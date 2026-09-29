@@ -1,0 +1,759 @@
+{
+  "_comment": "Empathize action board lines (NPCEmpathize.Help): Help, Games, Romance and Talk. Player lines by speaker voice (default, em, bubba); replies by who they answer (default, toEm, toBubba).",
+  "help": {
+    "treat": {
+      "offer": {
+        "default": [
+          "Hold still, {name}. {Let me see to that|I have something for this}.",
+          "You are hurt. {Here|Take this}, it will help.",
+          "Sit down a moment, {name}. I will patch you up."
+        ],
+        "em": [
+          "Hold still. I am fixing you, and I do not do this for everyone.",
+          "You are bleeding on my time, {name}. Allow me."
+        ],
+        "bubba": [
+          "Madonna, look at you. Sit, sit, I got something for that.",
+          "Easy, darlin'. Bubba's got a {rag|kit} for everything."
+        ]
+      },
+      "thanks": {
+        "default": [
+          "{Thank you|Thanks}. {That is much better|I owe you one}.",
+          "Oh, that helps. {Really|It really does}.",
+          "I did not expect anyone to stop. Thank you."
+        ],
+        "toEm": [
+          "From you? I will not forget it.",
+          "Thank you. You are kinder than they say."
+        ],
+        "toBubba": [
+          "Grazie, big man. That is much better.",
+          "You have gentle hands for a mechanic. Thanks."
+        ]
+      }
+    },
+    "medicine": {
+      "offer": {
+        "default": [
+          "You look unwell, {name}. {Take this|Try this}, it is {item}.",
+          "I have {item} here. It should help with that.",
+          "That does not sound good. {Here|Take this}: {item}."
+        ],
+        "em": [
+          "{item}. Take it. Do not argue with a goddess about dosage.",
+          "You are ill and it offends me. Here, {item}."
+        ],
+        "bubba": [
+          "Here, {item}. My nonna swore by it. The pharmacy too.",
+          "Take this, guaglio', {item}. Twice a day, like the priest says."
+        ]
+      },
+      "thanks": {
+        "default": [
+          "I could not afford {item}. Thank you.",
+          "I will take it. {Thank you|Bless you}.",
+          "You did not have to do that. Thank you."
+        ],
+        "toEm": [
+          "Medicine from a goddess. I will take it, thank you.",
+          "I will do as you say. Thank you."
+        ],
+        "toBubba": [
+          "Grazie, Bubba. I feel better already.",
+          "You are a good man. Thank you."
+        ]
+      }
+    },
+    "firstAid": {
+      "kneel": {
+        "default": [
+          "{Stay with me|Come on}, {name}. {Breathe|Easy now}.",
+          "Hey. Hey, {name}. Can you hear me?",
+          "Do not move. Let me look at you."
+        ],
+        "em": [
+          "Get up, {name}. I did not give you permission to lie there.",
+          "Breathe. That is an order."
+        ],
+        "bubba": [
+          "Oh no no no, come on, {name}. Up you get.",
+          "Easy, easy. Bubba's here. Open your eyes."
+        ]
+      },
+      "wake": {
+        "default": [
+          "What... what happened? {You helped me|You stopped}.",
+          "I thought I was done for. Thank you.",
+          "I can stand. I think. Thank you."
+        ],
+        "toEm": [
+          "You... picked me up? Thank you.",
+          "I will not forget this, I swear it."
+        ],
+        "toBubba": [
+          "Bubba? You got me up. Grazie.",
+          "Big man. You saved my neck."
+        ]
+      }
+    },
+    "fix": {
+      "offer": {
+        "default": [
+          "{You look like you need this|Here}. {item}, on me.",
+          "Take the edge off, {name}. {item}.",
+          "I know that look. Here, {item}."
+        ],
+        "em": [
+          "{item}. I know what you want. Do not make a habit of asking me.",
+          "Here. Mortals and their wants."
+        ],
+        "bubba": [
+          "Eh, I know how it is. Take the {item}.",
+          "Here, darlin'. Just this once, hm?"
+        ]
+      },
+      "thanks": {
+        "default": [
+          "Oh, {thank you|you are a saint}. I needed that.",
+          "That is... yes. {Thank you|Much better}.",
+          "I will pay you back. {Some day|I promise}."
+        ],
+        "toEm": [
+          "From you? I will take it. Thank you.",
+          "You understand. Thank you."
+        ],
+        "toBubba": [
+          "Bubba, you are a lifesaver.",
+          "Grazie. I was going out of my mind."
+        ]
+      }
+    },
+    "intervene": {
+      "plea": {
+        "default": [
+          "{name}, the {substance}... it is eating you alive. {Will you try to cut down|Let us talk about it}?",
+          "I care what happens to you. The {substance} has to stop.",
+          "You are better than the {substance}, {name}. Try, for me."
+        ],
+        "em": [
+          "The {substance} is making you small, {name}. I prefer you large. Stop.",
+          "I have watched empires fall to less. Put the {substance} down."
+        ],
+        "bubba": [
+          "Listen, guaglio'. The {substance}, it takes and takes. Ease off, for me.",
+          "My cousin went down that road with {substance}. Do not follow him."
+        ]
+      },
+      "accept": {
+        "default": [
+          "{You are right|Maybe you are right}. I will try. I will really try.",
+          "Nobody ever said it to my face. Alright. I will cut down.",
+          "I know. I know. I will try."
+        ],
+        "toEm": [
+          "If you say so, then... I will try.",
+          "You are right. I will try, I swear."
+        ],
+        "toBubba": [
+          "Alright, alright. For you, Bubba. I will try.",
+          "You sound like my father. Fine. I will cut down."
+        ]
+      },
+      "refuse": {
+        "default": [
+          "{Mind your own business|Who asked you}.",
+          "I have it under control. Leave it.",
+          "You do not know anything about it."
+        ],
+        "toEm": [
+          "Even you do not get to tell me that.",
+          "Goddess or not, leave it alone."
+        ],
+        "toBubba": [
+          "Not now, Bubba. Leave it.",
+          "Fix your camper, not me."
+        ]
+      }
+    },
+    "shelter": {
+      "offer": {
+        "default": [
+          "{name}, we have a place in {place}. {It is yours|Stay there}, for as long as you need.",
+          "Nobody should sleep outside. There is a room for you in {place}.",
+          "We own a home in {place}. Take it. Please."
+        ],
+        "em": [
+          "I own a house in {place}. You will live in it. That is not a request.",
+          "A roof, {name}. In {place}. You are welcome."
+        ],
+        "bubba": [
+          "We got a house in {place}, darlin'. Mi casa, capisci?",
+          "Come stay at ours in {place}. The door sticks, I will fix it."
+        ]
+      },
+      "accept": {
+        "default": [
+          "A roof? A real one? {Thank you|I do not know what to say}.",
+          "I will look after it like it was mine. Thank you.",
+          "I had stopped hoping. Thank you."
+        ],
+        "toEm": [
+          "Under your roof? I am honoured. Thank you.",
+          "I will keep it spotless, I swear."
+        ],
+        "toBubba": [
+          "Bubba, you are an angel. Grazie.",
+          "I will not get in your way. Thank you."
+        ]
+      }
+    }
+  },
+  "games": {
+    "challenge": {
+      "ask": {
+        "default": [
+          "{Fancy|How about} a game of {game}, {name}?",
+          "I bet I can beat you at {game}.",
+          "You and me, {name}. {game}. {Now|Right now}."
+        ],
+        "em": [
+          "{game}. You and me. I will be gracious in victory.",
+          "Play {game} with me, {name}. I am bored."
+        ],
+        "bubba": [
+          "Eh, {name}! A little {game}? Friendly, friendly.",
+          "Come on, {game}, just the two of us."
+        ]
+      },
+      "accept": {
+        "default": [
+          "{You are on|Alright, you asked for it}.",
+          "Sure, {why not|I could use the fun}.",
+          "Oh, I love {game}. Let us go."
+        ],
+        "toEm": [
+          "Against you? I will try not to embarrass myself.",
+          "An honour. I will not go easy."
+        ],
+        "toBubba": [
+          "You are on, big man.",
+          "Hah, alright Bubba. Let us see it."
+        ]
+      },
+      "refuse": {
+        "default": [
+          "{Not now|Some other time}.",
+          "I am not in the mood for {game}.",
+          "No thanks, {name}."
+        ],
+        "toEm": [
+          "Not today. Forgive me.",
+          "I would rather not, if it is all the same."
+        ],
+        "toBubba": [
+          "Nah, not now, Bubba.",
+          "Another day, big man."
+        ]
+      },
+      "won": {
+        "default": [
+          "{Well played|Good game}. You got me.",
+          "Hah, fair and square. Again sometime?",
+          "You are better than you look."
+        ],
+        "toEm": [
+          "Of course you won. Well played.",
+          "I should have known better. Good game."
+        ],
+        "toBubba": [
+          "You got me, Bubba. Good game.",
+          "Beaten by a mechanic. Well played."
+        ]
+      },
+      "lost": {
+        "default": [
+          "{Better luck next time|Not bad, not bad}.",
+          "Hah! {Mine|That one is mine}.",
+          "You gave it a go. Good game."
+        ],
+        "toEm": [
+          "I... won? Against you? Good game.",
+          "Forgive me. Good game all the same."
+        ],
+        "toBubba": [
+          "Hah, sorry Bubba. Good game.",
+          "Next time, big man."
+        ]
+      },
+      "draw": {
+        "default": [
+          "Even. {We will need a rematch|Fair enough}.",
+          "Neither of us, then. Good game.",
+          "A draw. I will take it."
+        ],
+        "toEm": [
+          "A draw with you is a win for me.",
+          "Even. That will do."
+        ],
+        "toBubba": [
+          "Even, Bubba. Rematch soon.",
+          "Nobody wins. Good game."
+        ]
+      }
+    }
+  },
+  "romance": {
+    "introduce": {
+      "pitch": {
+        "default": [
+          "{name}, you should meet {other}. {I think you two would get on|Trust me}.",
+          "Have you ever met {other}? You would like them.",
+          "I know someone for you, {name}. {other}."
+        ],
+        "em": [
+          "{other}. You and {other}. I have decided, and I am never wrong.",
+          "Meet {other}, {name}. Consider it divine intervention."
+        ],
+        "bubba": [
+          "Eh, {name}, you know {other}? Nice person. Very nice.",
+          "My friend {other}, single, lovely. Just saying."
+        ]
+      },
+      "accept": {
+        "default": [
+          "{other}? Alright. {Why not|I will say hello}.",
+          "You think so? I will give it a try.",
+          "Well... alright. Introduce us."
+        ],
+        "toEm": [
+          "If you say we are meant to, who am I to argue?",
+          "Alright. I trust your eye."
+        ],
+        "toBubba": [
+          "Alright Bubba, you old matchmaker.",
+          "Fine, fine. I will meet them."
+        ]
+      },
+      "refuse": {
+        "default": [
+          "I do not think {other} is my type.",
+          "Thank you, but no.",
+          "I am not looking right now."
+        ],
+        "toEm": [
+          "I would rather choose for myself, forgive me.",
+          "Not even you can make that work."
+        ],
+        "toBubba": [
+          "Nice try, Bubba. No.",
+          "Stick to engines, big man."
+        ]
+      }
+    }
+  },
+  "talk": {
+    "rumours": {
+      "ask": {
+        "default": [
+          "{Heard anything|What is new} lately, {name}?",
+          "Any news, {name}?",
+          "What are people saying these days?"
+        ],
+        "em": [
+          "Tell me what the mortals are whispering, {name}.",
+          "News. Now. Entertain me."
+        ],
+        "bubba": [
+          "Eh, {name}, what is the gossip?",
+          "So, what is going on round here?"
+        ]
+      },
+      "war": {
+        "default": [
+          "{They say|Word is} {a} and {b} are still at each other's throats.",
+          "The war between {a} and {b}? It is not ending any time soon.",
+          "Everyone is talking about {a} and {b}. The fighting goes on."
+        ],
+        "toEm": [
+          "{a} and {b} are at war. You probably knew that.",
+          "The {a} and {b} war drags on."
+        ],
+        "toBubba": [
+          "{a} and {b}, still fighting. Crazy world, Bubba.",
+          "War between {a} and {b}. Keep the camper fuelled."
+        ]
+      },
+      "horde": {
+        "default": [
+          "The goblins still hold {country}. {People are scared|Nobody knows what comes next}.",
+          "I heard the Horde is dug in at {country}.",
+          "Refugees from {country} keep turning up. The Horde has it."
+        ],
+        "toEm": [
+          "The Horde holds {country}. They say it would not dare cross you.",
+          "Goblins in {country}, still."
+        ],
+        "toBubba": [
+          "Goblins in {country}, Bubba. Lock the camper.",
+          "The Horde still has {country}."
+        ]
+      },
+      "election": {
+        "default": [
+          "The {power} election is in {days} days. {party} or {rival}, take your pick.",
+          "Everyone is on about the vote in {power}. {days} days to go.",
+          "It is {party} against {rival} in {power}. {days} days."
+        ],
+        "toEm": [
+          "An election in {power}, in {days} days. Do you vote?",
+          "{party} or {rival}. Who would you bless?"
+        ],
+        "toBubba": [
+          "Vote in {power} in {days} days, Bubba.",
+          "{party}, {rival}, same circus."
+        ]
+      },
+      "electionResult": {
+        "default": [
+          "{winner} won in {power}. {Some are happy|Not everyone is happy}.",
+          "Did you hear? {winner} took {power}.",
+          "The count is in: {winner}, in {power}."
+        ],
+        "toEm": [
+          "{winner} won {power}. Your doing?",
+          "{winner} took {power}."
+        ],
+        "toBubba": [
+          "{winner} won in {power}, Bubba.",
+          "{winner} got in. Nothing changes."
+        ]
+      },
+      "epidemic": {
+        "default": [
+          "There is {disease} going round. {Wash your hands|Keep your distance}.",
+          "Half the town is down with {disease}, they say.",
+          "Be careful. {disease} is spreading."
+        ],
+        "toEm": [
+          "{disease} is spreading. Surely not your doing.",
+          "Beware {disease}, even goddesses sneeze."
+        ],
+        "toBubba": [
+          "{disease} going round, Bubba. Wash those hands.",
+          "Watch out for {disease}."
+        ]
+      },
+      "marketUp": {
+        "default": [
+          "{company} shares are flying. Wish I had bought some.",
+          "Everyone is buying {company}, they say.",
+          "{company} is doing well. Too well, maybe."
+        ],
+        "toEm": [
+          "{company} is soaring. Did you bless it?",
+          "{company}, up and up."
+        ],
+        "toBubba": [
+          "{company} is up, Bubba. Buy low, eh?",
+          "{company} shares are flying."
+        ]
+      },
+      "marketDown": {
+        "default": [
+          "{company} is sinking. Somebody is losing their shirt.",
+          "I would not touch {company} right now.",
+          "{company} shares are in the gutter."
+        ],
+        "toEm": [
+          "{company} is collapsing. Was it you?",
+          "{company}, down and down."
+        ],
+        "toBubba": [
+          "{company} is going under, Bubba.",
+          "Stay away from {company}."
+        ]
+      },
+      "town": {
+        "default": [
+          "{Did you hear|Have you heard}? {news}",
+          "Round here, the talk is this: {news}",
+          "You will not believe it. {news}"
+        ],
+        "toEm": [
+          "Something happened: {news}",
+          "News for you: {news}"
+        ],
+        "toBubba": [
+          "Eh Bubba, listen: {news}",
+          "So: {news}"
+        ]
+      },
+      "generic": {
+        "default": [
+          "{Between you and me|Do not quote me}: {rumour}",
+          "I heard this one the other day. {rumour}",
+          "People say all sorts. {rumour}"
+        ],
+        "toEm": [
+          "You probably know better, but: {rumour}",
+          "They say: {rumour}"
+        ],
+        "toBubba": [
+          "Crazy one for you, Bubba: {rumour}",
+          "Listen to this: {rumour}"
+        ]
+      },
+      "nothing": {
+        "default": [
+          "{Nothing much|Quiet times}, honestly.",
+          "I have not heard a thing.",
+          "Nothing worth repeating."
+        ],
+        "toEm": [
+          "Nothing you do not already know.",
+          "Quiet, for once."
+        ],
+        "toBubba": [
+          "Nothing, Bubba. Dead quiet.",
+          "Nothing new."
+        ]
+      }
+    }
+  },
+  "rough": {
+    "accuse": {
+      "speak": {
+        "default": [
+          "{name}, I know what you did. {crime}.",
+          "You. {crime}. {Admit it|Do not bother denying it}.",
+          "I have heard things about you, {name}. {crime}, {they say|people whisper}."
+        ],
+        "em": [
+          "{crime}, {name}. I can smell it on you.",
+          "I know what you are, {name}. Guilty of {crime}. Confess."
+        ],
+        "bubba": [
+          "I hate to say it, {name}, but folks say {crime}. That true?",
+          "Eh, {name}. {crime}? Tell me it ain't so."
+        ]
+      },
+      "npc": {
+        "deny": {
+          "default": [
+            "{What|Excuse me}? I never did any such thing.",
+            "{crime}? Me? You have the wrong person.",
+            "That is a lie and you know it."
+          ],
+          "toEm": [
+            "{crime}? Says the witch who fed the spear?",
+            "I did nothing of the kind, miss. Nothing."
+          ],
+          "toBubba": [
+            "Mr. Wilson, I swear, I never did.",
+            "Not me, Mr. Wilson. Never."
+          ],
+          "em": [
+            "{crime}? Me? I have done worse, and none of it was that.",
+            "Wrong. I do not do {crime}. I do things with far more style."
+          ],
+          "bubba": [
+            "{crime}? Me? I fix things, I don't break 'em.",
+            "Now hold on, I never did nothing like that."
+          ]
+        },
+        "anger": {
+          "default": [
+            "How {dare|can} you say that to my face?",
+            "Say that again and see what happens.",
+            "{crime}? Get out of my sight."
+          ],
+          "toEm": [
+            "Accuse me again, witch, and I will call the priest.",
+            "You have some nerve, miss."
+          ],
+          "toBubba": [
+            "I thought better of you, Wilson.",
+            "You of all people, Wilson? Shame on you."
+          ],
+          "em": [
+            "Choose your next words carefully. I remember names.",
+            "Accuse me again and you will find out what a witch does with grudges."
+          ],
+          "bubba": [
+            "Hey. That ain't right to say, and you know it.",
+            "I'm gonna pretend I didn't hear that, guaglio'."
+          ]
+        },
+        "shock": {
+          "default": [
+            "{I|We}... I thought we were friends.",
+            "You really think I would do {crime}?",
+            "I... do not know what to say to that."
+          ],
+          "toEm": [
+            "Even you think that of me, miss?",
+            "I thought you of all people would understand."
+          ],
+          "toBubba": [
+            "Mr. Wilson... I would never.",
+            "That hurts, coming from you."
+          ],
+          "em": [
+            "You think that of me? After everything?",
+            "I am... genuinely offended. That is rare."
+          ],
+          "bubba": [
+            "Aw, come on. You know me better than that.",
+            "That one hurts, darlin'. It really does."
+          ]
+        },
+        "flinch": {
+          "default": [
+            "{Who told you that|Where did you hear that}? That was a long time ago.",
+            "I... that is not... keep your voice down.",
+            "That was years ago. I paid for it."
+          ],
+          "toEm": [
+            "How did you know? Witchcraft?",
+            "Please, miss, not so loud."
+          ],
+          "toBubba": [
+            "Mr. Wilson, please. That is behind me.",
+            "I am not proud of it, Mr. Wilson."
+          ],
+          "em": [
+            "That was another life. Mostly.",
+            "You have been reading things you should not."
+          ],
+          "bubba": [
+            "Aw. That was a long time ago. I was young and stupid.",
+            "Keep it down, eh? I ain't that guy no more."
+          ]
+        },
+        "laugh": {
+          "default": [
+            "{crime}? {Ha|Hah}! Me? Have you seen me?",
+            "Oh yes, {crime}. In my spare time. Between lunch and a nap.",
+            "That is the funniest thing I have heard all week."
+          ],
+          "toEm": [
+            "{crime}? Says the woman who killed a god?",
+            "Oh, that is rich, coming from you, miss."
+          ],
+          "toBubba": [
+            "{crime}? Ha! Good one, Mr. Wilson.",
+            "You had me for a second there, Mr. Wilson."
+          ],
+          "em": [
+            "{crime}. How flattering. How wrong.",
+            "If I had done {crime}, you would know. Everyone would."
+          ],
+          "bubba": [
+            "{crime}? Ha! Me? I can't even pick a lock.",
+            "Ha! That's a good one. You should do comedy."
+          ]
+        }
+      },
+      "member": {
+        "hurt": {
+          "default": [
+            "After all the roads we have walked, you say that?",
+            "I thought you trusted me.",
+            "That hurts. Coming from you, that really hurts."
+          ],
+          "toEm": [
+            "Even you, Em? I thought we were past that.",
+            "You could have just said you were angry."
+          ],
+          "toBubba": [
+            "Bubba... I thought you had my back.",
+            "Not you too, Bubba."
+          ],
+          "em": [
+            "I will remember that. I remember everything.",
+            "We travel together and you say that. Noted."
+          ],
+          "bubba": [
+            "That one stings, pal. It really does.",
+            "We're family on the road, and you say that?"
+          ]
+        },
+        "anger": {
+          "default": [
+            "Say that again, and we are done travelling together.",
+            "Watch your mouth.",
+            "You want to start this here? Fine."
+          ],
+          "toEm": [
+            "Watch it, witch.",
+            "Big words, Em. Back them up."
+          ],
+          "toBubba": [
+            "Careful, Wilson.",
+            "You are out of line, Bubba."
+          ],
+          "em": [
+            "Careful. I share a camp with you. I know where you sleep.",
+            "Try that again and see what happens."
+          ],
+          "bubba": [
+            "Hey. We don't talk like that in this outfit.",
+            "That ain't how we do things, and you know it."
+          ]
+        },
+        "laugh": {
+          "default": [
+            "{crime}? Me? Sure, and I also {fly|breathe underwater}.",
+            "Ha! You have been in the {sun|pub} too long."
+          ],
+          "toEm": [
+            "{crime}? That is your department, Em.",
+            "Ha! Have you been at the potions again?"
+          ],
+          "toBubba": [
+            "Ha! Good one, Bubba.",
+            "{crime}? Bubba, you kill me."
+          ],
+          "em": [
+            "{crime}. Yes. Obviously. How did you guess.",
+            "I would do it with more flair."
+          ],
+          "bubba": [
+            "Ha! Me? {crime}? I can barely parallel park.",
+            "Good one, pal. Real good."
+          ]
+        }
+      },
+      "self": {
+        "default": [
+          "{crime}. Did I? Maybe not in so many words. But I have thought about it.",
+          "If anyone asked, could I honestly say I never did {crime}?",
+          "I tell myself I am not the kind who would do {crime}. I tell myself a lot of things."
+        ],
+        "em": [
+          "{crime}. Of all the things I have done, that is not one. Probably.",
+          "I accuse myself of {crime}. The court of one finds me insufferable."
+        ],
+        "bubba": [
+          "{crime}? Nah. But I did leave that wrench in the Hendersons' sink.",
+          "Me? {crime}? I'd never. Would I?"
+        ]
+      },
+      "selfGuilty": {
+        "default": [
+          "{crime}. Yes. I did. And I think about it {more than I let on|most nights}.",
+          "There is no point {lying to myself|pretending}: {crime}. It was me."
+        ],
+        "em": [
+          "{crime}. Guilty. I would do it again, which is the worst part.",
+          "Yes. {crime}. The spear was not my only mistake."
+        ],
+        "bubba": [
+          "{crime}. Yeah. I ain't proud of it.",
+          "Ma would be ashamed. {crime}. I did it."
+        ]
+      }
+    }
+  }
+}

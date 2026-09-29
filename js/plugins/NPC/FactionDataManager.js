@@ -1109,6 +1109,13 @@ Game_Factions.prototype.foundPlayerFaction = function (name) {
     parentHyperpower: null,
     founded: this._todayStamp(),
   };
+  // The team standing in the party when the banner goes up joins its
+  // political party too, if the world has one (NPCPolitics, THE PARTY'S OWN
+  // POLITICAL PARTY).
+  const politics = window.NPCPolitics;
+  if (politics && typeof politics.enrollTeamInPlayerParty === "function") {
+    try { politics.enrollTeamInPlayerParty(); } catch (e) { console.warn("[Factions] party enrolment", e); }
+  }
   return this._playerFaction;
 };
 

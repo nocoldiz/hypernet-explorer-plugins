@@ -461,6 +461,19 @@
     updateAugmentInput() {
       const isCancel = Input.isTriggered("cancel") || Input.isTriggered("escape") || TouchInput.isCancelled();
 
+      // L1 / R1 (Q / W, Tab) turn the two tabs from wherever the cursor is.
+      const tabDir = window.UINav ? window.UINav.tabDir() : 0;
+      if (tabDir) {
+        const next = Math.max(0, Math.min(1, this._tab + tabDir));
+        if (next !== this._tab) {
+          this._tab = next;
+          this._selectedIndex = 0;
+          SoundManager.playCursor();
+          this.refreshAugmentDOM();
+        }
+        return;
+      }
+
       if (this._activeArea === "tabs") {
         if (Input.isTriggered("right") || Input.isRepeated("right")) {
           if (this._tab < 1) {
@@ -501,34 +514,22 @@
       // The catalogue reads several across, so down walks a whole line of
       // cards and left and right walk within one. How many across is read off
       // the live grid rather than restated here (UI/MenuVirtualList.js).
+      // UINav.gridStep keeps left and right on the row and stops at its ends.
       const cols = window.MenuVirtualList.columnsOf("#aug-list-content", 1);
-      const step = (delta) => {
-        const next = this._selectedIndex + delta;
-        if (next < 0 || next >= this._rows.length) return false;
-        this._selectedIndex = next;
-        SoundManager.playCursor();
-        this.refreshAugmentDOM();
-        this.scrollSelectedIntoView();
-        return true;
-      };
-
-      if (Input.isTriggered("down") || Input.isRepeated("down")) {
-        // The last line is rarely full, so a jump past the end still lands on
-        // the last card rather than refusing to move.
-        if (!step(cols) && this._selectedIndex < this._rows.length - 1) {
-          step(this._rows.length - 1 - this._selectedIndex);
-        }
-      } else if (Input.isTriggered("right") || Input.isRepeated("right")) {
-        if (cols > 1) step(1);
-      } else if (Input.isTriggered("left") || Input.isRepeated("left")) {
-        if (cols > 1) step(-1);
-      } else if (Input.isTriggered("up") || Input.isRepeated("up")) {
-        if (this._selectedIndex >= cols) {
-          step(-cols);
-        } else {
+      const dir = window.UINav ? window.UINav.navDir() : null;
+      if (dir) {
+        if (dir === "up" && this._selectedIndex < cols) {
           this._activeArea = "tabs";
           SoundManager.playCursor();
           this.refreshAugmentDOM();
+          return;
+        }
+        const next = window.UINav.gridStep(this._selectedIndex, dir, this._rows.length, cols);
+        if (next !== this._selectedIndex) {
+          this._selectedIndex = next;
+          SoundManager.playCursor();
+          this.refreshAugmentDOM();
+          this.scrollSelectedIntoView();
         }
       } else if (isCancel) {
         this._activeArea = "tabs";

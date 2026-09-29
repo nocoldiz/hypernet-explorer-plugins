@@ -704,7 +704,7 @@
 
     function beginStoryRunTransfer() {
         const landing = storyModeLanding();
-        // Switch 49 marks the save as a story run, whichever landing it opens on.
+        // STORY_MODE_SWITCH (100) marks the save as a story run, whichever landing it opens on.
         $gameSwitches.setValue(STORY_MODE_SWITCH, true);
         // The story never opens on its landing either: the wizard comes first.
         $gameSystem._pendingCreationCurtain = true;
@@ -1989,18 +1989,23 @@
         if (isStoryPlaytestBoot()) beginStoryPlaytest();
     };
 
-    // Builds the canon world (2001, ordinary population, ordinary magic: the
-    // creation defaults) and populates it the same way the Worlds screen does,
-    // so a first-time player reaches the game without passing through it. Both
-    // New story and New party start here when the world folder is empty.
+    // Activates the default world (WorldManager.ensureDefaultWorld: the canon
+    // 2001 world on the default seed, copied from the snapshot shipped in
+    // data/DefaultWorld/) and populates whatever it still owes, so a
+    // first-time player reaches the game without passing through the Worlds
+    // screen. Both New story and New party start here when no world is active.
     async function createDefaultWorld() {
         const WM = window.WorldManager;
-        let base = (WM.randomWorldName && WM.randomWorldName()) || 'Story'; // i18n-ignore: world folder name under save/worlds/, persistence key
-        let name = base;
-        let n = 2;
-        while (WM.worldExists(name)) name = base + ' ' + (n++);
-        WM.createWorld(name, {});
-        WM.setActiveWorld(name);
+        WM.ensureDefaultWorld();
+        WM.setActiveWorld(WM.DEFAULT_WORLD_NAME);
+        if (!WM.worldInfo().historyInitialized) await simulateActiveWorld();
+        WM.initializeWorld();
+        await DataManager.loadGlobalInfo();
+    }
+
+    // The history and every world step, run on the active world.
+    async function simulateActiveWorld() {
+        const WM = window.WorldManager;
         if (typeof FactionDataManager !== 'undefined' &&
             FactionDataManager.instance && FactionDataManager.instance._readyPromise) {
             await FactionDataManager.instance._readyPromise;
@@ -2008,9 +2013,64 @@
         if (window.HistoryManager) {
             window.HistoryManager.initializeWorldHistory({ years: null, seed: WM.worldInfo().seed });
         }
-        WM.initializeWorld();
-        await DataManager.loadGlobalInfo();
     }
+
+    // --- Regenerating the shipped default world ------------------------------
+    //
+    // tools/build/gen_default_world.js (an option of build_encrypted) starts
+    // the game with the genworld launch option. Once the title screen is up
+    // the default world is built the way createDefaultWorld builds it, from
+    // scratch, in a scratch folder, exported into data/DefaultWorld/ and the
+    // scratch folder removed; then the game quits. The developer's own active
+    // world is never written to active.json and stays the active one.
+    const GENWORLD_SCRATCH = 'DefaultWorldBuild'; // i18n-ignore: scratch world folder name
+    const GENWORLD_RETRIES = 3;
+    let _genWorldStarted = false;
+
+    function isDefaultWorldGeneration() {
+        return Utils.isNwjs() && Utils.isOptionValid('genworld');
+    }
+
+    async function generateDefaultWorldTemplate() {
+        const WM = window.WorldManager;
+        if (WM.worldExists(GENWORLD_SCRATCH)) WM.discardWorld(GENWORLD_SCRATCH);
+        WM.createWorld(GENWORLD_SCRATCH, {});
+        WM.setActiveWorld(GENWORLD_SCRATCH, false);
+        try {
+            await simulateActiveWorld();
+            WM.initializeWorld();
+            // A step whose data table was still loading fails and stays
+            // owed: give it the same few tries a play session would.
+            for (let i = 0; i < GENWORLD_RETRIES && WM.hasPendingWorldInit(); i++) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                WM.initializeWorld();
+            }
+            if (WM.hasPendingWorldInit()) {
+                throw new Error('world steps still owed after ' + GENWORLD_RETRIES + ' retries'); // i18n-ignore: diagnostic
+            }
+            const info = WM.exportWorldTemplate(GENWORLD_SCRATCH);
+            console.log('[Titlescreen] Default world written: ' + info.files.length + ' files.'); // i18n-ignore: diagnostic
+        } finally {
+            WM.discardWorld(GENWORLD_SCRATCH);
+        }
+    }
+
+    function quitGeneration(code) {
+        try { process.exit(code); } catch (e) {
+            try { nw.App.quit(); } catch (e2) { /* nothing left to close */ }
+        }
+    }
+
+    const _Scene_Title_start_genWorld = Scene_Title.prototype.start;
+    Scene_Title.prototype.start = function () {
+        _Scene_Title_start_genWorld.call(this);
+        if (!isDefaultWorldGeneration() || _genWorldStarted) return;
+        _genWorldStarted = true;
+        generateDefaultWorldTemplate().then(() => quitGeneration(0)).catch(e => {
+            console.error('[Titlescreen] Default world generation failed', e); // i18n-ignore: diagnostic
+            quitGeneration(1);
+        });
+    };
 
     // Story mode has a savefile band of its own (SaveSystem), so the entry
     // resumes one once it has been written. It is named Story mode either way.
@@ -2179,12 +2239,10 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         return _drawnTitleMusic;
     }
 
+    // Random always reads Random: the piece it drew is never shown on the
+    // dial, so the pick stays the one the player made.
     function titleMusicTrackName(track) {
-        if (track.value === TITLE_MUSIC_RANDOM) {
-            const curVal = titleMusicValue();
-            const found = TITLE_MUSIC_DEFAULTS.find(t => t.value === curVal);
-            return found ? found.name : T('Titlescreen.menu.musicRandom');
-        }
+        if (track.value === TITLE_MUSIC_RANDOM) return T('Titlescreen.menu.musicRandom');
         return track.name;
     }
 
@@ -5805,8 +5863,13 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     const ERIS_SAVE_FRAMES = 3600;   // a minute between autosaves
     const ERIS_SPAWN_TRIES = 40;
     const ERIS_ERROR_LIMIT = 300;    // consecutive failing frames before giving up
-    const ERIS_SHADE_ALPHA = 0.35;   // keeps the menu readable over the map
     const ERIS_FALLBACK = { mapId: 1421, x: 9, y: 9 };   // the sandbox's own start
+    // A new map is kept out of sight until its tileset has held still this
+    // many frames with every image loaded (plugins swap tilesets after the
+    // load), or until the cap, then the last frame of the old map fades off it.
+    const ERIS_SETTLE_FRAMES = 12;
+    const ERIS_SETTLE_CAP = 240;
+    const ERIS_FADE_FRAMES = 20;
     // The map's DOM that is allowed over the title: NPC dialogue, meaning the
     // parchment message box and the NPCs' chatter bubbles. Everything else the
     // map's plugins put up is held hidden while the camera runs.
@@ -5984,8 +6047,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             if (this._windowLayer) this._windowLayer.visible = false;
             if (this._menuButton) this._menuButton.visible = false;
             const mw = this._messageWindow;
-            if (mw && mw._htmlMsgRoot) mw._htmlMsgRoot.style.pointerEvents = 'none';
-            if (mw && mw._htmlMsgName) mw._htmlMsgName.style.pointerEvents = 'none';
+            if (mw && mw._htmlMsgRoot) mw._htmlMsgRoot.classList.add('title-eris-passthrough');
+            if (mw && mw._htmlMsgName) mw._htmlMsgName.classList.add('title-eris-passthrough');
         }
         start() {
             super.start();
@@ -6028,11 +6091,6 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             if (!this._enabled) return;
             ensureErisGuards();
             this._holder = new PIXI.Container();
-            this._shade = new PIXI.Graphics();
-            this._shade.beginFill(0x000000, ERIS_SHADE_ALPHA);
-            this._shade.drawRect(0, 0, Graphics.width, Graphics.height);
-            this._shade.endFill();
-            this._holder.addChild(this._shade);
             title.addChildAt(this._holder, 0);
             this._boot();
         }
@@ -6079,8 +6137,59 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             const scene = new Scene_ErisCamera();
             this._scene = scene;
             this._started = false;
+            this._shown = false;
+            this._settle = 0;
+            this._settleAge = 0;
+            this._settleTileset = null;
+            // Drawn only once settled (see _updateReveal); it still updates.
+            scene.renderable = false;
             this._holder.addChildAt(scene, 0);
             this._guarded(scene, () => scene.create());
+        }
+
+        // The last frame of the map being left, held over the holder while
+        // the next map loads and settles.
+        _freezeFrame(scene) {
+            this._dropCover();
+            const renderer = Graphics.app && Graphics.app.renderer;
+            if (!renderer || !scene) return;
+            try {
+                const tex = PIXI.RenderTexture.create({ width: Graphics.width, height: Graphics.height });
+                this._guarded(scene, () => renderer.render(scene, tex));
+                this._cover = new PIXI.Sprite(tex);
+                this._coverFade = 0;
+                this._holder.addChild(this._cover);
+            } catch (e) {
+                this._dropCover();
+            }
+        }
+
+        _dropCover() {
+            const cover = this._cover;
+            this._cover = null;
+            if (!cover) return;
+            if (cover.parent) cover.parent.removeChild(cover);
+            try { cover.destroy({ texture: true, baseTexture: true }); } catch (e) { /* ignore */ }
+        }
+
+        // Shows the map once its tileset has stopped changing and its
+        // images are in, then fades the frozen frame of the old map away.
+        _updateReveal(scene) {
+            if (!this._shown) {
+                const id = $gameMap ? $gameMap.tilesetId() : 0;
+                if (id !== this._settleTileset) { this._settleTileset = id; this._settle = 0; }
+                if (ImageManager.isReady()) this._settle++;
+                if (this._settle >= ERIS_SETTLE_FRAMES || ++this._settleAge >= ERIS_SETTLE_CAP) {
+                    this._shown = true;
+                    scene.renderable = true;
+                }
+                return;
+            }
+            if (this._cover) {
+                this._coverFade++;
+                this._cover.alpha = Math.max(0, 1 - this._coverFade / ERIS_FADE_FRAMES);
+                if (this._coverFade >= ERIS_FADE_FRAMES) this._dropCover();
+            }
         }
 
         _dropScene() {
@@ -6110,10 +6219,10 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                     for (const el of body.children) {
                         if (erisShowsElement(el)) continue;
                         if (this._hidden.has(el)) {
-                            el.style.setProperty('visibility', 'hidden', 'important');
+                            if (el.classList) el.classList.add('title-eris-hidden');
                         } else if (!before.has(el) || before.get(el) !== el.style.cssText) {
                             this._hidden.add(el);
-                            el.style.setProperty('visibility', 'hidden', 'important');
+                            if (el.classList) el.classList.add('title-eris-hidden');
                         }
                     }
                 }
@@ -6133,6 +6242,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                     window.AutoIdleExplorer.setBackgroundScene(scene);
                 }
                 this._guarded(scene, () => scene.update());
+                this._updateReveal(scene);
                 this._errors = 0;
             } catch (e) {
                 if (this._errors++ === 0) console.warn('[ErisCamera] map update error:', e);
@@ -6143,6 +6253,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 }
             }
             if (scene._erisNeedsRebuild) {
+                // A map still hidden behind the cover is not frozen over it.
+                if (this._shown) this._freezeFrame(scene);
                 this._dropScene();
                 this._buildScene();
                 return;
@@ -6176,7 +6288,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             this._ownsGame = false;
             this._enabled = false;
             this._dropScene();
-            for (const el of this._hidden) el.style.removeProperty('visibility');
+            this._dropCover();
+            for (const el of this._hidden) if (el.classList) el.classList.remove('title-eris-hidden');
             this._hidden.clear();
             if (this._holder && this._holder.parent) this._holder.parent.removeChild(this._holder);
             if (this._holder) { try { this._holder.destroy({ children: true }); } catch (e) { /* ignore */ } }

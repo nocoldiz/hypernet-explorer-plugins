@@ -759,7 +759,9 @@
         _Game_CharacterBase_updatePattern.call(this);
         const newPattern = this._pattern;
 
-        if (prevPattern !== newPattern && this.isMoving()) {
+        // On a <Platform> map nothing is ever "moving" on the grid, so the
+        // platformer flags the frames where the feet actually step.
+        if (prevPattern !== newPattern && (this.isMoving() || this._pfStepping)) {
             const isPlayer = this === $gamePlayer;
             let shouldPlayFootsteps = false;
 

@@ -1,0 +1,685 @@
+{
+  "_comment": "Empathize Talk about / Teach / Learn (NPCEmpathize.js SECTION 10, NPCEmpathizeLessons; NPCEmpathizeUI.js LESSONS). Pools are keyed by variant: default, em and bubba for lines Em or Bubba speak themselves, toEm and toBubba for an ordinary NPC answering one of them. Answer and reply pools are keyed again by stance: like, dislike, neutral, unknown. {topic}, {name}, {skill} and {price} are filled first, then the {a|b} alternation is resolved.",
+  "ui": {
+    "talkAbout": "Talk about...",
+    "teach": "Teach",
+    "learn": "Learn",
+    "pickTopic": "Talk to {name} about...",
+    "pickTeach": "Teach {name} a skill",
+    "pickLearn": "Learn from {name}",
+    "pickTerms": "How will you teach {skill}?",
+    "groupCreeds": "Creeds",
+    "groupPolitics": "Powers, parties and factions",
+    "groupTopics": "Topics",
+    "noTopics": "Nobody in the party has been told about anything worth raising yet.",
+    "noTeach": "There is nothing the two of you could teach {name}.",
+    "noLearn": "{name} knows nothing you could learn.",
+    "hintHours": "{hours} h",
+    "hintFree": "{hours} h, free",
+    "hintPrice": "{hours} h, {price}",
+    "teachFree": "Teach it for free",
+    "teachFreeHint": "They will remember it fondly",
+    "teachSell": "Sell the lesson ({price})",
+    "teachSellHint": "Paid, and a little goodwill",
+    "detailHours": "Lesson: {hours} h",
+    "detailFee": "Selling price: {price}",
+    "detailFree": "Free: a friend teaches for nothing",
+    "detailPrice": "Price: {price}",
+    "teachDone": "{name} learned {skill}. {hours} h went by.",
+    "teachSold": "{name} learned {skill} and paid {price}. {hours} h went by.",
+    "learnDone": "{actor} learned {skill}. {hours} h went by.",
+    "learnPaid": "{actor} learned {skill} for {price}. {hours} h went by.",
+    "anything": "something",
+    "trainSpec": "Train a specialization",
+    "learnSpec": "Learn a specialization",
+    "pickTrainSpec": "Train {name} in a specialization",
+    "pickLearnSpec": "Learn a specialization from {name}",
+    "pickSpecTerms": "How will you train them in {spec}?",
+    "noTrainSpec": "You hold no specialization above what {name} already knows.",
+    "noLearnSpec": "{name} holds no specialization above yours.",
+    "hintSpecTier": "{from} to {to}, {hours} h",
+    "hintSpecFree": "{from} to {to}, {hours} h, free",
+    "hintSpecPrice": "{from} to {to}, {hours} h, {price}",
+    "detailSpecTier": "Session: {from} to {to}",
+    "trainSpecDone": "{name} is now {tier} in {spec}. {hours} h went by.",
+    "trainSpecSold": "{name} is now {tier} in {spec} and paid {price}. {hours} h went by.",
+    "learnSpecDone": "{actor} is now {tier} in {spec}. {hours} h went by.",
+    "learnSpecPaid": "{actor} is now {tier} in {spec} for {price}. {hours} h went by."
+  },
+  "reason": {
+    "known": "Already knows it",
+    "youKnow": "You already know it",
+    "nature": "Cannot exist in this world",
+    "cultist": "A Cultist learns only from written pages",
+    "level": "Needs level {level}",
+    "calling": "Outside their calling",
+    "prereq": "Needs {skills} first",
+    "hostile": "Refuses to teach you",
+    "cantAfford": "They cannot afford {price}",
+    "youCantAfford": "You cannot afford {price}",
+    "child": "Too young to be taught",
+    "beast": "Cannot be taught",
+    "unimplemented": "Nobody practises it yet",
+    "pacifist": "Will not train to fight"
+  },
+  "talk": {
+    "ask": {
+      "default": [
+        "Have you ever heard of {topic}?",
+        "What is your opinion on {topic}?",
+        "Tell me about {topic}. {What do you know|Anything at all}?",
+        "{So|Honest question}: {topic}. What do you make of it?",
+        "Does {topic} mean anything to you?",
+        "I keep hearing about {topic}. {Any thoughts|Where do you stand}?"
+      ],
+      "em": [
+        "{topic}. I have notes. I want yours before I compare them.",
+        "Tell me what you know about {topic}, and do not simplify it for me.",
+        "Hypothetically, {topic}. Talk. I am listening with my whole face.",
+        "I am compiling opinions on {topic}. Yours is the next entry. Go.",
+        "{topic}: {curse, blessing or paperwork|friend, foe or footnote}?"
+      ],
+      "bubba": [
+        "Uè, {name}, you ever heard of {topic}? Straight answer, I'm askin' nice.",
+        "{topic}. What's your feelin' on it, guaglio'? No rush, the engine's coolin'.",
+        "Tell me somethin' about {topic}. I'm a mechanic, I like to know how things work.",
+        "Mannaggia, everybody's talkin' about {topic}. Where do you stand, darlin'?",
+        "Chiano chiano, now. {topic}. Good thing or bad thing, in your book?"
+      ]
+    },
+    "answer": {
+      "default": {
+        "like": [
+          "{topic}? {Oh, I like that a lot|Now that is something I can get behind}.",
+          "{topic} is {one of the good things left|about the best thing going}, if you ask me.",
+          "I've a soft spot for {topic}, {honestly|I won't lie}.",
+          "{topic}! {Finally, someone with taste|You've made my day asking that}."
+        ],
+        "dislike": [
+          "{topic}? {Don't get me started|I'd rather not, frankly}.",
+          "{Ugh|Oh no}. {topic} is {the worst of it|a mess I want no part of}.",
+          "I can't stand {topic}. {Sorry, but there it is|I've had enough of it}.",
+          "{topic} has done {nobody|none of us} any good, and I'll say it twice."
+        ],
+        "neutral": [
+          "{topic}? {It has its good points and its bad|Could be worse, could be better}.",
+          "I don't think much about {topic} {either way|one way or the other}.",
+          "{topic} is {fine, I suppose|what it is}. Why do you ask?",
+          "{Some days I'm for it, some days I'm not|I'm on the fence} about {topic}."
+        ],
+        "unknown": [
+          "{topic}? {Never heard of it|Can't say I know it}. {What is it|Explain}?",
+          "{Sorry|Hm}, {topic} means nothing to me.",
+          "{topic}... {no, doesn't ring a bell|should I know that}?",
+          "You'll have to tell me about {topic} sometime. {I've no idea|Not a clue}."
+        ]
+      },
+      "toEm": {
+        "like": [
+          "{topic}? {Oh, you'd know more than me, witch, but yes|Yes}, I like it. {Please don't curse me for saying so|Is that the right answer}?",
+          "I think {topic} is wonderful. {You're writing this down, aren't you|Are you writing this down}?",
+          "{topic}, yes. I'm for it. You look at me like I'm a spell you're checking."
+        ],
+        "dislike": [
+          "{topic}? Not for me. {Please don't hex me over it|No offence meant to anyone with a grimoire}.",
+          "I hate {topic}, and I don't care if you've got a book that says otherwise.",
+          "{topic} is rotten. {There, you have my opinion, now stop staring|That's all I'll say to a witch}."
+        ],
+        "neutral": [
+          "{topic}? I don't know, miss. I've never needed an opinion on it until you asked.",
+          "Neither here nor there on {topic}. Is that going on the record?",
+          "{topic} is fine. Why does a witch want to know?"
+        ],
+        "unknown": [
+          "{topic}? You'd know better than me, you've read everything.",
+          "Never heard of {topic}. Is it in one of your books?",
+          "{topic}? Is that magic? I don't want to know if it's magic."
+        ]
+      },
+      "toBubba": {
+        "like": [
+          "{topic}? Love it. Almost as much as I love your engine, Mr. Wilson.",
+          "Coming from you? Yes, {topic}, yes. Whatever you think, I think it too.",
+          "{topic} is grand. Wait until I tell my mother Bubba Wilson asked me."
+        ],
+        "dislike": [
+          "{topic}? Can't stand it. Sorry, Mr. Wilson, I hope that isn't one of yours.",
+          "Honestly? {topic} is rubbish. You'd fix it in an afternoon, I bet.",
+          "I don't like {topic} at all. Please don't be disappointed in me."
+        ],
+        "neutral": [
+          "{topic}? Not sure. What do you think? I'll think that.",
+          "No strong feelings on {topic}. Can I shake your hand though?",
+          "{topic} is all right. Nothing like the Liminal Engine, mind."
+        ],
+        "unknown": [
+          "{topic}? Never heard of it. Is it one of your inventions?",
+          "I don't know {topic}, Mr. Wilson. Explain it slowly, I'll remember every word.",
+          "{topic}? No idea. But if you're asking, it must matter."
+        ]
+      },
+      "em": {
+        "like": [
+          "{topic}. I approve. I approve of very little, so frame that.",
+          "{topic} is one of the few things in ninety-two dimensions that works as advertised.",
+          "Yes. {topic}. I have three pages on it and none of them are rude."
+        ],
+        "dislike": [
+          "{topic}. No. I have read about it and I want the hours back.",
+          "{topic} is a bad idea with a good publicist.",
+          "I would sooner be hexed than argue for {topic}. I have been hexed. It was better."
+        ],
+        "neutral": [
+          "{topic}. Interesting, not important. I file it under maybe.",
+          "{topic} depends on who is asking and what they want. So, what do you want?",
+          "I have no feelings about {topic}. I have footnotes."
+        ],
+        "unknown": [
+          "{topic}. I do not know it. That annoys me more than it should.",
+          "Never heard of {topic}. Give me a day and a library.",
+          "{topic}? Not in any book I own. Which means I need more books."
+        ]
+      },
+      "bubba": {
+        "like": [
+          "{topic}? Beautiful thing, darlin'. Runs smooth, like a good carburettor.",
+          "Uè, {topic}! Now you're talkin'. I'm all for it.",
+          "{topic}, sì, sì. That's somethin' worth keepin' in the toolbox."
+        ],
+        "dislike": [
+          "{topic}? Mannaggia. Bad wirin', that one. I'd pull it out and start over.",
+          "Don't talk to me about {topic}, guaglio'. It gives me a headache like a slipped gasket.",
+          "{topic}'s rotten from the chassis up. That's my feelin'."
+        ],
+        "neutral": [
+          "{topic}? Eh. Some days it runs, some days it stalls.",
+          "I'm not fussed about {topic}. Chiano chiano, we'll see how it goes.",
+          "{topic}'s neither here nor there. Like a spare tyre, you're glad of it when you need it."
+        ],
+        "unknown": [
+          "{topic}? Never heard of it, and I've heard of most things.",
+          "You got me there, darlin'. {topic}'s a new one on me.",
+          "{topic}? Draw me a diagram and I'll tell you if it'll run."
+        ]
+      }
+    },
+    "askBack": {
+      "default": [
+        "{And you|Your turn}: what do you make of {topic}?",
+        "Since we're talking, {what do you think of|where do you stand on} {topic}?",
+        "Let me ask you one. {topic}: {yes or no|for or against}?",
+        "Have you heard of {topic}? {I'm curious|I'd like to know}."
+      ],
+      "toEm": [
+        "Can I ask you one, miss? {topic}. Is that witch business?",
+        "What does a witch think of {topic}? I've always wondered.",
+        "You'll know this one: {topic}. What's the truth of it?"
+      ],
+      "toBubba": [
+        "Can I ask you, Mr. Wilson? {topic}. What do you reckon?",
+        "What does the man who built the Liminal Engine think of {topic}?",
+        "{topic}, Mr. Wilson. Would you fix it or scrap it?"
+      ],
+      "em": [
+        "Now you. {topic}. Be precise.",
+        "Your turn, {name}. {topic}: defend a position.",
+        "{topic}. Tell me what you think and I will tell you what is wrong with it."
+      ],
+      "bubba": [
+        "Now you tell me, {name}. {topic}, what's your feelin'?",
+        "Your turn, guaglio'. {topic}, good or bad?",
+        "And {topic}, darlin'? What do you make of that one?"
+      ]
+    },
+    "reply": {
+      "default": {
+        "like": [
+          "{topic}? {I'm all for it|I like it, honestly}.",
+          "I think {topic} is {one of the good things|worth defending}.",
+          "{Big fan of|Can't say a bad word about} {topic}."
+        ],
+        "dislike": [
+          "{topic}? {Not for me|I can do without it}.",
+          "I don't like {topic}. {Never have|Sorry}.",
+          "{topic} is {trouble|more harm than good}, if you ask me."
+        ],
+        "neutral": [
+          "{topic}? {I could take it or leave it|No strong feelings}.",
+          "I'm {on the fence|in two minds} about {topic}.",
+          "{topic} is {fine|all right}, I suppose."
+        ],
+        "unknown": [
+          "{topic}? {Never heard of it|No idea, sorry}.",
+          "I don't know {topic}. {You'll have to tell me|What is it}?",
+          "{topic}... {doesn't ring a bell|you've lost me}."
+        ]
+      },
+      "em": {
+        "like": [
+          "{topic}. Good. Sound. I would sign it.",
+          "I like {topic}, and I checked the sources.",
+          "{topic} is one of the rare things I have no complaints about."
+        ],
+        "dislike": [
+          "{topic}. No. I have reasons and they are all footnoted.",
+          "I dislike {topic} on principle and in practice.",
+          "{topic} is a mistake that has not finished happening."
+        ],
+        "neutral": [
+          "{topic}. Undecided. I am waiting on further evidence.",
+          "{topic} is neither here nor there, which is its own kind of answer.",
+          "I have no opinion on {topic}. I have questions."
+        ],
+        "unknown": [
+          "{topic}. I do not know it, and I am not pleased about that.",
+          "Never heard of {topic}. Write it down for me.",
+          "{topic}? Not yet. Give me a library."
+        ]
+      },
+      "bubba": {
+        "like": [
+          "{topic}? Love it, darlin'. Runs like a dream.",
+          "Uè, {topic}'s a good one. I'd put my name on it.",
+          "{topic}, sì. Good honest work, that."
+        ],
+        "dislike": [
+          "{topic}? Mannaggia, no. Bad engineerin' from bumper to bumper.",
+          "I can't stand {topic}, guaglio'. Wouldn't let it near the Beast.",
+          "{topic}'s junk. I'd strip it for parts."
+        ],
+        "neutral": [
+          "{topic}? Eh. It runs, mostly.",
+          "I'm not fussed about {topic}. Chiano chiano.",
+          "{topic}'s fine. Nothin' to write home about."
+        ],
+        "unknown": [
+          "{topic}? Never heard of it, darlin'.",
+          "You got me. {topic}'s a new one.",
+          "{topic}? I'd have to take it apart to tell you."
+        ]
+      }
+    }
+  },
+  "teach": {
+    "offer": {
+      "default": [
+        "I could teach you {skill}, if you have a few hours.",
+        "{Want to|Would you like to} learn {skill}? I'll show you, no charge.",
+        "Let me show you {skill}. {It's easier than it looks|You'll pick it up}."
+      ],
+      "em": [
+        "Sit. I am going to teach you {skill}, and you are going to take notes.",
+        "{skill}. I will explain it once properly, and then again for real.",
+        "I am teaching you {skill}. Free of charge, which is unlike me."
+      ],
+      "bubba": [
+        "Come here, guaglio'. I'll show you {skill}, same as my old man showed me.",
+        "{skill}? Easy. Roll your sleeves up, darlin', it's free.",
+        "Jamme, I'll teach you {skill}. No money, just pay attention."
+      ]
+    },
+    "offerSell": {
+      "default": [
+        "I can teach you {skill}. {It'll cost you|My rate is} {price}.",
+        "{skill} is yours to learn, for {price}.",
+        "Lessons in {skill}, {price}. Worth every cent."
+      ],
+      "em": [
+        "{skill}. {price}. Knowledge has a price and I am its accountant.",
+        "I will teach you {skill} for {price}. The notes are extra. Joking. Mostly.",
+        "{price} for {skill}. You are getting a bargain and I want that acknowledged."
+      ],
+      "bubba": [
+        "I'll teach you {skill}, darlin'. {price}, and that's the family rate.",
+        "{skill}? {price}. Parts and labour, you understand.",
+        "{price} and I'll show you {skill} proper. Fair's fair."
+      ]
+    },
+    "thanksFree": {
+      "default": [
+        "{Thank you|I can't thank you enough}. I won't forget this, {name}.",
+        "You taught me {skill} for nothing? {You're a good one|I owe you}.",
+        "{skill}! I actually understand it now. Thank you, {name}."
+      ],
+      "toEm": [
+        "A witch taught me {skill}. For free. Nobody is going to believe this.",
+        "Thank you, miss. I understood about half, but it was the right half.",
+        "{skill}! I'll be careful with it, I promise. Thank you."
+      ],
+      "toBubba": [
+        "Bubba Wilson taught me {skill}. Himself. I'm never washing these hands.",
+        "Thank you, Mr. Wilson! I'll tell my children about this.",
+        "{skill}, from you. I don't have the words. Thank you."
+      ],
+      "em": [
+        "{skill}. Adequately explained. Thank you, {name}. I mean it.",
+        "You taught that well. I am revising my opinion of you upward.",
+        "Thank you. {skill} goes in the good notebook."
+      ],
+      "bubba": [
+        "Grazie, darlin'. {skill}, eh? You explained that like a mechanic.",
+        "Uè, thank you, guaglio'. I'll put {skill} in the toolbox.",
+        "That's a gift, {name}. I won't forget it."
+      ]
+    },
+    "thanksPaid": {
+      "default": [
+        "{price}, and worth it. Thank you, {name}.",
+        "Money well spent. {skill} is mine now.",
+        "{Fair price|Fair enough}. Thanks for the lesson."
+      ],
+      "toEm": [
+        "{price} to a witch for {skill}. My mother would faint. Worth it.",
+        "Here's your {price}, miss. And thank you, really.",
+        "Paid in full. Please don't turn me into anything."
+      ],
+      "toBubba": [
+        "{price} for a lesson from Bubba Wilson? I'd have paid double.",
+        "Here you go, Mr. Wilson. Best {price} I ever spent.",
+        "Paid and grateful. Thank you, sir."
+      ],
+      "em": [
+        "{price}. Reasonable. The lesson was worth more, but I will not say so twice.",
+        "Paid. And thank you, {name}. Both are true.",
+        "Money well spent, which is a sentence I rarely say."
+      ],
+      "bubba": [
+        "{price}, eh? Fair's fair, darlin'. Thank you.",
+        "Here, guaglio'. Honest money for honest work.",
+        "Paid up. Good lesson, that."
+      ]
+    }
+  },
+  "learn": {
+    "ask": {
+      "default": [
+        "Would you teach me {skill}?",
+        "{Could|Would} you show me {skill}? I'd be grateful.",
+        "I'd like to learn {skill}. {Would you teach me|Any chance}?"
+      ],
+      "em": [
+        "Teach me {skill}. I will be an excellent student, and an insufferable one.",
+        "I want to learn {skill}. Name your terms.",
+        "{skill}. Show me. I learn quickly and I ask a lot of questions."
+      ],
+      "bubba": [
+        "Uè, would you show me {skill}? I'm handy, I pick things up quick.",
+        "{skill}, eh? Teach an old mechanic, darlin'?",
+        "I'd like to learn {skill}, guaglio'. What do you say?"
+      ]
+    },
+    "agreeFree": {
+      "default": [
+        "For you? {Of course|Gladly}. No charge.",
+        "{Sure|Happily}. Friends don't pay for lessons.",
+        "Come on then, {name}. I'll show you, free."
+      ],
+      "toEm": [
+        "For you, miss? Of course. Just don't make it explode.",
+        "Free, for a friend. Even a witchy one.",
+        "I'll teach you. You'll probably be better at it than me by tonight."
+      ],
+      "toBubba": [
+        "Teach Bubba Wilson? For free? It's an honour, sir.",
+        "Of course, Mr. Wilson. I'd never take your money.",
+        "Me, teaching you! Come on, before I wake up."
+      ],
+      "em": [
+        "Free. You have earned it. Sit, and try to keep up.",
+        "For you, no charge. Do not tell anyone I have a soft side.",
+        "Fine. I will teach you. Take notes."
+      ],
+      "bubba": [
+        "For you, darlin'? Niente, nothin'. Come here.",
+        "Free, guaglio'. Friends don't pay in my garage.",
+        "Sì, sì, I'll show you. No money."
+      ]
+    },
+    "agreePaid": {
+      "default": [
+        "{price} and it's yours.",
+        "I'll teach you, but it'll cost {price}.",
+        "{Fair's fair|Business is business}: {price} for the lesson."
+      ],
+      "toEm": [
+        "{price}, miss. Witch or not, I've bills to pay.",
+        "I'll teach you for {price}. Please don't curse the change.",
+        "{price}. And you promise not to use it on me."
+      ],
+      "toBubba": [
+        "It feels wrong charging you, Mr. Wilson, but {price}.",
+        "{price}, sir. Only because I need it.",
+        "I'll teach you for {price}. Then I'm telling everyone I taught Bubba Wilson."
+      ],
+      "em": [
+        "{price}. Knowledge is not free and neither am I.",
+        "I will teach you for {price}. Payment first, pedagogy second.",
+        "{price}. It is a fair price and I will not haggle."
+      ],
+      "bubba": [
+        "{price}, darlin'. Parts and labour.",
+        "I'll show you for {price}. Honest money.",
+        "{price}, and I throw in a coffee."
+      ]
+    },
+    "refuse": {
+      "default": [
+        "Teach you? {After what you've done|Not a chance}.",
+        "{No|Absolutely not}. Find someone else.",
+        "I wouldn't teach you to tie your shoes."
+      ],
+      "toEm": [
+        "Teach a witch? You'll get nothing from me.",
+        "No. Go read it in one of your books.",
+        "Not you. Not ever."
+      ],
+      "toBubba": [
+        "Not even for you, Wilson. Not after all this.",
+        "No. Famous or not, the answer's no.",
+        "Go and invent it yourself."
+      ],
+      "em": [
+        "No. And I will not be explaining why.",
+        "I teach people I trust. You are not on the list.",
+        "Absolutely not."
+      ],
+      "bubba": [
+        "Mannaggia, no. Not you, guaglio'.",
+        "No lessons for you, darlin'. Not today, not tomorrow.",
+        "Forget it. Go on, the door's that way."
+      ]
+    }
+  },
+  "spec": {
+    "train": {
+      "offer": {
+        "default": [
+          "I've been doing {spec} for years. {Let me show you|I'll walk you through it}, no charge.",
+          "{Want to|Would you like to} get better at {spec}? I can train you, free.",
+          "Spend a few hours with me on {spec}. {You'll feel the difference|It'll stick}."
+        ],
+        "em": [
+          "{spec}. You are doing it wrong, and I am going to fix that. Free of charge.",
+          "Sit down. One session of {spec}, properly, and you will thank me later.",
+          "I am training you in {spec}. No fee. Try not to make me regret it."
+        ],
+        "bubba": [
+          "Come here, guaglio'. {spec}, the way it's done in the family. On the house.",
+          "{spec}? I'll sort you out, darlin'. No money, just elbow grease.",
+          "Jamme, a few hours of {spec} with me and you'll be a different person."
+        ]
+      },
+      "offerSell": {
+        "default": [
+          "I can train you in {spec}. {My rate is|It'll cost you} {price}.",
+          "A proper session of {spec}, for {price}.",
+          "{price} and I'll make you better at {spec}. Fair?"
+        ],
+        "em": [
+          "{spec}, one session, {price}. Expertise is not a charity.",
+          "I will train you in {spec} for {price}. Payment first, pedagogy second.",
+          "{price}. For {spec}. You are getting a bargain and I want that noted."
+        ],
+        "bubba": [
+          "{spec}, darlin'? {price}, and that's the family rate.",
+          "I'll train you up in {spec}. {price}, parts and labour.",
+          "{price} and a coffee, and you'll know {spec} like I do."
+        ]
+      },
+      "thanksFree": {
+        "default": [
+          "{I feel it already|That clicked}. {spec}, for nothing? Thank you, {name}.",
+          "You trained me in {spec} for free? {I owe you|You're a good one}.",
+          "I'm {tier} at {spec} now. I won't forget this, {name}."
+        ],
+        "toEm": [
+          "A witch trained me in {spec}. For free. Nobody is going to believe this.",
+          "Thank you, miss. I followed most of it, and the rest I'll practise.",
+          "{spec}! I'll put it to good use, I promise."
+        ],
+        "toBubba": [
+          "Bubba Wilson trained me in {spec}. Himself. I'm telling everyone.",
+          "Thank you, Mr. Wilson! I'll practise every day.",
+          "{spec}, from you. I don't have the words."
+        ],
+        "em": [
+          "{spec}. Adequately taught. Thank you, {name}. I mean it.",
+          "That was good training. I am revising my opinion of you upward.",
+          "Thank you. {tier} in {spec}. That goes in the good notebook."
+        ],
+        "bubba": [
+          "Grazie, darlin'. {spec}, eh? You teach like a proper mechanic.",
+          "Uè, thank you, guaglio'. That's going in the toolbox.",
+          "That's a gift, {name}. I won't forget it."
+        ]
+      },
+      "thanksPaid": {
+        "default": [
+          "{price}, and worth it. Thank you, {name}.",
+          "Money well spent. I'm {tier} at {spec} now.",
+          "{Fair price|Fair enough}. Thanks for the training."
+        ],
+        "toEm": [
+          "{price} to a witch for {spec}. My mother would faint. Worth it.",
+          "Here's your {price}, miss. And thank you, really.",
+          "Paid in full. Please don't turn me into anything."
+        ],
+        "toBubba": [
+          "{price} for training from Bubba Wilson? I'd have paid double.",
+          "Here you go, Mr. Wilson. Best {price} I ever spent.",
+          "Paid, and proud of it. Thank you, sir."
+        ],
+        "em": [
+          "{price}. Fine. The training was worth slightly more, but fine.",
+          "Here is your {price}. I have learned something, and I resent it.",
+          "Paid. {spec} was the right investment."
+        ],
+        "bubba": [
+          "There's your {price}, guaglio'. Money well spent.",
+          "{price}, eh? For that training, it's a gift.",
+          "Paid in full, darlin'. Grazie."
+        ]
+      }
+    },
+    "learn": {
+      "ask": {
+        "default": [
+          "Could you train me in {spec}, {name}?",
+          "{I'd love it if you|Would you} taught me some of your {spec}.",
+          "You're good at {spec}. Show me how?"
+        ],
+        "em": [
+          "{name}. Your {spec}. I want it. Teach me.",
+          "I understand you are competent at {spec}. Prove it by teaching me.",
+          "Train me in {spec}. I learn quickly, and I take notes."
+        ],
+        "bubba": [
+          "Eh, {name}, show me a bit of your {spec}, would you?",
+          "Darlin', they say you know {spec}. Teach an old man?",
+          "Jamme, {spec}. I'm all ears, guaglio'."
+        ]
+      },
+      "agreeFree": {
+        "default": [
+          "For you? Of course. {Sit down|Pull up a chair}, {name}.",
+          "{spec}? Happily. No charge between friends.",
+          "I'd be glad to. Let's start with the basics."
+        ],
+        "toEm": [
+          "For you, miss? Free. Just don't curse my tools.",
+          "Of course. It's an honour to teach a witch anything.",
+          "Sit down, miss. {spec} is easier than magic."
+        ],
+        "toBubba": [
+          "Me, training Bubba Wilson? No charge. Never.",
+          "Of course, Mr. Wilson. It's my pleasure.",
+          "Free, sir. Just let me tell people about it."
+        ],
+        "em": [
+          "Fine. Free. Because I like you, which is rare.",
+          "Sit. {spec}. Pay attention, I will not repeat myself.",
+          "No fee. Consider it an investment in your survival."
+        ],
+        "bubba": [
+          "For you, darlin'? Free. Come here.",
+          "Of course, guaglio'. No money, just attention.",
+          "Jamme, I'll show you {spec}. On the house."
+        ]
+      },
+      "agreePaid": {
+        "default": [
+          "{price} and it's yours.",
+          "I'll train you, but it'll cost {price}.",
+          "{Fair is fair|Business is business}: {price} for the session."
+        ],
+        "toEm": [
+          "{price}, miss. Witch or not, I have bills.",
+          "I'll train you for {price}. Please don't hex the rest.",
+          "{price}. And promise not to use it on me."
+        ],
+        "toBubba": [
+          "Feels wrong charging you, Mr. Wilson, but {price}.",
+          "{price}, sir. Only because I need it.",
+          "{price}. Then I tell everyone I trained Bubba Wilson."
+        ],
+        "em": [
+          "{price}. Knowledge is not free and neither am I.",
+          "I will train you for {price}. Payment first.",
+          "{price}. It is a fair price and I do not haggle."
+        ],
+        "bubba": [
+          "{price}, darlin'. Parts and labour.",
+          "I'll show you for {price}. Honest money.",
+          "{price}, and I'll throw in a coffee."
+        ]
+      },
+      "refuse": {
+        "default": [
+          "Train you? {After what you've done|Not a chance}.",
+          "{No|Absolutely not}. Find someone else.",
+          "I wouldn't train you to hold a spoon."
+        ],
+        "toEm": [
+          "Train a witch? You'll get nothing from me.",
+          "No. Go read it in one of your books.",
+          "Not you. Not ever."
+        ],
+        "toBubba": [
+          "Not even for you, Wilson. Not after all this.",
+          "No. Famous or not, the answer's no.",
+          "Go and learn it somewhere else."
+        ],
+        "em": [
+          "No. And I will not be explaining why.",
+          "I train people I trust. You are not on the list.",
+          "Absolutely not."
+        ],
+        "bubba": [
+          "Mannaggia, no. Not you, guaglio'.",
+          "No training for you, darlin'. Not today, not tomorrow.",
+          "Forget it. Go on, the door's that way."
+        ]
+      }
+    }
+  }
+}

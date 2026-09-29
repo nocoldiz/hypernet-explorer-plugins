@@ -1020,7 +1020,7 @@
     const eventId = this.eventId();
     const mapId = $gameMap.mapId();
     const now = gameMinutes();
-    saveRecord(mapId, eventId, { plantId, plantedAt: now, lastUpdateMinutes: now, effectiveGrowthMinutes: 0, stage: 0, removed: false });
+    saveRecord(mapId, eventId, { plantId, plantedAt: now, lastUpdateMinutes: now, effectiveGrowthMinutes: 0, stage: 0, removed: false, partyOwned: partyStamp() });
     if (procTileForEvent(mapId, eventId)) procFlush();
     const ev = $gameMap.event(eventId);
     if (ev) applySprite(ev, getRecord(mapId, eventId));
@@ -1128,30 +1128,13 @@
       let moved = false;
       const len = this.activeElements.length;
 
-      if (Input.isTriggered('down') || Input.isRepeated('down')) {
-        if (this.focusIndex + this.cols < len) {
-          this.focusIndex += this.cols;
-        } else {
-          this.focusIndex = this.focusIndex % this.cols;
-        }
-        moved = true;
-      } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
-        if (this.focusIndex - this.cols >= 0) {
-          this.focusIndex -= this.cols;
-        } else {
-          let target = Math.floor((len - 1) / this.cols) * this.cols + (this.focusIndex % this.cols);
-          if (target >= len) target -= this.cols;
-          this.focusIndex = target >= 0 ? target : 0;
-        }
-        moved = true;
-      } else if (Input.isTriggered('right') || Input.isRepeated('right')) {
-        if (this.focusIndex % this.cols < this.cols - 1 && this.focusIndex + 1 < len) {
-          this.focusIndex += 1;
-          moved = true;
-        }
-      } else if (Input.isTriggered('left') || Input.isRepeated('left')) {
-        if (this.focusIndex % this.cols > 0) {
-          this.focusIndex -= 1;
+      // The four directions walk the controls by their columns and stop at
+      // the edges: a step never wraps into another column (UINav.gridStep).
+      const dir = window.UINav ? UINav.navDir() : null;
+      if (dir) {
+        const next = UINav.gridStep(this.focusIndex, dir, len, this.cols);
+        if (next !== this.focusIndex) {
+          this.focusIndex = next;
           moved = true;
         }
       } else if (Input.isTriggered('ok')) {
@@ -1633,7 +1616,7 @@
       }
       $gameParty.loseGold(def.cost);
       const now = gameMinutes();
-      const newRec = { plantId, plantedAt: now, lastUpdateMinutes: now, effectiveGrowthMinutes: 0, stage: 0, removed: false };
+      const newRec = { plantId, plantedAt: now, lastUpdateMinutes: now, effectiveGrowthMinutes: 0, stage: 0, removed: false, partyOwned: partyStamp() };
       let ev;
       if (this._tile) {
         // Procedural plot: the world folder holds the record, and the sown tile
@@ -1864,6 +1847,107 @@
     return out;
   }
 
+  // ============================================================
+  //  WATERING, OWNERSHIP AND HARVESTING FOR SOMEBODY ELSE
+  // ============================================================
+  // The town's people look after plots too (NPCSimulationCore SECTION 7): a
+  // farm hand on shift, a resident in their own garden, a keen gardener passing
+  // by. They go through these calls, so the record they touch is the same one
+  // the party's plant menu reads.
+  //
+  // Watering: a plot keeps its water for HYDRATION_DAYS, and a plot watered
+  // today, while its season is on (or under glass), grows an extra
+  // WATER_BONUS_DAYS on top of the day. Once a day at most, whoever does it.
+  //
+  // Ownership: a plot the party sowed is stamped with the party's postal id
+  // (the same id AnimalGrowthSystem stamps on bought stock), and nobody but the
+  // party ever harvests it. `owner` names an NPC whose crop it is.
+  const HYDRATION_DAYS = 2;
+  const WATER_BONUS_DAYS = 0.25;
+
+  function partyStamp() {
+    if (window.MailSystem && typeof window.MailSystem.partyId === "function") {
+      return window.MailSystem.partyId() || true;
+    }
+    return ($gameSystem && $gameSystem._mailPartyId) || true;
+  }
+
+  function isPartyOwned(rec) {
+    if (!rec || !rec.partyOwned) return false;
+    if (rec.partyOwned === true) return true;
+    const mine = partyStamp();
+    return mine === true || rec.partyOwned === mine;
+  }
+
+  function ownerOf(rec) {
+    return (rec && rec.owner) || null;
+  }
+
+  // 0 to 100: full the moment it is watered (or sown), dry HYDRATION_DAYS on.
+  function hydrationOf(rec) {
+    if (!rec || rec.removed || !rec.plantId) return 0;
+    const from = rec.wateredAt != null ? rec.wateredAt : (rec.plantedAt || 0);
+    const days = Math.max(0, (gameMinutes() - from) / MINUTES_PER_DAY);
+    return Math.max(0, Math.min(100, Math.round(100 * (1 - days / HYDRATION_DAYS))));
+  }
+
+  function wateredToday(rec) {
+    return !!rec && rec.wateredDay === Math.floor(gameMinutes() / MINUTES_PER_DAY);
+  }
+
+  function refreshPlotSprite(mapId, eventId, rec) {
+    if (!$gameMap || $gameMap.mapId() !== mapId || !eventId) return;
+    const ev = $gameMap.event(eventId);
+    if (ev) applySprite(ev, rec);
+  }
+
+  // Waters one plot. Answers the record when the water went in, null when
+  // there is nothing growing or it has already had its water today.
+  function waterPlot(mapId, eventId, by) {
+    updateGrowth(mapId, eventId);
+    const rec = getRecord(mapId, eventId);
+    if (!rec || rec.removed || !rec.plantId) return null;
+    const def = PLANT_DB[rec.plantId];
+    if (!def || wateredToday(rec)) return null;
+    const now = gameMinutes();
+    rec.wateredAt = now;
+    rec.wateredDay = Math.floor(now / MINUTES_PER_DAY);
+    if (by) rec.tendedBy = String(by);
+    const inSeason = isGreenhouse() || def.seasons.includes(seasonAtMinute(now));
+    if (inSeason && !isRipe(rec)) {
+      rec.effectiveGrowthMinutes = (rec.effectiveGrowthMinutes || 0) + WATER_BONUS_DAYS * MINUTES_PER_DAY;
+      rec.stage = calcStage(rec.effectiveGrowthMinutes, def.growthDays);
+    }
+    saveRecord(mapId, eventId, rec);
+    if (procTileForEvent(mapId, eventId)) procFlush();
+    refreshPlotSprite(mapId, eventId, rec);
+    return rec;
+  }
+
+  // Harvests a ripe plot for someone other than the party: the plot is emptied
+  // exactly as the party's harvest empties it, but the crop is handed back to
+  // the caller instead of the party's bag, at the plant's own yield (the
+  // party's Farming bonus is the party's). A party plot is never harvested
+  // here. Answers { itemId, qty, plantId } or null.
+  function harvestPlotFor(mapId, eventId) {
+    updateGrowth(mapId, eventId);
+    const rec = getRecord(mapId, eventId);
+    if (!isRipe(rec) || isPartyOwned(rec)) return null;
+    const def = PLANT_DB[rec.plantId];
+    const plantId = rec.plantId;
+    const r = calcProgress(rec.effectiveGrowthMinutes, def.growthDays);
+    const qty = Math.max(1, Math.round(def.yieldMin + (def.yieldMax - def.yieldMin) * r));
+    const tile = procTileForEvent(mapId, eventId);
+    rec.removed = true;
+    rec.plantId = null;
+    rec.stage = 0;
+    if (tile) procSaveTile(tile, rec);
+    else saveRecord(mapId, eventId, rec);
+    refreshPlotSprite(mapId, eventId, rec);
+    if (tile) procClearTile(tile, eventId);
+    return { itemId: def.itemId, qty, plantId };
+  }
+
   window.PlantGrowthSystem = {
     getRecord: (mapId, eventId) => getRecord(mapId, eventId),
     updateGrowth: (mapId, eventId) => updateGrowth(mapId, eventId),
@@ -1874,6 +1958,14 @@
     PLANT_DB,
     // The whole crop as a console sees it, projected and read-only.
     listPlots: () => listPlots(),
+    // Tending by the town's people (NPCSimulationCore SECTION 7).
+    isRipe: (rec) => isRipe(rec),
+    isPartyOwned: (rec) => isPartyOwned(rec),
+    ownerOf: (rec) => ownerOf(rec),
+    hydrationOf: (rec) => hydrationOf(rec),
+    wateredToday: (rec) => wateredToday(rec),
+    waterPlot: (mapId, eventId, by) => waterPlot(mapId, eventId, by),
+    harvestPlotFor: (mapId, eventId) => harvestPlotFor(mapId, eventId),
   };
 
 })();

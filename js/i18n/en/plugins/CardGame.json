@@ -41,7 +41,10 @@
     "draw": "A draw",
     "streak": "{count} in a row.",
     "packWon": "A booster pack for the win.",
-    "pickSecondTile": "Now pick the tile it moves to."
+    "pickSecondTile": "Now pick the tile it moves to.",
+    "forfeitAsk": "Leave the table? The stake is forfeit.",
+    "forfeitYes": "Forfeit",
+    "forfeitNo": "Stay"
   },
   "col": {
     "title": "Card Collection",

@@ -153,42 +153,28 @@
                 return "";
             };
 
+            // The stats the skill's damage is worked out from: the same stats
+            // its <StatReq:> asks for (window.SkillStatReq.scaling), one, or two
+            // split equally for a physical skill with magic in it. A skill with
+            // no tag falls back to the parameters its formula reads. No grade:
+            // the stat itself is what the reader needs.
+            const FORMULA_STAT = { atk: 'STR', def: 'CON', mat: 'INT', mdf: 'WIS', agi: 'DEX', luk: 'PSI' };
+            const PARAM_STAT = ['', '', 'STR', 'CON', 'INT', 'WIS', 'DEX', 'PSI'];
+            const statLabel = (key) => (window.SkillStatReq ? window.SkillStatReq.statName(key) : key);
             const scaleOf = (skill) => {
-                if (!skill || !skill.damage || !skill.damage.formula) return null;
-                const formula = skill.damage.formula;
-                // Values are Equip.* leaves, so the scaling stat is named in the
-                // same vocabulary as the character sheet.
-                const statPatterns = {
-                    'a.atk': 'str',
-                    'a.mat': 'int',
-                    'a.param(2)': 'str',
-                    'a.param(3)': 'con',
-                    'a.param(4)': 'int',
-                    'a.param(5)': 'wis',
-                    'a.param(6)': 'dex',
-                    'a.param(7)': 'psi'
-                };
-                let mainStat = null;
-                let maxMultiplier = 0;
-                for (const [pattern, statName] of Object.entries(statPatterns)) {
-                    const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                    const match = formula.match(new RegExp(escaped + '\\s*\\*\\s*([\\d.]+)', 'i'));
-                    if (match) {
-                        const m = parseFloat(match[1]);
-                        if (m > maxMultiplier) { maxMultiplier = m; mainStat = statName; }
-                    } else if (formula.includes(pattern) && maxMultiplier === 0) {
-                        mainStat = statName; maxMultiplier = 1;
+                if (!skill || !skill.damage) return null;
+                let stats = window.SkillStatReq ? window.SkillStatReq.scaling(skill) : [];
+                if (!stats.length) {
+                    const formula = String(skill.damage.formula || '');
+                    const found = [];
+                    for (const m of formula.matchAll(/a\.(atk|def|mat|mdf|agi|luk)\b|a\.param\((\d)\)/g)) {
+                        const key = m[1] ? FORMULA_STAT[m[1]] : PARAM_STAT[Number(m[2])];
+                        if (key && !found.includes(key)) found.push(key);
                     }
+                    stats = found.slice(0, 2);
                 }
-                if (!mainStat) return null;
-                let grade = 'F';
-                if (maxMultiplier >= 9) grade = 'S';
-                else if (maxMultiplier >= 7) grade = 'A';
-                else if (maxMultiplier >= 5) grade = 'B';
-                else if (maxMultiplier >= 3) grade = 'C';
-                else if (maxMultiplier >= 2) grade = 'D';
-                else if (maxMultiplier >= 1) grade = 'E';
-                return { stat: T("Equip." + mainStat), grade: grade, multiplier: maxMultiplier };
+                if (!stats.length) return null;
+                return { stats: stats, stat: stats.map(statLabel).join(' + ') };
             };
 
             const categoryOf = (skill) => {
@@ -251,7 +237,7 @@
                 // repeated as a row here.
 
                 const scaleData = scaleOf(skill);
-                if (scaleData) specs.push({ label: T("Equip.scale"), val: `${scaleData.stat} (${scaleData.grade})` });
+                if (scaleData) specs.push({ label: T("Equip.scale"), val: scaleData.stat, cls: 'inspect-spec-row--scaling' });
 
                 if (skill.speed) specs.push({ label: T("Inventory.spec.label.speedAdjust"), val: (skill.speed > 0 ? "+" : "") + skill.speed });
                 if (skill.successRate !== undefined && skill.successRate !== 100) specs.push({ label: T("Inventory.spec.label.successRate"), val: skill.successRate + "%" });
@@ -299,7 +285,7 @@
                 if (req) {
                     specs.push({
                         label: T("SkillsMenu.spec.label.statReq"),
-                        val: svc.statName(req.stat) + " " + req.points
+                        val: svc.label(skill)
                     });
                     // The stat the caster actually holds is only worth a row of
                     // its own when it falls short: "9 (met)" under "INT 8" says
@@ -464,7 +450,7 @@
 
             // ── Rendering ─────────────────────────────────────────────────────
             const specRows = (specs) => specs.map(spec =>
-                `<div class="inspect-spec-row"><span class="inspect-spec-label">${esc(spec.label)}:</span><span class="inspect-spec-value">${esc(spec.val)}</span></div>`
+                `<div class="inspect-spec-row${spec.cls ? ' ' + spec.cls : ''}"><span class="inspect-spec-label">${esc(spec.label)}:</span><span class="inspect-spec-value">${esc(spec.val)}</span></div>`
             ).join("");
 
             const section = (title, body) => `<div class="inspect-section-title">${esc(title)}</div>${body}`;
@@ -1411,6 +1397,8 @@
 
         this._htmlSkillRoot = root;
         document.body.appendChild(root);
+        // Select opens the help sheet only while the panel is the one on screen.
+        if (window.UIHelp) UIHelp.attach(root, 'SkillsMenu.help.battle', { when: () => this.visible && this.isOpen() });
 
         root.addEventListener("wheel", (e) => {
             e.preventDefault();
@@ -2421,6 +2409,7 @@
         this._dndContainer.style.opacity = "0";
         this._dndContainer.style.transition = "opacity 0.22s ease-out";
         document.body.appendChild(this._dndContainer);
+        if (window.UIHelp) UIHelp.attach(this._dndContainer, 'SkillsMenu.help.menu');
 
         // The wheel moves whatever is under the pointer. It used to always
         // scroll the left page's list, so the inspect card on the right could
@@ -3592,12 +3581,17 @@
                 this.handleQuickToggle();
             } else if (Input.isTriggered('escape') || Input.isTriggered('cancel') || TouchInput.isCancelled()) {
                 this.handleCancel();
-            } else if (Input.isTriggered('pagedown')) {
-                // L1 / Q ,  next actor
-                this.handleActorCycle(1);
-            } else if (Input.isTriggered('pageup')) {
-                // R1 / W ,  previous actor
-                this.handleActorCycle(-1);
+            } else {
+                // L1 / R1 step the skill-type tabs; L2 / R2 change the member
+                // (CharSwitcher, installed with the scene).
+                const tabStep = window.UINav ? window.UINav.tabDir() : 0;
+                if (tabStep) {
+                    const scene = this._scene;
+                    const count = scene.getUISkillTypes().length;
+                    const at = scene._dndSelectedPreset ? 0 : (scene._dndSelectedTypeIndex || 0);
+                    const next = Math.max(0, Math.min(count - 1, at + tabStep));
+                    if (next !== at || scene._dndSelectedPreset) scene.selectUISkillType(next);
+                }
             }
         },
 
@@ -4183,7 +4177,7 @@
 
         const scaleData = this.getSkillScale(skill);
         if (scaleData) {
-            const scaleText = `${scaleData.stat} (${scaleData.grade})`;
+            const scaleText = scaleData.stat;
             this.drawKeyValue(T('SkillsMenu.info.scale'), scaleText, x, y);
             if (this.isBasicSkill(skill)) {
                 const basicX = x + 100 + this.textWidth(scaleText) + 20;

@@ -361,6 +361,60 @@
   }
 
   // ===========================================================================
+  // Blunt blows knock out, they never kill through a vital part
+  // ===========================================================================
+  //   A club, a fist or a ram breaks bones, but it cannot destroy a heart or a
+  //   brain. On a Blunt hit a vital part is held at 1 HP on every difficulty,
+  //   Blood and Oil included: never broken, destroyed, cut or lost. The blow
+  //   still costs its full HP, and a non-vital part can still break.
+  //
+  //   Every battler also keeps a small fight record: which damage type dealt
+  //   the blow that took them to 0 HP, and whether any vital part of theirs
+  //   was destroyed during the fight. A fight ended by a Blunt blow with every
+  //   vital part intact leaves the victim downed rather than dead; the map and
+  //   downed-body systems read that off wasBluntDowned.
+  // ===========================================================================
+
+  // Set while a Blunt blow is being applied, so the part cascades it sets off
+  // (destroyPartInPlace, removeBodyPartOnZeroHp) hold a vital part too.
+  let bluntBlowDepth = 0;
+
+  function isBluntAction(action, subject) {
+    if (!action) return false;
+    return getActionDamageType(action, subject) === "Blunt";
+  }
+
+  /** A vital part under a Blunt blow: kept on the body at 1 HP or more. */
+  function holdVitalPart(part) {
+    if (!part) return;
+    if (!(part.currentHp >= 1)) part.currentHp = 1;
+    part.damaged = false;
+  }
+
+  function resetFightRecord(battler) {
+    if (!battler) return;
+    battler._lastKillingDamageType = null;
+    battler._vitalDestroyed = false;
+  }
+
+  function noteVitalDestroyed(battler) {
+    if (battler) battler._vitalDestroyed = true;
+  }
+
+  /** Called after a blow's HP damage lands: remembers the type that dropped them. */
+  function noteKillingBlow(battler, damageType) {
+    if (!battler || !(battler.hp <= 0)) return;
+    battler._lastKillingDamageType = String(damageType || "Blunt");
+  }
+
+  /** Ended by a Blunt blow with every vital part intact: downed, not dead. */
+  function wasBluntDowned(battler) {
+    if (!battler) return false;
+    const down = battler.hp <= 0 || (typeof battler.isDead === "function" && battler.isDead());
+    return !!down && battler._lastKillingDamageType === "Blunt" && !battler._vitalDestroyed;
+  }
+
+  // ===========================================================================
   // What a weapon does to a body part
   // ===========================================================================
   // What an attack does to a body part:
@@ -380,26 +434,44 @@
       const forced = window.VectorGun.damageTypeOverride(s0, action);
       if (forced) return forced;
     }
+    const s = subject || (action && action.subject ? action.subject() : (window.BattleManager ? BattleManager._subject : null));
+    const weaponType = weaponDamageType(s);
     if (action) {
       const item = typeof action.item === "function" ? action.item() : (action._item ? action.item() : null);
       if (item) {
+        // The plain Attack command swings whatever is in hand: its own
+        // <DamageType: Blunt> only speaks for a bare fist, so a sword attack
+        // still cuts. Every other skill's tag beats the weapon.
+        if (weaponType && isBasicAttackSkill(item, s)) return weaponType;
         const dt = (item.meta && item.meta.DamageType) ||
           (item.note && (item.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
         if (dt) return String(dt).trim();
       }
     }
-    const s = subject || (action && action.subject ? action.subject() : (window.BattleManager ? BattleManager._subject : null));
-    if (s && typeof s.weapons === "function") {
-      const weapons = s.weapons() || [];
-      for (const w of weapons) {
-        if (w) {
-          const wdt = (w.meta && w.meta.DamageType) ||
-            (w.note && (w.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
-          if (wdt) return String(wdt).trim();
-        }
-      }
-    }
+    if (weaponType) return weaponType;
     return "Blunt";
+  }
+
+  /** The <DamageType:> of the first tagged weapon a battler holds, or null. */
+  function weaponDamageType(battler) {
+    if (!battler || typeof battler.weapons !== "function") return null;
+    const weapons = battler.weapons() || [];
+    for (const w of weapons) {
+      if (!w) continue;
+      const wdt = (w.meta && w.meta.DamageType) ||
+        (w.note && (w.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
+      if (wdt) return String(wdt).trim();
+    }
+    return null;
+  }
+
+  /** Is this item the battler's plain Attack skill (skill 1 unless a trait says otherwise)? */
+  function isBasicAttackSkill(item, battler) {
+    if (!item || !item.id) return false;
+    const skills = window.$dataSkills;
+    if (skills && skills[item.id] !== item) return false;
+    const attackId = battler && typeof battler.attackSkillId === "function" ? battler.attackSkillId() : 1;
+    return item.id === attackId || item.id === 1;
   }
 
   function attackerCanCut(subject, action) {
@@ -1454,6 +1526,7 @@
   function destroyPartInPlace(actor, partKey) {
     var part = actor._bodyParts[partKey];
     if (!part || part.ruined) return;
+    if (part.vital && bluntBlowDepth > 0) { holdVitalPart(part); return; }
     part.currentHp = 0;
     part.damaged = true;
     part.ruined = true;
@@ -1525,8 +1598,11 @@
     var part = actor._bodyParts[partKey];
     if (!part) return;
 
+    if (part.vital && bluntBlowDepth > 0) { holdVitalPart(part); return; }
+
     if (part.vital) {
       // Vital organ check
+      noteVitalDestroyed(actor);
       actor.die();
       actor.refresh();
       $gameParty.removeActor(actor.actorId());
@@ -1644,6 +1720,18 @@
 
   // Calculate damage to a body part
   function applyDamageToBodyPart(actor, partKey, damage, action) {
+    var part = actor._bodyParts ? actor._bodyParts[partKey] : null;
+    if (!part || part.damaged) return 0;
+    if (!isBluntAction(action)) return applyDamageToBodyPartRaw(actor, partKey, damage, action, false);
+    bluntBlowDepth++;
+    try {
+      return applyDamageToBodyPartRaw(actor, partKey, damage, action, true);
+    } finally {
+      bluntBlowDepth--;
+    }
+  }
+
+  function applyDamageToBodyPartRaw(actor, partKey, damage, action, blunt) {
     var part = actor._bodyParts[partKey];
 
     if (!part || part.damaged) return 0;
@@ -1662,7 +1750,8 @@
       // Blood and Oil: a vital part is only lethal once the character is under
       // a quarter of their HP, the same line a monster's vital parts keep
       // (MonsterHealth.vitalCanFall). Above it the part holds at 1 HP.
-      if (part.vital && isBloodAndOil() && !vitalCanFall(actor)) {
+      // A Blunt blow never finishes a vital part, on any difficulty.
+      if (part.vital && (blunt || (isBloodAndOil() && !vitalCanFall(actor)))) {
         appliedDamage = Math.min(part.currentHp - 1, damage);
         if (appliedDamage <= 0) return 0;
       }
@@ -1684,6 +1773,7 @@
         if (isBloodAndOil()) {
           if (part.vital) {
             // Vital organ check
+            noteVitalDestroyed(actor);
             actor.die();
             actor.refresh();
             $gameParty.removeActor(actor.actorId());
@@ -2443,16 +2533,17 @@
     this.processPlayerSwitch();
   };
 
-  // Handle left/right input for switching between party members
+  // L2 / R2 (, and .) switch between party members, as on every menu.
   Window_HealthStatus.prototype.processPlayerSwitch = function () {
     if (!this.isOpenAndActive()) return;
 
     var partySize = $gameParty.members().length;
     if (partySize <= 1) return;
 
-    if (Input.isRepeated('right')) {
+    var step = window.UINav ? window.UINav.partyDir() : 0;
+    if (step > 0) {
       this.switchToNextActor();
-    } else if (Input.isRepeated('left')) {
+    } else if (step < 0) {
       this.switchToPreviousActor();
     }
   };
@@ -2747,10 +2838,22 @@
     );
   };
 
+  // A new fight starts a clean fight record (wasBluntDowned).
+  var _Game_Battler_onBattleStart_fightRecord = Game_Battler.prototype.onBattleStart;
+  Game_Battler.prototype.onBattleStart = function (advantageous) {
+    resetFightRecord(this);
+    _Game_Battler_onBattleStart_fightRecord.call(this, advantageous);
+  };
+
   // Override damage application
   var _Game_Action_executeHpDamage = Game_Action.prototype.executeHpDamage;
   Game_Action.prototype.executeHpDamage = function (target, value) {
     _Game_Action_executeHpDamage.call(this, target, value);
+
+    // The fight record every battler keeps: what dropped them (wasBluntDowned).
+    if (value > 0 && target && target.hp <= 0) {
+      noteKillingBlow(target, getActionDamageType(this, this.subject ? this.subject() : null));
+    }
 
     // Apply limb damage system to all actors
     if (target.isActor() && value > 0) {
@@ -2946,6 +3049,13 @@
   window.HealthCore.vitalCanFall = vitalCanFall;
   window.HealthCore.PLAYER_CUTTING_DAMAGE_TYPES = PLAYER_CUTTING_DAMAGE_TYPES;
   window.HealthCore.getActionDamageType = getActionDamageType;
+  window.HealthCore.isBasicAttackSkill = isBasicAttackSkill;
+  window.HealthCore.isBluntAction = isBluntAction;
+  window.HealthCore.resetFightRecord = resetFightRecord;
+  window.HealthCore.noteVitalDestroyed = noteVitalDestroyed;
+  window.HealthCore.noteKillingBlow = noteKillingBlow;
+  window.HealthCore.wasBluntDowned = wasBluntDowned;
+  window.HealthCore.endedNonLethally = wasBluntDowned;
   window.HealthCore.CUTTING_DAMAGE_TYPES = CUTTING_DAMAGE_TYPES;
   window.HealthCore.CUTTING_WEAPON_TYPES = CUTTING_DAMAGE_TYPES;
   // What a part's penalty is worth broken (false) versus taken off (true).

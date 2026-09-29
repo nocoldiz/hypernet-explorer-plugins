@@ -562,5 +562,104 @@
       "{classOrigin} Non ha infanzia, solo una data di costruzione: {year}, {placeIn}. Il registro si apre il giorno in cui {event}. {later} {moral}",
       "{classOrigin} Di lei non si ricorda nulla e si registra tutto: dal {year}, {placeIn}, risponde ogni volta che {event}. {later} {moral}"
     ]
+  },
+  "animalBio": {
+    "parents": {
+      "none": "",
+      "mother": " da {mother}",
+      "both": " da {mother} e {father}"
+    },
+    "default": [
+      "{Nato|Venuto al mondo}{parents} {where}, {name} {ha vissuto come ha sempre vissuto la sua specie|segue le abitudini della sua specie}. {Cibo, riparo e i suoi simili: non conosce altro.|Ricorda poco oltre il tempo e la fame.}",
+      "{name} {è nato|è venuto al mondo}{parents} {where}. {Non ha mai pensato al domani, e non gli è mai servito.|Quello che sa, l'ha imparato vivendo.}"
+    ],
+    "breed": {
+      "Cat": [
+        "{Nato|Venuto al mondo}{parents} {where}, {name} {segue orari tutti suoi|va e viene come gli pare}. {Caccia ciò che si muove al tramonto e dorme nelle ore calde.|I topi lo temono; le persone le tollera appena.}",
+        "{name} {è nato|è venuto al mondo}{parents} {where}. {Non appartiene a nessuno, qualunque cosa si creda.|Ha un posto caldo per ogni ora del giorno e sa dove trovarli tutti.}"
+      ],
+      "Dog": [
+        "{Nato|Venuto al mondo}{parents} {where}, {name} {segue il suo branco|sta vicino ai suoi}. {Conosce ogni odore del posto e si fida di pochi.|Buona voce e naso migliore.}",
+        "{name} {è nato|è venuto al mondo}{parents} {where}. {Difenderebbe da chiunque la terra dove è cresciuto.|Ha imparato presto che un cane paziente mangia.}"
+      ],
+      "Pigeon": [
+        "{Uscito dall'uovo|Nato}{parents} {where}, {name} {cerca briciole per terra|sta sui tetti e nelle piazze}. {Ha visto della città più di molti che ci abitano.|Niente lo spaventa due volte.}",
+        "{name} {è uscito dall'uovo|è nato}{parents} {where}. {Vola con lo stormo e ogni sera torna sullo stesso cornicione.|Capisce l'ora dalla folla.}"
+      ],
+      "Crab": [
+        "{Nato|Venuto al mondo}{parents} {where}, {name} {sta sulla linea della marea|cammina di lato nel suo piccolo mondo}. {Ha cambiato più gusci di quanti ne sappia contare.|Teme i gabbiani e nient'altro.}",
+        "{name} {è uscito dalla risacca|è nato}{parents} {where}. {Il mare gli porta tutto ciò che gli serve due volte al giorno.|Conosce ogni sasso del suo tratto di riva.}"
+      ],
+      "Toad": [
+        "{Nato|Venuto al mondo}{parents} {where}, {name} {passa il giorno sotto un sasso|aspetta la pioggia}. {Di notte mangia tutto ciò che è abbastanza piccolo.|È sopravvissuto a gran parte dello stagno in cui è nato.}",
+        "{name} {è uscito dall'acqua|è nato}{parents} {where}. {Canta quando l'aria si fa umida.|La pazienza è tutto il suo mestiere.}"
+      ],
+      "Chicken": [
+        "{Uscito dall'uovo|Nato}{parents} {where}, {name} {razzola in cerca di grano tutto il giorno|sta nell'aia con lo stormo}. {Depone quando mangia e tiene il muso quando no.|Conosce la mano che porta il becchime.}",
+        "{name} {è uscito dall'uovo|è nato}{parents} {where}. {Lo stormo ha le sue gerarchie e lui conosce il suo posto.|Dall'alba al tramonto è indaffarato, e al tramonto si appollaia.}"
+      ],
+      "Rooster": [
+        "{Uscito dall'uovo|Nato}{parents} {where}, {name} {comanda l'aia|veglia sulle galline}. {Chiama il sole che qualcuno l'abbia chiesto o no.|Ha combattuto ogni rivale che ha incontrato.}",
+        "{name} {è uscito dall'uovo|è nato}{parents} {where}. {Si pavoneggia, canta, fa la guardia.|La sua voce è la prima cosa che la fattoria sente.}"
+      ],
+      "Duck": [
+        "{Uscito dall'uovo|Nato}{parents} {where}, {name} {segue gli altri fino all'acqua|sguazza in ogni pozzanghera}. {Cammina in fila e nuota in gruppo.|La pioggia è il suo tempo preferito.}",
+        "{name} {è uscito dall'uovo|è nato}{parents} {where}. {Da qualunque posto sa la strada per l'acqua.|Brontola per tutto e non intende niente.}"
+      ],
+      "Pig": [
+        "{Nato|Venuto al mondo}{parents} {where}, {name} {grufola dappertutto|scova col muso tutto ciò che è sepolto}. {È più furbo di quanto lasci vedere.|Mangia bene e dorme meglio.}",
+        "{name} {è nato|è venuto al mondo}{parents} {where}, {in una figliata numerosa|uno di una figliata affollata}. {Non ha mai avuto fame a lungo.|Fango d'estate, paglia d'inverno, e cibo sempre.}"
+      ],
+      "Sheep": [
+        "{Nato|Venuto al mondo}{parents} {where}, {name} {sta col gregge|pascola dove pascolano gli altri}. {La sua lana ha tenuto caldo a qualcuno, da qualche parte.|Si spaventa facilmente e dimentica in fretta.}",
+        "{name} {è nato|è venuto al mondo}{parents} {where}. {Riconosce il gregge dalla voce.|Erba, ombra, il gregge: tutto il suo mondo.}"
+      ],
+      "Cow": [
+        "{Nato|Venuto al mondo}{parents} {where}, {name} {pascola lento e non si perde nulla|sta con la mandria}. {Dà latte e chiede erba.|Ha una lunga memoria per la gentilezza.}",
+        "{name} {è nato|è venuto al mondo}{parents} {where}. {Le stagioni lo portano dal campo alla stalla e ritorno.|È pesante, paziente e senza fretta.}"
+      ],
+      "Goat": [
+        "{Nato|Venuto al mondo}{parents} {where}, {name} {si arrampica su tutto ciò che sta fermo|mangia quello che gli altri scartano}. {Nessun recinto l'ha tenuto a lungo.|È curioso di tutto e ha paura di poco.}",
+        "{name} {è nato|è venuto al mondo}{parents} {where}. {Ha assaggiato quasi tutta la fattoria, anche le parti che non sono cibo.|Tiene per sé i suoi pensieri e la sua strada.}"
+      ],
+      "Horse": [
+        "{Nato|Venuto al mondo}{parents} {where}, {name} {corre con la mandria|pascola in campo aperto}. {Ha portato più di un cavaliere e li ricorda tutti.|È forte, veloce e diffidente con ciò che non conosce.}",
+        "{name} {è nato|è venuto al mondo}{parents} {where}. {Conosce ogni strada che ha percorso.|Se ha spazio, corre per il piacere di farlo.}"
+      ],
+      "Donkey": [
+        "{Nato|Venuto al mondo}{parents} {where}, {name} {lavora quando decide lui|va al suo passo}. {Porta i carichi senza lamentarsi e i rancori senza fine.|Testardo, paziente e più saggio di quanto sembri.}",
+        "{name} {è nato|è venuto al mondo}{parents} {where}. {È sopravvissuto a diversi padroni.|Non si lascia mettere fretta, né prendere in giro.}"
+      ],
+      "Rabbit": [
+        "{Nato|Venuto al mondo}{parents} {where}, {name} {sta vicino alla sua tana|mangia all'alba e al tramonto}. {Tutto gli dà la caccia e lui lo sa.|Ha una famiglia grande e un carattere breve.}",
+        "{name} {è nato|è venuto al mondo}{parents} {where}, {in una tana piena di parenti|uno di una figliata numerosa}. {Prima scappa, poi si chiede perché.|Trifoglio e quiete: non chiede altro.}"
+      ]
+    },
+    "archetype": {
+      "Beast": [
+        "{Nato|Venuto al mondo}{parents} {where}, {name} {resta nel suo territorio|va dove c'è cibo}. {Si fida più del suo naso che della parola di chiunque.|È vissuto d'ingegno e di denti.}",
+        "{name} {è nato|è venuto al mondo}{parents} {where}. {Conosce ogni sentiero del suo territorio.|Niente in lui è mai stato domestico.}"
+      ],
+      "Bird": [
+        "{Uscito dall'uovo|Nato}{parents} {where}, {name} {sta tra l'aria e i rami|va dove lo portano il vento e i semi}. {Sente il tempo prima di chiunque.|Il suo canto è l'unica cosa che possiede.}",
+        "{name} {è uscito dall'uovo|è nato}{parents} {where}. {Non è mai rimasto a lungo sullo stesso albero.|Dorme leggero e si sveglia presto.}"
+      ],
+      "Crustacean": [
+        "{Nato|Venuto al mondo}{parents} {where}, {name} {sta tra i sassi bagnati|corre da un riparo all'altro}. {Il guscio è la sua casa e la sua armatura.|Non è mai stato lontano dall'acqua.}",
+        "{name} {è uscito dall'acqua|è nato}{parents} {where}. {Mangia quello che lascia la marea.|Si muove di lato e mai di fretta.}"
+      ],
+      "Frog": [
+        "{Nato|Venuto al mondo}{parents} {where}, {name} {aspetta tra le canne|passa il caldo nel fango}. {Caccia con la lingua e molta pazienza.|Ogni notte umida è una buona notte.}",
+        "{name} {è uscito dall'acqua|è nato}{parents} {where}. {Ha cominciato la vita con una coda e l'ha persa per strada.|Conosce ogni pozzanghera a portata di salto.}"
+      ],
+      "Horse": [
+        "{Nato|Venuto al mondo}{parents} {where}, {name} {corre con la sua mandria|sta in campo aperto}. {È forte, veloce e diffidente con ciò che non conosce.|Ricorda ogni strada che ha percorso.}",
+        "{name} {è nato|è venuto al mondo}{parents} {where}. {Se ha spazio, corre per il piacere di farlo.|Ha portato carichi e cavalieri.}"
+      ],
+      "Rabbit": [
+        "{Nato|Venuto al mondo}{parents} {where}, {name} {sta vicino alla sua tana|mangia all'alba e al tramonto}. {Tutto gli dà la caccia e lui lo sa.|Prima scappa, poi si chiede perché.}",
+        "{name} {è nato|è venuto al mondo}{parents} {where}, {uno di una figliata numerosa|in una tana piena di parenti}. {Trifoglio e quiete: non chiede altro.|Ha una famiglia grande e un carattere breve.}"
+      ]
+    }
   }
 }

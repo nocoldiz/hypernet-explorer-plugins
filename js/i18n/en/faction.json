@@ -1667,6 +1667,30 @@
           "name": "Commodore of the Fjords"
         }
       }
+    },
+    "goblinhorde": {
+      "name": "Goblin Horde",
+      "description": "The warband that holds Norway and Iceland and wants the rest. Twice anyone's army, a tenth of their economy, and no patience for either.",
+      "troops": {
+        "grunt": {
+          "name": "Horde Grunt"
+        },
+        "raider": {
+          "name": "Horde Raider"
+        },
+        "slinger": {
+          "name": "Horde Slinger"
+        },
+        "guard": {
+          "name": "Horde Shieldguard"
+        },
+        "shaman": {
+          "name": "Horde Shaman"
+        },
+        "warboss": {
+          "name": "Horde Warboss"
+        }
+      }
     }
   }
 }

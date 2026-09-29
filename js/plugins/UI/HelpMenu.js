@@ -196,20 +196,12 @@
 
     // Parse and display control tags based on input method
     const ControlTagParser = {
+        // The device in hand is Input.lastInputDevice()'s answer: a pad that
+        // is plugged in but not being pressed this instant is still in hand.
         getCurrentInputMethod: function () {
-            const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
-            for (let i = 0; i < gamepads.length; i++) {
-                const gamepad = gamepads[i];
-                if (gamepad) {
-                    for (let j = 0; j < gamepad.buttons.length; j++) {
-                        if (gamepad.buttons[j].pressed) return 'gamepad';
-                    }
-                    for (let j = 0; j < gamepad.axes.length; j++) {
-                        if (Math.abs(gamepad.axes[j]) > 0.5) return 'gamepad';
-                    }
-                }
-            }
-            return 'keyboard';
+            const device = typeof Input !== 'undefined' && typeof Input.lastInputDevice === 'function'
+                ? Input.lastInputDevice() : 'keyboard';
+            return device === 'pad' ? 'gamepad' : 'keyboard';
         },
 
         parseControlText: function (text) {
@@ -1051,14 +1043,13 @@
         if (detailChanged) detailPage.innerHTML = detailHTML;
 
         // Every gold link on the page just built. A link is followed with the
-        // mouse or, when the reader has the page itself focused, with Enter on
-        // the link that has been tabbed to.
+        // mouse or, when the reader has the page itself focused, by walking to
+        // it with the directions and pressing Confirm (A / Enter), which
+        // updateUIHelpInput reads off Input, never off a keydown of its own.
         if (detailChanged) {
+            this._contentFocus = -1;
             detailPage.querySelectorAll(".help-link").forEach((el) => {
                 el.addEventListener("click", (e) => { e.stopPropagation(); this.followLink(el); });
-                el.addEventListener("keydown", (e) => {
-                    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); this.followLink(el); }
-                });
             });
         }
 
@@ -1331,22 +1322,18 @@
         const topics = this.visibleTopics(activeCategory);
 
         // L1/R1, and Tab with Shift for the other direction, walk the
-        // macrotopic rail from anywhere in the scene.
+        // macrotopic rail from anywhere in the scene (window.UINav.tabDir).
         const groups = this._groups || [];
-        if (groups.length > 1) {
-            const backwards = Input.isTriggered('pageup')
-                || (Input.isTriggered('tab') && Input.isPressed('shift'));
-            const forwards = Input.isTriggered('pagedown') || Input.isTriggered('tab');
-            if (backwards || forwards) {
-                this.stepGroup(backwards ? -1 : 1);
-                return;
-            }
+        const tabDir = window.UINav ? window.UINav.tabDir() : 0;
+        if (tabDir && groups.length > 1) {
+            this.stepGroup(tabDir);
+            return;
         }
 
         // A shelf with no macrotopics of its own leaves the shoulder buttons to
         // the category tabs, which is what they did before the rail existed.
-        if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
-            const dir = Input.isTriggered('pageup') ? -1 : 1;
+        if (tabDir) {
+            const dir = tabDir;
             this._tabIndex = (this._tabIndex + dir + categories.length) % categories.length;
             this._listIndex = 0;
             this._activeArea = "tabs";
@@ -1414,7 +1401,7 @@
                         if (row) row.scrollIntoView({ block: "nearest" });
                     }
                 }
-            } else if (Input.isTriggered('right') || Input.isTriggered('ok')) {
+            } else if (Input.isRepeated('right') || Input.isTriggered('ok')) {
                 if (this._selectedTopic) {
                     this._activeArea = "content";
                     SoundManager.playOk();
@@ -1428,8 +1415,28 @@
                 this.refreshUIHelp();
             }
         } else if (this._activeArea === "content") {
-            // Scroll page content smoothly using arrows
+            // The page's own controls (its wiki button and every gold link in
+            // sight) are walked with up / down; where there is no control to
+            // step to, the page scrolls instead, smoothly while held.
             const contentDiv = document.getElementById("help-content-scroll");
+            if (Input.isTriggered('ok')) {
+                const target = this.helpContentTargets()[this._contentFocus];
+                if (target) {
+                    if (target.classList.contains('help-link')) this.followLink(target);
+                    else target.click();
+                }
+                return;
+            }
+            if (Input.isTriggered('cancel') || TouchInput.isCancelled() || Input.isRepeated('left')) {
+                this._contentFocus = -1;
+                this._activeArea = "list";
+                SoundManager.playCancel();
+                this.refreshUIHelp();
+                return;
+            }
+            const down = Input.isRepeated('down');
+            const up = !down && Input.isRepeated('up');
+            if ((down || up) && this.stepHelpContent(down ? 1 : -1)) return;
             if (contentDiv) {
                 if (Input.isPressed('down')) {
                     contentDiv.scrollTop += 8;
@@ -1437,12 +1444,54 @@
                     contentDiv.scrollTop -= 8;
                 }
             }
-
-            if (Input.isTriggered('cancel') || TouchInput.isCancelled() || Input.isTriggered('left')) {
-                this._activeArea = "list";
-                SoundManager.playCancel();
-                this.refreshUIHelp();
-            }
         }
+    };
+
+    // The controls on the open page, in reading order: the wiki button first,
+    // then every gold link the body wrote.
+    Scene_Help.prototype.helpContentTargets = function () {
+        const root = document.getElementById("help-container");
+        if (!root) return [];
+        const out = [];
+        const wiki = root.querySelector("#help-wiki-btn");
+        if (wiki) out.push(wiki);
+        root.querySelectorAll("#help-content-scroll .help-link").forEach((el) => out.push(el));
+        return out;
+    };
+
+    // Steps the page cursor to the next / previous control that is in sight.
+    // A control scrolled out of the pane is not jumped to (the reader would
+    // skip the prose between), so the step answers false and the page scrolls.
+    Scene_Help.prototype.stepHelpContent = function (dir) {
+        const targets = this.helpContentTargets();
+        if (!targets.length) return false;
+        const pane = document.getElementById("help-content-scroll");
+        const inSight = (el) => {
+            if (!pane || !pane.contains(el) || !el.getBoundingClientRect) return true;
+            const r = el.getBoundingClientRect();
+            const c = pane.getBoundingClientRect();
+            return r.bottom > c.top && r.top < c.bottom;
+        };
+        const at = typeof this._contentFocus === "number" ? this._contentFocus : -1;
+        let next = -1;
+        if (dir > 0) {
+            for (let i = at + 1; i < targets.length; i++) {
+                if (inSight(targets[i])) { next = i; break; }
+            }
+            if (next < 0) return false;
+        } else {
+            if (at < 0) return false;
+            next = at - 1;
+            while (next >= 0 && !inSight(targets[next])) next--;
+        }
+        targets.forEach((el) => el.classList.remove("focused"));
+        this._contentFocus = next;
+        const el = targets[next];
+        if (el) {
+            el.classList.add("focused");
+            if (el.scrollIntoView) el.scrollIntoView({ block: "nearest" });
+        }
+        SoundManager.playCursor();
+        return true;
     };
 })();

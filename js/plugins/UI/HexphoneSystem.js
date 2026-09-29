@@ -2831,13 +2831,29 @@
         this.updateCursorBlink();
         this.updateAmbient();
         this.updateZoomHint();
+        this.syncKeypadCursor();
     };
 
     Scene_AnokiPhone.prototype.updateEngineInput = function() {
         // ok = MENU button, cancel = END button, arrows = list navigation.
-        // Keyboard digits arrive via the DOM listener instead.
+        // Keyboard digits arrive via the DOM listener as well; on the idle
+        // screen and while a number is being dialled the directions walk the
+        // keypad itself and Confirm presses the key under the cursor.
         if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
             this.onEndButton();
+            return;
+        }
+        if (this.usesKeypadCursor()) {
+            const dir = window.UINav ? window.UINav.navDir() : null;
+            if (dir) {
+                this.stepKeypadCursor(dir);
+                return;
+            }
+            if (Input.isTriggered('ok')) {
+                const key = (this._buttons || [])[this._padKeyIndex];
+                if (key) key.onClick();
+                return;
+            }
             return;
         }
         if (Input.isTriggered('ok')) {
@@ -2853,11 +2869,46 @@
             this.navigateList(1);
         } else if (Input.isRepeated('up')) {
             this.navigateList(-1);
-        } else if (Input.isTriggered('left')) {
+        } else if (Input.isRepeated('left')) {
             if (this._screenMode === 'settings') { this.changeRingtone(-1); this.refreshScreen(); }
-        } else if (Input.isTriggered('right')) {
+        } else if (Input.isRepeated('right')) {
             if (this._screenMode === 'settings') { this.changeRingtone(1); this.refreshScreen(); }
         }
+    };
+
+    // The screens where the keys themselves are the controls: the idle screen
+    // (a digit starts a number, MENU opens the menu, CALL the dialler) and the
+    // two where a number is typed. Everywhere else the directions walk the
+    // list on the LCD.
+    Scene_AnokiPhone.prototype.usesKeypadCursor = function() {
+        const mode = this._screenMode;
+        return (mode === 'home' || mode === 'dial' || mode === 'addContact') &&
+            !this._screenZoomed && (this._buttons || []).length > 0;
+    };
+
+    // The buttons are laid out three across: CALL MENU END, then the twelve
+    // keys of the pad, so one grid step walks all fifteen and never wraps
+    // into another column.
+    Scene_AnokiPhone.prototype.stepKeypadCursor = function(dir) {
+        const count = (this._buttons || []).length;
+        const at = this._padKeyIndex == null ? 1 : this._padKeyIndex;
+        const next = window.UINav ? window.UINav.gridStep(at, dir, count, 3) : at;
+        if (next === at) return;
+        this._padKeyIndex = next;
+        this.playButtonSound();
+        this.syncKeypadCursor();
+    };
+
+    // The ring sits on the key under the cursor only while the keys are the
+    // controls; on every other screen no key wears it.
+    Scene_AnokiPhone.prototype.syncKeypadCursor = function() {
+        if (this._padKeyIndex == null) this._padKeyIndex = 1;
+        const on = this.usesKeypadCursor();
+        (this._buttons || []).forEach((button, i) => {
+            if (button && typeof button.setFocused === 'function') {
+                button.setFocused(on && i === this._padKeyIndex);
+            }
+        });
     };
 
     Scene_AnokiPhone.prototype.navigateList = function(delta) {
@@ -3084,6 +3135,15 @@
         bitmap.outlineColor = 'rgba(0, 0, 0, 0.65)';
         bitmap.outlineWidth = 3;
 
+        if (this._focused) {
+            ctx.save();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'rgba(255, 214, 120, 0.95)';
+            roundedPath(ctx, p - 3, p - 2 + sink, w + 6, h + 5, 11);
+            ctx.stroke();
+            ctx.restore();
+        }
+
         const lines = this._label.split('\n');
         if (lines.length === 1 || !lines[1]) {
             bitmap.fontSize = 15;
@@ -3123,6 +3183,15 @@
 
     Sprite_AnokiButton.prototype.setClickHandler = function(handler) {
         this._clickHandler = handler;
+    };
+
+    // The key the pad's cursor rests on wears a ring. Redrawn only when it
+    // changes, so the cursor costs nothing on the frames it stands still.
+    Sprite_AnokiButton.prototype.setFocused = function(on) {
+        const next = !!on;
+        if (next === !!this._focused) return;
+        this._focused = next;
+        this.redraw(this._wasPressed);
     };
 
     Sprite_AnokiButton.prototype.onClick = function() {

@@ -2273,20 +2273,12 @@
         html += `<div class="sb-panel"><div class="sb-panel-hd">${T('Stockbusters.text.buyItNow')}</div><div class="sb-panel-bd">`;
         const dt = (entry.meta && entry.meta.DamageType) ||
             (entry.note && (entry.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
-        let scaleStr = '';
-        if (DataManager.isWeapon(entry)) {
-            const note = entry.note || '';
-            const scales = [];
-            const regex = /<Scale:\s*([^>]+)>/gi;
-            let match;
-            while ((match = regex.exec(note)) !== null) {
-                scales.push(...match[1].split(',').map(s => s.trim().toUpperCase()));
-            }
-            if (scales.length > 0) scaleStr = scales.join(' + ');
-        }
+        // The stats a weapon's attack is worked out from (window.WeaponScaling).
+        const scaleStats = (DataManager.isWeapon(entry) && window.WeaponScaling)
+            ? window.WeaponScaling.statsFor(entry) : [];
         html += `<table class="sb-kv">` +
             (dt ? `<tr><td class="k">${T('Inventory.spec.label.damageCategory') || 'Damage Type'}</td><td class="v"><b style="color:var(--xp-navy);">${escapeHtml(String(dt).trim())}</b></td></tr>` : '') +
-            (scaleStr ? `<tr><td class="k">Scaling</td><td class="v"><b style="color:#b8860b;">${escapeHtml(scaleStr)}</b></td></tr>` : '') +
+            (scaleStats.length ? `<tr><td class="k">${T('Inventory.spec.label.scaling')}</td><td class="v">${window.WeaponScaling.chipsHTML(scaleStats)}</td></tr>` : '') +
             `<tr><td class="k">${T('Stockbusters.text.colPrice')}</td><td class="v"><span id="sb-unit" class="sb-price"></span></td></tr>` +
             `<tr><td class="k">${T('Stockbusters.text.perUnit')}</td><td class="v"><span id="sb-each"></span></td></tr>` +
             `<tr><td class="k">${T('Stockbusters.ui.totalCost')}</td><td class="v"><span id="sb-total" class="sb-bigprice"></span></td></tr>` +

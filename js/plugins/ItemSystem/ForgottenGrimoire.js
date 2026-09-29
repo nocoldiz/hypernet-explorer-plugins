@@ -295,13 +295,13 @@
                 return;
             }
             if (len === 0) {
-                if ((Input.isTriggered("left") || Input.isTriggered("right")) && onSpells) {
+                if ((Input.isRepeated("left") || Input.isRepeated("right")) && onSpells) {
                     sc._focus = "party"; SoundManager.playCursor(); sc.syncSelection();
                 }
                 return;
             }
-            if (Input.isTriggered("right") && !onSpells) { sc._focus = "spells"; sc._spellIdx = 0; SoundManager.playCursor(); sc.syncSelection(); return; }
-            if (Input.isTriggered("left") && onSpells) { sc._focus = "party"; SoundManager.playCursor(); sc.syncSelection(); return; }
+            if (Input.isRepeated("right") && !onSpells) { sc._focus = "spells"; sc._spellIdx = 0; SoundManager.playCursor(); sc.syncSelection(); return; }
+            if (Input.isRepeated("left") && onSpells) { sc._focus = "party"; SoundManager.playCursor(); sc.syncSelection(); return; }
 
             let moved = false, idx = onSpells ? sc._spellIdx : sc._actorIdx;
             if (Input.isRepeated("down")) { idx = (idx + 1) % len; moved = true; }

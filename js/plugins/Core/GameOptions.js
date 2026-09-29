@@ -461,6 +461,7 @@ const GameOptions = {
             categories: ['experimental'],
             groups: [
                 { key: 'autoExplore', symbols: ['autoIdle'] },
+                { key: 'simulationLog', symbols: ['simulationLog'] },
                 { key: 'ascii', symbols: ['asciiModeEnabled', 'asciiHudEnabled'] },
                 { key: 'noclip', symbols: ['ctrlNoclip'] }
             ]

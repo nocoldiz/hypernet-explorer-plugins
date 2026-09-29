@@ -88,16 +88,14 @@
   const weightOf = (item) => safe("getItemWeight", () => utils.getItemWeight(item), 1);
 
   // Which button flips between Acquire and Liquidate, named on a chip in front
-  // of the tab row: the shoulder buttons when a pad is plugged in, TAB
+  // of the tab row: the shoulder buttons when a pad is in hand, TAB
   // otherwise. The same chip the empathize panel wears, for the same reason:
   // the directions stay inside the open tab, so without it the control is
-  // invisible. A pad can be plugged in (or its battery die) while the shop is
-  // open, so the chip is kept in step every frame rather than only on a
-  // redraw.
-  const padPluggedIn = () => {
-    const pad = window.AnalogStickInput;
-    return !!(pad && typeof pad.hasPad === "function" && pad.hasPad());
-  };
+  // invisible. The device in hand can change while the shop is open, so the
+  // chip is kept in step every frame rather than only on a redraw.
+  const padPluggedIn = () =>
+    typeof Input !== "undefined" && typeof Input.lastInputDevice === "function" &&
+    Input.lastInputDevice() === "pad";
 
   // i18n-ignore-start: physical controller / keyboard button ids
   const tabHintLabel = () => (padPluggedIn() ? "L1 R1" : "TAB");
@@ -374,32 +372,11 @@
     }
   };
 
-  Window_ItemDetail.prototype.getWeaponScalingType = function (weapon) {
-    if (!weapon || !DataManager.isWeapon(weapon)) {
-      return null;
-    }
-    const note = (weapon.note || '');
-    const scales = [];
-    const regex = /<Scale:\s*([^>]+)>/gi;
-    let match;
-    while ((match = regex.exec(note)) !== null) {
-      const parts = match[1].split(',').map(s => s.trim().toUpperCase());
-      scales.push(...parts);
-    }
-    if (scales.length === 0 && weapon.meta && weapon.meta.Scale) {
-      scales.push(...String(weapon.meta.Scale).split(',').map(s => s.trim().toUpperCase()));
-    }
-    if (scales.includes('STR') && scales.includes('DEX')) return 'MIX';
-    if (scales.includes('STR') && scales.includes('INT')) return 'ARC';
-    if (scales.includes('MIX')) return 'MIX';
-    if (scales.includes('ARC')) return 'ARC';
-    if (scales.includes('DEX')) return 'DEX';
-    if (scales.includes('INT')) return 'INT';
-    if (scales.includes('WIS')) return 'WIS';
-    if (scales.includes('CON')) return 'CON';
-    if (scales.includes('PSI')) return 'PSI';
-    if (scales.includes('STR')) return 'STR';
-    return 'STR';
+  // The stats a weapon scales on (window.WeaponScaling, ItemSystemEquipment):
+  // ['DEX'], ['STR', 'DEX'] ... Empty for anything that is not a weapon.
+  Window_ItemDetail.prototype.getWeaponScalingStats = function (weapon) {
+    if (!weapon || !DataManager.isWeapon(weapon) || !window.WeaponScaling) return [];
+    return window.WeaponScaling.statsFor(weapon);
   };
 
   Window_ItemDetail.prototype.drawItemDetails = function () {
@@ -610,9 +587,9 @@
       currentY += lineHeight;
     }
 
-    const scalingType = this.getWeaponScalingType(item);
-    if (scalingType) {
-      this.drawKeyValue(T('Shop.scale'), scalingType, 0, currentY);
+    const scalingStats = this.getWeaponScalingStats(item);
+    if (scalingStats.length) {
+      this.drawKeyValue(T('Shop.scale'), scalingStats.map(st => window.WeaponScaling.statName(st)).join(' + '), 0, currentY);
       currentY += lineHeight;
     }
 
@@ -1153,7 +1130,7 @@
   // The keys the shop borrows while it is open.
   const SHOP_KEY_BINDINGS = {
     87: 'up',        // W
-    65: 'shopBack',  // A → always go back to buy tab
+    65: 'left',      // A
     83: 'down',      // S
     68: 'right',     // D
     81: 'pageup',    // Q → L1 (switch to Buy)
@@ -1168,14 +1145,9 @@
     107: 'shopQtyUp'    // numpad +
   };
 
-  // How far a fully pulled analog trigger has to travel before it counts as a
-  // press, and how many frames apart it repeats while it is held. The triggers
-  // are the pad's half of the same steppers: they have no Input.gamepadMapper
-  // entry (buttons 6/7), so they are read raw through AnalogStickInput, the
-  // same way the empathize panel reads them.
-  const QTY_TRIGGER_THRESHOLD = 0.5;
-  const QTY_REPEAT_WAIT = 24;
-  const QTY_REPEAT_INTERVAL = 5;
+  // The pad's half of the same steppers is left / right on a line already on
+  // the counter (see stepCounterLine), riding Input's own repeat. The triggers
+  // are the party step on every menu, so the shop does not read them.
 
   // What those keys meant before a shop borrowed them, kept module-wide rather
   // than per scene. A scene-local copy looked right but a shop that opened while
@@ -1216,9 +1188,6 @@
     _Scene_Shop_create.call(this);
     this.createItemDetailWindow();
     this.initStock();
-    // Analog-trigger hold state for the cart quantity steppers (readShopQtyStep).
-    this._qtyTriggerDir = 0;
-    this._qtyTriggerHold = 0;
     // The buy list was built while the engine created its windows, before
     // today's stock was rolled, so a shelf filtered against yesterday's numbers
     // is rebuilt now that the record is current.
@@ -1238,22 +1207,12 @@
     for (const field of Object.values(HIDDEN_SHOP_WINDOWS)) parkWindow(this[field]);
     parkWindow(this._itemDetailWindow);
 
-    // Global keyboard / escape listener. Both listeners live on window, so they
-    // must check they still belong to the scene on screen: a shop that failed to
-    // tear down would otherwise keep closing whatever scene came after it.
-    this._onShopKeyDown = (event) => {
-      if (event.key !== "Escape" && event.key !== "Esc") return;  // i18n-ignore  KeyboardEvent.key values
-      if (SceneManager._scene !== this) return;
-      event.preventDefault();
-      this.cancelShopAction();
-    };
-    window.addEventListener("keydown", this._onShopKeyDown);
-
-    // Global right-click / context menu listener to handle cancellations
+    // Escape and the right button reach the shop as Input's cancel and
+    // TouchInput's, which the update reads once; a listener of its own would
+    // answer the same press a second time. The browser's own context menu is
+    // still kept off the counter.
     this._onShopContextMenu = (event) => {
       event.preventDefault();
-      if (SceneManager._scene !== this) return;
-      this.cancelShopAction();
     };
     window.addEventListener("contextmenu", this._onShopContextMenu);
   };
@@ -1415,14 +1374,6 @@
 
     this.syncShopTabHint();
 
-    // Robust native input/controller backup checks
-    if (Input.isTriggered('shopBack') && !this._numberWindow.active) {
-      if (this._sellWindow.active || this._categoryWindow.active) {
-        SoundManager.playCursor();
-        this.switchToBuy();
-        return;
-      }
-    }
 
     // Shift puts the highlighted line on the counter, or takes it back off: the
     // keyboard's half of the multi-select the cards do on a click. It works on
@@ -1483,8 +1434,9 @@
     // has the little -/+ steppers inside the card; without this the only way a
     // pad or keyboard could change an amount was to take the line off the
     // counter and put it back, so every multi-line cart was stuck at one each.
-    // Minus/plus on the keyboard, L2/R2 on a pad, both auto-repeating; SHIFT
-    // steps by ten and CTRL goes the whole way, matching the stepper's clicks.
+    // Minus/plus on the keyboard, left/right on a pad (stepCounterLine), both
+    // auto-repeating; SHIFT steps by ten and CTRL goes the whole way, matching
+    // the stepper's clicks.
     if (!this._numberWindow.active) {
       const step = this.readShopQtyStep();
       if (step) {
@@ -1563,10 +1515,6 @@
     this.destroyUIShopDOM();
 
     // Clean up event listeners to avoid memory leaks
-    if (this._onShopKeyDown) {
-      window.removeEventListener("keydown", this._onShopKeyDown);
-      this._onShopKeyDown = null;
-    }
     if (this._onShopContextMenu) {
       window.removeEventListener("contextmenu", this._onShopContextMenu);
       this._onShopContextMenu = null;
@@ -1755,9 +1703,7 @@
     const buyData = this.buyData();
     const sellData = this.sellData();
     const stockHash = buyData.map(item => this.getStock(item)).join(",");
-    // One pass over the party's gear per frame instead of one per listed item.
-    const worn = wornCounts();
-    const ownedHash = sellData.map(item => $gameParty.numItems(item) + (worn.get(item) || 0)).join(",");
+    const ownedHash = sellData.map(item => $gameParty.numItems(item)).join(",");
 
     const hash = `${isBuyMode}_${isSellMode}_${buyIdx}_${sellIdx}_${catIdx}_${numActive}_${numVal}_${numMax}_${partyGold}_${buyData.length}_${sellData.length}_${stockHash}_${ownedHash}_${chipFocus}_${selHash}`;
     this._lastHashState = {
@@ -1861,10 +1807,9 @@
     }
 
     // 4. Verify if items data changed
-    const worn = wornCounts();
     const listLength = isBuyMode ? this.buyData().length : this.sellData().length;
     const stockHash = this.buyData().map(item => this.getStock(item)).join(",");
-    const ownedHash = this.sellData().map(item => $gameParty.numItems(item) + (worn.get(item) || 0)).join(",");
+    const ownedHash = this.sellData().map(item => $gameParty.numItems(item)).join(",");
 
     const selHash = this.cartHash(isBuyMode);
 
@@ -2016,8 +1961,7 @@
         // weight, rather than on the line: the left page is a price list, and a
         // line that also carried its own weight and its own two counts read as
         // four numbers where one was wanted.
-        const wornHere = worn.get(selectedItem) || 0;
-        const ownedHere = $gameParty.numItems(selectedItem) + wornHere;
+        const ownedHere = $gameParty.numItems(selectedItem);
         let countBadgesHTML = `
             <div class="detail-spec-badge">
                 <span class="badge-lbl">${esc(T('Shop.ui.owned'))}</span>
@@ -2032,25 +1976,16 @@
                 <span class="badge-val">${shelfStock === UNLIMITED_STOCK ? "∞" : shelfStock}</span>
             </div>
           `;
-        } else if (wornHere > 0) {
-          // Gear on someone's back is sellable too, but say so: the sale takes
-          // it off them.
-          countBadgesHTML += `
-            <div class="detail-spec-badge">
-                <span class="badge-lbl">${esc(T('Shop.ui.worn'))}</span>
-                <span class="badge-val">${wornHere}</span>
-            </div>
-          `;
         }
 
         let scaleBadgeHTML = "";
         if (DataManager.isWeapon(selectedItem) && this._itemDetailWindow) {
-          const scaling = this._itemDetailWindow.getWeaponScalingType(selectedItem);
-          if (scaling) {
+          const scaling = this._itemDetailWindow.getWeaponScalingStats(selectedItem);
+          if (scaling.length) {
             scaleBadgeHTML = `
-              <div class="detail-spec-badge">
+              <div class="detail-spec-badge detail-spec-badge--scaling">
                   <span class="badge-lbl">${esc(T('Shop.ui.scale'))}</span>
-                  <span class="badge-val">${esc(scaling)}</span>
+                  <span class="badge-val">${window.WeaponScaling.chipsHTML(scaling)}</span>
               </div>
             `;
           }
@@ -2335,7 +2270,6 @@
               <div style="display:flex; align-items:baseline; gap:8px; font-size:16px; color:${color}; font-weight:${trained ? 'bold' : 'normal'};">
                   <span style="flex:1 1 auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(actorLabel(actor))}</span>
                   <span style="font-size:14px;">${esc(tier)}</span>
-                  <span style="font-weight:bold; font-size:14px;">${esc(prof.gradeFor(actor, selectedItem))}</span>
               </div>
             `;
           });
@@ -2842,6 +2776,7 @@
   const chipCursorLeft = function (buying) {
     const scene = SceneManager._scene;
     if (!(scene instanceof Scene_Shop) || !scene.isShopReady()) return;
+    if (scene.stepCounterLine(-1, buying)) return;
     const win = buying ? scene._buyWindow : scene._sellWindow;
     if (!scene._chipFocus) {
       scene._chipFocus = true;
@@ -2857,6 +2792,7 @@
   const chipCursorRight = function (buying) {
     const scene = SceneManager._scene;
     if (!(scene instanceof Scene_Shop) || !scene.isShopReady()) return;
+    if (scene.stepCounterLine(1, buying)) return;
     if (scene._chipFocus) {
       if (scene.stepShopCategoryChip(1, buying)) SoundManager.playCursor();
       return;
@@ -3449,73 +3385,20 @@
   };
 
   //=============================================================================
-  // Selling worn equipment
+  // The sell list
   //=============================================================================
-  // A shop always buys gear, whether it is in the bag or on someone's back.
-  // The engine only ever offers $gameParty.allItems(), which excludes equipped
-  // weapons and armors, so a player had to visit the equip menu first. Here the
-  // sell list also carries what the party is wearing, and the sale unequips as
-  // many copies as it needs before the items leave the inventory.
+  // Only what is in the bag is offered. Gear on someone's back stays there: a
+  // piece has to be taken off in the equip menu before a shop will see it.
 
-  const equipHolders = () =>
-    safe("equipHolders", () => ($gameParty.allMembers ? $gameParty.allMembers() : $gameParty.members()), []) || [];
-
-  // Every piece of gear the party is wearing, counted in one pass. Callers that
-  // ask about a whole list (the sell cards, the state hash) take this map rather
-  // than walking the party once per item.
+  // What the party can actually hand over: the bag alone.
+  const sellableCount = (item) => $gameParty.numItems(item);
   window.ItemSystemShop = window.ItemSystemShop || {};
-  const wornCounts = () => {
-    const counts = new Map();
-    for (const actor of equipHolders()) {
-      const equips = safe("actor.equips", () => actor.equips(), []) || [];
-      for (const equip of equips) {
-        if (equip) counts.set(equip, (counts.get(equip) || 0) + 1);
-      }
-    }
-    return counts;
-  };
-  window.ItemSystemShop.wornCounts = wornCounts;
-
-  // How many copies of an item the party is wearing right now.
-  const equippedCount = (item) => {
-    if (!item || DataManager.isItem(item)) return 0;
-    return wornCounts().get(item) || 0;
-  };
-  window.ItemSystemShop.equippedCount = equippedCount;
-
-  // What the party can actually hand over: the bag plus what it is wearing.
-  const sellableCount = (item) => $gameParty.numItems(item) + equippedCount(item);
   window.ItemSystemShop.sellableCount = sellableCount;
-
-  // Take `count` copies off whoever is wearing them. changeEquip hands the old
-  // piece back to the party, so the ordinary loseItem in doSell can take it.
-  // Returns how many actually came off: a locked or sealed slot refuses, and
-  // counting those as sold would pay the party for gear it never handed over.
-  const unequipForSale = (item, count) => {
-    if (!item || count <= 0) return 0;
-    let removed = 0;
-    for (const actor of equipHolders()) {
-      const equips = safe("actor.equips", () => actor.equips(), []) || [];
-      for (let slotId = 0; slotId < equips.length && removed < count; slotId++) {
-        if (equips[slotId] !== item) continue;
-        safe("changeEquip", () => actor.changeEquip(slotId, null), null);
-        const stillWorn = safe("actor.equips", () => actor.equips()[slotId], item);
-        if (stillWorn !== item) removed++;
-      }
-      if (removed >= count) break;
-    }
-    return removed;
-  };
 
   const _Window_ShopSell_makeItemList = Window_ShopSell.prototype.makeItemList;
   Window_ShopSell.prototype.makeItemList = function () {
     _Window_ShopSell_makeItemList.call(this);
     if (!Array.isArray(this._data)) this._data = [];
-    for (const item of wornCounts().keys()) {
-      if (this.includes(item) && !this._data.includes(item)) {
-        this._data.push(item);
-      }
-    }
     // The bag is read as categories, alphabetically, with the lines inside each
     // one in name order - the same shape the shelf is read in. The overlay draws
     // a header per category off this order, so the cursor walks the page the way
@@ -3529,21 +3412,6 @@
       if (catA !== catB) return catA.localeCompare(catB);
       return itemName(a).localeCompare(itemName(b));
     });
-  };
-
-  Scene_Shop.prototype.maxSell = function () {
-    return sellableCount(this._item);
-  };
-
-  const _Scene_Shop_doSell_equipped = Scene_Shop.prototype.doSell;
-  Scene_Shop.prototype.doSell = function (number) {
-    const inBag = $gameParty.numItems(this._item);
-    // Sell no more than the party can actually part with: what is in the bag
-    // plus whatever really came off someone's back.
-    const takenOff = unequipForSale(this._item, number - inBag);
-    const sellable = Math.min(number, inBag + takenOff);
-    if (sellable <= 0) return;
-    _Scene_Shop_doSell_equipped.call(this, sellable);
   };
 
   //=============================================================================
@@ -3850,31 +3718,28 @@
     else this.changeSellSelectionQty(item, delta);
   };
 
-  // -1, +1 or 0 for this frame's quantity step, from either input the steppers
-  // answer to. The keyboard half rides Input's own key-repeat; the pad half is
-  // the analog triggers, which Input does not see at all (no gamepadMapper
-  // entry for buttons 6/7), so their hold has to be counted here to get the
-  // same auto-repeat rather than one step per pull.
+  // -1, +1 or 0 for this frame's quantity step from the keyboard's minus and
+  // plus, riding Input's own key-repeat. The pad steps the same quantity with
+  // left / right, which the lists hand to stepCounterLine.
   Scene_Shop.prototype.readShopQtyStep = function () {
     if (Input.isRepeated('shopQtyUp')) return 1;
     if (Input.isRepeated('shopQtyDown')) return -1;
+    return 0;
+  };
 
-    const pads = window.AnalogStickInput;
-    if (!pads || typeof pads.rightTrigger !== 'function') return 0;
-    const up = pads.rightTrigger() >= QTY_TRIGGER_THRESHOLD;
-    const down = !up && pads.leftTrigger() >= QTY_TRIGGER_THRESHOLD;
-    const dir = up ? 1 : (down ? -1 : 0);
-    if (dir === 0 || dir !== this._qtyTriggerDir) {
-      // Direction changed (or let go): restart the hold so the new pull steps
-      // once immediately instead of inheriting the old one's repeat rhythm.
-      this._qtyTriggerDir = dir;
-      this._qtyTriggerHold = 0;
-      if (dir === 0) return 0;
-    }
-    const t = ++this._qtyTriggerHold;
-    const fires = t === 1 ||
-      (t >= QTY_REPEAT_WAIT && (t - QTY_REPEAT_WAIT) % QTY_REPEAT_INTERVAL === 0);
-    return fires ? dir : 0;
+  // Left / right on a line already sitting on the counter step its quantity,
+  // the way the card's own -/+ steppers do; anywhere else they keep walking
+  // the chip row and the tabs. Answers true when the press was spent here.
+  Scene_Shop.prototype.stepCounterLine = function (dir, buying) {
+    if (this._chipFocus || !this.isShopReady() || this._numberWindow.active) return false;
+    const win = buying ? this._buyWindow : this._sellWindow;
+    const item = win && win.item ? win.item() : null;
+    if (!item || !this.shopCart(buying).has(item)) return false;
+    const scale = Input.isPressed('control') ? 9999 : (Input.isPressed('shift') ? 10 : 1);
+    this.changeCartQty(item, dir * scale, buying);
+    SoundManager.playCursor();
+    this.refreshUIShop();
+    return true;
   };
 
   Scene_Shop.prototype.clearCart = function (buying) {
@@ -3954,19 +3819,15 @@
 
   const ALL_CATEGORIES = "all";
 
-  // What the sell list could ever show, before any chip narrows it: the bag and
-  // whatever the party is wearing, minus the key items no shop will take.
+  // What the sell list could ever show, before any chip narrows it: the bag, minus
+  // the key items no shop will take. Worn gear is never offered.
   const isShopSellType = (item) =>
     !!item && !isKeyItem(item) &&
     (DataManager.isItem(item) || DataManager.isWeapon(item) || DataManager.isArmor(item));
 
   Scene_Shop.prototype.sellPoolItems = function () {
     const pool = safe("allItems", () => $gameParty.allItems(), []) || [];
-    const items = pool.filter(isShopSellType);
-    for (const worn of wornCounts().keys()) {
-      if (isShopSellType(worn) && !items.includes(worn)) items.push(worn);
-    }
-    return items;
+    return pool.filter(isShopSellType);
   };
 
   // The whole shelf, before the chip narrows it. Window_ShopBuy#makeItemList

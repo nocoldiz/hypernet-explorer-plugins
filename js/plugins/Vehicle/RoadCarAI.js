@@ -101,10 +101,25 @@
  * on, and when the driver comes back it drives out to the very tile it pulled
  * off from. A car with no verge within reach simply carries on driving.
  *
- * The driver is a real person, minted through NPCSystem.spawnRoadsideNPC on one
- * of the map's own spare NPC slots: a citizen of this square, or (more often out
- * on the road) an authored face from the world-wide pool, passing through. They
- * get the ordinary wandering brain, so they behave like anybody else in town.
+ * The driver is a real person, and the same one the whole time (WHO IS DRIVING):
+ * every car coming onto the square is dealt somebody at the wheel, a citizen of
+ * this square or of the towns around it, and that person carries the car's keys.
+ * When the car pulls over it is THEM who is put down beside it (through
+ * NPCSystem.placeNamedNPC on one of the map's spare NPC slots, so the Empathize
+ * panel opens on the same person). Only when nobody could be drawn is a face
+ * minted through NPCSystem.spawnRoadsideNPC instead. They get the ordinary
+ * wandering brain, so they behave like anybody else in town.
+ *
+ * Anything that goes wrong on the road brings them out too: running somebody
+ * over, hitting the party, ramming a creature, a bump with another car or the
+ * party crashing into them. They pull over, get out, say what they think of it
+ * and drive on after a while, unless they were downed, arrested or lost their
+ * keys. Who hit whom is remembered in the opinions of the people involved.
+ *
+ * Somebody who carries car keys can also summon their own car: in a town they
+ * walk to it (their parked car, or one brought round to a bay near them) and
+ * drive off, and a trip taken by car shows on a road square as a car with them
+ * at the wheel.
  *
  * The car sits there as an ordinary PARKED car the whole time: solid, harmless,
  * and stealable, which is rather the point of the driver being away from it. A
@@ -386,7 +401,7 @@
     }
     // An empty world has no traffic: every car this cell would have had is
     // standing still instead, and none of them is being driven anywhere.
-    if (isEmptyWorld()) {
+    if (isEmptyWorld() || !peopleDrive()) {
       parked = Math.max(parked, driving + parked);
       driving = 0;
     }
@@ -745,6 +760,9 @@
 
   // Car reached its exit border (or got wedged): re-enter on a random lane.
   function respawnLaneCar(ev) {
+    // Somebody's own car on a trip drives on out of the square: the trip goes
+    // on without us, and the car goes back to the pool (WHO IS DRIVING).
+    if (ev._carTraveller) { retireTravellerCar(ev); return; }
     if (laneDefs.length === 0) return;
     for (let tries = 0; tries < 20; tries++) {
       const li = Math.floor(Math.random() * laneDefs.length);
@@ -755,6 +773,7 @@
       if (nearPlayer(start.x, start.y, SPAWN_PLAYER_CLEARANCE)) continue;
       if (!carCanBePlaced(ev, start.x, start.y, dir)) continue;
       placeOnLane(ev, li, 0);
+      newDriver(ev);  // a car coming onto the square is somebody else's
       return;
     }
   }
@@ -790,6 +809,8 @@
     // front and (in town) somebody in the road all hold this one where it is.
     if (!carCanEnter(ev, nx, ny, dir)) {
       ev._carStuck = (ev._carStuck || 0) + 1;
+      // Pulling up behind somebody is now and then a bump (WHO IS DRIVING).
+      if (ev._carStuck === 1 && maybeFenderBender(ev, nx, ny, dir)) return;
       if (ev._carStuck > STUCK_LIMIT) respawnLaneCar(ev);
       return;
     }
@@ -809,6 +830,51 @@
       $gameMap.isPassable(x, y, 6)
     );
   }
+
+  // ==========================================================================
+  //  ROAD TRAVELLERS (road biomes only)
+  //
+  //  People on the road between towns are walked by
+  //  NPC/NPCSystem_RoadTravellers.js, which loads after this file and hangs
+  //  its walker on window.RoadCarAI.travellers. This file keeps the hooks
+  //  that call it (initializeRoadCars, the Scene_Map update below and the
+  //  Game_Event update) and hands it the lane helpers it walks them by.
+  // ==========================================================================
+
+  const MODE_BROOM = "broom";  // i18n-ignore  travel mode id
+  const MODE_CAR = "car";      // i18n-ignore  travel mode id
+
+  window.RoadCarAI = {
+    PROC_MAP_ID, VAR_WORLD_X, VAR_WORLD_Y, MODE_BROOM,
+    get gridW() { return gridW; },
+    get gridH() { return gridH; },
+    get biomeCategory() { return biomeCategory; },
+    isRoad, currentRoadShape, roadGeometry, worldCellKey, nearPlayer, dirToward, dxOf, dyOf,
+    carBodyAt, getGameTimeMinutes,
+    // The driver's keys (THE DRIVER'S KEYS below).
+    CAR_KEYS_ITEM_ID, giveDriverKeys, carOfDriver, onDriverKeysTaken,
+    // Who is driving (WHO IS DRIVING below).
+    MODE_CAR, get CAR_TOPUP_CAP() { return CAR_TOPUP_CAP; }, driverOf, mayDrive, hasCarKeys, isCarOwner, drawDriver, dealDriver: newDriver, driverForCell,
+    driveTravellerCar, summonOwnCar, carIncident,
+    travellers: null,   // filled by NPC/NPCSystem_RoadTravellers.js
+  };
+
+  const _Scene_Map_update_roadTravellers = Scene_Map.prototype.update;
+  Scene_Map.prototype.update = function () {
+    _Scene_Map_update_roadTravellers.call(this);
+    if (Graphics.frameCount % 30 !== 0) return;
+    try {
+      window.RoadCarAI.travellers?.updateSpawns();
+    } catch (e) {
+      dwarn("[RoadCarAI] road travellers:", e);
+    }
+    if (Graphics.frameCount % SUMMON_EVERY_FRAMES !== 0) return;
+    try {
+      updateCarSummons();
+    } catch (e) {
+      dwarn("[RoadCarAI] car summons:", e);
+    }
+  };
 
   // ==========================================================================
   //  SPRITE-SIZED COLLISION
@@ -919,6 +985,9 @@
     pedestrianMapId = $gameMap.mapId();
     pedestrianCache = $gameMap.events().filter((e) => {
       if (!e || e._erased) return false;
+      // Somebody on the road on foot or on a bike can be run down; a broom
+      // is up in the air (ROAD TRAVELLERS).
+      if (e._roadTraveller) return e._roadTraveller.mode !== MODE_BROOM;
       const name = e.event() && e.event().name;
       return name === "NPC" || name === "Enemy";  // i18n-ignore  event names
     });
@@ -1101,6 +1170,7 @@
   }
 
   function respawnDrivingCar(ev) {
+    if (ev._carTraveller) { retireTravellerCar(ev); return; }
     const pool = roadEdgeTiles.length > 0 ? roadEdgeTiles : roadTiles;
     if (pool.length === 0) return;
     for (let tries = 0; tries < 30; tries++) {
@@ -1114,6 +1184,7 @@
       ev._carStuck = 0;
       ev._carTurnCooldown = 0;
       ev._carPullTo = null;
+      newDriver(ev);  // a car coming onto the square is somebody else's
       return;
     }
   }
@@ -1259,6 +1330,8 @@
     if (ev._carPullStuck > PULL_OVER_LIMIT) {
       ev._carPullTo = null;
       ev._carPullStuck = 0;
+      // After a crash the driver gets out whether or not the verge is free.
+      if (plan.park && plan.incident) beginStop(ev, plan);
     }
   }
 
@@ -1303,23 +1376,96 @@
       lane: plan.lane,
       waypoint: plan.waypoint,
       rejoin: plan.rejoin,
-      untilMin: nowMinutes() + PARK_MINUTES_MIN
-        + Math.floor(Math.random() * (PARK_MINUTES_MAX - PARK_MINUTES_MIN)),
+      // Getting out after a crash is a short stop: a look at the damage and a
+      // word with whoever was in the way.
+      untilMin: plan.incident
+        ? nowMinutes() + INCIDENT_MINUTES_MIN
+          + Math.floor(Math.random() * (INCIDENT_MINUTES_MAX - INCIDENT_MINUTES_MIN))
+        : nowMinutes() + PARK_MINUTES_MIN
+          + Math.floor(Math.random() * (PARK_MINUTES_MAX - PARK_MINUTES_MIN)),
       driverId: null,
       waitedFrom: null,
+      incident: plan.incident || null,
     };
     ev._carMode = "stopped";
     ev._carLane = null;
     applyCarModeSettings(ev);
 
-    const visitor = Math.random() < (biomeCategory === "road"
-      ? PARK_VISITOR_CHANCE_ROAD
-      : PARK_VISITOR_CHANCE_TOWN);
-    const driver = window.NPCSystem?.spawnRoadsideNPC?.(doorstep.x, doorstep.y, { visitor });
+    // The one at the wheel is the one who gets out (WHO IS DRIVING). Only a
+    // car nobody could be drawn for mints a roadside face the old way, and
+    // that face is its driver from then on.
+    let driver = placeDriverAt(ev, doorstep);
+    if (!driver) {
+      const visitor = Math.random() < (biomeCategory === "road"
+        ? PARK_VISITOR_CHANCE_ROAD
+        : PARK_VISITOR_CHANCE_TOWN);
+      driver = window.NPCSystem?.spawnRoadsideNPC?.(doorstep.x, doorstep.y, { visitor });
+    }
     if (driver) {
       ev._carStop.driverId = driver.eventId();
+      ev._carStop.driverName = driverNameOf(driver);
+      if (ev._carStop.driverName) ev._driverName = ev._carStop.driverName;
       driver._carDriverOf = ev.eventId();
+      // Put down after the dead were dealt: whoever drove here is alive.
+      driver._npcZombieDecided = true;
+      giveDriverKeys(ev);
+      if (plan.incident) driverSays(ev._carStop.driverName, plan.incident);
     }
+  }
+
+  // ==========================================================================
+  //  THE DRIVER'S KEYS (Phase R)
+  // ==========================================================================
+  // Whoever parks a car owns it, and owning it is carrying its keys: the
+  // "Utilitarian car" item (CAR_KEYS_ITEM_ID) goes into the driver's hand
+  // (profile.itemIds, kept by NPCShared.capItemIds whatever else is thrown
+  // away). A profile minted a moment after the driver was is caught on the
+  // car's next tick. Taking those keys off the driver, looted off the body
+  // (NPCDowned) or lifted from a pocket (Empathize), leaves their car open to
+  // the party: the theft prompt then needs no lockpick, and the car stays at
+  // the kerb for good, since nobody can drive it off without them.
+  function driverNameOf(driver) {
+    const name = driver && driver.event && driver.event() ? driver.event().name : "";
+    return name ? String(name).trim() : null;
+  }
+
+  function driverProfileOf(name) {
+    return name ? ($gameSystem?._npcSociety?.[name] || null) : null;
+  }
+
+  function giveDriverKeys(ev) {
+    const stop = ev && ev._carStop;
+    if (!stop || stop.keysGiven || !stop.driverName) return false;
+    const profile = driverProfileOf(stop.driverName);
+    if (!profile) return false;
+    stop.keysGiven = true;
+    const shared = window.NPCShared;
+    if (shared?.grantCarKeys) shared.grantCarKeys(profile);
+    else {
+      profile.itemIds = Array.isArray(profile.itemIds) ? profile.itemIds : [];
+      if (!profile.itemIds.includes(CAR_KEYS_ITEM_ID)) profile.itemIds.push(CAR_KEYS_ITEM_ID);
+    }
+    return true;
+  }
+
+  // The parked car of this driver on the current map, or null.
+  function carOfDriver(name) {
+    if (!name || !$gameMap) return null;
+    return $gameMap.events().find(e => e && !e._erased && e._isRoadCar &&
+      ((e._carStop && e._carStop.driverName === name) ||
+       (e._carMode === "parked" && e._carOwnerName === name))) || null;
+  }
+
+  // The party took the keys off `name`: their parked car is the party's to
+  // open. Answers the car, or null when it is not on this map.
+  function onDriverKeysTaken(name) {
+    // Without the keys there is no car to be had: they are never dealt a
+    // wheel again, and never summon one (WHO IS DRIVING).
+    const profile = driverProfileOf(name);
+    if (profile) profile._carKeysLost = true;
+    const car = carOfDriver(name);
+    if (car) car._carKeysTaken = true;
+    return car;
   }
 
   // A car standing at the kerb with its driver away. Nothing to steer; it only
@@ -1327,10 +1473,23 @@
   function updateStoppedCar(ev) {
     const stop = ev._carStop;
     if (!stop) { resumeStoppedCar(ev); return; }
+    if (!stop.keysGiven) giveDriverKeys(ev);
+    // Keys gone from the driver's hand by any road at all: the same.
+    if (stop.keysGiven && stop.driverName && !driverStillHoldsKeys(stop.driverName)) ev._carKeysTaken = true;
+    // The keys are in the party's hands: nobody drives this car away.
+    if (ev._carKeysTaken) return;
     if (nowMinutes() < stop.untilMin) return;
 
     const driver = stop.driverId ? $gameMap.event(stop.driverId) : null;
     const gone = !driver || driver._erased || driver._carDriverOf !== ev.eventId();
+    // A driver lying in the road does not drive anywhere: the car waits. One
+    // taken out of the world (arrested, killed, recruited) is not coming back,
+    // and the car is left at the kerb with their name on it.
+    if (!gone && (driver._npcDowned || driverProfileOf(stop.driverName)?.downed)) return;
+    if (gone && stop.driverId) {
+      abandonCar(ev);
+      return;
+    }
 
     // The driver's time is up: they walk back and get in. A driver who has been
     // recruited, killed or otherwise taken out of the world is simply not coming,
@@ -1374,6 +1533,671 @@
         ? { x: stop.rejoin.x, y: stop.rejoin.y, park: false }
         : null;
     applyCarModeSettings(ev);
+  }
+
+  // Nobody is coming back for it: it stays where it stands as an ordinary
+  // parked car, still theirs (stealing it wrongs them), still stealable.
+  function abandonCar(ev) {
+    const stop = ev._carStop || {};
+    ev._carOwnerName = stop.driverName || ev._driverName || null;
+    ev._carStop = null;
+    ev._driverName = null;
+    ev._carMode = "parked";
+    ev._carLane = null;
+    ev._carPullTo = null;
+    applyCarModeSettings(ev);
+  }
+
+  // ==========================================================================
+  //  WHO IS DRIVING
+  // ==========================================================================
+  // Every car is somebody's. A car that comes onto the square is dealt a real
+  // person at the wheel: a citizen of this square's settlement or one of the
+  // people of the towns around it (NPCLifeSim.driversNear), else somebody
+  // passing through from a hand-made town. The draw is seeded on the world,
+  // the square, the hour and the car, so the same car in the same hour is the
+  // same person. Only a sentient adult drives (window.NPCCreature,
+  // NPCSim.Children), never one of the written cast (Story or Local), never
+  // somebody in the party, gone, down, locked up or already at another wheel,
+  // and never somebody who has lost their keys.
+  //
+  // A driver is somebody who OWNS a car: owning one is carrying its keys, and
+  // it is rolled once per person (NPCSim.Vehicles.ensureCar, by wealth tier
+  // and job). The owners of the pool are looked at first, all of them. Only
+  // when not one of them is free is somebody else handed a set of keys, and
+  // they become an owner for good; those top-ups are counted per settlement
+  // and stop at CAR_TOPUP_CAP. A car nobody can be found for is not put on
+  // the road at all, so the cars of a place converge on its owners instead
+  // of the keys spreading with every car that comes by.
+  //
+  // Nobody drives where nobody is left (WorldModes.simulatesPeople). In a
+  // zombie world the ones at the wheel are the living: profiles and life
+  // records are the survivors, the dead are only re-skinned map slots.
+  //
+  // That person is the one who gets out when the car pulls over (beginStop),
+  // who is hurt or angry after a crash (INCIDENTS), and whose car is stolen.
+  // A parked car belongs to somebody too (assignOwner), and a key holder can
+  // summon their own (SUMMONING A CAR) or drive it on a trip (driveTravellerCar).
+  const DRIVER_TRIES = 8;             // candidates looked at per draw
+  const DRIVER_POOL_CACHE_MAX = 24;   // squares whose pools are kept
+  const CAR_TRAVELLERS_MAX = 2;       // own cars on a trip on one road square
+  const SUMMONED_MAX = 2;             // cars summoned in one town at once
+  const SUMMON_EVERY_FRAMES = 600;    // how often a town is asked
+  const SUMMON_CHANCE = 0.25;
+  const SUMMON_RANGE = 10;            // tiles from the owner a car is brought to
+  const REJOIN_RANGE = 6;             // a road within this reach to drive off on
+  const INCIDENT_MINUTES_MIN = 8;
+  const INCIDENT_MINUTES_MAX = 25;
+  const OPINION_DRIVER_HIT_PARTY = 8;  // a driver who knocked the party down
+  const OPINION_DRIVER_CRASHED = 20;   // the party crashed into their car
+  const OPINION_VICTIM_OF_DRIVER = 30; // somebody run down, of their driver
+  const OPINION_FENDER_BENDER = 15;    // two drivers, of each other
+  const OPINION_CAR_STOLEN = 35;       // an owner who saw it go
+  const FENDER_BENDER_CHANCE = 0.03;   // per car pulling up behind another
+  const WITNESS_RANGE = 8;
+  const INCIDENT_LINES = 2;            // RoadCar.incident.<kind>1..N
+  const CAR_TOPUP_CAP = 3;             // new owners one settlement may be dealt
+  // i18n-ignore-start  incident kinds and the procedural group prefix
+  const INCIDENT = {
+    HIT_PARTY: "hitParty", CRASH_PARTY: "crashParty", HIT_PERSON: "hitPerson",
+    HIT_CREATURE: "hitCreature", FENDER: "fender", THEFT: "theft",
+  };
+  const PROC_GROUP_PREFIX = "Proc:";
+  // i18n-ignore-end
+
+  let driverPools = new Map();   // "x,y:hour" -> [names]
+  let arrivalsByCar = [];        // visitors who drove to this town, owners first
+  let lastPoolSize = 0;          // how many people the last draw could look at
+
+  function peopleDrive() {
+    const WMo = window.NPCShared && window.NPCShared.WorldModes;
+    return !WMo || WMo.simulatesPeople() !== false;
+  }
+
+  function currentCell() {
+    return {
+      wx: $gameVariables.value(VAR_WORLD_X) || 1,
+      wy: $gameVariables.value(VAR_WORLD_Y) || 1,
+    };
+  }
+
+  function driverSeed(key) {
+    const shared = window.NPCShared;
+    const ws = shared && shared.worldSeed ? shared.worldSeed() : 19002001;
+    let h = 5381;
+    if (shared && shared.nameHash) h = shared.nameHash(key) >>> 0;
+    else for (let i = 0; i < key.length; i++) h = ((h * 33) ^ key.charCodeAt(i)) >>> 0;
+    h = (h ^ ws) >>> 0;
+    h = Math.imul(h ^ (h >>> 13), 0x5bd1e995) >>> 0;
+    return (h ^ (h >>> 15)) >>> 0;
+  }
+
+  function isKeysId(id) {
+    const shared = window.NPCShared;
+    return shared && shared.isCarKeys ? shared.isCarKeys(id) : Number(id) === CAR_KEYS_ITEM_ID;
+  }
+
+  // Does this person carry car keys right now?
+  function hasCarKeys(name) {
+    const ids = driverProfileOf(name)?.itemIds;
+    return Array.isArray(ids) && ids.some(isKeysId);
+  }
+
+  // A driver with no profile to read cannot be said to have lost them.
+  function driverStillHoldsKeys(name) {
+    return !driverProfileOf(name) || hasCarKeys(name);
+  }
+
+  function inPartyNamed(name) {
+    const members = ($gameParty && $gameParty.members) ? $gameParty.members() : [];
+    return members.some(a => a && a.name && a.name() === name);
+  }
+
+  // May this person be at a wheel at all?
+  function mayDrive(name) {
+    if (!name) return false;
+    const profile = driverProfileOf(name);
+    if (!profile || profile._carKeysLost) return false;
+    if (profile.downed || profile._killed) return false;
+    const NS = window.NPCSystem;
+    if (NS?.isNameGone?.(name)) return false;
+    if (NS?.isStoryName?.(name) || NS?.isReservedName?.(name)) return false;
+    if (window.NPCCreature?.isNonSentientProfile?.(profile)) return false;
+    if (window.NPCSim?.Children?.isMinor?.(profile, name)) return false;
+    const record = window.NPCLifeSim?.getRecord?.(name);
+    if (record && (record.child || record.nonSentient || record.inPrisonUntilMinute != null)) return false;
+    return !inPartyNamed(name);
+  }
+
+  // Everybody already standing on the map, by name.
+  function onMapNames() {
+    const out = new Set();
+    for (const e of $gameMap.events()) {
+      const data = e && !e._erased && e.event ? e.event() : null;
+      if (data && data.name) out.add(data.name);
+    }
+    return out;
+  }
+
+  // Everybody already at a wheel, or owning a car parked, on this map.
+  function busyDrivers(except) {
+    const out = new Set();
+    for (const c of roadCarEvents()) {
+      if (!c || c === except || c._erased || c._carActive === false) continue;
+      if (c._driverName) out.add(c._driverName);
+      if (c._carOwnerName) out.add(c._carOwnerName);
+      if (c._carStop && c._carStop.driverName) out.add(c._carStop.driverName);
+    }
+    return out;
+  }
+
+  // Who this square's cars are drawn from, kept per square and hour. `light`
+  // (the 3D road) skips the settlement's own people and the fallback, so it
+  // costs no walk over the society at all.
+  function driverPool(wx, wy, hour, light) {
+    const key = wx + "," + wy + ":" + hour + (light ? ":l" : "");
+    const hit = driverPools.get(key);
+    if (hit) return hit;
+    const names = new Set();
+    const society = $gameSystem && $gameSystem._npcSociety;
+    const Life = window.NPCLifeSim;
+    if (!light && society) {
+      const group = PROC_GROUP_PREFIX + wx + "," + wy;
+      const groups = new Set([group]);
+      const canon = Life && Life.canonicalGroup ? Life.canonicalGroup(group) : null;
+      if (canon) groups.add(canon);
+      for (const name of Object.keys(society)) {
+        const p = society[name];
+        if (p && groups.has(p._homeGroupName)) names.add(name);
+      }
+    }
+    let near = [];
+    try {
+      near = (Life && Life.driversNear) ? (Life.driversNear(wx, wy, hour * 60) || []) : [];
+    } catch (e) {
+      near = [];
+    }
+    for (const n of near) names.add(typeof n === "string" ? n : n && n.name);
+    if (!names.size && !light) {
+      // Nobody lives near this bit of road: whoever is on it is passing
+      // through from one of the hand-made towns.
+      for (const r of (window.NPCSystem?.getWorldResidents?.() || [])) names.add(r && r.name);
+    }
+    names.delete(undefined);
+    names.delete(null);
+    names.delete("");
+    const list = Array.from(names).sort();
+    // An empty answer is not kept: the society may simply not be dealt yet.
+    if (!list.length) return list;
+    if (driverPools.size >= DRIVER_POOL_CACHE_MAX) driverPools = new Map();
+    driverPools.set(key, list);
+    return list;
+  }
+
+  // Does this person own a car? The one roll (NPCSim.Vehicles.hasCar rolls
+  // it on first asking), else simply the keys in the hand.
+  function isCarOwner(name) {
+    const V = window.NPCSim && window.NPCSim.Vehicles;
+    if (V && V.hasCar) return !!V.hasCar(driverProfileOf(name), name);
+    return hasCarKeys(name);
+  }
+
+  // The settlement a square's top-ups are counted against.
+  function topUpGroup(cell) {
+    const group = PROC_GROUP_PREFIX + cell.wx + "," + cell.wy;
+    const Life = window.NPCLifeSim;
+    return (Life && Life.canonicalGroup ? Life.canonicalGroup(group) : null) || group;
+  }
+
+  function topUpsOf(group) {
+    const store = $gameSystem && $gameSystem._carTopUps;
+    return (store && store[group]) || 0;
+  }
+
+  // Nobody here owns a free car: `name` is handed a set of keys and owns a
+  // car from now on, one of the settlement's CAR_TOPUP_CAP.
+  function makeOwner(name, group) {
+    const profile = driverProfileOf(name);
+    if (!profile) return false;
+    profile._carRolled = true;
+    profile._carOwner = true;
+    profile._carTopUp = group;
+    const shared = window.NPCShared;
+    if (shared && shared.grantCarKeys) shared.grantCarKeys(profile);
+    const store = $gameSystem._carTopUps || ($gameSystem._carTopUps = {});
+    store[group] = (store[group] || 0) + 1;
+    return true;
+  }
+
+  // One person for this car, or null when nobody can be had. `opts.cell` asks
+  // for another square than the one loaded, `opts.light` the 3D road's cheap
+  // draw (owners only, nobody is ever handed keys for it), `opts.onMap`
+  // allows somebody already walking about (a parked car's owner).
+  function drawDriver(ev, salt, opts) {
+    lastPoolSize = 0;
+    if (!peopleDrive()) return null;
+    const o = opts || {};
+    const cell = o.cell || currentCell();
+    const hour = Math.floor(nowMinutes() / 60);
+    const pool = driverPool(cell.wx, cell.wy, hour, !!o.light);
+    lastPoolSize = pool.length;
+    if (!pool.length) return null;
+    const busy = o.light ? null : busyDrivers(ev);
+    const here = (o.light || o.onMap) ? null : onMapNames();
+    const free = (name) => !(busy && busy.has(name)) && !(here && here.has(name)) && mayDrive(name);
+    const id = o.id != null ? o.id : (ev && ev.eventId ? ev.eventId() : 0);
+    const base = driverSeed("driver:" + cell.wx + "," + cell.wy + ":" + hour + ":" + id + ":" + String(salt)); // i18n-ignore  seed key
+    const n = pool.length;
+    // The owners first: every one in the pool, from a seeded place in it.
+    for (let i = 0; i < n; i++) {
+      const name = pool[(base + i) % n];
+      if (isCarOwner(name) && free(name)) return name;
+    }
+    if (o.light) return null;
+    // Not one free owner: a new one, while the settlement has top-ups left.
+    const group = topUpGroup(cell);
+    if (topUpsOf(group) >= CAR_TOPUP_CAP) return null;
+    const tries = Math.min(DRIVER_TRIES, n);
+    for (let i = 0; i < tries; i++) {
+      const name = pool[(base + i * 7919) % n];
+      if (!free(name)) continue;
+      if (makeOwner(name, group)) return name;
+    }
+    return null;
+  }
+
+  // Puts `name` at the wheel, with the keys in their hand.
+  function assignDriver(ev, name) {
+    ev._driverName = name || null;
+    if (!name) return null;
+    const profile = driverProfileOf(name);
+    const shared = window.NPCShared;
+    if (profile && shared && shared.grantCarKeys) shared.grantCarKeys(profile);
+    return name;
+  }
+
+  // A car coming onto the square. With people about and none of them free to
+  // drive it, it does not come: the square's traffic is its owners' cars.
+  function newDriver(ev) {
+    ev._driverSeq = (ev._driverSeq || 0) + 1;
+    const name = assignDriver(ev, drawDriver(ev, ev._driverSeq));
+    if (!name && lastPoolSize > 0) hideCar(ev);
+    return name;
+  }
+
+  // Whose car this is: the one out of it, the one at the wheel, the owner.
+  function driverOf(car) {
+    if (!car) return null;
+    return (car._carStop && car._carStop.driverName) || car._driverName || car._carOwnerName || null;
+  }
+
+  // The 3D road (VoxelWorldTraffic): a name for a car passing a world square,
+  // off the same people, drawn the cheap way. The keys go with it.
+  function driverForCell(wx, wy, salt) {
+    return drawDriver(null, salt, { cell: { wx, wy }, light: true, id: 0 });
+  }
+
+  // The driver steps out onto the doorstep: the same named person, put down
+  // on a spare slot, or null when they cannot be (no slot, no face for them).
+  function placeDriverAt(ev, doorstep) {
+    const name = ev._driverName;
+    const NS = window.NPCSystem;
+    if (!name || !doorstep || !NS || !NS.placeNamedNPC) return null;
+    if (onMapNames().has(name) || !mayDrive(name)) return null;
+    return NS.placeNamedNPC(name, doorstep.x, doorstep.y, { roadside: true }) || null;
+  }
+
+  // ── Parked cars are somebody's too ──────────────────────────────────────
+  // Who drove to this town on a trip by car (NPCLifeSim.arrivalsIn): their car
+  // is at the kerb, so the parked cars go to them first.
+  function carArrivalsHere() {
+    const Life = window.NPCLifeSim;
+    const group = $gameSystem && $gameSystem._currentProcGroup;
+    if (!Life || !Life.arrivalsIn || !group) return [];
+    let names = [];
+    try {
+      names = Life.arrivalsIn(group, nowMinutes()) || [];
+    } catch (e) {
+      names = [];
+    }
+    return names.filter((n) => {
+      const record = Life.getRecord ? Life.getRecord(n) : null;
+      return !!(record && record.trip && record.trip.mode === MODE_CAR);
+    });
+  }
+
+  // A parked car's owner (who may be walking about the square), keys in hand.
+  // An empty or a zombie world's cars were left where they stood: nobody's.
+  function assignOwner(ev) {
+    ev._carOwnerName = null;
+    if (isEmptyWorld() || isZombieWorld() || !peopleDrive()) return null;
+    const busy = busyDrivers(ev);
+    let name = null;
+    while (!name && arrivalsByCar.length) {
+      const n = arrivalsByCar.shift();
+      if (!busy.has(n) && mayDrive(n)) name = n;
+    }
+    if (!name) name = drawDriver(ev, "park", { onMap: true }); // i18n-ignore  seed salt
+    if (!name) return null;
+    ev._carOwnerName = name;
+    return name;
+  }
+
+  // ── Somebody's own car on a trip ────────────────────────────────────────
+  // A key holder on a trip by car (NPCLifeSim.travellersNear answers mode
+  // "car") is met on a road square as one of the cars on it, with them at the
+  // wheel. NPCSystem_RoadTravellers hands the entry over here. The car comes in
+  // at the border on the lane that runs their way, and leaves at the far edge.
+  function freeCar() {
+    return roadCarEvents().find(c => c && !c._erased && c._carActive === false && c._carMode === "hidden") || null;
+  }
+
+  function activeCarCount() {
+    let n = 0;
+    for (const c of roadCarEvents()) if (c && !c._erased && c._carActive !== false) n++;
+    return n;
+  }
+
+  function driveTravellerCar(entry) {
+    if (!entry || entry.mode !== MODE_CAR || !entry.name) return null;
+    if (!$gameMap || $gameMap.mapId() !== PROC_MAP_ID) return null;
+    if (biomeCategory !== "road" || !laneDefs.length || !peopleDrive()) return null;
+    const name = entry.name;
+    if (!hasCarKeys(name) || !mayDrive(name)) return null;
+    if (busyDrivers(null).has(name) || onMapNames().has(name)) return null;
+    let travelling = 0;
+    for (const c of roadCarEvents()) if (c && !c._erased && c._carTraveller && c._carActive !== false) travelling++;
+    if (travelling >= CAR_TRAVELLERS_MAX || activeCarCount() >= TOTAL_CAR_CAP) return null;
+    const car = freeCar();
+    if (!car) return null;
+    const h = entry.heading || { x: 0, y: 0 };
+    const order = laneDefs.map((path, li) => {
+      const a = path[0];
+      const b = path[path.length - 1];
+      const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+      return { li, score: ((b.x - a.x) * h.x + (b.y - a.y) * h.y) / len + Math.random() * 0.25 };
+    }).sort((p, q) => q.score - p.score);
+    for (const { li } of order) {
+      const start = laneDefs[li][0];
+      const next = laneDefs[li][1] || start;
+      const dir = dirToward(start.x, start.y, next.x, next.y);
+      if (nearPlayer(start.x, start.y, SPAWN_PLAYER_CLEARANCE)) continue;
+      if (!carCanBePlaced(car, start.x, start.y, dir)) continue;
+      car._carActive = true;
+      car._carMode = "driving";
+      car._carStop = null;
+      car._carOwnerName = null;
+      car._carKeysTaken = false;
+      car._carTurnCooldown = 0;
+      clearParkedSelfSwitch(car);
+      applyCarModeSettings(car);
+      placeOnLane(car, li, 0);
+      car._carTraveller = true;
+      assignDriver(car, name);
+      return car;
+    }
+    return null;
+  }
+
+  function retireTravellerCar(ev) {
+    hideCar(ev);
+  }
+
+  // ── SUMMONING A CAR ─────────────────────────────────────────────────────
+  // In a town, now and then somebody who carries car keys leaves by car: they
+  // walk to their own parked car if it is here, or have one brought round to a
+  // bay near them (a free car of the map, put down on a parkable spot beside a
+  // SignPark, else on the nearest open ground with a road in reach). The car
+  // then waits like any car whose driver is out (the stopped car above), they
+  // get in, and it drives off. Bounded: SUMMONED_MAX at once, one per ask.
+  function nearestRoadTile(x, y, range) {
+    for (let r = 0; r <= range; r++) {
+      for (let dy = -r; dy <= r; dy++) {
+        for (let dx = -r; dx <= r; dx++) {
+          if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
+          if (inBounds(x + dx, y + dy) && isRoad(x + dx, y + dy)) return { x: x + dx, y: y + dy };
+        }
+      }
+    }
+    return null;
+  }
+
+  function summonSpot(car, x, y) {
+    const tryAt = (tx, ty) => {
+      for (const d of [2, 4, 6, 8]) {
+        if (!isParkableSpot(car, tx, ty, d)) continue;
+        const rejoin = nearestRoadTile(tx, ty, REJOIN_RANGE);
+        if (rejoin) return { x: tx, y: ty, dir: d, rejoin };
+      }
+      return null;
+    };
+    const dist = (s) => Math.abs(s.x - x) + Math.abs(s.y - y);
+    const bays = parkingSpots
+      .filter(s => dist(s) <= SUMMON_RANGE)
+      .sort((a, b) => dist(a) - dist(b))
+      .slice(0, 6);
+    for (const s of bays) {
+      for (let dy = -2; dy <= 2; dy++) {
+        for (let dx = -2; dx <= 2; dx++) {
+          const hit = tryAt(s.x + dx, s.y + dy);
+          if (hit) return hit;
+        }
+      }
+    }
+    for (let r = 1; r <= SUMMON_RANGE; r++) {
+      for (let dy = -r; dy <= r; dy++) {
+        for (let dx = -r; dx <= r; dx++) {
+          if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
+          const hit = tryAt(x + dx, y + dy);
+          if (hit) return hit;
+        }
+      }
+    }
+    return null;
+  }
+
+  // `npcEv` leaves by car. Answers the car, or null when they cannot.
+  function summonOwnCar(npcEv) {
+    if (!npcEv || npcEv._erased || !$gameMap || $gameMap.mapId() !== PROC_MAP_ID) return null;
+    if (npcEv._carDriverOf != null || npcEv._roadTraveller || npcEv._isRoadCar) return null;
+    const name = npcEv.event && npcEv.event() ? String(npcEv.event().name || "").trim() : "";
+    if (!name || !hasCarKeys(name) || !mayDrive(name) || !peopleDrive()) return null;
+    let car = roadCarEvents().find(c => c && !c._erased && c._carMode === "parked" && c._carOwnerName === name) || null;
+    let rejoin = null;
+    if (car) {
+      rejoin = nearestRoadTile(car.x, car.y, REJOIN_RANGE);
+      if (!rejoin) return null;
+    } else {
+      if (activeCarCount() >= TOTAL_CAR_CAP) return null;
+      car = freeCar();
+      if (!car) return null;
+      const spot = summonSpot(car, npcEv.x, npcEv.y);
+      if (!spot) return null;
+      car._carActive = true;
+      clearParkedSelfSwitch(car);
+      car.setPosition(spot.x, spot.y);
+      car.setDirection(spot.dir);
+      car._carDir = spot.dir;
+      rejoin = spot.rejoin;
+    }
+    car._carStop = {
+      dir: car.direction(), lane: null, waypoint: null, rejoin,
+      untilMin: nowMinutes(), driverId: npcEv.eventId(), driverName: name,
+      keysGiven: true, waitedFrom: null, summoned: true, incident: null,
+    };
+    car._carMode = "stopped";
+    car._carLane = null;
+    car._carPullTo = null;
+    car._carOwnerName = null;
+    car._carTraveller = false;
+    car._carKeysTaken = false;
+    car._driverName = name;
+    npcEv._carDriverOf = car.eventId();
+    applyCarModeSettings(car);
+    return car;
+  }
+
+  function summonedCount() {
+    let n = 0;
+    for (const c of roadCarEvents()) if (c && !c._erased && c._carStop && c._carStop.summoned) n++;
+    return n;
+  }
+
+  // Every SUMMON_EVERY_FRAMES frames in a town: does a key holder leave by car?
+  function updateCarSummons() {
+    if (!$gameMap || $gameMap.mapId() !== PROC_MAP_ID) return;
+    if (biomeCategory !== "city" && biomeCategory !== "village") return;
+    if (isEmptyWorld() || isZombieWorld() || !peopleDrive()) return;
+    if ($gameMap.isEventRunning()) return;
+    if (summonedCount() >= SUMMONED_MAX) return;
+    if (Math.random() >= SUMMON_CHANCE) return;
+    const NS = window.NPCSystem;
+    const holders = $gameMap.events().filter((e) => {
+      if (!e || e._erased || e._isRoadCar || e._roadTraveller || e._carDriverOf != null) return false;
+      const data = e.event ? e.event() : null;
+      if (!data || !data.name) return false;
+      const note = data.note || "";
+      if (NS?.hasStoryTag?.(note) || NS?.hasLocalTag?.(note) || NS?.hasHiddenTag?.(note)) return false;
+      if (NS?.isZombieWalker?.(e)) return false;
+      return hasCarKeys(String(data.name).trim());
+    });
+    if (!holders.length) return;
+    summonOwnCar(holders[Math.floor(Math.random() * holders.length)]);
+  }
+
+  // ── INCIDENTS ───────────────────────────────────────────────────────────
+  // Something happens on the road: the party is knocked down, somebody is run
+  // over, a creature goes under the bumper, two cars touch, the party crashes
+  // into one. The driver pulls over (onto the verge if there is one, where the
+  // car stands if not), gets out through the ordinary stop (beginStop), says
+  // what they think of it and gets back in a little later. What was done is
+  // remembered: one person's opinion of another (profile.relationships, the
+  // shape NPCSim.bumpMutualOpinion keeps) and every party member's standing
+  // with them (loseNpcRegard).
+  function lowerRegardOf(selfName, otherName, amount) {
+    if (!selfName || !otherName || selfName === otherName) return;
+    const profile = driverProfileOf(selfName);
+    if (!profile) return;
+    profile.relationships = profile.relationships || {};
+    const rel = profile.relationships[otherName] || { meetCount: 0, opinion: 0 };
+    rel.opinion = Math.max(-100, Math.min(100, (Number(rel.opinion) || 0) - amount));
+    rel.meetCount = Math.min((rel.meetCount || 0) + 1, 999);
+    profile.relationships[otherName] = rel;
+  }
+
+  // A line over the driver's head, off RoadCar.incident.<kind>1..N.
+  function driverSays(name, kind) {
+    if (!name || !kind) return "";
+    const n = 1 + Math.floor(Math.random() * INCIDENT_LINES);
+    const text = T("RoadCar.incident." + kind + n);
+    try {
+      window.NPCConversation?.ThoughtBubbleManager?.queue?.(name, text);
+    } catch (e) {
+      /* a bubble never stops the road */
+    }
+    return text;
+  }
+
+  // The driver of `ev` pulls over and gets out. True when they will.
+  function carIncident(ev, kind) {
+    if (!ev || ev._carMode !== "driving" || !ev._driverName) return false;
+    const pending = ev._carPullTo;
+    if (pending && pending.incident) return true;
+    const plan = {
+      park: true,
+      incident: kind,
+      dir: (pending && pending.dir) || ev._carDir || ev.direction(),
+      lane: pending && pending.park ? pending.lane : ev._carLane,
+      waypoint: pending && pending.park ? pending.waypoint : ev._carWaypoint,
+      rejoin: pending
+        ? (pending.park ? pending.rejoin : { x: pending.x, y: pending.y })
+        : { x: ev.x, y: ev.y },
+    };
+    const spot = pullOverSpot(ev);
+    if (spot) {
+      ev._carPullTo = Object.assign({ x: spot.x, y: spot.y }, plan);
+      ev._carPullStuck = 0;
+      return true;
+    }
+    beginStop(ev, plan);
+    return ev._carMode === "stopped";
+  }
+
+  // The car the bodywork of `ev` would run into at (x, y), if any.
+  function carAhead(ev, x, y, dir) {
+    let found = null;
+    anyBodyTile(ev, x, y, dir, (tx, ty) => {
+      for (const other of roadCarEvents()) {
+        if (!other || other === ev || other._erased || other._carActive === false) continue;
+        if (carCovers(other, tx, ty)) { found = other; return true; }
+      }
+      return false;
+    });
+    return found;
+  }
+
+  // Now and then pulling up behind somebody is a bump: both get out, and each
+  // thinks less of the other.
+  function maybeFenderBender(ev, x, y, dir) {
+    if (!ev._driverName) return false;
+    const other = carAhead(ev, x, y, dir);
+    if (!other || other._carMode !== "driving" || !other._driverName) return false;
+    if (Math.random() >= FENDER_BENDER_CHANCE) return false;
+    lowerRegardOf(ev._driverName, other._driverName, OPINION_FENDER_BENDER);
+    lowerRegardOf(other._driverName, ev._driverName, OPINION_FENDER_BENDER);
+    carIncident(ev, INCIDENT.FENDER);
+    carIncident(other, INCIDENT.FENDER);
+    return true;
+  }
+
+  // A car the world is driving knocked the party down.
+  function driverHitParty(car) {
+    const name = car && car._driverName;
+    if (!name) return;
+    loseNpcRegard(driverProfileOf(name), OPINION_DRIVER_HIT_PARTY);
+    carIncident(car, INCIDENT.HIT_PARTY);
+  }
+
+  // The party's own vehicle went into this car.
+  function crashedIntoCar(car) {
+    const name = driverOf(car);
+    const profile = driverProfileOf(name);
+    if (profile) loseNpcRegard(profile, OPINION_DRIVER_CRASHED);
+    if (car._carMode === "driving") {
+      if (!carIncident(car, INCIDENT.CRASH_PARTY)) car._carStuck = STUCK_LIMIT + 1;
+      return;
+    }
+    const stop = car._carStop;
+    const driver = stop && stop.driverId ? $gameMap.event(stop.driverId) : null;
+    if (driver && !driver._erased) driverSays(name, INCIDENT.CRASH_PARTY);
+  }
+
+  // Their car is gone: the keys in their hand open nothing now. One who saw it
+  // go files it and never forgives the party.
+  function carStolenFrom(car) {
+    const stop = car._carStop;
+    const driver = stop && stop.driverId ? $gameMap.event(stop.driverId) : null;
+    if (driver) driver._carDriverOf = null;
+    const name = driverOf(car);
+    if (!name) return null;
+    const profile = driverProfileOf(name);
+    if (profile) {
+      if (Array.isArray(profile.itemIds)) profile.itemIds = profile.itemIds.filter(id => !isKeysId(id));
+      profile._carKeysLost = true;
+    }
+    const witness = $gameMap.events().find(e => e && !e._erased && !e._isRoadCar && e.event &&
+      e.event() && e.event().name === name &&
+      Math.abs(e.x - car.x) + Math.abs(e.y - car.y) <= WITNESS_RANGE);
+    if (witness) {
+      if (profile) loseNpcRegard(profile, OPINION_CAR_STOLEN);
+      try {
+        window.CrimeSystem?.addPresetCrime?.("vehicleTheft");  // i18n-ignore  crime key
+      } catch (e) {
+        /* no charge filed is never worth breaking the theft over */
+      }
+      driverSays(name, INCIDENT.THEFT);
+    }
+    return name;
   }
 
   // ==========================================================================
@@ -1499,6 +2323,10 @@
   function hideCar(ev) {
     ev._carActive = false;
     ev._carMode = "hidden";
+    ev._carStop = null;
+    ev._driverName = null;
+    ev._carOwnerName = null;
+    ev._carTraveller = false;
     ev._carLane = null;
     ev._carPullTo = null;
     clearParkedSelfSwitch(ev);
@@ -1694,7 +2522,7 @@
       ev.enemyHp = 1; // no corpse system to hand it to: leave it standing, hurt
       return "hurt";
     }
-    F.killEnemyEventLeaveCorpse(ev, rammingLevel());
+    F.killEnemyEventLeaveCorpse(ev, rammingLevel(), 'Blunt');
     if (pData) delete pData[key]; // nothing left for a battle to restore
     return "dead";
   }
@@ -1823,6 +2651,8 @@
   // charge, starts a fight or says anything. Returns true when a battle was
   // started and nothing else should happen this frame.
   function runOverPedestrian(source, victim, byPlayer) {
+    // A broom flies over the bonnet (ROAD TRAVELLERS).
+    if (victim && victim._roadTraveller && victim._roadTraveller.mode === MODE_BROOM) return false;
     const now = Graphics.frameCount;
     if (now - (victim._carHitFrame || -Infinity) <= HIT_GRACE_FRAMES) return false;
     victim._carHitFrame = now;
@@ -1833,16 +2663,29 @@
       // Thrown clear first: a creature that dies under the wheels leaves its
       // body where it lands, not where it was standing.
       knockClear(source, victim, byPlayer ? 3 : 2);
-      return ramEnemy(victim, byPlayer);
+      const fought = ramEnemy(victim, byPlayer);
+      // Whoever was driving pulls over to look at what they hit.
+      if (!byPlayer) carIncident(source, INCIDENT.HIT_CREATURE);
+      return fought;
     }
 
     knockClear(source, victim, byPlayer ? 3 : 2);
     const name = npcNameForEvent(victim);
     const profile = societyProfile(name);
+    if (!byPlayer) {
+      // A car the world is driving: the victim knows exactly who it was, and
+      // the driver gets out (WHO IS DRIVING).
+      if (profile) {
+        injureNpcProfile(name, profile, false);
+        const driverName = source && source._driverName;
+        if (driverName && driverName !== name) lowerRegardOf(name, driverName, OPINION_VICTIM_OF_DRIVER);
+      }
+      carIncident(source, INCIDENT.HIT_PERSON);
+      return false;
+    }
     if (!profile) return false;
-    const severe = byPlayer && Math.random() < 0.4;
+    const severe = Math.random() < 0.4;
     const injuries = injureNpcProfile(name, profile, severe);
-    if (!byPlayer) return false;
 
     loseNpcRegard(profile, OPINION_PER_HIT);
     try {
@@ -1877,6 +2720,9 @@
     const box = carRect(source, null);
     for (const victim of pedestrianEvents()) {
       if (victim.isJumping()) continue;
+      // Highway traffic gives the verge and the shoulder the width of the
+      // road: only the party's own wheels run a traveller down.
+      if (!byPlayer && victim._roadTraveller) continue;
       if (boxContains(source, box, victim.x, victim.y)) runOverPedestrian(source, victim, byPlayer);
     }
   }
@@ -1891,6 +2737,7 @@
     ) {
       lastHitFrame = Graphics.frameCount;
       car.performPlayerHit();
+      driverHitParty(car);
       return;
     }
 
@@ -1963,9 +2810,10 @@
       // Nobody sleeps through a wreck: the passengers VehicleCrew.js has under
       // are thrown awake, and stay awake for a while after.
       window.VehicleCrew?.wake?.("crash");  // i18n-ignore  reason id
-      // A driving car that has been hit stops steering into the wreck and takes
-      // itself off to another entry road.
-      if (car._carMode === "driving") car._carStuck = STUCK_LIMIT + 1;
+      // Whoever's car it is thinks rather less of the party now, and one at the
+      // wheel pulls over to have it out; a car with nobody drawn for it stops
+      // steering into the wreck and takes itself off to another entry road.
+      crashedIntoCar(car);
       return; // one crash a frame, however many cars are in the pile
     }
   }
@@ -2048,6 +2896,13 @@
   };
 
   function attemptCarTheft(car) {
+    // The party holds this car's own keys, taken off its driver: it opens,
+    // no lockpick, no minigame, and the keys already in the bag are the car.
+    if (car._carKeysTaken) {
+      say(T('RoadCar.usedDriverKeys'));
+      completeCarTheft({ mapId: $gameMap.mapId(), eventId: car.eventId(), keysInHand: true });
+      return;
+    }
     // Half the cars in an empty world were left open, and there is nobody to
     // take one from: it opens on the spot, with no lockpick, no minigame and
     // no crime. The other half were locked and are picked as usual (though
@@ -2111,6 +2966,8 @@
   // Success: the keys go to the party and the car leaves the world for good.
   function completeCarTheft(pending) {
     const car = $gameMap.mapId() === pending.mapId ? $gameMap.event(pending.eventId) : null;
+    // It was somebody's car (WHO IS DRIVING).
+    if (car) carStolenFrom(car);
     if (car) {
       car._carActive = false;
       car._carMode = "hidden";
@@ -2121,7 +2978,9 @@
     recordStolenCar();
 
     const keys = $dataItems[CAR_KEYS_ITEM_ID];
-    if (keys) {
+    if (keys && pending.keysInHand) {
+      AudioManager.playSe({ name: "lock_01", volume: 100, pitch: 100, pan: 0 });
+    } else if (keys) {
       $gameParty.gainItem(keys, 1);
       AudioManager.playSe({ name: "lock_01", volume: 100, pitch: 100, pan: 0 });
       say(T('RoadCar.hotwired', { icon: keys.iconIndex, item: keys.name }));
@@ -2154,6 +3013,12 @@
   const _Game_Event_update = Game_Event.prototype.update;
   Game_Event.prototype.update = function () {
     _Game_Event_update.call(this);
+
+    // Somebody on the road (ROAD TRAVELLERS): walked here, not by a car.
+    if (this._roadTraveller) {
+      if ($gameMap.mapId() === PROC_MAP_ID) window.RoadCarAI.travellers?.update(this);
+      return;
+    }
 
     if (!this._isRoadCar || $gameMap.mapId() !== PROC_MAP_ID) return;
     if (this._carActive === false) return;
@@ -2290,6 +3155,7 @@
     // erases the template's cars the same way a traffic-free biome does.
     const underground = !!window.ProceduralInteriors?.isCurrent?.();
     biomeCategory = underground ? "none" : classifyBiome(biomeName);
+    window.RoadCarAI.travellers?.reset();
 
     const cars = $gameMap.events().filter((e) => e && e.event() && e.event().name === "Car");  // i18n-ignore  event name
     carEvents = cars;
@@ -2326,12 +3192,15 @@
       if (laneDefs.length === 0) {
         dwarn("[RoadCarAI] No valid lanes; falling back to free road-following.");
       }
+      window.RoadCarAI.travellers?.init();
     }
 
     const plan = getCarPlan();
     const occupied = new Set();
     let parkedDone = 0;
     let drivingDone = 0;
+    // Visitors who drove here left their car at the kerb (WHO IS DRIVING).
+    arrivalsByCar = biomeCategory === "road" ? [] : carArrivalsHere();
 
     cars.forEach((ev) => {
       // A car erased on a previous visit to this cell has no page: bring it back
@@ -2340,10 +3209,18 @@
         ev._erased = false;
         ev.refresh();
       }
+      // A new plan is a new set of people: nobody is carried over from it.
+      ev._carStop = null;
+      ev._driverName = null;
+      ev._carOwnerName = null;
+      ev._carTraveller = false;
+      ev._carKeysTaken = false;
       if (parkedDone < plan.parked && makeParkedCar(ev, occupied)) {
         parkedDone++;
+        assignOwner(ev);
       } else if (drivingDone < plan.driving && roadTiles.length > 0 && makeDrivingCar(ev, occupied)) {
         drivingDone++;
+        newDriver(ev);
       } else {
         hideCar(ev);
       }

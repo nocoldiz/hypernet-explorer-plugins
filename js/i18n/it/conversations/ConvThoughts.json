@@ -218,6 +218,164 @@
       "Bastano due ritocchi e qui dentro {sembra casa|si respira|non sembra più in prestito}.",
       "Sono {le belle cose|i piccoli comfort|una buona sedia} a fare di quattro muri una casa.",
       "Ecco, già così è {tutta un'altra storia|molto meglio|quasi giusto}."
+    ],
+    "arcade": [
+      "Ancora {un gettone|una partita|una moneta} e {ce la faccio|batto quel record|smetto, giuro}.",
+      "Le mie iniziali {finiranno su quella classifica|sono ancora lassù|sono lassù da qualche parte}, lo giuro.",
+      "{Quei fantasmi|Quell'ultimo livello|Il boss finale} {bara|ce l'ha con me|è truccato}."
+    ],
+    "slots": [
+      "{Tre ciliegie|Ancora una linea|Solo un'altra leva} e {l'avrei preso|c'ero quasi|giuro che stava arrivando}.",
+      "La macchina {deve pagare|è calda stasera|sta per dare}, me lo sento.",
+      "{Facile che vengano, facile che vadano|Addio affitto|Volevo metterci una moneta sola}."
+    ],
+    "horserace": [
+      "{Mai|Mai più|Mai una volta ancora} puntare su un cavallo {con un nome così|a istinto|perché mi ha guardato}.",
+      "{Per una narice|Per una lunghezza|Sul palo}, e {il mio|non il mio|quello sbagliato} l'ha spuntata.",
+      "La forma diceva {una cosa|il favorito|niente di utile}, la corsa {un'altra|l'outsider|tutto}."
+    ],
+    "tournament": [
+      "{Il mio|La mia scelta|Quella bestia su cui ho puntato} {è caduto al primo turno|ha lottato come un diavolo|non aveva il diritto di vincere}.",
+      "I grossi {vincono sempre|non vincono mai quando punto io|vincono finché non perdono}.",
+      "{Sangue sulla sabbia|Che incontro|Che serata}, e {soldi in tasca|tasche più leggere|niente in mano}."
+    ],
+    "cards": [
+      "{Bella mano|Pescata storta|Tavolo stretto}. {Li avevo in pugno|Mi avevano in pugno|Partita aperta} dalla {prima carta|metà|ultima zuffa}.",
+      "{La prossima volta|Un giorno|Domani} porto un {mazzo migliore|mazzo degno del nome|carta più rara}.",
+      "Lo scontro {è andato a me|è andato a loro|ha spazzato via il tavolo}."
+    ],
+    "scratch": [
+      "{Niente|Due su tre|Per un soffio}, {come sempre|di nuovo|ovviamente}.",
+      "{Qualcuno|Un fortunato|Il cugino di un cugino} ha vinto grosso con uno di questi, {dicono|pare|una volta}.",
+      "{Gratta|Raschia|Strofina}, {spera|prega|sospira}, {cestino|ripeti|comprane un altro}."
+    ],
+    "bowling": [
+      "{Strike|Spare|Dritto nel canale}, {e me lo prendo|ecco la mia serata|tipico}.",
+      "{La pista|La palla|Il rimettibirilli} {tira a sinistra|ce l'ha con me|è scivolosa stasera}.",
+      "{Scarpe|Scarpe a noleggio|Quelle scarpe} {di due numeri sbagliate|ancora calde|che sanno del cliente prima}, e comunque {una bella partita|ho giocato|una vittoria}."
+    ],
+    "pool": [
+      "{L'otto|L'ultima palla|La nera} in {buca d'angolo|buca centrale|buca sbagliata}, {e la partita è finita|ovviamente|tipico}.",
+      "{Il gessetto|Una mano ferma|Una bella apertura} è {mezza partita|tutto|proprio quello che mi mancava}.",
+      "{Di sponda|Tiro lungo|Doppia sponda}, {proprio come l'avevo chiamata|nessuno se l'aspettava|pura fortuna}."
+    ],
+    "basketball": [
+      "{Solo rete|Sul ferro|Tabellone e dentro}.",
+      "{Nessuno|Neanche uno|Nessuno di loro} {difende l'area|tagliafuori|torna in difesa} qui.",
+      "{Ancora qualche|Altri dieci|Solo un altro} tiro e la chiamo {giornata|serata|vittoria}."
+    ],
+    "target": [
+      "Rosata {più stretta|migliore|più larga} {dell'ultima volta|di quanto pensassi|a ogni serie}.",
+      "{Espira|Premi, non strappare|Fermo}, e {il bersaglio cade|il piattello si rompe|è andato}.",
+      "{Le orecchie|La spalla|Il polso} {me lo ricorderanno domani|se lo ricorderanno|fischieranno tutta la notte}."
+    ],
+    "piano": [
+      "{Scordato|Tasti che si incollano|Una nota incrinata} e comunque {canta|che bello|ne vale la pena}.",
+      "Le mie {dita|mani|mano sinistra} {ricordano più di me|fanno di testa loro|sono fuori allenamento}.",
+      "{Solo una canzone|Solo il ritornello|Solo l'inizio}, {poi|e poi|forse} smetto."
+    ],
+    "tarot": [
+      "{La Torre|La Morte|Il Matto} di nuovo. {Vuol dire cambiamento, non morte|Non sono preoccupato|Va bene, va tutto bene}.",
+      "Le carte {non mentono mai|dicono quello che sai già|sono solo cartone}, {dicono|per lo più|di sicuro}.",
+      "{Dritta|Rovesciata|Incrociata}, {è un buon segno|è un cattivo segno|non è un segno di niente}."
+    ]
+  },
+  "greetFriend": [
+    "{Ehi|Oh|Guarda chi c'è}, {name}!",
+    "{Buonasera|Buongiorno|Ciao}, {name}.",
+    "{name}! {Che piacere|Ma guarda|Ancora vivo allora}."
+  ],
+  "water": {
+    "swim": {
+      "wash": [
+        "{Niente|Nessun sapone} {batte|vale} un {tuffo|bagno|bel risciacquo} per {lavarsi via la giornata|ripulirsi|darsi una lavata}.",
+        "{Bene|Allora}, {dentro|si va}. {È fredda|Brr|Che frescura}, ma {avevo bisogno di lavarmi|ero sporco|puzzavo}."
+      ],
+      "escape": [
+        "{Non può|Non riuscirà a|Che provi a} seguirmi {qui dentro|in acqua|fin qui}!",
+        "{Nuota|Continua a nuotare|Fuori portata}! {Non voltarti|Non fermarti|Ci sei quasi}."
+      ],
+      "leisure": [
+        "{Che giornata per|Tempo perfetto per|È ora di} un {bagno|tuffo|po' di sguazzo}.",
+        "{Ahh|Oh|Mm}, l'acqua è {splendida|proprio giusta|perfetta} {oggi|a quest'ora}."
+      ],
+      "group": [
+        "{Aspettami|Arrivo|Tienimi il posto}! {L'ultimo che entra|Sono subito dietro di te}!",
+        "{Facciamo a gara|Scommetto che nuoto più veloce di te|C'è posto per un altro}?"
+      ]
+    },
+    "swimming": [
+      "*{galleggia sulla schiena|fa il morto a galla|sguazza}*",
+      "{Potrei|Resterei volentieri} {qui dentro|qui fuori} {tutto il giorno|fino a cena|per ore}.",
+      "{Ah|Oh}, {un pesce mi ha sfiorato la gamba|era un'onda|ne ho bevuta un po'}!"
+    ],
+    "fish": {
+      "cast": [
+        "*{lancia la lenza|fa scattare la canna|lascia affondare l'amo}* {Ora si aspetta|Forza|Abboccate, piccoli}.",
+        "{Bel posto|Acqua tranquilla|Calma piatta}. {Dovrebbero abboccare|Arriveranno|Pazienza}."
+      ],
+      "wait": [
+        "{Ancora niente|Neanche un morso|Sto ancora aspettando}. {Pazienza|Da un momento all'altro|Dai}...",
+        "*{osserva il galleggiante|tira piano la lenza|sbadiglia guardando l'acqua}*"
+      ],
+      "catch": [
+        "{Preso|Catturato|Abboccato}! Un {fish}, {ed è pure bello|mica male|la cena è servita}.",
+        "{Guarda qui|Ah|Ecco fatto}, un {fish}! {Nella borsa|Questa è la cena|Valeva l'attesa}."
+      ],
+      "release": [
+        "Un {fish}? {Torna in acqua|Via di qui|Non oggi}, {piccolo|amico|poverino}.",
+        "*slama il {fish} e lo ributta in acqua* {Vai|Nuota via|Alla prossima}."
+      ],
+      "nothing": [
+        "{Niente|Proprio niente|Amo vuoto}. {Forse domani|I pesci dormono|Esca sbagliata di nuovo}.",
+        "{Beh|Pazienza}, {oggi hanno vinto i pesci|un'ora tranquilla vale da sola|almeno è stato rilassante}."
+      ]
+    },
+    "talk": [
+      [
+        [
+          0,
+          "{L'acqua è|È} {tiepida|splendida|perfetta} {oggi|oggi pomeriggio}, vero?"
+        ],
+        [
+          1,
+          "{Più calda dell'ultima volta|Proprio giusta|Ci starei tutto il giorno}."
+        ]
+      ],
+      [
+        [
+          0,
+          "{Facciamo a gara|Scommetto che non mi prendi} fino {all'altra sponda|agli scogli|alla riva opposta}!"
+        ],
+        [
+          1,
+          "{Ci sto|Nemmeno per sogno|Dammi un po' di vantaggio}!"
+        ]
+      ],
+      [
+        [
+          0,
+          "{Qualcosa mi ha|Qualcosa ha appena} {toccato il piede|nuotato accanto}?"
+        ],
+        [
+          1,
+          "{Solo alghe|Sarà un pesce|Non pensarci}."
+        ],
+        [
+          0,
+          "{Ci sto pensando|Troppo tardi|Grazie tante}."
+        ]
+      ],
+      [
+        [
+          0,
+          "{Ne avevo bisogno|Era proprio quello che ci voleva|Migliore idea della settimana}."
+        ],
+        [
+          1,
+          "{Anch'io|Pure io|Fino in fondo}. {Il lavoro può aspettare|Dimentica il resto|Lasciati galleggiare}."
+        ]
+      ]
     ]
   },
   "craving": {
@@ -345,6 +503,191 @@
       "Potrei {comprarmi questa strada|comprarmene metà|comprare tutto} e dormirei {male lo stesso|uguale|sveglio alle quattro} comunque.",
       "{Il trucco|Tutto il trucco|L'unico trucco} è {sembrare che non stai contando|non dare mai l'idea di contare|contare dove non ti vede nessuno}.",
       "{Qualcuno|Uno|Un cugino} vuole {un favore|soldi|una presentazione}. {C'è sempre qualcuno|Ce n'è sempre uno|Ne spunta uno a settimana}."
+    ]
+  },
+  "addiction": {
+    "buy": {
+      "nicotine": [
+        "Un {pacchetto|pacco|astuccio} nuovo di {item}. {Adesso sì|Già va meglio|Ecco qua}.",
+        "{Solo uno|Uno solo|Soltanto uno}: {item}. Per {dopo|le emergenze|la strada di casa}.",
+        "Non {guardarmi così|giudicarmi|dire una parola}, è solo {item}."
+      ],
+      "alcohol": [
+        "{item}, per {stasera|dopo|quando la giornata è finita}. {Puramente medicinale|Solo per gli ospiti|Nessuno deve saperlo}.",
+        "Una bottiglia di {item}. {Una|Una sola|Soltanto una}. È {ragionevole|moderato|praticamente niente}.",
+        "{Incartala|Mettila nella borsa|Passamela} in fretta, {per favore|se non le dispiace|prima che cambi idea}."
+      ],
+      "caffeine": [
+        "{item}. {Grazie a tutti i santi|Grazie al cielo|Finalmente}.",
+        "Prendo {item}, e {un altro subito dopo|un secondo da portare via|nient'altro conta}.",
+        "{Mettimelo in mano|Dammelo|Passamelo} prima che {mi addormenti in piedi|dimentichi il mio nome|smetta di funzionare}."
+      ],
+      "narcotic": [
+        "Nessuno ha visto. {Nessuno|Neanche un'anima|Proprio nessuno} mi ha visto comprare {item}.",
+        "{item}. Quanto basta per tornare {in equilibrio|stabile|me stesso}.",
+        "So {cosa sto facendo|benissimo cosa sto facendo}. {Quasi sempre|Più o meno|Quasi}."
+      ],
+      "gambling": [
+        "{item}. {È questo quello buono|Me lo sento in questo|Oggi la fortuna gira}.",
+        "Solo {un|un solo} {item}. {Per divertimento|Per il brivido|Per tenermi in allenamento}.",
+        "Le {probabilità|cifre|stelle} dicono che {item} pagherà. {Sarà meglio|Me lo devono|Deve essere così}."
+      ]
+    },
+    "use": {
+      "nicotine": [
+        "*accende {una sigaretta|il fuoco|una}* {Ahh|Ecco|Finalmente}. {Meglio|Molto meglio|Questa sì che è roba}.",
+        "*soffia fuori {un lungo pennacchio|fumo lento|un nastro grigio}* {Adesso posso pensare|Il mondo è più quieto|Bene}.",
+        "{item}. Le {mani|dita|nervature} smettono finalmente di {tremare|agitarsi|lamentarsi}."
+      ],
+      "alcohol": [
+        "*beve {un lungo sorso|una bella sorsata|un sorso lento} di {item}* {Ahh|Meglio|Ecco qua}.",
+        "Gli {spigoli|angoli|pensieri} della giornata {si ammorbidiscono|si sciolgono|svaniscono} al primo {sorso|bicchiere|goccio}.",
+        "{Salute|A me|A nessuno in particolare}. *beve*"
+      ],
+      "caffeine": [
+        "*manda giù {item}* {Ed eccomi|Adesso sono|Questo mi rende} di nuovo una {persona|creatura umana|cittadina}.",
+        "{Oh|Sì|Ecco}. La {nebbia|emicrania|foschia} se ne {va|sta andando|dirada}.",
+        "*beve {item}* {Bene|Ottimo|Perfetto}. Cosa stavo {facendo|per fare|cercando}?"
+      ],
+      "narcotic": [
+        "*{rabbrividisce|sospira|si immobilizza}* {Ecco|Così|Di nuovo in equilibrio}. {Tutto è piano|Niente fa male|Finalmente quiete}.",
+        "Il {mondo|la stanza|la strada} smette di {premermi addosso|spingermi|urlarmi contro}.",
+        "{Quanto basta|Solo quanto serve|Una piccola}. {Nessuno|Neanche un'anima} deve saperlo."
+      ],
+      "gambling": [
+        "*gratta {item} con {una moneta|un'unghia|le dita che tremano}* {Dai|Dai, dai|Ti prego}...",
+        "{item}, e il {brivido|fremito|guizzo} {torna|c'è|è vivo} per un momento.",
+        "*studia {item}* {Vicino|Quasi|Così vicino}. {La prossima volta|Il prossimo|Domani} di sicuro."
+      ]
+    },
+    "relief": {
+      "nicotine": [
+        "Il {peggio|tremore|annebbiamento} è {passato|finito|svanito}. Posso di nuovo {respirare|pensare|sentire}.",
+        "{Ahh|Finalmente|Alla buon'ora}. Sono di nuovo {me stesso|umano|buona compagnia}.",
+        "È stata {dura|troppo lunga|pesante}. {Mai più|Non di nuovo|Lo dico ogni volta}."
+      ],
+      "alcohol": [
+        "Il {tremore|tremito|sudore} si è {fermato|calmato|placato}. {Per ora|Per oggi|Grazie al cielo}.",
+        "Riesco a tenere in mano una {tazza|bicchiere|penna} senza {rovesciarla|tremare|fare figuracce}.",
+        "{Stabile|Più stabile|Meglio}. Domani {diminuisco|starò attento|ci vado piano}. {Davvero|Sul serio|Lo giuro}."
+      ],
+      "caffeine": [
+        "Il {mal di testa|chiodo dietro l'occhio|martellare} è {sparito|in calo|finalmente passato}.",
+        "Sono sveglio. {Davvero|Sul serio|Veramente} sveglio. {Che sensazione|Finalmente|Alleluia}.",
+        "{Bene|Ottimo|D'accordo}. Posso tornare a essere {utile|educato|piacevole}."
+      ],
+      "narcotic": [
+        "Le mie {ossa|articolazioni|mani} {hanno smesso di litigare|tacciono|sono di nuovo mie}.",
+        "Di nuovo {al caldo|calmo|in equilibrio}. Il {freddo|brivido|terrore} {se ne è andato|è passato|ha mollato la presa}.",
+        "{Ce l'ho fatta|Ne sono fuori|Sono sopravvissuto}. {A malapena|Appena|In qualche modo}."
+      ],
+      "gambling": [
+        "Il {prurito|nervosismo|richiamo} si è {calmato|zittito|placato}. {Per stasera|Per ora|Per oggi}.",
+        "Riesco a stare fermo {di nuovo|finalmente|adesso}. {Strana sensazione|Curioso|Che pace}.",
+        "{Basta|Basta così|Non più} per oggi. {Probabilmente|Credo|Spero}."
+      ]
+    },
+    "gamble": {
+      "casino": [
+        "{Stasera|Questa sera|Adesso} è la notte giusta. {Me lo sento|I tavoli mi chiamano|La fortuna me ne deve una}.",
+        "Solo una {puntatina|visita|partitina} al {casinò|tavolo|la roulette}. {Entro ed esco|Un'ora al massimo|Niente di che}.",
+        "La {roulette|i tavoli|le macchinette} {mi aspetta|non aspettano|sono calde stasera}. {Vado|Arrivo|Andiamo}."
+      ],
+      "bet": [
+        "{Tutto sul|Il tutto sul|Tutto quanto sul} {rosso|favorito|numero sette}. {Non|No, non|Non si} torna indietro.",
+        "*{posa la puntata|mette giù le fiches|piazza la scommessa}* {Dai|Fallo per me|Ti prego, ti prego}.",
+        "{Un po' di più|Solo un pochino di più|Raddoppio} stavolta. {La sorte sta girando|Mi spetta|Deve arrivare}."
+      ],
+      "won": [
+        "{Ho vinto|Vinto|Sì}! {Lo sapevo|Te l'avevo detto|L'ho sempre detto}! {amount} {in più|di vincita|in tasca}!",
+        "*ride* {Il sistema funziona|Sono un genio|La fortuna mi ama}! {Ancora|Un'altra|Avanti}!",
+        "{amount}! {Finalmente|Alla buon'ora|Era ora}. {Adesso si comincia davvero|Lascio tutto sul tavolo|Lascia o raddoppia}."
+      ],
+      "lost": [
+        "{Persi|Andati|Sotto di} {amount}. {Pazienza|Non importa|Così va la vita}.",
+        "{Il banco|La roulette|Quella macchinetta} {vince ancora|è truccata|mi odia}. {Tipico|Ovvio|Come sempre}.",
+        "{amount} in meno. {Mi fermo qui|Basta per stasera|Ora di tornare a casa}. {Forse|Magari|Credo}."
+      ],
+      "chase": [
+        "Sotto di {amount}. {Ancora una|Solo un'altra|Un'altra} e {li riprendo|vado in pari|recupero tutto}.",
+        "Non {posso|voglio|intendo} andarmene {adesso|in perdita|così}. {Deve|È destino che|Sta per} girare.",
+        "{Raddoppio|Rilancio|Tutto quanto}. {La prossima paga|Mi spetta|La fortuna torna sempre}."
+      ],
+      "broke": [
+        "{Quello era|Ecco che se ne va} {l'ultimo|l'affitto|l'ultimo spicciolo}. {Oh no|Cosa ho fatto|Non di nuovo}.",
+        "*rovescia {le tasche vuote|un borsellino vuoto|la fodera di una tasca}* {Niente|Neanche una moneta|Sparito tutto}.",
+        "{Come|Come faccio a|Cosa} {lo dico a casa|lo spiego|pago l'affitto} adesso?"
+      ]
+    }
+  },
+  "farmCare": {
+    "hiveTend": [
+      "{Piano|Con calma|Adagio}, {ragazze|piccole|care mie}. {Do solo un'occhiata|Vi controllo e basta|Vedo come state}.",
+      "{Prima il fumo|Un po' di fumo|Prima calmarle}, poi il coperchio. {Mai il contrario|Tutto il trucco è lì|Lo si impara una volta sola}.",
+      "I {telaini|favi|telaini della covata} sono {sani|pieni di vita|pieni}. {Bene|Benissimo|Può andare}.",
+      "{Senti che ronzio|Senti come ronzano|Che suono}. Un alveare {contento|felice|operoso} {suona così|ronza così|è un alveare rumoroso}."
+    ],
+    "hiveTreat": [
+      "{Di nuovo gli acari|Ancora la varroa|Quegli acari}. {Non nel mio alveare|Fuori di qui|Non finché ci sono io}.",
+      "Un {trattamento|po' di polvere|dosaggio} contro {gli acari|il marciume|la tarma}, e {ce la faranno|staranno bene|mi ringrazieranno}.",
+      "{C'è qualcosa che non va|Stanno male|Questo alveare è malato}. {Meno male che sono passato|Meglio ora che mai|Preso in tempo}."
+    ],
+    "hiveSuper": [
+      "{Non hanno più spazio|Sono pieni fino al coperchio|Stanno scoppiando}. {Un'altra cassa|Un melario nuovo|Un altro piano} sopra.",
+      "{Più spazio|Spazio per crescere|Una casa più grande} e {niente sciame|restano qui|non se ne va nessuno}. {È questa l'idea|Speriamo|Incrociamo le dita}."
+    ],
+    "honeyHarvest": [
+      "{Guarda qui|Telaini pesanti|Favi pieni}. {Miele|Oro|Oro liquido} {quest'anno|finalmente|di nuovo}.",
+      "{Lasciargliene tanto|Mai prendere tutto|Alle api la loro parte}, il resto si prende. {È la regola|È giusto|Prima le api}.",
+      "{Dita appiccicose|Tutto appiccica|Miele dappertutto}, {ma ne vale la pena|e mi va bene così|come sempre}.",
+      "{Vasetti|Barattoli|Orci} di {miele|miele fresco|miele in favo} per {{owner}|il padrone|la casa}."
+    ],
+    "barrelCheck": [
+      "{Lavora ancora|Borbotta ancora|È ancora viva}. {Bene|Lasciamola stare|Pazienza}.",
+      "{Un colpetto sul fianco|Bussare sulle doghe|Ascoltare al tappo}. {Suona giusto|Suona quasi giusto|Ci siamo quasi}.",
+      "{{brew}|La fermentazione|Il lotto} {vuole altro tempo|non è ancora pronto|se la prende comoda}. {Anch'io|Giusto|Nessuna fretta}."
+    ],
+    "barrelCare": [
+      "Una {mescolata|bella mescolata|mescolata lenta} per {svegliare il lievito|farla girare|renderla uniforme}.",
+      "{Un rabbocco|Uno schizzo per rabboccare|Colmare il vuoto}. {Gli angeli si prendono|La botte si prende|Il legno si tiene} la sua parte.",
+      "{Tappo pulito|Un panno fresco sul tappo|Pulire il bordo}, {niente mosche qui|non entra niente|l'ordine è sicurezza}."
+    ],
+    "barrelBottle": [
+      "{Pronta|Fatto|Finita} finalmente. {Fuori le bottiglie|Prendete le bottiglie|Imbottigliamo}.",
+      "{Limpida|Brillante|Dorata} {come si deve|e bellissima|e pronta}. {Nelle bottiglie|Imbottigliamo|Via}.",
+      "Ecco {{brew}|un lotto|un buon lotto} per {{owner}|il padrone|la cantina}."
+    ],
+    "barrelStart": [
+      "{Botte vuota|Una botte vuota|Niente qui dentro}? {Non per molto|Così non va|Rimediamo}.",
+      "{Un lotto nuovo|Una cotta fresca|Un'altra cotta} di {{brew}|qualcosa di buono|quella solita}. {Ci vediamo tra qualche giorno|Ora si aspetta|Pazienza adesso}."
+    ],
+    "taste": [
+      "{Solo un assaggio|Una goccia sulla lingua|Un sorso}. {Per la qualità|Per puro mestiere|Qualcuno deve pur farlo}.",
+      "{Mm|Uhm|Oh}. {Sta venendo bene|Niente male|Serve un'altra settimana}.",
+      "{Dolce|Aspra|Rotonda} {all'inizio|sulla lingua|al primo sorso}, {secca|calda|lunga} {alla fine|dopo|in coda}. {Bene|Promette|Non ancora}."
+    ],
+    "tempted": [
+      "{Nessuno sentirà la mancanza di|Chi se ne accorgerebbe, di|Nessuno conta} {una bottiglia|una sola bottiglia|una bottiglietta}.",
+      "{Solo una|Soltanto una|Una}. {Per i nervi|È medicinale|Me la sono guadagnata}.",
+      "{Non dovrei|Davvero non dovrei|Non farlo}. {...|Beh, pazienza|Troppo tardi}."
+    ],
+    "unattendedHive": [
+      "{Nessuno si è avvicinato a questo alveare|Chi bada a queste api|Questo alveare è stato abbandonato} {da giorni|da un po'|da secoli}.",
+      "{Poverine|Guardale|Oh cielo}, {lasciate a sé stesse|nessuno che le accudisca|dimenticate}.",
+      "{Qualcuno si è scordato|Nessuno si è ricordato|Tutti si sono scordati} {delle api|dell'alveare|della colonia}. {Io no|Ora ci sono io|Non più}."
+    ],
+    "unattendedBarrel": [
+      "{Nessuno tocca questa botte|Questa botte è stata lasciata lì|Chi si è scordato di questa} {da giorni|da un po'|da secoli}.",
+      "{Polvere sul coperchio|Ragnatele sul tappo|Il panno non si è mosso}. {Lasciata sola|Nessuno ci bada|Dimenticata}.",
+      "Una botte {lasciata a sé stessa|senza nessuno che ci badi|senza custode} {diventa aceto|inacidisce|va a male}. {Non questa|Non oggi|Non finché ci sono io}."
+    ],
+    "friendHive": [
+      "{Le loro api|Le api} {avevano sete|avevano bisogno di una mano|andavano accudite}. {È il minimo|Tra amici ci si aiuta|Nessun disturbo}.",
+      "{Ho dato un'occhiata al|Ho controllato il|Ho tenuto d'occhio il} {loro alveare|loro sciame|l'alveare del gruppo}. {Farebbero lo stesso|Tra amici si fa|Con piacere}."
+    ],
+    "friendBarrel": [
+      "{La loro|La} {botte|cotta} {si sentiva sola|andava controllata|voleva un po' di cura}. {Aiutare non fa male|Tra amici ci si aiuta|Con piacere}.",
+      "{Ho dato|Ho fatto} {un'occhiata|una mescolata|un controllo} alla {loro botte|botte del gruppo}. {Senza toccarne una goccia, eh|Non tocca a me imbottigliare|Guardo e basta}."
     ]
   }
 }

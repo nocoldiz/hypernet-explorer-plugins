@@ -330,10 +330,12 @@
                 extra: { face: 'Y', key: 'menu' },
                 tabPrev: { face: 'L1', key: 'pageup' },
                 tabNext: { face: 'R1', key: 'pagedown' },
-                // A screen a player can lean into: the same two triggers that
-                // zoom the voxel world and every 3D minigame, so the gesture
-                // is one gesture everywhere. Only the screens that have
-                // something to enlarge ask for these.
+                // In a menu the triggers step the party member the page is
+                // showing. A page with no party on it and something to lean
+                // into (the phone's screen) reads them as the zoom instead, the
+                // same pair that zooms the voxel world; no page reads both.
+                partyPrev: { face: 'L2', key: 'partyPrev' },
+                partyNext: { face: 'R2', key: 'partyNext' },
                 zoomOut: { face: 'L2' },
                 zoomIn: { face: 'R2' },
                 // Scrolling is not a button: the right stick moves whatever
@@ -677,6 +679,8 @@
             extra: 'Y',
             tabPrev: 'L1',
             tabNext: 'R1',
+            partyPrev: 'L2',
+            partyNext: 'R2',
             scroll: 'RS',
             scrollUp: 'RS\u2191',
             scrollDown: 'RS\u2193',
@@ -713,7 +717,9 @@
             tabPrev: 'tabPrev',
             tabNext: 'tabNext',
             prev: 'tabPrev',
-            next: 'tabNext'
+            next: 'tabNext',
+            partyPrev: 'partyPrev',
+            partyNext: 'partyNext'
         },
         // i18n-ignore-end
 
@@ -852,6 +858,27 @@
             }
         },
 
+        // The party switcher: L2 and R2 step the member a page is showing, on
+        // every screen that shows one, so its two ends say so the way a tab
+        // strip's do.
+        SWITCHERS: '.companion-switcher, .companion-tabs-row',
+
+        decorateSwitchers(scope, on) {
+            let rows;
+            try { rows = scope.querySelectorAll(this.SWITCHERS); } catch (e) { return; }
+            for (const row of rows) {
+                // A switcher nested in another is walked once, from the outer one.
+                if (row.parentElement && row.parentElement.closest &&
+                    row.parentElement.closest(this.SWITCHERS)) continue;
+                if (!row.querySelectorAll) continue;
+                const tabs = Array.prototype.slice.call(row.querySelectorAll('.companion-tab'));
+                for (const tab of tabs) this.unstamp(tab);
+                if (!on || tabs.length < 2) continue;
+                this.stamp(tabs[0], this.BUTTON.partyPrev, true);
+                this.stamp(tabs[tabs.length - 1], this.BUTTON.partyNext, false);
+            }
+        },
+
         unstamp(el) {
             const badge = el && el.querySelector && el.querySelector('.' + this.BADGE_CLASS);
             if (badge && badge.parentNode) badge.parentNode.removeChild(badge);
@@ -894,6 +921,7 @@
             try { marks = scope.querySelectorAll(this.MARK_SELECTOR); } catch (e) { return; }
             for (const el of marks) this.markOne(el, on);
             this.decorateTabs(scope, on);
+            this.decorateSwitchers(scope, on);
         },
 
         //---------------------------------------------------------------------
@@ -1348,6 +1376,184 @@
     Controller.closeTextEntry = () => PadText.close();
     Controller.Text = PadText;
     window.PadText = PadText;
+
+    //=========================================================================
+    // UINav: the one way a menu reads the pad and the keyboard
+    //=========================================================================
+    // Every menu in the game answers the same questions the same way:
+    //   L1 / R1   (Q / W, Shift+Tab / Tab)   the previous / next tab
+    //   L2 / R2   (, / .)                    the previous / next party member
+    //   the cross / left stick / arrows      move, repeating while held
+    // and one press is one action: once a screen has acted on a press it
+    // consumes it, and nothing else reading Input that frame sees it again.
+    // A modal swallows the press that opened it for the same reason.
+    // i18n-ignore-start  Input action names
+    if (typeof Input !== 'undefined') {
+        if (Input.gamepadMapper) {
+            Input.gamepadMapper[6] = 'partyPrev';
+            Input.gamepadMapper[7] = 'partyNext';
+        }
+        if (Input.keyMapper) {
+            Input.keyMapper[188] = 'partyPrev'; // ,
+            Input.keyMapper[190] = 'partyNext'; // .
+        }
+    }
+
+    const UINav = {
+        _latch: new Set(),
+        _all: false,
+
+        // The previous / next tab: -1, 0 or +1.
+        tabDir() {
+            if (typeof Input === 'undefined') return 0;
+            if (Input.isTriggered('pageup')) return -1;
+            if (Input.isTriggered('pagedown')) return 1;
+            if (Input.isTriggered('tab')) return Input.isPressed('shift') ? -1 : 1;
+            return 0;
+        },
+
+        // The previous / next party member the page is showing: -1, 0 or +1.
+        // Reading it claims the triggers, so no other reader acts on them too.
+        partyDir() {
+            if (typeof Input === 'undefined') return 0;
+            const stick = window.AnalogStickInput;
+            if (stick && typeof stick._claimTriggers === 'function') stick._claimTriggers();
+            if (Input.isTriggered('partyPrev')) return -1;
+            if (Input.isTriggered('partyNext')) return 1;
+            return 0;
+        },
+
+        // Steps the tab strip drawn in `root` by clicking the neighbour of its
+        // active tab, so a screen whose tabs are plain clickable strips gets
+        // L1 / R1 without a line of its own. Returns true when a tab turned.
+        stepTabs(root, dir) {
+            if (!dir || !root || !root.querySelectorAll) return false;
+            const pad = window.PadUI;
+            const selector = pad && pad.TAB_STRIPS ? pad.TAB_STRIPS : '.backpack-tabs';
+            let strips;
+            try { strips = root.querySelectorAll(selector); } catch (e) { return false; }
+            const shown = (el) => {
+                for (let n = el; n && n.nodeType === 1; n = n.parentElement) {
+                    if (n.hidden || (n.classList && n.classList.contains('ui-closed'))) return false;
+                    const cs = window.getComputedStyle ? window.getComputedStyle(n) : null;
+                    if (cs && (cs.display === 'none' || cs.visibility === 'hidden')) return false;
+                }
+                return true;
+            };
+            for (const strip of strips) {
+                if (!shown(strip)) continue;
+                let tabs = Array.prototype.slice.call(strip.children || []);
+                // A strip that wraps its tabs in one row element.
+                if (tabs.length === 1 && tabs[0].children && tabs[0].children.length > 1) {
+                    tabs = Array.prototype.slice.call(tabs[0].children);
+                }
+                tabs = tabs.filter((t) => !t.classList.contains('pad-badge') &&
+                    !t.classList.contains('is-disabled') && !t.hasAttribute('disabled'));
+                if (tabs.length < 2) continue;
+                const at = tabs.findIndex((t) => t.classList.contains('active') ||
+                    t.classList.contains('selected') || t.getAttribute('aria-selected') === 'true');
+                if (at < 0) continue;
+                const next = Math.max(0, Math.min(tabs.length - 1, at + dir));
+                if (next === at) return true;
+                tabs[next].click();
+                return true;
+            }
+            return false;
+        },
+
+        // One of the four directions, repeating while it is held, or null.
+        navDir() {
+            if (typeof Input === 'undefined') return null;
+            for (const dir of ['up', 'down', 'left', 'right']) {
+                if (Input.isRepeated(dir)) return dir;
+            }
+            return null;
+        },
+
+        // Where a grid cursor goes. Left and right stay on the row and stop at
+        // its ends; up and down move a whole row and stop at the edges. A step
+        // never wraps into another column. `cols` may be the grid element, in
+        // which case the drawn column count is read off it.
+        gridStep(index, dir, count, cols) {
+            let c = cols;
+            if (c && typeof c === 'object') {
+                const list = window.MenuVirtualList;
+                c = list && typeof list.columnsOf === 'function' ? list.columnsOf(c) : 1;
+            }
+            c = Math.max(1, Math.floor(Number(c) || 1));
+            const n = Math.max(0, Math.floor(Number(count) || 0));
+            if (!n) return 0;
+            const i = Math.max(0, Math.min(n - 1, Math.floor(Number(index) || 0)));
+            const col = i % c;
+            const row = Math.floor(i / c);
+            const lastRow = Math.floor((n - 1) / c);
+            switch (dir) {
+                case 'left': return col > 0 ? i - 1 : i;
+                case 'right': return col < c - 1 && i + 1 < n ? i + 1 : i;
+                case 'up': return row > 0 ? i - c : i;
+                case 'down':
+                    if (row >= lastRow) return i;
+                    return Math.min(i + c, n - 1);
+                default: return i;
+            }
+        },
+
+        // This press has been acted on: nothing else reads it this frame. With
+        // no name, every press of the frame is spent.
+        consume(action) {
+            if (action) this._latch.add(action);
+            else this._all = true;
+        },
+        handled() { this._all = true; },
+        consumed(action) {
+            if (this._all || this._latch.has(action)) return true;
+            // A press swallowed while it was held stays spent until let go.
+            if (this._held.has(action)) {
+                if (typeof Input !== 'undefined' && Input._currentState && Input._currentState[action]) return true;
+                this._held.delete(action);
+            }
+            return false;
+        },
+
+        // The press that opened (or closed) something must not also act in it,
+        // this frame or while it is still held down.
+        _held: new Set(),
+        swallowHeld() {
+            if (typeof Input !== 'undefined' && Input._currentState) {
+                for (const name of Object.keys(Input._currentState)) {
+                    if (Input._currentState[name]) this._held.add(name);
+                }
+            }
+            this._all = true;
+        },
+
+        _frame() {
+            this._latch.clear();
+            this._all = false;
+        }
+    };
+    // i18n-ignore-end
+
+    if (typeof Input !== 'undefined') {
+        const _Input_update = Input.update;
+        Input.update = function () {
+            UINav._frame();
+            return _Input_update.apply(this, arguments);
+        };
+        const _isTriggered = Input.isTriggered;
+        Input.isTriggered = function (name) {
+            if (UINav.consumed(name)) return false;
+            return _isTriggered.apply(this, arguments);
+        };
+        const _isRepeated = Input.isRepeated;
+        Input.isRepeated = function (name) {
+            if (UINav.consumed(name)) return false;
+            return _isRepeated.apply(this, arguments);
+        };
+    }
+
+    Controller.Nav = UINav;
+    window.UINav = UINav;
 
     window.Controller = Controller;
     // Every screen that already asks for window.PadUI is asking this.

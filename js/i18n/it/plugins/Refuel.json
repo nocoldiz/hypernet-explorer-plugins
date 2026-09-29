@@ -24,5 +24,30 @@
     "level": "Livello",
     "pricePerLitre": "Prezzo/L",
     "wallet": "Portafoglio"
+  },
+  "help": {
+    "title": "La stazione di servizio",
+    "items": {
+      "vehicles": {
+        "name": "Veicoli",
+        "text": "Ogni veicolo del gruppo che va a carburante. Scegline uno per vedere come rifornirlo."
+      },
+      "options": {
+        "name": "Opzioni di rifornimento",
+        "text": "Compra un numero di litri o Fai il pieno. Il prezzo di ogni opzione è indicato accanto."
+      },
+      "overview": {
+        "name": "Panoramica carburante",
+        "text": "Il livello del carburante del veicolo scelto, il prezzo al litro e quanto ha il gruppo nel portafoglio."
+      },
+      "exit": {
+        "name": "Esci dalla stazione",
+        "text": "Lascia la stazione."
+      },
+      "help": {
+        "name": "? Aiuto",
+        "text": "Apre questa scheda. Col controller premi Select; premilo di nuovo, Indietro o Conferma per chiuderla."
+      }
+    }
   }
 }

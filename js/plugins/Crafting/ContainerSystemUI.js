@@ -302,6 +302,32 @@
             this._refreshList();
         }
 
+        // The search typed on the pad's letter sheet. Committing it filters the
+        // shelf exactly as typing into the field does; cancelling leaves the
+        // shelf as it was.
+        openPadSearch() {
+            if (!window.Controller || typeof Controller.textEntry !== 'function') return;
+            if (window.UINav) UINav.swallowHeld();
+            Controller.textEntry({
+                title: T('Inventory.searchPlaceholder'),
+                value: this._searchText || "",
+                max: 40,
+                onCommit: (value) => {
+                    if (window.UINav) UINav.swallowHeld();
+                    const text = String(value || "").trim();
+                    this._searchOpen = !!text;
+                    this._searchText = text;
+                    const slot = this._domContainer && this._domContainer.querySelector('#cs-search-field');
+                    if (slot) slot.outerHTML = this._searchFieldHTML();
+                    this._selectedIndex = 0;
+                    this._refreshList();
+                },
+                onCancel: () => {
+                    if (window.UINav) UINav.swallowHeld();
+                }
+            });
+        }
+
         clearSearch() {
             this._searchText    = "";
             this._searchOpen    = false;
@@ -603,6 +629,7 @@
                     SoundManager.playOk();
                     $gameParty.loseItem(item, 1);
                     ContainerManager.addItem(this._containerId, ItemUtils.encodeKey(item), 1, this._isExtradimensional);
+                    ContainerManager.noteStored(this._containerId, item, 1, this._isExtradimensional);
                     this._selectedIndex = 0;
                     this._activeSection = "items";
                     this._refreshDOM();
@@ -616,7 +643,7 @@
                 SoundManager.playOk();
                 $gameParty.gainItem(item, 1);
                 ContainerManager.removeItem(this._containerId, ItemUtils.encodeKey(item), 1, this._isExtradimensional);
-                // Inside a building the player does not own this is a theft.
+                // Inside somebody's home this joins the haul rolled for on close.
                 ContainerManager.reportTheft(this._containerId, item, 1, this._isExtradimensional);
                 this._activeSection = "items";
                 this._refreshDOM();
@@ -624,6 +651,8 @@
         }
 
         _openQuantityModal(item, max, mode) {
+            // The press that opened the modal must not also act inside it.
+            if (window.UINav) UINav.swallowHeld();
             this._quantityModalOpen = true;
             this._quantityItem      = item;
             this._quantityMax       = max;
@@ -656,6 +685,7 @@
             if (this._quantityMode === "store") {
                 $gameParty.loseItem(item, qty);
                 ContainerManager.addItem(this._containerId, ItemUtils.encodeKey(item), qty, this._isExtradimensional);
+                ContainerManager.noteStored(this._containerId, item, qty, this._isExtradimensional);
             } else {
                 $gameParty.gainItem(item, qty);
                 ContainerManager.removeItem(this._containerId, ItemUtils.encodeKey(item), qty, this._isExtradimensional);
@@ -672,6 +702,7 @@
         }
 
         _closeQuantityModal() {
+            if (window.UINav) UINav.swallowHeld();
             this._quantityModalOpen = false;
             this._quantityItem      = null;
             const modal = document.getElementById("cs-qty");
@@ -692,6 +723,8 @@
         terminate() {
             if (this._backgroundSprite) this._backgroundSprite.filters = [];
             super.terminate();
+            // Whatever was carried out of somebody's home is rolled for now.
+            ContainerManager.closeContainer();
             UIContainerInputManager.deactivate();
 
             if (this._domContainer) {
@@ -723,8 +756,10 @@
             const scene = this._scene;
 
             // A search being typed into owns the keyboard: the cursor must not
-            // walk the shelf on every letter of a word.
+            // walk the shelf on every letter of a word. The pad's letter sheet
+            // owns every press while it is up for the same reason.
             if (window.MenuSearchBar && window.MenuSearchBar.isTyping()) return;
+            if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) return;
 
             if (scene._quantityModalOpen) {
                 if      (Input.isRepeated('right')) this._qtyAdjust(scene, +1);
@@ -732,19 +767,25 @@
                 else if (Input.isRepeated('up'))    this._qtyAdjust(scene, +10);
                 else if (Input.isRepeated('down'))  this._qtyAdjust(scene, -10);
                 else if (Input.isTriggered('ok'))   scene.confirmQuantity();
-                else if (Input.isTriggered('escape') || Input.isTriggered('cancel')) scene.cancelQuantity();
+                else if (Input.isTriggered('escape') || Input.isTriggered('cancel') || TouchInput.isCancelled()) scene.cancelQuantity();
                 return;
             }
 
+            const pad = typeof Input.lastInputDevice === 'function' && Input.lastInputDevice() === 'pad';
+
             // Left/Right switch shelves, L1/R1 walk the category chips above them,
-            // Up/Down move within the list.
-            if (Input.isTriggered('pageup')) {
-                scene.cycleCategory(-1);
-            } else if (Input.isTriggered('pagedown')) {
-                scene.cycleCategory(+1);
-            } else if (Input.isTriggered('left')) {
+            // Up/Down move within the list. On a keyboard Tab still opens the
+            // search, as it always has; Q/W walk the chips there.
+            if (!pad && Input.isTriggered('tab')) {
+                scene.toggleSearch();
+                return;
+            }
+            const tabDir = window.UINav ? UINav.tabDir() : 0;
+            if (tabDir) {
+                scene.cycleCategory(tabDir);
+            } else if (Input.isRepeated('left')) {
                 this._switchTab(scene, -1);
-            } else if (Input.isTriggered('right')) {
+            } else if (Input.isRepeated('right')) {
                 this._switchTab(scene, +1);
             } else if (Input.isRepeated('up')) {
                 this._move(scene, -1);
@@ -754,10 +795,6 @@
                 this._ok(scene);
             } else if (Input.isTriggered('shift')) {
                 this._cycleSort(scene);
-            } else if (Input.isTriggered('tab')) {
-                // Keyboard only, and deliberately: a pad cannot type a query in
-                // anyway, and the sort tags above are the reordering a pad has.
-                scene.toggleSearch();
             } else if (Input.isTriggered('escape') || Input.isTriggered('cancel') || TouchInput.isCancelled()) {
                 // Backing out of a search puts the field away and gives the
                 // whole shelf back before it closes the chest.
@@ -767,6 +804,10 @@
                     return;
                 }
                 scene.handleBack();
+            } else if (pad && Input.isTriggered('menu')) {
+                // A pad cannot type into the field, so Y opens the letter sheet
+                // for the query instead. B on the sheet closes the sheet only.
+                scene.openPadSearch();
             }
         },
 
@@ -850,6 +891,14 @@
 
     // `state` is the id the panel branches on; label and actionLabel are read
     // from Container.harvest.* so they follow the language.
+    // A person's body carries its own wounds (NPCSystem, DOWNED BODIES); a
+    // creature's are the shared record kept per enemy id.
+    function _corpsePartDamage(corpse) {
+        if (!corpse) return null;
+        if (corpse.partDamage) return corpse.partDamage;
+        return (window.BSE && window.BSE.enemyPartDamage && window.BSE.enemyPartDamage[corpse.enemyId]) || null;
+    }
+
     function _classifyPart(partDef, savedPart, enemyDef, harvestedParts, partKey) {
         const L = (k) => T('Container.harvest.' + k);
         if (harvestedParts && harvestedParts[partKey]) {
@@ -935,7 +984,7 @@
             const bse    = window.BSE;
             const corpse = this._corpse;
             if (!corpse || !corpse.enemyId) { this._partKeys = []; return; }
-            const pd = bse && bse.enemyPartDamage[corpse.enemyId];
+            const pd = _corpsePartDamage(corpse);
             let archetypeName = pd && pd.archetypeName;
             if (!archetypeName) {
                 const enemyData = $dataEnemies[corpse.enemyId];
@@ -956,6 +1005,7 @@
         _getEnemyName() {
             const corpse = this._corpse;
             if (!corpse || !corpse.enemyId) return T('Container.harvest.unknownEnemy');
+            if (corpse.npcName) return corpse.npcName;
             const e = $dataEnemies[corpse.enemyId];
             return e ? e.name : T('Container.harvest.unknownEnemy');
         }
@@ -1212,7 +1262,7 @@
                 if (!this._corpse) this._corpse = {};
                 if (!this._corpse._harvestedParts) this._corpse._harvestedParts = {};
                 this._corpse._harvestedParts[partKey] = true;
-                const pd = window.BSE && window.BSE.enemyPartDamage[this._corpse.enemyId];
+                const pd = _corpsePartDamage(this._corpse);
                 if (pd && pd.parts[partKey]) pd.parts[partKey].destroyed = true;
             } else {
                 // Failed roll: the attempt ruins the part. Grant nothing and mark
@@ -1222,7 +1272,7 @@
                 if (!this._corpse) this._corpse = {};
                 if (!this._corpse._harvestedParts) this._corpse._harvestedParts = {};
                 this._corpse._harvestedParts[partKey] = true;
-                const pd = window.BSE && window.BSE.enemyPartDamage[this._corpse.enemyId];
+                const pd = _corpsePartDamage(this._corpse);
                 if (pd && pd.parts[partKey]) pd.parts[partKey].destroyed = true;
             }
 
@@ -1245,7 +1295,7 @@
             if (!this._corpse) this._corpse = {};
             if (!this._corpse._harvestedParts) this._corpse._harvestedParts = {};
             this._corpse._harvestedParts[partKey] = true;
-            const pd = window.BSE && window.BSE.enemyPartDamage[this._corpse.enemyId];
+            const pd = _corpsePartDamage(this._corpse);
             if (pd && pd.parts[partKey]) pd.parts[partKey].destroyed = true;
             return amount;
         }

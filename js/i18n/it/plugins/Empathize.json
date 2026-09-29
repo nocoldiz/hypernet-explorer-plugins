@@ -85,6 +85,13 @@
   "relaxing": "Si rilassa",
   "socializing": "Socializza",
   "traveling": "In viaggio",
+  "shopping": "A fare compere",
+  "atSchool": "A scuola",
+  "tending": "Cura le piante",
+  "animalCare": "Si prende cura degli animali",
+  "routineSickLeave": "in malattia",
+  "routineParentalLeave": "in congedo parentale",
+  "routineMinigame": "a giocare",
   "onHand": "in tasca",
   "hungerLabel": "Fame",
   "sleepLabel": "Sonno",
@@ -137,6 +144,7 @@
   "briberyCaught": "{name} intasca l'oro ma ti avverte.",
   "bribeRefused": "{name} è troppo ostile per accettare.",
   "bribeRefusedLaw": "{name} rifiuta per principio e denuncia il tentativo.",
+  "bribeIncorruptible": "{name} è incorruttibile e non accetterà mai il tuo denaro.",
   "bribeSmall": "Piccola",
   "bribeMedium": "Media",
   "bribeLarge": "Grande",
@@ -318,6 +326,16 @@
   "noneCurrent": "Attualmente in buona salute.",
   "noneConditions": "Nessuna condizione permanente.",
   "noPast": "Nessuna malattia pregressa registrata.",
+  "woundsTitle": "Ferite",
+  "woundsHp": "Salute {hp} / {mhp}",
+  "woundBroken": "rotto",
+  "woundCut": "tagliato",
+  "woundLost": "perso",
+  "implantsTitle": "Impianti",
+  "implantsNone": "Nessun impianto.",
+  "implantOn": "Impiantato in: {part}",
+  "implantProsthetic": "protesi",
+  "woundsDowned": "a terra",
   "epidemicsTitle": "Epidemie vissute",
   "noEpidemics": "Mai coinvolto in un'epidemia.",
   "epidemicCaught": "l'ha contratta",
@@ -416,6 +434,29 @@
   "hometownLbl": "Città natale",
   "archetypeLbl": "Archetipo",
   "towardEmLbl": "Verso Em",
+  "convertingTo": "In conversione a {creed}: {pct}%",
+  "convertingBy": "(grazie a {name})",
+  "refugeeFleeing": "Si prepara a fuggire da {country}",
+  "refugeeSettled": "Profugo da {country}, dal {year}",
+  "refugeeCamp": "In un campo profughi, fuggito da {country} nel {year}",
+  "hordeIntegrated": "Vive nella società dei goblin",
+  "tripOnTheWay": "In viaggio verso {place}, {mode}",
+  "tripVisiting": "In visita a {place}",
+  "vehicle": {
+    "bike": "Si sposta in bicicletta",
+    "broom": "Si sposta a cavallo di una scopa",
+    "car": "Guida la propria auto"
+  },
+  "travelMode": {
+    "walk": "a piedi",
+    "bike": "in bicicletta",
+    "broom": "a cavallo di una scopa",
+    "train": "in treno",
+    "bus": "in autobus",
+    "carsharing": "in auto",
+    "taxi": "in taxi",
+    "car": "con la propria auto"
+  },
   "localOfficeLbl": "Carica",
   "holyLeader": "Guida spirituale",
   "petFollower": "Seguace",
@@ -1032,5 +1073,1192 @@
       ]
     }
   },
-  "worldPeopleTab": "Popolo"
+  "worldPeopleTab": "Popolo",
+  "bountyLbl": "Taglia",
+  "attackWanted": "{name} è ricercato, con una taglia di {bounty}. Abbatterlo non è un reato.",
+  "woundHealsIn": "guarisce in {days} g",
+  "woundsTreated": "curato",
+  "woundsNeedHealer": "ha bisogno di cure",
+  "healing": "Dal guaritore",
+  "activity": {
+    "swimming": "Sta nuotando",
+    "fishing": "Sta pescando",
+    "exploringTower": "In esplorazione nella Torre Omega",
+    "exploringDungeon": "In esplorazione nel sottosuolo",
+    "exploringSpace": "In esplorazione nello spazio",
+    "travelling": "In viaggio",
+    "relocating": "Sta traslocando",
+    "onLeave": {
+      "sick": "In malattia",
+      "parental": "In congedo parentale"
+    },
+    "school": "A scuola",
+    "play": "Sta giocando",
+    "fighting": "Sta combattendo",
+    "fleeing": "In fuga",
+    "downed": "A terra, ferito",
+    "recovering": "In convalescenza",
+    "minigame": "Ai giochi",
+    "beekeeping": "Si occupa delle api",
+    "brewing": "Bada alle botti",
+    "creature": {
+      "asleep": "Dorme",
+      "rest": "Riposa",
+      "graze": "Pascola",
+      "forage": "Cerca cibo",
+      "hunt": "Caccia",
+      "wander": "Vaga",
+      "drink": "Beve",
+      "groom": "Si pulisce",
+      "play": "Gioca",
+      "herd": "Con i suoi simili"
+    }
+  },
+  "shares": {
+    "holds": "Possiede azioni di {list}",
+    "item": "{company} ({value})"
+  },
+  "animalLifeEvents": "La sua vita",
+  "animalAge": "{stage}, {age}",
+  "dossier": {
+    "partnersLbl": "Partner",
+    "primaryTag": "principale",
+    "qpTag": "queerplatonico",
+    "qpWith": "Partner queerplatonico di",
+    "familyTitle": "Famiglia",
+    "childrenLbl": "Figli",
+    "parentsLbl": "Genitori",
+    "siblingsLbl": "Fratelli e sorelle",
+    "grandparentsLbl": "Nonni",
+    "grandchildrenLbl": "Nipoti",
+    "stage": {
+      "newborn": "neonato",
+      "child": "bambino",
+      "adult": "adulto"
+    },
+    "age": {
+      "one": "{count} anno",
+      "other": "{count} anni"
+    },
+    "more": "+{n} altri",
+    "expectingIn": {
+      "one": "In attesa, nascita tra {count} giorno",
+      "other": "In attesa, nascita tra {count} giorni"
+    },
+    "expectingSoon": "In attesa, nascita imminente",
+    "adoptingIn": {
+      "one": "Adozione in corso, a casa tra {count} giorno",
+      "other": "Adozione in corso, a casa tra {count} giorni"
+    },
+    "adoptingSoon": "Adozione in corso, a casa a giorni",
+    "withdrawal": "In astinenza: {name}",
+    "band": {
+      "tower": "Esplora la Torre Omega, piani da {low} a {high}, con {names}",
+      "towerAlone": "Esplora la Torre Omega, piani da {low} a {high}",
+      "towerSoon": "In partenza per la Torre Omega con {names}",
+      "towerSoonAlone": "In partenza per la Torre Omega",
+      "dungeon": "Esplora i sotterranei con {names}",
+      "dungeonAlone": "Esplora i sotterranei",
+      "dungeonSoon": "In partenza per i sotterranei con {names}",
+      "dungeonSoonAlone": "In partenza per i sotterranei",
+      "space": "Nello spazio con {names}",
+      "spaceAlone": "Nello spazio",
+      "spaceBase": "A bordo della nave in orbita bassa con {names}",
+      "spaceBaseAlone": "A bordo della nave in orbita bassa",
+      "spaceSoon": "In partenza per lo spazio con {names}",
+      "spaceSoonAlone": "In partenza per lo spazio",
+      "backIn": {
+        "one": "di ritorno tra {count} giorno",
+        "other": "di ritorno tra {count} giorni"
+      },
+      "backToday": "di ritorno oggi",
+      "leavesIn": {
+        "one": "parte tra {count} giorno",
+        "other": "parte tra {count} giorni"
+      },
+      "leavesToday": "parte oggi",
+      "withWhen": "{what}, {when}"
+    },
+    "artifactsTitle": "Artefatti",
+    "carryTitle": "Porta con sé",
+    "carry": {
+      "vehicle": "Mezzi",
+      "keys": "Chiavi",
+      "food": "Cibo",
+      "fix": "Dosi",
+      "other": "Altro"
+    },
+    "diet": {
+      "vegan": "Vegano",
+      "vegetarian": "Vegetariano"
+    },
+    "employerParty": "Dipendente del tuo gruppo"
+  },
+  "act": {
+    "help": {
+      "treatThem": "Presta cure",
+      "giveMedicine": "Dai una medicina",
+      "firstAid": "Primo soccorso",
+      "offerFix": "Offri una dose",
+      "intervene": "Intervieni",
+      "shelter": "Offri un tetto",
+      "pickTreat": "Cura {name} con",
+      "pickMedicine": "Medicina per {name}",
+      "pickFix": "Una dose per {name}",
+      "pickIntervene": "Convinci {name} a smettere con",
+      "pickShelter": "Un tetto per {name}",
+      "hintHeal": "Ridà {hp} di salute, {have} nello zaino",
+      "hintHealMedicine": "Ridà {hp} di salute e accelera la guarigione, {have} nello zaino",
+      "hintCure": "Cura {disease} in {days} giorni, {have} nello zaino",
+      "hintManage": "Tiene a bada {disease}, {have} nello zaino",
+      "hintFix": "{substance}: calma la voglia di {dose}, {have} nello zaino",
+      "hintIntervene": "Circa il {chance}% che ti ascolti",
+      "hintIntervened": "Sta già riducendo",
+      "hintShelterNone": "Nessuna città risponde per questa porta",
+      "reason": {
+        "hostile": "Non ti lascia avvicinare.",
+        "notHurt": "Non ha ferite.",
+        "noHealItems": "Nello zaino non c'è niente che curi.",
+        "notSick": "Non ha niente che tu possa curare.",
+        "noMedicine": "Nello zaino non c'è un rimedio per quello che ha.",
+        "notDowned": "È di nuovo in piedi.",
+        "downed": "È a terra: prima il primo soccorso.",
+        "notAddicted": "Non ha vizi da soddisfare.",
+        "noFix": "Nello zaino non c'è niente per il suo vizio.",
+        "fixedToday": "Per oggi ha avuto abbastanza da te.",
+        "distrust": "Non si fida abbastanza di te per ascoltarti.",
+        "intervenedLately": "Gliene hai parlato solo pochi giorni fa.",
+        "notInNeed": "Ha già un tetto sopra la testa.",
+        "noHome": "Il gruppo non possiede una casa da offrire.",
+        "cantMove": "Non può trasferirsi da qui."
+      },
+      "result": {
+        "treated": "{name} torna in sesto con {item}: +{hp} di salute.",
+        "medicine": "{name} inizia una cura di {item} per {disease}.",
+        "medicineManage": "{name} prende {item}: {disease} è tenuto a bada.",
+        "revived": "{name} riprende i sensi con un quarto della salute.",
+        "fix": "{name} prende {item}. La voglia di {substance} molla la presa, per ora.",
+        "intervened": "{name} accetta di ridurre {substance}. La voglia crescerà più lentamente per {days} giorni.",
+        "rebuffed": "{name} non vuole sentire una parola su {substance}.",
+        "sheltered": "{name} si trasferisce nella tua casa a {place}."
+      }
+    },
+    "games": {
+      "challenge": "Sfida a un gioco",
+      "pickGame": "Sfida {name} a",
+      "hintGame": "{spec}: tu {you}, avversario {them}",
+      "hintGameHere": "Al tavolo qui. {spec}: tu {you}, avversario {them}",
+      "pickBet": "Gioca a {game} per",
+      "betNone": "Solo per divertimento",
+      "bet": "Una scommessa di {price}",
+      "hintBetNone": "Non c'è niente in palio",
+      "hintBet": "Chi vince prende {price}",
+      "name": {
+        "cards": "carte",
+        "chess": "scacchi",
+        "pool": "biliardo",
+        "bowling": "bowling",
+        "basketball": "basket",
+        "arcade": "videogiochi",
+        "target": "tiro al bersaglio",
+        "piano": "un duetto al pianoforte"
+      },
+      "reason": {
+        "hostile": "Non vuole avere niente a che fare con te.",
+        "playedToday": "Ci hai già giocato oggi.",
+        "declined": "{name} rifiuta la partita.",
+        "cantBet": "Il gruppo non può coprire la scommessa.",
+        "theyCantBet": "Non vuole rischiare così tanto."
+      },
+      "result": {
+        "won": "Batti {name} a {game}.",
+        "lost": "{name} ti batte a {game}.",
+        "draw": "Tu e {name} finite {game} in parità.",
+        "wonBet": "Vinci {price} da {name}.",
+        "lostBet": "Perdi {price} con {name}.",
+        "seat": "{name} viene con te per una partita a {game}."
+      }
+    },
+    "romance": {
+      "introduce": "Presenta a qualcuno",
+      "pickMatch": "Presenta {name} a",
+      "hintMatch": "Circa il {chance}% che scatti la scintilla",
+      "reason": {
+        "distant": "Non ti conosce abbastanza da fidarsi della tua parola.",
+        "matchedToday": "Hai già fatto il sensale con questa persona oggi.",
+        "notSingle": "Uno dei due non è libero.",
+        "noMatch": "Nessuno che conosci fa al caso suo."
+      },
+      "result": {
+        "matched": "{name} e {other} vanno d'accordo. Ora si frequentano.",
+        "noSpark": "Tra {name} e {other} non scatta niente."
+      }
+    },
+    "talk": {
+      "rumours": "Voci e notizie",
+      "reason": {
+        "hostile": "Non ha niente da dirti.",
+        "noNews": "Ti ha già detto tutto quello che sa per oggi."
+      },
+      "result": {
+        "heard": "{name} ti racconta cosa si dice in giro."
+      }
+    },
+    "cat": {
+      "talk": "Parla",
+      "beliefs": "Credo",
+      "politics": "Politica",
+      "money": "Denaro",
+      "help": "Aiuto",
+      "work": "Lavoro e viaggi",
+      "lessons": "Lezioni",
+      "games": "Giochi",
+      "romance": "Romanticismo",
+      "rough": "Maniere forti"
+    },
+    "beliefs": {
+      "preach": "Predica",
+      "debate": "Dibatti",
+      "askViews": "Chiedi le sue idee",
+      "prayTogether": "Pregate insieme",
+      "reason": {
+        "sameCreed": "Condividete già questo credo.",
+        "unmovable": "Il suo credo è fisso, niente di ciò che dici lo smuoverà.",
+        "tired": "Avete già discusso abbastanza per oggi.",
+        "prayed": "Avete già pregato insieme oggi.",
+        "noCreed": "Non hai alcun credo per cui parlare.",
+        "notFaithful": "Pregano insieme solo due fedeli."
+      },
+      "result": {
+        "preachMoved": "{npc} è al {pct}% del cammino verso {creed}.",
+        "preachConverted": "{npc} si è convertito a {creed}.",
+        "preachUnmoved": "{npc} ti ha ascoltato e non si è smosso.",
+        "preachBackfire": "{npc} si è impuntato, e {actor} ne è uscito con dei dubbi.",
+        "debateWon": "{actor} ha vinto il dibattito: {npc} è al {pct}% del cammino verso {creed}.",
+        "debateWonUnmoved": "{actor} ha vinto il dibattito, ma {npc} non si è smosso.",
+        "debateLost": "{actor} ha perso il dibattito e ora pende al {pct}% verso {creed}.",
+        "actorConverted": "{actor} si è convertito a {creed}.",
+        "views": "{name}: {creed}, {family}.",
+        "viewsConverting": "Pende al {pct}% verso {creed}.",
+        "viewsParty": "Sostiene {party}.",
+        "viewsNoParty": "Non appartiene a nessun partito.",
+        "viewsVoted": "L'ultima volta ha votato {party}.",
+        "viewsNeverVoted": "Non ha ancora votato.",
+        "prayed": "{actor} e {npc} hanno pregato insieme."
+      },
+      "family": {
+        "left": "di sinistra",
+        "centreLeft": "di centrosinistra",
+        "centre": "di centro",
+        "right": "di destra",
+        "nationalist": "nazionalista",
+        "theocratic": "teocratico",
+        "monarchist": "monarchico",
+        "anarchist": "anarchico",
+        "militarist": "militarista",
+        "mystic": "mistico",
+        "horde": "dell'Orda",
+        "alien": "venuto da fuori questo mondo"
+      },
+      "actorDoubt": "Nel dubbio: {pct}% verso {creed}",
+      "actorDoubtBy": "(da quando ha parlato con {name})",
+      "lines": {
+        "preach": {
+          "speak": {
+            "default": [
+              "{Ascoltami|Senti}, {npc}. {creed} è l'unico modo in cui questo mondo {ha senso|sta in piedi}.",
+              "Meriti di meglio di quello in cui credi ora. {creed} {ha le risposte|è la risposta}.",
+              "Lascia che ti racconti cosa ha fatto {creed} per me, {npc}."
+            ],
+            "em": [
+              "Lo dirò una volta sola, {npc}, e lentamente: {creed} ha ragione. Tu no.",
+              "Ho letto più di te. {creed}. Scrivitelo."
+            ],
+            "bubba": [
+              "Senti, guaglio', mio padre credeva in {creed} e sul sugo non ha mai sbagliato.",
+              "{creed}, tesoro. Fidati di Bubba su questa."
+            ]
+          },
+          "moved": {
+            "default": [
+              "Forse hai ragione. {Ci penserò|Lasciami rifletterci}.",
+              "Uhm. {Non l'avevo mai vista così|In effetti ha senso}."
+            ],
+            "toEm": [
+              "Quando una strega lo dice così chiaro... {ci penserò|va bene, ti ascolto}."
+            ],
+            "toBubba": [
+              "Se ci crede Bubba Wilson, forse qualcosa di vero c'è."
+            ]
+          },
+          "unmoved": {
+            "default": [
+              "{Bel tentativo|Buon per te}, ma mi tengo quello che ho.",
+              "Le ho già sentite tutte. {No, grazie|Non fa per me}."
+            ],
+            "toEm": [
+              "Con rispetto, signorina, no."
+            ],
+            "toBubba": [
+              "Ammiro il suo lavoro, signor Wilson, ma no."
+            ]
+          },
+          "backfire": {
+            "default": [
+              "{Come ti permetti|Chi te l'ha chiesto}? Io credo in {theirs}, e ci penserei due volte sul tuo.",
+              "Di nuovo con questa storia? Vai a predicare da un'altra parte. {theirs} resta."
+            ],
+            "toEm": [
+              "Tieniti la predica, strega. {theirs} ha fatto per me più di quanto farai mai tu."
+            ],
+            "toBubba": [
+              "Nemmeno lei può vendermela, Wilson. {theirs}, sempre."
+            ]
+          }
+        },
+        "debate": {
+          "open": {
+            "default": [
+              "Risolviamola come si deve: {creed} contro {theirs}. {Comincia tu|Comincio io}.",
+              "Io difendo {creed}, tu difendi {theirs}. {Giusto|Affare fatto}?"
+            ],
+            "em": [
+              "Dibatti con me, {npc}. {creed} contro {theirs}. Cerca di starmi dietro."
+            ],
+            "bubba": [
+              "Va bene, jamme, io e te, {creed} contro {theirs}. Senza gridare."
+            ]
+          },
+          "won": {
+            "default": [
+              "{Non... ci avevo pensato|Qui mi hai preso}. {Dammi tempo|Fammi pensare}.",
+              "Va bene. L'hai argomentata meglio. Non dico che hai ragione. Per ora."
+            ],
+            "toEm": [
+              "Mi ha smontato pezzo per pezzo, signorina. Mi ci vorrà un po' per rimettermi insieme."
+            ],
+            "toBubba": [
+              "È più sveglio di quanto dicano i giornali, signor Wilson."
+            ]
+          },
+          "lost": {
+            "default": [
+              "{Ed ecco perché|Visto}? {theirs} regge. Pensaci mentre torni a casa.",
+              "Hai finito gli argomenti. {theirs} no."
+            ],
+            "toEm": [
+              "Non così brillante, dopotutto. {theirs}, signorina. Ci dia un'occhiata."
+            ],
+            "toBubba": [
+              "Torni alle sue invenzioni, signor Wilson. Questa la vince {theirs}."
+            ]
+          }
+        },
+        "views": {
+          "ask": {
+            "default": [
+              "In cosa credi, {npc}? {Sinceramente|Davvero}.",
+              "Da che parte stai, {in politica|sulle grandi questioni}?"
+            ],
+            "em": [
+              "Dimmi in cosa credi. Cercherò di non giudicarti. Ad alta voce."
+            ],
+            "bubba": [
+              "Allora, qual è la tua fede, tesoro? Politica, chiesa, quello che è."
+            ]
+          },
+          "answer": {
+            "default": [
+              "{creed}, {da quando ero giovane|da anni ormai}. {Perché lo chiedi|È lì che sto}.",
+              "Sono per {creed}, se proprio devi dargli un nome."
+            ],
+            "toEm": [
+              "{creed}. La prego, non mi maledica per questo."
+            ],
+            "toBubba": [
+              "{creed}, signor Wilson. Da sempre."
+            ]
+          }
+        },
+        "pray": {
+          "invite": {
+            "default": [
+              "Pregheresti un po' con me, {npc}?",
+              "{Preghiamo|Vogliamo pregare} insieme? Aiuta."
+            ],
+            "em": [
+              "Inginocchiati con me. Non dirò a nessuno che è stata un'idea mia."
+            ],
+            "bubba": [
+              "Vieni, diciamo una preghierina insieme, come faceva mia nonna."
+            ]
+          },
+          "agree": {
+            "default": [
+              "{Mi farebbe piacere|Volentieri}. {Grazie|È passato troppo tempo}.",
+              "Sì. Facciamolo."
+            ],
+            "toEm": [
+              "Con una strega? ...Sì. Perché no."
+            ],
+            "toBubba": [
+              "Pregare accanto a Bubba Wilson. Mia madre non ci crederà mai."
+            ]
+          }
+        }
+      },
+      "known": {
+        "title": "Opinioni condivise con {by}:",
+        "family": "Famiglia di credo: {family}"
+      }
+    },
+    "politics": {
+      "askVote": "Chiedi del suo voto",
+      "joinTheirParty": "Iscriviti a {party} (~{chance}%)",
+      "inviteToParty": "Invita in {party} (~{chance}%)",
+      "campaign": "Fai campagna per un partito",
+      "endorse": "Sostieni un candidato",
+      "petition": "Presenta una petizione",
+      "reason": {
+        "askedToday": "Glielo hai già chiesto oggi.",
+        "noParty": "Qui non c'è nessun partito a cui iscriversi.",
+        "noBallot": "Sulla sua scheda non c'è nessun partito per cui conquistarlo.",
+        "noElection": "Nessuna elezione in cui vota è abbastanza vicina.",
+        "noFavour": "La sua carica non ha favori da concedere.",
+        "noCharges": "Non hai nessuna accusa a tuo carico.",
+        "taxFloor": "La tassa è già al minimo.",
+        "youCantAfford": "Non puoi permetterti {price}."
+      },
+      "result": {
+        "voteSecret": "{npc} tiene il suo voto per sé.",
+        "voteParty": "{npc} sostiene {party}.",
+        "voteNoParty": "{npc} non appartiene a nessun partito.",
+        "voteLast": "L'ultima volta ha votato {voted}.",
+        "voteNever": "Non ha ancora votato.",
+        "joined": "{actor} si è iscritto a {party}.",
+        "joinRefused": "{party} non accetta {actor}.",
+        "invited": "{npc} si è iscritto a {party}.",
+        "inviteRefused": "{npc} non si iscriverà a {party}.",
+        "campaignLanded": "{npc} guarda con più favore a {party}.",
+        "campaignSwitched": "{npc} ora sostiene {party}.",
+        "campaignFailed": "{npc} non si è lasciato convincere.",
+        "endorseLanded": "{npc} penserà meglio di {candidate} alle urne.",
+        "endorseFailed": "{npc} non cambia idea su {candidate}.",
+        "pardonGranted": "{npc} ha fatto cadere l'accusa di {crime}, per {price}.",
+        "taxCutGranted": "{npc} ha fatto abbassare di un punto la tassa in {polity}, per {price}.",
+        "petitionRefused": "{npc} ha respinto la petizione."
+      },
+      "pick": {
+        "campaign": "Per quale partito fare campagna con {name}?",
+        "yourParty": "{party} (il tuo partito)",
+        "near": "Vicino alle sue idee",
+        "middling": "Un po' lontano dalle sue idee",
+        "far": "Lontano dalle sue idee",
+        "endorse": "Chi sostenere con {name}? Si vota tra {days} giorni.",
+        "teamCandidate": "{name} (il tuo candidato)",
+        "themselves": "{name} (se stesso)",
+        "petition": "Quale favore chiedere a {name}? (~{chance}%)",
+        "chance": "~{chance}% che accetti"
+      },
+      "favour": {
+        "pardon": "Far cadere l'accusa di {crime} ({price})",
+        "taxCut": "Abbassare di un punto la tassa in {polity} ({price})",
+        "noCharge": "niente"
+      },
+      "partyWarn": "Si sta allontanando da {party}: lontano dal suo programma",
+      "lines": {
+        "vote": {
+          "ask": {
+            "default": [
+              "Per chi voti, {npc}? {Se posso chiedere|Solo curiosità}.",
+              "Quale partito ha il tuo voto?"
+            ],
+            "em": [
+              "Il tuo voto. A chi va? Sto raccogliendo dati."
+            ],
+            "bubba": [
+              "Per chi voti, tesoro? Resta tra noi."
+            ]
+          },
+          "answer": {
+            "default": [
+              "{party}, {ogni volta|quasi sempre}. Qualcuno deve pur farlo.",
+              "Sto con {party}. {Non dirlo ai vicini|Con orgoglio}."
+            ],
+            "toEm": [
+              "{party}, signorina. È permesso?"
+            ],
+            "toBubba": [
+              "{party}, signor Wilson. E lei per chi vota?"
+            ]
+          },
+          "none": {
+            "default": [
+              "Nessuno. {Sono tutti uguali|Nessuno se lo merita}.",
+              "Non appartengo a nessun partito."
+            ],
+            "toEm": [
+              "Nessuno, signorina. Me ne tengo fuori."
+            ],
+            "toBubba": [
+              "Nessuno, signor Wilson. La politica non fa per me."
+            ]
+          },
+          "refuse": {
+            "default": [
+              "Sono {affari miei|cose private}, {scusa|se non ti dispiace}.",
+              "Preferisco {non dirlo|tenerlo per me}."
+            ],
+            "toEm": [
+              "Io... preferirei non dirlo, signorina."
+            ],
+            "toBubba": [
+              "Nemmeno per lei, signor Wilson, questo resta privato."
+            ]
+          }
+        },
+        "join": {
+          "ask": {
+            "default": [
+              "Parlami di {party}. Mi prenderebbero?",
+              "Vorrei iscrivermi a {party}. {Garantiresti per me|Mi iscrivi}?"
+            ],
+            "em": [
+              "{party}. Sto valutando l'iscrizione. Convincimi, o iscrivimi."
+            ],
+            "bubba": [
+              "Segna Bubba per {party}, eh? Porto io le lasagne."
+            ]
+          },
+          "yes": {
+            "default": [
+              "{Benvenuto a bordo|Felice di averti}! Ci vediamo alla prossima riunione.",
+              "Fatto. Ora sei uno di noi."
+            ],
+            "toEm": [
+              "Una strega in {party}. Sarà una riunione interessante."
+            ],
+            "toBubba": [
+              "Bubba Wilson in {party}! Aspetta che lo sappiano."
+            ]
+          },
+          "no": {
+            "default": [
+              "{Non credo|Non sono sicuro} che ti troveresti bene in {party}.",
+              "Sinceramente? Le tue idee non sono le nostre."
+            ],
+            "toEm": [
+              "{party} non è pronto per lei, signorina."
+            ],
+            "toBubba": [
+              "Mi spiace, signor Wilson. {party} non sarebbe mai d'accordo."
+            ]
+          }
+        },
+        "invite": {
+          "ask": {
+            "default": [
+              "Vieni in {party}, {npc}. {Ci serve gente come te|Ti troveresti benissimo}.",
+              "Hai mai pensato a {party}? C'è un posto per te."
+            ],
+            "em": [
+              "Iscriviti a {party}. Non ho l'abitudine di chiedere due volte."
+            ],
+            "bubba": [
+              "Vieni con noi in {party}, guaglio'. Alle riunioni si mangia bene."
+            ]
+          },
+          "yes": {
+            "default": [
+              "{Sai che ti dico|Perché no}? Ci sto.",
+              "Va bene, mi hai convinto. {party} sia."
+            ],
+            "toEm": [
+              "Se lo dice lei, signorina. Ci sto."
+            ],
+            "toBubba": [
+              "Per lei, signor Wilson? Certo!"
+            ]
+          },
+          "no": {
+            "default": [
+              "{No, grazie|Passo}. {party} non fa per me.",
+              "Non mi ci vedo in {party}."
+            ],
+            "toEm": [
+              "No, signorina. Grazie, ma no."
+            ],
+            "toBubba": [
+              "Farei molto per lei, signor Wilson, ma non questo."
+            ]
+          }
+        },
+        "campaign": {
+          "pitch": {
+            "default": [
+              "Hai visto per cosa si batte {party}? {Ha senso|È quello che ci serve}.",
+              "La prossima volta che voti, pensa a {party}."
+            ],
+            "em": [
+              "{party}. Leggi il loro programma. Poi rileggilo."
+            ],
+            "bubba": [
+              "Vota {party}, tesoro. Lo dice Bubba."
+            ]
+          },
+          "yes": {
+            "default": [
+              "{Forse hai ragione|Hai buoni argomenti}. Gli darò un'occhiata.",
+              "Uhm. {party}. Chissà."
+            ],
+            "toEm": [
+              "Lo leggerò, signorina. Due volte."
+            ],
+            "toBubba": [
+              "Se lo dice Bubba!"
+            ]
+          },
+          "no": {
+            "default": [
+              "{Neanche per sogno|Non credo proprio}. Non {party}.",
+              "Ho già deciso, grazie."
+            ],
+            "toEm": [
+              "No, signorina. Non loro."
+            ],
+            "toBubba": [
+              "Nemmeno per lei, signor Wilson."
+            ]
+          }
+        },
+        "endorse": {
+          "pitch": {
+            "default": [
+              "Quando voti, {pensa a|considera} {candidate}. {È la persona giusta|Non te ne pentirai}.",
+              "{candidate} ha il mio appoggio. Dovrebbe avere anche il tuo."
+            ],
+            "em": [
+              "{candidate}. È il nome che scriverai sulla scheda."
+            ],
+            "bubba": [
+              "Vota {candidate}, eh? Brava gente."
+            ]
+          },
+          "yes": {
+            "default": [
+              "{candidate}? {Va bene|Forse}, ci penserò.",
+              "Se garantisci tu per {candidate}, vale qualcosa."
+            ],
+            "toEm": [
+              "{candidate}. Capito, signorina."
+            ],
+            "toBubba": [
+              "{candidate}, allora, signor Wilson."
+            ]
+          },
+          "no": {
+            "default": [
+              "{candidate}? {No|Neanche per sogno}.",
+              "Ho già deciso, grazie."
+            ],
+            "toEm": [
+              "Non {candidate}, signorina. Mi spiace."
+            ],
+            "toBubba": [
+              "Mi spiace, signor Wilson, non {candidate}."
+            ]
+          }
+        },
+        "petition": {
+          "pardon": {
+            "default": [
+              "C'è la questione di {crime} sulla mia fedina. Il suo ufficio potrebbe {farla cadere|farla sparire}? Il costo è {price}.",
+              "Vorrei presentare una domanda di grazia per {crime}. Pago io i {price}."
+            ],
+            "em": [
+              "L'accusa di {crime}. Un malinteso. Ecco {price} per le scartoffie."
+            ],
+            "bubba": [
+              "Quella faccenda di {crime}, non era niente. {price} per il disturbo?"
+            ]
+          },
+          "taxCut": {
+            "default": [
+              "La tassa in {polity} sta schiacciando la gente. Un punto in meno {aiuterebbe|farebbe tanto}. Le spese di pratica sono {price}.",
+              "Presento una petizione per abbassare la tassa in {polity}. Copro io i {price}."
+            ],
+            "em": [
+              "Abbassate la tassa in {polity}. Ecco {price}. Lo consideri un investimento."
+            ],
+            "bubba": [
+              "Le tasse in {polity}, troppo alte! Ecco, {price}, fate una cosa buona."
+            ]
+          },
+          "yes": {
+            "default": [
+              "{Molto bene|Consideralo fatto}. Le carte saranno firmate oggi.",
+              "Concesso. Non farmene pentire."
+            ],
+            "toEm": [
+              "Concesso, signora. Con discrezione."
+            ],
+            "toBubba": [
+              "Per lei, signor Wilson, è fatta."
+            ]
+          },
+          "no": {
+            "default": [
+              "{Non posso farlo|È fuori discussione}. L'ufficio ha le sue regole.",
+              "No. Petizione respinta."
+            ],
+            "toEm": [
+              "Temo di no, signora."
+            ],
+            "toBubba": [
+              "Nemmeno per lei, signor Wilson, no."
+            ]
+          }
+        }
+      }
+    },
+    "money": {
+      "label": {
+        "stockTips": "Chiedi consigli in borsa",
+        "tradeShares": "Scambia azioni",
+        "lend": "Presta denaro",
+        "borrow": "Chiedi un prestito",
+        "repay": "Restituisci il prestito ({owed})"
+      },
+      "reason": {
+        "cooldown": "Hai già chiesto oggi.",
+        "cold": "Con te non parla di soldi.",
+        "hostile": "Non vuole avere niente a che fare con te.",
+        "alreadyLent": "Ti deve ancora il prestito precedente.",
+        "youCantAfford": "Non puoi permettertelo.",
+        "notFriends": "Lo farebbe solo per un buon amico.",
+        "noShares": "Non possiede azioni.",
+        "noMarket": "La borsa non è aperta.",
+        "npcCantAfford": "Non può pagarlo.",
+        "noNeed": "Non ha bisogno di soldi.",
+        "alreadyBorrowed": "Gli devi ancora dei soldi.",
+        "notRich": "Non ha niente da parte.",
+        "nothingOwed": "Non gli devi niente."
+      },
+      "tips": {
+        "ask": "{Qualche dritta sulla borsa?|Hai sentito di qualcosa che valga la pena comprare?|Dove metteresti i tuoi soldi adesso?}",
+        "up": "{Detto tra noi, {company} sta salendo.|Io comprerei {company} finché costa poco.|{company}. Ricordati le mie parole, salirà.}",
+        "down": "{Esci da {company} finché sei in tempo.|{company} sta per crollare, io non la toccherei.|Sto vendendo {company} senza far rumore. Trai le tue conclusioni.}",
+        "flat": "{{company} questa settimana non si muove.|Da {company} è tutto fermo. Aspetta e vedrai.}",
+        "cold": "{I miei soldi sono affari miei.|Non do consigli agli sconosciuti.}",
+        "done": "{name} ti ha dato una dritta su {company}."
+      },
+      "trade": {
+        "pickTitle": "Scambia azioni con {name}",
+        "buyRow": "Compra {company} a {unit} per azione",
+        "sellRow": "Vendi {company} a {unit} per azione",
+        "hintBuy": "Ne possiede {have}. Puoi permettertene {max}.",
+        "hintSell": "Ne possiedi {have}. Può pagarne {max}.",
+        "pickLots": "Quante azioni di {company}?",
+        "lot": "{count} azioni per {total}",
+        "buyAsk": "{Prendo {count} delle tue azioni {company}.|Mi vendi {count} azioni di {company}?}",
+        "sellAsk": "{Ho {count} azioni di {company} per te.|Vuoi {count} azioni di {company}?}",
+        "deal": "{{total} e sono tue. Fatto.|Affare fatto. {total}.|Mi sta bene, {total}.}",
+        "done": "{count} azioni di {company} sono passate di mano per {total}.",
+        "none": "{name} non ha niente da scambiare con te."
+      },
+      "lend": {
+        "pickTitle": "Quanto prestare a {name}?",
+        "row": "{amount}, da restituire come {owed} in {days} giorni",
+        "offer": "{Se sei a corto, posso prestarti {amount}.|Ti servono {amount}? Posso darteli.}",
+        "accept": "{Mi aiuterebbe più di quanto immagini. Riavrai {owed} tra {days} giorni.|Grazie. {owed} tra {days} giorni, hai la mia parola.}",
+        "noNeed": "{Gentile da parte tua, ma me la cavo.|Tienili, non mi servono {amount}.}",
+        "done": "Hai prestato {amount} a {name}. Ti deve {owed} entro {days} giorni."
+      },
+      "borrow": {
+        "pickTitle": "Quanto chiedere in prestito a {name}?",
+        "row": "{amount}, da restituire come {owed} in {days} giorni",
+        "ask": "{Potresti prestarmi {amount}?|Sono in difficoltà. {amount}, solo per una settimana?}",
+        "agree": "{Per te, sì. Mi ridai {owed} tra {days} giorni.|Va bene. Voglio {owed} tra {days} giorni.}",
+        "refuse": "{Non presto soldi a chi conosco appena.|No. Chiedi a qualcun altro.}",
+        "repay": "{Ecco quello che ti devo, {owed}.|Sono venuto a saldare: {owed}.}",
+        "thanks": "{Di parola. Grazie.|Saldato, e pure in anticipo.}",
+        "done": "Hai preso in prestito {amount} da {name}. Devi restituire {owed} entro {days} giorni.",
+        "repaid": "Hai restituito {owed} a {name}.",
+        "none": "{name} non può darti niente in questo momento."
+      },
+      "settle": {
+        "repaid": "{name} ti ha restituito {amount}.",
+        "defaulted": "{name} non ti ha mai restituito i {amount} che ti doveva.",
+        "paidBack": "{amount} sono tornati a {name}. Il prestito è saldato.",
+        "missed": "Hai saltato una rata di {amount} a {name}.",
+        "writtenOff": "{name} ha rinunciato ai {amount} che gli dovevi, e ti stima meno per questo.",
+        "forgiven": "I {amount} che dovevi a {name} ormai non li devi a nessuno.",
+        "vehicleBack": "{vehicle} è tornato a {name}.",
+        "vehicleKept": "{name} ha denunciato il furto del suo {vehicle}."
+      }
+    },
+    "work": {
+      "label": {
+        "askWork": "Chiedi lavoro",
+        "hire": "Assumi",
+        "fire": "Licenzia",
+        "workTogether": "Lavorate insieme",
+        "askRide": "Chiedi un passaggio",
+        "borrowVehicle": "Fatti prestare il mezzo",
+        "inviteMove": "Invita a trasferirsi",
+        "inviteExpedition": "Invita a una spedizione"
+      },
+      "reason": {
+        "cooldown": "Hai già chiesto di recente.",
+        "hostile": "Non vuole avere niente a che fare con te.",
+        "cold": "Preferisce di no.",
+        "notFriends": "Lo farebbe solo per un buon amico.",
+        "alreadyLent": "Ce l'hai ancora tu.",
+        "office": "Ricopre una carica.",
+        "requirements": "Non hai i requisiti per quel lavoro.",
+        "busy": "È già via per un turno.",
+        "noWork": "Non c'è lavoro da fare.",
+        "questTaken": "Quel contratto non c'è più.",
+        "noVacancy": "Quel posto non è più libero.",
+        "declined": "Ha rifiutato.",
+        "notYours": "Non lavora per te.",
+        "noCar": "Non ha un'auto.",
+        "noStop": "Nessun posto dove andare.",
+        "youCantAfford": "Non puoi permettertelo.",
+        "noVehicle": "Non ha niente da prestare.",
+        "rooted": "Non se ne andrà.",
+        "cannotGo": "Non può partire."
+      },
+      "shift": {
+        "0": "turno di notte",
+        "1": "turno di giorno",
+        "2": "turno serale"
+      },
+      "ask": {
+        "pickTitle": "Che lavoro conosce {name}?",
+        "shiftRow": "Un turno come {job} presso {place}",
+        "shiftHint": "{hours} ore, paga {pay}",
+        "questRow": "Contratto: {title}",
+        "questOwnHint": "Un avviso suo",
+        "questPassHint": "Qualcuno che conosce sta cercando",
+        "shiftAsk": "{Dove lavori prendono gente?|C'è qualche turno libero dove lavori?}",
+        "shiftVouch": "{Ci manca un {job}. Metterò una buona parola per te.|Passa, dirò che sei con me.}",
+        "questAsk": "{Conosci qualche lavoro pagato?|C'è qualcosa da fare, dietro compenso?}",
+        "questOwn": "{Guarda caso, ho messo un avviso io stesso: {title}.|Sì. {title}. È tuo se lo vuoi.}",
+        "questPass": "{Io no, ma so chi cerca: {title}.|Prova questo: {title}. Di' che ti mando io.}",
+        "dispatched": "{actor} è andato a lavorare un turno di {hours} ore come {job}.",
+        "worked": "{actor} ha lavorato un turno come {job} e ha guadagnato {pay}.",
+        "questTaken": "Contratto accettato: {title}.",
+        "none": "{name} non conosce lavoro per te."
+      },
+      "hire": {
+        "pickTitle": "Offri un posto a {name}",
+        "row": "{job} presso {place}",
+        "hint": "{shift}, paga {wage}",
+        "offer": "{Vieni a lavorare per me, come {job} presso {place}.|C'è un posto per te presso {place}: {job}, {wage} a turno.}",
+        "accept": "{Hai trovato il tuo {job}.|Quando comincio?|Meglio di quello che avevo. Sì.}",
+        "decline": "{Grazie, ma no.|Sto bene dove sono.}",
+        "done": "{name} ora lavora come {job} presso {place}.",
+        "none": "Non c'è nessun posto libero nelle tue attività della sua città."
+      },
+      "fire": {
+        "confirmTitle": "Licenziare {name} da {place}?",
+        "yes": "Licenzialo",
+        "no": "Tienilo",
+        "say": "{Mi dispiace. Dobbiamo lasciarti andare.|Il tuo posto presso {place} è finito.}",
+        "reply": "{Dopo tutto quello che ho fatto per quel posto?|Va bene. Spero che affondi senza di me.|Capisco. Grazie di niente.}",
+        "done": "{name} non lavora più per te."
+      },
+      "together": {
+        "ask": "{Ti spiace se oggi ti do una mano?|Lascia che faccia il turno con te.}",
+        "done": "{Niente male. Stessa ora domani?|In compagnia le ore sono volate.}",
+        "result": "{actor} ha lavorato {hours} ore accanto a {name} e ha guadagnato {pay}."
+      },
+      "ride": {
+        "pickTitle": "Dove dovrebbe portarti {name}?",
+        "hint": "Tariffa {fare}",
+        "hintHeading": "Ci va comunque. Tariffa {fare}",
+        "hintFree": "Gratis",
+        "ask": "{Potresti portarci a {place}?|Ci daresti un passaggio fino a {place}?}",
+        "agree": "{Sali. {fare} per la benzina.|{place}? Certo, per {fare}.}",
+        "agreeFree": "{Sali, offro io.|Per te? Niente.}",
+        "refuse": "{La mia auto non è un taxi.|Vai a piedi.}",
+        "done": "{name} ti sta portando a {place}.",
+        "none": "Non c'è nessun posto dove {name} ti porterebbe."
+      },
+      "vehicle": {
+        "ask": "{Mi presteresti il tuo {vehicle} per un giorno?|Mi presti il tuo {vehicle}? Te lo riporto domani.}",
+        "agree": "{Prendilo. Domani, mi raccomando.|Trattalo bene. Lo rivoglio tra un giorno.}",
+        "refuse": "{Il mio {vehicle} lo uso solo io.|Non presto il mio {vehicle}.}",
+        "done": "Hai preso in prestito {vehicle} di {name} per un giorno. Tenerlo è un furto."
+      },
+      "move": {
+        "pickTitle": "Dove invitare {name} a trasferirsi?",
+        "ask": "{Hai mai pensato di trasferirti a {place}?|A {place} ti aspetta una vita nuova.}",
+        "agree": "{Sai, credo che lo farò. {place}.|Perché no? Si ricomincia a {place}.}",
+        "agreeFamily": "{A tutti noi farebbe bene un cambiamento. Andremo a {place}.|Convincerò la famiglia. {place}.}",
+        "decline": "{La mia vita è qui.|{place}? Non durerei una settimana.}",
+        "done": "{name} si trasferisce a {place}.",
+        "doneFamily": "{name} si trasferisce a {place}, con altri {count} della famiglia.",
+        "none": "Non conosci nessuna città da suggerire."
+      },
+      "expedition": {
+        "pickTitle": "Dove dovrebbe andare all'avventura {name}?",
+        "towerRow": "La Torre Omega, piano {floor}",
+        "dungeonRow": "I sotterranei sotto il mondo",
+        "askTower": "{Ti va una scalata? Il piano {floor} della torre va ripulito.|Mettete insieme una compagnia e prendetevi il piano {floor}.}",
+        "askDungeon": "{Sotto il mondo c'è un tesoro per chi ha abbastanza coraggio.|Quassù sei sprecato. Scendi nei sotterranei.}",
+        "decline": "{Neanche per tutto l'oro della torre.|Non sono un avventuriero.}",
+        "joined": "{C'è una compagnia che parte presto. Andrò con loro.|Conosco gente che parte. Contate su di me.}",
+        "formed": "{Allora metterò insieme una compagnia mia.|Troverò dei compagni e partirò.}",
+        "done": "{name} parte per una spedizione."
+      }
+    },
+    "voice": {
+      "em": {
+        "money": {
+          "tips": {
+            "ask": "{Dimmi dove vanno i soldi. Saprò se menti.|Quale delle tue società sta per salire? Parla.}"
+          },
+          "trade": {
+            "buyAsk": "{Prendo {count} delle tue azioni {company}. Dimmi il prezzo e non offendermi.|{count} azioni di {company}. Consegnale.}",
+            "sellAsk": "{Ho {count} azioni di {company}. Puoi averle, a un prezzo giusto.|{count} azioni di {company}, maledette solo un poco. Le vuoi?}"
+          },
+          "lend": {
+            "offer": "{Sembri povero. Posso prestarti {amount}. Non costringermi a venirli a cercare.|{amount}. Prendili. Io ricordo ogni debito.}"
+          },
+          "borrow": {
+            "ask": "{Mi servono {amount}. Un prestito, non un regalo. Non sono una mendicante.|Prestami {amount}. Te li renderò, cosa che gli dèi non hanno mai fatto.}",
+            "repay": "{Ecco i tuoi {owed}. Contali. Io mantengo la parola.|{owed}, come promesso. Siamo pari.}"
+          }
+        },
+        "work": {
+          "ask": {
+            "shiftAsk": "{Dove lavori assumono? So fare cose. Molte cose.|Mi serve lavoro. Onesto, per lo più.}",
+            "questAsk": "{Qualcuno ha bisogno di qualcosa? Di difficile, possibilmente.|Cerco guai pagati. Ne conosci?}"
+          },
+          "hire": {
+            "offer": "{Lavora per me come {job} a {place}. Pago puntuale, il che è raro.|A {place} serve un {job}. Servi tu. Di' di sì.}"
+          },
+          "fire": {
+            "say": "{Hai finito a {place}. Mi dispiace, davvero. Più o meno.|Il tuo posto a {place} è finito. Non piangermi addosso.}"
+          },
+          "together": {
+            "ask": "{Farò il turno con te. Cerca di starmi dietro.|Lascia che ti aiuti. Mi annoio e tu sembri lento.}"
+          },
+          "ride": {
+            "ask": "{Portami a {place}. Volerei, ma la gente fissa.|Un passaggio fino a {place}. Per favore. Ho detto per favore.}"
+          },
+          "vehicle": {
+            "ask": "{Prestami il tuo {vehicle} per un giorno. Te lo restituirò senza fatture.|Il tuo {vehicle}. Un giorno. Te lo riporto.}"
+          },
+          "move": {
+            "ask": "{Dovresti trasferirti a {place}. Ho visto il tuo futuro qui ed è noioso.|{place}. Vai. Fidati di una strega.}"
+          },
+          "expedition": {
+            "askTower": "{Il piano {floor} della torre va ripulito. Saresti bravo a morirci. Scherzo.|Raduna una banda e prendi il piano {floor}. Credo in te. Un poco.}",
+            "askDungeon": "{C'è oro sotto il mondo. Vai a prenderlo.|I sotterranei ti chiamano. Li sento.}"
+          }
+        }
+      },
+      "bubba": {
+        "money": {
+          "tips": {
+            "ask": "{Ehi, tu sai qualcosa della borsa? Mio cugino continua a chiedermelo.|Dove li metteresti i soldi, tesoro? Io capisco solo di chiavi inglesi.}"
+          },
+          "trade": {
+            "buyAsk": "{Prenderei {count} delle tue azioni {company}, se per te va bene.|{count} azioni di {company}? Ti do un prezzo giusto.}",
+            "sellAsk": "{Ho {count} azioni di {company} in un cassetto. Le vuoi?|{count} azioni di {company}, guaglio'. Buone come l'oro.}"
+          },
+          "lend": {
+            "offer": "{Sei a corto questo mese? Ti posso anticipare {amount}, nessun problema.|Tieni, {amount}. Me li ridai quando puoi.}"
+          },
+          "borrow": {
+            "ask": "{Mi scoccia chiedertelo, ma mi presteresti {amount}?|Il tetto del capanno perde. {amount}, fino alla settimana prossima?}",
+            "repay": "{Ecco i tuoi {owed}, e grazie.|{owed}, come promesso. Un Wilson paga i suoi debiti.}"
+          }
+        },
+        "work": {
+          "ask": {
+            "shiftAsk": "{Dove lavori serve un paio di mani? Sono pratico.|C'è lavoro? Riparo quasi tutto.}",
+            "questAsk": "{Conosci qualcuno che ha un lavoretto da fare? Non ho paura di sporcarmi.|Qualcosa da aggiustare, per qualche euro?}"
+          },
+          "hire": {
+            "offer": "{Vieni a lavorare per me, {job} a {place}. Paga giusta, niente storie.|C'è un posto per te a {place}, come {job}. Che dici?}"
+          },
+          "fire": {
+            "say": "{Mi dispiace davvero. Dobbiamo lasciarti andare da {place}.|Non è facile da dire. Il tuo lavoro a {place} è finito.}"
+          },
+          "together": {
+            "ask": "{Ti spiace se oggi do una mano? Due mani sono meglio di una.|Lascia che ti aiuti col turno, eh?}"
+          },
+          "ride": {
+            "ask": "{Mi daresti un passaggio fino a {place}? Il mio furgone è a pezzi.|Mi porteresti a {place}?}"
+          },
+          "vehicle": {
+            "ask": "{Mi presteresti il tuo {vehicle} per un giorno? Te lo metto a punto.|Mi presti il {vehicle}? Torna domani, e va meglio.}"
+          },
+          "move": {
+            "ask": "{Hai mai pensato a {place}? Brava gente, lì.|A {place} servirebbe uno come te.}"
+          },
+          "expedition": {
+            "askTower": "{Il piano {floor} della torre va ripulito. Te la senti?|Raduna qualche amico e prendi il piano {floor}. L'attrezzatura te la sistemo io.}",
+            "askDungeon": "{Dicono che nei sotterranei ci sia un tesoro. Vai a prendertene un po'.|Sei sprecato in questa città. Scendi nei sotterranei.}"
+          }
+        }
+      },
+      "toEm": {
+        "money": {
+          "tips": {
+            "cold": "{Non do consigli sui soldi alle streghe.|Tenga il naso fuori dal mio borsellino, signorina.}",
+            "up": "{Detto tra noi, signorina, {company} sta salendo.|{company}. Sale. La prego, non la maledica.}",
+            "down": "{Venda {company}, signorina. Sta scendendo.|{company} sta affondando. Non l'ha sentito da me.}",
+            "flat": "{{company} non va da nessuna parte, signorina.|Da {company} non si muove niente. Proprio niente.}"
+          },
+          "trade": {
+            "deal": "{{total}, signorina. Un piacere. Credo.|Affare fatto, {total}. Tratta duro, per essere una strega.}"
+          },
+          "lend": {
+            "noNeed": "{Gentile, signorina, ma sto bene.|Non serve, davvero. Tenga i suoi {amount}.}",
+            "accept": "{Grazie, signorina. {owed} in {days} giorni, lo giuro.|È più gentile di quanto dicono. {owed} entro {days} giorni.}"
+          },
+          "borrow": {
+            "refuse": "{Prestare soldi a una strega? Piuttosto li presto al mare.|No, signorina. Neanche un centesimo.}",
+            "agree": "{Va bene, signorina. {owed} entro {days} giorni, e niente fatture.|Per lei, sì. {owed} in {days} giorni.}",
+            "thanks": "{Saldato. Grazie, signorina.|Siamo pari. Mantiene la parola, questo glielo concedo.}"
+          }
+        },
+        "work": {
+          "ask": {
+            "shiftVouch": "{Ci manca un {job}. Dirò che lei è... affidabile.|Passi. Metterò una buona parola, signorina.}",
+            "questOwn": "{In realtà ho pubblicato qualcosa io: {title}. È suo.|{title}. Se qualcuno può farlo, è una strega.}",
+            "questPass": "{Non io, ma qualcuno vuole questo: {title}.|Provi con {title}. Dica che la mando io, signorina.}"
+          },
+          "hire": {
+            "decline": "{Lavorare per una strega? No, grazie.|Sto bene dove sto, signorina.}",
+            "accept": "{Lavorare per la famosa Em? Sì!|Quando comincio, signorina?}"
+          },
+          "fire": {
+            "reply": "{Dopo tutto quello che ho fatto per lei, signorina?|Bene. Spero che la lancia la ritrovi.}"
+          },
+          "together": {
+            "done": "{Lavora sodo, per essere una strega. Grazie.|Le ore sono volate, signorina.}"
+          },
+          "ride": {
+            "refuse": "{La mia auto non è per le streghe.|Non può semplicemente volare, signorina?}",
+            "agree": "{Salga, signorina. {fare} per la benzina.|{place}? Va bene. {fare}.}",
+            "agreeFree": "{Salga, signorina. Gratis.|Per lei? Niente. Ma non fatturi i sedili.}"
+          },
+          "vehicle": {
+            "refuse": "{Il mio {vehicle} non va da nessuna parte con una strega.|No, signorina. Non il mio {vehicle}.}",
+            "agree": "{Lo prenda, signorina. Domani, mi raccomando.|Ne abbia cura. E niente incantesimi sui freni.}"
+          },
+          "move": {
+            "decline": "{La mia vita è qui, signorina.|{place}? No, signorina.}",
+            "agree": "{Se lo dice una strega... {place}, allora.|Sa, signorina, credo abbia ragione. {place}.}",
+            "agreeFamily": "{Andremo tutti a {place}, signorina. Mi ha convinto.|Alla famiglia farebbe bene {place}. Grazie, signorina.}"
+          },
+          "expedition": {
+            "decline": "{Non sono coraggioso come lei, signorina.|Nemmeno per tutto l'oro della torre.}",
+            "joined": "{Una banda parte presto. Andrò, signorina.|Ci sto. Per lei, signorina.}",
+            "formed": "{Allora radunerò una banda mia, signorina.|Troverò dei compagni e partirò. Vedrà.}"
+          }
+        }
+      },
+      "toBubba": {
+        "money": {
+          "tips": {
+            "cold": "{Mi scusi, signor Wilson, i miei soldi restano privati.|Nemmeno per lei, signor Wilson.}",
+            "up": "{Per lei, signor Wilson: {company} sta salendo.|{company}, signor Wilson. La compri.}",
+            "down": "{Esca da {company}, signor Wilson.|{company} sta affondando. Non dica che gliel'ho detto io.}",
+            "flat": "{{company} non va da nessuna parte, signor Wilson.|Niente da {company} questa settimana, signor Wilson.}"
+          },
+          "trade": {
+            "deal": "{{total}, signor Wilson. Fatto.|Affare. {total}, e grazie per le strade.}"
+          },
+          "lend": {
+            "noNeed": "{Gentile, signor Wilson, ma sto bene.|Li tenga, signor Wilson.}",
+            "accept": "{Grazie, signor Wilson. {owed} in {days} giorni.|Lei è un brav'uomo. {owed} entro {days} giorni.}"
+          },
+          "borrow": {
+            "refuse": "{Mi dispiace, signor Wilson, proprio non posso.|Non stavolta, signor Wilson.}",
+            "agree": "{Per lei, signor Wilson, certo. {owed} in {days} giorni.|Dopo quello che ha fatto per noi? Prenda. {owed} in {days} giorni.}",
+            "thanks": "{Puntualissimo. Grazie, signor Wilson.|Siamo pari. Sempre un piacere, signor Wilson.}"
+          }
+        },
+        "work": {
+          "ask": {
+            "shiftVouch": "{Ci serve un {job}. Sarebbero fortunati ad averla, signor Wilson.|Dirò loro che arriva Bubba Wilson.}",
+            "questOwn": "{Ho pubblicato qualcosa io: {title}. È suo, signor Wilson.|{title}. Nessuno meglio di lei.}",
+            "questPass": "{Provi questo, signor Wilson: {title}.|{title}. Dica che la mando io.}"
+          },
+          "hire": {
+            "decline": "{Grazie, signor Wilson, ma sono sistemato.|Sto bene dove sto, signor Wilson.}",
+            "accept": "{Lavorare per Bubba Wilson? Assolutamente.|Quando comincio, signor Wilson?}"
+          },
+          "fire": {
+            "reply": "{Anche lei, signor Wilson?|Capisco. Fa male lo stesso, signor Wilson.}"
+          },
+          "together": {
+            "done": "{Lavora per tre, signor Wilson.|Le ore sono volate. Grazie, signor Wilson.}"
+          },
+          "ride": {
+            "refuse": "{Mi scusi, signor Wilson, oggi l'auto non è libera.|Non oggi, signor Wilson.}",
+            "agree": "{Salga, signor Wilson. {fare} per la benzina.|{place}? Certo, {fare}.}",
+            "agreeFree": "{Salga, signor Wilson. Offro io.|Per lei? Gratis, sempre.}"
+          },
+          "vehicle": {
+            "refuse": "{Mi dispiace, signor Wilson, nessuno guida il mio {vehicle}.|Non il {vehicle}, signor Wilson.}",
+            "agree": "{Lo prenda, signor Wilson. Probabilmente me lo aggiusta pure.|Certo. Per domani, signor Wilson.}"
+          },
+          "move": {
+            "decline": "{La mia vita è qui, signor Wilson.|{place}? Non potrei, signor Wilson.}",
+            "agree": "{Se lo dice Bubba Wilson. {place}, allora.|Ha ragione, signor Wilson. {place}.}",
+            "agreeFamily": "{Andremo tutti a {place}, signor Wilson.|Alla famiglia farebbe bene {place}. Grazie, signor Wilson.}"
+          },
+          "expedition": {
+            "decline": "{Non sono un eroe, signor Wilson.|Nemmeno per tutto l'oro della torre.}",
+            "joined": "{Una banda parte presto. Andrò, signor Wilson.|Ci sto, signor Wilson.}",
+            "formed": "{Allora radunerò una banda mia, signor Wilson.|Troverò dei compagni e partirò.}"
+          }
+        }
+      }
+    },
+    "rough": {
+      "accuse": "Accusa di un crimine",
+      "accuseSelf": "Accusa te stesso",
+      "pickTitle": "Accusa {name} di...",
+      "pickSelf": "Accusa te stesso di...",
+      "reason": {
+        "accusedToday": "Li hai già accusati oggi.",
+        "noCrimes": "Non si conoscono crimini di cui accusare qualcuno.",
+        "noCrime": "Quel crimine non esiste."
+      },
+      "result": {
+        "npc": "{name} non lo dimenticherà. Opinione di {actor}: -{drop}.",
+        "flinch": "{name} ha sussultato a quella parola. Opinione di {actor}: -{drop}.",
+        "laugh": "{name} ci ha riso sopra, più o meno. Opinione di {actor}: -{drop}.",
+        "bond": "Il loro legame ha preso un colpo: -{drop}.",
+        "member": "{name} ci è rimasto male. Opinione di {actor}: -{drop}.",
+        "memberSilent": "{name} non dice nulla, ma ha sentito ogni parola.",
+        "self": "Nessun altro l'ha sentito."
+      },
+      "category": {
+        "Theft": "Furto",
+        "Violence": "Violenza",
+        "Property": "Proprietà",
+        "PublicOrder": "Ordine pubblico",
+        "Drugs": "Droga",
+        "WhiteCollar": "Colletti bianchi",
+        "Cyber": "Informatica",
+        "OrganizedCrime": "Crimine organizzato",
+        "Environmental": "Ambiente",
+        "Traffic": "Traffico",
+        "MinorOffenses": "Infrazioni minori",
+        "Judicial": "Giustizia",
+        "Weapons": "Armi",
+        "StateCrimes": "Crimini di Stato"
+      }
+    }
+  }
 }

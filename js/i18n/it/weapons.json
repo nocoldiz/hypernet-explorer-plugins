@@ -2209,7 +2209,7 @@
   },
   "663": {
     "name": "Proiettore di schiuma",
-    "description": "Arma sperimentale che spara schiuma adesiva\nper bloccare. Puo avvelenare."
+    "description": "Arma sperimentale che spara schiuma adesiva\nper bloccare. Puo stordire."
   },
   "664": {
     "name": "Lanciatore di reti elettriche",
@@ -2217,6 +2217,6 @@
   },
   "665": {
     "name": "Emettitore a microonde",
-    "description": "Emettitore direzionale che lancia un raggio\ndi microonde. Puo avvelenare."
+    "description": "Emettitore direzionale che lancia un raggio\ndi microonde. Puo stordire."
   }
 }

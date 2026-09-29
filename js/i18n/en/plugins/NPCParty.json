@@ -11,6 +11,7 @@
     "house": "the house in {place}",
     "ship": "the starship",
     "vault": "the bunker",
-    "cannotJoin": "{name} cannot take the road again right now."
+    "cannotJoin": "{name} cannot take the road again right now.",
+    "estate": "{name} in {place}"
   }
 }

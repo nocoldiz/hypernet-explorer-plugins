@@ -1,0 +1,672 @@
+{
+  "_comment": "Ideology framing layered on top of the personality voice (NPCConversation II.9 CREED VOICE). An NPC's creed is folded into one family by its axes (CreedVoice.ideologyFamily); a few creeds have a special bank that wins over their family. flavour is a stray aside; the other pools frame one topic. Every line is a short sentence appended after what was already said.",
+  "family": {
+    "left": {
+      "flavour": [
+        "{The workers built this town|Workers built all of this}, remember that.",
+        "{Solidarity|Solidarity, comrade}. It's the only thing that works.",
+        "The bosses {never|don't} lose sleep over any of it."
+      ],
+      "politics": [
+        "Parliament is a club for the owners.",
+        "{Nationalise it|Put it in common hands}, all of it."
+      ],
+      "work": [
+        "{Join the union|Get a union card}, that's my advice.",
+        "They pay us in crumbs and call it a wage."
+      ],
+      "war": [
+        "Rich men's war, poor men's blood.",
+        "The workers of {enemy} are not my enemy."
+      ],
+      "family": [
+        "A family needs a wage and a free clinic, not sermons.",
+        "Every child deserves a school and a hot meal."
+      ],
+      "goblins": [
+        "Even the goblins are ruled by a chief and his cronies.",
+        "The Horde is what happens when might owns everything."
+      ],
+      "money": [
+        "Money is theft with better tailoring.",
+        "{Rents|Prices} up, wages flat. Funny, that."
+      ],
+      "elections": [
+        "Vote left, then keep organising.",
+        "Whoever wins, the strike fund stays full."
+      ]
+    },
+    "centreLeft": {
+      "flavour": [
+        "A fair deal for everyone, that's all I ask.",
+        "{Reform|Steady reform}, not revolution.",
+        "Good schools and a decent pension. Is that too much?"
+      ],
+      "politics": [
+        "We need a government that {listens|actually listens}.",
+        "Compromise isn't a dirty word."
+      ],
+      "work": [
+        "Fair pay for a fair day.",
+        "A minimum wage never ruined anybody."
+      ],
+      "war": [
+        "Diplomacy first, always.",
+        "Send the ONU, not the tanks."
+      ],
+      "family": [
+        "{Childcare|Parental leave} should be a right.",
+        "A family shouldn't choose between rent and bread."
+      ],
+      "goblins": [
+        "We should take in the refugees from the Horde.",
+        "Walls won't stop the Horde. Alliances might."
+      ],
+      "money": [
+        "Tax the rich a little, help the rest a lot.",
+        "Public services are money well spent."
+      ],
+      "elections": [
+        "Every vote counts. Especially mine.",
+        "Turnout wins elections, not slogans."
+      ]
+    },
+    "centre": {
+      "flavour": [
+        "{Let's look at the numbers|The numbers never lie}.",
+        "Moderation in all things.",
+        "Both sides have a point, as usual."
+      ],
+      "politics": [
+        "Competent people in charge, that's all I want.",
+        "Less shouting, more planning."
+      ],
+      "work": [
+        "Efficiency pays everyone in the end.",
+        "Skills. Training. That's the answer."
+      ],
+      "war": [
+        "War is bad for trade and worse for people.",
+        "Sanctions first, then talks."
+      ],
+      "family": [
+        "Families need stability more than speeches.",
+        "Good planning starts at the kitchen table."
+      ],
+      "goblins": [
+        "A stable border is a sensible border.",
+        "The Horde is a problem to manage, not to scream about."
+      ],
+      "money": [
+        "A balanced budget helps everyone.",
+        "Markets work, mostly, with a referee."
+      ],
+      "elections": [
+        "I'll vote for whoever has a plan.",
+        "Read the manifestos. Nobody does."
+      ]
+    },
+    "right": {
+      "flavour": [
+        "{Hard work|Hard work and common sense} built this country.",
+        "Things were better when people knew their place.",
+        "{Tradition|Tradition matters}. Somebody has to say it."
+      ],
+      "politics": [
+        "Less government, lower taxes.",
+        "The state should keep its nose out of my business."
+      ],
+      "work": [
+        "Nobody ever got rich waiting for handouts.",
+        "An honest day's work, that's the secret."
+      ],
+      "war": [
+        "Strength keeps the peace.",
+        "A strong army means nobody tries it."
+      ],
+      "family": [
+        "The family is the bedrock of everything.",
+        "Children need discipline and church on Sunday."
+      ],
+      "goblins": [
+        "Secure the border first, ask questions later.",
+        "The Horde respects one thing: strength."
+      ],
+      "money": [
+        "Taxes are theft, politely collected.",
+        "Save your coins. The bank of mum and dad won't last."
+      ],
+      "elections": [
+        "Vote for order, not promises.",
+        "Anyone but the spenders."
+      ]
+    },
+    "nationalist": {
+      "flavour": [
+        "{Our nation first|The nation comes first}. Always.",
+        "Our flag has seen worse than this.",
+        "Foreign ideas, foreign trouble."
+      ],
+      "politics": [
+        "We need a strong hand at the top.",
+        "Enough talk. Leadership."
+      ],
+      "work": [
+        "Jobs for our own people first.",
+        "Buy local. Keep the money here."
+      ],
+      "war": [
+        "Every inch of our soil is sacred.",
+        "Let {enemy} come. We'll be ready."
+      ],
+      "family": [
+        "Big families make a strong nation.",
+        "Teach the children our history, all of it."
+      ],
+      "goblins": [
+        "Not one goblin crosses our border.",
+        "The Horde will break on us."
+      ],
+      "money": [
+        "Our money stays in our banks.",
+        "Foreign speculators are bleeding us dry."
+      ],
+      "elections": [
+        "Vote for the nation, not for parties.",
+        "A true patriot knows where to put the cross."
+      ]
+    },
+    "theocratic": {
+      "flavour": [
+        "{Heaven|The heavens} watch over this street.",
+        "Pray first, then act.",
+        "{Faith|Faith, friend}. It carries you."
+      ],
+      "politics": [
+        "No law stands above the divine.",
+        "The clergy should guide the state."
+      ],
+      "work": [
+        "Work is prayer with your hands.",
+        "Rest on the holy day, whatever the boss says."
+      ],
+      "war": [
+        "May heaven judge {enemy}.",
+        "A just war is fought with a clean heart."
+      ],
+      "family": [
+        "A blessed home is a happy home.",
+        "Children are a gift from above."
+      ],
+      "goblins": [
+        "The Horde are heathens. Pray for them, and bar the door.",
+        "Even goblins have souls, the priest says. I doubt it."
+      ],
+      "money": [
+        "Tithe first, then spend.",
+        "Gold won't follow you to heaven."
+      ],
+      "elections": [
+        "Vote as your conscience and your priest tell you.",
+        "Heaven doesn't need ballots, but we do."
+      ]
+    },
+    "monarchist": {
+      "flavour": [
+        "{Long live|God save} the crown.",
+        "A proper court gives a country dignity.",
+        "Blood tells, in the end."
+      ],
+      "politics": [
+        "Parliaments come and go. The crown remains.",
+        "A king above the parties, that's stability."
+      ],
+      "work": [
+        "Serve well and be rewarded.",
+        "Royal warrant on the door, that's quality."
+      ],
+      "war": [
+        "For the crown and the old banners.",
+        "The royal guard will see to {enemy}."
+      ],
+      "family": [
+        "Good families keep good lineages.",
+        "Every family should know its coat of arms."
+      ],
+      "goblins": [
+        "No goblin chief will ever sit on a throne.",
+        "The Horde has no nobility, only brutes."
+      ],
+      "money": [
+        "Old money knows how to behave.",
+        "The royal mint never lies."
+      ],
+      "elections": [
+        "Elect whoever you like. The crown remains.",
+        "Voting is a courtesy the crown allows."
+      ]
+    },
+    "anarchist": {
+      "flavour": [
+        "{No gods, no masters|No masters}.",
+        "Nobody needs a boss to be decent.",
+        "{Mutual aid|Help your neighbour}. That's all society is."
+      ],
+      "politics": [
+        "Every government is a gang with paperwork.",
+        "Burn the rulebook, keep the kindness."
+      ],
+      "work": [
+        "Workers' councils would run this better in a week.",
+        "My boss produces nothing but memos."
+      ],
+      "war": [
+        "Their wars, our dead.",
+        "Desert, all of you. Go home."
+      ],
+      "family": [
+        "Families are chosen as much as born.",
+        "Raise children free, not obedient."
+      ],
+      "goblins": [
+        "The Horde and the state have the same chief.",
+        "Free the goblins from their chiefs too."
+      ],
+      "money": [
+        "Money is a leash.",
+        "Share it out and see who starves."
+      ],
+      "elections": [
+        "If voting changed anything, they'd ban it.",
+        "I'm spoiling my ballot. Again."
+      ]
+    },
+    "militarist": {
+      "flavour": [
+        "{Discipline|Discipline and order}, that's what's missing.",
+        "A soldier's life teaches you everything.",
+        "Stand up straight when you talk to me."
+      ],
+      "politics": [
+        "Generals would run this better.",
+        "Parliament talks, the army acts."
+      ],
+      "work": [
+        "Every job is easier with a drill sergeant.",
+        "Punctual, polished, prepared."
+      ],
+      "war": [
+        "Victory over {enemy}, whatever the cost.",
+        "The army will finish this."
+      ],
+      "family": [
+        "My kids will serve, like I did.",
+        "A household runs on discipline."
+      ],
+      "goblins": [
+        "Give me a battalion and the Horde is history.",
+        "Goblins fight dirty. So should we."
+      ],
+      "money": [
+        "Spend it on the army first.",
+        "Military budget, the only budget that matters."
+      ],
+      "elections": [
+        "Vote for whoever funds the army.",
+        "A general on the ballot, that's what we need."
+      ]
+    },
+    "mystic": {
+      "flavour": [
+        "The stars {are restless|shifted} tonight.",
+        "{The leylines hum|Everything is connected}.",
+        "There are forces nobody talks about."
+      ],
+      "politics": [
+        "Governments rise and fall with the moon.",
+        "The council meets under the wrong sign."
+      ],
+      "work": [
+        "My tarot said this job wouldn't last.",
+        "Work with intention, the rest follows."
+      ],
+      "war": [
+        "{enemy} was born under a bad sign.",
+        "The omens were clear, and nobody listened."
+      ],
+      "family": [
+        "My grandmother read our fortunes over tea.",
+        "Every family has a guardian spirit."
+      ],
+      "goblins": [
+        "The Horde carries an old curse.",
+        "Goblin shamans know things we've forgotten."
+      ],
+      "money": [
+        "Money flows like the tides.",
+        "A coin found face up is a sign."
+      ],
+      "elections": [
+        "Vote when the moon is waxing.",
+        "The runes favour the underdog."
+      ]
+    },
+    "horde": {
+      "flavour": [
+        "{Strong eat first|The strong eat first}. That's the law.",
+        "Loud and proud, that's the way.",
+        "{Waaagh|Hah}! Good day for it."
+      ],
+      "politics": [
+        "The biggest chief makes the rules.",
+        "Talk is for losers. Shout is for chiefs."
+      ],
+      "work": [
+        "Work hard, fight harder.",
+        "Loot is honest pay."
+      ],
+      "war": [
+        "Crush {enemy}! Take their stuff!",
+        "War is the best party."
+      ],
+      "family": [
+        "Many kids, big clan.",
+        "Clan first, always."
+      ],
+      "goblins": [
+        "The Horde is family.",
+        "Goblins know how to live."
+      ],
+      "money": [
+        "Shiny things are for the strong.",
+        "Take it, it's yours now."
+      ],
+      "elections": [
+        "Voting? Just punch the other one.",
+        "Biggest one wins. Simple."
+      ]
+    },
+    "alien": {
+      "flavour": [
+        "{Fascinating|How quaint}, these local customs.",
+        "On my world this would be a greeting.",
+        "Your species {sleeps|eats} so often."
+      ],
+      "politics": [
+        "Your governments are adorable.",
+        "One planet, so many flags. Inefficient."
+      ],
+      "work": [
+        "You trade your time for tokens. Curious.",
+        "Labour, by hand? How primitive. How charming."
+      ],
+      "war": [
+        "You fight over lines on a map.",
+        "{enemy} and you share a planet. Share it."
+      ],
+      "family": [
+        "Human children are so noisy and so fragile.",
+        "Your families are so small."
+      ],
+      "goblins": [
+        "The goblins are the most honest of you.",
+        "The Horde at least says what it wants."
+      ],
+      "money": [
+        "Paper that means food. Remarkable.",
+        "Your economy is a group hallucination."
+      ],
+      "elections": [
+        "You choose rulers by counting paper. Delightful.",
+        "I would vote, but I'm not technically from here."
+      ]
+    }
+  },
+  "special": {
+    "juche": {
+      "flavour": [
+        "Self-reliance {above all|in everything}.",
+        "The Great Leader foresaw this day.",
+        "We need nothing from anyone."
+      ],
+      "politics": [
+        "The Party and the people are one heart.",
+        "Only the Leader's line is correct."
+      ],
+      "work": [
+        "Every shift is a battle for the revolution.",
+        "The quota will be exceeded, as always."
+      ],
+      "war": [
+        "Songun: the army comes first, then everything else.",
+        "{enemy} trembles before our resolve."
+      ],
+      "family": [
+        "Every family hangs the Leader's portrait with pride.",
+        "Our children sing for the Leader before breakfast."
+      ],
+      "goblins": [
+        "Even the Horde could learn self-reliance from us.",
+        "Goblins? Our border guards would not blink."
+      ],
+      "money": [
+        "We grow our own rice and build our own tractors.",
+        "Foreign money corrupts the revolutionary spirit."
+      ],
+      "elections": [
+        "One candidate, one heart, one hundred percent.",
+        "Turnout will be complete. It always is."
+      ]
+    },
+    "orthodox_communist": {
+      "flavour": [
+        "As the classics say, history has its laws.",
+        "{Comrade|Friend}, the dialectic doesn't lie.",
+        "The five-year plan is on schedule."
+      ],
+      "politics": [
+        "The Party line is clear, and so is my conscience.",
+        "Revisionists will be the death of the revolution."
+      ],
+      "work": [
+        "Stakhanov would have finished this by noon.",
+        "Norms are there to be beaten."
+      ],
+      "war": [
+        "Imperialism always ends in war. Read your Lenin.",
+        "The Red Army has seen off worse than {enemy}."
+      ],
+      "family": [
+        "The collective raises the child as much as the parents.",
+        "My grandfather built the tractor factory."
+      ],
+      "goblins": [
+        "The Horde is feudalism with fangs.",
+        "Even goblins need a vanguard party."
+      ],
+      "money": [
+        "Private profit is organised theft.",
+        "The state bank is the people's bank."
+      ],
+      "elections": [
+        "Bourgeois elections, bourgeois circus.",
+        "The Soviets decide, not the ballot box."
+      ]
+    },
+    "kemalist": {
+      "flavour": [
+        "Peace at home, peace in the world.",
+        "{Science|Reason and science} are the truest guides.",
+        "The Republic stands on six arrows."
+      ],
+      "politics": [
+        "Keep religion out of the state.",
+        "The Republic must be defended, from all sides."
+      ],
+      "work": [
+        "Modern industry, modern nation.",
+        "Every school teacher is a soldier of progress."
+      ],
+      "war": [
+        "The army guards the Republic, not a faction.",
+        "Independence is not negotiable, {enemy} should know."
+      ],
+      "family": [
+        "Our daughters study and vote, as they should.",
+        "Educate the children, and the nation follows."
+      ],
+      "goblins": [
+        "Superstition breeds hordes. Reason stops them.",
+        "The Horde is what backwardness looks like."
+      ],
+      "money": [
+        "A national economy for a national people.",
+        "Build our own railways, our own mills."
+      ],
+      "elections": [
+        "The ballot is the Republic's heart.",
+        "Vote for the Republic, not for the mosque or the pasha."
+      ]
+    },
+    "pacifist_theocratic": {
+      "flavour": [
+        "Peace be with you, and with your house.",
+        "{Turn the other cheek|Forgive, and keep forgiving}.",
+        "No blade ever healed anyone."
+      ],
+      "politics": [
+        "Govern with mercy, or not at all.",
+        "The holy council forbids all violence."
+      ],
+      "work": [
+        "Honest work is a quiet prayer.",
+        "Share the harvest with whoever is hungry."
+      ],
+      "war": [
+        "I pray for the soldiers of {enemy} as well.",
+        "Every war is a sin against heaven."
+      ],
+      "family": [
+        "A gentle home raises gentle children.",
+        "We never raise a hand to a child."
+      ],
+      "goblins": [
+        "Even the Horde deserves our prayers.",
+        "Feed the goblin at your gate, and he may leave in peace."
+      ],
+      "money": [
+        "Give freely. Heaven keeps the accounts.",
+        "Wealth is a test, not a prize."
+      ],
+      "elections": [
+        "I vote for whoever wants fewer soldiers.",
+        "Pray before you vote, and vote for peace."
+      ]
+    },
+    "trolling_humans": {
+      "flavour": [
+        "{Lol|Heh}, humans.",
+        "I told a human their shoelace was untied. It wasn't.",
+        "Your faces when you're confused. Priceless."
+      ],
+      "politics": [
+        "I voted for a potato last time. It nearly won.",
+        "Your parliaments are my favourite comedy."
+      ],
+      "work": [
+        "I moved every stapler in the office one inch left.",
+        "Work? I prefer wandering around looking busy."
+      ],
+      "war": [
+        "War is just trolling with worse manners.",
+        "Tell {enemy} their army's boots are on backwards."
+      ],
+      "family": [
+        "Human children are the best to confuse.",
+        "I taught a kid that clouds are sheep. Beautiful."
+      ],
+      "goblins": [
+        "Goblins are no fun, they troll back.",
+        "I swapped a goblin's helmet for a pot. He hasn't noticed."
+      ],
+      "money": [
+        "I pay in coins from three countries at once.",
+        "Watching you count change is my hobby."
+      ],
+      "elections": [
+        "I'm writing in 'the moon' again.",
+        "Elections are the best week of the year for pranks."
+      ]
+    },
+    "human_adoration_doctrine": {
+      "flavour": [
+        "{Humans are so precious|You are all so precious}.",
+        "Look at their little hands!",
+        "Every human is a miracle of carbon."
+      ],
+      "politics": [
+        "Human governments are so earnest. I love them.",
+        "Whatever humans decide, we adore it."
+      ],
+      "work": [
+        "Humans working hard makes me weep with joy.",
+        "Your tiny tools! Wonderful!"
+      ],
+      "war": [
+        "Please don't hurt each other. Please.",
+        "Tell {enemy} we love them too."
+      ],
+      "family": [
+        "Human babies are the best thing in the universe.",
+        "I would guard your children with my life."
+      ],
+      "goblins": [
+        "Goblins are not humans, but we pray for them anyway.",
+        "The Horde must not touch a single human hair."
+      ],
+      "money": [
+        "Take my coins, human, buy something lovely.",
+        "Humans deserve every comfort."
+      ],
+      "elections": [
+        "Every human vote is sacred.",
+        "Humans choosing leaders! So brave."
+      ]
+    },
+    "goblin_evangelism": {
+      "flavour": [
+        "The Great Goblin God {sees you|is coming}.",
+        "Have you heard the good news of the Horde?",
+        "{Repent|Convert} and join the clan."
+      ],
+      "politics": [
+        "Every throne will kneel to the goblin gospel.",
+        "The chiefs rule by divine grubbiness."
+      ],
+      "work": [
+        "Work for the clan, pray for the chief.",
+        "Sweat is holy water."
+      ],
+      "war": [
+        "Holy war against {enemy}, the god demands it.",
+        "Every conquest is a conversion."
+      ],
+      "family": [
+        "Raise your young in the goblin faith.",
+        "A big clan is a blessed clan."
+      ],
+      "goblins": [
+        "Goblins are the chosen people.",
+        "The Horde is the god's hand on earth."
+      ],
+      "money": [
+        "Tithe to the shrine and prosper.",
+        "The god loves shiny offerings."
+      ],
+      "elections": [
+        "The god has already chosen.",
+        "Vote goblin, or be converted."
+      ]
+    }
+  }
+}

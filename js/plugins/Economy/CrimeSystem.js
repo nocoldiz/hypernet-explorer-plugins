@@ -289,6 +289,16 @@
  * @text Clear Wanted Heat
  * @desc Call the manhunt off without touching the bounty.
  *
+ * @command bribeOfficer
+ * @text Bribe Officer
+ * @desc From an arrest: d20 + PSI against the officer's morality. Taken, that officer ignores the party. Refused, Bribery is filed and the event jumps to the retry label.
+ *
+ * @arg retryLabel
+ * @text Retry Label
+ * @desc Label jumped to when the bribe is not taken.
+ * @type string
+ * @default Restart
+ *
     * @command addCrimeFromVariable
  * @text Add Crime (Bounty from Variable)
  * @desc Add a new crime with bounty amount read from Variable 79
@@ -793,6 +803,163 @@
     crimesAgainstHumanity: "Guerilla Warfare",
     };
 
+    // ======================================================================
+    // JURISDICTIONS: whose law the party is standing under
+    // ======================================================================
+    // Three codes of law, and a record for each. Most of the world keeps the
+    // common code (PresetCrimes.json as it is written). The Holy Vatican
+    // Empire keeps canon law instead: its own charges, its own tariff, a list
+    // of sins the rest of the world never heard of, and a stretch of modern
+    // offences it simply does not recognise. The Goblin Horde permits
+    // everything except stealing.
+    //
+    // A bounty never crosses the border. The record the party is standing
+    // under is $gameSystem._crimeData, exactly as before, so every reader
+    // (the HUD, the officers, the trial, the prison, the N€police portal)
+    // settles whichever record is local without knowing there are two. The
+    // other one waits in $gameSystem._crimeSheets until the party crosses
+    // back, heat and all.
+    // i18n-ignore-start  hyperpower, jurisdiction and charge ids, never shown
+    const VATICAN_POWER = 'Holy Vatican Empire';
+    const GOBLIN_POWER = 'Goblin Horde';
+    const NEUTRAL_POWER = 'Neutral';
+    const LAW_COMMON = 'common';
+    const LAW_VATICAN = 'vatican';
+    const LAW_HORDE = 'horde';
+
+    // The Horde's law has one article: do not take what is not yours.
+    // Everything else is permitted, so only the thefts are ever filed on
+    // Horde ground, at the common tariff: every preset in the Theft category
+    // and the two ways of stealing a vehicle.
+    const HORDE_THEFT_CATEGORY = 'Theft';
+    const HORDE_THEFT_EXTRA = ['vehicleTheft', 'carjacking'];
+
+    // Canon law, read against the common catalogue: preset key -> [the canon
+    // charge it is filed under, what canon law asks for it in gold]. A preset
+    // key missing here is a crime the Holy Office does not recognise at all:
+    // traffic, the machine crimes, hunting and the environment, tax (the Empire
+    // collects tithes), loitering and littering, carrying a weapon.
+    const VATICAN_CANON = {
+        pettyTheft: ['theftFromTheFaithful', 150],
+        pickpocketing: ['theftFromTheFaithful', 200],
+        shoplifting: ['theftFromTheFaithful', 250],
+        robbery: ['theftFromTheFaithful', 2500],
+        armedRobbery: ['theftFromTheFaithful', 4000],
+        bankRobbery: ['theftFromTheFaithful', 8000],
+        grandTheft: ['theftFromTheFaithful', 5000],
+        vehicleTheft: ['theftFromTheFaithful', 1500],
+        carjacking: ['theftFromTheFaithful', 3500],
+        burglary: ['violationOfTheHearth', 1500],
+        breakingAndEntering: ['violationOfTheHearth', 1000],
+        trespassing: ['trespassOnConsecratedGround', 400],
+        unlawfulEntry: ['trespassOnConsecratedGround', 600],
+        graverobbing: ['desecrationOfTheDead', 20000],
+        assault: ['sheddingOfBlood', 600],
+        battery: ['sheddingOfBlood', 800],
+        aggravatedAssault: ['sheddingOfBlood', 2000],
+        hitAndRun: ['sheddingOfBlood', 3000],
+        murder: ['mortalSin', 30000],
+        manslaughter: ['mortalSin', 15000],
+        serialKilling: ['mortalSin', 80000],
+        abandonChild: ['abandonmentOfAnInnocent', 12000],
+        animalCruelty: ['crueltyToCreation', 800],
+        abandonPet: ['crueltyToCreation', 600],
+        vandalism: ['sacrilege', 800],
+        propertyDestruction: ['sacrilege', 1200],
+        arson: ['sacrilege', 6000],
+        publicDisturbance: ['disturbingTheHolyPeace', 100],
+        disorderlyConduct: ['disturbingTheHolyPeace', 150],
+        disturbing: ['disturbingTheHolyPeace', 100],
+        noisePollution: ['disturbingTheHolyPeace', 80],
+        harassment: ['disturbingTheHolyPeace', 400],
+        publicIntoxication: ['intemperance', 300],
+        underageDrinking: ['intemperance', 300],
+        drugPossession: ['intemperance', 800],
+        drugDealing: ['peddlingOfVice', 4000],
+        drugTrafficking: ['peddlingOfVice', 12000],
+        smuggling: ['peddlingOfVice', 5000],
+        contraband: ['peddlingOfVice', 1200],
+        bribery: ['simony', 3000],
+        corruption: ['simony', 8000],
+        embezzlement: ['simony', 5000],
+        fraud: ['simony', 3000],
+        moneyLaundering: ['simony', 6000],
+        extortion: ['usury', 3000],
+        blackmail: ['usury', 2500],
+        perjury: ['falseWitness', 4000],
+        forgery: ['falseWitness', 2000],
+        counterfeiting: ['falseWitness', 3000],
+        identityTheft: ['falseWitness', 2000],
+        kidnapping: ['tradeInSouls', 15000],
+        hostage: ['tradeInSouls', 12000],
+        humanTrafficking: ['tradeInSouls', 40000],
+        slavery: ['tradeInSouls', 30000],
+        contemptOfCourt: ['defianceOfTheHolyOffice', 1500],
+        obstructingJustice: ['defianceOfTheHolyOffice', 2500],
+        resistingArrest: ['defianceOfTheHolyOffice', 1000],
+        escapingCustody: ['defianceOfTheHolyOffice', 5000],
+        prisonBreak: ['defianceOfTheHolyOffice', 12000],
+        illegalWeapons: ['armingTheUnfaithful', 3000],
+        weaponsTrafficking: ['armingTheUnfaithful', 8000],
+        treason: ['treasonAgainstTheThrone', 60000],
+        espionage: ['treasonAgainstTheThrone', 40000],
+        terrorism: ['abomination', 100000],
+        bioterrorism: ['abomination', 1000000],
+        warCrimes: ['abomination', 150000],
+        genocide: ['abomination', 500000],
+        crimesAgainstHumanity: ['abomination', 300000],
+    };
+
+    // Sins only canon law knows, and what they cost in gold. Filed anywhere
+    // else in the world they are not recognised.
+    const VATICAN_SINS = {
+        witchcraft: 25000,      // a Witch in the party
+        gunmancy: 25000,        // a Gunmancer in the party
+        heresy: 15000,          // an esoteric spell cast on the Empire's soil
+        forbiddenArts: 50000,   // a forbidden spell cast on the Empire's soil
+        atheism: 10000,         // an atheist in the party
+    };
+
+    // Classes the Holy Office marks on sight: Witch (2) and Gunmancer (16).
+    // The mark is PERMANENT: it is filed on the person, not on a deed, so no
+    // fine, bribe or pardon lifts it; only a served sentence does, and it is
+    // filed again the next time they cross into the Empire.
+    const VATICAN_MARKED_CLASSES = { 2: 'witchcraft', 16: 'gunmancy' };
+    // The Atheist trait (Traits.json 117).
+    const ATHEIST_TRAIT_ID = 117;
+    // i18n-ignore-end
+
+    // Canon law does not forget: a manhunt takes three times as long to blow
+    // over inside the Empire.
+    const VATICAN_HEAT_DECAY_HOURS = 12;
+
+    // The country the party is standing in: WeatherSystem's live entry first
+    // (Countries.json repeats ids, so the entry beats Variable 86), then the id.
+    function currentCountryEntry() {
+        const w = (typeof $gameWeather !== 'undefined') ? $gameWeather : null;
+        if (w && w.currentCountry && w.currentCountry.country) return w.currentCountry;
+        const list = window.WorldGen && window.WorldGen.Countries;
+        if (!Array.isArray(list) || typeof $gameVariables === 'undefined' || !$gameVariables) return null;
+        const id = $gameVariables.value(86);
+        return list.find(c => c && c.id === id) || null;
+    }
+
+    // Who holds a nation right now, read the way NPCPolitics reads it: the
+    // live timeline first, then Countries.json, where a `faction` naming a
+    // hyperpower counts as much as a `controller`.
+    function controllerOfCountry(entry) {
+        if (!entry || !entry.country) return NEUTRAL_POWER;
+        const hm = window.HistoryManager;
+        const sim = (hm && typeof hm.getNationState === 'function') ? hm.getNationState(entry.country) : null;
+        if (sim && sim.controller && sim.controller !== NEUTRAL_POWER) return sim.controller;
+        if (entry.controller && entry.controller !== NEUTRAL_POWER) return entry.controller;
+        return entry.faction && entry.faction !== NEUTRAL_POWER ? entry.faction : NEUTRAL_POWER;
+    }
+
+    function sumBounty(list) {
+        return (list || []).reduce((sum, c) => sum + ((c && c.bounty) || 0), 0);
+    }
+
     // Somebody who knows the work leaves less behind for the nEuroPolice to
     // find, so the same act attracts a smaller bounty (Streetwise, 6304 band).
     // Floored at 70%: getting good at crime never makes it free.
@@ -817,9 +984,11 @@
             if (!$gameSystem._crimeData) {
                 $gameSystem._crimeData = {
                     crimes: [],
+                    marks: [],
                     totalBounty: 0
                 };
             }
+            if (!Array.isArray($gameSystem._crimeData.marks)) $gameSystem._crimeData.marks = [];
 
             // Initialize window.playerCrimes array
             if (!window.playerCrimes) {
@@ -843,13 +1012,14 @@
             const data = $gameSystem._crimeData;
             const shown = $gameVariables.value(bountyVariableId) || 0;
 
-            if (data.crimes.length) {
+            if (data.crimes.length || data.marks.length) {
                 if (shown <= 0) {
                     // Settled somewhere that only wrote the variable (time
                     // served, a pardon, a savegame written before this):
                     // the sheet goes with it, or the next crime committed
                     // re-totals it and hands the party their old bounty back.
                     data.crimes = [];
+                    data.marks = [];
                     data.totalBounty = 0;
                 } else {
                     this.recalculateBounty();
@@ -887,6 +1057,9 @@
             // The officer pages are conditioned on it, so the map has to
             // re-read them for a chase to start or stop.
             if ($gameMap) $gameMap.requestRefresh();
+            // More heat, more police: NPCSystem calls in (or stands down) the
+            // extra patrols on the map the party is standing on.
+            try { window.NPCSystem?.onHeatChanged?.(next); } catch (e) { /* the heat is set either way */ }
             return next;
         }
 
@@ -1011,6 +1184,8 @@
         // otherwise the trail cools with the clock (faster in dark/night conditions).
         static updateHeat() {
             if (!$gameVariables) return;
+            // Crossing a border swaps the record before anything reads it.
+            this.syncJurisdiction();
             const now = this.worldMinute();
             const heat = this.getHeat();
             // Whatever else happens this tick, the officer events are told the
@@ -1046,7 +1221,8 @@
             const minutes = now - since;
             if (minutes <= 0) return;
             // Trails cool 50% faster in dark/night conditions
-            const decayRate = isDarkOrNightCrimeEnvironment() ? (HEAT_DECAY_PER_MINUTE * 1.5) : HEAT_DECAY_PER_MINUTE;
+            const baseRate = this.heatDecayPerMinute();
+            const decayRate = isDarkOrNightCrimeEnvironment() ? (baseRate * 1.5) : baseRate;
             const shed = Math.floor(minutes * decayRate);
             if (shed < 1) return;
             // Spend only the minutes that paid for a whole point. At this rate
@@ -1088,6 +1264,8 @@
                 const distance = dx + dy;
                 if (distance > spotRange) continue;
                 if (!isOfficerEvent(ev)) continue;
+                // A bribed officer is paid not to have seen anybody.
+                if (this.isBribedOfficer(ev)) continue;
                 if (distance > HEAT_SPOT_TOUCH) {
                     if (!inSightCone(ev, px, py, spotCone)) continue;
                     if (!hasSightLine(ev.x, ev.y, px, py)) continue;
@@ -1105,8 +1283,11 @@
             return this.setHeat(next);
         }
 
-        static addCrime(crimeName, bountyAmount, crimeId = null) {
+        // options.mark      the actor id a permanent canon mark is filed on
+        // options.canonical the name and bounty are already canon law's own
+        static addCrime(crimeName, bountyAmount, crimeId = null, options = {}) {
             this.initialize();
+            options = options || {};
 
             // A crime needs somebody to have been wronged and somebody left to
             // answer to. An empty world has neither: nothing is filed, no
@@ -1119,6 +1300,25 @@
                 }
                 return;
             }
+
+            // Whose law is this filed under? The deed is judged by the code of
+            // the ground it was done on, and a deed that code does not know is
+            // no crime there at all.
+            this.syncJurisdiction();
+            let charge = null;
+            if (!options.canonical) {
+                const law = this.lawFor(crimeId, crimeName, bountyAmount);
+                if (!law) {
+                    this.showNotRecognisedNotification();
+                    return;
+                }
+                crimeName = law.name;
+                bountyAmount = law.bounty;
+                charge = law.charge || null;
+            }
+            // The Holy Office answers to nobody's badge and discounts nothing
+            // for a professional hand: a canon sin is charged in full.
+            const inquisition = !!options.canonical || !!VATICAN_SINS[crimeId];
 
             // Sandbox mode: the player self-pardons on the spot, no bounty added.
             const isSandbox = !!($gameSystem && $gameSystem._isSandboxMode);
@@ -1134,14 +1334,14 @@
 
             // A professional attracts less attention. Applied after the two
             // early-outs above, so a pardoned or immune crime stays at zero.
-            bountyAmount = bountyAfterStreetwise(bountyAmount);
+            if (!inquisition) bountyAmount = bountyAfterStreetwise(bountyAmount);
 
             // ...and an officer of the law signs their own report. A Police
             // Officer travelling with the party can write off charges worth
             // 5000 gold a day per level of rank, and a second officer signs for
             // their own allowance on top. What the badge covers never reaches
             // the record at all: it was done in the name of the law.
-            const lawful = this.trySelfPardon(bountyAmount);
+            const lawful = inquisition ? null : this.trySelfPardon(bountyAmount);
             if (lawful) bountyAmount = 0;
 
             // Doing it is the lesson. The leader is the one who did it, so no
@@ -1157,14 +1357,21 @@
                 id: crimeId,
                 timestamp: getGameDateTimeString()
             };
+            if (charge) crime.charge = charge;
 
-            $gameSystem._crimeData.crimes.push(crime);
-            $gameSystem._crimeData.totalBounty += bountyAmount;
-
-            // Add crime ID to window.playerCrimes if provided
-            if (crimeId) {
-                window.playerCrimes.push(crimeId);
+            if (options.mark != null) {
+                // A mark is filed on a person and sits apart from the charges,
+                // so nothing that settles a charge can reach it.
+                crime.actorId = options.mark;
+                $gameSystem._crimeData.marks.push(crime);
+            } else {
+                $gameSystem._crimeData.crimes.push(crime);
+                // Add crime ID to window.playerCrimes if provided
+                if (crimeId) {
+                    window.playerCrimes.push(crimeId);
+                }
             }
+            $gameSystem._crimeData.totalBounty += bountyAmount;
 
             // Update bounty variable
             if ($gameVariables) $gameVariables.setValue(bountyVariableId, $gameSystem._crimeData.totalBounty);
@@ -1320,7 +1527,15 @@
             return !!this.grudgeLedger()[key];
         }
 
+        // A counter on the party's own deed never shuts them out: the keeper
+        // works for them, whatever went missing from the till.
+        static isOwnCounter(mapId) {
+            const P = window.PropertyOwnership;
+            return !!(P && typeof P.ownsShopCounter === 'function' && P.ownsShopCounter(mapId));
+        }
+
         static vendorRefusesHere(mapId, eventId) {
+            if (this.isOwnCounter(mapId)) return false;
             return this.vendorRefuses(vendorKey(mapId, eventId));
         }
 
@@ -1328,8 +1543,10 @@
         // the police whatever they thought of the party, and they close their
         // door to it for good.
         static caughtStealingFrom(mapId, eventId, keeperName, spec = {}) {
-            const key = vendorKey(mapId, eventId);
-            this.refuseVendor(key, keeperName);
+            // Robbing the party's own shop is still a theft the keeper reports,
+            // but they cannot bar the door to the people who own it.
+            const ownCounter = this.isOwnCounter(mapId);
+            if (!ownCounter) this.refuseVendor(vendorKey(mapId, eventId), keeperName);
             // The charge itself is common event 125's job, so only the deed and
             // the grudge are settled here.
             const result = this.commit(Object.assign({
@@ -1339,7 +1556,7 @@
                 target: spec.itemName || null,
                 file: false,
             }, spec));
-            if (window.ParchmentToast) {
+            if (!ownCounter && window.ParchmentToast) {
                 window.ParchmentToast.show(
                     T('Crime.vendorRefusesForever', { keeper: keeperName || T('Crime.theShopkeeper') }),
                     { severity: 'danger' }
@@ -1527,7 +1744,10 @@
 
         static addPresetCrime(crimeKey) {
             const crime = PresetCrimes[crimeKey];
-            if (crime) {
+            if (!crime && VATICAN_SINS[crimeKey]) {
+                // A sin only canon law knows; filed elsewhere, addCrime says so.
+                this.addCrime(this.canonChargeName(crimeKey), VATICAN_SINS[crimeKey], crimeKey);
+            } else if (crime) {
                 // Pass the crimeKey as the ID
                 this.addCrime(this.presetCrimeName(crimeKey), crime.bounty, crimeKey);
             } else {
@@ -1616,10 +1836,15 @@
         static clearBounty(options) {
             this.initialize();
 
+            // Time served lifts everything on the local record, canon marks
+            // included. The shopkeepers' grudge is not the court's to lift.
+            const refusedVendors = $gameSystem._crimeData.refusedVendors;
             $gameSystem._crimeData = {
                 crimes: [],
+                marks: [],
                 totalBounty: 0
             };
+            if (refusedVendors) $gameSystem._crimeData.refusedVendors = refusedVendors;
 
             // Clear window.playerCrimes array
             window.playerCrimes = [];
@@ -1681,9 +1906,22 @@
             return removed;
         }
 
+        // The canon marks on the local record: filed on a person, never on a
+        // deed, so they are listed apart from getCrimes() and nothing that
+        // pays or pardons a charge can touch them.
+        static getMarks() {
+            this.initialize();
+            return $gameSystem._crimeData.marks;
+        }
+
+        // What money can settle: the charges, never the marks.
+        static payableBounty() {
+            return sumBounty(this.getCrimes());
+        }
+
         static recalculateBounty() {
             this.initialize();
-            const total = this.getCrimes().reduce((sum, c) => sum + (c.bounty || 0), 0);
+            const total = sumBounty(this.getCrimes()) + sumBounty(this.getMarks());
             if ($gameSystem._crimeData) $gameSystem._crimeData.totalBounty = total;
             if ($gameVariables) $gameVariables.setValue(bountyVariableId, total);
             if (total <= 0) this.clearHeat();
@@ -1704,7 +1942,8 @@
             }
 
             const crimes = this.getCrimes();
-            if (!crimes.length) {
+            const marks = this.getMarks();
+            if (!crimes.length && !marks.length) {
                 // Nothing itemised to trim (a bounty set outright by a debug
                 // tool or an event): the variable is all there is.
                 if ($gameVariables) $gameVariables.setValue(bountyVariableId, target);
@@ -1712,7 +1951,7 @@
                 return target;
             }
 
-            let total = crimes.reduce((sum, c) => sum + (c.bounty || 0), 0);
+            let total = sumBounty(crimes) + sumBounty(marks);
             while (crimes.length && total > target) {
                 const oldest = crimes[0];
                 const worth = oldest.bounty || 0;
@@ -1724,7 +1963,356 @@
                     total = target;
                 }
             }
+            // Time in a cell is the one thing that wears a canon mark down,
+            // and it only reaches the marks once every charge is served.
+            while (marks.length && total > target) {
+                const oldest = marks[0];
+                const worth = oldest.bounty || 0;
+                if (worth <= total - target) {
+                    total -= worth;
+                    marks.shift();
+                } else {
+                    oldest.bounty = worth - (total - target);
+                    total = target;
+                }
+            }
             return this.recalculateBounty();
+        }
+
+        // ==================================================================
+        // JURISDICTIONS: the common code and canon law
+        // ==================================================================
+        // See the tables at the top of the file. The active record is always
+        // $gameSystem._crimeData; the one for the other code is parked here.
+        static sheets() {
+            if (!$gameSystem._crimeSheets) {
+                $gameSystem._crimeSheets = { active: LAW_COMMON, stored: {}, marked: {} };
+            }
+            const S = $gameSystem._crimeSheets;
+            if (!S.stored) S.stored = {};
+            if (!S.marked) S.marked = {};
+            return S;
+        }
+
+        static jurisdiction() {
+            if (typeof $gameSystem === 'undefined' || !$gameSystem) return LAW_COMMON;
+            return this.sheets().active;
+        }
+
+        static isCanonLaw() {
+            return this.jurisdiction() === LAW_VATICAN;
+        }
+
+        // The code of the ground the party stands on, or null when nobody
+        // can say (no country known yet): the record then stays as it is.
+        static jurisdictionHere() {
+            const entry = currentCountryEntry();
+            if (!entry) return null;
+            const power = controllerOfCountry(entry);
+            if (power === VATICAN_POWER) return LAW_VATICAN;
+            if (power === GOBLIN_POWER) return LAW_HORDE;
+            return LAW_COMMON;
+        }
+
+        static isHordeLaw() {
+            return this.jurisdiction() === LAW_HORDE;
+        }
+
+        static syncJurisdiction() {
+            if (this._syncingLaw) return this.jurisdiction();
+            if (typeof $gameSystem === 'undefined' || !$gameSystem || !$gameVariables) return LAW_COMMON;
+            this.initialize();
+            this._syncingLaw = true;
+            try {
+                const here = this.jurisdictionHere();
+                if (here && here !== this.sheets().active) this.switchJurisdiction(here);
+                if (this.isCanonLaw()) this.markTheParty();
+            } finally {
+                this._syncingLaw = false;
+            }
+            return this.jurisdiction();
+        }
+
+        // Park the record of the code being left, raise the one being entered.
+        // The manhunt stays behind with its record: the Empire's constables
+        // do not chase across the border, and nobody else's chase them in.
+        static switchJurisdiction(to) {
+            this.initialize();
+            const S = this.sheets();
+            const from = S.active;
+            if (from === to) return false;
+            const data = $gameSystem._crimeData;
+            S.stored[from] = {
+                crimes: data.crimes || [],
+                marks: data.marks || [],
+                totalBounty: data.totalBounty || 0,
+                bribedOfficers: data.bribedOfficers || null,
+                heat: this.getHeat(),
+            };
+            const next = S.stored[to] || { crimes: [], marks: [], totalBounty: 0, bribedOfficers: null, heat: 0 };
+            delete S.stored[to];
+            data.crimes = next.crimes || [];
+            data.marks = next.marks || [];
+            data.totalBounty = next.totalBounty || 0;
+            if (next.bribedOfficers) data.bribedOfficers = next.bribedOfficers;
+            else delete data.bribedOfficers;
+            S.active = to;
+            // A new visit: whoever the Holy Office marks is marked afresh.
+            if (to === LAW_VATICAN) S.marked = {};
+
+            window.playerCrimes = data.crimes.map(c => c.id).filter(Boolean);
+            if ($gameVariables) $gameVariables.setValue(bountyVariableId, data.totalBounty);
+            $gameSystem._crimeHeatMinute = this.worldMinute();
+            this.setHeat(data.totalBounty > 0 ? (next.heat || 0) : 0);
+
+            // Entering a code of its own is announced; so is leaving one for
+            // the common code.
+            const ENTER = { [LAW_VATICAN]: 'Crime.law.enterCanon', [LAW_HORDE]: 'Crime.law.enterHorde' };
+            const LEAVE = { [LAW_VATICAN]: 'Crime.law.leaveCanon', [LAW_HORDE]: 'Crime.law.leaveHorde' };
+            const key = ENTER[to] || LEAVE[from];
+            if (key && window.ParchmentToast) {
+                window.ParchmentToast.show(T(key), { severity: ENTER[to] ? 'warning' : 'info', key: 'crimeLaw' });
+            }
+            return true;
+        }
+
+        // How a deed filed under a preset key reads under the local code:
+        // { name, bounty, charge } or null when that code does not know it.
+        // A bounty that was scaled by the caller (a theft priced off what was
+        // taken) keeps its scale under canon law's own tariff.
+        // A charge filed without a key (a broken contract, a false emergency
+        // call) is taken as it came, except on Horde ground, where only a
+        // named theft is a crime.
+        static lawFor(crimeId, crimeName, bountyAmount) {
+            const bounty = Number(bountyAmount) || 0;
+            if (this.isHordeLaw()) {
+                return this.isTheft(crimeId) ? { name: crimeName, bounty } : null;
+            }
+            if (!crimeId) return { name: crimeName, bounty };
+            if (!this.isCanonLaw()) {
+                if (VATICAN_SINS[crimeId]) return null;
+                return { name: crimeName, bounty };
+            }
+            if (VATICAN_SINS[crimeId]) {
+                return { name: this.canonChargeName(crimeId), bounty: bounty > 0 ? bounty : VATICAN_SINS[crimeId], charge: crimeId };
+            }
+            const canon = VATICAN_CANON[crimeId];
+            // A key that is no preset at all is some plugin's own charge:
+            // filed as it came.
+            if (!canon) return PresetCrimes[crimeId] ? null : { name: crimeName, bounty };
+            const base = (PresetCrimes[crimeId] && PresetCrimes[crimeId].bounty) || 0;
+            const scaled = base > 0 && bounty > 0 ? Math.round(bounty * canon[1] / base) : canon[1];
+            return { name: this.canonChargeName(canon[0]), bounty: Math.max(1, scaled), charge: canon[0] };
+        }
+
+        static isTheft(crimeId) {
+            if (!crimeId) return false;
+            if (HORDE_THEFT_EXTRA.includes(crimeId)) return true;
+            const preset = PresetCrimes[crimeId];
+            return !!preset && preset.category === HORDE_THEFT_CATEGORY;
+        }
+
+        static canonChargeName(key) {
+            return T('Crime.canon.' + key);
+        }
+
+        // Whether the local code prosecutes this preset key at all.
+        static isRecognised(crimeId) {
+            return !!this.lawFor(crimeId, '', 1);
+        }
+
+        static heatDecayPerMinute() {
+            const hours = this.isCanonLaw() ? VATICAN_HEAT_DECAY_HOURS : HEAT_DECAY_HOURS;
+            return HEAT_MAX / (hours * 60);
+        }
+
+        // Who the Holy Office charges for being who they are, once a visit.
+        // A Witch or a Gunmancer carries a permanent mark; an atheist an
+        // ordinary charge that can be paid like any other.
+        static markTheParty() {
+            if (typeof $gameParty === 'undefined' || !$gameParty || !$gameParty.members) return;
+            const S = this.sheets();
+            for (const actor of $gameParty.members()) {
+                if (!actor || typeof actor.actorId !== 'function') continue;
+                const id = actor.actorId();
+                const cls = typeof actor.currentClass === 'function' ? actor.currentClass() : null;
+                const sin = cls ? VATICAN_MARKED_CLASSES[cls.id] : null;
+                const markKey = 'mark:' + id;
+                if (sin && !S.marked[markKey]) {
+                    S.marked[markKey] = true;
+                    if (!this.getMarks().some(m => m.actorId === id)) {
+                        this.addCrime(T('Crime.canon.onPerson', { charge: this.canonChargeName(sin), name: actor.name() }),
+                            VATICAN_SINS[sin], sin, { canonical: true, mark: id });
+                    }
+                }
+                const atheistKey = 'atheism:' + id;
+                const traits = actor._selectedTraits;
+                const atheist = Array.isArray(traits) && traits.some(t => t && t.id === ATHEIST_TRAIT_ID);
+                if (atheist && !S.marked[atheistKey]) {
+                    S.marked[atheistKey] = true;
+                    this.addCrime(T('Crime.canon.onPerson', { charge: this.canonChargeName('atheism'), name: actor.name() }),
+                        VATICAN_SINS.atheism, 'atheism', { canonical: true });
+                }
+            }
+        }
+
+        // A party member casting a forbidden or esoteric spell on the Empire's
+        // soil is charged on the spot. No witness is needed: the Holy Office
+        // feels it done.
+        static onSkillUsed(actor, skill) {
+            if (!skill || !actor) return;
+            const meta = skill.meta || {};
+            const sin = meta.Forbidden ? 'forbiddenArts' : (meta.Esoteric ? 'heresy' : null);
+            if (!sin) return;
+            if (typeof $gameParty === 'undefined' || !$gameParty || !$gameParty.members().includes(actor)) return;
+            if (this.syncJurisdiction() !== LAW_VATICAN) return;
+            this.addCrime(T('Crime.canon.spell', { charge: this.canonChargeName(sin), spell: skill.name }),
+                VATICAN_SINS[sin], sin, { canonical: true });
+        }
+
+        static showNotRecognisedNotification() {
+            if (!window.ParchmentToast) return;
+            window.ParchmentToast.show(T('Crime.law.notRecognised'), {
+                severity: 'info',
+                duration: displayDuration,
+                key: 'crimeNotRecognised'
+            });
+        }
+
+        // ==================================================================
+        // THE BRIBE: an arresting officer who looks the other way
+        // ==================================================================
+        // Offered from the arrest (common event 124). The price is a share of
+        // the bounty, always less than paying it, and dearer the more honest
+        // the officer; the roll is a d20 plus the leader's PSI modifier against
+        // a DC read off the same morality. A virtuous officer
+        // (NPCSociety INCORRUPTIBLE_MORALITY) is never bought at any price.
+        //
+        // Taken, the money is gone and that one officer stops chasing: their
+        // arrest page stays off and their eyes no longer feed the manhunt, for
+        // as long as the record is no bigger than the one they were paid to
+        // forget. Refused, no money changes hands but offering it is a crime of
+        // its own, and the party may try again.
+        static BRIBE_DC_BASE = 12;
+        static BRIBE_DC_PER_MORALITY = 8;    // one point of DC per 8 of morality
+        static BRIBE_DC_MIN = 5;
+        static BRIBE_DC_MAX = 19;
+        static BRIBE_SHARE_BASE = 0.5;       // of the bounty, at morality 0
+        static BRIBE_SHARE_PER_MORALITY = 1 / 400;
+
+        static officerName(ev) {
+            if (!ev) return '';
+            const sim = window.NPCSim;
+            const name = sim && typeof sim.npcNameForEvent === 'function' ? sim.npcNameForEvent(ev) : null;
+            return String(name || (ev.event && ev.event() && ev.event().name) || '').trim();
+        }
+
+        static officerProfile(ev) {
+            const R = window.NPCSocietyRegistry;
+            const name = this.officerName(ev);
+            return (R && name && typeof R.getProfile === 'function') ? R.getProfile(name) : null;
+        }
+
+        // The same officer whichever map they walk onto when they are a person
+        // with a profile; the event on this map when they are only a uniform.
+        static officerKey(ev) {
+            if (!ev) return '';
+            if (this.officerProfile(ev)) return 'N:' + this.officerName(ev);
+            return 'E:' + vendorKey($gameMap ? $gameMap.mapId() : 0, ev.eventId());
+        }
+
+        static bribeTerms(ev) {
+            const profile = this.officerProfile(ev);
+            const morality = Math.max(-100, Math.min(100, Number(profile && profile.moralityScore) || 0));
+            const R = window.NPCSocietyRegistry;
+            const incorruptible = R && typeof R.isIncorruptible === 'function'
+                ? R.isIncorruptible(profile)
+                : morality >= 60;
+            const dc = Math.max(this.BRIBE_DC_MIN, Math.min(this.BRIBE_DC_MAX,
+                this.BRIBE_DC_BASE + Math.round(morality / this.BRIBE_DC_PER_MORALITY)));
+            const bounty = this.getTotalBounty();
+            const share = this.BRIBE_SHARE_BASE + morality * this.BRIBE_SHARE_PER_MORALITY;
+            // Always under the bounty: a bribe dearer than paying is no bribe.
+            const cost = Math.max(1, Math.min(bounty - 1, Math.round(bounty * share)));
+            return { morality, incorruptible, dc, cost, bounty };
+        }
+
+        static bribedLedger() {
+            this.initialize();
+            const data = $gameSystem._crimeData;
+            if (!data.bribedOfficers) data.bribedOfficers = {};
+            return data.bribedOfficers;
+        }
+
+        // Still paid for while the record has not grown past what they were
+        // paid to forget. A new charge on top puts them back on the party.
+        static isBribedOfficer(ev) {
+            if (!ev || typeof $gameSystem === 'undefined' || !$gameSystem || !$gameSystem._crimeData) return false;
+            const led = $gameSystem._crimeData.bribedOfficers;
+            if (!led) return false;
+            const entry = led[this.officerKey(ev)];
+            return !!entry && this.getTotalBounty() <= entry.covered;
+        }
+
+        static bribeRoller() {
+            return $gameParty && $gameParty.leader ? $gameParty.leader() : null;
+        }
+
+        static async rollBribe(terms, officerName) {
+            const actor = this.bribeRoller();
+            const modifier = actor ? (actor.psiMod ?? Math.floor(((actor.luk || 10) - 10) / 2)) : 0;
+            if (window.Dice3D && typeof window.Dice3D.rollD20 === 'function') {
+                return window.Dice3D.rollD20({
+                    actionName: T('Crime.bribe.action', { name: officerName, cost: this.goldToEuros(terms.cost) }),
+                    statName: 'PSI',
+                    modifier,
+                    dc: terms.dc,
+                    actor,
+                    force3D: true
+                });
+            }
+            const roll = Math.floor(Math.random() * 20) + 1;
+            return {
+                roll, modifier, total: roll + modifier,
+                success: roll === 20 || (roll !== 1 && roll + modifier >= terms.dc)
+            };
+        }
+
+        // Returns { outcome: 'bribed' | 'refused' | 'failed' | 'broke' | 'none', terms }.
+        static async bribeOfficer(ev) {
+            const toast = (key, params, severity) => {
+                if (window.ParchmentToast) window.ParchmentToast.show(T(key, params), { severity });
+            };
+            const terms = this.bribeTerms(ev);
+            if (!ev || terms.bounty <= 1) return { outcome: 'none', terms };
+            const name = this.officerName(ev) || T('Crime.bribe.theOfficer');
+            const cost = this.goldToEuros(terms.cost);
+
+            if (terms.incorruptible) {
+                this.addPresetCrime('bribery');
+                toast('Crime.bribe.incorruptible', { name }, 'danger');
+                return { outcome: 'refused', terms };
+            }
+            if ($gameParty.gold() < terms.cost) {
+                toast('Crime.bribe.cannotAfford', { name, cost }, 'danger');
+                return { outcome: 'broke', terms };
+            }
+
+            const result = await this.rollBribe(terms, name);
+            if (result && result.success) {
+                $gameParty.loseGold(terms.cost);
+                this.bribedLedger()[this.officerKey(ev)] = {
+                    covered: this.getTotalBounty(),
+                    paid: terms.cost,
+                    since: getGameDateTimeString()
+                };
+                if ($gameMap) $gameMap.requestRefresh();
+                toast('Crime.bribe.taken', { name, cost }, 'good');
+                return { outcome: 'bribed', terms };
+            }
+            this.addPresetCrime('bribery');
+            toast('Crime.bribe.rejected', { name }, 'danger');
+            return { outcome: 'failed', terms };
         }
     }
 
@@ -1770,6 +2358,46 @@
     PluginManager.registerCommand(pluginName, "clearHeat", () => {
         CrimeSystem.clearHeat();
     });
+
+    // Run from the arrest itself, so the officer is the event running it. The
+    // interpreter waits on the roll; anything short of a bribe taken jumps back
+    // to the retry label and the arrest choice is put to the party again.
+    PluginManager.registerCommand(pluginName, "bribeOfficer", function (args) {
+        const interpreter = this;
+        const retryLabel = String((args && args.retryLabel) || 'Restart');
+        const ev = $gameMap && this.eventId ? $gameMap.event(this.eventId()) : null;
+        interpreter._crimeBribePending = true;
+        CrimeSystem.bribeOfficer(ev).then(result => {
+            if (result.outcome !== 'bribed' && result.outcome !== 'none') {
+                interpreter.command119([retryLabel]);
+            }
+        }).catch(e => {
+            console.error('CrimeSystem bribeOfficer: ' + e.message); // i18n-ignore: developer diagnostic
+        }).finally(() => {
+            interpreter._crimeBribePending = false;
+        });
+        this.setWaitMode('crimeBribe');
+    });
+
+    const _Game_Interpreter_updateWaitMode = Game_Interpreter.prototype.updateWaitMode;
+    Game_Interpreter.prototype.updateWaitMode = function () {
+        if (this._waitMode === 'crimeBribe') {
+            if (this._crimeBribePending) return true;
+            this._waitMode = '';
+            return false;
+        }
+        return _Game_Interpreter_updateWaitMode.call(this);
+    };
+    // Forbidden and esoteric spells are a sin under canon law, cast from the
+    // menu or in battle alike: useItem is the one place both go through.
+    const _Game_Battler_useItem = Game_Battler.prototype.useItem;
+    Game_Battler.prototype.useItem = function (item) {
+        _Game_Battler_useItem.call(this, item);
+        if (this.isActor() && DataManager.isSkill(item)) {
+            try { CrimeSystem.onSkillUsed(this, item); } catch (e) { /* the spell is cast either way */ }
+        }
+    };
+
     // Global access for script calls
     window.CrimeSystem = CrimeSystem;
     // Who the police are, asked from outside. An officer is recognised here and
@@ -1904,7 +2532,20 @@
         if (!$gameSystem || !$gameVariables) return;
         if (($gameVariables.value(bountyVariableId) || 0) <= 0) return;
         if (!isOfficerEvent(this)) return;
+        if (CrimeSystem.isBribedOfficer(this)) return;
         CrimeSystem.raiseHeat(HEAT_TALK);
+    };
+
+    // A bribed officer's arrest page (the one conditioned on the heat) never
+    // comes up, so they keep to their everyday talk page and stop following.
+    const _Game_Event_meetsConditions = Game_Event.prototype.meetsConditions;
+    Game_Event.prototype.meetsConditions = function (page) {
+        if (page && page.conditions && page.conditions.variableValid &&
+            page.conditions.variableId === heatVariableId &&
+            CrimeSystem.isBribedOfficer(this)) {
+            return false;
+        }
+        return _Game_Event_meetsConditions.call(this, page);
     };
 
     // The heat is read off the clock rather than off steps, so it fades while

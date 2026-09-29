@@ -305,5 +305,135 @@
     "mode": "Maniglia",
     "fitting": "Innesto",
     "done": "Fatto"
+  },
+  "npcUnique": {
+    "name": "{{base} {adjective} di {owner}|{base} di {owner}, {adjective}}",
+    "adjective": {
+      "weapon": [
+        "dal filo {rugginoso|insanguinato}",
+        "dalle incisioni lunari",
+        "dal manico di frassino",
+        "dalla doppia tempra",
+        "dal pomo di rovo",
+        "dai riflessi di sale",
+        "dalla lacca notturna",
+        "dagli anelli di rame",
+        "dal gelo di tomba",
+        "della buona sorte",
+        "dal filo storto",
+        "dall'impugnatura d'osso",
+        "che sussurra",
+        "dal cattivo carattere",
+        "dalle borchie d'ottone",
+        "dalle vene d'argento",
+        "{di vecchia data|dei vecchi tempi}"
+      ],
+      "armor": [
+        "dalle toppe",
+        "della buona sorte",
+        "dal morso delle tarme",
+        "dai bottoni d'ottone",
+        "dalle macchie di pioggia",
+        "dalle cuciture {d'oro|d'argento}",
+        "dai colori sbiaditi",
+        "dai lacci di ferro",
+        "dalla fodera di velluto",
+        "dalla tinta fatta a mano",
+        "dalla crosta di sale",
+        "dai segni di brace",
+        "dalla lunga fatica",
+        "della domenica"
+      ]
+    },
+    "madeFor": "Opera di {maker}, su misura per {owner}.",
+    "madeOwn": "Opera di {owner}, fatta per la propria mano.",
+    "history": "Da allora: {chain}.",
+    "how": {
+      "crafted": "la forgiatura di {holder}",
+      "commissioned": "la commissione di {holder}",
+      "purchased": "l'acquisto di {holder}",
+      "stole": "il furto di {holder}",
+      "seized": "il saccheggio di {holder}",
+      "returned": "la restituzione a {holder}",
+      "acquired": "il passaggio a {holder}",
+      "recruited": "l'ingresso nel gruppo di {holder}",
+      "sold": "la vendita a {holder}",
+      "soldAt": "la vendita a un banco di {holder}"
+    },
+    "tip": "Pezzo unico. Opera di {maker}, su misura per {owner}.",
+    "tipHeld": "Pezzo unico. Opera di {maker}, su misura per {owner}, ora nelle mani di {holder}."
+  },
+  "help": {
+    "board": {
+      "title": "L'officina",
+      "intro": "Scegli un mestiere a sinistra, poi un pezzo a destra per vedere cosa serve a costruirlo.",
+      "items": {
+        "back": {
+          "name": "Indietro",
+          "text": "Esce dall'officina."
+        },
+        "trades": {
+          "name": "Metodi di produzione",
+          "text": "I mestieri del gruppo, con quante formule di ciascuno sono note. Sceglierne uno restringe i pezzi della pagina destra a quel mestiere."
+        },
+        "member": {
+          "name": "Schede dei compagni",
+          "text": "Chi lavora al banco. Auto affida ogni pezzo al membro più bravo a farlo; un nome fa lavorare quel membro su tutto."
+        },
+        "search": {
+          "name": "Cerca",
+          "text": "Filtra i pezzi per nome."
+        },
+        "status": {
+          "name": "Schede di stato",
+          "text": "Dividono i pezzi per quel che si può farne: pronti, senza materiali, oltre l'addestramento del fabbro, già portati o già forgiati."
+        },
+        "context": {
+          "name": "Riepilogo",
+          "text": "Il mestiere e lo stato mostrati e quanti pezzi corrispondono."
+        },
+        "list": {
+          "name": "Pezzi",
+          "text": "Tutto ciò che corrisponde. Apri un pezzo per vederne materiali, aspetto e statistiche, e per costruirlo."
+        },
+        "help": {
+          "name": "? Aiuto",
+          "text": "Apre questa scheda. Col controller premi Select; premilo di nuovo, Indietro o Conferma per chiuderla."
+        }
+      }
+    },
+    "piece": {
+      "title": "Costruire un pezzo",
+      "items": {
+        "back": {
+          "name": "Torna al banco",
+          "text": "Ritorna all'elenco dei pezzi."
+        },
+        "look": {
+          "name": "Come viene fuori",
+          "text": "Un'anteprima del pezzo finito. Modifica modello apre l'editor, dove le parti montate si spostano, ruotano e ridimensionano."
+        },
+        "details": {
+          "name": "Che cos'è",
+          "text": "Tipo, slot, rarità, valore, peso e bonus del pezzo, e i materiali che richiede contro quelli che il gruppo porta."
+        },
+        "name": {
+          "name": "Nome",
+          "text": "Come si chiamerà il pezzo. Scrivi un nome tuo o tirane uno nuovo."
+        },
+        "batch": {
+          "name": "Quantità",
+          "text": "Quanti farne in una volta, entro i materiali a disposizione."
+        },
+        "forge": {
+          "name": "Forgia e Fondi",
+          "text": "Forgia costruisce il pezzo e spende i materiali. Fondi smonta una copia portata."
+        },
+        "help": {
+          "name": "? Aiuto",
+          "text": "Apre questa scheda. Col controller premi Select; premilo di nuovo, Indietro o Conferma per chiuderla."
+        }
+      }
+    }
   }
 }

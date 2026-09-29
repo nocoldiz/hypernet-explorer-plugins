@@ -1675,5 +1675,869 @@
     "L'onorario è stato sequestrato come prova di qualcosa."
    ]
   }
+ },
+ "140": {
+  "name": "Agente di stazione",
+  "description": "Tieni in movimento i binari, rispondi ai viaggiatori e fai partire i treni in orario.",
+  "outcome": {
+   "success": [
+    "Ogni treno parte al minuto esatto.",
+    "Mandi un turista smarrito al binario giusto.",
+    "La stazione gira come un orologio sotto di te."
+   ],
+   "partial": [
+    "Un ritardo si propaga lungo la linea e finisce su di te.",
+    "Metà dei viaggiatori fa la stessa domanda.",
+    "Ti sgoli agli altoparlanti."
+   ],
+   "failure": [
+    "Mandi un'intera gita scolastica al binario sbagliato.",
+    "Oggi l'orario ha la meglio su di te.",
+    "Attorno a te si forma una coda di pendolari furiosi."
+   ],
+   "disaster": [
+    "Un treno parte con il tuo fischietto e mezza divisa!",
+    "Dai il via al treno sbagliato, che va nella direzione sbagliata!",
+    "La folla spinge e finisci trascinato sui binari!"
+   ]
+  }
+ },
+ "141": {
+  "name": "Bigliettaio",
+  "description": "Vendi biglietti da dietro il vetro e fai quadrare la cassa alla chiusura.",
+  "outcome": {
+   "success": [
+    "La cassa quadra fino all'ultimo centesimo.",
+    "La coda si scioglie prima dell'ora di punta.",
+    "Un cliente abituale ti ringrazia per nome."
+   ],
+   "partial": [
+    "La stampante si inceppa due volte.",
+    "Dai il resto sbagliato a un pensionato e lo rincorri.",
+    "Il vetro si appanna e nessuno ti sente."
+   ],
+   "failure": [
+    "In cassa mancano soldi e li metti tu.",
+    "Vendi una pila di biglietti per un treno che non esiste.",
+    "La macchinetta si mangia il tuo turno."
+   ],
+   "disaster": [
+    "Vendi lo stesso posto a quaranta persone!",
+    "Il rotolo dei biglietti si srotola per tutto l'atrio!",
+    "Un controllore trova una banconota falsa nel tuo fondo cassa!"
+   ]
+  }
+ },
+ "142": {
+  "name": "Infermiere",
+  "description": "Manda avanti il reparto: medicazioni, flebo, cartelle e una parola gentile alle tre di notte.",
+  "outcome": {
+   "success": [
+    "Ogni paziente del reparto dorme più sereno.",
+    "Blocchi una febbre prima che peggiori.",
+    "Il medico si fida della tua cartella senza controllare."
+   ],
+   "partial": [
+    "I campanelli non smettono mai di suonare.",
+    "Un paziente ti lancia il vassoio.",
+    "Finisci il turno a caffè freddo e nervi."
+   ],
+   "failure": [
+    "Scambi due cartelle e devi ammetterlo.",
+    "Un paziente se ne va contro il parere medico.",
+    "Ti becchi quello che aveva il letto sette."
+   ],
+   "disaster": [
+    "Una flebo finisce nel braccio sbagliato del paziente sbagliato!",
+    "Svieni nel mezzo del giro!",
+    "Si ammala tutto il reparto, e tu per primo!"
+   ]
+  }
+ },
+ "143": {
+  "name": "Medico",
+  "description": "Fai diagnosi, prescrivi e operi quando nessun altro lo farebbe.",
+  "outcome": {
+   "success": [
+    "Una diagnosi che nessuno aveva visto, ed è giusta.",
+    "L'intervento va liscio dal primo taglio all'ultimo punto.",
+    "Una famiglia ti ringrazia in corridoio."
+   ],
+   "partial": [
+    "Insegui un sintomo per tutto il turno e lui insegue te.",
+    "Le scartoffie durano più dell'intervento.",
+    "Alla fine ti tremano un po' le mani."
+   ],
+   "failure": [
+    "Leggi male un esame e il paziente ne paga le conseguenze.",
+    "Un secondo parere ti smentisce davanti a tutti.",
+    "Il turno finisce con più domande che risposte."
+   ],
+   "disaster": [
+    "Lasci una pinza dove nessuna pinza dovrebbe stare!",
+    "Una denuncia per negligenza arriva prima del caffè!",
+    "Ti prendi la malattia rara che stavi studiando!"
+   ]
+  }
+ },
+ "144": {
+  "name": "Farmacista",
+  "description": "Prepari ricette, pesi polveri e sai quali pillole non devono mai incontrarsi.",
+  "outcome": {
+   "success": [
+    "Ogni ricetta esce perfetta.",
+    "Noti un'interazione pericolosa e la fermi.",
+    "Un cliente abituale giura sui tuoi consigli."
+   ],
+   "partial": [
+    "La calligrafia delle ricette è un reato a sé.",
+    "In magazzino manca metà della lista.",
+    "Un cliente discute sul prezzo per un'ora."
+   ],
+   "failure": [
+    "Consegni il dosaggio sbagliato e devi richiamarlo.",
+    "La bilancia era starata tutto il pomeriggio.",
+    "Un ispettore trova i tuoi registri in disordine."
+   ],
+   "disaster": [
+    "Inghiotti un campione per sbaglio!",
+    "Un intero scaffale di sciroppi si schianta a terra!",
+    "Mescoli le polveri sbagliate e il bancone comincia a fumare!"
+   ]
+  }
+ },
+ "145": {
+  "name": "Fornaio",
+  "description": "Impasti prima dell'alba e hai gli scaffali pieni quando si aprono le porte.",
+  "outcome": {
+   "success": [
+    "Le prime pagnotte escono dorate.",
+    "La coda fuori si forma prima dell'apertura.",
+    "Il profumo da solo vende mezza bottega."
+   ],
+   "partial": [
+    "L'impasto non lievita e neanche tu.",
+    "Una teglia esce un filo troppo scura.",
+    "La farina finisce ovunque, orecchie comprese."
+   ],
+   "failure": [
+    "Un'intera infornata esce come mattoni.",
+    "Non ti svegli e gli scaffali restano vuoti fino a mezzogiorno.",
+    "Il forno muore a metà cottura."
+   ],
+   "disaster": [
+    "Il forno prende fuoco con il pane dentro!",
+    "Ti bruci le mani con la pala!",
+    "Un sacco di farina scoppia e la cucina diventa bianca!"
+   ]
+  }
+ },
+ "146": {
+  "name": "Commesso",
+  "description": "Riempi gli scaffali, stai alla cassa e sorridi a chiunque entri.",
+  "outcome": {
+   "success": [
+    "Scaffali in ordine e cassa giusta.",
+    "Un cliente esce con più di quanto era venuto a prendere.",
+    "Il direttore approva la tua vetrina."
+   ],
+   "partial": [
+    "Una consegna arriva proprio nell'ora di punta.",
+    "Qualcuno vuole un rimborso senza scontrino.",
+    "La prezzatrice stampa tutto a zero."
+   ],
+   "failure": [
+    "Sparisce merce durante il tuo turno.",
+    "Batti lo stesso articolo quattro volte.",
+    "Un cliente chiede del direttore, e lo ottiene."
+   ],
+   "disaster": [
+    "Uno scaffale crolla addosso a un cliente!",
+    "Ti chiudi nel magazzino fino alla chiusura!",
+    "Un taccheggiatore svuota la vetrina sotto i tuoi occhi!"
+   ]
+  }
+ },
+ "147": {
+  "name": "Cassiere di banca",
+  "description": "Conti i soldi degli altri tutto il giorno senza tenerne nemmeno uno.",
+  "outcome": {
+   "success": [
+    "Il tuo cassetto quadra al centesimo.",
+    "Individui un assegno falso e lo rifiuti con garbo.",
+    "Un risparmiatore nervoso se ne va rassicurato."
+   ],
+   "partial": [
+    "Il contamonete si inceppa su un barattolo di centesimi.",
+    "Arriva una coda di pensionati tutta insieme.",
+    "Riconti la stessa mazzetta tre volte."
+   ],
+   "failure": [
+    "Nel cassetto manca denaro e nessuno crede sia un errore.",
+    "Incassi un assegno che torna scoperto nel pomeriggio.",
+    "Il revisore vuole vederti lunedì."
+   ],
+   "disaster": [
+    "Consegni tutto il cassetto a un rapinatore senza che te lo chieda!",
+    "La porta del caveau si chiude con te dalla parte sbagliata!",
+    "Un tuo assegno falso finisce sui giornali!"
+   ]
+  }
+ },
+ "148": {
+  "name": "Agente di polizia",
+  "description": "Fai la ronda, raccogli le deposizioni e mantieni la pace finché dura.",
+  "outcome": {
+   "success": [
+    "Le strade restano tranquille durante il tuo turno.",
+    "Una deposizione fa saltare il caso.",
+    "Un bambino ti saluta da una finestra."
+   ],
+   "partial": [
+    "Passi il turno a compilare moduli.",
+    "Un ubriaco ti tira un pugno e ti sfiora.",
+    "Ogni chiamata è un falso allarme."
+   ],
+   "failure": [
+    "Un sospettato ti sfugge in un vicolo.",
+    "Il tuo rapporto torna pieno di inchiostro rosso.",
+    "Il sergente ti mette a dirigere il traffico."
+   ],
+   "disaster": [
+    "Un inseguimento finisce con te nel canale!",
+    "Arresti per sbaglio il nipote del sindaco!",
+    "Scoppia una rivolta e tu sei in prima fila!"
+   ]
+  }
+ },
+ "149": {
+  "name": "Guardia carceraria",
+  "description": "Conti le teste, giri le chiavi e non volti mai le spalle al cortile.",
+  "outcome": {
+   "success": [
+    "Ogni testa contata, ogni porta chiusa.",
+    "Sedi una rissa prima che cominci.",
+    "Il turno passa senza un solo incidente."
+   ],
+   "partial": [
+    "I detenuti ti mettono alla prova tutta la notte.",
+    "Un vassoio di sbobba ti finisce sugli stivali.",
+    "Separi una zuffa e ti prendi una gomitata."
+   ],
+   "failure": [
+    "Nel tuo braccio salta fuori del contrabbando.",
+    "Le tue chiavi spariscono per un'ora.",
+    "Il direttore scrive il tuo nome su un taccuino."
+   ],
+   "disaster": [
+    "Scoppia una rivolta nel tuo braccio!",
+    "Un detenuto esce con la tua divisa!",
+    "Resti chiuso in una cella fino al mattino!"
+   ]
+  }
+ },
+ "150": {
+  "name": "Croupier",
+  "description": "Distribuisci le carte e giri la ruota con una faccia che non tradisce nulla.",
+  "outcome": {
+   "success": [
+    "Il banco vince, come deve sempre.",
+    "Un giocatore facoltoso ti lascia una mancia in fiches.",
+    "Le tue mani non perdono un colpo."
+   ],
+   "partial": [
+    "Un tavolo di studenti discute ogni mano.",
+    "Un habitué accusa la ruota di barare.",
+    "Il polso ti fa male a forza di distribuire."
+   ],
+   "failure": [
+    "Paghi una mano che aveva perso.",
+    "Il capo sala ti osserva tutta la notte.",
+    "Un contatore di carte ti svuota il tavolo."
+   ],
+   "disaster": [
+    "La ruota vola via dal perno!",
+    "Distribuisci dal sabot sbagliato e paghi tutti!",
+    "Una rissa per una sola fiche distrugge il tavolo!"
+   ]
+  }
+ },
+ "151": {
+  "name": "Addetto alla sala giochi",
+  "description": "Cambi i gettoni, sblocchi i cabinati e tieni onesta la classifica.",
+  "outcome": {
+   "success": [
+    "Ogni cabinato funziona tutta la sera.",
+    "Aggiusti una gettoniera inceppata con una graffetta.",
+    "Un ragazzino batte il record e tocca a te annunciarlo."
+   ],
+   "partial": [
+    "Qualcuno versa una bibita in un joystick.",
+    "Il cambiamonete si mangia banconote per tutto il pomeriggio.",
+    "La musica in loop ti entra nei sogni."
+   ],
+   "failure": [
+    "Tre cabinati si spengono insieme.",
+    "Perdi un intero sacchetto di gettoni.",
+    "Un imbroglione arriva in cima alla classifica durante il tuo turno."
+   ],
+   "disaster": [
+    "Un cabinato fa scintille e ti dà la scossa!",
+    "La gru dei premi riesce, non si sa come, a lasciar cadere te!",
+    "Una rivolta di bambini per l'ultimo premio!"
+   ]
+  }
+ },
+ "152": {
+  "name": "Bibliotecario",
+  "description": "Metti a scaffale, timbri, ripari dorsi e zittisci la sala di lettura.",
+  "outcome": {
+   "success": [
+    "Ogni libro torna al suo posto.",
+    "Trovi il titolo che un lettore aveva dato per perso.",
+    "La sala di lettura resta in un silenzio beato."
+   ],
+   "partial": [
+    "Una scolaresca invade gli scaffali.",
+    "Metà delle restituzioni sono in ritardo e appiccicose.",
+    "Ripari un dorso e ti incolli le dita."
+   ],
+   "failure": [
+    "Un volume raro viene archiviato male e si perde.",
+    "Ti addormenti al banco delle restituzioni.",
+    "Le schede del catalogo finiscono sul pavimento."
+   ],
+   "disaster": [
+    "Un'intera fila di scaffali crolla come un domino!",
+    "Rovesci l'inchiostro su una prima edizione!",
+    "Un libro che non dovevi aprire ti legge a sua volta!"
+   ]
+  }
+ },
+ "153": {
+  "name": "Sacerdote",
+  "description": "Celebri la funzione, confessi e nel mezzo seppellisci, sposi e benedici.",
+  "outcome": {
+   "success": [
+    "L'omelia arriva al cuore e i banchi sono pieni.",
+    "Una confessione toglie un peso a un'intera famiglia.",
+    "Il cestino delle offerte torna pesante."
+   ],
+   "partial": [
+    "Metà dei fedeli sonnecchia durante l'omelia.",
+    "Un matrimonio sfora di due ore.",
+    "L'organista suona l'inno sbagliato."
+   ],
+   "failure": [
+    "Perdi il segno nella liturgia.",
+    "Il vescovo viene a sapere dell'ultima predica.",
+    "Nessuno viene ai vespri."
+   ],
+   "disaster": [
+    "Le candele danno fuoco alla tovaglia dell'altare!",
+    "Benedici la coppia sbagliata!",
+    "Qualcosa risponde alla preghiera di esorcismo!"
+   ]
+  }
+ },
+ "154": {
+  "name": "Accolito",
+  "description": "Accendi le candele, spazzi la navata e impari tacendo.",
+  "outcome": {
+   "success": [
+    "Ogni candela accesa, ogni gradino spazzato.",
+    "Il sacerdote ti lascia suonare la campana.",
+    "Trovi una quiete che non sapevi di avere."
+   ],
+   "partial": [
+    "L'incenso ti fa starnutire per tutta la funzione.",
+    "Fai colare cera sull'unica tonaca che hai.",
+    "La corda della campana per poco non ti porta via."
+   ],
+   "failure": [
+    "Ti dimentichi di riempire l'acquasantiera.",
+    "Ti cade il cestino delle offerte a metà navata.",
+    "Una candela si spegne e non si riaccende."
+   ],
+   "disaster": [
+    "Ti dai fuoco alla manica!",
+    "Il turibolo si stacca e colpisce un pellegrino!",
+    "Suoni la campana alle tre di notte!"
+   ]
+  }
+ },
+ "155": {
+  "name": "Custode di museo",
+  "description": "Stai tra i visitatori e i capolavori, giorno e notte.",
+  "outcome": {
+   "success": [
+    "Nemmeno un'impronta su una cornice.",
+    "Fermi un bambino a un soffio da un vaso Ming.",
+    "Il giro notturno passa in perfetto silenzio."
+   ],
+   "partial": [
+    "Stai in piedi così a lungo che ti si bloccano le ginocchia.",
+    "Un gruppo turistico ignora ogni cordone.",
+    "Le statue sembrano guardarti a loro volta."
+   ],
+   "failure": [
+    "Un visitatore tocca il quadro e l'allarme urla.",
+    "Ti appisoli nella sala delle sculture.",
+    "La torcia ti muore durante il giro notturno."
+   ],
+   "disaster": [
+    "Un quadro sparisce durante il tuo turno!",
+    "Fai scattare la griglia laser e resti chiuso dentro!",
+    "Rovesci una statua che si porta dietro un'ala del museo!"
+   ]
+  }
+ },
+ "156": {
+  "name": "Istruttore di palestra",
+  "description": "Guidi i corsi, assisti i sollevamenti e urli incoraggiamenti fino alla chiusura.",
+  "outcome": {
+   "success": [
+    "Tutto il corso completa il circuito.",
+    "Un habitué fa il suo record personale al tuo conteggio.",
+    "La palestra ronza di esecuzioni perfette."
+   ],
+   "partial": [
+    "Un nuovo iscritto ti fa cadere un manubrio su un piede.",
+    "L'impianto audio muore a metà lezione.",
+    "Mostri uno squat una volta di troppo."
+   ],
+   "failure": [
+    "Metà del corso molla prima della fine del riscaldamento.",
+    "Ti stiri un muscolo per fare il fenomeno.",
+    "Un iscritto disdice e dà la colpa a te."
+   ],
+   "disaster": [
+    "Il bilanciere ti crolla addosso!",
+    "Un tapis roulant scaraventa un iscritto nello specchio!",
+    "Ti strappi qualcosa che ha un nome latino!"
+   ]
+  }
+ },
+ "157": {
+  "name": "Carroattrezzi",
+  "description": "Riporti in deposito i guasti e i parcheggiati male, con qualsiasi tempo.",
+  "outcome": {
+   "success": [
+    "Ogni chiamata evasa, ogni auto consegnata.",
+    "Una famiglia in panne torna a casa grazie a te.",
+    "Il verricello non slitta mai."
+   ],
+   "partial": [
+    "Un automobilista discute per tutto il tragitto.",
+    "La pioggia trasforma ogni lavoro in un bagno di fango.",
+    "Ti perdi nei sensi unici."
+   ],
+   "failure": [
+    "Rimorchi l'auto sbagliata.",
+    "La catena si spezza a metà rampa.",
+    "Il tuo carro va in panne e serve un rimorchio a te."
+   ],
+   "disaster": [
+    "L'auto scivola dal pianale dentro una vetrina!",
+    "Rimorchi un'auto della polizia con la polizia dentro!",
+    "Il verricello scatta indietro e ti colpisce!"
+   ]
+  }
+ },
+ "158": {
+  "name": "Scaricatore di porto",
+  "description": "Carichi e scarichi le navi, con o senza marea.",
+  "outcome": {
+   "success": [
+    "La nave salpa in orario, carica al completo.",
+    "Guidi una cassa a un dito dal punto giusto.",
+    "Il caposquadra offre il primo giro."
+   ],
+   "partial": [
+    "Il gruista è nuovo e si vede.",
+    "Gli spruzzi di salsedine ti inzuppano.",
+    "Un container non vuole stare dritto."
+   ],
+   "failure": [
+    "Un bancale si spacca e il carico finisce ovunque.",
+    "Perdi la marea e la nave aspetta te.",
+    "La tua schiena presenta un reclamo."
+   ],
+   "disaster": [
+    "Una cassa si sgancia e ti butta in acqua!",
+    "Carichi la merce sulla nave sbagliata!",
+    "La passerella cede sotto di te!"
+   ]
+  }
+ },
+ "159": {
+  "name": "Locandiere",
+  "description": "Tieni pulite le stanze, arieggiati i letti e gli ospiti fuori dagli affari altrui.",
+  "outcome": {
+   "success": [
+    "Ogni stanza è prenotata e ogni ospite è contento.",
+    "Un mercante di passaggio promette di tornare.",
+    "I conti tornano e la cantina è piena."
+   ],
+   "partial": [
+    "Un ospite si lamenta dell'ospite accanto.",
+    "Il bucato arriva fino al soffitto.",
+    "Qualcuno se ne va senza pagare la colazione."
+   ],
+   "failure": [
+    "Prenoti due volte la stanza migliore.",
+    "Un ospite se ne va senza pagare niente.",
+    "L'ispettore trova qualcosa sotto un letto."
+   ],
+   "disaster": [
+    "Un incendio in cucina svuota tutta la locanda!",
+    "Consegni la chiave principale a un ladro!",
+    "Un ospite si rivela un ricercato, e tu il suo complice!"
+   ]
+  }
+ },
+ "160": {
+  "name": "Proiezionista",
+  "description": "Carichi le bobine, metti a fuoco il fascio e fai i cambi senza che nessuno se ne accorga.",
+  "outcome": {
+   "success": [
+    "Ogni cambio bobina cade sul segnale.",
+    "L'immagine è nitida dalla prima all'ultima fila.",
+    "Il pubblico applaude, e un po' è per te."
+   ],
+   "partial": [
+    "La pellicola salta a metà del bacio.",
+    "In cabina si soffoca tutta la sera.",
+    "Passi una bobina intera a sistemare il fuoco."
+   ],
+   "failure": [
+    "Proietti le bobine nell'ordine sbagliato.",
+    "La lampada salta durante il finale.",
+    "L'audio va un secondo dietro l'immagine."
+   ],
+   "disaster": [
+    "La pellicola prende fuoco nel proiettore!",
+    "Proietti il film sbagliato a una sala di bambini!",
+    "La cabina si riempie di fumo e tu con lei!"
+   ]
+  }
+ },
+ "161": {
+  "name": "Insegnante",
+  "description": "Stai davanti a trenta persone irrequiete e riesci a farle appassionare a qualcosa.",
+  "outcome": {
+   "success": [
+    "Tutta la classe capisce, nello stesso momento.",
+    "Uno studente silenzioso fa una domanda brillante.",
+    "La lezione si allunga e a nessuno dispiace."
+   ],
+   "partial": [
+    "L'ultima fila si passa bigliettini per tutta l'ora.",
+    "Il gesso stride e la classe pure.",
+    "Correggi compiti fino a vedere doppio."
+   ],
+   "failure": [
+    "Vince la classe, e lo sai.",
+    "Un genitore scrive una lunga lettera su di te.",
+    "Perdi il piano della lezione e improvvisi male."
+   ],
+   "disaster": [
+    "Un esperimento di scienze fa scattare gli irrigatori!",
+    "La classe ti chiude nell'armadio del materiale!",
+    "L'ispettore arriva nel mezzo del caos!"
+   ]
+  }
+ },
+ "162": {
+  "name": "Cancelliere",
+  "description": "Fai giurare i testimoni, tieni il verbale e archivi ogni parola della corte.",
+  "outcome": {
+   "success": [
+    "Il verbale è completo fino all'ultima obiezione.",
+    "Il giudice si complimenta per l'archiviazione.",
+    "Ogni causa a ruolo viene discussa in orario."
+   ],
+   "partial": [
+    "Un testimone borbotta per tutto il pomeriggio.",
+    "Il nastro della macchina da scrivere finisce a metà sentenza.",
+    "I fascicoli di domani arrivano stanotte."
+   ],
+   "failure": [
+    "Fai giurare il testimone sbagliato.",
+    "Sparisce una pagina di deposizione.",
+    "La difesa chiede l'annullamento per colpa del tuo verbale."
+   ],
+   "disaster": [
+    "Archivi male una sentenza e un colpevole esce libero!",
+    "Fai cadere la scatola delle prove giù per le scale del tribunale!",
+    "Il giudice ti accusa di oltraggio alla corte!"
+   ]
+  }
+ },
+ "163": {
+  "name": "Operaio di fabbrica",
+  "description": "Alimenti la linea, badi alla pressa e tieni le dita dove puoi vederle.",
+  "outcome": {
+   "success": [
+    "La linea non si ferma mai nel tuo tratto.",
+    "Raggiungi la quota con un'ora di anticipo.",
+    "Il caporeparto si dimentica di te, ed è un complimento."
+   ],
+   "partial": [
+    "Il rumore ti segue fino a casa.",
+    "Un nastro slitta e lo sistemi a mano.",
+    "La mensa finisce tutto prima della tua pausa."
+   ],
+   "failure": [
+    "Un lotto non passa il controllo per colpa della tua postazione.",
+    "La pressa si inceppa e la linea si ferma per tutti.",
+    "Timbri in ritardo ed esci ancora più tardi."
+   ],
+   "disaster": [
+    "La pressa ti afferra la manica!",
+    "Una valvola della caldaia salta accanto a te!",
+    "Ti cade una chiave inglese nella macchina e se la mangia!"
+   ]
+  }
+ },
+ "164": {
+  "name": "Tecnico di laboratorio",
+  "description": "Analizzi i campioni, lavi la vetreria e annoti esattamente cosa è successo.",
+  "outcome": {
+   "success": [
+    "Ogni campione analizzato, ogni risultato registrato.",
+    "La tua calibrazione salva l'intero esperimento.",
+    "Un ricercatore mette il tuo nome nei ringraziamenti."
+   ],
+   "partial": [
+    "La centrifuga traballa tutto il pomeriggio.",
+    "Lavi vetreria fino ad avere le mani raggrinzite.",
+    "La cappa fa un rumore che nessuno sa spiegare."
+   ],
+   "failure": [
+    "Contamini una settimana di colture.",
+    "I risultati non si ripetono, ed era il tuo turno.",
+    "Un'etichetta si sbava e nessuno sa cosa c'è nella fiaschetta."
+   ],
+   "disaster": [
+    "Un becher trabocca e i fumi riempiono il laboratorio!",
+    "Qualcosa in una piastra di Petri si muove!",
+    "Fai cadere l'unico campione che contava!"
+   ]
+  }
+ },
+ "165": {
+  "name": "Venditore al mercato",
+  "description": "Monti il banco all'alba, gridi i prezzi e contratti finché l'ultima cassetta è vuota.",
+  "outcome": {
+   "success": [
+    "Il banco è esaurito entro mezzogiorno.",
+    "Vinci una trattativa e il cliente ti ringrazia pure.",
+    "La tua voce arriva da un capo all'altro della piazza."
+   ],
+   "partial": [
+    "Il banco accanto ti fa concorrenza al ribasso tutta la mattina.",
+    "La pioggia manda tutti a casa presto.",
+    "La bilancia è starata e arrotondi per difetto."
+   ],
+   "failure": [
+    "Metà della merce marcisce al sole.",
+    "Un piccione si prende la tua cassetta migliore.",
+    "Contratti fino a vendere sottocosto."
+   ],
+   "disaster": [
+    "Il tendone crolla su tutto il banco!",
+    "Un carretto ti passa sopra le cassette!",
+    "L'ispettore ti chiude il banco sul posto!"
+   ]
+  }
+ },
+ "166": {
+  "name": "Impiegato d'ufficio",
+  "description": "Archivi, batti a macchina, fotocopi e partecipi a riunioni sulle riunioni.",
+  "outcome": {
+   "success": [
+    "La casella è vuota entro le cinque.",
+    "Il tuo foglio di calcolo salva il trimestre.",
+    "Il capo usa la tua relazione senza cambiare una parola."
+   ],
+   "partial": [
+    "La stampante si inceppa su ogni pagina importante.",
+    "Una riunione si mangia tutto il pomeriggio.",
+    "La macchinetta del caffè è di nuovo rotta."
+   ],
+   "failure": [
+    "Mandi la mail a tutta l'azienda.",
+    "Un fascicolo si perde da qualche parte negli schedari.",
+    "I tuoi conti non tornano e se ne accorgono tutti."
+   ],
+   "disaster": [
+    "La fotocopiatrice prende fuoco!",
+    "Distruggi l'unica copia del contratto!",
+    "Il computer si mangia un mese di lavoro!"
+   ]
+  }
+ },
+ "167": {
+  "name": "Apicoltore",
+  "description": "Cura le arnie, calma le colonie col fumo e raccogli il miele quando i melari sono pieni.",
+  "outcome": {
+   "success": [
+    "I melari vengono via pesanti e dorati.",
+    "La colonia resta tranquilla sotto il fumo tutta la mattina.",
+    "Trovi la regina sul primo telaino."
+   ],
+   "partial": [
+    "Qualche puntura attraverso i guanti.",
+    "L'affumicatore continua a spegnersi.",
+    "Metà dei telaini non sono ancora opercolati."
+   ],
+   "failure": [
+    "La colonia ti si rovescia addosso dalla cassetta.",
+    "Ti cade un telaino pieno nell'erba.",
+    "La varroa ha lavorato e nessuno se n'è accorto."
+   ],
+   "disaster": [
+    "L'intero alveare sciama e si porta via la regina!",
+    "Rovesci l'arnia con un calcio!",
+    "Un velo bucato e cento api furiose ti inseguono per il campo!"
+   ]
+  }
+ },
+ "168": {
+  "name": "Capo di Stato",
+  "description": "Governa una nazione o un blocco dalla sua capitale: firma, ricevi, decidi e prenditi la colpa.",
+  "outcome": {
+   "success": [
+    "Hai firmato undici decreti e ne hai capiti nove.",
+    "Un inviato straniero se n'è andato sorridendo, il che può voler dire qualsiasi cosa.",
+    "Il consiglio dei ministri ti ha dato ragione, a gran voce, prima che finissi.",
+    "Il tuo gradimento è salito di un punto in un giorno in cui non è successo niente.",
+    "La stampa ti ha definito uno statista e lo intendeva come un complimento."
+   ],
+   "partial": [
+    "Hai governato, nel senso che la capitale non è andata a fuoco.",
+    "Metà dei ministri è venuta alla riunione. L'altra metà ha mandato un biglietto.",
+    "Un decreto è uscito con il sigillo sbagliato. Vale lo stesso.",
+    "La folla davanti al palazzo era più piccola di ieri, il che è un progresso.",
+    "Hai rimandato la decisione difficile a una settimana migliore."
+   ],
+   "failure": [
+    "L'opposizione ti ha riletto il discorso, più lentamente.",
+    "Un promemoria trapelato spiegava la tua politica meglio di te.",
+    "Il tesoro ha comunicato una cifra che nessuno voleva pronunciare.",
+    "Il tuo stesso partito si è astenuto. Due volte.",
+    "L'inviato se n'è andato presto e si è portato via il trattato."
+   ],
+   "disaster": [
+    "Uno scandalo è scoppiato prima di pranzo e si è moltiplicato per cena.",
+    "La guardia di palazzo ha chiesto, gentilmente, chi comandasse oggi.",
+    "Hai firmato una dichiarazione di guerra che doveva essere un accordo commerciale.",
+    "La folla ha scoperto il tuo indirizzo di casa.",
+    "Il tuo ritratto è stato staccato in tre ministeri contemporaneamente."
+   ]
+  }
+ },
+ "169": {
+  "name": "Ministro",
+  "description": "Dirigi un ministero per il governo in carica, e rispondine in aula.",
+  "outcome": {
+   "success": [
+    "Il tuo ministero ha speso il bilancio per quello che aveva promesso.",
+    "Una legge che hai scritto è passata con ferite solo estetiche.",
+    "Hai risposto a ogni interrogazione in aula senza dire niente.",
+    "Il capo di Stato ti ha ringraziato per nome.",
+    "I numeri del tuo dicastero erano buoni, e veri."
+   ],
+   "partial": [
+    "La riforma è passata, tranne la parte che serviva a qualcosa.",
+    "Sei sopravvissuto al question time con un livido.",
+    "Il ministero ha traslocato e ha perso uno schedario.",
+    "Il tuo vice si è preso il merito e metà della colpa.",
+    "È stata avviata una consultazione, che è un modo di aspettare."
+   ],
+   "failure": [
+    "La commissione ti ha rimandato la legge con un disegnino sopra.",
+    "Un giornalista ha trovato la cifra che avevi arrotondato.",
+    "I tuoi stessi funzionari hanno parlato contro di te.",
+    "L'alleato di coalizione ha posto il veto sulla tua unica buona idea.",
+    "La stampa ti ha descritto come un segnaposto."
+   ],
+   "disaster": [
+    "Ti sei dimesso, poi ti hanno detto che non erano accettate, poi ti hanno licenziato.",
+    "Un'auto del ministero è stata trovata dove non doveva essere.",
+    "Il revisore ha aperto il tuo dicastero ed è svenuto.",
+    "Una voce di bilancio è stata spesa due volte senza consegnare nulla.",
+    "Sei stato rimpastato in un ministero che non esiste."
+   ]
+  }
+ },
+ "170": {
+  "name": "Leader di partito",
+  "description": "Guida un partito nell'assemblea: tieni uniti i banchi e la leadership al riparo dai rivali.",
+  "outcome": {
+   "success": [
+    "I banchi hanno votato compatti, cosa che non succede mai.",
+    "Un rivale è passato con te portandosi dietro un'intera corrente.",
+    "Il tuo discorso è stato citato da tutti i giornali, correttamente.",
+    "I sondaggi si sono mossi a tuo favore per un motivo che sai spiegare.",
+    "I fondi del partito sono arrivati più in fretta degli scandali."
+   ],
+   "partial": [
+    "Il partito ha tenuto, ma a stento e solo per oggi.",
+    "La tua mozione è caduta per un collega assente.",
+    "Un finanziatore ha chiesto una cosa piccola, per ora.",
+    "Ti hanno fischiato, e hai risposto piuttosto bene.",
+    "Il programma ha guadagnato due promesse che nessuno ha fatto quadrare."
+   ],
+   "failure": [
+    "Tre deputati hanno votato con il governo per errore.",
+    "Si è parlato di una sfida alla leadership, poi l'hanno messa in calendario.",
+    "Il tuo slogan è stato preso in giro alla radio per tutto il pomeriggio.",
+    "Il tesoriere si è dimesso per dedicarsi di più ai conti.",
+    "I tuoi stessi deputati hanno fatto trapelare la riunione sulla strategia."
+   ],
+   "disaster": [
+    "Il partito si è spaccato a metà durante il tuo discorso.",
+    "È saltato fuori un nastro. Ci sei tu.",
+    "Il tuo vice ha fondato un nuovo partito quel pomeriggio, con il tuo staff.",
+    "I finanziatori hanno rivoluto i soldi, con gli interessi.",
+    "Hai perso la fiducia del tuo stesso gruppo parlamentare."
+   ]
+  }
+ },
+ "171": {
+  "name": "Legislatore",
+  "description": "Siedi in aula o nel collegio elettorale: leggi le leggi, esprimi il voto, conserva il seggio.",
+  "outcome": {
+   "success": [
+    "Il tuo emendamento è sopravvissuto intatto a tre letture.",
+    "Hai letto tutta la legge, il che ti ha reso l'esperto.",
+    "Il tuo voto ha deciso la votazione, e hai votato bene.",
+    "Un elettore ti ha scritto per ringraziarti, con una calligrafia leggibile.",
+    "La commissione ha adottato la tua relazione senza modifiche."
+   ],
+   "partial": [
+    "Hai votato, poi hai letto la legge, in quest'ordine.",
+    "Il tuo emendamento è passato come nota a piè di pagina.",
+    "La seduta si è protratta e la tua interrogazione non è arrivata.",
+    "Eri presente, e il verbale lo dirà.",
+    "Un lobbista ti ha portato a pranzo e per poco non ci è riuscito."
+   ],
+   "failure": [
+    "Hai votato contro una legge che avevi firmato tu.",
+    "Il tuo discorso è stato ascoltato da tre deputati e un commesso.",
+    "Il capogruppo era scontento e lo ha messo per iscritto.",
+    "Hai perso la votazione per la lunghezza di un corridoio.",
+    "Il tuo ufficio ha smarrito una petizione con mille firme."
+   ],
+   "disaster": [
+    "Ti hanno sorpreso addormentato durante l'appello.",
+    "I tuoi rimborsi spese sono stati letti ad alta voce in aula.",
+    "Una legge che hai scritto faceva l'esatto contrario del suo titolo.",
+    "Sei stato espulso dalla seduta per un commento sul cappello di un collega.",
+    "L'aula ti ha censurato all'unanimità, compreso tu."
+   ]
+  }
  }
 }

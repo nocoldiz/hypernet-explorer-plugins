@@ -17,6 +17,7 @@
   "filedOn": "Registrata il {date}",
   "dateUnknown": "data ignota",
   "settle": "Salda",
+  "markUnpayable": "Il marchio del Sant'Uffizio. Nessuna multa lo toglie, solo la pena scontata.",
   "tooCostly": "Troppo cara",
   "notEnoughMoney": "Non hai abbastanza soldi per quella multa.",
   "settleEverything": "Salda tutto ({total})",

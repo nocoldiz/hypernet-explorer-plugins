@@ -715,11 +715,11 @@
             const btns = this.scene.confirmModalButtons();
             if (btns.length === 0) return;
 
-            if (Input.isTriggered('right') || Input.isTriggered('down')) {
+            if (Input.isRepeated('right') || Input.isRepeated('down')) {
                 this.scene._confirmModalIndex = (this.scene._confirmModalIndex + 1) % btns.length;
                 SoundManager.playCursor();
                 this.scene.updateConfirmModalFocus();
-            } else if (Input.isTriggered('left') || Input.isTriggered('up')) {
+            } else if (Input.isRepeated('left') || Input.isRepeated('up')) {
                 this.scene._confirmModalIndex =
                     (this.scene._confirmModalIndex - 1 + btns.length) % btns.length;
                 SoundManager.playCursor();
@@ -747,7 +747,7 @@
             } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
                 index = slots[(pos - 1 + slots.length) % slots.length];
                 moved = true;
-            } else if (Input.isTriggered('right')) {
+            } else if (Input.isRepeated('right')) {
                 const btns = this._getActionButtons();
                 if (btns.length > 0) {
                     this._focusMode = 'actions';
@@ -793,7 +793,7 @@
             } else if (Input.isTriggered('ok')) {
                 const btn = btns[this._actionIndex];
                 if (btn) btn.click();
-            } else if (Input.isTriggered('left') || Input.isTriggered('cancel')) {
+            } else if (Input.isRepeated('left') || Input.isTriggered('cancel')) {
                 this._focusMode = 'slots';
                 if (Input.isTriggered('cancel')) {
                     SoundManager.playCancel();
@@ -1515,8 +1515,8 @@
                 <h3 class="save-modal-title">${escapeHtml(opts.title)}</h3>
                 <div class="save-modal-message">${escapeHtml(opts.message)}</div>
                 <div class="save-modal-buttons">
-                    <button type="button" class="save-modal-btn save-modal-cancel">${escapeHtml(opts.cancelLabel)}</button>
-                    <button type="button" class="save-modal-btn danger save-modal-confirm">${escapeHtml(opts.confirmLabel)}</button>
+                    <button type="button" class="save-modal-btn save-modal-cancel focusable">${escapeHtml(opts.cancelLabel)}</button>
+                    <button type="button" class="save-modal-btn save-modal-confirm focusable">${escapeHtml(opts.confirmLabel)}</button>
                 </div>
             </div>
         `;
@@ -1546,6 +1546,8 @@
         // Cancel is the default focus so a stray OK press never deletes.
         this._confirmModalIndex = 0;
         this.updateConfirmModalFocus();
+        // The press that asked the question must not also answer it.
+        if (window.UINav) window.UINav.swallowHeld();
     };
 
     Scene_File.prototype.confirmModalButtons = function () {
@@ -1563,6 +1565,8 @@
         if (this._confirmModal) {
             if (this._confirmModal.parentNode) this._confirmModal.parentNode.removeChild(this._confirmModal);
             this._confirmModal = null;
+            // Nor may the press that answered it act on the slots underneath.
+            if (window.UINav) window.UINav.swallowHeld();
         }
     };
 

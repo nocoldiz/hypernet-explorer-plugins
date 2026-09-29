@@ -126,7 +126,8 @@
     "dialogueVoicesVolume": "How loud the letter blips under a dialogue line are, apart from the other sound effects.",
     "battleLogPosition": "Which corner of the screen the running battle commentary hangs in.",
     "battleCommandPosition": "Which side of the screen the battle command list, the skill page and the backpack stand on.",
-    "lowModelDetail": "Builds procedural weapons and items with fewer segments. Helps on slower machines; the models read blockier."
+    "lowModelDetail": "Builds procedural weapons and items with fewer segments. Helps on slower machines; the models read blockier.",
+    "simulationLog": "Every decision taken on the map by a party member, a monster or an NPC pops up as a notification. Busy maps produce a lot of them."
   },
   "descState": {
     "musicArtistDisplay": [
@@ -189,7 +190,8 @@
     "autoExplore": "Auto Explore",
     "noclip": "Noclip",
     "ascii": "ASCII",
-    "other": "Other"
+    "other": "Other",
+    "simulationLog": "Simulation Log"
   },
   "galaxyQuality": {
     "low": "Low",

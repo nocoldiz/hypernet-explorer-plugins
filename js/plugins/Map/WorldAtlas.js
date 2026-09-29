@@ -29,9 +29,10 @@
  *
  * === Controls ===
  * Mouse:    drag to pan, wheel to zoom, hover to read, click to select.
- * Arrows/WASD: pan.  PageUp/PageDown: step through the nations.
- * OK: centre on the selected nation.  Shift: cycle the shading.
- * Cancel/Esc: close.
+ * Left/Right: step the year (holding Shift/X or Ctrl: ten years).
+ * Up/Down: step through the nations.  Right stick: pan.
+ * L1/R1 (Q/W, Tab): cycle the shading, as tabs do on every menu.
+ * OK: centre on the selected nation.  Cancel/Esc/right click: step out, close.
  *
  * === Opening it ===
  * Pause menu -> World Map -> Atlas, the plugin command above, or
@@ -1153,7 +1154,12 @@
             }, { passive: false });
 
             // Right click is the cancel gesture: it must never start a drag,
-            // and the browser menu must never stand over the map.
+            // and the browser menu must never stand over the map. The press is
+            // kept from TouchInput, which would read the same click as a
+            // second cancel and step out two levels at once.
+            el.addEventListener("mousedown", (ev) => {
+                if (ev.button === 2) ev.stopPropagation();
+            });
             el.addEventListener("contextmenu", (ev) => {
                 ev.preventDefault();
                 ev.stopPropagation();
@@ -1200,24 +1206,33 @@
         update() {
             super.update();
             if (!this._view) return;
+            // The right stick pans the map (the mouse drags it); the four
+            // directions belong to the timeline and the nations below.
+            const stick = window.AnalogStickInput;
+            if (stick && typeof stick.rightX === "function") {
+                const rx = stick.rightX();
+                const ry = stick.rightY();
+                if (rx || ry) {
+                    const step = this._view.w * 0.02;
+                    this._view.cx += rx * step;
+                    this._view.cy += ry * step;
+                    this._applyView();
+                }
+            }
+
+            // Left / right step the year along the timeline, ten at a time
+            // while Shift (X on a pad) or Ctrl is held. Up / down walk the
+            // nations. L1 / R1 (Q / W, Tab) turn the shading, the atlas's tabs.
             // WASD arrives here as the direction symbols: the keyMapper maps
             // them globally, so there is nothing else to listen for.
-            const step = this._view.w * 0.02;
-            let moved = false;
-            if (Input.isPressed("right")) { this._view.cx += step; moved = true; }
-            if (Input.isPressed("left")) { this._view.cx -= step; moved = true; }
-            if (Input.isPressed("down")) { this._view.cy += step; moved = true; }
-            if (Input.isPressed("up")) { this._view.cy -= step; moved = true; }
-            if (moved) this._applyView();
-
-            // The century is stepped with PageUp/PageDown, ten years at a time
-            // while a direction is held; Tab walks the nations instead.
-            const leap = Input.isPressed("control") ? 10 : 1;
-            if (Input.isRepeated("pagedown")) this._setYear(this._year + leap, true);
-            else if (Input.isRepeated("pageup")) this._setYear(this._year - leap, true);
-            else if (Input.isRepeated("tab")) this._stepSelection(1);
-            else if (Input.isTriggered("shift")) {
-                this._setMode(MODES[(MODES.indexOf(this._mode) + 1) % MODES.length]);
+            const leap = Input.isPressed("shift") || Input.isPressed("control") ? 10 : 1;
+            const tabDir = window.UINav ? UINav.tabDir() : 0;
+            if (Input.isRepeated("right")) this._setYear(this._year + leap, true);
+            else if (Input.isRepeated("left")) this._setYear(this._year - leap, true);
+            else if (Input.isRepeated("down")) this._stepSelection(1);
+            else if (Input.isRepeated("up")) this._stepSelection(-1);
+            else if (tabDir) {
+                this._setMode(MODES[(MODES.indexOf(this._mode) + tabDir + MODES.length) % MODES.length]);
             } else if (Input.isTriggered("ok")) {
                 if (this._selected) { SoundManager.playOk(); this._centreOn(this._selected); }
             } else if (Input.isTriggered("cancel") || TouchInput.isCancelled()) {

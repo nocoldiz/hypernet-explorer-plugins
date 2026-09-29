@@ -74,7 +74,7 @@
     "maxLoan": "Prestito massimo",
     "loanDuration": "Durata del prestito",
     "confirmKeys": "OK: Invio   Annulla: ESC",
-    "adjustKeys": "Su/Giù: ±€1,00   Sinistra/Destra: ±€10,00   Q/E: ±€100,00",
+    "adjustKeys": "Su/Giù: ±€1,00   Sinistra/Destra: ±€10,00   Maiusc+Sinistra/Destra: ±€100,00",
     "noMoneyToDeposit": "Non hai soldi da depositare!",
     "noBankMoney": "Non hai soldi sul conto!",
     "alreadyBorrowed": "Hai già un prestito in corso!",

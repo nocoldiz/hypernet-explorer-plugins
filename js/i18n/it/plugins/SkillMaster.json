@@ -727,5 +727,217 @@
     "mode": "Modalità"
   },
   "lent": "PRESTATA",
-  "lentBy": "Prestata da {item}"
+  "lentBy": "Prestata da {item}",
+  "help": {
+    "category": {
+      "title": "Scuole di abilità",
+      "intro": "Ogni scuola di abilità e di magia da cui il gruppo può imparare.",
+      "items": {
+        "member": {
+          "name": "Schede dei compagni",
+          "text": "L'allievo. Scuole, progressi e costi sono quelli di questo membro."
+        },
+        "skills": {
+          "name": "Abilità",
+          "text": "Scuole di abilità fisiche, pagate in AP. Un badge Primaria o Secondaria segna le scuole dell'allievo, che costano meno Conoscenza."
+        },
+        "magic": {
+          "name": "Magia",
+          "text": "Scuole di incantesimi, pagati in MP. Apri una scuola per vederne l'atlante."
+        },
+        "rail": {
+          "name": "Pulsanti del banco",
+          "text": "La colonna sul bordo destro: fondere incantesimi, creare un incantesimo o un'abilità, sfogliare i sistemi magici, incantare armi, equipaggiamento e libri, scrivere libri di abilità e grimori, esorcizzare oggetti magici."
+        },
+        "help": {
+          "name": "? Aiuto",
+          "text": "Apre questa scheda. Col controller premi Select; premilo di nuovo, Indietro o Conferma per chiuderla."
+        }
+      }
+    },
+    "atlas": {
+      "title": "L'atlante della scuola",
+      "intro": "Le abilità di una scuola, disposte come una mappa. Trascina per spostarti, rotella per lo zoom.",
+      "items": {
+        "map": {
+          "name": "Atlante",
+          "text": "Ogni cerchio è un'abilità. Si apre quando l'allievo ne conosce una confinante; quelle bloccate dicono cosa aspettano."
+        },
+        "legend": {
+          "name": "Appresa, Disponibile, Bloccata",
+          "text": "Le apprese sono note, le disponibili si possono insegnare ora con la Conoscenza, le bloccate sono ancora fuori portata."
+        },
+        "progress": {
+          "name": "Progresso",
+          "text": "Quante abilità della scuola l'allievo ha appreso, e la Conoscenza del gruppo."
+        },
+        "detail": {
+          "name": "Scheda abilità",
+          "text": "Costo, effetto e descrizione dell'abilità sotto il cursore. Da qui si insegna, si vede l'anteprima o la si porta in battaglia o la si lascia in panchina."
+        },
+        "member": {
+          "name": "Schede dei compagni",
+          "text": "Cambia allievo."
+        },
+        "help": {
+          "name": "? Aiuto",
+          "text": "Apre questa scheda. Col controller premi Select; premilo di nuovo, Indietro o Conferma per chiuderla."
+        }
+      }
+    },
+    "spellEditor": {
+      "title": "Fondere incantesimi",
+      "items": {
+        "dominant": {
+          "name": "Incantesimo dominante",
+          "text": "Definisce il danno e il bersaglio del risultato. Solo magia."
+        },
+        "recessive": {
+          "name": "Recessivo",
+          "text": "Un incantesimo o un'abilità: decide se il risultato è un incantesimo o un'abilità."
+        },
+        "animation": {
+          "name": "Animazione",
+          "text": "L'effetto che il nuovo incantesimo mostra quando viene lanciato."
+        },
+        "cost": {
+          "name": "Costo di fusione",
+          "text": "MP e AP delle due parti sommati, più Conoscenza. Entrambe le parti vengono dimenticate, e un incantesimo fuso si può separare in seguito."
+        },
+        "fused": {
+          "name": "Incantesimi fusi",
+          "text": "Tutto ciò che è stato fuso. Da qui si rinomina, si separa o si elimina."
+        },
+        "help": {
+          "name": "? Aiuto",
+          "text": "Apre questa scheda. Col controller premi Select; premilo di nuovo, Indietro o Conferma per chiuderla."
+        }
+      }
+    },
+    "craft": {
+      "title": "Il banco di lavoro",
+      "items": {
+        "parts": {
+          "name": "Parti",
+          "text": "Effetti, elementi e formule comprati una volta sola con la Conoscenza, poi riusati in ogni incantesimo o abilità scritto qui."
+        },
+        "complexity": {
+          "name": "Complessità",
+          "text": "Un costo permanente: fissa gli MP o gli AP di ogni lancio e la statistica richiesta a chi scrive."
+        },
+        "preview": {
+          "name": "Anteprima",
+          "text": "Cosa farà l'incantesimo o l'abilità finita, e quanto costerà."
+        },
+        "write": {
+          "name": "Scrivi",
+          "text": "Dà un nome all'opera e la aggiunge agli incantesimi o alle abilità dell'allievo."
+        },
+        "yours": {
+          "name": "I tuoi incantesimi e abilità",
+          "text": "Tutto ciò che è stato scritto qui. Modificane o scartane uno dall'elenco."
+        },
+        "help": {
+          "name": "? Aiuto",
+          "text": "Apre questa scheda. Col controller premi Select; premilo di nuovo, Indietro o Conferma per chiuderla."
+        }
+      }
+    },
+    "enchant": {
+      "title": "Incantare",
+      "items": {
+        "gear": {
+          "name": "Oggetto",
+          "text": "L'arma, l'equipaggiamento o il libro in cui legare un incantesimo. Solo gli oggetti portati dal gruppo."
+        },
+        "spells": {
+          "name": "Incantesimi",
+          "text": "Gli incantesimi che si possono legare. Un'arma prende incantesimi offensivi e di stato, l'equipaggiamento protettivi, un libro qualsiasi."
+        },
+        "effect": {
+          "name": "Cosa fa",
+          "text": "Un'arma lancia a ogni colpo critico, l'equipaggiamento risponde al primo critico subito in battaglia, un libro lancia quando viene letto. Nessuno spende MP."
+        },
+        "bound": {
+          "name": "Legati finora",
+          "text": "Gli oggetti già incantati. Da qui si rinomina, si disfa o si recupera un incantesimo."
+        },
+        "help": {
+          "name": "? Aiuto",
+          "text": "Apre questa scheda. Col controller premi Select; premilo di nuovo, Indietro o Conferma per chiuderla."
+        }
+      }
+    },
+    "writebook": {
+      "title": "Scrivere un libro",
+      "items": {
+        "source": {
+          "name": "Pagine",
+          "text": "Le abilità o gli incantesimi che il gruppo conosce già. Ognuno scelto diventa una pagina."
+        },
+        "chosen": {
+          "name": "Pagine scelte",
+          "text": "Cosa conterrà il volume, e la Conoscenza che costa scriverlo."
+        },
+        "write": {
+          "name": "Scrivilo",
+          "text": "Rilega le pagine in un libro. Resta leggibile finché ogni pagina non è stata letta a qualcuno."
+        },
+        "written": {
+          "name": "Scritti finora",
+          "text": "I libri già scritti. Da qui si rinomina, si disfa o si recupera."
+        },
+        "help": {
+          "name": "? Aiuto",
+          "text": "Apre questa scheda. Col controller premi Select; premilo di nuovo, Indietro o Conferma per chiuderla."
+        }
+      }
+    },
+    "hexorcize": {
+      "title": "Esorcizzare",
+      "items": {
+        "pieces": {
+          "name": "Oggetti magici",
+          "text": "Armi ed equipaggiamento magici portati dal gruppo. Togli un oggetto di dosso prima di disfarlo."
+        },
+        "worth": {
+          "name": "Valore",
+          "text": "La Conoscenza che ogni oggetto restituisce una volta disfatto."
+        },
+        "unmake": {
+          "name": "Uno o tutti",
+          "text": "Disfa l'oggetto sotto il cursore, o ogni copia posseduta. L'oggetto è perso per sempre."
+        },
+        "help": {
+          "name": "? Aiuto",
+          "text": "Apre questa scheda. Col controller premi Select; premilo di nuovo, Indietro o Conferma per chiuderla."
+        }
+      }
+    },
+    "magicSystems": {
+      "title": "Sistemi magici",
+      "items": {
+        "map": {
+          "name": "Sistemi",
+          "text": "I dieci sistemi da cui attinge la magia. Quello segnato come il sistema della tua classe è quello dell'allievo."
+        },
+        "classes": {
+          "name": "Classi",
+          "text": "Quali classi attingono al sistema selezionato."
+        },
+        "spells": {
+          "name": "Incantesimi",
+          "text": "Gli incantesimi di quel sistema, e quanti ne sono noti."
+        },
+        "lore": {
+          "name": "Tradizione",
+          "text": "Cos'è il sistema e quanto è rigoroso."
+        },
+        "help": {
+          "name": "? Aiuto",
+          "text": "Apre questa scheda. Col controller premi Select; premilo di nuovo, Indietro o Conferma per chiuderla."
+        }
+      }
+    }
+  }
 }

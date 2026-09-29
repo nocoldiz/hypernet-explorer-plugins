@@ -1,9 +1,127 @@
+0.7.0a
+
+Society simulation rework:
+ - empathize actions grouped in category tabs
+ - preach, debate and pray to shift NPC ideology
+ - join an NPC's party or invite them to yours
+ - NPCs leave parties when their ideology drifts away
+ - train and learn specializations with NPCs, free or paid
+ - empathize money, work, travel, help, games and rumours actions
+ - accuse NPCs, party members or yourself of any crime
+ - new Politics menu replaces ??? in the main menu
+ - elected politicians are real simulated NPCs with jobs
+ - every road car has an NPC driver, key holders summon their car
+ - drivers step out after incidents, crashes lower disposition
+ - empathize shows stocks, family, addictions, expeditions, artifacts, carried items
+ - stock prices driven by the simulated society, except soul and oil
+ - NPCs hold shares, CEO class NPCs most of all
+ - non sentient NPCs follow creature schedules and hold no euros
+ - animals age, breed and die, on and off screen
+ - animal backstories and life events
+ - simulation adapted to every world creation mode
+ - goblin world starts with most countries held by the goblin horde
+ - normal dialogue slowly converts NPCs to the speaker's ideology
+ - downed monsters recover, empathize battle wounds stick
+ - upper omega tower floors get resident NPCs
+ - preparing the world shows progress for each step
+ - ideology shaped by voted party, government, friends and life events
+ - friends and party slowly convert NPC ideology, percentage shown in empathize
+ - NPC specializations seeded from class and job, honed while levelling
+ - NPC levels and lives catch up over skipped days
+ - NPCs visit other towns and move there permanently
+ - walkers, bikes and broomsticks travel the roads in 2D and 3D
+ - only NPCs carrying a bike or broom can ride one
+ - NPCs follow their empathize schedule, weekends included
+ - NPCs seek friends and family and talk more
+ - NPCs play the minigames they stand at
+ - every map tagged with compatible jobs, 28 new jobs
+ - NPCs work real shifts, take sick and parental leave
+ - omega tower citizens get jobs and initialize correctly
+ - relationship styles and orientation respected, couples break up
+ - pregnancy, adoption and children in two growth phases
+ - hyperpowers wage wars ended by conquest or ONU white peace
+ - territory changes after 2001, later start years simulated
+ - goblin horde towns in chaos, refugees flee and later return
+ - goblin mode and goblin horde scenarios
+ - NPCs flee or fight monsters, battles shown with red flashes
+ - monsters fight, spare and flee each other with toasts
+ - escaped enemies run away from the party
+ - blunt damage cannot destroy vital parts, leaves the victim downed
+ - downed bodies: loot, butcher, coup de grace
+ - defeated NPCs pay their pocket money to the party
+ - non lethal NPC defeat is aggravated assault, not murder
+ - injured NPCs heal over time and visit clinics
+ - NPC clothes by job and wealth, rare artifacts for the rich
+ - NPCs carry diet compatible food and eat when hungry
+ - some NPCs own unique customised thinker gear
+ - tech savvy NPCs get implants and prosthetics
+ - diseases spread by contact, venereal ones between partners
+ - addicted NPCs carry and use fixes, gamblers visit casinos
+ - NPCs tend plants, animals, hives and barrels
+ - NPCs swim and fish, drivers carry car keys
+ - exploring parties of real NPCs in the tower, dungeons and space
+ - more social lines: family, elections, war, goblins, ideology
+ - NPCs boast about and ask about specializations
+ - empathize teach, learn and talk about topics
+ - natural deaths keep the population stable
+ - buy job maps from the assets menu for daily profits
+ - interior job maps need ownership to build, B warns when building is off
+ - reworked NPC plugins into granular modules, lighter on FPS
+
+
+Added:
+ - default Esoteric world regenerable from build encrypted and worlds menu
+ - experimental full simulation log option, decisions popped as toasts
+ - buy and sell working places remotely in real estate app
+ - found your own political party, Propaganda2 app for campaigns and elections
+ - bribe the officer when arrested, high moral NPCs never take bribes
+ - reusable help modal with ? button, opened with Select
+ - voxel elevators in tall buildings, alien terrain varies by biome
+ - set respawn point at coordinates command, blood and oil switch
+ - fire all button in the workforce tab, with modal confirmation
+
+Changed:
+ - found party in politics is now a modal window
+ - better main menu icons, find icon moved to multiplayer
+ - reworked crime system: holy vatican empire and goblin horde have own laws
+ - vector gun form switching now smooth and seamless in battle and menu
+ - hexapedia pages no longer written for preset characters, Em, Eris, Bubba
+ - reworked stealing system, d20 roll when closing containers in NPC homes
+ - reworked scaling: highlighted stats instead of grades, firearms on DEX
+ - reworked hypertamer like first gen tamagotchi, with toast notification option
+ - reworked scythe of nyarlathotep blade into a single crescent
+ - debuffed catfish, critter and backward bird, removed forage from enemies
+ - delete party button no longer red, modal buttons lose inner bg
+ - reworked gunmancer skill learnup to prefer offensive magic, no firearm shots
+ - reworked NPC pool into seeded local NPCs, with homeless, street crime, bounties
+ - standardized controller controls across every menu, R2 switches party member
+ - each vector gun form has its own damage buff and type
+ - reworked character creation to choose 2D bust or 3D model
+ - vector gun switch keeps the rest of the turn, no switching back
+ - reworked enemy attack elements and elemental resistances to fit their bodies
+
+Fixed:
+ - water reflection culled on non blue tiles
+ - empathize ui completely controller accessible, including wiki
+ - preparing world no longer stuck in politics step
+ - eris camera map transfer no longer shows visible tileset switching
+ - random title music no longer changes the selected one on the dial
+ - removed black shading over eris camera mode
+ - events without Local, NPC or AI tags hide name and letter sound
+ - worn items no longer show up in liquidate menu
+ - hobgoblin warrior not visible in battle
+ - dice of yaldabaoth rolls first, then changes form
+ - slowdown lag at the start of battle
+ - vector gun switch animation now displayed in battle, and slower
+
 0.6.43a
 
  Maps:
  - Extended Moderna arcipelago, remade Palamoss, extended Spiral Summers
  Fixed:
- - removed cool vibes playing in character creation
+ - omega tower parties no longer pass unpassable tiles or terrain tag 7
+ - platforming mode bugs, faster ladders with aerial recovery
+ - removed music playing in character creation
  - Standardized more UI
  - Story mode dialogues triggering in non story mode
 

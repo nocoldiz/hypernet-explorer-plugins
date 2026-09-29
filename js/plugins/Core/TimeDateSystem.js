@@ -2510,6 +2510,17 @@
     // hour some of the town is between cigarettes and some of it badly wants
     // one, consistently and with nothing written to the save.
     profileCravings(profile) {
+      // The simulation keeps a real meter once it has met this person
+      // (NPCSim.Addictions, profile._crave); an empty one is a child or a
+      // beast, who is never addicted.
+      const stored = profile && profile._crave && profile._crave.v;
+      if (stored && typeof stored === "object") {
+        return Object.keys(stored).filter((key) => this.isKey(key)).map((key) => ({
+          key,
+          label: this.label(key),
+          value: Math.max(0, Math.min(100, Number(stored[key]) || 0)),
+        }));
+      }
       const ids = (profile && profile.traitIds) || [];
       const specs = this.LIST.filter((a) => ids.includes(a.traitId));
       if (!specs.length) return [];
@@ -4014,6 +4025,13 @@
     // for a companion, 'npc' for a bystander and 'self' for the player's own
     // subconscious, which is what an opponent is when nobody else is there.
     pick(opts = {}) {
+      // Somebody who was challenged to this very game (the Empathize panel's
+      // Challenge) takes the seat once, ahead of anybody else in the room.
+      const pinned = this._pinned;
+      if (pinned) {
+        this._pinned = null;
+        if (Date.now() <= pinned.until && pinned.stand) return Object.assign({}, pinned.stand);
+      }
       const party = opts.party === false ? [] : this.partyCandidates();
       if (party.length) {
         const m = party[Math.floor(Math.random() * party.length)];
@@ -4026,6 +4044,16 @@
       return { kind: 'self', name: T('TimeDate.opponent.subconscious'), actorId: 0 };
     },
 
+    // Hands the next pick() this stand-in, for PIN_MS of real time: long
+    // enough to walk to the table, short enough that a challenge nobody
+    // followed up never sits somebody down at a game played days later.
+    PIN_MS: 5 * 60 * 1000,
+    _pinned: null,
+    pin(stand) {
+      this._pinned = (stand && stand.name) ? { stand, until: Date.now() + this.PIN_MS } : null;
+      return !!this._pinned;
+    },
+
     // The name to print in the other seat, with the game's own CPU label as
     // the fallback for a stand-in that was never picked.
     nameOf(stand, fallback) {
@@ -4035,14 +4063,20 @@
     // An NPC who spent the evening playing enjoyed it: pay their leisure meter
     // when the session ends. A companion is already covered by MinigameFun,
     // which pays the whole party, and a subconscious has no meter to pay.
-    payFun(stand, amount) {
+    // `opts.signed` lets a lost round take Fun away (an NPC playing on their
+    // own, NPCSimulationCore MINIGAME PLAY); `opts.quiet` keeps the popup down
+    // for a round the player did not sit in on.
+    payFun(stand, amount, opts) {
       if (!stand || stand.kind !== 'npc') return 0;
-      const profile = window.NPCSocietyRegistry?.getProfile?.(stand.name);
+      const profile = window.NPCSocietyRegistry?.getProfile?.(stand.name) ||
+        window.$gameSystem?._npcSociety?.[stand.name];
       if (!profile) return 0;
       const step = amount == null ? this.NPC_FUN : Number(amount);
-      if (!(step > 0)) return 0;
+      const signed = !!(opts && opts.signed);
+      if (!(step > 0) && !(signed && step < 0)) return 0;
       profile.leisure = Math.max(0, Math.min(100,
         Math.round((profile.leisure ?? 100) + step)));
+      if (opts && opts.quiet) return step;
       try {
         window.ParchmentToast?.show(
           T('TimeDate.opponent.funShared', { name: stand.name }),
@@ -4871,6 +4905,14 @@
 
   Scene_Map.prototype.setSleepRespawnPoint = function () {
     $gameVariables.setValue(112, $gameVariables.value(86)); // RespawnCountryID = CurrentCountryID
+    // The same answer as the setRespawnPointAtCoordinates command: map id and
+    // tile, or the procedural square and the tile inside it, or that square's
+    // surface when the camp is made inside a structure entered off it.
+    const BSE = window.BattleSystemEnhanced;
+    if (BSE && BSE.Functions && BSE.Functions.setRespawnHere) {
+      BSE.Functions.setRespawnHere();
+      return;
+    }
     $gameVariables.setValue(25, $gameMap.mapId());          // RespawnMapID
     $gameVariables.setValue(26, $gamePlayer.x);             // RespawnX
     $gameVariables.setValue(27, $gamePlayer.y);             // RespawnY

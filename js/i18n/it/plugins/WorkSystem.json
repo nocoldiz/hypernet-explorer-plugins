@@ -3,6 +3,7 @@
   "faction": "Fazione",
   "locations": "Luoghi",
   "unknown": "Sconosciuto",
+  "moreLocations": "+{count} altri",
   "requirements": "Requisiti",
   "successRate": "Tasso di Successo",
   "deficitWarning": "Carenze rilevate. Accettare questo contratto comporta un rischio maggiore di fallimento e ferite.",

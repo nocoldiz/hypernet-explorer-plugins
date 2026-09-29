@@ -239,17 +239,16 @@
         return;
       }
 
-      if (Input.isRepeated('down') || Input.isRepeated('s')) {
+      // WASD arrives as the arrows; one press is one action, so the checks
+      // form a single chain.
+      if (Input.isRepeated('down')) {
         if (this._idx < len - 1) { this._idx++; SoundManager.playCursor(); this._updateHighlight(); }
-      }
-      if (Input.isRepeated('up') || Input.isRepeated('w')) {
+      } else if (Input.isRepeated('up')) {
         if (this._idx > 0)       { this._idx--; SoundManager.playCursor(); this._updateHighlight(); }
-      }
-      if (Input.isTriggered('ok')) {
+      } else if (Input.isTriggered('ok')) {
         SoundManager.playOk();
         this._doSteal();
-      }
-      if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+      } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
         SoundManager.playCancel();
         this.popScene();
       }

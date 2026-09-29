@@ -1907,6 +1907,7 @@
             this.updateFlash(deltaTime);
             this.updateAimHighlight(deltaTime);
             this.updateDestroyFade(deltaTime);
+            this._undoBossIntroOutro();
 
             if (this.currentAnimation === 'death') {
                 // Drop any leftover action-gesture offset before the death pose.
@@ -2042,11 +2043,20 @@
                     case 5: py = 1.5 * s * Math.sin(Math.min(prog * 2.6, Math.PI)); rz = prog * 0.9; break;       // blown back, then drop
                 }
             }
-            // py & rz: owning pose resets them each frame -> add directly.
-            m.position.y += py; m.rotation.z += rz;
-            // px & ry: persistent axes -> delta-track so they zero out cleanly.
-            const L = this._lastBoss || (this._lastBoss = { px: 0, ry: 0 });
-            m.position.x += px - L.px; m.rotation.y += ry - L.ry; L.px = px; L.ry = ry;
+            // Every axis is taken back off by _undoBossIntroOutro before the next
+            // pose, so it holds whether or not the family's pose re-sets it. Only
+            // some families rewrite model.position.y each frame; the humanoid one
+            // does not, and a boss built on it (Hobgoblin Warrior) summed the
+            // rise into a fall through the floor and was never seen again.
+            m.position.x += px; m.position.y += py; m.rotation.y += ry; m.rotation.z += rz;
+            this._lastBoss = { px: px, py: py, ry: ry, rz: rz };
+        }
+        _undoBossIntroOutro() {
+            const L = this._lastBoss;
+            if (!L || !this.model) return;
+            const m = this.model;
+            m.position.x -= L.px; m.position.y -= L.py; m.rotation.y -= L.ry; m.rotation.z -= L.rz;
+            this._lastBoss = null;
         }
 
         // ── Hit-stop ─────────────────────────────────────────────────────────

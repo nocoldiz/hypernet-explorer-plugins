@@ -483,10 +483,13 @@
           </div>`;
       }
 
-      const locationsHTML = (job.locations && job.locations.length > 0)
+      const places = window.WorkSystem.jobLocationsShown
+        ? window.WorkSystem.jobLocationsShown(job, 8) : { shown: [], more: 0 };
+      const locationsHTML = places.shown.length > 0
         ? `<div class="inspect-section-title">${T('WorkSystem.availableLocations')}</div>
            <div class="ui-chip-row">
-             ${job.locations.map(loc => `<span class="ui-chip">${this.getLocationName(loc)}</span>`).join('')}
+             ${places.shown.map(loc => `<span class="ui-chip">${this.getLocationName(loc)}</span>`).join('')}
+             ${places.more ? `<span class="ui-chip">${window.WorkSystem.moreLocationsLabel(places.more)}</span>` : ''}
            </div>`
         : "";
 
@@ -741,7 +744,7 @@
               this._jobListWindow.select(prevIndex);
               moved = true;
             }
-          } else if (Input.isTriggered('right') || this.isKeyPressed('KeyD') || Input.isTriggered('ok')) {
+          } else if (Input.isRepeated('right') || this.isKeyPressed('KeyD') || Input.isTriggered('ok')) {
             if (job) {
               this._dndFocusSection = 'actors';
               this._dndActorIndex = 0;
@@ -762,7 +765,7 @@
               this._dndActorIndex = (this._dndActorIndex - 1 + maxActors) % maxActors;
               moved = true;
             }
-          } else if (Input.isTriggered('left') || this.isKeyPressed('KeyA')) {
+          } else if (Input.isRepeated('left') || this.isKeyPressed('KeyA')) {
             this._dndFocusSection = 'list';
             moved = true;
             SoundManager.playCancel();
@@ -775,7 +778,9 @@
           }
         }
 
-        if (Input.isTriggered('pagedown') || Input.isTriggered('pageup')) {
+        // The offers and the roster are this screen's two pages: L1 / R1
+        // (Q / W, Tab) turn between them like any other tab strip.
+        if (window.UINav ? window.UINav.tabDir() : (Input.isTriggered('pagedown') || Input.isTriggered('pageup'))) {
           this.showSection(this._dndFocusSection === 'list' ? 'actors' : 'list');
           return;
         }
@@ -902,6 +907,9 @@
   // work it will not give reads as a bug, and the party has the pause menu and
   // the wiki to find out why the column is thinner than usual.
   function isJobOpenToParty(job) {
+    // An appointed office (a head of state, a minister) is held by whoever the
+    // politics seat in it, never taken off a board (NPCPolitics).
+    if (job && job.appointed) return false;
     try {
       const crime = window.CrimeSystem;
       if (crime && typeof crime.refusesRegisteredService === "function" &&
@@ -1083,12 +1091,18 @@
       y += lineHeight;
 
       this.changeTextColor(ColorManager.normalColor());
-      if (!this._job.locations || this._job.locations.length === 0) {
+      const places = window.WorkSystem.jobLocationsShown
+        ? window.WorkSystem.jobLocationsShown(this._job, 6) : { shown: [], more: 0 };
+      if (!places.shown.length) {
         const unknownText =T('WorkSystem.unknown');
         this.drawText(unknownText, leftX + 10, y, columnWidth - 10);
       } else {
-        for (const location of this._job.locations) {
+        for (const location of places.shown) {
           this.drawText('• ' + this.getLocationName(location), leftX + 10, y, columnWidth - 10);
+          y += lineHeight;
+        }
+        if (places.more) {
+          this.drawText('• ' + window.WorkSystem.moreLocationsLabel(places.more), leftX + 10, y, columnWidth - 10);
           y += lineHeight;
         }
       }

@@ -876,6 +876,9 @@
     canReopen: canReopenOriginStep,
     reopen: reopenOriginStep,
     clearSnapshot: clearOriginSnapshot,
+    // The names the creation picker may offer, or null for all of them (the
+    // goblin scenarios, see allowedStartDestinations).
+    allowedDestinations: (destinations) => allowedStartDestinations(destinations),
   };
 
   // --- Starting loadouts ---------------------------------------------------
@@ -1076,6 +1079,24 @@
       { id: ITEM_FIELD_RATION, qty: 3, each: true },
       { id: ITEM_STRONG_ALE, qty: 2, each: true },
     ],
+    // Goblins on their own ground: what was scavenged on the way down the
+    // road, a stick to lean on and a map somebody else drew.
+    origin_goblin: [
+      { id: ITEM_LOCAL_MAP, qty: 1 },
+      { id: ITEM_WALKING_STICK, qty: 1 },
+      { id: ITEM_VENISON_JERKY, qty: 3, each: true },
+      { id: ITEM_WILD_BERRIES, qty: 2, each: true },
+      { id: ITEM_STRONG_ALE, qty: 2, each: true },
+      { id: ITEM_OINTMENT, qty: 1, each: true },
+    ],
+    // A Horde warband's camp: rations for the column, ale for the fires.
+    origin_goblin_horde: [
+      { id: ITEM_LOCAL_MAP, qty: 1 },
+      { id: ITEM_WHETSTONE, qty: 1 },
+      { id: ITEM_FIELD_RATION, qty: 3, each: true },
+      { id: ITEM_STRONG_ALE, qty: 2, each: true },
+      { id: ITEM_FIGHTERS_BOOSTER, qty: 1, each: true },
+    ],
     // A faction's own quartermaster: a proper camp, properly fed.
     origin_faction_leader: [
       { id: ITEM_LOCAL_MAP, qty: 1 },
@@ -1226,6 +1247,10 @@
     origin_crash: [ITEM_LOW_ORBIT_PIN, ITEM_MULTITOOL, ITEM_FLASHLIGHT],
     // Warband: keep the edge, hit harder, feel none of it.
     origin_warlord: [ITEM_WHETSTONE, ITEM_FIGHTERS_BOOSTER, ITEM_MORPHINE],
+    // Goblin on the road: the jerky, the ale, and something for the scrapes.
+    origin_goblin: [ITEM_VENISON_JERKY, ITEM_STRONG_ALE, ITEM_OINTMENT],
+    // Horde warband: keep the edge, hit harder, drink to it.
+    origin_goblin_horde: [ITEM_WHETSTONE, ITEM_FIGHTERS_BOOSTER, ITEM_STRONG_ALE],
     // Quartermaster: the rope, the stone, the map of what you hold.
     origin_faction_leader: [ITEM_ELVEN_ROPE, ITEM_WHETSTONE, ITEM_LOCAL_MAP],
     // Fresh implants: the nanites, the spray, and the charge they run on.
@@ -2469,6 +2494,207 @@
     startWorldMapPickerOrigin();
   }
 
+  // ==========================================================================
+  // The goblin scenarios
+  // ==========================================================================
+  // Goblin mode: the party are goblins, dressed off the same goblin wardrobe a
+  // goblin world deals its crowd from (SpriteCatalog.goblinKeys, the busts
+  // those sheets carry), and the starting place picker offers only the places
+  // standing in a nation the Goblin Horde holds on the day the game begins.
+  // The Horde's reach is read live (SpriteCatalog.goblinHordeHoldsCountry, the
+  // chronicle's controller first), so a nation the Horde has conquered since
+  // the century began is offered with its old seats, and one it has lost is not.
+  //
+  // Goblin Horde: the same, plus a warband of the Horde's own troops
+  // (ArmyManager.GOBLIN_HORDE_TROOPS), paid two weeks ahead, and the standing
+  // of a Horde officer: high with the Horde, low with every power it is at war
+  // with (HistoryManager.activeWars).
+  //
+  // GOBLIN_HORDE_ARMY_PLAN is the ONE table the warband is written in: the
+  // grant hires exactly its rows, and the scenario text and the dossier count
+  // them off it, so the number promised is the number that marches.
+  const GOBLIN_ORIGINS = ["origin_goblin", "origin_goblin_horde"]; // i18n-ignore  choice symbols
+  const GOBLIN_HORDE_ARMY_PLAN = [
+    { troop: "grunt", count: 20 },   // i18n-ignore  ArmyManager troop key
+    { troop: "slinger", count: 10 }, // i18n-ignore  ArmyManager troop key
+    { troop: "raider", count: 6 },   // i18n-ignore  ArmyManager troop key
+    { troop: "guard", count: 2 },    // i18n-ignore  ArmyManager troop key
+    { troop: "shaman", count: 1 },   // i18n-ignore  ArmyManager troop key
+    { troop: "warboss", count: 1 },  // i18n-ignore  ArmyManager troop key
+  ];
+  const GOBLIN_HORDE_UPKEEP_WEEKS = 2;
+  const GOBLIN_HORDE_REPUTATION = 60;
+  const GOBLIN_HORDE_ENEMY_REPUTATION = -60;
+  const GOBLIN_HORDE_POWER_FALLBACK = "Goblin Horde"; // i18n-ignore  Hyperpowers.json key
+
+  function isGoblinOrigin(symbol) {
+    return GOBLIN_ORIGINS.indexOf(symbol) >= 0;
+  }
+
+  function goblinHordePowerName() {
+    const AM = window.ArmyManager;
+    return (AM && AM.GOBLIN_HORDE_POWER) || GOBLIN_HORDE_POWER_FALLBACK;
+  }
+
+  /** A copy of the warband plan, [{ troop, count }]. */
+  function goblinHordeArmyPlan() {
+    return GOBLIN_HORDE_ARMY_PLAN.map((row) => ({ troop: row.troop, count: row.count }));
+  }
+
+  /** How many troops the Goblin Horde scenario starts with. */
+  function goblinHordeArmyCount() {
+    return GOBLIN_HORDE_ARMY_PLAN.reduce((sum, row) => sum + row.count, 0);
+  }
+
+  /** The upkeep money the warband is paid ahead, in gold. */
+  function goblinHordeUpkeepGold() {
+    const AM = window.ArmyManager;
+    if (!AM || typeof AM.goblinHordePlanWeeklyCost !== "function") return 0;
+    return AM.goblinHordePlanWeeklyCost(GOBLIN_HORDE_ARMY_PLAN) * GOBLIN_HORDE_UPKEEP_WEEKS;
+  }
+
+  // The nation a picker destination stands in: its own Destinations.json
+  // entry, then any spelling WorkSystem knows it by.
+  function destinationCountryOf(dest) {
+    if (!dest) return null;
+    const own = dest.transportOverrides && dest.transportOverrides.country;
+    if (own) return own;
+    const WS = window.WorkSystem;
+    const found = WS && typeof WS.destinationCountry === "function" ? WS.destinationCountry(dest.name) : null;
+    return (found && found.country) || null;
+  }
+
+  /** Does the Horde hold the ground this picker destination stands on? */
+  function hordeHoldsDestination(dest) {
+    const SC = window.SpriteCatalog;
+    if (!SC || !dest || dest.custom) return false;
+    const country = destinationCountryOf(dest);
+    if (country) return !!SC.goblinHordeHoldsCountry(country);
+    const base = dest.transportOverrides && dest.transportOverrides.base;
+    return !!(base && typeof SC.goblinHordeHoldsSquare === "function" &&
+      SC.goblinHordeHoldsSquare(base.x, base.y));
+  }
+
+  /** The names of the destinations standing on Horde ground, in list order. */
+  function goblinHordeDestinations(destinations) {
+    return (destinations || []).filter(hordeHoldsDestination).map((dest) => dest.name);
+  }
+
+  // Asked by FastTravelSystem when the creation picker opens. Answers the
+  // names the picker may offer, or null to leave it alone: every scenario but
+  // the two goblin ones, and a goblin one whose Horde holds nowhere on the
+  // list, which is told so and given the whole map rather than none of it.
+  function allowedStartDestinations(destinations) {
+    if (!$gameTemp || !$gameTemp._characterCreationTravelMode) return null;
+    if (!$gameSystem || !isGoblinOrigin($gameSystem._ccOriginSymbol)) return null;
+    const names = goblinHordeDestinations(destinations);
+    if (names.length > 0) return names;
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('CharCreate.goblinNoHordeDestination'), { severity: "warning" });
+    }
+    return null;
+  }
+
+  // Whether this member is dressed by the scenario: a creature character keeps
+  // the body it was built with, and so does anyone already wearing a goblin.
+  function wantsGoblinLook(actor, SC) {
+    if (!actor || actor._isCreatureActor) return false;
+    const NC = window.NPCCreature;
+    if (NC && NC.isNonSentientActor && NC.isNonSentientActor(actor)) return false;
+    const current = actor.characterName ? actor.characterName() : "";
+    return !(current && SC.isGoblinSheet(current));
+  }
+
+  /**
+   * Dress every member of the party as a goblin: a sheet off the goblin
+   * wardrobe and the bust that sheet carries, dealt off the origin seed so
+   * the same run always gets the same faces. Returns how many were dressed.
+   */
+  function dressPartyAsGoblins() {
+    const SC = window.SpriteCatalog;
+    if (!SC || typeof SC.goblinKeys !== "function" || !$gameParty) return 0;
+    const pool = SC.goblinKeys() || [];
+    if (!pool.length) return 0;
+    const catalog = (window.WorldGen && window.WorldGen.NPCs) || {};
+    const rng = seededRng(originRollSeed() ^ textSalt("goblin-party")); // i18n-ignore  seed salt
+    const members = $gameParty.members();
+    // Distinct faces while the wardrobe has enough of them.
+    const sheets = rngPickSome(rng, pool, members.length);
+    let dressed = 0;
+    members.forEach((actor, index) => {
+      const sheet = sheets.length ? sheets[index % sheets.length] : null;
+      if (!sheet || !wantsGoblinLook(actor, SC)) return;
+      actor.setCharacterImage(sheet, 0);
+      const entry = catalog[sheet] || {};
+      const bust = (entry.busts && entry.busts[0]) || null;
+      if (bust && actor.setVnBust) {
+        actor.setVnBust(bust);
+        if (actor.setPortraitMode) actor.setPortraitMode("bust");
+      }
+      dressed++;
+    });
+    if (dressed && typeof $gamePlayer !== "undefined" && $gamePlayer && $gamePlayer.refresh) {
+      $gamePlayer.refresh();
+    }
+    return dressed;
+  }
+
+  /** The powers the Horde is at war with right now, by name. */
+  function goblinHordeWarEnemies() {
+    const hm = window.HistoryManager;
+    if (!hm || typeof hm.activeWars !== "function") return [];
+    const horde = goblinHordePowerName().toLowerCase();
+    const enemies = [];
+    (hm.activeWars() || []).forEach((war) => {
+      if (!war) return;
+      const a = String(war.attacker || "");
+      const d = String(war.defender || "");
+      const other = a.toLowerCase() === horde ? d : (d.toLowerCase() === horde ? a : "");
+      if (other && enemies.indexOf(other) < 0) enemies.push(other);
+    });
+    return enemies;
+  }
+
+  // Every member's own standing: a Horde officer, welcome with the Horde and
+  // hated by whoever it is fighting, their branch factions included.
+  function applyGoblinHordeStanding() {
+    const gf = (typeof $gameFactions !== "undefined") ? $gameFactions : null;
+    if (!gf || typeof gf.setReputationFor !== "function" || !$gameParty) return;
+    const powers = typeof gf.getHyperpowers === "function" ? gf.getHyperpowers() : [];
+    const byName = (name) => powers.find((hp) => hp && hp.name.toLowerCase() === String(name).toLowerCase()) || null;
+    const horde = byName(goblinHordePowerName());
+    const hordeKey = horde ? gf.hyperpowerStandingKey(horde.id) : "hp:4";
+    const enemyKeys = [];
+    goblinHordeWarEnemies().forEach((name) => {
+      const hp = byName(name);
+      if (!hp) return;
+      enemyKeys.push(gf.hyperpowerStandingKey(hp.id));
+      const branches = typeof gf.getHyperpowerFactions === "function" ? gf.getHyperpowerFactions(hp.id) : [];
+      branches.forEach((f) => { if (f) enemyKeys.push(f.id); });
+    });
+    $gameParty.members().forEach((actor) => {
+      gf.setReputationFor(actor, hordeKey, GOBLIN_HORDE_REPUTATION);
+      enemyKeys.forEach((key) => gf.setReputationFor(actor, key, GOBLIN_HORDE_ENEMY_REPUTATION));
+    });
+  }
+
+  function startGoblinOrigin() {
+    dressPartyAsGoblins();
+    startWorldMapPickerOrigin();
+  }
+
+  function startGoblinHordeOrigin() {
+    dressPartyAsGoblins();
+    const AM = window.ArmyManager;
+    if (AM && typeof AM.grantGoblinHordeTroops === "function") {
+      AM.grantGoblinHordeTroops(goblinHordeArmyPlan());
+    }
+    const upkeep = goblinHordeUpkeepGold();
+    if (upkeep > 0 && $gameParty) $gameParty.gainGold(upkeep);
+    applyGoblinHordeStanding();
+    startWorldMapPickerOrigin();
+  }
+
   // Faction Leader / Deserter origins: both let the player pick a faction
   // through the same Factions menu (Scene_FactionStatus, in selection mode)
   // and grant 40 troops of that faction. Faction Leader sets reputation with
@@ -2646,6 +2872,23 @@
     startArtifactHeirOrigin,
     startCrashLandedOrigin,
     startWarlordOrigin,
+    GOBLIN_ORIGINS,
+    GOBLIN_HORDE_ARMY_PLAN,
+    GOBLIN_HORDE_REPUTATION,
+    GOBLIN_HORDE_ENEMY_REPUTATION,
+    GOBLIN_HORDE_UPKEEP_WEEKS,
+    isGoblinOrigin,
+    goblinHordeArmyPlan,
+    goblinHordeArmyCount,
+    goblinHordeUpkeepGold,
+    hordeHoldsDestination,
+    goblinHordeDestinations,
+    allowedStartDestinations,
+    dressPartyAsGoblins,
+    goblinHordeWarEnemies,
+    applyGoblinHordeStanding,
+    startGoblinOrigin,
+    startGoblinHordeOrigin,
     finishFactionOrigin,
     startFactionPickerOrigin,
     SUGGESTED_ORIGINS,

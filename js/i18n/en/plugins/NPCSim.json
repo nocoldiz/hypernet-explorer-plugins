@@ -6,6 +6,8 @@
     "skyscrapers": "high-rise"
   },
   "log": {
+    "swam": "went for a swim",
+    "caughtFish": "caught a {fish}",
     "work": "worked as {job} and earned {pay}",
     "harvested": "harvested mature crops",
     "animalProduce": "collected animal produce",
@@ -13,9 +15,9 @@
     "caughtStealing": "caught stealing {item}",
     "bought": "bought {item} for {price}",
     "cooked": "cooked {a} with {b}",
+    "ateFromHand": "ate the {item} they were carrying",
     "foundInContainer": "found {amount} rummaging through a container",
     "rentedRoom": "rented a room for the night ({price})",
-    "soldHoney": "sold a batch of honey and wax for {amount}",
     "tookLoan": "took out a loan for {amount}",
     "deposited": "deposited {amount} into a savings account",
     "rentalIncome": "collected {amount} in rental income",
@@ -23,7 +25,60 @@
     "stocksLoss": "lost {amount} trading stocks",
     "movedHome": "moved to a {home} ({saved} saved)",
     "reachedLevel": "reached level {level}",
-    "met": "met {name}"
+    "specHoned": "became {level} in {spec}",
+    "met": "met {name}",
+    "minigameWon": "played {game} and won {amount}",
+    "minigameLost": "played {game} and lost {amount}",
+    "minigameBeat": "played {game} and won",
+    "minigameBeaten": "played {game} and lost",
+    "minigameDraw": "played {game} to a draw",
+    "minigamePlayed": "played {game}",
+    "treated": "was treated with {item} for {price}",
+    "prosthetic": "had a lost part replaced with {item} for {price}",
+    "harvestedCrop": "harvested {qty} {item}",
+    "harvestedFor": "harvested {qty} {item} for {owner}",
+    "collected": "collected {qty} {item} from the animals",
+    "collectedFor": "collected {qty} {item} for {owner}",
+    "wateredParty": "watered the party's {plant}",
+    "fedParty": "fed the party's {animal}",
+    "wateredHive": "filled the water at the party's hive",
+    "usedFix": "used {item} to feed a {substance} craving",
+    "withdrawal": "went into {substance} withdrawal",
+    "withdrawalOver": "came through {substance} withdrawal",
+    "hiveCared": "looked after the bees",
+    "hiveCaredParty": "looked after the party's bees",
+    "hiveTreated": "treated the bees for {threats}",
+    "honeyTaken": "took {qty} {item} off the hive",
+    "honeyTakenFor": "took {qty} {item} off the hive for {owner}",
+    "barrelCared": "saw to a barrel of {brew}",
+    "barrelCaredParty": "saw to the party's barrel of {brew}",
+    "barrelBottled": "bottled {qty} {item}",
+    "barrelBottledFor": "bottled {qty} {item} for {owner}",
+    "barrelStarted": "set a barrel of {brew} going",
+    "sippedBrew": "helped themselves to a drop of {brew}",
+    "stocksBought": "bought {shares} shares of {company} for {amount}",
+    "stocksInherited": "inherited the shares of {name}",
+    "workInKind": "worked as {job} and was paid in food"
+  },
+  "tend": {
+    "waterFriend": "The {plant} looked thirsty. Least I can do for friends.",
+    "feedFriend": "Gave the {animal} something to eat. Friends look after each other's animals.",
+    "hiveFriend": "Topped up the water at their hive. Bees get thirsty too.",
+    "barrelFriend": "Gave their barrel of {brew} a look. Friends keep an eye on each other's things."
+  },
+  "minigame": {
+    "arcade": "an arcade cabinet",
+    "slots": "the slot machine",
+    "horserace": "the horse races",
+    "tournament": "the monster tournament",
+    "cards": "a card duel",
+    "scratch": "a scratch card",
+    "bowling": "a game of bowling",
+    "pool": "a game of pool",
+    "basketball": "a game of basketball",
+    "target": "at the shooting range",
+    "piano": "the piano",
+    "tarot": "a tarot reading"
   },
   "narrative": {
     "noHistory": "{name} has no recorded history yet.",
@@ -43,5 +98,28 @@
     "summary": "{name}: {list}.",
     "quiet": "{name} has been living quietly."
   },
-  "unknownDate": "Unknown"
+  "unknownDate": "Unknown",
+  "work": {
+    "served": [
+      "Here you are, {name}.",
+      "Next! Ah, {name}. The usual?",
+      "There you go, {name}. Mind how you go.",
+      "Anything else, {name}?"
+    ],
+    "thanked": [
+      "Thanks, {name}. Keep the change.",
+      "Quick service, {name}. I like that.",
+      "Cheers, {name}.",
+      "Just what I needed, thank you."
+    ]
+  },
+  "addiction": {
+    "label": {
+      "nicotine": "nicotine",
+      "caffeine": "caffeine",
+      "narcotic": "narcotics",
+      "alcohol": "alcohol",
+      "gambling": "gambling"
+    }
+  }
 }

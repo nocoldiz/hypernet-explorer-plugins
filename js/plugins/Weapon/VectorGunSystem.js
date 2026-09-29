@@ -24,7 +24,7 @@
  *                    of its own, calibrated separately, which is how the frame
  *                    holds two at once. Everything else strikes plain.
  *   THE FORM         what the gun is. One choice fitted at a time: the Dice
- *                    of YHWH (the default), the gun's own shape, or one of the
+ *                    of Yaldabaoth (the default), the gun's own shape, or one of the
  *                    twenty weapon forms it folds into, which come open with
  *                    Em's level up to the Grimoire of Solomon at 50. In battle
  *                    the reload row is SWITCH: it reconstructs the weapon as
@@ -63,10 +63,36 @@
   const BURST_DAMAGE_RATE = 0.7;  // what each round of a burst gives up
   const OVERLOAD_DAMAGE_RATE = 0.85;  // what a doubled magazine costs a shot
   // What folding is worth. The pistol is the weapon at rest: every shape it
-  // reconstructs into, the coilgun included, strikes for this much more, and
-  // only a folded weapon carries an element at all. Switching is a decision,
-  // not a costume.
-  const FORM_DAMAGE_BONUS = 0.4;
+  // reconstructs into, the coilgun included, strikes harder than it does, each
+  // by its own share, the later shapes the most. The rosary mends rather than
+  // strikes, so it gains nothing, and the Fists of Em are the gun put down,
+  // so they hit softer than it. Switching is a decision, not a costume.
+  const FORM_DAMAGE_BONUS = {
+    gautama: 0,
+    fists: -0.20,
+    zos: 0.26,
+    aiwass: 0.28,
+    freud: 0.30,
+    abrasax: 0.32,
+    hadit: 0.34,
+    nuit: 0.36,
+    bubba: 0.38,
+    sniper: 0.40,
+    kia: 0.42,
+    longinus: 0.44,
+    solomon: 0.45,
+    babalon: 0.46,
+    grimoire: 0.47,
+    baphomet: 0.48,
+    choronzon: 0.50,
+    eris: 0.51,
+    maat: 0.53,
+    thelema: 0.55,
+    yaldabaoth: 0.60,
+    nyarlathotep: 0.64,
+  };
+  /** What a folded shape adds to a blow, as a fraction (0.4 = +40%). */
+  const formDamageBonus = (key) => (key && FORM_DAMAGE_BONUS[key]) || 0;
   // What the Solomon incantation is worth. The words of a spell said out in
   // full before it is cast cost the fight a page of everybody's time, and buy
   // this much: every spell read that way lands, or mends, that much harder.
@@ -238,7 +264,7 @@
     eris:      { wtypeId: 5, range: 1, builder: 'createVectorNunchakuModel' },   // Nunchaku of Eris
     maat:      { wtypeId: 3, range: 2, builder: 'createVectorFlailModel' },      // Mail of Maat
     bubba:     { wtypeId: 3, range: 1, builder: 'createVectorWrenchModel' },     // Wrench of Bubba
-    yaldabaoth:{ wtypeId: 4, range: 1, builder: 'createVectorChainsawModel',     // Chainsaw of Yaldabaoth
+    yaldabaoth:{ wtypeId: 4, range: 1, builder: 'createVectorChainsawModel',     // Chainsaw of YHWH
                  sounds: ['Machine', 'Saw1', 'Slash1'] },
     nyarlathotep: { wtypeId: 12, range: 2, builder: 'createVectorScytheModel' }, // Scythe of Nyarlathotep
     // The one blade that is not swung with the arm: it reads the mind behind
@@ -289,7 +315,7 @@
   const FORM_KEYS = Object.keys(FORM_MODES).filter((k) => !FORM_MODES[k].derived);
 
   // What Em has earned the right to fit. Twenty weapon forms, one per face of
-  // the Dice of YHWH: she walks in with four of them and the rest come open
+  // the Dice of Yaldabaoth: she walks in with four of them and the rest come open
   // one at a time, weakest first, until the Grimoire of Solomon at 50 leaves
   // nothing shut. The dice and the gun's own shape are always hers.
   const FORM_UNLOCK = {
@@ -332,7 +358,7 @@
   const lockedForms = () => FORM_ORDER.filter((key) => !isFormUnlocked(key))
     .map((key) => ({ key: key, level: formUnlockLevel(key) }));
 
-  // The Dice of YHWH: the default choice in the form bay, and not a weapon at
+  // The Dice of Yaldabaoth: the default choice in the form bay, and not a weapon at
   // all. Fitted, SWITCH rolls a d20 and the frame folds into the form on that
   // face, locked or not: the dice does not ask what she has earned.
   const DICE_FORM = 'dice';
@@ -465,7 +491,7 @@
   // valid answer, so the weapon is never left without one.
 
   /**
-   * The choice in the form bay, the Dice of YHWH by default. A form her level
+   * The choice in the form bay, the Dice of Yaldabaoth by default. A form her level
    * has not reached (a savegame from before the forms were earned) reads as
    * the dice rather than as a form she could not have fitted.
    */
@@ -506,7 +532,7 @@
   }
 
   /**
-   * One roll of the Dice of YHWH.
+   * One roll of the Dice of Yaldabaoth.
    * @param {number} [face] - A face to land on instead of rolling, for tests
    * @returns {{face: number, key: string, natural: boolean}}
    */
@@ -770,10 +796,12 @@
     // Only the frame itself folds: another hand's weapon is its own weapon
     // whoever is standing next to it.
     const holdsGun = !!subject && !!subject.weapons && subject.weapons().some(isVectorGun);
-    let rate = (damageTypeOverride(subject, action) ? WIDE_DAMAGE_RATE : 1);
+    // Only a fanned shot pays for spreading: a folded shape's own damage type
+    // is what it is, not a spread.
+    let rate = (!(holdsGun && formKey()) && firing(subject, 'wide') ? WIDE_DAMAGE_RATE : 1);
     // Folded, the whole frame is behind the blow: every shape strikes harder
     // than the pistol does, which is what makes SWITCH worth the round.
-    if (holdsGun && formKey()) rate *= 1 + FORM_DAMAGE_BONUS;
+    if (holdsGun && formKey()) rate *= 1 + formDamageBonus(formKey());
     if (firing(subject, 'burst')) rate *= BURST_DAMAGE_RATE;
     if (firing(subject, 'overpressure')) rate *= 1 + OVERPRESSURE_BONUS;
     // A doubled rack is paid for by every round that comes out of it, and it
@@ -1137,14 +1165,41 @@
     return (BOW_DRAWS[calValue(key, 'draw')] || BOW_DRAWS.standard).crit || 0;
   }
 
-  /** The damage type the shape delivers, when it was told to deliver one. */
-  function formDamageType() {
-    const key = formKey();
+  // What each shape hits with, out of the damage types the game already has
+  // (the <DamageType:> tags of the database). The maul is the one that is
+  // calibrated rather than fixed, and the rosary mends, so it strikes as nothing.
+  const FORM_DAMAGE_TYPES = {
+    abrasax: 'Piercing',
+    thelema: 'Cutting',
+    choronzon: 'Blunt',
+    babalon: 'Cutting',
+    nuit: 'Cutting',
+    hadit: 'Abstract',
+    aiwass: 'Piercing',
+    zos: 'Piercing',
+    baphomet: 'Cutting',
+    kia: 'Blunt',
+    longinus: 'Piercing',
+    fists: 'Blunt',
+    eris: 'Blunt',
+    maat: 'Area',
+    bubba: 'Blunt',
+    yaldabaoth: 'Cutting',
+    nyarlathotep: 'Area',
+    freud: 'Abstract',
+    solomon: 'Area',
+    sniper: 'Piercing',
+    grimoire: 'Explosive',
+  };
+
+  /** The damage type a shape delivers, or null for one that strikes as nothing. */
+  function formDamageType(form) {
+    const key = form === undefined ? formKey() : form;
     if (key === 'choronzon') {
       const type = calValue(key, 'damageType');
       return MAUL_TYPES.indexOf(type) >= 0 ? type : 'Blunt';
     }
-    return null;
+    return (key && FORM_DAMAGE_TYPES[key]) || null;
   }
 
   /** Whether the shape in hand mends rather than strikes. */
@@ -2015,6 +2070,79 @@
   }
 
   /**
+   * Whether the fold is still moving in the hand. The battle follows this
+   * rather than a clock: counted in frames, a slow frame left the packet
+   * sitting shut for a beat before the new shape opened, and a fast one cut
+   * the swap in over a fold that had not closed yet.
+   * @returns {?boolean} true while a panel is moving, false once it has
+   *   settled, null when no hand holds a panel fold (the Fists of Em's rig,
+   *   or the hand still being rebuilt), which is left to the clock
+   */
+  function switchFxRunning() {
+    const progress = switchFxProgress();
+    return progress === null ? null : progress < 1;
+  }
+
+  /**
+   * How far through its half the fold in the hand is, 0 to 1 (the slowest
+   * hand's), or null when no hand holds a panel fold. The rise is started off
+   * this before the fold has finished (VECTOR_FOLD_HANDOFF).
+   * @returns {?number}
+   */
+  function switchFxProgress() {
+    const panels = heldGunSprites().filter((sprite) => !sprite._rig);
+    if (!panels.length) return null;
+    let least = 1;
+    for (const sprite of panels) {
+      const vs = sprite._model._vectorSwitch;
+      if (vs) least = Math.min(least, vs.elapsed / vs.duration);
+    }
+    return least;
+  }
+
+  // The shape being put away, still folding, once its sprite has let go of it.
+  const _ghosts = [];
+  let _ghostClock = 0;
+
+  /**
+   * Takes the model out of a sprite about to be torn down while its fold is
+   * still playing, and plays the rest of that fold where it stands. The new
+   * shape rises out of the same point meanwhile, so the two overlap instead
+   * of one being cut into the other.
+   * @param {Object} sprite - the Sprite_3DWeapon being replaced
+   * @returns {boolean} true when the model was taken
+   */
+  function adoptFoldingModel(sprite) {
+    const model = sprite && !sprite._rig ? sprite._model : null;
+    if (!model || !model._vectorSwitch) return false;
+    // Handed back opaque first: the materials may be a cached prototype's.
+    if (sprite._applyFade) sprite._applyFade(1);
+    sprite._model = null;
+    _ghosts.push(model);
+    if (!_ghostClock) {
+      let last = performance.now();
+      const step = () => {
+        const now = performance.now();
+        const dt = now - last;
+        last = now;
+        const WSP = window.WeaponSystemProcedural;
+        for (let i = _ghosts.length - 1; i >= 0; i--) {
+          const ghost = _ghosts[i];
+          if (WSP && ghost.parent) WSP.tickVectorSwitch(ghost, dt);
+          if (!ghost.parent || !ghost._vectorSwitch) {
+            if (ghost.parent) ghost.parent.remove(ghost);
+            if (window.disposeWeaponObject3D) window.disposeWeaponObject3D(ghost);
+            _ghosts.splice(i, 1);
+          }
+        }
+        _ghostClock = _ghosts.length ? requestAnimationFrame(step) : 0;
+      };
+      _ghostClock = requestAnimationFrame(step);
+    }
+    return true;
+  }
+
+  /**
    * Lowers or raises the rig's hands for a SWITCH.
    * @param {Object} sprite - a Sprite_3DWeapon holding the rig
    * @param {boolean} rise - true to raise them, false to put them away
@@ -2038,13 +2166,16 @@
    * than from a second copy living in the menu.
    * @param {Object} model - the three.js model on the stand
    * @param {string} phase - 'fold' or 'rise'
+   * @param {Object} [opts] - {reverse, pace}, handed to startVectorSwitch: a
+   *   shape going back to the gun retraces its way out, and faster
    * @returns {number} How long it runs, in milliseconds
    */
-  function playSwitchOn(model, phase) {
+  function playSwitchOn(model, phase, opts) {
     const WSP = window.WeaponSystemProcedural;
     if (!WSP || !WSP.startVectorSwitch) return 0;
     const rise = phase === 'rise';
-    let ms = rise ? WSP.VECTOR_RISE_MS : WSP.VECTOR_FOLD_MS;
+    const pace = (opts && opts.pace > 0) ? opts.pace : 1;
+    let ms = (rise ? WSP.VECTOR_RISE_MS : WSP.VECTOR_FOLD_MS) * pace;
     // The Fists of Em on the stand are the authored rig: lowered and raised
     // with its own clips, and held down between the two.
     const rig = model && model.userData && model.userData.rigPreview;
@@ -2054,11 +2185,12 @@
       ms = Math.max(ms, WSP.playPreviewRig(rig,
         rise ? (clips.Equip || 'Equip') : (clips.Unequip || 'Unequip'), false));
     } else if (model) {
-      WSP.startVectorSwitch(model, phase);
+      const vs = WSP.startVectorSwitch(model, phase, opts);
+      if (vs) ms = vs.duration;
     }
     if (typeof AudioManager !== 'undefined') {
       AudioManager.playSe(Object.assign({}, rise ? RISE_SE : FOLD_SE));
-      if (rise) setTimeout(() => AudioManager.playSe(Object.assign({}, RACK_SE)), RACK_DELAY_MS);
+      if (rise) setTimeout(() => AudioManager.playSe(Object.assign({}, RACK_SE)), RACK_DELAY_MS * pace);
     }
     return ms;
   }
@@ -2129,7 +2261,7 @@
   }
 
   /**
-   * The Dice of YHWH, thrown as the frame folds. The face names the form it
+   * The Dice of Yaldabaoth, thrown as the frame folds. The face names the form it
    * folds into; a natural 20 opens the Grimoire of Solomon as Em's limit break
    * instead (window.LimitBreak.diceGrimoire), which buys the book with none of
    * the pact's prices. Should the book not open, the frame folds into the
@@ -2139,13 +2271,60 @@
    * @returns {{face: number, key: string, natural: boolean, grimoire: boolean}}
    */
   function throwDice(holder, face) {
-    const roll = rollDice(face);
+    // A die already thrown ahead of the fold (preRollDice) is read, not
+    // thrown a second time.
+    const pending = takePendingFace();
+    const shown = !face && pending > 0;
+    const roll = rollDice(shown ? pending : face);
     let grimoire = false;
     if (roll.natural) {
       const LB = window.LimitBreak;
       grimoire = !!(LB && LB.diceGrimoire && LB.diceGrimoire(holder));
     }
     $gameSystem._vectorGunRolled = grimoire ? null : roll.key;
+    if (!shown) showDice(roll, grimoire);
+    return Object.assign({ grimoire: grimoire }, roll);
+  }
+
+  //--------------------------------------------------------------------------
+  // The die before the fold
+  //--------------------------------------------------------------------------
+  // In battle the die is thrown first and the frame only folds once it has
+  // landed, so the shape never changes under a die still in the air. The face
+  // waits on $gameTemp, which no savegame keeps, until switchForm reads it.
+
+  /** Whether the next SWITCH throws the dice (the pistol, fitted with the dice). */
+  function willThrowDice() {
+    return !formKey() && fittedForm() === DICE_FORM;
+  }
+
+  function takePendingFace() {
+    if (typeof $gameTemp === 'undefined' || !$gameTemp) return 0;
+    const n = Number($gameTemp._vgPendingFace) || 0;
+    $gameTemp._vgPendingFace = 0;
+    return n;
+  }
+
+  /**
+   * Throws the Dice of Yaldabaoth on screen ahead of the fold. The face is kept
+   * for the switchForm that follows, which folds into it without a second throw.
+   * @param {Game_Actor} [holder] - whoever throws it
+   * @param {number} [face] - A face to land on instead of rolling, for tests
+   * @returns {{face: number, key: string, natural: boolean}}
+   */
+  function preRollDice(holder, face) {
+    const roll = rollDice(face);
+    if (typeof $gameTemp !== 'undefined' && $gameTemp) $gameTemp._vgPendingFace = roll.face;
+    // The book is only opened at the fold; a natural 20 is announced as the
+    // book whenever the limit break is there to open it.
+    const LB = window.LimitBreak;
+    showDice(roll, roll.natural && !!(LB && LB.diceGrimoire)
+      && !(LB.isGrimoireOpen && LB.isGrimoireOpen(holder || wielder())));
+    return roll;
+  }
+
+  /** The die on screen (or a toast without Dice3D), landing on the face rolled. */
+  function showDice(roll, grimoire) {
     const D3 = window.Dice3D;
     if (D3 && typeof D3.rollD20 === 'function') {
       // The die is thrown on screen, landing on the face already rolled.
@@ -2162,7 +2341,6 @@
         : T('VectorGun.toast.roll', { n: roll.face, form: T('VectorGun.shape.' + roll.key + '.name') }),
       { key: 'vgdice', severity: grimoire ? 'good' : 'info' });
     }
-    return Object.assign({ grimoire: grimoire }, roll);
   }
 
   function switchForm(actor, face) {
@@ -2200,6 +2378,42 @@
     // one and is paid for it, once a round (BattleSystemPassiveSkills.js).
     if (holder && holder.reloadBullets) holder.reloadBullets();
     return folded;
+  }
+
+  //--------------------------------------------------------------------------
+  // One fold a turn
+  //--------------------------------------------------------------------------
+  // SWITCH does not spend the turn: once the frame has come together the rest
+  // of the round is still hers to act in. What it does spend is the fold
+  // itself, so it cannot be switched back until the next round. The record is
+  // kept on the troop, which is wiped for every fight, so turn 0 of one battle
+  // never reads as turn 0 of the last.
+
+  const battleTurn = () =>
+    (typeof $gameTroop !== 'undefined' && $gameTroop && $gameTroop.turnCount)
+      ? $gameTroop.turnCount() : 0;
+
+  /** Whether this battler has already folded the frame this round. */
+  function switchedThisTurn(actor) {
+    if (!actor || typeof $gameTroop === 'undefined' || !$gameTroop) return false;
+    const log = $gameTroop._vgSwitched;
+    const id = actor.actorId ? actor.actorId() : 0;
+    return !!(log && log[id] === battleTurn());
+  }
+
+  /** Books this round's fold to whoever made it. */
+  function markSwitched(actor) {
+    if (!actor || typeof $gameTroop === 'undefined' || !$gameTroop) return;
+    if (!$gameTroop._vgSwitched) $gameTroop._vgSwitched = {};
+    $gameTroop._vgSwitched[actor.actorId ? actor.actorId() : 0] = battleTurn();
+  }
+
+  if (typeof Game_Troop !== 'undefined') {
+    const _Game_Troop_clear_VG = Game_Troop.prototype.clear;
+    Game_Troop.prototype.clear = function () {
+      _Game_Troop_clear_VG.call(this);
+      this._vgSwitched = {};
+    };
   }
 
   //--------------------------------------------------------------------------
@@ -2335,10 +2549,14 @@
     setSniperShotsFired(0);
     unfold();
     // A shape folding itself back is the same machine doing the same thing, so
-    // it is shown the same way rather than blinking into a pistol.
+    // it is shown the same way rather than blinking into a pistol: the spent
+    // shape shrinks away as a ghost while the pistol rises out of it.
+    playSwitchFx('fold', 0);
     const scene = typeof SceneManager !== 'undefined' ? SceneManager._scene : null;
-    if (scene && scene._spriteset && scene._spriteset.updateWeaponSprite) {
-      scene._spriteset.updateWeaponSprite();
+    const spriteset = scene && scene._spriteset;
+    if (spriteset && spriteset.updateWeaponSprite) {
+      spriteset._vgMorphing = true;
+      try { spriteset.updateWeaponSprite(); } finally { spriteset._vgMorphing = false; }
     }
     playSwitchFx('rise');
     if (window.ParchmentToast) {
@@ -2670,11 +2888,14 @@
     // The Blade of Thelema and the element, both read by the screen and by the
     // battle command window.
     BLADE_SOUNDS, BLADE_ANIMATION, bladeReady, inBlade, switchForm, resetForm,
+    switchFxRunning, switchFxProgress, adoptFoldingModel,
+    switchedThisTurn, markSwitched,
     FORM_MODES, FORM_KEYS, FORM_CHOICES, GUN_FORM, GUN_WTYPE, SNIPER_FORM,
     SNIPER_SHOTS, isFormMode, fittedForm, setForm, switchTarget,
     // The forms she has earned, and the dice that ignores all of it.
     FORM_UNLOCK, FORM_ORDER, formUnlockLevel, isFormUnlocked, lockedForms,
     DICE_FORM, DICE_SIDES, DICE_FACES, rollDice, throwDice, rolledForm, lastRoll,
+    willThrowDice, preRollDice,
     sniperShotsFired, setSniperShotsFired,
     formKey, formWeaponType, formBuilder, formAnimationId, formSounds,
     formWeaponRow, formMotion, formHitFX, FORM_POSE_READINGS,
@@ -2685,7 +2906,8 @@
     STATUS_MODES, STATUS_CHANCE, HEX_STATES,
     playSwitchFx, playSwitchOn,
     ELEMENT_IDS, elementId, setElement, elementColor, modelKey,
-    elementActive, activeElementId, elementSlot, coilElementId, FORM_DAMAGE_BONUS,
+    elementActive, activeElementId, elementSlot, coilElementId, FORM_DAMAGE_BONUS, formDamageBonus,
+    FORM_DAMAGE_TYPES, formDamageType,
     // What each shape is calibrated to, and the tables the page reads its
     // choices out of. The screen invents no option of its own.
     calibration, calValue, calList, setCalibration, toggleCalibration,

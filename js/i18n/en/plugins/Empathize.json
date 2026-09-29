@@ -85,6 +85,13 @@
   "relaxing": "Relaxing",
   "socializing": "Socializing",
   "traveling": "Traveling",
+  "shopping": "Shopping",
+  "atSchool": "At school",
+  "tending": "Tending plants",
+  "animalCare": "Caring for animals",
+  "routineSickLeave": "on sick leave",
+  "routineParentalLeave": "on parental leave",
+  "routineMinigame": "at the games",
   "onHand": "on hand",
   "hungerLabel": "Hunger",
   "sleepLabel": "Sleep",
@@ -137,6 +144,7 @@
   "briberyCaught": "{name} pockets the gold but warns you off.",
   "bribeRefused": "{name} is too hostile to accept anything.",
   "bribeRefusedLaw": "{name} refuses on principle and reports the attempt.",
+  "bribeIncorruptible": "{name} is incorruptible and will never take your money.",
   "bribeSmall": "Small",
   "bribeMedium": "Medium",
   "bribeLarge": "Large",
@@ -318,6 +326,16 @@
   "noneCurrent": "Currently in good health.",
   "noneConditions": "No lasting conditions.",
   "noPast": "No recorded past illnesses.",
+  "woundsTitle": "Wounds",
+  "woundsHp": "Health {hp} / {mhp}",
+  "woundBroken": "broken",
+  "woundCut": "cut",
+  "woundLost": "lost",
+  "implantsTitle": "Implants",
+  "implantsNone": "No implants.",
+  "implantOn": "Fitted in: {part}",
+  "implantProsthetic": "prosthetic",
+  "woundsDowned": "downed",
   "epidemicsTitle": "Epidemics lived through",
   "noEpidemics": "Never caught up in an epidemic.",
   "epidemicCaught": "caught it",
@@ -416,6 +434,29 @@
   "hometownLbl": "Hometown",
   "archetypeLbl": "Archetype",
   "towardEmLbl": "Toward Em",
+  "convertingTo": "Converting to {creed}: {pct}%",
+  "convertingBy": "(through {name})",
+  "refugeeFleeing": "Preparing to flee {country}",
+  "refugeeSettled": "Refugee from {country}, since {year}",
+  "refugeeCamp": "In a refugee camp, fled {country} in {year}",
+  "hordeIntegrated": "Lives in goblin society",
+  "tripOnTheWay": "On the way to {place}, {mode}",
+  "tripVisiting": "Visiting {place}",
+  "vehicle": {
+    "bike": "Gets about by bike",
+    "broom": "Gets about by broomstick",
+    "car": "Drives their own car"
+  },
+  "travelMode": {
+    "walk": "on foot",
+    "bike": "by bike",
+    "broom": "by broomstick",
+    "train": "by train",
+    "bus": "by bus",
+    "carsharing": "by car",
+    "taxi": "by taxi",
+    "car": "in their own car"
+  },
   "localOfficeLbl": "Office",
   "holyLeader": "Holy Leader",
   "petFollower": "Follower",
@@ -1032,5 +1073,1192 @@
       ]
     }
   },
-  "worldPeopleTab": "People"
+  "worldPeopleTab": "People",
+  "bountyLbl": "Bounty",
+  "attackWanted": "{name} is wanted, with {bounty} on their head. Bringing them down is no crime.",
+  "woundHealsIn": "heals in {days} d",
+  "woundsTreated": "treated",
+  "woundsNeedHealer": "needs a healer",
+  "healing": "Seeing a healer",
+  "activity": {
+    "swimming": "Swimming",
+    "fishing": "Fishing",
+    "exploringTower": "Exploring the Omega Tower",
+    "exploringDungeon": "Exploring the underground",
+    "exploringSpace": "Exploring space",
+    "travelling": "Travelling",
+    "relocating": "Moving house",
+    "onLeave": {
+      "sick": "On sick leave",
+      "parental": "On parental leave"
+    },
+    "school": "At school",
+    "play": "Playing",
+    "fighting": "Fighting",
+    "fleeing": "Fleeing",
+    "downed": "Down and hurt",
+    "recovering": "Recovering",
+    "minigame": "Playing games",
+    "beekeeping": "Keeping bees",
+    "brewing": "Minding the barrels",
+    "creature": {
+      "asleep": "Asleep",
+      "rest": "Resting",
+      "graze": "Grazing",
+      "forage": "Foraging",
+      "hunt": "Hunting",
+      "wander": "Roaming",
+      "drink": "Drinking",
+      "groom": "Grooming",
+      "play": "Playing",
+      "herd": "With its kind"
+    }
+  },
+  "shares": {
+    "holds": "Holds shares in {list}",
+    "item": "{company} ({value})"
+  },
+  "animalLifeEvents": "Its life",
+  "animalAge": "{stage}, {age}",
+  "dossier": {
+    "partnersLbl": "Partners",
+    "primaryTag": "primary",
+    "qpTag": "queerplatonic",
+    "qpWith": "Queerplatonic partner of",
+    "familyTitle": "Family",
+    "childrenLbl": "Children",
+    "parentsLbl": "Parents",
+    "siblingsLbl": "Siblings",
+    "grandparentsLbl": "Grandparents",
+    "grandchildrenLbl": "Grandchildren",
+    "stage": {
+      "newborn": "newborn",
+      "child": "child",
+      "adult": "adult"
+    },
+    "age": {
+      "one": "{count} year",
+      "other": "{count} years"
+    },
+    "more": "+{n} more",
+    "expectingIn": {
+      "one": "Expecting, due in {count} day",
+      "other": "Expecting, due in {count} days"
+    },
+    "expectingSoon": "Expecting, due any day now",
+    "adoptingIn": {
+      "one": "Adopting a child, home in {count} day",
+      "other": "Adopting a child, home in {count} days"
+    },
+    "adoptingSoon": "Adopting a child, home any day now",
+    "withdrawal": "In withdrawal: {name}",
+    "band": {
+      "tower": "Exploring the Omega Tower, floors {low} to {high}, with {names}",
+      "towerAlone": "Exploring the Omega Tower, floors {low} to {high}",
+      "towerSoon": "Setting out for the Omega Tower with {names}",
+      "towerSoonAlone": "Setting out for the Omega Tower",
+      "dungeon": "Exploring the dungeons with {names}",
+      "dungeonAlone": "Exploring the dungeons",
+      "dungeonSoon": "Setting out for the dungeons with {names}",
+      "dungeonSoonAlone": "Setting out for the dungeons",
+      "space": "Out in space with {names}",
+      "spaceAlone": "Out in space",
+      "spaceBase": "Aboard the low orbit ship with {names}",
+      "spaceBaseAlone": "Aboard the low orbit ship",
+      "spaceSoon": "Setting out for space with {names}",
+      "spaceSoonAlone": "Setting out for space",
+      "backIn": {
+        "one": "back in {count} day",
+        "other": "back in {count} days"
+      },
+      "backToday": "back today",
+      "leavesIn": {
+        "one": "leaving in {count} day",
+        "other": "leaving in {count} days"
+      },
+      "leavesToday": "leaving today",
+      "withWhen": "{what}, {when}"
+    },
+    "artifactsTitle": "Artifacts",
+    "carryTitle": "Carrying",
+    "carry": {
+      "vehicle": "Rides",
+      "keys": "Keys",
+      "food": "Food",
+      "fix": "Fixes",
+      "other": "Other"
+    },
+    "diet": {
+      "vegan": "Vegan",
+      "vegetarian": "Vegetarian"
+    },
+    "employerParty": "Employed by your party"
+  },
+  "act": {
+    "help": {
+      "treatThem": "Treat them",
+      "giveMedicine": "Give medicine",
+      "firstAid": "First aid",
+      "offerFix": "Offer a fix",
+      "intervene": "Intervene",
+      "shelter": "Offer shelter",
+      "pickTreat": "Treat {name} with",
+      "pickMedicine": "Medicine for {name}",
+      "pickFix": "A fix for {name}",
+      "pickIntervene": "Talk {name} out of",
+      "pickShelter": "A roof for {name}",
+      "hintHeal": "Restores {hp} health, {have} in the pack",
+      "hintHealMedicine": "Restores {hp} health and speeds the healing, {have} in the pack",
+      "hintCure": "Cures {disease} over {days} days, {have} in the pack",
+      "hintManage": "Holds {disease} at bay, {have} in the pack",
+      "hintFix": "{substance}: eases the craving by {dose}, {have} in the pack",
+      "hintIntervene": "About {chance}% that they listen",
+      "hintIntervened": "Already cutting down",
+      "hintShelterNone": "No town answers for this door",
+      "reason": {
+        "hostile": "They will not let you near them.",
+        "notHurt": "They are not hurt.",
+        "noHealItems": "Nothing in the pack heals.",
+        "notSick": "They are not ill with anything you can treat.",
+        "noMedicine": "The pack holds no remedy for what they have.",
+        "notDowned": "They are back on their feet.",
+        "downed": "They are down: first aid comes first.",
+        "notAddicted": "They have no habit to feed.",
+        "noFix": "The pack holds nothing that feeds their habit.",
+        "fixedToday": "They have had enough from you today.",
+        "distrust": "They do not trust you enough to hear it.",
+        "intervenedLately": "You talked to them about it only days ago.",
+        "notInNeed": "They have a roof over their head.",
+        "noHome": "The party owns no home to offer.",
+        "cantMove": "They cannot move away from here."
+      },
+      "result": {
+        "treated": "{name} is patched up with {item}: +{hp} health.",
+        "medicine": "{name} starts a course of {item} for {disease}.",
+        "medicineManage": "{name} takes {item}: {disease} is held at bay.",
+        "revived": "{name} comes round at a quarter of their health.",
+        "fix": "{name} takes the {item}. The {substance} craving lets go, for now.",
+        "intervened": "{name} agrees to cut down on {substance}. The craving will build more slowly for {days} days.",
+        "rebuffed": "{name} will not hear a word about {substance}.",
+        "sheltered": "{name} moves into your home in {place}."
+      }
+    },
+    "games": {
+      "challenge": "Challenge to a game",
+      "pickGame": "Challenge {name} to",
+      "hintGame": "{spec}: you {you}, them {them}",
+      "hintGameHere": "At the table here. {spec}: you {you}, them {them}",
+      "pickBet": "Play {game} for",
+      "betNone": "Just for fun",
+      "bet": "A bet of {price}",
+      "hintBetNone": "Nothing riding on it",
+      "hintBet": "Winner takes {price}",
+      "name": {
+        "cards": "cards",
+        "chess": "chess",
+        "pool": "pool",
+        "bowling": "bowling",
+        "basketball": "basketball",
+        "arcade": "arcade games",
+        "target": "target shooting",
+        "piano": "a piano duet"
+      },
+      "reason": {
+        "hostile": "They want nothing to do with you.",
+        "playedToday": "You have already played them today.",
+        "declined": "{name} turns the game down.",
+        "cantBet": "The party cannot cover that bet.",
+        "theyCantBet": "They will not risk that much."
+      },
+      "result": {
+        "won": "You beat {name} at {game}.",
+        "lost": "{name} beats you at {game}.",
+        "draw": "You and {name} finish {game} level.",
+        "wonBet": "You win {price} from {name}.",
+        "lostBet": "You lose {price} to {name}.",
+        "seat": "{name} comes along for a game of {game}."
+      }
+    },
+    "romance": {
+      "introduce": "Introduce to someone",
+      "pickMatch": "Introduce {name} to",
+      "hintMatch": "About {chance}% that they hit it off",
+      "reason": {
+        "distant": "They do not know you well enough to take your word.",
+        "matchedToday": "You have played matchmaker with them today.",
+        "notSingle": "One of them is not free.",
+        "noMatch": "Nobody you know would suit them."
+      },
+      "result": {
+        "matched": "{name} and {other} hit it off. They are seeing each other now.",
+        "noSpark": "{name} and {other} did not click."
+      }
+    },
+    "talk": {
+      "rumours": "Rumours and news",
+      "reason": {
+        "hostile": "They have nothing to say to you.",
+        "noNews": "They have told you all they know today."
+      },
+      "result": {
+        "heard": "{name} shares what is going round."
+      }
+    },
+    "cat": {
+      "talk": "Talk",
+      "beliefs": "Beliefs",
+      "politics": "Politics",
+      "money": "Money",
+      "help": "Help",
+      "work": "Work and travel",
+      "lessons": "Lessons",
+      "games": "Games",
+      "romance": "Romance",
+      "rough": "Rough"
+    },
+    "beliefs": {
+      "preach": "Preach",
+      "debate": "Debate",
+      "askViews": "Ask their views",
+      "prayTogether": "Pray together",
+      "reason": {
+        "sameCreed": "You already share this creed.",
+        "unmovable": "Their creed is set, nothing you say will move it.",
+        "tired": "You have argued enough with them for one day.",
+        "prayed": "You have already prayed together today.",
+        "noCreed": "You hold no creed to speak for.",
+        "notFaithful": "Only two of the faith pray together."
+      },
+      "result": {
+        "preachMoved": "{npc} is {pct}% of the way to {creed}.",
+        "preachConverted": "{npc} has come round to {creed}.",
+        "preachUnmoved": "{npc} heard you out and was not moved.",
+        "preachBackfire": "{npc} dug in, and {actor} came away with doubts of their own.",
+        "debateWon": "{actor} won the debate: {npc} is {pct}% of the way to {creed}.",
+        "debateWonUnmoved": "{actor} won the debate, but {npc} was not moved.",
+        "debateLost": "{actor} lost the debate and now leans {pct}% toward {creed}.",
+        "actorConverted": "{actor} has come round to {creed}.",
+        "views": "{name}: {creed}, {family}.",
+        "viewsConverting": "Leaning {pct}% toward {creed}.",
+        "viewsParty": "Backs the {party}.",
+        "viewsNoParty": "Belongs to no party.",
+        "viewsVoted": "Last voted for the {party}.",
+        "viewsNeverVoted": "Has not voted yet.",
+        "prayed": "{actor} and {npc} prayed together."
+      },
+      "family": {
+        "left": "on the left",
+        "centreLeft": "on the centre left",
+        "centre": "in the centre",
+        "right": "on the right",
+        "nationalist": "nationalist",
+        "theocratic": "theocratic",
+        "monarchist": "monarchist",
+        "anarchist": "anarchist",
+        "militarist": "militarist",
+        "mystic": "mystic",
+        "horde": "of the Horde",
+        "alien": "from off this world"
+      },
+      "actorDoubt": "Doubting: {pct}% toward {creed}",
+      "actorDoubtBy": "(since talking with {name})",
+      "lines": {
+        "preach": {
+          "speak": {
+            "default": [
+              "{Hear me out|Listen}, {npc}. {creed} is the only way this world {makes sense|holds together}.",
+              "You deserve better than what you believe now. {creed} {has the answers|is the answer}.",
+              "Let me tell you what {creed} has done for me, {npc}."
+            ],
+            "em": [
+              "I will say this once, {npc}, and slowly: {creed} is correct. You are not.",
+              "I have read more than you. {creed}. Write it down."
+            ],
+            "bubba": [
+              "Listen, guaglio', my old man believed in {creed} and he was never wrong about the sauce.",
+              "{creed}, darlin'. Trust Bubba on this one."
+            ]
+          },
+          "moved": {
+            "default": [
+              "Maybe you have a point. {I'll think about it|Let me sit with that}.",
+              "Huh. {I never saw it that way|That actually makes sense}."
+            ],
+            "toEm": [
+              "When a witch says it that plainly... {I'll think about it|fine, I'm listening}."
+            ],
+            "toBubba": [
+              "If Bubba Wilson believes it, maybe there's something to it."
+            ]
+          },
+          "unmoved": {
+            "default": [
+              "{Nice try|Good for you}, but I'll keep what I have.",
+              "I've heard all that before. {No thanks|Not for me}."
+            ],
+            "toEm": [
+              "With respect, miss, no."
+            ],
+            "toBubba": [
+              "I admire your work, Mr. Wilson, but no."
+            ]
+          },
+          "backfire": {
+            "default": [
+              "{How dare you|Who asked you}? {theirs} is what I believe, and I'd think twice about yours.",
+              "Again with this? Go and preach at somebody else. {theirs} stands."
+            ],
+            "toEm": [
+              "Keep your sermon, witch. {theirs} has done more for me than you ever will."
+            ],
+            "toBubba": [
+              "Even you can't sell me that, Wilson. {theirs}, always."
+            ]
+          }
+        },
+        "debate": {
+          "open": {
+            "default": [
+              "Let's settle this properly: {creed} against {theirs}. {You go first|I'll start}.",
+              "I'll argue {creed}, you argue {theirs}. {Fair|Deal}?"
+            ],
+            "em": [
+              "Debate me, {npc}. {creed} against {theirs}. Try to keep up."
+            ],
+            "bubba": [
+              "Alright, jamme, you and me, {creed} against {theirs}. No shouting."
+            ]
+          },
+          "won": {
+            "default": [
+              "{I... hadn't thought of that|You've got me there}. {Give me time|Let me think}.",
+              "Fine. You argued it better. I'm not saying you're right. Yet."
+            ],
+            "toEm": [
+              "You took me apart, miss. I'll need a while to put myself back together."
+            ],
+            "toBubba": [
+              "You're sharper than the papers say, Mr. Wilson."
+            ]
+          },
+          "lost": {
+            "default": [
+              "{And that is why|See}? {theirs} holds up. Think about it on your way home.",
+              "You're out of arguments. {theirs} isn't."
+            ],
+            "toEm": [
+              "Not so clever after all, are we? {theirs}, miss. Look into it."
+            ],
+            "toBubba": [
+              "Stick to inventing, Mr. Wilson. {theirs} wins this one."
+            ]
+          }
+        },
+        "views": {
+          "ask": {
+            "default": [
+              "What do you believe in, {npc}? {Honestly|Really}.",
+              "Where do you stand, {politically|on the big questions}?"
+            ],
+            "em": [
+              "Tell me what you believe. I will try not to judge you. Out loud."
+            ],
+            "bubba": [
+              "So what's your religion, darlin'? Politics, church, whatever."
+            ]
+          },
+          "answer": {
+            "default": [
+              "{creed}, {since I was young|for years now}. {Why do you ask|That's where I stand}.",
+              "I'm {creed}, if you have to put a name to it."
+            ],
+            "toEm": [
+              "{creed}. Please don't curse me for it."
+            ],
+            "toBubba": [
+              "{creed}, Mr. Wilson. Always have been."
+            ]
+          }
+        },
+        "pray": {
+          "invite": {
+            "default": [
+              "Would you pray with me a while, {npc}?",
+              "{Let's|Shall we} pray together? It helps."
+            ],
+            "em": [
+              "Kneel with me. I will not tell anyone it was my idea."
+            ],
+            "bubba": [
+              "Come, we say a little prayer together, like my nonna did."
+            ]
+          },
+          "agree": {
+            "default": [
+              "{I'd like that|Gladly}. {Thank you|It's been too long}.",
+              "Yes. Let's."
+            ],
+            "toEm": [
+              "With a witch? ...Yes. Why not."
+            ],
+            "toBubba": [
+              "Praying beside Bubba Wilson. My mother will never believe it."
+            ]
+          }
+        }
+      },
+      "known": {
+        "title": "Views they shared with {by}:",
+        "family": "Creed family: {family}"
+      }
+    },
+    "politics": {
+      "askVote": "Ask about their vote",
+      "joinTheirParty": "Join the {party} (~{chance}%)",
+      "inviteToParty": "Invite to the {party} (~{chance}%)",
+      "campaign": "Campaign for a party",
+      "endorse": "Endorse a candidate",
+      "petition": "Petition",
+      "reason": {
+        "askedToday": "You have already asked them today.",
+        "noParty": "There is no party to join here.",
+        "noBallot": "They have no party on their ballot to be won to.",
+        "noElection": "No election they vote in is close enough.",
+        "noFavour": "Their office has no favour to grant.",
+        "noCharges": "You have no charge on your record.",
+        "taxFloor": "The tax is already as low as it goes.",
+        "youCantAfford": "You cannot afford {price}."
+      },
+      "result": {
+        "voteSecret": "{npc} keeps their vote to themselves.",
+        "voteParty": "{npc} backs the {party}.",
+        "voteNoParty": "{npc} belongs to no party.",
+        "voteLast": "Last voted for the {voted}.",
+        "voteNever": "Has not voted yet.",
+        "joined": "{actor} joined the {party}.",
+        "joinRefused": "The {party} will not take {actor} on.",
+        "invited": "{npc} joined the {party}.",
+        "inviteRefused": "{npc} will not join the {party}.",
+        "campaignLanded": "{npc} warmed to the {party}.",
+        "campaignSwitched": "{npc} now backs the {party}.",
+        "campaignFailed": "{npc} was not won over.",
+        "endorseLanded": "{npc} will think better of {candidate} at the polls.",
+        "endorseFailed": "{npc} is not swayed on {candidate}.",
+        "pardonGranted": "{npc} had the charge of {crime} dropped, for {price}.",
+        "taxCutGranted": "{npc} had the tax in {polity} cut by a point, for {price}.",
+        "petitionRefused": "{npc} turned the petition down."
+      },
+      "pick": {
+        "campaign": "Campaign to {name} for which party?",
+        "yourParty": "{party} (your party)",
+        "near": "Close to their views",
+        "middling": "Some way from their views",
+        "far": "Far from their views",
+        "endorse": "Endorse whom to {name}? The vote is in {days} days.",
+        "teamCandidate": "{name} (your candidate)",
+        "themselves": "{name} (themselves)",
+        "petition": "Ask {name} for which favour? (~{chance}%)",
+        "chance": "~{chance}% they agree"
+      },
+      "favour": {
+        "pardon": "Drop the charge of {crime} ({price})",
+        "taxCut": "Cut the tax in {polity} by a point ({price})",
+        "noCharge": "nothing"
+      },
+      "partyWarn": "Drifting from the {party}: far from its platform",
+      "lines": {
+        "vote": {
+          "ask": {
+            "default": [
+              "Who do you vote for, {npc}? {If you don't mind my asking|Just curious}.",
+              "Which party has your vote?"
+            ],
+            "em": [
+              "Your vote. Who gets it? I am collecting data."
+            ],
+            "bubba": [
+              "Who you vote for, darlin'? Between us."
+            ]
+          },
+          "answer": {
+            "default": [
+              "The {party}, {every time|mostly}. Somebody has to.",
+              "I'm with the {party}. {Don't tell my neighbours|Proudly}."
+            ],
+            "toEm": [
+              "The {party}, miss. Is that allowed?"
+            ],
+            "toBubba": [
+              "The {party}, Mr. Wilson. Who do you vote for?"
+            ]
+          },
+          "none": {
+            "default": [
+              "Nobody. {They're all the same|None of them deserve it}.",
+              "I don't belong to any party."
+            ],
+            "toEm": [
+              "Nobody, miss. I keep out of it."
+            ],
+            "toBubba": [
+              "Nobody, Mr. Wilson. Politics isn't for me."
+            ]
+          },
+          "refuse": {
+            "default": [
+              "That's {private|my business}, {sorry|if you don't mind}.",
+              "I'd {rather not say|keep that to myself}."
+            ],
+            "toEm": [
+              "I... would rather not say, miss."
+            ],
+            "toBubba": [
+              "Even for you, Mr. Wilson, that stays private."
+            ]
+          }
+        },
+        "join": {
+          "ask": {
+            "default": [
+              "Tell me about the {party}. Would they take me on?",
+              "I'd like to join the {party}. {Could you vouch for me|Will you sign me up}?"
+            ],
+            "em": [
+              "The {party}. I am considering membership. Convince me, or sign me up."
+            ],
+            "bubba": [
+              "Put Bubba down for the {party}, eh? I'll bring the lasagne."
+            ]
+          },
+          "yes": {
+            "default": [
+              "{Welcome aboard|Glad to have you}! I'll see you at the next meeting.",
+              "Done. You're one of us now."
+            ],
+            "toEm": [
+              "A witch in the {party}. This will be an interesting meeting."
+            ],
+            "toBubba": [
+              "Bubba Wilson in the {party}! Wait till they hear."
+            ]
+          },
+          "no": {
+            "default": [
+              "{I don't think|I'm not sure} you'd fit in with the {party}.",
+              "Honestly? Your views aren't ours."
+            ],
+            "toEm": [
+              "The {party} is not ready for you, miss."
+            ],
+            "toBubba": [
+              "Sorry, Mr. Wilson. The {party} would never agree."
+            ]
+          }
+        },
+        "invite": {
+          "ask": {
+            "default": [
+              "Come and join the {party}, {npc}. {We need people like you|You'd fit right in}.",
+              "Have you thought about the {party}? There's a place for you."
+            ],
+            "em": [
+              "Join the {party}. I am not in the habit of asking twice."
+            ],
+            "bubba": [
+              "Come with us in the {party}, guaglio'. We eat well at the meetings."
+            ]
+          },
+          "yes": {
+            "default": [
+              "{You know what|Why not}? Count me in.",
+              "Alright, you've convinced me. The {party} it is."
+            ],
+            "toEm": [
+              "If you say so, miss. Count me in."
+            ],
+            "toBubba": [
+              "For you, Mr. Wilson? Of course!"
+            ]
+          },
+          "no": {
+            "default": [
+              "{No thanks|I'll pass}. The {party} isn't for me.",
+              "I don't see myself in the {party}."
+            ],
+            "toEm": [
+              "No, miss. Thank you, but no."
+            ],
+            "toBubba": [
+              "I'd do a lot for you, Mr. Wilson, but not that."
+            ]
+          }
+        },
+        "campaign": {
+          "pitch": {
+            "default": [
+              "Have you looked at what the {party} stands for? {It makes sense|It's what we need}.",
+              "Next time you vote, think about the {party}."
+            ],
+            "em": [
+              "The {party}. Read their platform. Then read it again."
+            ],
+            "bubba": [
+              "Vote {party}, darlin'. Bubba says so."
+            ]
+          },
+          "yes": {
+            "default": [
+              "{Maybe you're right|You make a good case}. I'll look into them.",
+              "Huh. The {party}. I might."
+            ],
+            "toEm": [
+              "I'll read it, miss. Twice."
+            ],
+            "toBubba": [
+              "If Bubba says so!"
+            ]
+          },
+          "no": {
+            "default": [
+              "{Not a chance|I don't think so}. Not the {party}.",
+              "I've made up my mind, thanks."
+            ],
+            "toEm": [
+              "No, miss. Not them."
+            ],
+            "toBubba": [
+              "Not even for you, Mr. Wilson."
+            ]
+          }
+        },
+        "endorse": {
+          "pitch": {
+            "default": [
+              "When you vote, {think of|consider} {candidate}. {They're the right one|You won't regret it}.",
+              "{candidate} has my backing. They should have yours."
+            ],
+            "em": [
+              "{candidate}. That is the name you will write on the ballot."
+            ],
+            "bubba": [
+              "Vote {candidate}, eh? Good people."
+            ]
+          },
+          "yes": {
+            "default": [
+              "{candidate}? {Alright|Maybe}, I'll keep them in mind.",
+              "If you vouch for {candidate}, that's something."
+            ],
+            "toEm": [
+              "{candidate}. Understood, miss."
+            ],
+            "toBubba": [
+              "{candidate} it is, Mr. Wilson."
+            ]
+          },
+          "no": {
+            "default": [
+              "{candidate}? {No|Not a chance}.",
+              "I've already decided, thanks."
+            ],
+            "toEm": [
+              "Not {candidate}, miss. Sorry."
+            ],
+            "toBubba": [
+              "Sorry, Mr. Wilson, not {candidate}."
+            ]
+          }
+        },
+        "petition": {
+          "pardon": {
+            "default": [
+              "There's the matter of {crime} on my record. Could your office {see it dropped|make it go away}? The fee is {price}.",
+              "I'd like to petition for a pardon on {crime}. I'll pay the {price}."
+            ],
+            "em": [
+              "The charge of {crime}. A misunderstanding. Here is {price} for the paperwork."
+            ],
+            "bubba": [
+              "That {crime} business, it was nothing. {price} for the trouble?"
+            ]
+          },
+          "taxCut": {
+            "default": [
+              "The tax in {polity} is crushing people. A point off would {help|go a long way}. The fee is {price}.",
+              "I'm petitioning for a lower tax in {polity}. I'll cover the {price}."
+            ],
+            "em": [
+              "Lower the tax in {polity}. Here is {price}. Consider it an investment."
+            ],
+            "bubba": [
+              "Taxes in {polity}, too high! Here, {price}, do something nice."
+            ]
+          },
+          "yes": {
+            "default": [
+              "{Very well|Consider it done}. The papers will be signed today.",
+              "Granted. Don't make me regret it."
+            ],
+            "toEm": [
+              "Granted, madam. Quietly."
+            ],
+            "toBubba": [
+              "For you, Mr. Wilson, it's done."
+            ]
+          },
+          "no": {
+            "default": [
+              "{I can't do that|That's out of the question}. The office has rules.",
+              "No. Petition denied."
+            ],
+            "toEm": [
+              "I'm afraid not, madam."
+            ],
+            "toBubba": [
+              "Even for you, Mr. Wilson, no."
+            ]
+          }
+        }
+      }
+    },
+    "money": {
+      "label": {
+        "stockTips": "Ask for stock tips",
+        "tradeShares": "Trade shares",
+        "lend": "Lend money",
+        "borrow": "Borrow money",
+        "repay": "Repay loan ({owed})"
+      },
+      "reason": {
+        "cooldown": "You already asked today.",
+        "cold": "They do not talk money with you.",
+        "hostile": "They want nothing to do with you.",
+        "alreadyLent": "They still owe you from the last loan.",
+        "youCantAfford": "You cannot afford it.",
+        "notFriends": "Only a good friend would do that.",
+        "noShares": "They hold no shares.",
+        "noMarket": "The market is not trading.",
+        "npcCantAfford": "They cannot pay for it.",
+        "noNeed": "They do not need the money.",
+        "alreadyBorrowed": "You still owe them.",
+        "notRich": "They have nothing to spare.",
+        "nothingOwed": "You owe them nothing."
+      },
+      "tips": {
+        "ask": "{Any tips on the market?|Heard anything worth buying?|Where would you put your money right now?}",
+        "up": "{Between us, {company} is on the way up.|I would buy {company} while it is cheap.|{company}. Mark my words, it climbs.}",
+        "down": "{Get out of {company} while you can.|{company} is heading for a fall, I would not touch it.|I am quietly selling {company}. Draw your own conclusions.}",
+        "flat": "{{company} is going nowhere this week.|Nothing moves at {company}. Wait and see.}",
+        "cold": "{My money is my business.|I do not give tips to strangers.}",
+        "done": "{name} tipped you about {company}."
+      },
+      "trade": {
+        "pickTitle": "Trade shares with {name}",
+        "buyRow": "Buy {company} at {unit} a share",
+        "sellRow": "Sell {company} at {unit} a share",
+        "hintBuy": "They hold {have}. You can afford {max}.",
+        "hintSell": "You hold {have}. They can pay for {max}.",
+        "pickLots": "How many shares of {company}?",
+        "lot": "{count} shares for {total}",
+        "buyAsk": "{I will take {count} of your {company} shares.|Sell me {count} shares of {company}?}",
+        "sellAsk": "{I have {count} shares of {company} for you.|Want {count} shares of {company}?}",
+        "deal": "{{total}, and they are yours. Done.|Deal. {total} it is.|Fair enough, {total}.}",
+        "done": "{count} shares of {company} changed hands for {total}.",
+        "none": "{name} has nothing to trade with you."
+      },
+      "lend": {
+        "pickTitle": "Lend {name} how much?",
+        "row": "{amount}, repaid as {owed} in {days} days",
+        "offer": "{If you are short, I can lend you {amount}.|Need {amount}? I can spare it.}",
+        "accept": "{That would help more than you know. You will have {owed} back in {days} days.|Thank you. {owed}, in {days} days, you have my word.}",
+        "noNeed": "{Kind of you, but I am doing fine.|Keep it, I have no need of {amount}.}",
+        "done": "You lent {name} {amount}. {owed} is due in {days} days."
+      },
+      "borrow": {
+        "pickTitle": "Borrow how much from {name}?",
+        "row": "{amount}, repaid as {owed} in {days} days",
+        "ask": "{Could you lend me {amount}?|I am in a tight spot. {amount}, just for a week?}",
+        "agree": "{For you, yes. {owed} back in {days} days.|All right. I will want {owed} in {days} days.}",
+        "refuse": "{I do not lend money to people I barely know.|No. Ask somebody else.}",
+        "repay": "{Here is what I owe you, {owed}.|I have come to settle up: {owed}.}",
+        "thanks": "{Good as your word. Thank you.|Settled, and early too.}",
+        "done": "You borrowed {amount} from {name}. {owed} is due in {days} days.",
+        "repaid": "You paid {name} back {owed}.",
+        "none": "{name} cannot spare anything right now."
+      },
+      "settle": {
+        "repaid": "{name} paid back {amount}.",
+        "defaulted": "{name} never paid back the {amount} they owed you.",
+        "paidBack": "{amount} went back to {name}. The loan is settled.",
+        "missed": "You missed a repayment of {amount} to {name}.",
+        "writtenOff": "{name} has written off the {amount} you owed, and thinks less of you for it.",
+        "forgiven": "The {amount} you owed {name} is owed to nobody now.",
+        "vehicleBack": "The {vehicle} went back to {name}.",
+        "vehicleKept": "{name} has reported their {vehicle} stolen."
+      }
+    },
+    "work": {
+      "label": {
+        "askWork": "Ask for work",
+        "hire": "Hire",
+        "fire": "Fire",
+        "workTogether": "Work together",
+        "askRide": "Ask for a ride",
+        "borrowVehicle": "Borrow their vehicle",
+        "inviteMove": "Invite to move",
+        "inviteExpedition": "Invite to an expedition"
+      },
+      "reason": {
+        "cooldown": "You already asked recently.",
+        "hostile": "They want nothing to do with you.",
+        "cold": "They would rather not.",
+        "notFriends": "Only a good friend would do that.",
+        "alreadyLent": "You still have it.",
+        "office": "They hold an office.",
+        "requirements": "You do not meet the job's requirements.",
+        "busy": "They are already away on a shift.",
+        "noWork": "There is no work to be had.",
+        "questTaken": "That contract is gone.",
+        "noVacancy": "That post is no longer open.",
+        "declined": "They turned it down.",
+        "notYours": "They do not work for you.",
+        "noCar": "They have no car.",
+        "noStop": "Nowhere to go.",
+        "youCantAfford": "You cannot afford it.",
+        "noVehicle": "They have nothing to lend.",
+        "rooted": "They will not leave.",
+        "cannotGo": "They cannot go."
+      },
+      "shift": {
+        "0": "night shift",
+        "1": "day shift",
+        "2": "evening shift"
+      },
+      "ask": {
+        "pickTitle": "What work does {name} know of?",
+        "shiftRow": "A shift as {job} at {place}",
+        "shiftHint": "{hours} hours, pays {pay}",
+        "questRow": "Contract: {title}",
+        "questOwnHint": "Their own notice",
+        "questPassHint": "Somebody they know is hiring",
+        "shiftAsk": "{Is your place taking anyone on?|Any shifts going where you work?}",
+        "shiftVouch": "{We are short a {job}. I will put in a word for you.|Come by, I will tell them you are with me.}",
+        "questAsk": "{Do you know of any paid work?|Anything that needs doing, for a fee?}",
+        "questOwn": "{As it happens, I posted something myself: {title}.|I do. {title}. It is yours if you want it.}",
+        "questPass": "{Not me, but I know who is hiring: {title}.|Try this one: {title}. Tell them I sent you.}",
+        "dispatched": "{actor} went off to work a {hours} hour shift as {job}.",
+        "worked": "{actor} worked a shift as {job} and earned {pay}.",
+        "questTaken": "Contract taken: {title}.",
+        "none": "{name} knows of no work for you."
+      },
+      "hire": {
+        "pickTitle": "Offer {name} a post",
+        "row": "{job} at {place}",
+        "hint": "{shift}, pays {wage}",
+        "offer": "{Come and work for me, as {job} at {place}.|There is a post for you at {place}: {job}, {wage} a shift.}",
+        "accept": "{You have yourself a {job}.|When do I start?|Better than what I had. Yes.}",
+        "decline": "{Thank you, but no.|I am happy where I am.}",
+        "done": "{name} now works as {job} at {place}.",
+        "none": "There is no open post at your workplaces in their town."
+      },
+      "fire": {
+        "confirmTitle": "Let {name} go from {place}?",
+        "yes": "Let them go",
+        "no": "Keep them on",
+        "say": "{I am sorry. We have to let you go.|Your post at {place} is finished.}",
+        "reply": "{After everything I did for that place?|Fine. I hope it sinks without me.|I see. Thank you for nothing.}",
+        "done": "{name} no longer works for you."
+      },
+      "together": {
+        "ask": "{Mind if I lend a hand today?|Let me work your shift with you.}",
+        "done": "{Not bad at all. Same time tomorrow?|The hours went quicker with company.}",
+        "result": "{actor} worked {hours} hours beside {name} and earned {pay}."
+      },
+      "ride": {
+        "pickTitle": "Where should {name} drive you?",
+        "hint": "Fare {fare}",
+        "hintHeading": "They are going there anyway. Fare {fare}",
+        "hintFree": "Free",
+        "ask": "{Could you drive us to {place}?|Any chance of a lift to {place}?}",
+        "agree": "{Get in. {fare} for the petrol.|{place}? Sure, for {fare}.}",
+        "agreeFree": "{Get in, it is on me.|For you? No charge.}",
+        "refuse": "{My car is not a taxi.|Walk.}",
+        "done": "{name} is driving you to {place}.",
+        "none": "There is nowhere {name} would drive you."
+      },
+      "vehicle": {
+        "ask": "{Could I borrow your {vehicle} for a day?|Lend me your {vehicle}? I will bring it back tomorrow.}",
+        "agree": "{Take it. Tomorrow, mind.|Look after it. I want it back in a day.}",
+        "refuse": "{Nobody rides my {vehicle} but me.|I do not lend my {vehicle} out.}",
+        "done": "You borrowed {name}'s {vehicle} for a day. Keeping it is theft."
+      },
+      "move": {
+        "pickTitle": "Invite {name} to move where?",
+        "ask": "{Have you thought of moving to {place}?|There is a life waiting for you in {place}.}",
+        "agree": "{You know, I think I will. {place} it is.|Why not? A fresh start in {place}.}",
+        "agreeFamily": "{We could all use a change. We will go to {place}.|I will talk the family round. {place}.}",
+        "decline": "{My life is here.|{place}? I would not last a week.}",
+        "done": "{name} is moving to {place}.",
+        "doneFamily": "{name} is moving to {place}, with {count} more of the household.",
+        "none": "You know no town to suggest."
+      },
+      "expedition": {
+        "pickTitle": "Where should {name} go adventuring?",
+        "towerRow": "The Omega Tower, floor {floor}",
+        "dungeonRow": "The dungeons under the world",
+        "askTower": "{Fancy a climb? Floor {floor} of the tower needs clearing.|Get a band together and take floor {floor}.}",
+        "askDungeon": "{There is treasure under the world for anybody brave enough.|You would be wasted up here. Go down into the dungeons.}",
+        "decline": "{Not for all the gold in the tower.|I am no adventurer.}",
+        "joined": "{There is a band leaving soon. I will go with them.|I know some people heading out. Count me in.}",
+        "formed": "{Then I will raise a band of my own.|I will find companions and go.}",
+        "done": "{name} is going on an expedition."
+      }
+    },
+    "voice": {
+      "em": {
+        "money": {
+          "tips": {
+            "ask": "{Tell me where the money is going. I will know if you lie.|Which of your little companies is about to rise? Speak.}"
+          },
+          "trade": {
+            "buyAsk": "{I will take {count} of your {company} shares. Name the price and do not insult me.|{count} shares of {company}. Hand them over.}",
+            "sellAsk": "{I have {count} shares of {company}. You may have them, for a fair sum.|{count} shares of {company}, cursed only slightly. Want them?}"
+          },
+          "lend": {
+            "offer": "{You look poor. I can lend you {amount}. Do not make me come looking for it.|{amount}. Take it. I remember every debt.}"
+          },
+          "borrow": {
+            "ask": "{I require {amount}. A loan, not a gift. I am not a beggar.|Lend me {amount}. I will pay it back, which is more than gods ever did.}",
+            "repay": "{Your {owed}. Count it. I keep my word.|{owed}, as promised. We are square.}"
+          }
+        },
+        "work": {
+          "ask": {
+            "shiftAsk": "{Is your place hiring? I can do things. Many things.|I need work. Honest work, mostly.}",
+            "questAsk": "{Does anybody need something done? Something difficult, ideally.|I am looking for paid trouble. Know of any?}"
+          },
+          "hire": {
+            "offer": "{Work for me as {job} at {place}. I pay on time, which is rare.|{place} needs a {job}. It needs you. Say yes.}"
+          },
+          "fire": {
+            "say": "{You are done at {place}. I am sorry, truly. Mostly.|Your post at {place} is over. Do not cry at me.}"
+          },
+          "together": {
+            "ask": "{I will work your shift with you. Try to keep up.|Let me help. I am bored and you look slow.}"
+          },
+          "ride": {
+            "ask": "{Drive me to {place}. I would fly, but people stare.|A lift to {place}. Please. I said please.}"
+          },
+          "vehicle": {
+            "ask": "{Lend me your {vehicle} for a day. I will return it unhexed.|Your {vehicle}. One day. I will bring it back.}"
+          },
+          "move": {
+            "ask": "{You should move to {place}. I have seen your future here and it is dull.|{place}. Go. Trust a witch.}"
+          },
+          "expedition": {
+            "askTower": "{Floor {floor} of the tower needs clearing. You would be good at dying there. Joking.|Gather a band and take floor {floor}. I believe in you. Slightly.}",
+            "askDungeon": "{There is gold under the world. Go and take it.|The dungeons are calling you. I can hear them.}"
+          }
+        }
+      },
+      "bubba": {
+        "money": {
+          "tips": {
+            "ask": "{Eh, you know anything about the market? My cousin keeps asking me.|Where would you put your money, darlin'? I only know wrenches.}"
+          },
+          "trade": {
+            "buyAsk": "{I'll take {count} of your {company} shares, if that's all right.|{count} shares of {company}? I'll give you a fair price.}",
+            "sellAsk": "{I got {count} shares of {company} sitting in a drawer. You want 'em?|{count} shares of {company}, guaglio'. Good as gold.}"
+          },
+          "lend": {
+            "offer": "{You short this month? I can spot you {amount}, no problem.|Here, {amount}. Pay me back when you can.}"
+          },
+          "borrow": {
+            "ask": "{I hate to ask, but could you lend me {amount}?|The shed roof is leaking. {amount}, just till next week?}",
+            "repay": "{Here's your {owed}, with thanks.|{owed}, like I promised. A Wilson pays his debts.}"
+          }
+        },
+        "work": {
+          "ask": {
+            "shiftAsk": "{Your place need a pair of hands? I'm handy.|Any work going? I can fix pretty much anything.}",
+            "questAsk": "{You know anybody who needs a job done? I don't mind getting dirty.|Anything that needs fixing, for a few euros?}"
+          },
+          "hire": {
+            "offer": "{Come work for me, {job} at {place}. Fair pay, no nonsense.|There's a spot for you at {place}, as {job}. What do you say?}"
+          },
+          "fire": {
+            "say": "{I'm real sorry. We gotta let you go from {place}.|This ain't easy to say. Your job at {place} is done.}"
+          },
+          "together": {
+            "ask": "{Mind if I pitch in today? Two hands are better than one.|Let me give you a hand with the shift, eh?}"
+          },
+          "ride": {
+            "ask": "{Any chance of a ride to {place}? My van's in pieces.|Could you run me over to {place}?}"
+          },
+          "vehicle": {
+            "ask": "{Could I borrow your {vehicle} for a day? I'll tune it up for you.|Lend me the {vehicle}? Back tomorrow, running better.}"
+          },
+          "move": {
+            "ask": "{You ever think about {place}? Good people there.|{place} could use somebody like you.}"
+          },
+          "expedition": {
+            "askTower": "{Floor {floor} of the tower needs clearing out. You up for it?|Get some friends together and take floor {floor}. I'll fix your gear.}",
+            "askDungeon": "{There's treasure down in the dungeons, they say. Go get some.|You're too good for this town. Go down in the dungeons.}"
+          }
+        }
+      },
+      "toEm": {
+        "money": {
+          "tips": {
+            "cold": "{I do not give my money tips to witches.|Keep your nose out of my purse, miss.}",
+            "up": "{Between us, miss, {company} is going up.|{company}. It climbs. Please do not curse it.}",
+            "down": "{Sell {company}, miss. It is going down.|{company} is sinking. You did not hear it from me.}",
+            "flat": "{{company} is going nowhere, miss.|Nothing moves at {company}. Nothing at all.}"
+          },
+          "trade": {
+            "deal": "{{total}, miss. A pleasure. I think.|Deal, {total}. You drive a hard bargain for a witch.}"
+          },
+          "lend": {
+            "noNeed": "{That is kind, miss, but I am fine.|No need, really. Keep your {amount}.}",
+            "accept": "{Thank you, miss. {owed} in {days} days, I swear it.|You are kinder than they say. {owed} back in {days} days.}"
+          },
+          "borrow": {
+            "refuse": "{Lend money to a witch? I would sooner lend it to the sea.|No, miss. Not a cent.}",
+            "agree": "{All right, miss. {owed} back in {days} days, and no hexes.|For you, yes. {owed} in {days} days.}",
+            "thanks": "{Paid in full. Thank you, miss.|Settled. You keep your word, I will say that.}"
+          }
+        },
+        "work": {
+          "ask": {
+            "shiftVouch": "{We are short a {job}. I will tell them you are... reliable.|Come by. I will put in a word, miss.}",
+            "questOwn": "{I posted something, actually: {title}. It is yours.|{title}. If anyone can do it, a witch can.}",
+            "questPass": "{Not me, but somebody wants this done: {title}.|Try {title}. Tell them I sent you, miss.}"
+          },
+          "hire": {
+            "decline": "{Work for a witch? No, thank you.|I am happy where I am, miss.}",
+            "accept": "{Working for the famous Em? Yes!|When do I start, miss?}"
+          },
+          "fire": {
+            "reply": "{After everything I did for you, miss?|Fine. I hope the spear finds you again.}"
+          },
+          "together": {
+            "done": "{You work hard, for a witch. Thank you.|The hours flew by, miss.}"
+          },
+          "ride": {
+            "refuse": "{My car is not for witches.|Can you not just fly, miss?}",
+            "agree": "{Get in, miss. {fare} for the petrol.|{place}? All right. {fare}.}",
+            "agreeFree": "{Get in, miss. No charge.|For you? Free. Please do not hex the seats.}"
+          },
+          "vehicle": {
+            "refuse": "{My {vehicle} is not going anywhere with a witch.|No, miss. Not my {vehicle}.}",
+            "agree": "{Take it, miss. Tomorrow, please.|Look after it. And no spells on the brakes.}"
+          },
+          "move": {
+            "decline": "{My life is here, miss.|{place}? No, miss.}",
+            "agree": "{If a witch says so... {place} it is.|You know, miss, I think you are right. {place}.}",
+            "agreeFamily": "{We will all go to {place}, miss. You have convinced me.|The family could use {place}. Thank you, miss.}"
+          },
+          "expedition": {
+            "decline": "{I am not brave like you, miss.|Not for all the gold in the tower.}",
+            "joined": "{A band is leaving soon. I will go, miss.|Count me in. For you, miss.}",
+            "formed": "{Then I will raise my own band, miss.|I will find companions and go. You will see.}"
+          }
+        }
+      },
+      "toBubba": {
+        "money": {
+          "tips": {
+            "cold": "{Sorry, Mr. Wilson, my money stays private.|Not even for you, Mr. Wilson.}",
+            "up": "{For you, Mr. Wilson: {company} is going up.|{company}, Mr. Wilson. Buy it.}",
+            "down": "{Get out of {company}, Mr. Wilson.|{company} is sinking. Don't tell anyone I said so.}",
+            "flat": "{{company} is going nowhere, Mr. Wilson.|Nothing at {company} this week, Mr. Wilson.}"
+          },
+          "trade": {
+            "deal": "{{total}, Mr. Wilson. Done.|Deal. {total}, and thank you for the roads.}"
+          },
+          "lend": {
+            "noNeed": "{That is kind, Mr. Wilson, but I am fine.|Keep it, Mr. Wilson.}",
+            "accept": "{Thank you, Mr. Wilson. {owed} in {days} days.|You are a good man. {owed} back in {days} days.}"
+          },
+          "borrow": {
+            "refuse": "{I am sorry, Mr. Wilson, I just cannot.|Not this time, Mr. Wilson.}",
+            "agree": "{For you, Mr. Wilson, of course. {owed} in {days} days.|After what you did for us? Take it. {owed} in {days} days.}",
+            "thanks": "{Paid on the dot. Thank you, Mr. Wilson.|Settled. Always a pleasure, Mr. Wilson.}"
+          }
+        },
+        "work": {
+          "ask": {
+            "shiftVouch": "{We need a {job}. They would be lucky to have you, Mr. Wilson.|I will tell them Bubba Wilson is coming.}",
+            "questOwn": "{I posted something myself: {title}. Yours, Mr. Wilson.|{title}. Nobody better for it.}",
+            "questPass": "{Try this one, Mr. Wilson: {title}.|{title}. Tell them I sent you.}"
+          },
+          "hire": {
+            "decline": "{Thank you, Mr. Wilson, but I am settled.|I am happy where I am, Mr. Wilson.}",
+            "accept": "{Working for Bubba Wilson? Absolutely.|When do I start, Mr. Wilson?}"
+          },
+          "fire": {
+            "reply": "{Even you, Mr. Wilson?|I understand. It still hurts, Mr. Wilson.}"
+          },
+          "together": {
+            "done": "{You work like three men, Mr. Wilson.|The hours went quick. Thank you, Mr. Wilson.}"
+          },
+          "ride": {
+            "refuse": "{Sorry, Mr. Wilson, the car is not free today.|Not today, Mr. Wilson.}",
+            "agree": "{Hop in, Mr. Wilson. {fare} for the petrol.|{place}? Sure, {fare}.}",
+            "agreeFree": "{Hop in, Mr. Wilson. It is on me.|For you? Free, always.}"
+          },
+          "vehicle": {
+            "refuse": "{I am sorry, Mr. Wilson, nobody rides my {vehicle}.|Not the {vehicle}, Mr. Wilson.}",
+            "agree": "{Take it, Mr. Wilson. You will probably fix it.|Of course. Back tomorrow, Mr. Wilson.}"
+          },
+          "move": {
+            "decline": "{My life is here, Mr. Wilson.|{place}? I could not, Mr. Wilson.}",
+            "agree": "{If Bubba Wilson says so. {place} it is.|You are right, Mr. Wilson. {place}.}",
+            "agreeFamily": "{We will all go to {place}, Mr. Wilson.|The family could use {place}. Thank you, Mr. Wilson.}"
+          },
+          "expedition": {
+            "decline": "{I am no hero, Mr. Wilson.|Not for all the gold in the tower.}",
+            "joined": "{There is a band leaving soon. I will go, Mr. Wilson.|Count me in, Mr. Wilson.}",
+            "formed": "{Then I will raise my own band, Mr. Wilson.|I will find companions and go.}"
+          }
+        }
+      }
+    },
+    "rough": {
+      "accuse": "Accuse of a crime",
+      "accuseSelf": "Accuse yourself",
+      "pickTitle": "Accuse {name} of...",
+      "pickSelf": "Accuse yourself of...",
+      "reason": {
+        "accusedToday": "You already accused them today.",
+        "noCrimes": "No crimes are known to accuse anyone of.",
+        "noCrime": "There is no such crime."
+      },
+      "result": {
+        "npc": "{name} will not forget that. Opinion of {actor}: -{drop}.",
+        "flinch": "{name} flinched at the word. Opinion of {actor}: -{drop}.",
+        "laugh": "{name} laughed it off, mostly. Opinion of {actor}: -{drop}.",
+        "bond": "Their bond took a knock: -{drop}.",
+        "member": "{name} is stung. Opinion of {actor}: -{drop}.",
+        "memberSilent": "{name} says nothing, but heard every word.",
+        "self": "Nobody else heard it."
+      },
+      "category": {
+        "Theft": "Theft",
+        "Violence": "Violence",
+        "Property": "Property",
+        "PublicOrder": "Public order",
+        "Drugs": "Drugs",
+        "WhiteCollar": "White collar",
+        "Cyber": "Cyber",
+        "OrganizedCrime": "Organised crime",
+        "Environmental": "Environmental",
+        "Traffic": "Traffic",
+        "MinorOffenses": "Minor offences",
+        "Judicial": "Judicial",
+        "Weapons": "Weapons",
+        "StateCrimes": "State crimes"
+      }
+    }
+  }
 }

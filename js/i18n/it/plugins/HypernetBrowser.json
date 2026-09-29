@@ -517,6 +517,7 @@
     "personNoDiary": "Il registro non contiene ancora nulla sotto questo nome.",
     "personFooter": "Scritto dall'enciclopedia a partire dal diario di squadra. Conservato con il mondo, e leggibile da chi lo giocherà dopo.",
     "backToPortal": "Portale Hexapedia",
-    "written": "Hexapedia ha scritto una voce su {name}"
+    "written": "Hexapedia ha scritto una voce su {name}",
+    "updated": "Pagine di Hexapedia su {name} aggiornate con le ultime imprese"
   }
 }

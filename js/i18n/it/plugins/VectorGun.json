@@ -17,6 +17,7 @@
   "full": "Massimo 3 modalita alla volta.",
   "noGun": "Il gruppo non ha la pistola.",
   "detail": {
+    "damageType": "Tipo di danno",
     "status": "Stato",
     "effect": "Effetto",
     "modesTitle": "Modalita attive",
@@ -172,8 +173,8 @@
     "noSky": "Qui dentro non c'e cielo da cambiare.",
     "spent": "{form} esaurita, torna pistola.",
     "locked": "{mode} si sblocca al livello {n}.",
-    "roll": "Dado di YHWH: {n}. {form}.",
-    "natural": "Dado di YHWH: {n} naturale. Il Grimorio di Salomone si apre.",
+    "roll": "Dado di Yaldabaoth: {n}. {form}.",
+    "natural": "Dado di Yaldabaoth: {n} naturale. Il Grimorio di Salomone si apre.",
     "grimoire": "Grimorio di Salomone",
     "formLocked": "{form} si sblocca al livello {n}."
   },
@@ -213,11 +214,19 @@
       "9": "Danno oscuro."
     }
   },
+  "damageType": {
+    "Blunt": "Contundente",
+    "Cutting": "Tagliente",
+    "Piercing": "Perforante",
+    "Area": "Ad area",
+    "Explosive": "Esplosivo",
+    "Abstract": "Astratto"
+  },
   "form": {
     "gun": "Pistola",
     "blade": "Lama di Thelema",
     "fitted": "Montata",
-    "gain": "+{bonus}% danno. Niente elemento, niente modalità. TRASFORMA è gratis.",
+    "gain": "{bonus}% danno.",
     "gunGain": "Usa l'elemento e fino a 3 modalità.",
     "diceGain": "La pistola tiene elemento e modalità fino al tiro."
   },
@@ -228,7 +237,7 @@
   },
   "shape": {
     "dice": {
-      "name": "Dado di YHWH",
+      "name": "Dado di Yaldabaoth",
       "desc": "Tira un d20 per la forma.",
       "effect": "TRASFORMA tira un d20 e prende la forma di quella faccia, bloccata o no. 1: Pugni di Em. 20: Grimorio di Salomone, senza costo in PV. Un altro TRASFORMA torna alla pistola."
     },
@@ -300,7 +309,7 @@
     "solomon": {
       "name": "Grimorio di Salomone",
       "desc": "Incantesimi del grimorio.",
-      "effect": "Le battaglie iniziano con gli incantesimi del grimorio invece di quelli di Em. Gli incantesimi costano PV in base al loro costo. Morte Aggraziata non dà invulnerabilità. Gli attacchi normali arrivano a 4 caselle."
+      "effect": "Le battaglie iniziano con il grimorio aperto, come una Morte Aggraziata permanente senza costi né limiti. Morte Aggraziata dà gli incantesimi più potenti delle scuole calibrate. Gli attacchi normali arrivano a 4 caselle."
     },
     "fists": {
       "name": "Pugni di Em",
@@ -323,7 +332,7 @@
       "effect": "Molto più danno al tipo di creatura scelto, meno agli altri."
     },
     "yaldabaoth": {
-      "name": "Motosega di Yaldabaoth",
+      "name": "Motosega di YHWH",
       "desc": "Forte contro i feriti.",
       "effect": "Più danno quanto più il bersaglio è ferito, secondo la lettura scelta. Meno danno ai bersagli illesi."
     },

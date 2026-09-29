@@ -55,6 +55,17 @@
         return (window.CrimeSystem && window.CrimeSystem.getTotalBounty) ? window.CrimeSystem.getTotalBounty() : 0;
     }
 
+    // What money can settle: the charges, never a canon mark.
+    function payableBounty() {
+        const CS = window.CrimeSystem;
+        return (CS && CS.payableBounty) ? CS.payableBounty() : totalBounty();
+    }
+
+    function marks() {
+        const CS = window.CrimeSystem;
+        return (CS && CS.getMarks) ? CS.getMarks() : [];
+    }
+
     function inPrison() {
         return !!(window.prisonManager && window.prisonManager.isInPrison && window.prisonManager.isInPrison());
     }
@@ -264,7 +275,7 @@
 
         renderRecord: function(panel) {
             const list = crimes();
-            const bounty = totalBounty();
+            const bounty = payableBounty();
             const gold = $gameParty ? $gameParty.gold() : 0;
 
             panel.innerHTML = `
@@ -277,7 +288,19 @@
             `;
 
             const holder = panel.querySelector('#np-charges');
-            if (list.length === 0) {
+            marks().forEach(mark => {
+                const row = document.createElement('div');
+                row.style.cssText = S.card + ' display:flex; align-items:center; gap:12px;';
+                row.innerHTML = `
+                    <div style="flex:1; min-width:0">
+                        <div style="font-weight:bold">${escapeHtml(mark.name)}</div>
+                        <div style="${S.note}">${T('NeuroPolice.markUnpayable')}</div>
+                    </div>
+                    <div style="font-weight:bold; color:var(--xp-red-3); white-space:nowrap">${euros(mark.bounty)}</div>
+                `;
+                holder.appendChild(row);
+            });
+            if (list.length === 0 && marks().length === 0) {
                 holder.innerHTML = `<div style="${S.card} color:var(--xp-ink-6)">${T('NeuroPolice.emptyFile')}</div>`;
             } else {
                 list.forEach((crime, index) => {
@@ -334,7 +357,7 @@
         },
 
         settleAll: function() {
-            const bounty = totalBounty();
+            const bounty = payableBounty();
             if (bounty <= 0) { this.say(T('NeuroPolice.nothingToSettle')); return; }
             if ($gameParty.gold() < bounty) {
                 if (window.SoundManager) SoundManager.playBuzzer();

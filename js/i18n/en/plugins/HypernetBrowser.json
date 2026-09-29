@@ -517,6 +517,7 @@
     "personNoDiary": "The record holds nothing under this name yet.",
     "personFooter": "Written by the encyclopedia from the party diary. Kept with the world, and readable by whoever plays it next.",
     "backToPortal": "Hexapedia portal",
-    "written": "Hexapedia has written up {name}"
+    "written": "Hexapedia has written up {name}",
+    "updated": "Hexapedia pages for {name} updated with latest exploits"
   }
 }

@@ -495,16 +495,27 @@
             const want = S.depthMin + settleRnd(wx, wy, ++seed) * (S.depthMax - S.depthMin);
             return Math.min(want, room);
         };
-        // How tall. A city block is a city block: five storeys out at the edge
-        // of town, eighteen in the middle of it, and every so often one that
-        // goes half as high again as its neighbours - which is what makes a
-        // skyline a skyline rather than a wall of equal boxes.
+        // How tall. Every lot rolls its own kind of building rather than a
+        // height off one curve, so a street is a row of different things: a
+        // low old house left between two blocks, a run of mid-rise flats, an
+        // office block, and now and then a tower standing over all of it. The
+        // middle of town (core) pushes every kind taller and makes the towers
+        // commoner, which is what gives the skyline its peak.
         const storeys = (d) => {
-            const base = big ? 5 + Math.round(core * 10) : 1;
-            const jit  = Math.round(settleRnd(wx, wy, ++seed) * (big ? 5 : 1));
-            let st = Math.max(1, base + jit - (d ? 1 : 0));
-            if (big && settleRnd(wx, wy, ++seed) < 0.12) st = Math.round(st * 1.7);
-            return st;
+            if (!big) {
+                const jit = Math.round(settleRnd(wx, wy, ++seed));
+                return Math.max(1, 1 + jit - (d ? 1 : 0));
+            }
+            const kind = settleRnd(wx, wy, ++seed);
+            const r = settleRnd(wx, wy, ++seed);
+            const lowShare   = 0.22 - core * 0.12;      // two to four storeys
+            const towerShare = 0.04 + core * 0.14;      // sixteen and up
+            let st;
+            if (kind < lowShare)             st = 2 + Math.floor(r * 3);
+            else if (kind < 0.62)            st = 4 + Math.round(core * 4) + Math.floor(r * 5);
+            else if (kind < 1 - towerShare)  st = 8 + Math.round(core * 6) + Math.floor(r * 7);
+            else                             st = 16 + Math.round(core * 12) + Math.floor(r * 10);
+            return Math.max(1, st - (d ? 1 : 0));
         };
 
         // side: 0 north (-z), 1 south (+z), 2 west (-x), 3 east (+x)
@@ -989,7 +1000,20 @@
     const DOOR_H          = 12;    // and its height (3 m)
     const STEP_UP         = 6;     // how high a walker can step (1.5 m: stairs, kerbs)
     const STAIR_REACH     = 3.6;   // how far from a flight your feet may be to be on it
-    const INTERIOR_MAX_FLOORS = 6; // a tower is walkable for six storeys, not sixty
+    // A tower is walkable all the way up: its lift serves every floor, and the
+    // renderer only puts up the floors round the one you are on (see
+    // BuildingInteriors), so a forty-storey block costs what a house does.
+    const INTERIOR_MAX_FLOORS = 40;
+    // The lift: anything this tall has one, in the back corner the stairwell
+    // is not in. Ridden, not climbed: step into the cab, pick a floor, and the
+    // doors open on it (VoxelWorldScene's _callLift).
+    const LIFT_MIN_FLOORS = 4;
+    const LIFT_W          = 11;    // the cab, inside (2.75 m square)
+    const LIFT_T          = 1.2;   // its walls
+    // Floors drawn above and below the walker's own in a building taller than
+    // INTERIOR_ALL_FLOORS; anything shorter is drawn whole, as it always was.
+    const INTERIOR_ALL_FLOORS = 6;
+    const INTERIOR_BAND       = 1;
     const INTERIOR_NEAR   = 240;   // build an interior once the party is this close
     const INTERIOR_FAR    = 340;   // and take it down again out here
 
@@ -1097,6 +1121,18 @@
         _splitRooms(b, rnd, depth - 1, rooms, walls);
     }
 
+    // Whether a piece of this size at (x, z) would stand in anything that has
+    // to be kept clear: the stairwell, the lift, or a list of them.
+    function _keepOutHit(keep, x, z, size) {
+        if (!keep) return false;
+        if (Array.isArray(keep)) {
+            for (const k of keep) if (_keepOutHit(k, x, z, size)) return true;
+            return false;
+        }
+        return Math.abs(x - keep.x) < keep.w / 2 + size / 2 &&
+               Math.abs(z - keep.z) < keep.d / 2 + size / 2;
+    }
+
     // Stand one piece against a wall of the room, facing in. Returns null when
     // there is nowhere left that is not the stairwell or another piece.
     function _againstWall(room, size, rnd, taken, shaft) {
@@ -1108,8 +1144,7 @@
             else if (side === 1) { z = room.z + room.d / 2 - m; x = room.x + (rnd() - 0.5) * Math.max(0, room.w - size - 6); rot = Math.PI; }
             else if (side === 2) { x = room.x - room.w / 2 + m; z = room.z + (rnd() - 0.5) * Math.max(0, room.d - size - 6); rot = Math.PI / 2; }
             else                 { x = room.x + room.w / 2 - m; z = room.z + (rnd() - 0.5) * Math.max(0, room.d - size - 6); rot = -Math.PI / 2; }
-            if (shaft && Math.abs(x - shaft.x) < shaft.w / 2 + size / 2 &&
-                         Math.abs(z - shaft.z) < shaft.d / 2 + size / 2) continue;
+            if (_keepOutHit(shaft, x, z, size)) continue;
             let clear = true;
             for (const t of taken) {
                 if (Math.abs(t.x - x) < (t.s + size) / 2 && Math.abs(t.z - z) < (t.s + size) / 2) { clear = false; break; }
@@ -1222,8 +1257,7 @@
                 const x = room.x + (rnd() - 0.5) * (room.w - size - 8) * 0.5;
                 const z = room.z + (rnd() - 0.5) * (room.d - size - 8) * 0.5 +
                           (kind === 'pew' ? (i - (n - 1) / 2) * 14 : 0);
-                if (shaft && Math.abs(x - shaft.x) < shaft.w / 2 + size / 2 &&
-                             Math.abs(z - shaft.z) < shaft.d / 2 + size / 2) continue;
+                if (_keepOutHit(shaft, x, z, size)) continue;
                 taken.push({ x, z, s: size });
                 if (!middleAt && kind !== 'rug') middleAt = { x, z };
                 put(kind, x, z, kind === 'pew' ? 0 : Math.floor(rnd() * 4) * (Math.PI / 2));
@@ -1271,9 +1305,10 @@
             z: (face[1] !== 0 ? -face[1] : (rnd() < 0.5 ? -1 : 1)) * (id / 2 - shaftD / 2 - 0.5)
         };
         const hasStairs = floors > 1 && iw > 26 && id > 26;
+        const lift = _planLift(floors, iw, id, face, hasStairs ? shaft : null);
 
         const plan = {
-            floors, H, iw, id, shaft: hasStairs ? shaft : null,
+            floors, H, iw, id, shaft: hasStairs ? shaft : null, lift,
             roofY: floors * H,          // the underside of the roof, for headroom
             slabs: [], walls: [], stairs: [], furniture: [], rooms: [],
             // Whoever is minding the shop, one per shop floor (see below).
@@ -1299,6 +1334,8 @@
             z: (lot.side < 2) ? (lot.side === 0 ? -id / 2 : id / 2) : 0
         };
         const rooms = _roomPlanFor(lot);
+        // What no piece of furniture may stand in.
+        const keepOut = [plan.shaft, plan.lift].filter(Boolean);
 
         for (let f = 0; f < floors; f++) {
             const y = f * H;
@@ -1331,8 +1368,15 @@
                     const wall = c.alongX
                         ? { x: c.at, z: mid, w: WALL_T, d: len, y, h: H - 0.8 }
                         : { x: mid, z: c.at, w: len, d: WALL_T, y, h: H - 0.8 };
-                    if (!plan.shaft || !_overlapsShaft(wall, plan.shaft)) plan.walls.push(wall);
+                    if (plan.shaft && _overlapsShaft(wall, plan.shaft)) continue;
+                    if (plan.lift && _overlapsShaft(wall, plan.lift)) continue;
+                    plan.walls.push(wall);
                 }
+            }
+            // The lift cab on this floor: three walls, open toward the middle
+            // of the building so it is walked into from the rooms.
+            if (plan.lift) {
+                for (const w of _liftWalls(plan.lift, y, H)) plan.walls.push(w);
             }
 
             // A CEILING over the top floor. Without it the roof outside is a
@@ -1370,7 +1414,7 @@
                     : f === 0 ? jobs[jobs.length > 1 ? 1 + (dealt++ % rest) : 0]
                     : jobs[i % jobs.length];
                 plan.rooms.push({ x: r.x, z: r.z, w: r.w, d: r.d, y, role });
-                _furnishRoom(plan.furniture, r, role, y, rnd, plan.shaft, !!lot.ruined, pickSprite);
+                _furnishRoom(plan.furniture, r, role, y, rnd, keepOut, !!lot.ruined, pickSprite);
                 // Somebody has to be minding it. One to a shop floor, standing
                 // a little back from the middle of the room, which is where a
                 // counter would be.
@@ -1397,6 +1441,48 @@
         }
 
         return plan;
+    }
+
+    // Where the lift goes, or null for a building without one. It takes the
+    // back corner the stairwell did not: across the back wall from it, so the
+    // two never share a corner and the front door stays clear of both. A
+    // building too narrow to hold both side by side has no lift.
+    function _planLift(floors, iw, id, face, shaft) {
+        if (floors < LIFT_MIN_FLOORS) return null;
+        const w = LIFT_W + LIFT_T * 2;
+        const alongX = face[0] === 0;          // the door is on a z side, so the back wall runs along x
+        const span = alongX ? iw : id;
+        const need = w + (shaft ? (alongX ? shaft.w : shaft.d) : 0) + 4;
+        if (span < need || (alongX ? id : iw) < w + 12) return null;
+        // Which end of the back wall: the other end from the stairwell.
+        const shaftEnd = shaft ? Math.sign(alongX ? shaft.x : shaft.z) || 1 : 1;
+        const end = -shaftEnd;
+        const back = alongX ? -(face[1] || 1) : -(face[0] || 1);
+        const x = alongX ? end * (iw / 2 - w / 2 - 0.5) : back * (iw / 2 - w / 2 - 0.5);
+        const z = alongX ? back * (id / 2 - w / 2 - 0.5) : end * (id / 2 - w / 2 - 0.5);
+        // The cab opens toward the front of the building, into the rooms.
+        const open = alongX ? [0, -back] : [-back, 0];
+        return { x, z, w, d: w, open, floors };
+    }
+
+    // The three walls of the cab on one floor, in the same form as any other
+    // wall of the plan. `lift` marks them for the renderer, which dresses them
+    // in steel rather than plaster.
+    function _liftWalls(lift, y, H) {
+        const h = H - 0.8, t = LIFT_T, hw = lift.w / 2, hd = lift.d / 2;
+        const out = [];
+        const [ox, oz] = lift.open;
+        if (ox === 0) {
+            // Open on a z side: the back wall across x, the two sides along z.
+            out.push({ x: lift.x, z: lift.z - oz * (hd - t / 2), w: lift.w, d: t, y, h, lift: true });
+            out.push({ x: lift.x - hw + t / 2, z: lift.z, w: t, d: lift.d, y, h, lift: true });
+            out.push({ x: lift.x + hw - t / 2, z: lift.z, w: t, d: lift.d, y, h, lift: true });
+        } else {
+            out.push({ x: lift.x - ox * (hw - t / 2), z: lift.z, w: t, d: lift.d, y, h, lift: true });
+            out.push({ x: lift.x, z: lift.z - hd + t / 2, w: lift.w, d: t, y, h, lift: true });
+            out.push({ x: lift.x, z: lift.z + hd - t / 2, w: lift.w, d: t, y, h, lift: true });
+        }
+        return out;
     }
 
     // Where the doorway sits along the door-side wall, as [from, to].
@@ -1530,7 +1616,8 @@
         DOOR_H, DOOR_W, FURN_SIZE,
         ROOM_KIT, ROOM_PLANS, STEADING_ODDS, planSteading, steadingKindAt,
         INTERIOR_FAR,
-        INTERIOR_MAX_FLOORS, INTERIOR_NEAR, SETTLE, SIDE_NORMALS, STAIR_REACH,
+        INTERIOR_MAX_FLOORS, INTERIOR_NEAR, INTERIOR_ALL_FLOORS, INTERIOR_BAND,
+        LIFT_MIN_FLOORS, LIFT_W, SETTLE, SIDE_NORMALS, STAIR_REACH,
         STEP_UP, SettlementBatch, WALL_T, _doorSpan, _fenceRing, _overlapsShaft,
         _planBlockLots, _planProps, _slabAround, _tilePlanCache, abandonedKindAt,
         buildSolids, planAbandoned, planBaseY, planForTile, planInterior,

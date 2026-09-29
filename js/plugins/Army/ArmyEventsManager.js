@@ -1798,14 +1798,19 @@ Sprite_ArmyLabel.prototype.refresh = function () {
   }
 
   // Who fights whom. Two columns of one power never come to blows; a private
-  // column will raid anybody; two powers fight when the day says they do, which
-  // is a seeded answer so both savegames of a world see the same war.
+  // column will raid anybody; two powers fight when they are at war, which is
+  // the chronicle's own war list (HistoryManager.isAtWar), shared by every
+  // savegame of the world. Only a build with no war system at all falls back
+  // to a small seeded daily chance, so the columns still meet somebody.
+  const FALLBACK_WAR_CHANCE = 0.1;
   function hostile(a, b) {
     if (!a || !b || a.id === b.id) return false;
     if (a.powerName && a.powerName === b.powerName && a.kind === b.kind) return false;
     if (a.kind !== "power" || b.kind !== "power") return true;
+    const hm = window.HistoryManager;
+    if (hm && typeof hm.isAtWar === "function") return !!hm.isAtWar(a.powerName, b.powerName);
     const pair = [a.powerName, b.powerName].sort().join("|");   // i18n-ignore  record key
-    return mulberry32(hashStr(worldSeed() + ":war:" + pair + ":" + dayIndex()))() < 0.35;
+    return mulberry32(hashStr(worldSeed() + ":war:" + pair + ":" + dayIndex()))() < FALLBACK_WAR_CHANCE;
   }
 
   function distance(a, b) { return Math.abs(a.x - b.x) + Math.abs(a.y - b.y); }

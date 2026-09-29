@@ -28,6 +28,7 @@
 
     const {
         CharacterBillboard, VehicleBillboard, INTERIOR_FAR, INTERIOR_NEAR, PERSON_H, STAIR_REACH,
+        INTERIOR_ALL_FLOORS, INTERIOR_BAND,
         STEP_UP, SettlementBatch, WORLD_MAP_ID, WORLD_TILE_SIZE, getRenderType,
         planBaseY, planForTile, planInterior, planSettlement, sampleBiomeAt,
         settleRnd, settlementKindAt
@@ -102,9 +103,13 @@
     const CAVE_BIOME_TAGS = ['Cave', 'Cavern', 'Caves', 'Underdark', 'Mines',   // i18n-ignore  <Biome:> tag names
                              'Mineshaft', 'Catacombs', 'Crypt', 'Dungeon'];     // i18n-ignore  <Biome:> tag names
     // ...and the roster of the SEWERS, which is a different place with
-    // different things in it. Enemies.json tags 173 creatures Sewer and they
-    // never had anywhere to be until the galleries under the towns existed.
+    // different things in it. A sewer is one of the generated structures, and
+    // those no longer carry creatures of their own (tools/enemies/
+    // gen_enemy_biomes.js never writes a structure tag): they BORROW the rosters
+    // their structure catalogue entry names. The tags are still tried first,
+    // for a database that carries them.
     const SEWER_BIOME_TAGS = ['Sewer', 'Sewers', 'Cistern'];                    // i18n-ignore  <Biome:> tag names
+    const SEWER_STRUCTURE  = 'Sewer';                                           // i18n-ignore  structure catalogue key
     // A passage is not a prairie: things are met round the next corner, not
     // half a kilometre off across open country.
     const CAVE_SPAWN_MIN  = 90;    // world units from the party
@@ -801,8 +806,29 @@
                 const ids = this._candidatesFor(name);
                 if (ids && ids.length) { pool = ids; break; }
             }
+            if (!pool) pool = this._borrowedSewerRoster();
             this._sewerPool = pool;
             return pool;
+        }
+
+        // The rosters the sewer structure borrows, read off the same catalogue
+        // the 2D sewers are populated from (ProcGenDungeon.structure), so the
+        // galleries under a town field what a sewer map would. Null when the
+        // catalogue is not loaded or borrows nothing the database names.
+        _borrowedSewerRoster() {
+            const D = window.ProcGenDungeon;
+            const st = (D && typeof D.structure === 'function') ? D.structure(SEWER_STRUCTURE) : null;
+            const biomes = (st && st.enemy && st.enemy.biomes) || [];
+            const out = [];
+            const seen = new Set();
+            for (const name of biomes) {
+                if (SEWER_BIOME_TAGS.indexOf(name) >= 0) continue;
+                const ids = this._candidatesFor(name) || [];
+                for (const id of ids) {
+                    if (!seen.has(id)) { seen.add(id); out.push(id); }
+                }
+            }
+            return out.length ? out : null;
         }
 
         // Which of the two the party is actually in. A sewer is a built gallery
@@ -1295,8 +1321,17 @@
 
         get decorator() { return this._terrain ? this._terrain._decorator : null; }
 
-        update(px, pz) {
+        update(px, pz, feetY) {
             const ts = WORLD_TILE_SIZE;
+            // A tall building only has the floors round the walker's own put
+            // up, so climbing a flight (or riding the lift) moves that band.
+            if (feetY != null) {
+                for (const rec of this._live.values()) {
+                    if (!rec.banded) continue;
+                    const f = this._floorOf(rec, px, pz, feetY);
+                    if (f !== rec.focus) this._dress(rec, f);
+                }
+            }
             const ptx = Math.floor(px / ts), ptz = Math.floor(pz / ts);
             const want = new Set();
             let built = 0;
@@ -1317,7 +1352,13 @@
                         if (d <= INTERIOR_NEAR) {
                             want.add(key);
                             if (!live && built < this._budget) {
-                                this._live.set(key, this._build(tx, tz, plan, i, ox, oz));
+                                const rec = this._build(tx, tz, plan, i, ox, oz);
+                                rec.key = key;
+                                if (rec.banded && feetY != null) {
+                                    const f = this._floorOf(rec, px, pz, feetY);
+                                    if (f !== rec.focus) this._dress(rec, f);
+                                }
+                                this._live.set(key, rec);
                                 built++;
                             }
                         } else if (live && d > INTERIOR_FAR) {
@@ -1387,27 +1428,75 @@
         // the flights of stairs and whatever furniture is still in it.
         _build(tx, tz, plan, index, ox, oz) {
             const lot  = plan.lots[index];
+            const base = planBaseY(plan, tx, tz, (gx, gz) => this._terrain.getTerrainHeight(gx, gz));
+            const inner = planInterior(lot, tx, tz, index);
+            const rec = {
+                group: null, inner, lot, base, index, keepers: [],
+                wx: ox + lot.x, wz: oz + lot.z,
+                tile: tx + ',' + tz,
+                // A building taller than a house is put up a few floors at a
+                // time, round whichever floor the walker is on.
+                banded: inner.floors > INTERIOR_ALL_FLOORS,
+                focus: 0
+            };
+            this._dress(rec, 0);
+            return rec;
+        }
+
+        // Which floor of a building a walker is on: the one under their feet
+        // when they are inside it, and the ground floor from the street.
+        _floorOf(rec, x, z, feetY) {
+            const inner = rec.inner;
+            const lx = x - rec.wx, lz = z - rec.wz;
+            if (Math.abs(lx) > inner.iw / 2 + 2 || Math.abs(lz) > inner.id / 2 + 2) return 0;
+            const f = Math.floor((feetY - rec.base + 2) / inner.H);
+            return Math.max(0, Math.min(inner.floors - 1, f));
+        }
+
+        // Put up the geometry of an interior round one floor (the whole of it
+        // for a building short enough to be drawn whole), replacing whatever
+        // of it was standing before.
+        _dress(rec, focus) {
+            if (rec.group) {
+                this._scene.remove(rec.group);
+                rec.group.traverse(o => { if (o.isInstancedMesh && o.dispose) o.dispose(); });
+            }
+            rec.focus = focus;
+            const { lot, inner, base } = rec;
             const dec  = this.decorator;
+            const H = inner.H;
+            const lo = rec.banded ? focus - INTERIOR_BAND : 0;
+            const hi = rec.banded ? focus + INTERIOR_BAND : inner.floors;
+            const floorOf = (y) => Math.floor(y / H + 0.001);
+            const shown = (y) => { const f = floorOf(y); return f >= lo && f <= hi; };
             // Furniture that is drawn as a picture rather than built out of
             // boxes, gathered for the whole building (see the loop below).
             const sprites = [];
-            const base = planBaseY(plan, tx, tz, (gx, gz) => this._terrain.getTerrainHeight(gx, gz));
-            const inner = planInterior(lot, tx, tz, index);
             const group = new THREE.Group();
-            group.position.set(ox + lot.x, base, oz + lot.z);
+            group.position.set(rec.wx, base, rec.wz);
             const ruined = !!lot.ruined;
 
             if (dec) {
                 const B = new SettlementBatch(dec);
                 const floorMat = ruined ? dec._matSoil() : dec._matFloor();
                 const wallMat  = ruined ? dec._matRuinPlaster() : dec._matPlaster();
+                const steel    = dec._matMetal();
                 for (const s of inner.slabs) {
+                    // The slab over the top floor shown is its ceiling, so it
+                    // stands one floor past the band.
+                    const f = floorOf(s.y);
+                    if (f < lo || f > hi + 1) continue;
                     B.add('uBox', floorMat, s.x, s.y - 0.6, s.z, s.w, 0.6, s.d, 0);
                 }
                 for (const w of inner.walls) {
-                    B.add('uBox', wallMat, w.x, w.y, w.z, w.w, w.h, w.d, 0);
+                    // The lining runs the full height of the building in one
+                    // piece, so it is never left out.
+                    if (w.h <= H && !shown(w.y)) continue;
+                    B.add('uBox', w.lift ? steel : wallMat, w.x, w.y, w.z, w.w, w.h, w.d, 0);
                 }
+                if (inner.lift) this._addLiftCab(B, dec, inner.lift, lo, Math.min(hi, inner.floors - 1), H);
                 for (const st of inner.stairs) {
+                    if (!shown(st.y0)) continue;
                     // Drawn as a flight of steps; walked as the ramp underneath
                     // it (see floorAt), which is what keeps the climb smooth.
                     const steps = 9;
@@ -1421,6 +1510,7 @@
                     }
                 }
                 for (const f of inner.furniture) {
+                    if (!shown(f.y)) continue;
                     // A piece with a picture is drawn as that picture, standing
                     // on the floor; one without is built out of boxes the way it
                     // always was. Collected here and emitted a folder at a time
@@ -1432,14 +1522,76 @@
             }
 
             this._emitFurnitureSprites(group, dec, sprites);
-            const keepers = this._emitKeepers(group, inner, base, ox + lot.x, oz + lot.z);
+            const keepers = (inner.keepers || []).filter(k => k.floor >= lo && k.floor <= hi);
+            rec.keepers = this._emitKeepers(group, { keepers }, base, rec.wx, rec.wz);
 
             this._scene.add(group);
-            return {
-                group, inner, lot, base, index, keepers,
-                wx: ox + lot.x, wz: oz + lot.z,
-                tile: tx + ',' + tz
-            };
+            rec.group = group;
+            return rec;
+        }
+
+        // The lift cab on each floor that is standing: a steel floor plate and
+        // the call panel beside the opening, lit, so it reads as a lift from
+        // across the room. The walls are the plan's own (marked `lift`).
+        _addLiftCab(B, dec, lift, lo, hi, H) {
+            const steel = dec._matMetal();
+            const lamp  = dec._mat('#ffd36a');
+            const [ox, oz] = lift.open;
+            const hw = lift.w / 2, hd = lift.d / 2;
+            for (let f = Math.max(0, lo); f <= hi; f++) {
+                const y = f * H;
+                B.add('uBox', steel, lift.x, y, lift.z, lift.w - 0.4, 0.3, lift.d - 0.4, 0);
+                // The panel, on the back wall of the cab facing out of it.
+                if (ox === 0) {
+                    B.add('uBox', lamp, lift.x + hw * 0.45, y + 5, lift.z - oz * (hd - 1.6),
+                          2.2, 3, 0.4, 0);
+                } else {
+                    B.add('uBox', lamp, lift.x - ox * (hw - 1.6), y + 5, lift.z + hd * 0.45,
+                          0.4, 3, 2.2, 0);
+                }
+                // The lintel over the opening.
+                if (ox === 0) {
+                    B.add('uBox', steel, lift.x, y + H - 3.2, lift.z + oz * (hd - 0.6),
+                          lift.w, 2.4, 1.2, 0);
+                } else {
+                    B.add('uBox', steel, lift.x + ox * (hw - 0.6), y + H - 3.2, lift.z,
+                          1.2, 2.4, lift.d, 0);
+                }
+            }
+        }
+
+        // The lift a walker is standing in or at, on a floor it serves, or
+        // null. `reach` is how far outside the cab still counts as at it.
+        liftAt(x, feetY, z, reach) {
+            for (const rec of this._live.values()) {
+                const L = rec.inner.lift;
+                if (!L) continue;
+                const lx = x - rec.wx - L.x, lz = z - rec.wz - L.z;
+                if (Math.abs(lx) > L.w / 2 + reach || Math.abs(lz) > L.d / 2 + reach) continue;
+                const H = rec.inner.H;
+                const f = Math.round((feetY - rec.base) / H);
+                if (f < 0 || f >= rec.inner.floors) continue;
+                if (Math.abs(feetY - (rec.base + f * H)) > 4) continue;
+                return { key: rec.key, floor: f, floors: rec.inner.floors };
+            }
+            return null;
+        }
+
+        // Where the doors of a lift open on a floor: the middle of the cab,
+        // standing on its floor plate. Null if that building is not standing.
+        liftStop(key, floor) {
+            const rec = this._live.get(key);
+            if (!rec || !rec.inner.lift) return null;
+            const L = rec.inner.lift;
+            const f = Math.max(0, Math.min(rec.inner.floors - 1, floor));
+            return { x: rec.wx + L.x, y: rec.base + f * rec.inner.H, z: rec.wz + L.z };
+        }
+
+        // Put a building's floors up round one floor right now, so a ride's
+        // doors open on a floor that is already there.
+        focusFloor(key, floor) {
+            const rec = this._live.get(key);
+            if (rec && rec.banded && rec.focus !== floor) this._dress(rec, floor);
         }
 
         // One instanced mesh per folder for the whole building: a house with a

@@ -86,6 +86,29 @@
         const WM = window.WorldManager;
         return !!(WM && typeof WM.isEmptyWorld === "function" && WM.isEmptyWorld());
     }
+
+    // What the world creation mode says about the chronicle: the one answer is
+    // NPCShared.WorldModes. A harness that loads this file on its own has no
+    // WorldModes, and there the world is an ordinary one that an empty world
+    // (WorldManager.isEmptyWorld) still stops.
+    function worldModes() {
+        return (window.NPCShared && window.NPCShared.WorldModes) || window.WorldModes || null;
+    }
+    // Anybody left for the live chronicle to happen to (empty, death: no).
+    function worldSimulatesPeople() {
+        const WMo = worldModes();
+        return WMo ? !!WMo.simulatesPeople() : !isEmptyWorld();
+    }
+    // Wars are declared at all.
+    function worldHasWars() {
+        const WMo = worldModes();
+        return WMo ? !!WMo.hasWars() : !isEmptyWorld();
+    }
+    // The Goblin Horde is the normal order of the world (goblin).
+    function hordeIsNormalOrder() {
+        const WMo = worldModes();
+        return !!(WMo && WMo.hordeIsNormalOrder());
+    }
     const AUTO_RUN = params.autoRunOnNewGame === "true";
     const CANON_END_YEAR = 2001; // The true end year of the canon timeline
 
@@ -852,6 +875,11 @@
         };
     }
 
+    // Whoever wants to hear about a nation changing hands in the live
+    // chronicle (HistoryManager.onNationChange). Kept outside the instance so a
+    // reset() never drops a subscriber.
+    const NATION_LISTENERS = [];
+
     class HistoryManager {
         constructor() {
             this.reset();
@@ -906,6 +934,7 @@
             this._leaderIllness = {};   // leader name → {diseaseId, diseaseName, since, until}
             this._sealed = false;       // set once sealFinalOffices has run
             this._epidemics = [];       // the century's plagues and panics
+            this._wars = [];            // wars after the century (see WARS)
             this._earthRegionSet = null; // rebuilt from the countries below
 
             const fdm = FactionDataManager.instance;
@@ -1326,6 +1355,7 @@
         // language it is opened in; a plain string is still accepted.
         recordNationChange(name, dateStr, controller, reason) {
             const recs = this._nationHistory[name] || (this._nationHistory[name] = []);
+            const from = recs.length ? recs[recs.length - 1].controller : null;
             const govId = this.governmentIdFor(controller, name);
             recs.push({
                 date: dateStr, controller,
@@ -1336,6 +1366,15 @@
                 reasonKey: isLK(reason) ? reason.$k : null,
                 reasonParams: isLK(reason) ? reason.$p : null
             });
+            // The live chronicle tells whoever listens (onNationChange); the
+            // century is history, written before anybody could be listening.
+            if (this._inLive && from !== controller) {
+                this._notifyNationChange({
+                    country: name, from, to: controller, date: dateStr,
+                    reason: isLK(reason) ? reason.$k : reason,
+                    span: !!this._spanRunning
+                });
+            }
         }
 
         // --- Where a power may act -------------------------------------------
@@ -1473,7 +1512,8 @@
         // conquers it (its government becomes the conqueror's archetype), or a
         // controlled nation wins independence and restores its own government.
         // Every change is appended to the nation's permanent government history.
-        handleNationPolitics(date) {
+        handleNationPolitics(date, live) {
+            if (live) { this._liveNationPolitics(date); return; }
             const nations = Object.keys(this._currentCountries || {});
             const powers = Object.keys(this._currentHyperpowers || {});
             if (!nations.length || !powers.length) return;
@@ -1544,6 +1584,67 @@
                 iconIndex: ICONS.conquest
             });
             this._currentHyperpowers[conqueror].military = (this._currentHyperpowers[conqueror].military || 100) + 5;
+        }
+
+        // After the century a nation is taken in a war (see WARS), not on a
+        // roll. What is left of the roll is the unrest no army decides, asked
+        // once a month at a lower rate: a held nation throwing its master off,
+        // or a coup in which a power puts its own people in.
+        _liveNationPolitics(date) {
+            const nations = Object.keys(this._currentCountries || {});
+            const powers = Object.keys(this._currentHyperpowers || {});
+            if (!nations.length || !powers.length) return;
+            if (this._rand() > LIVE_UNREST_CHANCE) return;
+            const nation = nations[Math.floor(this._rand() * nations.length)];
+            if (this.homeNationOwner(nation) || this.nationAtWar(nation)) return;
+            const info = this._currentCountries[nation];
+            const current = info.controller || 'Neutral';  // i18n-ignore  controller id
+            const dateStr = dayStr(date);
+            const prevRecs = this._nationHistory[nation];
+            const prevRec = prevRecs && prevRecs.length ? prevRecs[prevRecs.length - 1] : null;
+            const prevGov = prevRec
+                ? (prevRec.governmentId ? this._govParam(prevRec.governmentId) : prevRec.government)
+                : this._govParam('old order');  // i18n-ignore  government id
+
+            if (current !== 'Neutral' && this._rand() < 0.6) {  // i18n-ignore  controller id
+                info.controller = 'Neutral';  // i18n-ignore  controller id
+                const gov = this._govParam(this.governmentIdFor('Neutral', nation));  // i18n-ignore  controller id
+                this.recordNationChange(nation, dateStr, 'Neutral',  // i18n-ignore  controller id
+                    LK('History.reason.independence', { power: current }));
+                this._events.push({
+                    date: dateStr, category: 'conquest', type: 'independence',
+                    ...descOf('History.conquest.independence',
+                        { nation: nation, power: current, prevGov: prevGov, gov: gov }),
+                    iconIndex: ICONS.peace
+                });
+                return;
+            }
+            if (this._rand() >= LIVE_COUP_SHARE) return;
+
+            const region = this.regionOfNation(nation);
+            const candidates = powers.filter(p => p !== current
+                && !this.isSecludedPower(p) && this.powerExists(p, date)
+                && this.powerReaches(p, region));
+            if (!candidates.length) return;
+            let total = 0;
+            const weights = candidates.map(p => {
+                const w = Math.max(1, this._currentHyperpowers[p].military || 50);
+                total += w;
+                return w;
+            });
+            let r = this._rand() * total;
+            let backer = candidates[0];
+            for (let i = 0; i < candidates.length; i++) {
+                if ((r -= weights[i]) <= 0) { backer = candidates[i]; break; }
+            }
+            info.controller = backer;
+            const gov = this._govParam(this.governmentIdFor(backer, nation));
+            this.recordNationChange(nation, dateStr, backer, LK('History.reason.coup', { power: backer }));
+            this._events.push({
+                date: dateStr, category: 'conquest', type: 'coup',
+                ...descOf('History.conquest.coup', { power: backer, nation: nation, prevGov: prevGov, gov: gov }),
+                iconIndex: ICONS.conquest
+            });
         }
 
         // --- Epidemics --------------------------------------------------------
@@ -2563,6 +2664,7 @@
                 WM.setField("history", "factionLeaders", this._currentFactionLeaders);
                 WM.setField("history", "sealed", this._sealed === true);
                 WM.setField("history", "epidemics", this._epidemics);
+                WM.setField("history", "wars", this._wars || []);
                 if (this._seed !== undefined) {
                     WM.setField("history", "seed", this._seed);
                 }
@@ -2587,6 +2689,7 @@
                 $gameSystem._historicalFactionLeaders = this._currentFactionLeaders;
                 $gameSystem._historicalSealed = this._sealed === true;
                 $gameSystem._historicalEpidemics = this._epidemics;
+                $gameSystem._historicalWars = this._wars || [];
                 if (this._seed !== undefined) {
                     $gameSystem._historySeed = this._seed;
                 }
@@ -2621,6 +2724,7 @@
                     leaderIllness: "_historicalLeaderIllness",
                     holyLeaders: "_historicalHolyLeaders",
                     epidemics: "_historicalEpidemics",
+                    wars: "_historicalWars",
                     seed: "_historySeed"
                 };
                 const key = map[prop];
@@ -3130,6 +3234,7 @@
             factionLeaders: this._liveGet("factionLeaders"),
             sealed: this._liveGet("sealed"),
             epidemics: this._liveGet("epidemics"),
+            wars: this._liveGet("wars"),
         };
         if (held.hyperpowers) this._currentHyperpowers = held.hyperpowers;
         if (held.factions) this._currentFactions = held.factions;
@@ -3147,6 +3252,10 @@
         this._sealed = held.sealed !== false;
         if (Array.isArray(held.epidemics)) this._epidemics = held.epidemics;
         if (Array.isArray(held.deadLeaders)) this._deadLeaders = new Set(held.deadLeaders);
+        // A world folder is the only truth about its wars: one that has none
+        // yet is at peace, whatever the last world in memory was fighting.
+        if (Array.isArray(held.wars)) this._wars = held.wars;
+        else if (window.WorldManager || !Array.isArray(this._wars)) this._wars = [];
         this._liveCastReady = true;
         return true;
     };
@@ -3181,6 +3290,7 @@
         this._liveSet("holyLeaders", this._currentHolyLeaders);
         this._liveSet("deadLeaders", Array.from(this._deadLeaders || []));
         this._liveSet("epidemics", this._epidemics);
+        this._liveSet("wars", this._wars || []);
         this._liveFlush();
     };
 
@@ -3205,7 +3315,9 @@
         // savegame of the world however they got there.
         this._rng = makeRng((seed ^ Math.imul(day + 1, 2654435761)) >>> 0);
 
-        this.updateActiveLeaders(date);
+        // A leader roster is dated in years, so a lived-through span asks it
+        // once a month, as the century does; play keeps asking it daily.
+        if (!this._spanRunning || date.getDate() === 1) this.updateActiveLeaders(date);
 
         // The monthly generators push into `this._events`; for the live pass
         // that array IS the world log, so what they write lands in the world
@@ -3213,6 +3325,7 @@
         const held = this._events;
         const before = store.length;
         this._events = store;
+        this._inLive = true;
         try {
             if (date.getDate() === 1) {
                 // A power can be founded in the middle of a playthrough: the
@@ -3224,16 +3337,21 @@
                 this.handleEpidemics(date);
                 this.handleInternalPolitics(date, false);
                 this.handleInternalPolitics(date, true);
-                this.handleNationPolitics(date);
+                this.handleNationPolitics(date, true);
+                this.handleWars(date);
                 this.handleArtifactTransfers(date);
             }
-            const event = this.generateRandomEvent(date);
+            // The years a later start lives through before play (simulateSpan)
+            // are written at the century's density rather than an entry a day:
+            // they are history, and a dozen of them must cost a moment.
+            const eventful = !this._spanRunning || this._rand() < DAILY_EVENT_CHANCE;
+            const event = eventful ? this.generateRandomEvent(date) : null;
             if (event) this._events.push(event);
             // A live day can be as busy as a simulated one: the same odds of
             // a second, third, fourth and fifth entry apply on top of the
             // guaranteed first.
             for (const chance of EXTRA_EVENT_CHANCES) {
-                if (this._rand() >= chance) break;
+                if (!eventful || this._rand() >= chance) break;
                 const extra = this.generateRandomEvent(date);
                 if (extra) this._events.push(extra);
             }
@@ -3241,6 +3359,7 @@
             console.warn("[HistorySimulator] live day", liveDateStr(date), e);
         } finally {
             this._events = held;
+            this._inLive = false;
         }
 
         // Everything the day wrote is stamped as live and dated to the day
@@ -3251,6 +3370,9 @@
             if (!store[i]) continue;
             store[i].live = true;
             store[i].date = liveDateStr(date);
+            // The years a later start skips are history by the time anybody
+            // reads the news (simulateSpan).
+            if (this._spanRunning) continue;
             if (window.$newsManager && typeof window.$newsManager.addWorldEvent === "function") {
                 try { window.$newsManager.addWorldEvent(renderRecord(store[i]), store[i].date); } catch (_) {}
             }
@@ -3281,8 +3403,15 @@
             this._liveTargetDay = today;
             return 0;
         }
-        if (today - last > LIVE_MAX_DAYS) last = today - LIVE_MAX_DAYS;
         this._liveTargetDay = today;
+        // Nobody is left (empty, death): the century stopped on 1 January 2000
+        // and the days after it are passed over, not written, so the clock
+        // costs one store and the chronicle stays silent.
+        if (!worldSimulatesPeople()) {
+            this._liveSet("liveLastDay", today);
+            return 0;
+        }
+        if (today - last > LIVE_MAX_DAYS) last = today - LIVE_MAX_DAYS;
 
         // One chunk per call, never the whole backlog. _runLiveDay does seven
         // heavy world passes on the first of each month, so the twelve years a
@@ -3320,6 +3449,685 @@
         if (this._liveTargetDay == null) return false;
         const last = this._liveGet("liveLastDay");
         return last != null && last < this._liveTargetDay;
+    };
+
+    //=========================================================================
+    // WARS: wars, peace and territory after the century
+    //=========================================================================
+    //
+    // After 2001 a nation no longer changes hands on a monthly dice roll: it is
+    // taken in a war, handed back in a peace, or lost in a coup. A war is one
+    // record in history.json "wars":
+    //
+    //   { id, attacker, defender, since, goal: [countries], taken: [{country,
+    //     from}], score, months, exhaustAt, status: 'active' | 'ended',
+    //     endedBy, until, winner, loser, frozenUntil }
+    //
+    // Every month (the 1st, inside _runLiveDay):
+    //   , declarations: a power that is at peace may go to war with a power it
+    //     can reach that holds a nation it can reach and that is not somebody's
+    //     seat. The odds grow with its military edge, with how far apart the two
+    //     governments stand, and with old grudges. One war per power, three at
+    //     once in the whole world, one new one a month at most.
+    //   , battles: the score moves by the military and economy ratio plus
+    //     noise; every 25 points takes one goal nation through
+    //     recordNationChange, and a falling score gives them back.
+    //   , endings: capitulation at +/-100, a white peace by exhaustion after
+    //     18 to 36 months, or the ONU (ceasefire, white peace, sanctions).
+    //
+    // Everything else in the game reads the same list: the campaign armies
+    // (ArmyEventsManager.hostile), the NPC worldview pull (NPCLifeSimulator),
+    // the ONU agenda, and the Politics news through the live chronicle.
+
+    const WAR_MAX_ACTIVE = 3;          // wars at once in the whole world
+    const WAR_GOAL_MAX = 4;            // nations one war can claim
+    const WAR_SCORE_PER_NATION = 25;   // score that takes one goal nation
+    const WAR_SCORE_CAP = 100;         // capitulation
+    const WAR_EXHAUSTION_MIN = 18;     // months before exhaustion can end it
+    const WAR_EXHAUSTION_SPAN = 18;    // ...and up to this many more
+    const WAR_DECLARE_BASE = 0.012;    // monthly odds per pair, before weighting
+    const WAR_DECLARE_ROLL_CAP = 0.5;  // no month is ever a sure declaration
+    const WAR_TRUCE_MONTHS = 24;       // two powers that just made peace keep it this long
+    const WAR_CEASEFIRE_MONTHS = 6;
+    const WAR_SANCTION_CUT = 0.15;     // share of the economy sanctions take
+    const WAR_SANCTION_MONTHS = 12;
+    const WAR_ENDED_KEPT = 60;         // ended wars remembered (grudges, the Archive)
+    const ARTIFACT_HOLDERS_KEPT = 32;  // an artifact's custody: its first holder and the latest ones
+    const LIVE_UNREST_CHANCE = 0.02;   // monthly: independence or a coup somewhere
+    const LIVE_COUP_SHARE = 0.5;       // of the rolls that land on a free nation
+    const SPAN_MAX_DAYS = 40 * 366;    // simulateSpan never runs longer than this
+
+    const IDEOLOGY_AXIS_IDS = ['econ', 'auth', 'trad', 'mil', 'myst'];   // i18n-ignore  axis ids
+    let _ideologyAxesById = null;
+
+    // Ideology.json, by id, as the five axes the politics sim runs on.
+    function ideologyAxesTable() {
+        if (_ideologyAxesById) return _ideologyAxesById;
+        const list = (window.WorldGen && Array.isArray(window.WorldGen.Ideology))
+            ? window.WorldGen.Ideology
+            : (loadJsonFile('js/db/WorldGen/Ideology.json') || []);
+        const table = {};
+        for (const entry of Array.isArray(list) ? list : []) {
+            if (entry && entry.id && entry.axes) table[entry.id] = entry.axes;
+        }
+        _ideologyAxesById = table;
+        return table;
+    }
+
+    function addMonths(date, months) {
+        const d = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0);
+        d.setMonth(d.getMonth() + months);
+        return d;
+    }
+
+    // A day index from a Date, a 'YYYY-MM-DD' string or a day index.
+    function spanDayOf(v) {
+        if (v instanceof Date) return Math.round(Date.UTC(v.getFullYear(), v.getMonth(), v.getDate()) / 86400000);
+        if (typeof v === 'string') {
+            const [y, m, d] = v.split('-').map(Number);
+            if (!Number.isFinite(y)) return NaN;
+            return Math.round(Date.UTC(y, (m || 1) - 1, d || 1) / 86400000);
+        }
+        return Number(v);
+    }
+
+    // The chronicle names a power by its Hyperpowers.json key; the live
+    // politics folds one of them under another name (NPCPolitics
+    // FACTION_ALIASES), so a reader may ask either.
+    const POWER_ALIASES = { 'ussr': 'soviet union' };   // i18n-ignore  power ids
+    const powerKey = (n) => { const k = String(n || '').trim().toLowerCase(); return POWER_ALIASES[k] || k; };
+    const samePower = (a, b) => !!a && !!b && powerKey(a) === powerKey(b);
+
+    // --- Reading the list ----------------------------------------------------
+
+    HistoryManager.prototype.getWars = function () {
+        const v = this._histField("wars", this._wars);
+        return Array.isArray(v) ? v : [];
+    };
+
+    HistoryManager.prototype.activeWars = function () {
+        return this.getWars().filter(w => w && w.status === 'active');
+    };
+
+    HistoryManager.prototype.warById = function (id) {
+        return this.getWars().find(w => w && w.id === id) || null;
+    };
+
+    // True when `a` is at war with `b`, or with anybody when `b` is left out.
+    HistoryManager.prototype.isAtWar = function (a, b) {
+        if (!a) return false;
+        return this.activeWars().some(w =>
+            (samePower(a, w.attacker) && (b == null || samePower(b, w.defender))) ||
+            (samePower(a, w.defender) && (b == null || samePower(b, w.attacker))));
+    };
+
+    // The active war between two powers, whichever of them started it.
+    HistoryManager.prototype.warBetween = function (a, b) {
+        return this.activeWars().find(w =>
+            (samePower(a, w.attacker) && samePower(b, w.defender)) ||
+            (samePower(a, w.defender) && samePower(b, w.attacker))) || null;
+    };
+
+    // --- The nation-change hook ---------------------------------------------
+    // Called from recordNationChange for every change the live chronicle
+    // makes (the century is history and fires nothing). Returns a function
+    // that removes the listener.
+    HistoryManager.prototype.onNationChange = function (fn) {
+        if (typeof fn !== 'function') return () => {};
+        NATION_LISTENERS.push(fn);
+        return () => {
+            const at = NATION_LISTENERS.indexOf(fn);
+            if (at >= 0) NATION_LISTENERS.splice(at, 1);
+        };
+    };
+
+    HistoryManager.prototype._notifyNationChange = function (change) {
+        // The crowd of a Horde-held square is worked out once per square
+        // (DataService); a nation changing hands makes that answer stale.
+        try {
+            if (window.SpriteCatalog && typeof window.SpriteCatalog.invalidateHordeGround === 'function') {
+                window.SpriteCatalog.invalidateHordeGround();
+            }
+        } catch (_) {}
+        for (const fn of NATION_LISTENERS.slice()) {
+            try { fn(change); } catch (e) { console.warn("[HistorySimulator] nation change listener", e); }
+        }
+    };
+
+    // --- How strong, how far apart, how bitter -------------------------------
+
+    HistoryManager.prototype._warStrength = function (power) {
+        const hp = (this._currentHyperpowers || {})[power] || {};
+        const mil = Math.max(1, Number(hp.military) || 50);
+        const eco = Math.max(1, Number(hp.economy) || 50);
+        return mil * (0.5 + eco / 200);
+    };
+
+    // A government's position: its seated leader's creed where the book gives
+    // one, otherwise a fixed position hashed from the government it runs.
+    HistoryManager.prototype._powerAxes = function (power) {
+        const leader = (this._currentLeaders || {})[power];
+        const key = leader && String(leader.ideologyKey || '');
+        if (key && key.indexOf('ideology.') === 0) {
+            const axes = ideologyAxesTable()[key.slice('ideology.'.length)];
+            if (axes) return axes;
+        }
+        let h = normalizeHistorySeed('gov:' + this.governmentIdFor(power, power)) || 1;
+        const out = {};
+        for (const ax of IDEOLOGY_AXIS_IDS) {
+            out[ax] = (h % 201) - 100;
+            h = Math.imul(h ^ (h >>> 13), 2654435761) >>> 0;
+        }
+        return out;
+    };
+
+    // 0 for two identical governments, about 1 for two at opposite corners.
+    HistoryManager.prototype._ideologyDistance = function (a, b) {
+        const x = this._powerAxes(a), y = this._powerAxes(b);
+        let sum = 0;
+        for (const ax of IDEOLOGY_AXIS_IDS) {
+            const d = (Number(x[ax]) || 0) - (Number(y[ax]) || 0);
+            sum += d * d;
+        }
+        return Math.min(1, Math.sqrt(sum) / 447);
+    };
+
+    // Old wars `a` lost to `b`, or that `b` started against `a`: 0 to 3.
+    HistoryManager.prototype._grudge = function (a, b) {
+        let g = 0;
+        for (const w of this._wars || []) {
+            if (!w || w.status !== 'ended') continue;
+            if (w.attacker === b && w.defender === a) g++;
+            else if (w.loser === a && w.winner === b) g++;
+        }
+        return Math.min(3, g);
+    };
+
+    // Two powers that made peace less than WAR_TRUCE_MONTHS ago keep it.
+    HistoryManager.prototype._inTruce = function (a, b, date) {
+        const floor = dayStr(addMonths(date, -WAR_TRUCE_MONTHS));
+        return (this._wars || []).some(w => w && w.status === 'ended' && w.until && w.until > floor &&
+            ((w.attacker === a && w.defender === b) || (w.attacker === b && w.defender === a)));
+    };
+
+    // Whether a nation is already the stake of an active war.
+    HistoryManager.prototype.nationAtWar = function (nation) {
+        return (this._wars || []).some(w => w && w.status === 'active' &&
+            ((w.goal || []).indexOf(nation) >= 0 || (w.taken || []).some(t => t.country === nation)));
+    };
+
+    // What `attacker` could claim off `defender`: the nations it holds that
+    // are nobody's seat, that the attacker can reach, and that no other war is
+    // already being fought over.
+    HistoryManager.prototype.warGoals = function (attacker, defender, holdings) {
+        const held = holdings ? (holdings[defender] || []) : (this._warHoldings()[defender] || []);
+        return held.filter(nation => this.powerReaches(attacker, this.regionOfNation(nation)));
+    };
+
+    // Every power's claimable nations (not a seat, not already a stake), in
+    // one pass over the country table.
+    HistoryManager.prototype._warHoldings = function () {
+        const seats = new Set();
+        for (const hp of Object.values(this._currentHyperpowers || {})) {
+            if (hp && hp.homeNation) seats.add(hp.homeNation);
+        }
+        const out = {};
+        for (const [nation, info] of Object.entries(this._currentCountries || {})) {
+            const owner = info && info.controller;
+            if (!owner || owner === 'Neutral' || seats.has(nation)) continue;  // i18n-ignore  controller id
+            if (this.nationAtWar(nation)) continue;
+            (out[owner] = out[owner] || []).push(nation);
+        }
+        for (const list of Object.values(out)) list.sort();
+        return out;
+    };
+
+    HistoryManager.prototype.warDeclarationChance = function (attacker, defender) {
+        const ratio = this._warStrength(attacker) / this._warStrength(defender);
+        // Nobody picks a fight they expect to lose.
+        if (ratio < 0.9) return 0;
+        const edge = Math.min(3, ratio - 0.9 + 0.1);
+        const distance = this._ideologyDistance(attacker, defender);
+        const grudge = this._grudge(attacker, defender);
+        return WAR_DECLARE_BASE * edge * (0.4 + distance * 1.2) * (1 + 0.5 * grudge);
+    };
+
+    // --- Moving a nation ------------------------------------------------------
+
+    HistoryManager.prototype._transferNation = function (nation, controller, dateStr, reason) {
+        const info = (this._currentCountries || {})[nation];
+        if (!info || info.controller === controller) return false;
+        info.controller = controller;
+        this.recordNationChange(nation, dateStr, controller, reason);
+        return true;
+    };
+
+    HistoryManager.prototype._warEvent = function (dateStr, type, key, params, icon) {
+        this._events.push({
+            date: dateStr, category: type === 'war_peace' ? 'peace' : 'war', type,
+            ...descOf(key, params),
+            iconIndex: icon != null ? icon : ICONS.war
+        });
+    };
+
+    // --- Declaring -------------------------------------------------------------
+
+    HistoryManager.prototype.declareWar = function (attacker, defender, goals, date) {
+        if (!Array.isArray(this._wars)) this._wars = [];
+        // A world with no wars in it (WorldModes.hasWars) declares none.
+        if (!worldHasWars()) return null;
+        const pool = (goals && goals.length ? goals : this.warGoals(attacker, defender)).slice();
+        if (!pool.length || attacker === defender) return null;
+        // The claim is a seeded handful of what is on offer.
+        for (let i = pool.length - 1; i > 0; i--) {
+            const j = Math.floor(this._rand() * (i + 1));
+            [pool[i], pool[j]] = [pool[j], pool[i]];
+        }
+        const count = 1 + Math.floor(this._rand() * Math.min(WAR_GOAL_MAX, pool.length));
+        const goal = pool.slice(0, count);
+        const dateStr = dayStr(date);
+        const war = {
+            id: `${dateStr}:${attacker}>${defender}`,
+            attacker, defender, since: dateStr,
+            goal, taken: [], score: 0, months: 0,
+            exhaustAt: WAR_EXHAUSTION_MIN + Math.floor(this._rand() * (WAR_EXHAUSTION_SPAN + 1)),
+            status: 'active', endedBy: null, until: null,
+            winner: null, loser: null, frozenUntil: null
+        };
+        this._wars.push(war);
+        this._warEvent(dateStr, 'war_declared',
+            goal.length > 1 ? 'History.war.declaredMany' : 'History.war.declared',
+            { attacker, defender, nation: goal[0], others: goal.length - 1 });
+        return war;
+    };
+
+    HistoryManager.prototype.handleWarDeclarations = function (date) {
+        if (!worldHasWars()) return null;
+        const active = (this._wars || []).filter(w => w && w.status === 'active');
+        if (active.length >= WAR_MAX_ACTIVE) return null;
+        const busy = new Set();
+        active.forEach(w => { busy.add(w.attacker); busy.add(w.defender); });
+        const powers = Object.keys(this._currentHyperpowers || {})
+            .filter(p => !this.isSecludedPower(p) && this.powerExists(p, date))
+            .sort();
+        const holdings = this._warHoldings();
+        const offers = [];
+        let total = 0;
+        for (const a of powers) {
+            if (busy.has(a)) continue;
+            for (const d of powers) {
+                if (d === a || busy.has(d) || !holdings[d]) continue;
+                if (!this.powersMayInteract(a, d) || this._inTruce(a, d, date)) continue;
+                const goals = this.warGoals(a, d, holdings);
+                if (!goals.length) continue;
+                const chance = this.warDeclarationChance(a, d);
+                if (chance <= 0) continue;
+                offers.push({ a, d, goals, chance });
+                total += chance;
+            }
+        }
+        if (!offers.length) return null;
+        if (this._rand() >= Math.min(WAR_DECLARE_ROLL_CAP, total)) return null;
+        let r = this._rand() * total;
+        let chosen = offers[offers.length - 1];
+        for (const o of offers) {
+            if ((r -= o.chance) <= 0) { chosen = o; break; }
+        }
+        return this.declareWar(chosen.a, chosen.d, chosen.goals, date);
+    };
+
+    // --- Fighting ----------------------------------------------------------------
+
+    // Take goal nations up to what the score has earned, or give back what it
+    // no longer holds up.
+    HistoryManager.prototype._settleWarLines = function (war, dateStr) {
+        const earned = war.score > 0 ? Math.floor(war.score / WAR_SCORE_PER_NATION) : 0;
+        const target = Math.max(0, Math.min(war.goal.length, earned));
+        while (war.taken.length < target) {
+            const next = war.goal.find(n => !war.taken.some(t => t.country === n) &&
+                ((this._currentCountries || {})[n] || {}).controller === war.defender);
+            if (!next) break;
+            this._transferNation(next, war.attacker, dateStr, LK('History.war.conquest', { power: war.defender }));
+            war.taken.push({ country: next, from: war.defender });
+            this._warEvent(dateStr, 'war_taken', 'History.war.taken',
+                { power: war.attacker, nation: next, from: war.defender }, ICONS.conquest);
+        }
+        while (war.taken.length > target) {
+            const back = war.taken.pop();
+            if (this._transferNation(back.country, back.from, dateStr, LK('History.war.conquest', { power: war.attacker }))) {
+                this._warEvent(dateStr, 'war_taken', 'History.war.taken',
+                    { power: back.from, nation: back.country, from: war.attacker }, ICONS.conquest);
+            }
+        }
+    };
+
+    HistoryManager.prototype._closeWar = function (war, dateStr, endedBy, winner, loser) {
+        war.status = 'ended';
+        war.endedBy = endedBy;
+        war.until = dateStr;
+        war.winner = winner || null;
+        war.loser = loser || null;
+        war.frozenUntil = null;
+    };
+
+    // Everything the war moved goes back to whoever held it before.
+    HistoryManager.prototype._restoreStatusQuo = function (war, dateStr) {
+        let restored = 0;
+        while (war.taken.length) {
+            const back = war.taken.pop();
+            if (((this._currentCountries || {})[back.country] || {}).controller !== war.attacker) continue;
+            if (this._transferNation(back.country, back.from, dateStr,
+                LK('History.war.whitePeaceReason', { power: war.attacker }))) restored++;
+        }
+        return restored;
+    };
+
+    HistoryManager.prototype.whitePeace = function (war, date, endedBy) {
+        if (!war || war.status !== 'active') return null;
+        const dateStr = dayStr(date);
+        this._restoreStatusQuo(war, dateStr);
+        this._closeWar(war, dateStr, endedBy || 'exhaustion', null, null);
+        this._warEvent(dateStr, 'war_peace',
+            endedBy === 'onu' ? 'History.war.whitePeace' : 'History.war.exhaustion',
+            { attacker: war.attacker, defender: war.defender, months: war.months || 0 }, ICONS.peace);
+        return war;
+    };
+
+    HistoryManager.prototype.capitulate = function (war, loser, date) {
+        if (!war || war.status !== 'active') return null;
+        const dateStr = dayStr(date);
+        const winner = loser === war.defender ? war.attacker : war.defender;
+        if (winner === war.attacker) {
+            for (const nation of war.goal) {
+                if (war.taken.some(t => t.country === nation)) continue;
+                if (((this._currentCountries || {})[nation] || {}).controller !== war.defender) continue;
+                this._transferNation(nation, war.attacker, dateStr, LK('History.war.conquest', { power: war.defender }));
+                war.taken.push({ country: nation, from: war.defender });
+            }
+        } else {
+            this._restoreStatusQuo(war, dateStr);
+        }
+        const hps = this._currentHyperpowers || {};
+        if (hps[winner]) hps[winner].military = (Number(hps[winner].military) || 50) + 5;
+        if (hps[loser]) hps[loser].military = Math.max(5, (Number(hps[loser].military) || 50) - 5);
+        this._closeWar(war, dateStr, 'capitulation', winner, loser);
+        this._warEvent(dateStr, 'war_capitulation', 'History.war.capitulation',
+            { loser, winner, count: war.taken.length }, ICONS.war);
+        return war;
+    };
+
+    HistoryManager.prototype._advanceWar = function (war, date) {
+        if (!war || war.status !== 'active') return;
+        war.months = (war.months || 0) + 1;
+        const dateStr = dayStr(date);
+        const countries = this._currentCountries || {};
+        // A goal that left the defender's hands some other way (a coup, an
+        // independence) is no longer the stake.
+        war.goal = (war.goal || []).filter(n => (war.taken || []).some(t => t.country === n) ||
+            (countries[n] || {}).controller === war.defender);
+        war.taken = war.taken || [];
+        if (!war.goal.length) { this.whitePeace(war, date, 'exhaustion'); return; }
+
+        const frozen = war.frozenUntil && dateStr < war.frozenUntil;
+        if (!frozen) {
+            if (war.frozenUntil) war.frozenUntil = null;
+            const sa = this._warStrength(war.attacker);
+            const sd = this._warStrength(war.defender);
+            const delta = 14 * (sa - sd) / (sa + sd) + 3 + (this._rand() - 0.5) * 16;
+            war.score = Math.max(-WAR_SCORE_CAP, Math.min(WAR_SCORE_CAP, Math.round((war.score || 0) + delta)));
+            if (war.score >= WAR_SCORE_CAP) { this.capitulate(war, war.defender, date); return; }
+            if (war.score <= -WAR_SCORE_CAP) { this.capitulate(war, war.attacker, date); return; }
+            this._settleWarLines(war, dateStr);
+        }
+        if (war.months >= (war.exhaustAt || WAR_EXHAUSTION_MIN)) this.whitePeace(war, date, 'exhaustion');
+    };
+
+    // Sanctions run out, and the economy they cut comes back.
+    HistoryManager.prototype._liftSanctions = function (date) {
+        const dateStr = dayStr(date);
+        for (const hp of Object.values(this._currentHyperpowers || {})) {
+            if (!hp || !hp.sanctionedUntil || dateStr < hp.sanctionedUntil) continue;
+            hp.economy = (Number(hp.economy) || 0) + (Number(hp.sanctionCut) || 0);
+            delete hp.sanctionedUntil;
+            delete hp.sanctionCut;
+        }
+    };
+
+    HistoryManager.prototype._pruneWars = function () {
+        const wars = this._wars || [];
+        let ended = wars.filter(w => w && w.status === 'ended').length;
+        for (let i = 0; i < wars.length && ended > WAR_ENDED_KEPT; i++) {
+            if (wars[i] && wars[i].status === 'ended') { wars.splice(i, 1); i--; ended--; }
+        }
+    };
+
+    // The monthly war pass: battles first, then whoever is still at peace may
+    // start something.
+    HistoryManager.prototype.handleWars = function (date) {
+        if (!Array.isArray(this._wars)) this._wars = [];
+        this._liftSanctions(date);
+        for (const war of this._wars.slice()) {
+            if (war && war.status === 'active') this._advanceWar(war, date);
+        }
+        this.handleWarDeclarations(date);
+        this._pruneWars();
+    };
+
+    // --- The ONU ---------------------------------------------------------------
+    // The assembly acts on the live world between chronicle days, so each of
+    // these loads the world's state, writes its entry into the world log and
+    // puts the state back.
+
+    HistoryManager.prototype._nowLiveDate = function () {
+        const minute = (typeof $gameVariables !== "undefined" && $gameVariables) ? ($gameVariables.value(114) || 0) : 0;
+        return liveDateOf(liveDayOf(minute));
+    };
+
+    HistoryManager.prototype._liveAct = function (fn) {
+        this._ensureLiveCast();
+        const store = this._eventStore();
+        const held = this._events;
+        const wasLive = this._inLive;
+        const before = store ? store.length : 0;
+        if (store) this._events = store;
+        this._inLive = true;
+        let out = null;
+        try {
+            out = fn();
+        } finally {
+            this._events = held;
+            this._inLive = wasLive;
+        }
+        if (store && store !== held) {
+            for (let i = before; i < store.length; i++) {
+                if (!store[i]) continue;
+                store[i].live = true;
+                if (window.$newsManager && typeof window.$newsManager.addWorldEvent === "function") {
+                    try { window.$newsManager.addWorldEvent(renderRecord(store[i]), store[i].date); } catch (_) {}
+                }
+            }
+        } else if (store) {
+            for (let i = before; i < store.length; i++) if (store[i]) store[i].live = true;
+        }
+        this._persistLiveCast();
+        return out;
+    };
+
+    HistoryManager.prototype._activeWarById = function (id) {
+        return (this._wars || []).find(w => w && w.id === id && w.status === 'active') || null;
+    };
+
+    // A passed ceasefire: the score is frozen for six months.
+    HistoryManager.prototype.ceasefire = function (warId, months, date) {
+        return this._liveAct(() => {
+            const war = this._activeWarById(warId);
+            if (!war) return null;
+            const when = date || this._nowLiveDate();
+            const span = Number(months) > 0 ? Number(months) : WAR_CEASEFIRE_MONTHS;
+            war.frozenUntil = dayStr(addMonths(when, span));
+            this._warEvent(dayStr(when), 'war_ceasefire', 'History.war.ceasefire',
+                { attacker: war.attacker, defender: war.defender, until: war.frozenUntil }, ICONS.peace);
+            return war;
+        });
+    };
+
+    // A passed white peace: the war ends and every border goes back.
+    HistoryManager.prototype.imposeWhitePeace = function (warId, date) {
+        return this._liveAct(() => {
+            const war = this._activeWarById(warId);
+            if (!war) return null;
+            return this.whitePeace(war, date || this._nowLiveDate(), 'onu');
+        });
+    };
+
+    // Passed sanctions: the aggressor's economy loses a share for a year.
+    HistoryManager.prototype.sanction = function (warId, date) {
+        return this._liveAct(() => {
+            const war = this._activeWarById(warId);
+            if (!war) return null;
+            const hp = (this._currentHyperpowers || {})[war.attacker];
+            if (!hp) return null;
+            const when = date || this._nowLiveDate();
+            if (!hp.sanctionedUntil) {
+                const cut = Math.round((Number(hp.economy) || 0) * WAR_SANCTION_CUT);
+                hp.economy = (Number(hp.economy) || 0) - cut;
+                hp.sanctionCut = cut;
+            }
+            hp.sanctionedUntil = dayStr(addMonths(when, WAR_SANCTION_MONTHS));
+            this._warEvent(dayStr(when), 'war_sanctions', 'History.war.sanctions',
+                { power: war.attacker, enemy: war.defender }, ICONS.diplomatic);
+            return war;
+        });
+    };
+
+    // --- The years between 2001 and a later start ------------------------------
+    // A world that starts after 2001 used to open on the map of 1 January 2001:
+    // the live chronicle's first call only marks the day it was called on. This
+    // runs the same day pass (wars included) over every day from `from` up to,
+    // not including, `to`, seeded per day exactly as the live chronicle is, so
+    // the same world always opens on the same map. The live chronicle then
+    // carries on from `to`. Returns { days, events, ms }.
+    HistoryManager.prototype.simulateSpan = function (from, to) {
+        const empty = { days: 0, events: 0, ms: 0 };
+        let first = spanDayOf(from);
+        const last = spanDayOf(to) - 1;
+        if (!Number.isFinite(first) || !Number.isFinite(last) || last < first) return empty;
+        if (last - first > SPAN_MAX_DAYS) first = last - SPAN_MAX_DAYS;
+        const done = this._liveGet("liveLastDay");
+        if (done != null && done >= first) first = done + 1;
+        if (last < first || this._liveRunning) return empty;
+        // A world with nobody in it lives no years before play either.
+        if (!worldSimulatesPeople()) return empty;
+        const store = this._eventStore();
+        if (!store) return empty;
+        const startedAt = Date.now();
+        this._liveRunning = true;
+        this._spanRunning = true;
+        let written = 0;
+        try {
+            // Read the world's own state afresh: the cast in memory may belong
+            // to the world that was open before this one.
+            if (window.WorldManager) this._liveCastReady = false;
+            this._ensureLiveCast();
+            for (let day = first; day <= last; day++) written += this._runLiveDay(day, store);
+            this._liveSet("liveLastDay", last);
+            this._trimLiveEvents(store);
+            this._persistLiveCast();
+            this._liveFlush(true);
+        } finally {
+            this._liveRunning = false;
+            this._spanRunning = false;
+        }
+        return { days: last - first + 1, events: written, ms: Date.now() - startedAt };
+    };
+
+    //=========================================================================
+    // A goblin world: the Horde holds most of the map from the first day
+    //=========================================================================
+    //
+    // In a goblin world (WorldModes.hordeIsNormalOrder) the Goblin Horde is the
+    // normal order, not an invader. When the world is made, after the century
+    // and the years lived before play, a share of the nations that are nobody's
+    // seat (drawn off the world seed between GOBLIN_WORLD_SHARE_MIN and _MAX)
+    // is recorded as the Horde's through recordNationChange, with a reason of
+    // its own, so the map, the politics, the refugees, HordeGround and the
+    // stock market all read it off the same chronicle. Every power keeps its
+    // own seat and a few holdouts keep theirs. Written once per world, and
+    // outside the live chronicle, so no listener takes it for a conquest:
+    // nobody flees ground that was always the Horde's.
+    const GOBLIN_WORLD_POWER = 'Goblin Horde';  // i18n-ignore  hyperpower id
+    const GOBLIN_WORLD_SHARE_MIN = 0.70;
+    const GOBLIN_WORLD_SHARE_MAX = 0.85;
+    const GOBLIN_WORLD_SALT = 0x60B11D;
+
+    // The nations the pass is counted over: every nation that is not a
+    // power's seat.
+    HistoryManager.prototype.goblinWorldPool = function () {
+        return Object.keys(this._currentCountries || {}).filter(n => !this.homeNationOwner(n)).sort();
+    };
+
+    // The share of that pool the Horde holds right now.
+    HistoryManager.prototype.goblinWorldShare = function () {
+        const pool = this.goblinWorldPool();
+        if (!pool.length) return 0;
+        const held = pool.filter(n => (this._currentCountries[n] || {}).controller === GOBLIN_WORLD_POWER);
+        return held.length / pool.length;
+    };
+
+    HistoryManager.prototype.applyGoblinWorld = function (minute) {
+        if (!hordeIsNormalOrder()) return null;
+        const done = this._liveGet("goblinWorld");
+        if (done) return done;
+        if (window.WorldManager) this._liveCastReady = false;
+        this._ensureLiveCast();
+        if (!(this._currentHyperpowers || {})[GOBLIN_WORLD_POWER]) return null;
+        const countries = this._currentCountries || {};
+        const pool = this.goblinWorldPool();
+        if (!pool.length) return null;
+        const rng = makeRng((normalizeHistorySeed(this.getSeed()) ^ GOBLIN_WORLD_SALT) >>> 0);
+        const share = GOBLIN_WORLD_SHARE_MIN + rng.next() * (GOBLIN_WORLD_SHARE_MAX - GOBLIN_WORLD_SHARE_MIN);
+        const target = Math.round(share * pool.length);
+        let held = pool.filter(n => (countries[n] || {}).controller === GOBLIN_WORLD_POWER).length;
+        // A seeded order over the rest; a nation somebody is fighting over
+        // stays that war's business.
+        const rest = pool.filter(n => (countries[n] || {}).controller !== GOBLIN_WORLD_POWER && !this.nationAtWar(n));
+        for (let i = rest.length - 1; i > 0; i--) {
+            const j = Math.floor(rng.next() * (i + 1));
+            [rest[i], rest[j]] = [rest[j], rest[i]];
+        }
+        const at = liveDateOf(liveDayOf(Number(minute) || 0));
+        const dateStr = dayStr(at);
+        const taken = [];
+        for (const nation of rest) {
+            if (held >= target) break;
+            const from = countries[nation].controller || 'Neutral';  // i18n-ignore  controller id
+            const reason = from === 'Neutral'  // i18n-ignore  controller id
+                ? LK('History.reason.goblinWorld')
+                : LK('History.reason.goblinWorldFrom', { power: from });
+            if (this._transferNation(nation, GOBLIN_WORLD_POWER, dateStr, reason)) {
+                taken.push(nation);
+                held++;
+            }
+        }
+        const store = this._eventStore();
+        if (store && taken.length) {
+            store.push({
+                date: dateStr, category: 'conquest', type: 'conquest',
+                ...descOf('History.conquest.goblinWorld',
+                    { power: GOBLIN_WORLD_POWER, count: held, holdouts: pool.length - held }),
+                iconIndex: ICONS.conquest
+            });
+        }
+        const out = { date: dateStr, taken, share: held / pool.length };
+        this._liveSet("goblinWorld", out);
+        this._persistLiveCast();
+        try {
+            if (window.SpriteCatalog && typeof window.SpriteCatalog.invalidateHordeGround === 'function') {
+                window.SpriteCatalog.invalidateHordeGround();
+            }
+        } catch (_) {}
+        this._liveFlush(true);
+        return out;
     };
 
     //=========================================================================
@@ -3376,6 +4184,9 @@
             typeof $gameVariables !== "undefined" && $gameVariables ? $gameVariables.value(114) : 0
         )));
         holders.push({ holder: holderName, power: null, since: date, how: T(howKey), howKey, howParams: null });
+        // The first holder and the latest ones: a piece that changes hands
+        // for centuries must not grow the world file without end.
+        if (holders.length > ARTIFACT_HOLDERS_KEPT) holders.splice(1, holders.length - ARTIFACT_HOLDERS_KEPT);
         const entry = this.recordEvent({
             date: date,
             category: "paranormal",
@@ -3603,8 +4414,14 @@
             if (out.length < 2) {
                 const seed = seedOf(record.name);
                 const fill = [81, 132, 95, 85, 98, 171];
-                while (out.length < 2) {
-                    const pick = fill[Math.floor(rollFrom(seed, out.length) * fill.length)];
+                // Rolled on the attempt, not on how many are held: a roll that
+                // lands on a trait already held must move on, or the same roll
+                // repeats forever. With no repeat the two counts agree, so
+                // every other leader keeps the traits they always had.
+                for (let step = 0; out.length < 2; step++) {
+                    const pick = step < 32
+                        ? fill[Math.floor(rollFrom(seed, step) * fill.length)]
+                        : fill.find(id => !out.includes(id));
                     if (!out.includes(pick)) out.push(pick);
                 }
             }
@@ -4441,6 +5258,36 @@
             const info = window.WorldManager.worldInfo();
             if (info.historyInitialized) { manager.migrateKeyedHistory(); return; }
             manager.initializeWorldHistory({ years: info.historyYears || null, seed: info.seed });
+        });
+    }
+
+    // World initialization step: a world that starts after 2001 lives the
+    // years in between before anybody is dealt into it. Runs after the century
+    // (0) and before the politics (50), which read the map it leaves. A world
+    // whose live chronicle has already started keeps the one it has.
+    if (window.WorldManager && window.WorldManager.registerWorldInitializer) {
+        window.WorldManager.registerWorldInitializer("worldTimeline", 48, () => {
+            const WM = window.WorldManager;
+            const info = WM.worldInfo();
+            const startDay = liveDayOf(Number(info.worldTimeMinutes) || 0);
+            // The century already wrote 1 January 2001.
+            const firstDay = liveDayOf(0) + 1;
+            if (startDay <= firstDay) return;
+            if (manager._liveGet("liveLastDay") != null) return;
+            const span = manager.simulateSpan(firstDay, startDay);
+            console.log(`[HistorySimulator] Lived ${span.days} days since 2001 (${span.events} entries, ${span.ms}ms).`);
+        });
+    }
+
+    // World initialization step: in a goblin world the Horde holds most of the
+    // map on the first day (applyGoblinWorld). Runs after the years before play
+    // (48) and before the politics (50), the refugees (58) and everything else
+    // that reads who holds what; a no-op in every other world.
+    if (window.WorldManager && window.WorldManager.registerWorldInitializer) {
+        window.WorldManager.registerWorldInitializer("goblinWorld", 49, () => {
+            const info = window.WorldManager.worldInfo();
+            const out = manager.applyGoblinWorld(Number(info.worldTimeMinutes) || 0);
+            if (out) console.log(`[HistorySimulator] The Goblin Horde holds ${Math.round(out.share * 100)}% of the world (${out.taken.length} nations taken).`);
         });
     }
 

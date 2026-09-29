@@ -1731,6 +1731,7 @@
     // Answers false when there is nothing usable to rebuild, so the caller can
     // send the party somewhere that does exist instead of onto a blank 636.
     function restoreProcRespawn(snap) {
+        if (snap && snap.fromCoords) return restoreProcRespawnFromCoords(snap);
         const pg = $gameSystem && $gameSystem._procGenData;
         if (!pg || !snap || !snap.currentBiome) return false;
         surfaceProcGenLayers(pg);
@@ -1738,6 +1739,33 @@
         pg.generatedMapData = null;
         $gameSystem._procEntryBorder = null;
         return restoreProcSurface(snap);
+    }
+
+    // A respawn point named only by its world square (the
+    // setRespawnPointAtCoordinates command): nobody has stood there, so there
+    // is no snapshot of it to put back. It is built the way an origin or a
+    // fast-travel arrival builds a square it was never on, off the biome
+    // snapshot, so it is the very square the world holds at those coordinates,
+    // road, river and neighbours included.
+    function snapshotProcRespawnAt(worldX, worldY) {
+        const x = Number(worldX), y = Number(worldY);
+        if (!Number.isFinite(x) || !Number.isFinite(y) || x < 0 || y < 0) return null;
+        const biome = $gameSystem && $gameSystem.getBiomeFromCache
+            ? $gameSystem.getBiomeFromCache(x, y) : null;
+        if (!biome) return null;
+        return { fromCoords: true, originX: x, originY: y, currentBiome: biome };
+    }
+
+    function restoreProcRespawnFromCoords(snap) {
+        if (!$gameSystem || !$gameSystem.generateOriginBiomeMap) return false;
+        const built = $gameSystem.generateOriginBiomeMap({
+            worldX: snap.originX, worldY: snap.originY, allowWater: true
+        });
+        if (!built) return false;
+        $gameSystem._procEntryBorder = null;
+        $gameVariables.setValue(110, 1);
+        $gameVariables.setValue(111, 1);
+        return true;
     }
 
     // Descending into a layer of the same square -- a cave through goDown or
@@ -8152,7 +8180,9 @@
         // tiles (they are rebuilt), no descent and no structure session. Used by
         // everything that registers where a death sends the party back to.
         snapshotProcRespawn,
-        restoreProcRespawn
+        restoreProcRespawn,
+        // A respawn point on a world square nobody has stood on, by coordinates.
+        snapshotProcRespawnAt
     };
 
     // ========================================================================

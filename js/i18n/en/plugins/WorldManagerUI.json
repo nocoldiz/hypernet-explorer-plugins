@@ -40,6 +40,24 @@
   "aWorldWithThisName": "A world with this name already exists.",
   "generatingWorldHistory": "Generating world history...",
   "populatingWorld": "Populating the world...",
+  "initStepProgress": "Preparing the world ({current}/{total}): {step}...",
+  "initSteps": {
+    "history": "history",
+    "worldgenManifests": "map groups and settlements",
+    "npcRoster": "the people",
+    "shopShifts": "shop rotas",
+    "dungeon": "the dungeon",
+    "towerWorlds": "the tower worlds",
+    "worldTimeline": "the years since 2001",
+    "goblinWorld": "the Goblin Horde's dominion",
+    "politics": "governments and elections",
+    "factionDiplomacy": "faction diplomacy",
+    "npcPreAge": "the people's pasts",
+    "refugees": "the refugees",
+    "worldWeb": "the settlement web",
+    "epidemics": "epidemics",
+    "erisLawyers": "the lawyers"
+  },
   "worldCreationFailed": "World creation failed: ",
   "months": [
     "January",
@@ -99,5 +117,10 @@
     "severed": "Magic has been stripped from the world. Spells, enchanted items, and magical creatures no longer appear, and the MP bar is removed. The party retains only what they are given at creation.",
     "unbound": "Magic runs wild across the world. Weapons are enchanted, illnesses are curses, and creatures mutate from raw ley energy. Shops and loot contain no ordinary gear."
   },
-  "magicalLocked": "Chosen once at creation and independent of the timeline. Any combination of the two can be made."
+  "magicalLocked": "Chosen once at creation and independent of the timeline. Any combination of the two can be made.",
+  "regenerate": "REGENERATE",
+  "regenerateWorld": "Regenerate World",
+  "confirmRegenerate": "Reset world \"{name}\" to the default world shipped with the game? Its history, NPCs and savegames are lost. This cannot be undone.",
+  "regeneratingWorld": "Restoring the default world...",
+  "worldRegenerated": "The default world has been restored."
 }

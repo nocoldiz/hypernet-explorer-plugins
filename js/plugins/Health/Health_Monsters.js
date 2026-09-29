@@ -468,7 +468,12 @@
       // Vital parts are protected: they cannot drop below 1 HP until the enemy
       // is under VITAL_INSTAKILL_RATE HP. Only then does destroying one trigger
       // the instakill in handleDestroyedBodyPart.
-      var canBeDestroyed = !basePart.vital || window.MonsterHealth.vitalCanFall(enemy);
+      // A Blunt blow never finishes a vital part at all, whatever the HP:
+      // it breaks bones and knocks out, it does not kill through an organ
+      // (HealthCore.isBluntAction, wasBluntDowned).
+      var blunt = isBluntBlow(action);
+      var canBeDestroyed = !basePart.vital ||
+        (!blunt && window.MonsterHealth.vitalCanFall(enemy));
 
       // Check if part is now destroyed
       if (part.currentHp <= 0) {
@@ -512,6 +517,13 @@
    */
   function partFinished(part) {
     return !!part && (part.destroyed || part.broken);
+  }
+
+  /** A blow with a known action whose damage type is Blunt. */
+  function isBluntBlow(action) {
+    var HC = window.HealthCore;
+    if (!action || !HC || typeof HC.isBluntAction !== "function") return false;
+    return HC.isBluntAction(action);
   }
 
   function partCutByAttacker(attacker, action) {
@@ -700,6 +712,7 @@
         // the death itself until the log drained let the thing take one more
         // turn after it had already been gutted.
         if (basePart.vital) {
+          enemy._vitalDestroyed = true;
           $gameTemp.vitalPartDestroyedEnemy = enemy;
           $gameTemp.vitalPartCollapsePending = !enemy.isDead();
           killByVitalLoss(enemy);
@@ -779,6 +792,16 @@
     },
 
     isVitalPart: isVitalPart,
+
+    isBluntBlow: isBluntBlow,
+
+    // The fight ended with a Blunt blow and every vital part still in place:
+    // the monster is downed, not dead (the fight record lives in Health_Core).
+    wasBluntDowned: function (enemy) {
+      var HC = window.HealthCore;
+      if (HC && typeof HC.wasBluntDowned === "function") return HC.wasBluntDowned(enemy);
+      return false;
+    },
 
     // Whether a blow to a vital part may kill this monster yet: only once it
     // is under a quarter of its HP. Above that a vital part is held at 1 HP.

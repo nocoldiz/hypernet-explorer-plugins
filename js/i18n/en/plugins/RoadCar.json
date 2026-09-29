@@ -2,6 +2,7 @@
   "unattendedCar": "An unattended car.",
   "stealCar": "Steal car",
   "cancel": "Cancel",
+  "usedDriverKeys": "You unlock it with the driver's own keys.",
   "usedSkeletonKey": "Used Skeleton Key!",
   "needLockpick": "You need a lockpick to hotwire a car.",
   "lockStuck": "The lock will not budge.",
@@ -16,5 +17,19 @@
   "driverSave": {
     "nearMiss": "[Driver DEX save: {roll}{mod}={total}] Near miss, swerved in time!",
     "failed": "[Driver DEX save: {roll}{mod}={total} vs DC {dc}] Reflex save failed, the vehicle hits!"
+  },
+  "incident": {
+    "hitParty1": "Watch where you walk! That is a road!",
+    "hitParty2": "You came out of nowhere. Are you hurt?",
+    "crashParty1": "Look at my car! Do you know what that costs?",
+    "crashParty2": "Where did you learn to drive, a fairground?",
+    "hitPerson1": "They stepped right out in front of me!",
+    "hitPerson2": "Oh no. Somebody call for help!",
+    "hitCreature1": "Something went under the wheels. Is it dead?",
+    "hitCreature2": "That thing just ran across the road!",
+    "fender1": "You drove straight into me!",
+    "fender2": "Did you not see me braking?",
+    "theft1": "Hey! That is my car!",
+    "theft2": "Thief! Somebody stop them, they took my car!"
   }
 }

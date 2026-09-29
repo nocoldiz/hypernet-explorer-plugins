@@ -415,16 +415,46 @@
             return true;
         }
 
+        // Euros a sale fetches. Somebody who knows the market does not take the
+        // first offer, so the haircut narrows as Real Estate Appraisal climbs.
+        salePriceOf(property) {
+            const valuer = window.SpecializationXP
+                ? window.SpecializationXP.multiplier('Real Estate Appraisal', 0.025) : 1;
+            const base = property.isNormalHome ? property.price : this.calculateEffectivePrice(property);
+            return Math.floor(base * Math.min(1, 0.9 * valuer));
+        }
+
+        // A companion's inherited residence or a bought procedural floor goes
+        // back to the market: the record is dropped from the system that owns
+        // it, so its build rights and cupboards go with it.
+        sellNormalHome(home) {
+            let released = false;
+            if (home.normalHomeType === 'residence') {
+                const list = $gameSystem && $gameSystem._npcInheritedHouses;
+                const idx = Array.isArray(list)
+                    ? list.findIndex(h => h.mapId === home.mapId && (h.npcName || '') === (home.resident || ''))
+                    : -1;
+                if (idx >= 0) { list.splice(idx, 1); released = true; }
+            } else if (home.normalHomeType === 'procedural') {
+                const PHS = window.ProceduralHouseSystem;
+                released = !!(PHS && typeof PHS.releaseOwnedHouse === 'function' && PHS.releaseOwnedHouse(home.houseKey));
+            }
+            if (!released) return false;
+            const goldGain = this.salePriceOf(home) * 100;
+            $gameParty.gainGold(goldGain);
+            if (window.SpecializationXP) {
+                window.SpecializationXP.awardForValue('Real Estate Appraisal', goldGain);
+            }
+            return true;
+        }
+
         sellProperty(propertyId) {
+            const home = this.getNormalHomes().find(p => p.id === propertyId);
+            if (home) return this.sellNormalHome(home);
             const property = this.properties.find(p => p.id === propertyId);
             if (!property || !property.isOwned) return false;
 
-            const effectivePrice = this.calculateEffectivePrice(property);
-            // Somebody who knows the market does not take the first offer, so
-            // the haircut on a sale narrows as Real Estate Appraisal climbs.
-            const valuer = window.SpecializationXP
-                ? window.SpecializationXP.multiplier('Real Estate Appraisal', 0.025) : 1;
-            const salePrice = Math.floor(effectivePrice * Math.min(1, 0.9 * valuer));
+            const salePrice = this.salePriceOf(property);
             const goldGain = salePrice * 100;
 
             $gameParty.gainGold(goldGain);
@@ -614,16 +644,9 @@
                 );
             }
 
-            // Drift company share prices with a small daily random walk, clamped
-            // to a sane band around each company's base listing price.
-            const defs = this.getCompanyDefs();
-            Object.keys(defs).forEach(key => {
-                const base = Number(defs[key].sharePrice) || 1;
-                const cur = this.getCompanyPrice(key);
-                const drift = 1 + (Math.random() - 0.5) * 0.1; // ±5%
-                const next = Math.max(base * 0.3, Math.min(base * 4, cur * drift));
-                this.companyPrices[key] = Math.max(1, Math.round(next));
-            });
+            // Company share prices are the stock terminal's to move (its hourly
+            // engine, driven by the society): this register only keeps the
+            // quote it is handed, so there is one price and one engine.
 
             // Save the update
             this.save();
@@ -738,6 +761,7 @@
                         marketTrend: 0,
                         isNormalHome: true,
                         normalHomeType: 'procedural',
+                        houseKey: h.key,
                         entranceCoords: `X:${h.x} Y:${h.y}`,
                         floor: h.floor,
                         mapId: h.mapId
@@ -859,6 +883,14 @@
             return this.companyShares[key] || 0;
         }
 
+        // Shares of a company the society's NPCs hold (NPCSim.Stocks): they
+        // are not on offer to the party.
+        npcShares(key) {
+            const S = window.NPCSim && window.NPCSim.Stocks;
+            try { return S && typeof S.heldBy === 'function' ? Math.max(0, Number(S.heldBy(key)) || 0) : 0; }
+            catch (e) { return 0; }
+        }
+
         // Render-ready list of every listed company, enriched with the player's
         // position. Sorted by name for stable display.
         getCompanies() {
@@ -879,7 +911,7 @@
                     price,
                     totalShares: total,
                     sharesOwned: owned,
-                    available: Math.max(0, total - owned),
+                    available: Math.max(0, total - owned - this.npcShares(key)),
                     ownershipPct: total > 0 ? (owned / total) * 100 : 0,
                     value: Math.round(owned * price * 100),      // gold
                     costBasis: this.companyCostBasis[key] || 0   // gold
@@ -896,7 +928,7 @@
             const def = this.getCompanyDefs()[key];
             if (!def) return false;
             const total = Number(def.totalShares) || 0;
-            const available = Math.max(0, total - this.getShares(key));
+            const available = Math.max(0, total - this.getShares(key) - this.npcShares(key));
             count = Math.min(Math.floor(count), available);
             if (count <= 0) return false;
 
@@ -969,7 +1001,7 @@
                 shares,
                 costBasis: this.companyCostBasis[key] || 0, // gold
                 totalShares: total,
-                available: Math.max(0, total - shares)
+                available: Math.max(0, total - shares - this.npcShares(key))
             };
         }
 
@@ -1322,7 +1354,7 @@
                 if (!this._rightClickStartedHere) return;
                 this._rightClickStartedHere = false;
                 SoundManager.playCancel();
-                this.dismiss();
+                this.stepOut();
             });
             this._dndContainer.addEventListener('wheel', (e) => {
                 const listEl = this._dndContainer.querySelector('#estate-list');
@@ -1397,27 +1429,7 @@
             else if (trend < -0.5) { marketSentiment = t('cold'); sentimentColor = 'var(--border-danger-active)'; }
 
             const sref = this.sceneRef();
-            const commands = [];
-            if (selectedProperty.isOwned) {
-                // A shop deed is worth more open than sold, so running it comes first.
-                if (selectedProperty.type === 'Shop') {
-                    commands.push({ label: T('RealEstate.ui.manageShop'), action: "manage" });
-                }
-                if (!selectedProperty.isNormalHome) {
-                    commands.push({ label: T('RealEstate.ui.liquidateAsset'), action: "sell", danger: true });
-                }
-            } else if (selectedProperty.isRentedByPlayer) {
-                commands.push({ label: T('RealEstate.ui.vacateRental'), action: "vacate", danger: true });
-            } else if ($realEstateManager.isTakenByAnother(selectedProperty.id)) {
-                // Another playthrough of this world holds it: nothing to offer
-                // but the news, so neither deed nor lease is put up for sale.
-            } else {
-                commands.push({ label: T('RealEstate.ui.acquireDeed'), action: "buy" });
-                commands.push({ label: T('RealEstate.ui.rent'), action: "rent", secondary: true });
-            }
-            if (effects.length > 0) {
-                commands.push({ label: T('RealEstate.ui.investigateMarketNews'), action: "info", secondary: true });
-            }
+            const commands = this.deedCommands(selectedProperty);
 
             const commandsHTML = commands.map((cmd, cIdx) => {
                 const isSel = cIdx === this._dndCommandIndex && this._dndFocusSection === 'commands';
@@ -1459,6 +1471,12 @@
                 ownedRows = row(T('RealEstate.ui.monthlyRent'), `€${monthlyRent.toLocaleString()}`);
             }
 
+            const lodgingId = this.lodgingPlaceIdFor(selectedProperty);
+            if (lodgingId) {
+                const living = window.PartyLodging.residents().filter(p => p.lodging === lodgingId).map(p => p.name);
+                ownedRows += row(T('RealEstate.ui.residents'), living.length ? living.join(', ') : '-');
+            }
+
             return `
                 <div class="item-inspect">
                     <h3 class="title estate-06">${selectedProperty.name}</h3>
@@ -1484,6 +1502,7 @@
             return `<div class="re-tabs">
                 ${tab('properties', T('RealEstate.ui.properties'))}
                 ${tab('companies', T('RealEstate.ui.companies'))}
+                ${window.WorkplaceDeeds ? tab('workplaces', T('RealEstate.ui.workingPlaces')) : ''}
             </div>`;
         }
 
@@ -1503,6 +1522,7 @@
             }
 
             if (this._viewMode === 'companies') this.refreshCompaniesInPlace();
+            else if (this._viewMode === 'workplaces') this.refreshWorkplacesInPlace();
             else this.refreshPropertiesInPlace();
             this.scrollSelectedIntoView();
         }
@@ -1511,6 +1531,10 @@
             if (this._viewMode === 'companies') {
                 const holdings = Object.keys($realEstateManager.companyShares || {}).length;
                 return `co_${holdings}`;
+            }
+            if (this._viewMode === 'workplaces') {
+                const WD = window.WorkplaceDeeds;
+                return `wp_${WD ? WD.list().length : 0}`;
             }
             const props = $realEstateManager ? $realEstateManager.getAllProperties().length : 0;
             const owned = $realEstateManager ? $realEstateManager.getOwnedCount() : 0;
@@ -1526,7 +1550,9 @@
             const dismissText = T('RealEstate.ui.dismiss');
             const registryTitle = this._viewMode === 'companies'
                 ? (T('RealEstate.ui.companyExchange'))
-                : (T('RealEstate.ui.realEstateRegistry'));
+                : this._viewMode === 'workplaces'
+                    ? T('RealEstate.ui.workingPlacesRegistry')
+                    : (T('RealEstate.ui.realEstateRegistry'));
 
             const cash = Number(($gameParty.gold() / 100).toFixed(2));
             let statsHTML;
@@ -1550,6 +1576,10 @@
                     </div>`;
                 if (this._companyIndex >= companies.length) this._companyIndex = Math.max(0, companies.length - 1);
                 listHTML = this.buildCompanyListHTML(companies, this._companyIndex);
+            } else if (this._viewMode === 'workplaces') {
+                const places = this.workplaceListing();
+                statsHTML = this.buildWorkplaceStatsHTML(places, cash);
+                listHTML = this.buildWorkplaceListHTML(places, this._workplaceIndex);
             } else {
                 const dailyYield = $realEstateManager.calculateDailyIncome();
                 const allProps = $realEstateManager.getAllProperties();
@@ -1592,6 +1622,14 @@
                     <div class="right-page">
                         <h2 class="title">${title}</h2>
                         <div class="estate-12" id="re-deed-wrap">${this.buildProspectusHTML(company)}</div>
+                    </div>`;
+            }
+            if (this._viewMode === 'workplaces') {
+                const place = this.workplaceListing()[this._workplaceIndex] || null;
+                return `
+                    <div class="right-page">
+                        <h2 class="title">${T('RealEstate.ui.businessDeed')}</h2>
+                        <div class="estate-12" id="re-deed-wrap">${this.buildWorkplaceDeedHTML(place)}</div>
                     </div>`;
             }
             const properties = $realEstateManager.getAllProperties();
@@ -1757,6 +1795,7 @@
 
         selectPropertyItem(index) {
             if (this._propertyListWindow) {
+                if (index !== this._propertyListWindow.index()) this._residentPickerFor = null;
                 this._propertyListWindow.select(index);
                 this._dndFocusSection = 'list';
                 SoundManager.playCursor();
@@ -1779,6 +1818,16 @@
             } else if (action === 'manage') {
                 this.commandManageShop();
                 return;
+            } else if (action === 'residents') {
+                this._residentPickerFor = property.id;
+                this._dndCommandIndex = 0;
+                SoundManager.playOk();
+            } else if (action === 'closeRes') {
+                this._residentPickerFor = null;
+                this._dndCommandIndex = 0;
+                SoundManager.playCancel();
+            } else if (action.indexOf('res:') === 0) {
+                this.toggleResident(property, Number(action.slice(4)));
             } else if (action === 'info') {
                 this.commandInfo();
                 return; // Navigation will handle page transition
@@ -1790,21 +1839,86 @@
             this.refreshUIRealEstateDOM();
         }
 
-        getActiveCommands(property) {
+        // Every button the deed page draws, in order. The keyboard walks the
+        // same list (getActiveCommands), so the two can never disagree.
+        deedCommands(property) {
             const commands = [];
+            if (!property) return commands;
+            if (this._residentPickerFor === property.id) return this.residentCommands(property);
             if (property.isOwned) {
-                if (property.type === 'Shop') commands.push('manage');
-                if (!property.isNormalHome) commands.push('sell');
+                // A shop deed is worth more open than sold, so running it comes first.
+                if (property.type === 'Shop') { // i18n-ignore: property type id
+                    commands.push({ label: T('RealEstate.ui.manageShop'), action: 'manage' });
+                }
+                if (this.lodgingPlaceIdFor(property)) {
+                    commands.push({ label: T('RealEstate.ui.assignResidents'), action: 'residents' });
+                }
+                commands.push({
+                    label: property.isNormalHome
+                        ? T('RealEstate.ui.sellHome', { price: '€' + $realEstateManager.salePriceOf(property).toLocaleString() })
+                        : T('RealEstate.ui.liquidateAsset'),
+                    action: 'sell', danger: true,
+                });
             } else if (property.isRentedByPlayer) {
-                commands.push('vacate');
-            } else if (!$realEstateManager.isTakenByAnother(property.id)) {
-                commands.push('buy', 'rent');
+                commands.push({ label: T('RealEstate.ui.vacateRental'), action: 'vacate', danger: true });
+            } else if ($realEstateManager.isTakenByAnother(property.id)) {
+                // Another playthrough of this world holds it: nothing to offer
+                // but the news, so neither deed nor lease is put up for sale.
+            } else {
+                commands.push({ label: T('RealEstate.ui.acquireDeed'), action: 'buy' });
+                commands.push({ label: T('RealEstate.ui.rent'), action: 'rent', secondary: true });
             }
-            const effects = $realEstateManager.getActiveEffectsForLocation(property.location);
-            if (effects.length > 0) {
-                commands.push('info');
+            if ($realEstateManager.getActiveEffectsForLocation(property.location).length > 0) {
+                commands.push({ label: T('RealEstate.ui.investigateMarketNews'), action: 'info', secondary: true });
             }
             return commands;
+        }
+
+        getActiveCommands(property) {
+            return this.deedCommands(property).map(cmd => cmd.action);
+        }
+
+        // The PartyLodging place a deed is, or null when nobody can live in it:
+        // a shop is a business and a workplace is not on this page at all.
+        lodgingPlaceIdFor(property) {
+            const PL = window.PartyLodging;
+            if (!PL || !property || !property.isOwned) return null;
+            let id = null;
+            if (property.normalHomeType === 'residence') id = 'home:' + property.mapId;          // i18n-ignore: place id
+            else if (property.normalHomeType === 'procedural') id = 'house:' + property.houseKey; // i18n-ignore: place id
+            else if (!property.isNormalHome && property.type !== 'Shop') id = 'estate:' + property.id; // i18n-ignore: place id
+            return id && PL.places().some(place => place.id === id) ? id : null;
+        }
+
+        // Every inactive party member, each a button that moves them in or,
+        // for one already living here, back out to the halls.
+        residentCommands(property) {
+            const PL = window.PartyLodging;
+            const placeId = this.lodgingPlaceIdFor(property);
+            const out = [];
+            if (PL && placeId) {
+                PL.residents().forEach((person, idx) => {
+                    const here = person.lodging === placeId;
+                    out.push({
+                        action: 'res:' + idx,
+                        label: here
+                            ? T('RealEstate.ui.residentHere', { name: person.name })
+                            : T('RealEstate.ui.residentElsewhere', { name: person.name, place: PL.placeName(person.lodging) }),
+                        secondary: !here,
+                    });
+                });
+            }
+            out.push({ label: T('RealEstate.ui.residentsDone'), action: 'closeRes', secondary: true });
+            return out;
+        }
+
+        toggleResident(property, idx) {
+            const PL = window.PartyLodging;
+            const placeId = this.lodgingPlaceIdFor(property);
+            const person = PL && placeId ? PL.residents()[idx] : null;
+            if (!person) { SoundManager.playBuzzer(); return; }
+            const ok = PL.assign(person.name, person.lodging === placeId ? PL.DEFAULT : placeId);
+            if (ok) SoundManager.playOk(); else SoundManager.playBuzzer();
         }
 
         executeFocusedCommand() {
@@ -1819,19 +1933,233 @@
 
         // --- Company view helpers ---
 
+        viewModes() {
+            return window.WorkplaceDeeds ? ['properties', 'companies', 'workplaces'] : ['properties', 'companies'];
+        }
+
         switchView(mode) {
-            if (mode !== 'properties' && mode !== 'companies') return;
+            if (this.viewModes().indexOf(mode) < 0) return;
             if (this._viewMode === mode) return;
             this._viewMode = mode;
             this._dndFocusSection = 'list';
             this._companyCommandIndex = 0;
+            this._workplaceCommandIndex = 0;
             this._dndCommandIndex = 0;
             SoundManager.playCursor();
             this.refreshUIRealEstateDOM();
         }
 
-        toggleView() {
-            this.switchView(this._viewMode === 'companies' ? 'properties' : 'companies');
+        toggleView(dir) {
+            const modes = this.viewModes();
+            const at = Math.max(0, modes.indexOf(this._viewMode));
+            const step = dir < 0 ? -1 : 1;
+            this.switchView(modes[(at + step + modes.length) % modes.length]);
+        }
+
+        // --- Working places view (WORKPLACE DEEDS below) ---
+
+        workplaceListing() {
+            const WD = window.WorkplaceDeeds;
+            const places = WD && typeof WD.listing === 'function' ? WD.listing() : [];
+            if (!Number.isInteger(this._workplaceIndex)) this._workplaceIndex = 0;
+            if (this._workplaceIndex >= places.length) this._workplaceIndex = Math.max(0, places.length - 1);
+            return places;
+        }
+
+        wpEuro(gold) {
+            return `€${(Math.round(Number(gold) || 0) / 100).toLocaleString()}`;
+        }
+
+        buildWorkplaceStatsHTML(places, cash) {
+            const owned = places.filter(p => p.status === 'owned');
+            const weekly = owned.reduce((s, p) => s + p.projected.profit, 0) * window.WorkplaceDeeds.PAYOUT_DAYS;
+            return `
+                <div class="re-stat">
+                    <span class="re-stat-lbl">${T('RealEstate.ui.liquidFunds')}</span>
+                    <span class="re-stat-val" id="re-cash">€${cash.toLocaleString()}</span>
+                </div>
+                <div class="re-stat estate-09">
+                    <span class="re-stat-lbl">${T('RealEstate.ui.businessesHeld')}</span>
+                    <span class="re-stat-val estate-10" id="re-wp-owned">${owned.length} / ${places.length}</span>
+                </div>
+                <div class="re-stat estate-11">
+                    <span class="re-stat-lbl">${T('RealEstate.ui.weeklyYield')}</span>
+                    <span class="re-stat-val" id="re-wp-yield">${this.wpEuro(weekly)}</span>
+                </div>`;
+        }
+
+        workplaceStatus(place) {
+            if (place.status === 'owned') return { label: T('RealEstate.ui.owned'), color: 'var(--text-success-active)' };
+            if (place.status === 'taken') return { label: T('RealEstate.ui.taken'), color: 'var(--text-disabled)' };
+            return { label: T('RealEstate.ui.available'), color: 'var(--text-primary-hover)' };
+        }
+
+        buildWorkplaceListHTML(places, selectedIndex) {
+            const sref = this.sceneRef();
+            return places.map((p, idx) => {
+                const st = this.workplaceStatus(p);
+                return `
+                    <div class="item-slot focusable ${idx === selectedIndex ? 'selected' : ''}" tabindex="0" data-focus-key="re-wp-${p.mapId}" onclick="${sref}.selectWorkplaceItem(${idx})">
+                        <div class="item-slot-info">
+                            <div class="item-slot-name">${p.name}</div>
+                            <div class="item-slot-meta"><span>${p.place ? p.place + ' • ' : ''}${this.wpEuro(p.price)}</span></div>
+                        </div>
+                        <div class="estate-01">
+                            <span class="estate-02" style="color:${st.color}">${st.label}</span>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        workplaceJobNames(jobIds) {
+            const WS = window.WorkSystem;
+            return (jobIds || []).map(id => {
+                const job = WS && Array.isArray(WS.Jobs) ? WS.Jobs.find(j => j && j.id === id) : null;
+                return job && typeof WS.jobName === 'function' ? WS.jobName(job) : String(id);
+            }).join(', ');
+        }
+
+        // Commands for the selected working place, in the order they are drawn.
+        getActiveWorkplaceCommands(place) {
+            if (!place) return [];
+            if (place.status === 'owned') return ['sell'];
+            if (place.status === 'available') return ['buy'];
+            return [];
+        }
+
+        buildWorkplaceDeedHTML(place) {
+            if (!place) {
+                return `
+                    <div class="item-inspect item-inspect--empty estate-04">
+                        <h3 class="title">${T('RealEstate.ui.businessDeed')}</h3>
+                        <p class="inspect-placeholder-text">${T('RealEstate.ui.selectAWorkplace')}</p>
+                    </div>`;
+            }
+            const WD = window.WorkplaceDeeds;
+            const sref = this.sceneRef();
+            const row = (label, value, valStyle = '') =>
+                `<div class="inspect-spec-row"><span class="inspect-spec-label">${label}:</span><span class="inspect-spec-value" style="${valStyle}">${value}</span></div>`;
+            const pnl = (v) => `color:${v >= 0 ? 'var(--text-success-active)' : 'var(--border-danger-active)'};`;
+            const proj = place.projected;
+            const rep = place.status === 'owned' ? WD.report(place.mapId) : null;
+
+            const cmds = this.getActiveWorkplaceCommands(place).map(action => action === 'sell'
+                ? { action, label: T('Assets.workplace.sell', { price: this.wpEuro(rep ? rep.salePrice : 0) }), danger: true }
+                : { action, label: T('Assets.workplace.buy', { price: this.wpEuro(place.price) }) });
+            if (this._workplaceCommandIndex >= cmds.length) this._workplaceCommandIndex = Math.max(0, cmds.length - 1);
+            const commandsHTML = cmds.map((cmd, cIdx) => {
+                const isSel = cIdx === this._workplaceCommandIndex && this._dndFocusSection === 'commands';
+                return `<div class="inspect-btn${cmd.danger ? ' inspect-btn--danger' : ''} focusable ${isSel ? 'selected' : ''}" tabindex="0" data-focus-key="re-wp-cmd-${cmd.action}" onclick="${sref}.executeWorkplaceCommand('${cmd.action}')">${cmd.label}</div>`;
+            }).join('');
+
+            let ownedRows = '';
+            if (rep) {
+                const totals = rep.deed.totals || { days: 0, profit: 0 };
+                ownedRows = row(T('Assets.workplace.nextPayout'), T('Assets.workplace.inDays', { days: rep.nextPayout }))
+                    + row(T('Assets.workplace.totalProfit', { days: totals.days }), this.wpEuro(totals.profit), pnl(totals.profit))
+                    + row(T('Assets.ui.boughtValue'), this.wpEuro(rep.deed.price))
+                    + row(T('Assets.workplace.saleValue'), this.wpEuro(rep.salePrice), 'color:var(--text-primary-hover);');
+            } else if (place.status === 'taken') {
+                ownedRows = row(T('RealEstate.ui.status'), T('RealEstate.ui.taken'), 'color:var(--text-disabled);');
+            }
+
+            return `
+                <div class="item-inspect">
+                    <h3 class="title estate-06">${place.name}</h3>
+                    <div class="inspect-section-title">${T('RealEstate.ui.businessDeed2')}</div>
+                    ${place.place ? row(t('location'), place.place) : ''}
+                    ${row(T('Assets.workplace.trades'), this.workplaceJobNames(place.jobs) || '-')}
+                    ${row(T('Assets.workplace.askingPrice'), this.wpEuro(place.price), 'color:var(--text-primary-hover);')}
+                    ${row(T('Assets.workplace.staffed'), `${proj.shifts} / ${place.positions}`)}
+                    ${row(T('Assets.workplace.townWealth'), `x${place.wealth.toFixed(2)}`)}
+                    ${row(T('Assets.workplace.dailyProfit'), this.wpEuro(proj.profit), pnl(proj.profit))}
+                    ${row(T('RealEstate.ui.weeklyPayout'), this.wpEuro(proj.profit * WD.PAYOUT_DAYS), pnl(proj.profit) + 'font-weight:bold;')}
+                    ${ownedRows}
+                    <div class="inspect-actions estate-08">${commandsHTML}</div>
+                </div>`;
+        }
+
+        refreshWorkplacesInPlace() {
+            const cash = Number(($gameParty.gold() / 100).toFixed(2));
+            const places = this.workplaceListing();
+            const statsEl = this._dndContainer.querySelector('.re-stats');
+            if (statsEl) statsEl.innerHTML = this.buildWorkplaceStatsHTML(places, cash);
+            const listEl = this._dndContainer.querySelector('#estate-list');
+            if (listEl) {
+                const key = this.currentListDataKey();
+                if (this._reListDataKey !== key || listEl.children.length !== places.length) {
+                    this._reListDataKey = key;
+                    listEl.innerHTML = this.buildWorkplaceListHTML(places, this._workplaceIndex);
+                } else {
+                    listEl.querySelectorAll('.item-slot').forEach((slot, idx) => {
+                        slot.classList.toggle('selected', idx === this._workplaceIndex);
+                    });
+                }
+            }
+            const deedWrap = this._dndContainer.querySelector('#re-deed-wrap');
+            if (deedWrap) deedWrap.innerHTML = this.buildWorkplaceDeedHTML(places[this._workplaceIndex] || null);
+        }
+
+        selectWorkplaceItem(index) {
+            this._workplaceIndex = index;
+            this._dndFocusSection = 'list';
+            this._workplaceCommandIndex = 0;
+            SoundManager.playCursor();
+            this.refreshUIRealEstateDOM();
+        }
+
+        executeWorkplaceCommand(action) {
+            const WD = window.WorkplaceDeeds;
+            const place = this.workplaceListing()[this._workplaceIndex];
+            if (!WD || !place) return;
+            const result = action === 'buy' ? WD.buy(place.mapId) : action === 'sell' ? WD.sell(place.mapId) : null;
+            if (result && result.ok) {
+                SoundManager.playShop();
+                const args = { name: place.name, price: this.wpEuro(result.price) };
+                window.ParchmentToast?.show?.(action === 'buy'
+                    ? T('Assets.workplace.bought', args) : T('Assets.workplace.sold', args));
+            } else {
+                SoundManager.playBuzzer();
+                if (result && action === 'buy') {
+                    window.ParchmentToast?.show?.(T(result.reason === 'funds'
+                        ? 'Assets.workplace.cannotAfford' : 'Assets.workplace.notForSale'));
+                }
+            }
+            this._dndFocusSection = 'list';
+            this._workplaceCommandIndex = 0;
+            this.refreshUIRealEstateDOM();
+        }
+
+        updateWorkplaceNav() {
+            let moved = false;
+            const places = this.workplaceListing();
+            const place = places[this._workplaceIndex] || null;
+            if (this._dndFocusSection === 'list') {
+                const max = places.length;
+                if (Input.isRepeated('down')) {
+                    if (max > 0) { this._workplaceIndex = (this._workplaceIndex + 1) % max; moved = true; }
+                } else if (Input.isRepeated('up')) {
+                    if (max > 0) { this._workplaceIndex = (this._workplaceIndex - 1 + max) % max; moved = true; }
+                } else if (Input.isRepeated('right') || Input.isTriggered('ok')) {
+                    if (this.getActiveWorkplaceCommands(place).length > 0) {
+                        this._dndFocusSection = 'commands'; this._workplaceCommandIndex = 0; moved = true;
+                    }
+                }
+            } else if (this._dndFocusSection === 'commands') {
+                const cmds = this.getActiveWorkplaceCommands(place);
+                const max = cmds.length;
+                if (Input.isRepeated('down')) {
+                    if (max > 0) { this._workplaceCommandIndex = (this._workplaceCommandIndex + 1) % max; moved = true; }
+                } else if (Input.isRepeated('up')) {
+                    if (max > 0) { this._workplaceCommandIndex = (this._workplaceCommandIndex - 1 + max) % max; moved = true; }
+                } else if (Input.isRepeated('left')) {
+                    this._dndFocusSection = 'list'; moved = true;
+                } else if (Input.isTriggered('ok')) {
+                    const action = cmds[this._workplaceCommandIndex];
+                    if (action) this.executeWorkplaceCommand(action);
+                }
+            }
+            return moved;
         }
 
         selectCompanyItem(index) {
@@ -1879,6 +2207,21 @@
             this.refreshUIRealEstateDOM();
         }
 
+        stepOut() {
+            if (this._residentPickerFor) {
+                this._residentPickerFor = null;
+                this._dndCommandIndex = 0;
+                this.refreshUIRealEstateDOM();
+                return;
+            }
+            if (this._dndFocusSection === 'commands') {
+                this._dndFocusSection = 'list';
+                this.refreshUIRealEstateDOM();
+                return;
+            }
+            this.dismiss();
+        }
+
         executeFocusedCompanyCommand() {
             const company = this.selectedCompany();
             const cmds = this.getActiveCompanyCommands(company);
@@ -1893,24 +2236,29 @@
             super.update();
 
             if (this._dndContainer) {
-                // TAB (or Q/E, mapped to pageup/pagedown) flips between the
-                // property registry and the company exchange. Input._currentState
-                // is keyed by keyMapper button names in this project, so we use
-                // those rather than raw event.code strings. The clickable tabs are
-                // the primary, always-working control.
-                if (Input.isTriggered('tab') || Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
-                    this.toggleView();
+                // L1/R1 (Q/W, Tab) cycle the property registry, the company
+                // exchange and the working places, as tabs do on every menu. The clickable
+                // tabs are the primary, always-working control.
+                const tabDir = window.UINav ? UINav.tabDir() : 0;
+                if (tabDir) {
+                    this.toggleView(tabDir);
                     return;
                 }
 
-                const moved = this._viewMode === 'companies'
+                // Cancel (B, Esc, right click) steps out one level: out of the
+                // command column back to the list, and only from the list does
+                // it close the market.
+                if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
+                    SoundManager.playCancel();
+                    this.stepOut();
+                    return;
+                }
+
+                const moved = this._viewMode === 'workplaces'
+                    ? this.updateWorkplaceNav()
+                    : this._viewMode === 'companies'
                     ? this.updateCompanyNav()
                     : this.updatePropertyNav();
-
-                if (Input.isTriggered('cancel') || Input.isTriggered('escape')) {
-                    SoundManager.playCancel();
-                    this.dismiss();
-                }
 
                 if (moved) {
                     this.refreshUIRealEstateDOM();
@@ -1923,21 +2271,23 @@
             const property = this._propertyListWindow.property();
 
             if (this._dndFocusSection === 'list') {
-                if (Input.isTriggered('down') || Input.isRepeated('down')) {
+                if (Input.isRepeated('down')) {
+                    this._residentPickerFor = null;
                     const currentIndex = this._propertyListWindow.index();
                     const maxItems = this._propertyListWindow.maxItems();
                     if (maxItems > 0) {
                         this._propertyListWindow.select(currentIndex < maxItems - 1 ? currentIndex + 1 : 0);
                         moved = true;
                     }
-                } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
+                } else if (Input.isRepeated('up')) {
+                    this._residentPickerFor = null;
                     const currentIndex = this._propertyListWindow.index();
                     const maxItems = this._propertyListWindow.maxItems();
                     if (maxItems > 0) {
                         this._propertyListWindow.select(currentIndex > 0 ? currentIndex - 1 : maxItems - 1);
                         moved = true;
                     }
-                } else if (Input.isTriggered('right') || Input.isTriggered('ok')) {
+                } else if (Input.isRepeated('right') || Input.isTriggered('ok')) {
                     if (property && this.getActiveCommands(property).length > 0) {
                         this._dndFocusSection = 'commands';
                         this._dndCommandIndex = 0;
@@ -1947,11 +2297,11 @@
             } else if (this._dndFocusSection === 'commands') {
                 const cmds = property ? this.getActiveCommands(property) : [];
                 const maxCmds = cmds.length;
-                if (Input.isTriggered('down') || Input.isRepeated('down')) {
+                if (Input.isRepeated('down')) {
                     if (maxCmds > 0) { this._dndCommandIndex = (this._dndCommandIndex + 1) % maxCmds; moved = true; }
-                } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
+                } else if (Input.isRepeated('up')) {
                     if (maxCmds > 0) { this._dndCommandIndex = (this._dndCommandIndex - 1 + maxCmds) % maxCmds; moved = true; }
-                } else if (Input.isTriggered('left')) {
+                } else if (Input.isRepeated('left')) {
                     this._dndFocusSection = 'list'; moved = true;
                 } else if (Input.isTriggered('ok')) {
                     this.executeFocusedCommand();
@@ -1967,11 +2317,11 @@
 
             if (this._dndFocusSection === 'list') {
                 const maxItems = companies.length;
-                if (Input.isTriggered('down') || Input.isRepeated('down')) {
+                if (Input.isRepeated('down')) {
                     if (maxItems > 0) { this._companyIndex = (this._companyIndex + 1) % maxItems; moved = true; }
-                } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
+                } else if (Input.isRepeated('up')) {
                     if (maxItems > 0) { this._companyIndex = (this._companyIndex - 1 + maxItems) % maxItems; moved = true; }
-                } else if (Input.isTriggered('right') || Input.isTriggered('ok')) {
+                } else if (Input.isRepeated('right') || Input.isTriggered('ok')) {
                     if (company && this.getActiveCompanyCommands(company).length > 0) {
                         this._dndFocusSection = 'commands'; this._companyCommandIndex = 0; moved = true;
                     }
@@ -1979,11 +2329,11 @@
             } else if (this._dndFocusSection === 'commands') {
                 const cmds = this.getActiveCompanyCommands(company);
                 const maxCmds = cmds.length;
-                if (Input.isTriggered('down') || Input.isRepeated('down')) {
+                if (Input.isRepeated('down')) {
                     if (maxCmds > 0) { this._companyCommandIndex = (this._companyCommandIndex + 1) % maxCmds; moved = true; }
-                } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
+                } else if (Input.isRepeated('up')) {
                     if (maxCmds > 0) { this._companyCommandIndex = (this._companyCommandIndex - 1 + maxCmds) % maxCmds; moved = true; }
-                } else if (Input.isTriggered('left')) {
+                } else if (Input.isRepeated('left')) {
                     this._dndFocusSection = 'list'; moved = true;
                 } else if (Input.isTriggered('ok')) {
                     this.executeFocusedCompanyCommand();
@@ -2194,7 +2544,7 @@
         makeCommandList() {
             if (this._property) {
                 if (this._property.isOwned) {
-                    if (!this._property.isNormalHome) this.addCommand(t('sell'), 'sell');
+                    this.addCommand(t('sell'), 'sell');
                 } else if (!($realEstateManager &&
                         $realEstateManager.isTakenByAnother(this._property.id))) {
                     this.addCommand(t('buy'), 'buy');
@@ -2455,6 +2805,12 @@
         // timer (the stock terminal prices every couple of seconds) ask first,
         // so a background tick never builds the whole property market for them.
         isReady() { return !!$realEstateManager; },
+        // Market deeds the party holds that somebody can live in: every owned
+        // property but a shop (PartyLodging sends inactive members there).
+        getOwnedEstateHomes() {
+            ensureRealEstateManager();
+            return $realEstateManager.properties.filter(p => p && p.isOwned && p.type !== 'Shop'); // i18n-ignore: property type id
+        },
         registerCompany(key, opts) { ensureRealEstateManager(); return $realEstateManager.registerCompany(key, opts || {}); },
         registerDestination(key, valueEuros) { ensureRealEstateManager(); return $realEstateManager.registerDestination(key, valueEuros); },
         giveShares(key, count) { ensureRealEstateManager(); return $realEstateManager.giveShares(key, count); },
@@ -2494,3 +2850,489 @@
     window.Scene_RealEstate = Scene_RealEstate;
 
 })();
+//=============================================================================
+// WORKPLACE DEEDS: buying the business the party is standing in
+//=============================================================================
+// A map that js/db/WorldGen/MapJobs.json names as a workplace can be bought
+// from the Assets menu while the party stands on it, or from anywhere on the
+// Real Estate Board's "Working places" tab when MapJobs says it is an
+// interior (its "env", stamped by tools/build/gen_map_jobs.js). The staff
+// JobShiftManager deals to it keep working their shifts; each day a shift is
+// staffed, the takings of that shift less the wage of whoever worked it are
+// the party's, paid out once a week (PAYOUT_DAYS).
+//
+// A deed is sold back from either menu for SALE_RATE of its current price
+// (narrowed by Real Estate Appraisal, as a house sale is), with the days
+// since the last payout paid first.
+//
+// What can be bought:
+//   - an authored map (a numeric MapJobs key) with at least one job
+//   - never a map tagged <Exterior>: open ground is nobody's to sell
+//   - never an abandoned building (NPCResidents.json __maps[id].abandoned):
+//     nobody trades there, so there is no business to buy
+//   - never twice, and never one another savegame of this world already holds
+// A workplace inside the Omega Tower or on a dungeon floor IS for sale when it
+// is an interior with a trade: its build rights stay Free (the tag decides
+// that), but its takings are as real as anybody's.
+//
+// Ownership follows the real estate rule (RealEstateMarket above): WHOSE the
+// deed is lives in this savegame ($gameSystem._workplaceDeeds), and the world
+// is told only that the business is off the market, through the same register
+// the houses use (_realEstateTaken, market.json), keyed "workplace:<mapId>".
+//
+// Buying a workplace:
+//   - makes its <BuildRights: Owner> ground the party's to build on
+//     (FurnitureSystem.isIllegalBuildHere asks ownsHere)
+//   - makes its containers the party's (ContainerSystem partyOwnsHere)
+//   - does NOT make its people or its counters fair game: pickpocketing and
+//     shoplifting there are the same crimes they were before
+(function () {
+    'use strict';
+
+    const WT = (key, args) => (typeof window.T === 'function' ? window.T(key, args) : key);
+
+    const DAY_MINUTES = 1440;
+    const PRICE_DAYS = 90;          // a business sells for this many days of its full wage bill
+    const MIN_PRICE = 500000;       // 5,000.00 euros, the cheapest counter in the world
+    const REVENUE_RATE = 1.35;      // a staffed shift takes in its wage times this, in an average town
+    const MAX_SETTLE_DAYS = 30;     // a long absence is paid for at most a month at once
+    const PAYOUT_DAYS = 7;          // the takings are paid out once a week
+    const SALE_RATE = 0.9;          // a sale fetches this share of the asking price
+    const HISTORY_DAYS = 7;         // settlements kept for the report
+    const PROC_MAP_ID = 636;        // the procedural template map: its MapJobs keys are not numeric
+    const WORLD_MAP_ID = 315;
+    const TAKEN_PREFIX = 'workplace:'; // i18n-ignore: world register key
+
+    function deeds() {
+        if (typeof $gameSystem === 'undefined' || !$gameSystem) return {};
+        if (!$gameSystem._workplaceDeeds) $gameSystem._workplaceDeeds = {};
+        return $gameSystem._workplaceDeeds;
+    }
+
+    function nowMinute() {
+        return (typeof $gameVariables !== 'undefined' && $gameVariables) ? (Number($gameVariables.value(114)) || 0) : 0;
+    }
+
+    function dayIndex(minute) {
+        return Math.floor((minute == null ? nowMinute() : minute) / DAY_MINUTES);
+    }
+
+    function allJobs() {
+        return (window.WorkSystem && Array.isArray(window.WorkSystem.Jobs)) ? window.WorkSystem.Jobs : [];
+    }
+
+    function jobById(id) {
+        return allJobs().find(j => j && j.id === id) || null;
+    }
+
+    function mapJobsEntry(mapId) {
+        const id = Number(mapId);
+        if (!Number.isInteger(id) || id <= 0 || id === PROC_MAP_ID || id === WORLD_MAP_ID) return null;
+        const table = (window.WorldGen && window.WorldGen.MapJobs) || {};
+        return table[String(id)] || null;
+    }
+
+    function jobIdsAt(mapId) {
+        const entry = mapJobsEntry(mapId);
+        const ids = (entry && Array.isArray(entry.jobs)) ? entry.jobs : [];
+        return ids.filter(j => !!jobById(j));
+    }
+
+    // The shifts a job keeps: JobShiftManager's own answer when the NPC
+    // simulation is loaded, else the Jobs.json list read the same way.
+    function shiftsOf(jobId) {
+        const JSM = window.NPCSim && window.NPCSim.JobShiftManager;
+        if (JSM && typeof JSM.shiftsOf === 'function') return JSM.shiftsOf(jobId);
+        const job = jobById(jobId);
+        const own = Array.isArray(job && job.shifts)
+            ? job.shifts.filter(s => Number.isInteger(s) && s >= 0 && s < 3) : [];
+        return own.length ? own : [0, 1, 2];
+    }
+
+    // Every (job, shift) post of a workplace, with the wage of one shift.
+    function positions(mapId) {
+        const out = [];
+        for (const jobId of jobIdsAt(mapId)) {
+            const job = jobById(jobId);
+            const wage = Math.max(0, Number(job && job.basePay) || 0);
+            for (const shift of shiftsOf(jobId)) out.push({ jobId, shift, wage });
+        }
+        return out;
+    }
+
+    function isExteriorNote(note) {
+        return /<Exterior>/i.test(String(note || ''));
+    }
+
+    // MapJobs' stamp of the map's own tag, for a map that is not loaded.
+    function envOf(mapId) {
+        const entry = mapJobsEntry(mapId);
+        return (entry && entry.env) || null;
+    }
+
+    function isExteriorMap(mapId, note) {
+        return isExteriorNote(note) || envOf(mapId) === 'Exterior'; // i18n-ignore: map tag value
+    }
+
+    function isAbandoned(mapId) {
+        const res = window.WorldGen && window.WorldGen.NPCResidents;
+        const meta = res && res.__maps && res.__maps[String(mapId)];
+        return !!(meta && meta.abandoned);
+    }
+
+    function currentMapId() {
+        return (typeof $gameMap !== 'undefined' && $gameMap && typeof $gameMap.mapId === 'function') ? $gameMap.mapId() : 0;
+    }
+
+    function currentNote() {
+        return (typeof $dataMap !== 'undefined' && $dataMap && $dataMap.note) || '';
+    }
+
+    // The town a workplace belongs to: its <MapGroup:> tag, else the MapGroups
+    // list that holds it.
+    function groupOf(mapId, note) {
+        const m = String(note || '').match(/<MapGroup:\s*([^>]+)>/i);
+        if (m) return m[1].trim();
+        const groups = (window.WorldGen && window.WorldGen.MapGroups) || {};
+        for (const name of Object.keys(groups)) {
+            const maps = groups[name] && groups[name].maps;
+            if (Array.isArray(maps) && maps.indexOf(Number(mapId)) >= 0) return name;
+        }
+        return null;
+    }
+
+    // How well the town is doing: 0.5 in a town on its knees, 1 in an ordinary
+    // one, 1.5 in a boom (NPCWorldWeb prosperity 0..100, 50 when unknown).
+    function wealthFactor(group) {
+        const W = window.NPCWorldWeb;
+        const pulse = group && W && typeof W.getPulse === 'function' ? W.getPulse(group) : null;
+        const p = pulse && Number.isFinite(Number(pulse.prosperity)) ? Number(pulse.prosperity) : 50;
+        return 0.5 + Math.max(0, Math.min(100, p)) / 100;
+    }
+
+    function dailyWageBill(mapId) {
+        return positions(mapId).reduce((sum, p) => sum + p.wage, 0);
+    }
+
+    // Gold, rounded to whole euros.
+    function priceOf(mapId, note) {
+        const group = groupOf(mapId, note);
+        const raw = dailyWageBill(mapId) * PRICE_DAYS * wealthFactor(group);
+        return Math.max(MIN_PRICE, Math.round(raw / 100) * 100);
+    }
+
+    function owns(mapId) {
+        return !!deeds()[String(Number(mapId))];
+    }
+
+    function ownsHere() {
+        const id = currentMapId();
+        return !!id && owns(id);
+    }
+
+    function takenRegister() {
+        return (typeof $gameSystem !== 'undefined' && $gameSystem && $gameSystem._realEstateTaken) || null;
+    }
+
+    function isTakenByAnother(mapId) {
+        const reg = takenRegister();
+        return !!(reg && reg[TAKEN_PREFIX + Number(mapId)]) && !owns(mapId);
+    }
+
+    // { ok, reason }: reason is one of noJobs, exterior, abandoned, owned, taken.
+    function eligibility(mapId, note) {
+        const id = Number(mapId);
+        if (!jobIdsAt(id).length) return { ok: false, reason: 'noJobs' };
+        if (isExteriorMap(id, note)) return { ok: false, reason: 'exterior' };
+        if (isAbandoned(id)) return { ok: false, reason: 'abandoned' };
+        if (owns(id)) return { ok: false, reason: 'owned' };
+        if (isTakenByAnother(id)) return { ok: false, reason: 'taken' };
+        return { ok: true, reason: null };
+    }
+
+    function canBuyHere() {
+        const id = currentMapId();
+        return !!id && eligibility(id, currentNote()).ok;
+    }
+
+    function mapDisplayName(mapId) {
+        if (currentMapId() === Number(mapId) && typeof $gameMap.displayName === 'function') {
+            const dn = $gameMap.displayName();
+            if (dn) return dn;
+        }
+        const entry = mapJobsEntry(mapId);
+        if (entry && entry.name) return entry.name;
+        const infos = typeof $dataMapInfos !== 'undefined' ? $dataMapInfos : null;
+        const info = infos && infos[Number(mapId)];
+        return (info && info.name) || WT('Assets.workplace.unnamed', { id: mapId });
+    }
+
+    // The note to judge a map by: the live one when the party stands on it,
+    // else nothing (MapJobs' env and MapGroups answer for it).
+    function noteFor(mapId) {
+        return Number(mapId) === currentMapId() ? currentNote() : '';
+    }
+
+    // The offer for the map the party is standing on, or null.
+    function offerHere() {
+        const mapId = currentMapId();
+        return mapId ? offerFor(mapId) : null;
+    }
+
+    // The offer for any workplace, or null when it is not for sale.
+    function offerFor(mapId) {
+        mapId = Number(mapId);
+        const note = noteFor(mapId);
+        if (!mapId || !eligibility(mapId, note).ok) return null;
+        const group = groupOf(mapId, note);
+        return {
+            mapId,
+            name: mapDisplayName(mapId),
+            group,
+            place: placeOf(mapId, group),
+            price: priceOf(mapId, note),
+            jobs: jobIdsAt(mapId),
+            positions: positions(mapId).length,
+            staffed: staffedShifts(mapId).length,
+            wealth: wealthFactor(group),
+            projected: dailyTakings(mapId, group),
+        };
+    }
+
+    // Where a workplace stands, for a list: its town, else the named map
+    // above it (MapJobs "place").
+    function placeOf(mapId, group) {
+        if (group) return group;
+        const entry = mapJobsEntry(mapId);
+        return (entry && entry.place) || '';
+    }
+
+    // Every workplace the Real Estate Board lists: an authored interior with
+    // a trade that is not abandoned, whoever holds it. status is 'owned',
+    // 'taken' (another savegame of this world) or 'available'.
+    function listing() {
+        const table = (window.WorldGen && window.WorldGen.MapJobs) || {};
+        const out = [];
+        for (const key of Object.keys(table)) {
+            if (!/^\d+$/.test(key)) continue;
+            const id = Number(key);
+            if (envOf(id) !== 'Interior' || !jobIdsAt(id).length || isAbandoned(id)) continue; // i18n-ignore: map tag value
+            const note = noteFor(id);
+            const group = groupOf(id, note);
+            const status = owns(id) ? 'owned' : (isTakenByAnother(id) ? 'taken' : 'available'); // i18n-ignore: status ids
+            out.push({
+                mapId: id,
+                name: mapDisplayName(id),
+                group,
+                place: placeOf(id, group),
+                status,
+                price: priceOf(id, note),
+                jobs: jobIdsAt(id),
+                positions: positions(id).length,
+                staffed: staffedShifts(id).length,
+                wealth: wealthFactor(group),
+                projected: dailyTakings(id, group),
+            });
+        }
+        return out.sort((a, b) => String(a.place).localeCompare(String(b.place)) ||
+            String(a.name).localeCompare(String(b.name)) || a.mapId - b.mapId);
+    }
+
+    // Who works here: JobShiftManager's assignments on this map, less anybody
+    // away on leave.
+    function staffedShifts(mapId) {
+        const id = Number(mapId);
+        const assigns = (typeof $gameSystem !== 'undefined' && $gameSystem && $gameSystem._npcJobAssignments) || {};
+        const leave = window.NPCSim && window.NPCSim.Leave;
+        const out = [];
+        for (const name of Object.keys(assigns)) {
+            const a = assigns[name];
+            if (!a || Number(a.mapId) !== id) continue;
+            if (leave && typeof leave.isOnLeave === 'function' && leave.isOnLeave(name)) continue;
+            const job = jobById(a.jobId);
+            if (!job) continue;
+            out.push({ name, jobId: a.jobId, shift: a.shift, wage: Math.max(0, Number(job.basePay) || 0) });
+        }
+        return out;
+    }
+
+    // One day of trade: every staffed shift takes in its wage times the
+    // revenue rate (scaled by the town's wealth) and pays that wage out.
+    function dailyTakings(mapId, group) {
+        const shifts = staffedShifts(mapId);
+        const factor = wealthFactor(group !== undefined ? group : groupOf(mapId, ''));
+        let revenue = 0, wages = 0;
+        for (const s of shifts) {
+            revenue += Math.round(s.wage * REVENUE_RATE * factor);
+            wages += s.wage;
+        }
+        return { shifts: shifts.length, revenue, wages, profit: revenue - wages };
+    }
+
+    function buy(mapId, note) {
+        const id = Number(mapId == null ? currentMapId() : mapId);
+        const n = note == null ? noteFor(id) : note;
+        const elig = eligibility(id, n);
+        if (!elig.ok) return { ok: false, reason: elig.reason };
+        const price = priceOf(id, n);
+        const gold = (typeof $gameParty !== 'undefined' && $gameParty) ? $gameParty.gold() : 0;
+        if (gold < price) return { ok: false, reason: 'funds', price };
+        $gameParty.loseGold(price);
+        const group = groupOf(id, n);
+        deeds()[String(id)] = {
+            mapId: id,
+            name: mapDisplayName(id),
+            group,
+            place: placeOf(id, group),
+            price,
+            boughtMinute: nowMinute(),
+            lastDay: dayIndex(),
+            totals: { days: 0, revenue: 0, wages: 0, profit: 0 },
+            history: [],
+        };
+        if (typeof $gameSystem !== 'undefined' && $gameSystem) {
+            const reg = $gameSystem._realEstateTaken || ($gameSystem._realEstateTaken = {});
+            reg[TAKEN_PREFIX + id] = {
+                how: 'bought', // i18n-ignore: stored record key
+                by: ($gameParty && $gameParty.leader && $gameParty.leader() && $gameParty.leader().name()) || null,
+                at: nowMinute(),
+            };
+        }
+        if (window.SpecializationXP && typeof window.SpecializationXP.awardForValue === 'function') {
+            window.SpecializationXP.awardForValue('Real Estate Appraisal', price); // i18n-ignore: specialization id
+        }
+        return { ok: true, price, mapId: id };
+    }
+
+    // Pays every whole day since the last settlement, once a week has gone
+    // by (PAYOUT_DAYS). Safe to call as often as anybody likes: a day is only
+    // ever paid once. opts.mapId settles that one deed now, week or not (a
+    // sale); opts.silent shows no toast.
+    function settle(minute, opts) {
+        const today = dayIndex(minute);
+        const book = deeds();
+        const paid = [];
+        const only = opts && opts.mapId != null ? String(Number(opts.mapId)) : null;
+        for (const key of Object.keys(book)) {
+            const d = book[key];
+            if (!d || (only && key !== only)) continue;
+            const last = Number.isFinite(Number(d.lastDay)) ? Number(d.lastDay) : today;
+            if (!only && today - last < PAYOUT_DAYS) continue;
+            const days = Math.min(MAX_SETTLE_DAYS, today - last);
+            d.lastDay = today;
+            if (!(days > 0)) continue;
+            const day = dailyTakings(d.mapId, d.group);
+            const rec = {
+                day: today, days, shifts: day.shifts,
+                revenue: day.revenue * days, wages: day.wages * days, profit: day.profit * days,
+            };
+            d.totals.days += days;
+            d.totals.revenue += rec.revenue;
+            d.totals.wages += rec.wages;
+            d.totals.profit += rec.profit;
+            d.history = [rec].concat(d.history || []).slice(0, HISTORY_DAYS);
+            if (typeof $gameParty !== 'undefined' && $gameParty) {
+                if (rec.profit > 0) $gameParty.gainGold(rec.profit);
+                else if (rec.profit < 0) $gameParty.loseGold(Math.min($gameParty.gold(), -rec.profit));
+            }
+            paid.push({ mapId: d.mapId, name: d.name, record: rec });
+        }
+        if (paid.length && !(opts && opts.silent) && window.ParchmentToast && typeof window.ParchmentToast.show === 'function') {
+            const total = paid.reduce((s, p) => s + p.record.profit, 0);
+            const euro = window.AssetsMenu && window.AssetsMenu.euro
+                ? window.AssetsMenu.euro(total) : String(total / 100);
+            window.ParchmentToast.show(
+                WT(total >= 0 ? 'Assets.workplace.dailyProfitToast' : 'Assets.workplace.dailyLossToast',
+                    { amount: euro, count: paid.length }),
+                { title: WT('Assets.workplace.dailyTitle') }
+            );
+        }
+        return paid;
+    }
+
+    // What the deed fetches today: SALE_RATE of the asking price, the haircut
+    // narrowing with Real Estate Appraisal as a house sale's does.
+    function salePriceOf(mapId) {
+        const d = deeds()[String(Number(mapId))];
+        if (!d) return 0;
+        const valuer = window.SpecializationXP && typeof window.SpecializationXP.multiplier === 'function'
+            ? window.SpecializationXP.multiplier('Real Estate Appraisal', 0.025) : 1; // i18n-ignore: specialization id
+        const rate = Math.min(1, SALE_RATE * valuer);
+        return Math.round(priceOf(d.mapId, noteFor(d.mapId)) * rate / 100) * 100;
+    }
+
+    // Sells a deed back to the market. The days since the last payout are
+    // settled first, so a sale never forfeits takings already earned.
+    function sell(mapId) {
+        const key = String(Number(mapId));
+        const d = deeds()[key];
+        if (!d) return { ok: false, reason: 'notOwned' };
+        const price = salePriceOf(d.mapId);
+        settle(undefined, { mapId: d.mapId, silent: true });
+        delete deeds()[key];
+        const reg = takenRegister();
+        if (reg) delete reg[TAKEN_PREFIX + d.mapId];
+        if (typeof $gameParty !== 'undefined' && $gameParty) $gameParty.gainGold(price);
+        if (window.SpecializationXP && typeof window.SpecializationXP.awardForValue === 'function') {
+            window.SpecializationXP.awardForValue('Real Estate Appraisal', price); // i18n-ignore: specialization id
+        }
+        return { ok: true, price, mapId: d.mapId, name: d.name };
+    }
+
+    // Whole days until the next weekly payout of a deed.
+    function daysToPayout(mapId) {
+        const d = deeds()[String(Number(mapId))];
+        if (!d) return null;
+        const last = Number.isFinite(Number(d.lastDay)) ? Number(d.lastDay) : dayIndex();
+        return Math.max(0, PAYOUT_DAYS - (dayIndex() - last));
+    }
+
+    function list() {
+        const book = deeds();
+        return Object.keys(book).map(k => book[k]).filter(Boolean)
+            .sort((a, b) => a.mapId - b.mapId);
+    }
+
+    function report(mapId) {
+        const d = deeds()[String(Number(mapId))];
+        if (!d) return null;
+        return {
+            deed: d,
+            today: dailyTakings(d.mapId, d.group),
+            positions: positions(d.mapId).length,
+            last: (d.history && d.history[0]) || null,
+            nextPayout: daysToPayout(d.mapId),
+            salePrice: salePriceOf(d.mapId),
+        };
+    }
+
+    window.WorkplaceDeeds = {
+        PRICE_DAYS, MIN_PRICE, REVENUE_RATE, MAX_SETTLE_DAYS, PAYOUT_DAYS, SALE_RATE,
+        jobIdsAt, positions, staffedShifts, groupOf, wealthFactor, dailyWageBill,
+        priceOf, eligibility, canBuyHere, offerHere, offerFor, listing, owns, ownsHere, isTakenByAnother,
+        dailyTakings, buy, sell, salePriceOf, daysToPayout, settle, list, report,
+        isExteriorNote, isExteriorMap, isAbandoned,
+    };
+
+    // The schedule: the week's takings are paid once PAYOUT_DAYS in-game days
+    // have turned over. Throttled like the rent hook above; settle() is
+    // idempotent.
+    if (typeof Scene_Map !== 'undefined' && Scene_Map.prototype && typeof Scene_Map.prototype.update === 'function') {
+        let frames = 0;
+        const _Scene_Map_update_Workplace = Scene_Map.prototype.update;
+        Scene_Map.prototype.update = function () {
+            _Scene_Map_update_Workplace.call(this);
+            if (++frames < 120) return;
+            frames = 0;
+            if (!$gameSystem || !$gameSystem._workplaceDeeds) return;
+            const book = $gameSystem._workplaceDeeds;
+            const today = dayIndex();
+            for (const key in book) {
+                if (book[key] && today - book[key].lastDay >= PAYOUT_DAYS) { settle(); return; }
+            }
+        };
+    }
+})();
+//=============================================================================
+// END WORKPLACE DEEDS
+//=============================================================================

@@ -1,3 +1,63 @@
 {
-  "obtained": "Ottenuto:"
+  "obtained": "Ottenuto:",
+  "simLog": {
+    "optionName": "Registro della simulazione",
+    "line": "[{kind}] {text}",
+    "kind": {
+      "party": "Gruppo",
+      "monster": "Mostro",
+      "npc": "PNG"
+    },
+    "npc": {
+      "need": {
+        "sleep": "{name} decide di andare a dormire",
+        "hunger": "{name} decide di cercare qualcosa da mangiare",
+        "hygiene": "{name} decide di andare a lavarsi",
+        "work": "{name} decide di andare al lavoro",
+        "shopwork": "{name} decide di badare al negozio",
+        "money": "{name} decide di andare a guadagnare qualche soldo",
+        "crime": "{name} decide di tentare la sorte col crimine",
+        "safety": "{name} decide di cercare un posto sicuro",
+        "comfort": "{name} decide di cercare un posto comodo",
+        "social": "{name} decide di cercare compagnia",
+        "shopping": "{name} decide di andare a fare acquisti",
+        "leisure": "{name} decide di divertirsi un po'"
+      },
+      "goal": {
+        "wander": "{name} decide di gironzolare",
+        "socialize": "{name} decide di unirsi alla folla"
+      },
+      "flee": "{name} decide di fuggire da un mostro",
+      "engage": "{name} decide di affrontare un mostro"
+    },
+    "monster": {
+      "idle": "{name} si calma",
+      "alert": "{name} nota qualcosa",
+      "commit": "{name} decide di dare la caccia",
+      "search": "{name} cerca la preda perduta",
+      "return": "{name} torna alla sua tana",
+      "recover": "{name} si ferma a riprendere fiato"
+    },
+    "party": {
+      "idle": "{name} decide di restare fermo",
+      "follow": "{name} decide di camminare con il capogruppo",
+      "walk": "{name} decide di fare una passeggiata",
+      "visit": "{name} decide di andare a chiacchierare con qualcuno",
+      "look": "{name} decide di guardare qualcosa",
+      "return": "{name} decide di raggiungere il capogruppo",
+      "need": {
+        "hunger": "{name} decide di cercare qualcosa da mangiare",
+        "sleep": "{name} decide di riposarsi",
+        "hygiene": "{name} decide di andare a lavarsi",
+        "social": "{name} decide di cercare compagnia",
+        "leisure": "{name} decide di divertirsi un po'"
+      }
+    },
+    "battle": {
+      "acts": "{name} usa {skill} su {target}",
+      "actsPlain": "{name} usa {skill}",
+      "approaches": "{name} si avvicina per usare {skill}",
+      "holds": "{name} mantiene la posizione"
+    }
+  }
 }

@@ -49,7 +49,7 @@
     "catchDifficulty": 3,
     "size": "large",
     "sellPrice": 200,
-    "itemId": 372
+    "itemId": 508
   },
   {
     "id": 5,
@@ -205,7 +205,7 @@
     "catchDifficulty": 4,
     "size": "large",
     "sellPrice": 800,
-    "itemId": 414
+    "itemId": 581
   },
   {
     "id": 17,

@@ -717,7 +717,16 @@
     { key: "reparations",   grave: false, base: .05, w: { commerce: -.6, order: .7, piety: .4, isolation: -.3 } },
     { key: "budget",        grave: false, base: .15, w: { commerce: .5, order: .8, chaos: -.5 } },
     { key: "tower",         grave: false, base: .25, w: { science: .5, piety: .4, order: .6, isolation: -.5 } },
+    // The war business. These three are never drawn at random: each is put
+    // to a real war the chronicle is fighting (HistoryManager.activeWars),
+    // and a passed one acts on it (applyWarMotion).
+    { key: "ceasefire",     grave: true,  war: true, base: .20, w: { order: .6, militarism: -.8, commerce: .4, chaos: -.2 } },
+    { key: "whitePeace",    grave: true,  war: true, base: .05, w: { order: .5, militarism: -1.0, piety: .3, isolation: -.3 } },
+    { key: "sanctions",     grave: false, war: true, base: .05, w: { commerce: -.5, order: .7, militarism: .2, isolation: -.2 } },
   ];
+
+  // How often a sitting takes up a war while one is being fought.
+  const WAR_AGENDA_CHANCE = 0.6;
 
   // A lean, not a verdict. The weights are deliberately damped: at full
   // strength they swamped the noise and every motion kind carried or fell the
@@ -740,12 +749,79 @@
     return s;
   }
 
+  // The seat a power sits in, by its Hyperpowers.json name (the name the
+  // chronicle's war list carries).
+  function delegationForPower(powerName) {
+    if (!powerName || !factionsReady()) return null;
+    const hp = ($gameFactions.getHyperpowers() || []).find((h) => h && h.name === powerName);
+    if (!hp) return null;
+    return delegations().find((d) => d.kind === "hyperpower" && d.hyperpowerId === hp.id) || null;
+  }
+
+  const powerDisplayName = (name) =>
+    (window.WorldNames && typeof window.WorldNames.any === "function") ? window.WorldNames.any(name) : name;
+
+  // One real war, and the motion to put to it: the victim moves it against
+  // the aggressor whenever both hold a seat. Null while the world is at peace.
+  function warMotionFor(roster) {
+    const hm = window.HistoryManager;
+    if (!hm || typeof hm.activeWars !== "function" || !roster.length) return null;
+    const wars = hm.activeWars();
+    if (!wars.length) return null;
+    const war = pick(wars);
+    const def = pick(MOTIONS.filter((m) => m.war));
+    const attacker = delegationForPower(war.attacker);
+    const defender = delegationForPower(war.defender);
+    const sponsor = defender || pick(roster.filter((d) => !attacker || d.key !== attacker.key)) || roster[0];
+    const target = attacker || pick(roster.filter((d) => d.key !== sponsor.key)) || sponsor;
+    const tokens = {
+      sponsor: sponsor.name,
+      target: target.name,
+      leader: leaderOf(sponsor),
+      attacker: attacker ? attacker.name : powerDisplayName(war.attacker),
+      defender: defender ? defender.name : powerDisplayName(war.defender),
+    };
+    return {
+      def: def,
+      sponsor: sponsor,
+      target: target,
+      warId: war.id,
+      attackerName: tokens.attacker,
+      defenderName: tokens.defender,
+      ballot: chance(def.grave ? 0.6 : 0.25) ? "secret" : "public",
+      title: vary(fill(T("ONUAssembly.motion." + def.key + ".title"), tokens)),
+      text: say("ONUAssembly.motion." + def.key + ".text", tokens),
+    };
+  }
+
+  // A passed war motion acts on the war it was put to: a ceasefire freezes
+  // it for six months, a white peace ends it with every border put back, and
+  // sanctions cut the aggressor's economy for a year. Returns the war, or null
+  // when nothing happened (a failed motion, or a war that ended meanwhile).
+  function applyWarMotion(motion, passed) {
+    if (!passed || !motion || !motion.warId || !motion.def || !motion.def.war) return null;
+    const hm = window.HistoryManager;
+    if (!hm) return null;
+    let war = null;
+    try {
+      if (motion.def.key === "ceasefire" && typeof hm.ceasefire === "function") war = hm.ceasefire(motion.warId);
+      else if (motion.def.key === "whitePeace" && typeof hm.imposeWhitePeace === "function") war = hm.imposeWhitePeace(motion.warId);
+      else if (motion.def.key === "sanctions" && typeof hm.sanction === "function") war = hm.sanction(motion.warId);
+    } catch (e) { console.warn("[ONUAssembly] war motion", e); }
+    if (war) motion.warResult = motion.def.key;
+    return war;
+  }
+
   function rollAgenda() {
     const roster = delegations();
     const count = 1 + Math.floor(Math.random() * 3);
-    const pool = MOTIONS.slice();
+    const pool = MOTIONS.filter((m) => !m.war);
     const out = [];
-    for (let i = 0; i < count && pool.length; i++) {
+    // A war on the books is business: while one is being fought the chamber
+    // more often than not takes it up.
+    const warMotion = chance(WAR_AGENDA_CHANCE) ? warMotionFor(roster) : null;
+    if (warMotion) out.push(warMotion);
+    for (let i = out.length; i < count && pool.length; i++) {
       const motion = pool.splice(Math.floor(Math.random() * pool.length), 1)[0];
       const sponsor = pick(roster);
       const target = pick(roster.filter((d) => d.key !== sponsor.key)) || sponsor;
@@ -1230,6 +1306,12 @@
       }
 
       applyMotionOutcome(actor, delegation, sg, motion, votes, option, passed);
+      if (motion.warResult) {
+        chamber.add(say("ONUAssembly.warOutcome." + motion.warResult, {
+          attacker: motion.attackerName, defender: motion.defenderName,
+        }), "narrator");
+        await chamber.advance();
+      }
     }
 
     session.index = session.agenda.length;
@@ -1289,6 +1371,7 @@
       }
     }
 
+    applyWarMotion(motion, passed);
     recordInHistory(actor, delegation, sg, motion, votes, option, passed);
   }
 
@@ -1512,6 +1595,7 @@
         passed = council.passed;
       }
       if (passed) carried++;
+      applyWarMotion(motion, passed);
       recordUnattendedMotion(motion, counts, passed, minute);
     }
     return carried;
@@ -1880,6 +1964,7 @@
     // sittings without a game window: nothing in the game calls these.
     _internal: {
       MOTIONS, TRAITS, traitScore, rollAgenda, speakersFor, speechFor,
+      warMotionFor, applyWarMotion, delegationForPower,
       castVotes, tally, councilRuling, councilMembers, persuasion,
       applyJoin, applyResign, applySecretaryGeneral, settleStipends,
       runSession, runJoiningBoard, vary, say,

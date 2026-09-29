@@ -140,6 +140,9 @@
         byName: new Map(),
         byWtype: new Map(),
         ready: false,
+        // The activity table, read by the NPC simulation (NPCSim.Specs) so a
+        // stranger's tiers are paced off the same numbers as the party's.
+        EXP_TO_NEXT: Object.freeze(EXP_TO_NEXT.slice()),
 
         async load() {
             try {
@@ -1131,18 +1134,8 @@
                 }
             }) : null;
 
-            // TAB cycles the category tabs here, the way L1/R1 do in the
-            // backpack: the sheet is read one category at a time, so the tabs
-            // are what the hand reaches for. The party moved onto SHIFT.
-            // Forward only: SHIFT is the party key here, so Shift+TAB would
-            // step back and change companion in the same breath. L1 and left
-            // are the way back.
-            this._specTabListener = (e) => {
-                if (e.key !== 'Tab') return;
-                e.preventDefault();
-                this.cycleCategory(1);
-            };
-            window.addEventListener('keydown', this._specTabListener);
+            // Tab / Shift+Tab reach the category tabs through UINav.tabDir(),
+            // with L1 / R1; L2 / R2 step the party (see updateSpecInput).
 
             this.initSpecDOM();
         }
@@ -1357,15 +1350,10 @@
                     const isFocused = isSel && this._activeArea === 'categories';
                     tabsHTML += `<div class="backpack-tab ${isSel ? 'active' : ''} ${isFocused ? 'selected' : ''}" data-cat-idx="${idx}">${escapeHtml(categoryTabLabel(cat))}</div>`;
                 });
-                // One badge, naming the device actually in hand: R1 on a pad,
-                // TAB on a keyboard, never the three faces at once
-                // (docs/task/ui_fixing.md, rule 9). Button faces, not prose.
-                const turnKey = (Input.lastInputDevice && Input.lastInputDevice() === 'pad') ? 'R1' : 'TAB';  // i18n-ignore  button faces
                 // The rail is built exactly as the backpack builds its own: the
                 // chips in a .backpack-tabs-row inside .backpack-tabs, so a rail
                 // that wraps to several lines spaces them the same way.
-                categoryRow.innerHTML = `<div class="backpack-tabs-row">${tabsHTML}` +
-                    `<span class="char-switch-hint">${turnKey}</span></div>`;
+                categoryRow.innerHTML = `<div class="backpack-tabs-row">${tabsHTML}</div>`;
                 categoryRow.querySelectorAll('.backpack-tab').forEach(tab => {
                     tab.addEventListener('click', () => {
                         const idx = parseInt(tab.getAttribute('data-cat-idx'), 10);
@@ -1394,11 +1382,8 @@
                         const sel = idx === this._currentActorIndex ? 'selected' : '';
                         tabs += `<div class="companion-tab ${sel}" data-actor-idx="${idx}">${escapeHtml(m.name())}</div>`;
                     });
-                    // The party hint cannot be the shared L/R or TAB one any
-                    // more: those cycle the categories here. SHIFT (X on a pad)
-                    // takes the companions instead.
-                    const partyKey = (Input.lastInputDevice && Input.lastInputDevice() === 'pad') ? 'X' : 'SHIFT';  // i18n-ignore  button faces
-                    compRow.innerHTML = `<div class="companion-tabs-row">${tabs}</div><span class="char-switch-hint">${partyKey}</span>`;
+                    // PadUI stamps L2 / R2 on the row's two ends while a pad is in hand.
+                    compRow.innerHTML = `<div class="companion-tabs-row">${tabs}</div>`;
                     compRow.querySelectorAll('.companion-tab').forEach(tab => {
                         tab.addEventListener('click', () => {
                             const idx = parseInt(tab.getAttribute('data-actor-idx'), 10);
@@ -1654,15 +1639,25 @@
         }
 
         updateSpecInput() {
-            // L1 / R1 cycle the category tabs from anywhere, as in the backpack.
-            if (Input.isTriggered('pageup')) { this.cycleCategory(-1); return; }
-            if (Input.isTriggered('pagedown')) { this.cycleCategory(1); return; }
-            // The companions moved off the shoulders to make room for the tabs.
-            if (Input.isTriggered('shift')) { this.switchToNextCharacter(); return; }
+            // L1 / R1 (Tab, Shift+Tab) step the category tabs and L2 / R2 (, and .)
+            // step the party member, from anywhere on the sheet.
+            const nav = window.UINav;
+            const tabStep = nav ? nav.tabDir() : 0;
+            if (tabStep) { this.cycleCategory(tabStep); return; }
+            const partyStep = nav ? nav.partyDir() : 0;
+            if (partyStep > 0) { this.switchToNextCharacter(); return; }
+            if (partyStep < 0) { this.switchToPreviousCharacter(); return; }
 
-            // ESC, controller B and right click all mean the same thing: leave
-            // the sheet, from whichever half of the spread the cursor sits in.
+            // ESC, controller B and right click all mean the same thing: one
+            // level out. From the list that is the category rail above it; the
+            // sheet itself only closes from the rail.
             if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
+                if (this._activeArea === 'list') {
+                    this._activeArea = 'categories';
+                    SoundManager.playCancel();
+                    this.refreshSpecDOM();
+                    return;
+                }
                 this.closeMenu();
                 return;
             }

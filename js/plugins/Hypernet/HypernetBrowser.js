@@ -750,12 +750,30 @@
             return { slug, row, isNew: !before };
         },
 
+        // Written characters (a preset dossier, Em, Eris, Bubba) already have
+        // their article on the shelf the encyclopedia shipped with, so it is
+        // never written a second one: crossing the threshold only tells the
+        // party their page has been brought up to date.
+        AUTHORED_NAMES: ['em', 'eris', 'bubba'], // i18n-ignore: character ids
+        isAuthored(actor) {
+            if (!actor) return false;
+            if (actor._isPresetActor) return true;
+            const CP = window.CharacterPresets;
+            try {
+                if (CP && CP.isEmActor && CP.isEmActor(actor)) return true;
+                if (CP && CP.findPresetForActor && CP.findPresetForActor(actor)) return true;
+            } catch (e) { /* fall through to the name */ }
+            const name = String((actor.name && actor.name()) || '').trim().toLowerCase();
+            return this.AUTHORED_NAMES.indexOf(name) !== -1;
+        },
+
         // Everybody in the party who has earned an article and has none yet.
         catchUp() {
             if (typeof $gameParty === 'undefined' || !$gameParty) return [];
             const written = [];
             $gameParty.members().forEach((actor) => {
                 if (!actor || !(Number(actor.level) >= this.MIN_LEVEL)) return;
+                if (this.isAuthored(actor)) return;
                 const result = this.record(actor);
                 if (result && result.isNew) written.push(result);
             });
@@ -828,6 +846,15 @@
         try {
             if (levelJump > 0 || isSummonProxy(actor)) return;
             if (!(Number(actor.level) >= People.MIN_LEVEL)) return;
+            if (People.isAuthored(actor)) {
+                if (actor._hexapediaNotified) return;
+                actor._hexapediaNotified = true;
+                if (window.ParchmentToast) {
+                    window.ParchmentToast.show(t('hexapedia.updated', { name: actor.name() }),
+                        { severity: 'good', duration: 600, key: 'hexapedia:updated:' + People.slugFor(actor.name()) });
+                }
+                return;
+            }
             const written = People.record(actor);
             if (written && written.isNew && window.ParchmentToast) {
                 window.ParchmentToast.show(t('hexapedia.written', { name: actor.name() }),

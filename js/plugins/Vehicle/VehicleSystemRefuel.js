@@ -221,6 +221,7 @@
         wrap.appendChild(el);
         document.body.appendChild(wrap);
         this._refuelEl = wrap;
+        if (window.UIHelp) UIHelp.attach(wrap, 'Refuel.help', { when: () => !this._rfWaiting });
 
         el.addEventListener('mouseover', ev => {
             const row = ev.target.closest('.rf-option-row');
@@ -436,7 +437,7 @@
 
     Scene_Map.prototype._rfUpdateInput = function () {
         const len = this._rfOptions.length;
-        if (Input.isRepeated('down') || Input.isRepeated('s')) {
+        if (Input.isRepeated('down')) {
             if (this._rfIdx < len - 1) {
                 this._rfIdx++;
                 SoundManager.playCursor();
@@ -445,7 +446,7 @@
                 const sel = this._refuelEl.querySelector('.rf-option-row.selected');
                 if (sel) sel.scrollIntoView({ block: 'nearest' });
             }
-        } else if (Input.isRepeated('up') || Input.isRepeated('w')) {
+        } else if (Input.isRepeated('up')) {
             if (this._rfIdx > 0) {
                 this._rfIdx--;
                 SoundManager.playCursor();

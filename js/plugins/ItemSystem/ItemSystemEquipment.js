@@ -62,14 +62,13 @@
  * - Winning a battle grants 1 proficiency point per equipped weapon type, so an
  *   untrained weapon carried long enough catches up.
  *
- * Weapon Scaling (shown when weapon slot selected):
- * - No attack skill: STR scaling
- * - Attack skill 840: DEX scaling
- * - Attack skill 841: MIX scaling
- * - Attack skill 842: PSI scaling
- * - Attack skill 843: INT scaling
- * - Attack skill 844: CON scaling
- * - Attack skill 845: WIS scaling
+ * Weapon Scaling:
+ * - A weapon's <Scale: STAT> tags name the one or two stats its attack is
+ *   worked out from (window.WeaponScaling). Two stats split it equally.
+ * - Every firearm scales on DEX; the heavy ones (minigun, HMG, anti-material
+ *   rifle) on STR and DEX.
+ * - The equip screen highlights those stats in the character's stat strip,
+ *   for the weapon held and for the one being inspected. No letter grade.
  *
  * @param enableSwitching
  * @text Enable Character Switching
@@ -991,14 +990,6 @@
     const LEVEL_MULTIPLIER = [1, 1 / 3, 2 / 3, 1, 1.1, 1.25]; // indexed by level
     const BATTLE_EXP = 1;
 
-    // The same five tiers read as a letter grade on the equip screen, next to
-    // the stat the weapon scales on: Untrained F, Beginner D, Intermediate C
-    // (the tier where the weapon finally performs as listed), Advanced B,
-    // Master S. Indexed by level, so index 0 is never reached.
-    // i18n-ignore-start  letter grades, not words
-    const LEVEL_GRADE = ['F', 'F', 'D', 'C', 'B', 'S'];
-    // i18n-ignore-end
-
     const WeaponProficiency = {
         PROFICIENT_LEVEL,
 
@@ -1050,12 +1041,6 @@
             if (ra.proficient !== rb.proficient) return rb.proficient - ra.proficient;
             if (ra.level !== rb.level) return rb.level - ra.level;
             return 0;
-        },
-
-        // Letter grade of the wielder's proficiency with this weapon, F to S.
-        gradeFor(actor, weapon) {
-            const level = Math.max(1, Math.min(LEVEL_GRADE.length - 1, this.levelFor(actor, weapon)));
-            return LEVEL_GRADE[level];
         },
 
         levelNameFor(actor, weapon) {
@@ -1150,6 +1135,18 @@
     // costs both of them a third of their strength (HandSlots.dualPenalty):
     // the whole point of the Dual Wield classes is that they do not pay it.
     Game_Actor.prototype.weaponParamDelta = function (paramId) {
+        const sums = this.weaponParamSums(paramId);
+        return sums.total - sums.raw;
+    };
+
+    // What the carried weapons add to one parameter: `raw` as listed, `total`
+    // as it lands in these hands. total for ATK is the weapon's attack power,
+    // which the plain attack counts whatever stat the weapon scales on.
+    Game_Actor.prototype.weaponParamTotal = function (paramId) {
+        return this.weaponParamSums(paramId).total;
+    };
+
+    Game_Actor.prototype.weaponParamSums = function (paramId) {
         const equips = this.equips();
         let raw = 0;
         const scaled = [];
@@ -1166,11 +1163,11 @@
             raw += base;
             scaled.push(Math.round(base * WeaponProficiency.multiplier(this, item) * penalty));
         }
-        if (!scaled.length) return 0;
+        if (!scaled.length) return { raw: 0, total: 0 };
         const total = scaled.length > 2
             ? medianOf(scaled)
             : scaled.reduce((sum, value) => sum + value, 0);
-        return total - raw;
+        return { raw: raw, total: total };
     };
 
     const _Game_Actor_paramPlus_proficiency = Game_Actor.prototype.paramPlus;
@@ -1430,34 +1427,71 @@
         _BattleManager_processVictory_proficiency.call(this);
     };
 
-    Game_Actor.prototype.getWeaponScalingType = function (weapon) {
-        if (!weapon || !DataManager.isWeapon(weapon)) return null;
-        const note = (weapon.note || '');
-        const scales = [];
-        const regex = /<Scale:\s*([^>]+)>/gi;
-        let match;
-        while ((match = regex.exec(note)) !== null) {
-            const parts = match[1].split(',').map(s => s.trim().toUpperCase());
-            scales.push(...parts);
+    // =============================================================================
+    // Weapon scaling
+    // =============================================================================
+    //
+    // The stats a weapon's plain attack is worked out from, read off its
+    // <Scale: STAT> tags: one, or two split equally (a sword on STR and DEX, a
+    // minigun on STR and DEX, a pistol on DEX alone). This is the one answer
+    // every screen prints (equip, backpack, shop, Stockbusters): the stats are
+    // named and highlighted, never graded. The battle formula reads the same
+    // tags (BattleSystemEnhancedMechanics, getWeaponScalingStats).
+
+    const SCALE_ALIASES = {
+        STR: ['STR'], ATK: ['STR'], DEX: ['DEX'], AGI: ['DEX'], CON: ['CON'], DEF: ['CON'],
+        INT: ['INT'], MAT: ['INT'], WIS: ['WIS'], MDF: ['WIS'], PSI: ['PSI'], LUK: ['PSI'],
+        MIX: ['STR', 'DEX'], ARC: ['STR', 'INT']
+    };
+
+    const WeaponScaling = {
+        // ['DEX'], ['STR', 'DEX'] ... A weapon with no tag swings on STR;
+        // anything that is not a weapon scales on nothing.
+        statsFor(weapon) {
+            if (!weapon || !weapon.wtypeId) return [];
+            const raw = [];
+            const regex = /<Scale:\s*([^>]+)>/gi;
+            let match;
+            while ((match = regex.exec(weapon.note || '')) !== null) {
+                raw.push(...match[1].split(',').map(s => s.trim().toUpperCase()));
+            }
+            if (!raw.length && weapon.meta && weapon.meta.Scale && weapon.meta.Scale !== true) {
+                raw.push(...String(weapon.meta.Scale).split(',').map(s => s.trim().toUpperCase()));
+            }
+            const out = [];
+            for (const key of raw) {
+                for (const stat of (SCALE_ALIASES[key] || [])) {
+                    if (!out.includes(stat) && out.length < 2) out.push(stat);
+                }
+            }
+            return out.length ? out : ['STR'];
+        },
+
+        // A stat's printed name, the one the sheet uses (js/i18n/<lang>/stats.json).
+        statName(stat) {
+            return (window.CCStatLabel ? window.CCStatLabel(stat) : null) || stat;
+        },
+
+        // "DEX", "STR + DEX", localized.
+        label(weapon) {
+            return this.statsFor(weapon).map(st => this.statName(st)).join(' + ');
+        },
+
+        // The same stats as highlighted chips, for any HTML screen.
+        chipsHTML(stats) {
+            return (stats || []).map(st =>
+                `<span class="stat-scaling-chip" data-stat="${st}">${this.statName(st)}</span>`).join('');
         }
-        if (scales.length === 0 && weapon.meta && weapon.meta.Scale) {
-            scales.push(...String(weapon.meta.Scale).split(',').map(s => s.trim().toUpperCase()));
-        }
-        if (scales.includes('STR') && scales.includes('DEX')) return 'MIX';
-        if (scales.includes('STR') && scales.includes('INT')) return 'ARC';
-        if (scales.includes('MIX')) return 'MIX';
-        if (scales.includes('ARC')) return 'ARC';
-        if (scales.includes('DEX')) return 'DEX';
-        if (scales.includes('INT')) return 'INT';
-        if (scales.includes('WIS')) return 'WIS';
-        if (scales.includes('CON')) return 'CON';
-        if (scales.includes('PSI')) return 'PSI';
-        if (scales.includes('STR')) return 'STR';
-        return 'STR';
+    };
+
+    // Kept for callers that still ask the actor.
+    Game_Actor.prototype.getWeaponScalingStats = function (weapon) {
+        return WeaponScaling.statsFor(weapon);
     };
 
     // Expose to UI layer
     window.WeaponProficiency = WeaponProficiency;
+    window.WeaponScaling = WeaponScaling;
     window.EquipI18n   = i18n;
     window.EquipParams = {
         enableSwitching: parameters['enableSwitching'] === 'true',

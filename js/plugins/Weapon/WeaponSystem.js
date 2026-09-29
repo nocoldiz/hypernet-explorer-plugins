@@ -1445,8 +1445,8 @@
   // party and catches a weapon put down after the first ask.
   const RIG_MAP_WARM_DELAY = 240;   // ~4s of map before the first ask
   const RIG_MAP_WARM_EVERY = 300;
-  const _Scene_Map_update_warmRig = Scene_Map.prototype.update;
-  Scene_Map.prototype.update = function () {
+  const _Scene_Map_update_warmRig = typeof Scene_Map !== "undefined" && Scene_Map.prototype.update;
+  if (_Scene_Map_update_warmRig) Scene_Map.prototype.update = function () {
     _Scene_Map_update_warmRig.call(this);
     this._rigWarmFrames = (this._rigWarmFrames || 0) + 1;
     if (this._rigWarmFrames < RIG_MAP_WARM_DELAY) return;
@@ -1590,16 +1590,8 @@
     if (!rightWeapon && !rightShield && window.WeaponSystemProcedural) {
       rightWeapon = WeaponSystemProcedural.unarmedWeaponFor(actor);
     }
-    // The vector gun folded into the Fists of Em is put down: the hand is the
-    // authored pair of fists (WeaponSystemProcedural.rigFistWeapon), whatever
-    // the holder is, and her own built fist only if that file is missing.
-    const VG = window.VectorGun;
-    const vgFists = !!(rightWeapon && VG && VG.isVectorGun(rightWeapon) &&
-      VG.formKey() === VG.FISTS_FORM && window.WeaponSystemProcedural);
-    if (vgFists) {
-      rightWeapon = (WeaponSystemProcedural.rigFistWeapon && WeaponSystemProcedural.rigFistWeapon()) ||
-        WeaponSystemProcedural.unarmedWeaponFor(actor);
-    }
+    const vgFists = isVectorFists(rightWeapon);
+    if (vgFists) rightWeapon = vectorFistsWeapon(actor);
 
     // Claws are a pair even when the database lists one of them.
     const isClaws = !!(weapons[0] && weapons[0].wtypeId === 10);
@@ -1631,6 +1623,23 @@
       }
     }
   };
+
+  /** True for the vector gun folded into the Fists of Em. */
+  function isVectorFists(weapon) {
+    const VG = window.VectorGun;
+    return !!(weapon && VG && VG.isVectorGun(weapon) &&
+      VG.formKey() === VG.FISTS_FORM && window.WeaponSystemProcedural);
+  }
+
+  /**
+   * The hand the Fists of Em are held and thrown with: the gun is put down, so
+   * it is the authored pair of fists (WeaponSystemProcedural.rigFistWeapon),
+   * whatever the holder is, and her own built fist only if that file is missing.
+   */
+  function vectorFistsWeapon(actor) {
+    const WSP = window.WeaponSystemProcedural;
+    return (WSP.rigFistWeapon && WSP.rigFistWeapon()) || WSP.unarmedWeaponFor(actor);
+  }
 
   // How long a blow takes to arrive when the weapon has no movement to read it
   // off: a little under half of a stock swing, which since the attack clips
@@ -1665,6 +1674,11 @@
       // layer holding nothing.
       const next = new Sprite_3DWeapon(
         weapon, getScaledWeaponX(isLeft), getScaledWeaponY());
+      // A SWITCH hands the old shape's model over still folding: it shrinks
+      // away beside the new one instead of being cut (VectorGun.adoptFoldingModel).
+      if (held && this._vgMorphing && window.VectorGun && window.VectorGun.adoptFoldingModel) {
+        window.VectorGun.adoptFoldingModel(held);
+      }
       // terminate() runs disposeWeaponObject3D; a bare scene.remove would leak
       // the model's GPU buffers on every swap.
       if (held) held.terminate();
@@ -1846,9 +1860,15 @@
       weapon = WeaponSystemProcedural.unarmedWeaponFor(actor);
     }
     if (!weapon) return;
+    // The blow is thrown with the same hands the turn is held in: handing the
+    // gun itself over here would rebuild the hand as the holder's own
+    // archetype fist in place of the rig.
+    const vgFists = isVectorFists(weapon);
+    if (vgFists) weapon = vectorFistsWeapon(actor);
 
     const sprite = this.setHeldWeaponModel(isLeftHand ? 'left' : 'right', weapon);
     if (!sprite) return;
+    if (!isLeftHand) sprite._vgHeld = vgFists;
     // No <Movement:> tag means "whatever this weapon does", NOT a sword swing:
     // defaulting to Swing here is what had untagged firearms and slings
     // clubbing the enemy with the stock. WeaponSystemProcedural.motionForWeapon

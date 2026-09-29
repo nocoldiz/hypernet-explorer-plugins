@@ -59,35 +59,13 @@ Scene_TravelJournal.prototype.initialize = function () {
 Scene_TravelJournal.prototype.create = function () {
     Scene_MenuBase.prototype.create.call(this);
 
-    // --- WASD tracking (per menu-rework spec) ---
-    this._wasdInput      = { up: false, down: false, left: false, right: false };
-    this._wasdHeld       = { up: false, down: false, left: false, right: false };
-    this._wasdHoldFrames = { up: 0,     down: 0,     left: 0,     right: 0     };
-
+    // WASD needs no listener of its own: Input.keyMapper already reads the
+    // four keys as the four directions. The one thing still listened for is
+    // WHEN a key was last struck, so a gamepad "cancel" can be told apart from
+    // a keyboard key that RMMZ maps to cancel (typing the letter "x").
     this._lastKeyTime = 0;
-    this._wasdListener = (event) => {
-        // Track the latest physical keystroke so the input manager can tell a
-        // gamepad "cancel" apart from a keyboard key that RMMZ maps to cancel
-        // (e.g. typing the letter "x" while editing).
-        this._lastKeyTime = performance.now();
-        if (event.repeat) return;
-        // Never hijack WASD while the editor textbox is focused.
-        if (document.activeElement === this._editor) return;
-        const key = event.key.toLowerCase();
-        if (key === 'w') { this._wasdInput.up    = true; this._wasdHeld.up    = true; event.preventDefault(); }
-        if (key === 's') { this._wasdInput.down  = true; this._wasdHeld.down  = true; event.preventDefault(); }
-        if (key === 'a') { this._wasdInput.left  = true; this._wasdHeld.left  = true; event.preventDefault(); }
-        if (key === 'd') { this._wasdInput.right = true; this._wasdHeld.right = true; event.preventDefault(); }
-    };
-    this._wasdUpListener = (event) => {
-        const key = event.key.toLowerCase();
-        if (key === 'w') { this._wasdHeld.up    = false; this._wasdHoldFrames.up    = 0; }
-        if (key === 's') { this._wasdHeld.down  = false; this._wasdHoldFrames.down  = 0; }
-        if (key === 'a') { this._wasdHeld.left  = false; this._wasdHoldFrames.left  = 0; }
-        if (key === 'd') { this._wasdHeld.right = false; this._wasdHoldFrames.right = 0; }
-    };
-    window.addEventListener('keydown', this._wasdListener);
-    window.addEventListener('keyup',   this._wasdUpListener);
+    this._keyTimeListener = () => { this._lastKeyTime = performance.now(); };
+    window.addEventListener('keydown', this._keyTimeListener);
 
     // --- DOM state ---
     this._pageIndex     = 0;             // page currently open in the editor
@@ -116,10 +94,12 @@ Scene_TravelJournal.prototype.update = function () {
 };
 
 Scene_TravelJournal.prototype.terminate = function () {
-    if (this._wasdListener) {
-        window.removeEventListener('keydown', this._wasdListener);
-        window.removeEventListener('keyup',   this._wasdUpListener);
-        this._wasdListener = this._wasdUpListener = null;
+    if (this._keyTimeListener) {
+        window.removeEventListener('keydown', this._keyTimeListener);
+        this._keyTimeListener = null;
+    }
+    if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) {
+        Controller.closeTextEntry();
     }
     // Make sure whatever is in the editor is committed to disk.
     this._commitEditor();
@@ -146,13 +126,45 @@ Scene_TravelJournal.prototype._commitEditor = function () {
     }
 };
 
+// True when the pad is the device in hand and the letter sheet exists.
+Scene_TravelJournal.prototype.padTypes = function () {
+    return !!(window.Controller && typeof Controller.textEntry === 'function' &&
+        typeof Input !== 'undefined' && typeof Input.lastInputDevice === 'function' &&
+        Input.lastInputDevice() === 'pad');
+};
+
 Scene_TravelJournal.prototype.focusEditor = function () {
     this._section = 'editor';
-    if (this._editor) {
-        this._editor.focus();
-        const len = this._editor.value.length;
-        this._editor.setSelectionRange(len, len);
+    if (!this._editor) return;
+    // A pad does not take the caret: the page is only marked, and Confirm
+    // opens the letter sheet over it (writeWithPad).
+    if (this.padTypes()) {
+        this._editor.classList.add('focused');
+        return;
     }
+    this._editor.focus();
+    const len = this._editor.value.length;
+    this._editor.setSelectionRange(len, len);
+};
+
+// The pad's way of writing the open page: the letter sheet, handed the page as
+// it stands, writes it back the way typing into the field would have.
+Scene_TravelJournal.prototype.writeWithPad = function () {
+    if (!this._editor) return;
+    const editor = this._editor;
+    Controller.textEntry({
+        title: Manager.titleFor(this._pageIndex),
+        value: editor.value,
+        max: 4000,
+        multiline: true,
+        onCommit: (value) => {
+            if (!this._editor) return;
+            this._editor.value = String(value || '');
+            Manager.setContent(this._pageIndex, this._editor.value);
+            Manager.persist();
+            this._updateOpenPagePreview();
+        }
+    });
 };
 
 Scene_TravelJournal.prototype.blurEditorToList = function () {
@@ -353,32 +365,36 @@ const TravelJournalInput = {
         //    A controller B (cancel) still pulls focus back to the list - we
         //    only accept it when it did NOT originate from a keystroke this
         //    frame, so typing letters that RMMZ maps to "cancel" is ignored.
+        // The pad's letter sheet owns every press while it is up.
+        if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) return;
         if (scene._section === 'editor') {
-            if (Input.isTriggered('cancel') &&
-                (performance.now() - (scene._lastKeyTime || 0) > 60)) {
+            // The field has the caret: the keyboard is typing into it.
+            if (document.activeElement === scene._editor) {
+                if (Input.isTriggered('cancel') &&
+                    (performance.now() - (scene._lastKeyTime || 0) > 60)) {
+                    scene.blurEditorToList();
+                }
+                return;
+            }
+            // The page is only marked (a pad is in hand): Confirm writes on
+            // it, Cancel or Right step out to the list of pages.
+            if (Input.isTriggered('ok')) {
+                if (scene.padTypes()) scene.writeWithPad();
+                else scene.focusEditor();
+                return;
+            }
+            if (Input.isTriggered('cancel') || Input.isTriggered('escape') ||
+                TouchInput.isCancelled() || Input.isRepeated('right')) {
                 scene.blurEditorToList();
             }
             return;
         }
         if (document.activeElement === scene._editor) return;
 
-        // 2. WASD hold-repeat simulation.
-        for (const dir of ['up', 'down', 'left', 'right']) {
-            if (scene._wasdHeld[dir]) {
-                scene._wasdHoldFrames[dir]++;
-                const t = scene._wasdHoldFrames[dir];
-                if (t > Input.keyRepeatWait && (t - Input.keyRepeatWait) % Input.keyRepeatInterval === 0) {
-                    scene._wasdInput[dir] = true;
-                }
-            } else {
-                scene._wasdHoldFrames[dir] = 0;
-            }
-        }
-        const isDown  = Input.isRepeated('down')  || scene._wasdInput.down;
-        const isUp    = Input.isRepeated('up')    || scene._wasdInput.up;
-        const isRight = Input.isRepeated('right') || scene._wasdInput.right;
-        const isLeft  = Input.isRepeated('left')  || scene._wasdInput.left;
-        scene._wasdInput.up = scene._wasdInput.down = scene._wasdInput.left = scene._wasdInput.right = false;
+        const isDown  = Input.isRepeated('down');
+        const isUp    = Input.isRepeated('up');
+        const isRight = Input.isRepeated('right');
+        const isLeft  = Input.isRepeated('left');
 
         if (isUp || isDown || isLeft || isRight) this.handleMove(scene, { isUp, isDown, isLeft, isRight });
         if (Input.isTriggered('ok')) this.handleOk(scene);

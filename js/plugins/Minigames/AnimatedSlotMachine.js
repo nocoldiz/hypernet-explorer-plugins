@@ -204,9 +204,40 @@
         });
         return pool;
     })();
-    function pickTarget() {
-        return WEIGHTED_POOL[Math.floor(Math.random() * WEIGHTED_POOL.length)];
+    // `rng` is optional: a function answering [0, 1), Math.random when absent.
+    function pickTarget(rng) {
+        const r = typeof rng === 'function' ? rng() : Math.random();
+        return WEIGHTED_POOL[Math.floor(r * WEIGHTED_POOL.length)];
     }
+
+    // What three drums pay on a stake of `bet`: three of a kind pays the
+    // symbol's multiple, any pair pays 1.5x (see checkWin for why), anything
+    // else nothing. The one answer for the cabinet and for simulateSpin.
+    function payoutFor(targets, bet) {
+        const [a, b, c] = targets;
+        if (a === b && b === c) {
+            const mult = SYMBOLS[a].mult;
+            return { win: bet * mult, mult, level: mult >= 25 ? 2 : 1, kind: 'jackpot' };
+        }
+        if (a === b || b === c || a === c) {
+            const win = Math.floor(bet * 1.5);
+            return { win, mult: 1.5, level: win > 0 ? 1 : 0, kind: 'pair' };
+        }
+        return { win: 0, mult: 0, level: 0, kind: 'none' };
+    }
+
+    // A spin with nobody at the cabinet: an NPC pulling the lever
+    // (NPCSimulationCore MINIGAME PLAY). Same weighted drums and the same pay
+    // table as the scene, so the house keeps the same edge. `rng` is a
+    // function answering [0, 1). Returns { targets, win, mult, kind }.
+    function simulateSpin(bet, rng) {
+        const stake = Math.max(0, Math.floor(Number(bet) || 0));
+        const targets = [pickTarget(rng), pickTarget(rng), pickTarget(rng)];
+        const pay = payoutFor(targets, stake);
+        return { targets, win: pay.win, mult: pay.mult, kind: pay.kind };
+    }
+
+    window.AnimatedSlotMachine = { simulateSpin, payoutFor, MULT_TABLE: MULT_TABLE.slice(), SYMBOL_COUNT };
 
     //=========================================================================
     // Sound. A slot machine is a mechanical instrument and most of what it says
@@ -1483,23 +1514,17 @@
         }
 
         checkWin() {
-            const [a, b, c] = this._targets;
-            let winAmount = 0;
+            // A pair happens on ~33% of spins with 3 reels (higher with fewer
+            // symbols). Paying bet*2 pushed the overall RTP above 100% for the
+            // recommended 5-symbol setups. Pay bet*1.5 so the house keeps an
+            // edge across the whole recommended 5-10 symbol range (payoutFor).
+            const pay = payoutFor(this._targets, this._bet);
+            const winAmount = pay.win;
+            const level = pay.level;
             let message = '';
-            let level = 0;
-
-            if (a === b && b === c) {
-                const mult = SYMBOLS[a].mult;
-                winAmount = this._bet * mult;
-                level = mult >= 25 ? 2 : 1;
-                message = T('SlotMachine.jackpot', { amount: winAmount, mult });
-            } else if (a === b || b === c || a === c) {
-                // A pair happens on ~33% of spins with 3 reels (higher with fewer
-                // symbols). Paying bet*2 pushed the overall RTP above 100% for the
-                // recommended 5-symbol setups. Pay bet*1.5 so the house keeps an
-                // edge across the whole recommended 5-10 symbol range.
-                winAmount = Math.floor(this._bet * 1.5);
-                level = winAmount > 0 ? 1 : 0;
+            if (pay.kind === 'jackpot') {
+                message = T('SlotMachine.jackpot', { amount: winAmount, mult: pay.mult });
+            } else if (pay.kind === 'pair') {
                 message = T('SlotMachine.pair', { amount: winAmount });
             }
 

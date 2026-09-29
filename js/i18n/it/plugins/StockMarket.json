@@ -156,11 +156,209 @@
         "Gli scambi su {company} restano regolari, senza notizie di rilievo.",
         "{company} corregge i conti dell'anno scorso di un arrotondamento."
       ]
+    },
+    "driver": {
+      "spend": {
+        "up": [
+          "{company} sale mentre i clienti svuotano gli scaffali nella zona di {town}.",
+          "Le casse suonano tutta la settimana e {company} cavalca la spesa."
+        ],
+        "down": [
+          "{company} cede mentre i portafogli restano chiusi nella zona di {town}.",
+          "Una settimana fiacca alle casse pesa su {company}."
+        ]
+      },
+      "jobs": {
+        "up": [
+          "Le assunzioni riprendono e {company} guadagna con le buste paga.",
+          "{company} sale mentre le file dei disoccupati si accorciano."
+        ],
+        "down": [
+          "I licenziamenti si allargano e {company} scende con i salari.",
+          "{company} cala mentre la zona di {town} perde posti di lavoro."
+        ]
+      },
+      "prosperity": {
+        "up": [
+          "{company} guadagna sul boom nella zona di {town}.",
+          "Tempi buoni nella zona di {town} sostengono {company}."
+        ],
+        "down": [
+          "{company} colpita dalla crisi nella zona di {town}.",
+          "Tempi duri nella zona di {town} frenano {company}."
+        ]
+      },
+      "hq": {
+        "up": [
+          "{company} sale mentre la sua città, {town}, prospera.",
+          "La sede di {town} annuncia un trimestre forte per {company}."
+        ],
+        "down": [
+          "Guai in casa a {town} affossano {company}.",
+          "{company} scivola mentre la sua città, {town}, è in difficoltà."
+        ]
+      },
+      "war": {
+        "up": [
+          "{company} in rialzo per la {war}.",
+          "{company} guadagna mentre la {war} tiene pieni i libri degli ordini."
+        ],
+        "down": [
+          "{company} in ribasso per la {war}.",
+          "La {war} pesa su {company}."
+        ]
+      },
+      "sanctions": {
+        "up": [
+          "{company} guadagna mentre le sanzioni contro {power} stringono l'offerta.",
+          "Le sanzioni riducono l'offerta e {company} ne approfitta."
+        ],
+        "down": [
+          "{company} cede mentre le sanzioni contro {power} si allentano.",
+          "L'offerta torna a crescere e {company} restituisce i guadagni delle sanzioni."
+        ]
+      },
+      "plague": {
+        "up": [
+          "{company} sale mentre l'epidemia riempie i suoi forzieri.",
+          "Commercio cupo: {company} cresce con il numero dei morti."
+        ],
+        "down": [
+          "{company} scende mentre l'epidemia si spegne.",
+          "Meno funerali, margini più sottili per {company}."
+        ]
+      },
+      "horde": {
+        "up": [
+          "{company} guadagna mentre l'Orda sparge il caos.",
+          "Dove va l'Orda dei Goblin, {company} sale."
+        ],
+        "down": [
+          "{company} si calma mentre l'ordine torna nelle terre dell'Orda.",
+          "La quiete nei territori occupati toglie smalto a {company}."
+        ]
+      },
+      "building": {
+        "up": [
+          "{company} sale perché traslochi e campi chiedono acciaio.",
+          "Nuovi tetti, nuovi campi: le acciaierie di {company} lavorano a pieno ritmo."
+        ],
+        "down": [
+          "{company} cede mentre meno persone si spostano.",
+          "Gli ordini edilizi si esauriscono e {company} rallenta."
+        ]
+      },
+      "greenwitch": {
+        "up": [
+          "{company} fiorisce con {town}.",
+          "Una buona stagione a {town} sostiene {company}."
+        ],
+        "down": [
+          "{company} colpita dalla crisi di {town}.",
+          "{town} vive una stagione magra e {company} ne risente."
+        ]
+      },
+      "harvest": {
+        "up": [
+          "{company} guadagna mentre le fattorie raccolgono di più.",
+          "Campi pieni, granai pieni: {company} sale."
+        ],
+        "down": [
+          "I campi fermi frenano {company}.",
+          "{company} cede per un raccolto scarso."
+        ]
+      },
+      "mouths": {
+        "up": [
+          "Più bocche da sfamare sostengono {company}.",
+          "{company} guadagna mentre le città crescono."
+        ],
+        "down": [
+          "{company} scende mentre le città si svuotano.",
+          "Meno gente a tavola, meno vendite per {company}."
+        ]
+      },
+      "mood": {
+        "up": [
+          "{company} sale mentre i governi diventano ottimisti.",
+          "Le tesorerie si rilassano e {company} guadagna."
+        ],
+        "down": [
+          "{company} scende sui discorsi cupi delle tesorerie.",
+          "L'umore economico dei governi peggiora e {company} lo segue."
+        ]
+      },
+      "election": {
+        "up": [
+          "{company} guadagna mentre l'incertezza del voto ({power}) si dissolve.",
+          "Passato il giorno del voto, {company} si riprende."
+        ],
+        "down": [
+          "{company} scende in vista del voto ({power}).",
+          "Il nervosismo elettorale ({power}) pesa su {company}."
+        ]
+      },
+      "savings": {
+        "up": [
+          "I depositi affluiscono e {company} sale.",
+          "{company} guadagna mentre i risparmiatori riempiono i caveau."
+        ],
+        "down": [
+          "{company} cede mentre i depositi si esauriscono.",
+          "I risparmiatori restano lontani e {company} rallenta."
+        ]
+      },
+      "balances": {
+        "up": [
+          "{company} guadagna mentre le borse del paese si riempiono.",
+          "Borse piene, caveau pieni: {company} sale."
+        ],
+        "down": [
+          "{company} cede mentre le borse del paese si svuotano.",
+          "Tasche vuote, caveau vuoti: {company} rallenta."
+        ]
+      },
+      "trips": {
+        "up": [
+          "{company} guadagna mentre le strade si riempiono di viaggiatori.",
+          "Corriere piene, treni pieni: {company} sale."
+        ],
+        "down": [
+          "{company} cede mentre si viaggia meno.",
+          "I posti vuoti pesano su {company}."
+        ]
+      },
+      "moves": {
+        "up": [
+          "{company} sale mentre le famiglie cambiano casa.",
+          "I furgoni dei traslochi sono tutti prenotati e {company} sale."
+        ],
+        "down": [
+          "{company} rallenta mentre la gente resta dov'è.",
+          "Meno traslochi, meno ordini di trasporto per {company}."
+        ]
+      }
+    },
+    "earnings": {
+      "beat": [
+        "{company} supera le stime del trimestre.",
+        "{company} presenta utili sopra ogni previsione."
+      ],
+      "miss": [
+        "{company} manca le stime del trimestre.",
+        "Gli utili di {company} deludono e il consiglio si scusa."
+      ]
     }
   },
   "dividends": {
     "tag": "DIV",
     "paid": "Dividendi accreditati: {amount} per {days} giorno/i di possesso.",
     "toast": "Dividendi pagati: {amount}"
+  },
+  "drivers": {
+    "warName": "guerra tra {a} e {b}",
+    "someWar": "guerra lontana",
+    "someTown": "mercato",
+    "somePower": "le potenze"
   }
 }

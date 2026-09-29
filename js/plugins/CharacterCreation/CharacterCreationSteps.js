@@ -45,6 +45,7 @@
     actorArchetypeKey,
     actorSecondaryArchetypeKey,
     applyArchetypesToActor,
+    portraitIsModel,
     CharacterCreationData,
     STEP,
   } = window.CCKit;
@@ -1519,6 +1520,34 @@
       `;
     }
 
+    // How the member is drawn wherever a portrait stands: the 2D bust their
+    // sprite carries, or a 3D model sculpted for them. It heads the Bio tab,
+    // above even the kind, and is open to a person and a creature alike; a
+    // creature opens on its model and a person on their bust. The 3D chip is
+    // only offered where a model can actually be built.
+    _renderPortraitStyleHtml() {
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (!actor) return "";
+      if (Scene_CharacterCreation._storyMode) return "";
+      const CC3D = window.CC3DModel;
+      const canModel = !!(window.Scene_CC3DModel && CC3D && CC3D.isAvailable && CC3D.isAvailable());
+      const isModel = canModel && portraitIsModel(actor);
+      const locked = this._isActorLockedPreset(actor);
+      const chip = (style, selected, disabled, label) => {
+        const click = disabled ? 'SoundManager.playBuzzer()' : `SceneManager._scene.onSetPortraitStyle('${style}')`;
+        return `<button class="cc-bio-chip cc-portrait-style-chip ${selected ? 'selected' : ''} ${disabled ? 'disabled' : ''}" onclick="${click}">${label}</button>`;
+      };
+      return `
+        <div class="cc-bio-section">
+          <div class="cc-bio-section-title">${this._ccIconHtml(183, 16)} <span>${ccT('CharCreate.portraitStyle')}</span></div>
+          <div class="cc-bio-chips-row">
+            ${chip('bust', !isModel, locked, ccT('CharCreate.portraitBust'))}
+            ${chip('model', isModel, locked || !canModel, ccT('CharCreate.portraitModel'))}
+          </div>
+        </div>
+      `;
+    }
+
     // The body a character is spliced from. Both selects funnel through
     // applyArchetypesToActor (see onSelectCreatureArchetype /
     // onSelectCreatureSecondaryArchetype), which settles the 3D config from
@@ -1575,7 +1604,7 @@
     // shows and the label the trigger wears, so the two can never disagree.
 
     _jobPickOptions() {
-      const allJobs = (window.WorkSystem && window.WorkSystem.Jobs) || [];
+      const allJobs = ((window.WorkSystem && window.WorkSystem.Jobs) || []).filter(j => j && !j.appointed);
       const jobLabel = (j) => (window.WorkSystem && window.WorkSystem.jobName)
         ? window.WorkSystem.jobName(j)
         : (j.name || ccTp('CharCreate.jobNumber', { id: j.id }));
@@ -1845,6 +1874,7 @@
       const isStoryEm = !!(CP && CP.isStoryModeEm && CP.isStoryModeEm(actor));
       if (isStoryEm && CP.applyStoryModeEmLocks) CP.applyStoryModeEmLocks(actor);
 
+      const portraitStyleHtml = this._renderPortraitStyleHtml();
       const typePillsHtml = this._renderTypePillsHtml();
       const memberIdxForType = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       const isCreatureActor = !!(actor._isCreatureActor || $gameSwitches.value(77 + memberIdxForType));
@@ -2088,6 +2118,7 @@
         return `
           <div class="cc-page cc-page-left ts-page cc-page-column">
             <div class="cc-bio-container cc-step-scroll">
+              ${portraitStyleHtml}
               ${typePillsHtml}
               ${archetypeBioHtml}
               <div class="cc-bio-section">
@@ -2134,6 +2165,7 @@
       return `
         <div class="cc-page cc-page-left cc-page-full ts-page cc-page-column">
           <div class="cc-bio-container cc-step-scroll">
+            ${portraitStyleHtml}
             ${typePillsHtml}
             ${archetypeBioHtml}
             <div class="cc-bio-section">
@@ -2615,7 +2647,8 @@
       // The trade itself is known, goods or not, so its preset ranks are
       // bought before the purse below is spent.
       if (!feral && !actor._jobId) {
-        const job = rand((window.WorkSystem && window.WorkSystem.Jobs) || []);
+        // An appointed office (NPCPolitics) is nobody's starting trade.
+        const job = rand(((window.WorkSystem && window.WorkSystem.Jobs) || []).filter(j => j && !j.appointed));
         if (job) {
           actor._jobId = job.id;
           this._applyJobSpecPreset(actor, job.id);
@@ -3291,7 +3324,7 @@
       const memberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       actor._bioSet = true;
 
-      const allJobs = (window.WorkSystem && window.WorkSystem.Jobs) || [];
+      const allJobs = ((window.WorkSystem && window.WorkSystem.Jobs) || []).filter(j => j && !j.appointed);
       if (allJobs.length > 0) {
         const randomJob = allJobs[Math.floor(Math.random() * allJobs.length)];
         this.onBioOptionChange("job", randomJob.id);
@@ -4350,7 +4383,7 @@
       }
 
       // Random Job & Job Items
-      const allJobs = (window.WorkSystem && window.WorkSystem.Jobs) || [];
+      const allJobs = ((window.WorkSystem && window.WorkSystem.Jobs) || []).filter(j => j && !j.appointed);
       if (allJobs.length > 0) {
         const randomJob = allJobs[Math.floor(Math.random() * allJobs.length)];
         currentActor._jobId = randomJob.id;

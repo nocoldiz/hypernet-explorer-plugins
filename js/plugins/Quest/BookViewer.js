@@ -42,10 +42,10 @@
  * - Right Arrow / Mouse Click Right Side: Next page
  * - Mouse drag: take hold of a page and turn it by hand
  * - Mouse fling off the screen: tear the page out
- * - Up Arrow / Down Arrow: Jump backward / forward 10 pages
- * - Page Up / Page Down (keyboard) or L1 / R1 (gamepad): Jump backward / forward 10 pages
- * - Shift (keyboard) or L2 (gamepad): Jump to the cover
- * - C (keyboard) or R2 (gamepad): Jump to the last page
+ * - Page Up / Page Down, Q / W, Tab (keyboard) or L1 / R1 (gamepad): Jump backward / forward 10 pages
+ * - Up Arrow (or up on a gamepad): Jump to the cover
+ * - Down Arrow (or down on a gamepad): Jump to the last page
+ * - Shift (keyboard) or X (gamepad): Fall open at the next bookmark
  * - Enter / Space (or A on a gamepad): Leave a bookmark on the open page
  * - Click a bookmark tab: Fall open at that page
  * - Escape / Right Click: Close book
@@ -1678,28 +1678,30 @@
         }
 
         updateInput() {
-            // 'run' and 'kick' are the L2/R2 (LT/RT) action slots in this
-            // game's gamepad map, reused here as jump-to-cover / jump-to-end.
+            // One press, one turn. Left / right turn a single leaf, L1 / R1
+            // (Page Up / Page Down, Tab) turn ten at once, and up / down fall
+            // open at the cover and at the last page.
             if (Input.isTriggered('cancel') || TouchInput.isCancelled() || (TouchInput.isTriggered() && TouchInput.isLongPressed())) {
                 this.onCancel();
-            } else if (Input.isTriggered('ok')) {
+                return;
+            }
+            if (Input.isTriggered('ok')) {
                 this.toggleBookmark();
-            } else if (Input.isTriggered('menu')) {
+                return;
+            }
+            if (Input.isTriggered('shift')) {
                 this.nextBookmark();
-            } else if (Input.isTriggered('run')) {
-                this.goToStart();
-            } else if (Input.isTriggered('kick')) {
+                return;
+            }
+            const tab = window.UINav ? window.UINav.tabDir() : 0;
+            if (tab > 0 || Input.isRepeated('pagedown')) {
+                this.jumpForward();
+            } else if (tab < 0 || Input.isRepeated('pageup')) {
+                this.jumpBackward();
+            } else if (Input.isTriggered('down')) {
                 this.goToEnd();
-            } else if (Input.isRepeated('pagedown')) {
-                // R1 on a gamepad, Page Down on keyboard
-                this.jumpForward();
-            } else if (Input.isRepeated('pageup')) {
-                // L1 on a gamepad, Page Up on keyboard
-                this.jumpBackward();
-            } else if (Input.isRepeated('down')) {
-                this.jumpForward();
-            } else if (Input.isRepeated('up')) {
-                this.jumpBackward();
+            } else if (Input.isTriggered('up')) {
+                this.goToStart();
             } else if (Input.isRepeated('right')) {
                 this.nextPage();
             } else if (Input.isRepeated('left')) {

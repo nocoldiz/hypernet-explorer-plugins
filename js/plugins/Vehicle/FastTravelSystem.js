@@ -2358,6 +2358,15 @@
             ($gameTemp && $gameTemp._characterCreationTravelMode && transportType === 'train')
                 ? CC_TRAIN_START_DESTINATIONS.slice()
                 : null;
+        // A scenario may narrow the creation picker to its own ground (the
+        // goblin scenarios offer only what the Horde holds); CharacterCreation
+        // answers which names, or null to leave the list alone.
+        const ccOrigin = window.CharacterCreationOrigin;
+        if ($gameTemp && $gameTemp._characterCreationTravelMode && ccOrigin &&
+            typeof ccOrigin.allowedDestinations === 'function') {
+            const narrowed = ccOrigin.allowedDestinations(data.destinations);
+            if (Array.isArray(narrowed) && narrowed.length > 0) data.allowedDestinations = narrowed;
+        }
         data.isActive = true;
 
         this.openFastTravelUIOverlay();
@@ -2762,30 +2771,10 @@
         const firstItem = document.querySelector('.travel-dest-item');
         if (firstItem) this.highlightTravelDestination(firstItem.getAttribute('data-name'));
 
-        // W / S / ArrowUp / ArrowDown keyboard navigation
-        this._travelKeyHandler = (e) => {
-            const overlay = document.getElementById('travel-overlay');
-            if (!overlay) return;
-            const listPanel = document.getElementById('panel-list');
-            const isListVisible = listPanel && listPanel.style.display !== 'none';
-            const customBox = document.getElementById('travel-custom-modal');
-            if (customBox && customBox.style.display === 'flex') return;
-
-            // Up/Down navigation (ArrowUp/ArrowDown and W/S remapped to up/down) is
-            // handled solely by the RMMZ Input handler in Scene_Map.update so the
-            // selection moves exactly one station per press. Handling W/S here too
-            // double-counted the move (DOM keydown + RMMZ isRepeated), which made up
-            // and down behave inconsistently (#89). This handler now only covers confirm.
-            if (e.key === 'Enter' || e.key === 'z' || e.key === 'Z') {
-                if (isListVisible) {
-                    e.preventDefault();
-                    Input.clear(); // Prevent RMMZ Input from also processing this
-                    const items = Array.from(document.querySelectorAll('.travel-dest-item'));
-                    if (items.length > 0) this.selectTravelDestination(items[_travelSelectedIndex].getAttribute('data-name'));
-                }
-            }
-        };
-        document.addEventListener('keydown', this._travelKeyHandler);
+        // Every key the picker answers (the arrows, WASD, Enter / Z, the pad)
+        // is read through RMMZ's Input in updateTravelPickerInput. A DOM
+        // keydown listener beside it double-counted presses (#89), so there
+        // is none.
     };
 
     // The map sheet is panned with a CSS transform on #travel-wrapper, and a
@@ -3339,6 +3328,8 @@ Scene_Map.prototype.printTravelCoordinates = function () {
     Scene_Map.prototype.openCustomPointModal = function () {
         const modal = document.getElementById('travel-custom-modal');
         if (!modal) return;
+        // The press that opened the box must not also act inside it.
+        if (window.UINav) UINav.swallowHeld();
         SoundManager.playOk();
         const px = $gameVariables.value(playerXVar);
         const py = $gameVariables.value(playerYVar);
@@ -3361,6 +3352,30 @@ Scene_Map.prototype.printTravelCoordinates = function () {
             };
         }
         this.refreshCustomPointModal();
+    };
+
+    // The name field: typed into on a keyboard, and on a pad written on the
+    // letter sheet, whose B closes the sheet and leaves the box up.
+    Scene_Map.prototype.editCustomPointName = function (nameInput) {
+        const pad = typeof Input.lastInputDevice === 'function' && Input.lastInputDevice() === 'pad';
+        if (pad && window.Controller && typeof Controller.textEntry === 'function') {
+            if (window.UINav) UINav.swallowHeld();
+            Controller.textEntry({
+                title: T('FastTravel.custom.name'),
+                value: nameInput.value || '',
+                max: Number(nameInput.maxLength) > 0 ? Number(nameInput.maxLength) : 48,
+                onCommit: (value) => {
+                    if (window.UINav) UINav.swallowHeld();
+                    nameInput.value = String(value || '');
+                    this._customNameEdited = true;
+                },
+                onCancel: () => {
+                    if (window.UINav) UINav.swallowHeld();
+                }
+            });
+            return;
+        }
+        nameInput.focus();
     };
 
     Scene_Map.prototype.refreshCustomPointModal = function () {
@@ -3439,6 +3454,7 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         const modal = document.getElementById('travel-custom-modal');
         const nameInput = document.getElementById('travel-custom-name');
         if (nameInput) nameInput.blur();
+        if (modal && modal.style.display !== 'none' && window.UINav) UINav.swallowHeld();
         if (modal) modal.style.display = 'none';
         this._customPoint = null;
         if (!skipSound) SoundManager.playCancel();
@@ -3450,10 +3466,6 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         const overlay = document.getElementById('travel-overlay');
         if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
         _travelOverlayEl = null;
-        if (this._travelKeyHandler) {
-            document.removeEventListener('keydown', this._travelKeyHandler);
-            this._travelKeyHandler = null;
-        }
         this.openFastTravelUIOverlay();
     };
 
@@ -3516,12 +3528,6 @@ Scene_Map.prototype.printTravelCoordinates = function () {
             _travelOverlayEl = null;
         }
 
-        // Remove W/S/Arrow key listener
-        if (this._travelKeyHandler) {
-            document.removeEventListener('keydown', this._travelKeyHandler);
-            this._travelKeyHandler = null;
-        }
-
         // Remove window-level drag listeners (prevents accumulation across opens)
         if (this._travelMouseMoveHandler) {
             window.removeEventListener('mousemove', this._travelMouseMoveHandler);
@@ -3562,6 +3568,8 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         // it must not scroll, and cancel closes the box rather than the map.
         const customModal = document.getElementById('travel-custom-modal');
         if (customModal && customModal.style.display === 'flex') {
+            // The pad's letter sheet answers every press itself while it is up.
+            if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) return true;
             const nameInput = document.getElementById('travel-custom-name');
             if (nameInput && document.activeElement === nameInput) {
                 // The name is being typed: only cancel is ours, and all it does
@@ -3575,18 +3583,19 @@ Scene_Map.prototype.printTravelCoordinates = function () {
                 TouchInput.clear();
                 return true;
             }
-            if (Input.isRepeated('left'))  { self.stepCustomField(self._customPointField, -1); return true; }
-            if (Input.isRepeated('right')) { self.stepCustomField(self._customPointField, 1); return true; }
-            // The shoulders move ten at a time, so the far side of a 256 square
-            // world is a few presses away rather than a hundred.
-            if (Input.isRepeated('pageup'))   { self.stepCustomField(self._customPointField, -10); return true; }
-            if (Input.isRepeated('pagedown')) { self.stepCustomField(self._customPointField, 10); return true; }
+            // Left / right step the coordinate; holding Shift (X on a pad)
+            // steps ten at a time, so the far side of a 256 square world is a
+            // few presses away rather than a hundred. L1 / R1 are the tabs'
+            // buttons on every menu and never touch a value.
+            const step = Input.isPressed('shift') ? 10 : 1;
+            if (Input.isRepeated('left'))  { self.stepCustomField(self._customPointField, -step); return true; }
+            if (Input.isRepeated('right')) { self.stepCustomField(self._customPointField, step); return true; }
             if (Input.isRepeated('down')) { self.focusCustomField((self._customPointField + 1) % 3); return true; }
             if (Input.isRepeated('up'))   { self.focusCustomField((self._customPointField + 2) % 3); return true; }
             if (Input.isTriggered('ok')) {
                 // OK on the name field is "let me type it"; anywhere else it
                 // writes the square down.
-                if (self._customPointField === 2 && nameInput) nameInput.focus();
+                if (self._customPointField === 2 && nameInput) self.editCustomPointName(nameInput);
                 else self.saveCustomPoint();
                 Input.clear();
                 return true;
@@ -3620,8 +3629,8 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         if (isListVisible) {
             const items = Array.from(document.querySelectorAll('.travel-dest-item'));
             if (items.length > 0) {
-                // Only handle direction/ok via RMMZ Input for arrow keys and controller (not WASD)
-                // WASD is handled by _travelKeyHandler which clears Input to prevent double-consumption
+                // Every direction (arrows, WASD, pad) and OK arrive through RMMZ
+                // Input here, and only here.
                 // Don't call Input.clear() here: it resets the repeat timer
                 // (_pressedTime) and gamepad state, so a held d-pad/stick reads
                 // as a fresh press every frame and skips items. Let RMMZ's
@@ -4414,6 +4423,53 @@ Scene_Map.prototype.printTravelCoordinates = function () {
      */
     window.FastTravelSystem.destinations = function () {
         try { return getTeleportDestinations() || []; } catch (e) { return []; }
+    };
+
+    function destinationNamed(destName) {
+        try { return (getTeleportDestinations() || []).find(d => d && d.name === destName) || null; }
+        catch (e) { return null; }
+    }
+
+    /**
+     * What a journey to one place costs on one network, in gold, as the
+     * overlay would quote it from where the party stands; null for a place
+     * the network does not know. Read by anybody who sells a seat without
+     * opening the page: an NPC driving the party in their own car
+     * (NPC/NPCEmpathizeUI_Chat.js, DEALS).
+     */
+    window.FastTravelSystem.quote = function (destName, transportType) {
+        const dest = destinationNamed(destName);
+        if (!dest) return null;
+        try { return calculateTravelCost(dest, transportType); } catch (e) { return null; }
+    };
+
+    // A place as the overlay's list names it.
+    window.FastTravelSystem.placeLabel = function (destName) {
+        const dest = destinationNamed(destName);
+        return dest ? rowLabel(dest) : String(destName || '');
+    };
+
+    /**
+     * Set out on a journey whose seat was settled somewhere else: a lift in an
+     * NPC's car is agreed and paid for in the Empathize panel, and the party
+     * then travels exactly as a paying passenger does. `fare` is whatever the
+     * counter still takes, 0 when the driver has been paid. Answers false when
+     * the map cannot run the journey (no map scene, an unknown or sealed stop).
+     */
+    window.FastTravelSystem.rideTo = function (destName, transportType, fare) {
+        const scene = SceneManager._scene;
+        if (!scene || !scene._fastTravelDestWindow || typeof scene.closeFastTravelWindow !== 'function') return false;
+        const dest = destinationNamed(destName);
+        if (!dest || isDestOffline(dest)) return false;
+        const data = getFastTravelData();
+        data.selectedTransport = transportType;
+        data.ccLandingPending = false;
+        if ($gameMap.mapId() === 315) {
+            $gameVariables.setValue(playerXVar, $gamePlayer.x);
+            $gameVariables.setValue(playerYVar, $gamePlayer.y);
+        }
+        executeTravel(dest, Math.max(0, Math.floor(Number(fare) || 0)), false);
+        return true;
     };
 
     /**

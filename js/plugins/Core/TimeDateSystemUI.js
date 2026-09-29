@@ -128,6 +128,11 @@
     return DURATION_MODES.filter((m) => m !== "sleep" || sleepAllowedFor(scene));
   }
 
+  function respawnIsHere() {
+    const BSE = window.BattleSystemEnhanced;
+    return !!(BSE && BSE.Functions && BSE.Functions.isRespawnHere && BSE.Functions.isRespawnHere());
+  }
+
   function commandsForMode(mode, allowSleep) {
     const t = sleepLabels();
     if (mode === "sleep") {
@@ -190,7 +195,9 @@
     // Hardcore (Permadeath) and Blood and Oil use terminal death, so there is
     // no respawn point to set; hide the option in those modes (Switch 9).
     if (!(window.$gameSwitches && $gameSwitches.value(9))) {
-      mainCommands.push({ key: "respawn", label: t.respawn });
+      // Greyed out while the respawn point already stands on this tile; any
+      // other tile, on this map or another, offers it again.
+      mainCommands.push({ key: "respawn", label: t.respawn, disabled: respawnIsHere() });
     }
     mainCommands.push({ key: "cancel", label: t.cancel });
     return mainCommands;
@@ -337,53 +344,24 @@
     _scene: null,
     _active: false,
     _openedFrame: 0,
-    _wasdInput: { up: false, down: false },
-    _wasdHeld: { up: false, down: false },
-    _wasdHoldFrames: { up: 0, down: 0 },
-    // A/D are a one-shot Sleep<->Wait toggle, not a held-repeat scrub, so
-    // they only need a simple "was pressed this frame" flag.
-    _adInput: { left: false, right: false },
-    _keydownListener: null,
-    _keyupListener: null,
 
+    // WASD needs no listener here: Input.keyMapper already reads the four
+    // keys as the four directions, so one reading of Input covers the arrows,
+    // WASD and the pad alike, with the one repeat rule.
     activate(scene) {
       this._scene = scene;
       this._active = true;
       this._openedFrame = Graphics.frameCount;
-      this._wasdInput.up = this._wasdInput.down = false;
-      this._wasdHeld.up = this._wasdHeld.down = false;
-      this._wasdHoldFrames.up = this._wasdHoldFrames.down = 0;
-      this._adInput.left = this._adInput.right = false;
-      if (!this._keydownListener) {
-        this._keydownListener = (event) => {
-          if (event.repeat) return;
-          const key = event.key.toLowerCase();
-          if (key === "w") { this._wasdInput.up = true; this._wasdHeld.up = true; event.preventDefault(); }
-          if (key === "s") { this._wasdInput.down = true; this._wasdHeld.down = true; event.preventDefault(); }
-          if (key === "a") { this._adInput.left = true; event.preventDefault(); }
-          if (key === "d") { this._adInput.right = true; event.preventDefault(); }
-        };
-        this._keyupListener = (event) => {
-          const key = event.key.toLowerCase();
-          if (key === "w") { this._wasdHeld.up = false; this._wasdHoldFrames.up = 0; }
-          if (key === "s") { this._wasdHeld.down = false; this._wasdHoldFrames.down = 0; }
-        };
-        window.addEventListener("keydown", this._keydownListener);
-        window.addEventListener("keyup", this._keyupListener);
-      }
+      // The press that opened the menu must not also act inside it.
+      if (window.UINav) window.UINav.swallowHeld();
       // Opened by a key or a button, so the pointer is not steering yet.
       if (window.PointerSteering) window.PointerSteering.release();
     },
 
     deactivate() {
+      if (this._active && window.UINav) window.UINav.swallowHeld();
       this._active = false;
       this._scene = null;
-      if (this._keydownListener) {
-        window.removeEventListener("keydown", this._keydownListener);
-        window.removeEventListener("keyup", this._keyupListener);
-        this._keydownListener = null;
-        this._keyupListener = null;
-      }
     },
 
     update() {
@@ -393,29 +371,14 @@
       // Swallow the key press that opened the menu
       if (Graphics.frameCount - this._openedFrame < 4) return;
 
-      // WASD hold-repeat simulation (matches MZ key-repeat timing)
-      for (const dir of ["up", "down"]) {
-        if (this._wasdHeld[dir]) {
-          this._wasdHoldFrames[dir]++;
-          const held = this._wasdHoldFrames[dir];
-          if (held > Input.keyRepeatWait && (held - Input.keyRepeatWait) % Input.keyRepeatInterval === 0) {
-            this._wasdInput[dir] = true;
-          }
-        } else {
-          this._wasdHoldFrames[dir] = 0;
-        }
-      }
-
-      const isUp = Input.isRepeated("up") || this._wasdInput.up;
-      const isDown = Input.isRepeated("down") || this._wasdInput.down;
-      this._wasdInput.up = this._wasdInput.down = false;
+      const isUp = Input.isRepeated("up");
+      const isDown = Input.isRepeated("down");
 
       // Left/Right (arrow keys, A/D, or a gamepad d-pad/stick, all of which
       // RPG Maker's Input class already maps to "left"/"right") steps the
       // Sleep / Wait / Forage selector while a duration list is open.
-      const isLeft = Input.isTriggered("left") || this._adInput.left;
-      const isRight = Input.isTriggered("right") || this._adInput.right;
-      this._adInput.left = this._adInput.right = false;
+      const isLeft = Input.isRepeated("left");
+      const isRight = Input.isRepeated("right");
       if ((isLeft || isRight) && DURATION_MODES.indexOf(scene._sleepMenuMode) >= 0) {
         scene._toggleSleepMenuType(isLeft ? -1 : 1);
         return;
@@ -562,7 +525,7 @@
           : cmd.label;
         return `<div class="army-dialog-btn army-dialog-btn--row${
           cmd.rightLabel ? " army-dialog-btn--split" : ""
-        }${i === this._sleepMenuIndex ? " selected" : ""}" data-cmd="${
+        }${cmd.disabled ? " army-dialog-btn--disabled" : ""}${i === this._sleepMenuIndex ? " selected" : ""}" data-cmd="${
           cmd.key
         }">${inner}</div>`;
       })
@@ -908,8 +871,13 @@
         SceneManager.push(Scene_Save);
         break;
       case "respawn":
+        if (respawnIsHere()) {
+          SoundManager.playBuzzer();
+          break;
+        }
         this.setSleepRespawnPoint();
-        SoundManager.playOk();
+        SoundManager.playSave();
+        this._refreshSleepMenuDOM();
         break;
       case "cancel":
       case "cancel_sleep":

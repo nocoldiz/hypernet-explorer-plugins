@@ -184,6 +184,33 @@
     "The Tower. {sponsor} asks that every power's offices inside it be {registered|capped|opened to inspection}. {target} has {nine floors|more floors than it has declared|a floor that does not appear on any plan}.",
     "{sponsor} moves that the assembly recognise the Tower as the only thing keeping the ninety two dimensions from collapsing into one another, {and act accordingly|and fund it accordingly|which {target} says is theology, not procedure}."
    ]
+  },
+  "ceasefire": {
+   "tag": "the ceasefire",
+   "title": "Motion of {sponsor}: a ceasefire between {attacker} and {defender}",
+   "text": [
+    "{sponsor} asks the assembly to order a ceasefire between {attacker} and {defender} for six months. {leader} reads out {the casualty figures|a list of towns that no longer answer the telephone|the price of bread in both capitals}.",
+    "Six months without guns. {sponsor} moves that {attacker} and {defender} hold their lines where they stand. {leader} has brought {a map with the lines already drawn|a very long pencil|nothing but patience}.",
+    "{sponsor} wants the war between {attacker} and {defender} {paused|put on ice|made to wait its turn} while the room thinks. {leader} says thinking is cheaper than shells."
+   ]
+  },
+  "whitePeace": {
+   "tag": "the white peace",
+   "title": "Motion of {sponsor}: a white peace between {attacker} and {defender}",
+   "text": [
+    "{sponsor} moves that the war between {attacker} and {defender} end today, every border put back where it stood before the first shot. {leader} calls it {the only fair ending|an ending nobody will like|an ending at last}.",
+    "A white peace: no winner, no loser, the old map back on the wall. {sponsor} asks the assembly to impose it on {attacker} and {defender}. {leader} has already had the old map {framed|laminated|photocopied eleven times}.",
+    "{sponsor} proposes that {attacker} hand back everything it took from {defender} and that both go home. {leader} does not expect thanks from either."
+   ]
+  },
+  "sanctions": {
+   "tag": "the sanctions",
+   "title": "Motion of {sponsor}: sanctions on {attacker} for its war on {defender}",
+   "text": [
+    "{sponsor} moves that the assembly sanction {attacker} for its war on {defender}: its trade cut for a year. {leader} lists {the ports to be closed|the banks to be frozen|the shipments to be turned back}.",
+    "Sanctions. {sponsor} wants {attacker} to pay for its war on {defender} in the one currency it understands. {leader} has the figures {to the euro|to the cent|rounded, generously}.",
+    "{sponsor} asks the room to close its markets to {attacker} until it stops shelling {defender}. {leader} admits it will hurt {everybody a little|the markets more than the generals|the chamber's coffee supply}."
+   ]
   }
  },
  "voice": {
@@ -952,6 +979,20 @@
    "\"{name}. Accredited to {power}.\" The clerk stamps it. \"{leader} will be told. {leader} is told everything.\"",
    "The nameplate is printed while {name} watches: {power}, and underneath in smaller letters, {name}. \"{leader} approved it {this morning|in advance|without reading it}.\"",
    "\"Welcome to the delegation of {power},\" says the clerk, in the voice of somebody who has said it four hundred times. \"{leader} sends nothing. {leader} never does.\""
+  ]
+ },
+ "warOutcome": {
+  "ceasefire": [
+   "The ceasefire is sent to {attacker} and {defender}. For six months the lines stand where they are.",
+   "Word goes out to both fronts: {attacker} and {defender} are to hold fire. The chair allows itself a moment of quiet."
+  ],
+  "whitePeace": [
+   "The war between {attacker} and {defender} is over. Every border goes back to where it stood before it began.",
+   "{attacker} and {defender} are at peace by order of the assembly, and the old map is the map again."
+  ],
+  "sanctions": [
+   "The sanctions on {attacker} take effect at midnight. Its trade will be thinner for a year.",
+   "{attacker} is under sanctions for its war on {defender}. The markets are already moving."
   ]
  }
 }

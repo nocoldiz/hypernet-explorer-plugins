@@ -1823,6 +1823,13 @@
 
             super.update();
 
+            // L1 / R1 turn the two shelves, the chronicles and the record.
+            const shelf = window.UINav ? window.UINav.tabDir() : 0;
+            if (shelf && this._dndContainer) {
+                this.setNewsTab(shelf > 0 ? 'history' : 'news');
+                return;
+            }
+
             if (this._tab === 'history') {
                 this.updateWorldHistoryInput();
                 return;
@@ -1849,10 +1856,11 @@
                     }
                 }
 
-                if (Input.isTriggered('left')) {
+                // Left walks back a month, right forward, repeating while held.
+                if (Input.isRepeated('left')) {
                     this._newsWindow.changeMonth(-1);
                     moved = true;
-                } else if (Input.isTriggered('right')) {
+                } else if (Input.isRepeated('right')) {
                     this._newsWindow.changeMonth(1);
                     moved = true;
                 }
@@ -1882,9 +1890,11 @@
                 moved = true;
             }
 
-            if (Input.isTriggered('left')) {
+            // The record runs newest year first: left walks back in time
+            // (towards the founding), right forward.
+            if (Input.isRepeated('left')) {
                 this.changeHistoryYear(1);
-            } else if (Input.isTriggered('right')) {
+            } else if (Input.isRepeated('right')) {
                 this.changeHistoryYear(-1);
             }
 
@@ -1993,11 +2003,11 @@
         processHandling() {
             if (this.isOpenAndActive()) {
                 // Handle month navigation first - don't process other inputs during these
-                if (Input.isTriggered('left')) {
+                if (Input.isRepeated('left')) {
                     this.changeMonth(-1);
                     SoundManager.playCursor();
                     return;
-                } else if (Input.isTriggered('right')) {
+                } else if (Input.isRepeated('right')) {
                     this.changeMonth(1);
                     SoundManager.playCursor();
                     return;
@@ -2375,10 +2385,10 @@
             if (this.isOpenAndActive()) {
                 if (Input.isTriggered('cancel') || Input.isTriggered('escape')) {
                     this.processCancel();
-                } else if (Input.isTriggered('up')) {
+                } else if (Input.isRepeated('up')) {
                     this.navigateNews(-1);
                     SoundManager.playCursor();
-                } else if (Input.isTriggered('down')) {
+                } else if (Input.isRepeated('down')) {
                     this.navigateNews(1);
                     SoundManager.playCursor();
                 }

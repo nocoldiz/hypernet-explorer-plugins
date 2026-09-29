@@ -716,7 +716,12 @@
     //                 walks in, so the halls are never the same crowd twice.
     //   a house     , any floor the party holds the deed to
     //                 (ProceduralHouseSystem.listOwnedHouses)
-    //   the ship    , the starship interior, offered only to a party that
+    //   a residence , a companion's home inherited on joining, known by its
+    //                 interior map ($gameSystem._npcInheritedHouses)
+    //   an estate   , a home bought on the Real Estate Board (any owned deed
+    //                 but a shop). It has no map: its residents live there
+    //                 off the road and are met nowhere until called back.
+    //   the ship   , the starship interior, offered only to a party that
     //                 owns a starship
     //   the vault   , the patron vault, offered only in a world whose square
     //                 has been claimed. A vault resident is found on ANY of
@@ -810,6 +815,14 @@
         return owned.some(v => v && (v.key === "starship" || v.type === "airship"));  // i18n-ignore: vehicle keys
     }
 
+    // The Real Estate Board's deeds the party holds that somebody can live in.
+    function ownedEstateHomes() {
+        const AR = window.AssetRegistry;
+        try {
+            return (AR && typeof AR.getOwnedEstateHomes === "function") ? (AR.getOwnedEstateHomes() || []) : [];
+        } catch (e) { return []; }
+    }
+
     function vaultIsOpen() {
         return !!window.PatreonRewards?.claimedSquare?.();
     }
@@ -850,6 +863,26 @@
                     id: "house:" + house.key,   // i18n-ignore: place id
                     kind: "house",
                     name: T('NPCParty.lodging.house', { place: house.mapName || "" }),
+                });
+            }
+            // A companion's residence inherited on joining, found again by its
+            // interior map when the party walks in.
+            const inherited = (typeof $gameSystem !== "undefined" && $gameSystem && Array.isArray($gameSystem._npcInheritedHouses))
+                ? $gameSystem._npcInheritedHouses : [];
+            for (const home of inherited) {
+                if (!home || home.mapId == null) continue;
+                const id = "home:" + home.mapId;   // i18n-ignore: place id
+                if (out.some(place => place.id === id)) continue;
+                out.push({ id, kind: "home", name: T('NPCParty.lodging.house', { place: home.mapName || home.npcName || "" }) });
+            }
+            // A home bought on the Real Estate Board. It has no map of its own
+            // to walk into: whoever lives there is simply there, off the road.
+            // A shop is a business, not a home, so nobody is sent to live in it.
+            for (const property of ownedEstateHomes()) {
+                out.push({
+                    id: "estate:" + property.id,   // i18n-ignore: place id
+                    kind: "estate",
+                    name: T('NPCParty.lodging.estate', { name: property.name, place: property.location || "" }),
                 });
             }
             if (ownsStarship()) {
@@ -920,9 +953,9 @@
                 const key = PHS.getCurrentOwnershipKey?.();
                 const id = key ? "house:" + key : null;   // i18n-ignore: place id
                 if (id && this.places().some(place => place.id === id)) return id;
-                // A deed held under a spelling the board does not list (an
-                // inherited residence) is somebody's home but nobody is
-                // assigned to it, so nobody is put on this floor.
+                // An inherited residence is known by its interior map alone.
+                const home = "home:" + mapId;   // i18n-ignore: place id
+                if (this.places().some(place => place.id === home)) return home;
                 return null;
             }
             return null;
@@ -1180,6 +1213,8 @@
         if (!actor) return;
         const profile = window.NPCSocietyRegistry?.getProfile(eventName);
         const wealthTierBase = profile?.wealthTierBase ?? 2;
+        // A piece customised for them comes along as itself (Quest/ThinkerMenu.js).
+        window.NPCUniqueGear?.materializeWorn?.(eventName);
         const equip = window.NPCSocietyGetEquip(eventName, actor._classId || null, wealthTierBase);
         if (equip.weaponId && $dataWeapons[equip.weaponId]) {
             actor.forceChangeEquip(0, $dataWeapons[equip.weaponId]);
@@ -1194,10 +1229,15 @@
                 : actor.equipSlots().findIndex((e, i) => e === armor.etypeId && !actor.equips()[i]);
             if (slot >= 0) actor.forceChangeEquip(slot, armor);
         }
+        // Its custody follows them into the party.
+        window.NPCUniqueGear?.joinParty?.(eventName);
     }
 
     function grantNPCGold(eventName) {
         const profile = window.NPCSocietyRegistry?.getProfile(eventName);
+        // A beast brings no purse: it never held euros (NPCCreature). Asked of
+        // the profile, not the name, because by now it is in the party.
+        if (profile && window.NPCCreature?.isNonSentientProfile?.(profile)) return;
         const wealthTier = profile ? (profile.wealthTierBase ?? 2) : 2;
 
         const members = $gameParty.members();
@@ -1225,7 +1265,10 @@
     function grantNPCPossessions(eventName) {
         const profile = window.NPCSocietyRegistry?.getProfile(eventName);
         // Money on hand -> party funds (profile.money is in gold, 100 = 1€).
-        if (profile && profile.money !== undefined) {
+        if (profile && window.NPCCreature?.isNonSentientProfile?.(profile)) {
+            // A beast hands over no money: it never held any (NPCCreature).
+            profile.money = 0;
+        } else if (profile && profile.money !== undefined) {
             const money = Math.max(0, Math.floor(profile.money));
             if (money > 0) $gameParty.gainGold(money);
             profile.money = 0;

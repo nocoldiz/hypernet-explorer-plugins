@@ -12052,7 +12052,8 @@
 }
 
 .help-link:hover,
-.help-link:focus {
+.help-link:focus,
+.help-link.focused {
     filter: brightness(1.25);
     outline: none;
     border-bottom-color: var(--text-gold-dark);
@@ -13894,9 +13895,39 @@
     font-weight: bold;
 }
 
+/* The stats the held (or inspected) weapon scales on: boxed and tinted, so
+   the strip says at a glance what the weapon is worked out from. */
+#equip-container .paperdoll-stat-col--scaling {
+    background: var(--highlight-paper);
+    outline: 1px solid var(--accent-gold-pure);
+    border-radius: 3px;
+}
+
 #equip-container .paperdoll-stat-col--scaling .stat-label,
 #equip-container .paperdoll-stat-col--scaling .stat-val {
     color: var(--text-primary-hover);
+    font-weight: bold;
+}
+
+/* A scaling stat named on its own: equip detail, shop, backpack, skill panels. */
+.stat-scaling-chip {
+    display: inline-block;
+    margin: 0 4px 0 0;
+    padding: 0 6px;
+    background: var(--highlight-paper);
+    border: 1px solid var(--accent-gold-pure);
+    border-radius: 3px;
+    color: var(--text-primary-hover);
+    font-weight: bold;
+}
+
+.inspect-spec-row--scaling .inspect-spec-value {
+    padding: 0 6px;
+    background: var(--highlight-paper);
+    border: 1px solid var(--accent-gold-pure);
+    border-radius: 3px;
+    color: var(--text-primary-hover);
+    font-weight: bold;
 }
 
 #equip-container .paperdoll-container {
@@ -14412,6 +14443,18 @@
 
 #equip-container .equip-param-name {
     color: var(--text-detail-label);
+}
+
+/* A bonus to a stat the weapon also scales on. */
+#equip-container .equip-param-chip--scaling {
+    padding: 2px 6px;
+    background: var(--highlight-paper);
+    border: 1px solid var(--accent-gold-pure);
+    border-radius: 3px;
+}
+
+#equip-container .equip-param-chip--scaling .equip-param-name {
+    color: var(--text-primary-hover);
 }
 
 /* Special properties two across, so four short lines take two rows. */
@@ -17150,7 +17193,8 @@
    Delete buttons (UIFileInputManager toggles .focused on them). It is the same
    swap hover paints, so Save does not sit in a ring of its own while its two
    neighbours stay flat. */
-#save-menu-container .inspect-btn.focused {
+#save-menu-container .inspect-btn.focused,
+#history-container .inspect-btn.focused {
     background: var(--chip-active-bg);
     color: var(--chip-active-fg);
     box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
@@ -18284,7 +18328,8 @@
     cursor: pointer;
 }
 .hist-decade:hover,
-.hist-decade:focus {
+.hist-decade:focus,
+.hist-decade.focused {
     border-color: var(--text-primary-hover);
     color: var(--text-primary-hover);
     outline: none;
@@ -20135,6 +20180,35 @@
     /* The label rides the row's own weight, or the bold above stops at the span. */
     .npc-chat-action-btn:hover:not(.npc-action-disabled) .npc-opt-label,
     .npc-chat-action-btn.npc-action-focused .npc-opt-label { font-weight: inherit; }
+    /* ── Action board categories (Talk, Money, Help ...) ──
+       A wrapping row of tabs at the head of the verb column: only the open
+       category's verbs are listed under it. L1 / R1 step through them while
+       the cursor is on the verbs, and a click opens one. Drawn like the
+       character switcher's chips, so the open one reads in the panel's gold. */
+    .npc-action-cats {
+      display: flex; flex-wrap: wrap; align-items: center;
+      gap: 4px;
+      width: 100%;
+      padding-bottom: 6px; margin-bottom: 2px;
+      border-bottom: 1px solid var(--border-primary-hover-translucent-15);
+      box-sizing: border-box;
+    }
+    .npc-action-cat {
+      cursor: pointer; user-select: none; -webkit-user-select: none;
+      padding: 2px 8px;
+      font-size: var(--fs-label);
+      white-space: nowrap;
+      color: var(--text-text-alt-2);
+      border: 1px solid var(--border-primary-hover-translucent-15);
+      background: transparent;
+      transition: color 0.1s, border-color 0.1s;
+    }
+    .npc-action-cat:hover { border-color: var(--text-primary-hover); }
+    .npc-action-cat.active {
+      font-weight: bold;
+      color: var(--text-primary-hover);
+      border-color: var(--text-primary-hover);
+    }
     /* ── Wiki (entity profiles & hyperlinks) ───────────── */
     .npc-wiki-link {
       color: var(--border-focus-hover);
@@ -20346,11 +20420,26 @@ padding: 2px 10px;
       box-shadow: inset 0 0 0 2px var(--accent-gold-pure);
       transform: translateY(-2px);
     }
-    .npc-back-btn.npc-content-focused {
+    .npc-back-btn.npc-content-focused,
+    .npc-wiki-link.npc-content-focused,
+    .npc-wiki-fav.npc-content-focused {
       color: var(--border-focus-hover);
       outline: 2px solid var(--border-focus-hover);
       outline-offset: 2px;
       border-radius: 3px;
+    }
+    .npc-wiki-link.npc-content-focused { text-decoration-style: solid; }
+    /* The pad's cursor on a person of the Social Web draws the hover rim. */
+    .npc-web-node.npc-content-focused .npc-web-rim {
+      stroke: var(--accent-gold-pure); stroke-width: 4;
+    }
+    .npc-web-node.npc-content-focused .npc-web-label { fill: var(--accent-gold-pure); }
+    /* A button or a More row on a tab other than the chat wears the chat
+       cursor's own look when the pad is on it. */
+    .npc-chat-action-btn.npc-content-focused,
+    .npc-action-row.npc-content-focused {
+      border-color: var(--text-primary-hover);
+      font-weight: bold;
     }
     .npc-wiki-entry-name {
       font-size: var(--fs-body); color: var(--text-primary-hover);
@@ -24126,7 +24215,8 @@ body.ascii-ui-active .ascii-passthrough {
     );
 }
 
-.journal-editor:focus {
+.journal-editor:focus,
+.journal-editor.focused {
     border-color: var(--border-focus-hover);
     box-shadow: inset 0 0 24px var(--border-primary-hover-translucent-15),
                 0 0 0 2px var(--border-focus-hover);
@@ -25214,6 +25304,26 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     min-height: 18px;
     color: var(--text-highlight-active);
 }
+#world-manage-container .wm-progress {
+    appearance: none;
+    -webkit-appearance: none;
+    display: block;
+    width: 100%;
+    height: 4px;
+    margin-top: 4px;
+    border: none;
+    background: var(--border-subtle);
+}
+#world-manage-container .wm-progress[hidden] {
+    display: none;
+}
+#world-manage-container .wm-progress::-webkit-progress-bar {
+    background: var(--border-subtle);
+}
+#world-manage-container .wm-progress::-webkit-progress-value {
+    background: var(--text-highlight-active);
+    transition: width 0.2s;
+}
 #world-manage-container .wm-tabs {
     flex-shrink: 0;
 }
@@ -25547,6 +25657,8 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
   100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
 .cd-banner h1{margin:0 0 6px;font-size:2.31rem;letter-spacing:.06em;}
 .cd-banner p{margin:2px 0;font-size:1.14rem;opacity:.92;}
+/* The forfeit question over a staked table: A forfeits, B stays. */
+.cd-confirm .cd-confirm-btns{display:flex;gap:12px;justify-content:center;margin-top:10px;}
 
 /* The card being held is the duel's right column, so it reads on the shared
    detail scale and in the shared inks (docs/task/ui_fixing.md). It keeps a
@@ -26297,6 +26409,8 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .qb-p-row { display: flex; align-items: center; gap: 10px; padding: 5px 8px; cursor: pointer;
   font-size: 1.14rem; border-bottom: 1px solid rgba(139,90,40,0.2); }
 .qb-p-row:hover { background: rgba(255,215,106,0.35); }
+/* The shelf row under the pad cursor. */
+.qb-p-row.focused { background: var(--highlight-paper); box-shadow: inset 3px 0 0 var(--border-accent-deepest); }
 .qb-p-name { flex: 1 1 auto; }
 .qb-p-price { flex: 0 0 140px; text-align: right; font-weight: bold; color: #5d3a00; }
 .qb-p-held { flex: 0 0 120px; text-align: right; opacity: 0.7; }
@@ -30438,6 +30552,93 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     margin-bottom: 8px;
 }
 
+/* The help seal (window.UIHelp, ItemSystem/ItemSystemUtils.js): a round "?" in
+   the top right corner of any page that explains itself. The companion tabs
+   share that corner, so they step left of it. */
+.ui-help-btn {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    z-index: 40;
+    min-width: 26px;
+    height: 26px;
+    padding: 0 7px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    font-weight: bold;
+    line-height: 1;
+    color: var(--text-primary-hover);
+    background: var(--bg-panel);
+    border: 1.5px solid var(--text-primary-hover);
+    border-radius: 13px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.ui-help-btn:hover {
+    box-shadow: 0 0 0 2px var(--text-primary-hover);
+}
+
+.ui-help-btn[hidden] {
+    display: none;
+}
+
+.ui-help-host .companion-switcher {
+    padding-right: 38px;
+}
+
+/* The sheet itself: the shared panel, over every other panel. */
+.ui-overlay.ui-help-overlay {
+    z-index: 1400;
+}
+
+.ui-help-panel {
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+}
+
+.ui-help-title {
+    font-family: var(--font-ui);
+    font-size: 1.3rem;
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    color: var(--text-primary-hover);
+    margin-bottom: 6px;
+}
+
+.ui-help-intro {
+    margin-bottom: 10px;
+}
+
+.ui-help-row {
+    padding: 8px 4px;
+    border-bottom: 1px solid var(--border-primary-hover-translucent-15);
+}
+
+.ui-help-row:last-child {
+    border-bottom: none;
+}
+
+.ui-help-name {
+    font-family: var(--font-ui);
+    font-weight: bold;
+    color: var(--text-primary-hover);
+    margin-bottom: 2px;
+}
+
+.ui-help-text {
+    font-family: var(--font-ui);
+    font-size: 0.92rem;
+    line-height: 1.45;
+    color: var(--text-text-alt-4);
+}
+
 /* The detail card: a fixed head, a body that scrolls, and an action strip that
    stays on the page. Nothing inside it may set its own height. */
 .ui-detail {
@@ -30608,6 +30809,11 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     border: 1.5px solid var(--text-primary-hover);
     border-radius: 4px;
     outline: none;
+}
+
+/* The name field under the pad cursor of a panel (A opens the letter sheet). */
+.ui-panel .ui-input.selected {
+    box-shadow: 0 0 0 2px var(--text-primary-hover);
 }
 
 /* A fact: what it is called, and the answer under it. Two to a line, and a
@@ -31081,6 +31287,133 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .onu-stat--population  { background: var(--text-navy); }
 .onu-stat--information { background: var(--text-text-alt-8); }
 .onu-stat--arcane      { background: var(--text-text-alt-19); }
+.onu-stat--legitimacy  { background: var(--faction-accord-allied); }
+.onu-stat--stability   { background: var(--text-navy); }
+.onu-stat--unrest      { background: var(--faction-rep-nemesis); }
+.onu-stat--mood        { background: var(--accent-amber-gold); }
+.onu-stat--share       { background: var(--border-primary-hover-translucent-15); }
+.onu-stat--winner      { background: var(--text-primary-hover); }
+
+/* The Politics menu (Scene_Politics, js/plugins/NPC/ONUAssemblyUI.js): the
+   shared spread, a place line under the title, the tab rail, and a list of
+   offices, parties and records. A row is a word on the page until it is the
+   one under the cursor, which takes the gold hairline and nothing behind it. */
+.politics-scene .pol-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.pol-place {
+    flex: 0 0 auto;
+    font-family: var(--font-ui);
+    font-size: var(--fs-caption);
+    color: var(--text-detail-label);
+    margin-bottom: var(--sp-3);
+}
+
+.pol-list {
+    overflow-y: auto;
+}
+
+.pol-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: 8px 12px;
+    margin-bottom: 4px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.pol-row:hover,
+.pol-row.selected {
+    border-color: var(--text-primary-hover);
+}
+
+.pol-row-main {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.pol-row-name {
+    font-family: var(--font-ui);
+    font-size: var(--fs-body);
+    font-weight: bold;
+    color: var(--text-success-active);
+}
+
+.pol-row.selected .pol-row-name {
+    color: var(--text-primary-hover);
+}
+
+.pol-row-sub {
+    font-family: var(--font-ui);
+    font-size: var(--fs-caption);
+    color: var(--text-detail-label);
+}
+
+.pol-row-badge {
+    flex: 0 0 auto;
+    font-family: var(--font-ui);
+    font-size: var(--fs-chip);
+    font-weight: bold;
+    color: var(--text-primary-hover);
+}
+
+.pol-election-meta {
+    font-family: var(--font-ui);
+    font-size: var(--fs-caption);
+    color: var(--text-detail-label);
+    margin-bottom: var(--sp-2);
+}
+
+/* The founding sheet: a modal over the spread. The fields on the left, what
+   they add up to on the right, Found and Cancel under both. */
+.ui-panel.pol-draft-box {
+    width: min(1040px, 92vw);
+    height: min(640px, 86vh);
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.pol-draft-head {
+    flex: 0 0 auto;
+    margin-bottom: var(--sp-3);
+}
+
+.pol-draft-head .title {
+    margin: 0;
+}
+
+.pol-draft-sub {
+    font-family: var(--font-ui);
+    font-size: var(--fs-caption);
+    color: var(--text-detail-label);
+}
+
+.pol-draft-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: var(--sp-5);
+}
+
+.pol-draft-list,
+.pol-draft-detail {
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.pol-draft-box .ui-panel-actions {
+    flex: 0 0 auto;
+}
 
 .onu-mark--carried { color: var(--faction-accord-allied); }
 .onu-mark--failed  { color: var(--faction-accord-hostile); }
@@ -38502,6 +38835,12 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 }
 
 .title-veil--fading { transition: opacity var(--title-veil-fade, 600ms) ease-out; }
+
+/* The Eris camera behind the title: whatever DOM her map scene puts up is
+   held hidden (it keeps its box, so nothing reflows), and the dialogue box she
+   is allowed to show lets every click through to the title menu. */
+.title-eris-hidden { visibility: hidden !important; }
+.title-eris-passthrough { pointer-events: none !important; }
 .title-veil--out { opacity: 0; }
 
 /* Anything TitleLayout.place() has anchored. */
@@ -39169,8 +39508,10 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 /* A soft spot, beside the monster: the element's symbol and the multiplier in
    white. No tag and no plate, so it reads as a mark on the creature rather
-   than a second row of chips. */
-.bse-hud-weak {
+   than a second row of chips. An element it shrugs off entirely or drinks
+   in is marked the same way, beneath the soft spots. */
+.bse-hud-weak,
+.bse-hud-null {
     display: flex;
     align-items: center;
     gap: 3px;

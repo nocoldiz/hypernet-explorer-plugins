@@ -66,5 +66,9 @@
   "combatStatistics": "Statistiche di combattimento",
   "release": "Congeda",
   "practiceBattle": "Battaglia di addestramento",
-  "practiceTooFew": "Servono almeno due truppe combattenti per un'esercitazione."
+  "practiceTooFew": "Servono almeno due truppe combattenti per un'esercitazione.",
+  "fireAll": "Licenzia tutti",
+  "fireAllTitle": "Licenziare l'intera compagnia?",
+  "fireAllBody": "Vuoi davvero licenziare tutte le {count} truppe? La scelta è irreversibile e ogni squadra verrà sciolta.",
+  "firedAll": "La compagnia è stata congedata: {count} truppe licenziate."
 }

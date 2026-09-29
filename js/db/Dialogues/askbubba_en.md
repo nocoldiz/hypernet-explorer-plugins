@@ -566,7 +566,7 @@ And when the god dies?
 
 Bubba:
 The spells stop, dear.
-Most of the sacred repertoire the Vatican owns has been dead weight since the 31st of December 2001.
+Most of the sacred repertoire the Vatican owns has been dead weight since the 1st of January 2001.
 
 Em:
 Because of me.

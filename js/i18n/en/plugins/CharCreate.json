@@ -267,6 +267,14 @@
       "name": "Independent Warlord",
       "desc": "Begin in command of [40 troops] drawn from random factions, loyal to no one, with enough money to cover [two weeks of their upkeep]."
     },
+    "originGoblin": {
+      "name": "Goblin Mode",
+      "desc": "Your whole party are [goblins]. Begin in a place of your choice, but only among the [places the Goblin Horde holds] when the game starts."
+    },
+    "originGoblinHorde": {
+      "name": "Goblin Horde",
+      "desc": "Goblins of the Horde itself: begin in a place the Horde holds, in command of [{count} Goblin Horde troops] with [two weeks of their upkeep], welcome with the Horde and [hated by every power at war with it]."
+    },
     "originCrash": {
       "name": "Crash Landed",
       "desc": "Begin [stranded on a random planet] in an uncharted galaxy, ship [damaged], nearly out of fuel and with [no jump charges] left."
@@ -575,6 +583,14 @@
   "2WeeksOfTheirWagesInCash": "2 weeks of their wages, in cash",
   "40FromTheFactionYouPick": "40, from the faction you pick",
   "40FromTheFactionYouDeserted": "40, from the faction you deserted",
+  "aCityTheGoblinHordeHolds": "A place the Goblin Horde holds, of your choice",
+  "people": "People",
+  "everyMemberAGoblin": "Every member is a goblin",
+  "goblinHordeTroopsTotal": "{count} Goblin Horde troops",
+  "goblinHordeUpkeep": "{weeks} weeks of their wages, {amount} euros in cash",
+  "standing": "Standing",
+  "goblinHordeStanding": "Revered by the Horde, hostile to its war enemies",
+  "goblinNoHordeDestination": "The Goblin Horde holds no place on the map right now: any city will do.",
   "cash": "Cash",
   "startingOut": "Starting Out",
   "language": "Language",
@@ -631,6 +647,9 @@
     "INTIMIDATION": "Intimidation. How threatening the character's clothes and gear appear."
   },
   "characterType": "Character Type",
+  "portraitStyle": "Portrait",
+  "portraitBust": "2D Bust",
+  "portraitModel": "3D Model",
   "traitTypeLabel": "TRAIT",
   "traitCategoryLabel": {
     "physical": "PHYSICAL",

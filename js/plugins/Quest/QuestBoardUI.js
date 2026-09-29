@@ -154,6 +154,7 @@
         const confirmAb = t.closest("[data-confirm-abandon]");
         if (confirmAb) { this._doAbandon(confirmAb.dataset.confirmAbandon); return; }
         if (t.closest("[data-close-compose]")) { this._closeComposer(); return; }
+        if (t.closest("[data-picker-search]")) { this._openPickerSearch(); return; }
         if (t.closest("[data-close-picker]")) { this._composer.picker = null; SoundManager.playCancel(); this._refresh(); return; }
         const pick = t.closest("[data-cpick]");
         if (pick) {
@@ -164,6 +165,7 @@
         const page = t.closest("[data-cpage]");
         if (page) {
           this._composer.picker.page += Number(page.dataset.cpage);
+          this._composer.picker.cursor = 0;
           SoundManager.playCursor();
           this._refresh();
           return;
@@ -224,6 +226,7 @@
           return;
         }
         picker.page = 0;
+        picker.cursor = 0;
         ev.preventDefault();
         ev.stopPropagation();
         this._refresh();
@@ -797,7 +800,7 @@
 
     // ---- the shelf a notice picks things off ----
     _openPicker(which) {
-      this._composer.picker = { which, query: "", page: 0 };
+      this._composer.picker = { which, query: "", page: 0, cursor: 0 };
       SoundManager.playOk();
       this._refresh();
     }
@@ -840,9 +843,12 @@
       const pages = Math.max(1, Math.ceil(all.length / PER));
       p.page = Math.max(0, Math.min(p.page, pages - 1));
       const slice = all.slice(p.page * PER, p.page * PER + PER);
-      const rows = slice.map(e => {
+      p.count = slice.length;
+      p.cursor = Math.max(0, Math.min(p.cursor || 0, slice.length - 1));
+      const rows = slice.map((e, i) => {
         const held = $gameParty.numItems(e.obj);
-        return `<div class="qb-p-row" data-cpick="${e.kind}:${e.id}">
+        const focused = i === p.cursor ? " focused" : "";
+        return `<div class="qb-p-row${focused}" data-cpick="${e.kind}:${e.id}" data-pad="select">
           ${iconHTML(e.obj.iconIndex)}
           <span class="qb-p-name">${esc(e.obj.name)}</span>
           <span class="qb-p-price">${esc(api.euros(e.obj.price || 0))}</span>
@@ -852,14 +858,14 @@
       return `<div id="qb-pick-backdrop"><div id="qb-pick">
         <div class="qb-p-head">
           <span>${p.which === "wanted" ? T('QuestBoard.composePickWanted') : T('QuestBoard.composePickGoods')}</span>
-          <span class="qb-p-search">${T('QuestBoard.composeSearch')}: <b>${esc(p.query) || "&hellip;"}</b></span>
+          <span class="qb-p-search" data-picker-search="1" data-pad="filter">${T('QuestBoard.composeSearch')}: <b>${esc(p.query) || "&hellip;"}</b></span>
           <span class="qb-p-page">${p.page + 1}/${pages}</span>
         </div>
         <div class="qb-p-list">${rows}</div>
         <div class="qb-d-btns">
-          <span class="qb-btn" data-cpage="-1">&lsaquo;</span>
-          <span class="qb-btn" data-cpage="1">&rsaquo;</span>
-          <span class="qb-btn" data-close-picker="1">${T('QuestBoard.back')}</span>
+          <span class="qb-btn" data-cpage="-1" data-pad="prev">&lsaquo;</span>
+          <span class="qb-btn" data-cpage="1" data-pad="next">&rsaquo;</span>
+          <span class="qb-btn" data-close-picker="1" data-pad="back">${T('QuestBoard.back')}</span>
         </div>
       </div></div>`;
     }
@@ -1018,11 +1024,11 @@
         this._back();
         return;
       }
-      if (Input.isTriggered("tab") || Input.isTriggered("pagedown") || Input.isTriggered("pageup")) {
+      const tabDir = window.UINav ? window.UINav.tabDir() : 0;
+      if (tabDir) {
         const order = ["offers", "contracts", "posted"];
-        const back = Input.isTriggered("pageup");
         const i = order.indexOf(this._tab);
-        this._switchTab(order[(i + (back ? order.length - 1 : 1)) % order.length]);
+        this._switchTab(order[(i + (tabDir < 0 ? order.length - 1 : 1)) % order.length]);
         return;
       }
       if (Input.isTriggered("ok")) {
@@ -1038,12 +1044,13 @@
 
       const count = this._tab === "posted" ? this._cards().length + 1 : this._cards().length;
       if (!count) return;
-      let moved = false;
-      const perRow = this._perRow();
-      if (Input.isRepeated("right")) { this._focus = (this._focus + 1) % count; moved = true; }
-      else if (Input.isRepeated("left")) { this._focus = (this._focus - 1 + count) % count; moved = true; }
-      else if (Input.isRepeated("down")) { this._focus = Math.min(count - 1, this._focus + perRow); moved = true; }
-      else if (Input.isRepeated("up")) { this._focus = Math.max(0, this._focus - perRow); moved = true; }
+      // The notes are pinned in rows: the cursor follows the drawn columns
+      // and never wraps into another one.
+      const dir = window.UINav ? window.UINav.navDir() : null;
+      if (!dir) return;
+      const next = window.UINav.gridStep(this._focus, dir, count, this._perRow());
+      const moved = next !== this._focus;
+      this._focus = next;
       if (moved) {
         SoundManager.playCursor();
         this._paintFocus();
@@ -1075,16 +1082,74 @@
       if (Input.isRepeated("left")) { this._adjustRow(rows[c.row].id, -1); return; }
     }
 
+    // The shelf is a list: up and down walk it, A takes the thing under the
+    // cursor, left / right (and L1 / R1) turn its pages and X opens the search.
     _updatePicker() {
       const p = this._composer.picker;
+      if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) return;
       if (Input.isTriggered("cancel")) {
         this._composer.picker = null;
         SoundManager.playCancel();
         this._refresh();
         return;
       }
-      if (Input.isRepeated("right")) { p.page++; SoundManager.playCursor(); this._refresh(); return; }
-      if (Input.isRepeated("left")) { p.page = Math.max(0, p.page - 1); SoundManager.playCursor(); this._refresh(); return; }
+      if (Input.isTriggered("shift")) { this._openPickerSearch(); return; }
+      if (Input.isTriggered("ok")) {
+        const row = this._el && this._el.querySelectorAll("#qb-pick .qb-p-row")[p.cursor || 0];
+        if (row && row.dataset.cpick) {
+          const [kind, id] = row.dataset.cpick.split(":");
+          this._pickGoods(kind, Number(id));
+        } else {
+          SoundManager.playBuzzer();
+        }
+        return;
+      }
+      const tabDir = window.UINav ? window.UINav.tabDir() : 0;
+      const dir = window.UINav ? window.UINav.navDir() : null;
+      if (tabDir > 0 || dir === "right") { p.page++; p.cursor = 0; SoundManager.playCursor(); this._refresh(); return; }
+      if (tabDir < 0 || dir === "left") { p.page = Math.max(0, p.page - 1); p.cursor = 0; SoundManager.playCursor(); this._refresh(); return; }
+      if (dir === "up" || dir === "down") {
+        const count = p.count || 0;
+        if (!count) return;
+        const next = window.UINav.gridStep(p.cursor || 0, dir, count, 1);
+        if (next === p.cursor) return;
+        p.cursor = next;
+        SoundManager.playCursor();
+        this._paintPickerFocus();
+      }
+    }
+
+    _paintPickerFocus() {
+      const p = this._composer && this._composer.picker;
+      if (!p || !this._el) return;
+      const rows = this._el.querySelectorAll("#qb-pick .qb-p-row");
+      rows.forEach((row, i) => row.classList.toggle("focused", i === p.cursor));
+      const at = rows[p.cursor];
+      if (at && at.scrollIntoView) at.scrollIntoView({ block: "nearest" });
+    }
+
+    // With no keyboard in hand the search is typed on the pad's letter sheet;
+    // a keyboard just types into the shelf, as it always did.
+    _openPickerSearch() {
+      const p = this._composer && this._composer.picker;
+      if (!p) return;
+      const pad = typeof Input.lastInputDevice === "function" && Input.lastInputDevice() === "pad";
+      if (!pad || !window.Controller || typeof Controller.textEntry !== "function") return;
+      if (window.UINav) window.UINav.swallowHeld();
+      Controller.textEntry({
+        title: T('QuestBoard.composeSearch'),
+        value: p.query || "",
+        max: 40,
+        onCommit: (value) => {
+          if (!this._composer || this._composer.picker !== p) return;
+          p.query = String(value || "");
+          p.page = 0;
+          p.cursor = 0;
+          if (window.UINav) window.UINav.swallowHeld();
+          this._refresh();
+        },
+        onCancel: () => { if (window.UINav) window.UINav.swallowHeld(); }
+      });
     }
   }
 

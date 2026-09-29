@@ -1,0 +1,561 @@
+{
+  "_comment": "Discorsi sulle specializzazioni (NPCConversation SpecTalk). {spec} è il nome della specializzazione come lo legge il giocatore (una specializzazione d'arma usa invece il suo weaponTopic), {level} il nome del grado (Avanzato, Maestro), {name} l'altra persona in una domanda con risposta. Le liste sono per gruppo di voce: boastful, humble, analytical, warm, wry, playful, più em e bubba, che tengono la loro voce.",
+  "talk": {
+    "boastful": [
+      "Nessuno in questa città mi si avvicina in {spec}. {Nessuno|Neanche uno}.",
+      "{level} in {spec}. Dillo piano, suona ancora meglio.",
+      "Chiedi a chiunque chi è il migliore in {spec}. Anzi, lascia stare. Sono io.",
+      "Potrei fare {spec} {nel sonno|con una mano sola|a occhi chiusi}, e certi giorni lo faccio.",
+      "Dovrebbero mettere la mia faccia su un'insegna: {spec}, fatto come si deve, chiedere qui."
+    ],
+    "humble": [
+      "Me la cavo {non male|abbastanza, credo} in {spec}. Almeno, così mi dicono.",
+      "{spec} è l'unica cosa che non rovino. Di solito.",
+      "Anni di {spec} e certi {giorni|mattini} mi sento ancora un principiante.",
+      "Oggi qualcuno mi ha chiamato esperto di {spec}. Non sapevo dove guardare.",
+      "Ho solo continuato a esercitarmi in {spec}. Non volevo arrivare così lontano."
+    ],
+    "analytical": [
+      "Il segreto di {spec} è il metodo. Il {novanta|grosso} per cento è fare bene la parte noiosa.",
+      "Sto affinando il mio approccio a {spec}. {Piccoli margini|Minimi cambiamenti}, grande differenza.",
+      "La gente pensa che {spec} sia talento. È ripetizione, misurata e corretta.",
+      "Al livello {level}, {spec} smette di essere regole e diventa eccezioni.",
+      "Tengo a mente ogni errore che ho fatto in {spec}. È una lista lunga, e utile."
+    ],
+    "warm": [
+      "Adoro {spec}. {È la parte della giornata che sento mia|Rende le giornate utili}.",
+      "Se qualcuno vuole imparare {spec}, glielo insegnerei {volentieri|con piacere}.",
+      "Anni di {spec}, e mi fa ancora sorridere quando va bene.",
+      "Una volta qualcuno mi ha insegnato {spec} per niente. Sto ancora restituendo il favore.",
+      "Fare {spec} per le persone a cui voglio bene è la parte più bella dell'esserne capace."
+    ],
+    "wry": [
+      "{level} in {spec}. {Tanto mi serve|E l'affitto arriva lo stesso}.",
+      "Essere bravi in {spec} vuol dire soprattutto che tutti te lo chiedono gratis.",
+      "{spec}. Sono bravo. Ecco il problema, ormai ci sono incastrato.",
+      "Tutti quegli anni di {spec} e il mondo non se n'è ancora accorto. Mi sta bene.",
+      "Padroneggiare {spec} è stato facile. Trovare qualcuno a cui importi, quello è difficile."
+    ],
+    "playful": [
+      "{spec} è {praticamente|solo} un gioco di cui conosco tutti i trucchi.",
+      "Dammi {spec} e {un pomeriggio libero|un angolo tranquillo} e ti mostro qualcosa che non hai mai visto.",
+      "Ogni volta che faccio {spec} provo una cosa nuova. {A volte funziona pure|Metà delle volte va storta}.",
+      "{spec}? Potrei parlarne per ore. Non tentarmi.",
+      "Stanotte ho sognato {spec}. Mi sono svegliato con tre idee nuove e il mal di testa."
+    ],
+    "em": [
+      "{spec}. {level}. Tengo appunti sui miei errori, e il quaderno si sta assottigliando.",
+      "Ho ridotto {spec} a un metodo. Lo spiego a chiunque me lo chieda, e a qualcuno che non lo fa.",
+      "{spec} è un sistema. L'ho smontato due volte e l'ho rimontato meglio.",
+      "Se vuoi {spec} fatto correttamente, sono la persona corretta. È un fatto, non un vanto.",
+      "Ogni volta che miglioro in {spec}, trovo un modo nuovo di sbagliarlo. Affascinante."
+    ],
+    "bubba": [
+      "Uè, {spec}? È il mio pane quotidiano, tesoro. {Mannaggia|Madonna}, quanto sono bravo.",
+      "Chiano chiano, così si fa {spec}. Ci ho messo anni a impararlo con calma.",
+      "{spec}, guaglio'. Come aggiustare un motore: prima ascolti, poi le mani.",
+      "Non vado fiero di molto, ma {spec}? Lì ci metto la firma.",
+      "Mia nonna diceva che non sarei stato buono a niente. Doveva vedermi in {spec}, tesoro."
+    ]
+  },
+  "weapon": {
+    "light": {
+      "boastful": [
+        "Sbatti le palpebre e la mia lama è già nel fodero. {Nessuno|Nessuno qui} è più veloce.",
+        "La velocità batte la stazza. L'ho dimostrato su sciocchi più grossi di te.",
+        "Un coltello in mano mia {firma|scrive} da solo il suo nome. Chiedi a chi l'ha incontrato."
+      ],
+      "humble": [
+        "Sono svelto con una lama leggera. Non è {granché|niente di speciale}, mi esercito tanto.",
+        "Le armi piccole mi si addicono. A dire il vero preferirei non averne bisogno.",
+        "Dicono che sono veloce col pugnale. Io cerco solo di non tagliarmi."
+      ],
+      "analytical": [
+        "Una lama leggera scambia portata con ritmo. Vinci nel mezzo secondo in cui l'altro decide.",
+        "Prima i piedi, poi il polso. Il filo è la parte meno importante di un pugnale.",
+        "Arma corta, archi corti, nessun gesto sprecato. È tutto ciò che vuol dire {level}."
+      ],
+      "warm": [
+        "Il mio primo coltello era un regalo. Lo tengo affilato, e lo tengo per proteggere la gente.",
+        "Insegnerei a chiunque a maneggiare una lama piccola. Tutti dovrebbero sapersi difendere.",
+        "Le mani svelte servono più ad aiutare che a ferire. Quasi sempre."
+      ],
+      "wry": [
+        "Veloce col coltello. Fantastico alle feste, pessimo per farsi amici.",
+        "Lame leggere. Tutto il pericolo, nessun rispetto.",
+        "Anni di pratica per tagliare il pane più in fretta di chiunque. Ne è valsa la pena."
+      ],
+      "playful": [
+        "Guarda, faccio girare un pugnale {tre|quattro} volte e lo riprendo per il manico. Di solito.",
+        "Una lama leggera è una compagna di ballo che non ti pesta mai i piedi.",
+        "Una volta ho sbucciato una mela in un'unica striscia durante una rissa. Non chiedere com'è finita la rissa."
+      ]
+    },
+    "sword": {
+      "boastful": [
+        "Mostrami uno spadaccino in città che riesca a toccarmi. {Aspetto|Dai, aspetto}.",
+        "Guardia, taglio, stoccata. Le faccio tutte e tre meglio di chiunque tu abbia conosciuto.",
+        "La mia spada non ha mai perso un duello. Io nemmeno, guarda caso."
+      ],
+      "humble": [
+        "Con la spada me la cavo. Però preferisco ancora parlare.",
+        "Mi alleno con la spada da anni. C'è sempre qualcuno più bravo, da qualche parte.",
+        "Il mio maestro direbbe che la mia guardia è ancora troppo bassa. Avrebbe ragione."
+      ],
+      "analytical": [
+        "La scherma è geometria con delle conseguenze. Angoli e distanza, nient'altro.",
+        "Quasi tutti guardano la lama. Guarda i fianchi, e saprai il taglio prima che arrivi.",
+        "La stoccata è onesta, il taglio perdona. Sapere quale usare è roba da {level}."
+      ],
+      "warm": [
+        "Una buona spada è una promessa: stare tra i guai e le persone che ami.",
+        "Mi esercito ancora con la spada ogni mattina. Mi schiarisce la testa per la giornata.",
+        "Chi vuole imparare la spada sa dove trovarmi. Portate pazienza, non orgoglio."
+      ],
+      "wry": [
+        "Sono {level} con la spada. Il mondo è passato ai fucili e si è scordato di avvisarmi.",
+        "Una spada. Pesante sul fianco, inutile in coda.",
+        "La scherma: la nobile arte di essere bravissimi in qualcosa per cui nessuno ti assume."
+      ],
+      "playful": [
+        "Niente suona meglio di una spada che esce dal fodero. {Niente|Forse i fuochi d'artificio}.",
+        "Do un nome alle mie spade. Questa si chiama Gerardo. Gerardo ne ha viste tante.",
+        "So tagliare lo stoppino di una candela senza spegnere la fiamma. Più che altro un trucco da festa."
+      ]
+    },
+    "heavy": {
+      "boastful": [
+        "Dammi la cosa più grossa che hai. La faccio roteare tutto il giorno.",
+        "Quando mi impegno in un colpo, i muri {si spostano|si arrendono}. Anche la gente.",
+        "Quel martello l'hanno fatto per due uomini. Io lo uso con una mano, nei giorni storti."
+      ],
+      "humble": [
+        "Sono abbastanza forte per le armi pesanti. È più o meno tutto quello che serve.",
+        "Le armi grosse si adattano al mio fisico. Non ci metto molta furbizia.",
+        "Cerco di essere delicato con un grande martello. È più difficile di quanto sembri."
+      ],
+      "analytical": [
+        "Un'arma pesante è gestione dello slancio. Fermare il colpo è la vera abilità.",
+        "O ti impegni del tutto o non colpire affatto. Le mezze misure con una mazza ti fanno ammazzare.",
+        "Il lavoro lo fa la schiena, non le braccia. Mi ci sono voluti anni per capirlo."
+      ],
+      "warm": [
+        "Il mio martellone costruisce più recinti di quanti ne rompa. Mi piace così.",
+        "Portare la roba pesante è il mio modo di badare agli amici. Qualcuno deve farlo.",
+        "Insegno a chiunque a colpire in sicurezza. Nessuno dovrebbe rovinarsi la schiena imparando."
+      ],
+      "wry": [
+        "Maestro delle armi pesanti. Le mie spalle hanno sporto reclamo anni fa.",
+        "Tutti ti vogliono intorno quando c'è da spaccare qualcosa. Mai a cena.",
+        "Armi a due mani. Mal di schiena a due mani."
+      ],
+      "playful": [
+        "Niente come il suono di un grande martello su un'incudine. O su una porta. O su un armadio.",
+        "Una volta ho spaccato un ceppo, il tronco sotto, e il terreno sotto quello.",
+        "Colpo grosso, sorriso grosso. Ecco tutta la mia filosofia."
+      ]
+    },
+    "axe": {
+      "boastful": [
+        "Mettimi un'ascia in pugno e ti sgombero una foresta prima di pranzo.",
+        "Nessuno taglia come me. Gli alberi della regione {conoscono|temono} il mio nome.",
+        "Peso in avanti, un colpo, fatto. Il secondo non mi serve."
+      ],
+      "humble": [
+        "Ho la mano per l'ascia. Sono cresciuto spaccando legna, tutto qui.",
+        "Dicono che sono bravo con l'ascia. È che non mi piace sprecare colpi.",
+        "Io e l'ascia andiamo d'accordo. Io non la spingo troppo, e lei non mi morde."
+      ],
+      "analytical": [
+        "Un'ascia è tutta testa. Lascia che il peso guidi, le braccia devono solo sterzare.",
+        "L'uncino dietro la lama è la parte che si dimentica. Aggancia lo scudo, poi taglia.",
+        "Ogni colpo ha il suo angolo migliore. Trovalo una volta e non lo perdi più."
+      ],
+      "warm": [
+        "L'inverno è più facile con un vicino bravo con l'ascia. Sono felice di essere quel vicino.",
+        "Mio padre mi ha insegnato l'ascia. La insegno a chiunque me lo chieda.",
+        "C'è qualcosa di onesto in un'ascia. Sai sempre come stanno le cose, con lei."
+      ],
+      "wry": [
+        "{level} con l'ascia. Tutti ti trattano da boscaiolo o da assassino.",
+        "Esperto d'ascia. Quindi mi tocca ogni legna da spaccare della via, al prezzo di un grazie.",
+        "L'ascia non mi delude mai. La gente, invece, è un'altra storia."
+      ],
+      "playful": [
+        "So piantare un'ascia lanciata in un bersaglio a venti passi. Il trucco è non pensarci.",
+        "Un'ascia è solo un attaccapanni molto serio. Prova.",
+        "Parlo con la mia ascia. Non ha ancora risposto, ma sa ascoltare."
+      ]
+    },
+    "whip": {
+      "boastful": [
+        "Schiocco la frusta e spengo una candela dall'altra parte della stanza. {Ogni volta|Al primo colpo}.",
+        "Portata, schiocco, presa. Nessuno arriva a tre metri da me.",
+        "Sentono la mia frusta e ripensano alla loro giornata."
+      ],
+      "humble": [
+        "La frusta è un'abilità strana, lo so. Mi capita solo di cavarmela.",
+        "Ho imparato la frusta in una fattoria. È più questione di pazienza che d'altro.",
+        "Sto attento con la frusta. È facile farsi male mentre la impari."
+      ],
+      "analytical": [
+        "Lo schiocco è la punta che rompe il muro del suono. Il resto è tempismo.",
+        "Una frusta è un'onda che lanci. Controlli l'onda, controlli lo scontro.",
+        "Avvolgere è più difficile che colpire. È lì che {level} comincia a vedersi."
+      ],
+      "warm": [
+        "Uso la frusta soprattutto per radunare le capre, a dire il vero. La rispettano più della gente.",
+        "Ti mostro la frusta, ma piano. La mia prima lezione mi ha lasciato un segno sull'orecchio.",
+        "Sembra crudele, ma nelle mani giuste una frusta tiene al sicuro una folla."
+      ],
+      "wry": [
+        "Maestro di frusta. La gente pensa il peggio di me, e di solito sbaglia.",
+        "La frusta. Nessuno ti prende sul serio finché non la schiocchi in casa.",
+        "Anni di pratica e sto ancora spiegando che non è un passatempo, è una disciplina."
+      ],
+      "playful": [
+        "Con la frusta riesco a strappare un cappello dalla testa. Ormai ne ho una piccola collezione.",
+        "Schiocco! Scusa. Abitudine. Ti ho spaventato? Era voluto.",
+        "Una frusta è solo un dito molto lungo e molto rumoroso. Ci indico le cose."
+      ]
+    },
+    "staff": {
+      "boastful": [
+        "Due estremità, e ti colpisco con entrambe prima che tu sbatta le palpebre.",
+        "Nessuno supera il mio bastone. Né con la spada, né con la lancia, né con il malumore.",
+        "Ho disarmato spadaccini con un manico di scopa. Immagina con un bastone vero."
+      ],
+      "humble": [
+        "Un bastone è solo un pezzo di legno. Ho solo passato tanto tempo col mio.",
+        "Me la cavo col bastone. Aiuta anche nelle lunghe camminate.",
+        "Non mi piace far male alla gente. Col bastone fermo una rissa senza farne troppo."
+      ],
+      "analytical": [
+        "Il bastone è tutto leva. Mani larghe per la forza, strette per la velocità.",
+        "Ogni colpo col bastone prepara l'altra estremità. Pensa a coppie.",
+        "Il controllo della distanza è tutto. Resta sulla punta e non possono raggiungerti."
+      ],
+      "warm": [
+        "Il mio bastone viene da un albero piantato da mia nonna. È di famiglia, in un certo senso.",
+        "Chiunque può imparare il bastone. Anche i bambini. Soprattutto i bambini, non hanno paura.",
+        "Bastone da passeggio di giorno, guardia di notte. Mi piace che faccia tutte e due le cose."
+      ],
+      "wry": [
+        "{level} col bastone. È un pezzo di legno. Sono un maestro del pezzo di legno.",
+        "Tutti pensano che io sia un mago. So solo picchiare la gente col legno.",
+        "Il bastone: l'arma più economica, l'apprendistato più lungo."
+      ],
+      "playful": [
+        "Gira, gira, spazza. Io e il mio bastone facciamo venire le vertigini ai vicini.",
+        "Una volta ho saltato un recinto con l'asta. Ho mancato un po' l'altro lato.",
+        "Il mio bastone fa anche da stendibiancheria. Bucato tattico."
+      ]
+    },
+    "bow": {
+      "boastful": [
+        "So spaccare una freccia già piantata nel bersaglio. L'ho fatto {due|tre} volte questo mese.",
+        "Trazione, ancoraggio, rilascio. Nessuno in questa regione tira come me.",
+        "Scegli un bersaglio, uno qualsiasi. Ha già la mia freccia dentro."
+      ],
+      "humble": [
+        "Con l'arco tiro discretamente. Occhi buoni, mani ferme, tutto qui.",
+        "L'arco è stato un amico silenzioso. Non serve che ne faccia chiasso.",
+        "A volte sbaglio ancora. Non credere a chi dice di non sbagliare mai."
+      ],
+      "analytical": [
+        "Il tiro con l'arco è costanza. Stessa trazione, stesso ancoraggio, stesso respiro, ogni volta.",
+        "Vento, caduta e distanza. Leggi queste tre cose e la freccia fa il resto.",
+        "Quasi tutti gli errori nascono nel rilascio. Le dita devono togliersi di mezzo."
+      ],
+      "warm": [
+        "Il tiro con l'arco mi calma. Solo io, la corda e il silenzio tra un tiro e l'altro.",
+        "Mia madre mi ha insegnato a tirare. Adoro tramandarlo.",
+        "Caccio con l'arco perché la mia famiglia mangi bene. L'abilità serve a questo."
+      ],
+      "wry": [
+        "Maestro arciere. Utilissimo, finché non piove.",
+        "Un arco nell'epoca dei fucili. Mi piacciono le cause perse, purché eleganti.",
+        "Serve un arciere solo quando qualcosa è già andato storto."
+      ],
+      "playful": [
+        "So colpire una mela sopra un cappello. Preferisco che il cappello stia su un palo.",
+        "Il suono più bello del mondo è una freccia che centra il bersaglio. Tunk!",
+        "Anche alle frecce do un nome. Perderle è sempre un piccolo funerale."
+      ]
+    },
+    "projectile": {
+      "boastful": [
+        "Coltelli, stelle, sassi, quello che vuoi. Se lo lancio, atterra dove dico io.",
+        "Ho colpito una moneta a trenta passi con un coltello da lancio. {Martedì|La settimana scorsa}, per la precisione.",
+        "Nessuno lancia come me. Nessuno ci va nemmeno vicino."
+      ],
+      "humble": [
+        "Me la cavo a lanciare le cose. Non è l'abilità più utile, lo so.",
+        "Buona mira, tutto qui. Da piccolo mi esercitavo sui barattoli.",
+        "Lancio dritto. Tutto il resto di me è un po' storto."
+      ],
+      "analytical": [
+        "Un'arma lanciata gira a un ritmo fisso. Impara la tua distanza in rotazioni.",
+        "Il punto di rilascio batte la forza ogni volta. Troppo presto, troppo alto. Troppo tardi, per terra.",
+        "Le armi a distanza sono matematica che fai col polso."
+      ],
+      "warm": [
+        "Ho imparato a lanciare con mio fratello, facendo rimbalzare i sassi. I giorni più belli che ricordo.",
+        "Lanciare richiede pazienza. Sono felice di averne con chiunque stia imparando.",
+        "La mia mira ci ha sfamati in qualche inverno magro. I conigli non se ne accorgono mai."
+      ],
+      "wry": [
+        "Armi da lancio. L'unica abilità in cui poi devi andare a riprendertela.",
+        "{level} nel lanciare cose. Il bersaglio delle freccette al bar mi teme, nient'altro.",
+        "Ogni coltello che ho lanciato sono dovuto andare a riprenderlo. Ottimo esercizio."
+      ],
+      "playful": [
+        "Scegli un nodo in quello steccato. Dai. Un nodo qualsiasi.",
+        "Nei giorni lenti faccio il giocoliere coi coltelli da lancio. I vicini hanno delle opinioni.",
+        "Lanciare è solo prendere al volo, al contrario, per conto degli altri."
+      ]
+    },
+    "gun": {
+      "boastful": [
+        "Faccio rosate più strette degli istruttori del poligono della polizia. {Lo sanno|Lo odiano}.",
+        "Scegli una bottiglia su quel muretto. Una qualsiasi. È andata.",
+        "Sotto pressione divento più fermo. Per questo sono il miglior tiratore in giro."
+      ],
+      "humble": [
+        "Sono un buon tiratore. Vorrei che non fosse qualcosa di cui ho bisogno.",
+        "Mani ferme e tanta pratica. Non c'è niente di magico.",
+        "Tengo la pistola pulita e spero di non doverla mai usare. Tutto qui."
+      ],
+      "analytical": [
+        "Il controllo del grilletto è tutto. Premi, non tirare. Il colpo deve sorprenderti.",
+        "Espira, pausa, premi. La precisione vive nella pausa.",
+        "Quasi tutti i tiri sbagliati sono manutenzione sbagliata. Pulisci l'arma e metà dei problemi spariscono."
+      ],
+      "warm": [
+        "Insegno la sicurezza con le armi a chiunque me lo chieda. Sapere è più sicuro che non sapere.",
+        "Porto un'arma perché chi mi sta intorno non debba farlo. La vedo così.",
+        "Il mio vecchio istruttore di tiro era l'uomo più gentile che abbia mai conosciuto. Cerco di somigliargli."
+      ],
+      "wry": [
+        "Tiratore scelto. Adesso me lo chiedono in tutti i moduli dell'assicurazione.",
+        "{level} con le armi da fuoco. Ogni discussione sembra molto breve.",
+        "Essere un buon tiratore vuol dire ripulire dopo i tiri sbagliati di tutti gli altri."
+      ],
+      "playful": [
+        "Una volta ho fatto saltare il tappo di una bottiglia dall'altra parte della piazza. Il vino era terribile.",
+        "Barattoli su uno steccato al tramonto. Il modo migliore di passare una serata.",
+        "Ricarico più in fretta di quanto mi allacci le scarpe. Questione di priorità."
+      ]
+    },
+    "claw": {
+      "boastful": [
+        "La distanza ravvicinata è casa mia. Entra qui con me e ne esci a brandelli.",
+        "Nessuno squarcia una guardia come me. {Nessuno|Nemmeno un'anima}.",
+        "I miei artigli hanno aperto porte, armature e almeno una discussione."
+      ],
+      "humble": [
+        "Sono bravo con gli artigli da mano. Non è uno stile elegante, lo so.",
+        "Gli artigli si adattano alle mie mani. Non vado in giro a vantarmene.",
+        "Combatto da vicino perché con le armi lunghe non valgo niente. È la verità."
+      ],
+      "analytical": [
+        "Gli artigli sono questione di angoli. Non colpisci attraverso, rastrelli di traverso.",
+        "Con gli artigli lo scontro si vince dentro la sua portata. Conta tutto l'ingresso.",
+        "Presa e forza del polso contano più delle lame sul guanto."
+      ],
+      "warm": [
+        "Fanno paura, ma ho usato gli artigli solo per proteggere qualcuno. Lo giuro.",
+        "Chi vuole imparare il corpo a corpo, gli mostro come farlo senza farsi male.",
+        "Con gli artigli mi arrampico, cucino e apro le lettere. Combattere è la cosa minore."
+      ],
+      "wry": [
+        "Maestro degli artigli. La gente cambia marciapiede. Non posso biasimarla.",
+        "Artigli da mano. Non immagini quanti guanti ho rovinato.",
+        "{level} nello strappare le cose. Ancora non riesco ad aprire un barattolo."
+      ],
+      "playful": [
+        "Grrr. Scusa. Ogni volta che metto gli artigli mi sento un gatto.",
+        "Ci ho inciso le mie iniziali su un albero. Era un albero molto grande.",
+        "Gli artigli sono solo coltelli che si danno il cinque."
+      ]
+    },
+    "glove": {
+      "boastful": [
+        "Nessuno dura tre riprese con me. {Nessuno|Neanche uno}.",
+        "I miei pugni hanno chiuso più risse delle armi di quasi tutti.",
+        "Metti i guantoni, in guardia. Ah, sei occupato? Lo immaginavo."
+      ],
+      "humble": [
+        "So tirare di boxe, un po'. Da ragazzo mi ha tenuto lontano dai guai, più o meno.",
+        "Con i pugni me la cavo. Cerco di non andare a cercare motivi per usarli.",
+        "Solo tante ore in palestra, tutto qui."
+      ],
+      "analytical": [
+        "La boxe è piedi e respiro. I pugni sono la parte minore.",
+        "Jab per misurare, diretto per chiudere. Tutto il resto sono note a margine.",
+        "Mento basso, gomiti stretti. È semplice. Farlo da stanchi è la parte difficile."
+      ],
+      "warm": [
+        "Il sabato insegno ai ragazzi in palestra. Sono già più bravi di me.",
+        "La boxe mi ha dato disciplina quando non ne avevo. Le devo molto.",
+        "Imparare a combattere mi ha reso più calmo, non più arrabbiato. Strano, vero?"
+      ],
+      "wry": [
+        "Bravo coi pugni. Non buono a molto altro, secondo mia madre.",
+        "{level} nel tirare pugni. Sorprendentemente pochi annunci di lavoro.",
+        "Prima o poi il naso di ogni campione somiglia al mio."
+      ],
+      "playful": [
+        "Vola, pungi, il solito. Ho una rima migliore ma è volgare.",
+        "Faccio pugilato con l'ombra davanti alle vetrine. La gente pensa che la saluti.",
+        "I miei guantoni hanno un nome. Il sinistro è Tuono, il destro è pure Tuono. Più facile così."
+      ]
+    },
+    "spear": {
+      "boastful": [
+        "Nessuno entra nella mia portata. {Nessuno di vivo|Nessuno, finora}.",
+        "Portata, affondo, posizione. Con una lancia potrei tenere un ponte da solo.",
+        "Porta una spada contro la mia lancia. Mi piacerebbe vedere come va a finire."
+      ],
+      "humble": [
+        "La lancia è un'arma semplice. Io sono solo testardo nell'esercitarmi.",
+        "Con la lancia me la cavo. È l'arma più antica che ci sia, chiunque può impararla.",
+        "La portata lunga si addice a chi è prudente. Io sono molto prudente."
+      ],
+      "analytical": [
+        "Una lancia è distanza che puoi tenere in mano. Tieni la punta in linea e devono girarci intorno.",
+        "Puntare il calcio contro una carica è la fisica che lavora al posto tuo.",
+        "Presa corta per la velocità, lunga per la portata. {level} vuol dire cambiarla senza pensarci."
+      ],
+      "warm": [
+        "Pescare con la lancia in un mattino tranquillo è la cosa che amo di più al mondo.",
+        "La lancia di mio nonno è appesa sopra la porta. La tengo oliata per lui.",
+        "Un muro di lance funziona solo se tutti si fidano l'uno dell'altro. Mi piace per questo."
+      ],
+      "wry": [
+        "Maestro di lancia. Prova a salirci su un autobus.",
+        "La lancia: magnifica in una falange, terribile in un corridoio.",
+        "L'arma più antica del mondo, e sono l'ultimo in città a prenderla sul serio."
+      ],
+      "playful": [
+        "So far cadere una mela dal ramo col calcio della lancia e prenderla sulla punta.",
+        "Pesca con la lancia, caccia con la lancia, lancia per prendere le cose dagli scaffali alti.",
+        "Ogni lancia è segretamente una forchetta molto lunga."
+      ]
+    }
+  },
+  "weaponTopic": {
+    "light": "lame leggere",
+    "sword": "scherma",
+    "heavy": "armi pesanti",
+    "axe": "combattimento con l'ascia",
+    "whip": "frusta",
+    "staff": "combattimento col bastone",
+    "bow": "tiro con l'arco",
+    "projectile": "armi da lancio",
+    "gun": "tiro a segno",
+    "claw": "combattimento con gli artigli",
+    "glove": "pugilato",
+    "spear": "lancia"
+  },
+  "question": {
+    "boastful": [
+      "{name}, in {spec} sono bravo quasi quanto te. Quasi. Cos'è che mi manca?",
+      "Va bene, {name}, {spec}. Mostrami il trucco e per primavera ti supero.",
+      "Dicono che sei il migliore in {spec}, {name}. Dimostralo: qual è il segreto?",
+      "{name}. {spec}. Dammi un consiglio, uno solo, e al resto ci penso io."
+    ],
+    "humble": [
+      "Ehm, {name}? Scusa il disturbo. Come sei diventato così bravo in {spec}?",
+      "{name}, posso chiederti una cosa su {spec}? Continuo a sbagliare.",
+      "In {spec} sono ancora un disastro, {name}. Da dove cominceresti?",
+      "Se non è troppo disturbo, {name}, cosa dovrebbe esercitare un principiante in {spec}?"
+    ],
+    "analytical": [
+      "{name}, in {spec}, cosa sbagliano i principianti senza accorgersene?",
+      "Domanda sincera, {name}: in {spec} conta di più la velocità o la precisione?",
+      "{name}, come capisci di essere davvero migliorato in {spec}?",
+      "Qual è la parte di {spec} che i libri non spiegano mai, {name}?"
+    ],
+    "warm": [
+      "{name}, ultimamente provo con {spec}. Qualche consiglio per chi comincia?",
+      "Sei così bravo in {spec}, {name}. Me ne mostreresti un pochino?",
+      "{name}, cosa ti ha fatto innamorare di {spec}?",
+      "Mi piacerebbe migliorare in {spec}, {name}. Cosa ti ha aiutato di più?"
+    ],
+    "wry": [
+      "{name}, dai. Dimmi che {spec} non è difficile come sembra. Mentimi, se serve.",
+      "Allora, {name}, {spec}. Vale la fatica, o sto perdendo tempo?",
+      "{name}, quanti anni di {spec} prima che smetta di essere un tormento?",
+      "Dimmi sinceramente, {name}. Qualcuno è davvero bravo in {spec}, o fingete tutti?"
+    ],
+    "playful": [
+      "{name}! Insegnami un trucco di {spec}. Uno appariscente. Per favore?",
+      "Svelto, {name}: qual è la cosa più bella che sai fare con {spec}?",
+      "{name}, se {spec} fosse un gioco, quale sarebbe il codice segreto?",
+      "Ieri ho provato con {spec} ed è andata storta, {name}. Cosa ho sbagliato?"
+    ],
+    "em": [
+      "{name}. {spec}. Ho tre domande e vorrei le risposte in ordine.",
+      "Spiegami {spec}, {name}. Non semplificarlo. Me ne accorgerei.",
+      "{name}, sto studiando {spec}. Dove fallisce il mio metodo?",
+      "In {spec} sei più bravo di me, {name}. Vorrei sapere esattamente perché."
+    ],
+    "bubba": [
+      "Uè, {name}, sei bravo in {spec}, eh? Come fa uno a impararlo?",
+      "{name}, tesoro, {spec}. Qual è il trucco? Sono un meccanico, mi piace vedere com'è fatto dentro.",
+      "Mannaggia, {name}, ho provato con {spec} e ho combinato un pasticcio. Dove ho sbagliato?",
+      "Chiano chiano, {name}. Spiegami {spec} come spiegheresti un carburatore."
+    ]
+  },
+  "answer": {
+    "boastful": [
+      "Facile, {name}. Guardami fare {spec} e copia tutto. Tutto.",
+      "Il segreto di {spec}? Essere me. Altrimenti, esercitati ogni giorno per dieci anni.",
+      "Hai chiesto alla persona giusta, {name}. Prima lezione: non dubitare mai di te.",
+      "Ah! Stammi vicino, {name}. Un po' del mio talento in {spec} potrebbe attaccarsi."
+    ],
+    "humble": [
+      "Oh, non sono poi così bravo, {name}. Esercita le basi finché non ti annoiano.",
+      "Sinceramente, {name}? Ho fatto io tutti gli errori per primo. Continua e basta.",
+      "Non so se sono io quello a cui chiedere, {name}, ma rallenta. A me ha aiutato.",
+      "Comincia in piccolo, {name}. È tutto quello che ho fatto, davvero."
+    ],
+    "analytical": [
+      "Scomponilo, {name}. Padroneggia un pezzo di {spec} alla volta e misura ognuno.",
+      "Prima la precisione, {name}. La velocità nasce dalla ripetizione, mai il contrario.",
+      "Prendi appunti, {name}. Ogni errore che scrivi è uno che non farai due volte.",
+      "Quasi tutti hanno fretta sulle basi di {spec}, {name}. Tu no."
+    ],
+    "warm": [
+      "Certo, {name}! Passa quando vuoi e ci esercitiamo insieme.",
+      "Sii gentile con te stesso, {name}. All'inizio tutti sono pessimi in {spec}.",
+      "Mi farebbe piacere aiutarti, {name}. Porta un amico, è più divertente.",
+      "Quello che mi ha aiutato di più è stato qualcuno di paziente. Lo sarò io per te, {name}."
+    ],
+    "wry": [
+      "Il segreto, {name}? Anni di noia e un po' di sfortuna.",
+      "Continua a sbagliare, {name}. Prima o poi finisci i modi per sbagliare.",
+      "Sinceramente, {name}, ne vale la pena. Solo non aspettarti che qualcuno ti ringrazi.",
+      "Nessuno è bravo all'inizio, {name}. Quasi nessuno lo è nemmeno alla fine."
+    ],
+    "playful": [
+      "Guarda bene, {name}. No, più da vicino. Adesso dimentica tutto e fallo a modo tuo.",
+      "Il codice segreto, {name}? Esercitati finché non sembra un gioco.",
+      "Provalo al contrario, {name}. Sul serio. Si impara di più dal pasticcio.",
+      "Ah! Cercami domani, {name}. Ti mostro la parte appariscente."
+    ],
+    "em": [
+      "Il tuo metodo fallisce al secondo passo, {name}. Quello di tutti. Sistema prima quello.",
+      "{spec} è un sistema, {name}. Impara il sistema e il resto è aritmetica.",
+      "Scrivi cosa fai, {name}, poi fai esattamente quello. Quasi nessuno ci riesce.",
+      "Tre regole, {name}: osserva, ripeti, correggi. In quest'ordine. Sempre."
+    ],
+    "bubba": [
+      "Chiano chiano, {name}. Prima ascolti, poi le mani. Come un motore.",
+      "Uè, tesoro, {spec} non si impara parlando. Prendilo in mano e sporcati le mani.",
+      "Mannaggia, {name}, tutti vogliono il trucco. Non c'è. Solo tempo.",
+      "Passa dal camper, guaglio'. Ti faccio vedere come si deve, col caffè."
+    ]
+  }
+}

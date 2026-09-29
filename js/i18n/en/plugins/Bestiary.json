@@ -16,6 +16,8 @@
   "randomizeSeed": "Randomize Seed",
   "seed": "Seed",
   "noBiologicalDescriptionRegistered": "No biological description registered.",
+  "elementAbsorb": "Absorbs",
+  "elementImmune": "Immune",
   "elementalAffinities": "Elemental Affinities",
   "noElementalWeaknessOrResistance": "No elemental weakness or resistance detected.",
   "slower": "Slower",

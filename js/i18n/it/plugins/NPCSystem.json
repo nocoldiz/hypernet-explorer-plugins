@@ -81,5 +81,16 @@
     "readOnly": "Appartiene a un altro viaggio. Puoi parlare, e nulla più.",
     "join": "Chiedigli di unirsi"
   },
-  "towerWorldOfFloor": "{world}, piano {floor}"
+  "towerWorldOfFloor": "{world}, piano {floor}",
+  "streetCrime": {
+    "pickpocket": "{thief} ha borseggiato {victim} e se l'è filata con {amount}.",
+    "pickpocketCaught": "{victim} ha sorpreso {thief} con la mano nella sua tasca!",
+    "pickpocketValuable": "{thief} ha sfilato {item} a {victim}.",
+    "valuableRecovered": "{victim} ha ripreso {item} a {thief}.",
+    "fight": "{a} e {b} stanno facendo a botte!",
+    "grudge": "{a} ha attaccato briga con {b}.",
+    "knockedOut": "{winner} ha steso {loser}.",
+    "recovered": "{victim} si è ripreso quello che {thief} aveva rubato."
+  },
+  "bountyCollected": "Taglia riscossa su {name}: {amount}"
 }

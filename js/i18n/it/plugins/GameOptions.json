@@ -126,7 +126,8 @@
     "dialogueVoicesVolume": "Quanto sono forti i suoni delle lettere sotto una battuta di dialogo, separati dagli altri effetti sonori.",
     "battleLogPosition": "In quale angolo dello schermo sta il resoconto della battaglia.",
     "battleCommandPosition": "Su quale lato dello schermo stanno i comandi di battaglia, la pagina delle abilità e lo zaino.",
-    "lowModelDetail": "Costruisce armi e oggetti procedurali con meno segmenti. Aiuta sulle macchine lente; i modelli appaiono piu spigolosi."
+    "lowModelDetail": "Costruisce armi e oggetti procedurali con meno segmenti. Aiuta sulle macchine lente; i modelli appaiono piu spigolosi.",
+    "simulationLog": "Ogni decisione presa sulla mappa da un membro del gruppo, un mostro o un PNG compare come notifica. Le mappe affollate ne producono molte."
   },
   "descState": {
     "musicArtistDisplay": [
@@ -189,7 +190,8 @@
     "autoExplore": "Esplorazione automatica",
     "noclip": "Noclip",
     "ascii": "ASCII",
-    "other": "Altro"
+    "other": "Altro",
+    "simulationLog": "Registro della simulazione"
   },
   "galaxyQuality": {
     "low": "Bassa",

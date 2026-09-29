@@ -66,5 +66,9 @@
   "combatStatistics": "Combat Statistics",
   "release": "Release",
   "practiceBattle": "Practice Battle",
-  "practiceTooFew": "Two fighting troops are needed for a drill."
+  "practiceTooFew": "Two fighting troops are needed for a drill.",
+  "fireAll": "Fire All",
+  "fireAllTitle": "Fire the Whole Company?",
+  "fireAllBody": "Are you certain you wish to fire all {count} troops? This cannot be undone, and every squad will be disbanded.",
+  "firedAll": "The company has been dismissed: {count} troops fired."
 }

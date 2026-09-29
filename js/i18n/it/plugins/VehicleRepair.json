@@ -112,5 +112,38 @@
   },
   "toast": {
     "criticalFailure": "{part} si è guastato. Il veicolo non si muove più."
+  },
+  "help": {
+    "title": "Il garage",
+    "items": {
+      "close": {
+        "name": "Chiudi",
+        "text": "Esce dal garage."
+      },
+      "portrait": {
+        "name": "Veicolo",
+        "text": "Il veicolo, la sua descrizione e se funziona. Un'astronave può cambiare aspetto da qui."
+      },
+      "status": {
+        "name": "Stato",
+        "text": "Danneggiato significa che un componente essenziale è allo 0% e il veicolo non si muove finché non viene riparato."
+      },
+      "tabs": {
+        "name": "Riparazione e Potenziamenti",
+        "text": "Passa dal riparare i pezzi al migliorare il veicolo."
+      },
+      "repair": {
+        "name": "Registro integrità",
+        "text": "Ogni pezzo con la sua integrità. Quelli essenziali tengono in moto il veicolo. Ripara un pezzo, o Riparazione totale per tutti, spendendo materiali."
+      },
+      "upgrades": {
+        "name": "Officina potenziamenti",
+        "text": "Miglioramenti comprati a livelli: accelerazione, velocità massima, capacità del serbatoio, riduzione dei danni, e per il camper guida sull'acqua e volo."
+      },
+      "help": {
+        "name": "? Aiuto",
+        "text": "Apre questa scheda. Col controller premi Select; premilo di nuovo, Indietro o Conferma per chiuderla."
+      }
+    }
   }
 }

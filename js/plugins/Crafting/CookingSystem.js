@@ -1789,10 +1789,6 @@
         const item1 = CookingSystem.getFirstItem();
         const item2 = CookingSystem.getSecondItem();
 
-        // Shoulder buttons change who is cooking, wherever the cursor is (TAB
-        // does the same on a keyboard, through CharSwitcher).
-        if (Input.isTriggered('pagedown')) { this.cycleCookActor(1); return; }
-        if (Input.isTriggered('pageup')) { this.cycleCookActor(-1); return; }
 
         if (this._activeArea === "pantry") {
             if (itemsList.length === 0) {
@@ -1803,12 +1799,15 @@
                 return;
             }
 
-            // The pantry is drawn three across, like the backpack's pockets, so
-            // the cursor walks columns sideways and rows up and down.
-            const COLS = 3;   // matches .backpack-grid grid-template-columns
-            const moveCursor = (delta) => {
-                const len = itemsList.length;
-                this._pantryIndex = ((this._pantryIndex + delta) % len + len) % len;
+            // The pantry is drawn as a grid, like the backpack's pockets, so
+            // the cursor walks the drawn columns sideways and the rows up and
+            // down, and never wraps into another column (UINav.gridStep reads
+            // the column count off the grid itself; three is the fallback).
+            const gridEl = document.querySelector("#cooking-container .pantry-list");
+            const cols = gridEl && window.MenuVirtualList && typeof MenuVirtualList.columnsOf === 'function'
+                ? MenuVirtualList.columnsOf(gridEl, 3) : 3;
+            const moveCursor = (next) => {
+                this._pantryIndex = next;
                 SoundManager.playCursor();
                 this.refreshUICooking();
                 const container = document.getElementById("cooking-container");
@@ -1818,20 +1817,18 @@
                 }
             };
 
-            if (Input.isRepeated('down')) {
-                moveCursor(COLS);
-            } else if (Input.isRepeated('up')) {
-                moveCursor(-COLS);
-            } else if (Input.isRepeated('left') && this._pantryIndex % COLS !== 0) {
-                moveCursor(-1);
-            } else if (Input.isRepeated('right') && this._pantryIndex % COLS !== COLS - 1
-                       && this._pantryIndex + 1 < itemsList.length) {
-                moveCursor(1);
-            } else if (Input.isTriggered('right') && item1 && item2) {
+            const dir = window.UINav ? UINav.navDir() : null;
+            const next = dir ? UINav.gridStep(this._pantryIndex, dir, itemsList.length, cols) : this._pantryIndex;
+            if (dir && next !== this._pantryIndex) {
+                moveCursor(next);
+            } else if (dir === 'right' && Input.isTriggered('right') && item1 && item2) {
+                // Off the end of a row with a pair chosen: over to the Cook button.
                 this._activeArea = "confirm";
                 this._confirmIndex = 0;
                 SoundManager.playCursor();
                 this.refreshUICooking();
+            } else if (dir) {
+                // Against the edge of the grid: the press is spent, nothing moves.
             } else if (Input.isTriggered('ok')) {
                 const selectedItem = itemsList[this._pantryIndex];
                 const isEnabled = selectedItem &&
@@ -1868,7 +1865,7 @@
                 }
             }
         } else if (this._activeArea === "confirm") {
-            if (Input.isTriggered('left') || Input.isTriggered('up') || Input.isTriggered('down')) {
+            if (Input.isRepeated('left') || Input.isRepeated('up') || Input.isRepeated('down')) {
                 this._activeArea = "pantry";
                 SoundManager.playCursor();
                 this.refreshUICooking();

@@ -971,26 +971,31 @@
             if (Graphics.frameCount % 60 === 0) {
                 this._refreshRoomListCountdowns();
             }
-            // Keyboard / gamepad navigation
+            // Keyboard / gamepad navigation. WASD arrives as the arrows, so
+            // only the direction names are read.
             const len = (this._roomListRooms || []).length;
-            if (Input.isRepeated('down') || Input.isRepeated('s')) {
+            if (Input.isRepeated('down')) {
                 if (this._roomListIdx < len - 1) {
                     this._roomListIdx++;
                     this._updateRoomListHighlight();
                     this.panMapToRoomEvent(this._roomListIdx);
                     SoundManager.playCursor();
                 }
-            }
-            if (Input.isRepeated('up') || Input.isRepeated('w')) {
+            } else if (Input.isRepeated('up')) {
                 if (this._roomListIdx > 0) {
                     this._roomListIdx--;
                     this._updateRoomListHighlight();
                     this.panMapToRoomEvent(this._roomListIdx);
                     SoundManager.playCursor();
                 }
+            } else if (Input.isTriggered('ok')) {
+                SoundManager.playOk();
+                this.onRoomListOverlayOk();
+            } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+                // B, Esc and right click all close the list: it is the top level.
+                SoundManager.playCancel();
+                this.closeRoomListOverlay();
             }
-            if (Input.isTriggered('ok'))     { SoundManager.playOk();     this.onRoomListOverlayOk();   }
-            if (Input.isTriggered('cancel')) { SoundManager.playCancel(); this.closeRoomListOverlay(); }
         }
 
         // Bouncing arrow above selected room event

@@ -30,6 +30,7 @@
         HEADLIGHT_NIGHT, KMH_TO_UNITS, ROAD_HALF_LANE, ROAD_LANE_OFF, TRAFFIC_MAX,
         TRAFFIC_RING_MAX, TRAFFIC_RING_MIN, TRAFFIC_VEHICLES, UNITS_PER_M,
         VehicleBillboard, WORLD_TILE_SIZE,
+        CharacterBillboard, PERSON_H, ROAD_TOTAL_W, ROAD_SHOULDER_W,
         getRenderType, getRoadDirectionAt, sampleBiomeAt
     } = VW;
 
@@ -60,6 +61,7 @@
             this._t      = 0;
             this._silent = !!silent;
             this._hornCd = 0;   // near-miss honk cooldown (s)
+            this._driverSeq = 0; // salt of the next driver drawn (RoadCarAI)
 
             // Lamps are the one thing a flat card cannot draw for itself: a
             // sprite has its headlights painted on and they do not light up at
@@ -180,6 +182,16 @@
                 car.lamps.position.set(cx, 0, cz);
                 car.lamps.rotation.y = car.yaw;
                 car.lamps.visible = true;
+                // Somebody is at the wheel: one of the people of the towns
+                // around the square the eye is over, drawn by the 2D road's
+                // own rule (RoadCarAI.driverForCell, a cached pool, no scan).
+                car.driverName = null;
+                if (!this._silent) {
+                    const RC = window.RoadCarAI;
+                    try {
+                        car.driverName = (RC && RC.driverForCell) ? (RC.driverForCell(cTileX, cTileZ, ++this._driverSeq) || null) : null;
+                    } catch (e) { car.driverName = null; }
+                }
                 return;
             }
         }
@@ -335,8 +347,256 @@
         }
     }
 
+    // =========================================================================
+    // RoadTravellerManager, the people on the road between towns.
+    //
+    // The same people the 2D road squares show (Vehicle/RoadCarAI.js), from
+    // the same answer: NPCLifeSim.travellersNear, asked for the world square
+    // the eye is over every TRAVELLER_SPAWN_EVERY seconds. A walker is a
+    // person card (their own walk sheet, as the town crowd draws them); a
+    // rider is a VehicleBillboard on the riding sheet (VehicleSystem
+    // .npcRidingSheet). Nobody takes a car lane:
+    //   walk   the verge, just off the paved width
+    //   bike   the hard shoulder on the right of the way they are going
+    //   broom  over the median, TRAVELLER_BROOM_H up, and never in the
+    //          camper's way (bumpFrom passes them over)
+    //   car    their OWN car (a key holder on a trip by car): a car card in
+    //          the outer lane of their carriageway, at road speed, with them
+    //          at the wheel. Nobody talks to a moving car and the camper does
+    //          not shove one onto the verge.
+    // They are real people: nearest() answers the town crowd's talk path, so
+    // Talk and Empathize open on them the same way.
+    // =========================================================================
+    const TRAVELLER_POOL = 8;
+    const TRAVELLER_SPAWN_EVERY = 1.5;              // seconds between spawn checks
+    const TRAVELLER_BROOM_H = 4 * UNITS_PER_M;      // a broom flies at 4 m
+    const TRAVELLER_RING_MIN = 1;                   // tiles: where one is put down
+    const TRAVELLER_RING_MAX = 3;
+    // Speeds in km/h, turned into world units by KMH_TO_UNITS.
+    const TRAVELLER_KMH = { walk: [8, 12], bike: [20, 30], broom: [40, 60], car: [55, 90] };
+    const TRAVELLER_LENGTH = { bike: 1.8 * UNITS_PER_M, broom: 2.0 * UNITS_PER_M, car: 4.4 * UNITS_PER_M };
+    // Distance from the road's centre line, on the right of the way of travel.
+    const TRAVELLER_OFFSET = {
+        walk:  ROAD_TOTAL_W * 0.5 + 8,
+        bike:  ROAD_TOTAL_W * 0.5 - ROAD_SHOULDER_W * 0.5,
+        broom: 0,
+        car:   ROAD_LANE_OFF + ROAD_HALF_LANE
+    };
+    const TRAVELLER_BUMP_R = 6;                     // a person's own reach, for the camper
+    // i18n-ignore-start  travel mode ids
+    const T_WALK = 'walk', T_BIKE = 'bike', T_BROOM = 'broom', T_CAR = 'car';
+    // i18n-ignore-end
+
+    class RoadTravellerManager {
+        constructor(scene) {
+            this._scene = scene;
+            this._list  = [];
+            this._t     = 0;
+            this._seen  = { hour: -1, names: new Set() };
+        }
+
+        static offsetFor(mode) { return TRAVELLER_OFFSET[mode] != null ? TRAVELLER_OFFSET[mode] : TRAVELLER_OFFSET.walk; }
+        static heightFor(mode) { return mode === T_BROOM ? TRAVELLER_BROOM_H : 0; }
+        static sheetFor(mode, name) {
+            if (mode === T_CAR) {
+                // One of the light traffic sheets, the same one for the same person.
+                const cars = TRAFFIC_VEHICLES.filter(v => !v.heavy);
+                if (!cars.length) return null;
+                const key = String(name || '');
+                let h = 5381;
+                for (let i = 0; i < key.length; i++) h = ((h * 33) ^ key.charCodeAt(i)) >>> 0;
+                return { name: cars[h % cars.length].sheet, index: 0 };
+            }
+            const VS = window.VehicleSystem;
+            const s = (mode === T_BIKE || mode === T_BROOM) && VS && VS.npcRidingSheet ? VS.npcRidingSheet(mode) : null;
+            return s && s.name ? s : null;
+        }
+
+        // The walk sheet a person is drawn in, off their profile, or a seeded
+        // passer-by's when the profile has none.
+        _personSheet(name) {
+            const p = $gameSystem && $gameSystem._npcSociety ? $gameSystem._npcSociety[name] : null;
+            let sheet = p && p.spriteKey ? String(p.spriteKey) : '';
+            let index = 0;
+            if (sheet && !sheet.includes('!$')) {
+                const i = Number(p.spriteIndex != null ? p.spriteIndex : p.bustIndex);
+                index = Number.isFinite(i) ? Math.max(0, Math.min(7, i | 0)) : 0;
+            }
+            if (!sheet) {
+                let h = 5381;
+                for (let i = 0; i < name.length; i++) h = ((h * 33) ^ name.charCodeAt(i)) >>> 0;
+                const persona = window.NPCSystem && window.NPCSystem.generateSeededPersona
+                    ? window.NPCSystem.generateSeededPersona(h || 1) : null;
+                if (!persona || !persona.spriteName) return null;
+                sheet = persona.spriteName;
+                index = persona.charIdx || 0;
+            }
+            return { name: sheet, index };
+        }
+
+        // A straight road tile near the eye, running the way `heading` goes as
+        // near as the road allows.
+        _roadTileNear(cTileX, cTileZ, heading) {
+            const wantH = Math.abs(heading.x) >= Math.abs(heading.y);
+            let fallback = null;
+            for (let attempt = 0; attempt < 12; attempt++) {
+                const ang  = Math.random() * Math.PI * 2;
+                const ring = TRAVELLER_RING_MIN + Math.random() * (TRAVELLER_RING_MAX - TRAVELLER_RING_MIN);
+                const tx = cTileX + Math.round(Math.cos(ang) * ring);
+                const tz = cTileZ + Math.round(Math.sin(ang) * ring);
+                if (tx < 0 || tz < 0 || tx >= 256 || tz >= 256) continue;
+                if (getRenderType(sampleBiomeAt(tx, tz).name) !== 'road') continue;
+                const dir = getRoadDirectionAt(tx, tz);
+                if (dir !== 'horizontal' && dir !== 'vertical') continue;
+                if ((dir === 'horizontal') === wantH) return { tx, tz, horiz: dir === 'horizontal' };
+                if (!fallback) fallback = { tx, tz, horiz: dir === 'horizontal' };
+            }
+            return fallback;
+        }
+
+        _spawn(entry, camX, camZ) {
+            const ts = WORLD_TILE_SIZE;
+            const heading = entry.heading || { x: 1, y: 0 };
+            const at = this._roadTileNear(Math.floor(camX / ts), Math.floor(camZ / ts), heading);
+            if (!at) return false;
+            const mode = entry.mode === T_BIKE || entry.mode === T_BROOM || entry.mode === T_CAR ? entry.mode : T_WALK;
+            // World-map y is the scene's z: the heading's sign along the road.
+            const along = at.horiz ? heading.x : heading.y;
+            const sign = along < 0 ? -1 : 1;
+            const ax = at.horiz ? sign : 0;
+            const az = at.horiz ? 0 : sign;
+            const off = RoadTravellerManager.offsetFor(mode);
+            const x = at.tx * ts + ts * 0.5 + az * off;
+            const z = at.tz * ts + ts * 0.5 - ax * off;
+
+            let bb;
+            if (mode === T_WALK) {
+                const sheet = this._personSheet(entry.name);
+                if (!sheet) return false;
+                bb = new CharacterBillboard(sheet.name, sheet.index, PERSON_H);
+            } else {
+                const sheet = RoadTravellerManager.sheetFor(mode, entry.name);
+                if (!sheet) return false;
+                bb = new VehicleBillboard(sheet.name, TRAVELLER_LENGTH[mode]);
+            }
+            this._scene.add(bb.mesh);
+            const kmh = TRAVELLER_KMH[mode];
+            const home = entry.from || entry.pos || { x: at.tx, y: at.tz };
+            this._list.push({
+                bb, name: entry.name, mode, ambient: !!entry.ambient,
+                wx: Math.round(home.x), wy: Math.round(home.y),
+                x, z, ax, az, yaw: Math.atan2(ax, az),
+                speed: (kmh[0] + Math.random() * (kmh[1] - kmh[0])) * KMH_TO_UNITS,
+                pause: 0
+            });
+            return true;
+        }
+
+        _drop(t) {
+            t.bb.dispose();
+            const i = this._list.indexOf(t);
+            if (i >= 0) this._list.splice(i, 1);
+        }
+
+        _checkSpawns(camX, camZ) {
+            if (this._list.length >= TRAVELLER_POOL) return;
+            const Life = window.NPCLifeSim;
+            if (!Life || !Life.travellersNear) return;
+            const now = (typeof $gameVariables !== 'undefined' && $gameVariables) ? ($gameVariables.value(114) || 0) : 0;
+            const hour = Math.floor(now / 60);
+            if (this._seen.hour !== hour) this._seen = { hour, names: new Set() };
+            const ts = WORLD_TILE_SIZE;
+            const wx = Math.floor(camX / ts), wy = Math.floor(camZ / ts);
+            if (wx < 0 || wy < 0 || wx > 255 || wy > 255) return;
+            let list = [];
+            try { list = Life.travellersNear(wx, wy, now, TRAVELLER_POOL) || []; } catch (e) { list = []; }
+            const party = new Set((typeof $gameParty !== 'undefined' && $gameParty && $gameParty.members
+                ? $gameParty.members() : []).map(a => a && a.name && a.name()));
+            for (const entry of list) {
+                if (!entry || !entry.name || this._seen.names.has(entry.name) || party.has(entry.name)) continue;
+                if (this._list.some(t => t.name === entry.name)) continue;
+                this._seen.names.add(entry.name);
+                // One at a time: the road fills over a few checks, not in a burst.
+                if (this._spawn(entry, camX, camZ)) return;
+            }
+        }
+
+        update(delta, camX, camZ, camYaw, df, groundFn) {
+            this._t += delta;
+            if (this._t >= TRAVELLER_SPAWN_EVERY) {
+                this._t = 0;
+                this._checkSpawns(camX, camZ);
+            }
+            const ts = WORLD_TILE_SIZE;
+            const recycle = TRAFFIC_RING_MAX * ts * 1.3;
+            // Walked in place, not over a copy: a traveller dropped here is
+            // spliced out of the list, so the index steps back over it.
+            const list = this._list;
+            for (let i = 0; i < list.length; i++) {
+                const t = list[i];
+                if (t.pause > 0) t.pause -= delta;
+                const moving = t.pause <= 0;
+                if (moving) {
+                    t.x += t.ax * t.speed * delta;
+                    t.z += t.az * t.speed * delta;
+                    if (t.mode === T_WALK) t.bb.step += t.speed * delta;
+                }
+                if (Math.abs(t.x - camX) > recycle || Math.abs(t.z - camZ) > recycle) { this._drop(t); i--; continue; }
+                const tx = Math.floor(t.x / ts), tz = Math.floor(t.z / ts);
+                if (tx < 0 || tz < 0 || tx >= 256 || tz >= 256) { this._drop(t); i--; continue; }
+                // Off the end of the road (a broom flies on regardless).
+                if (t.mode !== T_BROOM && getRenderType(sampleBiomeAt(tx, tz).name) !== 'road') { this._drop(t); i--; continue; }
+                const ground = groundFn ? (groundFn(t.x, t.z) || 0) : 0;
+                t.bb.yaw = t.yaw;
+                t.bb.moving = t.mode === T_WALK && moving;
+                t.bb.setPosition(t.x, ground + RoadTravellerManager.heightFor(t.mode), t.z);
+                t.bb.setVisible(true);
+                t.bb.setDaylight(df == null ? 1 : df);
+                t.bb.update(camX, camZ, camYaw || 0);
+            }
+        }
+
+        // The traveller nearest a point, within `maxD`, shaped as the town
+        // crowd's citizens are ({ name, wx, wy, x, z }) so the same talk path
+        // takes them. A broom is out of reach up there.
+        nearest(x, z, maxD) {
+            let best = null, bestD = maxD * maxD;
+            for (const t of this._list) {
+                if (t.mode === T_BROOM || t.mode === T_CAR) continue;
+                const dx = t.x - x, dz = t.z - z;
+                const d = dx * dx + dz * dz;
+                if (d < bestD) { bestD = d; best = t; }
+            }
+            return best;
+        }
+
+        // The camper is at (x, z) with reach `r`: whoever on foot or on a bike
+        // is under it steps smartly aside onto the verge and stops a moment.
+        // A broom is up in the air and never touched.
+        bumpFrom(x, z, r) {
+            const R = r + TRAVELLER_BUMP_R;
+            for (const t of this._list) {
+                if (t.mode === T_BROOM || t.mode === T_CAR) continue;
+                const dx = t.x - x, dz = t.z - z;
+                if (dx * dx + dz * dz > R * R) continue;
+                // Out to the verge on their own side of the road.
+                const side = (dx * t.az - dz * t.ax) >= 0 ? 1 : -1;
+                t.x = x + t.az * R * side;
+                t.z = z - t.ax * R * side;
+                t.pause = 2 + Math.random() * 2;
+            }
+        }
+
+        dispose() {
+            for (const t of this._list) t.bb.dispose();
+            this._list.length = 0;
+        }
+    }
+
     // Handed to the rest of the suite.
     Object.assign(VW, {
-        TrafficManager
+        TrafficManager,
+        RoadTravellerManager,
+        TRAVELLER_OFFSET, TRAVELLER_BROOM_H, TRAVELLER_POOL, TRAVELLER_SPAWN_EVERY
     });
 })();

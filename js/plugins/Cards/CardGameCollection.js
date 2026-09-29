@@ -520,12 +520,12 @@
         this.onCancelAction();
         return;
       }
-      if (Input.isTriggered("tab")) {
-        this.setMode(this.inCollection() ? "deck" : "collection");
-        return;
-      }
-      if (Input.isTriggered("pageup") || Input.isTriggered("pagedown")) {
-        const step = Input.isTriggered("pagedown") ? 1 : -1;
+      // L1 / R1 (Q / W, Tab) turn the filter tabs, the strip the pad's
+      // shoulder badges sit on. The bench / catalogue switch above it is a
+      // row the cursor walks to (up from the tabs) like every other control.
+      const tabDir = window.UINav ? window.UINav.tabDir() : 0;
+      if (tabDir) {
+        const step = tabDir > 0 ? 1 : -1;
         this._filter = (this._filter + step + FILTERS.length) % FILTERS.length;
         this._tabFocus = this._filter;
         this._index = 0;
@@ -735,7 +735,9 @@
             SoundManager.playCursor();
             this.render();
           }
-        } else if (Input.isTriggered("ok") || Input.isTriggered("shift")) {
+        } else if (Input.isTriggered("ok") || Input.isTriggered("menu")) {
+          // A on a deck row is its click (give the copy back); Y is the
+          // remove verb everywhere in the game.
           if (rows[this._deckRowFocus]) {
             this.removeFromDeck(rows[this._deckRowFocus]);
             const newRows = this.deckRowKeys();
@@ -822,7 +824,9 @@
           this.moveIndex(1, keys.length);
         }
       } else if (Input.isRepeated("left")) {
-        if (!keys.length || this._index === 0) {
+        // The first column is the edge of the shelf: left leaves for the
+        // tabs rather than wrapping onto the row above.
+        if (!keys.length || this._index <= 0 || (this._index % PAGE_SIZE) % cols === 0) {
           this._area = "tabs";
           this._tabFocus = this._filter;
           SoundManager.playCursor();
@@ -862,7 +866,8 @@
         const key = this.selectedKey();
         if (!key) { SoundManager.playBuzzer(); return; }
         this.activate(key);
-      } else if (Input.isTriggered("shift")) {
+      } else if (Input.isTriggered("menu")) {
+        // Y, the remove verb: the selected card goes back to the shelf.
         const key = this.selectedKey();
         if (key) this.removeFromDeck(key);
       }
@@ -980,10 +985,12 @@
         });
         back.addEventListener("click", () => this.close());
       }
+      // A right click already reaches the scene as TouchInput.isCancelled();
+      // the listener only keeps the browser's menu away, so one click backs
+      // out one level, not two.
       container.addEventListener("contextmenu", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        this.onCancelAction();
       });
       this.mountSearch(container);
     }
@@ -1447,11 +1454,12 @@
         <div class="cp-pack" id="cp-pack">${escapeHtml(T("CardGame.pack.sealed"))}</div>
         <div class="cp-row" id="cp-row" style="display:none"></div>
         <div class="cp-hint" id="cp-hint"></div>`;
-      container.querySelector("#cp-pack").addEventListener("click", () => this.advance());
+      // A click on the pack and a right click both already reach update()
+      // through TouchInput; a DOM handler as well would act twice on one
+      // press, so the overlay only keeps the browser's menu away.
       container.addEventListener("contextmenu", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        this.finish();
       });
     }
 

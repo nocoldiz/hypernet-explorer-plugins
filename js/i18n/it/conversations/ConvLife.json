@@ -1,0 +1,630 @@
+{
+  "_comment": "Discorsi degli NPC guidati dal contesto (NPCConversation II.8 LIFE TALK). Ogni gruppo viene scelto solo quando la sua condizione vale per chi parla: famiglia, lavoro, viaggi, guerre, l'Orda dei Goblin, elezioni, scontri, giochi. I segnaposto sono riempiti dal registro di vita prima di risolvere le alternative {a|b}; {a} e {b} negli scambi sono i due interlocutori.",
+  "thought": {
+    "familyPartner": [
+      "{Dovrei portare|Magari prendo} qualcosa di carino a {partner} tornando a casa.",
+      "{partner} {mi chiederà|vorrà sapere} com'è andata la giornata. {Cosa gli dico|Mi inventerò qualcosa}.",
+      "{Chissà cosa|Scommetto che} {partner} sta facendo adesso.",
+      "Stasera a casa da {partner}. {È la parte bella della giornata|La parte migliore, davvero}."
+    ],
+    "familyPoly": [
+      "{partner} e {partner2} vogliono cenare entrambi da me. {Il calendario sul frigo è una guerra|Serve un tavolo più grande}.",
+      "Tre compleanni da ricordare, ora. {partner} non mi perdonerebbe mai se me lo scordassi.",
+      "{partner} dice che {partner2} ha finito il caffè. {Io non c'entro|Non è la mia battaglia}.",
+      "Mi chiedono come funziona con {partner} e {partner2}. {Pazienza e un buon calendario|Come tutti, ma più rumoroso}."
+    ],
+    "familyLongDistance": [
+      "{partner} è così lontano. {Un'altra lettera stasera|Chiamo quando la tariffa scende}.",
+      "{Conto|Sto ancora contando} i giorni che mancano per rivedere {partner}.",
+      "Una storia a distanza con {partner}. {La bolletta del telefono è una piccola tragedia|Vale ogni francobollo}.",
+      "Tengo l'ultima cartolina di {partner} nel {cappotto|portafoglio}."
+    ],
+    "familyAnniversary": [
+      "{years} anni con {partner} questo mese. {Dove sono finiti|Sembra la settimana scorsa}.",
+      "Si avvicina l'anniversario. {Non ho ancora comprato niente|Dei fiori, magari. O una bella cena}.",
+      "{years} anni e {partner} ride ancora alle mie battute. {Quasi sempre|A volte}.",
+      "Dovrei prenotare un tavolo per me e {partner}. {years} anni se lo meritano."
+    ],
+    "familyPregnant": [
+      "{Il bambino ha scalciato di nuovo|Un altro calcio}. {Qualcuno ha fretta|Ciao anche a te, piccolo}.",
+      "Mi fa male tutto e {non riesco a smettere di sorridere|ho di nuovo una fame da lupi}.",
+      "{partner} continua a chiedermi se mi serve qualcosa. {Una schiena nuova, grazie|Cetrioli. Sempre cetrioli}.",
+      "I nomi. {Non abbiamo|Ancora non abbiamo} un nome."
+    ],
+    "familyPartnerPregnant": [
+      "{partner} aspetta un bambino. {Diventerò genitore|Genitore. Io}.",
+      "Devo dipingere la stanzetta prima che arrivi il bambino.",
+      "{partner} vuole i cetrioli alle tre di notte. {Troverò dei cetrioli|Dove si trovano cetrioli alle tre}.",
+      "{Sono pronto|Nessuno è pronto} per questo? {Respiro profondo|Un giorno alla volta}."
+    ],
+    "familyNewborn": [
+      "{child} si è svegliato {quattro|cinque} volte stanotte. {Ho dimenticato cos'è il sonno|Caffè. Subito}.",
+      "Oggi {child} mi ha stretto il dito e non lo mollava più.",
+      "Pannolini, biberon, pannolini. Ora in questa casa comanda {child}.",
+      "{È normale|Sarà normale} che {child} pianga così tanto? {Chiederò al medico|Dicono tutti di sì}."
+    ],
+    "familyChildren": [
+      "{child} ha la recita a scuola la settimana prossima. {Non devo dimenticarlo|In prima fila, l'ho promesso}.",
+      "{child} mi ha chiesto perché il cielo è blu. {Ho detto magia|Ho detto di chiedere alla maestra}.",
+      "Devo andare a prendere {child} prima che chiudano i negozi.",
+      "{child} cresce così in fretta. {Di nuovo scarpe nuove|I pantaloni sono già corti}."
+    ],
+    "familyAdultChild": [
+      "{child} non chiama mai. {Sarà impegnato|Gli scriverò io}.",
+      "{Fiero|Così fiero} di {child}. Non che lo direi ad alta voce.",
+      "{child} ha la sua vita, ora. {Strana sensazione|Casa silenziosa}.",
+      "Chissà se {child} mangia come si deve."
+    ],
+    "familyParents": [
+      "Dovrei andare a trovare {parent} questo fine settimana.",
+      "{parent} avrebbe qualcosa da ridire su questo. {Come sempre|Non smette mai}.",
+      "{parent} sta invecchiando. {Lo noto di più ora|Le scale sono più dure}.",
+      "La cucina di {parent}. {Niente la batte|Non riesco ancora a farla uguale}."
+    ],
+    "familySiblings": [
+      "{sibling} mi deve ancora dei soldi. {Dai tempi della scuola|Da anni}.",
+      "È un po' che non vedo {sibling}. {Dovrei chiamare|Devo scrivere}.",
+      "Io e {sibling} da piccoli litigavamo come gatti. {Ora mi manca|Ora andiamo d'accordo}.",
+      "{sibling} è sempre stato il preferito della mamma. {Va bene|Pazienza}."
+    ],
+    "familyBreakup": [
+      "{Non ci credo ancora|Faccio fatica a crederci}, con {ex} è finita.",
+      "Continuo a mettere fuori due tazze. {Abitudine|Stupida abitudine}.",
+      "{ex} {si è preso la padella buona|si è tenuto i dischi}. {Va bene|Ovvio}.",
+      "Forse stare da solo {per un po'|di nuovo} non è così male."
+    ],
+    "familyWidowed": [
+      "A {ex} sarebbe piaciuta oggi. {Era il suo tempo|Era la sua giornata}.",
+      "La casa è così silenziosa senza {ex}.",
+      "A volte parlo ancora con {ex}. {Nessuno deve saperlo|Mi aiuta}.",
+      "Il cappotto di {ex} è ancora vicino alla porta. {Non riesco a spostarlo|Non ancora}."
+    ],
+    "familyMovedOut": [
+      "Casa nuova, {muri nuovi|stesso me}. Andarmene è stata {la scelta giusta|più dura del previsto}.",
+      "Ho lasciato la casa a {ex}. {Scatoloni ovunque|Metà delle mie cose sono ancora negli scatoloni}.",
+      "Prima notte nel posto nuovo. {Rumori strani|I tubi battono}.",
+      "Ricomincio da {una stanza in affitto|una stanza singola}. {Poteva andare peggio|È un inizio}."
+    ],
+    "familyPartnerAway": [
+      "{partner} è in viaggio. {Il letto è troppo grande|La casa è troppo silenziosa}.",
+      "{partner} ha mandato una cartolina. {Vorrei essere lì|Sembra caldo}.",
+      "{partner} torna presto. {Devo mettere in ordine|Meglio nascondere i piatti}.",
+      "Cucino per uno mentre {partner} è via. {Di nuovo pane tostato|Di nuovo minestra}."
+    ],
+    "familyParentalLeave": [
+      "Congedo parentale. {Più dura di qualsiasi turno|Nessuno mi aveva detto che era un doppio turno}.",
+      "A casa con {child} tutto il giorno. {Ogni giorno è lunedì|Ho imparato tutte le ninne nanne}.",
+      "Il lavoro sembra un'altra vita. Ora il mio lavoro è {child}.",
+      "{Un pisolino|Dieci minuti di silenzio}. Chiedo solo questo."
+    ],
+    "familyRefugeeKin": [
+      "Nessuna lettera da {kin} questo mese. {Nei campi non c'è posta|Spero stia bene}.",
+      "{kin} è fuggito dall'Orda con {niente|una valigia}. Dovrei mandare dei soldi.",
+      "{kin} dice che nel campo di notte fa freddo. {Manderò coperte|Manderò un cappotto}.",
+      "Quando potrà tornare a casa {kin}?"
+    ],
+    "kidNewborn": [
+      "*ueee*",
+      "*singhiozzo* *ueeee*",
+      "*gorgoglia*",
+      "*singhiozza e piange*"
+    ],
+    "kidChild": [
+      "{Voglio|Posso avere} un gelato!",
+      "{parent} ha detto che posso giocare fino a cena!",
+      "{Sono un drago|Sono un cavaliere}! {Roaar|Ah}!",
+      "{È già|Quando è} il mio compleanno?",
+      "Domani non voglio andare a scuola.",
+      "{Guarda|Guarda guarda}! Un {insetto|coleottero}!"
+    ],
+    "workSick": [
+      "A casa in malattia. {Io e il soffitto ormai siamo amici|Tè e coperte}.",
+      "{Il medico dice riposo|Riposo, hanno detto}. {Facile a dirsi|Mi annoio già}.",
+      "Spero che al lavoro se la cavino senza di me. {Probabilmente sì|Probabilmente no}.",
+      "Un altro giorno di malattia {a tossire|a tirare su col naso}."
+    ],
+    "workUnemployed": [
+      "Un altro giorno senza lavoro. {I giornali non hanno niente|Niente negli annunci}.",
+      "L'affitto scade e non entra {niente|neanche un soldo}.",
+      "Mi lamentavo del mio lavoro. {Cosa darei|Me lo riprenderei subito}.",
+      "{Forse|Magari} dovrei provare in un'altra città. Qui non c'è niente."
+    ],
+    "workAfterShift": [
+      "Turno finito. {I piedi|La schiena} {mi odiano|sono distrutti}.",
+      "Un'altra giornata da {job}, qualche altro soldo.",
+      "{Meno male|Grazie al cielo} che il turno è finito.",
+      "Domani di nuovo {job}. {Che gioia|Meraviglioso}."
+    ],
+    "travelAway": [
+      "{place} è bellissima, ma mi manca il mio letto.",
+      "{Devo mandare|Dovrei mandare} una cartolina a casa da {place}.",
+      "A {place} tutto costa il doppio. {Prezzi da turisti|Ovviamente}.",
+      "Ancora qualche giorno a {place}, poi a casa."
+    ],
+    "travelOnRoad": [
+      "{Ancora ore|Mancano ore} per {place}. {Ho le gambe rigide|Dovevo portarmi un libro}.",
+      "In viaggio per {place}. {Spero che la stanza sia prenotata|Speriamo nel tempo}.",
+      "A {place} prima di notte, {se la strada regge|con un po' di fortuna}.",
+      "Viaggiare è per il novanta per cento aspettare."
+    ],
+    "travelEmigrate": [
+      "{Forse è ora|Potrebbe essere ora} di lasciare {country} per sempre.",
+      "Dicono che all'estero c'è lavoro. {Niente mi trattiene qui|Cosa mi resta qui}?",
+      "Ho ricominciato a guardare le mappe. {Da qualche altra parte|Ovunque ma non qui}.",
+      "Se le cose non migliorano entro primavera, faccio le valigie."
+    ],
+    "travelNewcomer": [
+      "Mi sto ancora abituando a questa città. {Le strade sembrano tutte uguali|Mi perdo ogni giorno}.",
+      "Mi manca casa. {Il cibo, soprattutto|La gente, soprattutto}.",
+      "Qui nessuno sa ancora il mio nome. {Cambierà|Ci vuole tempo}.",
+      "Città nuova, nuovo inizio. {Incrociamo le dita|Vediamo}."
+    ],
+    "warOurs": [
+      "{Siamo in guerra con|Ancora in guerra con} {enemy}. {Quando finirà|Quanto durerà stavolta}?",
+      "Richiamano altri uomini contro {enemy}. {Spero non nella mia via|Non di nuovo}.",
+      "{power} contro {enemy}. {Altri funerali|Altre tessere annonarie}, la guerra porta solo questo.",
+      "Ogni notiziario ormai parla di {enemy}."
+    ],
+    "warFront": [
+      "{enemy} vuole {country}. {Dovranno prendersela|Solo sul mio cadavere}.",
+      "Se il fronte si sposta, tocca a {country}. {Dovrei preparare una borsa|Teniamo la cantina piena}.",
+      "I cannoni oltre il confine {mi hanno tenuto sveglio|hanno svegliato il cane} di nuovo.",
+      "{country} non può resistere per sempre contro {enemy}."
+    ],
+    "warFar": [
+      "{power} e {enemy} ci risiamo. {Lontano da qui, per fortuna|Meno male che non siamo noi}.",
+      "Ho visto le notizie della guerra di {power}. {Terribile|Poveretti}.",
+      "{power} contro {enemy}. {I prezzi saliranno anche qui|Entro l'inverno lo vedremo nel prezzo del pane}.",
+      "Qualcuno dovrebbe fermare {power} e {enemy} prima che si allarghi."
+    ],
+    "warPeace": [
+      "Pace con {enemy}, finalmente. {Ci crederò quando la vedrò|Speriamo che tenga}.",
+      "L'ONU ha fatto davvero qualcosa. {C'è una prima volta per tutto|I miracoli succedono}.",
+      "I soldati tornano a casa dal fronte di {enemy}.",
+      "Una pace firmata sulla carta. {La carta brucia|Meglio di niente}."
+    ],
+    "hordeFleeing": [
+      "Abbiamo lasciato {from} con {quello che potevamo portare|nient'altro che i cappotti addosso}.",
+      "I goblin hanno preso {from}. {Sento ancora i tamburi|Continuo a vedere il fumo}.",
+      "{Continua a camminare|Avanti}. Ovunque non ci sia l'Orda.",
+      "È rimasto ancora qualcuno a {from}?"
+    ],
+    "hordeCamp": [
+      "Un'altra notte al campo. {La tenda perde|Il vento non smette mai}.",
+      "Fila per l'acqua, fila per il pane. {Vita da campo|Ora la vita è questa}.",
+      "I bambini del campo giocano a goblin e umani. {Gli umani perdono sempre|Non riesco a guardare}.",
+      "{from} è a pochi giorni da qui, ma potrebbe essere sulla luna."
+    ],
+    "hordeSettled": [
+      "{Abbiamo|Ho} un tetto qui ora, ma non è {from}.",
+      "La gente qui è gentile, quasi sempre. {Alcuni ti fissano|Alcuni no}.",
+      "Tengo ancora l'orologio sull'ora di {from}.",
+      "Un giorno prenderò il treno per tornare a {from}. {Un giorno|Prima o poi}."
+    ],
+    "hordeReturned": [
+      "Di nuovo a casa a {from}. {La casa è ancora in piedi|Mezza casa è ancora in piedi}.",
+      "I goblin se ne sono andati da {from}. {La loro puzza no|Le loro scritte no}.",
+      "Di nuovo a {from}. {Vicini che non pensavo di rivedere|Strade vuote, ma nostre}.",
+      "Ricostruiamo {from}, mattone dopo mattone."
+    ],
+    "hordeIntegrated": [
+      "I goblin mi lasciano in pace {se pago la decima|finché lavoro}. {È una vita|Poteva andare peggio}.",
+      "Ho imparato abbastanza goblin da contrattare. {Lo rispettano|Più o meno}.",
+      "Il capo dice che gli umani sono utili. {Intendo restare utile|Utile vuol dire al sicuro}.",
+      "{Di nuovo stufato di radici|Di nuovo pane di scarafaggi}. Ci si abitua."
+    ],
+    "hordeUnder": [
+      "{country} ora appartiene all'Orda. {Testa bassa|Non guardarli negli occhi}.",
+      "Stendardi goblin sul municipio. {Non riesco ad abituarmi|Ogni mattina è uno shock}.",
+      "Dicono che l'Orda sarà cacciata da {country}. {Dicono tante cose|Chi lo dice}?",
+      "Coprifuoco al tramonto. Ai goblin piace il buio."
+    ],
+    "hordeFear": [
+      "Se l'Orda passa il confine, {dove andiamo|scappiamo}.",
+      "Di nuovo goblin avvistati vicino al passo. {Ho chiuso le imposte|Dormo con l'attizzatoio}.",
+      "Mio cugino dice che l'Orda mangia {i cavalli|i cani}. {Ci credo|Probabilmente è vero}.",
+      "Ogni tamburo che sento, penso che siano loro."
+    ],
+    "playWon": [
+      "Ho vinto a {game}! {Offro io|Sapevo che la fortuna sarebbe girata}!",
+      "{game}, e l'ho battuto. {Ci so ancora fare|Niente male}.",
+      "Fortuna del principiante a {game}? {Bravura|Pura bravura}.",
+      "Quella vittoria a {game} mi ha fatto la settimana."
+    ],
+    "playLost": [
+      "Perso di nuovo a {game}. {Truccato|È truccato, lo giuro}.",
+      "{game} si è mangiato i miei soldi. {Mai più|Alla prossima}.",
+      "Ci ero così vicino a {game}. {Così vicino|Quasi}!",
+      "{game}: uno, io: zero."
+    ],
+    "fightFleeing": [
+      "{Scappa|Scappa, scappa}!",
+      "{Stammi lontano|Indietro}!",
+      "{Aiuto|Qualcuno mi aiuti}!",
+      "{Non oggi|Non io}, {mostro|bestia}!"
+    ],
+    "fightDowned": [
+      "*geme*",
+      "{Non riesco|Non riesco... ad} alzarmi...",
+      "{Qualcuno|Chiunque}... aiuto...",
+      "*tossisce* {Mi fa male tutto|Ahi}..."
+    ],
+    "fightInjured": [
+      "Mi fa ancora male {il braccio|la gamba} per quella {cosa|rissa}.",
+      "{Di nuovo bende|Altre bende}. {Dovrei vedere un guaritore|Dovrei vedere un medico}.",
+      "{Zoppico|Dolori} tutto il giorno. {Mai più|Lezione imparata}.",
+      "Questa mi lascerà una cicatrice."
+    ],
+    "fightWitness": [
+      "{Hai visto quello|Hai visto lo} scontro? {Terrificante|Incredibile}.",
+      "Di nuovo mostri per strada. {Dove sono le guardie|Nessuno è al sicuro}.",
+      "{Io resto a distanza|Io sto ben lontano}.",
+      "{Qualcuno|Che qualcuno} chiami le guardie!"
+    ],
+    "crimeWanted": [
+      "{Testa bassa|Cammina normale}. {Nessuno guarda|Nessuno sa}.",
+      "Ogni divisa mi fa venire il mal di stomaco.",
+      "{Forse|Magari} una città nuova e un nome nuovo.",
+      "Quel manifesto non mi somiglia nemmeno."
+    ],
+    "foodAte": [
+      "Quel {item} {ci voleva proprio|era proprio quello che serviva}.",
+      "{Mangiato|Di nuovo} {item} al volo. {Niente tempo per sedersi|Giornata piena}.",
+      "{item}. Non è un pasto vero, ma andrà bene.",
+      "Un secondo {item} non mi sarebbe dispiaciuto."
+    ],
+    "specHoned": [
+      "Sto migliorando in {spec}. {La pratica paga|Tutta quella pratica}.",
+      "Oggi {spec} mi è venuto più facile. {Finalmente|Era ora}.",
+      "Qualcuno mi ha chiesto aiuto per {spec}. A me!",
+      "A quanto pare ho un talento per {spec}."
+    ],
+    "creedDoubt": [
+      "Forse quelli di {creed} hanno ragione. {Forse|Non ditelo a nessuno}.",
+      "Ridevo di {creed}. {Ora non ne sono più sicuro|Ora leggo i loro volantini}.",
+      "{Non smetto di pensare|Continuo a pensare} a quello che dicevano su {creed}.",
+      "E se mi fossi sbagliato fin dall'inizio?"
+    ],
+    "electionSoon": [
+      "{days} giorni al voto ({election}). {party} o {rival}? {Ancora indeciso|Scelta difficile}.",
+      "{Manifesti ovunque|Volantini in ogni cassetta}. Il voto ({election}) è vicino.",
+      "{party} promette di nuovo la luna. {rival} la promette a meno.",
+      "Voterò. {Voto sempre|Qualcuno deve farlo}. Solo che non so per chi."
+    ],
+    "electionWeek": [
+      "Si vota questa settimana ({election}). Dicono che {party} sia avanti nei sondaggi.",
+      "{rival} potrebbe ancora farcela. {I sondaggi mentono|L'altra volta i sondaggi sbagliavano}.",
+      "Qual è il mio seggio? {Devo controllare|La scuola, credo}.",
+      "Tutti litigano per il voto. {Anche il fornaio|Anche mia madre}."
+    ],
+    "electionDay": [
+      "Giorno di voto! {Già la fila alla scuola|Vado alla cabina}.",
+      "Matita, scheda, croce. {Democrazia|Ho fatto la mia parte}.",
+      "Votato. {Ora la lunga attesa|Ora aspettiamo lo spoglio}.",
+      "{I seggi chiudono|Le cabine chiudono} stasera. {Nervoso|Non riesco a stare fermo}."
+    ],
+    "electionResult": [
+      "Ha vinto {winner} ({election}). {Beh|Eccoci qua}.",
+      "Non posso credere che abbia vinto davvero {winner}.",
+      "Ora comanda {winner}. {Vediamo cosa fa|Promesse, promesse}.",
+      "Lo spoglio è finito. {winner}. {Ovvio|E chi altri}."
+    ]
+  },
+  "script": {
+    "kinPartners": [
+      [[0, "{Com'è andata|Come va} la giornata, {b}?"], [1, "{Lunga|Meglio adesso}. E tu?"], [0, "{Uguale|Meglio ora che sei qui}."]],
+      [[0, "{Cena a casa stasera|Cuciniamo insieme stasera}, {b}?"], [1, "Solo se non lavo io i piatti."], [0, "{Affare fatto|Vedremo}."]],
+      [[1, "{a}, hai lasciato di nuovo le luci accese."], [0, "Le ho lasciate accese per te."], [1, "*ride* {Furbo|Bel tentativo}."]]
+    ],
+    "kinPartnersFight": [
+      [[0, "Non mi ascolti mai, {b}."], [1, "Ti sto ascoltando adesso!"], [0, "{Allora sentimi|No, aspetti solo di parlare}."], [1, "{Va bene|Come vuoi tu}."]],
+      [[0, "Dov'eri ieri sera?"], [1, "Fuori. {È un reato|Serve un permesso}?"], [0, "{Non cominciare|Incredibile}."]],
+      [[1, "{Le bollette|L'affitto}, {a}. Dobbiamo parlare di soldi."], [0, "{Non ora|Non qui}."], [1, "Non è mai il momento!"]]
+    ],
+    "kinPartnersMakeUp": [
+      [[0, "{b}... per ieri. Mi dispiace."], [1, "{Anche a me|Dispiace anche a me}. Ho detto cose."], [0, "{Tregua|Di nuovo amici}?"], [1, "*sorride* Tregua."]],
+      [[1, "Ti ho portato {dei fiori|dei pasticcini}. Offerta di pace."], [0, "{Mi conosci troppo bene|Accettata}."]],
+      [[0, "Smettiamo di litigare, {b}."], [1, "D'accordo. {Almeno fino a martedì|Fino alla prossima}."]]
+    ],
+    "kinAnniversary": [
+      [[0, "{years} anni, {b}. Ci credi?"], [1, "{Sembra ieri|Sembrano cento}."], [0, "Li rifarei tutti, uno per uno."]],
+      [[1, "Buon anniversario, {a}."], [0, "Te lo sei ricordato! {Pensavo te ne dimenticassi|Ho prenotato un tavolo}."], [1, "{years} anni. Certo che me lo ricordavo."]]
+    ],
+    "kinPregnancy": [
+      [[0, "Come ti senti, {b}?"], [1, "{Enorme|Come una balena}. E affamato."], [0, "Ti prendo qualcosa. {Cetrioli|Qualsiasi cosa}?"]],
+      [[0, "Hai pensato ai nomi?"], [1, "{Qualcuno|Troppi}. E tu?"], [0, "Mi piacciono {i nomi di famiglia|le cose semplici}."], [1, "Ne litigheremo dopo."]]
+    ],
+    "kinParentChild": [
+      [[0, "Hai finito i compiti, {b}?"], [1, "{Quasi|Sì}! Posso giocare ora?"], [0, "{Mezz'ora|Fino a cena}."], [1, "Evviva!"]],
+      [[1, "{a}, {guarda|guarda guarda}, ho trovato un {coleottero|sasso che luccica}!"], [0, "{Che bello|Wow}! Non metterlo in bocca."], [1, "Non lo faccio!"]],
+      [[0, "Dammi la mano quando attraversiamo, {b}."], [1, "Sono grande ormai!"], [0, "Anche i grandi si danno la mano."]],
+      [[1, "Perché il cielo è blu, {a}?"], [0, "{Chiedilo alla maestra|Perché gli piace il blu}."], [1, "Non è una risposta!"]]
+    ],
+    "kinParentChildScold": [
+      [[0, "{b}! Cosa ti ho detto sul correre?"], [1, "Scusa..."], [0, "{Niente dolci stasera|Dopo questo dritti a casa}."]],
+      [[1, "Non voglio andare a casa!"], [0, "{Andiamo adesso|Cinque minuti, poi a casa}."], [1, "*fa il muso*"]]
+    ],
+    "kinParentAdultChild": [
+      [[0, "Mangi come si deve, {b}?"], [1, "Sì, {a}. {Sono adulto|Tutti i giorni}."], [0, "Ti vedo magro."]],
+      [[1, "{a}, dovresti riposare di più."], [0, "Riposerò quando sarò morto."], [1, "{Non dirlo|È proprio questo che mi preoccupa}."]],
+      [[0, "Quando vieni per il pranzo della domenica?"], [1, "{Questa settimana|Presto, promesso}."], [0, "Lo dici sempre."]]
+    ],
+    "kinSiblings": [
+      [[0, "Ti ricordi quando {abbiamo rotto la finestra|ci siamo nascosti in soffitta}, {b}?"], [1, "Hai dato la colpa a me!"], [0, "{Eri più piccolo|Ha funzionato}."]],
+      [[0, "Hai chiamato la mamma ultimamente?"], [1, "{La settimana scorsa|Non ancora}. E tu?"], [0, "{Ieri|Lo faccio stasera}."]],
+      [[1, "Mi devi ancora quei soldi, {a}."], [0, "{Quali soldi|Mettili sul mio conto}."], [1, "*sospira*"]]
+    ],
+    "kinSiblingsSpat": [
+      [[0, "L'hai sempre vinta tu, {b}."], [1, "Perché ho ragione io!"], [0, "{Incredibile|Tipico}."]],
+      [[1, "Tocca a me!"], [0, "Toccava a te ieri!"], [1, "{Bugiardo|Non è vero}!"]]
+    ],
+    "kinNewborn": [
+      [[1, "*ueee*"], [0, "Shh, shh, {b}. Sono qui."], [1, "*singhiozzo*"]],
+      [[1, "*gorgoglia*"], [0, "{Era un sorriso|Era una risata}? {Che cosina furba|Guarda te}!"]],
+      [[0, "È ora del biberon, {b}."], [1, "*singhiozza*"], [0, "{Piano, piano|Con calma}."]]
+    ],
+    "kidStranger": [
+      [[1, "Ciao! {Come ti chiami|Sei un gigante}?"], [0, "{Sono {a}|Solo un adulto}. Dove sono i tuoi genitori?"], [1, "Laggiù!"]],
+      [[0, "Attento a dove corri, piccolo."], [1, "{Scusa|Sto facendo una gara}!"]]
+    ],
+    "kidPlay": [
+      [[0, "{Ce l'hai|Tocca a te}, {b}!"], [1, "Non vale!"], [0, "*scappa ridendo*"]],
+      [[0, "Giochiamo ai {cavalieri|pirati}!"], [1, "Io sono il {re|capitano}!"], [0, "Allora io sono il drago!"]],
+      [[1, "Vuoi vedere la mia {biglia|coccinella}?"], [0, "{Wow|Forte}! Posso tenerla?"], [1, "Attento!"]]
+    ],
+    "aboutPartner": [
+      [[0, "Io e {partner} stiamo {ridipingendo la cucina|organizzando una vacanza}."], [1, "Come va?"], [0, "{Quattro litigi finora|Meglio del previsto}."]],
+      [[1, "Come sta {partner}, {a}?"], [0, "{Bene|Indaffarato, ma bene}. Chiede sempre di te."], [1, "Salutamelo."]],
+      [[0, "Ieri sera ha cucinato {partner}. {Ha bruciato|Ha quasi bruciato} la casa."], [1, "*ride* Conta il pensiero."], [0, "Il rilevatore di fumo non è d'accordo."]]
+    ],
+    "aboutPoly": [
+      [[0, "{partner} e {partner2} si contendono la poltrona buona."], [1, "Chi vince?"], [0, "{Il gatto|Nessuno. Ci sono seduto io}."]],
+      [[1, "Non diventa complicato, con {partner} e {partner2}?"], [0, "{Meno di quanto pensi|Solo più compleanni}."], [1, "Io a stento ne gestisco uno."]]
+    ],
+    "aboutChildren": [
+      [[0, "Ieri {child} ha perso un altro dente."], [1, "La fatina paga bene?"], [0, "{Troppo bene|Inflazione}."]],
+      [[0, "Ora {child} vuole fare il {cavaliere|astronauta}."], [1, "La settimana scorsa era il fornaio."], [0, "La prossima, chissà."]],
+      [[1, "Come va la scuola per {child}?"], [0, "{Il migliore in disegno|Problemi con l'aritmetica}."], [1, "{Ha preso da te|Ha preso dall'altro}."]]
+    ],
+    "aboutNewborn": [
+      [[0, "{child} ci ha tenuti svegli tutta la notte, di nuovo."], [1, "{Poi migliora|Poi migliora. Prima o poi}."], [0, "Quando?"], [1, "{Te lo dirò quando lo saprò|Tra circa diciotto anni}."]],
+      [[1, "Congratulazioni per {child}!"], [0, "Grazie. {Così piccolo|Così rumoroso}. Meraviglioso."]]
+    ],
+    "aboutPregnancy": [
+      [[0, "Aspettiamo un bambino!"], [1, "{Congratulazioni|Che meraviglia}! Quando?"], [0, "{Prima dell'inverno|Tra qualche mese}."]],
+      [[1, "Sembri stanco, {a}."], [0, "{partner} aspetta un bambino. Nessuno dorme."], [1, "Aspetta che arrivi."]]
+    ],
+    "aboutBreakup": [
+      [[0, "Io e {ex} ci siamo lasciati."], [1, "{Oh no|Mi dispiace}. Stai bene?"], [0, "{Ci sto arrivando|Chiedimelo il mese prossimo}."]],
+      [[1, "Ho saputo di te e {ex}."], [0, "Le notizie corrono."], [1, "Se ti serve un bicchiere, ci sono."]]
+    ],
+    "aboutWidowed": [
+      [[0, "È dura da quando {ex} non c'è più."], [1, "{Mi dispiace tanto|Era una brava persona}."], [0, "Grazie. Le giornate sono lunghe."]],
+      [[1, "Penso spesso a {ex}."], [0, "Anch'io. Ogni giorno."]]
+    ],
+    "aboutParents": [
+      [[0, "{parent} mi vuole di nuovo a pranzo la domenica."], [1, "Cibo gratis!"], [0, "Cibo gratis e quaranta domande."]],
+      [[1, "Come sta {parent}?"], [0, "{Testardo come sempre|Le ginocchia no, la lingua sì}."]]
+    ],
+    "aboutSiblings": [
+      [[0, "{sibling} mi ha preso in prestito {la bici|il cappotto} ed è sparito."], [1, "Fratelli!"], [0, "{Mai più|Ogni volta}."]],
+      [[1, "Vedi spesso {sibling}?"], [0, "{Alle feste|Funerali e matrimoni}."]]
+    ],
+    "aboutPartnerAway": [
+      [[0, "{partner} è in viaggio."], [1, "Ti godi la pace?"], [0, "{Per un giorno|No, mi manca}."]],
+      [[1, "Dov'è {partner} in questi giorni?"], [0, "In viaggio. Torna presto."], [1, "Digli di portare regali."]]
+    ],
+    "aboutRefugeeKin": [
+      [[0, "{kin} è in un campo da quando è arrivata l'Orda."], [1, "È terribile. Puoi aiutarlo?"], [0, "Mando quello che posso."]],
+      [[1, "Notizie da {kin}?"], [0, "{Una lettera|Ancora niente}. La posta dai campi è lenta."]]
+    ],
+    "aboutMovedOut": [
+      [[0, "Me ne sono andato di casa. {Posto nuovo|Stanza minuscola}."], [1, "Dopo {ex}?"], [0, "Dopo {ex}. Si ricomincia."]],
+      [[1, "Com'è il posto nuovo?"], [0, "{I tubi battono|Tranquillo}. Almeno è mio."]]
+    ],
+    "topicWar": [
+      [[0, "Hai sentito le notizie dal fronte di {enemy}?"], [1, "{Cerco di non farlo|Ogni giorno}. Brutte."], [0, "Quando smetteranno?"], [1, "Quando finiranno i soldi."]],
+      [[1, "Richiamano di nuovo per la guerra con {enemy}."], [0, "{A mio cugino è arrivata la lettera|Non il mio ragazzo, ti prego}."], [1, "Nessuno vuole questa guerra."]]
+    ],
+    "topicWarFront": [
+      [[0, "Se {enemy} prende {country}, siamo i prossimi."], [1, "{Non dirlo|Abbassa la voce}."], [0, "Qualcuno deve dirlo."]],
+      [[1, "Ho preparato una borsa, non si sa mai."], [0, "{Anch'io|Saggio}. Il fronte è troppo vicino."]]
+    ],
+    "topicElection": [
+      [[0, "Per chi voti? {party} o {rival}?"], [1, "{Voto segreto|Non te lo dico}."], [0, "{Codardo|Giusto}."]],
+      [[1, "Mancano {days} giorni. Vincerà {party}, vedrai."], [0, "{rival} ha lo slancio."], [1, "Lo slancio non sono voti."]],
+      [[0, "Ho visto il comizio di {party}. Folla enorme."], [1, "La birra gratis attira la folla."], [0, "*ride* Vero."]]
+    ],
+    "topicElectionDay": [
+      [[0, "Hai già votato?"], [1, "{Stamattina|Ci sto andando}."], [0, "Anch'io. Vediamo."]],
+      [[1, "Lunga fila al seggio."], [0, "Bene. Alla gente importa."]]
+    ],
+    "topicElectionResult": [
+      [[0, "Ha vinto {winner}. {Ci credi|Ovviamente}."], [1, "{Diamogli una possibilità|Che il cielo ci aiuti}."], [0, "Lo vedremo presto."]],
+      [[1, "Quindi è {winner}."], [0, "Altri quattro anni di lamentele."], [1, "Certe cose non cambiano mai."]]
+    ],
+    "topicUnemployed": [
+      [[0, "Cerco ancora lavoro."], [1, "{Prova al porto|Prova al mercato}. Assumono."], [0, "{Già fatto|Provato}. Niente."]],
+      [[1, "Fortuna con la ricerca di lavoro?"], [0, "{No|Non ancora}. I risparmi stanno finendo."], [1, "Qualcosa salterà fuori."]]
+    ],
+    "topicEmigrate": [
+      [[0, "Sto pensando di lasciare {country}."], [1, "{E andare dove|Partire? Davvero}?"], [0, "{Ovunque ci sia lavoro|Da qualche parte più sicura}."]],
+      [[1, "Tutti i giovani se ne vanno."], [0, "{Puoi dargli torto|Forse anch'io}."]]
+    ],
+    "topicRefugee": [
+      [[0, "Sono arrivato da {from} quando l'hanno presa i goblin."], [1, "{Mi dispiace|Non riesco a immaginarlo}."], [0, "Si impara a ricominciare."]],
+      [[1, "Ti manca {from}?"], [0, "Ogni giorno. Il pane, il fiume, tutto."]]
+    ],
+    "topicIntegrated": [
+      [[0, "Il sorvegliante goblin mi ha dato un giorno libero."], [1, "{Generoso|Generoso, per un goblin}."], [0, "Non farti sentire."]],
+      [[1, "Come fai a vivere sotto di loro?"], [0, "{Lavora sodo, stai zitto|Ti adatti}."]]
+    ],
+    "topicHordeFear": [
+      [[0, "Di nuovo goblin avvistati vicino al confine."], [1, "{Chiudi le porte|Tieni i bambini in casa}."], [0, "Le porte non fermano l'Orda."]],
+      [[1, "Se arriva l'Orda, dove andiamo?"], [0, "{A ovest|Ovunque}. In fretta."]]
+    ],
+    "topicTrip": [
+      [[0, "Appena tornato da {place}."], [1, "Com'è andata?"], [0, "{Cara|Meravigliosa}. {Contento di essere a casa|Voglio tornarci}."]],
+      [[1, "Vai da qualche parte di bello?"], [0, "A {place}, se le tariffe tengono."]]
+    ],
+    "topicNewcomer": [
+      [[1, "Sei nuovo qui, vero?"], [0, "{Appena trasferito|Trasferito la scorsa stagione}."], [1, "Benvenuto. {Il forno all'angolo è il migliore|Evita la torta della taverna}."]],
+      [[0, "Mi sto ancora orientando."], [1, "Ci vuole un anno. Poi sei del posto."]]
+    ],
+    "topicMinigame": [
+      [[0, "{Ho vinto|Ho perso} a {game} prima."], [1, "{Beato te|Che sfortuna}."], [0, "{Offro io|Mai più}."]],
+      [[1, "Giochi ancora a {game}?"], [0, "{Solo il venerdì|Troppo spesso}."]]
+    ],
+    "topicFight": [
+      [[0, "Hai visto quel mostro?"], [1, "{Sono scappato|Mi sono nascosto}. E tu?"], [0, "{Uguale|Più veloce di te}."]],
+      [[1, "Sei ferito!"], [0, "{Un graffio|Solo lividi}. Dovresti vedere l'altra cosa."]]
+    ],
+    "topicSick": [
+      [[0, "Sono a casa in malattia."], [1, "Guarisci presto!"], [0, "{Ci provo|Dillo alla mia gola}."]],
+      [[1, "Sei pallido."], [0, "{Febbre|Un virus}. Ordini del medico: riposo."]]
+    ],
+    "topicParentalLeave": [
+      [[0, "In congedo con il bambino."], [1, "{Fortunato|Stancante}?"], [0, "{Tutte e due|Stancante. Tanto stancante}."]],
+      [[1, "Ti manca il lavoro?"], [0, "{Non il capo|Solo il silenzio}."]]
+    ],
+    "topicConversion": [
+      [[0, "Ho letto qualcosa su {creed}."], [1, "{Attento|Quelli}? Davvero?"], [0, "Hanno senso, in parte."]],
+      [[1, "Ultimamente sembri diverso."], [0, "Forse {creed} mi ha convinto."]]
+    ]
+  },
+  "ambient": {
+    "family": [
+      [[0, "{partner} ti saluta."], [1, "Ricambia il saluto."]],
+      [[0, "Devo andare a casa, {child} mi aspetta."], [1, "Vai, vai."]],
+      [[0, "Cena in famiglia stasera."], [1, "{Beato te|Buona fortuna}."]]
+    ],
+    "kids": [
+      [[0, "{Guardami|Guarda}!"], [1, "{Attento|Wow}!"]],
+      [[0, "Prendimi!"], [1, "{Arrivo|Non vale}!"]]
+    ],
+    "war": [
+      [[0, "Notizie dal fronte?"], [1, "Niente di buono."]],
+      [[0, "Il pane è aumentato ancora. La guerra."], [1, "Sempre la guerra."]]
+    ],
+    "election": [
+      [[0, "Voti per {party}?"], [1, "{Forse|Mai}."]],
+      [[0, "Le elezioni sono vicine."], [1, "{Non ricordarmelo|Non vedo l'ora}."]]
+    ],
+    "work": [
+      [[0, "Ancora niente lavoro?"], [1, "{Niente|Proprio niente}."]],
+      [[0, "Vai al turno?"], [1, "{Purtroppo|Sempre}."]]
+    ],
+    "horde": [
+      [[0, "Sentito tamburi?"], [1, "{Non scherzare|Non stanotte}."]],
+      [[0, "I goblin sono agitati."], [1, "Testa bassa."]]
+    ],
+    "emigrate": [
+      [[0, "Penso di trasferirmi all'estero."], [1, "{Portami con te|Buona fortuna}."]],
+      [[0, "Qui per noi non c'è niente."], [1, "{Forse|Purtroppo è vero}."]]
+    ]
+  },
+  "mention": {
+    "partner": [
+      "Piaceresti a {partner}. {Piace a tutti|A {partner} piacciono tutti}.",
+      "{partner} mi aspetta a casa. {Non posso fare tardi|Non devo tardare}.",
+      "Io e {partner} stiamo insieme da {years} anni. {Ancora qui|Ancora a litigare sul termostato}."
+    ],
+    "poly": [
+      "{partner} e {partner2} mi tengono occupato. {Due anniversari|Il doppio dei compleanni}.",
+      "Divido la casa con {partner} e {partner2}. {Casa rumorosa|Mai soli}."
+    ],
+    "longDistance": [
+      "{partner} vive lontano. {Lettere ogni settimana|La bolletta del telefono è scioccante}.",
+      "Vedo {partner} solo ogni tanto. Così ogni visita conta."
+    ],
+    "anniversary": [
+      "{years} anni con {partner} questo mese. {Non farmi dimenticare i fiori|Mi serve un regalo}.",
+      "Il nostro anniversario è vicino. {partner} pensa che me ne sia dimenticato."
+    ],
+    "pregnant": [
+      "Il bambino nasce presto. {Si vede|Sono enorme}.",
+      "Io e {partner} aspettiamo un bambino. {Terrorizzato|Felicissimo}, in parti uguali."
+    ],
+    "partnerPregnant": [
+      "{partner} aspetta un bambino. Diventerò genitore!",
+      "Stiamo dipingendo la cameretta. {partner} ha scelto il giallo."
+    ],
+    "newborn": [
+      "Il mio piccolo {child} ha {solo pochi mesi|appena visto il mondo}. Da allora non dormo.",
+      "{child} ha il pianto più forte della via, lo giuro."
+    ],
+    "children": [
+      "Il mio {child} ora è a scuola. {Speriamo che impari qualcosa|Speriamo che si comporti bene}.",
+      "{child} vuole diventare come te da grande. {Avventurieri|Eroi}, tutti quanti."
+    ],
+    "adultChild": [
+      "Il mio {child} è cresciuto. {Non chiama mai, ovviamente|Se la cava bene}.",
+      "{child} è andato via di casa l'anno scorso. La casa è così silenziosa."
+    ],
+    "parents": [
+      "Il mio {parent} ti farebbe una testa così. {Vecchie storie|Storie di guerra}.",
+      "Ora mi prendo cura di {parent}. {Odierebbe sentirmelo dire|Testardo come un mulo}."
+    ],
+    "siblings": [
+      "Io e {sibling} non ci parliamo molto. {Vecchia lite|Lunga storia}.",
+      "Piaceresti a {sibling}. {Adora i viaggiatori|Ti farebbe mille domande}."
+    ],
+    "breakup": [
+      "Io e {ex} ci siamo lasciati. {Fa ancora male|Non chiedere}.",
+      "Sono di nuovo single da {ex}. {Vado piano|Mi godo la quiete}."
+    ],
+    "widowed": [
+      "Ho perso {ex} tempo fa. {Certi giorni vanno meglio|Te lo porti dietro}.",
+      "Saresti piaciuto a {ex}. Gli piacevano tutti."
+    ],
+    "partnerAway": [
+      "{partner} è in viaggio. {La casa è troppo silenziosa|Mangio pane tostato ogni sera}.",
+      "{partner} manda cartoline dal viaggio. {Si vanta|Lo fa apposta}."
+    ],
+    "refugeeKin": [
+      "Il mio {kin} è fuggito dall'Orda. {Ora è in un campo|Gli mando quello che posso}.",
+      "Se passi dai campi, chiedi di {kin}. Digli che penso a lui."
+    ]
+  },
+  "greetKin": {
+    "partner": [
+      "{Ehi|Ciao}, {name}! {Ti amo|Eccoti}.",
+      "{name}! {Cena alle sette|Non fare tardi}!"
+    ],
+    "parent": [
+      "{Ciao|Salve}, {name}!",
+      "{name}! {Posso venire anch'io|Aspettami}!"
+    ],
+    "child": [
+      "{Eccoti|Ciao}, {name}. {Ti comporti bene|Niente guai}?",
+      "{name}, {a casa per cena|resta dove ti vedo}!"
+    ],
+    "sibling": [
+      "{Oi|Ehi}, {name}!",
+      "{name}! {Mi devi ancora dei soldi|Chiama la mamma}!"
+    ]
+  },
+  "fallback": {
+    "partner": "la mia metà",
+    "child": "il piccolo",
+    "parent": "mamma",
+    "sibling": "mio fratello",
+    "ex": "il mio ex",
+    "kin": "mio cugino",
+    "enemy": "il nemico",
+    "power": "le potenze",
+    "country": "questo paese",
+    "place": "la costa",
+    "from": "casa",
+    "game": "le macchinette",
+    "item": "spuntino",
+    "spec": "il mio mestiere",
+    "creed": "quel credo",
+    "party": "il governo",
+    "rival": "gli altri",
+    "winner": "i nuovi",
+    "election": "elezioni",
+    "job": "lavoro",
+    "years": "alcuni"
+  }
+}

@@ -111,7 +111,7 @@
     --modal-btn-bg: transparent;
     --modal-btn-border: 2px solid var(--text-primary-hover);
     --modal-btn-fg: var(--text-primary-hover);
-    --modal-btn-hover-bg: rgba(255, 204, 102, 0.12);
+    --modal-btn-hover-bg: transparent;
     --modal-btn-hover-fg: var(--text-primary-hover);
     --modal-btn-hover-border: var(--accent-gold-pure);
     --modal-btn-hover-shadow: none;

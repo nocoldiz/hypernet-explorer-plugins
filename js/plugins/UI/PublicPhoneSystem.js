@@ -629,11 +629,27 @@
         this.updateEngineInput();
         this.updateCursorBlink();
         this.updateAmbient();
+        this.syncKeypadCursor();
     };
 
     Scene_PublicPhone.prototype.updateEngineInput = function() {
         if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
             this.onEndButton();
+            return;
+        }
+        // On the idle screen and while a number is dialled the keys are the
+        // controls: the directions walk them and Confirm presses the one under
+        // the cursor, the same as a click on it.
+        if (this.usesKeypadCursor()) {
+            const dir = window.UINav ? window.UINav.navDir() : null;
+            if (dir) {
+                this.stepKeypadCursor(dir);
+                return;
+            }
+            if (Input.isTriggered('ok')) {
+                const key = this._buttons[this._padKeyIndex];
+                if (key) key.onClick();
+            }
             return;
         }
         if (Input.isTriggered('ok')) {
@@ -650,6 +666,33 @@
         } else if (Input.isRepeated('up')) {
             this.navigateList(-1);
         }
+    };
+
+    Scene_PublicPhone.prototype.usesKeypadCursor = function() {
+        const mode = this._screenMode;
+        return (mode === 'home' || mode === 'dial') && (this._buttons || []).length > 0;
+    };
+
+    // CALL LIST END over the twelve keys, three across: one grid step walks
+    // all fifteen and never wraps into another column.
+    Scene_PublicPhone.prototype.stepKeypadCursor = function(dir) {
+        const count = this._buttons.length;
+        const at = this._padKeyIndex == null ? 1 : this._padKeyIndex;
+        const next = window.UINav ? window.UINav.gridStep(at, dir, count, 3) : at;
+        if (next === at) return;
+        this._padKeyIndex = next;
+        this.playButtonSound();
+        this.syncKeypadCursor();
+    };
+
+    Scene_PublicPhone.prototype.syncKeypadCursor = function() {
+        if (this._padKeyIndex == null) this._padKeyIndex = 1;
+        const on = this.usesKeypadCursor();
+        (this._buttons || []).forEach((button, i) => {
+            if (button && typeof button.setFocused === 'function') {
+                button.setFocused(on && i === this._padKeyIndex);
+            }
+        });
     };
 
     Scene_PublicPhone.prototype.navigateList = function(delta) {

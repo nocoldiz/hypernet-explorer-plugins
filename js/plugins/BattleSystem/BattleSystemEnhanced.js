@@ -452,6 +452,10 @@
  * @type number
  * @default 26
  *
+ * @command setRespawnPointAtCoordinates
+ * @text Set Respawn Point At Coordinates
+ * @desc Set the respawn point where the player stands now. Detects the map id and tile, or on the procedural map the world square and the tile inside it.
+ *
  * @command restore
  * @text Restore Inventory
  * @desc Restores the player's gold and inventory from their last death point and removes the gravestone data.
@@ -1580,8 +1584,16 @@
         // HP damage and HP drain only: healing, MP damage and every recovery
         // effect keep their full value.
         if (!this.checkDamageType([1, 5])) return value;
-        let finalValue = value;
-        if (value <= 0) {
+        // An element the target is immune to (rate 0) or absorbs (below 0) is
+        // not a hit the chip floor may rescue: a blade through a ghost does
+        // nothing, and fire into a fire elemental feeds it. An absorbed hit is
+        // resolved exactly as the same blow would have hurt, then turned into
+        // healing, so the pacing below heals no more than it would have harmed.
+        const elementRate = this.calcElementRate(target);
+        if (elementRate === 0) return value;
+        const absorbed = elementRate < 0 && value < 0;
+        let finalValue = absorbed ? -value : value;
+        if (finalValue <= 0) {
             // InvisibleHand's own DEF/MDF boost (section 4c) can push a raw
             // formula to 0 or below against a much higher-level enemy, at
             // which point no tactic could ever land a hit at all - that is
@@ -1632,7 +1644,7 @@
         // to be added here as a flat handful of damage, which a paced hit no
         // longer notices.
 
-        return Math.round(finalValue);
+        return absorbed ? -Math.round(finalValue) : Math.round(finalValue);
     };
 
     // ==================================================================
@@ -2143,20 +2155,38 @@
     window.SkillStatReq = {
         MAX_FAIL: STAT_REQ_CAP,
 
-        // { stat, paramId, points } for a skill, or null when it carries no tag.
-        of(skill) {
-            if (!skill || skill.id === undefined) return null;
+        // Every { stat, paramId, points } a skill asks for, primary first: one,
+        // or two for a physical skill with magic in it (`<StatReq: STR 12,
+        // INT 9>`). Empty when it carries no tag.
+        list(skill) {
+            if (!skill || skill.id === undefined) return [];
             if (statReqCache.has(skill.id)) return statReqCache.get(skill.id);
-            let out = null;
-            const m = /<StatReq:\s*([A-Za-z]+)\s+(\d+)\s*>/i.exec(skill.note || '');
+            const out = [];
+            const m = /<StatReq:\s*([^>]+)>/i.exec(skill.note || '');
             if (m) {
-                const stat = m[1].toUpperCase();
-                if (STAT_REQ_PARAM[stat] !== undefined) {
-                    out = { stat: stat, paramId: STAT_REQ_PARAM[stat], points: Number(m[2]) };
+                for (const part of m[1].split(',')) {
+                    const pm = /^\s*([A-Za-z]+)\s+(\d+)\s*$/.exec(part);
+                    if (!pm) continue;
+                    const stat = pm[1].toUpperCase();
+                    if (STAT_REQ_PARAM[stat] === undefined || out.length >= 2) continue;
+                    out.push({ stat: stat, paramId: STAT_REQ_PARAM[stat], points: Number(pm[2]) });
                 }
             }
             statReqCache.set(skill.id, out);
             return out;
+        },
+
+        // The primary requirement, or null when the skill carries no tag.
+        of(skill) {
+            return this.list(skill)[0] || null;
+        },
+
+        // The stats the skill's damage is worked out from: the same stats it
+        // asks for, and with two of them the damage is split equally between
+        // them (tools/skills/gen_stat_requirements.js writes the formula to
+        // match). ['STR'], ['INT'], ['STR', 'INT'] ...
+        scaling(skill) {
+            return this.list(skill).map(r => r.stat);
         },
 
         // The localized three-letter name of a stat, the same one the sheet and
@@ -2190,19 +2220,27 @@
         // How the battler stands against one skill, or null when the skill asks
         // for nothing or the battler is not on this scale (creatures are not:
         // their parameters are written in the hundreds).
+        // With two requirements every missing point counts, and the one the
+        // battler is furthest under is the one reported.
         check(battler, skill) {
-            const req = this.of(skill);
-            if (!req || !battler || !battler.isActor || !battler.isActor()) return null;
-            const have = this.baseStat(battler, req.paramId);
-            const short = Math.max(0, req.points - have);
+            const reqs = this.list(skill);
+            if (!reqs.length || !battler || !battler.isActor || !battler.isActor()) return null;
+            const parts = reqs.map(req => {
+                const have = this.baseStat(battler, req.paramId);
+                return { stat: req.stat, paramId: req.paramId, points: req.points, have: have,
+                    short: Math.max(0, req.points - have) };
+            });
+            const short = parts.reduce((sum, p) => sum + p.short, 0);
+            const worst = parts.reduce((w, p) => (p.short > w.short ? p : w), parts[0]);
             return {
-                stat: req.stat,
-                paramId: req.paramId,
-                points: req.points,
-                have: have,
+                stat: worst.stat,
+                paramId: worst.paramId,
+                points: worst.points,
+                have: worst.have,
                 short: short,
                 met: short === 0,
-                failChance: short ? Math.min(STAT_REQ_CAP, 1 - Math.pow(STAT_REQ_SLIP, short)) : 0
+                failChance: short ? Math.min(STAT_REQ_CAP, 1 - Math.pow(STAT_REQ_SLIP, short)) : 0,
+                parts: parts
             };
         },
 
@@ -2216,10 +2254,9 @@
             return c ? c.failChance : 0;
         },
 
-        // "INT 14", ready to print anywhere.
+        // "INT 14" or "STR 12 · INT 9", ready to print anywhere.
         label(skill) {
-            const req = this.of(skill);
-            return req ? this.statName(req.stat) + ' ' + req.points : '';
+            return this.list(skill).map(req => this.statName(req.stat) + ' ' + req.points).join(' · ');
         },
 
         // "INT 8/14", the floor AND what this battler actually holds. Every
@@ -2230,7 +2267,7 @@
         standingLabel(battler, skill) {
             const c = this.check(battler, skill);
             if (!c) return this.label(skill);
-            return this.statName(c.stat) + ' ' + c.have + '/' + c.points;
+            return c.parts.map(p => this.statName(p.stat) + ' ' + p.have + '/' + p.points).join(' · ');
         }
     };
 
@@ -2498,6 +2535,67 @@
         $gameSystem._respawnPointSet = true;
     });
 
+    // The respawn point, read off wherever the player stands. On an authored
+    // map that is the map id and the tile. On the procedural map the id (636)
+    // is every square at once, so the square itself is stored with the tile
+    // inside it, and the death rebuilds it. Inside a structure entered off a
+    // square (a cellar, a cave) the party wakes on that square's surface, at
+    // its way down, or its centre when it has none on record.
+    function detectRespawnPoint() {
+        const WMR = window.WorldMapReturn;
+        const mapId = $gameMap.mapId();
+        const here = { mapId, x: $gamePlayer.x, y: $gamePlayer.y, proc: null };
+        if (!WMR || mapId !== WMR.procMapId) return here;
+        here.proc = WMR.snapshotProcRespawn ? WMR.snapshotProcRespawn() : null;
+        if (here.proc) return here;
+        const pg = $gameSystem._procGenData || {};
+        const world = window.WorldMapTransfer.playerWorld();
+        here.proc = WMR.snapshotProcRespawnAt ? WMR.snapshotProcRespawnAt(world.x, world.y) : null;
+        if (!here.proc) return null;
+        const hasEntrance = Number.isFinite(pg.goDownEventX) && Number.isFinite(pg.goDownEventY);
+        here.x = hasEntrance ? pg.goDownEventX : Math.floor($gameMap.width() / 2);
+        here.y = hasEntrance ? pg.goDownEventY : Math.floor($gameMap.height() / 2);
+        return here;
+    }
+    BSE.Functions.detectRespawnPoint = detectRespawnPoint;
+
+    // The one way to make "here" the respawn point: this command and the sleep
+    // menu's Set Respawn both go through it. Answers false when nothing was set.
+    function setRespawnHere() {
+        const here = detectRespawnPoint();
+        if (!here) {
+            console.warn("BattleSystemEnhanced: the square the party stands on cannot be rebuilt; respawn point left unchanged.");
+            return false;
+        }
+        $gameVariables.setValue(BSE.Params.respawnMapVar, here.mapId);
+        $gameVariables.setValue(BSE.Params.respawnXVar, here.x);
+        $gameVariables.setValue(BSE.Params.respawnYVar, here.y);
+        $gameSystem._respawnProcSurface = here.proc;
+        $gameSystem._respawnPointSet = true;
+        return true;
+    }
+    BSE.Functions.setRespawnHere = setRespawnHere;
+
+    // Is the respawn point already the one setRespawnHere would set? Any other
+    // tile answers no, on the same map or the same square too, so the point
+    // can always be moved as soon as the party takes a step.
+    function isRespawnHere() {
+        if (!$gameSystem._respawnPointSet) return false;
+        const here = detectRespawnPoint();
+        if (!here) return false;
+        if ($gameVariables.value(BSE.Params.respawnMapVar) !== here.mapId) return false;
+        if ($gameVariables.value(BSE.Params.respawnXVar) !== here.x) return false;
+        if ($gameVariables.value(BSE.Params.respawnYVar) !== here.y) return false;
+        const stored = $gameSystem._respawnProcSurface;
+        if (!here.proc || !stored) return !here.proc && !stored;
+        return stored.originX === here.proc.originX && stored.originY === here.proc.originY;
+    }
+    BSE.Functions.isRespawnHere = isRespawnHere;
+
+    PluginManager.registerCommand(pluginName, "setRespawnPointAtCoordinates", function() {
+        setRespawnHere();
+    });
+
     PluginManager.registerCommand(pluginName, "restore", function(args) {
         if (BSE.Functions.executeRestoreCommand) {
             BSE.Functions.executeRestoreCommand();
@@ -2655,6 +2753,13 @@
         return BSE.State.mapCorpses.find(c => c && c.mapId === mapId && c.x === x && c.y === y) || null;
     };
 
+    // A person's body (NPCSystem, DOWNED BODIES) is asked about first: Loot,
+    // Butcher or Cancel. Butcher comes back here, to the harvest scene.
+    function openPersonCorpse(corpse) {
+        if (!corpse || !corpse.npcName || !window.NPCDowned) return false;
+        return !!window.NPCDowned.openCorpseMenu(corpse);
+    }
+
     const _Game_Player_checkTriggerHere = Game_Player.prototype.checkEventTriggerHere;
     Game_Player.prototype.checkEventTriggerHere = function(triggers) {
         _Game_Player_checkTriggerHere.call(this, triggers);
@@ -2665,6 +2770,7 @@
         if ($gameParty.inBattle()) return;
         const corpses = BSE.State.mapCorpses.filter(c => c.mapId === $gameMap.mapId());
         const corpse = corpses.find(c => c.x === this.x && c.y === this.y);
+        if (corpse && openPersonCorpse(corpse)) return;
         if (corpse && typeof Scene_BodyPartHarvest !== 'undefined') {
             SceneManager.push(Scene_BodyPartHarvest);
             SceneManager.prepareNextScene(corpse);
@@ -2684,6 +2790,7 @@
         const x2 = $gameMap.roundXWithDirection(this.x, this.direction());
         const y2 = $gameMap.roundYWithDirection(this.y, this.direction());
         const corpse = corpses.find(c => c.x === x2 && c.y === y2);
+        if (corpse && openPersonCorpse(corpse)) return;
         if (corpse && typeof Scene_BodyPartHarvest !== 'undefined') {
             SceneManager.push(Scene_BodyPartHarvest);
             SceneManager.prepareNextScene(corpse);
@@ -2806,9 +2913,17 @@
         _Game_Enemy_performCollapse_BSE.call(this);
     };
 
-    const _Game_Enemy_die_BSE = Game_Enemy.prototype.die;
+    // Game_Enemy owns no die() in the engine, so capturing one here would
+    // freeze Game_BattlerBase#die for every enemy as it stood when this file
+    // loaded, and a later plugin's override of it would never reach one. The
+    // chain is walked at call time instead.
+    const _Game_Enemy_die_BSE =
+        Object.prototype.hasOwnProperty.call(Game_Enemy.prototype, 'die')
+            ? Game_Enemy.prototype.die
+            : null;
     Game_Enemy.prototype.die = function() {
-        _Game_Enemy_die_BSE.call(this);
+        if (_Game_Enemy_die_BSE) _Game_Enemy_die_BSE.call(this);
+        else Game_Battler.prototype.die.call(this);
         this._collapsePlayed = false;
         if ($gameParty && $gameParty.inBattle()) this.performCollapse();
     };
@@ -2987,15 +3102,19 @@
         enemy.addState(enemy.deathStateId());
     };
 
-    CritSever.applyVerdict = function(verdict, target) {
+    CritSever.applyVerdict = function(verdict, target, action) {
         if (!verdict || verdict.outcome === "none") return verdict;
+        // A Blunt blow never takes a vital part, however well it lands: it
+        // breaks and knocks out (HealthCore.isBluntAction).
+        const HCb = window.HealthCore;
+        const blunt = !!(action && HCb && HCb.isBluntAction && HCb.isBluntAction(action));
         const boss = CritSever.isBoss(target);
         // A boss keeps its life and loses a piece of itself instead, and so
         // does anything still above a quarter of its HP: a vital part is only
         // ever lethal under that line (MonsterHealth.vitalCanFall).
         const MH = window.MonsterHealth;
         const vitalOpen = !MH || !MH.vitalCanFall || MH.vitalCanFall(target);
-        const takesLife = verdict.outcome === "behead" && !boss && vitalOpen;
+        const takesLife = verdict.outcome === "behead" && !boss && vitalOpen && !blunt;
         let partKey = takesLife ? CritSever.pickVitalPart(target) : null;
         if (!partKey) partKey = CritSever.pickLimb(target);
         if (partKey && window.MonsterHealth) window.MonsterHealth.severPart(target, partKey);
@@ -3089,7 +3208,7 @@
         action._critSeverRolled = true;
         const magical = CritSever.isMagicalStrike(action);
         const verdict = CritSever.roll(action.subject(), target, magical);
-        CritSever.applyVerdict(verdict, target);
+        CritSever.applyVerdict(verdict, target, action);
         CritSever.logRoll(verdict, target);
         return verdict;
     };

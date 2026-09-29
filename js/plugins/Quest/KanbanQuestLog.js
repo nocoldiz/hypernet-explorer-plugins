@@ -1031,8 +1031,8 @@
             if (this._selectedQuest) {
                 if (cancelled) this._closeDetail();
                 else if (Input.isTriggered('shift')) this._showOnMap();
-                else if (Input.isTriggered('right')) this._moveSelectedTo('inProgress');
-                else if (Input.isTriggered('left')) this._moveSelectedTo('todo');
+                else if (Input.isRepeated('right')) this._moveSelectedTo('inProgress');
+                else if (Input.isRepeated('left')) this._moveSelectedTo('todo');
                 return;
             }
 

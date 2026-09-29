@@ -218,6 +218,164 @@
       "A few new touches and this place {feels like home|is almost liveable|stops feeling borrowed}.",
       "{Nice things|Small comforts|A good chair} make a house a home.",
       "That looks {better already|much better|nearly right}."
+    ],
+    "arcade": [
+      "One more {credit|go|coin} and I {have it|beat that score|am done, honestly}.",
+      "My initials are {going on that board|still up there|up there somewhere}, I swear.",
+      "{Those ghosts|That last level|The final boss} {cheats|has it in for me|is rigged}."
+    ],
+    "slots": [
+      "{Three cherries|One more line|Just one more pull} and I {would have had it|was that close|swear it was coming}.",
+      "The machine is {due|warm tonight|about to pay}, I can feel it.",
+      "{Easy come, easy go|That is the rent gone|I only meant to put in one coin}."
+    ],
+    "horserace": [
+      "{Never|Never again|Not once more} back a horse {with a name like that|on a hunch|because it looked at me}.",
+      "{By a nose|By a length|At the post}, and {mine|not mine|the wrong one} took it.",
+      "The form said {one thing|the favourite|nothing useful}, the race said {another|the outsider|everything}."
+    ],
+    "tournament": [
+      "{Mine|My pick|That beast I backed} {went down in the first round|fought like a devil|had no business winning}.",
+      "The big ones {always win|never win when I back them|win until they do not}.",
+      "{Blood on the sand|What a bout|What a night}, and {money in my pocket|my pocket lighter|nothing to show for it}."
+    ],
+    "cards": [
+      "{Good hand|Bad draw|Tight board}. {I had them|They had me|Anybody's game} from the {first card|middle|last clash}.",
+      "{Next time|One day|Tomorrow} I bring a {better deck|deck worth the name|rarer card}.",
+      "The clash {went my way|went theirs|took everything off the board}."
+    ],
+    "scratch": [
+      "{Nothing|Two out of three|A near miss}, {as usual|again|of course}.",
+      "{Somebody|Some lucky soul|A cousin of a cousin} won big on one of these, {they say|apparently|once}.",
+      "{Scratch|Scrape|Rub}, {hope|pray|sigh}, {bin|repeat|buy another}."
+    ],
+    "bowling": [
+      "{A strike|A spare|Straight into the gutter}, {and I will take it|that is my night|typical}.",
+      "The {lane|ball|pin setter} {pulls left|has it in for me|is slippery tonight}.",
+      "{Shoes|Rented shoes|Those shoes} {two sizes off|still warm|smell of the last one}, and still {a decent game|I bowled|a win}."
+    ],
+    "pool": [
+      "{Eight ball|Last ball|The black} in the {corner|side pocket|wrong pocket}, {and that is the game|of course|typical}.",
+      "{Chalk|A steady hand|A good break} is {half of it|everything|what I did not have}.",
+      "{Bank shot|Long pot|Double}, {just like I called it|nobody saw it coming|pure luck}."
+    ],
+    "basketball": [
+      "{Nothing but net|Off the rim|Off the backboard and in}.",
+      "{Nobody|Not a soul|Not one of them} {guards the paint|boxes out|runs back} here.",
+      "{A few more|Ten more|Just one more} shots and I call it {a day|a night|a win}."
+    ],
+    "target": [
+      "{Tighter|Better|Wider} grouping {than last time|than I thought|every round}.",
+      "{Breathe out|Squeeze, do not pull|Steady}, and {the target falls|the clay breaks|it is gone}.",
+      "My {ears|shoulder|wrist} will {feel that tomorrow|remember that|ring all night}."
+    ],
+    "piano": [
+      "{Out of tune|Sticky keys|A cracked note} and still {it sings|lovely|worth it}.",
+      "My {fingers|hands|left hand} {remember more than I do|have a mind of their own|are out of practice}.",
+      "{Just the one song|Only the chorus|Just the start of it}, {then|and then|maybe} I stop."
+    ],
+    "tarot": [
+      "{The Tower|Death|The Fool} again. {It means change, not death|I am not worried|That is fine, it is fine}.",
+      "The cards {never lie|say what you already know|are only cardboard}, {they say|mostly|surely}.",
+      "{Upright|Reversed|Crossed}, {that is a good sign|that is a bad sign|that is no sign at all}."
+    ]
+  },
+  "greetFriend": [
+    "{Hey|Oh|Look}, {name}!",
+    "{Evening|Morning|Hello}, {name}.",
+    "{name}! {Good to see you|Fancy that|Still alive then}."
+  ],
+  "water": {
+    "swim": {
+      "wash": [
+        "{Nothing|No soap} {beats|compares to} a {dip|swim|good rinse} to {wash off the day|get clean|scrub up}.",
+        "{Right|Well}, {in I go|here goes}. {It's cold|Brr|Bracing}, but I {needed a wash|was filthy|smelled}."
+      ],
+      "escape": [
+        "{It can't|It won't|Let it try to} follow me {in here|into the water|out here}!",
+        "{Swim|Keep swimming|Out of reach}! {Don't look back|Don't stop|Nearly there}."
+      ],
+      "leisure": [
+        "{What a day for|Perfect weather for|Time for} a {swim|dip|paddle}.",
+        "{Ahh|Oh|Mm}, the water is {lovely|just right|perfect} {today|this time of day}."
+      ],
+      "group": [
+        "{Wait for me|Coming|Save me a spot}! {Last one in|I'm right behind you}!",
+        "{Race you|Bet I can outswim you|Room for one more}?"
+      ]
+    },
+    "swimming": [
+      "*{floats on their back|treads water|splashes about}*",
+      "{I could|I'd happily} stay {in here|out here} {all day|until dinner|for hours}.",
+      "{Ha|Oh}, {a fish just brushed my leg|that was a wave|I swallowed some}!"
+    ],
+    "fish": {
+      "cast": [
+        "*{casts the line|flicks the rod|lets the hook sink}* {Now we wait|Come on then|Bite, little ones}.",
+        "{Good spot|Quiet water|Nice and still}. {Should be biting|They'll come|Patience}."
+      ],
+      "wait": [
+        "{Nothing yet|Not a nibble|Still waiting}. {Patience|Any minute now|Come on}...",
+        "*{watches the float|tugs the line gently|yawns at the water}*"
+      ],
+      "catch": [
+        "{Got one|Caught it|Hooked}! A {fish}, {and a fine one|not bad at all|dinner sorted}.",
+        "{Look at this|Ha|There we go}, a {fish}! {Into the bag|That's supper|Worth the wait}."
+      ],
+      "release": [
+        "A {fish}? {Back you go|Off with you|Not today}, {little one|friend|you poor thing}.",
+        "*unhooks the {fish} and tosses it back* {Go on|Swim away|Next time}."
+      ],
+      "nothing": [
+        "{Nothing|Not a thing|Empty hook}. {Maybe tomorrow|The fish are sleeping|Wrong bait again}.",
+        "{Well|Oh well}, {the fish won today|a quiet hour is its own catch|at least it was peaceful}."
+      ]
+    },
+    "talk": [
+      [
+        [
+          0,
+          "{The water's|It's} {warm|lovely|perfect} {today|this afternoon}, isn't it?"
+        ],
+        [
+          1,
+          "{Warmer than last time|Just right|Could stay in all day}."
+        ]
+      ],
+      [
+        [
+          0,
+          "{Race you|Bet you can't catch me} to the {far side|rocks|other bank}!"
+        ],
+        [
+          1,
+          "{You're on|Not a chance|Give me a head start}!"
+        ]
+      ],
+      [
+        [
+          0,
+          "{Did something|Something just} {touch my foot|swim past me}?"
+        ],
+        [
+          1,
+          "{Just weeds|Probably a fish|Don't think about it}."
+        ],
+        [
+          0,
+          "{I'm thinking about it|Too late|Great, thanks}."
+        ]
+      ],
+      [
+        [
+          0,
+          "{I needed this|This is what I needed|Best idea all week}."
+        ],
+        [
+          1,
+          "{Me too|Same here|Every bit of it}. {Work can wait|Forget the rest|Just float}."
+        ]
+      ]
     ]
   },
   "craving": {
@@ -345,6 +503,191 @@
       "I could {buy this street|buy half of this|have it all bought} and I would still {sleep badly|wake at four|worry about the same thing}.",
       "{The trick|The whole trick|The only trick} is {looking like you are not counting|never appearing to count|counting where nobody sees it}.",
       "{Somebody|Someone|A cousin} wants {a favour|money|an introduction}. {There is always somebody|There always is|There is one every week}."
+    ]
+  },
+  "addiction": {
+    "buy": {
+      "nicotine": [
+        "A fresh {pack|packet|box} of {item}. {Now we are talking|That is better already|Right then}.",
+        "{Just the one|Only the one|One} {item}. For {later|emergencies|the walk home}.",
+        "Do not {look at me like that|judge me|say a word}, it is only {item}."
+      ],
+      "alcohol": [
+        "{item}, for {the evening|later|when the day is done}. {Purely medicinal|Strictly for guests|Nobody needs to know}.",
+        "One bottle of {item}. {One|Just one|A single one}. That is {sensible|moderate|practically nothing}.",
+        "{Wrap it|Bag it|Hand it over} quickly, {please|if you would|before I change my mind}."
+      ],
+      "caffeine": [
+        "{item}. {Thank every saint|Thank goodness|At last}.",
+        "I will take {item}, and {another after that|a second one to go|nothing else matters}.",
+        "{Put it in my hand|Give it here|Pass it over} before I {fall asleep standing|forget my own name|stop working}."
+      ],
+      "narcotic": [
+        "Nobody saw that. {Nobody|Not a soul|Nobody at all} saw me buy {item}.",
+        "{item}. Just enough to be {level|steady|myself} again.",
+        "I {know|really do know} what I am doing. {Mostly|More or less|Most days}."
+      ],
+      "gambling": [
+        "{item}. {This one is the one|I can feel it in this one|Today the luck turns}.",
+        "Just {one|a single} {item}. {For fun|For the thrill|To keep my hand in}.",
+        "The {odds|numbers|stars} say {item} will pay. {They had better|They owe me|They must}."
+      ]
+    },
+    "use": {
+      "nicotine": [
+        "*lights {a cigarette|up|one}* {Ahh|There|Finally}. {Better|Much better|That is the stuff}.",
+        "*breathes out {a long plume|slow smoke|a grey ribbon}* {Now I can think|The world is quieter|Right}.",
+        "{item}. The {hands|fingers|nerves} stop {shaking|twitching|complaining} at last."
+      ],
+      "alcohol": [
+        "*takes a {long pull|deep swig|slow sip} of {item}* {Ahh|Better|There we are}.",
+        "The {edges|corners|worries} of the day {go soft|melt|fade} with the first {mouthful|glass|swallow}.",
+        "{Cheers|To me|To nobody in particular}. *drinks*"
+      ],
+      "caffeine": [
+        "*gulps {item}* {And I am|Now I am|That makes me} a {person|human being|citizen} again.",
+        "{Oh|Yes|There}. The {fog|headache|haze} is {lifting|going|clearing}.",
+        "*drinks {item}* {Right|Good|Excellent}. What was I {doing|meant to be doing|here for}?"
+      ],
+      "narcotic": [
+        "*{shivers|sighs|goes still}* {There|That is it|Level again}. {Everything is level|Nothing hurts|Quiet at last}.",
+        "The {world|room|street} stops {pressing|pushing|shouting} at me.",
+        "{Just enough|Only enough|A small one}. {Nobody|Not a soul} needs to know."
+      ],
+      "gambling": [
+        "*scratches {item} with {a coin|a thumbnail|trembling fingers}* {Come on|Come on, come on|Please}...",
+        "{item}, and the {thrill|rush|spark} is {back|there|alive} for a moment.",
+        "*studies {item}* {Close|Nearly|So close}. {Next time|The next one|Tomorrow} for certain."
+      ]
+    },
+    "relief": {
+      "nicotine": [
+        "The {worst|shaking|fog} has {passed|gone|lifted}. I can {breathe|think|hear} again.",
+        "{Ahh|At last|Finally}. I am {myself|human|fit company} again.",
+        "That was {a bad one|too long|hard}. {Never again|Not again|I say that every time}."
+      ],
+      "alcohol": [
+        "The {shaking|trembling|sweating} has {stopped|eased|let go}. {For now|For today|Thank heaven}.",
+        "I can hold a {cup|glass|pen} again without {spilling|shaking|embarrassing myself}.",
+        "{Steady|Steadier|Better}. I will {cut down|be careful|go easy} tomorrow. {Honestly|Really|I mean it}."
+      ],
+      "caffeine": [
+        "The {headache|nail behind my eye|throbbing} is {gone|fading|finally gone}.",
+        "I am awake. {Properly|Actually|Truly} awake. {What a feeling|At last|Hallelujah}.",
+        "{Right|Good|Fine}. I can be {useful|polite|pleasant} again."
+      ],
+      "narcotic": [
+        "My {bones|joints|hands} {have stopped arguing|are quiet|belong to me} again.",
+        "{Warm|Calm|Level} again. The {cold|shivering|dread} has {gone|passed|let go}.",
+        "I {got through it|am through it|survived that}. {Barely|Just|Somehow}."
+      ],
+      "gambling": [
+        "The {itch|restlessness|pull} has {eased|gone quiet|settled}. {For tonight|For now|Today}.",
+        "I can sit still {again|at last|now}. {Strange feeling|Odd|How peaceful}.",
+        "{Enough|That is enough|No more} for today. {Probably|I think|I hope}."
+      ]
+    },
+    "gamble": {
+      "casino": [
+        "{Tonight|This evening|Right now} is the night. {I can feel it|The tables are calling|Luck owes me one}.",
+        "Just a {quick|small|little} {flutter|visit|round} at the {casino|tables|wheel}. {In and out|An hour at most|Nothing big}.",
+        "The {wheel|tables|machines} {are waiting|will not wait|are warm tonight}. {Off I go|Here I come|Right then}."
+      ],
+      "bet": [
+        "{Everything on|All on|The lot on} {red|the favourite|number seven}. {No|No, no|No going} back.",
+        "*{puts down a stake|lays down the chips|places a bet}* {Come on|Do it for me|Please, please}.",
+        "{A bit more|Just a little more|Double it} this time. {The odds are turning|I am due|It must come}."
+      ],
+      "won": [
+        "{I won|Won|Yes}! {I knew it|I told you|I always said so}! {amount} {up|richer|in my pocket}!",
+        "*laughs* {The system works|I am a genius|Luck loves me}! {Again|One more|Keep going}!",
+        "{amount}! {Finally|At last|About time}. {Now the real betting starts|Let it ride|Double or nothing}."
+      ],
+      "lost": [
+        "{Lost|Gone|Down} {amount}. {Oh well|Never mind|That is how it goes}.",
+        "{The house|The wheel|That machine} {wins again|is rigged|hates me}. {Typical|Of course|As always}.",
+        "{amount} down. {I will stop here|Enough for tonight|Time to go home}. {Probably|Maybe|I think}."
+      ],
+      "chase": [
+        "{amount} down. {One more|Just one more|Another} and I {win it back|am even|break even}.",
+        "I {cannot|will not|refuse to} leave {now|on a loss|like this}. It {has|is bound|is going} to turn.",
+        "{Double it|Raise it|All of it}. {The next one pays|I am owed|Luck always comes back}."
+      ],
+      "broke": [
+        "{That was|There goes} the {last|rent|last of it}. {Oh no|What have I done|Not again}.",
+        "*turns out {empty pockets|an empty purse|the lining of a pocket}* {Nothing|Not a coin|Gone}.",
+        "{How|How do I|What do I} {tell them at home|explain this|pay the rent} now?"
+      ]
+    }
+  },
+  "farmCare": {
+    "hiveTend": [
+      "{Easy|Gently|Slowly} now, {girls|little ones|my lovelies}. Just {having a look|checking on you|seeing how you are}.",
+      "{Smoke first|A puff of smoke|Calm them down first}, then the lid. {Never the other way round|That is the whole trick|Everybody learns that once}.",
+      "The {frames|combs|brood frames} look {healthy|busy|full}. {Good|Lovely|That will do}.",
+      "{Listen to that hum|Hear them humming|That sound}. A {happy|contented|busy} hive {sounds like that|hums like that|is a loud hive}."
+    ],
+    "hiveTreat": [
+      "{Mites again|Varroa again|Those mites}. {Not in my hive|Out you go|Not on my watch}.",
+      "A {dusting|treatment|dose} against the {mites|rot|moth}, and they will {pull through|be fine|thank me later}.",
+      "{Something is wrong in there|They are poorly|This hive is sick}. {Good thing I came|Better now than never|Caught it in time}."
+    ],
+    "hiveSuper": [
+      "They are {running out of room|packed to the lid|bursting}. {Another box|A new super|One more storey} on top.",
+      "{More room|Space to grow|A bigger house} and {no swarm|they stay put|nobody leaves}. {That is the idea|Fingers crossed|Hopefully}."
+    ],
+    "honeyHarvest": [
+      "{Look at that|Heavy frames|Full combs}. {Honey|Gold|Liquid gold} {this year|at last|again}.",
+      "{Leave them plenty|Never take it all|Leave the bees their share}, take the rest. {That is the rule|That is fair|Bees first}.",
+      "{Sticky fingers|Everything is sticky|Honey everywhere}, {but worth it|and I would not have it any other way|as usual}.",
+      "{Jars|Pots|Crocks} of {honey|fresh honey|comb honey} for {{owner}|the owner|the house}."
+    ],
+    "barrelCheck": [
+      "{Still working|Still bubbling|Still alive}. {Good|Leave it be|Patience}.",
+      "{Tap the side|Knock on the staves|Listen at the bung}. {Sounds right|Sounds about right|Getting there}.",
+      "The {{brew}|brew|batch} {wants more time|is not ready yet|is taking its time}. {So do I|Fair enough|No hurry}."
+    ],
+    "barrelCare": [
+      "A {stir|good stir|slow stir} to {wake the yeast|keep it moving|even it out}.",
+      "{Topping it up|A splash to top it up|Filling the gap}. The {angels|barrel|wood} {drinks|takes|keeps} its share.",
+      "{Clean bung|Fresh cloth over the bung|Wipe the rim}, {no flies in this one|nothing gets in|tidy is safe}."
+    ],
+    "barrelBottle": [
+      "{Ready|Done|Finished} at last. {Bottles out|Fetch the bottles|Let us bottle it}.",
+      "{Clear|Bright|Golden} {as you like|and lovely|and ready}. {Into the bottles|Bottle it|Off it goes}.",
+      "That is {{brew}|a batch|a good batch} for {{owner}|the owner|the cellar}."
+    ],
+    "barrelStart": [
+      "{Empty barrel|An empty cask|Nothing in this one}? {Not for long|That will not do|Let us fix that}.",
+      "{New batch|A fresh brew|Another brew} of {{brew}|something good|the usual}. {See you in a few days|Now we wait|Patience now}."
+    ],
+    "taste": [
+      "{Just a taste|A drop on the tongue|One sip}. {For quality|Purely professional|Somebody has to}.",
+      "{Mm|Hm|Oh}. {Coming along nicely|Not bad at all|Needs another week}.",
+      "{Sweet|Sharp|Round} {at the front|on the tongue|at first}, {dry|warm|long} {at the end|after|behind}. {Good|Promising|Not yet}."
+    ],
+    "tempted": [
+      "{Nobody will miss|Who would notice|Surely nobody counts} {one bottle|a single bottle|one little bottle}.",
+      "{Just the one|Only the one|One}. {For the nerves|Medicinal|I earned it}.",
+      "{I should not|I really should not|Do not do it}. {...|Oh, well|Too late}."
+    ],
+    "unattendedHive": [
+      "{Nobody has been near this hive|Who is minding these bees|This hive has been left} {for days|in a while|for ages}.",
+      "{Poor things|Look at them|Oh dear}, {left to themselves|nobody looking after them|forgotten}.",
+      "{Somebody forgot|Nobody remembered|Everybody forgot} the {bees|hive|colony}. {Well, I did not|I am here now|Not any more}."
+    ],
+    "unattendedBarrel": [
+      "{Nobody has touched this barrel|This cask has been left|Who forgot this one} {in days|for a while|for ages}.",
+      "{Dust on the lid|Cobwebs on the bung|The cloth has not moved}. {Left alone|Nobody minds it|Forgotten}.",
+      "A barrel {left to itself|nobody minds|with no keeper} {goes to vinegar|goes sour|goes bad}. {Not this one|Not today|Not on my watch}."
+    ],
+    "friendHive": [
+      "{Their|The} bees {looked thirsty|needed a hand|needed looking after}. {Least I can do|Friends help|No trouble at all}.",
+      "{Had a look at|Checked on|Kept an eye on} {their hive|their bees|the party's bees}. {They would do the same|Friends do that|Happy to}."
+    ],
+    "friendBarrel": [
+      "{Their|The} {barrel|cask|brew} {was getting lonely|needed a look|wanted minding}. {No harm in helping|Friends help|Happy to}.",
+      "{Gave|Had} {their|the party's} {barrel|brew} a {look|stir|once-over}. {Not touching a drop, mind|Not mine to bottle|Just looking}."
     ]
   }
 }

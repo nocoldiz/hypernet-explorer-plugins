@@ -22,7 +22,7 @@
     "cooking": "Cucina",
     "alchemistry": "Alchimica",
     "build": "Costruisci",
-    "training": "Spellcraft",
+    "training": "Forgia incantesimi",
     "research": "Ricerca",
     "questLog": "Missioni",
     "diary": "Diario",
@@ -42,15 +42,16 @@
     "returnToShip": "Torna alla Nave",
     "teleportToShip": "Teletrasporto alla Nave",
     "returnToWorldMap": "Torna alla mappa",
-    "returnToWorldMapAt": "Torna alla mappa ({x}, {y})",
     "returnToElevator": "Torna all'ascensore",
     "chooseLandingSite": "Scegli il sito di atterraggio",
     "stopTravel": "Interrompi viaggio",
     "omegaTower": "Torre Omega",
     "deeds": "Atti",
-    "locked": "???"
+    "locked": "???",
+    "politics": "Politica"
   },
   "cmdDesc": {
+    "politics": "Chi governa il luogo in cui ti trovi, e quando si vota",
     "backpack": "Gestisci inventario e oggetti del gruppo",
     "equip": "Modifica armi, armature ed equipaggiamento",
     "skills": "Visualizza e usa abilità e incantesimi",
@@ -253,7 +254,7 @@
   },
   "travel": {
     "goUp": "Vai in superficie",
-    "goDown": "Scendi nel sottosuolo",
+    "goDown": "Sottosuolo",
     "showMinimap": "Mostra la minimappa",
     "hideMinimap": "Nascondi la minimappa",
     "openMap": "Apri la mappa del mondo",

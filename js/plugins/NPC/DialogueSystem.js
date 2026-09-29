@@ -88,6 +88,18 @@ Imported.DialogueSystem = true;
     // the fixture ("Shop", "Bar") and worked in shifts by somebody else, so
     // every line the player reads and every society lookup has to go through
     // NPCSim rather than the raw event name.
+    // Is this event a person, by the tags in its note (NPC, AI, Local, and
+    // Story, which is read as NPC)? NPCSystem owns the answer; the fallback
+    // mirrors it for when that plugin is not loaded.
+    function DialogueSystem_isPersonEvent(ev) {
+        const note = String(ev?.event?.()?.note || '');
+        const NS = window.NPCSystem;
+        if (NS && typeof NS.isNPCEvent === 'function') {
+            return !!(NS.isNPCEvent(note) || NS.hasStoryTag?.(note));
+        }
+        return /\b(npc|ai|local|story)\b/i.test(note);
+    }
+
     function _npcNameForEvent(ev) {
         if (!ev) return null;
         const name = window.NPCSim?.npcNameForEvent?.(ev) ?? ev.event()?.name?.trim();
@@ -295,6 +307,152 @@ Imported.DialogueSystem = true;
 
         get parent() { return document.body; }
     }
+
+    // -------------------------------------------------------------------------
+    // Speaker models: a speaker with a 3D body is shown by it
+    // -------------------------------------------------------------------------
+    // An NPC whose body is a model (a creature, an animal, a dossier that ships
+    // one) and a party member who picked the 3D Model portrait at creation
+    // stand in the bust slot as that model, not as the bust their sprite
+    // carries. Which model is window.NPCPortraitModel's answer
+    // (NPCEmpathizeUI.js), so the message box and the Empathize panel always
+    // show the same body. The model is rendered into a Bitmap on one offscreen
+    // WebGL context kept for the session, and that Bitmap walks in exactly as a
+    // bust does: the slide, the side and the fallback never learn the
+    // difference. A model that cannot be built fails its Bitmap, and the bust
+    // it was standing in for is shown instead.
+    const SpeakerModels = (() => {
+        const CACHE_MAX = 12;
+        // Frames re-rendered after the model lands, so a texture that arrives
+        // a moment late still makes it onto the portrait.
+        const BURST = 30;
+        const cache = new Map(); // "specId|WxH" -> Bitmap, oldest first
+        let gl = null;
+        let queue = Promise.resolve();
+
+        function available() {
+            return typeof THREE !== 'undefined' && !!window.NPCPortraitModel?.build && !!window.ActorModel3D?.framing;
+        }
+
+        function context(width, height) {
+            if (!gl) {
+                const canvas = document.createElement('canvas');
+                let renderer = null;
+                try {
+                    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, preserveDrawingBuffer: true });
+                } catch (e) { return null; }
+                if (!renderer || !renderer.getContext || !renderer.getContext()) return null;
+                renderer.setPixelRatio(1);
+                gl = { renderer, canvas };
+            }
+            gl.renderer.setSize(width, height, false);
+            return gl;
+        }
+
+        function copyInto(bitmap, canvas) {
+            if (!bitmap.context || !bitmap._baseTexture) return;
+            bitmap.context.clearRect(0, 0, bitmap.width, bitmap.height);
+            bitmap.context.drawImage(canvas, 0, 0, bitmap.width, bitmap.height);
+            bitmap._baseTexture.update();
+        }
+
+        function disposeScene(scene) {
+            scene.traverse((obj) => {
+                if (obj.geometry && obj.geometry.dispose) obj.geometry.dispose();
+                const mats = Array.isArray(obj.material) ? obj.material : (obj.material ? [obj.material] : []);
+                mats.forEach((m) => { if (m && m.dispose) m.dispose(); });
+            });
+        }
+
+        function render(spec, bitmap) {
+            const state = bitmap._speakerModel;
+            return Promise.resolve(window.NPCPortraitModel.build(spec)).then((battler) => {
+                if (!battler || !battler.model || state.disposed) { state.failed = true; return null; }
+                const ctx = context(bitmap.width, bitmap.height);
+                if (!ctx) { state.failed = true; return null; }
+                const scene = new THREE.Scene();
+                scene.add(new THREE.AmbientLight(0xffffff, 1.1));
+                const keyLight = new THREE.DirectionalLight(0xfff2d0, 1.4); keyLight.position.set(3, 5, 4); scene.add(keyLight);
+                const fillLight = new THREE.DirectionalLight(0xbcd4ff, 0.7); fillLight.position.set(-3, -2, 2); scene.add(fillLight);
+                const camera = new THREE.PerspectiveCamera(40, bitmap.width / bitmap.height, 0.05, 300);
+                try { battler.update(1 / 60); } catch (e) { /* a still pose is enough */ }
+                const fit = window.ActorModel3D.framing(battler, camera, 1.05);
+                if (!fit) { state.failed = true; return null; }
+                const holder = new THREE.Group();
+                holder.position.copy(fit.center).multiplyScalar(-1);
+                holder.add(battler.model);
+                if (window.PSXShader) window.PSXShader.applyToObject(battler.model);
+                scene.add(holder);
+                // A bust stands on the bottom edge of the screen, so a whole
+                // body does too: the camera is lifted until the feet sit on the
+                // frame's floor. A model framed as a bust (portraitCrop) is
+                // already cut the way the art is.
+                let lift = 0;
+                if (!battler.portraitCrop) {
+                    const box = new THREE.Box3().setFromObject(holder);
+                    const halfView = Math.tan((camera.fov * Math.PI / 180) / 2) * fit.distance;
+                    lift = Math.max(0, halfView + box.min.y);
+                }
+                camera.position.set(0, lift, fit.distance);
+                camera.lookAt(0, lift, 0);
+                const draw = () => {
+                    ctx.renderer.setSize(bitmap.width, bitmap.height, false);
+                    if (window.PSXShader) window.PSXShader.render(ctx.renderer, scene, camera);
+                    else ctx.renderer.render(scene, camera);
+                    copyInto(bitmap, ctx.canvas);
+                };
+                draw();
+                state.ready = true;
+                return new Promise((resolve) => {
+                    let left = BURST;
+                    const tick = () => {
+                        if (state.disposed || --left <= 0) { disposeScene(scene); resolve(null); return; }
+                        draw();
+                        requestAnimationFrame(tick);
+                    };
+                    requestAnimationFrame(tick);
+                });
+            }).catch(() => { state.failed = true; return null; });
+        }
+
+        // The oldest portraits go once the cache is full, except the one on
+        // screen right now.
+        function evict(inUse) {
+            for (const [key, bitmap] of cache) {
+                if (cache.size <= CACHE_MAX) break;
+                if (inUse && inUse(bitmap)) continue;
+                cache.delete(key);
+                bitmap._speakerModel.disposed = true;
+                try { bitmap.destroy(); } catch (e) { /* already gone */ }
+            }
+        }
+
+        // A Bitmap the bust sprite can wear, or null when no model can be
+        // drawn here at all. It reads as loading until the first frame lands
+        // and as failed when nothing could be built.
+        function bitmapFor(spec, width, height, inUse) {
+            if (!spec || !spec.id || !available()) return null;
+            const w = Math.max(1, Math.round(width));
+            const h = Math.max(1, Math.round(height));
+            const key = `${spec.id}|${w}x${h}`;
+            const hit = cache.get(key);
+            if (hit && !hit._speakerModel.failed && !hit._speakerModel.disposed) {
+                cache.delete(key);
+                cache.set(key, hit);
+                return hit;
+            }
+            const bitmap = new Bitmap(w, h);
+            bitmap._speakerModel = { ready: false, failed: false, disposed: false };
+            bitmap.isReady = function () { return this._speakerModel.ready; };
+            bitmap.isError = function () { return this._speakerModel.failed; };
+            cache.set(key, bitmap);
+            evict(inUse);
+            queue = queue.then(() => render(spec, bitmap));
+            return bitmap;
+        }
+
+        return { bitmapFor, available };
+    })();
 
     // -------------------------------------------------------------------------
     // BustManager
@@ -898,7 +1056,12 @@ Imported.DialogueSystem = true;
         getBustNameFromEventComment() {
             const interpreter = $gameMap._interpreter;
             if (!interpreter || !interpreter._eventId) return null;
-            const gameEvent = $gameMap.event(interpreter._eventId);
+            return this._authoredBustForEvent($gameMap.event(interpreter._eventId));
+        }
+
+        // The face an event's author wrote on it, if any, for any event and
+        // not only the one the interpreter is running.
+        _authoredBustForEvent(gameEvent) {
             if (!gameEvent) return null;
             // A `bust: <name>` line names the portrait outright, and is read
             // through the same service the Empathize panel reads it with, so
@@ -960,6 +1123,10 @@ Imported.DialogueSystem = true;
             if (!interpreter || !interpreter._eventId) return false;
             const gameEvent = $gameMap.event(interpreter._eventId);
             if (!gameEvent) return false;
+            // Only a person has a name tag and a voice: an event whose note
+            // carries none of NPC, AI or Local is a thing, and its box is read
+            // unsigned and in silence.
+            if (!DialogueSystem_isPersonEvent(gameEvent)) return false;
             const eventName = gameEvent.event().name;
             if (eventName && (eventName.startsWith("EV") || eventName.startsWith("Treasure") || eventName.startsWith("Random"))) return false;
             const page = gameEvent.event().pages.find(p => gameEvent.meetsConditions(p));
@@ -987,10 +1154,16 @@ Imported.DialogueSystem = true;
             return this.checkImageExists(path) ? path : `busts/7`;
         }
 
-        showCustomBust(imageName, characterName, side) {
+        // `modelSpec` is the speaker's 3D body when the caller knows who is
+        // talking (an exchange hands the NPC's in); a party member named as
+        // the speaker is looked up here. Story scenes keep their painted cast.
+        showCustomBust(imageName, characterName, side, modelSpec) {
             if (!imageName) return;
+            const spec = this.storyMode ? null
+                : (modelSpec || this._actorModelSpec(this._partyMemberNamed(characterName)));
+            const model        = this._modelBitmap(spec);
             const path         = this.resolveBustPath(imageName);
-            const key          = `custom_${imageName}`;
+            const key          = model ? `model_${spec.id}` : `custom_${imageName}`;
             const fallback     = this._loadFallback();
 
             if (this.nameWindow) {
@@ -1027,7 +1200,9 @@ Imported.DialogueSystem = true;
             if (!this.characterBust.parent && scene) addBustToScene(this.characterBust, scene);
 
             try {
-                this._beginBustLoad(ImageManager.loadBitmap('img/', path), key, fallback, path);
+                const bust = ImageManager.loadBitmap('img/', path);
+                if (model) this._beginBustLoad(model, key, bust, path);
+                else this._beginBustLoad(bust, key, fallback, path);
             } catch (err) {
                 console.warn("Failed to load custom bust:", path, err);
                 if (fallback) this._beginBustLoad(fallback, key, null, path);
@@ -1089,13 +1264,58 @@ Imported.DialogueSystem = true;
                 this.nameIsVisible = true;
             }
 
+            // A speaker with a 3D body is shown by it; the bust their sprite
+            // carries only stands in when the model cannot be built.
+            const model = this._modelBitmap(this._eventModelSpec(eventId));
             try {
-                this._beginBustLoad(ImageManager.loadBitmap('img/', path), key, fallback, path);
+                const bust = ImageManager.loadBitmap('img/', path);
+                if (model) this._beginBustLoad(model, key, bust, path);
+                else this._beginBustLoad(bust, key, fallback, path);
             } catch (err) {
                 console.warn("Failed to load bust:", path, err);
                 if (fallback) this._beginBustLoad(fallback, key, null, path);
             }
             this.bustIsVisible = true;
+        }
+
+        // ── Speaker models ──────────────────────────────────────────────────
+        // The model an NPC event is shown by, or null when their bust is
+        // right. A face written on the event by its author (a `bust:` line or
+        // a bare comment) and the visor of an airless world both keep their
+        // place: those are chosen faces, not the one a sprite happens to carry.
+        _eventModelSpec(eventId) {
+            if (!SpeakerModels.available()) return null;
+            const ev = eventId ? $gameMap.event(eventId) : null;
+            if (!ev) return null;
+            try {
+                if (this._authoredBustForEvent(ev)) return null;
+                const sheet = typeof ev.characterName === 'function' ? ev.characterName() : '';
+                if (sheet && window.GalaxySim?.EVA?.bustForSheet?.(sheet)) return null;
+                return window.NPCPortraitModel.specForEvent(ev) || null;
+            } catch (err) { return null; }
+        }
+
+        // A party member is shown by their model when they picked the 3D Model
+        // portrait at creation (or are a creature drawn by one).
+        _actorModelSpec(actor) {
+            if (!actor || !SpeakerModels.available()) return null;
+            try { return window.NPCPortraitModel.specForActor?.(actor) || null; }
+            catch (err) { return null; }
+        }
+
+        _partyMemberNamed(displayName) {
+            const name = String(displayName || '').split(',')[0].trim();
+            if (!name) return null;
+            try {
+                const members = ($gameParty && $gameParty.allMembers) ? $gameParty.allMembers() : [];
+                return members.find(a => a && a.name && a.name().trim() === name) || null;
+            } catch (err) { return null; }
+        }
+
+        _modelBitmap(spec) {
+            if (!spec) return null;
+            return SpeakerModels.bitmapFor(spec, getBustWidth(), getBustHeight(),
+                (bitmap) => this.characterBust && this.characterBust.bitmap === bitmap);
         }
 
         hideBusts() {
@@ -2934,7 +3154,7 @@ Imported.DialogueSystem = true;
             return;
         }
         const step = _npcExchangeQueue.shift();
-        bm.showCustomBust(step.imageName, step.displayName, step.side);
+        bm.showCustomBust(step.imageName, step.displayName, step.side, step.modelSpec || null);
         $gameMessage.setBackground(0);
         $gameMessage.setPositionType(2);
         window.skipLocalization = true;
@@ -3088,14 +3308,18 @@ Imported.DialogueSystem = true;
     // One step of an exchange. The party always speaks from the left of the
     // screen and the NPC always answers from the right, whichever of them
     // opened the conversation, so a beat reads as two people facing each other.
+    // Each step carries the speaker's 3D body too, when they have one (see
+    // BustManager._eventModelSpec / _actorModelSpec).
     function playerStep(actor, text) {
         const H    = window.NPCEmpathize?._helpers;
         const full = H?._resolveBustForActor ? H._resolveBustForActor(actor) : 'img/busts/7.png';
+        const bm   = SceneManager._scene?._bustManager;
         return {
             imageName: String(full).replace(/^img\/busts\//, '').replace(/\.png$/, ''),
             displayName: actor ? actor.name() : '',
             text,
             side: 'left',
+            modelSpec: bm ? bm._actorModelSpec(actor) : null,
         };
     }
 
@@ -3106,6 +3330,7 @@ Imported.DialogueSystem = true;
             displayName: bm ? bm.getCharacterDisplayName(ev.eventId()) : npcName,
             text,
             side: 'right',
+            modelSpec: bm ? bm._eventModelSpec(ev.eventId()) : null,
         };
     }
 
@@ -3618,6 +3843,22 @@ Imported.DialogueSystem = true;
         const actorId = $gameParty?.leader?.()?.actorId();
         if (actorId == null) return;
         H._gainSocialFromCompany(actorId, ensureNpcProfile(ev, npcName));
+    }
+
+    // A conversation on the map talks the NPC a little toward the leader's
+    // creed, the same push the Empathize chat gives (NPCLifeSim.dialoguePush:
+    // once per NPC per game hour, never Em and Bubba to each other, never a
+    // child, a beast or a pinned creed). The opinion it is scaled by is the
+    // one the panel reads.
+    function pushDialogueCreed(npcName, profile) {
+        const Life = window.NPCLifeSim;
+        const H    = window.NPCEmpathize?._helpers;
+        if (!Life?.dialoguePush || !npcName || !profile) return null;
+        const actor = $gameParty?.leader?.();
+        if (!actor) return null;
+        const opinion = H?._npcEffectiveOpinion ? H._npcEffectiveOpinion(profile, actor) : 0;
+        try { return Life.dialoguePush(npcName, actor, opinion ?? 0); }
+        catch (e) { console.warn('[DialogueSystem] creed push failed', e); return null; }
     }
 
     // The third thing that can happen: no social move at all, just the rumour
@@ -4359,6 +4600,24 @@ Imported.DialogueSystem = true;
         return true;
     }
 
+    // A plain choice put to the party from code, not from an event page: a
+    // faceless prompt and its options (NPCSystem's DOWNED BODIES menus on a
+    // downed monster, a downed person or a corpse). onPick gets the index;
+    // cancelIndex is the option Cancel falls on. False when a box is already
+    // up and the question cannot be asked.
+    window.DialogueChoice = {
+        ask(prompt, labels, onPick, cancelIndex) {
+            if (!$gameMessage || $gameMessage.isBusy()) return false;
+            const list = (labels || []).map(l => String(l || ''));
+            if (!list.length) return false;
+            if (prompt) sayFaceless([prompt]);
+            const cancel = cancelIndex == null ? list.length - 1 : cancelIndex;
+            $gameMessage.setChoices(list, 0, cancel);
+            $gameMessage.setChoiceCallback(i => { if (typeof onPick === 'function') onPick(i); });
+            return true;
+        },
+    };
+
     // The scenes are readable outside the plugin command too (a quest step, a
     // cutscene, the test harness).
     window.StoryDialogue = {
@@ -4552,8 +4811,8 @@ Imported.DialogueSystem = true;
         if (ev && bm) {
             // A beast or an unregistered event (a cat, a signpost, a body
             // double) has no Socialize catalogue behind it and only ever has
-            // the rumour to give. For everybody else the plain rumour is the
-            // exception, one talk in four; the rest of the time the exchange is
+            // the rumour to give. For everybody else the plain rumour is one
+            // talk in two (RUMOR_CHANCE); the rest of the time the exchange is
             // a proper conversation, the multi-beat scripts two NPCs trade,
             // with the greeting-sized social beats behind them as the fallback.
             let builders;
@@ -4609,6 +4868,7 @@ Imported.DialogueSystem = true;
                 // the leader answers in is two portraits; a rumour nobody
                 // answers is the NPC alone.
                 if (steps && startNPCExchange(steps, true)) {
+                    if (!pair && sentient) pushDialogueCreed(npcName, profile);
                     this.setWaitMode('message');
                     return true;
                 }
@@ -4660,6 +4920,8 @@ Imported.DialogueSystem = true;
         // lines here stages them the way a talked-to NPC is staged instead,
         // the party on the left and whoever answers on the right.
         exchange: steps => startNPCExchange(steps, true),
+        // The creed push a map conversation gives (tests and other talkers).
+        pushCreed: (npcName, profile) => pushDialogueCreed(npcName, profile),
         // One Socialize move, rolled at random for a caller with nobody on an
         // event to talk to: the party member walking behind the leader
         // (Core/AutoIdleExplorer.js). It reads the same catalogue the panel's

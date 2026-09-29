@@ -922,6 +922,8 @@
 
         updateGameInput() {
             if (this._isDispensing) return;
+            // The letter sheet answers every press itself while it is up.
+            if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) return;
 
             let moved = false;
             if (Input.isRepeated('down')) { this.moveSelection(0, 1); moved = true; }
@@ -930,13 +932,54 @@
             else if (Input.isRepeated('left')) { this.moveSelection(-1, 0); moved = true; }
             if (moved) return;
 
-            if (Input.isTriggered('ok')) {
+            // A pad cannot type on the keypad: X, or A with no slot lit (the
+            // machine's code screen is what has focus then), opens the letter
+            // sheet for the code instead.
+            const pad = this.padInHand();
+            if (pad && (Input.isTriggered('shift') ||
+                (Input.isTriggered('ok') && this._selIndex < 0 && this._typedCode === ''))) {
+                this.openCodeSheet();
+            } else if (Input.isTriggered('ok')) {
                 Input.clear();
                 if (this._typedCode !== '') this.submitTypedCode();
                 else this.buySelected();
-            } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+            } else if (Input.isTriggered('cancel')) {
+                // Right click is answered by the container's contextmenu
+                // listener alone: the same click also arrives as TouchInput's
+                // cancel, and reading both stepped out two levels at once.
                 this.onCancelAction();
             }
+        }
+
+        padInHand() {
+            return typeof Input !== 'undefined' && typeof Input.lastInputDevice === 'function' &&
+                Input.lastInputDevice() === 'pad';
+        }
+
+        // The code typed on the pad's letter sheet goes in exactly as if its
+        // keys had been pressed on the keypad, then is submitted. B closes the
+        // sheet and leaves the machine as it was.
+        openCodeSheet() {
+            if (!window.Controller || typeof Controller.textEntry !== 'function') return;
+            if (window.UINav) UINav.swallowHeld();
+            Controller.textEntry({
+                title: T('Vending.ui.codeEntry'),
+                value: '',
+                max: 3,
+                onCommit: (value) => {
+                    if (window.UINav) UINav.swallowHeld();
+                    const code = String(value || '').replace(/\s+/g, '').toUpperCase().slice(0, 3);
+                    if (!code || !this.isActive()) return;
+                    this._typedCode = code;
+                    const index = codeToIndex(code);
+                    if (index >= 0) this._selIndex = index;
+                    this._dirtyDom = true;
+                    this.submitTypedCode();
+                },
+                onCancel: () => {
+                    if (window.UINav) UINav.swallowHeld();
+                }
+            });
         }
 
         onCancelAction() {

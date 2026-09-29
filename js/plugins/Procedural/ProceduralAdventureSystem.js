@@ -42,6 +42,8 @@
  *   Anomaly.earth.eris.Eris          her own scope: the one square a day she
  *                                    takes, and the adventures on it
  *   Anomaly.earth.fallbackScenarios  played on a biome nothing was written for
+ *   Anomaly.earth.storyScenarios     Em and Bubba's own, offered in the story
+ *                                    mode only (switch 100) on a plain square
  *   Anomaly.scenarios.<id>           { title, start, nodes: { <id>: node } }
  *   node                             { text, choices: [{ text, to }] }
  *   terminal node                    { text, outcome: { kind, mag } }
@@ -698,6 +700,20 @@
               $gameSwitches.value(EM_SWITCH));
   }
 
+  // ---- Story mode ---------------------------------------------------------
+  // The story mode (switch 100, per savegame) is Em's own road, with Bubba at
+  // her elbow, and a pack can write adventures that belong to that road alone:
+  // `storyScenarios` names them, and no other savegame is ever offered one. A
+  // plain square rolls one of them in place of its own some of the time; a
+  // square with a bespoke story (a place, a country, a power, Eris) keeps it.
+  const STORY_SWITCH = 100;   // i18n-ignore: switch id, CharacterCreation.js
+  const ANOM_STORY_CHANCE = 0.35;
+
+  function anomIsStory() {
+    return !!(typeof $gameSwitches !== "undefined" && $gameSwitches &&
+              $gameSwitches.value(STORY_SWITCH));
+  }
+
   function anomResolve(session, tpl) {
     const rng = anomRng(session);
     let s = anomAlt(rng, String(tpl || ""));
@@ -955,6 +971,50 @@
   // never one tagged <Forbidden>, which are not handed out in lay-bys.
   const ANOM_ESOTERIC_FLOOR = 1400;
 
+  // `pool: "spell"` is a lesson rather than a find: a magical spell out of the
+  // whole book, cut to the quester. Its <StatReq:> floor (3..20) has to sit in
+  // a band that climbs with their level, so a level 1 apprentice is shown a
+  // cantrip and a level 60 witch is not shown one, and an <Esoteric> page is
+  // only taught once SkillArcana says the quester is old enough to read it.
+  const ANOM_SPELL_BAND = 5;       // how many StatReq points the band spans
+  const ANOM_SPELL_LEVEL_STEP = 6; // levels per point the band climbs
+  const ANOM_SPELL_REQ_MAX = 20;
+
+  function anomSpellBand(level) {
+    const top = Math.min(ANOM_SPELL_REQ_MAX,
+      ANOM_SPELL_BAND + Math.floor(Math.max(1, level || 1) / ANOM_SPELL_LEVEL_STEP));
+    return { lo: top - ANOM_SPELL_BAND, hi: top };
+  }
+
+  function anomSpellReq(skill) {
+    const m = /<StatReq:\s*[A-Za-z]+\s+(\d+)/i.exec(skill.note || "");   // i18n-ignore: note tag
+    return m ? Number(m[1]) : -1;
+  }
+
+  function anomPickSpell(session, known) {
+    const who = anomQuester(session);
+    const band = anomSpellBand(who && who.level);
+    const arcana = window.SkillArcana;
+    const fits = [], under = [];
+    for (let i = 11; i < $dataSkills.length; i++) {
+      const s = $dataSkills[i];
+      if (!s || !s.name || known.has(s.id)) continue;
+      const note = s.note || "";
+      if (!/<Nature:\s*Magical>/i.test(note) || /<Forbidden>/i.test(note)) continue;   // i18n-ignore: note tags
+      if (arcana && who && !arcana.meetsLevel(who, s)) continue;
+      const req = anomSpellReq(s);
+      if (req < 0 || req > band.hi) continue;
+      (req >= band.lo ? fits : under).push(s);
+    }
+    // A witch who already knows every spell of her band is taught the best of
+    // what is left under it, never one above it.
+    const pool = fits.length ? fits
+      : under.sort((a, b) => anomSpellReq(b) - anomSpellReq(a)).slice(0, 12);
+    if (!pool.length) return null;
+    const rng = anomRng(session);
+    return pool[Math.floor(rng() * pool.length)];
+  }
+
   function anomPickSkill(session, pool) {
     if (typeof $dataSkills === "undefined" || !$dataSkills) return null;
     const members = ($gameParty && $gameParty.members) ? $gameParty.members() : [];
@@ -963,6 +1023,7 @@
       if (typeof a.skills !== "function") return;
       try { a.skills().forEach((s) => { if (s) known.add(s.id); }); } catch (e) { /* stubs */ }
     });
+    if (pool === "spell") return anomPickSpell(session, known);   // i18n-ignore: pool id
     // The whole book starts past the basics (attack, guard and their kin).
     const from = pool === "esoteric" ? ANOM_ESOTERIC_FLOOR : 11;   // i18n-ignore: pool id
     const candidates = [];
@@ -1750,12 +1811,23 @@
     return list.filter((id) => db.scenarios && db.scenarios[id]);
   }
 
+  function anomStoryList(session) {
+    if (session.scope || !anomIsStory()) return [];
+    const db = anomalyDB();
+    const list = packOf(session).storyScenarios || [];
+    return list.filter((id) => db.scenarios && db.scenarios[id]);
+  }
+
   function anomScenarioFor(session) {
     const usable = anomScenarioList(session);
     const quests = (!session.scope) ? anomQuestList(session) : [];
+    const story = anomStoryList(session);
     let pool = usable;
     if (quests.length && (!usable.length || seededFloat(session.key, 9241) < 0.45)) {
       pool = quests;
+    }
+    if (story.length && (!pool.length || seededFloat(session.key, 9311) < ANOM_STORY_CHANCE)) {
+      pool = story;
     }
     if (!pool.length) return null;
     const idx = Math.floor(seededFloat(session.key, 7717) * pool.length) % pool.length;
@@ -3490,6 +3562,8 @@
     brackets: ANOM_BRACKETS,
     bracketFor: anomBracket,
     goldPayout: anomGoldPayout,
+    // The StatReq band a `pool: "spell"` lesson is cut to at a given level.
+    spellBand: anomSpellBand,
   };
 
   // GalaxySim_Scene3D / _Overlay / _Bodies still ask for the star-map encounter

@@ -1,4 +1,5 @@
 {
+  "refugeeCamp": "Refugee camp ({country})",
   "partsUnknown": "parts unknown",
   "jobFallback": "Job {id}",
   "moveReason": {
@@ -10,7 +11,9 @@
     "freshStart": "seeking a fresh start",
     "cheapHousing": "drawn by cheap housing",
     "fallingOut": "after a falling-out",
-    "changeOfAir": "for a change of air"
+    "changeOfAir": "for a change of air",
+    "homecoming": "coming back home",
+    "fledHorde": "fleeing the Goblin Horde"
   },
   "marital": {
     "married": "Married",
@@ -27,7 +30,16 @@
     "widowed": "widowed"
   },
   "event": {
+    "widowed": "was widowed by the death of {name}",
+    "died": "died",
+    "diedNatural": "died of natural causes",
+    "diedIllness": "died of {illness}",
+    "takenInBy": "was taken in by {name}",
     "moved": "moved to {place}, {reason}",
+    "fled": "fled the Goblin Horde's rule over {country}, for {place}",
+    "survivorFear": "hid from the dead in {place} and lived to tell of it",
+    "survivorFled": "fled the dead of {from}, for {place}",
+    "returnedHome": "came home to {place}, {country} free of the Goblin Horde again",
     "convictedSentenced": "convicted of {crime} and sentenced to {days} days",
     "convicted": "convicted of {crime}, sentenced to {days} days",
     "arrestedNotConvicted": "arrested for {crime} but never convicted",
@@ -45,9 +57,68 @@
     "brokeUpWith": "broke up with {name}",
     "wasAbandonedBy": "was abandoned by {name}",
     "abandonedPartner": "abandoned {name} and never looked back",
+    "introduced": "met {name} through {by} and started seeing them",
+    "sheltered": "took shelter in a home in {place}",
     "startedSeeing": "started seeing {name}",
     "bought": "bought {item}",
-    "worldviewShifted": "their worldview shifted"
+    "gotImplant": "had a {augment} fitted ({bodyPart})",
+    "gotProsthetic": "had a lost {bodyPart} replaced with a {augment}",
+    "sickLeave": "went on sick leave for {days} days with {illness}",
+    "parentalLeave": "took {days} days of parental leave",
+    "fellIll": "fell ill with {illness}",
+    "fellIllFrom": "fell ill with {illness}, caught from {name}",
+    "infidelityRevealed": "caught {illness} from {name} and learned of the affair",
+    "formedUnion": "entered a civil union with {name}",
+    "arrangedMarriage": "married {name} in a match the families arranged",
+    "formedBond": "formed a queerplatonic bond with {name}",
+    "pregnant": "was expecting a child with {name}",
+    "childBorn": "welcomed a child, {name}",
+    "childAdopted": "adopted a child, {name}",
+    "movedOut": "moved out after parting from {name}",
+    "movedOutRough": "moved out after parting from {name}, with nowhere to go",
+    "cameOfAge": "came of age",
+    "worldviewShifted": "their worldview shifted",
+    "worldviewShiftedBy": {
+      "age": "grew older and came round to {creed}",
+      "wealth": "a change of fortune turned them to {creed}",
+      "job": "their line of work turned them to {creed}",
+      "prison": "came out of the cells believing in {creed}",
+      "partner": "came round to {creed} alongside their partner",
+      "family": "came round to {creed}, the way they were raised",
+      "government": "the government of the day turned them to {creed}",
+      "friends": "their friends talked them round to {creed}",
+      "war": "the war turned them to {creed}",
+      "politics": "their politics hardened into {creed}"
+    },
+    "converted": "was talked round to {creed} by {by}",
+    "bandSetOut": {
+      "tower": "set out to climb the Omega Tower with {leader}'s band",
+      "dungeon": "went down into the underground with {leader}'s band",
+      "space": "flew out to explore space with {leader}'s crew"
+    },
+    "bandLost": {
+      "tower": "fell in the Omega Tower",
+      "dungeon": "was lost in the underground",
+      "space": "was lost in space"
+    },
+    "bandBack": {
+      "plain": {
+        "tower": "came back from the Omega Tower",
+        "dungeon": "came back up from the underground",
+        "space": "came back from space"
+      },
+      "hurt": {
+        "tower": "came back from the Omega Tower badly hurt",
+        "dungeon": "came back up from the underground badly hurt",
+        "space": "came back from space badly hurt"
+      },
+      "rich": {
+        "tower": "came back from the Omega Tower with a haul of loot",
+        "dungeon": "came back up from the underground with a haul of loot",
+        "space": "came back from space with a rich find"
+      }
+    },
+    "accusedBy": "was accused of {crime} by {by}"
   },
   "bio": {
     "noLife": "{name}: no recorded life.",
@@ -132,5 +203,37 @@
     "Tundra": "Tundra",
     "Underdark": "Underdark",
     "Volcano": "Volcano"
+  },
+  "animal": {
+    "event": {
+      "born": "{was born|came into the world} {where}",
+      "bornTo": "{was born to {mother}|came into the world at {mother}'s side} {where}",
+      "bornToBoth": "{was born to {mother} and {father}|came into the world, the young of {mother} and {father},} {where}",
+      "weaned": "{was weaned|left its mother's side|began to find its own food}",
+      "firstLitter": "{had a first litter of {count}|gave birth for the first time, to {count}}",
+      "litter": "{had a litter of {count}|gave birth to {count}|brought {count} more into the world}",
+      "lostMate": "{lost its mate, {name}|was left without {name}}",
+      "survivedPredator": "{survived a predator|got away from something that hunts|escaped a hunter with its life}",
+      "fedBy": "{was fed by {name}|ate from {name}'s hand}",
+      "soldTo": "{was sold to {name}|changed hands, to {name}}",
+      "movedPen": "{was moved {where}|was brought to a new pen, {where}}",
+      "grewOld": "{grew old|slowed with age|reached old age}",
+      "diedAge": "{died of old age|died, old and worn out}",
+      "diedHunger": "{starved|died of hunger}",
+      "diedIllness": "{died of illness|was taken by sickness}",
+      "diedPredator": "{was killed by a predator|was taken by something that hunts}",
+      "killedBy": "{was killed by {name}|died at the hands of {name}}",
+      "adoptedAsPet": "{was adopted as a pet by {name}|went to live with {name} as a pet}",
+      "ownerLost": "{lost one of the farm's animals, a {animal}|lost a {animal} from the farm}"
+    },
+    "onFarm": "on {owner}'s farm",
+    "inPlace": "in {place}",
+    "inWild": "in the wild",
+    "stage": {
+      "newborn": "Newborn",
+      "young": "Young",
+      "adult": "Adult",
+      "old": "Old"
+    }
   }
 }

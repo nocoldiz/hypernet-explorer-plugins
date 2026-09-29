@@ -72,6 +72,8 @@
   "actionJoinPet": "Join as pet",
   "actionJoinPartyAnimal": "Join party",
   "toast": {
-    "grownUp": "The {animal} has grown up."
+    "grownUp": "The {animal} has grown up.",
+    "died": "Your {animal} at {place} has died.",
+    "born": "A young {animal} was born at {place}."
   }
 }

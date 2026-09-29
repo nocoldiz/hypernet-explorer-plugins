@@ -113,7 +113,7 @@ const ARTIFACT_MAX_MULT = 4;
 
 // What the hand-authored catalogue actually tops out at, in each kind.
 const CATALOGUE_BEST_ATK = 4;
-const CATALOGUE_BEST_DEF = 8;
+const CATALOGUE_BEST_DEF = 9;
 
 // The catalogue's own defensive profile: material class, then how much of the
 // body the slot covers. Kept identical to the generator that writes the
@@ -552,10 +552,27 @@ function generateDescription(effects, level) {
 }
 
 // Find an available artifact slot
+// The world's own artifacts (HistorySimulator.injectArtifacts) are written
+// into the same 1501+ rows this generator mints into. They belong to the
+// chronicle, which keeps a custody record for each, so a runtime mint must
+// never land on one and a reset must never blank one.
+function isWorldArtifactRow(row, kind) {
+    if (!row || row.isGenerated) return false;
+    const HM = window.HistoryManager;
+    const records = HM && HM._artifactRecords;
+    if (records && records[kind + ":" + row.id]) return true;
+    const note = row.note || "";
+    return /<category:\s*artifact\s*>/i.test(note) && !/<Procedural/i.test(note);
+}
+
+function isFreeSlot(row, kind) {
+    return !!row && !row.isGenerated && !isWorldArtifactRow(row, kind);
+}
+
 function findAvailableArtifactSlot() {
     for (let i = 0; i < ARTIFACT_COUNT; i++) {
         const id = ARTIFACT_START_ID + i;
-        if (!$dataItems[id].isGenerated) {
+        if (isFreeSlot($dataItems[id], "item")) { // i18n-ignore: artifact kind
             return id;
         }
     }
@@ -566,7 +583,7 @@ function findAvailableArtifactSlot() {
 function findAvailableWeaponSlot() {
     for (let i = 0; i < WEAPON_COUNT; i++) {
         const id = WEAPON_START_ID + i;
-        if (!$dataWeapons[id].isGenerated) {
+        if (isFreeSlot($dataWeapons[id], "weapon")) { // i18n-ignore: artifact kind
             return id;
         }
     }
@@ -577,7 +594,7 @@ function findAvailableWeaponSlot() {
 function findAvailableArmorSlot() {
     for (let i = 0; i < ARMOR_COUNT; i++) {
         const id = ARMOR_START_ID + i;
-        if (!$dataArmors[id].isGenerated) {
+        if (isFreeSlot($dataArmors[id], "armor")) { // i18n-ignore: artifact kind
             return id;
         }
     }
@@ -626,6 +643,7 @@ function generateArtifact(level) {
 function resetArtifactSlots() {
     for (let i = 0; i < ARTIFACT_COUNT; i++) {
         const id = ARTIFACT_START_ID + i;
+        if (!$dataItems[id] || isWorldArtifactRow($dataItems[id], "item")) continue; // i18n-ignore: artifact kind
         $dataItems[id].isGenerated = false;
         // i18n-ignore-start: sentinel names for unused procedural rows.
         // ProceduralQuestSystem and HypernetArtifactAnalyzer both exclude a
@@ -640,6 +658,7 @@ function resetArtifactSlots() {
 function resetWeaponSlots() {
     for (let i = 0; i < WEAPON_COUNT; i++) {
         const id = WEAPON_START_ID + i;
+        if (!$dataWeapons[id] || isWorldArtifactRow($dataWeapons[id], "weapon")) continue; // i18n-ignore: artifact kind
         $dataWeapons[id].isGenerated = false;
         // i18n-ignore-start: sentinel names for unused procedural rows.
         // ProceduralQuestSystem and HypernetArtifactAnalyzer both exclude a
@@ -654,6 +673,7 @@ function resetWeaponSlots() {
 function resetArmorSlots() {
     for (let i = 0; i < ARMOR_COUNT; i++) {
         const id = ARMOR_START_ID + i;
+        if (!$dataArmors[id] || isWorldArtifactRow($dataArmors[id], "armor")) continue; // i18n-ignore: artifact kind
         $dataArmors[id].isGenerated = false;
         // i18n-ignore-start: sentinel names for unused procedural rows.
         // ProceduralQuestSystem and HypernetArtifactAnalyzer both exclude a
@@ -663,6 +683,15 @@ function resetArmorSlots() {
         // i18n-ignore-end
     }
 }
+
+// Which rows are the world's and which are free, for anything that has to
+// tell the two apart and for the tests.
+window.ArtifactSlots = {
+    isWorldArtifactRow,
+    findAvailableArtifactSlot,
+    findAvailableWeaponSlot,
+    findAvailableArmorSlot,
+};
 
 // Plugin command processing
 // Commands are looked up under Utils.extractFileName of the plugins.js entry, i.e. this

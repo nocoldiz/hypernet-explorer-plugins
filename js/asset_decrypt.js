@@ -489,6 +489,17 @@
     if (typeof MutationObserver === "function" && document.documentElement) {
         new MutationObserver(function (records) {
             for (var r = 0; r < records.length; r++) {
+                // The browser theme swap re-points the <link> it added the
+                // first time (GameOptions._injectTheme) rather than adding a
+                // new one, so a changed href is a new sheet too.
+                var target = records[r].target;
+                if (records[r].type === "attributes" && target && target.tagName === "LINK") {
+                    if (target.addEventListener) {
+                        target.addEventListener("load", queueScan);
+                    }
+                    queueScan();
+                    return;
+                }
                 var added = records[r].addedNodes;
                 for (var n = 0; added && n < added.length; n++) {
                     var node = added[n];
@@ -504,7 +515,9 @@
                     return;
                 }
             }
-        }).observe(document.documentElement, { childList: true, subtree: true });
+        }).observe(document.documentElement, {
+            childList: true, subtree: true, attributes: true, attributeFilter: ["href"]
+        });
     }
 
     //-------------------------------------------------------------------------

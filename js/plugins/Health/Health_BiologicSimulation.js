@@ -1097,17 +1097,15 @@
   Scene_BiologicSimulation.prototype.updateUIBiologicInput = function () {
     if (!this.isActive()) return;
 
-    // The arrows own the chapter tabs, the bumpers own the character.
-    if (Input.isTriggered('right')) {
+    // L1 / R1 (and the arrows, which have nothing else to do here) step the
+    // chapter tabs; L2 / R2 change the member (CharSwitcher).
+    const tabStep = window.UINav ? window.UINav.tabDir() : 0;
+    if (tabStep) {
+      this.cycleUICategory(tabStep);
+    } else if (Input.isRepeated('right')) {
       this.cycleUICategory(1);
-    } else if (Input.isTriggered('left')) {
+    } else if (Input.isRepeated('left')) {
       this.cycleUICategory(-1);
-    }
-
-    if (Input.isTriggered('pagedown')) {
-      this.cycleUIActor(1);
-    } else if (Input.isTriggered('pageup')) {
-      this.cycleUIActor(-1);
     }
 
     const chapter = this._dndContainer ? this._dndContainer.querySelector(".bio-chapter") : null;

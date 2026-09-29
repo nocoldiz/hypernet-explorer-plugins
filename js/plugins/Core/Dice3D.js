@@ -799,7 +799,7 @@
                             }
                             if (statusEl && options.outcomeText) {
                                 // A throw with no number to reach (the Dice of
-                                // YHWH) names what the face means instead.
+                                // Yaldabaoth) names what the face means instead.
                                 statusEl.textContent = String(options.outcomeText);
                                 statusEl.className = 'dice3d-status ' + (nat20 ? 'crit-success' : 'success') + ' visible';
                             } else if (statusEl) {

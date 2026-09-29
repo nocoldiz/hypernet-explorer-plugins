@@ -1,0 +1,561 @@
+{
+  "_comment": "Specialization talk (NPCConversation SpecTalk). {spec} is the specialization's name as the player reads it (a weapon spec reads its weaponTopic instead), {level} its tier name (Advanced, Master), {name} the other person in a question and answer. Pools are keyed by voice group: boastful, humble, analytical, warm, wry, playful, plus em and bubba, who keep their own voice.",
+  "talk": {
+    "boastful": [
+      "Nobody in this town comes close to me at {spec}. {Nobody|Not one of them}.",
+      "{level} at {spec}. Say it slowly, it sounds even better.",
+      "Ask anyone who is best at {spec}. Actually, don't bother. It's me.",
+      "I could do {spec} {in my sleep|with one hand|blindfolded}, and some days I do.",
+      "They should put my face on a sign: {spec}, done properly, ask here."
+    ],
+    "humble": [
+      "I'm {not bad|alright, I suppose} at {spec}. People keep telling me so, anyway.",
+      "{spec} is the one thing I don't mess up. Usually.",
+      "Years of {spec} and I still feel like a beginner {some days|most mornings}.",
+      "Someone called me an expert in {spec} today. I didn't know where to look.",
+      "I just kept practising {spec}. I never meant to get this far with it."
+    ],
+    "analytical": [
+      "The trick to {spec} is method. {Ninety|Most} percent of it is doing the boring part properly.",
+      "I've been refining how I approach {spec}. {Small margins|Tiny changes}, big difference.",
+      "People think {spec} is talent. It's repetition, measured and corrected.",
+      "At {level} level, {spec} stops being about rules and starts being about the exceptions.",
+      "I keep a mental list of every mistake I've made at {spec}. It is a long list, and a useful one."
+    ],
+    "warm": [
+      "I love {spec}. {It's the part of the day that feels like mine|It makes the days feel useful}.",
+      "If anyone ever wants to learn {spec}, I'd {happily|gladly} show them.",
+      "Years of {spec}, and it still makes me smile when it goes right.",
+      "Somebody taught me {spec} once, for nothing. I'm still paying it forward.",
+      "Doing {spec} for people I care about is the best part of being good at it."
+    ],
+    "wry": [
+      "{level} at {spec}. {Much good it does me|And the rent still comes due}.",
+      "Being good at {spec} mostly means everyone asks you to do it for free.",
+      "{spec}. I'm good at it. That's the problem, now I'm stuck with it.",
+      "All those years of {spec} and the world still hasn't noticed. Fine by me.",
+      "Mastering {spec} was easy. Finding anyone who cares, that's the hard part."
+    ],
+    "playful": [
+      "{spec} is {basically|just} a game where I know all the cheats.",
+      "Give me {spec} and a {free afternoon|quiet corner} and I'll show you something you've never seen.",
+      "Every time I do {spec} I try one new thing. {Sometimes it even works|Half the time it goes sideways}.",
+      "{spec}? I could talk about it for hours. Don't tempt me.",
+      "I dreamt about {spec} last night. Woke up with three new ideas and a headache."
+    ],
+    "em": [
+      "{spec}. {level}. I keep notes on my own mistakes, and the notebook is getting thin.",
+      "I have {spec} down to a method. I will explain it to anyone who asks, and to some who don't.",
+      "{spec} is a system. I have taken it apart twice and put it back better.",
+      "If you want {spec} done correctly, I am the correct person. That is a fact, not a boast.",
+      "Every time I get better at {spec}, I find a new way to be wrong about it. Fascinating."
+    ],
+    "bubba": [
+      "Uè, {spec}? That's my bread an' butter, sugar. {Mannaggia|Madonna}, I'm good at it.",
+      "Chiano chiano, that's how you do {spec}. Took me years to learn it the slow way.",
+      "{spec}, guaglio'. Like fixin' an engine: listen first, hands second.",
+      "Ain't much I'm proud of, but {spec}? That I'll put my name on.",
+      "My nonna said I'd never be good at nothin'. Should've seen me at {spec}, sugar."
+    ]
+  },
+  "weapon": {
+    "light": {
+      "boastful": [
+        "Blink and my blade's already back in its sheath. {Nobody|No one here} is faster.",
+        "Speed beats size. I've proved it on bigger fools than you.",
+        "A knife in my hand {writes its own|signs its own} name. Ask anyone who's met it."
+      ],
+      "humble": [
+        "I'm quick with a light blade. It's {not much|nothing special}, I just practise a lot.",
+        "Small weapons suit me. I'd rather not need them at all, honestly.",
+        "People say I'm fast with a dagger. I just try not to cut myself."
+      ],
+      "analytical": [
+        "A light blade trades reach for tempo. You win in the half second they spend deciding.",
+        "Footwork first, wrist second. The edge is the least important part of a dagger.",
+        "Short weapon, short arcs, no wasted motion. That's all {level} really means."
+      ],
+      "warm": [
+        "My first knife was a gift. I keep it sharp, and I keep it for keeping people safe.",
+        "I'd teach anyone to handle a small blade. Everybody should be able to look after themselves.",
+        "Quick hands are for helping more than hurting. Mostly."
+      ],
+      "wry": [
+        "Fast with a knife. Great at parties, terrible for making friends.",
+        "Light blades. All the danger, none of the respect.",
+        "Years of practice so I can cut bread faster than anyone alive. Worth it."
+      ],
+      "playful": [
+        "Watch this, I can flip a dagger {three|four} times and still catch it by the handle. Usually.",
+        "A light blade is a dance partner that never steps on your feet.",
+        "I once peeled an apple in one strip mid fight. Don't ask how the fight went."
+      ]
+    },
+    "sword": {
+      "boastful": [
+        "Show me a swordsman in this town who can touch me. {I'll wait|Go on, I'll wait}.",
+        "Guard, cut, thrust. I do all three better than anyone you've ever met.",
+        "My sword has never lost a duel. Neither have I, funnily enough."
+      ],
+      "humble": [
+        "I know my way around a sword. I'd still rather talk things out.",
+        "I've trained with the sword for years. There's always someone better, somewhere.",
+        "My teacher would say my guard is still too low. He'd be right."
+      ],
+      "analytical": [
+        "Swordplay is geometry with consequences. Angles and distance, nothing more.",
+        "Most people watch the blade. Watch the hips, and you'll know the cut before it comes.",
+        "The thrust is honest, the cut is forgiving. Knowing which to use is {level} work."
+      ],
+      "warm": [
+        "A good sword is a promise to stand between trouble and the people you love.",
+        "I still practise with the sword every morning. It clears my head for the day.",
+        "Anyone who wants to learn the sword can find me. Bring patience, not pride."
+      ],
+      "wry": [
+        "I'm a {level} with a sword. The world moved on to guns and forgot to tell me.",
+        "A sword. Heavy on the hip, useless in a queue.",
+        "Swordsmanship: the fine art of being very good at something nobody hires for."
+      ],
+      "playful": [
+        "Nothing sounds better than a sword leaving its scabbard. {Nothing|Maybe fireworks}.",
+        "I name my swords. This one's called Gerald. Gerald has seen things.",
+        "I can cut a candle wick without putting the flame out. Party trick, mostly."
+      ]
+    },
+    "heavy": {
+      "boastful": [
+        "Hand me the biggest thing you've got. I'll swing it all day.",
+        "When I commit to a swing, walls {move|give up}. People too.",
+        "They built that hammer for two men. I use it for one hand, on bad days."
+      ],
+      "humble": [
+        "I'm strong enough for the heavy weapons. That's about all it takes, really.",
+        "Big weapons just suit my build. I'm not clever about it.",
+        "I try to be gentle with a great hammer. It's harder than it sounds."
+      ],
+      "analytical": [
+        "A heavy weapon is momentum management. Stopping the swing is the real skill.",
+        "Commit fully or don't swing at all. Half measures with a maul get you killed.",
+        "Your spine does the work, not your arms. That took me years to understand."
+      ],
+      "warm": [
+        "My big hammer builds fences more often than it breaks anything. I like that.",
+        "Carrying the heavy stuff is how I look after my friends. Someone has to.",
+        "I'll teach anyone to swing safely. Nobody should wreck their back learning the hard way."
+      ],
+      "wry": [
+        "Master of the heavy weapons. My shoulders filed a complaint years ago.",
+        "Everyone wants you around when there's something to smash. Never for dinner.",
+        "Two handed weapons. Two handed backache."
+      ],
+      "playful": [
+        "Nothing like the sound of a great hammer on an anvil. Or a door. Or a wardrobe.",
+        "I once split a log, the stump under it, and the ground under that.",
+        "Big swing, big grin. That's my whole philosophy."
+      ]
+    },
+    "axe": {
+      "boastful": [
+        "Put a hand axe in my fist and I'll clear a forest before lunch.",
+        "Nobody chops like me. The trees in this region {know my name|fear my name}.",
+        "Weight forward, one swing, done. I don't need a second."
+      ],
+      "humble": [
+        "I've a knack with the axe. Grew up splitting wood, that's all it is.",
+        "People say I'm good with an axe. I just don't like wasting swings.",
+        "The axe and I get along. I don't push it too far, and it doesn't bite me."
+      ],
+      "analytical": [
+        "An axe is all head. Let the weight lead and your arms just steer.",
+        "The hook behind the blade is the part people forget. Catch the shield, then cut.",
+        "Every chop has a best angle. Find it once and you never lose it."
+      ],
+      "warm": [
+        "Winter's easier when someone good with an axe lives next door. Happy to be that someone.",
+        "My father taught me the axe. I'll teach it to anybody who asks.",
+        "There's something honest about an axe. You always know where you stand with it."
+      ],
+      "wry": [
+        "{level} with an axe. Everyone treats you like a lumberjack or a murderer.",
+        "An axe expert. So I get every splitting job in the street, for the price of a thank you.",
+        "The axe never lets me down. People, now, that's another story."
+      ],
+      "playful": [
+        "I can land a thrown axe in a target at twenty paces. The trick is not thinking about it.",
+        "An axe is just a very serious hat hook. Try it.",
+        "I talk to my axe. It hasn't answered yet, but it's a good listener."
+      ]
+    },
+    "whip": {
+      "boastful": [
+        "I can crack a whip and snuff a candle across the room. {Every time|First try}.",
+        "Reach, crack, wrap. Nobody gets within ten feet of me.",
+        "They hear my whip and they reconsider their day."
+      ],
+      "humble": [
+        "The whip's an odd skill, I know. I just happen to be alright at it.",
+        "I learned the whip on a farm. It's more about patience than anything.",
+        "I'm careful with the whip. It's easy to hurt yourself learning it."
+      ],
+      "analytical": [
+        "The crack is the tip breaking the sound barrier. Everything else is timing.",
+        "A whip is a wave you throw. Control the wave, control the fight.",
+        "Entangling is harder than striking. That's where {level} starts to show."
+      ],
+      "warm": [
+        "I mostly use the whip to herd goats, honestly. They respect it more than people do.",
+        "I'll show you the whip, but slowly. My first lesson left a mark on my ear.",
+        "It looks cruel, but in the right hands a whip keeps a crowd safe."
+      ],
+      "wry": [
+        "Master of the whip. People assume the worst about me, and they're usually wrong.",
+        "The whip. Nobody takes you seriously until you crack it indoors.",
+        "Years of practice and I'm still explaining it's not a hobby, it's a discipline."
+      ],
+      "playful": [
+        "I can snatch a hat off a head with my whip. I've a small collection now.",
+        "Crack! Sorry. Habit. Did that scare you? It was meant to.",
+        "A whip's just a very long, very loud finger. I point with it."
+      ]
+    },
+    "staff": {
+      "boastful": [
+        "Two ends, and I hit you with both before you blink.",
+        "Nobody gets past my staff. Not with a sword, not with a spear, not with a mood.",
+        "I've disarmed swordsmen with a broom handle. Imagine what I do with a real staff."
+      ],
+      "humble": [
+        "A staff is just a stick. I've only spent a long time with mine.",
+        "I'm handy with a staff. It helps on long walks, too.",
+        "I don't like to hurt people. A staff lets me stop a fight without much of that."
+      ],
+      "analytical": [
+        "The staff is all leverage. Hands wide for power, close for speed.",
+        "Every strike on the staff sets up the other end. Think in pairs.",
+        "Distance control is everything. Stay at the tip and they can't reach you."
+      ],
+      "warm": [
+        "My staff was cut from a tree my grandmother planted. It's family, in a way.",
+        "Anyone can learn the staff. Even children. Especially children, they're fearless.",
+        "A walking stick by day, a guard by night. I like that it does both."
+      ],
+      "wry": [
+        "{level} with a staff. It's a stick. I'm a master of the stick.",
+        "Everyone thinks I'm a wizard. I just know how to hit people with wood.",
+        "The staff: cheapest weapon, longest apprenticeship."
+      ],
+      "playful": [
+        "Spin, spin, sweep. My staff and I make the neighbours dizzy.",
+        "I once pole vaulted over a fence with my staff. Missed the other side a bit.",
+        "My staff doubles as a washing line. Tactical laundry."
+      ]
+    },
+    "bow": {
+      "boastful": [
+        "I can split an arrow already in the target. I've done it {twice|three times} this month.",
+        "Draw, anchor, release. Nobody in this region shoots like me.",
+        "Name a target, any target. It's already got my arrow in it."
+      ],
+      "humble": [
+        "I'm a decent shot with a bow. Good eyes, steady hands, that's all.",
+        "The bow's been a quiet friend to me. I don't need to be loud about it.",
+        "I still miss sometimes. Don't let anybody tell you they don't."
+      ],
+      "analytical": [
+        "Archery is consistency. Same draw, same anchor, same breath, every single time.",
+        "Wind, drop and distance. Read those three and the arrow does the rest.",
+        "Most misses happen at the release. The fingers have to get out of the way."
+      ],
+      "warm": [
+        "Archery calms me down. Just me, the string and the quiet between shots.",
+        "My mother taught me to shoot. I love passing it on.",
+        "I hunt with the bow so my family eats well. That's what the skill is for."
+      ],
+      "wry": [
+        "Master archer. Very useful, right up until it rains.",
+        "A bow in the age of guns. I like my lost causes elegant.",
+        "People only need an archer when something's already gone wrong."
+      ],
+      "playful": [
+        "I can shoot an apple off a hat. I prefer the hat to be on a post.",
+        "The best sound in the world is an arrow hitting the centre. Thunk!",
+        "I name my arrows too. Losing them is always a small funeral."
+      ]
+    },
+    "projectile": {
+      "boastful": [
+        "Knives, stars, stones, whatever. If I throw it, it lands where I want.",
+        "I hit a coin at thirty paces with a throwing knife. {Tuesday|Last week}, actually.",
+        "Nobody throws like me. Nobody even comes close."
+      ],
+      "humble": [
+        "I'm alright at throwing things. Not the most useful skill, I know.",
+        "Good aim, that's all. I practised on tin cans as a kid.",
+        "I throw straight. Everything else about me is a bit crooked."
+      ],
+      "analytical": [
+        "A thrown weapon spins at a set rate. Learn your distance in rotations.",
+        "Release point beats power every time. Too early, too high. Too late, the floor.",
+        "Range weapons are maths you do with your wrist."
+      ],
+      "warm": [
+        "I learned to throw with my brother, skipping stones. Still the best days I remember.",
+        "Throwing takes patience. I'm happy to be patient with anyone learning.",
+        "My aim has kept us fed a few lean winters. Rabbits never see it coming."
+      ],
+      "wry": [
+        "Throwing weapons. The only skill where you have to go and fetch it afterwards.",
+        "{level} at throwing things. The pub darts board fears me, nothing else does.",
+        "Every knife I've ever thrown I've had to walk after. Great exercise."
+      ],
+      "playful": [
+        "Pick a knot in that fence. Go on. Any knot.",
+        "I juggle throwing knives on slow days. The neighbours have opinions.",
+        "Throwing things is just catching, in reverse, for other people."
+      ]
+    },
+    "gun": {
+      "boastful": [
+        "I shoot tighter groups than the police range instructors. {They know it|They hate it}.",
+        "Pick a bottle on that wall. Pick any bottle. It's gone.",
+        "Under pressure I get steadier. That's why I'm the best shot around."
+      ],
+      "humble": [
+        "I'm a good shot. I wish it wasn't something I needed to be.",
+        "Steady hands and a lot of practice. There's nothing magic about it.",
+        "I keep my gun clean and hope I never need it. That's all."
+      ],
+      "analytical": [
+        "Trigger control is everything. Squeeze, don't pull. The shot should surprise you.",
+        "Breathe out, pause, press. The pause is where the accuracy lives.",
+        "Most bad shooting is bad maintenance. Clean the weapon, and half your problems go away."
+      ],
+      "warm": [
+        "I teach gun safety to anyone who asks. Knowing is safer than not knowing.",
+        "I carry so the people around me don't have to. That's how I see it.",
+        "My old shooting coach was the kindest man I ever met. I try to be like him."
+      ],
+      "wry": [
+        "Crack shot. The insurance forms all ask about it now.",
+        "{level} with a firearm. Makes every argument feel very short.",
+        "Being a good shot means you get to clean up after everyone else's bad shots."
+      ],
+      "playful": [
+        "I once shot the cork out of a bottle from across a plaza. The wine was terrible.",
+        "Tin cans on a fence at sunset. Best way to spend an evening.",
+        "I can reload faster than I can tie my shoes. Priorities."
+      ]
+    },
+    "claw": {
+      "boastful": [
+        "Close range is my home. Get in there with me and you'll leave in ribbons.",
+        "Nobody tears through a guard like I do. {Nobody|Not a soul}.",
+        "My claws have opened doors, armour and at least one argument."
+      ],
+      "humble": [
+        "I'm good with hand claws. It's not a pretty style, I know.",
+        "Claws just fit my hands. I don't go around bragging about it.",
+        "I fight close because I'm not good at anything longer. That's the truth of it."
+      ],
+      "analytical": [
+        "Claws are about angles. You don't strike through, you rake across.",
+        "The fight with claws is won inside their reach. Everything is about the entry.",
+        "Grip and wrist strength matter more than the blades on the gauntlet."
+      ],
+      "warm": [
+        "They look frightening, but I've only used my claws to protect people. I promise.",
+        "Anyone who wants to learn close fighting, I'll show them how to stay safe doing it.",
+        "Claws are how I climb, cook and open letters. Fighting is the least of it."
+      ],
+      "wry": [
+        "Master of the claws. People cross the street. Can't blame them.",
+        "Hand claws. You'll never guess how many gloves I've ruined.",
+        "{level} at tearing things. Still can't open a jar."
+      ],
+      "playful": [
+        "Rawr. Sorry. Every time I put the claws on I feel like a cat.",
+        "I carved my initials into a tree with these. It was a very big tree.",
+        "Claws are just knives that high five."
+      ]
+    },
+    "glove": {
+      "boastful": [
+        "Nobody lasts three rounds with me. {Nobody|Not one}.",
+        "My fists have ended more fights than most people's weapons.",
+        "Put the gloves on, square up. Oh, you're busy? Thought so."
+      ],
+      "humble": [
+        "I can box a bit. Kept me out of trouble as a kid, mostly.",
+        "I'm handy with my fists. I try not to go looking for reasons to use them.",
+        "Just a lot of hours at the gym, that's all it is."
+      ],
+      "analytical": [
+        "Boxing is feet and breathing. The punches are the least of it.",
+        "Jab to measure, cross to finish. Everything else is footnotes.",
+        "Tuck the chin, keep the elbows in. It's simple. Doing it tired is the hard part."
+      ],
+      "warm": [
+        "I teach the kids at the gym on Saturdays. They're better than me already.",
+        "Boxing gave me discipline when I had none. I owe it a lot.",
+        "Learning to fight made me calmer, not angrier. Funny how that works."
+      ],
+      "wry": [
+        "Good with my fists. Not much good for anything else, according to my mother.",
+        "{level} at punching. Surprisingly few job openings.",
+        "Every champion's nose looks like mine eventually."
+      ],
+      "playful": [
+        "Float, sting, the usual. I've a better rhyme but it's rude.",
+        "I shadow box in shop windows. People think I'm waving at them.",
+        "My gloves have names. Left is Thunder, right is also Thunder. Easier that way."
+      ]
+    },
+    "spear": {
+      "boastful": [
+        "Nobody gets inside my reach. {Nobody alive|Nobody yet}.",
+        "Reach, thrust, set. I could hold a bridge on my own with a spear.",
+        "Bring a sword against my spear. I'd love to see how that goes for you."
+      ],
+      "humble": [
+        "The spear's a simple weapon. I'm just stubborn about practising it.",
+        "I'm decent with a spear. It's the oldest weapon there is, anybody can learn it.",
+        "Long reach suits a cautious person. I'm very cautious."
+      ],
+      "analytical": [
+        "A spear is distance you can hold. Keep the point on the line and they have to go around it.",
+        "Setting the butt against a charge is physics doing your work for you.",
+        "Short grip for speed, long grip for reach. {level} means switching without thinking."
+      ],
+      "warm": [
+        "Fishing with a spear on a quiet morning is my favourite thing in the world.",
+        "My grandfather's spear hangs over my door. I keep it oiled for him.",
+        "A spear wall only works if everyone trusts each other. I like that about it."
+      ],
+      "wry": [
+        "Master of the spear. Try getting it on a bus.",
+        "The spear: great in a phalanx, terrible in a corridor.",
+        "Oldest weapon in the world, and I'm the last one in town who takes it seriously."
+      ],
+      "playful": [
+        "I can knock an apple off a branch with the butt of my spear and catch it on the point.",
+        "Spear fishing, spear hunting, spear reaching things off high shelves.",
+        "Every spear is secretly a very long fork."
+      ]
+    }
+  },
+  "weaponTopic": {
+    "light": "light blades",
+    "sword": "swordplay",
+    "heavy": "heavy weapons",
+    "axe": "axe fighting",
+    "whip": "the whip",
+    "staff": "staff fighting",
+    "bow": "archery",
+    "projectile": "throwing weapons",
+    "gun": "shooting",
+    "claw": "claw fighting",
+    "glove": "boxing",
+    "spear": "the spear"
+  },
+  "question": {
+    "boastful": [
+      "{name}, I'm nearly as good as you at {spec}. Nearly. What's the one thing I'm missing?",
+      "Alright, {name}, {spec}. Show me the trick and I'll be better than you by spring.",
+      "They say you're the best at {spec}, {name}. Prove it: what's the secret?",
+      "{name}. {spec}. Give me one tip, just one, and I'll take it from there."
+    ],
+    "humble": [
+      "Um, {name}? Sorry to bother you. How did you get so good at {spec}?",
+      "{name}, could I ask you something about {spec}? I keep getting it wrong.",
+      "I'm still hopeless at {spec}, {name}. Where would you even start?",
+      "If it's not too much trouble, {name}, what should a beginner practise in {spec}?"
+    ],
+    "analytical": [
+      "{name}, in {spec}, what do beginners get wrong that they don't notice?",
+      "Genuine question, {name}: in {spec}, what matters more, speed or precision?",
+      "{name}, how do you know when you've actually improved at {spec}?",
+      "What's the part of {spec} that the books never explain, {name}?"
+    ],
+    "warm": [
+      "{name}, I've been trying {spec} lately. Any advice for someone just starting out?",
+      "You're so good at {spec}, {name}. Would you ever show me a little?",
+      "{name}, what made you fall in love with {spec}?",
+      "I'd love to get better at {spec}, {name}. What helped you most?"
+    ],
+    "wry": [
+      "{name}, go on. Tell me {spec} isn't as hard as it looks. Lie if you have to.",
+      "So, {name}, {spec}. Is it worth the bother, or am I wasting my time?",
+      "{name}, how many years of {spec} before it stops being miserable?",
+      "Tell me honestly, {name}. Is anyone actually good at {spec}, or do you all just pretend?"
+    ],
+    "playful": [
+      "{name}! Teach me one {spec} trick. A flashy one. Please?",
+      "Quick, {name}: what's the coolest thing you can do with {spec}?",
+      "{name}, if {spec} was a game, what's the cheat code?",
+      "I tried {spec} yesterday and it went sideways, {name}. What did I do wrong?"
+    ],
+    "em": [
+      "{name}. {spec}. I have three questions and I would like them answered in order.",
+      "Explain {spec} to me, {name}. Do not simplify it. I will know.",
+      "{name}, I have been studying {spec}. Where does my method fail?",
+      "Your {spec} is better than mine, {name}. I would like to know exactly why."
+    ],
+    "bubba": [
+      "Uè, {name}, you're good at {spec}, eh? How's a fella learn that?",
+      "{name}, sugar, {spec}. What's the trick? I'm a mechanic, I like to see the insides.",
+      "Mannaggia, {name}, I tried {spec} an' made a mess of it. Where'd I go wrong?",
+      "Chiano chiano, {name}. Walk me through {spec}, like you'd explain a carburettor."
+    ]
+  },
+  "answer": {
+    "boastful": [
+      "Easy, {name}. Watch me do {spec} and copy everything. Everything.",
+      "The secret to {spec}? Be me. Failing that, practise every day for ten years.",
+      "You're asking the right person, {name}. Lesson one: never doubt yourself.",
+      "Hah! Stick close, {name}. A bit of my {spec} might rub off on you."
+    ],
+    "humble": [
+      "Oh, I'm really not that good, {name}. Just practise the basics until they're boring.",
+      "Honestly, {name}? I made every mistake first. Just keep at it.",
+      "I don't know if I'm the one to ask, {name}, but slow down. That helped me.",
+      "Start small, {name}. That's all I did, really."
+    ],
+    "analytical": [
+      "Break it down, {name}. Master one piece of {spec} at a time and measure each one.",
+      "Precision first, {name}. Speed comes from repetition, never the other way round.",
+      "Keep notes, {name}. Every mistake you write down is one you won't make twice.",
+      "Most people rush the fundamentals of {spec}, {name}. Don't."
+    ],
+    "warm": [
+      "Of course, {name}! Come by any time and we'll practise together.",
+      "Be kind to yourself, {name}. Everyone is terrible at {spec} at first.",
+      "I'd love to help, {name}. Bring a friend, it's more fun that way.",
+      "What helped me most was someone patient. I'll be that for you, {name}."
+    ],
+    "wry": [
+      "The secret, {name}? Years of boredom and a bit of bad luck.",
+      "Keep failing, {name}. Eventually you run out of ways to get it wrong.",
+      "Honestly, {name}, it's worth it. Just don't expect anyone to thank you.",
+      "Nobody's good at first, {name}. Most of us aren't even good at the end."
+    ],
+    "playful": [
+      "Watch closely, {name}. No, closer. Now forget everything and try it your own way.",
+      "The cheat code, {name}? Practise until it feels like playing.",
+      "Try it backwards, {name}. Seriously. You'll learn more from the mess.",
+      "Ha! Come find me tomorrow, {name}. I'll show you the flashy bit."
+    ],
+    "em": [
+      "Your method fails at the second step, {name}. Everyone's does. Fix that first.",
+      "{spec} is a system, {name}. Learn the system and the rest is arithmetic.",
+      "Write down what you do, {name}, then do exactly that. Most people cannot.",
+      "Three rules, {name}: observe, repeat, correct. In that order. Always."
+    ],
+    "bubba": [
+      "Chiano chiano, {name}. Listen first, hands second. Same as an engine.",
+      "Uè, sugar, you don't learn {spec} from talkin'. Grab it an' get your hands dirty.",
+      "Mannaggia, {name}, everybody wants the trick. There ain't one. Just time.",
+      "Come by the camper, guaglio'. I'll show you proper, with coffee."
+    ]
+  }
+}

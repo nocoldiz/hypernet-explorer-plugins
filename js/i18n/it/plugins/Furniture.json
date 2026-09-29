@@ -1,4 +1,5 @@
 {
+  "cannotBuildHere": "Qui non puoi costruire.",
   "materialFallback": "Materiale",
   "materialsRecovered": "Materiali recuperati:",
   "dismantle": "Smonta",

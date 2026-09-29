@@ -192,15 +192,12 @@
           if (dt) {
             generalSpecs.push({ label: T('Inventory.spec.label.damageCategory'), val: String(dt).trim() });
           }
-          const note = selectedItem.note || '';
-          const scales = [];
-          const regex = /<Scale:\s*([^>]+)>/gi;
-          let match;
-          while ((match = regex.exec(note)) !== null) {
-            scales.push(...match[1].split(',').map(s => s.trim().toUpperCase()));
-          }
+          // The stats the weapon's attack is worked out from, as highlighted
+          // chips rather than a grade (window.WeaponScaling).
+          const scaler = window.WeaponScaling;
+          const scales = scaler ? scaler.statsFor(selectedItem) : [];
           if (scales.length > 0) {
-            generalSpecs.push({ label: T('Inventory.spec.label.scaling'), val: scales.join(' + ') });
+            generalSpecs.push({ label: T('Inventory.spec.label.scaling'), val: scaler.chipsHTML(scales) });
           }
         }
         else if (isArmor) {
@@ -389,7 +386,7 @@
             + (medicine.treats.length ? specRowHTML(T('Shop.medicineTreats'), T('Inventory.medicineIllnessCount', { count: medicine.treats.length })) : ''));
           if (medicine.cures.length || medicine.treats.length) {
             const ref = itemRefOf(selectedItem);
-            detailedInfoHTML += `<div class="inspect-medicine-info"><div class="army-dialog-btn" onclick="window.ItemInspect.showMedicineInfo('${ref.kind}', ${ref.id})">${T('Inventory.medicineInfoButton')}</div></div>`;
+            detailedInfoHTML += `<div class="inspect-medicine-info"><div class="army-dialog-btn focusable" onclick="window.ItemInspect.showMedicineInfo('${ref.kind}', ${ref.id})">${T('Inventory.medicineInfoButton')}</div></div>`;
           }
         }
         const cravingsFed = window.ItemSystemUtils && window.ItemSystemUtils.getAddictionRelief ? window.ItemSystemUtils.getAddictionRelief(selectedItem) : [];
@@ -520,8 +517,12 @@
           </div>`;
         el.addEventListener('click', (e) => { if (e.target === el) closeMedicineInfo(); });
         document.body.appendChild(el);
+        // The press that opened the window must not also answer it.
+        if (window.UINav) window.UINav.swallowHeld();
         // The scene below would read the same Escape as its own cancel and walk
         // out of the inspect card, so the key is eaten here while this is open.
+        // A pad's A / B arrive through Input instead, and the backpack answers
+        // them (isMedicineInfoOpen) before any read of its own.
         medicineKeyHandler = (e) => {
           if (e.key === 'Escape' || e.key === 'Backspace' || e.key === 'x' || e.key === 'X') {
             e.preventDefault(); e.stopPropagation(); closeMedicineInfo();
@@ -535,8 +536,13 @@
       function closeMedicineInfo() {
         if (medicineKeyHandler) { document.removeEventListener('keydown', medicineKeyHandler, true); medicineKeyHandler = null; }
         const el = document.getElementById('medicine-info-modal');
-        if (el && el.parentNode) el.parentNode.removeChild(el);
+        if (el && el.parentNode) {
+          el.parentNode.removeChild(el);
+          if (window.UINav) window.UINav.swallowHeld();
+        }
       }
+
+      function isMedicineInfoOpen() { return !!document.getElementById('medicine-info-modal'); }
 
       // The piece on its own, filling the screen: the same viewer the card's
       // little square runs, so the drag, the wheel button pan and the wheel
@@ -563,6 +569,7 @@
         const canvas = document.getElementById('item-model-fullscreen-canvas');
         const entry  = canvas ? window.Weapon3DPreview.mount(canvas, item) : null;
         if (entry) fullscreenEntry = [entry];
+        if (window.UINav) window.UINav.swallowHeld();
         // The scene below would read Escape as its own cancel and leave the
         // inspect card, so the key is eaten here while this is open.
         fullscreenKeyHandler = (e) => {
@@ -578,12 +585,15 @@
         if (fullscreenEntry && window.Weapon3DPreview) window.Weapon3DPreview.disposeAll(fullscreenEntry);
         fullscreenEntry = null;
         const el = document.getElementById('item-model-fullscreen');
-        if (el && el.parentNode) el.parentNode.removeChild(el);
+        if (el && el.parentNode) {
+          el.parentNode.removeChild(el);
+          if (window.UINav) window.UINav.swallowHeld();
+        }
       }
 
       function isModelFullscreenOpen() { return !!document.getElementById('item-model-fullscreen'); }
 
-      return { rarityOf, typeLabelOf, descriptionOf, loreOf, detailsHTML, build, drawIcon, showMedicineInfo, closeMedicineInfo, showModelFullscreen, closeModelFullscreen, isModelFullscreenOpen };
+      return { rarityOf, typeLabelOf, descriptionOf, loreOf, detailsHTML, build, drawIcon, showMedicineInfo, closeMedicineInfo, isMedicineInfoOpen, showModelFullscreen, closeModelFullscreen, isModelFullscreenOpen };
     })();
   }
 
@@ -595,28 +605,8 @@
   Scene_EnhancedItem.prototype.create = function () {
     _Scene_EnhancedItem_create.call(this);
 
-    // WASD state
-    this._wasdInput      = { up: false, down: false, left: false, right: false };
-    this._wasdHeld       = { up: false, down: false, left: false, right: false };
-    this._wasdHoldFrames = { up: 0,     down: 0,     left: 0,     right: 0     };
-
-    this._wasdListener = (event) => {
-      if (event.repeat) return;
-      const key = event.key.toLowerCase();
-      if (key === 'w') { this._wasdInput.up    = true; this._wasdHeld.up    = true; event.preventDefault(); }
-      if (key === 's') { this._wasdInput.down  = true; this._wasdHeld.down  = true; event.preventDefault(); }
-      if (key === 'a') { this._wasdInput.left  = true; this._wasdHeld.left  = true; event.preventDefault(); }
-      if (key === 'd') { this._wasdInput.right = true; this._wasdHeld.right = true; event.preventDefault(); }
-    };
-    this._wasdUpListener = (event) => {
-      const key = event.key.toLowerCase();
-      if (key === 'w') { this._wasdHeld.up    = false; this._wasdHoldFrames.up    = 0; }
-      if (key === 's') { this._wasdHeld.down  = false; this._wasdHoldFrames.down  = 0; }
-      if (key === 'a') { this._wasdHeld.left  = false; this._wasdHoldFrames.left  = 0; }
-      if (key === 'd') { this._wasdHeld.right = false; this._wasdHoldFrames.right = 0; }
-    };
-    window.addEventListener('keydown', this._wasdListener);
-    window.addEventListener('keyup',   this._wasdUpListener);
+    // WASD needs nothing of its own: Input.keyMapper already reads the four
+    // keys as the four directions, with the one repeat rule every menu uses.
 
     // DOM state
     // The backpack opens on what was picked up last: the thing a player has
@@ -656,16 +646,12 @@
   };
 
   Scene_EnhancedItem.prototype.terminate = function () {
-    if (this._wasdListener) {
-      window.removeEventListener('keydown', this._wasdListener);
-      window.removeEventListener('keyup',   this._wasdUpListener);
-      this._wasdListener   = null;
-      this._wasdUpListener = null;
-    }
-
     UIbackpackInputManager.deactivate();
 
-    if (window.ItemInspect) window.ItemInspect.closeModelFullscreen();
+    if (window.ItemInspect) {
+      window.ItemInspect.closeModelFullscreen();
+      window.ItemInspect.closeMedicineInfo();
+    }
     this.disposeUIItemViewport();
 
     // The bar's root is a child of the container about to be torn down.
@@ -1233,6 +1219,8 @@
     el.className = 'army-dialog-overlay';
     this._dndContainer.appendChild(el);
     this.renderDiscardModal();
+    // The Y (or Discard) press that asked the question must not answer it.
+    if (window.UINav) window.UINav.swallowHeld();
   };
 
   Scene_EnhancedItem.prototype.renderDiscardModal = function () {
@@ -1279,6 +1267,27 @@
     this.closeDiscardModal();
   };
 
+  // The Info button of the medicinal register, when the card on the right
+  // page has one. It is walked as the stop after the last action button.
+  Scene_EnhancedItem.prototype.medicineInfoButton = function () {
+    const root = this._dndContainer;
+    return root && root.querySelector ? root.querySelector('.inspect-medicine-info .army-dialog-btn') : null;
+  };
+
+  // Every redraw puts the cursor mark back on that button when it is the stop
+  // the pad is resting on, since the card is rebuilt under it.
+  const _Scene_EnhancedItem_refreshUIbackpack = Scene_EnhancedItem.prototype.refreshUIbackpack;
+  Scene_EnhancedItem.prototype.refreshUIbackpack = function () {
+    const result = _Scene_EnhancedItem_refreshUIbackpack.apply(this, arguments);
+    const info = this.medicineInfoButton();
+    if (info) {
+      const on = this._dndActiveSection === 'actions' &&
+        this._selectedActionIndex === (this._dndActionsList || []).length;
+      info.classList.toggle('selected', on);
+    }
+    return result;
+  };
+
   Scene_EnhancedItem.prototype.cancelDiscard = function () {
     SoundManager.playCancel();
     this.closeDiscardModal();
@@ -1289,6 +1298,8 @@
     this._discardPendingItem = null;
     const modal = document.getElementById('discard-modal');
     if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
+    // Nor may the press that answered it act on the page underneath.
+    if (window.UINav) window.UINav.swallowHeld();
     this.refreshUIbackpack();
   };
 
@@ -1796,60 +1807,39 @@
 
     update() {
       if (!this._active || !this._scene) return;
-      // The full screen model viewer owns the whole screen while it is open,
-      // Escape included: the backpack takes no key until it is closed.
-      if (window.ItemInspect && window.ItemInspect.isModelFullscreenOpen()) return;
+      const inspect = window.ItemInspect;
+      // The full screen model viewer and the medicinal register own the whole
+      // screen while they are open. The keyboard's Escape is eaten by their
+      // own key guard; a pad's A or B arrives here and closes them, and the
+      // backpack takes nothing else until they are gone.
+      if (inspect && inspect.isModelFullscreenOpen()) {
+        if (Input.isTriggered('ok') || Input.isTriggered('cancel') || Input.isTriggered('escape')) {
+          SoundManager.playCancel();
+          inspect.closeModelFullscreen();
+        }
+        return;
+      }
+      if (inspect && inspect.isMedicineInfoOpen && inspect.isMedicineInfoOpen()) {
+        if (Input.isTriggered('ok') || Input.isTriggered('cancel') || Input.isTriggered('escape')) {
+          SoundManager.playCancel();
+          inspect.closeMedicineInfo();
+        }
+        return;
+      }
       const scene = this._scene;
 
       // Search bar has focus, pass all keys to browser
       const searchInput = document.getElementById('backpack-search-input');
       if (searchInput && document.activeElement === searchInput) return;
 
-      // WASD hold-repeat simulation (matches MZ arrow-key timing)
-      for (const dir of ['up', 'down', 'left', 'right']) {
-        if (scene._wasdHeld && scene._wasdHeld[dir]) {
-          scene._wasdHoldFrames[dir]++;
-          const t = scene._wasdHoldFrames[dir];
-          if (t > Input.keyRepeatWait && (t - Input.keyRepeatWait) % Input.keyRepeatInterval === 0) {
-            scene._wasdInput[dir] = true;
-          }
-        } else if (scene._wasdHoldFrames) {
-          scene._wasdHoldFrames[dir] = 0;
-        }
-      }
-
-      const isDown  = Input.isRepeated('down')  || (scene._wasdInput && scene._wasdInput.down);
-      const isUp    = Input.isRepeated('up')    || (scene._wasdInput && scene._wasdInput.up);
-      const isLeft  = Input.isRepeated('left')  || (scene._wasdInput && scene._wasdInput.left);
-      const isRight = Input.isRepeated('right') || (scene._wasdInput && scene._wasdInput.right);
-
-      // Consume WASD flags
-      if (scene._wasdInput) {
-        scene._wasdInput.up = scene._wasdInput.down = scene._wasdInput.left = scene._wasdInput.right = false;
-      }
-
-      // L1 / R1, cycle tabs from anywhere (use isTriggered: no repeat)
-      if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
-        const tabs = scene.uiCategories();
-        const dir  = Input.isTriggered('pageup') ? -1 : 1;
-        const cur  = tabs.indexOf(scene._activeUICategory);
-        const next = (cur + dir + tabs.length) % tabs.length;
-        SoundManager.playCursor();
-        scene._activeUICategory    = tabs[next];
-        scene._activeCategoryIndex = next;
-        scene._dndSelectedIndex    = 0;
-        scene._dndActiveSection    = 'items';
-        scene.refreshUIbackpack();
-        return;
-      }
-
-      // Discard modal takes full input priority
+      // Discard modal takes full input priority: nothing below it, the tabs
+      // included, reads a press while the question is up.
       if (scene._discardModalOpen) {
-        if (Input.isTriggered('left')) {
+        if (Input.isRepeated('left')) {
           scene.adjustDiscardQty(-1);
-        } else if (Input.isTriggered('right')) {
+        } else if (Input.isRepeated('right')) {
           scene.adjustDiscardQty(1);
-        } else if (Input.isTriggered('up') || Input.isTriggered('down')) {
+        } else if (Input.isRepeated('up') || Input.isRepeated('down')) {
           SoundManager.playCursor();
           scene._discardModalFocusIdx = 1 - scene._discardModalFocusIdx;
           scene.renderDiscardModal();
@@ -1859,6 +1849,26 @@
         } else if (Input.isTriggered('escape') || Input.isTriggered('cancel')) {
           scene.cancelDiscard();
         }
+        return;
+      }
+
+      const isDown  = Input.isRepeated('down');
+      const isUp    = Input.isRepeated('up');
+      const isLeft  = Input.isRepeated('left');
+      const isRight = Input.isRepeated('right');
+
+      // L1 / R1 (Q / W, Shift+Tab / Tab) cycle the tabs from anywhere.
+      const tabDir = window.UINav ? window.UINav.tabDir() : 0;
+      if (tabDir) {
+        const tabs = scene.uiCategories();
+        const cur  = tabs.indexOf(scene._activeUICategory);
+        const next = (cur + tabDir + tabs.length) % tabs.length;
+        SoundManager.playCursor();
+        scene._activeUICategory    = tabs[next];
+        scene._activeCategoryIndex = next;
+        scene._dndSelectedIndex    = 0;
+        scene._dndActiveSection    = 'items';
+        scene.refreshUIbackpack();
         return;
       }
 
@@ -1901,12 +1911,6 @@
         return;
       }
 
-      // Tab opens the medicinal register of the piece on the right page,
-      // which is the one control on the card that is not a row of the list.
-      if (Input.isTriggered('tab')) {
-        const info = document.querySelector('.inspect-medicine-info .army-dialog-btn');
-        if (info) { info.click(); return; }
-      }
 
       if      (isDown)  this.handleMove('down');
       else if (isUp)    this.handleMove('up');
@@ -2018,7 +2022,9 @@
       } else if (section === 'actions') {
         // The action buttons sit on a single row, so left/right walks them and
         // stepping off the left edge (or pressing up) returns to the pockets.
-        const count = scene._dndActionsList.length;
+        // The card's medicinal register button, when it has one, is the stop
+        // after the last action (index = count), so A opens it like the rest.
+        const count = scene._dndActionsList.length + (scene.medicineInfoButton() ? 1 : 0);
         if (dir === 'right' && scene._selectedActionIndex < count - 1) {
           SoundManager.playCursor(); scene._selectedActionIndex++; scene.refreshUIbackpack();
         } else if (dir === 'left' && scene._selectedActionIndex > 0) {
@@ -2055,7 +2061,9 @@
         }
       } else if (section === 'actions') {
         const action = scene._dndActionsList[scene._selectedActionIndex];
+        const info = !action ? scene.medicineInfoButton() : null;
         if (action) scene.triggerUIItemAction(action);
+        else if (info) { SoundManager.playOk(); info.click(); }
       } else if (section === 'targets') {
         scene.applyUITargetRow(scene._selectedTargetIndex);
       }

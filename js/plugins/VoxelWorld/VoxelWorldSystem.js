@@ -164,6 +164,9 @@
                     atHelm: !!o.atHelm,
                     startTile: o.startTile || null
                 });
+            // build() hands back null when the world could not be raised; the
+            // caller is told so rather than crashing on the way in.
+            if (!this._scene) return null;
             this._scene._onStandaloneExit = (typeof onExit === 'function') ? onExit : null;
             return this._scene;
         },

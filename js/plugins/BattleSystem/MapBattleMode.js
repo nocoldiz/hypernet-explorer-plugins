@@ -393,9 +393,13 @@
     // The raw options toggle, read at the one point a new battle decides which
     // presentation to use (BattleSystemEnhanced.js). Once a fight has begun
     // everything else checks isActive(), so a mid-battle flip cannot corrupt
-    // it. The voxel world is never a tactical grid.
+    // it. The voxel world is never a tactical grid, and neither is a <Platform>
+    // map (Map/PlatformerMode.js): gravity has no grid to stand troops on, so
+    // the fight falls back to the turn based battle scene until the party
+    // leaves the map. The option itself is left alone.
     window.isMapBattleMode = () => {
         if (window.VoxelWorldSystem && window.VoxelWorldSystem.isActive()) return false;
+        if (window.PlatformerMode && window.PlatformerMode.isActive()) return false;
         return ConfigManager.mapBattleMode === true;
     };
 
@@ -3154,12 +3158,35 @@
         MBM._aiTurn = { subject, done: false };
         if (MBM._aiActionReaches(subject)) {
             MBM._aiTurn.done = true;
+            MBM._simLogTurn(subject, 'acts');
             return true;
         }
-        if (MBM._startAiApproach(subject, character)) return false;
+        if (MBM._startAiApproach(subject, character)) {
+            MBM._simLogTurn(subject, 'approaches');
+            return false;
+        }
         MBM._aiTurn.done = true;
+        MBM._simLogTurn(subject, 'holds');
         subject.clearActions();
         return true;
+    };
+
+    // One line in the simulation log for what a CPU battler chose this turn.
+    MBM._simLogTurn = function (subject, how) {
+        if (!window.SimLog || !window.SimLog.active()) return;
+        const action = subject.currentAction();
+        const item = action && action.item();
+        let target = '';
+        if (action && how === 'acts' && action._targetIndex >= 0) {
+            const unit = action.isForOpponent() ? subject.opponentsUnit() : subject.friendsUnit();
+            const b = unit.members()[action._targetIndex];
+            target = b ? b.name() : '';
+        }
+        const line = how === 'acts' && !target ? 'actsPlain' : how;
+        const kind = subject.isActor() ? 'party' : 'monster';
+        window.SimLog.decide(kind, 'mbm:' + (subject.isActor() ? 'a' + subject.actorId() : 'e' + subject.index()),
+            'ParchmentToast.simLog.battle.' + line,
+            { name: subject.name(), skill: item ? item.name : '', target });
     };
 
     // Can the rolled action land from here? Also pins it onto a reachable
@@ -3424,7 +3451,9 @@
         for (const entry of MBM._combatEnemyEvents) {
             if (!entry.event || entry.eventId === MBM._eventId) continue;
             if (entry.event._erased) continue;
-            const wiped = entry.battlers.every(b => !b || b.isDead() || !b.isAppeared());
+            // A monster that ran (Game_Enemy.escape) is hidden, not gone: its
+            // event stays and runs from the party (BSE.Skirmish.startEscape).
+            const wiped = entry.battlers.every(b => !b || b.isDead() || (!b.isAppeared() && !b._bseEscaped));
             if (wiped) {
                 if (entry.battlers.some(b => b && b.isDead())) MBM._recordCorpse(entry, mapId);
                 delete pData[entry.persistentId];
@@ -3445,6 +3474,9 @@
                 record.enemyHp = record.enemyHp || {};
                 entry.battlers.forEach((b, i) => { if (b) record.enemyHp[i] = b.hp; });
                 entry.event.lockMovement(160);
+                if (BSE.Skirmish && entry.battlers.some(b => b && b._bseEscaped && !b.isDead())) {
+                    BSE.Skirmish.startEscape(entry.event);
+                }
             }
         }
     };

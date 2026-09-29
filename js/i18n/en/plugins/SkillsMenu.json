@@ -148,5 +148,73 @@
   "Thermodynamics": "Thermodynamics",
   "Ritual": "Ritual"
  },
- "searchPlaceholder": "Search skills…"
+ "searchPlaceholder": "Search skills…",
+ "help": {
+  "menu": {
+   "title": "Skills",
+   "items": {
+    "back": {
+     "name": "Back",
+     "text": "Leaves the skills page."
+    },
+    "types": {
+     "name": "Tabs",
+     "text": "The kinds of skill the character knows. Level Up lists the skills that can be learned now."
+    },
+    "search": {
+     "name": "Search and sort",
+     "text": "Filters the list by name and changes its order."
+    },
+    "grid": {
+     "name": "Skills",
+     "text": "Every skill in the open tab. Pick one to see its card on the right page."
+    },
+    "loadout": {
+     "name": "Loadout",
+     "text": "The nine skills carried into battle. Only these can be cast in a fight; Best and Random fill the strip for you."
+    },
+    "sync": {
+     "name": "Sync and Desync",
+     "text": "Sync puts the selected skill in the loadout, Desync takes it out. Some skills are always carried and spend no slot."
+    },
+    "card": {
+     "name": "Skill card",
+     "text": "Cost, element, damage and effects of the selected skill, and Use to cast it outside battle."
+    },
+    "member": {
+     "name": "Companion tabs",
+     "text": "Switches the character."
+    },
+    "help": {
+     "name": "? Help",
+     "text": "Opens this sheet. On a controller, press Select; press it again, Back or Confirm to close."
+    }
+   }
+  },
+  "battle": {
+   "title": "Casting in battle",
+   "items": {
+    "list": {
+     "name": "Skills",
+     "text": "The skills this character carries into battle. Pick one to cast it."
+    },
+    "cost": {
+     "name": "Cost",
+     "text": "The MP or AP a skill spends. A skill the character cannot afford is dimmed."
+    },
+    "weapon": {
+     "name": "Weapon needs",
+     "text": "A skill marked Needs melee or Needs ranged works only with that kind of weapon in hand."
+    },
+    "target": {
+     "name": "Target",
+     "text": "A skill aimed at an ally asks who it lands on after being picked."
+    },
+    "help": {
+     "name": "? Help",
+     "text": "Opens this sheet. On a controller, press Select; press it again, Back or Confirm to close."
+    }
+   }
+  }
+ }
 }

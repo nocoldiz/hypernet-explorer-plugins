@@ -66,6 +66,20 @@
  *   buildPowerReport(powerName)   , readable multi-line state-of-the-nation
  *   buildElectionReport(powerName), readable election history + next date
  *   buildNPCProfile(npcName)      , readable political biography of an NPC
+ *   getNation(name)               , a nation's own government, or null
+ *   describePlace(groupName?)     , the town hall, nation and bloc over a
+ *                                    place (the party's own when omitted)
+ *   electedOf(place)              , every office holder over that place
+ *   realPoliticians()             , office holders made into people
+ *                                    (REAL POLITICIANS section)
+ *   onPersonDied(name)            , called by NPCLifeSim.killNpc
+ *
+ *   The party's own political party (THE PARTY'S OWN POLITICAL PARTY):
+ *   foundPlayerParty / editPlayerParty / playerParty, one per world, with a
+ *   creed, up to three tenets and a weekly subscription fee paid by every
+ *   supporter; partiesIn(scope) every party narrowed to a place, nation or
+ *   hyperpower; projectCampaign / launchCampaign paid conversion and smear
+ *   campaigns; upcomingElections / standForElection candidacies of the team.
  *
  * @command PoliticsReport
  * @desc Show the state-of-the-nation report for a hyperpower.
@@ -124,6 +138,7 @@
   const IDENTITY_LOG_CAP   = 20;              // per-NPC political event log
   const SETTLEMENT_LOG_CAP = 20;              // per-settlement office history
   const LOCAL_TERM_DAYS    = 365;             // settlement mayoral term
+  const LOCAL_RETRY_DAYS   = 14;              // a town too small to vote tries again
 
   // The five ideological axes, each -100..+100.
   //   econ: -100 collectivist  … +100 free-market
@@ -163,520 +178,6 @@
   };
 
   // ==========================================================================
-  // GOVERNMENT ARCHETYPES, one per known hyperpower, plus a fallback
-  // ==========================================================================
-  // system:    election idiom (see ElectionEngines)
-  // baseline:  the power's cultural center of ideological gravity
-  // partyKind: what "parties" are called in reports
-  // rigging:   how much official results favor the incumbent (0..1)
-  // coupSusceptibility / scandalSensitivity: event multipliers
-
-  // i18n-ignore-start: hyperpower keys are joined against Countries.json and
-  // the history simulation; govType / system / partyKind / nameFlavor are ids
-  // the code branches on; the party word banks compose party names that are
-  // written into the saved world state, so they are proper nouns like any
-  // other. Every one of these that reaches the screen is resolved through
-  // powerLabel() below, from js/i18n/<lang>/plugins/Politics.json.
-
-
-  const ARCHETYPES = {
-    "Holy Vatican Empire": {
-      govType: "theocracy", system: "conclave", headTitle: "Supreme Pontifex",
-      legislature: "Holy Curia", partyKind: "order", seats: 120, termDays: 2920,
-      electorCount: 21, electorTitle: "Cardinal",
-      baseline: { econ: 10, auth: 55, trad: 85, mil: 20, myst: 90 },
-      rigging: 0.2, coupSusceptibility: 0.4, scandalSensitivity: 1.4,
-      nameFlavor: "clerical",
-    },
-    "USSR": {
-      govType: "single-party state", system: "plenum", headTitle: "General Secretary",
-      legislature: "Supreme Soviet", partyKind: "faction", seats: 1500, termDays: 1825,
-      electorCount: 12, electorTitle: "Politburo Member",
-      baseline: { econ: -85, auth: 70, trad: -20, mil: 55, myst: -80 },
-      rigging: 0.85, coupSusceptibility: 1.2, scandalSensitivity: 0.5,
-      nameFlavor: "soviet",
-    },
-    "Britannia": {
-      govType: "parliamentary monarchy", system: "parliamentary", headTitle: "Prime Minister",
-      legislature: "Parliament", partyKind: "party", seats: 650, termDays: 1460,
-      baseline: { econ: 35, auth: 10, trad: 40, mil: 25, myst: -30 },
-      rigging: 0, coupSusceptibility: 0.2, scandalSensitivity: 1.2,
-      nameFlavor: "british",
-    },
-    "Archive Foundation": {
-      govType: "technocracy", system: "examination", headTitle: "First Archivist",
-      legislature: "Index Council", partyKind: "school", seats: 88, termDays: 2190,
-      baseline: { econ: 0, auth: 35, trad: -40, mil: -20, myst: 25 },
-      rigging: 0.1, coupSusceptibility: 0.3, scandalSensitivity: 1.0,
-      nameFlavor: "archivist",
-    },
-    "Ottoman Empire": {
-      govType: "sultanate", system: "succession", headTitle: "Sultan",
-      legislature: "Divan", partyKind: "court faction", seats: 40, termDays: 3650,
-      baseline: { econ: 20, auth: 65, trad: 70, mil: 50, myst: 45 },
-      rigging: 0.6, coupSusceptibility: 0.9, scandalSensitivity: 0.7,
-      nameFlavor: "ottoman",
-    },
-    "The Gods": {
-      govType: "divine pantheon", system: "tournament", headTitle: "Prime Deity",
-      legislature: "Celestial Court", partyKind: "house", seats: 12, termDays: 4380,
-      baseline: { econ: 0, auth: 40, trad: 60, mil: 40, myst: 100 },
-      rigging: 0, coupSusceptibility: 0.6, scandalSensitivity: 0.9,
-      nameFlavor: "divine",
-    },
-    "San Marino Republic": {
-      govType: "serene republic", system: "parliamentary", headTitle: "Captain Regent",
-      legislature: "Grand Council", partyKind: "party", seats: 60, termDays: 182, // two Captains Regent, six-month terms
-      baseline: { econ: 25, auth: -25, trad: 30, mil: -40, myst: 0 },
-      rigging: 0, coupSusceptibility: 0.1, scandalSensitivity: 1.1,
-      nameFlavor: "sammarinese",
-    },
-    "Hypercapitalist Collective": {
-      govType: "corporatocracy", system: "shareholder", headTitle: "Chief Executive Sovereign",
-      legislature: "The Board", partyKind: "bloc", seats: 100, termDays: 365, // annual general meeting
-      baseline: { econ: 95, auth: 30, trad: -30, mil: 10, myst: -60 },
-      rigging: 0.15, coupSusceptibility: 0.5, scandalSensitivity: 0.8,
-      nameFlavor: "corporate",
-    },
-    "The Tourists": {
-      govType: "caste hierarchy", system: "conclave", headTitle: "Tour Director",
-      legislature: "The Itinerary", partyKind: "caste", seats: 33, termDays: 730,
-      electorCount: 15, electorTitle: "Overseer",
-      baseline: { econ: 20, auth: 45, trad: -60, mil: 30, myst: 40 },
-      rigging: 0.35, coupSusceptibility: 0.3, scandalSensitivity: 0.6,
-      nameFlavor: "zeta",
-    },
-    "The Dargos": {
-      govType: "practical joke", system: "moot", headTitle: "First Dargos",
-      legislature: "The Bit", partyKind: "routine", seats: 9, termDays: 400,
-      baseline: { econ: 0, auth: -20, trad: -40, mil: 10, myst: 70 },
-      rigging: 0.5, coupSusceptibility: 1.1, scandalSensitivity: 0.1,
-      nameFlavor: "dargos",
-    },
-    "Democratic People's Republic of Korea": {
-      // Two parties, one of which has never won anything, and a chair that has
-      // stayed in one family for three generations.
-      govType: "hereditary republic", system: "succession", headTitle: "Eternal Chairman",
-      legislature: "Supreme People's Assembly", partyKind: "party", seats: 687, termDays: 1825,
-      baseline: { econ: -95, auth: 95, trad: 45, mil: 95, myst: -40 },
-      rigging: 0.99, coupSusceptibility: 0.15, scandalSensitivity: 0.05,
-      nameFlavor: "korean",
-    },
-    "Dharma Directorate": {
-      // The Middle Kingdom after it put communism down: rites, sutras and an
-      // examination hall, with the mandate reviewed rather than voted on.
-      govType: "harmonious empire", system: "examination", headTitle: "Chancellor of Rites",
-      legislature: "Hall of Ten Thousand Voices", partyKind: "school", seats: 2980, termDays: 3650,
-      electorCount: 25, electorTitle: "Preceptor",
-      baseline: { econ: 30, auth: 70, trad: 90, mil: 55, myst: 60 },
-      rigging: 0.55, coupSusceptibility: 0.35, scandalSensitivity: 0.6,
-      nameFlavor: "chinese",
-    },
-    "Illuminated Khanate": {
-      // A khanate run out of a monastery: the Khan is recognised, not elected,
-      // and the abbots do the recognising.
-      govType: "illuminated khanate", system: "conclave", headTitle: "Illuminated Khan",
-      legislature: "Ikh Khuraldai", partyKind: "banner", seats: 76, termDays: 4380,
-      electorCount: 18, electorTitle: "Abbot",
-      baseline: { econ: -20, auth: 55, trad: 90, mil: 50, myst: 95 },
-      rigging: 0.4, coupSusceptibility: 0.6, scandalSensitivity: 0.5,
-      nameFlavor: "mongol",
-    },
-    "Solomonic Republic": {
-      // A republic bound to the seventy-two Goetic spirits Solomon sealed;
-      // its restored Sanhedrin argues Goetic precedent in every session it
-      // has ever held.
-      govType: "solomonic republic", system: "parliamentary", headTitle: "Nasi of the Republic",
-      legislature: "Restored Sanhedrin", partyKind: "council", seats: 71, termDays: 1460,
-      baseline: { econ: 20, auth: 40, trad: 75, mil: 65, myst: 70 },
-      rigging: 0.1, coupSusceptibility: 0.25, scandalSensitivity: 1.4,
-      nameFlavor: "goetic",
-    },
-    "Petro Kingdom of Arabia": {
-      // Everything it is, it is because of what is under it. The succession is
-      // a boardroom and the boardroom is a court.
-      govType: "petro monarchy", system: "succession", headTitle: "Oil-Emir",
-      legislature: "Concession Majlis", partyKind: "concession", seats: 150, termDays: 3650,
-      baseline: { econ: 75, auth: 85, trad: 80, mil: 40, myst: 45 },
-      rigging: 0.8, coupSusceptibility: 0.5, scandalSensitivity: 0.3,
-      nameFlavor: "arab",
-    },
-    "Imperial State of Persia": {
-      // The revolution never came. The Peacock Throne appoints a government and
-      // the government answers for it, which is a different job entirely.
-      govType: "imperial state", system: "succession", headTitle: "Prime Minister",
-      legislature: "National Consultative Assembly", partyKind: "party", seats: 268, termDays: 1460,
-      baseline: { econ: 35, auth: 70, trad: 65, mil: 55, myst: 40 },
-      rigging: 0.65, coupSusceptibility: 0.6, scandalSensitivity: 0.8,
-      nameFlavor: "persian",
-    },
-    "Sanatana Rashtra": {
-      // The eternal order, administered: a parliament that sits under an
-      // acharya and votes on what tradition turns out to have required.
-      govType: "dharmic republic", system: "parliamentary", headTitle: "Prime Minister",
-      legislature: "Rashtra Sabha", partyKind: "sabha", seats: 545, termDays: 1825,
-      baseline: { econ: 15, auth: 55, trad: 90, mil: 55, myst: 75 },
-      rigging: 0.3, coupSusceptibility: 0.35, scandalSensitivity: 1.2,
-      nameFlavor: "indic",
-    },
-    "Long Chile": {
-      // The thinnest country in the world, and the one most convinced it ought
-      // to be longer. Every ballot is about the next valley.
-      govType: "expansionist republic", system: "parliamentary", headTitle: "President-Marshal",
-      legislature: "Congress of the Long South", partyKind: "movement", seats: 155, termDays: 1460,
-      baseline: { econ: 10, auth: 55, trad: 50, mil: 85, myst: 10 },
-      rigging: 0.35, coupSusceptibility: 0.9, scandalSensitivity: 0.8,
-      nameFlavor: "andean",
-    },
-    "Kukulkan Ascendancy": {
-      // A restoration, not a republic: the god-emperor reigns until the count
-      // says otherwise, and the Council of Ajawob argues about the calendar.
-      govType: "divine empire", system: "succession", headTitle: "God-Emperor",
-      legislature: "Council of Ajawob", partyKind: "cult", seats: 52, termDays: 7300, // one k'atun
-      baseline: { econ: -10, auth: 80, trad: 95, mil: 60, myst: 95 },
-      rigging: 0.75, coupSusceptibility: 0.7, scandalSensitivity: 0.4,
-      nameFlavor: "mesoamerican",
-    },
-    "Goblin Horde": {
-      govType: "warband confederacy", system: "moot", headTitle: "Big Boss",
-      legislature: "Da Moot", partyKind: "clan", seats: 30, termDays: 300, // until someone bigger shows up
-      baseline: { econ: -30, auth: 50, trad: 20, mil: 90, myst: 35 },
-      rigging: 0, coupSusceptibility: 1.6, scandalSensitivity: 0.2,
-      nameFlavor: "goblin",
-    },
-  };
-
-  // Unknown hyperpowers (modded Countries.json) get a seeded generic republic.
-  const FALLBACK_ARCHETYPE = {
-    govType: "republic", system: "parliamentary", headTitle: "President",
-    legislature: "Assembly", partyKind: "party", seats: 200, termDays: 1460,
-    baseline: { econ: 0, auth: 0, trad: 0, mil: 0, myst: 0 },
-    rigging: 0, coupSusceptibility: 0.5, scandalSensitivity: 1.0,
-    nameFlavor: "generic",
-  };
-
-  // ==========================================================================
-  // NATIONAL PARTY ROSTERS
-  // ==========================================================================
-  //
-  // EVERY party in the world lives in js/db/WorldGen/Parties.json, filed under
-  // the nation it stands in - there is no such thing as a hyperpower's own
-  // party. A power's bench is the parties of the nations it holds, its home
-  // nation's among them and weighted (see syncPowerParties, HOME_BENCH_WEIGHT);
-  // a nation runs its own assembly out of exactly the same list.
-  //
-  // Nobody votes outside their own nation: an NPC's ballot holds the parties of
-  // the country their hometown stands in (Destinations.json `country`) and
-  // nothing else. A nation with no roster at all leaves its citizens with no
-  // party, which is a real answer - see nearestPartyId and collectNpcBallots.
-  const NATIONAL_PARTIES = {};
-  function addNationalParty(country, party) {
-    if (!country || !party || !party.name) return;
-    const list = NATIONAL_PARTIES[country] || (NATIONAL_PARTIES[country] = []);
-    if (!list.some(p => p.name === party.name)) list.push(party);
-  }
-
-  // Parties.json is loaded with the rest of js/db (DataService), which happens
-  // after this plugin is evaluated, so the file is folded in on first use.
-  let _nationalPartiesLoaded = false;
-  function nationalParties(country) {
-    if (!_nationalPartiesLoaded) {
-      const book = window.WorldGen?.Parties;
-      if (book) {
-        for (const [nation, list] of Object.entries(book)) {
-          if (!Array.isArray(list)) continue;   // "_comment"
-          for (const party of list) addNationalParty(nation, Object.assign({ country: nation }, party));
-        }
-        _nationalPartiesLoaded = true;
-      }
-    }
-    // A floor world of the Omega Tower is not in Parties.json and never will
-    // be: it was rolled from the world seed, and so was its bench. The names
-    // come back in the world's own naming register, so a goblin world's
-    // parties read as goblin clans and a machine world's as directorates.
-    const towerWorld = towerWorldByCountry(country);
-    if (towerWorld) return towerPartyEntries(towerWorld);
-    return (country && NATIONAL_PARTIES[country]) || [];
-  }
-
-  // A floor world's bench, in the shape nationalParties answers in. The creed
-  // each party carries is drawn from the same book Earth's parties use, so
-  // the platform math, the ballots and the wiki all work unchanged; only the
-  // alien creeds are held back from a world whose people are not.
-  // Keyed by the WORLD SEED as well as the floor: "tower:-5" names a different
-  // world in every save, and a cache that only knew the floor would hand the
-  // second world the first one's bench.
-  const _towerPartyCache = {};
-  function towerPartyEntries(world) {
-    const key = worldSeed() + "|" + world.id + "|" + world.name;   // i18n-ignore: cache key
-    if (_towerPartyCache[key]) return _towerPartyCache[key];
-    const creeds = (window.NPCShared.ideologyList() || [])
-      .filter((i) => i && !!i.alien === !!world.alien);
-    const rng = new PolRng(worldSeed() ^ nameHash("towerparties:" + world.id));  // i18n-ignore: seed string
-    const entries = world.parties.map((party) => ({
-      name: party.name,
-      country: world.name,
-      ideologyId: creeds.length ? creeds[rng.int(0, creeds.length - 1)].id : null,
-      founded: null,
-    }));
-    _towerPartyCache[key] = entries;
-    return entries;
-  }
-
-
-  // The nation an NPC votes in: the country their HOMETOWN stands in, whatever
-  // town they happen to be standing in today (Destinations.json `country`).
-  function homeCountryOf(npcName, groupName) {
-    const home = getProfile(npcName)?._homeGroupName || groupName || null;
-    if (!home) return null;
-    const declared = window.WorkSystem?.destinationCountry?.(home)?.country;
-    if (declared) return declared;
-    const countries = getCountries();
-    const match = countries.find(c => norm(c.country) === norm(home));
-    return match ? match.country : null;
-  }
-
-  // Some Countries.json entries spell the same power differently.
-  const FACTION_ALIASES = { "Soviet Union": "USSR" };
-
-  // Who the world opens with, whatever the century did. The history simulation
-  // seals these four offices on its last pass (HistorySimulator.sealFinalOffices)
-  // and the live politics has to agree with it: these people won the elections
-  // held before the first day, and they are not going anywhere.
-  // i18n-ignore-start  leader names, matched against Leaders.json
-  const SEATED_ON_DAY_ONE = {
-    "Britannia": "Margaret Thatcher",
-    "Free States of Midwest": "Bill Clinton",
-    "Eastern Seaboard": "George W. Bush",
-  };
-  // i18n-ignore-end
-
-  // Powers that hold no ground on this planet. Every other hyperpower is
-  // discovered from Countries.json, which is a map of Earth and can therefore
-  // never name one of these: they are registered here instead, with the worlds
-  // they hold standing in for member countries, so a government, an electorate,
-  // a run of elections and a wiki article are built for them exactly as for
-  // Britannia. The names are the keys of js/db/WorldGen/Hyperpowers.json.
-  const OFFWORLD_POWERS = {
-    "The Tourists": ["Zeta Reticuli A", "Zeta Reticuli B"],
-    "The Dargos":   ["Titania"],
-  };
-  // i18n-ignore-end
-
-  // The Omega Tower's floors are not cellars: each one opens onto its own
-  // world, and each of those worlds holds its own hyperpower, with its own
-  // bench and its own elections (DungeonFloorSystem.js, window.TowerWorlds).
-  // They are registered exactly as the offworld powers above are - a power
-  // whose single member country is the world itself - so everything built
-  // for Britannia is built for them without a line of it knowing about the
-  // tower. They are NOT in OFFWORLD_POWERS, because that table is authored
-  // and these are rolled from the world seed.
-  function towerWorlds() {
-    const TW = window.TowerWorlds;
-    if (!TW || typeof TW.all !== "function") return [];
-    try { return TW.all() || []; } catch (e) { return []; }
-  }
-
-  function towerWorldByPower(powerName) {
-    if (!powerName) return null;
-    const list = towerWorlds();
-    for (const w of list) if (w.powerName === powerName) return w;
-    return null;
-  }
-
-  function towerWorldByCountry(country) {
-    if (!country) return null;
-    const list = towerWorlds();
-    for (const w of list) if (w.name === country) return w;
-    return null;
-  }
-
-  function isTowerPower(powerName) {
-    return !!towerWorldByPower(powerName);
-  }
-
-  // One government per KIND of world, not per world: a goblin world is a
-  // warband wherever in the shaft it is, and there are only so many ways a
-  // people organises itself. A world whose kind is not here falls through
-  // to FALLBACK_ARCHETYPE like any unknown power, so nothing breaks.
-  const TOWER_GOV_ARCHETYPES = {
-    // i18n-ignore-start: institution names are proper nouns, stored on the
-    // record and never translated, exactly as the Earth archetypes above.
-    republic: {
-      govType: "republic", system: "parliamentary", headTitle: "First Speaker",
-      legislature: "General Assembly", partyKind: "party", seats: 180, termDays: 1460,
-      baseline: { econ: 0, auth: 0, trad: 0, mil: 0, myst: 0 },
-      rigging: 0.05, coupSusceptibility: 0.4, scandalSensitivity: 1.1,
-      nameFlavor: "generic",
-    },
-    warband: {
-      govType: "warband", system: "tournament", headTitle: "Warchief",
-      legislature: "Moot", partyKind: "clan", seats: 40, termDays: 730,
-      baseline: { econ: -20, auth: 45, trad: 30, mil: 80, myst: 10 },
-      rigging: 0.5, coupSusceptibility: 1.5, scandalSensitivity: 0.3,
-      nameFlavor: "goblin",
-    },
-    tyranny: {
-      govType: "tyranny", system: "succession", headTitle: "Sovereign",
-      legislature: "Court", partyKind: "court faction", seats: 24, termDays: 3650,
-      baseline: { econ: -30, auth: 90, trad: 50, mil: 70, myst: 40 },
-      rigging: 0.9, coupSusceptibility: 1.3, scandalSensitivity: 0.2,
-      nameFlavor: "ottoman",
-    },
-    conclave: {
-      govType: "conclave", system: "conclave", headTitle: "First Voice",
-      legislature: "Convocation", partyKind: "circle", seats: 90, termDays: 2190,
-      baseline: { econ: 5, auth: 30, trad: 20, mil: -20, myst: 85 },
-      rigging: 0.25, coupSusceptibility: 0.5, scandalSensitivity: 0.9,
-      nameFlavor: "divine",
-    },
-    directorate: {
-      govType: "directorate", system: "shareholder", headTitle: "Director",
-      legislature: "Board", partyKind: "bloc", seats: 64, termDays: 1825,
-      baseline: { econ: 60, auth: 50, trad: -40, mil: 10, myst: -70 },
-      rigging: 0.4, coupSusceptibility: 0.3, scandalSensitivity: 0.6,
-      nameFlavor: "archivist",
-    },
-    // i18n-ignore-end
-  };
-
-  // A world of ferals or of the risen holds no government at all: nobody on
-  // it can hold an office, so there is nothing to build (window.NPCCreature
-  // owns that boundary and this is the political end of it).
-  function towerArchetypeFor(powerName) {
-    const world = towerWorldByPower(powerName);
-    if (!world) return null;
-    if (world.govArchetypeKey === "none") return null;
-    return TOWER_GOV_ARCHETYPES[world.govArchetypeKey] || null;
-  }
-
-  // The worlds that seat a government. A world of beasts is skipped whole.
-  // A world of beasts seats nobody, and a colony of Earth people seats nothing
-  // NEW: they climbed in from here and kept Earth's nations and Earth's
-  // hyperpowers, which is the whole of what makes a colony a colony.
-  function governedTowerWorlds() {
-    return towerWorlds().filter((w) => w.govArchetypeKey !== "none" && !w.earthborn);
-  }
-
-
-  // ==========================================================================
-  // NAME BANKS, politicians per flavor
-  // ==========================================================================
-
-  // i18n-ignore-start: politician names are composed once and stored on the
-  // saved record, so they are proper nouns and never translated, exactly like
-  // the NPCPools rosters.
-  const NAME_BANKS = {
-    clerical: {
-      title: ["Cardinal", "Monsignor", "Abbot", "Prioress", "Vicar"],
-      first: ["Anselm", "Benedicta", "Clemens", "Dominika", "Egidio", "Fulgenzio", "Gregoria", "Hyacinth", "Innocenzo", "Lucilla", "Pius", "Severina"],
-      last:  ["di Castello", "Vetrari", "Santangelo", "Beneventi", "del Rosario", "Calvino", "Aldobrandi", "Fioravanti"],
-    },
-    soviet: {
-      title: ["Comrade", "Commissar", "Marshal", "Director"],
-      first: ["Anatoli", "Bohdana", "Dmitri", "Galina", "Iosif", "Katarina", "Lev", "Mira", "Nikolai", "Oksana", "Pavel", "Svetlana", "Vasili", "Yelena"],
-      last:  ["Stalvik", "Orlov", "Kuznetsova", "Brezhko", "Malenkov", "Tereshkova", "Ferrum", "Zhdanova", "Petrenko", "Volkov"],
-    },
-    british: {
-      title: ["Lord", "Lady", "Sir", "Dame", "The Rt. Hon."],
-      first: ["Alistair", "Beatrice", "Clive", "Dorothea", "Edmund", "Felicity", "Gerald", "Harriet", "Ignatius", "Josephine", "Mortimer", "Penelope"],
-      last:  ["Ashworth", "Blackwood", "Carmichael", "Davenport", "Featherstone", "Greystoke", "Hollingsworth", "Pemberton", "Sinclair", "Thistlewood"],
-    },
-    archivist: {
-      title: ["Archivist", "Indexer", "Curator", "Lector", "Registrar"],
-      first: ["Aleph", "Brevia", "Codex", "Delia", "Errat", "Folio", "Glossa", "Hilbert", "Iota", "Lemma", "Margin", "Quarto", "Vellum"],
-      last:  ["of Stack Nine", "of the Cold Shelf", "of Reading Room IV", "of the Locked Annex", "of Acquisitions", "of the Long Index", "of Preservation", "of Catalogue Zero"],
-    },
-    ottoman: {
-      title: ["Pasha", "Vizier", "Bey", "Hanim", "Agha"],
-      first: ["Aydin", "Belkis", "Cem", "Dilara", "Emre", "Feride", "Halil", "Iskender", "Leyla", "Murad", "Nilufer", "Orhan", "Selim", "Zeynep"],
-      last:  ["of the Golden Horn", "the Magnificent", "the Quiet", "of the Tulip Court", "the Mapmaker", "of Smyrna", "the Falconer", "of the Velvet Divan"],
-    },
-    divine: {
-      title: ["", "", "", ""],
-      first: ["Aurvang", "Belisaria", "Cthonis", "Dawnmaker", "Erebh", "Fulmina", "Ghorvad", "Hyalith", "Ilmarra", "Khoros", "Lethiel", "Morvandra", "Nyxion", "Ophira", "Pyrrhast", "Selunara", "Thandros", "Umbriel", "Vorthane", "Zephyrelle"],
-      last:  ["the Thrice-Crowned", "of the Last Door", "Stormtender", "the Unblinking", "of Forgotten Rivers", "Worldcarver", "the Patient Flame", "of the Hollow Star", "Oathkeeper", "the Many-Handed"],
-    },
-    sammarinese: {
-      title: ["Don", "Donna", "Maestro", "Dottore", "Dottoressa"],
-      first: ["Arianna", "Bartolomeo", "Cesare", "Delfina", "Ercole", "Fiorella", "Gianmarco", "Isotta", "Lorenzo", "Marinella", "Ottavio", "Speranza"],
-      last:  ["Titano", "Balestrieri", "Montale", "Serravalle", "Faetano", "Borgomaggiore", "Acquaviva", "Chiesanuova"],
-    },
-    corporate: {
-      title: ["CEO", "CFO", "Director", "VP", "Chairperson"],
-      first: ["Aria", "Blake", "Cassius", "Delphine", "Everett", "Fallon", "Grayson", "Harlow", "Indra", "Jaxon", "Kendall", "Lennox", "Marlowe", "Sterling"],
-      last:  ["Vance-Holdings", "Quarterly", "Margin", "Blackrock", "Ledgerman", "Synergy", "Acquira", "Dividenda", "Mercer-Yield", "Optimasse"],
-    },
-    mongol: {
-      title: ["Khan", "Abbot", "Noyon", "Lama", "Darga"],
-      first: ["Batu", "Chuluun", "Erdene", "Gantulga", "Khulan", "Munkh", "Naran", "Oyuun", "Saruul", "Temujin", "Tsetseg", "Zaya"],
-      last:  ["of the Gobi", "of Karakorum", "Bataar", "Gandan", "of the Orkhon", "Sukh", "Dorj", "of the Blue Sky"],
-    },
-    indic: {
-      title: ["Acharya", "Shri", "Pandit", "Swami", "Sardar"],
-      first: ["Aditya", "Bhavani", "Chandra", "Devika", "Girish", "Ila", "Kailash", "Lakshmi", "Nandan", "Parvati", "Raghav", "Vasanti"],
-      last:  ["Sharma", "Iyer", "Chatterjee", "Deshmukh", "Nair", "Rathore", "Bhattacharya", "Kulkarni", "Varma", "Trivedi"],
-    },
-    andean: {
-      title: ["General", "Don", "Doña", "Diputado", "Almirante"],
-      first: ["Aurelio", "Bernarda", "Cristóbal", "Elvira", "Fermín", "Ignacia", "Lautaro", "Mercedes", "Octavio", "Rosalba", "Tomás", "Ximena"],
-      last:  ["Valdivia", "Errázuriz", "Montalva", "Quintana", "Vergara", "Undurraga", "Cifuentes", "Barros", "Zañartu", "Ilabaca"],
-    },
-    korean: {
-      title: ["Comrade", "Chairman", "Marshal", "Secretary", "Hero of the Republic"],
-      first: ["Chol", "Hyon", "Il", "Jong", "Myong", "Nam", "Ok", "Song", "Un", "Yong", "Chun", "Sun"],
-      last:  ["Kim", "Ri", "Pak", "Choe", "Kang", "Hong", "O", "Jang", "Yun", "An"],
-    },
-    chinese: {
-      title: ["Preceptor", "Chancellor", "Abbot", "Censor", "Rectifier"],
-      first: ["Wei", "Lan", "Zhen", "Xiu", "Ming", "Qiu", "Shun", "Yun", "Bo", "Fang", "Jian", "Ruo"],
-      last:  ["Kong", "Meng", "Zhu", "Wang", "Li", "Chen", "Fa", "Xuan", "Hui", "Tang"],
-    },
-    persian: {
-      title: ["Hojjat al-Islam", "Doctor", "Engineer", "Ayatollah", "Deputy"],
-      first: ["Ali", "Hossein", "Fatemeh", "Mehdi", "Reza", "Zahra", "Mostafa", "Nasrin", "Kazem", "Parvin", "Javad", "Soraya"],
-      last:  ["Ansari", "Beheshti", "Golpayegani", "Hashemi", "Kermani", "Mousavian", "Nouri", "Rezaei", "Shirazi", "Tabatabai"],
-    },
-    goetic: {
-      title: ["King", "Duke", "Prince", "Marquis", "President"],
-      first: ["Bael", "Agares", "Vassago", "Marbas", "Buer", "Sitri", "Beleth", "Naberius", "Astaroth", "Furfur", "Stolas", "Balam", "Gremory", "Andras"],
-      last:  ["of the Ars Goetia", "of the Seventy-Two", "Bound of Solomon", "of the Brazen Vessel", "the Sigil-Bearer", "of the Ninth Hierarchy", "the Ring-Sworn", "of the Restored Sanhedrin"],
-    },
-    arab: {
-      title: ["Sheikh", "Colonel", "Comrade", "Sayyid", "Doctor"],
-      first: ["Adnan", "Bassam", "Dalal", "Faisal", "Hala", "Ibrahim", "Karim", "Layla", "Mahmoud", "Nabil", "Rania", "Tariq"],
-      last:  ["al-Bakri", "al-Douri", "al-Hashimi", "al-Jaberi", "al-Khoury", "al-Masri", "al-Rashid", "al-Sabah", "al-Tikriti", "Haddad"],
-    },
-    mesoamerican: {
-      title: ["Ajaw", "Sajal", "Ah K'in", "Nacom", "Halach Uinic"],
-      first: ["Balam", "Ix Chel", "Kan Ek", "Yaxkin", "Itzel", "Chaac", "Ahau", "Nicte", "Tecum", "Xoc", "Zacnicte", "Kinich"],
-      last:  ["of Copán", "of Palenque", "of Tikal", "of Chichén", "of Uxmal", "of the Cenote", "Tenochca", "of the Ninth Sky"],
-    },
-    goblin: {
-      title: ["Boss", "Warboss", "Shaman", "Chief", "Loota"],
-      first: ["Grik", "Snaga", "Zog", "Mok", "Urgha", "Skab", "Nazgit", "Throk", "Grubna", "Wort", "Izzik", "Bogrot"],
-      last:  ["Skullsplitta", "da Biter", "Three-Teef", "Wolfpig-Rida", "da Sneaky", "Ironchewa", "Mudfist", "da Loud", "Squigbreff", "Stabba"],
-    },
-    zeta: {
-      title: ["Overseer", "Analyzer", "Warper", "Guide", "Ambassador"],
-      first: ["Zyx-7", "Qel-9", "Vrax-3", "Klix-5", "Hlee-2", "Omm-4", "Vess-1", "Thruun-8", "Iisha-6", "Nuu-11", "Sset-13", "Ilka-17", "Praa-19", "Oxx-23"],
-      last:  ["of the Open Shutter", "of the Red Scalpel", "of the Folded Mind", "of the Long Weekend", "of the Quiet Probe", "of the Kind Regard", "of the Second Landing", "of the Third Reticulum"],
-    },
-    dargos: {
-      title: ["Regent", "Clerk", "Marshal", "Envoy", ""],
-      first: ["Obb", "Wodwod", "Ssein", "Grunnu", "Habb", "Ilfo", "Nnok", "Purr", "Tebbe", "Ulgu"],
-      last:  ["the Unserious", "of the Long Con", "who Waits", "the Straight-Faced", "of Titania", "the Callback", "who Means It", "of the Acid Shore"],
-    },
-    generic: {
-      title: ["Hon.", "Senator", "Deputy", "Minister"],
-      first: ["Adrian", "Bianca", "Casimir", "Daria", "Emil", "Franka", "Gustave", "Helena", "Ivo", "Jana", "Karl", "Lena"],
-      last:  ["Varga", "Novak", "Lindqvist", "Moreau", "Keller", "Sokolov", "Brandt", "Costa", "Vidal", "Hoffmann"],
-    },
-  };
-
-  // i18n-ignore-end
-
-  // ==========================================================================
   // SHARED UTILITIES (see NPCShared.js)
   // ==========================================================================
 
@@ -695,6 +196,12 @@
     if (!power) return "";
     const key = "Politics.power." + powerSlug(power.name) + "." + field;
     if (T.has(key)) return T(key);
+    // A nation's own government reads as one (NATION_ARCHETYPE), not as the
+    // generic republic a power with no entry of its own falls back to.
+    if (power.kind === "nation") {
+      const national = "Politics.power.nationalGovernment." + field;
+      if (T.has(national)) return T(national);
+    }
     const generic = "Politics.power.default." + field;
     if (T.has(generic)) return T(generic);
     return power[field] || "";
@@ -789,8 +296,31 @@
     return !!(NC && NC.isNonSentientByName && NC.isNonSentientByName(name));
   }
 
+  // A child of the world (NPCLifeSim FAMILY) holds no citizenship yet.
+  function isMinorName(name) {
+    return !!window.NPCLifeSim?.isMinor?.(name);
+  }
+
   function norm(s) {
     return String(s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  }
+
+  // The first Countries.json entry whose normalised name is norm(name), off an
+  // index built once per countries list. resolveGroupPolity is asked for every
+  // thought a person has on the map, and the find this replaces normalised
+  // every country's name, and the name asked, on every call.
+  let _countryIndexSrc = null, _countryIndexLen = -1, _countryIndex = null;
+  function countryByName(countries, name) {
+    if (_countryIndexSrc !== countries || _countryIndexLen !== countries.length) {
+      _countryIndex = new Map();
+      for (const c of countries) {
+        const k = norm(c.country);
+        if (!_countryIndex.has(k)) _countryIndex.set(k, c);
+      }
+      _countryIndexSrc = countries;
+      _countryIndexLen = countries.length;
+    }
+    return _countryIndex.get(norm(name)) || null;
   }
 
   function canonicalFaction(name) {
@@ -1045,6 +575,10 @@
     pol.deathDate = dateStrOf(minute);
     pol.deathCause = cause || null;
     if (pol.office === power.headTitle) pol.office = null;
+    // A politician who is also a person in the world dies there too (REAL
+    // POLITICIANS). killNpc asks back through onPersonDied, which finds the
+    // record already closed and leaves it alone.
+    if (pol.npcName) buryPerson(pol, cause);
   }
 
   // Permanent head-of-state pockets: every transfer of the top office (election,
@@ -1318,6 +852,25 @@
   // pass - see catchUp.
   function allPolities(state) {
     return Object.values(state.powers).concat(Object.values(state.nations || {}));
+  }
+
+  // A monster world (WorldModes.monsterPowersOnly) has politics only where a
+  // monster power governs: a polity whose naming register is the Horde's
+  // (nameFlavor "goblin": the Goblin Horde, the nations it holds, the warband
+  // worlds of the tower). Nobody else holds an office there, and where no
+  // monster power exists at all political time does not pass.
+  const MONSTER_POWER_FLAVORS = new Set(["goblin"]); // i18n-ignore: nameFlavor ids
+  function isMonsterPolity(polity) {
+    return !!polity && MONSTER_POWER_FLAVORS.has(polity.nameFlavor);
+  }
+  function monsterPowersOnly() {
+    const WMo = window.NPCShared?.WorldModes;
+    return !!(WMo && WMo.monsterPowersOnly());
+  }
+  // The governments the world simulates: every one, or a monster world's own.
+  function livePolities(state) {
+    const all = allPolities(state);
+    return monsterPowersOnly() ? all.filter(isMonsterPolity) : all;
   }
 
   // A nation's own government is written the first time the world has a reason
@@ -1828,6 +1381,8 @@
     engine.call(ElectionEngines, state, power, minute, rng, record);
     // Whoever the book names holds the office however the vote went.
     enforceCanonHead(state, power, minute, record);
+    // The team's own candidates, weighed against the result (candidacies).
+    if (!opts.historical) contestPlayerCandidacy(state, power, minute, record);
     pushElection(power, record);
     if (!opts.historical) {
       pushPowerEvent(power, minute, "election",
@@ -2133,11 +1688,11 @@
   // The history simulation can have moved a nation under a different
   // hyperpower than Countries.json ships with, the world's simulated
   // controller (HistoryManager.getNationState) always wins.
-  function resolveGroupPolity(state, groupName) {
+  function resolveGroupPolity(state, groupName, opts) {
     const countries = getCountries();
     const powers = Object.keys(state.powers);
     const rng = new PolRng(worldSeed() ^ nameHash("polity:" + (groupName || "drifters")));
-    let country = countries.find(c => norm(c.country) === norm(groupName)) || null;
+    let country = countryByName(countries, groupName);
     // A named settlement (Ghent, Milano, Omega Tower, ...) is a group whose name
     // is its Destinations.json key, and every entry there declares the nation the
     // place stands in. Without this a town that is not itself a country name fell
@@ -2147,7 +1702,7 @@
     if (!country) {
       declaredCountry = window.WorkSystem?.destinationCountry?.(groupName)?.country || null;
       if (declaredCountry) {
-        country = countries.find(c => norm(c.country) === norm(declaredCountry)) || null;
+        country = countryByName(countries, declaredCountry);
       }
     }
     // Procedural settlements are keyed "Proc:x,y" and never match a country by
@@ -2172,10 +1727,17 @@
       const nationId = $gameSystem?._npcMapGroups?.[groupName]?.nationId;
       if (nationId != null) country = countries.find(c => c.id === nationId) || null;
     }
+    // Every better signal before a seeded guess: the nation the group itself
+    // declares (a camp, a settlement registered with one), the country its
+    // world square is painted in, and, when it is the ground the party stands
+    // on, the country WeatherSystem put in variable 86.
+    if (!country && !declaredCountry) country = signalledCountry(countries, groupName);
     // A place whose declared nation has no Countries.json entry of its own (a
     // Libya, a Liechtenstein) still reads as that nation, it simply has no
     // controller on file, so the allegiance falls through to sympathy below.
     if (!country && declaredCountry) return { country: declaredCountry, power: sympathyPower(powers, rng) };
+    // A strict caller (REAL POLITICIANS looking for a capital) wants no guess.
+    if (!country && opts && opts.strict) return { country: null, power: "Neutral" };
     if (!country && countries.length) country = countries[rng.int(0, countries.length - 1)];
     let controller = country?.controller ?? "Neutral";
     let faction = country?.faction ?? "Neutral";
@@ -2191,6 +1753,43 @@
       powerName = sympathyPower(powers, rng);
     }
     return { country: country?.country ?? null, power: powerName };
+  }
+
+  // The ground the party is standing on, as a group key.
+  function currentGroupName() {
+    if (!$gameSystem) return null;
+    const onProc = typeof $gameMap !== "undefined" && $gameMap && $gameMap.mapId && $gameMap.mapId() === 636;
+    if (onProc && $gameSystem._currentProcGroup) return $gameSystem._currentProcGroup;
+    let g = null;
+    try {
+      g = (typeof $gameMap !== "undefined" && $gameMap && $gameMap.mapId)
+        ? (window.NPCSystem?.findMapGroupByMap?.($gameMap.mapId()) || null) : null;
+    } catch (_) { g = null; }
+    return g || $gameSystem._npcSystemCurrentMapGroup || null;
+  }
+
+  // A country for a group that no name, destination or nation id answers,
+  // read off what the world itself knows about the place. Null when nothing
+  // does: the caller then decides whether a seeded guess is acceptable.
+  function signalledCountry(countries, groupName) {
+    const grp = $gameSystem?._npcMapGroups?.[groupName];
+    if (grp && grp.country) {
+      const own = countryByName(countries, grp.country);
+      if (own) return own;
+    }
+    if (grp && Number.isFinite(grp.worldX) && Number.isFinite(grp.worldY) &&
+        typeof $gameSystem.getCountryFromWorldCoordinates === "function") {
+      try {
+        const at = $gameSystem.getCountryFromWorldCoordinates(grp.worldX, grp.worldY);
+        if (at && at.country) return countryByName(countries, at.country) || at;
+      } catch (_) { /* the world map is not scanned yet */ }
+    }
+    if (groupName && groupName === currentGroupName()) {
+      const id = (typeof $gameVariables !== "undefined" && $gameVariables) ? ($gameVariables.value(86) || 0) : 0;
+      // 255 is WeatherSystem's "no country found" answer.
+      if (id && id !== 255) return countries.find(c => c.id === id) || null;
+    }
+    return null;
   }
 
   // Sympathy allegiance, drawn from the powers of this world only: nobody
@@ -2267,12 +1866,216 @@
     return partyId;
   }
 
+  // ==========================================================================
+  // CIVIC DRAW AND CREED SYNC, the creed leans to the ballot and the government
+  // ==========================================================================
+  // A person's creed is not dealt in a vacuum. The first time their political
+  // identity is written, they are drawn toward one of their own nation's
+  // parties (the popular ones, and the ones near what they already believe,
+  // likelier) and toward whoever governs them, and the creed is re-picked
+  // from the handful standing nearest that mix. Once only: `_civicV` stamps
+  // it, and an identity that already exists is never redrawn.
+  //
+  // Then the two stay in step. A creed that changes (drift, conversion)
+  // pulls the identity's axes after it and may move the party they sympathize
+  // with; identity axes that wander far from the creed (radicalization) pull
+  // the creed after them. `_creedSyncing` keeps either from calling the other.
+
+  const CIVIC_MIX = { creed: 0.55, party: 0.25, ruling: 0.20 };
+  const CIVIC_DIST_SCALE = 20;       // party weight = share * exp(-dist / 20)
+  const CIVIC_CANDIDATES = 5;
+  const CREED_SYNC_PULL = 0.6;       // identity axes move this far toward the creed
+  const PARTY_HYSTERESIS = 8;        // a new party must be this much nearer to win
+  const REALIGN_GAP = 30;            // identity-to-creed distance that re-picks the creed
+  const REALIGN_RATE_PER_30D = 0.25;
+
+  let _creedSyncing = false;
+
+  function mixAxes(parts) {
+    const out = {};
+    for (const ax of AXES) {
+      let v = 0;
+      for (const [axes, w] of parts) v += (axes?.[ax] ?? 0) * w;
+      out[ax] = clamp(Math.round(v), -100, 100);
+    }
+    return out;
+  }
+
+  // Weighted pick over [{..., w}] with the simulation's own rng.
+  function weightedPick(list, rng) {
+    let total = 0;
+    for (const e of list) total += e.w;
+    if (!(total > 0)) return list[0] || null;
+    let roll = rng.next() * total;
+    for (const e of list) { roll -= e.w; if (roll <= 0) return e; }
+    return list[list.length - 1];
+  }
+
+  function civicDraw(state, npcName, profile, power, country, rng) {
+    const S = window.NPCShared;
+    if (!profile || profile._civicV === S.CIVIC_V) return false;
+    const creed = S.ideologyFor(profile);
+    // Pinned creeds and the off-world keep what they hold; a beast holds none.
+    if (!creed || creed.alien || S.creedPinned(profile) || isNonSentientName(npcName) || !power) {
+      profile._civicV = S.CIVIC_V;
+      return false;
+    }
+    const creedAxes = S.ideologyAxes(creed);
+    const ballot = ballotFor(power, country);
+    let party = null;
+    if (ballot.length) {
+      const weighted = ballot.map(p => ({
+        party: p,
+        w: Math.max(1, p.lastShare || 0) * Math.exp(-ideologyDistance(creedAxes, p.platform) / CIVIC_DIST_SCALE),
+      }));
+      party = weightedPick(weighted, rng)?.party || null;
+    }
+    const target = mixAxes([
+      [creedAxes, CIVIC_MIX.creed],
+      [party ? party.platform : creedAxes, CIVIC_MIX.party],
+      [rulingPlatform(power), CIVIC_MIX.ruling],
+    ]);
+    const near = S.nearestIdeologies(target, { alien: false, limit: CIVIC_CANDIDATES });
+    const pick = weightedPick(near.map(e => ({ ...e, w: 1 / (1 + e.distance / 25) })), rng);
+    if (pick && pick.ideo) S.setCreed(profile, pick.ideo);
+    profile._civicV = S.CIVIC_V;
+    return !!pick;
+  }
+
+  // The creed on the society profile changed: pull the identity after it.
+  function onCreedChanged(npcName) {
+    if (_creedSyncing) return false;
+    const state = getState();
+    const identity = state?.identities?.[npcName];
+    const profile = getProfile(npcName);
+    const creed = window.NPCShared.ideologyFor(profile);
+    if (!identity || !creed) return false;
+    _creedSyncing = true;
+    try {
+      const power = state.powers[identity.power];
+      const baseline = power ? power.baseline : {};
+      const creedAxes = window.NPCShared.ideologyAxes(creed);
+      for (const ax of AXES) {
+        const target = creedAxes[ax] * CREED_WEIGHT + (baseline[ax] ?? 0) * (1 - CREED_WEIGHT);
+        const cur = identity.ideology[ax] ?? 0;
+        identity.ideology[ax] = clamp(Math.round(cur + (target - cur) * CREED_SYNC_PULL), -100, 100);
+      }
+      identity.creedId = creed.id;
+      // A character the player built declares a party only by the player's
+      // hand (see ensureIdentity): nothing here moves it.
+      if (power && !(profile && profile.playerCreated)) {
+        let best = null, bestD = Infinity, curD = Infinity;
+        for (const party of ballotFor(power, identity.country)) {
+          const d = ideologyDistance(identity.ideology, party.platform);
+          if (d < bestD) { bestD = d; best = party; }
+          if (party.id === identity.partyId) curD = d;
+        }
+        if (best && best.id !== identity.partyId && bestD + PARTY_HYSTERESIS < curD) {
+          const old = partyById(power, identity.partyId);
+          identity.partyId = best.id;
+          pushIdentityEvent(identity, nowMinuteVar(), "conversion", "Politics.identity.conversion",
+            { from: old?.name ?? T("Politics.fallback.oldGuard"), to: best.name });
+        } else {
+          // Not near enough another party to switch outright: the further the
+          // new creed stands from their own party, the likelier they walk out
+          // of it anyway (PARTY DRIFT).
+          const minute = nowMinuteVar();
+          driftFromParty(npcName, identity, power, new PolRng(worldSeed() ^ nameHash("driftCreed:" + npcName) ^ ((minute >>> 0) || 1)),
+            minute, DRIFT_ON_CREED_DAYS);
+        }
+      }
+      return true;
+    } finally {
+      _creedSyncing = false;
+    }
+  }
+
+  // Somebody moved to another town for good (NPCLifeSim RELOCATION). Their
+  // vote goes with their home: the power and the nation of the new town, and
+  // the party nearest them on its ballot. Whatever office they held in the old
+  // town is left there. A character the player built keeps the party the
+  // player declared. Somebody from off this world still answers to the power
+  // that sent them, wherever they live.
+  function onRelocated(npcName, toGroup) {
+    const state = getState();
+    const identity = state?.identities?.[npcName];
+    if (!identity || !toGroup) return false;
+    // Who lives where has changed: the next roll call counts them afresh.
+    _populationCache = null;
+    // The office they held in the old town stays there, empty, until its next
+    // election: the town's own record must stop naming them as its holder.
+    for (const [groupName, settlement] of Object.entries(state.settlements || {})) {
+      if (groupName === toGroup || !settlement?.offices) continue;
+      for (const office of LOCAL_OFFICES) {
+        if (settlement.offices[office] === npcName) settlement.offices[office] = null;
+      }
+    }
+    identity.group = toGroup;
+    identity.localOffice = null;
+    if (identity.country == null) return true;
+    const polity = resolveGroupPolity(state, toGroup);
+    const country = homeCountryOf(npcName, toGroup) || polity.country;
+    const power = state.powers[polity.power];
+    if (identity.country === country && identity.power === polity.power) return true;
+    const minute = nowMinuteVar();
+    identity.country = country;
+    identity.power = polity.power;
+    ensureCountryParties(power, country, minute);
+    ensureNation(state, country, minute);
+    const profile = getProfile(npcName);
+    if (!(profile && profile.playerCreated)) identity.partyId = nearestPartyId(power, identity.ideology, country);
+    identity.votedLast = null;
+    identity.grudgePartyId = null;
+    return true;
+  }
+
+  // The other direction: identity axes that have wandered far from the creed
+  // (radicalization, years of unrest) re-pick the creed nearest where the
+  // person now stands, inside their own pool. Chance scales with the chunk.
+  function realignCreed(npcName, identity, rng, days, minute) {
+    if (_creedSyncing) return false;
+    const S = window.NPCShared;
+    const profile = getProfile(npcName);
+    const creed = S.ideologyFor(profile);
+    if (!profile || !creed || S.creedPinned(profile)) return false;
+    if (ideologyDistance(identity.ideology, S.ideologyAxes(creed)) <= REALIGN_GAP) return false;
+    if (rng.next() >= Math.min(1, REALIGN_RATE_PER_30D * days / 30)) return false;
+    const near = S.nearestIdeologies(identity.ideology, { alien: !!creed.alien, limit: 1 });
+    const pick = near[0];
+    if (!pick || pick.ideo.id === creed.id) return false;
+    _creedSyncing = true;
+    try {
+      S.setCreed(profile, pick.ideo);
+      identity.creedId = pick.ideo.id;
+      window.NPCLifeSim?.pushEvent?.(npcName, minute, "outlook",
+        "NPCLife.event.worldviewShiftedBy.politics", { creed: pick.ideo.id });
+    } finally {
+      _creedSyncing = false;
+    }
+    return true;
+  }
+
+  // The platform of whoever governs this person, for the life sim's pull.
+  function rulingPlatformOf(npcName) {
+    const state = $gameSystem?._npcPolitics;
+    const identity = state?.identities?.[npcName];
+    const power = identity && state.powers?.[identity.power];
+    if (!power) return null;
+    return { platform: rulingPlatform(power), unrest: power.state?.unrest ?? 0, power: power.name };
+  }
+
   function ensureIdentity(state, npcName, groupName, nowMinute) {
     // Asked BEFORE the cache, and the cached answer is thrown away: a beast
     // that already holds a citizenship, a party and a vote was written by a
     // world folder from before the rule, and reading it back would keep a cat
     // in the Nieuw-Vlaamse Verbond forever.
     if (isNonSentientName(npcName)) {
+      if (state.identities[npcName]) delete state.identities[npcName];
+      return null;
+    }
+    // Nor does a child: no party and no vote until eighteen (NPCLifeSim
+    // FAMILY), when the identity is written like anybody's.
+    if (isMinorName(npcName)) {
       if (state.identities[npcName]) delete state.identities[npcName];
       return null;
     }
@@ -2310,6 +2113,12 @@
     // toward the local consensus without erasing the creed. Somebody with no
     // creed on file is still the baseline plus a wide personal spread, which is
     // all this used to be. Then nudges from the rest of the profile.
+    // First the civic draw (above): the creed leans to a party of their own
+    // nation and to the government, once, before the identity reads it.
+    if (!alien && profile) {
+      civicDraw(state, npcName, profile, power, polity.country,
+        new PolRng(worldSeed() ^ nameHash("civic:" + npcName)));
+    }
     const creed = window.NPCShared.ideologyFor(profile);
     const baseline = power ? power.baseline : { econ: 0, auth: 0, trad: 0, mil: 0, myst: 0 };
     let center = baseline, spread = 50;
@@ -2368,9 +2177,11 @@
   }
 
   function simulateIdentitiesChunk(state, chunkStart, days) {
+    const monsterOnly = monsterPowersOnly();
     for (const [npcName, identity] of Object.entries(state.identities)) {
       const power = state.powers[identity.power];
       if (!power) continue;
+      if (monsterOnly && !isMonsterPolity(power)) continue;
       const rng = new PolRng(worldSeed() ^ nameHash("idchunk:" + npcName) ^ ((chunkStart >>> 0) || 1));
 
       // engagement drifts with national unrest (politics gets harder to ignore)
@@ -2392,16 +2203,174 @@
         }
       }
 
+      // Membership follows belief (PARTY DRIFT), on its own seed so the draws
+      // below are the same whether or not anybody walked out.
+      driftFromParty(npcName, identity, power,
+        new PolRng(worldSeed() ^ nameHash("drift:" + npcName) ^ ((chunkStart >>> 0) || 1)), chunkStart, days);
+
       if (sampleCount(rng, NPC_RATES.radicalize * (power.state.unrest / 100) * days) > 0) {
         for (const ax of AXES) identity.ideology[ax] = clamp(Math.round(identity.ideology[ax] * 1.2), -100, 100);
         identity.engagement = clamp(identity.engagement + 15, 0, 100);
         pushIdentityEvent(identity, chunkStart, "radicalized", "Politics.identity.radicalized");
       }
 
+      // Axes that have drifted far from the creed pull the creed after them.
+      realignCreed(npcName, identity, rng, days, chunkStart);
+
       if (identity.grudgePartyId && sampleCount(rng, NPC_RATES.grudgeFade * days) > 0) {
         identity.grudgePartyId = null;
       }
     }
+  }
+
+  // ==========================================================================
+  // PARTY DRIFT, membership follows belief
+  // ==========================================================================
+  // Somebody whose views have wandered away from their party's platform
+  // (preaching, conversion, a debate lost, years of organic drift) is likelier
+  // to walk out of it the further they have gone. Under DRIFT_FLOOR nobody
+  // leaves; past it the daily chance climbs with the square of the distance,
+  // up to DRIFT_DAILY_MAX a day at DRIFT_FLOOR + DRIFT_SPAN. Leaving is to the
+  // nearest party of their own ballot when one stands within DRIFT_INDEPENDENT,
+  // independent otherwise. Rolled once a chunk (simulateIdentitiesChunk) and
+  // right after a creed change (onCreedChanged). A character the player built
+  // declares a party only by the player's hand, so nothing here moves them;
+  // for them actorPartyStanding answers how far they have drifted, and the
+  // Empathize panel warns.
+  //
+  // The Empathize actions (join, invite, campaign) move people through
+  // switchParty and reconsiderParty, so every change of party is logged here.
+
+  const DRIFT_FLOOR = 30;
+  const DRIFT_SPAN = 70;
+  const DRIFT_DAILY_MAX = 0.02;
+  const DRIFT_ON_CREED_DAYS = 30;
+  const DRIFT_INDEPENDENT = 45;
+  const DRIFT_WARN = 45;
+
+  function partyDriftChance(distance, days) {
+    const over = (Number(distance) || 0) - DRIFT_FLOOR;
+    if (!(over > 0) || !(days > 0)) return 0;
+    const x = Math.min(1, over / DRIFT_SPAN);
+    return 1 - Math.pow(1 - DRIFT_DAILY_MAX * x * x, days);
+  }
+
+  // One roll. Answers "switched", "left" or null.
+  function driftFromParty(npcName, identity, power, rng, minute, days) {
+    if (!identity || !identity.partyId || !power) return null;
+    const own = partyById(power, identity.partyId);
+    if (!own) return null;
+    const dist = ideologyDistance(identity.ideology, own.platform);
+    const p = partyDriftChance(dist, days);
+    if (!(p > 0) || rng.next() >= p) return null;
+    if (getProfile(npcName)?.playerCreated) return null;
+    let best = null, bestD = Infinity;
+    for (const party of ballotFor(power, identity.country)) {
+      if (party.id === own.id) continue;
+      const d = ideologyDistance(identity.ideology, party.platform);
+      if (d < bestD) { bestD = d; best = party; }
+    }
+    if (best && bestD <= DRIFT_INDEPENDENT && bestD < dist) {
+      identity.partyId = best.id;
+      pushIdentityEvent(identity, minute, "conversion", "Politics.identity.driftedTo", // i18n-ignore: event type
+        { from: own.name, to: best.name });
+      return "switched"; // i18n-ignore: result id
+    }
+    identity.partyId = null;
+    pushIdentityEvent(identity, minute, "conversion", "Politics.identity.driftedOut", { from: own.name }); // i18n-ignore: event type
+    return "left"; // i18n-ignore: result id
+  }
+
+  // The parties on somebody's own ballot, nearest their views first:
+  // [{ party, distance }].
+  function ballotOf(npcName) {
+    const state = $gameSystem?._npcPolitics;
+    const identity = state?.identities?.[npcName];
+    const power = identity && state.powers?.[identity.power];
+    if (!power) return [];
+    return ballotFor(power, identity.country)
+      .map(party => ({ party, distance: ideologyDistance(identity.ideology, party.platform) }))
+      .sort((a, b) => a.distance - b.distance);
+  }
+
+  // Put somebody in a party by hand (a party member talked them into it):
+  // no hysteresis, and logged. `partyId` is a party of their own power, the
+  // player's party id (they become one of its supporters) or null for
+  // independent. opts: { by } names who talked them round.
+  function switchParty(npcName, partyId, opts = {}) {
+    const state = $gameSystem?._npcPolitics;
+    const identity = state?.identities?.[npcName];
+    if (!identity) return false;
+    const minute = nowMinuteVar();
+    const power = state.powers?.[identity.power];
+    const from = (power && partyById(power, identity.partyId))?.name ?? T("Politics.fallback.oldGuard");
+    if (partyId === PLAYER_PARTY_ID) {
+      const mine = state.playerParty;
+      if (!mine) return false;
+      mine.supporters = mine.supporters || [];
+      if (mine.supporters.includes(npcName)) return false;
+      mine.supporters.push(npcName);
+      pushIdentityEvent(identity, minute, "conversion", "Politics.identity.joinedBy", // i18n-ignore: event type
+        { party: mine.name, from, by: opts.by || "-" });
+      return true;
+    }
+    if (partyId === identity.partyId) return false;
+    const party = (partyId && power) ? partyById(power, partyId) : null;
+    if (partyId && !party) return false;
+    identity.partyId = party ? party.id : null;
+    pushIdentityEvent(identity, minute, "conversion", party ? "Politics.identity.joinedBy" : "Politics.identity.driftedOut", // i18n-ignore: event type
+      party ? { party: party.name, from, by: opts.by || "-" } : { from });
+    return true;
+  }
+
+  // Views moved (a campaign on the doorstep): the same rule a creed change
+  // runs, a party nearer by PARTY_HYSTERESIS wins them. Answers the new party
+  // or null.
+  function reconsiderParty(npcName) {
+    const state = $gameSystem?._npcPolitics;
+    const identity = state?.identities?.[npcName];
+    const power = identity && state.powers?.[identity.power];
+    if (!power || getProfile(npcName)?.playerCreated) return null;
+    const ballot = ballotOf(npcName);
+    const best = ballot[0];
+    const cur = ballot.find(e => e.party.id === identity.partyId);
+    const curD = cur ? cur.distance : Infinity;
+    if (!best || best.party.id === identity.partyId || !(best.distance + PARTY_HYSTERESIS < curD)) return null;
+    identity.partyId = best.party.id;
+    pushIdentityEvent(identity, nowMinuteVar(), "conversion", "Politics.identity.conversion",
+      { from: cur ? cur.party.name : T("Politics.fallback.oldGuard"), to: best.party.name });
+    return best.party;
+  }
+
+  // A party member's own standing in the party they declared for (the
+  // detailed sheet, or joined in Empathize) or the player's party they belong
+  // to: { party, isPlayer, distance, drifting } or null. `axes` is where the
+  // member stands now (their creed's axes, or their identity's).
+  function actorPartyStanding(actorName, axes) {
+    const state = $gameSystem?._npcPolitics;
+    if (!state || !actorName) return null;
+    const identity = state.identities?.[actorName];
+    const where = axes || identity?.ideology;
+    if (!where) return null;
+    let party = null, isPlayer = false;
+    const declared = getProfile(actorName)?.declaredPartyName;
+    if (declared) {
+      const home = identity && state.powers?.[identity.power];
+      party = (home && home.parties.find(p => p.name === declared)) || null;
+      if (!party) {
+        for (const polity of allPolities(state)) {
+          party = (polity.parties || []).find(p => p.name === declared) || null;
+          if (party) break;
+        }
+      }
+    }
+    if (!party && state.playerParty && (state.playerParty.members || []).includes(actorName)) {
+      party = state.playerParty;
+      isPlayer = true;
+    }
+    if (!party) return null;
+    const distance = ideologyDistance(where, party.platform);
+    return { party, isPlayer, distance, drifting: distance > DRIFT_WARN };
   }
 
   // ==========================================================================
@@ -2474,11 +2443,65 @@
     }
   }
 
-  function localResidents(state, groupName) {
+  // A nation changed hands in the live chronicle (a war, a peace, a coup):
+  // every settlement in it and everybody filed under it answer to whoever
+  // holds it now. Modelled on repairDeclaredCountries: the polity is worked
+  // out again, and a person whose power changed is re-sorted into a party of
+  // the new one, since party ids are scoped to their power. Reads the state
+  // without creating it, so a world whose politics are not bootstrapped yet
+  // (the years before a later start) costs nothing here. Returns how many
+  // settlements and people were moved.
+  function reresolveCountry(country) {
+    const state = (typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem._npcPolitics : null;
+    if (!state || !country) return 0;
+    const target = norm(country);
+    const cache = {};
+    const polityOf = (groupName) => {
+      if (!(groupName in cache)) cache[groupName] = resolveGroupPolity(state, groupName);
+      return cache[groupName];
+    };
+    let moved = 0;
+    for (const [groupName, settlement] of Object.entries(state.settlements || {})) {
+      if (!settlement || norm(settlement.country) !== target) continue;
+      const polity = polityOf(groupName);
+      if (settlement.power !== polity.power) moved++;
+      settlement.power = polity.power;
+    }
+    for (const identity of Object.values(state.identities || {})) {
+      if (!identity || identity.country == null || norm(identity.country) !== target) continue;
+      const polity = polityOf(identity.group);
+      if (identity.power === polity.power) continue;
+      identity.power = polity.power;
+      const power = state.powers[polity.power];
+      if (power) {
+        ensureCountryParties(power, identity.country, nowMinuteVar());
+        identity.partyId = nearestPartyId(power, identity.ideology, identity.country);
+      }
+      identity.votedLast = null;
+      identity.grudgePartyId = null;
+      moved++;
+    }
+    return moved;
+  }
+
+  // name -> group turned round into group -> names, rebuilt whenever the roll
+  // call is (collectPopulation hands back the same object until it changes).
+  let _byGroupSrc = null, _byGroup = null;
+  function populationOfGroup(groupName) {
     const population = collectPopulation();
-    return Object.entries(population)
-      .filter(([, g]) => g === groupName)
-      .map(([name]) => name)
+    if (_byGroupSrc !== population) {
+      _byGroup = new Map();
+      for (const [name, g] of Object.entries(population)) {
+        if (!_byGroup.has(g)) _byGroup.set(g, []);
+        _byGroup.get(g).push(name);
+      }
+      _byGroupSrc = population;
+    }
+    return _byGroup.get(groupName) || [];
+  }
+
+  function localResidents(state, groupName) {
+    return populationOfGroup(groupName)
       // A beast standing in the square is not a resident who votes: an old
       // world folder's stray identity is dropped here as well as at the gate
       // (see ensureIdentity), so it never stands, votes or is counted.
@@ -2494,7 +2517,10 @@
     const rng = new PolRng(worldSeed() ^ nameHash("local:" + settlement.group) ^ ((minute >>> 0) || 1));
     const residents = localResidents(state, settlement.group);
     if (residents.length < 2) {
-      settlement.nextLocalElectionMinute = minute + LOCAL_TERM_DAYS * MINUTES_PER_DAY;
+      // Too few voters yet (a square the party has only just walked onto, a
+      // town still being dealt): the vote is called again soon rather than a
+      // whole term later, so the town is not left without a mayor for a year.
+      settlement.nextLocalElectionMinute = minute + LOCAL_RETRY_DAYS * MINUTES_PER_DAY;
       return;
     }
 
@@ -2504,8 +2530,22 @@
         const id = state.identities[name];
         return { name, score: id.engagement * 0.7 + id.charisma * 0.5 + rng.next() * 25 };
       })
-      .sort((a, b) => b.score - a.score);
+      .sort((a, b) => b.score - a.score)
+      // Somebody already governing the nation or the bloc (REAL POLITICIANS)
+      // votes here like anybody, but does not stand for the town hall.
+      .filter(c => !holdsStateOffice(c.name));
     const candidates = ranked.slice(0, Math.min(3, ranked.length));
+    if (!candidates.length) {
+      settlement.nextLocalElectionMinute = minute + LOCAL_RETRY_DAYS * MINUTES_PER_DAY;
+      return;
+    }
+    // The team's own candidates stand beside them, on their party's platform
+    // (candidacies), and the party's supporters vote for them.
+    const standing = candidacies(state).filter(c => c.status === "standing" && c.level === "local" && c.polity === settlement.group); // i18n-ignore: status id, level id
+    const platform = candidatePlatform(state);
+    const supporters = new Set(state.playerParty ? livePlayerSupporters(state) : []);
+    for (const c of standing) candidates.push({ name: c.actor, player: true, ideology: platform });
+    const ideologyOfCand = (cand) => cand.ideology || state.identities[cand.name].ideology;
 
     // Every resident votes for the candidate ideologically closest to them.
     const votes = {};
@@ -2514,12 +2554,21 @@
       let best = null, bestD = Infinity;
       for (const cand of candidates) {
         if (cand.name === voter) { best = cand; break; } // you always vote for yourself
-        const d = ideologyDistance(vid.ideology, state.identities[cand.name].ideology);
+        const d = ideologyDistance(vid.ideology, ideologyOfCand(cand)) - (cand.player ? candidateCharisma(cand.name) : 0);
         if (d < bestD) { bestD = d; best = cand; }
       }
+      if (standing.length && supporters.has(voter)) best = candidates.find(c => c.player) || best;
       if (best) votes[best.name] = (votes[best.name] || 0) + 1;
     }
-    const winnerName = candidates.slice().sort((a, b) => (votes[b.name] || 0) - (votes[a.name] || 0))[0].name;
+    const winner = candidates.slice().sort((a, b) => (votes[b.name] || 0) - (votes[a.name] || 0))[0];
+    const winnerName = winner.name;
+    for (const c of standing) {
+      c.share = +(100 * (votes[c.actor] || 0) / residents.length).toFixed(1);
+      c.winnerShare = +(100 * (votes[winnerName] || 0) / residents.length).toFixed(1);
+      c.winner = winnerName;
+      c.status = c.actor === winnerName ? "won" : "lost"; // i18n-ignore: status ids
+    }
+    if (winner.player) ensureCandidateIdentity(state, winnerName, settlement.group, platform);
 
     // Clear old officeholders.
     for (const office of LOCAL_OFFICES) {
@@ -2537,7 +2586,7 @@
       "Politics.story.electedMayor", { group: settlement.group });
 
     const mayorIdeology = state.identities[winnerName].ideology;
-    const pool = residents.filter(n => n !== winnerName)
+    const pool = residents.filter(n => n !== winnerName && !holdsStateOffice(n))
       .sort((a, b) => ideologyDistance(mayorIdeology, state.identities[a].ideology)
                     - ideologyDistance(mayorIdeology, state.identities[b].ideology));
     for (const office of LOCAL_OFFICES.slice(1)) {
@@ -2560,6 +2609,505 @@
   }
 
   // ==========================================================================
+  // REAL POLITICIANS, the elected made into people
+  // ==========================================================================
+  // A politician used to be a record and nothing more: a name, a handful of
+  // numbers and an office inside a polity. Whoever holds an office of a nation
+  // or of a bloc is now also SOMEBODY: a society profile living in the seat of
+  // that government (the capital's own town, or a square of that country), a
+  // life record, a door in the resident register and an appointed job the
+  // schedule reads, so they go to work in the capital, come home at night and
+  // can be met, talked to and killed like anybody else.
+  //
+  // Bounded on purpose. The offices are, in this order: the head, the
+  // ministers (the leaders of the parties in government), the leaders of the
+  // other seated parties and, where the system has them, the electors. At most
+  // REAL_POL.PER_POLITY a polity, never more than REAL_POL.TOTAL office holders
+  // in the world at once, and REAL_POL.PER_PASS new people a catch-up. Heads
+  // are dealt first everywhere, then ministers and so on, so a crowded world
+  // spends its budget on the offices that matter.
+  //
+  // Left out, and kept special: the main players. Anybody the book of leaders
+  // wrote down (LeaderPersona.isBookLeader, a HistoryManager leader record, a
+  // head SEATED_ON_DAY_ONE, a `real`, `canonHead` or `protected` politician)
+  // and the authored cast (NPCSystem.isStoryName / isReservedName). The local
+  // offices (mayor and the rest) are already held by residents and are not
+  // touched here.
+  //
+  // The link runs both ways: pol.npcName on the record, profile._politicianId
+  // (with _politicianOf, the polity's name, and _politicianKind) on the
+  // person, and profile._politicsOffice while they hold the office. A
+  // politician the politics bury dies in the world too (NPCLifeSim.killNpc); a
+  // person killed in the world leaves the office (onPersonDied, called from
+  // killNpc). The register lives with the rest of the politics, per world:
+  // state.realPoliticians = { name: { polId, polity, kind, role, group, since, gone } }.
+
+  const REAL_POL = Object.freeze({ PER_POLITY: 6, TOTAL: 160, PER_PASS: 12 });
+  // The appointed trades of js/db/WorkSystem/Jobs.json (`appointed: true`):
+  // never dealt by a town's job roster, never offered to the party, only
+  // pinned onto an office holder here.
+  const OFFICE_JOBS = Object.freeze({ head: 168, minister: 169, partyLeader: 170, legislator: 171 });
+  const OFFICE_ROLE_ORDER = Object.freeze(["head", "minister", "partyLeader", "legislator"]);
+  const OFFICE_JOB_IDS = new Set(Object.values(OFFICE_JOBS));
+  const OFFICE_WORK_SHIFT = 1;   // 08-16, the day the offices keep
+
+  function realRegistry(state) {
+    if (!state.realPoliticians || typeof state.realPoliticians !== "object") state.realPoliticians = {};
+    return state.realPoliticians;
+  }
+
+  function polityByKind(state, kind, name) {
+    if (!state || !name) return null;
+    return kind === "nation" ? (state.nations?.[name] || null) : (state.powers?.[name] || null);
+  }
+
+  // Holds an office of a nation or a bloc right now.
+  function holdsStateOffice(name) {
+    return !!getProfile(name)?._politicsOffice;
+  }
+
+  // The people the world is written around. They keep the special handling
+  // they already have (LeaderPersona dossiers, the wiki's Main Players shelf)
+  // and are never minted here as ordinary townsfolk.
+  function isMainPlayer(pol) {
+    if (!pol || !pol.name) return true;
+    if (pol.real || pol.canonHead || pol.protected || pol.leaderId) return true;
+    const name = pol.name;
+    if (SEATED_ON_DAY_ONE && Object.values(SEATED_ON_DAY_ONE).includes(name)) return true;
+    try { if (window.LeaderPersona?.isBookLeader?.(name)) return true; } catch (_) { /* no persona service */ }
+    if (window.HistoryManager?.getLeaderRecord?.(name)) return true;
+    const NS = window.NPCSystem;
+    try {
+      if (NS?.isStoryName?.(name) || NS?.isReservedName?.(name)) return true;
+    } catch (_) { /* the manifest is not loaded */ }
+    return false;
+  }
+
+  // Everybody who holds an office of this polity, in the order they matter:
+  // [{ pol, role }], each politician once, the living only.
+  function officeHoldersOf(polity) {
+    const out = [];
+    if (!polity) return out;
+    const seen = new Set();
+    const add = (pol, role) => {
+      if (!pol || !pol.alive || seen.has(pol.id)) return;
+      seen.add(pol.id);
+      out.push({ pol, role });
+    };
+    const pols = polity.politicians || {};
+    add(pols[polity.headId], "head");
+    for (const partyId of (polity.coalition || [])) {
+      const party = partyById(polity, partyId);
+      if (party) add(pols[party.leaderId], "minister");
+    }
+    const seated = (polity.parties || []).filter(p => (p.seats || 0) > 0)
+      .sort((a, b) => (b.seats - a.seats) || String(a.id).localeCompare(String(b.id)));
+    for (const party of seated) add(pols[party.leaderId], "partyLeader");
+    for (const id of (polity.electors || [])) add(pols[id], "legislator");
+    return out;
+  }
+
+  // The office, in the reader's words: a head wears their polity's own title,
+  // an elector theirs.
+  function roleLabel(role, polity) {
+    if (role === "head") return powerLabel(polity, "headTitle");
+    if (role === "legislator" && polity && (polity.electors || []).length) return powerLabel(polity, "electorTitle");
+    const key = "Politics.role." + role;
+    return T.has(key) ? T(key) : String(role || "");
+  }
+
+  // Where a government sits: a nation in itself, a bloc in its home nation
+  // (or the first world it holds, for a power with no seat on Earth).
+  function seatCountryOf(polity) {
+    if (!polity) return null;
+    if (polity.kind === "nation") return polity.name;
+    return polity.homeNation || (polity.memberCountries || [])[0] || null;
+  }
+
+  function isProcGroupName(groupName) {
+    const grp = $gameSystem?._npcMapGroups?.[groupName];
+    if (grp && (grp._procedural || grp._tower)) return true;
+    try { return !!window.NPCSystem?.isProceduralGroup?.(groupName); } catch (_) { return false; }
+  }
+
+  // The group the office holders of a polity live in: a hand-made town of its
+  // seat nation before a procedural square of it, the first by name, so the
+  // same world always seats its government in the same place. Only a group
+  // whose nation is KNOWN counts (resolveGroupPolity strict): a guess is no
+  // capital. Null when the world holds no place of that nation yet; the
+  // office holders are then minted the first time it does.
+  // The groups of every nation, kept between passes until the world's list of
+  // groups changes: a polity whose seat has no place yet asks again every day.
+  let _seatIndex = null, _seatIndexKey = "";
+  function seatGroupOf(state, polity, cache) {
+    const country = seatCountryOf(polity);
+    if (!country) return null;
+    const groupsNow = $gameSystem?._npcMapGroups || {};
+    const indexKey = Object.keys(groupsNow).length + "|" + (state.nations ? Object.keys(state.nations).length : 0);
+    if (!cache.byCountry && _seatIndex && _seatIndexKey === indexKey) cache.byCountry = _seatIndex;
+    if (!cache.byCountry) {
+      cache.byCountry = {};
+      _seatIndex = cache.byCountry;
+      _seatIndexKey = indexKey;
+      const groups = groupsNow;
+      const seatedGlobal = new Set(window.NPCSystem?.SEATED_GLOBAL_GROUPS || []);
+      for (const groupName of Object.keys(groups).sort()) {
+        const grp = groups[groupName];
+        if (!grp || grp._camp || seatedGlobal.has(groupName)) continue;
+        let found = null;
+        try { found = resolveGroupPolity(state, groupName, { strict: true }).country; } catch (_) { found = null; }
+        if (!found) continue;
+        (cache.byCountry[found] = cache.byCountry[found] || []).push(groupName);
+      }
+    }
+    const list = cache.byCountry[country] || [];
+    return list.find(g => !isProcGroupName(g)) || list[0] || null;
+  }
+
+  // The map an office is worked on: the group's own main map.
+  function workMapOf(groupName) {
+    const grp = $gameSystem?._npcMapGroups?.[groupName];
+    if (!grp) return null;
+    return (grp.mainMaps || [])[0] ?? (grp.maps || [])[0] ?? null;
+  }
+
+  // Takes up, changes or leaves an office: the pinned job, the flag the rest
+  // of the simulation reads (_politicsOffice), and a line in the life story.
+  function applyOffice(state, name, entry, role, polity, minute) {
+    const profile = getProfile(name);
+    if (!profile) return;
+    const record = $gameSystem?._npcLifeRecords?.[name] || null;
+    if (role) {
+      const jobId = OFFICE_JOBS[role];
+      const same = entry.role === role && profile.currentJobId === jobId;
+      if (record) record.inOffice = true;
+      if (same) {
+        profile._politicsOffice = { role, polity: polity.name, kind: polity.kind };
+        return;
+      }
+      // Whatever shift the town had dealt them goes back to the town.
+      if (profile.currentJobId && !OFFICE_JOB_IDS.has(profile.currentJobId)) {
+        try { window.NPCSim?.JobShiftManager?.releaseSlot?.(name); } catch (_) { /* no roster loaded */ }
+      }
+      profile._politicsOffice = { role, polity: polity.name, kind: polity.kind };
+      profile.currentJobId = jobId;
+      profile.workMapId = workMapOf(entry.group);
+      profile.workShift = OFFICE_WORK_SHIFT;
+      profile._routineDay = -1;
+      if (entry.role !== role) {
+        window.NPCLifeSim?.pushEvent?.(name, minute, "career", "Politics.life.tookOffice", // i18n-ignore: life event type
+          { office: roleLabel(role, polity), polity: polity.name });
+      }
+      entry.role = role;
+      return;
+    }
+    if (!entry.role && !profile._politicsOffice) return;
+    const was = entry.role;
+    entry.role = null;
+    profile._politicsOffice = null;
+    if (record) record.inOffice = false;
+    if (OFFICE_JOB_IDS.has(profile.currentJobId)) {
+      // Back among the townsfolk: the town's roster deals them a trade again.
+      profile.currentJobId = null;
+      profile.workMapId = null;
+      profile.workShift = null;
+      profile._routineDay = -1;
+    }
+    if (was) {
+      window.NPCLifeSim?.pushEvent?.(name, minute, "career", "Politics.life.leftOffice", // i18n-ignore: life event type
+        { office: roleLabel(was, polity), polity: polity.name });
+    }
+  }
+
+  // One politician becomes a person living in `group`. False when the world
+  // cannot have them (yet, or at all: the name is somebody else's).
+  function materialise(state, polity, pol, role, group, minute) {
+    const name = pol.name;
+    const Reg = window.NPCSocietyRegistry;
+    if (!Reg?.ensureProfile || window._NPCSocietyDataLoader?.isReady === false) return false;
+    if (window.NPCLifeSim?.isDead?.(name)) { pol._npcBlocked = "dead"; return false; } // i18n-ignore: reason id
+    let profile = getProfile(name);
+    // A name the world already gave to somebody else stays theirs. A profile
+    // minted lazily for this very name (the wiki opened them by name) is the
+    // same person and is adopted.
+    if (profile && (profile._politicianId ? profile._politicianId !== pol.id
+        : (profile._homeGroupName || profile._resident || profile.playerCreated || profile._killed))) {
+      pol._npcBlocked = "nameTaken"; // i18n-ignore: reason id
+      return false;
+    }
+    const age = politicianAge(pol, minute);
+    const mapId = workMapOf(group);
+    if (!profile) {
+      const rng = new PolRng(worldSeed() ^ nameHash("office-person:" + name));
+      const classRng = { nextInt: (lo, hi) => lo + Math.floor(rng.next() * Math.max(1, hi - lo)) };
+      const classId = window.NPCCreature?.rollHumanoidClassId?.(classRng) ?? null;
+      try {
+        profile = Reg.ensureProfile(name, classId, group, mapId ?? undefined, { initSpec: { age: String(age) } }) || null;
+      } catch (e) {
+        console.error("[NPCPolitics] could not make a person of " + name, e);
+        profile = null;
+      }
+    }
+    if (!profile) return false;
+    if (window.NPCCreature?.isNonSentientProfile?.(profile)) { pol._npcBlocked = "creature"; return false; } // i18n-ignore: reason id
+
+    profile._politicianId = pol.id;
+    profile._politicianOf = polity.name;
+    profile._politicianKind = polity.kind;
+    pol.npcName = name;
+    if (!profile._homeGroupName) profile._homeGroupName = group;
+    // A door in the capital, on its resident register (or among a square's
+    // newcomers): what makes them spawn where they live.
+    try { window.NPCSystem?.rehomeResident?.(name, null, group); }
+    catch (e) { console.error("[NPCPolitics] no door for " + name + " in " + group, e); }
+    if (!profile._homeGroupName) profile._homeGroupName = group;
+    try { window.NPCLifeSim?.ensureLifeRecord?.(name, group, undefined, { age }); }
+    catch (e) { console.error("[NPCPolitics] no life record for " + name, e); }
+    // Their vote is where they live now, like anybody's.
+    try { ensureIdentity(state, name, group, minute); } catch (_) { /* no identity, no vote */ }
+    _populationCache = null;
+
+    const entry = { polId: pol.id, polity: polity.name, kind: polity.kind, role: null, group, since: minute };
+    realRegistry(state)[name] = entry;
+    applyOffice(state, name, entry, role, polity, minute);
+    return true;
+  }
+
+  // The politics buried somebody who is also a person: the world buries them
+  // too, through the one death path.
+  let _burying = false;
+  function buryPerson(pol, cause) {
+    const name = pol && pol.npcName;
+    const Life = window.NPCLifeSim;
+    if (!name || _burying || !Life?.killNpc) return false;
+    if (Life.isDead?.(name) || getProfile(name)?._killed) return false;
+    const key = cause && cause.key;
+    // i18n-ignore-start: death cause ids
+    const why = key === "Politics.death.illness"
+      ? { kind: "illness", illness: cause.params?.disease || null }
+      : key === "Politics.death.naturalCauses"
+        ? { kind: "natural" }
+        : { kind: "politics", eventKey: "Politics.life.diedInOffice", eventParams: { cause: textOf(cause) } };
+    // i18n-ignore-end
+    _burying = true;
+    try { Life.killNpc(name, why); }
+    catch (e) { console.error("[NPCPolitics] the world could not bury " + name, e); }
+    finally { _burying = false; }
+    const state = $gameSystem?._npcPolitics;
+    const entry = state?.realPoliticians?.[name];
+    if (entry) {
+      const polity = polityByKind(state, entry.kind, entry.polity);
+      if (polity) applyOffice(state, name, entry, null, polity, nowMinuteVar());
+      entry.gone = true;
+    }
+    return true;
+  }
+
+  // An office left empty by a death the politics did not cause: the party
+  // finds a new leader, the electors a new colleague, and a head of state is
+  // replaced at the polls straight away, the way an assassination is.
+  function vacateOffices(state, polity, pol, minute) {
+    const rng = new PolRng(worldSeed() ^ nameHash("vacate:" + pol.id) ^ ((minute >>> 0) || 1));
+    const party = partyById(polity, pol.partyId);
+    if (party && party.leaderId === pol.id) {
+      party.leaderId = makePolitician(polity, rng, minute, { ideology: party.platform, spread: 20, partyId: party.id }).id;
+    }
+    const electorIdx = (polity.electors || []).indexOf(pol.id);
+    if (electorIdx >= 0) {
+      const successor = makePolitician(polity, rng, minute, { spread: 25 });
+      successor.office = polity.electorTitle;
+      polity.electors[electorIdx] = successor.id;
+    }
+    if (pol.id === polity.headId) {
+      pol.office = null;
+      resolveElection(state, polity, minute, rng, { label: "snap" });
+      if (polity.nextElectionMinute != null) polity.nextElectionMinute = minute + polity.termDays * MINUTES_PER_DAY;
+    }
+  }
+
+  // Somebody died in the world (NPCLifeSim.killNpc). When they held an office
+  // of a nation or a bloc, the office is theirs no more.
+  function onPersonDied(name) {
+    if (_burying) return false;
+    const state = (typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem._npcPolitics : null;
+    const entry = state?.realPoliticians?.[name];
+    if (!entry || entry.gone) return false;
+    const polity = polityByKind(state, entry.kind, entry.polity);
+    const pol = polity?.politicians?.[entry.polId] || null;
+    entry.gone = true;
+    if (!polity || !pol || !pol.alive) return false;
+    const minute = nowMinuteVar();
+    const wasHead = pol.id === polity.headId;
+    const age = politicianAge(pol, minute);
+    _burying = true;   // the world has already buried them
+    try {
+      killPolitician(polity, pol, minute, { key: "Politics.death.diedInWorld" });
+    } finally { _burying = false; }
+    pushPowerEvent(polity, minute, "death", wasHead ? "Politics.event.headDies" : "Politics.event.politicianDies",
+      { name: pol.name, age, power: polity.name, title: powerLabel(polity, "headTitle") });
+    applyOffice(state, name, entry, null, polity, minute);
+    vacateOffices(state, polity, pol, minute);
+    return true;
+  }
+
+  // Keeps every link true and mints the office holders the world is missing.
+  // Run by the catch-up once a simulated day at most. Answers how many new
+  // people were made.
+  function syncRealPoliticians(state, minute) {
+    if (!state) return 0;
+    const reg = realRegistry(state);
+    const Life = window.NPCLifeSim;
+    const rolesByPolity = new Map();
+    const rolesOf = (polity) => {
+      const key = polity.kind + ":" + polity.name;
+      if (!rolesByPolity.has(key)) {
+        const roles = new Map();
+        for (const { pol, role } of officeHoldersOf(polity)) roles.set(pol.id, role);
+        rolesByPolity.set(key, roles);
+      }
+      return rolesByPolity.get(key);
+    };
+    const live = new Set(livePolities(state));
+
+    // 1. The people already made: deaths either way, and the office they hold
+    //    today (won, lost, promoted, sent back to the benches).
+    let active = 0;
+    for (const [name, entry] of Object.entries(reg)) {
+      if (!entry || entry.gone) continue;
+      const polity = polityByKind(state, entry.kind, entry.polity);
+      const pol = polity?.politicians?.[entry.polId] || null;
+      if (!polity || !pol) { entry.gone = true; continue; }
+      const personDead = !!(Life?.isDead?.(name) || getProfile(name)?._killed);
+      if (!pol.alive && !personDead) { buryPerson(pol, pol.deathCause); continue; }
+      if (pol.alive && personDead) { onPersonDied(name); continue; }
+      if (!pol.alive) { applyOffice(state, name, entry, null, polity, minute); entry.gone = true; continue; }
+      // A polity the world no longer simulates (a monster world's human
+      // governments) keeps its people, out of office.
+      const role = live.has(polity) ? (rolesOf(polity).get(pol.id) || null) : null;
+      applyOffice(state, name, entry, role, polity, minute);
+      if (role) active++;
+    }
+
+    // 2. The office holders nobody has made yet, heads first everywhere.
+    if (active >= REAL_POL.TOTAL) return 0;
+    const wanted = [];
+    for (const polity of live) {
+      const holders = officeHoldersOf(polity).filter(h => !isMainPlayer(h.pol)).slice(0, REAL_POL.PER_POLITY);
+      holders.forEach((h, rank) => {
+        if (!h.pol.npcName && !h.pol._npcBlocked) wanted.push({ polity, pol: h.pol, role: h.role, rank });
+      });
+    }
+    wanted.sort((a, b) => (a.rank - b.rank) ||
+      (OFFICE_ROLE_ORDER.indexOf(a.role) - OFFICE_ROLE_ORDER.indexOf(b.role)) ||
+      ((a.polity.kind === "nation" ? 0 : 1) - (b.polity.kind === "nation" ? 0 : 1)) ||
+      String(a.polity.name).localeCompare(String(b.polity.name)));
+    const cache = {};
+    let made = 0;
+    // Minting a person asks the book about everybody already minted; no office
+    // changes hands in this loop, so each of those answers is asked once.
+    const pass = () => {
+      for (const want of wanted) {
+        if (made >= REAL_POL.PER_PASS || active >= REAL_POL.TOTAL) break;
+        const group = seatGroupOf(state, want.polity, cache);
+        if (!group) continue;
+        if (materialise(state, want.polity, want.pol, want.role, group, minute)) { made++; active++; }
+      }
+    };
+    const Reg = window.NPCSocietyRegistry;
+    if (Reg?.withLeaderMemo) Reg.withLeaderMemo(pass); else pass();
+    return made;
+  }
+
+  // ==========================================================================
+  // THE PLACE, what the Politics menu reads
+  // ==========================================================================
+  // Every government with a say over one place: the settlement's own offices,
+  // the nation it stands in and the bloc that holds that nation. Reads the
+  // state and never creates it, so asking costs nothing in a world with no
+  // politics.
+
+  function politicsLive() {
+    if (isEmptyWorld()) return false;
+    const WMo = window.NPCShared?.WorldModes;
+    return !(WMo && !WMo.hasPolitics());
+  }
+
+  // Whether the world simulates this polity at all (a monster world runs its
+  // monster governments only).
+  function isLivePolity(polity) {
+    if (!polity || !politicsLive()) return false;
+    return !monsterPowersOnly() || isMonsterPolity(polity);
+  }
+
+  function describePlace(groupName) {
+    const state = (typeof $gameSystem !== "undefined" && $gameSystem) ? ($gameSystem._npcPolitics || null) : null;
+    const group = groupName || currentGroupName();
+    const countries = getCountries();
+    let country = null, powerName = null;
+    const towerWorld = group ? (window.TowerWorlds?.worldOfGroup?.(group) || null) : null;
+    if (towerWorld && !towerWorld.earthborn) {
+      country = towerWorld.name;
+      powerName = towerWorld.powerName || null;
+    } else {
+      if (group && state) {
+        try { country = resolveGroupPolity(state, group, { strict: true }).country || null; } catch (_) { country = null; }
+      }
+      if (!country) {
+        const here = (typeof $gameWeather !== "undefined" && $gameWeather) ? $gameWeather.currentCountry : null;
+        const id = (typeof $gameVariables !== "undefined" && $gameVariables) ? ($gameVariables.value(86) || 0) : 0;
+        const byId = id && id !== 255 ? countries.find(c => c.id === id) : null;
+        country = byId?.country || here?.country || null;
+      }
+      if (country) {
+        const holder = canonicalFaction(controllerOfCountry(country));
+        powerName = holder && holder !== "Neutral" ? holder : null;
+      }
+    }
+    const grp = group ? ($gameSystem?._npcMapGroups?.[group] || null) : null;
+    const nation = country && state ? (state.nations?.[country] || null) : null;
+    const power = powerName && state ? (state.powers?.[powerName] || null) : null;
+    return {
+      group: group || null,
+      groupLabel: grp?.displayName || grp?.foundedTown || group || null,
+      country, powerName,
+      settlement: group && state ? (state.settlements?.[group] || null) : null,
+      nation: isLivePolity(nation) ? nation : null,
+      power: isLivePolity(power) ? power : null,
+      live: politicsLive(),
+    };
+  }
+
+  // Everybody holding an office over a place, level by level:
+  // [{ name, level: "local" | "nation" | "power", role, office, polity, person, main, partyId }].
+  function electedOf(place) {
+    const out = [];
+    if (!place) return out;
+    const reg = $gameSystem?._npcPolitics?.realPoliticians || {};
+    const settlement = place.settlement;
+    if (settlement && settlement.offices && place.live) {
+      for (const office of LOCAL_OFFICES) {
+        const name = settlement.offices[office];
+        if (!name) continue;
+        out.push({ name, level: "local", role: office, office: officeLabel(office),
+          polity: settlement.group, person: true, main: false, partyId: null });
+      }
+    }
+    const addPolity = (polity, level) => {
+      if (!polity) return;
+      for (const { pol, role } of officeHoldersOf(polity)) {
+        out.push({
+          name: pol.name, level, role, office: roleLabel(role, polity), polity: polity.name,
+          person: !!(pol.npcName && reg[pol.npcName] && !reg[pol.npcName].gone),
+          main: isMainPlayer(pol), partyId: pol.partyId || null, polId: pol.id,
+        });
+      }
+    };
+    addPolity(place.nation, "nation");
+    addPolity(place.power, "power");
+    return out;
+  }
+
+  // ==========================================================================
   // CATCH-UP, the delta engine
   // ==========================================================================
 
@@ -2568,6 +3116,8 @@
 
   // True in a world created with populationMode "empty" (WorldManager).
   function isEmptyWorld() {
+    const WMo = window.NPCShared?.WorldModes;
+    if (WMo && !WMo.simulatesPeople()) return true;
     const WM = window.WorldManager;
     return !!(WM && typeof WM.isEmptyWorld === "function" && WM.isEmptyWorld());
   }
@@ -2577,6 +3127,8 @@
     // No electorate, no candidates, no coups: political time does not pass in
     // an empty world. See WorldManager.populationMode.
     if (isEmptyWorld()) return;
+    const WMo = window.NPCShared?.WorldModes;
+    if (WMo && !WMo.hasPolitics()) return;
     const state = getState();
     if (!state) return;
     _catchUpRunning = true;
@@ -2591,6 +3143,7 @@
         state.lastSimMinute = nowMinute;
         // Resolve any elections the bootstrap already made due (incl. local).
         runDueElections(state, nowMinute, nowMinute);
+        syncRealPoliticians(state, nowMinute);
         return;
       }
       if (nowMinute < state.lastSimMinute) { state.lastSimMinute = nowMinute; return; } // time rewound
@@ -2604,7 +3157,7 @@
         const chunkDays = Math.min(CHUNK_DAYS, remaining);
         const chunkEnd = cursor + chunkDays * MINUTES_PER_DAY;
         runDueElections(state, cursor, chunkEnd);
-        for (const power of allPolities(state)) {
+        for (const power of livePolities(state)) {
           simulatePowerChunk(state, power, cursor, chunkDays, chunkEnd);
         }
         simulateIdentitiesChunk(state, cursor, chunkDays);
@@ -2612,6 +3165,10 @@
         remaining -= chunkDays;
       }
       state.lastSimMinute = cursor;
+      // Whoever holds an office now is somebody in the world (REAL POLITICIANS).
+      syncRealPoliticians(state, cursor);
+      // The party's own campaigns and dues (THE PARTY'S OWN POLITICAL PARTY).
+      advancePlayerPolitics(cursor);
 
       if (deltaMinutes >= SKIP_FLUSH_MINUTES) {
         try { window.WorldManager?.flush?.(); } catch (_) { /* flush is best-effort */ }
@@ -2622,7 +3179,8 @@
   }
 
   function runDueElections(state, fromMinute, toMinute) {
-    for (const power of allPolities(state)) {
+    const monsterOnly = monsterPowersOnly();
+    for (const power of livePolities(state)) {
       let guard = 0;
       while (power.nextElectionMinute !== null && power.nextElectionMinute <= toMinute && guard++ < 200) {
         const at = Math.max(power.nextElectionMinute, fromMinute);
@@ -2631,6 +3189,7 @@
       }
     }
     for (const settlement of Object.values(state.settlements)) {
+      if (monsterOnly && !isMonsterPolity(state.powers[settlement.power])) continue;
       let guard = 0;
       while (settlement.nextLocalElectionMinute <= toMinute && guard++ < 100) {
         resolveLocalElection(state, settlement, Math.max(settlement.nextLocalElectionMinute, fromMinute));
@@ -2866,8 +3425,811 @@
     });
   }
 
+  // ==========================================================================
+  // THE PARTY'S OWN POLITICAL PARTY
+  // ==========================================================================
+  //
+  // The party may found one political party of its own, and only one, the
+  // same way it may raise one faction banner: founding is a thing the world
+  // remembers. The record lives in the politics state
+  // ($gameSystem._npcPolitics.playerParty), which WorldManager keeps in the
+  // world folder, so every savegame of the world finds the same party.
+  //
+  // It stands on a creed out of Ideology.json and up to MAX_PLAYER_TENETS
+  // tenets. Each tenet pushes the creed's five axes, so the platform is the
+  // creed as the founders bent it, and policiesFor reads it like any other.
+  //
+  // It is NOT written into any polity's `parties`. Those rosters are what
+  // every voter is drawn to (nearestPartyId) and what every ballot counts, and
+  // slipping a party in there would reshuffle a whole nation's sympathies the
+  // moment it was founded. Its members are listed on the record instead: the
+  // team standing in the party when it is founded, and the team standing in it
+  // when the party's faction is founded later (Game_Factions.foundPlayerFaction).
+
+  const PLAYER_PARTY_ID = "party_player"; // i18n-ignore: record id
+  const MAX_PLAYER_TENETS = 3;
+
+  // What each tenet does to the platform. Two tenets on the same axis pulling
+  // opposite ways cannot both be held: `axis` + the sign is the pole.
+  const PLAYER_TENETS = [
+    { id: "commonOwnership", shift: { econ: -30 } },
+    { id: "freeEnterprise", shift: { econ: 30 } },
+    { id: "liberty", shift: { auth: -30 } },
+    { id: "order", shift: { auth: 30 } },
+    { id: "progress", shift: { trad: -30 } },
+    { id: "heritage", shift: { trad: 30 } },
+    { id: "peace", shift: { mil: -30 } },
+    { id: "strength", shift: { mil: 30 } },
+    { id: "reason", shift: { myst: -30 } },
+    { id: "arcana", shift: { myst: 30 } },
+    { id: "welfare", shift: { econ: -15, auth: 10 } },
+    { id: "localRule", shift: { auth: -15, trad: 10 } },
+  ];
+
+  function playerTenet(id) {
+    return PLAYER_TENETS.find(t => t.id === id) || null;
+  }
+
+  // The one axis a tenet pulls hardest on, and which way.
+  function tenetPole(tenet) {
+    let best = null;
+    for (const [axis, v] of Object.entries(tenet.shift)) {
+      if (!best || Math.abs(v) > Math.abs(best.v)) best = { axis, v };
+    }
+    return best ? { axis: best.axis, sign: Math.sign(best.v) } : null;
+  }
+
+  // Two tenets clash when they pull the same axis opposite ways.
+  function tenetsClash(a, b) {
+    const pa = tenetPole(a), pb = tenetPole(b);
+    return !!(pa && pb && pa.axis === pb.axis && pa.sign !== pb.sign);
+  }
+
+  // A tenet list cleaned up: known ids, no repeats, no clashes, at most
+  // MAX_PLAYER_TENETS. The first of two clashing tenets is the one kept.
+  function cleanTenets(ids) {
+    const out = [];
+    for (const id of (Array.isArray(ids) ? ids : [])) {
+      const tenet = playerTenet(id);
+      if (!tenet || out.includes(id)) continue;
+      if (out.some(o => tenetsClash(playerTenet(o), tenet))) continue;
+      out.push(id);
+      if (out.length >= MAX_PLAYER_TENETS) break;
+    }
+    return out;
+  }
+
+  // The creeds a party can be founded on: every earthly creed. The off-world
+  // ones belong to the powers that brought them.
+  function foundableCreeds() {
+    const list = window.WorldGen?.Ideology;
+    return Array.isArray(list) ? list.filter(c => c && c.id && !c.alien) : [];
+  }
+
+  function playerPartyPlatform(ideologyId, tenetIds) {
+    const creed = ideologyById(ideologyId);
+    const base = creed ? window.NPCShared.ideologyAxes(creed) : {};
+    const platform = {};
+    for (const ax of AXES) platform[ax] = Number(base[ax]) || 0;
+    for (const id of cleanTenets(tenetIds)) {
+      const tenet = playerTenet(id);
+      for (const [ax, v] of Object.entries(tenet.shift)) {
+        if (ax in platform) platform[ax] = clamp(platform[ax] + v, -100, 100);
+      }
+    }
+    return platform;
+  }
+
+  // A name rolled out of the word banks, for a founder who types none.
+  function rollPlayerPartyName() {
+    const pool = (key) => (typeof T.pool === "function" ? T.pool(key) : []);
+    const pick = (key) => {
+      const bank = pool(key);
+      return bank.length ? bank[Math.floor(Math.random() * bank.length)] : "";
+    };
+    const forms = pool("Politics.player.nameForm");
+    const form = forms.length ? forms[Math.floor(Math.random() * forms.length)] : "{adj} {noun}";
+    const parts = { adj: pick("Politics.player.nameAdj"), noun: pick("Politics.player.nameNoun") };
+    const name = String(form).replace(/\{(\w+)\}/g, (m, k) => parts[k] || "").replace(/\s+/g, " ").trim();
+    return name || T("Politics.player.fallbackName");
+  }
+
+  function playerParty() {
+    return $gameSystem?._npcPolitics?.playerParty ?? null;
+  }
+
+  // The team as it stands: every character in the party, by name.
+  function teamNames() {
+    const members = (window.$gameParty && $gameParty.allMembers) ? ($gameParty.allMembers() || []) : [];
+    return members.filter(Boolean).map(m => m.name()).filter(Boolean);
+  }
+
+  // Everybody in the team joins, and a name already on the card is not written
+  // twice. Answers the names that joined this time.
+  function enrollTeamInPlayerParty() {
+    const party = playerParty();
+    if (!party) return [];
+    const joined = [];
+    for (const name of teamNames()) {
+      if (party.members.includes(name)) continue;
+      party.members.push(name);
+      joined.push(name);
+    }
+    return joined;
+  }
+
+  // ---- the subscription ------------------------------------------------------
+  //
+  // A card costs a fixed weekly fee, in gold, which the founders set. Every
+  // supporter the party has won pays it, and the party's treasurer hands the
+  // week's takings to the team (settlePlayerParty). The fee also decides WHO
+  // joins: it falls in a price class on the same 0 (poorest) to 4 (elite)
+  // scale as a society profile's wealthTierBase. Somebody below that class
+  // cannot afford the card; somebody well above it finds a cheap party beneath
+  // them. A cheap party fills with the poor, a dear one only with the elite.
+
+  const DEFAULT_PLAYER_FEE = 100;      // 1 euro a week
+  const MAX_PLAYER_FEE = 1000000;      // 10.000 euros a week
+  // Upper bound of each price class, in gold a week: <=50 is class 0, etc.
+  const FEE_CLASS_BOUNDS = [50, 200, 1000, 5000];
+  const BASE_LAPSE_WEEKLY = 0.02;      // supporters who drift off anyway
+  const PRICED_OUT_LAPSE_WEEKLY = 0.3; // a supporter the fee has outgrown
+  const MINUTES_PER_WEEK = MINUTES_PER_DAY * 7;
+
+  function cleanFee(fee) {
+    const n = Math.round(Number(fee));
+    return Number.isFinite(n) ? clamp(n, 0, MAX_PLAYER_FEE) : DEFAULT_PLAYER_FEE;
+  }
+
+  function feeClass(fee) {
+    const f = cleanFee(fee);
+    const i = FEE_CLASS_BOUNDS.findIndex(b => f <= b);
+    return i < 0 ? FEE_CLASS_BOUNDS.length : i;
+  }
+
+  function wealthTierOf(npcName) {
+    const tier = getProfile(npcName)?.wealthTierBase;
+    return typeof tier === "number" ? clamp(tier, 0, 4) : 2;
+  }
+
+  // How willing somebody of `tier` is to buy a card of price class `cls`.
+  function classAppeal(tier, cls) {
+    if (tier < cls) return 0.05 * Math.pow(0.4, cls - tier - 1);
+    return Math.pow(0.55, tier - cls);
+  }
+
+  // The one founding. Answers null when this world already has a party of the
+  // player's, or when the creed is not one a party can be founded on.
+  function foundPlayerParty(opts = {}) {
+    const state = getState();
+    if (!state || state.playerParty) return null;
+    const creed = ideologyById(opts.ideologyId);
+    if (!creed || creed.alien) return null;
+    const tenets = cleanTenets(opts.tenets);
+    const typed = String(opts.name == null ? "" : opts.name).trim().slice(0, 48);
+    const minute = nowMinuteVar();
+    state.playerParty = {
+      id: PLAYER_PARTY_ID,
+      isPlayer: true,
+      name: typed || rollPlayerPartyName(),
+      ideologyId: creed.id,
+      tenets,
+      platform: playerPartyPlatform(creed.id, tenets),
+      fee: opts.fee == null ? DEFAULT_PLAYER_FEE : cleanFee(opts.fee),
+      foundedYear: yearOf(minute),
+      founded: dateStrOf(minute),
+      members: [],
+      supporters: [],
+      lastPaidMinute: minute,
+      lastIncome: null,
+      totalIncome: 0,
+    };
+    enrollTeamInPlayerParty();
+    return state.playerParty;
+  }
+
+  // Editing a founded party: any of name, creed, tenets and fee. Answers false
+  // when there is nothing to edit or the creed is not a foundable one.
+  function editPlayerParty(opts = {}) {
+    const party = playerParty();
+    if (!party) return false;
+    if (opts.ideologyId !== undefined) {
+      const creed = ideologyById(opts.ideologyId);
+      if (!creed || creed.alien) return false;
+      party.ideologyId = creed.id;
+    }
+    if (opts.tenets !== undefined) party.tenets = cleanTenets(opts.tenets);
+    if (opts.name !== undefined) {
+      const typed = String(opts.name == null ? "" : opts.name).trim().slice(0, 48);
+      if (typed) party.name = typed;
+    }
+    if (opts.fee !== undefined) party.fee = cleanFee(opts.fee);
+    party.platform = playerPartyPlatform(party.ideologyId, party.tenets);
+    return true;
+  }
+
+  // The supporters still in the world: a name whose identity is gone (death,
+  // a beast, a child) is struck off the list.
+  function livePlayerSupporters(state) {
+    const party = state?.playerParty;
+    if (!party) return [];
+    party.supporters = (party.supporters || []).filter(n => !!state.identities[n]);
+    return party.supporters;
+  }
+
+  // The weeks since the last payout: supporters lapse (the priced-out ones
+  // fast), then those who stayed pay the fee. Answers the gold paid.
+  function settlePlayerParty(state, nowMinute) {
+    const party = state?.playerParty;
+    if (!party) return 0;
+    if (party.lastPaidMinute == null || nowMinute < party.lastPaidMinute) party.lastPaidMinute = nowMinute;
+    const weeks = Math.floor((nowMinute - party.lastPaidMinute) / MINUTES_PER_WEEK);
+    if (weeks <= 0) return 0;
+    const cls = feeClass(party.fee);
+    let gold = 0;
+    for (let w = 0; w < Math.min(weeks, 520); w++) {
+      const weekMinute = party.lastPaidMinute + (w + 1) * MINUTES_PER_WEEK;
+      party.supporters = livePlayerSupporters(state).filter(name => {
+        const lapse = wealthTierOf(name) < cls ? PRICED_OUT_LAPSE_WEEKLY : BASE_LAPSE_WEEKLY;
+        const rng = new PolRng(worldSeed() ^ nameHash("partyDues:" + name) ^ (weekMinute >>> 0));
+        return rng.next() >= lapse;
+      });
+      gold += party.supporters.length * cleanFee(party.fee);
+    }
+    party.lastPaidMinute += weeks * MINUTES_PER_WEEK;
+    party.lastIncome = { weeks, gold, date: dateStrOf(nowMinute), supporters: party.supporters.length };
+    party.totalIncome = (party.totalIncome || 0) + gold;
+    if (gold > 0 && window.$gameParty && $gameParty.gainGold) $gameParty.gainGold(gold);
+    return gold;
+  }
+
+  // What the party would take in a week at a given fee, with nobody lapsing.
+  function weeklyTakings(fee) {
+    const state = $gameSystem?._npcPolitics;
+    return livePlayerSupporters(state).length * cleanFee(fee == null ? state?.playerParty?.fee : fee);
+  }
+
+  // ---- where: the scopes a list or a campaign can be narrowed to -------------
+  //
+  // { kind: "world" } or { kind: "place"|"nation"|"power", value }. A place is
+  // a map group (the key of state.settlements).
+
+  const SCOPE_KINDS = ["world", "place", "nation", "power"]; // i18n-ignore: scope ids
+
+  function identityInScope(identity, scope) {
+    if (!scope || scope.kind === "world" || !scope.value) return true; // i18n-ignore: scope id
+    if (scope.kind === "place") return identity.group === scope.value; // i18n-ignore: scope id
+    if (scope.kind === "nation") return identity.country === scope.value; // i18n-ignore: scope id
+    if (scope.kind === "power") return identity.power === canonicalFaction(scope.value); // i18n-ignore: scope id
+    return true;
+  }
+
+  // The choices a scope kind offers: [{ value, label }], sorted by label.
+  function scopeOptions(kind) {
+    const state = $gameSystem?._npcPolitics;
+    if (!state) return [];
+    let out = [];
+    if (kind === "place") { // i18n-ignore: scope id
+      const groups = $gameSystem._npcMapGroups || {};
+      out = Object.keys(state.settlements || {}).map(g => ({
+        value: g, label: (groups[g] && (groups[g].displayName || groups[g].foundedTown)) || g,
+      }));
+    } else if (kind === "nation") { // i18n-ignore: scope id
+      out = Object.keys(state.nations || {}).map(n => ({ value: n, label: n }));
+    } else if (kind === "power") { // i18n-ignore: scope id
+      out = livePolities(state).filter(p => p.kind !== "nation").map(p => ({ value: p.name, label: p.name })); // i18n-ignore: polity kind
+    }
+    return out.sort((a, b) => String(a.label).localeCompare(String(b.label)));
+  }
+
+  // Supporters per party id, one walk over the identities.
+  function supporterCounts(state) {
+    const counts = {};
+    for (const identity of Object.values(state.identities || {})) {
+      if (identity.partyId) counts[identity.partyId] = (counts[identity.partyId] || 0) + 1;
+    }
+    return counts;
+  }
+
+  // Every party that stands within a scope, supporters attached, biggest
+  // first. The player's party leads a world-wide list and any list whose
+  // scope holds one of its supporters.
+  //   world   every party of every polity
+  //   power   that bloc's own assembly
+  //   nation  that nation's government, and its parties in its bloc's assembly
+  //   place   the same as the nation the place stands in
+  // Each row: { party, polityName, polityKind, supporters, isPlayer }.
+  function partiesIn(scope) {
+    const state = $gameSystem?._npcPolitics;
+    if (!state) return [];
+    scope = scope || { kind: "world" }; // i18n-ignore: scope id
+    let nation = null, powerName = null;
+    if (scope.kind === "place" && scope.value) { // i18n-ignore: scope id
+      try { const pol = resolveGroupPolity(state, scope.value); nation = pol.country; powerName = pol.power; }
+      catch (_) { return []; }
+    } else if (scope.kind === "nation") nation = scope.value; // i18n-ignore: scope id
+    else if (scope.kind === "power") powerName = canonicalFaction(scope.value); // i18n-ignore: scope id
+    if (nation && !powerName) powerName = state.nations?.[nation]?.power || controllerOfCountry(nation);
+    const counts = supporterCounts(state);
+    const out = [];
+    for (const polity of allPolities(state)) {
+      const isNation = polity.kind === "nation"; // i18n-ignore: polity kind
+      for (const party of polity.parties || []) {
+        let keep = scope.kind === "world" || !scope.value; // i18n-ignore: scope id
+        if (!keep && scope.kind === "power") keep = !isNation && polity.name === powerName; // i18n-ignore: scope id
+        if (!keep && nation) {
+          keep = isNation ? polity.name === nation
+            : (polity.name === powerName && party.country === nation);
+        }
+        if (keep) out.push({ party, polityName: polity.name, polityKind: isNation ? "nation" : "power", supporters: counts[party.id] || 0, isPlayer: false }); // i18n-ignore: polity kinds
+      }
+    }
+    out.sort((a, b) => b.supporters - a.supporters || String(a.party.name).localeCompare(String(b.party.name)));
+    const mine = state.playerParty;
+    if (mine) {
+      const supporters = livePlayerSupporters(state);
+      const here = supporters.filter(n => identityInScope(state.identities[n], scope)).length;
+      if (scope.kind === "world" || !scope.value || here > 0) { // i18n-ignore: scope id
+        out.unshift({ party: mine, polityName: null, polityKind: null, supporters: here, isPlayer: true });
+      }
+    }
+    return out;
+  }
+
+  // ---- campaigns ---------------------------------------------------------------
+  //
+  // Money spent over days or months to win people to a party: the player's own
+  // or any party in the world. A campaign covers a scope (above) and runs at an
+  // intensity (gold a day). Every day each person it can reach may convert:
+  //
+  //   p = CAMPAIGN_DAILY_BASE * reach * affinity * appeal
+  //
+  //   reach    how much of the scope the money covers: the daily gold over
+  //            REACH_GOLD_PER_HEAD for every person in it, capped at 1
+  //   affinity nearness of their own ideology to the party's platform, and
+  //            how little they are already committed (engagement)
+  //   appeal   for the player's party only, classAppeal of the fee
+  //
+  // The projection a founder is shown is the same sum the days then roll
+  // (1 - (1-p)^days per person), over the same identities, so it is what the
+  // simulation expects to happen, not a separate guess. A convert is pulled
+  // halfway toward the platform, so the new allegiance holds against drift.
+
+  const CAMPAIGN_INTENSITIES = [
+    { id: "leaflets", dailyGold: 2000 },
+    { id: "rallies", dailyGold: 10000 },
+    { id: "broadcast", dailyGold: 50000 },
+    { id: "saturation", dailyGold: 250000 },
+  ];
+  const CAMPAIGN_DURATIONS = [1, 3, 7, 14, 30, 90, 180]; // days; 30+ read as months
+  const CAMPAIGN_DAILY_BASE = 0.08;
+  const REACH_GOLD_PER_HEAD = 20;
+  const CAMPAIGN_PULL = 0.5;
+  const CAMPAIGN_HISTORY_CAP = 20;
+  // Smears: a daily chance to land, how much faith (engagement) a hit drains,
+  // how far it shoves each axis away from the platform, and the faith at or
+  // under which somebody walks out of the party.
+  const SMEAR_DAILY_BASE = 0.1;
+  const SMEAR_FAITH_LOSS = 25;
+  const SMEAR_IDEOLOGY_PUSH = 12;
+  const SMEAR_WALKOUT_FAITH = 5;
+
+  // Where a campaign's target stands: the player's party, or { party, polity }.
+  function campaignTarget(spec) {
+    const state = $gameSystem?._npcPolitics;
+    if (!state) return null;
+    if (spec.targetKind === "player") { // i18n-ignore: target kind
+      return state.playerParty ? { party: state.playerParty, polity: null, isPlayer: true } : null;
+    }
+    const found = window.NPCPolitics.findParty(spec.partyId);
+    return found ? { party: found.party, polity: found.power, isPlayer: false } : null;
+  }
+
+  // Can this person be won to this target at all? A national party is only on
+  // its own nation's ballot, and nobody already with the target is counted.
+  function campaignEligible(state, name, identity, target, scope, smear) {
+    if (!identityInScope(identity, scope)) return false;
+    // A smear reaches the people who back the party it is aimed at.
+    if (smear) return !target.isPlayer && identity.partyId === target.party.id;
+    if (target.isPlayer) return !(target.party.supporters || []).includes(name);
+    if (identity.partyId === target.party.id) return false;
+    const polity = target.polity;
+    if (polity.kind === "nation") return identity.country === polity.name; // i18n-ignore: polity kind
+    if (identity.power !== polity.name) return false;
+    return !target.party.country || identity.country === target.party.country;
+  }
+
+  function campaignOdds(state, spec) {
+    const target = campaignTarget(spec);
+    if (!target) return null;
+    const scope = spec.scope || { kind: "world" }; // i18n-ignore: scope id
+    const smear = spec.kind === "smear"; // i18n-ignore: campaign kind
+    if (smear && target.isPlayer) return null;
+    const people = [];
+    for (const [name, identity] of Object.entries(state.identities || {})) {
+      if (campaignEligible(state, name, identity, target, scope, smear)) people.push([name, identity]);
+    }
+    const reach = people.length ? Math.min(1, (Number(spec.dailyGold) || 0) / (REACH_GOLD_PER_HEAD * people.length)) : 0;
+    const cls = target.isPlayer ? feeClass(target.party.fee) : null;
+    // A smear lands easiest on the lukewarm: the committed shrug it off.
+    if (smear) {
+      const odds = people.map(([name, identity]) => ({ name, identity,
+        p: clamp(SMEAR_DAILY_BASE * reach * (1 - 0.5 * (Number(identity.engagement) || 0) / 100), 0, 0.95) }));
+      return { target, scope, odds, reach, smear };
+    }
+    const odds = people.map(([name, identity]) => {
+      const dist = ideologyDistance(identity.ideology, target.party.platform);
+      const affinity = Math.max(0.05, 1 - dist / 150) * (1 - 0.6 * (Number(identity.engagement) || 0) / 100);
+      const appeal = target.isPlayer ? classAppeal(wealthTierOf(name), cls) : 1;
+      return { name, identity, p: clamp(CAMPAIGN_DAILY_BASE * reach * affinity * appeal, 0, 0.95) };
+    });
+    return { target, scope, odds, reach, smear: false };
+  }
+
+  // The expected outcome of a campaign before a coin is spent.
+  function projectCampaign(spec) {
+    const state = $gameSystem?._npcPolitics;
+    if (!state) return null;
+    const days = Math.max(1, Math.round(Number(spec.days) || 1));
+    const run = campaignOdds(state, spec);
+    if (!run) return null;
+    let expected = 0;
+    for (const o of run.odds) expected += 1 - Math.pow(1 - o.p, days);
+    return {
+      eligible: run.odds.length,
+      reach: Math.round(run.reach * 100),
+      expected: Math.round(expected),
+      cost: Math.round((Number(spec.dailyGold) || 0) * days),
+      days,
+    };
+  }
+
+  // Pays for and starts a campaign. Answers { ok, reason?, campaign? }.
+  function launchCampaign(spec) {
+    const state = getState();
+    if (!state) return { ok: false, reason: "noWorld" }; // i18n-ignore: reason id
+    const projection = projectCampaign(spec);
+    if (!projection) return { ok: false, reason: "noTarget" }; // i18n-ignore: reason id
+    if (!projection.eligible) return { ok: false, reason: "nobody" }; // i18n-ignore: reason id
+    const gold = window.$gameParty && $gameParty.gold ? $gameParty.gold() : 0;
+    if (gold < projection.cost) return { ok: false, reason: "funds" }; // i18n-ignore: reason id
+    if ($gameParty.loseGold) $gameParty.loseGold(projection.cost);
+    const minute = nowMinuteVar();
+    const target = campaignTarget(spec);
+    state.campaigns = state.campaigns || [];
+    state.campaignSeq = (state.campaignSeq || 0) + 1;
+    const campaign = {
+      id: state.campaignSeq,
+      kind: spec.kind === "smear" ? "smear" : "convert", // i18n-ignore: campaign kinds
+      targetKind: target.isPlayer ? "player" : "party", // i18n-ignore: target kinds
+      partyId: target.party.id,
+      partyName: target.party.name,
+      scope: spec.scope && spec.scope.kind !== "world" ? { kind: spec.scope.kind, value: spec.scope.value } : { kind: "world" }, // i18n-ignore: scope id
+      intensity: spec.intensity || null,
+      dailyGold: Math.round(Number(spec.dailyGold) || 0),
+      days: projection.days,
+      cost: projection.cost,
+      projected: projection.expected,
+      converted: 0,
+      startMinute: minute,
+      lastMinute: minute,
+      endMinute: minute + projection.days * MINUTES_PER_DAY,
+      started: dateStrOf(minute),
+      done: false,
+    };
+    state.campaigns.unshift(campaign);
+    return { ok: true, campaign };
+  }
+
+  // A smear that lands: faith in the party drains and the views it stood for
+  // sour. Somebody with no faith left walks out of it, and either way they are
+  // easier for the next conversion campaign to win (affinity reads both).
+  function smearIdentity(identity, party, minute) {
+    identity.engagement = clamp(Math.round((Number(identity.engagement) || 0) - SMEAR_FAITH_LOSS), 0, 100);
+    for (const ax of AXES) {
+      const gap = (identity.ideology[ax] ?? 0) - (party.platform[ax] ?? 0);
+      const away = gap === 0 ? 0 : Math.sign(gap) * SMEAR_IDEOLOGY_PUSH;
+      identity.ideology[ax] = clamp(Math.round(identity.ideology[ax] + away), -100, 100);
+    }
+    const walked = identity.engagement <= SMEAR_WALKOUT_FAITH;
+    if (walked) identity.partyId = null;
+    pushIdentityEvent(identity, minute, "smear", // i18n-ignore: event type
+      walked ? "Politics.identity.smearedOut" : "Politics.identity.smeared", { party: party.name });
+  }
+
+  // Roll the days a campaign has run since it was last looked at.
+  function advanceCampaign(state, campaign, nowMinute) {
+    if (campaign.done) return;
+    const to = Math.min(nowMinute, campaign.endMinute);
+    const days = Math.floor((to - campaign.lastMinute) / MINUTES_PER_DAY);
+    if (days > 0) {
+      const run = campaignOdds(state, campaign);
+      if (!run) { campaign.done = true; return; }
+      const at = campaign.lastMinute + days * MINUTES_PER_DAY;
+      for (const o of run.odds) {
+        const rng = new PolRng(worldSeed() ^ nameHash(`campaign:${campaign.id}:${o.name}`) ^ (campaign.lastMinute >>> 0));
+        if (rng.next() >= 1 - Math.pow(1 - o.p, days)) continue;
+        const identity = o.identity;
+        if (run.smear) {
+          smearIdentity(identity, run.target.party, at);
+          campaign.converted++;
+          continue;
+        }
+        for (const ax of AXES) {
+          identity.ideology[ax] = clamp(Math.round(identity.ideology[ax] + ((run.target.party.platform[ax] ?? 0) - identity.ideology[ax]) * CAMPAIGN_PULL), -100, 100);
+        }
+        const from = identity.partyId ? (partyById(run.target.polity || state.powers[identity.power], identity.partyId)?.name || null) : null;
+        if (run.target.isPlayer) run.target.party.supporters.push(o.name);
+        else identity.partyId = run.target.party.id;
+        pushIdentityEvent(identity, at, "campaign", "Politics.identity.campaigned", { party: run.target.party.name, from: from || "-" }); // i18n-ignore: event type
+        campaign.converted++;
+      }
+      campaign.lastMinute = at;
+    }
+    if (campaign.lastMinute >= campaign.endMinute) campaign.done = true;
+  }
+
+  // Everything of the player's that runs on the clock: campaigns, then dues.
+  function advancePlayerPolitics(nowMinute) {
+    const state = $gameSystem?._npcPolitics;
+    if (!state) return;
+    const minute = nowMinute == null ? nowMinuteVar() : nowMinute;
+    for (const campaign of state.campaigns || []) advanceCampaign(state, campaign, minute);
+    if (state.campaigns && state.campaigns.length > CAMPAIGN_HISTORY_CAP) {
+      const running = state.campaigns.filter(c => !c.done);
+      const over = state.campaigns.filter(c => c.done).slice(0, Math.max(0, CAMPAIGN_HISTORY_CAP - running.length));
+      state.campaigns = running.concat(over).sort((a, b) => b.id - a.id);
+    }
+    settlePlayerParty(state, minute);
+  }
+
+  // ---- candidacies ------------------------------------------------------------
+  //
+  // A member of the team may stand in any election still to come: a town's
+  // mayoralty, a nation's government, or a hyperpower's head of state. A
+  // conclave is not an election anybody stands in (the Holy Vatican Empire's
+  // cardinals elect one of their own), so a power that picks its head that way
+  // takes no candidates; the nations under it hold ordinary elections and do.
+  //
+  // Standing costs a deposit, and the candidate runs for the party's own
+  // political party when there is one, on its platform, or on their own
+  // otherwise. Nothing in the election engines changes: the town hall counts
+  // the candidate among its own three (resolveLocalElection), and a national
+  // or bloc election is resolved as it always was, then the candidate's vote is
+  // weighed against the winner's (contestPlayerCandidacy). Whoever the history
+  // book names still holds the office however the vote went.
+
+  const CANDIDACY_DEPOSIT = { local: 10000, nation: 200000, power: 2000000 }; // i18n-ignore: level ids
+  const CANDIDACY_CAP = 30;
+  const NEUTRAL_PLATFORM = { econ: 0, auth: 0, trad: 0, mil: 0, myst: 0 };
+
+  function candidacies(state) {
+    state.candidacies = state.candidacies || [];
+    return state.candidacies;
+  }
+
+  function polityForLevel(state, level, name) {
+    if (level === "nation") return state.nations?.[name] || null; // i18n-ignore: level id
+    if (level === "power") return state.powers?.[canonicalFaction(name)] || null; // i18n-ignore: level id
+    return null;
+  }
+
+  // Can anybody stand in this polity's elections at all?
+  function acceptsCandidates(polity) {
+    return !!(polity && polity.nextElectionMinute != null && polity.system !== "conclave" && (polity.parties || []).length); // i18n-ignore: election system id
+  }
+
+  // Every election still to come that a candidate could stand in:
+  // [{ level, polity, label, minute, date, office, deposit, open, standing }].
+  function upcomingElections(scope) {
+    const state = $gameSystem?._npcPolitics;
+    if (!state) return [];
+    const now = nowMinuteVar();
+    const standing = (level, polity) => candidacies(state)
+      .filter(c => c.status === "standing" && c.level === level && c.polity === polity).map(c => c.actor);
+    const out = [];
+    const groups = $gameSystem._npcMapGroups || {};
+    for (const [group, settlement] of Object.entries(state.settlements || {})) {
+      if (settlement.nextLocalElectionMinute == null || settlement.nextLocalElectionMinute < now) continue;
+      if (scope && scope.kind !== "world" && scope.value) { // i18n-ignore: scope id
+        const where = { group, country: settlement.country, power: settlement.power };
+        if (!identityInScope(where, scope)) continue;
+      }
+      const g = groups[group];
+      out.push({ level: "local", polity: group, label: (g && (g.displayName || g.foundedTown)) || group, // i18n-ignore: level id
+        minute: settlement.nextLocalElectionMinute, date: dateStrOf(settlement.nextLocalElectionMinute),
+        office: officeLabel("mayor"), deposit: CANDIDACY_DEPOSIT.local, open: true, standing: standing("local", group) }); // i18n-ignore: level id
+    }
+    for (const polity of livePolities(state)) {
+      const level = polity.kind === "nation" ? "nation" : "power"; // i18n-ignore: level ids
+      if (polity.nextElectionMinute == null || polity.nextElectionMinute < now) continue;
+      if (scope && scope.kind !== "world" && scope.value) { // i18n-ignore: scope id
+        const where = level === "nation" // i18n-ignore: level id
+          ? { country: polity.name, power: polity.power || controllerOfCountry(polity.name) }
+          : { power: polity.name };
+        if (scope.kind === "place") { // i18n-ignore: scope id
+          let pol = null;
+          try { pol = resolveGroupPolity(state, scope.value); } catch (_) { pol = null; }
+          if (!pol || (level === "nation" ? pol.country !== polity.name : pol.power !== polity.name)) continue; // i18n-ignore: level id
+        } else if (!identityInScope(where, scope)) continue;
+      }
+      out.push({ level, polity: polity.name, label: polity.name, minute: polity.nextElectionMinute,
+        date: dateStrOf(polity.nextElectionMinute), office: powerLabel(polity, "headTitle"),
+        system: polity.system, deposit: CANDIDACY_DEPOSIT[level], open: acceptsCandidates(polity),
+        standing: standing(level, polity.name) });
+    }
+    return out.sort((a, b) => a.minute - b.minute || String(a.label).localeCompare(String(b.label)));
+  }
+
+  // Put a team member's name down. Answers { ok, reason?, candidacy? }.
+  function standForElection(spec = {}) {
+    const state = getState();
+    if (!state) return { ok: false, reason: "noWorld" }; // i18n-ignore: reason id
+    const actor = String(spec.actor || "");
+    if (!teamNames().includes(actor)) return { ok: false, reason: "notInTeam" }; // i18n-ignore: reason id
+    const level = spec.level;
+    if (!(level in CANDIDACY_DEPOSIT)) return { ok: false, reason: "noElection" }; // i18n-ignore: reason id
+    let minute = null;
+    if (level === "local") { // i18n-ignore: level id
+      const settlement = state.settlements?.[spec.polity];
+      minute = settlement ? settlement.nextLocalElectionMinute : null;
+    } else {
+      const polity = polityForLevel(state, level, spec.polity);
+      if (polity && polity.system === "conclave") return { ok: false, reason: "conclave" }; // i18n-ignore: reason id, election system id
+      if (!acceptsCandidates(polity)) return { ok: false, reason: "noElection" }; // i18n-ignore: reason id
+      minute = polity.nextElectionMinute;
+    }
+    if (minute == null || minute < nowMinuteVar()) return { ok: false, reason: "noElection" }; // i18n-ignore: reason id
+    if (candidacies(state).some(c => c.status === "standing" && c.actor === actor)) return { ok: false, reason: "alreadyStanding" }; // i18n-ignore: reason id
+    const deposit = CANDIDACY_DEPOSIT[level];
+    const gold = window.$gameParty && $gameParty.gold ? $gameParty.gold() : 0;
+    if (gold < deposit) return { ok: false, reason: "funds" }; // i18n-ignore: reason id
+    if ($gameParty.loseGold) $gameParty.loseGold(deposit);
+    state.candidacySeq = (state.candidacySeq || 0) + 1;
+    const party = state.playerParty;
+    const candidacy = {
+      id: state.candidacySeq, actor, level,
+      polity: level === "power" ? canonicalFaction(spec.polity) : spec.polity, // i18n-ignore: level id
+      partyName: party ? party.name : null,
+      electionMinute: minute, electionDate: dateStrOf(minute), deposit,
+      status: "standing", share: null, winnerShare: null, winner: null, // i18n-ignore: status id
+    };
+    candidacies(state).unshift(candidacy);
+    if (state.candidacies.length > CANDIDACY_CAP) {
+      state.candidacies = state.candidacies.filter((c, i) => c.status === "standing" || i < CANDIDACY_CAP); // i18n-ignore: status id
+    }
+    return { ok: true, candidacy };
+  }
+
+  function withdrawCandidacy(id) {
+    const state = $gameSystem?._npcPolitics;
+    const c = state && candidacies(state).find(x => x.id === id && x.status === "standing"); // i18n-ignore: status id
+    if (!c) return false;
+    c.status = "withdrawn"; // i18n-ignore: status id
+    return true;
+  }
+
+  // The platform a candidate runs on: their political party's, or the centre.
+  function candidatePlatform(state) {
+    return state.playerParty ? state.playerParty.platform : NEUTRAL_PLATFORM;
+  }
+
+  // A little personal pull for a known face: a point per ten levels, up to 5.
+  function candidateCharisma(actorName) {
+    const members = (window.$gameParty && $gameParty.allMembers) ? ($gameParty.allMembers() || []) : [];
+    const actor = members.find(m => m && m.name() === actorName);
+    return actor ? Math.min(5, Math.floor((actor.level || 1) / 10)) : 0;
+  }
+
+  // The identity an elected member of the team is given, so the town hall
+  // (offices, appointments) reads them like any other resident.
+  function ensureCandidateIdentity(state, actorName, group, platform) {
+    if (state.identities[actorName]) return state.identities[actorName];
+    const settlement = state.settlements?.[group];
+    state.identities[actorName] = {
+      power: settlement?.power ?? null, country: settlement?.country ?? null, group,
+      ideology: { ...platform }, partyId: null, creedId: state.playerParty?.ideologyId ?? null,
+      engagement: 100, charisma: 60, votedLast: null, grudgePartyId: null, localOffice: null, log: [],
+    };
+    return state.identities[actorName];
+  }
+
+  // A national or bloc election has just been resolved: the candidates who
+  // stood in it are weighed against the winner. The electorate is the same one
+  // the ballot counted; the party's supporters vote for its candidate, and a
+  // voter whose own party stands further from the candidate's platform than
+  // the candidate does leans their way for half a vote.
+  function contestPlayerCandidacy(state, power, minute, record) {
+    const level = power.kind === "nation" ? "nation" : "power"; // i18n-ignore: level ids
+    const standing = candidacies(state).filter(c => c.status === "standing" && c.level === level && c.polity === power.name); // i18n-ignore: status id
+    if (!standing.length) return;
+    const platform = candidatePlatform(state);
+    const supporters = new Set(state.playerParty ? livePlayerSupporters(state) : []);
+    let votes = 0, electorate = 0;
+    for (const [name, identity] of Object.entries(state.identities)) {
+      if (level === "nation" ? identity.country !== power.name : identity.power !== power.name) continue; // i18n-ignore: level id
+      electorate++;
+      if (supporters.has(name)) { votes++; continue; }
+      const own = partyById(power, identity.partyId);
+      const ownD = own ? ideologyDistance(identity.ideology, own.platform) : 200;
+      if (ideologyDistance(identity.ideology, platform) < ownD) votes += 0.5;
+    }
+    const winnerShare = Number(record.results?.[0]?.share ?? 50);
+    const canon = canonHeadRecord(power, minute);
+    let best = null;
+    for (const c of standing) {
+      const share = electorate ? +Math.min(100, 100 * votes / electorate + candidateCharisma(c.actor)).toFixed(1) : 0;
+      c.share = share;
+      c.winnerShare = winnerShare;
+      c.winner = record.head || record.winner || null;
+      c.status = "lost"; // i18n-ignore: status id
+      if (!canon && share > winnerShare && (!best || share > best.share)) best = c;
+    }
+    if (!best) return;
+    best.status = "won"; // i18n-ignore: status id
+    best.winner = best.actor;
+    const rng = new PolRng(worldSeed() ^ nameHash("candidate:" + best.actor) ^ ((minute >>> 0) || 1));
+    const pol = makePolitician(power, rng, minute, { ideology: platform, spread: 0, partyId: null });
+    pol.name = best.actor;
+    pol.protected = true;
+    pol.playerActor = true;
+    pol._npcBlocked = "team"; // i18n-ignore: reason id
+    const previous = power.politicians[power.headId];
+    if (previous && previous.office === power.headTitle) previous.office = null;
+    power.headId = pol.id;
+    pol.office = power.headTitle;
+    recordHead(power, minute, pol, "elected");
+    record.results.unshift({ candidateId: pol.id, name: best.actor, partyId: null, share: best.share, player: true });
+    record.head = best.actor;
+    pushPowerEvent(power, minute, "election", "Politics.event.candidateWins", // i18n-ignore: event type
+      { name: best.actor, title: powerLabel(power, "headTitle"), share: best.share });
+  }
+
   window.NPCPolitics = {
     catchUp,
+    CANDIDACY_DEPOSIT,
+    upcomingElections,
+    standForElection,
+    withdrawCandidacy,
+    listCandidacies() { return ($gameSystem?._npcPolitics?.candidacies || []).slice(); },
+    // --- the party's own political party -----------------------------------
+    PLAYER_PARTY_ID,
+    MAX_PLAYER_TENETS,
+    PLAYER_TENETS,
+    playerParty,
+    hasPlayerParty() { return !!playerParty(); },
+    foundPlayerParty,
+    editPlayerParty,
+    enrollTeamInPlayerParty,
+    DEFAULT_PLAYER_FEE,
+    MAX_PLAYER_FEE,
+    FEE_CLASS_BOUNDS,
+    feeClass,
+    classAppeal,
+    weeklyTakings,
+    playerSupporters() { return livePlayerSupporters($gameSystem?._npcPolitics).slice(); },
+    SCOPE_KINDS,
+    scopeOptions,
+    partiesIn,
+    CAMPAIGN_INTENSITIES,
+    CAMPAIGN_DURATIONS,
+    projectCampaign,
+    launchCampaign,
+    listCampaigns() { return ($gameSystem?._npcPolitics?.campaigns || []).slice(); },
+    advancePlayerPolitics,
+    rollPlayerPartyName,
+    playerPartyPlatform,
+    cleanTenets,
+    tenetsClash(a, b) {
+      const ta = playerTenet(a), tb = playerTenet(b);
+      return !!(ta && tb && tenetsClash(ta, tb));
+    },
+    foundableCreeds,
+    isPlayerPartyMember(name) {
+      const party = playerParty();
+      return !!(party && name && party.members.includes(name));
+    },
+    reresolveCountry,
     policyAxes,
     policiesFor,
     listPowers() { return Object.keys($gameSystem?._npcPolitics?.powers || {}); },
@@ -2931,6 +4293,24 @@
         || a.name.localeCompare(b.name));
       return scored.slice(0, limit);
     },
+    // Creed and identity kept in step (CIVIC DRAW AND CREED SYNC section).
+    onCreedChanged,
+    // A voter who moved town (NPCLifeSim RELOCATION).
+    onRelocated,
+    rulingPlatformOf,
+    // The platform a power governs by, by the power's name (NPCLifeSim
+    // REFUGEES leans the Horde's integrated humans toward it), and a line in
+    // a power's own event log from outside the political simulation.
+    platformOfPower(powerName) {
+      const power = $gameSystem?._npcPolitics?.powers?.[canonicalFaction(powerName)];
+      return power ? rulingPlatform(power) : null;
+    },
+    logPowerEvent(powerName, minute, type, key, params) {
+      const power = $gameSystem?._npcPolitics?.powers?.[canonicalFaction(powerName)];
+      if (!power || !Array.isArray(power.events)) return false;
+      pushPowerEvent(power, minute, type, key, params);
+      return true;
+    },
     getSettlement(groupName) { return $gameSystem?._npcPolitics?.settlements?.[groupName] ?? null; },
     opinionModifier,
     getConversationContext,
@@ -2939,17 +4319,28 @@
     buildNPCProfile,
     // --- wiki lookup API ---------------------------------------------------
     // Exact-name (case-insensitive) search across every power's political class.
+    // Nations are searched after the powers: a nation's government is a polity
+    // exactly as a bloc's is, and its politicians are just as findable.
     findPolitician(name) {
       const state = $gameSystem?._npcPolitics;
       if (!state) return null;
       const target = String(name || "").trim().toLowerCase();
       if (!target) return null;
-      for (const power of Object.values(state.powers || {})) {
+      for (const power of allPolities(state)) {
         for (const pol of Object.values(power.politicians || {})) {
           if (String(pol.name).toLowerCase() === target) return { power, pol };
         }
       }
       return null;
+    },
+    // A nation's own government (created the first time somebody from it
+    // exists, see ensureNation), or null.
+    getNation(name) { return $gameSystem?._npcPolitics?.nations?.[name] ?? null; },
+    listNations() { return Object.keys($gameSystem?._npcPolitics?.nations || {}); },
+    // A power by name, or failing that a nation: the one lookup for "the
+    // polity called this", whichever kind it is.
+    getPolity(name) {
+      return this.getPower(name) || this.getNation(name);
     },
     getPolitician(powerName, polId) {
       return this.getPower(powerName)?.politicians?.[polId] ?? null;
@@ -2958,7 +4349,7 @@
       return this.getPower(powerName)?.headHistory ?? [];
     },
     getPartyOf(powerName, partyId) {
-      const power = this.getPower(powerName);
+      const power = this.getPolity(powerName);
       return power ? (power.parties.find(p => p.id === partyId) || null) : null;
     },
     // Exact-id search across every power's parties, for the wiki's party page
@@ -2966,7 +4357,7 @@
     findParty(partyId) {
       const state = $gameSystem?._npcPolitics;
       if (!state || !partyId) return null;
-      for (const power of Object.values(state.powers || {})) {
+      for (const power of allPolities(state)) {
         const party = power.parties.find(p => p.id === partyId);
         if (party) return { power, party };
       }
@@ -2977,8 +4368,8 @@
     listAllParties() {
       const state = $gameSystem?._npcPolitics;
       const out = [];
-      for (const power of Object.values(state?.powers || {})) {
-        for (const party of power.parties) out.push({ party, powerName: power.name });
+      for (const power of (state ? allPolities(state) : [])) {
+        for (const party of power.parties) out.push({ party, powerName: power.name, kind: power.kind || "power" }); // i18n-ignore: polity kind id
       }
       return out;
     },
@@ -2996,6 +4387,26 @@
       return out;
     },
     politicianAgeOf(pol) { return politicianAge(pol, nowMinuteVar()); },
+    // --- the place and its office holders (REAL POLITICIANS, THE PLACE) ------
+    describePlace,
+    electedOf,
+    isLivePolity,
+    roleLabel,
+    // [{ name, role, office, polId, person, main }] for one polity.
+    officeHoldersOf(polity) {
+      const reg = $gameSystem?._npcPolitics?.realPoliticians || {};
+      return officeHoldersOf(polity).map(({ pol, role }) => ({
+        name: pol.name, role, office: roleLabel(role, polity), polId: pol.id,
+        person: !!(pol.npcName && reg[pol.npcName] && !reg[pol.npcName].gone),
+        main: isMainPlayer(pol),
+      }));
+    },
+    // The office holders the world has made into people: name -> entry.
+    realPoliticians() { return $gameSystem?._npcPolitics?.realPoliticians || {}; },
+    // Called by NPCLifeSim.killNpc: a person who held an office leaves it.
+    onPersonDied,
+    holdsStateOffice,
+    REAL_POL, OFFICE_JOBS,
     electionLabelOf(powerName) {
       const power = this.getPower(powerName);
       return power ? labelOf(power) : T("Politics.election.parliamentary");
@@ -3012,16 +4423,43 @@
     // test/inspection hooks
     _internals: {
       PolRng, nameHash, sampleCount, dateStrOf, yearOf, clamp,
-      AXES, ARCHETYPES, FALLBACK_ARCHETYPE, FACTION_ALIASES, RATES, NPC_RATES,
+      AXES, RATES, NPC_RATES,
       ideologyDistance, jitterIdeology, discoverHyperpowers, collectPopulation,
       resolveElection, resolveGroupPolity, policyTargets, labelOf,
       LOCAL_OFFICES, LOCAL_OFFICE_LABELS,
+      ensureIdentity, civicDraw, realignCreed, rulingPlatform, getState,
+      simulateIdentitiesChunk,
+      CIVIC_MIX, PARTY_HYSTERESIS, REALIGN_GAP,
+      syncRealPoliticians, materialise, isMainPlayer, seatGroupOf, killPolitician,
+      signalledCountry, resolveLocalElection, LOCAL_RETRY_DAYS, onRelocated,
     },
   };
+
+  // Party drift and the hand-made party moves (PARTY DRIFT section).
+  Object.assign(window.NPCPolitics, {
+    DRIFT_FLOOR, DRIFT_WARN,
+    partyDriftChance, ballotOf, switchParty, reconsiderParty, actorPartyStanding,
+    driftFromParty(npcName, days, rng) {
+      const state = $gameSystem?._npcPolitics;
+      const identity = state?.identities?.[npcName];
+      if (!identity) return null;
+      const minute = nowMinuteVar();
+      return driftFromParty(npcName, identity, state.powers?.[identity.power],
+        rng || new PolRng(worldSeed() ^ nameHash("driftHand:" + npcName) ^ ((minute >>> 0) || 1)), minute, days);
+    },
+  });
 
   // ==========================================================================
   // ENGINE HOOKS (guarded so the module stays loadable outside RMMZ for tests)
   // ==========================================================================
+
+  // A nation that changes hands in the chronicle takes its towns and its
+  // people with it (HistorySimulator loads first, so its hook is there).
+  if (typeof window !== "undefined" && window.HistoryManager?.onNationChange) {
+    window.HistoryManager.onNationChange((change) => {
+      try { reresolveCountry(change && change.country); } catch (e) { console.warn("[NPCPolitics] reresolveCountry", e); }
+    });
+  }
 
   // World initialization: the powers, their political classes and every
   // settlement's local politics are bootstrapped when the world is made, so a
@@ -3115,5 +4553,29 @@
 
     console.log("[NPCPolitics] Loaded, hyperpower politics & elections active.");
   }
+
+  // ==========================================================================
+  // FAMILY NAMESPACE (NPCPolitics_*.js)
+  // ==========================================================================
+  // The data tables (archetypes, party rosters, name banks) live in
+  // NPCPolitics_Data.js, listed in js/plugins.js right after this file. It
+  // reads what it needs off NPCPolitics._internal, publishes its tables there
+  // and binds the names this file reads late once it is in.
+
+  window.NPCPolitics._internal = { _late: [] };
+  Object.assign(window.NPCPolitics._internal, {
+    getCountries, getProfile, nameHash, norm, PolRng, worldSeed,
+  });
+
+  // Owned by modules that load after this one, bound once the family is in.
+  let
+    ARCHETYPES, FACTION_ALIASES, FALLBACK_ARCHETYPE, governedTowerWorlds, homeCountryOf,
+    isTowerPower, NAME_BANKS, nationalParties, OFFWORLD_POWERS, SEATED_ON_DAY_ONE,
+    towerArchetypeFor, towerWorldByPower;
+  window.NPCPolitics._internal._late.push(() => ({
+    ARCHETYPES, FACTION_ALIASES, FALLBACK_ARCHETYPE, governedTowerWorlds, homeCountryOf,
+    isTowerPower, NAME_BANKS, nationalParties, OFFWORLD_POWERS, SEATED_ON_DAY_ONE,
+    towerArchetypeFor, towerWorldByPower,
+  } = window.NPCPolitics._internal));
 
 })();

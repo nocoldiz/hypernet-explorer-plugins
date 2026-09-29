@@ -921,7 +921,7 @@
     "group": "topics",
     "order": 16830,
     "keyword": "Main menu",
-    "synonyms": [],
+    "synonyms": ["MENU"],
     "autoDetect": false,
     "title": "DialogueTopics.topicMainMenu.title",
     "description": "DialogueTopics.topicMainMenu.description",
@@ -1154,6 +1154,46 @@
     "synonyms": [],
     "title": "DialogueTopics.topicEuronymous.title",
     "description": "DialogueTopics.topicEuronymous.description",
+    "image": ""
+  },
+  "topicTritunnelWest": {
+    "type": "topic",
+    "group": "topics",
+    "order": 17050,
+    "keyword": "Tritunnel West",
+    "synonyms": [],
+    "title": "DialogueTopics.topicTritunnelWest.title",
+    "description": "DialogueTopics.topicTritunnelWest.description",
+    "image": ""
+  },
+  "topicHypermetroTrain": {
+    "type": "topic",
+    "group": "topics",
+    "order": 17060,
+    "keyword": "Hypermetro train",
+    "synonyms": [],
+    "title": "DialogueTopics.topicHypermetroTrain.title",
+    "description": "DialogueTopics.topicHypermetroTrain.description",
+    "image": ""
+  },
+  "topicEsotericShop": {
+    "type": "topic",
+    "group": "topics",
+    "order": 17070,
+    "keyword": "Esoteric shop",
+    "synonyms": [],
+    "title": "DialogueTopics.topicEsotericShop.title",
+    "description": "DialogueTopics.topicEsotericShop.description",
+    "image": ""
+  },
+  "topicBroomstick": {
+    "type": "topic",
+    "group": "topics",
+    "order": 17080,
+    "keyword": "broomstick",
+    "synonyms": [],
+    "title": "DialogueTopics.topicBroomstick.title",
+    "description": "DialogueTopics.topicBroomstick.description",
     "image": ""
   }
 }

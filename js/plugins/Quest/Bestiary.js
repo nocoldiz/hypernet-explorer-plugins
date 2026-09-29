@@ -865,7 +865,11 @@
                         `;
                         activeRates.forEach(obj => {
                             const valClass = obj.rate > 1.0 ? "weakness" : "resistance";
-                            const formattedRate = obj.rate + "x";
+                            // No multiplier reads as clearly as the word for
+                            // a blow that does nothing or heals.
+                            const formattedRate = obj.rate < 0 ? T('Bestiary.elementAbsorb')
+                                : obj.rate === 0 ? T('Bestiary.elementImmune')
+                                : obj.rate + "x";
                             affinitiesGridHTML += `
                                 <div class="affinity-row">
                                     <span class="affinity-name">${obj.name}</span>
@@ -1288,42 +1292,40 @@
                 return;
             }
 
-            // L1/R1 cycle the right-page detail tabs from anywhere in the scene
-            if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
-                const dir = Input.isTriggered('pageup') ? -1 : 1;
-                this._activeTab = (this._activeTab + dir + 3) % 3;
-                SoundManager.playCursor();
-                this.refreshUIBestiary();
+            // L1 / R1 turn the tabs of the page under the cursor: on the list
+            // they turn the Earth / Petrodemon / Rarity / Alien pockets, in the
+            // detail they turn the Lexicon / Anatomy / Extraction tabs.
+            const tabDir = window.UINav ? window.UINav.tabDir() : 0;
+            if (tabDir) {
+                if (this._activeArea === 'tabs') {
+                    this._activeTab = Math.max(0, Math.min(2, this._activeTab + tabDir));
+                    SoundManager.playCursor();
+                    this.refreshUIBestiary();
+                } else {
+                    const page = Math.max(0, Math.min(3, (this._pageTab || 0) + tabDir));
+                    this.switchBestiaryPageTab(page);
+                }
                 return;
             }
 
+            const dir = window.UINav ? window.UINav.navDir() : null;
             if (this._activeArea === 'list') {
-                if (Input.isRepeated('down')) {
-                    this._selectedIndex = (this._selectedIndex + 1) % this._monsterList.length;
-                    SoundManager.playCursor();
-                    this.refreshUIBestiary();
-
-                    // By index: the card moved onto is built only once the
-                    // window reaches it (UI/MenuVirtualList.js).
+                if (dir) {
+                    // The cards are drawn four to a row: the cursor follows the
+                    // drawn columns and never wraps into another one.
                     const viewport = document.getElementById("bestiary-list-viewport");
-                    if (viewport) window.MenuVirtualList.scrollToIndex(viewport, this._selectedIndex);
-                } else if (Input.isRepeated('up')) {
-                    this._selectedIndex = (this._selectedIndex - 1 + this._monsterList.length) % this._monsterList.length;
-                    SoundManager.playCursor();
-                    this.refreshUIBestiary();
-
-                    // By index: the card moved onto is built only once the
-                    // window reaches it (UI/MenuVirtualList.js).
-                    const viewport = document.getElementById("bestiary-list-viewport");
-                    if (viewport) window.MenuVirtualList.scrollToIndex(viewport, this._selectedIndex);
-                } else if (Input.isRepeated('left')) {
-                    this._activeArea = 'tabs';
-                    this._activeTab = 2; // Focus rightmost tab (Extraction) on left page
-                    SoundManager.playOk();
-                    this.refreshUIBestiary();
+                    const next = window.UINav.gridStep(this._selectedIndex, dir, this._monsterList.length, viewport || 1);
+                    if (next !== this._selectedIndex) {
+                        this._selectedIndex = next;
+                        SoundManager.playCursor();
+                        this.refreshUIBestiary();
+                        // By index: the card moved onto is built only once the
+                        // window reaches it (UI/MenuVirtualList.js).
+                        if (viewport) window.MenuVirtualList.scrollToIndex(viewport, this._selectedIndex);
+                    }
                 } else if (Input.isTriggered('ok')) {
                     this._activeArea = 'tabs';
-                    this._activeTab = 0; // Focus first tab (Lexicon) on left page
+                    this._activeTab = 0; // Focus the first detail tab (Lexicon)
                     SoundManager.playOk();
                     this.refreshUIBestiary();
                 } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
@@ -1331,19 +1333,19 @@
                     SoundManager.playCancel();
                 }
             } else if (this._activeArea === 'tabs') {
-                if (Input.isRepeated('right')) {
-                    // The tabs never hand focus back to the list: right wraps
-                    // around them and cancel leaves the book altogether.
-                    this._activeTab = (this._activeTab + 1) % 3;
-                    SoundManager.playCursor();
-                    this.refreshUIBestiary();
-                } else if (Input.isRepeated('left')) {
-                    this._activeTab = (this._activeTab - 1 + 3) % 3;
-                    SoundManager.playCursor();
-                    this.refreshUIBestiary();
+                if (dir === 'right' || dir === 'left') {
+                    const step = dir === 'right' ? 1 : -1;
+                    const next = Math.max(0, Math.min(2, this._activeTab + step));
+                    if (next !== this._activeTab) {
+                        this._activeTab = next;
+                        SoundManager.playCursor();
+                        this.refreshUIBestiary();
+                    }
                 } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
-                    this.popScene();
+                    // One level out: back to the creature list, not out of the book.
+                    this._activeArea = 'list';
                     SoundManager.playCancel();
+                    this.refreshUIBestiary();
                 }
             }
         }

@@ -288,7 +288,8 @@
         _Window_BattleLog_startAction_statReq.call(this, subject, action, targets);
         if (action && statReqFumble(action)) {
             const item = action.item();
-            const req = window.SkillStatReq.of(item);
+            // With two requirements the one furthest under is the one named.
+            const req = window.SkillStatReq.check(subject, item) || window.SkillStatReq.of(item);
             this.push('addText', T('Battle.statReq.fumble', {
                 actor: subject.name(),
                 skill: item.name,
@@ -408,8 +409,11 @@
         } else {
             val = _Game_Action_makeDamageValue_Piercing.call(this, target, critical);
         }
-        if (this._isPiercingPenetration) {
+        // Half of an absorbed or nullified hit is still absorbed or nullified.
+        if (this._isPiercingPenetration && val > 0) {
             val = Math.max(1, Math.round(val * 0.5));
+        } else if (this._isPiercingPenetration && val < 0) {
+            val = Math.min(-1, Math.round(val * 0.5));
         }
         return val;
     };
@@ -480,6 +484,9 @@
     // `<Scale: PSI>`, `<Scale: INT>`, etc.).
     // Standard Attack (Skill 1) dynamically reads the weapon's scaling tags to
     // evaluate damage formula based on the character's corresponding attributes.
+    // A weapon on DEX alone never reads STR; one on two stats splits the swing
+    // equally between them. Every firearm is on DEX, the heavy ones (minigun,
+    // HMG, anti-material rifle) on STR and DEX: tools/weapons/gen_firearm_scaling.js.
 
     // What a plain swing is worth. A normal attack costs nothing, needs no
     // resource and is available every single round, so it is the FLOOR of the
@@ -529,8 +536,14 @@
                 const scales = getWeaponScalingStats(a);
                 let statSum = 0;
                 let isMagicDef = true;
+                // The weapon's own attack power lands on STR (params[2]), so a
+                // stat other than STR is handed it back: a gun that scales on DEX
+                // alone still hits harder than an empty hand, and never through
+                // STR. With two stats each carries its half of it.
+                const weaponPower = (typeof a.weaponParamTotal === 'function') ? (a.weaponParamTotal(2) || 0) : 0;
 
                 scales.forEach(st => {
+                    if (!['STR', 'ATK', 'MIX', 'ARC'].includes(st)) statSum += weaponPower;
                     switch (st) {
                         case 'DEX':
                         case 'AGI':

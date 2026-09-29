@@ -1,0 +1,672 @@
+{
+  "_comment": "Cornice ideologica sopra la voce della personalità (NPCConversation II.9 CREED VOICE). Il credo di un NPC è ricondotto a una famiglia dai suoi assi (CreedVoice.ideologyFamily); alcuni credi hanno un gruppo speciale che vince sulla famiglia. flavour è un inciso libero; gli altri gruppi inquadrano un argomento. Ogni riga è una breve frase aggiunta dopo quanto già detto.",
+  "family": {
+    "left": {
+      "flavour": [
+        "{Questa città l'hanno costruita i lavoratori|I lavoratori hanno costruito tutto questo}, ricordalo.",
+        "{Solidarietà|Solidarietà, compagno}. È l'unica cosa che funziona.",
+        "I padroni {non perdono mai|non perdono} il sonno per niente di tutto questo."
+      ],
+      "politics": [
+        "Il parlamento è un circolo per i proprietari.",
+        "{Nazionalizzare|Mettere in mano comune}, tutto quanto."
+      ],
+      "work": [
+        "{Iscriviti al sindacato|Prendi la tessera del sindacato}, ti consiglio.",
+        "Ci pagano in briciole e lo chiamano salario."
+      ],
+      "war": [
+        "Guerra dei ricchi, sangue dei poveri.",
+        "I lavoratori di {enemy} non sono miei nemici."
+      ],
+      "family": [
+        "Una famiglia ha bisogno di un salario e di un ambulatorio gratuito, non di prediche.",
+        "Ogni bambino merita una scuola e un pasto caldo."
+      ],
+      "goblins": [
+        "Anche i goblin sono comandati da un capo e dai suoi compari.",
+        "L'Orda è quello che succede quando la forza possiede tutto."
+      ],
+      "money": [
+        "Il denaro è un furto con un sarto migliore.",
+        "{Affitti|Prezzi} su, salari fermi. Strano, eh."
+      ],
+      "elections": [
+        "Vota a sinistra, poi continua a organizzarti.",
+        "Chiunque vinca, la cassa per lo sciopero resta piena."
+      ]
+    },
+    "centreLeft": {
+      "flavour": [
+        "Un patto equo per tutti, chiedo solo questo.",
+        "{Riforme|Riforme costanti}, non rivoluzione.",
+        "Buone scuole e una pensione decente. È chiedere troppo?"
+      ],
+      "politics": [
+        "Serve un governo che {ascolti|ascolti davvero}.",
+        "Compromesso non è una parolaccia."
+      ],
+      "work": [
+        "Paga giusta per una giornata giusta.",
+        "Un salario minimo non ha mai rovinato nessuno."
+      ],
+      "war": [
+        "Prima la diplomazia, sempre.",
+        "Mandate l'ONU, non i carri armati."
+      ],
+      "family": [
+        "{L'asilo|Il congedo parentale} dovrebbe essere un diritto.",
+        "Una famiglia non dovrebbe scegliere tra affitto e pane."
+      ],
+      "goblins": [
+        "Dovremmo accogliere i profughi dell'Orda.",
+        "I muri non fermano l'Orda. Le alleanze forse sì."
+      ],
+      "money": [
+        "Tassare un po' i ricchi, aiutare molto gli altri.",
+        "I servizi pubblici sono soldi ben spesi."
+      ],
+      "elections": [
+        "Ogni voto conta. Soprattutto il mio.",
+        "Le elezioni le vince l'affluenza, non gli slogan."
+      ]
+    },
+    "centre": {
+      "flavour": [
+        "{Guardiamo i numeri|I numeri non mentono mai}.",
+        "Moderazione in tutto.",
+        "Entrambe le parti hanno ragione, come al solito."
+      ],
+      "politics": [
+        "Gente competente al comando, voglio solo questo.",
+        "Meno urla, più programmazione."
+      ],
+      "work": [
+        "L'efficienza alla fine paga tutti.",
+        "Competenze. Formazione. Ecco la risposta."
+      ],
+      "war": [
+        "La guerra fa male al commercio e ancora peggio alla gente.",
+        "Prima le sanzioni, poi i negoziati."
+      ],
+      "family": [
+        "Alle famiglie serve stabilità più che discorsi.",
+        "La buona programmazione comincia al tavolo di cucina."
+      ],
+      "goblins": [
+        "Un confine stabile è un confine sensato.",
+        "L'Orda è un problema da gestire, non da urlare."
+      ],
+      "money": [
+        "Un bilancio in pareggio aiuta tutti.",
+        "I mercati funzionano, quasi sempre, con un arbitro."
+      ],
+      "elections": [
+        "Voterò chi ha un programma.",
+        "Leggete i programmi. Non lo fa nessuno."
+      ]
+    },
+    "right": {
+      "flavour": [
+        "{Il duro lavoro|Il duro lavoro e il buon senso} hanno costruito questo paese.",
+        "Si stava meglio quando ognuno sapeva stare al suo posto.",
+        "{La tradizione|La tradizione conta}. Qualcuno deve dirlo."
+      ],
+      "politics": [
+        "Meno stato, meno tasse.",
+        "Lo stato dovrebbe tenere il naso fuori dai miei affari."
+      ],
+      "work": [
+        "Nessuno si è mai arricchito aspettando sussidi.",
+        "Una giornata di lavoro onesto, ecco il segreto."
+      ],
+      "war": [
+        "La forza mantiene la pace.",
+        "Un esercito forte vuol dire che nessuno ci prova."
+      ],
+      "family": [
+        "La famiglia è il fondamento di tutto.",
+        "I bambini hanno bisogno di disciplina e della messa la domenica."
+      ],
+      "goblins": [
+        "Prima si chiude il confine, poi si fanno domande.",
+        "L'Orda rispetta una sola cosa: la forza."
+      ],
+      "money": [
+        "Le tasse sono un furto, riscosso con educazione.",
+        "Metti da parte i soldi. La banca di mamma e papà non dura."
+      ],
+      "elections": [
+        "Vota per l'ordine, non per le promesse.",
+        "Chiunque, tranne gli spendaccioni."
+      ]
+    },
+    "nationalist": {
+      "flavour": [
+        "{Prima la nostra nazione|La nazione viene prima}. Sempre.",
+        "La nostra bandiera ha visto di peggio.",
+        "Idee straniere, guai stranieri."
+      ],
+      "politics": [
+        "Serve una mano forte al vertice.",
+        "Basta chiacchiere. Guida."
+      ],
+      "work": [
+        "Il lavoro prima alla nostra gente.",
+        "Compra locale. I soldi restano qui."
+      ],
+      "war": [
+        "Ogni palmo della nostra terra è sacro.",
+        "Che venga {enemy}. Saremo pronti."
+      ],
+      "family": [
+        "Famiglie numerose fanno una nazione forte.",
+        "Insegnate ai bambini la nostra storia, tutta quanta."
+      ],
+      "goblins": [
+        "Nemmeno un goblin passa il nostro confine.",
+        "L'Orda si spezzerà contro di noi."
+      ],
+      "money": [
+        "I nostri soldi restano nelle nostre banche.",
+        "Gli speculatori stranieri ci stanno dissanguando."
+      ],
+      "elections": [
+        "Vota per la nazione, non per i partiti.",
+        "Un vero patriota sa dove mettere la croce."
+      ]
+    },
+    "theocratic": {
+      "flavour": [
+        "{Il cielo|I cieli} vegliano su questa strada.",
+        "Prima prega, poi agisci.",
+        "{La fede|La fede, amico}. Ti sostiene."
+      ],
+      "politics": [
+        "Nessuna legge sta sopra quella divina.",
+        "Il clero dovrebbe guidare lo stato."
+      ],
+      "work": [
+        "Il lavoro è una preghiera fatta con le mani.",
+        "Riposa nel giorno santo, qualunque cosa dica il capo."
+      ],
+      "war": [
+        "Che il cielo giudichi {enemy}.",
+        "Una guerra giusta si combatte con il cuore puro."
+      ],
+      "family": [
+        "Una casa benedetta è una casa felice.",
+        "I figli sono un dono dall'alto."
+      ],
+      "goblins": [
+        "L'Orda è pagana. Prega per loro, e sbarra la porta.",
+        "Anche i goblin hanno un'anima, dice il prete. Ne dubito."
+      ],
+      "money": [
+        "Prima la decima, poi la spesa.",
+        "L'oro non ti seguirà in paradiso."
+      ],
+      "elections": [
+        "Vota come ti dicono la coscienza e il parroco.",
+        "Il cielo non ha bisogno di schede, noi sì."
+      ]
+    },
+    "monarchist": {
+      "flavour": [
+        "{Viva|Dio salvi} la corona.",
+        "Una vera corte dà dignità a un paese.",
+        "Il sangue alla fine si vede."
+      ],
+      "politics": [
+        "I parlamenti vanno e vengono. La corona resta.",
+        "Un re al di sopra dei partiti, questa è stabilità."
+      ],
+      "work": [
+        "Servi bene e sarai ricompensato.",
+        "Il brevetto reale sulla porta, questa è qualità."
+      ],
+      "war": [
+        "Per la corona e le antiche insegne.",
+        "La guardia reale sistemerà {enemy}."
+      ],
+      "family": [
+        "Le buone famiglie custodiscono buone stirpi.",
+        "Ogni famiglia dovrebbe conoscere il proprio stemma."
+      ],
+      "goblins": [
+        "Nessun capo goblin siederà mai su un trono.",
+        "L'Orda non ha nobiltà, solo bruti."
+      ],
+      "money": [
+        "I soldi antichi sanno come comportarsi.",
+        "La zecca reale non mente mai."
+      ],
+      "elections": [
+        "Eleggete chi volete. La corona resta.",
+        "Votare è una cortesia che la corona concede."
+      ]
+    },
+    "anarchist": {
+      "flavour": [
+        "{Né dio né padroni|Nessun padrone}.",
+        "Nessuno ha bisogno di un capo per essere onesto.",
+        "{Mutuo soccorso|Aiuta il tuo vicino}. La società è solo questo."
+      ],
+      "politics": [
+        "Ogni governo è una banda con le scartoffie.",
+        "Brucia il regolamento, tieni la gentilezza."
+      ],
+      "work": [
+        "I consigli dei lavoratori lo gestirebbero meglio in una settimana.",
+        "Il mio capo produce solo promemoria."
+      ],
+      "war": [
+        "Le loro guerre, i nostri morti.",
+        "Disertate, tutti quanti. Andate a casa."
+      ],
+      "family": [
+        "Le famiglie si scelgono quanto si ereditano.",
+        "Crescere i figli liberi, non obbedienti."
+      ],
+      "goblins": [
+        "L'Orda e lo stato hanno lo stesso capo.",
+        "Liberate anche i goblin dai loro capi."
+      ],
+      "money": [
+        "Il denaro è un guinzaglio.",
+        "Dividetelo e vediamo chi muore di fame."
+      ],
+      "elections": [
+        "Se votare cambiasse qualcosa, lo vieterebbero.",
+        "Annullo la scheda. Di nuovo."
+      ]
+    },
+    "militarist": {
+      "flavour": [
+        "{La disciplina|Disciplina e ordine}, ecco cosa manca.",
+        "La vita da soldato ti insegna tutto.",
+        "Stai dritto quando mi parli."
+      ],
+      "politics": [
+        "I generali lo gestirebbero meglio.",
+        "Il parlamento parla, l'esercito agisce."
+      ],
+      "work": [
+        "Ogni lavoro è più facile con un sergente istruttore.",
+        "Puntuale, lucidato, pronto."
+      ],
+      "war": [
+        "Vittoria su {enemy}, a qualunque costo.",
+        "L'esercito finirà il lavoro."
+      ],
+      "family": [
+        "I miei figli serviranno, come ho fatto io.",
+        "Una casa va avanti con la disciplina."
+      ],
+      "goblins": [
+        "Datemi un battaglione e l'Orda è storia.",
+        "I goblin combattono sporco. Dovremmo farlo anche noi."
+      ],
+      "money": [
+        "Prima si spende per l'esercito.",
+        "Il bilancio della difesa, l'unico che conti."
+      ],
+      "elections": [
+        "Vota chi finanzia l'esercito.",
+        "Un generale sulla scheda, ecco cosa ci vuole."
+      ]
+    },
+    "mystic": {
+      "flavour": [
+        "Le stelle {sono inquiete|si sono spostate} stanotte.",
+        "{Le linee di forza vibrano|Tutto è collegato}.",
+        "Ci sono forze di cui nessuno parla."
+      ],
+      "politics": [
+        "I governi sorgono e cadono con la luna.",
+        "Il consiglio si riunisce sotto il segno sbagliato."
+      ],
+      "work": [
+        "I tarocchi dicevano che questo lavoro non sarebbe durato.",
+        "Lavora con intenzione, il resto segue."
+      ],
+      "war": [
+        "{enemy} è nato sotto un cattivo segno.",
+        "I presagi erano chiari, e nessuno ha ascoltato."
+      ],
+      "family": [
+        "Mia nonna ci leggeva il futuro nelle foglie del tè.",
+        "Ogni famiglia ha uno spirito guardiano."
+      ],
+      "goblins": [
+        "L'Orda porta con sé un'antica maledizione.",
+        "Gli sciamani goblin sanno cose che abbiamo dimenticato."
+      ],
+      "money": [
+        "Il denaro scorre come le maree.",
+        "Una moneta trovata a faccia in su è un segno."
+      ],
+      "elections": [
+        "Vota quando la luna è crescente.",
+        "Le rune favoriscono lo sfavorito."
+      ]
+    },
+    "horde": {
+      "flavour": [
+        "{Il forte mangia per primo|I forti mangiano per primi}. È la legge.",
+        "Rumorosi e fieri, così si fa.",
+        "{Waaagh|Ah}! Bella giornata per questo."
+      ],
+      "politics": [
+        "Il capo più grosso fa le regole.",
+        "Parlare è da perdenti. Urlare è da capi."
+      ],
+      "work": [
+        "Lavora sodo, combatti più sodo.",
+        "Il bottino è una paga onesta."
+      ],
+      "war": [
+        "Schiacciate {enemy}! Prendete la loro roba!",
+        "La guerra è la festa migliore."
+      ],
+      "family": [
+        "Tanti piccoli, clan grande.",
+        "Prima il clan, sempre."
+      ],
+      "goblins": [
+        "L'Orda è famiglia.",
+        "I goblin sanno come vivere."
+      ],
+      "money": [
+        "Le cose luccicanti sono per i forti.",
+        "Prendilo, ora è tuo."
+      ],
+      "elections": [
+        "Votare? Basta un pugno all'altro.",
+        "Vince il più grosso. Semplice."
+      ]
+    },
+    "alien": {
+      "flavour": [
+        "{Affascinante|Che pittoresche}, queste usanze locali.",
+        "Sul mio mondo questo sarebbe un saluto.",
+        "La vostra specie {dorme|mangia} così spesso."
+      ],
+      "politics": [
+        "I vostri governi sono adorabili.",
+        "Un pianeta, tante bandiere. Inefficiente."
+      ],
+      "work": [
+        "Scambiate il vostro tempo con gettoni. Curioso.",
+        "Lavoro manuale? Che primitivo. Che grazioso."
+      ],
+      "war": [
+        "Combattete per delle linee su una mappa.",
+        "{enemy} e voi condividete un pianeta. Condividetelo."
+      ],
+      "family": [
+        "I cuccioli umani sono così rumorosi e così fragili.",
+        "Le vostre famiglie sono così piccole."
+      ],
+      "goblins": [
+        "I goblin sono i più onesti tra voi.",
+        "L'Orda almeno dice cosa vuole."
+      ],
+      "money": [
+        "Carta che vuol dire cibo. Notevole.",
+        "La vostra economia è un'allucinazione collettiva."
+      ],
+      "elections": [
+        "Scegliete i capi contando fogli di carta. Delizioso.",
+        "Voterei, ma tecnicamente non sono di qui."
+      ]
+    }
+  },
+  "special": {
+    "juche": {
+      "flavour": [
+        "Autosufficienza {sopra ogni cosa|in tutto}.",
+        "Il Grande Leader aveva previsto questo giorno.",
+        "Non abbiamo bisogno di niente da nessuno."
+      ],
+      "politics": [
+        "Il Partito e il popolo sono un solo cuore.",
+        "Solo la linea del Leader è corretta."
+      ],
+      "work": [
+        "Ogni turno è una battaglia per la rivoluzione.",
+        "La quota sarà superata, come sempre."
+      ],
+      "war": [
+        "Songun: prima l'esercito, poi tutto il resto.",
+        "{enemy} trema davanti alla nostra determinazione."
+      ],
+      "family": [
+        "Ogni famiglia appende con orgoglio il ritratto del Leader.",
+        "I nostri bambini cantano per il Leader prima di colazione."
+      ],
+      "goblins": [
+        "Anche l'Orda potrebbe imparare l'autosufficienza da noi.",
+        "Goblin? Le nostre guardie di confine non batterebbero ciglio."
+      ],
+      "money": [
+        "Coltiviamo il nostro riso e costruiamo i nostri trattori.",
+        "Il denaro straniero corrompe lo spirito rivoluzionario."
+      ],
+      "elections": [
+        "Un candidato, un cuore, il cento per cento.",
+        "L'affluenza sarà totale. Lo è sempre."
+      ]
+    },
+    "orthodox_communist": {
+      "flavour": [
+        "Come dicono i classici, la storia ha le sue leggi.",
+        "{Compagno|Amico}, la dialettica non mente.",
+        "Il piano quinquennale è nei tempi."
+      ],
+      "politics": [
+        "La linea del Partito è chiara, e anche la mia coscienza.",
+        "I revisionisti saranno la rovina della rivoluzione."
+      ],
+      "work": [
+        "Stachanov l'avrebbe finito entro mezzogiorno.",
+        "Le norme esistono per essere superate."
+      ],
+      "war": [
+        "L'imperialismo finisce sempre in guerra. Leggetevi Lenin.",
+        "L'Armata Rossa ha respinto di peggio di {enemy}."
+      ],
+      "family": [
+        "Il collettivo cresce il bambino quanto i genitori.",
+        "Mio nonno ha costruito la fabbrica di trattori."
+      ],
+      "goblins": [
+        "L'Orda è feudalesimo con le zanne.",
+        "Anche i goblin hanno bisogno di un partito d'avanguardia."
+      ],
+      "money": [
+        "Il profitto privato è furto organizzato.",
+        "La banca di stato è la banca del popolo."
+      ],
+      "elections": [
+        "Elezioni borghesi, circo borghese.",
+        "Decidono i Soviet, non l'urna."
+      ]
+    },
+    "kemalist": {
+      "flavour": [
+        "Pace in patria, pace nel mondo.",
+        "{La scienza|La ragione e la scienza} sono le guide più vere.",
+        "La Repubblica poggia su sei frecce."
+      ],
+      "politics": [
+        "La religione resti fuori dallo stato.",
+        "La Repubblica va difesa, da ogni parte."
+      ],
+      "work": [
+        "Industria moderna, nazione moderna.",
+        "Ogni maestro di scuola è un soldato del progresso."
+      ],
+      "war": [
+        "L'esercito difende la Repubblica, non una fazione.",
+        "L'indipendenza non si negozia, {enemy} dovrebbe saperlo."
+      ],
+      "family": [
+        "Le nostre figlie studiano e votano, come è giusto.",
+        "Istruite i bambini, e la nazione seguirà."
+      ],
+      "goblins": [
+        "La superstizione genera orde. La ragione le ferma.",
+        "L'Orda è l'aspetto dell'arretratezza."
+      ],
+      "money": [
+        "Un'economia nazionale per un popolo nazionale.",
+        "Costruiamo le nostre ferrovie, i nostri mulini."
+      ],
+      "elections": [
+        "La scheda è il cuore della Repubblica.",
+        "Vota per la Repubblica, non per la moschea o per il pascià."
+      ]
+    },
+    "pacifist_theocratic": {
+      "flavour": [
+        "La pace sia con te, e con la tua casa.",
+        "{Porgi l'altra guancia|Perdona, e continua a perdonare}.",
+        "Nessuna lama ha mai guarito nessuno."
+      ],
+      "politics": [
+        "Governate con misericordia, o non governate affatto.",
+        "Il sacro consiglio proibisce ogni violenza."
+      ],
+      "work": [
+        "Il lavoro onesto è una preghiera silenziosa.",
+        "Dividi il raccolto con chi ha fame."
+      ],
+      "war": [
+        "Prego anche per i soldati di {enemy}.",
+        "Ogni guerra è un peccato contro il cielo."
+      ],
+      "family": [
+        "Una casa gentile cresce figli gentili.",
+        "Non alziamo mai la mano su un bambino."
+      ],
+      "goblins": [
+        "Anche l'Orda merita le nostre preghiere.",
+        "Sfama il goblin alla tua porta, e forse se ne andrà in pace."
+      ],
+      "money": [
+        "Dona con generosità. Il cielo tiene i conti.",
+        "La ricchezza è una prova, non un premio."
+      ],
+      "elections": [
+        "Voto per chi vuole meno soldati.",
+        "Prega prima di votare, e vota per la pace."
+      ]
+    },
+    "trolling_humans": {
+      "flavour": [
+        "{Lol|Eh}, umani.",
+        "Ho detto a un umano che aveva la scarpa slacciata. Non era vero.",
+        "Le vostre facce quando siete confusi. Impagabili."
+      ],
+      "politics": [
+        "L'ultima volta ho votato una patata. Ha quasi vinto.",
+        "I vostri parlamenti sono la mia commedia preferita."
+      ],
+      "work": [
+        "Ho spostato ogni pinzatrice dell'ufficio di due centimetri a sinistra.",
+        "Lavorare? Preferisco girare con l'aria indaffarata."
+      ],
+      "war": [
+        "La guerra è solo uno scherzo con modi peggiori.",
+        "Dite a {enemy} che il loro esercito ha gli stivali al contrario."
+      ],
+      "family": [
+        "I cuccioli umani sono i migliori da confondere.",
+        "Ho insegnato a un bambino che le nuvole sono pecore. Stupendo."
+      ],
+      "goblins": [
+        "I goblin non sono divertenti, rispondono agli scherzi.",
+        "Ho scambiato l'elmo di un goblin con una pentola. Non se n'è accorto."
+      ],
+      "money": [
+        "Pago con monete di tre paesi insieme.",
+        "Guardarvi contare il resto è il mio hobby."
+      ],
+      "elections": [
+        "Scriverò di nuovo 'la luna' sulla scheda.",
+        "Le elezioni sono la settimana migliore dell'anno per gli scherzi."
+      ]
+    },
+    "human_adoration_doctrine": {
+      "flavour": [
+        "{Gli umani sono così preziosi|Siete tutti così preziosi}.",
+        "Guarda che manine!",
+        "Ogni umano è un miracolo di carbonio."
+      ],
+      "politics": [
+        "I governi umani sono così sinceri. Li adoro.",
+        "Qualunque cosa decidano gli umani, la adoriamo."
+      ],
+      "work": [
+        "Gli umani che lavorano sodo mi fanno piangere di gioia.",
+        "I vostri attrezzi minuscoli! Meravigliosi!"
+      ],
+      "war": [
+        "Non fatevi del male, per favore. Per favore.",
+        "Dite a {enemy} che amiamo anche loro."
+      ],
+      "family": [
+        "I neonati umani sono la cosa più bella dell'universo.",
+        "Proteggerei i vostri figli con la mia vita."
+      ],
+      "goblins": [
+        "I goblin non sono umani, ma preghiamo lo stesso per loro.",
+        "L'Orda non deve toccare nemmeno un capello umano."
+      ],
+      "money": [
+        "Prendi le mie monete, umano, comprati qualcosa di bello.",
+        "Gli umani meritano ogni comodità."
+      ],
+      "elections": [
+        "Ogni voto umano è sacro.",
+        "Umani che scelgono i capi! Che coraggio."
+      ]
+    },
+    "goblin_evangelism": {
+      "flavour": [
+        "Il Grande Dio Goblin {ti vede|sta arrivando}.",
+        "Hai sentito la buona novella dell'Orda?",
+        "{Pentiti|Convertiti} ed entra nel clan."
+      ],
+      "politics": [
+        "Ogni trono si inginocchierà al vangelo goblin.",
+        "I capi regnano per diritto divino della sporcizia."
+      ],
+      "work": [
+        "Lavora per il clan, prega per il capo.",
+        "Il sudore è acqua santa."
+      ],
+      "war": [
+        "Guerra santa contro {enemy}, il dio lo esige.",
+        "Ogni conquista è una conversione."
+      ],
+      "family": [
+        "Cresci i tuoi piccoli nella fede goblin.",
+        "Un clan grande è un clan benedetto."
+      ],
+      "goblins": [
+        "I goblin sono il popolo eletto.",
+        "L'Orda è la mano del dio sulla terra."
+      ],
+      "money": [
+        "Paga la decima al santuario e prospera.",
+        "Il dio ama le offerte luccicanti."
+      ],
+      "elections": [
+        "Il dio ha già scelto.",
+        "Vota goblin, o sarai convertito."
+      ]
+    }
+  }
+}

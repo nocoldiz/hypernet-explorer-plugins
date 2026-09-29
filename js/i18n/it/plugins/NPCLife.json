@@ -1,4 +1,5 @@
 {
+  "refugeeCamp": "Campo profughi ({country})",
   "partsUnknown": "luoghi ignoti",
   "jobFallback": "Lavoro {id}",
   "moveReason": {
@@ -10,7 +11,9 @@
     "freshStart": "per ricominciare da capo",
     "cheapHousing": "attirato dagli affitti bassi",
     "fallingOut": "dopo una rottura",
-    "changeOfAir": "per cambiare aria"
+    "changeOfAir": "per cambiare aria",
+    "homecoming": "per tornare a casa",
+    "fledHorde": "in fuga dall'Orda dei Goblin"
   },
   "marital": {
     "married": "Sposato",
@@ -27,7 +30,16 @@
     "widowed": "vedovanza"
   },
   "event": {
+    "widowed": "è rimasto vedovo per la morte di {name}",
+    "died": "è morto",
+    "diedNatural": "è morto di cause naturali",
+    "diedIllness": "è morto di {illness}",
+    "takenInBy": "è stato accolto da {name}",
     "moved": "si è trasferito a {place}, {reason}",
+    "fled": "è fuggito dal dominio dell'Orda dei Goblin su {country}, verso {place}",
+    "survivorFear": "si è nascosto dai morti a {place} ed è sopravvissuto per raccontarlo",
+    "survivorFled": "è fuggito dai morti di {from}, verso {place}",
+    "returnedHome": "è tornato a casa a {place}, con {country} di nuovo libero dall'Orda dei Goblin",
     "convictedSentenced": "condannato per {crime} a {days} giorni",
     "convicted": "condannato per {crime}, {days} giorni di pena",
     "arrestedNotConvicted": "arrestato per {crime} ma mai condannato",
@@ -45,9 +57,68 @@
     "brokeUpWith": "si è lasciato con {name}",
     "wasAbandonedBy": "è stato abbandonato da {name}",
     "abandonedPartner": "ha abbandonato {name} senza voltarsi indietro",
+    "introduced": "ha conosciuto {name} grazie a {by} e ora si frequentano",
+    "sheltered": "ha trovato riparo in una casa a {place}",
     "startedSeeing": "ha iniziato a frequentare {name}",
     "bought": "ha comprato {item}",
-    "worldviewShifted": "la sua visione del mondo è cambiata"
+    "gotImplant": "si è fatto impiantare {augment} ({bodyPart})",
+    "gotProsthetic": "ha sostituito una parte persa ({bodyPart}) con {augment}",
+    "sickLeave": "ha preso {days} giorni di malattia per {illness}",
+    "parentalLeave": "ha preso {days} giorni di congedo parentale",
+    "fellIll": "ha contratto {illness}",
+    "fellIllFrom": "ha contratto {illness}, contagio da {name}",
+    "infidelityRevealed": "ha contratto {illness} da {name} e ha scoperto il tradimento",
+    "formedUnion": "ha stretto un'unione civile con {name}",
+    "arrangedMarriage": "ha sposato {name} in un matrimonio combinato dalle famiglie",
+    "formedBond": "ha stretto un legame queerplatonico con {name}",
+    "pregnant": "aspettava un figlio da {name}",
+    "childBorn": "ha accolto un figlio, {name}",
+    "childAdopted": "ha adottato un figlio, {name}",
+    "movedOut": "ha lasciato casa dopo la separazione da {name}",
+    "movedOutRough": "ha lasciato casa dopo la separazione da {name}, senza un posto dove andare",
+    "cameOfAge": "ha raggiunto la maggiore età",
+    "worldviewShifted": "la sua visione del mondo è cambiata",
+    "worldviewShiftedBy": {
+      "age": "con gli anni si è avvicinato a {creed}",
+      "wealth": "un cambio di fortuna lo ha portato a {creed}",
+      "job": "il suo mestiere lo ha portato a {creed}",
+      "prison": "è uscito di cella credendo in {creed}",
+      "partner": "si è avvicinato a {creed} insieme al partner",
+      "family": "si è avvicinato a {creed}, come gli è stato insegnato in famiglia",
+      "government": "il governo del momento lo ha portato a {creed}",
+      "friends": "gli amici lo hanno convinto di {creed}",
+      "war": "la guerra lo ha portato a {creed}",
+      "politics": "le sue idee politiche si sono indurite in {creed}"
+    },
+    "converted": "è stato convinto di {creed} da {by}",
+    "bandSetOut": {
+      "tower": "è partito per scalare la Torre Omega con la compagnia di {leader}",
+      "dungeon": "è sceso nel sottosuolo con la compagnia di {leader}",
+      "space": "è partito per esplorare lo spazio con l'equipaggio di {leader}"
+    },
+    "bandLost": {
+      "tower": "è caduto nella Torre Omega",
+      "dungeon": "si è perso nel sottosuolo",
+      "space": "si è perso nello spazio"
+    },
+    "bandBack": {
+      "plain": {
+        "tower": "è tornato dalla Torre Omega",
+        "dungeon": "è risalito dal sottosuolo",
+        "space": "è tornato dallo spazio"
+      },
+      "hurt": {
+        "tower": "è tornato dalla Torre Omega gravemente ferito",
+        "dungeon": "è risalito dal sottosuolo gravemente ferito",
+        "space": "è tornato dallo spazio gravemente ferito"
+      },
+      "rich": {
+        "tower": "è tornato dalla Torre Omega con un ricco bottino",
+        "dungeon": "è risalito dal sottosuolo con un ricco bottino",
+        "space": "è tornato dallo spazio con una ricca scoperta"
+      }
+    },
+    "accusedBy": "è stato accusato di {crime} da {by}"
   },
   "bio": {
     "noLife": "{name}: nessuna vita registrata.",
@@ -132,5 +203,37 @@
     "Tundra": "Tundra",
     "Underdark": "Sottosuolo",
     "Volcano": "Vulcano"
+  },
+  "animal": {
+    "event": {
+      "born": "{è nato|è venuto al mondo} {where}",
+      "bornTo": "{è nato da {mother}|è venuto al mondo accanto a {mother}} {where}",
+      "bornToBoth": "{è nato da {mother} e {father}|è venuto al mondo, piccolo di {mother} e {father},} {where}",
+      "weaned": "{è stato svezzato|si è staccato dalla madre|ha cominciato a cercarsi il cibo da solo}",
+      "firstLitter": "{ha avuto la prima cucciolata, {count} piccoli|ha partorito per la prima volta, {count} piccoli}",
+      "litter": "{ha avuto una cucciolata di {count}|ha dato alla luce {count} piccoli|ha messo al mondo altri {count} piccoli}",
+      "lostMate": "{ha perso il compagno, {name}|è rimasto senza {name}}",
+      "survivedPredator": "{è sopravvissuto a un predatore|è sfuggito a qualcosa che caccia|è scampato a un cacciatore}",
+      "fedBy": "{è stato nutrito da {name}|ha mangiato dalla mano di {name}}",
+      "soldTo": "{è stato venduto a {name}|è passato di mano, a {name}}",
+      "movedPen": "{è stato spostato {where}|è stato portato in un nuovo recinto, {where}}",
+      "grewOld": "{è invecchiato|ha rallentato con l'età|è arrivato alla vecchiaia}",
+      "diedAge": "{è morto di vecchiaia|è morto, vecchio e consumato}",
+      "diedHunger": "{è morto di fame|è morto di stenti}",
+      "diedIllness": "{è morto di malattia|è stato portato via da un male}",
+      "diedPredator": "{è stato ucciso da un predatore|è stato preso da qualcosa che caccia}",
+      "killedBy": "{è stato ucciso da {name}|è morto per mano di {name}}",
+      "adoptedAsPet": "{è stato adottato come animale da compagnia da {name}|è andato a vivere con {name} come animale da compagnia}",
+      "ownerLost": "{ha perso uno degli animali della fattoria ({animal})|ha perso un capo della fattoria ({animal})}"
+    },
+    "onFarm": "nella fattoria di {owner}",
+    "inPlace": "in {place}",
+    "inWild": "allo stato brado",
+    "stage": {
+      "newborn": "Neonato",
+      "young": "Giovane",
+      "adult": "Adulto",
+      "old": "Anziano"
+    }
   }
 }

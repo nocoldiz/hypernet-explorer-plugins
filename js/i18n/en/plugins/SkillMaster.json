@@ -727,5 +727,217 @@
     "mode": "Mode"
   },
   "lent": "LENT",
-  "lentBy": "Lent by {item}"
+  "lentBy": "Lent by {item}",
+  "help": {
+    "category": {
+      "title": "Skill schools",
+      "intro": "Every school of skills and magic the party can learn from.",
+      "items": {
+        "member": {
+          "name": "Companion tabs",
+          "text": "The pupil. Schools, progress and costs are shown for this member."
+        },
+        "skills": {
+          "name": "Skills",
+          "text": "Schools of physical skills, paid for in AP. A Primary or Secondary badge marks the pupil's own schools, which cost less Knowledge to learn from."
+        },
+        "magic": {
+          "name": "Magic",
+          "text": "Schools of spells, paid for in MP. Open a school to see its atlas of spells."
+        },
+        "rail": {
+          "name": "Bench buttons",
+          "text": "The column on the right edge: fuse spells, craft a spell or a skill, browse the magical systems, enchant weapons, equipment and books, write skill books and grimories, and hexorcize magical gear."
+        },
+        "help": {
+          "name": "? Help",
+          "text": "Opens this sheet. On a controller, press Select; press it again, Back or Confirm to close."
+        }
+      }
+    },
+    "atlas": {
+      "title": "The school atlas",
+      "intro": "The skills of one school, laid out as a map. Drag to pan, wheel to zoom.",
+      "items": {
+        "map": {
+          "name": "Atlas",
+          "text": "Each circle is a skill. A skill opens once the pupil knows one that borders it; locked ones say what they are waiting for."
+        },
+        "legend": {
+          "name": "Learned, Open, Locked",
+          "text": "Learned skills are known, open ones can be taught now for Knowledge, locked ones are still out of reach."
+        },
+        "progress": {
+          "name": "Progress",
+          "text": "How many of the school's skills the pupil has learned, and the Knowledge the party holds."
+        },
+        "detail": {
+          "name": "Skill card",
+          "text": "Cost, effect and description of the skill under the cursor. From here it can be taught, previewed, or carried into battle and left on the bench."
+        },
+        "member": {
+          "name": "Companion tabs",
+          "text": "Switches the pupil."
+        },
+        "help": {
+          "name": "? Help",
+          "text": "Opens this sheet. On a controller, press Select; press it again, Back or Confirm to close."
+        }
+      }
+    },
+    "spellEditor": {
+      "title": "Fusing spells",
+      "items": {
+        "dominant": {
+          "name": "Dominant spell",
+          "text": "Defines the damage and the targeting of the result. Magic only."
+        },
+        "recessive": {
+          "name": "Recessive",
+          "text": "A spell or a skill: it sets whether the result is a spell or a skill."
+        },
+        "animation": {
+          "name": "Animation",
+          "text": "The effect the new spell plays when cast."
+        },
+        "cost": {
+          "name": "Fusion cost",
+          "text": "MP and AP of both parts combined, plus Knowledge. Both parts are forgotten, and a fused spell can be split back apart later."
+        },
+        "fused": {
+          "name": "Fused spells",
+          "text": "Everything fused so far. Rename, split or delete one from here."
+        },
+        "help": {
+          "name": "? Help",
+          "text": "Opens this sheet. On a controller, press Select; press it again, Back or Confirm to close."
+        }
+      }
+    },
+    "craft": {
+      "title": "The workbench",
+      "items": {
+        "parts": {
+          "name": "Parts",
+          "text": "Effects, elements and formulas bought once each with Knowledge, then reused in every spell or skill written here."
+        },
+        "complexity": {
+          "name": "Complexity",
+          "text": "A permanent cost: it sets the MP or AP of every cast and the stat the writer must have."
+        },
+        "preview": {
+          "name": "Preview",
+          "text": "What the finished spell or skill will do, and what it will cost."
+        },
+        "write": {
+          "name": "Write",
+          "text": "Names the work and adds it to the pupil's own spells or skills."
+        },
+        "yours": {
+          "name": "Your spells and skills",
+          "text": "Everything written here so far. Edit or discard one from the list."
+        },
+        "help": {
+          "name": "? Help",
+          "text": "Opens this sheet. On a controller, press Select; press it again, Back or Confirm to close."
+        }
+      }
+    },
+    "enchant": {
+      "title": "Enchanting",
+      "items": {
+        "gear": {
+          "name": "Gear",
+          "text": "The weapon, equipment or book to bind a spell into. Only pieces the party carries are shown."
+        },
+        "spells": {
+          "name": "Spells",
+          "text": "The spells that can be bound. A weapon takes offensive and status spells, equipment protective ones, a book any spell."
+        },
+        "effect": {
+          "name": "What it does",
+          "text": "A weapon casts on every critical hit, equipment answers the first critical hit taken in a battle, a book casts when read out. None of them spend MP."
+        },
+        "bound": {
+          "name": "Bound so far",
+          "text": "The pieces already enchanted. Rename, unmake or recover a spell from them."
+        },
+        "help": {
+          "name": "? Help",
+          "text": "Opens this sheet. On a controller, press Select; press it again, Back or Confirm to close."
+        }
+      }
+    },
+    "writebook": {
+      "title": "Writing a book",
+      "items": {
+        "source": {
+          "name": "Pages",
+          "text": "The skills or spells the party already knows. Each one chosen becomes a page."
+        },
+        "chosen": {
+          "name": "Chosen pages",
+          "text": "What the volume will hold, and the Knowledge it costs to write."
+        },
+        "write": {
+          "name": "Write it",
+          "text": "Binds the pages into a book. It stays readable until every page has been read to somebody."
+        },
+        "written": {
+          "name": "Written so far",
+          "text": "Books already written. Rename, unmake or recover one from here."
+        },
+        "help": {
+          "name": "? Help",
+          "text": "Opens this sheet. On a controller, press Select; press it again, Back or Confirm to close."
+        }
+      }
+    },
+    "hexorcize": {
+      "title": "Hexorcizing",
+      "items": {
+        "pieces": {
+          "name": "Magical pieces",
+          "text": "Magical weapons and equipment the party carries. Take a piece off before unmaking it."
+        },
+        "worth": {
+          "name": "Worth",
+          "text": "The Knowledge each piece gives back once unmade."
+        },
+        "unmake": {
+          "name": "One or all",
+          "text": "Unmakes the piece under the cursor, or every copy held. The piece is gone for good."
+        },
+        "help": {
+          "name": "? Help",
+          "text": "Opens this sheet. On a controller, press Select; press it again, Back or Confirm to close."
+        }
+      }
+    },
+    "magicSystems": {
+      "title": "Magical systems",
+      "items": {
+        "map": {
+          "name": "Systems",
+          "text": "The ten systems magic is drawn from. The one marked as yours is the pupil's own."
+        },
+        "classes": {
+          "name": "Classes",
+          "text": "Which classes draw on the selected system."
+        },
+        "spells": {
+          "name": "Spells",
+          "text": "The spells of that system, and how many of them are known."
+        },
+        "lore": {
+          "name": "Lore",
+          "text": "What the system is and how rigorous it is."
+        },
+        "help": {
+          "name": "? Help",
+          "text": "Opens this sheet. On a controller, press Select; press it again, Back or Confirm to close."
+        }
+      }
+    }
+  }
 }

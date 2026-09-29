@@ -19,6 +19,28 @@
 (() => {
   "use strict";
 
+  // --- Blood and Oil switch ---
+  // Switch 9 is on for Hardcore AND Blood and Oil; switch 80 is on for Blood
+  // and Oil alone, so an event page can ask for it. It mirrors
+  // $gameSystem._bloodAndOilMode, which stays the one source of truth: every
+  // map start copies the flag over, so the difficulty picker, story mode and
+  // saves made before the switch existed all land on the right value.
+  const BLOOD_AND_OIL_SWITCH = 80;
+  function syncBloodAndOilSwitch() {
+    if (!window.$gameSwitches || !window.$gameSystem) return;
+    const on = !!$gameSystem._bloodAndOilMode;
+    if ($gameSwitches.value(BLOOD_AND_OIL_SWITCH) !== on) {
+      $gameSwitches.setValue(BLOOD_AND_OIL_SWITCH, on);
+    }
+  }
+  window.BloodAndOilSwitch = { id: BLOOD_AND_OIL_SWITCH, sync: syncBloodAndOilSwitch };
+
+  const _Scene_Map_start = Scene_Map.prototype.start;
+  Scene_Map.prototype.start = function () {
+    syncBloodAndOilSwitch();
+    _Scene_Map_start.call(this);
+  };
+
   const Scene_CharacterCreation = window.Scene_CharacterCreation;
   if (!Scene_CharacterCreation) return;
 

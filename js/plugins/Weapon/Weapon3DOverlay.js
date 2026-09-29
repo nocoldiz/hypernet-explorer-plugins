@@ -2813,4 +2813,7 @@
   window.WeaponHitFX = WeaponHitFX;
   window.WeaponTrail = WeaponTrail;
   window.WeaponThreeScene = WeaponThreeScene;
+  // A model let go of by its sprite but still on screen (the vector gun's
+  // fold, finishing as the new shape rises) is freed through the same call.
+  window.disposeWeaponObject3D = disposeWeaponObject3D;
 })();

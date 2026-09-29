@@ -1,0 +1,630 @@
+{
+  "_comment": "Context-driven NPC talk (NPCConversation II.8 LIFE TALK). Every pool here is picked only when its condition holds for the speaker: family, jobs, travel, wars, the Goblin Horde, elections, fights, games. Placeholders are filled from the speaker's life record before the {a|b} alternation is resolved; {a} and {b} in scripts are the two speakers.",
+  "thought": {
+    "familyPartner": [
+      "{I should bring|Maybe I'll pick up} something nice for {partner} on the way home.",
+      "{partner} {will|is going to} ask how my day went. {What do I even say|I'll make something up}.",
+      "{Wonder what|I bet} {partner} is doing right now.",
+      "Home to {partner} tonight. {That's the good part of the day|Best part of the day, honestly}."
+    ],
+    "familyPoly": [
+      "{partner} and {partner2} both want dinner at mine. {The calendar on the fridge is war|We need a bigger table}.",
+      "Three birthdays to remember now. {partner} would never forgive me for forgetting.",
+      "{partner} says {partner2} took the last of the coffee. {I am staying out of it|Not my fight}.",
+      "People ask how it works with {partner} and {partner2}. {Patience and a good calendar|Same as anyone, but louder}."
+    ],
+    "familyLongDistance": [
+      "{partner} is so far away. {Another letter tonight|I'll call when the rates drop}.",
+      "{Counting|Still counting} the days until I see {partner} again.",
+      "Long distance with {partner}. {The phone bill is a small tragedy|Worth every stamp}.",
+      "I kept the last postcard from {partner} in my {coat|wallet}."
+    ],
+    "familyAnniversary": [
+      "{years} years with {partner} this month. {Where did they go|Feels like last week}.",
+      "Anniversary coming. {I still have not bought anything|Flowers, maybe. Or a proper dinner}.",
+      "{years} years and {partner} still laughs at my jokes. {Mostly|Sometimes}.",
+      "I should book a table for {partner} and me. {years} years deserves it."
+    ],
+    "familyPregnant": [
+      "{The baby kicked again|Another kick}. {Someone is impatient|Hello to you too, little one}.",
+      "Everything aches and I {cannot stop smiling|am starving again}.",
+      "{partner} keeps asking if I need anything. {A new back, please|Pickles. Always pickles}.",
+      "Names. We still {do not|don't} have a name."
+    ],
+    "familyPartnerPregnant": [
+      "{partner} is expecting. {I am going to be a parent|A parent. Me}.",
+      "Need to paint the small room before the baby comes.",
+      "{partner} wants pickles at three in the morning. {I will find pickles|Where does one find pickles at three}.",
+      "{Am I ready for this|Nobody is ready for this}. {Deep breath|One day at a time}."
+    ],
+    "familyNewborn": [
+      "{child} woke up {four|five} times last night. {I have forgotten what sleep is|Coffee. Now}.",
+      "{child} grabbed my finger today and would not let go.",
+      "Nappies, bottles, nappies. {child} runs this house now.",
+      "{Is it normal|Surely it's normal} for {child} to cry this much? {I'll ask the doctor|Everyone says so}."
+    ],
+    "familyChildren": [
+      "{child} has a school play next week. {I must not forget|Front row, I promised}.",
+      "{child} asked me why the sky is blue. {I said magic|I said ask your teacher}.",
+      "Need to pick {child} up before the shops close.",
+      "{child} is growing so fast. {New shoes again|The trousers are already short}."
+    ],
+    "familyAdultChild": [
+      "{child} never calls. {Busy, I suppose|I'll write instead}.",
+      "{Proud of|So proud of} {child}. Not that I'd say it out loud.",
+      "{child} has their own life now. {Strange feeling|Quiet house}.",
+      "I wonder if {child} is eating properly."
+    ],
+    "familyParents": [
+      "I should visit {parent} this weekend.",
+      "{parent} would have something to say about this. {Always does|Never stops}.",
+      "{parent} is getting older. {I notice it more now|The stairs are harder for them}.",
+      "{parent}'s cooking. {Nothing beats it|I still can't make it the same}."
+    ],
+    "familySiblings": [
+      "{sibling} still owes me money. {Since school|For years now}.",
+      "Haven't seen {sibling} in a while. {Should call|Must write}.",
+      "{sibling} and I fought like cats as kids. {Now I miss it|Now we get on}.",
+      "{sibling} always was mother's favourite. {Fine|Whatever}."
+    ],
+    "familyBreakup": [
+      "{Still can't believe|Hard to believe} it's over with {ex}.",
+      "I keep setting two cups out. {Habit|Stupid habit}.",
+      "{ex} {took the good pan|kept the records}. {Fine|Of course they did}.",
+      "Maybe being alone {for a while|again} is not so bad."
+    ],
+    "familyWidowed": [
+      "{ex} would have liked today. {The weather was theirs|It was their kind of day}.",
+      "The house is so quiet without {ex}.",
+      "I still talk to {ex} sometimes. {Nobody needs to know|It helps}.",
+      "{ex}'s coat is still by the door. {I can't move it|Not yet}."
+    ],
+    "familyMovedOut": [
+      "New flat, {new walls|same me}. Moving out was {the right call|harder than it looked}.",
+      "I left the house to {ex}. {Boxes everywhere now|Half my things are still in boxes}.",
+      "First night in the new place. {Strange noises|The pipes knock}.",
+      "Starting again from a {spare room|single room}. {Could be worse|It's a start}."
+    ],
+    "familyPartnerAway": [
+      "{partner} is away on a trip. {The bed is too big|The house is too quiet}.",
+      "{partner} sent a postcard. {Wish I was there|Looks warm}.",
+      "{partner} back soon. {Must tidy up before then|Better hide the dishes}.",
+      "Cooking for one while {partner} is away. {Toast again|Soup again}."
+    ],
+    "familyParentalLeave": [
+      "Parental leave. {Harder than any shift|Nobody told me it was a double shift}.",
+      "Home with {child} all day. {Every day is Monday|I've learned every lullaby}.",
+      "Work feels like another life. {child} is my job now.",
+      "{A nap|Ten minutes of quiet}. That's all I ask."
+    ],
+    "familyRefugeeKin": [
+      "No letter from {kin} this month. {The camps have no post|I hope they're safe}.",
+      "{kin} fled the Horde with {nothing|one suitcase}. I should send money.",
+      "{kin} says the camp is cold at night. {I'll send blankets|I'll send a coat}.",
+      "When will {kin} be able to go home?"
+    ],
+    "kidNewborn": [
+      "*waaah*",
+      "*sniffle* *waaaah*",
+      "*gurgles*",
+      "*hiccups and cries*"
+    ],
+    "kidChild": [
+      "{I want|Can I have} an ice cream!",
+      "{parent} said I can play until dinner!",
+      "{I'm a dragon|I'm a knight}! {Rawr|Ha}!",
+      "{Is it|When is} my birthday {yet|soon}?",
+      "I don't want to go to school tomorrow.",
+      "{Look|Look look}! A {bug|beetle}!"
+    ],
+    "workSick": [
+      "Off work sick. {The ceiling and I are old friends now|Tea and blankets}.",
+      "{Doctor says rest|Rest, they said}. {Easier said than done|I'm bored already}.",
+      "Hope they're managing without me at work. {Probably fine|Probably not}.",
+      "{Coughing|Sniffling} through another day off."
+    ],
+    "workUnemployed": [
+      "Another day without work. {The papers have nothing|Nothing in the listings}.",
+      "Rent is due and {nothing|not a coin} coming in.",
+      "I used to complain about my job. {What I'd give|I'd take it back now}.",
+      "{Maybe|Perhaps} I should try another town. There's nothing here."
+    ],
+    "workAfterShift": [
+      "Shift done. {My feet|My back} {hate me|are finished}.",
+      "Another day at the {job}, another few coins.",
+      "{Glad|Thank goodness} that shift is over.",
+      "Tomorrow the {job} all over again. {Joy|Wonderful}."
+    ],
+    "travelAway": [
+      "{place} is lovely, but I miss my own bed.",
+      "{Must send|Should send} a postcard home from {place}.",
+      "Everything in {place} costs twice as much. {Tourist prices|Of course}.",
+      "A few more days in {place}, then home."
+    ],
+    "travelOnRoad": [
+      "{Still hours|Hours yet} until {place}. {My legs are stiff|Should have brought a book}.",
+      "On the road to {place}. {I hope the room is booked|Fingers crossed for the weather}.",
+      "{place} by nightfall, {if the road holds|with luck}.",
+      "Travel is ninety percent waiting."
+    ],
+    "travelEmigrate": [
+      "{Maybe it's time|It might be time} to leave {country} for good.",
+      "They say there's work abroad. {Nothing is keeping me here|What's left for me here}?",
+      "I've been looking at maps again. {Somewhere else|Anywhere else}.",
+      "If things don't improve by spring, I'm packing."
+    ],
+    "travelNewcomer": [
+      "Still getting used to this town. {The streets all look the same|I get lost every day}.",
+      "I miss home. {The food, mostly|The people, mostly}.",
+      "Nobody here knows my name yet. {That will change|Give it time}.",
+      "New town, new start. {Fingers crossed|Let's see}."
+    ],
+    "warOurs": [
+      "{We're at war with|Still fighting} {enemy}. {When will it end|How long this time}?",
+      "They're calling up more men against {enemy}. {I hope not my street|Not again}.",
+      "{power} and {enemy}. {More funerals|More ration cards}, that's all war brings.",
+      "Every news bulletin is about {enemy} now."
+    ],
+    "warFront": [
+      "{enemy} wants {country}. {They'll have to take it|Over my dead body}.",
+      "If the front moves, {country} is next. {I should pack a bag|Keep the cellar stocked}.",
+      "The guns over the border {kept me up|woke the dog} again.",
+      "{country} can't hold forever against {enemy}."
+    ],
+    "warFar": [
+      "{power} and {enemy} are at it again. {Far from here, thankfully|Glad it's not us}.",
+      "Saw the war news from {power}. {Terrible|Poor souls}.",
+      "{power} against {enemy}. {Prices will go up here too|It'll be in our bread prices by winter}.",
+      "Someone should stop {power} and {enemy} before it spreads."
+    ],
+    "warPeace": [
+      "Peace with {enemy}, finally. {I'll believe it when I see it|Let's hope it holds}.",
+      "The ONU actually did something. {First time for everything|Miracles happen}.",
+      "The soldiers are coming home from the {enemy} front.",
+      "A peace signed on paper. {Paper burns|Better than nothing}."
+    ],
+    "hordeFleeing": [
+      "We left {from} with {what we could carry|nothing but the coats on our backs}.",
+      "The goblins took {from}. {I can still hear the drums|I keep seeing the smoke}.",
+      "{Just keep walking|Keep moving}. Anywhere the Horde isn't.",
+      "Is anyone still left in {from}?"
+    ],
+    "hordeCamp": [
+      "Another night in the camp. {The tent leaks|The wind never stops}.",
+      "Queue for water, queue for bread. {Camp life|This is life now}.",
+      "The camp children play goblins and humans. {Humans always lose|I can't watch}.",
+      "{from} is only a few days away, and it might as well be the moon."
+    ],
+    "hordeSettled": [
+      "{We have|I have} a roof here now, but it isn't {from}.",
+      "People here are kind, mostly. {Some of them stare|Some of them don't}.",
+      "I still set my watch to {from} time.",
+      "One day I'll take the train back to {from}. {One day|Someday}."
+    ],
+    "hordeReturned": [
+      "Home in {from} again. {The house is still standing|Half the house is still standing}.",
+      "The goblins are gone from {from}. {Their smell isn't|The graffiti isn't}.",
+      "Back in {from}. {Neighbours I never thought I'd see again|Empty streets, but ours}.",
+      "Rebuilding {from}, brick by brick."
+    ],
+    "hordeIntegrated": [
+      "The goblins leave me be {if I pay the tithe|as long as I work}. {It's a life|Could be worse}.",
+      "I've learned enough Goblin to haggle. {They respect that|Mostly}.",
+      "The chief says humans are useful. {I intend to stay useful|Useful is safe}.",
+      "{Grubroot stew again|Beetle bread again}. You get used to it."
+    ],
+    "hordeUnder": [
+      "{country} belongs to the Horde now. {Keep your head down|Don't look them in the eye}.",
+      "Goblin banners on the town hall. {I can't get used to it|Every morning it's a shock}.",
+      "They say the Horde will be pushed out of {country}. {They say a lot|Who says}?",
+      "Curfew at dusk. The goblins like the dark."
+    ],
+    "hordeFear": [
+      "If the Horde comes over the border, {where do we even go|we run}.",
+      "Goblins spotted near the pass again. {I've locked the shutters|I sleep with a poker}.",
+      "My cousin says the Horde eats {horses|dogs}. {I believe it|Probably true}.",
+      "Every drum I hear, I think it's them."
+    ],
+    "playWon": [
+      "Won at {game}! {Drinks on me|Knew my luck would turn}!",
+      "{game}, and I beat it. {Still got it|Not bad at all}.",
+      "Beginner's luck at {game}? {Skill|Pure skill}.",
+      "That {game} win made my week."
+    ],
+    "playLost": [
+      "Lost at {game} again. {Rigged|It's rigged, I swear}.",
+      "{game} ate my money. {Never again|Until next time}.",
+      "I was so close at {game}. {So close|Almost}!",
+      "{game}: one, me: nothing."
+    ],
+    "fightFleeing": [
+      "{Run|Run, run, run}!",
+      "{Get away from me|Stay back}!",
+      "{Help|Somebody help}!",
+      "{Not today|Not me}, {monster|beast}!"
+    ],
+    "fightDowned": [
+      "*groans*",
+      "{Can't|Can't... get} up...",
+      "{Someone|Anyone}... help...",
+      "*coughs* {Everything hurts|Ow}..."
+    ],
+    "fightInjured": [
+      "My {arm|leg} still hurts from that {thing|brawl}.",
+      "{Bandages again|More bandages}. {Should see a healer|Should see a doctor}.",
+      "{Limping|Aching} all day. {Never again|Lesson learned}.",
+      "I'll have a scar from this one."
+    ],
+    "fightWitness": [
+      "{Did you see that|Did you see} fight? {Terrifying|Unbelievable}.",
+      "Monsters in the street again. {Where are the guards|Nobody's safe}.",
+      "{I'm keeping my distance|I'm staying well back}.",
+      "{Someone|Somebody} should call the guard!"
+    ],
+    "crimeWanted": [
+      "{Keep your head down|Walk normally}. {Nobody's looking|Nobody knows}.",
+      "Every uniform makes my stomach turn.",
+      "{Maybe|Perhaps} a new town and a new name.",
+      "That poster doesn't even look like me."
+    ],
+    "foodAte": [
+      "That {item} {hit the spot|was just what I needed}.",
+      "{Eating|Ate} {item} on the go again. {No time to sit|Busy day}.",
+      "{item}. Not a proper meal, but it'll do.",
+      "Could have done with a second {item}."
+    ],
+    "specHoned": [
+      "Getting better at {spec}. {Practice pays|All that practice}.",
+      "{spec} came easier today. {Finally|About time}.",
+      "Someone asked me for help with {spec}. Me!",
+      "I've got a knack for {spec}, it turns out."
+    ],
+    "creedDoubt": [
+      "Maybe the {creed} people have a point. {Just maybe|Don't tell anyone}.",
+      "I used to laugh at {creed}. {Now I'm not so sure|Now I'm reading their pamphlets}.",
+      "{Can't stop thinking|Keep thinking} about what they said about {creed}.",
+      "What if I've been wrong all along?"
+    ],
+    "electionSoon": [
+      "{days} days to the {election}. {party} or {rival}? {Still undecided|Hard call}.",
+      "{Posters everywhere|Leaflets in every letterbox}. The {election} is close.",
+      "{party} promises the moon again. {rival} promises it cheaper.",
+      "I'll vote. {I always vote|Somebody has to}. Just not sure for whom."
+    ],
+    "electionWeek": [
+      "The {election} is this week. {party} is ahead in the polls, they say.",
+      "{rival} could still pull it off. {Polls lie|The polls were wrong last time}.",
+      "Which polling station is mine? {Must check|The school, I think}.",
+      "Everybody's arguing about the {election}. {Even the baker|Even my mother}."
+    ],
+    "electionDay": [
+      "Voting day! {Queue at the school already|Off to the booth}.",
+      "Pencil, paper, cross. {Democracy|Done my bit}.",
+      "Voted. {Now the long wait|Now we wait for the count}.",
+      "{Polls close|The booths close} tonight. {Nervous|Can't settle}."
+    ],
+    "electionResult": [
+      "{winner} won the {election}. {Well|Here we go}.",
+      "Can't believe {winner} actually won.",
+      "{winner} in charge now. {Let's see what they do|Promises, promises}.",
+      "The count's done. {winner}. {Of course|Who else}."
+    ]
+  },
+  "script": {
+    "kinPartners": [
+      [[0, "{How was|How's} your day, {b}?"], [1, "{Long|Better now}. You?"], [0, "{Same|Better now you're here}."]],
+      [[0, "{Dinner at home tonight|Shall we cook together tonight}, {b}?"], [1, "Only if I'm not doing the dishes."], [0, "{Deal|We'll see}."]],
+      [[1, "{a}, you left the lights on again."], [0, "I left them on for you."], [1, "*laughs* {Smooth|Nice try}."]]
+    ],
+    "kinPartnersFight": [
+      [[0, "You never listen to me, {b}."], [1, "I'm listening right now!"], [0, "{Then hear me|No, you're waiting to talk}."], [1, "{Fine|Whatever you say}."]],
+      [[0, "Where were you last night?"], [1, "Out. {Is that a crime|Do I need a permit}?"], [0, "{Don't start|Unbelievable}."]],
+      [[1, "{The bills|The rent}, {a}. We need to talk about money."], [0, "{Not now|Not here}."], [1, "It's always not now!"]]
+    ],
+    "kinPartnersMakeUp": [
+      [[0, "{b}... about yesterday. I'm sorry."], [1, "{Me too|I'm sorry too}. I said things."], [0, "{Truce|Friends again}?"], [1, "*smiles* Truce."]],
+      [[1, "I brought you {flowers|pastries}. Peace offering."], [0, "{You know me too well|Accepted}."]],
+      [[0, "Let's not fight anymore, {b}."], [1, "Agreed. {At least until Tuesday|Until the next time}."]]
+    ],
+    "kinAnniversary": [
+      [[0, "{years} years, {b}. Can you believe it?"], [1, "{Feels like yesterday|Feels like a hundred}."], [0, "I'd do every one of them again."]],
+      [[1, "Happy anniversary, {a}."], [0, "You remembered! {I thought you'd forget|I booked a table}."], [1, "{years} years. Of course I remembered."]]
+    ],
+    "kinPregnancy": [
+      [[0, "How are you feeling, {b}?"], [1, "{Enormous|Like a whale}. And hungry."], [0, "I'll get you something. {Pickles|Anything}?"]],
+      [[0, "Have you thought of names?"], [1, "{A few|Too many}. You?"], [0, "I like {old family names|something simple}."], [1, "We'll argue about it later."]]
+    ],
+    "kinParentChild": [
+      [[0, "Did you finish your homework, {b}?"], [1, "{Almost|Yes}! Can I play now?"], [0, "{Half an hour|Until dinner}."], [1, "Yay!"]],
+      [[1, "{a}, {look|look look}, I found a {beetle|shiny stone}!"], [0, "{Lovely|Wow}! Don't put it in your mouth."], [1, "I won't!"]],
+      [[0, "Hold my hand when we cross, {b}."], [1, "I'm big now!"], [0, "Big kids hold hands too."]],
+      [[1, "Why is the sky blue, {a}?"], [0, "{Ask your teacher|Because it likes blue}."], [1, "That's not an answer!"]]
+    ],
+    "kinParentChildScold": [
+      [[0, "{b}! What did I say about running?"], [1, "Sorry..."], [0, "{No sweets tonight|Straight home after this}."]],
+      [[1, "I don't want to go home!"], [0, "{We're going now|Five more minutes, then home}."], [1, "*sulks*"]]
+    ],
+    "kinParentAdultChild": [
+      [[0, "Are you eating properly, {b}?"], [1, "Yes, {a}. {I'm an adult|Every day}."], [0, "You look thin."]],
+      [[1, "{a}, you should rest more."], [0, "I'll rest when I'm dead."], [1, "{Don't say that|That's what worries me}."]],
+      [[0, "When are you coming for Sunday lunch?"], [1, "{This week|Soon, I promise}."], [0, "You always say that."]]
+    ],
+    "kinSiblings": [
+      [[0, "Remember when we {broke the window|hid in the attic}, {b}?"], [1, "You blamed me!"], [0, "{You were smaller|It worked}."]],
+      [[0, "Called our mother lately?"], [1, "{Last week|Not yet}. You?"], [0, "{Yesterday|I'll do it tonight}."]],
+      [[1, "Still owe me that money, {a}."], [0, "{Which money|Put it on my account}."], [1, "*sighs*"]]
+    ],
+    "kinSiblingsSpat": [
+      [[0, "You always get your way, {b}."], [1, "Because I'm right!"], [0, "{Unbelievable|Typical}."]],
+      [[1, "It's my turn!"], [0, "It was your turn yesterday!"], [1, "{Liar|Was not}!"]]
+    ],
+    "kinNewborn": [
+      [[1, "*waaah*"], [0, "Shh, shh, {b}. I'm here."], [1, "*sniffle*"]],
+      [[1, "*gurgles*"], [0, "{Is that a smile|Was that a laugh}? {Clever little thing|Look at you}!"]],
+      [[0, "Time for your bottle, {b}."], [1, "*hiccups*"], [0, "{Slowly, slowly|Easy now}."]]
+    ],
+    "kidStranger": [
+      [[1, "Hello! {What's your name|Are you a giant}?"], [0, "{I'm {a}|Just a grown-up}. Where are your parents?"], [1, "Over there!"]],
+      [[0, "Careful where you run, little one."], [1, "{Sorry|I'm racing}!"]]
+    ],
+    "kidPlay": [
+      [[0, "{Tag|You're it}, {b}!"], [1, "No fair!"], [0, "*runs off laughing*"]],
+      [[0, "Let's play {knights|pirates}!"], [1, "I'm the {king|captain}!"], [0, "Then I'm the dragon!"]],
+      [[1, "Want to see my {marble|beetle}?"], [0, "{Woah|Cool}! Can I hold it?"], [1, "Careful!"]]
+    ],
+    "aboutPartner": [
+      [[0, "{partner} and I are {repainting the kitchen|planning a holiday}."], [1, "How's that going?"], [0, "{Four arguments so far|Better than expected}."]],
+      [[1, "How's {partner}, {a}?"], [0, "{Good|Busy, but good}. Always asking after you."], [1, "Give them my best."]],
+      [[0, "{partner} cooked last night. {Burned|Nearly burned} the house down."], [1, "*laughs* The thought counts."], [0, "The smoke alarm disagrees."]]
+    ],
+    "aboutPoly": [
+      [[0, "{partner} and {partner2} are fighting over the good armchair."], [1, "Who's winning?"], [0, "{The cat|Neither. I'm sitting in it}."]],
+      [[1, "Doesn't it get complicated, with {partner} and {partner2}?"], [0, "{Less than you'd think|Just more birthdays}."], [1, "I can barely manage one."]]
+    ],
+    "aboutChildren": [
+      [[0, "{child} lost another tooth yesterday."], [1, "Tooth fairy paying well?"], [0, "{Too well|Inflation}."]],
+      [[0, "{child} wants to be a {knight|astronaut} now."], [1, "Last week it was a baker."], [0, "Next week, who knows."]],
+      [[1, "How's school going for {child}?"], [0, "{Top marks in drawing|Trouble in arithmetic}."], [1, "{Takes after you|Takes after the other one}."]]
+    ],
+    "aboutNewborn": [
+      [[0, "{child} kept us up all night again."], [1, "{It gets easier|It gets easier. Eventually}."], [0, "When?"], [1, "{I'll tell you when I know|About eighteen years}."]],
+      [[1, "Congratulations on {child}!"], [0, "Thank you. {Tiny thing|Loud thing}. Wonderful."]]
+    ],
+    "aboutPregnancy": [
+      [[0, "We're expecting!"], [1, "{Congratulations|That's wonderful}! When?"], [0, "{Before winter|In a few months}."]],
+      [[1, "You look tired, {a}."], [0, "{partner} is expecting. Nobody sleeps."], [1, "Just wait until it arrives."]]
+    ],
+    "aboutBreakup": [
+      [[0, "{ex} and I split up."], [1, "{Oh no|I'm sorry}. You alright?"], [0, "{Getting there|Ask me next month}."]],
+      [[1, "Heard about you and {ex}."], [0, "News travels."], [1, "If you need a drink, I'm here."]]
+    ],
+    "aboutWidowed": [
+      [[0, "It's been hard since {ex} passed."], [1, "{I'm so sorry|They were a good soul}."], [0, "Thank you. The days are long."]],
+      [[1, "I think of {ex} often."], [0, "So do I. Every day."]]
+    ],
+    "aboutParents": [
+      [[0, "{parent} wants me over for Sunday lunch again."], [1, "Free food!"], [0, "Free food and forty questions."]],
+      [[1, "How's {parent} keeping?"], [0, "{Stubborn as ever|The knees are bad, the tongue is fine}."]]
+    ],
+    "aboutSiblings": [
+      [[0, "{sibling} borrowed my {bicycle|coat} and it's gone."], [1, "Siblings!"], [0, "{Never again|Every time}."]],
+      [[1, "Do you see {sibling} much?"], [0, "{Holidays|Funerals and weddings}."]]
+    ],
+    "aboutPartnerAway": [
+      [[0, "{partner} is away on a trip."], [1, "Enjoying the peace?"], [0, "{For a day|No, I miss them}."]],
+      [[1, "Where's {partner} these days?"], [0, "Travelling. Back soon."], [1, "Tell them to bring presents."]]
+    ],
+    "aboutRefugeeKin": [
+      [[0, "{kin} is in a camp since the Horde came."], [1, "That's terrible. Can you help?"], [0, "I send what I can."]],
+      [[1, "Any word from {kin}?"], [0, "{One letter|Nothing yet}. The post is slow from the camps."]]
+    ],
+    "aboutMovedOut": [
+      [[0, "I moved out. {New place|Tiny room}."], [1, "After {ex}?"], [0, "After {ex}. Fresh start."]],
+      [[1, "How's the new place?"], [0, "{The pipes knock|Quiet}. It's mine, at least."]]
+    ],
+    "topicWar": [
+      [[0, "Did you hear the news from the {enemy} front?"], [1, "{I try not to|Every day}. It's bad."], [0, "When will they stop?"], [1, "When the money runs out."]],
+      [[1, "They're drafting again for the war with {enemy}."], [0, "{My cousin got a letter|Not my boy, please}."], [1, "Nobody wants this war."]]
+    ],
+    "topicWarFront": [
+      [[0, "If {enemy} takes {country}, we're next."], [1, "{Don't say that|Keep your voice down}."], [0, "Somebody has to say it."]],
+      [[1, "I've packed a bag, just in case."], [0, "{Me too|Smart}. The front is too close."]]
+    ],
+    "topicElection": [
+      [[0, "Who are you voting for? {party} or {rival}?"], [1, "{Secret ballot|Not telling}."], [0, "{Coward|Fair enough}."]],
+      [[1, "{days} days left. {party} will win, you'll see."], [0, "{rival} has momentum."], [1, "Momentum isn't votes."]],
+      [[0, "Saw the {party} rally. Big crowd."], [1, "Free beer draws crowds."], [0, "*laughs* True."]]
+    ],
+    "topicElectionDay": [
+      [[0, "Voted yet?"], [1, "{This morning|On my way now}."], [0, "Me too. Let's see."]],
+      [[1, "Long queue at the booth."], [0, "Good. People care."]]
+    ],
+    "topicElectionResult": [
+      [[0, "{winner} won. {Can you believe it|Of course they did}."], [1, "{Give them a chance|Heaven help us}."], [0, "We'll see soon enough."]],
+      [[1, "So it's {winner}."], [0, "Four more years of complaining."], [1, "Some things never change."]]
+    ],
+    "topicUnemployed": [
+      [[0, "Still looking for work."], [1, "{Try the docks|Try the market}. They hire."], [0, "{I did|Tried}. Nothing."]],
+      [[1, "Any luck with the job hunt?"], [0, "{No|Not yet}. The savings are running out."], [1, "Something will turn up."]]
+    ],
+    "topicEmigrate": [
+      [[0, "I'm thinking of leaving {country}."], [1, "{And go where|Leaving? Really}?"], [0, "{Anywhere with work|Somewhere safer}."]],
+      [[1, "Everyone young is leaving."], [0, "{Can you blame them|Maybe me too}."]]
+    ],
+    "topicRefugee": [
+      [[0, "I came from {from} when the goblins took it."], [1, "{I'm sorry|I can't imagine}."], [0, "You learn to start again."]],
+      [[1, "Do you miss {from}?"], [0, "Every day. The bread, the river, all of it."]]
+    ],
+    "topicIntegrated": [
+      [[0, "The goblin overseer gave me a day off."], [1, "{Generous|Generous for a goblin}."], [0, "Don't let them hear that."]],
+      [[1, "How do you stand living under them?"], [0, "{Work hard, keep quiet|You adapt}."]]
+    ],
+    "topicHordeFear": [
+      [[0, "Goblins seen near the border again."], [1, "{Lock your doors|Keep the kids inside}."], [0, "Doors won't stop the Horde."]],
+      [[1, "If the Horde comes, where do we go?"], [0, "{West|Anywhere}. Fast."]]
+    ],
+    "topicTrip": [
+      [[0, "Just back from {place}."], [1, "How was it?"], [0, "{Expensive|Wonderful}. {Glad to be home|Want to go back}."]],
+      [[1, "Going anywhere nice?"], [0, "{place}, if the fares hold."]]
+    ],
+    "topicNewcomer": [
+      [[1, "You're new here, aren't you?"], [0, "{Just moved|Moved last season}."], [1, "Welcome. {The bakery on the corner is the best|Avoid the tavern pie}."]],
+      [[0, "Still finding my way around."], [1, "Takes a year. Then you're a local."]]
+    ],
+    "topicMinigame": [
+      [[0, "{Won|Lost} at {game} earlier."], [1, "{Lucky you|Bad luck}."], [0, "{Drinks on me|Never again}."]],
+      [[1, "You still playing {game}?"], [0, "{Only on Fridays|Too often}."]]
+    ],
+    "topicFight": [
+      [[0, "Did you see that monster?"], [1, "{I ran|I hid}. You?"], [0, "{Same|Faster than you}."]],
+      [[1, "You're hurt!"], [0, "{A scratch|Just bruises}. Should see the other thing."]]
+    ],
+    "topicSick": [
+      [[0, "I'm off work sick."], [1, "Get better soon!"], [0, "{Trying|Tell that to my throat}."]],
+      [[1, "You look pale."], [0, "{Fever|A bug}. Doctor's orders: rest."]]
+    ],
+    "topicParentalLeave": [
+      [[0, "On leave with the baby."], [1, "{Lucky|Tiring}?"], [0, "{Both|Tiring. So tiring}."]],
+      [[1, "Missing work?"], [0, "{Not the boss|Only the quiet}."]]
+    ],
+    "topicConversion": [
+      [[0, "I've been reading about {creed}."], [1, "{Careful|Them}? Really?"], [0, "They make sense, some of it."]],
+      [[1, "You sound different lately."], [0, "Maybe {creed} got to me."]]
+    ]
+  },
+  "ambient": {
+    "family": [
+      [[0, "{partner} says hi."], [1, "Tell them hi back."]],
+      [[0, "Must get home, {child} is waiting."], [1, "Go, go."]],
+      [[0, "Family dinner tonight."], [1, "{Lucky|Good luck}."]]
+    ],
+    "kids": [
+      [[0, "{Watch me|Look}!"], [1, "{Careful|Wow}!"]],
+      [[0, "Catch me!"], [1, "{Coming|Not fair}!"]]
+    ],
+    "war": [
+      [[0, "Any news from the front?"], [1, "Nothing good."]],
+      [[0, "Bread's up again. The war."], [1, "Always the war."]]
+    ],
+    "election": [
+      [[0, "Voting for {party}?"], [1, "{Maybe|Never}."]],
+      [[0, "Election's close."], [1, "{Don't remind me|Can't wait}."]]
+    ],
+    "work": [
+      [[0, "Still no work?"], [1, "{Nothing|Not a thing}."]],
+      [[0, "Heading to your shift?"], [1, "{Sadly|Always}."]]
+    ],
+    "horde": [
+      [[0, "Heard any drums?"], [1, "{Don't joke|Not tonight}."]],
+      [[0, "The goblins are restless."], [1, "Keep your head down."]]
+    ],
+    "emigrate": [
+      [[0, "Thinking of moving abroad."], [1, "{Take me with you|Good luck}."]],
+      [[0, "Nothing for us here."], [1, "{Maybe|Sadly true}."]]
+    ]
+  },
+  "mention": {
+    "partner": [
+      "{partner} would like you. {Everyone does|They like everybody}.",
+      "My {partner} is waiting at home. {Can't be long|Mustn't be late}.",
+      "{partner} and I have been together {years} years. {Still going|Still arguing about the thermostat}."
+    ],
+    "poly": [
+      "{partner} and {partner2} keep me busy. {Two anniversaries|Double the birthdays}.",
+      "I share a home with {partner} and {partner2}. {Loud house|Never lonely}."
+    ],
+    "longDistance": [
+      "{partner} lives far off. {Letters every week|The phone bill is shocking}.",
+      "I see {partner} only now and then. Makes every visit count."
+    ],
+    "anniversary": [
+      "{years} years with {partner} this month. {Don't let me forget flowers|I need a present}.",
+      "Our anniversary is soon. {partner} thinks I've forgotten."
+    ],
+    "pregnant": [
+      "The baby is due soon. {Can you tell|I'm enormous}.",
+      "{partner} and I are expecting. {Terrified|Thrilled}, in equal measure."
+    ],
+    "partnerPregnant": [
+      "{partner} is expecting. I'm going to be a parent!",
+      "We're painting the nursery. {partner} picked yellow."
+    ],
+    "newborn": [
+      "My little {child} is {only months old|brand new}. I haven't slept since.",
+      "{child} has the loudest cry in the street, I swear."
+    ],
+    "children": [
+      "My {child} is at school right now. {Hopefully learning something|Hopefully behaving}.",
+      "{child} wants to be just like you when they grow up. {Adventurers|Heroes}, the lot of you."
+    ],
+    "adultChild": [
+      "My {child} is all grown up. {Never calls, of course|Doing well for themselves}.",
+      "{child} left home last year. The house is so quiet."
+    ],
+    "parents": [
+      "My {parent} would talk your ear off. {Old stories|War stories}.",
+      "I look after {parent} these days. {They'd hate me saying so|Stubborn as a mule}."
+    ],
+    "siblings": [
+      "My {sibling} and I don't talk much. {Old quarrel|Long story}.",
+      "{sibling} would like you. {They love travellers|They'd ask a thousand questions}."
+    ],
+    "breakup": [
+      "{ex} and I split up. {Still sore|Don't ask}.",
+      "I'm single again since {ex}. {Taking it slow|Enjoying the quiet}."
+    ],
+    "widowed": [
+      "I lost {ex} a while back. {Some days are better|You carry it}.",
+      "{ex} would have liked you. They liked everybody."
+    ],
+    "partnerAway": [
+      "{partner} is away on a trip. {The house is too quiet|I'm eating toast every night}.",
+      "{partner} sends postcards from their trip. {Showing off|Rubbing it in}."
+    ],
+    "refugeeKin": [
+      "My {kin} fled the Horde. {They're in a camp now|I send what I can}.",
+      "If you pass the camps, ask for {kin}. Tell them I'm thinking of them."
+    ]
+  },
+  "greetKin": {
+    "partner": [
+      "{Hey|Hi}, {name}! {Love you|There you are}.",
+      "{name}! {Dinner at seven|Don't be late}!"
+    ],
+    "parent": [
+      "{Hi|Hello}, {name}!",
+      "{name}! {Can I come too|Wait for me}!"
+    ],
+    "child": [
+      "{There you are|Hello}, {name}. {Behaving|Staying out of trouble}?",
+      "{name}, {home by dinner|stay where I can see you}!"
+    ],
+    "sibling": [
+      "{Oi|Hey}, {name}!",
+      "{name}! {You still owe me|Call mum}!"
+    ]
+  },
+  "fallback": {
+    "partner": "my other half",
+    "child": "the little one",
+    "parent": "mum",
+    "sibling": "my brother",
+    "ex": "my ex",
+    "kin": "my cousin",
+    "enemy": "the enemy",
+    "power": "the powers",
+    "country": "this country",
+    "place": "the coast",
+    "from": "home",
+    "game": "the machines",
+    "item": "snack",
+    "spec": "my trade",
+    "creed": "that creed",
+    "party": "the government",
+    "rival": "the other lot",
+    "winner": "the new lot",
+    "election": "election",
+    "job": "job",
+    "years": "a few"
+  }
+}

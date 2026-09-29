@@ -47,22 +47,40 @@
         }
 
         updateUIInput() {
+            // L1 / R1 turn the two shelves, the timeline and the library.
+            const shelf = window.UINav ? window.UINav.tabDir() : 0;
+            if (shelf) {
+                this._navZone = "list";   // i18n-ignore: cursor zone id
+                this.setArchiveMode(shelf > 0 ? "diseases" : "timeline");   // i18n-ignore: shelf id
+                return;
+            }
             // The canon filter, which was a click and nothing else: the archive
-            // walks its entries with the stick and leaves with Confirm, so the
-            // one plate that narrows the list had no key of its own. SHIFT is
-            // the second verb on a book spread everywhere else in this game.
+            // walks its entries with the stick, so the one plate that narrows
+            // the list had no key of its own. SHIFT is the second verb on a
+            // book spread everywhere else in this game.
             if (Input.isTriggered('shift')) {
                 SoundManager.playCursor();
                 this.toggleFixedOnly();
+                this.paintNavZone();
                 return;
             }
-            if (Input.isTriggered('ok')) {
-                SoundManager.playOk();
-                this.popScene();
+            // The decade rail and the buttons under the dossier are rows the
+            // cursor steps into: left from the list reaches the rail, right
+            // reaches the buttons, and Cancel steps back out to the list.
+            if (this._navZone === "rail" || this._navZone === "actions") {
+                this.updateNavZone();
                 return;
             }
             if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
                 this.onCancel();
+                return;
+            }
+            const side = Input.isRepeated('left') ? "rail" : (Input.isRepeated('right') ? "actions" : null);
+            if (side && this.navZoneItems(side).length) {
+                this._navZone = side;
+                this._navZoneIndex = 0;
+                SoundManager.playCursor();
+                this.paintNavZone();
                 return;
             }
 
@@ -101,6 +119,68 @@
                     this._historyWindow.select(prev);
                     this.syncUIHistoryState();
                 }
+            }
+        }
+
+        // The controls of a cursor zone, in the order they are drawn.
+        navZoneItems(zone) {
+            const box = this._uiContainer || document.getElementById("history-container");
+            if (!box) return [];
+            const selector = zone === "rail" ? ".hist-rail .hist-decade" : ".inspect-actions [role=button]";
+            return Array.prototype.slice.call(box.querySelectorAll(selector));
+        }
+
+        paintNavZone() {
+            const box = this._uiContainer || document.getElementById("history-container");
+            if (!box) return;
+            box.querySelectorAll(".hist-rail .hist-decade, .inspect-actions [role=button]")
+                .forEach(el => el.classList.remove("focused"));
+            const zone = this._navZone;
+            if (zone !== "rail" && zone !== "actions") return;
+            const items = this.navZoneItems(zone);
+            const at = items[Math.max(0, Math.min(items.length - 1, this._navZoneIndex || 0))];
+            if (at) {
+                at.classList.add("focused");
+                if (at.scrollIntoView) at.scrollIntoView({ block: "nearest" });
+            }
+        }
+
+        updateNavZone() {
+            const zone = this._navZone;
+            const items = this.navZoneItems(zone);
+            const leave = () => {
+                this._navZone = "list";
+                this.paintNavZone();
+            };
+            if (!items.length) { leave(); return; }
+            const at = Math.max(0, Math.min(items.length - 1, this._navZoneIndex || 0));
+            if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+                SoundManager.playCancel();
+                leave();
+                return;
+            }
+            if (Input.isTriggered('ok')) {
+                // A decade chip jumps the list and hands the cursor back to it;
+                // the buttons act where they stand.
+                if (zone === "rail") leave();
+                items[at].click();
+                if (zone === "actions") this.paintNavZone();
+                return;
+            }
+            const dir = window.UINav ? window.UINav.navDir() : null;
+            if (!dir) return;
+            if (dir === "left" || dir === "right") {
+                const next = at + (dir === "right" ? 1 : -1);
+                if (next < 0 && zone === "actions") { SoundManager.playCursor(); leave(); return; }
+                if (next >= items.length && zone === "rail") { SoundManager.playCursor(); leave(); return; }
+                const clamped = Math.max(0, Math.min(items.length - 1, next));
+                if (clamped === at) return;
+                this._navZoneIndex = clamped;
+                SoundManager.playCursor();
+                this.paintNavZone();
+            } else if (zone === "rail" && dir === "down") {
+                SoundManager.playCursor();
+                leave();
             }
         }
 
@@ -312,10 +392,11 @@
                 container.id = "history-container";
                 document.body.appendChild(container);
             }
+            // A right click already reaches the scene as Cancel; here it only
+            // keeps the browser's own menu away, so one click backs out once.
             container.addEventListener('contextmenu', (ev) => {
                 ev.preventDefault();
                 ev.stopPropagation();
-                this.onCancel();
             });
         }
 

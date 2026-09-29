@@ -81,5 +81,16 @@
     "readOnly": "They belong to another journey. You can talk, and nothing more.",
     "join": "Ask them along"
   },
-  "towerWorldOfFloor": "{world}, floor {floor}"
+  "towerWorldOfFloor": "{world}, floor {floor}",
+  "streetCrime": {
+    "pickpocket": "{thief} picked {victim}'s pocket and got away with {amount}.",
+    "pickpocketCaught": "{victim} caught {thief} with a hand in their pocket!",
+    "pickpocketValuable": "{thief} lifted {item} off {victim}.",
+    "valuableRecovered": "{victim} took {item} back off {thief}.",
+    "fight": "{a} and {b} are fighting!",
+    "grudge": "{a} picked a fight with {b}.",
+    "knockedOut": "{winner} knocked {loser} out cold.",
+    "recovered": "{victim} took back what {thief} stole."
+  },
+  "bountyCollected": "Bounty collected on {name}: {amount}"
 }

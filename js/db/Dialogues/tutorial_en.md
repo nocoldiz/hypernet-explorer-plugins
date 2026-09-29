@@ -2687,3 +2687,18 @@ How honest?
 
 Bubba:
 Honest enough that nobody looks at your hands.
+
+
+------------------------------------------------------------------------------------------------------------
+m_animal_lives
+
+Animal lives
+
+Bubba:
+The animals out here live whole lives whether anyone watches or not. Born, grown, old, and a litter or two on the way.
+
+Em:
+And the ones on the farms?
+
+Bubba:
+Somebody feeds those. Leave yours alone long enough and nobody will.

@@ -407,6 +407,22 @@
     "topicEuronymous": {
       "title": "Euronymous",
       "description": "The member of Mahyem who survived Varg's knife. The brain trauma left him with acquired savant syndrome and one of the most powerful psionic minds alive. He walked away from the stage while the rest of the band went on living as gods, and nobody knows where he is now."
+    },
+    "topicTritunnelWest": {
+      "title": "Tritunnel West",
+      "description": "The western mouth of the Tritunnel, the bored crossing that runs under the sea between Britain and the continent. Drive the Camper south far enough and the road goes underground here; the far end opens in Belgium."
+    },
+    "topicHypermetroTrain": {
+      "title": "The Hypermetro",
+      "description": "A train that runs through tunnels which are not always where they were yesterday. It is the quick way to anywhere worth going, including the Omega Tower, and for some places it is the only lifeline to the rest of the world."
+    },
+    "topicEsotericShop": {
+      "title": "Esoteric Shop",
+      "description": "A shop for magical equipment, alchemistry kits, reagents and the occasional flying broomstick. Most of what it sells is made by Esoteric Heavy Industries, and nobody asks where the stock comes from."
+    },
+    "topicBroomstick": {
+      "title": "Broomstick",
+      "description": "A flying broom, made by Esoteric Heavy Industries and sold in esoteric shops. Em's last one was broken, along with several of her bones, when a tourist arc ship ran her over."
     }
   }
 }

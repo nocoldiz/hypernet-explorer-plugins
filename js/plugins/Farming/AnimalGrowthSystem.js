@@ -280,6 +280,15 @@
     $gameSelfSwitches.setValue([mapId, eventId, "A"], !hasAnimal);
   }
 
+  // A death world (NPCShared.WorldModes.hasAnimals) holds no animal at all: no
+  // farmstead stock is dealt, no pen is drawn, nothing ages or is born, and
+  // an authored animal slot stands empty. Read rather than cached, since the
+  // answer belongs to the world and a session can change worlds.
+  function animalsLive() {
+    const WMo = window.NPCShared && window.NPCShared.WorldModes;
+    try { return !WMo || typeof WMo.hasAnimals !== "function" || WMo.hasAnimals(); } catch (_) { return true; }
+  }
+
   function gameMinutes() {
     return ($gameVariables ? $gameVariables.value(GAME_TIME_VAR) : 0) || 0;
   }
@@ -715,6 +724,7 @@
 
   // Ages every stored animal (placements and event slots alike).
   function updateAllGrowth() {
+    if (!animalsLive()) return;
     for (const { rec } of allPlacements()) updateRecordGrowth(rec);
     const data = $gameSystem && $gameSystem._animalData;
     if (data) {
@@ -740,6 +750,10 @@
 
   function refreshMapAnimals() {
     if (!$gameMap || !$gameSystem) return;
+    if (!animalsLive()) {
+      for (const ev of $gameMap.events()) if (ev && isAnimalEvent(ev) && !ev._erased) ev.erase();
+      return;
+    }
     const mapId = $gameMap.mapId();
     for (const ev of $gameMap.events()) {
       if (!ev || !isAnimalEvent(ev)) continue;
@@ -1074,7 +1088,7 @@
   }
 
   function spawnFarmsteadAnimals() {
-    if (!isProceduralMap() || !$dataMap || !$gameMap) return;
+    if (!animalsLive() || !isProceduralMap() || !$dataMap || !$gameMap) return;
     const key = currentMapKey();
     const dealt = farmsteadDealt();
     if (dealt[key]) return;                      // this square has had its turn
@@ -1119,7 +1133,7 @@
   // Rebuilds every animal owned at the current map key. Called before the
   // spriteset builds its character sprites so the animals are drawn with it.
   function spawnPlacedAnimals() {
-    if (!$dataMap || !$gameMap) return;
+    if (!animalsLive() || !$dataMap || !$gameMap) return;
     const key = currentMapKey();
     // The procedural map keeps the same $dataMap object across world
     // coordinates, so the already-spawned list is scoped to the key it was
@@ -1153,7 +1167,7 @@
   // Build menu) so it can honour its own free-build rules.
   function placeAnimal(animalId, stage, x, y) {
     const def = ANIMAL_DB[animalId];
-    if (!def) return null;
+    if (!def || !animalsLive()) return null;
     const rec = newRecord(animalId, stage);
     if (!rec) return null;
     rec.uid = nextPlacementUid();
@@ -1782,7 +1796,11 @@
     const grown = Math.max(def.growthDays || 0, 1);
     const life = lifespanDaysOf(def);
     const ceiling = Math.max(grown + 1, Math.floor(life * 0.5));
-    const ageDays = baby ? 0 : grown + (seed % (ceiling - grown));
+    // One age for one animal: an animal NPC with a life already dealt
+    // (NPCLife_Animals) is exactly as old as that life says.
+    const lifeBorn = window.NPCLifeSim?.Animals?.bornMinuteOf?.(npcName);
+    const ageDays = (typeof lifeBorn === "number") ? Math.max(0, (now - lifeBorn) / MINUTES_PER_DAY)
+      : baby ? 0 : grown + (seed % (ceiling - grown));
 
     const produceTimers = {};
     if (!baby) {
@@ -1936,6 +1954,135 @@
     return found ? found.rec : null;
   }
 
+  // ============================================================
+  //  CARE BY THE TOWN'S PEOPLE (NPCSimulationCore SECTION 7)
+  // ============================================================
+
+  // The stock record behind a map event: a bought or farmstead animal, or a
+  // legacy "Animal" slot. An animal NPC dealt by the wardrobe is a person in
+  // the simulation, not livestock, so it answers null here.
+  function livestockBehind(event) {
+    if (!event) return null;
+    const placed = findPlacementByEvent(event);
+    if (placed) return placed;
+    const legacy = $gameMap ? getRecord($gameMap.mapId(), event.eventId()) : null;
+    return (legacy && legacy.animalId) ? legacy : null;
+  }
+
+  // Collects what an animal has ready for someone other than the party: the
+  // same batches the party's collection takes (the timers move on just the
+  // same), handed back to the caller at the animal's own yield instead of
+  // landing in the party's bag. The party's stock is never collected here.
+  function collectProduceFor(rec, def) {
+    if (!rec || !def || isPartyOwned(rec)) return [];
+    updateRecordGrowth(rec);
+    return checkProduce(rec, def, true)
+      .map(r => ({ itemId: r.itemId, qty: Math.max(1, r.qty) }));
+  }
+
+  // ============================================================
+  //  LIVES (NPCLife_Animals)
+  // ============================================================
+
+  // An animal's sex, dealt once off its uid (or its NPC name) and kept on the
+  // record. A breed whose sheets are all one sex (a hen, a rooster) says so.
+  const SEX_OF_BREED = { Chicken: "f", Rooster: "m" };  // i18n-ignore: breed ids and sex ids
+  function sexOf(rec) {
+    if (!rec) return null;
+    if (rec.sex === "f" || rec.sex === "m") return rec.sex;
+    rec.sex = SEX_OF_BREED[rec.animalId] ||
+      ((seedFrom(rec.npcName || ("uid" + rec.uid)) & 1) ? "f" : "m");
+    return rec.sex;
+  }
+
+  // A newborn of `animalId` beside its mother at `mapKey`: a new placement,
+  // owned by whoever owned the mother, born at `bornAt`. Spawned as an event
+  // at once when that map is the one loaded. Answers the record, or null.
+  function bornPlacement(mapKey, animalId, mother, bornAt) {
+    const def = ANIMAL_DB[animalId];
+    if (!def || !mother || !animalsLive()) return null;
+    const rec = newRecord(animalId, def.hasBaby ? "baby" : "adult");
+    if (!rec) return null;
+    const at = (typeof bornAt === "number") ? bornAt : gameMinutes();
+    rec.uid = nextPlacementUid();
+    rec.bornAt = at;
+    rec.boughtAt = at;
+    rec.fedAt = at;
+    rec.lastUpdateMinutes = at;
+    if (def.hasBaby) rec.effectiveGrowthMinutes = 0;
+    rec.mapId = mother.mapId;
+    rec.mapName = mother.mapName || mapDisplayName(mapKey);
+    rec.wild = !!mother.wild;
+    rec.owner = mother.owner || null;
+    rec.party = mother.party || null;
+    rec.paid = 0;
+    rec.mother = mother.uid;
+    rec.x = mother.x;
+    rec.y = mother.y;
+    const loaded = $gameMap && String(currentMapKey()) === String(mapKey);
+    if (loaded) {
+      const offsets = [[0, 1], [1, 0], [0, -1], [-1, 0], [1, 1], [-1, 1], [1, -1], [-1, -1]];
+      const free = offsets.map(([dx, dy]) => ({ x: mother.x + dx, y: mother.y + dy }))
+        .find(t => canPlaceAnimalAt(t.x, t.y));
+      if (!free) return null;           // nowhere to put it down: no birth
+      rec.x = free.x;
+      rec.y = free.y;
+    }
+    placementsAt(mapKey).push(rec);
+    if (loaded) {
+      const ev = spawnAnimalEvent(rec);
+      if (ev && $dataMap) {
+        if (!$dataMap._animalSpawned) $dataMap._animalSpawned = [];
+        $dataMap._animalSpawned.push(rec.uid);
+        const spriteset = SceneManager._scene && SceneManager._scene._spriteset;
+        if (spriteset && typeof spriteset.addAnimalCharacterSprite === "function") spriteset.addAnimalCharacterSprite(ev);
+      }
+    }
+    return rec;
+  }
+
+  // An animal that has died: its placement is gone, and on the loaded map its
+  // body is left where it stood. Answers the record, or null.
+  function retirePlacement(uid) {
+    const found = findPlacement(uid);
+    if (!found) return null;
+    const rec = found.rec;
+    const ev = findAnimalEvent(rec.uid);
+    const BSE = window.BattleSystemEnhanced;
+    if (ev && !ev._erased && $gameMap && BSE && BSE.Functions && BSE.Functions.dropMapCorpse) {
+      BSE.Functions.dropMapCorpse({
+        mapId: $gameMap.mapId(), x: ev.x, y: ev.y,
+        spriteName: ev._characterName || "", spriteIndex: ev._characterIndex || 0,
+        hue: ev._characterHue || 0, bloodColor: [200, 20, 20], enemyId: 0,
+      });
+    }
+    removePlacement(uid);
+    return rec;
+  }
+
+  // Produce for an animal its owner kept fed over [from, to] (off-screen care,
+  // NPCSim.Tending.careOffscreen): every whole batch in that span at the
+  // animal's own yield, the timer moved on by what was taken. Never the
+  // party's stock, and never a young animal.
+  function collectProduceOver(rec, def, from, to) {
+    if (!rec || !def || isPartyOwned(rec) || getStage(rec, def) !== "adult") return [];
+    const out = [];
+    if (!rec.produceTimers) rec.produceTimers = {};
+    (def.produces || []).forEach((prod, i) => {
+      const key = `p${i}`;
+      const needed = prod.interval * MINUTES_PER_DAY;
+      if (!(needed > 0)) return;
+      const start = Math.max(rec.produceTimers[key] != null ? rec.produceTimers[key] : from, from);
+      const batches = Math.floor(Math.max(0, to - start) / needed);
+      if (batches < 1) { rec.produceTimers[key] = start; return; }
+      let qty = 0;
+      for (let b = 0; b < batches; b++) qty += prod.yieldMin + Math.floor(Math.random() * (prod.yieldMax - prod.yieldMin + 1));
+      rec.produceTimers[key] = start + batches * needed;
+      out.push({ itemId: prod.itemId, qty: Math.max(1, qty) });
+    });
+    return out;
+  }
+
   // Public API for NPCSimulationCore, FurnitureSystem, AssetsMenu and others
   window.AnimalGrowthSystem = {
     ANIMAL_DB,
@@ -1995,6 +2142,26 @@
     ageLabelOf:         (rec) => ageLabelOf(rec),
     keepCompany:        (rec, def) => keepCompany(rec, def),
     reportCollected:    (items) => reportCollected(items),
+    // Care by the town's people
+    livestockBehind:    (event) => livestockBehind(event),
+    collectProduceFor:  (rec, def) => collectProduceFor(rec, def),
+    updateRecordGrowth: (rec) => updateRecordGrowth(rec),
+    animalsLive:        () => animalsLive(),
+    // The map-load passes, for a harness that has no scene to run them
+    refreshMapAnimals:  () => refreshMapAnimals(),
+    spawnPlacedAnimals: () => spawnPlacedAnimals(),
+    spawnFarmsteadAnimals: () => spawnFarmsteadAnimals(),
+    // Lives, ageing, breeding and death (NPCLife_Animals)
+    NUTRITION_DAYS,
+    currentMapKey:      () => currentMapKey(),
+    placementStore:     () => placementStore(),
+    animalNpcRecords:   () => animalNpcRecords(),
+    lifespanDaysOf:     (def) => lifespanDaysOf(def),
+    getStage:           (rec, def) => getStage(rec, def),
+    sexOf:              (rec) => sexOf(rec),
+    bornPlacement:      (mapKey, animalId, mother, bornAt) => bornPlacement(mapKey, animalId, mother, bornAt),
+    retirePlacement:    (uid) => retirePlacement(uid),
+    collectProduceOver: (rec, def, from, to) => collectProduceOver(rec, def, from, to),
   };
 
 })();

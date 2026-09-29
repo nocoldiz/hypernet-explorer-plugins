@@ -2747,6 +2747,30 @@
           "name": "Commodoro dei Fiordi"
         }
       }
+    },
+    "goblinhorde": {
+      "name": "Orda dei Goblin",
+      "description": "La banda armata che tiene Norvegia e Islanda e vuole il resto. Il doppio dell'esercito di chiunque, un decimo della loro economia, e pazienza per nessuna delle due.",
+      "troops": {
+        "grunt": {
+          "name": "Soldataglia dell'Orda"
+        },
+        "raider": {
+          "name": "Predone dell'Orda"
+        },
+        "slinger": {
+          "name": "Frombolière dell'Orda"
+        },
+        "guard": {
+          "name": "Scudiero dell'Orda"
+        },
+        "shaman": {
+          "name": "Sciamano dell'Orda"
+        },
+        "warboss": {
+          "name": "Capoguerra dell'Orda"
+        }
+      }
     }
   }
 }

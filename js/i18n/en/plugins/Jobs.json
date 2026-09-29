@@ -1675,5 +1675,869 @@
         "The fee was confiscated as evidence of something."
       ]
     }
+  },
+  "140": {
+    "name": "Station Agent",
+    "description": "Keep the platforms moving, answer travellers and wave the trains off on time.",
+    "outcome": {
+      "success": [
+        "Every train leaves on the minute.",
+        "You send a lost tourist to the right platform.",
+        "The station runs like a clock under you."
+      ],
+      "partial": [
+        "A delay ripples down the line and lands on you.",
+        "Half the travellers ask the same question.",
+        "You shout yourself hoarse over the tannoy."
+      ],
+      "failure": [
+        "You send a whole school trip to the wrong platform.",
+        "The timetable beats you today.",
+        "A queue of angry commuters forms around you."
+      ],
+      "disaster": [
+        "A train leaves with your whistle and half your uniform!",
+        "You wave off the wrong train and it goes the wrong way!",
+        "The crowd surges and you are carried onto the tracks!"
+      ]
+    }
+  },
+  "141": {
+    "name": "Ticket Clerk",
+    "description": "Sell tickets from behind the glass and balance the till at closing.",
+    "outcome": {
+      "success": [
+        "The till balances to the last cent.",
+        "The queue melts away before the rush.",
+        "A regular thanks you by name."
+      ],
+      "partial": [
+        "The printer jams twice.",
+        "You give a pensioner the wrong change and chase them down.",
+        "The window fogs up and nobody can hear you."
+      ],
+      "failure": [
+        "The till is short and it comes out of your pocket.",
+        "You sell a stack of tickets for a train that does not run.",
+        "The machine eats your shift."
+      ],
+      "disaster": [
+        "You sell the same seat to forty people!",
+        "The ticket roll unspools across the whole hall!",
+        "An inspector finds a counterfeit in your float!"
+      ]
+    }
+  },
+  "142": {
+    "name": "Nurse",
+    "description": "Run the ward: dressings, drips, charts and a kind word at three in the morning.",
+    "outcome": {
+      "success": [
+        "Every patient on the ward sleeps easier.",
+        "You catch a fever before it turns.",
+        "The doctor trusts your chart without checking."
+      ],
+      "partial": [
+        "The call bells never stop ringing.",
+        "A patient throws their tray at you.",
+        "You finish the shift on cold coffee and nerves."
+      ],
+      "failure": [
+        "You mix up two charts and have to own it.",
+        "A patient walks out against advice.",
+        "You catch whatever bed seven had."
+      ],
+      "disaster": [
+        "A drip goes in the wrong arm of the wrong patient!",
+        "You faint in the middle of the rounds!",
+        "The whole ward comes down with it, and you first!"
+      ]
+    }
+  },
+  "143": {
+    "name": "Physician",
+    "description": "Diagnose, prescribe and operate when nobody else will.",
+    "outcome": {
+      "success": [
+        "A diagnosis nobody else saw, and it is right.",
+        "The operation goes clean from first cut to last stitch.",
+        "A family thanks you in the corridor."
+      ],
+      "partial": [
+        "You chase a symptom all shift and it chases you back.",
+        "The paperwork takes longer than the surgery.",
+        "Your hands shake a little at the end."
+      ],
+      "failure": [
+        "You misread a scan and the patient pays for it.",
+        "A second opinion overrules you in front of everyone.",
+        "The shift ends with more questions than answers."
+      ],
+      "disaster": [
+        "You leave a clamp where no clamp should be!",
+        "A malpractice notice arrives before you finish your coffee!",
+        "You catch the rare disease you were researching!"
+      ]
+    }
+  },
+  "144": {
+    "name": "Pharmacist",
+    "description": "Fill prescriptions, weigh powders and know which pills must never meet.",
+    "outcome": {
+      "success": [
+        "Every prescription goes out exactly right.",
+        "You spot a dangerous combination and stop it.",
+        "A regular swears by your advice."
+      ],
+      "partial": [
+        "The handwriting on the prescriptions is a crime of its own.",
+        "The stockroom is out of half the list.",
+        "A customer argues about the price for an hour."
+      ],
+      "failure": [
+        "You hand over the wrong strength and have to call them back.",
+        "The scales were off all afternoon.",
+        "An inspector finds your records untidy."
+      ],
+      "disaster": [
+        "You swallow a sample by mistake!",
+        "A whole shelf of syrups crashes to the floor!",
+        "You mix the wrong powders and the counter starts smoking!"
+      ]
+    }
+  },
+  "145": {
+    "name": "Baker",
+    "description": "Knead before dawn and have the shelves full when the doors open.",
+    "outcome": {
+      "success": [
+        "The first loaves come out golden.",
+        "The queue outside starts before you open.",
+        "The smell alone sells half the shop."
+      ],
+      "partial": [
+        "The dough will not rise and neither will you.",
+        "One tray comes out a shade too dark.",
+        "Flour ends up everywhere, including your ears."
+      ],
+      "failure": [
+        "A whole batch comes out as bricks.",
+        "You oversleep and the shelves stay empty until noon.",
+        "The oven dies in the middle of the bake."
+      ],
+      "disaster": [
+        "The oven catches fire with the bread inside!",
+        "You burn your hands on the peel!",
+        "A sack of flour bursts and the kitchen goes white!"
+      ]
+    }
+  },
+  "146": {
+    "name": "Shop Clerk",
+    "description": "Stock the shelves, work the till and smile at whoever walks in.",
+    "outcome": {
+      "success": [
+        "The shelves are straight and the till is right.",
+        "A customer leaves with more than they came for.",
+        "The manager nods at your window display."
+      ],
+      "partial": [
+        "A delivery arrives right at the rush.",
+        "Somebody wants a refund with no receipt.",
+        "The price gun prints everything at zero."
+      ],
+      "failure": [
+        "Stock goes missing on your watch.",
+        "You ring up the same item four times.",
+        "A customer asks for the manager, and gets one."
+      ],
+      "disaster": [
+        "A shelf collapses on a customer!",
+        "You lock yourself in the stockroom until closing!",
+        "A shoplifter empties the display while you watch!"
+      ]
+    }
+  },
+  "147": {
+    "name": "Bank Teller",
+    "description": "Count other people's money all day without keeping any of it.",
+    "outcome": {
+      "success": [
+        "Your drawer balances to the cent.",
+        "You spot a forged cheque and politely refuse it.",
+        "A nervous saver leaves reassured."
+      ],
+      "partial": [
+        "The coin counter jams on a jar of pennies.",
+        "A queue of pensioners arrives at once.",
+        "You recount the same stack three times."
+      ],
+      "failure": [
+        "Your drawer is short and nobody believes it was an error.",
+        "You cash a cheque that bounces by the afternoon.",
+        "The auditor asks to see you on Monday."
+      ],
+      "disaster": [
+        "You hand a robber the whole drawer without being asked!",
+        "The vault door closes with you on the wrong side!",
+        "A forged cheque of yours reaches the newspapers!"
+      ]
+    }
+  },
+  "148": {
+    "name": "Police Officer",
+    "description": "Walk the beat, take the statements and keep the peace as long as it lasts.",
+    "outcome": {
+      "success": [
+        "The streets stay quiet on your watch.",
+        "A statement cracks the case open.",
+        "A child waves at you from a window."
+      ],
+      "partial": [
+        "You spend the shift filling in forms.",
+        "A drunk takes a swing and grazes you.",
+        "Every call is a false alarm."
+      ],
+      "failure": [
+        "A suspect slips away down an alley.",
+        "Your report is sent back full of red ink.",
+        "The sergeant puts you on traffic duty."
+      ],
+      "disaster": [
+        "A chase ends with you in the canal!",
+        "You arrest the mayor's nephew by mistake!",
+        "A riot breaks out and you are at the front of it!"
+      ]
+    }
+  },
+  "149": {
+    "name": "Prison Guard",
+    "description": "Count heads, turn keys and never turn your back on the yard.",
+    "outcome": {
+      "success": [
+        "Every head counted, every door locked.",
+        "You talk down a fight before it starts.",
+        "The shift passes without a single incident."
+      ],
+      "partial": [
+        "The inmates test you all night.",
+        "A tray of slop lands on your boots.",
+        "You break up a scuffle and take an elbow."
+      ],
+      "failure": [
+        "Contraband turns up on your block.",
+        "Your keys go missing for an hour.",
+        "The warden writes your name in a notebook."
+      ],
+      "disaster": [
+        "A riot starts on your block!",
+        "An inmate walks out in your uniform!",
+        "You are locked in a cell until morning!"
+      ]
+    }
+  },
+  "150": {
+    "name": "Croupier",
+    "description": "Deal the cards and spin the wheel with a face that gives nothing away.",
+    "outcome": {
+      "success": [
+        "The house wins, as it always should.",
+        "A high roller tips you in chips.",
+        "Your hands never miss a beat."
+      ],
+      "partial": [
+        "A table of students argues every hand.",
+        "A regular accuses the wheel of cheating.",
+        "Your wrist aches from dealing."
+      ],
+      "failure": [
+        "You pay out a hand that lost.",
+        "The pit boss watches you all night.",
+        "A card counter cleans out your table."
+      ],
+      "disaster": [
+        "The wheel flies off its spindle!",
+        "You deal from the wrong shoe and pay everyone!",
+        "A brawl over a single chip wrecks the table!"
+      ]
+    }
+  },
+  "151": {
+    "name": "Arcade Attendant",
+    "description": "Change tokens, unjam cabinets and keep the high score table honest.",
+    "outcome": {
+      "success": [
+        "Every cabinet runs all night.",
+        "You fix a jammed coin slot with a paperclip.",
+        "A kid beats the high score and you get to announce it."
+      ],
+      "partial": [
+        "Somebody spills soda into a joystick.",
+        "The token machine eats notes all afternoon.",
+        "The music loop gets into your dreams."
+      ],
+      "failure": [
+        "Three cabinets go dark at once.",
+        "You lose a whole bag of tokens.",
+        "A cheater tops the scoreboard on your watch."
+      ],
+      "disaster": [
+        "A cabinet sparks and shocks you!",
+        "The prize crane drops you, somehow!",
+        "A riot of children over the last prize!"
+      ]
+    }
+  },
+  "152": {
+    "name": "Librarian",
+    "description": "Shelve, stamp, mend spines and hush the reading room.",
+    "outcome": {
+      "success": [
+        "Every book is back where it belongs.",
+        "You find the one title a reader had given up on.",
+        "The reading room stays blissfully silent."
+      ],
+      "partial": [
+        "A school group descends on the stacks.",
+        "Half the returns are overdue and sticky.",
+        "You mend a spine and glue your fingers together."
+      ],
+      "failure": [
+        "A rare volume is misfiled and lost.",
+        "You fall asleep at the returns desk.",
+        "The catalogue cards end up on the floor."
+      ],
+      "disaster": [
+        "A whole stack of shelving topples like dominoes!",
+        "You spill ink across a first edition!",
+        "A book you were not meant to open reads you back!"
+      ]
+    }
+  },
+  "153": {
+    "name": "Priest",
+    "description": "Lead the service, hear confession and bury, marry and bless in between.",
+    "outcome": {
+      "success": [
+        "The sermon lands and the pews are full.",
+        "A confession lifts a weight off a whole family.",
+        "The collection plate comes back heavy."
+      ],
+      "partial": [
+        "Half the congregation dozes through the homily.",
+        "A wedding runs two hours late.",
+        "The organist plays the wrong hymn."
+      ],
+      "failure": [
+        "You lose your place in the liturgy.",
+        "The bishop hears about the last sermon.",
+        "Nobody comes to evening prayers."
+      ],
+      "disaster": [
+        "The candles set the altar cloth alight!",
+        "You bless the wrong couple!",
+        "Something answers the exorcism prayer!"
+      ]
+    }
+  },
+  "154": {
+    "name": "Acolyte",
+    "description": "Light the candles, sweep the nave and learn by keeping quiet.",
+    "outcome": {
+      "success": [
+        "Every candle lit, every step swept.",
+        "The priest lets you ring the bell.",
+        "You find a stillness you did not know you had."
+      ],
+      "partial": [
+        "The incense makes you sneeze through the service.",
+        "You drip wax on your only robe.",
+        "The bell rope nearly takes you with it."
+      ],
+      "failure": [
+        "You forget to fill the holy water.",
+        "You drop the collection plate mid-aisle.",
+        "A candle goes out and cannot be relit."
+      ],
+      "disaster": [
+        "You set fire to your sleeve!",
+        "The censer swings free and brains a pilgrim!",
+        "You ring the bell at three in the morning!"
+      ]
+    }
+  },
+  "155": {
+    "name": "Museum Guard",
+    "description": "Stand between the visitors and the masterpieces, all day and all night.",
+    "outcome": {
+      "success": [
+        "Not a fingerprint on a single frame.",
+        "You stop a toddler an inch from a Ming vase.",
+        "The night rounds pass in perfect quiet."
+      ],
+      "partial": [
+        "You stand so long your knees lock.",
+        "A tour group ignores every rope.",
+        "The statues seem to watch you back."
+      ],
+      "failure": [
+        "A visitor touches the painting and the alarm screams.",
+        "You doze off in the sculpture hall.",
+        "Your flashlight dies on the night round."
+      ],
+      "disaster": [
+        "A painting vanishes on your watch!",
+        "You trip the laser grid and lock yourself in!",
+        "You knock over a statue and it takes a wing with it!"
+      ]
+    }
+  },
+  "156": {
+    "name": "Gym Instructor",
+    "description": "Run the classes, spot the lifts and shout encouragement until closing.",
+    "outcome": {
+      "success": [
+        "The whole class finishes the circuit.",
+        "A regular hits a personal best on your count.",
+        "The gym hums with good form."
+      ],
+      "partial": [
+        "A newcomer drops a dumbbell on your foot.",
+        "The sound system dies mid-class.",
+        "You demonstrate a squat one time too many."
+      ],
+      "failure": [
+        "Half the class quits before the warm up ends.",
+        "You pull a muscle showing off.",
+        "A member cancels and blames you."
+      ],
+      "disaster": [
+        "The barbell comes down on you!",
+        "A treadmill launches a member into the mirror!",
+        "You tear something that has a Latin name!"
+      ]
+    }
+  },
+  "157": {
+    "name": "Tow Driver",
+    "description": "Haul the broken and the badly parked back to the yard, in any weather.",
+    "outcome": {
+      "success": [
+        "Every call answered, every car delivered.",
+        "A stranded family gets home thanks to you.",
+        "The winch never slips."
+      ],
+      "partial": [
+        "A driver argues the whole way to the yard.",
+        "The rain turns every job into a mud bath.",
+        "You get lost in the one way system."
+      ],
+      "failure": [
+        "You tow the wrong car.",
+        "The chain snaps halfway up the ramp.",
+        "Your truck breaks down and needs a tow itself."
+      ],
+      "disaster": [
+        "The car rolls off the bed and into a shop window!",
+        "You tow a police car with the police inside!",
+        "The winch whips back and catches you!"
+      ]
+    }
+  },
+  "158": {
+    "name": "Dockworker",
+    "description": "Load and unload the ships, tide or no tide.",
+    "outcome": {
+      "success": [
+        "The ship sails on schedule, fully loaded.",
+        "You guide a crate down within an inch of its mark.",
+        "The foreman buys the first round."
+      ],
+      "partial": [
+        "The crane operator is new and it shows.",
+        "Salt spray soaks you through.",
+        "A container will not sit straight."
+      ],
+      "failure": [
+        "A pallet splits and the cargo goes everywhere.",
+        "You miss the tide and the ship waits for you.",
+        "Your back files a complaint."
+      ],
+      "disaster": [
+        "A crate swings loose and knocks you into the harbour!",
+        "You load the cargo onto the wrong ship!",
+        "The gangway gives way under you!"
+      ]
+    }
+  },
+  "159": {
+    "name": "Innkeeper",
+    "description": "Keep the rooms clean, the beds aired and the guests out of each other's business.",
+    "outcome": {
+      "success": [
+        "Every room is booked and every guest is happy.",
+        "A travelling merchant promises to come back.",
+        "The books balance and the cellar is full."
+      ],
+      "partial": [
+        "A guest complains about the guest next door.",
+        "The laundry piles up to the ceiling.",
+        "Someone checks out without paying for breakfast."
+      ],
+      "failure": [
+        "You double book the best room.",
+        "A guest leaves without paying at all.",
+        "The inspector finds something under a bed."
+      ],
+      "disaster": [
+        "A fire in the kitchen empties the whole inn!",
+        "You hand the master key to a thief!",
+        "A guest turns out to be a wanted criminal, and you are the accomplice!"
+      ]
+    }
+  },
+  "160": {
+    "name": "Projectionist",
+    "description": "Thread the reels, focus the beam and change over without anybody noticing.",
+    "outcome": {
+      "success": [
+        "Every changeover lands on the cue mark.",
+        "The picture is sharp from the front row to the back.",
+        "The audience applauds, and a little of it is for you."
+      ],
+      "partial": [
+        "The film jumps in the middle of the kiss.",
+        "The booth is stifling all evening.",
+        "You spend a reel fixing the focus."
+      ],
+      "failure": [
+        "You show the reels in the wrong order.",
+        "The lamp blows during the climax.",
+        "The sound runs a second behind the picture."
+      ],
+      "disaster": [
+        "The film catches fire in the gate!",
+        "You project the wrong film to a room of children!",
+        "The booth fills with smoke and you with it!"
+      ]
+    }
+  },
+  "161": {
+    "name": "Teacher",
+    "description": "Stand in front of thirty restless people and make them care about something.",
+    "outcome": {
+      "success": [
+        "The whole class gets it, at the same time.",
+        "A quiet student asks a brilliant question.",
+        "The lesson runs over and nobody minds."
+      ],
+      "partial": [
+        "The back row passes notes all lesson.",
+        "The chalk squeals and so does the class.",
+        "You mark papers until your eyes cross."
+      ],
+      "failure": [
+        "The class wins, and you know it.",
+        "A parent writes a long letter about you.",
+        "You lose your lesson plan and improvise badly."
+      ],
+      "disaster": [
+        "A science demonstration sets off the sprinklers!",
+        "The class locks you in the supply cupboard!",
+        "The inspector arrives in the middle of the chaos!"
+      ]
+    }
+  },
+  "162": {
+    "name": "Court Clerk",
+    "description": "Swear in the witnesses, keep the record and file every word the bench says.",
+    "outcome": {
+      "success": [
+        "The record is complete down to the last objection.",
+        "The judge compliments your filing.",
+        "Every case on the docket is heard on time."
+      ],
+      "partial": [
+        "A witness mumbles through a whole afternoon.",
+        "The typewriter ribbon runs out mid-verdict.",
+        "The files for tomorrow arrive tonight."
+      ],
+      "failure": [
+        "You swear in the wrong witness.",
+        "A page of testimony goes missing.",
+        "The defence asks for a mistrial over your transcript."
+      ],
+      "disaster": [
+        "You misfile a verdict and a guilty man walks!",
+        "You drop the evidence box down the courthouse stairs!",
+        "The judge holds you in contempt!"
+      ]
+    }
+  },
+  "163": {
+    "name": "Factory Hand",
+    "description": "Feed the line, mind the press and keep your fingers where you can see them.",
+    "outcome": {
+      "success": [
+        "The line never stops on your stretch.",
+        "Your quota is met an hour early.",
+        "The foreman forgets you are there, which is praise."
+      ],
+      "partial": [
+        "The noise follows you home.",
+        "A belt slips and you fix it by hand.",
+        "The canteen runs out before your break."
+      ],
+      "failure": [
+        "A batch fails inspection because of your station.",
+        "The press jams and the line stops for everyone.",
+        "You clock in late and clock out later."
+      ],
+      "disaster": [
+        "The press catches your sleeve!",
+        "A boiler valve blows next to you!",
+        "You drop a wrench into the machine and it eats it!"
+      ]
+    }
+  },
+  "164": {
+    "name": "Lab Technician",
+    "description": "Run the samples, clean the glassware and write down exactly what happened.",
+    "outcome": {
+      "success": [
+        "Every sample processed, every result logged.",
+        "Your calibration saves the whole experiment.",
+        "A researcher puts your name in the acknowledgements."
+      ],
+      "partial": [
+        "The centrifuge wobbles all afternoon.",
+        "You wash glassware until your hands wrinkle.",
+        "The fume hood makes a noise nobody can explain."
+      ],
+      "failure": [
+        "You contaminate a week of cultures.",
+        "The results do not repeat, and it is your run.",
+        "A label smudges and nobody knows what is in the flask."
+      ],
+      "disaster": [
+        "A beaker boils over and the fumes fill the lab!",
+        "Something in a petri dish moves!",
+        "You drop the one sample that mattered!"
+      ]
+    }
+  },
+  "165": {
+    "name": "Market Vendor",
+    "description": "Set up the stall at dawn, call out the prices and haggle until the last crate is empty.",
+    "outcome": {
+      "success": [
+        "The stall sells out by noon.",
+        "You win a haggle and the customer still thanks you.",
+        "Your voice carries across the whole square."
+      ],
+      "partial": [
+        "The stall next door undercuts you all morning.",
+        "Rain sends everyone home early.",
+        "The scales are off and you round down."
+      ],
+      "failure": [
+        "Half the produce spoils in the sun.",
+        "A pigeon claims your best crate.",
+        "You haggle yourself below cost."
+      ],
+      "disaster": [
+        "The awning collapses onto the whole stall!",
+        "A cart runs over your crates!",
+        "The inspector closes your stall on the spot!"
+      ]
+    }
+  },
+  "166": {
+    "name": "Office Clerk",
+    "description": "File, type, photocopy and attend meetings about meetings.",
+    "outcome": {
+      "success": [
+        "The inbox is empty by five.",
+        "Your spreadsheet saves the quarter.",
+        "The boss uses your report without changing a word."
+      ],
+      "partial": [
+        "The printer jams on every page that matters.",
+        "A meeting eats the whole afternoon.",
+        "The coffee machine is broken again."
+      ],
+      "failure": [
+        "You send the email to the entire company.",
+        "A file is lost somewhere in the cabinets.",
+        "Your figures do not add up and everybody notices."
+      ],
+      "disaster": [
+        "The photocopier catches fire!",
+        "You shred the only copy of the contract!",
+        "The computer eats a month of work!"
+      ]
+    }
+  },
+  "167": {
+    "name": "Beekeeper",
+    "description": "Tend the hives, smoke the colonies calm and take off the honey when the supers are full.",
+    "outcome": {
+      "success": [
+        "The supers come off heavy and golden.",
+        "The colony stays calm under the smoke all morning.",
+        "You spot the queen on the first frame."
+      ],
+      "partial": [
+        "A few stings through the gloves.",
+        "The smoker keeps going out.",
+        "Half the frames are still uncapped."
+      ],
+      "failure": [
+        "The colony boils out of the box at you.",
+        "You drop a full frame in the grass.",
+        "The mites have been busy and nobody noticed."
+      ],
+      "disaster": [
+        "The whole hive swarms and takes the queen with it!",
+        "You kick the hive over!",
+        "A stung veil and a hundred angry bees chase you across the field!"
+      ]
+    }
+  },
+  "168": {
+    "name": "Head of State",
+    "description": "Govern a nation or a bloc from its capital: sign, receive, decide, and be blamed.",
+    "outcome": {
+      "success": [
+        "You signed eleven decrees and understood nine of them.",
+        "A foreign envoy left smiling, which may mean anything.",
+        "The cabinet agreed with you, loudly, before you had finished.",
+        "Your approval rose a point on a day nothing happened.",
+        "The press called you statesmanlike and meant it kindly."
+      ],
+      "partial": [
+        "You governed, in the sense that the capital did not burn.",
+        "Half the ministers came to the meeting. The other half sent notes.",
+        "A decree went out with the wrong seal. It stands anyway.",
+        "The crowd outside was smaller than yesterday, which is progress.",
+        "You postponed the hard decision to a better week."
+      ],
+      "failure": [
+        "The opposition read your speech back to you, slower.",
+        "A leaked memo explained your policy better than you did.",
+        "The treasury reported a number nobody wanted to say aloud.",
+        "Your own party abstained. Twice.",
+        "The envoy left early and took the treaty with him."
+      ],
+      "disaster": [
+        "A scandal broke before lunch and multiplied by dinner.",
+        "The palace guard asked, politely, who was in charge today.",
+        "You signed a declaration of war you meant to be a trade deal.",
+        "The crowd outside learned your home address.",
+        "Your portrait was taken down in three ministries at once."
+      ]
+    }
+  },
+  "169": {
+    "name": "Minister",
+    "description": "Run a ministry for the government of the day, and answer for it in the chamber.",
+    "outcome": {
+      "success": [
+        "Your ministry spent its budget on what it said it would.",
+        "A bill you drafted passed with only cosmetic wounds.",
+        "You answered every question in the chamber without saying anything.",
+        "The head of state thanked you by name.",
+        "Your department's figures were good, and real."
+      ],
+      "partial": [
+        "The reform passed, minus the part that did anything.",
+        "You survived question time with a bruise.",
+        "The ministry moved offices and lost a filing cabinet.",
+        "Your deputy took the credit and half the blame.",
+        "A consultation was launched, which is a way of waiting."
+      ],
+      "failure": [
+        "The committee sent your bill back with a drawing on it.",
+        "A journalist found the figure you had rounded.",
+        "Your own civil servants briefed against you.",
+        "The coalition partner vetoed your one good idea.",
+        "You were described in the press as a placeholder."
+      ],
+      "disaster": [
+        "You resigned, then were told it was not accepted, then were sacked.",
+        "A ministry car was found somewhere it should not have been.",
+        "The auditor opened your department and fainted.",
+        "Your budget line was spent twice and delivered nothing.",
+        "You were reshuffled into a ministry that does not exist."
+      ]
+    }
+  },
+  "170": {
+    "name": "Party Leader",
+    "description": "Lead a party in the assembly: hold the benches together and the leadership against rivals.",
+    "outcome": {
+      "success": [
+        "The benches voted as one, which never happens.",
+        "A rival defected to you with a whole faction.",
+        "Your speech was quoted in every paper, correctly.",
+        "The polls moved your way for a reason you could name.",
+        "Party funds came in faster than the scandals."
+      ],
+      "partial": [
+        "The party held, but only just and only today.",
+        "Your motion failed by the width of one absent colleague.",
+        "A donor asked for something small, for now.",
+        "You were heckled, and heckled back rather well.",
+        "The manifesto grew two new promises nobody costed."
+      ],
+      "failure": [
+        "Three members voted with the government by mistake.",
+        "A leadership challenge was rumoured, then scheduled.",
+        "Your slogan was mocked on the radio all afternoon.",
+        "The treasurer resigned to spend more time with the accounts.",
+        "Your own backbench leaked the strategy meeting."
+      ],
+      "disaster": [
+        "The party split down the middle during your speech.",
+        "A tape surfaced. You are on it.",
+        "Your deputy launched a new party that afternoon, with your staff.",
+        "The donors asked for their money back, with interest.",
+        "You lost the confidence vote in your own party room."
+      ]
+    }
+  },
+  "171": {
+    "name": "Legislator",
+    "description": "Sit in the chamber or the electoral college: read the bills, cast the votes, keep the seat.",
+    "outcome": {
+      "success": [
+        "Your amendment survived three readings intact.",
+        "You read the whole bill, which made you the expert.",
+        "Your vote decided the division, and you voted well.",
+        "A constituent wrote to thank you, in legible handwriting.",
+        "The committee adopted your report without changes."
+      ],
+      "partial": [
+        "You voted, then read the bill, in that order.",
+        "Your amendment passed as a footnote.",
+        "The session ran long and your question was not reached.",
+        "You were present, which the record will show.",
+        "A lobbyist took you to lunch and only nearly succeeded."
+      ],
+      "failure": [
+        "You voted the wrong way on a bill you had co-sponsored.",
+        "Your speech was delivered to three members and a clerk.",
+        "The whip was displeased and said so in writing.",
+        "You missed the division bell by a corridor.",
+        "Your office misplaced a petition with a thousand names."
+      ],
+      "disaster": [
+        "You were caught asleep during a roll call.",
+        "Your expenses were read aloud in the chamber.",
+        "A bill you wrote did the exact opposite of its title.",
+        "You were expelled from the sitting for a remark about a colleague's hat.",
+        "The chamber voted to censure you, unanimously, including you."
+      ]
+    }
   }
 }

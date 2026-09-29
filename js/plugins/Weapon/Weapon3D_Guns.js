@@ -1402,13 +1402,22 @@
         bend.position.set(0, -0.016, -0.04);
         bend.rotation.set(0, Math.PI / 2, 0);
         group.add(bend);
-        // The tape is wound round the bend that serves as a grip; stepped
-        // further down it left the last wraps hanging under the hose.
+        // The loose end hangs off the bend and down past the hand. Without it
+        // the whole thing measured barely half a pistol tall across X and Y,
+        // and the overlay fits a weapon to its height: it was drawn enormous.
+        const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.019, 0.017, 0.13, this.seg(11, 7)), hose);
+        tail.position.set(0, -0.082, -0.068);
+        tail.rotation.x = 0.12;
+        group.add(tail);
+        const cut = new THREE.Mesh(new THREE.CylinderGeometry(0.017, 0.017, 0.006, this.seg(11, 7)), sand);
+        cut.position.set(0, -0.147, -0.076);
+        group.add(cut);
+        // The tape is wound round the top of that tail, which is where it is
+        // actually held; stepped down it follows the hose rather than the air.
         for (let i = 0; i < 4; i++) {
           const wrap = new THREE.Mesh(new THREE.TorusGeometry(0.021, 0.005, this.seg(4, 3), this.seg(10, 6)), tape);
-          wrap.position.set(0, -0.038 - i * 0.009, -0.04);
+          wrap.position.set(0, -0.038 - i * 0.014, -0.06 - i * 0.002);
           wrap.rotation.x = Math.PI / 2;
-          wrap.scale.z = 0.6;
           group.add(wrap);
         }
         this._gunTrigger(group, brass, 0, -0.03, -0.008, { guard: false });
@@ -8409,7 +8418,7 @@
         return group;
       },
 
-      // ---- Chainsaw of Yaldabaoth --------------------------------------
+      // ---- Chainsaw of YHWH --------------------------------------
       // Bar, sprocket and a run of teeth: the demiurge's own tool, and the one
       // shape in the rack that is louder than it is sharp.
       createVectorChainsawModel(weapon, rand) {
@@ -8493,35 +8502,70 @@
         gripPeg.position.set(0.026, 0, -0.02);
         group.add(gripPeg);
 
-        // The socket the blade turns out of, and the blade itself: a run of
-        // panels sweeping away from the haft, thinning as it goes.
+        // The socket the blade turns out of, and the blade itself: one
+        // crescent turned across the haft so its face is to the camera, the
+        // spine arching over and the point hooking back toward the hands, the
+        // edge on the inside curve.
         const socket = new THREE.Mesh(
           new THREE.CylinderGeometry(0.019, 0.016, 0.03, this.seg(10, 6)), mats.accent);
         socket.rotation.x = Math.PI / 2;
         socket.position.set(0, 0, 0.23);
         group.add(socket);
-        const panels = this.isLowDetail() ? 3 : 5;
-        for (let i = 0; i < panels; i++) {
-          const t = i / (panels - 1);
-          const blade = new THREE.Mesh(
-            new THREE.BoxGeometry(0.012 - t * 0.006, 0.055 - t * 0.03, 0.07), mats.plate);
-          blade.position.set(-0.03 - t * 0.13, 0.01 + t * 0.05, 0.245 - t * 0.05);
-          blade.rotation.z = -0.3 - t * 0.5;
-          blade.rotation.y = t * 0.35;
-          group.add(blade);
+        const head = new THREE.Group();
+        head.position.set(0, 0, 0.245);
+        head.rotation.x = 0.5;
+        group.add(head);
+        const heel = { x: 0.012, lo: -0.024, hi: 0.026 };
+        const point = { x: -0.275, y: -0.06 };
+        const spineCtl = { x: -0.14, y: 0.06 };
+        const edgeCtl = { x: -0.15, y: -0.004 };
+        const shape = new THREE.Shape();
+        shape.moveTo(heel.x, heel.lo);
+        shape.lineTo(heel.x, heel.hi);
+        shape.quadraticCurveTo(spineCtl.x, spineCtl.y, point.x, point.y);
+        shape.quadraticCurveTo(edgeCtl.x, edgeCtl.y, heel.x, heel.lo);
+        const depth = 0.006;
+        const bladeGeo = new THREE.ExtrudeGeometry(shape, {
+          depth,
+          curveSegments: this.seg(18, 8),
+          bevelEnabled: true,
+          bevelThickness: 0.003,
+          bevelSize: 0.003,
+          bevelSegments: 1
+        });
+        bladeGeo.translate(0, 0, -depth / 2);
+        bladeGeo.computeVertexNormals();
+        head.add(new THREE.Mesh(bladeGeo, mats.plate));
+
+        // The edge: the inside curve lit in a run of pulsing lengths, so the
+        // light still travels down it the way it runs down every seam.
+        const edgeCurve = new THREE.QuadraticBezierCurve3(
+          new THREE.Vector3(point.x + 0.004, point.y - 0.001, 0),
+          new THREE.Vector3(edgeCtl.x, edgeCtl.y - 0.003, 0),
+          new THREE.Vector3(heel.x - 0.016, heel.lo - 0.002, 0));
+        const runs = this.isLowDetail() ? 2 : 4;
+        for (let i = 0; i < runs; i++) {
+          const pts = [];
+          for (let k = 0; k <= 6; k++) {
+            pts.push(edgeCurve.getPoint((i + k / 6) / runs));
+          }
           const edge = new THREE.Mesh(
-            new THREE.BoxGeometry(0.004, 0.05 - t * 0.028, 0.006),
+            new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), this.seg(10, 5),
+              0.0048 - i * 0.0006, this.seg(6, 4), false),
             seams[i % seams.length]);
-          edge.position.copy(blade.position);
-          edge.rotation.copy(blade.rotation);
-          edge.position.z += 0.034;
           edge.userData.pulse = { min: 0.2, max: 1.4, freq: 1.2, phase: i * 0.6 };
-          group.add(edge);
+          head.add(edge);
         }
+        // A spur off the back of the socket, the counterweight to the hook.
+        const spur = new THREE.Mesh(
+          new THREE.ConeGeometry(0.009, 0.04, this.seg(8, 5)), mats.accent);
+        spur.rotation.set(0, -0.4, -Math.PI / 2);
+        spur.position.set(0.03, 0, 0.245);
+        group.add(spur);
         const tip = new THREE.Group();
-        tip.position.set(-0.2, 0.07, 0.2);
+        tip.position.set(point.x, point.y, 0);
         tip.userData.gun = 'muzzle';
-        group.add(tip);
+        head.add(tip);
         this._vectorHinge(group, mats, { axis: 'x', r: 0.01, len: 0.03, z: 0.2 });
         this._vectorSeam(group, mats,
           { x: 0.012, y: 0, z: 0.02, len: 0.34, w: 0.003, phase: 0.4 });

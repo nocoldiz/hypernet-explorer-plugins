@@ -989,10 +989,15 @@
                 return;
             }
 
-            // The shoulder buttons switch who is at the bench, the same rule
-            // every other book-spread menu in the game follows.
-            if (Input.isTriggered('pagedown')) { scene.cycleAlchemist(1);  return; }
-            if (Input.isTriggered('pageup'))   { scene.cycleAlchemist(-1); return; }
+            // L1 / R1 step the tabs; L2 / R2 change who is at the bench
+            // (CharSwitcher, installed with the scene).
+            const tabStep = window.UINav ? window.UINav.tabDir() : 0;
+            if (tabStep) {
+                const last = scene._el.tabNodes.length - 1;
+                const next = Math.max(0, Math.min(last, scene._tab + tabStep));
+                if (next !== scene._tab) { SoundManager.playCursor(); scene.selectTab(next); }
+                return;
+            }
 
             if      (isDown)  this.handleMove('down');
             else if (isUp)    this.handleMove('up');

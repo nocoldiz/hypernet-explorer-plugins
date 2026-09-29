@@ -17,6 +17,7 @@
   "filedOn": "Filed {date}",
   "dateUnknown": "date unknown",
   "settle": "Settle",
+  "markUnpayable": "The Holy Office's mark. No fine lifts it, only time served.",
   "tooCostly": "Too costly",
   "notEnoughMoney": "Not enough money for that fine.",
   "settleEverything": "Settle everything ({total})",

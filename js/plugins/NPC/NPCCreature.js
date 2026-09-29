@@ -58,7 +58,15 @@
  *   isNonSentientProfile(profile)
  *   isNonSentientActor(actor)
  *   isNonSentientByName(name)    party actor first, society profile second
- *   sheetHalf(spriteKey)         "creature" | "animal" | "" off the NPCs.json
+ *   mayHoldMoney(profile, name)  false for the world's beasts: the one gate
+ *                                 every write to an NPC's purse asks
+ *   sanitizeMoney(profile, name) zeroes a beast's purse, true when it did
+ *   mayWork(profile, name)       a beast works only where beastsWork()
+ *   creatureLife(profile)        { rhythm, wake, bed, sleepless, diet, forage,
+ *                                   herd, drinks, grooms, ageless,
+ *                                   lifespanDays, breed, archetype }
+ *   lifespanDaysOf / isAgeless(profile)
+ *   sheetHalf(spriteKey)        "creature" | "animal" | "" off the NPCs.json
  *                                 flags, the one authority on what a sheet is
  *   isCreatureSheet(spriteKey)
  *   sentientClassFor(key, seed)   a civilised class off that sheet's roster
@@ -164,6 +172,22 @@
   // forced onto it. FERAL_CLASS_ID is the answer for a sheet whose entry lists
   // nothing at all, which no shipped sheet does.
   const FERAL_CLASS_ID = 63;
+
+  // The risen. In a zombie world (WorldModes.survivorsOnly) anybody wearing a
+  // sheet out of the Zombies/ half of the wardrobe (the `zombie` flag of
+  // NPCs.json, SpriteCatalog.isZombieSheet) did not make it: they are the
+  // Zombie class, and hold no trade, no purse, no creed and no family, like
+  // any other creature. Those sheets list civilised classes because the same
+  // faces are worn by the living in every other world, so the sheet and the
+  // world are read, not the classes. The survivors are everybody else.
+  const ZOMBIE_CLASS_ID = 68;
+  function isRisenSheet(key) {
+    if (!key) return false;
+    const WMo = window.NPCShared && window.NPCShared.WorldModes;
+    if (!(WMo ? WMo.survivorsOnly() : isZombieWorld())) return false;
+    const SC = window.SpriteCatalog;
+    return !!(SC && typeof SC.isZombieSheet === "function" && SC.isZombieSheet(key));
+  }
 
   const DEFAULT_ARCHETYPE = "Humanoid";
 
@@ -884,6 +908,173 @@
     return null;
   }
 
+  // ---------------------------------------------------------------------------
+  // What a beast may hold, and whether it works
+  // ---------------------------------------------------------------------------
+  // The one gate every write to an NPC's purse asks: a non-sentient NPC holds
+  // no euros, whatever wrote them (a shift, a loan, a theft, a recruit, a
+  // written page comment). The player's own creature characters are exempt,
+  // the same way they are exempt everywhere else.
+  function isHeldToBeastRules(profile, name) {
+    if (!profile || !isNonSentientProfile(profile)) return false;
+    return !isPlayerCharacterName(name || profile._eventName || null);
+  }
+
+  function mayHoldMoney(profile, name) {
+    return !isHeldToBeastRules(profile, name);
+  }
+
+  // The lazy sanitiser: zeroes whatever money a beast is found holding (a
+  // world folder written before the rule, a path nobody gated). True when it
+  // changed something.
+  function sanitizeMoney(profile, name) {
+    if (!isHeldToBeastRules(profile, name)) return false;
+    if (profile.money === 0) return false;
+    profile.money = 0;
+    return true;
+  }
+
+  // Beasts hold jobs and counters only where the world says so (a monster
+  // world, WorldModes.beastsWork). Every job, shift and counter gate asks this.
+  function beastsWork() {
+    const WM = (window.NPCShared && window.NPCShared.WorldModes) || window.WorldModes;
+    try { return !!(WM && typeof WM.beastsWork === "function" && WM.beastsWork()); }
+    catch (_) { return false; }
+  }
+
+  function mayWork(profile, name) {
+    return !isHeldToBeastRules(profile, name) || beastsWork();
+  }
+
+  // ---------------------------------------------------------------------------
+  // A creature's day and a creature's life
+  // ---------------------------------------------------------------------------
+  // How a beast spends its hours, read off what it is: its breed first (the
+  // `animalGrowth.breed` on its wardrobe sheet), then its class (a zombie, a
+  // ghost, a drone), then its archetype. RoutineManager builds the creature's
+  // day out of this, and NPCLife_Animals ages it by `lifespanDays`.
+  //
+  //   rhythm   diurnal | nocturnal | crepuscular | still | restless
+  //   diet     grazer | forager | hunter | none
+  //   herd     keeps with its own kind (a flock, a herd, a pack)
+  //   drinks   goes to water
+  //   grooms   tends its coat or feathers
+  //   ageless  never grows old (the undead, ghosts, the manufactured)
+  // i18n-ignore-start: rhythm, diet, archetype, breed and class slug ids
+  const CREATURE_RHYTHMS = Object.freeze({
+    diurnal:     Object.freeze({ wake: 6, bed: 20 }),
+    nocturnal:   Object.freeze({ wake: 19, bed: 7 }),
+    crepuscular: Object.freeze({ wake: 16, bed: 10 }),
+    still:       Object.freeze({ wake: 7, bed: 19 }),
+    restless:    Object.freeze({ wake: 0, bed: 0, sleepless: true }),
+  });
+  const ARCHETYPE_LIFE = Object.freeze({
+    Beast:             { rhythm: "diurnal",     diet: "forager", herd: false, lifespanDays: 4000 },
+    Bird:              { rhythm: "diurnal",     diet: "forager", herd: true,  lifespanDays: 2500 },
+    Crustacean:        { rhythm: "crepuscular", diet: "forager", herd: false, lifespanDays: 2920, grooms: false },
+    Insectoid:         { rhythm: "diurnal",     diet: "forager", herd: true,  lifespanDays: 400,  grooms: false },
+    Frog:              { rhythm: "nocturnal",   diet: "hunter",  herd: false, lifespanDays: 3650, grooms: false },
+    Horse:             { rhythm: "diurnal",     diet: "grazer",  herd: true,  lifespanDays: 10220 },
+    Rabbit:            { rhythm: "crepuscular", diet: "grazer",  herd: true,  lifespanDays: 3285 },
+    Mushroom:          { rhythm: "still",       diet: "none",    herd: false, lifespanDays: 1500, drinks: false, grooms: false },
+    Slime:             { rhythm: "still",       diet: "forager", herd: false, lifespanDays: 9000, drinks: false, grooms: false },
+    Mutant:            { rhythm: "nocturnal",   diet: "forager", herd: false, lifespanDays: 9000 },
+    Humanoid:          { rhythm: "diurnal",     diet: "forager", herd: true,  lifespanDays: 25000 },
+    Spherical:         { rhythm: "restless",    diet: "hunter",  herd: false, ageless: true, drinks: false, grooms: false },
+    ChestMimic:        { rhythm: "still",       diet: "hunter",  herd: false, ageless: true, drinks: false, grooms: false },
+    Undead:            { rhythm: "nocturnal",   diet: "hunter",  herd: true,  ageless: true, drinks: false, grooms: false },
+    ConstructedUndead: { rhythm: "nocturnal",   diet: "hunter",  herd: false, ageless: true, drinks: false, grooms: false },
+    Ghost:             { rhythm: "nocturnal",   diet: "none",    herd: false, ageless: true, drinks: false, grooms: false },
+    Demon:             { rhythm: "nocturnal",   diet: "hunter",  herd: false, ageless: true, drinks: false, grooms: false },
+  });
+  const BREED_LIFE = Object.freeze({
+    Cat:     { rhythm: "crepuscular", diet: "hunter",  herd: false },
+    Dog:     { rhythm: "diurnal",     diet: "hunter",  herd: true },
+    Pigeon:  { rhythm: "diurnal",     diet: "forager", herd: true },
+    Crab:    { rhythm: "crepuscular", diet: "forager", herd: false, grooms: false },
+    Toad:    { rhythm: "nocturnal",   diet: "hunter",  herd: false, grooms: false },
+    Chicken: { rhythm: "diurnal",     diet: "forager", herd: true },
+    Rooster: { rhythm: "diurnal",     diet: "forager", herd: true },
+    Duck:    { rhythm: "diurnal",     diet: "forager", herd: true },
+    Pig:     { rhythm: "diurnal",     diet: "forager", herd: true },
+    Sheep:   { rhythm: "diurnal",     diet: "grazer",  herd: true },
+    Cow:     { rhythm: "diurnal",     diet: "grazer",  herd: true },
+    Goat:    { rhythm: "diurnal",     diet: "grazer",  herd: true },
+    Horse:   { rhythm: "diurnal",     diet: "grazer",  herd: true },
+    Donkey:  { rhythm: "diurnal",     diet: "grazer",  herd: true },
+    Rabbit:  { rhythm: "crepuscular", diet: "grazer",  herd: true },
+  });
+  // A class that decides the whole of it, whatever sheet it wears.
+  const CLASS_LIFE = Object.freeze({
+    zombie:     { rhythm: "nocturnal", diet: "hunter", herd: true,  ageless: true, drinks: false, grooms: false },
+    ghost:      { rhythm: "nocturnal", diet: "none",   herd: false, ageless: true, drinks: false, grooms: false },
+    drone:      { rhythm: "restless",  diet: "none",   herd: false, ageless: true, drinks: false, grooms: false },
+    manacyborg: { rhythm: "restless",  diet: "none",   herd: false, ageless: true, drinks: false, grooms: false },
+  });
+  const CREATURE_LIFE_DEFAULT = Object.freeze({ rhythm: "diurnal", diet: "forager", herd: false, lifespanDays: 4000 });
+  // The creature slots a beast's day is built from (Empathize.activity.creature.*).
+  const CREATURE_SLOTS = Object.freeze([
+    "creature.asleep", "creature.rest", "creature.graze", "creature.forage", "creature.hunt",
+    "creature.wander", "creature.drink", "creature.groom", "creature.play", "creature.herd",
+  ]);
+  const FORAGE_SLOT = Object.freeze({
+    grazer: "creature.graze", forager: "creature.forage", hunter: "creature.hunt", none: "creature.wander",
+  });
+  // i18n-ignore-end
+
+  function classSlugOf(classId) {
+    const entry = (typeof $dataClasses !== "undefined" && $dataClasses) ? $dataClasses[Number(classId) || 0] : null;
+    return entry && entry.name ? String(entry.name).toLowerCase().replace(/[^a-z0-9]/g, "") : "";
+  }
+
+  function wardrobeGrowthOf(spriteKey) {
+    const entry = spriteKey ? npcData()[spriteKey] : null;
+    return (entry && entry.animal === true && entry.animalGrowth) || null;
+  }
+
+  // Cached per profile (the sheet, class and archetype are the key), since the
+  // schedule asks it every tick.
+  const _lifeCache = new WeakMap();
+  function creatureLife(profile) {
+    if (!profile) return null;
+    const stamp = `${profile.spriteKey || ""}|${profile.assignedClassId || 0}|${profile.archetype || ""}`;
+    const hit = _lifeCache.get(profile);
+    if (hit && hit.stamp === stamp) return hit.life;
+    const growth = wardrobeGrowthOf(profile.spriteKey);
+    const breed = (growth && growth.breed) || null;
+    const arche = archetypeKeysOf(profile)[0] || "";
+    const slug = classSlugOf(profile.assignedClassId);
+    const life = Object.assign({}, CREATURE_LIFE_DEFAULT,
+      ARCHETYPE_LIFE[arche] || {}, (breed && BREED_LIFE[breed]) || {}, CLASS_LIFE[slug] || {});
+    if (growth && growth.lifespanDays) life.lifespanDays = growth.lifespanDays;
+    if (life.drinks === undefined) life.drinks = true;
+    if (life.grooms === undefined) life.grooms = true;
+    life.ageless = !!life.ageless;
+    if (life.ageless) life.lifespanDays = 0;
+    const rhythm = CREATURE_RHYTHMS[life.rhythm] || CREATURE_RHYTHMS.diurnal;
+    life.wake = rhythm.wake;
+    life.bed = rhythm.bed;
+    life.sleepless = !!rhythm.sleepless;
+    life.forage = FORAGE_SLOT[life.diet] || FORAGE_SLOT.forager;
+    life.breed = breed;
+    life.archetype = arche || null;
+    life.growthDays = (growth && growth.growthDays) || 0;
+    Object.freeze(life);
+    _lifeCache.set(profile, { stamp, life });
+    return life;
+  }
+
+  // A beast's whole lifespan in days, 0 for one that never grows old.
+  function lifespanDaysOf(profile) {
+    const life = creatureLife(profile);
+    return life ? life.lifespanDays : 0;
+  }
+
+  function isAgeless(profile) {
+    const life = creatureLife(profile);
+    return !!(life && life.ageless);
+  }
+
   window.NPCCreature = {
     CREATURE_CHANCE_MONSTER, CREATURE_CHANCE_NORMAL,
     CREATURE_CHANCE_SETTLEMENT, CREATURE_CHANCE_WILD, CREATURE_CHANCE_ZOMBIE,
@@ -901,5 +1092,8 @@
     creatureWardrobe, spritesForArchetypes, spritePathFor, archetypePool,
     enemyForArchetypes, modelForArchetypes,
     modelKeyForSprite, modelForSprite,
+    isHeldToBeastRules, mayHoldMoney, sanitizeMoney, beastsWork, mayWork,
+    CREATURE_RHYTHMS, CREATURE_SLOTS, creatureLife, lifespanDaysOf, isAgeless,
+    ZOMBIE_CLASS_ID, isRisenSheet,
   };
 })();

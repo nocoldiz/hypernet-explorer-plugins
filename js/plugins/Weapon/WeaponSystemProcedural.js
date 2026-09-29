@@ -1852,10 +1852,16 @@ var WeaponSystemProcedural = {
   //
   //   fold   the panels swing shut about their creases, mountain and valley
   //          alternating, the far end going first, each one telescoping in
-  //          along the spine until the weapon is a flat packet in the hand
-  //   rise   the new shape arrives as that packet and opens the other way, the
-  //          hand end first, every panel snapping a little past its crease and
-  //          settling back onto it
+  //          along the spine and shrinking into the pivot until it is gone
+  //   rise   the new shape grows out of that same point and opens the other
+  //          way, the hand end first, every panel snapping a little past its
+  //          crease and settling back onto it
+  //
+  // The two halves OVERLAP: the new shape starts opening while the last of
+  // the old one is still shrinking away (VECTOR_FOLD_HANDOFF), and the old
+  // model plays out its fold as a ghost beside it. No two shapes share a
+  // silhouette (a rosary is nothing like a pistol), so neither is ever asked
+  // to become the other: one vanishes into the point the other grows from.
   //
   // Both halves work on whatever the builders placed, so any shape folds:
   // nothing here knows what weapon it is folding.
@@ -1865,7 +1871,17 @@ var WeaponSystemProcedural = {
   VECTOR_FOLD_STAGGER: 0.5,   // the share of the clip a panel spends waiting its turn
   VECTOR_FOLD_TUCK: 0.7,      // how far in along the spine the packet telescopes
   VECTOR_FOLD_FLAT: 0.55,     // how far onto the spine a shut panel is drawn down
-  VECTOR_FOLD_SNAP: 1.9,      // how hard a crease opens past itself before it settles
+  VECTOR_FOLD_SNAP: 1.25,     // how hard a crease opens past itself before it settles
+  // How far a shut panel gathers in on the pivot, shrinking as it goes. At 1
+  // it is gone: two shapes never pack down to the same packet, and a swap
+  // between two visible packets read as one bundle popping into another.
+  VECTOR_FOLD_GATHER: 1,
+  // The share of the fold after which the new shape starts to rise, while the
+  // old one is still shrinking away.
+  VECTOR_FOLD_HANDOFF: 0.6,
+  // The longest step one frame of the fold may take. A hitch (the new shape
+  // being built at the pivot is one) otherwise jumped the panels half way.
+  VECTOR_FOLD_STEP_MS: 34,
   // Where along the weapon, from the hand end, the packet gathers. Not the
   // hand itself: a held weapon's grip sits below the bottom edge of the
   // battle overlay, and a fold packed down to it happened entirely off screen.
@@ -1875,10 +1891,20 @@ var WeaponSystemProcedural = {
    * Starts one half of the fold on a model.
    * @param {THREE.Object3D} model - The weapon in the hand
    * @param {string} phase - 'fold' (closing up) or 'rise' (opening out)
+   * @param {Object} [opts] - {reverse, pace}. Reversed, a half is the OTHER
+   *   half played backwards: closing is the rise run back into its packet and
+   *   opening is the fold run back out of it, so a shape going back to the gun
+   *   retraces exactly how it came out of it. `pace` scales the duration.
+   * @returns {Object|null} The running switch ({duration, parts, ...})
    */
-  startVectorSwitch(model, phase) {
+  startVectorSwitch(model, phase, opts) {
     if (!model || typeof THREE === 'undefined') return null;
-    const rise = phase === 'rise';
+    const closing = phase !== 'rise';
+    const reverse = !!(opts && opts.reverse);
+    // The curve being played: a reversed close is the rise's, a reversed open
+    // the fold's.
+    const rise = reverse ? closing : !closing;
+    const pace = (opts && opts.pace > 0) ? opts.pace : 1;
     // A model still held shut from an earlier fold (the swap kept the same
     // model) is opened back to its builder's layout before it is measured.
     if (model._vectorFolded) {
@@ -1969,19 +1995,27 @@ var WeaponSystemProcedural = {
         // the hand side of it come up to meet them.
         reach: along - (held + span * this.VECTOR_FOLD_PIVOT),
         rest: node.quaternion.clone(),
+        restScale: node.scale.clone(),
       });
       index++;
     });
     model._vectorSwitch = {
       elapsed: 0,
-      duration: rise ? this.VECTOR_RISE_MS : this.VECTOR_FOLD_MS,
+      duration: Math.max(1, (rise ? this.VECTOR_RISE_MS : this.VECTOR_FOLD_MS) * pace),
       rise: rise,
+      reverse: reverse,
+      closing: closing,
       spine: spine,
+      // The point on the spine the packet gathers in on.
+      pivot: spine.clone().multiplyScalar(held + span * this.VECTOR_FOLD_PIVOT),
       parts: parts,
       _q: new THREE.Quaternion(),
       _pq: new THREE.Quaternion(),
       _v: new THREE.Vector3(),
     };
+    // Nothing is drawn between here and the first tick, so the start pose is
+    // put on now: a model opening out of its packet is never seen whole first.
+    this.tickVectorSwitch(model, 0);
     return model._vectorSwitch;
   },
 
@@ -1989,8 +2023,11 @@ var WeaponSystemProcedural = {
   tickVectorSwitch(model, dtMs) {
     const vs = model && model._vectorSwitch;
     if (!vs) return;
-    vs.elapsed += dtMs;
-    const t = Math.max(0, Math.min(1, vs.elapsed / vs.duration));
+    vs.elapsed += Math.min(Math.max(0, dtMs || 0), this.VECTOR_FOLD_STEP_MS);
+    const done = vs.elapsed >= vs.duration;
+    const played = Math.max(0, Math.min(1, vs.elapsed / vs.duration));
+    // Played backwards, the clip is read from its end to its start.
+    const t = vs.reverse ? 1 - played : played;
     const stagger = this.VECTOR_FOLD_STAGGER;
     const window_ = 1 - stagger;
     const q = vs._q;
@@ -2024,6 +2061,10 @@ var WeaponSystemProcedural = {
       // and the whole thing telescopes in along the spine towards the pivot
       // as it goes, the ends travelling furthest, which shortens a long weapon.
       v.addScaledVector(vs.spine, -part.reach * this.VECTOR_FOLD_TUCK * k);
+      // and gathers in on the pivot, shrinking as it does, so whatever shape it
+      // was it ends as the point the next shape grows out of.
+      const gather = Math.max(0.001, 1 - this.VECTOR_FOLD_GATHER * k);
+      v.sub(vs.pivot).multiplyScalar(gather).add(vs.pivot);
       if (part.toParent) {
         // Back into the space of the sub-group the part hangs from.
         v.applyMatrix4(part.toParent);
@@ -2031,10 +2072,11 @@ var WeaponSystemProcedural = {
       }
       part.node.position.copy(v);
       part.node.quaternion.copy(q).multiply(part.rest);
+      part.node.scale.copy(part.restScale).multiplyScalar(gather);
     }
 
-    if (t >= 1) {
-      if (vs.rise) {
+    if (done) {
+      if (!vs.closing) {
         // Everything back exactly where the builder left it: an animation that
         // ends a millimetre out leaves the weapon wrong for the rest of the fight.
         this._restoreVectorParts(vs.parts);
@@ -2053,6 +2095,7 @@ var WeaponSystemProcedural = {
     for (const part of parts) {
       part.node.position.copy(part.local || part.home);
       part.node.quaternion.copy(part.rest);
+      if (part.restScale) part.node.scale.copy(part.restScale);
     }
   },
 

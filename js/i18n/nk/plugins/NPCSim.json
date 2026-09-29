@@ -17,7 +17,6 @@
     "cooked": "COOKED {a} WIT {b}",
     "foundInContainer": "FOUND {amount} RUMMAGIN' THROUGH A CONTAINER",
     "rentedRoom": "RENTED A ROOM FOR DA NIGHT ({price})",
-    "soldHoney": "SOLD A BATCH OF HONEY AN' WAX FOR {amount}",
     "tookLoan": "TOOK OUT A LOAN FOR {amount}",
     "deposited": "DEPOSITED {amount} INTO A SAVINGS ACCOUNT",
     "rentalIncome": "COLLECTED {amount} IN RENTAL INCOME",

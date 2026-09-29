@@ -74,7 +74,7 @@
     "maxLoan": "Max Loan",
     "loanDuration": "Loan Duration",
     "confirmKeys": "OK: Enter   Cancel: ESC",
-    "adjustKeys": "Up/Down: ±€1.00   Left/Right: ±€10.00   Q/E: ±€100.00",
+    "adjustKeys": "Up/Down: ±€1.00   Left/Right: ±€10.00   Shift+Left/Right: ±€100.00",
     "noMoneyToDeposit": "You don't have any money to deposit!",
     "noBankMoney": "You don't have any money in your bank account!",
     "alreadyBorrowed": "You already have an outstanding loan!",

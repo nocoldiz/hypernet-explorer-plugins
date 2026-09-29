@@ -19,6 +19,7 @@
     "loot": "{key}  Search the {name}",
     "board": "{key}  Climb into the camper",
     "fish": "{key}  Cast a line",
+    "lift": "{key}  Call the lift",
     "chest": {
       "item": "{key}  Open the supply chest",
       "armor": "{key}  Open the armour chest",

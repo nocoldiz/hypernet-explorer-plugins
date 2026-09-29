@@ -3,6 +3,7 @@
   "faction": "Faction",
   "locations": "Locations",
   "unknown": "Unknown",
+  "moreLocations": "+{count} more",
   "requirements": "Requirements",
   "successRate": "Success Rate",
   "deficitWarning": "Deficits detected. Taking this contract on carries a higher risk of failure and injury.",

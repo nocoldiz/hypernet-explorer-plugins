@@ -272,6 +272,8 @@
         // wildlife brawl resolving in the background could erase it (and its
         // battler's map position) out from under the fight.
         if (ev && ev._mbmCombatant) return false;
+        // Downed on the map (section 19): lying there, out of the food web.
+        if (ev && ev._bseDowned) return false;
         return !!(ev && !ev._erased && BSE.Helpers.isMonsterEvent(ev) &&
             ev._fixedTroopId > 0);
     }
@@ -1988,7 +1990,7 @@
     const OMEGA_TOWER_FALLBACK = { x: 79, y: 125 }; // world map (315) tile
     // Green Witch Space Center: the launch site, and the square every start
     // that begins off Earth is measured from (see getOffEarthAnchor).
-    const SPACE_CENTER_FALLBACK = { x: 61, y: 138 };
+    const SPACE_CENTER_FALLBACK = { x: 61, y: 118 };
     const WORLD_MAP_TILES  = 256;  // map 315 is 256x256; the gradient's own extent
     const PLACE_CURVE      = 1.2;  // >1 keeps the neighbourhood of home gentle
 
@@ -2027,7 +2029,7 @@
     };
 
     // The square a party that never stood on Earth is measured from: the Green
-    // Witch Space Center, 61,138. The space origin lifted off from it and the
+    // Witch Space Center, 61,118. The space origin lifted off from it and the
     // crash-landed origin was on its way back to it, so it is the one square on
     // Earth either of them can honestly call home. Every origin that DOES stand
     // on an Earth square is measured from that square instead, the castaway's
@@ -4138,11 +4140,23 @@
     const AI_ROUSE_FRAMES  = 240;  // how long a creature stays roused by a call
     const AI_RETURN_TIME   = 900;  // longest a creature spends walking home
 
+    // The name the simulation log gives a map monster: its troop leader's.
+    function simLogMonsterName(ev) {
+        const troop = ev._fixedTroopId ? $dataTroops[ev._fixedTroopId] : null;
+        const enemy = (troop && troop.members.length) ? $dataEnemies[troop.members[0].enemyId] : null;
+        const name = enemy ? String(enemy.name || '').trim() : '';
+        return name || String((ev.event() && ev.event().name) || '').trim();
+    }
+
     Game_Event.prototype.aiEnter = function(state, timer) {
         const was = this._aiState;
         this._aiState = state;
         this._aiTimer = Math.max(0, Math.min(99999, timer || 0));
         if (was === state) return;
+        if (window.SimLog && window.SimLog.active()) {
+            window.SimLog.decide('monster', this.eventId(),
+                'ParchmentToast.simLog.monster.' + state, { name: simLogMonsterName(this) });
+        }
         const beh = this._bseBeh;
         if (state === 'commit' && beh && beh.chaseSpeed && this._moveSpeed > 0) {
             this.setMoveSpeed(Math.min(
@@ -5155,6 +5169,8 @@
                     const a = enemies[i], b = enemies[j];
                     const dx = Math.abs(a.x - b.x), dy = Math.abs(a.y - b.y);
                     if (Math.max(dx, dy) > 1) continue; // not touching or adjacent
+                    // Running from a fight it just broke off (section 19).
+                    if (a._bseRun || b._bseRun) continue;
 
                     const ecoA = BSE.Helpers.getEventEcology(a);
                     const ecoB = BSE.Helpers.getEventEcology(b);
@@ -5173,6 +5189,7 @@
                         if (a.enemyHp === undefined) a.enemyHp = a.getMaxHpForEvent();
                         if (b.enemyHp === undefined) b.enemyHp = b.getMaxHpForEvent();
                         fights[key] = { fighters: [a.eventId(), b.eventId()], timer: ECO_FIGHT_INTERVAL };
+                        BSE.Skirmish.toast('start', BSE.Skirmish.monsterSide(a), BSE.Skirmish.monsterSide(b));
                     }
                 }
             }
@@ -5192,32 +5209,11 @@
                 continue;
             }
 
-            const lv1 = lvOf(e1), lv2 = lvOf(e2);
-            const eco1 = BSE.Helpers.getEventEcology(e1);
-            const eco2 = BSE.Helpers.getEventEcology(e2);
-
-            // attacker weight = level, tripled when ecologically dominant
-            let w1 = lv1, w2 = lv2;
-            if (BSE.Helpers.ecologyDominates(eco1, eco2)) w1 *= 3;
-            if (BSE.Helpers.ecologyDominates(eco2, eco1)) w2 *= 3;
-
-            let attacker, defender, atkLv;
-            if (Math.random() < w1 / (w1 + w2)) { attacker = e1; defender = e2; atkLv = lv1; }
-            else { attacker = e2; defender = e1; atkLv = lv2; }
-
-            const damage = 5 + Math.floor(atkLv / 2) + Math.floor(Math.random() * 6);
-            if (defender.enemyHp === undefined) defender.enemyHp = defender.getMaxHpForEvent();
-            defender.enemyHp -= damage;
-            BSE.Functions.recordMapEnemyDamage(defender, damage);
-
-            const spriteset = SceneManager._scene && SceneManager._scene._spriteset;
-            if (spriteset && spriteset._characterSprites) {
-                const ds = spriteset._characterSprites.find(s => s._character === defender);
-                if (ds) { ds.setBlendColor([255, 64, 64, 160]); ds._flashDuration = 12; }
-            }
-
-            if (defender.enemyHp <= 0) {
-                BSE.Functions.killEnemyEventLeaveCorpse(defender, atkLv);
+            // One exchange through the shared resolver (section 19): attacker
+            // weight is the level, tripled when ecologically dominant, and the
+            // fight can end in a kill, a downed body, a spare or a flight.
+            if (BSE.Skirmish.exchange(fight, BSE.Skirmish.monsterSide(e1),
+                BSE.Skirmish.monsterSide(e2), Math.random) !== 'continue') {
                 delete fights[key];
             }
         }
@@ -5263,13 +5259,13 @@
     // Kill a map enemy event and leave a harvestable corpse, possibly with
     // body parts torn off / destroyed depending on the killer's level and RNG.
     // ------------------------------------------------------------------------
-    BSE.Functions.killEnemyEventLeaveCorpse = function(ev, killerLevel) {
+    BSE.Functions.killEnemyEventLeaveCorpse = function(ev, killerLevel, damageType) {
         if (!ev || ev._erased) return;
         const troop = ev._fixedTroopId ? $dataTroops[ev._fixedTroopId] : null;
         const enemyId = (troop && troop.members.length) ? troop.members[0].enemyId : 0;
         const enemyData = enemyId ? $dataEnemies[enemyId] : null;
 
-        applyMapDeathPartDamage(enemyId, enemyData, killerLevel);
+        applyMapDeathPartDamage(enemyId, enemyData, killerLevel, damageType);
 
         const corpse = {
             mapId: $gameMap.mapId(),
@@ -5300,7 +5296,7 @@
         $gameMap.eraseEvent(ev.eventId());
     };
 
-    function applyMapDeathPartDamage(enemyId, enemyData, killerLevel) {
+    function applyMapDeathPartDamage(enemyId, enemyData, killerLevel, damageType) {
         if (!enemyId || !enemyData || !BSE.State.enemyPartDamage) return;
         const archetypeName = BSE.Helpers.getEnemyArchetype(enemyData);
         const archetypes = window.Health && window.Health.Archetypes;
@@ -5318,7 +5314,10 @@
         for (const key in archetype.parts) {
             const basePart = archetype.parts[key];
             const maxHp = Math.max(1, Math.round(mhp * (basePart.hpPercent || 100) / 100));
-            const destroyed = Math.random() < brutality;
+            // A Blunt death (a ram, a club) breaks bones but never destroys a
+            // vital part (HealthCore.isBluntAction, the same rule as a battle).
+            const blunt = damageType === 'Blunt' && basePart.vital;
+            const destroyed = !blunt && Math.random() < brutality;
             parts[key] = {
                 currentHp: destroyed ? 0 : maxHp,
                 maxHp: maxHp,
@@ -6255,5 +6254,770 @@
         }
         _BSE_spawnEnemiesFromEncounters.call(this);
     };
+
+    // ========================================================================
+    // 18. Airborne shadows
+    // ------------------------------------------------------------------------
+    // A creature that flies or floats is drawn the way the Flying Broom is: the
+    // stock Shadow1 blob on the ground under it, and the creature itself held a
+    // little above that and bobbing, so the gap between the two is what says
+    // "airborne". What counts as airborne is one question with three answers,
+    // any of which will do: the archetype moves as a flyer here
+    // (FLYING_ENEMY_ARCHETYPES), the body says <Floating>, or the 3D rig flies
+    // (Battler3D.resolveLocomotion gait 'fly').
+    //
+    // The shadow is a sibling of the character sprite, not a child: a child is
+    // drawn over its parent, and a shadow has to lie under it. It sits at z 2,
+    // between the ground tiles and the characters (z 3). Like the level plates
+    // (BattleSystemEnhancedLevelDisplay.js) it only lives while its owner keeps
+    // saying so once a frame, and a sweep takes off any whose owner went quiet.
+    // ========================================================================
+    const AIRBORNE_SHADOW_Z = 2;
+    const AIRBORNE_LIFT_PX = 12;
+    const AIRBORNE_BOB_PX = 3;
+    const AIRBORNE_BOB_FRAMES = 90;
+    const AIRBORNE_SHADOW_OPACITY = 200;
+    const AIRBORNE_SHADOW_STALE_FRAMES = 2;
+
+    BSE.Helpers.isAirborneEnemy = function(enemyData) {
+        if (!enemyData) return false;
+        if (enemyData._bseAirborne !== undefined) return enemyData._bseAirborne;
+        // A swimmer is never airborne: on a fish, eel or shark <Floating> means
+        // buoyant in the water, not held above the ground with a shadow under it.
+        const archetype = BSE.Helpers.getEnemyArchetype(enemyData);
+        let gait = null;
+        if (window.Battler3D && typeof window.Battler3D.resolveLocomotion === 'function') {
+            try {
+                gait = window.Battler3D.resolveLocomotion(enemyData).gait;
+            } catch (e) {
+                gait = null;
+            }
+        }
+        let airborne;
+        if (BSE.Helpers.getFlyingArchetype(archetype)) airborne = true;
+        else if (BSE.Helpers.getAquaticArchetype(archetype) || gait === 'swim') airborne = false;
+        else airborne = gait === 'fly' || /<Floating>/i.test(enemyData.note || '');
+        // Notes never change at runtime, so the answer is kept on the entry.
+        enemyData._bseAirborne = !!airborne;
+        return enemyData._bseAirborne;
+    };
+
+    // The troop's lead creature decides, as it does for how the event moves.
+    function airborneEvent(event) {
+        if (!event || event._erased || !event._fixedTroopId) return false;
+        if (event._bseAirborneTroop === event._fixedTroopId) return event._bseAirborneFlag;
+        const troop = $dataTroops && $dataTroops[event._fixedTroopId];
+        const lead = troop && troop.members && troop.members[0];
+        const enemyData = lead ? $dataEnemies[lead.enemyId] : null;
+        event._bseAirborneTroop = event._fixedTroopId;
+        event._bseAirborneFlag = BSE.Helpers.isAirborneEnemy(enemyData);
+        return event._bseAirborneFlag;
+    }
+
+    // How far above its shadow the creature is this frame. Every event bobs on
+    // its own phase, so a flock does not rise and fall as one.
+    function airborneLift(event) {
+        const frame = typeof Graphics !== 'undefined' ? (Graphics.frameCount || 0) : 0;
+        const phase = ((event.eventId ? event.eventId() : 0) * 17) % AIRBORNE_BOB_FRAMES;
+        const t = ((frame + phase) % AIRBORNE_BOB_FRAMES) / AIRBORNE_BOB_FRAMES;
+        return AIRBORNE_LIFT_PX + Math.sin(t * Math.PI * 2) * AIRBORNE_BOB_PX;
+    }
+
+    const _Game_Event_shiftY_Airborne = Game_Event.prototype.shiftY;
+    Game_Event.prototype.shiftY = function() {
+        const base = _Game_Event_shiftY_Airborne.call(this);
+        return airborneEvent(this) ? base + airborneLift(this) : base;
+    };
+
+    const liveAirborneShadows = new Set();
+
+    function shadowFrame() {
+        return typeof Graphics !== 'undefined' ? (Graphics.frameCount || 0) : 0;
+    }
+
+    const _Sprite_Character_update_Airborne = Sprite_Character.prototype.update;
+    Sprite_Character.prototype.update = function() {
+        _Sprite_Character_update_Airborne.call(this);
+        this.updateAirborneShadow();
+    };
+
+    Sprite_Character.prototype.updateAirborneShadow = function() {
+        const event = this._character;
+        const live = event && event.eventId && $gameMap && $gameMap.event
+            ? $gameMap.event(event.eventId()) : null;
+        if (!event || live !== event || !airborneEvent(event) || !this.parent) {
+            return this.removeAirborneShadow();
+        }
+        let shadow = this._airborneShadow;
+        if (!shadow) {
+            shadow = new Sprite(ImageManager.loadSystem('Shadow1'));
+            shadow.anchor.x = 0.5;
+            shadow.anchor.y = 1;
+            shadow.z = AIRBORNE_SHADOW_Z;
+            this._airborneShadow = shadow;
+        }
+        // Registered every frame, so a shadow the sweep took off while its
+        // owner was not being updated is tracked again once it comes back.
+        liveAirborneShadows.add(shadow);
+        if (shadow.parent !== this.parent) {
+            if (shadow.parent) shadow.parent.removeChild(shadow);
+            this.parent.addChild(shadow);
+        }
+        // On the ground, where the creature would stand: its lift is taken
+        // back off. The higher it bobs, the smaller and fainter the shadow.
+        const lift = airborneLift(event);
+        const fade = 1 - (lift - AIRBORNE_LIFT_PX) / (AIRBORNE_LIFT_PX * 2);
+        shadow.x = this.x;
+        shadow.y = this.y + lift;
+        shadow.scale.x = shadow.scale.y = Math.abs(this.scale.x || 1) * fade;
+        shadow.opacity = Math.round(AIRBORNE_SHADOW_OPACITY * fade * (this.opacity / 255));
+        shadow.visible = this.visible && this.opacity > 0;
+        shadow._shadowFrame = shadowFrame();
+    };
+
+    Sprite_Character.prototype.removeAirborneShadow = function() {
+        const shadow = this._airborneShadow;
+        if (!shadow) return;
+        liveAirborneShadows.delete(shadow);
+        shadow.visible = false;
+        if (shadow.parent) shadow.parent.removeChild(shadow);
+        this._airborneShadow = null;
+    };
+
+    // A sprite the engine stopped updating never says it is done with its
+    // shadow, so anything not refreshed for a couple of frames is taken away.
+    const _Spriteset_Map_update_Airborne = Spriteset_Map.prototype.update;
+    Spriteset_Map.prototype.update = function() {
+        _Spriteset_Map_update_Airborne.call(this);
+        const now = shadowFrame();
+        for (const shadow of liveAirborneShadows) {
+            if (now - (shadow._shadowFrame || 0) > AIRBORNE_SHADOW_STALE_FRAMES) {
+                liveAirborneShadows.delete(shadow);
+                shadow.visible = false;
+                if (shadow.parent) shadow.parent.removeChild(shadow);
+            }
+        }
+    };
+
+    // ========================================================================
+    // 19. MAP SKIRMISH - people and monsters fighting where they stand
+    // ========================================================================
+    // Out on the map a fight does not need the party. A guard squares up to
+    // the wolf that walked into town, a hunter goes for the townsfolk, two
+    // creatures of the food web settle who eats whom (section 14). All of them
+    // are decided by ONE resolver, a round every ROUND_FRAMES:
+    //
+    //   - who lands the blow is a weighted roll (level, tripled for a monster
+    //     that dominates the other in the food web; a person adds their
+    //     strength, their combat training and a fighter's edge);
+    //   - the blow's damage type (the monster's own skills, the person's
+    //     weapon) decides how a body at 0 goes down: a Blunt ending with no
+    //     vital part destroyed leaves it DOWNED (HealthCore.wasBluntDowned's
+    //     rule), anything else kills;
+    //   - a side under FLEE_HP_RATIO of its health may break off, by morale
+    //     and by the level gap, and runs at speed 5 until it is clear;
+    //   - a monster with <Talk> that has put somebody down may spare them,
+    //     rolled on exactly the odds a battle's surrender uses (EnemyTalk).
+    //
+    // The NPC half (who flees, who engages, their HP and wounds, their death)
+    // is NPCSystem's "MAP SKIRMISH" section, reached through window.NPCSkirmish
+    // so this file never has to know what a controller is.
+
+    // Public reads of the private food-web helpers above.
+    BSE.Helpers.liveMonsters = function() { return liveEnemiesThisFrame(); };
+    BSE.Helpers.isLiveMonster = function(ev) { return isLiveEnemyEvent(ev); };
+    BSE.Helpers.nearestMonster = function(x, y, range, filter) {
+        const list = liveEnemiesThisFrame();
+        let best = null, bestD = Infinity;
+        for (let i = 0; i < list.length; i++) {
+            const ev = list[i];
+            if (!ev || ev._erased) continue;
+            const d = Math.abs(ev.x - x) + Math.abs(ev.y - y);
+            if (d > range || d >= bestD) continue;
+            if (filter && !filter(ev)) continue;
+            best = ev;
+            bestD = d;
+        }
+        return best;
+    };
+    BSE.Helpers.stepAway = function(ev, x, y) { aiStepAway(ev, x, y); };
+    BSE.Helpers.stepToward = function(ev, x, y) { aiStepToward(ev, x, y); };
+
+    // START SKIRMISH CORE
+    // Pure rules, no map: the node harness (test/test_map_skirmish.js) slices
+    // this block out and runs it against stand-ins.
+    function makeSkirmishCore(helpers) {
+        const ARCHETYPE_RE = /<Archetype:\s*(\w+)>/i;
+        const DAMAGE_TYPE_RE = /<DamageType:\s*([^>]+)>/i;
+        const core = {
+            SCAN_FRAMES: 20,            // pairing sweep cadence
+            ROUND_FRAMES: 60,           // one exchange of blows
+            FLEE_HP_RATIO: 0.3,         // under this share of health, running is on the table
+            MONSTER_FLEE_TILES: 8,      // a monster runs until it is this far clear
+            RUN_SPEED: 5,
+            RUN_MAX_FRAMES: 900,        // nothing runs for ever into a wall
+            ESCAPE_TILES: 8,            // a monster that escaped a battle
+            ESCAPE_NO_ENGAGE_FRAMES: 1800, // 30 s before it will pick a fight again
+            TOAST_RANGE: 16,
+            TOAST_COOLDOWN_FRAMES: 900, // one line per pair every 15 s
+            PARTY_HIT_CHANCE: 0.2,      // per exchange, a party member stood right beside it
+            VITAL_HIT_CHANCE: 0.1,      // an edged blow that reaches something vital
+            MAX_FIGHTS: 12,             // background fights held at once
+            MORALE: { Hunter: 0.8, Predator: 0.65, Neutral: 0.4, Prey: 0.2 },
+
+            // A side's weight in the roll for who lands the blow.
+            weight(side, other) {
+                let w = Math.max(1, side.level || 1);
+                if (side.kind === 'monster') {
+                    if (other && other.kind === 'monster' &&
+                        helpers.ecologyDominates(side.eco, other.eco)) w *= 3;
+                } else {
+                    w += (side.atk || 0) / 20 + (side.spec || 0) * 2;
+                    if (side.fighter) w *= 1.25;
+                }
+                return w;
+            },
+
+            // What a landed blow takes. Two monsters trade the food web's old
+            // figure exactly; a person brings strength and training, and a
+            // person on either end sets armour against it.
+            damage(attacker, defender, rng) {
+                const lv = Math.max(1, attacker.level || 1);
+                let dmg = 5 + Math.floor(lv / 2) + Math.floor(rng() * 6);
+                if (attacker.kind === 'npc') {
+                    dmg += Math.floor((attacker.atk || 0) / 10) + (attacker.spec || 0);
+                }
+                if (attacker.kind !== 'monster' || defender.kind !== 'monster') {
+                    dmg -= Math.floor((defender.def || 0) / 10);
+                }
+                return Math.max(1, dmg);
+            },
+
+            round(a, b, rng) {
+                const wa = core.weight(a, b), wb = core.weight(b, a);
+                const aHits = rng() < wa / (wa + wb);
+                const attacker = aHits ? a : b;
+                const defender = aHits ? b : a;
+                return {
+                    attacker, defender, attackerIsA: aHits,
+                    damage: core.damage(attacker, defender, rng),
+                    blow: attacker.blow || 'Blunt'
+                };
+            },
+
+            // Hurt badly enough to think about running: how likely it is.
+            breakOffChance(side, other) {
+                if (!(side.mhp > 0) || side.hp <= 0) return 0;
+                if (side.hp / side.mhp >= core.FLEE_HP_RATIO) return 0;
+                const morale = side.morale != null ? side.morale : 0.5;
+                const gap = ((other && other.level) || 1) - (side.level || 1);
+                return Math.max(0.05, Math.min(0.9, 0.3 + (0.5 - morale) * 0.6 + gap * 0.03));
+            },
+            breaksOff(side, other, rng) {
+                const c = core.breakOffChance(side, other);
+                return c > 0 && rng() < c;
+            },
+
+            // How a side at 0 goes down (Phase X: blunt knocks out).
+            ending(victim, blow) {
+                if (victim.hp > 0) return null;
+                return (blow === 'Blunt' && !victim.vitalDestroyed) ? 'downed' : 'death';
+            },
+
+            // The damage type of one of a monster's blows: its own tag, else
+            // one of the skills it fights with, else a plain blow.
+            blowOf(enemyData, rng, skills) {
+                if (!enemyData) return 'Blunt';
+                const own = String(enemyData.note || '').match(DAMAGE_TYPE_RE);
+                if (own) return own[1].trim();
+                const acts = (enemyData.actions || []).filter(a => a && a.skillId > 0);
+                if (!acts.length) return 'Blunt';
+                const pick = acts[Math.floor(rng() * acts.length)];
+                const skill = skills ? skills[pick.skillId] : null;
+                const m = skill ? String(skill.note || '').match(DAMAGE_TYPE_RE) : null;
+                return m ? m[1].trim() : 'Blunt';
+            },
+
+            // A downed body at a monster's mercy: the talk odds a battle's
+            // surrender rolls, with the victim doing the talking.
+            spareChance(enemyData, victimLuk, rng) {
+                const ET = helpers.enemyTalk();
+                if (!ET || !ET.canTalkData || !ET.canTalkData(enemyData)) return 0;
+                const arch = String(enemyData.note || '').match(ARCHETYPE_RE);
+                const disposition = ET.rollDispositionValue(arch ? arch[1] : null, rng);
+                const enemyLuk = (enemyData.params && enemyData.params[7]) || 0;
+                return ET.talkSuccessChance(disposition, victimLuk, enemyLuk);
+            },
+            spares(enemyData, victimLuk, rng) {
+                const c = core.spareChance(enemyData, victimLuk, rng);
+                return c > 0 && rng() * 100 < c;
+            },
+
+            // May this pair's line be shown now? Stamps the pair when it may.
+            toastAllowed(store, key, frame, dist) {
+                if (!(dist <= core.TOAST_RANGE)) return false;
+                const last = store[key];
+                if (last != null && frame - last < core.TOAST_COOLDOWN_FRAMES) return false;
+                store[key] = frame;
+                return true;
+            },
+
+            // A run: set up, one step, and done.
+            runState(threat, tiles, prevSpeed, frame) {
+                return {
+                    threat: threat.id != null ? threat.id : null,
+                    player: !!threat.player,
+                    x: threat.x, y: threat.y,
+                    tiles: tiles, prevSpeed: prevSpeed,
+                    until: frame + core.RUN_MAX_FRAMES
+                };
+            },
+            runDone(run, x, y, frame) {
+                if (!run) return true;
+                if (frame >= run.until) return true;
+                return Math.abs(x - run.x) + Math.abs(y - run.y) > run.tiles;
+            }
+        };
+        return core;
+    }
+    // END SKIRMISH CORE
+
+    const Skirmish = BSE.Skirmish = makeSkirmishCore({
+        ecologyDominates: (a, b) => BSE.Helpers.ecologyDominates(a, b),
+        enemyTalk: () => window.EnemyTalk || null
+    });
+
+    const SKIRMISH_FLASH = [255, 64, 64, 160];
+    const _skirmishToasts = {};
+
+    function skirmishFrame() {
+        return (typeof Graphics !== 'undefined' && Graphics.frameCount) || 0;
+    }
+
+    function skirmishNpcApi() {
+        return window.NPCSkirmish || null;
+    }
+
+    function skirmishFlash(character) {
+        const spriteset = SceneManager._scene && SceneManager._scene._spriteset;
+        if (!character || !spriteset || !spriteset._characterSprites) return;
+        const sprite = spriteset._characterSprites.find(s => s._character === character);
+        if (sprite) { sprite.setBlendColor(SKIRMISH_FLASH); sprite._flashDuration = 12; }
+    }
+
+    function chebyshev(a, b) {
+        return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y));
+    }
+
+    Skirmish.monsterRef = function(ev) { return { kind: 'monster', id: ev.eventId() }; };
+    Skirmish.refKey = function(ref) { return ref.kind === 'npc' ? 'n:' + ref.name : 'm:' + ref.id; };
+
+    // Everything the resolver needs to know about a monster, read fresh.
+    Skirmish.monsterSide = function(ev) {
+        if (!isLiveEnemyEvent(ev)) return null;
+        const troop = $dataTroops[ev._fixedTroopId];
+        const enemyData = (troop && troop.members.length) ? $dataEnemies[troop.members[0].enemyId] : null;
+        const mhp = ev.getMaxHpForEvent() || 1;
+        if (ev.enemyHp === undefined) ev.enemyHp = mhp;
+        const eco = BSE.Helpers.getEventEcology(ev);
+        const p = (enemyData && enemyData.params) || [];
+        return {
+            kind: 'monster',
+            ref: Skirmish.monsterRef(ev),
+            event: ev,
+            enemyData: enemyData,
+            name: enemyData ? String(enemyData.name || '').trim() : '',
+            level: lvOf(ev),
+            hp: ev.enemyHp,
+            mhp: mhp,
+            atk: p[2] || 0, def: p[3] || 0, luk: p[7] || 0,
+            eco: eco,
+            morale: Skirmish.MORALE[eco] != null ? Skirmish.MORALE[eco] : 0.4,
+            blow: Skirmish.blowOf(enemyData, Math.random, $dataSkills),
+            vitalDestroyed: !!ev._bseVitalHit
+        };
+    };
+
+    Skirmish.sideOf = function(ref) {
+        if (!ref) return null;
+        if (ref.kind === 'monster') return Skirmish.monsterSide($gameMap.event(ref.id));
+        const api = skirmishNpcApi();
+        return api && api.sideFor ? api.sideFor(ref.name) : null;
+    };
+
+    // ------------------------------------------------------------------------
+    // One exchange. Answers 'continue' while the fight goes on, or how it
+    // ended: 'killed', 'downed', 'spared', 'fled', 'apart'.
+    // ------------------------------------------------------------------------
+    Skirmish.exchange = function(fight, A, B, rng) {
+        if (!A || !B || !A.event || !B.event || chebyshev(A.event, B.event) > 1) return 'apart';
+        const r = Skirmish.round(A, B, rng);
+        const attacker = r.attacker, defender = r.defender;
+        Skirmish.hit(defender, attacker, r.damage, r.blow, rng);
+        skirmishFlash(defender.event);
+        if (defender.hp <= 0) {
+            return Skirmish.finish(attacker, defender, Skirmish.ending(defender, r.blow), r.blow, rng);
+        }
+        Skirmish.partyCaughtUp(A, rng);
+        Skirmish.partyCaughtUp(B, rng);
+        if (Skirmish.breaksOff(defender, attacker, rng)) {
+            Skirmish.flee(defender, attacker);
+            Skirmish.toast('fled', attacker, defender);
+            return 'fled';
+        }
+        return 'continue';
+    };
+
+    Skirmish.hit = function(side, attacker, damage, blow, rng) {
+        if (side.kind === 'monster') {
+            const ev = side.event;
+            ev.enemyHp -= damage;
+            BSE.Functions.recordMapEnemyDamage(ev, damage);
+            if (blow !== 'Blunt' && rng() < Skirmish.VITAL_HIT_CHANCE) ev._bseVitalHit = true;
+            side.hp = ev.enemyHp;
+            side.vitalDestroyed = !!ev._bseVitalHit;
+            return;
+        }
+        const api = skirmishNpcApi();
+        const res = api && api.applyHit ? api.applyHit(side.name, damage, blow, rng) : null;
+        if (res) {
+            side.hp = res.hp;
+            side.vitalDestroyed = !!res.vitalDestroyed;
+        } else {
+            side.hp -= damage;
+        }
+    };
+
+    Skirmish.finish = function(winner, loser, end, blow, rng) {
+        let outcome = end === 'downed' ? 'downed' : 'killed';
+        // Down at a monster's feet: one that can be talked to may let it be,
+        // anything else finishes what it started.
+        if (end === 'downed' && winner.kind === 'monster') {
+            if (Skirmish.spares(winner.enemyData, loser.luk || 0, rng)) {
+                outcome = 'spared';
+            } else {
+                end = 'death';
+                outcome = 'killed';
+            }
+        }
+        if (end === 'death') {
+            Skirmish.kill(loser, winner, blow);
+            if (winner.kind === 'npc' && loser.kind === 'monster') outcome = 'won';
+        } else {
+            Skirmish.onDowned(loser, { byBlunt: blow === 'Blunt', by: winner });
+            if (outcome === 'spared' && winner.event) Skirmish.startRun(winner.event, loser.event, Skirmish.MONSTER_FLEE_TILES);
+        }
+        Skirmish.toast(outcome, winner, loser);
+        return outcome;
+    };
+
+    Skirmish.kill = function(side, killer, blow) {
+        if (side.kind === 'monster') {
+            BSE.Functions.killEnemyEventLeaveCorpse(side.event, killer.level || 1, blow);
+            return;
+        }
+        const api = skirmishNpcApi();
+        if (api && api.onDeath) api.onDeath(side.name, killer);
+    };
+
+    // The downed state, for both kinds. Phase K builds on this hook (the
+    // lying-down crawl, the loot and coup de grace menus, recovery), so it is
+    // one function K can wrap rather than two code paths.
+    Skirmish.onDowned = function(side, info) {
+        if (side.kind === 'monster') {
+            const ev = side.event;
+            const prevSpeed = ev._bseRun ? ev._bseRun.prevSpeed : ev._moveSpeed;
+            ev._bseDowned = Skirmish.downedRecord(($gameVariables && $gameVariables.value(114)) || 0,
+                !!(info && info.byBlunt), Math.random);
+            ev._bseDowned.prevSpeed = prevSpeed;
+            ev._npcLyingDown = true;
+            ev._bseRun = null;
+            return;
+        }
+        const api = skirmishNpcApi();
+        if (api && api.onDowned) api.onDowned(side.name, info || {});
+    };
+
+    // A downed monster gets up again, the way a downed person does
+    // (NPCSystem_Downed.js): DOWNED_RECOVER_HOURS after it went down, at
+    // DOWNED_RECOVER_HP of its health, and goes back to whatever it was doing.
+    // Checked where it crawls (every frame it is on the map) and on the hourly
+    // pass of the downed register, so a monster nobody is looking at gets up
+    // on time too.
+    Skirmish.DOWNED_RECOVER_HOURS = [3, 6];
+    Skirmish.DOWNED_RECOVER_HP = 0.25;
+    Skirmish.downedRecord = function(minute, byBlunt, rng) {
+        const [lo, hi] = Skirmish.DOWNED_RECOVER_HOURS;
+        const hours = lo + (rng ? rng() : Math.random()) * (hi - lo);
+        return { since: minute, untilMinute: minute + Math.round(hours * 60), byBlunt: !!byBlunt };
+    };
+    Skirmish.recoverDue = function(ev, minute) {
+        const d = ev && !ev._erased ? ev._bseDowned : null;
+        if (!d) return false;
+        const now = minute != null ? minute : (($gameVariables && $gameVariables.value(114)) || 0);
+        const until = d.untilMinute != null ? d.untilMinute
+            : (d.since || 0) + Skirmish.DOWNED_RECOVER_HOURS[1] * 60;
+        return now >= until;
+    };
+    Skirmish.recover = function(ev) {
+        if (!ev || ev._erased || !ev._bseDowned) return false;
+        const prevSpeed = ev._bseDowned.prevSpeed;
+        const mhp = (ev.getMaxHpForEvent && ev.getMaxHpForEvent()) || 1;
+        ev._bseDowned = null;
+        ev._npcLyingDown = false;
+        ev._bseCrawlWait = 0;
+        ev._bseVitalHit = false;
+        ev.enemyHp = Math.max(1, Math.round(mhp * Skirmish.DOWNED_RECOVER_HP));
+        if (prevSpeed > 0 && ev.setMoveSpeed) ev.setMoveSpeed(prevSpeed);
+        // The battle it may still be dragged into builds it at the same
+        // quarter: the persistent wound record is set to match.
+        const troopId = ev._fixedTroopId;
+        const pData = BSE.State && BSE.State.persistentEnemyData;
+        if (troopId && pData && $dataTroops[troopId] && $gameMap) {
+            const key = `${$gameMap.mapId()}_${ev.eventId()}`;
+            const record = pData[key] || (pData[key] = { troopId: troopId, enemyHp: {} });
+            record.troopId = troopId;
+            if (!record.enemyHp) record.enemyHp = {};
+            const mult = (window.GameOptions && window.GameOptions.enemyStatMultiplier)
+                ? window.GameOptions.enemyStatMultiplier() : 1;
+            $dataTroops[troopId].members.forEach((member, index) => {
+                const data = $dataEnemies[member.enemyId];
+                if (!data) return;
+                const memberMax = Math.max(1, Math.round((data.params[0] || 1) * mult));
+                record.enemyHp[index] = Math.max(1, Math.round(memberMax * Skirmish.DOWNED_RECOVER_HP));
+            });
+        }
+        return true;
+    };
+    // Every downed monster on the map whose time is up. Answers how many got up.
+    Skirmish.recoverDownedMonsters = function(minute) {
+        if (!$gameMap || !$gameMap.events) return 0;
+        let up = 0;
+        for (const ev of $gameMap.events()) {
+            if (ev && ev._bseDowned && Skirmish.recoverDue(ev, minute) && Skirmish.recover(ev)) up++;
+        }
+        return up;
+    };
+
+    Skirmish.flee = function(side, from) {
+        if (side.kind === 'monster') {
+            Skirmish.startRun(side.event, from.event, Skirmish.MONSTER_FLEE_TILES);
+            return;
+        }
+        const api = skirmishNpcApi();
+        if (api && api.flee) api.flee(side.name, from.event);
+    };
+
+    // ------------------------------------------------------------------------
+    // Running: from a fight, from a threat, or out of a battle it escaped.
+    // ------------------------------------------------------------------------
+    Skirmish.startRun = function(ev, threat, tiles) {
+        if (!ev || ev._erased) return;
+        const t = threat === $gamePlayer
+            ? { player: true, x: $gamePlayer.x, y: $gamePlayer.y }
+            : { id: threat && threat.eventId ? threat.eventId() : null,
+                x: threat ? threat.x : ev.x, y: threat ? threat.y : ev.y };
+        const prev = ev._bseRun ? ev._bseRun.prevSpeed : ev._moveSpeed;
+        ev._bseRun = Skirmish.runState(t, tiles, prev, skirmishFrame());
+        ev._movementLocked = false;
+        ev._fleeHoldTimer = 0;
+        ev.setMoveSpeed(Skirmish.RUN_SPEED);
+    };
+
+    // One step of a run, taken while the creature stands still. Answers true
+    // while it is still running.
+    Skirmish.stepRun = function(ev) {
+        const run = ev._bseRun;
+        if (!run) return false;
+        let tx = run.x, ty = run.y;
+        if (run.player && $gamePlayer) { tx = $gamePlayer.x; ty = $gamePlayer.y; }
+        else if (run.threat != null) {
+            const t = $gameMap.event(run.threat);
+            if (t && !t._erased) { tx = t.x; ty = t.y; }
+        }
+        run.x = tx; run.y = ty;
+        if (Skirmish.runDone(run, ev.x, ev.y, skirmishFrame())) {
+            ev._bseRun = null;
+            if (run.prevSpeed > 0) ev.setMoveSpeed(run.prevSpeed);
+            return false;
+        }
+        aiStepAway(ev, tx, ty);
+        return true;
+    };
+
+    // A monster that got out of a battle alive (Game_Enemy.escape): it runs
+    // from the party once the map is back and will not pick a fight for 30 s.
+    Skirmish.startEscape = function(ev) {
+        if (!ev || ev._erased) return;
+        ev._bseNoEngageUntil = skirmishFrame() + Skirmish.ESCAPE_NO_ENGAGE_FRAMES;
+        Skirmish.startRun(ev, $gamePlayer, Skirmish.ESCAPE_TILES);
+    };
+
+    Skirmish.isHoldingOff = function(ev) {
+        return !!(ev && ev._bseNoEngageUntil && skirmishFrame() < ev._bseNoEngageUntil);
+    };
+
+    // BattleSystemEnhancedState queues the escaped monsters of a battle here,
+    // and drains the queue on the map the party comes back to.
+    Skirmish.queueEscape = function(mapId, eventId) {
+        if (!$gameSystem) return;
+        const q = $gameSystem._bseEscapers || ($gameSystem._bseEscapers = []);
+        if (!q.some(e => e.mapId === mapId && e.eventId === eventId)) q.push({ mapId, eventId });
+    };
+    Skirmish.drainEscapes = function() {
+        const q = $gameSystem && $gameSystem._bseEscapers;
+        if (!q || !q.length || !$gameMap) return;
+        const mapNow = $gameMap.mapId();
+        $gameSystem._bseEscapers = q.filter(entry => {
+            if (entry.mapId !== mapNow) return true;
+            Skirmish.startEscape($gameMap.event(entry.eventId));
+            return false;
+        });
+    };
+
+    const _Game_Enemy_escape_Skirmish = Game_Enemy.prototype.escape;
+    Game_Enemy.prototype.escape = function() {
+        this._bseEscaped = true;
+        _Game_Enemy_escape_Skirmish.call(this);
+    };
+
+    // ------------------------------------------------------------------------
+    // The party stood right beside a monster in a fight takes a stray blow.
+    // ------------------------------------------------------------------------
+    Skirmish.partyCaughtUp = function(side, rng) {
+        if (!side || side.kind !== 'monster' || !side.event || !$gamePlayer || !$gameParty) return false;
+        if (chebyshev(side.event, $gamePlayer) > 1) return false;
+        if (rng() >= Skirmish.PARTY_HIT_CHANCE) return false;
+        const alive = $gameParty.battleMembers().filter(a => a && a.isAlive() && a.hp > 1);
+        if (!alive.length) return false;
+        const actor = alive[Math.floor(rng() * alive.length)];
+        const dmg = Math.min(actor.hp - 1, Skirmish.damage(side, { kind: 'actor', def: actor.def }, rng));
+        if (dmg <= 0) return false;
+        actor.gainHp(-dmg);
+        const HC = window.HealthCore;
+        if (HC && HC.injureBodyPart && actor._bodyParts) {
+            const keys = Object.keys(actor._bodyParts).filter(k => {
+                const part = actor._bodyParts[k];
+                return part && !part.vital && !part.damaged;
+            });
+            if (keys.length) {
+                HC.injureBodyPart(actor, keys[Math.floor(rng() * keys.length)], Math.ceil(dmg / 2),
+                    { cut: side.blow !== 'Blunt' });
+            }
+        }
+        skirmishFlash($gamePlayer);
+        Skirmish.toast('partyHit', side, { name: actor.name(), event: $gamePlayer });
+        return true;
+    };
+
+    // ------------------------------------------------------------------------
+    // Toasts: only near the party, one line per pair per cooldown.
+    // ------------------------------------------------------------------------
+    function skirmishLabel(side) {
+        return (side && side.name) || '';
+    }
+
+    Skirmish.toast = function(kind, a, b) {
+        if (!window.ParchmentToast || !window.ParchmentToast.show || !$gamePlayer) return false;
+        const where = (b && b.event) || (a && a.event);
+        if (!where) return false;
+        const dist = Math.abs(where.x - $gamePlayer.x) + Math.abs(where.y - $gamePlayer.y);
+        const key = [skirmishLabel(a), skirmishLabel(b)].sort().join('|') + (kind === 'start' ? '' : ':' + kind);
+        if (!Skirmish.toastAllowed(_skirmishToasts, key, skirmishFrame(), dist)) return false;
+        const severity = kind === 'killed' || kind === 'partyHit' ? 'danger' // i18n-ignore: severity id
+            : (kind === 'start' ? 'warning' : 'info'); // i18n-ignore: severity id
+        let text;
+        if (kind === 'start') {
+            text = a.kind === 'npc'
+                ? T('Battle.skirmish.npcEngages', { npc: a.name, monster: b.name })
+                : T('Battle.skirmish.monsterAttacks', { monster: a.name, target: b.name });
+        } else {
+            text = T('Battle.skirmish.' + kind, { winner: skirmishLabel(a), loser: skirmishLabel(b),
+                monster: skirmishLabel(a), name: skirmishLabel(b) });
+        }
+        try { window.ParchmentToast.show(text, { severity: severity }); } catch (e) { return false; }
+        return true;
+    };
+
+    // The registry of fights with a person in them (Skirmish.fights, start,
+    // stop, isFighting, huntPeople, pairScan, update) is NPC/NPCSystem_Skirmish.js,
+    // installed onto this Skirmish when the NPC plugins load; it reads the
+    // two private helpers below off it.
+    Skirmish.chebyshev = chebyshev;
+    Skirmish.npcApi = skirmishNpcApi;
+
+    const _Game_Event_scanEcologyAI_Skirmish = Game_Event.prototype.scanEcologyAI;
+    Game_Event.prototype.scanEcologyAI = function() {
+        _Game_Event_scanEcologyAI_Skirmish.call(this);
+        if (Skirmish.huntPeople) Skirmish.huntPeople(this);
+    };
+
+    const _Scene_Map_update_Skirmish = Scene_Map.prototype.update;
+    Scene_Map.prototype.update = function() {
+        _Scene_Map_update_Skirmish.call(this);
+        if (window.MapBattleMode && window.MapBattleMode.isActive()) return;
+        if (window.PlatformerMode && window.PlatformerMode.isActive && window.PlatformerMode.isActive()) return;
+        if (this.isActive() && Skirmish.update) Skirmish.update();
+    };
+
+    // ------------------------------------------------------------------------
+    // Movement: a run takes the frame; a monster holding off does not chase.
+    // ------------------------------------------------------------------------
+    const _Game_Event_updateEnemyAIMovement_Skirmish = Game_Event.prototype.updateEnemyAIMovement;
+    Game_Event.prototype.updateEnemyAIMovement = function() {
+        if (this._bseDowned) { Skirmish.crawl(this); return true; }
+        if (this._bseRun && !this._erased) {
+            if (Skirmish.stepRun(this)) { this.resetStopCount(); return true; }
+        }
+        return _Game_Event_updateEnemyAIMovement_Skirmish.call(this);
+    };
+
+    const _Game_Event_aiWillEngage_Skirmish = Game_Event.prototype.aiWillEngage;
+    Game_Event.prototype.aiWillEngage = function(beh, dist) {
+        if (this._bseRun || Skirmish.isHoldingOff(this)) return false;
+        return _Game_Event_aiWillEngage_Skirmish.call(this, beh, dist);
+    };
+
+    // A downed monster is never battled: it crawls a step every
+    // CRAWL_FRAMES at speed 1, away from the party, and OK on it opens its
+    // own menu (Coup de grace / Cancel, NPCSystem's DOWNED BODIES).
+    Skirmish.CRAWL_FRAMES = 180;
+    Skirmish.crawl = function(ev) {
+        if (!ev || ev._erased) return;
+        if (Skirmish.recoverDue(ev)) { Skirmish.recover(ev); return; }
+        if (ev.isMoving() || !$gamePlayer) return;
+        ev._npcLyingDown = true;
+        ev._bseCrawlWait = (ev._bseCrawlWait || 0) + 1;
+        if (ev._bseCrawlWait < Skirmish.CRAWL_FRAMES) return;
+        ev._bseCrawlWait = 0;
+        const dx = ev.x - $gamePlayer.x, dy = ev.y - $gamePlayer.y;
+        if (Math.abs(dx) + Math.abs(dy) > 8) return;
+        ev.setMoveSpeed(1);
+        const dirs = [[2, 0, 1], [4, -1, 0], [6, 1, 0], [8, 0, -1]]
+            .map(([d, sx, sy]) => ({ d, gain: Math.abs(dx + sx) + Math.abs(dy + sy) }))
+            .sort((a, b) => b.gain - a.gain);
+        for (const o of dirs) {
+            if (ev.canPass(ev.x, ev.y, o.d)) { ev.moveStraight(o.d); break; }
+        }
+    };
+
+    // Pressed on, not bumped into: the action button (or a click) this frame.
+    Skirmish.okPressed = function() {
+        return !!((typeof Input !== 'undefined' && Input.isTriggered('ok')) ||
+            (typeof TouchInput !== 'undefined' && TouchInput.isTriggered()));
+    };
+
+    // Touching a monster that has just escaped, or one lying downed, starts
+    // nothing; pressing OK on a downed one opens its menu.
+    const _Game_Event_start_Skirmish = Game_Event.prototype.start;
+    Game_Event.prototype.start = function() {
+        if (this._fixedTroopId > 0 && this._bseDowned && Skirmish.okPressed() && window.NPCDowned) {
+            window.NPCDowned.openMonsterMenu(this);
+            return;
+        }
+        if (this._fixedTroopId > 0 && (this._bseDowned || Skirmish.isHoldingOff(this))) return;
+        _Game_Event_start_Skirmish.call(this);
+    };
+
 
 })();

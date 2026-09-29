@@ -25,7 +25,7 @@
   },
   "5": {
     "name": "Fuga",
-    "description": "Aumenta PSI di chi la usa.",
+    "description": "Fugge dalla battaglia.",
     "message1": "%1 fugge.",
     "message2": ""
   },

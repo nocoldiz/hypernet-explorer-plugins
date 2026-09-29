@@ -41,7 +41,10 @@
     "draw": "Pareggio",
     "streak": "{count} di fila.",
     "packWon": "Un pacchetto di carte per la vittoria.",
-    "pickSecondTile": "Ora scegli la casella di destinazione."
+    "pickSecondTile": "Ora scegli la casella di destinazione.",
+    "forfeitAsk": "Lasciare il tavolo? La posta va persa.",
+    "forfeitYes": "Rinuncia",
+    "forfeitNo": "Resta"
   },
   "col": {
     "title": "Collezione di carte",

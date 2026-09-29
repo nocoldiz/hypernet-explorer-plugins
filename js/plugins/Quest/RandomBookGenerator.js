@@ -1356,8 +1356,8 @@ function generatePaintingDescription(random = Math.random, customSubject = "") {
                 ...amberInsects(),
                 ...amberPlant(),
             ];
-            if (random() < 0.15) allInclusions.push(...amberRare);
-            if (random() < 0.10) allInclusions.push(...amberVertebrate);
+            if (random() < 0.15) allInclusions.push(...amberRare());
+            if (random() < 0.10) allInclusions.push(...amberVertebrate());
             const pattern = pick(amberDescriptionPatterns());
             return pattern
                 .replace(/\{color\}/g,        pick(amberColors()))

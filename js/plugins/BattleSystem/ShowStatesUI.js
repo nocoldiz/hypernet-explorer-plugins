@@ -502,15 +502,17 @@
 
     // ── Input loop ────────────────────────────────────────────
 
+    // Up / down walk the list and left / right jump a page of it. The list
+    // has no tabs, so L1 / R1 are left to the tab convention and do nothing.
     update() {
       super.update();
-      if (Input.isRepeated('down') || Input.isRepeated('s')) {
+      if (Input.isRepeated('down')) {
         this._select(this._idx === -1 ? 0 : this._idx + 1, true);
-      } else if (Input.isRepeated('up') || Input.isRepeated('w')) {
+      } else if (Input.isRepeated('up')) {
         this._select(this._idx === -1 ? this._states.length - 1 : this._idx - 1, true);
-      } else if (Input.isRepeated('right') || Input.isRepeated('pagedown')) {
+      } else if (Input.isRepeated('right')) {
         this._select(this._idx === -1 ? 0 : this._idx + PAGE_JUMP, true);
-      } else if (Input.isRepeated('left') || Input.isRepeated('pageup')) {
+      } else if (Input.isRepeated('left')) {
         this._select(this._idx === -1 ? 0 : this._idx - PAGE_JUMP, true);
       } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
         this.onCancel();

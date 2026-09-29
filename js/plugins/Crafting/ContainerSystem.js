@@ -514,11 +514,14 @@
     //=============================================================================
     // Theft: emptying somebody else's cupboards
     //=============================================================================
-    // A procedural building belongs to whoever lives there until the player buys
-    // the floor (ProceduralHouseSystem's ownership keys). Carrying something out
-    // of a building the player does not own is a theft, so every retrieval is
-    // filed as its own charge, priced on what was taken. Storing things is never
-    // a crime, and the extradimensional / vehicle containers are the player's own.
+    // A procedural home belongs to the family that lives there until the player
+    // buys the floor (ProceduralHouseSystem's ownership keys). Carrying things
+    // out of it is a theft, but only a theft somebody NOTICES reaches the
+    // record: what was taken is gathered while the container is open, and when
+    // the lid comes down the party rolls a d20 against how much noise the job
+    // made and who was watching. Storing things is never a crime, the party's
+    // own places and bags never are, and neither is anything on an <Exterior>
+    // map or inside a public space (a shop floor, an inn, a skyscraper).
 
     // Tier thresholds are the total shop value of the goods in one grab (gold).
     const THEFT_TIERS = [
@@ -528,20 +531,35 @@
     ];
     const THEFT_VALUE_SHARE = 0.1; // of the goods' shop value, on top of the base
 
+    // The d20 the party rolls when it closes the container. The DC is the base,
+    // plus the noise of the job, plus the eyes on it.
+    const HAUL_BASE_DC = 5;
+    const HAUL_GRAMS_PER_NOISE = 2000;  // every 2 kg carried about is one point
+    const HAUL_WEIGHT_NOISE_CAP = 6;
+    const HAUL_ITEMS_PER_NOISE = 3;     // every 3 things taken is one point
+    const HAUL_COUNT_NOISE_CAP = 4;
+    const HAUL_SEEN_DC = 8;             // somebody with a line of sight on the job
+    const HAUL_EXTRA_EYES_DC = 2;       // each further pair of eyes
+    const HAUL_EXTRA_EYES_CAP = 6;
+    const HAUL_HEARING_RANGE = 8;       // tiles a noisy job carries through walls
+
+    function isExteriorMap() {
+        return !!($dataMap && $dataMap.note && /<Exterior>/i.test($dataMap.note));
+    }
+
     function isStolenContainer(containerId, isExtradimensional) {
         if (isExtradimensional || !containerId) return false;
         if (String(containerId).indexOf('vehicle_') === 0) return false;
-        // Inside the party's own camper, car or starship. The hold is already
-        // excluded by its id above; this covers every other box standing in
-        // those cabins (furniture the party placed, the crates the interior is
-        // drawn with), and it also settles a house session left over from
-        // whatever building they walked out of before climbing aboard.
+        // A bought workplace: its containers passed to the party with the deed.
+        if (partyOwnsHere()) return false;
+        // Out in the open nothing is anybody's cupboard.
+        if (isExteriorMap()) return false;
         const H = window.ProceduralHouseSystem;
         if (!H || typeof H.isInsideHouse !== 'function') return false;
-        // Inside a building the party does not own. Ownership is one answer
-        // now (partyOwnsHere), so the camper cabins and the bought floors are
-        // excluded by the same rule rather than by two.
-        return H.isInsideHouse() && !partyOwnsHere();
+        if (!H.isInsideHouse() || partyOwnsHere()) return false;
+        // Somebody's home, not a public space: the shop floor, the inn, the
+        // clinic and the skyscraper belong to nobody in particular.
+        return typeof H.isCurrentPrivateHome === 'function' ? !!H.isCurrentPrivateHome() : true;
     }
 
     // ======================================================================
@@ -559,6 +577,11 @@
     function partyOwnsHere() {
         const V = window.VehicleSystem || window.MergedVehicleSystem;
         if (V && typeof V.isVehicleInteriorMap === 'function' && V.isVehicleInteriorMap()) return true;
+        // A workplace bought from the Assets menu comes with everything in its
+        // cupboards (RealEstateMarket.js, WORKPLACE DEEDS). Its people and its
+        // counters are another matter: see CrimeSystem and StealingSystem.
+        const W = window.WorkplaceDeeds;
+        if (W && typeof W.ownsHere === 'function' && W.ownsHere()) return true;
         const H = window.ProceduralHouseSystem;
         if (H && typeof H.isInsideHouse === 'function' && H.isInsideHouse()) {
             return !!(H.isCurrentFloorOwned && H.isCurrentFloorOwned());
@@ -568,10 +591,112 @@
         // there is stolen either.
         return false;
     }
-    window.PropertyOwnership = { ownsHere: partyOwnsHere };
+
+    // A shop counter is the party's when it stands on a floor they own, or on
+    // a map whose shop ShopManagement has on the party's deed. Robbing it is
+    // still a theft (the till is not the party's pocket), but the keeper works
+    // for them and never shuts the door on them.
+    function partyOwnsShopCounter(mapId) {
+        if ($gameMap && mapId === $gameMap.mapId() && partyOwnsHere()) return true;
+        const S = window.ShopManagement;
+        return !!(S && typeof S.ownsShopOnMap === 'function' && S.ownsShopOnMap(mapId));
+    }
+    window.PropertyOwnership = { ownsHere: partyOwnsHere, ownsShopCounter: partyOwnsShopCounter };
 
     function theftTier(value) {
         return THEFT_TIERS.find(t => value < t.maxValue) || THEFT_TIERS[THEFT_TIERS.length - 1];
+    }
+
+    function itemGrams(item) {
+        const U = window.ItemSystemUtils;
+        return (U && typeof U.getItemWeight === 'function') ? (Number(U.getItemWeight(item)) || 0) : 0;
+    }
+
+    // ── The haul: gathered while the lid is up ──────────────────────────
+    // Only one container is ever open. Putting something back cancels that
+    // much of the haul, but moving it still makes noise.
+    let openHaul = null;
+    let pendingHaul = null;
+
+    function haulFor(containerId, isExtradimensional) {
+        if (!isStolenContainer(containerId, isExtradimensional)) return null;
+        if (!openHaul || openHaul.containerId !== containerId) {
+            openHaul = { containerId, taken: {}, grams: 0 };
+        }
+        return openHaul;
+    }
+
+    function noteTaken(containerId, item, amount, isExtradimensional) {
+        if (!item || !(amount > 0)) return;
+        const haul = haulFor(containerId, isExtradimensional);
+        if (!haul) return;
+        const key = ItemUtils.encodeKey(item);
+        haul.taken[key] = (haul.taken[key] || 0) + amount;
+        haul.grams += itemGrams(item) * amount;
+    }
+
+    function noteStored(containerId, item, amount, isExtradimensional) {
+        if (!item || !(amount > 0)) return;
+        const haul = haulFor(containerId, isExtradimensional);
+        if (!haul) return;
+        const key = ItemUtils.encodeKey(item);
+        if (haul.taken[key]) {
+            haul.taken[key] -= amount;
+            if (haul.taken[key] <= 0) delete haul.taken[key];
+        }
+        haul.grams += itemGrams(item) * amount;
+    }
+
+    // What the party walked away with: every row still taken, its count and
+    // its shop value. Empty when everything went back in.
+    function haulGoods(haul) {
+        const rows = [];
+        let count = 0, value = 0;
+        for (const key of Object.keys((haul && haul.taken) || {})) {
+            const qty = haul.taken[key];
+            const item = ItemUtils.decodeKey(key);
+            if (!item || !(qty > 0)) continue;
+            rows.push({ item, qty });
+            count += qty;
+            value += Math.max(0, (item.price || 0) * qty);
+        }
+        return { rows, count, value };
+    }
+
+    function haulNoise(grams, count) {
+        return Math.min(HAUL_WEIGHT_NOISE_CAP, Math.floor((grams || 0) / HAUL_GRAMS_PER_NOISE))
+             + Math.min(HAUL_COUNT_NOISE_CAP, Math.floor((count || 0) / HAUL_ITEMS_PER_NOISE));
+    }
+
+    // Seen is anybody with a line of sight on the job and a reason to talk;
+    // heard is anybody else in earshot of it. Nobody at all means no roll.
+    function haulDC(noise, seen) {
+        let dc = HAUL_BASE_DC + noise;
+        if (seen > 0) {
+            dc += HAUL_SEEN_DC + Math.min(HAUL_EXTRA_EYES_CAP, (seen - 1) * HAUL_EXTRA_EYES_DC);
+        }
+        return dc;
+    }
+
+    // People on the map close enough to hear furniture being emptied, walls
+    // or not. A person is whoever NPCSystem says is one; a creature does not
+    // go to the police.
+    function listenersAt(x, y) {
+        if (!$gameMap || typeof $gameMap.events !== 'function') return [];
+        const N = window.NPCSystem;
+        const Cr = window.NPCCreature;
+        const out = [];
+        for (const ev of $gameMap.events()) {
+            if (!ev || ev._erased || !ev.event) continue;
+            const data = ev.event();
+            if (!data || !data.name) continue;
+            if (N && typeof N.isNPCEvent === 'function' && !N.isNPCEvent(data.note)) continue;
+            if (Cr && typeof Cr.isNonSentientByName === 'function' && Cr.isNonSentientByName(data.name)) continue;
+            const d = Math.abs($gameMap.deltaX(ev.x, x)) + Math.abs($gameMap.deltaY(ev.y, y));
+            if (d > HAUL_HEARING_RANGE) continue;
+            out.push(String(data.name).trim());
+        }
+        return out;
     }
 
     // CrimeSystem only pops its own notification on the map, and a container is
@@ -591,26 +716,104 @@
         );
     }
 
-    function reportContainerTheft(containerId, item, amount, isExtradimensional) {
-        if (!item || !(amount > 0)) return;
-        if (!isStolenContainer(containerId, isExtradimensional)) return;
+    function chargeName(goods) {
+        const tier = theftTier(goods.value);
+        const what = goods.rows.length === 1
+            ? (goods.rows[0].qty > 1
+                ? T('Container.theft.stack', { item: goods.rows[0].item.name, count: goods.rows[0].qty })
+                : goods.rows[0].item.name)
+            : T('Container.theft.haul', { count: goods.count });
+        return {
+            tier,
+            name: T('Container.theft.charge', { crime: getText('theft.' + tier.key), item: what }),
+            bounty: tier.base + Math.round(goods.value * THEFT_VALUE_SHARE),
+        };
+    }
+
+    // The lid came down. Whatever was taken waits for the map to come back,
+    // because who can see the party is a question asked of the map.
+    function closeContainer() {
+        const haul = openHaul;
+        openHaul = null;
+        if (!haul) return;
+        const goods = haulGoods(haul);
+        if (!goods.count) return;
+        pendingHaul = { haul, goods };
+    }
+
+    function rollHaul(dc, modifier) {
+        const D = window.Dice3D;
+        if (D && typeof D.rollD20 === 'function') {
+            return Promise.resolve(D.rollD20({
+                dc, modifier, statName: 'DEX', // i18n-ignore: Dice3D stat label
+                actionName: T('Container.theft.rollAction'),
+            })).then(res => !!(res && res.success));
+        }
+        const raw = Math.floor(Math.random() * 20) + 1;
+        return Promise.resolve(raw === 20 || (raw !== 1 && raw + modifier >= dc));
+    }
+
+    function haulModifier() {
+        const S = window.StealingSystem;
+        const leader = $gameParty && $gameParty.leader && $gameParty.leader();
+        const agi = leader ? leader.agi : 10;
+        return (S && typeof S.rollModifier === 'function') ? S.rollModifier(agi) : Math.floor((agi - 10) / 2);
+    }
+
+    // Back on the map: count the eyes and the ears, then throw the die. A
+    // failed roll is reported exactly like a shoplift a keeper caught: through
+    // CrimeSystem.commit, with the witnesses who will talk.
+    function settleHaul() {
+        const pending = pendingHaul;
+        pendingHaul = null;
+        if (!pending) return Promise.resolve(null);
         const C = window.CrimeSystem;
-        if (!C || typeof C.addCrime !== 'function') return;
+        if (!C || typeof C.commit !== 'function') return Promise.resolve(null);
 
-        const value  = Math.max(0, (item.price || 0) * amount);
-        const tier   = theftTier(value);
-        const bounty = tier.base + Math.round(value * THEFT_VALUE_SHARE);
-        const goods  = amount > 1
-            ? T('Container.theft.stack', { item: item.name, count: amount })
-            : item.name;
-        const name   = T('Container.theft.charge', { crime: getText('theft.' + tier.key), item: goods });
+        const x = $gamePlayer ? $gamePlayer.x : 0;
+        const y = $gamePlayer ? $gamePlayer.y : 0;
+        const sight = typeof C.witnessesAt === 'function' ? C.witnessesAt(x, y) : [];
+        const seen = typeof C.reportersAmong === 'function' ? C.reportersAmong(sight, null) : sight;
+        const seenNames = new Set(seen.map(w => w && w.name));
+        const heard = listenersAt(x, y).filter(n => !seenNames.has(n));
+        const earshot = typeof C.reportersAmong === 'function' ? C.reportersAmong(heard, null) : heard;
+        const charge = chargeName(pending.goods);
 
-        // addCrime returns nothing and may discount or void the bounty (sandbox,
-        // Eris immunity, Streetwise), so read what actually landed on the record.
-        const before = C.getTotalBounty ? C.getTotalBounty() : 0;
-        C.addCrime(name, bounty, tier.key);
-        const filed = (C.getTotalBounty ? C.getTotalBounty() : 0) - before;
-        showTheftToast(name, filed);
+        if (!seen.length && !earshot.length) {
+            if (window.ParchmentToast) window.ParchmentToast.show(T('Crime.nobodySaw'), { severity: 'good' });
+            return Promise.resolve({ reported: false, rolled: false });
+        }
+
+        const noise = haulNoise(pending.haul.grams, pending.goods.count);
+        const dc = haulDC(noise, seen.length);
+        return rollHaul(dc, haulModifier()).then(clean => {
+            if (clean) {
+                if (window.ParchmentToast) {
+                    window.ParchmentToast.show(T('Container.theft.unnoticed'), { severity: 'good' });
+                }
+                return { reported: false, rolled: true, dc };
+            }
+            const before = C.getTotalBounty ? C.getTotalBounty() : 0;
+            const result = C.commit({
+                name: charge.name,
+                crimeId: charge.tier.key,
+                bounty: charge.bounty,
+                verb: 'burglary', // i18n-ignore: deed verb id
+                target: pending.goods.rows.map(r => r.item.name).join(', '),
+                witnesses: seen.length ? seen : earshot,
+            });
+            const filed = (C.getTotalBounty ? C.getTotalBounty() : 0) - before;
+            showTheftToast(charge.name, filed);
+            return { reported: !!(result && result.reported), rolled: true, dc };
+        });
+    }
+
+    if (typeof Scene_Map !== 'undefined') {
+        const _Scene_Map_start = Scene_Map.prototype.start;
+        Scene_Map.prototype.start = function () {
+            _Scene_Map_start.call(this);
+            if (pendingHaul) settleHaul();
+        };
     }
 
     //=============================================================================
@@ -784,10 +987,27 @@
             return isStolenContainer(containerId, isExtradimensional);
         }
 
-        // Files one charge for the items just carried out of an unowned building.
-        // A no-op everywhere else, so retrieval paths can call it unconditionally.
+        // Adds the items just carried out of somebody's home to the haul that
+        // is settled when the container closes (closeContainer). A no-op
+        // everywhere else, so retrieval paths can call it unconditionally.
         static reportTheft(containerId, item, amount, isExtradimensional = false) {
-            reportContainerTheft(containerId, item, amount, isExtradimensional);
+            noteTaken(containerId, item, amount, isExtradimensional);
+        }
+
+        // Putting something back cancels that much of the haul; moving it
+        // still makes noise.
+        static noteStored(containerId, item, amount, isExtradimensional = false) {
+            noteStored(containerId, item, amount, isExtradimensional);
+        }
+
+        // The lid comes down: whatever is still taken is rolled for once the
+        // map is back (settleHaul).
+        static closeContainer() {
+            closeContainer();
+        }
+
+        static settleHaul() {
+            return settleHaul();
         }
 
         static getItemAmount(containerId, itemId, isExtradimensional = false) {

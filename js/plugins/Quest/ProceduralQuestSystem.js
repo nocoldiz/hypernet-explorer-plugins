@@ -1183,9 +1183,11 @@
   // ==========================================================================
   // Named individuals as quest givers
   //
-  // Rather than inventing a person, pull a real NPC out of the map pools
-  // (js/db/WorldGen/NPCPools.json, the same events NPCSystem spawns) so the
-  // poster is somebody the player can actually go and meet, and give them a
+  // Rather than inventing a person, pull a real one out of the world: the
+  // residents every town was dealt from the world seed (NPCSystem's resident
+  // registry) and the authored cast that survives on the maps
+  // (js/db/WorldGen/NPCResidents.json), so the poster is somebody the player
+  // can actually go and meet, and give them a
   // personality from PersonalityData.json to write in. The personality is derived
   // deterministically from the NPC's name when the society sim has not assigned
   // one, so the same person always sounds the same.
@@ -1218,12 +1220,19 @@
     return null;
   }
 
-  // Flatten the pools once: [{ name, group, archetype }].
+  // Flatten the pools once per world: [{ name, group, archetype }].
   let _npcPool = null;
+  let _npcPoolWorld = null;
   function npcPool() {
-    if (_npcPool) return _npcPool;
+    const residents = window.NPCSystem?.getWorldResidents?.() || [];
+    const worldKey = residents.length;
+    if (_npcPool && _npcPoolWorld === worldKey) return _npcPool;
     _npcPool = [];
-    const pools = window.WorldGen?.NPCPools;
+    _npcPoolWorld = worldKey;
+    for (const r of residents) {
+      if (r && r.name) _npcPool.push({ name: String(r.name), group: r.group, archetype: null });
+    }
+    const pools = window.WorldGen?.NPCResidents;
     if (!pools) return _npcPool;
     for (const [group, list] of Object.entries(pools)) {
       if (group.startsWith("__") || !Array.isArray(list)) continue;
@@ -1502,6 +1511,36 @@
       rarityKey: enemy.rarityKey || null, done: false,
     };
   }
+  // An outlaw hunt written against a real person: somebody in one of the
+  // hand-made towns with a bounty on their life record (NPCSystem.wantedNPCs).
+  // Answered when they are brought down (onWantedNPCKilled), wherever that is.
+  function stepWantedNPC(w, site, place) {
+    return {
+      kind: "bounty_npc", npcName: w.name, bounty: w.bounty, level: w.level,
+      mapId: w.mapId, place: place || "", site: site || null, criminal: true, done: false,
+    };
+  }
+
+  // Somebody wanted, not already named on another open warrant, whose home is
+  // somewhere the world map can point at. Null when the world has nobody.
+  function pickWantedNPC(rng) {
+    let list = [];
+    try { list = window.NPCSystem?.wantedNPCs?.() || []; } catch (e) { list = []; }
+    const taken = new Set();
+    for (const q of activeQuests()) for (const st of (q.steps || [])) if (st.kind === "bounty_npc" && !st.done) taken.add(st.npcName);
+    const wmt = window.WorldMapTransfer;
+    const out = [];
+    for (const w of list) {
+      if (taken.has(w.name)) continue;
+      const c = wmt?.mapCoordsTag ? wmt.mapCoordsTag(w.mapId) : null;
+      if (!c) continue;
+      const place = (wmt?.placeName && wmt.placeName(w.mapId)) || ($dataMapInfos?.[w.mapId]?.name) || "";
+      out.push({ w, site: { wx: c.x, wy: c.y }, place });
+      if (out.length >= 12) break;
+    }
+    return out.length ? pick(rng, out) : null;
+  }
+
   function stepScan(kind, site, count) { return { kind, site, count, scanned: {}, done: false }; }
   function stepClearing(site, count) { return { kind: "clearing", site, count, cleared: 0, done: false }; }
   function stepDeliver(dest) { return { kind: "deliver_board", dest, done: false }; }
@@ -1544,6 +1583,9 @@
           : (s.criminal ? T('Quests.huntDownTheOutlaw') : T('Quests.slayThe'));
         return lead + s.enemyName + " (Lv " + s.enemyLevel + ") " + T('Quests.at') + siteText(s.site);
       }
+      case "bounty_npc":
+        return T('Quests.huntDownTheOutlaw') + s.npcName + " (Lv " + s.level + "), " +
+          T('Quests.wantedFor', { bounty: euros(s.bounty) }) + (s.place || siteText(s.site));
       case "statues": return T('Quests.scan') + s.count + T('Quests.statuesAt') + siteText(s.site);
       case "signs": return T('Quests.verify') + s.count + T('Quests.signpostsAt') + siteText(s.site);
       case "clearing": return T('Quests.clear') + s.count + T('Quests.obstaclesAt') + siteText(s.site);
@@ -1778,8 +1820,15 @@
       }
       case "bounty_criminal":
       case "bounty_monster": {
-        const site = pickSiteCoords(rng, origin);
         const criminal = type === "bounty_criminal";
+        const wanted = (criminal && !draft) ? pickWantedNPC(rng) : null;
+        if (wanted) {
+          o.steps = [stepWantedNPC(wanted.w, wanted.site, wanted.place)];
+          gold *= 1.5 + 0.05 * Math.max(0, wanted.w.level - L);
+          ctx.X = wanted.site.wx; ctx.Y = wanted.site.wy; ctx.ENEMY = wanted.w.name; ctx.LVL = wanted.w.level;
+          break;
+        }
+        const site = pickSiteCoords(rng, origin);
         const picked = pickBountyEnemy(rng, L, diff, criminal, site);
         if (!picked) { fallbackToSurvey(); break; }
         // A warrant is sworn out on a person and a creature hunt is not: only
@@ -4172,6 +4221,30 @@
     toast(T('Quests.youKilled') + b.name + T('Quests.whateverContractWantedItDeadIsLongGone'));
   }
 
+  // Is there an open warrant on this person? A name on one is fair game in the
+  // Empathize panel even if their bounty has lapsed since it was posted.
+  function hasWarrantOn(name) {
+    if (!name) return false;
+    return activeQuests().some(q => (q.steps || []).some(st => st.kind === "bounty_npc" && !st.done && st.npcName === name));
+  }
+
+  // A wanted NPC brought down (NPCSystem's bounty collection, on the kill):
+  // every open warrant written on them is answered.
+  function onWantedNPCKilled(name) {
+    if (!name) return false;
+    let hit = false;
+    for (const q of activeQuests()) {
+      for (let i = 0; i < (q.steps || []).length; i++) {
+        const st = q.steps[i];
+        if (st.kind !== "bounty_npc" || st.done || st.npcName !== name || !stepIsActive(q, i)) continue;
+        completeStep(q, i, T('Quests.wantedNPCBrought') + name + ".");
+        toast(T('Quests.bountyTargetEliminated') + name);
+        hit = true;
+      }
+    }
+    return hit;
+  }
+
   // Killed is not the only way a target leaves its square. One talked round in
   // the middle of the fight follows the party home, and a hunt is answered
   // either way: the thing the notice was about is off those coordinates for
@@ -4587,7 +4660,7 @@
     nowMinutes, firstUndoneIndex,
     // world side
     questForPlanet, questForSystem, failQuest, debugGenerateQuest,
-    state, bounties,
+    state, bounties, onWantedNPCKilled, hasWarrantOn,
     // map side
     questMarkers, questLocation, destCoords, sitePlace, siteText,
     enemySpawnsAtSite, siteEcologyProfile, siteSurfaceBiome,

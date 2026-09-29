@@ -569,7 +569,9 @@
     "tooCloseMember": "{name} è troppo vicino per svincolarsi! Un altro del gruppo può ancora provarci."
   },
   "hud": {
-    "elementRate": "{rate}x"
+    "elementRate": "{rate}x",
+    "elementAbsorb": "Assorbe",
+    "elementImmune": "Immune"
   },
   "statReq": {
     "fumble": "{actor} perde il filo di {skill}: {stat} base insufficiente!"
@@ -687,10 +689,9 @@
       "grimoireEmpty": "Il libro si apre su pagine bianche.",
       "reroll": "{actor} si strappa {cost} di vita e legge oltre. Rispondono {count} pagine nuove.",
       "regen": "Il libro aperto rilegge {actor}, pagina dopo pagina.",
-      "pact": "Il libro non restituisce niente. Non l'ha mai promesso.",
       "pactOpen": "{actor} entra già leggendo. Ci sono {count} pagine aperte.",
-      "pactPrice": "La pagina si prende {cost} da {actor}.",
-      "natural": "Il Dado di YHWH cade sul 20. Il Grimorio di Salomone si apre per {actor}, e non chiede niente in cambio."
+      "pactReroll": "{actor} volta pagina e continua a leggere. {count} nuove pagine rispondono.",
+      "natural": "Il Dado di Yaldabaoth cade sul 20. Il Grimorio di Salomone si apre per {actor}, e non chiede niente in cambio."
     },
     "em": {
       "enter": [
@@ -734,5 +735,29 @@
     "positionOption": "Posizione comandi",
     "positionLeft": "Sinistra",
     "positionRight": "Destra"
+  },
+  "skirmish": {
+    "npcEngages": "{npc} affronta {monster}!",
+    "monsterAttacks": "{monster} attacca {target}!",
+    "won": "{winner} abbatte {loser}.",
+    "killed": "{winner} ha ucciso {loser}.",
+    "downed": "{winner} manda a terra {loser}.",
+    "spared": "{winner} risparmia {loser} e se ne va.",
+    "fled": "{loser} si sottrae allo scontro e fugge da {winner}.",
+    "partyHit": "{monster} colpisce {name}!"
+  },
+  "downedBody": {
+    "promptMonster": "{name} giace a terra, troppo ferito per combattere.",
+    "promptNpc": "{name} giace a terra, troppo ferito per rialzarsi.",
+    "promptCorpse": "Qui giace il corpo di {name}.",
+    "implantsHarvested": "Estratto dal corpo: {items}",
+    "coupDeGrace": "Colpo di grazia",
+    "loot": "Saccheggia",
+    "firstAid": "Primo soccorso",
+    "firstAidDone": "{name} riprende i sensi, scosso ma in piedi.",
+    "butcher": "Macella",
+    "cancel": "Annulla",
+    "pocketMoney": "{name} consegna {money}.",
+    "notBattleable": "{name} giace a terra e non può combattere."
   }
 }

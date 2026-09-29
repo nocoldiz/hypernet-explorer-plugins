@@ -27,7 +27,10 @@
     "burglary": "Furto con Scasso",
     "grandTheft": "Furto Aggravato",
     "charge": "{crime}: {item}",
-    "stack": "{item} x{count}"
+    "stack": "{item} x{count}",
+    "haul": "{count} oggetti rubati",
+    "rollAction": "Sgattaiolare Inosservati",
+    "unnoticed": "Lo richiudi piano. Nessuno si è accorto di nulla."
   },
   "harvest": {
     "collected": "✓ Raccolto",

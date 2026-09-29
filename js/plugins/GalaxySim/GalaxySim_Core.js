@@ -200,12 +200,20 @@
   // ============================================================================
   // Plugin Commands
   // ============================================================================
+  // The editor stores a command under the plugin's name as plugins.js lists it,
+  // folder and all ("GalaxySim/GalaxySim_Core"), and that is what the common
+  // events call. Every command answers to the bare name as well, so a caller
+  // written against either one reaches it.
+  const COMMAND_HOSTS = [pluginName, "GalaxySim/" + pluginName];
+  function registerGalaxyCommand(name, fn) {
+    for (const host of COMMAND_HOSTS) PluginManager.registerCommand(host, name, fn);
+  }
 
-  PluginManager.registerCommand(pluginName, "OpenStarMap", (args) => {
+  registerGalaxyCommand("OpenStarMap", (args) => {
     pushStarMapScene();
   });
 
-  PluginManager.registerCommand(pluginName, "SetCurrentSystem", (args) => {
+  registerGalaxyCommand("SetCurrentSystem", (args) => {
     const systemName = args.systemName || "Sol";   // i18n-ignore: system id
 
     if (!$gameSystem.starMapData) {
@@ -221,7 +229,7 @@
   // currently orbits (ship.currentPlanet), then teleports to whichever is picked
   // via GS.teleportToLandingSite. If the planet/moon has no spaceports, brings up
   // the landing-site picker so the player can choose a landing square.
-  PluginManager.registerCommand(pluginName, "LandToSpaceport", () => {
+  registerGalaxyCommand("LandToSpaceport", () => {
     const dm = $gameSystem.starMapData;
     const ship = dm && dm.playerShip;
     let planet = null;
@@ -268,10 +276,10 @@
     });
   });
 
-  PluginManager.registerCommand(pluginName, "ship controls", () => {
+  registerGalaxyCommand("ship controls", () => {
     openShipControls();
   });
-  PluginManager.registerCommand(pluginName, "ShipControls", () => {
+  registerGalaxyCommand("ShipControls", () => {
     openShipControls();
   });
 
@@ -339,7 +347,7 @@
   }
   window.GalaxySim.interiorHeatCelsius = interiorHeatCelsius;
 
-  PluginManager.registerCommand(pluginName, "Refuel", (args) => {
+  registerGalaxyCommand("Refuel", (args) => {
     const plan = autoRefuel();
     if (!plan) return;
     // Travel only advances while the star map is running (see

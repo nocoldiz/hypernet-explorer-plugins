@@ -38,6 +38,13 @@
  *   Core/WorldManager → Core/TimeDateSystem → NPC/NPCSystem
  *   → NPC/NPCSociety → NPC/NPCSimulationCore → NPC/NPCLifeSimulator
  *
+ * Modules: this file keeps the constants, helpers, places, population, the
+ * life record, the delta engine, catchUp, households, the biography, the
+ * plugin commands and the family namespace (NPCLifeSim._internal). The rest
+ * lives in NPCLife_Worldview, _Travel, _Family, _Api (the public API below),
+ * _Refugees, _Death, _Bands and _Hooks (last: the engine hooks), listed in
+ * js/plugins.js right after this file in that order.
+ *
  * Public API (window.NPCLifeSim):
  *   catchUp(nowMinute)       , resolve all background life events up to now
  *   ensureLifeRecord(name)   , get-or-create the life record for an NPC
@@ -118,6 +125,9 @@
     "fallingOut", "changeOfAir",
   ];
   const BORN_HERE = "bornHere";
+  // The stay that opens when a traveller comes back from a trip. Kept out of
+  // MOVE_REASONS: nobody's rolled backstory moves them "coming home".
+  const HOMECOMING = "homecoming";
   const moveReasonLabel = (id) => {
     const key = "NPCLife.moveReason." + id;
     return T.has(key) ? T(key) : String(id || "");
@@ -178,9 +188,12 @@
     return (dest && typeof dest === "object") ? Object.keys(dest) : [];
   }
 
+  // The trades anybody can be dealt: an appointed office (Jobs.json
+  // `appointed`, a head of state, a minister) is only ever held by the people
+  // NPCPolitics seats in it.
   function getJobs() {
     const jobs = window.WorkSystem?.Jobs;
-    return Array.isArray(jobs) ? jobs : [];
+    return Array.isArray(jobs) ? jobs.filter(j => j && !j.appointed) : [];
   }
 
   function getCrimes() {
@@ -223,6 +236,67 @@
       if (norm(dest) === target) return dest;
     }
     return groupName; // group has no Destinations entry, use its own name
+  }
+
+  // ==========================================================================
+  // PLACES, the one answer to "which town is this"
+  // ==========================================================================
+  // A person's home is a map-group key: an authored town ("OmegaTower") or a
+  // procedural square ("Proc:121,161"). A trip, a move or a road traveller
+  // speaks in Destinations.json names ("Milano"). These four translate between
+  // the two so no caller re-derives it. A procedural destination is found by
+  // the tile it stands on: its `base` or any of its `reservedTiles`.
+
+  function destinationRecord(name) {
+    const dest = window.WorkSystem?.Destinations;
+    return (dest && name && typeof dest === "object") ? (dest[name] || null) : null;
+  }
+
+  let _tileIndex = null;
+  let _tileIndexSource = null;
+  function destinationAtTile(x, y) {
+    const dest = window.WorkSystem?.Destinations;
+    if (!dest || typeof dest !== "object") return null;
+    if (_tileIndexSource !== dest) {
+      _tileIndex = new Map();
+      _tileIndexSource = dest;
+      for (const [name, entry] of Object.entries(dest)) {
+        if (!entry?.procedural || !entry.base) continue;
+        _tileIndex.set(`${entry.base.x},${entry.base.y}`, name);
+        for (const key of (entry.reservedTiles || [])) {
+          if (!_tileIndex.has(key)) _tileIndex.set(String(key), name);
+        }
+      }
+    }
+    return _tileIndex.get(`${x},${y}`) || null;
+  }
+
+  // The destination a map group stands for, or null when it stands for none.
+  function placeOfGroup(group) {
+    if (!group) return null;
+    const m = /^Proc:(-?\d+),(-?\d+)$/.exec(String(group));
+    if (m) return destinationAtTile(Number(m[1]), Number(m[2]));
+    return destinationForGroup(group);
+  }
+
+  // The map group a destination is lived in. A procedural destination is its
+  // base square; an authored one the group of the same name; anything else is
+  // somewhere people visit but nobody can be seen arriving (null).
+  function groupForPlace(name) {
+    if (!name) return null;
+    const entry = destinationRecord(name);
+    if (entry?.procedural && entry.base) return `Proc:${entry.base.x},${entry.base.y}`; // i18n-ignore: settlement key
+    const target = norm(name);
+    for (const key of Object.keys($gameSystem?._npcMapGroups || {})) {
+      if (norm(key) === target) return key;
+    }
+    return null;
+  }
+
+  // World-map square of a destination, or null for one without coordinates.
+  function placeCoords(name) {
+    const base = destinationRecord(name)?.base;
+    return base ? { x: base.x, y: base.y } : null;
   }
 
   // ==========================================================================
@@ -271,6 +345,14 @@
   function pushLifeEvent(record, minute, type, key, params) {
     record.lifeEvents.unshift({ minute, date: dateStrOf(minute), type, key, params });
     if (record.lifeEvents.length > LIFE_EVENT_CAP) record.lifeEvents.pop();
+  }
+
+  // A life event that can turn somebody's worldview (DIRECTED DEVELOPMENT):
+  // the tag is read, and cleared, on the next pass that resolves their outlook.
+  function markDev(record, tag) {
+    if (!record || record.nonSentient || !tag) return;
+    const pending = Array.isArray(record._devPending) ? record._devPending : (record._devPending = []);
+    if (!pending.includes(tag)) pending.push(tag);
   }
 
   // A career segment records the job's i18n key ("jobs.12.name"), the way
@@ -389,10 +471,48 @@
     // reader's language here. `wild` is only ever on a non-sentient creature's
     // events, and turns the place into the country around it (see stopLabel).
     if (params.job != null) values.job = jobLabel(params.job);
+    // A creed is logged by its id and named in the reader's language.
+    if (params.creed != null) values.creed = creedLabel(params.creed);
     if (params.place != null) {
       values.place = stopLabel({ place: params.place, wild: params.wild || null });
     }
-    return T(entry.key, values);
+    // An augment and the part it went in are logged by their catalogue keys.
+    if (params.augment != null) values.augment = window.NPCSim?.Implants?.label?.(params.augment) || params.augment;
+    if (params.bodyPart != null) values.bodyPart = window.NPCSim?.Implants?.partLabel?.(params.bodyPart) || params.bodyPart;
+    // An illness is logged by its disease id (Health_DiseaseSystem).
+    if (params.illness != null) values.illness = window.DiseaseSystem?.displayName?.(params.illness) || params.illness;
+    // An animal's place is logged as a map-group key or a farm owner, and
+    // written out here (NPCLife_Animals).
+    if (params.whereKey != null || params.whereOwner != null) values.where = animalWhereText(params);
+    // A line may carry {a|b} alternatives: chosen off the entry itself, so the
+    // same event always reads the same way.
+    return resolveAlternation(T(entry.key, values), nameHash(String(entry.key) + ":" + (entry.minute | 0)));
+  }
+
+  // "{a|b|c}" groups (after the {name} placeholders are filled) resolved to
+  // one alternative each, off `seed`, so a line reads the same every time.
+  function resolveAlternation(text, seed) {
+    if (typeof text !== "string" || text.indexOf("|") < 0) return text;
+    let s = (seed >>> 0) || 1;
+    let out = text, guard = 0;
+    const re = /\{([^{}]*\|[^{}]*)\}/;
+    while (re.test(out) && guard++ < 32) {
+      out = out.replace(re, (whole, body) => {
+        const opts = body.split("|");
+        s = (Math.imul(s ^ (s >>> 15), 2246822519) + 0x9e3779b9) >>> 0;
+        return opts[s % opts.length];
+      });
+    }
+    return out;
+  }
+
+  // Where an animal was born or moved to, from a logged { whereKey, whereWild,
+  // whereOwner }: an owner's farm, a place, the country round it, or "in the
+  // wild" when nothing is known.
+  function animalWhereText(params) {
+    if (params.whereOwner) return T("NPCLife.animal.onFarm", { owner: params.whereOwner });
+    if (params.whereKey) return T("NPCLife.animal.inPlace", { place: stopLabel({ place: params.whereKey, wild: params.whereWild || null }) });
+    return T("NPCLife.animal.inWild");
   }
 
   function rollHonesty(name, profile, rng) {
@@ -403,7 +523,23 @@
     return rng.int(10, 95);
   }
 
-  function rollBirth(name, profile, rng, nowMinute, forcedAge) {
+  function rollBirth(name, profile, rng, nowMinute, forcedAge, opts) {
+    // A child born into the world (FAMILY) is dated to the minute they were
+    // born, and is the one person the age floor does not apply to.
+    if (opts && opts.child) {
+      const at = typeof opts.birthMinute === "number" ? opts.birthMinute
+        : nowMinute - Math.max(0, Number(forcedAge) || 0) * MINUTES_PER_YEAR - Math.floor(rng.next() * 0.9 * MINUTES_PER_YEAR);
+      const birthYearFloat = yearFloatOf(Math.min(nowMinute, at));
+      const d = new Date(EPOCH_YEAR, 0, 1, 10, 0, 0);
+      d.setMinutes(d.getMinutes() + Math.min(nowMinute, at));
+      const birthYear = Math.floor(birthYearFloat);
+      const birthMonth = d.getMonth() + 1;
+      const birthDay = Math.min(28, d.getDate());
+      return {
+        birthYear, birthMonth, birthDay, birthYearFloat,
+        birthDate: `${String(birthDay).padStart(2, "0")} ${MONTHS[birthMonth - 1]} ${birthYear}`,
+      };
+    }
     // Stay coherent with NPCSociety's backstory convention (age ≈ 18 + level*2)
     // when a society profile exists; otherwise a seeded adult age. A household
     // (bindFamily) hands its members their ages, so parents are older than
@@ -507,6 +643,13 @@
       record.employment = "none"; // i18n-ignore: employment state id
       return;
     }
+    // A child has worked no job yet; growing up (FAMILY) opens the market.
+    if (record.child) {
+      record.careerHistory = [];
+      record.retirementAge = rng.int(60, 70);
+      record.employment = "none"; // i18n-ignore: employment state id
+      return;
+    }
     const nowYear = yearOf(record._nowMinute);
     const startAge = rng.int(16, 23);
     const startYear = record.birthYear + startAge;
@@ -600,6 +743,8 @@
     record.inPrisonUntilMinute = null;
     // A beast is not answerable to anybody's law, so it has no record to have.
     if (record.nonSentient) return;
+    // Nor is a child (FAMILY).
+    if (record.child) return;
     // Honest NPCs maintain clean records.
     if (record.honesty >= 60) return;
 
@@ -685,6 +830,11 @@
   // minor, whatever produced the record.
   function enforceAdultBirth(record) {
     if (!record || typeof record.birthYearFloat !== "number") return record;
+    // A beast is as old as its own kind lives (NPCLife_Animals): a lamb is
+    // a lamb, not an eighteen-year-old.
+    if (record.nonSentient) return record;
+    // A child of the world is exactly as old as they are (FAMILY).
+    if (record.child) return record;
     const nowMinute = $gameVariables ? ($gameVariables.value(114) || 0) : 0;
     const nowFloat  = yearFloatOf(nowMinute);
     if (nowFloat - record.birthYearFloat >= MIN_NPC_AGE) return record;
@@ -726,8 +876,20 @@
     // each town (see stopLabel), and it is marked on the record so the readers
     // that quote a life do not have to reach for the society profile.
     record.nonSentient = isNonSentient(profile, name);
-    Object.assign(record, rollBirth(name, profile, rng, nowMinute, opts && opts.age));
-    rollLocationHistory(record, record.homeGroup, rng, opts && opts.nativeChance, record.nonSentient);
+    // A child (FAMILY): born into a household, or dealt into one as a minor.
+    const child = !record.nonSentient && !!((opts && opts.child) || profile?._child);
+    if (child) record.child = true;
+    // A beast's age is read off its own kind's lifespan (NPCLife_Animals),
+    // never the human 18 + level * 2 a person is dealt.
+    const animalBirth = record.nonSentient && rollAnimalBirth ? rollAnimalBirth(name, profile, rng, nowMinute, opts) : null;
+    Object.assign(record, animalBirth || rollBirth(name, profile, rng, nowMinute, opts && opts.age, child ? Object.assign({ child: true }, opts) : null));
+    if (child && ageAt(record, nowMinute) >= MIN_NPC_AGE) delete record.child;
+    rollLocationHistory(record, record.homeGroup, rng, record.child ? 1 : (opts && opts.nativeChance), record.nonSentient);
+    if (record.child && opts && opts.birthplace) {
+      record.birthplace = opts.birthplace;
+      record.currentPlace = opts.birthplace;
+      record.locationHistory = [{ place: opts.birthplace, wild: null, fromYear: record.birthYear, toYear: null, reason: BORN_HERE }];
+    }
     rollCareerHistory(record, profile, rng);
     rollCriminalHistory(record, rng);
     // Some low-morality NPCs start the game already wanted, a seeded bounty
@@ -761,23 +923,44 @@
     for (const name of newNames) {
       const r = records[name];
       if (!r || r.maritalStatus !== "married" || r.partner) continue;
+      // Somebody content alone, or who only ever holds a queerplatonic bond,
+      // was never married (FAMILY).
+      const rules = rulesOf(styleKeyOf(name));
+      if (!rules.partners || !rules.dates) {
+        r.maritalStatus = "single";
+        r.timesMarried = 0;
+        continue;
+      }
       (byGroup[r.homeGroup || "__none__"] = byGroup[r.homeGroup || "__none__"] || []).push(name);
     }
     for (const names of Object.values(byGroup)) {
       names.sort();
-      for (let i = 0; i + 1 < names.length; i += 2) {
-        const a = records[names[i]], b = records[names[i + 1]];
-        a.partner = { name: b.name, external: false };
-        b.partner = { name: a.name, external: false };
-        const year = Math.max(a.birthYear, b.birthYear) + 22;
-        a.partnerSinceMinute = b.partnerSinceMinute = minuteOfYear(year);
-        syncCoupleOpinions(a.name, b.name, 55);
+      // Paired in name order with the first one both of them would have.
+      const taken = new Set();
+      for (let i = 0; i < names.length; i++) {
+        if (taken.has(names[i])) continue;
+        for (let j = i + 1; j < names.length; j++) {
+          if (taken.has(names[j])) continue;
+          if (pairKind(names[i], names[j]) !== "romantic") continue; // i18n-ignore: bond kind id
+          const a = records[names[i]], b = records[names[j]];
+          a.partner = { name: b.name, external: false };
+          b.partner = { name: a.name, external: false };
+          const year = Math.max(a.birthYear, b.birthYear) + 22;
+          a.partnerSinceMinute = b.partnerSinceMinute = minuteOfYear(year);
+          a.partnerStyle = b.partnerStyle = coupleStyle(a.name, b.name, "romantic", false, true); // i18n-ignore: bond kind id
+          syncCoupleOpinions(a.name, b.name, 55);
+          taken.add(a.name); taken.add(b.name);
+          break;
+        }
       }
-      if (names.length % 2 === 1) {
-        const solo = records[names[names.length - 1]];
+      // Whoever is left married somebody from beyond the simulation.
+      for (const name of names) {
+        if (taken.has(name)) continue;
+        const solo = records[name];
         const rng = new LifeRng(nameHash(solo.name + "_spouse") ^ worldSeed());
         solo.partner = { name: rng.pick(PARTNER_NAME_BANK), external: true };
         solo.partnerSinceMinute = minuteOfYear(solo.birthYear + rng.int(21, Math.max(22, ageAt(solo, 0) - 1)));
+        solo.partnerStyle = coupleStyle(solo.name, null, "romantic", false, true); // i18n-ignore: bond kind id
       }
     }
   }
@@ -799,36 +982,54 @@
   // DELTA ENGINE, resolve life events across an elapsed interval
   // ==========================================================================
 
-  function endPartnership(record, nowYear, outcome, atMinute) {
-    const partner = record.partner;
+  // Ends one partnership: the primary partner, or `partnerName` among the
+  // partners of a poly life (FAMILY). Whoever is left with nobody is single
+  // or divorced again; a couple who shared a home part ways under separate
+  // roofs (separateHousehold).
+  function endPartnership(record, nowYear, outcome, atMinute, partnerName) {
+    const partner = partnerName ? partnersOf(record).find(p => p.name === partnerName) : record.partner;
     if (!partner) return;
+    const wasPrimary = record.partner?.name === partner.name;
+    const since = partner.sinceMinute ?? (wasPrimary ? record.partnerSinceMinute : null);
+    // i18n-ignore-start: outcome / marital-status ids
+    const alone = outcome === "broke up" ? "single" : outcome === "widowed" ? "widowed" : "divorced";
+    // i18n-ignore-end
     record.exPartners.push({
       name: partner.name, external: !!partner.external,
-      fromYear: record.partnerSinceMinute != null ? yearOf(record.partnerSinceMinute) : nowYear,
+      fromYear: since != null ? yearOf(since) : nowYear,
       toYear: nowYear, outcome,
     });
-    record.partner = null;
-    record.partnerSinceMinute = null;
-    record.maritalStatus = outcome === "broke up" ? "single" : "divorced"; // i18n-ignore: outcome / marital-status ids
+    unlinkPartner(record, partner.name);
+    if (!record.partner) record.maritalStatus = alone;
+    markDev(record, "partner");
 
     if (!partner.external) {
       const other = getRecords()?.[partner.name];
-      if (other && other.partner?.name === record.name) {
+      if (other && partnersOf(other).some(p => p.name === record.name)) {
+        const mine = partnersOf(other).find(p => p.name === record.name);
+        const otherSince = mine?.sinceMinute ?? (other.partner?.name === record.name ? other.partnerSinceMinute : null);
         other.exPartners.push({
           name: record.name, external: false,
-          fromYear: other.partnerSinceMinute != null ? yearOf(other.partnerSinceMinute) : nowYear,
+          fromYear: otherSince != null ? yearOf(otherSince) : nowYear,
           toYear: nowYear, outcome: outcome === "abandoned" ? "wasAbandoned" : outcome, // i18n-ignore: outcome id
         });
-        other.partner = null;
-        other.partnerSinceMinute = null;
-        other.maritalStatus = outcome === "broke up" ? "single" : "divorced"; // i18n-ignore: outcome / marital-status ids
+        unlinkPartner(other, record.name);
+        if (!other.partner) other.maritalStatus = alone;
+        markDev(other, "partner");
         pushLifeEvent(other, atMinute, "relationship",
           outcome === "abandoned" ? "NPCLife.event.wasAbandonedBy"
             : outcome === "broke up" ? "NPCLife.event.brokeUpWith" // i18n-ignore: outcome id
+            : outcome === "widowed" ? "NPCLife.event.widowed" // i18n-ignore: outcome id
             : "NPCLife.event.divorced",
           { name: record.name });
       }
-      syncCoupleOpinions(record.name, partner.name, -55);
+      // A death is no split: the one left behind keeps the home, and the
+      // two are not set against each other (DEATH).
+      if (outcome !== "widowed") { // i18n-ignore: outcome id
+        syncCoupleOpinions(record.name, partner.name, -55);
+        try { separateHousehold(record.name, partner.name, atMinute); }
+        catch (e) { console.error("[NPCLifeSim] moving out after a split failed", e); }
+      }
     }
   }
 
@@ -842,6 +1043,7 @@
       }
       if (record.employment === "imprisoned") record.employment = "unemployed";
       pushLifeEvent(record, releaseMinute, "release", "NPCLife.event.releasedFromPrison");
+      markDev(record, "prison");
     }
   }
 
@@ -850,6 +1052,10 @@
     // against either (rollCareerHistory leaves it null).
     if (record.nonSentient) return;
     if (record.inPrisonUntilMinute != null) return;
+    // An office of a nation or a bloc is the career while it is held
+    // (NPCPolitics REAL POLITICIANS): nobody retires out of it or changes
+    // trade on the side.
+    if (record.inOffice) return;
     const age = ageAt(record, nowMinute);
     const nowYear = yearOf(nowMinute);
 
@@ -879,6 +1085,7 @@
         } else {
           record.employment = "unemployed";
         }
+        markDev(record, "job");
       }
     } else if (record.employment === "unemployed") {
       const found = sampleCount(rng, RATES.findJob * web.findJob * deltaDays);
@@ -889,23 +1096,29 @@
           record.careerHistory.push({ ...job, fromYear: yearOf(atMinute), toYear: null, end: null });
           record.employment = "employed";
           pushLifeEvent(record, atMinute, "career", "NPCLife.event.foundWork", { job: job.jobName });
+          markDev(record, "job");
         }
       }
     }
   }
 
   function resolveRelationships(record, rng, lastMinute, nowMinute, deltaDays, singlesByGroup) {
-    // Nothing courts a beast and a beast courts nothing.
-    if (record.nonSentient) return;
+    // Nothing courts a beast and a beast courts nothing; nor a child (FAMILY).
+    if (record.nonSentient || record.child) return;
     if (record.inPrisonUntilMinute != null) return;
-    const nowYear = yearOf(nowMinute);
     const records = getRecords();
     const web = webRates(record);
+    const ownKey = styleKeyOf(record.name);
+    const own = rulesOf(ownKey);
+
+    // A poly or open life keeps its other partners going on the side (FAMILY).
+    if (record.partner) resolveExtraPartners(record, rng, lastMinute, nowMinute, deltaDays, singlesByGroup);
+    const lived = rulesOf(record.partnerStyle || ownKey);
 
     if (record.maritalStatus === "married" && record.partner) {
       // Conviction within the interval, or a dishonest spouse, strains a
       // marriage, and so do the settlement's hard times (world web).
-      let divorceRate = RATES.divorce * web.divorce;
+      let divorceRate = RATES.divorce * web.divorce * (lived.breakup || 1);
       const recentConviction = record.criminalRecord.some(c => c.convicted && c.minute > lastMinute);
       if (recentConviction) divorceRate *= 6;
       if (record.honesty < 30) divorceRate *= 2;
@@ -931,21 +1144,27 @@
     if (record.maritalStatus === "dating" && record.partner) {
       const courtshipDays = record.partnerSinceMinute != null
         ? (nowMinute - record.partnerSinceMinute) / MINUTES_PER_DAY : 0;
-      if (courtshipDays >= COURTSHIP_MIN_DAYS && sampleCount(rng, RATES.marry * deltaDays) > 0) {
+      // A queerplatonic bond, a situationship or friends with benefits never
+      // becomes a marriage; a serial monogamist is quicker to it.
+      const other = record.partner.external ? null : records?.[record.partner.name];
+      const mayMarry = lived.marries && record.partner.bond !== QP_BOND &&
+        (!other || other.partner?.name === record.name);
+      const courtMin = COURTSHIP_MIN_DAYS * (lived.courtship || 1);
+      if (mayMarry && courtshipDays >= courtMin && sampleCount(rng, RATES.marry * deltaDays) > 0) {
         const atMinute = lastMinute + Math.floor(rng.next() * (nowMinute - lastMinute));
+        const key = lived.union ? "NPCLife.event.formedUnion" : "NPCLife.event.married";
         record.maritalStatus = "married";
         record.timesMarried = (record.timesMarried || 0) + 1;
-        pushLifeEvent(record, atMinute, "relationship", "NPCLife.event.married", { name: record.partner.name });
-        if (!record.partner.external) {
-          const other = records?.[record.partner.name];
-          if (other && other.partner?.name === record.name) {
-            other.maritalStatus = "married";
-            other.timesMarried = (other.timesMarried || 0) + 1;
-            pushLifeEvent(other, atMinute, "relationship", "NPCLife.event.married", { name: record.name });
-          }
+        pushLifeEvent(record, atMinute, "relationship", key, { name: record.partner.name });
+        markDev(record, "partner");
+        if (other) {
+          other.maritalStatus = "married";
+          other.timesMarried = (other.timesMarried || 0) + 1;
+          pushLifeEvent(other, atMinute, "relationship", key, { name: record.name });
+          markDev(other, "partner");
           syncCoupleOpinions(record.name, record.partner.name, 70);
         }
-      } else if (sampleCount(rng, RATES.breakup * deltaDays) > 0) {
+      } else if (sampleCount(rng, RATES.breakup * (lived.breakup || 1) * deltaDays) > 0) {
         const atMinute = lastMinute + Math.floor(rng.next() * (nowMinute - lastMinute));
         const partnerName = record.partner.name;
         endPartnership(record, yearOf(atMinute), "broke up", atMinute); // i18n-ignore: outcome id
@@ -956,12 +1175,24 @@
 
     // Single, divorced, or widowed: maybe meet someone from their map group.
     // Festivals and good civic mood spark courtships; epidemics chill them.
-    const datingRate = RATES.startDating * record.charisma * web.dating;
+    // Somebody content alone, or who wants nobody at all, never looks.
+    if (!own.partners) return;
+    const orient = window.NPCRomance ? window.NPCRomance.orientation(record.name, getProfile(record.name)) : null;
+    if (orient?.romantic?.key === "bubbaromantic") return;
+    const bondOnly = wantsOnlyBond(own, orient);
+    const datingRate = RATES.startDating * record.charisma * web.dating * (bondOnly ? 0.5 : 1);
     if (sampleCount(rng, datingRate * deltaDays) > 0) {
       const atMinute = lastMinute + Math.floor(rng.next() * (nowMinute - lastMinute));
-      const pool = singlesByGroup[record.homeGroup || "__none__"] || [];
-      // Family is never courted (see HOUSEHOLDS).
-      const candidates = pool.filter(n => n !== record.name && !record.kin?.[n]);
+      const home = record.homeGroup || "__none__";
+      let pool = singlesByGroup[home] || [];
+      // Long-distance: somebody from another town.
+      let apart = false;
+      if (ownKey === "long-distance") {
+        const away = Object.keys(singlesByGroup).filter(g => g !== home && g !== "__none__" && singlesByGroup[g].length).sort();
+        if (away.length) { pool = singlesByGroup[away[Math.floor(rng.next() * away.length)]]; apart = true; }
+      }
+      // Family is never courted (see HOUSEHOLDS), and both people are asked.
+      const candidates = pool.filter(n => n !== record.name && !record.kin?.[n] && pairKind(record.name, n, nowMinute));
       let partnerName = null;
       let external = true;
       if (candidates.length && rng.next() < 0.75) {
@@ -970,27 +1201,55 @@
       } else {
         partnerName = rng.pick(PARTNER_NAME_BANK);
       }
-      record.maritalStatus = "dating";
-      record.partner = { name: partnerName, external };
+      const kind = external ? (bondOnly ? QP_BOND : "romantic") : pairKind(record.name, partnerName, nowMinute); // i18n-ignore: bond kind id
+      const style = coupleStyle(record.name, external ? null : partnerName, kind, apart);
+      const arranged = !!rulesOf(style).arranged;
+      const bond = kind === QP_BOND ? { bond: QP_BOND } : {};
+      const eventKey = kind === QP_BOND ? "NPCLife.event.formedBond"
+        : arranged ? "NPCLife.event.arrangedMarriage" : "NPCLife.event.startedSeeing";
+      record.maritalStatus = arranged ? "married" : "dating";
+      if (arranged) record.timesMarried = (record.timesMarried || 0) + 1;
+      record.partner = Object.assign({ name: partnerName, external }, bond);
       record.partnerSinceMinute = atMinute;
-      pushLifeEvent(record, atMinute, "relationship", "NPCLife.event.startedSeeing", { name: partnerName });
+      record.partnerStyle = style;
+      pushLifeEvent(record, atMinute, "relationship", eventKey, { name: partnerName });
       if (!external) {
         const other = records?.[partnerName];
         if (other && !other.partner && (other.maritalStatus === "single" || other.maritalStatus === "divorced" || other.maritalStatus === "widowed")) {
-          other.maritalStatus = "dating";
-          other.partner = { name: record.name, external: false };
+          other.maritalStatus = arranged ? "married" : "dating";
+          if (arranged) other.timesMarried = (other.timesMarried || 0) + 1;
+          other.partner = Object.assign({ name: record.name, external: false }, bond);
           other.partnerSinceMinute = atMinute;
-          pushLifeEvent(other, atMinute, "relationship", "NPCLife.event.startedSeeing", { name: record.name });
-          syncCoupleOpinions(record.name, partnerName, 35);
+          other.partnerStyle = style;
+          pushLifeEvent(other, atMinute, "relationship", eventKey, { name: record.name });
+          syncCoupleOpinions(record.name, partnerName, arranged ? 45 : 35);
+          if (arranged) { markDev(record, "partner"); markDev(other, "partner"); }
           // Remove both from the singles pool so they aren't double-booked this pass.
           const idx = pool.indexOf(partnerName); if (idx >= 0) pool.splice(idx, 1);
-          const idx2 = pool.indexOf(record.name); if (idx2 >= 0) pool.splice(idx2, 1);
+          const homePool = singlesByGroup[home] || [];
+          const idx2 = homePool.indexOf(record.name); if (idx2 >= 0) homePool.splice(idx2, 1);
         } else {
           // Candidate got taken earlier in this same pass, date offscreen instead.
-          record.partner = { name: partnerName, external: true };
+          record.partner = Object.assign({ name: partnerName, external: true }, bond);
         }
       }
     }
+  }
+
+  // The Horde's crime multiplier for a home group, worked out once per group
+  // per game day (HordeGround.crime: 1 anywhere else, up to 3).
+  const _hordeCrimeMemo = new Map();
+  function hordeCrimeMultiplier(group, nowMinute) {
+    const HG = window.HordeGround;
+    if (!group || !HG?.crime) return 1;
+    const day = Math.floor((Number(nowMinute) || 0) / MINUTES_PER_DAY);
+    const hit = _hordeCrimeMemo.get(group);
+    if (hit && hit.day === day) return hit.v;
+    let v = 1;
+    try { v = Number(HG.crime(group)) || 1; } catch (_) { v = 1; }
+    if (_hordeCrimeMemo.size > 512) _hordeCrimeMemo.clear();
+    _hordeCrimeMemo.set(group, { day, v });
+    return v;
   }
 
   function resolveCrime(record, rng, lastMinute, nowMinute, deltaDays) {
@@ -1004,12 +1263,16 @@
       record.wantedBounty = Math.max(0, record.wantedBounty - decay);
     }
 
-    if (record.honesty >= 60) return; // honest NPCs stay clean
+    // On the Horde's ground the social order has gone (HordeGround): more of
+    // the town is willing, and the willing are at it more often.
+    const horde = hordeCrimeMultiplier(record.homeGroup, nowMinute);
+    const honestAt = 60 + 10 * (horde - 1);
+    if (record.honesty >= honestAt) return; // honest NPCs stay clean
     if (record.inPrisonUntilMinute != null) return;
 
-    const dishonesty = (60 - record.honesty) / 60;
+    const dishonesty = (honestAt - record.honesty) / honestAt;
     const web = webRates(record);
-    const crimes = sampleCount(rng, RATES.crimeBase * dishonesty * web.crime * deltaDays);
+    const crimes = sampleCount(rng, RATES.crimeBase * dishonesty * web.crime * horde * deltaDays);
     for (let i = 0; i < crimes; i++) {
       const crime = pickCrime(rng, record.honesty);
       if (!crime) return;
@@ -1022,6 +1285,7 @@
         const releaseMinute = atMinute + entry.sentenceDays * MINUTES_PER_DAY;
         pushLifeEvent(record, atMinute, "conviction", "NPCLife.event.convicted",
           { crime: entry.name.toLowerCase(), days: entry.sentenceDays });
+        markDev(record, "prison");
         if (releaseMinute > nowMinute) {
           record.inPrisonUntilMinute = releaseMinute;
           if (record.employment !== "retired") record.employment = "imprisoned";
@@ -1085,12 +1349,26 @@
     return pool;
   }
 
+  // Implants and prosthetics (NPCSim.Implants, NPCSimulationCore SECTION
+  // 11b7): an augment bought at a clinic now and then, and a part lost in a
+  // fight made good once its wait is over. Its own random stream.
+  function resolveImplants(record, profile, lastMinute, nowMinute, deltaDays) {
+    const I = window.NPCSim?.Implants;
+    if (!I || !profile || record.child || record.nonSentient) return;
+    if (record.inPrisonUntilMinute != null) return;
+    I.catchUp(record.name, profile, lastMinute, nowMinute, deltaDays, record.homeGroup,
+      (minute, key, params) => pushLifeEvent(record, minute, IMPLANT_EVENT, key, params));
+  }
+  const IMPLANT_EVENT = "implant"; // i18n-ignore: life event type
+
   // Day-to-day life between visits: NPCs keep buying what they need (money
   // down, goods up, stock is abstract), and their worldview drifts on the
   // scale of years, so the same person met a decade later reads differently.
   function resolveDailyLife(record, profile, rng, lastMinute, nowMinute, deltaDays) {
     if (!profile) return;
     if (record.inPrisonUntilMinute != null) return;
+    // A beast buys nothing: it holds no euros (NPCCreature.mayHoldMoney).
+    if (record.nonSentient || window.NPCCreature?.mayHoldMoney?.(profile, record.name) === false) return;
 
     const buys = sampleCount(rng, RATES.shopping * deltaDays);
     if (buys > 0) {
@@ -1100,6 +1378,12 @@
         if ((profile.money ?? 0) <= 0 || !pool.length) break;
         const item = pool[rng.int(0, pool.length - 1)];
         if (item.price > profile.money) continue;
+        // Nothing their diet forbids (NPCShared.Diet); the draw is taken
+        // either way, so the stream stays as it was.
+        const _diet = window.NPCShared?.Diet;
+        if (_diet && typeof $dataItems !== "undefined" && !_diet.allows(profile, $dataItems?.[item.id])) continue;
+        // Never the Liminal cuffs, never a car's keys off a shelf (NPCShared).
+        if (window.NPCShared?.isForbiddenItem?.(item.id) || window.NPCShared?.isCarKeys?.(item.id)) continue;
         profile.money = Math.max(0, profile.money - item.price);
         profile.itemIds.push(item.id);
         if (rng.next() < 0.15) {
@@ -1107,247 +1391,20 @@
           pushLifeEvent(record, atMinute, "purchase", "NPCLife.event.bought", { item: item.name.toLowerCase() });
         }
       }
-      if (profile.itemIds.length > PROFILE_ITEMIDS_CAP) {
+      // The shared cap, which never throws a bike or a broom away.
+      if (window.NPCShared?.capItemIds) window.NPCShared.capItemIds(profile);
+      else if (profile.itemIds.length > PROFILE_ITEMIDS_CAP) {
         profile.itemIds.splice(0, profile.itemIds.length - PROFILE_ITEMIDS_CAP);
       }
     }
 
-    // A worldview shifts to a NEIGHBOURING creed, not to the next line of the
-    // file. Ideology.json is authored in thematic blocks, so walking the index
-    // by one used to turn a Trade Unionist into a Feminist Emancipationist one
-    // year and an Anarcho-Capitalist the next, and could walk a citizen
-    // straight into an off-world creed. The move is now measured on the five
-    // axes every creed carries: one of the handful standing nearest to where
-    // this person already stands, inside their own pool, nearer ones likelier.
-    const ideologies = window.NPCShared.ideologyList();
-    const creed = window.NPCShared.ideologyFor(profile);
-    if (ideologies.length > 1 && creed && sampleCount(rng, RATES.ideologyShift * deltaDays) > 0) {
-      const near = window.NPCShared.nearestIdeologies(creed, {
-        alien: !!creed.alien, limit: 7, exclude: creed.id,
-      });
-      if (near.length) {
-        let total = 0;
-        const weights = near.map(e => { const w = 1 / (1 + e.distance / 25); total += w; return w; });
-        let roll = rng.next() * total;
-        let pick = near[near.length - 1];
-        for (let i = 0; i < near.length; i++) {
-          roll -= weights[i];
-          if (roll <= 0) { pick = near[i]; break; }
-        }
-        profile.ideologyIndex = pick.index;
-        profile.ideologyId    = pick.ideo.id;
-        const atMinute = lastMinute + Math.floor(rng.next() * Math.max(1, nowMinute - lastMinute));
-        pushLifeEvent(record, atMinute, "outlook", "NPCLife.event.worldviewShifted");
-      }
+    // Money changing hands up or down a tier is one of the things that turns
+    // a worldview (DIRECTED DEVELOPMENT below).
+    const tier = profile.wealthTierBase;
+    if (typeof tier === "number") {
+      if (typeof record._devWealthTier === "number" && record._devWealthTier !== tier) markDev(record, "wealth");
+      record._devWealthTier = tier;
     }
-  }
-
-  // ==========================================================================
-  // TRAVELLING
-  // ==========================================================================
-  // An NPC's location history used to be pure backstory: rollLocationHistory
-  // invented a past at record-mint time and currentPlace was never written
-  // again. Nobody ever went anywhere while the world was running.
-  //
-  // Now an authored citizen takes a trip. They are away for a while, they turn
-  // up somewhere else, they pay for the journey, they sleep in an inn while
-  // they are there, and they come home. Because a destination may be a
-  // procedural square that does not exist until the party walks onto it, a
-  // trip is a RECORD first and a body only if somebody goes and looks.
-  //
-  // Who never travels:
-  //   - anyone from a procedural settlement. Their village is where they are
-  //     from and where they stay; they may still receive visitors.
-  //   - anyone non-sentient. A beast keeps no money and buys no ticket.
-  //   - anyone in prison, or already away.
-  //
-  // Where they may go: any Destinations.json entry that is not locked,
-  // procedural ones included, which is the whole point. A Ghent citizen turning
-  // up in a procedural village is the thing worth seeing.
-
-  const TRAVEL_DAY_CHANCE = 0.012;   // per eligible NPC per day, so a trip is an event
-  const TRAVEL_AWAY_CAP = 3;         // at most this many from one town away at once
-  const TRAVEL_STAY_MIN_DAYS = 1;
-  const TRAVEL_STAY_MAX_DAYS = 6;
-  const FARE_PER_TILE = 10;          // FastTravelSystem's own baseDistancePrice
-
-  // The ways an NPC may go, drawn from FastTravelSystem's fare and speed
-  // tables and its own own/scheduled/hired taxonomy. Deliberately NOT the
-  // whole list of 28: a mode is only here if a destination can actually carry
-  // a block for it. hypermetro is absent on purpose, because no destination in
-  // the game has a hypermetro station and offering one would be a fiction.
-  const TRAVEL_MODES = [
-    { id: "train", arrangement: "scheduled", fare: 1.2, speed: 3.33, station: "train" },
-    { id: "bus", arrangement: "scheduled", fare: 0.8, speed: 2.0, station: "bus" },
-    { id: "carsharing", arrangement: "own", fare: 0.35, speed: 3.5, station: null },
-    { id: "taxi", arrangement: "hired", fare: 2.5, speed: 3.33, station: null },
-  ];
-
-  // Which kinds of journey somebody of this means would consider. A destitute
-  // NPC queues for a fare; a wealthy one is driven.
-  function arrangementsForTier(tier) {
-    if (tier >= 4) return ["hired", "own", "scheduled"];
-    if (tier >= 2) return ["own", "scheduled"];
-    return ["scheduled"];
-  }
-
-  function destinationTable() {
-    const dest = window.WorkSystem?.Destinations;
-    return (dest && typeof dest === "object") ? dest : null;
-  }
-
-  // Everywhere an NPC may actually go. Locked places are sealed off for the
-  // party and are no more open to anybody else.
-  function openDestinations() {
-    const table = destinationTable();
-    if (!table) return [];
-    return Object.keys(table).filter((k) => table[k] && !table[k].locked);
-  }
-
-  // How far apart two named places are, in world-map tiles, off the same
-  // "base" pin FastTravelSystem measures its own fares from. Worked out here
-  // rather than by calling calculateTravelCost, which reads the PLAYER's
-  // position out of the game variables and would price every NPC's journey as
-  // though they set off from wherever the party is standing.
-  function placeDistance(fromName, toName) {
-    const table = destinationTable();
-    const a = table?.[fromName]?.base;
-    const b = table?.[toName]?.base;
-    if (!a || !b) return null;
-    return Math.round(Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2)));
-  }
-
-  // The cheapest way this person could make this journey, or null if they
-  // cannot make it at all. A mode with a station type is only on offer where
-  // the destination actually has that station.
-  function travelOffer(fromName, toName, tier, purse) {
-    const table = destinationTable();
-    const to = table?.[toName];
-    if (!to) return null;
-    const tiles = placeDistance(fromName, toName);
-    if (tiles === null || tiles <= 0) return null;
-    const allowed = arrangementsForTier(tier);
-    let best = null;
-    for (const mode of TRAVEL_MODES) {
-      if (!allowed.includes(mode.arrangement)) continue;
-      if (mode.station && !to[mode.station]) continue;
-      const cost = Math.floor(tiles * FARE_PER_TILE * mode.fare);
-      if (cost > purse) continue;
-      if (!best || cost < best.cost) {
-        best = { mode: mode.id, arrangement: mode.arrangement, cost, tiles,
-                 minutes: Math.max(60, Math.round((tiles / mode.speed) * 60)) };
-      }
-    }
-    return best;
-  }
-
-  // Who is allowed to go anywhere at all.
-  function mayTravel(record, profile) {
-    if (!record || record.nonSentient) return false;
-    if (record.inPrisonUntilMinute != null) return false;
-    const group = record.homeGroup;
-    if (!group) return false;
-    // A procedural settlement's people belong to their square. They stay.
-    if (window.NPCSystem?.isProceduralGroup?.(group)) return false;
-    if (window.NPCCreature?.isNonSentientProfile?.(profile)) return false;
-    return true;
-  }
-
-  // Somewhere to sleep while they are away. RentSystem already keeps NPC
-  // tenancies, keyed mapId_eventId, but it can only list the rooms of the map
-  // that happens to be loaded, so a room is BOOKED here as an intention and
-  // only matched to an actual door when somebody is standing in that town.
-  function takeLodging(record, profile, place) {
-    record.lodging = { place, roomKey: null };
-    try {
-      const RS = window.RentSystem;
-      const free = RS?.freeRooms?.();
-      if (!free || !free.length) return;
-      // Only when the town they arrived in is the one under our feet.
-      const room = free[0];
-      const price = Number(room.price) || 0;
-      if (profile && Number(profile.money) >= price) {
-        profile.money -= price;
-        record.lodging.roomKey = room.mapId + "_" + room.eventId;  // i18n-ignore: record key
-        record.lodging.paid = price;
-      }
-    } catch (e) { /* no inn to be had; they are away all the same */ }
-  }
-
-  // One day of being, or not being, a traveller.
-  function resolveTravel(record, profile, rng, lastMinute, nowMinute, deltaDays, awayByGroup) {
-    if (!record) return;
-
-    // Already away: are they home yet?
-    if (record.trip) {
-      if (nowMinute >= record.trip.homeByMinute) {
-        record.currentPlace = record.trip.from;
-        beginStay(record, record.trip.from, nowMinute, "followingFamily");  // i18n-ignore: MOVE_REASONS id
-        record.trip = null;
-        record.lodging = null;
-      }
-      return;
-    }
-
-    if (!mayTravel(record, profile)) return;
-    const home = destinationForGroup(record.homeGroup);
-    if (!home) return;
-    // A town only lets so many of its people be elsewhere at once, or a place
-    // the party walks into could be standing empty.
-    const away = awayByGroup[record.homeGroup] || 0;
-    if (away >= TRAVEL_AWAY_CAP) return;
-    // The chance is per day, so a long skip is more likely to have contained a
-    // trip than a short one, without ever becoming a certainty.
-    if (rng.next() > 1 - Math.pow(1 - TRAVEL_DAY_CHANCE, Math.min(deltaDays, 30))) return;
-
-    const options = openDestinations().filter((d) => d !== home);
-    if (!options.length) return;
-    const to = rng.pick(options);
-    const purse = Math.max(0, Number(profile?.money) || 0);
-    const tier = Number(profile?.wealthTierBase) || 0;
-    const offer = travelOffer(home, to, tier, purse);
-    // Somebody who cannot afford the cheapest way there does not go. That
-    // refusal is the point: a journey is a thing you have to be able to pay for.
-    if (!offer) return;
-
-    if (profile) profile.money = purse - offer.cost;
-    const stayDays = rng.int(TRAVEL_STAY_MIN_DAYS, TRAVEL_STAY_MAX_DAYS);
-    record.trip = {
-      from: home, to,
-      mode: offer.mode, arrangement: offer.arrangement,
-      fare: offer.cost, tiles: offer.tiles,
-      leftAtMinute: nowMinute,
-      arrivesAtMinute: nowMinute + offer.minutes,
-      homeByMinute: nowMinute + offer.minutes * 2 + stayDays * MINUTES_PER_DAY,
-    };
-    record.currentPlace = to;
-    beginStay(record, to, nowMinute, "changeOfAir");  // i18n-ignore: MOVE_REASONS id
-    takeLodging(record, profile, to);
-    awayByGroup[record.homeGroup] = away + 1;
-  }
-
-  // The location history is a list of stays: one open stay at the end, every
-  // earlier one closed off with the year it ended. Going somewhere and coming
-  // back are the same operation, so there is one of these and not two, and the
-  // reason is drawn from the vocabulary the rest of the record already speaks.
-  function beginStay(record, place, minute, reason) {
-    if (!Array.isArray(record.locationHistory)) return;
-    const year = yearOf(minute);
-    const open = record.locationHistory[record.locationHistory.length - 1];
-    if (open && open.toYear === null) open.toYear = year;
-    record.locationHistory.push({
-      place, wild: null, fromYear: year, toYear: null, reason,
-    });
-  }
-
-  function resolveStanding(record, deltaDays, profile) {
-    // Standing slowly recovers toward the NPC's baseline once sentences are
-    // served, paid debts fade from public memory.
-    const base = baselineStanding(record, profile);
-    const drift = 0.02 * deltaDays;
-    if (record.socialStanding < base) record.socialStanding = Math.min(base, record.socialStanding + drift);
-    else if (record.socialStanding > base) record.socialStanding = Math.max(base, record.socialStanding - drift);
-    record.socialStanding = Math.round(record.socialStanding * 100) / 100;
   }
 
   // --------------------------------------------------------------------------
@@ -1359,6 +1416,8 @@
 
   // True in a world created with populationMode "empty" (WorldManager).
   function isEmptyWorld() {
+    const WMo = window.NPCShared?.WorldModes;
+    if (WMo && !WMo.simulatesPeople()) return true;
     const WM = window.WorldManager;
     return !!(WM && typeof WM.isEmptyWorld === "function" && WM.isEmptyWorld());
   }
@@ -1366,8 +1425,16 @@
   function catchUp(nowMinute) {
     if (_catchUpRunning) return;
     // Nobody is left to have a life to simulate: no jobs taken, no partners
-    // found, no children born. See WorldManager.populationMode.
-    if (isEmptyWorld()) return;
+    // found, no children born. See WorldManager.populationMode. The animals
+    // on the farms and in the buildings still live, age and breed
+    // (NPCLife_Animals), on their own clock.
+    if (isEmptyWorld()) {
+      if ($gameSystem && $gameVariables && resolveAnimalWorld) {
+        try { resolveAnimalWorld(Number(nowMinute ?? $gameVariables.value(114)) || 0); }
+        catch (e) { console.error("[NPCLifeSim] the animal lives failed", e); }
+      }
+      return;
+    }
     if (!$gameSystem || !$gameVariables) return;
     const records = getRecords();
     if (!records) return;
@@ -1401,7 +1468,7 @@
       for (const record of Object.values(records)) {
         // Nobody is paired off with a beast: a non-sentient life is never in
         // the pool the courtships above are drawn from.
-        if (record.nonSentient) continue;
+        if (record.nonSentient || record.child || record.dead) continue;
         if (record.partner || record.inPrisonUntilMinute != null) continue;
         if (record.maritalStatus === "single" || record.maritalStatus === "divorced" || record.maritalStatus === "widowed") {
           (singlesByGroup[record.homeGroup || "__none__"] = singlesByGroup[record.homeGroup || "__none__"] || []).push(record.name);
@@ -1420,17 +1487,60 @@
         }
       }
 
+      // Room in each town for the children still to come (FAMILY).
+      const familyCtx = familyContext(records);
+      // Head counts for the relocation floor, counted fresh for this pass.
+      window.NPCLifeSim._internal._relocCounts = null;
+
       for (const record of Object.values(records)) {
+        // The dead live no further (DEATH).
+        if (record.dead) continue;
         const rng = new LifeRng((nameHash(record.name + "_delta") ^ seed ^ (last >>> 0)) >>> 0);
         const profile = getProfile(record.name);
+        // A beast lives a beast's life (NPCLife_Animals): it ages by its
+        // kind's lifespan, breeds, is fed or goes hungry and dies, and none
+        // of a person's passes (work, love, crime, money, creed) apply.
+        if (record.nonSentient) {
+          if (resolveAnimalLife) resolveAnimalLife(record, profile, rng, last, nowMinute, deltaDays);
+          continue;
+        }
+        // A child grows up; until eighteen nothing else in a life applies.
+        if (record.child && !resolveGrowingUp(record, profile, nowMinute)) continue;
+        // Age and illness take some (NATURAL MORTALITY, NPCLife_Death).
+        if (resolveMortality && resolveMortality(record, profile, last, nowMinute, deltaDays)) continue;
         resolvePrison(record, last, nowMinute);
         resolveCareer(record, rng, last, nowMinute, deltaDays);
         resolveRelationships(record, rng, last, nowMinute, deltaDays, singlesByGroup);
+        resolveFamily(record, profile, rng, last, nowMinute, deltaDays, familyCtx);
         resolveCrime(record, rng, last, nowMinute, deltaDays);
         syncLiveCrimeLog(record, last);
         resolveDailyLife(record, profile, rng, last, nowMinute, deltaDays);
+        // Worldview, even behind bars: prison is one of the things that turns it.
+        resolveWorldview(record, profile, rng, last, nowMinute, deltaDays);
+        resolveConversion(record, profile, deltaDays, nowMinute);
         resolveStanding(record, deltaDays, profile);
         resolveTravel(record, profile, rng, last, nowMinute, deltaDays, awayByGroup);
+        resolveRelocation(record, profile, rng, nowMinute, deltaDays);
+        resolveImplants(record, profile, last, nowMinute, deltaDays);
+      }
+
+      // The animals: litters among the beasts that live here, and the farm
+      // and building stock ageing, breeding and being cared for off-screen
+      // (NPCLife_Animals).
+      try { resolveAnimalWorld?.(nowMinute, deltaDays, last); } catch (e) { console.error("[NPCLifeSim] the animal lives failed", e); }
+
+      // Expeditions that are over, and the month's draft (ADVENTURING BANDS).
+      try { resolveBands(nowMinute); } catch (e) { console.error("[NPCLifeSim] resolving the bands failed", e); }
+
+      // The Horde's refugees, a game month at a time (REFUGEES).
+      try { resolveRefugees(nowMinute); } catch (e) {
+        console.error("[NPCLifeSim] the refugee flows failed:", e);
+      }
+
+      // Illness passed on between people who live, work and sleep together
+      // over the interval (Health_DiseaseSystem NPC CONTACT SPREAD).
+      try { window.DiseaseSystem?.spreadPass?.(nowMinute, deltaDays, last); } catch (e) {
+        console.error("[NPCLifeSim] disease spread failed:", e);
       }
 
       // 5. A real time skip immediately persists the world's npcs.json.
@@ -1663,117 +1773,45 @@
   }
 
   // ==========================================================================
-  // PUBLIC API
+  // FAMILY NAMESPACE (NPCLife_*.js)
   // ==========================================================================
+  // The life simulation is split across the NPCLife_*.js modules listed in
+  // js/plugins.js right after this file. Each module reads the helpers it
+  // shares with the others off NPCLifeSim._internal and publishes its own
+  // there; a name owned by a module that loads later is bound through _late,
+  // which NPCLife_Hooks.js (the last module) runs once the whole family is in.
+  // NPCLife_Api.js fills in the public API on this same object.
 
-  // Is this person out of town, and what are they doing there? The one answer,
-  // so nothing has to go digging in the record for it.
-  function travelStatus(name) {
-    const record = $gameSystem?._npcLifeRecords?.[name];
-    const trip = record?.trip;
-    if (!trip) return null;
-    return {
-      from: trip.from, to: trip.to, mode: trip.mode,
-      arrangement: trip.arrangement, fare: trip.fare,
-      lodging: record.lodging?.place || null,
-      roomKey: record.lodging?.roomKey || null,
-    };
-  }
+  window.NPCLifeSim = { _internal: { _late: [] } };
+  Object.assign(window.NPCLifeSim._internal, {
+    ageAt, baselineStanding, bindFamily, BORN_HERE, buildBiography, catchUp, collectPopulation,
+    dateStrOf, destinationAtTile, destinationRecord, endPartnership, enforceAdultBirth,
+    ensureLifeRecord, getCrimes, getJobs, getProfile, getRecords, groupForPlace, HOMECOMING,
+    hordeCrimeMultiplier, isEmptyWorld, isNonSentient, kinOf, lifeEventText, LifeRng, markDev,
+    MIN_NPC_AGE, minuteOfYear, MINUTES_PER_DAY, MINUTES_PER_YEAR, MOVE_REASONS, moveReasonLabel,
+    nameHash, pairNewlyweds, PARTNER_NAME_BANK, placeCoords, placeLabel, placeOfGroup,
+    pushLifeEvent, RATES, recordCrime, resolveCrime, resolveRelationships, sampleCount, setKin,
+    syncCoupleOpinions, worldSeed, yearFloatOf, yearOf,
+    animalWhereText, resolveAlternation, stopLabel,
+  });
+  // Live state other modules read or reset: always the binding itself, never a copy.
+  Object.defineProperty(window.NPCLifeSim._internal, "_populationCache", { get: () => _populationCache, set: (v) => { _populationCache = v; }, enumerable: true });
+  Object.defineProperty(window.NPCLifeSim._internal, "_populationCacheKey", { get: () => _populationCacheKey, set: (v) => { _populationCacheKey = v; }, enumerable: true });
 
-  function isAwayFromTown(name) {
-    return !!$gameSystem?._npcLifeRecords?.[name]?.trip;
-  }
-
-  window.NPCLifeSim = {
-    travelStatus,
-    isAwayFromTown,
-    catchUp,
-    ensureLifeRecord,
-    getRecord(name) { return getRecords()?.[name] ?? null; },
-    // Throw away the life this person was dealt and deal another one, against
-    // whatever their profile says now (level, morality, home town). Used by the
-    // Detailed character editor, where the player is still deciding who this
-    // character is and asks for a different past.
-    rerollLifeRecord(name, homeGroupHint) {
-      const records = getRecords();
-      if (!records || !name) return null;
-      delete records[name];
-      const salt = "_" + Math.floor(Math.random() * 0x7fffffff);
-      return ensureLifeRecord(name, homeGroupHint, salt);
-    },
-    buildBiography,
-    // Resolve a { key, params } pocket from a record's lifeEvents.
-    lifeEventText,
-    // Records a live-sim crime (e.g. a theft the player's world witnessed)
-    // straight onto the NPC's permanent criminal record and personal bounty,
-    // used by NPCSimulationCore's CrimeManager when an NPC gets caught.
-    addLiveCrime(name, crimeKey, minute, opts = {}) {
-      const record = ensureLifeRecord(name);
-      if (!record) return null;
-      const crimes = getCrimes();
-      const crime = crimes.find(c => c.key === crimeKey)
-        || crimes.find(c => c.category === "Theft") // i18n-ignore: PresetCrimes category id
-        || crimes[0];
-      if (!crime) return null;
-      const caught = opts.caught ?? true;
-      const atMinute = Number(minute ?? ($gameVariables ? $gameVariables.value(114) : 0)) || 0;
-      const entry = recordCrime(record, crime, atMinute, caught, false);
-      // recordCrime only raises the bounty for *unwitnessed* crimes; a
-      // caught-in-the-act NPC who fled the scene still becomes wanted.
-      if (caught && (opts.addBounty ?? true)) record.wantedBounty += crime.bounty;
-      pushLifeEvent(record, atMinute, "arrest", "NPCLife.event.caughtCommitting", { crime: crime.name.toLowerCase() });
-      return entry;
-    },
-    // Current personal bounty (gold) on this NPC's head.
-    getBounty(name) { return getRecords()?.[name]?.wantedBounty ?? 0; },
-    ageOf(name) {
-      const r = getRecords()?.[name];
-      if (!r) return null;
-      enforceAdultBirth(r);
-      return ageAt(r, $gameVariables ? ($gameVariables.value(114) || 0) : 0);
-    },
-    // The live in-game year, and the age floor every NPC birth date respects.
-    currentYear() { return yearOf($gameVariables ? ($gameVariables.value(114) || 0) : 0); },
-    MIN_NPC_AGE,
-    // The family a procedural household is found with (HOUSEHOLDS section).
-    bindFamily,
-    kinOf,
-    // test/inspection hooks
-    _internals: { LifeRng, nameHash, sampleCount, yearOf, dateStrOf, collectPopulation, RATES },
-  };
-
-  // ==========================================================================
-  // ENGINE HOOKS (guarded so the module stays loadable outside RMMZ for tests)
-  // ==========================================================================
-
-  if (typeof Game_Map !== "undefined") {
-    // Natural play + every time-skip path funnels through the minute variable;
-    // catchUp itself early-outs until at least one full day has accumulated.
-    const _Game_Map_update = Game_Map.prototype.update;
-    Game_Map.prototype.update = function (sceneActive) {
-      _Game_Map_update.call(this, sceneActive);
-      if (!sceneActive || !$gameVariables) return;
-      const minute = $gameVariables.value(114) || 0;
-      if (minute !== this._lastLifeSimMinute) {
-        this._lastLifeSimMinute = minute;
-        const last = $gameSystem?._npcLifeLastSimMinute;
-        if (last === undefined || last === null || minute - last >= MINUTES_PER_DAY || minute < last) {
-          catchUp(minute);
-        }
-      }
-    };
-  }
-
-  if (typeof Scene_Map !== "undefined") {
-    // Resolve pending time right when a map finishes loading (post-load,
-    // post-fast-travel, post-sleep) so biographies are current before the
-    // player can inspect anyone.
-    const _Scene_Map_onMapLoaded = Scene_Map.prototype.onMapLoaded;
-    Scene_Map.prototype.onMapLoaded = function () {
-      _Scene_Map_onMapLoaded.call(this);
-      if ($gameVariables) catchUp($gameVariables.value(114) || 0);
-    };
-  }
+  // Owned by modules that load after this one, bound once the family is in.
+  let
+    coupleStyle, creedLabel, familyContext, pairKind, partnersOf, QP_BOND, resolveBands,
+    resolveConversion, resolveExtraPartners, resolveFamily, resolveGrowingUp, resolveRefugees,
+    resolveRelocation, resolveStanding, resolveTravel, resolveWorldview, rulesOf, separateHousehold,
+    styleKeyOf, unlinkPartner, wantsOnlyBond, resolveMortality,
+    resolveAnimalLife, resolveAnimalWorld, rollAnimalBirth;
+  window.NPCLifeSim._internal._late.push(() => ({
+    coupleStyle, creedLabel, familyContext, pairKind, partnersOf, QP_BOND, resolveBands,
+    resolveConversion, resolveExtraPartners, resolveFamily, resolveGrowingUp, resolveRefugees,
+    resolveRelocation, resolveStanding, resolveTravel, resolveWorldview, rulesOf, separateHousehold,
+    styleKeyOf, unlinkPartner, wantsOnlyBond, resolveMortality,
+    resolveAnimalLife, resolveAnimalWorld, rollAnimalBirth,
+  } = window.NPCLifeSim._internal));
 
   if (typeof PluginManager !== "undefined") {
     PluginManager.registerCommand(pluginName, "NPCLife", args => {

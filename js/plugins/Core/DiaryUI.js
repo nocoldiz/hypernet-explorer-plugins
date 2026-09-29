@@ -459,6 +459,19 @@
         // character; only Enter and Escape are acted on here.
         _openWrite() {
             if (!this._container || this._writeOpen || this._foreign) return;
+            // A pad has no keys to type with: the letter sheet stands in for the
+            // field, and a line it hands back is written the way the field's is.
+            if (this._padTypes()) {
+                Controller.textEntry({
+                    title: tr('write.title'),
+                    value: this._writeDraft || "",
+                    max: 400,
+                    multiline: true,
+                    onCommit: (value) => { this._writeText(String(value || "")); },
+                    onCancel: () => {}
+                });
+                return;
+            }
             SoundManager.playOk();
             const sheet = document.createElement("div");
             sheet.className = "diary-write-backdrop";
@@ -497,9 +510,19 @@
             this._writeEl = null;
         }
 
+        // True when the pad is the device in hand and the letter sheet exists.
+        _padTypes() {
+            return !!(window.Controller && typeof Controller.textEntry === "function" &&
+                typeof Input !== "undefined" && typeof Input.lastInputDevice === "function" &&
+                Input.lastInputDevice() === "pad");
+        }
+
         _submitWrite() {
             const field = this._writeEl && this._writeEl.querySelector("#diary-write-input");
-            const text = field ? field.value : "";
+            this._writeText(field ? field.value : "");
+        }
+
+        _writeText(text) {
             const D = window.Diary;
             const written = (D && D.write) ? D.write(text) : null;
             this._writeDraft = "";
@@ -585,9 +608,20 @@
 
         update() {
             super.update();
+            // The pad's letter sheet owns every press while it is up.
+            if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) return;
             // While the sheet is up the keyboard belongs to the field alone: no
-            // page turns, no cancel, nothing that could steal its focus.
-            if (this._writeOpen) return;
+            // page turns, nothing that could steal its focus. A pad's B still
+            // reaches Input (the key guard only shields keystrokes), and it puts
+            // the sheet away rather than leaving the reader stuck in it.
+            if (this._writeOpen) {
+                if (Input.isTriggered("cancel")) {
+                    SoundManager.playCancel();
+                    this._closeWrite();
+                    if (window.UINav) window.UINav.swallowHeld();
+                }
+                return;
+            }
             if (Input.isTriggered("ok") && !this._foreign) { this._openWrite(); return; }
             if (Input.isTriggered("cancel") || TouchInput.isCancelled()) {
                 TouchInput.clear();

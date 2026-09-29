@@ -14,6 +14,7 @@
  * - Nutrition value extraction
  * - Text formatting utilities
  * - Actor bust image paths
+ * - The "?" help sheet any page can wear (window.UIHelp, opened with Select)
  *
  * Terms of Use:
  * Free for use in both commercial and non-commercial projects.
@@ -2665,4 +2666,310 @@
   };
 
   window.ItemTargetCard = ItemTargetCard;
+})();
+
+//=============================================================================
+// The help sheet (window.UIHelp)
+//
+// A page that wants to explain itself wears a "?" in its top right corner and
+// opens one shared sheet: every control on the page, one row each, named and
+// explained. The words live in the page's own i18n file, under an object of
+// this shape:
+//
+//   "help": {
+//     "title": "The forge",
+//     "intro": "optional line under the title",
+//     "items": { "back": { "name": "Back", "text": "Leaves the forge." }, ... }
+//   }
+//
+// so a screen hands over the key of that object and nothing else:
+//
+//   UIHelp.attach(hostEl, 'Blacksmith.help.board');
+//   UIHelp.attach(hostEl, () => 'SkillMaster.help.' + this._viewMode);
+//   UIHelp.attach(hostEl, key, { when: () => this.isOpen() });
+//
+// A key that is a function is asked again every time, so a page with several
+// views explains the one on screen; a view whose key has no sheet simply shows
+// no "?". attach() is safe to call on every redraw, and a screen that rebuilds
+// its DOM with innerHTML does not have to: the frame hook below puts a lost
+// button back on the next frame.
+//
+// On a controller the sheet opens with SELECT, from any page that attached
+// one. While the sheet is up it owns the frame: the scene underneath is not
+// updated at all, so nothing the page reads can fire through it.
+//=============================================================================
+(function () {
+  "use strict";
+
+  const BTN_CLASS = 'ui-help-btn';
+  const HOST_CLASS = 'ui-help-host';
+  const SHEET_ID = 'ui-help-sheet';
+  const SCROLL_STEP = 56;
+
+  const tr = (key, params) => (typeof window.T === 'function' ? window.T(key, params) : key);
+  const has = (key) => !!(key && typeof window.T === 'function' && window.T.has && window.T.has(key));
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, (c) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  }
+
+  // Line breaks in a help text are kept: a long control reads better as two
+  // short paragraphs than as one wall.
+  function para(s) {
+    return esc(s).split('\n').join('<br>');
+  }
+
+  function currentScene() {
+    return (typeof SceneManager !== 'undefined' && SceneManager._scene) || null;
+  }
+
+  // Hidden by the page itself: a tab panel toggled off with display:none.
+  function hiddenByPage(el) {
+    for (let n = el; n && n.nodeType === 1; n = n.parentElement) {
+      if (n.style && n.style.display === 'none') return true;
+    }
+    return false;
+  }
+
+  const entries = [];
+  let sheet = null;
+
+  function entryFor(host) {
+    for (const e of entries) if (e.host === host) return e;
+    return null;
+  }
+
+  function keyOf(entry) {
+    let key = entry.key;
+    if (typeof key === 'function') {
+      try { key = key(); } catch (e) { key = null; }
+    }
+    return key ? String(key) : null;
+  }
+
+  function hasSheet(entry) {
+    const key = keyOf(entry);
+    return !!key && has(key + '.items');
+  }
+
+  // Whether this page is the one on screen and may be asked for its sheet.
+  function live(entry) {
+    const host = entry.host;
+    if (!host || !host.isConnected) return false;
+    if (entry.scene && entry.scene !== currentScene()) return false;
+    if (hiddenByPage(host)) return false;
+    if (entry.when) {
+      try { if (!entry.when()) return false; } catch (e) { return false; }
+    }
+    return true;
+  }
+
+  function buttonOf(host) {
+    const kids = host.children || [];
+    for (let i = 0; i < kids.length; i++) {
+      if (kids[i].classList && kids[i].classList.contains(BTN_CLASS)) return kids[i];
+    }
+    return null;
+  }
+
+  function ensureButton(entry) {
+    const host = entry.host;
+    if (!host || !host.isConnected) return null;
+    host.classList.add(HOST_CLASS);
+    let btn = buttonOf(host);
+    if (!btn) {
+      btn = document.createElement('div');
+      btn.className = BTN_CLASS;
+      // The badge layer (Controller.UI) stamps the pad's SELECT inside it
+      // while a controller is the device in hand.
+      btn.setAttribute('data-pad', 'SELECT');
+      btn.setAttribute('role', 'button');
+      btn.textContent = '?';
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const current = entryFor(host);
+        if (current) UIHelp.open(current);
+      });
+      // A press on the button is not a press on the page under it.
+      btn.addEventListener('pointerup', (e) => e.stopPropagation());
+      btn.addEventListener('mousedown', (e) => e.stopPropagation());
+      host.appendChild(btn);
+    }
+    btn.title = tr('ItemUtils.help.button');
+    btn.hidden = !hasSheet(entry);
+    return btn;
+  }
+
+  function prune() {
+    for (let i = entries.length - 1; i >= 0; i--) {
+      const e = entries[i];
+      const gone = !e.host || !e.host.isConnected;
+      if (gone && (e.seen || e.scene !== currentScene())) entries.splice(i, 1);
+      else if (!gone) e.seen = true;
+    }
+  }
+
+  function activeEntry() {
+    for (let i = entries.length - 1; i >= 0; i--) {
+      if (live(entries[i]) && hasSheet(entries[i])) return entries[i];
+    }
+    return null;
+  }
+
+  function sheetHTML(key) {
+    const items = (window.T && window.T.obj) ? window.T.obj(key + '.items') : {};
+    const rows = Object.keys(items || {}).map((id) => {
+      const base = key + '.items.' + id;
+      return `
+        <div class="ui-help-row">
+          <div class="ui-help-name">${esc(tr(base + '.name'))}</div>
+          <div class="ui-help-text">${para(tr(base + '.text'))}</div>
+        </div>`;
+    }).join('');
+    const intro = has(key + '.intro')
+      ? `<p class="ui-panel-hint ui-help-intro">${para(tr(key + '.intro'))}</p>` : '';
+    return `
+      <div class="ui-panel ui-help-panel" role="dialog">
+        <div class="ui-help-title">${esc(tr(key + '.title'))}</div>
+        ${intro}
+        <div class="ui-panel-body ui-scroll ui-help-body">${rows}</div>
+        <div class="ui-panel-dismiss ui-help-close" data-pad="cancel">${esc(tr('ItemUtils.help.close'))}</div>
+      </div>`;
+  }
+
+  // Whatever pressed the key that opened or closed the sheet must not also
+  // reach the page on the next frame.
+  function swallowInput() {
+    if (typeof Input !== 'undefined' && Input.clear) Input.clear();
+    if (typeof TouchInput !== 'undefined' && TouchInput.clear) TouchInput.clear();
+  }
+
+  const UIHelp = {
+    /**
+     * Give a page its "?" and its sheet.
+     * @param {HTMLElement} host   positioned element the button sits in
+     * @param {string|Function} key  i18n key of the page's help object
+     * @param {{when?: Function}} [opts]  extra "is this page up" test
+     */
+    attach(host, key, opts) {
+      if (!host || !key) return null;
+      let entry = entryFor(host);
+      if (!entry) {
+        entry = { host: host, key: key, when: null, scene: currentScene(), seen: false };
+        entries.push(entry);
+      }
+      entry.key = key;
+      entry.when = (opts && opts.when) || null;
+      ensureButton(entry);
+      return entry;
+    },
+
+    detach(host) {
+      const entry = entryFor(host);
+      if (!entry) return;
+      entries.splice(entries.indexOf(entry), 1);
+      const btn = host && buttonOf(host);
+      if (btn) btn.remove();
+      if (host && host.classList) host.classList.remove(HOST_CLASS);
+      if (sheet && sheet.entry === entry) this.close(true);
+    },
+
+    isOpen() {
+      return !!(sheet && sheet.el.isConnected);
+    },
+
+    // Opens the sheet of the given page, or of the page on screen.
+    open(entry) {
+      const target = entry || activeEntry();
+      if (!target || !hasSheet(target)) return false;
+      const key = keyOf(target);
+      this.close(true);
+      const el = document.createElement('div');
+      el.id = SHEET_ID;
+      el.className = 'ui-overlay ui-help-overlay';
+      el.innerHTML = sheetHTML(key);
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (e.target === el || (e.target.closest && e.target.closest('.ui-help-close'))) this.close();
+      });
+      // The document swallows the wheel (RMMZ), so the body is turned by hand.
+      el.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const body = el.querySelector('.ui-help-body');
+        if (body) body.scrollTop += e.deltaY;
+      }, { passive: false });
+      el.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.close();
+      });
+      document.body.appendChild(el);
+      sheet = { el: el, body: el.querySelector('.ui-help-body'), entry: target };
+      swallowInput();
+      if (typeof SoundManager !== 'undefined' && SoundManager.playOk) SoundManager.playOk();
+      return true;
+    },
+
+    close(silent) {
+      if (!sheet) return;
+      if (sheet.el.parentNode) sheet.el.parentNode.removeChild(sheet.el);
+      sheet = null;
+      swallowInput();
+      if (!silent && typeof SoundManager !== 'undefined' && SoundManager.playCancel) SoundManager.playCancel();
+    },
+
+    // The sheet's own frame: close, or scroll the list.
+    _sheetFrame() {
+      const C = window.Controller;
+      if (Input.isTriggered('cancel') || Input.isTriggered('escape') || Input.isTriggered('ok') ||
+          (C && C.triggered && C.triggered('SELECT')) ||
+          (TouchInput.isCancelled && TouchInput.isCancelled())) {
+        this.close();
+        return;
+      }
+      const body = sheet && sheet.body;
+      if (!body) return;
+      if (Input.isRepeated('down')) body.scrollTop += SCROLL_STEP;
+      else if (Input.isRepeated('up')) body.scrollTop -= SCROLL_STEP;
+      else if (Input.isRepeated('pagedown')) body.scrollTop += body.clientHeight;
+      else if (Input.isRepeated('pageup')) body.scrollTop -= body.clientHeight;
+    },
+
+    // Once a frame, before the scene. True when the sheet has the frame and
+    // the scene must not be updated.
+    frame() {
+      if (sheet) {
+        if (!sheet.el.isConnected) { sheet = null; return false; }
+        this._sheetFrame();
+        const C = window.Controller;
+        if (C && C.UI && C.UI.frame) C.UI.frame();
+        return true;
+      }
+      if (!entries.length) return false;
+      prune();
+      for (const e of entries) ensureButton(e);
+      const C = window.Controller;
+      if (!C || !C.triggered) return false;
+      if (C.textEntryOpen && C.textEntryOpen()) return false;
+      if (C.triggered('SELECT') && this.open()) return true;
+      return false;
+    },
+
+    // Test seam: the pages that have asked for a sheet.
+    _entries() { return entries.slice(); }
+  };
+
+  if (typeof SceneManager !== 'undefined' && SceneManager.updateScene) {
+    const _updateScene = SceneManager.updateScene;
+    SceneManager.updateScene = function () {
+      const scene = this._scene;
+      if (scene && (!scene.isStarted || scene.isStarted()) && UIHelp.frame()) return;
+      _updateScene.apply(this, arguments);
+    };
+  }
+
+  window.UIHelp = UIHelp;
 })();

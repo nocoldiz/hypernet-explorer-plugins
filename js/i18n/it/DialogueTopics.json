@@ -407,6 +407,22 @@
     "topicEuronymous": {
       "title": "Euronymous",
       "description": "Il membro dei Mahyem sopravvissuto al coltello di Varg. Il trauma cranico gli ha lasciato una sindrome del savant acquisita e una delle menti psioniche piu potenti in circolazione. Ha lasciato il palco mentre il resto della band continuava a vivere da dio, e nessuno sa piu dove sia."
+    },
+    "topicTritunnelWest": {
+      "title": "Tritunnel Ovest",
+      "description": "La bocca occidentale del Tritunnel, il passaggio scavato sotto il mare tra la Gran Bretagna e il continente. Guida il Camper abbastanza a sud e la strada scende sottoterra qui; l'altro capo si apre in Belgio."
+    },
+    "topicHypermetroTrain": {
+      "title": "L'Hypermetro",
+      "description": "Un treno che corre in gallerie che non sempre stanno dove stavano ieri. È la via rapida verso qualunque posto valga la pena, Omega Tower compresa, e per certi luoghi è l'unico legame con il resto del mondo."
+    },
+    "topicEsotericShop": {
+      "title": "Negozio esoterico",
+      "description": "Un negozio di equipaggiamento magico, kit di alchemistria, reagenti e ogni tanto una scopa volante. Quasi tutto quello che vende lo fabbrica la Esoteric Heavy Industries, e nessuno chiede da dove arrivi la merce."
+    },
+    "topicBroomstick": {
+      "title": "Scopa volante",
+      "description": "Una scopa volante, fabbricata dalla Esoteric Heavy Industries e venduta nei negozi esoterici. L'ultima di Em si è rotta, insieme a parecchie delle sue ossa, quando un'arca turistica l'ha investita."
     }
   }
 }

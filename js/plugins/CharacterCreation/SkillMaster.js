@@ -1964,8 +1964,10 @@
         },
 
         _rank: function (tree) {
-            let deepest = 0;
+            let deepest = -1;
             for (const node of tree.order) if (!node.forbidden) deepest = Math.max(deepest, node.tier);
+            // A school that is nothing but forbidden workings (Economy) has no
+            // climb to hang beyond, so its core stands on the first tier.
             for (const node of tree.order) if (node.forbidden) node.tier = deepest + 1;
             const tiers = [];
             for (const node of tree.order) {
@@ -3975,7 +3977,7 @@
         const maxFocus = FORGE_SPLIT_BASE + customCount;
         const prev = this._editorFocus;
 
-        if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
+        if ((window.CCNav ? window.CCNav.railDir() : 0) !== 0) {
             if (this._editorFocus >= FORGE_SPLIT_BASE) {
                 this._editorFocus = 0;
             } else if (customCount > 0) {
@@ -4350,7 +4352,8 @@
         this.createUISkillDOM();
         if (window.CharSwitcher) {
             window.CharSwitcher.installTabKey(this, (dir) => {
-                if (this._viewMode !== 'spellEditor' && this._viewMode !== 'preview') this.cycleTeachActor(dir);
+                const benches = ['spellEditor', 'craft', 'enchant', 'writebook', 'hexorcize', 'preview'];
+                if (!benches.includes(this._viewMode) && getSwitchableMembers().length > 1) this.cycleTeachActor(dir);
             });
         }
     };
@@ -4415,6 +4418,14 @@
         document.body.appendChild(this._dndContainer);
 
         if (window.CCNav) window.CCNav.attach(this, this._dndContainer);
+
+        // The "?" explains the view on screen: the three views of one school
+        // are all its atlas.
+        if (window.UIHelp) {
+            const ATLAS_VIEWS = { list: 1, detail: 1, preview: 1 };
+            UIHelp.attach(this._dndContainer, () =>
+                'SkillMaster.help.' + (ATLAS_VIEWS[this._viewMode] ? 'atlas' : this._viewMode));
+        }
 
         this._dndContainer.addEventListener("wheel", (e) => {
             e.preventDefault();
@@ -5587,10 +5598,6 @@
         if (window.CCNav && window.CCNav.update()) return;
         if (window.CCScroll) window.CCScroll.update(this._dndContainer);
 
-        if (this._viewMode !== 'spellEditor' && this._viewMode !== 'craft' && this._viewMode !== 'enchant' && this._viewMode !== 'writebook' && this._viewMode !== 'hexorcize' && this._viewMode !== 'preview' && getSwitchableMembers().length > 1) {
-            if (Input.isTriggered('pagedown')) { this.cycleTeachActor(1); return; }
-            if (Input.isTriggered('pageup')) { this.cycleTeachActor(-1); return; }
-        }
 
         if (this._viewMode === 'category') {
             const split = this.getSplitCategoriesCached();
@@ -5950,9 +5957,13 @@
  *
  *   resource cost    a spell spends MP, a skill spends AP, and both scale
  *                    with the complexity of the build
- *   stat floor       the build stamps <StatReq: INT n> on a spell and
- *                    <StatReq: WIS n> on a skill, and the bench refuses to
- *                    write an entry whose floor the character cannot reach
+ *   stat floor       the build stamps <StatReq: STAT n> on the stat its core
+ *                    scales on (craftScaling: an offensive spell INT, a mend,
+ *                    a ward or a sacred or cursed spell WIS, a mind spell PSI,
+ *                    a blow STR, an aimed one DEX, a second wind CON, a
+ *                    bandage or a rally WIS), the damage formula reads that
+ *                    same stat, and the bench refuses to write an entry whose
+ *                    floor the character cannot reach
  *
  * That floor is the balance: knowledge alone never buys an ultimate, because
  * the only characters who can hold a complicated build are the ones who
@@ -5987,8 +5998,17 @@
     const CRAFT_MAX_RIDERS = 4;
     const CRAFT_MAX_REFINES = 5;
 
-    const PARAM_INT = 4;
-    const PARAM_WIS = 5;
+    // The six base parameters a build can scale on: param id, the formula term
+    // it swings with and the defence it is measured against.
+    const CRAFT_STATS = {
+        STR: { paramId: 2, atk: 'a.atk', def: 'b.def' },
+        CON: { paramId: 3, atk: 'a.def', def: 'b.def' },
+        INT: { paramId: 4, atk: 'a.mat', def: 'b.mdf' },
+        WIS: { paramId: 5, atk: 'a.mdf', def: 'b.mdf' },
+        DEX: { paramId: 6, atk: 'a.agi', def: 'b.def' },
+        PSI: { paramId: 7, atk: 'a.luk', def: 'b.mdf' }
+    };
+    const CRAFT_AIMED = ['thrust', 'marksman', 'venomEdge'];
 
     const tr = (key, params) => (typeof T === 'function' ? T('SkillMaster.craft.' + key, params) : key);
 
@@ -6134,6 +6154,26 @@
         return parts;
     }
 
+    // The stat a build scales on, and asks for, read off its core: the same
+    // rules the shipped skills follow (tools/skills/gen_stat_requirements.js).
+    function craftScaling(build) {
+        const core = byKey(CORES, build.core);
+        const spell = build.kind !== 'skill';
+        const mends = core && (core.dmg === 0 || core.dmg === 3 || core.dmg === 4);
+        let key;
+        if (!core) key = spell ? 'INT' : 'STR';
+        else if (spell) {
+            if (core.key === 'mindBurn') key = 'PSI';
+            else if (mends || core.element === 8 || core.element === 9) key = 'WIS';
+            else key = 'INT';
+        } else if (mends) key = 'WIS';
+        else if (core.key === 'secondWind') key = 'CON';
+        else if (CRAFT_AIMED.includes(core.key)) key = 'DEX';
+        else key = 'STR';
+        return Object.assign({ key: key }, CRAFT_STATS[key]);
+    }
+    SkillMaster.craftScaling = craftScaling;
+
     function craftQuote(build) {
         const parts = craftParts(build);
         const spell = build.kind !== 'skill';
@@ -6159,8 +6199,8 @@
             // of it; MP has no such ceiling.
             mpCost: spell ? resource : 0,
             tpCost: spell ? 0 : Math.min(100, resource),
-            statKey: spell ? 'INT' : 'WIS',
-            paramId: spell ? PARAM_INT : PARAM_WIS,
+            statKey: craftScaling(build).key,
+            paramId: craftScaling(build).paramId,
             statReq: Math.max(3, Math.min(20, Math.round(5 + cx * 1.15)))
         };
     }
@@ -6214,9 +6254,9 @@
         const core = byKey(CORES, build.core);
         const power = byKey(POWERS, build.power) || POWERS[0];
         if (!core || core.dmg === 0) return '0';
-        const spell = build.kind !== 'skill';
-        const atkStat = spell ? 'a.mat' : 'a.atk';
-        const defStat = spell ? 'b.mdf' : 'b.def';
+        const scaling = craftScaling(build);
+        const atkStat = scaling.atk;
+        const defStat = scaling.def;
         const mult = Math.round(core.power * power.mult * 100) / 100;
 
         if (core.dmg === 3) return `${atkStat} * ${mult} + a.level * 2`; // i18n-ignore: RPG Maker damage formula
@@ -7232,7 +7272,7 @@
             return;
         }
 
-        if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
+        if ((window.CCNav ? window.CCNav.railDir() : 0) !== 0) {
             const nextKind = (this._craft && this._craft.kind === 'skill') ? 'spell' : 'skill';
             this.openCraftBench(nextKind);
             return;
@@ -8209,12 +8249,11 @@
     };
 
     Proto.updateEnchantBenchInput = function () {
-        if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
+        const tabStep = (window.CCNav ? window.CCNav.railDir() : 0);
+        if (tabStep !== 0) {
             const kinds = ['weapon', 'armor', 'book'];
             const curIdx = kinds.indexOf(this._enchantKind || 'weapon');
-            const nextIdx = Input.isTriggered('pagedown')
-                ? (curIdx + 1) % kinds.length
-                : (curIdx - 1 + kinds.length) % kinds.length;
+            const nextIdx = (curIdx + tabStep + kinds.length) % kinds.length;
             this.openEnchantBench(kinds[nextIdx]);
             return;
         }
@@ -8809,7 +8848,7 @@
     };
 
     Proto.updateWriteBenchInput = function () {
-        if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
+        if ((window.CCNav ? window.CCNav.railDir() : 0) !== 0) {
             const nextKind = (this._writeKind === 'skillbook') ? 'grimorie' : 'skillbook';
             this.openWriteBench(nextKind);
             return;

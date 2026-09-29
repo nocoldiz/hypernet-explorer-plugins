@@ -700,10 +700,10 @@
         if (box) box.scrollTop += e.deltaY;
       }, { passive: false });
 
-      // Right mouse button closes the maintenance pockets.
+      // Right mouse button steps out one level, as Cancel does.
       this._dndContainer.addEventListener("contextmenu", (e) => {
         e.preventDefault();
-        this.exitMaintenance();
+        this.stepOut();
       });
 
       // Every button in here - repair a part, buy an upgrade, open the hull
@@ -831,6 +831,13 @@
           </div>
         </div>
       `;
+      // Select stands down while the hull editor is open over the garage.
+      if (window.UIHelp) UIHelp.attach(this._dndContainer, 'VehicleRepair.help', {
+        when: () => {
+          const modal = window.GalaxySim && window.GalaxySim.ShipAppearance;
+          return !(modal && modal.isOpen());
+        }
+      });
 
       this.drawVehicleSprite();
     }
@@ -880,31 +887,31 @@
       const health = getVehicleHealth(this._vehicleType) || {};
       const partsConfig = getPartsConfig(this._vehicleType);
       let partsListHTML = "";
-      Object.keys(partsConfig).forEach((part) => {
-        const partHealth = Math.round(health[part] || 0);
-        const isCritical = partsConfig[part].critical;
-
-        // One scale for every meter in the game (window.NeedGauge): the number
-        // and the bar fill take the same band class, so they never disagree.
-        const band = window.NeedGauge
-          ? window.NeedGauge.band(partHealth)
-          : (partHealth <= 20 ? 'gauge-band--bad' : partHealth <= 50 ? 'gauge-band--warn' : 'gauge-band--ok');
-
-        partsListHTML += `
-          <div class="item-slot item-slot--compact vrep-part">
-            <div class="item-slot-info">
-              <div class="item-slot-name">
-                ${window.VehicleParts.label(part)}${isCritical ? ` <span class="ui-chip vrep-critical-chip">${T('VehicleRepair.critical')}</span>` : ''}
-              </div>
-              <div class="vrep-track"><div class="vrep-fill gauge-fill ${band}" style="width:${partHealth}%"></div></div>
-            </div>
-            <span class="item-slot-count gauge-ink ${band}">${partHealth}%</span>
-          </div>
-        `;
-      });
-      return partsListHTML;
-    }
-
+      Object.keys(partsConfig).forEach((part) => {
+        const partHealth = Math.round(health[part] || 0);
+        const isCritical = partsConfig[part].critical;
+
+        // One scale for every meter in the game (window.NeedGauge): the number
+        // and the bar fill take the same band class, so they never disagree.
+        const band = window.NeedGauge
+          ? window.NeedGauge.band(partHealth)
+          : (partHealth <= 20 ? 'gauge-band--bad' : partHealth <= 50 ? 'gauge-band--warn' : 'gauge-band--ok');
+
+        partsListHTML += `
+          <div class="item-slot item-slot--compact vrep-part">
+            <div class="item-slot-info">
+              <div class="item-slot-name">
+                ${window.VehicleParts.label(part)}${isCritical ? ` <span class="ui-chip vrep-critical-chip">${T('VehicleRepair.critical')}</span>` : ''}
+              </div>
+              <div class="vrep-track"><div class="vrep-fill gauge-fill ${band}" style="width:${partHealth}%"></div></div>
+            </div>
+            <span class="item-slot-count gauge-ink ${band}">${partHealth}%</span>
+          </div>
+        `;
+      });
+      return partsListHTML;
+    }
+
     // ---- Right-page: Repair tab ----
     renderRepairPage(useItalian, partsListHTML) {
       const type = this._vehicleType;
@@ -1216,19 +1223,21 @@
       }
     }
 
-    scrollPartsList(direction) {
-      const c = this._dndContainer;
-      if (!c) return;
-      const box = c.querySelector('.maint-scroll[data-active="1"]') || c.querySelector('.maint-scroll');
-      if (box) {
-        box.scrollTop += direction * 35;
-      }
-    }
-
     exitMaintenance() {
       SoundManager.playCancel();
       this.closeVehiclePreview();
       SceneManager.pop();
+    }
+
+    // Cancel steps out one level: the Upgrades tab goes back to Repair, the
+    // tab the bay opens on, and only from there does the bay close.
+    stepOut() {
+      if (this._tab === 'upgrades') {
+        SoundManager.playCancel();
+        this.switchTab('repair');
+        return;
+      }
+      this.exitMaintenance();
     }
 
     update() {
@@ -1246,30 +1255,28 @@
       }
 
       if (Input.isTriggered('cancel') || Input.isTriggered('escape')) {
-        this.exitMaintenance();
+        this.stepOut();
         return;
       }
 
-      // Left/Right toggles the Repair <-> Upgrades tab. Read before the ring,
-      // which would otherwise walk sideways along a row of parts.
-      if (Input.isTriggered('left') || Input.isTriggered('right')) {
-        this.switchTab(this._tab === 'repair' ? 'upgrades' : 'repair');
+      // L1 / R1 (Q / W, Tab) turn the Repair / Upgrades tab, as tabs do on
+      // every menu. Read before the ring, which leaves them alone.
+      const tabDir = window.UINav ? UINav.tabDir() : 0;
+      if (tabDir) {
+        const tabs = ['repair', 'upgrades'];
+        const next = tabs[Math.max(0, Math.min(tabs.length - 1, tabs.indexOf(this._tab) + tabDir))];
+        if (next !== this._tab) this.switchTab(next);
         return;
       }
 
-      // Up/Down walk the buttons on the open tab, Confirm presses the one under
-      // the ring; the pane scrolls to keep it in view. The wheel and the page
-      // keys still scroll the list on their own, for reading rather than
-      // choosing.
+      // The four directions walk the buttons on the open tab, Confirm presses
+      // the one under the ring; the pane scrolls to keep it in view. The wheel
+      // and the right stick scroll the list on their own, for reading rather
+      // than choosing.
       if (window.CCNav) {
         if (!window.CCNav.active()) window.CCNav.enter("right");
         if (window.CCNav.update()) return;
         window.CCNav.paint();
-      }
-      if (Input.isRepeated('pagedown')) {
-        this.scrollPartsList(1);
-      } else if (Input.isRepeated('pageup')) {
-        this.scrollPartsList(-1);
       }
     }
   }

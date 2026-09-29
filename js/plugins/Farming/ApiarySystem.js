@@ -29,7 +29,8 @@
 (() => {
     'use strict';
     
-    const HONEY_ITEM_ID = 149;
+    // "Wild Honey" in data/Items.json.
+    const HONEY_ITEM_ID = 492;
 
     // ---- Where the yield goes ----------------------------------------------
     // Straight to the party, unless they own a shop that deals in this sort of
@@ -984,7 +985,185 @@
             }
             return 0;
         }
+
+        // A neighbour topping up the hive's water trough (NPCSimulationCore
+        // SECTION 7): the colony's water goes back to full and nothing is
+        // taken off it. False when the trough was already full.
+        waterHive() {
+            const res = this.colony && this.colony.resources;
+            if (!res || res.water >= 100) return false;
+            res.water = 100;
+            return true;
+        }
+
+        // ---- The hive minded by other hands (NPCSim_Tending) ---------------
+        // What a townsperson does at a hive, on the colony itself, so its
+        // stores, threats and mood really change. None of it is on the party's
+        // own path: the apiary page still only harvests.
+
+        // The last time somebody minded the hive: a keeper's visit, or the
+        // party's last look at it (lastUpdate moves when the page is opened).
+        lastTendedOf() {
+            return this.lastTendedMin != null ? this.lastTendedMin : (this.lastUpdate != null ? this.lastUpdate : null);
+        }
+
+        markTended(minutes) {
+            this.lastTendedMin = minutes == null ? currentGameMinutes() : minutes;
+        }
+
+        // A look under the lid: what it needs, without changing anything but
+        // the visit's stamp.
+        inspectHive() {
+            const c = this.colony || {};
+            const res = c.resources || {};
+            const threats = (c.environment && Array.isArray(c.environment.threats)) ? c.environment.threats : [];
+            const supers = Number(this.supers) || 0;
+            this.lastInspectedMin = currentGameMinutes();
+            return {
+                honey: Number(res.honey) || 0,
+                water: Number(res.water) || 0,
+                threats: threats.slice(),
+                treatable: threats.filter(t => HIVE_TREATABLE.includes(t)),
+                needsWater: (Number(res.water) || 0) < 100,
+                needsFeed: (Number(res.honey) || 0) < HIVE_FEED_BELOW,
+                needsSuper: supers < HIVE_MAX_SUPERS && (Number(res.honey) || 0) >= HIVE_SUPER_AT + HIVE_SUPER_STEP * supers,
+                queenAlive: c.queen !== null,
+            };
+        }
+
+        // Syrup in the feeder when the stores run low. False when they are not.
+        feedHive() {
+            const c = this.colony;
+            const res = c && c.resources;
+            if (!res || (Number(res.honey) || 0) >= HIVE_FEED_BELOW) return false;
+            res.honey = (Number(res.honey) || 0) + HIVE_FEED_AMOUNT;
+            if (typeof c.mood === 'number') c.mood = Math.min(100, c.mood + 2);
+            return true;
+        }
+
+        // Treats the mites, the brood diseases and the moth. Answers what was
+        // treated (an empty list when the hive was clean).
+        treatHive() {
+            const env = this.colony && this.colony.environment;
+            if (!env || !Array.isArray(env.threats)) return [];
+            const treated = env.threats.filter(t => HIVE_TREATABLE.includes(t));
+            if (!treated.length) return [];
+            env.threats = env.threats.filter(t => !HIVE_TREATABLE.includes(t));
+            for (const bee of (this.colony.bees || [])) {
+                if (bee && Array.isArray(bee.infections) && bee.infections.length) {
+                    bee.infections = bee.infections.filter(t => !HIVE_TREATABLE.includes(t));
+                }
+            }
+            if (this.colony.stats) this.colony.stats.diseasesOvercome = (this.colony.stats.diseasesOvercome || 0) + treated.length;
+            return [...new Set(treated)];
+        }
+
+        // Another box on top once the stores fill the one below: room eases a
+        // crowded colony. False when there is no call for one.
+        addSuper() {
+            const c = this.colony;
+            const res = c && c.resources;
+            const supers = Number(this.supers) || 0;
+            if (!res || supers >= HIVE_MAX_SUPERS) return false;
+            if ((Number(res.honey) || 0) < HIVE_SUPER_AT + HIVE_SUPER_STEP * supers) return false;
+            this.supers = supers + 1;
+            if (typeof c.mood === 'number') c.mood = Math.min(100, c.mood + 5);
+            return true;
+        }
+
+        // The honey and the old comb taken off a hive that belongs to somebody
+        // in the town (`owner`), handed back instead of given to the party:
+        // { itemId, jars, wax }. The same 30% keep-back as the party's harvest.
+        // Null for the party's own colony, and when there is nothing to take.
+        harvestFor() {
+            if (!this.owner) return null;
+            const res = this.colony && this.colony.resources;
+            if (!res) return null;
+            const harvestable = Math.floor((Number(res.honey) || 0) * 0.7);
+            const jars = Math.floor(harvestable / 10);
+            if (jars <= 0) return null;
+            res.honey -= harvestable;
+            const wax = Math.max(0, Math.floor(((Number(res.wax) || 0) - HIVE_WAX_KEEP) * 0.5));
+            if (wax > 0) res.wax -= wax;
+            return { itemId: HONEY_ITEM_ID, jars, wax };
+        }
+
+        // A townsperson's colony lives on between visits: the hours since the
+        // last one, up to `maxHours`, are simulated when somebody calls.
+        catchUp(maxHours) {
+            const now = currentGameMinutes();
+            const hours = Math.min(Math.floor((now - (this.lastUpdate != null ? this.lastUpdate : now)) / 60), maxHours || HIVE_NPC_CATCHUP_HOURS);
+            if (hours >= 1) this.simulateTimeStep(hours);
+            this.lastUpdate = now;
+            return Math.max(0, hours);
+        }
     }
+
+    // What a keeper can cure, when the stores call for a feed, a super, and
+    // the comb a harvest leaves behind.
+    const HIVE_TREATABLE = [Threats.VARROA, Threats.NOSEMA, Threats.FOULBROOD, Threats.WAXMOTH];
+    const HIVE_FEED_BELOW = 60;
+    const HIVE_FEED_AMOUNT = 30;
+    const HIVE_MAX_SUPERS = 3;
+    const HIVE_SUPER_AT = 200;
+    const HIVE_SUPER_STEP = 100;
+    const HIVE_WAX_KEEP = 20;
+    // A townsperson's hive is simulated at most this many hours per visit.
+    const HIVE_NPC_CATCHUP_HOURS = 24;
+
+    // ---- Hives that are not the party's -------------------------------------
+    // The party keeps one colony ($gameSystem.apiaryComplex) and every hive the
+    // party opens is that one. A hive that belongs to somebody in the town is
+    // a colony of its own, kept under $gameSystem._npcHives by "<mapId>_<eventId>":
+    // claimed by a call, or on first sight by a <HiveOwner: Name> tag in the
+    // hive event's note.
+    const HIVE_OWNER_TAG = /<HiveOwner:\s*([^>]+)>/i;
+
+    const NpcHives = {
+        HONEY_ITEM_ID,
+        FEED_BELOW: HIVE_FEED_BELOW,
+        TREATABLE: HIVE_TREATABLE,
+
+        _store() {
+            if (!$gameSystem) return null;
+            if (!$gameSystem._npcHives) $gameSystem._npcHives = {};
+            return $gameSystem._npcHives;
+        },
+
+        claimHive(mapId, eventId, owner) {
+            const store = this._store();
+            if (!store || !owner) return null;
+            const key = `${mapId}_${eventId}`;
+            if (store[key]) return store[key];
+            const colony = new ApiaryComplex();
+            colony.owner = String(owner);
+            store[key] = colony;
+            return colony;
+        },
+
+        // The colony behind a hive event: a townsperson's own when the hive is
+        // theirs, else the party's (null when the party has none yet).
+        hiveAt(mapId, eventId) {
+            const store = $gameSystem && $gameSystem._npcHives;
+            const own = store && store[`${mapId}_${eventId}`];
+            if (own) return own;
+            const ev = (typeof $gameMap !== 'undefined' && $gameMap && $gameMap.mapId && $gameMap.mapId() === mapId)
+                ? $gameMap.event(eventId) : null;
+            const note = ev && typeof ev.event === 'function' ? String((ev.event() || {}).note || '') : '';
+            const m = note.match(HIVE_OWNER_TAG);
+            if (m) return this.claimHive(mapId, eventId, m[1].trim());
+            return ($gameSystem && $gameSystem.apiaryComplex) || null;
+        },
+
+        isPartyHive(colony) {
+            return !!colony && !colony.owner;
+        },
+
+        ownerOf(colony) {
+            return (colony && colony.owner) || null;
+        },
+    };
+    window.ApiarySystem = Object.assign(window.ApiarySystem || {}, NpcHives);
     
     // Expose the colony classes globally so JsonEx can restore their prototypes when a
     // save is loaded (the instance graph is stored inside $gameSystem.apiaryComplex).
@@ -1624,16 +1803,27 @@
         updateApiaryInput() {
             if (this._closing) return;
             const count = (this._maxActionIndex || 1) + 1;
-            if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+            const dir = window.UINav ? UINav.navDir() : null;
+            // Right click is answered by the container's contextmenu listener
+            // alone: the same click also arrives as TouchInput's cancel, and
+            // reading both stepped out two levels on one press.
+            if (Input.isTriggered('cancel')) {
                 this.onCancelAction();
-            } else if (Input.isRepeated('up')) {
-                this._actionIndex = this._actionIndex === -1 ? count - 1 : (this._actionIndex - 1 + count) % count;
-                SoundManager.playCursor();
-                this.refreshUIApiary();
-            } else if (Input.isRepeated('down')) {
-                this._actionIndex = this._actionIndex === -1 ? 0 : (this._actionIndex + 1) % count;
-                SoundManager.playCursor();
-                this.refreshUIApiary();
+            } else if (dir) {
+                // The action buttons are a row that wraps, so the cursor walks
+                // them by their drawn columns and stops at the edges.
+                let next;
+                if (this._actionIndex === -1 || this._actionIndex == null) {
+                    next = dir === 'up' || dir === 'left' ? count - 1 : 0;
+                } else {
+                    const strip = this._container && this._container.querySelector('.apiary-actions');
+                    next = UINav.gridStep(this._actionIndex, dir, count, strip || 1);
+                }
+                if (next !== this._actionIndex) {
+                    this._actionIndex = next;
+                    SoundManager.playCursor();
+                    this.refreshUIApiary();
+                }
             } else if (Input.isTriggered('ok')) {
                 if (this._actionIndex !== -1 && this._actionIndex != null) {
                     this.executeApiaryAction(this._actionIndex);

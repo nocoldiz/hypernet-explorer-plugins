@@ -2209,7 +2209,7 @@
   },
   "663": {
     "name": "Foam Projector",
-    "description": "An experimental gun firing sticky foam\nto pin a target. Can poison on hit."
+    "description": "An experimental gun firing sticky foam\nto pin a target. Can stun on hit."
   },
   "664": {
     "name": "Electro-Net Launcher",
@@ -2217,6 +2217,6 @@
   },
   "665": {
     "name": "Microwave Denial Emitter",
-    "description": "A directed emitter that throws a beam of\nmicrowaves. Can poison on hit."
+    "description": "A directed emitter that throws a beam of\nmicrowaves. Can stun on hit."
   }
 }

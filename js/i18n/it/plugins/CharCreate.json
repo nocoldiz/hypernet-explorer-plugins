@@ -267,6 +267,14 @@
       "name": "Signore della Guerra Indipendente",
       "desc": "Inizia al comando di [40 truppe] prese da fazioni casuali, leali a nessuno, con euro sufficiente per [due settimane di stipendio]."
     },
+    "originGoblin": {
+      "name": "Modalità Goblin",
+      "desc": "Tutto il gruppo è composto da [goblin]. Inizia in un luogo a tua scelta, ma solo tra i [luoghi che l'Orda dei Goblin controlla] all'inizio della partita."
+    },
+    "originGoblinHorde": {
+      "name": "Orda dei Goblin",
+      "desc": "Goblin dell'Orda stessa: inizia in un luogo che l'Orda controlla, al comando di [{count} truppe dell'Orda dei Goblin] con [due settimane del loro stipendio], ben voluto dall'Orda e [odiato da ogni potenza in guerra con essa]."
+    },
     "originCrash": {
       "name": "Atterraggio di Fortuna",
       "desc": "Inizia [bloccato su un pianeta casuale] in una galassia inesplorata, con la nave [danneggiata], quasi senza carburante e [senza cariche di Schrodinger-Bohr]."
@@ -575,6 +583,14 @@
   "2WeeksOfTheirWagesInCash": "2 settimane di paga, in contanti",
   "40FromTheFactionYouPick": "40, dalla fazione che scegli",
   "40FromTheFactionYouDeserted": "40, dalla fazione che hai disertato",
+  "aCityTheGoblinHordeHolds": "Un luogo dell'Orda dei Goblin, a tua scelta",
+  "people": "Popolo",
+  "everyMemberAGoblin": "Ogni membro è un goblin",
+  "goblinHordeTroopsTotal": "{count} truppe dell'Orda dei Goblin",
+  "goblinHordeUpkeep": "{weeks} settimane di paga, {amount} euro in contanti",
+  "standing": "Reputazione",
+  "goblinHordeStanding": "Venerato dall'Orda, ostile ai suoi nemici in guerra",
+  "goblinNoHordeDestination": "L'Orda dei Goblin non controlla alcun luogo sulla mappa in questo momento: va bene qualsiasi città.",
   "cash": "Contanti",
   "startingOut": "Punto di Partenza",
   "language": "Lingua",
@@ -631,6 +647,9 @@
     "INTIMIDATION": "Intimidazione. Quanto i vestiti e l'equipaggiamento del personaggio appaiono minacciosi."
   },
   "characterType": "Tipo di personaggio",
+  "portraitStyle": "Ritratto",
+  "portraitBust": "Busto 2D",
+  "portraitModel": "Modello 3D",
   "traitTypeLabel": "TRATTO",
   "traitCategoryLabel": {
     "physical": "FISICO",

@@ -384,31 +384,49 @@
     // of it, so the whole job here is choosing what those numbers are worth in
     // metres.
     //
+    // That field is continent scale, and a whole planet is only six to twenty
+    // four world squares round (GalaxySim's planetGridSize), so it changes about
+    // as fast underfoot as Earth's hill field does. Stretched straight into
+    // metres it made every square a mountainside. So it is not stretched
+    // straight: the reading is normalised to the band the field actually spans
+    // (ALIEN_E_LO..ALIEN_E_HI) and raised on a curve, which keeps most of a
+    // world as lowland and plain and saves the height for the few places the
+    // picture drew as its highest country.
+    //
     // Sea level is pinned to the world's own SEA_LEVEL, which is where the water
     // plane sits, so an ocean the picture painted is an ocean you can swim in.
-    // Above it the relief is stretched far harder than below it: the deeps only
-    // have to look deep from a boat, while the mountains have to be worth
-    // climbing, and a linear map of the same field would give a world of
-    // ankle-high hills over a bottomless sea.
-    const ALIEN_LAND_RELIEF = 2400;   // world units from the tide line to the peaks
+    // A world with no sea stands on a datum GROUND_BASE over it instead, so a
+    // dry basin is still dry ground and not a hole down to where water would be.
+    const ALIEN_E_LO = 0.30;          // the field's lowlands bottom out about here
+    const ALIEN_E_HI = 0.75;          // ...and its highest peaks top out here
+    const ALIEN_LAND_RELIEF = 650;    // world units from the tide line to the peaks
     const ALIEN_SEA_RELIEF  = 520;    // ...and from the tide line to the abyss
-    // A crater on a cratered world: how deep the floor sits under the plain it
-    // punched into, and how high the rim it threw up stands over it.
-    const ALIEN_CRATER_D    = 210;
-    const ALIEN_CRATER_RIM  = 90;
+    // A crater: how deep its floor sits per landing-grid cell of radius (a
+    // simple crater is about a fifth as deep as it is wide), the deepest any
+    // basin gets, and how high the rim stands as a share of that depth.
+    const ALIEN_CRATER_PER_R = 200;
+    const ALIEN_CRATER_D     = 210;
+    const ALIEN_CRATER_RIM   = 0.4;
+    // The planet's field is sampled on this lattice and interpolated between,
+    // rather than asked afresh for every column: eight octaves of noise and a
+    // crater scan per five-unit column was the whole cost of an alien tile.
+    // Sixteen units is finer than the finest octave the field carries.
+    const ALIEN_LATTICE = 32;         // lattice steps per world square
+    const ALIEN_COARSE  = 4;          // ...and for the smoothed elevation (alienSmoothE)
+    const ALIEN_LATTICE_CACHE = 60000;
 
     // -------------------------------------------------------------------------
     // What KIND of world this is
     // -------------------------------------------------------------------------
     // The elevation field says where the high ground is. It does not say what
-    // high ground MEANS on this world, and every world used to be given the
-    // same answer: one relief, one roughness, grass, sand, rock and snow, so a
-    // rainforest, a salt flat, an ice moon and a lava world came out as the
-    // same continent painted four colours.
+    // high ground MEANS on this world. A style is that answer: how high the
+    // field is raised and on what curve, what shapes are cut out of it (ridges,
+    // dunes, terraces, chasms, craters), what the ground is made of band by
+    // band and what the sea, if there is one, is. Each style has a silhouette
+    // of its own, so an ice sheet, a dune sea, a cratered plain and a crystal
+    // range read as four different places from the ground and not as one
+    // mountain range painted four colours.
     //
-    // A style is that answer. It says how far the field is stretched, what
-    // shapes are cut out of it (ridges, dunes, terraces, chasms, craters), what
-    // the ground is made of band by band and what the sea, if there is one, is.
     // Styles are looked up by the planet's own type first and by its painter
     // family behind that, then jittered by the world's seed, which is what
     // makes two ice moons two different ice moons.
@@ -416,17 +434,21 @@
     function defAlienStyle(key, o) {
         ALIEN_STYLES[key] = Object.assign({
             key,
-            land: ALIEN_LAND_RELIEF,  // tide line to the peaks, world units
+            land: ALIEN_LAND_RELIEF,  // tide line (or datum) to the peaks, world units
+            landPow: 2.2,             // above 1 the lowlands stay low and the peaks rise late
             sea: ALIEN_SEA_RELIEF,    // tide line to the abyss
-            detail: 90,               // the planet's OWN fine octave
-            rough: 26,                // generic hill-scale roughness
-            fine: 7,                  // metre-scale roughness underfoot
+            detail: 36,               // the planet's OWN fine octave
+            rough: 16,                // generic hill-scale roughness
+            fine: 4,                  // metre-scale roughness underfoot
+            plains: 0.5,              // share of the world that is quiet country
             ridge: 0,                 // ridged crests on the high ground
             ridgePow: 2,
+            ridgeFrom: 0.45,          // how high (0..1) the ground is before crests bite
             dune: 0,                  // parallel crests, deserts and ash fields
             duneF: 0.0042,
             terrace: 0,               // quantise the relief to this step
             terraceMix: 0.7,
+            terraceFrom: 0.35,        // how high the ground is before it steps
             crater: 1,                // multiplies the impact depth and rim
             crevasse: 0,              // chasms cut along the fracture lines
             lava: false,              // fissures run molten
@@ -455,20 +477,26 @@
 
     // The five families, which anything unlisted falls back to.
     defAlienStyle('terrestrial', {
-        ridge: 190, mats: M_EARTH, deep: MAT.CLAY, shore: MAT.SAND });
+        // Rolling country and the odd range where the picture drew one.
+        ridge: 150, mats: M_EARTH, deep: MAT.CLAY, shore: MAT.SAND });
     defAlienStyle('rocky', {
-        land: 1500, sea: 260, detail: 130, ridge: 240,
-        mats: M_ROCK, deep: MAT.GRAVEL, shore: MAT.GRAVEL, tint: 0.55 });
+        land: 480, landPow: 1.8, sea: 260, detail: 50, rough: 18, fine: 5,
+        ridge: 130, mats: M_ROCK, deep: MAT.GRAVEL, shore: MAT.GRAVEL, tint: 0.55 });
     defAlienStyle('icy', {
-        land: 900, sea: 300, detail: 60, rough: 14, fine: 4, ridge: 120,
-        crevasse: 260, mats: M_ICE, deep: MAT.ICE, shore: MAT.SNOW, tint: 0.7 });
+        // An ice sheet: nearly level, cut by narrow crevasses and heaved up
+        // into low pressure ridges.
+        land: 170, landPow: 1.5, sea: 300, detail: 18, rough: 7, fine: 2,
+        plains: 0.75, ridge: 45, ridgePow: 3, ridgeFrom: 0.3, crevasse: 120,
+        mats: M_ICE, deep: MAT.ICE, shore: MAT.SNOW, tint: 0.7 });
     defAlienStyle('volcanic', {
-        land: 1900, sea: 340, detail: 150, ridge: 320, ridgePow: 3, lava: true,
+        // Flat flood basalt and a few tall shields standing out of it.
+        land: 780, landPow: 3, sea: 340, detail: 34, rough: 12, fine: 5,
+        ridge: 210, ridgePow: 3, ridgeFrom: 0.55, lava: true,
         mats: M_FIRE, deep: MAT.OBSIDIAN, shore: MAT.BASALT, tint: 0.6 });
     defAlienStyle('gas', {
         // Nothing to stand on but the cloud deck itself: endless soft swells
         // and no relief that could ever be climbed.
-        land: 260, sea: 120, detail: 40, rough: 40, fine: 3, crater: 0,
+        land: 260, landPow: 1, sea: 120, detail: 40, rough: 40, fine: 3, crater: 0,
         mats: { cloud: MAT.SNOW, rock: MAT.SNOW, dust: MAT.SNOW,
                 snow: MAT.SNOW, ice: MAT.ICE, water: MAT.ICE },
         deep: MAT.ICE, shore: MAT.SNOW, tint: 0.35 });
@@ -476,89 +504,105 @@
     // ...and the worlds that are their own thing, keyed by planet type
     // (js/db/GalaxySim/PlanetTypes.json). i18n-ignore: planet type ids
     defAlienStyle('desert', {
-        land: 1100, sea: 200, detail: 70, ridge: 120, dune: 34, terrace: 130,
+        // A dune sea, with mesas standing out of it where the ground is high.
+        land: 320, landPow: 2, sea: 200, detail: 16, rough: 8, fine: 2,
+        plains: 0.7, ridge: 50, dune: 30, terrace: 55, terraceMix: 0.85,
+        terraceFrom: 0.5,
         mats: { grass: MAT.SAND, forest: MAT.SAND, beach: MAT.SAND,
                 rock: MAT.SANDSTONE, snow: MAT.SALT, dust: MAT.SAND,
                 ridge: MAT.SANDSTONE, water: MAT.SALT },
         deep: MAT.SALT, shore: MAT.SALT, tint: 0.5 });
     defAlienStyle('rainforest', {
-        land: 2000, detail: 120, rough: 40, ridge: 260, ridgePow: 3,
-        mats: M_EARTH, tint: 0.3 });
+        // Close, steep-sided hills everywhere and no real plain anywhere.
+        land: 520, landPow: 1.5, detail: 44, rough: 34, fine: 6, plains: 0.25,
+        ridge: 110, ridgePow: 3, ridgeFrom: 0.3, mats: M_EARTH, tint: 0.3 });
     defAlienStyle('ocean', {
         // Almost all of it is sea, and what stands out of it is worn flat.
-        land: 700, sea: 900, detail: 50, ridge: 60, mats: M_EARTH,
-        deep: MAT.CLAY, shore: MAT.SAND });
+        land: 200, landPow: 1.6, sea: 900, detail: 20, rough: 10, fine: 3,
+        plains: 0.8, ridge: 40, mats: M_EARTH, deep: MAT.CLAY, shore: MAT.SAND });
     defAlienStyle('acid_ocean', {
-        land: 800, sea: 800, detail: 60, ridge: 80,
+        land: 240, landPow: 1.6, sea: 800, detail: 24, rough: 10, fine: 3,
+        plains: 0.7, ridge: 50,
         mats: { grass: MAT.CLAY, forest: MAT.CLAY, beach: MAT.SALT,
                 rock: MAT.LIMESTONE, snow: MAT.SALT, water: MAT.CLAY },
         deep: MAT.LIMESTONE, shore: MAT.SALT, tint: 0.55 });
     defAlienStyle('tundra', {
-        land: 1000, sea: 260, detail: 70, ridge: 140, crevasse: 90,
+        // Permafrost flats: low swells, frost cracks and very little else.
+        land: 220, landPow: 1.7, sea: 260, detail: 22, rough: 10, fine: 3,
+        plains: 0.75, ridge: 50, crevasse: 50,
         mats: { grass: MAT.SNOW, forest: MAT.SNOW, beach: MAT.GRAVEL,
                 rock: MAT.ROCK, snow: MAT.SNOW, ice: MAT.ICE, dust: MAT.GRAVEL,
                 ridge: MAT.ROCK, water: MAT.ICE },
         deep: MAT.ICE, shore: MAT.SNOW, tint: 0.6 });
     defAlienStyle('mercurian', {
-        // Airless, scoured, and stepped where the crust cooled and shrank.
-        land: 1700, detail: 150, ridge: 300, terrace: 210, crater: 1.35,
+        // Airless cratered plains, stepped by the scarps a shrinking crust left.
+        land: 440, landPow: 1.8, detail: 40, rough: 10, fine: 4, plains: 0.6,
+        ridge: 120, terrace: 80, terraceMix: 0.6, crater: 1.35,
         mats: M_ROCK, deep: MAT.GRAVEL, shore: MAT.GRAVEL, tint: 0.6 });
     defAlienStyle('mega_iron', {
-        land: 800, detail: 60, ridge: 90, terrace: 260, crater: 1.2,
+        // Level iron plateaus, one over another.
+        land: 280, landPow: 1.4, detail: 20, rough: 8, fine: 2, plains: 0.7,
+        ridge: 40, terrace: 70, terraceMix: 0.8, terraceFrom: 0.15, crater: 1.2,
         mats: { dust: MAT.GRAVEL, rock: MAT.IRON, ridge: MAT.IRON,
                 snow: MAT.IRON, grass: MAT.GRAVEL, water: MAT.IRON },
         deep: MAT.IRON, shore: MAT.GRAVEL, tint: 0.65 });
     defAlienStyle('carbon', {
-        land: 1600, detail: 110, ridge: 280, terrace: 150,
+        land: 500, landPow: 2, detail: 40, rough: 14, fine: 4, ridge: 160,
+        terrace: 70, terraceMix: 0.6, terraceFrom: 0.45,
         mats: { dust: MAT.ASH, rock: MAT.OBSIDIAN, ridge: MAT.OBSIDIAN,
                 snow: MAT.ASH, grass: MAT.ASH, water: MAT.OBSIDIAN },
         deep: MAT.OBSIDIAN, shore: MAT.ASH, tint: 0.7 });
     defAlienStyle('diamond', {
-        // Crystal country: sharp, faceted and stepped, and it catches the light.
-        land: 2100, detail: 120, ridge: 460, ridgePow: 4, terrace: 90,
-        terraceMix: 0.9,
+        // Crystal country: marble lowlands, and out of them sharp faceted
+        // spires that catch the light. The one world meant to be jagged.
+        land: 820, landPow: 2.6, detail: 40, rough: 14, fine: 4, plains: 0.45,
+        ridge: 300, ridgePow: 4, ridgeFrom: 0.4, terrace: 45, terraceMix: 0.8,
+        terraceFrom: 0.5,
         mats: { dust: MAT.CRYSTAL, rock: MAT.CRYSTAL, ridge: MAT.CRYSTAL,
                 snow: MAT.MARBLE, grass: MAT.MARBLE, water: MAT.CRYSTAL },
         deep: MAT.CRYSTAL, shore: MAT.MARBLE, tint: 0.75 });
     defAlienStyle('plasma', {
-        land: 700, detail: 200, rough: 60, ridge: 120, lava: true,
-        mats: M_FIRE, deep: MAT.MAGMA, shore: MAT.BASALT, tint: 0.75 });
+        land: 300, landPow: 1.6, detail: 60, rough: 30, fine: 6, ridge: 90,
+        lava: true, mats: M_FIRE, deep: MAT.MAGMA, shore: MAT.BASALT, tint: 0.75 });
     defAlienStyle('quark_planet', {
         // Gravity that steep leaves nothing standing: a mirror of a world.
-        land: 120, sea: 60, detail: 14, rough: 4, fine: 2, crater: 0,
+        land: 60, landPow: 1, sea: 60, detail: 8, rough: 3, fine: 1, crater: 0,
         mats: { dust: MAT.OBSIDIAN, rock: MAT.OBSIDIAN, ridge: MAT.OBSIDIAN,
                 snow: MAT.OBSIDIAN, grass: MAT.OBSIDIAN, water: MAT.OBSIDIAN },
         deep: MAT.OBSIDIAN, shore: MAT.OBSIDIAN, tint: 0.85 });
     defAlienStyle('magnetar', {
-        land: 300, sea: 90, detail: 30, rough: 8, fine: 2, ridge: 40,
+        land: 140, landPow: 1.2, sea: 90, detail: 14, rough: 6, fine: 2, ridge: 30,
         mats: { dust: MAT.IRON, rock: MAT.IRON, ridge: MAT.IRON,
                 snow: MAT.GLOWSTONE, grass: MAT.IRON, water: MAT.IRON },
         deep: MAT.IRON, shore: MAT.IRON, tint: 0.8 });
     defAlienStyle('rogue', {
         // No star, no weather: whatever the last impact left, kept for ever.
-        land: 1300, detail: 90, rough: 18, fine: 4, ridge: 200, crater: 1.3,
-        crevasse: 140,
+        land: 420, landPow: 1.8, detail: 30, rough: 10, fine: 3, ridge: 130,
+        crater: 1.3, crevasse: 80,
         mats: { ice: MAT.ICE, snow: MAT.ICE, dust: MAT.ROCK, rock: MAT.ROCK,
                 ridge: MAT.ROCK, grass: MAT.ICE, water: MAT.ICE },
         deep: MAT.ICE, shore: MAT.ICE, tint: 0.65 });
     defAlienStyle('chthonian', {
         // A gas giant's stripped core: bare metal ridges and open melt.
-        land: 2200, detail: 170, ridge: 380, ridgePow: 3, lava: true,
+        land: 880, landPow: 2.8, detail: 50, rough: 16, fine: 5, ridge: 260,
+        ridgePow: 3, ridgeFrom: 0.5, lava: true,
         mats: { lava: MAT.LAVA, ash: MAT.ASH, basalt: MAT.BASALT,
                 rock: MAT.IRON, ridge: MAT.IRON, dust: MAT.ASH,
                 snow: MAT.ASH, water: MAT.MAGMA },
         deep: MAT.MAGMA, shore: MAT.BASALT, tint: 0.7 });
     // The bodies too small to have pulled themselves round: no weather, no
-    // erosion, and relief that is simply what they broke as.
+    // erosion, and relief that is simply what they broke as. Rough by nature,
+    // but their gravity is too weak to hold anything up for long.
     defAlienStyle('irregular', {
-        land: 2000, sea: 200, detail: 210, rough: 60, fine: 10, ridge: 420,
-        ridgePow: 4, crater: 1.5,
+        land: 560, landPow: 1.4, sea: 200, detail: 70, rough: 26, fine: 7,
+        plains: 0.35, ridge: 180, ridgePow: 3, ridgeFrom: 0.35, crater: 1.5,
         mats: { dust: MAT.GRAVEL, rock: MAT.ROCK, ridge: MAT.ROCK,
                 snow: MAT.ICE, ice: MAT.ICE, grass: MAT.GRAVEL, water: MAT.ICE },
         deep: MAT.ICE, shore: MAT.GRAVEL, tint: 0.6 });
     defAlienStyle('comet', {
-        land: 1600, sea: 200, detail: 180, rough: 50, fine: 9, ridge: 300,
-        ridgePow: 3, crater: 1.2, crevasse: 200,
+        // Dark crust over ice, pitted where it vents and cracked where it thaws.
+        land: 420, landPow: 1.6, sea: 200, detail: 50, rough: 18, fine: 6,
+        plains: 0.45, ridge: 140, ridgePow: 3, crater: 1.2, crevasse: 110,
         mats: { ice: MAT.ICE, snow: MAT.SNOW, dust: MAT.ASH, rock: MAT.ICE,
                 ridge: MAT.ICE, grass: MAT.SNOW, water: MAT.ICE },
         deep: MAT.ICE, shore: MAT.SNOW, tint: 0.7 });
@@ -589,6 +633,10 @@
         const n = Math.sin((seed + 1) * 12.9898 + k * 78.233) * 43758.5453;
         return n - Math.floor(n);
     }
+    const _smooth = (a, b, v) => {
+        const t = _clamp((v - a) / (b - a), 0, 1);
+        return t * t * (3 - 2 * t);
+    };
 
     // The style this world is walked in, worked out once per landing and hung
     // on the field function itself (the field is rebuilt on every landing, so
@@ -600,27 +648,161 @@
                      ALIEN_STYLES[meta.surface] || ALIEN_STYLES.rocky;
         const st = Object.assign({}, base);
         const seed = meta.seed || 0;
-        // The same style is never the same world twice: one planet's ranges are
-        // half again as high as another's, one is stepped where another is
-        // smooth, one is combed into dunes and another is not.
+        // The same style is never the same world twice: one planet's ranges
+        // stand higher than another's, one is stepped where another is smooth,
+        // one is combed into dunes and another is not. The jitter moves a world
+        // around inside its style and never out of it, so an ice sheet can be
+        // a rougher ice sheet but never a mountain range.
         const h = (k) => alienHash(seed, k);
-        st.land   = st.land * (0.65 + h(1) * 0.85);
+        st.land   = st.land * (0.8 + h(1) * 0.5);
+        st.landPow = st.landPow * (0.75 + h(15) * 0.5);
         st.sea    = st.sea * (0.7 + h(2) * 0.7);
-        st.ridge  = st.ridge * (0.4 + h(3) * 1.4);
-        st.detail = st.detail * (0.7 + h(4) * 0.8);
-        st.rough  = st.rough * (0.6 + h(5) * 1.0);
+        st.ridge  = st.ridge * (0.5 + h(3) * 1.1);
+        st.detail = st.detail * (0.7 + h(4) * 0.6);
+        st.rough  = st.rough * (0.7 + h(5) * 0.6);
+        st.plains = _clamp(st.plains + (h(14) - 0.5) * 0.3, 0, 1);
         // Terracing and dunes are things a world either has or has not, so they
         // are rolled for rather than scaled: about half the worlds that could be
         // stepped are stepped, and the step is its own height.
         st.terrace = (st.terrace && h(6) < 0.55) ? st.terrace * (0.6 + h(7)) : 0;
-        st.dune    = st.dune ? st.dune * (0.5 + h(8) * 1.2) : (h(9) < 0.12 ? 22 : 0);
+        st.dune    = st.dune ? st.dune * (0.6 + h(8) * 0.8) : (h(9) < 0.12 ? 14 : 0);
         st.duneF   = st.duneF * (0.6 + h(10) * 1.1);
-        st.crevasse = st.crevasse * (0.5 + h(11) * 1.2);
+        st.crevasse = st.crevasse * (0.7 + h(11) * 0.8);
         st.crater  = st.crater * (0.6 + h(12) * 0.9);
         // Which way the dunes and the strata run on this world.
         st.grain   = h(13) * Math.PI;
         field._style = st;
         return st;
+    }
+
+    // The elevation, smoothed. The picture's field is five octaves deep, and
+    // on a planet this small the top ones fall inside a single square, where
+    // each octave adds as much slope as the one before it: raised as it is, it
+    // made every hillside a cliff. So the height is read off a coarse lattice
+    // through a cubic B-spline, which keeps the continents, ranges and basins
+    // the picture drew and drops the crinkle under them. The fine roughness is
+    // put back on purpose afterwards, in amounts each style chooses.
+    function alienCoarse(field, i, k) {
+        const cache = field._coarse || (field._coarse = new GenCache(ALIEN_LATTICE_CACHE));
+        const key = (i + 1e6) * 2e6 + (k + 1e6);
+        let r = cache.get(key);
+        if (r === undefined) {
+            const info = field(i / ALIEN_COARSE, k / ALIEN_COARSE);
+            r = info ? { e: info.e,
+                         sea: (typeof info.seaLevel === 'number') ? info.seaLevel : 0.5 } : false;
+            cache.set(key, r);
+        }
+        return r || null;
+    }
+    const _bw = [0, 0, 0, 0], _bv = [0, 0, 0, 0];
+    function _bspline(t, w) {
+        const t2 = t * t, t3 = t2 * t, u = 1 - t;
+        w[0] = u * u * u / 6;
+        w[1] = (3 * t3 - 6 * t2 + 4) / 6;
+        w[2] = (-3 * t3 + 3 * t2 + 3 * t + 1) / 6;
+        w[3] = t3 / 6;
+    }
+    // Smoothed elevation and sea level at a point given in world squares.
+    function alienSmoothE(field, gx, gz, out) {
+        const fx = gx * ALIEN_COARSE, fz = gz * ALIEN_COARSE;
+        const ix = Math.floor(fx), iz = Math.floor(fz);
+        _bspline(fx - ix, _bw); _bspline(fz - iz, _bv);
+        let e = 0, sea = 0;
+        for (let b = 0; b < 4; b++) {
+            for (let a = 0; a < 4; a++) {
+                const n = alienCoarse(field, ix - 1 + a, iz - 1 + b);
+                if (!n) return false;
+                const w = _bw[a] * _bv[b];
+                e += n.e * w; sea += n.sea * w;
+            }
+        }
+        out.e = e; out.sea = sea;
+        return true;
+    }
+
+    // One reading of the planet's field, copied out of the field's shared
+    // answer so the lattice can keep it.
+    function alienReading(field, gx, gz) {
+        const info = field(gx, gz);
+        if (!info) return null;
+        const r = {
+            e: info.e,
+            sea: (typeof info.seaLevel === 'number') ? info.seaLevel : 0.5,
+            band: info.band || 'rock',
+            detail: (typeof info.detail === 'number') ? info.detail : 0.5,
+            crack: info.crack || 0,
+            fracture: info.fracture || 0,
+            crater: info.crater || 0,
+            craterR: info.craterR || 1
+        };
+        // Read after the copy: the field answers every call into one object.
+        return alienSmoothE(field, gx, gz, r) ? r : null;
+    }
+
+    // The planet's field at a world-unit point, interpolated off the lattice.
+    // Every channel is blended; the band, which is a name, is the nearest
+    // lattice node's. Answers into `_alienAt`, which is reused.
+    const _alienAt = { e: 0, sea: 0.5, band: 'rock', detail: 0.5, crack: 0,
+                       fracture: 0, crater: 0, craterR: 1 };
+    function alienAt(field, x, z) {
+        const step = WORLD_TILE_SIZE / ALIEN_LATTICE;
+        const cache = field._lattice || (field._lattice = new GenCache(ALIEN_LATTICE_CACHE));
+        const fx = x / step, fz = z / step;
+        const ix = Math.floor(fx), iz = Math.floor(fz);
+        const tx = fx - ix, tz = fz - iz;
+        const node = (i, k) => {
+            const key = (i + 1e6) * 2e6 + (k + 1e6);
+            let r = cache.get(key);
+            if (r === undefined) {
+                r = alienReading(field, i / ALIEN_LATTICE, k / ALIEN_LATTICE);
+                cache.set(key, r || false);
+            }
+            return r || null;
+        };
+        const a = node(ix, iz), b = node(ix + 1, iz);
+        const c = node(ix, iz + 1), d = node(ix + 1, iz + 1);
+        if (!a || !b || !c || !d) return null;
+        const w00 = (1 - tx) * (1 - tz), w10 = tx * (1 - tz);
+        const w01 = (1 - tx) * tz,       w11 = tx * tz;
+        const o = _alienAt;
+        o.e        = a.e * w00 + b.e * w10 + c.e * w01 + d.e * w11;
+        o.sea      = a.sea * w00 + b.sea * w10 + c.sea * w01 + d.sea * w11;
+        o.detail   = a.detail * w00 + b.detail * w10 + c.detail * w01 + d.detail * w11;
+        o.crack    = a.crack * w00 + b.crack * w10 + c.crack * w01 + d.crack * w11;
+        o.fracture = a.fracture * w00 + b.fracture * w10 + c.fracture * w01 + d.fracture * w11;
+        o.crater   = a.crater * w00 + b.crater * w10 + c.crater * w01 + d.crater * w11;
+        o.craterR  = a.craterR * w00 + b.craterR * w10 + c.craterR * w01 + d.craterR * w11;
+        o.band = (tx < 0.5) ? (tz < 0.5 ? a.band : c.band) : (tz < 0.5 ? b.band : d.band);
+        return o;
+    }
+
+    // Whether any of the squares within r of (cwx, cwy) holds the sea the
+    // picture painted, or null when this is Earth. On another world every
+    // square is the same biome, so the streamer cannot ask the biome whether it
+    // is water the way it does at home: it has to ask the field. Each square is
+    // settled once per landing and kept.
+    function alienSeaNear(cwx, cwy, r) {
+        const field = getAlienTerrain();
+        if (!field) return null;
+        if (field.meta && field.meta.gasGiant) return false;
+        const seen = field._seaSquares || (field._seaSquares = new Map());
+        for (let dy = -r; dy <= r; dy++) {
+            for (let dx = -r; dx <= r; dx++) {
+                const gx = cwx + dx, gz = cwy + dy;
+                const key = gx + ',' + gz;
+                let wet = seen.get(key);
+                if (wet === undefined) {
+                    wet = false;
+                    for (let k = 0; k < 9 && !wet; k++) {
+                        const info = field(gx + ((k % 3) + 0.5) / 3, gz + (Math.floor(k / 3) + 0.5) / 3);
+                        if (info && typeof info.seaLevel === 'number' && info.e < info.seaLevel) wet = true;
+                    }
+                    seen.set(key, wet);
+                }
+                if (wet) return true;
+            }
+        }
+        return false;
     }
 
     // The whole column, off one sample of the planet's own field. Returns the
@@ -639,51 +821,76 @@
             o.r = 0; o.g = 0; o.b = 0;
             return o;
         }
-        const info = field(x / ts, z / ts);
+        const info = alienAt(field, x, z);
         if (!info) return null;
         const st = alienStyle(field);
 
-        const sea = (typeof info.seaLevel === 'number') ? info.seaLevel : 0.5;
+        // How high this is, as a share of the way from the lowest lowland to
+        // the highest peak the field reaches. On a world with a sea it is
+        // measured from the tide line, so the coast is where the picture put it.
+        const sea = info.sea;
+        const wet = sea >= 0;
         const d = info.e - sea;
-        let h = SEA_LEVEL + d * (d >= 0 ? st.land : st.sea);
+        const t = wet
+            ? _clamp(d / Math.max(0.05, ALIEN_E_HI - sea), 0, 1)
+            : _clamp((info.e - ALIEN_E_LO) / (ALIEN_E_HI - ALIEN_E_LO), 0, 1);
+        const rise = st.land * (0.1 * t + 0.9 * Math.pow(t, st.landPow));
+        const datum = wet ? SEA_LEVEL : SEA_LEVEL + GROUND_BASE;
+        let h = (wet && d < 0) ? SEA_LEVEL + d * st.sea : datum + rise;
+
+        // How rugged the ground is here. Two things decide it: how high it
+        // stands (lowlands are worn smooth, high country is broken), and which
+        // province of the world this is, off a field slow enough that a walk
+        // crosses from quiet plains into rough uplands and back. That is what
+        // keeps one world from being the same square repeated pole to pole.
+        const n = shapeAt(x, z);
+        const prov = _smooth(-0.3, 0.3, n.a + (0.5 - st.plains) * 0.8);
+        const rug = (0.3 + 0.7 * prov) * (0.45 + 0.9 * t);
         // The metre-scale roughness underfoot. Most of it is the planet's OWN
         // field carried on past the five octaves the picture stops at, so the
         // ground is rough the way this world is rough; the perlin under it only
         // fills in below the resolution even that reaches.
-        const n = shapeAt(x, z);
-        const det = (typeof info.detail === 'number') ? info.detail - 0.5 : 0;
-        h += det * st.detail;
-        h += n.c * st.fine + n.b * st.rough;
+        const det = info.detail - 0.5;
+        h += (det * st.detail + n.c * st.fine + n.b * st.rough) * rug;
 
         // Ridges: the fold where the hill field crosses zero becomes a crest,
-        // and it only bites on ground the heightmap already raised, so a range
-        // stands where the picture drew high country and the plains stay plains.
-        if (st.ridge && d > 0) {
-            h += st.ridge * Math.pow(n.ridge, st.ridgePow) * Math.min(1, d * 4);
+        // and it only bites on the high country, so a range stands where the
+        // picture drew one and the plains stay plains.
+        if (st.ridge) {
+            h += st.ridge * Math.pow(n.ridge, st.ridgePow) *
+                 _smooth(st.ridgeFrom, 1, t) * (0.4 + 0.6 * prov);
         }
-        // Dunes and wind streaks: parallel crests combed across the world one
-        // way, which is what a desert or an ash plain reads as from the ground.
+        // Dunes and wind streaks: parallel crests combed across the low ground
+        // one way, which is what a desert or an ash plain reads as from the
+        // ground. High country is too broken to hold them.
         if (st.dune) {
             const u = x * Math.cos(st.grain) + z * Math.sin(st.grain);
-            h += st.dune * Math.sin(u * st.duneF + n.a * 3.1);
+            h += st.dune * Math.sin(u * st.duneF + n.a * 3.1) * (1 - _smooth(0.45, 0.8, t));
         }
-        // Terraces: strata, mesas and the steps a cooling crust shrank into.
+        // Terraces: strata, mesas and the steps a cooling crust shrank into,
+        // only once the ground has risen far enough off the datum to show them.
         if (st.terrace) {
-            const q = Math.round(h / st.terrace) * st.terrace;
-            h += (q - h) * st.terraceMix;
+            const rel = h - datum;
+            const q = Math.round(rel / st.terrace) * st.terrace;
+            h += (q - rel) * st.terraceMix * _smooth(st.terraceFrom, st.terraceFrom + 0.2, t);
         }
-        // Chasms, cut along the fracture lines the picture cracked the ice with.
-        if (st.crevasse && info.fracture) {
-            h -= st.crevasse * info.fracture * info.fracture;
+        // Chasms, cut along the fracture lines the picture cracked the ice
+        // with: only the heart of each line opens, sheer at the lip, with level
+        // ice either side of it.
+        if (st.crevasse && info.fracture > 0.88) {
+            const f = (info.fracture - 0.88) / 0.12;
+            h -= st.crevasse * Math.sqrt(f);
         }
 
         // A crater field, where the picture shows one: the floor dropped, the
-        // rim thrown up around it, and the plain outside untouched.
+        // rim thrown up around it, and the plain outside untouched. How deep is
+        // how wide, so a small pit is a pit and not a well.
         if (info.crater && st.crater) {
-            const t = info.crater;                      // 0 at the rim, 1 dead centre
-            if (t > 0) {
-                const rim = Math.exp(-Math.pow((t - 0.12) / 0.1, 2));
-                h += (ALIEN_CRATER_RIM * rim - ALIEN_CRATER_D * t * t) * st.crater;
+            const c = info.crater;                      // 0 at the rim, 1 dead centre
+            if (c > 0) {
+                const depth = Math.min(ALIEN_CRATER_D, ALIEN_CRATER_PER_R * info.craterR);
+                const rim = Math.exp(-Math.pow((c - 0.12) / 0.1, 2));
+                h += (ALIEN_CRATER_RIM * depth * rim - depth * c * c) * st.crater;
             }
         }
 
@@ -692,12 +899,12 @@
         // white, and none of it has to be guessed at twice. What that band is
         // MADE of is the style's business: white on an ice moon is ice, white on
         // a salt desert is salt.
-        const band = info.band || 'rock';
+        const band = info.band;
         const mats = st.mats || M_EARTH;
         let mat;
-        if (h < SEA_LEVEL - 40)      mat = st.deep;
-        else if (h < SEA_LEVEL)      mat = st.shore;
-        else                         mat = mats[band] || mats.rock || MAT.ROCK;
+        if (wet && h < SEA_LEVEL - 40) mat = st.deep;
+        else if (wet && h < SEA_LEVEL) mat = st.shore;
+        else                           mat = mats[band] || mats.rock || MAT.ROCK;
         // Open melt: on a world whose crust is cracked the fissures run molten
         // rather than merely dark, and they run where the picture glows.
         if (st.lava && info.crack > 0.78 && h >= SEA_LEVEL) mat = MAT.LAVA;
@@ -708,8 +915,8 @@
         // greys, and nothing has to name a colour twice.
         const wx = Math.floor(x / ts), wy = Math.floor(z / ts);
         const own = sampleBiomeAt(wx, wy);
-        const c = VoxelField.hexRGB(own.color || '#90ee90');
-        let r = c.r, g = c.g, b = c.b;
+        const col = VoxelField.hexRGB(own.color || '#90ee90');
+        let r = col.r, g = col.g, b = col.b;
         const blk = MATERIALS[mat];
         if (blk && blk.rgb) {
             const k = st.tint;
@@ -3654,7 +3861,7 @@
         VoxelEdits, VoxelField, VoxelMesher, MeshBuffer,
         TERRAIN, profileFor, islandRiseAt, riverPathAt, riverAt, shapeAt,
         oceanIslandOf, oceanIslandAt, OCEAN_ISLE_MAX_R,
-        clearTerrainCaches, SEA_LEVEL, GROUND_BASE,
+        clearTerrainCaches, SEA_LEVEL, GROUND_BASE, alienSeaNear,
         voxelMaterial, voxelGrassMaterial, voxelWaterMaterial, disposeVoxelMaterial,
         voxelBlockMaterial, hotAt, oreAt, bedMat,
         isFarlands,

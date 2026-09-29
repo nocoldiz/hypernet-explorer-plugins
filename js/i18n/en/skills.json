@@ -25,7 +25,7 @@
   },
   "5": {
     "name": "Escape",
-    "description": "Raises the user's PSI.",
+    "description": "Escapes from battle.",
     "message1": "%1 flees.",
     "message2": ""
   },

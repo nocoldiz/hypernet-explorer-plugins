@@ -73,7 +73,7 @@
  *   resolves "{a|b|c}" alternations as it is said
  * - A defence bar. Before the hearing opens the player retains one of five
  *   advocates, nominates a party member, or stands alone. The five are real
- *   NPCs pulled from js/db/WorldGen/NPCPools.json, fixed for the lifetime of
+ *   NPCs pulled from the world's residents (NPCSystem), fixed for the lifetime of
  *   the world by the creation seed and shared by every savegame of it
  *   (world folder npcs.json -> erisLawyers). Their rank is written onto the
  *   real society profile: level, INT (MAT), WIS (MDF), the Law specialization
@@ -998,8 +998,9 @@
   //
   // Eris's court has never had a defence, which is exactly why one is worth
   // buying. Five advocates practise in front of her bench. They are not invented
-  // for the occasion: they are pulled out of the world's own NPC pools
-  // (js/db/WorldGen/NPCPools.json, the same events NPCSystem spawns) and fixed
+  // for the occasion: they are pulled out of the world's own people (the
+  // residents NPCSystem dealt every town from the world seed, then the
+  // authored cast of js/db/WorldGen/NPCResidents.json) and fixed
   // for the lifetime of the world by the creation seed, so every savegame of a
   // world briefs the same five people. They are ranked, and the rank is written
   // onto the real society profile: level, INT (MAT) and WIS (MDF) are overridden
@@ -1083,15 +1084,23 @@
   })());
 
   const ErisLawyers = {
-    // Every named person in the world's NPC pools who carries a walking sprite.
-    // Placeholder event names ("NPC", "EV003", ...) are events, not people, and
-    // never take silk. Cached per session; the pools do not change at runtime.
+    // Every named person in the world who carries a walking sprite: the
+    // towns' residents first, then the authored cast. Placeholder event names
+    // ("NPC", "EV003", ...) are events, not people, and never take silk.
+    // Cached per session once the residents exist.
     _pool: null,
     pool() {
       if (this._pool) return this._pool;
       const out = [];
       const seen = new Set();
-      const pools = window.WorldGen && window.WorldGen.NPCPools;
+      const residents = (window.NPCSystem && window.NPCSystem.getWorldResidents)
+        ? window.NPCSystem.getWorldResidents() : [];
+      for (const r of residents) {
+        if (!r || !r.name || !r.characterName || seen.has(r.name)) continue;
+        seen.add(r.name);
+        out.push({ name: r.name, group: r.group, characterName: r.characterName, characterIndex: r.characterIndex || 0 });
+      }
+      const pools = window.WorldGen && window.WorldGen.NPCResidents;
       if (pools) {
         for (const [group, list] of Object.entries(pools)) {
           if (group.startsWith("__") || !Array.isArray(list)) continue;
@@ -1113,7 +1122,7 @@
           }
         }
       }
-      this._pool = out;
+      if (residents.length) this._pool = out;
       return out;
     },
 
@@ -1508,6 +1517,17 @@
     return Input.isTriggered('cancel') || TouchInput.isCancelled();
   }
 
+  // The hearing's prompts poll on animation frames, and a screen can draw
+  // more than one of those per game frame (a 120 Hz monitor, a slow tick).
+  // Input only changes on a game frame, so a poll reads it at most once per
+  // frame: otherwise one press read twice moved a cursor two rows.
+  function freshInputFrame(state) {
+    const frame = (typeof Graphics !== 'undefined' && Graphics.frameCount) || 0;
+    if (state.frame === frame) return false;
+    state.frame = frame;
+    return true;
+  }
+
   // The two states of the continue caret. Glyphs rather than words: they are
   // the same in every language and they name no key.
   const CARET_WAIT = '▾';
@@ -1524,7 +1544,7 @@
     }
 
     return new Promise(resolve => {
-      const advanceKeys = ['Enter', 'NumpadEnter', 'Space'];
+      const frameGate = { frame: -1 };
       let readyAt = performance.now() + minReadMs;
       let autoAt = trial._autoPlay ? performance.now() + autoAdvanceDelay(trial) : 0;
       let armed = false;
@@ -1547,7 +1567,6 @@
 
       const done = () => {
         active = false;
-        document.removeEventListener('keydown', kh);
         if (log) log.removeEventListener('click', ch);
         if (hint && hint.parentNode) hint.parentNode.removeChild(hint);
         // Drop the press so the next wait or choice does not inherit it.
@@ -1571,22 +1590,20 @@
         paintHint();
       };
 
-      const kh = (e) => {
-        if (!armed || e.repeat || trial._autoPlay) return;
-        if (advanceKeys.includes(e.code)) { e.preventDefault(); SoundManager.playOk(); done(); }
-      };
+      // Enter and Space arrive through Input as 'ok' like the pad's A: a DOM
+      // keydown handler beside the poll used to advance a second time.
       // The whole transcript is the continue button, the prompt under the
       // newest line included.
       const ch = () => {
         if (trial._autoPlay) { stopAuto(); SoundManager.playOk(); done(); return; }
         if (armed) { SoundManager.playOk(); done(); }
       };
-      document.addEventListener('keydown', kh);
       if (log) log.addEventListener('click', ch);
       paintHint();
 
       const poll = () => {
         if (!active) return;
+        if (!freshInputFrame(frameGate)) { requestAnimationFrame(poll); return; }
 
         if (trial._autoPlay) {
           // Cancel again stops the playback; pressing on takes the line AND
@@ -1966,8 +1983,10 @@
 
         // Keyboard and pad both arrive through Input alone: a DOM keydown
         // handler beside this poll moved the cursor twice per press.
+        const frameGate = { frame: -1 };
         const poll = () => {
           if (!active) return;
+          if (!freshInputFrame(frameGate)) { requestAnimationFrame(poll); return; }
           if (!armed) {
             if (!Input.isPressed('ok') && performance.now() >= readyAt) armed = true;
             requestAnimationFrame(poll);
@@ -2240,8 +2259,10 @@
       // started, which read as the menu ignoring the key.
       Input.clear();
       let armed = false;
+      const frameGate = { frame: -1 };
       const poll = () => {
         if (!active) return;
+        if (!freshInputFrame(frameGate)) { requestAnimationFrame(poll); return; }
         if (!armed) {
           // The same press that opened the brief must not also retain counsel.
           if (!Input.isPressed("ok")) armed = true;
@@ -3725,8 +3746,10 @@
 
         // Keyboard and pad both arrive through Input alone: a DOM keydown
         // handler beside this poll moved the cursor twice per press.
+        const frameGate = { frame: -1 };
         const poll = () => {
           if (!active) return;
+          if (!freshInputFrame(frameGate)) { requestAnimationFrame(poll); return; }
           if (!armed) {
             if (!Input.isPressed('ok') && performance.now() >= readyAt) armed = true;
             requestAnimationFrame(poll);

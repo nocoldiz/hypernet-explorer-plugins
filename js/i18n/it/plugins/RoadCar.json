@@ -2,6 +2,7 @@
   "unattendedCar": "Un'auto incustodita.",
   "stealCar": "Ruba l'auto",
   "cancel": "Annulla",
+  "usedDriverKeys": "La apri con le chiavi del suo stesso autista.",
   "usedSkeletonKey": "Hai usato il Passepartout!",
   "needLockpick": "Ti serve un grimaldello per far partire un'auto a caldo.",
   "lockStuck": "La serratura non si muove.",
@@ -16,5 +17,19 @@
   "driverSave": {
     "nearMiss": "[Tiro su DES del guidatore: {roll}{mod}={total}] Per un pelo, sterzata all'ultimo istante!",
     "failed": "[Tiro su DES del guidatore: {roll}{mod}={total} contro CD {dc}] Riflessi insufficienti, il veicolo va a sbattere!"
+  },
+  "incident": {
+    "hitParty1": "Guarda dove cammini! Questa è una strada!",
+    "hitParty2": "Sei sbucato dal nulla. Ti sei fatto male?",
+    "crashParty1": "Guarda la mia macchina! Sai quanto costa?",
+    "crashParty2": "Dove hai imparato a guidare, all’autoscontro?",
+    "hitPerson1": "Mi è saltato davanti all’improvviso!",
+    "hitPerson2": "Oh no. Qualcuno chiami aiuto!",
+    "hitCreature1": "Qualcosa è finito sotto le ruote. È morto?",
+    "hitCreature2": "Quella bestia ha attraversato di colpo!",
+    "fender1": "Mi sei venuto addosso!",
+    "fender2": "Non mi hai visto frenare?",
+    "theft1": "Ehi! Quella è la mia macchina!",
+    "theft2": "Al ladro! Fermatelo, mi ha rubato la macchina!"
   }
 }

@@ -24,5 +24,30 @@
     "level": "Level",
     "pricePerLitre": "Price/L",
     "wallet": "Wallet"
+  },
+  "help": {
+    "title": "The fuel station",
+    "items": {
+      "vehicles": {
+        "name": "Vehicles",
+        "text": "Every vehicle the party owns that takes fuel. Pick one to see its refuelling options."
+      },
+      "options": {
+        "name": "Refuel options",
+        "text": "Buy a set number of litres or fill the tank. The price of each option is shown beside it."
+      },
+      "overview": {
+        "name": "Fuel overview",
+        "text": "The fuel level of the selected vehicle, the price per litre and what the party has in its wallet."
+      },
+      "exit": {
+        "name": "Exit station",
+        "text": "Leaves the station."
+      },
+      "help": {
+        "name": "? Help",
+        "text": "Opens this sheet. On a controller, press Select; press it again, Back or Confirm to close."
+      }
+    }
   }
 }

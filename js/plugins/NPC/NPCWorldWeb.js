@@ -675,6 +675,8 @@
 
   // True in a world created with populationMode "empty" (WorldManager).
   function isEmptyWorld() {
+    const WMo = window.NPCShared?.WorldModes;
+    if (WMo && !WMo.simulatesPeople()) return true;
     const WM = window.WorldManager;
     return !!(WM && typeof WM.isEmptyWorld === "function" && WM.isEmptyWorld());
   }
@@ -743,7 +745,11 @@
         const power = pulse.power ? window.NPCPolitics?.getPower?.(pulse.power) : null;
         const econMood  = power?.state?.economyMood ?? 50;
         const stability = power?.state?.stability ?? 50;
-        const unrest    = power?.state?.unrest ?? 30;
+        // The Goblin Horde's towns seethe (window.HordeGround): unrest counts
+        // for up to twice as much there, and the street is less safe.
+        let hordeUnrest = 1;
+        try { hordeUnrest = Number(window.HordeGround?.unrest?.(pulse.group)) || 1; } catch (_) { hordeUnrest = 1; }
+        const unrest    = (power?.state?.unrest ?? 30) * hordeUnrest;
 
         // ---- targets -------------------------------------------------------
         const workforce = census.employed + census.unemployed;
@@ -763,7 +769,8 @@
           62 - perCapitaCrime * 350 - (census.criminals / Math.max(1, census.population)) * 40
             + (guardHonesty - 50) * 0.35 + (stability - 50) * 0.2
             - (pulse.group === playerGroup ? notoriety * 18 : 0)
-            + (pulse.episodes.crimeWave ? 14 : 0), // the crackdown pushes back
+            + (pulse.episodes.crimeWave ? 14 : 0) // the crackdown pushes back
+            - (hordeUnrest - 1) * 30,
           0, 100);
 
         const moodTarget = clamp(

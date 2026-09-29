@@ -1450,19 +1450,18 @@
             }
         } else if (isAmountActive && this._amountWindow) {
             // The bigger rungs of the ladder are click-only in the book spread,
-            // so Q/E (pageup/pagedown) carry the coarse step for the keyboard.
+            // so left/right carry the coarse step and holding Shift (X on a
+            // pad) makes it ten times bigger. L1/R1 are the tabs' buttons on
+            // every menu, so they never touch the amount.
+            const coarse = Input.isPressed('shift') ? 10000 : 1000;
             if (Input.isRepeated('down')) {
                 this.adjustAmount(-100);
             } else if (Input.isRepeated('up')) {
                 this.adjustAmount(100);
             } else if (Input.isRepeated('left')) {
-                this.adjustAmount(-1000);
+                this.adjustAmount(-coarse);
             } else if (Input.isRepeated('right')) {
-                this.adjustAmount(1000);
-            } else if (Input.isRepeated('pageup')) {
-                this.adjustAmount(-10000);
-            } else if (Input.isRepeated('pagedown')) {
-                this.adjustAmount(10000);
+                this.adjustAmount(coarse);
             } else if (Input.isTriggered('ok')) {
                 this.confirmTransaction();
             } else if (Input.isTriggered('cancel')) {

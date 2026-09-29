@@ -17,6 +17,7 @@
   "full": "Maximum 3 modes at once.",
   "noGun": "The party does not have the gun.",
   "detail": {
+    "damageType": "Damage type",
     "status": "Status",
     "effect": "Effect",
     "modesTitle": "Active modes",
@@ -172,8 +173,8 @@
     "noSky": "No sky in here to turn over.",
     "spent": "{form} spent, folded back into the pistol.",
     "locked": "{mode} opens at level {n}.",
-    "roll": "Dice of YHWH: {n}. {form}.",
-    "natural": "Dice of YHWH: natural {n}. The Grimoire of Solomon opens.",
+    "roll": "Dice of Yaldabaoth: {n}. {form}.",
+    "natural": "Dice of Yaldabaoth: natural {n}. The Grimoire of Solomon opens.",
     "grimoire": "Grimoire of Solomon",
     "formLocked": "{form} unlocks at level {n}."
   },
@@ -213,11 +214,19 @@
       "9": "Dark damage."
     }
   },
+  "damageType": {
+    "Blunt": "Blunt",
+    "Cutting": "Cutting",
+    "Piercing": "Piercing",
+    "Area": "Area",
+    "Explosive": "Explosive",
+    "Abstract": "Abstract"
+  },
   "form": {
     "gun": "Gun",
     "blade": "Blade of Thelema",
     "fitted": "Fitted",
-    "gain": "+{bonus}% damage. No element, no modes. SWITCH is free.",
+    "gain": "{bonus}% damage.",
     "gunGain": "Uses the element and up to 3 modes.",
     "diceGain": "The pistol keeps the element and modes until the roll."
   },
@@ -228,7 +237,7 @@
   },
   "shape": {
     "dice": {
-      "name": "Dice of YHWH",
+      "name": "Dice of Yaldabaoth",
       "desc": "Rolls a d20 for the form.",
       "effect": "SWITCH rolls a d20 and turns into that face's form, locked or not. 1: Fists of Em. 20: Grimoire of Solomon, no HP cost. SWITCH again returns to the pistol."
     },
@@ -300,7 +309,7 @@
     "solomon": {
       "name": "Grimoire of Solomon",
       "desc": "Grimoire spells.",
-      "effect": "Battles start with grimoire spells instead of Em's own. Spells cost HP based on their cost. Graceful Death gives no invulnerability. Normal attacks reach 4 tiles."
+      "effect": "Battles start with the grimoire open, as a permanent Graceful Death with no costs or limits. Graceful Death deals the strongest spells of the calibrated schools. Normal attacks reach 4 tiles."
     },
     "fists": {
       "name": "Fists of Em",
@@ -323,7 +332,7 @@
       "effect": "Much more damage to the chosen creature type, less to others."
     },
     "yaldabaoth": {
-      "name": "Chainsaw of Yaldabaoth",
+      "name": "Chainsaw of YHWH",
       "desc": "Strong vs wounded.",
       "effect": "More damage the more hurt the target is, by the chosen reading. Less damage to unhurt targets."
     },

@@ -309,6 +309,15 @@
     return !!(window.Scene_CC3DModel && window.CC3DModel && window.CC3DModel.isAvailable());
   }
 
+  // Whether the member is drawn as a 3D model, and the one way to change it,
+  // both owned by the wizard (window.CCKit) so the Bio tab and this sheet
+  // can never disagree.
+  function portraitIsModel(actor) {
+    const kit = window.CCKit;
+    if (kit && kit.portraitIsModel) return kit.portraitIsModel(actor);
+    return !!(actor && actor.portraitMode && actor.portraitMode() === "model");
+  }
+
   //===========================================================================
   // Field writers
   //===========================================================================
@@ -363,8 +372,8 @@
       // offers it to one, so it survives the body going back to humanoid.
       actor.changeClass(DEFAULT_CLASS_ID, false);
     }
-    // The art style follows the kind: a person is drawn as a bust, a creature
-    // is sculpted in 3D. Nothing asks the player which of the two they want.
+    // The art style starts from the kind: a person opens on their bust, a
+    // creature on its sculpted 3D model. The Portrait row changes it after.
     if (actor.setPortraitMode) {
       if (creature) { if (actor.portraitMode() !== "sprite") actor.setPortraitMode("model"); }
       else actor.setPortraitMode("bust");
@@ -1037,10 +1046,17 @@
       { id: "level", label: T("detailed.row.level"), value: String(actor.level), kind: "pick" }
     );
     identity.push({ id: "appearance", label: T("detailed.row.appearance"), value: "", kind: "open" });
-    // Art style is not a row: a person wears a hand-drawn bust, a creature
-    // wears its sculpted 3D model, so only a creature is offered the sculptor.
-    if (model3DAvailable() && creature) {
-      identity.push({ id: "model3d", label: T("detailed.row.model3d"), value: "", kind: "open" });
+    // The portrait is a choice for a person and a creature alike: the 2D bust
+    // the sprite carries, or a sculpted 3D model. The sculptor is offered to
+    // whoever is drawn as a model.
+    if (model3DAvailable()) {
+      identity.push({
+        id: "portrait", label: T("portraitStyle"),
+        value: portraitIsModel(actor) ? T("portraitModel") : T("portraitBust"), kind: "pick",
+      });
+      if (portraitIsModel(actor)) {
+        identity.push({ id: "model3d", label: T("detailed.row.model3d"), value: "", kind: "open" });
+      }
     }
     sections.push({ title: T("detailed.section.identity"), rows: identity });
 
@@ -1292,6 +1308,14 @@
             { key: "creature", label: T("detailed.kind.creature"), sub: T("detailed.kind.creatureDesc") },
           ],
         };
+      case "portrait":
+        return {
+          title: T("portraitStyle"),
+          options: [
+            { key: "bust", label: T("portraitBust") },
+            { key: "model", label: T("portraitModel") },
+          ],
+        };
       case "gender":
         return {
           title: TE("genderLbl"),
@@ -1463,6 +1487,13 @@
         applyKind(key === "creature");
         if (key === "creature") openCreatureBuilder();
         return false;
+      case "portrait": {
+        const kit = window.CCKit;
+        if (!actor || !kit || !kit.setPortraitStyle || !kit.setPortraitStyle(actor, key)) {
+          SoundManager.playBuzzer();
+        }
+        return false;
+      }
       case "gender":
         applyGender(Number(key));
         return false;

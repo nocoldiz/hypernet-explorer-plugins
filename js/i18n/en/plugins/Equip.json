@@ -4,6 +4,7 @@
   "stealth": "Stealth",
   "intimidation": "Intimidation",
   "scale": "Scaling",
+  "scalingStat": "The weapon's damage scales on this stat",
   "basePower": "Base Damage",
   "damage": "Damage",
   "random": "Random",

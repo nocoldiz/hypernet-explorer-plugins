@@ -56,44 +56,37 @@
     if (!window.CharSwitcher) {
         window.CharSwitcher = {
             isControllerConnected() {
-                const pads = navigator.getGamepads ? navigator.getGamepads() : [];
-                for (let i = 0; i < pads.length; i++) {
-                    if (pads[i] && pads[i].connected) return true;
-                }
-                return false;
+                return typeof Input !== 'undefined' && typeof Input.lastInputDevice === 'function'
+                    ? Input.lastInputDevice() === 'pad' : false;
             },
-            parts(memberCount) {
-                if (!memberCount || memberCount <= 1) return { left: '', right: '' };
-                if (this.isControllerConnected()) {
-                    return {
-                        left: '<span class="char-switch-hint">L</span>',
-                        right: '<span class="char-switch-hint">R</span>'
-                    };
-                }
-                return { left: '', right: '<span class="char-switch-hint">TAB</span>' };
-            },
-            inner(tabsRowHTML, memberCount) {
-                const p = this.parts(memberCount);
-                return p.left + tabsRowHTML + p.right;
-            },
+            parts() { return { left: '', right: '' }; },
+            inner(tabsRowHTML) { return tabsRowHTML; },
             wrap(tabsRowHTML, memberCount) {
                 return `<div class="companion-switcher">${this.inner(tabsRowHTML, memberCount)}</div>`;
             },
+            // The name is historical: it installs the party step, which is on
+            // the triggers now and on Tab no longer (Tab steps the tabs).
             installTabKey(scene, onCycle) {
-                if (scene._charSwitchTabListener) return;
-                scene._charSwitchTabListener = (e) => {
-                    if (e.key !== 'Tab') return;
-                    e.preventDefault();
-                    if (this.isControllerConnected()) return;
-                    onCycle(e.shiftKey ? -1 : 1);
+                if (!scene || scene._charSwitchCycle) return;
+                scene._charSwitchCycle = onCycle;
+                const update = scene.update;
+                scene.update = function () {
+                    const nav = window.UINav;
+                    const busy = window.Controller && window.Controller.textEntryOpen &&
+                        window.Controller.textEntryOpen();
+                    if (nav && this._charSwitchCycle && !busy && !this._uiModalOpen) {
+                        const dir = nav.partyDir();
+                        if (dir) {
+                            this._charSwitchCycle(dir);
+                            nav.consume('partyPrev');
+                            nav.consume('partyNext');
+                        }
+                    }
+                    return update.apply(this, arguments);
                 };
-                window.addEventListener('keydown', scene._charSwitchTabListener);
             },
             removeTabKey(scene) {
-                if (scene._charSwitchTabListener) {
-                    window.removeEventListener('keydown', scene._charSwitchTabListener);
-                    scene._charSwitchTabListener = null;
-                }
+                if (scene) scene._charSwitchCycle = null;
             }
         };
     }

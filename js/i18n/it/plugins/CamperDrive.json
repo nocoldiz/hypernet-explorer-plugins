@@ -19,6 +19,7 @@
     "loot": "{key}  Fruga il corpo di {name}",
     "board": "{key}  Sali sul camper",
     "fish": "{key}  Lancia la lenza",
+    "lift": "{key}  Chiama l'ascensore",
     "chest": {
       "item": "{key}  Apri la cassa dei rifornimenti",
       "armor": "{key}  Apri la cassa delle armature",

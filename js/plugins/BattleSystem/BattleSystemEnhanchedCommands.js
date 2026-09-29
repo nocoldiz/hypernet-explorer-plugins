@@ -397,10 +397,11 @@
         this.addCommandWithIcon("", "hyper", true, null, 87);
       } else if (vectorSwitchReady) {
         // The vector gun takes that row for its own SWITCH: folding the frame
-        // into the fitted shape and back (Weapon/VectorGunSystem.js). It is
-        // free - it neither spends the round nor raises a guard - so the row
-        // stays on the window and may be pressed again straight away.
-        this.addCommandWithIcon("", "vectorSwitch", true, null, 118);
+        // into the fitted shape and back (Weapon/VectorGunSystem.js). It
+        // does not spend the round, but it folds only once a round: after a
+        // switch the row stays greyed until the next turn.
+        const canSwitch = !window.VectorGun.switchedThisTurn(this._actor);
+        this.addCommandWithIcon("", "vectorSwitch", canSwitch, null, 118);
       } else if (hasRanged) {
         // Reload doubles as Defense for ranged actors: commandReload both recharges
         // projectiles and guards. The bullet count now shows on Attack instead.
@@ -1491,6 +1492,32 @@
   // is watched at all.
   const MS_PER_FRAME = 1000 / 60;
   const framesFor = (ms) => Math.max(1, Math.ceil(ms / MS_PER_FRAME));
+  // A half is ended by the panels settling, not by the clock (switchFxRunning):
+  // the frame count is only the floor for a hand with no panels to watch, and
+  // this many frames past it is as long as a stalled fold is waited on.
+  const VECTOR_SWITCH_GRACE = 90;
+
+  /**
+   * Whether this half of the fold is over. The panels are watched when there
+   * are panels: the new shape opens the frame the old one has shut, with no
+   * beat of a closed packet in between and no cut over a fold still closing.
+   * @param {Scene_Battle} scene
+   * @returns {boolean}
+   */
+  const vectorHalfDone = (scene) => {
+    const stage = scene._vectorSwitchStage;
+    const VG = window.VectorGun;
+    const WSP = window.WeaponSystemProcedural;
+    const progress = (stage === 'fold' || stage === 'rise') && VG && VG.switchFxProgress
+      ? VG.switchFxProgress() : null;
+    if (progress === null) return scene._vectorSwitchWait <= 0;
+    // The new shape starts rising while the old one is still shrinking away:
+    // the old model finishes its fold as a ghost (VectorGun.adoptFoldingModel).
+    const end = stage === 'fold' && WSP && WSP.VECTOR_FOLD_HANDOFF
+      ? WSP.VECTOR_FOLD_HANDOFF : 1;
+    if (progress >= end) return true;
+    return scene._vectorSwitchWait <= 0 && scene._vectorSwitchGrace-- <= 0;
+  };
 
   Scene_Battle.prototype.commandVectorSwitch = function () {
     const actor = BattleManager.actor();
@@ -1498,13 +1525,44 @@
     // instead (turnGrimoirePage), and nothing below this runs.
     if (this.turnGrimoirePage(actor)) return;
     if (!actor || !window.VectorGun) return;
+    // Once a round: after a switch the frame stays as it is until next turn.
+    if (window.VectorGun.switchedThisTurn(actor)) {
+      SoundManager.playBuzzer();
+      if (this._actorCommandWindow) this._actorCommandWindow.activate();
+      return;
+    }
     if (this._actorCommandWindow) this._actorCommandWindow.deactivate();
     this._vectorSwitchActorId = actor.actorId();
-    // Half one: the weapon it is holding now folds shut. The gun is still the
-    // old shape, which is the whole point of playing this before the swap.
+    // The Dice of Yaldabaoth is thrown first: the frame only folds once it has
+    // landed, into the face it landed on.
+    const VG = window.VectorGun;
+    if (VG.willThrowDice && VG.preRollDice && VG.willThrowDice()) {
+      VG.preRollDice(actor);
+      this._vectorSwitchStage = 'dice';
+      this._vectorSwitchWait = 1;
+      return;
+    }
+    this.foldVectorSwitch();
+  };
+
+  /** Half one: the weapon it is holding now folds shut. */
+  Scene_Battle.prototype.foldVectorSwitch = function () {
+    // The gun is still the old shape, which is the whole point of playing
+    // this before the swap.
     const fold = window.VectorGun.playSwitchFx('fold');
     this._vectorSwitchStage = 'fold';
     this._vectorSwitchWait = framesFor(fold || 200);
+    this._vectorSwitchGrace = VECTOR_SWITCH_GRACE;
+  };
+
+  /** The die is left to land before the frame starts to fold. */
+  Scene_Battle.prototype.waitVectorDice = function () {
+    const D3 = window.Dice3D;
+    if (D3 && D3.isRolling && D3.isRolling()) {
+      this._vectorSwitchWait = 1;
+      return;
+    }
+    this.foldVectorSwitch();
   };
 
   /** Half two: the frame is rebuilt as the fitted shape and unfolds into it. */
@@ -1522,6 +1580,7 @@
     const rise = window.VectorGun.playSwitchFx('rise');
     this._vectorSwitchStage = 'rise';
     this._vectorSwitchWait = framesFor(rise || 300);
+    this._vectorSwitchGrace = VECTOR_SWITCH_GRACE;
   };
 
   /** Writes the shape the frame now stands as into the battle log. */
@@ -1539,10 +1598,11 @@
   };
 
   /**
-   * Passes the turn once the reconstruction has finished. The switch costs the
-   * round: it raises no guard and does nothing else, so the frame can be
-   * folded only once per turn. A Dice of YHWH still tumbling on screen is
-   * waited out first, so its face is read before anyone moves.
+   * Hands the command window back once the reconstruction has finished. The
+   * switch does not cost the round: the rest of the turn is still hers, with
+   * the new shape in hand, but SWITCH is greyed until the next one
+   * (VectorGun.switchedThisTurn). A Dice of Yaldabaoth still tumbling on screen is
+   * waited out first, so its face is read before anything else is picked.
    */
   Scene_Battle.prototype.finishVectorSwitch = function () {
     const D3 = window.Dice3D;
@@ -1558,9 +1618,15 @@
     // The turn may have been taken away from under the animation (a forced
     // action, the actor going down): there is then nothing to pass.
     if (!actor || actor.actorId() !== actorId) return;
-    const action = BattleManager.inputtingAction();
-    if (action) action.clear();
-    this.selectNextCommand();
+    window.VectorGun.markSwitched(actor);
+    // Rebuilt rather than just reactivated: the attack row wears the new
+    // shape's icon, and the SWITCH row is now greyed.
+    const win = this._actorCommandWindow;
+    if (!win) return;
+    if (win.setup) win.setup(actor);
+    else if (win.refresh) win.refresh();
+    if (win.selectSymbol) win.selectSymbol("attack");
+    win.activate();
   };
 
   /**
@@ -1593,10 +1659,12 @@
   const _BSEC_Scene_Battle_update = Scene_Battle.prototype.update;
   Scene_Battle.prototype.update = function () {
     _BSEC_Scene_Battle_update.call(this);
-    if (this._vectorSwitchWait > 0) {
-      this._vectorSwitchWait--;
-      if (this._vectorSwitchWait <= 0) {
-        if (this._vectorSwitchStage === 'fold') this.riseVectorSwitch();
+    if (this._vectorSwitchStage) {
+      if (this._vectorSwitchWait > 0) this._vectorSwitchWait--;
+      if (vectorHalfDone(this)) {
+        this._vectorSwitchWait = 0;
+        if (this._vectorSwitchStage === 'dice') this.waitVectorDice();
+        else if (this._vectorSwitchStage === 'fold') this.riseVectorSwitch();
         else this.finishVectorSwitch();
       }
     }
@@ -1606,7 +1674,7 @@
   const _BSEC_Scene_Battle_isAnyInputWindowActive =
     Scene_Battle.prototype.isAnyInputWindowActive;
   Scene_Battle.prototype.isAnyInputWindowActive = function () {
-    if (this._vectorSwitchWait > 0) return true;
+    if (this._vectorSwitchStage) return true;
     return _BSEC_Scene_Battle_isAnyInputWindowActive.call(this);
   };
 

@@ -15,12 +15,22 @@
  *
  * Mechanics:
  *   - Left/Right walk, Shift runs, OK jumps (coyote time + jump buffering)
- *   - Wall jump off either side while airborne
- *   - Ladder climbing with Up/Down
+ *   - Wall jump off either side while airborne; releasing OK early cuts a jump
+ *   - Ladders: Up or Down grabs one, Shift climbs faster, OK hops off toward
+ *     the direction held (Down+OK lets go). The top of a ladder is a floor you can stand on and walk over,
+ *     and climbing past it steps you onto it instead of dropping you back.
+ *   - Aerial recovery: a jump or a fall that ends on a ladder catches it, and
+ *     holding Up or toward a ladder catches one within reach of the body
  *   - Water zones (region 99): swim with Up / OK, sink slowly otherwise
  *   - The body is an axis aligned box swept against the tiles, so it can never
  *     end up inside a solid tile or inside region 10, at any speed
  *   - Followers replay the leader's path a few frames behind
+ *   - Every new tile counts as a step: footsteps, bush depth, damage floors,
+ *     encounters, step counters and touch events all fire as on the grid
+ *   - Movement routes forced on the player run on the grid as usual
+ *   - Enemy events keep to the ground (flyers excepted), fall off ledges and
+ *     obey regions 5 and 10
+ *   - The tactical map battle mode stands down here: fights are turn based
  *   - Transfers freeze the body, resolve the landing spot out of any solid and
  *     snap the camera, so teleporting in and out never drops the party in a wall
  *   - Leaving the map: standing on a walkable border tile crosses as it always
@@ -60,7 +70,11 @@
   const MAX_FALL_SPEED = P(12);
   const WALL_JUMP_X    = P(8);
   const WALL_JUMP_Y    = P(-18);
-  const CLIMB_SPEED    = P(3.2);
+  const CLIMB_SPEED    = P(6);
+  const CLIMB_RUN      = P(9);
+  const LADDER_HOP     = 0.85;     // a hop off a ladder, as a share of a jump
+  const JUMP_CUT_SPEED = P(-7);    // rise left once OK is released mid jump
+  const WALL_JUMP_LOCK = 8;        // frames a wall kick is not steered back
 
   // Water (region 99): heavy drag, a slow sink, and a stroke that beats it.
   const WATER_GRAVITY   = GRAVITY * 0.22;
@@ -70,6 +84,13 @@
   const WATER_STROKE    = P(-4.5);
   const WATER_DRAG      = 0.86;
   const WATER_EXIT_JUMP = P(-11);
+
+  // Aerial recovery: how far past the body's own edges a ladder is still in
+  // reach when Up or the direction of the ladder is held, and how long a hop
+  // off a ladder ignores the rungs it just left.
+  const LADDER_REACH = 0.5;
+  const LADDER_GROUND_REACH = 0.2;
+  const LADDER_REGRAB_FRAMES = 10;
 
   const COYOTE_FRAMES  = 6;   // grace after walking off a ledge
   const JUMP_BUFFER    = 6;   // grace for pressing jump just before landing
@@ -217,6 +238,71 @@
     return !!world.isLadder(tx, Math.floor((b.y1 + b.y2) / 2));
   }
 
+  function ladderTile(world, tx, ty) {
+    return inBounds(world, tx, ty) && !!world.isLadder(tx, ty);
+  }
+
+  // The topmost rung of a ladder is a floor seen from above: it can be stood
+  // on and walked across, and only Down (or climbing) goes through it.
+  function isLadderTop(world, tx, ty) {
+    return ladderTile(world, tx, ty) && !ladderTile(world, tx, ty - 1);
+  }
+
+  // The ladder column nearest the body whose rungs share its height, or null.
+  // `reach` widens the body sideways, which is what lets a jump that lands a
+  // little short of a ladder still catch it.
+  function ladderColumnNear(world, x, y, reach) {
+    const b = boxAt(x, y);
+    const r = reach || 0;
+    const ty1 = Math.floor(b.y1), ty2 = Math.floor(b.y2 - EPS);
+    const tx1 = Math.floor(b.x1 - r), tx2 = Math.floor(b.x2 + r - EPS);
+    let best = null;
+    for (let tx = tx1; tx <= tx2; tx++) {
+      for (let ty = ty1; ty <= ty2; ty++) {
+        if (!ladderTile(world, tx, ty)) continue;
+        if (best === null || Math.abs(tx - x) < Math.abs(best - x)) best = tx;
+        break;
+      }
+    }
+    return best;
+  }
+
+  // The ladder the feet are standing on the top of, or null.
+  function ladderTopUnder(world, x, y) {
+    const feet = y + 1;
+    const ty = Math.round(feet);
+    if (Math.abs(feet - ty) > 0.02) return null;
+    const b = boxAt(x, y);
+    let best = null;
+    for (let tx = Math.floor(b.x1); tx <= Math.floor(b.x2 - EPS); tx++) {
+      if (!isLadderTop(world, tx, ty)) continue;
+      if (best === null || Math.abs(tx - x) < Math.abs(best - x)) best = tx;
+    }
+    return best;
+  }
+
+  function standingOnLadderTop(world, x, y) {
+    return ladderTopUnder(world, x, y) !== null;
+  }
+
+  // Solid footing or a ladder top: what coyote time and jumping count as ground.
+  function standing(world, x, y) {
+    return onGround(world, x, y) || standingOnLadderTop(world, x, y);
+  }
+
+  // The first ladder top the feet crossed on the way down this frame, or null.
+  function ladderTopCrossed(world, x, prevY, y) {
+    const from = prevY + 1, to = y + 1;
+    if (to <= from) return null;
+    const b = boxAt(x, y);
+    for (let ty = Math.ceil(from - 0.02); ty < to; ty++) {
+      for (let tx = Math.floor(b.x1); tx <= Math.floor(b.x2 - EPS); tx++) {
+        if (isLadderTop(world, tx, ty)) return ty;
+      }
+    }
+    return null;
+  }
+
   // Which way is a body pushing when it cannot go that way? On the grid a
   // refused step is a whole failed move and every map exit hangs off it; here
   // the body is simply flush against something and no step is ever taken, so
@@ -233,81 +319,180 @@
   function newBody(x, y) {
     return {
       x: x, y: y, vx: 0, vy: 0,
-      onGround: false, inWater: false, onLadder: false,
+      onGround: false, inWater: false, onLadder: false, climbing: false,
       jumping: false, running: false,
-      coyote: 0, buffer: 0, direction: 2,
+      coyote: 0, buffer: 0, direction: 2, regrab: 0, wallLock: 0,
     };
+  }
+
+  // Take hold of the ladder in column `tx`: stop dead and line up on the rungs,
+  // without ever sliding through a wall to get there.
+  function grabLadder(world, body, tx) {
+    body.climbing = true;
+    body.jumping = false;
+    body.vx = 0;
+    body.vy = 0;
+    body.coyote = 0;
+    body.wallLock = 0;
+    moveAxis(world, body, tx - body.x, "x");
+    // The substeps leave float dust; settle exactly on the column when free.
+    if (Math.abs(body.x - tx) < 1e-6 && !collides(world, tx, body.y)) body.x = tx;
+  }
+
+  // Which ladder, if any, this frame's input and position take hold of.
+  function ladderToGrab(world, body, i, grounded) {
+    if (body.climbing || body.regrab > 0) return null;
+    const up = i.up && !i.down, down = i.down && !i.up;
+    if (up) return ladderColumnNear(world, body.x, body.y, grounded ? LADDER_GROUND_REACH : LADDER_REACH);
+    if (down) return grounded ? ladderTopUnder(world, body.x, body.y) : null;
+    if (grounded || body.vy < 0) return null;
+    // Aerial recovery: a jump or a fall that ends on a ladder catches it, and
+    // one that ends just short of it does too while the ladder's way is held.
+    // Holding away from it, or Down, lets the body drop past.
+    const tx = ladderColumnNear(world, body.x, body.y, LADDER_REACH);
+    if (tx === null) return null;
+    const toward = tx > body.x ? i.right && !i.left : tx < body.x ? i.left && !i.right : false;
+    const away = tx > body.x ? i.left && !i.right : tx < body.x ? i.right && !i.left : false;
+    if (away) return null;
+    if (toward) return tx;
+    return ladderColumnNear(world, body.x, body.y, 0) === tx ? tx : null;
   }
 
   // One frame of simulation for any body: the player, Player 2, anything else
   // that wants the same feel. `input` is a plain record so the caller decides
   // where the buttons came from (keyboard, pad, split screen, replay).
+  // `jumpHeld` is optional: left out, every jump runs its full height.
   function stepBody(world, body, input) {
     const i = input || {};
-    body.onLadder = isLadderAt(world, body.x, body.y);
+    if (body.regrab === undefined) body.regrab = 0;
+    if (body.wallLock === undefined) body.wallLock = 0;
     body.inWater = isInWater(world, body.x, body.y);
     body.running = !!i.run;
+    if (body.regrab > 0) body.regrab--;
+    if (body.wallLock > 0) body.wallLock--;
 
     if (i.jump) body.buffer = JUMP_BUFFER;
     else if (body.buffer > 0) body.buffer--;
 
-    // --- horizontal intent ---------------------------------------------------
-    let speed;
-    if (body.inWater) speed = body.running ? WATER_RUN : WATER_MOVE;
-    else speed = body.running ? RUN_SPEED : MOVE_SPEED;
+    const grounded = !body.climbing && standing(world, body.x, body.y);
+    const up = i.up && !i.down, down = i.down && !i.up;
+    const left = i.left && !i.right, right = i.right && !i.left;
 
-    if (i.left && !i.right) { body.vx = -speed; body.direction = 4; }
-    else if (i.right && !i.left) { body.vx = speed; body.direction = 6; }
-    else if (body.inWater) body.vx *= WATER_DRAG;
-    else body.vx = 0;
+    const grab = ladderToGrab(world, body, i, grounded);
+    if (grab !== null) grabLadder(world, body, grab);
 
-    // --- vertical intent -----------------------------------------------------
-    if (body.onLadder) {
-      body.vy = 0;
-      if (i.up && !i.down) { body.vy = -CLIMB_SPEED; body.direction = 8; }
-      else if (i.down && !i.up) { body.vy = CLIMB_SPEED; body.direction = 2; }
-      // Jumping is the only way off the top of a ladder.
-      if (body.buffer > 0) { body.vy = JUMP_SPEED; body.jumping = true; body.buffer = 0; }
-    } else if (body.inWater) {
-      const surfacing = !isHeadUnderwater(world, body.x, body.y);
-      if (i.up || body.buffer > 0) {
-        // Breaking the surface with a stroke launches out of the water rather
-        // than bobbing against the ceiling of it.
-        body.vy = (surfacing && body.buffer > 0) ? WATER_EXIT_JUMP : WATER_STROKE;
+    if (body.climbing) {
+      // --- on a ladder --------------------------------------------------------
+      const climb = body.running ? CLIMB_RUN : CLIMB_SPEED;
+      body.vy = up ? -climb : down ? climb : 0;
+      // No sideways drift: the direction held to reach a ladder would carry
+      // the body straight off its far side. Left or Right only turns, and
+      // with OK picks the side to hop off to.
+      body.vx = 0;
+      if (up) body.direction = 8;
+      else if (down) body.direction = 2;
+      else if (left) body.direction = 4;
+      else if (right) body.direction = 6;
+      if (body.buffer > 0) {
+        // OK hops off; Down with it just lets go.
+        body.climbing = false;
         body.buffer = 0;
-      } else {
-        body.vy = Math.min(body.vy * WATER_DRAG + WATER_GRAVITY, WATER_MAX_FALL);
+        body.regrab = LADDER_REGRAB_FRAMES;
+        if (down) {
+          body.vy = 0;
+        } else {
+          body.vy = JUMP_SPEED * LADDER_HOP;
+          body.jumping = true;
+        }
+        const speed = body.running ? RUN_SPEED : MOVE_SPEED;
+        body.vx = left ? -speed : right ? speed : 0;
       }
-      body.jumping = false;
     } else {
-      if (body.onGround) body.coyote = COYOTE_FRAMES;
-      else if (body.coyote > 0) body.coyote--;
+      // --- horizontal intent -------------------------------------------------
+      let speed;
+      if (body.inWater) speed = body.running ? WATER_RUN : WATER_MOVE;
+      else speed = body.running ? RUN_SPEED : MOVE_SPEED;
 
-      if (body.buffer > 0 && body.coyote > 0) {
-        body.vy = JUMP_SPEED;
-        body.jumping = true;
-        body.buffer = 0;
+      if (body.wallLock > 0) { /* the wall kick carries the body for a moment */ }
+      else if (left) { body.vx = -speed; body.direction = 4; }
+      else if (right) { body.vx = speed; body.direction = 6; }
+      else if (body.inWater) body.vx *= WATER_DRAG;
+      else body.vx = 0;
+
+      // --- vertical intent ---------------------------------------------------
+      if (body.inWater) {
+        const surfacing = !isHeadUnderwater(world, body.x, body.y);
+        if (i.up || body.buffer > 0) {
+          // Breaking the surface with a stroke launches out of the water rather
+          // than bobbing against the ceiling of it.
+          body.vy = (surfacing && body.buffer > 0) ? WATER_EXIT_JUMP : WATER_STROKE;
+          body.buffer = 0;
+        } else {
+          body.vy = Math.min(body.vy * WATER_DRAG + WATER_GRAVITY, WATER_MAX_FALL);
+        }
+        // Water is not ground: leaving it must not hand out a second jump.
+        body.jumping = false;
         body.coyote = 0;
-      } else if (body.buffer > 0 && !body.onGround) {
-        const left = touchingLeftWall(world, body.x, body.y);
-        const right = touchingRightWall(world, body.x, body.y);
-        if (left || right) {
-          const boost = body.running ? WALL_JUMP_X * 1.5 : WALL_JUMP_X;
-          body.vy = WALL_JUMP_Y;
-          body.vx = left ? boost : -boost;
-          body.direction = left ? 6 : 4;
+      } else {
+        if (grounded) body.coyote = COYOTE_FRAMES;
+        else if (body.coyote > 0) body.coyote--;
+
+        if (body.buffer > 0 && body.coyote > 0) {
+          body.vy = JUMP_SPEED;
           body.jumping = true;
           body.buffer = 0;
+          body.coyote = 0;
+        } else if (body.buffer > 0 && !grounded) {
+          const wallLeft = touchingLeftWall(world, body.x, body.y);
+          const wallRight = touchingRightWall(world, body.x, body.y);
+          if (wallLeft || wallRight) {
+            const boost = body.running ? WALL_JUMP_X * 1.5 : WALL_JUMP_X;
+            body.vy = WALL_JUMP_Y;
+            body.vx = wallLeft ? boost : -boost;
+            body.direction = wallLeft ? 6 : 4;
+            body.jumping = true;
+            body.buffer = 0;
+            body.wallLock = WALL_JUMP_LOCK;
+          }
         }
+        // Letting go of OK on the way up cuts the jump short.
+        if (i.jumpHeld === false && body.jumping && body.vy < JUMP_CUT_SPEED) body.vy = JUMP_CUT_SPEED;
+        body.vy = Math.min(body.vy + GRAVITY, MAX_FALL_SPEED);
       }
-      body.vy = Math.min(body.vy + GRAVITY, MAX_FALL_SPEED);
     }
 
     // --- integrate -----------------------------------------------------------
-    if (moveAxis(world, body, body.vx, "x")) body.vx = 0;
-    if (moveAxis(world, body, body.vy, "y")) {
+    const prevY = body.y;
+    const dy = body.vy;
+    if (moveAxis(world, body, body.vx, "x")) { body.vx = 0; body.wallLock = 0; }
+    const hitY = moveAxis(world, body, body.vy, "y");
+    if (hitY) {
       if (body.vy > 0) body.jumping = false;
       body.vy = 0;
+    }
+
+    if (body.climbing) {
+      if (hitY && dy > 0) {
+        // Climbed down onto the floor: stand on it.
+        body.climbing = false;
+      } else if (ladderColumnNear(world, body.x, body.y, 0) === null) {
+        body.climbing = false;
+        if (dy < 0) {
+          // Climbed past the top rung: step onto it rather than drop back.
+          const ty = Math.ceil(body.y + 1 - EPS);
+          const tx = Math.round(body.x);
+          if (isLadderTop(world, tx, ty) && !collides(world, body.x, ty - 1)) body.y = ty - 1;
+          body.vy = 0;
+        }
+      }
+    } else if (dy > 0 && !down) {
+      // One way ladder tops catch a falling body, unless Down drops through.
+      const ty = ladderTopCrossed(world, body.x, prevY, body.y);
+      if (ty !== null && !collides(world, body.x, ty - 1)) {
+        body.y = ty - 1;
+        body.vy = 0;
+        body.jumping = false;
+      }
     }
 
     // A body can only be inside geometry here if the map changed under it.
@@ -319,9 +504,35 @@
       body.vy = 0;
     }
 
-    body.onGround = body.onLadder || body.inWater || onGround(world, body.x, body.y);
+    body.onLadder = body.climbing || isLadderAt(world, body.x, body.y);
+    body.onGround = body.climbing || body.inWater || standing(world, body.x, body.y);
     if (body.onGround && body.vy >= 0) body.jumping = false;
     return body;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Map events on a platform map. They still walk the grid, but the grid has
+  // to agree with the physics: region 10 walls them off, region 5 lets them
+  // through, and anything that walks (every enemy that is not a flyer) keeps
+  // its feet on something and falls when it walks off an edge.
+  // ---------------------------------------------------------------------------
+  function hasFooting(world, tx, ty) {
+    return tileSolid(world, tx, ty + 1) || isLadderTop(world, tx, ty + 1) ||
+           ladderTile(world, tx, ty) || tileWater(world, tx, ty);
+  }
+
+  function eventCanStep(world, x, y, d, walker) {
+    const x2 = x + (d === 6 ? 1 : d === 4 ? -1 : 0);
+    const y2 = y + (d === 2 ? 1 : d === 8 ? -1 : 0);
+    if (tileSolid(world, x2, y2)) return false;
+    if (!walker) return true;
+    if (d === 8) return ladderTile(world, x, y) || ladderTile(world, x2, y2) || tileWater(world, x2, y2);
+    if (d === 2) return ladderTile(world, x2, y2) || tileWater(world, x2, y2);
+    return hasFooting(world, x2, y2);
+  }
+
+  function eventShouldFall(world, x, y) {
+    return inBounds(world, x, y + 1) && !hasFooting(world, x, y);
   }
 
   const Physics = {
@@ -338,6 +549,12 @@
     isLadderAt: isLadderAt, newBody: newBody, stepBody: stepBody,
     pressedBlockedDirection: pressedBlockedDirection,
     EDGE_PRESS_FRAMES: EDGE_PRESS_FRAMES,
+    CLIMB_SPEED: CLIMB_SPEED, CLIMB_RUN: CLIMB_RUN,
+    LADDER_REACH: LADDER_REACH, LADDER_REGRAB_FRAMES: LADDER_REGRAB_FRAMES,
+    JUMP_CUT_SPEED: JUMP_CUT_SPEED, WALL_JUMP_LOCK: WALL_JUMP_LOCK,
+    isLadderTop: isLadderTop, ladderColumnNear: ladderColumnNear,
+    standingOnLadderTop: standingOnLadderTop, standing: standing,
+    hasFooting: hasFooting, eventCanStep: eventCanStep, eventShouldFall: eventShouldFall,
   };
 
   // Headless callers (the test harness) load the file for its physics alone and
@@ -377,27 +594,47 @@
     character.setDirection(body.direction);
   }
 
+  // Read the character back into the body. The facing comes too, so an event
+  // that turns the player (a transfer, a move route, a Set Direction) is not
+  // undone on the next frame by the body's own idea of where it faces.
   function syncBodyFrom(character, body) {
     body.x = character._realX;
     body.y = character._realY;
+    if (character.direction) body.direction = character.direction();
   }
 
-  // Put a character somewhere legal on this map and stop it dead. Used by every
-  // way into a platform map: transfer, locate, load.
-  function placeSafely(character, body) {
-    const spot = resolveSpawn(liveWorld, character._realX, character._realY);
+  // Put a character somewhere legal on this map. Used by every way into a
+  // platform map. An arrival (transfer, locate) names a tile, so it is snapped
+  // to it and stopped dead; a return from a menu or a battle is the same body
+  // coming back, so it keeps its sub tile position and its momentum.
+  function placeSafely(character, body, arrival) {
+    const isArrival = arrival !== false;
+    const spot = isArrival
+      ? resolveSpawn(liveWorld, character._realX, character._realY)
+      : unstick(liveWorld, character._realX, character._realY);
     character._realX = spot.x;
     character._realY = spot.y;
     character._x = Math.round(spot.x);
     character._y = Math.round(spot.y);
     if (body) {
       body.x = spot.x; body.y = spot.y;
-      body.vx = 0; body.vy = 0;
-      body.jumping = false; body.coyote = 0; body.buffer = 0;
+      if (character.direction) body.direction = character.direction();
+      if (isArrival) {
+        body.vx = 0; body.vy = 0;
+        body.jumping = false; body.climbing = false;
+        body.coyote = 0; body.buffer = 0; body.regrab = 0; body.wallLock = 0;
+      }
     }
     if (character === (typeof $gamePlayer !== "undefined" ? $gamePlayer : null)) {
       character._pfEdgeDir = 0;
       character._pfEdgeFrames = 0;
+      if (isArrival) {
+        // The landing tile is where the party already is, not somewhere it
+        // just walked onto: a transfer event under the arrival spot must not
+        // fire and bounce the party straight back, and no step is counted.
+        character._lastTriggerTileX = character._lastStepTileX = character._x;
+        character._lastTriggerTileY = character._lastStepTileY = character._y;
+      }
     }
   }
 
@@ -426,7 +663,8 @@
       (typeof $gameMap !== "undefined" && $gameMap && $gameMap.isEventRunning()) ||
       (typeof $gameMessage !== "undefined" && $gameMessage && $gameMessage.isBusy());
     const p2 = (manager && manager.p2Input) ? manager.p2Input : {};
-    const jump = !!(manager && manager.isTriggered && manager.isTriggered("up"));
+    // Up climbs ladders, so the jump is the action button, as it is for P1.
+    const jump = !!(manager && manager.isTriggered && manager.isTriggered("action"));
     const input = held ? {} : {
       left: !!p2.left,
       right: !!p2.right,
@@ -434,6 +672,7 @@
       down: !!p2.down,
       run: !!p2.dash,
       jump: jump,
+      jumpHeld: !!p2.action,
     };
 
     stepBody(liveWorld, body, input);
@@ -507,8 +746,12 @@
     if (object === $dataMap) {
       _frozen = true;
       _cameraSnap = true;
+      // Scene_Map reloads the map file on every rebuild, the menu and a battle
+      // included. Only a real transfer loses momentum and the followers' trail.
+      const player = typeof $gamePlayer !== "undefined" ? $gamePlayer : null;
+      if (player && !player.isTransferring()) return;
       _positionHistory = [];
-      if (typeof $gamePlayer !== "undefined" && $gamePlayer && $gamePlayer._pfBody) {
+      if (player && player._pfBody) {
         const body = $gamePlayer._pfBody;
         body.vx = 0; body.vy = 0; body.jumping = false;
         body.coyote = 0; body.buffer = 0;
@@ -523,12 +766,15 @@
       // Landing on a wall, on a region 10 block or off the map is the one thing
       // a teleport into a platformer can do that the grid mode cannot: fix it
       // here, before a single frame of gravity runs.
-      placeSafely($gamePlayer, playerBody());
+      const arrival = !!this._transfer;
+      placeSafely($gamePlayer, playerBody(), arrival);
       for (const follower of $gamePlayer._followers._data) {
-        follower._realX = $gamePlayer._realX;
-        follower._realY = $gamePlayer._realY;
-        follower._x = $gamePlayer._x;
-        follower._y = $gamePlayer._y;
+        if (arrival || !_positionHistory.length) {
+          follower._realX = $gamePlayer._realX;
+          follower._realY = $gamePlayer._realY;
+          follower._x = $gamePlayer._x;
+          follower._y = $gamePlayer._y;
+        }
         follower.setThrough(true);
       }
       snapCameraNow();
@@ -551,7 +797,7 @@
   Scene_Map.prototype.start = function () {
     _Scene_Map_start.call(this);
     if (isPlatformMap()) {
-      placeSafely($gamePlayer, playerBody());
+      placeSafely($gamePlayer, playerBody(), !!this._transfer);
       snapCameraNow();
     }
     _frozen = false;
@@ -599,10 +845,16 @@
   // _realX almost never equals _x and the engine's test answered "moving" on
   // nearly every frame, which is why neither could ever fire. Nothing here is
   // ever in the middle of a move, so say so.
+  // A forced move route (Set Movement Route on the player, a jump command) is
+  // a grid walk, and runs as one: the engine's own answer holds for it.
   const _GP_isMoving = Game_Player.prototype.isMoving;
   Game_Player.prototype.isMoving = function () {
-    if (isPlatformMap()) return false;
+    if (isPlatformMap() && !this._pfGridDriven()) return false;
     return _GP_isMoving.call(this);
+  };
+
+  Game_Player.prototype._pfGridDriven = function () {
+    return !!(this.isMoveRouteForcing() || this.isJumping());
   };
 
   const _GP_update = Game_Player.prototype.update;
@@ -613,6 +865,18 @@
 
   Game_Player.prototype._pfUpdate = function (sceneActive) {
     const body = playerBody();
+
+    // A move route owns the party: let the grid walk it, with its followers,
+    // and pick the body up where the route leaves it. Skipping this left every
+    // "wait for completion" route on the player waiting forever.
+    if (!_frozen && this._pfGridDriven()) {
+      _GP_update.call(this, sceneActive);
+      syncBodyFrom(this, body);
+      body.vx = 0; body.vy = 0; body.jumping = false; body.climbing = false;
+      _positionHistory = [];
+      return;
+    }
+
     syncBodyFrom(this, body);
 
     if (_frozen) {
@@ -630,12 +894,15 @@
       right: Input.isPressed("right"),
       up: Input.isPressed("up"),
       down: Input.isPressed("down"),
-      run: Input.isPressed("shift"),
+      // The Always Dash option and a map's "disable dashing" both count here.
+      run: this.isDashButtonPressed() && !$gameMap.isDashDisabled(),
       jump: Input.isTriggered("ok") && !this._pfActionTarget(),
+      jumpHeld: Input.isPressed("ok"),
     };
 
     stepBody(liveWorld, body, input);
     applyBody(this, body);
+    this._dashing = body.running && body.vx !== 0;
 
     this._pfUpdateAnimation(body);
     this._pfUpdateFollowers();
@@ -648,14 +915,18 @@
       this._pfEdgeFrames = 0;
     }
 
-    // Game_Player.update (bypassed here) normally runs the per step processing
-    // in updateNonmoving: encounter stepping and $gameParty.onPlayerWalk()
-    // (damage floors and slip processing). Keep them, fired once per new tile.
+    // Game_Player.update (bypassed here) normally runs the per step processing:
+    // increaseSteps (step count, bush depth, and everything other plugins hang
+    // off a step), $gameParty.onPlayerWalk() (damage floors, slip damage) and
+    // encounter stepping. Keep all of it, fired once per new tile.
     if (!$gameMap.isEventRunning() &&
         (this._lastStepTileX !== this._x || this._lastStepTileY !== this._y)) {
       if (this._lastStepTileX !== undefined) {
+        this.increaseSteps();
         $gameParty.onPlayerWalk();
         this.updateEncounterCount();
+      } else {
+        this.refreshBushDepth();
       }
       this._lastStepTileX = this._x;
       this._lastStepTileY = this._y;
@@ -665,12 +936,14 @@
   };
 
   // The event the action button would talk to, if any. Only an action button
-  // event counts, so a map full of touch triggers and parallel processes does
-  // not cost the party its jump.
+  // event with something to say counts, so a map full of decoration, touch
+  // triggers and parallel processes does not cost the party its jump.
   Game_Player.prototype._pfActionTarget = function () {
     for (const event of $gameMap.events()) {
-      if (!event || event._trigger !== 0) continue;
+      if (!event || !event.isTriggerIn([0]) || !event.page()) continue;
       if (event.isThrough && event.isThrough()) continue;
+      const list = event.list();
+      if (!list || list.length <= 1) continue;
       if (Math.abs(event.x - this.x) + Math.abs(event.y - this.y) <= 1) return event;
     }
     return null;
@@ -678,23 +951,38 @@
 
   const _Character_updateAnimation = Game_Character.prototype.updateAnimation;
   Game_Player.prototype.updateAnimation = function () {
-    if (!isPlatformMap()) { _Character_updateAnimation.call(this); return; }
+    if (!isPlatformMap() || this._pfGridDriven()) { _Character_updateAnimation.call(this); return; }
     this._pfUpdateAnimation(this._pfBody);
   };
 
+  // Walking frames advance through the engine's own updatePattern, so the walk
+  // cycle is the usual 0 1 2 1 and footstep sounds (Audio/ToshA_Footsteps.js,
+  // which reads the terrain tag and region under the feet) fire on the frames
+  // they are set to. _pfStepping tells them a step is happening, since
+  // isMoving() is false here.
   Game_Player.prototype._pfUpdateAnimation = function (body) {
     if (_frozen || !body) { this._pattern = 1; this._animCounter = 0; return; }
-    if (body.onLadder) { this._pattern = 1; return; }
-    if (body.vx !== 0 && (body.onGround || body.inWater)) {
-      this._animCounter++;
-      const animSpeed = body.running ? RUN_ANIM_SPEED : ANIM_SPEED;
-      if (this._animCounter >= animSpeed) {
-        this._pattern = (this._pattern + 1) % 3;
-        this._animCounter = 0;
-      }
-    } else {
+    let stepping = false, speed = ANIM_SPEED, audible = false;
+    if (body.climbing) {
+      stepping = body.vy !== 0 || body.vx !== 0;
+    } else if (body.vx !== 0 && (body.onGround || body.inWater)) {
+      stepping = true;
+      audible = !body.inWater;
+      speed = body.running ? RUN_ANIM_SPEED : ANIM_SPEED;
+    }
+    if (!stepping) {
       this._pattern = 1;
       this._animCounter = 0;
+      return;
+    }
+    if (++this._animCounter < speed) return;
+    this._animCounter = 0;
+    this._stopCount = 0;
+    this._pfStepping = audible;
+    try {
+      this.updatePattern();
+    } finally {
+      this._pfStepping = false;
     }
   };
 
@@ -712,10 +1000,13 @@
 
   const _GP_isOnLadder = Game_Player.prototype.isOnLadder;
   Game_Player.prototype.isOnLadder = function () {
-    if (isPlatformMap()) return isLadderAt(liveWorld, this._realX, this._realY);
+    if (isPlatformMap()) return !!(this._pfBody && this._pfBody.climbing);
     return _GP_isOnLadder.call(this);
   };
 
+  // Touch events go through the engine's own entry points, so every plugin
+  // hook on them (the battle initiation block, vehicle hits and the rest) sees
+  // a platform touch exactly as it sees a grid one.
   Game_Player.prototype._pfCheckEventTrigger = function () {
     if ($gameMap.isEventRunning()) return;
 
@@ -728,8 +1019,11 @@
     if (this._lastTriggerTileX !== this.x || this._lastTriggerTileY !== this.y) {
       this._lastTriggerTileX = this.x;
       this._lastTriggerTileY = this.y;
-      for (const event of $gameMap.eventsXy(this.x, this.y)) {
-        if (!event._starting && event._trigger !== 0 && event._trigger !== 4) event.start();
+      // Below or above characters: the "here" check. Same as characters: the
+      // body passes through them, so reaching their tile is the bump.
+      this.checkEventTriggerHere([1, 2]);
+      if (!$gameMap.isEventRunning() && !$gameMap.isAnyEventStarting()) {
+        this.checkEventTriggerTouch(this.x, this.y);
       }
     }
   };
@@ -827,6 +1121,8 @@
   };
 
   Game_Player.prototype._pfUpdateCamera = function () {
+    // A Scroll Map command owns the camera until it finishes.
+    if ($gameMap.isScrolling && $gameMap.isScrolling()) return;
     const targetX = this._realX - ($gameMap.screenTileX() - 1) / 2;
     const targetY = this._realY - ($gameMap.screenTileY() - 1) / 2;
     const ease = _cameraSnap ? 1 : CAMERA_SPEED;
@@ -851,6 +1147,57 @@
       return;
     }
     _Game_Event_update.call(this);
+    if (isPlatformMap()) this._pfUpdateFall();
+  };
+
+  // ---------------------------------------------------------------------------
+  // Enemy events on a platform map
+  // ---------------------------------------------------------------------------
+  // The encounter spawner and the map author both place monsters on any
+  // walkable tile, and on a side view map most walkable tiles are air. A
+  // monster that walks (anything but a flyer) keeps to the floors, climbs only
+  // ladders and water, and drops when it steps off an edge. Touching the party
+  // still starts the fight through the usual event touch.
+  function isMonsterEvent(event) {
+    const data = event.event && event.event();
+    return !!(event._fixedTroopId > 0 || (data && data.name === "Enemy")); // i18n-ignore: event name
+  }
+
+  function isFlyingMonster(event) {
+    const bse = window.BattleSystemEnhanced;
+    const helpers = bse && bse.Helpers;
+    if (!helpers || !helpers.getFlyingArchetype || !helpers.getEnemyArchetype) return false;
+    const troop = event._fixedTroopId > 0 && typeof $dataTroops !== "undefined" ? $dataTroops[event._fixedTroopId] : null;
+    const member = troop && troop.members && troop.members[0];
+    const enemy = member && typeof $dataEnemies !== "undefined" ? $dataEnemies[member.enemyId] : null;
+    return !!(enemy && helpers.getFlyingArchetype(helpers.getEnemyArchetype(enemy)));
+  }
+
+  Game_Event.prototype._pfIsWalker = function () {
+    if (this._pfWalker === undefined || this._pfWalkerTroop !== this._fixedTroopId) {
+      this._pfWalkerTroop = this._fixedTroopId;
+      this._pfWalker = isMonsterEvent(this) && !isFlyingMonster(this);
+    }
+    return this._pfWalker;
+  };
+
+  const _Game_Event_canPass = Game_Event.prototype.canPass;
+  Game_Event.prototype.canPass = function (x, y, d) {
+    if (!isPlatformMap() || this.isThrough() || this._pfRemote) return _Game_Event_canPass.call(this, x, y, d);
+    const x2 = $gameMap.roundXWithDirection(x, d);
+    const y2 = $gameMap.roundYWithDirection(y, d);
+    if (!$gameMap.isValid(x2, y2)) return false;
+    if (!eventCanStep(liveWorld, x, y, d, this._pfIsWalker())) return false;
+    // Region 5 is open whatever the tile says, for events as for the party.
+    if (liveWorld.regionId(x2, y2) === REGION_PASS) return !this.isCollidedWithCharacters(x2, y2);
+    return _Game_Event_canPass.call(this, x, y, d);
+  };
+
+  Game_Event.prototype._pfUpdateFall = function () {
+    if (this._erased || this.isThrough() || this.isMoving() || this.isJumping()) return;
+    if (!this._pfIsWalker()) return;
+    if (!eventShouldFall(liveWorld, this._x, this._y)) return;
+    this._y += 1;   // updateMove eases the sprite down to it
   };
 
   const _Game_Event_locate = Game_Event.prototype.locate;

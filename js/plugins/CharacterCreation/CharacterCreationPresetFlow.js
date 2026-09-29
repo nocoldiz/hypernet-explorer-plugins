@@ -485,8 +485,14 @@
       // A dossier that asks to be drawn from its sculpted body says so, and
       // that answer outranks whatever the branches above settled: a beast in a
       // party is its model, never a borrowed portrait.
+      // A creature dossier that says nothing opens on its model like any other
+      // creature, over the bust its look carries (kept on the actor for the
+      // Bio tab's 2D Bust choice); a species model ("sprite") already is one.
       if (preset.portraitMode && actor.setPortraitMode) {
         actor.setPortraitMode(preset.portraitMode);
+      } else if (preset.characterType === "creature" && actor.setPortraitMode &&
+          actor.portraitMode() !== "sprite") {
+        actor.setPortraitMode("model");
       }
 
       // Set switches

@@ -1513,6 +1513,40 @@
         }
       }
       for (const character of toRemove) reflectionSprites.delete(character);
+
+      if (reflectionSprites.size > 0) this.updateGround(spriteset);
+    },
+
+    // The tile layer under the reflections, drawn once a frame into a
+    // screen-sized texture the mask samples: a reflection pixel only shows
+    // where the ground beneath it is blue, so it stops spilling onto the
+    // snow, sand or grass beside the water. Region 99 marks whole shore
+    // tiles, which is too coarse to cull by on its own.
+    updateGround(spriteset) {
+      const mask = getBlueMaskFilter();
+      if (!mask || !mask.uniforms) return;
+      const layer = spriteset._tilemap && spriteset._tilemap._lowerLayer;
+      const renderer = Graphics.app && Graphics.app.renderer;
+      if (!layer || !renderer || !PIXI.RenderTexture) {
+        mask.uniforms.uUseGround = 0;
+        return;
+      }
+      const w = Graphics.width;
+      const h = Graphics.height;
+      let rt = this._groundTexture;
+      if (!rt || rt.baseTexture.destroyed || rt.width !== w || rt.height !== h) {
+        if (rt && !rt.baseTexture.destroyed) rt.destroy(true);
+        rt = this._groundTexture = PIXI.RenderTexture.create({ width: w, height: h, resolution: 1 });
+      }
+      try {
+        renderer.render(layer, rt, true, null, true);
+      } catch (e) {
+        mask.uniforms.uUseGround = 0;
+        return;
+      }
+      mask.uniforms.uGround = rt;
+      mask.uniforms.uGroundSize = [w, h];
+      mask.uniforms.uUseGround = 1;
     },
 
     // Cache a character -> sprite map instead of a linear scan per character.
@@ -1553,6 +1587,11 @@
     _blueMaskFilter = new PIXI.Filter(null, `
       varying vec2 vTextureCoord;
       uniform sampler2D uSampler;
+      uniform sampler2D uGround;
+      uniform vec2 uGroundSize;
+      uniform float uUseGround;
+      uniform vec4 inputSize;
+      uniform vec4 outputFrame;
 
       void main(void) {
         vec4 color = texture2D(uSampler, vTextureCoord);
@@ -1570,9 +1609,24 @@
 
         float keep = max(blueDominant, isBlueTinted);
 
+        // Culled wherever the tile underneath is not water blue (teal counts:
+        // blue well above red, green no stronger than blue).
+        if (uUseGround > 0.5) {
+          vec2 screen = vTextureCoord * inputSize.xy + outputFrame.xy;
+          vec4 ground = texture2D(uGround, screen / uGroundSize);
+          float groundBlue = step(0.15, ground.b - ground.r) *
+                             step(ground.g - 0.12, ground.b) *
+                             step(0.01, ground.a);
+          keep *= groundBlue;
+        }
+
         gl_FragColor = vec4(color.rgb, color.a * keep);
       }
-    `);
+    `, {
+      uGround: PIXI.Texture ? PIXI.Texture.EMPTY : null,
+      uGroundSize: [1, 1],
+      uUseGround: 0
+    });
     _blueMaskFilter.padding = 0;
     return _blueMaskFilter;
   }

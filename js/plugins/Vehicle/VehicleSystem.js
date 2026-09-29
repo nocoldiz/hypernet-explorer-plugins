@@ -4800,6 +4800,21 @@
     manager: vehicleManager,
     ownsVehicleKey(key) { return ownsVehicleKey(key); },
 
+    // Whether the party leader's class is `<Nature: Magical>`, the answer that
+    // dresses every broom rider in the pointed hat. The 3D world asks it too
+    // (VoxelWorldEntities / VoxelWorldScene) to pick the arcane broom sheet.
+    isMagicalLeader() { return isMagicalLeader(); },
+
+    // The riding sheet an NPC on the road is drawn on: 'bike' or 'broom', or
+    // null for anyone on foot. An NPC who owns a broom is a caster by
+    // definition, so the broom is always the arcane one. The paths are read
+    // off the vehicle configs, the one place they are written.
+    npcRidingSheet(kind) {
+      const sheet = kind === 'bike' ? VehicleConfig.BIKE.sprites.riding
+        : kind === 'broom' ? VehicleConfig.BROOM.sprites.ridingArcane : null;
+      return sheet ? Object.assign({}, sheet) : null;
+    },
+
     // Vehicles the party can act on from where they stand ({ key, name }, most
     // recently parked first). The world map asks this to tell a parked vehicle
     // apart from the town square it is standing on (Map/WorldMapReturn.js).

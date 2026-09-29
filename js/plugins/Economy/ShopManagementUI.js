@@ -67,27 +67,10 @@
       const s = this._scene;
       if (!s) return;
 
-      // WASD hold-repeat
-      for (const dir of ['up', 'down']) {
-        if (s._wasdHeld[dir]) {
-          s._wasdHoldFrames[dir]++;
-          const t = s._wasdHoldFrames[dir];
-          if (t > Input.keyRepeatWait && (t - Input.keyRepeatWait) % Input.keyRepeatInterval === 0) {
-            s._wasdPending[dir] = true;
-          }
-        } else {
-          s._wasdHoldFrames[dir] = 0;
-        }
-      }
-
-      const goUp   = Input.isRepeated('up')   || s._wasdPending.up;
-      const goDown = Input.isRepeated('down') || s._wasdPending.down;
-      s._wasdPending.up = s._wasdPending.down = false;
-
-      // L1 / R1 tab cycling (suppressed during slot-assignment mode)
+      // L1 / R1 (Q / W, Tab) tab cycling (suppressed during slot-assignment mode)
       if (s._changingSlot === null) {
-        if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
-          const dir = Input.isTriggered('pageup') ? -1 : 1;
+        const dir = window.UINav ? UINav.tabDir() : 0;
+        if (dir) {
           const cur = _TABS.indexOf(s._activeTab);
           s._activeTab     = _TABS[(cur + dir + _TABS.length) % _TABS.length];
           s._selectedIndex = 0;
@@ -97,20 +80,24 @@
         }
       }
 
+      // The list steps by its drawn columns, so the same four directions work
+      // whether the rows are laid out as one column or as a grid. WASD reaches
+      // here as the arrows.
       const total = s._getListItems().length;
-
-      if (goUp && s._selectedIndex > 0) {
-        s._selectedIndex--;
-        SoundManager.playCursor();
-        s._updateHighlight();
-      } else if (goDown && s._selectedIndex < total - 1) {
-        s._selectedIndex++;
-        SoundManager.playCursor();
-        s._updateHighlight();
+      const nav = window.UINav ? UINav.navDir() : null;
+      if (nav && total > 0) {
+        const listEl = s._el && s._el.querySelector('.shop-mgmt-list');
+        const next = UINav.gridStep(s._selectedIndex, nav, total, listEl || 1);
+        if (next !== s._selectedIndex) {
+          s._selectedIndex = next;
+          SoundManager.playCursor();
+          s._updateHighlight();
+        }
+        return;
       }
 
-      if (Input.isTriggered('ok'))                              this._handleOk();
-      if (Input.isTriggered('escape') || Input.isTriggered('cancel')) this._handleCancel();
+      if (Input.isTriggered('ok')) this._handleOk();
+      else if (Input.isTriggered('escape') || Input.isTriggered('cancel') || TouchInput.isCancelled()) this._handleCancel();
     },
 
     _handleOk() {
@@ -193,24 +180,6 @@
       // The shelves page fills from the bags first; the wholesaler is a click away.
       this._shelfSource   = 'bag';
 
-      this._wasdPending    = { up: false, down: false };
-      this._wasdHeld       = { up: false, down: false };
-      this._wasdHoldFrames = { up: 0, down: 0 };
-
-      this._onKeyDown = (e) => {
-        if (e.repeat) return;
-        const k = e.key.toLowerCase();
-        if (k === 'w') { this._wasdPending.up   = true; this._wasdHeld.up   = true; e.preventDefault(); }
-        if (k === 's') { this._wasdPending.down  = true; this._wasdHeld.down  = true; e.preventDefault(); }
-      };
-      this._onKeyUp = (e) => {
-        const k = e.key.toLowerCase();
-        if (k === 'w') { this._wasdHeld.up   = false; this._wasdHoldFrames.up   = 0; }
-        if (k === 's') { this._wasdHeld.down  = false; this._wasdHoldFrames.down  = 0; }
-      };
-      window.addEventListener('keydown', this._onKeyDown);
-      window.addEventListener('keyup',   this._onKeyUp);
-
       // Whatever the shop traded while the party was elsewhere is settled
       // before the book is drawn, so the balance on the page is current.
       if (SM.refreshEconomy) SM.refreshEconomy();
@@ -245,8 +214,6 @@
     }
 
     terminate() {
-      window.removeEventListener('keydown', this._onKeyDown);
-      window.removeEventListener('keyup',   this._onKeyUp);
       UIShopInputManager.deactivate();
       if (this._el) {
         const el = this._el;

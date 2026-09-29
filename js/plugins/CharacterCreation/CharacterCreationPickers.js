@@ -58,6 +58,10 @@
     AUGMENTED_ORIGIN_MAX,
     CARD_ORIGIN_CARDS,
     bunkerGoldPiles,
+    goblinHordeArmyPlan,
+    goblinHordeArmyCount,
+    goblinHordeUpkeepGold,
+    GOBLIN_HORDE_UPKEEP_WEEKS,
   } = window.CCOrigins || {};
 
   // Written as a class body so the methods move onto the wizard exactly as
@@ -716,6 +720,27 @@
           row(T('CharCreate.troops'), T('CharCreate.40FromRandomFactions')),
           row(T('CharCreate.upkeep'), T('CharCreate.2WeeksOfTheirWagesInCash')),
         ],
+        origin_goblin: [
+          row(T('CharCreate.start'), T('CharCreate.aCityTheGoblinHordeHolds')),
+          row(T('CharCreate.people'), T('CharCreate.everyMemberAGoblin')),
+        ],
+        // Every row is counted off the plan the grant hires from.
+        origin_goblin_horde: [
+          row(T('CharCreate.start'), T('CharCreate.aCityTheGoblinHordeHolds')),
+          row(T('CharCreate.people'), T('CharCreate.everyMemberAGoblin')),
+          row(T('CharCreate.troops'), T('CharCreate.goblinHordeTroopsTotal', { count: goblinHordeArmyCount() })),
+        ].concat(goblinHordeArmyPlan().map((plan) => row(
+          window.ArmyManager && window.ArmyManager.goblinHordeTroopName
+            ? window.ArmyManager.goblinHordeTroopName(plan.troop) : plan.troop,
+          "x" + plan.count
+        ))).concat([
+          row(T('CharCreate.upkeep'), T('CharCreate.goblinHordeUpkeep', {
+            weeks: GOBLIN_HORDE_UPKEEP_WEEKS,
+            amount: Math.floor(goblinHordeUpkeepGold() / 100).toLocaleString(
+              T.language() === "it" ? "it-IT" : "en-US"),
+          })),
+          row(T('CharCreate.standing'), T('CharCreate.goblinHordeStanding')),
+        ]),
         origin_faction_leader: [
           row(T('CharCreate.start'), T('CharCreate.aCityOfYourChoice')),
           row(T('CharCreate.troops'), T('CharCreate.40FromTheFactionYouPick')),

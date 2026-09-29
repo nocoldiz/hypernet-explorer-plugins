@@ -301,27 +301,18 @@
         activate(scene) { this._scene = scene; this._active = true; },
         deactivate()    { this._active = false; this._scene = null; },
 
-        _consumeWasd(scene) {
-            const w = scene._wasdInput;
-            if (!w) return null;
-            let dir = null;
-            if (w.up) dir = "up";
-            else if (w.down) dir = "down";
-            else if (w.left) dir = "left";
-            else if (w.right) dir = "right";
-            w.up = w.down = w.left = w.right = false;
-            return dir;
-        },
-
+        // WASD is not read here: Input.keyMapper already turns the four keys
+        // into the four directions, so one reading below covers both.
         update() {
             if (!this._active || !this._scene) return;
             const scene = this._scene;
-            if (scene._busy || !scene._container) { this._consumeWasd(scene); return; }
+            if (scene._busy || !scene._container) return;
+            // The pad's letter sheet owns every press while it is up.
+            if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) return;
 
             // While the confirmation window is open, swallow background navigation;
             // only let cancel/escape dismiss it.
             if (scene._confirmOverlay) {
-                this._consumeWasd(scene);
                 if (Input.isTriggered("cancel") || Input.isTriggered("escape") || TouchInput.isCancelled()) {
                     TouchInput.clear();
                     SoundManager.playCancel();
@@ -338,7 +329,6 @@
 
             if (Input.isTriggered("cancel") || Input.isTriggered("escape") || TouchInput.isCancelled()) {
                 TouchInput.clear();
-                this._consumeWasd(scene);
                 SoundManager.playCancel();
                 if (typing) {
                     ae.blur();
@@ -356,14 +346,13 @@
                 return;
             }
 
-            if (typing) { this._consumeWasd(scene); return; }
+            if (typing) return;
 
-            const wasdDir = this._consumeWasd(scene);
-            if (wasdDir) { this.handleMove(wasdDir); return; }
-
-            if (!scene._creatingWorld && (Input.isTriggered("pageup") || Input.isTriggered("pagedown"))) {
+            // L1 / R1 (Q / W, Shift+Tab / Tab) step the dossier's tabs.
+            const tabStep = !scene._creatingWorld && window.UINav ? window.UINav.tabDir() : 0;
+            if (tabStep) {
                 if (scene._selectedWorld) {
-                    const dir  = Input.isTriggered("pageup") ? -1 : 1;
+                    const dir  = tabStep;
                     const next = (RIGHT_TABS.indexOf(scene._rightTab) + dir + RIGHT_TABS.length) % RIGHT_TABS.length;
                     scene._focusSection = "tabs";
                     scene._focusIndex   = next;
@@ -462,6 +451,13 @@
             }
         },
 
+        // True when the pad is the device in hand and the letter sheet exists.
+        padTypes() {
+            return !!(window.Controller && typeof Controller.textEntry === "function" &&
+                typeof Input !== "undefined" && typeof Input.lastInputDevice === "function" &&
+                Input.lastInputDevice() === "pad");
+        },
+
         handleOk() {
             const scene = this._scene;
             const els   = scene._focusables(scene._focusSection);
@@ -477,6 +473,25 @@
             // .disabled class on an .inspect-btn.
             if (el.disabled || el.classList.contains("disabled")) {
                 SoundManager.playBuzzer();
+                return;
+            }
+            if (el.tagName === "INPUT" && this.padTypes()) {
+                // A pad has no keys to type with: the letter sheet stands in,
+                // and writes back into the same field the keyboard types into.
+                const label = el.previousElementSibling && el.previousElementSibling.tagName === "LABEL"
+                    ? el.previousElementSibling
+                    : (el.parentElement && el.parentElement.previousElementSibling);
+                Controller.textEntry({
+                    title: label ? label.textContent : "",
+                    value: el.value,
+                    max: Number(el.getAttribute("maxlength")) || 40,
+                    onCommit: (value) => {
+                        el.value = String(value || "");
+                        el.dispatchEvent(new Event("input", { bubbles: true }));
+                        el.dispatchEvent(new Event("change", { bubbles: true }));
+                        scene._applyFocusHighlight && scene._applyFocusHighlight();
+                    }
+                });
                 return;
             }
             if (el.tagName === "INPUT" || el.tagName === "SELECT") {
@@ -546,7 +561,6 @@
             this._startLevel = START_LEVEL_DEFAULT;
             this._populationMode = POPULATION_DEFAULT;
             this._magicalLevel = MAGICAL_DEFAULT;
-            this._wasdInput = { up: false, down: false, left: false, right: false };
             this.createUIDOM();
             WorldManageInputManager.activate(this);
         }
@@ -802,31 +816,13 @@
                 container.dataset.wmListenersBound = "1";
             }
 
-            this._wasdListener = (e) => {
-                if (this._busy) return;
-                const ae = document.activeElement;
-                if (ae && this._container && this._container.contains(ae) &&
-                    (ae.tagName === "INPUT" || ae.tagName === "SELECT")) return;
-                let hit = true;
-                switch (e.key.toLowerCase()) {
-                    case "w": this._wasdInput.up = true; break;
-                    case "s": this._wasdInput.down = true; break;
-                    case "a": this._wasdInput.left = true; break;
-                    case "d": this._wasdInput.right = true; break;
-                    default: hit = false;
-                }
-                if (hit) e.preventDefault();
-            };
-            window.addEventListener("keydown", this._wasdListener);
-
             this.refreshUIDOM();
         }
 
         removeUIDOM() {
             this._closeConfirm();
-            if (this._wasdListener) {
-                window.removeEventListener("keydown", this._wasdListener);
-                this._wasdListener = null;
+            if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) {
+                Controller.closeTextEntry();
             }
             if (this._container) {
                 const container = this._container;
@@ -1015,6 +1011,7 @@
                                 ${T('WorldManagerUI.createActivate')}
                             </button>
                             <div id="wm-status" class="wm-status"></div>
+                            <progress id="wm-progress" class="wm-progress" max="1" value="0" hidden></progress>
                         </div>
                     </div>
                 </div>
@@ -1112,6 +1109,10 @@
 
         renderInfoTab(world, active) {
             const isActive = world.name === active;
+            // The default world is always kept: it offers Regenerate in place
+            // of Delete.
+            const isDefault = !!(window.WorldManager.isDefaultWorld &&
+                window.WorldManager.isDefaultWorld(world.name));
             const created = world.createdAt
                 ? new Date(world.createdAt).toLocaleString(T('WorldManagerUI.enUs'))
                 : "?";
@@ -1169,10 +1170,15 @@
                         onclick="SceneManager._scene.onActivateWorld('${world.name.replace(/'/g, "\\'")}')">
                         ${T('WorldManagerUI.setActive')}
                     </div>
+                    ${isDefault ? `
+                    <div class="inspect-btn inspect-btn--secondary" role="button" tabindex="0"
+                        onclick="SceneManager._scene.onRegenerateWorld()">
+                        ${T('WorldManagerUI.regenerate')}
+                    </div>` : `
                     <div class="inspect-btn inspect-btn--secondary" role="button" tabindex="0"
                         onclick="SceneManager._scene.onDeleteWorld('${world.name.replace(/'/g, "\\'")}')">
                         ${T('WorldManagerUI.delete')}
-                    </div>
+                    </div>`}
                 </div>
             `;
         }
@@ -1226,6 +1232,27 @@
         setStatus(text) {
             const status = document.getElementById("wm-status");
             if (status) status.textContent = text;
+        }
+
+        // What world creation is preparing right now, and how far along it
+        // is. null clears the bar.
+        setInitProgress(p) {
+            const bar = document.getElementById("wm-progress");
+            if (!p) {
+                if (bar) bar.hidden = true;
+                return;
+            }
+            if (p.key) {
+                const path = `WorldManagerUI.initSteps.${p.key}`;
+                const label = T(path);
+                const step = label && label !== path ? label : T('WorldManagerUI.populatingWorld');
+                this.setStatus(T('WorldManagerUI.initStepProgress',
+                    { current: p.index + 1, total: p.total, step }));
+            }
+            if (bar) {
+                bar.hidden = false;
+                bar.value = p.total ? p.index / p.total : 1;
+            }
         }
 
         // ---- event handlers ------------------------------------------------
@@ -1305,6 +1332,60 @@
             });
         }
 
+        // The default world is never deleted, only put back to the snapshot
+        // shipped with the game. Without one (browser play) it is rebuilt
+        // from scratch the way a new world is.
+        onRegenerateWorld() {
+            if (this._busy || this._confirmOverlay) return;
+            const WM = window.WorldManager;
+            const name = WM.DEFAULT_WORLD_NAME;
+            this._showConfirm({
+                title: T('WorldManagerUI.regenerateWorld'),
+                message: T('WorldManagerUI.confirmRegenerate', { name }),
+                confirmLabel: T('WorldManagerUI.regenerate'),
+                cancelLabel: T('WorldManagerUI.cancel'),
+                onConfirm: () => {
+                    SoundManager.playOk();
+                    this._busy = true;
+                    this.setStatus(T('WorldManagerUI.regeneratingWorld'));
+                    setTimeout(async () => {
+                        try {
+                            const seeded = WM.regenerateDefaultWorld();
+                            if (!seeded) {
+                                if (WM.activeWorldName !== name) WM.setActiveWorld(name);
+                                if (typeof FactionDataManager !== "undefined" &&
+                                    FactionDataManager.instance && FactionDataManager.instance._readyPromise) {
+                                    await FactionDataManager.instance._readyPromise;
+                                }
+                                if (window.HistoryManager) {
+                                    window.HistoryManager.initializeWorldHistory({ years: null, seed: WM.worldInfo().seed });
+                                }
+                            }
+                            // Only the steps added since the snapshot are
+                            // owed, and none of them when there is nothing new.
+                            if (WM.activeWorldName === name) {
+                                this.setStatus(T('WorldManagerUI.populatingWorld'));
+                                await WM.initializeWorldAsync({}, p => this.setInitProgress(p));
+                                this.setInitProgress(null);
+                            }
+                            await DataManager.loadGlobalInfo();
+                            SoundManager.playSave();
+                            this._busy = false;
+                            this._selectedWorld = name;
+                            this.refreshUIDOM(true);
+                            this.setStatus(T('WorldManagerUI.worldRegenerated'));
+                        } catch (e) {
+                            console.error("[WorldManagerUI] World regeneration failed", e);
+                            SoundManager.playBuzzer();
+                            this._busy = false;
+                            this.setInitProgress(null);
+                            this.setStatus(T('WorldManagerUI.worldCreationFailed') + e.message);
+                        }
+                    }, 50);
+                }
+            });
+        }
+
         // In-DOM confirmation window (replaces the native confirm() dialog so it
         // matches the parchment / Omega Tower theme and never breaks the canvas).
         _showConfirm({ title, message, confirmLabel, cancelLabel, onConfirm }) {
@@ -1348,6 +1429,8 @@
 
             this._container.appendChild(overlay);
             this._confirmOverlay = overlay;
+            // The press that asked must not also answer.
+            if (window.UINav) window.UINav.swallowHeld();
             const confirmBtn = overlay.querySelector(".wm-modal-confirm");
             if (confirmBtn) setTimeout(() => confirmBtn.focus(), 30);
         }
@@ -1362,6 +1445,9 @@
             if (this._confirmOverlay) {
                 this._confirmOverlay.remove();
                 this._confirmOverlay = null;
+                // Nor may the press that answered (Enter also clicks the
+                // focused button) act again on the page underneath.
+                if (window.UINav) window.UINav.swallowHeld();
             }
             this._confirmCallback = null;
         }
@@ -1423,10 +1509,10 @@
                     // live and work, the shop rotas, the dungeon, the politics,
                     // the epidemics. Generated here so the world is whole the
                     // moment it exists rather than filling in as it is walked.
+                    // One line per step, repainted between steps.
                     this.setStatus(T('WorldManagerUI.populatingWorld'));
-                    // Let the status paint before the generators block the thread.
-                    await new Promise(resolve => setTimeout(resolve, 30));
-                    WM.initializeWorld();
+                    await WM.initializeWorldAsync({}, p => this.setInitProgress(p));
+                    this.setInitProgress(null);
                     await DataManager.loadGlobalInfo();
                     SoundManager.playSave();
                     this._busy = false;
@@ -1445,6 +1531,7 @@
                     console.error("[WorldManagerUI] World creation failed", e);
                     SoundManager.playBuzzer();
                     this._busy = false;
+                    this.setInitProgress(null);
                     this.setStatus(T('WorldManagerUI.worldCreationFailed') + e.message);
                 }
             }, 50);

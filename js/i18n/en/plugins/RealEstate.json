@@ -55,7 +55,21 @@
     "evicted": "Evicted from \"{name}\": rent unpaid.",
     "appName": "Real Estate Board",
     "manageShop": "Run the shop",
-    "manageFromDeeds": "The shop book opens from the Deeds page."
+    "manageFromDeeds": "The shop book opens from the Deeds page.",
+    "workingPlaces": "Working places",
+    "workingPlacesRegistry": "WORKING PLACES",
+    "businessDeed": "BUSINESS DEED",
+    "businessDeed2": "Business Deed",
+    "selectAWorkplace": "Select a working place to inspect its business.",
+    "businessesHeld": "Businesses Held",
+    "weeklyYield": "Weekly Yield",
+    "weeklyPayout": "Weekly Payout",
+    "sellHome": "SELL HOME ({price})",
+    "assignResidents": "RESIDENTS",
+    "residents": "Residents",
+    "residentHere": "{name}: lives here",
+    "residentElsewhere": "Move in {name} (now at {place})",
+    "residentsDone": "DONE"
   },
   "company": {
     "lemoncorp": {

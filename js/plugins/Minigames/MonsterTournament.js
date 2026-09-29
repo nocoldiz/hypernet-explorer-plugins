@@ -123,8 +123,81 @@
         const p = (data && data.params) || [];
         return (p[0] || 0) + (p[2] || 0) + (p[4] || 0) + (p[5] || 0);
     }
-    function statWinnerSide(leftData, rightData) {
-        return (statPower(leftData) + Math.random() * 80) >= (statPower(rightData) + Math.random() * 80) ? -1 : 1;
+    // `rng` is optional: a function answering [0, 1), Math.random when absent.
+    function statWinnerSide(leftData, rightData, rng) {
+        const r = typeof rng === 'function' ? rng : Math.random;
+        return (statPower(leftData) + r() * 80) >= (statPower(rightData) + r() * 80) ? -1 : 1;
+    }
+
+    // Pari-mutuel odds: the payout multiplier is the field's total power over
+    // the chosen monster's power, times a house edge. A flat 8:1 payout was
+    // strongly +EV because the player picks the champion after seeing every
+    // monster's stats; betting the favorite now pays little, so expected value
+    // stays below the stake. Never below near-even, capped at the old 8x.
+    const TOURNAMENT_HOUSE_EDGE = 0.85;
+    function pariMutuelMultiplier(monsters, chosenIndex) {
+        const chosenPower = Math.max(1, statPower(monsters[chosenIndex]));
+        let totalPower = 0;
+        for (const m of monsters) totalPower += Math.max(1, statPower(m));
+        const multiplier = (totalPower / chosenPower) * TOURNAMENT_HOUSE_EDGE;
+        return Math.max(1.1, Math.min(multiplier, 8));
+    }
+
+    // A bet with nobody in the stands: an NPC backing a fighter
+    // (NPCSimulationCore MINIGAME PLAY). Eight fighters out of the enemy
+    // database (or `opts.fighters`), a knock-out bracket settled by the same
+    // stat roll the arena falls back on when a real battle cannot be run, and
+    // the same pari-mutuel multiplier the player is paid by. The punter backs
+    // a fighter in proportion to its power (they read the card too). `rng` is
+    // a function answering [0, 1).
+    function simulateBet(stake, rng, opts) {
+        const rnd = typeof rng === 'function' ? rng : Math.random;
+        const o = opts || {};
+        let fighters = Array.isArray(o.fighters) ? o.fighters.slice(0, 8) : null;
+        if (!fighters) {
+            const pool = (typeof $dataEnemies !== 'undefined' && $dataEnemies ? $dataEnemies : [])
+                .filter(e => e && e.name && e.params);
+            if (pool.length < 2) return null;
+            fighters = [];
+            const used = new Set();
+            let guard = 0;
+            while (fighters.length < 8 && guard++ < 5000) {
+                const e = pool[Math.floor(rnd() * pool.length)];
+                if (!e || (used.has(e.id) && used.size < pool.length)) continue;
+                used.add(e.id);
+                fighters.push(e);
+            }
+        }
+        if (fighters.length < 2) return null;
+        let pick = Number.isInteger(o.pick) && fighters[o.pick] ? o.pick : -1;
+        if (pick < 0) {
+            const powers = fighters.map(f => Math.max(1, statPower(f)));
+            let roll = rnd() * powers.reduce((a, b) => a + b, 0);
+            pick = fighters.length - 1;
+            for (let i = 0; i < powers.length; i++) {
+                roll -= powers[i];
+                if (roll <= 0) { pick = i; break; }
+            }
+        }
+        let bracket = fighters.map((_, i) => i);
+        while (bracket.length > 1) {
+            const next = [];
+            for (let i = 0; i < bracket.length; i += 2) {
+                if (i + 1 >= bracket.length) { next.push(bracket[i]); continue; }
+                const a = bracket[i], b = bracket[i + 1];
+                next.push(statWinnerSide(fighters[a], fighters[b], rnd) === -1 ? a : b);
+            }
+            bracket = next;
+        }
+        const champion = bracket[0];
+        const bet = Math.max(0, Math.floor(Number(stake) || 0));
+        const won = champion === pick;
+        const multiplier = pariMutuelMultiplier(fighters, pick);
+        return {
+            won, stake: bet, multiplier, pick, championIndex: champion,
+            winnings: won ? Math.max(bet, Math.floor(bet * multiplier)) : 0,
+            fighter: fighters[pick].name, champion: fighters[champion].name
+        };
     }
     function fallbackBeats(winnerSide, startGauges, leftData, rightData) {
         const loser = -winnerSide;
@@ -1562,12 +1635,7 @@
                 // champion after seeing every monster's stats; betting the
                 // favorite now pays little, so expected value stays below the stake.
                 const stake = this.currentBets[this.playerChoice] || 0;
-                const chosenPower = Math.max(1, statPower(this.selectedMonsters[this.playerChoice]));
-                let totalPower = 0;
-                for (const m of this.selectedMonsters) totalPower += Math.max(1, statPower(m));
-                const HOUSE_EDGE = 0.85;
-                let multiplier = (totalPower / chosenPower) * HOUSE_EDGE;
-                multiplier = Math.max(1.1, Math.min(multiplier, 8)); // never below near-even, cap at old 8x
+                const multiplier = pariMutuelMultiplier(this.selectedMonsters, this.playerChoice);
                 const winnings = Math.max(stake, Math.floor(stake * multiplier));
                 $gameParty.gainItem($dataItems[bettingItemId], winnings);
                 this.setTitle(T('MonsterTournament.champion', { name: this.selectedMonsters[this.playerChoice].name }));
@@ -1646,6 +1714,7 @@
     }
 
     Scene_MonsterTournament.runDuel = runDuel;
+    window.MonsterTournament = { simulateBet, pariMutuelMultiplier, statPower };
     // Export the scene class.
     window.Scene_MonsterTournament = Scene_MonsterTournament;
 })();

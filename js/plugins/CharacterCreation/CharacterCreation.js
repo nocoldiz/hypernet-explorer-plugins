@@ -106,6 +106,9 @@
     startArtifactHeirOrigin,
     startCrashLandedOrigin,
     startWarlordOrigin,
+    goblinHordeArmyCount,
+    startGoblinOrigin,
+    startGoblinHordeOrigin,
     finishFactionOrigin,
     startFactionPickerOrigin,
   } = window.CCOrigins;
@@ -759,11 +762,16 @@
     // body's grafted parts come from. A primary that changed opens the sculptor
     // on a monster of the new kind; a changed second half only adds or swaps
     // the limbs it brought, leaving anything sculpted by hand alone.
+    // Only a member portrayed by a model keeps one: a creature always does, a
+    // person only once the 3D Model portrait was picked for them. A person on
+    // their bust still has the grafts worked out from the same splice, off a
+    // model that is never stored, so a second half never hands them a model.
     const CC3D = window.CC3DModel;
     if (CC3D && CC3D.applyArchetypesToConfig && CC3D.setConfig) {
-      const cfg = CC3D.applyArchetypesToConfig(CC3D.getConfig(actor.actorId()), canonical);
+      const existing = CC3D.getConfig(actor.actorId());
+      const cfg = CC3D.applyArchetypesToConfig(existing, canonical);
       if (cfg) {
-        CC3D.setConfig(actor.actorId(), cfg);
+        if (existing || keepsModelPortrait(actor)) CC3D.setConfig(actor.actorId(), cfg);
         // What the model wears IS what the body is made of, so the graft record
         // is rewritten from the model every time either of them moves.
         if (CC3D.graftedParts) {
@@ -825,15 +833,69 @@
     if (!primary) return false;
     if (key) return applyArchetypesToActor(actor, [primary, key]);
     if (!applyArchetypesToActor(actor, [primary])) return false;
-    // A person back on a plain Humanoid body is drawn by their bust again: the
-    // model and the grafts the second half implied go with it, exactly as they
-    // do when a member is switched back from a creature.
+    // A person back on a plain Humanoid body carries no grafts. How they are
+    // drawn is not touched: the portrait is the choice made on the Bio tab,
+    // and a second half never made it for them in the first place.
     if (!actor._isCreatureActor && primary === "Humanoid") { // i18n-ignore: Archetypes.json key
       actor._ccGraftedParts = null;
       actor._ccReplacedParts = null;
+    }
+    return true;
+  }
+
+  // ── The portrait choice: 2D bust or 3D model ─────────────────────────────
+  // Every member, person or creature, is drawn by one of the two, picked on
+  // the Bio tab. A creature opens on its model and a person on the bust their
+  // sprite carries; either can be switched. "sprite" is the monster style a
+  // species-built creature or a recruit wears, which is a model too.
+  function keepsModelPortrait(actor) {
+    if (!actor) return false;
+    if (Scene_CharacterCreation.isCreatureActor(actor)) return true;
+    const mode = actor.portraitMode ? actor.portraitMode() : 0;
+    return mode === "model" || mode === "sprite";
+  }
+
+  function portraitIsModel(actor) {
+    const mode = actor && actor.portraitMode ? actor.portraitMode() : 0;
+    if (mode === "model" || mode === "sprite") return true;
+    if (mode === "bust") return false;
+    // Unset (a member made before the choice existed): the kind decides.
+    return Scene_CharacterCreation.isCreatureActor(actor);
+  }
+
+  // A person asked to be drawn as a model gets one built off the body they
+  // already have (plain Humanoid, or Humanoid spliced with a second half),
+  // the same way a creature's is built off its archetypes.
+  function ensurePortraitModel(actor) {
+    if (!actor) return false;
+    const CC3D = window.CC3DModel;
+    if (CC3D && CC3D.getConfig && CC3D.getConfig(actor.actorId())) return true;
+    const keys = actorArchetypeKeys(actor);
+    return applyArchetypesToActor(actor, keys.length ? keys : ["Humanoid"]); // i18n-ignore: Archetypes.json key
+  }
+
+  function setPortraitStyle(actor, style) {
+    if (!actor || !actor.setPortraitMode) return false;
+    const creature = Scene_CharacterCreation.isCreatureActor(actor);
+    if (style === "model") {
       const CC3D = window.CC3DModel;
-      if (CC3D && CC3D.setConfig) CC3D.setConfig(actor.actorId(), null);
-      if (actor.setPortraitMode) actor.setPortraitMode("bust");
+      if (!(CC3D && CC3D.isAvailable && CC3D.isAvailable())) return false;
+      actor._ccCreatureBust = false;
+      // A species-built creature is already drawn as its model.
+      if (actor.portraitMode() !== "sprite") actor.setPortraitMode("model");
+      return creature ? ensureCreatureModel(actor) : ensurePortraitModel(actor);
+    }
+    actor.setPortraitMode("bust");
+    // The status sheet draws a creature by its model unless it was asked for
+    // the bust here, so the pick is written on the creature itself.
+    actor._ccCreatureBust = creature;
+    // The bust is the one the sprite carries; a stranger's is rolled only for
+    // a sheet that has none, and never over one already chosen.
+    if (!(actor.vnBust && actor.vnBust())) {
+      const paired = window.selectBustForActorSprite && window.selectBustForActorSprite(actor.actorId());
+      if (!paired && !Scene_CharacterCreation.isCreatureActor(actor) && window.selectRandomBustForActor) {
+        window.selectRandomBustForActor(actor.actorId());
+      }
     }
     return true;
   }
@@ -1736,6 +1798,10 @@
           getLocalizedChoice(T('CharCreate.choice.originArtifact.name'), "origin_artifact", T('CharCreate.choice.originArtifact.desc')),
           getLocalizedChoice(T('CharCreate.choice.originCrash.name'), "origin_crash", T('CharCreate.choice.originCrash.desc')),
           getLocalizedChoice(T('CharCreate.choice.originWarlord.name'), "origin_warlord", T('CharCreate.choice.originWarlord.desc')),
+          getLocalizedChoice(T('CharCreate.choice.originGoblin.name'), "origin_goblin", T('CharCreate.choice.originGoblin.desc')),
+          // The troop count is read off the same plan the grant hires from.
+          getLocalizedChoice(T('CharCreate.choice.originGoblinHorde.name'), "origin_goblin_horde",
+            T('CharCreate.choice.originGoblinHorde.desc', { count: goblinHordeArmyCount() })),
           getLocalizedChoice(T('CharCreate.choice.originFactionLeader.name'), "origin_faction_leader", T('CharCreate.choice.originFactionLeader.desc')),
           getLocalizedChoice(T('CharCreate.choice.originDeserter.name'), "origin_deserter", T('CharCreate.choice.originDeserter.desc')),
           getLocalizedChoice(T('CharCreate.choice.originAugmented.name'), "origin_augmented", T('CharCreate.choice.originAugmented.desc')),
@@ -2201,20 +2267,11 @@
       return !!this._isSimpleMode;
     }
 
+    // The device in hand is Input.lastInputDevice()'s answer (MouseControls.js),
+    // never a poll of the pads of its own.
     static isControllerConnected() {
-      if (window.AnalogStickInput && typeof window.AnalogStickInput.hasPad === "function") {
-        if (window.AnalogStickInput.hasPad()) return true;
-      }
-      if (typeof navigator !== "undefined" && navigator.getGamepads) {
-        const pads = navigator.getGamepads();
-        for (let i = 0; i < pads.length; i++) {
-          if (pads[i] && pads[i].connected) return true;
-        }
-      }
-      if (typeof Input !== "undefined" && Input.lastInputDevice && Input.lastInputDevice() === "pad") {
-        return true;
-      }
-      return false;
+      return typeof Input !== "undefined" && typeof Input.lastInputDevice === "function"
+        ? Input.lastInputDevice() === "pad" : false;
     }
 
     // True when the CLASS step lists the whole sentient roster inline, one
@@ -2656,12 +2713,12 @@
       if (!actor) return false;
       if (actor._isCreatureActor) return true;
       // A person's body is Humanoid, and every sprite writes that onto the
-      // member, so only an archetype other than Humanoid (a spliced second
-      // half) makes the member a body drawn as a model. Counting any list at
-      // all left a person who once picked a second half, then put it back to
-      // None, drawn as a 3D model for good.
-      if ((actor._creatureArchetypes || []).some((k) =>
-        k && String(k).toLowerCase() !== "humanoid")) return true; // i18n-ignore: Archetypes.json key
+      // member, so only a PRIMARY other than Humanoid makes the member a
+      // creature. A person spliced with a second half is still a person: the
+      // grafts change their body, never how they are drawn (the Bio tab's
+      // portrait choice says that).
+      const primaryArch = (actor._creatureArchetypes || [])[0];
+      if (primaryArch && String(primaryArch).toLowerCase() !== "humanoid") return true; // i18n-ignore: Archetypes.json key
       const CC = window.CreatureClasses;
       if (CC && CC.isCreatureClass && actor._classId && CC.isCreatureClass(actor._classId)) return true;
       const NC = window.NPCCreature;
@@ -2990,10 +3047,17 @@
       // The scenario page is the party's, not any one member's: the rail of
       // member tabs would offer pages that cannot be opened from here, so the
       // scenario tab stands alone.
+      // L2 / R2 step the party members themselves (window.UINav.partyDir), so
+      // their two faces bracket the member tabs once there is more than one.
+      const memberHints = padConnected && !isScenarioMode && partyMembers.length > 1;
+      const memberHintL = memberHints ? '<span class="cc-pad-hint">L2</span>' : '';
+      const memberHintR = memberHints ? '<span class="cc-pad-hint">R2</span>' : '';
       const leftTabsHtml = isScenarioMode ? '' : `
             ${leftHintL}
             ${settingsTabHtml}
+            ${memberHintL}
             ${partyTabsHtml}
+            ${memberHintR}
             ${addBtnHtml}
             ${petTabHtml}
             ${vehicleTabHtml}
@@ -3003,14 +3067,9 @@
       // in the action bar (see _actionBarModeToggleHtml), which leaves the whole
       // right half of this bar to the step tabs.
 
-      const hasStepTabs = !isScenarioMode && !isSettingsActive && !isPetActive && !isVehicleActive && !!stepTabsHtml.trim();
-      const rightHintL = (padConnected && hasStepTabs) ? '<span class="cc-pad-hint">L2</span>' : '';
-      const rightHintR = (padConnected && hasStepTabs) ? '<span class="cc-pad-hint">R2</span>' : '';
-      const stepTabsFullHtml = hasStepTabs ? `
-        ${rightHintL}
-        ${stepTabsHtml}
-        ${rightHintR}
-      ` : stepTabsHtml;
+      // The step tabs are walked by the ring like any other control; the
+      // triggers belong to the party now, so they wear no faces of their own.
+      const stepTabsFullHtml = stepTabsHtml;
 
       return `
         <div class="cc-dossier-top-bar">
@@ -3222,9 +3281,10 @@
 
     _getActorBust(actor) {
       if (!actor) return null;
-      // A monster has no bust: it is drawn as the model it was sculpted from,
-      // and a 2D portrait borrowed off a sprite sheet would be somebody else.
-      if (this._isCreatureActorFor(actor)) return null;
+      // A member drawn as a 3D model shows no bust, person or creature alike.
+      // One drawn as a bust shows theirs, a creature included: the portrait
+      // is the Bio tab's choice, not the kind's.
+      if (portraitIsModel(actor)) return null;
       if (actor.vnBust && actor.vnBust()) return actor.vnBust();
       const spriteName = actor.characterName();
       const spriteIndex = actor.characterIndex();
@@ -3687,19 +3747,20 @@
       }
     }
 
-    // How a character is portrayed is not a choice any more: a person wears a
-    // hand-drawn bust, a creature wears its sculpted 3D model. So this opens
-    // the one editor that belongs to what the member already is.
+    // How a character is portrayed is the Bio tab's 2D Bust / 3D Model choice,
+    // so this opens the one editor that belongs to the portrait they wear: the
+    // sculptor for a model, the sprite gallery (which carries the bust) for a
+    // bust.
     onOpenProfileVisualEditor() {
       if (this._refusePresetEdit()) return;
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return;
-      const memberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-      const isCreature = !!(actor._isCreatureActor || $gameSwitches.value(77 + memberIndex));
 
-      if (isCreature && window.Scene_CC3DModel && window.CC3DModel &&
+      if (portraitIsModel(actor) && window.Scene_CC3DModel && window.CC3DModel &&
           window.CC3DModel.isAvailable && window.CC3DModel.isAvailable()) {
-        const archetypes = actor._creatureArchetypes || [DEFAULT_CREATURE_ARCHETYPE];
+        const keys = actorArchetypeKeys(actor);
+        const archetypes = keys.length ? keys
+          : [Scene_CharacterCreation.isCreatureActor(actor) ? DEFAULT_CREATURE_ARCHETYPE : "Humanoid"]; // i18n-ignore: Archetypes.json key
         window.Scene_CC3DModel.setup(actor.actorId(), Scene_CharacterCreation, {
           creature: true,
           initArchetypes: archetypes,
@@ -4048,60 +4109,38 @@
       this.onTabClick(target.step, target.id);
     }
 
+    // L2 / R2 (, / . on a keyboard): the previous / next party member, the
+    // same step every menu that shows a member takes (window.UINav.partyDir).
     readTriggerDir() {
-      let ltTriggered = false;
-      let rtTriggered = false;
-
-      const stick = window.AnalogStickInput;
-      if (stick && typeof stick.isButtonTriggered === "function") {
-        if (stick.isButtonTriggered(6)) ltTriggered = true;
-        if (stick.isButtonTriggered(7)) rtTriggered = true;
-      }
-
-      if (!ltTriggered && !rtTriggered && typeof navigator !== "undefined" && navigator.getGamepads) {
-        const pads = navigator.getGamepads();
-        for (let i = 0; i < pads.length; i++) {
-          const pad = pads[i];
-          if (!pad || !pad.connected || !pad.buttons) continue;
-          const b6 = pad.buttons[6];
-          const b7 = pad.buttons[7];
-          const ltDown = !!(b6 && (b6.pressed || b6.value > 0.4));
-          const rtDown = !!(b7 && (b7.pressed || b7.value > 0.4));
-          if (ltDown && !this._rawLtPrev) ltTriggered = true;
-          if (rtDown && !this._rawRtPrev) rtTriggered = true;
-          this._rawLtPrev = ltDown;
-          this._rawRtPrev = rtDown;
-          break;
-        }
-      }
-
-      if (ltTriggered && !rtTriggered) return -1;
-      if (rtTriggered && !ltTriggered) return 1;
-      return 0;
+      const nav = window.UINav;
+      return nav && typeof nav.partyDir === "function" ? nav.partyDir() : 0;
     }
 
+    // Steps the member tabs of the top rail, and only those: from the
+    // settings, pet or vehicle page it lands on the first (or last) member.
+    cycleMember(direction) {
+      const size = $gameParty ? $gameParty.size() : 0;
+      if (size < 1) return false;
+      const entries = this._topRailEntries();
+      const onMember = (entries[this._topRailIndex(entries)] || {}).kind === "member" &&
+        Scene_CharacterCreation._railFocus !== "add";
+      const cur = Scene_CharacterCreation._currentPartyMemberIndex || 0;
+      let next;
+      if (!onMember) next = direction > 0 ? 0 : size - 1;
+      else next = (cur + direction + size) % size;
+      if (onMember && next === cur) return true;
+      this._openTopRailEntry({ kind: "member", index: next });
+      return true;
+    }
+
+    // Select (Back) turns Simple / Detailed. Read once, off the stick
+    // plugin's own edge, with RMMZ's "select" action as the keyboard's way in.
     isSelectTriggered() {
       const stick = window.AnalogStickInput;
-      if (stick && typeof stick.isButtonTriggered === "function") {
-        if (stick.isButtonTriggered(8)) return true;
-      }
-      if (typeof navigator !== "undefined" && navigator.getGamepads) {
-        const pads = navigator.getGamepads();
-        for (let i = 0; i < pads.length; i++) {
-          const pad = pads[i];
-          if (!pad || !pad.connected || !pad.buttons) continue;
-          const b8 = pad.buttons[8];
-          const selectDown = !!(b8 && (b8.pressed || b8.value > 0.5));
-          const triggered = selectDown && !this._rawSelectPrev;
-          this._rawSelectPrev = selectDown;
-          if (triggered) return true;
-          break;
-        }
-      }
-      if (typeof Input !== "undefined" && Input.isTriggered && Input.isTriggered("select")) {
+      if (stick && typeof stick.isButtonTriggered === "function" && stick.isButtonTriggered(8)) {
         return true;
       }
-      return false;
+      return typeof Input !== "undefined" && !!Input.isTriggered && Input.isTriggered("select");
     }
 
     // Read before any other input on every page of the wizard, so the rail is
@@ -4120,10 +4159,10 @@
         }
       }
 
-      // L2 / R2: cycle right step tabs
+      // L2 / R2: the previous / next party member
       const triggerDir = this.readTriggerDir();
       if (triggerDir) {
-        this.cycleRightRail(triggerDir);
+        this.cycleMember(triggerDir);
         return true;
       }
 
@@ -4261,14 +4300,32 @@
       this._repaintArchetypeStep();
     }
 
+    // The Bio tab's 2D Bust / 3D Model chips. Either answer is open to a
+    // person and to a creature alike.
+    onSetPortraitStyle(style) {
+      if (this._refusePresetEdit()) return;
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (!actor) return;
+      if (!setPortraitStyle(actor, style === "model" ? "model" : "bust")) {
+        SoundManager.playBuzzer();
+        return;
+      }
+      SoundManager.playCursor();
+      this._lastStep = -1;
+      this._lastIndex = -1;
+      this.refreshUIOverlayDOM();
+    }
+
     onOpenCreature3DStudio() {
       if (this._refusePresetEdit()) return;
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return;
       if (window.Scene_CC3DModel && window.CC3DModel && window.CC3DModel.isAvailable && window.CC3DModel.isAvailable()) {
-        // Sculpting one is what makes the model the creature's portrait.
-        if (actor.setPortraitMode) actor.setPortraitMode("model");
-        const archetypes = (actor && actor._creatureArchetypes) || [actor._currentArchetype || DEFAULT_CREATURE_ARCHETYPE];
+        // Sculpting one is what makes the model the member's portrait.
+        if (actor.setPortraitMode && actor.portraitMode() !== "sprite") actor.setPortraitMode("model");
+        const keys = actorArchetypeKeys(actor);
+        const archetypes = keys.length ? keys
+          : [Scene_CharacterCreation.isCreatureActor(actor) ? DEFAULT_CREATURE_ARCHETYPE : "Humanoid"]; // i18n-ignore: Archetypes.json key
         window.Scene_CC3DModel.setup(actor.actorId(), Scene_CharacterCreation, {
           creature: true,
           initArchetypes: archetypes,
@@ -5049,6 +5106,10 @@
         startCrashLandedOrigin();
       } else if (symbol === "origin_warlord") {
         startWarlordOrigin();
+      } else if (symbol === "origin_goblin") {
+        startGoblinOrigin();
+      } else if (symbol === "origin_goblin_horde") {
+        startGoblinHordeOrigin();
       } else if (symbol === "origin_faction_leader") {
         // Pauses the wizard and opens the faction picker; finishFactionOrigin
         // (called from its confirm callback) does the granting, and the
@@ -5682,7 +5743,9 @@
         // the one case where there is always a body to show: the same default
         // the identity card names is built instead, so a creature is never
         // looked at through an empty window.
-        cfg = M3D.configFromArchetypes(keys.length ? keys : [CREATURE_DEFAULT_ARCHETYPE]);
+        const fallbackKey = Scene_CharacterCreation.isCreatureActor(actor)
+          ? CREATURE_DEFAULT_ARCHETYPE : "Humanoid"; // i18n-ignore: Archetypes.json key
+        cfg = M3D.configFromArchetypes(keys.length ? keys : [fallbackKey]);
       }
       if (!wrap || !actor || !cfg) { this._destroyCC3DPortrait(); return; }
       const info = { kind: "custom", cfg: cfg, actorId: actor.actorId() };
@@ -6310,6 +6373,8 @@
     actorArchetypeKeys,
     applyArchetypeToActor,
     applySecondaryArchetypeToActor,
+    portraitIsModel,
+    setPortraitStyle,
     personalityCatalog,
     presetSkins,
     presetSkinLabel,

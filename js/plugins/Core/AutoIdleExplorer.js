@@ -5762,56 +5762,34 @@
             };
         },
 
+        // One answer with the Empathize panel and the life simulation:
+        // window.NPCRomance (NPCSociety.js, ROMANCE IDENTITY).
         getOrientation(name, profile) {
-            const Shared = window.NPCShared;
             const defaultOrient = { sexual: { key: 'bisexual' }, romantic: { key: 'biromantic' } };
             if (!name) return defaultOrient;
-            const ov = profile?._orientOverride;
-            if (ov?.sexualKey || ov?.romanticKey) {
-                return {
-                    sexual: { key: ov.sexualKey || 'bisexual' },
-                    romantic: { key: ov.romanticKey || 'biromantic' }
-                };
-            }
-            if (!Shared) return defaultOrient;
-            const hashRom = (Shared.nameHash(name + '_romorient') ^ Shared.worldSeed()) % 100;
-            const hashSex = (Shared.nameHash(name + '_sexorient') ^ Shared.worldSeed()) % 100;
-            let romKey = 'heteroromantic';
-            if (hashRom < 60) romKey = 'heteroromantic';
-            else if (hashRom < 72) romKey = 'biromantic';
-            else if (hashRom < 82) romKey = 'homoromantic';
-            else if (hashRom < 90) romKey = 'panromantic';
-            else if (hashRom < 94) romKey = 'demiromantic';
-            else if (hashRom < 97) romKey = 'aromantic';
-            else romKey = 'sapioromantic';
-
-            let sexKey = 'heterosexual';
-            if (hashSex < 60) sexKey = 'heterosexual';
-            else if (hashSex < 72) sexKey = 'bisexual';
-            else if (hashSex < 82) sexKey = 'homosexual';
-            else if (hashSex < 90) sexKey = 'pansexual';
-            else if (hashSex < 94) sexKey = 'demisexual';
-            else if (hashSex < 97) sexKey = 'asexual';
-            else sexKey = 'heterosexual';
-
-            return { sexual: { key: sexKey }, romantic: { key: romKey } };
+            const R = window.NPCRomance;
+            if (!R) return defaultOrient;
+            const o = R.orientation(name, profile);
+            return {
+                sexual: o.sexual || defaultOrient.sexual,
+                romantic: o.romantic || defaultOrient.romantic,
+            };
         },
 
         getRelationshipStanding(name, profile) {
             let partnered = false;
-            let styleKey = 'single';
             if (window.NPCLifeSim) {
                 try {
                     window.NPCLifeSim.ensureLifeRecord?.(name, profile?._homeGroupName);
                     const rec = window.NPCLifeSim.getRecord?.(name);
                     partnered = !!(rec && rec.partner);
-                    if (rec && rec.maritalStatus) styleKey = rec.maritalStatus;
                 } catch (_) {}
             }
-            if (profile?._relStyleOverride) styleKey = profile._relStyleOverride;
-            const exclusiveStyles = new Set(['monogamous', 'civil-union', 'arranged-marriage', 'long-distance', 'companionate', 'married']);
+            const style = window.NPCRomance?.styleFor?.(name, partnered, profile) || null;
+            const styleKey = style?.key || profile?._relStyleOverride || (partnered ? 'monogamous' : 'single');
+            const exclusiveStyles = new Set(['monogamous', 'civil-union', 'arranged-marriage', 'long-distance', 'companionate']);
             const isTaken = partnered && exclusiveStyles.has(styleKey);
-            const isAromantic = styleKey === 'aromantic-solo';
+            const isAromantic = styleKey === 'aromantic-solo' || styleKey === 'single-content';
             return { partnered, styleKey, isTaken, isAromantic };
         },
 
@@ -5821,6 +5799,9 @@
             if (!s || !t) return false;
             if (s.name === t.name) return false;
             if (s.isNonSentient || t.isNonSentient) return false;
+            // Nobody courts a child, and a child courts nobody (NPCLifeSim FAMILY).
+            const Life = window.NPCLifeSim;
+            if (Life?.isMinor?.(s.name) || Life?.isMinor?.(t.name)) return false;
 
             // Party members toward other party members (except toward current party leader)
             if (s.isActor && t.isActor) {
@@ -7089,6 +7070,19 @@
         // beside you reads as a stranger. Then company, then something to look
         // at, then a walk, then standing there with a thought.
         pickActivity(f, s) {
+            this.pickActivityOnly(f, s);
+            if (window.SimLog && window.SimLog.active()) {
+                const actor = this.actorOf(f);
+                const act = s.act || "idle";
+                const key = act === "need" && s.need
+                    ? "ParchmentToast.simLog.party.need." + s.need
+                    : "ParchmentToast.simLog.party." + act;
+                window.SimLog.decide("party", actor ? actor.actorId() : 0, key,
+                    { name: actor ? actor.name() : "" });
+            }
+        },
+
+        pickActivityOnly(f, s) {
             if (this.beginNeed(f, s)) return;
             // Every errand is taken at its own pace, and now and then somebody
             // takes it at a run, if they have the breath for one.

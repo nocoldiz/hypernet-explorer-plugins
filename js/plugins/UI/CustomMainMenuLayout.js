@@ -174,6 +174,9 @@
         // (WASD is bound to the four directions everywhere), so every step north
         // raised the machine: it lives on P, out of the way of movement.
         { symbol: "hypernet",    key: "P", code: 80 },
+        // Who governs the ground under the party. L: no plugin maps it on the
+        // field (the piano's L is its own scene's), and it is out of WASD.
+        { symbol: "politics",    key: "L", code: 76 },
         // Digits stay the favourites hotbar on the map (ItemSystem/
         // ItemSystemInventory.js already maps 1-9 to it, Skyrim-style), so these
         // one only listens on the symbol that plugin defines and is reachable
@@ -221,32 +224,32 @@
         vector_gun: 115,
         sleep_menu: 205,
         save: 121,
-        search: 79,
+        search: 247,
         cooking: 219,
-        thinker: 290,
+        thinker: 108,
         alchemistry: 180,
         build: 210,
         quest_log: 231,
         diary: 189,
-        training: 193,
+        training: 101,
         research: 225,
         bestiary: 291,
         cards: 416,
         world_map: 190,
-        factions: 132,
+        factions: 124,
+        politics: 145,
         biologics: 84,
         augments: 143,
         help: 186,
         options: 83,
         tools: 216,
-        locked: 281,
         dynamics: 196,
         sandbox: 245,
-        multiplayer: 246,
+        multiplayer: 79,
         hypernet: 306,
-        radio: 80,
+        radio: 146,
         gameEnd: 214,
-        assets: 313,
+        assets: 191,
         deeds: 192,
         pets: 298,
         vehicles: 195,
@@ -302,6 +305,7 @@
         { symbol: "help",            labelKey: "MainMenu.cmd.archive" },
         { symbol: "factions",        labelKey: "MainMenu.cmd.factions" },
         { symbol: "research",        labelKey: "MainMenu.cmd.research" },
+        { symbol: "politics",        labelKey: "MainMenu.cmd.politics" },
         { symbol: "assets",          labelKey: "MainMenu.cmd.assets" },
         { symbol: "pets",            labelKey: "MainMenu.cmd.pets" },
         { symbol: "training",        labelKey: "MainMenu.cmd.training" },
@@ -332,7 +336,7 @@
         dynamicsTurnOrder: 220,
         dynamicsWiki: 234,
         dynamicsHistory: 230,
-        deedsRent: 313
+        deedsRent: 192
     };
 
     // One cell of the sheet, as an inline background. Every icon in the menu
@@ -360,35 +364,8 @@
 
 
 
-    // =========================================================================
-    // Input tracking fallback for RPG Maker
-    // =========================================================================
-    let lastInputType = 'keyboard';
-    const _Input_onKeyDown = Input._onKeyDown;
-    Input._onKeyDown = function (event) {
-        _Input_onKeyDown.call(this, event);
-        lastInputType = 'keyboard';
-    };
-
-    const _TouchInput_onTrigger = TouchInput._onTrigger;
-    TouchInput._onTrigger = function (x, y) {
-        _TouchInput_onTrigger.call(this, x, y);
-        lastInputType = 'mouse';
-    };
-
-    const _Input_pollGamepads = Input._pollGamepads;
-    Input._pollGamepads = function () {
-        _Input_pollGamepads.call(this);
-        const gamepads = navigator.getGamepads();
-        if (gamepads) {
-            for (const gamepad of gamepads) {
-                if (gamepad && gamepad.buttons.some(b => b.pressed)) {
-                    lastInputType = 'gamepad';
-                    break;
-                }
-            }
-        }
-    };
+    // Which device is in hand is Input.lastInputDevice()'s answer
+    // (MouseControls.js); this menu keeps no tracker of its own.
 
     // Claim the keys declared in HOTKEYS. Entries without a `code` are owned by
     // another plugin (see the table) and are only listened to, never remapped.
@@ -571,19 +548,25 @@
             const focused = document.activeElement;
             if (focused && (focused.tagName === 'INPUT' || focused.tagName === 'TEXTAREA')) return;
 
-            // Walking the party comes before the back-out check because TAB is
-            // shared between the two: while the roster cards are on the page it
-            // steps to the next member (so the needs panel reports each of them
-            // in turn), and only the cancel key leaves the menu. The shoulder
-            // buttons do the same on a pad, backwards and forwards.
+            // L2 / R2 (, and . on a keyboard) walk the party while the roster
+            // cards are on the page, so the needs panel reports each member in
+            // turn; L1 / R1 step whatever tab strip the page is showing.
+            const nav = window.UINav;
             const menuScene = SceneManager._scene;
-            if (menuScene && menuScene.canCycleSelectedActor && menuScene.canCycleSelectedActor()) {
-                if (Input.isTriggered('pageup')) {
-                    menuScene.cycleSelectedActor(-1);
+            if (nav && menuScene && menuScene.canCycleSelectedActor && menuScene.canCycleSelectedActor()) {
+                const partyStep = nav.partyDir();
+                if (partyStep) {
+                    menuScene.cycleSelectedActor(partyStep);
+                    nav.consume('partyPrev');
+                    nav.consume('partyNext');
                     return;
                 }
-                if (Input.isTriggered('pagedown') || Input.isTriggered('tab')) {
-                    menuScene.cycleSelectedActor(1);
+            }
+            if (nav && (Input.isTriggered('pageup') || Input.isTriggered('pagedown'))) {
+                const dir = Input.isTriggered('pageup') ? -1 : 1;
+                if (nav.stepTabs((this.scope && this.scope.isConnected) ? this.scope : (this.container || document), dir)) {
+                    nav.consume('pageup');
+                    nav.consume('pagedown');
                     return;
                 }
             }
@@ -670,6 +653,8 @@
                 SoundManager.playOk();
                 el.click();
             }
+            // A greyed Build tile still answers its key, with the reason.
+            else if (el && symbol === "build") window.FurnitureSystem?.warnCannotBuild?.();
         }
 
         static updateFocus(fromPointer = false) {
@@ -4005,11 +3990,11 @@
                         atlasHTML,
                         this.generateUICommandItemHTML(T('MainMenu.cmd.factions'), "factions"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.research'), "research"),
-                        // The pocket that is not there yet. It squares the archive
-                        // group off against the grid's columns so the rows below it
-                        // are not shifted out of line, and it is inert: the cursor
-                        // reaches it, nothing opens.
-                        this.generateUILockedCommandItemHTML(),
+                        // Who governs the place the party stands in: the town
+                        // hall, the nation and the bloc above it (NPC/
+                        // ONUAssemblyUI.js, Scene_Politics). It also squares the
+                        // archive group off against the grid's columns.
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.politics'), "politics"),
                     ],
                     // Party: the people and creatures travelling with you
                     [
@@ -4212,18 +4197,6 @@
                 <span>${label}</span>
                 ${pointsAlert}
                 ${hotkey}
-            </div>
-        `;
-    };
-
-    // A pocket the party has not found. It is focusable so the pad cursor walks
-    // the grid without a hole in it (and so right off it still reaches the tools
-    // on the facing page), and it is disabled so picking it does nothing.
-    Scene_Menu.prototype.generateUILockedCommandItemHTML = function () {
-        return `
-            <div class="command-item focusable is-disabled" data-symbol="locked">
-                <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.locked)}"></span>
-                <span>${T('MainMenu.cmd.locked')}</span>
             </div>
         `;
     };
@@ -4663,6 +4636,13 @@
                         console.warn("Scene_FactionStatus is not defined!");
                     }
                     break;
+                case "politics":
+                    if (window.Scene_Politics) {
+                        SceneManager.push(window.Scene_Politics);
+                    } else {
+                        console.warn("Scene_Politics is not defined!");
+                    }
+                    break;
                 case "biologics":
                     if (typeof Scene_BiologicSimulation !== "undefined") {
                         SceneManager.push(Scene_BiologicSimulation);
@@ -4922,6 +4902,7 @@
         training:   () => pushMapScene(typeof Scene_SkillEncyclopedia !== "undefined" && Scene_SkillEncyclopedia),
         bestiary:   () => pushMapScene(typeof Scene_CDCollection !== "undefined" && Scene_CDCollection),
         factions:   () => pushMapScene(typeof Scene_FactionStatus !== "undefined" && Scene_FactionStatus),
+        politics:   () => pushMapScene(window.Scene_Politics),
         biologics:  () => pushMapScene(typeof Scene_BiologicSimulation !== "undefined" && Scene_BiologicSimulation),
         augments:   () => pushMapScene(typeof Scene_PartyAugments !== "undefined" && Scene_PartyAugments),
         assets:     () => pushMapScene(typeof Scene_AssetsMenu !== "undefined" && Scene_AssetsMenu),
@@ -4945,6 +4926,8 @@
             if (canBuild) {
                 SoundManager.playOk();
                 PluginManager.callCommand(scene, 'FurnitureSystem', 'openBuilder', {});
+            } else {
+                window.FurnitureSystem?.warnCannotBuild?.();
             }
         },
         // Bethesda's wait key: passes the clock, and may also lie down where

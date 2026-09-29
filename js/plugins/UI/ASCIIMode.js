@@ -2282,7 +2282,7 @@
         if (DataManager.isWeapon(item)) {
             const scaling = this.getWeaponScaling(item);
             if (scaling) {
-                this.drawKeyValue("Scale", scaling, x, currentY);
+                this.drawKeyValue(T('Shop.scale'), scaling, x, currentY);
                 currentY += lineHeight;
             }
             this.drawParams(item, x, currentY);
@@ -2337,30 +2337,11 @@
         }
     };
 
+    // "DEX", "STR + DEX": the stats the weapon scales on, named by the one
+    // service every screen asks (window.WeaponScaling, ItemSystemEquipment).
     Scene_Shop.prototype.getWeaponScaling = function (item) {
-        if (!item || !DataManager.isWeapon(item)) return 'STR';
-        const note = (item.note || '');
-        const scales = [];
-        const regex = /<Scale:\s*([^>]+)>/gi;
-        let match;
-        while ((match = regex.exec(note)) !== null) {
-            const parts = match[1].split(',').map(s => s.trim().toUpperCase());
-            scales.push(...parts);
-        }
-        if (scales.length === 0 && item.meta && item.meta.Scale) {
-            scales.push(...String(item.meta.Scale).split(',').map(s => s.trim().toUpperCase()));
-        }
-        if (scales.includes('STR') && scales.includes('DEX')) return 'MIX';
-        if (scales.includes('STR') && scales.includes('INT')) return 'ARC';
-        if (scales.includes('MIX')) return 'MIX';
-        if (scales.includes('ARC')) return 'ARC';
-        if (scales.includes('DEX')) return 'DEX';
-        if (scales.includes('INT')) return 'INT';
-        if (scales.includes('WIS')) return 'WIS';
-        if (scales.includes('CON')) return 'CON';
-        if (scales.includes('PSI')) return 'PSI';
-        if (scales.includes('STR')) return 'STR';
-        return 'STR';
+        if (!item || !DataManager.isWeapon(item) || !window.WeaponScaling) return '';
+        return window.WeaponScaling.label(item);
     };
 
     // Expose AsciiMode API for other plugins

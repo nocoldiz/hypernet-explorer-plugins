@@ -854,6 +854,11 @@
     "excluded": "",
     "name": ""
   },
+  "Bribe the officer": {
+    "val": "Corrompi l'agente",
+    "excluded": "",
+    "name": ""
+  },
   "You don't have any money to clear\nyour bounty.": {
     "val": "Non hai abbastanza denaro per estinguere\nla tua taglia.",
     "excluded": "",

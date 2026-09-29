@@ -584,15 +584,8 @@
             }
             announce(text('act.grimoire', { actor: actor.name(), count: taken.length }));
             // The book reads her back while it is open: an open grimoire keeps
-            // the woman holding it on her feet, and holds her still. The
-            // Grimoire of Solomon does the opposite, and says so instead.
-            if (solomonPact()) {
-                announce(text('act.pact', { actor: actor.name() }));
-            } else if ($dataStates && $dataStates[REGEN_STATE_ID]) {
-                actor.addState(REGEN_STATE_ID);
-                announce(text('act.regen', { actor: actor.name() }));
-            }
-            if ($dataStates && $dataStates[FOCUS_STATE_ID]) actor.addState(FOCUS_STATE_ID);
+            // the woman holding it on her feet, and holds her still.
+            bookBlessing(actor);
             emEnter(actor);
         },
 
@@ -627,9 +620,6 @@
     // Graceful Death is not a rage: it is the calmest she ever is. The book
     // puts her regeneration and her focus on together (States.json 34).
     const FOCUS_STATE_ID = 34;
-    // The pact's price: a spell read out of the Grimoire of Solomon costs its
-    // caster this much of her own health per point the spell costs to cast.
-    const SOLOMON_HP_PER_MP = 1;
     // How many of her own lines the entrance is worth. She is not chatty here.
     const EM_ENTER_LINES = 2;
     const GRIMOIRE_ESOTERIC_LEVEL = 50;
@@ -658,10 +648,32 @@
         return skill.stypeId === MAGIC_STYPE_ID;
     }
 
+    /**
+     * The schools the Grimoire of Solomon is calibrated to deal from
+     * (Weapon/VectorGunSystem.js, the Calibrate page). Empty means every one.
+     */
+    function pactSchools() {
+        const VG = window.VectorGun;
+        const list = (VG && typeof VG.grimoireSchools === 'function') ? VG.grimoireSchools() : [];
+        return Array.isArray(list) ? list : [];
+    }
+
+    function skillSchool(skill) {
+        const SM = window.SkillMaster;
+        if (SM && typeof SM.getSkillCategory === 'function') return SM.getSkillCategory(skill.id);
+        const match = skill.note && skill.note.match(/<category:\s*(.+?)\s*>/i);
+        return match ? match[1].trim() : null;
+    }
+
     function grimoireSpells(actor, def) {
+        // The Grimoire of Solomon reads without a single one of the book's
+        // limits: no level gate on the esoteric or forbidden pages, no mana
+        // ceiling, no stat floor. What narrows it is the calibration alone.
+        const pact = !!def.pact;
         const level = actor.level || 1;
-        const esoteric = level >= (def.esotericLevel || GRIMOIRE_ESOTERIC_LEVEL);
-        const forbidden = level >= (def.forbiddenLevel || GRIMOIRE_FORBIDDEN_LEVEL);
+        const esoteric = pact || level >= (def.esotericLevel || GRIMOIRE_ESOTERIC_LEVEL);
+        const forbidden = pact || level >= (def.forbiddenLevel || GRIMOIRE_FORBIDDEN_LEVEL);
+        const schools = pact ? pactSchools() : [];
         // Nothing the book deals her is a spell she could never pay for: a page
         // she cannot cast is a dead slot in a nine-slot row.
         const ceiling = actor.mmp || 0;
@@ -670,6 +682,8 @@
             if (!isMagicalSkill(skill)) return false;
             if (skill.occasion !== 0 && skill.occasion !== 1) return false;
             if (!skill.damage || skill.damage.type <= 0) return false;
+            if (schools.length && schools.indexOf(skillSchool(skill)) < 0) return false;
+            if (pact) return true;
             if ((skill.mpCost || 0) > ceiling) return false;
             // Nor a page whose <StatReq:> floor she is under: the book deals
             // her spells she can hold, not ones that come apart in her hands.
@@ -680,7 +694,10 @@
         });
         if (!pool.length) return [];
         const power = (skill) => (skill.mpCost || 0) + (skill.tpCost || 0) * 2;
-        const ranked = pool.slice().sort((a, b) => power(b) - power(a));
+        const ranked = pool.slice().sort((a, b) => power(b) - power(a) || b.id - a.id);
+        // Graceful Death under the pact deals the strongest pages there are,
+        // straight off the top, not a shuffle of the loud ones.
+        if (def.strongest) return ranked.slice(0, def.slots || GRIMOIRE_SLOTS).map(skill => skill.id);
         const loud = ranked.slice(0, Math.max(GRIMOIRE_SLOTS, Math.floor(ranked.length * GRIMOIRE_TOP_SLICE)));
         return shuffled(loud).slice(0, def.slots || GRIMOIRE_SLOTS).map(skill => skill.id);
     }
@@ -823,11 +840,26 @@
         grimoire: true,
     };
 
+    // The Grimoire of Solomon: the book with none of its limits, open all
+    // fight like a limit break that never closes.
+    const PACT_BOOK = Object.assign({}, GRIMOIRE_HYPER, { pact: true });
+    // Graceful Death taken with the pact fitted: the strongest spells in the
+    // game, out of the calibrated schools, and nothing else on the bar.
+    const PACT_HYPER = Object.assign({}, GRIMOIRE_HYPER, { pact: true, strongest: true });
+
+    /** What an open book does for the one reading it: regeneration and focus. */
+    function bookBlessing(actor) {
+        if ($dataStates && $dataStates[REGEN_STATE_ID]) {
+            actor.addState(REGEN_STATE_ID);
+            announce(text('act.regen', { actor: actor.name() }));
+        }
+        if ($dataStates && $dataStates[FOCUS_STATE_ID]) actor.addState(FOCUS_STATE_ID);
+    }
+
     /**
      * Whether the pact shape is the one fitted in the gun's form bay
-     * (Weapon/VectorGunSystem.js). Everything the pact changes hangs off this:
-     * the book opens by itself, the limit break buys no invulnerable turn, and
-     * the book takes health rather than giving it.
+     * (Weapon/VectorGunSystem.js). The book then opens by itself every fight,
+     * as a limit break that lasts the whole of it, and asks nothing back.
      */
     function solomonPact() {
         const VG = window.VectorGun;
@@ -929,7 +961,7 @@
          * her hands opens into.
          */
         hyperFor(actor) {
-            if (holdsVectorGun(actor)) return GRIMOIRE_HYPER;
+            if (holdsVectorGun(actor)) return solomonPact() ? PACT_HYPER : GRIMOIRE_HYPER;
             const def = HYPERS[classIdOf(actor)];
             return def || null;
         },
@@ -999,9 +1031,7 @@
             actor._hyperBlocked = true;
             if (!def) return;
             actor._hyperSpentDay = currentDay();
-            // The pact buys no protection: what the book gives, it gives on the
-            // page, and the woman reading it stands there unshielded.
-            actor._hyperInvulnTurns = (def.grimoire && solomonPact()) ? 0 : INVULNERABLE_TURNS;
+            actor._hyperInvulnTurns = INVULNERABLE_TURNS;
             announce(text('unleash', { actor: actor.name(), hyper: this.commandName(actor) }));
             const act = ACTS[def.kind];
             if (act) act(actor, def);
@@ -1009,27 +1039,32 @@
 
         /**
          * The Grimoire of Solomon opens by itself. Whoever holds the gun with
-         * the pact shape fitted walks into every fight already reading, which
-         * is the whole of what the form buys and the whole of what it costs.
+         * the pact shape fitted walks into every fight already reading, with
+         * everything Graceful Death gives: the shield, the regeneration, the
+         * focus. It is a limit break that stays open, and it costs nothing.
          * @returns {boolean} true when the book was opened for them
          */
         openPactBook(actor) {
             if (!solomonPact() || !holdsVectorGun(actor)) return false;
             if (this.isGrimoireOpen(actor)) return false;
             if (window.VectorGun && window.VectorGun.openGrimoire) window.VectorGun.openGrimoire();
-            const taken = dealGrimoire(actor, GRIMOIRE_HYPER);
-            if (!taken) return false;
+            const taken = dealGrimoire(actor, PACT_BOOK);
+            if (!taken) {
+                if (window.VectorGun && window.VectorGun.closeGrimoire) window.VectorGun.closeGrimoire();
+                return false;
+            }
             announce(text('act.pactOpen', { actor: actor.name(), count: taken.length }));
-            if ($dataStates && $dataStates[FOCUS_STATE_ID]) actor.addState(FOCUS_STATE_ID);
+            actor._hyperInvulnTurns = INVULNERABLE_TURNS;
+            bookBlessing(actor);
             return true;
         },
 
         /**
-         * A natural 20 on the Dice of YHWH (Weapon/VectorGunSystem.js): the
+         * A natural 20 on the Dice of Yaldabaoth (Weapon/VectorGunSystem.js): the
          * frame opens into the Grimoire of Solomon as her limit break, and none
          * of the pact's prices come with it. She is shielded as any Hyper
          * shields, the book keeps her on her feet, no page is paid for in
-         * blood (solomonPact() is false while the dice is fitted) and whatever
+         * blood and whatever
          * was lowering her is lifted. It is the dice's gift, so the day's
          * Hyper is left unspent.
          * @returns {boolean} true when the book opened
@@ -1049,25 +1084,6 @@
             return true;
         },
 
-        /**
-         * What a page costs to read under the pact: the book takes out of her
-         * what the spell would have taken out of anyone else, in blood rather
-         * than in magic. It stops at her last point of health; the pact is a
-         * price, not an execution.
-         * @returns {number} the health taken
-         */
-        pactPrice(actor, skill) {
-            if (!solomonPact() || !this.isGrimoireOpen(actor)) return 0;
-            const cost = Math.round(((skill && skill.mpCost) || 0) * SOLOMON_HP_PER_MP);
-            if (cost <= 0) return 0;
-            const paid = Math.min(actor.hp - 1, cost);
-            if (paid <= 0) return 0;
-            actor.setHp(actor.hp - paid);
-            if (actor.startDamagePopup) actor.startDamagePopup();
-            announce(text('act.pactPrice', { actor: actor.name(), cost: paid }));
-            return paid;
-        },
-
         /** Whether the book is open in this one's hands right now. */
         isGrimoireOpen(actor) {
             return !!(actor && actor._grimoireRestore);
@@ -1081,17 +1097,24 @@
          */
         rerollGrimoire(actor) {
             if (!this.isGrimoireOpen(actor)) return false;
-            if (actor.hp <= 1) return false;
-            const def = this.hyperFor(actor) || GRIMOIRE_HYPER;
-            const cost = Math.min(actor.hp - 1, Math.max(1, Math.round(actor.mhp * GRIMOIRE_REROLL_HP)));
-            actor.setHp(actor.hp - cost);
-            if (actor.startDamagePopup) actor.startDamagePopup();
+            // Under the pact a page turns for free, onto another shuffle of
+            // the calibrated schools.
+            const pact = solomonPact();
+            if (!pact && actor.hp <= 1) return false;
+            const def = pact ? PACT_BOOK : (this.hyperFor(actor) || GRIMOIRE_HYPER);
+            const cost = pact ? 0 : Math.min(actor.hp - 1, Math.max(1, Math.round(actor.mhp * GRIMOIRE_REROLL_HP)));
+            if (cost > 0) {
+                actor.setHp(actor.hp - cost);
+                if (actor.startDamagePopup) actor.startDamagePopup();
+            }
             const taken = dealGrimoire(actor, def);
             if (!taken) {
                 announce(text('act.grimoireEmpty', { actor: actor.name() }));
                 return true;
             }
-            announce(text('act.reroll', { actor: actor.name(), cost, count: taken.length }));
+            announce(pact
+                ? text('act.pactReroll', { actor: actor.name(), count: taken.length })
+                : text('act.reroll', { actor: actor.name(), cost, count: taken.length }));
             const line = emSay('page', { actor: actor.name() });
             if (line) announce(line);
             return true;
@@ -1237,8 +1260,6 @@
             if (action && action.isSkill && action.isSkill() && action.item) {
                 const skill = action.item();
                 emIncant(subject, skill);
-                // And under the Grimoire of Solomon, the page is paid for.
-                LimitBreak.pactPrice(subject, skill);
             }
         }
         _BattleManager_startAction_hyper.call(this);

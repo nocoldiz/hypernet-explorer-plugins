@@ -23,6 +23,12 @@
  * Globals: NPCSocietyRegistry, NPCSocietyConfig, NPCSocietyGetEquip,
  *          NPCHistSim (backstory API), _NPCSocietyDataLoader
  *
+ * Modules: this file keeps the configuration, the data loader, the social
+ * graph, the profile generator, the registry, the engine hooks, the world
+ * roster, the standing and the family namespace (NPCSocietyRegistry._internal).
+ * The rest lives in NPCSociety_InitSpec, _Romance, _Gear and _Backstory
+ * (last), listed in js/plugins.js right after this file in that order.
+ *
  * See docs/npcsociety_system.md for full documentation.
  */
 
@@ -39,6 +45,10 @@
     WEALTH_WEIGHTS: [5, 15, 35, 30, 15],
     WEALTH_ICON: 314,
     FACTION_FALLBACK_ICON: 187,
+    // Morality (moralityScore, -100 to +100) at and above which a person is
+    // "virtuous" and takes no bribe of any kind, however it is offered: the
+    // Empathize panel's gift of cash and an arresting officer's alike.
+    INCORRUPTIBLE_MORALITY: 60,
 
     // PERSONALITY_ICONS removed, now loaded from db/Health/PersonalityData.json
 
@@ -230,7 +240,22 @@
   // book, so the book is asked as well.
   function _isWorldLeaderName(name, profile) {
     if (profile && profile._isWorldLeader) return true;
-    try { return !!window.LeaderPersona?.isLeader?.(name); } catch (e) { return false; }
+    if (_leaderMemo && _leaderMemo.has(name)) return _leaderMemo.get(name);
+    let answer;
+    try { answer = !!window.LeaderPersona?.isLeader?.(name); } catch (e) { answer = false; }
+    if (_leaderMemo) _leaderMemo.set(name, answer);
+    return answer;
+  }
+
+  // Asking the book is a walk over every roster and assembly in the world, and
+  // minting one person asks it about everybody already minted. While the world
+  // roster is dealt (initializeWorldRoster) nobody takes or leaves office, so
+  // each name is asked once; outside that pass every answer is read live.
+  let _leaderMemo = null;
+  function _withLeaderMemo(fn) {
+    if (_leaderMemo) return fn();
+    _leaderMemo = new Map();
+    try { return fn(); } finally { _leaderMemo = null; }
   }
 
   // How likely two world leaders are to already know each other. They never
@@ -293,305 +318,6 @@
     }
 
     registry[eventName] = { homeMapId: profile.homeMapId, group };
-  }
-
-  // ==========================================================================
-  // SECTION 3b: EQUIPMENT GENERATION HELPERS
-  // ==========================================================================
-
-  function _itemLevel(item) {
-    if (!item || !Array.isArray(item.params)) return 0;
-    return item.params.reduce((sum, v) => sum + Math.abs(v), 0);
-  }
-
-  function _partyMedianLevel() {
-    if (!$gameParty) return 1;
-    const members = $gameParty.members();
-    if (!members.length) return 1;
-    const levels = members.map(a => a.level).sort((a, b) => a - b);
-    const mid = Math.floor(levels.length / 2);
-    return levels.length % 2 !== 0 ? levels[mid] : Math.floor((levels[mid - 1] + levels[mid]) / 2);
-  }
-
-  // --------------------------------------------------------------------------
-  // Local NPCs track the party
-  // --------------------------------------------------------------------------
-  // An event tagged "Local" belongs to the map it was authored on: the player
-  // meets that person whenever the story brings them to that town, be it in the
-  // first hour of a playthrough or the fiftieth. A level rolled once, at first
-  // sight, says nothing by then, so a local NPC is pinned to the party's median
-  // level instead and everything derived from it is rebuilt whenever the party
-  // moves past them.
-  let _localNameCache = { mapId: -1, names: null };
-
-  function _localNamesOnMap() {
-    const mapId = $gameMap?.mapId?.() ?? -1;
-    if (_localNameCache.mapId !== mapId || !_localNameCache.names) {
-      const names = new Set();
-      for (const ev of ($gameMap?.events?.() || [])) {
-        const data = ev?.event?.();
-        if (data?.name && window.NPCSystem?.hasLocalTag?.(data.note)) names.add(data.name);
-      }
-      _localNameCache = { mapId, names };
-    }
-    return _localNameCache.names;
-  }
-
-  // The tag lives on the event, which is only readable while the player stands
-  // on that NPC's own map, so the answer is flagged onto the profile the first
-  // time it can be read and kept from then on.
-  function _isLocalNpc(eventName, profile) {
-    if (!profile || !eventName) return false;
-    if (profile._localNpc === undefined && _localNamesOnMap().has(eventName)) {
-      profile._localNpc = true;
-    }
-    return profile._localNpc === true;
-  }
-
-  function _syncLocalLevel(eventName, profile) {
-    // A level an event wrote out for itself (see SECTION 3c) is the map's own
-    // answer, not the party's, and is never dragged to the party median.
-    if (profile && profile._levelPinned) return;
-    if (!_isLocalNpc(eventName, profile)) return;
-    const target = _partyMedianLevel();
-    if (!target || profile.level === target) return;
-
-    // Same shape as the generator's level block (section 4, step 10b), seeded
-    // per name so the same person always re-rolls to the same spread around
-    // whatever level the party has reached.
-    const rng = new SeededRng(nameToSeed(eventName + "_locallvl") ^ (window.NPCShared.worldSeed() >>> 0));
-    const statMid = Math.max(1, Math.floor(target * 5 * (0.7 + rng.next() * 0.6)));
-    profile.level = target;
-    profile.atk = Math.max(1, statMid + rng.nextInt(-3, 4));
-    profile.def = Math.max(1, statMid + rng.nextInt(-3, 4));
-    profile.mat = Math.max(1, statMid + rng.nextInt(-3, 4));
-    profile.mdf = Math.max(1, statMid + rng.nextInt(-3, 4));
-    profile.agi = Math.max(1, statMid + rng.nextInt(-3, 4));
-    profile.luk = Math.max(1, statMid + rng.nextInt(-3, 4));
-    profile.mhp = (10 + target) * 10 + rng.nextInt(0, 21);
-    profile.mmp = (5  + target) * 5  + rng.nextInt(0, 11);
-
-    // Their level is the party's, not something they earned, so their exp is
-    // re-pegged to it and whatever the daily gain had banked is dropped.
-    const classId = profile.assignedClassId;
-    const expMgr  = window.NPCSim?.ExpManager;
-    if (expMgr) {
-      profile.exp = expMgr.expForLevel(classId ?? 0, target);
-      if (classId) expMgr.learnClassSkillsUpToLevel(profile, classId, target);
-    }
-  }
-
-  // --------------------------------------------------------------------------
-  // Travellers are their actor
-  // --------------------------------------------------------------------------
-  // A party member's profile carries the social half of them only: the level,
-  // the vitals and the stats belong to the actor the player levels up, equips
-  // and heals. A profile minted for a traveller (character creation writes one
-  // for every character it finalizes) rolled its own set of numbers once and
-  // then never moved, so the Empathize panel showed a stranger's character
-  // sheet next to their own portrait. Mirror the actor onto the profile
-  // whenever it is accessed, so the panel, the wiki and the simulation all read
-  // the character the player is actually playing.
-  function _partyActorFor(eventName) {
-    const members = $gameParty?.members?.() ?? [];
-    return members.find(a => a && a.name() === eventName) ?? null;
-  }
-
-  function _syncPartyMemberStats(eventName, profile) {
-    const actor = _partyActorFor(eventName);
-    if (!actor || !profile) return;
-    profile.level = actor.level;
-    profile.mhp   = actor.mhp;
-    profile.mmp   = actor.mmp;
-    profile.atk   = actor.atk;
-    profile.def   = actor.def;
-    profile.mat   = actor.mat;
-    profile.mdf   = actor.mdf;
-    profile.agi   = actor.agi;
-    profile.luk   = actor.luk;
-    // Equip-derived stats live on the actor (ActorCharacterFields), and read 0
-    // rather than a rolled value when the character has none of them.
-    if (actor.pvArcane)       profile.arcane       = actor.pvArcane();
-    if (actor.pvSubstance)    profile.substance    = actor.pvSubstance();
-    if (actor.pvStealth)      profile.stealth      = actor.pvStealth();
-    if (actor.pvIntimidation) profile.intimidation = actor.pvIntimidation();
-    // The class the player is playing outranks the one the society guessed, and
-    // the experience bar reads against it (the sim's curve is RMMZ's own).
-    const classId = actor.currentClass()?.id;
-    if (classId) profile.assignedClassId = classId;
-    if (actor.currentExp) profile.exp = actor.currentExp();
-
-    // Body and gender are the character sheet's, so the romance page and the
-    // pronouns the panel writes with match the person the player made.
-    if (actor.gender) profile.gender = actor.gender();
-    if (actor._orientOverride) {
-      profile._orientOverride = {
-        ...(profile._orientOverride || {}),
-        ...actor._orientOverride,
-      };
-    }
-    if (actor._ideologyId) {
-      profile.ideologyId = actor._ideologyId;
-      const idList = window.NPCShared?.ideologyList?.() || [];
-      const idx = idList.findIndex(i => i && i.id === actor._ideologyId);
-      if (idx >= 0) profile.ideologyIndex = idx;
-    }
-    const archetypeKeys = window.HealthCore?.getActorArchetypeKeys?.(actor);
-    if (archetypeKeys?.length) profile.archetype = archetypeKeys[0];
-
-    // The traits the player bought at creation (TraitSelector writes them
-    // onto the actor), not the ones the society dealt a stranger of that name:
-    // they are what the status screen prints and what the compatibility maths
-    // already reads off the actor. A recruited NPC whose actor carries none
-    // keeps the rolled set, which is the only record they have.
-    const traitIds = (actor._selectedTraits ?? [])
-      .map(t => t && t.id).filter(id => id != null);
-    if (traitIds.length) profile.traitIds = traitIds;
-
-    // The skills the character actually knows. levelSkillBrackets is the sim's
-    // ladder of what an NPC picks up as it levels; a traveller levels up in the
-    // party instead, so it would only list spells they cannot cast.
-    if (actor.skills) {
-      profile.skillIds = actor.skills().map(s => s && s.id).filter(id => id != null);
-      profile.levelSkillBrackets = {};
-    }
-
-    // Needs are the actor's own (TimeDateSystem), on the same 0-100 scale the
-    // profile keeps them, so the panel never reports a traveller starving while
-    // their character sheet says they are fed.
-    const NEED_FIELDS = {
-      hunger:  'hungerPercent',  sleep:   'sleepPercent', hygiene: 'hygienePercent',
-      social:  'socialPercent',  leisure: 'leisurePercent',
-    };
-    for (const [field, fn] of Object.entries(NEED_FIELDS)) {
-      if (typeof actor[fn] !== 'function') continue;
-      profile[field] = Math.max(0, Math.min(100, Math.round(actor[fn]())));
-    }
-    // Same reading tickNeeds takes of an NPC, against the actor's own figures,
-    // so the badge does not announce a hunger the character does not have.
-    if (profile.hunger < 25)     profile.currentNeed = 'food';
-    else if (profile.sleep < 20) profile.currentNeed = 'sleep';
-    else                         profile.currentNeed = null;
-
-    // A traveller carries the party purse, so their means are the party's rather
-    // than the wealth band the roll gave them.
-    if ($gameParty?.gold) {
-      const gold = $gameParty.gold();
-      profile.money = gold;
-      // Same bands the generator hands out starting money from (wealthGoldBase),
-      // split at the midpoint between one tier's base and the next.
-      const edges = [25000, 250000, 2500000, 25000000];
-      const fromPurse = edges.filter(edge => gold >= edge).length;
-      // A band chosen at character creation (wealthTierChosen, written by the
-      // detailed editor) outranks an EMPTY purse. The money each member brings
-      // in is only handed over once creation finishes, so until then the purse
-      // reports everybody destitute, and this sync , which runs on every read of
-      // the profile , would undo the pick the moment it was made.
-      profile.wealthTierBase = (fromPurse === 0 && profile.wealthTierChosen != null)
-        ? profile.wealthTierChosen
-        : fromPurse;
-    }
-  }
-
-  function _generateEquipment(eventName, classId, wealthTierBase) {
-    const worldSeed = window.NPCShared.worldSeed();
-    const rng = new SeededRng(nameToSeed(eventName + "_equip") ^ (worldSeed >>> 0));
-    // A beast carries no gear. It has no hands to hold a blade with, no money
-    // to have bought one and nobody to have been issued one by: a dog on a
-    // street corner wearing a halberd and a cloak is the roll leaking through.
-    // The class alone answers it (NPCCreature owns the boundary), so this holds
-    // wherever the equipment is read from, the panel and the recruit alike.
-    const NC = window.NPCCreature;
-    if (NC && NC.isNonSentientClassId(classId) && !NC.isPlayerCharacterName(eventName)) {
-      return { weaponId: null, armorIds: [] };
-    }
-    const hasClass = !!classId;
-    // Nobody in a severed world owns an enchanted blade, and nobody in an
-    // unbound one owns technology (window.MagicNature).
-    const _natureOk = (e) => !window.MagicNature || window.MagicNature.allowsData(e);
-    const profile = (eventName && $gameSystem?._npcSociety?.[eventName])
-      || (window.NPCSim?.getProfile?.(eventName)) || null;
-    const lostEquip = new Set(profile?.lostEquipIds || []);
-    const allWeapons = ($dataWeapons || []).filter(w => w && w.id > 0 && w.name && _natureOk(w) && !lostEquip.has(w.id));
-    const allArmors  = ($dataArmors  || []).filter(a => a && a.id > 0 && a.name && _natureOk(a) && !lostEquip.has(a.id));
-    const isPurple = (item) => (item.price || 0) >= 100000;
-
-    if (!hasClass) {
-      // No class: clothes-category armors, rarely a cheap weapon
-      let armorPool = allArmors.filter(a => !isPurple(a) && /<category:\s*clothes>/i.test(a.note || ''));
-      if (!armorPool.length) {
-        armorPool = [...allArmors].filter(a => !isPurple(a)).sort((x, y) => _itemLevel(x) - _itemLevel(y))
-          .slice(0, Math.max(1, Math.floor(allArmors.length * 0.25)));
-      }
-      const shuffledArmors = seededShuffle([...armorPool], rng);
-      const armorIds = shuffledArmors.slice(0, Math.min(2, shuffledArmors.length)).map(a => a.id);
-
-      let weaponId = null;
-      if (rng.next() < 0.15 && allWeapons.length > 0) {
-        const cheapPool = [...allWeapons].filter(w => !isPurple(w)).sort((x, y) => _itemLevel(x) - _itemLevel(y))
-          .slice(0, Math.max(1, Math.floor(allWeapons.length * 0.2)));
-        if (cheapPool.length > 0) weaponId = seededShuffle(cheapPool, rng)[0].id;
-      }
-      return { weaponId, armorIds };
-    }
-
-    // Class NPC: target item stat total = NPC level × 5 × wealth multiplier
-    const targetLevel = (profile && typeof profile.level === 'number' && profile.level > 0)
-      ? profile.level : _partyMedianLevel();
-    const wealthMults = [0.4, 0.7, 1.0, 1.4, 2.0];
-    const targetStats = targetLevel * 5 * wealthMults[Math.min(wealthTierBase, 4)];
-
-    // 15% to 30% of NPCs carry a purple-tier item (price >= 100000, Epic/Legendary),
-    // scaling with their own level (15% at lvl 1, up to 30% at lvl 80+).
-    const purpleChance = 0.15 + 0.15 * Math.min(1, Math.max(0, (targetLevel - 1) / 79));
-    const allowPurple = rng.next() < purpleChance;
-
-    const _score = (item) => {
-      const diff = Math.abs(_itemLevel(item) - targetStats);
-      const closeness = 1 / (1 + (diff / Math.max(1, targetStats)) * 3);
-      return rng.next() * 0.4 + closeness * 0.6;
-    };
-
-    let weaponId = null;
-    let purpleGranted = false;
-
-    // 35% chance that an allowed purple item is a weapon, provided eligible purple weapons exist
-    const purpleInWeapon = allowPurple && (rng.next() < 0.35);
-
-    if (allWeapons.length > 0) {
-      let pool = purpleInWeapon ? allWeapons.filter(isPurple) : allWeapons.filter(w => !isPurple(w));
-      if (!pool.length) pool = allWeapons.filter(w => !isPurple(w));
-      if (!pool.length) pool = allWeapons;
-      const scored = pool.map(w => ({ id: w.id, score: _score(w), obj: w }));
-      scored.sort((a, b) => b.score - a.score);
-      weaponId = scored[0].id;
-      if (isPurple(scored[0].obj)) purpleGranted = true;
-    }
-
-    const armorIds = [];
-    if (allArmors.length > 0) {
-      const numArmors = rng.nextInt(1, 4);
-      const needPurpleArmor = allowPurple && !purpleGranted;
-      if (needPurpleArmor) {
-        const purplePool = allArmors.filter(isPurple);
-        if (purplePool.length > 0) {
-          const scoredP = purplePool.map(a => ({ id: a.id, score: _score(a) }));
-          scoredP.sort((a, b) => b.score - a.score);
-          armorIds.push(scoredP[0].id);
-        }
-      }
-      const nonPurpleArmors = allArmors.filter(a => !isPurple(a));
-      const scored = (nonPurpleArmors.length > 0 ? nonPurpleArmors : allArmors)
-        .map(a => ({ id: a.id, score: _score(a) }));
-      scored.sort((a, b) => b.score - a.score);
-      const seen = new Set(armorIds);
-      for (const s of scored) {
-        if (armorIds.length >= numArmors) break;
-        if (!seen.has(s.id)) { armorIds.push(s.id); seen.add(s.id); }
-      }
-    }
-
-    return { weaponId, armorIds };
   }
 
   // ==========================================================================
@@ -664,456 +390,6 @@
     return _cachedClassLearnings.get(classId);
   }
 
-  // ==========================================================================
-  // SECTION 3c: EVENT INITIALIZATION SPEC
-  // ==========================================================================
-  // An event may dictate the person generated onto it instead of accepting the
-  // seeded roll. Any comment on the event page written as `key: value` is read
-  // here and forced onto the profile the moment it is minted:
-  //
-  //     class: Witch
-  //     bust: Butler
-  //     level: 10
-  //     ideology: pacifist_theocratic
-  //     traits: obese, trigger:happy
-  //
-  // Every key answers one of the things the Empathize panel shows, so a
-  // written character can be pinned down as tightly or as loosely as the map
-  // wants: whatever is not named is still rolled, and stays coherent with what
-  // is. Unknown keys are ignored (the single-token bust comment and the
-  // `Preset: <name>` dossier tag are other systems' conventions and pass
-  // straight through), so this can never break an event already using comments
-  // for something else.
-  //
-  // Values are matched loosely: an id, the identifier in the data file, or the
-  // name the player reads, all case- and punctuation-insensitive. That is why
-  // `trigger:happy` finds `traits.trigger_happy.name` even though it holds a
-  // colon of its own: only the FIRST colon of a line separates key from value.
-  //
-  // docs/NPCInitializationExample.md is the worked catalogue of every key.
-
-  const _normKey = (s) => String(s ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
-
-  // Identifier inside a dotted i18n key ("traits.trigger_happy.name" -> the
-  // "trigger_happy" in the middle), which is what a map author reads off the
-  // data file and writes in the comment.
-  function _identSegment(key) {
-    const parts = String(key ?? '').split('.');
-    if (parts.length >= 3) return parts.slice(1, -1).join('_');
-    return parts[parts.length - 1] || '';
-  }
-
-  const _trOrEmpty = (key) => (key && window.T?.has?.(key)) ? window.T(key) : '';
-
-  // True when `value` names any of `candidates` (an id, an identifier, or a
-  // localized display name), compared normalized.
-  function _namesOne(value, candidates) {
-    const want = _normKey(value);
-    if (!want) return false;
-    return candidates.some(c => c != null && _normKey(c) === want);
-  }
-
-  const NPCInitSpec = {
-    // Every key the spec understands, and the other spellings a map author
-    // might reasonably write for it.
-    ALIASES: {
-      class: 'class', classid: 'class', job: 'job', jobid: 'job',
-      bust: 'bust', face: 'bust', portrait: 'bust',
-      sprite: 'sprite', spritekey: 'sprite', character: 'sprite',
-      bustindex: 'bustIndex', faceindex: 'bustIndex',
-      gender: 'gender', sex: 'gender',
-      archetype: 'archetype', creature: 'creature',
-      level: 'level', exp: 'exp',
-      atk: 'atk', str: 'atk', def: 'def', con: 'def',
-      mat: 'mat', int: 'mat', mdf: 'mdf', wis: 'mdf',
-      agi: 'agi', dex: 'agi', luk: 'luk', psi: 'luk',
-      mhp: 'mhp', hp: 'mhp', mmp: 'mmp', mp: 'mmp',
-      arcane: 'arcane', substance: 'substance', stealth: 'stealth',
-      intimidation: 'intimidation',
-      personality: 'personality', ideology: 'ideology', creed: 'ideology',
-      faction: 'faction', traits: 'traits', trait: 'traits',
-      skills: 'skills', skill: 'skills', items: 'items', item: 'items',
-      morality: 'morality', moralityscore: 'morality',
-      wealth: 'wealth', wealthtier: 'wealth', money: 'money',
-      workstart: 'workStart', workend: 'workEnd', workshift: 'workShift',
-      hunger: 'hunger', sleep: 'sleep', hygiene: 'hygiene',
-      social: 'social', leisure: 'leisure',
-      opinion: 'opinion', playeropinion: 'opinion',
-      birthyear: 'birthYear', age: 'age', birthplace: 'birthplace',
-      orientation: 'sexual', sexual: 'sexual', sexuality: 'sexual',
-      romantic: 'romantic', romance: 'romantic',
-      relationship: 'relationship', relationshipstyle: 'relationship',
-      home: 'homeGroup', homegroup: 'homeGroup', homemap: 'homeMapId',
-    },
-
-    // ---- Reading the comment lines -----------------------------------------
-
-    // Parses `key: value` lines into a canonical spec object. Anything that is
-    // not a recognised key is dropped, so this is safe to run over every
-    // comment on every event.
-    parseLines(lines) {
-      const spec = {};
-      for (const line of (lines || [])) {
-        const text = String(line ?? '').trim();
-        const at = text.indexOf(':');
-        if (at <= 0) continue;
-        const canon = this.ALIASES[_normKey(text.slice(0, at))];
-        if (!canon) continue;
-        const value = text.slice(at + 1).trim();
-        if (!value) continue;
-        if (spec[canon] === undefined) spec[canon] = value;
-      }
-      return Object.keys(spec).length ? spec : null;
-    },
-
-    // Comment text of one event page (codes 108/408).
-    _pageComments(page) {
-      if (!page || !page.list) return [];
-      return page.list
-        .filter(cmd => cmd.code === 108 || cmd.code === 408)
-        .map(cmd => String(cmd.parameters?.[0] ?? '').trim())
-        .filter(Boolean);
-    },
-
-    // From the raw event JSON: every page is read and the first page to name a
-    // key wins it. The world-roster pass mints people from map data alone,
-    // with no Game_Event to ask which page is active, and a character written
-    // across several pages is still the same character.
-    fromEventData(eventData) {
-      if (!eventData || !eventData.pages || !eventData.pages.length) return null;
-      const lines = [];
-      for (const page of eventData.pages) lines.push(...this._pageComments(page));
-      return this.parseLines(lines);
-    },
-
-    // From a live Game_Event: the active page first (it is the one the player
-    // is looking at), then the rest as a fallback.
-    fromEvent(event) {
-      const data = event?.event?.();
-      if (!data || !data.pages || !data.pages.length) return null;
-      let active = null;
-      if (typeof event.meetsConditions === 'function')
-        active = data.pages.find(p => event.meetsConditions(p)) || null;
-      if (!active && typeof event.page === 'function') active = event.page() || null;
-      const lines = active ? this._pageComments(active) : [];
-      for (const page of data.pages) {
-        if (page === active) continue;
-        lines.push(...this._pageComments(page));
-      }
-      return this.parseLines(lines);
-    },
-
-    // The spec for a name, for every caller that has only the name in hand
-    // (the dialogue box, the panel, the wiki). Looks the event up on the
-    // current map, then falls back to the spec already recorded on the profile.
-    forName(eventName) {
-      if (!eventName) return null;
-      if (typeof $gameMap !== 'undefined' && $gameMap && $gameMap.events) {
-        for (const ev of $gameMap.events()) {
-          if (ev?.event?.()?.name === eventName) {
-            const spec = this.fromEvent(ev);
-            if (spec) return spec;
-          }
-        }
-      }
-      return $gameSystem?._npcSociety?.[eventName]?._initSpec ?? null;
-    },
-
-    // The bust an event names, for the resolvers that draw the face. Answered
-    // here rather than in each of them so the message box and the Empathize
-    // panel can never disagree about which portrait a written character wears.
-    bustFor(eventName, event) {
-      const spec = (event ? this.fromEvent(event) : null) || this.forName(eventName);
-      return spec?.bust || null;
-    },
-
-    // ---- Resolving a written value to the thing it names --------------------
-
-    classId(value) {
-      const n = Number(value);
-      if (Number.isFinite(n) && $dataClasses?.[n]) return n;
-      const names = DataLoader.classNames || {};
-      for (const id of Object.keys(names)) {
-        if (_namesOne(value, [names[id]])) return Number(id);
-      }
-      for (const cls of ($dataClasses || [])) {
-        if (cls && _namesOne(value, [cls.name])) return cls.id;
-      }
-      return null;
-    },
-
-    traitId(value) {
-      const traits = DataLoader.traits || [];
-      const n = Number(value);
-      if (Number.isFinite(n) && traits.some(t => t.id === n)) return n;
-      for (const t of traits) {
-        if (_namesOne(value, [_identSegment(t.name), _trOrEmpty(t.name)])) return t.id;
-      }
-      return null;
-    },
-
-    // { index, id } of the creed, or null.
-    ideology(value) {
-      const list = DataLoader.ideologies || [];
-      for (let i = 0; i < list.length; i++) {
-        const ideo = list[i];
-        if (!ideo) continue;
-        if (_namesOne(value, [ideo.id, _identSegment(ideo.name), _trOrEmpty(ideo.name)]))
-          return { index: i, id: ideo.id };
-      }
-      return null;
-    },
-
-    factionIndex(value) {
-      const list = DataLoader.factions || [];
-      const n = Number(value);
-      for (let i = 0; i < list.length; i++) {
-        const f = list[i];
-        if (!f) continue;
-        if (Number.isFinite(n) && f.id === n) return i;
-        if (_namesOne(value, [_identSegment(f.name), _trOrEmpty(f.name), DataLoader.getFactionName(f)]))
-          return i;
-      }
-      return -1;
-    },
-
-    personalityIndex(value) {
-      const list = DataLoader.personalities || [];
-      const n = Number(value);
-      if (Number.isFinite(n) && list[n]) return n;
-      for (let i = 0; i < list.length; i++) {
-        if (list[i] && _namesOne(value, [list[i].name])) return i;
-      }
-      return -1;
-    },
-
-    skillId(value) {
-      const n = Number(value);
-      if (Number.isFinite(n) && $dataSkills?.[n]) return n;
-      for (const s of ($dataSkills || [])) {
-        if (s && s.name && _namesOne(value, [s.name])) return s.id;
-      }
-      return null;
-    },
-
-    itemId(value) {
-      const n = Number(value);
-      if (Number.isFinite(n) && $dataItems?.[n]) return n;
-      for (const i of ($dataItems || [])) {
-        if (i && i.name && _namesOne(value, [i.name])) return i.id;
-      }
-      return null;
-    },
-
-    // 0 jobless, a Jobs.json id, or null when nothing matches.
-    jobId(value) {
-      const norm = _normKey(value);
-      if (norm === 'none' || norm === 'jobless') return 0;
-      const jobs = window.WorkSystem?.Jobs || [];
-      const n = Number(value);
-      if (Number.isFinite(n) && jobs.some(j => j.id === n)) return n;
-      for (const j of jobs) {
-        if (_namesOne(value, [j.spec, _trOrEmpty(j.name)])) return j.id;
-      }
-      return null;
-    },
-
-    // 0 male, 1 female, 2 non-binary, 3 cocoon: the order the pronoun table is
-    // written in (see SECTION 7).
-    gender(value) {
-      const n = Number(value);
-      if (Number.isFinite(n)) return Math.min(Math.max(n | 0, 0), 3);
-      const keys = [['male', 'man', 'm', 'he'], ['female', 'woman', 'f', 'she'],
-                    ['nonbinary', 'enby', 'nb', 'they'], ['cocoon', 'xe', 'neo']];
-      for (let i = 0; i < keys.length; i++) {
-        if (_namesOne(value, keys[i])) return i;
-      }
-      return null;
-    },
-
-    // 0 destitute .. 4 wealthy.
-    wealthTier(value) {
-      const n = Number(value);
-      if (Number.isFinite(n)) return Math.min(Math.max(n | 0, 0), 4);
-      const tiers = [['destitute', 'broke'], ['poor'], ['workingclass', 'working'],
-                     ['middleclass', 'middle', 'comfortable'], ['wealthy', 'rich']];
-      for (let i = 0; i < tiers.length; i++) {
-        if (_namesOne(value, tiers[i])) return i;
-      }
-      return null;
-    },
-
-    orientationKey(kind, value) {
-      const list = window.NPCOrientationData?.()?.[kind] || [];
-      for (const o of list) {
-        if (o && _namesOne(value, [o.key, _identSegment(o.name), _trOrEmpty(o.name)])) return o.key;
-      }
-      return null;
-    },
-
-    relationshipKey(value) {
-      const list = window.NPCRelationshipData?.()?.styles || [];
-      for (const s of list) {
-        if (s && _namesOne(value, [s.key, _identSegment(s.name), _trOrEmpty(s.name)])) return s.key;
-      }
-      return null;
-    },
-
-    // ---- Forcing it onto the profile ---------------------------------------
-
-    // Applies `spec` to `profile`, in place. Called once, right after the
-    // profile is minted, and again for the identity half whenever the sprite
-    // reconciler has had a chance to overwrite it (see _applySocietySprite):
-    // an event that says who this is outranks the sheet they are wearing.
-    apply(profile, spec, eventName) {
-      if (!profile || !spec) return profile;
-      profile._initSpec = spec;
-      if (eventName && !profile._eventName) profile._eventName = eventName;
-      this.applyIdentity(profile, spec);
-
-      const num = (key, min, max) => {
-        const v = Number(spec[key]);
-        if (!Number.isFinite(v)) return null;
-        return Math.min(Math.max(v, min), max);
-      };
-      const list = (key) => String(spec[key] ?? '').split(',').map(s => s.trim()).filter(Boolean);
-
-      // Level, and the stats that hang off it. A written level rescales the
-      // rolled stat block unless the stats are written too, so `level: 10`
-      // alone still produces somebody who fights like a level 10.
-      const level = num('level', 1, 9999);
-      if (level != null && level !== profile.level) {
-        const ratio = level / Math.max(1, profile.level || 1);
-        profile.level = level;
-        for (const key of ['atk', 'def', 'mat', 'mdf', 'agi', 'luk', 'mhp', 'mmp']) {
-          if (profile[key]) profile[key] = Math.max(1, Math.round(profile[key] * ratio));
-        }
-        // Cleared so ensureSimFields re-derives them from the written level.
-        profile.exp = undefined;
-        profile._classSkillsSeeded = false;
-        // A level the map wrote is the map's, not the party's: the local-level
-        // peg would otherwise drag it back to the party median on every read.
-        profile._levelPinned = true;
-      }
-      for (const key of ['atk', 'def', 'mat', 'mdf', 'agi', 'luk', 'mhp', 'mmp',
-                         'arcane', 'substance', 'stealth', 'intimidation', 'exp']) {
-        const v = num(key, 0, 99999999);
-        if (v != null) profile[key] = v;
-      }
-
-      const pi = spec.personality != null ? this.personalityIndex(spec.personality) : -1;
-      if (pi >= 0) profile.personalityIndex = pi;
-
-      const ideo = spec.ideology != null ? this.ideology(spec.ideology) : null;
-      if (ideo) { profile.ideologyIndex = ideo.index; profile.ideologyId = ideo.id; }
-
-      if (spec.faction != null) {
-        const fi = this.factionIndex(spec.faction);
-        if (fi >= 0 || _normKey(spec.faction) === 'none') profile.factionIndex = fi;
-      }
-
-      if (spec.traits != null) {
-        const ids = list('traits').map(t => this.traitId(t)).filter(id => id != null);
-        if (ids.length) profile.traitIds = ids;
-      }
-      if (spec.skills != null) {
-        const ids = list('skills').map(s => this.skillId(s)).filter(id => id != null);
-        if (ids.length) profile.skillIds = ids;
-      }
-      if (spec.items != null) {
-        const ids = list('items').map(i => this.itemId(i)).filter(id => id != null);
-        if (ids.length) profile.itemIds = ids;
-      }
-
-      const wealth = spec.wealth != null ? this.wealthTier(spec.wealth) : null;
-      if (wealth != null) profile.wealthTierBase = wealth;
-      const money = num('money', 0, Number.MAX_SAFE_INTEGER);
-      if (money != null) profile.money = money;
-      const morality = num('morality', -100, 100);
-      if (morality != null) profile.moralityScore = morality;
-      const opinion = num('opinion', -100, 100);
-      if (opinion != null) profile.playerOpinion = opinion;
-
-      if (spec.job != null) {
-        const jid = this.jobId(spec.job);
-        if (jid != null) profile.currentJobId = jid;
-      }
-      for (const key of ['workStart', 'workEnd']) {
-        const v = num(key, 0, 23);
-        if (v != null) profile[key] = v;
-      }
-      const shift = num('workShift', 0, 3);
-      if (shift != null) profile.workShift = shift;
-
-      for (const key of ['hunger', 'sleep', 'hygiene', 'social', 'leisure']) {
-        const v = num(key, 0, 100);
-        if (v != null) profile[key] = v;
-      }
-
-      // Background. An age is the same statement as a birth year said from the
-      // other end, so it is converted rather than stored: the backstory
-      // generator only knows about years.
-      const birthYear = num('birthYear', 0, 9999);
-      if (birthYear != null) profile._birthYearOverride = birthYear;
-      const age = num('age', 0, 999);
-      if (age != null && birthYear == null) {
-        const nowYear = window.NPCLifeSim?.currentYear?.() ?? 2001;
-        profile._birthYearOverride = nowYear - age;
-      }
-      if (spec.birthplace) profile._birthplaceOverride = spec.birthplace;
-
-      const sexual   = spec.sexual   != null ? this.orientationKey('sexual', spec.sexual) : null;
-      const romantic = spec.romantic != null ? this.orientationKey('romantic', spec.romantic) : null;
-      if (sexual || romantic) {
-        profile._orientOverride = profile._orientOverride || {};
-        if (sexual)   profile._orientOverride.sexualKey   = sexual;
-        if (romantic) profile._orientOverride.romanticKey = romantic;
-      }
-      const relStyle = spec.relationship != null ? this.relationshipKey(spec.relationship) : null;
-      if (relStyle) profile._relStyleOverride = relStyle;
-
-      if (spec.homeGroup) profile._homeGroupName = spec.homeGroup;
-      const homeMap = num('homeMapId', 1, 9999);
-      if (homeMap != null) profile.homeMapId = homeMap;
-
-      profile._initSpecApplied = true;
-      return profile;
-    },
-
-    // The half of the spec that says WHO this is rather than how they are
-    // doing: re-applied after anything that re-derives identity from the sheet.
-    applyIdentity(profile, spec) {
-      if (!profile || !spec) return;
-      const classId = spec.class != null ? this.classId(spec.class) : null;
-      if (classId) profile.assignedClassId = classId;
-      if (spec.sprite) profile.spriteKey = spec.sprite;
-      const bustIndex = Number(spec.bustIndex);
-      if (Number.isFinite(bustIndex)) profile.bustIndex = Math.max(0, bustIndex | 0);
-      const gender = spec.gender != null ? this.gender(spec.gender) : null;
-      if (gender != null) profile.gender = gender;
-      if (spec.archetype) profile.archetype = spec.archetype;
-      if (spec.creature != null) profile.isCreature = /^(1|true|yes|on)$/i.test(String(spec.creature).trim());
-      // The class the event wrote is the last word on personhood, so a Witch
-      // written onto a beast's sheet is a person, and a Feral written onto an
-      // ordinary sheet is not. NPCCreature still owns where that line falls.
-      const NC = window.NPCCreature;
-      if (classId && NC) {
-        profile.nonSentient = !NC.isPlayerCharacterName?.(profile._eventName) &&
-          NC.isNonSentientClassId(classId);
-      }
-    },
-
-    // Whether an event dictates the LOOK of this NPC, which is what tells the
-    // sprite reconciler to leave the face alone. Only the lines that name a
-    // face count: a spec overrides the fields it writes and nothing else, so
-    // `class:` or `gender:` on their own say who this person is and still let
-    // the simulation deal them a sprite and a bust like anybody else.
-    pinsIdentity(spec) {
-      return !!spec && (spec.sprite != null || spec.bust != null ||
-        spec.bustIndex != null || spec.archetype != null || spec.creature != null);
-    },
-  };
-  window.NPCInitSpec = NPCInitSpec;
 
   const ProfileGenerator = {
     _wealthCumulative: [5, 20, 55, 85, 100],
@@ -1242,6 +518,9 @@
             }
           }
           // If classPool is empty, assignedClassId stays as the event-note classId
+          // One of the risen of a zombie world is a Zombie whatever its sheet
+          // lists (NPCCreature.isRisenSheet): no trade, no purse, no creed.
+          if (NC && NC.isRisenSheet && NC.isRisenSheet(spriteKey)) assignedClassId = NC.ZOMBIE_CLASS_ID;
         }
       }
 
@@ -1430,7 +709,14 @@
         return { id: i.id, score: rng.next() * boost };
       });
       scoredItems.sort((a, b) => b.score - a.score);
-      const itemIds = scoredItems.slice(0, numItems).map(x => x.id);
+      // Never the Liminal cuffs and never car keys (NPCShared): dropped after
+      // the draw, so every other profile's stream stays as it was.
+      const _shared = window.NPCShared;
+      const itemIds = [];
+      for (const x of scoredItems) {
+        if (itemIds.length >= numItems) break;
+        if (!_shared?.isForbiddenItem?.(x.id) && !_shared?.isCarKeys?.(x.id)) itemIds.push(x.id);
+      }
 
       // 8. Faction (~4% chance). An alien belongs to their own caste's faction
       //    outright: the castes ARE the factions out there, so there is nothing
@@ -1582,6 +868,9 @@
 
   function _isRegenerableProfile(name, profile) {
     if (!profile) return true;
+    // A politician made into a person (NPCPolitics REAL POLITICIANS) is linked
+    // from the political record by name, and is never pruned out from under it.
+    if (profile._politicianId) return false;
     if (Math.abs(profile.playerOpinion ?? 0) > 10) return false;
     if (profile.eventLog && profile.eventLog.length) return false;
     if (profile.thoughts && profile.thoughts.length) return false;
@@ -1628,7 +917,7 @@
         changed = true;
       }
     }
-    if (!(profile.money > 0)) {
+    if (!(profile.money > 0) && window.NPCCreature?.mayHoldMoney?.(profile, name) !== false) {
       const wealthGoldBase = [5000, 50000, 500000, 5000000, 50000000];
       const tier = Math.min(Math.max(profile.wealthTierBase | 0, 0), 4);
       profile.money = Math.floor(wealthGoldBase[tier] * (0.5 + rng.next()));
@@ -1664,13 +953,21 @@
           changed = true;
         }
       } else {
+        const risen = !!NC.isRisenSheet?.(profile.spriteKey);
         if (profile.isCreature) {
           // A beast's anatomy does not follow it into a person's clothes.
           profile.isCreature = false;
           profile.archetype = entry.Archetype || "Humanoid"; // i18n-ignore: Archetypes.json id
           changed = true;
         }
-        if (NC.isNonSentientClassId(profile.assignedClassId)) {
+        if (risen) {
+          // One of the risen of a zombie world wears a person's sheet and is
+          // a Zombie all the same (NPCCreature.isRisenSheet).
+          if (profile.assignedClassId !== NC.ZOMBIE_CLASS_ID) {
+            profile.assignedClassId = NC.ZOMBIE_CLASS_ID;
+            changed = true;
+          }
+        } else if (NC.isNonSentientClassId(profile.assignedClassId)) {
           // A person's sheet can never carry a creature class, so the one this
           // profile holds came from the roll and is replaced by a civilised
           // class off the sheet's own roster.
@@ -1730,9 +1027,6 @@
           });
           if (kept.length !== profile.traitIds.length) { profile.traitIds = kept; changed = true; }
         }
-        // The specializations are rolled off the traits and cached; a repaired
-        // set of traits has to re-roll them rather than keep the old answer.
-        if (changed && profile._specCache) { delete profile._specCache; }
         if (profile.currentJobId) {
           profile.currentJobId = 0;
           profile.workMapId = null;
@@ -1746,7 +1040,9 @@
           changed = true;
         }
       }
-      if (!nonSentient && _restorePersonhood(eventName, profile)) changed = true;
+      // A child holds no creed, no purse and no banner of their own yet
+      // (NPCLifeSim FAMILY); growing up hands them those.
+      if (!nonSentient && !profile._child && _restorePersonhood(eventName, profile)) changed = true;
       return changed;
     },
 
@@ -1887,6 +1183,13 @@
 
     getProfile(eventName) {
       return $gameSystem?._npcSociety?.[eventName] ?? null;
+    },
+
+    // Whether this person refuses every bribe. Takes a profile or a name; a
+    // stranger with no profile is of middling morality and can be bought.
+    isIncorruptible(profileOrName) {
+      const p = typeof profileOrName === 'string' ? this.getProfile(profileOrName) : profileOrName;
+      return (Number(p?.moralityScore) || 0) >= SocConfig.INCORRUPTIBLE_MORALITY;
     },
 
     // The same lookup for a party member. Profiles are keyed by name, so an actor is resolved
@@ -2138,7 +1441,6 @@
     SocietyRegistry.decayOpinions(day);
   };
 
-  window.NPCSocietyGetEquip = _generateEquipment;
   // ==========================================================================
   // SECTION 6b: WORLD ROSTER INITIALIZATION
   // ==========================================================================
@@ -2175,6 +1477,17 @@
     // done, fail the step so WorldManager runs it again later.
     if (!DataLoader.isReady) throw new Error("NPC society data is still loading");  // i18n-ignore: diagnostic
 
+    // The towns' own people first: a household behind every door and the
+    // street-folk of every map, dealt from the world seed (NPCSystem.js,
+    // RESIDENT REGISTRY). The authored cast below is minted after them and
+    // keeps the names it was written with.
+    try {
+      const dealt = NPCSys.ensureResidents?.() || 0;
+      console.log(`[NPCSociety] Residents: ${dealt} people dealt across the hand-made towns.`);  // i18n-ignore: diagnostic
+    } catch (e) {
+      console.error("[NPCSociety] Could not deal the residents", e);  // i18n-ignore: diagnostic
+    }
+
     // Groups that draw their pool from the whole world rather than their own
     // maps, so being named by one of them says nothing about where you live.
     const isWorldWide = (name) => name === NPCSys.GLOBAL_GROUP_NAME ||
@@ -2187,14 +1500,22 @@
       .sort((a, b) =>
         (isWorldWide(a) ? 1 : 0) - (isWorldWide(b) ? 1 : 0) || (a < b ? -1 : a > b ? 1 : 0));
 
+    // A world with nobody left in it (WorldModes.simulatesPeople: empty,
+    // death) mints its written cast alone, the one set of people who still
+    // walk it (NPCSystem wakeStoryNPCs), and staffs no job.
+    const WMo = window.NPCShared?.WorldModes;
+    const peopled = !WMo || WMo.simulatesPeople();
+
     // name → [{ groupName, eventData }], in group order.
     const claims = new Map();
     for (const groupName of groups) {
       // Jobs first: the shift each person works decides where they spend their
       // day, and the leftovers become the group's counter-staff pool, which
       // the shop rotas are drawn from in the next step.
-      try { window.NPCSim?.JobShiftManager?.ensureGroupAssignments?.(groupName); } catch (e) {
-        console.error(`[NPCSociety] Job assignment failed for "${groupName}"`, e);
+      if (peopled) {
+        try { window.NPCSim?.JobShiftManager?.ensureGroupAssignments?.(groupName); } catch (e) {
+          console.error(`[NPCSociety] Job assignment failed for "${groupName}"`, e);
+        }
       }
 
       let templates = [];
@@ -2208,6 +1529,7 @@
         // not a person; a hidden template is scenery with a face.
         if (!name || name === "NPC" || seen.has(name)) continue;  // i18n-ignore: placeholder event name
         if (NPCSys.hasHiddenTag?.(ev.note)) continue;
+        if (!peopled && !NPCSys.hasStoryTag?.(ev.note)) continue;
         seen.add(name);
         if (!claims.has(name)) claims.set(name, []);
         claims.get(name).push({ groupName, eventData: ev, mapId: tpl.mapId });
@@ -2236,488 +1558,16 @@
   }
 
   if (window.WorldManager?.registerWorldInitializer) {
-    window.WorldManager.registerWorldInitializer("npcRoster", 20, initializeWorldRoster);
+    window.WorldManager.registerWorldInitializer("npcRoster", 20, () => _withLeaderMemo(initializeWorldRoster));
   }
 
   window.NPCSocietyRegistry = SocietyRegistry;
   window.NPCSocietyConfig = SocConfig;
   SocietyRegistry.initializeWorldRoster = initializeWorldRoster;
+  // Runs fn with each "is this a world leader?" answer asked of the book once.
+  // Only for a pass in which nobody takes or leaves office.
+  SocietyRegistry.withLeaderMemo = _withLeaderMemo;
 
-  // ==========================================================================
-  // SECTION 7: PROCEDURAL BACKSTORY (formerly NPCSystemHistorySimulator.js)
-  // ==========================================================================
-  // Generates a deterministic biographical backstory for each NPC by pulling
-  // events from HistorySimulator's generated timeline that the NPC "lived
-  // through". Seeded from nameToSeed(npcName) XOR the world seed, like every
-  // other facet of the profile. Stored in profile.backstory and displayed in
-  // the NPCEmpathize panel as a "BACKGROUND" section below Stats.
-
-  // Indexed by gender: 0 Male, 1 Female, 2 Non-binary, 3 Cocoon (neopronoun
-  // "xe"). Each entry carries its own conjugated verb forms, because a language
-  // that agrees on gender needs a different word, not a different rule:
-  // NPCSociety.pronoun.<gender> in js/i18n/<lang>/plugins.
-  const PRONOUN_COUNT = 4;
-  const pronounOf = (gender) =>
-    T.obj('NPCSociety.pronoun.' + Math.min(Math.max(gender | 0, 0), PRONOUN_COUNT - 1));
-
-  // Five adjectives, drawn by index so the seeded sequence never moves. They
-  // describe the "creature" or the "soul", never the person, so a language
-  // that inflects them agrees with that noun and needs only one list.
-  const ADJECTIVE_COUNT = 5;
-  function adjectiveAt(index) {
-    const pool = T.pool('NPCSociety.adjective');
-    return pool[index % pool.length] || '';
-  }
-
-  // Representative city for each HistorySimulator country, used to anchor a
-  // creature's "born in the wilds near <city>" origin to its birthplace nation.
-  // i18n-ignore-start: real place names, and HistorySimulator country ids
-  const CITY_BY_COUNTRY = {
-    'Italy': 'Rome', 'United Kingdom': 'London', 'Norway': 'Oslo',
-    'Russia': 'Moscow', 'Turkey': 'Istanbul', 'Netherlands': 'Amsterdam',
-    'Belgium': 'Brussels', 'Switzerland': 'Zurich', 'Austria': 'Vienna',
-    'Poland': 'Warsaw', 'Czechoslovakia': 'Prague', 'Hungary': 'Budapest',
-    'Romania': 'Bucharest', 'Bulgaria': 'Sofia', 'Yugoslavia': 'Belgrade',
-    'Greece': 'Athens', 'Denmark': 'Copenhagen', 'Sweden': 'Stockholm',
-    'Finland': 'Helsinki', 'Ireland': 'Dublin', 'Albania': 'Tirana',
-    'Estonia': 'Tallinn', 'Latvia': 'Riga', 'Lithuania': 'Vilnius',
-  };
-  // i18n-ignore-end
-
-  // Nations vs towns. A birthplace is stored under its English id, so the two
-  // are told apart against the world data and not against the label a language
-  // draws: everything the timeline or Countries.json knows is a country, and
-  // anything else (a dossier hometown, an invented "...bledon") is a town.
-  let _nationSet = null, _nationSize = -1;
-  function isNationId(raw) {
-    const name = String(raw == null ? '' : raw).trim();
-    if (!name) return false;
-    if (name === 'Europe') return true; // i18n-ignore: the continent-wide fallback id
-    const listed = (window.WorldGen && window.WorldGen.Countries) || [];
-    if (!_nationSet || _nationSize !== listed.length) {
-      _nationSet = new Set(Object.keys(window.HistorySimulator_COUNTRIES || {}));
-      for (const c of listed) if (c && c.country) _nationSet.add(c.country);
-      _nationSize = listed.length;
-    }
-    return _nationSet.has(name);
-  }
-
-  // The preposition and the article in front of a place belong to the language,
-  // not to the sentence: English says "in Italy" but "in the Netherlands", and
-  // Italian says "in Italia", "nei Paesi Bassi" and "a Bologna". So a bio is
-  // handed a finished locative phrase, keyed on the English id (the only stable
-  // spelling), with the plain "in {place}" rule as the fallback.
-  function locativeOf(rawId, label) {
-    const slug = window.WorldNames
-      ? window.WorldNames.slug(rawId)
-      : String(rawId || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
-    const own = 'NPCSociety.bio.placeIn.' + slug;
-    if (slug && T.has(own)) return T(own, { place: label });
-    return T(isNationId(rawId) ? 'NPCSociety.bio.inCountry' : 'NPCSociety.bio.inTown',
-             { place: label });
-  }
-
-  // One wording out of the bank a key holds, picked by index so the same person
-  // is always written the same way. A language that still ships a single string
-  // instead of a bank answers with that string.
-  function wording(key, params, index) {
-    const bank = T.list(key, params);
-    if (!bank.length) return T(key, params);
-    return bank[((index % bank.length) + bank.length) % bank.length];
-  }
-
-  // ---------------------------------------------------------------------------
-  // Class origins
-  // ---------------------------------------------------------------------------
-  // Every class answers the question the era templates never did: not when this
-  // person was born but how they came to be a Witch, a Lumberjack or a Zombie.
-  // The bank is NPCSociety.bio.classOrigin.<slug>, keyed on the class's own
-  // English database name reduced to letters and digits, which is the one
-  // spelling that survives a language switch.
-  const classSlug = (classId) => {
-    const entry = (typeof $dataClasses !== 'undefined' && $dataClasses)
-      ? $dataClasses[Number(classId) || 0] : null;
-    return entry && entry.name
-      ? String(entry.name).toLowerCase().replace(/[^a-z0-9]/g, '') : '';
-  };
-
-  // One origin out of that class's bank, or '' for a class the bank has no page
-  // for (a mod's class, a bio rolled before the bank existed).
-  function classOriginOf(classId, params, index) {
-    const slug = classSlug(classId);
-    if (!slug) return '';
-    const key = 'NPCSociety.bio.classOrigin.' + slug;
-    const bank = T.list(key, params);
-    if (!bank.length) return '';
-    return bank[((index % bank.length) + bank.length) % bank.length];
-  }
-
-  // Which side of the line a bio is written from. window.NPCCreature owns the
-  // boundary; nothing here compares an id.
-  const bioIsNonSentient = (classId) =>
-    !!(classId && window.NPCCreature && window.NPCCreature.isNonSentientClassId(classId));
-
-  // The one non-sentient class the world still reaches: a Drone holds no creed
-  // and no trade like every other beast, but it was BUILT with the world
-  // written into it as a set of conditions, so the timeline is exactly what it
-  // reacts to. Every other creature class is deaf to history and its bio says
-  // nothing about coups, wars or elections.
-  const EVENT_AWARE_CREATURE = new Set(['drone']); // i18n-ignore: Classes.json name slug
-  // And the two that were assembled rather than whelped, which are not "born in
-  // the wilds near" anywhere even when the creature builder made them.
-  const MANUFACTURED_CREATURE = new Set(['drone', 'manacyborg']); // i18n-ignore: Classes.json name slugs
-
-  const BackstoryGenerator = {
-
-    // `salt` re-rolls a bio that has already been written (rerollBackstory);
-    // without it the name is the whole seed, so the same person always gets the
-    // same formative events back in the same world.
-    generate(eventName, profile, salt) {
-      // Read through HistoryManager so backstories see the active-world timeline
-      // (WorldManager store) as well as the $gameSystem fallback.
-      const events = window.HistoryManager
-        ? window.HistoryManager.getEvents()
-        : $gameSystem?._historicalEvents;
-      if (!events?.length) return null;
-
-      const worldSeed = window.NPCShared ? window.NPCShared.worldSeed() : 19002001;
-      const rng = new SeededRng((nameToSeed(eventName + (salt || '')) ^ worldSeed) >>> 0);
-
-      // ── Birth year ──────────────────────────────────────────────────────────
-      // A curated preset dossier (CharacterCreationPresets) wins over the
-      // level-derived estimate, so a pre-made character's stated birth date
-      // doesn't contradict what the Empathize panel narrates.
-      // Every NPC is an adult: the level-derived estimate is floored at 18 and
-      // subtracted from the CURRENT in-game year (not a hardcoded 2001), so a
-      // backstory can never describe a minor. A dossier-supplied birth year is
-      // honoured but held to the same floor.
-      const MIN_AGE   = window.NPCLifeSim?.MIN_NPC_AGE ?? 18;
-      const nowYear   = window.NPCLifeSim?.currentYear?.() ?? 2001;
-      const age       = MIN_AGE + Math.max(0, profile.level ?? 1) * 2;
-      const rolled    = Math.max(1900, nowYear - Math.min(age, 101));
-      const birthYear = profile._birthYearOverride != null
-        ? Math.min(profile._birthYearOverride, nowYear - MIN_AGE)
-        : rolled;
-
-      // ── Candidate events ────────────────────────────────────────────────────
-      let candidates = events.filter(e => {
-        const y = parseInt((e.date || '').slice(0, 4), 10);
-        return !isNaN(y) && y >= birthYear;
-      });
-      if (candidates.length < 2) {
-        // Fallback: last 30 simulated years
-        candidates = events.filter(e => {
-          const y = parseInt((e.date || '').slice(0, 4), 10);
-          return !isNaN(y) && y >= 1971;
-        });
-      }
-      if (!candidates.length) candidates = events.slice(-10);
-
-      // ── Score candidates ────────────────────────────────────────────────────
-      const traits     = DataLoader.traits ?? [];
-      const factions   = DataLoader.factions ?? [];
-      const factionObj = profile.factionIndex >= 0 ? factions[profile.factionIndex] : null;
-      const factionKey = factionObj ? (factionObj.name || '').split('.')[1] || '' : '';
-
-      const traitNames = (profile.traitIds ?? []).map(id => {
-        const t = traits.find(tr => tr.id === id);
-        return (t?.name || '').toLowerCase();
-      });
-      const isMilitary = traitNames.some(n => n.includes('brave') || n.includes('violent') || n.includes('aggressive'));
-
-      const scored = candidates.map(e => {
-        let score = rng.next() * 10;
-        if (e.category === 'paranormal' && (profile.moralityScore ?? 0) < -20) score += 4;
-        if (e.category === 'political'  && (profile.moralityScore ?? 0) > 20)  score += 4;
-        if (e.category === 'military'   && isMilitary)                          score += 3;
-        if (e.category === 'social')                                             score += 2;
-        if (factionKey && (e.description || '').toLowerCase().includes(factionKey.toLowerCase())) score += 5;
-        return { event: e, score };
-      });
-      scored.sort((a, b) => b.score - a.score);
-      const pickCount = candidates.length >= 15 ? 3 : 2;
-      // The i18n key travels with the snapshot: an NPC's formative events are
-      // copied out of the timeline, and a copy that kept only the finished
-      // prose would freeze the bio in the language the century was simulated
-      // in (an English coup quoted inside an Italian sentence).
-      const formativeEvents = scored.slice(0, pickCount).map(s => ({
-        date:        (s.event.date || '').slice(0, 7),
-        description: s.event.description || '',
-        descKey:     s.event.descKey || null,
-        descParams:  s.event.descParams || null,
-        category:    s.event.category || 'social',
-      }));
-
-      // ── Birthplace ──────────────────────────────────────────────────────────
-      const countries = Object.entries(window.HistorySimulator_COUNTRIES ?? {});
-      let birthplace = profile._birthplaceOverride || 'Europe'; // i18n-ignore: HistorySimulator country id
-      if (!profile._birthplaceOverride && countries.length) {
-        const weights = countries.map(([, data]) => {
-          const matches = factionKey && (data.faction || '').toLowerCase().includes(factionKey.toLowerCase());
-          return matches ? 3 : 1;
-        });
-        const totalW = weights.reduce((a, b) => a + b, 0);
-        let r = rng.next() * totalW;
-        for (let i = 0; i < weights.length; i++) {
-          r -= weights[i];
-          if (r <= 0) { birthplace = countries[i][0]; break; }
-        }
-      }
-
-      // ── Narrative ───────────────────────────────────────────────────────────
-      // Only the pieces are stored. The sentence is written out by
-      // BackstoryGenerator.narrativeOf() every time the bio is drawn, so it
-      // follows a language switch instead of freezing at first meeting.
-      const seed = {
-        gender:     Math.min(profile.gender ?? 0, PRONOUN_COUNT - 1),
-        adjIdx:     rng.nextInt(0, ADJECTIVE_COUNT),
-        // Which wording of the era template this person is written with. Drawn
-        // last, so a backstory rolled before wordings varied keeps every other
-        // piece it was rolled with.
-        varIdx:     rng.nextInt(0, 24),
-        isCreature: !!profile.isCreature,
-        moral:      profile.moralityScore ?? 0,
-        // The class the bio is written around. Every class carries its own
-        // bank of origins (NPCSociety.bio.classOrigin.<slug>), so the sentence
-        // says how this person or thing came to be what it is rather than only
-        // when it was born. Stored rather than read off the profile at draw
-        // time, because a bio is also drawn for somebody the registry no
-        // longer holds; the wizard re-rolls the bio whenever the class
-        // changes, so the two never drift.
-        classId:    profile.assignedClassId ?? null,
-        // Which origin of that class's bank, drawn separately from varIdx so
-        // two people of the same class born in the same era do not have to
-        // share a story.
-        originIdx:  rng.nextInt(0, 64),
-      };
-
-      return { birthYear, birthplace, formativeEvents, seed };
-    },
-
-    // Compose the bio. A profile generated before this was keyed keeps the
-    // finished `narrative` string it was saved with.
-    narrativeOf(backstory) {
-      if (!backstory) return '';
-      const seed = backstory.seed;
-      if (!seed) return backstory.narrative || '';
-
-      // What this character IS decides the shape of the whole sentence, down
-      // to the pronoun, so it is settled before a word is written:
-      //   , a beast (every creature class but the Drone) is deaf to history.
-      //     Its bio is its class origin and nothing else: no coup, no election
-      //     and no war ever reached it, so none is quoted at it.
-      //   , a Drone is the exception, because it was manufactured with the
-      //     world written into it as a list of conditions to answer.
-      //   , everybody else keeps the era template they always had, with the
-      //     class origin written in after it.
-      const slug = classSlug(seed.classId);
-      const beast = bioIsNonSentient(seed.classId);
-      const eventAware = !beast || EVENT_AWARE_CREATURE.has(slug);
-      const manufactured = MANUFACTURED_CREATURE.has(slug);
-
-      // A beast is an "it" throughout, closing line included. Written out of
-      // its own pronoun set rather than out of the gender it was rolled, or a
-      // bio would open on "It was assembled" and close on "he".
-      const pr  = beast ? T.obj('NPCSociety.pronoun.beast') : pronounOf(seed.gender);
-      const adj = adjectiveAt(seed.adjIdx);
-      // A backstory rolled before the wordings varied has no varIdx of its own,
-      // so one is derived from what it does carry: the same person still reads
-      // the same way every time the bio is drawn.
-      const vIdx = (seed.varIdx != null ? seed.varIdx | 0
-                                        : ((backstory.birthYear | 0) + (seed.adjIdx | 0) * 7)) >>> 0;
-      const evs = backstory.formativeEvents || [];
-      const ev0 = _shortDesc(_eventText(evs[0]));
-      const ev1 = evs[1]
-        ? wording('NPCSociety.bio.later',
-                  Object.assign({}, pr, { event: _shortDesc(_eventText(evs[1])) }), vIdx + 1)
-        : '';
-
-      const moral = seed.moral;
-      const band = moral > 60 ? 'high' : moral > 20 ? 'good' : moral > -20 ? 'weary'
-                 : moral > -60 ? 'loose' : 'lawless';
-      // Offset off the era wording, so the closing line does not always fall
-      // with the same opening one.
-      const moralLine = wording('NPCSociety.bio.moral.' + band, pr, vIdx + (seed.adjIdx | 0) + 2);
-
-      // A birthplace is a country for most people and a town for anyone born
-      // from a dossier hometown; a town reads by its Destinations.json "name",
-      // a country by its WorldNames label. Both are stored under their English
-      // id, which is what CITY_BY_COUNTRY and the dossiers match on.
-      const birthplace = window.WorldNames
-        ? window.WorldNames.place(backstory.birthplace)
-        : backstory.birthplace;
-      // Where the sentence says the person is from, preposition and article
-      // included, so a template only ever writes "{born} {placeIn}".
-      let placeIn;
-      let key;
-      if (seed.isCreature && !manufactured) {
-        // Creatures aren't born into a nation, they come out of the wilds near
-        // the city closest to their birthplace country.
-        const city = CITY_BY_COUNTRY[backstory.birthplace] || birthplace;
-        placeIn = T('NPCSociety.bio.wildsNear', {
-          city: window.WorldNames ? window.WorldNames.place(city) : city,
-        });
-        key = 'creature';
-      } else {
-        placeIn = locativeOf(backstory.birthplace, birthplace);
-        if (backstory.birthYear <= 1919) key = 'turbulent';
-        else if (backstory.birthYear <= 1945) key = 'warYears';
-        else if (backstory.birthYear <= 1969) key = 'postwar';
-        else key = 'modern';
-      }
-
-      // A bio rolled before the origins existed carries no originIdx, so one is
-      // derived from what it does carry and the same character keeps reading
-      // the same way.
-      const oIdx = (seed.originIdx != null ? seed.originIdx | 0
-                                           : ((backstory.birthYear | 0) * 3 + vIdx)) >>> 0;
-      const params = Object.assign({}, pr, {
-        year: backstory.birthYear, place: birthplace, placeIn: placeIn, adj: adj,
-        event: ev0, later: ev1, moral: moralLine,
-      });
-      params.classOrigin = classOriginOf(seed.classId, params, oIdx);
-
-      if (beast) {
-        // The Drone's own template quotes the timeline; every other creature
-        // class uses the one that does not mention it at all.
-        const bank = eventAware ? 'NPCSociety.bio.drone' : 'NPCSociety.bio.beast';
-        // Without a class origin to hang it on, the beast template would read
-        // as a sentence with a hole in it, so an unbanked class falls back to
-        // the ordinary wording it has always had.
-        if (params.classOrigin) {
-          return wording(bank, params, vIdx).replace(/  +/g, ' ').trim();
-        }
-      }
-
-      const era = wording('NPCSociety.bio.' + key, params, vIdx);
-      // The class origin follows the era sentence rather than being written
-      // into all twenty era wordings: one line, one place to change it, and a
-      // bank that is still complete for a class the era templates never knew.
-      return `${era} ${params.classOrigin}`.replace(/  +/g, ' ').trim();
-    },
-  };
-
-  // Re-capitalize proper nouns (country / hyperpower / faction / leader names)
-  // after an event description has been lowercased to flow mid-sentence, so the
-  // bio reads "...survived the october revolution and Vladimir Lenin's purges".
-  let _pnNouns = null, _pnRe = null, _pnMap = null;
-  function _restoreProperNouns(text) {
-    let nouns = window.HistorySimulator_PROPER_NOUNS;
-    if (!nouns || !nouns.length) return text;
-    // Merge in live, simulated names (dynamic hyperpowers / nations / leaders)
-    // so names not in the static export still get re-capitalized (#82).
-    const hm = window.HistoryManager;
-    if (hm) {
-      const extra = [];
-      const hp = hm.getHyperpowers ? (hm.getHyperpowers() || {}) : {};
-      for (const name of Object.keys(hp)) {
-        extra.push(name);
-        for (const l of ((hp[name] && hp[name].leaders) || [])) if (l && l.name) extra.push(l.name);
-        for (const l of ((hp[name] && hp[name].holy_leaders) || [])) if (l && l.name) extra.push(l.name);
-      }
-      const ns = hm.getNationsState ? (hm.getNationsState() || {}) : {};
-      for (const n of Object.keys(ns)) {
-        extra.push(n);
-        if (ns[n] && ns[n].controller && ns[n].controller !== 'Neutral') extra.push(ns[n].controller);
-      }
-      if (extra.length) nouns = nouns.concat(extra.filter(Boolean));
-    }
-    // The sentence being reflowed has already been written out in the active
-    // language, so the names inside it are the localized ones. The English list
-    // is kept as well: a world simulated before descriptions were keyed still
-    // quotes English prose.
-    if (window.WorldNames) {
-      const localized = Array.from(window.WorldNames.map().values());
-      if (localized.length) nouns = nouns.concat(localized);
-    }
-    if (nouns !== _pnNouns) {
-      _pnNouns = nouns;
-      // Longest first so multi-word names win over their substrings.
-      const seen = new Set();
-      const sorted = nouns.filter(n => { const k = String(n).toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; })
-        .sort((a, b) => b.length - a.length);
-      _pnMap = new Map(sorted.map(n => [n.toLowerCase(), n]));
-      const escaped = sorted.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-      _pnRe = new RegExp('\\b(' + escaped.join('|') + ')\\b', 'gi');
-    }
-    return text.replace(_pnRe, m => _pnMap.get(m.toLowerCase()) || m);
-  }
-
-  // A snapshotted event's sentence in the active language. A snapshot taken
-  // before the timeline was keyed keeps the prose it was saved with.
-  function _eventText(ev) {
-    if (!ev) return '';
-    if (ev.descKey && window.HistoryManager?.describeRecord) {
-      return window.HistoryManager.describeRecord(ev);
-    }
-    return ev.description || '';
-  }
-
-  function _shortDesc(desc) {
-    if (!desc) return T('NPCSociety.bio.uncertainTimes');
-    // Event descriptions are read as clauses inside the narrative, so they are
-    // quoted in full: cutting them at 60 characters left every second sentence
-    // trailing off mid-thought. Only a runaway description is trimmed, and then
-    // at a word boundary.
-    const MAX = 240;
-    // The clause is dropped into the middle of a sentence that supplies its
-    // own full stop, so it gives up whatever it ended on: a headline event
-    // ("...overthrowing Sniper Zaitsev!") otherwise read as "Zaitsev!.".
-    const text = desc.replace(/[.!?…]+\s*$/, '');
-    if (text.length <= MAX) return _restoreProperNouns(text.toLowerCase());
-    const cut = text.slice(0, MAX).replace(/\s\S*$/, '');
-    return _restoreProperNouns(cut.toLowerCase()) + '…';
-  }
-
-  // Batch generator, call after runSimulation to backfill all loaded profiles
-  window.NPCHistSim = {
-    // The bio, written out in the active language. Pass a profile's
-    // `backstory`; a profile saved before the bio was keyed returns the
-    // finished English string it was stored with.
-    narrativeOf(backstory) { return BackstoryGenerator.narrativeOf(backstory); },
-
-    generateBackstoryNow(name) {
-      const p = SocietyRegistry.getProfile(name);
-      if (!p) return;
-      const events = window.HistoryManager
-        ? window.HistoryManager.getEvents()
-        : ($gameSystem?._historicalEvents || []);
-      if (!events.length) return;
-      // A backstory built against an unkeyed timeline froze its formative
-      // events in one language. Once the world's history carries keys, drop it
-      // so it regenerates: the picks are seeded by name, so the same events
-      // come back, this time able to follow the language.
-      if (p.backstory &&
-          (p.backstory.formativeEvents || []).some(e => e && !e.descKey) &&
-          events.some(e => e && e.descKey)) {
-        p.backstory = null;
-      }
-      if (!p.backstory) p.backstory = BackstoryGenerator.generate(name, p);
-    },
-
-    // Throw the written bio away and write another one, against the profile as
-    // it stands now. The Detailed character editor offers this while the player
-    // is still deciding who the character is.
-    rerollBackstory(name) {
-      const p = SocietyRegistry.getProfile(name);
-      if (!p) return null;
-      const salt = '_' + Math.floor(Math.random() * 0x7fffffff);
-      const bio = BackstoryGenerator.generate(name, p, salt);
-      if (bio) p.backstory = bio;
-      return p.backstory || null;
-    },
-
-    generateAllBackstories() {
-      for (const name of Object.keys($gameSystem?._npcSociety ?? {}))
-        this.generateBackstoryNow(name);
-    },
-
-    // Exposed so NPCEmpathize._buildHistoryHTML can call it if needed externally.
-    buildBackstoryHTML(backstory) {
-      if (!backstory) return '';
-      return `<div class="npc-backstory-text">${escapeHtml(BackstoryGenerator.narrativeOf(backstory))}</div>`;
-    },
-  };
 
 
   // ---------------------------------------------------------------------------
@@ -2806,5 +1656,26 @@
     _DataManager_setupNewGame_standing.call(this);
     NPCStanding.clear();
   };
+
+  // ==========================================================================
+  // FAMILY NAMESPACE (NPCSociety_*.js)
+  // ==========================================================================
+  // The society is split across the NPCSociety_*.js modules listed in
+  // js/plugins.js right after this file. Each module reads the helpers it
+  // shares with the others off NPCSocietyRegistry._internal and publishes
+  // its own there; a name owned by a module that loads later is bound through
+  // _late, which NPCSociety_Backstory.js (the last module) runs once the
+  // whole family is in.
+
+  window.NPCSocietyRegistry._internal = { _late: [] };
+  Object.assign(window.NPCSocietyRegistry._internal, {
+    _natureLevel, DataLoader, escapeHtml, nameToSeed, SeededRng, SocietyRegistry,
+  });
+
+  // Owned by modules that load after this one, bound once the family is in.
+  let _syncLocalLevel, _syncPartyMemberStats, NPCInitSpec;
+  window.NPCSocietyRegistry._internal._late.push(() => ({
+    _syncLocalLevel, _syncPartyMemberStats, NPCInitSpec,
+  } = window.NPCSocietyRegistry._internal));
 
 })();

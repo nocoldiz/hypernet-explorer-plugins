@@ -176,11 +176,12 @@
     }
   };
 
-  // The shelf itself: two contiguous runs of database ids, every one of them
-  // a culture vial and every one of them the same object. They are listed as
-  // ranges rather than two hundred lines, and the category mapping underneath
-  // catches any vial added later without touching this file.
-  const VIAL_RANGES = [[1497, 1568], [1577, 1724]];
+  // The shelf itself: contiguous runs of database ids, every one of them a
+  // culture vial and every one of them the same object. 1656 is a gap: its vial
+  // was retired and the row left blank. They are listed as ranges rather than
+  // two hundred lines, and the category mapping underneath catches any vial
+  // added later without touching this file.
+  const VIAL_RANGES = [[1497, 1568], [1577, 1655], [1657, 1724]];
   for (const [from, to] of VIAL_RANGES) {
     for (let id = from; id <= to; id++) family.unique['i' + id] = 'createDiseaseVialModel';
   }

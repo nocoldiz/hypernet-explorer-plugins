@@ -56,7 +56,7 @@
     //
     // Nothing that uses this needs to know. `window.WorldGen.Biomes` is still
     // `window.WorldGen.Biomes`, still enumerable, still assignable (NPCSystem
-    // writes its own rosters over NPCPools, and the setter below lets it).
+    // writes its own manifest over NPCResidents, and the setter below lets it).
     let _registered = 0, _loaded = 0;
 
     function registerLazy(bucket, name, read) {
@@ -546,10 +546,14 @@
         // goblin half of the wardrobe (see goblinKeys / isGoblinHordeGround).
         // The tenth is anybody else who lives there, dealt off the ordinary
         // pool with the goblins taken out of it, so the share is exact.
-        // An authored town is deliberately not part of it: a written place
-        // keeps the cast it was written with, whoever rules the region it
-        // stands in.
-        const GOBLIN_SHARE = 0.9;
+        // An authored town counts too, through the country its map group
+        // stands in (NPCPolitics.nationOfGroup): its written <Story> cast keeps
+        // the faces it was written with, the crowd around them is the Horde's.
+        // Three quarters of the Horde's people are goblins, a further share is
+        // the other creatures that live among them (HORDE_CREATURE_SHARE), and
+        // the rest are the humans who live in goblin society.
+        const GOBLIN_SHARE = 0.75;
+        const HORDE_CREATURE_SHARE = 0.15;
 
         // The hyperpower whose ground it is: keyed this way in Hyperpowers.json
         // and in the "controller" / "faction" fields of Countries.json.
@@ -1159,13 +1163,66 @@
                 if (!gs || typeof gs.getCountryFromWorldCoordinates !== "function") return false;
                 const nation = gs.getCountryFromWorldCoordinates(x, y);
                 if (!nation) return false;
+                return this.goblinHordeHoldsCountry(nation.country, nation);
+            },
+
+            // Does the Horde hold this nation, by name? The same reading as
+            // the square's: the live timeline, then Countries.json.
+            goblinHordeHoldsCountry(country, nationEntry) {
+                if (!country) return false;
+                const nation = nationEntry ||
+                    ((window.WorldGen && Array.isArray(window.WorldGen.Countries))
+                        ? window.WorldGen.Countries.find(c => c && c.country === country) : null) || {};
                 const hm = window.HistoryManager;
-                const state = (hm && typeof hm.getNationState === "function" && nation.country)
-                    ? hm.getNationState(nation.country) : null;
+                const state = (hm && typeof hm.getNationState === "function")
+                    ? hm.getNationState(country) : null;
                 const controller = (state && state.controller) || nation.controller || "Neutral"; // i18n-ignore: Countries.json controller id
                 if (controller === GOBLIN_POWER) return true;
                 const faction = (state && state.faction) || nation.faction || "Neutral"; // i18n-ignore: Countries.json faction id
                 return controller === "Neutral" && faction === GOBLIN_POWER; // i18n-ignore: Countries.json controller id
+            },
+
+            // The nation an authored map group stands in: the politics answer
+            // first, then the group's Destinations.json entry, then whatever
+            // the group itself carries.
+            countryOfMapGroup(group) {
+                if (!group) return null;
+                let country = null;
+                try { country = window.NPCPolitics?.nationOfGroup?.(group) || null; } catch (_) { country = null; }
+                if (!country) country = window.WorkSystem?.destinationCountry?.(group)?.country || null;
+                if (!country) country = window.$gameSystem?._npcMapGroups?.[group]?.country || null;
+                return country;
+            },
+
+            goblinHordeHoldsGroup(group) {
+                return this.goblinHordeHoldsCountry(this.countryOfMapGroup(group));
+            },
+
+            // The hand-made map group a map belongs to, or null.
+            authoredGroupOfMap(mapId) {
+                const NS = window.NPCSystem;
+                let group = null;
+                try { group = NS?.findMapGroupByMap?.(mapId) || null; } catch (_) { group = null; }
+                if (!group) {
+                    const groups = window.WorldGen?.MapGroups || {};
+                    for (const k of Object.keys(groups)) {
+                        const maps = groups[k]?.maps;
+                        if (Array.isArray(maps) && maps.includes(mapId)) { group = k; break; }
+                    }
+                }
+                if (!group || /^Proc:/.test(String(group))) return null;
+                if (NS?.isProceduralGroup?.(group)) return null;
+                return group;
+            },
+
+            // Forget the square the Horde answer was last worked out for. The
+            // chronicle calls this whenever a nation changes hands (a war, a
+            // peace, a coup: HistoryManager.onNationChange), so a conquest is
+            // seen on the next deal rather than only after the party moves.
+            invalidateHordeGround() {
+                hordeGround.key = null;
+                hordeGround.answer = false;
+                try { window.HordeGround?.invalidate?.(); } catch (_) {}
             },
 
             // Is this map goblin country, i.e. is the crowd dealt here nine
@@ -1173,19 +1230,31 @@
             // asked of the place rather than of the world:
             //   - the ground is PROCEDURAL: the reused square (its towns, its
             //     villages, its caves, its roofed interiors) or a house
-            //     interior opened out of one. An authored map is never it.
-            //   - the world square it stands on is held by the Horde.
+            //     interior opened out of one, and the world square it stands
+            //     on is held by the Horde;
+            //   - or it is a hand-made map whose map group stands in a nation
+            //     the Horde holds (countryOfMapGroup).
             // An alien surface is never it either, whatever the world map
             // paints on the square its landing grid is addressed by: another
             // world is nobody's nation.
             isGoblinHordeGround(mapId) {
                 const WMT = window.WorldMapTransfer;
-                if (!WMT) return false;
                 const here = (window.$gameMap && $gameMap.mapId) ? $gameMap.mapId() : NaN;
                 const id = (mapId !== undefined && mapId !== null) ? Number(mapId) : here;
                 if (!Number.isFinite(id)) return false;
                 const houses = window.NPCSystem && window.NPCSystem.isHouseMap;
-                if (id !== PROC_MAP_ID && !(houses && houses(id))) return false;
+                if (id !== PROC_MAP_ID && !(houses && houses(id))) {
+                    // A hand-made town: the country its map group stands in.
+                    const group = this.authoredGroupOfMap(id);
+                    if (!group) return false;
+                    const gkey = id + ":g:" + group;
+                    if (hordeGround.key !== gkey) {
+                        hordeGround.key = gkey;
+                        hordeGround.answer = this.goblinHordeHoldsGroup(group);
+                    }
+                    return hordeGround.answer;
+                }
+                if (!WMT) return false;
                 if (id === here && WMT.isAlienSurface && WMT.isAlienSurface()) return false;
                 const wc = (id === here)
                     ? (WMT.currentWorldCoords && WMT.currentWorldCoords())
@@ -1521,6 +1590,20 @@
                             Math.floor((draw / gShare) * goblins.length))];
                     }
                     draw = (draw - gShare) / (1 - gShare);
+                    // The other creatures living among them take the next
+                    // slice (HORDE_CREATURE_SHARE of the whole), the people
+                    // who live in goblin society what is left.
+                    let hordeBeasts = this.creatureKeys({ half: "creature", exterior: opts.exterior })
+                        .filter(k => !this.isGoblinSheet(k) && !this.isZombieSheet(k));
+                    if (typeof opts.filter === "function") hordeBeasts = hordeBeasts.filter(opts.filter);
+                    if (hordeBeasts.length && gShare < 1) {
+                        const cShare = HORDE_CREATURE_SHARE / (1 - gShare);
+                        if (draw < cShare) {
+                            return hordeBeasts[Math.min(hordeBeasts.length - 1,
+                                Math.floor((draw / cShare) * hordeBeasts.length))];
+                        }
+                        draw = (draw - cShare) / (1 - cShare);
+                    }
                 }
                 const share = aliens.length ? (pool.length ? this.alienShare(opts) : 1) : 0;
                 if (draw < share) {
@@ -1539,10 +1622,157 @@
             },
 
             // May the spawn systems deal this sheet in this world?
+            // One face dealt on the Horde's own ground, wherever the asking
+            // happens: the same 75 / 15 / 10 the crowd there is dealt with.
+            hordeNpcKey(r, options) {
+                return this.pickNpcKey(r, Object.assign({}, options || {}, { goblinLand: true }));
+            },
+
+            // Share constants, for the population tests.
+            HORDE_SHARES: { goblin: GOBLIN_SHARE, creature: HORDE_CREATURE_SHARE },
+
             isSpawnable(key) {
                 const e = this.entry(key);
                 return !!(e && e.npc === true && e.beta !== true && e.vip !== true);
             }
+        };
+    })();
+
+    // ── The Horde's ground: how far gone a place it holds is ────────────────
+    // window.HordeGround is the one answer to "is this the Horde's, and how
+    // much social chaos is there?". chaos() is 0 on anybody else's ground, and
+    // on the Horde's it starts at one half the day it takes a country and
+    // climbs to 1 over HORDE_CHAOS_RAMP_YEARS of its rule. After a liberation
+    // the level it had reached falls back to 0 over HORDE_CHAOS_CALM_YEARS.
+    // Every consumer (the litter and overgrowth passes, the street crime, the
+    // shop thieves, the off-screen crime rate, the police and the settlement
+    // web's unrest) reads a bounded multiplier off this, never the raw level.
+    // Answers are memoised per place per game day, so asking costs nothing.
+    (() => {
+        const HORDE = "Goblin Horde";   // i18n-ignore: Hyperpowers.json key
+        const RAMP_YEARS = 10;
+        const CALM_YEARS = 3;
+        const MULT = {
+            litter: 5,        // up to six times the rubbish
+            overgrowth: 3,    // up to four times the green
+            crime: 2,         // up to three times the crime
+            theft: 2,
+            police: 0.6,      // down to two fifths of the officers
+            unrest: 1,        // up to twice the unrest and tension
+        };
+        // In a goblin world the Horde is the normal order, not an invader
+        // (WorldModes.hordeIsNormalOrder): its ground is kept far better than a
+        // fresh conquest, so every level below is scaled down by this, which is
+        // less litter, less crime and more police than the same years of rule
+        // anywhere else.
+        const GOBLIN_WORLD_CHAOS = 0.35;
+        const memo = new Map();
+
+        function normalOrderScale() {
+            const WMo = window.NPCShared && window.NPCShared.WorldModes;
+            return (WMo && WMo.hordeIsNormalOrder()) ? GOBLIN_WORLD_CHAOS : 1;
+        }
+
+        function yearNow() {
+            const v = window.$gameVariables;
+            const minute = (v && typeof v.value === "function") ? (Number(v.value(114)) || 0) : 0;
+            return 2001 + minute / 525600;
+        }
+        function yearOfDate(date) {
+            const m = /(\d{4})(?:-(\d{1,2}))?/.exec(String(date || ""));
+            if (!m) return null;
+            return Number(m[1]) + (m[2] ? (Number(m[2]) - 1) / 12 : 0);
+        }
+        const SC = () => window.SpriteCatalog;
+        const holdsCountry = (country) => !!(country && SC() && SC().goblinHordeHoldsCountry(country));
+
+        // The level for a country at a given year, off its chronicle, scaled
+        // for a world whose normal order the Horde is.
+        function chaosOfCountry(country, atYear) {
+            return rawChaosOfCountry(country, atYear) * normalOrderScale();
+        }
+        function rawChaosOfCountry(country, atYear) {
+            if (!country) return 0;
+            const now = (typeof atYear === "number") ? atYear : yearNow();
+            const hm = window.HistoryManager;
+            const hist = (hm && typeof hm.getNationHistory === "function") ? (hm.getNationHistory(country) || []) : [];
+            let start = null, end = null;
+            for (const entry of hist) {
+                const y = yearOfDate(entry && entry.date);
+                if (y === null || y > now) continue;
+                const horde = entry.controller === HORDE;
+                if (horde && (start === null || end !== null)) { start = y; end = null; }
+                else if (!horde && start !== null && end === null) end = y;
+            }
+            const held = holdsCountry(country);
+            if (held) {
+                // Held with no chronicle to date it: the Horde's own seat, long held.
+                const since = (start !== null && end === null) ? start : now - RAMP_YEARS;
+                return 0.5 + 0.5 * Math.max(0, Math.min(1, (now - since) / RAMP_YEARS));
+            }
+            if (start === null || end === null) return 0;
+            const peak = 0.5 + 0.5 * Math.max(0, Math.min(1, (end - start) / RAMP_YEARS));
+            return Math.max(0, peak * (1 - (now - end) / CALM_YEARS));
+        }
+
+        // The country a place stands in: a world square {x, y}, a map group
+        // ("Ghent", "Proc:12,40"), a map id, or nothing for where the party is.
+        function countryOf(where) {
+            const gs = window.$gameSystem;
+            if (where && typeof where === "object" && Number.isFinite(where.x)) {
+                const n = gs?.getCountryFromWorldCoordinates?.(where.x, where.y);
+                return n ? n.country : null;
+            }
+            if (typeof where === "string") {
+                const m = /^Proc:(-?\d+),(-?\d+)$/.exec(where);
+                const grp = gs?._npcMapGroups?.[where];
+                if (m) return grp?.country || countryOf({ x: Number(m[1]), y: Number(m[2]) });
+                return SC()?.countryOfMapGroup?.(where) || null;
+            }
+            const WMT = window.WorldMapTransfer;
+            const here = (window.$gameMap && $gameMap.mapId) ? $gameMap.mapId() : NaN;
+            const id = (where !== undefined && where !== null) ? Number(where) : here;
+            if (!Number.isFinite(id)) return null;
+            const houses = window.NPCSystem?.isHouseMap;
+            const procId = window.WorldMapReturn?.procMapId ?? 636;
+            if (id === procId || (houses && houses(id))) {
+                if (id === here && WMT?.isAlienSurface?.()) return null;
+                const wc = (id === here) ? WMT?.currentWorldCoords?.() : WMT?.worldCoordsForMap?.(id);
+                return wc ? countryOf({ x: wc.x, y: wc.y }) : null;
+            }
+            const group = SC()?.authoredGroupOfMap?.(id);
+            return group ? countryOf(group) : null;
+        }
+
+        function chaos(where) {
+            const country = countryOf(where);
+            if (!country) return 0;
+            const day = Math.floor(yearNow() * 365);
+            const scale = normalOrderScale();
+            const hit = memo.get(country);
+            if (hit && hit.day === day && hit.scale === scale) return hit.v;
+            const v = Math.max(0, Math.min(1, chaosOfCountry(country)));
+            if (memo.size > 64) memo.clear();
+            memo.set(country, { day, scale, v });
+            return v;
+        }
+
+        const bounded = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
+        window.HordeGround = {
+            POWER: HORDE, RAMP_YEARS, CALM_YEARS, MULT, GOBLIN_WORLD_CHAOS,
+            holdsCountry,
+            countryOf,
+            chaosOfCountry,
+            chaos,
+            // Rates are multiplied by these; the police count by police().
+            crime: (where) => bounded(1 + MULT.crime * chaos(where), 1, 1 + MULT.crime),
+            theft: (where) => bounded(1 + MULT.theft * chaos(where), 1, 1 + MULT.theft),
+            litter: (where) => bounded(1 + MULT.litter * chaos(where), 1, 1 + MULT.litter),
+            overgrowth: (where) => bounded(1 + MULT.overgrowth * chaos(where), 1, 1 + MULT.overgrowth),
+            police: (where) => bounded(1 - MULT.police * chaos(where), 1 - MULT.police, 1),
+            unrest: (where) => bounded(1 + MULT.unrest * chaos(where), 1, 1 + MULT.unrest),
+            // A nation changed hands: every answer is worked out again.
+            invalidate() { memo.clear(); },
         };
     })();
 

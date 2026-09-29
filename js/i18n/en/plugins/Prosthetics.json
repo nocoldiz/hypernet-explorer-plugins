@@ -179,6 +179,7 @@
   "faceSurgery": "Face surgery",
   "faceSurgeryMeta": "Change bust and portrait appearance",
   "faceSurgerySuccess": "Face surgery completed successfully.",
+  "tooExpensive": "Not enough money for that surgery.",
  "remote": {
   "title": "Remote Bistury",
   "banner": "REMOTE BISTURY",

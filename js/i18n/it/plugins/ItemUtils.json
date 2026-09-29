@@ -60,7 +60,8 @@
       "exercise": "{name} si sta allenando con {item}",
       "smoke": "{name} sta fumando {item}",
       "bet": "{name} sta studiando le quote di {item}",
-      "gamble": "{name} sta giocando {item}"
+      "gamble": "{name} sta giocando {item}",
+      "surf": "{name} sta cavalcando le onde con {item}"
     }
   },
   "targetCard": {
@@ -68,5 +69,9 @@
     "hp": "HP",
     "mp": "MP",
     "ap": "AP"
+  },
+  "help": {
+    "button": "Aiuto",
+    "close": "Chiudi"
   }
 }

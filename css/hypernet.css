@@ -5129,7 +5129,8 @@
 .gr-ink--ready { color: #2e7d32; }
 .gr-ink--warn { color: #b04a00; }
 .gr-ink--bad { color: #c0392b; }
-.gr-ink--honey { color: #c8922a; }
+/* A dark comb brown: honey gold is the parchment book's ink, never a window's. */
+.gr-ink--honey { color: #8b4513; }
 .gr-alert--waiting { background: #b04a00; color: #fff; }
 .gr-alert--clear { background: #2e7d32; color: #fff; }
 
@@ -5194,6 +5195,23 @@
 .chp-tight { padding: 6px 8px; }
 .chp-bad { color: #c0392b; }
 .chp-nav-on { background: var(--xp-face-2); border-left-color: #3b6ea5; font-weight: bold; }
+/* Propaganda2 (ONUAssemblyUI.js): the chamber's frame, a red header, and form controls */
+.pg-header { background: linear-gradient(to bottom,#a53b3b,#792a2a); border-bottom-color: #3f1616; }
+.pg-row { display: flex; align-items: center; gap: 8px; margin: 4px 0 6px; }
+.pg-wrap { flex-wrap: wrap; }
+.pg-lbl { font-weight: bold; color: #2a5179; margin-top: 6px; }
+.pg-input { font-family: 'Tahoma',sans-serif; font-size: 14px; padding: 3px 6px; border: 1px solid #7f9db9; background: var(--xp-white); color: var(--xp-ink-2); min-width: 0; }
+.pg-wide { flex: 1; }
+.pg-chip { padding: 3px 10px; border: 1px solid var(--xp-face-shade); border-radius: 3px; background: var(--xp-face-6); cursor: pointer; user-select: none; font-size: 14px; }
+.pg-chip-on { background: #3b6ea5; border-color: #2a5179; color: var(--xp-white); font-weight: bold; }
+.pg-btn { padding: 4px 14px; border: 1px solid #003c74; border-radius: 3px; background: linear-gradient(to bottom,#ffffff,#ece9d8); cursor: pointer; user-select: none; font-size: 14px; white-space: nowrap; }
+.pg-primary { font-weight: bold; }
+.pg-pick { max-height: 150px; overflow-y: auto; border: 1px solid var(--xp-face-3); background: var(--xp-white); margin-bottom: 6px; }
+.pg-item { padding: 3px 8px; cursor: pointer; border-bottom: 1px solid #efede4; }
+.pg-item-on { background: #316ac5; color: var(--xp-white); }
+.pg-item-on .chp-note { color: var(--xp-white); }
+.pg-tr { cursor: pointer; }
+.pg-msg { font-weight: bold; }
 
 /* The "remote" XP windows of the two Health plugins (the biologic console and
    the prosthetics bench): the styles they used to paste inline, as classes. */

@@ -1275,6 +1275,8 @@
 
     update() {
       super.update();
+      // The pad's letter sheet owns every press while it is up.
+      if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) return;
       if (this.isTyping()) {
         // The player is writing: the keyboard belongs to the field. Only a
         // controller cancel gets through, since the key guard swallows the
@@ -1390,9 +1392,37 @@
     focusEditor(id) {
       const el = document.getElementById(id);
       if (!el) return;
+      // A pad has no keys to type with: the letter sheet stands in for the
+      // field and writes the draft the field would have written.
+      if (this.padTypes()) {
+        const isSubject = id === "mail-subject";
+        const d = draft();
+        Controller.textEntry({
+          title: T(isSubject ? "Mail.compose.subject" : "Mail.compose.body"),
+          value: isSubject ? d.subject : d.body,
+          max: Number(el.getAttribute("maxlength")) || 2000,
+          multiline: !isSubject,
+          onCommit: (value) => {
+            const text = String(value || "");
+            if (isSubject) d.subject = text;
+            else d.body = text;
+            el.value = text;
+            this._confirmSend = false;
+            this.refreshAll();
+          }
+        });
+        return;
+      }
       el.focus();
       const len = el.value.length;
       try { el.setSelectionRange(len, len); } catch (e) { /* number fields */ }
+    }
+
+    // True when the pad is the device in hand and the letter sheet exists.
+    padTypes() {
+      return !!(window.Controller && typeof Controller.textEntry === "function" &&
+        typeof Input !== "undefined" && typeof Input.lastInputDevice === "function" &&
+        Input.lastInputDevice() === "pad");
     }
 
     //-------------------------------------------------------------------
@@ -1837,6 +1867,20 @@
     //-------------------------------------------------------------------
 
     updateMailInput() {
+      // L1 / R1 (Q / W, Shift+Tab / Tab) turn between the inbox and the
+      // writing desk from anywhere on the spread.
+      const tabStep = window.UINav ? window.UINav.tabDir() : 0;
+      if (tabStep) {
+        const modes = ["inbox", "compose"];
+        const at = Math.max(0, modes.indexOf(this._mode));
+        const next = modes[Math.max(0, Math.min(modes.length - 1, at + tabStep))];
+        if (next !== this._mode) {
+          this.setMode(next);
+          this.refreshAll();
+        }
+        return;
+      }
+
       const cancel = Input.isTriggered("cancel") || Input.isTriggered("escape") || TouchInput.isCancelled();
       const ok = Input.isTriggered("ok");
       const down = Input.isRepeated("down");
@@ -1895,9 +1939,12 @@
       }
       // Burning a letter was the one thing in here that needed a mouse: the
       // envelope is opened and emptied with Confirm, but the fire under it had
-      // only its button. SHIFT is the second verb everywhere else on a book
-      // spread, and a letter that still holds anything refuses anyway.
-      if (Input.isTriggered("shift") && this._mode === "inbox" && this._area === "list" && count) {
+      // only its button. It is the remove verb, so it sits on Y (Input 'menu')
+      // as discarding does on every menu, and a letter that still holds
+      // anything refuses anyway. MZ answers 'menu' for Escape too, so the
+      // button is told apart from a cancel here.
+      if (Input.isTriggered("menu") && !Input.isTriggered("escape") &&
+          this._mode === "inbox" && this._area === "list" && count) {
         this.discardCurrent();
         return;
       }

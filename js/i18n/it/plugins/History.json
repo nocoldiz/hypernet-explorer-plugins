@@ -402,12 +402,17 @@
     "annexation": "annessione",
     "conquest": "conquista (in precedenza {power})",
     "declaredIndependence": "indipendenza dichiarata da {power}",
-    "declaredPower": "il {power} si proclama"
+    "declaredPower": "il {power} si proclama",
+    "coup": "colpo di stato sostenuto da {power}",
+    "goblinWorld": "il dominio dell'Orda dei Goblin, l'ordine del mondo",
+    "goblinWorldFrom": "il dominio dell'Orda dei Goblin, l'ordine del mondo (in precedenza {power})"
   },
   "conquest": {
     "independence": "{nation} si libera di {power}, il {prevGov} viene smantellato e viene restaurato il {gov}.",
     "annex": "{conqueror} annette {nation}, il {prevGov} viene sostituito da un {gov}.",
-    "wrest": "{conqueror} strappa {nation} a {power}, il {prevGov} viene sostituito da un {gov}."
+    "wrest": "{conqueror} strappa {nation} a {power}, il {prevGov} viene sostituito da un {gov}.",
+    "coup": "Un colpo di stato sostenuto da {power} rovescia il {prevGov} di {nation}; prende il potere un {gov}.",
+    "goblinWorld": "{power} è l'ordine del mondo: {count} nazioni vivono sotto il suo dominio, e solo {holdouts} le resistono."
   },
   "epidemic": {
     "hysteriaName": "Il {disease} di {origin}, {year}",
@@ -537,5 +542,17 @@
     "mario_draghi": "Il 31 dicembre 2000 uscì dal proprio corpo nell'Eurotower di Francoforte e non vi rientrò. Quella notte gli Dei lo insediarono come dio del commercio, e da allora ogni prezzo fissato sulla Terra è un'offerta a lui.",
     "aaron_swartz": "Riprese la biblioteca a chi la stava vendendo. Da allora l'Archive Foundation lo conta tra i suoi, e tiene un terminale aperto a suo nome in ogni sala di lettura che possiede.",
     "friedrich_hayek": "Il Collettivo non lo vota. È il suo libro a votare."
+  },
+  "war": {
+    "declared": "{attacker} dichiara guerra a {defender} per {nation}.",
+    "declaredMany": "{attacker} dichiara guerra a {defender}, rivendicando {nation} e altre {others} nazioni.",
+    "conquest": "presa in guerra (in precedenza {power})",
+    "taken": "{power} strappa {nation} a {from} nel corso della guerra.",
+    "whitePeace": "Su richiesta dell'ONU {attacker} e {defender} firmano una pace bianca; ogni confine torna dov'era prima della guerra.",
+    "exhaustion": "Stremati dopo {months} mesi di guerra, {attacker} e {defender} firmano una pace bianca e ogni confine torna dov'era.",
+    "whitePeaceReason": "restituita da {power} con una pace bianca",
+    "capitulation": "{loser} capitola davanti a {winner}; la guerra finisce alle condizioni del vincitore.",
+    "ceasefire": "L'ONU impone un cessate il fuoco tra {attacker} e {defender}; le armi tacciono fino al {until}.",
+    "sanctions": "L'ONU sottopone {power} a sanzioni per la guerra contro {enemy}; i suoi commerci si riducono per un anno."
   }
 }

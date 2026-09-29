@@ -305,5 +305,135 @@
     "mode": "Handle",
     "fitting": "Fitting",
     "done": "Done"
+  },
+  "npcUnique": {
+    "name": "{{owner}'s {adjective} {base}|The {adjective} {base} of {owner}}",
+    "adjective": {
+      "weapon": [
+        "{Rust|Blood}-Bitten",
+        "Moon-Etched",
+        "Ash-Handled",
+        "Twice-Quenched",
+        "Thorn-Wound",
+        "Salt-Blued",
+        "Night-Lacquered",
+        "Copper-Ringed",
+        "Grave-Cold",
+        "Lucky",
+        "Crooked",
+        "Bone-Gripped",
+        "Whispering",
+        "Stubborn",
+        "Brass-Studded",
+        "Silver-Veined",
+        "{Old|Faithful}"
+      ],
+      "armor": [
+        "Patched",
+        "Lucky",
+        "Moth-Eaten",
+        "Brass-Buttoned",
+        "Rain-Stained",
+        "{Gold|Silver}-Stitched",
+        "Sun-Faded",
+        "Iron-Laced",
+        "Velvet-Lined",
+        "Hand-Dyed",
+        "Salt-Crusted",
+        "Ember-Singed",
+        "Well-Worn",
+        "Sunday-Best"
+      ]
+    },
+    "madeFor": "Customised by {maker} for {owner}.",
+    "madeOwn": "Customised by {owner} for their own hand.",
+    "history": "Since then: {chain}.",
+    "how": {
+      "crafted": "made by {holder}",
+      "commissioned": "made for {holder}",
+      "purchased": "bought by {holder}",
+      "stole": "stolen by {holder}",
+      "seized": "taken by {holder}",
+      "returned": "given back to {holder}",
+      "acquired": "passed to {holder}",
+      "recruited": "brought into the party by {holder}",
+      "sold": "sold to {holder}",
+      "soldAt": "sold over a counter in {holder}"
+    },
+    "tip": "One of a kind. Customised by {maker} for {owner}.",
+    "tipHeld": "One of a kind. Customised by {maker} for {owner}, now carried by {holder}."
+  },
+  "help": {
+    "board": {
+      "title": "The workshop",
+      "intro": "Pick a trade on the left, then a piece on the right to see what it takes to make.",
+      "items": {
+        "back": {
+          "name": "Back",
+          "text": "Leaves the workshop."
+        },
+        "trades": {
+          "name": "Production methods",
+          "text": "The trades the party works in, with how many of each trade's formulas are known. Picking one narrows the pieces on the right page to that trade."
+        },
+        "member": {
+          "name": "Companion tabs",
+          "text": "Whose hands are at the bench. Auto hands every piece to the member best at making it; a name makes that member craft everything."
+        },
+        "search": {
+          "name": "Search",
+          "text": "Filters the pieces by name."
+        },
+        "status": {
+          "name": "State tabs",
+          "text": "Sort the pieces by what can be done with them: ready to make, missing materials, beyond the smith's training, already carried or already forged."
+        },
+        "context": {
+          "name": "Summary line",
+          "text": "The trade and state being shown and how many pieces match them."
+        },
+        "list": {
+          "name": "Pieces",
+          "text": "Everything that matches. Open a piece to see its materials, its look and its stats, and to make it."
+        },
+        "help": {
+          "name": "? Help",
+          "text": "Opens this sheet. On a controller, press Select; press it again, Back or Confirm to close."
+        }
+      }
+    },
+    "piece": {
+      "title": "Making a piece",
+      "items": {
+        "back": {
+          "name": "Back to the board",
+          "text": "Returns to the list of pieces."
+        },
+        "look": {
+          "name": "How it comes out",
+          "text": "A preview of the finished piece. Edit model opens the model editor, where fitted parts can be moved, turned and sized."
+        },
+        "details": {
+          "name": "What it is",
+          "text": "Type, slot, rarity, value, weight and bonuses of the piece, and the materials it takes against what the party carries."
+        },
+        "name": {
+          "name": "Name",
+          "text": "What the piece will be called. Type your own name or roll a new one."
+        },
+        "batch": {
+          "name": "Quantity",
+          "text": "How many to make in one go, capped by the materials in hand."
+        },
+        "forge": {
+          "name": "Forge and Smelt",
+          "text": "Forge makes the piece and spends the materials. Smelt breaks a carried copy back down."
+        },
+        "help": {
+          "name": "? Help",
+          "text": "Opens this sheet. On a controller, press Select; press it again, Back or Confirm to close."
+        }
+      }
+    }
   }
 }

@@ -289,6 +289,9 @@
         // canBuildOnCurrentMap), whatever the reused template's note says.
         const key = furnitureMapKey();
         if (typeof key === 'string' && $gameMap && key !== String($gameMap.mapId())) return false;
+        // A workplace the party bought from the Assets menu is theirs to build
+        // on (RealEstateMarket.js, WORKPLACE DEEDS).
+        if (window.WorkplaceDeeds?.ownsHere?.()) return false;
         // Inside a procedural house the deed is the finer signal: a floor the
         // party bought (or inherited with a companion) is theirs to furnish.
         if (window.ProceduralHouseSystem?.isInsideHouse?.()) {
@@ -341,7 +344,20 @@
         });
     }
 
+    // The one answer to "build pressed where building is off": a buzzer and a
+    // short toast, whether the B key, the menu hotkey or the overlay asked.
+    function warnCannotBuild() {
+        SoundManager.playBuzzer();
+        if (!window.ParchmentToast) return;
+        window.ParchmentToast.show(T('Furniture.cannotBuildHere'), {
+            severity: 'warning',
+            duration: 150,
+            key: 'furniture-cannot-build'  // i18n-ignore  dedupe key
+        });
+    }
+
     window.FurnitureSystem = window.FurnitureSystem || {};
+    window.FurnitureSystem.warnCannotBuild = warnCannotBuild;
     window.FurnitureSystem.getMapBuildRights = getMapBuildRights;
     window.FurnitureSystem.canBuildOnCurrentMap = canBuildOnCurrentMap;
     window.FurnitureSystem.isIllegalBuildHere = isIllegalBuildHere;
@@ -4758,7 +4774,7 @@
         // <BuildRights: Disabled> map. Unowned <BuildRights: Owner> land opens
         // too, with the warning below and a bounty for whatever gets built.
         if (!canBuildOnCurrentMap()) {
-            SoundManager.playBuzzer();
+            warnCannotBuild();
             return;
         }
         illegalBuildPending = 0;
@@ -5527,10 +5543,17 @@
             this._fbCursorY = $gameMap.canvasToMapY(TouchInput.y).clamp(0, $gameMap.height() - 1);
         }
 
-        // Right-click is always a mouse cancel (disarm, else close).
+        // Right-click is a mouse cancel and steps out one level as B does:
+        // disarm, else leave the open category, else close.
         if (TouchInput.isCancelled()) {
             this._fbPointerMode = 'mouse';
             if (this._fbArmedId) { this.disarmFurniture(); SoundManager.playCancel(); }
+            else if (this._fbUI && this._fbUI.category) {
+                this._fbUI.category = null;
+                this._fbUI._selId = null;
+                SoundManager.playCancel();
+                this._fbUI.render();
+            }
             else this.closeFurnitureBuildMode();
             return;
         }

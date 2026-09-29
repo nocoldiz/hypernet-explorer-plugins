@@ -156,11 +156,209 @@
         "Trading in {company} is steady with no news to speak of.",
         "{company} restates last year's figures by a rounding error."
       ]
+    },
+    "driver": {
+      "spend": {
+        "up": [
+          "{company} climbs as shoppers empty the shelves in {town}.",
+          "The tills ring all week and {company} rides the spending."
+        ],
+        "down": [
+          "{company} slips as purses stay shut in {town}.",
+          "A quiet week at the tills weighs on {company}."
+        ]
+      },
+      "jobs": {
+        "up": [
+          "Hiring picks up and {company} gains with the pay packets.",
+          "{company} rises as the dole queues shorten."
+        ],
+        "down": [
+          "Layoffs spread and {company} falls with the wages.",
+          "{company} sags as {town} loses its jobs."
+        ]
+      },
+      "prosperity": {
+        "up": [
+          "{company} gains on a boom in {town}.",
+          "Good times in {town} lift {company}."
+        ],
+        "down": [
+          "{company} hit by the {town} bust.",
+          "Hard times in {town} drag on {company}."
+        ]
+      },
+      "hq": {
+        "up": [
+          "{company} climbs as its home town {town} prospers.",
+          "Head office in {town} reports a strong quarter for {company}."
+        ],
+        "down": [
+          "Trouble at home in {town} knocks {company}.",
+          "{company} slides as its home town {town} struggles."
+        ]
+      },
+      "war": {
+        "up": [
+          "{company} up on the {war}.",
+          "{company} gains as the {war} keeps the order books full."
+        ],
+        "down": [
+          "{company} down on the {war}.",
+          "The {war} weighs on {company}."
+        ]
+      },
+      "sanctions": {
+        "up": [
+          "{company} gains as the sanctions on {power} tighten supply.",
+          "Sanctions squeeze supply and {company} profits."
+        ],
+        "down": [
+          "{company} slips as the sanctions on {power} ease.",
+          "Supply loosens and {company} gives back its sanctions gains."
+        ]
+      },
+      "plague": {
+        "up": [
+          "{company} climbs as the epidemic fills its vaults.",
+          "Grim trade: {company} rises with the death toll."
+        ],
+        "down": [
+          "{company} falls as the epidemic burns out.",
+          "Fewer funerals, thinner margins for {company}."
+        ]
+      },
+      "horde": {
+        "up": [
+          "{company} gains as the Horde spreads its chaos.",
+          "Wherever the Goblin Horde goes, {company} follows it up."
+        ],
+        "down": [
+          "{company} eases as order returns to Horde country.",
+          "Calm in the occupied lands takes the shine off {company}."
+        ]
+      },
+      "building": {
+        "up": [
+          "{company} climbs as movers and camps need steel.",
+          "New roofs, new camps: the {company} mills run hot."
+        ],
+        "down": [
+          "{company} slips as fewer people are on the move.",
+          "Building orders dry up and {company} cools."
+        ]
+      },
+      "greenwitch": {
+        "up": [
+          "{company} blooms with {town}.",
+          "A good season in {town} lifts {company}."
+        ],
+        "down": [
+          "{company} hit by the {town} bust.",
+          "{town} has a lean season and {company} feels it."
+        ]
+      },
+      "harvest": {
+        "up": [
+          "{company} gains as the farms bring in more.",
+          "Busy fields, busy barns: {company} rises."
+        ],
+        "down": [
+          "Idle fields drag on {company}.",
+          "{company} slips on a thin harvest."
+        ]
+      },
+      "mouths": {
+        "up": [
+          "More mouths to feed lift {company}.",
+          "{company} gains as the towns grow."
+        ],
+        "down": [
+          "{company} falls as the towns empty.",
+          "Fewer people at the table, fewer sales for {company}."
+        ]
+      },
+      "mood": {
+        "up": [
+          "{company} rises as the governments turn optimistic.",
+          "Treasuries relax and {company} gains."
+        ],
+        "down": [
+          "{company} falls on gloomy treasury talk.",
+          "The governments' economic mood sours and {company} follows."
+        ]
+      },
+      "election": {
+        "up": [
+          "{company} gains as the election uncertainty in {power} lifts.",
+          "Polling day passes and {company} recovers."
+        ],
+        "down": [
+          "{company} falls ahead of the {power} election.",
+          "Election nerves in {power} weigh on {company}."
+        ]
+      },
+      "savings": {
+        "up": [
+          "Deposits pour in and {company} rises.",
+          "{company} gains as savers fill the vaults."
+        ],
+        "down": [
+          "{company} slips as deposits dry up.",
+          "Savers stay away and {company} eases."
+        ]
+      },
+      "balances": {
+        "up": [
+          "{company} gains as purses across the land grow fat.",
+          "Full purses mean full vaults, and {company} rises."
+        ],
+        "down": [
+          "{company} slips as the purses of the land run thin.",
+          "Empty pockets, empty vaults: {company} eases."
+        ]
+      },
+      "trips": {
+        "up": [
+          "{company} gains as the roads fill with travellers.",
+          "Busy coaches, busy rails: {company} rises."
+        ],
+        "down": [
+          "{company} slips as fewer people travel.",
+          "Empty seats weigh on {company}."
+        ]
+      },
+      "moves": {
+        "up": [
+          "{company} climbs as families move house.",
+          "Removal vans are booked solid and {company} rises."
+        ],
+        "down": [
+          "{company} eases as people stay put.",
+          "Fewer moves, fewer freight orders for {company}."
+        ]
+      }
+    },
+    "earnings": {
+      "beat": [
+        "{company} beats its quarterly figures.",
+        "{company} posts earnings ahead of every estimate."
+      ],
+      "miss": [
+        "{company} misses its quarterly figures.",
+        "{company} earnings fall short and the board apologises."
+      ]
     }
   },
   "dividends": {
     "tag": "DIV",
     "paid": "Dividends credited: {amount} for {days} day(s) of holdings.",
     "toast": "Dividends paid: {amount}"
+  },
+  "drivers": {
+    "warName": "{a}-{b} war",
+    "someWar": "fighting abroad",
+    "someTown": "the market towns",
+    "somePower": "the powers"
   }
 }

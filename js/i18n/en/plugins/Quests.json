@@ -215,5 +215,7 @@
     "toastReturned": "{title} is back on the board: whoever took it could not finish it.",
     "deliveryTitle": "Handed in for you",
     "escrowReturned": "Escrow returned"
-  }
+  },
+  "wantedFor": "wanted for {bounty}, last seen in ",
+  "wantedNPCBrought": "Warrant closed on "
 }

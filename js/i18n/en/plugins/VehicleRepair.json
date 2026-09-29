@@ -112,5 +112,38 @@
   },
   "toast": {
     "criticalFailure": "{part} has failed. The vehicle will not move."
+  },
+  "help": {
+    "title": "The garage",
+    "items": {
+      "close": {
+        "name": "Close",
+        "text": "Leaves the garage."
+      },
+      "portrait": {
+        "name": "Vehicle",
+        "text": "The vehicle, its description and whether it runs. A starship can change its appearance from here."
+      },
+      "status": {
+        "name": "Status",
+        "text": "Broken means an essential component is at 0% and the vehicle will not move until it is repaired."
+      },
+      "tabs": {
+        "name": "Repair and Upgrades",
+        "text": "Turn between mending parts and improving the vehicle."
+      },
+      "repair": {
+        "name": "Components registry",
+        "text": "Every part with its integrity. Essential ones keep the vehicle running. Repair one part, or Full Repair for all of them, spending materials."
+      },
+      "upgrades": {
+        "name": "Upgrade workshop",
+        "text": "Improvements bought in levels: acceleration, top speed, fuel capacity, damage reduction, and for the camper driving on water and flight."
+      },
+      "help": {
+        "name": "? Help",
+        "text": "Opens this sheet. On a controller, press Select; press it again, Back or Confirm to close."
+      }
+    }
   }
 }

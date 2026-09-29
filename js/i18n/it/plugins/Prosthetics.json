@@ -179,6 +179,7 @@
   "faceSurgery": "Chirurgia del viso",
   "faceSurgeryMeta": "Modifica il busto e l'aspetto del ritratto",
   "faceSurgerySuccess": "Chirurgia del viso completata con successo.",
+  "tooExpensive": "Non hai abbastanza denaro per questo intervento.",
  "remote": {
   "title": "Remote Bistury",
   "banner": "REMOTE BISTURY",

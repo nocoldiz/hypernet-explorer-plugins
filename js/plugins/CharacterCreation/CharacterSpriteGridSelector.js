@@ -359,6 +359,17 @@
   }
   rebuildSpriteOptions();
 
+  // A sheet's bust is recorded on the member whichever way they are drawn, so
+  // switching the Bio tab to 2D Bust shows the face their sprite carries. It
+  // only settles the portrait style on the bust for a member who has not
+  // chosen the 3D model (or wears a species model, "sprite").
+  function settleBustPortrait(actor) {
+    if (!actor || !actor.setPortraitMode) return;
+    const mode = actor.portraitMode ? actor.portraitMode() : 0;
+    if (mode === "model" || mode === "sprite") return;
+    actor.setPortraitMode("bust");
+  }
+
   // Function to select a random sprite from available options
   function selectRandomSprite(actorId) {
     rebuildSpriteBoard();
@@ -378,7 +389,7 @@
       const bust = bustForSprite(randomSprite.name, randomSprite.index);
       if (bust) {
         actor.setVnBust(bust);
-        if (actor.setPortraitMode) actor.setPortraitMode("bust");
+        settleBustPortrait(actor);
       } else if (window.selectRandomBustForActor) {
         window.selectRandomBustForActor(actorId);
       }
@@ -1231,27 +1242,26 @@
       this._standaloneSpriteMode = false;
       Scene_SpriteGridSelector._standaloneSpriteMode = false;
 
-      // A creature portrayed by its own 3D model is portrayed by nothing else:
-      // handing it the sheet's bust (and with it portrait mode "bust") threw
-      // the sculpted model away the moment its walking sprite was picked. The
-      // sprite is the map body, the model is the portrait, and choosing one
-      // never touches the other.
-      const CC3D = window.CC3DModel;
-      const keepsModel =
-        (actor.portraitMode && actor.portraitMode() === "model") ||
-        !!(CC3D && CC3D.getConfig && CC3D.getConfig(this._actorId));
+      // A member drawn as a 3D model (the Bio tab's choice, person or
+      // creature) keeps it: the sprite is the map body, the model is the
+      // portrait, and choosing one never touches the other. The sheet's bust
+      // is still recorded, so switching to 2D Bust shows the face this sprite
+      // carries. A config left behind by an earlier choice does not count:
+      // only the portrait style says how the member is drawn.
+      const keepsModel = !!(actor.portraitMode &&
+        (actor.portraitMode() === "model" || actor.portraitMode() === "sprite"));
 
       // Standalone means the sprite alone was asked for (the dossier avatar),
       // so the bust already on the character is left exactly as it is.
-      if (!standalone && !keepsModel) {
+      if (!standalone) {
         const bust = bustForSprite(entry.name, entry.index);
         if (bust) {
           actor.setVnBust(bust);
-          if (actor.setPortraitMode) actor.setPortraitMode("bust");
-        } else if (window.selectRandomBustForActor) {
+          if (!keepsModel && actor.setPortraitMode) actor.setPortraitMode("bust");
+        } else if (!keepsModel && window.selectRandomBustForActor) {
           window.selectRandomBustForActor(this._actorId);
         }
-        if (this._isQuickCreation()) {
+        if (!keepsModel && this._isQuickCreation()) {
           const utils = window.CharacterCreationUtils;
           if (utils && utils.applyIdentityFromSprite) {
             utils.applyIdentityFromSprite(this._actorId - 1, entry.name);
@@ -2195,7 +2205,7 @@
     const bust = bustForSprite(actor.characterName(), actor.characterIndex());
     if (!bust) return null;
     actor.setVnBust(bust);
-    if (actor.setPortraitMode) actor.setPortraitMode("bust");
+    settleBustPortrait(actor);
     return bust;
   };
 
@@ -2274,7 +2284,7 @@
     const actor = $gameActors.actor(actorId);
     if (actor) {
       actor.setVnBust(randomBust);
-      if (actor.setPortraitMode) actor.setPortraitMode("bust");
+      settleBustPortrait(actor);
     }
 
     return randomBust;

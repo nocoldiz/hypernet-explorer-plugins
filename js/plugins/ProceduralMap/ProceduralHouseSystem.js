@@ -238,6 +238,10 @@
       // Returns null when not inside a generated house/building.
       getContainerInstanceKey() { return getCurrentOwnershipKey(); },
       isCurrentFloorOwned() { return isCurrentFloorOwned(); },
+      // True while the party stands in somebody's home: a house, villa or
+      // residential floor. Shops, inns, clinics, abandoned shells and
+      // skyscrapers are public spaces, whose cupboards nobody calls theirs.
+      isCurrentPrivateHome() { return isCurrentPrivateHome(); },
       // Only <BuildRights: Owner> houses can be bought. Free houses already allow
       // building (no purchase needed) and Disabled houses can never be owned.
       canOfferPurchase() {
@@ -256,6 +260,14 @@
       // Read-only listing of every owned floor for the Assets pockets. Each entry
       // exposes the entrance map name + tile so the player can locate the deed.
       listOwnedHouses() { return listOwnedHouses(); },
+      // Gives an owned floor back (the Real Estate Board sold it): its build
+      // rights and cupboards are nobody's business of the party's again.
+      releaseOwnedHouse(key) {
+        const owned = getOwnedHouses();
+        if (!key || !owned[key]) return false;
+        delete owned[key];
+        return true;
+      },
       // Procedural-map interactive FEATURES. Building/dungeon doors are ENTERED
       // BY WALKING into them (ProceduralTerrainInteractions' walk-entrance hook
       // calls enterDoorFeatureAt with the door's own tile), the same way the
@@ -748,6 +760,15 @@
   function isHomeInteriorMap(mapId) {
     if (!mapId || !$dataMapInfos || !$dataMapInfos[mapId]) return false;
     return HOME_PARENT_IDS.includes($dataMapInfos[mapId].parentId);
+  }
+
+  // Decided by the interior template alone, never by the building: a walk-up
+  // with a shop on its ground floor still has families on the floors above.
+  function isCurrentPrivateHome() {
+    if (getCurrentOwnershipKey() === null) return false;
+    const mapId = $gameMap ? $gameMap.mapId() : null;
+    if (isPublicInteriorMap(mapId)) return false;
+    return isHomeInteriorMap(mapId);
   }
 
   function isBuildingPublic(building) {

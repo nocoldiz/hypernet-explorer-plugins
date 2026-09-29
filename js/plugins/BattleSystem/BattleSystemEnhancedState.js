@@ -697,8 +697,27 @@
         // while the rest keep fighting.
         const eventCleared = indexes => indexes.every(i => {
             const enemy = $gameTroop.members()[i];
-            return !enemy || !enemy.isAlive();
+            return !enemy || (!enemy.isAlive() && !enemy._bseEscaped);
         });
+
+        // A monster that ran out of the fight (Game_Enemy.escape) is hidden,
+        // not dead: its event stays on the map, runs from the party and holds
+        // off for a while (BSE.Skirmish.startEscape) instead of being settled.
+        const escapedIn = indexes => indexes.some(i => {
+            const enemy = $gameTroop.members()[i];
+            return !!(enemy && enemy._bseEscaped && !enemy.isDeathStateAffected());
+        });
+        const settleEscaped = (persistentId, evMapId, evId, indexes, byTroopIndex) => {
+            const record = pData[persistentId] || { enemyHp: {} };
+            if (!record.enemyHp) record.enemyHp = {};
+            indexes.forEach((troopIndex, i) => {
+                const enemy = $gameTroop.members()[troopIndex];
+                if (!enemy) return;
+                record.enemyHp[byTroopIndex ? troopIndex : i] = enemy.isDeathStateAffected() ? 0 : enemy.hp;
+            });
+            pData[persistentId] = record;
+            if (BSE.Skirmish && BSE.Skirmish.queueEscape) BSE.Skirmish.queueEscape(evMapId, evId);
+        };
 
         // Shared corpse helper - used for both flee (dead enemies mid-battle)
         // and win (all enemies cleared). An enemy whose HP is still > 0 survived
@@ -714,7 +733,7 @@
             // up by Immortal sits at 0 and would otherwise leave a body behind
             // on every flee while its map event lives on.
             const troopMember = $gameTroop && $gameTroop.members()[troopIndex];
-            const enemyAlive = troopMember && troopMember.isAlive();
+            const enemyAlive = troopMember && (troopMember.isAlive() || troopMember._bseEscaped);
             if (enemyAlive) return;
             BSE.Functions.dropMapCorpse({
                 mapId: evMapId,
@@ -755,6 +774,7 @@
                 });
                 pData[bId] = persistentData;
                 $gameSystem.setEventToLock(mId, eId);
+                if (escapedIn(baseIndexes) && BSE.Skirmish) BSE.Skirmish.queueEscape(mId, eId);
             }
             joined.forEach(j => {
                 if (eventCleared(j.memberIndexes)) {
@@ -771,24 +791,37 @@
                 });
                 pData[j.persistentId] = jData;
                 $gameSystem.setEventToLock(j.mapId, j.eventId);
+                if (escapedIn(j.memberIndexes) && BSE.Skirmish) BSE.Skirmish.queueEscape(j.mapId, j.eventId);
             });
             // Clear rewards: the party did not win this fight.
             const r = BSE.State.battleRewards;
             r.exp = 0; r.gold = 0; r.items = []; r.knowledge = 0;
         } else if (result === 0 && bId) { // Win
-            dropCorpse(mId, eId, 0);
-            joined.forEach(j => dropCorpse(j.mapId, j.eventId, j.memberIndexes[0]));
+            const baseIndexes = [];
+            for (let i = 0; i < baseSize; i++) baseIndexes.push(i);
+            const baseEscaped = escapedIn(baseIndexes);
+            if (!baseEscaped) dropCorpse(mId, eId, 0);
+            joined.forEach(j => {
+                if (!escapedIn(j.memberIndexes)) dropCorpse(j.mapId, j.eventId, j.memberIndexes[0]);
+            });
 
-            if (pData[bId]) delete pData[bId];
-            $gameSystem.setEventToDelete(mId, eId);
-            BSE.Functions.recordBossDefeat(mId, eId);
-            if ($gameMap.mapId() === 636) {
-                if (!$gameSystem._procGenDefeatedEnemies) $gameSystem._procGenDefeatedEnemies = [];
-                if (!$gameSystem._procGenDefeatedEnemies.includes(eId)) {
-                    $gameSystem._procGenDefeatedEnemies.push(eId);
+            if (baseEscaped) {
+                settleEscaped(bId, mId, eId, baseIndexes, true);
+            } else {
+                if (pData[bId]) delete pData[bId];
+                $gameSystem.setEventToDelete(mId, eId);
+                BSE.Functions.recordBossDefeat(mId, eId);
+                if ($gameMap.mapId() === 636) {
+                    if (!$gameSystem._procGenDefeatedEnemies) $gameSystem._procGenDefeatedEnemies = [];
+                    if (!$gameSystem._procGenDefeatedEnemies.includes(eId)) {
+                        $gameSystem._procGenDefeatedEnemies.push(eId);
+                    }
                 }
             }
-            joined.forEach(clearJoinedEvent);
+            joined.forEach(j => {
+                if (escapedIn(j.memberIndexes)) settleEscaped(j.persistentId, j.mapId, j.eventId, j.memberIndexes, false);
+                else clearJoinedEvent(j);
+            });
         }
 
         saveEnemyPartDamage();
@@ -1292,6 +1325,8 @@
                 if (event) event.holdAfterFlee();
             });
             $gameSystem.clearEventsToLock();
+            // Monsters that escaped the battle run from the party now.
+            if (BSE.Skirmish && BSE.Skirmish.drainEscapes) BSE.Skirmish.drainEscapes();
 
             // A tactical map battle (MapBattleMode.js) was fought where everyone
             // stands: putting the party back on its pre-battle tiles would slide

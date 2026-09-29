@@ -18,8 +18,13 @@
  *   - Party <-> NPC casual transmission is rolled each time the Empathize panel
  *     opens for an NPC (window.DiseaseSystem.onEmpathizeOpen).
  *   - Venereal diseases (venereal:true) NEVER spread by proximity. They only
- *     pass between NPCs who are romantic partners, resolved lazily from the
- *     NPCLifeSim partner link.
+ *     pass between NPCs who are sexual partners (every poly partner, open
+ *     extra and situationship; never a queerplatonic bond or an asexual one).
+ *   - NPCs pass illness to each other by contact (NPC CONTACT SPREAD): the
+ *     household, coworkers on the same shift, shop counters, refugee camps,
+ *     the street (dirtier on Goblin Horde ground), and live on the map after a
+ *     conversation, a greeting or a customer served at a counter. Run once
+ *     per NPCLifeSim catch-up.
  *   - Each NPC gets a deterministic, world-seeded medical history (past
  *     diseases + lasting conditions such as broken bones) shown on the
  *     Empathize "Health" tab.
@@ -1295,12 +1300,19 @@
     npcConditions(profile) { return (profile && profile.conditions) || []; },
     npcHasDisease(profile, id) { return this.npcDiseases(profile).some(e => e.id === id); },
 
-    infectNpc(profile, id, epidemicId) {
+    // `contact` ({source, route}) marks a person-to-person catch, so its
+    // course runs like any other (NPC CONTACT SPREAD): symptoms after the
+    // incubation, sick leave, a healer.
+    infectNpc(profile, id, epidemicId, contact) {
       if (!ensureDb() || !profile || !DB.byId[id]) return false;
       if (this.npcHasDisease(profile, id)) return false;
-      (profile.diseases || (profile.diseases = [])).push({
-        id, sinceMin: nowMin(), epidemic: epidemicId || null,
-      });
+      const entry = { id, sinceMin: nowMin(), epidemic: epidemicId || null };
+      if (contact) {
+        entry.contact = true;
+        if (contact.source) entry.source = contact.source;
+        if (contact.route) entry.route = contact.route;
+      }
+      (profile.diseases || (profile.diseases = [])).push(entry);
       return true;
     },
 
@@ -1601,7 +1613,7 @@
           if (this.npcHasDisease(profile, d.id)) continue;
           if ((profile.pastDiseases || []).includes(d.id)) continue;
           if (Math.random() < d.transmission * factor) {
-            this.infectNpc(profile, d.id, e.epidemic || null);
+            this.infectNpc(profile, d.id, e.epidemic || null, { source: a.name(), route: 'party' }); // i18n-ignore: route id
             given.push(d.id);
           }
         }
@@ -2125,6 +2137,715 @@
         past: actor._pastDiseases || [],
       };
     },
+  });
+
+  // ==========================================================================
+  // NPC CONTACT SPREAD (DiseaseSystem.spreadPass, onNpcContact)
+  // ==========================================================================
+  // Illness moves between people through the time they spend together, not
+  // only when somebody asks after them. Once a life-sim catch-up (NPCLifeSim,
+  // a day or more at a time) every carrier among the townsfolk is walked
+  // through the people they really share air, water, a bed or a counter with:
+  //
+  //   household     the people behind the same door ($gameSystem
+  //                 ._npcBuildingOccupants, NPCSim.sharesHome), else the
+  //                 partner and the children of the life record
+  //   coworker      the same work map and the same shift (_npcJobAssignments,
+  //                 _npcShopAssignments)
+  //   shop          a keeper and the people of the town who shop at the counter
+  //   camp          a refugee camp (record.refugee.status "camp"), crowded
+  //   town          the street, which the Goblin Horde's chaos makes dirtier
+  //   sexual        every partner of the record (poly partners, open extras,
+  //                 situationships); never a queerplatonic bond, never an
+  //                 asexual person
+  //
+  // and, live on the map, the two people of a finished conversation or a
+  // passing greeting (NPCConversation calls onNpcContact), and a customer
+  // served across a counter (NPCSim WorkServe). An illness the party passes to
+  // somebody in the Empathize exchange runs the same course.
+  //
+  // Each route is a per-day chance over the interval (never a day loop):
+  // the disease's own transmission, how catching the carrier is at this point
+  // of the course (nothing while incubating, `peak` through the peak days), how
+  // well the route carries the disease's vectors (or its category when a
+  // disease names none), the town's hygiene (NPCWorldWeb), its outbreak
+  // pressure (EpidemicSystem prevalence, the settlement's epidemic episode),
+  // Horde chaos and camp crowding. Carriers, contacts per carrier and new
+  // infections per pass are all capped, and the rolls are seeded, so the same
+  // world spreads the same way.
+  //
+  // The continental numbers stay the SIR curve's own: a person caught from an
+  // outbreak carrier keeps that outbreak's id, which is already counted in the
+  // town's compartments, and nothing here writes back into them. Everything
+  // else is the background illness of a town, which no outbreak ever counted.
+  //
+  // What catching it does: nothing for the incubation, then symptoms, which is
+  // the only point the biography hears of it (NPCLife.event.fellIll), sick
+  // leave (NPCSim.Leave), and a trip to a healer (NPCDowned's heal need, when
+  // that system is present). Treatment clears a curable illness after its
+  // course and holds a manageable one down; either makes the carrier far less
+  // catching. Recovery leaves immunity where the disease grants one.
+  const SPREAD = {
+    MAX_DAYS: 30,                 // a longer skip is read as a month of contact
+    MAX_CARRIERS_PER_PASS: 200,
+    MAX_CONTACTS_PER_CARRIER: 8,
+    MAX_NEW_PER_PASS: 60,
+    MAX_COURSE_PER_PASS: 400,
+    DAY_CAP: 0.5,                 // no single contact is surer than this a day
+    // How much contact each route is, as a factor on per-exposure transmission
+    // per day (conversation and greeting are per meeting, not per day).
+    ROUTE: {
+      household: 0.35, coworker: 0.12, shop: 0.05, camp: 0.22, town: 0.03,
+      conversation: 0.16, ambient: 0.06, greeting: 0.04,
+    },
+    // How well each route carries each vector. Anything unlisted is 0.
+    VECTOR: {
+      household:    { airborne: 1, saliva: 0.8, contact: 1, foodwater: 0.8, social: 1, vector: 0.3, fluid: 0.1, magical: 0.3 },
+      coworker:     { airborne: 1, saliva: 0.4, contact: 0.6, foodwater: 0.3, social: 1, vector: 0.2, magical: 0.2 },
+      shop:         { airborne: 0.6, contact: 0.5, foodwater: 0.2, social: 0.6 },
+      camp:         { airborne: 1, saliva: 0.6, contact: 1, foodwater: 1, social: 1, vector: 0.8, magical: 0.3 },
+      town:         { airborne: 0.6, contact: 0.4, foodwater: 0.6, social: 0.8, vector: 0.5 },
+      conversation: { airborne: 1, saliva: 0.6, contact: 0.3, social: 1 },
+      ambient:      { airborne: 0.8, contact: 0.2, social: 1 },
+      greeting:     { airborne: 0.6, contact: 0.3, social: 0.8 },
+    },
+    // A disease that names no vector travels the way its kind usually does.
+    CATEGORY_VECTORS: {
+      viral: ['airborne'], bacterial: ['contact'], fungal: ['contact'], parasitic: ['contact'],
+      protozoan: ['vector'], respiratory: ['airborne'], hysteria: ['social'],
+    },
+    SEX_PER_DAY: 0.25,            // how often a couple is intimate, on average
+    CONDOM: { married: 0.1, dating: 0.35, casual: 0.55 },
+    TREATED_FACTOR: 0.1,          // a treated or suppressed carrier
+    KNOWN_FACTOR: 0.35,           // a carrier who knows: they hold back
+    CAMP_FACTOR: 1.8,
+    HORDE_FACTOR: 1.2,            // at full chaos, on top of 1
+    HOUSEHOLD_MAX: 6,
+    COWORKERS_MAX: 4,
+    SHOP_CUSTOMERS: 2,
+    TOWN_CONTACTS: 2,
+    CAMP_CONTACTS: 4,
+    // No lasting immunity from these: reinfection is the rule.
+    NO_IMMUNITY_CATEGORIES: ['fungal', 'parasitic', 'protozoan', 'deficiency', 'mental', 'chronic', 'autoimmune'],
+    CARE_SEVERITIES: ['moderate', 'severe', 'lethal'],
+  };
+  const QP_BOND_KEY = 'queerplatonic';   // i18n-ignore: bond kind id (NPCLifeSim)
+
+  // A seeded roll for the spread. The first draw of a freshly seeded xorshift
+  // follows its seed closely, and the keys here differ in a character or two,
+  // so a few draws are thrown away first to keep neighbouring keys apart.
+  function _spreadRoll(key) {
+    const r = _rng(key);
+    r.next(); r.next(); r.next();
+    return r.next();
+  }
+
+  const _sp = {
+    society: () => (window.$gameSystem && $gameSystem._npcSociety) || null,
+    record: name => {
+      const LS = window.NPCLifeSim;
+      return (LS && LS.getRecord) ? LS.getRecord(name) : null;
+    },
+    // Dead, killed or a creature: out of the reckoning altogether.
+    gone(name, profile) {
+      if (!profile || profile._killed) return true;
+      const rec = _sp.record(name);
+      if (rec && (rec.dead || rec.nonSentient)) return true;
+      const NC = window.NPCCreature;
+      return !!(NC && NC.isNonSentientProfile && NC.isNonSentientProfile(profile) &&
+        !(NC.isPlayerCharacterName && NC.isPlayerCharacterName(name)));
+    },
+    groupOf(name, profile) {
+      const rec = _sp.record(name);
+      return (profile && profile._homeGroupName) || (rec && rec.homeGroup) || null;
+    },
+    onLeave(profile, now) {
+      const l = profile && profile.leave;
+      return !!(l && Number(l.untilMin) > now);
+    },
+  };
+
+  // Where an illness is for an NPC: days carried, still incubating or not,
+  // and how catching they are now (the party's courseState, without a course
+  // of medicine to read).
+  function _npcCourse(entry, d, now) {
+    const ph = _phasesOf(d);
+    const since = entry && entry.sinceMin != null ? entry.sinceMin : 0;
+    const days = Math.max(0, (now - since) / MINUTES_PER_DAY);
+    const incubating = days < (ph.incubation || 0);
+    const infectivity = incubating ? 0
+      : (days >= (ph.peakStart || 0) && days <= (ph.peakEnd != null ? ph.peakEnd : 9999)
+        ? (ph.peak || 1) : (ph.latent != null ? ph.latent : 1));
+    return { days, incubating, symptomatic: !incubating, infectivity, known: days >= (ph.window || 0) };
+  }
+
+  function _vectorsOf(d) {
+    if (Array.isArray(d.vectors) && d.vectors.length) return d.vectors;
+    return SPREAD.CATEGORY_VECTORS[d.category] || [];
+  }
+
+  // How well a route carries this disease, 0..1.
+  function _routeFit(d, route) {
+    const table = SPREAD.VECTOR[route];
+    if (!table || !d.infective) return 0;
+    let best = 0;
+    for (const v of _vectorsOf(d)) best = Math.max(best, table[v] || 0);
+    return best;
+  }
+
+  const _sexual = d => !!(d && (d.venereal || _vectorsOf(d).includes('sexual')));
+
+  function _grantsImmunity(d) {
+    if (!d) return false;
+    if (d.immunity != null) return !!d.immunity;
+    if (d.venereal) return false;
+    return !SPREAD.NO_IMMUNITY_CATEGORIES.includes(d.category);
+  }
+
+  function _npcImmune(profile, d) {
+    return _grantsImmunity(d) && (profile.pastDiseases || []).includes(d.id);
+  }
+
+  // A treated or suppressed carrier: the healer's treatment (NPCDowned), a
+  // remedy they carry, or a bout already under a course.
+  function _npcTreated(profile, entry, now) {
+    if (entry.treatedAt != null || entry.managed) return true;
+    const ND = window.NPCDowned;
+    if (ND && typeof ND.isTreated === 'function' && ND.isTreated(profile, now)) return true;
+    return _carriesRemedy(profile, entry.id);
+  }
+
+  function _carriesRemedy(profile, diseaseId) {
+    const items = profile && profile.itemIds;
+    if (!Array.isArray(items) || !items.length || !window.Medicines) return false;
+    const remedies = window.Medicines.forDisease(diseaseId);
+    return remedies.some(r => items.includes(r.itemId));
+  }
+
+  // The town's air: hygiene, outbreak pressure, Horde chaos, camp crowding.
+  function _envFactor(group, memo) {
+    const key = group || '';
+    if (memo && memo.has(key)) return memo.get(key);
+    let f = 1;
+    if (group) {
+      const W = window.NPCWorldWeb;
+      if (W) {
+        const drain = W.needDrainModifiers ? W.needDrainModifiers(group) : null;
+        if (drain && drain.hygiene > 1) f *= 1 + (drain.hygiene - 1) * 0.5;
+        const pulse = W.getPulse ? W.getPulse(group) : null;
+        const ep = pulse && pulse.episodes && pulse.episodes.epidemic;
+        if (ep) f *= 1 + (ep.severity != null ? ep.severity : 50) / 200;
+      }
+      const ES = window.EpidemicSystem;
+      if (ES && ES.placeForGroup && ES.prevalenceAt) {
+        try {
+          const place = ES.placeForGroup(group);
+          if (place) f *= 1 + Math.min(1, ES.prevalenceAt(place.key) * 10);
+        } catch (e) { /* geography is optional */ }
+      }
+      const HG = window.HordeGround;
+      if (HG && typeof HG.chaos === 'function') {
+        let c = 0;
+        try { c = Math.max(0, Math.min(1, Number(HG.chaos(group)) || 0)); } catch (e) { c = 0; }
+        f *= 1 + SPREAD.HORDE_FACTOR * c;
+      }
+      const grp = window.$gameSystem && $gameSystem._npcMapGroups && $gameSystem._npcMapGroups[group];
+      if (grp && grp._camp) f *= SPREAD.CAMP_FACTOR;
+    }
+    if (memo) memo.set(key, f);
+    return f;
+  }
+
+  // A person's own resistance: somebody who has not washed in days, a child
+  // or somebody old catches more.
+  function _susceptibility(name, profile) {
+    let s = 1;
+    if (typeof profile.hygiene === 'number' && profile.hygiene < 30) s *= 1.3;
+    const LS = window.NPCLifeSim;
+    const age = LS && LS.ageOf ? LS.ageOf(name) : null;
+    if (age != null && (age < 12 || age >= 65)) s *= 1.2;
+    return s;
+  }
+
+  // The bonds that are sexual: every partner of the record, the primary and
+  // every poly partner or open extra, situationships included. A queerplatonic
+  // bond is not one, and nor is anything an asexual person holds.
+  function _isAsexual(name, profile) {
+    const R = window.NPCRomance;
+    if (!R || typeof R.orientation !== 'function') return false;
+    try {
+      const o = R.orientation(name, profile);
+      return !!(o && o.sexual && o.sexual.key === 'asexual');
+    } catch (e) { return false; }
+  }
+
+  function _sexualPartners(name, profile) {
+    const rec = _sp.record(name);
+    if (!rec || rec.child || rec.partnerStyle === QP_BOND_KEY) return [];
+    const LS = window.NPCLifeSim;
+    // Any queerplatonic-only style (aromantic-solo too) holds no sexual bond.
+    const rules = (LS && LS.STYLE_RULES && rec.partnerStyle) ? LS.STYLE_RULES[rec.partnerStyle] : null;
+    if (rules && rules.qpOnly) return [];
+    const list = LS && LS.partnersOf ? LS.partnersOf(rec)
+      : (Array.isArray(rec.partners) && rec.partners.length ? rec.partners : (rec.partner ? [rec.partner] : []));
+    if (!list.length || _isAsexual(name, profile)) return [];
+    const soc = _sp.society() || {};
+    const out = [];
+    for (const p of list) {
+      if (!p || !p.name || p.external || p.bond === QP_BOND_KEY) continue;
+      const other = soc[p.name];
+      if (!other || _isAsexual(p.name, other)) continue;
+      const kind = rec.maritalStatus === 'married' && rec.partner && rec.partner.name === p.name ? 'married' : null;
+      out.push({ name: p.name, sinceMinute: p.sinceMinute != null ? p.sinceMinute : rec.partnerSinceMinute, kind });
+    }
+    return out;
+  }
+
+  // How often this couple uses protection: seeded per couple, higher the more
+  // casual the bond.
+  function _protection(aName, bName, rec, kind) {
+    const style = rec && rec.partnerStyle;
+    const casual = style === 'situationship' || style === 'friends-with-benefits' || // i18n-ignore: style ids
+      (rec && rec.partner && rec.partner.name !== bName && rec.partner.name !== aName);
+    const base = kind === 'married' ? SPREAD.CONDOM.married : casual ? SPREAD.CONDOM.casual : SPREAD.CONDOM.dating;
+    const use = base * (0.5 + _spreadRoll([aName, bName].sort().join('|') + '|condom'));
+    return Math.max(0.05, 1 - Math.min(1, use) * 0.9);
+  }
+
+  // Indexes for one pass: town residents, work shifts, shop keepers.
+  function _spreadIndex(soc) {
+    const byGroup = new Map();
+    for (const name of Object.keys(soc)) {
+      const p = soc[name];
+      if (!p || p._killed) continue;
+      const g = p._homeGroupName;
+      if (!g) continue;
+      (byGroup.get(g) || byGroup.set(g, []).get(g)).push(name);
+    }
+    const byShift = new Map();
+    const shiftOf = new Map();
+    const keepers = new Set();
+    const addShift = (name, a, shop) => {
+      if (!a || a.mapId == null) return;
+      const key = a.mapId + '|' + (a.shift != null ? a.shift : 0);
+      shiftOf.set(name, key);
+      (byShift.get(key) || byShift.set(key, []).get(key)).push(name);
+      if (shop) keepers.add(name);
+    };
+    const sys = window.$gameSystem || {};
+    for (const [name, a] of Object.entries(sys._npcJobAssignments || {})) addShift(name, a, false);
+    for (const [name, a] of Object.entries(sys._npcShopAssignments || {})) if (!shiftOf.has(name)) addShift(name, a, true);
+    const keepersByGroup = new Map();
+    for (const name of keepers) {
+      const p = soc[name];
+      const g = p && p._homeGroupName;
+      if (g) (keepersByGroup.get(g) || keepersByGroup.set(g, []).get(g)).push(name);
+    }
+    return { byGroup, byShift, shiftOf, keepersByGroup, env: new Map() };
+  }
+
+  // Up to `n` names out of `pool`, seeded, never `self`.
+  function _sample(pool, n, self, seedKey) {
+    if (!pool || !pool.length || n <= 0) return [];
+    if (pool.length <= n + 1) return pool.filter(x => x !== self).slice(0, n);
+    const rng = _rng(seedKey);
+    const out = [];
+    for (let tries = 0; out.length < n && tries < n * 4; tries++) {
+      const pick = pool[Math.floor(rng.next() * pool.length)];
+      if (pick !== self && !out.includes(pick)) out.push(pick);
+    }
+    return out;
+  }
+
+  function _housemates(name, profile) {
+    const sys = window.$gameSystem || {};
+    const home = profile.homeBuilding;
+    const occ = home && !home._placeholder && home.key && sys._npcBuildingOccupants
+      ? sys._npcBuildingOccupants[home.key] : null;
+    const sim = window.NPCSim;
+    const out = [];
+    if (Array.isArray(occ)) {
+      for (const n of occ) {
+        if (n === name || out.includes(n)) continue;
+        if (sim && typeof sim.sharesHome === 'function' && !sim.sharesHome(name, n)) continue;
+        out.push(n);
+      }
+    }
+    // A life with no register behind it: the partner they live with, and
+    // their children and parents in the same town.
+    const rec = _sp.record(name);
+    if (rec) {
+      const LS = window.NPCLifeSim;
+      const partners = LS && LS.partnersOf ? LS.partnersOf(rec) : (rec.partner ? [rec.partner] : []);
+      for (const p of partners) {
+        if (!p || p.external || out.includes(p.name)) continue;
+        if (LS && LS.livesApart && LS.livesApart(name, p.name)) continue;
+        const other = _sp.record(p.name);
+        if (other && other.homeGroup === rec.homeGroup) out.push(p.name);
+      }
+      for (const [n, rel] of Object.entries(rec.kin || {})) {
+        if (out.includes(n) || (rel !== 'parent' && rel !== 'child')) continue;
+        const other = _sp.record(n);
+        if (!other || other.homeGroup !== rec.homeGroup) continue;
+        if (rec.child || other.child) out.push(n);
+      }
+    }
+    return out.slice(0, SPREAD.HOUSEHOLD_MAX);
+  }
+
+  // Everyone a carrier meets over the interval, by route, bounded.
+  function _contactsOf(name, profile, idx, now, dayKey) {
+    const out = [];
+    const seen = new Set([name]);
+    const add = (n, route) => {
+      if (!n || seen.has(n) || out.length >= SPREAD.MAX_CONTACTS_PER_CARRIER) return;
+      seen.add(n);
+      out.push({ name: n, route });
+    };
+    for (const p of _sexualPartners(name, profile)) {
+      if (out.length >= SPREAD.MAX_CONTACTS_PER_CARRIER) break;
+      seen.add(p.name);
+      out.push({ name: p.name, route: 'sexual', partner: p });
+    }
+    for (const n of _housemates(name, profile)) add(n, 'household');
+    const group = _sp.groupOf(name, profile);
+    const rec = _sp.record(name);
+    const inCamp = !!(rec && rec.refugee && rec.refugee.status === 'camp'); // i18n-ignore: refugee status id
+    // At work, unless they are home on leave.
+    const shift = idx.shiftOf.get(name);
+    if (shift && !_sp.onLeave(profile, now)) {
+      for (const n of _sample(idx.byShift.get(shift), SPREAD.COWORKERS_MAX, name, name + '|work|' + dayKey)) add(n, 'coworker');
+    }
+    const residents = group ? idx.byGroup.get(group) : null;
+    // Over the counter: a keeper serves the town, anybody else is served
+    // (before the street, so a counter is not lost to a chance meeting).
+    if (group) {
+      if (idx.keepersByGroup.get(group) && idx.keepersByGroup.get(group).includes(name)) {
+        for (const n of _sample(residents, SPREAD.SHOP_CUSTOMERS, name, name + '|cust|' + dayKey)) add(n, 'shop');
+      } else {
+        for (const n of _sample(idx.keepersByGroup.get(group), 1, name, name + '|shop|' + dayKey)) add(n, 'shop');
+      }
+    }
+    if (inCamp) {
+      for (const n of _sample(residents, SPREAD.CAMP_CONTACTS, name, name + '|camp|' + dayKey)) add(n, 'camp');
+    } else if (residents) {
+      for (const n of _sample(residents, SPREAD.TOWN_CONTACTS, name, name + '|town|' + dayKey)) add(n, 'town');
+    }
+    return out;
+  }
+
+  // The medical history has to exist before anything is added to it: building
+  // it later would replace what was caught.
+  function _readyTarget(name, profile) {
+    if (!profile._medHistBuilt) API._buildBaseHistory(name, profile);
+  }
+
+  // One exposure of `tgt` to one carried illness of `src`. `days` is how long
+  // the contact lasted (1 for a single meeting). Returns the new entry or null.
+  function _expose(src, tgt, entry, route, days, env, now, fromMin, opts) {
+    const d = DB.byId[entry.id];
+    if (!d) return null;
+    const course = _npcCourse(entry, d, now);
+    if (!(course.infectivity > 0)) return null;
+    let perDay;
+    if (route === 'sexual') {
+      if (!_sexual(d)) return null;
+      perDay = d.transmission * course.infectivity * SPREAD.SEX_PER_DAY *
+        _protection(src.name, tgt.name, _sp.record(src.name), opts && opts.partner && opts.partner.kind);
+    } else {
+      if (d.venereal) return null;   // never by proximity
+      const fit = _routeFit(d, route);
+      if (!(fit > 0)) return null;
+      perDay = d.transmission * course.infectivity * (SPREAD.ROUTE[route] || 0) * fit * env;
+    }
+    if (_npcTreated(src.profile, entry, now)) perDay *= SPREAD.TREATED_FACTOR;
+    else if (course.known && course.symptomatic) perDay *= route === 'sexual' ? SPREAD.KNOWN_FACTOR : 1;
+    perDay *= _susceptibility(tgt.name, tgt.profile);
+    perDay = Math.min(SPREAD.DAY_CAP, perDay);
+    if (!(perDay > 0)) return null;
+    const exposure = Math.max(0, Math.min(days, course.days - (_phasesOf(d).incubation || 0) + 1));
+    if (!(exposure > 0)) return null;
+    const chance = 1 - Math.pow(1 - perDay, exposure);
+    const roll = _spreadRoll(`${src.name}>${tgt.name}|${d.id}|${route}|${Math.floor(now / MINUTES_PER_DAY)}|${opts && opts.salt || ''}`);
+    if (roll >= chance) return null;
+    _readyTarget(tgt.name, tgt.profile);
+    if (API.npcHasDisease(tgt.profile, d.id) || _npcImmune(tgt.profile, d)) return null;
+    // When in the interval it passed: spread through it, so a long skip finds
+    // them further along.
+    const span = Math.max(0, now - (fromMin != null ? fromMin : now));
+    const sinceMin = Math.round(now - span * (1 - roll / Math.max(chance, 1e-9)));
+    const caught = {
+      id: d.id, sinceMin: Math.min(now, Math.max(0, sinceMin)), epidemic: entry.epidemic || null,
+      source: src.name, route, contact: true,
+    };
+    if (d.venereal) caught.venereal = true;
+    (tgt.profile.diseases || (tgt.profile.diseases = [])).push(caught);
+    if (route === 'sexual') _maybeRevealInfidelity(tgt.name, src.name, entry, d, caught.sinceMin);
+    return caught;
+  }
+
+  // Caught something sexual from a partner who caught it, during this
+  // partnership, from somebody else: in a bond that was meant to be exclusive
+  // that is the end of it (NPCLifeSim FAMILY breakup).
+  function _maybeRevealInfidelity(victim, cheater, srcEntry, d, atMinute) {
+    const LS = window.NPCLifeSim;
+    const rec = _sp.record(victim);
+    const I = LS && LS._internals;
+    if (!rec || !I || !I.endPartnership || !srcEntry.source || srcEntry.source === victim) return;
+    const rules = (LS.STYLE_RULES || {})[rec.partnerStyle || (I.styleKeyOf ? I.styleKeyOf(victim) : '')] || {};
+    if (rules.poly || rules.open) return;
+    const partners = LS.partnersOf ? LS.partnersOf(rec) : [];
+    const bond = partners.find(p => p && p.name === cheater);
+    if (!bond) return;
+    const since = bond.sinceMinute != null ? bond.sinceMinute : rec.partnerSinceMinute;
+    if (since == null || !(srcEntry.sinceMin > since)) return;
+    const year = I.yearOf ? I.yearOf(atMinute) : null;
+    try {
+      I.endPartnership(rec, year, 'broke up', atMinute, cheater); // i18n-ignore: outcome id
+      LS.pushEvent(victim, atMinute, 'relationship', 'NPCLife.event.infidelityRevealed', { // i18n-ignore: life event type
+        name: cheater, illness: API.displayName(d.id),
+      });
+    } catch (e) { console.warn('[Health_DiseaseSystem] infidelity breakup failed', e); }
+  }
+
+  // Once symptoms show: the biography hears of it, a worker goes on sick
+  // leave, a curable or manageable illness is treated, a course that has run
+  // is over. Returns true when anything changed.
+  function _advanceNpcCourse(name, profile, now, onMap) {
+    const list = profile.diseases;
+    if (!Array.isArray(list) || !list.length) return false;
+    let changed = false;
+    for (const entry of list.slice()) {
+      const d = DB.byId[entry.id];
+      if (!d) continue;
+      const course = _npcCourse(entry, d, now);
+      if (!course.symptomatic) continue;
+      const t = _treatOf(d);
+      if (entry.contact && !entry.symptomatic) {
+        entry.symptomatic = true;
+        changed = true;
+        const onset = Math.min(now, (entry.sinceMin || 0) + (_phasesOf(d).incubation || 0) * MINUTES_PER_DAY);
+        const LS = window.NPCLifeSim;
+        if (LS && LS.pushEvent) {
+          const params = { illness: API.displayName(d.id) };
+          if (entry.source) params.name = entry.source;
+          try {
+            LS.pushEvent(name, Math.round(onset), 'health', entry.source ? 'NPCLife.event.fellIllFrom' : 'NPCLife.event.fellIll', params); // i18n-ignore: life event type
+          } catch (e) { /* the biography is optional */ }
+        }
+        const Leave = window.NPCSim && window.NPCSim.Leave;
+        if (Leave && typeof Leave.checkSick === 'function') {
+          try { Leave.checkSick(profile, name); } catch (e) { /* leave is optional */ }
+        }
+      }
+      // Treatment: a healer's course (NPCDowned), or a remedy they carry.
+      const treatable = !!t.curable || (t.manageClasses || []).length > 0;
+      if (treatable && entry.treatedAt == null && !entry.managed && (entry.contact || entry.epidemic)) {
+        const ND = window.NPCDowned;
+        if (!onMap && ND && typeof ND.treat === 'function' && profile.currentNeed === 'heal' &&
+            API.npcNeedsCare(profile, now)) {
+          try { ND.treat(name, profile, null); } catch (e) { /* healers are optional */ }
+        }
+        if (_npcTreated(profile, entry, now)) {
+          if (t.curable) entry.treatedAt = now;
+          else entry.managed = true;
+          changed = true;
+          // Somebody treated for something sexual tells whoever they sleep
+          // with, and those partners are treated with them.
+          if (d.venereal && t.curable) _notifyPartners(name, profile, d.id, now);
+        }
+      }
+      if (entry.treatedAt != null && t.curable &&
+          now - entry.treatedAt >= Math.max(1, t.courseDays || 1) * MINUTES_PER_DAY) {
+        _recoverNpc(profile, entry);
+        changed = true;
+        continue;
+      }
+      // An acute venereal illness runs its course like any other (the base
+      // history keeps the lifelong ones).
+      if (entry.contact && d.venereal && d.durationDays > 0 && d.durationDays < 9999 &&
+          course.days >= d.durationDays) {
+        _recoverNpc(profile, entry);
+        changed = true;
+      }
+    }
+    return changed;
+  }
+
+  function _notifyPartners(name, profile, diseaseId, now) {
+    const soc = _sp.society() || {};
+    for (const p of _sexualPartners(name, profile)) {
+      const other = soc[p.name];
+      const e = other && (other.diseases || []).find(x => x && x.id === diseaseId);
+      if (e && e.treatedAt == null) e.treatedAt = now;
+    }
+  }
+
+  function _recoverNpc(profile, entry) {
+    const at = profile.diseases.indexOf(entry);
+    if (at >= 0) profile.diseases.splice(at, 1);
+    const past = profile.pastDiseases || (profile.pastDiseases = []);
+    if (!past.includes(entry.id)) past.push(entry.id);
+  }
+
+  // Wires the illness into NPCDowned's heal need, once, whenever that system
+  // is loaded: a symptomatic, untreated illness sends them to a healer too.
+  function _hookHealer() {
+    const ND = window.NPCDowned;
+    if (!ND || ND._diseaseCareHooked || typeof ND.needsHeal !== 'function') return;
+    const base = ND.needsHeal;
+    ND.needsHeal = function (profile, now) {
+      if (base.call(this, profile, now)) return true;
+      if (!profile || profile.downed || profile._killed) return false;
+      if (typeof this.isTreated === 'function' && this.isTreated(profile, now)) return false;
+      try { return API.npcNeedsCare(profile, now); } catch (e) { return false; }
+    };
+    ND._diseaseCareHooked = true;
+  }
+
+  Object.assign(API, {
+    SPREAD,
+
+    // Where an NPC's illness has got to, for the leave and healer readers.
+    npcCourse(entry, now) {
+      if (!ensureDb() || !entry) return null;
+      const d = DB.byId[entry.id];
+      return d ? _npcCourse(entry, d, now != null ? now : nowMin()) : null;
+    },
+
+    // Past the incubation? An entry the library does not know, or one from the
+    // base history, counts as showing.
+    isNpcSymptomatic(entry, now) {
+      if (!entry || entry.sinceMin == null || !ensureDb()) return true;
+      const d = DB.byId[entry.id];
+      return d ? _npcCourse(entry, d, now != null ? now : nowMin()).symptomatic : true;
+    },
+
+    grantsImmunity(id) { ensureDb(); return _grantsImmunity(DB.byId[id]); },
+    isNpcImmune(profile, id) { ensureDb(); const d = DB.byId[id]; return !!(profile && d && _npcImmune(profile, d)); },
+    sexualPartnersOf(name) {
+      const soc = _sp.society() || {};
+      return soc[name] ? _sexualPartners(name, soc[name]).map(p => p.name) : [];
+    },
+
+    // Ill enough to see a healer: a symptomatic, untreated illness caught
+    // from somebody (or from an outbreak) that a healer can do something
+    // about, of moderate severity or worse, or anything venereal.
+    npcNeedsCare(profile, now) {
+      if (!profile || !Array.isArray(profile.diseases) || !profile.diseases.length || !ensureDb()) return false;
+      const at = now != null ? now : nowMin();
+      return profile.diseases.some(e => {
+        if (!e || (!e.contact && !e.epidemic) || e.treatedAt != null || e.managed) return false;
+        const d = DB.byId[e.id];
+        if (!d) return false;
+        const t = _treatOf(d);
+        if (!t.curable && !(t.manageClasses || []).length) return false;
+        if (!d.venereal && !SPREAD.CARE_SEVERITIES.includes(d.severity)) return false;
+        return _npcCourse(e, d, at).symptomatic;
+      });
+    },
+
+    // The background pass, run by NPCLifeSim.catchUp over the interval it
+    // resolves. Returns { carriers, contacts, infected: [{name, id, route, from}] }.
+    spreadPass(nowMinute, deltaDays, lastMinute) {
+      const soc = _sp.society();
+      if (!soc || !ensureDb()) return null;
+      const now = Number(nowMinute != null ? nowMinute : nowMin()) || 0;
+      const days = Math.min(SPREAD.MAX_DAYS, Math.max(0, Number(deltaDays) || 0));
+      if (!(days > 0)) return null;
+      const from = lastMinute != null ? Math.max(now - SPREAD.MAX_DAYS * MINUTES_PER_DAY, lastMinute)
+        : now - days * MINUTES_PER_DAY;
+      _hookHealer();
+      const dayKey = Math.floor(now / MINUTES_PER_DAY);
+      const onMap = new Set(((window.$gameSystem && $gameSystem.getActiveNPCControllers &&
+        $gameSystem.getActiveNPCControllers()) || []).map(c => c && c.eventName));
+
+      // Carriers, snapshotted first: nothing caught in this pass passes on
+      // in the same pass.
+      let carriers = [];
+      const course = [];
+      for (const name of Object.keys(soc)) {
+        const p = soc[name];
+        if (!p || !p._medHistBuilt || !Array.isArray(p.diseases) || !p.diseases.length) continue;
+        if (_sp.gone(name, p)) continue;
+        if (p.diseases.some(e => e && (e.contact || e.epidemic || e.treatedAt != null))) course.push(name);
+        const entries = p.diseases.filter(e => {
+          const d = e && DB.byId[e.id];
+          return d && (d.infective || _sexual(d)) && _npcCourse(e, d, now).infectivity > 0;
+        });
+        if (entries.length) carriers.push({ name, profile: p, entries: entries.slice() });
+      }
+      if (carriers.length > SPREAD.MAX_CARRIERS_PER_PASS) {
+        const order = c => _spreadRoll(c.name + '|carrier|' + dayKey);
+        carriers = carriers.map(c => ({ c, k: order(c) })).sort((a, b) => a.k - b.k)
+          .slice(0, SPREAD.MAX_CARRIERS_PER_PASS).map(x => x.c);
+      }
+
+      const out = { carriers: carriers.length, contacts: 0, infected: [] };
+      if (carriers.length) {
+        const idx = _spreadIndex(soc);
+        outer:
+        for (const src of carriers) {
+          const contacts = _contactsOf(src.name, src.profile, idx, now, dayKey);
+          for (const c of contacts) {
+            const tp = soc[c.name];
+            if (!tp || _sp.gone(c.name, tp)) continue;
+            out.contacts++;
+            const env = c.route === 'sexual' ? 1 : _envFactor(_sp.groupOf(c.name, tp), idx.env);
+            for (const entry of src.entries) {
+              if (API.npcHasDisease(tp, entry.id)) continue;
+              const caught = _expose(src, { name: c.name, profile: tp }, entry, c.route, days, env, now, from, { partner: c.partner });
+              if (!caught) continue;
+              out.infected.push({ name: c.name, id: entry.id, route: c.route, from: src.name });
+              if (!course.includes(c.name)) course.push(c.name);
+              if (out.infected.length >= SPREAD.MAX_NEW_PER_PASS) break outer;
+            }
+          }
+        }
+      }
+
+      // Symptoms, leave, treatment and recovery for everybody carrying a
+      // caught illness, bounded.
+      for (const name of course.slice(0, SPREAD.MAX_COURSE_PER_PASS)) {
+        const p = soc[name];
+        if (p) _advanceNpcCourse(name, p, now, onMap.has(name));
+      }
+      return out;
+    },
+
+    // Live, on the map: two people who have just talked (or greeted each other
+    // in passing, or across a counter) have shared the air for a moment. `route`
+    // is 'conversation', 'ambient', 'greeting' or 'shop'. O(diseases carried); returns what passed.
+    onNpcContact(aName, bName, route) {
+      const soc = _sp.society();
+      if (!soc || !aName || !bName || aName === bName) return null;
+      const pa = soc[aName], pb = soc[bName];
+      if (!pa || !pb) return null;
+      const aCarries = pa._medHistBuilt && pa.diseases && pa.diseases.length;
+      const bCarries = pb._medHistBuilt && pb.diseases && pb.diseases.length;
+      if (!aCarries && !bCarries) return null;
+      if (!ensureDb() || _sp.gone(aName, pa) || _sp.gone(bName, pb)) return null;
+      _hookHealer();
+      const r = SPREAD.ROUTE[route] != null ? route : 'conversation';
+      const now = nowMin();
+      const passed = [];
+      const pairs = [[{ name: aName, profile: pa }, { name: bName, profile: pb }],
+        [{ name: bName, profile: pb }, { name: aName, profile: pa }]];
+      for (const [src, tgt] of pairs) {
+        if (!src.profile._medHistBuilt) continue;
+        const env = _envFactor(_sp.groupOf(tgt.name, tgt.profile), null);
+        for (const entry of (src.profile.diseases || []).slice()) {
+          if (API.npcHasDisease(tgt.profile, entry.id)) continue;
+          const caught = _expose(src, tgt, entry, r, 1, env, now, now, { salt: 'live' + now });
+          if (caught) passed.push({ name: tgt.name, id: entry.id, route: r, from: src.name });
+        }
+      }
+      return passed;
+    },
+
+    _spreadInternals: { npcCourse: _npcCourse, routeFit: _routeFit, envFactor: _envFactor,
+      contactsOf: _contactsOf, spreadIndex: _spreadIndex, housemates: _housemates,
+      advance: _advanceNpcCourse, hookHealer: _hookHealer, protection: _protection },
   });
 
   // ==========================================================================
@@ -2724,6 +3445,8 @@
       _Scene_Map_onMapLoaded.call(this);
       try { catchUpEpidemics(nowMin()); } catch (e) { console.warn('[Health_DiseaseSystem]', e); }
       try { runHealthClock(); } catch (e) { console.warn('[Health_DiseaseSystem]', e); }
+      // The heal need learns about illness once NPCDowned is up (CONTACT SPREAD).
+      try { API._spreadInternals.hookHealer(); } catch (e) { /* optional */ }
     };
   }
 

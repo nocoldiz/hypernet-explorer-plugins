@@ -107,6 +107,7 @@
   ],
   "emLabel": {
     "dream": "Una visione, non in programma",
+    "forage": "Frugare con contegno",
     "menuBestiary": "Creature, catalogate",
     "menuBiologics": "Le mie interiora",
     "menuResign": "Ritirarsi dal match",
@@ -290,6 +291,7 @@
     "380": "Aumenta DES di un alleato. Tecnica di Piromanzia, un incantesimo pesante da pagare.",
     "381": "Aumenta DES di un alleato. Può applicare In posizione. Tecnica di Criomanzia, un incantesimo pesante da pagare.",
     "386": "Può applicare Acceca a tutti i nemici. Colpisce per ultimo. Tecnica di Illusione, un incantesimo pesante da pagare.",
+    "388": "Aumenta INT di tutti gli alleati. Può applicare Freddo. Colpisce per ultimo. Tecnica di Criomanzia, un vero prelievo dalla barra del mana.",
     "389": "Aumenta DES di tutti gli alleati. Colpisce per ultimo. Tecnica di Elettromanzia, un vero prelievo dalla barra del mana.",
     "393": "Infligge danni fisici minimi a un nemico e ne riduce COS e DES. Può applicare Sbilanciato. Tecnica di Meta-Magia, un vero prelievo dalla barra del mana.",
     "400": "Ripristina HP a un alleato e ne aumenta COS. Tecnica di Meta-Magia, poco costosa da lanciare.",
@@ -347,6 +349,7 @@
     "684": "Ripristina MP a chi la usa e ne aumenta FRZ e DES. Tecnica di Magia Proibita, un vero prelievo dalla barra del mana.",
     "697": "Ripristina MP a chi la usa e ne aumenta INT e SAG. Tecnica di Magia Proibita, un vero prelievo dalla barra del mana.",
     "702": "Infligge danni fisici lievi a tutti i nemici e può applicare Sbilanciato. Tecnica di Magia Proibita, un vero prelievo dalla barra del mana.",
+    "770": "Aumenta INT di chi la usa. Applica Impulso Arcano. Tecnica di Arcanismo, un incantesimo pesante da pagare.",
     "774": "Aumenta INT di un alleato. Può applicare Impulso Arcano. Colpisce per ultimo. Tecnica di Arcanismo, un incantesimo pesante da pagare.",
     "776": "Assorbe HP da un nemico e ne riduce INT. Può applicare Silenzio. Colpisce per ultimo. Tecnica di Arcanismo, un incantesimo pesante da pagare.",
     "777": "Maledice il bersaglio riducendone l'attacco e facendogli subire più danni.",

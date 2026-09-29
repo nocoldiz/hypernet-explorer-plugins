@@ -562,5 +562,104 @@
       "{classOrigin} It has no childhood, only a build date: {year}, {placeIn}. Its log opens on the day {event}. {later} {moral}",
       "{classOrigin} Nothing of it is remembered and all of it is recorded: since {year}, {placeIn}, it has answered every time {event}. {later} {moral}"
     ]
+  },
+  "animalBio": {
+    "parents": {
+      "none": "",
+      "mother": " to {mother}",
+      "both": " to {mother} and {father}"
+    },
+    "default": [
+      "{Born|Brought into the world}{parents} {where}, {name} {has lived as its kind always has|keeps the habits of its kind}. {Food, shelter and its own kind are all it knows.|It remembers little but weather and hunger.}",
+      "{name} {was born|came into the world}{parents} {where}. {It has never had a thought for tomorrow, and never needed one.|What it knows, it learned by living.}"
+    ],
+    "breed": {
+      "Cat": [
+        "{Born|Kittened}{parents} {where}, {name} {keeps its own hours|comes and goes as it pleases}. {It hunts what moves at dusk and sleeps through the heat of the day.|Mice fear it; people are merely tolerated.}",
+        "{name} {was born|came into the world}{parents} {where}. {It owns no one and is owned by no one, whatever anyone thinks.|It has a warm spot for every hour of the day and knows where each one is.}"
+      ],
+      "Dog": [
+        "{Whelped|Born}{parents} {where}, {name} {follows its pack|keeps close to its own}. {It knows every smell of the place and trusts few of them.|A good voice and a better nose.}",
+        "{name} {was born|came into the world}{parents} {where}. {It would guard the ground it grew up on against anything.|It learned early that a patient dog gets fed.}"
+      ],
+      "Pigeon": [
+        "{Hatched|Born}{parents} {where}, {name} {works the ground for crumbs|keeps to the rooftops and the squares}. {It has seen more of the town than most who live in it.|Nothing startles it twice.}",
+        "{name} {hatched|came out of the egg}{parents} {where}. {It flies with the flock and returns to the same ledge each night.|It knows the hour by the crowds.}"
+      ],
+      "Crab": [
+        "{Hatched|Born}{parents} {where}, {name} {keeps to the tideline|walks sideways through its small world}. {It has outgrown more shells than it can count.|It fears the gulls and nothing else.}",
+        "{name} {came out of the surf|was born}{parents} {where}. {The sea brings it everything it needs twice a day.|It knows every stone on its stretch of shore.}"
+      ],
+      "Toad": [
+        "{Spawned|Born}{parents} {where}, {name} {sits out the day under a stone|waits for rain}. {At night it eats whatever is small enough.|It has outlived most of the pond it hatched in.}",
+        "{name} {came out of the water|was born}{parents} {where}. {It sings when the air turns damp.|Patience is its whole trade.}"
+      ],
+      "Chicken": [
+        "{Hatched|Born}{parents} {where}, {name} {scratches for grain all day|keeps to the yard with the flock}. {It lays when it is fed and sulks when it is not.|It knows the hand that brings the feed.}",
+        "{name} {hatched|came out of the egg}{parents} {where}. {The flock has a pecking order and it knows its place in it.|Dawn to dusk it is busy, and at dusk it roosts.}"
+      ],
+      "Rooster": [
+        "{Hatched|Born}{parents} {where}, {name} {rules the yard|keeps watch over the hens}. {It calls up the sun whether anyone asked or not.|It has fought every rival it has met.}",
+        "{name} {hatched|came out of the egg}{parents} {where}. {It struts, it crows, it guards.|Its voice is the first thing the farm hears.}"
+      ],
+      "Duck": [
+        "{Hatched|Born}{parents} {where}, {name} {follows the others to the water|dabbles in every puddle}. {It walks in a line and swims in a crowd.|Rain is its favourite weather.}",
+        "{name} {hatched|came out of the egg}{parents} {where}. {It knows the way to water from anywhere.|It grumbles at everything and means none of it.}"
+      ],
+      "Pig": [
+        "{Farrowed|Born}{parents} {where}, {name} {roots through anything|noses out whatever is buried}. {It is cleverer than it lets on.|It eats well and sleeps better.}",
+        "{name} {was born|came into the world}{parents} {where}, {in a litter of many|one of a crowded litter}. {It has never been hungry for long.|Mud in summer, straw in winter, and food always.}"
+      ],
+      "Sheep": [
+        "{Lambed|Born}{parents} {where}, {name} {keeps with the flock|grazes where the others graze}. {Its wool has kept someone warm, somewhere.|It startles easily and forgets quickly.}",
+        "{name} {was born|came into the world}{parents} {where}. {It knows the flock by voice.|Grass, shade, the flock: its whole world.}"
+      ],
+      "Cow": [
+        "{Calved|Born}{parents} {where}, {name} {grazes slowly and misses nothing|keeps to the herd}. {It gives milk and asks for grass.|It has a long memory for kindness.}",
+        "{name} {was born|came into the world}{parents} {where}. {The seasons move it from field to barn and back.|It is heavy, patient and not in a hurry.}"
+      ],
+      "Goat": [
+        "{Kidded|Born}{parents} {where}, {name} {climbs anything that stands still|eats what the others will not}. {No fence has held it for long.|It is curious about everything and afraid of little.}",
+        "{name} {was born|came into the world}{parents} {where}. {It has tasted most of the farm, including the parts that are not food.|It keeps its own counsel and its own path.}"
+      ],
+      "Horse": [
+        "{Foaled|Born}{parents} {where}, {name} {runs with the herd|grazes the open ground}. {It has carried more than one rider and remembers each.|It is strong, quick and wary of the unfamiliar.}",
+        "{name} {was born|came into the world}{parents} {where}. {It knows every road it has ever walked.|Given room, it runs for the joy of it.}"
+      ],
+      "Donkey": [
+        "{Foaled|Born}{parents} {where}, {name} {works when it chooses to|keeps its own pace}. {It carries loads without complaint and grudges without end.|Stubborn, patient and wiser than it looks.}",
+        "{name} {was born|came into the world}{parents} {where}. {It has outlasted several owners.|It will not be hurried, and it will not be fooled.}"
+      ],
+      "Rabbit": [
+        "{Kindled|Born}{parents} {where}, {name} {keeps close to its burrow|feeds at dawn and dusk}. {Everything hunts it and it knows it.|It has a large family and a short temper.}",
+        "{name} {was born|came into the world}{parents} {where}, {in a warren full of kin|one of a large litter}. {It runs first and wonders later.|Clover and quiet are all it asks.}"
+      ]
+    },
+    "archetype": {
+      "Beast": [
+        "{Born|Brought into the world}{parents} {where}, {name} {keeps to its own ground|roams where the food is}. {It trusts its nose over anyone's word.|It has lived by its wits and its teeth.}",
+        "{name} {was born|came into the world}{parents} {where}. {It knows every path through its range.|Nothing about it was ever tame.}"
+      ],
+      "Bird": [
+        "{Hatched|Born}{parents} {where}, {name} {keeps to the air and the branches|goes where the wind and the seed take it}. {It knows the weather before anyone.|Its song is the only thing it owns.}",
+        "{name} {hatched|came out of the egg}{parents} {where}. {It has never stayed long in one tree.|It sleeps light and wakes early.}"
+      ],
+      "Crustacean": [
+        "{Hatched|Born}{parents} {where}, {name} {keeps to the wet stones|scuttles from cover to cover}. {Its shell is its house and its armour.|It has never been far from water.}",
+        "{name} {came out of the water|was born}{parents} {where}. {It eats what the tide leaves.|It moves sideways and never in a hurry.}"
+      ],
+      "Frog": [
+        "{Spawned|Born}{parents} {where}, {name} {waits in the reeds|sits out the heat in the mud}. {It hunts with a tongue and a lot of patience.|Every wet night is a good one.}",
+        "{name} {came out of the water|was born}{parents} {where}. {It started life with a tail and lost it along the way.|It knows every puddle in reach.}"
+      ],
+      "Horse": [
+        "{Foaled|Born}{parents} {where}, {name} {runs with its herd|keeps to the open ground}. {It is strong, quick and wary of the unfamiliar.|It remembers every road it has walked.}",
+        "{name} {was born|came into the world}{parents} {where}. {Given room, it runs for the joy of it.|It has carried loads and riders both.}"
+      ],
+      "Rabbit": [
+        "{Kindled|Born}{parents} {where}, {name} {keeps close to its burrow|feeds at dawn and dusk}. {Everything hunts it and it knows it.|It runs first and wonders later.}",
+        "{name} {was born|came into the world}{parents} {where}, {one of a large litter|in a warren full of kin}. {Clover and quiet are all it asks.|It has a large family and a short temper.}"
+      ]
+    }
   }
 }

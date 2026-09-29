@@ -1,5 +1,13 @@
 {
  "power": {
+  "nationalGovernment": {
+   "govType": "national government",
+   "headTitle": "Head of Government",
+   "legislature": "National Assembly",
+   "partyKind": "party",
+   "electorTitle": "Elector",
+   "electorTitlePlural": "Electors"
+  },
   "holyvaticanempire": {
    "govType": "theocracy",
    "headTitle": "Supreme Pontifex",
@@ -216,7 +224,10 @@
   "politicianDies": "{name} dies at {age}.",
   "headDies": "{name} dies at {age}. {power} mourns its {title}.",
   "diagnosed": "{name} has been diagnosed with {disease}. The physicians of {power} give no hope of a cure.",
-  "diesOfIllness": "{name} dies of {disease}. {power} mourns its {title}."
+  "diesOfIllness": "{name} dies of {disease}. {power} mourns its {title}.",
+  "hordeFlight": "The Goblin Horde takes {country}; {n} of its people prepare to flee.",
+  "hordeLiberation": "{country} is free of the Goblin Horde; {n} refugees can start for home.",
+  "candidateWins": "{name} won the election as an outsider with {share}% and became {title}."
  },
  "note": {
   "coalition": "Coalition formed with {party}.",
@@ -242,13 +253,20 @@
   "radicalized": "Hardened views as unrest spread.",
   "grudge": "Bitter about {winner} winning the {election}.",
   "electedMayor": "Elected Mayor of {group} ({votes}/{total} votes).",
-  "appointed": "Appointed {office} of {group}."
+  "appointed": "Appointed {office} of {group}.",
+  "campaigned": "Won over to the {party} by a campaign (was with {from}).",
+  "smeared": "Lost faith in the {party} after a smear campaign.",
+  "smearedOut": "Walked out of the {party}, disgusted by what the papers said.",
+  "driftedTo": "Drifted from the {from} to the {to}.",
+  "driftedOut": "Drifted away from the {from} and now belongs to no party.",
+  "joinedBy": "Joined the {party}, talked round by {by} (was with {from})."
  },
  "story": {
   "electedMayor": "elected Mayor of {group}",
   "appointed": "appointed {office} of {group}"
  },
  "death": {
+  "diedInWorld": "died",
   "wolfpigs": "fed to the wolfpigs after losing da Moot",
   "succession": "killed in the war of succession",
   "assassinated": "assassinated",
@@ -301,5 +319,395 @@
  "accession": {
   "elected": "elected",
   "coup": "coup"
+ },
+ "role": {
+  "head": "Head of State",
+  "minister": "Minister",
+  "partyLeader": "Party Leader",
+  "legislator": "Legislator"
+ },
+ "life": {
+  "tookOffice": "Took office as {office} of {polity}.",
+  "leftOffice": "Left office as {office} of {polity}.",
+  "diedInOffice": "Died in office: {cause}."
+ },
+ "menu": {
+  "title": "Politics",
+  "back": "Back",
+  "searchPlaceholder": "Search office holders",
+  "tab": {
+   "here": "Here",
+   "nation": "Nation",
+   "power": "Hyperpower",
+   "elected": "Elected",
+   "parties": "Parties",
+   "own": "Own party"
+  },
+  "row": {
+   "townHall": "Town hall",
+   "government": "Government",
+   "elections": "Elections",
+   "members": "Members and wars",
+   "filter": "Filter",
+   "found": "Found the party",
+   "save": "Save changes",
+   "discard": "Discard changes",
+   "edit": "Edit party",
+   "confirm": "Confirm",
+   "cancel": "Cancel"
+  },
+  "level": {
+   "local": "Town",
+   "nation": "Nation",
+   "power": "Hyperpower"
+  },
+  "empty": {
+   "noPolitics": "Nobody governs anybody in this world: no office is held and no vote is cast.",
+   "noPlace": "The party is standing nowhere any government has mapped.",
+   "noLocal": "This place keeps no town hall of its own.",
+   "noNation": "{country} keeps no government of its own that anybody here has heard of.",
+   "noCountry": "No nation claims the ground under the party.",
+   "noPower": "No hyperpower holds this ground.",
+   "noElected": "Nobody holds an office over this place.",
+   "noSelection": "Nothing chosen.",
+   "noParties": "No party sits in this chamber.",
+   "noElections": "No election has been held here yet.",
+   "noWars": "At peace with everybody.",
+   "noMatch": "Nothing matches.",
+   "noPartiesFound": "No party stands here."
+  },
+  "lbl": {
+   "place": "Place",
+   "country": "Nation",
+   "power": "Hyperpower",
+   "govType": "Government",
+   "head": "Head",
+   "rulingParty": "Ruling party",
+   "coalition": "Coalition",
+   "legislature": "Chamber",
+   "seats": "Seats",
+   "nextElection": "Next election",
+   "nextLocalElection": "Next town election",
+   "lastElection": "Last election",
+   "winner": "Winner",
+   "turnout": "Turnout",
+   "legitimacy": "Legitimacy",
+   "stability": "Stability",
+   "unrest": "Unrest",
+   "economy": "Economy",
+   "treasury": "Treasury",
+   "taxRate": "Tax rate",
+   "censorship": "Censorship",
+   "conscription": "Conscription",
+   "welfare": "Welfare",
+   "festivals": "Festivals",
+   "curfew": "Curfew",
+   "office": "Office",
+   "level": "Level",
+   "polity": "Of",
+   "party": "Party",
+   "share": "Share",
+   "leader": "Leader",
+   "votes": "Voters",
+   "founded": "Founded",
+   "age": "Age",
+   "status": "Standing",
+   "members": "Member nations",
+   "wars": "Wars",
+   "onu": "ONU assembly",
+   "mayorElected": "Mayor elected",
+   "supporters": "Supporters",
+   "ideology": "Ideology",
+   "name": "Name",
+   "fee": "Subscription",
+   "tenet": "Tenet",
+   "tenets": "Tenets",
+   "attracts": "Attracts",
+   "takings": "Weekly takings",
+   "lastPayout": "Last payout",
+   "totalEarned": "Total earned",
+   "campaigns": "Campaigns running"
+  },
+  "sec": {
+   "government": "Government",
+   "state": "State of the realm",
+   "policies": "Policies",
+   "chamber": "Chamber",
+   "lastResults": "Last results",
+   "history": "Past elections",
+   "offices": "Offices",
+   "person": "Office holder",
+   "members": "Member nations",
+   "wars": "Wars",
+   "platform": "Platform",
+   "founding": "Found a political party",
+   "editing": "Edit the party",
+   "partyMembers": "Party members"
+  },
+  "val": {
+   "vacant": "Vacant",
+   "none": "None",
+   "independent": "Independent",
+   "notScheduled": "Not scheduled",
+   "curfewOn": "In force",
+   "curfewOff": "None",
+   "snap": "snap",
+   "seated": "Seated",
+   "observer": "Observer",
+   "notSeated": "No seat",
+   "livesIn": "Lives in {place}",
+   "mainPlayer": "A main player of the century",
+   "recordOnly": "Known only from the record",
+   "townsperson": "A resident of the town",
+   "partyShare": "{share}% · {seats} seats",
+   "warLine": "{attacker} against {defender}, since {since}",
+   "coalitionPartners": "{party} and {n} more",
+   "supporters": "{n} supporters",
+   "yours": "Your party",
+   "chooseCreed": "Choose an ideology",
+   "feeWeekly": "{fee} a week",
+   "held": "Held",
+   "member": "Founding member",
+   "payout": "{gold} over {weeks} weeks, {date}"
+  },
+  "empathize": "Empathize",
+  "scope": {
+   "world": "Whole world",
+   "place": "Town or village",
+   "nation": "Nation",
+   "power": "Hyperpower",
+   "placeOf": "In {name}",
+   "nationOf": "Nation: {name}",
+   "powerOf": "Hyperpower: {name}"
+  },
+  "hint": {
+   "fee": "Every supporter pays this each week and the takings are paid to the party. A cheap card fills with the poor, a dear one only with the elite.",
+   "feeEntry": "Weekly subscription, in euros",
+   "creed": "The creed the party stands on. Its tenets bend it from there.",
+   "found": "Everybody in the team joins as a founding member. A world holds only one party of yours.",
+   "save": "The new platform takes effect at once.",
+   "tenets": "Pick up to {n} tenets. Two that pull the same way against each other cannot both be held.",
+   "propaganda": "Campaigns, smears and candidacies are run from Propaganda2 on the hyperdeck.",
+   "pick": "Confirm to choose it.",
+   "filter": "Narrow the list to a town or village, a nation or a hyperpower."
+  },
+  "msg": {
+   "needCreed": "Choose an ideology first.",
+   "alreadyFounded": "This world already has a party of yours.",
+   "founded": "{party} is founded. {n} founding members joined.",
+   "noParty": "You have not founded a party yet.",
+   "saved": "{party} has its new platform.",
+   "tooManyTenets": "A party can hold at most {n} tenets."
+  },
+  "feeClass": {
+   "0": "The poorest",
+   "1": "Working class",
+   "2": "Middle class",
+   "3": "The well-to-do",
+   "4": "The elite"
+  }
+ },
+ "player": {
+  "nameForm": [
+   "{adj} {noun} Party",
+   "Party of {adj} {noun}",
+   "{noun} Front",
+   "{adj} {noun} Movement",
+   "{adj} Union for {noun}",
+   "The {adj} {noun} League"
+  ],
+  "nameAdj": [
+   "Popular",
+   "New",
+   "United",
+   "Free",
+   "Radical",
+   "Honest",
+   "Common",
+   "Civic",
+   "Working",
+   "Liberated",
+   "Awakened",
+   "Esoteric",
+   "Modern",
+   "Sovereign",
+   "Democratic",
+   "Hidden"
+  ],
+  "nameNoun": [
+   "Progress",
+   "Renewal",
+   "Order",
+   "Liberty",
+   "Tomorrow",
+   "Unity",
+   "Dignity",
+   "Reform",
+   "Hope",
+   "Labour",
+   "Reason",
+   "Harmony",
+   "Justice",
+   "Prosperity",
+   "Balance",
+   "Vigil"
+  ],
+  "fallbackName": "The People's Party"
+ },
+ "tenet": {
+  "commonOwnership": {
+   "name": "Common ownership",
+   "desc": "Land, factories and wealth belong to everybody. Pulls the economy left."
+  },
+  "freeEnterprise": {
+   "name": "Free enterprise",
+   "desc": "Let people trade, hire and profit as they please. Pulls the economy right."
+  },
+  "liberty": {
+   "name": "Liberty",
+   "desc": "The state keeps out of private lives. Pulls authority down."
+  },
+  "order": {
+   "name": "Order",
+   "desc": "Laws obeyed, streets policed, disorder punished. Pulls authority up."
+  },
+  "progress": {
+   "name": "Progress",
+   "desc": "Old customs give way to new ideas. Pulls tradition down."
+  },
+  "heritage": {
+   "name": "Heritage",
+   "desc": "Keep the faith, the language and the old ways. Pulls tradition up."
+  },
+  "peace": {
+   "name": "Peace",
+   "desc": "Disarm, negotiate, never march first. Pulls militarism down."
+  },
+  "strength": {
+   "name": "Strength",
+   "desc": "A strong army is the only real guarantee. Pulls militarism up."
+  },
+  "reason": {
+   "name": "Reason",
+   "desc": "Science and evidence over spells and omens. Pulls mysticism down."
+  },
+  "arcana": {
+   "name": "Arcana",
+   "desc": "The hidden arts belong in government. Pulls mysticism up."
+  },
+  "welfare": {
+   "name": "Welfare",
+   "desc": "A safety net for everybody, run by a caring state. A little left and a little more authority."
+  },
+  "localRule": {
+   "name": "Local rule",
+   "desc": "Towns and villages decide for themselves. Less authority, a little more tradition."
+  }
+ },
+ "app": {
+  "name": "Propaganda2",
+  "subtitle": "Party office, campaigns and elections",
+  "purse": "Funds: {money}",
+  "statusParty": "{party} · {n} supporters · {takings} a week",
+  "statusNoParty": "No party founded yet.",
+  "tab": {
+   "party": "Party",
+   "parties": "Parties",
+   "campaigns": "Campaigns",
+   "elections": "Elections"
+  },
+  "reroll": "Another name",
+  "chooseCreed": "Choose",
+  "closeList": "Close list",
+  "searchCreed": "Search ideologies",
+  "searchPlace": "Search places",
+  "searchParty": "Search parties",
+  "searchElection": "Search elections",
+  "shown": "{n} of {total}",
+  "promote": "Campaign for it",
+  "smear": "Smear it",
+  "newCampaign": "New campaign",
+  "campaignKind": "Kind",
+  "kind": {
+   "convert": "Conversion",
+   "smear": "Smear"
+  },
+  "kindHint": {
+   "convert": "Wins people over to the party and pulls their views toward its platform.",
+   "smear": "Drains its supporters' faith and sours them on its platform. The shaken are easier to win later; the faithless walk out."
+  },
+  "target": "Party",
+  "chooseTarget": "Choose a party",
+  "noOwnParty": "No party of yours",
+  "where": "Where",
+  "intensity": "Intensity",
+  "intensityOf": {
+   "leaflets": "Leaflets ({money}/day)",
+   "rallies": "Rallies ({money}/day)",
+   "broadcast": "Broadcasts ({money}/day)",
+   "saturation": "Saturation ({money}/day)"
+  },
+  "duration": {
+   "title": "Duration",
+   "day": "{n} day",
+   "days": "{n} days",
+   "month": "{n} month",
+   "months": "{n} months"
+  },
+  "projection": "Projection",
+  "eligible": {
+   "convert": "People it can win",
+   "smear": "Supporters it can reach"
+  },
+  "reach": "Reach",
+  "expected": {
+   "convert": "Expected converts",
+   "smear": "Expected shaken"
+  },
+  "cost": "Cost",
+  "noProjection": "Choose a party to see the projection.",
+  "launch": "Launch campaign",
+  "launched": "Campaign for {party} launched: about {n} people by the end, for {cost}.",
+  "campaigns": "Campaigns",
+  "progress": "Result",
+  "progressOf": "{n} of {of} expected",
+  "state": "State",
+  "done": "Finished",
+  "running": "Running until {date}",
+  "noCampaigns": "No campaign run yet.",
+  "candidate": "Candidate",
+  "noTeam": "Nobody in the team.",
+  "runsFor": "Runs for {party}, on its platform.",
+  "runsAlone": "Runs as an independent. Found a party so its supporters vote for the candidate.",
+  "date": "Date",
+  "deposit": "Deposit",
+  "stand": "Stand",
+  "standing": "Standing: {names}",
+  "closed": {
+   "conclave": "Conclave, no outsiders",
+   "other": "Not open"
+  },
+  "noElections": "No election is coming here.",
+  "candidacies": "Candidacies",
+  "cand": {
+   "standing": "Standing",
+   "won": "Won",
+   "lost": "Lost",
+   "withdrawn": "Withdrawn"
+  },
+  "candResult": "{status}: {share}% against {winnerShare}%",
+  "withdraw": "Withdraw",
+  "noCandidacies": "Nobody has stood yet.",
+  "standingNow": "{name} stands in the election of {date}.",
+  "fail": {
+   "noWorld": "No world to campaign in.",
+   "noTarget": "Choose a party first.",
+   "nobody": "Nobody there can be reached.",
+   "funds": "Not enough money.",
+   "notInTeam": "Choose a candidate from the team.",
+   "noElection": "That election is not open.",
+   "conclave": "A conclave takes no outside candidates.",
+   "alreadyStanding": "That candidate is already standing in an election."
+  }
  }
 }

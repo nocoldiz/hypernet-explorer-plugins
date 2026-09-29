@@ -475,11 +475,13 @@
   // How much an element is worth against this monster, as the multiplier a hit
   // would actually be scaled by. Asked of the battler rather than read off the
   // database entry, so a state that has made it vulnerable counts too.
-  // Only what HURTS is named: a soft spot is a plan for the next turn, while
-  // the full affinity table (resistances and immunities included) belongs to
-  // the Bestiary, which has a page to lay it out on rather than a strip under
-  // a health bar. The worst three are enough to aim at.
+  // What HURTS is named first: a soft spot is a plan for the next turn. The
+  // one other thing named is an element that does nothing or heals (a blade
+  // through a ghost, fire into a fire elemental), because that is a turn
+  // thrown away or worse. Plain resistances belong to the Bestiary, which has
+  // a page to lay them out on rather than a strip under a health bar.
   const MAX_ELEMENT_CHIPS = 3;
+  const MAX_NULL_CHIPS = 2;
   const ELEMENT_CHIP_EPSILON = 0.01;
 
   // The one localised bank of element names in the game lives with the
@@ -513,6 +515,7 @@
     if (!battler || typeof battler.elementRate !== "function") return [];
     const source = elementNames();
     const found = [];
+    const nulled = [];
     for (let id = 1; id < source.length; id++) {
       const name = source[id];
       if (!name) continue;
@@ -522,17 +525,29 @@
       } catch (e) {
         continue;
       }
-      if (!isFinite(rate) || rate <= 1 + ELEMENT_CHIP_EPSILON) continue;
-      found.push({ id, name, rate });
+      if (!isFinite(rate)) continue;
+      if (rate > 1 + ELEMENT_CHIP_EPSILON) found.push({ id, name, rate });
+      else if (rate <= ELEMENT_CHIP_EPSILON) nulled.push({ id, name, rate });
     }
     found.sort((a, b) => b.rate - a.rate);
-    return found.slice(0, MAX_ELEMENT_CHIPS).map((el) => ({
+    // An absorption before an immunity: healing the target is the worse miss.
+    nulled.sort((a, b) => a.rate - b.rate);
+    const weak = found.slice(0, MAX_ELEMENT_CHIPS).map((el) => ({
       icon: ELEMENT_ICONS[el.id] || 0,
       name: el.name,
       text: window.T
         ? window.T("Battle.hud.elementRate", { rate: Number(el.rate.toFixed(1)) })
         : Number(el.rate.toFixed(1)) + "x",
     }));
+    const guard = nulled.slice(0, MAX_NULL_CHIPS).map((el) => ({
+      icon: ELEMENT_ICONS[el.id] || 0,
+      name: el.name,
+      nulls: true,
+      text: window.T
+        ? window.T(el.rate < 0 ? "Battle.hud.elementAbsorb" : "Battle.hud.elementImmune")
+        : "",
+    }));
+    return weak.concat(guard);
   }
 
   // What is currently wrong with the monster. A state with no icon is database
@@ -1731,7 +1746,7 @@
             "Bitter, serif",
             weakRowH
           );
-          if (el) el.classList.add("bse-hud-weak");
+          if (el) el.classList.add(weak.nulls ? "bse-hud-null" : "bse-hud-weak");
           weakY += weakRowH;
         }
       }
@@ -2788,6 +2803,11 @@
       skill && !seen.has(skill.id) && LO.isAlwaysCarried(actor, skill) &&
       !(anatomy && anatomy.has(skill.id)));
     const list = carried.concat(extra);
+    // The same skills in the same order keep the SAME array: the built row is
+    // keyed on its identity (_hotbarEntries), and a fresh copy of an unchanged
+    // list rebuilt every entry, canUse and tooltip six times a second.
+    if (cached && cached.length === list.length &&
+        cached.every((skill, i) => skill === list[i])) return cached;
     _hotbarSkillCache.set(actor, list);
     return list;
   }

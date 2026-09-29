@@ -920,6 +920,23 @@
     "Tech": 0.9
    }
   },
+  "doctor": {
+   "where": [
+    "village",
+    "city"
+   ],
+   "furniture": {
+    "Shelves": 0.9,
+    "Tables": 0.45,
+    "Signs": 0.4,
+    "Boxes": 0.35,
+    "Storage": 0.5,
+    "Lights": 0.3,
+    "Chairs": 0.25,
+    "Hospital": 1,
+    "Misc": 0.3
+   }
+  },
   "travelAgency": {
    "where": [
     "city"

@@ -42,15 +42,16 @@
     "returnToShip": "Return to Ship",
     "teleportToShip": "Teleport to Ship",
     "returnToWorldMap": "Return",
-    "returnToWorldMapAt": "Return ({x}, {y})",
     "returnToElevator": "Elevator",
     "chooseLandingSite": "Choose landing site",
     "stopTravel": "Stop travel",
     "omegaTower": "Omega Tower",
     "deeds": "Deeds",
-    "locked": "???"
+    "locked": "???",
+    "politics": "Politics"
   },
   "cmdDesc": {
+    "politics": "Who governs the place you stand in, and when it votes next",
     "backpack": "Manage party inventory and carried items",
     "equip": "Change weapons, armor and accessories",
     "skills": "View and use learned abilities and spells",
@@ -253,7 +254,7 @@
   },
   "travel": {
     "goUp": "Go to the surface",
-    "goDown": "Go underground",
+    "goDown": "Underground",
     "showMinimap": "Show minimap",
     "hideMinimap": "Hide minimap",
     "openMap": "Open world map",

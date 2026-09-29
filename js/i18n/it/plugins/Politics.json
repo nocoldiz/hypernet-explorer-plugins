@@ -1,5 +1,13 @@
 {
  "power": {
+  "nationalGovernment": {
+   "govType": "governo nazionale",
+   "headTitle": "Capo del governo",
+   "legislature": "Assemblea nazionale",
+   "partyKind": "partito",
+   "electorTitle": "Elettore",
+   "electorTitlePlural": "Elettori"
+  },
   "holyvaticanempire": {
    "govType": "teocrazia",
    "headTitle": "Sommo Pontefice",
@@ -216,7 +224,10 @@
   "politicianDies": "{name} muore a {age} anni.",
   "headDies": "{name} muore a {age} anni. {power} piange il suo {title}.",
   "diagnosed": "A {name} è stata diagnosticata {disease}. I medici di {power} non danno speranza di guarigione.",
-  "diesOfIllness": "{name} muore di {disease}. {power} piange il suo {title}."
+  "diesOfIllness": "{name} muore di {disease}. {power} piange il suo {title}.",
+  "hordeFlight": "L'Orda dei Goblin prende {country}; {n} dei suoi abitanti si preparano a fuggire.",
+  "hordeLiberation": "{country} è libero dall'Orda dei Goblin; {n} profughi possono rimettersi in cammino verso casa.",
+  "candidateWins": "{name} ha vinto le elezioni da outsider con il {share}% ed è diventato {title}."
  },
  "note": {
   "coalition": "Coalizione formata con {party}.",
@@ -242,13 +253,20 @@
   "radicalized": "Ha irrigidito le proprie posizioni mentre cresceva il malcontento.",
   "grudge": "Amareggiato dalla vittoria di {winner} alle {election}.",
   "electedMayor": "Eletto Sindaco di {group} ({votes}/{total} voti).",
-  "appointed": "Nominato {office} di {group}."
+  "appointed": "Nominato {office} di {group}.",
+  "campaigned": "Conquistato al {party} da una campagna (stava con {from}).",
+  "smeared": "Ha perso fiducia nel {party} dopo una campagna diffamatoria.",
+  "smearedOut": "Ha lasciato il {party}, disgustato da quello che dicevano i giornali.",
+  "driftedTo": "Si è allontanato da {from} ed è passato a {to}.",
+  "driftedOut": "Si è allontanato da {from} e ora non appartiene a nessun partito.",
+  "joinedBy": "È entrato in {party}, convinto da {by} (stava con {from})."
  },
  "story": {
   "electedMayor": "eletto Sindaco di {group}",
   "appointed": "nominato {office} di {group}"
  },
  "death": {
+  "diedInWorld": "morto",
   "wolfpigs": "dato in pasto ai lupomaiali dopo aver perso da Moot",
   "succession": "ucciso nella guerra di successione",
   "assassinated": "assassinato",
@@ -301,5 +319,395 @@
  "accession": {
   "elected": "eletto",
   "coup": "colpo di stato"
+ },
+ "role": {
+  "head": "Capo di Stato",
+  "minister": "Ministro",
+  "partyLeader": "Leader di partito",
+  "legislator": "Legislatore"
+ },
+ "life": {
+  "tookOffice": "Ha assunto l'incarico di {office} di {polity}.",
+  "leftOffice": "Ha lasciato l'incarico di {office} di {polity}.",
+  "diedInOffice": "Morto in carica: {cause}."
+ },
+ "menu": {
+  "title": "Politica",
+  "back": "Indietro",
+  "searchPlaceholder": "Cerca chi ricopre una carica",
+  "tab": {
+   "here": "Qui",
+   "nation": "Nazione",
+   "power": "Iperpotenza",
+   "elected": "Eletti",
+   "parties": "Partiti",
+   "own": "Il tuo partito"
+  },
+  "row": {
+   "townHall": "Municipio",
+   "government": "Governo",
+   "elections": "Elezioni",
+   "members": "Membri e guerre",
+   "filter": "Filtro",
+   "found": "Fonda il partito",
+   "save": "Salva modifiche",
+   "discard": "Annulla modifiche",
+   "edit": "Modifica partito",
+   "confirm": "Conferma",
+   "cancel": "Annulla"
+  },
+  "level": {
+   "local": "Città",
+   "nation": "Nazione",
+   "power": "Iperpotenza"
+  },
+  "empty": {
+   "noPolitics": "In questo mondo nessuno governa nessuno: nessuna carica è ricoperta e nessun voto è espresso.",
+   "noPlace": "Il gruppo si trova in un luogo che nessun governo ha mai mappato.",
+   "noLocal": "Questo luogo non ha un municipio suo.",
+   "noNation": "{country} non ha un governo proprio di cui qualcuno qui abbia sentito parlare.",
+   "noCountry": "Nessuna nazione rivendica il terreno sotto il gruppo.",
+   "noPower": "Nessuna iperpotenza controlla questo territorio.",
+   "noElected": "Nessuno ricopre una carica su questo luogo.",
+   "noSelection": "Nessuna selezione.",
+   "noParties": "Nessun partito siede in quest'aula.",
+   "noElections": "Qui non si è ancora votato.",
+   "noWars": "In pace con tutti.",
+   "noMatch": "Nessun risultato.",
+   "noPartiesFound": "Nessun partito qui."
+  },
+  "lbl": {
+   "place": "Luogo",
+   "country": "Nazione",
+   "power": "Iperpotenza",
+   "govType": "Governo",
+   "head": "Capo",
+   "rulingParty": "Partito di governo",
+   "coalition": "Coalizione",
+   "legislature": "Aula",
+   "seats": "Seggi",
+   "nextElection": "Prossime elezioni",
+   "nextLocalElection": "Prossime comunali",
+   "lastElection": "Ultime elezioni",
+   "winner": "Vincitore",
+   "turnout": "Affluenza",
+   "legitimacy": "Legittimità",
+   "stability": "Stabilità",
+   "unrest": "Disordini",
+   "economy": "Economia",
+   "treasury": "Tesoro",
+   "taxRate": "Aliquota",
+   "censorship": "Censura",
+   "conscription": "Leva",
+   "welfare": "Welfare",
+   "festivals": "Feste",
+   "curfew": "Coprifuoco",
+   "office": "Carica",
+   "level": "Livello",
+   "polity": "Di",
+   "party": "Partito",
+   "share": "Quota",
+   "leader": "Leader",
+   "votes": "Votanti",
+   "founded": "Fondato",
+   "age": "Età",
+   "status": "Posizione",
+   "members": "Nazioni membri",
+   "wars": "Guerre",
+   "onu": "Assemblea ONU",
+   "mayorElected": "Sindaco eletto",
+   "supporters": "Sostenitori",
+   "ideology": "Ideologia",
+   "name": "Nome",
+   "fee": "Quota",
+   "tenet": "Principio",
+   "tenets": "Principi",
+   "attracts": "Attira",
+   "takings": "Incasso settimanale",
+   "lastPayout": "Ultimo versamento",
+   "totalEarned": "Totale incassato",
+   "campaigns": "Campagne in corso"
+  },
+  "sec": {
+   "government": "Governo",
+   "state": "Stato del regno",
+   "policies": "Politiche",
+   "chamber": "Aula",
+   "lastResults": "Ultimi risultati",
+   "history": "Elezioni passate",
+   "offices": "Cariche",
+   "person": "Titolare della carica",
+   "members": "Nazioni membri",
+   "wars": "Guerre",
+   "platform": "Programma",
+   "founding": "Fonda un partito politico",
+   "editing": "Modifica il partito",
+   "partyMembers": "Membri del partito"
+  },
+  "val": {
+   "vacant": "Vacante",
+   "none": "Nessuno",
+   "independent": "Indipendente",
+   "notScheduled": "Non fissate",
+   "curfewOn": "In vigore",
+   "curfewOff": "Nessuno",
+   "snap": "anticipate",
+   "seated": "Con seggio",
+   "observer": "Osservatore",
+   "notSeated": "Senza seggio",
+   "livesIn": "Vive a {place}",
+   "mainPlayer": "Un protagonista del secolo",
+   "recordOnly": "Noto solo dagli archivi",
+   "townsperson": "Un abitante della città",
+   "partyShare": "{share}% · {seats} seggi",
+   "warLine": "{attacker} contro {defender}, dal {since}",
+   "coalitionPartners": "{party} e altri {n}",
+   "supporters": "{n} sostenitori",
+   "yours": "Il tuo partito",
+   "chooseCreed": "Scegli un'ideologia",
+   "feeWeekly": "{fee} a settimana",
+   "held": "Adottato",
+   "member": "Membro fondatore",
+   "payout": "{gold} in {weeks} settimane, {date}"
+  },
+  "empathize": "Empatizza",
+  "scope": {
+   "world": "Tutto il mondo",
+   "place": "Città o villaggio",
+   "nation": "Nazione",
+   "power": "Iperpotenza",
+   "placeOf": "A {name}",
+   "nationOf": "Nazione: {name}",
+   "powerOf": "Iperpotenza: {name}"
+  },
+  "hint": {
+   "fee": "Ogni sostenitore la paga ogni settimana e l'incasso va al partito. Una tessera economica si riempie di poveri, una cara solo di élite.",
+   "feeEntry": "Quota settimanale, in euro",
+   "creed": "Il credo su cui si fonda il partito. I principi lo piegano da lì.",
+   "found": "Tutti nella squadra entrano come membri fondatori. Un mondo ospita un solo partito tuo.",
+   "save": "Il nuovo programma vale da subito.",
+   "tenets": "Scegli fino a {n} principi. Due che tirano in direzioni opposte non possono stare insieme.",
+   "propaganda": "Campagne, diffamazioni e candidature si gestiscono da Propaganda2 sull'hyperdeck.",
+   "pick": "Conferma per sceglierlo.",
+   "filter": "Restringi l'elenco a una città o un villaggio, una nazione o un'iperpotenza."
+  },
+  "msg": {
+   "needCreed": "Prima scegli un'ideologia.",
+   "alreadyFounded": "Questo mondo ha già un partito tuo.",
+   "founded": "{party} è fondato. {n} membri fondatori si sono iscritti.",
+   "noParty": "Non hai ancora fondato un partito.",
+   "saved": "{party} ha il suo nuovo programma.",
+   "tooManyTenets": "Un partito può avere al massimo {n} principi."
+  },
+  "feeClass": {
+   "0": "I più poveri",
+   "1": "Classe operaia",
+   "2": "Ceto medio",
+   "3": "I benestanti",
+   "4": "L'élite"
+  }
+ },
+ "player": {
+  "nameForm": [
+   "Partito {adj} per {noun}",
+   "Partito del {noun}",
+   "Fronte per {noun}",
+   "Movimento {adj} per {noun}",
+   "Unione {adj} per {noun}",
+   "Lega {adj} per {noun}"
+  ],
+  "nameAdj": [
+   "Popolare",
+   "Nuovo",
+   "Unito",
+   "Libero",
+   "Radicale",
+   "Onesto",
+   "Comune",
+   "Civico",
+   "Operaio",
+   "Liberato",
+   "Risvegliato",
+   "Esoterico",
+   "Moderno",
+   "Sovrano",
+   "Democratico",
+   "Nascosto"
+  ],
+  "nameNoun": [
+   "Progresso",
+   "Rinnovamento",
+   "Ordine",
+   "Libertà",
+   "Domani",
+   "Unità",
+   "Dignità",
+   "Riforma",
+   "Speranza",
+   "Lavoro",
+   "Ragione",
+   "Armonia",
+   "Giustizia",
+   "Prosperità",
+   "Equilibrio",
+   "Vigilanza"
+  ],
+  "fallbackName": "Il Partito del Popolo"
+ },
+ "tenet": {
+  "commonOwnership": {
+   "name": "Proprietà comune",
+   "desc": "Terra, fabbriche e ricchezza appartengono a tutti. Sposta l'economia a sinistra."
+  },
+  "freeEnterprise": {
+   "name": "Libera impresa",
+   "desc": "Che la gente commerci, assuma e guadagni come vuole. Sposta l'economia a destra."
+  },
+  "liberty": {
+   "name": "Libertà",
+   "desc": "Lo Stato resta fuori dalle vite private. Abbassa l'autorità."
+  },
+  "order": {
+   "name": "Ordine",
+   "desc": "Leggi rispettate, strade sorvegliate, disordine punito. Alza l'autorità."
+  },
+  "progress": {
+   "name": "Progresso",
+   "desc": "Le vecchie usanze cedono alle idee nuove. Abbassa la tradizione."
+  },
+  "heritage": {
+   "name": "Eredità",
+   "desc": "Custodire la fede, la lingua e le vecchie usanze. Alza la tradizione."
+  },
+  "peace": {
+   "name": "Pace",
+   "desc": "Disarmare, trattare, non marciare mai per primi. Abbassa il militarismo."
+  },
+  "strength": {
+   "name": "Forza",
+   "desc": "Un esercito forte è l'unica vera garanzia. Alza il militarismo."
+  },
+  "reason": {
+   "name": "Ragione",
+   "desc": "Scienza e prove prima di incantesimi e presagi. Abbassa il misticismo."
+  },
+  "arcana": {
+   "name": "Arcani",
+   "desc": "Le arti occulte appartengono al governo. Alza il misticismo."
+  },
+  "welfare": {
+   "name": "Stato sociale",
+   "desc": "Una rete di sicurezza per tutti, gestita da uno Stato premuroso. Un po' a sinistra e un po' più di autorità."
+  },
+  "localRule": {
+   "name": "Autogoverno locale",
+   "desc": "Città e villaggi decidono da sé. Meno autorità, un po' più di tradizione."
+  }
+ },
+ "app": {
+  "name": "Propaganda2",
+  "subtitle": "Sede del partito, campagne ed elezioni",
+  "purse": "Fondi: {money}",
+  "statusParty": "{party} · {n} sostenitori · {takings} a settimana",
+  "statusNoParty": "Nessun partito fondato.",
+  "tab": {
+   "party": "Partito",
+   "parties": "Partiti",
+   "campaigns": "Campagne",
+   "elections": "Elezioni"
+  },
+  "reroll": "Un altro nome",
+  "chooseCreed": "Scegli",
+  "closeList": "Chiudi elenco",
+  "searchCreed": "Cerca ideologie",
+  "searchPlace": "Cerca luoghi",
+  "searchParty": "Cerca partiti",
+  "searchElection": "Cerca elezioni",
+  "shown": "{n} di {total}",
+  "promote": "Fai campagna",
+  "smear": "Diffamalo",
+  "newCampaign": "Nuova campagna",
+  "campaignKind": "Tipo",
+  "kind": {
+   "convert": "Conversione",
+   "smear": "Diffamazione"
+  },
+  "kindHint": {
+   "convert": "Conquista persone al partito e avvicina le loro idee al suo programma.",
+   "smear": "Prosciuga la fede dei suoi sostenitori e li allontana dal suo programma. Gli scossi sono più facili da conquistare poi; chi perde ogni fede se ne va."
+  },
+  "target": "Partito",
+  "chooseTarget": "Scegli un partito",
+  "noOwnParty": "Nessun partito tuo",
+  "where": "Dove",
+  "intensity": "Intensità",
+  "intensityOf": {
+   "leaflets": "Volantini ({money}/giorno)",
+   "rallies": "Comizi ({money}/giorno)",
+   "broadcast": "Trasmissioni ({money}/giorno)",
+   "saturation": "Saturazione ({money}/giorno)"
+  },
+  "duration": {
+   "title": "Durata",
+   "day": "{n} giorno",
+   "days": "{n} giorni",
+   "month": "{n} mese",
+   "months": "{n} mesi"
+  },
+  "projection": "Previsione",
+  "eligible": {
+   "convert": "Persone conquistabili",
+   "smear": "Sostenitori raggiungibili"
+  },
+  "reach": "Copertura",
+  "expected": {
+   "convert": "Convertiti previsti",
+   "smear": "Scossi previsti"
+  },
+  "cost": "Costo",
+  "noProjection": "Scegli un partito per vedere la previsione.",
+  "launch": "Lancia la campagna",
+  "launched": "Campagna per {party} lanciata: circa {n} persone alla fine, per {cost}.",
+  "campaigns": "Campagne",
+  "progress": "Risultato",
+  "progressOf": "{n} su {of} previsti",
+  "state": "Stato",
+  "done": "Conclusa",
+  "running": "In corso fino al {date}",
+  "noCampaigns": "Nessuna campagna ancora.",
+  "candidate": "Candidato",
+  "noTeam": "Nessuno nella squadra.",
+  "runsFor": "Corre per {party}, con il suo programma.",
+  "runsAlone": "Corre da indipendente. Fonda un partito perché i suoi sostenitori votino il candidato.",
+  "date": "Data",
+  "deposit": "Cauzione",
+  "stand": "Candidati",
+  "standing": "Candidati: {names}",
+  "closed": {
+   "conclave": "Conclave, niente esterni",
+   "other": "Non aperta"
+  },
+  "noElections": "Nessuna elezione in arrivo qui.",
+  "candidacies": "Candidature",
+  "cand": {
+   "standing": "In corsa",
+   "won": "Vinta",
+   "lost": "Persa",
+   "withdrawn": "Ritirata"
+  },
+  "candResult": "{status}: {share}% contro {winnerShare}%",
+  "withdraw": "Ritira",
+  "noCandidacies": "Nessuno si è ancora candidato.",
+  "standingNow": "{name} è candidato alle elezioni del {date}.",
+  "fail": {
+   "noWorld": "Nessun mondo in cui fare campagna.",
+   "noTarget": "Prima scegli un partito.",
+   "nobody": "Lì non si raggiunge nessuno.",
+   "funds": "Soldi insufficienti.",
+   "notInTeam": "Scegli un candidato dalla squadra.",
+   "noElection": "Quell'elezione non è aperta.",
+   "conclave": "Un conclave non accetta candidati esterni.",
+   "alreadyStanding": "Quel candidato è già in corsa in un'elezione."
+  }
  }
 }

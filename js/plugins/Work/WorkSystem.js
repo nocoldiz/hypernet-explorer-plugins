@@ -248,6 +248,60 @@
     return window.WorkSystem.Jobs.filter(job => job.factionId === factionId);
   };
 
+  //=============================================================================
+  // Map jobs: which jobs are worked where
+  //=============================================================================
+  // js/db/WorldGen/MapJobs.json (tools/build/gen_map_jobs.js) is the one
+  // answer. A job no longer carries a `locations` list: a key of the table
+  // names a place and lists the jobs worked there.
+  //   "<mapId>"             an authored map
+  //   "proc:biome:<Biome>"  a procedural settlement on that biome (map 636)
+  //   "proc:door:<Feature>" a building door of that kind in one (DoorClinic...)
+  //   "tower:<kind>"        a settlement on an Omega Tower floor, by world kind
+  // Only ids Jobs.json still has are answered, so a removed job drops out.
+  window.WorkSystem.mapJobs = function () {
+    const table = window.WorldGen && window.WorldGen.MapJobs;
+    return (table && typeof table === 'object') ? table : {};
+  };
+
+  window.WorkSystem.jobsAt = function (key) {
+    const entry = window.WorkSystem.mapJobs()[String(key)];
+    const ids = (entry && Array.isArray(entry.jobs)) ? entry.jobs : [];
+    const all = window.WorkSystem.Jobs;
+    if (!Array.isArray(all)) return ids.slice();
+    return ids.filter(id => all.some(job => job && job.id === id));
+  };
+
+  // Every authored map a job is placed on, ascending. A modded job that still
+  // carries its own numeric `locations` keeps them.
+  let _locationIndex = null;
+  let _locationIndexSource = null;
+  window.WorkSystem.jobLocations = function (job) {
+    if (!job) return [];
+    const table = window.WorkSystem.mapJobs();
+    if (_locationIndexSource !== table) {
+      _locationIndex = {};
+      for (const [key, entry] of Object.entries(table)) {
+        if (!/^\d+$/.test(key) || !entry || !Array.isArray(entry.jobs)) continue;
+        for (const id of entry.jobs) (_locationIndex[id] || (_locationIndex[id] = [])).push(Number(key));
+      }
+      for (const list of Object.values(_locationIndex)) list.sort((a, b) => a - b);
+      _locationIndexSource = table;
+    }
+    const own = Array.isArray(job.locations) ? job.locations.filter(l => typeof l === 'number') : [];
+    const placed = _locationIndex[job.id] || [];
+    return [...new Set(own.concat(placed))].sort((a, b) => a - b);
+  };
+
+  // What a job panel has room for: the first `max` places, and how many more
+  // there are (a shop clerk is wanted in dozens of shops).
+  window.WorkSystem.jobLocationsShown = function (job, max) {
+    const all = window.WorkSystem.jobLocations(job);
+    const cap = Math.max(1, max || 8);
+    return { shown: all.slice(0, cap), more: Math.max(0, all.length - cap) };
+  };
+  window.WorkSystem.moreLocationsLabel = (count) => T('WorkSystem.moreLocations', { count: count });
+
   // Helper function to get actor stat (including custom ones)
   window.WorkSystem.getActorStat = function (actor, stat) {
     if (!actor) return 0;
@@ -811,7 +865,9 @@
         return;
       }
 
-      let jobs = window.WorkSystem.Jobs;
+      // An appointed office is held by whoever the politics seat in it
+      // (NPCPolitics REAL POLITICIANS), never taken as a shift.
+      let jobs = window.WorkSystem.Jobs.filter(job => job && !job.appointed);
 
       // Filter by category if specified
       if (this._category) {
@@ -1055,11 +1111,15 @@
       y += lineHeight;
 
       this.resetTextColor();
-      if (!job.locations || job.locations.length === 0) {
+      const places = window.WorkSystem.jobLocationsShown(job, 6);
+      if (!places.shown.length) {
         const unknownText =T('WorkSystem.unknown');
         this.drawText(unknownText, leftX + 10, y, columnWidth - 10);
       } else {
-        for (const location of job.locations) {
+        const label = (loc) => window.WorkSystem.locationLabel ? window.WorkSystem.locationLabel(loc) : String(loc);
+        const lines = places.shown.map(label);
+        if (places.more) lines.push(window.WorkSystem.moreLocationsLabel(places.more));
+        for (const location of lines) {
           this.drawText('• ' + location, leftX + 10, y, columnWidth - 10);
           y += lineHeight;
           if (y > this.contentsHeight() - lineHeight * 2) break;
@@ -1506,12 +1566,14 @@
       }
 
       let locationsHTML = "";
-      if (job.locations && job.locations.length > 0) {
+      const places = window.WorkSystem.jobLocationsShown(job, 8);
+      if (places.shown.length > 0) {
         locationsHTML = `
           <div class="work-15">
             <strong class="work-16">${T('WorkSystem.deploymentLocations')}:</strong>
             <div class="work-17">
-              ${job.locations.map(loc => `<span class="work-18">${window.WorkSystem.locationLabel ? window.WorkSystem.locationLabel(loc) : loc}</span>`).join('')}
+              ${places.shown.map(loc => `<span class="work-18">${window.WorkSystem.locationLabel ? window.WorkSystem.locationLabel(loc) : loc}</span>`).join('')}
+              ${places.more ? `<span class="work-18">${window.WorkSystem.moreLocationsLabel(places.more)}</span>` : ''}
             </div>
           </div>
         `;
@@ -1731,7 +1793,7 @@
               this._jobListWindow.select(prevIndex);
               moved = true;
             }
-          } else if (Input.isTriggered('right') || this.isKeyPressed('KeyD') || Input.isTriggered('ok')) {
+          } else if (Input.isRepeated('right') || this.isKeyPressed('KeyD') || Input.isTriggered('ok')) {
             if (job) {
               this._dndFocusSection = 'actors';
               this._dndActorIndex = 0;
@@ -1754,7 +1816,7 @@
               this._dndActorIndex = (this._dndActorIndex - 1 + maxActors) % maxActors;
               moved = true;
             }
-          } else if ((Input.isTriggered('left') || this.isKeyPressed('KeyA')) && !this._singleJobMode) {
+          } else if ((Input.isRepeated('left') || this.isKeyPressed('KeyA')) && !this._singleJobMode) {
             this._dndFocusSection = 'list';
             this._detailsPanel.deactivateActorSelection();
             if (this._jobListWindow) this._jobListWindow.activate();

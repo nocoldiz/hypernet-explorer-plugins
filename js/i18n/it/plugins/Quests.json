@@ -215,5 +215,7 @@
     "toastReturned": "{title} è tornato in bacheca: chi l'aveva preso non è riuscito a finirlo.",
     "deliveryTitle": "Consegnato per te",
     "escrowReturned": "Vincolo restituito"
-  }
+  },
+  "wantedFor": "ricercato per {bounty}, visto l'ultima volta a ",
+  "wantedNPCBrought": "Mandato chiuso su "
 }

@@ -1820,12 +1820,6 @@
     static update() {
       if (!this.active) return;
 
-      // Bumpers (L1/R1) cycle the active patient outside the picker view.
-      if (this.scene && this.scene._viewState !== 'party' && $gameParty.members().length > 1) {
-        if (Input.isTriggered('pagedown')) { this.scene.cyclePatient(1); return; }
-        if (Input.isTriggered('pageup')) { this.scene.cyclePatient(-1); return; }
-      }
-
       if (this.mode === 'list') {
         this.updateListNavigation();
       } else if (this.mode === 'actions') {
@@ -1884,14 +1878,14 @@
       let moved = false;
       const len = this.actionElements.length;
 
-      if (Input.isTriggered('right')) {
+      if (Input.isRepeated('right')) {
         if (this.actionIndex + 1 < len) {
           this.actionIndex += 1;
         } else {
           this.actionIndex = 0;
         }
         moved = true;
-      } else if (Input.isTriggered('left')) {
+      } else if (Input.isRepeated('left')) {
         if (this.actionIndex - 1 >= 0) {
           this.actionIndex -= 1;
         } else {

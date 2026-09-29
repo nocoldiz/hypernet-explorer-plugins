@@ -107,6 +107,7 @@
   ],
   "emLabel": {
     "dream": "A Vision, Unscheduled",
+    "forage": "Rummage Grandly",
     "menuBestiary": "Creatures, Catalogued",
     "menuBiologics": "My Own Insides",
     "menuResign": "Retire From The Match",
@@ -290,6 +291,7 @@
     "380": "Raises one ally's DEX. A Pyromancy technique, a heavy spell to pay for.",
     "381": "Raises one ally's DEX. May grant Rooted. A Cryomancy technique, a heavy spell to pay for.",
     "386": "May inflict Blind on all enemies. Strikes last. A Illusion technique, a heavy spell to pay for.",
+    "388": "Raises all allies' INT. May grant Cold. Strikes last. A Cryomancy technique, a real draw on the mana bar.",
     "389": "Raises all allies' DEX. Strikes last. A Electromancy technique, a real draw on the mana bar.",
     "393": "Deals minor Physical damage to one enemy and lowers their CON/DEX. May inflict Unbalanced. A MetaMagic technique, a real draw on the mana bar.",
     "400": "Restores HP to one ally and raises their CON. A MetaMagic technique, cheap to cast.",
@@ -347,6 +349,7 @@
     "684": "Restores MP to the user and raises their STR and DEX. A ForbiddenMagic technique, a real draw on the mana bar.",
     "697": "Restores MP to the user and raises their INT and WIS. A ForbiddenMagic technique, a real draw on the mana bar.",
     "702": "Deals light Physical damage to all enemies and may inflict Unbalanced. A ForbiddenMagic technique, a real draw on the mana bar.",
+    "770": "Raises the user's INT. Grants Arcane Surge. A Arcanism technique, a heavy spell to pay for.",
     "774": "Raises one ally's INT. May grant Arcane Surge. Strikes last. A Arcanism technique, a heavy spell to pay for.",
     "776": "Drains HP from one enemy and lowers INT. May inflict Silence. Strikes last. A Arcanism technique, a heavy spell to pay for.",
     "777": "Curses a target to lower their attack strength and make them take more damage.",

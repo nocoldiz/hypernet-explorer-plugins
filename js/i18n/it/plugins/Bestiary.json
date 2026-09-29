@@ -16,6 +16,8 @@
   "randomizeSeed": "Rigenera seme",
   "seed": "Seme",
   "noBiologicalDescriptionRegistered": "Nessuna descrizione biologica registrata.",
+  "elementAbsorb": "Assorbe",
+  "elementImmune": "Immune",
   "elementalAffinities": "Affinità Elementali",
   "noElementalWeaknessOrResistance": "Nessuna resistenza o debolezza elementale rilevata.",
   "slower": "Molto lento",

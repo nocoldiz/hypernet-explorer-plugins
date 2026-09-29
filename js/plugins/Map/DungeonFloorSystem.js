@@ -2026,10 +2026,46 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   // a place to stand a stranger, and neither is the square the party arrived on.
   function bandStandable(x, y, reserved) {
     if (!$gameMap.isValid(x, y)) return false;
+    if (bandForbiddenTile(x, y)) return false;
     if (!$gameMap.isPassable(x, y, 2) || !$gameMap.isPassable(x, y, 8)) return false;
     if ($gameMap.eventsXy(x, y).length) return false;
     if ($gamePlayer && Math.abs($gamePlayer.x - x) + Math.abs($gamePlayer.y - y) < 4) return false;
     if (reserved && reserved.has(x + "," + y)) return false;
+    return true;
+  }
+
+  // Roofs (terrain tag 7) and climbable walls (4) read as passable in the
+  // tileset: the player is kept off them by the climbing rules, which a band
+  // never goes through, so they are refused here instead.
+  const BAND_FORBIDDEN_TERRAIN = [4, 7];
+
+  function bandForbiddenTile(x, y) {
+    if (typeof $gameMap.terrainTag !== "function") return false;
+    return BAND_FORBIDDEN_TERRAIN.includes($gameMap.terrainTag(x, y));
+  }
+
+  // May this member take one step that way? Asked before every band step so a
+  // member never walks onto a roof, and so one made `through` to let the
+  // player by still keeps to the tiles instead of walking through walls.
+  function bandCanEnter(ev, d) {
+    const x2 = ev.x + (d === 6 ? 1 : d === 4 ? -1 : 0);
+    const y2 = ev.y + (d === 2 ? 1 : d === 8 ? -1 : 0);
+    if (!$gameMap.isValid(x2, y2) || bandForbiddenTile(x2, y2)) return false;
+    if (typeof ev.isThrough === "function" && ev.isThrough()) {
+      if (!$gameMap.isPassable(ev.x, ev.y, d) || !$gameMap.isPassable(x2, y2, 10 - d)) return false;
+    }
+    return true;
+  }
+
+  // A step that fails the check counts as a failed move, so the fallback
+  // direction in bandStep is still tried.
+  function bandMove(ev, d) {
+    if (!bandCanEnter(ev, d)) {
+      if (typeof ev.setMovementSuccess === "function") ev.setMovementSuccess(false);
+      else ev._movementSucceeded = false;
+      return false;
+    }
+    ev.moveStraight(d);
     return true;
   }
 
@@ -2181,7 +2217,10 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
       band: bandId, leader: !!isLeader, name: member.name,
       // Null means Earth (window.TowerWorlds).
       originWorld: member.originWorld || null,
-      level: member.level, hp: member.hp, maxHp: member.hp
+      level: member.level, hp: member.hp, maxHp: member.hp,
+      // A person of the world out with their band (NPCLifeSim.Bands), and
+      // which band's record they belong to.
+      real: !!member.real, bandRecord: member.bandId || null
     };
     $gameMap._events[id] = ev;
     bandAddSprite(ev);
@@ -2192,18 +2231,27 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   // already has somebody on it (a menu closed, a save loaded) is left alone.
   function bandSpawnFloor() {
     const here = bandFloorHere();
-    if (!here) return 0;
+    if (!here) return bandRealBands() ? bandRealBands().spawnExpeditions() : 0;
     if (typeof $dataMap === "undefined" || !$dataMap) return 0;
     if (bandMembers().length) return 0;
     const rng = createSeededRandom(
       "towerBands:" + dungeonWorldSeed() + ":" + here.floor + ":" + Graphics.frameCount);  // i18n-ignore: seed string
+    // The people of the world whose band works this floor today are on it
+    // whatever the roll below says (NPCLifeSim.Bands); the rest of the floor's
+    // climbers are dealt as before, the Earth ones among them left out when
+    // the real bands are there to be them.
+    const service = bandRealService();
+    const realReserved = service ? bandReservedKeys() : null;
+    const real = service
+      ? bandRealBands().placeReal({ kind: "tower", floor: here.floor, level: here.level }, realReserved, BAND_MAX_COUNT)  // i18n-ignore: place kind id
+      : { bands: 0, spawned: 0 };
     // An empty floor is always on the cards: the tower is climbed, not queued
     // for, and meeting nobody on a landing is half of what makes meeting
     // somebody on the next one worth anything.
-    const bands = Math.floor(rng() * (BAND_MAX_COUNT + 1));
-    if (bands <= 0) return 0;
-    const reserved = bandReservedKeys();
-    let spawned = 0;
+    const bands = Math.min(Math.floor(rng() * (BAND_MAX_COUNT + 1)), BAND_MAX_COUNT - real.bands);
+    if (bands <= 0) return real.spawned;
+    const reserved = realReserved || bandReservedKeys();
+    let spawned = real.spawned;
     for (let band = 0; band < bands; band++) {
       const size = 1 + Math.floor(rng() * BAND_MAX_SIZE);
       const anchor = bandFindAnchor(rng, reserved, size);
@@ -2214,6 +2262,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
         // Each of them separately: a band is who fell in together on the way
         // up, not a delegation from one place.
         const origin = bandOriginWorld(rng);
+        if (!origin && service) continue;
         const characterName = bandSprite(rng);
         if (!characterName) continue;
         // How heavy they are is the floor's business, not their homeworld's:
@@ -2235,6 +2284,38 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
       }
     }
     return spawned;
+  }
+
+  // The world's own adventurers (NPCLifeSim.Bands), when the life simulation
+  // is loaded: NPC/NPCLife_Bands.js hangs them on DungeonFloors.realBands.
+  // Without it the tower keeps its made-up climbers alone.
+  function bandRealBands() {
+    const DF = window.DungeonFloors;
+    return DF && DF.realBands ? DF.realBands : null;
+  }
+
+  function bandRealService() {
+    const rb = bandRealBands();
+    return rb ? rb.service() : null;
+  }
+
+  // The tower floors whose creatures are within reach levels of a level,
+  // above ground and below, for NPCLifeSim.Bands to give a band a run of.
+  function bandFloorsForLevel(level, reach) {
+    const lv = Math.max(1, Number(level) || 1);
+    const r = Math.max(0, Number(reach) || 0);
+    const out = [];
+    for (let f = TOWER.DEEPEST; f <= 99; f++) {
+      if (f === 0 || f === 1) continue;
+      let at = 0;
+      if (f < 0) at = towerEnemyLevel(f);
+      else {
+        const range = upperFloorEnemyBand(f);
+        at = range ? Math.round((range.min + range.max) / 2) : 0;
+      }
+      if (at > 0 && Math.abs(at - lv) <= r) out.push(f);
+    }
+    return out;
   }
 
   function bandFindAnchor(rng, reserved, size) {
@@ -2290,11 +2371,11 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     const horz = dx > 0 ? 6 : 4;
     const vert = dy > 0 ? 2 : 8;
     if (Math.abs(dx) >= Math.abs(dy)) {
-      if (dx) ev.moveStraight(horz);
-      if (dy && !ev.isMovementSucceeded()) ev.moveStraight(vert);
+      if (dx) bandMove(ev, horz);
+      if (dy && !ev.isMovementSucceeded()) bandMove(ev, vert);
     } else {
-      if (dy) ev.moveStraight(vert);
-      if (dx && !ev.isMovementSucceeded()) ev.moveStraight(horz);
+      if (dy) bandMove(ev, vert);
+      if (dx && !ev.isMovementSucceeded()) bandMove(ev, horz);
     }
   }
 
@@ -2331,7 +2412,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
         const prey = bandNearestEnemy(ev, BAND_SIGHT);
         if (prey) bandStep(ev, prey.x, prey.y);
         else if (Math.random() < 0.4) {
-          ev.moveStraight([2, 4, 6, 8][Math.floor(Math.random() * 4)]);
+          bandMove(ev, [2, 4, 6, 8][Math.floor(Math.random() * 4)]);
         }
         continue;
       }
@@ -2357,16 +2438,18 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
       perpDirs = [4, 6];
     }
     const canStep = (dir) => {
+      // bandCanEnter already holds a `through` member to the tiles.
+      if (!bandCanEnter(ev, dir)) return false;
       if (typeof ev.canPass === "function") return ev.canPass(ev.x, ev.y, dir);
       return true;
     };
     if (primaryDir && canStep(primaryDir)) {
-      ev.moveStraight(primaryDir);
+      bandMove(ev, primaryDir);
     } else {
       let stepped = false;
       for (const pdir of perpDirs) {
         if (canStep(pdir)) {
-          ev.moveStraight(pdir);
+          bandMove(ev, pdir);
           stepped = true;
           break;
         }
@@ -2374,7 +2457,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
       if (!stepped && primaryDir) {
         for (const dir of [2, 4, 6, 8]) {
           if (dir !== (10 - primaryDir) && canStep(dir)) {
-            ev.moveStraight(dir);
+            bandMove(ev, dir);
             break;
           }
         }
@@ -2406,6 +2489,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
 
   function bandFell(ev) {
     const state = ev._towerBand;
+    const realName = state && state.real ? state.name : null;
     const name = state ? state.name : T("DungeonFloor.bandFallbackName");
     const level = state ? state.level : 1;
     const seen = ev.isNearTheScreen ? ev.isNearTheScreen() : false;
@@ -2468,6 +2552,14 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     if (typeof ev.setupPage === "function") ev.setupPage();
     if (name && seen && window.ParchmentToast && window.ParchmentToast.show) {
       window.ParchmentToast.show(T("DungeonFloor.bandFell", { name }), { severity: "warning" });  // i18n-ignore: severity id
+    }
+    // A person of the world does not get up again (NPCLifeSim.Bands, the one
+    // death path). Asked last, once the event already reads as their remains.
+    const service = realName ? bandRealService() : null;
+    if (service && typeof service.memberFell === "function") {
+      try { service.memberFell(realName, { mapId: $gameMap.mapId() }); } catch (e) {
+        console.error("[DungeonFloorSystem] a fallen climber could not be laid to rest", e);
+      }
     }
   }
 
@@ -3068,7 +3160,9 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     groupPrefix: TOWER_GROUP_PREFIX,
     groupName: towerGroupName,
     groupFloor: towerGroupFloor,
-    isTowerGroup: (name) => towerGroupFloor(name) > 0,
+    // Either half of the shaft: a lower floor ("Tower:-7") is as much a
+    // tower world as an upper one.
+    isTowerGroup: (name) => towerGroupFloor(name) !== 0,
     worldOfGroup: towerWorldOfGroup,
     // The politics layer asks for these by name.
     powerNames: () => allTowerWorlds().map((w) => w.powerName),
@@ -3140,6 +3234,18 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     updateBands: bandUpdate,
     yieldBand: bandYield,
     fellBand: bandFell,
+    // The real bands (NPCLifeSim.Bands): which floors a level of band works.
+    // Where else they are met off the tower (bandExpeditionPlace,
+    // spawnExpeditions) is NPC/NPCLife_Bands.js's, added here as realBands when
+    // the life simulation loads, and it puts them down with the floor's own
+    // helpers below.
+    floorsForLevel: bandFloorsForLevel,
+    realBands: null,
+    _bandHost: {
+      BAND_MAX_SIZE, PROC_MAP_ID, createSeededRandom, dungeonWorldSeed, towerStructureKeys,
+      currentTowerFloor, bandMembers, bandReservedKeys, bandFindAnchor, bandSpotsAround,
+      bandSpawnMember,
+    },
   };
 
   function moveToFloor(floor, spawnMode) {

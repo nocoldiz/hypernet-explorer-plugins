@@ -1747,6 +1747,13 @@
       .filter(shop => shop && shop.owned);
   }
 
+  // True when a shop on the party's deed trades on this map, so its counter
+  // is the party's own (CrimeSystem keeps that door open to them).
+  function ownsShopOnMap(mapId) {
+    if (mapId == null) return false;
+    return ownedShops().some(shop => String(shop.mapId) === String(mapId));
+  }
+
   // What each owned shop's till stood at when the day opened, and the profit
   // since. A shop bought today opens its ledger at its own balance, so the
   // first line it ever prints is a day's trade rather than the whole float.
@@ -2084,6 +2091,7 @@
     adoptWorldShops,
     // The day's takings, announced once per game day (see checkShopDay).
     ownedShops,
+    ownsShopOnMap,
     dailyProfits:      shopDailyProfits,
     announceProfits:   announceDailyProfits,
     checkDay:          checkShopDay,

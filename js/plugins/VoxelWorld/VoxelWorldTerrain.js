@@ -41,7 +41,7 @@
         VOX, VoxelField, VoxelMesher, WORLD_TILE_SIZE, getRenderType, profileFor,
         getRoadDirectionAt, loadTex, loadVoxelTex, sampleBiomeAt, voxelMaterial, VoxelWorldState,
         voxelGrassMaterial, voxelWaterMaterial, disposeVoxelMaterial,
-        voxelBlockMaterial
+        voxelBlockMaterial, alienSeaNear
     } = VW;
 
     const WORLD_TILES_ACROSS = 256;
@@ -419,6 +419,10 @@
         // lookups it makes are memoised, and it only runs when the camera
         // crosses into a new square.
         _seaWithin(cwx, cwy, r) {
+            // Another world is one biome from pole to pole, so its sea is
+            // whatever its own elevation field puts under the tide line.
+            const alien = alienSeaNear ? alienSeaNear(cwx, cwy, r) : null;
+            if (alien !== null) return alien;
             for (let dy = -r; dy <= r; dy++) {
                 for (let dx = -r; dx <= r; dx++) {
                     const biome = sampleBiomeAt(cwx + dx, cwy + dy);

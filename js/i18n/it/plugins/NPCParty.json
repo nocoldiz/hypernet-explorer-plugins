@@ -11,6 +11,7 @@
     "house": "la casa a {place}",
     "ship": "l’astronave",
     "vault": "il bunker",
-    "cannotJoin": "{name} non può rimettersi in viaggio adesso."
+    "cannotJoin": "{name} non può rimettersi in viaggio adesso.",
+    "estate": "{name} a {place}"
   }
 }

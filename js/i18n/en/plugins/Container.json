@@ -27,7 +27,10 @@
     "burglary": "Burglary",
     "grandTheft": "Grand Theft",
     "charge": "{crime}: {item}",
-    "stack": "{item} x{count}"
+    "stack": "{item} x{count}",
+    "haul": "{count} stolen goods",
+    "rollAction": "Slipping Away Unheard",
+    "unnoticed": "You close it quietly. Nobody noticed a thing."
   },
   "harvest": {
     "collected": "✓ Collected",

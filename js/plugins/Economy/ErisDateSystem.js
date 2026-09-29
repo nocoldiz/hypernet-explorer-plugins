@@ -2156,6 +2156,16 @@
     // presses on. The advance only arms once every advance input has been
     // released and a short minimum read time has passed, so a single keypress
     // can never skip several lines at once.
+    // The date's prompts poll on animation frames, and a screen can draw more
+    // than one of those per game frame. Input only changes on a game frame, so
+    // each poll reads it at most once per frame: one press, one action.
+    _freshInputFrame(state) {
+      const frame = (typeof Graphics !== 'undefined' && Graphics.frameCount) || 0;
+      if (state.frame === frame) return false;
+      state.frame = frame;
+      return true;
+    }
+
     _waitForAdvance(minReadMs = 260) {
       const t = this._t();
       const log = document.getElementById('eris-log');
@@ -2171,36 +2181,36 @@
 
       return new Promise(resolve => {
         const readyAt = performance.now() + minReadMs;
-        const advanceKeys = ['Enter', 'NumpadEnter', 'Space'];
+        const frameGate = { frame: -1 };
         let armed = false;
         let active = true;
 
         const done = () => {
           active = false;
-          document.removeEventListener('keydown', kh);
           if (log) log.removeEventListener('click', ch);
           if (hint && hint.parentNode) hint.parentNode.removeChild(hint);
           // Drop the press so the next wait/choice does not inherit it.
           Input.clear();
           resolve();
         };
-        const kh = (e) => {
-          if (!armed || e.repeat) return;
-          if (advanceKeys.includes(e.code)) { e.preventDefault(); SoundManager.playOk(); done(); }
-        };
+        // Enter and Space reach the poll through Input as 'ok', the pad's A
+        // too: a DOM keydown handler beside it used to advance a second time.
         const ch = () => { if (armed) { SoundManager.playOk(); done(); } };
-        document.addEventListener('keydown', kh);
         if (log) log.addEventListener('click', ch);
 
         const poll = () => {
           if (!active) return;
+          if (!this._freshInputFrame(frameGate)) { requestAnimationFrame(poll); return; }
           if (!armed) {
-            const held = Input.isPressed('ok') || Input.isPressed('down') || Input.isPressed('right');
+            const held = Input.isPressed('ok') || Input.isPressed('cancel') ||
+              Input.isPressed('down') || Input.isPressed('right');
             if (!held && performance.now() >= readyAt) {
               armed = true;
               if (hint) hint.classList.add('ready');
             }
-          } else if (Input.isTriggered('ok')) {
+          } else if (Input.isTriggered('ok') || Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+            // Cancel moves the line on as it does in every message window:
+            // there is nothing to step out of while she is talking.
             SoundManager.playOk();
             done();
             return;
@@ -2231,27 +2241,29 @@
           return btn;
         });
         const upd = () => btns.forEach((b, i) => b.classList.toggle('selected', i === sel));
-        const kh = (e) => {
-          if (e.repeat && (e.code === 'Enter' || e.code === 'Space')) return;
-          if (e.code === 'ArrowDown' || e.code === 'ArrowRight') { sel = (sel + 1) % btns.length; upd(); SoundManager.playCursor(); }
-          else if (e.code === 'ArrowUp' || e.code === 'ArrowLeft') { sel = (sel - 1 + btns.length) % btns.length; upd(); SoundManager.playCursor(); }
-          else if (e.code === 'Enter' || e.code === 'Space') { if (armed) finish(sel); }
-        };
+        const frameGate = { frame: -1 };
+        // Arrows, Enter and Space arrive through Input like the pad does; a DOM
+        // keydown handler beside the poll moved the cursor twice per press.
         const finish = (idx) => {
           active = false;
-          document.removeEventListener('keydown', kh);
           this._addDialogue(choices[idx], 'player');
           panel.innerHTML = '';
           SoundManager.playOk();
           Input.clear();
           resolve(idx);
         };
-        document.addEventListener('keydown', kh);
-
         const poll = () => {
           if (!active) return;
+          if (!this._freshInputFrame(frameGate)) { requestAnimationFrame(poll); return; }
           if (!armed) {
             if (!Input.isPressed('ok') && performance.now() >= readyAt) armed = true;
+            requestAnimationFrame(poll);
+            return;
+          }
+          // A date question has to be answered: Cancel is refused out loud
+          // rather than silently ignored.
+          if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+            SoundManager.playBuzzer();
             requestAnimationFrame(poll);
             return;
           }

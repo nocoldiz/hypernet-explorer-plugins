@@ -40,6 +40,24 @@
   "aWorldWithThisName": "Esiste già un mondo con questo nome.",
   "generatingWorldHistory": "Generazione della storia del mondo...",
   "populatingWorld": "Popolamento del mondo...",
+  "initStepProgress": "Preparazione del mondo ({current}/{total}): {step}...",
+  "initSteps": {
+    "history": "la storia",
+    "worldgenManifests": "gruppi di mappe e insediamenti",
+    "npcRoster": "gli abitanti",
+    "shopShifts": "i turni dei negozi",
+    "dungeon": "il dungeon",
+    "towerWorlds": "i mondi della torre",
+    "worldTimeline": "gli anni dal 2001",
+    "goblinWorld": "il dominio dell'Orda dei Goblin",
+    "politics": "governi ed elezioni",
+    "factionDiplomacy": "la diplomazia delle fazioni",
+    "npcPreAge": "il passato delle persone",
+    "refugees": "i profughi",
+    "worldWeb": "la rete degli insediamenti",
+    "epidemics": "le epidemie",
+    "erisLawyers": "gli avvocati"
+  },
   "worldCreationFailed": "Creazione del mondo fallita: ",
   "months": [
     "Gennaio",
@@ -99,5 +117,10 @@
     "severed": "La magia è stata cancellata dal mondo. Incantesimi, oggetti incantati e creature magiche non compaiono più, e la barra MP è rimossa. Il gruppo mantiene solo ciò che riceve alla creazione.",
     "unbound": "La magia dilaga in tutto il mondo. Le armi sono incantate, le malattie sono maledizioni e le creature mutano per l'energia delle leyline. Negozi e bottini non contengono equipaggiamento ordinario."
   },
-  "magicalLocked": "Si sceglie una volta sola alla creazione ed e indipendente dalla linea temporale. Si puo creare qualsiasi combinazione delle due."
+  "magicalLocked": "Si sceglie una volta sola alla creazione ed e indipendente dalla linea temporale. Si puo creare qualsiasi combinazione delle due.",
+  "regenerate": "RIGENERA",
+  "regenerateWorld": "Rigenera Mondo",
+  "confirmRegenerate": "Riportare il mondo \"{name}\" al mondo predefinito fornito con il gioco? La sua storia, gli NPC e i salvataggi andranno persi. Non può essere annullato.",
+  "regeneratingWorld": "Ripristino del mondo predefinito...",
+  "worldRegenerated": "Il mondo predefinito è stato ripristinato."
 }

@@ -1165,6 +1165,9 @@
     const qualityLabel = (quality) => T('Blacksmith.quality.' + qualityBand(quality));
 
     function forgedDisplayName(base, rec) {
+        // A piece customised for somebody in the world (the NPC custom pieces
+        // section below) carries its whole name already, owner and all.
+        if (rec.fixedName && rec.customName) return String(rec.customName);
         const key = rec.mark > 1 ? 'Blacksmith.forgedNameNumbered' : 'Blacksmith.forgedName';
         // A weapon that was given a name of its own at the anvil wears that
         // instead of its catalogue name; armor still reads as the piece it is.
@@ -1198,10 +1201,15 @@
             // forged from, since materializing gave it a brand new id.
             `\n<ForgeBaseId: ${rec.baseId}>` +
             (rec.texture ? `\n<ForgeTexture: ${rec.texture}>` : '') +
-            (rec.parts ? `\n<ForgeParts: ${encodeDesign(rec.parts)}>` : '');
+            (rec.parts ? `\n<ForgeParts: ${encodeDesign(rec.parts)}>` : '') +
+            (rec.modifier ? `\n<modifier: ${rec.modifier}>` : '') +
+            (rec.uid ? `\n<NpcUnique: ${rec.uid}>` : '');
         entry.description = String(base.description || '').trim();
         const line = T('Blacksmith.forgedDesc', { smith: rec.smith, quality: qualityLabel(rec.quality) });
         entry.description = entry.description ? entry.description + '\n' + line : line;
+        // Who it was made for and every hand it has passed through since.
+        const history = rec.uid && window.NPCUniqueGear ? window.NPCUniqueGear.historyText(rec.uid) : '';
+        if (history) entry.description += '\n' + history;
         DataManager.extractMetadata(entry);
 
         padSlots(src, rec.id);
@@ -1517,7 +1525,15 @@
         isForged,
         rebuild: rebuildForged,
         quality: (item) => (isForged(item) ? (Number(item.meta.ForgeQuality) || 1) : 0),
-        smeltYield
+        smeltYield,
+        // For the NPC custom pieces section: the same one-record-one-entry
+        // path every forged piece takes, never a second mint of its own.
+        materialize,
+        nextId: nextForgeId,
+        finishesFor,
+        qualityBand,
+        WORLD_FILE: FORGE_WORLD_FILE,
+        ID_BASE: FORGE_ID_BASE
     };
 
     function rarityOf(item) {
@@ -2055,6 +2071,9 @@
                 });
                 }
             }
+
+            // The "?" explains whichever of the two spreads is open.
+            if (window.UIHelp) UIHelp.attach(container, () => 'Blacksmith.help.' + (this.pieceMode() ? 'piece' : 'board'));
 
             this.renderSwitcher();
             this.renderTrades();
@@ -3505,9 +3524,15 @@
                 return;
             }
 
-            // Shoulder buttons hand the workshop to another member.
-            if (Input.isTriggered('pagedown')) { this.cycleSmith(1); return; }
-            if (Input.isTriggered('pageup')) { this.cycleSmith(-1); return; }
+            // L1 / R1 step the status tabs; L2 / R2 hand the workshop to
+            // another member (CharSwitcher, installed with the scene).
+            const tabStep = window.UINav ? window.UINav.tabDir() : 0;
+            if (tabStep) {
+                const at = Math.max(0, STATUS_TABS.indexOf(this._status));
+                const next = Math.max(0, Math.min(STATUS_TABS.length - 1, at + tabStep));
+                if (next !== at) { SoundManager.playCursor(); this.setStatus(STATUS_TABS[next]); }
+                return;
+            }
 
             const cancel = Input.isTriggered('cancel') || TouchInput.isCancelled();
 
@@ -3548,7 +3573,7 @@
                     this.setStatus(STATUS_TABS[clamped]);
                     this._activeArea = 'status';
                     this.refreshForge();
-                } else if (Input.isTriggered('ok') || Input.isTriggered('down')) {
+                } else if (Input.isTriggered('ok') || Input.isRepeated('down')) {
                     this._activeArea = 'items';
                     SoundManager.playCursor();
                     this.refreshForge();
@@ -3563,7 +3588,7 @@
                 const last = items.length - 1;
                 const col = this._itemIndex % GRID_COLS;
                 if (Input.isRepeated('right')) {
-                    if (this._itemIndex < last) { this.selectRow(this._itemIndex + 1); SoundManager.playCursor(); this.refreshForge(); }
+                    if (col < GRID_COLS - 1 && this._itemIndex < last) { this.selectRow(this._itemIndex + 1); SoundManager.playCursor(); this.refreshForge(); }
                 } else if (Input.isRepeated('left')) {
                     if (col === 0) {
                         this._activeArea = 'trades';
@@ -3599,7 +3624,7 @@
             if (this._activeArea === 'model') {
                 if (Input.isTriggered('ok')) {
                     this.openSculptor();
-                } else if (Input.isTriggered('down')) {
+                } else if (Input.isRepeated('down')) {
                     this.goArea(this.areaStep('model', 1));
                 } else if (cancel) {
                     this.closePiece();
@@ -3623,9 +3648,9 @@
                     this._nameChip = this._nameChip ? 0 : 1;
                     SoundManager.playCursor();
                     this.refreshForge();
-                } else if (Input.isTriggered('down')) {
+                } else if (Input.isRepeated('down')) {
                     this.goArea(this.areaStep('name', 1));
-                } else if (Input.isTriggered('up')) {
+                } else if (Input.isRepeated('up')) {
                     this.goArea(this.areaStep('name', -1));
                 } else if (cancel) {
                     this.closePiece();
@@ -3644,11 +3669,11 @@
                     this.setFinish(this._selectedItem, this._finishIndex ? list[this._finishIndex - 1] : '');
                     SoundManager.playCursor();
                     this.refreshForge();
-                } else if (Input.isTriggered('ok') || Input.isTriggered('down')) {
+                } else if (Input.isTriggered('ok') || Input.isRepeated('down')) {
                     this._activeArea = this.areaStep('finish', 1) || this.firstButtonArea();
                     SoundManager.playOk();
                     this.refreshForge();
-                } else if (Input.isTriggered('up')) {
+                } else if (Input.isRepeated('up')) {
                     this.goArea(this.areaStep('finish', -1));
                 } else if (cancel) {
                     this.closePiece();
@@ -3676,7 +3701,7 @@
                 }
                 if (Input.isTriggered('ok')) {
                     if (making) this.makeSelected(); else this.breakSelected();
-                } else if (Input.isTriggered('up')) {
+                } else if (Input.isRepeated('up')) {
                     this.goArea(this.areaStep(this.firstButtonArea(), -1));
                 } else if (cancel) {
                     this.closePiece();
@@ -4605,18 +4630,23 @@
             // the stand.
             if (window.CCNav && window.CCNav.update()) return;
             if (window.CCScroll) window.CCScroll.update(this._root);
-            // Y steps onto the page of controls, which is the one move the
-            // stage cannot make for itself.
-            if (Input.isTriggered('menu') && window.CCNav) {
-                if (window.CCNav.tryEnterFromBoard('down')) return;
-            }
+            // Cancel is read first: MZ answers 'menu' for Escape as well, so
+            // reading Y ahead of it would step onto the controls instead of
+            // leaving the stand.
             if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
                 if (this._drag || this._eatCancel > 0) return;
                 this.leave();
                 return;
             }
-            if (Input.isTriggered('pagedown')) { this.selectFitting(this._sel + 1); return; }
-            if (Input.isTriggered('pageup')) { this.selectFitting(this._sel - 1); return; }
+            // Y steps onto the page of controls, which is the one move the
+            // stage cannot make for itself.
+            if (Input.isTriggered('menu') && !Input.isTriggered('escape') && window.CCNav) {
+                if (window.CCNav.tryEnterFromBoard('down')) return;
+            }
+            // The fittings are the stand's tabs: L1 / R1 (Q / W, Shift+Tab /
+            // Tab) step them, since the directions are the sculpting hand.
+            const fitStep = window.UINav ? window.UINav.tabDir() : 0;
+            if (fitStep) { this.selectFitting(this._sel + fitStep); return; }
 
             const spec = this.selected();
             if (!spec) return;
@@ -4704,4 +4734,855 @@
     }
 
     window.Scene_Thinker = Scene_Thinker;
+})();
+
+/* ============================================================================
+ * NPC custom pieces - gear the world's people had made for them
+ * ============================================================================
+ * Some people in the world carry a weapon or a piece of armour that was
+ * customised at somebody's bench: a finish of its own (the same
+ * `<ForgeTexture:>` swatches the anvil offers), the seed its model is turned
+ * under, an optional `<modifier:>` (ItemSystem/ItemSystemModifiers.js) and a
+ * name nobody else's copy wears, "Marta's Rust-Bitten Cleaver".
+ *
+ * WHO OWNS ONE is the simulation's question (NPCSim.Gear.rollUnique, one
+ * seeded roll per profile weighted by wealth, a craft or combat trade, the
+ * specializations behind it and a collector's habits). This section is what
+ * the piece IS.
+ *
+ * THE RECORD. One per piece, keyed by a uid derived from the owner, the slot
+ * and the world seed, so every save of a world deals the same piece to the same
+ * person and a second deal finds the record already there:
+ *
+ *   { uid, baseId, kind: 'w'|'a', owner, maker, quality, texture, seed,
+ *     modifier, params, price, nameSeed, forgedId, custody: [...] }
+ *
+ * Records live beside the forge's own pieces in the world folder (the
+ * `forgedGear` file, key `npcUniques`), falling back to the save when no world
+ * is active. The person's profile lists the uids it was dealt
+ * (profile.uniqueGear) and keeps wearing the base entry in that slot.
+ *
+ * ONE ENTRY, ONCE. Nothing is written into the database until the piece is
+ * about to change hands: a body is searched, a pocket is picked, a trade or a
+ * card stake is offered, a recruit is dressed. Then it goes through the forge's
+ * own path (window.ForgedPieces.materialize) as one forged record with its own
+ * id from 2001 up (never an artifact slot, 1501-1600, never a catalogue row),
+ * the owner's slot is switched to that id, and from then on the entry is
+ * rebuilt from the forge's record on every load like any forged piece. The
+ * record remembers its id, so a second materialization answers the same entry.
+ *
+ * CUSTODY follows it the way the chronicle follows an artifact
+ * (HistoryManager.recordArtifactCustody): every link is {holder, party, howKey,
+ * at}, the item's description is rewritten from the chain, and the Empathize
+ * panel names who made it, for whom and who carries it now. Taking it off a
+ * living body files the robbery, and lifting it from a pocket the
+ * pickpocketing, at what the piece is worth. A recruit who joins the party
+ * wearing one hands its custody over as they come (joinParty).
+ */
+(() => {
+    'use strict';
+
+    const FP = () => window.ForgedPieces || null;
+    const tr = (name) => (typeof window.translateText === 'function' ? window.translateText(name) : name);
+
+    // i18n-ignore-start: <modifier:> note-tag ids, custody action ids, uid prefix, scene class name
+    const WEAPON_MODIFIERS = ['Sharp', 'Venomous', 'Blinding', 'Chilling', 'Stunning', 'Vampiric', 'Focusing', 'Perfect'];
+    const ARMOR_MODIFIERS = ['Refined', 'Regenerative', 'Retaliating', 'Insulated', 'Antidote', 'Blessed'];
+    const HOW = {
+        crafted: 'crafted', commissioned: 'commissioned', purchased: 'purchased',
+        stole: 'stole', seized: 'seized', returned: 'returned', acquired: 'acquired',
+        recruited: 'recruited', sold: 'sold', soldAt: 'soldAt'
+    };
+    const UID_PREFIX = 'nu-';
+    const EMPATHIZE_SCENE = 'Scene_NPCEmpathize';
+    const ROBBERY = 'robbery';
+    const PICKPOCKETING = 'pickpocketing';
+    const STORE_KEY = 'npcUniques';
+    // i18n-ignore-end
+    const I18N = 'Blacksmith.npcUnique.';
+    const MODIFIER_CHANCE = 0.5;
+    const TEXTURE_CHANCE = 0.85;
+    const QUALITY_MIN = 1.05;
+    const QUALITY_SPAN = 0.55;
+    const HISTORY_SHOWN = 4;
+    // An accessory (equip type 5) or a weapon can be lifted off somebody who is
+    // standing up; a coat or a helmet cannot.
+    const POCKET_ETYPE = 5;
+
+    // ── Seeds ────────────────────────────────────────────────────────────────
+    function hash(str) {
+        let h = 0x811c9dc5;
+        const s = String(str);
+        for (let i = 0; i < s.length; i++) {
+            h ^= s.charCodeAt(i);
+            h = Math.imul(h, 0x01000193);
+        }
+        return h >>> 0;
+    }
+
+    function rngOf(seed) {
+        let a = (seed >>> 0) || 0x9e3779b9;
+        return function () {
+            a = (a + 0x6d2b79f5) >>> 0;
+            let t = a;
+            t = Math.imul(t ^ (t >>> 15), t | 1);
+            t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+    }
+
+    function worldSeed() {
+        const S = window.NPCShared;
+        try { return S && S.worldSeed ? (S.worldSeed() >>> 0) : 0; } catch (e) { return 0; }
+    }
+
+    function minute() {
+        return (typeof $gameVariables !== 'undefined' && $gameVariables) ? ($gameVariables.value(114) || 0) : 0;
+    }
+
+    // `{a|b}` alternation, innermost first, drawn off the piece's own seed so
+    // the same piece always reads the same way.
+    function alternate(text, r) {
+        let out = String(text == null ? '' : text);
+        const re = /\{([^{}]*\|[^{}]*)\}/;
+        for (let guard = 0; guard < 32; guard++) {
+            const m = out.match(re);
+            if (!m) break;
+            const opts = m[1].split('|');
+            out = out.slice(0, m.index) + opts[Math.floor(r() * opts.length)] + out.slice(m.index + m[0].length);
+        }
+        return out;
+    }
+
+    // ── The store ────────────────────────────────────────────────────────────
+    function store() {
+        const WM = window.WorldManager;
+        const F = FP();
+        if (WM && WM.hasActiveWorld && WM.hasActiveWorld() && F && F.WORLD_FILE) {
+            const file = WM.getFile(F.WORLD_FILE);
+            if (!file[STORE_KEY] || typeof file[STORE_KEY] !== 'object') file[STORE_KEY] = {};
+            return file[STORE_KEY];
+        }
+        if (typeof $gameSystem === 'undefined' || !$gameSystem) return {};
+        if (!$gameSystem._npcUniqueGear || typeof $gameSystem._npcUniqueGear !== 'object') {
+            $gameSystem._npcUniqueGear = {};
+        }
+        return $gameSystem._npcUniqueGear;
+    }
+
+    function record(uid) {
+        return uid ? (store()[uid] || null) : null;
+    }
+
+    function tableOf(kind) {
+        return kind === 'w' ? $dataWeapons : $dataArmors;
+    }
+
+    function dataFor(kind, id) {
+        const src = tableOf(kind);
+        return src ? (src[Number(id)] || null) : null;
+    }
+
+    function kindOfItem(item) {
+        if (!item) return null;
+        if (DataManager.isWeapon(item)) return 'w';
+        if (DataManager.isArmor(item)) return 'a';
+        return null;
+    }
+
+    function uidOfItem(item) {
+        const raw = item && item.meta ? item.meta.NpcUnique : null;
+        return raw && raw !== true ? String(raw).trim() : '';
+    }
+
+    function recordOfItem(item) {
+        return record(uidOfItem(item));
+    }
+
+    function uidFor(owner, kind, baseId) {
+        return UID_PREFIX + hash(`${owner}|${kind}|${baseId}|${worldSeed()}`).toString(36);
+    }
+
+    function lastLink(rec) {
+        const c = rec && Array.isArray(rec.custody) ? rec.custody : [];
+        return c.length ? c[c.length - 1] : null;
+    }
+
+    function holderOf(rec) {
+        const last = lastLink(rec);
+        return last ? last.holder : null;
+    }
+
+    function heldByParty(rec) {
+        const last = lastLink(rec);
+        return !!(last && last.party);
+    }
+
+    function profileOf(name) {
+        if (!name) return null;
+        const soc = typeof $gameSystem !== 'undefined' && $gameSystem ? $gameSystem._npcSociety : null;
+        if (soc && soc[name]) return soc[name];
+        const sim = window.NPCSim;
+        return sim && sim.getProfile ? (sim.getProfile(name) || null) : null;
+    }
+
+    function leaderName() {
+        const a = typeof $gameParty !== 'undefined' && $gameParty && $gameParty.leader ? $gameParty.leader() : null;
+        return a && a.name ? a.name() : null;
+    }
+
+    function cleanName(s) {
+        return String(s == null ? '' : s).replace(/[<>{}|\r\n]/g, '').trim();
+    }
+
+    // ── What the piece is ────────────────────────────────────────────────────
+    // Same shape as the anvil's own drift (rollParams in the forge section),
+    // off the piece's seed instead of the moment: never past twice the entry.
+    function rollParams(base, quality, r) {
+        const out = (base.params || []).slice();
+        const grade = Math.max(0, Math.round((quality - 1) * 5));
+        for (let i = 0; i < out.length; i++) {
+            const v = out[i] || 0;
+            if (!v) continue;
+            const drift = quality * (0.92 + r() * 0.16);
+            const rolled = Math.round(v * drift) + (v > 0 ? grade : -grade);
+            const cap = Math.max(Math.abs(v) + 1, Math.round(Math.abs(v) * 2));
+            out[i] = Math.max(-cap, Math.min(cap, rolled)) || (v > 0 ? 1 : -1);
+        }
+        return out;
+    }
+
+    function modifierFor(kind, base, r) {
+        const roll = r();
+        const pickAt = r();
+        // The first <modifier:> on an entry is the one that counts, so a base
+        // that already carries one keeps it.
+        if (/<modifier:/i.test(String(base.note || ''))) return '';
+        if (roll >= MODIFIER_CHANCE) return '';
+        const list = kind === 'w' ? WEAPON_MODIFIERS : ARMOR_MODIFIERS;
+        return list[Math.floor(pickAt * list.length)];
+    }
+
+    // The record for a piece, from scratch. Pure: stores nothing.
+    function draft(owner, kind, baseId, opts) {
+        const base = dataFor(kind, baseId);
+        if (!base || !owner) return null;
+        const uid = uidFor(owner, kind, baseId);
+        const r = rngOf(hash(uid + '|piece'));
+        const quality = Math.round((QUALITY_MIN + r() * QUALITY_SPAN) * 100) / 100;
+        const F = FP();
+        let finishes = [];
+        try { finishes = F && F.finishesFor ? (F.finishesFor(base) || []) : []; } catch (e) { finishes = []; }
+        const texRoll = r();
+        const texPick = r();
+        const texture = finishes.length && texRoll < TEXTURE_CHANCE
+            ? finishes[Math.floor(texPick * finishes.length)] : '';
+        const seed = Math.floor(r() * 0x7fffffff);
+        const modifier = modifierFor(kind, base, r);
+        const params = rollParams(base, quality, r);
+        const price = Math.max(1, Math.round((base.price || 0) * quality * quality));
+        const nameSeed = Math.floor(r() * 0x7fffffff);
+        const maker = cleanName((opts && opts.maker) || owner);
+        return {
+            uid, baseId: Number(baseId), kind, owner: cleanName(owner), maker,
+            quality, texture, seed, modifier, params, price, nameSeed,
+            forgedId: null,
+            custody: [{
+                holder: cleanName(owner), party: false,
+                howKey: maker === cleanName(owner) ? HOW.crafted : HOW.commissioned,
+                at: minute()
+            }]
+        };
+    }
+
+    // The piece's name in the language being played, off its own seed.
+    function nameOf(rec) {
+        if (!rec) return '';
+        const base = dataFor(rec.kind, rec.baseId);
+        const r = rngOf(rec.nameSeed >>> 0);
+        const pool = T.pool(I18N + 'adjective.' + (rec.kind === 'w' ? 'weapon' : 'armor')) // i18n-ignore: key segment
+            .filter(v => typeof v === 'string' && v.trim());
+        const adjective = pool.length ? alternate(pool[Math.floor(r() * pool.length)], r) : '';
+        const text = T(I18N + 'name', {
+            owner: rec.owner, adjective, base: base ? tr(base.name) : ''
+        });
+        return alternate(text, r).replace(/\s+/g, ' ').trim();
+    }
+
+    // What the piece fetches, modifier included: what a theft of it is filed at.
+    function valueOf(recOrItem) {
+        let item = recOrItem;
+        if (recOrItem && recOrItem.uid && recOrItem.custody) {
+            item = recOrItem.forgedId ? dataFor(recOrItem.kind, recOrItem.forgedId) : null;
+            // Not written into the database yet: priced as the entry it will be.
+            if (!item) {
+                item = { price: recOrItem.price, note: recOrItem.modifier ? `<modifier: ${recOrItem.modifier}>` : '' };
+                if (recOrItem.kind === 'w') item.wtypeId = 1; else item.atypeId = 1;
+            }
+        }
+        if (!item) return 0;
+        const IM = window.ItemSystemModifiers;
+        return IM && IM.getModifiedPrice ? IM.getModifiedPrice(item) : (item.price || 0);
+    }
+
+    // The words under the item: who it was made by and for, and every hand
+    // it has changed since.
+    function historyText(uid) {
+        const rec = record(uid);
+        if (!rec) return '';
+        const lines = [];
+        lines.push(rec.maker && rec.maker !== rec.owner
+            ? T(I18N + 'madeFor', { maker: rec.maker, owner: rec.owner })
+            : T(I18N + 'madeOwn', { owner: rec.owner }));
+        const later = (rec.custody || []).slice(1).slice(-HISTORY_SHOWN);
+        if (later.length) {
+            const chain = later.map(l => T(I18N + 'how.' + (l.howKey || HOW.acquired), { holder: l.holder })).join(', ');
+            lines.push(T(I18N + 'history', { chain }));
+        }
+        return lines.join('\n');
+    }
+
+    // ── The owner's slot ─────────────────────────────────────────────────────
+    const SLOT_KIND = { w: 'weapon', a: 'armor' }; // i18n-ignore: item kinds
+
+    function slotHas(profile, kind, id) {
+        const eq = profile && profile.equipment;
+        if (!eq || id == null) return false;
+        const want = Number(id);
+        if (Array.isArray(eq)) return eq.some(e => e && e.kind === SLOT_KIND[kind] && Number(e.id) === want);
+        if (kind === 'w') return Number(eq.weaponId) === want;
+        return Array.isArray(eq.armorIds) && eq.armorIds.some(x => Number(x) === want);
+    }
+
+    function swapSlot(profile, kind, fromId, toId) {
+        const eq = profile && profile.equipment;
+        if (!eq) return false;
+        if (Array.isArray(eq)) {
+            const e = eq.find(x => x && x.kind === SLOT_KIND[kind] && Number(x.id) === Number(fromId));
+            if (!e) return false;
+            e.id = toId;
+            return true;
+        }
+        if (kind === 'w') {
+            if (Number(eq.weaponId) !== Number(fromId)) return false;
+            eq.weaponId = toId;
+            return true;
+        }
+        const at = Array.isArray(eq.armorIds) ? eq.armorIds.findIndex(x => Number(x) === Number(fromId)) : -1;
+        if (at < 0) return false;
+        eq.armorIds[at] = toId;
+        return true;
+    }
+
+    function dropSlot(profile, kind, id) {
+        const eq = profile && profile.equipment;
+        if (!eq) return false;
+        let taken = false;
+        if (Array.isArray(eq)) {
+            const at = eq.findIndex(x => x && x.kind === SLOT_KIND[kind] && Number(x.id) === Number(id));
+            if (at >= 0) { eq.splice(at, 1); taken = true; }
+        } else if (kind === 'w') {
+            if (Number(eq.weaponId) === Number(id)) { eq.weaponId = null; taken = true; }
+        } else if (Array.isArray(eq.armorIds)) {
+            const at = eq.armorIds.findIndex(x => Number(x) === Number(id));
+            if (at >= 0) { eq.armorIds.splice(at, 1); taken = true; }
+        }
+        if (taken) {
+            profile.lostEquipIds = Array.isArray(profile.lostEquipIds) ? profile.lostEquipIds : [];
+            if (!profile.lostEquipIds.includes(Number(id))) profile.lostEquipIds.push(Number(id));
+        }
+        return taken;
+    }
+
+    function forgetUid(profile, uid) {
+        if (profile && Array.isArray(profile.uniqueGear)) {
+            profile.uniqueGear = profile.uniqueGear.filter(u => u !== uid);
+        }
+    }
+
+    function rememberUid(profile, uid) {
+        if (!profile) return;
+        profile.uniqueGear = Array.isArray(profile.uniqueGear) ? profile.uniqueGear : [];
+        if (!profile.uniqueGear.includes(uid)) profile.uniqueGear.push(uid);
+    }
+
+    // The pieces this person still has on: dealt to them, still theirs by the
+    // chain, and still in the slot (a piece traded away for an upgrade is gone
+    // from them even if nobody has picked it up since).
+    function wornBy(name, profile) {
+        const p = profile || profileOf(name);
+        if (!p || !Array.isArray(p.uniqueGear) || !p.uniqueGear.length) return [];
+        const lost = new Set((p.lostEquipIds || []).map(Number));
+        const out = [];
+        for (const uid of p.uniqueGear) {
+            const rec = record(uid);
+            if (!rec || heldByParty(rec) || holderOf(rec) !== name) continue;
+            let id = null;
+            if (rec.forgedId && slotHas(p, rec.kind, rec.forgedId)) id = rec.forgedId;
+            else if (slotHas(p, rec.kind, rec.baseId)) id = rec.baseId;
+            if (id == null || lost.has(Number(id))) continue;
+            out.push({ rec, id });
+        }
+        return out;
+    }
+
+    // ── Into the database ────────────────────────────────────────────────────
+    function forgeRecordOf(rec) {
+        const F = FP();
+        if (!F || !rec) return null;
+        return (F.all() || []).find(f => f && f.uid === rec.uid) || null;
+    }
+
+    function materialize(rec) {
+        const F = FP();
+        if (!F || !rec) return null;
+        if (rec.forgedId) {
+            const cur = dataFor(rec.kind, rec.forgedId);
+            if (cur && uidOfItem(cur) === rec.uid) return cur;
+            const known = forgeRecordOf(rec);
+            if (known) {
+                const again = F.materialize(known);
+                if (again) return again;
+            }
+        }
+        const frec = {
+            id: F.nextId(rec.kind),
+            kind: rec.kind,
+            baseId: rec.baseId,
+            smith: cleanName(rec.maker || rec.owner),
+            quality: rec.quality,
+            texture: rec.texture || '',
+            seed: rec.seed || 0,
+            parts: null,
+            customName: nameOf(rec),
+            fixedName: true,
+            params: (rec.params || []).slice(),
+            price: rec.price,
+            mark: 1,
+            uid: rec.uid,
+            modifier: rec.modifier || ''
+        };
+        const pieces = F.all();
+        pieces.push(frec);
+        rec.forgedId = frec.id;
+        const entry = F.materialize(frec);
+        if (!entry) {
+            pieces.splice(pieces.indexOf(frec), 1);
+            rec.forgedId = null;
+            return null;
+        }
+        return entry;
+    }
+
+    // Everything this person has on that is about to be offered, written into
+    // the database and switched into their slot. `which` narrows it.
+    function materializeWorn(name, which) {
+        installHooks();
+        const profile = profileOf(name);
+        const out = [];
+        for (const { rec, id } of wornBy(name, profile)) {
+            if (which && !which(rec)) continue;
+            const entry = materialize(rec);
+            if (!entry) continue;
+            if (Number(id) !== entry.id) swapSlot(profile, rec.kind, id, entry.id);
+            out.push(entry);
+        }
+        return out;
+    }
+
+    // Hands a piece to somebody new, and rewrites its description.
+    function moveTo(rec, holder, howKey, party) {
+        if (!rec || !holder) return false;
+        const last = lastLink(rec);
+        if (last && last.holder === holder && !!last.party === !!party) return false;
+        rec.custody = Array.isArray(rec.custody) ? rec.custody : [];
+        rec.custody.push({ holder: cleanName(holder), party: !!party, howKey: howKey || HOW.acquired, at: minute() });
+        const F = FP();
+        const frec = forgeRecordOf(rec);
+        if (F && frec) F.materialize(frec);
+        return true;
+    }
+
+    // ── Deals ────────────────────────────────────────────────────────────────
+    // A piece for this person in this slot. The same person and slot always
+    // answer the same record; one already dealt in this world is reused, and a
+    // piece this world already wrote into the database is put straight back in
+    // their slot.
+    function bestow(profile, name, kind, baseId, opts) {
+        if (!profile || !name || (kind !== 'w' && kind !== 'a')) return null;
+        const uid = uidFor(name, kind, baseId);
+        const all = store();
+        let rec = all[uid];
+        if (!rec) {
+            rec = draft(name, kind, baseId, opts);
+            if (!rec) return null;
+            all[uid] = rec;
+        }
+        rememberUid(profile, uid);
+        if (rec.forgedId && !heldByParty(rec) && holderOf(rec) === name && dataFor(kind, rec.forgedId)) {
+            swapSlot(profile, kind, rec.baseId, rec.forgedId);
+        }
+        return rec;
+    }
+
+    // ── Changing hands ───────────────────────────────────────────────────────
+    function downed() {
+        return window.NPCDowned || null;
+    }
+
+    // The charge is filed at what the piece is worth, never below the
+    // preset's own bounty. The victim always talks (CrimeSystem.commit): a
+    // one-of-a-kind piece is missed the moment it is gone.
+    function fileTheft(victim, entry, crimeId) {
+        const CS = window.CrimeSystem;
+        if (!CS || typeof CS.commit !== 'function' || !entry) return null;
+        const id = crimeId || ROBBERY;
+        const preset = CS.getPresetCrime ? CS.getPresetCrime(id) : null;
+        const bounty = Math.max(valueOf(entry), (preset && preset.bounty) || 0);
+        return CS.commit({ crimeId: id, verb: id, victim: victim || null, target: entry.name, bounty });
+    }
+
+    // Taken out of a body's pockets: stolen off the living, seized off the dead.
+    function takeFromBody(name, rec, entry) {
+        const D = downed();
+        const profile = profileOf(name);
+        const s = D ? D._session : null;
+        const living = !!(s && s.name === name ? s.living : (profile && profile.downed));
+        dropSlot(profile, rec.kind, rec.forgedId);
+        forgetUid(profile, rec.uid);
+        moveTo(rec, leaderName() || name, living ? HOW.stole : HOW.seized, true);
+        if (living && profile && profile.downed && !profile._killed) {
+            if (s && s.name === name) s.robberyFiled = true;
+            fileTheft(name, entry);
+        }
+        rec._takenFrom = name;
+    }
+
+    // ── Between two people, and over a counter ───────────────────────────────
+    // Puts a piece back in an owner's slot after it was taken out of it
+    // (dropSlot): the slot it came from, if that slot is empty again.
+    function restoreSlot(profile, kind, id) {
+        const eq = profile && profile.equipment;
+        if (!eq || id == null) return false;
+        if (slotHas(profile, kind, id)) return true;
+        let put = false;
+        if (Array.isArray(eq)) { eq.push({ kind: SLOT_KIND[kind], id: Number(id) }); put = true; }
+        else if (kind === 'w' && (eq.weaponId == null || eq.weaponId === 0)) { eq.weaponId = Number(id); put = true; }
+        else if (kind === 'a' && Array.isArray(eq.armorIds)) { eq.armorIds.push(Number(id)); put = true; }
+        if (put && Array.isArray(profile.lostEquipIds)) {
+            profile.lostEquipIds = profile.lostEquipIds.filter(x => Number(x) !== Number(id));
+        }
+        return put;
+    }
+
+    // What can be lifted off somebody standing up: a weapon, or a small
+    // accessory (the pickpocket list's own rule).
+    function pocketable(rec) {
+        if (!rec) return false;
+        if (rec.kind === 'w') return true;
+        const base = dataFor('a', rec.baseId);
+        return !!base && base.etypeId === POCKET_ETYPE;
+    }
+
+    // One person lifts a piece off another in the street (NPCSystem's STREET
+    // CRIME): the smallest pocketable piece the victim has on is taken out of
+    // their slot and carried by the thief, and the chain says so. Answers the
+    // record, or null when there was nothing to lift.
+    function stealBetween(fromName, toName, rng) {
+        if (!fromName || !toName || fromName === toName) return null;
+        const from = profileOf(fromName), to = profileOf(toName);
+        if (!from || !to) return null;
+        const worn = wornBy(fromName, from).filter(x => pocketable(x.rec));
+        if (!worn.length) return null;
+        const r = typeof rng === 'function' ? rng : Math.random;
+        const hit = worn[Math.floor(r() * worn.length) % worn.length];
+        dropSlot(from, hit.rec.kind, hit.id);
+        forgetUid(from, hit.rec.uid);
+        rememberUid(to, hit.rec.uid);
+        hit.rec._lastSlotId = Number(hit.id);
+        moveTo(hit.rec, toName, HOW.stole, false);
+        return hit.rec;
+    }
+
+    // Taken back off the thief (the victim won the fight that followed): it
+    // goes back to them, and into the slot it was lifted out of.
+    function handBack(uid, toName, fromName) {
+        const rec = record(uid);
+        if (!rec || !toName || heldByParty(rec) || (fromName && holderOf(rec) !== fromName)) return false;
+        const to = profileOf(toName);
+        if (fromName) forgetUid(profileOf(fromName), uid);
+        rememberUid(to, uid);
+        if (rec._lastSlotId != null) restoreSlot(to, rec.kind, rec._lastSlotId);
+        rec._lastSlotId = null;
+        return moveTo(rec, toName, HOW.returned, false);
+    }
+
+    // Who a counter's goods go to: the person trading from the Empathize panel,
+    // the one working the till, the shift's persona, and failing all of them
+    // the settlement the shop stands in. Answers { name, person }.
+    function shopKeeperOf(scene) {
+        const tmp = typeof $gameTemp !== 'undefined' ? $gameTemp : null;
+        if (tmp && tmp._npcTradeSellFactor != null && tmp._npcTradeWith) return { name: tmp._npcTradeWith, person: true };
+        const mapId = scene ? scene._shopMapId : 0;
+        const evId = scene ? scene._shopEventId : 0;
+        if (!mapId || !evId) return null;
+        const sim = window.NPCSim;
+        const here = typeof $gameMap !== 'undefined' && $gameMap && $gameMap.mapId && $gameMap.mapId() === mapId;
+        const ev = here && $gameMap.event ? $gameMap.event(evId) : null;
+        const server = ev && sim && sim.WorkServe && sim.WorkServe.serverFor ? sim.WorkServe.serverFor(ev, null) : null;
+        if (server) return { name: server, person: true };
+        const persona = sim && sim.ShopShiftManager && sim.ShopShiftManager.getActivePersona
+            ? sim.ShopShiftManager.getActivePersona(mapId, evId) : null;
+        if (persona && persona.name) return { name: persona.name, person: true };
+        const NS = window.NPCSystem;
+        const group = NS && NS.findMapGroupByMap ? NS.findMapGroupByMap(mapId) : null;
+        const grp = group && typeof $gameSystem !== 'undefined' && $gameSystem && $gameSystem._npcMapGroups
+            ? $gameSystem._npcMapGroups[group] : null;
+        const place = (grp && grp.displayName) || group ||
+            (typeof $dataMapInfos !== 'undefined' && $dataMapInfos && $dataMapInfos[mapId] ? $dataMapInfos[mapId].name : null);
+        return place ? { name: place, person: false } : null;
+    }
+
+    // The party sold it: whoever took it over the counter holds it now. A
+    // person carries it (a trade from the panel, a keeper); a settlement keeps
+    // it on the shelf.
+    function onShopSale(rec, scene) {
+        if (!rec) return false;
+        const keeper = shopKeeperOf(scene);
+        if (!keeper) return false;
+        if (keeper.person) rememberUid(profileOf(keeper.name), rec.uid);
+        return moveTo(rec, keeper.name, keeper.person ? HOW.sold : HOW.soldAt, false);
+    }
+
+    // How a piece came to the party when nobody said: a counter opened on an
+    // NPC's goods is a purchase, a pocket picked from the panel is a theft.
+    function contextHow() {
+        if (typeof $gameTemp !== 'undefined' && $gameTemp && $gameTemp._npcTradeSellFactor != null) return HOW.purchased;
+        const scene = typeof SceneManager !== 'undefined' ? SceneManager._scene : null;
+        if (scene && scene.constructor && scene.constructor.name === EMPATHIZE_SCENE) return HOW.stole;
+        return HOW.acquired;
+    }
+
+    function onPartyGain(item) {
+        const rec = recordOfItem(item);
+        if (!rec || heldByParty(rec)) return;
+        const prev = holderOf(rec);
+        const D = downed();
+        const s = D ? D._session : null;
+        if (prev && s && s.name === prev) {
+            takeFromBody(prev, rec, item);
+            return;
+        }
+        const profile = profileOf(prev);
+        if (profile) {
+            dropSlot(profile, rec.kind, rec.forgedId);
+            forgetUid(profile, rec.uid);
+        }
+        const how = api._how || contextHow();
+        moveTo(rec, leaderName() || prev, how, true);
+        // A pocket picked clean of it: the owner reports it at its worth.
+        if (how === HOW.stole && profile && !profile._killed) fileTheft(prev, item, PICKPOCKETING);
+    }
+
+    // A recruit walks into the party wearing it: the same hands, now the
+    // party's (NPCSystemParty.equipNPCActor dresses the actor directly, so no
+    // gainItem ever sees it).
+    function joinParty(name) {
+        const profile = profileOf(name);
+        const out = [];
+        for (const { rec } of wornBy(name, profile)) {
+            forgetUid(profile, rec.uid);
+            if (moveTo(rec, name, HOW.recruited, true)) out.push(rec);
+        }
+        return out;
+    }
+
+    function partyHoldCount(item) {
+        if (typeof $gameParty === 'undefined' || !$gameParty) return 0;
+        let n = $gameParty.numItems ? $gameParty.numItems(item) : 0;
+        const kind = kindOfItem(item);
+        for (const a of ($gameParty.members ? $gameParty.members() : [])) {
+            for (const e of (a && a.equips ? a.equips() : [])) {
+                if (e && e.id === item.id && kindOfItem(e) === kind) n++;
+            }
+        }
+        return n;
+    }
+
+    // ── Hooks ────────────────────────────────────────────────────────────────
+    // The party side is patched once, here. The body's pockets
+    // (window.NPCDowned, NPC/NPCSystem.js) load after this plugin, so they are
+    // wrapped the first time anything here is asked, or at boot.
+    function installPartyHooks() {
+        if (typeof Game_Party === 'undefined' || !Game_Party.prototype || Game_Party.prototype._npcUniqueHooked) return;
+        const gain = Game_Party.prototype.gainItem;
+        if (typeof gain !== 'function') return;
+        Game_Party.prototype._npcUniqueHooked = true;
+        Game_Party.prototype.gainItem = function (item, amount, includeEquip) {
+            const uid = amount > 0 ? uidOfItem(item) : '';
+            if (uid) {
+                // One of a kind: the pack never holds two. An equip swap puts
+                // the piece back into an empty pack, so only the pack counts.
+                const inPack = this.numItems ? this.numItems(item) : 0;
+                amount = Math.min(amount, Math.max(0, 1 - inPack));
+                if (amount <= 0) return;
+            }
+            gain.call(this, item, amount, includeEquip);
+            if (uid) {
+                try { onPartyGain(item); } catch (e) { console.error('[ThinkerMenu] custom piece custody failed', e); }
+            }
+        };
+        // Sold over a counter: the one who took it holds it now (onShopSale).
+        if (typeof Scene_Shop !== 'undefined' && Scene_Shop.prototype && typeof Scene_Shop.prototype.doSell === 'function') {
+            const doSell = Scene_Shop.prototype.doSell;
+            Scene_Shop.prototype.doSell = function (number) {
+                const rec = number > 0 ? recordOfItem(this._item) : null;
+                const out = doSell.apply(this, arguments);
+                if (rec && heldByParty(rec)) {
+                    try { onShopSale(rec, this); } catch (e) { console.error('[ThinkerMenu] custom piece sale failed', e); }
+                }
+                return out;
+            };
+        }
+        if (typeof Scene_Shop !== 'undefined' && Scene_Shop.prototype && typeof Scene_Shop.prototype.maxBuy === 'function') {
+            const maxBuy = Scene_Shop.prototype.maxBuy;
+            Scene_Shop.prototype.maxBuy = function () {
+                const max = maxBuy.call(this);
+                if (!uidOfItem(this._item)) return max;
+                return Math.min(max, Math.max(0, 1 - partyHoldCount(this._item)));
+            };
+        }
+    }
+
+    function installHooks() {
+        installPartyHooks();
+        const D = downed();
+        if (!D || D._uniqueGearHooked) return;
+        D._uniqueGearHooked = true;
+        const fill = D.fillContainer;
+        if (typeof fill === 'function') {
+            D.fillContainer = function (name) {
+                try { materializeWorn(name); } catch (e) { console.error('[ThinkerMenu] custom piece fill failed', e); }
+                return fill.apply(this, arguments);
+            };
+        }
+        const taken = D.onTaken;
+        if (typeof taken === 'function') {
+            D.onTaken = function (name, key, amount) {
+                const at = this.kindOfKey ? this.kindOfKey(key) : null;
+                const kind = at ? (at.kind === 'weapon' ? 'w' : at.kind === 'armor' ? 'a' : null) : null; // i18n-ignore: item kinds
+                const entry = kind ? dataFor(kind, at.id) : null;
+                const rec = entry ? recordOfItem(entry) : null;
+                const mine = rec && ((holderOf(rec) === name && !heldByParty(rec)) || rec._takenFrom === name);
+                if (!mine) return taken.apply(this, arguments);
+                // Filed below at what the piece is worth, not as a nameless haul.
+                const file = this.fileCrime;
+                this.fileCrime = () => null;
+                try { taken.apply(this, arguments); } finally { this.fileCrime = file; }
+                if (holderOf(rec) === name && !heldByParty(rec)) takeFromBody(name, rec, entry);
+                rec._takenFrom = null;
+            };
+        }
+        const stored = D.onStored;
+        if (typeof stored === 'function') {
+            D.onStored = function (name, key) {
+                const out = stored.apply(this, arguments);
+                const at = this.kindOfKey ? this.kindOfKey(key) : null;
+                const kind = at ? (at.kind === 'weapon' ? 'w' : at.kind === 'armor' ? 'a' : null) : null; // i18n-ignore: item kinds
+                const entry = kind ? dataFor(kind, at.id) : null;
+                const rec = entry ? recordOfItem(entry) : null;
+                if (rec) {
+                    rememberUid(profileOf(name), rec.uid);
+                    moveTo(rec, name, HOW.returned, false);
+                }
+                return out;
+            };
+        }
+    }
+
+    installPartyHooks();
+    if (typeof Scene_Boot !== 'undefined' && Scene_Boot.prototype && typeof Scene_Boot.prototype.start === 'function') {
+        const start = Scene_Boot.prototype.start;
+        Scene_Boot.prototype.start = function () {
+            start.apply(this, arguments);
+            try { installHooks(); } catch (e) { console.error('[ThinkerMenu] custom piece hooks failed', e); }
+        };
+    }
+
+    // ── Asked from outside ───────────────────────────────────────────────────
+    // The panel's line for a piece a person has on: its own name and who made
+    // it for whom, or null for an ordinary piece. Never writes anything.
+    function describeWorn(name, kindWord, id) {
+        const kind = kindWord === 'weapon' || kindWord === 'w' ? 'w' : 'a'; // i18n-ignore: item kinds
+        const hit = wornBy(name).find(x => x.rec.kind === kind && Number(x.id) === Number(id));
+        if (!hit) return null;
+        const rec = hit.rec;
+        const entry = rec.forgedId ? dataFor(kind, rec.forgedId) : null;
+        const holder = holderOf(rec);
+        // Somebody other than the one it was made for: the panel names them.
+        const tipKey = holder && holder !== rec.owner ? 'tipHeld' : 'tip';
+        return {
+            uid: rec.uid,
+            name: entry && uidOfItem(entry) === rec.uid ? entry.name : nameOf(rec),
+            maker: rec.maker,
+            owner: rec.owner,
+            holder,
+            tip: T(I18N + tipKey, { maker: rec.maker || rec.owner, owner: rec.owner, holder })
+        };
+    }
+
+    // The pickpocket list gains whatever small piece of theirs can be lifted.
+    function pickpocketTargets(items, name, eventId) {
+        const out = Array.isArray(items) ? items.slice() : [];
+        const liftable = (rec) => {
+            if (rec.kind === 'w') return true;
+            const base = dataFor('a', rec.baseId);
+            return !!base && base.etypeId === POCKET_ETYPE;
+        };
+        const mapId = typeof $gameMap !== 'undefined' && $gameMap && $gameMap.mapId ? $gameMap.mapId() : 0;
+        for (const entry of materializeWorn(name, liftable)) {
+            out.push({
+                type: kindOfItem(entry) === 'w' ? 'weapon' : 'armor', // i18n-ignore: item kinds
+                id: entry.id, data: entry, sourceMapId: mapId, sourceEventId: eventId, npcUnique: true
+            });
+        }
+        return out;
+    }
+
+    const api = {
+        HOW,
+        UID_PREFIX,
+        WEAPON_MODIFIERS,
+        ARMOR_MODIFIERS,
+        _how: null,
+        store,
+        record,
+        recordOfItem,
+        uidOfItem,
+        uidFor,
+        draft,
+        bestow,
+        nameOf,
+        valueOf,
+        historyText,
+        holderOf,
+        heldByParty,
+        wornBy,
+        materialize,
+        materializeWorn,
+        moveTo,
+        describeWorn,
+        pickpocketTargets,
+        joinParty,
+        fileTheft,
+        stealBetween,
+        handBack,
+        shopKeeperOf,
+        onShopSale,
+        installHooks,
+        alternate,
+        // The id every piece written into the database starts from: the forge's.
+        idBase: () => (FP() && FP().ID_BASE) || 2001
+    };
+    window.NPCUniqueGear = api;
 })();

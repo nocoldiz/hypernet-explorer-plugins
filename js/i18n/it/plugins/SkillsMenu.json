@@ -149,5 +149,73 @@
     "Thermodynamics": "Termodinamico",
     "Ritual": "Rituale"
   },
-  "searchPlaceholder": "Cerca abilità…"
+  "searchPlaceholder": "Cerca abilità…",
+  "help": {
+    "menu": {
+      "title": "Abilità",
+      "items": {
+        "back": {
+          "name": "Indietro",
+          "text": "Esce dalla pagina delle abilità."
+        },
+        "types": {
+          "name": "Schede",
+          "text": "I tipi di abilità che il personaggio conosce. Avanzamento elenca le abilità apprendibili ora."
+        },
+        "search": {
+          "name": "Cerca e ordina",
+          "text": "Filtra l'elenco per nome e ne cambia l'ordine."
+        },
+        "grid": {
+          "name": "Abilità",
+          "text": "Ogni abilità della scheda aperta. Scegline una per vederne la scheda nella pagina destra."
+        },
+        "loadout": {
+          "name": "Abilità sincronizzate",
+          "text": "Le nove abilità portate in battaglia. Solo queste si possono usare in combattimento; Migliori e Casuali riempiono la barra per te."
+        },
+        "sync": {
+          "name": "Sincronizza e Desincronizza",
+          "text": "Sincronizza mette l'abilità selezionata nella barra, Desincronizza la toglie. Alcune abilità sono sempre portate e non occupano spazio."
+        },
+        "card": {
+          "name": "Scheda abilità",
+          "text": "Costo, elemento, danno ed effetti dell'abilità selezionata, e Usa per lanciarla fuori dalla battaglia."
+        },
+        "member": {
+          "name": "Schede dei compagni",
+          "text": "Cambia personaggio."
+        },
+        "help": {
+          "name": "? Aiuto",
+          "text": "Apre questa scheda. Col controller premi Select; premilo di nuovo, Indietro o Conferma per chiuderla."
+        }
+      }
+    },
+    "battle": {
+      "title": "Lanciare in battaglia",
+      "items": {
+        "list": {
+          "name": "Abilità",
+          "text": "Le abilità che questo personaggio porta in battaglia. Scegline una per lanciarla."
+        },
+        "cost": {
+          "name": "Costo",
+          "text": "Gli MP o AP che un'abilità spende. Un'abilità che il personaggio non può permettersi è sbiadita."
+        },
+        "weapon": {
+          "name": "Arma richiesta",
+          "text": "Un'abilità segnata Serve mischia o Serve distanza funziona solo con quel tipo di arma in mano."
+        },
+        "target": {
+          "name": "Bersaglio",
+          "text": "Un'abilità rivolta a un alleato chiede su chi cade dopo averla scelta."
+        },
+        "help": {
+          "name": "? Aiuto",
+          "text": "Apre questa scheda. Col controller premi Select; premilo di nuovo, Indietro o Conferma per chiuderla."
+        }
+      }
+    }
+  }
 }

@@ -35,6 +35,7 @@
     archetypeDisplayName,
     actorArchetypeKey,
     actorSecondaryArchetypeKey,
+    portraitIsModel,
     CharacterCreationData,
     STEP,
   } = window.CCKit;
@@ -387,30 +388,33 @@
         </div>
       `;
 
-      // 2. Full-Width Portrait Showcase Card (2D Bust for Humanoid, 3D Archetype Selector + Studio for Creature)
+      // 2. Full-Width Portrait Showcase Card: the 2D bust or the live 3D
+      // model, whichever the Bio tab's portrait choice says, for a person and
+      // a creature alike.
       let profileBoxHtml = "";
       if (!isPetActive) {
-        if (isCreature) {
-          // The archetypes a creature can actually BE, named the way the rest of
+        if (portraitIsModel(actor)) {
+          // The archetypes the member is built from, named the way the rest of
           // the game names them. This used to list Battler3D's ~600 raw
           // lowercase structure keys ("bigcat", "chromaticmanticore"), none of
           // which the health side could resolve back to a body.
-          const currentArch = actorArchetypeKey(actor) || "Beast"; // i18n-ignore: Archetypes.json key
+          const currentArch = actorArchetypeKey(actor) || (isCreature ? "Beast" : "Humanoid"); // i18n-ignore: Archetypes.json keys
           const secondArch = actorSecondaryArchetypeKey(actor) || "";
 
-          // A creature is its model, so the card names the model it already has
-          // (settled from its archetype the moment it was made) and opens the
-          // sculptor. No 2D bust is ever borrowed for a monster.
+          // The card names the model the member already has and opens the
+          // sculptor.
           const modelLabel = secondArch
             ? `${archetypeDisplayName(currentArch)} / ${archetypeDisplayName(secondArch)}`
             : archetypeDisplayName(currentArch);
+          const modelTitle = isLocked ? ccT('CharCreate.bustLockedHint') : modelLabel;
+          const modelClick = isLocked ? 'SoundManager.playBuzzer()' : 'SceneManager._scene.onOpenCreature3DStudio()';
 
           // The primary/secondary archetype pickers live on the Bio tab now,
-          // alongside the rest of who the creature is. The sidebar keeps only
+          // alongside the rest of who the member is. The sidebar keeps only
           // the model preview and the shortcut into the sculptor.
           profileBoxHtml = `
             <div class="cc-compact-portrait-card cc-col cc-col-gap-2">
-              <div class="cc-compact-bust-full empty cc3d-live-portrait cc-clip" title="${modelLabel}" onclick="SceneManager._scene.onOpenCreature3DStudio()">
+              <div class="cc-compact-bust-full empty cc3d-live-portrait cc-clip" title="${modelTitle}" onclick="${modelClick}">
                 <div class="cc3d-live-portrait-fallback cc-col cc-col-gap-2 cc-fill-center">
                   ${this._ccIconHtml(224, 28)}
                   <span class="cc-portrait-caption">${modelLabel}</span>

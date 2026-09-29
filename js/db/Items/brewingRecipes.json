@@ -6,11 +6,11 @@
     "icon": 105,
     "ingredients": [
       {
-        "item_id": 576,
+        "item_id": 869,
         "quantity": 2
       },
       {
-        "item_id": 75,
+        "item_id": 418,
         "quantity": 1
       }
     ],
@@ -18,7 +18,7 @@
     "spec": "Brewing",
     "output": [
       {
-        "item_id": 376,
+        "item_id": 516,
         "min": 2,
         "max": 4
       }
@@ -32,19 +32,20 @@
     "icon": 340,
     "ingredients": [
       {
-        "item_id": 373,
+        "item_id": 492,
         "quantity": 3
       },
       {
-        "item_id": 383,
+        "item_id": 429,
         "quantity": 2
       }
     ],
     "fermentHours": 72,
     "spec": "Brewing",
+    "alcoholic": true,
     "output": [
       {
-        "item_id": 394,
+        "item_id": 517,
         "min": 2,
         "max": 5
       }
@@ -58,23 +59,24 @@
     "icon": 83,
     "ingredients": [
       {
-        "item_id": 373,
+        "item_id": 492,
         "quantity": 2
       },
       {
-        "item_id": 75,
+        "item_id": 418,
         "quantity": 3
       },
       {
-        "item_id": 576,
+        "item_id": 869,
         "quantity": 1
       }
     ],
     "fermentHours": 96,
     "spec": "Brewing",
+    "alcoholic": true,
     "output": [
       {
-        "item_id": 172,
+        "item_id": 498,
         "min": 3,
         "max": 6
       }
@@ -88,23 +90,24 @@
     "icon": 269,
     "ingredients": [
       {
-        "item_id": 477,
+        "item_id": 591,
         "quantity": 3
       },
       {
-        "item_id": 383,
+        "item_id": 429,
         "quantity": 2
       },
       {
-        "item_id": 373,
+        "item_id": 492,
         "quantity": 1
       }
     ],
     "fermentHours": 168,
     "spec": "Brewing",
+    "alcoholic": true,
     "output": [
       {
-        "item_id": 285,
+        "item_id": 587,
         "min": 2,
         "max": 4
       }
@@ -118,23 +121,24 @@
     "icon": 80,
     "ingredients": [
       {
-        "item_id": 478,
+        "item_id": 590,
         "quantity": 2
       },
       {
-        "item_id": 336,
+        "item_id": 575,
         "quantity": 2
       },
       {
-        "item_id": 383,
+        "item_id": 429,
         "quantity": 2
       }
     ],
     "fermentHours": 336,
     "spec": "Brewing",
+    "alcoholic": true,
     "output": [
       {
-        "item_id": 392,
+        "item_id": 535,
         "min": 1,
         "max": 3
       }
@@ -148,23 +152,24 @@
     "icon": 224,
     "ingredients": [
       {
-        "item_id": 476,
+        "item_id": 551,
         "quantity": 2
       },
       {
-        "item_id": 480,
+        "item_id": 566,
         "quantity": 2
       },
       {
-        "item_id": 75,
+        "item_id": 418,
         "quantity": 2
       }
     ],
     "fermentHours": 240,
     "spec": "Distilling",
+    "alcoholic": true,
     "output": [
       {
-        "item_id": 1008,
+        "item_id": 898,
         "min": 1,
         "max": 4
       }

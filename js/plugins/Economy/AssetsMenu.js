@@ -30,6 +30,8 @@
  *  - BankLoanSystem.js    : $gameSystem.getBankBalance/getLoanBalance/getLoanDueDate
  *  - ONUAssembly.js       : window.ONUAssembly (diplomatic posts)
  *  - RentSystem.js        : window.RentSystem (inn stays)
+ *  - RealEstateMarket.js  : window.WorkplaceDeeds (the job map underfoot for sale,
+ *                           bought workplaces and their daily takings)
  *
  * Currency convention across the project: 100 gold = 1.00 EUR.
  */
@@ -78,6 +80,21 @@
   // value/bought are in gold cents. liability rows count negatively to net worth.
   function gatherAssets() {
     const assets = [];
+
+    // --- 0. Workplaces (RealEstateMarket.js, WORKPLACE DEEDS) ---
+    // The business the party is standing in, when it is for sale, heads the
+    // list as an offer. It is not a holding: calculateFinancialTotals skips it.
+    const WD = window.WorkplaceDeeds;
+    if (WD && typeof WD.offerHere === 'function') {
+      const offer = WD.offerHere();
+      if (offer) assets.push(workplaceOfferRow(offer));
+    }
+    if (WD && typeof WD.list === 'function') {
+      (WD.list() || []).forEach(d => {
+        const row = workplaceDeedRow(WD, d);
+        if (row) assets.push(row);
+      });
+    }
 
     // --- 1. Founded Towns (window.TownFounding) ---
     if (window.TownFounding && typeof window.TownFounding.list === 'function') {
@@ -481,6 +498,80 @@
     return assets;
   }
 
+  function workplaceJobNames(jobIds) {
+    const WS = window.WorkSystem;
+    return (jobIds || []).map(id => {
+      const job = WS && Array.isArray(WS.Jobs) ? WS.Jobs.find(j => j && j.id === id) : null;
+      return job && typeof WS.jobName === 'function' ? WS.jobName(job) : String(id);
+    }).join(', ');
+  }
+
+  function workplaceOfferRow(offer) {
+    const proj = offer.projected || { shifts: 0, revenue: 0, wages: 0, profit: 0 };
+    return {
+      cat: T('Assets.workplace.forSale'),
+      kind: 'workplaceOffer',
+      offer: true,
+      name: offer.name,
+      sub: T('Assets.workplace.offerSub', { price: euro(offer.price) }),
+      value: offer.price,
+      bought: null,
+      price: offer.price,
+      mapId: offer.mapId,
+      color: 'var(--text-amber-hint)',
+      details: [
+        { label: T('Assets.workplace.askingPrice'), val: euro(offer.price) },
+        { label: T('Assets.workplace.trades'), val: workplaceJobNames(offer.jobs) || '-' },
+        { label: T('Assets.workplace.posts'), val: String(offer.positions) },
+        { label: T('Assets.workplace.staffed'), val: `${proj.shifts} / ${offer.positions}` },
+        { label: T('Assets.workplace.townWealth'), val: `x${offer.wealth.toFixed(2)}` },
+        { label: T('Assets.workplace.dailyRevenue'), val: euro(proj.revenue) },
+        { label: T('Assets.workplace.dailyWages'), val: euro(proj.wages) },
+        { label: T('Assets.workplace.dailyProfit'), val: euro(proj.profit), pnl: proj.profit },
+        { label: T('Assets.ui.buildRights'), val: T('Assets.workplace.buildAfterPurchase') },
+      ],
+    };
+  }
+
+  function workplaceDeedRow(WD, deed) {
+    const rep = typeof WD.report === 'function' ? WD.report(deed.mapId) : null;
+    if (!rep) return null;
+    const today = rep.today;
+    const last = rep.last;
+    const totals = deed.totals || { days: 0, revenue: 0, wages: 0, profit: 0 };
+    return {
+      cat: T('Assets.workplace.section'),
+      kind: 'workplace',
+      name: deed.name,
+      sub: T('Assets.workplace.deedSub', { shifts: today.shifts, posts: rep.positions }),
+      value: deed.price,
+      bought: deed.price,
+      rentPerDay: Math.max(0, today.profit),
+      salePrice: rep.salePrice || 0,
+      mapId: deed.mapId,
+      color: 'var(--text-teal)',
+      details: [
+        { label: T('Assets.ui.mapId'), val: String(deed.mapId) },
+        { label: T('Assets.workplace.staffed'), val: `${today.shifts} / ${rep.positions}` },
+        { label: T('Assets.workplace.dailyRevenue'), val: euro(today.revenue) },
+        { label: T('Assets.workplace.dailyWages'), val: euro(today.wages) },
+        { label: T('Assets.workplace.dailyProfit'), val: euro(today.profit), pnl: today.profit },
+        ...(last ? [{
+          label: T('Assets.workplace.lastPayout', { days: last.days }),
+          val: euro(last.profit), pnl: last.profit,
+        }] : []),
+        { label: T('Assets.workplace.totalProfit', { days: totals.days }), val: euro(totals.profit), pnl: totals.profit },
+        ...(rep.nextPayout != null ? [{
+          label: T('Assets.workplace.nextPayout'),
+          val: T('Assets.workplace.inDays', { days: rep.nextPayout }),
+        }] : []),
+        { label: T('Assets.ui.boughtValue'), val: euro(deed.price) },
+        ...(rep.salePrice ? [{ label: T('Assets.workplace.saleValue'), val: euro(rep.salePrice) }] : []),
+        { label: T('Assets.ui.buildRights'), val: T('Assets.ui.owner') },
+      ],
+    };
+  }
+
   // Calculates financial summary across all held assets.
   function calculateFinancialTotals(allAssets) {
     const cash = typeof $gameParty !== 'undefined' && $gameParty ? $gameParty.gold() : 0;
@@ -490,6 +581,8 @@
     let totalRentDue = 0;
 
     (allAssets || []).forEach(a => {
+      // An offer is something for sale, not something held.
+      if (a.offer) return;
       if (a.liability) {
         totalLiabilities += a.value;
       } else {
@@ -521,15 +614,10 @@
       this._lastOil = 0;
       this._lastSouls = 0;
 
-      this._wasdQueued = { up: false, down: false };
-      this._wasdListener = (event) => {
-        if (event.repeat) return;
-        const k = event.key.toLowerCase();
-        if (k === 'w') { this._wasdQueued.up = true; event.preventDefault(); }
-        if (k === 's') { this._wasdQueued.down = true; event.preventDefault(); }
-      };
-      if (typeof window !== 'undefined') {
-        window.addEventListener('keydown', this._wasdListener);
+      // Whatever the owned workplaces made since the day last turned over is
+      // paid before the portfolio is drawn, so the report is never behind.
+      if (window.WorkplaceDeeds && typeof window.WorkplaceDeeds.settle === 'function') {
+        window.WorkplaceDeeds.settle();
       }
 
       this.createDOM();
@@ -551,7 +639,7 @@
         if (!this._rightClickStartedHere) return;
         this._rightClickStartedHere = false;
         if (typeof SoundManager !== 'undefined') SoundManager.playCancel();
-        this.popScene();
+        this.stepOut();
       });
 
       this.refreshDOM();
@@ -748,7 +836,8 @@
       // Contextual section title for specs
       let sectionTitle = T('Assets.ui.pocketsDetail');
       if (a.kind === 'town') sectionTitle = T('Assets.ui.townCharter');
-      else if (a.kind === 'shop') sectionTitle = T('Assets.ui.businessDeed');
+      else if (a.kind === 'shop' || a.kind === 'workplace') sectionTitle = T('Assets.ui.businessDeed');
+      else if (a.kind === 'workplaceOffer') sectionTitle = T('Assets.workplace.offerTitle');
       else if (a.kind === 'realEstate' || a.kind === 'proceduralHouse' || a.kind === 'residence') sectionTitle = T('Assets.ui.propertyDeed');
       else if (a.kind === 'animal') sectionTitle = T('Assets.ui.livestockRegister');
       else if (a.kind === 'stay' || a.kind === 'rental') sectionTitle = T('Assets.ui.tenancyAgreement');
@@ -801,6 +890,27 @@
             key: 'manageShop',
             cls: '',
             label: T('Towns.deeds.manageShop'),
+            enabled: true,
+          },
+        ];
+      }
+      if (asset.kind === 'workplaceOffer') {
+        const gold = typeof $gameParty !== 'undefined' && $gameParty ? $gameParty.gold() : 0;
+        return [
+          {
+            key: 'buyWorkplace',
+            cls: ' assets-action--gain',
+            label: T('Assets.workplace.buy', { price: euro(asset.price) }),
+            enabled: gold >= asset.price,
+          },
+        ];
+      }
+      if (asset.kind === 'workplace') {
+        return [
+          {
+            key: 'sellWorkplace',
+            cls: ' assets-action--sell',
+            label: T('Assets.workplace.sell', { price: euro(asset.salePrice) }),
             enabled: true,
           },
         ];
@@ -898,6 +1008,14 @@
         this.manageShop(a.shop);
         return;
       }
+      if (key === 'buyWorkplace') {
+        this.buyWorkplace(a);
+        return;
+      }
+      if (key === 'sellWorkplace') {
+        this.sellWorkplace(a);
+        return;
+      }
       if (a.animal) {
         const uid = a.animal.uid;
         if (key === 'collect') this.collectAnimal(uid);
@@ -931,6 +1049,34 @@
 
     collectAllRent() {
       this.collectTownRent();
+    }
+
+    buyWorkplace(asset) {
+      const WD = window.WorkplaceDeeds;
+      const result = WD && typeof WD.buy === 'function' ? WD.buy(asset.mapId) : null;
+      if (!result || !result.ok) {
+        if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer();
+        this.notify(T(result && result.reason === 'funds'
+          ? 'Assets.workplace.cannotAfford' : 'Assets.workplace.notForSale'));
+        return;
+      }
+      if (typeof SoundManager !== 'undefined') SoundManager.playShop();
+      this.notify(T('Assets.workplace.bought', { name: asset.name, price: euro(result.price) }));
+      this._selIndex = 0;
+      this.refreshDOM();
+    }
+
+    sellWorkplace(asset) {
+      const WD = window.WorkplaceDeeds;
+      const result = WD && typeof WD.sell === 'function' ? WD.sell(asset.mapId) : null;
+      if (!result || !result.ok) {
+        if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer();
+        return;
+      }
+      if (typeof SoundManager !== 'undefined') SoundManager.playShop();
+      this.notify(T('Assets.workplace.sold', { name: result.name || asset.name, price: euro(result.price) }));
+      this._selIndex = 0;
+      this.refreshDOM();
     }
 
     manageShop(shop) {
@@ -1150,21 +1296,22 @@
 
       let handled = false;
       if (typeof Input !== 'undefined') {
-        if (Input.isRepeated('down') || this._wasdQueued.down) { this.moveSelection(1); handled = true; }
-        else if (Input.isRepeated('up') || this._wasdQueued.up) { this.moveSelection(-1); handled = true; }
-        this._wasdQueued.up = this._wasdQueued.down = false;
+        // WASD reaches here as the arrows: a keydown listener of our own
+        // moved the row a second time on the same press.
+        if (Input.isRepeated('down')) { this.moveSelection(1); handled = true; }
+        else if (Input.isRepeated('up')) { this.moveSelection(-1); handled = true; }
 
         if (!handled && Input.isRepeated('right')) { handled = this.moveAssetButton(1); }
         else if (!handled && Input.isRepeated('left')) { handled = this.moveAssetButton(-1); }
-        if (!handled && Input.isTriggered('pagedown')) { handled = this.stepCategory(1); }
-        else if (!handled && Input.isTriggered('pageup')) { handled = this.stepCategory(-1); }
+        const tab = !handled && window.UINav ? UINav.tabDir() : 0;
+        if (tab) { handled = this.stepCategory(tab); }
         if (!handled && Input.isTriggered('ok')) { handled = this.triggerAssetButton(); }
 
         const cancelTriggered = Input.isTriggered('cancel') || Input.isTriggered('escape') ||
           (typeof TouchInput !== 'undefined' && TouchInput.isCancelled());
         if (!handled && cancelTriggered) {
           if (typeof SoundManager !== 'undefined') SoundManager.playCancel();
-          this.popScene();
+          this.stepOut();
           return;
         }
       }
@@ -1217,11 +1364,27 @@
       }
     }
 
-    terminate() {
-      if (this._wasdListener && typeof window !== 'undefined') {
-        window.removeEventListener('keydown', this._wasdListener);
-        this._wasdListener = null;
+    // Cancel steps out one level: an armed resignation is disarmed first,
+    // then the button row is left for the asset list, and only from the list
+    // does the portfolio close.
+    stepOut() {
+      if (this._confirmResign !== null && this._confirmResign !== undefined) {
+        this._confirmResign = null;
+        const held = this._btnIndex;
+        this.refreshDOM();
+        this._btnIndex = held;
+        this.refreshAssetButtons();
+        return;
       }
+      if (this._btnIndex >= 0) {
+        this._btnIndex = -1;
+        this.refreshAssetButtons();
+        return;
+      }
+      this.popScene();
+    }
+
+    terminate() {
       if (this._container) {
         const c = this._container;
         c.classList.remove('assets-fade-in');
@@ -1240,6 +1403,8 @@
     euro,
     calculateFinancialTotals,
     escapeHtml,
+    workplaceOfferRow,
+    workplaceDeedRow,
   };
 
 })();

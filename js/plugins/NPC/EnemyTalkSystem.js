@@ -69,7 +69,7 @@
 
     // Random names by archetype. Proper nouns: the name a talkable enemy is
     // given is written onto the battler and follows it around, so it never
-    // translates, exactly like the NPCPools rosters.
+    // translates, exactly like the NPC residents rosters.
     // i18n-ignore-start
     const archetypeNames = {
         Goblin: ["Gribble", "Snark", "Razzle", "Grot", "Nibbles", "Snaggletooth", "Runt", "Skitter", "Boggle", "Grub"],
@@ -274,21 +274,45 @@
     // 40% chance for low disposition (10-40)
     // 40% chance for medium disposition (41-70)
     // 20% chance for high disposition (71-100)
-    Game_Enemy.prototype.rollDisposition = function () {
-        const roll = Math.random();
+    //
+    // The roll and the success chance are plain functions on window.EnemyTalk
+    // as well, so a fight out on the map (BSE.Skirmish: a monster with <Talk>
+    // sparing a downed foe) rolls exactly the odds a battle's surrender does.
+    // START ENEMY TALK ODDS
+    window.EnemyTalk.rollDispositionValue = function (archetype, rng) {
+        const next = typeof rng === 'function' ? rng : Math.random;
+        const roll = next();
+        let value;
         if (roll < 0.4) {
-            this._disposition = Math.floor(Math.random() * 31) + 10; // 10-40
+            value = Math.floor(next() * 31) + 10; // 10-40
         } else if (roll < 0.8) {
-            this._disposition = Math.floor(Math.random() * 30) + 41; // 41-70
+            value = Math.floor(next() * 30) + 41; // 41-70
         } else {
-            this._disposition = Math.floor(Math.random() * 30) + 71; // 71-100
+            value = Math.floor(next() * 30) + 71; // 71-100
         }
-
-        const archetype = this.getArchetype();
         if (archetype && archetypeDispositionModifiers[archetype] !== undefined) {
-            this._disposition += archetypeDispositionModifiers[archetype];
+            value += archetypeDispositionModifiers[archetype];
         }
-        this._disposition = this._disposition.clamp(1, 100);
+        return Math.max(1, Math.min(100, value));
+    };
+
+    // Percent chance a talk lands: disposition, moved 2.5 points per point of
+    // luck the speaker has over the monster, held between 10 and 95.
+    window.EnemyTalk.talkSuccessChance = function (disposition, actorLuck, enemyLuck) {
+        const luckModifier = ((Number(actorLuck) || 0) - (Number(enemyLuck) || 0)) * 2.5;
+        const baseChance = (Number(disposition) || 0) + luckModifier;
+        return Math.floor(Math.max(10, Math.min(95, baseChance)));
+    };
+
+    // Can this monster, by its data alone, be reasoned with at all.
+    window.EnemyTalk.canTalkData = function (data) {
+        if (!data || window.EnemyTalk.isUnrecruitableData(data)) return false;
+        return String(data.note || '').includes('<Talk>');
+    };
+    // END ENEMY TALK ODDS
+
+    Game_Enemy.prototype.rollDisposition = function () {
+        this._disposition = window.EnemyTalk.rollDispositionValue(this.getArchetype());
     };
 
     const _Game_Enemy_setup = Game_Enemy.prototype.setup;
@@ -740,16 +764,8 @@
         if (!actor || !enemy) return 0;
         if (enemy.isUnrecruitable()) return 0;
 
-        const actorLuck = actor.luk;
-        const enemyLuck = enemy.luk;
-        const disposition = enemy.disposition();
-
         // Scale luck difference (2.5% per point of PSI difference in D&D scale)
-        const luckModifier = (actorLuck - enemyLuck) * 2.5;
-        const baseChance = disposition + luckModifier;
-        const successChance = Math.max(10, Math.min(95, baseChance));
-
-        return Math.floor(successChance);
+        return window.EnemyTalk.talkSuccessChance(enemy.disposition(), actor.luk, enemy.luk);
     };
 
     Scene_Battle.prototype.calculateTalkSuccess = function () {

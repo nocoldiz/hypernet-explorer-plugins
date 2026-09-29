@@ -231,6 +231,7 @@
     // Shift is read as a modifier here (it is held, not tapped), which is what
     // makes Shift+Tab the reverse of Tab rather than a press of its own.
     railDir() {
+      if (window.UINav) return window.UINav.tabDir();
       if (typeof Input === "undefined") return 0;
       if (Input.isTriggered("pageup")) return -1;
       if (Input.isTriggered("pagedown")) return 1;

@@ -149,28 +149,8 @@
         this._draggedItem       = null;
         this._dragSource        = null;
 
-        // WASD state
-        this._wasdInput      = { up: false, down: false, left: false, right: false };
-        this._wasdHeld       = { up: false, down: false, left: false, right: false };
-        this._wasdHoldFrames = { up: 0,     down: 0,     left: 0,     right: 0     };
-
-        this._wasdListener = (event) => {
-            if (event.repeat) return;
-            const key = event.key.toLowerCase();
-            if (key === 'w') { this._wasdInput.up    = true; this._wasdHeld.up    = true; event.preventDefault(); }
-            if (key === 's') { this._wasdInput.down  = true; this._wasdHeld.down  = true; event.preventDefault(); }
-            if (key === 'a') { this._wasdInput.left  = true; this._wasdHeld.left  = true; event.preventDefault(); }
-            if (key === 'd') { this._wasdInput.right = true; this._wasdHeld.right = true; event.preventDefault(); }
-        };
-        this._wasdUpListener = (event) => {
-            const key = event.key.toLowerCase();
-            if (key === 'w') { this._wasdHeld.up    = false; this._wasdHoldFrames.up    = 0; }
-            if (key === 's') { this._wasdHeld.down  = false; this._wasdHoldFrames.down  = 0; }
-            if (key === 'a') { this._wasdHeld.left  = false; this._wasdHoldFrames.left  = 0; }
-            if (key === 'd') { this._wasdHeld.right = false; this._wasdHoldFrames.right = 0; }
-        };
-        window.addEventListener('keydown', this._wasdListener);
-        window.addEventListener('keyup',   this._wasdUpListener);
+        // WASD needs no listener of its own: Input.keyMapper already reads the
+        // four keys as the four directions, with the one repeat rule.
 
         if (enableSwitching) {
             window.CharSwitcher.installTabKey(this, (dir) => {
@@ -189,12 +169,6 @@
     };
 
     Scene_Equip.prototype.terminate = function () {
-        if (this._wasdListener) {
-            window.removeEventListener('keydown', this._wasdListener);
-            window.removeEventListener('keyup',   this._wasdUpListener);
-            this._wasdListener   = null;
-            this._wasdUpListener = null;
-        }
         window.CharSwitcher.removeTabKey(this);
         hideStatTooltip();
         this.cleanup3DWeaponPreview();
@@ -429,6 +403,35 @@
                 };
                 if (startRig) startRig();
 
+                // A piece put away while it is still folding (the vector gun's
+                // SWITCH) plays the rest of its fold beside its replacement.
+                const ghosts = [];
+                /**
+                 * Builds `next` in THIS viewport in place of the piece on it,
+                 * with no new WebGL context, canvas or camera: the vector gun's
+                 * screen folds one shape into another here, and a remount
+                 * flashed an empty pane and threw the camera back mid-morph.
+                 * @returns {?THREE.Object3D} the new model, or null when it
+                 *   cannot be swapped in place (a rig or a GLB: remount then)
+                 */
+                previewEntry.swap = (next) => {
+                    if (previewEntry.disposed || previewEntry.rig || !model || !next) return null;
+                    if (next.model3d || next.wtypeId === undefined || !WSP) return null;
+                    if (WSP.previewRigFor && WSP.previewRigFor(next)) return null;
+                    const built = WSP.createModel(next);
+                    if (!built) return null;
+                    const old = model;
+                    if (old._vectorSwitch) {
+                        ghosts.push(old);
+                    } else {
+                        scene.remove(old);
+                        if (window.disposeWeaponObject3D) window.disposeWeaponObject3D(old);
+                    }
+                    setupModelPosition(built);
+                    previewEntry.model = built;
+                    return built;
+                };
+
                 // Scratch objects reused every frame to avoid per-frame allocations.
                 const _scratchDeltaRot = new THREE.Euler();
                 const _scratchDeltaPos = new THREE.Vector3();
@@ -447,7 +450,10 @@
                     const now = performance.now();
                     _frameAcc += Math.min(now - _previewLastTime, 50);
                     _previewLastTime = now;
-                    if (_frameAcc < PREVIEW_FRAME_MS) return;
+                    // A vector gun folding on the stand is drawn at the full
+                    // rate: at 30fps its panels step instead of swinging.
+                    const folding = !!(model && model._vectorSwitch) || ghosts.length > 0;
+                    if (!folding && _frameAcc < PREVIEW_FRAME_MS) return;
                     const deltaMs = _frameAcc;
                     _frameAcc = 0;
 
@@ -510,6 +516,14 @@
                         // call is free on a model that is not coming apart.
                         if (WeaponSystemProcedural.tickVectorSwitch) {
                             WeaponSystemProcedural.tickVectorSwitch(model, deltaMs);
+                            for (let i = ghosts.length - 1; i >= 0; i--) {
+                                const ghost = ghosts[i];
+                                WeaponSystemProcedural.tickVectorSwitch(ghost, deltaMs);
+                                if (ghost._vectorSwitch) continue;
+                                scene.remove(ghost);
+                                if (window.disposeWeaponObject3D) window.disposeWeaponObject3D(ghost);
+                                ghosts.splice(i, 1);
+                            }
                         }
                         const ropes = [];
                         if (model.userData._verletRope)  ropes.push(model.userData._verletRope);
@@ -1126,12 +1140,17 @@
         const cBefore = (typeof actor.calculateCustomStats === 'function') ? actor.calculateCustomStats() : null;
         const cAfter  = (preview && typeof preview.calculateCustomStats === 'function') ? preview.calculateCustomStats() : cBefore;
 
-        let scaling = new Set();
+        // The stats the weapon scales on are marked on the strip at all times:
+        // the one being inspected while a preview is up, otherwise whatever
+        // the character is holding (window.WeaponScaling).
+        const scaler = window.WeaponScaling;
         const item = preview ? this._inspectedItem : null;
-        if (item && DataManager.isWeapon(item) && typeof actor.getWeaponScalingType === 'function') {
-            const s = actor.getWeaponScalingType(item);
-            scaling = new Set(s === 'MIX' ? ['STR', 'DEX'] : s === 'ARC' ? ['STR', 'INT'] : s ? [s] : ['STR']);
-        }
+        const scaledBy = (item && DataManager.isWeapon(item))
+            ? [item]
+            : (typeof after.weapons === 'function' ? after.weapons() : []);
+        const scaling = new Set();
+        if (scaler) scaledBy.forEach(w => scaler.statsFor(w).forEach(st => scaling.add(st)));
+        const scalingTitle = T('Equip.scalingStat');
 
         const mainList = [
             { key: 'HP',  label: sT('hp', 'HP'),   before: actor.mhp, after: after.mhp },
@@ -1161,9 +1180,11 @@
             const diffHtml = diff
                 ? ` <span class="stat-diff ${diff > 0 ? 'positive' : 'negative'}">${diff > 0 ? '+' + diff : diff}${unit}</span>`
                 : '';
-            const cls = scaling.has(st.key) ? ' paperdoll-stat-col--scaling' : '';
+            const scales = scaling.has(st.key);
+            const cls = scales ? ' paperdoll-stat-col--scaling' : '';
+            const title = scales ? ` title="${escapeHtml(scalingTitle)}"` : '';
             return `
-                <div class="paperdoll-stat-col${cls}" data-stat="${st.key}">
+                <div class="paperdoll-stat-col${cls}" data-stat="${st.key}"${title}>
                     <span class="stat-label">${escapeHtml(String(st.label))}</span>
                     <span class="stat-val">${st.after}${unit}${modHtml}${diffHtml}</span>
                 </div>`;
@@ -1378,6 +1399,13 @@
         if (wtype) {
             typeTiles += factTile(T('Equip.weaponType'), escapeHtml(String(wtype).trim()));
         }
+        // The stats the weapon's attack is worked out from, as the same gold
+        // chips the stat strip marks (window.WeaponScaling).
+        const scaler = window.WeaponScaling;
+        const scalingStats = (isWeapon && scaler) ? scaler.statsFor(item) : [];
+        if (scalingStats.length) {
+            typeTiles += factTile(T('Equip.scale'), scaler.chipsHTML(scalingStats), 'equip-fact--scaling');
+        }
         const dt = (item.meta && item.meta.DamageType) ||
             (item.note && (item.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
         if (dt) {
@@ -1395,10 +1423,12 @@
         let paramsHtml = '';
         const paramNames = [S('hp', t.hp), S('mp', t.mp), S('str', t.str), S('con', t.con),
             S('int', t.int), S('wis', t.wis), S('dex', t.dex), S('psi', t.psi)];
+        const PARAM_STAT = ['HP', 'MP', 'STR', 'CON', 'INT', 'WIS', 'DEX', 'PSI'];
         const paramChips = (item.params || []).map((val, idx) => {
             if (!val) return '';
             const cls = val > 0 ? 'positive' : 'negative';
-            return `<span class="equip-param-chip"><span class="equip-param-name">${paramNames[idx] || T('Inventory.spec.stat')}</span>`
+            const scales = scalingStats.includes(PARAM_STAT[idx]) ? ' equip-param-chip--scaling' : '';
+            return `<span class="equip-param-chip${scales}"><span class="equip-param-name">${paramNames[idx] || T('Inventory.spec.stat')}</span>`
                 + `<span class="stat-diff ${cls}">${val > 0 ? '+' + val : val}</span></span>`;
         }).join('');
         if (paramChips) {
@@ -2158,47 +2188,28 @@
     // =============================================================================
 
     Scene_Equip.prototype.updateUIEquipInput = function () {
-        for (const dir of ['up', 'down', 'left', 'right']) {
-            if (this._wasdHeld[dir]) {
-                this._wasdHoldFrames[dir]++;
-                const t = this._wasdHoldFrames[dir];
-                if (t > Input.keyRepeatWait && (t - Input.keyRepeatWait) % Input.keyRepeatInterval === 0) {
-                    this._wasdInput[dir] = true;
-                }
-            } else {
-                this._wasdHoldFrames[dir] = 0;
-            }
-        }
+        // One reading of the four directions, repeating while held.
+        const dir     = window.UINav ? window.UINav.navDir() : null;
+        const isDown  = dir === 'down';
+        const isUp    = dir === 'up';
+        const isRight = dir === 'right';
+        const isLeft  = dir === 'left';
 
-        const isDown  = Input.isTriggered('down')  || Input.isRepeated('down')  || this._wasdInput.down;
-        const isUp    = Input.isTriggered('up')    || Input.isRepeated('up')    || this._wasdInput.up;
-        const isRight = Input.isTriggered('right') || Input.isRepeated('right') || this._wasdInput.right;
-        const isLeft  = Input.isTriggered('left')  || Input.isRepeated('left')  || this._wasdInput.left;
-        this._wasdInput.up = this._wasdInput.down = this._wasdInput.left = this._wasdInput.right = false;
-
-        if (enableSwitching) {
-            if (Input.isTriggered('pageup')) {
-                const party = $gameParty.allMembers();
-                if (party.length > 1) {
-                    this.switchToPreviousCharacter();
-                    const members = this.partyMembers();
-                    const mIdx = members.indexOf(this._actor);
-                    if (mIdx >= 0) this._memberIndex = mIdx;
-                    if (this._activeArea === 'paperdoll') this._updateSlotHighlight();
-                }
-                return;
+        // L1 / R1 step the equipment-type tabs; L2 / R2 change the member
+        // (CharSwitcher, installed with the scene).
+        const tabStep = window.UINav ? window.UINav.tabDir() : 0;
+        if (tabStep) {
+            const tabs = getEquipTabs();
+            const at = Math.max(0, tabs.findIndex((t) => t.id === (this._activeTab || 'all')));
+            const next = Math.max(0, Math.min(tabs.length - 1, at + tabStep));
+            if (tabs[next] && (next !== at || this._slotFilterIdx >= 0)) {
+                SoundManager.playCursor();
+                this._activeTab = tabs[next].id;
+                this._slotFilterIdx = -1;
+                this._gridIndex = 0;
+                this._refreshRightPage();
             }
-            if (Input.isTriggered('pagedown')) {
-                const party = $gameParty.allMembers();
-                if (party.length > 1) {
-                    this.switchToNextCharacter();
-                    const members = this.partyMembers();
-                    const mIdx = members.indexOf(this._actor);
-                    if (mIdx >= 0) this._memberIndex = mIdx;
-                    if (this._activeArea === 'paperdoll') this._updateSlotHighlight();
-                }
-                return;
-            }
+            return;
         }
 
         const isOk     = Input.isTriggered('ok');
@@ -2206,22 +2217,39 @@
 
         if (this._viewMode === 'detail') {
             if (isCancel) {
+                // One level out: back to where the card was opened from, the
+                // worn slot on the paperdoll or the piece on the bench.
                 if (typeof SoundManager !== 'undefined' && SoundManager.playCancel) SoundManager.playCancel();
+                const fromSlot = this._inspectedSlotIdx >= 0;
                 this._viewMode = 'paperdoll';
                 this.cleanup3DWeaponPreview();
                 this._refreshRightPage();
-                this._activeArea = 'grid';
-                this._updateInventoryHighlight();
+                this._clearAllHighlights();
+                if (fromSlot) {
+                    this._activeArea = 'paperdoll';
+                    this._updateSlotHighlight();
+                } else {
+                    this._activeArea = 'grid';
+                    this._updateInventoryHighlight();
+                }
                 return;
             }
 
             const container = document.getElementById('equip-container');
             const btns = container ? container.querySelectorAll('.detail-actions-row .equip-action-btn') : [];
 
+            // The card's buttons are one row: left / right walk every one of
+            // them and stop at its ends.
             if (isLeft || isRight) {
                 if (btns.length > 1) {
-                    this._detailBtnIndex = (this._detailBtnIndex === 0) ? 1 : 0;
-                    this._updateDetailButtonsHighlight();
+                    const at = Math.max(0, Math.min(btns.length - 1, this._detailBtnIndex || 0));
+                    const next = window.UINav
+                        ? window.UINav.gridStep(at, isLeft ? 'left' : 'right', btns.length, btns.length)
+                        : Math.max(0, Math.min(btns.length - 1, at + (isLeft ? -1 : 1)));
+                    if (next !== at) {
+                        this._detailBtnIndex = next;
+                        this._updateDetailButtonsHighlight();
+                    }
                 }
                 return;
             }
@@ -2256,6 +2284,24 @@
             if (this._activeArea === 'back') {
                 if (typeof SoundManager !== 'undefined' && SoundManager.playCancel) SoundManager.playCancel();
                 this.popScene();
+                return;
+            }
+            // The paperdoll is one level in from the bench, where the page
+            // opens: Cancel steps back out to the bench rather than closing.
+            if (this._activeArea === 'paperdoll') {
+                if (typeof SoundManager !== 'undefined' && SoundManager.playCancel) SoundManager.playCancel();
+                this._clearAllHighlights();
+                this._activeArea = 'grid';
+                this._updateInventoryHighlight();
+                return;
+            }
+            // A bench narrowed to one slot's pieces opens back up first.
+            if (this._activeArea === 'grid' && this._slotFilterIdx >= 0) {
+                if (typeof SoundManager !== 'undefined' && SoundManager.playCancel) SoundManager.playCancel();
+                this._slotFilterIdx = -1;
+                this._gridIndex = 0;
+                this._refreshRightPage();
+                this._updateInventoryHighlight();
                 return;
             }
             if (typeof SoundManager !== 'undefined' && SoundManager.playCancel) SoundManager.playCancel();
@@ -2347,14 +2393,13 @@
                 this._clearAllHighlights();
                 this._activeArea = 'paperdoll';
                 this._updateSlotHighlight();
-            } else if (isLeft) {
-                if (this._gridIndex > 0) {
-                    this._gridIndex--;
-                    this._updateInventoryHighlight();
-                }
-            } else if (isRight) {
-                if (this._gridIndex < items.length - 1) {
-                    this._gridIndex++;
+            } else if (isLeft || isRight) {
+                // Left / right stay on the drawn row (two across).
+                const next = window.UINav
+                    ? window.UINav.gridStep(this._gridIndex, isLeft ? 'left' : 'right', items.length, 2)
+                    : this._gridIndex;
+                if (next !== this._gridIndex) {
+                    this._gridIndex = next;
                     this._updateInventoryHighlight();
                 }
             } else if (isDown) {
@@ -2448,8 +2493,6 @@
                     currActor.changeEquip(this._slotIndex, null);
                     this._refreshDOM();
                     this._updateSlotHighlight();
-                } else {
-                    /* silent equip menu */
                 }
             }
         }

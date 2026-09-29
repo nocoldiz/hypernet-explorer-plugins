@@ -55,7 +55,21 @@
     "evicted": "Sfrattato da \"{name}\": affitto non pagato.",
     "appName": "Borsa Immobiliare",
     "manageShop": "Gestisci il negozio",
-    "manageFromDeeds": "Il registro del negozio si apre dalla pagina Atti."
+    "manageFromDeeds": "Il registro del negozio si apre dalla pagina Atti.",
+    "workingPlaces": "Luoghi di lavoro",
+    "workingPlacesRegistry": "LUOGHI DI LAVORO",
+    "businessDeed": "ATTO DI IMPRESA",
+    "businessDeed2": "Atto di impresa",
+    "selectAWorkplace": "Seleziona un luogo di lavoro per esaminarne l'attività.",
+    "businessesHeld": "Attività possedute",
+    "weeklyYield": "Rendita settimanale",
+    "weeklyPayout": "Incasso settimanale",
+    "sellHome": "VENDI CASA ({price})",
+    "assignResidents": "RESIDENTI",
+    "residents": "Residenti",
+    "residentHere": "{name}: vive qui",
+    "residentElsewhere": "Fai trasferire {name} (ora a {place})",
+    "residentsDone": "FATTO"
   },
   "company": {
     "lemoncorp": {

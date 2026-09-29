@@ -3939,7 +3939,22 @@
   const LITTER_FULL_YEAR = 2012;    // the year the city is buried in it
   const LITTER_COLLAPSE_FACTOR = 14;
   const LITTER_FIXED_MIN = 4;       // how strewn a fixed-decay world can be
+  // Ground the Goblin Horde holds is filthier and wilder than anywhere else,
+  // the longer it has been theirs the worse (window.HordeGround, DataService):
+  // up to six times the rubbish and four times the green, falling back to the
+  // ordinary street over the years after a liberation. 1 on anybody else's
+  // ground. Read for the square the party is on.
+  function hordeDecayFactor(kind) {
+    const HG = window.HordeGround;
+    if (!HG || typeof HG[kind] !== "function") return 1;
+    try { return Number(HG[kind]()) || 1; } catch (e) { return 1; }
+  }
+
   function cityLitterFactor() {
+    return cityLitterBaseFactor() * hordeDecayFactor("litter");
+  }
+
+  function cityLitterBaseFactor() {
     // Nothing artificial is scattered in an empty or a death world at all.
     if (!cityLitterAllowed()) return 0;
     // A fixed-decay world (the zombie apocalypse) never drifts: its streets
@@ -3984,6 +3999,10 @@
   const OVERGROWTH_MAX_FACTOR = 10;
   const OVERGROWTH_FIXED_MIN = 3;      // how green a fixed-decay world can be
   function cityOvergrowthFactor() {
+    return cityOvergrowthBaseFactor() * hordeDecayFactor("overgrowth");
+  }
+
+  function cityOvergrowthBaseFactor() {
     // A fixed-decay world sits at one point on the curve whatever the clock
     // says: there is nobody to cut it back and there never will be, so the
     // year it stopped being cut back is the only thing that decides how deep
@@ -5372,6 +5391,7 @@ function generateBurgBiome(biome, seed, allFeatures, adjacentBiomes, allOtherDat
     // dressing context of their own (the road biome). See cityOvergrowth.
     overgrowMapData,
     overgrowthFactor: cityOvergrowthFactor,
+    litterFactor: cityLitterFactor,
     structure: structureFor,
     structures: () => STRUCTURES.slice(),
     isStructure: (name) => !!structureFor(name),

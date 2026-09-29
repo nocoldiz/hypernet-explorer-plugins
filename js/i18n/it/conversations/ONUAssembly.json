@@ -184,6 +184,33 @@
         "La Torre. {sponsor} chiede che gli uffici di ogni potenza al suo interno siano {registrati|limitati|aperti a ispezione}. {target} ne ha {nove piani|più piani di quanti ne abbia dichiarati|un piano che non compare su nessuna pianta}.",
         "{sponsor} propone che l'assemblea riconosca la Torre come l'unica cosa che impedisce alle novantadue dimensioni di collassare l'una nell'altra, {e agisca di conseguenza|e la finanzi di conseguenza|cosa che {target} definisce teologia, non procedura}."
       ]
+    },
+    "ceasefire": {
+      "tag": "il cessate il fuoco",
+      "title": "Mozione di {sponsor}: cessate il fuoco tra {attacker} e {defender}",
+      "text": [
+        "{sponsor} chiede all'assemblea di ordinare un cessate il fuoco di sei mesi tra {attacker} e {defender}. {leader} legge {il bilancio delle vittime|l'elenco delle città che non rispondono più al telefono|il prezzo del pane nelle due capitali}.",
+        "Sei mesi senza armi. {sponsor} propone che {attacker} e {defender} restino sulle linee dove si trovano. {leader} ha portato {una mappa con le linee già tracciate|una matita molto lunga|nient'altro che pazienza}.",
+        "{sponsor} vuole che la guerra tra {attacker} e {defender} {si fermi|resti in sospeso|aspetti il suo turno} mentre la sala riflette. {leader} dice che riflettere costa meno delle granate."
+      ]
+    },
+    "whitePeace": {
+      "tag": "la pace bianca",
+      "title": "Mozione di {sponsor}: pace bianca tra {attacker} e {defender}",
+      "text": [
+        "{sponsor} propone che la guerra tra {attacker} e {defender} finisca oggi, con ogni confine riportato dov'era prima del primo colpo. {leader} la definisce {l'unica fine giusta|una fine che non piacerà a nessuno|finalmente una fine}.",
+        "Una pace bianca: nessun vincitore, nessun vinto, la vecchia mappa di nuovo al muro. {sponsor} chiede all'assemblea di imporla a {attacker} e {defender}. {leader} ha già fatto {incorniciare|plastificare|fotocopiare undici volte} la vecchia mappa.",
+        "{sponsor} propone che {attacker} restituisca tutto ciò che ha preso a {defender} e che entrambi tornino a casa. {leader} non si aspetta ringraziamenti da nessuno dei due."
+      ]
+    },
+    "sanctions": {
+      "tag": "le sanzioni",
+      "title": "Mozione di {sponsor}: sanzioni a {attacker} per la guerra contro {defender}",
+      "text": [
+        "{sponsor} propone che l'assemblea sanzioni {attacker} per la guerra contro {defender}: commerci tagliati per un anno. {leader} elenca {i porti da chiudere|le banche da congelare|i carichi da rimandare indietro}.",
+        "Sanzioni. {sponsor} vuole che {attacker} paghi la guerra contro {defender} nell'unica moneta che capisce. {leader} ha le cifre {all'euro|al centesimo|arrotondate con generosità}.",
+        "{sponsor} chiede alla sala di chiudere i mercati a {attacker} finché non smette di bombardare {defender}. {leader} ammette che farà male {un po' a tutti|più ai mercati che ai generali|alla scorta di caffè della sala}."
+      ]
     }
   },
   "voice": {
@@ -952,6 +979,20 @@
       "\"{name}. Accreditato presso {power}.\" L'impiegato timbra. \"{leader} sarà informato. {leader} viene informato di tutto.\"",
       "La targa viene stampata mentre {name} guarda: {power}, e sotto in caratteri più piccoli, {name}. \"{leader} l'ha approvato {stamattina|in anticipo|senza leggerlo}.\"",
       "\"Benvenuto nella delegazione di {power}\", dice l'impiegato, con la voce di chi l'ha detto quattrocento volte. \"{leader} non manda nulla. {leader} non lo fa mai.\""
+    ]
+  },
+  "warOutcome": {
+    "ceasefire": [
+      "Il cessate il fuoco viene inviato a {attacker} e {defender}. Per sei mesi le linee restano dove sono.",
+      "L'ordine parte verso entrambi i fronti: {attacker} e {defender} devono cessare il fuoco. Il presidente si concede un momento di silenzio."
+    ],
+    "whitePeace": [
+      "La guerra tra {attacker} e {defender} è finita. Ogni confine torna dov'era prima che cominciasse.",
+      "{attacker} e {defender} sono in pace per ordine dell'assemblea, e la vecchia mappa torna a essere la mappa."
+    ],
+    "sanctions": [
+      "Le sanzioni contro {attacker} entrano in vigore a mezzanotte. Per un anno i suoi commerci saranno più magri.",
+      "{attacker} è sotto sanzioni per la guerra contro {defender}. I mercati si stanno già muovendo."
     ]
   }
 }

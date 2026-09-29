@@ -78,6 +78,9 @@
   // The stand holds one of two things: the pistol, or "the other shape",
   // whichever one the cursor is on.
   const ALT_STAND = 'alt';
+  // How much of the full time a shape takes to go back to the gun: it
+  // retraces the way it came out, played backwards, and quicker than that.
+  const REVERT_PACE = 0.6;
 
   /** The bank a row's words come from: the shapes have one of their own. */
   const shapeText = (key, part) => T('VectorGun.shape.' + key + '.' + part);
@@ -528,41 +531,76 @@
     morphStand(form) {
       if (this._switching || !this._el) return;
       this._switching = true;
+      // Out of the gun the shape folds shut and opens as the new one; back to
+      // the gun the same two halves are played in reverse, so the shape closes
+      // up the way it opened and the pistol unfolds the way it folded.
+      const back = form === GUN_FORM && this._stand !== GUN_FORM;
+      const opts = back ? { reverse: true, pace: REVERT_PACE } : null;
       let fold = 0;
       try {
         const entry = this._previews[0];
-        fold = VG.playSwitchOn(entry ? entry.model : null, 'fold') || 0;
+        fold = VG.playSwitchOn(entry ? entry.model : null, 'fold', opts) || 0;
         this._zoomStand(MORPH_ZOOM, fold);
       } catch (e) {
         console.warn('[VectorGunUI] fold failed:', e);
       }
+      // The new shape starts rising while the old one is still shrinking away:
+      // the viewer keeps the old model folding beside it until it is gone.
+      const WSP = window.WeaponSystemProcedural;
+      const handoff = Math.round(fold * ((WSP && WSP.VECTOR_FOLD_HANDOFF) || 1));
       setTimeout(() => {
         // Whatever goes wrong in the rebuild, the stand is never left locked
         // mid-fold: a stuck flag froze it on one shape for good.
+        let swapped = null;
         try {
           if (!this._el) return;
           this._stand = form;
-          this._mountPreview(true);
+          swapped = this._swapPreview();
+          if (!swapped) this._mountPreview(true);
         } catch (e) {
           console.warn('[VectorGunUI] rebuild failed:', e);
         }
         if (!this._el) { this._switching = false; return; }
-        // The viewer builds the model inside its own animation loop, so the
-        // rise waits for it to exist: played on nothing, the new shape just
-        // snapped in.
-        this._whenModel((model) => {
-          let rise = 0;
-          try { rise = VG.playSwitchOn(model, 'rise') || 0; } catch (e) { rise = 0; }
+        const rise = (model) => {
+          // Measured at rest, before the rise packs it down, so the camera can
+          // travel to its fit WHILE the shape opens instead of after.
+          const fit = this._fitZoom();
+          let ms = 0;
+          try { ms = VG.playSwitchOn(model, 'rise', opts) || 0; } catch (e) { ms = 0; }
+          this._zoomStand(fit, Math.max(280, ms));
           this._switching = false;
           if (!this._el) return;
           // The cursor may have walked off this shape while it was folding:
           // the request that was refused mid-morph is served now.
-          if (this._standStale()) { this._syncStand(); return; }
-          // The new shape is measured only once it has finished unfolding:
-          // while its panels are still swinging open the bounds are the swing.
-          setTimeout(() => { if (this._el) this._fitStand(280); }, rise + 60);
-        });
-      }, fold);
+          if (this._standStale()) this._syncStand();
+        };
+        // Swapped in place, the new model exists now and is packed before it is
+        // ever drawn. A remount builds it inside the viewer's own loop, so the
+        // rise waits for it there.
+        if (swapped) rise(swapped);
+        else this._whenModel(rise);
+      }, handoff);
+    }
+
+    /**
+     * Builds the shape the stand wants in the viewer already on the page,
+     * rather than tearing it down for a new one.
+     * @returns {?THREE.Object3D} the new model, or null to remount instead
+     */
+    _swapPreview() {
+      const entry = this._previews[0];
+      const item = VG.gunData();
+      if (!entry || !entry.swap || !item) return null;
+      const form = this.standShape();
+      const key = VG.withForm(form, () => VG.modelKey());
+      if (key === this._previewKey) return null;
+      const model = VG.withForm(form, () => entry.swap(item));
+      if (!model) return null;
+      const label = this._el.querySelector('.vg-preview-label');
+      if (label) label.textContent = shapeText(form, 'name');
+      this._previewKey = key;
+      this._mountedShape = form;
+      return model;
     }
 
     /** Calls back with the stand's model once the viewer has built it. */
@@ -823,7 +861,9 @@
         const cam = this._previews[0] && this._previews[0].camera;
         if (!this._el || !cam) { clearInterval(this._zoomTimer); this._zoomTimer = 0; return; }
         const t = Math.min(1, (performance.now() - started) / ms);
-        cam.position.z = from + (z - from) * (t * (2 - t));
+        // Eased at both ends, so a zoom in handed straight to a zoom out
+        // turns round instead of jerking.
+        cam.position.z = from + (z - from) * (t * t * (3 - 2 * t));
         if (t >= 1) { clearInterval(this._zoomTimer); this._zoomTimer = 0; }
       }, 16);
     }
@@ -1133,8 +1173,12 @@
       const gun = VG.gunData();
       const baseRange = gun ? (/<Range:\s*(\d+)>/i.exec(gun.note || '') || [0, 1])[1] : 1;
       const baseBullets = gun ? (/<Bullets:\s*(\d+)>/i.exec(gun.note || '') || [0, 1])[1] : 1;
-      const bonus = Math.round((VG.FORM_DAMAGE_BONUS || 0) * 100);
+      const bonus = Math.round(VG.formDamageBonus(folded) * 100);
       const specs = [];
+      const damageType = VG.formDamageType(folded);
+      if (damageType) {
+        specs.push([T('VectorGun.detail.damageType'), T('VectorGun.damageType.' + damageType)]);
+      }
       VG.withForm(folded, () => {
         specs.push([T('VectorGun.detail.range'), T('VectorGun.detail.rangeTiles', { n: VG.weaponReach(Number(baseRange)) })]);
         // The frame condenses its own rounds, so no shape carries ammunition.
@@ -1155,14 +1199,16 @@
         const face = (VG.DICE_FACES || []).indexOf(key);
         if (face >= 0) specs.push([T('VectorGun.detail.face'), String(face + 1)]);
       }
-      const gain = key === GUN_FORM ? 'VectorGun.form.gunGain'
-        : key === DICE_FORM ? 'VectorGun.form.diceGain' : 'VectorGun.form.gain';
+      // A weapon form's card says only what it adds to a blow, and nothing at
+      // all when that is nothing (the rosary).
+      const gain = key === GUN_FORM ? T('VectorGun.form.gunGain')
+        : key === DICE_FORM ? T('VectorGun.form.diceGain')
+        : bonus ? T('VectorGun.form.gain', { bonus: (bonus > 0 ? '+' : '') + bonus }) : '';
       const locked = VG.isFormUnlocked ? !VG.isFormUnlocked(key) : false;
       return {
         name: shapeText(key, 'name'),
         kind: locked ? T('VectorGun.lock.title') : T('VectorGun.detail.formTitle'),
-        prose: line('VectorGun.shape.' + key + '.effect') + '<br><br>' +
-          T(gain, { bonus: bonus, element: elementName(VG.elementId()) }),
+        prose: line('VectorGun.shape.' + key + '.effect') + (gain ? '<br><br>' + gain : ''),
         specs: specs,
       };
     }

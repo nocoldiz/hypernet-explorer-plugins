@@ -569,7 +569,9 @@
     "tooCloseMember": "{name} is too close to break away! Another of the party may still try."
   },
   "hud": {
-    "elementRate": "{rate}x"
+    "elementRate": "{rate}x",
+    "elementAbsorb": "Absorbs",
+    "elementImmune": "Immune"
   },
   "statReq": {
     "fumble": "{actor} loses the thread of {skill}: not enough base {stat}!"
@@ -687,10 +689,9 @@
       "grimoireEmpty": "The book opens on blank pages.",
       "reroll": "{actor} tears {cost} out of herself and reads on. {count} new pages answer.",
       "regen": "The open book reads {actor} back, page by page.",
-      "pact": "The book gives nothing back. It never agreed to.",
       "pactOpen": "{actor} walks in already reading. {count} pages are open.",
-      "pactPrice": "The page takes {cost} out of {actor}.",
-      "natural": "The Dice of YHWH lands on 20. The Grimoire of Solomon opens for {actor}, and asks nothing back."
+      "pactReroll": "{actor} turns the page and reads on. {count} new pages answer.",
+      "natural": "The Dice of Yaldabaoth lands on 20. The Grimoire of Solomon opens for {actor}, and asks nothing back."
     },
     "em": {
       "enter": [
@@ -734,5 +735,29 @@
     "positionOption": "Command Position",
     "positionLeft": "Left",
     "positionRight": "Right"
+  },
+  "skirmish": {
+    "npcEngages": "{npc} engages the {monster}!",
+    "monsterAttacks": "The {monster} attacks {target}!",
+    "won": "{winner} brings down the {loser}.",
+    "killed": "{winner} killed {loser}.",
+    "downed": "{winner} knocks {loser} to the ground.",
+    "spared": "{winner} spares {loser} and walks away.",
+    "fled": "{loser} breaks off and flees from {winner}.",
+    "partyHit": "The {monster} lashes out at {name}!"
+  },
+  "downedBody": {
+    "promptMonster": "The {name} lies on the ground, too hurt to fight.",
+    "promptNpc": "{name} lies on the ground, too hurt to get up.",
+    "promptCorpse": "The body of {name} lies here.",
+    "implantsHarvested": "Pried from the body: {items}",
+    "coupDeGrace": "Coup de grace",
+    "loot": "Loot",
+    "firstAid": "First aid",
+    "firstAidDone": "{name} comes round, shaken but on their feet.",
+    "butcher": "Butcher",
+    "cancel": "Cancel",
+    "pocketMoney": "{name} hands over {money}.",
+    "notBattleable": "{name} is lying on the ground and cannot fight."
   }
 }

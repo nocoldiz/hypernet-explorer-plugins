@@ -1,3 +1,63 @@
 {
-  "obtained": "Obtained:"
+  "obtained": "Obtained:",
+  "simLog": {
+    "optionName": "Simulation Log",
+    "line": "[{kind}] {text}",
+    "kind": {
+      "party": "Party",
+      "monster": "Monster",
+      "npc": "NPC"
+    },
+    "npc": {
+      "need": {
+        "sleep": "{name} decides to go to sleep",
+        "hunger": "{name} decides to find something to eat",
+        "hygiene": "{name} decides to go and wash",
+        "work": "{name} decides to go to work",
+        "shopwork": "{name} decides to mind the shop",
+        "money": "{name} decides to go and earn some money",
+        "crime": "{name} decides to try their luck at crime",
+        "safety": "{name} decides to look for somewhere safe",
+        "comfort": "{name} decides to find somewhere comfortable",
+        "social": "{name} decides to look for company",
+        "shopping": "{name} decides to go shopping",
+        "leisure": "{name} decides to have some fun"
+      },
+      "goal": {
+        "wander": "{name} decides to wander about",
+        "socialize": "{name} decides to join the crowd"
+      },
+      "flee": "{name} decides to run from a monster",
+      "engage": "{name} decides to fight a monster"
+    },
+    "monster": {
+      "idle": "{name} settles down",
+      "alert": "{name} notices something",
+      "commit": "{name} decides to give chase",
+      "search": "{name} searches for its lost quarry",
+      "return": "{name} heads back to its lair",
+      "recover": "{name} stops to catch its breath"
+    },
+    "party": {
+      "idle": "{name} decides to stand around",
+      "follow": "{name} decides to walk with the leader",
+      "walk": "{name} decides to take a stroll",
+      "visit": "{name} decides to go and chat with someone",
+      "look": "{name} decides to look at something",
+      "return": "{name} decides to catch up with the leader",
+      "need": {
+        "hunger": "{name} decides to find something to eat",
+        "sleep": "{name} decides to get some rest",
+        "hygiene": "{name} decides to go and wash",
+        "social": "{name} decides to look for company",
+        "leisure": "{name} decides to have some fun"
+      }
+    },
+    "battle": {
+      "acts": "{name} uses {skill} on {target}",
+      "actsPlain": "{name} uses {skill}",
+      "approaches": "{name} moves in to use {skill}",
+      "holds": "{name} holds position"
+    }
+  }
 }

@@ -53,7 +53,7 @@
         SHIP_FLY_MIN, SHIP_FLY_MAX, SHIP_CLIMB_RATE,
         STEER_EASE, STEER_FALLOFF, STEP_SOUNDS, SURFACES, SkyFx, SolomonRitualFx, SpeedWarpFx, TALK_RANGE,
         SpellCaster, SpellFx, SPELL_SLOTS, BAR_MODES, isHealingSkill,
-        ParkedVehicles, TrafficManager, UnderwaterFx, VanModel, VoxelTerrain,
+        ParkedVehicles, TrafficManager, RoadTravellerManager, UnderwaterFx, VanModel, VoxelTerrain,
         WALK_LANTERN_INTENSITY, WARP_START_KMH, WHEELBASE, WORLD_MAP_ID,
         WORLD_SCALE, WORLD_TILES, WORLD_TILE_SIZE, WaterPlane, WeatherParticles, skyFogColor,
         VOX, VoxelTool, VoxelWorldState, WheelFx, ZOOM_MAX, _clearBiomeCaches, _perlin, camperCan,
@@ -106,6 +106,13 @@
 
     // How often the action prompt under the crosshair is worked out, in frames.
     const PROMPT_EVERY = 6;
+    // A lift: how far outside the cab still counts as at it, and how long the
+    // doors stay shut on a ride (a floor or two is a moment, the top of a
+    // tower from the lobby is a few seconds, never more).
+    const LIFT_REACH              = 4;
+    const LIFT_HOLD_MS            = 350;
+    const LIFT_HOLD_PER_FLOOR_MS  = 70;
+    const LIFT_HOLD_MAX_MS        = 2200;
     // How many frames the world waits on a window that says it is open but
     // is nowhere on screen before it takes itself back (about a second).
     const MENU_WATCHDOG = 60;
@@ -644,6 +651,8 @@
             // the free-play context worth losing.
             this._noEncounters = this._standalone;
             this._pendingShop = null;      // a shopkeeper waiting to open their stock
+            this._pendingLift = null;      // a floor picked in a lift, waiting to be ridden to
+            this._liftRiding  = false;     // the doors are shut and the cab is moving
             this._speedKmh   = 0;          // parked on entry; throttle or auto-travel moves it
             this._steerSmooth = 0;         // eased steering input for smoother turning
             this._tmpSky     = new THREE.Color();
@@ -993,6 +1002,8 @@
             // The people: a town's own citizens on its pavements, and the party
             // (and the pet) walking behind the leader whenever they are on foot.
             this._crowd        = noGround ? null : new CityCrowd(this._scene, this._terrain);
+            // And the people on the road between towns, on foot, bike or broom.
+            this._travellers   = noGround || !RoadTravellerManager ? null : new RoadTravellerManager(this._scene);
             this._interiors    = noGround ? null : new BuildingInteriors(this._scene, this._terrain);
             this._followers    = noGround ? null : new FollowerCrowd(this._scene);
             this._engine       = (this._titleMode || this._footOnly) ? null : new EngineAudio();
@@ -1697,6 +1708,8 @@
             if (this._lootBody()) return;
             if (this._talkToShopkeeper()) return;
             if (this._talkToCitizen()) return;
+            // Standing in a lift: pick a floor.
+            if (this._callLift()) return;
             // A chest beats the scenery: it is a chest, not a crate to break up.
             if (this._openChest()) return;
             // The water in front of them, with a rod in the pack.
@@ -2051,6 +2064,97 @@
             }
         }
 
+        // ---------------------------------------------------------------------
+        // Lifts
+        // ---------------------------------------------------------------------
+        // Anything four floors or taller has a lift in a back corner, a steel
+        // cab on every floor (VoxelWorldSettlements' planInterior). It works
+        // the way the vault's does on the 2D maps: step in, press the action
+        // key, pick a floor off the list, and the doors shut, the cab runs and
+        // they open again on that floor. The ride is a teleport under a fade,
+        // exactly like the vault's, with the wait growing with the distance.
+        _liftHere() {
+            if (!this._interiors || this._viewMode !== 'foot' || this._liftRiding) return null;
+            const rig = this._fpc.getRig().position;
+            return this._interiors.liftAt(rig.x, rig.y - (this._fpc.eyeH || FOOT_EYE), rig.z, LIFT_REACH);
+        }
+
+        _callLift() {
+            if (this.isPaused()) return false;
+            const stop = this._liftHere();
+            if (!stop) return false;
+            if (typeof $gameMessage === 'undefined' || $gameMessage.isBusy()) return true;
+            this._menuOpen = true;
+            if (this._overlay) this._overlay.style.display = 'none';
+            releasePointerLock();
+            if (typeof SoundManager !== 'undefined') SoundManager.playOk();
+            // Ground floor first, the way the vault lists a building's floors,
+            // and never the floor the cab is already on.
+            const choices = [], targets = [];
+            for (let f = 0; f < stop.floors; f++) {
+                if (f === stop.floor) continue;
+                choices.push(f === 0 ? T('ProceduralHouse.groundFloor')
+                    : T('ProceduralHouse.floorNumbered', { n: f }));
+                targets.push(f);
+            }
+            choices.push(T('ProceduralHouse.cancel'));
+            targets.push(-1);
+            window.skipLocalization = true;
+            $gameMessage.add(T('ProceduralHouse.selectFloor'));
+            $gameMessage.setChoices(choices, 0, choices.length - 1);
+            $gameMessage.setChoiceBackground(0);
+            $gameMessage.setChoicePositionType(2);
+            window.skipLocalization = false;
+            $gameMessage.setChoiceCallback((idx) => {
+                const target = targets[idx];
+                if (target >= 0) {
+                    this._pendingLift = { key: stop.key, from: stop.floor, floor: target };
+                } else {
+                    this._menuOpen = false;
+                    if (this._overlay) this._overlay.style.display = '';
+                }
+            });
+            return true;
+        }
+
+        // The ride itself: doors shut (the fade), the cab runs for as long as
+        // the distance takes, the party is put on the new floor with that
+        // floor already standing round them, and the doors open again.
+        _rideLift(ride) {
+            this._menuOpen = false;
+            if (this._overlay) this._overlay.style.display = '';
+            if (!this._interiors || !this._interiors.liftStop(ride.key, ride.floor)) return;
+            this._liftRiding = true;
+            this._fpc.clearMove();
+            const hold = Math.min(LIFT_HOLD_MAX_MS,
+                LIFT_HOLD_MS + LIFT_HOLD_PER_FLOOR_MS * Math.abs(ride.floor - ride.from));
+            this._fade(1, () => {
+                if (this._disposed) return;
+                setTimeout(() => {
+                    if (this._disposed) return;
+                    const at = this._interiors ? this._interiors.liftStop(ride.key, ride.floor) : null;
+                    if (at) {
+                        this._interiors.focusFloor(ride.key, ride.floor);
+                        const rig = this._fpc.getRig();
+                        rig.position.set(at.x, at.y + (this._fpc.eyeH || FOOT_EYE), at.z);
+                        this._fpc.vy = 0;
+                        if (typeof AudioManager !== 'undefined') {
+                            AudioManager.playSe({ name: 'Move1', volume: 70, pitch: 100, pan: 0 });
+                        }
+                    }
+                    this._fade(0, () => { this._liftRiding = false; });
+                }, hold);
+            });
+        }
+
+        // The townsperson or road traveller nearest a point: both are talked
+        // to the same way (a traveller is shaped as a citizen, { name, wx, wy }).
+        _nearestPerson(x, z, maxD) {
+            const ped = this._crowd ? this._crowd.nearest(x, z, maxD) : null;
+            if (ped || !this._travellers) return ped;
+            return this._travellers.nearest(x, z, maxD);
+        }
+
         _talkToCitizen() {
             if (!this._crowd || this._viewMode !== 'foot') return false;
             if (this.isPaused()) return false;
@@ -2060,7 +2164,7 @@
             if (!(SceneManager._scene instanceof Scene_Map)) return false;
             if (!SceneManager._scene._messageWindow) return false;
             const rig = this._fpc.getRig().position;
-            const ped = this._crowd.nearest(rig.x, rig.z, TALK_RANGE);
+            const ped = this._nearestPerson(rig.x, rig.z, TALK_RANGE);
             if (!ped) return false;
             this._openCitizenMenu(ped);
             return true;
@@ -2735,6 +2839,15 @@
             // A townsperson's answer, given once the choice window has closed:
             // their line goes in the message window, and Empathize opens their
             // panel as a scene of its own (which _suspended then waits out).
+            if (this._pendingLift) {
+                if (typeof $gameMessage !== 'undefined' && $gameMessage.isBusy()) {
+                    return this._holdForWindow(delta, now);
+                }
+                const ride = this._pendingLift;
+                this._pendingLift = null;
+                this._rideLift(ride);
+                return;
+            }
             if (this._pendingShop) {
                 if (typeof $gameMessage !== 'undefined' && $gameMessage.isBusy()) {
                     return this._holdForWindow(delta, now);
@@ -2921,7 +3034,8 @@
             } else if (this._viewMode === 'car') {
                 this._updateCarCamera(delta);
             } else {
-                this._fpc.update(delta);
+                // Nobody walks out of a moving lift.
+                if (!this._liftRiding) this._fpc.update(delta);
                 if (this._solomonShake > 0) {
                     this._camera.position.x += (Math.random() - 0.5) * this._solomonShake * 4;
                     this._camera.position.y += (Math.random() - 0.5) * this._solomonShake * 4;
@@ -3103,11 +3217,13 @@
                 const camYaw = this._cameraYaw();
                 const df = this._dayFactor == null ? 1 : this._dayFactor;
                 if (this._crowd) this._crowd.update(delta, this._vanX, this._vanZ, camYaw, df);
+                if (this._travellers) this._travellers.update(delta, this._vanX, this._vanZ, camYaw, df,
+                    (x, z) => this._groundUnderfoot(x, z));
                 // Insides are only worth building for somebody who could walk
                 // into one, so they follow the walker rather than the camper.
                 if (this._interiors && this._viewMode === 'foot') {
                     const rp = this._fpc.getRig().position;
-                    this._interiors.update(rp.x, rp.z);
+                    this._interiors.update(rp.x, rp.z, rp.y - (this._fpc.eyeH || FOOT_EYE));
                     // Whoever is minding the shops turns to face you.
                     this._interiors.tickKeepers(rp.x, rp.z, camYaw, df);
                 }
@@ -3378,7 +3494,7 @@
                 : ((fam === 'rocky' && R3D.rockyCraterList) ? R3D.rockyCraterList(seed, 14) : null);
             const opts = { family: fam, isOcean: !!t.isOcean };
             const out = { e: 0, seaLevel: 0.5, band: 'rock', crater: 0,
-                          detail: 0.5, crack: 0, fracture: 0 };
+                          detail: 0.5, crack: 0, fracture: 0, craterR: 1 };
 
             const field = (gx, gz) => {
                 const u = ((gx / w) % 1 + 1) % 1;
@@ -3396,6 +3512,7 @@
                 out.crack = info.crack || 0;
                 out.fracture = info.fracture || 0;
                 out.crater = 0;
+                out.craterR = 1;
                 if (craters) {
                     // How deep into a crater this square is: 0 outside, 1 dead
                     // centre. Longitude is measured the short way round so a
@@ -3406,7 +3523,9 @@
                         if (du > w / 2) du -= w; else if (du < -w / 2) du += w;
                         const dv = (f - c.v) * h;
                         const d = Math.hypot(du, dv) / c.r;
-                        if (d < 1) out.crater = Math.max(out.crater, 1 - d);
+                        // The deepest crater here, and how wide it is: the
+                        // ground sinks a crater in proportion to its size.
+                        if (d < 1 && 1 - d > out.crater) { out.crater = 1 - d; out.craterR = c.r; }
                     }
                 }
                 return out;
@@ -3936,7 +4055,7 @@
         }
 
         isPaused() {
-            return !!(this._menuOpen || this._suspended || this._msgWatch ||
+            return !!(this._menuOpen || this._suspended || this._msgWatch || this._liftRiding ||
                       this._battleWatch || this._stationRefuelWatch || this._domMenuOpen ||
                       this._isFullMapOpen());
         }
@@ -5144,6 +5263,9 @@
         // bumper meets elsewhere in the scene are knocks: they are felt through
         // the camera, they cost speed, and they leave the parts alone.
         _checkTrafficCollision(delta) {
+            // People on the road step aside; a broom is overhead and is never
+            // in the way (RoadTravellerManager.bumpFrom).
+            if (this._travellers) this._travellers.bumpFrom(this._vanX, this._vanZ, FOOT_VAN_HALF_LEN);
             if (this._crashCooldown > 0) { this._crashCooldown -= delta; return; }
             if (!this._traffic) return;
             for (const car of this._traffic._cars) {
@@ -5532,9 +5654,10 @@
                 }
             }
             if (!text && this._crowd) {
-                const ped = this._crowd.nearest(here.x, here.z, TALK_RANGE);
+                const ped = this._nearestPerson(here.x, here.z, TALK_RANGE);
                 if (ped) text = T('CamperDrive.prompt.talk', { key, name: ped.name });
             }
+            if (!text && this._liftHere()) text = T('CamperDrive.prompt.lift', { key });
             // A chest is what the key would open before it is anything else,
             // and it is the only prompt out here that says what is in it.
             if (!text) {
@@ -6546,6 +6669,8 @@
                 const camYaw = this._cameraYaw();
                 const df = this._dayFactor == null ? 1 : this._dayFactor;
                 if (this._crowd) this._crowd.update(delta, at.x, at.z, camYaw, df);
+                if (this._travellers) this._travellers.update(delta, at.x, at.z, camYaw, df,
+                    (x, z) => this._groundUnderfoot(x, z));
                 // Not while a fight is on: they are out of frame for it (see
                 // beginBattleView) and walking them would only put the trail
                 // back.
@@ -7710,6 +7835,7 @@
             if (this._wheelFx)      this._wheelFx.dispose();
             if (this._bioEnemies)   this._bioEnemies.dispose();
             if (this._crowd)        this._crowd.dispose();
+            if (this._travellers)   this._travellers.dispose();
             if (this._interiors)    this._interiors.dispose();
             if (this._followers)    this._followers.dispose();
             this._clearAlongside();

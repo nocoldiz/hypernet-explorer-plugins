@@ -504,6 +504,89 @@
         return best;
     }
 
+    // The book, written once for the course and for a punter nobody watches.
+    // Sets `chance` and `odds` on every runner of `horses`.
+    const HOUSE_EDGE = 0.20;
+    const BOOK_TRIALS = 200;
+    function priceField(horses, rnd) {
+        const n = horses.length;
+        const wins = new Array(n).fill(0);
+        for (let t = 0; t < BOOK_TRIALS; t++) wins[simulateRace(horses, rnd)]++;
+        horses.forEach((h, i) => {
+            // Smoothed, so a runner that lost every trial is a long price
+            // rather than an infinite one.
+            const p = (wins[i] + 1) / (BOOK_TRIALS + n);
+            const fair = (1 / p) * (1 - HOUSE_EDGE);
+            h.chance = p;
+            h.odds = Math.max(1.2, fair < 5 ? Math.round(fair * 10) / 10 : Math.round(fair));
+        });
+        return horses;
+    }
+
+    //=========================================================================
+    // A bet with nobody in the stand: an NPC at the bookmaker's
+    // (NPCSimulationCore MINIGAME PLAY). The field is drawn from the world's
+    // own thirty runners, priced by the same book, and the race is run by the
+    // same model the book prices, so the house keeps the same edge on them as
+    // on the player. `rng` is a function answering [0, 1): the punter's own
+    // choices. `opts.raceKey` names one race: its field, its prices and its
+    // result come off that key alone, so everybody betting on it bets on the
+    // same race and a replay is the same race. Without it the punter's stream
+    // runs the lot. `opts.pick` is 'form' (a runner picked in proportion to
+    // its chance, the default), 'favourite', 'longshot' or a lane index.
+    //=========================================================================
+    const _npcBook = { key: null, horses: null, winner: -1 };
+    function runRace(rnd) {
+        const pool = getHorsePool();
+        const picked = [];
+        let guard = 0;
+        while (picked.length < Math.min(LANES, pool.length) && guard++ < 500) {
+            const index = Math.floor(rnd() * pool.length);
+            if (!picked.includes(index)) picked.push(index);
+        }
+        const horses = priceField(picked.map(index => Object.assign({}, pool[index])), rnd);
+        return { horses, winner: simulateRace(horses, rnd) };
+    }
+    function simulateBet(stake, rng, opts) {
+        const rnd = typeof rng === 'function' ? rng : Math.random;
+        const o = opts || {};
+        let race;
+        if (o.raceKey != null) {
+            if (_npcBook.key !== o.raceKey) {
+                const r = runRace(mulberry32(hashStr('race:' + o.raceKey) ^ (worldSeed() >>> 0)));
+                _npcBook.key = o.raceKey;
+                _npcBook.horses = r.horses;
+                _npcBook.winner = r.winner;
+            }
+            race = { horses: _npcBook.horses, winner: _npcBook.winner };
+        } else {
+            race = runRace(rnd);
+        }
+        const horses = race.horses;
+        let pick;
+        if (Number.isInteger(o.pick) && horses[o.pick]) pick = o.pick;
+        else if (o.pick === 'favourite') pick = horses.reduce((b, h, i) => (h.chance > horses[b].chance ? i : b), 0);
+        else if (o.pick === 'longshot') pick = horses.reduce((b, h, i) => (h.chance < horses[b].chance ? i : b), 0);
+        else {
+            let roll = rnd() * horses.reduce((sum, h) => sum + h.chance, 0);
+            pick = horses.length - 1;
+            for (let i = 0; i < horses.length; i++) {
+                roll -= horses[i].chance;
+                if (roll <= 0) { pick = i; break; }
+            }
+        }
+        const winner = race.winner;
+        const bet = Math.max(0, Math.floor(Number(stake) || 0));
+        const won = winner === pick;
+        return {
+            won, stake: bet, payout: won && bet > 0 ? payout(bet, horses[pick].odds) : 0,
+            odds: horses[pick].odds, pick, winnerIndex: winner,
+            horse: horses[pick].name, winner: horses[winner].name
+        };
+    }
+
+    window.AnimatedHorseRace = { simulateBet, priceField, HOUSE_EDGE };
+
     const STATE = { SELECTION: 'selection', RACING: 'racing', RESULTS: 'results' };
 
     const CAM = { PADDOCK: 'paddock', BROADCAST: 'broadcast', HEADON: 'headon', POST: 'post' };
@@ -1607,20 +1690,7 @@
         // model as tangled as this one, and any independent estimate drifts away
         // from what actually happens the moment the race is retuned.
         assignOdds() {
-            const HOUSE_EDGE = 0.20;
-            const TRIALS = 200;
-            const horses = this._raceHorses;
-            const n = horses.length;
-            const wins = new Array(n).fill(0);
-            for (let t = 0; t < TRIALS; t++) wins[simulateRace(horses, Math.random)]++;
-            horses.forEach((h, i) => {
-                // Smoothed, so a runner that lost every trial is a long price
-                // rather than an infinite one.
-                const p = (wins[i] + 1) / (TRIALS + n);
-                const fair = (1 / p) * (1 - HOUSE_EDGE);
-                h.chance = p;
-                h.odds = Math.max(1.2, fair < 5 ? Math.round(fair * 10) / 10 : Math.round(fair));
-            });
+            priceField(this._raceHorses, Math.random);
         }
 
         // ---- selection -----------------------------------------------------

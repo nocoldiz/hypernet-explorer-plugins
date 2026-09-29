@@ -210,6 +210,15 @@ Game_Army.prototype.removeTroop = function (troopId) {
   return false;
 };
 
+// Fire the whole company at once. Squads go with them: an officer with no
+// troops left under them has nothing to lead. Returns how many were let go.
+Game_Army.prototype.removeAllTroops = function () {
+  const count = this._troops.length;
+  this._troops = [];
+  this._squads = [];
+  return count;
+};
+
 Game_Army.prototype.getTotalWeeklyCost = function () {
   const wages = this._troops.reduce((sum, troop) => sum + troop.weeklyCost, 0);
   // A mercenary in the party is somebody who has been on the other side of
@@ -540,10 +549,14 @@ class UIArmyInputManager {
 
     // If confirmation dialog is open
     if (this.scene._confirmOpen) {
-      if (Input.isTriggered('left') || Input.isTriggered('right')) {
-        SoundManager.playCursor();
-        this.scene._confirmChoice = this.scene._confirmChoice === 'yes' ? 'no' : 'yes';
-        this.scene.refreshUIDOM();
+      // Yes is drawn on the left, No on the right: the cross points at one.
+      const pick = Input.isRepeated('left') ? 'yes' : (Input.isRepeated('right') ? 'no' : null);
+      if (pick) {
+        if (pick !== this.scene._confirmChoice) {
+          SoundManager.playCursor();
+          this.scene._confirmChoice = pick;
+          this.scene.refreshUIDOM();
+        }
       } else if (Input.isTriggered('ok')) {
         // Confirm on the highlighted answer is the same call the click makes,
         // so the keyboard and the pointer walk one path.
@@ -556,8 +569,8 @@ class UIArmyInputManager {
       return;
     }
 
-    // L1/R1 cycle between the command and troop tabs from anywhere
-    if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
+    // L1/R1 (Q / W, Tab) cycle between the command and troop tabs from anywhere
+    if (window.UINav ? window.UINav.tabDir() : (Input.isTriggered('pageup') || Input.isTriggered('pagedown'))) {
       SoundManager.playCursor();
       this.scene._activeTab = this.scene._activeTab === 'commands' ? 'troops' : 'commands';
       this.scene.refreshUIDOM();
@@ -566,11 +579,11 @@ class UIArmyInputManager {
 
     if (this.scene._activeTab === 'commands') {
       const cmdCount = this.scene.commandList().length;
-      if (Input.isTriggered('down')) {
+      if (Input.isRepeated('down')) {
         SoundManager.playCursor();
         this.scene._commandIndex = (this.scene._commandIndex + 1) % cmdCount;
         this.scene.refreshUIDOM();
-      } else if (Input.isTriggered('up')) {
+      } else if (Input.isRepeated('up')) {
         SoundManager.playCursor();
         this.scene._commandIndex = (this.scene._commandIndex - 1 + cmdCount) % cmdCount;
         this.scene.refreshUIDOM();
@@ -582,13 +595,21 @@ class UIArmyInputManager {
       }
     } else if (this.scene._activeTab === 'troops') {
       const troops = $gameArmy.getTroops();
-      if (troops.length === 0) return;
+      // An empty roll still has a way back to the commands.
+      if (troops.length === 0) {
+        if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+          SoundManager.playCancel();
+          this.scene._activeTab = 'commands';
+          this.scene.refreshUIDOM();
+        }
+        return;
+      }
 
-      if (Input.isTriggered('down')) {
+      if (Input.isRepeated('down')) {
         SoundManager.playCursor();
         this.scene._troopIndex = (this.scene._troopIndex + 1) % troops.length;
         this.scene.refreshUIDOM();
-      } else if (Input.isTriggered('up')) {
+      } else if (Input.isRepeated('up')) {
         SoundManager.playCursor();
         this.scene._troopIndex = (this.scene._troopIndex - 1 + troops.length) % troops.length;
         this.scene.refreshUIDOM();
@@ -624,10 +645,10 @@ class UIBuyTroopsInputManager {
       return;
     }
 
-    if (Input.isTriggered('down')) {
+    if (Input.isRepeated('down')) {
       SoundManager.playCursor();
       this.scene.updateSelection(this.scene._selectedIndex + 1);
-    } else if (Input.isTriggered('up')) {
+    } else if (Input.isRepeated('up')) {
       SoundManager.playCursor();
       this.scene.updateSelection(this.scene._selectedIndex - 1);
     } else if (Input.isTriggered('ok')) {
@@ -660,11 +681,11 @@ class UISquadsInputManager {
         return;
       }
 
-      if (Input.isTriggered('down')) {
+      if (Input.isRepeated('down')) {
         SoundManager.playCursor();
         this.scene._squadIndex = (this.scene._squadIndex + 1) % squads.length;
         this.scene.refreshUIDOM();
-      } else if (Input.isTriggered('up')) {
+      } else if (Input.isRepeated('up')) {
         SoundManager.playCursor();
         this.scene._squadIndex = (this.scene._squadIndex - 1 + squads.length) % squads.length;
         this.scene.refreshUIDOM();
@@ -680,13 +701,21 @@ class UISquadsInputManager {
       }
     } else if (this.scene._activeTab === 'leaders') {
       const leaders = this.scene._leadersList;
-      if (leaders.length === 0) return;
+      // No one to put in charge: Cancel still steps back to the squads.
+      if (leaders.length === 0) {
+        if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+          SoundManager.playCancel();
+          this.scene._activeTab = 'squads';
+          this.scene.refreshUIDOM();
+        }
+        return;
+      }
 
-      if (Input.isTriggered('down')) {
+      if (Input.isRepeated('down')) {
         SoundManager.playCursor();
         this.scene._leaderIndex = (this.scene._leaderIndex + 1) % leaders.length;
         this.scene.refreshUIDOM();
-      } else if (Input.isTriggered('up')) {
+      } else if (Input.isRepeated('up')) {
         SoundManager.playCursor();
         this.scene._leaderIndex = (this.scene._leaderIndex - 1 + leaders.length) % leaders.length;
         this.scene.refreshUIDOM();
@@ -860,6 +889,7 @@ Scene_Army.prototype.create = function () {
   this._troopIndex = 0;
   this._confirmOpen = false;
   this._confirmChoice = 'no';
+  this._confirmFireAll = false;
   this._troopToRelease = null;
 
   this.createDummyWindows();
@@ -1035,13 +1065,16 @@ Scene_Army.prototype.refreshUIDOM = function () {
 
   // Cursive parchment confirmation box overlay
   let confirmDialogHTML = "";
-  if (this._confirmOpen && this._troopToRelease) {
-    const name = armyT(this._troopToRelease.name);
+  if (this._confirmOpen && (this._troopToRelease || this._confirmFireAll)) {
+    const title = this._confirmFireAll ? T('ArmyManager.fireAllTitle') : T('ArmyManager.releaseTitle');
+    const body = this._confirmFireAll
+      ? T('ArmyManager.fireAllBody', { count: `<strong>${troopCount}</strong>` })
+      : T('ArmyManager.releaseBody', { name: `<strong>${armyT(this._troopToRelease.name)}</strong>` });
     confirmDialogHTML = `
         <div class="army-dialog-overlay">
             <div class="army-dialog">
-                <h3>${T('ArmyManager.releaseTitle')}</h3>
-                <p>${T('ArmyManager.releaseBody', { name: `<strong>${name}</strong>` })}</p>
+                <h3>${title}</h3>
+                <p>${body}</p>
                 <div class="army-dialog-buttons">
                     <button class="army-dialog-btn ${this._confirmChoice === 'yes' ? 'selected' : ''}" onclick="SceneManager._scene.confirmRelease('yes')">${T('ArmyManager.yes')}</button>
                     <button class="army-dialog-btn ${this._confirmChoice === 'no' ? 'selected' : ''}" onclick="SceneManager._scene.confirmRelease('no')">${T('ArmyManager.no')}</button>
@@ -1103,7 +1136,8 @@ Scene_Army.prototype.commandList = function () {
   return [
     { label: T('ArmyManager.reviewTroops'), key: "troops" },
     { label: T('ArmyManager.manageSquads'), key: "squads" },
-    { label: T('ArmyManager.practiceBattle'), key: "practice" }
+    { label: T('ArmyManager.practiceBattle'), key: "practice" },
+    { label: T('ArmyManager.fireAll'), key: "fireAll" }
   ];
 };
 
@@ -1145,6 +1179,8 @@ Scene_Army.prototype.handleCommandOk = function () {
     SceneManager.push(Scene_Squads);
   } else if (this._commandIndex === 2) {
     this.startPracticeBattle();
+  } else if (this._commandIndex === 3) {
+    this.promptFireAll();
   }
 };
 
@@ -1175,9 +1211,25 @@ Scene_Army.prototype.promptReleaseTroop = function (index) {
     SoundManager.playOk();
     this._confirmOpen = true;
     this._confirmChoice = 'no';
+    this._confirmFireAll = false;
     this._troopToRelease = troop;
     this.refreshUIDOM();
   }
+};
+
+// The same parchment confirm box, asking about the whole company instead of
+// one troop. "No" is highlighted first so a stray OK never empties the camp.
+Scene_Army.prototype.promptFireAll = function () {
+  if ($gameArmy.getTroopCount() === 0) {
+    SoundManager.playBuzzer();
+    return;
+  }
+  SoundManager.playOk();
+  this._confirmOpen = true;
+  this._confirmChoice = 'no';
+  this._confirmFireAll = true;
+  this._troopToRelease = null;
+  this.refreshUIDOM();
 };
 
 Scene_Army.prototype.confirmRelease = function (choice) {
@@ -1186,7 +1238,18 @@ Scene_Army.prototype.confirmRelease = function (choice) {
 };
 
 Scene_Army.prototype.handleConfirmOk = function () {
-  if (this._confirmChoice === 'yes' && this._troopToRelease) {
+  if (this._confirmChoice === 'yes' && this._confirmFireAll) {
+    SoundManager.playOk();
+    const fired = $gameArmy.removeAllTroops();
+    this._confirmOpen = false;
+    this._confirmFireAll = false;
+    this._troopIndex = 0;
+    this._activeTab = 'commands';
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('ArmyManager.firedAll', { count: fired }), { severity: "info" });
+    }
+    this.refreshUIDOM();
+  } else if (this._confirmChoice === 'yes' && this._troopToRelease) {
     SoundManager.playOk();
     $gameArmy.removeTroop(this._troopToRelease.id);
     this._confirmOpen = false;
@@ -1206,6 +1269,7 @@ Scene_Army.prototype.handleConfirmOk = function () {
   } else {
     SoundManager.playCancel();
     this._confirmOpen = false;
+    this._confirmFireAll = false;
     this._troopToRelease = null;
     this.refreshUIDOM();
   }
@@ -1880,6 +1944,96 @@ ArmyManager.grantRandomTroopsMixed = function (count) {
     granted++;
   }
   return granted;
+};
+
+//=============================================================================
+// The Goblin Horde's own troops
+//=============================================================================
+// The Horde is a hyperpower with no branch faction in Factions.json, so nothing
+// in the faction register fields its soldiers. Its roster is written here and
+// filed under the power's own standing key ("hp:<id>", the same key the
+// per-character reputation reads), so a Horde troop reads as the Horde's in the
+// army book rather than as an independent's. Names are faction.json keys
+// (factions.goblinhorde.troops.<key>.name), resolved like every other troop.
+// Cheap and many: the power has twice anyone's military and a tenth of their
+// economy, and its wages show it.
+ArmyManager.GOBLIN_HORDE_POWER = "Goblin Horde"; // i18n-ignore: Hyperpowers.json key
+ArmyManager.GOBLIN_HORDE_TROOPS = {
+  grunt:   { formation: "formations.line",      role: "roles.closequarters", spritename: "Skab/!$GoblinRecruit",
+             hp: 95,  mp: 30,  atk: 30, def: 22, mat: 10, mdf: 12, agi: 34, luk: 20, hiringCost: 6000,  weeklyCost: 1200 },
+  raider:  { formation: "formations.wedge",     role: "roles.closequarters", spritename: "Skab/!$GoblinRaider",
+             hp: 120, mp: 35,  atk: 44, def: 26, mat: 12, mdf: 14, agi: 42, luk: 26, hiringCost: 14000, weeklyCost: 2800 },
+  slinger: { formation: "formations.scattered", role: "roles.ranged",        spritename: "Skab/!$GoblinPeasant",
+             hp: 90,  mp: 30,  atk: 40, def: 18, mat: 10, mdf: 12, agi: 48, luk: 24, hiringCost: 11000, weeklyCost: 2200 },
+  guard:   { formation: "formations.phalanx",   role: "roles.closequarters", spritename: "Skab/!$GoblinGuard",
+             hp: 170, mp: 40,  atk: 50, def: 55, mat: 14, mdf: 22, agi: 30, luk: 20, hiringCost: 30000, weeklyCost: 6000 },
+  shaman:  { formation: "formations.circle",    role: "roles.support",       spritename: "Skab/!$GoblinWitch",
+             hp: 110, mp: 140, atk: 24, def: 24, mat: 58, mdf: 50, agi: 36, luk: 34, hiringCost: 26000, weeklyCost: 5200 },
+  warboss: { formation: "formations.column",    role: "roles.closequarters", spritename: "Skab/!$GoblinShogun",
+             hp: 240, mp: 60,  atk: 82, def: 64, mat: 20, mdf: 34, agi: 40, luk: 40, hiringCost: 90000, weeklyCost: 18000 },
+};
+
+// The standing key the Horde's troops are filed under: its Hyperpowers.json id
+// read off the register, "hp:4" when the register is not up yet.
+ArmyManager.goblinHordeKey = function () {
+  const gf = (typeof $gameFactions !== "undefined") ? $gameFactions : null;
+  const hp = (gf && typeof gf.getHyperpowers === "function")
+    ? gf.getHyperpowers().find(h => h && h.name === ArmyManager.GOBLIN_HORDE_POWER) : null;
+  return "hp:" + (hp ? hp.id : 4);
+};
+
+// One troop record of the roster, ready for Game_Army.addTroop, or null.
+ArmyManager.goblinHordeTroop = function (key) {
+  const base = ArmyManager.GOBLIN_HORDE_TROOPS[key];
+  if (!base) return null;
+  return Object.assign({ name: "factions.goblinhorde.troops." + key + ".name", spriteindex: 0 }, base);
+};
+
+// The readable name of one roster key ("grunt"), for a caller that lists a
+// plan before anybody is hired.
+ArmyManager.goblinHordeTroopName = function (key) {
+  return ArmyManager.GOBLIN_HORDE_TROOPS[key] ? armyT("factions.goblinhorde.troops." + key + ".name") : String(key || "");
+};
+
+// Weekly wages of a plan ([{ troop, count }]) before anybody is hired, so a
+// caller can state the upkeep it pays before the army exists.
+ArmyManager.goblinHordePlanWeeklyCost = function (plan) {
+  return (plan || []).reduce((sum, row) => {
+    const t = row && ArmyManager.GOBLIN_HORDE_TROOPS[row.troop];
+    return sum + (t ? t.weeklyCost * (Number(row.count) || 0) : 0);
+  }, 0);
+};
+
+// Hires exactly the plan, row by row, up to the army cap. Returns how many
+// troops were added.
+ArmyManager.grantGoblinHordeTroops = function (plan) {
+  if (typeof $gameArmy === "undefined" || !$gameArmy) return 0;
+  const key = ArmyManager.goblinHordeKey();
+  let granted = 0;
+  for (const row of plan || []) {
+    const troop = row && ArmyManager.goblinHordeTroop(row.troop);
+    if (!troop) continue;
+    for (let i = 0; i < (Number(row.count) || 0); i++) {
+      if (!$gameArmy.addTroop(key, troop)) return granted;
+      granted++;
+    }
+  }
+  return granted;
+};
+
+// The name a troop's standing key is shown under: a faction's own name, or a
+// hyperpower's for the "hp:<id>" keys the Horde's troops carry. Null when the
+// key names nobody (an independent).
+ArmyManager.troopFactionName = function (factionId) {
+  const gf = (typeof $gameFactions !== "undefined") ? $gameFactions : null;
+  if (!gf) return null;
+  const m = /^hp:(\d+)$/.exec(String(factionId));
+  if (m) {
+    const hp = typeof gf.getHyperpower === "function" ? gf.getHyperpower(Number(m[1])) : null;
+    return hp ? (typeof gf.hyperpowerLabel === "function" ? gf.hyperpowerLabel(hp) : hp.name) : null;
+  }
+  const faction = gf.getFaction(factionId);
+  return faction ? armyT(faction.name) : null;
 };
 
 PluginManager.registerCommand("ArmyManager", "debugAddTroops", args => {

@@ -752,9 +752,8 @@
     // It asks a scene for ccScrollTarget() and ccScrollStep() exactly as this
     // did, so the creation screens keep the panes they name; this stands down
     // when that poll is actually driving the stick rather than scrolling the
-    // same pane twice. That poll is off by default (STICK_SCROLL_ENABLED), and
-    // standing down for a poll that scrolls nothing left this spread with a
-    // dead stick, so the test is the flag and not the plugin being loaded.
+    // same pane twice. The test is the flag (STICK_SCROLL_ENABLED) and not the
+    // plugin being loaded, so a build with that poll off still scrolls here.
     // The body below is what a build without that plugin falls back on.
     update(container) {
       if (window.UIScroll && window.UIScroll.STICK_SCROLL_ENABLED === true &&
@@ -1420,10 +1419,12 @@
     //   detail    optional (option) => html, which turns the sheet into a spread
     //   search    force the search strip on or off (default: on past 12 rows)
     //   onPick    (value, option) => void
+    //   container where the sheet is drawn (default: the creation screen,
+    //             else the page); the Empathize panel passes its overlay
     open(opts) {
       if (!opts || typeof document === "undefined") return;
       this.close(true);
-      const container = document.getElementById("character-creation-container") ||
+      const container = opts.container || document.getElementById("character-creation-container") ||
         document.body;
       if (!container) return;
 

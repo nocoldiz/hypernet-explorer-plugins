@@ -575,7 +575,7 @@ E quando il dio muore?
 
 Bubba:
 Gli incantesimi finiscono, teso'.
-La maggior parte del repertorio sacro in mano al Vaticano è diventata spazzatura inutile dal 31 dicembre 2001.
+La maggior parte del repertorio sacro in mano al Vaticano è diventata spazzatura inutile dal 1° gennaio 2001.
 
 Em:
 Per colpa mia.

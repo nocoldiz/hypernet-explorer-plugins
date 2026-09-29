@@ -402,12 +402,17 @@
     "annexation": "annexation",
     "conquest": "conquest (formerly {power})",
     "declaredIndependence": "independence declared from {power}",
-    "declaredPower": "the {power} declares itself"
+    "declaredPower": "the {power} declares itself",
+    "coup": "a coup backed by {power}",
+    "goblinWorld": "the Goblin Horde's rule, the order of the world",
+    "goblinWorldFrom": "the Goblin Horde's rule, the order of the world (formerly {power})"
   },
   "conquest": {
     "independence": "{nation} breaks free of {power}; the {prevGov} is dismantled and a {gov} restored.",
     "annex": "{conqueror} annexes {nation}; the {prevGov} is replaced by a {gov}.",
-    "wrest": "{conqueror} wrests {nation} from {power}; the {prevGov} is replaced by a {gov}."
+    "wrest": "{conqueror} wrests {nation} from {power}; the {prevGov} is replaced by a {gov}.",
+    "coup": "A coup backed by {power} topples the {prevGov} of {nation}; a {gov} takes power.",
+    "goblinWorld": "The {power} is the order of the world: {count} nations live under its rule, and only {holdouts} hold out against it."
   },
   "epidemic": {
     "hysteriaName": "The {disease} of {origin}, {year}",
@@ -537,5 +542,17 @@
     "mario_draghi": "On 31 December 2000 he stepped out of his own body in the Frankfurt Eurotower and did not step back into it. The Gods seated him that night as the god of commerce, and every price set anywhere on Earth has been an offering to him since.",
     "aaron_swartz": "He took the library back off the people who had been selling it. The Archive Foundation has counted him one of its own ever since, and keeps a terminal open in his name in every reading room it holds.",
     "friedrich_hayek": "The Collective does not vote on him. His book is what it votes with."
+  },
+  "war": {
+    "declared": "{attacker} declares war on {defender} over {nation}.",
+    "declaredMany": "{attacker} declares war on {defender}, claiming {nation} and {others} other nations.",
+    "conquest": "taken in war (formerly {power})",
+    "taken": "{power} takes {nation} from {from} in the war.",
+    "whitePeace": "At the ONU's demand {attacker} and {defender} sign a white peace; every border returns to where it stood before the war.",
+    "exhaustion": "Exhausted after {months} months of war, {attacker} and {defender} sign a white peace and every border goes back to where it stood.",
+    "whitePeaceReason": "returned by {power} in a white peace",
+    "capitulation": "{loser} capitulates to {winner}; the war ends on the victor's terms.",
+    "ceasefire": "The ONU imposes a ceasefire between {attacker} and {defender}; the guns fall silent until {until}.",
+    "sanctions": "The ONU places {power} under sanctions over its war with {enemy}; its trade shrinks for a year."
   }
 }

@@ -6,6 +6,8 @@
     "skyscrapers": "grattacielo"
   },
   "log": {
+    "swam": "è andato a nuotare",
+    "caughtFish": "ha pescato un {fish}",
     "work": "ha lavorato come {job} guadagnando {pay}",
     "harvested": "ha raccolto le colture mature",
     "animalProduce": "ha raccolto i prodotti degli animali",
@@ -13,9 +15,9 @@
     "caughtStealing": "sorpreso a rubare {item}",
     "bought": "ha comprato {item} per {price}",
     "cooked": "ha cucinato {a} con {b}",
+    "ateFromHand": "ha mangiato {item} che portava con sé",
     "foundInContainer": "ha trovato {amount} frugando in un contenitore",
     "rentedRoom": "ha affittato una stanza per la notte ({price})",
-    "soldHoney": "ha venduto una partita di miele e cera per {amount}",
     "tookLoan": "ha acceso un prestito da {amount}",
     "deposited": "ha depositato {amount} su un conto di risparmio",
     "rentalIncome": "ha incassato {amount} di affitti",
@@ -23,7 +25,60 @@
     "stocksLoss": "ha perso {amount} in borsa",
     "movedHome": "si è trasferito in una {home} ({saved} da parte)",
     "reachedLevel": "ha raggiunto il livello {level}",
-    "met": "ha incontrato {name}"
+    "specHoned": "ha raggiunto il grado {level} in {spec}",
+    "met": "ha incontrato {name}",
+    "minigameWon": "ha giocato {game} e ha vinto {amount}",
+    "minigameLost": "ha giocato {game} e ha perso {amount}",
+    "minigameBeat": "ha giocato {game} e ha vinto",
+    "minigameBeaten": "ha giocato {game} e ha perso",
+    "minigameDraw": "ha giocato {game} finendo in pareggio",
+    "minigamePlayed": "ha giocato {game}",
+    "treated": "si è fatto curare con {item} per {price}",
+    "prosthetic": "ha sostituito una parte persa con {item} per {price}",
+    "harvestedCrop": "ha raccolto {qty} {item}",
+    "harvestedFor": "ha raccolto {qty} {item} per {owner}",
+    "collected": "ha raccolto {qty} {item} dagli animali",
+    "collectedFor": "ha raccolto {qty} {item} per {owner}",
+    "wateredParty": "ha annaffiato le piante di {plant} del gruppo",
+    "fedParty": "ha dato da mangiare a {animal} del gruppo",
+    "wateredHive": "ha riempito l'acqua dell'alveare del gruppo",
+    "usedFix": "ha usato {item} per calmare la voglia di {substance}",
+    "withdrawal": "è andato in astinenza da {substance}",
+    "withdrawalOver": "ha superato l'astinenza da {substance}",
+    "hiveCared": "si è preso cura delle api",
+    "hiveCaredParty": "si è preso cura delle api del gruppo",
+    "hiveTreated": "ha curato le api contro {threats}",
+    "honeyTaken": "ha tolto {qty} {item} dall'alveare",
+    "honeyTakenFor": "ha tolto {qty} {item} dall'alveare per {owner}",
+    "barrelCared": "ha badato a una botte di {brew}",
+    "barrelCaredParty": "ha badato alla botte di {brew} del gruppo",
+    "barrelBottled": "ha imbottigliato {qty} {item}",
+    "barrelBottledFor": "ha imbottigliato {qty} {item} per {owner}",
+    "barrelStarted": "ha messo a fermentare una botte di {brew}",
+    "sippedBrew": "si è concesso un goccio di {brew}",
+    "stocksBought": "ha comprato {shares} azioni di {company} per {amount}",
+    "stocksInherited": "ha ereditato le azioni di {name}",
+    "workInKind": "ha lavorato come {job} ed è stato pagato in cibo"
+  },
+  "tend": {
+    "waterFriend": "Le piante di {plant} avevano sete. È il minimo che posso fare per degli amici.",
+    "feedFriend": "Ho dato da mangiare a {animal}. Tra amici ci si prende cura degli animali a vicenda.",
+    "hiveFriend": "Ho rabboccato l'acqua del loro alveare. Anche le api hanno sete.",
+    "barrelFriend": "Ho dato un'occhiata alla loro botte di {brew}. Tra amici ci si guarda le cose a vicenda."
+  },
+  "minigame": {
+    "arcade": "a un cabinato arcade",
+    "slots": "alla slot machine",
+    "horserace": "alle corse dei cavalli",
+    "tournament": "al torneo dei mostri",
+    "cards": "un duello di carte",
+    "scratch": "un gratta e vinci",
+    "bowling": "una partita a bowling",
+    "pool": "una partita a biliardo",
+    "basketball": "una partita a basket",
+    "target": "al poligono di tiro",
+    "piano": "il pianoforte",
+    "tarot": "una lettura dei tarocchi"
   },
   "narrative": {
     "noHistory": "{name} non ha ancora una storia registrata.",
@@ -43,5 +98,28 @@
     "summary": "{name}: {list}.",
     "quiet": "{name} vive tranquillamente."
   },
-  "unknownDate": "Sconosciuta"
+  "unknownDate": "Sconosciuta",
+  "work": {
+    "served": [
+      "Ecco a te, {name}.",
+      "Il prossimo! Ah, {name}. Il solito?",
+      "Ecco fatto, {name}. Buona giornata.",
+      "Altro, {name}?"
+    ],
+    "thanked": [
+      "Grazie, {name}. Tieni il resto.",
+      "Servizio rapido, {name}. Mi piace.",
+      "Grazie mille, {name}.",
+      "Proprio quello che mi serviva, grazie."
+    ]
+  },
+  "addiction": {
+    "label": {
+      "nicotine": "nicotina",
+      "caffeine": "caffeina",
+      "narcotic": "narcotici",
+      "alcohol": "alcol",
+      "gambling": "gioco d'azzardo"
+    }
+  }
 }

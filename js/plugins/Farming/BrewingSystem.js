@@ -127,7 +127,10 @@
         const patience = window.SpecializationXP
             ? window.SpecializationXP.discount(recipe.spec || 'Brewing', 0.06, 0.75) : 1;
         const totalMinutes = (recipe.fermentHours || 0) * 60 * patience;
-        const elapsedMinutes = currentMinutes - savedData.startMinutes;
+        // careMin: the time a stir or a top-up by someone minding the barrel
+        // brought the brew closer (tendBarrel below); a barrel nobody minds
+        // has none.
+        const elapsedMinutes = currentMinutes - savedData.startMinutes + (Number(savedData.careMin) || 0);
         // Guard a 0/missing fermentHours: without it the division yields
         // Infinity/NaN progress and a barrel that never becomes ready.
         if (!(totalMinutes > 0)) {
@@ -141,6 +144,44 @@
         else if (progress < 1.00) stage = STAGES.CONDITIONING;
         else                      stage = STAGES.READY;
         return { recipe, progress, remainingMinutes, stage };
+    }
+
+    // What an untouched barrel holds the first time anybody looks into it: a
+    // seeded 40% are part way through a brew somebody left there, the rest
+    // are empty. The same roll whether the party or a townsperson looks first.
+    function seedBarrel(mapId, eventId, recipes, barrels) {
+        const key = getBarrelKey(mapId, eventId);
+        if (barrels[key]) return barrels[key];
+        if (!recipes || recipes.length === 0) return null;
+        const rng = mulberry32(getBarrelSeed(mapId, eventId));
+        if (rng() < 0.40) {
+            const recipeIdx = Math.floor(rng() * recipes.length);
+            const progress  = 0.05 + rng() * 0.90;     // 5% – 95% through
+            const recipe    = recipes[recipeIdx];
+            const fakeStart = getGameTimeMinutes() - Math.floor(progress * recipe.fermentHours * 60);
+            barrels[key] = {
+                recipeId:     recipe.id,
+                startMinutes: fakeStart,
+                isPreSeeded:  true
+            };
+            return barrels[key];
+        }
+        return null;
+    }
+
+    // The batch a finished barrel gives, rolled off the barrel and the minute
+    // its brew began, so the same brew always comes out the same. `skill`
+    // multiplies the roll, never the seed.
+    function rollBarrelOutput(mapId, eventId, savedData, recipe, skill) {
+        const rng = mulberry32(getBarrelSeed(mapId, eventId) + (savedData.startMinutes | 0));
+        const out = [];
+        for (const o of recipe.output) {
+            const item = $dataItems[o.item_id];
+            if (!item) continue;
+            const rolled = o.min + Math.floor(rng() * (o.max - o.min + 1));
+            out.push({ item, amount: Math.max(1, Math.round(rolled * skill)) });
+        }
+        return out;
     }
 
     //=========================================================================
@@ -196,25 +237,7 @@
         }
 
         _trySeedBarrel() {
-            const key     = this._currentBarrelKey;
-            const barrels = $gameSystem._brewingBarrels;
-            if (barrels[key]) return;                       // already tracked ,  skip
-            const recipes = this._recipes;
-            if (!recipes || recipes.length === 0) return;
-
-            const seed = getBarrelSeed(this._mapId, this._eventId);
-            const rng  = mulberry32(seed);
-            if (rng() < 0.40) {
-                const recipeIdx = Math.floor(rng() * recipes.length);
-                const progress  = 0.05 + rng() * 0.90;     // 5% – 95% through
-                const recipe    = recipes[recipeIdx];
-                const fakeStart = getGameTimeMinutes() - Math.floor(progress * recipe.fermentHours * 60);
-                barrels[key] = {
-                    recipeId:     recipe.id,
-                    startMinutes: fakeStart,
-                    isPreSeeded:  true
-                };
-            }
+            seedBarrel(this._mapId, this._eventId, this._recipes, $gameSystem._brewingBarrels);
         }
 
         terminate() {
@@ -283,19 +306,28 @@
 
         updateBreweryInput() {
             const count = this._recipes.length;
-            if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+            const dir = window.UINav ? UINav.navDir() : null;
+            // Right click is answered by the container's contextmenu listener
+            // alone: the same click also arrives as TouchInput's cancel, and
+            // reading both stepped out two levels on one press.
+            if (Input.isTriggered('cancel')) {
                 this.onCancelAction();
-            } else if (Input.isRepeated('up')) {
+            } else if (dir) {
+                // The recipes step by their drawn columns (one, as the page
+                // lays them out today) and stop at the edges.
                 if (count > 0) {
-                    this._selectedIndex = this._selectedIndex === -1 ? count - 1 : (this._selectedIndex - 1 + count) % count;
-                    SoundManager.playCursor();
-                    this.refreshUI();
-                }
-            } else if (Input.isRepeated('down')) {
-                if (count > 0) {
-                    this._selectedIndex = this._selectedIndex === -1 ? 0 : (this._selectedIndex + 1) % count;
-                    SoundManager.playCursor();
-                    this.refreshUI();
+                    let next;
+                    if (this._selectedIndex === -1 || this._selectedIndex == null) {
+                        next = dir === 'up' || dir === 'left' ? count - 1 : 0;
+                    } else {
+                        const list = this._container && this._container.querySelector('#brewery-recipe-list');
+                        next = UINav.gridStep(this._selectedIndex, dir, count, list || 1);
+                    }
+                    if (next !== this._selectedIndex) {
+                        this._selectedIndex = next;
+                        SoundManager.playCursor();
+                        this.refreshUI();
+                    }
                 }
             } else if (Input.isTriggered('ok')) {
                 if (this._selectedIndex !== -1) {
@@ -366,19 +398,14 @@
             if (!recipe) return;
 
             // Seed combines barrel identity with the exact brew start time so
-            // each brew of the same barrel produces a different but deterministic yield
-            const rng   = mulberry32(getBarrelSeed(this._mapId, this._eventId) + (savedData.startMinutes | 0));
+            // each brew of the same barrel produces a different but deterministic yield.
             // The roll stays seeded (the same barrel always brews the same
             // batch); skill is applied to the result, never to the seed.
             const spec  = recipe.spec || 'Brewing';  // i18n-ignore  specialization id  // i18n-ignore  specialization id
             const skill = window.SpecializationXP
                 ? window.SpecializationXP.multiplier(spec, 0.10) : 1;
             const gains = [];
-            for (const out of recipe.output) {
-                const item   = $dataItems[out.item_id];
-                if (!item) continue;
-                const rolled = out.min + Math.floor(rng() * (out.max - out.min + 1));
-                const amount = Math.max(1, Math.round(rolled * skill));
+            for (const { item, amount } of rollBarrelOutput(this._mapId, this._eventId, savedData, recipe, skill)) {
                 deliverFarmProduce(item, amount);
                 // What came out of the barrel, in the party's diary (Diary.js).
                 if (window.Diary) window.Diary.onCrafted('brew', item.name, amount);
@@ -955,9 +982,175 @@
         },
     };
 
+    //=========================================================================
+    // Barrels minded by other hands (NPCSim_Tending)
+    //=========================================================================
+    // The town's brewers, bartenders and householders look after the barrels
+    // they stand beside through these calls, on the same records the brewery
+    // page reads. Nothing here runs on the party's own path: the page still
+    // seeds, starts and bottles exactly as it did.
+    //   - a barrel is the party's when the party started it: a record that is
+    //     neither pre-seeded nor carries an `owner` or the `house` stamp of a
+    //     brew a townsperson set going. Nobody bottles or restarts it for them.
+    //   - a stir (early on) or a top-up (later) brings the brew CARE_STEP of its
+    //     time closer, at most CARE_CAP of it in all, and stamps lastTendedMin.
+    //   - a barrel nobody has minded since UNATTENDED_MIN is unattended; one
+    //     never minded counts from the minute its brew began.
+    const CARE_STEP = 0.01;
+    const CARE_MIN_STEP = 5;
+    const CARE_CAP = 0.10;
+    const UNATTENDED_MIN = 720;
+    const CARE_ACTIONS = ['check', 'stir', 'topUp'];
+    // The common events that open the brewery, read once off $dataCommonEvents.
+    let _breweryCommonEvents = null;
+    const _barrelEventCache = new WeakMap();
+
+    function breweryCommonEvents() {
+        if (_breweryCommonEvents) return _breweryCommonEvents;
+        const ids = new Set();
+        const list = (typeof $dataCommonEvents !== 'undefined' && $dataCommonEvents) || [];
+        for (const ce of list) {
+            if (ce && Array.isArray(ce.list) && ce.list.some(isOpenBreweryCommand)) ids.add(ce.id);
+        }
+        if (list.length) _breweryCommonEvents = ids;
+        return ids;
+    }
+
+    function isOpenBreweryCommand(cmd) {
+        return !!cmd && cmd.code === 357 && Array.isArray(cmd.parameters) && cmd.parameters[1] === 'OpenBrewery';
+    }
+
+    function totalCareMinutes(recipe) {
+        return Math.max(0, (Number(recipe && recipe.fermentHours) || 0) * 60);
+    }
+
+    const BarrelCare = {
+        UNATTENDED_MIN,
+        CARE_STEP,
+        CARE_CAP,
+
+        loadRecipes: () => BrewingRecipeLoader.load(),
+        recipes: () => BrewingRecipeLoader.get(),
+        recipeOf: (rec) => (rec ? BrewingRecipeLoader.findById(rec.recipeId) : null),
+        recipeName: (recipe) => (recipe ? BrewingRecipeLoader.text(recipe.name) : ''),
+
+        // A fermenting barrel on the map: named for it, or one whose page
+        // opens the brewery, directly or through a common event.
+        isBarrelEvent(ev) {
+            const data = ev && typeof ev.event === 'function' ? ev.event() : null;
+            if (!data) return false;
+            if (_barrelEventCache.has(data)) return _barrelEventCache.get(data);
+            let yes = /ferment/i.test(String(data.name || ''));
+            if (!yes && Array.isArray(data.pages)) {
+                const ces = breweryCommonEvents();
+                yes = data.pages.some(p => p && Array.isArray(p.list) && p.list.some(c =>
+                    isOpenBreweryCommand(c) || (c && c.code === 117 && ces.has(c.parameters && c.parameters[0]))));
+            }
+            _barrelEventCache.set(data, yes);
+            return yes;
+        },
+
+        barrelAt(mapId, eventId) {
+            const barrels = $gameSystem && $gameSystem._brewingBarrels;
+            return (barrels && barrels[getBarrelKey(mapId, eventId)]) || null;
+        },
+
+        // The barrel's record, seeded the way the brewery page seeds it when
+        // nobody has looked in yet. Null when it is empty, or the recipe book
+        // has not loaded.
+        ensureBarrel(mapId, eventId) {
+            if (!$gameSystem) return null;
+            if (!$gameSystem._brewingBarrels) $gameSystem._brewingBarrels = {};
+            const have = this.barrelAt(mapId, eventId);
+            if (have) return have;
+            return seedBarrel(mapId, eventId, BrewingRecipeLoader.get(), $gameSystem._brewingBarrels);
+        },
+
+        isPartyBarrel(rec) {
+            return !!rec && !rec.isPreSeeded && !rec.owner && !rec.house;
+        },
+
+        ownerOf(rec) {
+            return (rec && rec.owner) || null;
+        },
+
+        isAlcoholic(recipe) {
+            const r = typeof recipe === 'string' ? BrewingRecipeLoader.findById(recipe) : recipe;
+            return !!(r && r.alcoholic);
+        },
+
+        state(rec, minutes) {
+            return rec ? computeBarrelState(rec, minutes == null ? getGameTimeMinutes() : minutes) : null;
+        },
+
+        lastTendedOf(rec) {
+            if (!rec) return null;
+            return rec.lastTendedMin != null ? rec.lastTendedMin : rec.startMinutes;
+        },
+
+        isUnattended(rec, minutes) {
+            const last = this.lastTendedOf(rec);
+            if (last == null) return false;
+            const now = minutes == null ? getGameTimeMinutes() : minutes;
+            return now - last >= UNATTENDED_MIN;
+        },
+
+        // check | stir | topUp. Answers { stage, cared } or null when there is
+        // no brew in it. A check only stamps the visit; a stir or a top-up on a
+        // brew still working brings it closer, within CARE_CAP.
+        tendBarrel(mapId, eventId, action, minutes) {
+            const rec = this.barrelAt(mapId, eventId);
+            const now = minutes == null ? getGameTimeMinutes() : minutes;
+            const state = this.state(rec, now);
+            if (!state || !CARE_ACTIONS.includes(action)) return null;
+            rec.lastTendedMin = now;
+            let cared = false;
+            if (action !== 'check' && state.stage !== STAGES.READY) {
+                const total = totalCareMinutes(state.recipe);
+                const room = total * CARE_CAP - (Number(rec.careMin) || 0);
+                const step = Math.min(room, Math.max(CARE_MIN_STEP, total * CARE_STEP));
+                if (step > 0) {
+                    rec.careMin = (Number(rec.careMin) || 0) + step;
+                    cared = true;
+                }
+            }
+            return { stage: this.state(rec, now).stage, cared };
+        },
+
+        // Bottles a finished brew that is NOT the party's, handing back what
+        // came out ({ recipe, items: [{ itemId, qty }] }) instead of giving it
+        // to the party, and empties the barrel. Null when it is not ready.
+        bottleBarrelFor(mapId, eventId, minutes) {
+            const rec = this.barrelAt(mapId, eventId);
+            if (!rec || this.isPartyBarrel(rec)) return null;
+            const state = this.state(rec, minutes);
+            if (!state || state.stage !== STAGES.READY) return null;
+            const items = rollBarrelOutput(mapId, eventId, rec, state.recipe, 1)
+                .map(o => ({ itemId: o.item.id, qty: o.amount }));
+            delete $gameSystem._brewingBarrels[getBarrelKey(mapId, eventId)];
+            return { recipe: state.recipe, items };
+        },
+
+        // Sets a brew going in an empty barrel for `owner` (a townsperson's
+        // name), or for the house it stands in when there is none named.
+        startBarrelFor(mapId, eventId, recipeId, owner, minutes) {
+            if (!$gameSystem) return null;
+            if (!$gameSystem._brewingBarrels) $gameSystem._brewingBarrels = {};
+            if (this.barrelAt(mapId, eventId)) return null;
+            const recipe = BrewingRecipeLoader.findById(recipeId);
+            if (!recipe) return null;
+            const now = minutes == null ? getGameTimeMinutes() : minutes;
+            const rec = { recipeId: recipe.id, startMinutes: now, lastTendedMin: now };
+            if (owner) rec.owner = owner;
+            else rec.house = true;
+            $gameSystem._brewingBarrels[getBarrelKey(mapId, eventId)] = rec;
+            return rec;
+        },
+    };
+
     // The holdings monitor is part of the brewery's own plugin, and it is what
     // a console asks about barrels from away.
-    window.BrewingSystem = Object.assign(window.BrewingSystem || {}, {
+    window.BrewingSystem = Object.assign(window.BrewingSystem || {}, BarrelCare, {
         listBarrels: () => listBarrels(),
         barrelState: (saved, minutes) => computeBarrelState(saved, minutes == null ? getGameTimeMinutes() : minutes),
         STAGES,

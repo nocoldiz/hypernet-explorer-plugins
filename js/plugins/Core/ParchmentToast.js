@@ -111,6 +111,21 @@
  * Up to 6 are on screen at once; the oldest is dropped past that. Showing a
  * notification whose key is already up refreshes its timer instead of
  * stacking a duplicate. No plugin commands.
+ *
+ * -----------------------------------------------------------------------
+ * Simulation log (Options, Experimental)
+ * -----------------------------------------------------------------------
+ * With the experimental "Simulation Log" option on, every decision a party
+ * member, a monster or an NPC takes on the current map is popped as a toast.
+ * The plugin that takes the decision reports it, one call, and does nothing
+ * else when the option is off:
+ *
+ *   SimLog.decide('npc', eventName, 'ParchmentToast.simLog.npc.goal.wander',
+ *                 { name: eventName });
+ *
+ * Each subject owns one toast that its next decision redraws, the lines are
+ * rate limited, and they are the first ones dropped to make room for anything
+ * else, so the log never buries a real notification.
  */
 (() => {
   "use strict";
@@ -650,9 +665,12 @@
   const PRIORITY_ITEM = 10;
   const PRIORITY_DEFAULT = 20;
   const PRIORITY_QUEST_MAIL = 30;
+  // Simulation log lines: always the first evicted.
+  const PRIORITY_SIMLOG = 40;
 
   function detectPriority(opts, text) {
     if (opts.persist) return PRIORITY_STICKY;
+    if (opts.category === "simlog") return PRIORITY_SIMLOG;  // i18n-ignore  category id
     const cat = opts.category || (opts.type === "item" || opts.type === "quest" || opts.type === "mail" ? opts.type : null);
     if (cat === "item" || opts.isItem) return PRIORITY_ITEM;
     if (cat === "quest" || opts.isQuest) return PRIORITY_QUEST_MAIL;
@@ -1460,6 +1478,84 @@
     hookItemCommand(127, () => (typeof $dataWeapons !== "undefined" ? $dataWeapons : null));
     hookItemCommand(128, () => (typeof $dataArmors !== "undefined" ? $dataArmors : null));
   }
+
+  // ------------------------------------------------------------------------
+  // Simulation log
+  // ------------------------------------------------------------------------
+  // Only what happens on the map the player is looking at: a decision taken
+  // behind a menu, in the battle scene or on another map is not logged.
+  const SIMLOG_PER_SECOND = 6;
+  const SIMLOG_DURATION = 150;
+  const SIMLOG_SEVERITY = { party: "good", monster: "danger", npc: "info" };  // i18n-ignore  severity ids
+  let _simlogWindowStart = 0;
+  let _simlogCount = 0;
+
+  if (typeof ConfigManager !== "undefined") {
+    ConfigManager.simulationLog = false;
+    const _makeData = ConfigManager.makeData;
+    ConfigManager.makeData = function () {
+      const config = _makeData.call(this);
+      config.simulationLog = this.simulationLog;
+      return config;
+    };
+    const _applyData = ConfigManager.applyData;
+    ConfigManager.applyData = function (config) {
+      _applyData.call(this, config);
+      this.simulationLog = !!config.simulationLog;
+    };
+  }
+
+  if (window.GameOptions && typeof GameOptions.registerOption === "function") {
+    GameOptions.registerOption(
+      "simulationLog",
+      () => T("ParchmentToast.simLog.optionName"),
+      () => !!ConfigManager.simulationLog,
+      (value) => { ConfigManager.simulationLog = !!value; },
+      "experimental",
+      "boolean"
+    );
+  }
+
+  const SimLog = {
+    enabled() {
+      return typeof ConfigManager !== "undefined" && !!ConfigManager.simulationLog;
+    },
+
+    // True when a decision taken now would be logged. Call sites that have to
+    // work out a name first ask this before doing the work.
+    active() {
+      if (!this.enabled()) return false;
+      if (typeof Scene_Map === "undefined" || typeof SceneManager === "undefined") return false;
+      return SceneManager._scene instanceof Scene_Map;
+    },
+
+    // kind: "party", "monster" or "npc". id: whatever tells this subject
+    // apart from the others of its kind. key/params: the i18n line.
+    decide(kind, id, key, params) {
+      try {
+        if (!this.active()) return;
+        const now = Date.now();
+        if (now - _simlogWindowStart >= 1000) {
+          _simlogWindowStart = now;
+          _simlogCount = 0;
+        }
+        if (_simlogCount >= SIMLOG_PER_SECOND) return;
+        const line = T(key, params || {});
+        if (!line || line === key) return;
+        _simlogCount++;
+        show(T("ParchmentToast.simLog.line", {
+          kind: T("ParchmentToast.simLog.kind." + kind),
+          text: line
+        }), {
+          key: "simlog:" + kind + ":" + id,  // i18n-ignore  dedupe key
+          category: "simlog",  // i18n-ignore  category id
+          severity: SIMLOG_SEVERITY[kind] || "info",
+          duration: SIMLOG_DURATION
+        });
+      } catch (e) { /* a log line never stops the decision it reports */ }
+    }
+  };
+  window.SimLog = SimLog;
 
   window.ParchmentToast = {
     show,

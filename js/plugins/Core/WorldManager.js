@@ -133,6 +133,11 @@
     // a default world is the reproducible "esoteric" world rather than a random
     // one. Shared with the creation UI through WorldManager.DEFAULT_SEED.
     const DEFAULT_WORLD_SEED = "esoteric";
+    // The default world itself: always present in the Worlds screen, built on
+    // the default seed and copied out of the snapshot shipped in
+    // data/DefaultWorld/. It cannot be deleted, only regenerated back to that
+    // snapshot (regenerateDefaultWorld).
+    const DEFAULT_WORLD_NAME = "Esoteric"; // i18n-ignore: world folder name, persistence key
     // Canonical world starting date: 1 January 2001, 10:00, which is minute 0
     // of the world clock (the TimeDateSystem epoch).
     const DEFAULT_START_YEAR = 2001;
@@ -404,7 +409,18 @@
             _npcMapSizes: "mapSizes",
             _npcMapTags: "mapTags",
             _npcMapLastVisitAt: "mapLastVisitAt",
-            _npcPoolCache: "poolCache",
+            // The people of every map group, dealt from the world seed when the
+            // world is made (NPCSystem.js, ResidentRegistry): each resident's
+            // home map, keyed by group. World-shared, so a town is the same
+            // town in every savegame of the world.
+            _npcResidents: { prop: "residents", merge: mergeByKey },
+            _npcResidentSpots: { prop: "residentSpots", merge: mergeByKey },
+            // Who moved to a procedural square for good, keyed by group, and
+            // each town's departures and head-count baseline for the move caps
+            // (NPCSystem.js ResidentRegistry.rehome, NPCLifeSimulator.js
+            // RELOCATION). World-shared like the residents themselves.
+            _npcImmigrants: { prop: "immigrants", merge: mergeByKey },
+            _npcRelocations: "relocations",
             _npcLastMapId: "lastMapId",
             _npcLastNeedsTick: "lastNeedsTick",
             _npcLastOpinionDecayDay: "lastOpinionDecayDay",
@@ -802,6 +818,7 @@
         DEFAULT_SEED: DEFAULT_WORLD_SEED,
         DEFAULT_START_YEAR: DEFAULT_START_YEAR,
         DEFAULT_START_MONTH: DEFAULT_START_MONTH,
+        DEFAULT_WORLD_NAME: DEFAULT_WORLD_NAME,
 
         isValidName(name) {
             return typeof name === "string" && /^[A-Za-z0-9 _-]{1,40}$/.test(name.trim());
@@ -981,6 +998,143 @@
                 console.error(`[WorldManager] Failed to write '${fileKey}' for world '${name}'`, e);
                 return false;
             }
+        },
+
+        // --- the default world shipped in the game folder ---------------------
+        //
+        // data/DefaultWorld/ holds a whole world folder generated at build time
+        // (tools/build/gen_default_world.js starts the game with the genworld
+        // option, Titlescreen.js builds the default world and hands it to
+        // exportWorldTemplate). A new default world is copied out of it instead
+        // of simulated on the player's machine. A world step added after the
+        // snapshot was taken is not marked done in it, so initializeWorld still
+        // runs that one step on top of the copy.
+        //
+        // NW.js only: the browser backend has no folder to copy from and keeps
+        // generating the world itself.
+
+        defaultTemplateDir() {
+            if (!isNwjs) return null;
+            const path = require("path");
+            return path.join(path.dirname(process.mainModule.filename), "data", "DefaultWorld");
+        },
+
+        // The template's own record (seed, when, which files), or null when
+        // there is none or it was made for a different default seed, which
+        // would hand the player a world that is not the default one.
+        defaultWorldTemplate() {
+            const dir = this.defaultTemplateDir();
+            if (!dir) return null;
+            const fs = require("fs");
+            const path = require("path");
+            const marker = path.join(dir, "template.json");
+            if (!fs.existsSync(marker)) return null;
+            try {
+                const info = JSON.parse(fs.readFileSync(marker, "utf8"));
+                if (!info || info.seed !== DEFAULT_WORLD_SEED || !Array.isArray(info.files)) return null;
+                if (!info.files.every(f => fs.existsSync(path.join(dir, f)))) return null;
+                return info;
+            } catch (e) {
+                console.error("[WorldManager] Unreadable default world template", e);
+                return null;
+            }
+        },
+
+        // Fills a world just made by createWorld with the shipped template.
+        // world.json keeps its own name and dates and takes everything else
+        // (seed, the initialized steps, the nation brackets) from the template.
+        // Returns false, leaving the world untouched, when there is no template.
+        seedWorldFromTemplate(name) {
+            const info = this.defaultWorldTemplate();
+            if (!info || !this.worldExists(name)) return false;
+            const fs = require("fs");
+            const path = require("path");
+            const dir = this.defaultTemplateDir();
+            try {
+                for (const file of info.files) {
+                    const key = file.replace(/\.json$/, "");
+                    if (key === "world") continue;
+                    Backend.writeFile(name, key, fs.readFileSync(path.join(dir, file), "utf8"));
+                }
+                const own = JSON.parse(Backend.readFile(name, "world"));
+                const shipped = JSON.parse(fs.readFileSync(path.join(dir, "world.json"), "utf8"));
+                const merged = Object.assign({}, shipped, {
+                    name: own.name, createdAt: own.createdAt, lastPlayed: own.lastPlayed
+                });
+                Backend.writeFile(name, "world", JSON.stringify(merged, null, 2));
+                console.log(`[WorldManager] World '${name}' copied from the default world template (${info.files.length} files).`);
+                return true;
+            } catch (e) {
+                console.error("[WorldManager] Could not copy the default world template", e);
+                return false;
+            }
+        },
+
+        // Writes a world's data files into data/DefaultWorld/, replacing what
+        // was there. template.json goes last: its presence is what tells the
+        // build tool the export finished.
+        exportWorldTemplate(name) {
+            const dir = this.defaultTemplateDir();
+            if (!dir) throw new Error("No default world folder outside NW.js"); // i18n-ignore: diagnostic
+            if (name === this.activeWorldName) this.flush();
+            const fs = require("fs");
+            const path = require("path");
+            Backend.ensureDir(dir);
+            for (const entry of fs.readdirSync(dir)) {
+                if (entry.endsWith(".json")) fs.unlinkSync(path.join(dir, entry));
+            }
+            const from = Backend.worldDir(name);
+            const files = fs.readdirSync(from).filter(entry =>
+                entry.endsWith(".json") && fs.statSync(path.join(from, entry)).isFile());
+            for (const file of files) fs.copyFileSync(path.join(from, file), path.join(dir, file));
+            const info = { seed: DEFAULT_WORLD_SEED, generatedAt: new Date().toISOString(), files };
+            fs.writeFileSync(path.join(dir, "template.json"), JSON.stringify(info, null, 2), "utf8");
+            return info;
+        },
+
+        isDefaultWorld(name) {
+            return name === DEFAULT_WORLD_NAME;
+        },
+
+        // Makes the default world when it is missing, from the shipped
+        // snapshot when there is one. Returns true when it had to be made.
+        ensureDefaultWorld() {
+            if (this.worldExists(DEFAULT_WORLD_NAME)) return false;
+            this.createWorld(DEFAULT_WORLD_NAME, {});
+            this.seedWorldFromTemplate(DEFAULT_WORLD_NAME);
+            return true;
+        },
+
+        // Resets the default world to the shipped snapshot. Everything it
+        // gathered since goes with the reset: history, people, savegames and
+        // diaries. Returns true when the snapshot was copied, false when there
+        // is none and the world was left fresh for initializeWorld to fill.
+        regenerateDefaultWorld() {
+            const name = DEFAULT_WORLD_NAME;
+            const wasActive = this.activeWorldName === name;
+            if (wasActive) {
+                // Dropped unflushed: the cache is what is being thrown away.
+                this.activeWorldName = null;
+                this._cache = {};
+                this._lastWritten = {};
+            }
+            Backend.removeWorld(name);
+            this.createWorld(name, {});
+            const seeded = this.seedWorldFromTemplate(name);
+            if (wasActive) this.setActiveWorld(name);
+            return seeded;
+        },
+
+        // Removes a scratch world without touching active.json, which
+        // deleteWorld rewrites. The build's generator uses it so the
+        // developer's own active world is still the active one afterwards.
+        discardWorld(name) {
+            if (this.activeWorldName === name) {
+                this.activeWorldName = null;
+                this._cache = {};
+                this._lastWritten = {};
+            }
+            Backend.removeWorld(name);
         },
 
         // Counts binary savegame files for the given world. Returns null when
@@ -1222,9 +1376,48 @@
         // Safe to call repeatedly: a completed step is skipped, so the normal
         // cost after the first run is nothing.
         initializeWorld(options = {}) {
-            if (!this.activeWorldName || this._initializing) return false;
+            const run = this._beginWorldInit(options);
+            if (!run) return false;
+            try {
+                for (const step of run.steps) this._runWorldInitStep(step, run);
+            } finally {
+                this._initializing = false;
+            }
+            return this._endWorldInit(run);
+        },
+
+        // The same run, one step at a time, with the thread handed back
+        // between steps so a screen can paint what is being prepared.
+        // onProgress({ key, index, total }) is called before each step, and
+        // once more with key null and index === total when all have run.
+        async initializeWorldAsync(options = {}, onProgress = null) {
+            const run = this._beginWorldInit(options);
+            if (!run) return false;
+            const total = run.steps.length;
+            const report = (key, index) => {
+                if (typeof onProgress !== "function") return;
+                try { onProgress({ key, index, total }); } catch (e) { console.error(e); }
+            };
+            try {
+                for (let i = 0; i < total; i++) {
+                    report(run.steps[i].key, i);
+                    await new Promise(resolve => setTimeout(resolve, 30));
+                    this._runWorldInitStep(run.steps[i], run);
+                }
+            } finally {
+                this._initializing = false;
+            }
+            report(null, total);
+            return this._endWorldInit(run);
+        },
+
+        // Everything a run needs before its first step, and the steps it owes
+        // (only those, so a progress count never includes skipped ones).
+        // Returns null when there is nothing to run.
+        _beginWorldInit(options) {
+            if (!this.activeWorldName || this._initializing) return null;
             if (options.force) this._initAttempts = {};
-            else if (!this.hasPendingWorldInit()) return false;
+            else if (!this.hasPendingWorldInit()) return null;
             // The steps write through the $gameSystem world accessors, so the
             // game objects have to exist. Creating a world from the title
             // screen happens before any of them do; New Game builds its own
@@ -1238,38 +1431,41 @@
             // the call comes from setupNewGame, and idempotent, so it costs
             // nothing there.
             this.applyPublicState();
-            const beforeSwitches = ($gameSwitches._data || []).slice();
-            const beforeVars = ($gameVariables._data || []).slice();
             const done = this.worldInitState();
-            const steps = this._initSteps.slice().sort((a, b) => a.order - b.order);
-            let ran = 0;
+            const steps = this._initSteps.slice()
+                .sort((a, b) => a.order - b.order)
+                .filter(step => (options.force || !done[step.key]) &&
+                    (this._initAttempts[step.key] || 0) < this.INIT_MAX_ATTEMPTS);
             this._initializing = true;
+            return {
+                steps, done, ran: 0,
+                beforeSwitches: ($gameSwitches._data || []).slice(),
+                beforeVars: ($gameVariables._data || []).slice()
+            };
+        },
+
+        _runWorldInitStep(step, run) {
+            this._initAttempts[step.key] = (this._initAttempts[step.key] || 0) + 1;
+            const startedAt = Date.now();
             try {
-                for (const step of steps) {
-                    if (done[step.key] && !options.force) continue;
-                    if ((this._initAttempts[step.key] || 0) >= this.INIT_MAX_ATTEMPTS) continue;
-                    this._initAttempts[step.key] = (this._initAttempts[step.key] || 0) + 1;
-                    const startedAt = Date.now();
-                    try {
-                        step.fn();
-                        done[step.key] = true;
-                        ran++;
-                        console.log(`[WorldManager] World '${this.activeWorldName}': initialized '${step.key}' (${Date.now() - startedAt}ms).`);
-                    } catch (e) {
-                        // A failed step stays unmarked, so it is retried on the
-                        // next run instead of leaving the world permanently
-                        // short of that data.
-                        console.error(`[WorldManager] World initializer '${step.key}' failed`, e);
-                    }
-                }
-            } finally {
-                this._initializing = false;
+                step.fn();
+                run.done[step.key] = true;
+                run.ran++;
+                console.log(`[WorldManager] World '${this.activeWorldName}': initialized '${step.key}' (${Date.now() - startedAt}ms).`);
+            } catch (e) {
+                // A failed step stays unmarked, so it is retried on the
+                // next run instead of leaving the world permanently
+                // short of that data.
+                console.error(`[WorldManager] World initializer '${step.key}' failed`, e);
             }
-            if (ran) {
-                this.captureInitializedState(beforeSwitches, beforeVars);
+        },
+
+        _endWorldInit(run) {
+            if (run.ran) {
+                this.captureInitializedState(run.beforeSwitches, run.beforeVars);
                 this.flush();
             }
-            return ran > 0;
+            return run.ran > 0;
         },
 
         // A step is free to raise a world switch (the dungeon step flips the
@@ -1693,6 +1889,18 @@
 
     (function resolveActiveWorld() {
         const persist = !Utils.isOptionValid("test");
+
+        // The default world is always there. Not while the build regenerates
+        // its snapshot (the genworld option), which must leave save/ alone.
+        if (!Utils.isOptionValid("genworld")) {
+            try {
+                if (WorldManager.ensureDefaultWorld()) {
+                    console.log(`[WorldManager] Default world '${DEFAULT_WORLD_NAME}' created.`);
+                }
+            } catch (e) {
+                console.error("[WorldManager] Could not create the default world", e);
+            }
+        }
 
         const active = Backend.readActive();
         if (active && WorldManager.worldExists(active)) {

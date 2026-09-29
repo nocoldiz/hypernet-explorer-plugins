@@ -851,13 +851,87 @@ Scene_FactionStatus.prototype.selectUIFaction = function (idx) {
   this.refreshUIFactions();
 };
 
+// The founding and rename panels, walked without a keyboard. The name field,
+// its buttons and the way out are one column: the cross moves along it, A
+// types into the field on the pad's letter sheet (Controller.textEntry) or
+// presses the button under the cursor, and B always shuts the panel. A typed
+// keyboard never reaches here while the field holds it (the field stops every
+// key), so one press is still one action.
+const FactionPanelPad = {
+  controls(panel) {
+    const field = panel.querySelector("input");
+    const rest = Array.prototype.slice.call(panel.querySelectorAll(".ui-panel-actions .inspect-btn, .ui-panel-dismiss"));
+    return field ? [field].concat(rest) : rest;
+  },
+
+  paint(panel) {
+    const list = this.controls(panel);
+    list.forEach((el, i) => el.classList.toggle("selected", i === panel._padAt));
+  },
+
+  open(panel) {
+    panel._padAt = 0;
+    this.paint(panel);
+    if (window.UINav) window.UINav.swallowHeld();
+  },
+
+  update(panel, onClose) {
+    if (!panel) return;
+    if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) return;
+    if (Input.isTriggered("cancel") || TouchInput.isCancelled()) {
+      onClose();
+      if (window.UINav) window.UINav.swallowHeld();
+      return;
+    }
+    const list = this.controls(panel);
+    if (!list.length) return;
+    let at = Math.max(0, Math.min(list.length - 1, panel._padAt || 0));
+    const dir = window.UINav ? window.UINav.navDir() : null;
+    if (dir) {
+      const next = Math.max(0, Math.min(list.length - 1, at + (dir === "up" || dir === "left" ? -1 : 1)));
+      if (next !== at) {
+        panel._padAt = next;
+        SoundManager.playCursor();
+        this.paint(panel);
+      }
+      return;
+    }
+    if (!Input.isTriggered("ok")) return;
+    const target = list[at];
+    if (target.tagName === "INPUT") {
+      const pad = typeof Input.lastInputDevice === "function" && Input.lastInputDevice() === "pad";
+      if (pad && window.Controller && typeof Controller.textEntry === "function") {
+        if (window.UINav) window.UINav.swallowHeld();
+        Controller.textEntry({
+          title: T("Factions.player.nameLbl"),
+          value: target.value,
+          max: 48,
+          onCommit: (value) => {
+            target.value = String(value || "");
+            if (window.UINav) window.UINav.swallowHeld();
+          },
+          onCancel: () => { if (window.UINav) window.UINav.swallowHeld(); }
+        });
+      } else {
+        target.focus();
+        target.select();
+      }
+      return;
+    }
+    target.click();
+  }
+};
+
 // Scene hook updates & intercepts
 const _Scene_FactionStatus_update = Scene_FactionStatus.prototype.update;
 Scene_FactionStatus.prototype.update = function () {
   _Scene_FactionStatus_update.call(this);
   // The founding panel is modal: while it is up the register neither moves its
-  // cursor nor answers Cancel by leaving.
-  if (this._foundPanel) return;
+  // cursor nor answers Cancel by leaving; the panel has the pad instead.
+  if (this._foundPanel) {
+    FactionPanelPad.update(this._foundPanel, () => this.closeFoundingPanel());
+    return;
+  }
   // A focused search field owns the keyboard (UI/MenuSearchBar.js).
   if (window.MenuSearchBar && window.MenuSearchBar.isTyping()) return;
   UIFactionsInputManager.update();
@@ -905,17 +979,14 @@ const UIFactionsInputManager = {
   update: function () {
     if (!this._active || !this._scene) return;
 
-    if (Input.isTriggered('pagedown')) {
-      this._scene.cycleRepActor(1);
-    } else if (Input.isTriggered('pageup')) {
-      this._scene.cycleRepActor(-1);
-    } else if (Input.isTriggered('down')) {
+    // L2 / R2 change the member (CharSwitcher, installed with the scene).
+    if (Input.isRepeated('down')) {
       this.handleMove("down");
-    } else if (Input.isTriggered('up')) {
+    } else if (Input.isRepeated('up')) {
       this.handleMove("up");
-    } else if (Input.isTriggered('right')) {
+    } else if (Input.isRepeated('right')) {
       this.handleFold(true);
-    } else if (Input.isTriggered('left')) {
+    } else if (Input.isRepeated('left')) {
       this.handleFold(false);
     } else if (Input.isTriggered('ok')) {
       this.handleOk();
@@ -1031,6 +1102,7 @@ Scene_FactionStatus.prototype.openFoundingPanel = function () {
   `;
   document.body.appendChild(panel);
   this._foundPanel = panel;
+  FactionPanelPad.open(panel);
 
   const field = panel.querySelector("input");
   // Set through the property, never through the markup: a rolled name is
@@ -1064,6 +1136,7 @@ Scene_FactionStatus.prototype.closeFoundingPanel = function () {
   SoundManager.playCancel();
   if (this._foundPanel.parentNode) this._foundPanel.parentNode.removeChild(this._foundPanel);
   this._foundPanel = null;
+  if (window.UINav) window.UINav.swallowHeld();
 };
 
 Scene_FactionStatus.prototype.confirmFounding = function () {
@@ -1298,6 +1371,7 @@ Scene_PlayerFaction.prototype.openRenamePanel = function () {
   `;
   document.body.appendChild(panel);
   this._pfRenamePanel = panel;
+  FactionPanelPad.open(panel);
 
   const field = panel.querySelector("input");
   field.value = record ? record.name : "";
@@ -1327,6 +1401,7 @@ Scene_PlayerFaction.prototype.closeRenamePanel = function () {
   SoundManager.playCancel();
   if (this._pfRenamePanel.parentNode) this._pfRenamePanel.parentNode.removeChild(this._pfRenamePanel);
   this._pfRenamePanel = null;
+  if (window.UINav) window.UINav.swallowHeld();
 };
 
 Scene_PlayerFaction.prototype.confirmRename = function () {
@@ -1341,12 +1416,16 @@ Scene_PlayerFaction.prototype.confirmRename = function () {
 
 Scene_PlayerFaction.prototype.update = function () {
   Scene_MenuBase.prototype.update.call(this);
-  // A focused field owns the keyboard, here as everywhere else.
-  if (this._pfRenamePanel) return;
+  // The rename panel is modal and walks itself; a focused field owns the
+  // keyboard, here as everywhere else.
+  if (this._pfRenamePanel) {
+    FactionPanelPad.update(this._pfRenamePanel, () => this.closeRenamePanel());
+    return;
+  }
   if (window.MenuSearchBar && window.MenuSearchBar.isTyping()) return;
 
-  if (Input.isTriggered("down")) this.movePlayerFactionCursor(1);
-  else if (Input.isTriggered("up")) this.movePlayerFactionCursor(-1);
+  if (Input.isRepeated("down")) this.movePlayerFactionCursor(1);
+  else if (Input.isRepeated("up")) this.movePlayerFactionCursor(-1);
   // The rename button, for a hand that never touches the mouse.
   else if (Input.isTriggered("shift")) this.openRenamePanel();
   else if (Input.isTriggered("ok")) this.chooseAllegiance(this._pfIndex);
@@ -1578,7 +1657,8 @@ Window_FactionStatus.prototype.update = function () {
 
   if (this.isOpenAndActive()) {
 
-    if (Input.isTriggered("ok") || Input.isTriggered("cancel")) {
+    // Only Cancel leaves: OK on a row is not a way out.
+    if (Input.isTriggered("cancel")) {
 
       SoundManager.playCancel();
 

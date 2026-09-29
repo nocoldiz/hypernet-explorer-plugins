@@ -132,6 +132,13 @@
     misc: 0.03
   };
   const DIVIDEND_DAYS_PER_YEAR = 365;
+
+  // The terminal's gain green, as ink. The flat #27ae60 it used to print in
+  // reads at under 3:1 on the terminal's white and pale-green panels, and as
+  // a plate under white lettering; this one clears the readable ratio on
+  // both. The chart's candles keep the bright green: they are shapes, not text.
+  const UP_INK = '#1b6e2e';
+  const UP_PLATE = 'linear-gradient(180deg, #218c4a, #1b6e2e)';
   // A majority holder takes more than its shares alone would pay: at 50% the
   // dividend is unchanged, at 100% it is doubled.
   const CONTROL_PREMIUM = 1;
@@ -166,6 +173,283 @@
     "GreenWitch Organics": { volatility: 0.22 },    // i18n-ignore  company key
     "Vault Bank Holdings": { volatility: 0.11 }     // i18n-ignore  company key
   };
+
+  //=============================================================================
+  // Society-driven fundamentals (company listings only)
+  //=============================================================================
+  //
+  // OIL and SOUL keep the 2 s real-time walk they have always had. A company
+  // moves on game time instead: once per game hour its fair-value centre
+  // drifts by what the society around it did, and its price mean-reverts to
+  // that centre with the sector volatility and the odd shock. The 2 s tick
+  // only animates the line between two hourly marks.
+  //
+  // Each driver reads one signal of the simulated world (readSocietySignals),
+  // normalised to about -1..1 against its own rolling 30-day mean. A
+  // company's score is the weighted sum of its drivers, clamped to -1..1;
+  // the centre drifts by score * CENTRE_DRIFT_PER_DAY a day, and the shock's
+  // up-chance leans the same way.
+  //
+  //   signal      what it reads
+  //   spend       NPC shop spending per day (BuyManager's capability_end cost)
+  //   jobs        employment rate across every settlement census
+  //   prosperity  average settlement prosperity (NPCWorldWeb pulses)
+  //   hq          prosperity of LimeCorp's home town (Ghent, map 1036)
+  //   war         active wars (HistoryManager.activeWars)
+  //   sanctions   hyperpowers under sanctions
+  //   plague      epidemic deaths per day (EpidemicSystem.stats)
+  //   horde       average Horde chaos over the settlements (HordeGround)
+  //   building    relocations per day plus refugee camps standing
+  //   greenwitch  prosperity of the GreenWitch settlement
+  //   harvest     farm tending done by NPCs per day (NPCSim.Tending)
+  //   mouths      census population, the food demand
+  //   mood        average economyMood of the polities (NPCPolitics)
+  //   election    how close the next election is (1 = imminent)
+  //   savings     NPC bank deposits per day
+  //   balances    the average purse the NPCs hold (what the bank has to lend)
+  //   trips       people on the road (life records with a trip)
+  //   moves       relocations per day
+  const COMPANY_DRIVERS = {
+    "LemonCorp": { spend: 0.6, jobs: 0.4 },
+    "LimeCorp": { spend: 0.5, jobs: 0.3, hq: 0.4 },
+    "PetroDyne": { war: 0.6, sanctions: 0.4 },
+    "SoulForge": { plague: 0.5, horde: 0.5 },
+    "HyperNet Systems": { prosperity: 0.6, jobs: 0.4 },   // i18n-ignore  company key
+    "Ferro Steelworks": { war: 0.5, building: 0.5 },      // i18n-ignore  company key
+    "GreenWitch Organics": { greenwitch: 0.4, harvest: 0.4, mouths: 0.3 },  // i18n-ignore  company key
+    "Vault Bank Holdings": { mood: 0.4, election: -0.3, jobs: 0.4, savings: 0.3, balances: 0.3 },  // i18n-ignore  company key
+    "Aether Logistics": { trips: 0.4, moves: 0.3, war: -0.4 }  // i18n-ignore  company key
+  };
+  // A company floated at runtime has no row: it follows its sector.
+  const SECTOR_DRIVERS = {
+    consumertech: { spend: 0.6, jobs: 0.4 },
+    energy: { war: 0.6, sanctions: 0.4 },
+    occult: { plague: 0.5, horde: 0.5 },
+    telecom: { prosperity: 0.6, jobs: 0.4 },
+    industrial: { war: 0.5, building: 0.5 },
+    agriculture: { harvest: 0.5, mouths: 0.5 },
+    finance: { mood: 0.5, jobs: 0.5 },
+    transport: { trips: 0.6, moves: 0.4 },
+    misc: { prosperity: 1 }
+  };
+  // How far a signal must stray before it counts as a full point: the larger
+  // of its mean deviation, `abs` and `rel` times its mean.
+  const SIGNAL_FLOOR = {
+    spend: { abs: 1000, rel: 0.1 },
+    jobs: { abs: 0.02, rel: 0 },
+    prosperity: { abs: 2, rel: 0 },
+    hq: { abs: 2, rel: 0 },
+    war: { abs: 0.5, rel: 0 },
+    sanctions: { abs: 0.5, rel: 0 },
+    plague: { abs: 5, rel: 0.1 },
+    horde: { abs: 0.05, rel: 0 },
+    building: { abs: 2, rel: 0.1 },
+    greenwitch: { abs: 2, rel: 0 },
+    harvest: { abs: 1, rel: 0.1 },
+    mouths: { abs: 1, rel: 0.02 },
+    mood: { abs: 2, rel: 0 },
+    election: { abs: 0.1, rel: 0 },
+    savings: { abs: 1000, rel: 0.1 },
+    balances: { abs: 50, rel: 0.05 },
+    trips: { abs: 3, rel: 0.1 },
+    moves: { abs: 2, rel: 0.1 }
+  };
+  // The flow signals, fed by note(): their raw value is a per-day rate.
+  const COUNTED_SIGNALS = ["spend", "harvest", "savings", "plague"];
+  const LIMECORP_HQ_MAP = 1036;
+  const LIMECORP_HQ_GROUP = "Ghent";      // i18n-ignore  map group key
+  const GREENWITCH_GROUP = "GreenWitch";  // i18n-ignore  map group key
+  const ELECTION_HORIZON_DAYS = 90;
+
+  const CATCHUP_MAX_HOURS = 90 * 24;   // a skip longer than 90 days is priced as 90
+  const COARSE_AFTER_HOURS = 72;       // a longer skip is stepped coarsely
+  const COARSE_STEPS_MAX = 120;        // and in at most this many steps
+  const CENTRE_DRIFT_PER_DAY = 0.02;   // the centre moves at most 2% a day
+  const NORM_ALPHA = 1 / (30 * 24);    // 30-day rolling mean, fed hourly
+  const RATE_ALPHA = 1 / 24;           // a counted flow, smoothed over a day
+  const HOURLY_REVERSION = 0.02;       // pull to the centre per game hour
+  const HOURLY_VOL = 0.02;             // def.volatility * this = hourly half-range
+  const HOURLY_SHOCK_CHANCE = 0.004;   // about one shock in ten game days
+  const INTRADAY_WIGGLE = 0.002;       // the 2 s line's jitter around its path
+  const NOISY_DRIVER = 0.5;            // chaos worlds: noise added to each driver
+  const NOISY_VOL = 1.5;               // and to the volatility
+  const CRASH_CENTRE = 0.35;           // zombie worlds price at a third of fair value
+  const BIG_MOVE = 0.05;               // a day's move worth a headline
+  const DRIVER_SWING = 0.6;            // a driver past this is news
+  const EARNINGS_EVERY_DAYS = 91;
+  const EARNINGS_JUMP = 0.03;
+
+  // What the world creation mode says about the market (NPCShared.WorldModes).
+  function worldModes() {
+    return window.NPCShared?.WorldModes || window.WorldModes || null;
+  }
+  function stocksFrozen() {
+    const WM = worldModes();
+    if (WM && typeof WM.stocksFrozen === "function") return !!WM.stocksFrozen();
+    const W = window.WorldManager;
+    return !!(W && typeof W.isEmptyWorld === "function" && W.isEmptyWorld());
+  }
+  function stocksNoisy() { const WM = worldModes(); return !!(WM && WM.stocksNoisy && WM.stocksNoisy()); }
+  function stocksCrashed() { const WM = worldModes(); return !!(WM && WM.stocksCrashed && WM.stocksCrashed()); }
+  function hasEconomy() {
+    const WM = worldModes();
+    return !(WM && typeof WM.hasEconomy === "function" && !WM.hasEconomy());
+  }
+
+  // A small seeded generator for the hourly steps, so a catch-up over the
+  // same hours from the same state lands on the same prices.
+  function hashString(str) {
+    let h = 2166136261 >>> 0;
+    const s = String(str);
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+    return h >>> 0;
+  }
+  function stepRng(seed) {
+    let a = seed >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function marketSeed() {
+    try {
+      const shared = window.NPCShared;
+      if (shared && typeof shared.worldSeed === "function") return shared.worldSeed() >>> 0;
+    } catch (e) {}
+    return 19002001;
+  }
+
+  // The game clock in minutes (Variable 114), or null before it exists.
+  function gameMinute() {
+    if (typeof $gameVariables === "undefined" || !$gameVariables) return null;
+    return Number($gameVariables.value(114)) || 0;
+  }
+
+  // A settlement's name as the player reads it.
+  function townLabel(group) {
+    if (!group) return _smi18n('drivers.someTown') || '';
+    try {
+      if (window.WorkSystem && typeof window.WorkSystem.destinationName === "function") {
+        return window.WorkSystem.destinationName(group) || String(group);
+      }
+    } catch (e) {}
+    return String(group);
+  }
+
+  // One read of everything the society is doing, taken once per game hour.
+  // Every source is optional: a build without it contributes nothing.
+  function readSocietySignals(nowMinute, lifeRecords) {
+    const sig = {};
+    const ctx = { bestTown: null, worstTown: null, war: null, power: null };
+    const web = window.NPCWorldWeb;
+    let groups = [];
+    try { groups = (web && web.listGroups && web.listGroups()) || []; } catch (e) { groups = []; }
+    let prosSum = 0, prosN = 0, employed = 0, unemployed = 0, population = 0;
+    let hordeSum = 0, hordeN = 0, best = -Infinity, worst = Infinity;
+    const HG = window.HordeGround;
+    for (const g of groups) {
+      let p = null;
+      try { p = web.getPulse(g); } catch (e) { p = null; }
+      if (!p) continue;
+      if (Number.isFinite(p.prosperity)) {
+        prosSum += p.prosperity; prosN++;
+        if (p.prosperity > best) { best = p.prosperity; ctx.bestTown = g; }
+        if (p.prosperity < worst) { worst = p.prosperity; ctx.worstTown = g; }
+      }
+      const c = p.census || {};
+      employed += Number(c.employed) || 0;
+      unemployed += Number(c.unemployed) || 0;
+      population += Number(c.population) || 0;
+      if (HG && typeof HG.chaos === "function") {
+        try { hordeSum += Number(HG.chaos(g)) || 0; hordeN++; } catch (e) {}
+      }
+    }
+    sig.prosperity = prosN ? prosSum / prosN : null;
+    const workforce = employed + unemployed;
+    sig.jobs = workforce ? employed / workforce : null;
+    sig.mouths = population || null;
+    sig.horde = hordeN ? hordeSum / hordeN : 0;
+
+    let hqGroup = LIMECORP_HQ_GROUP;
+    try {
+      const found = window.NPCSystem && window.NPCSystem.findMapGroupByMap && window.NPCSystem.findMapGroupByMap(LIMECORP_HQ_MAP);
+      if (found) hqGroup = found;
+    } catch (e) {}
+    ctx.hqTown = hqGroup;
+    try { const hq = web && web.getPulse && web.getPulse(hqGroup); sig.hq = hq && Number.isFinite(hq.prosperity) ? hq.prosperity : null; } catch (e) { sig.hq = null; }
+    try { const gw = web && web.getPulse && web.getPulse(GREENWITCH_GROUP); sig.greenwitch = gw && Number.isFinite(gw.prosperity) ? gw.prosperity : null; } catch (e) { sig.greenwitch = null; }
+    ctx.greenwitchTown = GREENWITCH_GROUP;
+
+    const HM = window.HistoryManager;
+    let wars = [];
+    try { wars = (HM && HM.activeWars && HM.activeWars()) || []; } catch (e) { wars = []; }
+    sig.war = wars.length;
+    if (wars.length) ctx.war = { a: wars[0].attacker, b: wars[0].defender };
+    let sanctioned = 0;
+    try {
+      const hp = (HM && HM.getHyperpowers && HM.getHyperpowers()) || {};
+      for (const k of Object.keys(hp)) if (hp[k] && hp[k].sanctionedUntil) { sanctioned++; ctx.sanctioned = k; }
+    } catch (e) {}
+    sig.sanctions = sanctioned;
+
+    const Pol = window.NPCPolitics;
+    let moodSum = 0, moodN = 0, soonest = Infinity;
+    try {
+      for (const name of (Pol && Pol.listPowers && Pol.listPowers()) || []) {
+        const pw = Pol.getPower(name);
+        if (!pw) continue;
+        const m = pw.state && pw.state.economyMood;
+        if (Number.isFinite(m)) { moodSum += m; moodN++; }
+        if (pw.nextElectionMinute != null && nowMinute != null) {
+          const days = (pw.nextElectionMinute - nowMinute) / 1440;
+          if (days >= 0 && days < soonest) { soonest = days; ctx.power = name; }
+        }
+      }
+    } catch (e) {}
+    sig.mood = moodN ? moodSum / moodN : null;
+    sig.election = Number.isFinite(soonest) ? Math.max(0, Math.min(1, 1 - soonest / ELECTION_HORIZON_DAYS)) : 0;
+
+    let moves = 0, camps = 0;
+    try {
+      const st = (typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem._npcRelocations) || null;
+      if (st && st.departures && nowMinute != null) {
+        for (const g of Object.keys(st.departures)) {
+          for (const at of st.departures[g] || []) if (nowMinute - at <= 1440 && nowMinute - at >= 0) moves++;
+        }
+      }
+      if (st && st.horde && st.horde.camps) camps = Object.keys(st.horde.camps).length;
+    } catch (e) {}
+    sig.moves = moves;
+    sig.building = moves + camps * 2;
+
+    let trips = 0;
+    if (lifeRecords) {
+      for (const k in lifeRecords) {
+        const r = lifeRecords[k];
+        if (r && r.trip && !r.dead) trips++;
+      }
+    }
+    sig.trips = trips;
+
+    // The purses of the sentient: the money the bank holds and lends. A beast
+    // holds none (NPCCreature), and a child's pocket money is left out.
+    let purse = 0, purses = 0;
+    try {
+      const soc = (typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem._npcSociety) || null;
+      const NC = window.NPCCreature;
+      if (soc) for (const k in soc) {
+        const p = soc[k];
+        if (!p || p._child || p._killed) continue;
+        if (NC && NC.isNonSentientProfile && NC.isNonSentientProfile(p)) continue;
+        purse += Math.max(0, Number(p.money) || 0); purses++;
+      }
+    } catch (e) {}
+    sig.balances = purses ? purse / purses : null;
+    return { sig, ctx };
+  }
 
   // Filled by buildStocksConfig() once the database is loaded: the terminal is
   // built after Companies.json is on window.WorldGen, never at plugin load.
@@ -267,7 +551,8 @@
       color: def.color || '#8b5a2b',
       totalShares: Math.max(0, Number(def.totalShares) || 0),
       tracks: meta.tracks || null,
-      beta: meta.beta || 0
+      beta: meta.beta || 0,
+      drivers: COMPANY_DRIVERS[key] || SECTOR_DRIVERS[sectorId] || SECTOR_DRIVERS.misc
     };
   }
 
@@ -376,6 +661,25 @@
     return reg;
   }
 
+  // Shares of a company the society's NPCs hold (NPCSim.Stocks), 0 without it.
+  function npcHeld(companyKey) {
+    try {
+      const S = window.NPCSim && window.NPCSim.Stocks;
+      return S && typeof S.heldBy === "function" ? Math.max(0, Number(S.heldBy(companyKey)) || 0) : 0;
+    } catch (e) { return 0; }
+  }
+
+  // What the party holds of a company, without building the register for it:
+  // the register when it stands, else what the save wrote of it.
+  function partySharesOf(companyKey) {
+    const reg = shareRegister(false);
+    if (reg) {
+      try { const pos = reg.getPosition(companyKey); return pos ? Math.max(0, Number(pos.shares) || 0) : 0; } catch (e) { return 0; }
+    }
+    const data = (typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem.realEstateData) || null;
+    return Math.max(0, Number(data && data.companyShares && data.companyShares[companyKey]) || 0);
+  }
+
   //=============================================================================
   // Stock Market System - Core Class
   //=============================================================================
@@ -401,6 +705,8 @@
       this._lastDividendDay = null; // the last in-game day a dividend was paid
       this._lastPctMove = {};   // last tick's move per stock, for tracking betas
       this._lastQuotedEuros = {}; // last per-share euro price written to the register
+      this._engine = this._freshEngine(); // the hourly company engine (see advanceToNow)
+      this._signalCache = null;           // readSocietySignals, once per game hour
 
       // Build the traded table from the world's company register, then seed
       // every listing with a history.
@@ -462,11 +768,12 @@
     }
 
     // Open a company listing on the price the share register last quoted, the
-    // first time this session looks at it: between sessions the Real Estate
-    // screen drifts prices daily, and the terminal should not undo that.
+    // first time this session looks at it and before the hourly engine has
+    // drawn a line for it (once it has, that line is the price).
     adoptRegisterQuotes() {
       for (const id of Object.keys(STOCKS_CONFIG)) {
         if (!this._stocks[id] || this._lastQuotedEuros[id] !== undefined) continue;
+        if (this._engine && this._engine.open && this._engine.open[id]) continue;
         const quoted = this._registerPriceCents(id, true);
         if (!quoted) continue;
         this._stocks[id].currentPrice = quoted;
@@ -559,10 +866,11 @@
     }
 
     // How many shares of a listing are still unissued. Commodities are unlimited.
+    // What the society's shareholders hold is not on offer either.
     availableShares(stockId) {
       const def = STOCKS_CONFIG[stockId];
       if (!def || !def.companyKey || !def.totalShares) return Infinity;
-      return Math.max(0, def.totalShares - (this._shares[stockId] || 0));
+      return Math.max(0, def.totalShares - (this._shares[stockId] || 0) - npcHeld(def.companyKey));
     }
 
     // The party's slice of a company, as a percentage. 0 for the commodities.
@@ -594,6 +902,8 @@
       WM.setField("market", "priceMap", priceMap);
       WM.setField("market", "histMap", histMap);
       WM.setField("market", "updateCounter", this._updateCounter);
+      // The hourly company engine prices the same world-shared listings.
+      WM.setField("market", "engine", this._engine);
     }
 
     loadWorldMarket() {
@@ -633,6 +943,7 @@
 
       const uc = WM.getField("market", "updateCounter");
       if (uc !== undefined) this._updateCounter = Number(uc);
+      this._adoptEngine(WM.getField("market", "engine"));
     }
 
     toJSON() {
@@ -645,6 +956,8 @@
         soulsShares: this._shares.souls || 0,
         oilCostBasis: this._costBasis.oil || 0,
         soulsCostBasis: this._costBasis.souls || 0,
+        lastDividendDay: this._lastDividendDay,
+        engine: this._engine,
       };
     }
 
@@ -682,7 +995,13 @@
       setOilSharesVariable(this._oilShares);
       setSoulSharesVariable(this._soulsShares);
 
-      if (jsonObj.lastDividendDay !== undefined) this._lastDividendDay = Number(jsonObj.lastDividendDay);
+      // A save made before the first settlement holds null: the day is still
+      // unmarked, not day zero (which would owe thirty days of back pay).
+      if (jsonObj.lastDividendDay != null && Number.isFinite(Number(jsonObj.lastDividendDay))) {
+        this._lastDividendDay = Number(jsonObj.lastDividendDay);
+      }
+      // The world's copy of the engine, read by loadWorldMarket below, wins.
+      this._adoptEngine(jsonObj.engine);
 
       if (Array.isArray(jsonObj.orders)) {
         this._orders = jsonObj.orders;
@@ -698,9 +1017,12 @@
     }
 
     update() {
+      // The companies' hourly mark: a single read of the clock unless an
+      // hour has turned (then the steps, and any catch-up, are run).
+      const marked = this.advanceToNow() > 0;
       if (!this._lastUpdateTime) {
         this._lastUpdateTime = Date.now();
-        return false;
+        return marked;
       }
       if (Date.now() - this._lastUpdateTime >= updateInterval) {
         this._lastUpdateTime = Date.now();
@@ -709,7 +1031,431 @@
         this.payDividends();
         return true;
       }
-      return false;
+      return marked;
+    }
+
+    // =========================================================================
+    // The hourly company engine
+    // =========================================================================
+
+    _freshEngine() {
+      return {
+        v: 1,
+        hour: null,        // the last game hour priced
+        centre: {},        // fair-value centre per company, in cents
+        open: {},          // price at the last hourly mark
+        target: {},        // price the line is heading to at the next mark
+        norm: {},          // per signal { m, d }: rolling mean and deviation
+        rate: {},          // per counted signal: smoothed per-hour flow
+        counters: {},      // per counted signal: flow since the last mark
+        seenDead: null,    // cumulative epidemic deaths at the last read
+        commodityMark: {}, // OIL / SOUL price at the last mark (for betas)
+        score: {},         // last score per company (-1..1)
+        drivers: {},       // last normalised driver values per signal
+        dayOpen: {},       // price a day ago, for the big-move wire
+        newsHour: {},      // last headline hour per company
+        lastSwing: {}      // sign of each signal's last reported swing
+      };
+    }
+
+    // Take a stored engine (save or world folder) as this market's, keeping
+    // the empty shape for anything it lacks.
+    _adoptEngine(saved) {
+      if (!saved || typeof saved !== "object" || saved.v !== 1) return;
+      const fresh = this._freshEngine();
+      for (const k of Object.keys(fresh)) {
+        if (saved[k] !== undefined && saved[k] !== null) fresh[k] = saved[k];
+        else if (k === "hour" || k === "seenDead") fresh[k] = saved[k] === undefined ? null : saved[k];
+      }
+      this._engine = fresh;
+      for (const id of Object.keys(this._engine.open)) {
+        if (this._stocks[id] && !STOCKS_CONFIG[id].commodity) {
+          const live = this._liveCompanyPrice(id, gameMinute());
+          if (live) this._stocks[id].currentPrice = live;
+        }
+      }
+    }
+
+    _companyIds() {
+      return Object.keys(STOCKS_CONFIG).filter(id => !STOCKS_CONFIG[id].commodity && this._stocks[id]);
+    }
+
+    // A flow the society reports (NPC spending, farm work, bank deposits).
+    note(signal, amount) {
+      if (!COUNTED_SIGNALS.includes(signal)) return;
+      const n = Number(amount);
+      if (!(n > 0)) return;
+      const c = this._engine.counters;
+      c[signal] = (c[signal] || 0) + n;
+    }
+
+    // The society's signals, read once per game hour.
+    societySignals(hour) {
+      if (this._signalCache && this._signalCache.hour === hour) return this._signalCache;
+      const minute = hour != null ? hour * 60 : gameMinute();
+      let records = null;
+      try { records = (typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem._npcLifeRecords) || null; } catch (e) { records = null; }
+      const read = readSocietySignals(minute, records);
+      // Epidemic deaths are a running total: the new ones since the last read
+      // are the flow.
+      try {
+        const epi = window.EpidemicSystem;
+        const st = epi && typeof epi.stats === "function" ? epi.stats() : null;
+        const total = st ? Number(st.totalDead != null ? st.totalDead : st.dead) || 0 : null;
+        if (total != null) {
+          if (this._engine.seenDead != null && total > this._engine.seenDead) this.note("plague", total - this._engine.seenDead);
+          this._engine.seenDead = total;
+        }
+      } catch (e) {}
+      this._signalCache = { hour, sig: read.sig, ctx: read.ctx };
+      return this._signalCache;
+    }
+
+    // Fold `hours` of the current signals into the rolling means, and answer
+    // each signal's normalised value.
+    // A signal first seen is averaged plainly until it has a history (the
+    // mean of what was seen so far), and trusted in step with that history
+    // over its first two days, so a market's first hours never read as news.
+    _normaliseSignals(sig, hours, noisy, rng) {
+      const E = this._engine;
+      const out = {};
+      for (const name of Object.keys(SIGNAL_FLOOR)) {
+        const x = sig[name];
+        if (x === null || x === undefined || !Number.isFinite(x)) { out[name] = 0; continue; }
+        let st = E.norm[name];
+        if (!st) st = E.norm[name] = { m: x, d: 0, c: 0 };
+        const seen = Number(st.c) || 0;
+        const floor = SIGNAL_FLOOR[name];
+        const scale = Math.max(st.d, floor.abs, floor.rel * Math.abs(st.m));
+        let n = Math.max(-1, Math.min(1, (x - st.m) / scale)) * Math.min(1, seen / 48);
+        if (noisy) n = Math.max(-1, Math.min(1, n + (rng() - 0.5) * 2 * NOISY_DRIVER));
+        out[name] = n;
+        const k = 1 - Math.pow(1 - Math.max(NORM_ALPHA, 1 / (seen + 1)), hours);
+        st.d += (Math.abs(x - st.m) - st.d) * k;
+        st.m += (x - st.m) * k;
+        st.c = Math.min(1e6, seen + hours);
+      }
+      return out;
+    }
+
+    // A company's score: its weighted drivers, clamped to -1..1.
+    _scoreOf(def, norm) {
+      let s = 0;
+      const drivers = def.drivers || {};
+      for (const name of Object.keys(drivers)) s += (norm[name] || 0) * drivers[name];
+      return Math.max(-1, Math.min(1, s));
+    }
+
+    // The counted flows as per-day rates, after `hours` more of them.
+    _flowSignals(hours) {
+      const E = this._engine;
+      const out = {};
+      const k = 1 - Math.pow(1 - RATE_ALPHA, hours);
+      for (const name of COUNTED_SIGNALS) {
+        const got = E.counters[name] || 0;
+        const perHour = got / Math.max(1, hours);
+        const prev = E.rate[name];
+        E.rate[name] = prev === undefined ? perHour : prev + (perHour - prev) * k;
+        E.counters[name] = 0;
+        out[name] = E.rate[name] * 24;
+      }
+      return out;
+    }
+
+    // One hourly (or coarse) step of a company's price: the pull to its
+    // centre, the sector's random walk, its commodity beta and a rare shock
+    // whose direction leans with the company's own score. Four draws every
+    // step, whatever happens, so two worlds with the same seed stay in step.
+    _companyStep(price, def, centre, hours, rng, score, commodityMove) {
+      const vol = (def.volatility || 0.2) * (stocksNoisy() ? NOISY_VOL : 1);
+      const r1 = rng(), r2 = rng(), r3 = rng(), r4 = rng();
+      const pull = (centre - price) * (1 - Math.pow(1 - HOURLY_REVERSION, hours));
+      const walk = (r1 - 0.5) * price * vol * HOURLY_VOL * Math.sqrt(hours);
+      const drift = def.tracks && def.beta ? price * (commodityMove || 0) * def.beta : 0;
+      let shock = 0;
+      if (r2 < 1 - Math.pow(1 - HOURLY_SHOCK_CHANCE, hours)) {
+        const upChance = 0.5 + score * 0.25;
+        shock = (r3 < upChance ? 1 : -1) * price * (0.08 + r4 * 0.12);
+      }
+      const minPrice = def.minPrice || 2000;
+      const maxPrice = def.maxPrice || 100000;
+      let next = price + pull + walk + drift + shock;
+      next = Math.max(minPrice, Math.min(next, maxPrice));
+      return Math.round(Math.max(next, minimumPrice));
+    }
+
+    // The centre a company reverts to right now: its drifting fair value,
+    // at a third of itself in a world where the market has crashed.
+    _effectiveCentre(id, def) {
+      const c = this._engine.centre[id] || def.centerPrice || def.initialPrice;
+      return stocksCrashed() ? Math.max(def.minPrice || minimumPrice, Math.round(c * CRASH_CENTRE)) : c;
+    }
+
+    // Price every game hour since the last mark. Answers the hours priced.
+    // A skip is capped at 90 days, and one longer than three days is walked
+    // in coarse steps (never more than COARSE_STEPS_MAX), the last of them
+    // always one hour, which becomes the line the terminal animates.
+    advanceToNow() {
+      const minute = gameMinute();
+      if (minute === null) return 0;
+      const hour = Math.floor(minute / 60);
+      const E = this._engine;
+      if (E.hour === null || E.hour === undefined || hour < E.hour) {
+        // The first mark, or a clock that went back (an older save of a
+        // shared world): start the line here without pricing anything.
+        E.hour = hour;
+        // Flows reported before the first mark belong to no hour.
+        E.counters = {};
+        this._markCommodities();
+        for (const id of this._companyIds()) {
+          const p = this._stocks[id].currentPrice;
+          if (!E.centre[id]) E.centre[id] = STOCKS_CONFIG[id].centerPrice || p;
+          if (!E.open[id]) E.open[id] = p;
+          if (!E.target[id]) E.target[id] = p;
+          if (!E.dayOpen[id]) E.dayOpen[id] = p;
+        }
+        return 0;
+      }
+      const owed = hour - E.hour;
+      if (owed <= 0) return 0;
+      if (stocksFrozen() || !hasEconomy()) { E.hour = hour; return 0; }
+      return this.advanceHours(owed, hour);
+    }
+
+    // Price `owed` hours ending at game hour `endHour`.
+    advanceHours(owed, endHour) {
+      const E = this._engine;
+      const hours = Math.min(owed, CATCHUP_MAX_HOURS);
+      const plan = [];
+      if (hours > COARSE_AFTER_HOURS) {
+        const coarse = hours - 1;
+        const size = Math.max(1, Math.ceil(coarse / (COARSE_STEPS_MAX - 1)));
+        let left = coarse;
+        while (left > 0) { const s = Math.min(size, left); plan.push(s); left -= s; }
+        plan.push(1);
+      } else {
+        for (let i = 0; i < hours; i++) plan.push(1);
+      }
+
+      const { sig: base, ctx } = this.societySignals(endHour);
+      const flows = this._flowSignals(hours);
+      const sig = Object.assign({}, base, flows);
+      const noisy = stocksNoisy();
+      const seed = marketSeed();
+      const ids = this._companyIds();
+      const commodityMove = this._commodityMoves();
+      this._markCommodities();
+      const closing = {};
+      for (const id of ids) {
+        if (!E.centre[id]) E.centre[id] = STOCKS_CONFIG[id].centerPrice || this._stocks[id].currentPrice;
+        if (!E.target[id]) E.target[id] = this._stocks[id].currentPrice;
+        closing[id] = E.target[id];
+      }
+
+      let at = endHour - hours;
+      let norm = {};
+      const path = {};
+      for (let s = 0; s < plan.length; s++) {
+        const dt = plan[s];
+        at += dt;
+        const noiseRng = stepRng(hashString("drivers:" + at) ^ seed);
+        norm = this._normaliseSignals(sig, dt, noisy, noiseRng);
+        for (const id of ids) {
+          const def = STOCKS_CONFIG[id];
+          const score = this._scoreOf(def, norm);
+          E.score[id] = score;
+          // The centre drifts with the score, never more than 2% a day.
+          const drift = Math.pow(1 + score * CENTRE_DRIFT_PER_DAY, dt / 24);
+          const lo = (def.minPrice || minimumPrice) * 1.2;
+          const hi = (def.maxPrice || def.initialPrice * 4) * 0.8;
+          E.centre[id] = Math.max(lo, Math.min(hi, E.centre[id] * drift));
+          const rng = stepRng(hashString(id + ":" + at) ^ seed);
+          const move = s === 0 ? (commodityMove[def.tracks] || 0) : 0;
+          let price = this._companyStep(E.target[id], def, this._effectiveCentre(id, def), dt, rng, score, move);
+          // Earnings day: the quarter's figures land with the drivers.
+          if (dt === 1 && at % 24 === 0 && this._isEarningsDay(id, at / 24)) {
+            price = Math.max(def.minPrice || minimumPrice, Math.min(def.maxPrice || price, Math.round(price * (1 + score * EARNINGS_JUMP))));
+            this._earningsNews(id, score);
+          }
+          if (s === plan.length - 1) E.open[id] = E.target[id];
+          E.target[id] = price;
+          (path[id] || (path[id] = [])).push(price);
+        }
+      }
+      E.drivers = norm;
+      E.hour = endHour;
+
+      for (const id of ids) {
+        const hist = this._history[id];
+        if (hist && hist.length) {
+          // The live point becomes the close of the hour just gone, then each
+          // priced step is a point, the last a fresh live point.
+          const steps = path[id] || [];
+          hist[hist.length - 1] = closing[id];
+          for (let i = 0; i < steps.length - 1; i++) hist.push(steps[i]);
+          hist.push(E.open[id]);
+          while (hist.length > historyLength) hist.shift();
+          if (!this._candles[id]) this._candles[id] = [];
+          const o = E.open[id];
+          this._candles[id].push({ open: o, high: o, low: o, close: o });
+          while (this._candles[id].length > 30) this._candles[id].shift();
+        }
+        const prev = this._stocks[id].currentPrice;
+        this._stocks[id].currentPrice = E.open[id];
+        this._lastPctMove[id] = prev > 0 ? (E.open[id] - prev) / prev : 0;
+        this._quoteToRegister(id, E.open[id]);
+      }
+
+      this._reconcileFloat();
+      this._marketWire(endHour, ctx, hours);
+      this.syncWorldMarket();
+      return hours;
+    }
+
+    // Earnings land once a quarter per company, each on its own day.
+    _isEarningsDay(id, day) {
+      return ((Math.floor(day) + (hashString("earnings:" + id) % EARNINGS_EVERY_DAYS)) % EARNINGS_EVERY_DAYS) === 0;
+    }
+
+    // What OIL and SOUL did since the last mark, for the houses that track them.
+    _commodityMoves() {
+      const out = {};
+      for (const id of Object.keys(COMMODITY_CONFIG)) {
+        const was = this._engine.commodityMark[id];
+        const now = this._stocks[id] && this._stocks[id].currentPrice;
+        out[id] = was > 0 && now > 0 ? (now - was) / was : 0;
+      }
+      return out;
+    }
+
+    _markCommodities() {
+      for (const id of Object.keys(COMMODITY_CONFIG)) {
+        if (this._stocks[id]) this._engine.commodityMark[id] = this._stocks[id].currentPrice;
+      }
+    }
+
+    // Where a company's line stands between two marks: from the last mark's
+    // price toward the next one, by the minutes gone, with a little jitter.
+    _liveCompanyPrice(id, minute, jitter) {
+      const E = this._engine;
+      const open = E.open[id], target = E.target[id];
+      if (!(open > 0) || !(target > 0)) return null;
+      let frac = 0;
+      if (minute !== null && minute !== undefined && E.hour !== null) {
+        frac = Math.max(0, Math.min(1, (minute - E.hour * 60) / 60));
+      }
+      let p = open + (target - open) * frac;
+      if (jitter) p += p * INTRADAY_WIGGLE * (Math.random() - 0.5) * 2;
+      return Math.max(minimumPrice, Math.round(p));
+    }
+
+    // The float is conserved: the party (and a scenario stake such as the CEO
+    // origin's LimeCorp grant) plus the NPC shareholders never exceed what a
+    // company issued. A stake granted after the NPCs bought in dilutes them.
+    _reconcileFloat() {
+      const S = window.NPCSim && window.NPCSim.Stocks;
+      if (!S || typeof S.trimTo !== "function") return;
+      for (const id of this._companyIds()) {
+        const def = STOCKS_CONFIG[id];
+        if (!def.totalShares) continue;
+        const room = Math.max(0, def.totalShares - Math.max(this._shares[id] || 0, partySharesOf(def.companyKey)));
+        if (npcHeld(def.companyKey) > room) {
+          try { S.trimTo(def.companyKey, room); } catch (e) {}
+        }
+      }
+    }
+
+    // =========================================================================
+    // The society API (window.StockSociety)
+    // =========================================================================
+
+    // Whether the market trades at all in this world.
+    isOpen() { return hasEconomy() && !stocksFrozen(); }
+
+    // Every listed company: key, sector id, price in cents, shares issued.
+    listings() {
+      return this._companyIds().map(id => {
+        const def = STOCKS_CONFIG[id];
+        return {
+          id, key: def.companyKey, name: def.name, symbol: def.symbol,
+          sector: String(def.sectorKey || 'misc').toLowerCase().replace(/[^a-z0-9]/g, ''),
+          price: this._stocks[id].currentPrice, centre: this._engine.centre[id] || def.centerPrice,
+          totalShares: def.totalShares
+        };
+      });
+    }
+
+    _idOfKey(key) {
+      for (const id of Object.keys(STOCKS_CONFIG)) if (STOCKS_CONFIG[id].companyKey === key) return id;
+      return null;
+    }
+
+    // A company's price in cents, by its register key.
+    priceOfKey(key) {
+      const id = this._idOfKey(key);
+      return id && this._stocks[id] ? this._stocks[id].currentPrice : 0;
+    }
+
+    // Its fair-value centre in cents.
+    centreOfKey(key) {
+      const id = this._idOfKey(key);
+      if (!id) return 0;
+      return this._effectiveCentre(id, STOCKS_CONFIG[id]);
+    }
+
+    // Shares nobody holds yet: issued, minus the party's, minus the NPCs'.
+    freeFloat(key) {
+      const id = this._idOfKey(key);
+      if (!id) return 0;
+      const def = STOCKS_CONFIG[id];
+      const party = Math.max(this._shares[id] || 0, partySharesOf(key));
+      return Math.max(0, (def.totalShares || 0) - party - npcHeld(key));
+    }
+
+    // A block of shares changing hands off the exchange, between the party and
+    // an NPC shareholder (the Empathize panel's Trade shares). Only the party's
+    // side moves here: +delta shares bought for `gold`, -delta sold. The float
+    // is untouched because the NPC's side (NPCSim.Stocks) moves the other way,
+    // and the cash is settled by the caller. Answers false when it cannot be
+    // done (no such company, more sold than held, more bought than issued).
+    movePartyShares(key, delta, gold) {
+      const id = this._idOfKey(key);
+      const n = Math.trunc(Number(delta) || 0);
+      if (!id || !n || !this._stocks[id]) return false;
+      const def = STOCKS_CONFIG[id];
+      const cur = Math.max(this._shares[id] || 0, partySharesOf(key));
+      const next = cur + n;
+      if (next < 0 || (def && def.totalShares && next > def.totalShares)) return false;
+      const paid = Math.max(0, Math.round(Number(gold) || 0));
+      const basis = this._costBasis[id] || 0;
+      this._costBasis[id] = n > 0 ? basis + paid : (cur > 0 ? basis * (next / cur) : 0);
+      this._shares[id] = next;
+      this._pushPosition(id);
+      this.recordTrade({
+        stockId: id, side: n > 0 ? "buy" : "sell", type: "private",
+        shares: Math.abs(n), price: Math.round(paid / Math.abs(n)), total: paid, pnl: 0
+      });
+      return true;
+    }
+
+    // What one share of a company pays a day, in cents, before the control
+    // premium; and that premium for a stake of `shares`.
+    dividendPerShareOfKey(key) {
+      const id = this._idOfKey(key);
+      return id ? this.dividendPerShare(id) : 0;
+    }
+    controlMultiplierForShares(key, shares) {
+      const id = this._idOfKey(key);
+      const def = id && STOCKS_CONFIG[id];
+      if (!def || !def.totalShares) return 1;
+      const pct = (Math.max(0, shares) / def.totalShares) * 100;
+      return pct <= 50 ? 1 : 1 + CONTROL_PREMIUM * ((pct - 50) / 50);
+    }
+
+    // The sector id a company trades in.
+    sectorOfKey(key) {
+      const id = this._idOfKey(key);
+      return id ? String(STOCKS_CONFIG[id].sectorKey || 'misc').toLowerCase().replace(/[^a-z0-9]/g, '') : null;
     }
 
     // =========================================================================
@@ -771,6 +1517,8 @@
       // Only the days actually paid for are struck off; the rest stay owed and
       // are paid on the following passes.
       this._lastDividendDay += days;
+      // The society's shareholders are paid on the same formula.
+      this._payNpcDividends(days);
       const paid = Math.floor(this.dailyDividend() * days);
       if (paid <= 0) return 0;
       if (typeof $gameParty !== 'undefined' && $gameParty) $gameParty.gainGold(paid);
@@ -786,9 +1534,22 @@
       return paid;
     }
 
+    // Every NPC shareholder's dividend for `days`, into their own purse
+    // (NPCSim.Stocks caps it at the NPC money cap).
+    _payNpcDividends(days) {
+      const S = window.NPCSim && window.NPCSim.Stocks;
+      if (!S || typeof S.payDividends !== "function" || !(days > 0)) return 0;
+      try {
+        return S.payDividends(days, (key, shares) =>
+          this.dividendPerShareOfKey(key) * shares * this.controlMultiplierForShares(key, shares)) || 0;
+      } catch (e) { return 0; }
+    }
+
+    // The 2 s tick. OIL and SOUL take their real-time step exactly as they
+    // always have; a company only animates its line between two hourly marks
+    // (the hourly engine, advanceToNow, is what moves it).
     updatePrices() {
-      const WM = window.WorldManager;
-      if (WM && typeof WM.isEmptyWorld === "function" && WM.isEmptyWorld()) return;
+      if (stocksFrozen()) return;
 
       // The commodities price first: the houses that live off them read the
       // move they just made.
@@ -798,20 +1559,17 @@
         return ca - cb;
       });
 
+      const minute = gameMinute();
       for (const id of ordered) {
         const def = STOCKS_CONFIG[id];
         if (!this._stocks[id]) continue;
 
-        // A company's price may have moved outside the terminal - the daily
-        // drift on the Real Estate screen - in which case that is where it
-        // opens from.
-        const quoted = this._registerPriceCents(id);
-        let prevPrice = this._stocks[id].currentPrice;
-        if (quoted && this._lastQuotedEuros[id] !== undefined &&
-            Math.round(quoted / 100) !== this._lastQuotedEuros[id]) {
-          prevPrice = quoted;
+        if (!def.commodity) {
+          this._animateCompany(id, minute);
+          continue;
         }
 
+        const prevPrice = this._stocks[id].currentPrice;
         const newPrice = this.generateNewPrice(prevPrice, id, def);
         this._stocks[id].currentPrice = newPrice;
         this._lastPctMove[id] = prevPrice > 0 ? (newPrice - prevPrice) / prevPrice : 0;
@@ -838,6 +1596,25 @@
       this.syncWorldMarket();
     }
 
+    // A company's live line: between the last hourly mark and the next, with
+    // the live history point and candle following it.
+    _animateCompany(id, minute) {
+      const prevPrice = this._stocks[id].currentPrice;
+      const live = this._liveCompanyPrice(id, minute, true) || prevPrice;
+      this._stocks[id].currentPrice = live;
+      this._lastPctMove[id] = prevPrice > 0 ? (live - prevPrice) / prevPrice : 0;
+      const hist = this._history[id];
+      if (hist && hist.length) hist[hist.length - 1] = live;
+      const candles = this._candles[id];
+      if (candles && candles.length) {
+        const last = candles[candles.length - 1];
+        last.close = live;
+        last.high = Math.max(last.high, live);
+        last.low = Math.min(last.low, live);
+      }
+      this._quoteToRegister(id, live);
+    }
+
     generateNewPrice(currentPrice, stockType, def) {
       let newPrice;
       // Town mood plus whatever the continent is dying of, clamped to the same
@@ -851,6 +1628,13 @@
         const fluctuation = (Math.random() - 0.5) * (currentPrice * def.volatility * 0.4);
         const pullToMean = (targetPrice - currentPrice) * reversionStrength;
         newPrice = currentPrice + pullToMean + fluctuation;
+      } else if (def && def.companyKey) {
+        // A company takes one hourly step of the society engine (this is how
+        // a listing's opening history is seeded; the live price is moved by
+        // advanceToNow).
+        const score = (this._engine && this._engine.score && this._engine.score[stockType]) || 0;
+        const move = def.tracks ? ((this._lastPctMove && this._lastPctMove[def.tracks]) || 0) : 0;
+        return this._companyStep(currentPrice, def, this._effectiveCentre(stockType, def), 1, Math.random, score, move);
       } else {
         const minPrice = def.minPrice || 2000;
         const maxPrice = def.maxPrice || 100000;
@@ -1344,9 +2128,126 @@
     }
 
     _headlineFor(stockId) {
+      // A company with a driver pulling hard is written up on that driver
+      // half the time; the flavour pools cover the rest.
+      const def = STOCKS_CONFIG[stockId];
+      if (def && def.companyKey && Math.random() < 0.5) {
+        const lead = this._leadDriver(stockId);
+        if (lead && Math.abs(lead.pull) >= 0.25) {
+          const text = this._driverHeadline(stockId, lead.name, lead.pull > 0 ? "up" : "down");
+          if (text) return text;
+        }
+      }
       const pool = this._headlinePool(stockId);
       if (!pool.length) return null;
       return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    // The driver doing the most to a company right now: { name, pull }, the
+    // pull being weight times the driver's normalised value.
+    _leadDriver(stockId) {
+      const def = STOCKS_CONFIG[stockId];
+      const norm = (this._engine && this._engine.drivers) || {};
+      let lead = null;
+      for (const name of Object.keys((def && def.drivers) || {})) {
+        const pull = (norm[name] || 0) * def.drivers[name];
+        if (!lead || Math.abs(pull) > Math.abs(lead.pull)) lead = { name, pull };
+      }
+      return lead;
+    }
+
+    // What a driver headline may name: the war, a town, a power.
+    _driverParams(stockId, driver, dir) {
+      const def = STOCKS_CONFIG[stockId] || {};
+      const ctx = (this._signalCache && this._signalCache.ctx) || {};
+      const war = ctx.war
+        ? (_smi18n('drivers.warName', { a: ctx.war.a, b: ctx.war.b }) || '')
+        : (_smi18n('drivers.someWar') || '');
+      let town = dir === "up" ? ctx.bestTown : ctx.worstTown;
+      if (driver === "hq") town = ctx.hqTown;
+      if (driver === "greenwitch") town = ctx.greenwitchTown;
+      const power = ctx.power || ctx.sanctioned || (_smi18n('drivers.somePower') || '');
+      return { company: def.name || '', ticker: def.symbol || '', war, town: townLabel(town), power };
+    }
+
+    // A line out of StockMarket.headlines.driver.<driver>.<up|down>.
+    _driverHeadline(stockId, driver, dir) {
+      if (typeof T !== "function" || !T.has) return null;
+      const key = 'StockMarket.headlines.driver.' + driver + '.' + dir;
+      if (!T.has(key) || typeof T.pool !== "function") return null;
+      const pool = T.pool(key);
+      if (!pool || !pool.length) return null;
+      const params = this._driverParams(stockId, driver, dir);
+      const line = String(pool[Math.floor(Math.random() * pool.length)]);
+      return line.replace(/\{(\w+)\}/g, (m, k) => (params[k] !== undefined ? params[k] : m));
+    }
+
+    _pushNews(stockId, text) {
+      if (!text) return;
+      const def = STOCKS_CONFIG[stockId];
+      this._news.unshift({
+        time: _smi18n('news.justNow') || '',
+        tag: def ? def.symbol : '',
+        text
+      });
+      if (this._news.length > 20) this._news.pop();
+    }
+
+    // Earnings day: the figures beat or miss with the company's own drivers.
+    _earningsNews(stockId, score) {
+      if (typeof T !== "function" || !T.has || typeof T.pool !== "function") return;
+      const key = 'StockMarket.headlines.earnings.' + (score >= 0 ? 'beat' : 'miss');
+      if (!T.has(key)) return;
+      const pool = T.pool(key);
+      if (!pool || !pool.length) return;
+      const params = this._driverParams(stockId, null, score >= 0 ? "up" : "down");
+      const line = String(pool[Math.floor(Math.random() * pool.length)]);
+      this._pushNews(stockId, line.replace(/\{(\w+)\}/g, (m, k) => (params[k] !== undefined ? params[k] : m)));
+    }
+
+    // At each hourly mark: a company that moved hard over the day, or a
+    // driver that swung past DRIVER_SWING, makes the wire. At most one line
+    // per mark, and each company at most once a game day.
+    _marketWire(hour, ctx, hours) {
+      const E = this._engine;
+      const ids = this._companyIds();
+      let written = false;
+      for (const id of ids) {
+        const p = E.open[id];
+        const was = E.dayOpen[id];
+        if (!(was > 0)) { E.dayOpen[id] = p; continue; }
+        if (hour % 24 === 0 || hours >= 24) E.dayOpen[id] = p;
+        if (written || hours > 24) continue;
+        const move = (p - was) / was;
+        if (Math.abs(move) < BIG_MOVE) continue;
+        if (E.newsHour[id] != null && hour - E.newsHour[id] < 24) continue;
+        const lead = this._leadDriver(id);
+        const dir = move > 0 ? "up" : "down";
+        const text = lead ? this._driverHeadline(id, lead.name, dir) : null;
+        const note = _smi18n('news.moveNote', { sign: move > 0 ? '+' : '-', pct: Math.abs(move * 100).toFixed(1) });
+        this._pushNews(id, (note ? note + ' ' : '') + (text || this._headlineFor(id) || ''));
+        E.newsHour[id] = hour;
+        E.dayOpen[id] = p;
+        written = true;
+      }
+      // A driver swinging past the mark is news for the company that leans
+      // on it hardest.
+      for (const name of Object.keys(E.drivers || {})) {
+        const n = E.drivers[name] || 0;
+        const sign = n >= DRIVER_SWING ? 1 : n <= -DRIVER_SWING ? -1 : 0;
+        const before = E.lastSwing[name] || 0;
+        E.lastSwing[name] = sign;
+        if (written || !sign || sign === before || hours > 24) continue;
+        let best = null, bestW = 0;
+        for (const id of ids) {
+          const w = (STOCKS_CONFIG[id].drivers || {})[name] || 0;
+          if (Math.abs(w) > Math.abs(bestW)) { best = id; bestW = w; }
+        }
+        if (!best) continue;
+        const text = this._driverHeadline(best, name, sign * bestW > 0 ? "up" : "down");
+        if (text) { this._pushNews(best, text); written = true; }
+      }
+      return written;
     }
 
     // The ticker tape the terminal opens on: one line from each of a handful of
@@ -1441,6 +2342,7 @@
       for (const [id, stock] of Object.entries(this._stocks)) {
         stock.currentPrice = Math.round(stock.currentPrice * (1.15 + Math.random() * 0.15));
         this._history[id].push(stock.currentPrice);
+        this._jumpCompanyLine(id, stock.currentPrice);
         this._quoteToRegister(id, stock.currentPrice);
       }
       this.syncWorldMarket();
@@ -1450,12 +2352,70 @@
       for (const [id, stock] of Object.entries(this._stocks)) {
         stock.currentPrice = Math.max(minimumPrice, Math.round(stock.currentPrice * (0.75 - Math.random() * 0.15)));
         this._history[id].push(stock.currentPrice);
+        this._jumpCompanyLine(id, stock.currentPrice);
         this._quoteToRegister(id, stock.currentPrice);
       }
       this.syncWorldMarket();
     }
+
+    // A pump or a crash moves a company's hourly line with it, so the next
+    // 2 s tick does not animate the jump straight back out.
+    _jumpCompanyLine(id, price) {
+      const def = STOCKS_CONFIG[id];
+      if (!def || def.commodity) return;
+      const E = this._engine;
+      const was = E.open[id] || price;
+      const ratio = was > 0 ? price / was : 1;
+      E.open[id] = price;
+      if (E.target[id]) E.target[id] = Math.max(minimumPrice, Math.round(E.target[id] * ratio));
+    }
   }
 
+
+  //=============================================================================
+  // The society's view of the market (window.StockSociety)
+  //=============================================================================
+  // What the NPC shareholders (NPCSim.Stocks) and the NPC economy read and
+  // report. Every answer is safe before a market exists.
+  function liveMarket() {
+    const m = (typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem.stockMarket : null;
+    return m && typeof m.listings === "function" ? m : null;
+  }
+  window.StockSociety = {
+    market: liveMarket,
+    isOpen() { const m = liveMarket(); return !!(m && m.isOpen()); },
+    listings() { const m = liveMarket(); return m ? m.listings() : []; },
+    priceOf(key) { const m = liveMarket(); return m ? m.priceOfKey(key) : 0; },
+    centreOf(key) { const m = liveMarket(); return m ? m.centreOfKey(key) : 0; },
+    freeFloat(key) { const m = liveMarket(); return m ? m.freeFloat(key) : 0; },
+    partyShares: partySharesOf,
+    // A private block trade's party side (see movePartyShares above).
+    movePartyShares(key, delta, gold) { const m = liveMarket(); return m ? m.movePartyShares(key, delta, gold) : false; },
+    // Where a company is heading on its own drivers: +1 up, -1 down, 0 flat.
+    // The hourly engine's society score, or the gap to fair value before it
+    // has run.
+    directionOf(key) {
+      const m = liveMarket();
+      if (!m) return 0;
+      const id = m._idOfKey(key);
+      if (!id) return 0;
+      let score = Number(m._engine && m._engine.score && m._engine.score[id]) || 0;
+      if (Math.abs(score) < 1e-6) {
+        const c = m.centreOfKey(key), p = m.priceOfKey(key);
+        if (c > 0 && p > 0) score = (c - p) / c;
+      }
+      return score > 0.001 ? 1 : score < -0.001 ? -1 : 0;
+    },
+    dividendPerShare(key) { const m = liveMarket(); return m ? m.dividendPerShareOfKey(key) : 0; },
+    controlMultiplier(key, shares) { const m = liveMarket(); return m ? m.controlMultiplierForShares(key, shares) : 1; },
+    sectorOf(key) { const m = liveMarket(); return m ? m.sectorOfKey(key) : null; },
+    // A flow the society reports: "spend" (NPC shop spending, gold),
+    // "harvest" (farm tending done), "savings" (NPC deposits, gold).
+    note(signal, amount) { const m = liveMarket(); if (m) m.note(signal, amount); },
+    COMPANY_DRIVERS,
+    SIGNALS: Object.keys(SIGNAL_FLOOR),
+    readSocietySignals
+  };
 
   //=============================================================================
   // Game_System Integration
@@ -1732,7 +2692,7 @@
               </div>
               <div style="text-align:right">
                 <div style="font-weight:bold; font-size:14px; color:var(--xp-blue-dark)">${formatMoney(price)}</div>
-                <div style="font-size:11px; font-weight:bold; color:${up ? '#27ae60' : '#c0392b'}">
+                <div style="font-size:11px; font-weight:bold; color:${up ? UP_INK : '#c0392b'}">
                   ${up ? '▲ +' : '▼ '}${pct.toFixed(2)}%
                 </div>
               </div>
@@ -1767,7 +2727,7 @@
               <span style="color:var(--xp-blue-dark)">MID: ${formatMoney(stockPrice)}</span>
               <span>MARKET</span>
             </div>
-            ${bids.map(b => `<div style="display:flex; justify-content:space-between; color:var(--xp-green); background:rgba(39,174,96,0.08); padding:1px 4px; border-radius:2px"><span>${formatMoney(b.price)}</span><span>${b.size} sh</span></div>`).join('')}
+            ${bids.map(b => `<div style="display:flex; justify-content:space-between; color:${UP_INK}; background:rgba(39,174,96,0.08); padding:1px 4px; border-radius:2px"><span>${formatMoney(b.price)}</span><span>${b.size} sh</span></div>`).join('')}
           </div>
         </div>
       `;
@@ -1803,7 +2763,7 @@
           const currentVal = qty * stk.currentPrice;
           const pnl = qty > 0 ? (currentVal - basis) : 0;
           const pnlPct = basis > 0 ? ((currentVal - basis) / basis) * 100 : 0;
-          const pnlColor = pnl >= 0 ? '#27ae60' : '#c0392b';
+          const pnlColor = pnl >= 0 ? UP_INK : '#c0392b';
 
           return `
             <tr style="border-bottom:1px solid var(--xp-gray); ${qty > 0 ? 'background:var(--xp-white);' : 'opacity:0.6'}">
@@ -1850,7 +2810,7 @@
             const stock = sm.getStock(ord.stockId) || { symbol: ord.stockId };
             const curP = sm.getPrice(ord.stockId);
             const dist = curP > 0 ? (((curP - ord.targetPrice) / curP) * 100).toFixed(1) : 0;
-            const sideColor = ord.side === 'buy' ? '#27ae60' : '#c0392b';
+            const sideColor = ord.side === 'buy' ? UP_INK : '#c0392b';
 
             return `
               <tr style="border-bottom:1px solid var(--xp-gray); background:var(--xp-white)">
@@ -1895,8 +2855,8 @@
         } else {
           const histRows = historyList.slice(0, 30).map(t => {
             const stock = sm.getStock(t.stockId) || { symbol: t.stockId };
-            const sideColor = t.side === 'buy' ? '#27ae60' : '#c0392b';
-            const pnlColor = (t.pnl || 0) >= 0 ? '#27ae60' : '#c0392b';
+            const sideColor = t.side === 'buy' ? UP_INK : '#c0392b';
+            const pnlColor = (t.pnl || 0) >= 0 ? UP_INK : '#c0392b';
             const timeStr = new Date(t.time || t.filledAt || Date.now()).toLocaleTimeString();
 
             return `
@@ -1910,7 +2870,7 @@
                 <td style="padding:5px 8px; text-align:right; font-weight:bold; color:${pnlColor}">
                   ${t.side === 'sell' && t.pnl !== undefined ? `${t.pnl >= 0 ? '+' : ''}${formatMoney(t.pnl)}` : '-'}
                 </td>
-                <td style="padding:5px 8px; text-align:center"><span style="color:var(--xp-green); font-size:11px; font-weight:bold">FILLED</span></td>
+                <td style="padding:5px 8px; text-align:center"><span style="color:${UP_INK}; font-size:11px; font-weight:bold">FILLED</span></td>
               </tr>
             `;
           }).join('');
@@ -2089,7 +3049,7 @@
         <div class="sm-header-bar">
           <div style="display:flex; align-items:center; gap:12px">
             <span style="font-size:18px; font-weight:bold; letter-spacing:1px; color:var(--xp-white)">STOCK MARKET</span>
-            <span style="background:var(--xp-green); color:var(--xp-white); font-size:10px; font-weight:bold; padding:2px 8px; border-radius:10px">● LIVE MARKET OPEN</span>
+            <span style="background:${UP_INK}; color:var(--xp-white); font-size:10px; font-weight:bold; padding:2px 8px; border-radius:10px">● LIVE MARKET OPEN</span>
             <span style="font-size:12px; color:var(--xp-sky-4)">Session Ticks: ${sm._updateCounter}</span>
           </div>
           <div style="display:flex; gap:10px">
@@ -2103,7 +3063,7 @@
             </div>
             <div class="sm-stat-pill">
               <span style="font-size:10px; color:var(--xp-sky-4)">NET WORTH</span>
-              <span style="font-size:14px; font-weight:bold; color:#2ecc71">${sm.getNetWorthFormatted()}</span>
+              <span style="font-size:14px; font-weight:bold; color:var(--xp-green-6)">${sm.getNetWorthFormatted()}</span>
             </div>
           </div>
         </div>
@@ -2143,7 +3103,7 @@
                   <span style="font-size:15px; font-weight:bold; color:var(--xp-blue-dark)">${currentStock.name}</span>
                   <span class="sm-ticker-badge" style="margin-left:6px">${currentStock.symbol}</span>
                   <span style="font-size:16px; font-weight:bold; margin-left:10px; color:var(--xp-ink)">${formatMoney(stockPrice)}</span>
-                  <span style="font-size:12px; font-weight:bold; margin-left:6px; color:${isUp ? '#27ae60' : '#c0392b'}">
+                  <span style="font-size:12px; font-weight:bold; margin-left:6px; color:${isUp ? UP_INK : '#c0392b'}">
                     ${isUp ? '▲ +' : '▼ '}${formatMoney(Math.abs(deltaPrice))} (${pctChange.toFixed(2)}%)
                   </span>
                 </div>
@@ -2180,7 +3140,7 @@
 
             <!-- Buy / Sell Mode Toggle -->
             <div style="display:flex; gap:4px; margin-bottom:8px">
-              <button class="focusable" id="sm-side-buy" style="flex:1; padding:7px; font-weight:bold; font-size:13px; cursor:pointer; border:1px solid var(--xp-green); background:${isBuy ? '#27ae60' : '#f0f0f0'}; color:${isBuy ? '#fff' : '#27ae60'}; border-radius:2px">
+              <button class="focusable" id="sm-side-buy" style="flex:1; padding:7px; font-weight:bold; font-size:13px; cursor:pointer; border:1px solid var(--xp-green); background:${isBuy ? UP_INK : '#f0f0f0'}; color:${isBuy ? '#fff' : UP_INK}; border-radius:2px">
                 BUY / LONG
               </button>
               <button class="focusable" id="sm-side-sell" style="flex:1; padding:7px; font-weight:bold; font-size:13px; cursor:pointer; border:1px solid var(--xp-red-2); background:${!isBuy ? '#c0392b' : '#f0f0f0'}; color:${!isBuy ? '#fff' : '#c0392b'}; border-radius:2px">
@@ -2258,12 +3218,12 @@
               </div>
               <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:bold; border-top:1px dashed var(--xp-silver); padding-top:4px; margin-top:4px">
                 <span style="color:var(--xp-blue-dark)">${isBuy ? 'Total Required:' : 'Estimated Proceeds:'}</span>
-                <span style="color:${isBuy ? '#c0392b' : '#27ae60'}">${formatMoney(totalEstimated)}</span>
+                <span style="color:${isBuy ? '#c0392b' : UP_INK}">${formatMoney(totalEstimated)}</span>
               </div>
             </div>
 
             <!-- Order Execution Button -->
-            <button id="sm-execute-order-btn" class="focusable" style="width:auto; min-width:180px; align-self:center; padding:10px 26px; font-size:14px; font-weight:bold; cursor:${isValid ? 'pointer' : 'not-allowed'}; background:${isValid ? (isBuy ? 'linear-gradient(180deg, #2ecc71, var(--xp-green))' : 'linear-gradient(180deg, #e74c3c, var(--xp-red-2))') : '#ccc'}; color:var(--xp-white); border:1px solid ${isValid ? (isBuy ? '#1e8449' : '#922b21') : '#aaa'}; border-radius:3px; box-shadow:${isValid ? '0 2px 5px rgba(0,0,0,0.2)' : 'none'}">
+            <button id="sm-execute-order-btn" class="focusable" style="width:auto; min-width:180px; align-self:center; padding:10px 26px; font-size:14px; font-weight:bold; cursor:${isValid ? 'pointer' : 'not-allowed'}; background:${isValid ? (isBuy ? UP_PLATE : 'linear-gradient(180deg, #e74c3c, var(--xp-red-2))') : '#ccc'}; color:var(--xp-white); border:1px solid ${isValid ? (isBuy ? '#1e8449' : '#922b21') : '#aaa'}; border-radius:3px; box-shadow:${isValid ? '0 2px 5px rgba(0,0,0,0.2)' : 'none'}">
               ${isValid ? `PLACE ${isBuy ? 'BUY' : 'SELL'} ${this._orderType.toUpperCase().replace('_', ' ')} ORDER` : validationMsg.toUpperCase()}
             </button>
 

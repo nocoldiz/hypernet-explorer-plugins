@@ -161,6 +161,8 @@
       super.update();
       this.updateSpriteFrames();
       if (this._phase === "play") {
+        // The forfeit question holds the table: nothing moves under it.
+        if (this._quitAsk) { this.updateQuitAsk(); return; }
         if (this._turn === 1) this.updateAI();
         else this.updateInput();
       } else if (this._phase === "over") {
@@ -494,6 +496,14 @@
           this.renderAll();
           return;
         }
+        // One level at a time: off the board back to the hand, and only from
+        // the hand away from the table.
+        if (this._area === "board") {
+          this._area = "hand";
+          SoundManager.playCancel();
+          this.renderAll();
+          return;
+        }
         this.confirmQuit();
         return;
       }
@@ -517,19 +527,23 @@
 
       if (this._area === "board") {
         const side = CG().BOARD_SIZE;
-        const step = (dx, dy) => {
-          const x = this._cursor % side, y = (this._cursor / side) | 0;
-          const nx = (x + dx + side) % side, ny = (y + dy + side) % side;
-          this._cursor = ny * side + nx;
+        // The board is a grid: the cursor follows its rows and columns and
+        // stops at the edges; down off the bottom row goes back to the hand.
+        const step = (dir) => {
+          const next = window.UINav
+            ? window.UINav.gridStep(this._cursor, dir, CG().BOARD_CELLS, side)
+            : this._cursor;
+          if (next === this._cursor) return;
+          this._cursor = next;
           SoundManager.playCursor();
           this.renderAll();
         };
-        if (Input.isRepeated("right")) step(1, 0);
-        else if (Input.isRepeated("left")) step(-1, 0);
-        else if (Input.isRepeated("up")) step(0, -1);
+        if (Input.isRepeated("right")) step("right");
+        else if (Input.isRepeated("left")) step("left");
+        else if (Input.isRepeated("up")) step("up");
         else if (Input.isRepeated("down")) {
           if (((this._cursor / side) | 0) === side - 1) { this._area = "hand"; SoundManager.playCursor(); this.renderAll(); }
-          else step(0, 1);
+          else step("down");
         } else if (Input.isTriggered("ok")) {
           this.playerPlace();
         }
@@ -551,11 +565,50 @@
 
     confirmQuit() {
       // Walking out of a staked duel forfeits it, which is the honest reading of
-      // leaving the table; a practice game just ends.
+      // leaving the table; a practice game just ends. A stake is never handed
+      // over on one press: the table asks first, A forfeits and B stays.
       if (this._stake.type === "none") { this.leave(); return; }
+      this.openQuitAsk();
+    }
+
+    forfeit() {
+      this.closeQuitAsk();
       this._phase = "over";
       this.settle(1);
       this.showBanner(1);
+    }
+
+    openQuitAsk() {
+      if (this._quitAsk) return;
+      const container = document.getElementById("cardduel-container");
+      if (!container) { this.forfeit(); return; }
+      this._quitAsk = true;
+      if (window.UINav) window.UINav.swallowHeld();
+      const box = document.createElement("div");
+      box.className = "cd-banner cd-confirm cd-in";
+      box.id = "cd-quit-ask";
+      box.innerHTML = `<p>${escapeHtml(T("CardGame.duel.forfeitAsk"))}</p>
+        <div class="cd-confirm-btns">
+          <button class="cd-btn" id="cd-quit-yes" data-pad="confirm">${escapeHtml(T("CardGame.duel.forfeitYes"))}</button>
+          <button class="cd-btn" id="cd-quit-no" data-pad="back">${escapeHtml(T("CardGame.duel.forfeitNo"))}</button>
+        </div>`;
+      container.appendChild(box);
+      box.querySelector("#cd-quit-yes").addEventListener("click", () => { SoundManager.playOk(); this.forfeit(); });
+      box.querySelector("#cd-quit-no").addEventListener("click", () => { SoundManager.playCancel(); this.closeQuitAsk(); });
+      SoundManager.playCursor();
+    }
+
+    closeQuitAsk() {
+      if (!this._quitAsk) return;
+      this._quitAsk = false;
+      const box = document.getElementById("cd-quit-ask");
+      if (box) box.remove();
+      if (window.UINav) window.UINav.swallowHeld();
+    }
+
+    updateQuitAsk() {
+      if (Input.isTriggered("ok")) { SoundManager.playOk(); this.forfeit(); return; }
+      if (Input.isTriggered("cancel") || TouchInput.isCancelled()) { SoundManager.playCancel(); this.closeQuitAsk(); }
     }
 
     //-------------------------------------------------------------------------
@@ -1104,6 +1157,7 @@
       container.querySelector("#cd-detail").style.top = Math.round(metrics.boardTop) + "px";
 
       container.querySelector("#cd-quit").addEventListener("click", () => {
+        if (this._quitAsk) return;
         if (this._phase === "play") this.confirmQuit(); else this.leave();
       });
     }

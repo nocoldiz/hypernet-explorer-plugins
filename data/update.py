@@ -6,6 +6,11 @@ import random
 FILENAME = 'classes.json'
 BACKUP_FILENAME = 'classes.json.bak'
 
+# Classes whose mana pool is a fixed number at every level.
+FIXED_MP = {'Mechanic': 10}
+# Classes of another nature that still get the Magical curve.
+CASTER_BAR = {'Freelancer'}
+
 def calculate_standard_curve(start, end, current_level):
     """The extreme slow curve used for Both and Mundane."""
     if current_level <= 1:
@@ -67,8 +72,17 @@ def run_updater():
         if max_level <= 1:
             continue
 
+        # The Mechanic's flat pool of ten is its class gimmick (it never casts),
+        # also held by tools/classes/gen_class_params.js FIXED_MMP.
+        if name in FIXED_MP:
+            for lvl in range(1, max_level):
+                mp_curve[lvl] = FIXED_MP[name]
+            continue
+
         # Route 1: Magical (Base 100, random variance +/- 20)
-        if re.search(r'<Nature:\s*Magical>', note, re.IGNORECASE):
+        # The Freelancer studies under every school, magic included, so it carries
+        # a caster's bar although its nature is Both (test/test_class_mp_tiers.js).
+        if name in CASTER_BAR or re.search(r'<Nature:\s*Magical>', note, re.IGNORECASE):
             random_start = random.randint(80, 120)
             
             for lvl in range(1, max_level):
