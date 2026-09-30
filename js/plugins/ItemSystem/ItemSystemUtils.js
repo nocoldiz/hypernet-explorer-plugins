@@ -1916,10 +1916,13 @@
 // One answer to "may this character learn this skill", for every teacher in
 // the game. Two tags on a skill raise a level floor:
 //
-//   <Esoteric>   readable from level 20
+//   <Esoteric>   readable from level 15
 //   <Forbidden>  readable from level 80
 //
-// (a Forbidden skill is also Esoteric; the higher floor wins). The floor is
+// (a Forbidden skill is also Esoteric; the higher floor wins). Each floor can
+// be switched off for a whole world on its creation form
+// (WorldManager.restrictsEsotericSkills / restrictsForbiddenSkills); a
+// forbidden skill whose own floor is off still asks the esoteric one. The floor is
 // the ONLY gate on that kind of knowledge now: mastering a whole school is no
 // longer asked of anybody.
 //
@@ -1959,10 +1962,19 @@
     isForbidden(skill) { return this.rank(skill) === "forbidden"; },
     isEsoteric(skill) { return this.rank(skill) !== null; },
 
+    // Whether this world keeps the floor on a rank at all ('esoteric' or
+    // 'forbidden'). On without a world, as it always was.
+    restricts(rank) {
+      const WM = window.WorldManager;
+      if (!WM) return true;
+      const fn = rank === "forbidden" ? WM.restrictsForbiddenSkills : WM.restrictsEsotericSkills;
+      return typeof fn === "function" ? fn.call(WM) !== false : true;
+    },
+
     requiredLevel(skill) {
       const rank = this.rank(skill);
-      if (rank === "forbidden") return this.FORBIDDEN_LEVEL;
-      if (rank === "esoteric") return this.ESOTERIC_LEVEL;
+      if (rank === "forbidden" && this.restricts("forbidden")) return this.FORBIDDEN_LEVEL;
+      if (rank && this.restricts("esoteric")) return this.ESOTERIC_LEVEL;
       return 0;
     },
 
@@ -1991,7 +2003,14 @@
     canLearnFromBook(actor, skill) {
       if (this.isSandbox()) return true;
       if (this.isCultist(actor)) return true;
-      if (!this.isForbidden(skill)) return true;
+      if (!this.isForbidden(skill) || !this.restricts("forbidden")) return true;
+      return !!actor && (actor.level || 0) >= this.FORBIDDEN_LEVEL;
+    },
+
+    // Stockbusters and any other counter that sells a skill outright: the
+    // full floor, as a teacher would ask it. Sandbox buys past it.
+    canBuy(actor, skill) {
+      if (this.isSandbox()) return true;
       return this.meetsLevel(actor, skill);
     },
 

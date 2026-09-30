@@ -153,5 +153,33 @@
   "saleValue": "Sale Value",
   "nextPayout": "Next Payout",
   "inDays": "in {days} day(s)"
+ },
+ "claim": {
+  "here": "Claimable Here",
+  "section": "Claims",
+  "deedTitle": "Claim",
+  "offerSub": "Nobody holds this ground: claim it for free",
+  "offerSubTaken": "This ground already belongs to somebody",
+  "biome": "Land",
+  "status": "Status",
+  "statusFree": "Unclaimed",
+  "statusTaken": "Already claimed by somebody else",
+  "statusClaimed": "Claimed",
+  "statusSquat": "Squatted",
+  "reserves": "Reserves Stationed",
+  "buildAfterClaim": "Free (yours once claimed)",
+  "buildFree": "Free",
+  "claim": "Claim Map",
+  "claimConfirm": "Claim Anyway",
+  "alreadyClaimed": "This place is already claimed. Claiming it anyway puts a {bounty} bounty on your head.",
+  "squatted": "{name} is yours by force. A {bounty} bounty has been filed.",
+  "claimed": "{name} is now claimed. Build rights are free.",
+  "sendReserves": "Send Reserves",
+  "noReserves": "No reserves left to send here.",
+  "reservesSent": "{count} reserve(s) sent to wait at {name}.",
+  "subStationed": "{count} reserve(s) waiting here",
+  "release": "Remove Claim",
+  "released": "You gave up your claim on {name}.",
+  "charge": "Squatting"
  }
 }

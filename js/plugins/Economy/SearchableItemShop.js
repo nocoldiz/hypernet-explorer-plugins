@@ -279,7 +279,8 @@
     // Tuition
     //=========================================================================
     // A spell is bought for somebody in particular. Two things decide whether a
-    // given member can be that somebody: they must not already know it, and
+    // given member can be that somebody: they must not already know it, they
+    // must clear an esoteric or forbidden level floor, and
     // their BASE stat must clear the floor written into the skill
     // (<StatReq: STAT N>, window.SkillStatReq in BattleSystemEnhanced.js). The
     // site sells understanding, not a scroll to be puzzled over later, so a
@@ -289,6 +290,9 @@
     function canLearnSkill(actor, skill) {
         if (!actor || !skill) return false;
         if (actor.hasSkill && actor.hasSkill(skill.id)) return false;
+        // Esoteric and forbidden skills keep their level floor here too,
+        // unless the world was made without it (window.SkillArcana).
+        if (window.SkillArcana && !window.SkillArcana.canBuy(actor, skill)) return false;
         return !window.SkillStatReq || window.SkillStatReq.meets(actor, skill);
     }
 

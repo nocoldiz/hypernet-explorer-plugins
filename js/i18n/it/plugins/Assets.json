@@ -153,5 +153,33 @@
     "saleValue": "Valore di vendita",
     "nextPayout": "Prossimo incasso",
     "inDays": "tra {days} giorno/i"
+  },
+  "claim": {
+    "here": "Rivendicabile Qui",
+    "section": "Rivendicazioni",
+    "deedTitle": "Rivendicazione",
+    "offerSub": "Questa terra non è di nessuno: rivendicala gratis",
+    "offerSubTaken": "Questa terra appartiene già a qualcuno",
+    "biome": "Terreno",
+    "status": "Stato",
+    "statusFree": "Non rivendicata",
+    "statusTaken": "Già rivendicata da qualcun altro",
+    "statusClaimed": "Rivendicata",
+    "statusSquat": "Occupata abusivamente",
+    "reserves": "Riserve di Stanza",
+    "buildAfterClaim": "Libero (tuo una volta rivendicato)",
+    "buildFree": "Libero",
+    "claim": "Rivendica Mappa",
+    "claimConfirm": "Rivendica Comunque",
+    "alreadyClaimed": "Questo luogo è già rivendicato. Rivendicarlo comunque ti costerà una taglia di {bounty}.",
+    "squatted": "{name} è tuo con la forza. È stata emessa una taglia di {bounty}.",
+    "claimed": "{name} ora è rivendicato. I diritti di costruzione sono liberi.",
+    "sendReserves": "Invia Riserve",
+    "noReserves": "Nessuna riserva da inviare qui.",
+    "reservesSent": "{count} riserva/e inviata/e ad attendere a {name}.",
+    "subStationed": "{count} riserva/e in attesa qui",
+    "release": "Rimuovi Rivendicazione",
+    "released": "Hai rinunciato alla rivendicazione su {name}.",
+    "charge": "Occupazione abusiva"
   }
 }

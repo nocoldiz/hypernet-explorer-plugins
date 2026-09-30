@@ -75,6 +75,11 @@
       if (shopHour) return "shopwork";
       if (workHour) return "work";
 
+      // Their town's public gathering (window.NPCGatherings): most of the town
+      // is out at it for its hours, in company, whatever the plan said. Only
+      // their own bed hours keep them home.
+      if (!RoutineManager.isSleepHour(profile, hour) && window.NPCGatherings?.attends?.(profile, hour)) return "social";
+
       // One sleep window per person per day (RoutineManager.sleepWindow): the
       // same hours their plan sleeps, the same hours a bed and a front door
       // are read against. A night worker's window sits in the day.
@@ -228,7 +233,19 @@
       if (LeaveManager.active(profile)) return false;
       if (Math.floor(hour / SHIFT_HOURS) !== profile.workShift) return false;
       if (this.isWeekend(day ?? this._dayIndex()) && JobManager.isWeekdayOnly(JobManager.getJob(profile))) return false;
+      if (this.isHolidayOff(profile, day)) return false;
       return true;
+    },
+
+    // A public holiday in the nation of their town (window.PublicHolidays)
+    // shuts the office, the workshop and the warehouse; the trades that serve
+    // the day off keep going (JobManager.worksHolidays), and a shop counter is
+    // a shift of its own that never closes.
+    isHolidayOff(profile, day) {
+      const PH = window.PublicHolidays;
+      if (!PH || !profile?._homeGroupName) return false;
+      if (!PH.isDayOff(profile._homeGroupName, day ?? PH.todayIndex())) return false;
+      return !JobManager.worksHolidays(JobManager.getJob(profile));
     },
 
     // ── The one clock ────────────────────────────────────────────────────
@@ -407,6 +424,9 @@
       if ((profile.money ?? 0) > 300)          w.shopping += 8;
       if ((profile.wealthTierBase ?? 0) >= 2)  w.shopping += 6;
       if (bias.weekend) { w.leisure += 12; w.social += 10; w.shopping += 4; w.money -= 6; }
+      // A public holiday is a longer, lazier weekend: out with people, at play,
+      // at their ease, and nobody chasing a wage.
+      if (bias.holiday) { w.leisure += 18; w.social += 14; w.comfort += 6; w.money -= 10; }
 
       // The settlement's civic state leans on everyone's plans (world web):
       // crime waves and busts make crime tempting, festivals pull people out,
@@ -452,6 +472,7 @@
       // Saturday and Sunday: more of the free hours go to play and company,
       // fewer to chasing money, and a weekday-only trade does not open.
       bias.weekend    = this.isWeekend(day);
+      bias.holiday    = !!window.PublicHolidays?.isDayOff?.(profile?._homeGroupName, day);
 
       const { wakeHour, bedHour, breakfast, lunch, dinner } = this._anchors(profile, name, rng);
 

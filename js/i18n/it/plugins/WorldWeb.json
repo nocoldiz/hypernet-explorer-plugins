@@ -85,5 +85,52 @@
     "rescue": "{actor} ha tirato fuori {target} dai guai a {place}.",
     "healing": "{actor} ha curato i feriti a {place}.",
     "charity": "{actor} ha dato a chi non aveva nulla, a {place}."
+  },
+  "gathering": {
+    "title": "{type} fino alle {end}",
+    "type": {
+      "festival": "Festa",
+      "danceFestival": "Festa danzante",
+      "protest": "Protesta",
+      "ceremony": "Cerimonia sacra",
+      "procession": "Processione",
+      "parade": "Parata",
+      "vigil": "Veglia",
+      "electionRally": "Comizio elettorale",
+      "electionDay": "Giorno del voto"
+    },
+    "toast": {
+      "festival": "{place} è tutta in strada: {occasion}.",
+      "danceFestival": "La musica riempie {place}, si balla: {occasion}.",
+      "protest": "Una protesta riempie la piazza di {place}, {occasion}.",
+      "ceremony": "Il Sacro Impero Vaticano celebra una cerimonia a {place}: {occasion}.",
+      "procession": "Una processione attraversa {place}: {occasion}.",
+      "parade": "{place} sfila in parata: {occasion}.",
+      "vigil": "{place} si raccoglie in silenzio: {occasion}.",
+      "electionRally": "I comizi affollano {place}: si avvicina {occasion}.",
+      "electionDay": "{place} fa la fila ai seggi per {occasion}."
+    },
+    "occasion": {
+      "localElection": "il voto cittadino",
+      "nationalElection": "il voto ({election})",
+      "local": {
+        "festival": "la festa del paese",
+        "danceFestival": "un'estate di musica",
+        "ceremony": "una benedizione pontificia",
+        "procession": "il santo patrono",
+        "parade": "la fondazione della città",
+        "vigil": "i morti della città"
+      }
+    },
+    "grievance": {
+      "taxes": "contro le nuove tasse",
+      "rents": "contro il caro affitti",
+      "wages": "per salari migliori",
+      "curfew": "contro il coprifuoco",
+      "war": "contro la guerra",
+      "corruption": "contro la corruzione in municipio",
+      "prices": "contro il prezzo del pane",
+      "police": "contro la polizia"
+    }
   }
 }

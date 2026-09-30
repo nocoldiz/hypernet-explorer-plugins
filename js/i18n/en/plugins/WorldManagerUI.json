@@ -122,5 +122,18 @@
   "regenerateWorld": "Regenerate World",
   "confirmRegenerate": "Reset world \"{name}\" to the default world shipped with the game? Its history, NPCs and savegames are lost. This cannot be undone.",
   "regeneratingWorld": "Restoring the default world...",
-  "worldRegenerated": "The default world has been restored."
+  "worldRegenerated": "The default world has been restored.",
+  "rewardNormal": "Normal",
+  "rewardMultiplierValue": "x{value}",
+  "rewardKinds": {
+    "exp": "Experience reward",
+    "gold": "Money reward",
+    "knowledge": "KP reward"
+  },
+  "restrict": {
+    "esoteric": "Restrict esoteric skills at level {level}",
+    "forbidden": "Restrict forbidden skills at level {level}"
+  },
+  "restrictOn": "On",
+  "restrictOff": "Off"
 }

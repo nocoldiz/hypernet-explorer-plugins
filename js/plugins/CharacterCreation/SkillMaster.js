@@ -5900,8 +5900,10 @@
         const arcana = window.SkillArcana;
         if (!arcana || !arcana.rank) return true;
         const rank = arcana.rank(skillId);
-        if (rank === "forbidden") return actor.level >= CHAOS_FORBIDDEN_LEVEL;
-        if (rank === "esoteric") return actor.level >= CHAOS_ESOTERIC_LEVEL;
+        // A world made without a floor drops the chaos one as well.
+        const keeps = (r) => !arcana.restricts || arcana.restricts(r);
+        if (rank === "forbidden" && keeps("forbidden")) return actor.level >= CHAOS_FORBIDDEN_LEVEL;
+        if (rank && keeps("esoteric")) return actor.level >= CHAOS_ESOTERIC_LEVEL;
         return true;
     }
 

@@ -22,7 +22,13 @@
  * Plugin Commands:
  * - Add Quest: Creates a new quest in the In Progress column
  * - Update Quest: Adds an update to an existing quest
+ * - Set Quest Marker: Pins a quest to a world map tile
  * - Complete Quest: Moves a quest to the Done column
+ *
+ * World map markers: Add Quest and Update Quest take an optional World Tile
+ * X/Y (0-255, or \V[n] to read a variable) and a Marker Label. While the note
+ * sits In Progress its marker is drawn on the world map, the minimap and the
+ * in-world plates; every update that names a tile moves it to the new step.
  * - Open Quest Log: Opens the Kanban quest board
  * 
  * @param menuCommand
@@ -60,21 +66,87 @@
  * @text Initial Description
  * @desc Initial description or objective
  * @type multiline_string
- * 
+ *
+ * @arg worldX
+ * @text World Tile X
+ * @desc World map tile (0-255) the quest points at. Blank for none. \V[n] reads variable n.
+ * @type string
+ * @default
+ *
+ * @arg worldY
+ * @text World Tile Y
+ * @desc World map tile (0-255) the quest points at. Blank for none. \V[n] reads variable n.
+ * @type string
+ * @default
+ *
+ * @arg locationLabel
+ * @text Marker Label
+ * @desc Text shown on the world map marker. Blank uses the quest title.
+ * @type string
+ * @default
+ *
  * @command updateQuest
  * @text Update Quest
  * @desc Adds an update to an existing quest
- * 
+ *
  * @arg questId
  * @text Quest ID
  * @desc ID of the quest to update
  * @type string
- * 
+ *
  * @arg updateText
  * @text Update Text
  * @desc New update information
  * @type multiline_string
- * 
+ *
+ * @arg worldX
+ * @text World Tile X
+ * @desc Moves the world map marker to this tile (0-255). Blank keeps the current one. \V[n] reads variable n.
+ * @type string
+ * @default
+ *
+ * @arg worldY
+ * @text World Tile Y
+ * @desc Moves the world map marker to this tile (0-255). Blank keeps the current one. \V[n] reads variable n.
+ * @type string
+ * @default
+ *
+ * @arg locationLabel
+ * @text Marker Label
+ * @desc Text shown on the world map marker for this step. Blank uses the quest title.
+ * @type string
+ * @default
+ *
+ * @arg clearLocation
+ * @text Remove Marker
+ * @desc Take the quest's marker off the world map (ignored when a tile is given).
+ * @type boolean
+ * @default false
+ *
+ * @command setQuestLocation
+ * @text Set Quest Marker
+ * @desc Pins a quest to a world map tile without writing a log update
+ *
+ * @arg questId
+ * @text Quest ID
+ * @type string
+ *
+ * @arg worldX
+ * @text World Tile X
+ * @desc World map tile (0-255). Blank removes the marker. \V[n] reads variable n.
+ * @type string
+ *
+ * @arg worldY
+ * @text World Tile Y
+ * @desc World map tile (0-255). Blank removes the marker. \V[n] reads variable n.
+ * @type string
+ *
+ * @arg locationLabel
+ * @text Marker Label
+ * @desc Text shown on the world map marker. Blank uses the quest title.
+ * @type string
+ * @default
+ *
  * @command completeQuest
  * @text Complete Quest
  * @desc Moves a quest to the Done column
@@ -214,6 +286,35 @@
           <div class="kb-seal">${sealCh}</div>
         </div>`;
 
+    }
+
+    // A world map tile typed into a plugin command: a number, or \V[n] for the
+    // value of variable n. Blank or out of the world's 0-255 squares is null.
+    const WORLD_TILES = 256;
+    function parseWorldTile(raw) {
+        if (raw == null) return null;
+        let s = String(raw).trim();
+        if (!s) return null;
+        const v = /^\\?v\[(\d+)\]$/i.exec(s);
+        if (v) {
+            if (typeof $gameVariables === 'undefined' || !$gameVariables) return null;
+            s = String($gameVariables.value(Number(v[1])));
+        }
+        const n = Number(s);
+        if (!Number.isFinite(n)) return null;
+        const t = Math.floor(n);
+        return (t >= 0 && t < WORLD_TILES) ? t : null;
+    }
+
+    // The coordinate arguments of addQuest / updateQuest applied to a note:
+    // a tile moves the marker there, clearLocation takes it away, and a
+    // command that names neither leaves the marker where it was.
+    function applyLocationArgs(id, args) {
+        if (parseWorldTile(args.worldX) != null && parseWorldTile(args.worldY) != null) {
+            return QuestManager.setLocation(id, args.worldX, args.worldY, args.locationLabel);
+        }
+        if (String(args.clearLocation) === 'true') return QuestManager.clearLocation(id);
+        return false;
     }
 
     // Helper function to get date string with year 2001
@@ -472,6 +573,28 @@
             const quest = this._quests[id];
             if (!quest) return false;
             quest.meta = Object.assign({}, quest.meta || {}, meta || {});
+            return true;
+        }
+
+        // Pin a hand-authored quest to a world map tile (map 315 / vars 43-44
+        // space). activeMarkers() reads it back, so the diamond, the in-world
+        // plate and the note's "Show on map" all follow the newest step. A
+        // missing or out of range tile is refused rather than pinned at 0,0.
+        static setLocation(id, wx, wy, label) {
+            const quest = this._quests[id];
+            if (!quest) return false;
+            const x = parseWorldTile(wx), y = parseWorldTile(wy);
+            if (x == null || y == null) return false;
+            const loc = { wx: x, wy: y };
+            if (label) loc.label = String(label);
+            this.setMeta(id, { location: loc });
+            return true;
+        }
+
+        static clearLocation(id) {
+            const quest = this._quests[id];
+            if (!quest || !quest.meta || !quest.meta.location) return false;
+            delete quest.meta.location;
             return true;
         }
 
@@ -1181,6 +1304,14 @@
                     seen.add(m.qid);
                 }
             } catch (e) { }
+            // A live contract whose current step has no place is not pinned at
+            // all: its meta.location is the snapshot taken when it was posted,
+            // which may be a step already done.
+            try {
+                if (typeof api.state === 'function') {
+                    for (const id of Object.keys(api.state().active || {})) seen.add(id);
+                }
+            } catch (e) { }
         }
         for (const id of this._questOrder.inProgress) {
             if (seen.has(id)) continue;
@@ -1242,10 +1373,20 @@
     // Plugin Commands
     PluginManager.registerCommand(pluginName, 'addQuest', args => {
         QuestManager.addQuest(args.questId, args.questTitle, args.questDescription);
+        applyLocationArgs(args.questId, args);
     });
 
+    // An update can carry the tile of the step it announces: the marker moves
+    // with the quest's newest objective.
     PluginManager.registerCommand(pluginName, 'updateQuest', args => {
         QuestManager.updateQuest(args.questId, args.updateText);
+        applyLocationArgs(args.questId, args);
+    });
+
+    PluginManager.registerCommand(pluginName, 'setQuestLocation', args => {
+        if (!QuestManager.setLocation(args.questId, args.worldX, args.worldY, args.locationLabel)) {
+            QuestManager.clearLocation(args.questId);
+        }
     });
 
     PluginManager.registerCommand(pluginName, 'completeQuest', args => {

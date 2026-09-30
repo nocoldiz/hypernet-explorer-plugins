@@ -404,9 +404,23 @@
         return _Game_Enemy_dropItemRate.call(this) * (hasDoubleSpoils(this) ? 2 : 1);
     };
 
+    // The world's reward multipliers (WorldManager.rewardMultiplier), chosen on
+    // the creation form. 1 everywhere unless the world says otherwise.
+    function worldRewardMultiplier(kind) {
+        const WM = window.WorldManager;
+        if (!WM || typeof WM.rewardMultiplier !== "function") return 1;
+        const m = Number(WM.rewardMultiplier(kind));
+        return Number.isFinite(m) && m >= 0 ? m : 1;
+    }
+    BSE.Helpers.worldRewardMultiplier = worldRewardMultiplier;
+
     const _BattleManager_makeRewards = BattleManager.makeRewards;
     BattleManager.makeRewards = function() {
         _BattleManager_makeRewards.call(this);
+        if (this._rewards) {
+            this._rewards.exp = Math.round((this._rewards.exp || 0) * worldRewardMultiplier("exp"));
+            this._rewards.gold = Math.round((this._rewards.gold || 0) * worldRewardMultiplier("gold"));
+        }
         const r = BSE.State.battleRewards;
         r.exp = this._rewards.exp || 0;
         r.gold = this._rewards.gold || 0;
@@ -434,7 +448,8 @@
                 const data = $dataEnemies[e.enemyId()];
                 return data ? BSE.Helpers.getEnemyLevel(data.note) : 0;
             });
-            const knowledge = window.KnowledgePoints.forEncounter(enemyLevels, partyMedian);
+            const knowledge = Math.round(window.KnowledgePoints.forEncounter(enemyLevels, partyMedian) *
+                worldRewardMultiplier("knowledge"));
             if (knowledge > 0) {
                 $gameSystem.addKnowledge(knowledge);
                 BSE.State.battleRewards.knowledge = knowledge;

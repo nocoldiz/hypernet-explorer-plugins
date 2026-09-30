@@ -1,0 +1,65 @@
+{
+  "title": "Calendar",
+  "prevYear": "Previous year",
+  "nextYear": "Next year",
+  "prevMonth": "Previous month",
+  "nextMonth": "Next month",
+  "today": "Today",
+  "nationHere": "Here: {nation}",
+  "nationAll": "All nations",
+  "nowhere": "no nation",
+  "nationsCount": "Holiday in {count}",
+  "dayTitle": "{weekday} {day} {month} {year}",
+  "newAppointment": "New appointment on this day",
+  "placeholder": "What, where, with whom",
+  "add": "Add",
+  "remove": "Remove",
+  "weekday": {
+    "0": "Sun",
+    "1": "Mon",
+    "2": "Tue",
+    "3": "Wed",
+    "4": "Thu",
+    "5": "Fri",
+    "6": "Sat"
+  },
+  "weekdayLong": {
+    "0": "Sunday",
+    "1": "Monday",
+    "2": "Tuesday",
+    "3": "Wednesday",
+    "4": "Thursday",
+    "5": "Friday",
+    "6": "Saturday"
+  },
+  "tag": {
+    "election": "Election",
+    "deadline": "Deadline x{count}"
+  },
+  "election": {
+    "power": "{election} of the {power}",
+    "nation": "National vote in {nation}"
+  },
+  "section": {
+    "holidays": "Public holidays",
+    "holidaysIn": "Public holidays in {nation}",
+    "elections": "Elections",
+    "deadlines": "Quest deadlines",
+    "appointments": "Appointments"
+  },
+  "none": {
+    "holidays": "An ordinary working day.",
+    "deadlines": "No contract falls due.",
+    "appointments": "Nothing written down."
+  },
+  "status": {
+    "added": "Appointment written down.",
+    "removed": "Appointment crossed out.",
+    "empty": "Write what the appointment is first."
+  },
+  "toast": {
+    "title": "Appointment",
+    "today": "Today at {time}: {text}",
+    "now": "It is {time}: {text}"
+  }
+}

@@ -208,6 +208,36 @@
         return MAGICAL_LEVELS.includes(level) ? level : DEFAULT_MAGICAL_LEVEL;
     }
 
+    // What a won fight pays, scaled per world: experience, money and knowledge
+    // (KP) each take their own multiplier, chosen on the creation form and
+    // stored in world.json. 1 is the untouched reward, which is what the
+    // default world and every world made before the option existed answer.
+    // Read through WorldManager.rewardMultiplier(kind).
+    const REWARD_KINDS = ["exp", "gold", "knowledge"];
+    const DEFAULT_REWARD_MULTIPLIER = 1;
+    const MIN_REWARD_MULTIPLIER = 0;
+    const MAX_REWARD_MULTIPLIER = 5;
+    function clampRewardMultiplier(value) {
+        const n = Number(value);
+        if (!Number.isFinite(n)) return DEFAULT_REWARD_MULTIPLIER;
+        return Math.max(MIN_REWARD_MULTIPLIER, Math.min(MAX_REWARD_MULTIPLIER, Math.round(n * 100) / 100));
+    }
+    function clampRewardMultipliers(input) {
+        const out = {};
+        for (const kind of REWARD_KINDS) {
+            out[kind] = clampRewardMultiplier(input && input[kind] !== undefined
+                ? input[kind] : DEFAULT_REWARD_MULTIPLIER);
+        }
+        return out;
+    }
+
+    // Whether <Esoteric> and <Forbidden> skills keep their level floor in this
+    // world (window.SkillArcana owns the floors). Both are on unless the
+    // creation form turned them off, so a world without the field is gated.
+    function clampRestriction(value) {
+        return value === undefined ? true : value !== false;
+    }
+
     // Beta sprites are strictly disabled across all worlds and cannot be selected.
     const DEFAULT_BETA_SPRITES = false;
 
@@ -885,6 +915,12 @@
                 populationMode: clampPopulationMode(options.populationMode),
                 // See clampMagicalLevel above. Its own axis, also permanent.
                 magicalLevel: clampMagicalLevel(options.magicalLevel),
+                // See clampRewardMultiplier above: exp, gold and knowledge.
+                rewardMultipliers: clampRewardMultipliers(options.rewardMultipliers),
+                // See clampRestriction above: the level floors on esoteric and
+                // forbidden skills, both on unless the form turned them off.
+                restrictEsotericSkills: clampRestriction(options.restrictEsotericSkills),
+                restrictForbiddenSkills: clampRestriction(options.restrictForbiddenSkills),
                 // Beta sprites are strictly disabled and cannot be selected.
                 betaSprites: false,
                 // The level bracket every Europe-zone nation's roaming fauna is
@@ -1249,6 +1285,34 @@
         isUnboundMagic() { return this.magicalLevel() === "unbound"; },
 
         MAGICAL_LEVELS: MAGICAL_LEVELS,
+
+        // How much a won fight's experience ("exp"), money ("gold") or
+        // knowledge ("knowledge") is scaled by in this world. 1 with no world.
+        rewardMultiplier(kind) {
+            if (!REWARD_KINDS.includes(kind) || !this.hasActiveWorld()) return DEFAULT_REWARD_MULTIPLIER;
+            const info = this.worldInfo();
+            const all = info && info.rewardMultipliers;
+            return clampRewardMultiplier(all && all[kind] !== undefined ? all[kind] : DEFAULT_REWARD_MULTIPLIER);
+        },
+
+        // Whether this world keeps the level floor on esoteric / forbidden
+        // skills (see clampRestriction). True with no world.
+        restrictsEsotericSkills() {
+            if (!this.hasActiveWorld()) return true;
+            const info = this.worldInfo();
+            return clampRestriction(info ? info.restrictEsotericSkills : undefined);
+        },
+        restrictsForbiddenSkills() {
+            if (!this.hasActiveWorld()) return true;
+            const info = this.worldInfo();
+            return clampRestriction(info ? info.restrictForbiddenSkills : undefined);
+        },
+
+        REWARD_KINDS: REWARD_KINDS,
+        DEFAULT_REWARD_MULTIPLIER: DEFAULT_REWARD_MULTIPLIER,
+        MIN_REWARD_MULTIPLIER: MIN_REWARD_MULTIPLIER,
+        MAX_REWARD_MULTIPLIER: MAX_REWARD_MULTIPLIER,
+        clampRewardMultiplier: clampRewardMultiplier,
 
         // Story mode used to be authored against the canon world alone (2001,
         // an ordinary population, ordinary magic) and was refused everywhere

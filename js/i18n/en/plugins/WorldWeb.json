@@ -85,5 +85,52 @@
     "rescue": "{actor} pulled {target} out of trouble in {place}.",
     "healing": "{actor} tended the hurt in {place}.",
     "charity": "{actor} gave to those with nothing in {place}."
+  },
+  "gathering": {
+    "title": "{type} until {end}",
+    "type": {
+      "festival": "Festival",
+      "danceFestival": "Dance festival",
+      "protest": "Protest",
+      "ceremony": "Holy ceremony",
+      "procession": "Procession",
+      "parade": "Parade",
+      "vigil": "Vigil",
+      "electionRally": "Campaign rally",
+      "electionDay": "Polling day"
+    },
+    "toast": {
+      "festival": "{place} is out in the streets for {occasion}.",
+      "danceFestival": "Music fills {place}: the town dances for {occasion}.",
+      "protest": "A protest fills the square in {place}, {occasion}.",
+      "ceremony": "The Holy Vatican Empire holds a ceremony in {place} for {occasion}.",
+      "procession": "A procession winds through {place} for {occasion}.",
+      "parade": "{place} holds a parade for {occasion}.",
+      "vigil": "{place} gathers in silence for {occasion}.",
+      "electionRally": "Campaign rallies crowd {place} ahead of {occasion}.",
+      "electionDay": "{place} queues at the polls for {occasion}."
+    },
+    "occasion": {
+      "localElection": "the town elections",
+      "nationalElection": "the {election}",
+      "local": {
+        "festival": "the town's own feast",
+        "danceFestival": "a summer of music",
+        "ceremony": "a pontifical blessing",
+        "procession": "the town's patron saint",
+        "parade": "the town's founding",
+        "vigil": "the town's dead"
+      }
+    },
+    "grievance": {
+      "taxes": "against the new taxes",
+      "rents": "against rising rents",
+      "wages": "for better wages",
+      "curfew": "against the curfew",
+      "war": "against the war",
+      "corruption": "against corruption in the town hall",
+      "prices": "against the price of bread",
+      "police": "against the police"
+    }
   }
 }

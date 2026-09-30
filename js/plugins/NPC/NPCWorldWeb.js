@@ -1196,6 +1196,233 @@
   };
 
   // ==========================================================================
+  // PUBLIC GATHERINGS (window.NPCGatherings)
+  // ==========================================================================
+  //
+  // A town or village turning out into its streets for one afternoon or
+  // evening: a festival, a dance festival, a protest, a Holy Vatican Empire
+  // ceremony, a procession, a parade, a vigil, a campaign rally or polling day.
+  // Hand-made towns and procedural cities, villages and burgs alike.
+  //
+  //   - A public holiday in the town's nation (window.PublicHolidays) ALWAYS
+  //     brings one, of the kind the holiday names (or its kind implies).
+  //   - The two days before a national or local election bring rallies, the
+  //     day itself brings the queue at the polls.
+  //   - A running world-web festival episode is a festival gathering.
+  //   - Otherwise a seeded few days a year bring one of their own.
+  //
+  // Everything is a pure function of (world seed, group, calendar day), so the
+  // whole town agrees on it without anything being stored. While it runs, most
+  // of the town's people spend the hours at it (NPCSim ScheduleManager asks
+  // attends(); the map resolver asks venueFor()).
+
+  // i18n-ignore-start  gathering type ids, named by WorldWeb.gathering.<id>
+  const GATHERING_HOURS = {
+    festival: [10, 23], danceFestival: [18, 24], protest: [10, 17], ceremony: [9, 13],
+    procession: [9, 13], parade: [10, 14], vigil: [18, 22], electionRally: [17, 22], electionDay: [8, 20],
+  };
+  const GATHERING_TURNOUT = {
+    festival: 0.85, danceFestival: 0.75, protest: 0.55, ceremony: 0.8, procession: 0.7,
+    parade: 0.8, vigil: 0.6, electionRally: 0.6, electionDay: 0.75,
+  };
+  const GATHERING_OF_KIND = { religious: "procession", civic: "parade", memorial: "vigil", festive: "festival", labour: "protest" };
+  const VATICAN = "Holy Vatican Empire";
+  const GRIEVANCES = ["taxes", "rents", "wages", "curfew", "war", "corruption", "prices", "police"];
+  // i18n-ignore-end
+  const RANDOM_GATHERING_RATE = 0.05;     // per town per ordinary day
+  const _gatherCache = new Map();
+
+  // A place people can gather in: any hand-made town group, and a procedural
+  // square only when it is a city, a village or a burg.
+  function isGatheringGroup(group) {
+    const grp = group ? $gameSystem?._npcMapGroups?.[group] : null;
+    if (!grp) return false;
+    if (!grp._procedural) return true;
+    return /city|village|burg/i.test(String(grp.biome || ""));
+  }
+
+  function gatheringPlace(group) {
+    const grp = $gameSystem?._npcMapGroups?.[group];
+    return grp?.displayName || window.WorkSystem?.destinationName?.(group) || grp?.foundedTown || String(group || "");
+  }
+
+  function vaticanHeld(group) {
+    const PH = window.PublicHolidays;
+    const country = PH?.countryOfGroup?.(group);
+    return !!country && window.NPCPolitics?.controllerOf?.(country) === VATICAN;
+  }
+
+  // The election falling on `day` or within two days of it, for this town.
+  function electionNear(group, day) {
+    const P = window.NPCPolitics, PH = window.PublicHolidays;
+    if (!P || !PH) return null;
+    const candidates = [];
+    const settlement = P.getSettlement?.(group);
+    if (settlement) {
+      if (settlement.nextLocalElectionMinute != null) candidates.push({ scope: "local", minute: settlement.nextLocalElectionMinute });
+      if (settlement.history?.[0]) candidates.push({ scope: "local", minute: settlement.history[0].minute });
+    }
+    let polity = null;
+    try { polity = P.polityOfGroup?.(group) || null; } catch (_) { polity = null; }
+    const powerName = polity?.country ? P.controllerOf?.(polity.country) : null;
+    const power = powerName ? P.getPower?.(powerName) : null;
+    if (power && (!P.isLivePolity || P.isLivePolity(power))) {
+      if (power.nextElectionMinute != null) candidates.push({ scope: "national", power: powerName, minute: power.nextElectionMinute });
+      if (power.elections?.[0]) candidates.push({ scope: "national", power: powerName, minute: power.elections[0].minute });
+    }
+    for (const c of candidates) {
+      const d = PH.dayOfMinute(c.minute);
+      if (d === day) return Object.assign({ type: "electionDay" }, c);
+      if (d - day === 1 || d - day === 2) return Object.assign({ type: "electionRally" }, c);
+    }
+    return null;
+  }
+
+  function makeGathering(group, day, type, reason) {
+    const [startHour, endHour] = GATHERING_HOURS[type] || GATHERING_HOURS.festival;
+    return { group, day, type, startHour, endHour, reason };
+  }
+
+  // The gathering a town holds on a calendar day, or null.
+  function gatheringFor(group, day) {
+    const PH = window.PublicHolidays;
+    if (!group || !PH || !isGatheringGroup(group)) return null;
+    const d = Number.isFinite(day) ? day : PH.todayIndex();
+    const key = group + "|" + d;
+    if (_gatherCache.has(key)) return _gatherCache.get(key);
+    let out = null;
+
+    const holidays = PH.forGroup(group, d);
+    if (holidays.length) {
+      const h = holidays[0];
+      let type = h.gathering || GATHERING_OF_KIND[h.kind] || "festival";
+      if ((type === "procession" || h.power === VATICAN) && vaticanHeld(group) && h.kind === "religious") type = "ceremony";
+      out = makeGathering(group, d, type, { kind: "holiday", id: h.id });
+    }
+    if (!out) {
+      const election = electionNear(group, d);
+      if (election) out = makeGathering(group, d, election.type, { kind: "election", scope: election.scope, power: election.power || null });
+    }
+    if (!out) {
+      const pulse = $gameSystem?._npcWorldWeb?.settlements?.[group];
+      const fest = pulse?.episodes?.festival;
+      if (fest && PH.dayOfMinute(fest.untilMinute) >= d && PH.dayOfMinute(fest.startedMinute ?? fest.untilMinute - 7 * MINUTES_PER_DAY) <= d) {
+        out = makeGathering(group, d, "festival", { kind: "festival", name: fest.name });
+      }
+    }
+    if (!out) {
+      const rng = new WebRng((worldSeed() ^ nameHash("gathering:" + group + ":" + d)) >>> 0);
+      if (rng.next() < RANDOM_GATHERING_RATE) {
+        const pulse = $gameSystem?._npcWorldWeb?.settlements?.[group];
+        const unrest = pulse ? clamp((50 - (pulse.mood ?? 50)) / 50, 0, 1) : 0;
+        const weights = { festival: 3, danceFestival: 3, protest: 2 + unrest * 6, procession: 1, ceremony: vaticanHeld(group) ? 4 : 0 };
+        let total = 0;
+        for (const k in weights) total += weights[k];
+        let roll = rng.next() * total, type = "festival";
+        for (const k in weights) { roll -= weights[k]; if (roll <= 0) { type = k; break; } }
+        out = makeGathering(group, d, type, { kind: "local", grievance: GRIEVANCES[Math.floor(rng.next() * GRIEVANCES.length)] });
+      }
+    }
+    if (_gatherCache.size > 2000) _gatherCache.clear();
+    _gatherCache.set(key, out);
+    return out;
+  }
+
+  function hourNow() {
+    const date = window.TimeDateSystem?.getCurrentDateObj?.();
+    return date && typeof date.getHours === "function" ? date.getHours() : ($gameVariables?.value(23) ?? 12);
+  }
+
+  function isRunning(g, hour) {
+    const h = hour == null ? hourNow() : hour;
+    return !!g && h >= g.startHour && h < g.endHour;
+  }
+
+  // The gathering under way in a town at an hour (default: now), or null.
+  function activeGathering(group, hour) {
+    const g = gatheringFor(group);
+    return isRunning(g, hour) ? g : null;
+  }
+
+  // Whether this person is out at their town's gathering at this hour. Most of
+  // the town is; who stays away is seeded, so it holds for the whole day.
+  function attends(profile, hour) {
+    const group = profile?._homeGroupName;
+    if (!group) return false;
+    const g = activeGathering(group, hour);
+    if (!g) return false;
+    const name = profile._eventName || profile.name || "";
+    const roll = ((nameHash(name + ":" + g.type + ":" + g.day) ^ worldSeed()) >>> 0) % 100;
+    return roll < Math.round((GATHERING_TURNOUT[g.type] || 0.7) * 100);
+  }
+
+  // The one square the whole town gathers on (the same map for everyone), for
+  // somebody who attends. Null when they do not, or the town has no square.
+  function venueFor(groupName, group, name, hour) {
+    const g = activeGathering(groupName, hour);
+    if (!g) return null;
+    const profile = $gameSystem?._npcSociety?.[name];
+    if (!profile || !attends(profile, hour)) return null;
+    const squares = group?.mainMaps || [];
+    if (!squares.length) return null;
+    return squares[(nameHash(groupName + ":" + g.day) >>> 0) % squares.length];
+  }
+
+  function gatheringName(type) {
+    const key = "WorldWeb.gathering.type." + type;
+    return T.has(key) ? T(key) : String(type || "");
+  }
+
+  function occasionOf(g) {
+    const r = g.reason || {};
+    if (r.kind === "holiday") return window.PublicHolidays?.nameOf?.(r.id) || r.id;
+    if (r.kind === "festival") return festivalName(r.name);
+    if (r.kind === "election") {
+      return r.scope === "national" && r.power
+        ? T("WorldWeb.gathering.occasion.nationalElection", { election: window.NPCPolitics?.electionLabelOf?.(r.power) || "" })
+        : T("WorldWeb.gathering.occasion.localElection");
+    }
+    if (g.type === "protest") return T("WorldWeb.gathering.grievance." + (r.grievance || "taxes"));
+    return T("WorldWeb.gathering.occasion.local." + g.type);
+  }
+
+  function describeGathering(g) {
+    if (!g) return "";
+    return T("WorldWeb.gathering.toast." + g.type, { place: gatheringPlace(g.group), occasion: occasionOf(g) });
+  }
+
+  function gatheringTitle(g) {
+    return T("WorldWeb.gathering.title", { type: gatheringName(g.type), end: String(g.endHour % 24).padStart(2, "0") + ":00" });
+  }
+
+  // The toast for a gathering under way where the party stands, once per town
+  // per gathering: on entering the town, or when it starts while they are there.
+  function announceGatheringHere() {
+    if (!window.ParchmentToast || !$gameSystem) return;
+    let group = null;
+    try { group = window.NPCPolitics?.describePlace?.()?.group || currentPlayerGroup(); } catch (_) { group = currentPlayerGroup(); }
+    const g = group ? activeGathering(group) : null;
+    const temp = typeof $gameTemp !== "undefined" ? $gameTemp : null;
+    const key = g ? group + "|" + g.day + "|" + g.type : null;
+    // Walking out of town forgets the last one, so coming back announces it again.
+    if (!g) { if (temp) temp._gatheringToastKey = null; return; }
+    if (temp && temp._gatheringToastKey === key) return;
+    if (temp) temp._gatheringToastKey = key;
+    try {
+      window.ParchmentToast.show(describeGathering(g), { severity: g.type === "protest" ? "warning" : "info",
+        title: gatheringTitle(g), key: "publicGathering" });
+    } catch (_) { /* a toast is never worth a crash */ }
+  }
+
+  window.NPCGatherings = {
+    TYPES: Object.keys(GATHERING_HOURS),
+    isGatheringGroup, gatheringFor, activeGathering, attends, venueFor,
+    describe: describeGathering, title: gatheringTitle, name: gatheringName, placeOf: gatheringPlace,
+    announceHere: announceGatheringHere,
+    clearCache() { _gatherCache.clear(); },
+  };
+
+  // ==========================================================================
   // ENGINE HOOKS (guarded so the module stays loadable outside RMMZ for tests)
   // ==========================================================================
 
@@ -1229,6 +1456,20 @@
     Scene_Map.prototype.onMapLoaded = function () {
       _Scene_Map_onMapLoaded.call(this);
       if ($gameVariables) catchUp($gameVariables.value(114) || 0);
+    };
+
+    // A gathering under way in the town the party walks into, or one that
+    // starts while they stand in it (a procedural square changing under them
+    // is caught by the same poll).
+    const _Scene_Map_start_gathering = Scene_Map.prototype.start;
+    Scene_Map.prototype.start = function () {
+      _Scene_Map_start_gathering.call(this);
+      announceGatheringHere();
+    };
+    const _Scene_Map_update_gathering = Scene_Map.prototype.update;
+    Scene_Map.prototype.update = function () {
+      _Scene_Map_update_gathering.call(this);
+      if ((Graphics.frameCount % 150) === 75 && this.isActive && this.isActive()) announceGatheringHere();
     };
   }
 

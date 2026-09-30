@@ -79,6 +79,7 @@ var $plugins =
 {"name":"Hypernet/HypernetMyComputer","status":true,"description":"v1.0.0 File Explorer \"My Computer\" application for HypernetOS.","parameters":{}},
 {"name":"Hypernet/HypernetNotepad","status":true,"description":"v1.0.0 Simulated Notepad text editor application for HypernetOS.","parameters":{}},
 {"name":"Hypernet/HypernetTokenExchange","status":true,"description":"v1.0.0 Token Exchange app for HypernetOS. Converts euros into arcade tokens and back.","parameters":{}},
+{"name":"Hypernet/HypernetCalendar","status":true,"description":"v1.0.0 Calendar app for HypernetOS: every nation's public holidays to 2100, quest deadlines and the party's own appointments.","parameters":{}},
 {"name":"Hypernet/HypernetTVGuide","status":true,"description":"v1.0.0 TV Guide application for HypernetOS. Browses channels and programs from TVTransmissions.json.","parameters":{}},
 {"name":"Hypernet/HypernetBrowser","status":true,"description":"Unified simulated Web 1.0 Alchemical Hypernet Browser Scene.","parameters":{}},
 {"name":"Hypernet/HyperDeckModels","status":true,"description":"v1.0.0 Procedural clamshell cases and component models for the Hyperdeck.","parameters":{}},

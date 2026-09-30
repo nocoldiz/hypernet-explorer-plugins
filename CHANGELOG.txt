@@ -1,3 +1,16 @@
+0.7.1a
+
+Added:
+ - national holidays, public gatherings and a hypernet calendar app
+ - claim map in deeds menu, with free build rights and party reserves
+ - new world exp, money and KP reward multiplier sliders
+ - new paid patreon vaults
+
+Fixed:
+ - water reflection shader crash on map load for some GPUs
+ - gguf models no longer included in encrypted build
+
+
 0.7.0a
 
 Society simulation rework:

@@ -360,6 +360,9 @@
       }
 
       if (activity === "social") {
+        // The town's public gathering: everybody at it is on the same square.
+        const venue = window.NPCGatherings?.venueFor?.(groupName, group, name, hour);
+        if (venue && inGroup(venue)) return venue;
         const visit = _socialMapFor(name, profile, inGroup, hourSalt);
         if (visit) return visit;
         if (group.mainMaps?.length) {

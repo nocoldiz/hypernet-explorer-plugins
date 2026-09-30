@@ -671,8 +671,14 @@
         // ceiling, no stat floor. What narrows it is the calibration alone.
         const pact = !!def.pact;
         const level = actor.level || 1;
-        const esoteric = pact || level >= (def.esotericLevel || GRIMOIRE_ESOTERIC_LEVEL);
-        const forbidden = pact || level >= (def.forbiddenLevel || GRIMOIRE_FORBIDDEN_LEVEL);
+        // A world made without a floor (window.SkillArcana.restricts) drops
+        // it here too; a forbidden page with its own floor off still asks the
+        // esoteric one.
+        const arcana = window.SkillArcana;
+        const openEsoteric = !!(arcana && arcana.restricts && !arcana.restricts('esoteric'));
+        const openForbidden = !!(arcana && arcana.restricts && !arcana.restricts('forbidden'));
+        const esoteric = pact || openEsoteric || level >= (def.esotericLevel || GRIMOIRE_ESOTERIC_LEVEL);
+        const forbidden = pact || (openForbidden ? esoteric : level >= (def.forbiddenLevel || GRIMOIRE_FORBIDDEN_LEVEL));
         const schools = pact ? pactSchools() : [];
         // Nothing the book deals her is a spell she could never pay for: a page
         // she cannot cast is a dead slot in a nine-slot row.

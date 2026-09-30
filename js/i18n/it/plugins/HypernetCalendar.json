@@ -1,0 +1,65 @@
+{
+  "title": "Calendario",
+  "prevYear": "Anno precedente",
+  "nextYear": "Anno successivo",
+  "prevMonth": "Mese precedente",
+  "nextMonth": "Mese successivo",
+  "today": "Oggi",
+  "nationHere": "Qui: {nation}",
+  "nationAll": "Tutte le nazioni",
+  "nowhere": "nessuna nazione",
+  "nationsCount": "Festa in {count}",
+  "dayTitle": "{weekday} {day} {month} {year}",
+  "newAppointment": "Nuovo appuntamento in questo giorno",
+  "placeholder": "Cosa, dove, con chi",
+  "add": "Aggiungi",
+  "remove": "Rimuovi",
+  "weekday": {
+    "0": "Dom",
+    "1": "Lun",
+    "2": "Mar",
+    "3": "Mer",
+    "4": "Gio",
+    "5": "Ven",
+    "6": "Sab"
+  },
+  "weekdayLong": {
+    "0": "Domenica",
+    "1": "Lunedì",
+    "2": "Martedì",
+    "3": "Mercoledì",
+    "4": "Giovedì",
+    "5": "Venerdì",
+    "6": "Sabato"
+  },
+  "tag": {
+    "election": "Elezioni",
+    "deadline": "Scadenza x{count}"
+  },
+  "election": {
+    "power": "{election} di {power}",
+    "nation": "Voto nazionale in {nation}"
+  },
+  "section": {
+    "holidays": "Festività",
+    "holidaysIn": "Festività in {nation}",
+    "elections": "Elezioni",
+    "deadlines": "Scadenze delle missioni",
+    "appointments": "Appuntamenti"
+  },
+  "none": {
+    "holidays": "Un normale giorno lavorativo.",
+    "deadlines": "Nessun contratto in scadenza.",
+    "appointments": "Niente in agenda."
+  },
+  "status": {
+    "added": "Appuntamento annotato.",
+    "removed": "Appuntamento cancellato.",
+    "empty": "Scrivi prima di cosa si tratta."
+  },
+  "toast": {
+    "title": "Appuntamento",
+    "today": "Oggi alle {time}: {text}",
+    "now": "Sono le {time}: {text}"
+  }
+}

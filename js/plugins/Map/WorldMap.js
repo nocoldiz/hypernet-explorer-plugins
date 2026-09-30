@@ -346,6 +346,7 @@
 
     // Plugin Commands
     PluginManager.registerCommand(pluginName, "openWorldMap", args => {
+        if (currentMapState !== 3) beginFold();
         currentMapState = 3;
         focusTileHint = null; // an explicit open follows the party
         resetZoom();
@@ -376,6 +377,7 @@
     });
 
     PluginManager.registerCommand(pluginName, "showZoomableMap", args => {
+        if (currentMapState !== 3) beginFold();
         currentMapState = 3;
         focusTileHint = null; // an explicit open follows the party
         resetZoom();
@@ -542,6 +544,7 @@
         focusOverride = { x: Number(wx), y: Number(wy) };
         focusTileHint = { x: Number(wx), y: Number(wy) };
         autoOpenedForTravel = false;
+        if (currentMapState !== 3) beginFold();
         currentMapState = 3;          // fullscreen, the map the M key cycles to
         clearFullscreenCache();       // rebuild the layer so markers redraw
         resetZoom();
@@ -1290,6 +1293,282 @@
     // same frame. Whichever reader gets there first wins.
     let lastToggleFrame = -1;
 
+    // ------------------------------------------------------------------------
+    // Street-map unfold
+    //
+    // Opening the sheet unfolds it like a pocket street map: the closed packet
+    // (the top-left panel) appears over the field, the other columns swing out
+    // one after another, then the bottom half drops down, each panel lifted in
+    // perspective and shaded while it stands off the table.
+    //
+    // It is played over two snapshots, so nothing about the live sheet
+    // (streaming, pins, chrome) has to know about it: the field as it was the
+    // moment before the open, and the finished sheet as it looks on the first
+    // frame it draws. Without a WebGL renderer or PIXI.Mesh (tests, a canvas
+    // fallback) the sheet simply appears, as it always did.
+    // ------------------------------------------------------------------------
+    const FOLD_COLS = 4;
+    const FOLD_ROWS = 2;
+    const FOLD_SUB = 6;            // mesh strips per panel, for the perspective
+    const FOLD_FRAMES = 54;
+    const FOLD_WAIT_FRAMES = 90;   // longest wait for the sheet's picture
+    const FOLD_SE = { name: 'Book1', volume: 70, pitch: 110, pan: 0 };
+    let fold = null;
+
+    function isFolding() {
+        return !!fold;
+    }
+
+    function foldRenderer() {
+        if (typeof PIXI === 'undefined' || !PIXI.Mesh || !PIXI.MeshGeometry ||
+            !PIXI.MeshMaterial || !PIXI.RenderTexture) return null;
+        const app = (typeof Graphics !== 'undefined') ? Graphics.app : null;
+        return (app && app.renderer) ? app.renderer : null;
+    }
+
+    // The running scene as it would draw now, with some of its layers held back.
+    function snapScene(hidden) {
+        const renderer = foldRenderer();
+        const scene = SceneManager._scene;
+        if (!renderer || !scene) return null;
+        const saved = hidden.filter(o => o).map(o => [o, o.visible]);
+        for (const [o] of saved) o.visible = false;
+        let rt = null;
+        try {
+            rt = PIXI.RenderTexture.create({ width: Graphics.width, height: Graphics.height });
+            renderer.render(scene, rt);
+            scene.worldTransform.identity();
+        } catch (e) {
+            if (rt) rt.destroy(true);
+            rt = null;
+        }
+        for (const [o, v] of saved) o.visible = v;
+        return rt;
+    }
+
+    // Called right BEFORE the state flips to fullscreen, while the field is
+    // still what the screen shows.
+    function beginFold() {
+        endFold();
+        const scene = SceneManager._scene;
+        if (!(scene instanceof Scene_Map) || !foldRenderer()) return;
+        const back = snapScene([worldMapSprite, scene._windowLayer]);
+        if (!back) return;
+        const container = new PIXI.Container();
+        const backSprite = new PIXI.Sprite(back);
+        const shadow = new PIXI.Graphics();
+        container.addChild(backSprite, shadow);
+        fold = { frame: 0, wait: 0, back, sheet: null, container, backSprite, shadow, mesh: null, shade: null };
+        placeFoldContainer();
+    }
+
+    function endFold() {
+        if (!fold) return;
+        const f = fold;
+        fold = null;
+        try {
+            if (f.container.parent) f.container.parent.removeChild(f.container);
+            f.container.destroy({ children: true });
+        } catch (e) { }
+        try { f.back.destroy(true); } catch (e) { }
+        try { if (f.sheet) f.sheet.destroy(true); } catch (e) { }
+    }
+
+    // Straight under the window layer, over every sprite the sheet adds to
+    // the scene, whenever it was added.
+    function placeFoldContainer() {
+        const scene = SceneManager._scene;
+        const c = fold.container;
+        const layer = scene._windowLayer;
+        if (c.parent === scene) {
+            const wIdx = layer ? scene.children.indexOf(layer) : -1;
+            const cIdx = scene.children.indexOf(c);
+            if (wIdx >= 0 ? cIdx === wIdx - 1 : cIdx === scene.children.length - 1) return;
+            scene.removeChild(c);
+        } else if (c.parent) {
+            c.parent.removeChild(c);
+        }
+        const at = layer ? scene.children.indexOf(layer) : -1;
+        if (at >= 0) scene.addChildAt(c, at); else scene.addChild(c);
+    }
+
+    // The finished sheet is in the scene: photograph it and build the paper.
+    function buildFoldSheet() {
+        const scene = SceneManager._scene;
+        const sheet = snapScene([fold.container, scene._windowLayer]);
+        if (!sheet) return false;
+        const nx = FOLD_COLS * FOLD_SUB + 1, ny = FOLD_ROWS * FOLD_SUB + 1;
+        const verts = new Float32Array(nx * ny * 2);
+        const uvs = new Float32Array(nx * ny * 2);
+        const idx = new Uint16Array((nx - 1) * (ny - 1) * 6);
+        for (let j = 0; j < ny; j++) {
+            for (let i = 0; i < nx; i++) {
+                const k = (j * nx + i) * 2;
+                uvs[k] = i / (nx - 1);
+                uvs[k + 1] = j / (ny - 1);
+            }
+        }
+        let n = 0;
+        for (let j = 0; j < ny - 1; j++) {
+            for (let i = 0; i < nx - 1; i++) {
+                const a = j * nx + i, b = a + 1, c = a + nx, d = c + 1;
+                idx[n++] = a; idx[n++] = b; idx[n++] = c;
+                idx[n++] = b; idx[n++] = d; idx[n++] = c;
+            }
+        }
+        const mesh = new PIXI.Mesh(new PIXI.MeshGeometry(verts, uvs, idx), new PIXI.MeshMaterial(sheet));
+        const shade = new PIXI.Graphics();
+        fold.container.addChild(mesh, shade);
+        fold.sheet = sheet;
+        fold.mesh = mesh;
+        fold.shade = shade;
+        fold.nx = nx;
+        fold.ny = ny;
+        if (typeof AudioManager !== 'undefined') AudioManager.playSe(FOLD_SE);
+        return true;
+    }
+
+    function foldClamp(v) {
+        return v < 0 ? 0 : (v > 1 ? 1 : v);
+    }
+
+    function foldEase(v) {
+        return 0.5 - 0.5 * Math.cos(Math.PI * foldClamp(v));
+    }
+
+    // One axis of the paper: where each fold line lands, and how high off the
+    // table it stands. `swing[p]` is 0 while panel p still lies folded under
+    // the packet and 1 once it lies flat; the panel being opened stands up at
+    // the matching angle, its free edge lifted toward the eye.
+    function foldAxis(count, size, progress) {
+        const pos = [0], lift = [0], tilt = [];
+        for (let p = 0; p < count; p++) {
+            const s = p === 0 ? 1 : foldEase(progress * (count - 1) - (p - 1));
+            const angle = (1 - s) * Math.PI / 2;
+            // A panel that has not started lies flat and folded: no width, no lift.
+            const raise = s > 0 ? Math.min(1, s * 4) : 0;
+            const width = s > 0 ? size * Math.cos(angle) : 0;
+            tilt.push(s > 0 ? Math.sin(angle) * raise : 0);
+            pos.push(pos[p] + width);
+            lift.push(lift[p] + size * Math.sin(angle) * raise);
+        }
+        return { pos, lift, tilt };
+    }
+
+    // Screen position of a point `u` of the way along one axis.
+    function foldAt(axis, count, u) {
+        const f = u * count;
+        const p = Math.min(count - 1, Math.floor(f));
+        const r = f - p;
+        return {
+            x: axis.pos[p] + (axis.pos[p + 1] - axis.pos[p]) * r,
+            z: axis.lift[p] + (axis.lift[p + 1] - axis.lift[p]) * r,
+        };
+    }
+
+    function layoutFold(t) {
+        const W = Graphics.width, H = Graphics.height;
+        const appear = foldClamp(t / 0.12);
+        const cols = foldAxis(FOLD_COLS, W / FOLD_COLS, foldClamp((t - 0.1) / 0.5));
+        const rows = foldAxis(FOLD_ROWS, H / FOLD_ROWS, foldClamp((t - 0.58) / 0.38));
+        const ox = (W - cols.pos[FOLD_COLS]) / 2;
+        const oy = (H - rows.pos[FOLD_ROWS]) / 2;
+        const cx = W / 2, cy = H / 2;
+        const eye = 1.4 * Math.max(W, H);
+        const grow = 0.92 + 0.08 * foldEase(appear);
+        const project = (u, v) => {
+            const a = foldAt(cols, FOLD_COLS, u), b = foldAt(rows, FOLD_ROWS, v);
+            const k = grow * eye / (eye - (a.z + b.z));
+            return { x: cx + (ox + a.x - cx) * k, y: cy + (oy + b.x - cy) * k };
+        };
+
+        const nx = fold.nx, ny = fold.ny;
+        const buf = fold.mesh.geometry.getBuffer('aVertexPosition');
+        const verts = buf.data;
+        for (let j = 0; j < ny; j++) {
+            for (let i = 0; i < nx; i++) {
+                const q = project(i / (nx - 1), j / (ny - 1));
+                const k = (j * nx + i) * 2;
+                verts[k] = q.x;
+                verts[k + 1] = q.y;
+            }
+        }
+        buf.update();
+        fold.mesh.alpha = appear;
+
+        // The field dims under the paper; the paper throws a shadow on it.
+        const dim = Math.round(255 - 70 * appear);
+        fold.backSprite.tint = (dim << 16) | (dim << 8) | dim;
+        const tl = project(0, 0), tr = project(1, 0), br = project(1, 1), bl = project(0, 1);
+        const sh = fold.shadow;
+        sh.clear();
+        sh.beginFill(0x000000, 0.35 * appear * (1 - foldClamp((t - 0.9) / 0.1)));
+        sh.drawPolygon([tl.x + 8, tl.y + 10, tr.x + 8, tr.y + 10, br.x + 8, br.y + 10, bl.x + 8, bl.y + 10]);
+        sh.endFill();
+
+        // A panel standing off the table turns from the light; the creases
+        // stay pressed in until the paper settles, then relax into the sheet.
+        const g = fold.shade;
+        g.clear();
+        for (let r = 0; r < FOLD_ROWS; r++) {
+            for (let c = 0; c < FOLD_COLS; c++) {
+                const a = Math.max(cols.tilt[c], rows.tilt[r]);
+                if (a <= 0.01) continue;
+                const u0 = c / FOLD_COLS, u1 = (c + 1) / FOLD_COLS;
+                const v0 = r / FOLD_ROWS, v1 = (r + 1) / FOLD_ROWS;
+                const p0 = project(u0, v0), p1 = project(u1, v0), p2 = project(u1, v1), p3 = project(u0, v1);
+                g.beginFill(0x000000, 0.5 * a * appear);
+                g.drawPolygon([p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y]);
+                g.endFill();
+            }
+        }
+        const crease = 0.35 * appear * (1 - foldClamp((t - 0.88) / 0.12));
+        if (crease > 0.01) {
+            g.lineStyle(2, 0x2a1d10, crease);
+            for (let c = 1; c < FOLD_COLS; c++) {
+                const a = project(c / FOLD_COLS, 0), b = project(c / FOLD_COLS, 1);
+                g.moveTo(a.x, a.y);
+                g.lineTo(b.x, b.y);
+            }
+            for (let r = 1; r < FOLD_ROWS; r++) {
+                const a = project(0, r / FOLD_ROWS), b = project(1, r / FOLD_ROWS);
+                g.moveTo(a.x, a.y);
+                g.lineTo(b.x, b.y);
+            }
+            g.lineStyle(0);
+        }
+    }
+
+    // Driven last in Scene_Map.update, after every layer of the sheet has
+    // been brought up to date for this frame.
+    function updateFold() {
+        if (!fold) return;
+        const scene = SceneManager._scene;
+        if (currentMapState !== 3 || !(scene instanceof Scene_Map) || !isLiveSprite(fold.container) ||
+            (fold.container.parent && fold.container.parent !== scene)) {
+            endFold();
+            return;
+        }
+        placeFoldContainer();
+        if (!fold.sheet) {
+            // The sheet draws once its picture has loaded; until then the
+            // packet waits, closed, over the frozen field.
+            const ready = isLiveSprite(worldMapSprite) && worldMapSprite.visible;
+            if (!ready || !buildFoldSheet()) {
+                if (++fold.wait > FOLD_WAIT_FRAMES) endFold();
+                return;
+            }
+        }
+        fold.frame++;
+        const t = fold.frame / FOLD_FRAMES;
+        if (t >= 1) { endFold(); return; }
+        try {
+            layoutFold(t);
+        } catch (e) {
+            endFold();
+        }
+    }
+
     function toggleMapState() {
         const frame = (typeof Graphics !== 'undefined' && Graphics.frameCount) || 0;
         if (frame === lastToggleFrame) return;
@@ -1311,6 +1590,7 @@
             destroyChrome();
             focusTileHint = null;
         } else {
+            beginFold();
             currentMapState = 3;
             resetZoom();
             clearFullscreenCache(); // drop the streamed layer so markers redraw
@@ -3940,28 +4220,10 @@
             toggleMapState();
         }
 
-        // Interactive Controls (Only in Fullscreen Mode)
+        // Interactive Controls (Only in Fullscreen Mode). While the sheet is
+        // still unfolding it is a picture: the chrome and the controls wait.
         if (currentMapState === 3 && isLiveSprite(worldMapSprite)) {
-            updateQuestMarkerInteraction();
-            // The sheet's own furniture and pointer: the zoom bar, the country
-            // picker, the square readout, the pins and the notes.
-            syncChrome();
-            updateSheetPointer();
-            // The pad's own reading of the same sheet. It runs even while a note
-            // box or a square preview is up, because closing those is the one
-            // thing a controller has to be able to do from in there.
-            updateSheetKeys();
-            if (!isSheetTyping()) {
-                updateZoomControls();
-                updatePanControls();
-            }
-            // The visible segments change with every pan and zoom step, and the
-            // check is cheap, so it rides the same frame rather than a redraw.
-            updateFullscreenStreaming();
-            // Sandbox: tap a cell on the Bologna overlay to teleport there.
-            if ($gameMap.mapId() === BOLOGNA_MAP_ID && isSandboxEnabled()) {
-                updateBolognaTeleportClick();
-            }
+            if (!isFolding()) updateSheetControls();
         } else if (chromeEl) {
             // The chart is not up any more: its furniture goes with it, however
             // the map was closed.
@@ -3982,7 +4244,34 @@
         // Drive every city label from a single shared pass (cheap bounds test
         // per sprite, viewport math computed once) instead of N per-sprite updates.
         refreshCityLabelSprites();
+
+        // Last, so the unfold photographs the sheet with every layer current.
+        updateFold();
     };
+
+    // The fullscreen sheet's own frame: its chrome, pointer, keys, pan and zoom.
+    function updateSheetControls() {
+        updateQuestMarkerInteraction();
+        // The sheet's own furniture and pointer: the zoom bar, the country
+        // picker, the square readout, the pins and the notes.
+        syncChrome();
+        updateSheetPointer();
+        // The pad's own reading of the same sheet. It runs even while a note
+        // box or a square preview is up, because closing those is the one
+        // thing a controller has to be able to do from in there.
+        updateSheetKeys();
+        if (!isSheetTyping()) {
+            updateZoomControls();
+            updatePanControls();
+        }
+        // The visible segments change with every pan and zoom step, and the
+        // check is cheap, so it rides the same frame rather than a redraw.
+        updateFullscreenStreaming();
+        // Sandbox: tap a cell on the Bologna overlay to teleport there.
+        if ($gameMap.mapId() === BOLOGNA_MAP_ID && isSandboxEnabled()) {
+            updateBolognaTeleportClick();
+        }
+    }
 
     // Detects vehicle fast travel starting/ending and keeps the minimap animating
     // the vehicle's live position while the player rides inside the vehicle.

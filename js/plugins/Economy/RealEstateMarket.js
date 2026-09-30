@@ -3336,3 +3336,262 @@
 //=============================================================================
 // END WORKPLACE DEEDS
 //=============================================================================
+
+//=============================================================================
+// MAP CLAIMS
+//=============================================================================
+// Staking out the ground the party is standing on, for nothing, from the
+// Deeds menu (AssetsMenu.js). A claim is kept in this savegame
+// ($gameSystem._mapClaims) and the world is told the ground is spoken for
+// through the same register the houses and workplaces use (_realEstateTaken,
+// market.json), keyed "claim:<place key>".
+//
+// The place key is the one the furniture already lives under
+// (FurnitureSystem.furnitureMapKey): the numeric id on an authored map, the
+// "proc:<biome>:<x>,<y>:<depth>" address on a procedural square.
+//
+// What can be claimed:
+//   - never the world map
+//   - never a settlement or a road: the Village, City and Burg biomes and
+//     their variations, and every Road square
+//   - never ground tagged <BuildRights: Disabled> (a procedural square is
+//     judged by its coordinate, not by the reused template's note)
+//   - ground that is somebody else's (<BuildRights: Owner> the party holds no
+//     deed to, an NPC's house floor, a claim another savegame of this world
+//     holds) can still be taken, but it is squatting: the party is warned and
+//     a trespassing bounty is filed
+//
+// A claim:
+//   - makes the ground's build rights Free (FurnitureSystem.getMapBuildRights)
+//   - is where the reserves can be sent to wait (CharacterPresets.stationReserves)
+//   - is given up from the same menu, which calls the reserves home again
+(function () {
+    'use strict';
+
+    const WORLD_MAP_ID = 315;
+    const PROC_MAP_ID = 636;
+    const TAKEN_PREFIX = 'claim:'; // i18n-ignore: world register key
+    const SQUAT_BOUNTY = 2500;     // 25.00 euros, the charge for squatting
+    const SQUAT_CRIME_ID = 'trespassing'; // i18n-ignore: PresetCrimes id
+    const CLAIMED_HOW = 'claimed'; // i18n-ignore: stored record key
+    // Settlements and roads are nobody's to stake out: every variation of
+    // these biomes (VillageIce, CityDesert, BurgDesert, "Road cross" ...).
+    const UNCLAIMABLE_BIOME = /^(village|city|burg|road)/i;
+
+    function claims() {
+        if (typeof $gameSystem === 'undefined' || !$gameSystem) return {};
+        if (!$gameSystem._mapClaims) $gameSystem._mapClaims = {};
+        return $gameSystem._mapClaims;
+    }
+
+    function nowMinute() {
+        return (typeof $gameVariables !== 'undefined' && $gameVariables) ? (Number($gameVariables.value(114)) || 0) : 0;
+    }
+
+    function currentMapId() {
+        return (typeof $gameMap !== 'undefined' && $gameMap && typeof $gameMap.mapId === 'function') ? $gameMap.mapId() : 0;
+    }
+
+    // The place the party stands on, as the key its furniture is stored under.
+    function keyHere() {
+        const FS = window.FurnitureSystem;
+        const key = FS && typeof FS.furnitureMapKey === 'function' ? FS.furnitureMapKey() : currentMapId();
+        return String(key);
+    }
+
+    function isProcSquare() {
+        return currentMapId() === PROC_MAP_ID;
+    }
+
+    // The biome underfoot: the generator's square on the procedural map, the
+    // map's own <Biome:> note elsewhere.
+    function biomeHere() {
+        const pg = (typeof $gameSystem !== 'undefined' && $gameSystem) ? $gameSystem._procGenData : null;
+        if (isProcSquare()) return (pg && pg.currentBiome) ? String(pg.currentBiome) : '';
+        const meta = (typeof $dataMap !== 'undefined' && $dataMap && $dataMap.meta) ? $dataMap.meta.Biome : null;
+        return (typeof meta === 'string') ? meta.trim() : '';
+    }
+
+    function isUnclaimableBiome(biome) {
+        return !!biome && UNCLAIMABLE_BIOME.test(String(biome));
+    }
+
+    function takenRegister() {
+        return (typeof $gameSystem !== 'undefined' && $gameSystem && $gameSystem._realEstateTaken) || null;
+    }
+
+    function owns(key) {
+        return !!claims()[String(key)];
+    }
+
+    function ownsHere() {
+        return owns(keyHere());
+    }
+
+    function isClaimedByAnother(key) {
+        const reg = takenRegister();
+        return !!(reg && reg[TAKEN_PREFIX + key]) && !owns(key);
+    }
+
+    // The ground's own rights, read off the note with no claim counted.
+    function rawRightsHere() {
+        const note = (typeof $dataMap !== 'undefined' && $dataMap && $dataMap.note) || '';
+        // i18n-ignore-start: <BuildRights:> note-tag values, compared in code
+        const m = String(note).match(/<BuildRights:\s*(\w+)>/i);
+        if (!m) return 'Free';
+        const v = m[1].toLowerCase();
+        if (v === 'disabled') return 'Disabled';
+        if (v === 'owner') return 'Owner';
+        return 'Free';
+        // i18n-ignore-end
+    }
+
+    // Is the ground underfoot somebody else's? An NPC's house floor, Owner
+    // land the party holds no deed to, or a claim of another savegame.
+    function belongsToSomebodyElse(key) {
+        if (isClaimedByAnother(key)) return true;
+        const PHS = window.ProceduralHouseSystem;
+        if (PHS && typeof PHS.isInsideHouse === 'function' && PHS.isInsideHouse()) {
+            return !(typeof PHS.isCurrentFloorOwned === 'function' && PHS.isCurrentFloorOwned());
+        }
+        if (isProcSquare()) return false;
+        if (rawRightsHere() !== 'Owner') return false; // i18n-ignore: build-rights id
+        const WD = window.WorkplaceDeeds;
+        if (WD && typeof WD.ownsHere === 'function' && WD.ownsHere()) return false;
+        return true;
+    }
+
+    // { ok, reason, squat }: reason is one of worldMap, notGenerated,
+    // settlement, disabled, claimed.
+    function eligibilityHere() {
+        const mapId = currentMapId();
+        if (!mapId || mapId === WORLD_MAP_ID) return { ok: false, reason: 'worldMap' };
+        const key = keyHere();
+        // A procedural square not generated yet has no address of its own.
+        if (isProcSquare() && key === String(PROC_MAP_ID)) return { ok: false, reason: 'notGenerated' };
+        if (isUnclaimableBiome(biomeHere())) return { ok: false, reason: 'settlement' };
+        if (!isProcSquare() && rawRightsHere() === 'Disabled') return { ok: false, reason: 'disabled' }; // i18n-ignore: build-rights id
+        if (owns(key)) return { ok: false, reason: 'claimed' };
+        return { ok: true, reason: null, squat: belongsToSomebodyElse(key) };
+    }
+
+    function nameHere() {
+        const W = window.WorldMapTransfer;
+        if (W && typeof W.locate === 'function' && typeof W.locationName === 'function') {
+            try {
+                const name = W.locationName(W.locate());
+                if (name) return name;
+            } catch (e) { /* fall through to the map's own name */ }
+        }
+        if (typeof $gameMap !== 'undefined' && $gameMap && typeof $gameMap.displayName === 'function') {
+            const dn = $gameMap.displayName();
+            if (dn) return dn;
+        }
+        return String(currentMapId());
+    }
+
+    // The offer for the ground underfoot, or null when it cannot be claimed.
+    function offerHere() {
+        const elig = eligibilityHere();
+        if (!elig.ok) return null;
+        const W = window.WorldMapTransfer;
+        let coords = null;
+        try { coords = W && typeof W.currentWorldCoords === 'function' ? W.currentWorldCoords() : null; } catch (e) { coords = null; }
+        return {
+            key: keyHere(),
+            mapId: currentMapId(),
+            name: nameHere(),
+            biome: biomeHere(),
+            worldX: coords ? coords.x : null,
+            worldY: coords ? coords.y : null,
+            squat: !!elig.squat,
+        };
+    }
+
+    // Stakes the ground underfoot. Squatting files the bounty.
+    function claimHere() {
+        const offer = offerHere();
+        if (!offer) return { ok: false, reason: eligibilityHere().reason };
+        const player = (typeof $gamePlayer !== 'undefined' && $gamePlayer) ? $gamePlayer : null;
+        claims()[offer.key] = {
+            key: offer.key,
+            mapId: offer.mapId,
+            x: player ? player.x : 0,
+            y: player ? player.y : 0,
+            name: offer.name,
+            biome: offer.biome,
+            worldX: offer.worldX,
+            worldY: offer.worldY,
+            squat: offer.squat,
+            claimedMinute: nowMinute(),
+        };
+        if (typeof $gameSystem !== 'undefined' && $gameSystem) {
+            const reg = $gameSystem._realEstateTaken || ($gameSystem._realEstateTaken = {});
+            if (!reg[TAKEN_PREFIX + offer.key]) {
+                claims()[offer.key].registered = true;
+                reg[TAKEN_PREFIX + offer.key] = {
+                    how: CLAIMED_HOW,
+                    by: ($gameParty && $gameParty.leader && $gameParty.leader() && $gameParty.leader().name()) || null,
+                    at: nowMinute(),
+                };
+            }
+        }
+        const bounty = offer.squat ? fileSquat() : 0;
+        return { ok: true, key: offer.key, name: offer.name, squat: offer.squat, bounty };
+    }
+
+    function fileSquat() {
+        const CS = window.CrimeSystem;
+        if (!CS || typeof CS.addCrime !== 'function') return 0;
+        const preset = typeof CS.presetCrimeName === 'function' ? CS.presetCrimeName(SQUAT_CRIME_ID) : '';
+        const name = preset || (typeof window.T === 'function' ? window.T('Assets.claim.charge') : '');
+        CS.addCrime(name, SQUAT_BOUNTY, SQUAT_CRIME_ID);
+        return SQUAT_BOUNTY;
+    }
+
+    // Gives a claim up. Whoever of the reserves waited there is called home.
+    function release(key) {
+        key = String(key);
+        const c = claims()[key];
+        if (!c) return { ok: false, reason: 'notClaimed' };
+        delete claims()[key];
+        const reg = takenRegister();
+        const rec = reg && reg[TAKEN_PREFIX + key];
+        // Only our own staking is struck off: a squat on somebody else's claim
+        // leaves their entry where it was.
+        if (rec && rec.how === CLAIMED_HOW && c.registered) delete reg[TAKEN_PREFIX + key];
+        const CP = window.CharacterPresets;
+        const recalled = CP && typeof CP.unstationReserves === 'function' ? CP.unstationReserves(key) : 0;
+        return { ok: true, key, name: c.name, recalled };
+    }
+
+    // Sends every reserve dossier of this world to wait on a claim.
+    function sendReserves(key) {
+        const c = claims()[String(key)];
+        if (!c) return { ok: false, reason: 'notClaimed', count: 0 };
+        const CP = window.CharacterPresets;
+        const count = CP && typeof CP.stationReserves === 'function' ? CP.stationReserves(c) : 0;
+        return { ok: count > 0, reason: count > 0 ? null : 'noReserves', count };
+    }
+
+    function stationedAt(key) {
+        const CP = window.CharacterPresets;
+        return CP && typeof CP.reservesStationedAt === 'function' ? CP.reservesStationedAt(String(key)) : [];
+    }
+
+    function list() {
+        const book = claims();
+        return Object.keys(book).map(k => book[k]).filter(Boolean)
+            .sort((a, b) => (a.claimedMinute || 0) - (b.claimedMinute || 0));
+    }
+
+    window.MapClaims = {
+        SQUAT_BOUNTY,
+        keyHere, biomeHere, isUnclaimableBiome, eligibilityHere, offerHere,
+        owns, ownsHere, isClaimedByAnother, belongsToSomebodyElse,
+        claimHere, release, sendReserves, stationedAt, list,
+    };
+})();
+//=============================================================================
+// END MAP CLAIMS
+//=============================================================================

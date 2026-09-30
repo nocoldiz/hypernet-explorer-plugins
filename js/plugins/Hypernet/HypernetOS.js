@@ -139,7 +139,7 @@
             'app-eurodemics': 'reference', 'app-artifact-analyzer': 'reference',
             'app-bank-system': 'economy', 'app-stock-market': 'economy', 'app-real-estate': 'economy',
             'app-token-exchange': 'economy', 'app-job-offers': 'economy',
-            'app-kanban-quest': 'office', 'app-beaglequest': 'office',
+            'app-kanban-quest': 'office', 'app-beaglequest': 'office', 'app-calendar': 'office',
             'app-colosseum': 'games', 'app-bobnzi': 'games',
             'app-minesweeper': 'games', 'app-solitaire': 'games',
             'app-folderopt': 'system', 'app-mouse': 'system', 'app-keyboard': 'system',
@@ -441,6 +441,7 @@
                 'app-cadd-trader': 'emblems-emblem-photos',
                 // Office and civic
                 'app-kanban-quest': 'apps-office-calendar',
+                'app-calendar': 'mimetypes-x-office-calendar',
                 'app-beaglequest': 'mimetypes-text-x-generic',
                 'app-wayfare': 'actions-go-jump',
                 'app-chamber': 'places-network-workgroup',
@@ -835,7 +836,7 @@
         // Pinned is a registry list; most-used is read off the same appUsage
         // record Add or Remove Programs reads, so the menu learns from the
         // player rather than from a second tally kept for it.
-        PINNED_DEFAULT: ['app-hypernet-browser', 'app-hypernet-notepad'],   // i18n-ignore  app ids
+        PINNED_DEFAULT: ['app-hypernet-browser', 'app-hypernet-notepad', 'app-calendar'],   // i18n-ignore  app ids
         MFU_MAX: 6,
 
         pinnedIds: function() {

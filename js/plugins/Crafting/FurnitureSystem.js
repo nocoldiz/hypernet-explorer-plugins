@@ -243,7 +243,10 @@
     // Free: building is always allowed. Disabled: building is never allowed.
     // Owner: building is allowed only where the player owns the location (an
     // owned procedural-house floor). Maps with no tag default to Free.
+    // Ground the party has claimed from the Deeds menu is Free whatever its
+    // tag says (RealEstateMarket.js, MAP CLAIMS).
     function getMapBuildRights() {
+        if (window.MapClaims?.ownsHere?.()) return 'Free'; // i18n-ignore: build-rights id
         const note = ($dataMap && $dataMap.note) || '';
         // i18n-ignore-start: <BuildRights:> note-tag values, compared in code
         const m = note.match(/<BuildRights:\s*(\w+)>/i);

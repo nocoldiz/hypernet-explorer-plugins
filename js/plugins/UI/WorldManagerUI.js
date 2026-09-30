@@ -126,6 +126,40 @@
         return note && note.trim() ? note : "";
     }
 
+    // What a won fight pays in this world: experience, money and knowledge,
+    // each on the same 0..100 slider the Options difficulty row uses. The
+    // middle (50) is the untouched reward; the left half runs down to nothing,
+    // the right half up to WorldManager's ceiling. WorldManager stores and
+    // clamps the multiplier itself; the slider position is only the form's.
+    const REWARD_KINDS = (window.WorldManager && window.WorldManager.REWARD_KINDS) ||
+        ["exp", "gold", "knowledge"];
+    const REWARD_MAX = (window.WorldManager && window.WorldManager.MAX_REWARD_MULTIPLIER) || 5;
+    const REWARD_SLIDER_DEFAULT = 50;
+    const REWARD_SLIDER_STEP = 5;
+
+    function rewardMultiplierFor(pos) {
+        const p = Math.max(0, Math.min(100, Number(pos) || 0));
+        const m = p <= 50 ? p / 50 : 1 + (p - 50) * (REWARD_MAX - 1) / 50;
+        return Math.round(m * 100) / 100;
+    }
+
+    function rewardMultiplierLabel(m) {
+        if (!Number.isFinite(m) || m === 1) return T('WorldManagerUI.rewardNormal');
+        return T('WorldManagerUI.rewardMultiplierValue', { value: m.toFixed(m < 1 ? 2 : 1) });
+    }
+
+    function rewardLabel(pos) {
+        return rewardMultiplierLabel(rewardMultiplierFor(pos));
+    }
+
+    function rewardSliderId(kind) {
+        return "wm-reward-" + kind;
+    }
+
+    function onOffLabel(on) {
+        return T(on ? 'WorldManagerUI.restrictOn' : 'WorldManagerUI.restrictOff');
+    }
+
     // Month names live in js/i18n/<lang>/plugins/WorldManagerUI.json.
 
     // Default world seed. Owned by Core/WorldManager so the creation form and
@@ -400,6 +434,11 @@
                         scene._changePopulationMode(dir === "left" ? -1 : 1);
                     } else if ((dir === "left" || dir === "right") && focusedId === "wm-magic") {
                         scene._changeMagicalLevel(dir === "left" ? -1 : 1);
+                    } else if ((dir === "left" || dir === "right") && focusedId.startsWith("wm-reward-")) {
+                        scene._changeRewardSlider(focusedId.slice("wm-reward-".length),
+                            dir === "left" ? -REWARD_SLIDER_STEP : REWARD_SLIDER_STEP);
+                    } else if ((dir === "left" || dir === "right") && focusedId.startsWith("wm-restrict-")) {
+                        scene._toggleRestriction(focusedId.slice("wm-restrict-".length));
                     }
                 } else if (sec === "modalclose") {
                     if (dir === "down")                     scene._setFocus("create", 0);
@@ -519,6 +558,11 @@
                 scene._changeMagicalLevel(1);
                 return;
             }
+            if (el.id.startsWith("wm-reward-")) return;
+            if (el.id.startsWith("wm-restrict-")) {
+                scene._toggleRestriction(el.id.slice("wm-restrict-".length));
+                return;
+            }
             el.click();
         },
     };
@@ -561,6 +605,9 @@
             this._startLevel = START_LEVEL_DEFAULT;
             this._populationMode = POPULATION_DEFAULT;
             this._magicalLevel = MAGICAL_DEFAULT;
+            this._rewardSliders = {};
+            REWARD_KINDS.forEach(kind => { this._rewardSliders[kind] = REWARD_SLIDER_DEFAULT; });
+            this._restrictions = { esoteric: true, forbidden: true };
             this.createUIDOM();
             WorldManageInputManager.activate(this);
         }
@@ -583,8 +630,10 @@
                 case "list":       return [...c.querySelectorAll(".wm-world-row")];
                 case "newworld":   return [document.getElementById("wm-create-open-btn")].filter(Boolean);
                 case "create":     return ["wm-name-input", "wm-start-month", "wm-start-year",
-                                        "wm-start-level", "wm-population", "wm-magic", "wm-seed-input",
-                                        "wm-seed-random-btn", "wm-create-btn"]
+                                        "wm-start-level", "wm-population", "wm-magic",
+                                        ...REWARD_KINDS.map(rewardSliderId),
+                                        "wm-restrict-esoteric", "wm-restrict-forbidden",
+                                        "wm-seed-input", "wm-seed-random-btn", "wm-create-btn"]
                                     .map(id => document.getElementById(id)).filter(Boolean);
                 case "modalclose": return [document.getElementById("wm-create-close-btn")].filter(Boolean);
                 case "back":    return [document.getElementById("wm-back-btn")].filter(Boolean);
@@ -744,6 +793,53 @@
                 const note = magicalNoteFor(next);
                 noteEl.textContent = note;
                 noteEl.classList.toggle("wm-hidden", !note);
+            }
+            SoundManager.playCursor();
+        }
+
+        // One reward slider, moved by a step (keys, pad) or set outright (a
+        // click on the bar). Repaints its own label and fill only.
+        _changeRewardSlider(kind, delta) {
+            const from = this._rewardSliders[kind] !== undefined ? this._rewardSliders[kind] : REWARD_SLIDER_DEFAULT;
+            this._setRewardSlider(kind, from + delta);
+        }
+
+        _setRewardSlider(kind, pos) {
+            if (!REWARD_KINDS.includes(kind)) return;
+            const next = Math.max(0, Math.min(100, Math.round(Number(pos) || 0)));
+            if (next === this._rewardSliders[kind]) return;
+            this._rewardSliders[kind] = next;
+            const el = document.getElementById(rewardSliderId(kind));
+            if (el) {
+                el.dataset.pos = next;
+                el.setAttribute("aria-valuenow", String(next));
+                const value = el.querySelector(".option-value");
+                if (value) value.textContent = rewardLabel(next);
+                const fill = el.querySelector(".wm-reward-fill");
+                if (fill) fill.value = next;
+            }
+            SoundManager.playCursor();
+        }
+
+        setRewardSliderFromClick(kind, event) {
+            const bar = event.currentTarget;
+            const rect = bar.getBoundingClientRect();
+            if (!rect.width) return;
+            this._setRewardSlider(kind, ((event.clientX - rect.left) / rect.width) * 100);
+            const els = this._focusables("create");
+            const at = els.findIndex(e => e.id === rewardSliderId(kind));
+            if (at >= 0) this._setFocus("create", at);
+        }
+
+        // The esoteric / forbidden level floors, on by default.
+        _toggleRestriction(rank) {
+            if (!this._restrictions || !(rank in this._restrictions)) return;
+            this._restrictions[rank] = !this._restrictions[rank];
+            const el = document.getElementById("wm-restrict-" + rank);
+            if (el) {
+                el.dataset.on = this._restrictions[rank] ? "1" : "0";
+                const label = el.querySelector(".wm-date-label");
+                if (label) label.textContent = onOffLabel(this._restrictions[rank]);
             }
             SoundManager.playCursor();
         }
@@ -994,6 +1090,38 @@
                             <div id="wm-magic-note" role="status"
                                  class="wm-enemy-floor${magicalNoteFor(magicalLevel) ? "" : " wm-hidden"}"
                             >${escapeHtml(magicalNoteFor(magicalLevel))}</div>
+                            ${REWARD_KINDS.map(kind => {
+                                const pos = this._rewardSliders && this._rewardSliders[kind] !== undefined
+                                    ? this._rewardSliders[kind] : REWARD_SLIDER_DEFAULT;
+                                const name = T('WorldManagerUI.rewardKinds.' + kind);
+                                return `<div id="${rewardSliderId(kind)}" class="option-row option-row--slider wm-reward-slider"
+                                     data-pos="${pos}" role="slider" tabindex="0" aria-label="${escapeHtml(name)}"
+                                     aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pos}">
+                                    <div class="option-row-head">
+                                        <span class="option-label"><span class="option-name">${escapeHtml(name)}</span></span>
+                                        <span class="option-value">${escapeHtml(rewardLabel(pos))}</span>
+                                    </div>
+                                    <div class="option-slider-bar" onclick="event.stopPropagation(); SceneManager._scene.setRewardSliderFromClick('${kind}', event)">
+                                        <progress class="wm-reward-fill" max="100" value="${pos}"></progress>
+                                    </div>
+                                </div>`;
+                            }).join("")}
+                            ${["esoteric", "forbidden"].map(rank => {
+                                const on = !this._restrictions || this._restrictions[rank] !== false;
+                                const A = window.SkillArcana;
+                                const level = rank === "forbidden"
+                                    ? ((A && A.FORBIDDEN_LEVEL) || 80) : ((A && A.ESOTERIC_LEVEL) || 15);
+                                const name = T('WorldManagerUI.restrict.' + rank, { level: level });
+                                return `<label>${escapeHtml(name)}</label>
+                                <div class="wm-date-row">
+                                    <div id="wm-restrict-${rank}" class="wm-year-selector" data-on="${on ? 1 : 0}"
+                                         role="switch" tabindex="0" aria-label="${escapeHtml(name)}">
+                                        <button type="button" class="wm-year-arrow" onclick="SceneManager._scene._toggleRestriction('${rank}')" aria-label="${escapeHtml(name)}">&#9664;</button>
+                                        <span class="wm-date-label">${escapeHtml(onOffLabel(on))}</span>
+                                        <button type="button" class="wm-year-arrow" onclick="SceneManager._scene._toggleRestriction('${rank}')" aria-label="${escapeHtml(name)}">&#9654;</button>
+                                    </div>
+                                </div>`;
+                            }).join("")}
                             <div id="wm-story-disabled" role="status"
                                  class="wm-enemy-floor wm-story-disabled${storyDisabledNoticeFor(start.year) ? "" : " wm-hidden"}"
                             >${escapeHtml(storyDisabledNoticeFor(start.year))}</div>
@@ -1163,6 +1291,24 @@
                                 POPULATION_MODES.includes(world.populationMode)
                                     ? world.populationMode : POPULATION_DEFAULT))}</span>
                         </div>
+                        ${REWARD_KINDS.map(kind => {
+                            const all = world.rewardMultipliers || {};
+                            const m = Number(all[kind] !== undefined ? all[kind] : 1);
+                            return `<div class="inspect-spec-row">
+                            <span class="inspect-spec-label">${escapeHtml(T('WorldManagerUI.rewardKinds.' + kind))}</span>
+                            <span class="inspect-spec-value">${escapeHtml(rewardMultiplierLabel(m))}</span>
+                        </div>`;
+                        }).join("")}
+                        ${["esoteric", "forbidden"].map(rank => {
+                            const key = rank === "forbidden" ? "restrictForbiddenSkills" : "restrictEsotericSkills";
+                            const A = window.SkillArcana;
+                            const level = rank === "forbidden"
+                                ? ((A && A.FORBIDDEN_LEVEL) || 80) : ((A && A.ESOTERIC_LEVEL) || 15);
+                            return `<div class="inspect-spec-row">
+                            <span class="inspect-spec-label">${escapeHtml(T('WorldManagerUI.restrict.' + rank, { level: level }))}</span>
+                            <span class="inspect-spec-value">${escapeHtml(onOffLabel(world[key] !== false))}</span>
+                        </div>`;
+                        }).join("")}
                     </div>
                 </div>
                 <div class="inspect-actions">
@@ -1495,7 +1641,14 @@
                         // the world is populated from already knows who is in
                         // it (and an empty world is never populated at all).
                         populationMode: this._populationMode || POPULATION_DEFAULT,
-                        magicalLevel: this._magicalLevel || MAGICAL_DEFAULT
+                        magicalLevel: this._magicalLevel || MAGICAL_DEFAULT,
+                        rewardMultipliers: REWARD_KINDS.reduce((out, kind) => {
+                            out[kind] = rewardMultiplierFor(this._rewardSliders
+                                ? this._rewardSliders[kind] : REWARD_SLIDER_DEFAULT);
+                            return out;
+                        }, {}),
+                        restrictEsotericSkills: !this._restrictions || this._restrictions.esoteric !== false,
+                        restrictForbiddenSkills: !this._restrictions || this._restrictions.forbidden !== false
                     });
                     WM.setActiveWorld(name);
                     if (typeof FactionDataManager !== "undefined" &&

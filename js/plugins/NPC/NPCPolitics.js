@@ -4252,6 +4252,14 @@
     // Nation *and* controlling hyperpower of a home map-group, on the same
     // terms as nationOfGroup: what an NPC's citizenship reads as before the
     // simulation has given them an identity of their own.
+    // The hyperpower holding a country right now, or null for neutral ground.
+    // No sympathy draw: a nation nobody holds keeps nobody's feast days
+    // (window.PublicHolidays).
+    controllerOf(countryName) {
+      if (!countryName) return null;
+      const held = canonicalFaction(controllerOfCountry(countryName));
+      return held && held !== "Neutral" ? held : null;
+    },
     polityOfGroup(groupName) {
       const state = getState();
       if (!state || !groupName) return null;

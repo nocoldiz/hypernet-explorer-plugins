@@ -3446,6 +3446,80 @@
   }
 
   //=============================================================================
+  // Stationing the reserves on a claim
+  //=============================================================================
+  // The Deeds menu can send the whole bench to wait on ground the party has
+  // claimed (window.MapClaims, RealEstateMarket.js). Each dossier is stamped
+  // with the claim's key and name; on an authored map their home becomes the
+  // claim itself, so a later playthrough of this world starts them there. A
+  // procedural square has no persistent geometry to start on, so there the
+  // home they already had is kept (UNHOMEABLE_MAP_IDS). Giving the claim up
+  // sends them back to the home they had before.
+
+  /**
+   * Station every reserve dossier this world can still call on a claim.
+   * @param {object} claim - MapClaims record ({ key, name, mapId, x, y })
+   * @returns {number} How many were sent
+   */
+  function stationReserves(claim) {
+    if (!$gameSystem || !claim || !claim.key) return 0;
+    const available = getAvailableRetiredPresets().map((preset) => preset.id);
+    const homeable = !UNHOMEABLE_MAP_IDS.includes(Number(claim.mapId));
+    let count = 0;
+    // Assign a new array, the WorldManager-backed field is a getter/setter pair.
+    $gameSystem._retiredCharacterPresets = getRetiredPresets().map((preset) => {
+      if (available.indexOf(preset.id) < 0 || preset.stationedAt === claim.key) return preset;
+      count++;
+      const next = Object.assign({}, preset, {
+        stationedAt: claim.key,
+        stationName: claim.name || "",
+      });
+      // The first home they had is the one a released claim returns them to.
+      if (!preset.homeBeforeStation) {
+        next.homeBeforeStation = { mapId: preset.mapId, x: preset.x, y: preset.y };
+      }
+      if (homeable) {
+        next.mapId = Number(claim.mapId);
+        next.x = Number(claim.x) || 0;
+        next.y = Number(claim.y) || 0;
+      } else if (preset.homeBeforeStation) {
+        Object.assign(next, preset.homeBeforeStation);
+      }
+      return next;
+    });
+    return count;
+  }
+
+  /**
+   * Call home every reserve waiting on a claim.
+   * @param {string} key - MapClaims key
+   * @returns {number} How many were called home
+   */
+  function unstationReserves(key) {
+    if (!$gameSystem) return 0;
+    let count = 0;
+    $gameSystem._retiredCharacterPresets = getRetiredPresets().map((preset) => {
+      if (preset.stationedAt !== key) return preset;
+      count++;
+      const next = Object.assign({}, preset, preset.homeBeforeStation || {});
+      delete next.stationedAt;
+      delete next.stationName;
+      delete next.homeBeforeStation;
+      return next;
+    });
+    return count;
+  }
+
+  /**
+   * Reserve dossiers waiting on a claim.
+   * @param {string} key - MapClaims key
+   * @returns {array} Array of preset objects
+   */
+  function reservesStationedAt(key) {
+    return getAvailableRetiredPresets().filter((preset) => preset.stationedAt === key);
+  }
+
+  //=============================================================================
   // Character Creation Tracking Functions
   //=============================================================================
 
@@ -5450,6 +5524,9 @@
     benchActorAsPreset,
     unretirePartyMember,
     discardRetiredPreset,
+    stationReserves,
+    unstationReserves,
+    reservesStationedAt,
     freeCompanionActorId,
     getUsedPresetIds,
     isPresetUsed,

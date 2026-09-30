@@ -32,6 +32,8 @@
  *  - RentSystem.js        : window.RentSystem (inn stays)
  *  - RealEstateMarket.js  : window.WorkplaceDeeds (the job map underfoot for sale,
  *                           bought workplaces and their daily takings)
+ *  - RealEstateMarket.js  : window.MapClaims (claiming the ground underfoot,
+ *                           sending the reserves there, giving it up)
  *
  * Currency convention across the project: 100 gold = 1.00 EUR.
  */
@@ -94,6 +96,18 @@
         const row = workplaceDeedRow(WD, d);
         if (row) assets.push(row);
       });
+    }
+
+    // --- 0b. Map claims (RealEstateMarket.js, MAP CLAIMS) ---
+    // The ground underfoot heads the list when it can be claimed, as the
+    // workplace offer does; the claims already staked follow it.
+    const MC = window.MapClaims;
+    if (MC && typeof MC.offerHere === 'function') {
+      const offer = MC.offerHere();
+      if (offer) assets.push(claimOfferRow(offer));
+    }
+    if (MC && typeof MC.list === 'function') {
+      (MC.list() || []).forEach(c => assets.push(claimRow(MC, c)));
     }
 
     // --- 1. Founded Towns (window.TownFounding) ---
@@ -572,6 +586,62 @@
     };
   }
 
+  function claimWhere(claim) {
+    const W = window.WorldMapTransfer;
+    if (claim.worldX == null || claim.worldY == null || !W || typeof W.squareLabel !== 'function') return '-';
+    return W.squareLabel(claim.worldX, claim.worldY);
+  }
+
+  function claimBiome(claim) {
+    if (!claim.biome) return '-';
+    return window.BiomeNames && typeof window.BiomeNames.display === 'function'
+      ? window.BiomeNames.display(claim.biome) : claim.biome;
+  }
+
+  function claimOfferRow(offer) {
+    return {
+      cat: T('Assets.claim.here'),
+      kind: 'claimOffer',
+      offer: true,
+      name: offer.name,
+      sub: offer.squat ? T('Assets.claim.offerSubTaken') : T('Assets.claim.offerSub'),
+      value: 0,
+      bought: null,
+      claim: offer,
+      color: offer.squat ? 'var(--text-cost-bad)' : 'var(--text-amber-hint)',
+      details: [
+        { label: T('Assets.ui.location'), val: claimWhere(offer) },
+        { label: T('Assets.claim.biome'), val: claimBiome(offer) },
+        { label: T('Assets.claim.status'), val: offer.squat ? T('Assets.claim.statusTaken') : T('Assets.claim.statusFree') },
+        { label: T('Assets.ui.buildRights'), val: T('Assets.claim.buildAfterClaim') },
+      ],
+    };
+  }
+
+  function claimRow(MC, claim) {
+    const stationed = typeof MC.stationedAt === 'function' ? (MC.stationedAt(claim.key) || []) : [];
+    const names = stationed.map(p => p.name).filter(Boolean).join(', ');
+    return {
+      cat: T('Assets.claim.section'),
+      kind: 'claim',
+      name: claim.name,
+      sub: stationed.length
+        ? T('Assets.claim.subStationed', { count: stationed.length })
+        : claimWhere(claim),
+      value: 0,
+      bought: null,
+      claim,
+      color: claim.squat ? 'var(--text-cost-bad)' : 'var(--text-teal)',
+      details: [
+        { label: T('Assets.ui.location'), val: claimWhere(claim) },
+        { label: T('Assets.claim.biome'), val: claimBiome(claim) },
+        { label: T('Assets.claim.status'), val: claim.squat ? T('Assets.claim.statusSquat') : T('Assets.claim.statusClaimed') },
+        { label: T('Assets.claim.reserves'), val: names || T('Assets.ui.none') },
+        { label: T('Assets.ui.buildRights'), val: T('Assets.claim.buildFree') },
+      ],
+    };
+  }
+
   // Calculates financial summary across all held assets.
   function calculateFinancialTotals(allAssets) {
     const cash = typeof $gameParty !== 'undefined' && $gameParty ? $gameParty.gold() : 0;
@@ -608,6 +678,7 @@
       this._selIndex = 0;
       this._btnIndex = -1;
       this._confirmResign = null;
+      this._confirmClaim = null;
       this._extendDays = 1;
       this._assets = [];
       this._catFilter = null;
@@ -838,6 +909,7 @@
       if (a.kind === 'town') sectionTitle = T('Assets.ui.townCharter');
       else if (a.kind === 'shop' || a.kind === 'workplace') sectionTitle = T('Assets.ui.businessDeed');
       else if (a.kind === 'workplaceOffer') sectionTitle = T('Assets.workplace.offerTitle');
+      else if (a.kind === 'claimOffer' || a.kind === 'claim') sectionTitle = T('Assets.claim.deedTitle');
       else if (a.kind === 'realEstate' || a.kind === 'proceduralHouse' || a.kind === 'residence') sectionTitle = T('Assets.ui.propertyDeed');
       else if (a.kind === 'animal') sectionTitle = T('Assets.ui.livestockRegister');
       else if (a.kind === 'stay' || a.kind === 'rental') sectionTitle = T('Assets.ui.tenancyAgreement');
@@ -902,6 +974,38 @@
             cls: ' assets-action--gain',
             label: T('Assets.workplace.buy', { price: euro(asset.price) }),
             enabled: gold >= asset.price,
+          },
+        ];
+      }
+      if (asset.kind === 'claimOffer') {
+        // Somebody else's ground is claimed on a second press: the first one
+        // arms the button and says what it will cost.
+        const armed = asset.claim.squat && this._confirmClaim === asset.claim.key;
+        return [
+          {
+            key: 'claimMap',
+            cls: asset.claim.squat ? ' assets-action--sell' : ' assets-action--gain',
+            label: armed ? T('Assets.claim.claimConfirm') : T('Assets.claim.claim'),
+            enabled: true,
+          },
+        ];
+      }
+      if (asset.kind === 'claim') {
+        const CP = window.CharacterPresets;
+        const waiting = CP && typeof CP.getAvailableRetiredPresets === 'function'
+          ? CP.getAvailableRetiredPresets().filter(p => p.stationedAt !== asset.claim.key).length : 0;
+        return [
+          {
+            key: 'sendReserves',
+            cls: ' assets-action--gain',
+            label: T('Assets.claim.sendReserves'),
+            enabled: waiting > 0,
+          },
+          {
+            key: 'releaseClaim',
+            cls: ' assets-action--sell',
+            label: T('Assets.claim.release'),
+            enabled: true,
           },
         ];
       }
@@ -1016,6 +1120,18 @@
         this.sellWorkplace(a);
         return;
       }
+      if (key === 'claimMap') {
+        this.claimMap(a);
+        return;
+      }
+      if (key === 'sendReserves') {
+        this.sendReservesToClaim(a);
+        return;
+      }
+      if (key === 'releaseClaim') {
+        this.releaseClaim(a);
+        return;
+      }
       if (a.animal) {
         const uid = a.animal.uid;
         if (key === 'collect') this.collectAnimal(uid);
@@ -1075,6 +1191,58 @@
       }
       if (typeof SoundManager !== 'undefined') SoundManager.playShop();
       this.notify(T('Assets.workplace.sold', { name: result.name || asset.name, price: euro(result.price) }));
+      this._selIndex = 0;
+      this.refreshDOM();
+    }
+
+    claimMap(asset) {
+      const MC = window.MapClaims;
+      if (!MC) return;
+      if (asset.claim.squat && this._confirmClaim !== asset.claim.key) {
+        this._confirmClaim = asset.claim.key;
+        if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer();
+        this.warn(T('Assets.claim.alreadyClaimed', { bounty: euro(MC.SQUAT_BOUNTY) }));
+        const held = this._btnIndex;
+        this.refreshDOM();
+        this._btnIndex = held;
+        this.refreshAssetButtons();
+        return;
+      }
+      this._confirmClaim = null;
+      const result = MC.claimHere();
+      if (!result || !result.ok) {
+        if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer();
+        return;
+      }
+      if (typeof SoundManager !== 'undefined') SoundManager.playOk();
+      if (result.squat) this.warn(T('Assets.claim.squatted', { name: result.name, bounty: euro(result.bounty) }));
+      else this.notify(T('Assets.claim.claimed', { name: result.name }));
+      this._selIndex = 0;
+      this.refreshDOM();
+    }
+
+    sendReservesToClaim(asset) {
+      const MC = window.MapClaims;
+      const result = MC ? MC.sendReserves(asset.claim.key) : null;
+      if (!result || !result.ok) {
+        if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer();
+        this.notify(T('Assets.claim.noReserves'));
+        return;
+      }
+      if (typeof SoundManager !== 'undefined') SoundManager.playOk();
+      this.notify(T('Assets.claim.reservesSent', { count: result.count, name: asset.claim.name }));
+      this.refreshDOM();
+    }
+
+    releaseClaim(asset) {
+      const MC = window.MapClaims;
+      const result = MC ? MC.release(asset.claim.key) : null;
+      if (!result || !result.ok) {
+        if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer();
+        return;
+      }
+      if (typeof SoundManager !== 'undefined') SoundManager.playCancel();
+      this.notify(T('Assets.claim.released', { name: result.name }));
       this._selIndex = 0;
       this.refreshDOM();
     }
@@ -1193,6 +1361,12 @@
       this.refreshDOM();
     }
 
+    warn(text) {
+      if (window.ParchmentToast && typeof window.ParchmentToast.show === 'function') {
+        window.ParchmentToast.show(text, { severity: 'warning', duration: 240 });
+      }
+    }
+
     notify(text) {
       if (window.ParchmentToast && typeof window.ParchmentToast.show === 'function') {
         window.ParchmentToast.show(text, { severity: 'info', duration: 180 });
@@ -1268,6 +1442,7 @@
       this._selIndex = idx;
       this._btnIndex = -1;
       this._confirmResign = null;
+      this._confirmClaim = null;
 
       const detail = this._container && this._container.querySelector('#assets-detail');
       if (detail) {
@@ -1368,6 +1543,14 @@
     // then the button row is left for the asset list, and only from the list
     // does the portfolio close.
     stepOut() {
+      if (this._confirmClaim) {
+        this._confirmClaim = null;
+        const held = this._btnIndex;
+        this.refreshDOM();
+        this._btnIndex = held;
+        this.refreshAssetButtons();
+        return;
+      }
       if (this._confirmResign !== null && this._confirmResign !== undefined) {
         this._confirmResign = null;
         const held = this._btnIndex;
@@ -1405,6 +1588,8 @@
     escapeHtml,
     workplaceOfferRow,
     workplaceDeedRow,
+    claimOfferRow,
+    claimRow,
   };
 
 })();

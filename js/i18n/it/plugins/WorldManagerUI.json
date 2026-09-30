@@ -122,5 +122,18 @@
   "regenerateWorld": "Rigenera Mondo",
   "confirmRegenerate": "Riportare il mondo \"{name}\" al mondo predefinito fornito con il gioco? La sua storia, gli NPC e i salvataggi andranno persi. Non può essere annullato.",
   "regeneratingWorld": "Ripristino del mondo predefinito...",
-  "worldRegenerated": "Il mondo predefinito è stato ripristinato."
+  "worldRegenerated": "Il mondo predefinito è stato ripristinato.",
+  "rewardNormal": "Normale",
+  "rewardMultiplierValue": "x{value}",
+  "rewardKinds": {
+    "exp": "Ricompensa esperienza",
+    "gold": "Ricompensa in denaro",
+    "knowledge": "Ricompensa KP"
+  },
+  "restrict": {
+    "esoteric": "Limita le abilità esoteriche al livello {level}",
+    "forbidden": "Limita le abilità proibite al livello {level}"
+  },
+  "restrictOn": "Attivo",
+  "restrictOff": "Disattivo"
 }

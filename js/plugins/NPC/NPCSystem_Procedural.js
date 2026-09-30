@@ -317,7 +317,11 @@
         activeEvents = npcEvents.filter((_, i) => !toCull.includes(i));
       } else if (!isCityBiome) {
         const cullRng = Utils.seededRandom(baseSeed ^ 0xdeadbeef);
-        const keepCount = Math.max(1, Math.ceil(npcEvents.length * (0.3 + cullRng * 0.4)));
+        // A public gathering (window.NPCGatherings) empties the houses: nearly
+        // the whole village is out on the street for its hours.
+        const gathering = isSettlementBiome && window.NPCGatherings?.activeGathering?.(settlementGroup);
+        const share = gathering ? 0.9 : (0.3 + cullRng * 0.4);
+        const keepCount = Math.max(1, Math.ceil(npcEvents.length * share));
         const indices = Array.from({ length: npcEvents.length }, (_, i) => i);
 
         for (let i = indices.length - 1; i > 0; i--) {

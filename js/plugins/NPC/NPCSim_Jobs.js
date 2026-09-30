@@ -115,6 +115,16 @@
       return !WEEKEND_TRADES.includes(job.spec);
     },
 
+    // A public holiday rests nearly everybody: only the trades whose trade IS
+    // the day off (the weekend trades) keep their shift. A job can say so
+    // outright with `holidays: true|false` in Jobs.json. Shop counters are not
+    // jobs and are never asked this.
+    worksHolidays(job) {
+      if (!job) return false;
+      if (typeof job.holidays === "boolean") return job.holidays;
+      return WEEKEND_TRADES.includes(job.spec);
+    },
+
     // Display name of the map where this NPC's job is performed, used by
     // the Empathize "Routine" tab to render "Work as <job> at <map>".
     getJobWorkMapName(profile) {

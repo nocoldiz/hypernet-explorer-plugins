@@ -1580,18 +1580,36 @@
 
   // The blue/azure mask every water reflection wears. Built once, on the first
   // reflection that asks for it, and handed to all of them.
+  // A GPU that still will not build it gets unmasked reflections rather than
+  // a crash, and is not asked again every frame.
   let _blueMaskFilter = null;
+  let _blueMaskFailed = false;
   function getBlueMaskFilter() {
     if (_blueMaskFilter) return _blueMaskFilter;
-    if (!PIXI.Filter) return null;
-    _blueMaskFilter = new PIXI.Filter(null, `
+    if (_blueMaskFailed || !PIXI.Filter) return null;
+    try {
+      _blueMaskFilter = buildBlueMaskFilter();
+    } catch (e) {
+      _blueMaskFailed = true;
+      console.warn("MovementInteractionSystem: water reflection mask unavailable.", e);
+      return null;
+    }
+    return _blueMaskFilter;
+  }
+  function buildBlueMaskFilter() {
+    const filter = new PIXI.Filter(null, `
       varying vec2 vTextureCoord;
       uniform sampler2D uSampler;
       uniform sampler2D uGround;
       uniform vec2 uGroundSize;
       uniform float uUseGround;
-      uniform vec4 inputSize;
-      uniform vec4 outputFrame;
+      // highp to match PIXI's filter vertex shader, which declares both. A
+      // uniform shared across the two stages must agree on precision, and the
+      // fragment default is mediump: strict drivers refused to link the
+      // mismatch, the program came back null and every map with water
+      // crashed on its first reflection.
+      uniform highp vec4 inputSize;
+      uniform highp vec4 outputFrame;
 
       void main(void) {
         vec4 color = texture2D(uSampler, vTextureCoord);
@@ -1627,8 +1645,8 @@
       uGroundSize: [1, 1],
       uUseGround: 0
     });
-    _blueMaskFilter.padding = 0;
-    return _blueMaskFilter;
+    filter.padding = 0;
+    return filter;
   }
 
   // --- Mirror Reflection System ---

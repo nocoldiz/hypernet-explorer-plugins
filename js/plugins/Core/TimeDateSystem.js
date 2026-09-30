@@ -6033,6 +6033,253 @@
   });
 
   //=============================================================================
+  // Public holidays (window.PublicHolidays)
+  //=============================================================================
+  //
+  // Every nation keeps its own days off, and a nation held by a hyperpower keeps
+  // that power's feasts on top of them (Holy Vatican Empire rites in Italy,
+  // October Revolution Day wherever the Soviet Union rules). The table is
+  // js/db/WorldGen/Holidays.json: a catalog of holiday ids (kind + the kind of
+  // public gathering the day brings), then per country and per power a list of
+  // [id, rule] pairs. The names are TimeDate.holiday.name.<id>.
+  //
+  // A rule is one of:
+  //   "MM-DD"          the same date every year
+  //   "E+n" / "O+n"    n days from Western / Orthodox Easter
+  //   "HMM-DD"         a date of the (tabular) Islamic calendar
+  //   "NMM-DD+n"       n days from the first new moon on or after MM-DD
+  //   "FMM-DD+n"       the same off the first full moon (lunar feasts)
+  //   "WMM:wd:nth"     the nth weekday (0 Sunday) of a month, -1 the last
+  //   "AMM-DD:wd"      the first weekday wd on or after MM-DD
+  //
+  // A day is a CALENDAR day index: 0 is 1 January 2001, the day the clock starts
+  // on, counted in whole days whatever the hour (RoutineManager.weekdayOf reads
+  // its day numbers the same way).
+  const PublicHolidays = (() => {
+    const EPOCH_UTC = Date.UTC(2001, 0, 1);
+    const DAY_MS = 86400000;
+    const JDN_EPOCH = 2451911;            // Julian day number of 1 Jan 2001
+    const SYNODIC = 29.530588853;
+    const NEW_MOON_JD = 2451550.1;        // 6 Jan 2000 18:14 UTC
+    const LAST_YEAR = 2100;
+
+    const table = () => {
+      const h = window.WorldGen && window.WorldGen.Holidays;
+      return h && h.catalog ? h : { catalog: {}, countries: {}, powers: {} };
+    };
+
+    function dayIndexOf(y, m, d) { return Math.round((Date.UTC(y, m - 1, d) - EPOCH_UTC) / DAY_MS); }
+    function dateOfDay(day) {
+      const dt = new Date(EPOCH_UTC + day * DAY_MS);
+      return { y: dt.getUTCFullYear(), m: dt.getUTCMonth() + 1, d: dt.getUTCDate(), weekday: dt.getUTCDay() };
+    }
+    function dayOfDate(date) { return dayIndexOf(date.getFullYear(), date.getMonth() + 1, date.getDate()); }
+    function dayOfMinute(minute) {
+      const date = new Date(2001, 0, 1, 10, 0, 0);
+      date.setMinutes(date.getMinutes() + (Number(minute) || 0));
+      return dayOfDate(date);
+    }
+    function todayIndex() { return dayOfDate(getCurrentDateObj()); }
+    // Game minute at which a calendar day starts (00:00), the inverse of
+    // dayOfMinute. The clock adds wall-clock minutes (setMinutes), so this counts
+    // them the same way, blind to daylight saving.
+    function minuteOfDay(day) {
+      return day * 1440 - 600;
+    }
+
+    function westernEaster(y) {
+      const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4;
+      const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3);
+      const h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4;
+      const l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+      const month = Math.floor((h + l - 7 * m + 114) / 31), day = ((h + l - 7 * m + 114) % 31) + 1;
+      return dayIndexOf(y, month, day);
+    }
+    function orthodoxEaster(y) {
+      const a = y % 4, b = y % 7, c = y % 19, d = (19 * c + 15) % 30, e = (2 * a + 4 * b - d + 34) % 7;
+      const month = Math.floor((d + e + 114) / 31), day = ((d + e + 114) % 31) + 1;
+      // A Julian date, moved onto the Gregorian calendar (13 days until 2100).
+      return dayIndexOf(y, month, day) + Math.floor(y / 100) - Math.floor(y / 400) - 2;
+    }
+    function hijriToDay(hy, hm, hd) {
+      const jdn = 1948439 + hd + Math.ceil(29.5 * (hm - 1)) + (hy - 1) * 354 + Math.floor((3 + 11 * hy) / 30);
+      return jdn - JDN_EPOCH;
+    }
+    // An Islamic date falls once or twice in a Gregorian year (its year is 354 days).
+    function hijriInYear(y, hm, hd) {
+      const lo = dayIndexOf(y, 1, 1), hi = dayIndexOf(y, 12, 31);
+      const approx = Math.floor((y - 622) * 33 / 32);
+      const out = [];
+      for (let hy = approx - 1; hy <= approx + 2; hy++) {
+        const day = hijriToDay(hy, hm, hd);
+        if (day >= lo && day <= hi) out.push(day);
+      }
+      return out;
+    }
+    // First new (or full) moon on or after a day, by the mean lunation: good to
+    // within a day, which is what a calendar of lunar feasts needs.
+    function moonOnOrAfter(day, full) {
+      const jd = day + JDN_EPOCH - (full ? SYNODIC / 2 : 0);
+      const k = Math.ceil((jd - NEW_MOON_JD) / SYNODIC);
+      const phaseJd = NEW_MOON_JD + k * SYNODIC + (full ? SYNODIC / 2 : 0);
+      return Math.floor(phaseJd + 0.5) - JDN_EPOCH;
+    }
+    function nthWeekday(y, m, wd, nth) {
+      if (nth > 0) {
+        const first = dayIndexOf(y, m, 1);
+        const shift = (wd - dateOfDay(first).weekday + 7) % 7;
+        return first + shift + 7 * (nth - 1);
+      }
+      const last = dayIndexOf(y, m + 1, 1) - 1;
+      return last - ((dateOfDay(last).weekday - wd + 7) % 7);
+    }
+
+    function daysOfRule(rule, y) {
+      let mt;
+      if ((mt = /^(\d\d)-(\d\d)$/.exec(rule))) return [dayIndexOf(y, +mt[1], +mt[2])];
+      if ((mt = /^([EO])([+-]\d+)$/.exec(rule))) return [(mt[1] === "E" ? westernEaster(y) : orthodoxEaster(y)) + (+mt[2])];
+      if ((mt = /^H(\d\d)-(\d\d)$/.exec(rule))) return hijriInYear(y, +mt[1], +mt[2]);
+      if ((mt = /^([NF])(\d\d)-(\d\d)([+-]\d+)$/.exec(rule))) return [moonOnOrAfter(dayIndexOf(y, +mt[2], +mt[3]), mt[1] === "F") + (+mt[4])];
+      if ((mt = /^W(\d\d):(\d):(-?\d)$/.exec(rule))) return [nthWeekday(y, +mt[1], +mt[2], +mt[3])];
+      if ((mt = /^A(\d\d)-(\d\d):(\d)$/.exec(rule))) {
+        const from = dayIndexOf(y, +mt[1], +mt[2]);
+        return [from + ((+mt[3] - dateOfDay(from).weekday + 7) % 7)];
+      }
+      return [];
+    }
+
+    function nameOf(id) {
+      const key = "TimeDate.holiday.name." + id;
+      return T.has(key) ? T(key) : String(id || "");
+    }
+
+    // Who holds a country right now (NPCPolitics answers; neutral ground keeps
+    // no hyperpower feasts at all).
+    function powerOf(country) {
+      const P = window.NPCPolitics;
+      if (P && typeof P.controllerOf === "function") return P.controllerOf(country) || null;
+      const row = (window.WorldGen?.Countries || []).find(c => c.country === country);
+      const held = row && (row.controller && row.controller !== "Neutral" ? row.controller : row.faction);
+      return held && held !== "Neutral" ? held : null;
+    }
+
+    const _yearCache = new Map();
+    // Every holiday a country keeps in one year: [{ day, id, kind, gathering,
+    // scope: "nation" | "power", power }], sorted by day.
+    function inYear(country, y) {
+      if (!country || y < 2001 || y > LAST_YEAR) return [];
+      const power = powerOf(country);
+      const key = country + "|" + (power || "") + "|" + y;
+      if (_yearCache.has(key)) return _yearCache.get(key);
+      const t = table();
+      const out = [];
+      const seen = new Set();
+      const add = (list, scope) => {
+        for (const [id, rule] of (list || [])) {
+          const cat = t.catalog[id] || { kind: "civic" };
+          for (const day of daysOfRule(rule, y)) {
+            if (dateOfDay(day).y !== y || seen.has(id + "@" + day)) continue;
+            seen.add(id + "@" + day);
+            out.push({ day, id, kind: cat.kind, gathering: cat.gathering || null, scope,
+              power: scope === "power" ? power : null });
+          }
+        }
+      };
+      add(t.countries[country], "nation");
+      if (power) add(t.powers[power], "power");
+      out.sort((a, b) => a.day - b.day || (a.scope === b.scope ? 0 : a.scope === "nation" ? -1 : 1));
+      if (_yearCache.size > 400) _yearCache.clear();
+      _yearCache.set(key, out);
+      return out;
+    }
+
+    function forCountry(country, day) {
+      if (!country) return [];
+      const d = Number.isFinite(day) ? day : todayIndex();
+      return inYear(country, dateOfDay(d).y).filter(h => h.day === d);
+    }
+
+    // The nation a map group lives in, remembered per group: the NPC schedule
+    // asks this for every person every hour.
+    const _groupCountry = new Map();
+    function countryOfGroup(group) {
+      if (!group) return null;
+      if (_groupCountry.has(group)) return _groupCountry.get(group);
+      let country = null;
+      try { country = window.NPCPolitics?.polityOfGroup?.(group)?.country || null; } catch (_) { country = null; }
+      if (country) _groupCountry.set(group, country);
+      return country;
+    }
+
+    function forGroup(group, day) { return forCountry(countryOfGroup(group), day); }
+    function isDayOff(group, day) { return forGroup(group, day).length > 0; }
+
+    // The nation the party is standing in.
+    function here() {
+      try {
+        const place = window.NPCPolitics?.describePlace?.();
+        if (place && place.country) return place.country;
+      } catch (_) { /* fall through to the weather's country */ }
+      const cc = typeof $gameWeather !== "undefined" && $gameWeather ? $gameWeather.currentCountry : null;
+      return cc && cc.country ? cc.country : null;
+    }
+
+    function countries() { return Object.keys(table().countries).sort(); }
+
+    function nationLabel(country) {
+      return window.WorldNames && window.WorldNames.nation ? window.WorldNames.nation(country) : String(country || "");
+    }
+
+    // The toast for a holiday in the nation the party is in, once per nation
+    // per day (a new day on the map, or crossing a border on one).
+    function announceHere() {
+      if (!window.ParchmentToast || typeof $gameSystem === "undefined" || !$gameSystem) return;
+      const country = here();
+      if (!country) return;
+      const day = todayIndex();
+      const list = forCountry(country, day);
+      if (!list.length) return;
+      const key = country + "|" + day;
+      if ($gameSystem._holidayToastKey === key) return;
+      $gameSystem._holidayToastKey = key;
+      const names = list.map(h => nameOf(h.id)).join(", ");
+      try {
+        window.ParchmentToast.show(T("TimeDate.holiday.toast", { holiday: names, country: nationLabel(country) }),
+          { severity: "good", title: T("TimeDate.holiday.toastTitle"), key: "publicHoliday" });
+      } catch (_) { /* a toast is never worth a crash */ }
+    }
+
+    return {
+      LAST_YEAR, dayIndexOf, dateOfDay, dayOfMinute, minuteOfDay, todayIndex,
+      westernEaster, orthodoxEaster, hijriToDay, moonOnOrAfter, daysOfRule,
+      inYear, forCountry, forGroup, countryOfGroup, isDayOff, here, countries,
+      nameOf, nationLabel, announceHere,
+      clearCache() { _yearCache.clear(); _groupCountry.clear(); },
+    };
+  })();
+  window.PublicHolidays = PublicHolidays;
+
+  if (typeof Scene_Map !== "undefined") {
+    const _Scene_Map_start_holidays = Scene_Map.prototype.start;
+    Scene_Map.prototype.start = function () {
+      _Scene_Map_start_holidays.call(this);
+      PublicHolidays.announceHere();
+    };
+    // A day that turns over while the party stands on the map.
+    const _Scene_Map_update_holidays = Scene_Map.prototype.update;
+    Scene_Map.prototype.update = function () {
+      _Scene_Map_update_holidays.call(this);
+      if ((Graphics.frameCount % 120) === 0 && this.isActive && this.isActive()) {
+        const day = PublicHolidays.todayIndex();
+        if (day !== this._holidayCheckedDay) {
+          this._holidayCheckedDay = day;
+          PublicHolidays.announceHere();
+        }
+      }
+    };
+  }
+
+  //=============================================================================
   // Game Initialization - Ensure time system is ready
   //=============================================================================
 
