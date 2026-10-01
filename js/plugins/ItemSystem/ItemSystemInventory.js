@@ -495,6 +495,7 @@
   // i18n-ignore-start  item-category ids; the caption is Inventory.category.<id>
   const MEDICAL_CATEGORY = "Medical";
   const FOOD_CATEGORY = "Food";
+  const TOOLS_CATEGORY = "Tools";
   const USABLE_CATEGORY = "Usable";
   const COMBAT_CATEGORY = "Combat";
   const BOOKS_CATEGORY = "Books";
@@ -506,7 +507,7 @@
   // The shelves, in the order the row reads them.
   const UI_CATEGORIES = [
     NEW_CATEGORY, ALL_CATEGORY, FAVORITES_CATEGORY, MEDICAL_CATEGORY, FOOD_CATEGORY,
-    USABLE_CATEGORY, COMBAT_CATEGORY, BOOKS_CATEGORY, LEISURE_CATEGORY,
+    TOOLS_CATEGORY, USABLE_CATEGORY, COMBAT_CATEGORY, BOOKS_CATEGORY, LEISURE_CATEGORY,
     MISC_CATEGORY, WEAPONS_CATEGORY, ARMOR_CATEGORY
   ];
 
@@ -692,8 +693,10 @@
 
   // A shelf the row knows the place of keeps it; a <category:> shelf falls in
   // behind them all, in the order its caption reads.
+  // The drawers key their shelves in lower case, so the lookup ignores case.
+  const UI_CATEGORY_KEYS = UI_CATEGORIES.map((cat) => cat.toLowerCase());
   const categoryRank = (label) => {
-    const idx = UI_CATEGORIES.indexOf(label);
+    const idx = UI_CATEGORY_KEYS.indexOf(String(label).toLowerCase());
     return idx >= 0 ? idx : UI_CATEGORIES.length;
   };
 

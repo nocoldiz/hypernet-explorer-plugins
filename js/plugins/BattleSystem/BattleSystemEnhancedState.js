@@ -439,22 +439,28 @@
     // only the single strongest enemy and used a flat level *difference*, which
     // ignored troop size and never scaled with the party's own level: at level 5
     // a +20 enemy paid 20 KP, at level 60 the same relative threat paid 60.
+    // Returns the KP paid. Exposed so the arena's own victory paths, which skip
+    // the engine's processVictory, pay knowledge on the same scale.
+    function payVictoryKnowledge() {
+        const party = $gameParty.members();
+        if (!party.length || !$gameTroop || !$gameTroop.members().length || !window.KnowledgePoints) return 0;
+        const partyMedian = BSE.Helpers.getMedianLevel(party);
+        const enemyLevels = $gameTroop.members().map(e => {
+            const data = $dataEnemies[e.enemyId()];
+            return data ? BSE.Helpers.getEnemyLevel(data.note) : 0;
+        });
+        const knowledge = Math.round(window.KnowledgePoints.forEncounter(enemyLevels, partyMedian) *
+            worldRewardMultiplier("knowledge"));
+        if (knowledge <= 0) return 0;
+        $gameSystem.addKnowledge(knowledge);
+        BSE.State.battleRewards.knowledge = knowledge;
+        return knowledge;
+    }
+    BSE.Functions.payVictoryKnowledge = payVictoryKnowledge;
+
     const _BattleManager_processVictory = BattleManager.processVictory;
     BattleManager.processVictory = function() {
-        const party = $gameParty.members();
-        if (party.length && $gameTroop && $gameTroop.members().length && window.KnowledgePoints) {
-            const partyMedian = BSE.Helpers.getMedianLevel(party);
-            const enemyLevels = $gameTroop.members().map(e => {
-                const data = $dataEnemies[e.enemyId()];
-                return data ? BSE.Helpers.getEnemyLevel(data.note) : 0;
-            });
-            const knowledge = Math.round(window.KnowledgePoints.forEncounter(enemyLevels, partyMedian) *
-                worldRewardMultiplier("knowledge"));
-            if (knowledge > 0) {
-                $gameSystem.addKnowledge(knowledge);
-                BSE.State.battleRewards.knowledge = knowledge;
-            }
-        }
+        payVictoryKnowledge();
         // Anything the fight itself owes is paid AFTER the engine has made its
         // rewards: makeRewards() rebuilds the item list from the drop table, so
         // a crate of oil flasks added before it would be thrown away.
@@ -631,10 +637,23 @@
         return true;
     };
 
+    // clear() only empties the lines on screen. The queue behind them (more
+    // lines, waits, a waitForEffect on a collapse) kept the log busy, and the
+    // battleEnd phase only runs once BattleManager.isBusy() is false, so the
+    // won fight still sat through all of it after the last sprite was gone.
+    BattleManager.flushLogForVictory = function() {
+        const log = this._logWindow;
+        if (!log) return;
+        if (log.clear) log.clear();
+        if (Array.isArray(log._methods)) log._methods.length = 0;
+        log._waitCount = 0;
+        log._waitMode = '';
+    };
+
     const _BattleManager_update_fastVictory = BattleManager.update;
     BattleManager.update = function(timeActive) {
         if (this.isFastVictoryReady()) {
-            if (this._logWindow && this._logWindow.clear) this._logWindow.clear();
+            this.flushLogForVictory();
             this.processVictory();
             return;
         }
@@ -959,6 +978,17 @@
                 && !(this.get3DModel && this.get3DModel(sprite._battler)));
         }
         return false;
+    };
+
+    // The battle log's waitForEffect reads isEffecting(), not isBusy(), so the
+    // hidden 2D collapse under a 3D model held the log (and with it the end of
+    // a won fight) for the whole length of that invisible effect.
+    const _Spriteset_Battle_isEffecting = Spriteset_Battle.prototype.isEffecting;
+    Spriteset_Battle.prototype.isEffecting = function() {
+        if (!this.get3DModel) return _Spriteset_Battle_isEffecting.call(this);
+        return this.battlerSprites().some(sprite => sprite.isEffecting && sprite.isEffecting()
+            && !(sprite._battler && sprite._battler.isEnemy && sprite._battler.isEnemy()
+                && this.get3DModel(sprite._battler)));
     };
 
     // ========================================================================

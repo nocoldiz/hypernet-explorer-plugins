@@ -156,6 +156,16 @@
         return _cachedSunlightMode;
     }
 
+    // The hour of the alien sky the party stands under, or null on Earth.
+    // Another world's night is its own: the far side of a planet is dark
+    // whatever the Earth clock says, so every light here that waits for dusk
+    // reads this before the clock (see WeatherSystem.alienSkyHour).
+    function alienSkyHour() {
+        return ($gameWeather && typeof $gameWeather.alienSkyHour === 'function')
+            ? $gameWeather.alienSkyHour()
+            : null;
+    }
+
     // ── What a player vehicle hangs at night ────────────────────────────────
     // Keyed by VehicleSystem's own maintenance key
     // (MergedVehicleSystem.riddenVehicleKey), so which vehicle this is is asked
@@ -614,6 +624,8 @@
 
         getCurrentHour() {
             // This function is now only used for 'full' cycle mode.
+            const alien = alienSkyHour();
+            if (alien !== null) return Math.floor(alien);
             if ($gameWeather && $gameWeather.currentHour !== undefined) {
                 return $gameWeather.currentHour;
             }
@@ -764,6 +776,8 @@
         }
 
         getCurrentHour() {
+            const alien = alienSkyHour();
+            if (alien !== null) return Math.floor(alien);
             if ($gameWeather && $gameWeather.currentHour !== undefined) {
                 return $gameWeather.currentHour;
             }
@@ -1199,6 +1213,8 @@
         }
 
         getCurrentHourFloat() {
+            const alien = alienSkyHour();
+            if (alien !== null) return alien;
             if ($gameVariables) {
                 const dateStr = $gameVariables.value(113);
                 if (dateStr && typeof dateStr === 'string') {
@@ -1379,16 +1395,36 @@
             const midMove = !!(window.WorldMapTransfer &&
                 typeof window.WorldMapTransfer.transitionPending === 'function' &&
                 window.WorldMapTransfer.transitionPending());
-            if (--this._visCheck <= 0 && !midMove) {
+            // A sprite that has never answered has no last answer to hold, so
+            // its first frame is always read, mid-move or not. Holding the
+            // constructor's zero there and snapping to it is what faded the
+            // night in over a second on every walk out of a house.
+            const firstRead = this._snapIntensity;
+            if (--this._visCheck <= 0 && (!midMove || firstRead)) {
                 this._context = this.darkContext();
                 this._nightFactor = this.getNightLightIntensity();
                 this._targetIntensity = this.computeTargetIntensity();
                 this._visCheck = VISIBILITY_REFRESH_INTERVAL;
+                // The fade is for the clock moving under a map being played.
+                // A change of PLACE (another map, indoors to outdoors, a layer
+                // down or up) is a cut: going out of a lit house into the
+                // night the dark is simply there, and out of a dark cellar
+                // into the night it stays exactly as dark as it was, instead
+                // of lifting and closing in again.
+                const place = this.placeKey();
+                if (this._placeKey !== undefined && this._placeKey !== place) {
+                    this._snapIntensity = true;
+                }
+                this._placeKey = place;
             }
 
             if (this._snapIntensity) {
                 this._currentIntensity = this._targetIntensity;
                 this._snapIntensity = false;
+                // Paint this frame, not on the next tick of the repaint clock:
+                // until then the canvas holds nothing (a fresh sprite) or the
+                // place just left, and the screen would show it.
+                this._mustPaint = true;
             }
 
             // Smooth transition
@@ -1412,7 +1448,7 @@
             // Core/ParchmentToast.js), and a repaint on a tick that is not the
             // drawn one is thrown away at full price. The fade above still
             // steps on every tick, so the light comes up at the same speed.
-            if (window.FrameBudget && !window.FrameBudget.isPresented()) return;
+            if (window.FrameBudget && !window.FrameBudget.isPresented() && !this._mustPaint) return;
             const resized = this._resizeCanvas();
             // The repaint is a full-canvas clear, a vignette gradient and one
             // fresh radial gradient per light source, and then the whole canvas
@@ -1428,9 +1464,52 @@
             // as a flicker, and a map battle - where the whole map keeps updating
             // underneath the fight (BattleSystem/MapBattleMode.js) - stops
             // spending most of its frame on light that did not change.
-            if (!resized && window.FrameBudget &&
+            //
+            // Except while something that carries a light is moving. At 24Hz
+            // a headlight cone, the party's glow and every lamp the camera
+            // scrolls past trailed a frame or two behind the sprite it belongs
+            // to, so whenever the picture moves the repaint follows it frame
+            // for frame, and only a still scene drops back to the clock.
+            const motion = this.motionKey();
+            const moved = motion !== this._paintedMotion;
+            if (!resized && !moved && !this._mustPaint && window.FrameBudget &&
                 !window.FrameBudget.every('dynLighting', LIGHTING_REPAINT_HZ)) return;
+            this._mustPaint = false;
+            this._paintedMotion = motion;
             this.renderLighting();
+        }
+
+        // Where the party is, as far as the dark is concerned: which map, and
+        // which kind of place on it (the procedural map keeps one id for the
+        // surface, every layer under it and every house on it). Any change in
+        // it is a cut rather than a fade (see update).
+        placeKey() {
+            const mapId = $gameMap ? $gameMap.mapId() : 0;
+            const data = (mapId === 636 && $gameSystem) ? $gameSystem._procGenData : null;
+            const depth = (data && data.biomeLayerStack) ? data.biomeLayerStack.length : 0;
+            const interior = this.isInteriorMap() ? 1 : 0;
+            return mapId + '|' + depth + '|' + interior + '|' + (this._context || '');
+        }
+
+        // A number that changes whenever anything carrying a light moves on
+        // screen: the camera, the party (where they stand and which way they
+        // face, since a cone turns with them) and the cars in traffic. Summed
+        // rather than strung together, as it is read every frame.
+        motionKey() {
+            if (!$gameMap || !$gamePlayer) return 0;
+            const mix = (c, k) => (c._realX || 0) * (k * 7.13) + (c._realY || 0) * (k * 3.71) +
+                (typeof c.direction === 'function' ? c.direction() : 0) * k;
+            let key = $gameMap.displayX() * 1013.7 + $gameMap.displayY() * 517.3 + mix($gamePlayer, 1);
+            const followers = $gamePlayer.followers ? $gamePlayer.followers() : null;
+            const list = followers && followers.data ? followers.data() : [];
+            for (let i = 0; i < list.length; i++) {
+                if (list[i]) key += mix(list[i], i + 2);
+            }
+            const traffic = this._trafficEvents || [];
+            for (let i = 0; i < traffic.length; i++) {
+                if (traffic[i]) key += mix(traffic[i], i + 11);
+            }
+            return key;
         }
 
         // Which events on this map are a lamp, and which are traffic.
@@ -1533,6 +1612,13 @@
             }
 
             // --- Followers / Party Members ---
+            // On a bike every member is on a bicycle of their own, so each of
+            // them carries its handlebar lamp the way they face, exactly like
+            // the leader's. On a broom (and on foot) it is the light circle.
+            // A pet trotting alongside has no bike and keeps its circle.
+            const lamp = this.playerVehicleLamp();
+            const VS = window.MergedVehicleSystem;
+            const ridersBeam = lamp === 'beam' && VS && typeof VS.followerRides === 'function';
             if ($gamePlayer && $gamePlayer.followers()) {
                 const followers = $gamePlayer.followers().data();
                 for (let i = 0; i < followers.length; i++) {
@@ -1541,6 +1627,11 @@
                         const fx = f.screenX() * s;
                         const fy = (f.screenY() - th / 2) * s;
                         if (fx >= -120 && fx <= cw + 120 && fy >= -120 && fy <= ch + 120) {
+                            if (ridersBeam && VS.followerRides(f)) {
+                                const at = this.vehicleLampOrigin(f, s, fx, fy);
+                                this.drawHeadlights(ctx, at.x, at.y, f.direction(), s, true);
+                                continue;
+                            }
                             const flicker = this.getFlicker(2.3 + i * 1.7);
                             this.drawLightCircle(ctx, fx, fy, basePartyRadius * flicker, 0.95, 'party');
                         }
@@ -1573,7 +1664,6 @@
             // moment they board anything at all, which is exactly when the
             // headlights are wanted, so every player vehicle used to drive the
             // night road with its lights off.
-            const lamp = this.playerVehicleLamp();
             if (lamp) {
                 const vx = $gamePlayer.screenX() * s;
                 const vy = ($gamePlayer.screenY() - th / 2) * s;

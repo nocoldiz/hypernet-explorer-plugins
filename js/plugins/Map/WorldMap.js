@@ -321,6 +321,227 @@
         return { x: $gamePlayer.x, y: $gamePlayer.y };
     }
 
+    // ------------------------------------------------------------------------
+    // THE GLOBE
+    // ------------------------------------------------------------------------
+    // Map 1409 is the whole Earth, 200x100 squares wrapping east to west, and
+    // map 315 is a close-up of one rectangle of it. WorldMapReturn owns every
+    // answer about where things are on it (see its THE GLOBE); what lives here
+    // is only the chart's side: which pictures draw it and where on them the
+    // party stands. Every member of the service is read defensively, with the
+    // same answer worked out here when the service has not loaded it.
+    //
+    // The pictures follow Europe's: globe-row-R-column-C.jpg, 4 rows by 8
+    // columns of 1200px, 25 squares to a segment at 48px a square, and one
+    // downscaled overview (8px a square) for the corner chart and the base of
+    // the streamed sheet.
+    const GLOBE_MAP_ID = 1409;
+    const GLOBE_W = 200;                 // squares round the globe
+    const GLOBE_H = 100;                 // squares from pole to pole
+    const GLOBE_SQUARE_BASE = 280;       // globe square (gx, gy) is procedural square (280+gx, 280+gy)
+    const GLOBE_TILE_PX = 1200;          // one globe-row-R-column-C segment
+    const GLOBE_TILE_SQUARES = 25;       // squares across one segment
+    const GLOBE_ROWS = 4;
+    const GLOBE_COLS = 8;
+    const GLOBE_SQUARE_PX = GLOBE_TILE_PX / GLOBE_TILE_SQUARES;   // 48, as on Europe's sheet
+    const GLOBE_SHEET_W = GLOBE_W * GLOBE_SQUARE_PX;              // 9600
+    const GLOBE_SHEET_H = GLOBE_H * GLOBE_SQUARE_PX;              // 4800
+    const GLOBE_OVERVIEW = 'img/worldmap/globe-overview.jpg';    // i18n-ignore  asset path
+    const GLOBE_MINI_SQUARES = 32;       // squares across the zoomed corner chart
+    const GLOBE_OPEN_SQUARES = 64;       // squares across the screen when the World view opens
+    const EUROPE_ON_GLOBE_DEFAULT = { x1: 69, y1: 8, x2: 101, y2: 41 };
+    const EUROPE_OUTLINE_COLOR = '#FFD76A';
+
+    function globeService() {
+        return (typeof window !== 'undefined' && window.WorldMapReturn) || null;
+    }
+
+    // The globe squares Europe's sheet covers, inclusive.
+    function europeOnGlobe() {
+        const svc = globeService();
+        const r = svc && svc.EUROPE_ON_GLOBE;
+        return (r && isFinite(r.x1) && isFinite(r.x2)) ? r : EUROPE_ON_GLOBE_DEFAULT;
+    }
+
+    function isGlobeMapHere() {
+        if (!$gameMap) return false;
+        const svc = globeService();
+        if (svc && typeof svc.isGlobeMap === 'function') return !!svc.isGlobeMap();
+        return $gameMap.mapId() === ((svc && svc.globeMapId) || GLOBE_MAP_ID);
+    }
+
+    // The party stands in one of the globe's own procedural squares.
+    function onGlobeSquare() {
+        const svc = globeService();
+        if (svc && typeof svc.onGlobeSquare === 'function') return !!svc.onGlobeSquare();
+        if (!$gameMap || $gameMap.mapId() !== PROC_MAP_ID || isOffEarthView()) return false;
+        const square = partyWorldSquare();
+        return square.x >= GLOBE_SQUARE_BASE && square.y >= GLOBE_SQUARE_BASE;
+    }
+
+    // Anywhere the globe, not Europe, is the picture of where the party is.
+    function isGlobeContext() {
+        return isGlobeMapHere() || onGlobeSquare();
+    }
+
+    // Map 315 tile units to globe tile units and back. Neither rounds.
+    function globeTileForWorld(x, y) {
+        const svc = globeService();
+        if (svc && typeof svc.globeTileForWorld === 'function') {
+            const g = svc.globeTileForWorld(x, y);
+            if (g && isFinite(g.x) && isFinite(g.y)) return g;
+        }
+        const r = europeOnGlobe();
+        return {
+            x: r.x1 + x * (r.x2 - r.x1 + 1) / WORLD_TILES,
+            y: r.y1 + y * (r.y2 - r.y1 + 1) / WORLD_TILES
+        };
+    }
+
+    function worldTileForGlobe(gx, gy) {
+        const svc = globeService();
+        if (svc && typeof svc.worldTileForGlobe === 'function') {
+            const w = svc.worldTileForGlobe(gx, gy);
+            if (w && isFinite(w.x) && isFinite(w.y)) return w;
+        }
+        const r = europeOnGlobe();
+        return {
+            x: (gx - r.x1) * WORLD_TILES / (r.x2 - r.x1 + 1),
+            y: (gy - r.y1) * WORLD_TILES / (r.y2 - r.y1 + 1)
+        };
+    }
+
+    // Where the party stands on the globe, in globe tile units with the
+    // fraction (tile n spans [n, n + 1)), or null off Earth.
+    function globePlayerPosition() {
+        const svc = globeService();
+        if (svc && typeof svc.globePosition === 'function') {
+            const p = svc.globePosition();
+            return (p && isFinite(p.x) && isFinite(p.y)) ? p : null;
+        }
+        if (!$gameMap || !$gamePlayer || isOffEarthView()) return null;
+        if (isGlobeMapHere()) return { x: $gamePlayer.x + 0.5, y: $gamePlayer.y + 0.5 };
+        if ($gameMap.mapId() === 315) return globeTileForWorld($gamePlayer.x + 0.5, $gamePlayer.y + 0.5);
+        const world = playerWorldPosition();
+        if (onGlobeSquare()) return { x: world.x - GLOBE_SQUARE_BASE, y: world.y - GLOBE_SQUARE_BASE };
+        return globeTileForWorld(world.x, world.y);
+    }
+
+    // Where the party stands on Europe's sheet (map 315 tile units, centred on
+    // the square), whatever they are standing on. Out on the globe that is the
+    // globe position carried over, which may fall off Europe's edge.
+    function europePlayerPosition() {
+        if ($gameMap && $gameMap.mapId() === 315 && $gamePlayer) {
+            return { x: $gamePlayer.x + 0.5, y: $gamePlayer.y + 0.5 };
+        }
+        if (isGlobeContext()) {
+            const g = globePlayerPosition();
+            if (g) return worldTileForGlobe(g.x, g.y);
+        }
+        return playerWorldPosition();
+    }
+
+    // One segment of the globe sheet, 1-based like Europe's.
+    function globeTilePath(row, col) {
+        return `img/worldmap/globe-row-${row}-column-${col}.jpg`;  // i18n-ignore  asset path
+    }
+
+    // The 1-based segment a globe square is drawn on. Columns wrap round the
+    // globe; rows stop at the poles.
+    function globeTileFor(gx, gy) {
+        const x = ((Math.floor(gx) % GLOBE_W) + GLOBE_W) % GLOBE_W;
+        const y = Math.max(0, Math.min(GLOBE_H - 1, Math.floor(gy)));
+        return {
+            row: Math.floor(y / GLOBE_TILE_SQUARES) + 1,
+            col: Math.floor(x / GLOBE_TILE_SQUARES) + 1
+        };
+    }
+
+    // The overview picture, shared by the corner chart and the streamed sheet.
+    // Whoever finds it still loading asks for one redraw when it lands.
+    let globeOverviewWaiting = false;
+    function globeOverviewBitmap() {
+        const bmp = loadCachedTile(GLOBE_OVERVIEW);
+        if (!bmp.isReady() && !globeOverviewWaiting) {
+            globeOverviewWaiting = true;
+            bmp.addLoadListener(() => {
+                globeOverviewWaiting = false;
+                refreshWorldMapDisplay();
+            });
+        }
+        return bmp;
+    }
+
+    // -- Europe or World ------------------------------------------------------
+    //
+    // The fullscreen chart has two views of Earth: Europe's sheet, with every
+    // pin, note and nation on it, and the whole globe with the party marked and
+    // Europe outlined. It opens on the one the party is standing in; the switch
+    // (Tab, the pad's X, or the buttons in the corner) is the player's until
+    // the chart is put away again.
+    const SHEET_VIEWS = ['europe', 'world'];
+    let sheetViewChoice = null;
+
+    function defaultSheetView() {
+        return isGlobeContext() ? 'world' : 'europe';
+    }
+
+    function sheetView() {
+        return SHEET_VIEWS.includes(sheetViewChoice) ? sheetViewChoice : defaultSheetView();
+    }
+
+    // The World view is an Earth view: Bologna and another planet keep their
+    // own charts whatever was picked.
+    function isWorldView() {
+        return sheetView() === 'world' && !isBolognaView() && !isOffEarthView();
+    }
+
+    // Switch the open chart to the other view, centred on `focus` (in the new
+    // view's own units) or on the party.
+    function setSheetView(view, focus) {
+        if (!SHEET_VIEWS.includes(view) || view === sheetView()) return false;
+        sheetViewChoice = view;
+        focusOverride = focus ? { x: focus.x, y: focus.y } : null;
+        clearFullscreenCache();
+        destroyChrome();
+        clearSelectedSquare();
+        resetZoom();
+        refreshWorldMapDisplay();
+        return true;
+    }
+
+    function toggleSheetView() {
+        const ok = setSheetView(sheetView() === 'world' ? 'europe' : 'world');
+        if (ok) SoundManager.playCursor();
+        return ok;
+    }
+
+    // Is a globe square inside Europe's rectangle? Columns are taken round the
+    // globe, so a click on a wrapped copy of the sheet counts too.
+    function isEuropeGlobeSquare(gx, gy) {
+        const r = europeOnGlobe();
+        const x = ((gx % GLOBE_W) + GLOBE_W) % GLOBE_W;
+        return x >= r.x1 && x < r.x2 + 1 && gy >= r.y1 && gy < r.y2 + 1;
+    }
+
+    // The globe square under the pointer on the World view, with the fraction,
+    // folded back round the globe; null off the top or the bottom.
+    function globePointAtPointer() {
+        if (!zoomScale) return null;
+        const gx = (TouchInput.x - panX) / zoomScale / GLOBE_SQUARE_PX;
+        const gy = (TouchInput.y - panY) / zoomScale / GLOBE_SQUARE_PX;
+        if (!(gy >= 0 && gy < GLOBE_H)) return null;
+        return { x: ((gx % GLOBE_W) + GLOBE_W) % GLOBE_W, y: gy };
+    }
+
+    // A click on the World view: inside Europe's rectangle it opens Europe's
+    // sheet on the spot clicked. Anywhere else the globe stays up.
+    function clickGlobeAt(point) {
+        if (!point || !isEuropeGlobeSquare(point.x, point.y)) return false;
+        const at = worldTileForGlobe(point.x, point.y);
+        return setSheetView('europe', at);
+    }
+
     // GalaxySim alien-planet surface (map 636, Alien* biome): pixels per
     // landing-grid cell in the fullscreen bitmap. The minimap draws the same
     // grid scaled down to mapWidth/mapHeight instead.
@@ -493,6 +714,9 @@
                 };
             }
         }
+        // The globe fits the screen on its long side at its widest: it wraps
+        // east to west, so zooming out further would only repeat it.
+        if (isWorldView()) return { w: GLOBE_SHEET_W, h: GLOBE_SHEET_H };
         return null;
     }
 
@@ -515,6 +739,12 @@
     // Bologna and a landing grid open fitted, since they are small enough to
     // read whole.
     function openZoom() {
+        // The World view opens on the party's corner of the globe rather than
+        // on the whole of it: wide enough to see which continent they are on.
+        if (isWorldView()) {
+            const globeFit = Graphics.width / (GLOBE_OPEN_SQUARES * GLOBE_SQUARE_PX);
+            return Math.min(MAX_ZOOM, Math.max(minZoom(), globeFit));
+        }
         if (fullscreenSheetSize()) return minZoom();
         const fit = Graphics.width / (WORLD_OPEN_SQUARES * WORLD_SHEET_PX / WORLD_TILES);
         return Math.min(MAX_ZOOM, Math.max(minZoom(), fit));
@@ -543,6 +773,8 @@
         if (wx == null || wy == null) return false;
         focusOverride = { x: Number(wx), y: Number(wy) };
         focusTileHint = { x: Number(wx), y: Number(wy) };
+        // A focus request names a square of Europe's sheet.
+        sheetViewChoice = 'europe';
         autoOpenedForTravel = false;
         if (currentMapState !== 3) beginFold();
         currentMapState = 3;          // fullscreen, the map the M key cycles to
@@ -570,6 +802,9 @@
         // except by pressing M.
         toggle: () => { autoOpenedForTravel = false; toggleMapState(); },
         requestFocusAt: requestWorldMapFocus,
+        // Interpolated {x, y, progress} of the vehicle on a fast-travel run,
+        // or null: the travel info card reads its coordinates off it.
+        travelPosition: () => getTravelVehiclePosition(),
         isMinimapVisible: () => isMinimapVisible(),
         setMinimapVisible: (v) => setMinimapVisible(v),
         // Stand the corner chart aside while a conversation portrait is drawn
@@ -645,6 +880,16 @@
             return;
         }
 
+        // The World view: the globe sheet, 48px a globe square.
+        if (isWorldView()) {
+            let g = focusOverride;
+            focusOverride = null;
+            if (!g) g = globePlayerPosition() || { x: GLOBE_W / 2, y: GLOBE_H / 2 };
+            panX = Graphics.width / 2 - (g.x * GLOBE_SQUARE_PX * zoomScale);
+            panY = Graphics.height / 2 - (g.y * GLOBE_SQUARE_PX * zoomScale);
+            return;
+        }
+
         let centerX, centerY;
 
         // A pending focus request wins once, then the map goes back to following
@@ -659,6 +904,12 @@
             const playerY = $gamePlayer.y || 0;
             centerX = playerX;
             centerY = playerY;
+        } else if (isGlobeContext()) {
+            // Out on the globe, Europe's sheet opens on the party's spot carried
+            // over onto it, or on its nearest edge when they are far outside.
+            const worldPos = europePlayerPosition();
+            centerX = Math.max(0, Math.min(WORLD_TILES, worldPos.x));
+            centerY = Math.max(0, Math.min(WORLD_TILES, worldPos.y));
         } else {
             // Otherwise use saved / live world coordinates
             const worldPos = playerWorldPosition();
@@ -717,16 +968,48 @@
         ctx.restore();
     }
 
-    // One diamond per distinct quest colour sharing this tile, so two different
-    // contracts pinned at the same spot don't merge into a single colour. Fans
-    // out horizontally around the tile centre when there's more than one.
-    function drawQuestTileDiamonds(ctx, x, y, tile, size) {
+    // A quest is marked by its own IconSet icon (KanbanQuest.iconFor), on a
+    // dark plate framed in its own colour, so the map and the quest log show
+    // the same token. One per quest sharing the tile, fanned out around the
+    // tile centre. A diamond stands in only while the IconSet is not loaded.
+    const QUEST_ICON_FALLBACK = 186;
+    function questIconSheet() {
+        const sheet = ImageManager.loadSystem('IconSet');
+        return (sheet && sheet.isReady()) ? sheet : null;
+    }
+
+    function drawQuestIcon(ctx, x, y, icon, color, size) {
+        const sheet = questIconSheet();
+        const source = sheet && (sheet._image || sheet._canvas);
+        if (!source) { drawDiamond(ctx, x, y, color, size); return; }
+        const half = size / 2;
+        const frame = Math.max(1, Math.round(size / 10));
+        ctx.save();
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(Math.round(x - half - frame), Math.round(y - half - frame),
+            Math.round(size + frame * 2), Math.round(size + frame * 2));
+        ctx.fillStyle = color || questMarkerColor;
+        ctx.fillRect(Math.round(x - half), Math.round(y - half), Math.round(size), Math.round(size));
+        ctx.fillStyle = 'rgba(43, 16, 8, 0.85)';
+        ctx.fillRect(Math.round(x - half + frame), Math.round(y - half + frame),
+            Math.round(size - frame * 2), Math.round(size - frame * 2));
+        const index = icon != null ? icon : QUEST_ICON_FALLBACK;
+        const iw = ImageManager.iconWidth || 32, ih = ImageManager.iconHeight || 32;
+        const sx = (index % 16) * iw, sy = Math.floor(index / 16) * ih;
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(source, sx, sy, iw, ih, Math.round(x - half + frame), Math.round(y - half + frame),
+            Math.round(size - frame * 2), Math.round(size - frame * 2));
+        ctx.restore();
+    }
+
+    function drawQuestTileIcons(ctx, x, y, tile, size) {
         const colors = (tile.colors && tile.colors.length) ? tile.colors : [questMarkerColor];
+        const icons = tile.icons || [];
         const n = colors.length;
-        const step = size * 0.85;
+        const step = size * 1.1;
         const startX = x - ((n - 1) * step) / 2;
         for (let i = 0; i < n; i++) {
-            drawDiamond(ctx, startX + i * step, y, colors[i], size);
+            drawQuestIcon(ctx, startX + i * step, y, icons[i], colors[i], size);
         }
     }
 
@@ -812,27 +1095,22 @@
         questTipEl.style.top = y + 'px';
     }
 
-    // The marker under the cursor, or null. Screen space to bitmap space is the
-    // inverse of the pan/zoom applied to the sprite.
+    // The marker under the cursor, or null. The pins are screen-space sprites
+    // of a fixed size, so the test is made in screen pixels too.
     function questMarkerAtPointer() {
-        const dims = fullscreenMapDims();
-        if (!dims || !dims.w || !zoomScale) return null;
-        const bx = (TouchInput.x - panX) / zoomScale;
-        const by = (TouchInput.y - panY) / zoomScale;
-        // Generous in bitmap pixels, because on a 12288px sheet a marker is tiny.
-        const radius = Math.max(28, 22 / zoomScale);
+        const radius = QUEST_PIN_ICON;
         let best = null, bestD = Infinity;
         for (const qt of getQuestMarkerTiles()) {
-            const qx = (qt.x / WORLD_TILES) * dims.w;
-            const qy = (qt.y / WORLD_TILES) * dims.h;
-            const d = Math.abs(qx - bx) + Math.abs(qy - by);
-            if (d <= radius * 2 && d < bestD) { bestD = d; best = qt; }
+            const at = questScreenPos(qt);
+            if (!at) continue;
+            const d = Math.abs(at.x - TouchInput.x) + Math.abs(at.y - TouchInput.y);
+            if (d <= radius && d < bestD) { bestD = d; best = qt; }
         }
         return best;
     }
 
     function updateQuestMarkerInteraction() {
-        if (currentMapState !== 3) { removeQuestTip(); return; }
+        if (currentMapState !== 3 || isBolognaView() || isOffEarthView()) { removeQuestTip(); return; }
         const hit = questMarkerAtPointer();
         if (!hit || !hit.qids || !hit.qids.length) { removeQuestTip(); return; }
         const qid = hit.qids[0];
@@ -847,17 +1125,86 @@
     }
 
     // ------------------------------------------------------------------------
-    // Off-screen quest markers (fullscreen world map)
+    // QUEST PINS (fullscreen world map)
+    //
+    // Every objective is a screen-space sprite over the map sprite: its quest's
+    // IconSet icon on a plate framed in its colour, with its name under it. It
+    // is NOT painted into the sheet's bitmap, because that bitmap is what the
+    // zoom scales, and a pin in it shrank to nothing when the chart was zoomed
+    // out. Here it keeps one size at every zoom, on Europe's sheet and on the
+    // globe alike.
     //
     // GTA-style: an objective panned out of view is not lost. It slides onto the
     // border of the screen as an arrow pointing at where it really is, and only
-    // goes away once the map has been dragged far enough for the real gold
-    // diamond to come into view. These live as screen-space sprites over the map
-    // sprite, because the diamonds themselves are painted inside the world
-    // bitmap, which is what the pan and the zoom move around.
+    // goes away once the map has been dragged far enough for the pin itself to
+    // come into view.
     // ------------------------------------------------------------------------
     const EDGE_MARKER_MARGIN = 34;  // px between the screen border and the arrow
     const EDGE_MARKER_ARROW = 26;   // arrow sprite size
+    const QUEST_PIN_ICON = 28;      // on-screen size of one quest icon plate
+
+    // Where a quest tile's centre is on the screen, whichever Earth view is up,
+    // or null when no sheet is. The globe wraps, so the copy nearest the middle
+    // of the screen is the one pointed at.
+    function questScreenPos(tile) {
+        if (!zoomScale) return null;
+        if (isWorldView()) {
+            const g = globeTileForWorld(tile.x + 0.5, tile.y + 0.5);
+            if (!g) return null;
+            const span = GLOBE_SHEET_W * zoomScale;
+            let sx = panX + g.x * GLOBE_SQUARE_PX * zoomScale;
+            const mid = Graphics.width / 2;
+            while (sx - mid > span / 2) sx -= span;
+            while (mid - sx > span / 2) sx += span;
+            return { x: sx, y: panY + g.y * GLOBE_SQUARE_PX * zoomScale };
+        }
+        const dims = fullscreenMapDims();
+        if (!dims || !dims.w || !dims.h) return null;
+        return {
+            x: panX + ((tile.x + 0.5) / WORLD_TILES) * dims.w * zoomScale,
+            y: panY + ((tile.y + 0.5) / WORLD_TILES) * dims.h * zoomScale
+        };
+    }
+
+    // The pin of one tile: a row of icon plates, one per quest sharing it, and
+    // their names under them. Anchored on the middle of the icon row, so the
+    // icon stands on the square itself.
+    function questPinSprite(tile) {
+        const size = QUEST_PIN_ICON;
+        const colors = (tile.colors && tile.colors.length) ? tile.colors : [questMarkerColor];
+        const gap = 4;
+        const rowW = colors.length * size + (colors.length - 1) * gap + 4;
+        const lineH = labelFontSize + 4;
+        const probe = new Bitmap(8, 8);
+        probe.fontFace = 'GameFont, sans-serif';
+        probe.fontSize = labelFontSize;
+        probe.fontBold = true;
+        let textW = 0;
+        for (const text of tile.labels) textW = Math.max(textW, Math.ceil(probe.measureTextWidth(text)) + 12);
+        if (probe.destroy) probe.destroy();
+        const w = Math.max(rowW, textW);
+        const rowH = size + 4;
+        const bmp = new Bitmap(w, rowH + lineH * tile.labels.length + 2);
+        const ctx = bmp.context;
+        const startX = w / 2 - ((colors.length - 1) * (size + gap)) / 2;
+        for (let i = 0; i < colors.length; i++) {
+            drawQuestIcon(ctx, startX + i * (size + gap), rowH / 2, (tile.icons || [])[i], colors[i], size);
+        }
+        bmp.fontFace = 'GameFont, sans-serif';
+        bmp.fontSize = labelFontSize;
+        bmp.fontBold = true;
+        bmp.outlineWidth = 4;
+        bmp.outlineColor = 'black';
+        for (let i = 0; i < tile.labels.length; i++) {
+            bmp.textColor = colors[i] || questMarkerColor;
+            bmp.drawText(tile.labels[i], 0, rowH + i * lineH, w, lineH, 'center');
+        }
+        bmp.baseTexture.update();
+        const sprite = new Sprite(bmp);
+        sprite.anchor.x = 0.5;
+        sprite.anchor.y = (rowH / 2) / bmp.height;
+        return sprite;
+    }
     let questEdgeContainer = null;
     let questEdgeKey = null;        // signature of the marker set the sprites show
     const questEdgeArrowBitmaps = new Map(); // colour -> cached triangle bitmap
@@ -955,7 +1302,8 @@
 
     // Rebuilt only when the marker set itself changes; panning just moves sprites.
     function questEdgeSignature(tiles) {
-        return tiles.map(t => t.x + ',' + t.y + ':' + t.labels.join('|')).join(';');
+        return tiles.map(t => t.x + ',' + t.y + ':' + t.labels.join('|') + ':' +
+            (t.icons || []).join(',')).join(';');
     }
 
     function buildQuestEdgeMarkers(tiles) {
@@ -969,8 +1317,11 @@
             arrow.anchor.x = 0.5;
             arrow.anchor.y = 0.5;
             const label = edgeLabelSprite(tile.labels, tile.colors);
+            const pin = questPinSprite(tile);
+            group.addChild(pin);
             group.addChild(arrow);
             group.addChild(label);
+            group._pin = pin;
             group._arrow = arrow;
             group._label = label;
             group._tile = tile;
@@ -982,15 +1333,14 @@
     }
 
     function updateQuestEdgeMarkers() {
-        // Only the world sheet paints quest diamonds; the Bologna and alien-planet
+        // Only the Earth sheets carry quest pins; the Bologna and alien-planet
         // fullscreens are other coordinate spaces entirely.
-        if (currentMapState !== 3 || !isLiveSprite(worldMapSprite) ||
+        if (currentMapState !== 3 || !isLiveSprite(worldMapSprite) || !worldMapSprite.visible ||
             !$gameMap || isBolognaView() || isOffEarthView()) {
             hideQuestEdgeMarkers();
             return;
         }
-        const dims = fullscreenMapDims();
-        if (!dims || !dims.w || !dims.h || !zoomScale) { hideQuestEdgeMarkers(); return; }
+        if (!zoomScale) { hideQuestEdgeMarkers(); return; }
 
         const tiles = getQuestMarkerTiles();
         const key = questEdgeSignature(tiles);
@@ -1007,17 +1357,25 @@
         const halfH = Math.max(1, cy - EDGE_MARKER_MARGIN);
 
         for (const group of container._groups) {
-            const tile = group._tile;
-            const sx = panX + (tile.x / WORLD_TILES) * dims.w * zoomScale;
-            const sy = panY + (tile.y / WORLD_TILES) * dims.h * zoomScale;
+            const at = questScreenPos(group._tile);
+            if (!at) { group.visible = false; continue; }
+            const sx = at.x, sy = at.y;
+            group.visible = true;
 
-            // Inside the viewport (minus the band the arrows occupy): the real
-            // diamond is doing the job, so the border marker steps aside.
+            // Inside the viewport (minus the band the arrows occupy): the pin
+            // itself is doing the job, so the border marker steps aside.
             if (sx >= EDGE_MARKER_MARGIN && sx <= Graphics.width - EDGE_MARKER_MARGIN &&
                 sy >= EDGE_MARKER_MARGIN && sy <= Graphics.height - EDGE_MARKER_MARGIN) {
-                group.visible = false;
+                group._pin.visible = true;
+                group._pin.x = Math.round(sx);
+                group._pin.y = Math.round(sy);
+                group._arrow.visible = false;
+                group._label.visible = false;
                 continue;
             }
+            group._pin.visible = false;
+            group._arrow.visible = true;
+            group._label.visible = true;
 
             const dx = sx - cx;
             const dy = sy - cy;
@@ -1771,7 +2129,12 @@
         // If we are in Detail Mode (Map != 315), we load dynamic images.
         const isBologna = isBolognaView();
         const isAlienPlanet = isOffEarthView();
-        if (currentMapState === 3 && !isBologna && !isAlienPlanet && (!worldMapBitmap || !worldMapBitmap.isReady())) return;
+        // The World view stands on the globe overview instead of Europe's picture.
+        if (currentMapState === 3 && !isBologna && !isAlienPlanet) {
+            if (isWorldView()) {
+                if (!globeOverviewBitmap().isReady()) return;
+            } else if (!worldMapBitmap || !worldMapBitmap.isReady()) return;
+        }
 
         worldMapSprite.visible = true;
 
@@ -1899,7 +2262,8 @@
         if (data.timerDestination) {
             drawLabel(ctx, dx, dy, String(data.timerDestination), 'white', labelFontSize * MINIMAP_SCALE);
         }
-        drawCoordinates(ctx, targetW, targetH, Math.round(pos.x), Math.round(pos.y), undefined, undefined, MINIMAP_SCALE);
+        // The interpolated coordinates are read on the travel info card
+        // (TimeDateSystem's MapInfoHUD), not stamped on the minimap.
 
         setWorldMapSpriteBitmap(bitmap);
     }
@@ -1926,7 +2290,7 @@
 
         // While travelling inside a vehicle, replace the local detail view with a
         // full world overview that animates the vehicle moving to its destination.
-        if (mapId !== 315 && isVehicleTravelActive()) {
+        if (mapId !== 315 && !isGlobeMapHere() && isVehicleTravelActive()) {
             renderTravelMiniMap();
             return;
         }
@@ -2006,11 +2370,11 @@
                         qt.y < srcYInTiles || qt.y >= srcYInTiles + zoomTiles) continue;
                     const qx = Math.floor(((qt.x - srcXInTiles) / zoomTiles) * targetW) + gridCellWidth / 2;
                     const qy = Math.floor(((qt.y - srcYInTiles) / zoomTiles) * targetH) + gridCellHeight / 2;
-                    drawQuestTileDiamonds(context, qx, qy, qt, 9 * MINIMAP_SCALE);
+                    drawQuestTileIcons(context, qx, qy, qt, 14 * MINIMAP_SCALE);
                 }
 
-                // Draw coordinates
-                drawCoordinates(context, targetW, targetH, playerX, playerY, undefined, undefined, MINIMAP_SCALE);
+                // Coordinates are read on the travel info card beside the
+                // date (TimeDateSystem's MapInfoHUD), not on the minimap.
             } else {
                 // --- DEFAULT MINIMAP (FULL VIEW) ---
                 bitmap.blt(worldMapBitmap, 0, 0, worldMapBitmap.width, worldMapBitmap.height, 0, 0, targetW, targetH);
@@ -2067,6 +2431,15 @@
         if (isOffEarthView()) {
             const alienBitmap = buildAlienPlanetBitmap(targetW, targetH, MINIMAP_SCALE);
             if (alienBitmap) setWorldMapSpriteBitmap(alienBitmap);
+            return;
+        }
+
+        // 2.75. The globe (map 1409) and its procedural squares. Their
+        // coordinates (0-199 on the globe, 280 and up for its squares) are not
+        // Europe's 0-255, so the block view below would cut a segment of Europe
+        // that is not there: the corner chart is cut out of the globe overview.
+        if (isGlobeContext()) {
+            renderGlobeMiniMap(targetW, targetH);
             return;
         }
 
@@ -2165,6 +2538,101 @@
         setWorldMapSpriteBitmap(bitmap);
     }
 
+    // Which part of the globe the corner chart shows, in globe squares, and
+    // where on the chart the party's dot falls. Zoomed (state 1) it is a window
+    // GLOBE_MINI_SQUARES wide round the party, with the chart's own aspect, that
+    // wraps east to west and stops at the poles; full (state 2) it is the whole
+    // globe, letterboxed into the chart.
+    function globeMiniView(pos, zoomed, targetW, targetH) {
+        if (zoomed) {
+            const viewW = GLOBE_MINI_SQUARES;
+            const viewH = Math.min(GLOBE_H, viewW * targetH / targetW);
+            const srcX = pos.x - viewW / 2;
+            const srcY = Math.max(0, Math.min(GLOBE_H - viewH, pos.y - viewH / 2));
+            return {
+                srcX: srcX, srcY: srcY, viewW: viewW, viewH: viewH,
+                dx: 0, dy: 0, dw: targetW, dh: targetH,
+                dotX: ((pos.x - srcX) / viewW) * targetW,
+                dotY: ((pos.y - srcY) / viewH) * targetH
+            };
+        }
+        const dw = Math.min(targetW, targetH * GLOBE_W / GLOBE_H);
+        const dh = dw * GLOBE_H / GLOBE_W;
+        const dx = (targetW - dw) / 2;
+        const dy = (targetH - dh) / 2;
+        const x = ((pos.x % GLOBE_W) + GLOBE_W) % GLOBE_W;
+        return {
+            srcX: 0, srcY: 0, viewW: GLOBE_W, viewH: GLOBE_H,
+            dx: dx, dy: dy, dw: dw, dh: dh,
+            dotX: dx + (x / GLOBE_W) * dw,
+            dotY: dy + (pos.y / GLOBE_H) * dh
+        };
+    }
+
+    // The pieces a wrapped window is drawn in: one, or two where it crosses
+    // the date line. Each is a source span in globe squares and where it lands
+    // across the window, as a share of the window's width.
+    function globeWrapSpans(srcX, viewW) {
+        const x0 = ((srcX % GLOBE_W) + GLOBE_W) % GLOBE_W;
+        const first = Math.min(viewW, GLOBE_W - x0);
+        const spans = [{ sx: x0, sw: first, at: 0 }];
+        if (first < viewW) spans.push({ sx: 0, sw: viewW - first, at: first / viewW });
+        return spans;
+    }
+
+    // Europe's rectangle on a chart drawn by globeMiniView, in chart pixels,
+    // once for each copy round the globe that the window can see.
+    function strokeEuropeOnGlobe(ctx, view, lineWidth) {
+        const r = europeOnGlobe();
+        const sx = view.dw / view.viewW;
+        const sy = view.dh / view.viewH;
+        ctx.save();
+        ctx.strokeStyle = EUROPE_OUTLINE_COLOR;
+        ctx.lineWidth = lineWidth;
+        for (const shift of [-GLOBE_W, 0, GLOBE_W]) {
+            const x = view.dx + (r.x1 + shift - view.srcX) * sx;
+            const w = (r.x2 - r.x1 + 1) * sx;
+            if (x + w < view.dx || x > view.dx + view.dw) continue;
+            ctx.strokeRect(x, view.dy + (r.y1 - view.srcY) * sy, w, (r.y2 - r.y1 + 1) * sy);
+        }
+        ctx.restore();
+    }
+
+    // The corner chart on the globe and on its procedural squares.
+    function renderGlobeMiniMap(targetW, targetH) {
+        const overview = globeOverviewBitmap();
+        if (!overview.isReady()) return;
+        const pos = globePlayerPosition();
+        if (!pos) return;
+
+        const bitmap = new Bitmap(targetW, targetH);
+        bitmap.context.imageSmoothingEnabled = true;
+        bitmap.context.imageSmoothingQuality = 'high';
+        bitmap.smooth = true;
+        const ctx = bitmap.context;
+
+        const view = globeMiniView(pos, currentMapState === 1, targetW, targetH);
+        const pxX = overview.width / GLOBE_W;
+        const pxY = overview.height / GLOBE_H;
+        if (view.dw < targetW || view.dh < targetH) {
+            // The whole globe is wider than the chart is tall: the bands it
+            // leaves are the sea it is printed on.
+            ctx.fillStyle = '#0b1a2a';
+            ctx.fillRect(0, 0, targetW, targetH);
+        }
+        for (const span of globeWrapSpans(view.srcX, view.viewW)) {
+            bitmap.blt(overview,
+                span.sx * pxX, view.srcY * pxY, span.sw * pxX, view.viewH * pxY,
+                view.dx + span.at * view.dw, view.dy,
+                (span.sw / view.viewW) * view.dw, view.dh);
+        }
+
+        strokeEuropeOnGlobe(ctx, view, 2 * MINIMAP_SCALE);
+        drawDot(ctx, view.dotX, view.dotY, playerColor, 5 * MINIMAP_SCALE);
+
+        setWorldMapSpriteBitmap(bitmap);
+    }
+
     // GalaxySim alien planet: unlike Earth's tile grid, the texture is a
     // single already-in-memory canvas, so it can be drawn synchronously with
     // no async load/cache machinery.
@@ -2202,15 +2670,58 @@
     const FS_MAX_TILES = 9;         // wider views read fine off the base image
     const FS_MAX_LOADING = 3;
 
+    // The two Earth sheets the layer can stream, described the same way: their
+    // virtual size, their segment grid, the picture under the segments and the
+    // size of the overlay drawn over them. Europe's is the one the layer has
+    // always drawn; the globe's is built on first use (its constants live in
+    // THE GLOBE) and wraps east to west.
+    const EUROPE_SHEET = {
+        key: 'europe',
+        w: WORLD_SHEET_PX, h: WORLD_SHEET_PX,
+        tilePx: FS_TILE_PX, rows: FS_GRID, cols: FS_GRID,
+        overlayW: FS_OVERLAY_PX, overlayH: FS_OVERLAY_PX,
+        wrap: false,
+        path: (row, col) => `img/worldmap/row-${row + 1}-column-${col + 1}.jpg`,
+        base: () => worldMapBitmap
+    };
+    let globeSheet = null;
+    function globeSheetSpec() {
+        if (!globeSheet) {
+            globeSheet = {
+                key: 'world',
+                w: GLOBE_SHEET_W, h: GLOBE_SHEET_H,
+                tilePx: GLOBE_TILE_PX, rows: GLOBE_ROWS, cols: GLOBE_COLS,
+                overlayW: GLOBE_SHEET_W / 3, overlayH: GLOBE_SHEET_H / 3,
+                wrap: true,
+                // Its segments are smaller than Europe's, so a few more of
+                // them cost the same memory as Europe's nine.
+                maxTiles: 12,
+                path: (row, col) => globeTilePath(row + 1, col + 1),
+                base: () => globeOverviewBitmap()
+            };
+        }
+        return globeSheet;
+    }
+    let fsSheet = EUROPE_SHEET;
+
     let fsLayer = null;       // container parented to worldMapSprite
     let fsBase = null;        // whole-world low resolution sprite
     let fsTileLayer = null;   // streamed detail segments
     let fsOverlay = null;     // grid + entity markers
+    let fsWrapCopies = [];    // the base and overlay again, a sheet to either side
     const fsTiles = new Map(); // "row,col" -> { sprite, bitmap }
     let fsLoading = 0;
     let fsGeneration = 0;     // invalidates in-flight tile loads
     let fsOverlayKey = null;
     let blankBitmap = null;
+
+    // Point the layer at another sheet. The layer is rebuilt for it on the
+    // next ensureFullscreenLayer.
+    function useFullscreenSheet(spec) {
+        if (spec === fsSheet) return;
+        destroyFullscreenLayer();
+        fsSheet = spec;
+    }
 
     // The sheet pixel size, whichever fullscreen view is up. Screen space math
     // used to read worldMapSprite.bitmap.width; the world sheet no longer has a
@@ -2220,7 +2731,7 @@
             worldMapSprite.bitmap !== blankBitmap && worldMapSprite.bitmap.width > 1) {
             return { w: worldMapSprite.bitmap.width, h: worldMapSprite.bitmap.height };
         }
-        if (fsLayer) return { w: WORLD_SHEET_PX, h: WORLD_SHEET_PX };
+        if (fsLayer) return { w: fsSheet.w, h: fsSheet.h };
         return null;
     }
 
@@ -2239,6 +2750,13 @@
         fsGeneration++;
         for (const key of Array.from(fsTiles.keys())) dropFsTile(key);
         if (fsBase && fsBase.parent) fsBase.parent.removeChild(fsBase);
+        // The wrapped copies share the base picture and the overlay bitmap:
+        // they are only unparented, the overlay's bitmap is freed once below.
+        for (const copy of fsWrapCopies) {
+            if (copy.parent) copy.parent.removeChild(copy);
+            copy.bitmap = null;
+        }
+        fsWrapCopies = [];
         if (fsOverlay) {
             if (fsOverlay.parent) fsOverlay.parent.removeChild(fsOverlay);
             const bmp = fsOverlay.bitmap;
@@ -2262,33 +2780,58 @@
         if (!isLiveSprite(worldMapSprite)) return null;
         if (fsLayer && isLiveSprite(fsLayer) && fsLayer.parent === worldMapSprite) return fsLayer;
         destroyFullscreenLayer();
-        if (!worldMapBitmap || !worldMapBitmap.isReady()) return null;
+        const sheet = fsSheet;
+        const picture = sheet.base();
+        if (!picture || !picture.isReady()) return null;
 
         fsLayer = new PIXI.Container();
 
-        fsBase = new Sprite(worldMapBitmap);
-        const baseScale = WORLD_SHEET_PX / (worldMapBitmap.width || FS_TILE_PX);
-        fsBase.scale.set(baseScale, baseScale);
-        fsLayer.addChild(fsBase);
+        const baseScale = sheet.w / (picture.width || sheet.tilePx);
+        const overlayScale = sheet.w / sheet.overlayW;
+        // A wrapping sheet carries a copy of its base and of its overlay a whole
+        // sheet to either side, so panning past the date line never shows the
+        // edge of the world. The streamed segments wrap on their own.
+        const shifts = sheet.wrap ? [-sheet.w, 0, sheet.w] : [0];
+
+        for (const shift of shifts) {
+            const base = new Sprite(picture);
+            base.scale.set(baseScale, baseScale);
+            base.x = shift;
+            fsLayer.addChild(base);
+            if (shift === 0) fsBase = base;
+            else fsWrapCopies.push(base);
+        }
 
         fsTileLayer = new PIXI.Container();
         fsLayer.addChild(fsTileLayer);
 
-        fsOverlay = new Sprite(new Bitmap(FS_OVERLAY_PX, FS_OVERLAY_PX));
-        const overlayScale = WORLD_SHEET_PX / FS_OVERLAY_PX;
+        fsOverlay = new Sprite(new Bitmap(sheet.overlayW, sheet.overlayH));
         fsOverlay.scale.set(overlayScale, overlayScale);
         fsLayer.addChild(fsOverlay);
+        for (const shift of shifts) {
+            if (shift === 0) continue;
+            const copy = new Sprite(fsOverlay.bitmap);
+            copy.scale.set(overlayScale, overlayScale);
+            copy.x = shift;
+            fsLayer.addChild(copy);
+            fsWrapCopies.push(copy);
+        }
 
         worldMapSprite.addChild(fsLayer);
         return fsLayer;
     }
 
+    // A segment key is "row,col" with the column as the viewport sees it: on a
+    // wrapping sheet it may run off either side, and is folded back onto the
+    // grid only to name the picture.
     function loadFsTile(key) {
         const parts = key.split(',');
         const row = Number(parts[0]);
         const col = Number(parts[1]);
+        const sheet = fsSheet;
         const generation = fsGeneration;
-        const bitmap = Bitmap.load(`img/worldmap/row-${row + 1}-column-${col + 1}.jpg`);
+        const fileCol = ((col % sheet.cols) + sheet.cols) % sheet.cols;
+        const bitmap = Bitmap.load(sheet.path(row, fileCol));
         const entry = { sprite: null, bitmap: bitmap };
         fsTiles.set(key, entry);
         fsLoading++;
@@ -2299,9 +2842,9 @@
             if (generation !== fsGeneration || fsTiles.get(key) !== entry) return;
             if (!fsTileLayer || !isLiveSprite(fsTileLayer)) return;
             const sprite = new Sprite(bitmap);
-            sprite.x = col * FS_TILE_PX;
-            sprite.y = row * FS_TILE_PX;
-            const s = FS_TILE_PX / (bitmap.width || FS_TILE_PX);
+            sprite.x = col * sheet.tilePx;
+            sprite.y = row * sheet.tilePx;
+            const s = sheet.tilePx / (bitmap.width || sheet.tilePx);
             sprite.scale.set(s, s);
             entry.sprite = sprite;
             fsTileLayer.addChild(sprite);
@@ -2312,11 +2855,16 @@
     // to run every frame: a handful of divisions plus a set comparison.
     function updateFullscreenStreaming() {
         if (!fsLayer || !isLiveSprite(fsLayer) || !zoomScale) return;
-        const cellOf = v => Math.max(0, Math.min(FS_GRID - 1, Math.floor(v / FS_TILE_PX)));
-        const c0 = cellOf((-panX) / zoomScale);
-        const c1 = cellOf((Graphics.width - panX) / zoomScale);
-        const r0 = cellOf((-panY) / zoomScale);
-        const r1 = cellOf((Graphics.height - panY) / zoomScale);
+        const sheet = fsSheet;
+        const rowOf = v => Math.max(0, Math.min(sheet.rows - 1, Math.floor(v / sheet.tilePx)));
+        // A wrapping sheet streams the copies to either side as well.
+        const colOf = sheet.wrap
+            ? v => Math.max(-sheet.cols, Math.min(2 * sheet.cols - 1, Math.floor(v / sheet.tilePx)))
+            : v => Math.max(0, Math.min(sheet.cols - 1, Math.floor(v / sheet.tilePx)));
+        const c0 = colOf((-panX) / zoomScale);
+        const c1 = colOf((Graphics.width - panX) / zoomScale);
+        const r0 = rowOf((-panY) / zoomScale);
+        const r1 = rowOf((Graphics.height - panY) / zoomScale);
 
         const wanted = new Set();
         for (let r = r0; r <= r1; r++) {
@@ -2327,7 +2875,7 @@
         }
         // Zoomed far enough out that a detail segment would be downsampled past
         // the base image anyway: leave the sheet on the base and load nothing.
-        if (wanted.size > FS_MAX_TILES) {
+        if (wanted.size > (sheet.maxTiles || FS_MAX_TILES)) {
             for (const key of Array.from(fsTiles.keys())) dropFsTile(key);
             return;
         }
@@ -2338,10 +2886,28 @@
         }
     }
 
+    // A wrapping sheet keeps the middle of the screen on its middle copy: a
+    // pan that has carried it a whole sheet east or west is put back by
+    // exactly one sheet, which draws the same picture.
+    function wrapFullscreenPan() {
+        if (!fsLayer || !fsSheet.wrap || !zoomScale) return;
+        const span = fsSheet.w * zoomScale;
+        const centre = (Graphics.width / 2 - panX) / zoomScale;
+        if (centre < 0) panX -= span;
+        else if (centre >= fsSheet.w) panX += span;
+        else return;
+        if (isLiveSprite(worldMapSprite)) worldMapSprite.x = panX;
+    }
+
     // What the overlay draws. Redrawing a 3072px canvas is not free, so it only
     // happens when one of these actually moved.
     function fullscreenOverlaySignature() {
-        const world = playerWorldPosition();
+        if (fsSheet.key === 'world') {
+            const g = globePlayerPosition();
+            return ['world', g ? Math.round(g.x * 4) + ',' + Math.round(g.y * 4) : '',
+                $gameMap ? $gameMap.mapId() : 0].join('|');
+        }
+        const world = europePlayerPosition();
         return [
             Math.round(world.x * 4), Math.round(world.y * 4),
             questEdgeSignature(getQuestMarkerTiles()),
@@ -2357,6 +2923,10 @@
         const bitmap = fsOverlay.bitmap;
         bitmap.clear();
         const ctx = bitmap.context;
+        if (fsSheet.key === 'world') {
+            drawGlobeOverlay(bitmap);
+            return;
+        }
         // The picked nation's territory goes down first, under the grid and
         // under every pin: it is the ground being coloured, not a mark on it.
         drawCountryHighlight(ctx, FS_OVERLAY_PX, FS_OVERLAY_PX);
@@ -2368,6 +2938,33 @@
         setSheetNameEntries(fsNameCollect);
         fsNameCollect = null;
         drawPadCursor(ctx, FS_OVERLAY_PX);
+    }
+
+    // The World view's overlay: Europe's rectangle, named, and the party. The
+    // overlay is a third of the sheet's size, so everything is sized in its
+    // pixels: a globe square is GLOBE_SQUARE_PX / 3 of them.
+    function drawGlobeOverlay(bitmap) {
+        const ctx = bitmap.context;
+        const sq = bitmap.width / GLOBE_W;
+        const r = europeOnGlobe();
+        const x = r.x1 * sq, y = r.y1 * sq;
+        const w = (r.x2 - r.x1 + 1) * sq, h = (r.y2 - r.y1 + 1) * sq;
+        ctx.save();
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.lineWidth = Math.max(4, sq * 0.6);
+        ctx.strokeRect(x, y, w, h);
+        ctx.strokeStyle = EUROPE_OUTLINE_COLOR;
+        ctx.lineWidth = Math.max(2, sq * 0.3);
+        ctx.strokeRect(x, y, w, h);
+        ctx.restore();
+        drawLabel(ctx, x, y + sq * 1.6, T('WorldMap.view.europe'), EUROPE_OUTLINE_COLOR,
+            Math.max(labelFontSize, Math.round(sq * 1.4)));
+        const g = globePlayerPosition();
+        if (g) {
+            const gx = ((g.x % GLOBE_W) + GLOBE_W) % GLOBE_W;
+            drawDot(ctx, gx * sq, g.y * sq, playerColor, Math.max(4, sq * 0.6));
+        }
+        bitmap.baseTexture.update();
     }
 
 
@@ -2403,6 +3000,11 @@
             renderAlienPlanetFullscreen();
             return;
         }
+        // Europe's sheet or the whole globe, streamed the same way. The globe
+        // names nothing on the screen-space layer: Europe's pins are Europe's.
+        const worldView = isWorldView();
+        useFullscreenSheet(worldView ? globeSheetSpec() : EUROPE_SHEET);
+        if (worldView) setSheetNameEntries([]);
         // The world sheet is drawn by the streamed layer, not by a bitmap on the
         // sprite itself; the sprite keeps a 1x1 placeholder so its texture stays
         // valid while the layer under it does the drawing.
@@ -2500,10 +3102,15 @@
         // Map 315 is still read for its events, because a teleport standing
         // somewhere the gazetteer does not list is a real door on real ground.
         const drawn = new Set();
+        const drawnKeys = new Set();
+        // Every mark stands in the middle of its square, the way the party's
+        // own dot always has, not on the square's top left corner.
+        const half = 0.5;
         for (const pin of sheetPins()) {
-            const px = Math.floor((pin.x / WORLD_TILES) * targetW);
-            const py = Math.floor((pin.y / WORLD_TILES) * targetH);
+            const px = ((pin.x + half) / WORLD_TILES) * targetW;
+            const py = ((pin.y + half) / WORLD_TILES) * targetH;
             drawn.add(pin.x + ',' + pin.y);
+            if (pin.destName) drawnKeys.add(String(pin.destName).toLowerCase());
             const color = SHEET_KIND_COLOR[pin.kind] || '#00FF00';
             if (pin.kind === 'note') {
                 // The party's own hand: a diamond, so it never reads as a place
@@ -2525,13 +3132,19 @@
         }
 
         // 1a. Teleport events standing on ground the gazetteer does not list.
-        for (const ev of events) {
+        // The globe's own events stand in globe squares, not Europe's.
+        for (const ev of (isGlobeMapHere() ? [] : events)) {
             if (!ev || ev._erased) continue;
             const name = ev.event().name || "";
             if (/^teleport/i.test(name)) {
-                const ex = Math.floor((ev.x / wTiles) * targetW);
-                const ey = Math.floor((ev.y / hTiles) * targetH);
+                const ex = ((ev.x + half) / wTiles) * targetW;
+                const ey = ((ev.y + half) / hTiles) * targetH;
                 if (drawn.has(ev.x + ',' + ev.y)) continue;
+                // The gazetteer often places a town a tile off its door event,
+                // so the square alone misses it: a place already pinned under
+                // the same Destinations.json key is not drawn a second time.
+                const evKey = name.replace(/^teleport\s*/i, '').replace(/^-\s*/, '').trim().toLowerCase();
+                if (evKey && drawnKeys.has(evKey)) continue;
 
                 drawSquare(context, ex, ey, '#00FF00', showLabels ? markerPx : 6 * scale);
 
@@ -2554,18 +3167,20 @@
         }
 
         // 1b. Active quest objectives. Always in world-tile space (0-255), which
-        // is what the world image and the vars 43/44 coordinates both use.
-        const questTiles = getQuestMarkerTiles();
-        for (const qt of questTiles) {
-            const qx = Math.floor((qt.x / WORLD_TILES) * targetW);
-            const qy = Math.floor((qt.y / WORLD_TILES) * targetH);
-            drawQuestTileDiamonds(context, qx, qy, qt, showLabels ? markerPx : 8 * scale);
-            if (showLabels) {
-                for (let i = 0; i < qt.labels.length; i++) {
-                    const text = qt.labels[i];
-                    const color = qt.colors[i] || questMarkerColor;
-                    if (fsNameCollect) fsNameCollect.push({ wx: qt.x, wy: qt.y, name: text, color: color, line: i });
-                    else drawLabel(context, qx, qy + i * (namePx + 4 * scale), text, color, namePx);
+        // is what the world image and the vars 43/44 coordinates both use. The
+        // fullscreen sheet does not paint them here at all: an icon in this
+        // bitmap shrinks to nothing zoomed out, so the sheet's quest pins are
+        // screen-space sprites (see QUEST PINS) that keep their size at any zoom.
+        if (!fsNameCollect) {
+            for (const qt of getQuestMarkerTiles()) {
+                const qx = ((qt.x + half) / WORLD_TILES) * targetW;
+                const qy = ((qt.y + half) / WORLD_TILES) * targetH;
+                drawQuestTileIcons(context, qx, qy, qt, showLabels ? markerPx * 1.5 : 12 * scale);
+                if (showLabels) {
+                    for (let i = 0; i < qt.labels.length; i++) {
+                        drawLabel(context, qx, qy + i * (namePx + 4 * scale), qt.labels[i],
+                            qt.colors[i] || questMarkerColor, namePx);
+                    }
                 }
             }
         }
@@ -2585,8 +3200,8 @@
         for (const v of owned) {
             if (!v.parkedMapId || v.parkedOnPlanet) continue;
             if (!(v.parkedWorldX > 0 || v.parkedWorldY > 0)) continue;
-            const vx = Math.floor((v.parkedWorldX / WORLD_TILES) * targetW);
-            const vy = Math.floor((v.parkedWorldY / WORLD_TILES) * targetH);
+            const vx = ((v.parkedWorldX + half) / WORLD_TILES) * targetW;
+            const vy = ((v.parkedWorldY + half) / WORLD_TILES) * targetH;
             drawDot(context, vx, vy, VEHICLE_DOT_COLOR[v.key] || boatColor, dotSize);
             if (showLabels) drawLabel(context, vx, vy, v.name, undefined, labelFontSize * scale);
         }
@@ -2602,8 +3217,9 @@
         } else {
             // Not on map 315: use the world position (0-256 range), fraction of
             // the square included, so crossing a procedural square walks the dot
-            // over instead of teleporting it.
-            const world = playerWorldPosition();
+            // over instead of teleporting it. Out on the globe it is the globe
+            // position carried over onto Europe's sheet.
+            const world = europePlayerPosition();
             px = (world.x / WORLD_TILES) * targetW;
             py = (world.y / WORLD_TILES) * targetH;
         }
@@ -2696,18 +3312,15 @@
         }
     }
 
-    function createCityLabelsContainer() {
-        const tilemap = currentTilemap();
-        if (!tilemap) return;
+    // What the labels of the current map say and where, as one string: a
+    // map refresh happens every time a variable or a switch changes, and the
+    // labels it would rebuild are nearly always the ones already standing.
+    let cityLabelSig = null;
+    let cityLabelTilemap = null;
 
-        // Remove old container if exists
-        removeCityLabels();
-
-        // Create labels array
-        cityLabelsContainer = [];
-
-        const events = $gameMap.events();
-        for (const ev of events) {
+    function cityLabelSpecs() {
+        const specs = [];
+        for (const ev of $gameMap.events()) {
             if (!ev || ev._erased) continue;
             const name = ev.event().name || "";
 
@@ -2719,22 +3332,14 @@
                 const key = match[1].trim();
                 const cityName = window.WorkSystem?.destinationName
                     ? window.WorkSystem.destinationName(key) : key;
-                if (cityName) {
-                    const labelSprite = new Sprite_CityLabel(ev.x, ev.y, cityName);
-                    tilemap.addChild(labelSprite);
-                    cityLabelsContainer.push(labelSprite);
-                }
+                if (cityName) specs.push([ev.x, ev.y, cityName]);
             }
         }
 
         // Founded towns stand on map 315 without an event of their own, so
         // their names are written straight over their world square.
         if ($gameMap.mapId() === 315) {
-            for (const town of foundedTownPins()) {
-                const labelSprite = new Sprite_CityLabel(town.worldX, town.worldY, town.name);
-                tilemap.addChild(labelSprite);
-                cityLabelsContainer.push(labelSprite);
-            }
+            for (const town of foundedTownPins()) specs.push([town.worldX, town.worldY, town.name]);
         }
 
         // Labels another plugin has hung on this map (Bologna's shop signs).
@@ -2744,11 +3349,35 @@
         if (extraLabelMapId === $gameMap.mapId()) {
             for (const label of extraLabels) {
                 if (!label || !label.text) continue;
-                const labelSprite = new Sprite_CityLabel(label.x, label.y, label.text);
-                tilemap.addChild(labelSprite);
-                cityLabelsContainer.push(labelSprite);
+                specs.push([label.x, label.y, label.text]);
             }
         }
+        return specs;
+    }
+
+    function createCityLabelsContainer() {
+        const tilemap = currentTilemap();
+        if (!tilemap) return;
+
+        const specs = cityLabelSpecs();
+        const sig = $gameMap.mapId() + "|" + JSON.stringify(specs);
+        // The same labels on the same tilemap: nothing to build.
+        if (sig === cityLabelSig && tilemap === cityLabelTilemap && cityLabelsContainer &&
+            cityLabelsContainer.every(l => isLiveSprite(l) && l.parent === tilemap)) {
+            return;
+        }
+
+        // Remove old container if exists
+        removeCityLabels();
+
+        cityLabelsContainer = [];
+        for (const [x, y, text] of specs) {
+            const labelSprite = new Sprite_CityLabel(x, y, text);
+            tilemap.addChild(labelSprite);
+            cityLabelsContainer.push(labelSprite);
+        }
+        cityLabelSig = sig;
+        cityLabelTilemap = tilemap;
     }
 
     // ------------------------------------------------------------------------
@@ -2791,12 +3420,18 @@
             for (const label of cityLabelsContainer) {
                 // A label already destroyed with its scene has no transform and
                 // no parent to detach from.
-                if (isLiveSprite(label) && label.parent) {
-                    label.parent.removeChild(label);
+                // Each label drew its own canvas and texture; both go with it.
+                const bitmap = label && label._bitmap;
+                if (isLiveSprite(label)) {
+                    if (label.parent) label.parent.removeChild(label);
+                    label.destroy();
                 }
+                if (bitmap) bitmap.destroy();
             }
             cityLabelsContainer = null;
         }
+        cityLabelSig = null;
+        cityLabelTilemap = null;
     }
 
     // ------------------------------------------------------------------------
@@ -2954,12 +3589,12 @@
             const entry = sprite._entry;
             const cell = squareScreenRect(entry.wx, entry.wy);
             if (!cell) { sprite.visible = false; continue; }
-            // The marker is drawn ON the square's corner, not in its middle, so
-            // the name is hung off that same point: it sits directly above its
-            // green square at any zoom instead of drifting half a square away.
+            // The marker is drawn in the middle of its square, so the name is
+            // hung off that same point: it sits directly above its green
+            // square at any zoom instead of drifting half a square away.
             const marker = Math.max(6, Math.min(cell.w * 0.6, 14));
-            const cx = cell.x;
-            const cy = cell.y - marker - sprite.bitmap.height - 2 -
+            const cx = cell.x + cell.w / 2;
+            const cy = cell.y + cell.h / 2 - marker - sprite.bitmap.height - 2 -
                        (entry.line || 0) * (SHEET_NAME_PX + 4);
             const halfW = sprite.bitmap.width / 2;
             if (cx + halfW < 0 || cx - halfW > Graphics.width ||
@@ -2982,6 +3617,11 @@
     // Driven once a frame while the chart is up.
     function refreshSheetLayer() {
         if (currentMapState !== 3 || !isLiveSprite(worldMapSprite) || !worldMapSprite.visible) {
+            if (sheetLayer) sheetLayer.visible = false;
+            return;
+        }
+        // The globe names nothing and rules no square: the layer is Europe's.
+        if (isWorldView()) {
             if (sheetLayer) sheetLayer.visible = false;
             return;
         }
@@ -3348,6 +3988,7 @@
     let noteModalSquare = null;
     let chromeZoomEl = null;
     let chromeReadoutEl = null;
+    let chromeCoordsEl = null;
     let chromeCountryEl = null;
     let chromeSuppressZoom = false;
     let chromePointerIn = false;   // the pointer is over the chrome, not the chart
@@ -3398,34 +4039,60 @@
             SceneManager._scene instanceof Scene_Map;
     }
 
+    // The Europe / World switch, top left: one button per view, the one up
+    // marked, and the key that flips between them.
+    function viewSwitchMarkup(view) {
+        const names = { europe: T('WorldMap.view.europe'), world: T('WorldMap.view.world') };
+        const button = (key) =>
+            `<div class="inspect-btn focusable wm-view-btn${key === view ? ' is-active' : ''}" ` +
+            `data-wm-view="${key}">${escapeSheet(names[key])}</div>`;
+        return `
+            <div class="wm-chrome-panel wm-view-box">
+                <div class="wm-chrome-title">${escapeSheet(T('WorldMap.view.title'))}</div>
+                <div class="wm-view-buttons">${button('europe')}${button('world')}</div>
+                <div class="wm-view-key">${escapeSheet(T('WorldMap.view.key'))}</div>
+            </div>`;
+    }
+
+    // The view the chrome on screen was built for: switching views builds it
+    // again, since the country picker and the readout are Europe's alone.
+    let chromeView = null;
+
     function buildChrome() {
         if (chromeEl) return chromeEl;
         const el = document.createElement('div');
         el.id = CHROME_ID;
+        const view = sheetView();
+        const europe = view !== 'world';
 
-        const countries = europeanCountries();
+        const countries = europe ? europeanCountries() : [];
         const options = ['<option value="0">' + escapeSheet(T('WorldMap.country.none')) + '</option>']
             .concat(countries.map(c =>
                 `<option value="${c.id}">${escapeSheet(c.country)}</option>`)).join('');
 
-        el.innerHTML = `
+        el.innerHTML = viewSwitchMarkup(view) + (europe ? `
             <div class="wm-chrome-panel wm-country-box">
                 <div class="wm-chrome-title">${escapeSheet(T('WorldMap.country.title'))}</div>
                 <select id="wm-country" class="wm-country-select focusable" tabindex="0">${options}</select>
-            </div>
+            </div>` : '') + `
             <div class="wm-chrome-panel wm-zoom-box">
                 <div class="wm-zoom-mark">+</div>
                 <input id="wm-zoom" class="wm-zoom-bar" type="range" min="0" max="1000" step="1"
                        value="${zoomToSlider(zoomScale)}" orient="vertical">
                 <div class="wm-zoom-mark">&minus;</div>
-            </div>
-            <div class="wm-chrome-panel wm-readout" id="wm-readout"></div>
-            <div class="wm-chrome-panel wm-sheet-hint">${escapeSheet(T('WorldMap.hint.sheet'))}</div>`;
+            </div>` + (europe ? `
+            <div class="wm-chrome-panel wm-readout" id="wm-readout"></div>` : '') + `
+            <div class="wm-chrome-panel wm-coords"><span class="wm-coords-label">${escapeSheet(T('WorldMap.coords.title'))}</span>` +
+            `<span class="wm-coords-value" id="wm-coords"></span></div>
+            <div class="wm-chrome-panel wm-sheet-hint">${escapeSheet(T(europe ? 'WorldMap.hint.sheet' : 'WorldMap.hint.world'))}</div>`;
 
         document.body.appendChild(el);
         chromeEl = el;
+        chromeView = view;
         chromeZoomEl = el.querySelector('#wm-zoom');
         chromeReadoutEl = el.querySelector('#wm-readout');
+        chromeCoordsEl = el.querySelector('#wm-coords');
+        coordsKey = null;
         chromeCountryEl = el.querySelector('#wm-country');
 
         chromeZoomEl.addEventListener('input', () => {
@@ -3438,18 +4105,20 @@
         chromeZoomEl.addEventListener('wheel', ev => ev.stopPropagation());
         chromeZoomEl.addEventListener('keydown', ev => ev.stopPropagation());
 
-        chromeCountryEl.addEventListener('change', () => {
-            highlightCountryId = Number(chromeCountryEl.value) || 0;
-            SoundManager.playCursor();
-            fsOverlayKey = null;      // the wash is part of the overlay
-            refreshWorldMapDisplay();
-        });
-        chromeCountryEl.addEventListener('keydown', ev => ev.stopPropagation());
-        chromeCountryEl.value = String(highlightCountryId || 0);
+        if (chromeCountryEl) {
+            chromeCountryEl.addEventListener('change', () => {
+                highlightCountryId = Number(chromeCountryEl.value) || 0;
+                SoundManager.playCursor();
+                fsOverlayKey = null;      // the wash is part of the overlay
+                refreshWorldMapDisplay();
+            });
+            chromeCountryEl.addEventListener('keydown', ev => ev.stopPropagation());
+            chromeCountryEl.value = String(highlightCountryId || 0);
+        }
 
         // Only the interactive panels claim the pointer: the readout is a label
         // and must not swallow a click on the square it is describing.
-        for (const panel of el.querySelectorAll('.wm-zoom-box, .wm-country-box')) {
+        for (const panel of el.querySelectorAll('.wm-zoom-box, .wm-country-box, .wm-view-box')) {
             panel.addEventListener('pointerenter', () => { chromePointerIn = true; });
             panel.addEventListener('pointerleave', () => { chromePointerIn = false; });
         }
@@ -3463,6 +4132,13 @@
             if (ev.target.closest('.wm-show-map, .wm-note-btn')) chromePointerIn = false;
         });
         el.addEventListener('click', ev => {
+            const viewBtn = ev.target.closest('[data-wm-view]');
+            if (viewBtn) {
+                ev.stopPropagation();
+                if (setSheetView(String(viewBtn.dataset.wmView))) SoundManager.playCursor();
+                TouchInput.clear();
+                return;
+            }
             const note = ev.target.closest('[data-wm-note-at]');
             if (note) {
                 ev.stopPropagation();
@@ -3481,7 +4157,8 @@
 
     function destroyChrome() {
         if (chromeEl) { chromeEl.remove(); chromeEl = null; }
-        chromeZoomEl = chromeReadoutEl = chromeCountryEl = null;
+        chromeView = null;
+        chromeZoomEl = chromeReadoutEl = chromeCountryEl = chromeCoordsEl = null;
         chromePointerIn = false;
         readoutKey = null;
         closeNoteModal();
@@ -3542,8 +4219,46 @@
             '</div>';
     }
 
+    // The coordinates of the square under the pointer, bottom right, in the
+    // units every other coordinate in the game is shown in: Europe's squares
+    // on Europe's sheet and inside its rectangle on the globe, the globe's own
+    // procedural squares (GLOBE_SQUARE_BASE + gx) anywhere else. With the
+    // pointer off the chart, or on the chrome, it reads the party's square.
+    let coordsKey = null;
+
+    function hoveredCoordinates() {
+        if (!chromePointerIn) {
+            if (isWorldView()) {
+                const g = globePointAtPointer();
+                if (g) {
+                    const gx = Math.floor(g.x), gy = Math.floor(g.y);
+                    if (isEuropeGlobeSquare(gx, gy)) {
+                        const w = worldTileForGlobe(g.x, g.y);
+                        return { x: Math.floor(w.x), y: Math.floor(w.y) };
+                    }
+                    return { x: GLOBE_SQUARE_BASE + gx, y: GLOBE_SQUARE_BASE + gy };
+                }
+            } else {
+                const sq = activeSquare();
+                if (sq) return sq;
+            }
+        }
+        const p = europePlayerPosition();
+        return p ? { x: Math.floor(p.x), y: Math.floor(p.y) } : null;
+    }
+
+    function refreshCoords() {
+        if (!chromeCoordsEl) { coordsKey = null; return; }
+        const at = hoveredCoordinates();
+        const key = at ? at.x + ',' + at.y : '';
+        if (key === coordsKey) return;
+        coordsKey = key;
+        chromeCoordsEl.textContent = at ? T('WorldMap.coords.value', { x: at.x, y: at.y }) : '';
+    }
+
     function syncChrome() {
         if (!chromeWanted()) { destroyChrome(); return; }
+        if (chromeEl && chromeView !== sheetView()) destroyChrome();
         buildChrome();
         if (chromeZoomEl && !chromeSuppressZoom) {
             const want = String(zoomToSlider(zoomScale));
@@ -3892,8 +4607,8 @@
         const radius = Math.max(24, 18 / zoomScale);
         let best = null, bestD = Infinity;
         for (const pin of sheetPins()) {
-            const px = (pin.x / WORLD_TILES) * dims.w;
-            const py = (pin.y / WORLD_TILES) * dims.h;
+            const px = ((pin.x + 0.5) / WORLD_TILES) * dims.w;
+            const py = ((pin.y + 0.5) / WORLD_TILES) * dims.h;
             const d = Math.abs(px - bx) + Math.abs(py - by);
             if (d <= radius * 2 && d < bestD) { bestD = d; best = pin; }
         }
@@ -3964,7 +4679,7 @@
     // The cursor starts where the party is, so the first press of a direction
     // summons it somewhere the player already recognises.
     function padCursorStart() {
-        const world = playerWorldPosition();
+        const world = europePlayerPosition();
         const x = Math.max(0, Math.min(WORLD_TILES - 1, Math.floor(world.x)));
         const y = Math.max(0, Math.min(WORLD_TILES - 1, Math.floor(world.y)));
         return { x: x, y: y };
@@ -4030,6 +4745,17 @@
         if (Input.isTriggered('cancel')) {
             // A pad has no M key to shut the chart with.
             toggleMapState();
+            return;
+        }
+        // Europe or World: Tab on a keyboard, X on a pad.
+        if (Input.isTriggered('tab') || Input.isTriggered('shift')) {
+            toggleSheetView();
+            return;
+        }
+        // The globe has no squares to walk a cursor over or write on: the
+        // stick pans it, and OK looks closer, which is Europe's sheet.
+        if (isWorldView()) {
+            if (Input.isTriggered('ok')) toggleSheetView();
             return;
         }
 
@@ -4101,6 +4827,11 @@
         // scaled, and that arithmetic is exactly what ResolutionSwitcher owns.
         if (chromePointerIn) return;
 
+        if (isWorldView()) {
+            updateGlobePointer();
+            return;
+        }
+
         refreshReadout(activeSquare());
 
         // Right-click puts the chart away, the way every other overlay in the
@@ -4132,6 +4863,33 @@
             if (square) {
                 clearPadCursor();
                 selectSquare(square);
+            }
+        }
+    }
+
+    // The World view's own pointer: right-click puts the chart away, a click
+    // (not a drag) inside Europe looks closer.
+    function updateGlobePointer() {
+        if (TouchInput.isCancelled()) {
+            TouchInput.clear();
+            toggleMapState();
+            return;
+        }
+        if (TouchInput.isTriggered()) {
+            sheetPressing = true;
+            sheetPressMoved = false;
+            sheetPressX = TouchInput.x;
+            sheetPressY = TouchInput.y;
+        } else if (sheetPressing && TouchInput.isPressed()) {
+            if (Math.abs(TouchInput.x - sheetPressX) > 8 || Math.abs(TouchInput.y - sheetPressY) > 8) {
+                sheetPressMoved = true;
+            }
+        } else if (sheetPressing && TouchInput.isReleased()) {
+            sheetPressing = false;
+            if (sheetPressMoved) return;
+            if (clickGlobeAt(globePointAtPointer())) {
+                SoundManager.playCursor();
+                TouchInput.clear();
             }
         }
     }
@@ -4230,6 +4988,9 @@
             destroyChrome();
             clearSelectedSquare();
         }
+        // Europe or World is picked per opening: shut, the chart forgets it and
+        // opens next time on whichever the party is standing in.
+        if (currentMapState !== 3) sheetViewChoice = null;
 
         // The chart's own screen-space layer: the town names, the ruled square
         // under the pointer and the square that has been picked.
@@ -4255,6 +5016,7 @@
         // The sheet's own furniture and pointer: the zoom bar, the country
         // picker, the square readout, the pins and the notes.
         syncChrome();
+        refreshCoords();
         updateSheetPointer();
         // The pad's own reading of the same sheet. It runs even while a note
         // box or a square preview is up, because closing those is the one
@@ -4266,6 +5028,7 @@
         }
         // The visible segments change with every pan and zoom step, and the
         // check is cheap, so it rides the same frame rather than a redraw.
+        wrapFullscreenPan();
         updateFullscreenStreaming();
         // Sandbox: tap a cell on the Bologna overlay to teleport there.
         if ($gameMap.mapId() === BOLOGNA_MAP_ID && isSandboxEnabled()) {

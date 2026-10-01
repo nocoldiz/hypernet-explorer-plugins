@@ -126,6 +126,8 @@
 
     const worldMapId = 315;
     const procMapId  = 636;
+    // The whole Earth, of which map 315 is a close-up (see THE GLOBE below).
+    const globeMapId = 1409;
 
     // Item 141 is the "Diving suit"; 142 is the UV sunglasses filed beside it,
     // which the Ocean descent used to ask for, so the suit never opened the way
@@ -723,8 +725,18 @@
     function playMapBgs() {
         const bgs = $dataMap && $dataMap.autoplayBgs ? $dataMap.bgs : null;
         if (!bgs || !bgs.name) return false;
-        crossfadeBiomeBgs(bgs, () => AudioManager.playBgs(bgs));
+        const night = isNightTimeNow() ? mapBgsNightName() : '';
+        const bed = night ? Object.assign({}, bgs, { name: night }) : bgs;
+        crossfadeBiomeBgs(bed, () => AudioManager.playBgs(bed));
         return true;
+    }
+
+    // The bed a map plays after dark, named in its note as <BgsNight: name>.
+    // The editor's autoplay BGS is the day bed; the night one keeps its volume
+    // and pitch. The 20:00 / 06:00 watcher below re-asks, so it swaps in place.
+    function mapBgsNightName() {
+        const m = $dataMap && $dataMap.note && $dataMap.note.match(/<BgsNight:\s*(.+?)>/i);
+        return m ? m[1].trim() : '';
     }
 
     // Ambience with no biome behind it: the map's own bed if it has one, silence
@@ -860,7 +872,7 @@
         // Outdoors this bed is weather, so it goes out through WeatherAudio and
         // picks up the Weather Volume slider; indoors it is room tone and plays
         // at its authored level on the plain BGS volume.
-        const bgs = { name: bgsName, volume: 80, pitch: 100, pan: 0 };
+        const bgs = { name: bgsName, volume: AudioManager.AMBIENCE_BGS_VOLUME || 80, pitch: 100, pan: 0 };
         const play = () => {
             if (window.WeatherAudio && window.WeatherAudio.playAmbience) {
                 window.WeatherAudio.playAmbience(bgs);
@@ -1431,15 +1443,21 @@
     };
 
     Game_System.prototype.getAdjacentWorldCoordinates = function(exitDirection) {
-        let newX = $gameVariables.value(VAR_WORLD_X);
-        let newY = $gameVariables.value(VAR_WORLD_Y);
+        const curX = $gameVariables.value(VAR_WORLD_X);
+        const curY = $gameVariables.value(VAR_WORLD_Y);
+        let newX = curX;
+        let newY = curY;
         switch (exitDirection) {
             case 2: newY += 1; break;
             case 4: newX -= 1; break;
             case 6: newX += 1; break;
             case 8: newY -= 1; break;
         }
-        return { x: newX, y: newY };
+        // Off the edge of Europe onto the globe, round the globe, or off the
+        // globe back into Europe (see THE GLOBE).
+        const across = (this._procGenData && this._procGenData.alienGrid)
+            ? null : globeAdjacentSquare(curX, curY, exitDirection);
+        return across || { x: newX, y: newY };
     };
 
     Game_System.prototype.getEdgeCoordinateForDirection = function(exitDirection, playerX, playerY) {
@@ -2227,7 +2245,17 @@
         this._borderDestination  = null;
         this._coordsDest         = null;
         this._worldmapDirections = null;
+        this._globeExit          = false;
         if ($gameMap.mapId() === procMapId) return;
+        // Map 315 is a close-up of the globe: every edge of it leads out onto
+        // map 1409 (see THE GLOBE), chevrons and all.
+        if ($gameMap.mapId() === worldMapId) {
+            if (globeAvailable()) {
+                this._globeExit = true;
+                this._worldmapDirections = ALL_BORDER_DIRECTIONS.slice();
+            }
+            return;
+        }
         if (!$dataMap || !$dataMap.note) return;
         const note = $dataMap.note;
         this._worldmapDirections = parseWorldmapDirections(note);
@@ -2255,9 +2283,15 @@
         return x === 0 || y === 0 || x === this.width() - 1 || y === this.height() - 1;
     };
 
+    // Does this map lead anywhere off its edges at all? A <Borders> or <Coords>
+    // destination, or map 315's own edges out onto the globe.
+    Game_Map.prototype.hasBorderExit = function() {
+        return !!(this._borderDestination || this._coordsDest || this._globeExit);
+    };
+
     Game_Map.prototype.isBorderTileEnabled = function(x, y) {
         if (!this.isBorderTile(x, y)) return false;
-        return this._borderDestination || this._coordsDest;
+        return this.hasBorderExit();
     };
 
     Game_Map.prototype.isBorderDirectionAllowed = function(directions) {
@@ -2333,7 +2367,7 @@
     Game_Map.prototype.isBorderCrossing = function(x, y, d) {
         const step = BORDER_STEP[d];
         if (!step) return false;
-        if (!this._borderDestination && !this._coordsDest) return false;
+        if (!this.hasBorderExit()) return false;
         if (!this.isBorderDirectionAllowed([BORDER_DIR_NAME[d]])) return false;
 
         let nx = x + step[0], ny = y + step[1];
@@ -2474,7 +2508,7 @@
     };
 
     Game_Player.prototype.updateBorderArrows = function() {
-        if (!$gameMap._borderDestination && !$gameMap._coordsDest) {
+        if (!$gameMap.hasBorderExit()) {
             this.clearBorderArrows();
             return;
         }
@@ -2630,7 +2664,7 @@
 
         // World/regular-map border arrows (yellow).
         clearArrowList(borderArrowSpritesP2);
-        if (($gameMap._borderDestination || $gameMap._coordsDest) && ss2._baseSprite) {
+        if ($gameMap.hasBorderExit() && ss2._baseSprite) {
             for (const border of $gameMap.getNearbyBorderTiles(ev.x, ev.y)) {
                 const sprite = new Sprite_BorderArrow(border.x, border.y, border.arrow);
                 ss2._baseSprite.addChild(sprite);
@@ -2676,6 +2710,11 @@
         if ($gameMap.mapId() === worldMapId) {
             $gameVariables.setValue(VAR_WORLD_X, this.x);
             $gameVariables.setValue(VAR_WORLD_Y, this.y);
+        } else if ($gameMap.mapId() === globeMapId) {
+            // On the globe the party's world square is the globe square's own
+            // procedural address, never a map 315 coordinate.
+            const square = globeSquareAt(this.x, this.y);
+            setPlayerWorldCoords(square.x, square.y);
         }
     };
 
@@ -2872,6 +2911,8 @@
     // same as any other button press would be.
     const _orig_Player_triggerButtonAction = Game_Player.prototype.triggerButtonAction;
     Game_Player.prototype.triggerButtonAction = function() {
+        if ($gameMap.mapId() === globeMapId && Input.isTriggered('ok') && !$gameMessage.isBusy() &&
+            this.triggerGlobeButtonAction()) return true;
         if ($gameMap.mapId() === worldMapId && Input.isTriggered('ok') && !$gameMessage.isBusy()) {
             const currentEvents   = $gameMap.eventsXy(this.x, this.y);
             const x2           = $gameMap.roundXWithDirection(this.x, this.direction());
@@ -2969,10 +3010,16 @@
     const _orig_Player_triggerTouchActionD1 = Game_Player.prototype.triggerTouchActionD1;
     Game_Player.prototype.triggerTouchActionD1 = function(x1, y1) {
         if (_orig_Player_triggerTouchActionD1.call(this, x1, y1)) return true;
-        if ($gameMap.mapId() !== worldMapId) return false;
+        if ($gameMap.mapId() !== worldMapId && $gameMap.mapId() !== globeMapId) return false;
         // Vehicles keep their own action menu on the OK button; clicking a route
         // while sailing or driving must stay pure movement.
         if (this.isInVehicle()) return false;
+        if ($gameMap.mapId() === globeMapId) {
+            const globeScene = SceneManager._scene;
+            if (!globeScene || !globeScene.openTravelDecision || !canOpenTravelDecisionHere()) return false;
+            globeScene.openTravelDecision();
+            return true;
+        }
         const clickOverlap = vehicleOnDestinationSquare();
         if (clickOverlap) { openDestinationVehicleChoice(clickOverlap); return true; }
         const scene = SceneManager._scene;
@@ -3026,6 +3073,7 @@
     // could have meant, 'explore' carries on into the square past this one.
     // Without it the crossing resolves itself exactly as it always did.
     Game_Player.prototype.performBorderReturn = function(direction, mode) {
+        if ($gameMap._globeExit) return this.leaveWorldForGlobe(direction || this.direction());
         let dest = null;
         let generated = false;
         if ($gameMap._coordsDest) {
@@ -3189,7 +3237,7 @@
             if (this.hasTransferEventAt(x, y)) { this._borderChoiceShown = tileKey; return; }
 
             const directions         = $gameMap.getBorderDirection(x, y);
-            const hasBorderDest      = $gameMap._borderDestination || $gameMap._coordsDest;
+            const hasBorderDest      = $gameMap.hasBorderExit();
             const isDirectionAllowed = $gameMap.isBorderDirectionAllowed(directions);
 
             if (hasBorderDest && this._borderChoiceShown !== tileKey && isDirectionAllowed) {
@@ -3206,7 +3254,8 @@
     // blocked, but the intent is to leave, so cross instead of bumping.
     Game_Player.prototype.tryBorderReturn = function(d) {
         if (this.isTransferring() || this.isMoving()) return false;
-        if ($gameMap.mapId() === worldMapId || $gameMap.mapId() === procMapId) return false;
+        if ($gameMap.mapId() === worldMapId && !$gameMap._globeExit) return false;
+        if ($gameMap.mapId() === procMapId) return false;
         if (this.canPass(this.x, this.y, d)) return false;
         if (this.hasTransferEventAt(this.x, this.y)) return false;
         if (!$gameMap.isBorderCrossing(this.x, this.y, d)) return false;
@@ -3221,6 +3270,388 @@
         if (directions.includes('east'))  return 6;
         if (directions.includes('north')) return 8;
         return 0;
+    };
+
+    // ============================================================================
+    // THE GLOBE (map 1409)
+    // ----------------------------------------------------------------------------
+    // Map 1409 is the whole Earth at a tenth of map 315's scale, and map 315 is a
+    // close-up of one rectangle of it (EUROPE_ON_GLOBE). The two hand over to
+    // each other at that rectangle:
+    //
+    //   - walking off any edge of map 315 lands on the globe just outside the
+    //     rectangle, at the spot the party left from, still facing the same way;
+    //   - stepping into the rectangle on the globe lands on map 315 at the same
+    //     relative spot, on the edge they came in by.
+    //
+    // The globe loops east to west like the planet does (the map's own
+    // horizontal loop), but not north to south: walking over a pole comes back
+    // down the other side of it, half the world round, heading the other way.
+    //
+    // Its squares are visited and generated like map 315's. A globe square
+    // (gx, gy) is procedural square (GLOBE_ORIGIN + gx, GLOBE_ORIGIN + gy), an
+    // address no map 315 square can ever have (ProceduralMapUtils.js, THE
+    // GLOBE), and every route back "to the world map" from one of them lands on
+    // the globe rather than on map 315 (see the reserveTransfer hook below).
+    // ============================================================================
+
+    // The rectangle of map 1409 that map 315 is a close-up of, globe tiles, inclusive.
+    const EUROPE_ON_GLOBE = { x1: 69, y1: 8, x2: 101, y2: 41 };
+    // A step on the globe covers ten times the ground of one on map 315, but
+    // costs five times as much (TimeDateSystem.js reads this).
+    const GLOBE_STEP_COST = 5;
+    // How far an arrival may be moved off water or rock onto ground the party
+    // can stand on.
+    const GLOBE_SETTLE_RADIUS = 12;
+
+    function globeUtils() {
+        const U = window.ProcGenUtils;
+        return (U && typeof U.globeToSquare === 'function') ? U : null;
+    }
+
+    // Is there a globe to walk out onto at all?
+    function globeAvailable() {
+        return !!(window.$dataMapInfos && $dataMapInfos[globeMapId]);
+    }
+
+    function clampTo(v, lo, hi) {
+        return Math.max(lo, Math.min(hi, v));
+    }
+
+    function europeSpan() {
+        return {
+            w: EUROPE_ON_GLOBE.x2 - EUROPE_ON_GLOBE.x1 + 1,
+            h: EUROPE_ON_GLOBE.y2 - EUROPE_ON_GLOBE.y1 + 1,
+        };
+    }
+
+    function isEuropeOnGlobe(gx, gy) {
+        return gx >= EUROPE_ON_GLOBE.x1 && gx <= EUROPE_ON_GLOBE.x2 &&
+               gy >= EUROPE_ON_GLOBE.y1 && gy <= EUROPE_ON_GLOBE.y2;
+    }
+
+    // Map 315 coordinates to globe tile coordinates and back, both in tile units
+    // where tile n spans [n, n + 1). Neither rounds.
+    function globeTileForWorld(x, y) {
+        const s = europeSpan();
+        return { x: EUROPE_ON_GLOBE.x1 + x * s.w / WORLD_W, y: EUROPE_ON_GLOBE.y1 + y * s.h / WORLD_H };
+    }
+
+    function worldTileForGlobe(gx, gy) {
+        const s = europeSpan();
+        return { x: (gx - EUROPE_ON_GLOBE.x1) * WORLD_W / s.w, y: (gy - EUROPE_ON_GLOBE.y1) * WORLD_H / s.h };
+    }
+
+    function globeSize() {
+        const info = window.WorldGen && window.WorldGen.GlobeBiomesMap;
+        if (info && info.width > 0 && info.height > 0) return { w: info.width, h: info.height };
+        if ($gameMap && $gameMap.mapId() === globeMapId) return { w: $gameMap.width(), h: $gameMap.height() };
+        return { w: 200, h: 100 };
+    }
+
+    function wrapGlobeX(gx) {
+        const w = globeSize().w;
+        return ((gx % w) + w) % w;
+    }
+
+    function isGlobeSquareCoord(x, y) {
+        const U = globeUtils();
+        return !!(U && U.isGlobeSquare(x, y));
+    }
+
+    // The procedural square standing for globe tile (gx, gy).
+    function globeSquareAt(gx, gy) {
+        const U = globeUtils();
+        return U ? U.globeToSquare(gx, gy) : { x: gx, y: gy };
+    }
+
+    // The globe tile just outside Europe that leaving map 315 at (wx, wy)
+    // heading d lands on: the same spot along the edge, one tile past it.
+    function globeTileOutsideEurope(wx, wy, d) {
+        const g = globeTileForWorld(wx, wy);
+        let gx = clampTo(Math.floor(g.x), EUROPE_ON_GLOBE.x1, EUROPE_ON_GLOBE.x2);
+        let gy = clampTo(Math.floor(g.y), EUROPE_ON_GLOBE.y1, EUROPE_ON_GLOBE.y2);
+        if (d === 4)      gx = EUROPE_ON_GLOBE.x1 - 1;
+        else if (d === 6) gx = EUROPE_ON_GLOBE.x2 + 1;
+        else if (d === 8) gy = EUROPE_ON_GLOBE.y1 - 1;
+        else if (d === 2) gy = EUROPE_ON_GLOBE.y2 + 1;
+        return { x: wrapGlobeX(gx), y: gy };
+    }
+
+    // The map 315 tile stepping onto globe tile (gx, gy) heading d lands on: the
+    // same relative spot, pulled onto the edge it was entered by, and never the
+    // outermost ring, which would walk the party straight back out.
+    function worldTileForGlobeEntry(gx, gy, d) {
+        const w = worldTileForGlobe(gx + 0.5, gy + 0.5);
+        let x = Math.floor(w.x), y = Math.floor(w.y);
+        if (d === 6 && gx === EUROPE_ON_GLOBE.x1)      x = 1;
+        else if (d === 4 && gx === EUROPE_ON_GLOBE.x2) x = WORLD_W - 2;
+        else if (d === 2 && gy === EUROPE_ON_GLOBE.y1) y = 1;
+        else if (d === 8 && gy === EUROPE_ON_GLOBE.y2) y = WORLD_H - 2;
+        return { x: clampTo(x, 1, WORLD_W - 2), y: clampTo(y, 1, WORLD_H - 2) };
+    }
+
+    // Is the party in one of the globe's procedural squares?
+    function onGlobeSquare() {
+        if (!$gameMap || $gameMap.mapId() !== procMapId) return false;
+        const pw = playerWorldCoords();
+        return isGlobeSquareCoord(pw.x, pw.y);
+    }
+
+    // Where the party is on the globe, in globe tile units (tile n spans
+    // [n, n + 1)), wherever they are on Earth. Null off Earth.
+    function globePosition() {
+        if (!$gameMap || !$gamePlayer) return null;
+        if (isAlienSurfaceNow()) return null;
+        const mapId = $gameMap.mapId();
+        if (mapId === globeMapId) return { x: $gamePlayer.x + 0.5, y: $gamePlayer.y + 0.5 };
+        if (mapId === worldMapId) return globeTileForWorld($gamePlayer.x + 0.5, $gamePlayer.y + 0.5);
+        const pw = playerWorldCoords();
+        let fx = 0.5, fy = 0.5;
+        if (mapId === procMapId) {
+            const local = squareLocalPlayerCoord($gamePlayer.x, $gamePlayer.y);
+            fx = clampTo(local.x / PROC_MAP_WIDTH, 0, 0.999);
+            fy = clampTo(local.y / PROC_MAP_HEIGHT, 0, 0.999);
+        }
+        if (isGlobeSquareCoord(pw.x, pw.y)) {
+            const g = globeUtils().squareToGlobe(pw.x, pw.y);
+            return { x: g.x + fx, y: g.y + fy };
+        }
+        return globeTileForWorld(pw.x + fx, pw.y + fy);
+    }
+
+    // The square past the edge of a procedural square where that edge leaves
+    // its own frame: off map 315's last row of squares onto the globe, round
+    // the globe and over its poles, and off the globe into Europe. Null for an
+    // ordinary step from one square to the next on map 315, which needs nothing.
+    function globeAdjacentSquare(cx, cy, d) {
+        const step = BORDER_STEP[d];
+        const U = globeUtils();
+        if (!step || !U) return null;
+        const local = squareLocalPlayerCoord($gamePlayer.x, $gamePlayer.y);
+        const fx = clampTo(local.x / PROC_MAP_WIDTH, 0, 0.999);
+        const fy = clampTo(local.y / PROC_MAP_HEIGHT, 0, 0.999);
+
+        if (U.isGlobeSquare(cx, cy)) {
+            const g = U.squareToGlobe(cx, cy);
+            const h = globeSize().h;
+            let gx = g.x + step[0], gy = g.y + step[1];
+            // Over a pole: down the other side of it, half the world round.
+            if (gy < 0 || gy >= h) {
+                gx += Math.floor(globeSize().w / 2);
+                gy = clampTo(gy, 0, h - 1);
+            }
+            gx = wrapGlobeX(gx);
+            if (isEuropeOnGlobe(gx, gy)) {
+                // Into Europe: the map 315 square on the side crossed, at the
+                // spot along it the party crossed at.
+                const w = worldTileForGlobe(g.x + fx, g.y + fy);
+                let x = Math.floor(w.x), y = Math.floor(w.y);
+                if (d === 6)      x = 0;
+                else if (d === 4) x = WORLD_W - 1;
+                else if (d === 2) y = 0;
+                else if (d === 8) y = WORLD_H - 1;
+                return { x: clampTo(x, 0, WORLD_W - 1), y: clampTo(y, 0, WORLD_H - 1) };
+            }
+            return U.globeToSquare(gx, gy);
+        }
+
+        // A map 315 square: only a step off its outermost squares leads out.
+        if (cx < 0 || cy < 0 || cx >= WORLD_W || cy >= WORLD_H) return null;
+        const nx = cx + step[0], ny = cy + step[1];
+        if (nx >= 0 && ny >= 0 && nx < WORLD_W && ny < WORLD_H) return null;
+        if (typeof U.globeBiomeAt !== 'function' || U.globeBiomeAt(0, 0) === null) return null;
+        const t = globeTileOutsideEurope(cx + fx, cy + fy, d);
+        return U.globeToSquare(t.x, t.y);
+    }
+
+    // The stitched window's neighbour of a globe square: round the date line,
+    // but never over a pole or into Europe, both of which are crossings.
+    function globeNeighbourSquare(wx, wy, dx, dy) {
+        const U = globeUtils();
+        const g = U.squareToGlobe(wx, wy);
+        const gy = g.y + dy;
+        if (gy < 0 || gy >= globeSize().h) return null;
+        const gx = wrapGlobeX(g.x + dx);
+        if (isEuropeOnGlobe(gx, gy)) return null;
+        return U.globeToSquare(gx, gy);
+    }
+
+    // Off an edge of map 315 onto the globe. Stepping ALONG an edge can trip the
+    // crossing sideways, so the tile's own way off the map wins over the facing.
+    Game_Player.prototype.leaveWorldForGlobe = function(d) {
+        if (!globeAvailable()) return false;
+        if ($gameMap.isBorderTile(this.x, this.y)) {
+            const dirs = $gameMap.getBorderDirection(this.x, this.y);
+            if (!dirs.includes(BORDER_DIR_NAME[d])) d = this.getExitDirection(dirs) || d;
+        }
+        const tile = globeTileOutsideEurope(this.x + 0.5, this.y + 0.5, d);
+        $gameTemp._globeArrival = true;
+        this.reserveTransfer(globeMapId, tile.x, tile.y, d, 0);
+        return true;
+    };
+
+    // Off the globe into Europe, from wherever in the rectangle the party stands.
+    Game_Player.prototype.enterWorldFromGlobe = function() {
+        const d = this.direction();
+        const tile = worldTileForGlobeEntry(this.x, this.y, d);
+        $gameTemp._globeArrival = true;
+        this.reserveTransfer(worldMapId, tile.x, tile.y, d, 0);
+    };
+
+    // Walking over a pole: the map does not loop north to south, so the step is
+    // taken by hand, onto the same row half the world round, facing back down.
+    Game_Player.prototype.crossGlobePole = function(d) {
+        if (this.isTransferring() || this.isMoving()) return false;
+        const h = $gameMap.height();
+        if (!((d === 8 && this.y === 0) || (d === 2 && this.y === h - 1))) return false;
+        const x = $gameMap.roundX(this.x + Math.floor($gameMap.width() / 2));
+        this.reserveTransfer(globeMapId, x, this.y, 10 - d, 0);
+        return true;
+    };
+
+    // OK on the globe: the vehicle menus first, as on map 315, then the travel
+    // menu. Answers false to leave the press to the engine (an event, a door).
+    Game_Player.prototype.triggerGlobeButtonAction = function() {
+        if (this.isInVehicle()) {
+            const riding = this.vehicle();
+            if (riding && this.showVehicleActionMenu) {
+                this.showVehicleActionMenu(riding, true);
+                Input.clear();
+                return true;
+            }
+            return false;
+        }
+        const x2 = $gameMap.roundXWithDirection(this.x, this.direction());
+        const y2 = $gameMap.roundYWithDirection(this.y, this.direction());
+        if ($gameMap.eventsXy(x2, y2).some(e => e.isTriggerIn([0]) && e.isNormalPriority())) return false;
+        const facingVehicle = ['ship', 'boat', 'airship']
+            .map(type => $gameMap.vehicle(type))
+            .find(v => v && v._mapId === $gameMap.mapId() && v.x === x2 && v.y === y2);
+        if (facingVehicle) {
+            if (!this.showVehicleActionMenu) return false;
+            this.showVehicleActionMenu(facingVehicle, false);
+            Input.clear();
+            return true;
+        }
+        const scene = SceneManager._scene;
+        if (!scene || !scene.openTravelDecision || !canOpenTravelDecisionHere()) return false;
+        scene.openTravelDecision();
+        return true;
+    };
+
+    // The globe's travel menu: visit the square, forage it or camp on it. None
+    // of map 315's places, plates or doors stand out here.
+    function openGlobeTravelDecision() {
+        const U = globeUtils();
+        const biome = (U && U.globeBiomeAt) ? U.globeBiomeAt($gamePlayer.x, $gamePlayer.y) : null;
+        const named = biome && window.BiomeNames && window.BiomeNames.display
+            ? window.BiomeNames.display(biome) : (biome && localizeName(biome));
+        const place = named || T('WorldMapReturn.wilderness');
+        const rows = [
+            { label: T('WorldMapReturn.visit', { place }), run: () => { performStopTravel(); } },
+            { label: T('WorldMapReturn.forage'), run: () => { $gameTemp._pendingWorldMapCommand = 'forage'; } },
+            { label: T('WorldMapReturn.makeCamp'), run: () => { $gameTemp._pendingWorldMapCommand = 'makeCamp'; } },
+            { label: T('WorldMapReturn.cancel'), run: null },
+        ];
+        const cancelIndex = rows.length - 1;
+        $gameMessage.setChoices(rows.map(r => r.label), 0, cancelIndex);
+        $gameMessage.setChoiceCallback((choice) => {
+            const row = rows[choice];
+            if (row && row.run) row.run();
+        });
+        Input.clear();
+        $gameTemp.clearDestination();
+    }
+
+    // An arrival on water or rock is moved to the nearest ground the party can
+    // stand on: never inside Europe on the globe (that would cross straight
+    // back), never on map 315's outer ring. A vehicle goes where it was put.
+    function settleGlobeArrival(player) {
+        if (player.isInVehicle()) return;
+        const onGlobe = $gameMap.mapId() === globeMapId;
+        const standable = (x, y) => $gameMap.isValid(x, y) &&
+            !(onGlobe ? isEuropeOnGlobe(x, y) : $gameMap.isBorderTile(x, y)) &&
+            $gameMap.isBorderTilePassable(x, y);
+        if (standable(player.x, player.y)) return;
+        for (let r = 1; r <= GLOBE_SETTLE_RADIUS; r++) {
+            let best = null, bestDist = Infinity;
+            for (let dy = -r; dy <= r; dy++) {
+                for (let dx = -r; dx <= r; dx++) {
+                    if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
+                    const x = $gameMap.roundX(player.x + dx), y = player.y + dy;
+                    if (!standable(x, y)) continue;
+                    const dist = dx * dx + dy * dy;
+                    if (dist < bestDist) { bestDist = dist; best = { x, y }; }
+                }
+            }
+            if (best) { player.locate(best.x, best.y); return; }
+        }
+    }
+
+    // A transfer "to the world map" aimed at a globe square is a transfer to the
+    // globe: every way back up out of a square (T, the menu row, a failed edge
+    // build) names the square it left, and only this knows which map that is.
+    const _Globe_Player_reserveTransfer = Game_Player.prototype.reserveTransfer;
+    Game_Player.prototype.reserveTransfer = function(mapId, x, y, d, fadeType) {
+        if (mapId === worldMapId && isGlobeSquareCoord(x, y)) {
+            const g = globeUtils().squareToGlobe(x, y);
+            mapId = globeMapId;
+            x = g.x;
+            y = g.y;
+        }
+        return _Globe_Player_reserveTransfer.call(this, mapId, x, y, d, fadeType);
+    };
+
+    const _Globe_Player_performTransfer = Game_Player.prototype.performTransfer;
+    Game_Player.prototype.performTransfer = function() {
+        const transferring = this.isTransferring();
+        const leaving = $gameMap.mapId();
+        const arriving = this._newMapId;
+        // Out of a globe square back up onto the globe: the clean-up the way
+        // back up onto map 315 makes.
+        if (transferring && leaving === procMapId && arriving === globeMapId) {
+            $gameSystem._procEntryBorder = null;
+            if ($gameSystem._procGenData) $gameSystem.clearProcGenData();
+        }
+        _Globe_Player_performTransfer.call(this);
+        if (!transferring) return;
+        if ($gameTemp._globeArrival) {
+            $gameTemp._globeArrival = false;
+            settleGlobeArrival(this);
+        }
+        if ($gameMap.mapId() === globeMapId) {
+            const square = globeSquareAt(this.x, this.y);
+            setPlayerWorldCoords(square.x, square.y);
+        }
+        // T on map 315 goes back to where the party came from; from the globe
+        // that is the rectangle they just stepped out of, which would only hand
+        // them straight back.
+        const origin = $gameTemp._lastWorldMapReturnOrigin;
+        if (leaving === globeMapId && origin && origin.mapId === globeMapId) {
+            $gameTemp._lastWorldMapReturnOrigin = null;
+        }
+    };
+
+    const _Globe_Player_moveStraight = Game_Player.prototype.moveStraight;
+    Game_Player.prototype.moveStraight = function(d) {
+        if ($gameMap.mapId() === globeMapId && this.crossGlobePole(d)) return;
+        _Globe_Player_moveStraight.call(this, d);
+    };
+
+    const _Globe_Player_update = Game_Player.prototype.update;
+    Game_Player.prototype.update = function(sceneActive) {
+        _Globe_Player_update.call(this, sceneActive);
+        if (sceneActive && $gameMap.mapId() === globeMapId) this.updateGlobeCrossing();
+    };
+
+    // Standing in Europe on the globe hands the party to map 315, once the step
+    // that brought them there has finished.
+    Game_Player.prototype.updateGlobeCrossing = function() {
+        if (this.isMoving() || this.isTransferring()) return;
+        if ($gameMessage.isBusy() || $gameMap.isEventRunning()) return;
+        if (!isEuropeOnGlobe(this.x, this.y)) return;
+        this.enterWorldFromGlobe();
     };
 
     // ============================================================================
@@ -3331,6 +3762,9 @@
     // squares simply run out at the edges of map 315.
     function neighbourCoord(wx, wy, dx, dy, alienGrid) {
         let nx = wx + dx, ny = wy + dy;
+        // The globe's squares wrap east to west, and end at the poles and at the
+        // edge of Europe: those two are crossings, never stitched ground.
+        if (!alienGrid && isGlobeSquareCoord(wx, wy)) return globeNeighbourSquare(wx, wy, dx, dy);
         if (alienGrid) {
             if (alienGrid.w < 3 && dx !== 0) return null;
             if (alienGrid.h < 3 && dy !== 0) return null;
@@ -6383,6 +6817,15 @@
             $gameVariables.setValue(VAR_WORLD_Y, $gamePlayer.y);
         }
 
+        // A globe square holds no named place: it is generated, always.
+        if ($gameMap.mapId() === globeMapId) {
+            const square = globeSquareAt($gamePlayer.x, $gamePlayer.y);
+            enterProceduralSquare(square.x, square.y, $gamePlayer.direction(), () => {
+                if (camperDriving) window.VoxelWorldSystem.stop();
+            });
+            return;
+        }
+
         const currentX = $gameVariables.value(VAR_WORLD_X);
         const currentY = $gameVariables.value(VAR_WORLD_Y);
         const NON_PROCEDURAL_COORDS = getWorldMapCoordinates();
@@ -7073,6 +7516,8 @@
     function currentWorldCoords() {
         const mapId = $gameMap.mapId();
         if (mapId === worldMapId) return { x: $gamePlayer.x, y: $gamePlayer.y };
+        // On the globe a tile is a globe square, addressed as such (see THE GLOBE).
+        if (mapId === globeMapId) return globeSquareAt($gamePlayer.x, $gamePlayer.y);
         if (mapId === procMapId) {
             const pg = $gameSystem._procGenData;
             if (pg && typeof pg.originX === 'number' && typeof pg.originY === 'number') {
@@ -7088,6 +7533,7 @@
     function worldCoordsForMap(mapId, x, y) {
         const id = Number(mapId) || 0;
         if (id === worldMapId) return { x: Number(x) || 0, y: Number(y) || 0 };
+        if (id === globeMapId) return globeSquareAt(Number(x) || 0, Number(y) || 0);
         if (id === $gameMap.mapId()) return currentWorldCoords();
         return mapCoordsTag(id) || playerWorldCoords();
     }
@@ -7274,6 +7720,9 @@
     function canOpenTravelDecisionHere() {
         if ($gameMessage.isBusy()) return false;
         if (window.ProceduralAdventure && window.ProceduralAdventure.isPlaying()) return false;
+        // Every square of the globe can be visited: none of map 315's places,
+        // plates or doors stand on it.
+        if ($gameMap.mapId() === globeMapId) return true;
         if ($gameMap.mapId() !== worldMapId) return false;
         return !isSettlementBiomeHere() || isHardcodedBiomeHere() || hasAdventureHere() ||
             hasFacedInteraction();
@@ -7334,6 +7783,7 @@
 
     Scene_Map.prototype.openTravelDecision = function() {
         if (!canOpenTravelDecisionHere()) return;
+        if ($gameMap.mapId() === globeMapId) { openGlobeTravelDecision(); return; }
         const Earth = adventureSystem();
         const faced = facedWorldCoords();
         // Every row carries the action it performs, so the order below is the
@@ -7438,6 +7888,10 @@
               });
             }
             Input.clear();
+            return;
+        }
+        if ($gameMap.mapId() === globeMapId) {
+            performStopTravel();
             return;
         }
         if ($gameMap.mapId() === worldMapId) {
@@ -8142,6 +8596,20 @@
         showLockedNotice,
         worldMapId,
         procMapId,
+        // The globe (map 1409): see THE GLOBE.
+        globeMapId,
+        EUROPE_ON_GLOBE,
+        GLOBE_STEP_COST,
+        isGlobeMap(mapId) { return (mapId != null ? mapId : ($gameMap ? $gameMap.mapId() : 0)) === globeMapId; },
+        isTravelMap(mapId) {
+            const id = mapId != null ? mapId : ($gameMap ? $gameMap.mapId() : 0);
+            return id === worldMapId || id === globeMapId;
+        },
+        globeTileForWorld,
+        worldTileForGlobe,
+        globePosition,
+        onGlobeSquare,
+        globeSquareAt,
         // The name to file a place under (Assets menu, delivery targets, ...).
         // Always use this instead of $dataMapInfos[id].name: the procedural map
         // is reused for the whole world and would otherwise read as

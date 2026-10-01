@@ -7366,5 +7366,13 @@
   "2067": {
     "name": "Tavola da surf",
     "description": "Tavola {incerata | in vetroresina}.\n{Cavalca l'onda | Prendi la cresta} in acqua."
+  },
+  "2068": {
+    "name": "Vasca di crescita portatile",
+    "description": "Una vasca di incubazione sigillata che fa crescere\nuna creatura di tua invenzione in tempi accelerati."
+  },
+  "2069": {
+    "name": "Ricombinatore genico portatile",
+    "description": "Un ricombinatore genico che impianta un embrione\numanoide di tua invenzione in un membro del gruppo."
   }
 }

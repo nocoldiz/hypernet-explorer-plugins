@@ -54,6 +54,16 @@
       return this.NPC_FREE_MAP_IDS.includes(mapId);
     },
 
+    // Maps that belong to the parties of this world and nobody else: the
+    // Stairs Hall. No roster, no crowd, no police. The only people met there
+    // are the world's idle companions (PartyLodging, NPCSystemParty.js) and
+    // the parties other savegames saved on it (VisitingParties).
+    PARTY_ONLY_MAP_IDS: [635],
+
+    isPartyOnlyMap(mapId) {
+      return this.PARTY_ONLY_MAP_IDS.includes(mapId);
+    },
+
     // An empty world (WorldManager.populationMode) has nobody left in it: no
     // roaming crowd, no <AI> wanderers, no local residents and nobody behind a
     // shop counter, on any map. Read rather than cached, since the answer
@@ -188,6 +198,21 @@
     // (which advances at most 1 minute per 10 steps), our signal that "time
     // was skipped" and group hangout assignments should be redetermined.
     GROUP_TIME_SKIP_MINUTES: 60,
+
+    // ── The street crowd of a city or village ───────────────────────────────
+    // One rule for a procedural settlement square (setupProceduralMapNPCs)
+    // and the exterior of a hand-made town (SpawnManager.settlementCrowdCap):
+    // a seeded 30% to 70% of the map's NPC slots (90% while a public gathering
+    // empties the houses), of which only SETTLEMENT_NPC_SHARE is drawn.
+    SETTLEMENT_NPC_SHARE: 0.5,
+    isSettlementBiome(biome) {
+      return /city|village|burg/i.test(String(biome || ""));
+    },
+    settlementCrowdCount(slots, rng, gathering) {
+      if (!(slots > 0)) return 0;
+      const share = gathering ? 0.9 : (0.3 + rng * 0.4);
+      return Math.max(1, Math.ceil(slots * share * Config.SETTLEMENT_NPC_SHARE));
+    },
 
     // ── Procedural residents (see the RESIDENT REGISTRY section) ─────────────
     // Every map group is populated by the world seed: one household behind

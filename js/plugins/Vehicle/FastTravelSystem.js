@@ -2249,11 +2249,14 @@
     Game_Player.prototype.increaseSteps = function () {
         _Game_Player_increaseSteps_FTS.call(this);
 
-        // Update airship position when riding it on map 315
-        if ($gameMap.mapId() === 315 && this.isInVehicle() && this.vehicle() === $gameMap.vehicle("airship")) {
+        // Update airship position when riding it on map 315, or on the globe it
+        // is a close-up of (map 1409, WorldMapReturn.js)
+        const WMR = window.WorldMapReturn;
+        const onWorldMap = WMR && WMR.isTravelMap ? WMR.isTravelMap($gameMap.mapId()) : $gameMap.mapId() === 315;
+        if (onWorldMap && this.isInVehicle() && this.vehicle() === $gameMap.vehicle("airship")) {
             const airship = $gameMap.vehicle("airship");
             if (airship) {
-                setVehiclePos('airship', 315, airship.x, airship.y);
+                setVehiclePos('airship', $gameMap.mapId(), airship.x, airship.y);
             }
         }
     };

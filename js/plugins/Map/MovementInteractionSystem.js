@@ -711,72 +711,7 @@
       // Issue #153: swimming washes the swimmer clean. Cleanliness is the
       // hygiene need (TimeDateSystem), and it comes off a stroke at a time now
       // rather than all at once on entry, for the whole party (see
-      // Game_Player.increaseSteps below). Getting in dirty still leaves a green
-      // grime puddle around them as the first of it rinses off.
-      if (character === $gamePlayer) {
-        const actor = $gameParty && $gameParty.leader ? $gameParty.leader() : null;
-        if (actor && typeof actor.hygienePercent === "function" && actor.hygienePercent() < 50) {
-          MovementSystem.spawnGrimePuddle(character);
-        }
-      }
-    },
-
-    // A short-lived pool of translucent green grime sprites at the swimmer's
-    // feet, drawn directly on the map tilemap. No asset is required: the blob
-    // texture is generated once via PIXI. Purely cosmetic and self-cleaning.
-    spawnGrimePuddle(character) {
-      const scene = SceneManager._scene;
-      const spriteset = scene && scene._spriteset;
-      if (!spriteset || !spriteset._tilemap || !Graphics.app) return;
-
-      if (!MovementSystem._grimeTexture) {
-        const g = new PIXI.Graphics();
-        g.beginFill(0xffffff);
-        g.drawEllipse(0, 0, 18, 11);
-        g.endFill();
-        MovementSystem._grimeTexture = Graphics.app.renderer.generateTexture(g);
-        g.destroy();
-      }
-
-      const tilemap = spriteset._tilemap;
-      const baseX = character.screenX();
-      const baseY = character.screenY();
-      const blobs = [];
-      const count = 6;
-      for (let i = 0; i < count; i++) {
-        const s = new PIXI.Sprite(MovementSystem._grimeTexture);
-        s.anchor.set(0.5);
-        s.tint = 0x4f7a2a;
-        s.x = baseX + (Math.random() - 0.5) * 36;
-        s.y = baseY - 4 + (Math.random() - 0.5) * 22;
-        s.scale.set(0.5 + Math.random() * 0.8);
-        s.alpha = 0.55;
-        tilemap.addChild(s);
-        blobs.push(s);
-      }
-
-      let life = 90;
-      const tick = () => {
-        // If the scene/tilemap was torn down mid-animation, the blobs were
-        // destroyed with it. Stop the RAF loop and do not touch dead objects.
-        const curScene = SceneManager._scene;
-        const curTilemap = curScene && curScene._spriteset && curScene._spriteset._tilemap;
-        if (curTilemap !== tilemap) {
-          return;
-        }
-        life--;
-        const fade = Math.max(0, life / 90);
-        blobs.forEach((s) => { s.alpha = 0.55 * fade; });
-        if (life <= 0) {
-          blobs.forEach((s) => {
-            if (s.parent) s.parent.removeChild(s);
-            s.destroy();
-          });
-          return;
-        }
-        requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
+      // Game_Player.increaseSteps below).
     },
 
     // Rearm swim/climb state after a transfer completes (queued in
@@ -1537,12 +1472,24 @@
       if (!rt || rt.baseTexture.destroyed || rt.width !== w || rt.height !== h) {
         if (rt && !rt.baseTexture.destroyed) rt.destroy(true);
         rt = this._groundTexture = PIXI.RenderTexture.create({ width: w, height: h, resolution: 1 });
+        this._groundKey = null;
       }
-      try {
-        renderer.render(layer, rt, true, null, true);
-      } catch (e) {
-        mask.uniforms.uUseGround = 0;
-        return;
+      // Drawn again only when the ground under the screen moved: the mask
+      // asks nothing of it but where the water is blue, and a still camera
+      // (or water tiles running their animation) never changes that.
+      const tilemap = spriteset._tilemap;
+      const key = (tilemap.origin ? tilemap.origin.x + "," + tilemap.origin.y : "") + "|" +
+        ($gameMap ? $gameMap.mapId() : 0) + "|" + (tilemap._needsRepaint ? Graphics.frameCount : "");
+      if (key !== this._groundKey || layer !== this._groundLayer) {
+        try {
+          renderer.render(layer, rt, true, null, true);
+        } catch (e) {
+          mask.uniforms.uUseGround = 0;
+          this._groundKey = null;
+          return;
+        }
+        this._groundKey = key;
+        this._groundLayer = layer;
       }
       mask.uniforms.uGround = rt;
       mask.uniforms.uGroundSize = [w, h];
@@ -1584,17 +1531,51 @@
   // a crash, and is not asked again every frame.
   let _blueMaskFilter = null;
   let _blueMaskFailed = false;
+  let _blueMaskContext = -1;
   function getBlueMaskFilter() {
-    if (_blueMaskFilter) return _blueMaskFilter;
     if (_blueMaskFailed || !PIXI.Filter) return null;
     try {
-      _blueMaskFilter = buildBlueMaskFilter();
+      if (!_blueMaskFilter) _blueMaskFilter = buildBlueMaskFilter();
+      linkBlueMaskOnRenderer(_blueMaskFilter);
     } catch (e) {
+      const worn = !!_blueMaskFilter;
+      _blueMaskFilter = null;
       _blueMaskFailed = true;
       console.warn("MovementInteractionSystem: water reflection mask unavailable.", e);
+      // Reflections already wearing the mask would hand the broken program to
+      // the renderer on their next draw: take them down, they come back bare.
+      if (worn && typeof ReflectionSystem !== "undefined") ReflectionSystem.clearSprites();
       return null;
     }
     return _blueMaskFilter;
+  }
+  // Building the filter only compiles it in PIXI's private test context. The
+  // renderer compiles it again on its own context, lazily, inside the first
+  // render that draws it, and a link failure there (a WebGL1 fallback renderer
+  // beside a WebGL2 test context, another GPU on a hybrid laptop, a restored
+  // context) throws the same getProgramParameter TypeError from inside
+  // renderer.render, where nothing can catch it. Linking it here first, once
+  // per context, moves that failure where the catch above sees it.
+  function linkBlueMaskOnRenderer(filter) {
+    const renderer = typeof Graphics !== "undefined" && Graphics.app && Graphics.app.renderer;
+    if (!renderer || !renderer.gl || !renderer.shader || !filter.program) return;
+    const uid = renderer.CONTEXT_UID;
+    if (_blueMaskContext === uid) return;
+    const programs = filter.program.glPrograms || {};
+    let linked = programs[uid];
+    if (!linked) {
+      try {
+        linked = renderer.shader.generateShader(filter);
+      } catch (e) {
+        delete programs[uid];
+        throw e;
+      }
+    }
+    if (!linked || !linked.program) {
+      delete programs[uid];
+      throw new Error("blue mask did not link on the renderer context"); // i18n-ignore: diagnostic
+    }
+    _blueMaskContext = uid;
   }
   function buildBlueMaskFilter() {
     const filter = new PIXI.Filter(null, `
@@ -2496,8 +2477,15 @@
     }
   };
 
+  // The globe (map 1409, WorldMapReturn.js) behaves as map 315 does here.
+  function isGlobeMap() {
+    const WMR = window.WorldMapReturn;
+    return !!(WMR && WMR.isGlobeMap && WMR.isGlobeMap($gameMap.mapId()));
+  }
+
   Scene_Map.prototype.updateSwimFishInput = function () {
-    if ($gameMap.mapId() === 315) return;
+    // The world map, and the globe it is a close-up of, take OK for travel.
+    if ($gameMap.mapId() === 315 || isGlobeMap()) return;
     // The sleep/wait popup owns the OK button while it is up. Without this, an
     // OK press meant for one of its rows ALSO ran the terrain interaction of the
     // tile the party is facing -- and on a Bed/Campfire/Tent/Bedroll that
@@ -3155,7 +3143,7 @@
       return;
     }
 
-    if ($gameMap.mapId() === 315) {
+    if ($gameMap.mapId() === 315 || isGlobeMap()) {
       const choices = [];
       if (Utils.hasFishingRod()) choices.push(T('Movement.fish'));
       if (Utils.hasSurfboard()) choices.push(T('Movement.surf'));

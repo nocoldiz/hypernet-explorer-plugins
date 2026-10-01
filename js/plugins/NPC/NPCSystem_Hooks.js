@@ -644,6 +644,21 @@
     }
   }
 
+  // Gives every party member standing on the map (an idle companion or a
+  // visitor, both tagged by VisitingParties.spawnOne) a controller of their own
+  // again, without moving them off the tile they were dealt.
+  function wakePartyPresences() {
+    for (const ev of $gameMap.events()) {
+      if (!ev || ev._erased || !ev[VisitingParties.EVENT_TAG]) continue;
+      const data = ev.event();
+      if (!data || !Utils.hasAITag(data.note)) continue;
+      if ($gameSystem.npcControllers.some(c => c.eventName === data.name)) continue;
+      const controller = new NPCController(data.name);
+      $gameSystem.npcControllers.push(controller);
+      controller.decideNextGoal();
+    }
+  }
+
   const _Scene_Map_onMapLoaded = Scene_Map.prototype.onMapLoaded;
   Scene_Map.prototype.onMapLoaded = function () {
     // Scene_Map.create reloads the map file on every rebuild of the scene, so at
@@ -681,8 +696,11 @@
         $gameMap.setupNPCControllers();
         // An upper floor of the Omega Tower nobody was drawn on is peopled by
         // its own world (NPCSystem_Procedural.js, populateTowerFloor).
+        // The Stairs Hall holds the parties and nobody else: no tower
+        // residents, no spaceport crowd, only whoever saved here below.
+        const partyOnly = Config.isPartyOnlyMap(mapId);
         try {
-          ProceduralManager.populateTowerFloor();
+          if (!partyOnly) ProceduralManager.populateTowerFloor();
         } catch (e) {
           console.error("[NPC System] tower floor residents failed", e);
         }
@@ -699,7 +717,7 @@
         // A landing pad on another world has no roster of its own: its crowd is
         // dealt here, nine faces in ten off the alien half of the wardrobe.
         try {
-          ProceduralManager.populateSpaceport();
+          if (!partyOnly) ProceduralManager.populateSpaceport();
         } catch (e) {
           console.error("[NPC System] spaceport crowd failed", e);
         }
@@ -741,6 +759,15 @@
     // leaves their placeholder slots alone, which is what the multiplayer
     // avatars on those maps need.
     if (Config.isNPCFreeMap(currentMapId)) return;
+
+    // A party-only map (Config.PARTY_ONLY_MAP_IDS) is staffed by nobody: the
+    // idle companions laid down just before this and the visiting parties laid
+    // down just after it are the whole of its population. The companions'
+    // controllers were swept with the list above, so they are handed back.
+    if (Config.isPartyOnlyMap(currentMapId)) {
+      wakePartyPresences();
+      return;
+    }
 
     // Nobody is left to spawn anywhere in an empty world. The placeholder
     // slots the crowd would have been dealt into are erased rather than left

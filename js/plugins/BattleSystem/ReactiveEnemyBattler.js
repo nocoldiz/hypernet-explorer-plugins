@@ -654,7 +654,7 @@
     };
 
     // MODIFIED: Enhanced particle creation with HP-based scaling
-    Sprite_Enemy.prototype.createDamageParticles = function (damage = 100) {
+    Sprite_Enemy.prototype.createDamageParticles = function (damage = 100, damageType = 'Blunt') {
         if (!this._enemy) return;
 
         const particleType = this._enemy.getParticleType();
@@ -663,11 +663,10 @@
         const config = particleTypes[particleType];
         if (!config || !this.parent) return;
 
-        // Blood is shown for one thing only: a limb lost or destroyed, sprayed by
-        // BloodSplatterFX from Health_Monsters. An ordinary blow draws none, so a
-        // bleeding archetype leaves here before it costs anything. Bark, sparks
-        // and rock chips are debris, not blood, and still fly on every hit.
-        if (config.accumulates) return;
+        // A Blunt blow bruises, it does not open a wound: a bleeding archetype
+        // leaves here before it costs anything. Every other damage type sprays.
+        // Bark, sparks and rock chips are debris, not blood, and fly on every hit.
+        if (config.accumulates && damageType === 'Blunt') return;
 
         // Use HP-based intensity calculation
         const intensity = this.determineSprayIntensityByHP(damage, this._enemy);
@@ -1220,21 +1219,22 @@
             }
         }
 
+        // Read before the blow lands: the damage type decides whether it bleeds.
+        const HC = window.HealthCore;
+        const damageType = HC && HC.getActionDamageType ? HC.getActionDamageType(this, subject) : 'Blunt';
+
         _Game_Action_apply.call(this, target);
 
         if (target && target.isEnemy()) {
             const result = target.result();
             if (result.isHit() && result.hpDamage > 0) {
-                const item = this.item();
-                if (item && (item.damage.elementId === 1 || item.damage.elementId === -1)) {
-                    const damage = result.hpDamage;
-                    setTimeout(() => {
-                        const sprite = target.getBattlerSprite();
-                        if (sprite) {
-                            sprite.createDamageParticles(damage);
-                        }
-                    }, 100);
-                }
+                const damage = result.hpDamage;
+                setTimeout(() => {
+                    const sprite = target.getBattlerSprite();
+                    if (sprite) {
+                        sprite.createDamageParticles(damage, damageType);
+                    }
+                }, 100);
             }
         }
     };

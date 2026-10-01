@@ -230,6 +230,29 @@
   const BACKGROUND_CHUNK = 60;
   let _chunkOffset = 0;
 
+  // The tick runs once a game hour (see the Game_Map.update hook): an NPC is
+  // given their need for the hour and the activity it sends them on, and keeps
+  // at it until the next hour turns. Sending every controller on the map off
+  // in the tick's own frame launched every one of their path searches at once,
+  // a hitch each time the hour (it used to be each minute) went by while
+  // walking. The controllers are queued instead and sent a few a frame, oldest
+  // first, so a long queue is still served in full however quickly the hours
+  // run (sleep, fast travel).
+  const DISPATCH_PER_FRAME = 3;
+  const _dispatchQueue = new Set();
+  function drainDispatchQueue(society) {
+    if (!_dispatchQueue.size) return;
+    let sent = 0;
+    for (const ctrl of _dispatchQueue) {
+      _dispatchQueue.delete(ctrl);
+      if (!ctrl.event || ctrl.event._erased) continue;
+      const profile = society?.[ctrl.eventName];
+      if (!profile) continue;
+      BehaviorDispatcher.dispatch(ctrl, profile);
+      if (++sent >= DISPATCH_PER_FRAME) break;
+    }
+  }
+
   // ============================================================================
   // SECTION 11e, SCHEDULE → MAP RESOLVER
   // ============================================================================
@@ -420,6 +443,7 @@
       // Computing hour from minute 0 (RMMZ default before TimeDateSystem runs) would force
       // hour=0 → every NPC scheduled to sleep on the very first tick.
       const hour = ($gameVariables?.value(23)) ?? 12; // default noon if not yet initialised
+      const hourIndex = Math.floor(currentMinute / 60);
 
       // Build on-map name set once per tick for fast lookup
       const onMapSet = new Set(
@@ -461,8 +485,9 @@
         // is thinking out loud at once is unreadable), off-screen ones keep the
         // slower cadence since nobody is there to read it. Each NPC gets a
         // per-name offset so they don't all land on the same tick.
-        const _interval = onMapSet.has(name) ? 15 : 20;
-        if ((currentMinute + nameHash(name)) % _interval === 0) ThoughtGenerator.generate(profile);
+        // One tick is a game hour: on the map that is one thought each, off it
+        // one hour in four, staggered by name.
+        if (onMapSet.has(name) || (hourIndex + nameHash(name)) % 4 === 0) ThoughtGenerator.generate(profile);
 
         // Wealth → home pool upgrade when money crosses tier thresholds
         WealthManager.maybeUpgrade(profile);
@@ -498,16 +523,14 @@
         Addictions.tick(profile, name, true, currentMinute);
         if (profile.currentJobId === null) JobManager.assignJob(profile);
         _workPay(profile, name, currentMinute, true);
-        if ((currentMinute + nameHash(name)) % 15 === 0) ThoughtGenerator.generate(profile);
+        ThoughtGenerator.generate(profile);
       }
 
-      // Dispatch on-map controller states + log NPC social meetings
+      // Log NPC social meetings, and queue the on-map controllers to be sent
+      // on the hour's need, a few a frame (drainDispatchQueue).
       const controllers = $gameSystem.getActiveNPCControllers?.() || [];
-      if (currentMinute % 5 === 0) SocialLogger.scanMeetings(controllers, society);
-      for (const ctrl of controllers) {
-        const profile = society[ctrl.eventName];
-        if (profile) BehaviorDispatcher.dispatch(ctrl, profile);
-      }
+      SocialLogger.scanMeetings(controllers, society);
+      for (const ctrl of controllers) _dispatchQueue.add(ctrl);
 
       // Fill sleep and orient toward Counter tiles for NPCs resting in region 102
       _tickRestingNPCs(controllers, society, delta);
@@ -528,6 +551,9 @@
     // road to 2012 frays both the off-screen sim and on-map NPC reactions.
     eraTension,
     satisfyNeedTick,
+    // Sends the queued on-map controllers on their need, a few a frame.
+    drainDispatch() { drainDispatchQueue($gameSystem?._npcSociety); },
+    DISPATCH_PER_FRAME,
     NeedManager,
     ScheduleManager,
     BehaviorDispatcher,
@@ -803,6 +829,8 @@
   Game_Map.prototype.setup = function (mapId) {
     _Game_Map_setup.call(this, mapId);
     ShopShiftManager.resetMapCache();
+    // The controllers queued for dispatch belonged to the map left behind.
+    _dispatchQueue.clear();
     // Whether this map holds games, for the leisure routing (SECTION 11b5b).
     try { Addictions.learnVenue(mapId); } catch (_) { /* never breaks a map load */ }
   };
@@ -811,12 +839,24 @@
   Game_Map.prototype.update = function (sceneActive) {
     _Game_Map_update.call(this, sceneActive);
     if (!sceneActive) return;
-    const minute = $gameVariables ? $gameVariables.value(114) : 0;
-    if (minute !== this._lastNPCSimMinute) {
-      this._lastNPCSimMinute = minute;
-      NPCSim.tick(minute);
-    }
+    // Once a game hour, not once a minute: every ten steps walked used to
+    // pay for a whole tick. An NPC does one thing an hour.
+    tickOnTheHour($gameVariables ? $gameVariables.value(114) : 0);
+    NPCSim.drainDispatch();
   };
+
+  // The tick, once per game hour whoever asks: the map's update above, or a
+  // screen that keeps the clock running without the map (the PC, see
+  // TimeDateSystem.runRealtimeClock). The hour is kept on $gameMap so both
+  // agree on which hour was last run.
+  function tickOnTheHour(minute) {
+    if (!$gameMap) return;
+    const hourIndex = Math.floor(minute / 60);
+    if (hourIndex === $gameMap._lastNPCSimHour) return;
+    $gameMap._lastNPCSimHour = hourIndex;
+    NPCSim.tick(minute);
+  }
+  NPCSim.tickOnTheHour = tickOnTheHour;
 
   // ============================================================================
   // SECTION 15, DIALOGUE HOOKS: thought balloon + player opinion

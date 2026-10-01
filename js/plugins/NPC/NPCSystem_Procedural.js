@@ -258,10 +258,7 @@
       if (!npcEvents.length) return;
 
       const biomeName = $gameSystem?._procGenData?.currentBiome || "Fields";
-      const isCityBiome = biomeName.toLowerCase().includes("city");
-      const isSettlementBiome = isCityBiome
-        || biomeName.toLowerCase().includes("village")
-        || biomeName.toLowerCase().includes("burg");
+      const isSettlementBiome = Config.isSettlementBiome(biomeName);
 
       // Lone building doors/tents scattered outside a proper settlement (see
       // SETTLEMENT_DOOR_FEATURES) get their own small NPC cluster below,
@@ -315,13 +312,16 @@
         const toCull = indices.slice(keepCount);
         toCull.forEach(idx => $gameMap.eraseEvent(npcEvents[idx].eventId()));
         activeEvents = npcEvents.filter((_, i) => !toCull.includes(i));
-      } else if (!isCityBiome) {
+      } else {
         const cullRng = Utils.seededRandom(baseSeed ^ 0xdeadbeef);
         // A public gathering (window.NPCGatherings) empties the houses: nearly
         // the whole village is out on the street for its hours.
         const gathering = isSettlementBiome && window.NPCGatherings?.activeGathering?.(settlementGroup);
-        const share = gathering ? 0.9 : (0.3 + cullRng * 0.4);
-        const keepCount = Math.max(1, Math.ceil(npcEvents.length * share));
+        // A city and a village are culled alike (Config.settlementCrowdCount),
+        // open country keeps its own unhalved share.
+        const keepCount = isSettlementBiome
+          ? Config.settlementCrowdCount(npcEvents.length, cullRng, gathering)
+          : Math.max(1, Math.ceil(npcEvents.length * (0.3 + cullRng * 0.4)));
         const indices = Array.from({ length: npcEvents.length }, (_, i) => i);
 
         for (let i = indices.length - 1; i > 0; i--) {

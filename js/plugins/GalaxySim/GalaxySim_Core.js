@@ -40,9 +40,9 @@
  * Either way the pumps engage by themselves the moment the ship arrives.
  * A full tank is a twenty-four-second stop: the ship eases in toward the star
  * while the pumps run and drifts back out once they stop, and the ETA is
- * counted down in the same window that counts down an arrival. The star cooks
- * the hull all the while, and the cabin temperature climbs with it (see
- * interiorHeatCelsius), cooling off once the ship pulls away.
+ * counted down in the same window that counts down an arrival. The cabin heats
+ * up as the hull closes on the star and returns to normal as it pulls back out
+ * (see interiorHeatCelsius). The same stop fills the Starship's rocket fuel.
  * A black hole fills the Schrodingerite magazine instead, in six seconds,
  * and its once-a-week harvest is a thirty-second flyby of the disk.
  *
@@ -50,7 +50,7 @@
  * Variables Used
  * ============================================================================
  * Variable 94: Ship speed multiplier
- * Variable 95: Fuel level
+ * Variable 95: legacy fuel level (the rocket fuel now lives in VehicleFuel 'airship')
  * Variable 96: Current star system
  * Variable 97: Target star system
  *
@@ -58,7 +58,7 @@
  * Infinite fuel
  * ============================================================================
  * If the party leader is named "Test" (or Sandbox mode is active), the
- * starship fuel (variable 95) never depletes.
+ * starship fuel never depletes.
  *
  * @command OpenStarMap
  * @text Open Star Map
@@ -333,8 +333,8 @@
   window.GalaxySim.autoRefuel = autoRefuel;
 
   // How much hotter than normal the cabin is running, in degrees Celsius: the
-  // star's heat soaks into the hull for as long as the pumps draw from it and
-  // bleeds away afterwards (see DataManager.tickRefuelHeat). Zero anywhere the
+  // hull heats up as the ship closes on a star to drink from it and cools back
+  // down as it pulls out again (see DataManager.tickRefuelHeat). Zero anywhere the
   // party is not aboard, so a planetside map is never warmed by a ship parked
   // in some other system. WeatherSystem asks this and nothing else.
   function interiorHeatCelsius() {
@@ -346,6 +346,20 @@
     return (dm && dm.getRefuelHeat) ? dm.getRefuelHeat() : 0;
   }
   window.GalaxySim.interiorHeatCelsius = interiorHeatCelsius;
+
+  // WeatherSystem only recomputes the cabin temperature on the hour, far too
+  // coarse for a stop this short: both the star map and the ship interior hand
+  // the heat over every frame, and the reading is refreshed whenever it has
+  // moved a whole degree, so it climbs on the way in and falls on the way out.
+  let lastCabinHeatShown = 0;
+  function nudgeCabinHeat(heat) {
+    if (Math.round(heat || 0) === Math.round(lastCabinHeatShown)) return;
+    lastCabinHeatShown = heat || 0;
+    if (window.$gameWeather && typeof $gameWeather.updateTemperature === "function") {
+      $gameWeather.updateTemperature();
+    }
+  }
+  window.GalaxySim.nudgeCabinHeat = nudgeCabinHeat;
 
   registerGalaxyCommand("Refuel", (args) => {
     const plan = autoRefuel();
@@ -982,8 +996,8 @@
   //   dayHours   Earth hours from one local noon to the next.
   //   locked     the same face is always turned toward what it is locked to.
   //   lockedTo   'star' (nothing overhead ever moves) or 'planet' (a moon,
-  //              which still gets day and night, just very slowly: our own
-  //              moon is locked to us and its day is a fortnight long).
+  //              whose day is a fortnight long: far too slow to see in a
+  //              visit, so localHourFor holds its light like a frozen world's).
   //   frozen     the sun never rises or sets here. Only locked-to-star worlds,
   //              and moons of one.
   //   fixedHour  what o'clock it is, forever, on a frozen world - which side of
@@ -1049,8 +1063,7 @@
   // local solar time on any world that has a sun over it, not just a frozen one:
   // walking east is walking into the evening, and all the way round is a whole
   // day. The rotation only decides how fast that hour then moves on its own -
-  // fast on Earth, a fortnight to the hour on a moon, never at all on a world
-  // locked to its star.
+  // fast on Earth, never at all on a moon or a world locked to its star.
   function localHourFor(desc, totalEarthMinutes, lonHour) {
     const day = desc && desc.day;
     if (!day) return null;
@@ -1063,7 +1076,10 @@
         : (day.frozen ? day.fixedHour : 12));
     const wrap = (x) => ((x % 24) + 24) % 24;
     // Locked to its star: the sun hangs wherever this longitude put it, forever.
-    if (day.frozen) return wrap(col);
+    // A moon is held the same way: its day is so long against a visit that the
+    // light only ever moves when the party walk across its longitude, never
+    // while they stand still.
+    if (day.frozen || day.locked) return wrap(col);
     const dh = day.dayHours;
     if (!(dh > 0)) return wrap(col);
     const h = (Number(totalEarthMinutes) || 0) / 60;
@@ -1781,12 +1797,16 @@
   const LG_MODE_H = 64;   // the row of ways down along the panel's foot
   const LG_INSET = 24;    // panel border to grid
 
+  // The page is the whole screen (Graphics.width/height), not MZ's smaller UI
+  // box: sized to the box, the picture stopped short of the screen edge and the
+  // row of ways down fell off the foot of the page.
+  //
   // The grid is drawn as large as the page allows while keeping its own cell
   // aspect: the texture is equirectangular and planetGridSize keeps h at half of
   // w, so the picture is twice as wide as it is tall and the squares stay square.
   function landingGridDestSize(grid) {
-    const availW = Graphics.boxWidth - LG_INSET * 2;
-    const availH = Graphics.boxHeight - LG_INSET * 2 -
+    const availW = Graphics.width - LG_INSET * 2;
+    const availH = Graphics.height - LG_INSET * 2 -
       LG_TITLE_H - LG_HELP_H - LG_MODE_H;
     let w = availW;
     let h = Math.round((w * grid.h) / grid.w);
@@ -1804,8 +1824,8 @@
     const w = size.w + LG_INSET * 2;
     const h = LG_TITLE_H + size.h + LG_HELP_H + LG_MODE_H + LG_INSET * 2;
     return new Rectangle(
-      Math.floor((Graphics.boxWidth - w) / 2),
-      Math.floor((Graphics.boxHeight - h) / 2),
+      Math.floor((Graphics.width - w) / 2),
+      Math.floor((Graphics.height - h) / 2),
       w, h
     );
   }
@@ -1962,7 +1982,7 @@
     // A plain dark page, like the world map: no plate, no gold frame, nothing
     // between the party and the picture they are choosing a square on.
     createBackdrop() {
-      const sprite = new Sprite(new Bitmap(Graphics.boxWidth, Graphics.boxHeight));
+      const sprite = new Sprite(new Bitmap(Graphics.width, Graphics.height));
       sprite.bitmap.fillAll("rgba(4, 6, 12, 0.94)");
       this._backdrop = sprite;
       this.addChild(sprite);
@@ -1980,6 +2000,11 @@
           Math.floor((LG_MODE_H - h) / 2),
         this._size.w, h
       );
+      // The page fills the whole screen, but windows live on the window layer,
+      // which MZ centres on the smaller UI box: take its offset back out so the
+      // row lands where the sprites above it were laid out.
+      rect.x -= Math.floor((Graphics.width - Graphics.boxWidth) / 2);
+      rect.y -= Math.floor((Graphics.height - Graphics.boxHeight) / 2);
       const win = new Window_LandingMode(rect, this._planet);
       // No windowskin frame or back: the gold plates are the whole modal.
       win.opacity = 0;
@@ -2006,7 +2031,7 @@
     }
 
     createTextSprite() {
-      this._textSprite = new Sprite(new Bitmap(Graphics.boxWidth, Graphics.boxHeight));
+      this._textSprite = new Sprite(new Bitmap(Graphics.width, Graphics.height));
       this.addChild(this._textSprite);
     }
 

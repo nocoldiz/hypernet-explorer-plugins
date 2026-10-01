@@ -71,6 +71,14 @@
  * @default 0
  * @desc Party member to boost (0 = ask or leader).
  *
+ * @command GrowingVat
+ * @desc Opens character creation for one creature, grown in the vat on an
+ * accelerated term. Used by the Portable Growing Vat.
+ *
+ * @command GeneSplicer
+ * @desc Asks which party member carries, then opens character creation for
+ * one humanoid carried on the human term. Used by the Portable Gene Splicer.
+ *
  * @command InfectMember
  * @desc Asks which party member to infect, then gives them the disease.
  * Works on the map and in battle. Used by the disease vials.
@@ -238,6 +246,10 @@
   var FALLBACK_TERM = 270; // Health_Core absent; the human term.
 
   function getPregnancyDuration(actor) {
+    // A spliced embryo (the gene splicer, see "Designed offspring") is carried
+    // on the term it was conceived with, not on the carrier's own species'.
+    var uterus = actor && actor._uterusData;
+    if (uterus && uterus.isPregnant && uterus.labTerm > 0) return uterus.labTerm;
     var api = window.HealthCore;
     if (!api || !api.getPregnancyDuration) return FALLBACK_TERM;
     return api.getPregnancyDuration(actor, getReproductionType(actor));
@@ -4095,7 +4107,8 @@
     if (!this._actor._uterusData) return;
 
     var uterus = this._actor._uterusData;
-    var pregnancyType = getReproductionType(this._actor) || 0;
+    // A spliced embryo gestates the human way whatever organ is carrying it.
+    var pregnancyType = uterus.labId ? 1 : (getReproductionType(this._actor) || 0);
 
     if (!uterus.isPregnant) {
       // Update ovulation cycle for uterus type when not pregnant
@@ -4428,6 +4441,13 @@
 
   Window_BiologicSimulation.prototype.giveBirth = function () {
     var uterus = this._actor._uterusData;
+    // A spliced embryo is one designed person, born as that person.
+    var labId = uterus && uterus.labId;
+    if (labId) {
+      uterus.labId = null;
+      uterus.labTerm = 0;
+      uterus.litterSize = 1;
+    }
     var litterSize = (uterus && uterus.litterSize) || 1;
     uterus.isPregnant = false;
     uterus.conceptionDate = null;
@@ -4449,6 +4469,10 @@
     pregToast(this._actor, toastMsg,
       { severity: 'good', duration: 300, key: 'birth' });
 
+    if (labId) {
+      deliverDesigned(labId, this._actor.name());
+      return;
+    }
     for (var i = 0; i < litterSize; i++) {
       registerOffspring(this._actor);
     }
@@ -6491,6 +6515,39 @@
     return action(members[0]);
   }
 
+  // A fresh reproductive record, for a body that has never carried anything.
+  function newUterusData(pregnancyType) {
+    return {
+      pregnancyType: pregnancyType,
+      isPregnant: false,
+      conceptionDate: null,
+      dueDate: null,
+      gestationalAge: 0,
+      fetus: null,
+      ovulationCycle: {
+        dayInCycle: Math.floor(Math.random() * 28) + 1,
+        cycleLength: 28,
+        ovulationDay: 14,
+        fertile: false,
+      },
+      eggCount: 300000 + Math.floor(Math.random() * 200000),
+      eggDevelopment: 0,
+      eggsToLay: 0,
+      seedDevelopment: 0,
+      seedsReady: 0,
+      mitosisDevelopment: 0,
+      lastStatusCheck: convertGameDateToTimestamp(getGameDateFromVariable()),
+      lastCycleUpdate: convertGameDateToTimestamp(getGameDateFromVariable()),
+      birthReady: false,
+      litterSize: 1,
+      contraceptiveDays: 0,
+      contraceptiveDate: null,
+      fertilityBoost: 0,
+      fertilityBoostDays: 0,
+      fertilityBoostDate: null,
+    };
+  }
+
   Window_BiologicSimulation.makePregnant = function (targetActor) {
     var actor = resolveReproActor(targetActor);
     if (!actor) return;
@@ -6506,37 +6563,7 @@
       return;
     }
     // Initialize uterus data if it doesn't exist
-    if (!actor._uterusData) {
-      actor._uterusData = {
-        pregnancyType: pregnancyType,
-        isPregnant: false,
-        conceptionDate: null,
-        dueDate: null,
-        gestationalAge: 0,
-        fetus: null,
-        ovulationCycle: {
-          dayInCycle: Math.floor(Math.random() * 28) + 1,
-          cycleLength: 28,
-          ovulationDay: 14,
-          fertile: false,
-        },
-        eggCount: 300000 + Math.floor(Math.random() * 200000),
-        eggDevelopment: 0,
-        eggsToLay: 0,
-        seedDevelopment: 0,
-        seedsReady: 0,
-        mitosisDevelopment: 0,
-        lastStatusCheck: convertGameDateToTimestamp(getGameDateFromVariable()),
-        lastCycleUpdate: convertGameDateToTimestamp(getGameDateFromVariable()),
-        birthReady: false,
-        litterSize: 1,
-        contraceptiveDays: 0,
-        contraceptiveDate: null,
-        fertilityBoost: 0,
-        fertilityBoostDays: 0,
-        fertilityBoostDate: null,
-      };
-    }
+    if (!actor._uterusData) actor._uterusData = newUterusData(pregnancyType);
 
     var uterus = actor._uterusData;
     var currentGameDate = convertGameDateToTimestamp(getGameDateFromVariable());
@@ -6622,7 +6649,7 @@
     if (!actor || !actor._uterusData) return;
 
     var uterus = actor._uterusData;
-    var pregnancyType = getReproductionType(actor) || 0;
+    var pregnancyType = uterus.labId ? 1 : (getReproductionType(actor) || 0);
 
     if (!uterus.isPregnant) {
       var message = T('Biologic.notCurrentlyInReproductiveProcess');
@@ -6874,6 +6901,10 @@
             uterus.contraceptiveDays = 30;
             uterus.contraceptiveDate = now;
             uterus.litterSize = 1;
+            // A spliced embryo goes with the pregnancy (its record is pruned by
+            // the designed offspring registry once nothing carries it).
+            uterus.labId = null;
+            uterus.labTerm = 0;
             msg = T('Biologic.contraceptiveTerminatedEarly', { actor: actor.name() });
             result.terminatedEarly = true;
           } else {
@@ -7242,6 +7273,300 @@
     if (command === "BoostMotility") Window_BiologicSimulation.boostMotility(targetActor);
   };
   // ==========================================================================
+  // Designed offspring: the portable growing vat and the portable gene splicer
+  // ==========================================================================
+  // Both devices open the character creation wizard on one seat of its own
+  // (CharacterCreationRoster.js, window.CCLab) and hand the character built
+  // there back here as an embryo, which is then carried to term:
+  //
+  //   - the growing vat grows a CREATURE on its own, on its archetype's term
+  //     cut down to VAT_ACCELERATION of it;
+  //   - the gene splicer grows a HUMANOID inside a party member, on the human
+  //     term, gestated the human way whatever organ is carrying it. Only a body
+  //     that can carry anything at all can carry it: testicles, a mitotic gland
+  //     and no organs at all are refused.
+  //
+  // The embryo is the whole character the wizard built, kept as a snapshot.
+  // At birth it joins the Pets page as one of the party's children, and from
+  // there it is promoted into a free seat whole (PetSystem.promoteDesigned).
+  //
+  // $gameSystem._labGestations holds one record per embryo:
+  //   { id, kind, name, carrierId, conception, term, record }
+  // where `record` is what PetSystem.birthDesigned is handed at birth.
+  var GROWING_VAT_ITEM = 2068;
+  var GENE_SPLICER_ITEM = 2069;
+  var VAT_ACCELERATION = 0.25;
+  var CARRIER_TYPES = [1, 2, 3]; // uterus, oviduct, sporangium
+
+  function labStore() {
+    if (!window.$gameSystem) return [];
+    if (!$gameSystem._labGestations) $gameSystem._labGestations = [];
+    return $gameSystem._labGestations;
+  }
+
+  function labNow() {
+    return convertGameDateToTimestamp(getGameDateFromVariable());
+  }
+
+  function labToast(text, severity) {
+    if (!text || !window.ParchmentToast) return;
+    window.ParchmentToast.show(text, { severity: severity || 'info', duration: 240 });
+  }
+
+  // Why this party member cannot carry a spliced embryo, as an i18n key, or ''
+  // when they can.
+  function carrierRefusal(actor) {
+    if (!actor) return 'Biologic.lab.noCarrier';
+    var type = getReproductionType(actor);
+    if (CARRIER_TYPES.indexOf(type) < 0) return 'Biologic.lab.cannotCarry';
+    var uterus = actor._uterusData;
+    if (uterus && uterus.isPregnant) return 'Biologic.lab.alreadyCarrying';
+    if (getFertilityBlockingAugment(actor)) return 'Biologic.lab.augmentBlocks';
+    return '';
+  }
+
+  function carriers() {
+    if (!window.$gameParty) return [];
+    return $gameParty.members().filter(function (a) { return a && !carrierRefusal(a); });
+  }
+
+  // How long the vat takes over this body: its own species' term, accelerated.
+  function vatTerm(actor) {
+    var api = window.HealthCore;
+    var full = (api && api.getPregnancyDuration)
+      ? api.getPregnancyDuration(actor, getReproductionType(actor))
+      : FALLBACK_TERM;
+    return Math.max(1, Math.round(full * VAT_ACCELERATION));
+  }
+
+  function refund(itemId) {
+    if (window.$gameParty && window.$dataItems && $dataItems[itemId]) {
+      $gameParty.gainItem($dataItems[itemId], 1);
+    }
+  }
+
+  function openWizard(kind, itemId, carrierId) {
+    var lab = window.CCLab;
+    if (!lab || !lab.hasFreeSeat || !lab.open) {
+      refund(itemId);
+      return false;
+    }
+    if (!lab.hasFreeSeat()) {
+      labToast(T('Biologic.lab.noRoom'), 'warning');
+      refund(itemId);
+      return false;
+    }
+    return lab.open(kind, { itemId: itemId, carrierId: carrierId || 0 });
+  }
+
+  // The gene splicer asks who carries before anything is built. Only the
+  // members who can are offered; the prompt is a message choice, so it works
+  // wherever the item's common event runs.
+  function askCarrier() {
+    var list = carriers();
+    if (!list.length) {
+      labToast(T('Biologic.lab.noCarrier'), 'warning');
+      refund(GENE_SPLICER_ITEM);
+      return;
+    }
+    if (!window.$gameMessage) {
+      openWizard('splice', GENE_SPLICER_ITEM, list[0].actorId());
+      return;
+    }
+    window.skipLocalization = true;
+    $gameMessage.add(T('Biologic.lab.chooseCarrier'));
+    window.skipLocalization = false;
+    $gameMessage.setChoices(
+      list.map(function (a) { return a.name(); }).concat(T('Biologic.lab.cancel')),
+      0,
+      list.length
+    );
+    $gameMessage.setChoiceCallback(function (index) {
+      var carrier = list[index];
+      if (!carrier) { refund(GENE_SPLICER_ITEM); return; }
+      openWizard('splice', GENE_SPLICER_ITEM, carrier.actorId());
+    });
+  }
+
+  // The wizard is done: the embryo leaves the seat it was built on and starts
+  // growing. `session` is the wizard's { kind, carrierId }.
+  function conceive(actor, session) {
+    var Pets = window.PetSystem;
+    if (!actor || !session || !Pets || !Pets.snapshotActor) return null;
+    var kind = session.kind === 'splice' ? 'splice' : 'vat';
+    var carrier = kind === 'splice' ? $gameActors.actor(session.carrierId) : null;
+    if (kind === 'splice' && carrierRefusal(carrier)) {
+      labToast(T(carrierRefusal(carrier), { actor: carrier ? carrier.name() : '' }), 'warning');
+      refund(GENE_SPLICER_ITEM);
+      if (window.CCLab && window.CCLab.release) window.CCLab.release(actor);
+      return null;
+    }
+
+    if (!$gameSystem._labGestationCounter) $gameSystem._labGestationCounter = 0;
+    var id = ++$gameSystem._labGestationCounter;
+    var now = labNow();
+    var NC = window.NPCCreature;
+    var sentient = !(NC && NC.isNonSentientActor && NC.isNonSentientActor(actor));
+    var entry = {
+      id: id,
+      kind: kind,
+      name: actor.name(),
+      carrierId: carrier ? carrier.actorId() : 0,
+      conception: now,
+      term: kind === 'splice' ? getHumanTerm() : vatTerm(actor),
+      record: {
+        name: actor.name(),
+        characterName: actor.characterName(),
+        characterIndex: actor.characterIndex(),
+        archetype: (actor._creatureArchetypes || []).join('/') || actor._currentArchetype || null,
+        gender: actor.gender ? actor.gender() : null,
+        reproduction: actor.reproductionType ? actor.reproductionType() : null,
+        sentient: sentient,
+        isFollower: sentient,
+        snapshot: Pets.snapshotActor(actor),
+      },
+    };
+    labStore().push(entry);
+    // The seat it was built on is handed back: it is not in the party yet.
+    if (window.CCLab && window.CCLab.release) window.CCLab.release(actor);
+
+    if (carrier) {
+      if (!carrier._uterusData) carrier._uterusData = newUterusData(getReproductionType(carrier));
+      var uterus = carrier._uterusData;
+      uterus.labId = id;
+      uterus.labTerm = entry.term;
+      uterus.isPregnant = true;
+      uterus.conceptionDate = now;
+      uterus.dueDate = now + entry.term;
+      uterus.gestationalAge = 0;
+      uterus.lastStatusCheck = now;
+      uterus.litterSize = 1;
+      uterus.notedQuarter = 0;
+      labToast(T('Biologic.lab.spliced', { actor: carrier.name(), name: entry.name, days: entry.term }), 'good');
+    } else {
+      labToast(T('Biologic.lab.vatStarted', { name: entry.name, days: entry.term }), 'good');
+    }
+    return entry;
+  }
+
+  function findEntry(id) {
+    var list = labStore();
+    for (var i = 0; i < list.length; i++) if (list[i] && list[i].id === id) return list[i];
+    return null;
+  }
+
+  function dropEntry(id) {
+    var list = labStore();
+    for (var i = list.length - 1; i >= 0; i--) if (list[i] && list[i].id === id) list.splice(i, 1);
+  }
+
+  // Birth: the designed character is one of the party's children now.
+  function deliverDesigned(id, parentName) {
+    var entry = findEntry(id);
+    if (!entry) return null;
+    dropEntry(id);
+    var Pets = window.PetSystem;
+    if (!Pets || !Pets.birthDesigned) return null;
+    var pet = Pets.birthDesigned(entry.record, parentName);
+    if (pet) labToast(T('Biologic.lab.born', { name: pet.name }), 'good');
+    return pet;
+  }
+
+  // Who is carrying spliced embryo `id`, or null once nobody is (the
+  // pregnancy ended, or the carrier left the world).
+  function spliceCarrier(entry) {
+    var actor = window.$gameActors ? $gameActors.actor(entry.carrierId) : null;
+    var uterus = actor && actor._uterusData;
+    return (uterus && uterus.isPregnant && uterus.labId === entry.id) ? actor : null;
+  }
+
+  // The vat grows on the clock alone; a spliced embryo is grown by its
+  // carrier's own pregnancy, so this only lets go of one nobody carries.
+  function tickLabGestations() {
+    var list = labStore().slice();
+    var now = labNow();
+    list.forEach(function (entry) {
+      if (!entry) return;
+      if (entry.kind === 'splice') {
+        if (!spliceCarrier(entry)) {
+          dropEntry(entry.id);
+          labToast(T('Biologic.lab.lost', { name: entry.name }), 'warning');
+        }
+        return;
+      }
+      if (now - entry.conception >= entry.term) {
+        deliverDesigned(entry.id, T('Biologic.lab.vatParent'));
+      }
+    });
+  }
+
+  // Every gestation the party has going, for the Pets page: the vat's, the
+  // spliced ones and every ordinary pregnancy, egg, seed and division.
+  // Rows: { key, name, carrier, kind, percent, daysLeft }.
+  function gestations() {
+    var rows = [];
+    var now = labNow();
+    labStore().forEach(function (entry) {
+      if (!entry || entry.kind !== 'vat') return;
+      var done = Math.max(0, now - entry.conception);
+      rows.push({
+        key: 'lab' + entry.id, // i18n-ignore: row key
+        name: entry.name,
+        carrier: T('Biologic.lab.vatParent'),
+        kind: 'vat',
+        percent: Math.min(100, Math.floor(100 * done / Math.max(1, entry.term))),
+        daysLeft: Math.max(0, Math.ceil(entry.term - done)),
+      });
+    });
+    var members = window.$gameParty ? $gameParty.members() : [];
+    members.forEach(function (actor) {
+      var uterus = actor && actor._uterusData;
+      if (!uterus || !uterus.isPregnant || !uterus.conceptionDate) return;
+      var entry = uterus.labId ? findEntry(uterus.labId) : null;
+      var term = getPregnancyDuration(actor);
+      var done = Math.max(0, now - uterus.conceptionDate);
+      var type = uterus.labId ? 1 : getReproductionType(actor);
+      rows.push({
+        key: 'actor' + actor.actorId(), // i18n-ignore: row key
+        name: entry ? entry.name : '',
+        carrier: actor.name(),
+        kind: entry ? 'splice' : (['pregnancy', 'pregnancy', 'egg', 'seed', 'mitosis'][type] || 'pregnancy'),
+        percent: Math.min(100, Math.floor(100 * done / Math.max(1, term))),
+        daysLeft: Math.max(0, Math.ceil(term - done)),
+      });
+    });
+    return rows;
+  }
+
+  window.BiologicLab = {
+    GROWING_VAT_ITEM: GROWING_VAT_ITEM,
+    GENE_SPLICER_ITEM: GENE_SPLICER_ITEM,
+    VAT_ACCELERATION: VAT_ACCELERATION,
+    CARRIER_TYPES: CARRIER_TYPES.slice(),
+    carrierRefusal: carrierRefusal,
+    carriers: carriers,
+    vatTerm: vatTerm,
+    humanTerm: getHumanTerm,
+    conceive: conceive,
+    deliver: deliverDesigned,
+    gestations: gestations,
+    tick: tickLabGestations,
+    refund: refund,
+    // Used from the wizard when it is closed without building anything.
+    cancel: function (session) {
+      if (!session) return;
+      refund(session.kind === 'splice' ? GENE_SPLICER_ITEM : GROWING_VAT_ITEM);
+    },
+  };
+
+  registerReproCommand("GrowingVat", function () {
+    openWizard('vat', GROWING_VAT_ITEM, 0);
+  });
+  registerReproCommand("GeneSplicer", function () {
+    askCarrier();
+  });
+
+  // ==========================================================================
   // The clock
   // ==========================================================================
   // Gestation used to advance only while the biologic panel was open, so a
@@ -7260,6 +7585,8 @@
       try { proxy.updatePregnancy(); }
       catch (e) { console.warn('[Health_BiologicSimulation] pregnancy tick failed', e); }
     }
+    try { tickLabGestations(); }
+    catch (e) { console.warn('[Health_BiologicSimulation] growing vat tick failed', e); }
   }
 
   // One stamp per game hour, off the same date variable the gestational clock

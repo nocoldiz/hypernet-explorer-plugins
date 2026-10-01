@@ -1,6 +1,6 @@
 {
   "autoplayBgm": false,
-  "autoplayBgs": false,
+  "autoplayBgs": true,
   "battleback1Name": "",
   "battleback2Name": "",
   "bgm": {
@@ -10,7 +10,7 @@
     "volume": 90
   },
   "bgs": {
-    "name": "",
+    "name": "room-office",
     "pan": 0,
     "pitch": 100,
     "volume": 90
@@ -20,7 +20,7 @@
   "encounterList": [],
   "encounterStep": 30,
   "height": 28,
-  "note": "<Interior>\n<Country: Belgium>\n<Coords 79 125>\n<BuildRights: Free>\n<Biome: City>",
+  "note": "<Interior>\n<Country: Belgium>\n<Coords 79 125>\n<BuildRights: Free>\n<Biome: City>\n<BgsNight: office-room-tone>",
   "parallaxLoopX": false,
   "parallaxLoopY": false,
   "parallaxName": "",

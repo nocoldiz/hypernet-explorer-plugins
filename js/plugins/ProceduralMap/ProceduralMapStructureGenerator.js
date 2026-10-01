@@ -56,235 +56,48 @@
     PROC_MAP_HEIGHT,
   } = Utils2;
 
-  // ===== DUNGEON FEATURE DETECTION =====
+  // ===== COASTLINE =====
 
   /**
-   * Determine which directions have water adjacent biomes
-   * Returns object with north, south, east, west boolean flags
+   * The settlement's shore: sea, sand, seashells and the diagonal corners,
+   * drawn by the same shared coastline every other square uses
+   * (ProcGenBeach.drawWaterEdges), so a town meets the fields and the beach
+   * next to it tile for tile. It used to draw a shore of its own, shallower,
+   * cornerless and tied to nothing, which left a band of water or a straight
+   * wall of grass against the sea on every seam a town shared with the coast.
+   *
+   * The sea is capped shallower than in open country (SETTLEMENT_MAX_DEPTH) so
+   * the streets survive, and a prefab the settlement already stood on its lots
+   * keeps its cells: the shoreline is laid after the lots.
    */
-  function getWaterDirections(adjacentBiomes) {
-    if (!adjacentBiomes) {
-      return { north: false, south: false, east: false, west: false };
+  function addDirectionalBeach(mapData, width, height, adjacentBiomes, allFeatures, rng, worldCoords) {
+    const BeachGen = window.ProcGenBeach;
+    if (!adjacentBiomes || !BeachGen || !BeachGen.drawWaterEdges) return;
+
+    let waterTiles = [];
+    for (const featureName of ["Water", "Ocean", "Beach"]) {
+      waterTiles = getFeatureTiles(featureName, allFeatures) || [];
+      if (waterTiles.length > 0) break;
     }
+    if (waterTiles.length === 0) return;
 
-    const isWaterBiome = (biomeName) => {
-      if (!biomeName) return false;
-      const name = biomeName.toLowerCase();
-      return name.includes("ocean") || name.includes("water") || name.includes("sea");
-    };
+    const pg = typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem._procGenData;
+    const cache = pg && pg.biomeCoordinateCache;
+    const wc = worldCoords || { x: pg ? pg.worldX || 0 : 0, y: pg ? pg.worldY || 0 : 0 };
+    const diagonalBiomes = cache && Utils2.checkDiagonalMapBiomesFromCache
+      ? Utils2.checkDiagonalMapBiomesFromCache(wc.x || 0, wc.y || 0, cache)
+      : null;
 
-    return {
-      north: isWaterBiome(adjacentBiomes.north),
-      south: isWaterBiome(adjacentBiomes.south),
-      east: isWaterBiome(adjacentBiomes.east),
-      west: isWaterBiome(adjacentBiomes.west)
-    };
-  }
-
-  /**
-   * Add full directional beach layout with water, sand, and seashells
-   * where water biomes are adjacent
-   */
-  function addDirectionalBeach(mapData, width, height, adjacentBiomes, allFeatures, rng) {
-    if (!adjacentBiomes) return;
-
-    const waterDirs = getWaterDirections(adjacentBiomes);
-    const beachTiles = getFeatureTiles("Beach", allFeatures);
-    const waterTiles = getFeatureTiles("Water", allFeatures);
-    const seashellTiles = getFeatureTiles("Seashell", allFeatures);
-
-    if (!beachTiles || beachTiles.length === 0) return;
-
-    const beachTile = beachTiles[0];
-    const waterTile = waterTiles ? waterTiles[0] : beachTile;
-    const maxEdgeDepth = 12; // Depth of water/beach gradient from edge
-    const beachSandWidth = 4; // Width of sandy beach area
-
-    // A prefab the settlement already stood on this square keeps its cells: the
-    // shoreline is laid after the lots, and used to wash straight through them.
     const prefabMask = mapData.prefabMask;
-    const isPrefab = (x, y) => !!(prefabMask && prefabMask[y * width + x]);
-    function paint(idx, x, y, tile) {
-      if (!isPrefab(x, y)) mapData[idx] = tile;
-    }
-
-    // Helper to place seashells on a beach tile
-    function placeSeashell(x, y) {
-      if (isPrefab(x, y)) return;
-      if (seashellTiles && seashellTiles.length > 0 && rng() < 0.08) {
-        const idx = calculateIndex(x, y, 1, width, height);
-        if (idx >= 0 && idx < mapData.length) {
-          mapData[idx] = seashellTiles[Math.floor(rng() * seashellTiles.length)];
-        }
+    BeachGen.drawWaterEdges(
+      mapData, waterTiles, adjacentBiomes, Math.floor(rng() * 0x7fffffff), width, height, rng, null, allFeatures, "",
+      {
+        worldCoords: wc,
+        diagonalBiomes,
+        maxDepth: BeachGen.SETTLEMENT_MAX_DEPTH,
+        keep: prefabMask ? (x, y) => !!prefabMask[y * width + x] : null,
       }
-    }
-
-    // North edge (water from top, land below)
-    if (waterDirs.north) {
-      for (let x = 0; x < width; x++) {
-        // Create natural variance in coastline depth
-        const variance = Math.sin(x / 20) * 3 + Math.sin(x / 7) * 2;
-        const coastlineDepth = Math.max(3, Math.floor(6 + variance));
-        const actualDepth = Math.min(maxEdgeDepth, coastlineDepth);
-
-        for (let y = 0; y < actualDepth; y++) {
-          const idx = calculateIndex(x, y, 0, width, height);
-          if (y < actualDepth - beachSandWidth) {
-            // Water area
-            paint(idx, x, y, waterTile);
-          } else {
-            // Beach sand area
-            paint(idx, x, y, beachTile);
-            placeSeashell(x, y);
-          }
-        }
-      }
-    }
-
-    // South edge (water from bottom, land above)
-    if (waterDirs.south) {
-      for (let x = 0; x < width; x++) {
-        const variance = Math.sin(x / 20 + 100) * 3 + Math.sin(x / 7 + 100) * 2;
-        const coastlineDepth = Math.max(3, Math.floor(6 + variance));
-        const actualDepth = Math.min(maxEdgeDepth, coastlineDepth);
-        const startY = Math.max(0, height - actualDepth);
-
-        for (let y = startY; y < height; y++) {
-          const idx = calculateIndex(x, y, 0, width, height);
-          if (y > height - actualDepth + beachSandWidth) {
-            // Water area
-            paint(idx, x, y, waterTile);
-          } else {
-            // Beach sand area
-            paint(idx, x, y, beachTile);
-            placeSeashell(x, y);
-          }
-        }
-      }
-    }
-
-    // East edge (water from right, land left)
-    if (waterDirs.east) {
-      for (let y = 0; y < height; y++) {
-        const variance = Math.sin(y / 20 + 200) * 3 + Math.sin(y / 7 + 200) * 2;
-        const coastlineDepth = Math.max(3, Math.floor(6 + variance));
-        const actualDepth = Math.min(maxEdgeDepth, coastlineDepth);
-        const startX = Math.max(0, width - actualDepth);
-
-        for (let x = startX; x < width; x++) {
-          const idx = calculateIndex(x, y, 0, width, height);
-          if (x > width - actualDepth + beachSandWidth) {
-            // Water area
-            paint(idx, x, y, waterTile);
-          } else {
-            // Beach sand area
-            paint(idx, x, y, beachTile);
-            placeSeashell(x, y);
-          }
-        }
-      }
-    }
-
-    // West edge (water from left, land right)
-    if (waterDirs.west) {
-      for (let y = 0; y < height; y++) {
-        const variance = Math.sin(y / 20 + 300) * 3 + Math.sin(y / 7 + 300) * 2;
-        const coastlineDepth = Math.max(3, Math.floor(6 + variance));
-        const actualDepth = Math.min(maxEdgeDepth, coastlineDepth);
-
-        for (let x = 0; x < actualDepth; x++) {
-          const idx = calculateIndex(x, y, 0, width, height);
-          if (x < actualDepth - beachSandWidth) {
-            // Water area
-            paint(idx, x, y, waterTile);
-          } else {
-            // Beach sand area
-            paint(idx, x, y, beachTile);
-            placeSeashell(x, y);
-          }
-        }
-      }
-    }
-
-    // Corners: blend where two water directions meet
-    const hasNorth = waterDirs.north;
-    const hasSouth = waterDirs.south;
-    const hasEast = waterDirs.east;
-    const hasWest = waterDirs.west;
-
-    // Northeast corner
-    if (hasNorth && hasEast) {
-      const cornerSize = 8;
-      for (let y = 0; y < cornerSize; y++) {
-        const variance = Math.sin(y / 8) * 2;
-        const depth = Math.max(2, Math.floor(4 + variance));
-        const limit = Math.min(cornerSize, depth);
-        for (let x = width - limit; x < width; x++) {
-          const idx = calculateIndex(x, y, 0, width, height);
-          if (y + (width - x) < 3) {
-            paint(idx, x, y, waterTile);
-          } else {
-            paint(idx, x, y, beachTile);
-            placeSeashell(x, y);
-          }
-        }
-      }
-    }
-
-    // Northwest corner
-    if (hasNorth && hasWest) {
-      const cornerSize = 8;
-      for (let y = 0; y < cornerSize; y++) {
-        const variance = Math.sin(y / 8 + 50) * 2;
-        const depth = Math.max(2, Math.floor(4 + variance));
-        for (let x = 0; x < depth; x++) {
-          const idx = calculateIndex(x, y, 0, width, height);
-          if (y + x < 3) {
-            paint(idx, x, y, waterTile);
-          } else {
-            paint(idx, x, y, beachTile);
-            placeSeashell(x, y);
-          }
-        }
-      }
-    }
-
-    // Southeast corner
-    if (hasSouth && hasEast) {
-      const cornerSize = 8;
-      for (let y = height - cornerSize; y < height; y++) {
-        const variance = Math.sin((height - y) / 8) * 2;
-        const depth = Math.max(2, Math.floor(4 + variance));
-        const limit = Math.min(cornerSize, depth);
-        for (let x = width - limit; x < width; x++) {
-          const idx = calculateIndex(x, y, 0, width, height);
-          if ((height - y) + (width - x) < 3) {
-            paint(idx, x, y, waterTile);
-          } else {
-            paint(idx, x, y, beachTile);
-            placeSeashell(x, y);
-          }
-        }
-      }
-    }
-
-    // Southwest corner
-    if (hasSouth && hasWest) {
-      const cornerSize = 8;
-      for (let y = height - cornerSize; y < height; y++) {
-        const variance = Math.sin((height - y) / 8 + 50) * 2;
-        const depth = Math.max(2, Math.floor(4 + variance));
-        for (let x = 0; x < depth; x++) {
-          const idx = calculateIndex(x, y, 0, width, height);
-          if ((height - y) + x < 3) {
-            paint(idx, x, y, waterTile);
-          } else {
-            paint(idx, x, y, beachTile);
-            placeSeashell(x, y);
-          }
-        }
-      }
-    }
+    );
   }
 
   // ===========================================================================
@@ -3078,7 +2891,7 @@
       placeSidewalksAroundRoads(mapData, width, height, roadSet, sidewalkTiles, rng, tilesToProtect, baseTile, 1);
     }
 
-    addDirectionalBeach(mapData, width, height, adjacentBiomes, allFeatures, rng);
+    addDirectionalBeach(mapData, width, height, adjacentBiomes, allFeatures, rng, allOtherData && allOtherData.worldCoords);
 
     // The green comes back over the paths and the yards, thicker every year
     // (see cityOvergrowth). Run after the paths and the beach so it can grow
@@ -4895,7 +4708,7 @@
 
 
     // --- STEP 6: beach, road poles, water regions ---------------------------
-    addDirectionalBeach(mapData, width, height, adjacentBiomes, allFeatures, rng);
+    addDirectionalBeach(mapData, width, height, adjacentBiomes, allFeatures, rng, allOtherData && allOtherData.worldCoords);
 
     placeRoadPolesAtIntersections(
       mapData, width, height, allFeatures, biome, seed,
@@ -5311,7 +5124,7 @@ function generateBurgBiome(biome, seed, allFeatures, adjacentBiomes, allOtherDat
   }
 
   // --- Step E.1: Directional Beach Generation ---
-  addDirectionalBeach(mapData, width, height, adjacentBiomes, allFeatures, rng);
+  addDirectionalBeach(mapData, width, height, adjacentBiomes, allFeatures, rng, allOtherData && allOtherData.worldCoords);
 
   // --- Step E.2: RoadPole markers at road intersection corners ---
   // Burg tracks roads in roadSet and building lots in lotOverlap (occupiedMapBurg

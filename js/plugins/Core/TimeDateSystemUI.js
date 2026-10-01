@@ -104,7 +104,27 @@
     if (!TDS || !TDS.getGameTimeMinutes || !TDS.getDateTimeFromMinutes) return "";
     const mins = TDS.getGameTimeMinutes() + Math.round(h * 60);
     const dt = TDS.getDateTimeFromMinutes(mins);
-    return dt && dt.time24 ? dt.time24 : "";
+    const clock = dt && dt.time24 ? dt.time24 : "";
+    const sky = alienSkyLabel(h);
+    return sky ? clock + " " + sky : clock;
+  }
+
+  // On another world the clock says nothing about the sky: the party's own
+  // longitude and the world's turn decide whether it is light out. So off Earth
+  // the wake time also says Day or Night there, using the same hour the screen
+  // tint and the night light read (GalaxySim.localHourFor). Empty on Earth.
+  function alienSkyLabel(h) {
+    const GS = window.GalaxySim;
+    const lp = GS && GS.getSurfacePlanet ? GS.getSurfacePlanet() : null;
+    if (!lp || !lp.day || !GS.localHourFor) return "";
+    // Same epoch the sky itself counts from (see WeatherSystem._skyHourFloat).
+    const total = ((typeof $gameVariables !== "undefined" && $gameVariables)
+      ? $gameVariables.value(114) : 0) + 600 + Math.round(h * 60);
+    const lon = GS.surfaceColumnHour ? GS.surfaceColumnHour() : null;
+    let local = GS.localHourFor(lp, total, lon);
+    if (local == null) local = (total / 60) % 24;
+    const t = sleepLabels();
+    return (local >= 6 && local < 18) ? t.alienDay : t.alienNight;
   }
 
   // Both Sleep and Wait share the same duration range: a half-hour nap up to
@@ -474,7 +494,10 @@
   // only part of the sleep meter and mends nobody's bones. On the world map
   // (315) waiting opens the camp rest instead (window.CampRest).
   Scene_Map.prototype.openWaitMenu = function () {
-    if ($gameMap && $gameMap.mapId() === 315 && window.CampRest) {
+    const WMR = window.WorldMapReturn;
+    const onWorldMap = $gameMap && ($gameMap.mapId() === 315 ||
+      !!(WMR && WMR.isGlobeMap && WMR.isGlobeMap($gameMap.mapId())));
+    if (onWorldMap && window.CampRest) {
       window.CampRest.pitch(this);
       return;
     }

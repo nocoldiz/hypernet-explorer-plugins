@@ -90,7 +90,7 @@ Em:
 È vero che i miliardari non provano l'[effetto veduta d'insieme | Overview effect] quando sono nello spazio?
 
 Bubba:
-Sì, quei bastardi ipercapitalisti possono andare a farsi benedire.
+Sì, quei bastardi ipercapitalisti possono andare a farsi hexare.
 
 ------------------------------------------------------------------------------------------------------------
 needs
@@ -242,7 +242,7 @@ Quindi la velocità che mi intrappola è anche la velocità che mi libera.
 
 Bubba:
 Adesso ragioni come una vera pilota, uagliona!
-E il mio [Motore Liminale | Liminal Engine] ci permette di fottercene di tutta la regola, basta che teniamo la lancetta sempre sopra gli 80.
+E il mio [Motore Liminale | Liminal Engine] ci permette di hexarcene di tutta la regola, basta che teniamo la lancetta sempre sopra gli 80.
 Mannaggia, ecco perché mi scoccio e mi girano i nervi quando mi chiedi di rallentare per guardare il paesaggio!
 
 ------------------------------------------------------------------------------------------------------------
@@ -533,7 +533,7 @@ E se un mortale ci mette uno spazio in mezzo?
 
 Bubba:
 L'universo la prende come una formula trascendentale e ti manda il conto!
-Nel migliore dei casi ti fotti le corde vocali. Ci sono casi peggiori, e ne ho incontrati due di persona.
+Nel migliore dei casi ti hexi le corde vocali. Ci sono casi peggiori, e ne ho incontrati due di persona.
 
 Em:
 Ed è questo il motivo per cui trasalisci ogni volta che leggo ad alta voce.
@@ -609,7 +609,7 @@ Em:
 E cosa li rende speciali?
 
 Bubba:
-Le loro merci se ne fottono del loop. Sposta un oggetto della EHI sotto gli 80 e non si resetterà.
+Le loro merci se ne hexano del loop. Sposta un oggetto della EHI sotto gli 80 e non si resetterà.
 Nessuno ha mai visto le loro fabbriche o i loro operai. La merce compare semplicemente nei magazzini quando nessuno guarda.
 
 Em:

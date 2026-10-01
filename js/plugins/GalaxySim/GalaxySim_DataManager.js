@@ -155,7 +155,7 @@
 
   // ============================================================================
   // Ship fuels (see GalaxySim_Core header).
-  //   - Variable 95 ("fuel"): the classic tank, spent only when the ship moves
+  //   - Rocket fuel (VehicleFuel 'airship', see MAP_FUEL_KEY): the tank spent only when the ship moves
   //     on the RPG world map (never touched by galaxy-scale travel now).
   //   - Hyperflux: powers galaxy-scale sublight travel between systems. Litres,
   //     capped at 92 000.
@@ -179,23 +179,25 @@
   // stellar refuel: half a minute for an empty magazine of charges.
   const SCHRODINGERITE_FULL_SECONDS = 6;
   const SCHRODINGERITE_REFUEL_RATE_PER_SEC = SCHRODINGERITE_MAX / SCHRODINGERITE_FULL_SECONDS;
-  // Variable 95 ("fuel") is the classic RPG-world-map tank (see the header
-  // note above); a Hyperflux refuel tops it up too, on the same real-time
+  // The Starship's rocket fuel: the tank the party HUD shows and the 2D world
+  // map burns, kept in VehicleSystem's per-vehicle store (window.VehicleFuel,
+  // key 'airship'). A Hyperflux refuel tops it up too, on the same real-time
   // curve as Hyperflux itself, so parking at a star fills both tanks at once
   // instead of leaving the party stranded on the world map with a full ship.
+  // Variable 95 is only the fallback where VehicleSystem is not loaded.
   const MAP_FUEL_MAX = 10000;
-  const MAP_FUEL_REFUEL_RATE_PER_SEC = MAP_FUEL_MAX / REFUEL_FULL_SECONDS;
-  // Drinking off a star cooks the hull: while the pumps run the heat soaking
-  // through the plating climbs the whole time, and the ship interior (map 721)
-  // reads that as a rising cabin temperature (see WeatherSystem's ship heat
-  // offset). Degrees Celsius added on top of whatever the interior would
-  // otherwise sit at, at a full soak.
+  const MAP_FUEL_KEY = "airship";
+  // Seconds the hull takes to close on the star it drinks from, and the same
+  // again to fall back out to its parking orbit (the star map and the ship
+  // interior both ease the same 8 seconds, see their refuel approach).
+  const REFUEL_APPROACH_SECONDS = 8;
+  // Flying in close to a star cooks the hull: the heat follows how near the
+  // ship has drawn, climbing on the way in, holding at the closest point while
+  // the pumps run and falling back to normal as it drifts out again. The ship
+  // interior (map 721) reads that as the cabin temperature (see WeatherSystem's
+  // ship heat offset). Degrees Celsius added on top of whatever the interior
+  // would otherwise sit at, at the closest point.
   const REFUEL_HEAT_MAX_C = 45;
-  // The climb is spread over one full tank, so a quick top-up leaves a warm
-  // cabin and a run from empty an uncomfortable one.
-  const REFUEL_HEAT_RISE_PER_SEC = REFUEL_HEAT_MAX_C / REFUEL_FULL_SECONDS;
-  // Radiating it back out takes noticeably longer than soaking it up.
-  const REFUEL_HEAT_COOL_PER_SEC = REFUEL_HEAT_MAX_C / 90;
   // The warp-speed slider (Variable 94) is calibrated for crossing light-years
   // between stars; applied unmodified to a hop between two planets a handful
   // of AU apart it made every intra-system trip read as instantaneous
@@ -564,6 +566,9 @@
         // Degrees Celsius of stellar heat currently soaked into the hull (see
         // tickRefuelHeat / getRefuelHeat).
         refuelHeatC: 0,
+        // 0..1, how far the hull has drawn in toward the body it drinks from
+        // (see tickRefuelHeat / getRefuelApproach).
+        refuelApproachRaw: 0,
         // Open Schrodingerite flyby, if any: { name, elapsed } (see
         // beginSchrodingeriteHarvest / tickSchrodingeriteHarvest).
         harvestRun: null,
@@ -823,7 +828,7 @@
         z: this.playerShip.departurePosition.z + dz * progress,
       };
 
-      // Galaxy-scale sublight travel burns Hyperflux (not the map-fuel var 95).
+      // Galaxy-scale sublight travel burns Hyperflux (not the rocket fuel tank).
       // Drain from the per-frame delta, not the total elapsed-since-departure
       // (the latter compounds because it is subtracted from already-decremented
       // fuel). Faster warp speeds cost quadratically more, so the slider trades
@@ -895,13 +900,27 @@
         Math.max(0, Math.min(SCHRODINGERITE_MAX, Math.floor(v || 0)));
       return this.playerShip.schrodingerite;
     }
+    // The Starship's rocket fuel (see MAP_FUEL_KEY above).
+    getMapFuelMax() {
+      const vf = (typeof window !== "undefined") && window.VehicleFuel;
+      return (vf && vf.max(MAP_FUEL_KEY)) || MAP_FUEL_MAX;
+    }
     getMapFuel() {
-      return ($gameVariables && $gameVariables.value(95)) || 0;
+      const vf = (typeof window !== "undefined") && window.VehicleFuel;
+      if (vf) return vf.get(MAP_FUEL_KEY);
+      return (typeof $gameVariables !== "undefined" && $gameVariables && $gameVariables.value(95)) || 0;
     }
     setMapFuel(v) {
-      const clamped = Math.max(0, Math.min(MAP_FUEL_MAX, v || 0));
-      if ($gameVariables) $gameVariables.setValue(95, clamped);
+      const clamped = Math.max(0, Math.min(this.getMapFuelMax(), v || 0));
+      const vf = (typeof window !== "undefined") && window.VehicleFuel;
+      if (vf) vf.set(MAP_FUEL_KEY, clamped);
+      else if (typeof $gameVariables !== "undefined" && $gameVariables) $gameVariables.setValue(95, clamped);
       return clamped;
+    }
+    // Litres of rocket fuel a running pump adds per second: one full tank over
+    // REFUEL_FULL_SECONDS, whatever size the tank has been upgraded to.
+    mapFuelRefuelRate() {
+      return this.getMapFuelMax() / REFUEL_FULL_SECONDS;
     }
 
     // Instantly relocate the ship to a target system (SB-Bridge warp). Consumes
@@ -994,7 +1013,7 @@
         return this.getSchrodingerite() < SCHRODINGERITE_MAX;
       }
       if (ship.parkedBody.kind !== "star") return false;
-      if (this.getHyperflux() >= HYPERFLUX_MAX && this.getMapFuel() >= MAP_FUEL_MAX) return false;
+      if (this.getHyperflux() >= HYPERFLUX_MAX && this.getMapFuel() >= this.getMapFuelMax()) return false;
       // parkedBody.system is set when parked at a companion/donor star of an
       // N-ary system; older saves (and primary parks) fall back to the name.
       const rec = this.getStarInSystem(
@@ -1035,26 +1054,39 @@
         return;
       }
       this.setHyperflux(this.getHyperflux() + REFUEL_RATE_PER_SEC * dt);
-      this.setMapFuel(this.getMapFuel() + MAP_FUEL_REFUEL_RATE_PER_SEC * dt);
-      if (this.getHyperflux() >= HYPERFLUX_MAX && this.getMapFuel() >= MAP_FUEL_MAX) {
+      this.setMapFuel(this.getMapFuel() + this.mapFuelRefuelRate() * dt);
+      if (this.getHyperflux() >= HYPERFLUX_MAX && this.getMapFuel() >= this.getMapFuelMax()) {
         ship.isRefueling = false;
       }
     }
 
-    // Advances the hull heat: rising the whole time the pumps run, bleeding
-    // away the rest of the time. Driven every frame by both the star map scene
-    // and the ship interior's backdrop, so the cabin keeps warming (and then
-    // cooling) with the star map closed. Returns the heat in degrees Celsius.
+    // Advances how far the hull has drawn in toward the body it drinks from
+    // (0 parked, 1 at the closest point) and the heat that follows it: the
+    // cabin warms on the way in to a star and cools back to normal on the way
+    // out, never the other way round. Driven every frame by both the star map
+    // scene and the ship interior's backdrop, so it carries on with the star
+    // map closed. Returns the heat in degrees Celsius.
     tickRefuelHeat(deltaSeconds) {
       const ship = this.playerShip;
       if (!ship) return 0;
       const dt = Math.max(0, deltaSeconds || 0);
-      const cur = ship.refuelHeatC || 0;
-      const next = ship.isRefueling
-        ? Math.min(REFUEL_HEAT_MAX_C, cur + REFUEL_HEAT_RISE_PER_SEC * dt)
-        : Math.max(0, cur - REFUEL_HEAT_COOL_PER_SEC * dt);
-      ship.refuelHeatC = next;
-      return next;
+      const drawing = !ship.isMoving && (ship.isRefueling || !!ship.harvestRun);
+      const step = dt / REFUEL_APPROACH_SECONDS;
+      const cur = ship.refuelApproachRaw || 0;
+      const raw = drawing ? Math.min(1, cur + step) : Math.max(0, cur - step);
+      ship.refuelApproachRaw = raw;
+      // Only a star is hot; a black hole is drawn close to just as well.
+      const nearStar = !!(ship.parkedBody && ship.parkedBody.kind === "star");
+      ship.refuelHeatC = nearStar ? REFUEL_HEAT_MAX_C * this.getRefuelApproach() : 0;
+      return ship.refuelHeatC;
+    }
+
+    // The approach eased with a smoothstep, so neither end of the move is
+    // abrupt. The one value the star map and the ship's window both fly by.
+    getRefuelApproach() {
+      const ship = this.playerShip;
+      const raw = (ship && ship.refuelApproachRaw) || 0;
+      return raw * raw * (3 - 2 * raw);
     }
 
     // How much hotter than normal the interior is running right now, in degrees
@@ -1077,7 +1109,7 @@
         return Math.max(0, Math.ceil(missing / SCHRODINGERITE_REFUEL_RATE_PER_SEC));
       }
       const flux = Math.max(0, HYPERFLUX_MAX - this.getHyperflux()) / REFUEL_RATE_PER_SEC;
-      const map = Math.max(0, MAP_FUEL_MAX - this.getMapFuel()) / MAP_FUEL_REFUEL_RATE_PER_SEC;
+      const map = Math.max(0, this.getMapFuelMax() - this.getMapFuel()) / this.mapFuelRefuelRate();
       return Math.max(0, Math.ceil(Math.max(flux, map)));
     }
 
@@ -1205,7 +1237,7 @@
           systemName: ship.currentSystem || null,
         };
       }
-      if (this.getHyperflux() >= HYPERFLUX_MAX && this.getMapFuel() >= MAP_FUEL_MAX) {
+      if (this.getHyperflux() >= HYPERFLUX_MAX && this.getMapFuel() >= this.getMapFuelMax()) {
         return { ...none, status: "full" };
       }
 
@@ -2739,8 +2771,10 @@
   StarMapDataManager.SCHRODINGERITE_FULL_SECONDS = SCHRODINGERITE_FULL_SECONDS;
   StarMapDataManager.SCHRODINGERITE_HARVEST_SECONDS = SCHRODINGERITE_HARVEST_SECONDS;
   StarMapDataManager.SCHRODINGERITE_HARVEST_AMOUNT = SCHRODINGERITE_HARVEST_AMOUNT;
-  // The cabin heat a full soak adds, exposed for the same reason.
+  // The cabin heat at the closest point, exposed for the same reason.
   StarMapDataManager.REFUEL_HEAT_MAX_C = REFUEL_HEAT_MAX_C;
+  StarMapDataManager.REFUEL_APPROACH_SECONDS = REFUEL_APPROACH_SECONDS;
+  StarMapDataManager.MAP_FUEL_MAX = MAP_FUEL_MAX;
   window.GalaxySim.NameGenerators = {
     generateProceduralGalaxyName,
     generateProceduralSuperclusterName,

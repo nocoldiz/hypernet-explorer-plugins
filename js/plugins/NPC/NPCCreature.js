@@ -632,6 +632,8 @@
     "Village", "VillageIce", "VillageMountain", "VillageDesert",
     "VillageRiver", "VillageSea",
     "Houses", "HousesInside", "Villa",
+    "Hospital", "Clinic", "Farmhouse", "GroceryStore", "HardwareStore",
+    "Store", "Restaurant", "Tavern",
   ]);
 
   // Is the party standing in a town? A procedural square answers with its own

@@ -1406,12 +1406,16 @@
     // Shops the party owns trade whether or not an event says so: without this
     // a bought shop only ever moved stock when a plugin command happened to
     // call refreshEconomy. The accrual itself is game-time based (see
-    // Shop.refreshEconomy), so this only decides how often it is checked.
-    if (Graphics.frameCount % producingInterval === 0) {
+    // Shop.refreshEconomy), so this only decides how often it is checked:
+    // once a game hour, the hours since the last check accrued in one go.
+    const economyHour = Math.floor(($gameVariables ? $gameVariables.value(114) : 0) / 60);
+    if (economyHour !== _lastEconomyHour) {
+      _lastEconomyHour = economyHour;
       refreshEconomy();
       checkShopDay();
     }
   };
+  let _lastEconomyHour = null;
 
   // -------------------------------------------------------------------------
   // Filling the shelves

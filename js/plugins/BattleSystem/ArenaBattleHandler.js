@@ -460,6 +460,41 @@
     BattleManager.setBossRushMode = function (v) { _bossRushMode = v; };
     BattleManager.isBossRushMode = function () { return _bossRushMode; };
 
+    // Any of the four arena sessions: a single bout, a gauntlet, a biome trial
+    // or a boss rush.
+    ArenaBattleHandler.isArenaSession = function () {
+        return _arenaMode || _gauntletMode || _biomeTrialMode || _bossRushMode;
+    };
+
+    //=========================================================================
+    // No experience in the arena
+    //=========================================================================
+    // The arena pays in euros and KP only. A rescaled run is wound back to its
+    // snapshot afterwards, so any exp earned inside it was thrown away while
+    // the popup still announced it: now none is earned and none is shown.
+    const _BattleManager_makeRewards_arena = BattleManager.makeRewards;
+    BattleManager.makeRewards = function () {
+        _BattleManager_makeRewards_arena.call(this);
+        if (!ArenaBattleHandler.isArenaSession()) return;
+        if (this._rewards) this._rewards.exp = 0;
+        const BSE = window.BattleSystemEnhanced;
+        if (BSE && BSE.State && BSE.State.battleRewards) BSE.State.battleRewards.exp = 0;
+    };
+
+    // Knowledge for a gauntlet, trial or rush bout, which skip the engine's
+    // processVictory and so the KP it pays. Held for the next streak toast.
+    let _pendingKnowledge = 0;
+    ArenaBattleHandler.payBoutKnowledge = function () {
+        const BSE = window.BattleSystemEnhanced;
+        const pay = BSE && BSE.Functions && BSE.Functions.payVictoryKnowledge;
+        if (typeof pay !== 'function') return 0;
+        const kp = pay() || 0;
+        // The streak toast announces it, so the map popup must not again.
+        if (BSE.State && BSE.State.battleRewards) BSE.State.battleRewards.knowledge = 0;
+        _pendingKnowledge += kp;
+        return kp;
+    };
+
     //=========================================================================
     // Ascending streak rewards (money + items)
     //=========================================================================
@@ -609,12 +644,15 @@
         if (!window.ParchmentToast) return;
         try {
             const toasts = [];
-            if (reward) {
+            const knowledge = _pendingKnowledge;
+            _pendingKnowledge = 0;
+            if (reward || knowledge > 0) {
                 const streakLabel = T('Arena.streak');
                 toasts.push(() => window.ParchmentToast.reward({
                     title: `${streakLabel} x${streak}`,
-                    gold: reward.gold,
-                    entries: reward.entries,
+                    gold: reward ? reward.gold : 0,
+                    knowledge: knowledge,
+                    entries: reward ? reward.entries : [],
                     duration: 150
                 }));
             }
@@ -635,6 +673,7 @@
             this.replayBgmAndBgs();
             this.makeRewards();
             this.gainRewards();
+            ArenaBattleHandler.payBoutKnowledge();
             this.endBattle(0);
             ArenaBattleHandler.processBiomeTrialVictory();
             return;
@@ -644,6 +683,7 @@
             this.replayBgmAndBgs();
             this.makeRewards();
             this.gainRewards();
+            ArenaBattleHandler.payBoutKnowledge();
             this.endBattle(0);
             ArenaBattleHandler.processBossRushVictory();
             return;
@@ -653,6 +693,7 @@
             this.replayBgmAndBgs();
             this.makeRewards();
             this.gainRewards();
+            ArenaBattleHandler.payBoutKnowledge();
             this.endBattle(0);
             ArenaBattleHandler.processGauntletVictory();
         } else {

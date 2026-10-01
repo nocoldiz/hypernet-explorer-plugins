@@ -27,7 +27,8 @@
   "hint": {
     "sheet": "Click a square to pick it. Right-click to put the chart away.",
     "travel": "Click to set off for {place}.",
-    "needVehicle": "You need to be aboard a vehicle to set off from the chart."
+    "needVehicle": "You need to be aboard a vehicle to set off from the chart.",
+    "world": "Click Europe to look closer. Right-click to put the chart away."
   },
   "note": {
     "title": "{place}",
@@ -44,5 +45,15 @@
     "notKept": "Drawn for this look only, and kept nowhere.",
     "close": "Close",
     "unbuildable": "There is no ground to lay out on that square."
+  },
+  "view": {
+    "title": "View",
+    "europe": "Europe",
+    "world": "World",
+    "key": "Tab or X: switch view"
+  },
+  "coords": {
+    "title": "Coordinates",
+    "value": "{x}, {y}"
   }
 }

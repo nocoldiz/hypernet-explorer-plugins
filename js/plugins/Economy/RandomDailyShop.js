@@ -571,7 +571,7 @@
     pharmacy: {
       get label() { return T('DailyShop.shopType.pharmacy'); },
       ids: [4, 5, 9, 12, 13, 16, 17, 25, 737, 740, 741, 742, 746, 1444, 1445, 1450, 1453, 1466, 1468,
-            1469, 1470, 1462],
+            1469, 1470, 1462, 2068, 2069],   // ...the growing vat and the gene splicer
       // Never out of the things a pharmacy is for: a kit, an antibiotic
       // course, rehydration salts, a multivitamin and the surgical tools,
       // on top of the three over-the-counter staples.
@@ -701,7 +701,7 @@
       get label() { return T('DailyShop.shopType.hardware'); },
       ids: [138, 156, 814, 811, 813, 132, 119, 807, 118, 121, 115, 870, 859,
             863, 867, 855, 856, 146, 406, 151, 374, 739, 861, 868, 805, 804,
-            2066],
+            2066, 2068],   // ...the growing vat, a tank before it is medicine
       fixed: [374, 814, 138, 136],   // lockpick, multi-tool, shovel, flashlight
       categories: ["tools", "component"],
     },
@@ -928,7 +928,7 @@
     fertilityClinic: {
       get label() { return T('DailyShop.shopType.fertilityClinic'); },
       ids: [716, 717, 729, 730, 738, 737, 740, 741, 742, 743, 744, 745, 746, 32, 733, 734, 887, 962, 958, 1, 884,
-            19, 59, 949],
+            19, 59, 949, 2068, 2069],
       fixed: [729, 737],        // human sample, gestation accelerator
       categories: ["fertility", "medical", "bodypart"],
     },
@@ -941,7 +941,7 @@
     },
     doctor: {
       get label() { return T('DailyShop.shopType.doctor'); },
-      ids: [1, 3, 19, 25, 244, 729, 737, 740, 741, 742, 746, 1443, 1446, 1464, 1465],
+      ids: [1, 3, 19, 25, 244, 729, 737, 740, 741, 742, 746, 1443, 1446, 1464, 1465, 2068, 2069],
       fixed: [1, 740, 1443],    // hand sanitizer, pregnancy test, first aid kit
       categories: ["medical", "fertility"],
       shelf: [10, 20],

@@ -3662,20 +3662,12 @@
       if (window.SoundManager) SoundManager.playOk();
     }
 
-    // Seconds the hull takes to close on the body it is drawing from, and the
-    // same again to fall back out to its parking orbit once the pumps stop.
-    // Eased with a smoothstep so neither end of the move is abrupt.
-    _updateRefuelApproach(delta) {
+    // How close the hull has drawn to the body it is drawing from. The
+    // DataManager advances it (tickRefuelHeat) so the cabin heat and the
+    // manoeuvre on screen are one and the same curve.
+    _updateRefuelApproach() {
       const dm = this.dataManager;
-      const ship = dm && dm.playerShip;
-      const drawing = !!(ship && !ship.isMoving && (ship.isRefueling ||
-        (dm.isHarvestingSchrodingerite && dm.isHarvestingSchrodingerite())));
-      const APPROACH_SECONDS = 8;
-      const step = Math.max(0, delta || 0) / APPROACH_SECONDS;
-      let raw = this._refuelApproachRaw || 0;
-      raw = drawing ? Math.min(1, raw + step) : Math.max(0, raw - step);
-      this._refuelApproachRaw = raw;
-      this._refuelApproach = raw * raw * (3 - 2 * raw);
+      this._refuelApproach = (dm && dm.getRefuelApproach) ? dm.getRefuelApproach() : 0;
     }
 
     /** The star the galaxy-scale zoom-in should drop into, if any. */
@@ -4035,9 +4027,10 @@
       // Slowly tops up Hyperflux while parked at a main-sequence star with
       // Refuel engaged; a no-op the rest of the time (see canRefuel).
       if (dm.tickRefuel) dm.tickRefuel(delta);
-      // The hull soaks up the star's heat for as long as the pumps run and
-      // sheds it afterwards; the ship interior reads it as a hot cabin.
-      if (dm.tickRefuelHeat) dm.tickRefuelHeat(delta);
+      // The hull heats up as it closes on the star and cools as it pulls back
+      // out; the ship interior reads it as a hot cabin.
+      if (dm.tickRefuelHeat && GS.nudgeCabinHeat) GS.nudgeCabinHeat(dm.tickRefuelHeat(delta));
+      else if (dm.tickRefuelHeat) dm.tickRefuelHeat(delta);
       // An open Schrodingerite flyby runs on the same clock; completing it
       // (or breaking it off) changes what the panel may offer.
       if (dm.tickSchrodingeriteHarvest && dm.tickSchrodingeriteHarvest(delta)) {
@@ -4050,7 +4043,7 @@
       // How far the hull has drawn in toward the body it is drinking from:
       // eased 0..1, so the approach and the drift back out both read as a
       // manoeuvre rather than a snap (see the system view's updateShip).
-      this._updateRefuelApproach(delta);
+      this._updateRefuelApproach();
 
       if (this._systemView) {
         // The system-scale ship is only ever drawn in the star system the ship
@@ -4207,8 +4200,8 @@
           hyperfluxMax: (D && D.HYPERFLUX_MAX) || 92000,
           schrodingerite: dm.getSchrodingerite ? dm.getSchrodingerite() : null,
           schrodingeriteMax: (D && D.SCHRODINGERITE_MAX) || 92,
-          mapFuel: $gameVariables.value(95) || 0,
-          mapFuelMax: 10000,
+          mapFuel: dm.getMapFuel ? dm.getMapFuel() : 0,
+          mapFuelMax: dm.getMapFuelMax ? dm.getMapFuelMax() : ((D && D.MAP_FUEL_MAX) || 10000),
         });
       }
       if (this._overlayUI.setRefuel) {

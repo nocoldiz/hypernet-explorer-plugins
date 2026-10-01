@@ -450,7 +450,7 @@
 
     // How many officers this map fields at this heat.
     countFor(mapId, heat) {
-      if (Config.isNPCFreeMap(mapId) || mapId === 636) return 0;
+      if (Config.isNPCFreeMap(mapId) || Config.isPartyOnlyMap(mapId) || mapId === 636) return 0;
       const meta = NPCPoolStore.mapMeta(mapId);
       if (!meta) return 0;
       const base = meta.officers || 0;

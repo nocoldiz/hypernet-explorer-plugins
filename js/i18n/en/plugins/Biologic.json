@@ -1,4 +1,18 @@
 {
+  "lab": {
+    "noRoom": "There is no free place in the party to grow a new life on. Make room first.",
+    "noCarrier": "Nobody in the party can carry a spliced embryo.",
+    "cannotCarry": "{actor} has no organ that can carry an embryo.",
+    "alreadyCarrying": "{actor} is already carrying.",
+    "augmentBlocks": "An implant stops {actor} from carrying.",
+    "chooseCarrier": "Who will carry the embryo?",
+    "cancel": "Cancel",
+    "spliced": "The splice takes. {actor} is carrying {name}, due in {days} days.",
+    "vatStarted": "{name} is growing in the vat. Ready in {days} days.",
+    "born": "{name} has been born. Find them among your followers.",
+    "lost": "The embryo of {name} has been lost.",
+    "vatParent": "Growing vat"
+  },
   "toast": {
     "fetusStage": "{actor}: {stage}, week {week}",
     "birth": "{actor} has given birth",

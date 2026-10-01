@@ -7366,5 +7366,13 @@
   "2067": {
     "name": "Surfboard",
     "description": "A {waxed | fibreglass} board.\n{Ride the swell | Catch a break} on any water."
+  },
+  "2068": {
+    "name": "Portable Growing Vat",
+    "description": "A sealed incubation tank that grows a creature\nof your design on an accelerated term."
+  },
+  "2069": {
+    "name": "Portable Gene Splicer",
+    "description": "A gene splicer that implants a humanoid embryo\nof your design in a party member."
   }
 }

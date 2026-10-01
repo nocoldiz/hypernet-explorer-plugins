@@ -411,8 +411,21 @@
         'floor.changed':        6,
         'rest.sleep':           6,
         'travel.refuel':        4,
-        'rest.wait':            2
+        'rest.wait':            2,
+
+        // Rare enough to tell, though its category weighs little
+        'rest.cryo':           40
     };
+
+    // The diary keeps what is worth telling, not the daily traffic: a kind that
+    // weighs less than this (a map walked into, a floor changed, a battle won
+    // against the usual foes, a purchase) is not written at all. A boss, a
+    // death, a wedding still are, and the player's own lines always.
+    const MIN_WRITTEN_WEIGHT = 15;
+    // Those lines are still kept for a while in memory, never saved nor shown
+    // in the book, so the companions can talk about the fight just won or the
+    // place just walked into (PartyBanter reads recentEntries).
+    const ROUTINE_RING = 24;
 
     const CAT_WEIGHT = {
         [CAT.WRITTEN]:   90,
@@ -573,8 +586,33 @@
         }
     }
 
+    // Every write to disk takes a number. A background write lands in a side
+    // file and is moved over the diary only if nothing newer was written while
+    // it was on its way (a save writes at once and must not be undone by it).
+    let _diaryWriteSeq = 0;
+
+    // The same file written without blocking, for the debounced flush.
+    function writeDiaryFileAsync(world, id, data, done) {
+        const dir = diaryDirFor(world);
+        if (!ensureDir(dir)) { done(false); return; }
+        let text;
+        try { text = JSON.stringify(data); } catch (e) { done(false); return; }
+        const seq = ++_diaryWriteSeq;
+        const file = path.join(dir, id + ".json");
+        const side = file + ".tmp";
+        fs.writeFile(side, text, "utf8", (err) => {
+            if (err) { console.error("[Diary] could not write the diary", err); done(false); return; }
+            if (seq !== _diaryWriteSeq) { fs.unlink(side, () => {}); done(true); return; }
+            fs.rename(side, file, (err2) => {
+                if (err2) console.error("[Diary] could not write the diary", err2);
+                done(!err2);
+            });
+        });
+    }
+
     function writeDiaryFile(world, id, data) {
         if (isNwjs) {
+            _diaryWriteSeq++;
             const dir = diaryDirFor(world);
             if (!ensureDir(dir)) return false;
             try {
@@ -662,6 +700,16 @@
                 if (typeof $gameSystem !== 'undefined' && $gameSystem) $gameSystem._diaryEntries = this._entries;
             }
             return this._entries;
+        },
+
+        // The latest lines, the written ones and the routine ones kept in
+        // memory alike, oldest first: what just happened, for whoever wants to
+        // react to it. The book reads entries(), which has only the former.
+        recentEntries() {
+            const written = this.entries().slice(-ROUTINE_RING);
+            const ring = this._routine || [];
+            if (!ring.length) return written;
+            return written.concat(ring).sort((a, b) => (Number(a.t) || 0) - (Number(b.t) || 0));
         },
 
         categories() { return CATEGORIES.slice(); },
@@ -821,6 +869,7 @@
         record(kind, entryParams, opts) {
             try {
                 if (this._suspend > 0 || !this.isActive()) return null;
+                const routine = kind !== 'note' && baseWeight(kind) < MIN_WRITTEN_WEIGHT;
                 opts = opts || {};
                 const at = (opts.at != null) ? Number(opts.at) : worldMinutes();
                 const p = Object.assign({}, entryParams || {});
@@ -836,6 +885,13 @@
                 const where = (opts.place !== undefined) ? opts.place : placeNow();
                 if (where) entry.w = where;
                 if (opts.who) entry.a = String(opts.who);
+
+                if (routine) {
+                    const ring = (this._routine ||= []);
+                    ring.push(entry);
+                    if (ring.length > ROUTINE_RING) ring.shift();
+                    return entry;
+                }
 
                 const list = this.entries();
                 list.push(entry);
@@ -868,7 +924,7 @@
             // shortly after the ink is dry rather than at the next save.
             this._flushTimer = setTimeout(() => {
                 this._flushTimer = null;
-                this.flush();
+                this.flush(true);
             }, 4000);
         },
 
@@ -899,7 +955,10 @@
             };
         },
 
-        flush() {
+        // `background` is the debounced write after new ink: it goes to disk
+        // off the main thread, so walking on never waits for the file. A save
+        // and the player's own line still write at once.
+        flush(background) {
             try {
                 if (!this._dirty) return;
                 const world = worldName();
@@ -907,6 +966,18 @@
                 if (!world || !id) return;   // sandbox play: kept in the session only
                 const data = this.header();
                 data.entries = this.entries();
+                if (background && isNwjs) {
+                    // One write at a time to the same file; ink that dries
+                    // meanwhile is written by the next one.
+                    if (this._writing) { this.markDirty(); return; }
+                    this._writing = true;
+                    this._dirty = false;
+                    writeDiaryFileAsync(world, id, data, (ok) => {
+                        this._writing = false;
+                        if (!ok) this.markDirty();
+                    });
+                    return;
+                }
                 if (writeDiaryFile(world, id, data)) this._dirty = false;
             } catch (e) {
                 console.error("[Diary] flush failed", e);

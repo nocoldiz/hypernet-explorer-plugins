@@ -86,11 +86,15 @@
     "battleBgm": "KevinMacLeod/Horror/Anxiety",
     "bgsNight": [
       "creepy-dungeon-ambience",
-      "eerie-atmos-4"
+      "eerie-atmos-4",
+      "mystic-wind-howling",
+      "abandoned-building-ext"
     ],
     "bgs": [
       "creepy-dungeon-ambience",
-      "eerie-atmos-3"
+      "eerie-atmos-3",
+      "abandoned-building-ext",
+      "teufelsberg-wind"
     ],
     "dayTemperature": 15,
     "nightTemperature": 10,
@@ -205,12 +209,14 @@
     "bgsNight": [
       "room-empty",
       "room-low",
-      "hallway"
+      "hallway",
+      "creaky-echoey"
     ],
     "bgs": [
       "room-ambience",
       "room-ambience2",
-      "room-empty"
+      "room-empty",
+      "creaky-echoey"
     ],
     "dayTemperature": 12,
     "nightTemperature": 8,
@@ -345,11 +351,17 @@
     "battleBgm": "KevinMacLeod/Techno/Brain Dance",
     "bgsNight": [
       "glitch-sounds",
-      "cyber-city-loop"
+      "cyber-city-loop",
+      "static-noise",
+      "emf-noise",
+      "apo-ambient"
     ],
     "bgs": [
       "glitch-sounds",
-      "cyber-city-loop"
+      "cyber-city-loop",
+      "static-noise",
+      "emf-noise",
+      "apo-ambient"
     ],
     "dayTemperature": 18,
     "nightTemperature": 14,
@@ -497,12 +509,14 @@
     "bgsNight": [
       "space-wind-long",
       "eerie-atmos-4",
-      "eerie-atmos-1"
+      "alien-planet-surface",
+      "alien-world"
     ],
     "bgs": [
       "space-wind-long",
       "eerie-atmos-3",
-      "park-wind-long"
+      "alien-planet-wind",
+      "alien-hostile-planet"
     ],
     "dayTemperature": 22,
     "nightTemperature": 16,
@@ -665,9 +679,8 @@
       "night-ambience3"
     ],
     "bgs": [
-      "People2",
-      "gym-ambience",
-      "funfair-ambience"
+      "funfair-ambience",
+      "crowd-stadium"
     ],
     "dayTemperature": 20,
     "nightTemperature": 15,
@@ -800,10 +813,15 @@
     "bgsNight": [
       "winchester-wind-ambience",
       "desert-ambience",
-      "night-crickets"
+      "night-crickets",
+      "desert-dark-sahara",
+      "distant-thunder"
     ],
     "bgs": [
-      "wind-in-the-desert-countryside"
+      "wind-in-the-desert-countryside",
+      "canyon-wind",
+      "desert-semi-insects",
+      "dust-storm"
     ],
     "dayTemperature": 32,
     "nightTemperature": 20,
@@ -955,11 +973,14 @@
     "bgsNight": [
       "crickets5",
       "night-crickets",
-      "bamboo-creaking-in-wind"
+      "bamboo-creaking-in-wind",
+      "japan-night-fields"
     ],
     "bgs": [
       "bamboo-creaking-in-wind",
-      "birdsong-ambient"
+      "birdsong-ambient",
+      "bamboo-forest",
+      "bamboo-forest-road"
     ],
     "dayTemperature": 25,
     "nightTemperature": 18,
@@ -1115,12 +1136,15 @@
     "bgsNight": [
       "gentle-waves-quiet-beach",
       "ocean-night",
-      "ocean-night2"
+      "ocean-night2",
+      "waves-shore"
     ],
     "bgs": [
       "gentle-waves-quiet-beach",
       "ocean-waves",
-      "waves-and-seagulls"
+      "waves-and-seagulls",
+      "beach-waves",
+      "waves-shore"
     ],
     "dayTemperature": 28,
     "nightTemperature": 22,
@@ -1276,10 +1300,14 @@
     "bgsNight": [
       "winchester-wind-ambience",
       "mountain-wind",
-      "night-ambience"
+      "night-ambience",
+      "canyon-wind"
     ],
     "bgs": [
-      "mountain-wind"
+      "mountain-wind",
+      "canyon-calm",
+      "canyon-wind",
+      "cave-mouth-wind"
     ],
     "dayTemperature": 30,
     "nightTemperature": 18,
@@ -1441,12 +1469,14 @@
     "bgsNight": [
       "night-ambience",
       "night-ambience2",
-      "night-tone"
+      "night-tone",
+      "castle-night"
     ],
     "bgs": [
       "winchester-wind-ambience",
       "mountain-wind",
-      "old-wood-creaking-building"
+      "old-wood-creaking-building",
+      "mystic-wind-howling"
     ],
     "dayTemperature": 18,
     "nightTemperature": 12,
@@ -1560,12 +1590,14 @@
     "bgsNight": [
       "room-big",
       "hallway",
-      "night-tone"
+      "night-tone",
+      "castle-night"
     ],
     "bgs": [
       "room-ambience",
       "room-big",
-      "hallwat-ambience"
+      "hallwat-ambience",
+      "cathedral-gap"
     ],
     "dayTemperature": 15,
     "nightTemperature": 10,
@@ -1678,12 +1710,15 @@
     "bgsNight": [
       "ce-cavern-looped",
       "cave-deep",
-      "cave-wind"
+      "cave-wind",
+      "cave-loop-stereo",
+      "cave-water"
     ],
     "bgs": [
       "ce-cavern-looped",
       "cave",
-      "cave-dripping"
+      "cave-dripping",
+      "cave-loop-stereo"
     ],
     "dayTemperature": 12,
     "nightTemperature": 10,
@@ -1784,11 +1819,15 @@
     "battleBgm": "KevinMacLeod/Horror/The Descent",
     "bgsNight": [
       "water-dripping-in-cave",
-      "basement-dripping"
+      "basement-dripping",
+      "cave-water",
+      "tunnel-water"
     ],
     "bgs": [
       "water-dripping-in-cave",
-      "basement-dripping"
+      "basement-dripping",
+      "cave-water",
+      "tunnel-water"
     ],
     "dayTemperature": 10,
     "nightTemperature": 8,
@@ -1878,12 +1917,14 @@
     "bgsNight": [
       "wind-blizzard",
       "wind-blizzard2",
-      "wind-arctic"
+      "wind-arctic",
+      "ice-cracks"
     ],
     "bgs": [
       "cold-wind-loop",
       "wind-icelake",
-      "cave-wind"
+      "cave-wind",
+      "ice-slow-crack"
     ],
     "dayTemperature": -5,
     "nightTemperature": -10,
@@ -1986,7 +2027,8 @@
     "bgs": [
       "church-room-tone",
       "room-big",
-      "room-ambience2"
+      "room-ambience2",
+      "cathedral-gap"
     ],
     "dayTemperature": 14,
     "nightTemperature": 10,
@@ -2180,14 +2222,17 @@
       "city-night4",
       "city-night5",
       "city-night6",
-      "city-night7"
+      "city-night7",
+      "city-night-la",
+      "city-night-amsterdam"
     ],
     "bgs": [
       "city-ambience",
       "city-ambience2",
       "city-soundscape",
       "city-soundscape2",
-      "desert"
+      "desert",
+      "city-busy"
     ],
     "interiorBgs": [],
     "dayTemperature": 22,
@@ -2347,7 +2392,8 @@
     "bgsNight": [
       "city-night",
       "city-night2",
-      "desert-ambience"
+      "desert-ambience",
+      "city-night-la"
     ],
     "bgs": [
       "city-ambience",
@@ -2514,12 +2560,14 @@
     "bgsNight": [
       "city-night",
       "city-night2",
-      "cold-wind-loop"
+      "cold-wind-loop",
+      "city-night-amsterdam"
     ],
     "bgs": [
       "city-ambience2",
       "city-soundscape",
-      "wind-soft"
+      "wind-soft",
+      "city-busy"
     ],
     "interiorBgs": [],
     "dayTemperature": 22,
@@ -2685,10 +2733,10 @@
       "village-night"
     ],
     "bgs": [
-      "People2",
       "city-soundscape",
       "village-at-morning",
-      "funfair-ambience"
+      "funfair-ambience",
+      "medieval-village"
     ],
     "interiorBgs": [],
     "dayTemperature": 22,
@@ -2843,12 +2891,13 @@
     "bgsNight": [
       "desert-ambience",
       "desert-monolit",
-      "village-night"
+      "village-night",
+      "desert-dark-sahara"
     ],
     "bgs": [
-      "People2",
       "desert-ambient-loop",
-      "village-at-morning"
+      "village-at-morning",
+      "village-africa"
     ],
     "interiorBgs": [],
     "dayTemperature": 22,
@@ -2993,12 +3042,13 @@
     "bgsNight": [
       "cold-wind-loop",
       "wind-soft",
-      "village-night2"
+      "village-night2",
+      "howling-wind"
     ],
     "bgs": [
-      "People2",
       "wind-soft2",
-      "village-at-morning"
+      "village-at-morning",
+      "medieval-village"
     ],
     "interiorBgs": [],
     "dayTemperature": 22,
@@ -3077,11 +3127,13 @@
     "battleBgm": "KevinMacLeod/Horror/Ghost Story",
     "bgsNight": [
       "creepy-dungeon-ambience",
-      "eerie-atmos-2"
+      "eerie-atmos-2",
+      "chains-echo-hall"
     ],
     "bgs": [
       "creepy-dungeon-ambience",
-      "eerie-atmos-1"
+      "eerie-atmos-1",
+      "dungeon-dark"
     ],
     "dayTemperature": 8,
     "nightTemperature": 6,
@@ -3217,12 +3269,14 @@
     "bgsNight": [
       "ce-cavern-looped",
       "cave-deep",
-      "cave-temple2"
+      "cave-temple2",
+      "crystal-chime"
     ],
     "bgs": [
       "ce-cracking",
       "cave",
-      "cave-temple"
+      "cave-temple",
+      "crystal-ambience"
     ],
     "dayTemperature": 16,
     "nightTemperature": 12,
@@ -3377,11 +3431,16 @@
     "battleBgm": "KevinMacLeod/Mysterious/Curse of the Scarab",
     "bgsNight": [
       "desert-ambience",
-      "desert-monolit"
+      "desert-monolit",
+      "desert-dark-sahara",
+      "desert-dunes"
     ],
     "bgs": [
       "desert-ambient-loop",
-      "desert2"
+      "desert2",
+      "desert-dunes",
+      "desert-open-wind",
+      "desert-quiet"
     ],
     "dayTemperature": 35,
     "nightTemperature": 15,
@@ -3573,12 +3632,15 @@
     "bgsNight": [
       "desert-ambience",
       "desert-monolit",
-      "mountain-wind"
+      "mountain-wind",
+      "canyon-wind"
     ],
     "bgs": [
       "desert-simple",
       "desert2",
-      "mountain-ambience"
+      "mountain-ambience",
+      "canyon-calm",
+      "desert-open-wind"
     ],
     "dayTemperature": 28,
     "nightTemperature": 12,
@@ -3711,11 +3773,17 @@
     "battleBgm": "KevinMacLeod/Techno/Space Fighter Loop",
     "bgsNight": [
       "glitch-sounds",
-      "cyber-city-loop"
+      "cyber-city-loop",
+      "server-room",
+      "static-noise",
+      "emf-noise"
     ],
     "bgs": [
       "glitch-sounds",
-      "cyber-city-loop"
+      "cyber-city-loop",
+      "server-room",
+      "static-noise",
+      "emf-noise"
     ],
     "dayTemperature": 20,
     "nightTemperature": 18,
@@ -3848,12 +3916,15 @@
     "bgsNight": [
       "ocean-night",
       "ocean-night2",
-      "gentle-waves-quiet-beach"
+      "gentle-waves-quiet-beach",
+      "harbor-night",
+      "harbor-night2"
     ],
     "bgs": [
       "waves-and-seagulls",
       "ocean-waves",
-      "lake-waves"
+      "lake-waves",
+      "harbor-day"
     ],
     "dayTemperature": 16,
     "nightTemperature": 12,
@@ -4011,10 +4082,18 @@
     "lowerLayer": "Cave",
     "battleBgm": "KevinMacLeod/Techno/Static Motion",
     "bgsNight": [
-      "dream2"
+      "dream2",
+      "dream-ambient",
+      "drone-dream",
+      "soft-tonal-wind",
+      "apo-ambient"
     ],
     "bgs": [
-      "dream2"
+      "dream2",
+      "dream-ambient",
+      "drone-dream",
+      "soft-tonal-wind",
+      "apo-ambient"
     ],
     "dayTemperature": 20,
     "nightTemperature": 18,
@@ -4118,10 +4197,16 @@
     "lowerLayer": "Cave",
     "battleBgm": "BattleMusic/Battle Metal",
     "bgsNight": [
-      "dungeon-ambiance"
+      "dungeon-ambiance",
+      "dungeon-dark",
+      "dungeon-air2",
+      "chains-echo-hall"
     ],
     "bgs": [
-      "dungeon-ambiance"
+      "dungeon-ambiance",
+      "dungeon-dark",
+      "dungeon-air2",
+      "chains-echo-hall"
     ],
     "dayTemperature": 10,
     "nightTemperature": 8,
@@ -4209,10 +4294,14 @@
     "lowerLayer": "Dungeon",
     "battleBgm": "BattleMusic/12- Era Machine",
     "bgsNight": [
-      "dungeon-ambiance"
+      "dungeon-ambiance",
+      "dungeon-air2",
+      "creaky-echoey"
     ],
     "bgs": [
-      "dungeon-ambiance"
+      "dungeon-ambiance",
+      "dungeon-air2",
+      "creaky-echoey"
     ],
     "dayTemperature": 12,
     "nightTemperature": 10,
@@ -4320,10 +4409,14 @@
     "lowerLayer": "Dungeon",
     "battleBgm": "KevinMacLeod/Mysterious/Deadly Roulette",
     "bgsNight": [
-      "dungeon-ambiance"
+      "dungeon-ambiance",
+      "dungeon-dark",
+      "cave-loop-stereo"
     ],
     "bgs": [
-      "dungeon-ambiance"
+      "dungeon-ambiance",
+      "dungeon-dark",
+      "cave-loop-stereo"
     ],
     "dayTemperature": 12,
     "nightTemperature": 10,
@@ -4501,10 +4594,14 @@
     "lowerLayer": "Crypt",
     "battleBgm": "BattleMusic/1- Brave reaction",
     "bgsNight": [
-      "creepy-dungeon-ambience"
+      "creepy-dungeon-ambience",
+      "cathedral-gap",
+      "dungeon-air2"
     ],
     "bgs": [
-      "creepy-dungeon-ambience"
+      "creepy-dungeon-ambience",
+      "cathedral-gap",
+      "dungeon-air2"
     ],
     "dayTemperature": 10,
     "nightTemperature": 8,
@@ -4602,12 +4699,14 @@
     "bgsNight": [
       "ce-cavern-looped",
       "cave-deep",
-      "cave-wind"
+      "cave-wind",
+      "dark-emptiness"
     ],
     "bgs": [
       "ce-cavern-looped",
       "cave",
-      "cave-dripping"
+      "cave-dripping",
+      "cave-loop-stereo"
     ],
     "dayTemperature": 12,
     "nightTemperature": 10,
@@ -4757,14 +4856,17 @@
       "abyss-ambience",
       "abyss-ambience2",
       "eerie-atmos-2",
-      "horror-drone-loop"
+      "horror-drone-loop",
+      "dark-emptiness"
     ],
     "bgs": [
       "horror",
       "drone",
       "unknown-noise",
       "horror-drone-loop",
-      "eerie-atmos-1"
+      "eerie-atmos-1",
+      "rumbling-drone",
+      "ominous-rumble"
     ],
     "dayTemperature": 14,
     "nightTemperature": 10,
@@ -4901,13 +5003,15 @@
       "industrial-ambience",
       "factory-buzz",
       "boiler-generator-loop",
-      "night-ambience"
+      "night-ambience",
+      "electrical-hum"
     ],
     "bgs": [
       "industrial-ambience",
       "industrial-machinery",
       "factory-buzz",
-      "boiler-generator-loop"
+      "boiler-generator-loop",
+      "electrical-hum"
     ],
     "dayTemperature": 24,
     "nightTemperature": 18,
@@ -4992,15 +5096,17 @@
     "battleBgm": "KevinMacLeod/Techno/Volatile Reaction",
     "bgsNight": [
       "industrial-machinery",
-      "industrial-compressor",
       "ventilation",
-      "boiler-generator-loop"
+      "boiler-generator-loop",
+      "electrical-hum",
+      "hum-loop"
     ],
     "bgs": [
       "industrial-machinery",
-      "industrial-compressor",
       "ventilation",
-      "boiler-generator-loop"
+      "boiler-generator-loop",
+      "electrical-hum",
+      "hum-loop"
     ],
     "dayTemperature": 22,
     "nightTemperature": 16,
@@ -5136,12 +5242,15 @@
     "bgsNight": [
       "crickets5",
       "night-crickets",
-      "nightingale"
+      "nightingale",
+      "witch-forest"
     ],
     "bgs": [
       "forest-birds-ambient-seamless-loop",
       "forest-birds",
-      "birdsong-ambient"
+      "birdsong-ambient",
+      "wind-chimes",
+      "witch-forest"
     ],
     "dayTemperature": 22,
     "nightTemperature": 16,
@@ -5293,14 +5402,17 @@
     "bgsNight": [
       "crickets5",
       "night-crickets",
-      "country-crickets"
+      "country-crickets",
+      "frogs-crickets"
     ],
     "bgs": [
       "farm1",
       "farm2",
       "farm3",
       "farm4",
-      "morning-countryside"
+      "morning-countryside",
+      "farm-general",
+      "farm-rooster-duck"
     ],
     "dayTemperature": 24,
     "nightTemperature": 16,
@@ -5532,14 +5644,16 @@
     "bgsNight": [
       "crickets5",
       "night-crickets",
-      "country-crickets"
+      "country-crickets",
+      "japan-night-fields"
     ],
     "bgs": [
       "field_tallgrass",
       "openfield_grass_rustlinginsects-",
       "grass_field_insectbed",
       "morning-countryside",
-      "park-wind-long"
+      "park-wind-long",
+      "meadow-insects"
     ],
     "dayTemperature": 25,
     "nightTemperature": 16,
@@ -5715,14 +5829,16 @@
     "bgsNight": [
       "crickets5",
       "night-crickets2",
-      "country-crickets"
+      "country-crickets",
+      "japan-night-fields"
     ],
     "bgs": [
       "openfield_grass_rustlinginsects-",
       "grass_field_insectbed",
       "nature-summer",
       "morning-countryside",
-      "park-wind-long"
+      "park-wind-long",
+      "meadow-insects"
     ],
     "dayTemperature": 24,
     "nightTemperature": 15,
@@ -5883,13 +5999,17 @@
     "bgsNight": [
       "forest-night",
       "forest-night2",
-      "forest-night3"
+      "forest-night3",
+      "cicadas-forest-night"
     ],
     "bgs": [
       "forest-ambient-loop",
       "forest-birds",
       "forest-birds-ambient-seamless-loop",
-      "birdsong-ambient"
+      "birdsong-ambient",
+      "woodland-ambience",
+      "forest-late-summer",
+      "wind-gusts-autumn"
     ],
     "dayTemperature": 22,
     "nightTemperature": 14,
@@ -6072,12 +6192,16 @@
     "bgsNight": [
       "jungle-night",
       "crickets5",
-      "frogs-croaking-at-night"
+      "frogs-croaking-at-night",
+      "jungle-night-island",
+      "cicadas-forest-night"
     ],
     "bgs": [
       "jungle-sounds-background-ambience-1",
       "forest-birds",
-      "nature-summer"
+      "nature-summer",
+      "jungle-dark",
+      "jungle-choco"
     ],
     "dayTemperature": 28,
     "nightTemperature": 22,
@@ -6250,12 +6374,14 @@
     "bgsNight": [
       "wind-blizzard",
       "wind-blizzard2",
-      "cold-wind-loop"
+      "cold-wind-loop",
+      "howling-wind"
     ],
     "bgs": [
       "cold-wind-loop",
       "wind-soft",
-      "snowing"
+      "snowing",
+      "arctic-wind-cold"
     ],
     "dayTemperature": -8,
     "nightTemperature": -12,
@@ -6407,13 +6533,15 @@
       "dark-graveyard",
       "wind-cemetary",
       "night-ambience",
-      "eerie-atmos-2"
+      "eerie-atmos-2",
+      "mystic-wind-howling"
     ],
     "bgs": [
       "wind-cemetary",
       "wind-soft",
       "crickets5",
-      "eerie-atmos-1"
+      "eerie-atmos-1",
+      "graveyard-ambience"
     ],
     "dayTemperature": 16,
     "nightTemperature": 10,
@@ -6565,12 +6693,16 @@
     "bgsNight": [
       "dream2",
       "female-choir",
-      "temple-chanting"
+      "temple-chanting",
+      "choir-ethereal-pad",
+      "soft-tonal-wind2"
     ],
     "bgs": [
       "dream2",
       "female-choir",
-      "temple-mantra"
+      "temple-mantra",
+      "choir-ethereal-pad",
+      "choir-meditation"
     ],
     "dayTemperature": 24,
     "nightTemperature": 20,
@@ -6722,12 +6854,14 @@
     "bgsNight": [
       "lava-loop-1",
       "lava-loop-2",
-      "lava-loop-3"
+      "lava-loop-3",
+      "choir-hell"
     ],
     "bgs": [
       "lava-loop-1",
       "lava-loop-2",
-      "lava-loop-3"
+      "lava-loop-3",
+      "choir-hell"
     ],
     "dayTemperature": 40,
     "nightTemperature": 35,
@@ -6896,14 +7030,16 @@
     "bgsNight": [
       "night-crickets",
       "crickets5",
-      "mountain-wind"
+      "mountain-wind",
+      "howling-wind"
     ],
     "bgs": [
       "mountain-wind",
       "mountain-ambience",
       "grass-wind",
       "outdoor-breeze-loop",
-      "park-wind-long"
+      "park-wind-long",
+      "wind-gusts-autumn"
     ],
     "dayTemperature": 18,
     "nightTemperature": 10,
@@ -7018,11 +7154,15 @@
     "bgsNight": [
       "bus-night",
       "highway-distant",
-      "night-ambience"
+      "night-ambience",
+      "traffic-continuous"
     ],
     "bgs": [
       "highway-distant",
-      "bus"
+      "bus",
+      "highway-urban",
+      "highway-overhead",
+      "traffic-continuous"
     ],
     "dayTemperature": 26,
     "nightTemperature": 18,
@@ -7175,12 +7315,14 @@
     "bgsNight": [
       "night-countryside",
       "village-night",
-      "outdoor-breeze-loop"
+      "outdoor-breeze-loop",
+      "frogs-crickets"
     ],
     "bgs": [
       "outdoor-breeze-loop",
       "birdsong-ambient",
-      "morning-countryside"
+      "morning-countryside",
+      "village-pond"
     ],
     "dayTemperature": 22,
     "nightTemperature": 15,
@@ -7286,12 +7428,18 @@
     "lowerLayer": "Dungeon",
     "battleBgm": "Field4",
     "bgsNight": [
+      "room-wind",
+      "room-wind-outside",
       "room-low",
-      "room-tone-4",
-      "night-tone"
+      "room-big",
+      "hum-loop"
     ],
     "bgs": [
-      "room-ambience"
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
     ],
     "dayTemperature": 20,
     "nightTemperature": 17,
@@ -7370,6 +7518,910 @@
       },
       {
         "name": "Flower",
+        "density": 0.18
+      }
+    ]
+  },
+  {
+    "name": "Hospital",
+    "hasNPC": true,
+    "tilesetId": 300,
+    "color": "#d8e8ec",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "Dungeon",
+    "battleBgm": "Field4",
+    "bgsNight": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "bgs": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "dayTemperature": 20,
+    "nightTemperature": 18,
+    "seasons": {
+      "winter": {
+        "sunrise": "07:00",
+        "sunset": "17:00",
+        "dayTemp": 18,
+        "nightTemp": 16.5,
+        "precipitation": 0,
+        "windSpeed": 2.3,
+        "cloudCover": 0,
+        "dayHumidity": 50,
+        "nightHumidity": 56
+      },
+      "spring": {
+        "sunrise": "06:30",
+        "sunset": "18:30",
+        "dayTemp": 19.3,
+        "nightTemp": 17.4,
+        "precipitation": 0,
+        "windSpeed": 2.1,
+        "cloudCover": 0,
+        "dayHumidity": 45,
+        "nightHumidity": 50
+      },
+      "summer": {
+        "sunrise": "06:00",
+        "sunset": "19:30",
+        "dayTemp": 22,
+        "nightTemp": 19.5,
+        "precipitation": 0,
+        "windSpeed": 1.8,
+        "cloudCover": 0,
+        "dayHumidity": 37,
+        "nightHumidity": 41
+      },
+      "autumn": {
+        "sunrise": "06:45",
+        "sunset": "18:00",
+        "dayTemp": 20.4,
+        "nightTemp": 18.2,
+        "precipitation": 0,
+        "windSpeed": 2,
+        "cloudCover": 0,
+        "dayHumidity": 49,
+        "nightHumidity": 54
+      }
+    },
+    "NPCPool": 0,
+    "features": [
+      {
+        "name": "CaveFloor",
+        "terrain": true,
+        "density": 1.2
+      },
+      {
+        "name": "Table",
+        "density": 0.4
+      },
+      {
+        "name": "Chair",
+        "density": 0.36
+      },
+      {
+        "name": "Shelf",
+        "density": 0.3
+      },
+      {
+        "name": "Tech",
+        "density": 0.3
+      },
+      {
+        "name": "Lamp",
+        "density": 0.3
+      }
+    ]
+  },
+  {
+    "name": "Clinic",
+    "hasNPC": true,
+    "tilesetId": 300,
+    "color": "#cfe3dc",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "Dungeon",
+    "battleBgm": "Field4",
+    "bgsNight": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "bgs": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "dayTemperature": 20,
+    "nightTemperature": 18,
+    "seasons": {
+      "winter": {
+        "sunrise": "07:00",
+        "sunset": "17:00",
+        "dayTemp": 18,
+        "nightTemp": 16.5,
+        "precipitation": 0,
+        "windSpeed": 2.3,
+        "cloudCover": 0,
+        "dayHumidity": 50,
+        "nightHumidity": 56
+      },
+      "spring": {
+        "sunrise": "06:30",
+        "sunset": "18:30",
+        "dayTemp": 19.3,
+        "nightTemp": 17.4,
+        "precipitation": 0,
+        "windSpeed": 2.1,
+        "cloudCover": 0,
+        "dayHumidity": 45,
+        "nightHumidity": 50
+      },
+      "summer": {
+        "sunrise": "06:00",
+        "sunset": "19:30",
+        "dayTemp": 22,
+        "nightTemp": 19.5,
+        "precipitation": 0,
+        "windSpeed": 1.8,
+        "cloudCover": 0,
+        "dayHumidity": 37,
+        "nightHumidity": 41
+      },
+      "autumn": {
+        "sunrise": "06:45",
+        "sunset": "18:00",
+        "dayTemp": 20.4,
+        "nightTemp": 18.2,
+        "precipitation": 0,
+        "windSpeed": 2,
+        "cloudCover": 0,
+        "dayHumidity": 49,
+        "nightHumidity": 54
+      }
+    },
+    "NPCPool": 0,
+    "features": [
+      {
+        "name": "CaveFloor",
+        "terrain": true,
+        "density": 1.2
+      },
+      {
+        "name": "Table",
+        "density": 0.4
+      },
+      {
+        "name": "Chair",
+        "density": 0.42
+      },
+      {
+        "name": "Shelf",
+        "density": 0.3
+      },
+      {
+        "name": "Tech",
+        "density": 0.18
+      },
+      {
+        "name": "Flower",
+        "density": 0.12
+      }
+    ]
+  },
+  {
+    "name": "Farmhouse",
+    "hasNPC": true,
+    "tilesetId": 300,
+    "color": "#cdb58c",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "Dungeon",
+    "battleBgm": "Field4",
+    "bgsNight": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "bgs": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "dayTemperature": 18,
+    "nightTemperature": 14,
+    "seasons": {
+      "winter": {
+        "sunrise": "07:00",
+        "sunset": "17:00",
+        "dayTemp": 16,
+        "nightTemp": 12.5,
+        "precipitation": 0,
+        "windSpeed": 2.3,
+        "cloudCover": 0,
+        "dayHumidity": 50,
+        "nightHumidity": 56
+      },
+      "spring": {
+        "sunrise": "06:30",
+        "sunset": "18:30",
+        "dayTemp": 17.3,
+        "nightTemp": 13.4,
+        "precipitation": 0,
+        "windSpeed": 2.1,
+        "cloudCover": 0,
+        "dayHumidity": 45,
+        "nightHumidity": 50
+      },
+      "summer": {
+        "sunrise": "06:00",
+        "sunset": "19:30",
+        "dayTemp": 20,
+        "nightTemp": 15.5,
+        "precipitation": 0,
+        "windSpeed": 1.8,
+        "cloudCover": 0,
+        "dayHumidity": 37,
+        "nightHumidity": 41
+      },
+      "autumn": {
+        "sunrise": "06:45",
+        "sunset": "18:00",
+        "dayTemp": 18.4,
+        "nightTemp": 14.2,
+        "precipitation": 0,
+        "windSpeed": 2,
+        "cloudCover": 0,
+        "dayHumidity": 49,
+        "nightHumidity": 54
+      }
+    },
+    "NPCPool": 0,
+    "features": [
+      {
+        "name": "CaveFloor",
+        "terrain": true,
+        "density": 1.2
+      },
+      {
+        "name": "Carpet",
+        "density": 0.4
+      },
+      {
+        "name": "Table",
+        "density": 0.5
+      },
+      {
+        "name": "Chair",
+        "density": 0.42
+      },
+      {
+        "name": "Stove",
+        "density": 0.24
+      },
+      {
+        "name": "Crate",
+        "density": 0.36
+      },
+      {
+        "name": "Lamp",
+        "density": 0.2
+      }
+    ]
+  },
+  {
+    "name": "GroceryStore",
+    "hasNPC": true,
+    "tilesetId": 300,
+    "color": "#e3d9a6",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "Dungeon",
+    "battleBgm": "Field4",
+    "bgsNight": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "bgs": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "dayTemperature": 19,
+    "nightTemperature": 17,
+    "seasons": {
+      "winter": {
+        "sunrise": "07:00",
+        "sunset": "17:00",
+        "dayTemp": 17,
+        "nightTemp": 15.5,
+        "precipitation": 0,
+        "windSpeed": 2.3,
+        "cloudCover": 0,
+        "dayHumidity": 50,
+        "nightHumidity": 56
+      },
+      "spring": {
+        "sunrise": "06:30",
+        "sunset": "18:30",
+        "dayTemp": 18.3,
+        "nightTemp": 16.4,
+        "precipitation": 0,
+        "windSpeed": 2.1,
+        "cloudCover": 0,
+        "dayHumidity": 45,
+        "nightHumidity": 50
+      },
+      "summer": {
+        "sunrise": "06:00",
+        "sunset": "19:30",
+        "dayTemp": 21,
+        "nightTemp": 18.5,
+        "precipitation": 0,
+        "windSpeed": 1.8,
+        "cloudCover": 0,
+        "dayHumidity": 37,
+        "nightHumidity": 41
+      },
+      "autumn": {
+        "sunrise": "06:45",
+        "sunset": "18:00",
+        "dayTemp": 19.4,
+        "nightTemp": 17.2,
+        "precipitation": 0,
+        "windSpeed": 2,
+        "cloudCover": 0,
+        "dayHumidity": 49,
+        "nightHumidity": 54
+      }
+    },
+    "NPCPool": 0,
+    "features": [
+      {
+        "name": "CaveFloor",
+        "terrain": true,
+        "density": 1.2
+      },
+      {
+        "name": "Shelf",
+        "density": 0.7
+      },
+      {
+        "name": "Crate",
+        "density": 0.5
+      },
+      {
+        "name": "Table",
+        "density": 0.24
+      },
+      {
+        "name": "Lamp",
+        "density": 0.24
+      }
+    ]
+  },
+  {
+    "name": "HardwareStore",
+    "hasNPC": true,
+    "tilesetId": 300,
+    "color": "#b9b2a4",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "Dungeon",
+    "battleBgm": "Field4",
+    "bgsNight": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "bgs": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "dayTemperature": 19,
+    "nightTemperature": 16,
+    "seasons": {
+      "winter": {
+        "sunrise": "07:00",
+        "sunset": "17:00",
+        "dayTemp": 17,
+        "nightTemp": 14.5,
+        "precipitation": 0,
+        "windSpeed": 2.3,
+        "cloudCover": 0,
+        "dayHumidity": 50,
+        "nightHumidity": 56
+      },
+      "spring": {
+        "sunrise": "06:30",
+        "sunset": "18:30",
+        "dayTemp": 18.3,
+        "nightTemp": 15.4,
+        "precipitation": 0,
+        "windSpeed": 2.1,
+        "cloudCover": 0,
+        "dayHumidity": 45,
+        "nightHumidity": 50
+      },
+      "summer": {
+        "sunrise": "06:00",
+        "sunset": "19:30",
+        "dayTemp": 21,
+        "nightTemp": 17.5,
+        "precipitation": 0,
+        "windSpeed": 1.8,
+        "cloudCover": 0,
+        "dayHumidity": 37,
+        "nightHumidity": 41
+      },
+      "autumn": {
+        "sunrise": "06:45",
+        "sunset": "18:00",
+        "dayTemp": 19.4,
+        "nightTemp": 16.2,
+        "precipitation": 0,
+        "windSpeed": 2,
+        "cloudCover": 0,
+        "dayHumidity": 49,
+        "nightHumidity": 54
+      }
+    },
+    "NPCPool": 0,
+    "features": [
+      {
+        "name": "CaveFloor",
+        "terrain": true,
+        "density": 1.2
+      },
+      {
+        "name": "Shelf",
+        "density": 0.66
+      },
+      {
+        "name": "Crate",
+        "density": 0.5
+      },
+      {
+        "name": "Gear",
+        "density": 0.36
+      },
+      {
+        "name": "Tech",
+        "density": 0.18
+      },
+      {
+        "name": "Lamp",
+        "density": 0.24
+      }
+    ]
+  },
+  {
+    "name": "Store",
+    "hasNPC": true,
+    "tilesetId": 300,
+    "color": "#e6cfd9",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "Dungeon",
+    "battleBgm": "Field4",
+    "bgsNight": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "bgs": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "dayTemperature": 20,
+    "nightTemperature": 17,
+    "seasons": {
+      "winter": {
+        "sunrise": "07:00",
+        "sunset": "17:00",
+        "dayTemp": 18,
+        "nightTemp": 15.5,
+        "precipitation": 0,
+        "windSpeed": 2.3,
+        "cloudCover": 0,
+        "dayHumidity": 50,
+        "nightHumidity": 56
+      },
+      "spring": {
+        "sunrise": "06:30",
+        "sunset": "18:30",
+        "dayTemp": 19.3,
+        "nightTemp": 16.4,
+        "precipitation": 0,
+        "windSpeed": 2.1,
+        "cloudCover": 0,
+        "dayHumidity": 45,
+        "nightHumidity": 50
+      },
+      "summer": {
+        "sunrise": "06:00",
+        "sunset": "19:30",
+        "dayTemp": 22,
+        "nightTemp": 18.5,
+        "precipitation": 0,
+        "windSpeed": 1.8,
+        "cloudCover": 0,
+        "dayHumidity": 37,
+        "nightHumidity": 41
+      },
+      "autumn": {
+        "sunrise": "06:45",
+        "sunset": "18:00",
+        "dayTemp": 20.4,
+        "nightTemp": 17.2,
+        "precipitation": 0,
+        "windSpeed": 2,
+        "cloudCover": 0,
+        "dayHumidity": 49,
+        "nightHumidity": 54
+      }
+    },
+    "NPCPool": 0,
+    "features": [
+      {
+        "name": "CaveFloor",
+        "terrain": true,
+        "density": 1.2
+      },
+      {
+        "name": "Shelf",
+        "density": 0.6
+      },
+      {
+        "name": "Table",
+        "density": 0.36
+      },
+      {
+        "name": "Carpet",
+        "density": 0.24
+      },
+      {
+        "name": "Lamp",
+        "density": 0.3
+      },
+      {
+        "name": "Flower",
+        "density": 0.12
+      }
+    ]
+  },
+  {
+    "name": "Restaurant",
+    "hasNPC": true,
+    "tilesetId": 300,
+    "color": "#e9c3a0",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "Dungeon",
+    "battleBgm": "Field4",
+    "bgsNight": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "bgs": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "dayTemperature": 21,
+    "nightTemperature": 18,
+    "seasons": {
+      "winter": {
+        "sunrise": "07:00",
+        "sunset": "17:00",
+        "dayTemp": 19,
+        "nightTemp": 16.5,
+        "precipitation": 0,
+        "windSpeed": 2.3,
+        "cloudCover": 0,
+        "dayHumidity": 50,
+        "nightHumidity": 56
+      },
+      "spring": {
+        "sunrise": "06:30",
+        "sunset": "18:30",
+        "dayTemp": 20.3,
+        "nightTemp": 17.4,
+        "precipitation": 0,
+        "windSpeed": 2.1,
+        "cloudCover": 0,
+        "dayHumidity": 45,
+        "nightHumidity": 50
+      },
+      "summer": {
+        "sunrise": "06:00",
+        "sunset": "19:30",
+        "dayTemp": 23,
+        "nightTemp": 19.5,
+        "precipitation": 0,
+        "windSpeed": 1.8,
+        "cloudCover": 0,
+        "dayHumidity": 37,
+        "nightHumidity": 41
+      },
+      "autumn": {
+        "sunrise": "06:45",
+        "sunset": "18:00",
+        "dayTemp": 21.4,
+        "nightTemp": 18.2,
+        "precipitation": 0,
+        "windSpeed": 2,
+        "cloudCover": 0,
+        "dayHumidity": 49,
+        "nightHumidity": 54
+      }
+    },
+    "NPCPool": 0,
+    "features": [
+      {
+        "name": "CaveFloor",
+        "terrain": true,
+        "density": 1.2
+      },
+      {
+        "name": "Table",
+        "density": 0.66
+      },
+      {
+        "name": "Chair",
+        "density": 0.6
+      },
+      {
+        "name": "Stove",
+        "density": 0.18
+      },
+      {
+        "name": "Lamp",
+        "density": 0.3
+      },
+      {
+        "name": "Flower",
+        "density": 0.18
+      }
+    ]
+  },
+  {
+    "name": "Tavern",
+    "hasNPC": true,
+    "tilesetId": 300,
+    "color": "#a8784f",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "Dungeon",
+    "battleBgm": "Field4",
+    "bgsNight": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "bgs": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "dayTemperature": 20,
+    "nightTemperature": 17,
+    "seasons": {
+      "winter": {
+        "sunrise": "07:00",
+        "sunset": "17:00",
+        "dayTemp": 18,
+        "nightTemp": 15.5,
+        "precipitation": 0,
+        "windSpeed": 2.3,
+        "cloudCover": 0,
+        "dayHumidity": 50,
+        "nightHumidity": 56
+      },
+      "spring": {
+        "sunrise": "06:30",
+        "sunset": "18:30",
+        "dayTemp": 19.3,
+        "nightTemp": 16.4,
+        "precipitation": 0,
+        "windSpeed": 2.1,
+        "cloudCover": 0,
+        "dayHumidity": 45,
+        "nightHumidity": 50
+      },
+      "summer": {
+        "sunrise": "06:00",
+        "sunset": "19:30",
+        "dayTemp": 22,
+        "nightTemp": 18.5,
+        "precipitation": 0,
+        "windSpeed": 1.8,
+        "cloudCover": 0,
+        "dayHumidity": 37,
+        "nightHumidity": 41
+      },
+      "autumn": {
+        "sunrise": "06:45",
+        "sunset": "18:00",
+        "dayTemp": 20.4,
+        "nightTemp": 17.2,
+        "precipitation": 0,
+        "windSpeed": 2,
+        "cloudCover": 0,
+        "dayHumidity": 49,
+        "nightHumidity": 54
+      }
+    },
+    "NPCPool": 0,
+    "features": [
+      {
+        "name": "CaveFloor",
+        "terrain": true,
+        "density": 1.2
+      },
+      {
+        "name": "Table",
+        "density": 0.6
+      },
+      {
+        "name": "Chair",
+        "density": 0.54
+      },
+      {
+        "name": "Carpet",
+        "density": 0.3
+      },
+      {
+        "name": "Stove",
+        "density": 0.18
+      },
+      {
+        "name": "Crate",
+        "density": 0.24
+      },
+      {
+        "name": "Lamp",
+        "density": 0.3
+      }
+    ]
+  },
+  {
+    "name": "Basement",
+    "hasNPC": false,
+    "tilesetId": 300,
+    "color": "#6e665c",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "Dungeon",
+    "battleBgm": "Field4",
+    "bgsNight": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "bgs": [
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
+    ],
+    "dayTemperature": 14,
+    "nightTemperature": 12,
+    "seasons": {
+      "winter": {
+        "sunrise": "07:00",
+        "sunset": "17:00",
+        "dayTemp": 12,
+        "nightTemp": 10.5,
+        "precipitation": 0,
+        "windSpeed": 2.3,
+        "cloudCover": 0,
+        "dayHumidity": 50,
+        "nightHumidity": 56
+      },
+      "spring": {
+        "sunrise": "06:30",
+        "sunset": "18:30",
+        "dayTemp": 13.3,
+        "nightTemp": 11.4,
+        "precipitation": 0,
+        "windSpeed": 2.1,
+        "cloudCover": 0,
+        "dayHumidity": 45,
+        "nightHumidity": 50
+      },
+      "summer": {
+        "sunrise": "06:00",
+        "sunset": "19:30",
+        "dayTemp": 16,
+        "nightTemp": 13.5,
+        "precipitation": 0,
+        "windSpeed": 1.8,
+        "cloudCover": 0,
+        "dayHumidity": 37,
+        "nightHumidity": 41
+      },
+      "autumn": {
+        "sunrise": "06:45",
+        "sunset": "18:00",
+        "dayTemp": 14.4,
+        "nightTemp": 12.2,
+        "precipitation": 0,
+        "windSpeed": 2,
+        "cloudCover": 0,
+        "dayHumidity": 49,
+        "nightHumidity": 54
+      }
+    },
+    "NPCPool": 0,
+    "features": [
+      {
+        "name": "CaveFloor",
+        "terrain": true,
+        "density": 1.2
+      },
+      {
+        "name": "Crate",
+        "density": 0.6
+      },
+      {
+        "name": "Shelf",
+        "density": 0.36
+      },
+      {
+        "name": "Gear",
+        "density": 0.24
+      },
+      {
+        "name": "Debris",
+        "density": 0.24
+      },
+      {
+        "name": "Lamp",
         "density": 0.18
       }
     ]
@@ -7497,12 +8549,16 @@
     "bgsNight": [
       "wind-blizzard",
       "wind-blizzard2",
-      "wind-arctic"
+      "wind-arctic",
+      "winter-storm",
+      "ice-cracks"
     ],
     "bgs": [
       "cold-wind-loop",
       "wind-icelake",
-      "snowing"
+      "snowing",
+      "arctic-wind-cold",
+      "ice-slow-crack"
     ],
     "dayTemperature": -8,
     "nightTemperature": -15,
@@ -7703,12 +8759,15 @@
     "bgsNight": [
       "wind-blizzard",
       "wind-blizzard2",
-      "wind-arctic"
+      "wind-arctic",
+      "snow-storm-heavy",
+      "winter-storm"
     ],
     "bgs": [
       "snowing",
       "wind-soft",
-      "wind-soft2"
+      "wind-soft2",
+      "arctic-wind-cold"
     ],
     "dayTemperature": -8,
     "nightTemperature": -15,
@@ -7848,12 +8907,18 @@
     "bgsNight": [
       "jungle-night",
       "crickets5",
-      "frogs-croaking-at-night"
+      "frogs-croaking-at-night",
+      "jungle-night-island",
+      "cicadas-forest-night"
     ],
     "bgs": [
       "jungle-sounds-background-ambience-1",
       "forest-birds",
-      "nature-summer"
+      "nature-summer",
+      "jungle-dark",
+      "jungle-rain",
+      "jungle-choco",
+      "jungle-mystic"
     ],
     "dayTemperature": 30,
     "nightTemperature": 24,
@@ -8001,13 +9066,16 @@
       "room-scifi",
       "ventilation",
       "hum-loop",
-      "boiler-generator-loop"
+      "boiler-generator-loop",
+      "server-room"
     ],
     "bgs": [
       "room-scifi",
       "room-computer",
       "ventilation",
-      "boiler-generator-loop"
+      "boiler-generator-loop",
+      "lab-ambience",
+      "control-room"
     ],
     "dayTemperature": 18,
     "nightTemperature": 16,
@@ -8141,10 +9209,16 @@
     "lowerLayer": "Cave",
     "battleBgm": "BattleMusic/Boss Battle",
     "bgsNight": [
-      "dungeon_ambient_1"
+      "dungeon_ambient_1",
+      "dungeon-dark",
+      "dark-emptiness",
+      "cave-loop-stereo"
     ],
     "bgs": [
-      "dungeon_ambient_1"
+      "dungeon_ambient_1",
+      "dungeon-dark",
+      "dark-emptiness",
+      "cave-loop-stereo"
     ],
     "dayTemperature": 14,
     "nightTemperature": 10,
@@ -8280,13 +9354,16 @@
     "bgsNight": [
       "lake-waves",
       "night-ambience",
-      "crickets5"
+      "crickets5",
+      "lake-night-frogs"
     ],
     "bgs": [
       "lake-waves",
       "water-stream",
       "water-stream2",
-      "park-river-long"
+      "park-river-long",
+      "lake-waves-shore",
+      "lake-water-lapping"
     ],
     "dayTemperature": 20,
     "nightTemperature": 14,
@@ -8442,10 +9519,12 @@
     "bgsNight": [
       "landfill",
       "night-crickets",
-      "night-ambience"
+      "night-ambience",
+      "frogs-crickets"
     ],
     "bgs": [
-      "landfill"
+      "landfill",
+      "traffic-continuous"
     ],
     "dayTemperature": 22,
     "nightTemperature": 14,
@@ -8603,13 +9682,16 @@
       "hum-loop",
       "unknown-noise",
       "eerie-atmos-4",
-      "horror-drone-loop"
+      "horror-drone-loop",
+      "rumbling-drone"
     ],
     "bgs": [
       "drone",
       "hum-loop",
       "room-tone-4",
-      "eerie-atmos-3"
+      "eerie-atmos-3",
+      "soft-tonal-wind",
+      "dark-emptiness"
     ],
     "dayTemperature": 20,
     "nightTemperature": 18,
@@ -8737,13 +9819,15 @@
     "bgsNight": [
       "frogs-croaking-at-night",
       "night-swamp",
-      "crickets5"
+      "crickets5",
+      "frogs-creek-night",
+      "frogs-crickets"
     ],
     "bgs": [
       "forest-swamp",
       "swamp-woods",
-      "water-creek",
-      "swamp-long"
+      "swamp-long",
+      "forest-swamp2"
     ],
     "dayTemperature": 28,
     "nightTemperature": 22,
@@ -8899,12 +9983,16 @@
     "bgsNight": [
       "train",
       "train-station",
-      "night-city"
+      "night-city",
+      "subway-train"
     ],
     "bgs": [
       "train",
       "train-station",
-      "train-freight"
+      "train-freight",
+      "station-zurich",
+      "station-liege",
+      "subway-inside"
     ],
     "dayTemperature": 20,
     "nightTemperature": 16,
@@ -9036,12 +10124,14 @@
     "bgsNight": [
       "old-mine-ambience",
       "cave-deep",
-      "rumbling-underground"
+      "rumbling-underground",
+      "creaky-echoey"
     ],
     "bgs": [
       "old-mine-ambience",
       "cave-dripping",
-      "rumbling-underground"
+      "rumbling-underground",
+      "cave-water"
     ],
     "dayTemperature": 12,
     "nightTemperature": 10,
@@ -9183,12 +10273,14 @@
     "bgsNight": [
       "night-crickets",
       "mountain-wind",
-      "night-ambience"
+      "night-ambience",
+      "howling-wind"
     ],
     "bgs": [
       "mountain-wind",
       "mountain-ambience",
-      "montain-ambience2"
+      "montain-ambience2",
+      "mountain-troodos"
     ],
     "dayTemperature": 8,
     "nightTemperature": -2,
@@ -9383,12 +10475,16 @@
     "bgsNight": [
       "wind-blizzard",
       "wind-blizzard2",
-      "wind-arctic"
+      "wind-arctic",
+      "howling-wind",
+      "winter-storm"
     ],
     "bgs": [
       "cold-wind-loop",
       "mountain-wind",
-      "wind-icelake"
+      "wind-icelake",
+      "arctic-wind-cold",
+      "arctic-air-water"
     ],
     "dayTemperature": -12,
     "nightTemperature": -18,
@@ -9551,13 +10647,16 @@
     "bgsNight": [
       "forest-night",
       "forest-night2",
-      "crickets5"
+      "crickets5",
+      "witch-forest"
     ],
     "bgs": [
       "forest-ambient-loop",
       "forest-swamp",
       "nature-summer",
-      "birdsong-ambient"
+      "birdsong-ambient",
+      "witch-forest",
+      "wind-chimes"
     ],
     "dayTemperature": 16,
     "nightTemperature": 14,
@@ -9689,12 +10788,15 @@
     "battleBgm": "BattleMusic/Battle of the Creek",
     "bgsNight": [
       "ocean-night",
-      "ocean-night2"
+      "ocean-night2",
+      "ocean-big-waves"
     ],
     "bgs": [
       "ocean-waves",
       "ocean2",
-      "ocean3"
+      "ocean3",
+      "ocean-big-waves",
+      "waves-shore"
     ],
     "dayTemperature": 18,
     "nightTemperature": 16,
@@ -9849,14 +10951,18 @@
     "lowerLayer": "Cave",
     "battleBgm": "BattleMusic/Hitman",
     "bgsNight": [
-      "room-office",
-      "room-office2",
-      "room-ambience"
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
     ],
     "bgs": [
-      "room-office",
-      "room-office2",
-      "room-computer"
+      "room-wind",
+      "room-wind-outside",
+      "room-low",
+      "room-big",
+      "hum-loop"
     ],
     "dayTemperature": 22,
     "nightTemperature": 18,
@@ -9993,13 +11099,16 @@
       "Wind5",
       "wind-soft",
       "hum-loop",
-      "space-wind-long"
+      "space-wind-long",
+      "soft-tonal-wind2"
     ],
     "bgs": [
       "Wind5",
       "wind-soft2",
       "room-scifi",
-      "cyber-city-loop"
+      "cyber-city-loop",
+      "soft-tonal-wind",
+      "scifi-hall-tone"
     ],
     "dayTemperature": 20,
     "nightTemperature": 16,
@@ -10123,7 +11232,8 @@
     "bgsNight": [
       "crickets5",
       "night-crickets",
-      "night-ambience"
+      "night-ambience",
+      "frogs-crickets"
     ],
     "bgs": [
       "thrushes-tits-city-dawn",
@@ -10132,7 +11242,8 @@
       "park-rome",
       "park-birds-long",
       "park-wind-long",
-      "birdsong-ambient"
+      "birdsong-ambient",
+      "tokyo-park-dusk"
     ],
     "dayTemperature": 24,
     "nightTemperature": 16,
@@ -10291,12 +11402,14 @@
     "bgsNight": [
       "wind-blizzard",
       "wind-arctic",
-      "cold-wind-loop"
+      "cold-wind-loop",
+      "polar-wind"
     ],
     "bgs": [
       "cold-wind-loop",
       "wind-soft",
-      "wind-icelake"
+      "wind-icelake",
+      "arctic-air-water"
     ],
     "dayTemperature": -15,
     "nightTemperature": -20,
@@ -10425,14 +11538,16 @@
       "water-river",
       "water-river2",
       "night-ambience",
-      "river-vistula-long"
+      "river-vistula-long",
+      "frogs-creek-night"
     ],
     "bgs": [
       "water-river",
       "water-river2",
       "water-stream",
       "park-river-long",
-      "river-vistula-long"
+      "river-vistula-long",
+      "river-mountains"
     ],
     "dayTemperature": 18,
     "nightTemperature": 12,
@@ -10558,14 +11673,16 @@
       "water-river",
       "water-river2",
       "night-ambience",
-      "river-vistula-long"
+      "river-vistula-long",
+      "frogs-creek-night"
     ],
     "bgs": [
       "water-river",
       "water-river2",
       "water-stream",
       "park-river-long",
-      "river-vistula-long"
+      "river-vistula-long",
+      "river-mountains"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -10694,14 +11811,16 @@
       "water-river",
       "water-river2",
       "night-ambience",
-      "river-vistula-long"
+      "river-vistula-long",
+      "frogs-creek-night"
     ],
     "bgs": [
       "water-river",
       "water-river2",
       "water-stream",
       "park-river-long",
-      "river-vistula-long"
+      "river-vistula-long",
+      "river-mountains"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -10833,14 +11952,16 @@
       "water-river",
       "water-river2",
       "night-ambience",
-      "river-vistula-long"
+      "river-vistula-long",
+      "frogs-creek-night"
     ],
     "bgs": [
       "water-river",
       "water-river2",
       "water-stream",
       "park-river-long",
-      "river-vistula-long"
+      "river-vistula-long",
+      "river-mountains"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -10919,16 +12040,17 @@
     "battleBgm": "BattleMusic/Battle of the Creek",
     "bgsNight": [
       "water-river",
-      "water-creek",
       "night-crickets",
-      "river-vistula-long"
+      "river-vistula-long",
+      "frogs-creek-night"
     ],
     "bgs": [
       "water-river",
-      "water-creek",
       "water-stream-birds",
       "park-river-long",
-      "river-vistula-long"
+      "river-vistula-long",
+      "river-mountains",
+      "waterfall-long"
     ],
     "dayTemperature": 22,
     "nightTemperature": 15,
@@ -11069,10 +12191,12 @@
     "bgsNight": [
       "bus-night",
       "highway-distant",
-      "night-crickets"
+      "night-crickets",
+      "frogs-crickets"
     ],
     "bgs": [
-      "highway-distant"
+      "highway-distant",
+      "wind-gusts-autumn"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -11151,12 +12275,14 @@
     "bgsNight": [
       "water-river",
       "highway-distant",
-      "river-vistula-long"
+      "river-vistula-long",
+      "traffic-continuous"
     ],
     "bgs": [
       "water-river",
       "water-river2",
-      "river-vistula-long"
+      "river-vistula-long",
+      "river-mountains"
     ],
     "dayTemperature": 22,
     "nightTemperature": 14,
@@ -11296,13 +12422,16 @@
       "night-crickets",
       "crickets5",
       "night-ambience",
-      "eerie-atmos-2"
+      "eerie-atmos-2",
+      "mystic-wind-howling"
     ],
     "bgs": [
       "winchester-wind-ambience",
       "wind-soft",
       "old-wood-creaking-building",
-      "outdoor-breeze-loop"
+      "outdoor-breeze-loop",
+      "teufelsberg-wind",
+      "abandoned-building-ext"
     ],
     "dayTemperature": 20,
     "nightTemperature": 14,
@@ -11454,12 +12583,15 @@
     "bgsNight": [
       "desert-ambience",
       "desert-monolit",
-      "wind-cemetary"
+      "wind-cemetary",
+      "saltlake-wind"
     ],
     "bgs": [
       "wind-in-the-desert-countryside",
       "desert-simple",
-      "wind-soft"
+      "wind-soft",
+      "saltlake-wind",
+      "desert-open-wind"
     ],
     "dayTemperature": 35,
     "nightTemperature": 20,
@@ -11575,13 +12707,18 @@
     "bgsNight": [
       "crickets5",
       "night-crickets",
-      "country-crickets"
+      "country-crickets",
+      "cicadas-forest-night",
+      "distant-thunder"
     ],
     "bgs": [
       "grass_field_insectbed",
       "openfield_grass_rustlinginsects-",
       "nature-summer",
-      "morning-countryside"
+      "morning-countryside",
+      "africa-silent",
+      "savannah-wildlife",
+      "cicadas"
     ],
     "dayTemperature": 32,
     "nightTemperature": 22,
@@ -11695,11 +12832,17 @@
     "battleBgm": "KevinMacLeod/Horror/The Descent",
     "bgsNight": [
       "abyss-ambience",
-      "abyss-ambience2"
+      "abyss-ambience2",
+      "underwater-lake",
+      "underwater-deep",
+      "deep-sea"
     ],
     "bgs": [
       "abyss-ambience",
-      "abyss-ambience2"
+      "abyss-ambience2",
+      "underwater-lake",
+      "underwater-deep",
+      "deep-sea"
     ],
     "dayTemperature": 8,
     "nightTemperature": 6,
@@ -11826,14 +12969,17 @@
       "sewer-drain",
       "sewer-drain2",
       "sewer-water",
-      "basement-dripping"
+      "basement-dripping",
+      "tunnel-water"
     ],
     "bgs": [
       "sewer-drain",
       "sewer-pipe",
       "sewers-pipe",
       "sewer-north",
-      "basement-dripping"
+      "basement-dripping",
+      "sewer-underground",
+      "parking-pipe-drip"
     ],
     "dayTemperature": 16,
     "nightTemperature": 14,
@@ -11987,13 +13133,18 @@
     "bgsNight": [
       "space-wind-long",
       "cyber-city-loop",
-      "drone"
+      "drone",
+      "spaceship-hum",
+      "space-ambience"
     ],
     "bgs": [
       "spaceship",
       "drone",
       "room-scifi",
-      "space-wind-long"
+      "space-wind-long",
+      "spaceship-hum",
+      "spaceship-atmos",
+      "space-ambience"
     ],
     "dayTemperature": 10,
     "nightTemperature": 5,
@@ -12146,14 +13297,18 @@
       "room-scifi",
       "ventilation",
       "hum-loop",
-      "cyber-city-loop"
+      "cyber-city-loop",
+      "electrical-hum",
+      "server-room-buzz"
     ],
     "bgs": [
       "room-scifi",
       "room-computer",
       "industrial-machinery",
       "cyber-city-loop",
-      "boiler-generator-loop"
+      "boiler-generator-loop",
+      "control-room",
+      "server-room"
     ],
     "dayTemperature": 18,
     "nightTemperature": 14,
@@ -12285,13 +13440,16 @@
     "bgsNight": [
       "frogs-croaking-at-night",
       "night-swamp",
-      "forest-night"
+      "forest-night",
+      "witch-forest"
     ],
     "bgs": [
       "forest-swamp",
       "swamp-woods",
       "lost-valley",
-      "swamp-long"
+      "swamp-long",
+      "witch-forest",
+      "jungle-mystic"
     ],
     "dayTemperature": 18,
     "nightTemperature": 14,
@@ -12427,7 +13585,8 @@
     "bgsNight": [
       "crickets5",
       "night-crickets",
-      "country-crickets"
+      "country-crickets",
+      "howling-wind"
     ],
     "bgs": [
       "openfield_grass_rustlinginsects-",
@@ -12641,13 +13800,16 @@
     "bgsNight": [
       "frogs-croaking-at-night",
       "night-swamp",
-      "crickets5"
+      "crickets5",
+      "frogs-crickets",
+      "frogs-creek-night"
     ],
     "bgs": [
       "swamp-woods",
       "forest-swamp",
       "countryside-swamp9",
-      "swamp-long"
+      "swamp-long",
+      "forest-swamp2"
     ],
     "dayTemperature": 24,
     "nightTemperature": 18,
@@ -12788,13 +13950,16 @@
     "bgsNight": [
       "woods-night",
       "wind-soft",
-      "cold-wind-loop"
+      "cold-wind-loop",
+      "howling-wind"
     ],
     "bgs": [
       "forest-ambient-loop",
       "forest-birds",
       "wind-soft2",
-      "birdsong-ambient"
+      "birdsong-ambient",
+      "woodland-ambience",
+      "wind-gusts-autumn"
     ],
     "dayTemperature": 10,
     "nightTemperature": -5,
@@ -12939,12 +14104,15 @@
     "bgsNight": [
       "temple-shadow",
       "night-ambience",
-      "cave-temple"
+      "cave-temple",
+      "monks-chant-tibetan"
     ],
     "bgs": [
       "temple-exterior",
       "temple-birds",
-      "cave-temple2"
+      "cave-temple2",
+      "temple-bells-hill",
+      "monks-chant-thai"
     ],
     "dayTemperature": 20,
     "nightTemperature": 16,
@@ -13103,12 +14271,16 @@
     "bgsNight": [
       "temple-shadow",
       "night-ambience",
-      "night-crickets"
+      "night-crickets",
+      "japan-night-fields"
     ],
     "bgs": [
       "temple-exterior",
       "temple-birds",
-      "temple-chanting"
+      "temple-chanting",
+      "temple-bell-valley",
+      "tokyo-park-dusk",
+      "cicadas"
     ],
     "dayTemperature": 22,
     "nightTemperature": 16,
@@ -13264,12 +14436,14 @@
     "bgsNight": [
       "train",
       "train-station",
-      "night-city"
+      "night-city",
+      "subway-train"
     ],
     "bgs": [
       "train",
       "train-station",
-      "train-freight"
+      "train-freight",
+      "station-liege"
     ],
     "dayTemperature": 22,
     "nightTemperature": 16,
@@ -13403,12 +14577,16 @@
     "bgsNight": [
       "wind-blizzard",
       "wind-arctic",
-      "wind-blizzard2"
+      "wind-blizzard2",
+      "winter-storm",
+      "snow-storm-heavy"
     ],
     "bgs": [
       "cold-wind-loop",
       "wind-soft",
-      "snowing"
+      "snowing",
+      "arctic-air-water",
+      "polar-wind"
     ],
     "dayTemperature": -10,
     "nightTemperature": -15,
@@ -13551,13 +14729,16 @@
       "cave-deep",
       "abyss-ambience",
       "cave-forgotten",
-      "eerie-atmos-3"
+      "eerie-atmos-3",
+      "rumbling-drone"
     ],
     "bgs": [
       "cave-deep",
       "cave-monsters",
       "abyss-ambience2",
-      "eerie-atmos-3"
+      "eerie-atmos-3",
+      "dark-emptiness",
+      "ominous-rumble"
     ],
     "dayTemperature": 10,
     "nightTemperature": 8,
@@ -13693,13 +14874,15 @@
     "bgsNight": [
       "village-night",
       "village-night2",
-      "night-countryside"
+      "night-countryside",
+      "frogs-crickets"
     ],
     "bgs": [
       "thrushes-tits-city-dawn",
       "backyard",
       "morning-countryside",
-      "park-birds-long"
+      "park-birds-long",
+      "village-pond"
     ],
     "dayTemperature": 24,
     "nightTemperature": 18,
@@ -13896,13 +15079,15 @@
     ],
     "bgsNight": [
       "village-night",
-      "village-night2"
+      "village-night2",
+      "night-countryside"
     ],
     "bgs": [
       "village-at-morning",
-      "People2",
       "backyard",
-      "morning-countryside"
+      "morning-countryside",
+      "village-rooster-wind",
+      "medieval-village"
     ],
     "interiorBgs": [],
     "dayTemperature": 22,
@@ -14110,12 +15295,13 @@
     "bgsNight": [
       "village-night",
       "village-night2",
-      "cold-wind-loop"
+      "cold-wind-loop",
+      "howling-wind"
     ],
     "bgs": [
       "village-at-morning",
       "wind-soft",
-      "People2"
+      "medieval-village"
     ],
     "interiorBgs": [],
     "dayTemperature": -5,
@@ -14307,12 +15493,14 @@
     "bgsNight": [
       "village-night",
       "village-night2",
-      "mountain-wind"
+      "mountain-wind",
+      "night-countryside"
     ],
     "bgs": [
       "village-at-morning",
       "mountain-ambience",
-      "backyard"
+      "backyard",
+      "village-mountain-quiet"
     ],
     "interiorBgs": [],
     "dayTemperature": 16,
@@ -14478,11 +15666,13 @@
     "bgsNight": [
       "village-night",
       "village-night2",
-      "desert-ambience"
+      "desert-ambience",
+      "desert-dark-sahara"
     ],
     "bgs": [
       "village-at-morning",
-      "desert-ambient-loop"
+      "desert-ambient-loop",
+      "village-africa"
     ],
     "interiorBgs": [],
     "dayTemperature": 26,
@@ -14666,13 +15856,14 @@
     "bgsNight": [
       "village-night",
       "village-night2",
-      "water-creek"
+      "frogs-creek-night"
     ],
     "bgs": [
       "village-at-morning",
       "water-river",
       "backyard",
-      "park-river-long"
+      "park-river-long",
+      "village-pond"
     ],
     "interiorBgs": [],
     "dayTemperature": 20,
@@ -14840,12 +16031,14 @@
     "bgsNight": [
       "village-night",
       "village-night2",
-      "ocean-night"
+      "ocean-night",
+      "harbor-night"
     ],
     "bgs": [
       "village-at-morning",
       "waves-and-seagulls",
-      "ocean-waves"
+      "ocean-waves",
+      "harbor-day"
     ],
     "interiorBgs": [],
     "dayTemperature": 24,
@@ -15017,12 +16210,17 @@
     "bgsNight": [
       "lava-loop-1",
       "lava-loop-3",
-      "mountain-wind"
+      "mountain-wind",
+      "volcano-yasur",
+      "earth-rumble"
     ],
     "bgs": [
       "lava-loop-1",
       "lava-loop-2",
-      "lava-loop-3"
+      "lava-loop-3",
+      "volcano-yasur",
+      "volcano-rumble",
+      "mud-volcano"
     ],
     "dayTemperature": 50,
     "nightTemperature": 40,
@@ -15116,11 +16314,13 @@
     "bgsNight": [
       "bus-night",
       "highway-distant",
-      "night-crickets"
+      "night-crickets",
+      "traffic-continuous"
     ],
     "bgs": [
       "Wind5",
-      "highway-distant"
+      "highway-distant",
+      "highway-urban"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -15198,11 +16398,13 @@
     "bgsNight": [
       "bus-night",
       "highway-distant",
-      "night-crickets"
+      "night-crickets",
+      "traffic-continuous"
     ],
     "bgs": [
       "Wind5",
-      "highway-distant"
+      "highway-distant",
+      "highway-urban"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -15280,11 +16482,13 @@
     "bgsNight": [
       "bus-night",
       "highway-distant",
-      "night-crickets"
+      "night-crickets",
+      "traffic-continuous"
     ],
     "bgs": [
       "Wind5",
-      "highway-distant"
+      "highway-distant",
+      "highway-urban"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -15362,11 +16566,13 @@
     "bgsNight": [
       "bus-night",
       "highway-distant",
-      "night-crickets"
+      "night-crickets",
+      "traffic-continuous"
     ],
     "bgs": [
       "Wind5",
-      "highway-distant"
+      "highway-distant",
+      "highway-urban"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -15444,11 +16650,13 @@
     "bgsNight": [
       "bus-night",
       "highway-distant",
-      "night-crickets"
+      "night-crickets",
+      "traffic-continuous"
     ],
     "bgs": [
       "Wind5",
-      "highway-distant"
+      "highway-distant",
+      "highway-urban"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -15526,11 +16734,13 @@
     "bgsNight": [
       "bus-night",
       "highway-distant",
-      "night-crickets"
+      "night-crickets",
+      "traffic-continuous"
     ],
     "bgs": [
       "Wind5",
-      "highway-distant"
+      "highway-distant",
+      "highway-urban"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -15608,11 +16818,13 @@
     "bgsNight": [
       "bus-night",
       "highway-distant",
-      "night-crickets"
+      "night-crickets",
+      "traffic-continuous"
     ],
     "bgs": [
       "Wind5",
-      "highway-distant"
+      "highway-distant",
+      "highway-urban"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -15690,11 +16902,13 @@
     "bgsNight": [
       "bus-night",
       "highway-distant",
-      "night-crickets"
+      "night-crickets",
+      "traffic-continuous"
     ],
     "bgs": [
       "Wind5",
-      "highway-distant"
+      "highway-distant",
+      "highway-urban"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -15772,11 +16986,13 @@
     "bgsNight": [
       "bus-night",
       "highway-distant",
-      "night-crickets"
+      "night-crickets",
+      "traffic-continuous"
     ],
     "bgs": [
       "Wind5",
-      "highway-distant"
+      "highway-distant",
+      "highway-urban"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -15854,11 +17070,13 @@
     "bgsNight": [
       "bus-night",
       "highway-distant",
-      "night-crickets"
+      "night-crickets",
+      "traffic-continuous"
     ],
     "bgs": [
       "Wind5",
-      "highway-distant"
+      "highway-distant",
+      "highway-urban"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -15936,11 +17154,13 @@
     "bgsNight": [
       "bus-night",
       "highway-distant",
-      "night-crickets"
+      "night-crickets",
+      "traffic-continuous"
     ],
     "bgs": [
       "Wind5",
-      "highway-distant"
+      "highway-distant",
+      "highway-urban"
     ],
     "dayTemperature": 26,
     "nightTemperature": 16,
@@ -16018,12 +17238,12 @@
     "bgsNight": [
       "creepy-dungeon-ambience",
       "cave-dripping",
-      "basement-dripping"
+      "chains-echo-hall"
     ],
     "bgs": [
       "creepy-dungeon-ambience",
       "cave-dripping",
-      "basement-dripping"
+      "chains-echo-hall"
     ],
     "dayTemperature": 9,
     "nightTemperature": 8,
@@ -16124,11 +17344,13 @@
     "battleBgm": "BattleMusic/1- Brave reaction",
     "bgsNight": [
       "old-mine-ambience",
-      "cave-deep"
+      "cave-deep",
+      "earth-rumble"
     ],
     "bgs": [
       "old-mine-ambience",
-      "cave-deep"
+      "cave-deep",
+      "earth-rumble"
     ],
     "dayTemperature": 13,
     "nightTemperature": 12,
@@ -16233,11 +17455,13 @@
     "battleBgm": "BattleMusic/1- Brave reaction",
     "bgsNight": [
       "cold-wind-loop",
-      "cave-wind"
+      "cave-wind",
+      "ice-slow-crack"
     ],
     "bgs": [
       "cold-wind-loop",
-      "cave-wind"
+      "cave-wind",
+      "ice-slow-crack"
     ],
     "dayTemperature": -3,
     "nightTemperature": -6,
@@ -16347,12 +17571,12 @@
     "bgsNight": [
       "cave-dripping",
       "sewer-water",
-      "basement-dripping"
+      "tunnel-water"
     ],
     "bgs": [
       "cave-dripping",
       "sewer-water",
-      "basement-dripping"
+      "tunnel-water"
     ],
     "dayTemperature": 13,
     "nightTemperature": 12,
@@ -16449,11 +17673,13 @@
     "battleBgm": "KevinMacLeod/Mysterious/Circus of Freaks",
     "bgsNight": [
       "cave-forgotten",
-      "cave-dripping"
+      "cave-dripping",
+      "cave-water"
     ],
     "bgs": [
       "cave-forgotten",
-      "cave-dripping"
+      "cave-dripping",
+      "cave-water"
     ],
     "dayTemperature": 16,
     "nightTemperature": 15,
@@ -16550,11 +17776,13 @@
     "battleBgm": "KevinMacLeod/Mysterious/Vanishing",
     "bgsNight": [
       "ce-cavern-looped",
-      "cave-deep"
+      "cave-deep",
+      "crystal-ambience"
     ],
     "bgs": [
       "ce-cavern-looped",
-      "cave-deep"
+      "cave-deep",
+      "crystal-ambience"
     ],
     "dayTemperature": 11,
     "nightTemperature": 10,
@@ -16656,12 +17884,12 @@
     "bgsNight": [
       "creepy-dungeon-ambience",
       "dungeon-air",
-      "eerie-atmos-2"
+      "chains-echo-hall"
     ],
     "bgs": [
       "creepy-dungeon-ambience",
       "dungeon-air",
-      "eerie-atmos-2"
+      "chains-echo-hall"
     ],
     "dayTemperature": 9,
     "nightTemperature": 8,
@@ -16763,12 +17991,12 @@
     "bgsNight": [
       "dungeon-air",
       "cabin-wind",
-      "basement-dripping"
+      "creaky-echoey"
     ],
     "bgs": [
       "dungeon-air",
       "cabin-wind",
-      "basement-dripping"
+      "creaky-echoey"
     ],
     "dayTemperature": 12,
     "nightTemperature": 11,
@@ -16866,12 +18094,12 @@
     "bgsNight": [
       "lava-loop-1",
       "industrial-machinery",
-      "boiler-generator-loop"
+      "blacksmith-forge"
     ],
     "bgs": [
       "lava-loop-1",
       "industrial-machinery",
-      "boiler-generator-loop"
+      "blacksmith-forge"
     ],
     "dayTemperature": 42,
     "nightTemperature": 40,
@@ -16969,12 +18197,12 @@
     "bgsNight": [
       "industrial-machinery",
       "dungeon_ambient_1",
-      "boiler-generator-loop"
+      "electrical-hum"
     ],
     "bgs": [
       "industrial-machinery",
       "dungeon_ambient_1",
-      "boiler-generator-loop"
+      "electrical-hum"
     ],
     "dayTemperature": 14,
     "nightTemperature": 13,
@@ -17076,12 +18304,12 @@
     "bgsNight": [
       "room-office",
       "industrial-machinery",
-      "boiler-generator-loop"
+      "lab-ambience"
     ],
     "bgs": [
       "room-office",
       "industrial-machinery",
-      "boiler-generator-loop"
+      "lab-ambience"
     ],
     "dayTemperature": 18,
     "nightTemperature": 17,
@@ -17179,14 +18407,12 @@
     "bgsNight": [
       "creepy-dungeon-ambience",
       "abyss-ambience",
-      "eerie-atmos-4",
-      "horror-drone-loop"
+      "choir-hell"
     ],
     "bgs": [
       "creepy-dungeon-ambience",
       "abyss-ambience",
-      "eerie-atmos-4",
-      "horror-drone-loop"
+      "choir-hell"
     ],
     "dayTemperature": 15,
     "nightTemperature": 14,
@@ -17287,11 +18513,13 @@
     "battleBgm": "Old/Thief",
     "bgsNight": [
       "cave-deep",
-      "dungeon-air"
+      "dungeon-air",
+      "cave-water"
     ],
     "bgs": [
       "cave-deep",
-      "dungeon-air"
+      "dungeon-air",
+      "cave-water"
     ],
     "dayTemperature": 14,
     "nightTemperature": 13,
@@ -17388,11 +18616,13 @@
     "battleBgm": "KevinMacLeod/Mysterious/Secret of Tiki Island",
     "bgsNight": [
       "cave-dripping",
-      "ce-cavern-looped"
+      "ce-cavern-looped",
+      "cave-water"
     ],
     "bgs": [
       "cave-dripping",
-      "ce-cavern-looped"
+      "ce-cavern-looped",
+      "cave-water"
     ],
     "dayTemperature": 17,
     "nightTemperature": 16,
@@ -17497,11 +18727,13 @@
     "battleBgm": "KevinMacLeod/Dramatic/The Pyre",
     "bgsNight": [
       "lava-loop-2",
-      "cave-deep"
+      "cave-deep",
+      "earth-rumble"
     ],
     "bgs": [
       "lava-loop-2",
-      "cave-deep"
+      "cave-deep",
+      "earth-rumble"
     ],
     "dayTemperature": 46,
     "nightTemperature": 44,
@@ -17599,12 +18831,12 @@
     "bgsNight": [
       "cave-forgotten",
       "creepy-dungeon-ambience",
-      "eerie-atmos-1"
+      "dungeon-dark"
     ],
     "bgs": [
       "cave-forgotten",
       "creepy-dungeon-ambience",
-      "eerie-atmos-1"
+      "dungeon-dark"
     ],
     "dayTemperature": 8,
     "nightTemperature": 7,
@@ -17705,11 +18937,13 @@
     "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "sewer-north",
-      "dungeon_ambient_1"
+      "dungeon_ambient_1",
+      "subway-inside"
     ],
     "bgs": [
       "sewer-north",
-      "dungeon_ambient_1"
+      "dungeon_ambient_1",
+      "subway-inside"
     ],
     "dayTemperature": 15,
     "nightTemperature": 14,
@@ -17810,11 +19044,13 @@
     "battleBgm": "BattleMusic/5- The Gauntlet and the Dragon",
     "bgsNight": [
       "old-mine-ambience",
-      "cave-wind"
+      "cave-wind",
+      "cave-loop-stereo"
     ],
     "bgs": [
       "old-mine-ambience",
-      "cave-wind"
+      "cave-wind",
+      "cave-loop-stereo"
     ],
     "dayTemperature": 19,
     "nightTemperature": 17,

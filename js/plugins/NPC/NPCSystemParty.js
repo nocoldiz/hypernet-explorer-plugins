@@ -711,9 +711,10 @@
     //   the halls   , the default. The Stairs Hall and every floor of the
     //                 Omega Tower above and below it: the one place in the
     //                 world that belongs to nobody, so it is where anybody
-    //                 with nowhere else to be ends up. Up to NINE of them are
-    //                 met on any one floor, drawn again every time the party
-    //                 walks in, so the halls are never the same crowd twice.
+    //                 with nowhere else to be ends up. Up to FIFTEEN of them
+    //                 are met in the Stairs Hall itself and NINE on any other
+    //                 floor, drawn again every time the party walks in, so the
+    //                 halls are never the same crowd twice.
     //   a house     , any floor the party holds the deed to
     //                 (ProceduralHouseSystem.listOwnedHouses)
     //   a residence , a companion's home inherited on joining, known by its
@@ -751,6 +752,10 @@
     // The halls are wide and the reserves can be long; nine at a time is a
     // crowd without being the whole bench standing in one room.
     const HALLS_MAX_RESIDENTS = 9;
+    // The Stairs Hall is the halls' front room and belongs to the parties
+    // alone (NPCSystem Config.PARTY_ONLY_MAP_IDS): nobody else is met there,
+    // so it holds more of them.
+    const STAIRS_HALL_MAX_RESIDENTS = 15;
     const LODGING_KEY_PREFIX = "inactive:";  // i18n-ignore  spawned event key
 
     function lodgingStore() {
@@ -841,6 +846,7 @@
         DEFAULT: LODGING_DEFAULT,
         MAX_ACTIVE: 3,
         HALLS_MAX_RESIDENTS,
+        STAIRS_HALL_MAX_RESIDENTS,
         STAIRS_HALL_MAP_ID,
         STARSHIP_INTERIOR_MAP_ID,
         KEY_PREFIX: LODGING_KEY_PREFIX,
@@ -966,7 +972,11 @@
         // vault are big enough to lose people in, so they hold a handful,
         // drawn again on every arrival.
         capacityFor(placeId) {
-            if (placeId === LODGING_DEFAULT) return HALLS_MAX_RESIDENTS;
+            if (placeId === LODGING_DEFAULT) {
+                const inHall = typeof $gameMap !== "undefined" && $gameMap
+                    && $gameMap.mapId() === STAIRS_HALL_MAP_ID;
+                return inHall ? STAIRS_HALL_MAX_RESIDENTS : HALLS_MAX_RESIDENTS;
+            }
             if (placeId === "vault") {                                   // i18n-ignore: place id
                 // One floor's share of the nine, rounded up, so a vault
                 // resident is somewhere down there rather than on a fixed step.

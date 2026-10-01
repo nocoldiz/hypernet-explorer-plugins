@@ -2431,7 +2431,7 @@
     return { system, planet, gxSeed };
   }
 
-  const CRASH_LANDED_FUEL = 200;        // out of a 10,000-unit map-fuel tank (var 95)
+  const CRASH_LANDED_FUEL = 200;        // litres out of the Starship's 10,000 litre rocket fuel tank
   const CRASH_LANDED_HYPERFLUX = 500;   // out of 92,000
   const CRASH_SHIP_DAMAGE_PERCENT = 70; // heavy damage, several critical parts near/at 0
 
@@ -2452,7 +2452,7 @@
     // ship's own position has to follow the party to the wreck site.
     dm.teleportToPlanetOrbit(pick.system.name, pick.planet.name);
     if ($gameSystem) $gameSystem._shipOrbitEarthInit = true;
-    $gameVariables.setValue(95, CRASH_LANDED_FUEL);
+    dm.setMapFuel(CRASH_LANDED_FUEL);
     dm.setHyperflux(CRASH_LANDED_HYPERFLUX);
     dm.setSchrodingerite(0);
 

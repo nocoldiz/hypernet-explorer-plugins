@@ -977,7 +977,7 @@
       this._draft = null;
       this._draftIndex = 0;
       this._draftPicker = null;
-      this._draftModal = null;
+      this._draftRows = [];
       this._ask = null;
       this._bar = window.MenuSearchBar ? window.MenuSearchBar.create({
         id: "politics", // i18n-ignore: search strip id
@@ -998,8 +998,8 @@
       // sheet is up.
       if (this._ask) return;
       if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) return;
-      // The founding sheet is a modal: while it is up the spread under it
-      // takes no keys.
+      // The founding sheet is a page of its own: while it is up the tabs and
+      // their list take no keys.
       if (this._draft) { this.updateDraftInput(); return; }
       if (!(window.MenuSearchBar && window.MenuSearchBar.isTyping())) this.updatePoliticsInput();
     }
@@ -1024,7 +1024,7 @@
           <div class="left-page pol-page">
             <div class="page-header-bar">
               <div class="back-button focusable" data-pol-act="back">${esc(PT("Politics.menu.back"))}</div>
-              <h2 class="title">${esc(PT("Politics.menu.title"))}</h2>
+              <h2 class="title" id="pol-title">${esc(PT("Politics.menu.title"))}</h2>
             </div>
             <div class="pol-place" id="pol-place"></div>
             <div class="backpack-tabs" id="pol-tabs"></div>
@@ -1048,6 +1048,7 @@
     }
 
     onPoliticsClick(e) {
+      if (this._draft) { this.onDraftClick(e); return; }
       const tab = e.target.closest("[data-pol-tab]");
       if (tab) { this.setPoliticsTab(Number(tab.getAttribute("data-pol-tab"))); return; }
       const row = e.target.closest("[data-pol-row]");
@@ -1198,7 +1199,7 @@
     }
 
     // The Own party tab before there is a party: one row, and the button
-    // that raises the founding sheet over the spread.
+    // that opens the founding sheet.
     ownFoundHTML() {
       const body = `<div class="ui-empty-note">${esc(PT("Politics.menu.msg.noParty"))}</div>` +
         `<div class="ui-empty-note">${esc(PT("Politics.menu.hint.found"))}</div>`;
@@ -1255,11 +1256,12 @@
       this.refreshPolitics();
     }
 
-    // ---- the founding sheet: a modal over the spread ---------------------------
-    // Found or edit, the sheet is one panel in the middle of the screen: the
-    // name, the creed, the fee and the tenets on the left, what they add up
-    // to on the right, Found and Cancel under both. The creed picker takes the
-    // panel's list while it is open; Cancel backs out of it, then the sheet.
+    // ---- the founding sheet: a page of the menu ---------------------------------
+    // Found or edit, the sheet takes the spread over: the name, the creed, the
+    // fee, the tenets and Found down the left page in place of the tabs and
+    // their list, what they add up to on the right with Cancel under it.
+    // The creed picker takes the sheet's list while it is open; Cancel (or
+    // Back) backs out of it, then out of the sheet to the tab it came from.
 
     openPoliticsDraft(draft) {
       if (!window.NPCPolitics) { SoundManager.playBuzzer(); return; }
@@ -1267,43 +1269,15 @@
       this._draft = draft;
       this._draftIndex = 0;
       this._draftPicker = null;
-      const modal = document.createElement("div");
-      modal.className = "ui-overlay pol-draft-modal";
-      modal.innerHTML = `
-        <div class="ui-panel pol-draft-box">
-          <div class="pol-draft-head">
-            <h3 class="title" id="pol-draft-title"></h3>
-            <div class="pol-draft-sub" id="pol-draft-sub"></div>
-          </div>
-          <div class="pol-draft-body">
-            <div class="ui-list ui-scroll pol-list pol-draft-list" id="pol-draft-list"></div>
-            <div class="ui-scroll pol-draft-detail" id="pol-draft-detail"></div>
-          </div>
-          <div class="inspect-actions ui-panel-actions">
-            <div class="inspect-btn focusable" data-pol-dact="commit" id="pol-draft-commit"></div>
-            <div class="inspect-btn focusable" data-pol-dact="cancel">${esc(PT("Politics.menu.row.cancel"))}</div>
-          </div>
-        </div>`;
-      document.body.appendChild(modal);
-      modal.addEventListener("click", (e) => this.onDraftClick(e));
-      modal.addEventListener("wheel", (e) => {
-        const box = e.target.closest(".pol-draft-list, .pol-draft-detail");
-        if (box) box.scrollTop += e.deltaY;
-        e.stopPropagation();
-        e.preventDefault();
-      }, { passive: false });
-      this._draftModal = modal;
       SoundManager.playOk();
       this.refreshPolitics();
     }
 
     closePoliticsDraft() {
-      const modal = this._draftModal;
-      if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
-      this._draftModal = null;
       this._draft = null;
       this._draftPicker = null;
       this._draftIndex = 0;
+      this._draftRows = [];
     }
 
     cancelPoliticsDraft() {
@@ -1336,23 +1310,38 @@
       return rows;
     }
 
+    // The sheet drawn into the spread's own two pages.
     refreshPoliticsDraft() {
-      const modal = this._draftModal;
+      const root = this._root;
       const d = this._draft;
-      if (!modal || !d) return;
+      if (!root || !d) return;
       this._draftRows = this.draftRows();
       if (this._draftIndex >= this._draftRows.length) this._draftIndex = Math.max(0, this._draftRows.length - 1);
       const row = this._draftRows[this._draftIndex];
-      modal.querySelector("#pol-draft-title").textContent = PT(d.founding ? "Politics.menu.sec.founding" : "Politics.menu.sec.editing");
-      modal.querySelector("#pol-draft-sub").textContent = this._draftPicker ? this._draftPicker.title : d.name;
-      modal.querySelector("#pol-draft-commit").textContent = PT(d.founding ? "Politics.menu.row.found" : "Politics.menu.row.save");
-      const list = modal.querySelector("#pol-draft-list");
-      list.innerHTML = this._draftRows.map((r, i) => this.politicsRowHTML(r, i, this._draftIndex, "data-pol-drow")).join("");
-      const sel = list.querySelector(".pol-row.selected");
-      if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: "nearest" });
-      const detail = modal.querySelector("#pol-draft-detail");
-      detail.innerHTML = this.draftDetailHTML(row);
-      paintMeasures(detail);
+      const heading = PT(d.founding ? "Politics.menu.sec.founding" : "Politics.menu.sec.editing");
+      const sub = this._draftPicker ? this._draftPicker.title : d.name;
+      const title = root.querySelector("#pol-title");
+      if (title) title.textContent = heading;
+      const placeEl = root.querySelector("#pol-place");
+      if (placeEl) placeEl.textContent = sub;
+      const tabs = root.querySelector("#pol-tabs");
+      if (tabs) tabs.innerHTML = "";
+      const slot = root.querySelector("#pol-search-slot");
+      if (slot) slot.innerHTML = "";
+      const list = root.querySelector("#pol-list");
+      if (list) {
+        list.innerHTML = this._draftRows.map((r, i) => this.politicsRowHTML(r, i, this._draftIndex, "data-pol-drow")).join("");
+        const sel = list.querySelector(".pol-row.selected");
+        if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: "nearest" });
+      }
+      const detail = root.querySelector("#pol-detail");
+      if (detail) {
+        // Found (or Save) is the sheet's last row and nowhere else: one
+        // control for it, so the right page only offers the way out.
+        const actions = `<div class="inspect-btn focusable" data-pol-dact="cancel">${esc(PT("Politics.menu.row.cancel"))}</div>`;
+        detail.innerHTML = polDetail(heading, sub, this.draftDetailHTML(row), actions);
+        paintMeasures(detail);
+      }
     }
 
     // What the sheet adds up to, with a word on the row under the cursor.
@@ -1386,13 +1375,15 @@
       const row = e.target.closest("[data-pol-drow]");
       if (row) {
         const i = Number(row.getAttribute("data-pol-drow"));
-        if (i === this._draftIndex) { this.activateDraftRow(); return; }
+        const kind = ((this._draftRows || [])[i] || {}).kind;
+        // The Found row is a button: one click founds, it never waits on a second.
+        if (i === this._draftIndex || kind === "draftConfirm") { this._draftIndex = i; this.activateDraftRow(); return; } // i18n-ignore: row kind
         this._draftIndex = i;
         SoundManager.playCursor();
         this.refreshPolitics();
         return;
       }
-      const act = e.target.closest("[data-pol-dact]");
+      const act = e.target.closest("[data-pol-dact], [data-pol-act=back]");
       if (!act) return;
       if (act.getAttribute("data-pol-dact") === "commit") this.commitPoliticsDraft(); // i18n-ignore: action id
       else this.cancelPoliticsDraft();
@@ -1531,6 +1522,9 @@
 
     refreshPolitics() {
       if (!this._root) return;
+      if (this._draft) { this.refreshPoliticsDraft(); return; }
+      const titleEl = this._root.querySelector("#pol-title");
+      if (titleEl) titleEl.textContent = PT("Politics.menu.title");
       const place = this._place;
       const placeEl = this._root.querySelector("#pol-place");
       if (placeEl) {
@@ -1563,7 +1557,6 @@
         detail.innerHTML = this.politicsDetailHTML(this._rows[this._index]);
         paintMeasures(detail);
       }
-      this.refreshPoliticsDraft();
     }
 
     politicsRowHTML(row, i, selected = this._index, attr = "data-pol-row") {

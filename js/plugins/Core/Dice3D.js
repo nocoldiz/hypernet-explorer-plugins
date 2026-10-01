@@ -603,7 +603,7 @@
                         duration: 200
                     });
                 }
-                if (nat20 || success) this._playSE('PixelUI/PixelUI (18)', 90, 100);
+                if (nat20 || success) this._playSE('Chime2', 90, 110);
                 else this._playSE('PixelUI/PixelUI (27)', 85, 90);
                 return Promise.resolve(resultData);
             }
@@ -822,7 +822,7 @@
                             } else if (nat1) {
                                 this._playSE('Down1', 90, 85);
                             } else if (success) {
-                                this._playSE('PixelUI/PixelUI (18)', 90, 100);
+                                this._playSE('Chime2', 90, 110);
                             } else {
                                 this._playSE('PixelUI/PixelUI (27)', 85, 90);
                             }

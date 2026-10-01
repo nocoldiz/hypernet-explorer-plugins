@@ -5457,7 +5457,8 @@
       // Draw travel info if moving
       if (shipData.isMoving && shipData.targetSystem) {
         const speedMultiplier = $gameVariables.value(94) || 1;
-        const fuel = Math.floor($gameVariables.value(95) || 0);
+        const dmFuel = window.GalaxySim.getDataManager && window.GalaxySim.getDataManager();
+        const fuel = Math.floor(dmFuel && dmFuel.getMapFuel ? dmFuel.getMapFuel() : 0);
 
         const infoY = labelY + labelHeight + 4;
         const infoText = `→ ${shipData.targetSystem} | ${speedMultiplier}x | Fuel: ${fuel}`;

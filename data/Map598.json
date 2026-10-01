@@ -20,7 +20,7 @@
   "encounterList": [],
   "encounterStep": 30,
   "height": 90,
-  "note": "<Interior>\n<Country: Belgium>\n<Coords 79 125>\n<BuildRights: Free>\n<Biome: City>",
+  "note": "<Interior>\n<Country: Belgium>\n<Coords 79 125>\n<BuildRights: Free>\n<Biome: City>\n<BgsNight: hallway>",
   "parallaxLoopX": true,
   "parallaxLoopY": true,
   "parallaxName": "Eris2",

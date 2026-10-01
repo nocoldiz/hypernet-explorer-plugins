@@ -11,7 +11,7 @@
  * Left page  : portfolio ledger summary (cash, vault assets, daily income, debt, net worth),
  *              category filter tabs, quick rent collection banner, and scrollable asset rows.
  * Right page : contextual deed and instrument inspector:
- *              - Stocks & equities: live price trend graph and position specs
+ *              - Stocks & equities: position specs
  *              - Founded towns: Town Charter, population, house/shop counts, and rent collection
  *              - Commercial shops: Business Deed, register balance, and direct shop book launcher
  *              - Real estate & houses: Property Deed, occupancy, daily rent, and valuation
@@ -820,7 +820,6 @@
       this._container.innerHTML = `<div class="book-spread">${leftPageHTML}${rightPageHTML}</div>`;
 
       this.applyRowTints();
-      this.paintGraph();
       this.paintAnimalSprite();
       this.scrollToSelected();
     }
@@ -890,17 +889,7 @@
 
       // Contextual visual section
       let visualHTML = '';
-      if (a.kind === 'stock' || a.kind === 'equity') {
-        visualHTML = `
-          <div class="assets-graph-box">
-            <div class="inspect-section-title assets-graph-title">${T('Assets.ui.stockMarket')}</div>
-            <canvas id="assets-graph" width="560" height="190"></canvas>
-            <div class="assets-graph-legend">
-              <div class="ui-chip assets-legend-item assets-legend--oil">OIL</div>
-              <div class="ui-chip assets-legend-item assets-legend--soul">SOUL</div>
-            </div>
-          </div>`;
-      } else if (a.animal) {
+      if (a.animal) {
         visualHTML = this.buildAnimalPortraitHTML(a.animal);
       }
 
@@ -1373,62 +1362,6 @@
       }
     }
 
-    token(name, fallback) {
-      if (!this._container || typeof getComputedStyle === 'undefined') return fallback;
-      const v = getComputedStyle(this._container).getPropertyValue(name);
-      return (v && v.trim()) || fallback;
-    }
-
-    paintGraph() {
-      const canvas = this._container && this._container.querySelector('#assets-graph');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-      const w = canvas.width, h = canvas.height;
-      ctx.clearRect(0, 0, w, h);
-
-      const sm = typeof $gameSystem !== 'undefined' && $gameSystem && $gameSystem.stockMarket;
-      if (!sm || typeof sm.getOilHistory !== 'function') return;
-      const oil = sm.getOilHistory() || [];
-      const souls = sm.getSoulsHistory() || [];
-      const all = [...oil, ...souls];
-      if (all.length < 2) return;
-
-      const min = Math.min(...all) * 0.92;
-      const max = Math.max(...all) * 1.08;
-      const padL = 56, padR = 14, padT = 14, padB = 16;
-
-      ctx.strokeStyle = this.token('--border-primary-hover-translucent-15', 'transparent');
-      ctx.lineWidth = 1;
-      ctx.font = '9px Tahoma';
-      ctx.fillStyle = this.token('--text-text-alt-4', 'currentColor');
-      ctx.textAlign = 'right';
-      for (let i = 0; i <= 4; i++) {
-        const gy = padT + (h - padT - padB) * (i / 4);
-        ctx.beginPath(); ctx.moveTo(padL, gy); ctx.lineTo(w - padR, gy); ctx.stroke();
-        const v = max - (max - min) * (i / 4);
-        ctx.fillText(euro(Math.round(v)), padL - 6, gy + 3);
-      }
-
-      const trend = (hist, color) => {
-        if (!hist || hist.length < 2) return;
-        const plotW = w - padL - padR, plotH = h - padT - padB;
-        ctx.beginPath();
-        hist.forEach((p, i) => {
-          const px = padL + i * (plotW / (hist.length - 1));
-          const py = padT + plotH - (((p - min) / (max - min)) * plotH || 0);
-          if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-        });
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2.2;
-        ctx.lineJoin = 'round';
-        ctx.lineCap = 'round';
-        ctx.stroke();
-      };
-      trend(oil, this.token('--text-cost-ok', 'currentColor'));
-      trend(souls, this.token('--text-text-alt-19', 'currentColor'));
-    }
-
     scrollToSelected() {
       const list = this._container && this._container.querySelector('#assets-list');
       if (!list) return;
@@ -1447,7 +1380,6 @@
       const detail = this._container && this._container.querySelector('#assets-detail');
       if (detail) {
         detail.innerHTML = this.buildDetailHTML();
-        this.paintGraph();
         this.paintAnimalSprite();
       }
       const list = this._container && this._container.querySelector('#assets-list');
@@ -1534,7 +1466,6 @@
       const detail = this._container.querySelector('#assets-detail');
       if (detail) {
         detail.innerHTML = this.buildDetailHTML();
-        this.paintGraph();
         this.paintAnimalSprite();
       }
     }

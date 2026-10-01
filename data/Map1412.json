@@ -1,6 +1,6 @@
 {
   "autoplayBgm": false,
-  "autoplayBgs": false,
+  "autoplayBgs": true,
   "battleback1Name": "",
   "battleback2Name": "",
   "bgm": {
@@ -10,7 +10,7 @@
     "volume": 90
   },
   "bgs": {
-    "name": "",
+    "name": "cabin-wind",
     "pan": 0,
     "pitch": 100,
     "volume": 90
@@ -20,7 +20,7 @@
   "encounterList": [],
   "encounterStep": 30,
   "height": 16,
-  "note": "<mz3d>\nsun(pitch:30)\nskyball(Universe.png,2|1.5|0,1,0)\ncamera(dist:0, height:1.1, pitch:60, fov:85, clip:0.1)\n</mz3d>\n<mz3d-tiles>\n//table\nA2,7,0:height(0.5)\n// bed\nB,4,28:top(+0,+18px,1,30px),side(+0,+1+32px,1,16px),height(0.33)\nB,4,29:top(+0,+0,1,+32px),side(+0,+32px,1,16px),height(0.33)\n\n// Base\nB,4,22: side(+0,+1),height(0.3),width(0.5+0.5)\n// Window\nB,0,14: side(+0,+1),height(2),width(1)\n</mz3d-tiles>\n<DisableFogOfWar>  \n<Interior>\n<Country: Belgium>\n<Coords 79 125>\n\n<Biome: Road>\n<BuildRights: Free>",
+  "note": "<mz3d>\nsun(pitch:30)\nskyball(Universe.png,2|1.5|0,1,0)\ncamera(dist:0, height:1.1, pitch:60, fov:85, clip:0.1)\n</mz3d>\n<mz3d-tiles>\n//table\nA2,7,0:height(0.5)\n// bed\nB,4,28:top(+0,+18px,1,30px),side(+0,+1+32px,1,16px),height(0.33)\nB,4,29:top(+0,+0,1,+32px),side(+0,+32px,1,16px),height(0.33)\n\n// Base\nB,4,22: side(+0,+1),height(0.3),width(0.5+0.5)\n// Window\nB,0,14: side(+0,+1),height(2),width(1)\n</mz3d-tiles>\n<DisableFogOfWar>  \n<Interior>\n<Country: Belgium>\n<Coords 79 125>\n\n<Biome: Road>\n<BuildRights: Free>\n<BgsNight: cabin-wind>",
   "parallaxLoopX": false,
   "parallaxLoopY": false,
   "parallaxName": "",

@@ -69,6 +69,9 @@
  *   startTraining(id, classId) / stopTraining(id) / promoteTrainee(id)
  *   hasFreeSlot()        → is there a companion slot open in the party
  *   inductAsMember(record, classId) → straight into the party, no drill first
+ *   birthDesigned(record, parent) → a child designed in the vat or splicer
+ *   snapshotActor(actor) → the whole actor, kept for promoteDesigned
+ *   canPromote(id) / promoteDesigned(id) → a designed child into a free seat
  *
  * Abandonment is the only way to be rid of a companion, and it is an offence:
  * leaving a pet behind is filed with the nEuroPolice as pet abandonment, and
@@ -675,6 +678,11 @@ window.Game_PetFollower = Game_PetFollower;
                 // answer; kept on the record so a menu row can sort on it.
                 ridable: false,
                 attrs: _petAttrs(sentient, magical, geneticFreak),
+                // A child designed in the growing vat or the gene splicer: the
+                // whole character the wizard built, promoted whole (see
+                // promoteDesigned).
+                designed: !!record.designed,
+                snapshot: record.snapshot || null,
             };
             // Decided here and never again, so it reads the same on the
             // Followers page, on the leash and in the party (_petIntoActor).
@@ -726,6 +734,76 @@ window.Game_PetFollower = Game_PetFollower;
             if (!this.getActivePet()) this.setActivePet(child.id);
             else _refreshFollower();
             return child;
+        },
+
+        // A child designed in the growing vat or the gene splicer
+        // (Health_BiologicSimulation.js, window.BiologicLab). It wears the face
+        // the wizard gave it and carries the snapshot it will be promoted from.
+        birthDesigned(record, parentName) {
+            if (!record) return null;
+            const child = this.registerPet(Object.assign({}, record, {
+                isChild: true,
+                designed: true,
+                parentName: parentName || "",
+                bornOn: $gameVariables ? String($gameVariables.value(113) || "") : "",
+                level: 1,
+            }));
+            if (!child) return null;
+            if (!this.getActivePet()) this.setActivePet(child.id);
+            else _refreshFollower();
+            return child;
+        },
+
+        // Everything a designed character is that does not live on the actor
+        // object itself, kept beside it so the seat it was built on can be
+        // handed to somebody else meanwhile.
+        snapshotActor(actor) {
+            if (!actor || typeof JsonEx === "undefined") return null;
+            const id = actor.actorId();
+            const CC3D = window.CC3DModel;
+            return {
+                actor: JsonEx.stringify(actor),
+                creature: !!(actor._isCreatureActor ||
+                    ($gameSwitches && CREATURE_SWITCHES[id] && $gameSwitches.value(CREATURE_SWITCHES[id]))),
+                model: CC3D && CC3D.getConfig ? CC3D.getConfig(id) : null,
+                seed: CC3D && CC3D.getCreatureSeed ? CC3D.getCreatureSeed(id) : null,
+            };
+        },
+
+        // A designed child is promoted as it was built, with no drill: its
+        // class was chosen in the wizard. Needs a free seat.
+        canPromote(id) {
+            const pet = this.getPet(id);
+            return !!(pet && pet.designed && pet.snapshot && _freeCompanionSlot());
+        },
+
+        promoteDesigned(id) {
+            const pet = this.getPet(id);
+            if (!pet || !pet.designed || !pet.snapshot) return null;
+            const slot = _freeCompanionSlot();
+            if (!slot || !$gameActors) return null;
+            let actor;
+            try { actor = JsonEx.parse(pet.snapshot.actor); } catch (e) { return null; }
+            if (!actor) return null;
+            actor._actorId = slot;
+            $gameActors._data[slot] = actor;
+            actor.setName(pet.name);
+            if ($gameSwitches && CREATURE_SWITCHES[slot]) {
+                $gameSwitches.setValue(CREATURE_SWITCHES[slot], !!pet.snapshot.creature);
+            }
+            const repro = actor.reproductionType ? actor.reproductionType() : null;
+            if ($gameVariables && REPRODUCTION_VARS[slot] && repro != null) {
+                $gameVariables.setValue(REPRODUCTION_VARS[slot], repro);
+            }
+            const CC3D = window.CC3DModel;
+            if (CC3D && CC3D.setConfig) CC3D.setConfig(slot, pet.snapshot.model || null);
+            if (CC3D && CC3D.setCreatureSeed) CC3D.setCreatureSeed(slot, pet.snapshot.seed || null);
+            actor.recoverAll();
+            $gameParty.addActor(slot);
+            if ($gameVariables) $gameVariables.setValue(29, $gameParty.members().length);
+            this.releasePet(pet.id);
+            _toast(T('PetFollower.designedJoined', { name: actor.name() }), "info");
+            return actor;
         },
 
         // Can this companion be ridden? A child never is (it is family, and it
@@ -896,6 +974,11 @@ window.Game_PetFollower = Game_PetFollower;
         // join offers in the Empathize panel are greyed out on.
         hasFreeSlot() {
             return _freeCompanionSlot() > 0;
+        },
+
+        // Which actor id that free slot is, or 0.
+        freeSlot() {
+            return _freeCompanionSlot();
         },
 
         // Taken straight into the party instead of onto the leash. An animal

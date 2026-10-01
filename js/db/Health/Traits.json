@@ -1722,8 +1722,8 @@
     "equipment": [],
     "switches": [],
     "incompatible": [
-      1,
-      62
+      62,
+      146
     ],
     "name": "traits.dwarfism.name",
     "description": "traits.dwarfism.description",

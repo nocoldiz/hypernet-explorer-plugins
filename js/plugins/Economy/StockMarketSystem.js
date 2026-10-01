@@ -19,10 +19,6 @@
  * @desc Base volatility for stocks.
  * @default 0.2
  * 
- * @param Update Interval
- * @desc How often the stocks update in milliseconds
- * @default 2000
- * 
  * @param History Length
  * @desc Number of price points to keep in history
  * @default 60
@@ -67,7 +63,6 @@
   const initialSoulsPrice = Number(parameters["Initial SOUL Price"]) || 66666;
   const soulMedianDefault = Number(parameters["SOUL Median Price"]) || 66666;
   const baseVolatility = Number(parameters["Volatility"]) || 0.2;
-  const updateInterval = Number(parameters["Update Interval"]) || 2000;
   const historyLength = Number(parameters["History Length"]) || 60;
   // How hard a continental outbreak leans on the market: infected people per
   // full point of negative sentiment, and the most it may ever be worth.
@@ -83,8 +78,8 @@
   //=============================================================================
   //
   // Two things are traded here. OIL and SOUL are the commodities the rest of
-  // the economy prices off (fuel, shop mark-ups, the SOUL median variable), and
-  // they keep the formulas and the wiring they have always had. Everything else
+  // the economy prices off (fuel, shop mark-ups, the SOUL median variable),
+  // priced on the same hourly engine as the companies. Everything else
   // is a company the world already knows about: the listings are read straight
   // from js/db/WorldGen/Companies.json, the same register the Real Estate
   // market and the Assets pockets trade, so a share bought at the terminal is
@@ -178,11 +173,15 @@
   // Society-driven fundamentals (company listings only)
   //=============================================================================
   //
-  // OIL and SOUL keep the 2 s real-time walk they have always had. A company
-  // moves on game time instead: once per game hour its fair-value centre
-  // drifts by what the society around it did, and its price mean-reverts to
-  // that centre with the sector volatility and the odd shock. The 2 s tick
-  // only animates the line between two hourly marks.
+  // Every listing moves on game time. Once per game hour a company's
+  // fair-value centre drifts by what the society around it did, and its price
+  // mean-reverts to that centre with the sector volatility and the odd shock;
+  // OIL and SOUL take their own hourly step first (_commodityStep), so the
+  // houses that track them read the move of the same hour. Between two marks
+  // the line is only animated, once per game minute, from the last mark's
+  // price toward the next one. While a trading screen is open the clock runs
+  // a game minute a real second (TimeDateSystem.runRealtimeClock), so the
+  // line moves every second and a new point lands every minute.
   //
   // Each driver reads one signal of the simulated world (readSocietySignals),
   // normalised to about -1..1 against its own rolling 30-day mean. A
@@ -270,7 +269,12 @@
   const HOURLY_REVERSION = 0.02;       // pull to the centre per game hour
   const HOURLY_VOL = 0.02;             // def.volatility * this = hourly half-range
   const HOURLY_SHOCK_CHANCE = 0.004;   // about one shock in ten game days
-  const INTRADAY_WIGGLE = 0.002;       // the 2 s line's jitter around its path
+  // OIL and SOUL, per game hour.
+  const OIL_HOURLY_REVERSION = 0.02;   // OIL's pull to its band midpoint
+  const SOUL_HOURLY_REVERSION = 0.08;  // SOUL's pull to the median variable
+  const COMMODITY_HOURLY_VOL = 0.25;   // def.volatility * this = hourly half-range
+  const OIL_SENTIMENT_DRIFT = 0.005;   // OIL's lean per hour at full sentiment
+  const OIL_SHOCK_CHANCE = 0.02;       // about one OIL shock in two game days
   const NOISY_DRIVER = 0.5;            // chaos worlds: noise added to each driver
   const NOISY_VOL = 1.5;               // and to the volatility
   const CRASH_CENTRE = 0.35;           // zombie worlds price at a third of fair value
@@ -699,7 +703,7 @@
       this._orderHistory = []; // Executed / Cancelled orders
       this._news = []; // Simulated live market headlines
       this._updateCounter = 0;
-      this._lastUpdateTime = 0;
+      this._lastLiveMinute = null; // the game minute the live line was last drawn at
       this._sessionStartTime = Date.now();
 
       this._lastDividendDay = null; // the last in-game day a dividend was paid
@@ -1016,22 +1020,24 @@
       this.syncWorldMarket();
     }
 
-    update() {
-      // The companies' hourly mark: a single read of the clock unless an
-      // hour has turned (then the steps, and any catch-up, are run).
+    // `live` is true while a trading screen is open (the terminal scene or the
+    // Hypernet app). Then the line is animated once per game minute; anywhere
+    // else only on the hourly mark, when orders are matched and dividends
+    // paid. Answers what the screen has to redraw: 0 nothing, 1 the prices
+    // and the chart (tickUIStock), 2 everything (refreshUIStock).
+    update(live) {
+      // The hourly mark: a single read of the clock unless an hour has
+      // turned (then the steps, and any catch-up, are run).
       const marked = this.advanceToNow() > 0;
-      if (!this._lastUpdateTime) {
-        this._lastUpdateTime = Date.now();
-        return marked;
-      }
-      if (Date.now() - this._lastUpdateTime >= updateInterval) {
-        this._lastUpdateTime = Date.now();
-        this.updatePrices();
-        this.evaluateOpenOrders();
-        this.payDividends();
-        return true;
-      }
-      return marked;
+      if (!live && !marked) return 0;
+      const minute = gameMinute();
+      if (!marked && minute === this._lastLiveMinute) return 0;
+      this._lastLiveMinute = minute;
+      const moved = this.updatePrices();
+      let full = marked;
+      if (moved || marked) full = this.evaluateOpenOrders() || full;
+      if (this.payDividends() > 0) full = true;
+      return full ? 2 : (moved ? 1 : 0);
     }
 
     // =========================================================================
@@ -1049,7 +1055,6 @@
         rate: {},          // per counted signal: smoothed per-hour flow
         counters: {},      // per counted signal: flow since the last mark
         seenDead: null,    // cumulative epidemic deaths at the last read
-        commodityMark: {}, // OIL / SOUL price at the last mark (for betas)
         score: {},         // last score per company (-1..1)
         drivers: {},       // last normalised driver values per signal
         dayOpen: {},       // price a day ago, for the big-move wire
@@ -1069,11 +1074,18 @@
       }
       this._engine = fresh;
       for (const id of Object.keys(this._engine.open)) {
-        if (this._stocks[id] && !STOCKS_CONFIG[id].commodity) {
-          const live = this._liveCompanyPrice(id, gameMinute());
+        if (this._stocks[id]) {
+          const live = this._livePrice(id, gameMinute());
           if (live) this._stocks[id].currentPrice = live;
         }
       }
+    }
+
+    // Every listing the hourly engine prices, the commodities first: the
+    // houses that live off them read the move they just made.
+    _engineIds() {
+      const all = Object.keys(STOCKS_CONFIG).filter(id => this._stocks[id]);
+      return all.filter(id => STOCKS_CONFIG[id].commodity).concat(all.filter(id => !STOCKS_CONFIG[id].commodity));
     }
 
     _companyIds() {
@@ -1191,6 +1203,37 @@
       return stocksCrashed() ? Math.max(def.minPrice || minimumPrice, Math.round(c * CRASH_CENTRE)) : c;
     }
 
+    // One hourly (or coarse) step of OIL or SOUL. SOUL reverts to the median
+    // variable; OIL to its band midpoint, leaning with the market sentiment
+    // and taking the odd shock. Four draws every step, like a company's.
+    _commodityStep(id, price, hours, rng, sentiment) {
+      const def = STOCKS_CONFIG[id];
+      const vol = (def.volatility || baseVolatility) * (stocksNoisy() ? NOISY_VOL : 1);
+      const r1 = rng(), r2 = rng(), r3 = rng(), r4 = rng();
+      const minPrice = def.minPrice || 2000;
+      const maxPrice = def.maxPrice || 100000;
+      const isSoul = id === "souls";
+      const centre = isSoul ? getSoulMedianFromVariable() : (def.centerPrice || (minPrice + maxPrice) / 2);
+      const reversion = isSoul ? SOUL_HOURLY_REVERSION : OIL_HOURLY_REVERSION;
+      let next = price + (centre - price) * (1 - Math.pow(1 - reversion, hours));
+      next += (r1 - 0.5) * price * vol * COMMODITY_HOURLY_VOL * Math.sqrt(hours);
+      if (!isSoul) {
+        next += price * (Math.pow(1 + OIL_SENTIMENT_DRIFT * sentiment, hours) - 1);
+        if (r2 < 1 - Math.pow(1 - OIL_SHOCK_CHANCE, hours)) {
+          const upChance = 0.5 + sentiment * 0.25;
+          next += (r3 < upChance ? 1 : -1) * price * (0.08 + r4 * 0.12);
+        }
+      }
+      next = Math.max(minPrice, Math.min(next, maxPrice));
+      return Math.round(Math.max(next, minimumPrice));
+    }
+
+    // Town mood plus whatever the continent is dying of, clamped to -1..1.
+    _sentiment() {
+      const mood = window.NPCWorldWeb?.marketSentiment?.() ?? 0;
+      return Math.max(-1, Math.min(1, mood + this._epidemicDrag()));
+    }
+
     // Price every game hour since the last mark. Answers the hours priced.
     // A skip is capped at 90 days, and one longer than three days is walked
     // in coarse steps (never more than COARSE_STEPS_MAX), the last of them
@@ -1206,10 +1249,9 @@
         E.hour = hour;
         // Flows reported before the first mark belong to no hour.
         E.counters = {};
-        this._markCommodities();
-        for (const id of this._companyIds()) {
+        for (const id of this._engineIds()) {
           const p = this._stocks[id].currentPrice;
-          if (!E.centre[id]) E.centre[id] = STOCKS_CONFIG[id].centerPrice || p;
+          if (!STOCKS_CONFIG[id].commodity && !E.centre[id]) E.centre[id] = STOCKS_CONFIG[id].centerPrice || p;
           if (!E.open[id]) E.open[id] = p;
           if (!E.target[id]) E.target[id] = p;
           if (!E.dayOpen[id]) E.dayOpen[id] = p;
@@ -1242,12 +1284,12 @@
       const sig = Object.assign({}, base, flows);
       const noisy = stocksNoisy();
       const seed = marketSeed();
-      const ids = this._companyIds();
-      const commodityMove = this._commodityMoves();
-      this._markCommodities();
+      const ids = this._engineIds();
+      const sentiment = this._sentiment();
+      const commodityMove = {};
       const closing = {};
       for (const id of ids) {
-        if (!E.centre[id]) E.centre[id] = STOCKS_CONFIG[id].centerPrice || this._stocks[id].currentPrice;
+        if (!STOCKS_CONFIG[id].commodity && !E.centre[id]) E.centre[id] = STOCKS_CONFIG[id].centerPrice || this._stocks[id].currentPrice;
         if (!E.target[id]) E.target[id] = this._stocks[id].currentPrice;
         closing[id] = E.target[id];
       }
@@ -1262,6 +1304,15 @@
         norm = this._normaliseSignals(sig, dt, noisy, noiseRng);
         for (const id of ids) {
           const def = STOCKS_CONFIG[id];
+          if (def.commodity) {
+            const was = E.target[id];
+            const next = this._commodityStep(id, was, dt, stepRng(hashString(id + ":" + at) ^ seed), sentiment);
+            commodityMove[id] = was > 0 ? (next - was) / was : 0;
+            if (s === plan.length - 1) E.open[id] = was;
+            E.target[id] = next;
+            (path[id] || (path[id] = [])).push(next);
+            continue;
+          }
           const score = this._scoreOf(def, norm);
           E.score[id] = score;
           // The centre drifts with the score, never more than 2% a day.
@@ -1270,7 +1321,7 @@
           const hi = (def.maxPrice || def.initialPrice * 4) * 0.8;
           E.centre[id] = Math.max(lo, Math.min(hi, E.centre[id] * drift));
           const rng = stepRng(hashString(id + ":" + at) ^ seed);
-          const move = s === 0 ? (commodityMove[def.tracks] || 0) : 0;
+          const move = commodityMove[def.tracks] || 0;
           let price = this._companyStep(E.target[id], def, this._effectiveCentre(id, def), dt, rng, score, move);
           // Earnings day: the quarter's figures land with the drivers.
           if (dt === 1 && at % 24 === 0 && this._isEarningsDay(id, at / 24)) {
@@ -1317,26 +1368,9 @@
       return ((Math.floor(day) + (hashString("earnings:" + id) % EARNINGS_EVERY_DAYS)) % EARNINGS_EVERY_DAYS) === 0;
     }
 
-    // What OIL and SOUL did since the last mark, for the houses that track them.
-    _commodityMoves() {
-      const out = {};
-      for (const id of Object.keys(COMMODITY_CONFIG)) {
-        const was = this._engine.commodityMark[id];
-        const now = this._stocks[id] && this._stocks[id].currentPrice;
-        out[id] = was > 0 && now > 0 ? (now - was) / was : 0;
-      }
-      return out;
-    }
-
-    _markCommodities() {
-      for (const id of Object.keys(COMMODITY_CONFIG)) {
-        if (this._stocks[id]) this._engine.commodityMark[id] = this._stocks[id].currentPrice;
-      }
-    }
-
-    // Where a company's line stands between two marks: from the last mark's
-    // price toward the next one, by the minutes gone, with a little jitter.
-    _liveCompanyPrice(id, minute, jitter) {
+    // Where a listing's line stands between two marks: from the last mark's
+    // price toward the next one, by the game minutes gone.
+    _livePrice(id, minute) {
       const E = this._engine;
       const open = E.open[id], target = E.target[id];
       if (!(open > 0) || !(target > 0)) return null;
@@ -1344,9 +1378,7 @@
       if (minute !== null && minute !== undefined && E.hour !== null) {
         frac = Math.max(0, Math.min(1, (minute - E.hour * 60) / 60));
       }
-      let p = open + (target - open) * frac;
-      if (jitter) p += p * INTRADAY_WIGGLE * (Math.random() - 0.5) * 2;
-      return Math.max(minimumPrice, Math.round(p));
+      return Math.max(minimumPrice, Math.round(open + (target - open) * frac));
     }
 
     // The float is conserved: the party (and a scenario stake such as the CEO
@@ -1545,128 +1577,61 @@
       } catch (e) { return 0; }
     }
 
-    // The 2 s tick. OIL and SOUL take their real-time step exactly as they
-    // always have; a company only animates its line between two hourly marks
-    // (the hourly engine, advanceToNow, is what moves it).
+    // The live tick, once per game minute while a trading screen is open (and
+    // on every hourly mark): each listing's line takes the step the clock
+    // says, between the last mark and the next. Nothing is priced here, the
+    // hourly engine (advanceToNow) does that. Answers whether a price moved.
     updatePrices() {
-      if (stocksFrozen()) return;
-
-      // The commodities price first: the houses that live off them read the
-      // move they just made.
-      const ordered = Object.keys(STOCKS_CONFIG).sort((a, b) => {
-        const ca = STOCKS_CONFIG[a].commodity ? 0 : 1;
-        const cb = STOCKS_CONFIG[b].commodity ? 0 : 1;
-        return ca - cb;
-      });
-
+      if (stocksFrozen()) return false;
       const minute = gameMinute();
-      for (const id of ordered) {
-        const def = STOCKS_CONFIG[id];
-        if (!this._stocks[id]) continue;
-
-        if (!def.commodity) {
-          this._animateCompany(id, minute);
-          continue;
-        }
-
-        const prevPrice = this._stocks[id].currentPrice;
-        const newPrice = this.generateNewPrice(prevPrice, id, def);
-        this._stocks[id].currentPrice = newPrice;
-        this._lastPctMove[id] = prevPrice > 0 ? (newPrice - prevPrice) / prevPrice : 0;
-
-        this._history[id].push(newPrice);
-        if (this._history[id].length > historyLength) this._history[id].shift();
-
-        // Update candlestick buffer
-        this.updateCandle(id, prevPrice, newPrice);
-        this._quoteToRegister(id, newPrice);
+      let moved = false;
+      for (const id of Object.keys(this._stocks)) {
+        if (this._animateLine(id, minute)) moved = true;
       }
-
       this._oilPrice = this._stocks.oil.currentPrice;
       this._soulsPrice = this._stocks.souls.currentPrice;
-      this._oilHistory = this._history.oil;
-      this._soulsHistory = this._history.souls;
       this._updateCounter++;
 
       // Periodically trigger a market event headline
       if (this._updateCounter % 15 === 0) {
         this.generateRandomHeadline();
       }
-
-      this.syncWorldMarket();
+      return moved;
     }
 
-    // A company's live line: between the last hourly mark and the next, with
-    // the live history point and candle following it.
-    _animateCompany(id, minute) {
-      const prevPrice = this._stocks[id].currentPrice;
-      const live = this._liveCompanyPrice(id, minute, true) || prevPrice;
-      this._stocks[id].currentPrice = live;
-      this._lastPctMove[id] = prevPrice > 0 ? (live - prevPrice) / prevPrice : 0;
+    // A listing's live line: between the last hourly mark and the next, with
+    // the live history point and candle following it. Answers whether it moved.
+    _animateLine(id, minute) {
+      const stock = this._stocks[id];
+      const prevPrice = stock.currentPrice;
+      const live = this._livePrice(id, minute);
+      if (!live) return false;
+      stock.currentPrice = live;
+      // A company is quoted in whole euros, so most minutes it does not move.
+      this._quoteToRegister(id, live);
+      const price = stock.currentPrice;
+      if (price === prevPrice) return false;
       const hist = this._history[id];
-      if (hist && hist.length) hist[hist.length - 1] = live;
+      if (hist && hist.length) hist[hist.length - 1] = price;
       const candles = this._candles[id];
       if (candles && candles.length) {
         const last = candles[candles.length - 1];
-        last.close = live;
-        last.high = Math.max(last.high, live);
-        last.low = Math.min(last.low, live);
+        last.close = price;
+        if (price > last.high) last.high = price;
+        if (price < last.low) last.low = price;
       }
-      this._quoteToRegister(id, live);
+      return true;
     }
 
+    // One hourly step of a listing with no engine state behind it: how a
+    // listing's opening history is seeded.
     generateNewPrice(currentPrice, stockType, def) {
-      let newPrice;
-      // Town mood plus whatever the continent is dying of, clamped to the same
-      // -1..1 range the sentiment term has always been on.
-      const mood = window.NPCWorldWeb?.marketSentiment?.() ?? 0;
-      const sentiment = Math.max(-1, Math.min(1, mood + this._epidemicDrag()));
-
-      if (stockType === "souls") {
-        const targetPrice = getSoulMedianFromVariable();
-        const reversionStrength = 0.08;
-        const fluctuation = (Math.random() - 0.5) * (currentPrice * def.volatility * 0.4);
-        const pullToMean = (targetPrice - currentPrice) * reversionStrength;
-        newPrice = currentPrice + pullToMean + fluctuation;
-      } else if (def && def.companyKey) {
-        // A company takes one hourly step of the society engine (this is how
-        // a listing's opening history is seeded; the live price is moved by
-        // advanceToNow).
-        const score = (this._engine && this._engine.score && this._engine.score[stockType]) || 0;
-        const move = def.tracks ? ((this._lastPctMove && this._lastPctMove[def.tracks]) || 0) : 0;
-        return this._companyStep(currentPrice, def, this._effectiveCentre(stockType, def), 1, Math.random, score, move);
-      } else {
-        const minPrice = def.minPrice || 2000;
-        const maxPrice = def.maxPrice || 100000;
-        // A company reverts to what it was floated at; OIL keeps the band
-        // midpoint it has always walked around.
-        const centerPrice = def.centerPrice || (minPrice + maxPrice) / 2;
-        const reversionStrength = 0.008;
-
-        const pullToCenter = (centerPrice - currentPrice) * reversionStrength;
-        const randomWalk = (Math.random() - 0.5) * (currentPrice * def.volatility * 0.5);
-        const sentimentDrift = currentPrice * 0.015 * sentiment;
-
-        // A house that lives off a commodity follows it: refiners rise with
-        // OIL, hauliers are squeezed by it.
-        let commodityDrift = 0;
-        if (def.tracks && def.beta) {
-          const move = (this._lastPctMove && this._lastPctMove[def.tracks]) || 0;
-          commodityDrift = currentPrice * move * def.beta;
-        }
-
-        let shock = 0;
-        if (Math.random() < 0.04) {
-          const upChance = 0.5 + sentiment * 0.25;
-          shock = (Math.random() < upChance ? 1 : -1) * currentPrice * (0.08 + Math.random() * 0.12);
-        }
-
-        newPrice = currentPrice + pullToCenter + randomWalk + sentimentDrift + commodityDrift + shock;
-        newPrice = Math.max(minPrice, Math.min(newPrice, maxPrice));
+      if (COMMODITY_CONFIG[stockType]) {
+        return this._commodityStep(stockType, currentPrice, 1, Math.random, this._sentiment());
       }
-
-      newPrice = Math.max(newPrice, minimumPrice);
-      return Math.round(newPrice);
+      const score = (this._engine && this._engine.score && this._engine.score[stockType]) || 0;
+      const move = def.tracks ? ((this._lastPctMove && this._lastPctMove[def.tracks]) || 0) : 0;
+      return this._companyStep(currentPrice, def, this._effectiveCentre(stockType, def), 1, Math.random, score, move);
     }
 
     generateRandomHistory(basePrice, length, stockType) {
@@ -1987,10 +1952,12 @@
       return true;
     }
 
+    // Answers whether any order was filled.
     evaluateOpenOrders() {
-      if (this._orders.length === 0) return;
+      if (this._orders.length === 0) return false;
 
       const remainingOrders = [];
+      let filled = false;
 
       for (const order of this._orders) {
         if (order.status !== "pending") continue;
@@ -2016,12 +1983,14 @@
 
         if (shouldTrigger) {
           this.executeOrderFill(order, currentPrice);
+          filled = true;
         } else {
           remainingOrders.push(order);
         }
       }
 
       this._orders = remainingOrders;
+      return filled;
     }
 
     executeOrderFill(order, fillPrice) {
@@ -2358,11 +2327,10 @@
       this.syncWorldMarket();
     }
 
-    // A pump or a crash moves a company's hourly line with it, so the next
-    // 2 s tick does not animate the jump straight back out.
+    // A pump or a crash moves a listing's hourly line with it, so the next
+    // live tick does not animate the jump straight back out.
     _jumpCompanyLine(id, price) {
-      const def = STOCKS_CONFIG[id];
-      if (!def || def.commodity) return;
+      if (!STOCKS_CONFIG[id]) return;
       const E = this._engine;
       const was = E.open[id] || price;
       const ratio = was > 0 ? price / was : 1;
@@ -2446,16 +2414,11 @@
   const _SceneManager_updateScene = SceneManager.updateScene;
   SceneManager.updateScene = function () {
     _SceneManager_updateScene.call(this);
-    if (
-      this._scene &&
-      $gameSystem &&
-      $gameSystem.stockMarket &&
-      $gameSystem.stockMarket.update &&
-      $gameSystem.stockMarket.update() &&
-      this._scene instanceof Scene_StockMarket
-    ) {
-      this._scene.refreshUIStock();
-    }
+    const sm = this._scene && $gameSystem && $gameSystem.stockMarket;
+    if (!sm || !sm.update) return;
+    const onTerminal = this._scene instanceof Scene_StockMarket;
+    const redraw = sm.update(onTerminal);
+    if (redraw && onTerminal) this._scene.redrawStock(redraw);
   };
 
   const _Game_Variables_setValue = Game_Variables.prototype.setValue;
@@ -2507,9 +2470,8 @@
     },
     update: function() {
       if (this.appInstance && this.win) {
-        if ($gameSystem && $gameSystem.stockMarket && $gameSystem.stockMarket.update()) {
-          this.appInstance.refreshUIStock();
-        }
+        const redraw = $gameSystem && $gameSystem.stockMarket ? $gameSystem.stockMarket.update(true) : 0;
+        if (redraw) this.appInstance.redrawStock(redraw);
         if (this.win.classList.contains('active')) {
           this.appInstance.update();
         }
@@ -2565,6 +2527,9 @@
         super.update();
         this.updateKeyboardShortcuts();
         this.updateStockFocusRing();
+        // A terminal on its own keeps the clock the PC keeps (in the Hypernet
+        // app, Scene_HypernetOS runs it).
+        if (window.TimeDateSystem && window.TimeDateSystem.runRealtimeClock) window.TimeDateSystem.runRealtimeClock();
       }
       if (this._toastTimer > 0) {
         this._toastTimer--;
@@ -2653,6 +2618,46 @@
       }
     }
 
+    // What the market's update asked for: 1 the moving prices and the chart,
+    // 2 the whole terminal.
+    redrawStock(level) {
+      if (level > 1) this.refreshUIStock();
+      else this.tickUIStock();
+    }
+
+    // The once-a-second redraw: the watchlist quotes, the selected listing's
+    // price and the chart, patched in place. Rebuilding the terminal (its
+    // stylesheet, every listener) is left to refreshUIStock, on the hourly
+    // mark or when the player acts.
+    tickUIStock() {
+      const container = document.getElementById("stock-container");
+      if (!container) return;
+      const sm = $gameSystem.stockMarket;
+      const quote = (stock, priceEl, moveEl, withAmount) => {
+        const price = stock.currentPrice;
+        const prev = this._prevPrices[stock.id] || price;
+        const delta = price - prev;
+        const pct = prev > 0 ? (delta / prev) * 100 : 0;
+        const up = delta >= 0;
+        if (priceEl) priceEl.textContent = formatMoney(price);
+        if (moveEl) {
+          moveEl.textContent = withAmount
+            ? `${up ? '▲ +' : '▼ '}${formatMoney(Math.abs(delta))} (${pct.toFixed(2)}%)`
+            : `${up ? '▲ +' : '▼ '}${pct.toFixed(2)}%`;
+          moveEl.style.color = up ? UP_INK : '#c0392b';
+        }
+      };
+      for (const card of container.querySelectorAll(".sm-stock-card[data-stock-id]")) {
+        const stock = sm.getStock(card.getAttribute("data-stock-id"));
+        if (stock) quote(stock, card.querySelector(".sm-q-price"), card.querySelector(".sm-q-move"), false);
+      }
+      const selected = sm.getStock(this._selectedStockId);
+      if (selected) quote(selected, container.querySelector("#sm-head-price"), container.querySelector("#sm-head-move"), true);
+      const ticks = container.querySelector("#sm-ticks");
+      if (ticks) ticks.textContent = String(sm._updateCounter);
+      this.paintStockGraph();
+    }
+
     refreshUIStock() {
       const container = document.getElementById("stock-container");
       if (!container) return;
@@ -2691,8 +2696,8 @@
                 ${stock.name && stock.name !== stock.symbol ? `<span style="font-weight:bold; font-size:13px; color:#1a2a3a; margin-left:4px">${stock.name}</span>` : ''}
               </div>
               <div style="text-align:right">
-                <div style="font-weight:bold; font-size:14px; color:var(--xp-blue-dark)">${formatMoney(price)}</div>
-                <div style="font-size:11px; font-weight:bold; color:${up ? UP_INK : '#c0392b'}">
+                <div class="sm-q-price" style="font-weight:bold; font-size:14px; color:var(--xp-blue-dark)">${formatMoney(price)}</div>
+                <div class="sm-q-move" style="font-size:11px; font-weight:bold; color:${up ? UP_INK : '#c0392b'}">
                   ${up ? '▲ +' : '▼ '}${pct.toFixed(2)}%
                 </div>
               </div>
@@ -3050,7 +3055,7 @@
           <div style="display:flex; align-items:center; gap:12px">
             <span style="font-size:18px; font-weight:bold; letter-spacing:1px; color:var(--xp-white)">STOCK MARKET</span>
             <span style="background:${UP_INK}; color:var(--xp-white); font-size:10px; font-weight:bold; padding:2px 8px; border-radius:10px">● LIVE MARKET OPEN</span>
-            <span style="font-size:12px; color:var(--xp-sky-4)">Session Ticks: ${sm._updateCounter}</span>
+            <span style="font-size:12px; color:var(--xp-sky-4)">Session Ticks: <span id="sm-ticks">${sm._updateCounter}</span></span>
           </div>
           <div style="display:flex; gap:10px">
             <div class="sm-stat-pill">
@@ -3102,8 +3107,8 @@
                 <div>
                   <span style="font-size:15px; font-weight:bold; color:var(--xp-blue-dark)">${currentStock.name}</span>
                   <span class="sm-ticker-badge" style="margin-left:6px">${currentStock.symbol}</span>
-                  <span style="font-size:16px; font-weight:bold; margin-left:10px; color:var(--xp-ink)">${formatMoney(stockPrice)}</span>
-                  <span style="font-size:12px; font-weight:bold; margin-left:6px; color:${isUp ? UP_INK : '#c0392b'}">
+                  <span id="sm-head-price" style="font-size:16px; font-weight:bold; margin-left:10px; color:var(--xp-ink)">${formatMoney(stockPrice)}</span>
+                  <span id="sm-head-move" style="font-size:12px; font-weight:bold; margin-left:6px; color:${isUp ? UP_INK : '#c0392b'}">
                     ${isUp ? '▲ +' : '▼ '}${formatMoney(Math.abs(deltaPrice))} (${pctChange.toFixed(2)}%)
                   </span>
                 </div>
@@ -3478,10 +3483,12 @@
       const canvas = document.getElementById("sm-chart-canvas");
       if (!canvas) return;
 
+      // Resizing a canvas reallocates it: only when the box really changed.
       const box = canvas.parentElement;
       if (box) {
-        canvas.width = box.clientWidth || 480;
-        canvas.height = box.clientHeight || 180;
+        const bw = box.clientWidth || 480, bh = box.clientHeight || 180;
+        if (canvas.width !== bw) canvas.width = bw;
+        if (canvas.height !== bh) canvas.height = bh;
       }
 
       const ctx = canvas.getContext("2d");

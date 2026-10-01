@@ -48,10 +48,14 @@
       "KevinMacLeod/Mysterious/Tempting Secrets"
     ],
     "bgsNight": [
+      "alien-planet-surface",
+      "alien-low-rumble",
       "winchester-wind-ambience"
     ],
     "bgs": [
-      "wind-in-the-desert-countryside"
+      "alien-planet-wind",
+      "alien-hostile-planet",
+      "desert-open-wind"
     ],
     "dayTemperature": 32,
     "nightTemperature": 20,
@@ -212,10 +216,13 @@
       "KevinMacLeod/Dramatic/The Pyre"
     ],
     "bgsNight": [
-      "winchester-wind-ambience"
+      "alien-planet-surface",
+      "alien-low-rumble"
     ],
     "bgs": [
-      "mountain-wind"
+      "alien-hostile-planet",
+      "alien-planet-wind",
+      "dust-storm"
     ],
     "dayTemperature": 30,
     "nightTemperature": 18,
@@ -363,14 +370,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
+      "alien-world",
       "night-crickets",
-      "mountain-wind",
-      "night-ambience"
+      "mountain-wind"
     ],
     "bgs": [
+      "alien-planet-tone",
       "mountain-wind",
-      "mountain-ambience",
-      "montain-ambience2"
+      "alien-bio-signs"
     ],
     "dayTemperature": 8,
     "nightTemperature": -2,
@@ -694,14 +701,14 @@
       "KevinMacLeod/Atmospheric/Night Cave"
     ],
     "bgsNight": [
+      "alien-world",
       "crickets5",
-      "night-crickets",
-      "country-crickets"
+      "japan-night-fields"
     ],
     "bgs": [
       "field_tallgrass",
-      "openfield_grass_rustlinginsects-",
-      "grass_field_insectbed"
+      "alien-bio-signs",
+      "alien-musical-creature"
     ],
     "dayTemperature": 25,
     "nightTemperature": 16,
@@ -858,14 +865,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "night-crickets",
-      "crickets5",
-      "night-ambience"
+      "alien-world",
+      "alien-low-rumble",
+      "night-crickets"
     ],
     "bgs": [
-      "mountain-wind",
-      "mountain-ambience",
-      "grass-wind"
+      "alien-planet-tone",
+      "mountain-troodos",
+      "alien-bio-signs"
     ],
     "dayTemperature": 18,
     "nightTemperature": 10,
@@ -1072,14 +1079,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "wind-blizzard",
-      "wind-blizzard2",
-      "wind-arctic"
+      "winter-storm",
+      "alien-storm-pulsation",
+      "alien-thunder-rumble"
     ],
     "bgs": [
-      "cold-wind-loop",
-      "wind-icelake",
-      "snowing"
+      "polar-wind",
+      "alien-storm-pulsation",
+      "alien-planet-wind"
     ],
     "dayTemperature": -8,
     "nightTemperature": -15,
@@ -1288,14 +1295,15 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "wind-blizzard",
-      "wind-blizzard2",
-      "wind-arctic"
+      "winter-storm",
+      "ice-cracks",
+      "alien-spacedrone"
     ],
     "bgs": [
-      "cold-wind-loop",
-      "wind-icelake",
-      "snowing"
+      "polar-wind",
+      "arctic-wind-cold",
+      "ice-slow-crack",
+      "alien-planet-tone"
     ],
     "dayTemperature": -8,
     "nightTemperature": -15,
@@ -1471,13 +1479,14 @@
       "KevinMacLeod/Horror/Unseen Horrors"
     ],
     "bgsNight": [
-      "ocean-night",
-      "ocean-night2"
+      "ocean-night2",
+      "alien-electric-breath",
+      "alien-wandering"
     ],
     "bgs": [
-      "ocean-waves",
-      "ocean2",
-      "ocean3"
+      "ocean-big-waves",
+      "alien-planet-tone",
+      "waves-shore"
     ],
     "dayTemperature": 18,
     "nightTemperature": 16,
@@ -1668,13 +1677,15 @@
     ],
     "bgsNight": [
       "lava-loop-1",
-      "lava-loop-2",
-      "lava-loop-3"
+      "alien-mud-volcanos",
+      "volcano-yasur",
+      "alien-bass-rumble"
     ],
     "bgs": [
       "lava-loop-1",
-      "lava-loop-2",
-      "lava-loop-3"
+      "alien-mud-volcanos",
+      "volcano-yasur",
+      "alien-bass-rumble"
     ],
     "dayTemperature": 50,
     "nightTemperature": 40,
@@ -1846,12 +1857,15 @@
       "KevinMacLeod/Mysterious/Tempting Secrets"
     ],
     "bgsNight": [
-      "desert-ambience",
-      "desert-monolit"
+      "desert-dark-sahara",
+      "alien-planet-surface",
+      "alien-low-rumble"
     ],
     "bgs": [
-      "desert-ambient-loop",
-      "desert2"
+      "alien-planet-wind",
+      "desert-dunes",
+      "alien-hostile-planet",
+      "dust-storm"
     ],
     "dayTemperature": 35,
     "nightTemperature": 15,
@@ -2008,14 +2022,15 @@
       "KevinMacLeod/Atmospheric/Night Cave"
     ],
     "bgsNight": [
-      "jungle-night",
-      "crickets5",
-      "frogs-croaking-at-night"
+      "alien-jungle-beast",
+      "alien-musical-creature",
+      "jungle-night-island"
     ],
     "bgs": [
-      "jungle-sounds-background-ambience-1",
-      "forest-birds",
-      "nature-summer"
+      "alien-jungle",
+      "alien-jungle-creatures",
+      "alien-jungle-beast",
+      "jungle-mystic"
     ],
     "dayTemperature": 30,
     "nightTemperature": 24,
@@ -2168,14 +2183,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "wind-blizzard",
-      "wind-arctic",
-      "wind-blizzard2"
+      "winter-storm",
+      "alien-spacedrone",
+      "howling-wind"
     ],
     "bgs": [
-      "cold-wind-loop",
-      "wind-soft",
-      "snowing"
+      "polar-wind",
+      "arctic-air-water",
+      "alien-planet-tone"
     ],
     "dayTemperature": -10,
     "nightTemperature": -15,
@@ -2356,14 +2371,14 @@
       "KevinMacLeod/Horror/Unseen Horrors"
     ],
     "bgsNight": [
-      "frogs-croaking-at-night",
-      "night-swamp",
-      "swamp-long"
+      "alien-methyl-swamp",
+      "alien-creepy",
+      "alien-electric-breath"
     ],
     "bgs": [
-      "swamp-woods",
-      "forest-swamp",
-      "countryside-swamp9"
+      "alien-methyl-swamp",
+      "hot-spring-bubbling",
+      "alien-world-horror"
     ],
     "dayTemperature": 24,
     "nightTemperature": 18,
@@ -2555,14 +2570,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "wind-blizzard",
-      "wind-blizzard2",
-      "wind-arctic"
+      "alien-thunder-rumble",
+      "alien-storm-pulsation",
+      "winter-storm"
     ],
     "bgs": [
-      "cold-wind-loop",
-      "wind-icelake",
-      "snowing"
+      "alien-storm-pulsation",
+      "alien-electric-storm",
+      "polar-wind"
     ],
     "dayTemperature": -8,
     "nightTemperature": -15,
@@ -2735,13 +2750,15 @@
       "KevinMacLeod/Dramatic/The Pyre"
     ],
     "bgsNight": [
-      "lava-loop-1",
-      "lava-loop-2",
+      "alien-storm-pulsation",
+      "alien-bass-rumble",
+      "alien-electric-arc",
       "lava-loop-3"
     ],
     "bgs": [
-      "lava-loop-1",
-      "lava-loop-2",
+      "alien-storm-pulsation",
+      "alien-bass-rumble",
+      "alien-electric-arc",
       "lava-loop-3"
     ],
     "dayTemperature": 50,
@@ -2944,14 +2961,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "wind-blizzard",
-      "wind-blizzard2",
-      "wind-arctic"
+      "alien-thunder-rumble",
+      "alien-bass-rumble",
+      "howling-wind"
     ],
     "bgs": [
-      "cold-wind-loop",
-      "wind-icelake",
-      "snowing"
+      "alien-electric-storm",
+      "alien-storm-pulsation",
+      "howling-wind"
     ],
     "dayTemperature": -8,
     "nightTemperature": -15,
@@ -3152,14 +3169,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "wind-blizzard",
-      "wind-blizzard2",
-      "wind-arctic"
+      "winter-storm",
+      "alien-thunder-rumble",
+      "alien-spacedrone"
     ],
     "bgs": [
-      "cold-wind-loop",
-      "wind-icelake",
-      "snowing"
+      "polar-wind",
+      "alien-storm-pulsation",
+      "alien-thunder-rumble"
     ],
     "dayTemperature": -8,
     "nightTemperature": -15,
@@ -3364,14 +3381,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "wind-blizzard",
-      "wind-blizzard2",
-      "wind-arctic"
+      "winter-storm",
+      "alien-rings-saturn",
+      "alien-spacedrone"
     ],
     "bgs": [
-      "cold-wind-loop",
-      "wind-icelake",
-      "snowing"
+      "polar-wind",
+      "alien-rings-saturn",
+      "ice-cracks"
     ],
     "dayTemperature": -8,
     "nightTemperature": -15,
@@ -3575,14 +3592,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "wind-blizzard",
-      "wind-blizzard2",
-      "wind-arctic"
+      "alien-rings-saturn",
+      "alien-thunder-rumble",
+      "alien-wandering"
     ],
     "bgs": [
-      "cold-wind-loop",
-      "wind-icelake",
-      "snowing"
+      "alien-rings-saturn",
+      "alien-storm-pulsation",
+      "polar-wind"
     ],
     "dayTemperature": -8,
     "nightTemperature": -15,
@@ -3782,14 +3799,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "wind-blizzard",
-      "wind-blizzard2",
-      "wind-arctic"
+      "alien-wandering",
+      "soft-tonal-wind2",
+      "alien-spacedrone"
     ],
     "bgs": [
-      "cold-wind-loop",
-      "wind-icelake",
-      "snowing"
+      "alien-wandering",
+      "soft-tonal-wind",
+      "alien-storm-pulsation"
     ],
     "dayTemperature": -8,
     "nightTemperature": -15,
@@ -3957,14 +3974,16 @@
       "KevinMacLeod/Dramatic/The Pyre"
     ],
     "bgsNight": [
-      "lava-loop-1",
+      "alien-bass-rumble",
+      "alien-seismic",
       "lava-loop-2",
-      "lava-loop-3"
+      "alien-void-monolith"
     ],
     "bgs": [
-      "lava-loop-1",
+      "alien-bass-rumble",
+      "alien-seismic",
       "lava-loop-2",
-      "lava-loop-3"
+      "alien-void-monolith"
     ],
     "dayTemperature": 50,
     "nightTemperature": 40,
@@ -4125,14 +4144,15 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "old-mine-ambience",
-      "cave-deep",
-      "rumbling-underground"
+      "rumbling-underground",
+      "alien-magnetic-field",
+      "alien-low-rumble"
     ],
     "bgs": [
       "old-mine-ambience",
-      "cave-dripping",
-      "rumbling-underground"
+      "alien-seismic",
+      "alien-magnetic-field",
+      "earth-rumble"
     ],
     "dayTemperature": 12,
     "nightTemperature": 10,
@@ -4287,10 +4307,16 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "landfill"
+      "alien-hostile-planet",
+      "alien-seismic",
+      "dust-storm",
+      "alien-low-rumble"
     ],
     "bgs": [
-      "landfill"
+      "alien-hostile-planet",
+      "alien-seismic",
+      "dust-storm",
+      "alien-low-rumble"
     ],
     "dayTemperature": 22,
     "nightTemperature": 14,
@@ -4438,14 +4464,15 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "crickets5",
-      "night-crickets",
-      "night-crickets2"
+      "crystal-chime",
+      "alien-spacedrone",
+      "cave-temple2"
     ],
     "bgs": [
+      "crystal-ambience",
+      "crystal-chime",
       "ce-cracking",
-      "cave",
-      "cave-temple"
+      "alien-planet-tone"
     ],
     "dayTemperature": 16,
     "nightTemperature": 12,
@@ -4606,13 +4633,17 @@
     ],
     "bgsNight": [
       "lava-loop-1",
-      "lava-loop-2",
-      "lava-loop-3"
+      "lava-loop-3",
+      "volcano-yasur",
+      "alien-mud-volcanos",
+      "alien-seismic"
     ],
     "bgs": [
       "lava-loop-1",
-      "lava-loop-2",
-      "lava-loop-3"
+      "lava-loop-3",
+      "volcano-yasur",
+      "alien-mud-volcanos",
+      "alien-seismic"
     ],
     "dayTemperature": 50,
     "nightTemperature": 40,
@@ -4776,14 +4807,14 @@
       "KevinMacLeod/Horror/Unseen Horrors"
     ],
     "bgsNight": [
-      "horror",
-      "abyss-ambience",
-      "abyss-ambience2"
+      "alien-electric-arc",
+      "alien-void-monolith",
+      "alien-radio-interference"
     ],
     "bgs": [
-      "horror",
-      "drone",
-      "unknown-noise"
+      "alien-electric-arc",
+      "alien-electric-storm",
+      "horror-drone-loop"
     ],
     "dayTemperature": 14,
     "nightTemperature": 10,
@@ -4938,14 +4969,16 @@
       "KevinMacLeod/Horror/Unseen Horrors"
     ],
     "bgsNight": [
-      "horror",
-      "abyss-ambience",
-      "abyss-ambience2"
+      "alien-magnetic-field",
+      "alien-pulsar",
+      "alien-void-monolith",
+      "emf-noise"
     ],
     "bgs": [
-      "horror",
-      "drone",
-      "unknown-noise"
+      "alien-magnetic-field",
+      "emf-noise",
+      "alien-pulsar",
+      "alien-radio-interference"
     ],
     "dayTemperature": 14,
     "nightTemperature": 10,
@@ -5096,14 +5129,16 @@
       "KevinMacLeod/Horror/Unseen Horrors"
     ],
     "bgsNight": [
-      "horror",
-      "abyss-ambience",
-      "abyss-ambience2"
+      "alien-pulsar",
+      "alien-void-monolith",
+      "abyss-ambience2",
+      "alien-ominous"
     ],
     "bgs": [
-      "horror",
-      "drone",
-      "unknown-noise"
+      "alien-pulsar",
+      "alien-void-monolith",
+      "unknown-noise",
+      "alien-electric-breath"
     ],
     "dayTemperature": 14,
     "nightTemperature": 10,
@@ -5256,14 +5291,16 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "spaceship",
-      "drone",
-      "hum-loop"
+      "alien-spacedrone",
+      "alien-void-monolith",
+      "space-ambience",
+      "alien-ominous"
     ],
     "bgs": [
-      "spaceship",
-      "drone",
-      "room-scifi"
+      "alien-spacedrone",
+      "alien-void-monolith",
+      "space-wind-long",
+      "polar-wind"
     ],
     "dayTemperature": 10,
     "nightTemperature": 5,
@@ -5417,14 +5454,15 @@
       "KevinMacLeod/Atmospheric/Night Cave"
     ],
     "bgsNight": [
-      "crickets5",
-      "night-crickets2",
-      "country-crickets"
+      "alien-world",
+      "japan-night-fields",
+      "alien-musical-creature"
     ],
     "bgs": [
-      "openfield_grass_rustlinginsects-",
-      "grass_field_insectbed",
-      "nature-summer"
+      "alien-bio-signs",
+      "alien-musical-creature",
+      "meadow-insects",
+      "alien-planet-tone"
     ],
     "dayTemperature": 24,
     "nightTemperature": 15,
@@ -5635,14 +5673,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "wind-blizzard",
-      "wind-blizzard2",
-      "wind-arctic"
+      "alien-spacedrone",
+      "winter-storm",
+      "alien-planet-surface"
     ],
     "bgs": [
-      "cold-wind-loop",
-      "wind-icelake",
-      "snowing"
+      "polar-wind",
+      "alien-planet-surface",
+      "ice-slow-crack"
     ],
     "dayTemperature": -8,
     "nightTemperature": -15,
@@ -5847,14 +5885,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "wind-blizzard",
-      "wind-blizzard2",
-      "wind-arctic"
+      "alien-spacedrone",
+      "space-wind-long",
+      "ice-cracks"
     ],
     "bgs": [
-      "cold-wind-loop",
-      "wind-icelake",
-      "snowing"
+      "alien-planet-surface",
+      "ice-slow-crack",
+      "space-wind-long"
     ],
     "dayTemperature": -8,
     "nightTemperature": -15,
@@ -6053,14 +6091,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "wind-blizzard",
-      "wind-blizzard2",
-      "wind-arctic"
+      "alien-spacedrone",
+      "space-ambience",
+      "alien-seismic"
     ],
     "bgs": [
-      "cold-wind-loop",
-      "wind-icelake",
-      "snowing"
+      "alien-planet-surface",
+      "space-wind-long",
+      "alien-seismic"
     ],
     "dayTemperature": -8,
     "nightTemperature": -15,
@@ -6214,10 +6252,13 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "winchester-wind-ambience"
+      "alien-spacedrone",
+      "space-ambience"
     ],
     "bgs": [
-      "wind-in-the-desert-countryside"
+      "alien-planet-surface",
+      "space-wind-long",
+      "dust-storm"
     ],
     "dayTemperature": 32,
     "nightTemperature": 20,
@@ -6363,10 +6404,13 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "winchester-wind-ambience"
+      "space-ambience",
+      "alien-low-rumble"
     ],
     "bgs": [
-      "mountain-wind"
+      "alien-planet-surface",
+      "alien-hostile-planet",
+      "space-wind-long"
     ],
     "dayTemperature": 30,
     "nightTemperature": 18,
@@ -6517,14 +6561,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "old-mine-ambience",
-      "cave-deep",
-      "rumbling-underground"
+      "rumbling-underground",
+      "alien-magnetic-field",
+      "space-ambience"
     ],
     "bgs": [
       "old-mine-ambience",
-      "cave-dripping",
-      "rumbling-underground"
+      "alien-magnetic-field",
+      "alien-seismic"
     ],
     "dayTemperature": 12,
     "nightTemperature": 10,
@@ -6675,10 +6719,11 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "winchester-wind-ambience"
+      "alien-spacedrone"
     ],
     "bgs": [
-      "wind-in-the-desert-countryside"
+      "alien-planet-surface",
+      "space-wind-long"
     ],
     "dayTemperature": 32,
     "nightTemperature": 20,
@@ -6870,14 +6915,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "wind-blizzard",
-      "wind-blizzard2",
-      "wind-arctic"
+      "alien-spacedrone",
+      "ice-slow-crack",
+      "space-wind-long"
     ],
     "bgs": [
-      "cold-wind-loop",
-      "wind-icelake",
-      "snowing"
+      "polar-wind",
+      "ice-cracks",
+      "alien-planet-surface"
     ],
     "dayTemperature": -8,
     "nightTemperature": -15,
@@ -7077,14 +7122,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "wind-blizzard",
-      "wind-blizzard2",
-      "wind-arctic"
+      "alien-geyser",
+      "alien-spacedrone",
+      "ice-slow-crack"
     ],
     "bgs": [
-      "cold-wind-loop",
-      "wind-icelake",
-      "snowing"
+      "alien-geyser",
+      "ice-cracks",
+      "polar-wind"
     ],
     "dayTemperature": -8,
     "nightTemperature": -15,
@@ -7284,14 +7329,14 @@
       "KevinMacLeod/Dark/Unholy Knight"
     ],
     "bgsNight": [
-      "wind-blizzard",
-      "wind-blizzard2",
-      "wind-arctic"
+      "space-ambience",
+      "alien-spacedrone",
+      "ice-cracks"
     ],
     "bgs": [
-      "cold-wind-loop",
-      "wind-icelake",
-      "snowing"
+      "polar-wind",
+      "space-wind-long",
+      "ice-slow-crack"
     ],
     "dayTemperature": -8,
     "nightTemperature": -15,
@@ -7453,11 +7498,14 @@
     ],
     "bgs": [
       "cave-wind",
-      "cave"
+      "cave",
+      "alien-cave-drone",
+      "alien-seismic"
     ],
     "bgsNight": [
       "cave-deep",
-      "cave-wind"
+      "cave-wind",
+      "alien-cave-drone"
     ],
     "dayTemperature": 8,
     "nightTemperature": 6,
@@ -7562,11 +7610,13 @@
     ],
     "bgs": [
       "cold-wind-loop",
-      "cave-wind"
+      "cave-wind",
+      "ice-slow-crack"
     ],
     "bgsNight": [
-      "wind-blizzard",
-      "wind-arctic"
+      "wind-arctic",
+      "ice-cracks",
+      "alien-cave-drone"
     ],
     "dayTemperature": -22,
     "nightTemperature": -28,
@@ -7671,11 +7721,13 @@
     ],
     "bgs": [
       "ce-cavern-looped",
-      "cave"
+      "crystal-ambience",
+      "crystal-chime"
     ],
     "bgsNight": [
       "cave-deep",
-      "ce-cavern-looped"
+      "crystal-chime",
+      "alien-cave-drone"
     ],
     "dayTemperature": 16,
     "nightTemperature": 14,
@@ -7777,11 +7829,14 @@
     ],
     "bgs": [
       "cave-deep",
-      "cave-wind"
+      "cave-wind",
+      "alien-mud-volcanos",
+      "earth-rumble"
     ],
     "bgsNight": [
       "cave-deep",
-      "cave"
+      "cave",
+      "alien-bass-rumble"
     ],
     "dayTemperature": 96,
     "nightTemperature": 88,
@@ -7882,11 +7937,14 @@
     ],
     "bgs": [
       "water-dripping-in-cave",
-      "abyss-ambience"
+      "abyss-ambience",
+      "deep-sea",
+      "alien-cave-drone"
     ],
     "bgsNight": [
       "abyss-ambience2",
-      "basement-dripping"
+      "basement-dripping",
+      "underwater-deep"
     ],
     "dayTemperature": 9,
     "nightTemperature": 8,
@@ -7991,11 +8049,13 @@
     ],
     "bgs": [
       "cave-dripping",
-      "cave"
+      "cave",
+      "alien-space-breathing"
     ],
     "bgsNight": [
       "cave-deep",
-      "cave-dripping"
+      "alien-space-breathing",
+      "alien-creepy"
     ],
     "dayTemperature": 19,
     "nightTemperature": 17,
@@ -8097,11 +8157,13 @@
     ],
     "bgs": [
       "wind-in-the-desert-countryside",
-      "cave-wind"
+      "cave-wind",
+      "dust-storm"
     ],
     "bgsNight": [
       "winchester-wind-ambience",
-      "cave-wind"
+      "cave-wind",
+      "alien-low-rumble"
     ],
     "dayTemperature": 34,
     "nightTemperature": 12,
@@ -8202,11 +8264,14 @@
     ],
     "bgs": [
       "cave-deep",
-      "cave"
+      "cave",
+      "alien-ominous"
     ],
     "bgsNight": [
       "cave-deep",
-      "cave-wind"
+      "cave-wind",
+      "alien-ominous",
+      "alien-void-monolith"
     ],
     "dayTemperature": 12,
     "nightTemperature": 11,
@@ -8311,11 +8376,13 @@
     ],
     "bgs": [
       "cave-wind",
-      "cold-wind-loop"
+      "cold-wind-loop",
+      "alien-electric-storm"
     ],
     "bgsNight": [
       "wind-blizzard2",
-      "cave-wind"
+      "cave-wind",
+      "alien-thunder-rumble"
     ],
     "dayTemperature": -40,
     "nightTemperature": -46,
@@ -8412,11 +8479,15 @@
     ],
     "bgs": [
       "cave-deep",
-      "cave-wind"
+      "cave-wind",
+      "alien-void-monolith",
+      "alien-space-breathing"
     ],
     "bgsNight": [
       "cave-deep",
-      "cave-wind"
+      "cave-wind",
+      "alien-void-monolith",
+      "alien-space-breathing"
     ],
     "dayTemperature": -180,
     "nightTemperature": -182,

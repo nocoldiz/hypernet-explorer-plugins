@@ -2872,6 +2872,8 @@
         this.updateAnalogCursor();
         this._updateFocusHighlight();
         if (window.HypernetOS.Kernel) window.HypernetOS.Kernel.tick();
+        // The world goes on while the machine is on: a game minute a second.
+        if (window.TimeDateSystem && window.TimeDateSystem.runRealtimeClock) window.TimeDateSystem.runRealtimeClock();
         this.updateHostedApps();
     };
 

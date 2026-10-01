@@ -26160,7 +26160,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 /* The map-marker identity: the same icon+colour this quest is pinned with on
    every compass/map indicator (WorldMapReturn.js, WorldMap.js). */
 .kb-quest-icon { position: absolute; top: 8px; left: 10px;
-  background-image: url('img/system/IconSet.png'); image-rendering: pixelated;
+  background-image: url('../img/system/IconSet.png'); image-rendering: pixelated;
   border-radius: 5px; background-color: rgba(43,16,8,0.55);
   outline: 2px solid var(--marker, #7a4d24); box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
 .kb-card-title { display: block; font-size: 1.173rem; font-weight: bold; line-height: 1.2; margin-bottom: 8px; }
@@ -26307,6 +26307,14 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .qb-pin { position: absolute; top: 8px; left: 50%; width: 18px; height: 18px; margin-left: -9px;
   border-radius: 50%; background: radial-gradient(circle at 35% 30%, #f0f0f0, var(--pin, #b03030) 55%, #501010);
   box-shadow: 0 3px 4px rgba(0,0,0,0.5); }
+/* The map-marker identity on a board note: the same icon+colour the quest is
+   pinned with on the world map and on its kanban post-it. */
+.qb-quest-icon { position: absolute; top: 8px; left: 10px;
+  background-image: url('../img/system/IconSet.png'); image-rendering: pixelated;
+  border-radius: 5px; background-color: rgba(43,16,8,0.55);
+  outline: 2px solid var(--marker, #7a4d24); box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+#qb-detail h2 .qb-quest-icon { position: relative; display: inline-block; top: 4px; left: 0;
+  margin-right: 10px; vertical-align: baseline; }
 .qb-note-title { font-size: 1.173rem; font-weight: bold; line-height: 1.2; margin-bottom: 8px; }
 .qb-note-giver { font-size: 1.02rem; font-style: normal; opacity: 0.8; margin-bottom: 8px; }
 .qb-note-reward { font-size: 1.104rem; font-weight: bold; color: #5d3a00; }
@@ -31397,49 +31405,6 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     font-size: var(--fs-caption);
     color: var(--text-detail-label);
     margin-bottom: var(--sp-2);
-}
-
-/* The founding sheet: a modal over the spread. The fields on the left, what
-   they add up to on the right, Found and Cancel under both. */
-.ui-panel.pol-draft-box {
-    width: min(1040px, 92vw);
-    height: min(640px, 86vh);
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-}
-
-.pol-draft-head {
-    flex: 0 0 auto;
-    margin-bottom: var(--sp-3);
-}
-
-.pol-draft-head .title {
-    margin: 0;
-}
-
-.pol-draft-sub {
-    font-family: var(--font-ui);
-    font-size: var(--fs-caption);
-    color: var(--text-detail-label);
-}
-
-.pol-draft-body {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-    gap: var(--sp-5);
-}
-
-.pol-draft-list,
-.pol-draft-detail {
-    min-height: 0;
-    overflow-y: auto;
-}
-
-.pol-draft-box .ui-panel-actions {
-    flex: 0 0 auto;
 }
 
 .onu-mark--carried { color: var(--faction-accord-allied); }
@@ -39179,6 +39144,27 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .title-scene-canvas { z-index: 40; opacity: var(--title-fade, 1); }
 .title-scene-canvas--faded { --title-fade: 0; }
 
+/* Every HTML panel of the title holds a compositor layer of its own. Left to
+   overlap testing, a panel can be squashed into a layer the WebGL background
+   is composited over once that canvas is resized, and the stars and bodies
+   are then drawn across the menu until something forces a full recomposite
+   (an alt-tab). With a layer of its own, z-index alone decides the order. */
+#title-menu-container,
+#title-version,
+#title-language,
+#title-update,
+#title-bg-switch,
+#title-music-switch,
+#title-disclaimer,
+#title-hyperverse-info,
+#title-hyperverse-catalog,
+#title-hyperverse-next,
+#title-hyperverse-catalog-btn,
+#title-autodrive-info,
+#title-datacard-layer {
+    will-change: transform;
+}
+
 /* The data card: one terminal dossier per catalogue row, with a bay in the
    middle that its 3D model is rendered into. */
 .title-dcard {
@@ -41610,28 +41596,31 @@ body.pad-input .kb-only {
     transform: translate(-50%, -50%);
     z-index: 11000;
     pointer-events: auto;
-    min-width: 260px;
-    max-width: 340px;
-    padding: 10px 12px;
-    border: 1px solid var(--border-primary-hover-translucent-15);
+    box-sizing: border-box;
+    min-width: 220px;
+    max-width: min(340px, 90vw);
+    padding: 8px 6px;
+    /* The dialogue choice window's frame (#html-choice-overlay): the rows are
+       .html-choice-item, so they wear its amber text and selected band. */
+    background: var(--text-danger-hover);
+    border: 3px solid var(--border-subtle);
     border-radius: 6px;
-    background: var(--bg-secondary-hover);
-    color: var(--text-primary-hover);
-    font-family: var(--font-ui);
-    font-size: var(--fs-body);
-    box-shadow: 0 6px 24px var(--shadow-primary-hover-translucent-5);
+    outline: 1px solid var(--border-subtle-translucent-40);
+    outline-offset: -7px;
+    background-image: radial-gradient(ellipse at center, transparent 40%, var(--bg-brown-vignette-10) 100%);
 }
 
 #quick-main-menu .qmm-head {
-    font-size: var(--fs-caption);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    opacity: 0.7;
-    margin-bottom: 6px;
+    font-family: var(--font-ui);
+    font-weight: bold;
+    color: var(--text-primary-hover);
+    text-align: center;
+    padding: 2px 18px 6px;
+    letter-spacing: 0.04em;
 }
 
 #quick-main-menu .qmm-list {
-    max-height: 46vh;
+    max-height: 60vh;
     overflow-y: auto;
 }
 
@@ -41639,22 +41628,12 @@ body.pad-input .kb-only {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 3px 6px;
-    border-radius: 4px;
     cursor: pointer;
-    white-space: nowrap;
 }
 
-#quick-main-menu .qmm-row.qmm-on {
-    background: var(--shadow-primary-hover-translucent-5);
-    outline: 1px solid var(--border-primary-hover-translucent-15);
-}
-
-/* A pocket that exists but cannot be opened from where the party is standing,
-   drawn the same way the pockets page draws it rather than hidden: the player
-   knows it is there and knows why it is not offered. */
+/* A pocket that exists but cannot be opened from where the party is standing
+   is drawn dimmed by .html-choice-item.disabled rather than hidden. */
 #quick-main-menu .qmm-row.qmm-off {
-    opacity: 0.4;
     cursor: default;
 }
 
@@ -42779,7 +42758,7 @@ body.pad-input .kb-only {
 
 #worldmap-chrome .wm-readout {
     right: calc(var(--sp-5) + 44px);
-    bottom: var(--sp-5);
+    bottom: calc(var(--sp-5) + 48px);
     width: 280px;
     display: none;
     text-align: left;
@@ -42833,11 +42812,63 @@ body.pad-input .kb-only {
     color: var(--text-primary-hover);
 }
 
+/* -- The hovered square's coordinates, bottom right ----------------------- */
+
+#worldmap-chrome .wm-coords {
+    right: var(--sp-5);
+    bottom: var(--sp-5);
+    display: flex;
+    gap: var(--sp-3);
+    align-items: baseline;
+    font-size: var(--fs-label);
+}
+
+#worldmap-chrome .wm-coords-label {
+    color: var(--text-text-alt-12);
+    font-size: var(--fs-caption);
+}
+
+#worldmap-chrome .wm-coords-value {
+    color: var(--text-primary-hover);
+    font-variant-numeric: tabular-nums;
+}
+
 /* -- The standing hint, bottom left --------------------------------------- */
 
 #worldmap-chrome .wm-sheet-hint {
     left: var(--sp-5);
     bottom: var(--sp-5);
+    font-size: var(--fs-caption);
+    color: var(--text-text-alt-12);
+}
+
+/* -- Europe or World, top left -------------------------------------------- */
+
+#worldmap-chrome .wm-view-box {
+    top: var(--sp-5);
+    left: var(--sp-5);
+    pointer-events: auto;
+}
+
+#worldmap-chrome .wm-view-buttons {
+    display: flex;
+    gap: var(--sp-2);
+}
+
+#worldmap-chrome .wm-view-buttons > .inspect-btn {
+    flex: 1 1 0;
+    margin-top: 0;
+    min-width: 0;
+    text-align: center;
+}
+
+#worldmap-chrome .wm-view-btn.is-active {
+    border-color: var(--text-primary-hover);
+    color: var(--text-primary-hover);
+}
+
+#worldmap-chrome .wm-view-key {
+    margin-top: var(--sp-2);
     font-size: var(--fs-caption);
     color: var(--text-text-alt-12);
 }

@@ -415,7 +415,7 @@
  *
  * @param invisibleHandOneShotMaxPercent
  * @text One-Shot Protection: Max % per Hit
- * @desc Maximum fraction of an enemy's max HP that a single hit can deal. Stops one-shot kills. 0.50 = 50%. Set to 0 to disable.
+ * @desc Maximum fraction of an enemy's max HP that a single hit can deal. Stops one-shot kills. Skills cast past the fair level gap ignore it. 0.50 = 50%. Set to 0 to disable.
  * @type number
  * @decimals 3
  * @default 0.50
@@ -1064,8 +1064,8 @@
      * lets them cut through the fauna they have outgrown instead of trading
      * blows with it. The one-shot ceiling
      * (invisibleHandOneShotMaxPercent, applied in makeDamageValue) still
-     * stands over the result, so even a crushing gap leaves a turn in the
-     * fight rather than deleting a monster from full HP.
+     * stands over a plain attack, so a free swing leaves a turn in the fight;
+     * a skill or spell cast down that gap is free of it and can kill outright.
      */
     BSE.Helpers.levelDampingFactor = function(subject, target, action, critical) {
         if (!subject || !target) return 1;
@@ -1578,6 +1578,28 @@
         return Math.max(1, resolved);
     };
 
+    /**
+     * Whether the one-shot ceiling stands over this hit on an enemy. It does,
+     * except for a skill or spell (never the plain attack) cast by a party
+     * member who outranks the enemy by more than the fair gap: a level 90
+     * psion's Gravity Crush deletes a level 4 pigeon in one cast, while the
+     * same psion's free swing still leaves it a turn.
+     */
+    BSE.Helpers.oneShotCapApplies = function(action, target) {
+        if (!action || !target) return true;
+        const subject = action.subject();
+        if (!subject || !subject.isActor || !subject.isActor()) return true;
+        if (!levelGapRulesApply()) return true;
+        const item = action.item();
+        if (!item || !DataManager.isSkill(item)) return true;
+        const attackId = subject.attackSkillId ? subject.attackSkillId() : 1;
+        if (item.id === attackId) return true;
+        const enemyLevel = BSE.Helpers.getBattlerLevel(target);
+        if (enemyLevel <= 0) return true;
+        const gap = BSE.Helpers.getBattlerLevel(subject) - enemyLevel;
+        return gap <= BSE.Params.levelGapFair;
+    };
+
     const _Game_Action_makeDamageValue_BSE = Game_Action.prototype.makeDamageValue;
     Game_Action.prototype.makeDamageValue = function(target, critical) {
         const value = _Game_Action_makeDamageValue_BSE.call(this, target, critical);
@@ -1633,8 +1655,11 @@
         // fraction of an enemy's max HP, so even the strongest attack cannot
         // kill an enemy outright from full or near-full health. This gives
         // every fight at least a couple of turns of meaningful interaction.
+        // A skill or spell cast down a level gap is exempt (see
+        // oneShotCapApplies): the plain attack keeps the ceiling.
         if (BSE.Params.invisibleHandOneShotMaxPercent > 0 &&
-            target && target.isEnemy && target.isEnemy()) {
+            target && target.isEnemy && target.isEnemy() &&
+            BSE.Helpers.oneShotCapApplies(this, target)) {
             const maxPerHit = Math.max(1, Math.round(target.mhp * BSE.Params.invisibleHandOneShotMaxPercent));
             if (finalValue > maxPerHit) finalValue = maxPerHit;
         }

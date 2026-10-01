@@ -300,7 +300,20 @@
     "traitGeneticFreak": "Genetic Freak",
     "ride": "Ride",
     "dismount": "Dismount",
-    "mounted": "Ridden"
+    "mounted": "Ridden",
+    "promote": "Promote",
+    "promoteNoRoom": "No free place in the party",
+    "groupGestating": "Gestating",
+    "gestationNamed": "{name}, carried by {carrier}",
+    "gestationProgress": "{percent}%, {days} days to go",
+    "gestationKind": {
+      "vat": "Growing vat",
+      "splice": "Spliced embryo",
+      "pregnancy": "Pregnancy",
+      "egg": "Eggs",
+      "seed": "Seed",
+      "mitosis": "Division"
+    }
   },
   "vehicles": {
     "fuel": "Fuel {fuel}L / {max}L",

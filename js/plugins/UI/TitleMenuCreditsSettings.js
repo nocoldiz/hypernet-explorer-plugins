@@ -167,6 +167,8 @@
                 { name: 'concrete footsteps 1.wav', by: 'patchytherat', urls: ['freesound.org/people/patchytherat/sounds/535052/'] },
                 { name: 'footsteps concrete', by: 'Yuval', urls: ['freesound.org/people/Yuval/sounds/205748/'] },
                 { name: 'Footsteps - Stone, Rock, Concrete, Cement', by: 'SecureSubset', urls: ['freesound.org/people/SecureSubset/sounds/813622/'] },
+                // 167 CC0 recordings by 135 people: each one is named in Credits.md.
+                { name: 'Biome ambience field recordings (CC0)', by: 'the Freesound community', urls: ['freesound.org/'] },
                 // The 3D world speaks with the same voice as the 2D one: every
                 // blow, every cube coming apart, every block set down and every
                 // landing is played out of the footstep material library above

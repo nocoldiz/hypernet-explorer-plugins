@@ -1115,5 +1115,12 @@
   "deletePartyPresetBody": "Delete the party dossier of {name}? This cannot be undone.",
   "exportPreset": "Export Dossier",
   "presetExported": "{name} written to the characters folder.",
-  "presetExportFailed": "The characters folder could not be written to."
+  "presetExportFailed": "The characters folder could not be written to.",
+  "lab": {
+    "cancel": "Discard",
+    "cancelTitle": "Discard this embryo?",
+    "cancelBody": "Nothing will be grown, and the device is returned unused.",
+    "confirmVat": "Start growing",
+    "confirmSplice": "Implant embryo"
+  }
 }

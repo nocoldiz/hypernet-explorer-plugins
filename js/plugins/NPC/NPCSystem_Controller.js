@@ -27,6 +27,21 @@
   let isZombieWalker;
   window.NPCSystem._internal._late.push(() => ({ isZombieWalker } = window.NPCSystem._internal));
 
+  // Where the NPCs stand, gathered once a frame for every wanderer rather
+  // than once per wander step. Only neighbouring tiles are looked up in it, so
+  // the wanderer's own tile being in it never matters.
+  let _occupied = null;
+  function _occupiedThisFrame(mapW) {
+    const fc = Graphics.frameCount;
+    if (_occupied && _occupied.frame === fc && _occupied.mapW === mapW) return _occupied.keys;
+    const keys = new Set();
+    for (const c of $gameSystem.npcControllers ?? []) {
+      if (c.event && !c.event._erased) keys.add(c.event.x + c.event.y * mapW);
+    }
+    _occupied = { frame: fc, mapW, keys };
+    return keys;
+  }
+
   // The working loop's pace (NPCController.updateWorking), in real time.
   const NPC_WORK = {
     CHECK_MS: 1000,                 // how often the shift is asked whether it is over
@@ -681,9 +696,16 @@
       if (this.event) this.event.setMoveSpeed(this._speedCap != null ? Math.min(this._speedCap, speed) : speed);
     }
 
+    // An unreachable zone sends them back to decideNextGoal, which can pick
+    // another zone and search again. Once in a row is allowed; a second miss
+    // in the same chain settles for a wander, so one update never runs search
+    // after search until the dice happen to land on one.
     calculatePath() {
       if (this.event && this.target) this.path = this.pathfinder.findPath(this.event.x, this.event.y, this.target.x, this.target.y) || [];
-      if (!this.path.length) this.decideNextGoal();
+      if (this.path.length) return;
+      if (this._repathing) { this.setGoal("wander"); return; }
+      this._repathing = true;
+      try { this.decideNextGoal(); } finally { this._repathing = false; }
     }
 
     _stepAlongPath(onFail) {
@@ -722,11 +744,7 @@
 
     getWanderDir() {
       const mapW = $gameMap.width();
-      const occupied = new Set();
-      for (const c of $gameSystem.npcControllers ?? []) {
-        if (c.event && !c.event._erased && c.event !== this.event)
-          occupied.add(c.event.x + c.event.y * mapW);
-      }
+      const occupied = _occupiedThisFrame(mapW);
       const dirs = [2, 4, 6, 8], weights = [];
       for (const dir of dirs) {
         const nx = $gameMap.roundXWithDirection(this.event.x, dir), ny = $gameMap.roundYWithDirection(this.event.y, dir);
@@ -852,14 +870,17 @@
     }
 
     // Off to the nearest free bed within reach. False when there is none, or
-    // no way to any of the closest few.
+    // no way to any of the closest few. At most NPCSeats.APPROACH_SEARCHES path searches
+    // in all: four beds of four sides each was sixteen, in one frame.
     goToBed(radius = NPCBeds.SEARCH_RADIUS) {
       if (!this.event) return false;
       const ex = this.event.x, ey = this.event.y;
+      let searches = 0;
       for (const bed of NPCBeds.freeBeds(ex, ey, this.event, radius).slice(0, 4)) {
         for (const a of NPCSeats.approaches(bed, ex, ey)) {
           if (a.x === ex && a.y === ey) { this.lieDown(bed, a.dir); return true; }
           if (!NPCSeats.isEmpty(a.x, a.y, this.event)) continue;
+          if (searches++ >= NPCSeats.APPROACH_SEARCHES) return false;
           const path = this.pathfinder.findPath(ex, ey, a.x, a.y);
           if (!path || !path.length) continue;
           this.path = path;
@@ -1297,14 +1318,18 @@
       const profile = window.NPCSocietyRegistry?.getProfile(this.eventName);
       const duration = ms || NPCSeats.sitDuration(profile);
       const seats = NPCSeats.freeSeats(this.event.x, this.event.y, this.event, radius);
+      // One search budget for every seat tried (see goToBed).
+      const budget = { left: NPCSeats.APPROACH_SEARCHES };
       for (const seat of seats.slice(0, 4)) {
-        if (this.goSit(seat, duration)) return true;
+        if (this.goSit(seat, duration, budget)) return true;
+        if (budget.left <= 0) break;
       }
       return false;
     }
 
     // Walk to a free tile beside `seat`, to sit on it for `ms` once there.
-    goSit(seat, ms) {
+    // `budget.left` is how many path searches the caller can still afford.
+    goSit(seat, ms, budget) {
       if (!this.event || !seat) return false;
       const ex = this.event.x, ey = this.event.y;
       for (const a of NPCSeats.approaches(seat, ex, ey)) {
@@ -1313,6 +1338,7 @@
           return true;
         }
         if (!NPCSeats.isEmpty(a.x, a.y, this.event)) continue;
+        if (budget) { if (budget.left <= 0) return false; budget.left--; }
         const path = this.pathfinder.findPath(ex, ey, a.x, a.y);
         if (!path || !path.length) continue;
         this.path = path;

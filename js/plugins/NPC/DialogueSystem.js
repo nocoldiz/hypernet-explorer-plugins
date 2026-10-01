@@ -1213,6 +1213,11 @@ Imported.DialogueSystem = true;
         }
 
         showBusts() {
+            // A speaker prefix already staged this box. VisualNovelBustSystem
+            // calls showBusts on every box from inside our startMessage, and a
+            // bustless sign would then mark nobody visible: the auto-hide never
+            // fired and Em stood on, tag and voice included, into the next box.
+            if (_prefixStage && this.storyMode) return;
             const charInfo   = this.getCurrentEventCharacterInfo();
             const shouldShow = this.shouldShowBustAndName();
             if (!shouldShow || !charInfo) { this.bustIsVisible = false; return; }
@@ -1885,7 +1890,12 @@ Imported.DialogueSystem = true;
         if (!_prefixStage) return;
         _prefixStage = null;
         const stage = bm || (SceneManager._scene && SceneManager._scene._bustManager);
-        if (stage) stage.setStoryMode(false);
+        if (!stage) return;
+        stage.setStoryMode(false);
+        // The tag named whoever the prefix put up; a box nobody is staged for
+        // is read unsigned.
+        if (stage.nameWindow) { stage.nameWindow.hideName(); stage.nameIsVisible = false; }
+        stage.bustIsVisible = false;
     }
 
     // The stage goes down with the portraits it was raised for, so an event

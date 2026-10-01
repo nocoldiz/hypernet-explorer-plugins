@@ -9,5 +9,6 @@
     "stopped": "{name}'s training is called off.",
     "readyNoRoom": "{name} has finished its training, but there is no room in the party for it yet.",
     "graduated": "{name} finishes training and joins the party as a {className}."
-  }
+  },
+  "designedJoined": "{name} takes up a place in the party."
 }

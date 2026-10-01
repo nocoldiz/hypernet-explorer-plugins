@@ -1150,7 +1150,45 @@ initializeGroupNPCs: (groupName, activeMapId = null) => {
       // And whoever has come to town on a trip (NPCLifeSim TRAVELLING).
       const arrivals = SpawnManager.arrivalVisitors(mapId, group, groupName)
         .filter(o => !here.has(o.name));
-      return assigned.concat(visitors, arrivals);
+      const roster = assigned.concat(visitors, arrivals);
+      const cap = SpawnManager.settlementCrowdCap(mapId, groupName);
+      if (cap === null || roster.length <= cap) return roster;
+      // Ranked on (name, map) alone, so the same people are the ones kept hour
+      // after hour and the turnover does not reshuffle the street.
+      const ws = (window.NPCShared?.worldSeed?.() ?? 19002001) >>> 0;
+      const rank = (name) => Utils.seededRandom((Utils.nameHash(`crowd:${name}:${mapId}`) ^ ws) >>> 0); // i18n-ignore: seed key
+      const kept = new Set(roster.slice().sort((a, b) => rank(a.name) - rank(b.name)).slice(0, cap));
+      return roster.filter(o => kept.has(o));
+    },
+
+    // How many roster people the exterior of a hand-made city or village may
+    // show, by the same rule as a procedural settlement square
+    // (Config.settlementCrowdCount): the map's slots are its NPC/Placeholder/
+    // PlayerNN events plus its <Local> people, and every Local is always on
+    // the map, so each one spends a slot of that budget before the roster is
+    // dealt. null for any other map, which keeps its whole roster.
+    settlementCrowdCap: (mapId, groupName) => {
+      if (!groupName || Config.isProceduralGroup(groupName)) return null;
+      if (!String($dataMap?.note || "").includes("<Exterior>")) return null; // i18n-ignore: map notetag
+      const biome = window.WorkSystem?.Destinations?.[groupName]?.biome;
+      if (!Config.isSettlementBiome(biome)) return null;
+      let slots = 0;
+      for (const ev of ($dataMap.events || [])) {
+        if (!ev?.name) continue;
+        const note = ev.note || "";
+        if (Utils.hasLocalTag(note)) { if (!Utils.hasHiddenTag(note)) slots++; continue; }
+        if (Utils.hasStoryTag(note)) continue;
+        if (ev.name.startsWith("NPC") || ev.name.startsWith("Placeholder") || Utils.isPlayerSlotName(ev.name)) slots++; // i18n-ignore: event-name prefixes
+      }
+      const locals = ($gameMap?.events?.() || []).filter(e => {
+        if (!e || e._erased) return false;
+        const note = e.event()?.note || "";
+        return Utils.hasLocalTag(note) && !Utils.hasHiddenTag(note);
+      }).length;
+      const ws = (window.NPCShared?.worldSeed?.() ?? 19002001) >>> 0;
+      const rng = Utils.seededRandom((Utils.nameHash(`crowdShare:${mapId}`) ^ ws) >>> 0); // i18n-ignore: seed key
+      const gathering = !!window.NPCGatherings?.activeGathering?.(groupName);
+      return Math.max(0, Config.settlementCrowdCount(slots, rng, gathering) - locals);
     },
 
     // Out-of-towners on a trip here, at most this many on one map at a time.

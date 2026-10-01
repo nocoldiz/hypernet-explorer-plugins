@@ -254,13 +254,26 @@
   // ground (sand included) down the middle.
   const ISLAND_MIN_CORE = 24;
 
-  // Tiles either side of a map seam over which the shore is held flat. The two
-  // squares sharing a seam sample the curve at *different* tiles (..., 62, 63 |
-  // 0, 1, ...), so a shore that moved between those two would still hand the
-  // player land on one side of the transfer and water on the other. Snapping
-  // both runs onto the seam coordinate makes the last column of one square and
-  // the first column of the next come out identical.
+  // At every map seam the shore is PINNED to a depth that belongs to that seam
+  // point alone (seamDepth), whatever the noise, the tide or the cap of the
+  // square drawing it. Two squares sharing a seam are not built together: the
+  // stitched window caches one at 10:00 and builds the next at 16:00, and a
+  // settlement caps its sea shallower than open country does. A shore that was
+  // only snapped to the same noise sample still moved with the tide and the
+  // cap, which drew a band of water across the seam, or a straight cliff of
+  // grass against open sea. Pinned, the last column of one square and the
+  // first column of the next always come out identical.
+  //
+  // SEAM_FLAT tiles either side of the seam sit exactly on the pinned depth;
+  // over the next SEAM_RAMP tiles the shore eases out into its own curve.
   const SEAM_FLAT = 3;
+  const SEAM_RAMP = 12;
+  const SEAM_MIN_DEPTH = 8;
+  const SEAM_DEPTH_RANGE = 5;   // seam depths fall in 8..12
+
+  // A town or village keeps its streets: its sea never comes further in than
+  // this. Never below the deepest seam, or the pin above would be capped away.
+  const SETTLEMENT_MAX_DEPTH = SEAM_MIN_DEPTH + SEAM_DEPTH_RANGE - 1;
 
   const _coastPhaseCache = new Map();
 
@@ -298,21 +311,39 @@
     const U = window.ProcGenUtils;
     const span = axis === AXIS_H ? U.PROC_MAP_WIDTH : U.PROC_MAP_HEIGHT;
 
-    // Hold the curve flat across the seam: both the trailing tiles of one
-    // square and the leading tiles of the next sample the seam coordinate.
+    // Distance in tiles from the nearest seam: 0 on both the last tile of one
+    // square and the first tile of the next.
     const local = ((globalCoord % span) + span) % span;
-    let t = globalCoord;
-    if (local < SEAM_FLAT) t = globalCoord - local;
-    else if (local >= span - SEAM_FLAT) t = globalCoord + (span - local);
+    const nearEnd = local >= span / 2;
+    const dist = nearEnd ? span - 1 - local : local;
+    const seamIndex = Math.floor(globalCoord / span) + (nearEnd ? 1 : 0);
+    const pinned = seamDepth(axis, lineIndex, seamIndex);
 
     const phases = coastPhases(axis, lineIndex);
+    const t = globalCoord;
     const coarse = Math.sin(t / 48 + phases[0]) * 0.5 + 0.5;
     const medium = Math.sin(t / 16 + phases[1]) * 0.5 + 0.5;
     const fine = Math.sin(t / 4 + phases[2]) * 0.5 + 0.5;
     const weighted = coarse * 0.6 + medium * 0.25 + fine * 0.15;
     const base = Math.floor(COAST_MIN_DEPTH + weighted * COAST_DEPTH_RANGE);
-    const cap = Math.min(COAST_MAX_DEPTH, maxDepth === undefined ? COAST_MAX_DEPTH : maxDepth);
-    return Math.max(1, Math.min(cap, Math.floor(base * tide)));
+    const cap = Math.max(pinned,
+      Math.min(COAST_MAX_DEPTH, maxDepth === undefined ? COAST_MAX_DEPTH : maxDepth));
+    const free = Math.max(1, Math.min(cap, base * tide));
+
+    const r = Math.max(0, Math.min(1, (dist - SEAM_FLAT) / SEAM_RAMP));
+    const w = r * r * (3 - 2 * r);
+    return Math.max(1, Math.round(pinned + (free - pinned) * w));
+  }
+
+  /**
+   * The depth the shore is pinned to where border line `lineIndex` crosses
+   * seam `seamIndex`, from the world seed alone: every square touching that
+   * point, built at any hour, draws the shore there at the same depth.
+   */
+  function seamDepth(axis, lineIndex, seamIndex) {
+    const U = window.ProcGenUtils;
+    const h = U.hashCoords(U.getWorldSeed() ^ 0x5ea3, lineIndex * 2 + axis, seamIndex) >>> 0;
+    return SEAM_MIN_DEPTH + (h % SEAM_DEPTH_RANGE);
   }
 
   /**
@@ -488,13 +519,18 @@
    * a side is water its own edge already covers that corner and a second blob
    * on top would push the shore past where the neighbouring square puts it --
    * the exact mismatch this pass exists to avoid.
+   *
+   * `depthCap` keeps the sea shallower in the middle of the square (a town
+   * keeps its streets, see SETTLEMENT_MAX_DEPTH). The seams are pinned below
+   * any cap, so a capped square still meets its neighbours tile for tile.
    */
-  function computeCoastMasks(width, height, worldCoords, edges, seaDiagonals, hasBeach) {
+  function computeCoastMasks(width, height, worldCoords, edges, seaDiagonals, hasBeach, depthCap) {
     const isIsland = !!(edges.north && edges.south && edges.east && edges.west);
     // An island's two facing shores would meet at high tide without this cap.
-    const maxDepth = isIsland
+    let maxDepth = isIsland
       ? Math.max(1, Math.floor((Math.min(width, height) - ISLAND_MIN_CORE) / 2))
       : COAST_MAX_DEPTH;
+    if (depthCap > 0) maxDepth = Math.min(maxDepth, depthCap);
 
     const d = seaDiagonals || {};
     const diagonals = {
@@ -529,7 +565,9 @@
    *
    * `options.worldCoords` and `options.diagonalBiomes` are what tie the shore to
    * its neighbours; without world coordinates the shore still draws, but only
-   * squares at the same coordinates would agree on it.
+   * squares at the same coordinates would agree on it. `options.maxDepth` caps
+   * how far in the sea comes and `options.keep(x, y)` names cells that must not
+   * be repainted (both used by settlements, ProceduralMapStructureGenerator).
    */
   function drawWaterEdges(
     mapData,
@@ -605,8 +643,11 @@
     }
 
     const { water, beach, touchesSea } = computeCoastMasks(
-      width, height, worldCoords, edges, seaDiagonals, beachTiles.length > 0
+      width, height, worldCoords, edges, seaDiagonals, beachTiles.length > 0, opts.maxDepth
     );
+    // Cells the caller already built on (a settlement's prefab lots) keep
+    // what stands there; the shore is still cut around them.
+    const keep = typeof opts.keep === "function" ? opts.keep : null;
     if (!touchesSea) return;
 
     // Only the "Water" feature's A1 tiles carry directional autotile variants.
@@ -633,6 +674,7 @@
       for (let x = 0; x < width; x++) {
         const cell = y * width + x;
         const idx = U.calculateIndex(x, y, 0, width, height);
+        if (keep && (water[cell] || beach[cell]) && keep(x, y)) continue;
 
         if (water[cell]) {
           const baseTile = U.randomChoice(waterTiles, rng);
@@ -830,6 +872,8 @@
     AXIS_H,
     AXIS_V,
     BEACH_WIDTH,
+    SETTLEMENT_MAX_DEPTH,
+    seamDepth,
     getGameDateFromVariable,
     calculateTideState,
     getTideMultiplier,

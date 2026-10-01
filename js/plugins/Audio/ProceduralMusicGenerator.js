@@ -291,6 +291,12 @@
                 'City': 'City',
                 'Burg': 'City',
                 'Office': 'City',
+                'Hospital': 'City',
+                'Clinic': 'City',
+                'GroceryStore': 'City',
+                'HardwareStore': 'City',
+                'Store': 'City',
+                'Restaurant': 'City',
 
                 // Village Biomes
                 'Village': 'Village',
@@ -298,6 +304,8 @@
                 'Farm': 'Village',
                 'Houses': 'Village',
                 'HousesInside': 'Village',
+                'Farmhouse': 'Village',
+                'Tavern': 'Village',
                 'Villa': 'Village',
                 'VillageMountain': 'Village',
                 'VillageRiver': 'Village',

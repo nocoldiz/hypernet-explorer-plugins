@@ -34,6 +34,7 @@
     selectedTraitObjects,
     markFirstCreationComplete,
     STEP,
+    storedCreationMode,
   } = window.CCKit;
 
   const { giveStartingMoney } = window.CCOrigins || {};
@@ -54,6 +55,9 @@
   // they were declared while they still lived inside it, accessors and all.
   class CCRosterPages {
     onPartyMemberTabClick(memberIndex) {
+      // A lab session has the one seat it is building, and no other.
+      if (Scene_CharacterCreation.isLabMode() &&
+          memberIndex !== Scene_CharacterCreation._currentPartyMemberIndex) return;
       this._pageRailFocused = false;
       Scene_CharacterCreation._isPetMode = false;
       Scene_CharacterCreation._isVehicleMode = false;
@@ -562,6 +566,16 @@
     onQuickRandomizeMember() {
       if (this._refusePresetEdit()) return;
       const memberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
+      const labType = Scene_CharacterCreation.labCharacterType();
+      if (labType) {
+        // A roll never leaves the body the vat or the splicer is building.
+        this._randomizeMemberCharacter(memberIndex, { forceHumanoid: true });
+        if (labType === "creature") this.onSetCharacterType("creature");
+        this._lastStep = -1;
+        this._lastIndex = -1;
+        this.refreshUIOverlayDOM();
+        return;
+      }
       this._randomizeMemberCharacter(memberIndex);
       Scene_CharacterCreation._lastMemberWasRandom = true;
       this._lastStep = -1;
@@ -575,8 +589,8 @@
     // member's actual training: level = rank + 1, and never below the head start
     // the class and the traits already grant, which specializationLevel() takes
     // care of on its own.
-    _commitSpecPoints() {
-      const members = ($gameParty && $gameParty.allMembers) ? $gameParty.allMembers() : [];
+    _commitSpecPoints(only) {
+      const members = only || (($gameParty && $gameParty.allMembers) ? $gameParty.allMembers() : []);
       members.forEach((actor) => {
         if (!actor) return;
         this._bankUnspentSpecPoints(actor);
@@ -682,6 +696,46 @@
       this._finishOriginChoice($gameSystem._ccOriginSymbol);
     }
 
+
+    // ── The growing vat and the gene splicer ─────────────────────────────────
+    // The embryo is done: it is settled the way a member is on embarking, then
+    // handed to the biologic simulation, which takes it off the seat and grows
+    // it (window.BiologicLab.conceive).
+    onFinishLabCreation() {
+      const lab = Scene_CharacterCreation._lab;
+      if (!lab) return;
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (!actor || this._embarkBlockedReason()) { SoundManager.playBuzzer(); return; }
+      if (Scene_CharacterCreation.isSimpleMode() &&
+          typeof this._ensureSimpleModeStatsAndTraits === "function") {
+        this._ensureSimpleModeStatsAndTraits(actor);
+      }
+      this._commitSpecPoints([actor]);
+      Scene_CharacterCreation.ensureSpriteAndBust(actor);
+      endLabSession();
+      if (this._dndContainer) window.CCPanel.hide(this._dndContainer);
+      const entry = window.BiologicLab ? window.BiologicLab.conceive(actor, lab) : null;
+      if (!entry) releaseLabSeat(actor);
+      restoreLabAudio(lab);
+      SoundManager.playOk();
+      this.popScene();
+    }
+
+    // Walking away from the vat or the splicer: the embryo is dropped and the
+    // device handed back unused.
+    onLabCancel() {
+      const lab = Scene_CharacterCreation._lab;
+      if (!lab) return;
+      this._ccConfirm({
+        title: ccT('CharCreate.lab.cancelTitle'),
+        body: ccT('CharCreate.lab.cancelBody'),
+        acceptLabel: ccT('CharCreate.lab.cancel')
+      }, () => {
+        abandonLabSession();
+        if (this._dndContainer) window.CCPanel.hide(this._dndContainer);
+        this.popScene();
+      });
+    }
 
     _wizardPartyPanelHtml() {
       const actor = Scene_CharacterCreation.getCurrentActor();
@@ -842,6 +896,139 @@
       Object.getOwnPropertyDescriptor(CCRosterPages.prototype, key)
     );
   }
+
+  // ==========================================================================
+  // The lab session: one embryo on a seat of its own
+  //
+  // The portable growing vat and the portable gene splicer
+  // (Health_BiologicSimulation.js, window.BiologicLab) both open the wizard
+  // here. The embryo is built on a free companion seat, because every page of
+  // the wizard reads the member it edits off the seat it sits on, and it
+  // leaves the seat again the moment it is finished or dropped: it only joins
+  // the party once it has been born and promoted (PetSystem.promoteDesigned).
+  // ==========================================================================
+  const CREATURE_SWITCH_BASE = 77;   // 77 + seat index, as everywhere in the wizard
+
+  function freeLabSeat() {
+    const Pets = window.PetSystem;
+    return (Pets && Pets.freeSlot) ? Pets.freeSlot() : 0;
+  }
+
+  function clearSeatExtras(actorId) {
+    if ($gameSwitches) $gameSwitches.setValue(CREATURE_SWITCH_BASE + actorId - 1, false);
+    const CC3D = window.CC3DModel;
+    if (CC3D && CC3D.setConfig) CC3D.setConfig(actorId, null);
+    if (CC3D && CC3D.setCreatureSeed) CC3D.setCreatureSeed(actorId, null);
+  }
+
+  // The seat goes back empty: a fresh actor, so nothing the embryo was
+  // (its traits, its body, its dossier flags) is inherited by whoever sits
+  // there next.
+  function releaseLabSeat(actor) {
+    if (!actor) return;
+    const actorId = actor.actorId();
+    if ($gameParty && $gameParty._actors.includes(actorId)) $gameParty.removeActor(actorId);
+    clearSeatExtras(actorId);
+    if ($gameActors && $gameActors._data) $gameActors._data[actorId] = new Game_Actor(actorId);
+    if ($gameVariables && $gameParty) $gameVariables.setValue(29, $gameParty.members().length);
+    if ($gamePlayer) $gamePlayer.refresh();
+  }
+
+  function endLabSession() {
+    Scene_CharacterCreation._lab = null;
+    Scene_CharacterCreation._currentPartyMemberIndex = 0;
+    Scene_CharacterCreation._isCreatureMode = false;
+    Scene_CharacterCreation._railFocus = null;
+  }
+
+  function restoreLabAudio(lab) {
+    if (!lab) return;
+    if (lab.bgm && lab.bgm.name) AudioManager.replayBgm(lab.bgm);
+    if (lab.bgs && lab.bgs.name) AudioManager.replayBgs(lab.bgs);
+  }
+
+  function abandonLabSession() {
+    const lab = Scene_CharacterCreation._lab;
+    if (!lab) return;
+    endLabSession();
+    releaseLabSeat($gameActors.actor(lab.actorId));
+    if (window.BiologicLab && window.BiologicLab.cancel) window.BiologicLab.cancel(lab);
+    restoreLabAudio(lab);
+  }
+
+  window.CCLab = {
+    hasFreeSeat() {
+      return freeLabSeat() > 0;
+    },
+
+    // kind: "vat" (a creature) or "splice" (a humanoid). opts: { itemId,
+    // carrierId }. Answers false when there is no seat to build on.
+    open(kind, opts) {
+      const o = opts || {};
+      const actorId = freeLabSeat();
+      if (!actorId || !$gameActors || !$gameActors._data) return false;
+      $gameActors._data[actorId] = new Game_Actor(actorId);
+      clearSeatExtras(actorId);
+      $gameParty.addActor(actorId);
+
+      const SC = Scene_CharacterCreation;
+      // Nothing a previous party run or session left on the class follows the
+      // embryo in: the same reset a new party gets, before the lab is set.
+      SC.resetRunState();
+      SC._lab = {
+        kind: kind === "vat" ? "vat" : "splice",
+        actorId: actorId,
+        carrierId: o.carrierId || 0,
+        itemId: o.itemId || 0,
+        fresh: true,
+        bgm: AudioManager.saveBgm(),
+        bgs: AudioManager.saveBgs(),
+      };
+      const mode = storedCreationMode ? storedCreationMode() : null;
+      SC._creationMode = (mode === "detailed" ? null : mode) || SC._creationMode; // i18n-ignore: CC_MODE value
+      SC._currentPartyMemberIndex = actorId - 1;
+      SC.prepare(STEP.BIO);
+      SceneManager.push(SC);
+      return true;
+    },
+
+    // The seat an embryo was built on, handed back once it is growing.
+    release(actor) {
+      releaseLabSeat(actor);
+    },
+
+    active() {
+      return Scene_CharacterCreation._lab;
+    },
+  };
+
+  // The first time the lab's wizard comes up, the seat is dealt a body of the
+  // kind the device builds, the same way the + tab deals a new recruit one.
+  const _CCLab_start = Scene_CharacterCreation.prototype.start;
+  Scene_CharacterCreation.prototype.start = function () {
+    _CCLab_start.call(this);
+    const lab = Scene_CharacterCreation._lab;
+    if (!lab || !lab.fresh) return;
+    lab.fresh = false;
+    const idx = lab.actorId - 1;
+    this._randomizeMemberCharacter(idx, { forceHumanoid: true, force2D: true });
+    Scene_CharacterCreation._currentPartyMemberIndex = idx;
+    if (lab.kind === "vat") this.onSetCharacterType("creature");
+    this._step = STEP.BIO;
+    if (this._titleWindow) this.setupStep();
+    this._lastStep = -1;
+    this._lastIndex = -1;
+    this.refreshUIOverlayDOM();
+  };
+
+  // The map coming back while a session is still open means the wizard was
+  // left some way other than finishing or cancelling: the embryo is dropped
+  // and the device handed back, so the seat is never left holding it.
+  const _CCLab_mapStart = Scene_Map.prototype.start;
+  Scene_Map.prototype.start = function () {
+    _CCLab_mapStart.call(this);
+    if (Scene_CharacterCreation._lab) abandonLabSession();
+  };
 
   // ==========================================================================
   // Battle Test: auto-build a random, balanced party

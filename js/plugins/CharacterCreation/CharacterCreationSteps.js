@@ -1478,6 +1478,9 @@
       // there is no humanoid, creature or second dossier to switch to, so the
       // pills are not drawn rather than drawn and refused.
       if (Scene_CharacterCreation._storyMode) return "";
+      // The growing vat and the gene splicer each build one kind of body, so
+      // there is nothing to choose between (and no dossier to take).
+      if (Scene_CharacterCreation.isLabMode && Scene_CharacterCreation.isLabMode()) return "";
       const isPreset = !!this._presetWindow;
       const isPresetActor = !!(actor._isPresetActor);
       // Only a VIP closes the dossier chip to the other seats: a party may hold

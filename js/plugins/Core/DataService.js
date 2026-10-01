@@ -1985,6 +1985,11 @@
     // mixing them into the same folder would bury everything else. Namespaces
     // are merged into one flat map, so a file name must be unique across roots.
     const I18N_SUBS = ['plugins', 'conversations', 'lore'];
+    // Keyed banks that sit at the language root beside Hendrix's replacement
+    // maps, yet are addressed by key like the rest: Ideology.json names every
+    // creed "ideology.<id>", so this file must answer as the "ideology"
+    // namespace or every party and creed panel prints the raw key.
+    const I18N_ROOT_BANKS = ['ideology'];
     const I18N_FALLBACK = 'en';
 
     let _i18nBase = {};      // English layer, always present
@@ -2026,6 +2031,14 @@
                 });
             });
         });
+        I18N_ROOT_BANKS.forEach(function (ns) {
+            const filePath = path.join(process.cwd(), 'js', 'i18n', lang, ns + '.json');
+            if (seen.has(ns) || !fs.existsSync(filePath)) return;
+            seen.add(ns);
+            registerLazy(out, ns, function () {
+                return parseJson(fs.readFileSync(filePath, 'utf8'), filePath);
+            });
+        });
         return out;
     }
 
@@ -2053,8 +2066,13 @@
         // Registered, not fetched: a synchronous request blocks the page, and
         // there were two hundred and sixty of them here before anything could
         // be drawn.
-        (i18nManifest()[lang] || []).forEach(function (file) {
+        const files = (i18nManifest()[lang] || []).slice();
+        if (files.length) {
+            I18N_ROOT_BANKS.forEach(function (ns) { files.push(ns + '.json'); });
+        }
+        files.forEach(function (file) {
             const ns = file.replace(/^.*\//, '').replace(/\.json$/i, '');
+            if (Object.prototype.hasOwnProperty.call(out, ns)) return;
             const url = 'js/i18n/' + lang + '/' + file;
             registerLazy(out, ns, function () {
                 const req = new XMLHttpRequest();

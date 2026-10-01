@@ -665,7 +665,7 @@
 *
 * @arg MaxVolume
 * @text Max Volume
-* @desc Set the max volume of the BGS (the volume when the player is closest to the audio source).
+* @desc Ignored: every Mush BGS plays at the game's ambience BGS level, set only by the BGS volume option.
 * @type number
 * @min 0
 * @max 100
@@ -811,7 +811,7 @@
 *
 * @arg Volume
 * @text Volume
-* @desc Set the volume of the BGS.
+* @desc Ignored: every Mush BGS plays at the game's ambience BGS level, set only by the BGS volume option.
 * @type number
 * @min 0
 * @max 100
@@ -949,7 +949,7 @@
 *
 * @arg Volume
 * @text Volume
-* @desc Set the new BGS volume.
+* @desc Ignored: every Mush BGS plays at the game's ambience BGS level, set only by the BGS volume option.
 * @type number
 * @min 0
 * @default 100
@@ -1690,6 +1690,19 @@ AudioManager.getConfigVolume_Bgs = function() {
 	return Math.round(Mush.parameters.mushAudioEngine.volumeBalance.bgsLevel * this._bgsVolume * this._masterVolume / 10000);
 };
 
+// The one level every BGS a map event starts on a Mush channel plays at: the
+// level the game's own ambience bed plays at (WorldMapReturn's biome bed), run
+// through the same Weather Volume scaling outdoors. The volume an event passes
+// (Max Volume, Volume) is ignored, so ambience can only be set from the BGS
+// volume option. Distance still fades a spacial BGS below it.
+AudioManager.AMBIENCE_BGS_VOLUME = 80;
+
+AudioManager.mushBgsVolume = function() {
+	const base = this.AMBIENCE_BGS_VOLUME;
+	const wa = window.WeatherAudio;
+	return (wa && typeof wa.bedVolume === 'function') ? wa.bedVolume(base) : base;
+};
+
 AudioManager.getConfigVolume_Me = function() {
 	return Math.round(Mush.parameters.mushAudioEngine.volumeBalance.meLevel * this._meVolume * this._masterVolume / 10000);
 };
@@ -2159,7 +2172,7 @@ PluginManager.registerCommand('MUSH_Audio_Engine', 'PlayBgm', args => {
 });
 
 PluginManager.registerCommand('MUSH_Audio_Engine', 'PlayBgs', args => {
-	var bgs = {name: String(args.Filename), pitch: Number(args.Pitch), volume: Number(args.Volume), pan: Number(args.Pan)};
+	var bgs = {name: String(args.Filename), pitch: Number(args.Pitch), volume: AudioManager.mushBgsVolume(), pan: Number(args.Pan)};
 	if (!AudioManager.checkAlreadyHaveBgsAudioChannel(args.Channel)) {
 		AudioManager.playMushBgs(bgs, Number(args.Channel), mushBool(args.AutoRemover), args.Interrupt);
 		if (Number(args.FadeIn) > 0) {
@@ -2201,7 +2214,7 @@ PluginManager.registerCommand('MUSH_Audio_Engine', 'ChangeVolumeBgm', args => {
 });
 
 PluginManager.registerCommand('MUSH_Audio_Engine', 'ChangeVolumeBgs', args => {
-	AudioManager.changeVolumeBgs(Number(args.Channel), Number(args.Volume), Number(args.ChangeVolBgsTransition))
+	AudioManager.changeVolumeBgs(Number(args.Channel), AudioManager.mushBgsVolume(), Number(args.ChangeVolBgsTransition))
 });
 
 PluginManager.registerCommand('MUSH_Audio_Engine', 'PlaySpatialSe', args => {
@@ -2500,7 +2513,8 @@ Game_Player.prototype.refreshSpacialAudio = function(index, type, source) {
 			{
 				{
 					var pPos = {x: $gameMap.event(e.id).x, y: $gameMap.event(e.id).y};
-					var mv = AudioManager.getSpacialVolume(oPos, pPos, mus.radius, mus.strength, mus.maxVolume);
+					var maxVol = type == 'bgs' ? AudioManager.mushBgsVolume() : mus.maxVolume;
+					var mv = AudioManager.getSpacialVolume(oPos, pPos, mus.radius, mus.strength, maxVol);
 					highestVolume = Math.max(highestVolume, mv);
 					// Panning section part 1/2
 					if (Mush.parameters.mushAudioEngine.genFeatures.spaPan) {

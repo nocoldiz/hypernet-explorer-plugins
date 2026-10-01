@@ -274,17 +274,17 @@
     // this table does not, or draws one with a different icon or label.
     //
     // The ORDER here is the pockets page's order, which is grouped by subject.
-    // The quick menu sorts its own copy alphabetically by the drawn name, as a
-    // thing you hold open and read down rather than a page you learn the shape
-    // of.
+    // The quick menu offers only the voices carrying `quick`, the few a player
+    // reaches for every few minutes, and draws them in the order that number
+    // gives rather than in the page's.
     const VOICES = [
         { symbol: "sandbox",         labelKey: "MainMenu.cmd.sandbox" },
         { symbol: "dynamics",        labelKey: "MainMenu.cmd.dynamics" },
-        { symbol: "item",            labelKey: "MainMenu.cmd.backpack" },
-        { symbol: "equip",           labelKey: "MainMenu.cmd.equip" },
-        { symbol: "skill",           labelKey: "MainMenu.cmd.skills" },
+        { symbol: "item",            labelKey: "MainMenu.cmd.backpack", quick: 3 },
+        { symbol: "equip",           labelKey: "MainMenu.cmd.equip", quick: 2 },
+        { symbol: "skill",           labelKey: "MainMenu.cmd.skills", quick: 4 },
         { symbol: "vector_gun",      labelKey: "VectorGun.menu" },
-        { symbol: "status1",         labelKey: "MainMenu.cmd.status" },
+        { symbol: "status1",         labelKey: "MainMenu.cmd.status", quick: 1 },
         { symbol: "specializations", labelKey: "MainMenu.cmd.specializations" },
         { symbol: "biologics",       labelKey: "MainMenu.cmd.biologics" },
         { symbol: "augments",        labelKey: "MainMenu.cmd.augments" },
@@ -310,7 +310,7 @@
         { symbol: "pets",            labelKey: "MainMenu.cmd.pets" },
         { symbol: "training",        labelKey: "MainMenu.cmd.training" },
         { symbol: "army",            labelKey: "MainMenu.cmd.workforce" },
-        { symbol: "save",            labelKey: "MainMenu.cmd.save" },
+        { symbol: "save",            labelKey: "MainMenu.cmd.save", quick: 5 },
         { symbol: "multiplayer",     labelKey: "MainMenu.cmd.multiplayer" },
         { symbol: "options",         labelKey: "MainMenu.cmd.preferences" },
         { symbol: "gameEnd",         labelKey: "MainMenu.cmd.resign" },
@@ -1415,6 +1415,17 @@
     Scene_Menu.prototype.promotePetTrainee = function (petId) {
         if (!window.PetSystem) return;
         if (!window.PetSystem.promoteTrainee(petId)) {
+            SoundManager.playBuzzer();
+            return;
+        }
+        SoundManager.playOk();
+        this.refreshUIMenuDOM(false);
+    };
+
+    // A child grown in the vat or the splicer taking the free seat it was
+    // built for.
+    Scene_Menu.prototype.promoteDesignedPet = function (petId) {
+        if (!window.PetSystem?.promoteDesigned?.(petId)) {
             SoundManager.playBuzzer();
             return;
         }
@@ -3628,6 +3639,12 @@
                         drillBtns = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.stopPetTraining?.(${pet.id})">${T('MainMenu.pets.trainStop')}</div>`;
                     } else if (window.PetSystem?.canTrain?.(pet.id)) {
                         drillBtns = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.startPetTraining?.(${pet.id})">${T('MainMenu.pets.train')}</div>`;
+                    } else if (pet.designed) {
+                        // Grown in the vat or the splicer: it was built whole in
+                        // the wizard, so it joins as it was built, no drill.
+                        drillBtns = window.PetSystem?.canPromote?.(pet.id)
+                            ? `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.promoteDesignedPet?.(${pet.id})">${T('MainMenu.pets.promote')}</div>`
+                            : `<div class="command-item roster-action is-disabled" title="${escapeHtml(T('MainMenu.pets.promoteNoRoom'))}">${T('MainMenu.pets.promote')}</div>`;
                     }
                     // A creature the party can sit on is offered the saddle
                     // instead of a place in the vehicle menu: there is no
@@ -3732,6 +3749,30 @@
                         </div>
                     </div>` : '';
 
+            // Everything the party is growing, born or not yet: every pregnancy,
+            // clutch, seed and division a member carries, and the embryos in the
+            // growing vat (window.BiologicLab, Health_BiologicSimulation.js).
+            const gestations = window.BiologicLab?.gestations?.() ?? [];
+            const gestationRow = (g) => {
+                const title = g.name
+                    ? T('MainMenu.pets.gestationNamed', { name: escapeHtml(g.name), carrier: escapeHtml(g.carrier) })
+                    : escapeHtml(g.carrier);
+                return `
+                    <div class="npc-dynamics-member roster-row">
+                        <div class="roster-action">
+                            <div class="entity-name">
+                                ${title}
+                                <span class="roster-sub">${T('MainMenu.pets.gestationKind.' + g.kind)}</span>
+                            </div>
+                            <span class="vehicle-meter"><span class="vehicle-meter-fill band-good" style="--ui-bar-w:${g.percent}%"></span></span>
+                            <div class="pet-drill">${T('MainMenu.pets.gestationProgress', { percent: g.percent, days: g.daysLeft })}</div>
+                        </div>
+                    </div>`;
+            };
+            const gestationRows = gestations.length ? `
+                    <div class="pets-group-title">${T('MainMenu.pets.groupGestating')}</div>
+                    ${gestations.map(gestationRow).join('')}` : '';
+
             // Three kinds of company, kept apart: animals taken in, offspring
             // born to the party, and creatures that talked their way in.
             const groups = [
@@ -3745,9 +3786,10 @@
                     <div class="pets-group-title">${g.label}</div>
                     ${g.rows.map(petRow).join('')}`)
                 .join('');
-            if (!pets.length && !summonRows) {
+            if (!pets.length && !summonRows && !gestationRows) {
                 petRows = `<div class="roster-empty">${T('MainMenu.pets.none')}</div>`;
             }
+            petRows = gestationRows + petRows;
             if (summonRows) {
                 petRows = `
                     <div class="pets-group-title">${T('MainMenu.pets.groupSummons')}</div>
@@ -5020,7 +5062,7 @@
     // (UI/QuickMainMenuLayout.js). ONE list, read rather than copied - see the
     // VOICES table above and the note over it.
     //
-    //   list()      every voice: { symbol, labelKey, label, icon, enabled }
+    //   list()      every voice: { symbol, labelKey, label, icon, enabled, quick }
     //   iconOf(sym) the IconSet cell that voice wears on the pockets page
     //   run(sym)    open it from the field (through MenuHotkeys.run)
     window.MainMenuVoices = {
@@ -5029,6 +5071,7 @@
                 symbol: v.symbol,
                 labelKey: v.labelKey,
                 label: T(v.labelKey),
+                quick: v.quick || 0,
                 icon: COMMAND_ICONS[v.symbol] || 0,
                 enabled: window.MainMenuVoices.enabled(v.symbol),
             }));

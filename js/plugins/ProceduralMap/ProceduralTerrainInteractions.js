@@ -608,11 +608,12 @@
     // Underground, where a plant has to manage without the sun. Everything
     // built down there and buried since (a sunken library, a cold-war bunker,
     // a buried lab) counts: whatever is growing in it grew in the dark.
-    { key: "cave", test: /^(cave|underdark|mines|mineshaft|crystals|crystalcavern|fungalwarren|mushroom|catacombs|crypt|dungeon|barrow|grotto|smugglertunnel|oubliette|lootcellar|sewer|lair|sunkenlibrary|underforge|coldwarbunker|buriedlab|profaneshrine|patronvault)/i },
+    { key: "cave", test: /^(cave|underdark|mines|mineshaft|crystals|crystalcavern|fungalwarren|mushroom|catacombs|crypt|dungeon|barrow|grotto|smugglertunnel|oubliette|lootcellar|sewer|lair|sunkenlibrary|underforge|coldwarbunker|buriedlab|profaneshrine|patronvault|basement)/i },
     // Damp and dark enough that the fungus is the crop.
     { key: "fungus", test: /^(mushroom|fungalwarren)/i },
-    // Pavement, and whatever is winning against it.
-    { key: "urban", test: /^(city|burg|metro|highway|office|omegatower|houses|factory|landfill|train|arena|prison|sewer|spacecenter|laboratory|abandoned|ruins|graveyard|villa|castle|temple|church|park)/i },
+    // Pavement, and whatever is winning against it, the shops, wards and
+    // taverns built on it included: their bins and back rooms are the larder.
+    { key: "urban", test: /^(city|burg|metro|highway|office|omegatower|houses|factory|landfill|train|arena|prison|sewer|spacecenter|laboratory|abandoned|ruins|graveyard|villa|castle|temple|church|park|hospital|clinic|grocerystore|hardwarestore|store|restaurant|tavern|basement)/i },
     // Places that are not really countries at all.
     { key: "weird", test: /^(eldritch|limbo|dreamscape|abstract|digital|heaven|space|spiritwoods|fairy)/i },
   ];

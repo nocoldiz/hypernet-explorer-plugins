@@ -304,6 +304,7 @@
     scale: scaleAmbience,
     refresh: refreshWeatherVolume,
     playAmbience: playAmbience,
+    bedVolume: ambienceVolume,
     duck: (factor) => {
       const f = Number(factor);
       duckFactor = isFinite(f) ? f.clamp(0, 1) : 1;
@@ -1462,8 +1463,20 @@
       // landing column the descriptor remembers stands in for it.
       const lon = GS.surfaceColumnHour ? GS.surfaceColumnHour() : null;
       const local = GS.localHourFor(lp, total, lon);
-      if (local == null) return earthHour;
-      return this._easeSkyHour(local);
+      if (local == null) { this._alienSkyHour = null; return earthHour; }
+      this._alienSkyHour = this._easeSkyHour(local);
+      return this._alienSkyHour;
+    }
+
+    // The hour the alien sky was last drawn at, or null on Earth. The night
+    // light reads this instead of the clock, so the same lamp-lit dark Earth
+    // gets after sunset falls on the far side of another world, and lifts
+    // again as the party walk back into its day.
+    alienSkyHour() {
+      const GS = window.GalaxySim;
+      if (!GS || !GS.getSurfacePlanet || !GS.getSurfacePlanet()) return null;
+      const h = this._alienSkyHour;
+      return (typeof h === "number" && isFinite(h)) ? h : null;
     }
 
     // The sky hour the screen is actually shown at, eased toward the one the
@@ -1495,6 +1508,7 @@
     // the sky is simply at whatever the new place is at.
     resetSkyHourEase() {
       this._skyHourEased = null;
+      this._alienSkyHour = null;
       this._skyHourEaseReset = true;
     }
 
@@ -3355,6 +3369,44 @@
       _Scene_Boot_create_whether.call(this);
       registerWhether();
     };
+  }
+
+  // ============================================================================
+  // SCREEN FILTER IDLING - the tint and flash filters sleep when they do nothing
+  // ============================================================================
+  // Stock MZ hangs a ColorFilter on the spriteset's base (screen tone) and one
+  // on the whole spriteset (flash, fade). Each is a full screen render texture
+  // pass, every frame, even when the tone is zero and nothing flashes, which is
+  // most of the time and expensive on an integrated GPU. A disabled filter is
+  // skipped by PIXI, and with no filter enabled the pass is gone altogether, so
+  // each one is switched on only while its values would change a pixel.
+  const ScreenFilterIdle = {
+    toneIsNeutral(tone) {
+      return !tone || (!tone[0] && !tone[1] && !tone[2] && !tone[3]);
+    },
+    overallIsNeutral(flashColor, brightness) {
+      return (!flashColor || !flashColor[3]) && brightness >= 255;
+    },
+  };
+  window.ScreenFilterIdle = ScreenFilterIdle;
+
+  if (typeof Spriteset_Base !== 'undefined') {
+  const _Spriteset_Base_updateBaseFilters = Spriteset_Base.prototype.updateBaseFilters;
+  Spriteset_Base.prototype.updateBaseFilters = function() {
+    _Spriteset_Base_updateBaseFilters.call(this);
+    const filter = this._baseColorFilter;
+    if (filter) filter.enabled = !ScreenFilterIdle.toneIsNeutral($gameScreen.tone());
+  };
+
+  const _Spriteset_Base_updateOverallFilters = Spriteset_Base.prototype.updateOverallFilters;
+  Spriteset_Base.prototype.updateOverallFilters = function() {
+    _Spriteset_Base_updateOverallFilters.call(this);
+    const filter = this._overallColorFilter;
+    if (filter) {
+      filter.enabled = !ScreenFilterIdle.overallIsNeutral(
+        $gameScreen.flashColor(), $gameScreen.brightness());
+    }
+  };
   }
 
 })();

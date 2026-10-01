@@ -1,4 +1,18 @@
 {
+  "lab": {
+    "noRoom": "Non c'è posto libero nel gruppo per far crescere una nuova vita. Fai spazio prima.",
+    "noCarrier": "Nessuno nel gruppo può portare un embrione modificato.",
+    "cannotCarry": "{actor} non ha un organo in grado di portare un embrione.",
+    "alreadyCarrying": "{actor} sta già portando una gravidanza.",
+    "augmentBlocks": "Un impianto impedisce a {actor} di portare una gravidanza.",
+    "chooseCarrier": "Chi porterà l'embrione?",
+    "cancel": "Annulla",
+    "spliced": "L'innesto attecchisce. {actor} porta {name}, nascita prevista tra {days} giorni.",
+    "vatStarted": "{name} cresce nella vasca. Pronto tra {days} giorni.",
+    "born": "{name} è nato. Lo trovi tra i tuoi seguaci.",
+    "lost": "L'embrione di {name} è andato perduto.",
+    "vatParent": "Vasca di crescita"
+  },
   "toast": {
     "fetusStage": "{actor}: {stage}, settimana {week}",
     "birth": "{actor} ha partorito",

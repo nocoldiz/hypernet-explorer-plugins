@@ -416,6 +416,10 @@
 
   const NPCSeats = {
     SPAWN_CHANCE: 0.2,
+    // Path searches one hunt for a bed or a seat may run (NPCController
+    // goToBed, goSitNearby). The nearest approaches are tried first, so the
+    // rest seldom pay off, and four beds of four sides each was sixteen.
+    APPROACH_SEARCHES: 3,
     // How long a sit lasts, in real milliseconds. Somebody tired stays longer.
     SIT_MS: [20000, 60000],
     TIRED_SIT_MS: [60000, 150000],
@@ -564,6 +568,18 @@
       const openHeap = new _MinHeap(fScore);
       const startK = getKey(startX, startY);
       const goalK  = getKey(goalX, goalY);
+
+      // A goal that no step may enter is answered now. The search below asks
+      // the same three questions of the goal tile whichever side it comes
+      // from, so it could only end in null too, after its whole 500 iterations
+      // (an NPC standing on the goal was the usual case, each hour, for every
+      // seat and bed already taken).
+      if (startK !== goalK) {
+        if (!$gameMap.isValid(goalX, goalY)) return null;
+        if (!doorKeys.has(goalK) && !this.isPassable(goalX, goalY, undefined, eventGrid)) return null;
+        if (avoidEnemies && enemyDangerKeys.has(goalK)) return null;
+        if (avoidNPCs && allNpcKeys.has(goalK) && goalK !== selfKey) return null;
+      }
 
       gScore.set(startK, 0);
       fScore.set(startK, Utils.manhattan(startX, startY, goalX, goalY));

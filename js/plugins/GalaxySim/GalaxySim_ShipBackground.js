@@ -175,11 +175,9 @@
     _shipBgTime: 0,
     _shipBgScroll: 0,
     _shipBgFrame: 0,
-    _shipBgApproachRaw: 0,
     _shipBgApproach: 0,
     _shipBgStateKey: null,
     _shipBgSpinAngle: null,
-    _shipBgHeatShown: 0,
   };
   Object.keys(_bgState).forEach(function (key) {
     Object.defineProperty(Spriteset_Map.prototype, key, {
@@ -228,19 +226,11 @@
     // engaged from inside (the Refuel plugin command) doesn't stall the moment
     // the star map is closed.
     if (ship.isRefueling && typeof dm.tickRefuel === "function") dm.tickRefuel(1 / 60);
-    // Unconditional: the cabin keeps heating while the pumps run and keeps
-    // cooling once they stop (see WeatherSystem's ship heat offset).
+    // Unconditional: the cabin warms as the hull closes on the star and cools
+    // as it pulls back out (see WeatherSystem's ship heat offset).
     if (typeof dm.tickRefuelHeat === "function") {
       const heat = dm.tickRefuelHeat(1 / 60);
-      // WeatherSystem only recomputes the cabin temperature on the hour, which
-      // is far too coarse for a stop this short: nudge it whenever the soak has
-      // moved a whole degree, so the reading climbs while the pumps run.
-      if (Math.round(heat) !== Math.round(this._shipBgHeatShown || 0)) {
-        this._shipBgHeatShown = heat;
-        if (window.$gameWeather && typeof $gameWeather.updateTemperature === "function") {
-          $gameWeather.updateTemperature();
-        }
-      }
+      if (window.GalaxySim.nudgeCabinHeat) window.GalaxySim.nudgeCabinHeat(heat);
     }
     // The same goes for an open Schrodingerite flyby.
     if (ship.harvestRun && typeof dm.tickSchrodingeriteHarvest === "function") {
@@ -250,12 +240,7 @@
     // How far the ship has drawn in toward the body it is drinking from: the
     // star map flies the hull closer, and from inside the ship that reads as
     // the body swelling in the window. Eased over the same 8 seconds.
-    const drawing = !ship.isMoving && (ship.isRefueling || !!ship.harvestRun);
-    const step = (1 / 60) / 8;
-    this._shipBgApproachRaw = Math.max(0, Math.min(1,
-      (this._shipBgApproachRaw || 0) + (drawing ? step : -step)));
-    const ar = this._shipBgApproachRaw;
-    this._shipBgApproach = ar * ar * (3 - 2 * ar);
+    this._shipBgApproach = dm.getRefuelApproach ? dm.getRefuelApproach() : 0;
 
     const dt = 1 / 60;
     this._shipBgTime += dt;

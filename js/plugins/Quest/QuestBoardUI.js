@@ -65,6 +65,24 @@
 
   // One IconSet cell, through the notification service that owns the sprite.
   // Silent if it is not loaded: an icon is decoration, and the sheet still reads.
+  // The quest's map-marker badge: the IconSet icon and colour it is pinned with
+  // on the world map and on its kanban post-it (KanbanQuest owns both). Only a
+  // contract with somewhere to go has a marker, so only that one wears it.
+  function questMarkerHTML(q, size) {
+    const kb = window.KanbanQuest;
+    const api = PQ();
+    if (!q || !q.qid || !kb || typeof kb.iconFor !== "function") return "";
+    let loc = null;
+    try { loc = (api && typeof api.questLocation === "function") ? api.questLocation(q) : null; } catch (e) { loc = null; }
+    if (!loc) return "";
+    const icon = kb.iconFor(q.qid);
+    const color = typeof kb.colorFor === "function" ? kb.colorFor(q.qid) : "";
+    const col = icon % 16, row = Math.floor(icon / 16);
+    return `<div class="qb-quest-icon" title="${T('Kanban.mapMarker') || ""}" style="--marker:${color};` +
+      `width:${size}px;height:${size}px;background-position:-${col * size}px -${row * size}px;` +
+      `background-size:${16 * size}px auto;"></div>`;
+  }
+
   function iconHTML(index) {
     return (index && window.ParchmentToast) ? window.ParchmentToast.icon(index) : "";
   }
@@ -315,6 +333,7 @@
       return `<div class="qb-note ${i === this._focus && !this._detail ? "focused" : ""}"
         data-card="${i}" style="--rot:${rot}deg; --note-bg:${bg}; --pin:${pin}; --seal:${seal}">
         <div class="qb-pin"></div>
+        ${questMarkerHTML(o, 30)}
         ${o.deadlineHours ? `<div class="qb-urgent">${T('QuestBoard.urgent')} ${o.deadlineHours}h</div>` : ""}
         <div class="qb-note-title">${esc(o.title)}</div>
         <div class="qb-note-giver">${esc(o.giverLabel)}</div>
@@ -350,6 +369,7 @@
       return `<div class="qb-note qb-contract ${i === this._focus && !this._detail ? "focused" : ""}"
         data-card="${i}" style="--rot:${rot}deg; --note-bg:${bg}">
         <div class="qb-pin"></div>
+        ${questMarkerHTML(q, 30)}
         <div class="qb-note-title">${esc(q.title)}</div>
         <div class="qb-note-giver">${esc(q.giverLabel)}</div>
         <div class="qb-status ${claimable ? "claimable" : "active"}">${esc(statusText)}</div>
@@ -390,7 +410,7 @@
         ? `<span class="qb-btn map" data-show-map="1">${T('QuestBoard.showOnMapAt', { place: window.WorldMapTransfer.squareLabel(loc.wx, loc.wy) })}</span>`
         : "";
       return `<div id="qb-detail-backdrop"><div id="qb-detail"><div class="qb-d-page">
-        <h2>${esc(o.title)}</h2>
+        <h2>${this._detailIsPosted ? "" : questMarkerHTML(o, 32)}${esc(o.title)}</h2>
         <div class="qb-d-giver">${T('QuestBoard.postedBy')}${esc(o.giverLabel)}</div>
         <div class="qb-d-body">${esc(o.body)}</div>
         <div class="qb-d-sec">${T('QuestBoard.objectives2')}</div>

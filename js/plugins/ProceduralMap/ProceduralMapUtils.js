@@ -792,6 +792,14 @@
   function normalizeLatitudeBiome(biomeName, originY) {
     // i18n-ignore-start  biome ids from Biomes.json
     if (biomeName !== "Ice") return biomeName;
+    // A globe square's latitude is its row on map 1409, poles at both ends.
+    if (originY >= GLOBE_ORIGIN) {
+      const g = globeData();
+      const gy = originY - GLOBE_ORIGIN;
+      if (g && gy < g.height) {
+        return (gy < GLOBE_POLAR_ROWS || gy >= g.height - GLOBE_POLAR_ROWS) ? "Permafrost" : "Tundra";
+      }
+    }
     return (originY < 48 || originY >= 208) ? "Permafrost" : "Tundra";
     // i18n-ignore-end
   }
@@ -4557,6 +4565,94 @@
     return classifyWorldColumn((z) => gameMap.tileId(x, y, z)).biome;
   }
 
+  // ===== THE GLOBE (map 1409) =====
+  //
+  // Map 1409 is the whole Earth at a tenth of map 315's scale, with map 315
+  // (Old Europe) standing in for one rectangle of it. Its squares are entered
+  // and generated exactly like map 315's, so they need world coordinates of
+  // their own that can never be mistaken for one of map 315's 0..255 squares:
+  // globe square (gx, gy) is procedural square (GLOBE_ORIGIN + gx,
+  // GLOBE_ORIGIN + gy). The origin keeps the whole globe, plus the wrap column
+  // either side of it, under the 512 the adjacency scans below bound their
+  // lookups by.
+  //
+  // What stands on each square is js/db/WorldGen/GlobeBiomesMap.json, derived
+  // from data/Map1409.json by tools/build/gen_biomes_map.js with the very
+  // classifier the map 315 snapshot uses (both maps share tileset 96). The
+  // squares are folded into the coordinate indexes rather than into the biome
+  // cache itself, so they never ride along in a save.
+  const GLOBE_MAP_ID = 1409;
+  const GLOBE_ORIGIN = 280;
+  const GLOBE_CODE_ALPHABET =
+    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  // How many rows at either pole read as Permafrost rather than Tundra.
+  const GLOBE_POLAR_ROWS = 10;
+
+  let _globe = undefined; // { width, height, biomes, rows } once read, null if absent
+
+  function globeData() {
+    if (_globe !== undefined) return _globe;
+    let data = null;
+    try {
+      data = window.WorldGen && window.WorldGen.GlobeBiomesMap;
+    } catch (e) {
+      data = null;
+    }
+    _globe = (data && Array.isArray(data.rows) && Array.isArray(data.biomes) &&
+      data.width > 0 && data.height > 0) ? data : null;
+    return _globe;
+  }
+
+  function globeWrapX(gx) {
+    const g = globeData();
+    if (!g) return gx;
+    return ((gx % g.width) + g.width) % g.width;
+  }
+
+  // The biome painted on globe square (gx, gy), gx wrapping round the globe.
+  // Null past either pole or with no globe map shipped.
+  function globeBiomeAt(gx, gy) {
+    const g = globeData();
+    if (!g || gy < 0 || gy >= g.height) return null;
+    const row = g.rows[gy];
+    if (!row) return null;
+    const code = GLOBE_CODE_ALPHABET.indexOf(row.charAt(globeWrapX(gx)));
+    return code >= 0 ? (g.biomes[code] || null) : null;
+  }
+
+  // Is this procedural square one of the globe's? The wrap columns either side
+  // count, so a neighbour lookup off the date line still lands on the globe.
+  function isGlobeSquare(x, y) {
+    const g = globeData();
+    if (!g) return false;
+    return y >= GLOBE_ORIGIN && y < GLOBE_ORIGIN + g.height &&
+      x >= GLOBE_ORIGIN - 1 && x <= GLOBE_ORIGIN + g.width;
+  }
+
+  function globeToSquare(gx, gy) {
+    return { x: GLOBE_ORIGIN + globeWrapX(gx), y: GLOBE_ORIGIN + gy };
+  }
+
+  function squareToGlobe(x, y) {
+    return { x: globeWrapX(x - GLOBE_ORIGIN), y: y - GLOBE_ORIGIN };
+  }
+
+  // Lay the globe's squares into a coordinate index built from the biome cache,
+  // and the two wrap columns beside it. `multi` indexes hold every biome on a
+  // square as an array, the others the one name.
+  function addGlobeToIndex(index, multi) {
+    const g = globeData();
+    if (!g || !index) return;
+    for (let gy = 0; gy < g.height; gy++) {
+      for (let gx = -1; gx <= g.width; gx++) {
+        const name = globeBiomeAt(gx, gy);
+        if (!name) continue;
+        const key = (GLOBE_ORIGIN + gx) * 100000 + (GLOBE_ORIGIN + gy);
+        if (!index.has(key)) index.set(key, multi ? [name] : name);
+      }
+    }
+  }
+
   /**
    * Get biome from cache with proper fallback to world map lookup
    * @param {Object} cache - The biome coordinate cache
@@ -4588,6 +4684,7 @@
         if (!index.has(key)) index.set(key, biomeName);
       }
     }
+    addGlobeToIndex(index, false);
     _biomeFallbackIndex = index;
     _biomeFallbackIndexSource = cache;
     return index;
@@ -4617,6 +4714,7 @@
         if (arr.indexOf(biomeName) === -1) arr.push(biomeName);
       }
     }
+    addGlobeToIndex(index, true);
     _biomeMultiIndex = index;
     _biomeMultiIndexSource = cache;
     return index;
@@ -4950,6 +5048,15 @@
     loadBiomesMapFromFile,
     exportBiomesMapToFile,
     expandWorldRegionRLE,
+    // The globe (map 1409) and its procedural squares: see THE GLOBE above.
+    globeBiomeAt,
+    isGlobeSquare,
+    globeToSquare,
+    squareToGlobe,
+    addGlobeToIndex,
+    GLOBE_MAP_ID,
+    GLOBE_ORIGIN,
+    GLOBE_CODE_ALPHABET,
     WORLD_MAP_ID,
     WORLD_TILESET_ID,
     PROC_MAP_ID,

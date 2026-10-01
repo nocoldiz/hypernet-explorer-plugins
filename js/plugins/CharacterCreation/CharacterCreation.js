@@ -2090,6 +2090,11 @@
       return !!(window.ChaosWorld && window.ChaosWorld.active());
     }
     static _isVehicleMode = false; // Vehicles tab: the garage the party sets out with
+    // The growing vat or the gene splicer (window.CCLab in
+    // CharacterCreationRoster.js): one embryo built on a seat of its own, with
+    // nothing of the party's, pets', garage's or settings' on offer.
+    // { kind: "vat" | "splice", actorId, carrierId, itemId } or null.
+    static _lab = null;
     static _isPartyPresetMode = false; // Party board: the written crews and the ones the player filed
     static _partyPresetIndex = 0;  // Which party on that board is highlighted
     static _isSimpleMode = true;  // Simple mode (default) vs Detailed mode
@@ -2255,6 +2260,16 @@
     // to the ordinary board (see the characterCreation plugin command).
     static isDetailedMode() {
       return this._creationMode === "detailed";
+    }
+
+    static isLabMode() {
+      return !!this._lab;
+    }
+
+    // The body the lab session allows: a vat grows creatures, a splice humans.
+    static labCharacterType() {
+      if (!this._lab) return null;
+      return this._lab.kind === "vat" ? "creature" : "humanoid";
     }
 
     static isSimpleMode() {
@@ -2425,6 +2440,32 @@
         step++;
       }
       return step;
+    }
+    // Every page flag a run leaves behind lives on the class, so it outlives
+    // the scene. A finished run ends on the scenario board with
+    // _isScenarioMode still up, and the next party opened on the settings page
+    // with the scenario rail drawn in place of the member and step tabs: only
+    // the options were reachable, until the game was restarted. A brand new
+    // party (and an abandoned one) puts all of them down here, in one place.
+    static resetRunState() {
+      this._interruptedStep = -1;
+      this._resumeOnStep = false;
+      this.clearSubScreens();
+      this._isCreatureMode = false;
+      this._traitsProcessed = false;
+      this._currentPartyMemberIndex = 0;
+      this._lastMemberWasRandom = false;
+      this._storyMode = false;
+      this._chaosPartyRolled = false;
+      this._lab = null;
+      this._railFocus = null;
+      this._isPetMode = false;
+      this._isVehicleMode = false;
+      this._isScenarioMode = false;
+      this._isPartyPresetMode = false;
+      this._partyPresetIndex = 0;
+      this._settingsRowIndex = 0;
+      this._randomizedAllParty = false;
     }
     static prepare(startStep = 0) {
       this._startStep = startStep;
@@ -2658,6 +2699,7 @@
           !(Scene_CharacterCreation.getCurrentActor() || {})._isPresetActor) {
         this.startStoryModeDossier();
       } else if (Scene_CharacterCreation.isChaosWorld() &&
+                 !Scene_CharacterCreation._lab &&
                  !Scene_CharacterCreation._chaosPartyRolled) {
         // The world of chaos is not built, it is drawn: three characters are
         // rolled on the way in and the wizard opens on the scenario board with
@@ -2941,9 +2983,11 @@
       // Which slot of the rail the pad is resting on, when it is resting on one
       // that is not also the open page (the empty party slot).
       const railFocus = Scene_CharacterCreation._railFocus;
+      // A lab session builds one embryo: its tab is the whole rail.
+      const isLab = Scene_CharacterCreation.isLabMode();
 
       // 0. Settings Tab (First Tab on the Left)
-      const settingsTabHtml = `
+      const settingsTabHtml = isLab ? '' : `
         <div class="cc-folder-tab ${isSettingsActive ? 'active' : ''}" onclick="SceneManager._scene.onSettingsTabClick()" title="${ccT('CharCreate.initialSettings')}">
           ${this._ccIconHtml(SETTINGS_TAB_ICON, 16)}
           <span>${ccT('CharCreate.settings')}</span>
@@ -2952,13 +2996,15 @@
 
       // 1. Top Left: Party Member Tabs + Pet Slot
       const partyTabsHtml = partyMembers.map((partyActor, idx) => {
+        if (isLab && partyActor.actorId() !== currentMemberIndex + 1) return '';
         const name = partyActor.name() || T('CharCreate.memberN', { n: idx + 1 });
-        const isActive = !isSettingsActive && !isScenarioMode && !isPetActive && !isVehicleActive && idx === currentMemberIndex;
+        const isActive = !isSettingsActive && !isScenarioMode && !isPetActive && !isVehicleActive &&
+          (isLab || idx === currentMemberIndex);
         const isComp = partyActor.name() && partyActor._classId > 0 && partyActor.characterName();
         const roman = idx === 0 ? 'I' : (idx === 1 ? 'II' : 'III');
         const isLeader = idx === 0;
 
-        const removeBtn = !isLeader ? `
+        const removeBtn = !isLeader && !isLab ? `
           <span class="cc-tab-remove-x" title="${ccT('CharCreate.deleteMember')}" onclick="event.stopPropagation(); SceneManager._scene.onRemovePartyMember(${idx}, event)">
             ✕
           </span>
@@ -2976,7 +3022,7 @@
       // L1/R1 stop on when the party is short a member) and Confirm fills it.
       // The story mode plays one character and one companion, so the seat is not
       // offered there at all.
-      const addBtnHtml = partySize < 3 && !Scene_CharacterCreation._storyMode ? `
+      const addBtnHtml = partySize < 3 && !Scene_CharacterCreation._storyMode && !isLab ? `
         <div class="cc-folder-tab cc-tab-add-plus ${railFocus === 'add' ? 'selected' : ''}" title="${ccT('CharCreate.addPartyMember')}" onclick="SceneManager._scene.onAddPartyMember()">
           +
         </div>
@@ -2998,13 +3044,13 @@
       const chosenVehicles = (window.CCStartVehicles && window.CCStartVehicles.selected()) || [];
       // The story mode is never asked what it drives: The Beast is already parked
       // where Em left it, so the garage is not offered at all.
-      const vehicleTabHtml = Scene_CharacterCreation._storyMode ? '' : `
+      const vehicleTabHtml = (Scene_CharacterCreation._storyMode || isLab) ? '' : `
         <div class="cc-folder-tab cc-vehicle-tab ${!isSettingsActive && !isScenarioMode && isVehicleActive ? 'active' : ''}" onclick="SceneManager._scene.onVehicleTabClick()">
           <span>${ccT('CharCreate.vehiclesTab')}${chosenVehicles.length ? ` (${chosenVehicles.length})` : ''}</span>
         </div>
       `;
 
-      const petTabHtml = `
+      const petTabHtml = isLab ? '' : `
         <div class="cc-folder-tab cc-pet-tab ${!isSettingsActive && !isScenarioMode && isPetActive ? 'active' : ''}" onclick="SceneManager._scene.onPetTabClick()">
           <span>${petName}</span>
           ${removePetBtn}
@@ -3112,6 +3158,13 @@
     // a chaos world rerolls the three characters it dealt (there is no party
     // page behind it to return to), and everywhere else steps back a page.
     _actionBarBackHtml() {
+      if (Scene_CharacterCreation.isLabMode()) {
+        return `<button class="cc-compact-btn cc-action-back focusable" tabindex="0"
+                data-nav-key="cc-action-back"
+                onclick="SceneManager._scene.onLabCancel()">
+              <span>${ccT('CharCreate.lab.cancel')}</span>
+            </button>`;
+      }
       const isScenario = !!Scene_CharacterCreation._isScenarioMode || this._step === STEP.ORIGIN;
       if (isScenario) {
         return Scene_CharacterCreation.isChaosWorld()
@@ -3153,6 +3206,7 @@
     _actionBarRandomizePartyHtml() {
       const isScenario = !!Scene_CharacterCreation._isScenarioMode || this._step === STEP.ORIGIN;
       if (isScenario || Scene_CharacterCreation._storyMode) return '';
+      if (Scene_CharacterCreation.isLabMode()) return '';
       if (this._isPartyBoardPage()) return '';
       return `<button class="cc-compact-btn cc-action-randomize focusable" tabindex="0"
               data-nav-key="cc-action-randomize"
@@ -3169,6 +3223,7 @@
       const isScenario = !!Scene_CharacterCreation._isScenarioMode || this._step === STEP.ORIGIN;
       if (isScenario || Scene_CharacterCreation._storyMode) return '';
       if (Scene_CharacterCreation._isPartyPresetMode) return '';
+      if (Scene_CharacterCreation.isLabMode()) return '';
       if (!(window.CharacterPresets && window.CharacterPresets.getPartyPresets)) return '';
       return `<button class="cc-compact-btn cc-action-party-presets focusable" tabindex="0"
               data-nav-key="cc-action-party-presets"
@@ -3226,8 +3281,17 @@
       const blocked = this._embarkBlockedReason();
       const isScenario = !!Scene_CharacterCreation._isScenarioMode || this._step === STEP.ORIGIN;
       // Before the scenario sheet, the forward action is choosing one; on it,
-      // the forward action is leaving.
-      const forward = isScenario
+      // the forward action is leaving. A lab session has no scenario: its
+      // forward action starts the gestation.
+      const lab = Scene_CharacterCreation._lab;
+      const forward = lab
+        ? `<button class="cc-compact-btn cc-action-embark focusable${blocked ? ' disabled' : ''}"
+                tabindex="0" data-nav-key="cc-action-embark"
+                title="${blocked}"
+                onclick="${blocked ? 'SoundManager.playBuzzer()' : 'SceneManager._scene.onFinishLabCreation()'}">
+            <span>${ccT(lab.kind === 'vat' ? 'CharCreate.lab.confirmVat' : 'CharCreate.lab.confirmSplice')}</span>
+          </button>`
+        : isScenario
         ? `<button class="cc-compact-btn cc-action-embark focusable${blocked ? ' disabled' : ''}"
                 tabindex="0" data-nav-key="cc-action-embark"
                 title="${blocked}"
@@ -3791,6 +3855,9 @@
       if (this._isActorLockedPreset(actor)) {
         this._clearPresetLock(actor);
       }
+      // The vat grows creatures and the splicer humans, nothing else.
+      const labType = Scene_CharacterCreation.labCharacterType();
+      if (labType && type !== labType) { SoundManager.playBuzzer(); return; }
 
       // The written characters the world holds one of each are their own kind
       // of dossier, so they are browsed on their own board (see isVipPreset);
@@ -4042,6 +4109,7 @@
     // character there yet - so it is marked as the resting slot and Confirm
     // fills it.
     _topRailEntries() {
+      if (Scene_CharacterCreation.isLabMode()) return this._labRailEntries();
       const entries = [{ kind: "settings" }];
       const size = $gameParty ? $gameParty.size() : 0;
       for (let i = 0; i < size; i++) entries.push({ kind: "member", index: i });
@@ -4050,6 +4118,12 @@
       // No garage in the story mode: it sets out in The Beast (see the vehicle tab).
       if (!Scene_CharacterCreation._storyMode) entries.push({ kind: "vehicle" });
       return entries;
+    }
+
+    // A lab session's rail is the one seat it is building.
+    _labRailEntries() {
+      const index = Scene_CharacterCreation._currentPartyMemberIndex || 0;
+      return [{ kind: "member", index }];
     }
 
     _topRailIndex(entries) {
@@ -4119,6 +4193,7 @@
     // Steps the member tabs of the top rail, and only those: from the
     // settings, pet or vehicle page it lands on the first (or last) member.
     cycleMember(direction) {
+      if (Scene_CharacterCreation.isLabMode()) return true;
       const size = $gameParty ? $gameParty.size() : 0;
       if (size < 1) return false;
       const entries = this._topRailEntries();
@@ -5287,18 +5362,9 @@
     }
 
     _exitToTitleConfirmed() {
-      Scene_CharacterCreation._interruptedStep = -1;
+      Scene_CharacterCreation.resetRunState();
       Scene_CharacterCreation._startStep = 0;
-      Scene_CharacterCreation.clearSubScreens();
-      Scene_CharacterCreation._isCreatureMode = false;
-      Scene_CharacterCreation._traitsProcessed = false;
-      Scene_CharacterCreation._currentPartyMemberIndex = 0;
-      Scene_CharacterCreation._lastMemberWasRandom = false;
-      Scene_CharacterCreation._storyMode = false;
-      Scene_CharacterCreation._chaosPartyRolled = false;
-      Scene_CharacterCreation._settingsRowIndex = 0;
       Scene_CharacterCreation._creationMode = null;
-      Scene_CharacterCreation._randomizedAllParty = false;
       this.hideUI();
       this.fadeOutAll();
       SceneManager.goto(Scene_Title);
@@ -5308,6 +5374,8 @@
       // The party board is a page over the wizard, so Back leaves it rather
       // than stepping the wizard behind it back a page.
       if (this.closePartyPresets && this.closePartyPresets()) return;
+      // A lab session has one way out, and it asks first.
+      if (Scene_CharacterCreation.isLabMode()) { this.onLabCancel(); return; }
       // First step of a new game's creation: Back leaves for the title screen
       // rather than doing nothing (the wizard opens straight after New Game,
       // so there is no other way out of it).
@@ -6173,9 +6241,9 @@
   // event to run it (see the Scene_Map hook below).
   function openCharacterCreation() {
     warmCreationAssets();
-    // A brand new party: nothing of a previous run's hand-over is still owed.
-    Scene_CharacterCreation._interruptedStep = -1;
-    Scene_CharacterCreation.clearSubScreens();
+    // A brand new party: nothing of a previous run's hand-over or open page
+    // is still owed.
+    Scene_CharacterCreation.resetRunState();
 
     // Story mode: switch 100 is on and the player is on the tutorial map, or
     // the story run asked for the wizard itself because it began in a year

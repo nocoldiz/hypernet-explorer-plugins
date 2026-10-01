@@ -288,7 +288,8 @@
     static AIRSHIP = {
       type: 'airship',
       name: 'Starship',  // i18n-ignore  vehicle id
-      maxFuel: 200,
+      // Litres of rocket fuel; a stellar refuel on the star map fills it too.
+      maxFuel: 10000,
       fuelRate: 0.8,
       interior: {
         mapId: 721,
@@ -543,7 +544,7 @@
     // drawn twice over for the world map the way a vehicle is.
     if (config.mount) return mountSprite();
     if (!config.sprites) return null;
-    const isMap315 = $gameMap.mapId() === 315;
+    const isMap315 = isWorldMapId($gameMap.mapId());
     if (config.type === 'airship') return starshipSprite(isMap315, !!driving);
     return isMap315 ? config.sprites.normal : (config.sprites.large || config.sprites.normal);
   }
@@ -796,8 +797,12 @@
     const events = ($dataMap && $dataMap.events) ? $dataMap.events : [];
     if (events.some(e => e && e.name === 'Fuel Pump')) return true;  // i18n-ignore  event name
 
-    if ($gameMap.mapId() === 315 && $gameSystem.getBiomeFromWorldCoordinates) {
-      const biome = ($gameSystem.getBiomeFromWorldCoordinates($gamePlayer.x, $gamePlayer.y) || '').toLowerCase();
+    const PGU = window.ProcGenUtils;
+    const globeBiome = (isGlobeMapId($gameMap.mapId()) && PGU && PGU.globeBiomeAt)
+      ? PGU.globeBiomeAt($gamePlayer.x, $gamePlayer.y) : null;
+    if (globeBiome || ($gameMap.mapId() === 315 && $gameSystem.getBiomeFromWorldCoordinates)) {
+      const biome = (globeBiome ||
+        $gameSystem.getBiomeFromWorldCoordinates($gamePlayer.x, $gamePlayer.y) || '').toLowerCase();
       if (biome.startsWith('city') || biome.startsWith('burg') || biome.startsWith('village')) {
         return true;
       }
@@ -1013,6 +1018,38 @@
     return (window.WorldMapReturn && window.WorldMapReturn.worldMapId) || 315;
   }
 
+  // Does this map move by the world map's rules (speeds, dashing, vehicle
+  // ground, sprite size)? Map 315 does, and so does the globe it is a close-up
+  // of (map 1409, see WorldMapReturn.js).
+  function isWorldMapId(mapId) {
+    const WMR = window.WorldMapReturn;
+    if (WMR && WMR.isTravelMap) return WMR.isTravelMap(mapId);
+    return mapId === 315;
+  }
+
+  function isGlobeMapId(mapId) {
+    const WMR = window.WorldMapReturn;
+    return !!(WMR && WMR.isGlobeMap && WMR.isGlobeMap(mapId));
+  }
+
+  function globeMapIdOr(fallback) {
+    const WMR = window.WorldMapReturn;
+    return (WMR && WMR.globeMapId) || fallback;
+  }
+
+  // The procedural square a globe tile stands for.
+  function globeSquareFor(x, y) {
+    const WMR = window.WorldMapReturn;
+    return (WMR && WMR.globeSquareAt) ? WMR.globeSquareAt(x, y) : { x, y };
+  }
+
+  // The globe tile a world square is, or null when it is one of map 315's.
+  function globeTileForSquare(wx, wy) {
+    const PGU = window.ProcGenUtils;
+    if (!PGU || !PGU.isGlobeSquare || !PGU.isGlobeSquare(wx, wy)) return null;
+    return PGU.squareToGlobe(wx, wy);
+  }
+
   // True while the loaded procedural map is an alien planet's landing grid.
   function isAlienSurfaceNow() {
     const wmt = transfer();
@@ -1110,6 +1147,11 @@
       // new tile and the vehicle would be shown one step off, underneath them.
       loc.worldX = loc.x;
       loc.worldY = loc.y;
+    } else if (isGlobeMapId(Number(mapId))) {
+      // The same on the globe, whose tiles are addressed as globe squares.
+      const square = globeSquareFor(loc.x, loc.y);
+      loc.worldX = square.x;
+      loc.worldY = square.y;
     }
     return loc;
   }
@@ -1241,6 +1283,9 @@
       return { mapId: $gameMap.mapId(), x: $gamePlayer.x, y: $gamePlayer.y };
     }
     if (pos.mapId === proceduralMapId() || !pos.mapId) {
+      // Left in one of the globe's squares: the globe is where it is shown.
+      const onGlobe = globeTileForSquare(VehiclePosition.worldX(key), VehiclePosition.worldY(key));
+      if (onGlobe) return { mapId: globeMapIdOr(1409), x: onGlobe.x, y: onGlobe.y };
       return { mapId: 315, x: VehiclePosition.worldX(key), y: VehiclePosition.worldY(key) };
     }
     return { mapId: pos.mapId, x: pos.x, y: pos.y };
@@ -1269,6 +1314,14 @@
       if (pos.alien) return null;
       tx = VehiclePosition.worldX(key);
       ty = VehiclePosition.worldY(key);
+    } else if (isGlobeMapId(currentMap)) {
+      // The globe shows what map 315 shows, for its own squares: anything left
+      // on the globe or in one of its procedural squares, at that square.
+      if (pos.alien) return null;
+      const onGlobe = globeTileForSquare(VehiclePosition.worldX(key), VehiclePosition.worldY(key));
+      if (!onGlobe) return null;
+      tx = onGlobe.x;
+      ty = onGlobe.y;
     } else if (currentMap === procMap) {
       if (pos.mapId !== procMap) return null;
       // Which realm the park is in: the same planet, the same depth in the layer
@@ -1412,7 +1465,7 @@
     if ($gameMap.regionId(x, y) === 99) return true;
     if (isWorldRiverTile(x, y)) return true;
     const mapId = $gameMap.mapId();
-    if ((mapId === 315 || mapId === proceduralMapId()) && $gameMap.terrainTag(x, y) === 3) return true;
+    if ((isWorldMapId(mapId) || mapId === proceduralMapId()) && $gameMap.terrainTag(x, y) === 3) return true;
     return false;
   }
 
@@ -1564,7 +1617,7 @@
     const regionId = $gameMap.regionId(x, y);
     if (regionId === 10) return true;
     if (regionId === 4) return false;
-    if (mapId === 315) {
+    if (isWorldMapId(mapId)) {
       return $gameMap.terrainTag(x, y) === 3;
     }
     return false;
@@ -2164,7 +2217,10 @@
 
       let consumption = config.fuelRate * deltaTime * FUEL_CONSUMPTION_MULTIPLIER;
 
-      if ($gameMap.mapId() !== 315) {
+      if (isGlobeMapId($gameMap.mapId())) {
+        // A globe step burns five times the fuel of one on map 315.
+        consumption *= (window.WorldMapReturn.GLOBE_STEP_COST || 5);
+      } else if ($gameMap.mapId() !== 315) {
         consumption /= 25;
       }
 
@@ -2256,7 +2312,7 @@
     if (isPlayerRidingCustomVehicle() && $gamePlayer.vehicle() === this) {
 
       // Force speed on map 315
-      const speed = $gameMap.mapId() === 315
+      const speed = isWorldMapId($gameMap.mapId())
         ? VehicleConfig.SPEED.map315VehicleSpeed
         : vehicleSpeedFor(this);
       if ($gamePlayer._moveSpeed !== speed) {
@@ -2390,7 +2446,7 @@
 
       if (isVehicleBlockedTile(x2, y2, $gameMap.mapId())) return false;
 
-      if ($gameMap.mapId() !== 315) {
+      if (!isWorldMapId($gameMap.mapId())) {
         const terrainTag = $gameMap.terrainTag(x2, y2);
         if (this.isShip()) {
           if (![0, 1, 2, 5, 6].includes(terrainTag)) return false;
@@ -2458,7 +2514,7 @@
     vehicle.getOff();
     this.setTransparent(false);
     this._vehicleGettingOff = true;
-    const onFootSpeed = $gameMap.mapId() === 315
+    const onFootSpeed = isWorldMapId($gameMap.mapId())
       ? VehicleConfig.SPEED.map315OnFootSpeed
       : VehicleConfig.SPEED.onFootBase;
     this.setMoveSpeed(onFootSpeed);
@@ -2486,7 +2542,7 @@
     const wasGettingOff = this._vehicleGettingOff;
     _Game_Player_updateVehicleGetOff_VS.call(this);
     if (wasGettingOff && !this._vehicleGettingOff) {
-      if ($gameMap.mapId() === 315) {
+      if (isWorldMapId($gameMap.mapId())) {
         this.setMoveSpeed(VehicleConfig.SPEED.map315OnFootSpeed);
       } else {
         this.setMoveSpeed(VehicleConfig.SPEED.onFootBase);
@@ -2563,7 +2619,7 @@
 
       this._fuelTimer = 0;
 
-      if ($gameMap.mapId() === 315) {
+      if (isWorldMapId($gameMap.mapId())) {
         $gamePlayer.setMoveSpeed(VehicleConfig.SPEED.map315VehicleSpeed);
         $gamePlayer._dashing = true;
       } else {
@@ -2598,7 +2654,7 @@
     }
 
     // Set appropriate on-foot speed based on map
-    if ($gameMap.mapId() === 315) {
+    if (isWorldMapId($gameMap.mapId())) {
       $gamePlayer.setMoveSpeed(VehicleConfig.SPEED.map315OnFootSpeed);
     } else {
       $gamePlayer.setMoveSpeed(VehicleConfig.SPEED.onFootBase);
@@ -2616,7 +2672,7 @@
 
   // Check for autorun enabled based on map
   Game_Player.prototype.isAutorunEnabled = function () {
-    return $gameMap.mapId() !== 315;
+    return !isWorldMapId($gameMap.mapId());
   };
 
   // Block walking over a parked airship (default only checks boat/ship)
@@ -2904,12 +2960,12 @@
   const _Game_Player_isDashButtonPressed = Game_Player.prototype.isDashButtonPressed;
   Game_Player.prototype.isDashButtonPressed = function () {
     // If in vehicle on map 315, always dash
-    if (isPlayerRidingCustomVehicle() && $gameMap.mapId() === 315) {
+    if (isPlayerRidingCustomVehicle() && isWorldMapId($gameMap.mapId())) {
       return true;
     }
 
     // On foot: no dash on map 315, otherwise check shift
-    if ($gameMap.mapId() === 315) {
+    if (isWorldMapId($gameMap.mapId())) {
       return false;
     }
     return Input.isPressed('shift');
@@ -2920,7 +2976,7 @@
   Game_Player.prototype.realMoveSpeed = function () {
     // In vehicle: handle speed
     if (isPlayerRidingCustomVehicle()) {
-      if ($gameMap.mapId() === 315) {
+      if (isWorldMapId($gameMap.mapId())) {
         // The Aero Streamlining upgrade grants a small world-map move-speed boost.
         let bonus = 0;
         const cfg = vehicleManager.getConfig($gamePlayer.vehicle());
@@ -2941,7 +2997,7 @@
     }
 
     // On foot on map 315: force speed
-    if (!this.isInVehicle() && $gameMap.mapId() === 315) {
+    if (!this.isInVehicle() && isWorldMapId($gameMap.mapId())) {
       return VehicleConfig.SPEED.map315OnFootSpeed;
     }
 
@@ -2961,7 +3017,7 @@
   // Override isDashing
   const _Game_Player_isDashing = Game_Player.prototype.isDashing;
   Game_Player.prototype.isDashing = function () {
-    if ($gameMap.mapId() === 315) {
+    if (isWorldMapId($gameMap.mapId())) {
       // On map 315: vehicles dash, player doesn't
       if (isPlayerRidingCustomVehicle()) {
         return true;
@@ -2981,12 +3037,12 @@
   // Override updateDashing
   const _Game_Player_updateDashing = Game_Player.prototype.updateDashing;
   Game_Player.prototype.updateDashing = function () {
-    if (isPlayerRidingCustomVehicle() && $gameMap.mapId() === 315) {
+    if (isPlayerRidingCustomVehicle() && isWorldMapId($gameMap.mapId())) {
       this._dashing = true;
       return;
     }
 
-    if ($gameMap.mapId() === 315 && !this.isInVehicle()) {
+    if (isWorldMapId($gameMap.mapId()) && !this.isInVehicle()) {
       this._dashing = false;
       return;
     }
@@ -3129,7 +3185,7 @@
    * sits when it is boarded from outside).
    */
   function overlappedWorldMapEvents() {
-    if (!$gameMap || $gameMap.mapId() !== 315) return [];
+    if (!$gameMap || !isWorldMapId($gameMap.mapId())) return [];
     const d = $gamePlayer.direction();
     const tiles = [
       { x: $gamePlayer.x, y: $gamePlayer.y },
@@ -3292,7 +3348,7 @@
         if (pg && /^space$/i.test(String(pg.currentBiome || ''))) return true;
       }
     }
-    const knownSpaceMaps = [372, 377, 379, 380, 381, 382, 392, 437, 486, 721, 1409, 1421];
+    const knownSpaceMaps = [372, 377, 379, 380, 381, 382, 392, 437, 486, 721, 1421];
     return knownSpaceMaps.includes(mapId);
   }
 
@@ -3478,8 +3534,13 @@
     try {
       const utils = window.ProcGenUtils;
       if (!utils || !utils.getBiomeFromWorldCoordinates) return '';
-      if (!window.WorldMapReturn || $gameMap.mapId() !== window.WorldMapReturn.worldMapId) return '';
-      const biome = utils.getBiomeFromWorldCoordinates($gameMap, $gamePlayer.x, $gamePlayer.y);
+      if (!window.WorldMapReturn) return '';
+      let biome = '';
+      if (isGlobeMapId($gameMap.mapId())) {
+        biome = utils.globeBiomeAt ? utils.globeBiomeAt($gamePlayer.x, $gamePlayer.y) : '';
+      } else if ($gameMap.mapId() === window.WorldMapReturn.worldMapId) {
+        biome = utils.getBiomeFromWorldCoordinates($gameMap, $gamePlayer.x, $gamePlayer.y);
+      }
       if (!biome) return '';
       return window.BiomeNames ? window.BiomeNames.display(biome) : biome;
     } catch (e) {
@@ -3659,7 +3720,7 @@
     // decides between walking into that biome and staying on the world map.
     if (window.WorldMapReturn) {
       const currentMapId = $gameMap.mapId();
-      if (!vehicle.isAirship() && currentMapId === window.WorldMapReturn.worldMapId) {
+      if (!vehicle.isAirship() && isWorldMapId(currentMapId)) {
         const biome = biomeNameUnderPlayer();
         choices.push(biome ? T('VehicleSystem.visitBiome', { biome })
           : T('VehicleSystem.visitMap'));
@@ -3880,7 +3941,7 @@
 
   const _Game_Player_checkEventTriggerHere = Game_Player.prototype.checkEventTriggerHere;
   Game_Player.prototype.checkEventTriggerHere = function (triggers) {
-    if (isPlayerRidingCustomVehicle() && $gameMap.mapId() !== 315) {
+    if (isPlayerRidingCustomVehicle() && !isWorldMapId($gameMap.mapId())) {
       if (!EventInteractionControl.isTransferEvent(this.x, this.y)) {
         return false;
       }
@@ -3890,7 +3951,7 @@
 
   const _Game_Player_checkEventTriggerThere = Game_Player.prototype.checkEventTriggerThere;
   Game_Player.prototype.checkEventTriggerThere = function (triggers) {
-    if (isPlayerRidingCustomVehicle() && $gameMap.mapId() !== 315) {
+    if (isPlayerRidingCustomVehicle() && !isWorldMapId($gameMap.mapId())) {
       const d = this.direction();
       const x2 = $gameMap.roundXWithDirection(this.x, d);
       const y2 = $gameMap.roundYWithDirection(this.y, d);
@@ -4022,7 +4083,7 @@
 
     // Set correct player speed when entering a map
     if (!$gamePlayer.isInVehicle()) {
-      if ($gameMap.mapId() === 315) {
+      if (isWorldMapId($gameMap.mapId())) {
         $gamePlayer.setMoveSpeed(VehicleConfig.SPEED.map315OnFootSpeed);
       } else {
         $gamePlayer.setMoveSpeed(VehicleConfig.SPEED.onFootBase);
@@ -4961,6 +5022,14 @@
       return !!riddenPortableConfig();
     },
 
+    // True when this follower is on a machine of their own right now (a bike
+    // or a broom of their own beside the leader's), false for anybody walking,
+    // swimming or trotting alongside. The lighting asks it so every rider
+    // carries the lamp of what they ride, not just the leader.
+    followerRides(follower) {
+      return !!followerRidingSprite(follower);
+    },
+
     // ...and true when that vehicle keeps to the same ground the party walks on,
     // which is the Bike and not the Broom: a party can pedal along beside a
     // cyclist and cannot walk after somebody flying over a lake. What the loose
@@ -5494,7 +5563,7 @@
    * small sprite, which is a boat the size of a person and has nowhere to sit.
    */
   function ridingSeats() {
-    if ($gameMap.mapId() === 315) return null;
+    if (isWorldMapId($gameMap.mapId())) return null;
     if (!isPlayerRidingCustomVehicle()) return null;
     const vehicle = $gamePlayer.vehicle();
     const config = vehicle && vehicleManager.getConfig(vehicle);
@@ -5652,7 +5721,7 @@
    */
   function starshipShadowSource() {
     if (typeof $gameMap === 'undefined' || !$gameMap) return null;
-    if ($gameMap.mapId() === 315) return null;
+    if (isWorldMapId($gameMap.mapId())) return null;
     if (starshipBarredHere()) return null;
     const vehicle = vehicleManager.getVehicle('airship');
     if (!vehicle) return null;

@@ -478,7 +478,7 @@
         if (!window.Diary || !window.Diary.entries) return null;
         let entries;
         try {
-            entries = window.Diary.entries();
+            entries = window.Diary.recentEntries ? window.Diary.recentEntries() : window.Diary.entries();
         } catch (e) {
             return null;
         }
@@ -597,7 +597,7 @@
         if (!window.Diary || !window.Diary.entries) return;
         let entries;
         try {
-            entries = window.Diary.entries();
+            entries = window.Diary.recentEntries ? window.Diary.recentEntries() : window.Diary.entries();
         } catch (e) {
             return;                         // a diary that will not open owes us nothing
         }

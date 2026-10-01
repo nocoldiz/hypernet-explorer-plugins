@@ -4,13 +4,13 @@
  * @author OmniLex.ai
  * @help QuickMainMenuLayout.js
  *
- * HOLD Tab (keyboard) or Y (pad) out on the map and the menu's pockets come up
- * in a small list beside the party, each with the icon it wears on the pockets
- * page, in alphabetical order. Walk it with the arrows, the left stick or the
+ * HOLD Tab (keyboard) or Y (pad) out on the map and the few pockets a player
+ * reaches for most come up in a dialogue choice window, each with the icon it
+ * wears on the pockets page. Walk it with the arrows, the left stick or the
  * mouse; let the key go and whatever the cursor is on opens. Let it go without
- * having held it long enough and nothing happens at all, so the tap each key
- * already had is untouched: Tab still steps the item hotbar, Y still opens the
- * menu.
+ * having held it long enough and the tap each key already had still happens:
+ * Tab steps the item hotbar, Y opens the menu (on release rather than on the
+ * press, which is what leaves room for the hold).
  *
  * It is a way of reaching one pocket without the page in between, not a second
  * menu: everything on it is the same voice, the same icon and the same scene
@@ -32,6 +32,7 @@
  *   - its icon goes in COMMAND_ICONS in that same file;
  *   - if it has to open from the field, give it an entry in MAP_HOTKEY_ACTIONS
  *     there too, or it will be a row in this list that does nothing;
+ *   - to put it on this list, give it a `quick` rank in that same table;
  *   - change NOTHING here. If you find yourself about to write a symbol name
  *     into this file, add the field you want to that table instead.
  *
@@ -67,6 +68,14 @@
     // 'key' or 'pad', so the release that closes the list is the release of the
     // very thing that opened it.
     let openedBy = null;
+    // Y is the pad's 'menu' button, which the map answers on the PRESS. While
+    // it is down the map is told no, and a Y let go before it became a hold
+    // asks for the menu once on the next frame instead.
+    let padWasDown = false;
+    let menuOnRelease = false;
+    // Closed while the key is still down (Confirm, Cancel): it has to be let
+    // go before it can count towards another hold.
+    let needsRelease = false;
 
     // ------------------------------------------------------------------ input
     // Y on a pad has no Input.gamepadMapper action of its own that is not also
@@ -114,14 +123,14 @@
         if (!voices || !voices.list) return [];
         return voices.list()
             .filter((v) => (voices.visible ? voices.visible(v.symbol) : true))
+            // Only the few the table marks as worth a shortcut: the whole page
+            // on a hold-and-release list was too long to read with a thumb.
+            .filter((v) => v.quick > 0)
             // A pocket with no way of opening from the field would be a row that
             // did nothing when it was picked.
             .filter((v) => window.MenuHotkeys && window.MenuHotkeys.has(v.symbol))
-            // Alphabetical by the name actually drawn, so the order is the one
-            // the player is reading rather than the order the page happens to
-            // group them in. Localised, so the Italian list reads in Italian
-            // order rather than in English order with Italian words on it.
-            .sort((a, b) => String(a.label).localeCompare(String(b.label)));
+            // In the order the table ranks them, the same on every language.
+            .sort((a, b) => a.quick - b.quick);
     }
 
     // ------------------------------------------------------------------- draw
@@ -143,6 +152,8 @@
         if (root && root.parentNode) return root;
         root = document.createElement('div');
         root.id = ROOT_ID;
+        // The dialogue choice window's frame (NPC/DialogueSystem.js), so the
+        // list reads like picking a reply rather than like a panel of its own.
         root.className = 'qmm';
         document.body.appendChild(root);
         return root;
@@ -151,9 +162,9 @@
     function render() {
         const el = build();
         const rows = entries.map((v, i) => {
-            const on = i === index ? ' qmm-on' : '';
-            const off = v.enabled ? '' : ' qmm-off';
-            return '<div class="qmm-row' + on + off + '" data-qmm="' + i + '">' + // i18n-ignore: markup and a data attribute name
+            const on = i === index ? ' qmm-on selected' : '';
+            const off = v.enabled ? '' : ' qmm-off disabled';
+            return '<div class="html-choice-item qmm-row' + on + off + '" data-qmm="' + i + '">' + // i18n-ignore: markup and a data attribute name
                 '<span class="icon menu-icon qmm-icon" style="' + iconStyle(v.icon) + '"></span>' +
                 '<span class="qmm-label">' + escapeHtml(v.label) + '</span>' +
                 '</div>';
@@ -198,6 +209,7 @@
     // Closing WITHOUT picking: the hold was let go on nothing, or the situation
     // went away under it.
     function close() {
+        if (open) needsRelease = true;
         open = false;
         openedBy = null;
         entries = [];
@@ -227,16 +239,29 @@
     function update() {
         const key = keyHeld();
         const pad = padExtraHeld();
+        // Y let go: a tap asks for the menu it was always going to open, a hold
+        // that already brought the list up asks for nothing. Asked for one
+        // frame only, so a map that would not open the menu then never opens
+        // it later out of nowhere.
+        menuOnRelease = false;
+        if (padWasDown && !pad && !open && !needsRelease && held < HOLD_FRAMES) menuOnRelease = true;
+        padWasDown = pad;
 
         if (!available()) {
             if (open) close();
             held = 0;
+            menuOnRelease = false;
             return;
         }
 
         if (!open) {
             // The hold has to grow out of ONE of the two, and the release that
             // closes the list is the release of that same one.
+            if (needsRelease) {
+                if (!key && !pad) needsRelease = false;
+                held = 0;
+                return;
+            }
             if (key || pad) {
                 held++;
                 if (held >= HOLD_FRAMES) show(key ? 'key' : 'pad');
@@ -280,6 +305,18 @@
         return _Game_Player_canMove.call(this);
     };
 
+    // Y held is still a hold in the making, so the map does not open the menu
+    // under it; the tap is handed back on release (see update()).
+    const _Scene_Map_isMenuCalled = Scene_Map.prototype.isMenuCalled;
+    Scene_Map.prototype.isMenuCalled = function () {
+        if (menuOnRelease) {
+            menuOnRelease = false;
+            return true;
+        }
+        if (open || padExtraHeld()) return false;
+        return _Scene_Map_isMenuCalled.call(this);
+    };
+
     const _Scene_Map_update = Scene_Map.prototype.update;
     Scene_Map.prototype.update = function () {
         _Scene_Map_update.call(this);
@@ -290,6 +327,7 @@
     Scene_Map.prototype.terminate = function () {
         close();
         held = 0;
+        menuOnRelease = false;
         _Scene_Map_terminate.call(this);
     };
 

@@ -36,6 +36,8 @@
     "hoursWait": "%1 Hours",
     "hourWait": "1 Hour",
     "halfHour": "30 Minutes",
+    "alienDay": "Day",
+    "alienNight": "Night",
     "cryo": "Cryogenic sleep",
     "save": "Save",
     "respawn": "Set respawn point",

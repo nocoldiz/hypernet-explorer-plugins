@@ -376,6 +376,25 @@
     // the moment it has been used.
     const hyperReady = !!(window.LimitBreak && window.LimitBreak.isReady(this._actor));
 
+    // Skills stands second, straight under Attack (and above Defense), so
+    // the list reads Attack, Skills, Defense, Backpack, Actions, Talk, Run.
+    const addSkillsRow = () => {
+      // A single Skills command holding every skill type at once (Magic, Skills,
+      // ...): the carried loadout is small enough that splitting it per type only
+      // added a menu level. ext 0 is what BattleLoadout.battleSkills reads as "no
+      // type filter", so the list opens on the whole loadout. A loadout holding
+      // nothing the actor can pay for greys out but still OPENS: the list is where
+      // the reason is legible, one greyed cost per skill, and each unaffordable
+      // skill buzzes there instead. Only an empty loadout refuses to open, since
+      // there would be nothing to read.
+      const carried = window.BattleLoadout
+        ? window.BattleLoadout.battleSkills(this._actor, 0)
+        : this._actor.skills().filter(skill => skill && skill.stypeId > 0);
+      const listed = carried.filter(isUsableSkill);
+      this.addCommandWithIcon("", "skill", listed.length > 0, 0, 76,
+        !this.hasCastableSkill(listed));
+    };
+
     if (hasRanged && attackExt && attackExt.current === 0) {
       // Out of ammo: Attack becomes Bash. Reload is placed first as the primary
       // action, followed by Bash (the fallback melee strike). A Hyper takes
@@ -383,6 +402,7 @@
       if (hyperReady) this.addCommandWithIcon("", "hyper", true, null, 87);
       else this.addCommandWithIcon("", "reload", true, null, 115);
       this.addCommandWithIcon("", "attack", true, attackExt, attackIcon);
+      addSkillsRow();
     } else {
       // Attack is ALWAYS enabled. It is the one action a battler can never be
       // left without, and every gate that used to grey it out read as a bug at
@@ -392,6 +412,7 @@
       // so the swing is offered and whatever refuses it does so where the reason
       // can be shown (the ammo counter on the command, the miss in the log).
       this.addCommandWithIcon("", "attack", true, attackExt, attackIcon);
+      addSkillsRow();
 
       if (hyperReady && (hasRanged || vectorSwitchReady)) {
         this.addCommandWithIcon("", "hyper", true, null, 87);
@@ -418,20 +439,10 @@
       }
     }
 
-    // A single Skills command holding every skill type at once (Magic, Skills,
-    // ...): the carried loadout is small enough that splitting it per type only
-    // added a menu level. ext 0 is what BattleLoadout.battleSkills reads as "no
-    // type filter", so the list opens on the whole loadout. A loadout holding
-    // nothing the actor can pay for greys out but still OPENS: the list is where
-    // the reason is legible, one greyed cost per skill, and each unaffordable
-    // skill buzzes there instead. Only an empty loadout refuses to open, since
-    // there would be nothing to read.
-    const carried = window.BattleLoadout
-      ? window.BattleLoadout.battleSkills(this._actor, 0)
-      : this._actor.skills().filter(skill => skill && skill.stypeId > 0);
-    const listed = carried.filter(isUsableSkill);
-    this.addCommandWithIcon("", "skill", listed.length > 0, 0, 76,
-      !this.hasCastableSkill(listed));
+    // Backpack/Item: disabled (greyed + buzzer) when the party holds no
+    // battle-usable item. Mirrors Window_BattleItem.includes ($gameParty.canUse).
+    const hasUsableItem = $gameParty.allItems().some(item => $gameParty.canUse(item));
+    this.addCommandWithIcon("", "item",  hasUsableItem,          null, 209);
 
     // Actions: the engine's fallback kit and the three things a body does that
     // are not skills at all. Those are always carried and never crowd a
@@ -468,13 +479,8 @@
       this.addCommandWithIcon(spiritRow.name, "switchspirit", spiritRow.enabled, null, 73);
     }
 
-    // Backpack/Item: disabled (greyed + buzzer) when the party holds no
-    // battle-usable item. Mirrors Window_BattleItem.includes ($gameParty.canUse).
-    const hasUsableItem = $gameParty.allItems().some(item => $gameParty.canUse(item));
-    this.addCommandWithIcon("", "item",  hasUsableItem,          null, 209);
-
-    // Talk (EnemyTalkSystem.js) stands here, right under the backpack, and not
-    // on the Actions page: it is the one row of the four that is not a way of
+    // Talk (EnemyTalkSystem.js) stands here, under the backpack and the
+    // Actions row, and not on the Actions page: it is the one row of the four that is not a way of
     // hitting somebody, and it is reached often enough that burying it behind
     // a page cost it a press every time.
     if (typeof Scene_Battle.prototype.openTalkMenu === "function") {

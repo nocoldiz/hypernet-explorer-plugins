@@ -300,7 +300,20 @@
     "traitGeneticFreak": "Mutante Genetico",
     "ride": "Cavalca",
     "dismount": "Scendi",
-    "mounted": "Cavalcato"
+    "mounted": "Cavalcato",
+    "promote": "Promuovi",
+    "promoteNoRoom": "Nessun posto libero nel gruppo",
+    "groupGestating": "In gestazione",
+    "gestationNamed": "{name}, portato da {carrier}",
+    "gestationProgress": "{percent}%, mancano {days} giorni",
+    "gestationKind": {
+      "vat": "Vasca di crescita",
+      "splice": "Embrione modificato",
+      "pregnancy": "Gravidanza",
+      "egg": "Uova",
+      "seed": "Seme",
+      "mitosis": "Divisione"
+    }
   },
   "vehicles": {
     "fuel": "Carburante {fuel}L / {max}L",

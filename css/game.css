@@ -333,12 +333,24 @@ body {
     flex-shrink: 0;
 }
 #map-info-hud .mih-location {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
     font-size: 23px;
     font-weight: 600;
     color: var(--text-primary-hover);
     letter-spacing: 0.4px;
     padding: 3px 0 6px 28px;
     line-height: 1.5;
+}
+/* World square coordinates, pushed to the right end of their row. */
+#map-info-hud .mih-coords {
+    margin-left: auto;
+    color: var(--text-primary-hover);
+    font-size: 19px;
+    font-weight: 600;
+    white-space: nowrap;
 }
 #map-info-hud .mih-region {
     display: flex;

@@ -1,3 +1,48 @@
+0.7.2a
+
+Added:
+ - portable growing vat and portable gene splicer
+ - two new patreon vaults
+ - every map has its own fixed day and night bgs
+ - night light on dark side of planets, following longitude and tidally locked planets
+ - more CC0 ambience sounds for all biome types, alien included
+ - map 1409 global earth worldmap, reached by exiting map 315 boundaries
+
+Changed:
+ - italian translation uses hex as the swear word in NPC lines and story dialogue
+ - time passes in real time when the PC is opened
+ - NPCs drawn per village or city map cut in half
+ - mush ambience bgs always play at the same volume as game bgs
+ - battle commands order: attack, skills, defense, backpack, actions, talk, escape
+ - backpack food category drawn after medical, tools after food
+ - travel info coordinates shown in gold next to biome name
+ - map 635 spawns only retired party members and saved parties, max 15
+ - found a political party is now a proper menu, not a modal
+ - dice success sound is different
+ - show coordinates in travel info window instead of minimap
+ - spells and skills can instakill enemies far below your level
+ - arena gives no XP, only euros and KP
+
+Fixed:
+ - normal moving on map no longer sluggish
+ - procedural map border between beach city and ocean no longer buggy
+ - battles end as soon as the enemy model sprite disappears
+ - Em bust and name tag no longer remain after no bust events
+ - quest markers no longer disappear from worldmap when zooming out
+ - night light snaps on map transfer, bike followers get light cones
+ - 3d monsters no longer too dark at night
+ - titlescreen stars and bodies no longer drawn above options after resizing
+ - blood particles drawn again for every attack type except blunt
+ - refueling scene heats ship near the star and fills rocket fuel
+ - choosing landing sites is now fullscreen, flyby buttons no longer cut off
+ - quick custommainmenu now opens holding Y on controller
+ - ideology no longer shown as key value in empathize wiki
+ - water reflection crash at first render on some GPUs
+ - character creation broken when making another party after returning to menu
+ - character creation traits now allow Dwarfism/Obese combination
+ - you can swim on alien worlds again
+
+
 0.7.1a
 
 Added:

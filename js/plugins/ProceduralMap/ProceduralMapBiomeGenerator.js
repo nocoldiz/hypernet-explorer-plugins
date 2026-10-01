@@ -3441,16 +3441,28 @@
     if (!mapData) return;
     const width = PROC_MAP_WIDTH;
     const height = PROC_MAP_HEIGHT;
+    // The sea is autotiled after it is laid (the terrestrial route's shoreline
+    // pass), so its edge tiles are other SHAPES of the same autotile, never the
+    // base tile itself. Matching the exact id left the whole shoreline unmarked:
+    // the swim prompt only opens on region 99, so the party stood at the edge of
+    // an alien sea with no way in. An autotile is matched by its kind instead.
+    const autotileKind = (tileId) =>
+      (tileId >= 2048 && tileId < 8192) ? Math.floor((tileId - 2048) / 48) : -1;
     const waterTiles = new Set();
+    const waterKinds = new Set();
     for (const name of ["Water", "Ocean", "Beach"]) {
       for (const variant of allFeatures[name] || []) {
-        if (variant.type === "single") waterTiles.add(variant.tileId);
+        if (variant.type !== "single") continue;
+        waterTiles.add(variant.tileId);
+        const kind = autotileKind(variant.tileId);
+        if (kind >= 0) waterKinds.add(kind);
       }
     }
     const regiondata = mapData.regiondata || new Array(width * height).fill(0);
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        if (waterTiles.has(mapData[calculateIndex(x, y, 0, width, height)])) {
+        const tileId = mapData[calculateIndex(x, y, 0, width, height)];
+        if (waterTiles.has(tileId) || waterKinds.has(autotileKind(tileId))) {
           regiondata[y * width + x] = 99;
         }
       }
@@ -5003,6 +5015,8 @@
         if (!index.has(key)) index.set(key, biomeName);
       }
     }
+    // The globe's squares (map 1409) answer from their own map, never the save.
+    if (Utils2.addGlobeToIndex) Utils2.addGlobeToIndex(index, false);
     _biomeIndex = index;
     _biomeIndexSource = cache;
     return index;

@@ -212,7 +212,11 @@
     // are recycled by whatever the next visit injects into map 636.
     if (procTileForEvent(mapId, eventId)) return;
     const isGrowing = !!(rec && !rec.removed && rec.plantId);
-    $gameSelfSwitches.setValue([mapId, eventId, "A"], !isGrowing);
+    // Written only when it changes: every self switch write asks for a whole
+    // map refresh, and this runs for every plant once a game minute.
+    const key = [mapId, eventId, "A"];
+    if ($gameSelfSwitches.value(key) === !isGrowing) return;
+    $gameSelfSwitches.setValue(key, !isGrowing);
   }
 
   function gameMinutes() {

@@ -490,6 +490,18 @@
   // Maps where hunger/sleep should not deplete (prison, transport maps, etc.).
   const NO_DEPLETION_MAPS = [718, 719, 720, 327, 1094, 317, 1102];
 
+  // The globe (map 1409, owned by WorldMapReturn.js) is a world map at a tenth
+  // of map 315's scale.
+  function isGlobeMapNow() {
+    const WMR = window.WorldMapReturn;
+    return !!(WMR && WMR.isGlobeMap && $gameMap && WMR.isGlobeMap($gameMap.mapId()));
+  }
+
+  function globeStepCost() {
+    const WMR = window.WorldMapReturn;
+    return (WMR && WMR.GLOBE_STEP_COST) || 5;
+  }
+
   // The one map id every procedural square reuses.
   const PROC_MAP_ID = 636;
 
@@ -528,9 +540,75 @@
     return $gameVariables.value(gameTimeVariable) || 0;
   }
 
+  // The clock ticks once every ten steps (every step on the world map), and
+  // a variable write asks for a whole map refresh, every page of every event
+  // weighed again. No page condition reads the clock in practice, so a write
+  // to it skips that refresh unless the current map has a page that does.
+  // Plugins read the clock off the variable themselves and need no refresh.
+  const ClockQuietWrite = {
+    _mapKey: null,
+    _uses: null,
+    mapUses(variableId) {
+      const key = $gameMap ? $gameMap.mapId() : 0;
+      if (this._mapKey !== key || $dataMap !== this._data) {
+        this._mapKey = key;
+        this._data = $dataMap;
+        this._uses = new Set();
+        for (const ev of ($dataMap && $dataMap.events) || []) {
+          for (const page of (ev && ev.pages) || []) {
+            const c = page && page.conditions;
+            if (c && c.variableValid) this._uses.add(c.variableId);
+          }
+        }
+      }
+      return this._uses.has(variableId);
+    }
+  };
+
+  const _Game_Variables_setValue_clock = Game_Variables.prototype.setValue;
+  Game_Variables.prototype.setValue = function (variableId, value) {
+    if ((variableId === gameTimeVariable || variableId === gameDateVariable) &&
+        typeof $gameMap !== 'undefined' && $gameMap && !ClockQuietWrite.mapUses(variableId)) {
+      const map = $gameMap;
+      map.requestRefresh = function () {};
+      try { _Game_Variables_setValue_clock.call(this, variableId, value); }
+      finally { delete map.requestRefresh; }
+      return;
+    }
+    _Game_Variables_setValue_clock.call(this, variableId, value);
+  };
+
   // Set game time in minutes (only used for map 315 manual advancement)
   function setGameTimeMinutes(minutes) {
     $gameVariables.setValue(gameTimeVariable, Math.max(0, minutes));
+  }
+
+  //===========================================================================
+  // The clock on a screen with no map under it
+  //===========================================================================
+  // While the PC (HypernetOS) or a trading terminal is open the party is not
+  // walking, so no step moves the clock. Those screens call this once a frame
+  // instead: a game minute every real second, and when the hour turns the
+  // hour variable the society reads is set and the NPC society's hourly tick
+  // runs, since Scene_Map is not there to run either. Everything else that
+  // follows the clock (the market's live line, its hourly mark) reads the
+  // variable and needs nothing more.
+  const REALTIME_FRAMES_PER_MINUTE = 60;
+  let realtimeFrames = 0;
+
+  function runRealtimeClock() {
+    if (!window.$gameVariables) return;
+    if (++realtimeFrames < REALTIME_FRAMES_PER_MINUTE) return;
+    realtimeFrames = 0;
+    const minutes = getGameTimeMinutes() + 1;
+    setGameTimeMinutes(minutes);
+    updateGameDateVariable();
+    if (minutes % 60 !== 0) return;
+    const hour = parseInt(getDateTimeFromMinutes(minutes).hours);
+    if ($gameVariables.value(23) !== hour) $gameVariables.setValue(23, hour);
+    if (window.NPCSim && typeof window.NPCSim.tickOnTheHour === 'function') {
+      window.NPCSim.tickOnTheHour(minutes);
+    }
   }
 
   //===========================================================================
@@ -1722,8 +1800,12 @@
     const isShiftPressed = Input.isPressed("shift");
     const baseMultiplier = isShiftPressed ? shiftMultiplier : 1.0;
 
-    // Check if on map 315 (world map) for special time/depletion rules
-    const isOnWorldMap = $gameMap && $gameMap.mapId() === 315;
+    // Check if on map 315 (world map) for special time/depletion rules. The
+    // globe (map 1409) is a world map too, at a tenth of the scale: one of its
+    // steps costs the clock and the body five of map 315's.
+    const isOnGlobe = isGlobeMapNow();
+    const isOnWorldMap = $gameMap && ($gameMap.mapId() === 315 || isOnGlobe);
+    const travelScale = isOnGlobe ? globeStepCost() : 1;
 
     // The needs drain once per STEP while the clock advances once per
     // STEPS_PER_MINUTE steps, so a map where a step buys less time has to cost
@@ -1733,8 +1815,8 @@
     // in there as on any other map.
     const paceFactor = (!isOnWorldMap && mapId === PROC_MAP_ID)
       ? (STEPS_PER_MINUTE / PROC_STEPS_PER_MINUTE) : 1;
-    const hungerRate = (isOnWorldMap ? (maxHunger * 0.003) : hungerDecreaseRate) * paceFactor;
-    const sleepRate = (isOnWorldMap ? (maxSleep * 0.006) : sleepDecreaseRate) * paceFactor;
+    const hungerRate = (isOnWorldMap ? (maxHunger * 0.003) : hungerDecreaseRate) * paceFactor * travelScale;
+    const sleepRate = (isOnWorldMap ? (maxSleep * 0.006) : sleepDecreaseRate) * paceFactor * travelScale;
 
     // Update game time based on map
     const currentTime = getGameTimeMinutes();
@@ -1755,7 +1837,7 @@
           minutesToAdd *= window.MergedVehicleSystem.getWorldRoadTimeFactor();
         }
       }
-      setGameTimeMinutes(currentTime + minutesToAdd);
+      setGameTimeMinutes(currentTime + minutesToAdd * travelScale);
     } else {
       // On foot, time advances by 1 minute every STEPS_PER_MINUTE steps, and
       // much more slowly than that inside a procedural square.
@@ -3520,7 +3602,8 @@
     onWorldMap() {
       if (!window.$gameMap || !window.$gamePlayer) return false;
       const id = (window.WorldMapReturn && window.WorldMapReturn.worldMapId) || 315;
-      return $gameMap.mapId() === id;
+      // The globe (map 1409) is a world map too, painted in the same tiles.
+      return $gameMap.mapId() === id || isGlobeMapNow();
     },
 
     // ----------------------------------------------------------------------
@@ -4310,8 +4393,11 @@
   MapInfoHUD.prototype._activeMode = function () {
     const scene = SceneManager._scene;
     if (!(scene instanceof Scene_Map)) return null;
+    // The fullscreen world map covers the screen and takes the minimap with
+    // it; the card goes with them rather than floating over the chart.
+    if (window.isWorldMapFullscreen && window.isWorldMapFullscreen()) return null;
     const mapId = $gameMap ? $gameMap.mapId() : 0;
-    if (mapId === 315) return 'world';
+    if (mapId === 315 || isGlobeMapNow()) return 'world';
     if (VEHICLE_INTERIOR_MAPS.includes(mapId)) {
       const data = ($gameSystem && $gameSystem.getFastTravelData) ? $gameSystem.getFastTravelData() : null;
       if (data && data.timerActive) return 'travel';
@@ -4350,7 +4436,7 @@
     this._updateVisibility();
     if (!this._shown) return;
     const mapId = $gameMap ? $gameMap.mapId() : 0;
-    if (mapId === 315 && $gamePlayer) {
+    if ((mapId === 315 || isGlobeMapNow()) && $gamePlayer) {
       const px = $gamePlayer.x;
       const py = $gamePlayer.y;
       if (px !== this._lastPlayerX || py !== this._lastPlayerY) {
@@ -4381,7 +4467,11 @@
   // rules would not recognise it.
   MapInfoHUD.prototype._getBiomeId = function () {
     let name = 'Unknown'; // i18n-ignore: sentinel compared against cached biome ids
-    if ($gameSystem && $gameSystem.getBiomeFromCache && $gamePlayer) {
+    const PGU = window.ProcGenUtils;
+    if (isGlobeMapNow() && $gamePlayer && PGU && PGU.globeBiomeAt) {
+      // The globe's tile is a globe square, not one of map 315's.
+      name = PGU.globeBiomeAt($gamePlayer.x, $gamePlayer.y) || name;
+    } else if ($gameSystem && $gameSystem.getBiomeFromCache && $gamePlayer) {
       const b = $gameSystem.getBiomeFromCache($gamePlayer.x, $gamePlayer.y);
       if (b && b !== 'Unknown') name = b; // i18n-ignore: sentinel
     }
@@ -4393,7 +4483,7 @@
   };
 
   MapInfoHUD.prototype._getBiomeName = function () {
-    if ($gamePlayer && window.WorldGen && window.WorldGen.HardcodedBiomeNames) {
+    if ($gamePlayer && !isGlobeMapNow() && window.WorldGen && window.WorldGen.HardcodedBiomeNames) {
       const loc = window.WorldGen.HardcodedBiomeNames[`${$gamePlayer.x},${$gamePlayer.y}`];
       if (loc) return loc;
     }
@@ -4622,6 +4712,21 @@
     `</div>`;
   };
 
+  // World square coordinates, "(48 132)", in gold at the right end of the
+  // biome row (of the date row on a travel card, which has no biome). On the
+  // world map it is the tile underfoot; on a fast-travel run, the vehicle's
+  // interpolated position along its route. The minimap no longer stamps them.
+  MapInfoHUD.prototype._coords = function () {
+    let pos = null;
+    if ($gameMap && ($gameMap.mapId() === 315 || isGlobeMapNow()) && $gamePlayer) {
+      pos = { x: $gamePlayer.x, y: $gamePlayer.y };
+    } else if (window.WorldMapView && window.WorldMapView.travelPosition) {
+      pos = window.WorldMapView.travelPosition();
+    }
+    if (!pos) return '';
+    return `<span class="mih-coords">${T("WorldMapReturn.squareBare", { x: Math.round(pos.x), y: Math.round(pos.y) })}</span>`;
+  };
+
   MapInfoHUD.prototype._refresh = function () {
     if (!this._el) return;
     const mode = this._activeMode();
@@ -4665,7 +4770,7 @@
       }
       html =
         `<div class="mih-datetime"><span class="mih-star">&#9733;</span>${dt.dateShort} ${dt.time24}</div>` +
-        `<div class="mih-location">${loc}</div>` +
+        `<div class="mih-location"><span>${loc}</span>${this._coords()}</div>` +
         countryHtml +
         this._enemyLevel() +
         this._temperature() +
@@ -4678,7 +4783,7 @@
       // There is no world tile to read a biome/country off, so the card
       // leads with the countdown instead of a location.
       html =
-        `<div class="mih-datetime"><span class="mih-star">&#9733;</span>${dt.dateShort} ${dt.time24}</div>` +
+        `<div class="mih-datetime"><span class="mih-star">&#9733;</span>${dt.dateShort} ${dt.time24}${this._coords()}</div>` +
         this._temperature() +
         this._food() +
         this._insomnia(needs) +
@@ -5797,20 +5902,23 @@
              Math.round(ddnLerp(ab, bb, t))) >>> 0;
   }
 
+  // Night is moonlit, not black: a monster at midnight must still read as a
+  // shape with its colours, only cooler and flatter than at noon.
+  //
   // Sampled, not bucketed: the light slides through dawn and dusk instead of
   // stepping, which is what makes a shadow crawl across the field rather than
   // jump. Daylight and deep night are near flat stretches, so the interesting
   // keyframes are packed around the two horizons.
   const DDN_KEYFRAMES = [
-    { h: 0.0,  key: 0x4a5c8c, ki: 0.22, sky: 0x1b2440, gnd: 0x0d1018, ai: 0.30, sh: 0.20 },
-    { h: 4.5,  key: 0x53608f, ki: 0.26, sky: 0x2a3358, gnd: 0x141826, ai: 0.32, sh: 0.22 },
+    { h: 0.0,  key: 0x8094c4, ki: 0.38, sky: 0x3a4a78, gnd: 0x23283a, ai: 0.40, sh: 0.20 },
+    { h: 4.5,  key: 0x8492c2, ki: 0.40, sky: 0x44507e, gnd: 0x282c40, ai: 0.41, sh: 0.22 },
     { h: 6.0,  key: 0xd98a5a, ki: 0.55, sky: 0x6b6d94, gnd: 0x3b3348, ai: 0.42, sh: 0.34 },
     { h: 7.5,  key: 0xffb877, ki: 0.95, sky: 0x9fb6d8, gnd: 0x6b5f52, ai: 0.50, sh: 0.56 },
     { h: 12.0, key: 0xfff6e2, ki: 1.15, sky: 0xbcd6f5, gnd: 0x8d8577, ai: 0.58, sh: 0.72 },
     { h: 16.5, key: 0xffdca8, ki: 1.00, sky: 0xaec8ea, gnd: 0x87786a, ai: 0.54, sh: 0.64 },
     { h: 18.5, key: 0xff9247, ki: 0.62, sky: 0x8a7fa4, gnd: 0x4d3f4a, ai: 0.44, sh: 0.38 },
-    { h: 20.0, key: 0x6a6396, ki: 0.30, sky: 0x333a63, gnd: 0x1a1c2c, ai: 0.34, sh: 0.23 },
-    { h: 24.0, key: 0x4a5c8c, ki: 0.22, sky: 0x1b2440, gnd: 0x0d1018, ai: 0.30, sh: 0.20 },
+    { h: 20.0, key: 0x8a86b8, ki: 0.40, sky: 0x464c7a, gnd: 0x282a3c, ai: 0.41, sh: 0.23 },
+    { h: 24.0, key: 0x8094c4, ki: 0.38, sky: 0x3a4a78, gnd: 0x23283a, ai: 0.40, sh: 0.20 },
   ];
 
   // Indoors the sky is a ceiling: one warm lamp almost overhead, no horizon
@@ -6001,6 +6109,7 @@
   window.TimeDateSystem.setGameTimeMinutes = setGameTimeMinutes;
   // Hours spent on one occupation, simulated forward with their cost paid.
   window.TimeDateSystem.passTime = passTime;
+  window.TimeDateSystem.runRealtimeClock = runRealtimeClock;
   window.TimeDateSystem.onTimeSkipped = onTimeSkipped;
   window.TimeDateSystem.notifyTimeSkipped = notifyTimeSkipped;
   window.TimeDateSystem.updateGameDateVariable = updateGameDateVariable;

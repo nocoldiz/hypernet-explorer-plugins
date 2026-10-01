@@ -1115,5 +1115,12 @@
   "deletePartyPresetBody": "Eliminare il dossier di gruppo di {name}? L'operazione è irreversibile.",
   "exportPreset": "Esporta Dossier",
   "presetExported": "{name} scritto nella cartella characters.",
-  "presetExportFailed": "Non è stato possibile scrivere nella cartella characters."
+  "presetExportFailed": "Non è stato possibile scrivere nella cartella characters.",
+  "lab": {
+    "cancel": "Scarta",
+    "cancelTitle": "Scartare questo embrione?",
+    "cancelBody": "Non crescerà nulla, e il dispositivo torna inutilizzato.",
+    "confirmVat": "Avvia la crescita",
+    "confirmSplice": "Impianta l'embrione"
+  }
 }

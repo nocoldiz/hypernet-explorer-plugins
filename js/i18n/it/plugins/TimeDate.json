@@ -36,6 +36,8 @@
     "hoursWait": "%1 ore",
     "hourWait": "1 ora",
     "halfHour": "30 minuti",
+    "alienDay": "Giorno",
+    "alienNight": "Notte",
     "cryo": "Sonno criogenico",
     "save": "Salva",
     "respawn": "Imposta punto di rinascita",

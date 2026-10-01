@@ -47,7 +47,7 @@ Em:
 Cosa dovremmo fare adesso?
 
 Bubba:
-Prima leviamoci da questa maledetta discarica gelata e andiamo al nostro [Camper | Camper] che ho parcheggiato in città.
+Prima leviamoci da questa hexata discarica gelata e andiamo al nostro [Camper | Camper] che ho parcheggiato in città.
 
 
 ------------------------------------------------------------------------------------------------------------
@@ -179,7 +179,7 @@ Mimic
 
 Em:
 Oh, quello è un mimic.
-Sarò anche magicamente lobotomizzata, ma riconosco un maledetto Mimic quando lo vedo.
+Sarò anche magicamente lobotomizzata, ma riconosco un hexato Mimic quando lo vedo.
 
 Bubba:
 Eh già, chi è che lascia un forziere chiuso in mezzo a una foresta?
