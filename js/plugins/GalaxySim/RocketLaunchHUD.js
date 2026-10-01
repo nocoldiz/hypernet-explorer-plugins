@@ -34,7 +34,7 @@
     return;
   }
   const K = P.K;
-  const { HUD_BASE_W, KARMAN_M, KESSLER_IN_M, KESSLER_OUT_M, LIT_BEATS, MOON_SITE_ID, PROFILES, SE, SITES, altText, altitudeAt, availableProfiles, availableSites, clamp, clamp01, clockText, crossing, descentFrom, destinationsFor, fareText, greatCircleM, hazardSeverity, integrityAt, lunarProfileFrom, modeBlurb, modeName, nearestSite, otherSite, pctText, phaseAt, refreshVaultSite, se, siteBlurb, siteName, speedText, start, t, tapeBands, tapeFraction, weatherLabel } = K;
+  const { HUD_BASE_W, KARMAN_M, KESSLER_IN_M, KESSLER_OUT_M, LIT_BEATS, MOON_SITE_ID, PROFILES, SE, SITES, altText, altitudeAt, availableProfiles, availableSites, clamp, clamp01, clockText, crossing, descentFrom, destinationsFor, fareText, greatCircleM, hazardSeverity, integrityAt, lunarProfileFrom, modeBlurb, modeName, nearestSite, otherSite, pctText, phaseAt, refreshVaultSite, se, siteBlurb, siteName, speedText, start, t, tapeBands, tapeFraction, tapeIsTimeline, tapeTimeFraction, trackText, weatherLabel } = K;
 
   // PSXHud is not on window yet when the base file builds the parts table, so
   // the HUD handed over was still null and would have stayed null here for
@@ -106,7 +106,10 @@
       const x = this.w - 52;
       const y0 = 18;
       const H = this.h - 44;
-      const yOf = (alt) => y0 + Math.round((1 - tapeFraction(alt, this.profile)) * H);
+      // On a crossing the bands are already fractions of the flight and the
+      // mark is the clock, not the altimeter: see tapeBands.
+      const timeline = tapeIsTimeline(this.profile);
+      const yOf = (v) => y0 + Math.round((1 - (timeline ? v : tapeFraction(v, this.profile))) * H);
 
       HUD.panel(b, x, y0 - 8, 46, H + 16, { fill: "#0a1220", dither: true });
 
@@ -138,7 +141,7 @@
 
       // The mark. A wedge, the altitude beside it, and a trail showing where
       // it has already been.
-      const my = clamp(yOf(st.alt), y0, y0 + H);
+      const my = clamp(yOf(timeline ? tapeTimeFraction(st.time, this.profile) : st.alt), y0, y0 + H);
       b.fillRect(x + 2, my, 4, y0 + H - my, "#1d4d7a");
       b.fillRect(x - 6, my - 1, 10, 3, P.ink);
       b.fillRect(x - 8, my, 2, 1, P.ink);
@@ -480,11 +483,9 @@
       const mode = this.page === "mode";
       const dest = this.page === "dest";   // i18n-ignore  page id
       const title = mode ? t("select.modeTitle") : dest ? t("select.destTitle") : t("select.title");
-      const sub = mode ? t("select.modeSubtitle") : dest ? t("select.destSubtitle") : t("select.subtitle");
-      // The 16px title needs its own line: at y 10 with the subtitle at 26 the
-      // two were drawn through each other.
+      // The title alone: the line under it only said again what the title and
+      // the cards already say.
       HUD.text(b, title, 0, 4, this.w, "center", P.cyan, 16);
-      HUD.text(b, sub, 0, 22, this.w, "center", P.dim, 8);
 
       const ids = this.ids;
       ids.forEach((id, i) => {
@@ -550,7 +551,7 @@
       if (!prof || box.h < 24 || box.w < 40) return;
       const total = prof.start._total;
       if (!(total > 0)) return;
-      const BASE = box.y + box.h - 11;      // the ground line
+      const BASE = box.y + box.h - 3;       // the ground line
       const TOP = box.y + 8;                // the top of the plot
       const H = BASE - TOP;
       if (H < 12) return;
@@ -597,14 +598,6 @@
         }
       }
       b.fillRect(box.x + 1, BASE, box.w - 2, 1, P.dim);
-
-      // The beats, written out under the chart. Too many to name one by one at
-      // this width, so it is the count and the two ends of the flight, which
-      // is what the player is choosing between.
-      const first = prof.phases[2] ? prof.phases[2].key : prof.phases[0].key;
-      const last = prof.phases[prof.phases.length - 1].key;
-      this._pairRow(b, t("phase." + first), t("phase." + last),
-        box.x + 2, BASE + 3, box.w - 4, P.dim, on ? P.ink : P.dim);
     }
 
     // A LABEL LEFT, A VALUE RIGHT, ON ONE LINE.
@@ -636,7 +629,7 @@
         [t("select.apogee"), altText(prof.apogee)],
         [t("select.armour"), prof.shedsArmour ? t("select.armourLost") : t("select.armourKept")],
         [t("select.arrives"), oneDest ? siteName(bSite.id) : t("select.choice")],
-        [t("select.track"), prof.downrange ? altText(greatCircleM(a, bSite)) : t("select.vertical")],
+        [t("select.track"), prof.downrange ? trackText(a, bSite) : t("select.vertical")],
       ];
     }
 
@@ -667,7 +660,7 @@
         [t("select.fare"), fareText(this._profileTo(id), this.profile, id)],
         [t("select.latitude"), st.lat.toFixed(2) + "°"],                    // i18n-ignore  degree sign
         [t("select.weather"), weatherLabel(this.env.weather)],
-        [t("select.track"), altText(greatCircleM(from, st))],
+        [t("select.track"), trackText(from, st)],
       ];
     }
   }

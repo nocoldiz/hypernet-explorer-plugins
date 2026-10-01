@@ -424,7 +424,7 @@
     // sent on: a retry leaves them to it.
     BUSY_STATES: ["goingToInteract", "interacting", "goingToWork", "working", "goingHome",
       "sleeping", "sitting", "goingToSeat", "goingToBed", "seekingNpc", "followingNpc", "conversing", "commuting",
-      "fleeing", "yielding", "playingMinigame", "goingToSwim", "swimming", "goingToFish", "fishing"],
+      "walkingIn", "walkingToCounter", "fleeing", "yielding", "playingMinigame", "goingToSwim", "swimming", "goingToFish", "fishing"],
 
     dispatch(controller, profile, force) {
       if (!controller || !profile) return;
@@ -440,6 +440,8 @@
       if (Water.STATES.includes(controller.state)) return;
       if (controller.state === "sleeping" && profile.currentNeed === "sleep") return;
       if (controller.state === "commuting") return;
+      // Coming in through the door, or on the way to take over a till.
+      if (controller.state === "walkingIn" || controller.state === "walkingToCounter") return;
 
       const need = profile.currentNeed;
 

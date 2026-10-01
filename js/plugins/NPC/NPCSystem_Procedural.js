@@ -1166,6 +1166,10 @@
       };
 
       let present = [];
+      // Callers at a home and the crowd of a public floor are visitors: they
+      // come and go on their own times (InteriorVisits) rather than stand here
+      // for the hour. Who lives here is dealt below as before.
+      let visit = null;
       if (kind === "home") {
         const household = ProceduralManager.ensureHousehold(building, groupName);
         const others = window.NPCSim?.getBuildingResidents?.(building, building.floorIndex || 0, groupName) || [];
@@ -1179,17 +1183,19 @@
           if (present.length >= floor) break;
           present.push(n);
         }
-        if (hour >= 9 && hour < 21) {
-          const callers = Object.keys(society).filter(n =>
-            society[n]._homeGroupName === groupName && society[n].spriteKey &&
-            !residents.includes(n) && usable(n) && !window.NPCCreature?.isNonSentientProfile?.(society[n]));
-          const count = Math.floor(rng.next() * (ProceduralManager.HOUSE_VISITORS_MAX + 1));
-          present.push(...shuffled(callers).slice(0, count));
-        }
+        const callers = Object.keys(society).filter(n =>
+          society[n]._homeGroupName === groupName && society[n].spriteKey &&
+          !residents.includes(n) && usable(n) && !window.NPCCreature?.isNonSentientProfile?.(society[n]));
+        visit = {
+          candidates: callers,
+          maxVisitsAt: (h) => (h >= 9 && h < 21 ? Math.ceil(ProceduralManager.HOUSE_VISITORS_MAX / 2) : 0),
+        };
       } else {
         const crowd = ProceduralManager.ensurePublicCrowd(building, groupName).filter(usable);
-        const late = hour >= 22 || hour < 6;
-        present = shuffled(crowd).slice(0, late ? Math.ceil(crowd.length / 2) : crowd.length);
+        visit = {
+          candidates: crowd,
+          maxVisitsAt: (h) => (h >= 22 || h < 6 ? Math.ceil(crowd.length / 2) : crowd.length),
+        };
       }
 
       const tiles = ProceduralManager._interiorTiles();
@@ -1200,6 +1206,13 @@
         if (ProceduralManager._spawnInteriorResident(name, tile)) made++;
       }
       Utils.debug(`procedural ${kind} interior ${key}: ${made} of ${present.length} standing`);
+      SpawnManager.InteriorVisits.begin({
+        building,
+        candidates: visit.candidates,
+        nameOf: (n) => n,
+        spawn: (n, tile) => ProceduralManager._spawnInteriorResident(n, tile),
+        maxVisitsAt: visit.maxVisitsAt,
+      });
       return made;
     },
 
@@ -1235,13 +1248,17 @@
     // One person, as a fresh event on this floor: the same Talk / Empathize
     // page and the same blank "gone" page every procedural citizen carries,
     // and a controller to walk them about the rooms.
-    _spawnInteriorResident: (name, tile) => {
+    // `look` ({ spriteName, charIdx }) dresses somebody who may have no
+    // society profile of their own, a seeded shop persona walking to or from
+    // their counter (InteriorVisits.beginShopHandover).
+    _spawnInteriorResident: (name, tile, look) => {
       const profile = $gameSystem._npcSociety?.[name];
-      if (!profile?.spriteKey) return null;
+      const spriteKey = look?.spriteName || profile?.spriteKey;
+      if (!spriteKey) return null;
       if (!$dataMap.events) $dataMap.events = [null];
       if (!$gameMap._events) $gameMap._events = [];
       const eventId = Math.max($dataMap.events.length, $gameMap._events.length);
-      const bustIndex = profile.bustIndex || 0;
+      const bustIndex = look ? (look.charIdx || 0) : (profile.bustIndex || 0);
       const blank = (switchOn) => ({
         actorId: 1, actorValid: false, itemId: 1, itemValid: false,
         selfSwitchCh: "A", selfSwitchValid: switchOn,
@@ -1255,7 +1272,7 @@
         pages: [{
           conditions: blank(false),
           directionFix: false,
-          image: { tileId: 0, characterName: profile.spriteKey, characterIndex: bustIndex, direction: 2, pattern: 1 },
+          image: { tileId: 0, characterName: spriteKey, characterIndex: bustIndex, direction: 2, pattern: 1 },
           list: ProceduralManager._spacerPageList(),
           moveFrequency: 3, moveRoute: idleRoute,
           moveSpeed: 3, moveType: 1, priorityType: 1, stepAnime: true,
@@ -1271,7 +1288,7 @@
         }],
       };
       const ev = new Game_Event($gameMap.mapId(), eventId);
-      ev.setImage(profile.spriteKey, bustIndex);
+      ev.setImage(spriteKey, bustIndex);
       ev._procInteriorSpawn = true;
       $gameMap._events[eventId] = ev;
       SpawnManager.snapshotSpawn(ev, { minted: true });

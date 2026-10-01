@@ -1,3 +1,17 @@
+0.7.3a
+
+Added:
+ - new patreon vault
+
+Changed:
+ - fixes on lighting changes
+ - fixes on rocket launmch system, now lighitng
+ - reworked shop UI, selected item price is yellow
+
+Fixed:
+ - night light and tint no longer flicker entering or leaving interiors
+ - map <Coords> now set world coordinates
+
 0.7.2a
 
 Added:
@@ -9,6 +23,7 @@ Added:
  - map 1409 global earth worldmap, reached by exiting map 315 boundaries
 
 Changed:
+ - shop visitors and shopkeepers route to and from the map teleport event
  - italian translation uses hex as the swear word in NPC lines and story dialogue
  - time passes in real time when the PC is opened
  - NPCs drawn per village or city map cut in half
@@ -22,7 +37,6 @@ Changed:
  - show coordinates in travel info window instead of minimap
  - spells and skills can instakill enemies far below your level
  - arena gives no XP, only euros and KP
-
 Fixed:
  - normal moving on map no longer sluggish
  - procedural map border between beach city and ocean no longer buggy

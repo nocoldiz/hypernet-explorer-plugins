@@ -773,12 +773,29 @@
       }
 
       const baseSeed = (seed >>> 0) || 1;
+      // The rota a building's counter was given is kept under the building's
+      // own seed (parent map + door tile), not the template's map+event key,
+      // and outlives the session cache that every map load clears. Without it
+      // a re-entry redrew the trio, and since the first draw had already booked
+      // its names in _npcShopAssignments, a different trio came out each time.
+      const rotas = $gameSystem
+        ? ($gameSystem._npcInteriorShopRotas = $gameSystem._npcInteriorShopRotas || {})
+        : {};
       for (const ev of shopEvents) {
         const evId = ev.eventId();
         const key  = `${mapId}_${evId}`;
         // Session cache only: this key belongs to a shared interior template,
         // so it must not be read back from (or written to) the world store.
         if (this._personas[key]) continue;
+        const rotaKey = `${baseSeed}_${evId}`;
+        const kept = rotas[rotaKey];
+        if (kept) {
+          this._setPersonas(key, kept, false);
+          if (Object.keys(kept).length) {
+            this._recordAssignments(mapId, evId, window.NPCSystem?.extractShopName?.(ev.event()) ?? null, kept);
+          }
+          continue;
+        }
 
         // Seeded on the building coords + this counter's id so the rota is
         // stable across re-entries yet distinct per shop, like assignPersonas.
@@ -800,11 +817,13 @@
         }
         if (Object.keys(shifts).length) {
           this._setPersonas(key, shifts, false);
+          rotas[rotaKey] = shifts;
           this._recordAssignments(mapId, evId, window.NPCSystem?.extractShopName?.(ev.event()) ?? null, shifts);
         } else if (this._isZombieWorld()) {
           // Abandoned: an empty rota, so the counter is never staffed and never
           // asked again while this interior is entered.
           this._setPersonas(key, {}, false);
+          rotas[rotaKey] = {};
         }
       }
 
@@ -863,6 +882,13 @@
         // would set _applied[key]=slot, and assignPersonas's own
         // updateSprites() would then skip it, leaving the shop graphic empty.
         const persona = this._getPersonas(key)?.[slot];
+        // A shift ending while the party watches is walked rather than swapped.
+        const prev = this._applied[key];
+        if (prev !== undefined && prev !== slot && !this._isZombieWorld() &&
+            this._handOver(ev, key, prev, persona)) {
+          this._applied[key] = slot;
+          continue;
+        }
         if (!persona) {
           // A zombie world has nobody to spare for a stand-in: an abandoned
           // till, and any till outside its one daytime shift, simply stands
@@ -887,6 +913,33 @@
       }
 
       if (allApplied) this._lastAppliedShift[mapId] = slot;
+    },
+
+    // The end of a shift, played out in front of the party: the one going home
+    // steps out beside the till and leaves by the map's exit, the till stands
+    // vacant (blanked, so pressing on it opens nothing), and the next one comes
+    // in by the exit and only takes the till once they have walked up to it
+    // (NPCSystem InteriorVisits.beginShopHandover). False when it cannot be
+    // walked, and the face is swapped on the spot as it always was.
+    _handOver(ev, key, prevSlot, persona) {
+      const begin = window.NPCSystem?.beginShopHandover;
+      if (typeof begin !== 'function' || !$gameMap) return false;
+      if (window.NPCSystem?.hasHiddenTag?.(ev.event()?.note)) return false;
+      const outgoing = this._getPersonas(key)?.[prevSlot] || null;
+      if (!outgoing && !persona) return false;
+      if (outgoing && persona && outgoing.name === persona.name) return false;
+      const mapId = $gameMap.mapId();
+      // Whoever the till belongs to by the time the walk ends: a long wait can
+      // carry the clock past another shift change on the way.
+      const seat = () => {
+        if (!$gameMap || $gameMap.mapId() !== mapId || $gameMap.event(ev.eventId()) !== ev || ev._erased) return;
+        const now = this._getPersonas(key)?.[this.currentShift()];
+        if (now) this._applyPersonaSprite(ev, now);
+      };
+      this._blankCounter(ev);
+      if (begin(ev, outgoing, persona, seat)) return true;
+      if (persona) this._applyPersonaSprite(ev, persona);
+      return false;
     },
 
     // Draws the counters whose rota is ALREADY known, and nothing else. Called

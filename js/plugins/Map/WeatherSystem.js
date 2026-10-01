@@ -2448,6 +2448,16 @@
       $gameWeather._tintReassertFrames = 12;
       $gameWeather.updateTimeOfDayTint(true);
     }
+    // The engine draws a new scene once before its first update, with the
+    // spriteset's filters still at their defaults: no tint and full
+    // brightness. Walking out of a house at night showed the street at
+    // midday for that frame, and a crossing held black by a screen fade
+    // flashed the new square at full light. The tone and the fade are put on
+    // the filters now, so the first frame of the map is already the right one.
+    if (this._spriteset && $gameScreen) {
+      if (typeof this._spriteset.updateBaseFilters === "function") this._spriteset.updateBaseFilters();
+      if (typeof this._spriteset.updateOverallFilters === "function") this._spriteset.updateOverallFilters();
+    }
     if (!this._transfer && _weatherBackup && $gameWeather) {
       const backup = _weatherBackup;
       _weatherBackup = null;

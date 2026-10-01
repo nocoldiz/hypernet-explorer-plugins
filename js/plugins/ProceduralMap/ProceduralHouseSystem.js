@@ -1390,8 +1390,12 @@
   const PRIORITY_SAME = 1;
 
   // A door event is any event whose active page runs a visitHouse /
-  // enterMultiBuilding plugin command. Returns its facing flag and the pool it
-  // leads into (so the lock rules can tell a home from a shop), or null.
+  // enterMultiBuilding / visitShop / visitClinic plugin command. Returns its
+  // facing flag and the pool it leads into (so the lock rules can tell a home
+  // from a shop), or null. A shop or clinic door is never locked. It is usually
+  // drawn on the shopfront wall, a tile the party cannot step onto, so it is
+  // entered by walking INTO it (`bump`), whatever trigger and priority its page
+  // was authored with.
   function eventDoorInfo(event) {
     if (!event || typeof event.page !== 'function') return null;
     const page = event.page();
@@ -1399,6 +1403,11 @@
     for (const c of page.list) {
       if (c.code === 357 && String(c.parameters[0]).includes('ProceduralHouseSystem')) {
         const cmd = c.parameters[1];
+        if (cmd === 'visitShop' || cmd === 'visitClinic') {
+          const a = c.parameters[3] || {};
+          return { useFacing: a.facing === 'true' || a.facing === true,
+                   poolName: cmd === 'visitShop' ? "shops" : "clinics", alwaysOpen: true, bump: true };
+        }
         if (cmd === 'visitHouse' || cmd === 'enterMultiBuilding') {
           const a = c.parameters[3] || {};
           // enterMultiBuilding defaults an empty base pool to "skyscrapers".
@@ -1435,10 +1444,24 @@
   function applyDoorTrigger(event) {
     const info = eventDoorInfo(event);
     if (!info) return;
+    if (info.bump) {
+      event._trigger = TRIGGER_EVENT_TOUCH;
+      event._priorityType = PRIORITY_SAME;
+      return;
+    }
     const closed = isDoorClosedForEvent(event, info.poolName, info.alwaysOpen);
     event._trigger = closed ? TRIGGER_ACTION : TRIGGER_EVENT_TOUCH;
     event._priorityType = closed ? PRIORITY_SAME : PRIORITY_BELOW;
   }
+
+  // A door already being gone through answers nothing else: holding the arrow
+  // against it bumps it every few frames, and each bump would start its page
+  // again (the door sound with it) until the transfer takes the party away.
+  const _Game_Event_start_door = Game_Event.prototype.start;
+  Game_Event.prototype.start = function () {
+    if (doorEntryBusy() && eventDoorInfo(this)) return;
+    _Game_Event_start_door.call(this);
+  };
 
   function refreshAllDoorTriggers() {
     if (typeof $gameMap === 'undefined' || !$gameMap || !$gameMap.events) return;
@@ -2618,7 +2641,9 @@
       // ProcStitch's performTransfer hook is the one place that knows which is
       // which, and it converts on the way in.
       const exitY = returnPoint.isRoomOverEdge ? returnPoint.eventY : (returnPoint.eventY + 1);
-      const exitDir = returnPoint.direction || 2;
+      // The party walks out the way they are facing at the door, not the way
+      // they faced when they went in (that was into the building).
+      const exitDir = ($gamePlayer && $gamePlayer.direction()) || returnPoint.direction || 2;
       $gamePlayer.reserveTransfer(returnPoint.mapId, returnPoint.eventX, exitY, exitDir, 0);
       delete houseReturnPoints[currentHouseSessionId];
       currentHouseSessionId = null;
@@ -2683,6 +2708,9 @@
   const _Scene_Map_onMapLoaded = Scene_Map.prototype.onMapLoaded;
   Scene_Map.prototype.onMapLoaded = function() {
       _Scene_Map_onMapLoaded.call(this);
+      // Events restored from a save never run setupPageSettings again, so the
+      // door rules are put back on them here as well.
+      refreshAllDoorTriggers();
       if (_postTransferActions) {
           const actions = _postTransferActions;
           switch(actions.type) {

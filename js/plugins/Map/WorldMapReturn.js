@@ -152,7 +152,18 @@
     // "nobody set this" and the party's own last world square is used instead.
     // A map that really does belong to that square is reached from it, so its
     // last-known coordinate already says so.
+    //
+    // The Omega Tower's own maps (<MapGroup: OmegaTower>) are the exception: for
+    // them the pair is the truth, so a new game started inside the tower knows
+    // where in the world it is (see isTemplateCoords).
     const TEMPLATE_COORDS = { x: 79, y: 125 };
+
+    // Is this <Coords> pair the editor template's leftover rather than a real
+    // statement about where the map stands? `note` is the map's own note box.
+    function isTemplateCoords(pair, note) {
+        if (!pair || pair.x !== TEMPLATE_COORDS.x || pair.y !== TEMPLATE_COORDS.y) return false;
+        return !/<\s*MapGroup\s*:\s*OmegaTower\s*>/i.test(String(note || ''));
+    }
 
     const BORDER_DETECTION_RANGE = 3;
     const PROC_MAP_WIDTH  = 64;
@@ -3047,7 +3058,7 @@
     // usable, so the caller can fall back to the world map rather than build
     // square (0, 0) somewhere in the sea.
     function proceduralBorderSquare(dest) {
-        const template = dest.x === TEMPLATE_COORDS.x && dest.y === TEMPLATE_COORDS.y;
+        const template = isTemplateCoords(dest, typeof $dataMap !== 'undefined' && $dataMap && $dataMap.note);
         const square = template ? playerWorldCoords() : { x: dest.x | 0, y: dest.y | 0 };
         if (!(square.x > 0) || !(square.y > 0)) return null;
         return square;
@@ -7373,6 +7384,13 @@
         return m ? { x: parseInt(m[1], 10), y: parseInt(m[2], 10) } : null;
     }
 
+    // The map's pair together with its note, which decides whether the editor
+    // template's pair is meant (see isTemplateCoords).
+    function declaredCoordsFromNote(note) {
+        const pair = coordsFromNote(note);
+        return (pair && !isTemplateCoords(pair, note)) ? pair : null;
+    }
+
     function readMapCoordsTag(mapId) {
         const id = Number(mapId) || 0;
         if (!id) return null;
@@ -7380,8 +7398,7 @@
         // loaded is worth a file read (fast travel parks a vehicle on its
         // destination before the transfer happens).
         if (id === $gameMap.mapId()) {
-            if ($gameMap._coordsDest) return { x: $gameMap._coordsDest.x, y: $gameMap._coordsDest.y };
-            return ($dataMap && $dataMap.note) ? coordsFromNote($dataMap.note) : null;
+            return ($dataMap && $dataMap.note) ? declaredCoordsFromNote($dataMap.note) : null;
         }
         if (typeof $dataMapInfos === 'undefined' || !$dataMapInfos || !$dataMapInfos[id]) return null;
         try {
@@ -7390,21 +7407,20 @@
             xhr.overrideMimeType('application/json');
             xhr.send();
             if (xhr.status >= 400) return null;
-            return coordsFromNote((JSON.parse(xhr.responseText) || {}).note);
+            return declaredCoordsFromNote((JSON.parse(xhr.responseText) || {}).note);
         } catch (e) {
             return null;
         }
     }
 
     // The world square a map DECLARES it stands on, or null when it declares
-    // nothing usable (no tag, or the editor template's default pair).
+    // nothing usable (no tag, or the editor template's default pair outside the
+    // Omega Tower).
     function mapCoordsTag(mapId) {
         const id = Number(mapId) || 0;
         if (!id || id === worldMapId || id === procMapId) return null;
         if (!mapCoordsCache.has(id)) {
-            const raw = readMapCoordsTag(id);
-            const usable = raw && !(raw.x === TEMPLATE_COORDS.x && raw.y === TEMPLATE_COORDS.y);
-            mapCoordsCache.set(id, usable ? raw : null);
+            mapCoordsCache.set(id, readMapCoordsTag(id));
         }
         return mapCoordsCache.get(id);
     }
@@ -8732,8 +8748,10 @@
     window.WorldMapTransfer = {
         worldMapId,
         procMapId,
-        // The editor template's <Coords> pair, read as "unset" everywhere.
+        // The editor template's <Coords> pair, read as "unset" everywhere but
+        // on the Omega Tower's own maps.
         TEMPLATE_COORDS,
+        isTemplateCoords,
 
         // --- the party ---
         playerWorld: playerWorldCoords,

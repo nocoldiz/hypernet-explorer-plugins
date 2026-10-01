@@ -830,6 +830,10 @@
     // still being built asynchronously on the very first run of a world.
     stageShopPersonas();
 
+    // Last building's visits end with it; an interior below starts its own.
+    SpawnManager.InteriorVisits._active = null;
+    SpawnManager.InteriorVisits._takeovers.clear();
+
     if (currentMapId === 636) {
       registerProcStitchHook();
       return populateProceduralSquare();
@@ -1083,6 +1087,8 @@
       $gameSystem.npcControllers?.forEach(c => c.update());
       // Somebody who has reached their door has gone through it.
       SpawnManager.updateCommutes();
+      // Visitors coming into and leaving the building, once a game minute.
+      SpawnManager.InteriorVisits.update();
       // Pockets picked and fights picked between the people on the map.
       try { StreetCrime.update(); } catch (e) { console.error("[NPC System] street crime tick failed", e); }
     }
@@ -1304,6 +1310,10 @@
     counterFacingDir: Utils.counterFacingDir,
     getCounterFacingDir: Utils.counterFacingDir,
     sanitizeShopEvent: sanitizeShopEvent,
+    // A shop counter changing hands in front of the party, walked from and to
+    // the map's exit (SpawnManager InteriorVisits).
+    beginShopHandover: (counter, outgoing, incoming, onSeated) =>
+      SpawnManager.beginShopHandover(counter, outgoing, incoming, onSeated),
     sanitizeMapShopEvents: sanitizeMapShopEvents,
     // Tells a rota counter (no graphic) apart from a Shop event whose
     // shopkeeper the author drew and who is therefore always on duty.

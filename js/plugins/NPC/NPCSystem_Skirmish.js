@@ -192,7 +192,7 @@
   // i18n-ignore-start: controller state ids, damage type ids, job category and spec category ids
   NPCSkirmish.STATES = ["fleeing", "skirmishing", "downed"];
   const SKIRMISH_DEAF_STATES = ["sleeping", "goingToBed", "talkingToPlayer", "conversing", "brawling",
-    "knockedOut", "yielding", "commuting", "fleeing", "skirmishing", "downed", "swimming"];
+    "knockedOut", "yielding", "commuting", "walkingToCounter", "fleeing", "skirmishing", "downed", "swimming"];
   const SKIRMISH_COMBAT_SPEC_CATS = ["Combat", "Weapons"];
   const SKIRMISH_COMBAT_JOB = "Combat";
   const SKIRMISH_BLUNT = "Blunt";

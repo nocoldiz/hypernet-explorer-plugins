@@ -13604,9 +13604,12 @@
 .shop-sec-hdr {
     border-bottom: none;
     padding-bottom: 4px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     font-weight: bold;
-    font-size: 15px;
+    font-size: var(--fs-detail-heading);
+    color: var(--text-detail-label);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 .shop-sec-hdr--split {
@@ -13615,9 +13618,51 @@
     gap: 10px;
 }
 
+/* Short figures run along one wrapping line, key then value, instead of a
+   row each. */
+.shop-stat-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    padding-left: 4px;
+    font-size: var(--fs-detail-body);
+}
+
+.shop-stat {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    white-space: nowrap;
+}
+
 .shop-stat-key {
     font-weight: 500;
-    width: 70px;
+    color: var(--text-success-active);
+}
+
+.shop-stat-val {
+    font-weight: bold;
+}
+
+/* A medicine's lists: a caption over a paragraph that reads at body size. */
+.shop-med-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 8px;
+    padding-left: 4px;
+}
+
+.shop-med-key {
+    font-size: var(--fs-detail-heading);
+    font-weight: bold;
+    color: var(--text-detail-heading);
+}
+
+.shop-med-val {
+    font-size: var(--fs-detail-heading);
+    line-height: 1.45;
+    color: var(--text-success-active);
 }
 
 .shop-plate {
@@ -15490,6 +15535,12 @@
     text-decoration: underline;
 }
 
+/* The line under the cursor quotes its price in the same yellow the item
+   sheet on the right page sets it in. */
+#shop-container .item-card.focused .item-card-price {
+    color: var(--text-detail-heading);
+}
+
 .item-card-left {
     display: flex;
     align-items: center;
@@ -15776,6 +15827,12 @@
     justify-content: space-between;
 }
 
+/* Caption and figure on one baseline: the smaller caption used to ride above
+   the value it names. */
+#shop-container .detail-spec-badge {
+    align-items: baseline;
+}
+
 .badge-lbl {
     color: var(--text-inverse);
     font-size: 0.842em;
@@ -15825,7 +15882,7 @@
 }
 
 .detail-price-val.cost {
-    color: var(--text-cost-bad);
+    color: var(--text-detail-heading);
 }
 
 .detail-price-val.gain {

@@ -1043,7 +1043,7 @@
     },
     {
       "id": "jackjt",
-      "name": "Jack JT",
+      "name": "Tanski",
       "status": "active",
       "planetName": "Jackjt",
       "specialTreasureRoomId": 153,
@@ -1307,7 +1307,7 @@
     },
     {
       "id": "zharrison",
-      "name": "Zachary Harrison",
+      "name": "Lemmiwinks",
       "status": "active",
       "planetName": "Harrison",
       "specialTreasureRoomId": 153,
@@ -1317,14 +1317,14 @@
       "secret": "bc8ee6ba8205"
     },
     {
-      "id": "",
-      "name": "",
-      "status": "",
-      "planetName": "",
-      "specialTreasureRoomId": 0,
-      "starType": "",
-      "galaxy": "",
-      "biome": "",
+      "id": "lnovarzr",
+      "name": "Lnova Rzr",
+      "status": "active",
+      "planetName": "Lnova",
+      "specialTreasureRoomId": 155,
+      "starType": "CLOCKWORK_STAR",
+      "galaxy": "Milky Way",
+      "biome": "Fields",
       "secret": "e032d7e239ae"
     },
     {

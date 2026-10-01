@@ -1400,6 +1400,27 @@
     return clamp(s, 0.9, 1.25);
   }
 
+  // A crossing's tape runs on flight time, not on height: see tapeBands.
+  function tapeIsTimeline(profile) {
+    return !!(profile && profile.lunar);
+  }
+  // Where a moment of the flight sits on a timeline tape, 0 at the rail and 1
+  // on the ground at the far end. The hold and the count are left off the
+  // bottom: nothing moves on them.
+  function tapeTimeFraction(time, profile) {
+    const prof = profile || PROFILES.orbital;
+    const st = prof.start || startTable(prof.phases);
+    const t0 = st.coil != null ? st.coil : 0;   // i18n-ignore  phase key
+    const span = Math.max(1e-6, st._total - t0);
+    return clamp((time - t0) / span, 0, 1);
+  }
+  // The first moment a flight reaches a height, for the bands on a timeline.
+  function timeAtAlt(alt, profile) {
+    const total = profile.start ? profile.start._total : startTable(profile.phases)._total;
+    for (let s = 0; s <= total; s += 0.1) if (altitudeAt(s, profile) >= alt) return s;
+    return total;
+  }
+
   function tapeFraction(alt, profile) {
     const top = (profile || PROFILES.orbital).tapeTop || TAPE_TOP_M;
     const a = clamp(alt, 0, top);
@@ -1423,7 +1444,7 @@
     TAPE_KNEE_M, TAPE_TOP_M,
     phaseAt, altitudeAt, verticalSpeedAt, horizontalSpeedAt, speedAt, ORBITAL_V,
     integrityAt, integrityAtTime, hazardSeverity,
-    tapeFraction, airDensity,
+    tapeFraction, tapeIsTimeline, tapeTimeFraction, airDensity,
   };
 
   // ==========================================================================
@@ -1930,6 +1951,46 @@
   }
 
   function moonRecord() { return worldRecord("moon"); }   // i18n-ignore  world id
+
+  // WHAT O'CLOCK IT IS ON ANOTHER WORLD, at the square the round comes down
+  // on. GalaxySim owns the answer (localHourFor, off the same landed
+  // descriptor a landing builds), so the sky over the pad and the sky the
+  // party steps out under are the same hour. Null on Earth, or when there is
+  // no star map to ask: the Earth clock stands.
+  function worldLocalHour(id) {
+    const w = WORLDS[id];
+    const GS = window.GalaxySim;
+    if (!w || !GS || typeof GS.makeLandedDescriptor !== "function" || typeof GS.localHourFor !== "function") return null;
+    try {
+      const rec = worldRecord(id);
+      const sys = worldSystem(id);
+      const parent = w.isMoon && sys ? (sys.planets || []).find((p) => p.name === w.parent) : null;
+      const grid = typeof GS.planetGridSize === "function" ? GS.planetGridSize(rec) : null;
+      const desc = GS.makeLandedDescriptor(rec, {
+        system: sys, gridCell: w.cell, grid: grid,
+        isMoon: !!w.isMoon, parentPlanet: parent || null,
+      });
+      const total = ((typeof $gameVariables !== "undefined" && $gameVariables)
+        ? Number($gameVariables.value(114)) || 0 : 0) + 600;
+      const h = GS.localHourFor(desc, total);
+      return (h == null || !isFinite(h)) ? null : h;
+    } catch (e) { return null; }
+  }
+
+  // The same environment at another hour and under another sky: the light is
+  // that world's, and the weather is not Earth's. Nothing in this plugin knows
+  // what the weather is doing on another world, so it is clear.
+  function envAtHour(env, hour) {
+    const clock = ((hour % 24) + 24) % 24;
+    const dayK = Math.cos(((clock - 12.5) / 12) * Math.PI);
+    return Object.assign({}, env, {
+      hour: Math.floor(clock), minute: Math.floor((clock % 1) * 60), clock,
+      weather: "none",   // i18n-ignore  weather id
+      wet: false, storm: false, snow: false,
+      night: dayK < -0.08, golden: Math.abs(dayK) < 0.28, dayK,
+      light: clamp01(dayK * 0.5 + 0.5),
+    });
+  }
 
   // The authored pad on that world, with the arrival tile this plugin lands
   // on rather than the one the star map's own picker uses: a round coming in
@@ -2564,6 +2625,16 @@
   const FAR_CAM_MAX_D = 12000;
   // How far off the camera's own bearing the Moon is held. See _buildMoon.
   const MOON_BEARING = 0.42;
+  // The lunar beats on which the altimeter is the height over the Moon, and
+  // so the beats on which nothing that is made of air may be drawn.
+  // A route's own landing opens on "approach"; the older lunar tail on
+  // "transit". A round coming in from another star is only over the Moon from
+  // its approach: its liminal beat is spent leaving the world it took off from.
+  const MOON_AIRLESS = ["liminal", "transit", "approach", "flyby", "skim", "touchdown", "arrived"];   // i18n-ignore  phase keys
+  // The beats on which a round is coming down to the world it was flown at:
+  // from here the sky is that world's, at that world's hour.
+  const ARRIVAL_SKY = ["approach", "transfer", "flyby", "skim", "touchdown", "arrived"];   // i18n-ignore  phase keys
+  const MOON_HOMECOMING = ["approach", "flyby", "skim", "touchdown", "arrived"];   // i18n-ignore  phase keys
   // The hyperspace corridor: how wide the square shaft is and how far down it
   // the slabs are laid before they are recycled to the far end.
   const CORRIDOR_HW = 30;
@@ -2880,6 +2951,23 @@
       this._deferred = [];
       this._built = {};
 
+      // THE LIGHT IS LOCAL. A pad on another world launches under that world's
+      // hour and not the Earth clock's, and a round arriving at one comes down
+      // into its hour too: see _arrivalSky.
+      const homeBody = (this.geoSite || site).body;
+      if (homeBody && homeBody !== "earth") {                       // i18n-ignore  world id
+        const h = worldLocalHour(homeBody);
+        if (h != null) this.env = envAtHour(this.env, h);
+      }
+      this._arrivalEnv = null;
+      const destWorld = this.profile.world;
+      if (destWorld && destWorld !== "earth" && destWorld !== homeBody) {   // i18n-ignore  world id
+        const h = worldLocalHour(destWorld);
+        if (h != null) this._arrivalEnv = envAtHour(this.env, h);
+        this._arrivalSite = SITES[destWorld] || null;
+      }
+      this._arrived = false;
+
       this._initThree();
       {
         this._buildFar();
@@ -3149,7 +3237,7 @@
 
     _paintSky() {
       const e = this.env;
-      const site = this.site;
+      const site = (this._arrived && this._arrivalSite) || this.site;
       return this._tex(64, 128, (ctx, w, h) => {
         // Zenith at the top of the canvas, horizon at the bottom, because the
         // dome is mapped v=1 at the pole.
@@ -4821,6 +4909,20 @@
       this._farAim.quaternion.copy(clean.quaternion);
       this._farAim.rotateX(-FAR_TILT * (this.orbitalK || 0));
       this._farAim.position.copy(this.farCamera.position);
+      // THE DIRECTOR'S AIM: the rig alone, without the player's drag or pan.
+      // A body the round is closing on is hung off this one, so swinging the
+      // camera looks round it instead of carrying it along with the lens.
+      const rx = Math.cos(rig.pitch) * Math.sin(rig.yaw) * rig.dist;
+      const ry = Math.sin(rig.pitch) * rig.dist;
+      const rz = Math.cos(rig.pitch) * Math.cos(rig.yaw) * rig.dist;
+      const director = this._directorCam || (this._directorCam = new THREE.Camera());
+      director.position.set(rig.target.x + rx, rig.target.y + ry, rig.target.z + rz);
+      director.up.set(0, 1, 0);
+      director.lookAt(rig.target.x, rig.target.y, rig.target.z);
+      this._farDirector = this._farDirector || new THREE.Object3D();
+      this._farDirector.quaternion.copy(director.quaternion);
+      this._farDirector.rotateX(-FAR_TILT * (this.orbitalK || 0));
+      this._farDirector.position.copy(this.farCamera.position);
       this._updateMoon(dt, this.phase || phaseAt(time, this.profile));
       // The pad is at a latitude, so the planet hangs under the vehicle at an
       // angle rather than squarely below it.
@@ -4887,7 +4989,9 @@
       this.speed = speedAt(time, prof, this.trackM);
       this.downrange = downrangeAt(time, prof);
       this.integrity = integrityAtTime(time, this.severity || 1, prof, this.downrange);
-      this.density = airDensity(this.alt);
+      // Over the Moon the altimeter is the height above the regolith, and
+      // there is no air at any height of it.
+      this.density = this._overMoon() ? 0 : airDensity(this.alt);
       this.downrangeM = this.downrange * this.trackM;
       // The ground track compressed into something the near scene can hold:
       // the pad only has to slide out of frame, not travel eighteen hundred
@@ -4903,6 +5007,7 @@
       // ever appears.
       this._drainDeferred();
 
+      this._arrivalSky(ph);
       this._updateSun();
       this._updateSky(dt);
       this._updatePad(dt, ph);
@@ -5312,28 +5417,38 @@
 
       const HW = CORRIDOR_HW;
       const velvet = this._tex(128, 256, (ctx, w, h) => {
-        // Curtain. Vertical folds, dark in the pleats and lit on the swell,
-        // which is the whole of what makes cloth read as cloth.
+        // BLACK VELVET. Vertical folds, near black in the pleats and only a
+        // cold sheen on the swell, which is all black cloth ever shows.
         const r = makeRng(0x5ed10c);
         for (let x = 0; x < w; x++) {
           const fold = Math.sin(x * 0.34) * 0.5 + 0.5;
           const deep = Math.pow(fold, 1.6);
-          const v = 26 + deep * 112;
-          ctx.fillStyle = "rgb(" + Math.round(v) + "," + Math.round(v * 0.10) + "," + Math.round(v * 0.13) + ")";
+          const v = 5 + deep * 34;
+          ctx.fillStyle = "rgb(" + Math.round(v) + "," + Math.round(v * 0.94) + "," + Math.round(v * 0.9) + ")";
           ctx.fillRect(x, 0, 1, h);
         }
-        // The weave, and the odd thread catching the light.
+        // The pile, and the odd gold thread catching the light.
         for (let i = 0; i < 2400; i++) {
           const x = Math.floor(r() * w), y = Math.floor(r() * h);
-          ctx.fillStyle = r() > 0.5 ? "rgba(190,40,50,0.10)" : "rgba(20,0,4,0.16)";
+          ctx.fillStyle = r() > 0.85 ? "rgba(224,184,74,0.22)" : "rgba(0,0,0,0.3)";
           ctx.fillRect(x, y, 1, 1);
         }
-        // And the hem, pooling at the bottom the way a heavy curtain does.
-        const grd = ctx.createLinearGradient(0, h * 0.82, 0, h);
-        grd.addColorStop(0, "rgba(0,0,0,0)");
-        grd.addColorStop(1, "rgba(0,0,0,0.65)");
-        ctx.fillStyle = grd;
-        ctx.fillRect(0, h * 0.82, w, h * 0.18);
+        // GOLD: a pelmet across the top and a fringed hem along the bottom,
+        // leafed the way the floor is so the two read as one room.
+        const leaf = (y0, hh) => {
+          const gold = ctx.createLinearGradient(0, y0, 0, y0 + hh);
+          gold.addColorStop(0, "#8a6a1c");
+          gold.addColorStop(0.5, "#f4d77a");
+          gold.addColorStop(1, "#8a6a1c");
+          ctx.fillStyle = gold;
+          ctx.fillRect(0, y0, w, hh);
+        };
+        leaf(0, 6);
+        leaf(h - 18, 4);
+        for (let x = 0; x < w; x += 3) {
+          ctx.fillStyle = x % 6 ? "#b38d2c" : "#e0b84a";
+          ctx.fillRect(x, h - 14, 1, 10 + Math.floor(r() * 4));
+        }
       }, 6, 1);
 
       // THE CHEVRON, BLACK AND GOLD. Not painted flat: the floor of that room
@@ -5348,7 +5463,7 @@
         gold.addColorStop(1, "#8a6a1c");
         ctx.fillStyle = gold;
         ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = "#060505";
+        ctx.fillStyle = "#020202";
         const band = h / 4;
         for (let b = 0; b < 4; b++) {
           const y = b * band;
@@ -5717,6 +5832,48 @@
       return 1;
     }
 
+    // 0 in a galaxy, 1 in the gap between two of them.
+    _intergalactic() {
+      const ph = this.phase;
+      if (!ph || !this.profile.jump) return 0;
+      if (ph.key === "breach") return smooth(ph.progress);
+      if (ph.key === "gods" || ph.key === "crossing") return 1;
+      if (ph.key === "emerge") return 1 - smooth(ph.progress);
+      return 0;
+    }
+
+    // THE OTHER WORLD'S HOUR, from the beat the round starts coming down to
+    // it. The sky dome and the cloud decks are repainted once for it, so the
+    // air over Zeta is not the night storm the round left Taranto in.
+    _arrivalSky(ph) {
+      if (this._arrived || !this._arrivalEnv || !ph) return;
+      if (ARRIVAL_SKY.indexOf(ph.key) < 0) return;
+      this._arrived = true;
+      this.env = this._arrivalEnv;
+      if (this.skyMat) { this.skyMat.map = this._paintSky(); this.skyMat.needsUpdate = true; }
+      if (this.clouds && this.clouds.length) {
+        const tex = this._paintClouds();
+        this.clouds.forEach((c) => { c.material.map = tex; c.material.needsUpdate = true; });
+      }
+    }
+
+    // Is the round down among the Moon's own beats, where the altimeter reads
+    // the height over the regolith rather than over the Earth? Everything that
+    // fades with the AIR reads this first: a vacuum has no sky dome, no cloud
+    // deck, no weather and no halo, however low the altimeter goes.
+    _overMoon() {
+      const ph = this.phase;
+      if (!ph || typeof this._lunarSky !== "function" || !this._lunarSky()) return false;
+      return (this._fromAfar() ? MOON_HOMECOMING : MOON_AIRLESS).indexOf(ph.key) >= 0;
+    }
+
+    // Did this flight take off from another star? Its Moon is not in the sky
+    // until the crossing has brought it home.
+    _fromAfar() {
+      const w = this.profile && this.profile.fromWorld;
+      return w === "zeta" || w === "titania";   // i18n-ignore  world ids
+    }
+
 
 
 
@@ -5731,7 +5888,7 @@
       const az = ((e.clock - 6) / 12) * Math.PI;
       const elev = e.dayK * (Math.PI / 2) * (1 - Math.abs((this.geoSite || this.site).lat) / 140);
       const ch = Math.cos(elev);
-      const hi = ramp(this.alt, 40000, 140000);
+      const hi = this._overMoon() ? 1 : ramp(this.alt, 40000, 140000);
       const dir = this.sun;
       dir.position.set(Math.cos(az) * ch * 1000, Math.sin(elev) * 1000, Math.sin(az) * ch * 1000);
       const warm = e.golden ? 0xffb066 : e.night ? 0x2a3a66 : 0xfff0dc;
@@ -5758,13 +5915,18 @@
       // stars have taken over; the two cross over between 40 and 95 km, which
       // is where the sky goes from blue to black and is the best shot in the
       // ascent.
-      const skyK = 1 - smooth(ramp(this.alt, 34000, 95000));
+      const airless = this._overMoon();
+      const skyK = airless ? 0 : 1 - smooth(ramp(this.alt, 34000, 95000));
       this.skyMat.opacity = skyK;
       this.skyMat.transparent = true;
       this.sky.visible = skyK > 0.01;
-      const starK = smooth(ramp(this.alt, 28000, 120000));
+      const starK = airless ? 1 : smooth(ramp(this.alt, 28000, 120000));
       if (starK > 0.001) this._ensure("stars");
-      if (this.starMat) this.starMat.opacity = starK;
+      // BETWEEN THE GALAXIES THERE ARE NO STARS. Every one of them belongs to
+      // one galaxy or the other, so the field goes out as the breach takes the
+      // round, stays out across the gold and the crossing with only the two
+      // galaxies in the dark, and comes back as it emerges inside the other.
+      if (this.starMat) this.starMat.opacity = starK * (1 - this._intergalactic());
 
       // The Earth from outside: the limb lights up as the vehicle gets far
       // enough for the atmosphere to be a visible shell rather than the room
@@ -5827,7 +5989,7 @@
       });
 
       // Lightning, in a storm, until the vehicle is above the weather.
-      if (this.env.storm && this.alt < 14000) {
+      if (this.env.storm && !airless && this.alt < 14000) {
         this._boltTimer -= dt;
         if (this._boltTimer <= 0) {
           this._boltTimer = 2.5 + this.rng() * 5;
@@ -6343,7 +6505,7 @@
     _updateMotes(dt) {
       // Weather only exists in the lower atmosphere, and only in weather.
       const e = this.env;
-      const active = (e.wet || e.snow) && this.alt < 12000;
+      const active = (e.wet || e.snow) && !this._overMoon() && this.alt < 12000;
       const target = active ? clamp01(1 - this.alt / 12000) * (e.storm ? 0.9 : 0.7) : 0;
       this.moteMat.opacity += (target - this.moteMat.opacity) * Math.min(1, dt * 4);
       this.moteField.visible = this.moteMat.opacity > 0.01;
@@ -6527,26 +6689,29 @@
         { from: SUB_APOGEE_M, to: null, key: "apogee", color: P.green },
       ];
     }
-    if (prof.lunar) {
-      // A CROSSING'S TAPE IS ITS OWN BEATS. The column on one of these is a
-      // range to whatever is worth measuring against at that point in the
-      // flight, and it changes what it is measuring twice - so the marks on it
-      // are the beats themselves, taken off the plan, at the heights the plan
-      // says they happen at. A flight to Andromeda no longer flies a tape that
-      // says LUNAR APPROACH.
+    if (tapeIsTimeline(prof)) {
+      // A CROSSING'S TAPE IS ITS OWN BEATS, AND IT IS A TIMELINE. The column
+      // on one of these is a range to whatever is worth measuring against at
+      // that point in the flight, and it changes what it is measuring twice.
+      // Marked at the heights the beats begin at, the white desert sat just
+      // over the debris belt and the mark read the one while flying the other.
+      // So every band is a fraction of the FLIGHT (see tapeTimeFraction), and
+      // the marks are in the order they are flown on every pair of worlds.
+      const st = prof.start || startTable(prof.phases);
+      const at = (time) => tapeTimeFraction(time, prof);
       const bands = [];
-      if (prof.belt) {
+      if (prof.belt && st.kessler != null) {
+        const belt = prof.phases.find((p) => p.key === "kessler");   // i18n-ignore  phase key
         bands.push(
-          { from: MAXQ_START_M, to: MAXQ_END_M, key: "maxq", color: P.amber },
-          { from: KESSLER_IN_M, to: KESSLER_OUT_M, key: "kessler", color: P.red }
+          { from: at(timeAtAlt(MAXQ_START_M, prof)), to: at(timeAtAlt(MAXQ_END_M, prof)), key: "maxq", color: P.amber },
+          { from: at(st.kessler), to: at(st.kessler + belt.dur), key: "kessler", color: P.red }
         );
       }
-      // One mark per beat of the crossing, at the height it begins.
+      // One mark per beat of the crossing, at the moment it begins.
       const marks = TAPE_MARKS[prof.world] || [];
       marks.forEach((key) => {
-        const beat = prof.phases.find((p) => p.key === key);
-        if (!beat) return;
-        bands.push({ from: beat.from, to: null, key: key, color: tapeColours()[key] || P.cyan });
+        if (st[key] == null || (key === "kessler" && prof.belt)) return;   // i18n-ignore  phase key
+        bands.push({ from: at(st[key]), to: null, key: key, color: tapeColours()[key] || P.cyan });
       });
       return bands;
     }
@@ -6575,6 +6740,30 @@
     if (m < 1000) return Math.round(m) + " " + t("unit.m");
     if (m < 100000) return (m / 1000).toFixed(1) + " " + t("unit.km");
     return Math.round(m / 1000) + " " + t("unit.km");
+  }
+  // HOW FAR THE CARD SAYS A DESTINATION IS. Two pads on the Earth are a great
+  // circle apart, the starship is the height of its orbit and the Moon is the
+  // Moon's distance, all in kilometres. The two worlds round other stars are
+  // given in light years: Zeta Reticuli is thirty-nine of them, the embassy on
+  // Titania is in Andromeda, and anything to or from Titania crosses that gap.
+  const ZETA_LY = 39;
+  const ANDROMEDA_LY = 2537000;
+  const STAR_LY = { zeta: ZETA_LY, titania: ANDROMEDA_LY };   // i18n-ignore  world ids
+  function groupDigits(n) {
+    // A separator is one character; anything longer is a missing key.
+    const sep = t("unit.thousands");
+    return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, sep.length > 1 ? "" : sep);
+  }
+  function trackText(a, b) {
+    const wa = (a && a.body) || "earth", wb = (b && b.body) || "earth";   // i18n-ignore  world id
+    const ly = Math.max(STAR_LY[wa] || 0, STAR_LY[wb] || 0);
+    if (wa !== wb && ly > 0) return groupDigits(ly) + " " + t("unit.ly");
+    let m;
+    if (wa !== wb) m = MOON_DIST_M;
+    else if (wa === "moon") m = 0;                                          // i18n-ignore  world id
+    else if ((a.orbital || a.noGround) !== (b.orbital || b.noGround)) m = DOCK_M;
+    else m = greatCircleM(a, b);
+    return m < 100000 ? altText(m) : groupDigits(m / 1000) + " " + t("unit.km");
   }
   function speedText(v) {
     const a = Math.abs(v);
@@ -7727,6 +7916,7 @@
       SE,
       SITES,
       altText,
+      trackText,
       altitudeAt,
       availableProfiles,
       availableSites,
@@ -7765,10 +7955,14 @@
       t,
       tapeBands,
       tapeFraction,
+      tapeIsTimeline,
+      tapeTimeFraction,
       weatherLabel,
       HOME_SKY,
       worldRecord,
       worldSystem,
+      worldLocalHour,
+      envAtHour,
     },
   };
 

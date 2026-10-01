@@ -444,11 +444,18 @@
       }
       return null;
     },
+    // A door into a shop is often named "Shop" too, but it is an entrance, not
+    // a till: forcing it to character priority turns a Player Touch door into
+    // a wall that fires again on every bump. Any event whose pages run a
+    // ProceduralHouseSystem command (visitShop, visitHouse, ...) is a door.
     isAnyShopEvent: (ev) => {
       const data = ev && ev.event ? ev.event() : ev;
       if (!data) return false;
-      return Utils.hasShopTag(data.note) || /^shop$/i.test(data.name || "");
+      if (!Utils.hasShopTag(data.note) && !/^shop$/i.test(data.name || "")) return false;
+      return !Utils.isBuildingDoorEvent(data);
     },
+    isBuildingDoorEvent: (eventData) => (eventData?.pages || []).some(p =>
+      (p?.list || []).some(c => c.code === 357 && String(c.parameters?.[0] || "").includes("ProceduralHouseSystem"))),
     // Returns the direction to face if an adjacent tile has the counter flag, else null.
     // Checks Down (2), Left (4), Right (6), Up (8) in order.
     counterFacingDir: (event) => {

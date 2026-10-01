@@ -136,6 +136,11 @@
     // transition stays smooth.
     const VISIBILITY_REFRESH_INTERVAL = 30;
 
+    // How many frames after a map comes up the night overlay is read every
+    // frame and cuts to any change: the scene's own fade in is 24 frames, the
+    // procedural crossings' screen fade starts 150ms late and runs 10.
+    const ARRIVAL_FRAMES = 40;
+
     // How many times a second the lighting canvas is repainted and re-uploaded.
     // See Spriteset_Lighting.update for why it is not once per drawn frame.
     const LIGHTING_REPAINT_HZ = 24;
@@ -1181,6 +1186,7 @@
             // first frame snaps to whatever the map already is; the fade below
             // is only for the light changing while the map is being played.
             this._snapIntensity = true;
+            this._arrivalFrames = 0;
             this._cachedStreetlightDataRef = null;
             this._cachedStreetlightTilesetId = null;
             this._cachedStreetlights = null;
@@ -1392,14 +1398,27 @@
             // was slow to land the two stayed apart for as long as it took. The
             // last answer is held until they are actually standing in the new
             // place; the sprite is rebuilt on arrival and snaps there.
+            // A reserved transfer is the same: the map being left keeps the
+            // light it has all through its fade out, and the next one is read
+            // on its own sprite once the screen is black.
             const midMove = !!(window.WorldMapTransfer &&
                 typeof window.WorldMapTransfer.transitionPending === 'function' &&
-                window.WorldMapTransfer.transitionPending());
+                window.WorldMapTransfer.transitionPending()) ||
+                !!($gamePlayer && $gamePlayer.isTransferring && $gamePlayer.isTransferring());
             // A sprite that has never answered has no last answer to hold, so
             // its first frame is always read, mid-move or not. Holding the
             // constructor's zero there and snapping to it is what faded the
             // night in over a second on every walk out of a house.
             const firstRead = this._snapIntensity;
+            // While the new map is fading in, the light is read every frame and
+            // any change is a cut, so a system that settles the place a few
+            // frames late lands while the screen is still dark instead of half
+            // a second into the map.
+            const arriving = this._arrivalFrames > 0;
+            if (arriving) {
+                this._arrivalFrames--;
+                this._visCheck = 1;
+            }
             if (--this._visCheck <= 0 && (!midMove || firstRead)) {
                 this._context = this.darkContext();
                 this._nightFactor = this.getNightLightIntensity();
@@ -1413,6 +1432,9 @@
                 // of lifting and closing in again.
                 const place = this.placeKey();
                 if (this._placeKey !== undefined && this._placeKey !== place) {
+                    this._snapIntensity = true;
+                }
+                if (arriving && this._currentIntensity !== this._targetIntensity) {
                     this._snapIntensity = true;
                 }
                 this._placeKey = place;
@@ -1477,6 +1499,19 @@
             this._mustPaint = false;
             this._paintedMotion = motion;
             this.renderLighting();
+        }
+
+        // The engine draws a new scene once BEFORE its first update
+        // (SceneManager.onSceneStart sets the stage, the frame is rendered, and
+        // only the next tick updates it), so a sprite that waits for update()
+        // shows its constructor on that frame: no night over the street just
+        // walked out onto. Scene_Map.start calls this so the very first frame
+        // of a map already carries its own dark, and opens the arrival window.
+        settle() {
+            this._visCheck = 1;
+            this._snapIntensity = true;
+            this._arrivalFrames = ARRIVAL_FRAMES;
+            this.update();
         }
 
         // Where the party is, as far as the dark is concerned: which map, and
@@ -2074,6 +2109,16 @@
         } else {
             this.addChild(this._dungeonLighting);
         }
+    };
+
+    // The new map's dark is in place before the scene is first drawn (see
+    // Sprite_DungeonLighting.settle). Aliased after WeatherSystem, so the tint
+    // it reasserts in its own start is already on the screen.
+    const _Scene_Map_start_lighting = Scene_Map.prototype.start;
+    Scene_Map.prototype.start = function () {
+        _Scene_Map_start_lighting.call(this);
+        const night = this._spriteset && this._spriteset._dungeonLighting;
+        if (night && typeof night.settle === 'function') night.settle();
     };
 
     // Note: _lightingLayer (child of the spriteset) and _nightLight (child of

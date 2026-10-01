@@ -1014,6 +1014,50 @@
       this._stepAlongPath(() => { this.path = []; });
     }
 
+    // ── Walking in (SpawnManager InteriorVisits) ────────────────────────────
+    // A visitor who has just come through the door walks into the room, then
+    // goes about their visit like anybody else on the map.
+    updateWalkingIn(time) {
+      const ev = this.event;
+      if (!ev || ev._erased) return;
+      const t = this.target;
+      if (!t || time >= this.stateEndTime || Math.abs(ev.x - t.x) + Math.abs(ev.y - t.y) <= 1) {
+        this.path = [];
+        return this.decideNextGoal();
+      }
+      if (ev.isMoving()) return;
+      if (!this.path.length) {
+        if (time < (this._commuteRepathAt || 0)) return;
+        this._commuteRepathAt = time + NPC_SEEK.COMMUTE_REPATH_MS;
+        this.path = this.pathfinder.findPath(ev.x, ev.y, t.x, t.y) || [];
+        if (!this.path.length) return;
+      }
+      this._stepAlongPath(() => { this.path = []; });
+    }
+
+    // ── Taking over a counter (SpawnManager InteriorVisits.beginShopHandover)
+    // The next shopkeeper walks from the door to the till. Once beside it the
+    // walker is gone and the counter event wears their face; a walk that runs
+    // out of time is settled the same way by SpawnManager.updateCommutes.
+    updateWalkingToCounter(time) {
+      const ev = this.event;
+      if (!ev || ev._erased) return;
+      const walk = ev._npcShopTakeover;
+      if (!walk) return;
+      if (Math.abs(ev.x - walk.x) + Math.abs(ev.y - walk.y) <= 0 || performance.now() >= walk.until) {
+        this.path = [];
+        return window.NPCSystem._internal.SpawnManager.finishShopTakeover(ev);
+      }
+      if (ev.isMoving()) return;
+      if (!this.path.length) {
+        if (time < (this._commuteRepathAt || 0)) return;
+        this._commuteRepathAt = time + NPC_SEEK.COMMUTE_REPATH_MS;
+        this.path = this.pathfinder.findPath(ev.x, ev.y, walk.x, walk.y) || [];
+        if (!this.path.length) return;
+      }
+      this._stepAlongPath(() => { this.path = []; });
+    }
+
     // ── Seeking somebody out (NPCConversation ConversationManager.seek) ─────
     // Walk up to another controller on this map and, once beside them, start
     // a conversation (ConversationManager.startWith).

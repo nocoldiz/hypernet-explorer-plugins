@@ -563,7 +563,7 @@
 
       // Some of the crowd is found sitting down: dealt onto a free seat, where
       // decideNextGoal sits them.
-      if (Math.random() < NPCSeats.SPAWN_CHANCE) {
+      if (!SpawnManager._dealingWalker && Math.random() < NPCSeats.SPAWN_CHANCE) {
         const seat = Utils.randomElement(NPCSeats.freeSeats(targetEvent.x, targetEvent.y, targetEvent));
         if (seat) targetEvent.locate(seat.x, seat.y);
       }
@@ -582,6 +582,19 @@
     // opts.isPublic - the interior belongs to a skyscraper: nobody lives here,
     //   so it draws a busy, fully random crowd from the whole town at any hour
     //   instead of a resident household.
+    // Who is inside a building is decided by the building and the in-game
+    // hour, never by Math.random: walking out and straight back in shows the
+    // same people, and the crowd only turns over with the hourly simulation
+    // tick. The building's own seed comes from its parent map and door tile
+    // (ProceduralHouseSystem.createSeed), so two doors never share a crowd.
+    interiorVisitRng: (building, mapId, hourIndex) => {
+      if (hourIndex == null) hourIndex = Math.floor((Number($gameVariables?.value(114)) || 0) / 60);
+      const base = building?.seed != null ? (building.seed >>> 0) : (Utils.nameHash(`interior_${mapId}`) >>> 0);
+      const floor = building?.floorIndex || 0;
+      const seed = (base ^ Math.imul(floor + 1, 0x85ebca6b) ^ Math.imul(hourIndex + 1, 0x9e3779b1)) >>> 0;
+      return new window.NPCShared.Rng(seed);
+    },
+
     replacePlayerEventsWithNPCs: (groupName, opts = {}) => {
       const { building = null, isPublic = false } = opts || {};
       const currentMapId = $gameMap.mapId();
@@ -606,6 +619,13 @@
 
       let selectedNPCs = [];
       let actualCount = 0;
+      const rng = SpawnManager.interiorVisitRng(building, currentMapId);
+      // A building entered through a door: whoever lives here is dealt onto the
+      // placeholders, everybody else comes and goes on their own visit times
+      // (InteriorVisits) instead of standing in for the hour.
+      const visiting = !!building;
+      let visitMax = 0;
+      let visitors = [];
 
       {
         let densityFactor = 120;
@@ -628,10 +648,11 @@
         }
 
         const maxNPCs = Math.min(Math.floor(($gameMap.width() * $gameMap.height()) / densityFactor), baseLimit);
+        visitMax = Math.max(1, maxNPCs);
 
         if (maxNPCs > 0) {
           const minNPCs = Math.max(1, Math.floor(maxNPCs * 0.5));
-          actualCount = Math.min(Math.floor(Utils.randBetween(minNPCs, maxNPCs + 1)), allPlaceholders.length, npcPool.length);
+          actualCount = Math.min(minNPCs + Math.floor(rng.next() * (maxNPCs + 1 - minNPCs)), allPlaceholders.length, npcPool.length);
         } else {
           actualCount = Math.min(1, allPlaceholders.length, npcPool.length);
         }
@@ -639,7 +660,7 @@
         const drawRandom = (count, exclude = []) => {
           const poolCopy = npcPool.filter(t => !exclude.includes(t));
           for (let i = 0; i < count && poolCopy.length; i++) {
-            selectedNPCs.push(poolCopy.splice(Math.floor(Math.random() * poolCopy.length), 1)[0]);
+            selectedNPCs.push(poolCopy.splice(Math.floor(rng.next() * poolCopy.length), 1)[0]);
           }
         };
 
@@ -657,7 +678,14 @@
           .map(name => npcPool.find(t => (t.eventData?.name || '') === name))
           .filter(Boolean);
 
-        if (residentTemplates.length) {
+        if (visiting) {
+          // Every resident is kept out of the visitors, at home this hour or
+          // not, so the visitor list stays the same whenever it is asked.
+          const residentNames = new Set(residents);
+          visitors = npcPool.filter(t => !residentNames.has(t.eventData?.name || ''));
+          selectedNPCs = [...residentTemplates];
+          actualCount = Math.min(selectedNPCs.length, allPlaceholders.length);
+        } else if (residentTemplates.length) {
           selectedNPCs = [...residentTemplates];
           // Fill remaining slots with random visitors/guests/pets if space allows
           drawRandom(Math.max(0, actualCount - residentTemplates.length), residentTemplates);
@@ -668,8 +696,9 @@
       }
 
       const validTiles = MapManager.getSpreadSpawnTiles();
-      const activePlaceholders = Utils.shuffle(allPlaceholders).slice(0, actualCount);
-      const unusedPlaceholders = allPlaceholders.slice(actualCount);
+      const shuffledPlaceholders = window.NPCShared.seededShuffle(allPlaceholders, rng);
+      const activePlaceholders = shuffledPlaceholders.slice(0, actualCount);
+      const unusedPlaceholders = shuffledPlaceholders.slice(actualCount);
 
       let tileIdx = 0;
       for (let i = 0; i < activePlaceholders.length; i++) {
@@ -698,6 +727,20 @@
       console.log(`[NPC System] ${activePlaceholders.length} NPCs spawned via replacePlayerEventsWithNPCs on map ${currentMapId} (${mapName})`);
 
       unusedPlaceholders.forEach(u => u.event.erase());
+
+      if (visiting) {
+        InteriorVisits.begin({
+          building,
+          candidates: visitors,
+          nameOf: (t) => t.eventData?.name || '',
+          spawn: (t, tile) => {
+            const ev = mintEvent(t.eventData, tile);
+            if (ev) SpawnManager.injectBrain(ev, ev.event());
+            return ev;
+          },
+          maxVisitsAt: () => visitMax,
+        });
+      }
     },
 
 initializeGroupNPCs: (groupName, activeMapId = null) => {
@@ -968,14 +1011,14 @@ initializeGroupNPCs: (groupName, activeMapId = null) => {
 
     // Send somebody out through it. Returns true when the walk was started, so
     // the caller knows to leave their event alone for now.
-    walkOut: (ctrl, door) => {
+    walkOut: (ctrl, door, timeout = SpawnManager.COMMUTE_TIMEOUT) => {
       if (!ctrl?.event || !door) return false;
       try {
-        ctrl.goToTile(door.x, door.y, "commuting", SpawnManager.COMMUTE_TIMEOUT);  // i18n-ignore: goal id
+        ctrl.goToTile(door.x, door.y, "commuting", timeout);  // i18n-ignore: goal id
       } catch (e) {
         return false;
       }
-      ctrl.event._npcCommute = { x: door.x, y: door.y, until: performance.now() + SpawnManager.COMMUTE_TIMEOUT };
+      ctrl.event._npcCommute = { x: door.x, y: door.y, until: performance.now() + timeout };
       return true;
     },
 
@@ -988,6 +1031,12 @@ initializeGroupNPCs: (groupName, activeMapId = null) => {
       const now = performance.now();
       for (const ctrl of list) {
         const ev = ctrl?.event;
+        // A next shopkeeper still short of the till when the clock runs out
+        // takes it all the same (InteriorVisits.finishShopTakeover).
+        if (ev && !ev._erased && ev._npcShopTakeover && now >= ev._npcShopTakeover.until) {
+          InteriorVisits.finishShopTakeover(ev);
+          continue;
+        }
         const walk = ev && ev._npcCommute;
         if (!walk || ev._erased) continue;
         const there = Math.abs(ev.x - walk.x) + Math.abs(ev.y - walk.y) <= 1;
@@ -1817,7 +1866,287 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     "DoorHardwareStore", "DoorIceCream", "DoorMusicStore", "GarageDoor" // i18n-ignore: Features.json ids
   ]);
 
+  // ==========================================================================
+  // INTERIOR VISITS AND COUNTER HANDOVERS
+  // ==========================================================================
+  //
+  // Somebody visiting a building is not there for the whole hour. Every hour of
+  // a building has its own seeded list of visits, each with an arrival minute
+  // and a stay of VISIT_MIN..VISIT_MAX game minutes. Walking out and straight
+  // back in finds whoever's visit covers this minute and nobody else, since
+  // the list is drawn off the building and the hour alone.
+  //
+  // While the party is inside, the list is played out on the clock (variable
+  // 114, once a game minute): an arrival is created beside the map's exit and
+  // walks in, a departure walks back to the exit and goes through it. Waiting
+  // fast-forwards the live map (TimeDateSystem _stepWaitAdvance), so those
+  // walks are seen during a wait too.
+  //
+  // A shop counter changing hands at the end of a shift is played out the same
+  // way (beginShopHandover): the one going home steps out beside the till and
+  // walks to the exit, the till stands vacant, and the next one comes in
+  // through the exit and walks to it before their face appears on it.
+  const InteriorVisits = {
+    VISIT_MIN: 10,         // game minutes
+    VISIT_MAX: 45,
+    WALK_TIMEOUT: 30000,   // ms before a walk in, out or to a till is settled anyway
+    NEAR_RADIUS: 4,        // how far from a door or a till a walker may be put down
+    _active: null,
+    _takeovers: new Map(), // walker event -> what to do once they reach the till
+
+    now: () => Number($gameVariables?.value(114)) || 0,
+
+    // The map's own way out: an event that runs ProceduralHouseSystem's
+    // exitHouse, transfers the party, or leads to another map, nearest (x, y).
+    exitNear(x, y) {
+      if (!$gameMap) return null;
+      let best = null, bestD = Infinity;
+      for (const ev of $gameMap.events()) {
+        if (!ev || ev._erased || ev._npcMinted || ev._procInteriorSpawn) continue;
+        if (!InteriorVisits.isExitEvent(ev)) continue;
+        const d = Math.abs(ev.x - x) + Math.abs(ev.y - y);
+        if (d < bestD) { bestD = d; best = ev; }
+      }
+      return best;
+    },
+
+    isExitEvent(ev) {
+      const data = ev?.event?.();
+      for (const page of data?.pages || []) {
+        for (const c of page?.list || []) {
+          if (c.code === 201) return true;
+          if (c.code === 357 && String(c.parameters?.[0] || "").includes("ProceduralHouseSystem") &&
+              c.parameters?.[1] === "exitHouse") return true;  // i18n-ignore: plugin command id
+        }
+      }
+      try { return (window.MapConnections?.exitTarget?.(ev) || 0) > 0; } catch (e) { return false; }
+    },
+
+    // Nearest free floor to (x, y), ring by ring: walkable, off the blocked
+    // terrain and regions, with nobody standing on it.
+    freeTileNear(x, y, radius = InteriorVisits.NEAR_RADIUS) {
+      if (!$gameMap) return null;
+      for (let r = 1; r <= radius; r++) {
+        for (let dy = -r; dy <= r; dy++) {
+          const span = r - Math.abs(dy);
+          for (const dx of span ? [-span, span] : [0]) {
+            const tx = x + dx, ty = y + dy;
+            if (!$gameMap.isValid(tx, ty)) continue;
+            if ([10, 103, 99].includes($gameMap.regionId(tx, ty))) continue;
+            if (Utils.isBlockedTerrain(tx, ty)) continue;
+            if (!ORTHO_DIRS.some(dir => $gameMap.isPassable(tx, ty, dir))) continue;
+            if ($gameMap.eventsXy(tx, ty).some(e => !e._erased)) continue;
+            if ($gamePlayer && $gamePlayer.x === tx && $gamePlayer.y === ty) continue;
+            return { x: tx, y: ty };
+          }
+        }
+      }
+      return null;
+    },
+
+    controllerOf(ev) {
+      return ($gameSystem?.npcControllers || []).find(c => c?.event === ev) || null;
+    },
+
+    // A walker is put down where the walk starts, never dealt onto a seat.
+    spawnWalker(spawn, who, tile) {
+      SpawnManager._dealingWalker = true;
+      try { return spawn(who, tile) || null; } catch (e) { return null; } finally { SpawnManager._dealingWalker = false; }
+    },
+
+    // ── visits ──────────────────────────────────────────────────────────────
+    //
+    // opts:
+    //   building     ProceduralHouseSystem.getCurrentBuilding(), seeds the plan
+    //   candidates   who may visit, in a stable order
+    //   nameOf(who)  their name
+    //   spawn(who, tile)  creates their event with a brain, or null
+    //   maxVisitsAt(hourOfDay)  visits to plan in that hour (0 for none)
+    begin(opts) {
+      if (!$gameMap || !opts || !opts.candidates?.length) { InteriorVisits._active = null; return; }
+      const T = InteriorVisits.now();
+      const door = InteriorVisits.exitNear($gamePlayer.x, $gamePlayer.y);
+      const a = InteriorVisits._active = {
+        ...opts,
+        mapId: $gameMap.mapId(),
+        exit: door ? { x: door.x, y: door.y } : { x: $gamePlayer.x, y: $gamePlayer.y },
+        plans: new Map(),
+        state: new Map(),   // visit key -> { ev, phase: "in" | "left" }
+        lastMinute: T,
+        baseHour: { index: Math.floor(T / 60), ofDay: $gameVariables?.value(23) ?? 12 },
+      };
+      // Whoever's visit covers this minute is already inside, spread about.
+      const px = $gamePlayer.x, py = $gamePlayer.y;
+      const tiles = MapManager.getSpreadSpawnTiles().filter(t =>
+        Math.max(Math.abs(t.x - px), Math.abs(t.y - py)) > 1 && !$gameMap.eventsXy(t.x, t.y).some(e => !e._erased));
+      let ti = 0;
+      for (const v of InteriorVisits.visitsAround(a, T)) {
+        if (T >= v.leave) { a.state.set(v.key, { ev: null, phase: "left" }); continue; }
+        if (T < v.arrive) continue;
+        const tile = tiles[ti++];
+        const ev = tile && !InteriorVisits._present(a, v.name) ? InteriorVisits.spawnWalker(a.spawn, v.who, tile) : null;
+        a.state.set(v.key, { ev, phase: ev ? "in" : "left" });
+      }
+    },
+
+    hourOfDay(a, hourIndex) {
+      return (((a.baseHour.ofDay + hourIndex - a.baseHour.index) % 24) + 24) % 24;
+    },
+
+    // The visits that start in one hour of this building, drawn off the
+    // building, its floor and that hour alone.
+    plan(a, hourIndex) {
+      if (a.plans.has(hourIndex)) return a.plans.get(hourIndex);
+      const rng = SpawnManager.interiorVisitRng(a.building, a.mapId, hourIndex);
+      const max = Math.max(0, Math.floor(a.maxVisitsAt(InteriorVisits.hourOfDay(a, hourIndex)) || 0));
+      const pool = a.candidates.slice();
+      const count = max ? max + Math.floor(rng.next() * (max + 1)) : 0;
+      const visits = [];
+      for (let i = 0; i < count && pool.length; i++) {
+        const who = pool.splice(Math.floor(rng.next() * pool.length), 1)[0];
+        const arrive = hourIndex * 60 + Math.floor(rng.next() * 60);
+        const stay = InteriorVisits.VISIT_MIN + Math.floor(rng.next() * (InteriorVisits.VISIT_MAX - InteriorVisits.VISIT_MIN + 1));
+        visits.push({ key: `${hourIndex}:${i}`, who, name: a.nameOf(who), arrive, leave: arrive + stay });
+      }
+      a.plans.set(hourIndex, visits);
+      for (const h of a.plans.keys()) if (h < hourIndex - 1) a.plans.delete(h);
+      return visits;
+    },
+
+    // A stay never lasts past the next hour, so the hour before this one and
+    // this one hold every visit that can cover this minute.
+    visitsAround(a, T) {
+      const h = Math.floor(T / 60);
+      return [...InteriorVisits.plan(a, h - 1), ...InteriorVisits.plan(a, h)];
+    },
+
+    // Somebody already in the room (on another visit, or living here) is not
+    // let in a second time.
+    _present(a, name) {
+      if (!name || !$gameMap) return false;
+      return $gameMap.events().some(e => e && !e._erased && e.event()?.name === name);
+    },
+
+    // Once a game minute while the party is in the building.
+    update() {
+      const a = InteriorVisits._active;
+      if (!a) return;
+      if (!$gameMap || $gameMap.mapId() !== a.mapId) { InteriorVisits._active = null; return; }
+      const T = InteriorVisits.now();
+      if (T === a.lastMinute) return;
+      a.lastMinute = T;
+      for (const v of InteriorVisits.visitsAround(a, T)) {
+        const st = a.state.get(v.key);
+        if (T >= v.leave) {
+          if (!st) a.state.set(v.key, { ev: null, phase: "left" });
+          else if (st.phase === "in") InteriorVisits._leave(a, st);
+          continue;
+        }
+        if (T >= v.arrive && !st) a.state.set(v.key, InteriorVisits._arrive(a, v));
+      }
+    },
+
+    _arrive(a, v) {
+      const gone = { ev: null, phase: "left" };
+      if (InteriorVisits._present(a, v.name)) return gone;
+      const tile = InteriorVisits.freeTileNear(a.exit.x, a.exit.y);
+      const ev = tile ? InteriorVisits.spawnWalker(a.spawn, v.who, tile) : null;
+      if (!ev) return gone;
+      const spots = MapManager.getSpreadSpawnTiles();
+      const goal = spots.length ? spots[Math.floor(Math.random() * spots.length)] : null;
+      const ctrl = InteriorVisits.controllerOf(ev);
+      if (goal && ctrl) ctrl.goToTile(goal.x, goal.y, "walkingIn", InteriorVisits.WALK_TIMEOUT);  // i18n-ignore: goal id
+      else if (goal) ev.locate(goal.x, goal.y);
+      return { ev, phase: "in" };
+    },
+
+    _leave(a, st) {
+      st.phase = "left";
+      const ev = st.ev;
+      if (!ev || ev._erased) return;
+      const ctrl = InteriorVisits.controllerOf(ev);
+      if (!ctrl || !SpawnManager.walkOut(ctrl, a.exit, InteriorVisits.WALK_TIMEOUT)) ev.erase();
+    },
+
+    // ── the counter changing hands ──────────────────────────────────────────
+    //
+    // Returns false when nothing could be walked (no exit, the map not on
+    // screen), and the caller swaps the face on the till at once as before.
+    // `onSeated` runs once the next keeper has reached the till, or straight
+    // away when there is no next keeper to walk.
+    beginShopHandover(counter, outgoing, incoming, onSeated) {
+      if (!$gameMap || !counter || counter._erased) return false;
+      if (!(SceneManager._scene instanceof Scene_Map)) return false;
+      const a = InteriorVisits._active;
+      const door = a && a.mapId === $gameMap.mapId() ? a.exit : InteriorVisits.exitNear(counter.x, counter.y);
+      if (!door) return false;
+      const exit = { x: door.x, y: door.y };
+      const spawn = (persona, tile) => ProceduralManager._spawnInteriorResident(persona.name, tile, persona);
+
+      if (outgoing?.spriteName) {
+        const tile = InteriorVisits.freeTileNear(counter.x, counter.y);
+        const ev = tile ? InteriorVisits.spawnWalker(spawn, outgoing, tile) : null;
+        const ctrl = ev && InteriorVisits.controllerOf(ev);
+        if (ev && (!ctrl || !SpawnManager.walkOut(ctrl, exit, InteriorVisits.WALK_TIMEOUT))) ev.erase();
+      }
+
+      const tile = incoming?.spriteName ? InteriorVisits.freeTileNear(exit.x, exit.y) : null;
+      const ev = tile ? InteriorVisits.spawnWalker(spawn, incoming, tile) : null;
+      const ctrl = ev && InteriorVisits.controllerOf(ev);
+      if (!ev || !ctrl) {
+        if (ev) ev.erase();
+        onSeated?.();
+        return true;
+      }
+      const spot = InteriorVisits.counterApproach(counter, ctrl);
+      ev._npcShopTakeover = { x: spot.x, y: spot.y, until: performance.now() + InteriorVisits.WALK_TIMEOUT };
+      InteriorVisits._takeovers.set(ev, onSeated);
+      ctrl.target = { x: spot.x, y: spot.y };
+      ctrl.state = "walkingToCounter";  // i18n-ignore: goal id
+      ctrl.stateEndTime = performance.now() + InteriorVisits.WALK_TIMEOUT;
+      ctrl.path = ctrl.pathfinder.findPath(ev.x, ev.y, spot.x, spot.y) || [];
+      return true;
+    },
+
+    // Where the next keeper stands to take the till: beside the counter event
+    // on a tile they can reach, the closest by route; else across the counter
+    // tile it faces; else the floor nearest the till.
+    counterApproach(counter, ctrl) {
+      const ev = ctrl.event;
+      let best = null, bestLen = Infinity;
+      for (const [dx, dy] of [[0, 1], [0, -1], [1, 0], [-1, 0]]) {
+        const x = counter.x + dx, y = counter.y + dy;
+        if (!$gameMap.isValid(x, y) || !ORTHO_DIRS.some(dir => $gameMap.isPassable(x, y, dir))) continue;
+        if ($gameMap.isCounter?.(x, y)) continue;
+        const path = (ev.x === x && ev.y === y) ? [] : ctrl.pathfinder.findPath(ev.x, ev.y, x, y);
+        if (path && path.length < bestLen) { bestLen = path.length; best = { x, y }; }
+      }
+      if (best) return best;
+      const dir = Utils.counterFacingDir(counter);
+      if (dir) {
+        const x = counter.x + (dir === 6 ? 2 : dir === 4 ? -2 : 0);
+        const y = counter.y + (dir === 2 ? 2 : dir === 8 ? -2 : 0);
+        if ($gameMap.isValid(x, y) && ORTHO_DIRS.some(d => $gameMap.isPassable(x, y, d))) return { x, y };
+      }
+      return InteriorVisits.freeTileNear(counter.x, counter.y) || { x: counter.x, y: counter.y };
+    },
+
+    // The next keeper is at the till: the walker goes and the till wears them.
+    finishShopTakeover(ev) {
+      if (!ev || !ev._npcShopTakeover) return;
+      ev._npcShopTakeover = null;
+      const onSeated = InteriorVisits._takeovers.get(ev);
+      InteriorVisits._takeovers.delete(ev);
+      ev.erase();
+      try { onSeated?.(); } catch (e) { console.error("[NPC System] shop takeover failed", e); }
+    },
+  };
+
+  SpawnManager.InteriorVisits = InteriorVisits;
+  SpawnManager.beginShopHandover = InteriorVisits.beginShopHandover;
+  SpawnManager.finishShopTakeover = InteriorVisits.finishShopTakeover;
+
   Object.assign(window.NPCSystem._internal, {
-    SETTLEMENT_DOOR_FEATURES, SpawnManager,
+    SETTLEMENT_DOOR_FEATURES, SpawnManager, InteriorVisits,
   });
 })();

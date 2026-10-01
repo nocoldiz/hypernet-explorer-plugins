@@ -35,6 +35,12 @@
     return;
   }
   const K = P.K;
+  // The beats on which the round is closing on the Moon or going round it.
+  const MOON_ANCHORED = ["moonbrake", "liminal", "transit", "approach", "flyby", "skim", "touchdown", "arrived"];   // i18n-ignore  phase keys
+  // The beats on which the altimeter is the range to the Moon itself. A
+  // route's landing opens on "approach", the older lunar tail on "transit".
+  const MOON_RANGED = ["transit", "approach", "flyby", "skim", "touchdown", "arrived"];   // i18n-ignore  phase keys
+
   const { DYSON_VIS_R, EARTH_VIS_R, HOME_SKY, MOON_BEARING, MOON_DIST_M, MOON_LAYER, MOON_R_M, MOON_VIS_R, SITES, clamp, clamp01, crossing, earthGone, hashOf, lerp, makeRng, onLayer, ramp, smooth, start, t, worldRecord, worldSystem } = K;
 
   // THE WORLD AT THE FAR END, AND THE TWO BEATS IT IS COME UP ON.
@@ -1155,12 +1161,15 @@
       const ahead = outbound ? this.andromeda : this.milkyWay;
 
       // THE ONE BEING LEFT. It starts as the sky the round has been inside all
-      // its life and ends as a smudge behind it.
+      // its life and ends as a smudge. Hung dead astern it was never in the
+      // window at all, so it is kept up and off to one side, drawing away
+      // across the frame while the other one comes up ahead: both galaxies
+      // and nothing else, in a sky with no stars in it.
       const mwD = lerp(1500, 9000, k);
-      this._placeFar(astern, Math.PI + 0.22, 0.1, mwD);
+      this._placeFar(astern, lerp(0.42, 0.62, k), lerp(0.22, 0.16, k), mwD);
       astern.quaternion.copy((this._farAim || this.farCamera).quaternion);
       astern.rotateZ(astern.userData.tilt || 0);
-      astern.material.opacity = lerp(0.85, 0.12, k);
+      astern.material.opacity = lerp(0.85, 0.4, k);
       astern.scale.setScalar(lerp(1.35, 0.45, k));
 
       // AND THE ONE BEING ARRIVED AT, AHEAD, WHICH IS THE WHOLE POINT OF THIS
@@ -1212,8 +1221,7 @@
         const to = Math.max(1, this.alt);
         return MOON_DIST_M * Math.pow(to / MOON_DIST_M, smooth(ph.progress));
       }
-      if (ph.key === "transit" || ph.key === "skim" ||
-        ph.key === "touchdown" || ph.key === "arrived") return this.alt;
+      if (MOON_RANGED.indexOf(ph.key) >= 0) return this.alt;
       // THE BRAKING PASS, which is a pass CLOSE BY THE MOON and was drawn at
       // the Moon's ordinary distance: a beat whose whole point is the round
       // going round the back of the Moon, flown with the Moon a speck off to
@@ -1254,8 +1262,12 @@
       // Titania is near the Earth only until the corridor or the breach takes
       // it: after that Luna was still hung over the arrival, and flown in
       // close on the skim because every crossing is flagged lunar.
-      const nearEarth = !this._leftSol(ph) && (homeId === "earth" ||
-        this.profile.world === "moon" ||                              // i18n-ignore  world id
+      // AND NOT BEFORE IT HAS COME HOME. A flight to the Moon off a pad on Zeta
+      // or Titania had Luna over that pad from the countdown on: it is in the
+      // sky from the approach, which is where the crossing lets go of it.
+      const toMoon = this.profile.world === "moon" &&                 // i18n-ignore  world id
+        (!this._fromAfar() || MOON_RANGED.indexOf(ph.key) >= 0);
+      const nearEarth = !this._leftSol(ph) && (homeId === "earth" || toMoon ||
         HOME_SKY.indexOf(ph.key) >= 0);
       this.moonPivot.visible = nearEarth;
       if (!nearEarth) return;
@@ -1272,7 +1284,7 @@
       let az = MOON_BEARING, el = 0.16;
       if (lunar) {
         const aiming = ph.key === "shroud" ? smooth(ph.progress)
-          : (["liminal", "transit", "flyby", "skim", "touchdown", "arrived"].indexOf(ph.key) >= 0 ? 1 : 0);
+          : (MOON_ANCHORED.indexOf(ph.key) >= 0 && ph.key !== "moonbrake" ? 1 : 0);
         az = MOON_BEARING * (1 - aiming);
         el = 0.16 * (1 - aiming);
         if (ph.key === "moonbrake") {
@@ -1303,10 +1315,22 @@
 
       // The direction, in camera space, turned into a world one - off the
       // SHAKE-FREE aim, or the Moon swims about whenever the hull is hit.
+      //
+      // ON THE APPROACH it is hung off the DIRECTOR'S aim instead, with the
+      // player's drag taken out: the round is closing on the Moon, so dragging
+      // the camera has to look round it, not swing it along with the lens and
+      // turn it under the player as if it were spun. Eased in over the shroud,
+      // so a camera already dragged off does not see it jump.
       const aim = this._farAim || this.farCamera;
+      const anchor = !lunar || !this._farDirector ? 0
+        : ph.key === "shroud" ? smooth(ph.progress)
+          : (MOON_ANCHORED.indexOf(ph.key) >= 0 ? 1 : 0);
+      const q = this._moonAimQ || (this._moonAimQ = new THREE.Quaternion());
+      q.copy(aim.quaternion);
+      if (anchor > 0) q.slerp(this._farDirector.quaternion, anchor);
       const dir = this._moonDir || (this._moonDir = new THREE.Vector3());
       const ce = Math.cos(el);
-      dir.set(Math.sin(az) * ce, Math.sin(el), -Math.cos(az) * ce).applyQuaternion(aim.quaternion);
+      dir.set(Math.sin(az) * ce, Math.sin(el), -Math.cos(az) * ce).applyQuaternion(q);
 
       // Sixty Earth radii out, and every metre of that closed by the drive.
       // Capped inside the starfield: a Moon further out than the stars is a
@@ -1319,7 +1343,8 @@
       // Under the belt the sky is still a sky and the Moon wears a halo in it;
       // above it there is nothing for a halo to be made of.
       if (this.moonHalo) {
-        this.moonHalo.material.opacity = 0.28 * (1 - smooth(ramp(this.alt, 20000, 90000)));
+        this.moonHalo.material.opacity = this._overMoon() ? 0
+          : 0.28 * (1 - smooth(ramp(this.alt, 20000, 90000)));
       }
       // Close enough to be a place rather than a light, the disc is handed
       // over to the ground in the near scene and taken off the far one.
@@ -1336,7 +1361,7 @@
       if (this.moonSun) {
         const a = this._moonPhase() * Math.PI * 2;
         const right = this._moonRight || (this._moonRight = new THREE.Vector3());
-        right.set(1, 0, 0).applyQuaternion(aim.quaternion);
+        right.set(1, 0, 0).applyQuaternion(q);
         const lit = this._moonLit || (this._moonLit = new THREE.Vector3());
         lit.copy(dir).multiplyScalar(Math.cos(a)).addScaledVector(right, Math.sin(a));
         this.moonSun.target = this.moonGroup;
@@ -1474,10 +1499,14 @@
 
     // Put something in the far scene at a bearing off the way the camera is
     // looking, the same way the Moon is placed and for the same reason: the
-    // far camera swings wherever the player drags it, and a thing the flight
+    // scripted camera swings round from beat to beat, and a thing the flight
     // is ABOUT may not be off the back of the frame.
+    //
+    // Off the DIRECTOR'S aim, not the player's: hung off the dragged lens, a
+    // world swung round with every drag and turned under the player as if it
+    // were spun. Dragging looks round it now.
     _placeFar(obj, az, el, dist) {
-      const aim = this._farAim || this.farCamera;
+      const aim = this._farDirector || this._farAim || this.farCamera;
       const dir = this._farDir || (this._farDir = new THREE.Vector3());
       const ce = Math.cos(el);
       dir.set(Math.sin(az) * ce, Math.sin(el), -Math.cos(az) * ce)

@@ -216,13 +216,13 @@
     "m": "m",
     "km": "km",
     "ms": "m/s",
-    "kms": "km/s"
+    "kms": "km/s",
+    "ly": "ly",
+    "thousands": ","
   },
   "select": {
     "title": "Launch site",
-    "subtitle": "Choose the launch site",
     "modeTitle": "Flight plan",
-    "modeSubtitle": "Choose the flight type",
     "latitude": "Lat",
     "weather": "Weather",
     "light": "Light",
@@ -241,7 +241,6 @@
     "track": "Track",
     "vertical": "Vertical",
     "destTitle": "Destination",
-    "destSubtitle": "Choose where the hop comes down",
     "choice": "Your choice",
     "fare": "Fare",
     "free": "Free",

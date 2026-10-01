@@ -160,6 +160,22 @@
     return rows;
   };
 
+  // A section of the item sheet: a caption over its body. The caption is
+  // already localized text and is escaped here, once.
+  const detailSectionHTML = (title, body) => `
+              <div class="gauges-section">
+                  <div class="card-lbl shop-sec-hdr">${esc(title)}</div>
+                  ${body}
+              </div>`;
+
+  // A handful of short figures (nutrition, needs restored, cravings fed, a
+  // weapon's parameters) set on one wrapping line, not a row apiece: three
+  // numbers about a cup of tea do not need three lines of the page.
+  const statLineHTML = (pairs) => `
+                  <div class="shop-stat-line">${pairs.map((p) => `
+                      <span class="shop-stat"><span class="shop-stat-key">${esc(p.key)}</span><span class="shop-stat-val" style="color:${p.color};">${esc(p.value)}</span></span>`).join("")}
+                  </div>`;
+
   const translate = (text) =>
     safe("translateText", () => {
       if (text && typeof window.translateText === "function") return window.translateText(text);
@@ -1017,7 +1033,7 @@
   };
 
   Window_ItemDetail.prototype.getStateName = function (stateId) {
-    return $dataStates[stateId] ? $dataStates[stateId].name : T('Shop.stateN', { id: stateId });
+    return $dataStates[stateId] ? translate($dataStates[stateId].name) : T('Shop.stateN', { id: stateId });
   };
   Window_ItemDetail.prototype.getParameterName = function (paramId) {
     return TextManager.param(paramId) || T('Shop.paramN', { id: paramId });
@@ -1038,7 +1054,7 @@
     return $dataSystem.skillTypes[stypeId] || T('Shop.skillTypeN', { id: stypeId });
   };
   Window_ItemDetail.prototype.getSkillName = function (skillId) {
-    return $dataSkills[skillId] ? $dataSkills[skillId].name : T('Shop.skillN', { id: skillId });
+    return $dataSkills[skillId] ? translate($dataSkills[skillId].name) : T('Shop.skillN', { id: skillId });
   };
   Window_ItemDetail.prototype.getWeaponTypeName = function (wtypeId) {
     if (!$dataSystem || !$dataSystem.weaponTypes || !$dataSystem.weaponTypes[wtypeId]) {
@@ -1954,7 +1970,9 @@
 
       if (selectedItem) {
         const isFood = safe("isFoodItem", () => utils.isFoodItem(selectedItem), false);
-        const category = categoryOf(selectedItem) || T('Shop.item');
+        // The same caption the category tabs and the list headers use, so the
+        // sheet does not call a thing "Medical" under a tab that says otherwise.
+        const category = categoryOf(selectedItem) ? categoryLabelOf(selectedItem) : T('Shop.item');
         const weight = formatWeight(weightOf(selectedItem));
 
         // How many of this there are lives on the description page, next to the
@@ -2065,10 +2083,9 @@
         if (loreText) descHTML += `<div class="detail-lore">${esc(loreText)}</div>`;
 
         // Params
-        let paramsHTML = "";
         const baseParams = [2, 3, 4, 5, 6, 7];
         const paramNames = [_si18n("ATT"), _si18n("DEF"), _si18n("M.ATT"), _si18n("M.DEF"), _si18n("AGILITY"), _si18n("LUCK")];
-        let hasParams = false;
+        const paramStats = [];
 
         baseParams.forEach((paramId, pIdx) => {
           let val = 0;
@@ -2077,32 +2094,18 @@
           } else if (DataManager.isArmor(selectedItem)) {
             val = paramOf(selectedItem, paramId);
           }
-
           if (val !== 0) {
-            hasParams = true;
-            const sign = val > 0 ? "+" : "";
-            const color = val > 0 ? "var(--text-cost-ok)" : "var(--text-text-alt-10)";
-
-            paramsHTML += `
-              <div class="gauge-row">
-                  <span style="font-weight:bold;">${esc(paramNames[pIdx])}</span>
-                  <span style="font-weight:bold; color:${color};">${sign}${val}</span>
-              </div>
-            `;
+            paramStats.push({
+              key: paramNames[pIdx],
+              value: (val > 0 ? "+" : "") + val,
+              color: val > 0 ? "var(--text-cost-ok)" : "var(--text-cost-bad)",
+            });
           }
         });
 
-        let combatSectionHTML = "";
-        if (hasParams) {
-          combatSectionHTML = `
-            <div class="gauges-section">
-                <div class="card-lbl" class="shop-sec-hdr">
-                    ${T('Shop.itemParameters')}
-                </div>
-                ${paramsHTML}
-            </div>
-          `;
-        }
+        const combatSectionHTML = paramStats.length
+          ? detailSectionHTML(T('Shop.itemParameters'), statLineHTML(paramStats))
+          : "";
 
         // Food & Nutrition
         let nutritionSectionHTML = "";
@@ -2111,41 +2114,13 @@
           const protein = safe("nutrition", () => utils.getNutritionValue(selectedItem, "protein"), 0);
           const fat = safe("nutrition", () => utils.getNutritionValue(selectedItem, "fat"), 0);
 
-          let nutGauges = "";
-          if (calories > 0) {
-            nutGauges += `
-              <div class="gauge-row">
-                  <span class="shop-stat-key">${T('Shop.calories')}</span>
-                  <span style="font-weight:bold; color:var(--text-amber-hint);">${calories} kcal</span>
-              </div>
-            `;
-          }
-          if (protein > 0) {
-            nutGauges += `
-              <div class="gauge-row">
-                  <span class="shop-stat-key">${T('Shop.protein')}</span>
-                  <span style="font-weight:bold; color:var(--text-cost-ok);">${protein}g</span>
-              </div>
-            `;
-          }
-          if (fat > 0) {
-            nutGauges += `
-              <div class="gauge-row">
-                  <span class="shop-stat-key">${T('Shop.fat')}</span>
-                  <span style="font-weight:bold; color:var(--text-gold-dark);">${fat}g</span>
-              </div>
-            `;
-          }
+          const nutStats = [];
+          if (calories > 0) nutStats.push({ key: T('Shop.calories'), value: calories + " kcal", color: "var(--text-amber-hint)" });
+          if (protein > 0) nutStats.push({ key: T('Shop.protein'), value: protein + "g", color: "var(--text-cost-ok)" });
+          if (fat > 0) nutStats.push({ key: T('Shop.fat'), value: fat + "g", color: "var(--text-gold-dark)" });
 
-          if (nutGauges) {
-            nutritionSectionHTML = `
-              <div class="gauges-section">
-                  <div class="card-lbl" class="shop-sec-hdr">
-                      ${T('Shop.vitalNutritionMetrics')}
-                  </div>
-                  ${nutGauges}
-              </div>
-            `;
+          if (nutStats.length) {
+            nutritionSectionHTML = detailSectionHTML(T('Shop.vitalNutritionMetrics'), statLineHTML(nutStats));
           }
         }
 
@@ -2153,57 +2128,30 @@
         let needsSectionHTML = "";
         const needRestores = needRestoresOf(selectedItem);
         if (needRestores.length) {
-          const needGauges = needRestores.map(r => `
-              <div class="gauge-row">
-                  <span class="shop-stat-key">${esc(r.label)}</span>
-                  <span style="font-weight:bold; color:${r.color};">+${r.amount}%</span>
-              </div>`).join("");
-          needsSectionHTML = `
-              <div class="gauges-section">
-                  <div class="card-lbl" class="shop-sec-hdr">
-                      ${T('Shop.needsRestored')}
-                  </div>
-                  ${needGauges}
-              </div>
-            `;
+          needsSectionHTML = detailSectionHTML(T('Shop.needsRestored'), statLineHTML(
+            needRestores.map(r => ({ key: r.label, value: "+" + r.amount + "%", color: r.color }))));
         }
 
         // What it is medicine for, and how long a course of it runs. Only a
         // tagged drug prints this; a healing potion has nothing to say here.
+        // Each list is a caption over a paragraph: a dozen illnesses squeezed
+        // into the right-hand half of a key/value row read as fine print.
         const medicine = medicineOf(selectedItem);
         if (medicine) {
           const rows = medicineLines(medicine, 10)
             .map(r => `
-              <div class="gauge-row">
-                  <span class="shop-stat-key">${esc(r.label)}</span>
-                  <span style="flex:1 1 auto; text-align:right; font-size:14px;">${esc(r.value)}</span>
-              </div>`).join("");
-          needsSectionHTML += `
-              <div class="gauges-section">
-                  <div class="card-lbl" class="shop-sec-hdr">
-                      ${T('Shop.medicineClass')}: ${esc(medicine.label)}
-                  </div>
-                  ${rows}
-              </div>
-            `;
+                  <div class="shop-med-row">
+                      <span class="shop-med-key">${esc(r.label)}</span>
+                      <span class="shop-med-val">${esc(r.value)}</span>
+                  </div>`).join("");
+          needsSectionHTML += detailSectionHTML(T('Shop.medicineClass') + ": " + medicine.label, rows);
         }
 
         // Cravings fed (nicotine, drink, caffeine, narcotics, a bet)
         const cravingRelief = addictionReliefOf(selectedItem);
         if (cravingRelief.length) {
-          const cravingGauges = cravingRelief.map(r => `
-              <div class="gauge-row">
-                  <span class="shop-stat-key">${esc(r.label)}</span>
-                  <span style="font-weight:bold; color:var(--text-caption-brown);">-${r.amount}%</span>
-              </div>`).join("");
-          needsSectionHTML += `
-              <div class="gauges-section">
-                  <div class="card-lbl" class="shop-sec-hdr">
-                      ${T('Shop.cravingsFed')}
-                  </div>
-                  ${cravingGauges}
-              </div>
-            `;
+          needsSectionHTML += detailSectionHTML(T('Shop.cravingsFed'), statLineHTML(
+            cravingRelief.map(r => ({ key: r.label, value: "-" + r.amount + "%", color: "var(--text-caption-brown)" }))));
         }
 
         // Effects / Traits. A cure-all item carries two dozen of these, so they
@@ -2232,11 +2180,9 @@
         let effectsSectionHTML = "";
         if (effectLines.length) {
           effectsSectionHTML = `
-            <div style="margin-bottom:18px;">
-                <div class="card-lbl" class="shop-sec-hdr">
-                    ${T('Shop.signalsChemicalProperties')}
-                </div>
-                <div class="detail-effect-chips" class="shop-plate">
+            <div class="gauges-section">
+                <div class="card-lbl shop-sec-hdr">${esc(T('Shop.signalsChemicalProperties'))}</div>
+                <div class="detail-effect-chips">
                     ${effectsHTML}
                 </div>
             </div>
@@ -2276,7 +2222,7 @@
 
           proficiencyHTML = `
             <div style="margin-bottom:10px;">
-                <div class="card-lbl" class="shop-sec-hdr shop-sec-hdr--split">
+                <div class="card-lbl shop-sec-hdr shop-sec-hdr--split">
                     <span>${esc(T('Shop.proficiency'))}</span>
                     <span style="font-weight:normal;">${esc(specName)}</span>
                 </div>
@@ -2486,9 +2432,10 @@
     }
   };
 
-  // The strip above the list, on either side of the counter: a hint while
-  // nothing is picked, and otherwise what is on the counter plus the one press
-  // that settles the lot.
+  // The strip above the list, on either side of the counter: empty while
+  // nothing is picked, and otherwise what is on the counter and a press that
+  // clears it. The press that settles the lot is the right page's own button,
+  // never a second copy of it here.
   Scene_Shop.prototype.renderShopCartBar = function (bar, isBuyMode) {
     const totals = this.cartTotals(isBuyMode);
 
@@ -2501,7 +2448,6 @@
               <span class="selection-value ${isBuyMode ? 'cost' : ''}">${money(totals.value)} €</span>
           </div>
           <div class="selection-actions">
-              <div class="action-btn confirm" id="settle-cart-btn">${esc(T(isBuyMode ? 'Shop.buySelected' : 'Shop.sellSelected', { lines: totals.lines }))}</div>
               <div class="action-btn cancel" id="clear-selection-btn">${esc(T('Shop.clearSelection'))}</div>
           </div>
       </div>
@@ -2517,7 +2463,6 @@
       });
     };
 
-    onBarClick("#settle-cart-btn", () => this.settleCart(isBuyMode));
     onBarClick("#clear-selection-btn", () => {
       this.clearCart(isBuyMode);
       SoundManager.playCancel();
