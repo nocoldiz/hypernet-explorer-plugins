@@ -1110,7 +1110,7 @@
                                 const on = !this._restrictions || this._restrictions[rank] !== false;
                                 const A = window.SkillArcana;
                                 const level = rank === "forbidden"
-                                    ? ((A && A.FORBIDDEN_LEVEL) || 80) : ((A && A.ESOTERIC_LEVEL) || 15);
+                                    ? ((A && A.FORBIDDEN_LEVEL) || 40) : ((A && A.ESOTERIC_LEVEL) || 15);
                                 const name = T('WorldManagerUI.restrict.' + rank, { level: level });
                                 return `<label>${escapeHtml(name)}</label>
                                 <div class="wm-date-row">
@@ -1303,7 +1303,7 @@
                             const key = rank === "forbidden" ? "restrictForbiddenSkills" : "restrictEsotericSkills";
                             const A = window.SkillArcana;
                             const level = rank === "forbidden"
-                                ? ((A && A.FORBIDDEN_LEVEL) || 80) : ((A && A.ESOTERIC_LEVEL) || 15);
+                                ? ((A && A.FORBIDDEN_LEVEL) || 40) : ((A && A.ESOTERIC_LEVEL) || 15);
                             return `<div class="inspect-spec-row">
                             <span class="inspect-spec-label">${escapeHtml(T('WorldManagerUI.restrict.' + rank, { level: level }))}</span>
                             <span class="inspect-spec-value">${escapeHtml(onOffLabel(world[key] !== false))}</span>

@@ -304,6 +304,55 @@
         return typeof category === 'string' && category.trim().toLowerCase() === 'basic'; // i18n-ignore: <category:Basic> note tag
     }
 
+    //=============================================================================
+    // HandTrees, over js/db/Skills/SkillTrees.json
+    //
+    // Every school's Training tree is written by hand: one tree per school,
+    // rooted in its basic skills, each node naming its tier and the node(s)
+    // it grows out of.
+    //=============================================================================
+
+    const HandTrees = {
+        _data: undefined,
+        _tiers: null,
+
+        all: function () {
+            if (this._data !== undefined) return this._data;
+            let data = null;
+            try {
+                const db = window.Skills && window.Skills.SkillTrees;
+                data = (db && db.trees) ? db.trees : null;
+            } catch (e) {
+                console.error('SkillMaster: SkillTrees.json could not be read', e);
+            }
+            this._data = data;
+            return data;
+        },
+
+        tree: function (category) {
+            const all = this.all();
+            const tree = all && category && all[category];
+            return (tree && Array.isArray(tree.nodes)) ? tree : null;
+        },
+
+        // The rung a skill stands on in its school's tree, -1 when it has none.
+        tierOf: function (skillId) {
+            if (!this._tiers) {
+                const tiers = new Map();
+                const all = this.all() || {};
+                for (const name of Object.keys(all)) {
+                    for (const node of (all[name].nodes || [])) tiers.set(node.id, node.tier);
+                }
+                this._tiers = tiers;
+            }
+            const tier = this._tiers.get(Number(skillId));
+            return tier === undefined ? -1 : tier;
+        }
+    };
+
+    window.HandTrees = HandTrees;
+    SkillMaster.HandTrees = HandTrees;
+
     function isHiddenFromSkillMaster(skill) {
         if (!skill) return true;
         if (isMenuCommandSkill(skill.id)) return true;
@@ -716,8 +765,6 @@
     const KP_TEACH_EXP = 1.75;
     const KP_TEACH_MIN = 50;
     const KP_TEACH_MAX = 250000;
-    const KP_ESOTERIC_MULT = 10;
-    const KP_FORBIDDEN_MULT = 100;
     const FOREIGN_KP_MULT = 3;
     const KP_TP_WEIGHT = 4;
     const KP_RESOURCE_SOFT = 12;
@@ -785,6 +832,16 @@
         return Math.max(1, power);
     }
 
+    // What a skill costs to learn is what rung of its school's tree it stands
+    // on. The rebalance that wrote SkillTrees.json set every skill's MP, TP,
+    // damage and StatReq from that same rung, so the price follows the power:
+    // a basic skill is a handful of fights, a capstone a long campaign's worth.
+    // On top of its rung an <Esoteric> working costs double and a <Forbidden>
+    // one ten times over, besides the level floor in window.SkillArcana.
+    const KP_TIER_COST = [60, 120, 220, 380, 600, 900];
+    const KP_ESOTERIC_MULT = 2;
+    const KP_FORBIDDEN_MULT = 10;
+
     function kpOccultMultiplier(skill) {
         const note = (skill && skill.note) || '';
         if (/<Forbidden>/i.test(note)) return KP_FORBIDDEN_MULT;
@@ -792,12 +849,15 @@
         return 1;
     }
 
-    const KP_TIER_STEP = 0.19;
-
     function kpTeachCost(skill) {
-        const raw = KP_TEACH_BASE * Math.pow(skillPower(skill), KP_TEACH_EXP)
-            * kpOccultMultiplier(skill);
-        return Math.max(KP_TEACH_MIN, Math.min(KP_TEACH_MAX, Math.round(raw)));
+        if (!skill) return KP_TEACH_MIN;
+        // Fusions and the benches' own writing stand on no rung: they are
+        // still priced off what they do.
+        const tier = skill._customSpell ? -1 : HandTrees.tierOf(skill.id);
+        const raw = tier >= 0
+            ? KP_TIER_COST[Math.min(tier, KP_TIER_COST.length - 1)]
+            : KP_TEACH_BASE * Math.pow(skillPower(skill), KP_TEACH_EXP);
+        return Math.max(KP_TEACH_MIN, Math.min(KP_TEACH_MAX, Math.round(raw * kpOccultMultiplier(skill))));
     }
 
     Game_System.prototype.getSkillKnowledgeCost = function (skillId, actorId) {
@@ -805,10 +865,6 @@
         if (!skill) return KP_TEACH_MIN;
         if (actorId) actorCategoryManager.setActor(actorId);
         let cost = kpTeachCost(skill);
-        const placed = window.SkillGraph && window.SkillGraph.node(skillId);
-        if (placed && placed.tier > 0) {
-            cost = Math.min(KP_TEACH_MAX, Math.round(cost * (1 + placed.tier * KP_TIER_STEP)));
-        }
         const category = getSkillCategory(skillId);
         if (category && actorId) {
             if (actorCategoryManager.isPrimary(category)) cost = Math.floor(cost * 0.5);
@@ -1880,6 +1936,12 @@
             this._trees[key] = tree;
             if (!skills.length) return tree;
 
+            const hand = SkillMaster.HandTrees && SkillMaster.HandTrees.tree(category);
+            if (hand) {
+                this._plant(tree, category, hand, skills);
+                return tree;
+            }
+
             const forbidden = [];
             const climb = [];
             for (const skill of skills) {
@@ -1905,6 +1967,66 @@
 
             this._rank(tree);
             return tree;
+        },
+
+        // A school's hand-written tree, planted as one grove. Only the skills
+        // this world lets the school show are planted (MagicNature can hold
+        // some back); a node whose parent is held back hangs off the nearest
+        // ancestor still standing, or stands as a root if none is.
+        _plant: function (tree, category, hand, skills) {
+            const present = {};
+            for (const skill of skills) present[skill.id] = skill;
+            const written = {};
+            for (const entry of (hand.nodes || [])) written[entry.id] = entry;
+            const standing = (ids) => {
+                const out = [];
+                const seen = {};
+                const walk = (list) => {
+                    for (const id of (list || [])) {
+                        if (seen[id]) continue;
+                        seen[id] = true;
+                        if (present[id]) { if (!out.includes(id)) out.push(id); }
+                        else if (written[id]) walk(written[id].requires);
+                    }
+                };
+                walk(ids);
+                return out;
+            };
+
+            const grove = { index: 0, nodes: [], forbidden: false };
+            const ordered = (hand.nodes || []).slice()
+                .filter(entry => present[entry.id])
+                .sort((a, b) => (a.tier - b.tier) || 0);
+            ordered.forEach((entry, seat) => {
+                const skill = present[entry.id];
+                const node = {
+                    id: skill.id, skill: skill, category: category,
+                    tier: entry.tier, grove: 0, seat: seat,
+                    lane: 0,
+                    forbidden: this.isForbidden(skill.id), hand: true,
+                    parents: standing(entry.requires), children: [], need: 0
+                };
+                node.need = node.parents.length;
+                grove.nodes.push(node);
+                tree.nodes[skill.id] = node;
+                tree.order.push(node);
+                this._index[skill.id] = node;
+            });
+            for (const node of grove.nodes) {
+                for (const id of node.parents) {
+                    const parent = tree.nodes[id];
+                    if (parent) parent.children.push(node.id);
+                }
+            }
+            grove.depth = grove.nodes.reduce((d, n) => Math.max(d, n.tier), 0);
+            tree.groves.push(grove);
+            tree.lanes = [];
+            tree.hand = true;
+
+            const tiers = [];
+            for (const node of tree.order) (tiers[node.tier] = tiers[node.tier] || []).push(node);
+            for (let t = 0; t < tiers.length; t++) if (!tiers[t]) tiers[t] = [];
+            tree.tiers = tiers;
         },
 
         _groves: function (climb, rank) {
@@ -2040,6 +2162,7 @@
         isEntry: function (skillId) {
             const node = this._nodeFor(skillId);
             if (!node) return true;
+            if (node.hand) return !node.parents.length;
             return !node.forbidden && node.tier === 0;
         },
 
@@ -2057,10 +2180,11 @@
             const node = this._nodeFor(skillId);
             if (!node) return true;
             const category = node.category;
-            // Past the level floor a forbidden node stands open on its own.
-            if (node.forbidden) return true;
+            // Past the level floor a forbidden node of an unwritten tree stands
+            // open on its own; in a hand-written tree it still wants its roots.
+            if (node.forbidden && !node.hand) return true;
             const foreign = SkillMaster.actorCategoryManager.isForeign(category);
-            if (!foreign && node.tier === 0) return true;
+            if (!foreign && (node.hand ? !node.parents.length : node.tier === 0)) return true;
             if (!node.parents.length) return !foreign;
             let held = 0;
             // A lent skill opens what stands behind it: while the gear is worn the
@@ -2070,9 +2194,10 @@
         },
 
         openers: function (skillId, actor) {
-            // A forbidden skill has no prerequisite skills any more, only a
-            // level floor, which the lock line states by itself.
-            if (this.isForbidden(skillId)) return [];
+            // A forbidden skill of an unwritten tree has no prerequisite skills,
+            // only a level floor, which the lock line states by itself.
+            const placed = this._nodeFor(skillId);
+            if (this.isForbidden(skillId) && !(placed && placed.hand)) return [];
             return this.requires(skillId)
                 .filter(id => !(actor && EquipSkills.holds(actor, id)))
                 .map(id => $dataSkills[id])
@@ -2081,7 +2206,7 @@
 
         stillWanted: function (skillId, actor) {
             const node = this._nodeFor(skillId);
-            if (!node || node.forbidden || !node.parents.length) return 0;
+            if (!node || (node.forbidden && !node.hand) || !node.parents.length) return 0;
             let held = 0;
             for (const id of node.parents) if (EquipSkills.holds(actor, id)) held++;
             return Math.max(0, Math.max(1, node.need) - held);
@@ -2097,10 +2222,14 @@
             const tree = this._organise(category);
             if (tree.graph) return tree.graph;
 
+            // A node is laid out under its first parent only, so a capstone
+            // that merges two lines is drawn once; its second line still gets
+            // its edge below.
             const nodes = tree.order.map(n => ({
                 id: n.id, skill: n.skill, tier: n.tier,
                 grove: n.grove, seat: n.seat, forbidden: n.forbidden,
-                parent: n.parents.length ? n.parents[0] : 0, children: n.children.slice()
+                parent: n.parents.length ? n.parents[0] : 0,
+                children: n.children.filter(id => tree.nodes[id] && tree.nodes[id].parents[0] === n.id)
             }));
             const placed = {};
             for (const n of nodes) placed[n.id] = n;
@@ -5862,7 +5991,7 @@
  * only rules the draw obeys:
  *
  *   esoteric   never before level 50
- *   forbidden  never before level 80
+ *   forbidden  never before level 40
  *
  * A skill's rank is read off window.SkillArcana, which is the one authority on
  * what is esoteric and what is forbidden; the floors here are the chaos
@@ -5873,7 +6002,7 @@
     "use strict";
 
     const CHAOS_ESOTERIC_LEVEL = 50;
-    const CHAOS_FORBIDDEN_LEVEL = 80;
+    const CHAOS_FORBIDDEN_LEVEL = 40;
 
     function chaosActive() {
         return !!(window.ChaosWorld && window.ChaosWorld.active());
