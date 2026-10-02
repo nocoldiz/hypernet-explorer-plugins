@@ -58,6 +58,12 @@
     Input.keyMapper[48 + i] = String(i);
   }
 
+  // The Input symbol of every slot, built once. The number keys are polled on
+  // every map frame, and spelling the nine symbols out with String() each time
+  // was nine fresh strings a frame for the same nine answers.
+  const SLOT_KEYS = [];
+  for (let i = 1; i <= SLOTS; i++) SLOT_KEYS.push(String(i));
+
   //===========================================================================
   // ItemHotbar , the favourites model
   //
@@ -84,12 +90,16 @@
 
     /** Slot index (0-based) to the string key the save file uses. */
     key(index) {
-      return String(index + 1);
+      return SLOT_KEYS[index] || String(index + 1);
     },
 
     /** Weapons and armour are equipped, not favourited; see the header. */
     isFavoritable(item) {
-      return !!item && DataManager.isItem(item) &&
+      // DataManager.isItem is $dataItems.includes(item), a walk of the whole
+      // item table up to the item, and the map asks it of all nine slots on
+      // every tick. A database item sits at its own id, so that one lookup
+      // answers it; anything else still gets the engine's own walk.
+      return !!item && ($dataItems[item.id] === item || DataManager.isItem(item)) &&
         (item.occasion === 0 || item.occasion === 2);
     },
 
@@ -447,15 +457,17 @@
   // while a key is holding the bar, so nothing else reads that frame.
   function updateMapKeyHold() {
     for (let i = 0; i < SLOTS; i++) {
-      if (!Input.isTriggered(String(i + 1))) continue;
+      if (!Input.isTriggered(SLOT_KEYS[i])) continue;
       if (_mapKeyArmed !== null && _mapKeyArmed !== i) _mapKeySpent.push(_mapKeyArmed);
       _mapKeyArmed = i;
       _mapArmed = false;
       _mapIdle = 0;
     }
-    _mapKeySpent = _mapKeySpent.filter(i => Input.isPressed(String(i + 1)));
+    // Almost always empty, and filtering an empty list still made a new one
+    // every frame.
+    if (_mapKeySpent.length) _mapKeySpent = _mapKeySpent.filter(i => Input.isPressed(SLOT_KEYS[i]));
     if (_mapKeyArmed === null) return false;
-    if (Input.isPressed(String(_mapKeyArmed + 1))) return true;
+    if (Input.isPressed(SLOT_KEYS[_mapKeyArmed])) return true;
     const slot = _mapKeyArmed;
     clearMapKeys();
     ItemHotbar.use(slot);
@@ -505,6 +517,10 @@
   // is taken once at the top of the frame and reused by both halves.
   let _mapVisible = false;
   let _mapAllowed = false;
+  // The bar was already hidden by the display pass: hide() writes styles and
+  // resets the label, so a map with nothing on the bar does it once, not on
+  // every tick.
+  let _mapHidden = false;
 
   const _Scene_Map_update_hotbar = Scene_Map.prototype.update;
   Scene_Map.prototype.update = function () {
@@ -570,10 +586,19 @@
 
   Scene_Map.prototype.updateItemHotbarDisplay = function () {
     if (!_mapVisible) {
-      _mapBar.hide();
+      if (!_mapHidden) {
+        _mapHidden = true;
+        _mapBar.hide();
+      }
       return;
     }
     if (_mapArmed && !ItemHotbar.itemAt(_mapIndex)) disarmMapBar();
+    // Below 60fps the engine runs two or three logic ticks per drawn frame
+    // (window.FrameBudget, Core/ParchmentToast.js), and a bar rendered on the
+    // ticks in between is never seen. The input and the disarm above keep
+    // running every tick; only the drawing waits for the tick that is shown.
+    if (window.FrameBudget && !window.FrameBudget.isPresented()) return;
+    _mapHidden = false;
     // A held number key names its slot without the bar taking the bumpers.
     const keyArmed = _mapKeyArmed !== null;
     _mapBar.render(ItemHotbar.entries(), {
@@ -592,6 +617,7 @@
     _mapVisible = false;
     _mapAllowed = false;
     _mapBar.hide();
+    _mapHidden = true;
     _Scene_Map_terminate_hotbar.call(this);
   };
 

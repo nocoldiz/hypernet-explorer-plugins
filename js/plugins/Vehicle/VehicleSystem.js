@@ -2904,7 +2904,22 @@
    * custom vehicles, plus whatever the registered sources add. A vehicle under
    * way is not in the list, so driving keeps the engine's one-tile collision.
    */
+  // Asked on every collision check of the player and of every event, and an
+  // NPC path search makes thousands, so the list is gathered once a frame:
+  // who stands where is still read live off each character (footprintCovers).
+  let footprintFrame = -1;
+  let footprintMapId = 0;
+  let footprintList = null;
   function solidFootprintCharacters() {
+    const frame = typeof Graphics !== 'undefined' ? Graphics.frameCount : -1;
+    const id = $gameMap.mapId();
+    if (footprintList && frame === footprintFrame && id === footprintMapId) return footprintList;
+    footprintList = gatherFootprintCharacters();
+    footprintFrame = frame;
+    footprintMapId = id;
+    return footprintList;
+  }
+  function gatherFootprintCharacters() {
     const list = [];
     const mapId = $gameMap.mapId();
     [$gameMap.boat(), $gameMap.ship(), $gameMap.airship()].forEach((vehicle) => {
@@ -4855,6 +4870,9 @@
     };
   }
 
+  // The vehicle name getHudVehicleStatus last looked up, and the frame it did.
+  let hudNameCache = null;
+
   window.MergedVehicleSystem = {
     version: '3.4.0',
     cache: mapCache,
@@ -4987,9 +5005,22 @@
 
       const health = window.VehicleSystemRepair?.totalHealth?.(key) || null;
       const usesFuel = !!config.usesFuel;
+      // The HUD asks for this every drawn frame while the party is aboard, and
+      // the name is an i18n lookup plus the camper's custom name. It is held
+      // for a second per vehicle, which still picks up a rename or a language
+      // switch long before anybody looks for it.
+      const frame = (typeof Graphics !== 'undefined' && Graphics.frameCount) || 0;
+      const held = hudNameCache;
+      let name;
+      if (held && held.id === config.name && frame - held.frame >= 0 && frame - held.frame < 60) {
+        name = held.name;
+      } else {
+        name = vehicleDisplayName(config);
+        hudNameCache = { id: config.name, name, frame };
+      }
       return {
         key,
-        name: vehicleDisplayName(config),
+        name,
         driving: !!(ridden || outside),
         // A vehicle with no maintenance record of its own (the Broom) has no
         // bar to draw; the HUD reads null as "no health line".

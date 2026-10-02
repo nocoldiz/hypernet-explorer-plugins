@@ -41,7 +41,7 @@
         this._lastLifeSimMinute = minute;
         const last = $gameSystem?._npcLifeLastSimMinute;
         if (last === undefined || last === null || minute - last >= MINUTES_PER_DAY || minute < last) {
-          catchUp(minute);
+          catchUp(minute, { fromClock: true });
         }
       }
     };

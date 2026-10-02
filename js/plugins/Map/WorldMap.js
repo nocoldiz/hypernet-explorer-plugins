@@ -186,9 +186,35 @@
         const old = worldMapSprite.bitmap;
         worldMapSprite.bitmap = bmp;
         if (old && old !== bmp && old !== worldMapBitmap && old !== fullscreenBitmap &&
-            old !== blankBitmap && typeof old.destroy === 'function') {
+            old !== blankBitmap && !minimapPool.includes(old) && typeof old.destroy === 'function') {
             old.destroy();
         }
+    }
+
+    // The minimap is redrawn on every tile the player steps. It used to draw
+    // into a brand new canvas each time and free the last one: a canvas
+    // allocation, a GPU texture and a collection per step. Two bitmaps of the
+    // minimap's size take turns instead: the one not on screen is cleared and
+    // drawn, so a render that bails out half way never blanks the shown one.
+    const minimapPool = [];
+    function minimapCanvas(w, h) {
+        const shown = isLiveSprite(worldMapSprite) ? worldMapSprite.bitmap : null;
+        let bitmap = minimapPool.find(b => b !== shown && b.width === w && b.height === h);
+        if (bitmap) {
+            bitmap.clear();
+        } else {
+            bitmap = new Bitmap(w, h);
+            bitmap.smooth = true;
+            const stale = minimapPool.findIndex(b => b !== shown);
+            if (minimapPool.length >= 2 && stale >= 0) {
+                minimapPool[stale].destroy();
+                minimapPool.splice(stale, 1);
+            }
+            minimapPool.push(bitmap);
+        }
+        bitmap.context.imageSmoothingEnabled = true;
+        bitmap.context.imageSmoothingQuality = 'high';
+        return bitmap;
     }
 
     // Key Definitions
@@ -2213,10 +2239,7 @@
         const targetW = mapWidth * MINIMAP_SCALE;
         const targetH = mapHeight * MINIMAP_SCALE;
 
-        const bitmap = new Bitmap(targetW, targetH);
-        bitmap.context.imageSmoothingEnabled = true;
-        bitmap.context.imageSmoothingQuality = 'high';
-        bitmap.smooth = true;
+        const bitmap = minimapCanvas(targetW, targetH);
         bitmap.blt(worldMapBitmap, 0, 0, worldMapBitmap.width, worldMapBitmap.height, 0, 0, targetW, targetH);
         const ctx = bitmap.context;
 
@@ -2303,10 +2326,7 @@
             // A refresh mid-transfer onto 315 can run before $dataMap is populated.
             if (!$dataMap) return;
 
-            const bitmap = new Bitmap(targetW, targetH);
-            bitmap.context.imageSmoothingEnabled = true;
-            bitmap.context.imageSmoothingQuality = 'high';
-            bitmap.smooth = true;
+            const bitmap = minimapCanvas(targetW, targetH);
 
             if (currentMapState === 1) {
                 // --- ZOOMED MINIMAP ---
@@ -2397,10 +2417,7 @@
             const { row, col } = bState;
             const tileBitmap = loadCachedTile(`img/worldmap/bologna/row-${row}-column-${col}.jpg`);
             if (!tileBitmap.isReady()) { tileBitmap.addLoadListener(refreshWorldMapDisplay); return; }
-            const bitmap = new Bitmap(targetW, targetH);
-            bitmap.context.imageSmoothingEnabled = true;
-            bitmap.context.imageSmoothingQuality = 'high';
-            bitmap.smooth = true;
+            const bitmap = minimapCanvas(targetW, targetH);
             const playerX = $gamePlayer.x;
             const playerY = $gamePlayer.y;
 
@@ -2466,10 +2483,7 @@
             return;
         }
 
-        const bitmap = new Bitmap(targetW, targetH);
-        bitmap.context.imageSmoothingEnabled = true;
-        bitmap.context.imageSmoothingQuality = 'high';
-        bitmap.smooth = true;
+        const bitmap = minimapCanvas(targetW, targetH);
 
         // Calculate local coordinates within the 32x32 block. These keep the
         // fraction: 12.25 is a quarter of the way across the block's 13th square.
@@ -2605,10 +2619,7 @@
         const pos = globePlayerPosition();
         if (!pos) return;
 
-        const bitmap = new Bitmap(targetW, targetH);
-        bitmap.context.imageSmoothingEnabled = true;
-        bitmap.context.imageSmoothingQuality = 'high';
-        bitmap.smooth = true;
+        const bitmap = minimapCanvas(targetW, targetH);
         const ctx = bitmap.context;
 
         const view = globeMiniView(pos, currentMapState === 1, targetW, targetH);
@@ -3318,18 +3329,34 @@
     let cityLabelSig = null;
     let cityLabelTilemap = null;
 
+    // The destination key each event's name spells, remembered against the
+    // name it was read from. A refresh fires on every switch and variable
+    // change, and running the teleport regex over every event of the map
+    // (some two hundred on the world map) each time only ever re-read the
+    // same names. A WeakMap rather than a field on the event, so nothing of
+    // it is written into the save; the readable name is still looked up each
+    // pass, since it follows the language.
+    const cityLabelKeyMemo = new WeakMap();
+    function cityLabelKeyFor(ev, name) {
+        const memo = cityLabelKeyMemo.get(ev);
+        if (memo && memo.name === name) return memo.key;
+        // Match "Teleport - CityName" or "teleport CityName"
+        const match = name.match(/^teleport\s*-?\s*(.+)/i);
+        const key = match ? match[1].trim() : null;
+        cityLabelKeyMemo.set(ev, { name, key });
+        return key;
+    }
+
     function cityLabelSpecs() {
         const specs = [];
         for (const ev of $gameMap.events()) {
             if (!ev || ev._erased) continue;
             const name = ev.event().name || "";
 
-            // Match "Teleport - CityName" or "teleport CityName"
-            const match = name.match(/^teleport\s*-?\s*(.+)/i);
-            if (match) {
+            const key = cityLabelKeyFor(ev, name);
+            if (key) {
                 // The event carries the Destinations.json key; the label on the
                 // map is that entry's readable name.
-                const key = match[1].trim();
                 const cityName = window.WorkSystem?.destinationName
                     ? window.WorkSystem.destinationName(key) : key;
                 if (cityName) specs.push([ev.x, ev.y, cityName]);
@@ -5349,31 +5376,308 @@
         }
     };
 
-    // ===== PERFORMANCE: cull per-frame updates of off-screen static events =====
-    // Map 315 is a 256x256 world map with ~200 events, nearly all static
-    // action-button teleports (no autonomous movement, no parallel process).
-    // The engine already only renders the visible tile window, but it still
-    // runs update() on every event each frame. We skip that work for events
-    // well off-screen, keeping the full update for events near the camera plus
-    // anything that must run regardless of position: parallel (4) / autorun (3)
-    // triggers, events currently moving, and events locked in interaction.
-    // Scoped to map 315 only so roaming NPCs on other maps are never frozen.
+    // ===== PERFORMANCE: off-screen characters rest =====
+    // Two halves of one idea, on every map: what the camera cannot see is not
+    // worth a frame of work, unless something is waiting on it.
+    //
+    // The engine never culls a character sprite. Each of the 100 to 250 events
+    // a map holds runs the whole Sprite_Character.update chain every frame (six
+    // plugin hooks deep, before this one), and a sprite wearing a filter (the
+    // fog grey, a monster hue, a flash) costs a full framebuffer pass even when
+    // it is drawn far outside the screen, because PIXI only skips what is
+    // invisible. So a sprite off the screen is hidden and its chain is not run;
+    // the first frame it is back in view runs the chain again, which takes the
+    // bitmap, the frame, the position and the visibility afresh.
+    //
+    // The same was done on the game side for the world map alone (its ~200
+    // static teleports) and it froze cutscenes: a forced move route on an
+    // off-screen event never finished, so the interpreter waited forever. It
+    // now runs on every map, and keeps updating anything somebody could be
+    // waiting on, or that lives a life of its own off the screen.
+
+    // Tiles of slack around the visible window. A sprite is wider and taller
+    // than its tile, and the engine draws it from the feet up, so its own
+    // frame is added on top (see spriteMargins below).
+    const REST_SPRITE_MARGIN = 3;
+    // The game side keeps the slack the world map cull always had.
+    const REST_EVENT_MARGIN = 4;
+
+    // Asked hundreds of times a frame, read once a frame: the camera's size,
+    // the tile size, the map's size and whether it loops. None of it changes
+    // inside a frame, and asking $gameMap for it (adjustX alone reads the loop
+    // flag through MapTransitionFix, the width and the zoomed screenTileX) for
+    // every character was most of what the cull itself cost. The map and its
+    // data ride in the key too, so a transfer made halfway through a frame is
+    // measured against the map it landed on.
+    //
+    // The display position is NOT cached: a second camera (split screen P2)
+    // swaps $gameMap._displayX/Y while its own spriteset updates, so it is read
+    // live off the field at every test and a sprite is always judged against
+    // the camera that is drawing it.
+    const restFrame = {
+        frame: -1, map: null, data: null,
+        tilesX: 0, tilesY: 0, tw: 48, th: 48, mapW: 0, mapH: 0,
+        loopX: false, loopY: false, noSprites: false, noEvents: false
+    };
+    function restContext() {
+        const frame = typeof Graphics !== 'undefined' ? (Graphics.frameCount || 0) : 0;
+        const data = typeof $dataMap !== 'undefined' ? $dataMap : null;
+        if (restFrame.frame === frame && restFrame.map === $gameMap && restFrame.data === data) {
+            return restFrame;
+        }
+        restFrame.frame = frame;
+        restFrame.map = $gameMap;
+        restFrame.data = data;
+        // screenTileX/Y are the zoomed camera's (MousePan redefines them to
+        // the tile count a zoomed-out screen really shows).
+        restFrame.tilesX = $gameMap.screenTileX();
+        restFrame.tilesY = $gameMap.screenTileY();
+        restFrame.tw = $gameMap.tileWidth();
+        restFrame.th = $gameMap.tileHeight();
+        restFrame.mapW = $gameMap.width();
+        restFrame.mapH = $gameMap.height();
+        restFrame.loopX = !!$gameMap.isLoopHorizontal();
+        restFrame.loopY = !!$gameMap.isLoopVertical();
+        // A map battle frames its own fight and points animations, popups and
+        // flashes at the sprites in it: none of it is worth second guessing.
+        const mbm = window.MapBattleMode;
+        restFrame.noSprites = !!(mbm && mbm.isActive && mbm.isActive());
+        // Online, remote players are events walked by packets, and nothing
+        // here can tell one apart, so the game side stays out of it.
+        const nm = window.NetworkManager;
+        const net = nm && nm.instance;
+        restFrame.noEvents = restFrame.noSprites ||
+            !!(net && typeof net.isMultiplayer === 'function' && net.isMultiplayer());
+        return restFrame;
+    }
+
+    // A tile-space position against a camera window: relative position, the
+    // window's size in tiles, and slack before and after.
+    function inWindow(rel, size, before, after) {
+        return rel >= -before && rel <= size + after;
+    }
+
+    // The engine's own adjustX/adjustY, for any camera (split screen P2 keeps
+    // its display position on the scene) and with the map's facts read off the
+    // frame context rather than asked again. A map that does not loop is the
+    // plain difference, which is all adjustX ever returns there.
+    function adjustAxis(real, display, mapSize, screenTiles, loops) {
+        if (loops && real < display - (mapSize - screenTiles) / 2) return real - display + mapSize;
+        return real - display;
+    }
+
+    // -- Sprites --------------------------------------------------------------
+
+    // Whether a character sprite has to run its chain whatever the camera
+    // says, for reasons that never change while the sprite keeps the same
+    // character and the same parent: the party and the vehicles are the
+    // camera's own subject, and a sprite outside the map's tilemap (a
+    // reflection, a cutscene's copy, one some scene built by hand) lives in
+    // another container and is that container's business. Three instanceof
+    // tests and a parent test per sprite per frame bought nothing, so the
+    // answer is kept on the sprite (never saved) until either of the two
+    // things it was read off is swapped.
+    function spriteAlwaysUpdates(sprite, ch) {
+        const parent = sprite.parent;
+        if (sprite._restKindCh === ch && sprite._restKindParent === parent) return sprite._restKind;
+        const always = ch instanceof Game_Player || ch instanceof Game_Follower ||
+            ch instanceof Game_Vehicle ||
+            !parent || typeof Tilemap !== 'function' || !(parent instanceof Tilemap);
+        sprite._restKindCh = ch;
+        sprite._restKindParent = parent;
+        sprite._restKind = always;
+        return always;
+    }
+
+    // Whether a character sprite has to run its chain this frame, for reasons
+    // that come and go.
+    function spriteMustUpdate(sprite, ch) {
+        if (sprite._alwaysUpdate || ch._alwaysUpdate) return true;
+        // A balloon or an animation reads its target sprite's position every
+        // frame, and an event command may be waiting for it to end. Requesting
+        // either one marks the character at once (Game_Temp.requestBalloon /
+        // requestAnimation), so a pending one is covered too.
+        if (ch._balloonPlaying || ch._animationPlaying) return true;
+        // A flash counts down inside the chain; let it finish where it began.
+        if (sprite._flashDuration > 0) return true;
+        if (ch.isJumping && ch.isJumping()) return true;
+        return false;
+    }
+
+    // A sprite is drawn from its feet, its frame rising above the tile and
+    // spreading half its width either side, so a tall or wide sheet gets the
+    // slack it needs to never pop in or out at the edge.
+    function spriteMargins(sprite, tw, th, out) {
+        const f = sprite._frame;
+        const sx = sprite.scale ? Math.abs(sprite.scale.x || 1) : 1;
+        const sy = sprite.scale ? Math.abs(sprite.scale.y || 1) : 1;
+        const w = f ? f.width * sx : tw;
+        const h = f ? f.height * sy : th;
+        out.x = REST_SPRITE_MARGIN + Math.ceil(w / 2 / tw);
+        out.below = REST_SPRITE_MARGIN + Math.ceil(h / th);
+        return out;
+    }
+    const spriteSlack = { x: 0, below: 0 };
+
+    // The character's scrolledX/Y, worked out against the frame context: the
+    // same arithmetic adjustX/adjustY do, without the five calls each makes.
+    function spriteOnScreen(sprite, ch, ctx) {
+        const m = spriteMargins(sprite, ctx.tw, ctx.th, spriteSlack);
+        const rx = adjustAxis(ch._realX, $gameMap._displayX, ctx.mapW, ctx.tilesX, ctx.loopX);
+        if (!inWindow(rx, ctx.tilesX, m.x, m.x)) return false;
+        const ry = adjustAxis(ch._realY, $gameMap._displayY, ctx.mapH, ctx.tilesY, ctx.loopY);
+        return inWindow(ry, ctx.tilesY, REST_SPRITE_MARGIN, m.below);
+    }
+
+    // A character with nothing to draw: no sheet, no tile, and the sprite
+    // already agrees (so a page switch to a graphic is caught the same frame,
+    // by the stock comparison the chain itself would make).
+    function spriteIsBlank(sprite, ch) {
+        return sprite._characterName === '' && sprite._tileId === 0 &&
+            ch.characterName() === '' && ch.tileId() === 0 &&
+            (!sprite.children || sprite.children.length === 0);
+    }
+
+    // The level plate (BattleSystemEnhancedLevelDisplay) and the airborne
+    // shadow (BattleSystemEnhancedEncounters) are siblings the owner keeps
+    // alive by stamping them once a frame, and a sweep takes off whatever went
+    // unstamped. A resting owner is not gone, so it stamps them as always and
+    // hides them, rather than have them swept and rebuilt the moment it is
+    // back in view.
+    function restSiblings(sprite) {
+        const frame = typeof Graphics !== 'undefined' ? (Graphics.frameCount || 0) : 0;
+        const plate = sprite._enemyLevelLabel;
+        if (plate) {
+            plate._plateFrame = frame;
+            plate.visible = false;
+        }
+        const shadow = sprite._airborneShadow;
+        if (shadow) {
+            shadow._shadowFrame = frame;
+            shadow.visible = false;
+        }
+    }
+
+    // True when the sprite may skip its chain this frame. The kept answer
+    // comes first, then the field reads, then the camera; the blank test asks
+    // the character for its sheet (a chain of overrides of its own) and so is
+    // only asked of a sprite the camera can see, the one case where it still
+    // decides anything.
+    function spriteMayRest(sprite) {
+        const ch = sprite._character;
+        if (!ch || !$gameMap) return false;
+        const ctx = restContext();
+        if (ctx.noSprites) return false;
+        if (spriteAlwaysUpdates(sprite, ch)) return false;
+        if (spriteMustUpdate(sprite, ch)) return false;
+        if (!spriteOnScreen(sprite, ch, ctx)) return true;
+        return spriteIsBlank(sprite, ch);
+    }
+
+    const _Sprite_Character_update_rest = Sprite_Character.prototype.update;
+    Sprite_Character.prototype.update = function() {
+        if (spriteMayRest(this)) {
+            this.visible = false;
+            restSiblings(this);
+            return;
+        }
+        _Sprite_Character_update_rest.call(this);
+    };
+
+    // -- Events ---------------------------------------------------------------
+
+    // What an event's data says about it, read once per note: the NPC tags are
+    // a regex each, and asking them of every event every frame was the cost
+    // this section exists to cut. Kept off the event (it is saved) and keyed
+    // on the note itself, because a roster slot's note is rewritten when a
+    // person is transplanted onto it.
+    const eventKindMemo = new WeakMap();
+    function eventLivesOffScreen(ev) {
+        const data = ev.event ? ev.event() : null;
+        if (!data) return false;
+        const note = data.note || '';
+        const name = data.name || '';
+        let memo = eventKindMemo.get(ev);
+        if (!memo || memo.note !== note || memo.name !== name) {
+            const npc = window.NPCSystem;
+            const person = !!(npc && typeof npc.isNPCEvent === 'function' && npc.isNPCEvent(note));
+            // ArmyEventsManager marches anything named Army on the world map.
+            const army = name === 'Army'; // i18n-ignore  event name
+            memo = { note, name, keep: person || army };
+            eventKindMemo.set(ev, memo);
+        }
+        return memo.keep;
+    }
+
+    // Whether an event has to update whatever the camera says. Conservative on
+    // purpose: anything that moves, runs, is waited on or has a life of its own
+    // off the screen keeps its full update. The plain field reads come first,
+    // the method calls after them and the note last, since every one of these
+    // is asked of every event the camera cannot see, every frame.
+    function eventMustUpdate(ev) {
+        // Autorun and parallel pages run where they are, seen or not.
+        if (ev._trigger === 3 || ev._trigger === 4) return true;
+        if (ev._locked || ev._starting) return true;
+        if (ev._balloonPlaying || ev._animationPlaying) return true;
+        // A fade in or out (NPCSystem's fadeIn/fadeOut) ends where it began.
+        if (ev._fadeType || ev._alwaysUpdate) return true;
+        // Monsters hunt, flee and despawn on their own clock.
+        if (ev._fixedTroopId > 0 || ev._bseRarityKey) return true;
+        // Road traffic, marching armies, zombies, platformer bodies placed from
+        // packets, puzzle pieces mid-act, a fog fade and a secret door opening.
+        if (ev._isRoadCar || ev._roadTraveller || ev._armyCampaignId || ev._npcZombieGait ||
+            ev._pfRemote || ev._scrambler || ev._secretRevealPhase || ev._fogOfWarTransitioning) {
+            return true;
+        }
+        // People: the NPC controllers walk them through their own update.
+        if (ev._npcRosterSpawn) return true;
+        // An event command may be waiting on any of these to finish.
+        if (ev.isMoveRouteForcing() || ev.isMoving() || ev.isJumping()) return true;
+        const split = window.SplitScreenManager;
+        if (split && split.p2Event === ev) return true;
+        return eventLivesOffScreen(ev);
+    }
+
+    // Inside a camera's window, measured as adjustX/adjustY would with the
+    // frame context's facts.
+    function eventInCamera(ev, displayX, displayY, ctx) {
+        const rx = adjustAxis(ev._realX, displayX, ctx.mapW, ctx.tilesX, ctx.loopX);
+        if (!inWindow(rx, ctx.tilesX, REST_EVENT_MARGIN, REST_EVENT_MARGIN)) return false;
+        const ry = adjustAxis(ev._realY, displayY, ctx.mapH, ctx.tilesY, ctx.loopY);
+        return inWindow(ry, ctx.tilesY, REST_EVENT_MARGIN, REST_EVENT_MARGIN);
+    }
+
+    // Seen by split screen P2's camera, while there is one.
+    function eventOnP2Screen(ev, ctx) {
+        const split = window.SplitScreenManager;
+        if (!split || !split.active) return false;
+        const scene = typeof SceneManager !== 'undefined' ? SceneManager._scene : null;
+        if (!scene || typeof scene._p2DisplayX !== 'number') return false;
+        return eventInCamera(ev, scene._p2DisplayX, scene._p2DisplayY, ctx);
+    }
+
+    // True when the event may skip its update this frame. The map's own camera
+    // is asked first: it is a handful of subtractions, and an event it can see
+    // updates whatever the rest of the list says, so the exemptions are only
+    // ever read for the events off the screen.
+    function eventMayRest(ev) {
+        if (!$gameMap) return false;
+        const ctx = restContext();
+        if (ctx.noEvents) return false;
+        if (eventInCamera(ev, $gameMap._displayX, $gameMap._displayY, ctx)) return false;
+        if (eventMustUpdate(ev)) return false;
+        if (eventOnP2Screen(ev, ctx)) return false;
+        // A walker the engine would still move (its self movement is gated on
+        // isNearTheScreen, a whole screen of slack) keeps walking exactly as
+        // it did before this cull existed.
+        if (ev._moveType !== 0 && ev.isNearTheScreen()) return false;
+        return true;
+    }
+
     const _Game_Event_update = Game_Event.prototype.update;
     Game_Event.prototype.update = function() {
-        if ($gameMap && $gameMap.mapId() === 315 &&
-            this._trigger !== 3 && this._trigger !== 4 &&
-            !this._locked && !this.isMoving()) {
-            const margin = 4;
-            const ox = $gameMap.displayX();
-            const oy = $gameMap.displayY();
-            if (this._realX < ox - margin ||
-                this._realX > ox + $gameMap.screenTileX() + margin ||
-                this._realY < oy - margin ||
-                this._realY > oy + $gameMap.screenTileY() + margin) {
-                return;
-            }
-        }
-        _Game_Event_update.call(this);
+        if (eventMayRest(this)) return;
+        _Game_Event_update.apply(this, arguments);
     };
 
 })();

@@ -148,8 +148,27 @@
     // the class chips call into another plugin to build theirs. None of them
     // change more than a few times a round, so they are read a few times a
     // second rather than sixty; a state that shows a tenth of a second late is
-    // a state nobody saw arrive late.
+    // a state nobody saw arrive late. On the map the pace is slower again: a
+    // chip pass reads the disease and addiction records and sorts the result
+    // for every member, and walking it six times a second showed up in the
+    // frame profile. Hunger and sleep move over game hours, so half a second
+    // is still instant to anyone reading the card. A fight keeps the quick
+    // pace, since a state landing on a member is news the player acts on.
     const CHIP_REFRESH_FRAMES = 6;
+    const CHIP_REFRESH_FRAMES_MAP = 30;
+    // A member's maximum HP and MP are not fields: each one is a param() call
+    // that runs through every plugin layered on the stat chain (gear
+    // modifiers, prosthetics, diseases, weather, the tech tree...), and two of
+    // them per member per drawn frame were most of what the cards cost on a
+    // quiet map. A maximum only moves on a level, a piece of gear or a state,
+    // so on the map it is read on this cadence, and at once whenever the
+    // member's current HP or MP moves. A fight reads it every frame.
+    const MAX_REFRESH_FRAMES_MAP = 15;
+    // The vehicle row asks the vehicle plugin for the vehicle under the party,
+    // its condition summed part by part and its tank. On the map that answer
+    // is held for a few drawn frames: boarding shows a tenth of a second late,
+    // and a tank drains over minutes.
+    const VEHICLE_REFRESH_FRAMES = 6;
     const FLASH_MS = 420;           // damage / healing wash on the HP bar
 
     // Where a meter stops being comfortable and where it becomes an emergency.
@@ -385,9 +404,16 @@
         this._vehicleCard = null;   // the row above them, while the party is aboard one
         this._vehicleCardKey = '';  // which vehicle that row is drawing
         this._layoutKey = '';
+        this._layoutIds = null;     // the actor ids the cards were built for
+        this._layoutVehicle = null; // and the vehicle key, compared in place
+        this._pointerKey = '';      // the pointer-events value last written
+        this._follow = null;        // the canvas box the overlay last followed
         this._needs = new Map();    // actorId -> needs object
         this._needTimer = NEED_REFRESH_FRAMES;
         this._chipTimer = 0;
+        this._maxTimer = 0;         // drawn frames since the maxima were read
+        this._vehicleHeld = null;   // the vehicle status last asked for
+        this._vehicleTimer = 0;     // drawn frames until it is asked again
         this._ascii = false;
         this._lastHp = new Map();   // actorId | 'vehicle:<key>' -> last HP seen
         this._projectedAp = new Map(); // actorId -> AP left after the armed skill
@@ -522,6 +548,8 @@
         this._needs.clear();
         this._needTimer = NEED_REFRESH_FRAMES;
         this._refreshKeys = null;
+        this._vehicleHeld = null;
+        this._vehicleTimer = 0;
         if (this._el) this._el.innerHTML = '';
     };
 
@@ -673,8 +701,23 @@
     // leaves, or the whole roster is swapped out), or when the party gets in or
     // out of a vehicle: that row is built and dropped with the same rebuild.
     PartyHudOverlay.prototype._syncCards = function (members, vehicle) {
+        // Asked every drawn frame, and the answer is almost always "nothing
+        // changed", so it is found by comparing the ids in place against the
+        // ones the cards were last built for. The joined key string (which
+        // canvasBottomY compares against) is only built when they differ.
+        if (this._layoutKey !== '' && this._layoutIds &&
+            this._layoutVehicle === (vehicle ? vehicle.key : null) &&
+            this._layoutIds.length === members.length) {
+            let same = true;
+            for (let i = 0; i < members.length; i++) {
+                if (this._layoutIds[i] !== members[i].actorId()) { same = false; break; }
+            }
+            if (same) return;
+        }
         const key = (vehicle ? vehicleCardKey(vehicle) + '|' : '') +
             members.map(m => m.actorId()).join(',');
+        this._layoutIds = members.map(m => m.actorId());
+        this._layoutVehicle = vehicle ? vehicle.key : null;
         if (key === this._layoutKey) return;
         this._layoutKey = key;
         this._el.innerHTML = '';
@@ -807,13 +850,20 @@
     // that keeps no health record (the Broom) draws no HP line, and one that
     // burns no fuel (the Bike, the Boat, the Broom) draws no fuel line.
     PartyHudOverlay.prototype._writeVehicle = function (card, status) {
+        // The status is held for a few frames (see _vehicleNow), so the same
+        // object coming back means nothing on the row can have moved.
+        if (card.kStatus === status) return;
+        card.kStatus = status;
         if (card.nameKey !== status.name) {
             card.nameKey = status.name;
             card.name.textContent = status.name;
         }
 
         const hasHealth = status.mhp > 0;
-        card.hp.bar.style.display = hasHealth ? '' : 'none';
+        if (card.hpShownKey !== hasHealth) {
+            card.hpShownKey = hasHealth;
+            card.hp.bar.style.display = hasHealth ? '' : 'none';
+        }
         if (hasHealth) {
             const hp = Math.round(status.hp);
             const mhp = Math.round(status.mhp);
@@ -831,8 +881,12 @@
             }
         }
 
-        card.mp.bar.style.display = status.usesFuel ? '' : 'none';
-        if (status.usesFuel) {
+        const usesFuel = !!status.usesFuel;
+        if (card.mpShownKey !== usesFuel) {
+            card.mpShownKey = usesFuel;
+            card.mp.bar.style.display = usesFuel ? '' : 'none';
+        }
+        if (usesFuel) {
             this._writeBar(card.mp, Math.round(status.fuel), Math.round(status.maxFuel), 'fuel');
         }
     };
@@ -847,14 +901,31 @@
         return this._needs.get(id);
     };
 
+    // The vehicle under the party, asked of the vehicle plugin once every
+    // VEHICLE_REFRESH_FRAMES drawn frames and held in between. A fight has no
+    // vehicle row, and forgets the held one so the map asks afresh after it.
+    PartyHudOverlay.prototype._vehicleNow = function (battle) {
+        if (battle) {
+            this._vehicleHeld = null;
+            this._vehicleTimer = 0;
+            return null;
+        }
+        if (this._vehicleTimer <= 0) {
+            this._vehicleHeld = vehicleStatus();
+            this._vehicleTimer = VEHICLE_REFRESH_FRAMES;
+        }
+        this._vehicleTimer--;
+        return this._vehicleHeld;
+    };
+
     PartyHudOverlay.prototype.refresh = function () {
         if (!this._el) return;
+        const battle = inBattle();
         const members = this.members();
-        const vehicle = vehicleStatus();
+        const vehicle = this._vehicleNow(battle);
         this._syncCards(members, vehicle);
         if (vehicle && this._vehicleCard) this._writeVehicle(this._vehicleCard, vehicle);
 
-        const battle = inBattle();
         const acting = actingActor();
         const picker = allyPicker();
         // The needs cadence is settled here, before the loop, because a card
@@ -867,11 +938,20 @@
             this._needTimer = 0;
             this._needs.clear();
         }
-        this._chipTimer = (this._chipTimer + 1) % CHIP_REFRESH_FRAMES;
+        const chipFrames = battle ? CHIP_REFRESH_FRAMES : CHIP_REFRESH_FRAMES_MAP;
+        this._chipTimer = (this._chipTimer + 1) % chipFrames;
         const writeChips = this._chipTimer === 0;
+        this._maxTimer = (this._maxTimer + 1) % MAX_REFRESH_FRAMES_MAP;
+        const readAllMax = battle || writeChips || this._maxTimer === 0;
         // The cards only take the mouse while there is something to aim at, so
-        // they never swallow a click meant for the map underneath them.
-        this._el.style.pointerEvents = picker ? 'auto' : 'none';
+        // they never swallow a click meant for the map underneath them. Written
+        // only when it flips: a style write every frame dirties the element
+        // for the browser's style pass even when the value is the same.
+        const pointer = picker ? 'auto' : 'none';
+        if (this._pointerKey !== pointer) {
+            this._pointerKey = pointer;
+            this._el.style.pointerEvents = pointer;
+        }
 
         for (const actor of members) {
             const card = this._cards.get(actor.actorId());
@@ -887,31 +967,40 @@
             // frame now allocates nothing at all. The chip cadence still forces a
             // pass through, which is what picks up a rename, a level, a change of
             // driver or a new piece of test gear.
+            // The current values are plain fields and are read every frame;
+            // the maxima are param() chains and are read on their own cadence
+            // (MAX_REFRESH_FRAMES_MAP) or the moment a current value moves.
             const isActing = battle && actor === acting && members.length > 1;
             const isTargeted = !!(picker && actor.isSelected && actor.isSelected());
+            const hp = actor.hp;
+            const mp = actor.mp;
+            const dead = actor.isDead();
             const tpNow = Math.floor(actor.tp);
             const apShown = this._projectedAp.has(actor.actorId())
                 ? Math.floor(this._projectedAp.get(actor.actorId()))
                 : tpNow;
+            const readMax = readAllMax || card.kMhp === undefined ||
+                card.kHp !== hp || card.kMp !== mp;
+            const mhp = readMax ? actor.mhp : card.kMhp;
+            const mmp = readMax ? actor.mmp : card.kMmp;
             if (!writeChips &&
-                card.kDead === actor.isDead() && card.kActing === isActing &&
-                card.kTargeted === isTargeted && card.kHp === actor.hp &&
-                card.kMhp === actor.mhp && card.kMp === actor.mp &&
-                card.kMmp === actor.mmp && card.kTp === tpNow && card.kAp === apShown) {
+                card.kDead === dead && card.kActing === isActing &&
+                card.kTargeted === isTargeted && card.kHp === hp &&
+                card.kMhp === mhp && card.kMp === mp &&
+                card.kMmp === mmp && card.kTp === tpNow && card.kAp === apShown) {
                 continue;
             }
-            card.kDead = actor.isDead();
+            card.kDead = dead;
             card.kActing = isActing;
             card.kTargeted = isTargeted;
-            card.kHp = actor.hp;
-            card.kMhp = actor.mhp;
-            card.kMp = actor.mp;
-            card.kMmp = actor.mmp;
+            card.kHp = hp;
+            card.kMhp = mhp;
+            card.kMp = mp;
+            card.kMmp = mmp;
             card.kTp = tpNow;
             card.kAp = apShown;
 
             const needs = battle ? null : this._needsFor(actor);
-            const dead = actor.isDead();
             if (card.deadKey !== dead) {
                 card.deadKey = dead;
                 card.root.classList.toggle('phud-down', dead);
@@ -946,15 +1035,18 @@
                 card.name.textContent = label;
             }
 
-            this._writeFlash(card, actor.actorId(), actor.hp);
-            this._writeBar(card.hp, actor.hp, actor.mhp, 'hp');
+            this._writeFlash(card, actor.actorId(), hp);
+            this._writeBar(card.hp, hp, mhp, 'hp');
             // A severed world has nothing to spend magic on, so the bar itself
             // is taken out of the card (`_makeBar` returns the element as
-            // `.bar`) rather than drawn empty.
-            const noMp = hideMpBar() || actor.mmp <= 0;
-            card.mp.bar.style.display = noMp ? 'none' : '';
+            // `.bar`) rather than drawn empty. Written only when it flips.
+            const noMp = hideMpBar() || mmp <= 0;
+            if (card.mpHiddenKey !== noMp) {
+                card.mpHiddenKey = noMp;
+                card.mp.bar.style.display = noMp ? 'none' : '';
+            }
             if (!noMp) {
-                this._writeBar(card.mp, actor.mp, actor.mmp, 'mp');
+                this._writeBar(card.mp, mp, mmp, 'mp');
             }
             this._writeOrb(card, actor);
 
@@ -1021,9 +1113,11 @@
         if (!view) return;
         const sx = view.width / Graphics.width;
         const sy = view.height / Graphics.height;
-        const key = [view.left, view.top, sx, sy].join('|');
-        if (key === this._followKey) return;
-        this._followKey = key;
+        // Compared as numbers, not joined into a key string: this runs every
+        // drawn frame and the canvas almost never moves.
+        const f = this._follow;
+        if (f && f.left === view.left && f.top === view.top && f.sx === sx && f.sy === sy) return;
+        this._follow = { left: view.left, top: view.top, sx, sy };
         this._el.style.left = (view.left + HUD_X * sx) + 'px';
         this._el.style.top = (view.top + HUD_Y * sy) + 'px';
         this._el.style.setProperty('--phud-scale', sy.toFixed(4));

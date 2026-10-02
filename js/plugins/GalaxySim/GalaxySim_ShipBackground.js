@@ -27,8 +27,16 @@
 
   // Maps that should show the live ship background declare it via the same
   // <Biome: Space> note tag WeatherSystem/WorldMapReturn/etc. already read.
+  // Asked on every frame of every map, so the regex runs once per $dataMap.
+  let _spaceNoteMap = null;
+  let _spaceNoteAnswer = false;
   function isSpaceBiomeMap() {
-    return !!($dataMap && $dataMap.note && /<Biome:\s*Space\s*>/i.test($dataMap.note));
+    if (!$dataMap) return false;
+    if ($dataMap !== _spaceNoteMap) {
+      _spaceNoteMap = $dataMap;
+      _spaceNoteAnswer = !!($dataMap.note && /<Biome:\s*Space\s*>/i.test($dataMap.note));
+    }
+    return _spaceNoteAnswer;
   }
 
   // Planet the ship starts orbiting the very first time the player boards it.
@@ -814,6 +822,30 @@
   let _timerTrip = null;      // trip identity; a change restarts the countdown
   let _arrivalUntil = 0;      // frameCount at which the arrival line is dropped
   let _arrivalName = "";
+  // What the shown text was built from. The countdown is asked for every
+  // frame of a trip and only changes once a second, so the HTML (and the
+  // translations inside it) are rebuilt only when one of these has moved.
+  // Reset whenever _timerHtml is, so a fresh window always gets its text.
+  let _stampKind = null;
+  let _stampA = null;
+  let _stampB = null;
+  let _stampC = null;
+  let _timerEl = null;        // the window the stamp was written into
+  let _posKey = null;         // the canvas box the window was last placed on
+
+  // True when the window already shows text built from these values; records
+  // them otherwise, so the caller can go on and build it.
+  function sameStamp(kind, a, b, c) {
+    if (_timerHtml !== null && _timerEl && _timerEl.isConnected &&
+        _stampKind === kind && _stampA === a && _stampB === b && _stampC === c) {
+      return true;
+    }
+    _stampKind = kind;
+    _stampA = a;
+    _stampB = b;
+    _stampC = c;
+    return false;
+  }
 
   function getShipTimerEl(create) {
     let el = document.getElementById(TIMER_ID);
@@ -823,6 +855,7 @@
       el.className = "html-parchment-overlay";
       document.body.appendChild(el);
       _timerHtml = null;
+      _posKey = null;
     }
     return el || null;
   }
@@ -831,6 +864,8 @@
     const el = document.getElementById(TIMER_ID);
     if (el && el.parentNode) el.parentNode.removeChild(el);
     _timerHtml = null;
+    _timerEl = null;
+    _posKey = null;
   }
 
   // Scale/position the overlay onto the game canvas. It sits in the BOTTOM
@@ -838,10 +873,22 @@
   // ship's own health bar already are, and a countdown parked on top of them
   // buried the lot. Anchored by its own right/bottom edges so a label that
   // changes length grows away from the corner instead of moving the window.
+  //
+  // The canvas box is read through the shared per-frame read (window.FrameBudget,
+  // Core/ParchmentToast.js) where it is loaded, and the seven style writes are
+  // made only when that box or the window has actually changed: the box almost
+  // never moves, and the writes were landing every frame of a trip.
   function syncShipTimerPos(el) {
-    const canvas = document.getElementById("gameCanvas");
-    if (!canvas) return;
-    const r = canvas.getBoundingClientRect();
+    let r = window.FrameBudget && window.FrameBudget.canvasRect ? window.FrameBudget.canvasRect() : null;
+    if (!r) {
+      const canvas = document.getElementById("gameCanvas");
+      if (!canvas) return;
+      r = canvas.getBoundingClientRect();
+    }
+    const key = r.left + "," + r.top + "," + r.right + "," + r.bottom + "," +
+      window.innerWidth + "," + window.innerHeight + "," + Graphics.width + "," + Graphics.height;
+    if (key === _posKey) return;
+    _posKey = key;
     const sx = r.width / Graphics.width;
     const sy = r.height / Graphics.height;
     const s = el.style;
@@ -857,12 +904,22 @@
   function setShipTimerHtml(html) {
     const el = getShipTimerEl(true);
     if (!el) return;
+    if (el !== _timerEl) {
+      _timerEl = el;
+      _posKey = null;
+    }
     if (html !== _timerHtml) {
       _timerHtml = html;
       el.innerHTML = html;
     }
-    el.style.display = "block";
+    if (el.style.display !== "block") el.style.display = "block";
     syncShipTimerPos(el);
+  }
+
+  // A frame whose text has not changed still keeps the window placed on the
+  // canvas, which is a compare and nothing more while the canvas stands still.
+  function keepShipTimer() {
+    syncShipTimerPos(_timerEl);
   }
 
   // Seconds left, derived from the same real-time maths DataManager.
@@ -888,16 +945,19 @@
 
   // The refuel / harvest countdown, written into the very same window that
   // counts an arrival down. Returns null when nothing is being drawn.
+  // Returns false (rather than a string) when the window already says it.
   function pumpTimerHtml(dm, ship) {
     const source = (ship.parkedBody && ship.parkedBody.name) || ship.currentSystem || "";
     if (ship.harvestRun) {
       const left = dm.schrodingeriteHarvestRemaining ? dm.schrodingeriteHarvestRemaining() : 0;
+      if (sameStamp("harvest", source, Math.max(0, Math.ceil(left || 0)), null)) return false;
       return `<div class="travel-timer-label">${T('Galaxy.travel.harvesting')}` +
         `${source ? " · " + source : ""}:</div>` +
         `<div class="travel-timer-time">${clockText(left)}</div>`;
     }
     if (!ship.isRefueling) return null;
     const left = dm.refuelEtaSeconds ? dm.refuelEtaSeconds() : 0;
+    if (sameStamp("refuel", source, Math.max(0, Math.ceil(left || 0)), null)) return false;
     return `<div class="travel-timer-label">${T('Galaxy.travel.refuelling')}` +
       `${source ? " · " + source : ""}:</div>` +
       `<div class="travel-timer-time">${clockText(left)}</div>`;
@@ -929,6 +989,12 @@
       // Parked with the pumps running: the arrival window becomes the refuel
       // window, counting the fill down exactly the way it counts a trip down.
       const pump = pumpTimerHtml(dm, ship);
+      if (pump === false) {
+        _timerTrip = null;
+        _arrivalUntil = 0;
+        keepShipTimer();
+        return;
+      }
       if (pump) {
         _timerTrip = null;
         _arrivalUntil = 0;
@@ -942,7 +1008,8 @@
       }
       _timerTrip = null;
       if (_arrivalUntil && Graphics.frameCount < _arrivalUntil) {
-        setShipTimerHtml(
+        if (sameStamp("arrived", _arrivalName, null, null)) keepShipTimer();
+        else setShipTimerHtml(
           `<div class="travel-timer-complete">${T('Galaxy.travel.arrivedAt', { place: _arrivalName })}</div>`);
       } else {
         _arrivalUntil = 0;
@@ -958,6 +1025,15 @@
       // hands over to the arrival line on the next frame.
       if (typeof dm.updateShipPosition === "function") dm.updateShipPosition();
     }
+    const dest = ship.targetPlanet || ship.targetSystem || "";
+    // Everything the readout prints follows from these: the seconds left, the
+    // trip's duration (the warp slider rescales it), and where it is going.
+    // The route's length is fixed for a trip, and a new trip clears the shown
+    // text above. A frame where none has moved writes nothing.
+    if (sameStamp("travel", eta.remaining, eta.total, dest)) {
+      keepShipTimer();
+      return;
+    }
     const mm = String(Math.floor(eta.remaining / 60)).padStart(2, "0");
     const ss = String(eta.remaining % 60).padStart(2, "0");
     let distHtml = "";
@@ -966,7 +1042,6 @@
       distHtml = `<div class="travel-timer-km">${T('Galaxy.travel.lyRemaining', {
         ly: left >= 10 ? Math.round(left) : left.toFixed(2) })}</div>`;
     }
-    const dest = ship.targetPlanet || ship.targetSystem || "";
     setShipTimerHtml(
       `<div class="travel-timer-label">${T('Galaxy.travel.timeToArrival')}${dest ? " · " + dest : ""}:</div>` +
       `<div class="travel-timer-time">${mm}:${ss}</div>` + distHtml);

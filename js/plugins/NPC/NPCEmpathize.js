@@ -488,6 +488,9 @@
       } else if (this._selectCount > 0) {
         this._selectCount = 0;
         this.setBlendColor([0, 0, 0, 0]);
+        // The blink left MZ's ColorFilter on the portrait as an identity pass;
+        // take it off once nothing else is using it.
+        window.FogOfWar?.detachIdleColorFilter?.(this);
       }
     }
 

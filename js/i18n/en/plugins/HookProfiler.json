@@ -1,0 +1,14 @@
+{
+  "option": {
+    "label": "Hook profiler (needs restart)",
+    "desc": "Times every plugin's share of the map update, one row per plugin and hook, and appends a report to perf-log.txt in the game folder every 30 seconds or when you press Ctrl+F8. Off, it costs nothing.",
+    "restart": "Takes effect after you restart the game."
+  },
+  "enabled": "Hook profiler turned on. Restart the game to start profiling.",
+  "disabled": "Hook profiler turned off. Restart the game to stop profiling.",
+  "alreadyOn": "The hook profiler is already running.",
+  "alreadyOff": "The hook profiler is already off.",
+  "notActive": "The hook profiler is not running. Turn it on and restart the game.",
+  "dumped": "Hook profile of {frames} frames written to {file}.",
+  "dumpedConsole": "Hook profile of {frames} frames printed to the console."
+}

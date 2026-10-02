@@ -353,13 +353,40 @@
     }
 
     /**
+     * A tile with the star (*) passage flag is drawn OVER the player: a roof
+     * edge, a treetop, an archway. It is not underfoot, so it never decides the
+     * step sound.
+     */
+    function isOverheadTile(tileId) {
+        const flags = $gameMap.tilesetFlags();
+        return !!(tileId && flags && (flags[tileId] & 0x10));
+    }
+
+    /**
+     * $gameMap.terrainTag with the star tiles left out: the tag of what is
+     * actually underfoot at (x, y).
+     */
+    function groundTerrainTag(x, y) {
+        if (!$gameMap.isValid(x, y)) return 0;
+        const flags = $gameMap.tilesetFlags();
+        for (const tileId of $gameMap.layeredTiles(x, y)) {
+            if (isOverheadTile(tileId)) continue;
+            const tag = flags[tileId] >> 12;
+            if (tag > 0) return tag;
+        }
+        return 0;
+    }
+
+    /**
      * Material underfoot at (x, y): the topmost layer that names one, so a
      * bridge over water sounds like wood and a bush on snow rustles.
      */
     function materialAt(table, x, y) {
         const overlay = getMaterialData().overlayMaterials;
         for (let z = 3; z >= 0; z--) {
-            const material = materialForTileId(table, $gameMap.tileId(x, y, z));
+            const tileId = $gameMap.tileId(x, y, z);
+            if (isOverheadTile(tileId)) continue;
+            const material = materialForTileId(table, tileId);
             if (!material) continue;
             // Layers 2 and 3 are scenery; only the ones you actually walk on
             // may speak over the ground below them.
@@ -426,7 +453,7 @@
     function getTerrainTagMaterialConfig(character) {
         if (!currentMaterialTable()) return null;
         const data = getMaterialData();
-        const material = data.terrainTagMaterials[String(character.terrainTag())];
+        const material = data.terrainTagMaterials[String(groundTerrainTag(character.x, character.y))];
         return material && data.materials[material] ? configForMaterial(material) : null;
     }
 
@@ -550,7 +577,7 @@
         if (materialSound) return materialSound;
 
         // Priority 3: Terrain tag sounds from plugin parameters
-        const terrainTag = character.terrainTag();
+        const terrainTag = groundTerrainTag(x, y);
         const stepSound = stepSounds.find(sound => sound.terrainTag === terrainTag);
         if (stepSound) return stepSound;
 
@@ -608,8 +635,50 @@
         isInCarMode = false;
     }
 
+    // The farthest any step sound on this map can carry: the largest
+    // maxDistance among the parameter sounds, this tileset's region sounds
+    // and the material sounds. Every walking NPC asked for its step sound on
+    // every animation frame, a region read, a material lookup and a terrain
+    // scan, only for most of them to be too far away to hear. Anybody past
+    // this reach cannot be heard whatever the ground under them, so they are
+    // turned away before the lookup. Cached per tileset, and refreshed when
+    // the material table turns up.
+    let cullKey = null;
+    let cullDistance = 0;
+    function footstepReach() {
+        const tilesetId = $gameMap.tilesetId();
+        const data = getMaterialData();
+        const key = tilesetId + "|" + (data ? 1 : 0);
+        if (key === cullKey) return cullDistance;
+        let reach = 0;
+        for (const sound of stepSounds) reach = Math.max(reach, Number(sound.maxDistance) || 0);
+        const regionSounds = parseRegionSounds(tilesetId);
+        for (const id in regionSounds) reach = Math.max(reach, Number(regionSounds[id].maxDistance) || 0);
+        if (data) {
+            const fallback = data.defaults.maxDistance !== undefined ? data.defaults.maxDistance : 5;
+            reach = Math.max(reach, Number(fallback) || 0);
+            for (const name in data.materials) {
+                const spec = data.materials[name];
+                if (spec && spec.maxDistance !== undefined) reach = Math.max(reach, Number(spec.maxDistance) || 0);
+            }
+        }
+        cullKey = key;
+        cullDistance = reach;
+        return reach;
+    }
+
+    function outOfFootstepReach(character) {
+        if (character === $gamePlayer || !$gamePlayer) return false;
+        const dx = $gamePlayer.x - character.x;
+        const dy = $gamePlayer.y - character.y;
+        const reach = footstepReach();
+        return dx * dx + dy * dy > reach * reach;
+    }
+
     // ====== Footstep sound playback function ======
-    function playFootstepSound(character) {
+    // stepSound: the config the caller already looked up for this step, so it
+    // is not looked up a second time.
+    function playFootstepSound(character, stepSoundIn) {
 
         // Disable footstep sounds for SeaBed biome
         if ($gameSystem._procGenData && $gameSystem._procGenData.currentBiome === "SeaBed") {
@@ -624,7 +693,7 @@
             const isEnemy = evName === "Enemy" || isAquatic || isAmphibious;
             
             if (isEnemy) {
-                const currentIsWater = $gameMap.terrainTag(character.x, character.y) === 3 || $gameMap.regionId(character.x, character.y) === 99;
+                const currentIsWater = groundTerrainTag(character.x, character.y) === 3 || $gameMap.regionId(character.x, character.y) === 99;
                 const wasInWater = character._wasInWater !== undefined ? character._wasInWater : false;
                 
                 if (currentIsWater === wasInWater) {
@@ -696,7 +765,7 @@
         }
     
         // Get sound configuration (region or terrain)
-        const stepSound = getSoundConfig(character);
+        const stepSound = stepSoundIn || getSoundConfig(character);
         
         if (stepSound && stepSound.soundNames.length > 0) {
             const pitch = Math.floor(Math.random() * (stepSound.pitchMax - stepSound.pitchMin + 1)) + stepSound.pitchMin;
@@ -773,10 +842,12 @@
                 }
             }
 
-            if (shouldPlayFootsteps) {
+            // An NPC past the farthest reach of any step sound here is not
+            // heard whatever it stands on, so it never pays for the lookup.
+            if (shouldPlayFootsteps && !outOfFootstepReach(this)) {
                 const stepSound = getSoundConfig(this);
                 if (stepSound && stepSound.animationFrames.includes(newPattern)) {
-                    playFootstepSound(this);
+                    playFootstepSound(this, stepSound);
                 }
             }
         }
@@ -900,6 +971,13 @@
         materials() {
             const data = getMaterialData();
             return data ? Object.keys(data.materials) : [];
+        },
+
+        // Terrain tag and material under (x, y), star (*) tiles left out.
+        groundTerrainTag,
+        materialAt(x, y) {
+            const table = currentMaterialTable();
+            return table ? materialAt(table, x, y) : null;
         },
 
         // Is there a sound for this material name?

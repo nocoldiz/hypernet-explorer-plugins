@@ -317,6 +317,9 @@
                             <span class="inspect-spec-label">${T.priority}</span>
                             <span class="inspect-spec-value">#${this._selectedModIndex + 1} / ${ModManager.mods.length}</span>
                         </div>
+                        <div class="inspect-spec-row">
+                            <span class="inspect-spec-value">${T.restart}</span>
+                        </div>
                     </div>
                     <div class="inspect-actions">${actionsHTML}</div>
                 </div>`;

@@ -1325,6 +1325,63 @@ AudioManager.initializeSpatialAudioOnStart = function(data) {
 // * 2.02 : Audio Manager - SE and UIS
 //==============================================================================================================
 
+// A sound effect played again (a footstep, every step, for the party and every
+// NPC in earshot) used to load and decode its file again each time: the stock
+// createBuffer is a new WebAudio, and MZ keeps no SE cache. The first play of a
+// name also loads a silent template; once that is decoded, later plays share
+// its AudioBuffer, which the Web Audio API lets any number of sources play.
+// Only the whole-file decode path is cached (the streamed VorbisDecoder one
+// keeps the stock behaviour), and the oldest names drop out past LIMIT.
+var MushSeCache = {
+	LIMIT: 64,
+	_templates: new Map(),
+	isComplete: function(t) {
+		return !!t && t._isLoaded && !t._isError && t.isReady() && !t._shouldUseDecoder();
+	},
+	clone: function(t, name) {
+		const b = Object.create(WebAudio.prototype);
+		b.clear();
+		b._url = t._url;
+		b._buffers = t._buffers.slice();
+		b._totalTime = t._totalTime;
+		b._sampleRate = t._sampleRate;
+		b._loopStart = t._loopStart;
+		b._loopLength = t._loopLength;
+		b._loopStartTime = t._loopStartTime;
+		b._loopLengthTime = t._loopLengthTime;
+		b._isLoaded = true;
+		b._isError = false;
+		b._lastUpdateTime = WebAudio._currentTime() - 0.5;
+		b.name = name;
+		b.frameCount = Graphics.frameCount;
+		return b;
+	},
+	buffer: function(folder, name) {
+		const key = folder + name;
+		const t = this._templates.get(key);
+		if (t) {
+			if (this.isComplete(t)) {
+				this._templates.delete(key);
+				this._templates.set(key, t);
+				return this.clone(t, name);
+			}
+			if (t._isError) {
+				this._templates.delete(key);
+				t.destroy();
+			}
+		} else if (WebAudio._context) {
+			this._templates.set(key, AudioManager.createBuffer(folder, name));
+			while (this._templates.size > this.LIMIT) {
+				const oldest = this._templates.keys().next().value;
+				this._templates.get(oldest).destroy();
+				this._templates.delete(oldest);
+			}
+		}
+		return AudioManager.createBuffer(folder, name);
+	}
+};
+window.MushSeCache = MushSeCache;
+
 AudioManager.playSe = function(se, pitchVar, volumeVar) {
     if (se.name) {
         // [Note] Do not play the same sound in the same frame.
@@ -1347,7 +1404,7 @@ AudioManager.playSe = function(se, pitchVar, volumeVar) {
         	var variance = Math.random() * por;
         	seDt.volume = Math.min(Math.round(seDt.volume - set + variance), 100);
         }
-        const buffer = this.createBuffer("se/", se.name);
+        const buffer = MushSeCache.buffer("se/", se.name);
         this.updateSeParameters(buffer, seDt);
         buffer.play(false);
         this._seBuffers.push(buffer);

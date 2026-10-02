@@ -179,8 +179,7 @@
   "unitPrice": "Prezzo unitario",
   "unitSellValue": "Valore di vendita",
   "basePrice": "Prima del mercato",
-  "oilIndex": "Indice PETROLIO",
-  "soulIndex": "Indice ANIMA",
+  "companyIndex": "Azioni {company}",
   "marketUp": "+{percent}% oggi",
   "marketOff": "{percent}% di sconto oggi",
   "refused": {

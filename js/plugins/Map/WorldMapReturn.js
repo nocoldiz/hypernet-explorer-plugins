@@ -141,6 +141,10 @@
     const VAR_WORLD_X  = 43;
     const VAR_WORLD_Y  = 44;
     const VAR_DEST_MAP = 45;
+    // 43/44 change on every world map step; a page conditioned on them is the
+    // only reason to refresh every event on the map for it.
+    window.TimeDateSystem?.quietVariable?.(VAR_WORLD_X);
+    window.TimeDateSystem?.quietVariable?.(VAR_WORLD_Y);
 
     // The <Coords x y> pair the editor's map template was saved with. 1269 of the
     // 1319 maps that carry the tag at all still hold this exact pair, which is a
@@ -1326,6 +1330,7 @@
         }
         questMarkerSprites = [];
         questMarkerKey = null;
+        questMarkerRecheck = 0;
     }
 
     function createQuestMarkers(markers) {
@@ -1361,22 +1366,36 @@
     // Rebuilds when the accepted-objective set changes (or the tilemap is
     // recreated by a scene change), so accepting or finishing a quest updates the
     // board without a reload.
+    // Collecting the markers walks every active quest step through the quest
+    // logs and their i18n text, and it ran on every frame the party stood on
+    // the world map. A quest changes on a talk, a pickup or an arrival, never
+    // between two frames of walking, so the set is re-read every
+    // QUEST_MARKER_RECHECK_FRAMES; a fresh tilemap (transfer, menu) still
+    // rebuilds at once, and the sprites still follow the camera every frame.
+    const QUEST_MARKER_RECHECK_FRAMES = 30;
+    let questMarkerRecheck = 0;
     function updateQuestMarkers() {
         if (!$gameMap) return;
         if ($gameMap.mapId() !== worldMapId) {
             if (questMarkerSprites.length) removeQuestMarkers();
+            questMarkerRecheck = 0;
             return;
         }
-        const markers = collectQuestMarkers();
-        const key = markers.map(m => m.x + ',' + m.y + ':' + m.lines.join('|')).join(';');
         const tilemap = SceneManager._scene && SceneManager._scene._spriteset
             ? SceneManager._scene._spriteset._tilemap : null;
         const stale = questMarkerSprites.length &&
             (questMarkerSprites[0].transform === null || questMarkerSprites[0].parent !== tilemap);
+        if (questMarkerRecheck-- > 0 && !stale) {
+            refreshQuestMarkers();
+            return;
+        }
+        const markers = collectQuestMarkers();
+        const key = markers.map(m => m.x + ',' + m.y + ':' + m.lines.join('|')).join(';');
         if (key !== questMarkerKey || stale) {
             createQuestMarkers(markers);
             questMarkerKey = key;
         }
+        questMarkerRecheck = QUEST_MARKER_RECHECK_FRAMES;
         refreshQuestMarkers();
     }
 
@@ -2508,14 +2527,11 @@
     };
 
     Game_Player.prototype.displayBorderArrows = function(borderTiles) {
-        this.clearBorderArrows();
-        if (!SceneManager._scene || !SceneManager._scene._spriteset) return;
-        const spriteset = SceneManager._scene._spriteset;
-        borderTiles.forEach(border => {
-            const sprite = new Sprite_BorderArrow(border.x, border.y, border.arrow);
-            spriteset._baseSprite.addChild(sprite);
-            borderArrowSprites.push(sprite);
-        });
+        if (!SceneManager._scene || !SceneManager._scene._spriteset) {
+            this.clearBorderArrows();
+            return;
+        }
+        syncArrowList(borderArrowSprites, borderTiles, SceneManager._scene._spriteset._baseSprite, ARROW_YELLOW);
     };
 
     Game_Player.prototype.updateBorderArrows = function() {
@@ -2527,21 +2543,11 @@
     };
 
     Game_Player.prototype.clearProcGenBorderArrows = function() {
-        for (const s of procGenBorderArrows) {
-            if (!s) continue;
-            if (s.parent) s.parent.removeChild(s);
-            if (s.bitmap && s.bitmap.destroy) s.bitmap.destroy();
-        }
-        procGenBorderArrows = [];
+        clearArrowList(procGenBorderArrows);
     };
 
     Game_Player.prototype.displayProcGenBorderArrows = function(borderTiles) {
-        this.clearProcGenBorderArrows();
-        for (const border of borderTiles) {
-            const sprite = new Sprite_BorderArrow(border.x, border.y, border.arrow, '#66ff66');
-            SceneManager._scene._spriteset.addChild(sprite);
-            procGenBorderArrows.push(sprite);
-        }
+        syncArrowList(procGenBorderArrows, borderTiles, SceneManager._scene._spriteset, ARROW_GREEN);
     };
 
     // A spaceport pad is a square of its planet's landing grid like any other
@@ -2557,21 +2563,21 @@
     };
 
     Game_Player.prototype.clearTeleportEventArrows = function() {
-        for (const s of teleportEventArrows) {
-            if (!s) continue;
-            if (s.parent) s.parent.removeChild(s);
-            // Each arrow owns a Bitmap created in its constructor; free it so the
-            // per-frame rebuild does not leak canvas/GPU textures.
-            if (s.bitmap && s.bitmap.destroy) s.bitmap.destroy();
-        }
-        teleportEventArrows = [];
+        // Each arrow owns a Bitmap created in its constructor; clearArrowList
+        // frees it so the rebuild does not leak canvas/GPU textures.
+        clearArrowList(teleportEventArrows);
     };
 
-    // Build transfer-event arrows around an arbitrary tile (px,py) into the given
-    // container, pushing the created sprites onto outArr. Shared by Player 1 and the
+    // Work out the transfer-event arrows around an arbitrary tile (px,py) and
+    // sync them into the given container's list. Shared by Player 1 and the
     // split-screen Player 2 set so both players get the same visual cue.
     function buildTeleportEventArrows(px, py, container, outArr) {
-        if (!container) return;
+        if (!container) { clearArrowList(outArr); return; }
+        const wanted = arrowWantScratch;
+        wanted.length = 0;
+        // The name test stays a plain pass over the events: it runs once per
+        // step, not per frame, and the slots are swapped in place by the
+        // spawners often enough that a cached list would go stale.
         for (const event of $gameMap.events()) {
             if (!event || !$dataMap.events[event._eventId]) continue;
             const name = $dataMap.events[event._eventId].name || '';
@@ -2618,18 +2624,19 @@
                     !$gameMap.isPassable(ax, ay, 6) && !$gameMap.isPassable(ax, ay, 8)) continue;
             }
 
-            const sprite = new Sprite_BorderArrow(ax, ay, char);
-            container.addChild(sprite);
-            outArr.push(sprite);
+            wanted.push({ x: ax, y: ay, arrow: char });
         }
+        syncArrowList(outArr, wanted, container, ARROW_YELLOW);
+        wanted.length = 0;
     }
 
     Game_Player.prototype.updateTeleportEventArrows = function() {
-        this.clearTeleportEventArrows();
-        if ($gameMap.mapId() === worldMapId) return;
-        if (!(SceneManager._scene instanceof Scene_Map)) return;
         const ftData = $gameSystem ? $gameSystem.getFastTravelData() : null;
-        if (ftData && ftData.timerActive && ftData.timerRemainingTime > 0) return;
+        if ($gameMap.mapId() === worldMapId || !(SceneManager._scene instanceof Scene_Map) ||
+            (ftData && ftData.timerActive && ftData.timerRemainingTime > 0)) {
+            this.clearTeleportEventArrows();
+            return;
+        }
         buildTeleportEventArrows(this.x, this.y, SceneManager._scene._spriteset, teleportEventArrows);
     };
 
@@ -2662,6 +2669,43 @@
         arr.length = 0;
     }
 
+    const ARROW_YELLOW = '#ffff66';
+    const ARROW_GREEN = '#66ff66';
+    const arrowWantScratch = [];
+
+    // Bring an arrow list in line with the tiles wanted ({x, y, arrow}) in
+    // the given container. The set is recomputed on the step's first frame
+    // AND on the frame it ends, and nearly always comes out the same as the
+    // one already standing, yet it used to be torn down and rebuilt each
+    // time: a Bitmap and a canvas draw per arrow, to put back what was there.
+    // An arrow still wanted, still in the live container, is kept as it is;
+    // only the ones that left are freed and only the new ones are drawn.
+    function syncArrowList(arr, wanted, container, color) {
+        if (!container) { clearArrowList(arr); return; }
+        const need = new Map();
+        for (const w of wanted) need.set(w.x + ',' + w.y + ',' + w.arrow, w);
+        let kept = 0;
+        for (let i = 0; i < arr.length; i++) {
+            const s = arr[i];
+            if (!s) continue;
+            const key = s._arrowKey;
+            if (!s._destroyed && s.parent === container && s._color === color && need.has(key)) {
+                need.delete(key);
+                arr[kept++] = s;
+                continue;
+            }
+            if (s.parent) s.parent.removeChild(s);
+            if (s.bitmap && s.bitmap.destroy) s.bitmap.destroy();
+        }
+        arr.length = kept;
+        for (const [key, w] of need) {
+            const sprite = new Sprite_BorderArrow(w.x, w.y, w.arrow, color);
+            sprite._arrowKey = key;
+            container.addChild(sprite);
+            arr.push(sprite);
+        }
+    }
+
     Game_Player.prototype.clearP2Arrows = function() {
         clearArrowList(borderArrowSpritesP2);
         clearArrowList(procGenBorderArrowsP2);
@@ -2674,32 +2718,25 @@
         if (!ev || !ss2) { this.clearP2Arrows(); return; }
 
         // World/regular-map border arrows (yellow).
-        clearArrowList(borderArrowSpritesP2);
         if ($gameMap.hasBorderExit() && ss2._baseSprite) {
-            for (const border of $gameMap.getNearbyBorderTiles(ev.x, ev.y)) {
-                const sprite = new Sprite_BorderArrow(border.x, border.y, border.arrow);
-                ss2._baseSprite.addChild(sprite);
-                borderArrowSpritesP2.push(sprite);
-            }
+            syncArrowList(borderArrowSpritesP2, $gameMap.getNearbyBorderTiles(ev.x, ev.y), ss2._baseSprite, ARROW_YELLOW);
+        } else {
+            clearArrowList(borderArrowSpritesP2);
         }
 
         // Proc-map edge arrows (green).
-        clearArrowList(procGenBorderArrowsP2);
         if ($gameMap.mapId() === procMapId) {
-            for (const border of $gameMap.getProcGenBorderTiles(ev.x, ev.y)) {
-                const sprite = new Sprite_BorderArrow(border.x, border.y, border.arrow, '#66ff66');
-                ss2.addChild(sprite);
-                procGenBorderArrowsP2.push(sprite);
-            }
+            syncArrowList(procGenBorderArrowsP2, $gameMap.getProcGenBorderTiles(ev.x, ev.y), ss2, ARROW_GREEN);
+        } else {
+            clearArrowList(procGenBorderArrowsP2);
         }
 
         // Transfer-event arrows (yellow).
-        clearArrowList(teleportEventArrowsP2);
-        if ($gameMap.mapId() !== worldMapId) {
-            const ftData = $gameSystem ? $gameSystem.getFastTravelData() : null;
-            if (!(ftData && ftData.timerActive && ftData.timerRemainingTime > 0)) {
-                buildTeleportEventArrows(ev.x, ev.y, ss2, teleportEventArrowsP2);
-            }
+        const ftData = $gameSystem ? $gameSystem.getFastTravelData() : null;
+        if ($gameMap.mapId() !== worldMapId && !(ftData && ftData.timerActive && ftData.timerRemainingTime > 0)) {
+            buildTeleportEventArrows(ev.x, ev.y, ss2, teleportEventArrowsP2);
+        } else {
+            clearArrowList(teleportEventArrowsP2);
         }
     };
 

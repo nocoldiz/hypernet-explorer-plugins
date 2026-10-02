@@ -5113,6 +5113,13 @@
         pushMapScene(sceneClass);
     }
 
+    // Asked every map tick, so the table is built once here rather than per call.
+    const STICK_HOTKEYS = [
+        ["L3", "vehicles"],
+        ["R3", "build"],
+        ["START", "sleep_menu"],
+    ];
+
     Scene_Map.prototype.updateMenuHotkeys = function () {
         if ($gameMap.isEventRunning()) return;
         // The 3D world is drawn OVER the map and keeps its own keyboard: F, C,
@@ -5130,11 +5137,6 @@
         // AnalogStickInput; binding them in the mapper would make every
         // key sharing that action fire twice. Map/MapLegend.js draws them as the
         // pad chips of their rows.
-        const STICK_HOTKEYS = [
-            ["L3", "vehicles"],
-            ["R3", "build"],
-            ["START", "sleep_menu"],
-        ];
         const stick = window.AnalogStickInput;
         if (stick && stick.isButtonTriggered && stick.BUTTON) {
             for (const [face, symbol] of STICK_HOTKEYS) {

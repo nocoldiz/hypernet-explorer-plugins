@@ -2304,14 +2304,16 @@
     let _placeProfileCache = null;
 
     BSE.Helpers.getPlaceEncounterProfile = function(biomeName) {
-        const here = BSE.Helpers.getWorldPosition() || { x: 0, y: 0 };
         const place = BSE.Helpers.getPlaceLevel() || BSE.Helpers.getPartyReferenceLevel();
         const era = BSE.Helpers.getSpawnEra();
         // The band the spawner would use here, the country's own included, so
         // the card reads what would actually walk out rather than what the
         // biome alone would field.
         const band = BSE.Helpers.getSpawnBand();
-        const key = [here.x, here.y, biomeName || '', place, Math.floor(era.year),
+        // The square itself is not in the key: nothing below reads it, and on
+        // the world map it changed on every step, so the cache never held and
+        // every step re-filtered all of $dataTroops for the HUD.
+        const key = [biomeName || '', place, Math.floor(era.year),
             BSE.Helpers.getNationId(), BSE.Helpers.getPopulationMode(),
             band.nation || '', band.min, band.max].join('|');
         if (_placeProfileCache && _placeProfileCache.key === key) return _placeProfileCache.value;
@@ -3664,7 +3666,9 @@
         // on the first AI tick, since a roaming monster is placed after this.
         this._aiState = 'idle';
         this._aiTimer = 0;
-        this._aiScan = 0;
+        // Seeded off the event id so a map's monsters do not all scan on the
+        // same frame (each scan walks every live enemy).
+        this._aiScan = (this._eventId || 0) % AI_SCAN_INTERVAL;
         this._aiRoused = 0;
         this._aiHome = null;
         this._aiLast = null;
@@ -4622,6 +4626,11 @@
 
     Game_Event.prototype.isAquaticEnemy = function() {
         if (this._isAquaticEnemy !== undefined && this._isAquaticEnemy !== false) return this._isAquaticEnemy === true;
+        // A "no" is held too, for as long as the troop it was asked of: the
+        // passability overrides ask it on every check for every monster, and
+        // most of them are not water creatures.
+        if (this._isAquaticEnemy === false && this._aquaticFor === this._fixedTroopId) return false;
+        this._aquaticFor = this._fixedTroopId;
         if (!this._fixedTroopId || this._fixedTroopId <= 0) { this._isAquaticEnemy = false; return false; }
         const troop = $dataTroops[this._fixedTroopId];
         if (!troop || !troop.members.length) { this._isAquaticEnemy = false; return false; }
@@ -4634,6 +4643,11 @@
 
     Game_Event.prototype.isAmphibiousEnemy = function() {
         if (this._isAmphibiousEnemy !== undefined && this._isAmphibiousEnemy !== false) return this._isAmphibiousEnemy === true;
+        // A "no" is held too, for as long as the troop it was asked of: the
+        // passability overrides ask it on every check for every monster, and
+        // most of them are not water creatures.
+        if (this._isAmphibiousEnemy === false && this._amphibiousFor === this._fixedTroopId) return false;
+        this._amphibiousFor = this._fixedTroopId;
         if (!this._fixedTroopId || this._fixedTroopId <= 0) { this._isAmphibiousEnemy = false; return false; }
         const troop = $dataTroops[this._fixedTroopId];
         if (!troop || !troop.members.length) { this._isAmphibiousEnemy = false; return false; }
@@ -4715,29 +4729,48 @@
     // 9. Game_Event - realMoveSpeed override
     // ========================================================================
 
+    // realMoveSpeed is asked every frame by every event, through
+    // animationWait as well as by the move itself, and the terrain factor
+    // below used to be worked out from scratch each time: two database
+    // lookups, the archetype, the water test (on the planet surface a
+    // terrain tag and a passability read) and the region. None of it changes
+    // while the monster stands on one tile, so the factor is kept on the
+    // event, keyed on the tile, the map and the troop, and only worked out
+    // again when one of those moves. Plain fields rather than a key string,
+    // so a still crowd allocates nothing.
+    BSE.Helpers.monsterSpeedFactor = function(ev) {
+        if (!BSE.Helpers.isMonsterEvent(ev) || !(ev._fixedTroopId > 0)) return 1;
+        const troop = $dataTroops[ev._fixedTroopId];
+        if (!troop || !troop.members.length) return 1;
+        const enemyData = $dataEnemies[troop.members[0].enemyId];
+        if (!enemyData) return 1;
+        const archetype = BSE.Helpers.getEnemyArchetype(enemyData);
+        if (BSE.Helpers.getFlyingArchetype(archetype)) return 1;
+        if (BSE.Helpers.getAquaticArchetype(archetype)) return 1;
+        const currentIsWater = BSE.Helpers.isWaterSpawnTile(ev.x, ev.y);
+        if (BSE.Helpers.getAmphibiousArchetype(archetype)) {
+            return currentIsWater ? 1.5 : 0.67;
+        }
+        const hasClimbTag = BSE.Helpers.enemyHasClimb(enemyData);
+        if (hasClimbTag && $gameMap.regionId(ev.x, ev.y) === 4) return 0.33;
+        if (currentIsWater) return 0.5;
+        return 1;
+    };
+
     const _Game_Event_realMoveSpeed = Game_Event.prototype.realMoveSpeed;
     Game_Event.prototype.realMoveSpeed = function() {
-        let speed = _Game_Event_realMoveSpeed.call(this);
-        if (BSE.Helpers.isMonsterEvent(this) && this._fixedTroopId > 0) {
-            const troop = $dataTroops[this._fixedTroopId];
-            if (troop && troop.members.length > 0) {
-                const enemyData = $dataEnemies[troop.members[0].enemyId];
-                if (enemyData) {
-                    const archetype = BSE.Helpers.getEnemyArchetype(enemyData);
-                    const currentIsWater = BSE.Helpers.isWaterSpawnTile(this.x, this.y);
-                    const regionId = $gameMap.regionId(this.x, this.y);
-                    if (BSE.Helpers.getFlyingArchetype(archetype)) return speed;
-                    if (BSE.Helpers.getAquaticArchetype(archetype)) return speed;
-                    if (BSE.Helpers.getAmphibiousArchetype(archetype)) {
-                        return currentIsWater ? speed * 1.5 : speed * 0.67;
-                    }
-                    const hasClimbTag = BSE.Helpers.enemyHasClimb(enemyData);
-                    if (hasClimbTag && regionId === 4) return speed * 0.33;
-                    if (currentIsWater) return speed * 0.5;
-                }
-            }
+        const speed = _Game_Event_realMoveSpeed.call(this);
+        if (!(this._fixedTroopId > 0)) return speed;
+        const mapId = $gameMap ? $gameMap.mapId() : 0;
+        if (this._bseSpeedX !== this.x || this._bseSpeedY !== this.y ||
+            this._bseSpeedMap !== mapId || this._bseSpeedTroop !== this._fixedTroopId) {
+            this._bseSpeedX = this.x;
+            this._bseSpeedY = this.y;
+            this._bseSpeedMap = mapId;
+            this._bseSpeedTroop = this._fixedTroopId;
+            this._bseSpeedFactor = BSE.Helpers.monsterSpeedFactor(this);
         }
-        return speed;
+        return this._bseSpeedFactor === 1 ? speed : speed * this._bseSpeedFactor;
     };
 
     // ========================================================================
@@ -6341,11 +6374,20 @@
         this.updateAirborneShadow();
     };
 
+    // Run for every character sprite on the screen every frame, and almost
+    // none of them fly: whether the character is an airborne monster is a
+    // field read kept on the event (airborneEvent), so it is asked before the
+    // map is searched for the live event, and a sprite with no shadow to take
+    // away is done there.
     Sprite_Character.prototype.updateAirborneShadow = function() {
         const event = this._character;
-        const live = event && event.eventId && $gameMap && $gameMap.event
+        if (!event || !airborneEvent(event)) {
+            if (this._airborneShadow) this.removeAirborneShadow();
+            return;
+        }
+        const live = event.eventId && $gameMap && $gameMap.event
             ? $gameMap.event(event.eventId()) : null;
-        if (!event || live !== event || !airborneEvent(event) || !this.parent) {
+        if (live !== event || !this.parent) {
             return this.removeAirborneShadow();
         }
         let shadow = this._airborneShadow;

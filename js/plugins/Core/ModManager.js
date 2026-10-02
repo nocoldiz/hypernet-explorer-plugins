@@ -11,9 +11,12 @@
  * ============================================================================
  * This plugin allows you to have a "mods" folder in your project root.
  * Inside "mods", each folder is treated as a separate mod.
- * Mods can replicate the game's folder structure to override default files
- * or add entirely new ones.
- * 
+ * Mods replicate the game's folder structure to override default files
+ * or add entirely new ones. ANY file of the game can be replaced this way:
+ * data/, js/db/, js/i18n/, img/, audio/, fonts/, css/ and the plugin scripts
+ * under js/plugins/ alike. The mod lower in the list wins a file two mods
+ * carry. Changes to the list apply at the next start.
+ *
  * Example Structure:
  * MyGame/
  *   data/
@@ -23,11 +26,20 @@
  *       data/
  *         Actors.json (Overrides default Actors.json)
  *         CustomData.json (Loaded dynamically into $dataCustom.CustomData)
+ *       js/
+ *         db/
+ *           NPC/
+ *             Orientations.json (Overrides js/db/NPC/Orientations.json)
  *       img/
  *         pictures/
  *           new_pic.png (Can be used in game like a normal picture)
  *     AnotherMod/
  *       ...
+ *
+ * js/main.js loads this plugin before every other one, so its hooks are in
+ * place before the first plugin script is requested. Not overridable: this
+ * file itself, js/main.js, js/plugins.js and the engine scripts, which have
+ * all run by then.
  * 
  * ============================================================================
  * Controls in Mod Manager Menu
@@ -263,25 +275,502 @@ window.$dataCustom = {};
         return workshop.updateItem(id, update, this.STEAM_APP_ID);
     };
 
-    // Resolves a path. If an active mod overrides it, returns the mod path.
-    ModManager.resolvePath = function (localPath) {
-        if (!Utils.isNwjs()) return localPath;
+    //-----------------------------------------------------------------------------
+    // The mod file index
+    //-----------------------------------------------------------------------------
+    //
+    // A mod is a copy of the game's own folder tree holding only the files it
+    // changes or adds: mods/<Mod>/js/db/NPC/Orientations.json stands in for
+    // js/db/NPC/Orientations.json, mods/<Mod>/img/faces/New.png is a face the
+    // game never shipped. Any file can be replaced that way, data, js/db, img,
+    // audio, fonts, css and the plugins themselves.
+    //
+    // The index is built once, at boot, from the active mods in load order, so
+    // the mod lower in the list wins a file two of them carry. Toggling or
+    // reordering takes effect at the next start: a plugin that has already run
+    // and a JSON that has already been parsed cannot be swapped under the game.
+    //
+    // Every way the game reads a file asks the index, one hook each: XHR and
+    // fetch, the fs calls, Bitmap and WebAudio (through AssetCaseResolver, which
+    // owns those two and knows about encrypted builds), the src and href of
+    // elements, and asset urls written into markup and styles. Plugin scripts
+    // are covered because js/main.js runs this file before any plugin is asked
+    // for. With no active mod nothing is hooked at all.
 
-        // Traverse backwards so mods at the bottom of the list (highest priority) get checked first
-        for (let i = this.mods.length - 1; i >= 0; i--) {
-            const mod = this.mods[i];
-            if (mod.active) {
-                const moddedPath = mod.path ? this.path.join(mod.path, localPath) : this.path.join(this.modsDir, mod.name, localPath);
-                if (this.fs.existsSync(moddedPath)) {
-                    // Return formatted for web request
-                    if (mod.path) {
-                        return "file:///" + moddedPath.replace(/\\/g, "/");
+    // Top level folders a mod cannot stand in for: its own siblings and the
+    // player's saves.
+    const SKIP_ROOTS = { mods: true, save: true };  // i18n-ignore  folder names
+    // The engine's encrypted twin of an asset, "<name>.png_".
+    const ENCRYPTED_EXT = /\.(png|jpe?g|ogg|m4a)_$/i;
+    // Roots whose files never appear inside markup or a style, so the text
+    // rewrite need not look for them.
+    const NON_DOC_ROOTS = { data: true, js: true };  // i18n-ignore  folder names
+    const MIME = {
+        json: 'application/json', txt: 'text/plain', csv: 'text/csv', js: 'text/javascript',  // i18n-ignore  mime types
+        css: 'text/css', html: 'text/html', png: 'image/png', jpg: 'image/jpeg',  // i18n-ignore  mime types
+        jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', svg: 'image/svg+xml',  // i18n-ignore  mime types
+        ogg: 'audio/ogg', m4a: 'audio/mp4', mp3: 'audio/mpeg', wav: 'audio/wav',  // i18n-ignore  mime types
+        woff: 'font/woff', woff2: 'font/woff2', ttf: 'font/ttf', otf: 'font/otf'  // i18n-ignore  mime types
+    };
+
+    ModManager.files = Object.create(null);      // "img/faces/A.png" -> entry
+    ModManager.filesLower = Object.create(null); // lower-cased key -> key
+    ModManager.dirs = Object.create(null);       // "img/faces" -> { file: abs, names: {} }
+
+    function encodePath(rel) {
+        return rel.split('/').map(encodeURIComponent).join('/');
+    }
+
+    function fileUrl(abs) {
+        const slashed = abs.replace(/\\/g, '/').replace(/^\/+/, '');
+        return 'file:///' + encodeURI(slashed).replace(/#/g, '%23').replace(/\?/g, '%3F');  // i18n-ignore  url scheme
+    }
+
+    ModManager.modRoot = function (mod) {
+        return mod.path || this.path.join(this.modsDir, mod.name);
+    };
+
+    ModManager.buildFileIndex = function () {
+        const fs = this.fs, path = this.path;
+        const files = Object.create(null);
+        const lower = Object.create(null);
+        const dirs = Object.create(null);
+        const addName = (relDir, name, abs) => {
+            const d = dirs[relDir] || (dirs[relDir] = { file: abs, names: Object.create(null) });
+            d.names[name] = true;
+        };
+        const put = (key, entry) => {
+            files[key] = entry;
+            lower[key.toLowerCase()] = key;
+        };
+
+        for (const mod of this.mods) {
+            if (!mod.active) continue;
+            const root = this.modRoot(mod);
+            const walk = (absDir, relDir) => {
+                let names;
+                try { names = fs.readdirSync(absDir); } catch (e) { return; }
+                for (const listed of names) {
+                    if (listed.charAt(0) === '.') continue;
+                    if (!relDir && SKIP_ROOTS[listed.toLowerCase()]) continue;
+                    // lstat is the one call an encrypted build's decrypt shim
+                    // leaves alone, and that shim lists "x.png_" as "x.png", so
+                    // the real name on disk is asked for here rather than trusted.
+                    let raw = listed, abs = path.join(absDir, listed), st = null;
+                    try { st = fs.lstatSync(abs); } catch (e) {
+                        try { st = fs.lstatSync(abs + '_'); raw += '_'; abs += '_'; } catch (e2) { continue; }
                     }
-                    return `mods/${mod.name}/${localPath}`;  // i18n-ignore  asset path
+                    if (st.isDirectory()) {
+                        const sub = relDir ? relDir + '/' + raw : raw;
+                        addName(relDir, raw, absDir);
+                        if (!dirs[sub]) dirs[sub] = { file: abs, names: Object.create(null) };
+                        walk(abs, sub);
+                        continue;
+                    }
+                    const key = relDir ? relDir + '/' + raw : raw;
+                    const local = mod.path ? null : 'mods/' + encodePath(mod.name) + '/' + encodePath(key);  // i18n-ignore  asset path
+                    put(key, { mod: mod.name, file: abs, url: local || fileUrl(abs), encrypted: false });
+                    addName(relDir, raw, absDir);
+                    if (ENCRYPTED_EXT.test(raw)) {
+                        // The plain name is what the engine asks for; it adds
+                        // the "_" itself once told the bytes are encrypted.
+                        const plain = key.slice(0, -1);
+                        if (!files[plain] || files[plain].mod !== mod.name) {
+                            put(plain, {
+                                mod: mod.name, file: abs, encrypted: true,
+                                url: local ? local.slice(0, -1) : fileUrl(abs).slice(0, -1)
+                            });
+                        }
+                    }
                 }
+            };
+            walk(root, '');
+        }
+
+        this.files = files;
+        this.filesLower = lower;
+        this.dirs = dirs;
+        this._docRegex = undefined;
+        const count = Object.keys(files).length;
+        if (count) console.log(`ModManager: ${count} game files overridden or added by mods.`);
+        return count;
+    };
+
+    ModManager.hasFiles = function () {
+        return Object.keys(this.files).length > 0;
+    };
+
+    // A game-relative path ("js/db/NPC/Orientations.json") as the index keys it:
+    // decoded, "." and ".." folded, forward slashes. null for anything that
+    // cannot be a game file a mod may replace.
+    ModManager.normalizeRel = function (rel) {
+        if (typeof rel !== 'string') return null;
+        const out = [];
+        for (const part of rel.replace(/\\/g, '/').split('/')) {
+            if (!part || part === '.') continue;
+            if (part === '..') {
+                if (!out.length) return null;
+                out.pop();
+                continue;
+            }
+            let decoded = part;
+            try { decoded = decodeURIComponent(part); } catch (e) { /* malformed escape: keep it raw */ }
+            out.push(decoded);
+        }
+        if (!out.length || SKIP_ROOTS[out[0].toLowerCase()]) return null;
+        return out.join('/');
+    };
+
+    // The index entry standing in for a game-relative path, or null. A url
+    // differing only in case still finds it, the way AssetCaseResolver lets the
+    // game's own assets be found.
+    ModManager.entryFor = function (rel) {
+        const key = this.normalizeRel(rel);
+        if (key === null) return null;
+        if (this.files[key]) return this.files[key];
+        const real = this.filesLower[key.toLowerCase()];
+        return real ? this.files[real] : null;
+    };
+
+    // The folder this page lives in, which a relative url is resolved against.
+    let pageBase = null;
+    function pageBaseUrl() {
+        if (pageBase === null) {
+            try {
+                const here = (typeof document !== 'undefined' && document.baseURI) || location.href;
+                pageBase = here.slice(0, here.lastIndexOf('/') + 1);
+            } catch (e) {
+                pageBase = '';
             }
         }
-        return localPath; // Fallback to base game path
+        return pageBase;
+    }
+
+    // Splits a url into the game-relative path it names, the prefix it was
+    // written with (the page folder, for an absolute one) and its ?query#hash.
+    // null when it names nothing in the game folder.
+    ModManager.parseUrl = function (url) {
+        if (typeof url !== 'string' || !url) return null;
+        let s = url, tail = '', prefix = '';
+        const cut = s.search(/[?#]/);
+        if (cut >= 0) { tail = s.slice(cut); s = s.slice(0, cut); }
+        const base = pageBaseUrl();
+        if (base && s.indexOf(base) === 0) {
+            prefix = base;
+            s = s.slice(base.length);
+        } else if (/^file:/i.test(s)) {
+            let abs;
+            try { abs = decodeURIComponent(s.replace(/^file:\/*/i, process.platform === 'win32' ? '' : '/')); } catch (e) { return null; }  // i18n-ignore  platform id
+            const rel = this.relFromFs(abs);
+            if (rel === null) return null;
+            return { rel: rel, prefix: null, tail: tail };
+        } else if (/^[a-z][a-z0-9+.-]*:/i.test(s) || s.indexOf('//') === 0) {
+            return null;
+        }
+        return { rel: s, prefix: prefix, tail: tail };
+    };
+
+    function urlOf(entry, parsed) {
+        if (/^file:/i.test(entry.url)) return entry.url + parsed.tail;
+        if (parsed.prefix === null) return fileUrl(entry.file) + parsed.tail;
+        return parsed.prefix + entry.url + parsed.tail;
+    }
+
+    // The url a request for `url` should go to instead, or null to leave it be.
+    // An encrypted-only mod file is left to the engine's own loaders, which are
+    // the ones that know to decrypt it (see assetFor).
+    ModManager.redirectUrl = function (url) {
+        const parsed = this.parseUrl(url);
+        if (!parsed) return null;
+        const entry = this.entryFor(parsed.rel);
+        if (!entry || entry.encrypted) return null;
+        return urlOf(entry, parsed);
+    };
+
+    // For Bitmap and WebAudio (AssetCaseResolver): the mod url to load and
+    // whether its bytes are encrypted. Asked per file because a mod ships plain
+    // files whatever the build it is dropped into says about its own.
+    ModManager.assetFor = function (url) {
+        const parsed = this.parseUrl(url);
+        if (!parsed) return null;
+        const entry = this.entryFor(parsed.rel);
+        return entry ? { url: urlOf(entry, parsed), encrypted: entry.encrypted } : null;
+    };
+
+    // A file system path as a game-relative one, or null when it lies outside
+    // the game folder.
+    ModManager.relFromFs = function (target) {
+        if (typeof target !== 'string' || !target) return null;
+        const rel = this.path.relative(this.basePath, this.path.resolve(target));
+        if (rel === '' || rel.indexOf('..') === 0 || this.path.isAbsolute(rel)) return null;
+        return this.normalizeRel(rel.split(this.path.sep).join('/'));
+    };
+
+    // The real path a file system call on `target` should touch: the mod's
+    // file, a folder only a mod has, or `target` itself.
+    ModManager.fsTarget = function (target) {
+        const rel = this.relFromFs(target);
+        if (rel === null) return target;
+        if (this.files[rel]) return this.files[rel].file;
+        const dir = this.dirs[rel];
+        if (dir && !(origFs.existsSync || this.fs.existsSync)(target)) return dir.file;
+        return target;
+    };
+
+    //-----------------------------------------------------------------------------
+    // The hooks
+    //-----------------------------------------------------------------------------
+
+    // The unhooked fs calls, so the hooks can ask the disk itself.
+    const origFs = {};
+
+    ModManager.installFsHooks = function () {
+        const fs = this.fs;
+        const self = this;
+        for (const name of Object.keys(fs)) {
+            if (typeof fs[name] === 'function') origFs[name] = fs[name];
+        }
+
+        // Calls whose first argument is the path read.
+        const PATH_FIRST = [
+            'readFileSync', 'readFile', 'existsSync', 'exists', 'statSync', 'stat',  // i18n-ignore  fs api
+            'lstatSync', 'lstat', 'accessSync', 'access', 'openSync', 'open',  // i18n-ignore  fs api
+            'createReadStream'  // i18n-ignore  fs api
+        ];
+        for (const name of PATH_FIRST) {
+            const orig = fs[name];
+            if (typeof orig !== 'function') continue;
+            fs[name] = function (target) {
+                const args = Array.prototype.slice.call(arguments);
+                // Only a read may be redirected: a write lands where it was
+                // aimed.
+                if (name.indexOf('open') === 0 && !isReadFlag(args[1])) return orig.apply(this, args);
+                args[0] = self.fsTarget(target);
+                return orig.apply(this, args);
+            };
+        }
+
+        const mergeNames = (target, entries, options) => {
+            const rel = target === self.basePath ? '' : self.relFromFs(target);
+            const dir = rel === null ? null : self.dirs[rel];
+            if (!dir || !Array.isArray(entries)) return entries;
+            const dirents = !!(options && typeof options === 'object' && options.withFileTypes);  // i18n-ignore  fs option
+            const have = new Set(entries.map(e => (dirents ? e.name : String(e))));
+            for (const name of Object.keys(dir.names)) {
+                const shown = ENCRYPTED_EXT.test(name) && have.has(name.slice(0, -1)) ? null : name;
+                if (shown === null || have.has(shown)) continue;
+                have.add(shown);
+                if (!dirents) { entries.push(shown); continue; }
+                const isDir = !!self.dirs[rel ? rel + '/' + shown : shown];
+                entries.push({
+                    name: shown,
+                    isFile: () => !isDir, isDirectory: () => isDir, isSymbolicLink: () => false,
+                    isBlockDevice: () => false, isCharacterDevice: () => false,
+                    isFIFO: () => false, isSocket: () => false
+                });
+            }
+            return entries;
+        };
+
+        const readdirSync = fs.readdirSync;
+        fs.readdirSync = function (target, options) {
+            let entries;
+            try {
+                entries = readdirSync.apply(this, arguments);
+            } catch (e) {
+                const rel = self.relFromFs(target);
+                if (rel === null || !self.dirs[rel]) throw e;
+                entries = [];
+            }
+            return mergeNames(target, entries, options);
+        };
+
+        const readdir = fs.readdir;
+        fs.readdir = function (target) {
+            const args = Array.prototype.slice.call(arguments);
+            const callback = args[args.length - 1];
+            const options = args.length > 2 ? args[1] : null;
+            if (typeof callback === 'function') {
+                args[args.length - 1] = function (err, entries) {
+                    if (err) {
+                        const rel = self.relFromFs(target);
+                        if (rel === null || !self.dirs[rel]) return callback(err, entries);
+                        entries = [];
+                    }
+                    callback(null, mergeNames(target, entries, options));
+                };
+            }
+            return readdir.apply(this, args);
+        };
+
+        if (fs.promises) {
+            const promises = fs.promises;
+            for (const name of ['readFile', 'stat', 'lstat', 'access']) {  // i18n-ignore  fs api
+                const orig = promises[name];
+                if (typeof orig !== 'function') continue;
+                promises[name] = function (target) {
+                    const args = Array.prototype.slice.call(arguments);
+                    args[0] = self.fsTarget(target);
+                    return orig.apply(this, args);
+                };
+            }
+            const pReaddir = promises.readdir;
+            if (typeof pReaddir === 'function') {
+                promises.readdir = function (target, options) {
+                    return pReaddir.apply(this, arguments).catch(err => {
+                        const rel = self.relFromFs(target);
+                        if (rel === null || !self.dirs[rel]) throw err;
+                        return [];
+                    }).then(entries => mergeNames(target, entries, options));
+                };
+            }
+        }
+    };
+
+    function isReadFlag(flags) {
+        return flags === undefined || flags === null || flags === 'r' || flags === 'rs' ||  // i18n-ignore  fs flags
+            flags === 0 || (typeof flags === 'object' && isReadFlag(flags.flags));
+    }
+
+    ModManager.installRequestHooks = function () {
+        const self = this;
+
+        if (typeof XMLHttpRequest !== 'undefined') {
+            const open = XMLHttpRequest.prototype.open;
+            XMLHttpRequest.prototype.open = function (method, url) {
+                const to = self.redirectUrl(url);
+                if (!to) return open.apply(this, arguments);
+                const args = Array.prototype.slice.call(arguments);
+                args[1] = to;
+                return open.apply(this, args);
+            };
+        }
+
+        // fetch cannot read file: urls, which is where a Workshop mod lives, so
+        // a modded file is answered straight off the disk instead.
+        if (typeof fetch === 'function' && typeof Response === 'function') {
+            const fetchOrig = window.fetch;
+            window.fetch = function (input, init) {
+                const url = typeof input === 'string' ? input : (input && typeof input.url === 'string' ? input.url : null);
+                const parsed = url ? self.parseUrl(url) : null;
+                const entry = parsed ? self.entryFor(parsed.rel) : null;
+                if (!entry || entry.encrypted) return fetchOrig.apply(this, arguments);
+                const ext = entry.file.slice(entry.file.lastIndexOf('.') + 1).toLowerCase();
+                return self.fs.promises.readFile(entry.file).then(buf => new Response(new Uint8Array(buf), {
+                    status: 200,
+                    headers: { 'Content-Type': MIME[ext] || 'application/octet-stream' }  // i18n-ignore  http header
+                }));
+            };
+        }
+    };
+
+    // Asset urls inside markup and styles: url(img/x.png), src="img/x.png",
+    // written relative to the page or absolute under its folder.
+    ModManager.docRegex = function () {
+        if (this._docRegex !== undefined) return this._docRegex;
+        const roots = Object.keys((this.dirs[''] && this.dirs[''].names) || {})
+            .filter(r => this.dirs[r] && !NON_DOC_ROOTS[r.toLowerCase()])
+            .map(r => r.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+        if (!roots.length) return (this._docRegex = null);
+        const base = pageBaseUrl().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        this._docRegex = new RegExp(
+            '(?<![A-Za-z0-9_.\\-/:])(' + (base ? base : '(?!)') + ')?' +
+            '((?:' + roots.join('|') + ')/[^"\'()<>\\\\?#\\s]+?\\.[A-Za-z0-9]+)(?![A-Za-z0-9_])', 'gi');
+        return this._docRegex;
+    };
+
+    ModManager.rewriteDoc = function (text) {
+        if (typeof text !== 'string' || text.indexOf('/') < 0) return text;
+        const re = this.docRegex();
+        if (!re) return text;
+        re.lastIndex = 0;
+        return text.replace(re, (all, base, rel) => this.redirectUrl((base || '') + rel) || all);
+    };
+
+    ModManager.installDomHooks = function () {
+        if (typeof Element === 'undefined') return;
+        const self = this;
+        const asUrl = value => (typeof value === 'string' ? (self.redirectUrl(value) || value) : value);
+        const asDoc = value => self.rewriteDoc(value);
+
+        const patchSetter = (proto, prop, transform) => {
+            const desc = proto && Object.getOwnPropertyDescriptor(proto, prop);
+            if (!desc || !desc.set) return false;
+            const setter = desc.set;
+            Object.defineProperty(proto, prop, {
+                get: desc.get,
+                set: function (value) { setter.call(this, transform.call(this, value)); },
+                configurable: true,
+                enumerable: desc.enumerable
+            });
+            return true;
+        };
+
+        // Plugin scripts first: PluginManager.loadScript sets script.src.
+        patchSetter(window.HTMLScriptElement && HTMLScriptElement.prototype, 'src', asUrl);
+        patchSetter(window.HTMLImageElement && HTMLImageElement.prototype, 'src', asUrl);
+        patchSetter(window.HTMLMediaElement && HTMLMediaElement.prototype, 'src', asUrl);
+        patchSetter(window.HTMLSourceElement && HTMLSourceElement.prototype, 'src', asUrl);
+        patchSetter(window.HTMLLinkElement && HTMLLinkElement.prototype, 'href', asUrl);
+
+        if (!this.docRegex()) return;
+        patchSetter(Element.prototype, 'innerHTML', asDoc);
+        patchSetter(Element.prototype, 'outerHTML', asDoc);
+        const insertAdjacentHTML = Element.prototype.insertAdjacentHTML;
+        Element.prototype.insertAdjacentHTML = function (position, html) {
+            return insertAdjacentHTML.call(this, position, asDoc(html));
+        };
+
+        const setAttribute = Element.prototype.setAttribute;
+        Element.prototype.setAttribute = function (name, value) {
+            const attr = String(name).toLowerCase();
+            if (attr === 'src' || attr === 'href') value = asUrl(value);  // i18n-ignore  attribute names
+            else if (attr === 'style') value = asDoc(value);  // i18n-ignore  attribute name
+            return setAttribute.call(this, name, value);
+        };
+
+        if (typeof CSSStyleDeclaration === 'undefined') return;
+        const style = CSSStyleDeclaration.prototype;
+        const setProperty = style.setProperty;
+        style.setProperty = function (name, value, priority) {
+            return setProperty.call(this, name, asDoc(value), priority);
+        };
+        // Camel-cased style properties are served by an interceptor with no
+        // descriptor to wrap (see tools/build/asset_decrypt.js, which defines
+        // the same accessors in an encrypted build: then they are wrapped).
+        const STYLE_PROPS = [
+            'cssText', 'background', 'backgroundImage', 'borderImage', 'borderImageSource',  // i18n-ignore  css props
+            'listStyleImage', 'maskImage', 'webkitMaskImage', 'content', 'cursor'  // i18n-ignore  css props
+        ];
+        for (const prop of STYLE_PROPS) {
+            if (patchSetter(style, prop, asDoc) || prop === 'cssText') continue;  // i18n-ignore  css prop
+            const css = prop.replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^webkit-/, '-webkit-');  // i18n-ignore  css prefix
+            Object.defineProperty(style, prop, {
+                configurable: true,
+                enumerable: false,
+                get: function () { return this.getPropertyValue(css); },
+                set: function (value) {
+                    let text = value === null || value === undefined ? '' : String(value);
+                    let priority = '';
+                    const important = /^([\s\S]*?)\s*!\s*important\s*$/i.exec(text);
+                    if (important) { text = important[1]; priority = 'important'; }  // i18n-ignore  css priority
+                    this.setProperty(css, text, priority);
+                }
+            });
+        }
+    };
+
+    ModManager.installHooks = function () {
+        if (!this.hasFiles()) return false;
+        this.installFsHooks();
+        this.installRequestHooks();
+        this.installDomHooks();
+        return true;
+    };
+
+    // Kept for callers of the old API: the url a game path loads from.
+    ModManager.resolvePath = function (localPath) {
+        return this.redirectUrl(localPath) || localPath;
     };
 
     // Load custom JSONs dynamically
@@ -330,73 +819,20 @@ window.$dataCustom = {};
         xhr.send();
     };
 
-    // Initialize the manager immediately
+    // Initialize the manager immediately, then point every file read at the
+    // mods. js/main.js loads this file ahead of every other plugin, so the
+    // hooks are in place before the first plugin script is even requested.
     ModManager.initialize();
+    ModManager.buildFileIndex();
+    ModManager.installHooks();
 
-    //-----------------------------------------------------------------------------
-    // Core Overrides for Path Redirection
-    //-----------------------------------------------------------------------------
-
-    // Override DataManager to intercept JSON loads
-    const _DataManager_loadDataFile = DataManager.loadDataFile;
-    DataManager.loadDataFile = function (name, src) {
-        const originalPath = "data/" + src;
-        const redirectedPath = ModManager.resolvePath(originalPath);
-
-        // Temporarily change src to our redirected path
-        // MZ internally prepends "data/", so we have to adjust if it's modded.
-        if (redirectedPath !== originalPath) {
-            // It's a modded path. We'll use a custom XHR for standard data to bypass MZ's strict pathing
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", redirectedPath);
-            xhr.overrideMimeType("application/json");
-            xhr.onload = () => this.onXhrLoad(xhr, name, src, redirectedPath);
-            xhr.onerror = () => this.onXhrError(name, src, redirectedPath);
-            window[name] = null;
-            xhr.send();
-        } else {
-            _DataManager_loadDataFile.call(this, name, src);
-        }
-    };
-
-    // Trigger custom data loading after main database loads
+    // Non-standard JSONs in a mod's data/ folder land in $dataCustom once the
+    // main database has loaded.
     const _DataManager_loadDatabase = DataManager.loadDatabase;
     DataManager.loadDatabase = function () {
         _DataManager_loadDatabase.call(this);
         ModManager.loadCustomData();
     };
-
-    // Override ImageManager to intercept Image loads
-    const _ImageManager_loadBitmap = ImageManager.loadBitmap;
-    ImageManager.loadBitmap = function (folder, filename) {
-        if (filename) {
-            const originalPath = folder + Utils.encodeURI(filename) + ".png";
-            const redirectedPath = ModManager.resolvePath(originalPath);
-            if (redirectedPath !== originalPath) {
-                // If it's modded, strip the filename out so we can pass the whole redirected path
-                // This is a bit hacky due to MZ's architecture, but effective.
-                let url = redirectedPath;
-                return Bitmap.load(url);
-            }
-        }
-        return _ImageManager_loadBitmap.call(this, folder, filename);
-    };
-
-    // Override AudioManager to intercept Audio loads
-    const _AudioManager_createBuffer = AudioManager.createBuffer;
-    AudioManager.createBuffer = function (folder, name) {
-        const ext = this.audioFileExt();
-        const originalPath = (this._path || "audio/") + folder + Utils.encodeURI(name) + ext;
-        const redirectedPath = ModManager.resolvePath(originalPath);
-
-        // WebAudio doesn't strictly prepend the folder if we pass a full URL
-        let url = redirectedPath;
-        const buffer = new WebAudio(url);
-        buffer.name = name;
-        buffer.frameCount = this.frameCount;
-        return buffer;
-    };
-
 
     //-----------------------------------------------------------------------------
     // Title Menu Integration & UI

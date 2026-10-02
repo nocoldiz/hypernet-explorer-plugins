@@ -6528,28 +6528,42 @@ var WeaponSystemProcedural = {
       }
     };
 
+    const fail = (err) => {
+      // Once it has failed it has failed: every empty hand from here on
+      // builds its own fist rather than asking for the file again.
+      spec.unavailable = true;
+      console.error('[WeaponSystemProcedural] could not load the hands: ' + spec.file, err);
+      settle(null);
+    };
+
+    // Bytes prefetched on the map (prefetchRig) are parsed straight out of
+    // memory, with no second read. They are let go once parsed: the pool holds
+    // the model from then on, and 19MB of raw file is not worth keeping beside it.
+    const bytes = this._rigBytes && this._rigBytes[spec.file];
+    if (bytes) {
+      delete this._rigBytes[spec.file];
+      try {
+        new THREE.GLTFLoader().parse(bytes, 'models/',
+          (gltf) => settle(this.prepareRig(gltf, spec)), fail);
+      } catch (e) { fail(e); }
+      return;
+    }
+
     new THREE.GLTFLoader().load(
       'models/' + spec.file,
       (gltf) => settle(this.prepareRig(gltf, spec)),
       undefined,
-      (err) => {
-        // Once it has failed it has failed: every empty hand from here on
-        // builds its own fist rather than asking for the file again.
-        spec.unavailable = true;
-        console.error('[WeaponSystemProcedural] could not load the hands: ' + spec.file, err);
-        settle(null);
-      }
+      fail
     );
   },
 
   /**
-   * Read the rig off disk before anything asks to hold it, so the first empty
-   * hand of the battle is answered out of the pool instead of waiting on a
-   * 19MB file. Only for party members who are actually unarmed: a party that
-   * all hold weapons never touches the file.
+   * The rig specs `actors` would ask for: one per file, only for party members
+   * who are actually unarmed. A party that all hold weapons asks for nothing.
    */
-  warmRig(actors) {
-    if (!actors || !actors.length) return;
+  rigSpecsForActors(actors) {
+    const specs = [];
+    if (!actors || !actors.length) return specs;
     const asked = {};
     for (const actor of actors) {
       if (!actor) continue;
@@ -6562,6 +6576,67 @@ var WeaponSystemProcedural = {
       const spec = this.rigSpecFor(vgHolder ? this.rigFistWeapon() : this.unarmedWeaponFor(actor));
       if (!spec || asked[spec.file]) continue;
       asked[spec.file] = true;
+      specs.push(spec);
+    }
+    return specs;
+  },
+
+  /**
+   * Reads the rig's raw bytes off disk WITHOUT parsing them. The read itself
+   * runs off the main thread; it is the parse of the 19MB file that froze the
+   * map for a moment when a warm-up landed while the party was walking. So
+   * the map only ever prefetches, and the parse is saved for a moment that is
+   * already a stall: a map load behind a black screen, or a battle opening
+   * (warmRig). Free once the bytes are in memory, the model is pooled, or a
+   * read of either kind is running.
+   */
+  prefetchRig(actors) {
+    if (!window.THREE || !THREE.FileLoader) return;
+    if (!this._rigBytes) this._rigBytes = {};
+    if (!this._rigFetching) this._rigFetching = {};
+    for (const spec of this.rigSpecsForActors(actors)) {
+      const file = spec.file;
+      const pool = this._rigPool && this._rigPool[file];
+      if (pool && pool.length) continue;
+      if (this._rigBytes[file] || this._rigFetching[file]) continue;
+      if (this._rigLoading && this._rigLoading[file]) continue;
+      this._rigFetching[file] = true;
+      const loader = new THREE.FileLoader();
+      loader.setResponseType('arraybuffer');
+      loader.load('models/' + file,
+        (data) => {
+          delete this._rigFetching[file];
+          // A battle that opened mid-read has already loaded its own copy;
+          // keeping these bytes too would only be parsed into a third.
+          const pooled = this._rigPool && this._rigPool[file];
+          if ((pooled && pooled.length) || (this._rigLoading && this._rigLoading[file])) return;
+          this._rigBytes[file] = data;
+        },
+        undefined,
+        () => {
+          // Left to the real load to fail loudly and mark the spec unavailable.
+          delete this._rigFetching[file];
+        });
+    }
+  },
+
+  /** Whether the rig's raw bytes are prefetched and waiting to be parsed. */
+  rigFetched(spec) {
+    return !!(spec && this._rigBytes && this._rigBytes[spec.file]);
+  },
+
+  /**
+   * Read the rig off disk before anything asks to hold it, so the first empty
+   * hand of the battle is answered out of the pool instead of waiting on a
+   * 19MB file. Only for party members who are actually unarmed: a party that
+   * all hold weapons never touches the file.
+   */
+  warmRig(actors, opts) {
+    // fetchedOnly: parse what prefetchRig already holds and start no read.
+    // A map load uses it, so a read that lands later never parses mid-walk.
+    const fetchedOnly = !!(opts && opts.fetchedOnly);
+    for (const spec of this.rigSpecsForActors(actors)) {
+      if (fetchedOnly && !this.rigFetched(spec)) continue;
       // Already warm, or already on its way: acquiring would pop the one copy
       // out of the pool and put it straight back, which is free but pointless.
       const pool = this._rigPool && this._rigPool[spec.file];

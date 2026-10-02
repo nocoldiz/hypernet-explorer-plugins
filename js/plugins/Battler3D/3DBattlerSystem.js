@@ -3558,9 +3558,10 @@
     // battlers use, at once, on the frame the fight appears - and a shader
     // compile blocks the driver outright.
     //
-    // So compile them earlier, out on the map, where a lost frame is a lost
-    // frame and not the opening of a fight. What is compiled is not a battler:
-    // it is one tiny box per material shape the roster is built out of
+    // So compile them earlier, while a map loads behind a black screen, where
+    // the frames are already lost and it is not the opening of a fight. What
+    // is compiled is not a battler: it is one tiny box per material shape the
+    // roster is built out of
     // (standard / basic, textured / untextured, flat / smooth shaded, each
     // through the retro patch if one is on), lit by the same rig a battle is
     // lit by. That is what a program is keyed on; the geometry behind it is
@@ -3568,8 +3569,7 @@
     //
     // This does NOT add a WebGL context. acquireBattleRenderer owns the one
     // context the session's battles share and would have built it on that same
-    // opening frame; the warm-up only asks for it a few seconds sooner.
-    const WARM_UP_DELAY_FRAMES = 180;   // ~3s of map before the map is touched
+    // opening frame; the warm-up only asks for it sooner.
     let _shadersWarmed = false;
 
     // Held for the life of the session so nothing can release their programs.
@@ -3651,18 +3651,20 @@
         }
     }
 
-    // Out on the map, once, a few seconds in: late enough that it is not
-    // competing with the map's own load, early enough to be long done before
-    // anything walks into a monster. A battle that starts first does not wait
-    // for it - the flag is set either way and the fight compiles what it needs.
-    const _Scene_Map_update_warmShaders = Scene_Map.prototype.update;
-    Scene_Map.prototype.update = function() {
-        _Scene_Map_update_warmShaders.call(this);
-        if (_shadersWarmed) return;
-        this._b3dWarmUpFrames = (this._b3dWarmUpFrames || 0) + 1;
-        if (this._b3dWarmUpFrames >= WARM_UP_DELAY_FRAMES && !this.isBusy()) {
-            warmBattleShaders();
-        }
+    // Once, while a map is loading. It used to run ~3s into the first map,
+    // which put a synchronous compile of eight programs (and a sky bake) in
+    // the middle of the party's first steps: a visible stutter while walking.
+    // onMapLoaded runs while the screen is still black from the load or the
+    // transfer, before the map fades in, so the same work is folded into a
+    // wait the player is already sitting through. The first map of a session
+    // takes it; if the enemies are sprites there it is retried on each later
+    // load, which costs one config read. A battle that starts first does not
+    // wait for it - the flag is set either way and the fight compiles what it
+    // needs.
+    const _Scene_Map_onMapLoaded_warmShaders = Scene_Map.prototype.onMapLoaded;
+    Scene_Map.prototype.onMapLoaded = function() {
+        _Scene_Map_onMapLoaded_warmShaders.call(this);
+        if (!_shadersWarmed) warmBattleShaders();
     };
 
     //=============================================================================
@@ -4592,6 +4594,105 @@
     }
     let _spreadBoxScratch = null;        // one box, reused (the pass runs twice)
 
+    // The corners the battle log keeps for itself (Core/MPP_SmoothBattleLog2.js)
+    // stand over the field as well as the HUD, and the frame is a wall: no
+    // creature is laid out with any of its body inside a corner or past an edge
+    // of the screen. The whole line is drawn in towards the centre a step at a
+    // time first, since that leaves every creature its size; only a body that
+    // still breaks a rule once the line is as tight as it goes, or one that
+    // breaks it upwards or downwards where drawing in does nothing (a giant met
+    // alone, its head past the top of the frame), is drawn smaller.
+    const LOG_CLEAR_PULL_STEP = 0.9;   // the line's spread, per step
+    const LOG_CLEAR_PULL_FLOOR = 0.45; // the tightest the line is drawn in to
+    const LOG_CLEAR_SHRINK_STEP = 0.9; // a body's size, per step
+    const LOG_CLEAR_SHRINK_FLOOR = 0.4; // never below this share of its size
+    const LOG_CLEAR_MAX_STEPS = 24;
+    const LOG_CLEAR_FRAME_MARGIN = 2; // px of air kept inside the frame
+    let _logClearCorner = null;
+
+    // The rectangle a model's box covers on the screen, in canvas pixels: its
+    // eight corners projected through the battle camera.
+    function modelScreenRect(root, camera, box) {
+        box.setFromObject(root);
+        if (box.isEmpty()) return null;
+        const v = _logClearCorner || (_logClearCorner = new THREE.Vector3());
+        let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+        for (let i = 0; i < 8; i++) {
+            v.set(i & 1 ? box.max.x : box.min.x,
+                i & 2 ? box.max.y : box.min.y,
+                i & 4 ? box.max.z : box.min.z);
+            v.project(camera);
+            if (!isFinite(v.x) || !isFinite(v.y)) continue;
+            const sx = (v.x * 0.5 + 0.5) * Graphics.width;
+            const sy = (-v.y * 0.5 + 0.5) * Graphics.height;
+            if (sx < x0) x0 = sx; if (sx > x1) x1 = sx;
+            if (sy < y0) y0 = sy; if (sy > y1) y1 = sy;
+        }
+        if (!isFinite(x0)) return null;
+        return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+    }
+
+    function shrinkBattlerModel(e, factor) {
+        const bm = e.battlerModel;
+        if (bm && typeof bm.scale === 'number' && typeof bm.applyModelScale === 'function') {
+            bm.scale *= factor;
+            bm.applyModelScale();
+        } else {
+            e.root.scale.multiplyScalar(factor);
+        }
+        e.shrunk *= factor;
+    }
+
+    // BEGIN model frame fault
+    // What is wrong with where a model stands on the screen: 'side' when it
+    // reaches past the left or right edge or into a log corner (drawing the
+    // line in can mend that), 'vertical' when it only reaches past the top or
+    // the bottom (only a smaller body can), null when it stands clear.
+    function modelFrameFault(r, width, height, hitCorner) {
+        if (!r) return null;
+        const M = LOG_CLEAR_FRAME_MARGIN;
+        if (r.x < M || r.x + r.w > width - M || (hitCorner && hitCorner(r))) return 'side';
+        if (r.y < M || r.y + r.h > height - M) return 'vertical';
+        return null;
+    }
+    // END model frame fault
+
+    function keepModelsInView(scene3d, row, box) {
+        if (!scene3d.camera || !row.length) return;
+        const corners = window.BattleLogCorners;
+        const hitCorner = corners && typeof corners.hit === 'function'
+            ? (r) => corners.hit(r) : null;
+        scene3d.camera.updateMatrixWorld();
+        for (const e of row) e.shrunk = 1;
+        let pull = 1;
+        for (let step = 0; step < LOG_CLEAR_MAX_STEPS; step++) {
+            const offenders = [];
+            for (const e of row) {
+                const fault = modelFrameFault(modelScreenRect(e.root, scene3d.camera, box),
+                    Graphics.width, Graphics.height, hitCorner);
+                if (fault) offenders.push({ e, fault });
+            }
+            if (!offenders.length) return;
+            const canPull = row.length > 1 && pull * LOG_CLEAR_PULL_STEP >= LOG_CLEAR_PULL_FLOOR
+                && offenders.some(o => o.fault === 'side' && Math.abs(o.e.root.position.x) > 0.05);
+            if (canPull) {
+                pull *= LOG_CLEAR_PULL_STEP;
+                for (const e of row) {
+                    e.root.position.x *= LOG_CLEAR_PULL_STEP;
+                    if (e.battlerModel) e.battlerModel._baseX = e.root.position.x;
+                }
+                continue;
+            }
+            let shrank = false;
+            for (const { e } of offenders) {
+                if (e.shrunk * LOG_CLEAR_SHRINK_STEP < LOG_CLEAR_SHRINK_FLOOR) continue;
+                shrinkBattlerModel(e, LOG_CLEAR_SHRINK_STEP);
+                shrank = true;
+            }
+            if (!shrank) return;
+        }
+    }
+
     Spriteset_Battle.prototype.spreadEnemyModels = function(final) {
         const scene3d = this._battle3DScene;
         if (!scene3d || scene3d._disposed || typeof THREE === 'undefined') return;
@@ -4659,6 +4760,10 @@
             row[0].root.position.z = 0;
             if (row[0].battlerModel) row[0].battlerModel._baseX = row[0].root.position.x;
         }
+
+        // Only on the last pass: the first one runs before every body has its
+        // final size, and a shrink taken then would be taken twice.
+        if (final) keepModelsInView(scene3d, row, box);
 
         // Drop the shadow catcher onto the lowest pair of feet on the field and
         // re-flag casters. Both have to wait for this pass rather than run at

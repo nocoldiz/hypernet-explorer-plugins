@@ -545,9 +545,15 @@
   // weighed again. No page condition reads the clock in practice, so a write
   // to it skips that refresh unless the current map has a page that does.
   // Plugins read the clock off the variable themselves and need no refresh.
+  // Other plugins register variables of the same kind (written every step,
+  // read by code, not by pages) through TimeDateSystem.quietVariable.
   const ClockQuietWrite = {
     _mapKey: null,
     _uses: null,
+    extra: new Set(),
+    isQuiet(variableId) {
+      return variableId === gameTimeVariable || variableId === gameDateVariable || this.extra.has(variableId);
+    },
     mapUses(variableId) {
       const key = $gameMap ? $gameMap.mapId() : 0;
       if (this._mapKey !== key || $dataMap !== this._data) {
@@ -565,12 +571,15 @@
     }
   };
 
+  // One shared stand-in for the duration of a quiet write. A fresh function
+  // per write was a closure raised every time the clock ticked.
+  const quietRequestRefresh = function () {};
   const _Game_Variables_setValue_clock = Game_Variables.prototype.setValue;
   Game_Variables.prototype.setValue = function (variableId, value) {
-    if ((variableId === gameTimeVariable || variableId === gameDateVariable) &&
+    if (ClockQuietWrite.isQuiet(variableId) &&
         typeof $gameMap !== 'undefined' && $gameMap && !ClockQuietWrite.mapUses(variableId)) {
       const map = $gameMap;
-      map.requestRefresh = function () {};
+      map.requestRefresh = quietRequestRefresh;
       try { _Game_Variables_setValue_clock.call(this, variableId, value); }
       finally { delete map.requestRefresh; }
       return;
@@ -2859,6 +2868,7 @@
   const INTOX_DOSE   = { alcohol: 0.45, narcotic: 0.50, nicotine: 0.06 };
   const INTOX_CLEAR  = { alcohol: 0.42, narcotic: 0.55, nicotine: 1.20 }; // per game minute
   const INTOX_STAGES = [15, 40, 70]; // sober | tipsy | drunk | gone
+  const INTOX_SCREEN_EVERY = 3;      // frames between writes of the canvas filter
   const INTOX_CAP    = 180;          // a load can sit past 100 and take its time coming down
 
   window.Intoxication = {
@@ -3027,6 +3037,8 @@
       el.style.webkitFilter = "";
       el.style.transform = "";
       delete el.dataset.intox;
+      this._shownFilter = null;
+      this._shownTransform = null;
     },
 
     /** Called every frame from whatever scene is up. */
@@ -3036,6 +3048,15 @@
       const actor = this.viewer();
       const level = actor ? this.level(actor) : 0;
       if (level < INTOX_STAGES[0]) return this._clearScreen(el);
+
+      // Written every third frame, and only when the string differs from the
+      // one already on the element. Each write of a CSS filter or transform
+      // has the browser re-resolve the style of the whole canvas, and the
+      // blur and drop shadow are recomposited from scratch on every change;
+      // the sway is slow enough that twenty updates a second still read as a
+      // smooth drift.
+      this._intoxFrame = ((this._intoxFrame || 0) + 1) % INTOX_SCREEN_EVERY;
+      if (this._intoxFrame !== 0 && el.dataset && el.dataset.intox) return;
 
       const t = Math.min(1, (level - INTOX_STAGES[0]) / (100 - INTOX_STAGES[0]));
       const high = this.register(actor) === "high";
@@ -3051,21 +3072,29 @@
       const hue    = high ? Math.sin(now * 0.55) * 45 * t : Math.sin(now * 0.20) * 9 * t;
       const sat    = 1 + (high ? 0.80 : 0.35) * t;
       const bright = 1 + (high ? 0.10 : -0.05) * t;
-      el.style.filter =
+      const filter =
         "blur(" + n(blur) + "px) saturate(" + n(sat) + ") brightness(" + n(bright) + ") " +
         "hue-rotate(" + n(hue) + "deg) drop-shadow(" +
         n(Math.sin(now * 0.90) * ghost) + "px " +
         n(Math.cos(now * 0.70) * ghost * 0.4) + "px 0 " +
         (high ? "rgba(255,140,220," : "rgba(120,180,255,") + n(0.45 * t) + "))";
-      el.style.webkitFilter = el.style.filter;
+      if (filter !== this._shownFilter) {
+        el.style.filter = filter;
+        el.style.webkitFilter = filter;
+        this._shownFilter = filter;
+      }
 
       const swayX = Math.sin(now * (high ? 0.40 : 1.10)) * 7 * t;
       const swayY = Math.cos(now * (high ? 0.30 : 0.80)) * 4 * t;
       const roll  = Math.sin(now * 0.35) * (high ? 0.4 : 1.2) * t;
       const zoom  = high ? 1 + Math.sin(now * 0.8) * 0.012 * t : 1;
-      el.style.transform =
+      const transform =
         "translate(" + n(swayX) + "px, " + n(swayY) + "px) rotate(" + n(roll) + "deg)" +
         (high ? " scale(" + zoom.toFixed(4) + ")" : "");
+      if (transform !== this._shownTransform) {
+        el.style.transform = transform;
+        this._shownTransform = transform;
+      }
       el.dataset.intox = "1";
     },
   };
@@ -4447,11 +4476,26 @@
       }
     }
     if (this._activeMode() === 'travel') {
-      // The fast-travel countdown ticks in real time (Game_System's own
-      // 1-second interval), so refresh every frame instead of the usual
-      // half-second cadence to keep it visibly counting down.
-      this._refresh();
-      return;
+      // The fast-travel run moves the clock and the vehicle's square in real
+      // time (Game_System's own 1-second interval), and the card used to be
+      // rebuilt every frame to keep up with them: the party medians, the date,
+      // a dozen translations and the whole card's HTML, sixty times a second,
+      // to print the same minute and the same square almost every time. It is
+      // rebuilt the frame either of those two printed values moves, and the
+      // slower half-second cadence below covers everything else on it.
+      const minute = Math.floor(getGameTimeMinutes());
+      const pos = window.WorldMapView && window.WorldMapView.travelPosition
+        ? window.WorldMapView.travelPosition() : null;
+      const tx = pos ? Math.round(pos.x) : null;
+      const ty = pos ? Math.round(pos.y) : null;
+      if (minute !== this._travelMinute || tx !== this._travelX || ty !== this._travelY) {
+        this._travelMinute = minute;
+        this._travelX = tx;
+        this._travelY = ty;
+        this._refreshTimer = 0;
+        this._refresh();
+        return;
+      }
     }
     this._refreshTimer++;
     if (this._refreshTimer >= 30) {
@@ -6088,6 +6132,9 @@
   // Expose globals for use by other plugins
   window.TimeDateSystem = window.TimeDateSystem || {};
   window.TimeDateSystem.getDayNightLight = getDayNightLight;
+  // A variable written so often that its map refresh is the cost: the write
+  // skips the refresh unless a page on the current map is conditioned on it.
+  window.TimeDateSystem.quietVariable = (variableId) => { ClockQuietWrite.extra.add(Number(variableId)); };
   window.TimeDateSystem.solveDayNightLight = solveDayNightLight;
   window.TimeDateSystem.maxHunger = maxHunger;
   window.TimeDateSystem.maxSleep = maxSleep;

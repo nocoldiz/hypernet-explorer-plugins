@@ -692,19 +692,43 @@
     return VOICE_BUBBA;
   }
 
+  // A notice is resolved every frame the party stands on its zone, and each
+  // resolution was two key builds, two lookups and two translations to arrive
+  // at the same two strings. A found notice is therefore kept per key, for as
+  // long as the language stays the one it was read in. Only found ones are
+  // kept: a key the translations do not hold yet may simply not be loaded yet,
+  // and that answer must be allowed to change on a later frame.
+  const noticeCache = new Map();
+  let noticeCacheLang = null;
+
   function readNotice(baseKey, voice) {
     if (!baseKey) return null;
     if (voice === VOICE_GENERIC) return null;
+    const lang = typeof ConfigManager !== "undefined" && ConfigManager ? ConfigManager.language : null;
+    if (lang !== noticeCacheLang) {
+      noticeCacheLang = lang;
+      noticeCache.clear();
+    }
+    const held = noticeCache.get(baseKey);
+    if (held) return held;
     const stem = baseKey;
     const titleKey = stem + ".title";
     const textKey = stem + ".text";
     if (!has(titleKey)) return null;
-    return {
+    const notice = {
       key: baseKey,
       voice: VOICE_BUBBA,
       title: T(titleKey),
       text: has(textKey) ? T(textKey) : "",
     };
+    noticeCache.set(baseKey, notice);
+    return notice;
+  }
+
+  // The plugin "refresh" command rebuilds the sheet from nothing, and a notice
+  // edited in the translations since is meant to come back with it.
+  function forgetNotices() {
+    noticeCache.clear();
   }
 
   function areaNoticeKey(mapId, x, y) {
@@ -830,10 +854,28 @@
     if (place) $gameSystem._mapLegendStartPlace = place;
   }
 
+  // currentPlace asks the world map for its coordinates and builds a fresh
+  // object, and one legend frame used to ask it up to three times (the arrival
+  // check, then the pinned check). Inside updateLegend the answer is read once
+  // and shared; asked from anywhere else it is read live, so nothing outside
+  // the frame can see a place the party has already left.
+  let framePlaceActive = false;
+  let framePlaceRead = false;
+  let framePlaceValue = null;
+
+  function framePlace() {
+    if (!framePlaceActive) return currentPlace();
+    if (!framePlaceRead) {
+      framePlaceRead = true;
+      framePlaceValue = currentPlace();
+    }
+    return framePlaceValue;
+  }
+
   function onStartPlace() {
     if (!$gameSystem) return false;
     const start = $gameSystem._mapLegendStartPlace;
-    const here = currentPlace();
+    const here = framePlace();
     if (!start || !here || start.mapId !== here.mapId) return false;
     // A generated map is one map id for the whole world, so the square the
     // game opened on is what tells it apart from every other one.
@@ -902,7 +944,7 @@
 
   function updateArrival() {
     if (!$gameSystem || !storyMode()) return;
-    const key = placeKey(currentPlace());
+    const key = placeKey(framePlace());
     if (!key || key === $gameSystem._mapLegendLastPlace) return;
     $gameSystem._mapLegendLastPlace = key;
     const visited = visitedPlaces();
@@ -958,8 +1000,9 @@
   // The fold line hangs its pad button off the end of the key the same way
   // every row does, so a player holding a pad reads R3 rather than a key they
   // are not touching. Nothing is drawn while no pad is plugged in.
-  function foldPadChip() {
-    return padConnected() ? foldPadButton() : "";
+  function foldPadChip(hasPad) {
+    const pad = hasPad === undefined ? padConnected() : !!hasPad;
+    return pad ? foldPadButton() : "";
   }
 
   // H is the help menu everywhere else, so the fold is spliced in ahead of the
@@ -1139,8 +1182,15 @@
       // The list, down the left. Folded it is put away whole: the fold
       // line that brings it back rides on whichever panel is still up.
       // The rows only change when the map does, so their ids alone say it.
-      let ctlSig = "";
-      for (const entry of rows) ctlSig += entry.id + "";
+      // The rows are one kept list per map (visibleRows), so their ids are
+      // joined once per list rather than walked again on every frame.
+      if (rows !== this._rowsRef) {
+        this._rowsRef = rows;
+        let ids = "";
+        for (const entry of rows) ids += entry.id + "";
+        this._rowsIds = ids;
+      }
+      let ctlSig = this._rowsIds;
       ctlSig += "" + (folded ? 1 : 0) + (state.foldable ? 1 : 0) +
         (state.hasPad ? 1 : 0) + (notice ? 1 : 0) + "" + (state.foldChip || "");
       const wantControls = rows.length || (state.foldable && !notice);
@@ -1335,6 +1385,17 @@
   }
 
   function updateLegend() {
+    framePlaceActive = true;
+    framePlaceRead = false;
+    try {
+      updateLegendFrame();
+    } finally {
+      framePlaceActive = false;
+      framePlaceValue = null;
+    }
+  }
+
+  function updateLegendFrame() {
     if (!sheetAllowed()) {
       sheet.hide();
       return;
@@ -1357,10 +1418,12 @@
       sheet.hide();
       return;
     }
+    // The pad is asked once and the answer handed to both fields that need it.
+    const hasPad = padConnected();
     sheet.draw(notice, rows, {
       folded, noticeFolded: isNoticeFolded(),
-      foldable: foldable(), hasPad: padConnected(), foldChip: foldChipLabel(),
-      foldPad: foldPadChip(),
+      foldable: foldable(), hasPad, foldChip: foldChipLabel(),
+      foldPad: foldPadChip(hasPad),
     });
     sheet.setBehindBusts(bustOnScreen());
   }
@@ -1410,6 +1473,7 @@
   //===========================================================================
 
   PluginManager.registerCommand(PLUGIN_NAME, "refresh", () => {
+    forgetNotices();
     sheet.destroy();
     updateLegend();
   });
@@ -1499,7 +1563,7 @@
     foldPadChip,
     padFoldAvailable,
 
-    refresh() { sheet.destroy(); updateLegend(); },
+    refresh() { forgetNotices(); sheet.destroy(); updateLegend(); },
     hide() { sheet.hide(); },
   };
 })();

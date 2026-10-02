@@ -1054,7 +1054,7 @@
     if (!s) return;
     const t = sleepLabels();
     s.el.classList.add("cryo-overlay--wake");
-    s.sub.textContent = t.cryoWakeSub;
+    if (s.sub) s.sub.textContent = t.cryoWakeSub;
     s.bar.style.width = "100%";
     const stamp = cryoStamp(info.minute);
     if (stamp) {

@@ -63,9 +63,12 @@
     return el;
   }
 
+  // Called by every bar on every frame nothing is hovered or armed, so the
+  // write is skipped while the card is already down: a style write dirties the
+  // element for the browser even when the value is the same.
   function hideTooltip() {
     const el = document.getElementById(TOOLTIP_ID);
-    if (el) el.style.display = 'none';
+    if (el && el.style.display !== 'none') el.style.display = 'none';
   }
 
   // Height the name line costs the bar: the text box plus its gap above.
@@ -361,6 +364,7 @@
     }
 
     _build(entries, state) {
+      this._quiet = false;
       const root = this.root();
       root.innerHTML = '';
       this._labelEl = null;
@@ -580,7 +584,39 @@
       const st = state || {};
       const list = entries || [];
       const root = this.root();
-      const key = this._key(list, st);
+      // Every caller hands a fresh list when anything in it changes (the map
+      // bar's and the battle bar's are kept lists, retired on change), so the
+      // same list with the same selection is the same bar: the nine-part key
+      // is only spelled out again when one of those has moved.
+      const sel = st.selected != null ? st.selected : -1;
+      const act = !!st.active;
+      const inert = !!st.inert;
+      let key;
+      if (list === this._keyList && sel === this._keySel && act === this._keyActive &&
+          st.page === this._keyPage && st.pages === this._keyPages) {
+        // The same bar as the last pass, on the same root, with the same
+        // hover and the same inert flag, standing where it stood: the label,
+        // the description, the card, the classes and the position all came
+        // out of exactly these inputs last time, so the frame is done. Every
+        // DOM read below (dataset, classList, style) is skipped with them; a
+        // hover moving is answered by the slot's own listeners, and hide(),
+        // a rebuild or a moved canvas clears _quiet.
+        if (this._quiet && this._quietRoot === root && this._quietInert === inert &&
+            this._quietHover === this._hoverIndex && this._samePlace()) {
+          this._entries = list;
+          this._state = st;
+          return;
+        }
+        key = this._keyStr;
+      } else {
+        key = this._key(list, st);
+        this._keyList = list;
+        this._keySel = sel;
+        this._keyActive = act;
+        this._keyPage = st.page;
+        this._keyPages = st.pages;
+        this._keyStr = key;
+      }
       this._entries = list;
       this._state = st;
       if (root.dataset.key !== key) {
@@ -591,16 +627,38 @@
       this._syncDesc();
       // Set outside the cached rebuild: the same row of slots is shown live
       // one frame and inert the next, and nothing about it needs redrawing.
-      const inert = !!st.inert;
       root.classList.toggle('hotbar-inert', inert);
-      root.style.pointerEvents = inert ? 'none' : 'auto';
+      const pointer = inert ? 'none' : 'auto';
+      if (root.style.pointerEvents !== pointer) root.style.pointerEvents = pointer;
       if (inert) this._hoverIndex = -1;
       this._syncDetail();
       if (root.style.display !== 'flex') root.style.display = 'flex';
       if (!this.inline) this._position();
+      this._quiet = true;
+      this._quietRoot = root;
+      this._quietInert = inert;
+      this._quietHover = this._hoverIndex;
+      this._markPlace();
+    }
+
+    // What the bar's place on screen was worked out from: the shared canvas
+    // scale (one object, replaced only on a resize), the canvas size and the
+    // bar's own lift. Compared by identity and as numbers, with no strings.
+    _markPlace() {
+      this._placeScale = this.inline ? null : canvasScale();
+      this._placeW = Graphics.width;
+      this._placeH = Graphics.height;
+      this._placeMargin = this.marginBottom;
+    }
+
+    _samePlace() {
+      if (this.inline) return true;
+      return this._placeScale === canvasScale() && this._placeW === Graphics.width &&
+        this._placeH === Graphics.height && this._placeMargin === this.marginBottom;
     }
 
     hide() {
+      this._quiet = false;
       const root = document.getElementById(this.id);
       if (root) root.style.display = 'none';
       // A bar that vanishes under the pointer never gets its mouseleave, and a
@@ -615,6 +673,7 @@
 
     /** Drop the element entirely; used when a scene tears its overlay down. */
     destroy() {
+      this._quiet = false;
       const root = document.getElementById(this.id);
       if (root && root.parentNode) root.parentNode.removeChild(root);
       this._root = null;

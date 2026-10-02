@@ -2283,39 +2283,51 @@
         _Game_Map_setup_furnitureMemo.call(this, mapId);
     };
 
-    function isTileBlockedByFurniture(x, y) {
-        if (!$gameSystem) return false;
+    // Which tiles the furniture blocks or turns into a ladder, worked out once
+    // per furniture list a frame. Both questions are asked on every
+    // passability check, and a path search makes thousands of those: walking
+    // every placed piece for each one was O(furniture) a check.
+    const FURN_BLOCKED = 1, FURN_LADDER = 2;
+    let _furnGridList = null;
+    let _furnGridFrame = -2;
+    let _furnGrid = null;
+    function furnitureTileFlags(x, y) {
+        if (!$gameSystem) return 0;
         const furnitureList = furnitureOnThisMap();
-        if (furnitureList.length === 0) return false;
-        for (const placed of furnitureList) {
-            const fData = Furniture[placed.furnitureId];
-            if (!fData) continue;
-            if (x < placed.x || x >= placed.x + fData.width) continue;
-            if (y < placed.y || y >= placed.y + fData.height) continue;
-            const collision = getEffectiveCollision(placed.furnitureId, fData);
-            const localY = y - placed.y;
-            switch (collision) {
-                case 'all':   return true;
-                case 'lower': if (localY === fData.height - 1) return true; break;
-                case 'lower2': if (localY >= fData.height - 2) return true; break;
+        if (!furnitureList || furnitureList.length === 0) return 0;
+        if (furnitureList !== _furnGridList || _furnFrame !== _furnGridFrame || _furnFrame < 0) {
+            _furnGridList = furnitureList;
+            _furnGridFrame = _furnFrame;
+            _furnGrid = new Map();
+            const w = $gameMap.width();
+            for (const placed of furnitureList) {
+                const fData = Furniture[placed.furnitureId];
+                if (!fData) continue;
+                const collision = getEffectiveCollision(placed.furnitureId, fData);
+                const ladder = !!getFolderRules(placed.furnitureId).ladder;
+                for (let ly = 0; ly < fData.height; ly++) {
+                    const blocks = collision === 'all' ||
+                        (collision === 'lower' && ly === fData.height - 1) ||
+                        (collision === 'lower2' && ly >= fData.height - 2);
+                    if (!blocks && !ladder) continue;
+                    for (let lx = 0; lx < fData.width; lx++) {
+                        const key = (placed.y + ly) * w + (placed.x + lx);
+                        _furnGrid.set(key, (_furnGrid.get(key) || 0) |
+                            (blocks ? FURN_BLOCKED : 0) | (ladder ? FURN_LADDER : 0));
+                    }
+                }
             }
         }
-        return false;
+        if (x < 0 || y < 0 || x >= $gameMap.width()) return 0;
+        return _furnGrid.get(y * $gameMap.width() + x) || 0;
+    }
+
+    function isTileBlockedByFurniture(x, y) {
+        return (furnitureTileFlags(x, y) & FURN_BLOCKED) !== 0;
     }
 
     function isTileLadderByFurniture(x, y) {
-        if (!$gameSystem) return false;
-        const furnitureList = furnitureOnThisMap();
-        if (furnitureList.length === 0) return false;
-        for (const placed of furnitureList) {
-            const fData = Furniture[placed.furnitureId];
-            if (!fData) continue;
-            if (x < placed.x || x >= placed.x + fData.width) continue;
-            if (y < placed.y || y >= placed.y + fData.height) continue;
-            const rules = getFolderRules(placed.furnitureId);
-            if (rules.ladder) return true;
-        }
-        return false;
+        return (furnitureTileFlags(x, y) & FURN_LADDER) !== 0;
     }
 
     const _Game_Map_isPassable_furniture = Game_Map.prototype.isPassable;

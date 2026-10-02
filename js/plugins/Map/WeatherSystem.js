@@ -1508,13 +1508,16 @@
     // the sky is simply at whatever the new place is at.
     resetSkyHourEase() {
       this._skyHourEased = null;
+      this._lastTintSkyHour = null;
       this._alienSkyHour = null;
       this._skyHourEaseReset = true;
     }
 
     // --- MODIFICATION START ---
     // Modified function to handle interior and exterior tinting rules
-    updateTimeOfDayTint(force = false) {
+    // skyHour: the sky hour already worked out (and eased) this frame by the
+    // caller, so the ease is not stepped twice in one frame.
+    updateTimeOfDayTint(force = false, skyHour = null) {
       let timeOffsetR = 0,
         timeOffsetG = 0,
         timeOffsetB = 0;
@@ -1543,7 +1546,9 @@
         // terminator between them. The CLOCK itself is not touched by any of
         // this: TimeDateSystem stays on Earth hours everywhere, for hunger,
         // sleep, the calendar and every schedule in the game. This reads it.
-        const currentHourFloat = this._skyHourFloat(gameDate);
+        const currentHourFloat = typeof skyHour === "number"
+          ? skyHour : this._skyHourFloat(gameDate);
+        this._lastTintSkyHour = currentHourFloat;
 
         // Get tint for current hour (with smooth interpolation within the hour)
         const [timeTintR, timeTintG, timeTintB] =
@@ -2102,7 +2107,17 @@
         this.updateTimeOfDayTint();
       } else if (walkedLongitude) {
         // Only the light: the weather and the clock still belong to the minute.
-        this.updateTimeOfDayTint();
+        // The eased sky hour is the only input that moves between minutes, and
+        // once it has caught up with the party's longitude it sits still. The
+        // full recompute (date string parse, palette lookups, temperature,
+        // a handful of throwaway arrays) ran every frame regardless, to land
+        // on the tint already on screen; it now runs only while the hour is
+        // actually sliding.
+        const sky = this._skyHourFloat(gameDate);
+        if (sky !== this._lastTintSkyHour) {
+          this.updateTimeOfDayTint(false, sky);
+          this._lastTintSkyHour = sky;
+        }
       } else if (this._tintReassertFrames > 0) {
         // For a few frames after entering/loading a map, force the day/night
         // tint back onto the screen even if the in-game minute has not changed.
@@ -3397,6 +3412,23 @@
     overallIsNeutral(flashColor, brightness) {
       return (!flashColor || !flashColor[3]) && brightness >= 255;
     },
+    // While one of them IS on, PIXI sizes its pass by target.getBounds(),
+    // which walks every child of the container (tilemap, a couple of hundred
+    // character sprites, lights, weather, pictures) once a frame. The answer
+    // is known in advance: both containers hold MZ's black ScreenSprite, a
+    // rectangle a hundred thousand pixels wide, so the bounds always come out
+    // larger than the screen and are fitted down to it. A filterArea of the
+    // screen itself is the same pass without the walk. It is in global
+    // coordinates, so the shake and zoom the spriteset moves by do not touch
+    // it, and it is refitted when the resolution changes.
+    fitScreenArea(container) {
+      if (!container || typeof Graphics === 'undefined') return;
+      const w = Graphics.width;
+      const h = Graphics.height;
+      const area = container.filterArea;
+      if (area && area.x === 0 && area.y === 0 && area.width === w && area.height === h) return;
+      container.filterArea = new Rectangle(0, 0, w, h);
+    },
   };
   window.ScreenFilterIdle = ScreenFilterIdle;
 
@@ -3406,6 +3438,7 @@
     _Spriteset_Base_updateBaseFilters.call(this);
     const filter = this._baseColorFilter;
     if (filter) filter.enabled = !ScreenFilterIdle.toneIsNeutral($gameScreen.tone());
+    if (this._baseSprite && this._baseSprite.filters) ScreenFilterIdle.fitScreenArea(this._baseSprite);
   };
 
   const _Spriteset_Base_updateOverallFilters = Spriteset_Base.prototype.updateOverallFilters;
@@ -3416,6 +3449,20 @@
       filter.enabled = !ScreenFilterIdle.overallIsNeutral(
         $gameScreen.flashColor(), $gameScreen.brightness());
     }
+    if (this.filters) ScreenFilterIdle.fitScreenArea(this);
+  };
+  }
+
+  // The scene's own fade filter. Stock Scene_Base puts one ColorFilter on the
+  // WHOLE scene (map, windows, HUD sprites) and only uses it to fade to black
+  // or white, so between fades every frame was still drawn into a render
+  // texture and copied back through an identity filter. It sleeps the same
+  // way: off while the fade opacity is zero, on for the frames of a fade.
+  if (typeof Scene_Base !== 'undefined') {
+  const _Scene_Base_updateColorFilter_idle = Scene_Base.prototype.updateColorFilter;
+  Scene_Base.prototype.updateColorFilter = function() {
+    _Scene_Base_updateColorFilter_idle.call(this);
+    if (this._colorFilter) this._colorFilter.enabled = (this._fadeOpacity || 0) > 0;
   };
   }
 

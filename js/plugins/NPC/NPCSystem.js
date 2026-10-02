@@ -643,10 +643,31 @@
     // near the player/start instead of scattering. Here we do a real
     // Fisher-Yates shuffle, then farthest-first reorder the leading picks so
     // each successive spawn tile is pushed away from the ones already chosen.
+    //
+    // The dispersion is ~64 passes over every passable tile, and it was paid
+    // on every call: the hourly turnover, every interior arrival, every
+    // street-crime and visitor placement. So each map's tile list keeps a few
+    // finished orderings (SPREAD_VARIANTS), built one per call until there are
+    // enough, and after that a call hands out a copy of one picked at random.
+    // The spread of each is the same; only the variety is bounded. Keyed on the
+    // tile list itself, which findPassableTerrainTiles rebuilds with the map.
+    SPREAD_VARIANTS: 6,
+    _spreadVariants: new WeakMap(),
     getSpreadSpawnTiles: () => {
       const src = MapManager.findPassableTerrainTiles();
       if (src.length <= 2) return src.slice();
 
+      let variants = MapManager._spreadVariants.get(src);
+      if (!variants) { variants = []; MapManager._spreadVariants.set(src, variants); }
+      if (variants.length >= MapManager.SPREAD_VARIANTS) {
+        return variants[Math.floor(Math.random() * variants.length)].slice();
+      }
+      const ordered = MapManager._spreadOrder(src);
+      variants.push(ordered);
+      return ordered.slice();
+    },
+
+    _spreadOrder: (src) => {
       const tiles = src.slice();
       for (let i = tiles.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));

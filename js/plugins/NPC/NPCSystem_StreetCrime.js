@@ -1116,6 +1116,48 @@
     this._tilemap.addChild(sprite);
   };
 
+  // ── Letting go of minted people who have left ─────────────────────────────
+  // A minted event is erased when its person walks out (a commuter through
+  // the door, a visitor leaving, the hour's leftovers), and an erased event
+  // stays in $gameMap._events: updated every frame, walked by every loop over
+  // the map's events, drawn by a sprite nobody sees, and written into the
+  // save with its whole page copy. The longer the party stayed on one map the
+  // slower it got. Once one has been gone a while and nothing holds it any
+  // more, its slot is emptied and its sprite taken down. Its id is never
+  // handed out again (mintEvent counts past the slot), so nothing keyed by
+  // it, a self switch or the gone registry, can wake up as somebody else.
+  const MINTED_PRUNE_FRAMES = 600;
+  const MINTED_GRACE_FRAMES = 300;
+  function pruneMintedEvents() {
+    if (!$gameMap || !$gameMap._events) return 0;
+    const frame = Graphics.frameCount;
+    if (frame % MINTED_PRUNE_FRAMES !== 0) return 0;
+    const held = new Set();
+    for (const c of $gameSystem?.npcControllers || []) if (c?.event) held.add(c.event);
+    const spriteset = SceneManager._scene && SceneManager._scene._spriteset;
+    let pruned = 0;
+    const events = $gameMap._events;
+    for (let id = 1; id < events.length; id++) {
+      const ev = events[id];
+      if (!ev || !ev._npcMinted || !ev._erased || ev._npcDowned || held.has(ev)) continue;
+      if (ev._npcErasedAt === undefined) { ev._npcErasedAt = frame; continue; }
+      if (frame - ev._npcErasedAt < MINTED_GRACE_FRAMES) continue;
+      const sprites = spriteset?._characterSprites;
+      if (sprites) {
+        const at = sprites.findIndex(s => s._character === ev);
+        if (at >= 0) {
+          const sprite = sprites[at];
+          sprites.splice(at, 1);
+          if (sprite.parent) sprite.parent.removeChild(sprite);
+          sprite.destroy();
+        }
+      }
+      events[id] = null;
+      pruned++;
+    }
+    return pruned;
+  }
+
   // Where a playthrough is standing is written down when it saves. Only a real
   // manual save into the playthrough's own slot counts (see isRecordableSlot):
   // the autosave is the world's, shared by everybody, and a quicksave is
@@ -1132,6 +1174,6 @@
   };
 
   Object.assign(window.NPCSystem._internal, {
-    mintEvent, NPCBounty, PoliceForce, StreetCrime, VisitingParties,
+    mintEvent, NPCBounty, PoliceForce, pruneMintedEvents, StreetCrime, VisitingParties,
   });
 })();

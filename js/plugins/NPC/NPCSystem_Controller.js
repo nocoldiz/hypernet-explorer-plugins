@@ -54,6 +54,10 @@
 
   // Walking out, and walking to or alongside somebody (Phase E): how often a
   // route is worked out again, and how long a walk may take.
+  // Updates a walker waits on a step somebody else is standing in before the
+  // step's fail handler runs (NPCController._stepAlongPath).
+  const NPC_BLOCKED_STEP_WAIT = 2;
+
   const NPC_SEEK = {
     TIMEOUT_MS: 45000,              // longest walk to somebody before giving up
     REPATH_MS: 2500,                // the one sought moves: re-route this often
@@ -727,10 +731,28 @@
         // with it while chasing.
         doorEvt.setThrough(true);
       } else if (this.event.canPass(this.event.x, this.event.y, dir)) {
+        this._blockedSteps = 0;
         this.event.moveStraight(dir);
+      } else if (this._blockedByWalker(nx, ny) && (this._blockedSteps || 0) < NPC_BLOCKED_STEP_WAIT) {
+        // Somebody is standing in the next tile. In a crowd they are usually
+        // gone a moment later, and the fail handler is mostly a fresh path
+        // search, which treats every NPC tile as a wall and so mostly fails
+        // too: every jostled walker ran one each update. So the step is kept
+        // and tried again for a few updates before giving up on it.
+        this._blockedSteps = (this._blockedSteps || 0) + 1;
+        this.path.unshift(dir);
       } else {
+        this._blockedSteps = 0;
         if (onFail) onFail();
       }
+    }
+
+    // A person (the player, a follower or any solid event other than this
+    // one) on the tile, rather than a wall or a fence.
+    _blockedByWalker(x, y) {
+      if ($gamePlayer && (typeof $gamePlayer.isCollided === "function"
+        ? $gamePlayer.isCollided(x, y) : ($gamePlayer.x === x && $gamePlayer.y === y))) return true;
+      return $gameMap.eventsXyNt(x, y).some(e => e && e !== this.event && !e._erased && e.isNormalPriority());
     }
 
     enterZone() {

@@ -757,16 +757,38 @@
             this.scene.add(turf);
 
             // The infield and the outfield, flat and darker, so the course does
-            // not float on nothing when the camera swings wide.
+            // not float on nothing when the camera swings wide. Laid as a frame
+            // AROUND the turf, never under it: the vertex snap moves each mesh's
+            // corners on its own, so two planes a few centimetres apart trade
+            // places pixel by pixel and the grass flickers. The strips share the
+            // turf's edge vertices (same segment counts) so the seam cannot crack,
+            // and they are subdivided so no corner lands far behind the camera.
             const groundMat = this._mat({ color: 0x3a6b30 });
-            const apron = new THREE.Mesh(this._geo(new THREE.PlaneGeometry(2600, 1800)), groundMat);
-            apron.rotation.x = -Math.PI / 2;
-            apron.position.set(RACE_LEN / 2, -0.06, 0);
-            this.scene.add(apron);
+            const x0 = -APPROACH, x1 = len - APPROACH;
+            const outX0 = RACE_LEN / 2 - 1300, outX1 = RACE_LEN / 2 + 1300;
+            const outZ = 900;
+            const strip = (xa, xb, za, zb, segX, segZ) => {
+                const piece = new THREE.Mesh(
+                    this._geo(new THREE.PlaneGeometry(xb - xa, zb - za, segX, segZ)), groundMat);
+                piece.rotation.x = -Math.PI / 2;
+                piece.position.set((xa + xb) / 2, 0, (za + zb) / 2);
+                this.scene.add(piece);
+            };
+            strip(x0, x1, HALF_TRACK, outZ, 24, 16);      // beside the course
+            strip(x0, x1, -outZ, -HALF_TRACK, 24, 16);
+            strip(outX0, x0, -HALF_TRACK, HALF_TRACK, 16, 3); // behind the gate
+            strip(x1, outX1, -HALF_TRACK, HALF_TRACK, 16, 3); // past the run-off
+            strip(outX0, x0, HALF_TRACK, outZ, 16, 16);   // the four corners
+            strip(outX0, x0, -outZ, -HALF_TRACK, 16, 16);
+            strip(x1, outX1, HALF_TRACK, outZ, 16, 16);
+            strip(x1, outX1, -outZ, -HALF_TRACK, 16, 16);
 
-            // The line at the post, painted on the grass.
-            this._box(0.8, 0.02, HALF_TRACK * 2 - 1, this._mat({ color: 0xf4f2e8 }),
-                RACE_LEN, 0.03, 0);
+            // The line at the post, painted on the grass. Depth biased towards the
+            // camera rather than lifted, for the same snapping reason.
+            const lineMat = this._mat({
+                color: 0xf4f2e8, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4
+            });
+            this._box(0.8, 0.02, HALF_TRACK * 2 - 1, lineMat, RACE_LEN, 0.01, 0);
         }
 
         _buildRails() {

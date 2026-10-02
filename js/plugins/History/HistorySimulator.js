@@ -3189,10 +3189,20 @@
     // chronicle's midnight at ten in the morning and stamp a morning's entry
     // with yesterday's date. The index is the calendar date itself, which is
     // also what makes it agree with the date the player is looking at.
+    //
+    // The map asks this every frame, so it is plain arithmetic rather than a
+    // Date built and thrown away each time: the clock is a count of whole
+    // minutes from 10:00 on 1 January 2001, the day index is that day's UTC
+    // day number, and so the day is the epoch's plus how many midnights the
+    // minutes have crossed. It is the same answer the Date walk gave (which
+    // added the minutes to the wall clock and read the wall clock's date back),
+    // without the host's time zone having any say in it.
+    const LIVE_EPOCH_DAY = Math.round(Date.UTC(2001, 0, 1) / 86400000);
+    const LIVE_EPOCH_MINUTE = 10 * 60;   // the clock starts at 10:00
     function liveDayOf(minute) {
-        const date = new Date(2001, 0, 1, 10, 0, 0);
-        date.setMinutes(date.getMinutes() + (Number(minute) || 0));
-        return Math.round(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86400000);
+        const m = Math.trunc(Number(minute) || 0);
+        if (!Number.isFinite(m)) return NaN;
+        return LIVE_EPOCH_DAY + Math.floor((m + LIVE_EPOCH_MINUTE) / 1440);
     }
 
     // The calendar date a day index falls on. Built at midday so no daylight
@@ -3308,82 +3318,156 @@
 
     // One day of the world. The daily entry is guaranteed; the monthly passes
     // run on the 1st, which is the same cadence the century was written at.
+    //
+    // A day is a queue of steps (_beginLiveDay) so the map can run the 1st of
+    // a month a pass per frame instead of all nine in one (catchUpLiveHistory,
+    // stepped). Run back to back, as here, it is exactly the day it always was.
     HistoryManager.prototype._runLiveDay = function (day, store) {
+        const job = this._beginLiveDay(day, store);
+        while (!this._stepLiveDay(job)) { /* every step, in order */ }
+        return job.written;
+    };
+
+    // The nine heavy passes of the 1st of a month, in the order they run. A
+    // power can be founded in the middle of a playthrough: the Northpoint Army
+    // declares itself on 1 December 2001, eleven months after the game starts.
+    const LIVE_MONTHLY_PASSES = [
+        (m, date) => m.handleFoundings(date),
+        (m, date) => m.handleLeaderMortality(date),
+        (m, date) => m.updateActiveLeaders(date),
+        (m, date) => m.handleEpidemics(date),
+        (m, date) => m.handleInternalPolitics(date, false),
+        (m, date) => m.handleInternalPolitics(date, true),
+        (m, date) => m.handleNationPolitics(date, true),
+        (m, date) => m.handleWars(date),
+        (m, date) => m.handleArtifactTransfers(date),
+    ];
+
+    // The steps of one day, not yet run. The day's seeded stream is made here
+    // and handed to every step, so a day split over frames draws exactly the
+    // numbers it would have drawn in one go.
+    HistoryManager.prototype._beginLiveDay = function (day, store) {
         const date = liveDateOf(day);
         const seed = normalizeHistorySeed(this.getSeed());
-        // A day is its own stream, so the same day reads the same in every
-        // savegame of the world however they got there.
-        this._rng = makeRng((seed ^ Math.imul(day + 1, 2654435761)) >>> 0);
-
+        const monthly = date.getDate() === 1;
+        const steps = [];
         // A leader roster is dated in years, so a lived-through span asks it
-        // once a month, as the century does; play keeps asking it daily.
-        if (!this._spanRunning || date.getDate() === 1) this.updateActiveLeaders(date);
-
-        // The monthly generators push into `this._events`; for the live pass
-        // that array IS the world log, so what they write lands in the world
-        // folder rather than in a scratch array nobody reads.
-        const held = this._events;
-        const before = store.length;
-        this._events = store;
-        this._inLive = true;
-        try {
-            if (date.getDate() === 1) {
-                // A power can be founded in the middle of a playthrough: the
-                // Northpoint Army declares itself on 1 December 2001, which is
-                // eleven months after the game starts.
-                this.handleFoundings(date);
-                this.handleLeaderMortality(date);
-                this.updateActiveLeaders(date);
-                this.handleEpidemics(date);
-                this.handleInternalPolitics(date, false);
-                this.handleInternalPolitics(date, true);
-                this.handleNationPolitics(date, true);
-                this.handleWars(date);
-                this.handleArtifactTransfers(date);
-            }
-            // The years a later start lives through before play (simulateSpan)
-            // are written at the century's density rather than an entry a day:
-            // they are history, and a dozen of them must cost a moment.
-            const eventful = !this._spanRunning || this._rand() < DAILY_EVENT_CHANCE;
-            const event = eventful ? this.generateRandomEvent(date) : null;
-            if (event) this._events.push(event);
-            // A live day can be as busy as a simulated one: the same odds of
-            // a second, third, fourth and fifth entry apply on top of the
-            // guaranteed first.
-            for (const chance of EXTRA_EVENT_CHANCES) {
-                if (!eventful || this._rand() >= chance) break;
-                const extra = this.generateRandomEvent(date);
-                if (extra) this._events.push(extra);
-            }
-        } catch (e) {
-            console.warn("[HistorySimulator] live day", liveDateStr(date), e);
-        } finally {
-            this._events = held;
-            this._inLive = false;
+        // once a month, as the century does; play keeps asking it daily. Run
+        // outside the log swap and outside the catch, as it always was: what
+        // it throws ends the call, and the day is tried again from the top.
+        steps.push({ live: false, run: (m) => {
+            if (!m._spanRunning || monthly) m.updateActiveLeaders(date);
+        } });
+        if (monthly) {
+            for (const pass of LIVE_MONTHLY_PASSES) steps.push({ live: true, run: (m) => pass(m, date) });
         }
+        steps.push({ live: true, run: (m) => m._liveDailyEvents(date) });
+        return {
+            day: day,
+            date: date,
+            store: store,
+            // A day is its own stream, so the same day reads the same in every
+            // savegame of the world however they got there.
+            rng: makeRng((seed ^ Math.imul(day + 1, 2654435761)) >>> 0),
+            steps: steps,
+            next: 0,
+            failed: false,
+            added: [],
+            written: 0,
+        };
+    };
 
-        // Everything the day wrote is stamped as live and dated to the day
-        // itself rather than to its month, so the Archive can order it, and
-        // handed to the news ticker, which is where the world talks about
-        // itself while the party is walking around in it.
-        for (let i = before; i < store.length; i++) {
-            if (!store[i]) continue;
-            store[i].live = true;
-            store[i].date = liveDateStr(date);
+    // The daily entries: the guaranteed one and the chance of more.
+    HistoryManager.prototype._liveDailyEvents = function (date) {
+        // The years a later start lives through before play (simulateSpan)
+        // are written at the century's density rather than an entry a day:
+        // they are history, and a dozen of them must cost a moment.
+        const eventful = !this._spanRunning || this._rand() < DAILY_EVENT_CHANCE;
+        const event = eventful ? this.generateRandomEvent(date) : null;
+        if (event) this._events.push(event);
+        // A live day can be as busy as a simulated one: the same odds of
+        // a second, third, fourth and fifth entry apply on top of the
+        // guaranteed first.
+        for (const chance of EXTRA_EVENT_CHANCES) {
+            if (!eventful || this._rand() >= chance) break;
+            const extra = this.generateRandomEvent(date);
+            if (extra) this._events.push(extra);
+        }
+    };
+
+    // Runs the day's next step. True once the day is finished, stamped and
+    // handed to the news.
+    HistoryManager.prototype._stepLiveDay = function (job) {
+        const outerRng = this._rng;
+        this._rng = job.rng;
+        let finished = false;
+        try {
+            const step = job.steps[job.next++];
+            if (!step) {
+                this._stampLiveDay(job);
+                finished = true;
+                return true;
+            }
+            // One failure ends the day's passes, as the single try around them
+            // always did: the rest are skipped and what was written is kept.
+            if (step.live && job.failed) return false;
+            if (!step.live) { step.run(this); return false; }
+            // The monthly generators push into `this._events`; for the live pass
+            // that array IS the world log, so what they write lands in the world
+            // folder rather than in a scratch array nobody reads.
+            const store = job.store;
+            const held = this._events;
+            const before = store.length;
+            this._events = store;
+            this._inLive = true;
+            try {
+                step.run(this);
+            } catch (e) {
+                job.failed = true;
+                console.warn("[HistorySimulator] live day", liveDateStr(job.date), e);
+            } finally {
+                this._events = held;
+                this._inLive = false;
+                for (let i = before; i < store.length; i++) job.added.push(store[i]);
+                job.written += store.length - before;
+            }
+            return false;
+        } finally {
+            // Between two steps of a split day the manager's stream is put
+            // back, so nothing that draws from it in the frames between can
+            // eat into the day's numbers. A finished day leaves its own stream
+            // in place, exactly as the day run in one go always did.
+            if (!finished) this._rng = outerRng;
+        }
+    };
+
+    // Everything the day wrote is stamped as live and dated to the day itself
+    // rather than to its month, so the Archive can order it, and handed to the
+    // news ticker, which is where the world talks about itself while the party
+    // is walking around in it.
+    HistoryManager.prototype._stampLiveDay = function (job) {
+        for (const record of job.added) {
+            if (!record) continue;
+            record.live = true;
+            record.date = liveDateStr(job.date);
             // The years a later start skips are history by the time anybody
             // reads the news (simulateSpan).
             if (this._spanRunning) continue;
             if (window.$newsManager && typeof window.$newsManager.addWorldEvent === "function") {
-                try { window.$newsManager.addWorldEvent(renderRecord(store[i]), store[i].date); } catch (_) {}
+                try { window.$newsManager.addWorldEvent(renderRecord(record), record.date); } catch (_) {}
             }
         }
-        return store.length - before;
     };
 
     // Resolve every day the world has lived through since it was last read.
     // Safe to call as often as anything likes: it is a delta engine, and a
     // clock that has not crossed midnight costs one comparison.
-    HistoryManager.prototype.catchUpLiveHistory = function (nowMinute) {
+    //
+    // `stepped` is the map's per-frame call: the 1st of a month is then run a
+    // few passes a frame (LIVE_STEP_BUDGET_MS) instead of all nine at once,
+    // and the frame is handed back. Every other caller (a map load, sleep, the
+    // cryo pod) is already a stall and finishes whatever a stepped call left.
+    HistoryManager.prototype.catchUpLiveHistory = function (nowMinute, stepped) {
         if (this._liveRunning) return 0;
         const store = this._eventStore();
         if (!store) return 0;
@@ -3392,6 +3476,18 @@
                 : (typeof $gameVariables !== "undefined" && $gameVariables ? $gameVariables.value(114) : 0)
         ) || 0;
         const today = liveDayOf(minute);
+        // A day a stepped call left half run is finished before anything else,
+        // whatever the clock says now: its passes have already touched the
+        // world, and running it again from the top would apply them twice.
+        let carried = 0;
+        if (this._liveDayJob) {
+            const job = this._liveDayJob;
+            if (!this._continueLiveDay(job, store, today, stepped)) return 0;
+            carried = job.written;
+            // A stepped call hands the frame back once the day is done; the
+            // rest of the backlog, if any, carries on next frame.
+            if (stepped) return carried;
+        }
         let last = this._liveGet("liveLastDay");
         if (last == null) {
             this._liveSet("liveLastDay", today);
@@ -3420,13 +3516,27 @@
         // generated events - while the game sat frozen. Whatever is left over
         // is drained a chunk a frame by the map's own update below, so a long
         // backlog costs a second of frames rather than a second of nothing.
-        const until = Math.min(today, last + LIVE_CHUNK_DAYS);
+        let until = Math.min(today, last + LIVE_CHUNK_DAYS);
 
         this._liveRunning = true;
-        let written = 0;
+        let written = carried;
         try {
             this._ensureLiveCast();
             for (let day = last + 1; day <= until; day++) {
+                // On the map the 1st of a month is not run inside a chunk. The
+                // chunk stops short of it, and the next frame starts it as a
+                // day of its own, resumed a few passes a frame until done.
+                if (stepped && liveDateOf(day).getDate() === 1) {
+                    if (day === last + 1) {
+                        const job = this._beginLiveDay(day, store);
+                        this._liveDayJob = job;
+                        this._liveSet("liveLastDay", day - 1);
+                        this._liveRunning = false;
+                        return this._continueLiveDay(job, store, today, true) ? job.written : 0;
+                    }
+                    until = day - 1;
+                    break;
+                }
                 written += this._runLiveDay(day, store);
             }
             this._liveSet("liveLastDay", until);
@@ -3443,9 +3553,68 @@
         return written;
     };
 
+    // How long a stepped call keeps running a split day's passes before it
+    // hands the frame back. At least one pass always runs, so a split day
+    // always moves; what is spread is the nine of them, not any one pass.
+    const LIVE_STEP_BUDGET_MS = 4;
+
+    function liveNow() {
+        return (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+    }
+
+    // Moves a half-run day on: to the end when not stepped, otherwise a few
+    // passes inside the frame budget. True once the day is finished, which is
+    // when it is counted as lived, the cast is written back and, if it was the
+    // last day owed, the closing passes run. The world folder is only written
+    // once the day is whole, so it never holds half a day.
+    HistoryManager.prototype._continueLiveDay = function (job, store, today, stepped) {
+        // A job from a world that is no longer open cannot be finished into
+        // this one (Scene_Map.terminate finishes a job long before that).
+        if (job.store !== store) { this._liveDayJob = null; return true; }
+        this._liveRunning = true;
+        let done = false;
+        try {
+            this._ensureLiveCast();
+            const started = liveNow();
+            do {
+                done = this._stepLiveDay(job);
+            } while (!done && (!stepped || liveNow() - started < LIVE_STEP_BUDGET_MS));
+            if (done) {
+                this._liveDayJob = null;
+                this._liveSet("liveLastDay", job.day);
+                if (job.day >= today) {
+                    this.reconcileArtifactCustody(liveDateStr(liveDateOf(today)));
+                    this._trimLiveEvents(store);
+                }
+                this._persistLiveCast();
+            }
+        } catch (e) {
+            // Only the day's first step can throw out of here (its passes are
+            // caught), so the day is let go and tried again from the top, as
+            // a throw out of _runLiveDay always left it.
+            this._liveDayJob = null;
+            throw e;
+        } finally {
+            this._liveRunning = false;
+        }
+        return done;
+    };
+
+    // Finishes a day a stepped call left half run, at once. For the moments
+    // the map stops being updated (it closes, the game is saved), so the world
+    // is never left, or written, with half of a day's passes applied.
+    HistoryManager.prototype.finishLiveDay = function () {
+        if (!this._liveDayJob || this._liveRunning) return;
+        const store = this._eventStore();
+        try {
+            this._continueLiveDay(this._liveDayJob, store, this._liveTargetDay != null ? this._liveTargetDay : this._liveDayJob.day, false);
+        } catch (e) { console.warn("[HistorySimulator]", e); }
+    };
+
     // True while there are still days owed. The map's update asks this every
     // frame, so it stays a pair of reads and no work.
     HistoryManager.prototype.hasLiveBacklog = function () {
+        if (this._liveDayJob) return true;
         if (this._liveTargetDay == null) return false;
         const last = this._liveGet("liveLastDay");
         return last != null && last < this._liveTargetDay;
@@ -4009,6 +4178,9 @@
     // carries on from `to`. Returns { days, events, ms }.
     HistoryManager.prototype.simulateSpan = function (from, to) {
         const empty = { days: 0, events: 0, ms: 0 };
+        // A day the map left half run is finished before the span reads where
+        // the chronicle stands, or that day would be run a second time.
+        this.finishLiveDay();
         let first = spanDayOf(from);
         const last = spanDayOf(to) - 1;
         if (!Number.isFinite(first) || !Number.isFinite(last) || last < first) return empty;
@@ -5166,17 +5338,38 @@
             if (!$gameVariables) return;
             const minute = $gameVariables.value(114) || 0;
             const day = liveDayOf(minute);
+            // Stepped: on the map the 1st of a month is spread over a few
+            // frames rather than run in the one where midnight is crossed.
             if (this._historyLastDay !== day) {
                 this._historyLastDay = day;
-                try { manager.catchUpLiveHistory(minute); } catch (e) { console.warn("[HistorySimulator]", e); }
+                try { manager.catchUpLiveHistory(minute, true); } catch (e) { console.warn("[HistorySimulator]", e); }
                 return;
             }
             // A catch-up that could not finish inside its chunk is carried on
             // here, one chunk a frame, until the world has lived every day it
             // is owed. Costs two reads on the frames where it has nothing left.
             if (!manager.hasLiveBacklog()) return;
-            try { manager.catchUpLiveHistory(minute); } catch (e) { console.warn("[HistorySimulator]", e); }
+            try { manager.catchUpLiveHistory(minute, true); } catch (e) { console.warn("[HistorySimulator]", e); }
         };
+
+        // A day split over frames is never left half run when the map stops
+        // being updated: a menu, a battle or a transfer closes this scene, and
+        // that close is already a stall, so the rest of the day runs there.
+        const _Scene_Map_terminate_history = Scene_Map.prototype.terminate;
+        Scene_Map.prototype.terminate = function () {
+            manager.finishLiveDay();
+            _Scene_Map_terminate_history.call(this);
+        };
+
+        // Nor is a savegame ever written with half a day's passes in it, or the
+        // day would run again from the top on load and apply them twice.
+        if (typeof DataManager !== "undefined" && DataManager.saveGame) {
+            const _DataManager_saveGame_history = DataManager.saveGame;
+            DataManager.saveGame = function () {
+                manager.finishLiveDay();
+                return _DataManager_saveGame_history.apply(this, arguments);
+            };
+        }
     })();
     window.HistorySimulator_COUNTRIES = COUNTRIES;
     window.HistorySimulator_ICONS     = ICONS;

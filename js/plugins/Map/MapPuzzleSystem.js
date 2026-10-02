@@ -1417,13 +1417,24 @@
         _Game_Event_moveStraight_p2.call(this, d);
     };
 
-    const _Game_Event_update_p2 = Game_Event.prototype.update;
+    // The one Game_Event.update hook of this file. It used to be three, one
+    // per job (the split screen P2 body below, the end of a push or a clone's
+    // step, the scrambler), each a link of its own in the chain every event on
+    // the map runs every frame. They run here in the order the three links ran
+    // them: P2 first, then the end of a move, then the scrambler.
+    const _Game_Event_update_puzzle = Game_Event.prototype.update;
     Game_Event.prototype.update = function () {
-        _Game_Event_update_p2.call(this);
-        if (window.$gameSplitScreen && window.$gameSplitScreen.active && this === window.$gameSplitScreen.p2Event) {
+        const wasMoving = this.isMoving();
+        _Game_Event_update_puzzle.call(this);
+        const split = window.$gameSplitScreen;
+        if (split && split.active && this === split.p2Event) {
             updatePushLock(this);
             updatePuzzleCharacter(this, SceneManager._scene instanceof Scene_Map);
         }
+        if (wasMoving && !this.isMoving() && $gameSystem && $gameSystem._puzzleData) {
+            this.onPuzzleMoveEnd();
+        }
+        if (this._scrambler) updateScrambler(this);
     };
 
     const _setupPage = Game_Event.prototype.setupPage;
@@ -1449,14 +1460,8 @@
         return (_Game_Event_canPass || Game_CharacterBase.prototype.canPass).call(this, x, y, d);
     };
 
-    const _Game_Event_update = Game_Event.prototype.update;
-    Game_Event.prototype.update = function () {
-        const wasMoving = this.isMoving();
-        _Game_Event_update.call(this);
-        if (wasMoving && !this.isMoving() && $gameSystem && $gameSystem._puzzleData) {
-            this.onPuzzleMoveEnd();
-        }
-    };
+    // The end of a pushed rock's or a clone's step is caught by the one
+    // Game_Event.update hook above.
 
     Game_Event.prototype.onPuzzleMoveEnd = function () {
         const id = this.eventId();
@@ -1563,8 +1568,13 @@
         setPuzzleSwitch(switchId, ids.every(id => puzzleData().torches[id].lit));
     }
 
+    // Runs every frame on a puzzle map, so it walks the table with for...in
+    // rather than Object.entries, which built a fresh array of [key, value]
+    // pairs per call for the collector to sweep up.
     function updateTorchTimers() {
-        for (const [id, t] of Object.entries(puzzleData().torches)) {
+        const torches = puzzleData().torches;
+        for (const id in torches) {
+            const t = torches[id];
             if (!t.lit || t.timerSeconds <= 0) continue;
             if (++t.timer >= t.timerSeconds * 60) extinguishTorch(+id);
         }
@@ -1604,7 +1614,10 @@
 
     function updateTimedPlates(rescan = true) {
         const pd = puzzleData();
-        for (const [id, plate] of Object.entries(pd.timedPlates)) {
+        // Per frame, so for...in rather than an Object.entries array per call.
+        const plates = pd.timedPlates;
+        for (const id in plates) {
+            const plate = plates[id];
             const ev = getEvent(+id);
             if (!ev) continue;
             // Occupancy only changes when something moves; cache it and rescan
@@ -2216,7 +2229,10 @@
     // =========================================================================
 
     function updateBlinkPlatforms() {
-        for (const [id, bp] of Object.entries(puzzleData().blinkPlatforms)) {
+        // Per frame, so for...in rather than an Object.entries array per call.
+        const platforms = puzzleData().blinkPlatforms;
+        for (const id in platforms) {
+            const bp = platforms[id];
             const ev = getEvent(+id);
             if (!ev) continue;
             if (++bp.frameCount >= (bp.visible ? bp.onFrames : bp.offFrames)) {
@@ -2502,6 +2518,9 @@
 
     const _moveStraight = Game_Player.prototype.moveStraight;
     Game_Player.prototype.moveStraight = function (d) {
+        // Off a puzzle map there is nothing to push, pull or mirror, and the
+        // two event scans below ran on every step of every map for it.
+        if (!mapHasPuzzleElements()) return _moveStraight.call(this, d);
         const pd = puzzleData();
         const oldX = this.x;
         const oldY = this.y;
@@ -3078,11 +3097,7 @@
         }
     }
 
-    const _Game_Event_update_scrambler = Game_Event.prototype.update;
-    Game_Event.prototype.update = function () {
-        _Game_Event_update_scrambler.call(this);
-        if (this._scrambler) updateScrambler(this);
-    };
+    // A scrambler is stepped by the one Game_Event.update hook near the top.
 
     window.MapPuzzleSystem = {
         checkPuzzleInteractions,

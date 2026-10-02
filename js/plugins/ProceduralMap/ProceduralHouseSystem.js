@@ -1215,12 +1215,21 @@
   }
 
   // Night runs from 20:00 to 06:00, matching the proc-map biome/ambience cutoff.
+  // Asked every frame by the door triggers, and the answer is a whole Date
+  // built and formatted into strings, so it is held for as long as the game
+  // minute it was worked out for.
+  let _nightMinute = null;
+  let _nightAnswer = false;
   function isNightTime() {
     try {
       if (window.TimeDateSystem && typeof window.TimeDateSystem.getGameTimeMinutes === 'function') {
-        const dt = window.TimeDateSystem.getDateTimeFromMinutes(window.TimeDateSystem.getGameTimeMinutes());
+        const minutes = window.TimeDateSystem.getGameTimeMinutes();
+        if (minutes === _nightMinute) return _nightAnswer;
+        const dt = window.TimeDateSystem.getDateTimeFromMinutes(minutes);
         const hour = parseInt(dt.hours, 10);
-        return hour >= 20 || hour < 6;
+        _nightMinute = minutes;
+        _nightAnswer = hour >= 20 || hour < 6;
+        return _nightAnswer;
       }
     } catch (e) {}
     return false;

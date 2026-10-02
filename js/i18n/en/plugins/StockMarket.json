@@ -53,7 +53,7 @@
   "assets": {
     "oil": {
       "name": "OIL",
-      "description": "Crude oil, priced by the barrel. Fuel prices and many shop mark-ups follow this line."
+      "description": "Crude oil, priced by the barrel."
     },
     "souls": {
       "name": "SOUL",

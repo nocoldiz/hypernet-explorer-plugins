@@ -164,6 +164,19 @@
   // another turn; a straight blocked by traffic can still force one sooner.
   const TURN_COOLDOWN_MIN = 5;
   const TURN_COOLDOWN_MAX = 12;
+  // Across a wide band the tile beside a car is road for a few tiles and then
+  // stops: that is the far kerb, not a side street. A turning only counts as
+  // one when the road runs at least this far off the street the car is on.
+  const SIDE_STREET_DEPTH = 10;
+  // Tiles a car must have driven since its last turn before it may turn the
+  // way that points it back where it came from: two turns the same way inside
+  // one street is a U-turn in front of whoever is watching.
+  const UTURN_GUARD = 16;
+  // How far across a street a driver looks for the kerbs. A car that cannot
+  // see both is in a junction or a square, where nobody changes lane.
+  const KERB_SCAN = 10;
+  // Narrower than this a street is a single lane, with no side to keep to.
+  const MIN_TWO_LANE_WIDTH = 4;
 
   // Walking into a procedural square from a world-map road drops the player ON
   // the border tile they came in from - which is exactly where traffic enters
@@ -276,6 +289,7 @@
   let biomeCategory = "none";    // 'road' | 'city' | 'village' | 'none'
   let laneDefs = [];             // road biome: fixed lane paths (see LANE GEOMETRY)
   let laneCursor = 0;            // round-robin lane assignment counter
+  let trafficOnRight = true;     // free-roaming town traffic keeps to this side
 
   // Traffic handedness. true = drive on the right (a car keeps the dashed centre
   // line on its LEFT), false = left-hand traffic. Every lane in the table below
@@ -973,24 +987,61 @@
 
   // Everybody a car can run over on the map currently loaded, cached for the
   // frame: this is read by every car, several times, every frame.
-  let pedestrianCache = [];
+  //
+  // The list is rebuilt in place, straight off the map's event slots, rather
+  // than through $gameMap.events() and a filter, which made two fresh arrays
+  // a frame. It cannot be kept across frames and refreshed only on a spawn or
+  // an erase: a dozen plugins write $gameMap._events slots directly (NPC
+  // spawns, plants, animals, armies, quests), so there is no one place a new
+  // pedestrian could be noticed. The same pass instead notes whether anybody
+  // on it moved, jumped, landed, arrived or left since the last frame, which
+  // is what lets a car skip testing its bodywork against all of them on the
+  // frames nothing under it could have changed (runDownEverybodyUnder).
+  const pedestrianCache = [];
   let pedestrianFrame = -1;
   let pedestrianMapId = -1;
+  let pedestrianStamp = 0;   // bumped whenever the list or a position on it changes
+
+  function isPedestrian(e) {
+    if (!e || e._erased) return false;
+    // Somebody on the road on foot or on a bike can be run down; a broom
+    // is up in the air (ROAD TRAVELLERS).
+    if (e._roadTraveller) return e._roadTraveller.mode !== MODE_BROOM;
+    const name = e.event() && e.event().name;
+    return name === "NPC" || name === "Enemy";  // i18n-ignore  event names
+  }
 
   function pedestrianEvents() {
     if (pedestrianFrame === Graphics.frameCount && pedestrianMapId === $gameMap.mapId()) {
       return pedestrianCache;
     }
     pedestrianFrame = Graphics.frameCount;
-    pedestrianMapId = $gameMap.mapId();
-    pedestrianCache = $gameMap.events().filter((e) => {
-      if (!e || e._erased) return false;
-      // Somebody on the road on foot or on a bike can be run down; a broom
-      // is up in the air (ROAD TRAVELLERS).
-      if (e._roadTraveller) return e._roadTraveller.mode !== MODE_BROOM;
-      const name = e.event() && e.event().name;
-      return name === "NPC" || name === "Enemy";  // i18n-ignore  event names
-    });
+    const mapId = $gameMap.mapId();
+    let changed = pedestrianMapId !== mapId;
+    pedestrianMapId = mapId;
+    // The slots themselves, not a filtered copy; a stand-in map without them
+    // (the headless harnesses) is read through events() as before.
+    const slots = Array.isArray($gameMap._events) ? $gameMap._events : $gameMap.events();
+    let n = 0;
+    for (let i = 0; i < slots.length; i++) {
+      const e = slots[i];
+      if (!isPedestrian(e)) continue;
+      if (pedestrianCache[n] !== e) { pedestrianCache[n] = e; changed = true; }
+      n++;
+      // Being a road traveller is part of it: highway traffic passes one by.
+      const jumping = e.isJumping();
+      const traveller = !!e._roadTraveller;
+      if (e._carSeenX !== e.x || e._carSeenY !== e.y || e._carSeenJump !== jumping ||
+          e._carSeenTraveller !== traveller) {
+        e._carSeenX = e.x;
+        e._carSeenY = e.y;
+        e._carSeenJump = jumping;
+        e._carSeenTraveller = traveller;
+        changed = true;
+      }
+    }
+    if (pedestrianCache.length !== n) { pedestrianCache.length = n; changed = true; }
+    if (changed) pedestrianStamp++;
     return pedestrianCache;
   }
 
@@ -1098,6 +1149,91 @@
 
   const inBounds = (x, y) => x >= 0 && y >= 0 && x < gridW && y < gridH;
 
+  const reverseDir = (d) => 10 - d;
+
+  // Consecutive road tiles from (x, y) stepping `d`, the start tile not
+  // counted, up to `max`. Off the map counts as road when `offMapIsRoad` (a
+  // side street running out to the border is still a street) and as the kerb
+  // otherwise.
+  function roadRun(x, y, d, max, offMapIsRoad) {
+    let n = 0;
+    for (let i = 1; i <= max; i++) {
+      const tx = x + dxOf(d) * i, ty = y + dyOf(d) * i;
+      if (!inBounds(tx, ty)) return offMapIsRoad ? max : n;
+      if (!isRoad(tx, ty)) return n;
+      n++;
+    }
+    return n;
+  }
+
+  // The kerb a driver keeps to while heading `d`: their right where traffic
+  // drives on the right, their left where it does not. Heading down the screen
+  // (2) faces south, so their right hand is west (4).
+  function kerbSideOf(d) {
+    const right = d === 2 ? 4 : d === 8 ? 6 : d === 4 ? 8 : 2;
+    return trafficOnRight ? right : reverseDir(right);
+  }
+
+  // A turn that points the car back the way it came before its last turn,
+  // taken before it has driven UTURN_GUARD tiles since, is a U-turn.
+  function isUTurn(ev, d) {
+    return ev._carPrevDir != null && d === reverseDir(ev._carPrevDir) &&
+      (ev._carSinceTurn || 0) < UTURN_GUARD;
+  }
+
+  // Where (x, y) sits across the street for a car heading `d`: `near` tiles of
+  // road between it and its own kerb, out of a street `width` wide. Null in a
+  // junction or a square (a kerb out of sight), and on a single-lane street.
+  function laneOffset(x, y, d) {
+    const toKerb = kerbSideOf(d);
+    const near = roadRun(x, y, toKerb, KERB_SCAN, false);
+    const far = roadRun(x, y, reverseDir(toKerb), KERB_SCAN, false);
+    if (near >= KERB_SCAN || far >= KERB_SCAN) return null;
+    const width = near + far + 1;
+    return width < MIN_TWO_LANE_WIDTH ? null : { near, width };
+  }
+
+  // In its own half of the street, or on one where there is no half to keep.
+  function inOwnHalf(x, y, d) {
+    const at = laneOffset(x, y, d);
+    return !at || at.near < Math.floor(at.width / 2);
+  }
+
+  // The sideways drift that brings a car going straight into the middle of its
+  // own half of the street, or 0 when it is already there, the street is a
+  // single lane, it is crossing a junction, or the tile is taken.
+  function laneDrift(ev, d) {
+    const at = laneOffset(ev.x, ev.y, d);
+    if (!at) return 0;
+    const target = Math.floor((Math.floor(at.width / 2) - 1) / 2);
+    if (at.near === target) return 0;
+    const toKerb = kerbSideOf(d);
+    const side = at.near > target ? toKerb : reverseDir(toKerb);
+    const tx = ev.x + dxOf(d) + dxOf(side);
+    const ty = ev.y + dyOf(d) + dyOf(side);
+    if (!inBounds(tx, ty) || !isRoad(tx, ty)) return 0;
+    return carCanEnter(ev, tx, ty, d) ? side : 0;
+  }
+
+  // Would turning into `d` here put the car in its own half of the street it
+  // turns into? A right turn is taken at the near corner of a junction and a
+  // left turn at the far one, the way a driver does it, so nobody comes out of
+  // the junction on the wrong side and then has to cut across oncoming cars.
+  function turnLandsInLane(ev, d) {
+    const toKerb = kerbSideOf(d);
+    let x = ev.x, y = ev.y;
+    for (let i = 0; i < SIDE_STREET_DEPTH; i++) {
+      x += dxOf(d);
+      y += dyOf(d);
+      if (!inBounds(x, y) || !isRoad(x, y)) return true;
+      // Still crossing the street being left: look one tile further in.
+      if (roadRun(x, y, toKerb, KERB_SCAN, false) >= KERB_SCAN ||
+          roadRun(x, y, reverseDir(toKerb), KERB_SCAN, false) >= KERB_SCAN) continue;
+      return inOwnHalf(x, y, d);
+    }
+    return true;
+  }
+
   // Decide the next direction for a driving car.
   // Returns a direction (2/4/6/8), null (wait this frame), or RESPAWN.
   function chooseCarDirection(ev) {
@@ -1112,37 +1248,46 @@
     const free = (d) => carCanEnter(ev, nx(d), ny(d), d);
 
     const straightRoad = roadDir(cur);
-    // Turn options never include reversing - cars only ever go forward or bend.
-    const turns = perpDirs(cur).filter(roadDir);
+    // Turn options never include reversing - cars only ever go forward or bend -
+    // nor a second bend that points back down the street just left.
+    const turns = perpDirs(cur).filter((d) => roadDir(d) && !isUTurn(ev, d));
     const freeTurns = turns.filter(free);
+    // A turning a driver would choose: a real side street, not the far kerb,
+    // taken from the spot that lands the car in its own lane.
+    const sideStreets = freeTurns.filter(
+      (d) => roadRun(ev.x, ev.y, d, SIDE_STREET_DEPTH, true) >= SIDE_STREET_DEPTH &&
+        turnLandsInLane(ev, d));
 
     // Commit to a heading after taking it: only a car past its cooldown may
     // volunteer for another turn on a plain straightaway (see TURN_COOLDOWN_*).
-    const takeTurn = () => {
-      const dir = freeTurns[Math.floor(Math.random() * freeTurns.length)];
+    const takeTurn = (options) => {
+      const dir = options[Math.floor(Math.random() * options.length)];
       ev._carTurnCooldown =
         TURN_COOLDOWN_MIN + Math.floor(Math.random() * (TURN_COOLDOWN_MAX - TURN_COOLDOWN_MIN));
+      ev._carPrevDir = cur;
+      ev._carSinceTurn = 0;
       return dir;
     };
 
     if (straightRoad) {
       const cooldown = ev._carTurnCooldown || 0;
-      // At an intersection, occasionally pick a turn (cities wander, roads don't)
-      if (cooldown <= 0 && freeTurns.length && Math.random() < turnChanceForBiome()) {
-        return takeTurn();
+      // At a side street, occasionally take it (cities wander, roads don't)
+      if (cooldown <= 0 && sideStreets.length && Math.random() < turnChanceForBiome()) {
+        return takeTurn(sideStreets);
       }
       if (free(cur)) {
         if (cooldown > 0) ev._carTurnCooldown = cooldown - 1;
+        ev._carSinceTurn = (ev._carSinceTurn || 0) + 1;
         return cur;                               // keep going straight
       }
-      // Straight blocked by another actor: slip onto a free turn if one exists,
-      // otherwise just wait for the tile ahead to clear (no reversing).
-      if (freeTurns.length) return takeTurn();
+      // Straight blocked by another actor: slip into a free side street if one
+      // is right here, otherwise wait for the tile ahead to clear.
+      if (sideStreets.length) return takeTurn(sideStreets);
       return null;
     }
 
     // Straight is no longer road: the road bends (corner) or forks here.
-    if (freeTurns.length) return takeTurn();
+    if (freeTurns.length) return takeTurn(freeTurns);
     if (turns.length) return null;               // a turn exists but is blocked -> wait
 
     // Nothing ahead and no turn - genuine dead end. Recycle to a border spawn
@@ -1177,12 +1322,17 @@
       const t = pool[Math.floor(Math.random() * pool.length)];
       const dir = pickStartDirection(t.x, t.y);
       if (nearPlayer(t.x, t.y, SPAWN_PLAYER_CLEARANCE)) continue;
+      // Come in on the side of the street that traffic drives on, while there
+      // are tries to spare for it.
+      if (tries < 20 && !inOwnHalf(t.x, t.y, dir)) continue;
       if (!carCanBePlaced(ev, t.x, t.y, dir)) continue;
       ev.setPosition(t.x, t.y);
       ev._carDir = dir;
       ev.setDirection(dir);
       ev._carStuck = 0;
       ev._carTurnCooldown = 0;
+      ev._carPrevDir = null;
+      ev._carSinceTurn = 0;
       ev._carPullTo = null;
       newDriver(ev);  // a car coming onto the square is somebody else's
       return;
@@ -1519,6 +1669,8 @@
     ev._carMode = "driving";
     ev._carStuck = 0;
     ev._carTurnCooldown = 0;
+    ev._carPrevDir = null;
+    ev._carSinceTurn = 0;
     ev._carLane = stop.lane != null ? stop.lane : null;
     ev._carWaypoint = stop.waypoint;
     if (stop.dir) {
@@ -2246,6 +2398,8 @@
     ev._carMode = "driving";
     ev._carStuck = 0;
     ev._carTurnCooldown = 0;
+    ev._carPrevDir = null;
+    ev._carSinceTurn = 0;
     ev._carPullTo = null;
     clearParkedSelfSwitch(ev);
     applyCarModeSettings(ev);
@@ -2285,6 +2439,7 @@
       const key = t.x + "," + t.y;
       const dir = pickStartDirection(t.x, t.y);
       if (nearPlayer(t.x, t.y, SPAWN_PLAYER_CLEARANCE)) continue;
+      if (tries < 40 && !inOwnHalf(t.x, t.y, dir)) continue;
       if (occupied.has(key) || !carCanBePlaced(ev, t.x, t.y, dir)) continue;
       occupied.add(key);
       ev.setPosition(t.x, t.y);
@@ -2656,6 +2811,8 @@
     const now = Graphics.frameCount;
     if (now - (victim._carHitFrame || -Infinity) <= HIT_GRACE_FRAMES) return false;
     victim._carHitFrame = now;
+    // Test every frame until this grace has run out (runDownEverybodyUnder).
+    impactForceUntil = Math.max(impactForceUntil, now + HIT_GRACE_FRAMES + 1);
 
     AudioManager.playSe({ name: "Blow2", volume: 80, pitch: 90, pan: 0 });  // i18n-ignore  SE file
 
@@ -2715,10 +2872,40 @@
     return dx >= box.minDx && dx <= box.maxDx && dy >= box.minDy && dy <= box.maxDy;
   }
 
+  // While anybody is inside their grace period every vehicle is tested every
+  // frame, exactly as before: the moment a grace runs out is a moment someone
+  // still under the bodywork can be hit again, with nothing having moved.
+  let impactForceUntil = -1;
+
   // Everybody a moving vehicle has under its bodywork right now.
+  //
+  // Whether someone is under a car only changes when the car's tile or facing
+  // changes, when somebody on the pedestrian list moves, jumps or lands, or
+  // when the list itself changes (pedestrianStamp), or when a grace period
+  // runs out (impactForceUntil). On every other frame the answer is the one
+  // the last test gave, so the test is skipped. A car moving into a tile
+  // changes its own tile that same frame, so it still hits whoever is there.
   function runDownEverybodyUnder(source, byPlayer) {
+    const peds = pedestrianEvents();
+    const now = Graphics.frameCount;
+    const dir = source.direction();
+    if (
+      now > impactForceUntil &&
+      source._impactStamp === pedestrianStamp &&
+      source._impactX === source.x &&
+      source._impactY === source.y &&
+      source._impactDir === dir &&
+      source._impactMapId === pedestrianMapId
+    ) return;
+    source._impactStamp = pedestrianStamp;
+    source._impactX = source.x;
+    source._impactY = source.y;
+    source._impactDir = dir;
+    source._impactMapId = pedestrianMapId;
+
     const box = carRect(source, null);
-    for (const victim of pedestrianEvents()) {
+    for (let i = 0; i < peds.length; i++) {
+      const victim = peds[i];
       if (victim.isJumping()) continue;
       // Highway traffic gives the verge and the shoulder the width of the
       // road: only the party's own wheels run a traveller down.
@@ -2773,9 +2960,14 @@
     for (const car of roadCarEvents()) {
       if (!car || car._erased || car._carActive === false) continue;
       if (now - (car._carCrashFrame || -Infinity) <= HIT_GRACE_FRAMES) continue;
-      const hit = anyBodyTile(car, car.x, car.y, null, (tx, ty) =>
-        boxContains(vehicle, box, tx, ty)
-      );
+      // Bodywork against bodywork as two rectangles overlapping: the same
+      // answer as walking every tile of the car's body through the box, with
+      // no closure made per car per frame.
+      const r = carRect(car, null);
+      if (r.minDx > r.maxDx || r.minDy > r.maxDy) continue;
+      const hit =
+        car.x + r.minDx <= vehicle.x + box.maxDx && car.x + r.maxDx >= vehicle.x + box.minDx &&
+        car.y + r.minDy <= vehicle.y + box.maxDy && car.y + r.maxDy >= vehicle.y + box.minDy;
       if (!hit) continue;
       car._carCrashFrame = now;
 
@@ -3082,9 +3274,19 @@
     }
 
     this._carStuck = 0;
+    // Going straight on a two-lane street, the driver eases over into the
+    // middle of their own half instead of holding whatever line they had.
+    const side = dir === this._carDir ? laneDrift(this, dir) : 0;
     this._carDir = dir;
     this.setDirection(dir);
-    this.moveStraight(dir);
+    if (side) {
+      const horz = dir === 4 || dir === 6 ? dir : side;
+      const vert = dir === 4 || dir === 6 ? side : dir;
+      this.moveDiagonally(horz, vert);
+      this.setDirection(dir);
+    } else {
+      this.moveStraight(dir);
+    }
   };
 
   // ==========================================================================
@@ -3096,7 +3298,7 @@
     _Scene_Map_onMapLoaded.call(this);
     // Every cache below holds objects or tiles of the map that is being left.
     carEvents = [];
-    pedestrianCache = [];
+    pedestrianCache.length = 0;
     pedestrianFrame = -1;
     parkingSpots = [];
     if ($gameMap.mapId() === PROC_MAP_ID) {
@@ -3176,6 +3378,7 @@
 
     buildRoadGrid();
     buildParkingSpots();
+    trafficOnRight = driveOnRight();
 
     // If a road biome somehow produced no road tiles, bail out gracefully
     if (biomeCategory !== "village" && roadTiles.length === 0) {

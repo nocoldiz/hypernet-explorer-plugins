@@ -340,14 +340,27 @@
       return h >= this.NIGHT_FROM || h < this.NIGHT_TO;
     },
 
+    // The verdict is remembered on the event, keyed on its data object:
+    // isFree asks it of every event on a bed's tile on every update of every
+    // sleeper walking to bed, and the answer meant walking every command of
+    // every page. A new data object (a map reload, a building floor reusing
+    // the event) is a new question and is scanned again. A WeakMap rather
+    // than a field on the event: Game_Events go into the save file, and a
+    // field would drag a copy of the event's whole data along with it.
+    _bedMemo: new WeakMap(),
+
     isBedEvent(ev) {
       if (!ev || ev._erased || !ev.event) return false;
       const data = ev.event();
       if (!data) return false;
+      const memo = this._bedMemo.get(ev);
+      if (memo && memo.data === data) return memo.bed;
       const name = String(data.name || "");
-      if (/\bbed\b/i.test(name) && !/flower|river|sea|garden|creek|stream|lake/i.test(name)) return true; // i18n-ignore: event names matched at runtime
-      return (data.pages || []).some(p => (p?.list || []).some(c =>
-        c && c.code === 117 && Number(c.parameters?.[0]) === Config.BED_COMMON_EVENT_ID));
+      const bed = (/\bbed\b/i.test(name) && !/flower|river|sea|garden|creek|stream|lake/i.test(name)) || // i18n-ignore: event names matched at runtime
+        (data.pages || []).some(p => (p?.list || []).some(c =>
+          c && c.code === 117 && Number(c.parameters?.[0]) === Config.BED_COMMON_EVENT_ID));
+      this._bedMemo.set(ev, { data, bed });
+      return bed;
     },
 
     // Every bed on the map, scanned once per map. Keyed on the map data
@@ -462,6 +475,25 @@
         ev && ev !== self && !ev._erased && !(typeof ev.isThrough === "function" && ev.isThrough()));
     },
 
+    // Every tile isEmpty would refuse, gathered in one pass over the events.
+    // freeSeats asked isEmpty of every seat on the map, and each ask filtered
+    // the whole event list (eventsXy): a spawn dealt onto a seat with no
+    // radius was seats times events. Same rules as isEmpty, read once.
+    heldTiles(self) {
+      const w = $gameMap.width();
+      const held = new Set();
+      if ($gamePlayer) held.add($gamePlayer.x + $gamePlayer.y * w);
+      for (const f of $gamePlayer?.followers?.()?._data || []) {
+        if (f && f._sittingDetached) held.add(f.x + f.y * w);
+      }
+      for (const ev of $gameMap.events()) {
+        if (!ev || ev === self || ev._erased) continue;
+        if (typeof ev.isThrough === "function" && ev.isThrough()) continue;
+        held.add(ev.x + ev.y * w);
+      }
+      return held;
+    },
+
     // A tile somebody can stand on: walkable, not a seat, not water or a
     // blocked region.
     canStand(x, y) {
@@ -488,10 +520,12 @@
     // With no radius the whole map counts.
     freeSeats(x, y, self, radius) {
       const out = [];
+      const held = this.heldTiles(self);
+      const w = $gameMap.width();
       for (const t of this.tiles()) {
         const d = Utils.manhattan(t.x, t.y, x, y);
         if (radius && d > radius) continue;
-        if (!this.isEmpty(t.x, t.y, self)) continue;
+        if (held.has(t.x + t.y * w)) continue;
         if (!this.approaches(t, x, y).length) continue;
         out.push({ x: t.x, y: t.y, d });
       }
@@ -531,6 +565,47 @@
       const traitsById = _getTraitsById();
       if ((profile?.traitIds || []).some(id => /lazy/i.test(traitsById.get(id)?.name || ""))) w += 15;
       return w;
+    },
+  };
+
+  // While a search runs, the event half of canPass is left out. Every
+  // neighbour the search weighs called it, and the stock check filters every
+  // event on the map into a fresh array each time: a few thousand passes over
+  // the whole event list per path. The frame's eventGrid already answers the
+  // same question for the tile being entered, and more strictly (any solid
+  // event, not just the same-priority ones), so the search loses nothing.
+  let _pathProbeDepth = 0;
+  const _Game_CharacterBase_isCollidedWithEvents_probe = Game_CharacterBase.prototype.isCollidedWithEvents;
+  Game_CharacterBase.prototype.isCollidedWithEvents = function (x, y) {
+    if (_pathProbeDepth > 0) return false;
+    return _Game_CharacterBase_isCollidedWithEvents_probe.call(this, x, y);
+  };
+
+  // Failed searches, remembered per walker for FRAMES frames. Kept per
+  // character because canPass and the walker's own tile are part of the
+  // question; a WeakMap so a freed event takes its memory with it, and so
+  // nothing of it reaches the save. Half a second is short enough that a
+  // crowd which has moved on is tried again almost at once.
+  const _PathFailMemo = {
+    FRAMES: 30,
+    _byChar: new WeakMap(),
+    has(ch, key) {
+      const m = ch && this._byChar.get(ch);
+      if (!m) return false;
+      const at = m.get(key);
+      if (at == null) return false;
+      const fc = Graphics.frameCount;
+      if (fc >= at && fc - at < this.FRAMES) return true;
+      m.delete(key);
+      return false;
+    },
+    remember(ch, key) {
+      if (!ch) return;
+      let m = this._byChar.get(ch);
+      if (!m) { m = new Map(); this._byChar.set(ch, m); }
+      // A walker that fails at many goals in a row keeps only the latest few.
+      if (m.size >= 16) m.clear();
+      m.set(key, Graphics.frameCount);
     },
   };
 
@@ -585,39 +660,47 @@
       fScore.set(startK, Utils.manhattan(startX, startY, goalX, goalY));
       openHeap.push(startK);
 
-      let iterations = 0;
-      while (openHeap.size > 0 && iterations++ < 500) {
-        const currentK = openHeap.pop();
-        if (currentK === goalK) return this.reconstructPath(cameFrom, currentK);
-        closedSet.add(currentK);
+      _pathProbeDepth++;
+      try {
+        let iterations = 0;
+        while (openHeap.size > 0 && iterations++ < 500) {
+          const currentK = openHeap.pop();
+          if (currentK === goalK) return this.reconstructPath(cameFrom, currentK);
+          closedSet.add(currentK);
 
-        const cx = currentK % mapW, cy = Math.floor(currentK / mapW);
+          const cx = currentK % mapW, cy = Math.floor(currentK / mapW);
 
-        // Walked off the tables above rather than built as an array of four
-        // objects: this loop runs up to 500 times per pathfind, and every NPC
-        // re-paths whenever its state changes.
-        for (let n = 0; n < 4; n++) {
-          const nx = cx + NEIGHBOR_DX[n];
-          const ny = cy + NEIGHBOR_DY[n];
-          const dir = NEIGHBOR_DIR[n];
-          const nK = getKey(nx, ny);
-          if (!$gameMap.isValid(nx, ny) || closedSet.has(nK)) continue;
-          const hasDoor = doorKeys.has(nK);
-          if (!hasDoor && (!this.character.canPass(cx, cy, dir) || !this.isPassable(nx, ny, undefined, eventGrid))) continue;
-          if (avoidEnemies && enemyDangerKeys.has(nK)) continue;
-          if (avoidNPCs && allNpcKeys.has(nK) && nK !== selfKey) continue;
+          // Walked off the tables above rather than built as an array of four
+          // objects: this loop runs up to 500 times per pathfind, and every NPC
+          // re-paths whenever its state changes.
+          for (let n = 0; n < 4; n++) {
+            const nx = cx + NEIGHBOR_DX[n];
+            const ny = cy + NEIGHBOR_DY[n];
+            const dir = NEIGHBOR_DIR[n];
+            const nK = getKey(nx, ny);
+            if (!$gameMap.isValid(nx, ny) || closedSet.has(nK)) continue;
+            const hasDoor = doorKeys.has(nK);
+            if (!hasDoor && (!this.character.canPass(cx, cy, dir) || !this.isPassable(nx, ny, undefined, eventGrid))) continue;
+            if (avoidEnemies && enemyDangerKeys.has(nK)) continue;
+            if (avoidNPCs && allNpcKeys.has(nK) && nK !== selfKey) continue;
 
-          const tGScore = (gScore.get(currentK) ?? 0) + 1;
-          if (openHeap.has(nK) && tGScore >= (gScore.get(nK) ?? Infinity)) continue;
+            const tGScore = (gScore.get(currentK) ?? 0) + 1;
+            if (openHeap.has(nK) && tGScore >= (gScore.get(nK) ?? Infinity)) continue;
 
-          cameFrom.set(nK, { pos: currentK, dir });
-          gScore.set(nK, tGScore);
-          fScore.set(nK, tGScore + Utils.manhattan(nx, ny, goalX, goalY));
+            cameFrom.set(nK, { pos: currentK, dir });
+            gScore.set(nK, tGScore);
+            fScore.set(nK, tGScore + Utils.manhattan(nx, ny, goalX, goalY));
 
-          if (!openHeap.has(nK)) openHeap.push(nK);
-          else openHeap.update(nK);
+            if (!openHeap.has(nK)) openHeap.push(nK);
+            else openHeap.update(nK);
+          }
         }
+      } finally {
+        _pathProbeDepth--;
       }
+      // Searched to the end and found nothing: the one null worth
+      // remembering (see _PathFailMemo below the class).
+      this._exhausted = true;
       return null;
     }
 
@@ -662,6 +745,24 @@
       return null;
     }
   }
+
+  // A search that just failed is not run again for a few frames: the goal is
+  // behind a crowd or out of reach, and every retry (a blocked step, a
+  // re-decide, the next sleeper eyeing the same bed) paid the full 500
+  // iterations to learn the same thing. Only a search that ran to the end is
+  // remembered; the goals findPath turns down before searching cost nothing
+  // to ask again, and may well be free a moment later.
+  const _findPathSearch = Pathfinder.prototype.findPath;
+  Pathfinder.prototype.findPath = function (startX, startY, goalX, goalY, avoidEnemies = true, avoidNPCs = true) {
+    const mapW = $gameMap.width();
+    const failKey = `${$gameMap.mapId()}:${startX + startY * mapW}:${goalX + goalY * mapW}:${avoidEnemies ? 1 : 0}${avoidNPCs ? 1 : 0}`;
+    if (_PathFailMemo.has(this.character, failKey)) return null;
+    this._exhausted = false;
+    const path = _findPathSearch.call(this, startX, startY, goalX, goalY, avoidEnemies, avoidNPCs);
+    if (!path && this._exhausted) _PathFailMemo.remember(this.character, failKey);
+    this._exhausted = false;
+    return path;
+  };
 
   // ==========================================================================
   // SWIM SPOTS (Phase R): where on the shore a person gets into the water

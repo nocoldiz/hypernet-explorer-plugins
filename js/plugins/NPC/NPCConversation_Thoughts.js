@@ -433,6 +433,11 @@
   })();
   if (BubbleLayout && typeof window !== 'undefined') window.NPCBubbleLayout = BubbleLayout;
 
+  // Whether the page knows the individual `translate` property (see
+  // ThoughtBubble.updatePosition).
+  const _CAN_TRANSLATE = typeof CSS !== 'undefined' && typeof CSS.supports === 'function' &&
+    CSS.supports('translate', '1px 1px');
+
   const ThoughtBubbleManager = (typeof document === 'undefined') ? null : (() => {
 
     // Screen-space helpers (mirrors MousePan's Window_EventHover projection).
@@ -574,8 +579,19 @@
           left = Math.round(slot.x);
           top  = Math.round(slot.y);
         }
-        if (left !== this._lastLeft) { this.el.style.left = left + 'px'; this._lastLeft = left; }
-        if (top  !== this._lastTop)  { this.el.style.top  = top  + 'px'; this._lastTop  = top;  }
+        if (left === this._lastLeft && top === this._lastTop) return;
+        this._lastLeft = left;
+        this._lastTop  = top;
+        // While the camera scrolls every bubble moves every frame, and a new
+        // left/top is a layout of the page each time. The CSS `translate`
+        // property moves it on the compositor instead. Not `transform`: the
+        // stylesheet already spends that on the centring translateX(-50%) and
+        // the fade's slide, with a transition on it that would make the bubble
+        // trail its speaker. `translate` is applied before `transform`, so the
+        // centring still holds. Left/top stay as the fallback where the
+        // property is unknown.
+        if (_CAN_TRANSLATE) this.el.style.translate = left + 'px ' + top + 'px';
+        else { this.el.style.left = left + 'px'; this.el.style.top = top + 'px'; }
       }
     }
 
@@ -600,7 +616,39 @@
         return bubble;
       },
 
+      // The sim's hourly tick thinks one thought for every NPC on the map in
+      // the same frame, and each bubble shown forces a layout to measure
+      // itself. They wait here instead and come up one every SHOW_GAP_FRAMES,
+      // newest kept: past PENDING_MAX the oldest thoughts are let go unseen.
+      SHOW_GAP_FRAMES: 6,
+      PENDING_MAX: 12,
+      _pending: [],
+      _lastShownFrame: -Infinity,
+
       queue(npcName, text) {
+        if (!npcName || !text || !$gameMap) return;
+        if (isTacticalFight()) return;
+        const at = this._pending.findIndex(p => p.npcName === npcName);
+        if (at >= 0) this._pending.splice(at, 1);
+        this._pending.push({ npcName, text, mapId: $gameMap.mapId() });
+        if (this._pending.length > this.PENDING_MAX) this._pending.shift();
+      },
+
+      _drainPending() {
+        if (!this._pending.length) return;
+        const frame = typeof Graphics !== "undefined" ? Graphics.frameCount : 0;
+        if (frame - this._lastShownFrame < this.SHOW_GAP_FRAMES) return;
+        const mapId = $gameMap.mapId();
+        while (this._pending.length) {
+          const next = this._pending.shift();
+          if (next.mapId !== mapId) continue;
+          this._lastShownFrame = frame;
+          this._showNow(next.npcName, next.text);
+          return;
+        }
+      },
+
+      _showNow(npcName, text) {
         if (!npcName || !text || !$gameMap) return;
         if (isTacticalFight()) return;
         // A non-sentient NPC (one of the creature classes, see NPCCreature) has
@@ -626,6 +674,7 @@
 
       update() {
         if (!$gameMap) return;
+        this._drainPending();
         // Nothing on screen, nothing to place. This runs on every frame of
         // every map, and everything below it costs something worth not paying
         // for an empty screen: _msgGetScale reads the canvas box out of the
@@ -665,6 +714,7 @@
       hideAll() {
         for (const bubble of this._bubbles) bubble.release();
         this._byName.clear();
+        this._pending.length = 0;
         if (BubbleLayout) BubbleLayout.clear();
       },
     };

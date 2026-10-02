@@ -455,10 +455,18 @@
     return out;
   }
 
+  // Walks the store in place: every placed animal asks this about itself
+  // once a second, and building the whole world's list for each one made a
+  // farm's tick grow with the square of its herd.
   function findPlacement(uid) {
     const n = Number(uid);
-    for (const entry of allPlacements()) {
-      if (entry.rec.uid === n) return entry;
+    const store = placementStore();
+    for (const mapKey in store) {
+      const list = store[mapKey];
+      if (!list) continue;
+      for (const rec of list) {
+        if (rec && rec.animalId && rec.uid === n) return { rec, mapKey };
+      }
     }
     return null;
   }
@@ -1365,7 +1373,8 @@
     // the sprite the moment a baby becomes an adult. Checked on a slow beat so
     // this per-frame hook stays cheap.
     if (this._animalUid) {
-      if ((Graphics.frameCount & 63) !== 0) return;
+      // Staggered by event id, so a herd does not all tick on one frame.
+      if (((Graphics.frameCount + this._eventId) & 63) !== 0) return;
       const found = findPlacement(this._animalUid);
       if (!found) return;
       updateRecordGrowth(found.rec);

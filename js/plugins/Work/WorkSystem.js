@@ -1953,6 +1953,15 @@
       const list = this.list();
       if (list.length === 0) return;
       const now = getGameTimeMinutes();
+      // Nobody is due on almost every frame of a shift, and the filtered copy
+      // below was a new array (and closure) each of them. The copy is only
+      // made once somebody is: finish() splices the live list, so it cannot
+      // be walked in place.
+      let due = false;
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].endMinute <= now) { due = true; break; }
+      }
+      if (!due) return;
       for (const entry of list.filter(e => e.endMinute <= now)) {
         this.finish(entry);
       }

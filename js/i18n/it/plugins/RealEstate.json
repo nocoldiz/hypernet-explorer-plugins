@@ -98,6 +98,60 @@
     },
     "aetherlogistics": {
       "description": "Operatore di trasporti. Treni, autobus ed elicotteri per passeggeri e merci."
+    },
+    "hearthmillfoods": {
+      "description": "Industria alimentare. Pane, scatolame, zuppe e acqua in bottiglia per ogni dispensa."
+    },
+    "carnifexreclamation": {
+      "description": "Recupera arti e organi dai caduti e li rivende a chirurghi e collezionisti."
+    },
+    "contagionbiolabs": {
+      "description": "Laboratorio di ricerca. Colture, fiale e campioni di ogni malattia conosciuta."
+    },
+    "panaceapharmaceuticals": {
+      "description": "Casa farmaceutica. Compresse, creme e gocce da banco."
+    },
+    "cradlegenetics": {
+      "description": "Catena di cliniche della fertilità. Campioni, test e ausili per la gestazione."
+    },
+    "aquamemoriaremedies": {
+      "description": "Rimedi omeopatici diluiti oltre l'ultima molecola. Economici, con clienti fedelissimi."
+    },
+    "curiokeepsake": {
+      "description": "Commerciante di cimeli, trofei e oggetti da collezione."
+    },
+    "cruciblereagents": {
+      "description": "Fornisce reagenti, sali e resine ad alchimisti e chimici."
+    },
+    "quillmarkpress": {
+      "description": "Casa editrice. Romanzi, scritture sacre, frammenti e libri degli incantesimi vuoti."
+    },
+    "artisanguildsupply": {
+      "description": "Attrezzi e materiali per ogni mestiere, dal calzolaio all'orologiaio."
+    },
+    "beastmarrowexports": {
+      "description": "Commercia veleni, ghiandole, piume e altre parti prelevate dai mostri."
+    },
+    "salvomunitions": {
+      "description": "Armi da lancio, bombe incendiarie e cassette di combattimento per la strada e l'arena."
+    },
+    "northboundoutfitters": {
+      "description": "Equipaggiamento di sopravvivenza per il freddo, le terre selvagge e la lunga strada."
+    },
+    "scrapheaprecycling": {
+      "description": "Compra rifiuti a tonnellate. Margini sottili, scorte infinite."
+    },
+    "ironcladarms": {
+      "description": "Forgia lame, asce, lance e ogni altra arma da corpo a corpo."
+    },
+    "longshotballistics": {
+      "description": "Archi, armi da lancio e armi da fuoco. Sale a ogni guerra."
+    },
+    "bulwarkarmory": {
+      "description": "Piastre, maglia e scudi. Merce pesante, ordini costanti."
+    },
+    "mantlehexoutfitters": {
+      "description": "Sarti e incantatori. Abiti, vesti, ninnoli e bastoni da lancio degli incantesimi."
     }
   },
   "sector": {
@@ -109,6 +163,7 @@
     "agriculture": "Agricoltura",
     "finance": "Finanza",
     "transport": "Trasporti",
-    "misc": "Varie"
+    "misc": "Varie",
+    "health": "Sanità"
   }
 }

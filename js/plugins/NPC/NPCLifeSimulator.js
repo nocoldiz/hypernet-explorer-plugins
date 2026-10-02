@@ -1422,7 +1422,10 @@
     return !!(WM && typeof WM.isEmptyWorld === "function" && WM.isEmptyWorld());
   }
 
-  function catchUp(nowMinute) {
+  // opts.fromClock: the daily catch-up the running clock asks for. It never
+  // writes the world files itself; the next save does (WorldManager), so a
+  // day turning over while the party walks costs no disk write.
+  function catchUp(nowMinute, opts) {
     if (_catchUpRunning) return;
     // Nobody is left to have a life to simulate: no jobs taken, no partners
     // found, no children born. See WorldManager.populationMode. The animals
@@ -1544,7 +1547,7 @@
       }
 
       // 5. A real time skip immediately persists the world's npcs.json.
-      if (deltaMinutes >= SKIP_FLUSH_MINUTES && window.WorldManager?.flush) {
+      if (deltaMinutes >= SKIP_FLUSH_MINUTES && !opts?.fromClock && window.WorldManager?.flush) {
         try { window.WorldManager.flush("npcs"); } catch (e) {
           console.error("[NPCLifeSim] world flush failed:", e);
         }

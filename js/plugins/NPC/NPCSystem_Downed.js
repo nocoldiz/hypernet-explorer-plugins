@@ -361,6 +361,10 @@
     _hooked: false,
     _simHooked: false,
     _lastHour: null,
+    // The hourly pass over every profile in the world, worked through
+    // SWEEP_CHUNK names a frame (see tick).
+    SWEEP_CHUNK: 400,
+    _sweep: null,
     _healerEvents: { mapId: 0, ids: [] },
 
     profileOf(name) {
@@ -796,8 +800,30 @@
       // health), whether or not anybody is watching them crawl.
       try { NPCSkirmish.bse()?.Skirmish?.recoverDownedMonsters?.(now); }
       catch (e) { console.warn("[NPC System] downed monster recovery failed", e); }
+      // The pass over every person in the world used to run whole in this
+      // frame, the same frame the hourly simulation tick and the street's
+      // turnover land in. It is now started here and worked through a chunk a
+      // frame (tickSweep, from the map update). A pass still unfinished when
+      // the next hour comes is finished first, so no hour is lost.
+      if (this._sweep) this.tickSweep(Infinity);
+      this._sweep = { names: Object.keys($gameSystem._npcSociety), i: 0, minutes, society: $gameSystem._npcSociety };
+      this.tickSweep();
+    },
+
+    // One chunk of the hourly pass: everybody hurt mends a little, the downed
+    // who are off this map get up when their time is up, and the hurt who are
+    // off it see their healer. A save loaded or a new world mid-pass drops it.
+    tickSweep(budget = this.SWEEP_CHUNK) {
+      const sw = this._sweep;
+      if (!sw) return;
+      const society = $gameSystem?._npcSociety;
+      if (!society || society !== sw.society) { this._sweep = null; return; }
+      const now = this.minute();
       const onMap = new Set(($gameSystem.getActiveNPCControllers?.() || []).map(c => c.eventName));
-      for (const [name, p] of Object.entries($gameSystem._npcSociety)) {
+      const end = Math.min(sw.names.length, sw.i + budget);
+      for (; sw.i < end; sw.i++) {
+        const name = sw.names[sw.i];
+        const p = society[name];
         if (!p || p._killed) continue;
         const hurt = p.downed || (typeof p.hp === "number" && p.hp < this.mhpOf(p)) ||
           (Array.isArray(p.injuries) && p.injuries.length);
@@ -806,9 +832,10 @@
           if (!onMap.has(name) && now >= (p.downed.untilMinute || 0)) this.recoverProfile(p);
           continue;
         }
-        this.regen(p, minutes, now);
+        this.regen(p, sw.minutes, now);
         if (!onMap.has(name) && p.currentNeed === DOWNED_HEAL_NEED) this.treat(name, p, null);
       }
+      if (sw.i >= sw.names.length) this._sweep = null;
     },
 
     // A treatment bought: the cheapest <Medicine:> item they can pay for,
@@ -1007,7 +1034,13 @@
     if (!sceneActive) return;
     NPCDowned.installSimHooks();
     NPCDowned.runDeferred();
-    try { NPCDowned.tick(); } catch (e) { console.error("[NPC System] recovery tick failed", e); }
+    try {
+      // tick runs the first chunk of a pass it starts; only a pass already
+      // under way before it takes its next chunk here.
+      const sweep = NPCDowned._sweep;
+      NPCDowned.tick();
+      if (sweep && NPCDowned._sweep === sweep) NPCDowned.tickSweep();
+    } catch (e) { console.error("[NPC System] recovery tick failed", e); }
   };
 
   window.NPCDowned = NPCDowned;

@@ -3,11 +3,6 @@
  * @plugindesc Handles a system of treasure rooms that can be accessed randomly from specific locations.
  * @author Omni-Lex
  *
- * @param treasureRooms
- * @text Treasure Rooms
- * @desc Comma-separated list of map IDs to use as treasure rooms
- * @default 5,6,7,8,9
- *
  * @param treasureRoomAssociations
  * @text Treasure Room Associations
  * @desc Maps that always lead to specific treasure rooms (format: sourceMapID:treasureMapID,...)
@@ -41,8 +36,9 @@
  * consistently leads to the same treasure room.
  *
  * AUTOMATIC CONFIGURATION:
- * Treasure rooms are automatically detected as child maps of parent ID 133.
- * Any map that is a child of map 133 will be included as a treasure room.
+ * Treasure rooms are the direct child maps of map 133, and nothing else.
+ * Which room an entrance leads to is seeded by the world seed and the
+ * entrance's location, so every savegame of one world agrees.
  */
 
 (() => {
@@ -51,24 +47,13 @@
 
   const parameters = PluginManager.parameters(pluginName);
   const treasureRoomParentId = 133;
-  const treasureRoomListFallback = [142,143,144,145,146,137,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,302];
+  // The direct children of map 133, for when $dataMapInfos is not loaded yet.
+  const treasureRoomListFallback = [134,142,143,144,145,146,147,148,149,150,151,152,156,157,158,159,306];
   
   let treasureRoomList = null;
   let treasureRoomListInitialized = false;
   
   const treasureRoomAssociationsRaw = parameters["treasureRoomAssociations"] || "";
-
-  // An explicitly configured treasureRooms param overrides the automatic
-  // child-map detection. Left at its default it stays inert so the auto-detect
-  // behaviour is preserved.
-  const DEFAULT_TREASURE_ROOMS_PARAM = "5,6,7,8,9";
-  const treasureRoomsParamRaw = String(parameters["treasureRooms"] || "").trim();
-  const treasureRoomsParam = treasureRoomsParamRaw
-    .split(",")
-    .map(s => parseInt(s.trim(), 10))
-    .filter(n => Number.isInteger(n) && n > 0);
-  const treasureRoomsParamIsCustom =
-    treasureRoomsParamRaw !== "" && treasureRoomsParamRaw !== DEFAULT_TREASURE_ROOMS_PARAM;
 
   function getChildMapsOfParent(parentId) {
     const childMaps = [];
@@ -82,22 +67,11 @@
     return childMaps.sort((a, b) => a - b);
   }
 
-  function generateAutomaticTreasureRooms() {
-    const childMaps = getChildMapsOfParent(treasureRoomParentId);
-    if (childMaps.length > 0) return childMaps;
-    return treasureRoomListFallback;
-  }
-
+  // Only a direct child of map 133 is ever a treasure room: an old treasureRooms
+  // plugin parameter once overrode this and sent parties into towns and taverns.
   function initializeTreasureRooms() {
-    // A customized treasureRooms param takes priority over auto-detection.
-    if (treasureRoomsParamIsCustom && treasureRoomsParam.length > 0) {
-      return treasureRoomsParam.slice();
-    }
-    if ($dataMapInfos) {
-      const autoRooms = generateAutomaticTreasureRooms();
-      if (autoRooms.length > 0) return autoRooms;
-    }
-    return treasureRoomListFallback;
+    const childMaps = getChildMapsOfParent(treasureRoomParentId);
+    return childMaps.length > 0 ? childMaps : treasureRoomListFallback.slice();
   }
 
   function ensureTreasureRoomsInitialized() {
@@ -187,6 +161,30 @@
     treasureRoomReturnStack.push(returnPoint);
   }
 
+  function worldSeed() {
+    if (window.NPCShared && typeof window.NPCShared.worldSeed === "function") {
+      return window.NPCShared.worldSeed() >>> 0;
+    }
+    if (window.HistoryManager && typeof window.HistoryManager.getSeed === "function") {
+      return window.HistoryManager.getSeed() >>> 0;
+    }
+    return 19002001;
+  }
+
+  // The room an entrance leads to depends on the world seed and the entrance's
+  // location alone, never on which rooms this savegame happened to visit first.
+  function seededRoomFor(locationKey, rooms) {
+    let keyHash = 0;
+    for (let i = 0; i < locationKey.length; i++) {
+      keyHash = ((keyHash << 5) - keyHash) + locationKey.charCodeAt(i);
+      keyHash = keyHash & keyHash;
+    }
+    const rngSeed = Math.abs(worldSeed() + keyHash);
+    const x = Math.sin(rngSeed) * 10000;
+    const r = x - Math.floor(x);
+    return rooms[Math.floor(r * rooms.length)];
+  }
+
   function selectTreasureRoom() {
     ensureTreasureRoomsInitialized();
     const currentMapId = $gameMap.mapId();
@@ -195,45 +193,15 @@
     if (treasureRoomAssociations[currentMapId]) {
       return treasureRoomAssociations[currentMapId];
     }
-    if (visitedTreasureRooms[locationKey]) {
-      return visitedTreasureRooms[locationKey];
+    // A remembered pick only stands while it is still a treasure room: saves
+    // made under the old list can hold a town map here.
+    const remembered = visitedTreasureRooms[locationKey];
+    if (remembered && treasureRoomList.includes(remembered) && !reservedRooms.has(remembered)) {
+      return remembered;
     }
 
-    const usedRoomIds = Object.values(visitedTreasureRooms);
     const openRooms = treasureRoomList.filter((roomId) => !reservedRooms.has(roomId));
-    const availableRooms = openRooms.filter((roomId) => !usedRoomIds.includes(roomId));
-
-    let historySeed = 19002001;
-    if (window.HistoryManager && typeof window.HistoryManager.getSeed === 'function') {
-      historySeed = window.HistoryManager.getSeed();
-    } else if ($gameSystem && $gameSystem._historySeed !== undefined) {
-      historySeed = $gameSystem._historySeed;
-    }
-
-    // Hash the locationKey to create a unique offset
-    let keyHash = 0;
-    for (let i = 0; i < locationKey.length; i++) {
-      keyHash = ((keyHash << 5) - keyHash) + locationKey.charCodeAt(i);
-      keyHash = keyHash & keyHash;
-    }
-    const combinedSeed = Math.abs(historySeed + keyHash);
-
-    // Seeded pseudo-random selection
-    let rngSeed = combinedSeed;
-    function seededRandom() {
-      let x = Math.sin(rngSeed++) * 10000;
-      return x - Math.floor(x);
-    }
-
-    let selectedRoom;
-    const fallbackRooms = openRooms.length > 0 ? openRooms : treasureRoomList;
-    if (availableRooms.length > 0) {
-      const idx = Math.floor(seededRandom() * availableRooms.length);
-      selectedRoom = availableRooms[idx];
-    } else {
-      const idx = Math.floor(seededRandom() * fallbackRooms.length);
-      selectedRoom = fallbackRooms[idx];
-    }
+    const selectedRoom = seededRoomFor(locationKey, openRooms.length > 0 ? openRooms : treasureRoomList);
     visitedTreasureRooms[locationKey] = selectedRoom;
 
     if (window.NetworkManager && NetworkManager.instance && NetworkManager.instance.isMultiplayer()) {

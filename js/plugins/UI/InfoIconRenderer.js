@@ -84,10 +84,15 @@
 
     // --- Sprite Handling ---
 
+    // Asked of every character sprite on the screen every frame. The sheet is
+    // read off the sprite rather than off the character: updateBitmap has just
+    // copied characterName() onto it (the engine runs it before updateFrame),
+    // and asking the character again ran the whole characterName chain of
+    // overrides a second time for an answer the sprite already holds.
     const _Sprite_Character_updateCharacterFrame = Sprite_Character.prototype.updateCharacterFrame;
     Sprite_Character.prototype.updateCharacterFrame = function() {
-        if (this._character && typeof this._character.isInfoIcon === "function" &&
-                this._character.isInfoIcon()) {
+        const ch = this._character;
+        if (ch && (ch._isInfoIcon || this._characterName === INFO_SPRITE_PATH)) {
             this.updateInfoFrame();
         } else {
             _Sprite_Character_updateCharacterFrame.call(this);

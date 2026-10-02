@@ -46,6 +46,10 @@
   const ENEMY_BAR_HEAD_GAP = 10;
   // How close a bar may come to an edge of the screen before it is pushed back.
   const ENEMY_BAR_SCREEN_MARGIN = 6;
+  // The weakness marks hang off the right of the bar's own bitmap (the gap,
+  // the element's icon and a multiplier such as 1.5x): a bar is placed as this
+  // much wider, so they are never drawn past the edge of the screen.
+  const ENEMY_BAR_WEAK_OVERHANG = 56;
   // Two creatures standing close together wear two bars that would otherwise be
   // drawn one through the other; the second one is lifted by this much, which is
   // the height the bar's own rows actually occupy, until it stands clear.
@@ -1855,6 +1859,48 @@
     return Graphics.width + "x" + Graphics.height;
   }
 
+  // BEGIN bar clear of log corners
+  // Moves a bar out of the corners the battle log keeps for itself
+  // (Core/MPP_SmoothBattleLog2.js). Of the two ways out, sideways towards the
+  // middle or up/down off the corner, the shorter one is taken, so the bar
+  // stays as near the head it names as the corner allows; a way out that lands
+  // in the other corner or off the screen is not taken at all.
+  function clearOfLogCorners(x, y, w, h, corners, W, H, M) {
+    if (!corners || corners.length === 0) return { x, y };
+    const hits = (rx, ry) => {
+      for (const c of corners) {
+        if (rx < c.x + c.w && c.x < rx + w && ry < c.y + c.h && c.y < ry + h) return c;
+      }
+      return null;
+    };
+    for (let guard = 0; guard < corners.length + 1; guard++) {
+      const c = hits(x, y);
+      if (!c) break;
+      const onRight = c.x + c.w / 2 > W / 2;
+      const onTop = c.y + c.h / 2 < H / 2;
+      const ways = [
+        { x: onRight ? c.x - w - M : c.x + c.w + M, y },
+        { x, y: onTop ? c.y + c.h + M : c.y - h - M },
+      ].filter(
+        (p) => p.x >= 0 && p.x + w <= W && p.y >= 0 && p.y + h <= H && !hits(p.x, p.y)
+      );
+      if (ways.length === 0) break;
+      ways.sort(
+        (a, b) => Math.abs(a.x - x) + Math.abs(a.y - y) - (Math.abs(b.x - x) + Math.abs(b.y - y))
+      );
+      x = Math.round(ways[0].x);
+      y = Math.round(ways[0].y);
+    }
+    return { x, y };
+  }
+  // END bar clear of log corners
+
+  function logCorners() {
+    return window.BattleLogCorners && typeof window.BattleLogCorners.rects === "function"
+      ? window.BattleLogCorners.rects()
+      : null;
+  }
+
   function layoutEnemyBarsOnModels(sprites, impatient) {
     if (!sprites || sprites.length === 0) return true;
     if (!impatient && !enemyFieldSettled()) {
@@ -1895,14 +1941,23 @@
     // it - its measured head projects to a corner, and the bar went and stood
     // in that corner, over the party's own cards.
     const lone = row.length === 1;
+    const corners = logCorners();
+    const W = Graphics.width;
+    const H = Graphics.height;
+    const BH = miniBarBitmapHeight;
     for (const entry of row) {
       const sprite = entry.sprite;
-      const w = sprite.bitmap ? sprite.bitmap.width : miniBarWidth;
+      const barW = sprite.bitmap ? sprite.bitmap.width : miniBarWidth;
+      // Everything the bar draws, its weakness marks included.
+      const w = barW + ENEMY_BAR_WEAK_OVERHANG;
       let x = lone
-        ? Math.round((Graphics.width - w) / 2)
-        : Math.round(entry.head.x - w / 2);
+        ? Math.round((Graphics.width - barW) / 2)
+        : Math.round(entry.head.x - barW / 2);
       let y = Math.round(entry.head.y - miniBarBitmapHeight - ENEMY_BAR_HEAD_GAP);
       x = Math.max(M, Math.min(Graphics.width - w - M, x));
+      // Kept out of the log's corners before and after every lift: a bar
+      // lifted clear of its neighbour can climb straight into the top one.
+      ({ x, y } = clearOfLogCorners(x, Math.max(M, y), w, BH, corners, W, H, M));
       for (let guard = 0; guard < placed.length; guard++) {
         const clash = placed.find(
           (p) =>
@@ -1913,11 +1968,13 @@
         );
         if (!clash) break;
         y = clash.y - ENEMY_BAR_STACK_STEP;
+        ({ x, y } = clearOfLogCorners(x, Math.max(M, y), w, BH, corners, W, H, M));
       }
       // Kept on the screen at BOTH ends: a creature standing below the bottom
       // edge (a model whose feet are off-camera, a head projected past the
       // frame) would otherwise wear its bar somewhere nobody can look at it.
       y = Math.max(M, Math.min(Graphics.height - miniBarBitmapHeight - M, y));
+      ({ x, y } = clearOfLogCorners(x, y, w, BH, corners, W, H, M));
       sprite.x = x;
       sprite.y = y;
       // Shown in the same breath it is placed: this function is the one that

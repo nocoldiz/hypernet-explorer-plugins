@@ -239,6 +239,7 @@
 
   const LINE_MS              = 3300;   // real-time ms between dialogue lines
   const SCAN_MS              = 4000;   // real-time ms between pair scans
+  const SCAN_STEPS           = 5;      // scans in a round, one per tick (see _runScanStep)
   const MAX_ACTIVE           = 4;      // concurrent face-to-face conversations
   const START_DIST           = 2;      // tiles: close enough to stop and chat
   const AMBIENT_DIST         = 6;      // tiles: "same room" chatter range
@@ -537,18 +538,34 @@
       return true;
     },
 
-    _eligibleControllers(states) {
+    // Who is near enough the player to be heard at all. A scan asks
+    // _eligibleControllers four or five times (face to face, ambient,
+    // greetings, the swim, SpecTalk), and each ask filtered every controller
+    // on the map through these same tests, so update works it out once per
+    // scan in _scanBase and every ask in that scan reads it. State and who is
+    // already talking are still asked fresh each time: one scan's chat takes
+    // its pair out of the next scan's running.
+    _scanBase: null,
+    _inRangeControllers() {
+      if (this._scanBase) return this._scanBase;
       const ctrls = $gameSystem?.getActiveNPCControllers?.() || [];
+      if (!$gamePlayer) return [];
       // One of the risen wears a person's face and has no conversation left in
       // it (NPCSystem_Zombies), whatever the profile behind the slot says.
       const risen = window.NPCSystem?.isZombieWalker;
       return ctrls.filter(c =>
         c.event && !c.event._erased && !c.event.isTransparent() &&
         !(risen && risen(c.event)) &&
-        c.eventName && states.includes(c.state) &&
-        !this._isBusyConversing(c.eventName) &&
-        $gamePlayer &&
+        c.eventName &&
         Math.abs(c.event.x - $gamePlayer.x) + Math.abs(c.event.y - $gamePlayer.y) <= PLAYER_RANGE
+      );
+    },
+
+    _eligibleControllers(states) {
+      return this._inRangeControllers().filter(c =>
+        c.event && !c.event._erased &&
+        states.includes(c.state) &&
+        !this._isBusyConversing(c.eventName)
       );
     },
 
@@ -586,13 +603,37 @@
         this._nextScanAt = now + SCAN_MS;
         // A tactical fight freezes the world: nobody stops for a chat
         // (MapBattleMode.js). Running exchanges finish on their own.
-        if (isTacticalFight()) return;
-        this._scanFaceToFace();
-        this._scanAmbient();
-        this._scanGreetings();
-        this._scanSwimTalk();
+        if (isTacticalFight()) { this._scanStep = -1; return; }
+        this._scanStep = 0;
+      }
+      if (this._scanStep >= 0) this._runScanStep(now);
+    },
+
+    // A scan round is five scans (face to face, ambient, greetings, the swim,
+    // SpecTalk), and running all five on the frame the round fell due put a
+    // spike of several milliseconds into one frame every four seconds. The
+    // round still starts every SCAN_MS, in the same order, but each scan
+    // takes its own frame: the five land on five consecutive ticks, a tenth
+    // of a second apart at most, and no frame pays for more than one of them.
+    // Who is in range is worked out afresh for each, which is a filter over
+    // the controllers and cheap next to the pair loops it feeds; a chat a
+    // scan starts still takes its pair out of the scans after it.
+    _scanStep: -1,
+    _runScanStep(now) {
+      if (isTacticalFight()) { this._scanStep = -1; return; }
+      const step = this._scanStep;
+      this._scanStep = step + 1 < SCAN_STEPS ? step + 1 : -1;
+      this._scanBase = null;
+      this._scanBase = this._inRangeControllers();
+      try {
+        if (step === 0) this._scanFaceToFace();
+        else if (step === 1) this._scanAmbient();
+        else if (step === 2) this._scanGreetings();
+        else if (step === 3) this._scanSwimTalk();
         // Somebody good at something says so, or is asked about it (II.10).
-        SpecTalk.scan({ now });
+        else SpecTalk.scan({ now });
+      } finally {
+        this._scanBase = null;
       }
     },
 
@@ -815,6 +856,8 @@
     hideAll() {
       for (const convo of [...this._active]) this._end(convo, true);
       if (SpecTalk) SpecTalk.clear();
+      // A round half run belongs to the map or the moment it started on.
+      this._scanStep = -1;
     },
   };
 

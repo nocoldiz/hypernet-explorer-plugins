@@ -1,3 +1,103 @@
+0.7.4a
+
+Perfomance:
+ - map sprites and the off-screen cull cost less per frame
+ - gamepads read once per frame across every input plugin
+ - scene fade filter switched off between fades
+ - encounter block check no longer forces a style recalculation each frame
+ - assembly sitting check no longer queries the whole page
+ - sound error sweep no longer copies buffer lists every frame
+ - party HUD reads max HP and vehicle status on a slower cadence
+ - quick bar skips unchanged renders and undrawn ticks
+ - NPC conversation scans spread across consecutive frames
+ - off-screen map characters skip their updates on every map
+ - screen tint and flash filters skip the per-frame bounds walk
+ - fog of war grey only on sprites near the screen
+ - hit flashes no longer leave an idle colour filter on sprites
+ - EVA suit check no longer allocates strings every frame
+ - monster terrain speed cached per tile
+ - water reflections skipped for off-screen characters
+ - army labels updated once per frame, army steps allocate nothing
+ - intoxication screen effect written every third frame, only on change
+ - work shift check no longer allocates every frame
+ - lighting repaint while moving capped at 30Hz
+ - lighting and fog layers no longer leak canvases on map rebuild
+ - fog grey no longer leaves filters on events
+ - mouse hover, interior blackout and room bounds no longer recompute per frame
+ - alien sky tint recomputes only while the hour moves
+ - city label refresh no longer rescans every event name
+ - border arrows reuse sprites instead of rebuilding each step
+ - puzzle per frame passes drop Object.entries allocations
+ - distant NPC footsteps skip the sound lookup
+ - unarmed rig no longer freezes the map while walking
+ - battle shader warm-up moved behind the map load screen
+ - monthly history passes spread over frames instead of one
+ - road cars test pedestrian hits only when something moved
+ - party HUD no longer rebuilds keys and chips every frame
+ - map legend caches notices instead of translating them every frame
+ - quick bar skips per-frame key strings and redundant style writes
+ - toast stack no longer forces a layout every frame
+ - travel info card refreshes only when minute or square changes
+ - starship countdown redraws once a second, not every frame
+ - bed checks no longer rescan event pages every update
+ - free seat search reads event positions once per call
+ - spread spawn tiles reuse a few cached orderings per map
+ - failed NPC path searches are not retried for half a second
+ - NPCs wait briefly on a blocked step before searching again
+ - hourly downed recovery pass spread across frames
+ - conversation scan computes nearby NPCs once per scan
+ - thought bubbles move with CSS translate instead of left and top
+ - NPC spawn log only prints in debug mode
+ - water reflections masked in one pass at half resolution
+ - erased spawned NPCs removed from the map after leaving
+ - furniture passability read from a tile grid
+ - thought bubbles shown one at a time, not in bursts
+ - farm animals and monster scans no longer tick on one frame
+ - non-aquatic monsters cache their passability answer
+ - space map and night checks cached instead of rechecked each frame
+ - puzzle step checks skipped on maps without puzzles
+ - world map quest markers rechecked twice a second, not every frame
+ - tower band scan skipped on maps without bands
+ - map HUD encounter level no longer recomputed on every step
+ - hourly NPC goal picking spread over frames
+ - NPC pathfinding skips the per-tile event scan
+ - stuck-in-wall check asks the way ahead first
+ - minimap reuses two bitmaps instead of one per step
+ - camera no longer sways ahead of the player on each step
+ - footstep sounds decoded once, not on every step
+ - world map steps no longer refresh every event
+ - daily NPC catch-ups no longer rewrite the world save
+
+
+Maps:
+ - collision fixes in omega tower
+ - updated Brickplace
+ - new layout for Bulkwark fortress
+ - removed incomplete treasure room from selection
+
+Added:
+ - opt-in hook profiler logging per-plugin map update cost to perf-log.txt
+
+Changed:
+ - merged hand-written skill trees per school with tier rebalance
+ - hook profiler now reports frame timing, rAF loops and overhead
+ - item prices tied to company stocks instead of OIL and SOULS
+
+Fixed:
+ - map events on four maps no longer run every frame
+ - cutscenes no longer hang on off-screen forced move routes
+ - enemy level plates no longer vanish when the world map is zoomed out
+ - cars travel in straight lines, no u-turns, and stick to one side
+ - RoadCarAI no longer crashes on map load assigning a constant
+ - tiles tagged with * no longer play their step sound
+ - checkPassage no longer inverted on special region tiles
+ - treasure rooms picked only from map 133 children, seeded by world seed
+ - modding now works with any file in the game
+ - enemy bars and models stay on screen, clear of battle log corners
+ - horse minigame no longer has flickering clipping on grass
+ - crash when trying to open Liminal World minigame
+ - game no longer crashes when the cryogenic pod term ends
+
 0.7.3a
 
 Added:
@@ -5,7 +105,7 @@ Added:
 
 Changed:
  - fixes on lighting changes
- - fixes on rocket launmch system, now lighitng
+ - fixes on rocket launch system, lighting depend on arrival planet time not Earth
  - reworked shop UI, selected item price is yellow
 
 Fixed:

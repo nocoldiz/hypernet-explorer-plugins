@@ -1438,11 +1438,16 @@
 
   // The warm-up above only starts the read. The 19MB file then parses on the
   // main thread the moment it lands, a second or two into the fight, which is
-  // the stall the opening of the first unarmed battle used to have. So the
-  // hands are also read out on the map, where a lost frame is a lost frame and
-  // not the start of a fight. warmRig is a no-op once the pool holds a copy or
-  // a read is running, so asking again every few seconds costs a loop over the
-  // party and catches a weapon put down after the first ask.
+  // the stall the opening of the first unarmed battle used to have. Reading
+  // it out on the map instead only moved that stall: the parse landed wherever
+  // the party happened to be walking, a visible freeze on an open street. So
+  // the map now only PREFETCHES the bytes (an off-thread read, no parse), and
+  // the parse waits for a moment that is already a stall: the next map load,
+  // behind the transfer's black screen, or the battle opening above, which
+  // then parses out of memory instead of waiting on the disk. prefetchRig is
+  // a no-op once the bytes are held, the model is pooled or a read is running,
+  // so asking again every few seconds costs a loop over the party and catches
+  // a weapon put down after the first ask.
   const RIG_MAP_WARM_DELAY = 240;   // ~4s of map before the first ask
   const RIG_MAP_WARM_EVERY = 300;
   const _Scene_Map_update_warmRig = typeof Scene_Map !== "undefined" && Scene_Map.prototype.update;
@@ -1452,7 +1457,18 @@
     if (this._rigWarmFrames < RIG_MAP_WARM_DELAY) return;
     if ((this._rigWarmFrames - RIG_MAP_WARM_DELAY) % RIG_MAP_WARM_EVERY !== 0) return;
     if (this.isBusy() || !window.WeaponSystemProcedural || !$gameParty) return;
-    WeaponSystemProcedural.warmRig($gameParty.battleMembers());
+    WeaponSystemProcedural.prefetchRig($gameParty.battleMembers());
+  };
+
+  // onMapLoaded runs while the screen is still black from the transfer (or
+  // the load, or the scene change), before the map fades in: a parse here is
+  // folded into a wait the player is already sitting through. fetchedOnly
+  // means nothing is read from here, so no parse can land after the fade-in.
+  const _Scene_Map_onMapLoaded_warmRig = typeof Scene_Map !== "undefined" && Scene_Map.prototype.onMapLoaded;
+  if (_Scene_Map_onMapLoaded_warmRig) Scene_Map.prototype.onMapLoaded = function () {
+    _Scene_Map_onMapLoaded_warmRig.call(this);
+    if (!window.WeaponSystemProcedural || !$gameParty) return;
+    WeaponSystemProcedural.warmRig($gameParty.battleMembers(), { fetchedOnly: true });
   };
 
   /**

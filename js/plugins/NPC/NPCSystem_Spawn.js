@@ -554,7 +554,9 @@
       }
 
       const controller = new NPCController(originalData.name);
-      console.log(`[NPC System] NPC spawned: "${originalData.name}" at (${targetEvent.x}, ${targetEvent.y}) on map ${$gameMap.mapId()}`);
+      // Once per spawn, and a street spawns dozens in a frame: only with the
+      // debug switch on (Utils.debug), never straight to the console.
+      Utils.debug(`NPC spawned: "${originalData.name}" at (${targetEvent.x}, ${targetEvent.y}) on map ${$gameMap.mapId()}`);
       targetEvent._moveType = 0;
       targetEvent.setMoveSpeed(controller.moveSpeed);
       targetEvent.setMoveFrequency(5);
@@ -821,6 +823,34 @@ initializeGroupNPCs: (groupName, activeMapId = null) => {
     // (their event is freed); NPCs newly scheduled here move in by reusing a
     // freed event; everyone who stays gets a fresh spot and re-picks a goal,
     // so the population visibly shifts without a jarring full map reload.
+    // Everybody staying on the map re-picks a goal on the hour, and one
+    // decideNextGoal can run several path searches. Done for the whole street
+    // in the turnover's own frame it was the hourly hitch, so they are queued
+    // here and drained DECIDES_PER_FRAME a frame (NPCSystem_Hooks), the same
+    // spread NPCSim gives its own dispatch.
+    DECIDES_PER_FRAME: 2,
+    _pendingDecides: [],
+    _pendingDecidesMapId: 0,
+    queueDecide(ctrl) {
+      const mapId = $gameMap ? $gameMap.mapId() : 0;
+      if (this._pendingDecidesMapId !== mapId) {
+        this._pendingDecides = [];
+        this._pendingDecidesMapId = mapId;
+      }
+      if (!this._pendingDecides.includes(ctrl)) this._pendingDecides.push(ctrl);
+    },
+    drainDecides() {
+      const queue = this._pendingDecides;
+      if (!queue.length) return;
+      if (!$gameMap || this._pendingDecidesMapId !== $gameMap.mapId()) { queue.length = 0; return; }
+      const live = $gameSystem.npcControllers || [];
+      for (let n = 0; n < this.DECIDES_PER_FRAME && queue.length; n++) {
+        const ctrl = queue.shift();
+        if (!ctrl?.event || ctrl.event._erased || !live.includes(ctrl)) continue;
+        ctrl.decideNextGoal();
+      }
+    },
+
     refreshCurrentMapForHour: (groupName) => {
       if (!$gameMap || !$gameSystem._npcGroupAssignments) return;
       const group = GroupRegistry.get(groupName);
@@ -869,7 +899,7 @@ initializeGroupNPCs: (groupName, activeMapId = null) => {
             const t = nextTile();
             if (t) ctrl.event.locate(t.x, t.y);
           }
-          ctrl.decideNextGoal();
+          SpawnManager.queueDecide(ctrl);
         } else if (watched && walkingOut < SpawnManager.COMMUTE_MAX &&
                    SpawnManager.walkOut(
                      ctrl,

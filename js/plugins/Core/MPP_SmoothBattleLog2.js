@@ -798,6 +798,43 @@
         return ConfigManager.battleLogPosition === LOG_POS_TOP_RIGHT;
     }
 
+    // BEGIN log corners
+    // The two corners the log may hang in are kept clear of the field whichever
+    // one it took: a monster's bar or body standing in either would be read
+    // through the commentary, or the commentary through it. Both rectangles are
+    // in canvas pixels, the most the box can ever cover in that corner, and the
+    // HUD (BattleSystemEnhancedHUD.js) and the 3D field (3DBattlerSystem.js) ask
+    // them where they may not stand. The top one reaches up to the frame: the
+    // drop over the log is air the log owns, not room for a bar.
+    function logCornerRects(width, height) {
+        const margin = 8;
+        const w = Math.round(width * LOG_MAX_W_RATIO) + margin;
+        const topH = Math.round(margin + LOG_TOP_DROP + height * LOG_MAX_H_RATIO_TOP);
+        const bottomH = Math.round(margin + height * LOG_MAX_H_RATIO);
+        return [
+            { corner: 'topRight', x: width - w, y: 0, w: w, h: topH },
+            { corner: 'bottomLeft', x: 0, y: height - bottomH, w: w, h: bottomH }
+        ];
+    }
+
+    function rectHitsLogCorner(rect, corners) {
+        for (const c of corners) {
+            if (rect.x < c.x + c.w && c.x < rect.x + rect.w &&
+                rect.y < c.y + c.h && c.y < rect.y + rect.h) {
+                return c;
+            }
+        }
+        return null;
+    }
+    // END log corners
+
+    window.BattleLogCorners = {
+        rects: function() { return logCornerRects(Graphics.width, Graphics.height); },
+        hit: function(rect) {
+            return rectHitsLogCorner(rect, logCornerRects(Graphics.width, Graphics.height));
+        }
+    };
+
     // Whether the log and the command list are standing against the same edge
     // of the screen, and so have to share the height of it.
     function logSharesCommandEdge() {

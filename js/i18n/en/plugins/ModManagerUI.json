@@ -12,5 +12,6 @@
   "priority": "Priority",
   "active": "Active",
   "inactive": "Inactive",
+  "restart": "Changes apply the next time the game starts.",
   "hint": "L1 / R1, reorder  ·  ← →, switch panel  ·  OK, toggle"
 }

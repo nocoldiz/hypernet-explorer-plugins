@@ -23,7 +23,7 @@
 
   const {
     Config, GoneRegistry, GroupRegistry, isBetaSprite, MapManager, NPCBeds, NPCBounty,
-    NPCController, NPCPoolStore, NPCYield, PoliceForce, populateProceduralSquare, ProceduralManager,
+    NPCController, NPCPoolStore, NPCYield, PoliceForce, populateProceduralSquare, ProceduralManager, pruneMintedEvents,
     registerProcStitchHook, ResidentRegistry, SpawnManager, StreetCrime, SwimSpots, Utils, VisitingParties,
     WorldgenStore,
   } = window.NPCSystem._internal;
@@ -1163,6 +1163,8 @@
           if (_hourlyRefreshQueue.steps.length === 0) _hourlyRefreshQueue = null;
         }
       }
+      SpawnManager.drainDecides();
+      pruneMintedEvents();
     }
   };
 

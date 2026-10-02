@@ -53,7 +53,7 @@
   "assets": {
     "oil": {
       "name": "OIL",
-      "description": "Petrolio greggio, quotato al barile. I prezzi del carburante e molti rincari nei negozi seguono questa linea."
+      "description": "Petrolio greggio, quotato al barile."
     },
     "souls": {
       "name": "SOUL",

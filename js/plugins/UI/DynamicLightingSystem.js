@@ -144,6 +144,10 @@
     // How many times a second the lighting canvas is repainted and re-uploaded.
     // See Spriteset_Lighting.update for why it is not once per drawn frame.
     const LIGHTING_REPAINT_HZ = 24;
+    // The same, while something carrying a light moves or the camera scrolls.
+    // Faster than the idle clock so a light keeps up with its sprite, but not
+    // every frame: see Spriteset_Lighting.update.
+    const LIGHTING_MOTION_HZ = 30;
 
     // Per-frame cache of the WeatherSystem sunlight mode. On streetlight-heavy
     // maps dozens of light sprites query this each frame; resolving it once per
@@ -1218,6 +1222,29 @@
             return false;
         }
 
+        // A new one of these is built on every Scene_Map rebuild: every
+        // transfer, every menu closed. MZ's Sprite.destroy only passes
+        // {texture: true}, which frees the Texture but leaves its BaseTexture,
+        // and PIXI.Texture.from(canvas) filed that BaseTexture in
+        // PIXI.utils.BaseTextureCache, which keeps it and its canvas alive for
+        // good. So each rebuild leaked one screen-sized canvas plus its GPU
+        // copy. The base is let go by hand once the sprite itself is gone, and
+        // the canvas is shrunk to nothing so its backing store goes at once
+        // rather than whenever the collector gets to it.
+        destroy(options) {
+            const base = this._texture ? this._texture.baseTexture : null;
+            const canvas = this._canvas;
+            super.destroy(options);
+            if (base && !base.destroyed) base.destroy();
+            if (canvas) {
+                canvas.width = 0;
+                canvas.height = 0;
+            }
+            this._texture = null;
+            this._canvas = null;
+            this._ctx = null;
+        }
+
         getCurrentHourFloat() {
             const alien = alienSkyHour();
             if (alien !== null) return alien;
@@ -1487,15 +1514,26 @@
             // underneath the fight (BattleSystem/MapBattleMode.js) - stops
             // spending most of its frame on light that did not change.
             //
-            // Except while something that carries a light is moving. At 24Hz
-            // a headlight cone, the party's glow and every lamp the camera
-            // scrolls past trailed a frame or two behind the sprite it belongs
-            // to, so whenever the picture moves the repaint follows it frame
-            // for frame, and only a still scene drops back to the clock.
+            // Movement gets a faster clock of its own. At 24Hz a headlight
+            // cone, the party's glow and every lamp the camera scrolls past
+            // trailed a frame or two behind the sprite it belongs to, and for
+            // a while any motion bypassed the clock altogether, so the canvas
+            // was repainted and re-uploaded on every frame anything with a
+            // light moved, which on a walk through town is nearly all of them.
+            // That is now capped at LIGHTING_MOTION_HZ (30): the light can sit
+            // about one frame behind its sprite while it moves, a trade-off
+            // accepted for performance, and a still scene falls back to the
+            // 24Hz idle clock. A resize or a forced paint (_mustPaint, the cut
+            // to a new place) still paints on the spot.
             const motion = this.motionKey();
             const moved = motion !== this._paintedMotion;
-            if (!resized && !moved && !this._mustPaint && window.FrameBudget &&
-                !window.FrameBudget.every('dynLighting', LIGHTING_REPAINT_HZ)) return;
+            if (!resized && !this._mustPaint && window.FrameBudget) {
+                if (moved) {
+                    if (!window.FrameBudget.every('dynLightingMotion', LIGHTING_MOTION_HZ)) return;
+                } else if (!window.FrameBudget.every('dynLighting', LIGHTING_REPAINT_HZ)) {
+                    return;
+                }
+            }
             this._mustPaint = false;
             this._paintedMotion = motion;
             this.renderLighting();

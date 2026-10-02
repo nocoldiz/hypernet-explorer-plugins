@@ -46,9 +46,13 @@
 
   const COURT_ATTR = "data-onu-sitting";
 
+  // Asked three times a map tick (the menu button, the menu call and the
+  // call check), and a whole-document attribute query each time is a walk of
+  // every node on the page. The chamber is only ever opened by open() below,
+  // so the node it marked is remembered and asked directly.
+  let courtNode = null;
   function assemblyIsSitting() {
-    const node = document.querySelector("[" + COURT_ATTR + "]");
-    return !!(node && node.isConnected);
+    return !!(courtNode && courtNode.isConnected && courtNode.hasAttribute(COURT_ATTR));
   }
 
   // Escape and the pad's cancel both read as 'cancel'; the right mouse button
@@ -100,6 +104,7 @@
       this._container = document.createElement("div");
       this._container.id = "menu-container";
       this._container.setAttribute(COURT_ATTR, "1");
+      courtNode = this._container;
       document.body.appendChild(this._container);
       this.render();
     }

@@ -2562,8 +2562,9 @@
         }).join('');
 
         // The row that opens the coordinate box. First in the list, so a pad
-        // reaches it with one press of up.
-        const addCustomHTML = vehicleTravel ? `
+        // reaches it with one press of up. Not in pick mode: the borrowing
+        // scene has no coordinate box, and pointing at a place needs none.
+        const addCustomHTML = (vehicleTravel && !isPick) ? `
                 <div class="travel-dest-item travel-custom-add" data-name="${CUSTOM_ADD_KEY}" onclick="SceneManager._scene.selectTravelDestination('${CUSTOM_ADD_KEY}')">
                     <span class="travel-dest-name">${T('FastTravel.custom.add')}</span>
                 </div>
@@ -4124,7 +4125,7 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         'openFastTravelUIOverlay', 'initTravelMapInteractions', 'adjustTravelZoom',
         'toggleTravelEditMode', 'printTravelCoordinates', 'highlightTravelDestination',
         'selectTravelDestination', 'closeTravelConfirmModal', 'reopenCreationOriginStep',
-        'closeTravelUIOverlay'
+        'closeTravelUIOverlay', 'travelViewerMetrics'
     ];
 
     //=========================================================================

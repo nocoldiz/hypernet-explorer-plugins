@@ -329,6 +329,7 @@
   let lastClimbSoundFrame = 0;
   let reflectionSprites = new Map();
   let reflectionContainer = null;
+  const GROUND_RESOLUTION = 0.5;
   let mirrorSprites = new Map();
   let mirrorContainer = null;
   let originalCanMoveFunction = null;
@@ -1228,6 +1229,7 @@
   };
 
   // --- Water Reflection System ---
+  const REFLECTION_SCREEN_MARGIN = 3;
   const ReflectionSystem = {
     // Whether the current map contains any reflective water (region 99).
     // Computed once per map (invalidated from Game_Map.setup) so maps without
@@ -1289,6 +1291,26 @@
       return $gameMap.regionId(x, waterY) === 99;
     },
 
+    // Whether a character's reflection could be on screen, in tiles off the
+    // display origin (adjustX/adjustY fold a looping map). The reflection hangs
+    // two tiles under its owner and a tall sheet reaches up from its foot
+    // tile, so the margin is wide on every side. Off screen a reflection is
+    // a sprite update and a share of the mask pass that nobody sees, and a
+    // big lake map used to keep one for every event on its shore.
+    isNearScreen(character) {
+      if (typeof $gameMap === "undefined" || !$gameMap ||
+        typeof $gameMap.adjustX !== "function") return true;
+      const zoom = (typeof $gameScreen !== "undefined" && $gameScreen && $gameScreen.zoomScale)
+        ? $gameScreen.zoomScale() : 1;
+      const shrink = zoom > 0 && zoom < 1 ? zoom : 1;
+      const sx = $gameMap.adjustX(character._realX);
+      const sy = $gameMap.adjustY(character._realY);
+      return sx > -REFLECTION_SCREEN_MARGIN &&
+        sx < $gameMap.screenTileX() / shrink + REFLECTION_SCREEN_MARGIN &&
+        sy > -REFLECTION_SCREEN_MARGIN - 2 &&
+        sy < $gameMap.screenTileY() / shrink + REFLECTION_SCREEN_MARGIN + 3;
+    },
+
     createReflectionSprite(character) {
       if (!character._characterName) return null;
       const reflection = new Sprite_Character(character);
@@ -1340,8 +1362,16 @@
       // ONE filter instance for every reflection on the map: a PIXI filter holds
       // no per-sprite state, and a fresh one per sprite meant a fresh uniform
       // group and shader binding for each of them.
+      //
+      // The mask hangs on the container, not on each reflection: PIXI runs a
+      // separate framebuffer pass for every display object carrying filters,
+      // so a shared instance still cost one pass per reflection a frame. On
+      // the container it is one pass for all of them. The sprite's own filter
+      // list (where setBlendColor put its colour filter) was already replaced
+      // by the mask here, so emptying it changes nothing on screen.
       const mask = getBlueMaskFilter();
-      if (mask) reflection.filters = [mask];
+      reflection.filters = null;
+      if (mask && reflectionContainer && !reflectionContainer.filters) reflectionContainer.filters = [mask];
 
       return reflection;
     },
@@ -1406,7 +1436,7 @@
       for (const character of allCharacters) {
         if (!character) continue;
 
-        if (this.shouldHaveReflection(character)) {
+        if (this.shouldHaveReflection(character) && this.isNearScreen(character)) {
           charactersNeedingReflections.add(character);
 
           if (!reflectionSprites.has(character)) {
@@ -1440,7 +1470,8 @@
         }
       }
 
-      const toRemove = [];
+      const toRemove = this._scratchRemove || (this._scratchRemove = []);
+      toRemove.length = 0;
       for (const [character, reflection] of reflectionSprites) {
         if (!charactersNeedingReflections.has(character)) {
           toRemove.push(character);
@@ -1468,10 +1499,13 @@
       }
       const w = Graphics.width;
       const h = Graphics.height;
+      // Half resolution: the mask only asks where the water is blue, and a
+      // quarter of the pixels is a quarter of the fill for the second tilemap
+      // pass this costs on every frame the camera scrolls.
       let rt = this._groundTexture;
       if (!rt || rt.baseTexture.destroyed || rt.width !== w || rt.height !== h) {
         if (rt && !rt.baseTexture.destroyed) rt.destroy(true);
-        rt = this._groundTexture = PIXI.RenderTexture.create({ width: w, height: h, resolution: 1 });
+        rt = this._groundTexture = PIXI.RenderTexture.create({ width: w, height: h, resolution: GROUND_RESOLUTION });
         this._groundKey = null;
       }
       // Drawn again only when the ground under the screen moved: the mask
@@ -1541,6 +1575,7 @@
       const worn = !!_blueMaskFilter;
       _blueMaskFilter = null;
       _blueMaskFailed = true;
+      if (typeof reflectionContainer !== "undefined" && reflectionContainer) reflectionContainer.filters = null;
       console.warn("MovementInteractionSystem: water reflection mask unavailable.", e);
       // Reflections already wearing the mask would hand the broken program to
       // the renderer on their next draw: take them down, they come back bare.
@@ -1852,13 +1887,20 @@
     const mapId = $gameMap ? $gameMap.mapId() : 0;
     if (character._misZTileX !== character.x ||
         character._misZTileY !== character.y ||
-        character._misZTileMap !== mapId) {
+        character._misZTileMap !== mapId ||
+        // A character saved before the deck was part of these facts.
+        character._misZIsBridge === undefined) {
       character._misZTileX = character.x;
       character._misZTileY = character.y;
       character._misZTileMap = mapId;
-      character._misZIsSeat = $gameMap.regionId(character.x, character.y) === 102;
+      const region = $gameMap.regionId(character.x, character.y);
+      character._misZIsSeat = region === 102;
       character._misZIsRoofOrSeat =
         Utils.isRoofTile(character.x, character.y) || character._misZIsSeat;
+      // The bridge deck (region 12, Utils.isBridgeTile) rides along: both
+      // screenZ hooks and the sprite's visibility asked it of the live map
+      // once per character per frame.
+      character._misZIsBridge = region === 12;
     }
     return character;
   };
@@ -1883,10 +1925,14 @@
   };
 
   // Cached per tile: the classification only changes when the character moves.
+  // The map id is part of the key for the same reason as in _misZTileFacts.
   const _misUnderStarTile = (character) => {
-    if (character._misStarX !== character.x || character._misStarY !== character.y) {
+    const mapId = $gameMap ? $gameMap.mapId() : 0;
+    if (character._misStarX !== character.x || character._misStarY !== character.y ||
+        character._misStarMap !== mapId) {
       character._misStarX = character.x;
       character._misStarY = character.y;
+      character._misStarMap = mapId;
       const x = character.x;
       const y = character.y;
       character._misStarOverhead =
@@ -1910,27 +1956,28 @@
     // On a bridge tile: draw above the upper tile layer when on the deck, or at
     // the normal character depth (below the upper layer) when passing underneath,
     // so the bridge tile hides the player.
-    if (Utils.isBridgeTile(this.x, this.y)) {
-      return this._onBridge ? 7 : _Game_Player_screenZ.call(this);
-    }
+    if (this._onBridge && _misZTileFacts(this)._misZIsBridge) return 7;
     return _Game_Player_screenZ.call(this);
   };
 
   const _Game_CharacterBase_screenZ = Game_CharacterBase.prototype.screenZ;
   Game_CharacterBase.prototype.screenZ = function () {
-    if ($gameMap && _misSeatAt(this)) return 10;
-    if ($gameMap && this._priorityType === 1 && _misUnderStarTile(this)) {
-      return STAR_OVERHEAD_Z;
-    }
-    // A follower on its own bridge layer is drawn on the deck, exactly like the
-    // player, so a party strung out across a span does not split in half when
-    // the leader reaches the far bank.
-    // An event is on the deck unless it has walked underneath it, a follower
-    // only once it has actually stepped up onto it.
-    if ($gameMap && Utils.isBridgeTile(this.x, this.y) &&
-        (this instanceof Game_Follower ? this._onBridge === true
-          : this instanceof Game_Event && this._onBridge !== false)) {
-      return 7;
+    if ($gameMap) {
+      const facts = _misZTileFacts(this);
+      if (facts._misZIsSeat) return 10;
+      if (this._priorityType === 1 && _misUnderStarTile(this)) {
+        return STAR_OVERHEAD_Z;
+      }
+      // A follower on its own bridge layer is drawn on the deck, exactly like the
+      // player, so a party strung out across a span does not split in half when
+      // the leader reaches the far bank.
+      // An event is on the deck unless it has walked underneath it, a follower
+      // only once it has actually stepped up onto it.
+      if (facts._misZIsBridge &&
+          (this instanceof Game_Follower ? this._onBridge === true
+            : this instanceof Game_Event && this._onBridge !== false)) {
+        return 7;
+      }
     }
     return _Game_CharacterBase_screenZ.call(this);
   };
@@ -3364,9 +3411,15 @@
   // grown around them, a shore the water ate - is walled in on all four sides
   // and every command, Swim included, silently does nothing. When the tile they
   // stand on lets them out nowhere at all, only the destination decides.
-  const _isStuckInTile = (character, x, y) => {
-    for (const dir of [2, 4, 6, 8]) {
-      if ($gameMap.isPassable(x, y, dir)) return false;
+  //
+  // It is asked on every refused step of every character, and a pathfinder
+  // refuses thousands a search, so the direction of travel is tried first: a
+  // refused step is nearly always a wall AHEAD, and the tile underfoot lets
+  // them out that way at once, one passability check instead of four.
+  const _isStuckInTile = (character, x, y, d) => {
+    if (d && $gameMap.isPassable(x, y, d)) return false;
+    for (let dir = 2; dir <= 8; dir += 2) {
+      if (dir !== d && $gameMap.isPassable(x, y, dir)) return false;
     }
     return true;
   };
@@ -3377,7 +3430,7 @@
     window._currentlyCheckingCharacter = this;
     try {
       if (_Game_CharacterBase_isMapPassable.call(this, x, y, d)) return true;
-      if (!_isStuckInTile(this, x, y)) return false;
+      if (!_isStuckInTile(this, x, y, d)) return false;
       const x2 = $gameMap.roundXWithDirection(x, d);
       const y2 = $gameMap.roundYWithDirection(y, d);
       return $gameMap.isPassable(x2, y2, this.reverseDir(d));
@@ -3577,6 +3630,9 @@
     if (this._misHasSpecialPassability === false && !(character && character._isDiving)) {
       return _Game_Map_checkPassage.call(this, x, y, bit);
     }
+    // The rules below are a walker's. A boat, ship or airship asks with its
+    // own bit (0x0200 / 0x0400 / 0x0800) and is answered off the tileset.
+    if ((bit & 0x0f) === 0) return _Game_Map_checkPassage.call(this, x, y, bit);
     const regionId = this.regionId(x, y);
     const terrainTag = this.terrainTag(x, y);
     const charIsSwimming = character ? character._isSwimming : false;
@@ -3593,49 +3649,49 @@
     }
 
     if (isDivingWater) {
-      return 0;
+      return true;
     }
 
-    // The keep-out region. These branches answer with the BLOCKED bits, the
-    // way the region rules below them do: 0 is "nothing in the way", `bit` is
-    // "all of it is".
-    if (regionId === NO_GO_REGION && isSealedRegionMap(this)) return bit;
+    // The keep-out region. Every branch answers the way the stock
+    // checkPassage does: true is "passable", false is "blocked". They used to
+    // answer in blocked bits (0 open, `bit` shut), which every caller reads
+    // the other way round: a boat or a spawn check saw region 10 as open and
+    // a bridge deck as a wall.
+    if (regionId === NO_GO_REGION && isSealedRegionMap(this)) return false;
 
     // Bridge deck over water, see Game_Map.isPassable above.
-    if (regionId === 12 && (charIsSwimming || charIsWaterEnemy)) return 0;
+    if (regionId === 12 && (charIsSwimming || charIsWaterEnemy)) return true;
 
     // The deck is walkable whatever it is painted over, see isPassable above.
-    if (regionId === 12 || regionId === 5) return 0;
+    if (regionId === 12 || regionId === 5) return true;
     if (regionId === 4 || regionId === 10) {
-      if (regionId === 4 && (charIsClimbing || this.isLadder(x, y))) return 0;
-      return bit;
+      if (regionId === 4 && (charIsClimbing || this.isLadder(x, y))) return true;
+      return false;
     }
-    if (regionId === 99) return (charIsSwimming || charIsWaterEnemy) ? 0 : bit;
+    if (regionId === 99) return !!(charIsSwimming || charIsWaterEnemy);
     if (terrainTag === 4) {
-      if ((charIsClimbing || this.isLadder(x, y)) && !Utils.hasPriorityTile(x, y)) return 0;
-      return bit;
+      if ((charIsClimbing || this.isLadder(x, y)) && !Utils.hasPriorityTile(x, y)) return true;
+      return false;
     }
-    if (terrainTag === 7) return charIsClimbing ? 0 : bit;
+    if (terrainTag === 7) return !!charIsClimbing;
 
     // Procedural map (636) water: terrain-tag-3 tiles that are blocked normally
     // open up only while swimming (or for water enemies); shallow passable water
     // is left untouched.
     if (terrainTag === 3 && this.mapId() === 636) {
-      const baseBit = _Game_Map_checkPassage.call(this, x, y, bit);
-      if (baseBit !== 0) return (charIsSwimming || charIsWaterEnemy) ? 0 : baseBit;
-      return baseBit;
+      const open = _Game_Map_checkPassage.call(this, x, y, bit);
+      return open || !!(charIsSwimming || charIsWaterEnemy);
     }
 
     // Unmarked liquid, see Game_Map.isPassable above.
     if (charIsSwimming || charIsWaterEnemy) {
-      const baseBit = _Game_Map_checkPassage.call(this, x, y, bit);
-      if (baseBit !== 0 && Utils.isLiquidTile(x, y)) return 0;
-      return baseBit;
+      const open = _Game_Map_checkPassage.call(this, x, y, bit);
+      return open || Utils.isLiquidTile(x, y);
     }
 
     if (character instanceof Game_Event && character.isAquaticEnemy && character.isAquaticEnemy() &&
         !(character.isAmphibiousEnemy && character.isAmphibiousEnemy())) {
-      return bit;
+      return false;
     }
 
     return _Game_Map_checkPassage.call(this, x, y, bit);
@@ -3788,46 +3844,88 @@
     return _procDivingCached;
   };
 
-  // Sprite crop for swimming
+  // Whether the event a sprite draws stands on water, asked by updateFrame
+  // (the swimming crop) and updateVisibility (what shows under a dive) for
+  // every event sprite on the screen, every frame. Utils.isWaterTile is a
+  // region read, two tile reads, the map id and the dive set, a dozen calls
+  // all told, and none of it changes while the event stands on one tile. So
+  // the answer is kept on the sprite (sprites are never saved) and asked
+  // again when the event steps, when anything the test reads off the map is
+  // swapped (the map, its data, the tileset a dive changes to, the dive set
+  // of water tiles), or after WATER_RECHECK_FRAMES, which picks up a tile
+  // rewritten in place under somebody standing still (a dig, a build).
+  const WATER_RECHECK_FRAMES = 64;
+  const _misWaterEnv = { map: null, mapId: 0, data: null, tiles: null, tileset: 0, uw: null, stamp: 0 };
+  const _misWaterStamp = () => {
+    const env = _misWaterEnv;
+    const data = typeof $dataMap !== "undefined" ? $dataMap : null;
+    const tiles = data ? data.data : null;
+    if (env.map !== $gameMap || env.mapId !== $gameMap._mapId || env.data !== data ||
+        env.tiles !== tiles || env.tileset !== $gameMap._tilesetId ||
+        env.uw !== $gameMap._underwaterWaterTiles) {
+      env.map = $gameMap;
+      env.mapId = $gameMap._mapId;
+      env.data = data;
+      env.tiles = tiles;
+      env.tileset = $gameMap._tilesetId;
+      env.uw = $gameMap._underwaterWaterTiles;
+      env.stamp++;
+    }
+    return env.stamp;
+  };
+  const _misSpriteOnWater = (sprite, ch) => {
+    const stamp = _misWaterStamp();
+    const age = Math.floor((Graphics.frameCount || 0) / WATER_RECHECK_FRAMES);
+    if (sprite._misWaterCh !== ch || sprite._misWaterX !== ch.x || sprite._misWaterY !== ch.y ||
+        sprite._misWaterStamp !== stamp || sprite._misWaterAge !== age) {
+      sprite._misWaterCh = ch;
+      sprite._misWaterX = ch.x;
+      sprite._misWaterY = ch.y;
+      sprite._misWaterStamp = stamp;
+      sprite._misWaterAge = age;
+      sprite._misWater = Utils.isWaterTile(ch.x, ch.y);
+    }
+    return sprite._misWater;
+  };
+
+  // Sprite crop for swimming.
+  //
+  // An event is never cropped while the party is under water (the diver sees
+  // it whole, if at all), so that is settled first, before the water under it
+  // is asked about; the party's own sprites read the leader's state.
   const _Sprite_Character_updateFrame = Sprite_Character.prototype.updateFrame;
   Sprite_Character.prototype.updateFrame = function() {
     _Sprite_Character_updateFrame.call(this);
-    if (this._character) {
-      let isSwimming = this._character._isSwimming || 
-                        (this._character === $gamePlayer && $gamePlayer._isSwimming) ||
-                        (this._character instanceof Game_Follower && $gamePlayer._isSwimming);
-      
-      if (!isSwimming && this._character instanceof Game_Event && Utils.isWaterTile(this._character.x, this._character.y) && !this._character.isJumping()) {
-          const isEnemy = this._character.event() && (
-              this._character.event().name === "Enemy" ||  // i18n-ignore  event name
-              (this._character.isAquaticEnemy && this._character.isAquaticEnemy()) ||
-              (this._character.isAmphibiousEnemy && this._character.isAmphibiousEnemy())
-          );
-          if (isEnemy) {
-              isSwimming = true;
-          }
+    const ch = this._character;
+    if (!ch) return;
+    const isProcDiving = _isProcDivingGlobal();
+    let isSwimming;
+    let isDiving;
+    if (ch instanceof Game_Event) {
+      if ($gamePlayer._isDiving || isProcDiving) return;
+      isSwimming = !!ch._isSwimming;
+      if (!isSwimming && _misSpriteOnWater(this, ch) && !ch.isJumping()) {
+        const data = ch.event();
+        isSwimming = !!(data && (
+          data.name === "Enemy" ||  // i18n-ignore  event name
+          (ch.isAquaticEnemy && ch.isAquaticEnemy()) ||
+          (ch.isAmphibiousEnemy && ch.isAmphibiousEnemy())
+        ));
       }
-      
-      const isProcDiving = _isProcDivingGlobal();
+      isDiving = ch._isDiving;
+    } else {
+      const party = ch === $gamePlayer || ch instanceof Game_Follower;
+      isSwimming = ch._isSwimming || (party && $gamePlayer._isSwimming);
+      isDiving = ch._isDiving || (party && ($gamePlayer._isDiving || isProcDiving));
+    }
 
-      const isDiving = this._character._isDiving ||
-                        (this._character === $gamePlayer && ($gamePlayer._isDiving || isProcDiving)) ||
-                        (this._character instanceof Game_Follower && ($gamePlayer._isDiving || isProcDiving));
-      
-      const isGlobalDiving = $gamePlayer._isDiving || isProcDiving;
-
-      if (isGlobalDiving && this._character instanceof Game_Event) {
-          isSwimming = false;
-      }
-
-      if (isSwimming && !isDiving) {
-        const frame = this._frame;
-        if (frame.width > 0 && frame.height > 0) {
-          if (this._character instanceof Game_Event) {
-            this.setFrame(frame.x, frame.y, frame.width, Math.floor(frame.height * 0.75));
-          } else {
-            this.setFrame(frame.x, frame.y, frame.width, frame.height / 2);
-          }
+    if (isSwimming && !isDiving) {
+      const frame = this._frame;
+      if (frame.width > 0 && frame.height > 0) {
+        if (ch instanceof Game_Event) {
+          this.setFrame(frame.x, frame.y, frame.width, Math.floor(frame.height * 0.75));
+        } else {
+          this.setFrame(frame.x, frame.y, frame.width, frame.height / 2);
         }
       }
     }
@@ -3836,6 +3934,9 @@
   const _Sprite_Character_updateVisibility = Sprite_Character.prototype.updateVisibility;
   Sprite_Character.prototype.updateVisibility = function() {
       _Sprite_Character_updateVisibility.call(this);
+      if (!this.visible) return;
+      const c = this._character;
+      if (!c) return;
 
       // Layered bridges (region 12): a character passing UNDER the deck must be
       // hidden by it. The map's deck tiles are painted on the lower tile layer
@@ -3843,24 +3944,47 @@
       // sprite - hide it directly while underneath. Each walker is judged on its
       // OWN on/under state, matching the screenZ hooks above: a follower still on
       // the deck stays visible after the leader has walked off the far end.
-      if (this.visible && this._character) {
-          const c = this._character;
-          const walksTheDeck = c === $gamePlayer || c instanceof Game_Follower ||
-              (c instanceof Game_Event && c._onBridge === false);
-          if (walksTheDeck && Utils.isUnderBridge(c)) {
+      // The deck test reads the tile facts screenZ keeps per tile.
+      const isEvent = c instanceof Game_Event;
+      const walksTheDeck = isEvent ? c._onBridge === false
+          : (c === $gamePlayer || c instanceof Game_Follower);
+      if (walksTheDeck && !c._onBridge && _misZTileFacts(c)._misZIsBridge) {
+          this.visible = false;
+          return;
+      }
+
+      if (isEvent && ($gamePlayer._isDiving || _isProcDivingGlobal())) {
+          if (!_misSpriteOnWater(this, c)) {
               this.visible = false;
           }
       }
+  };
 
-      if (this.visible && this._character instanceof Game_Event) {
-          const isGlobalDiving = $gamePlayer._isDiving || _isProcDivingGlobal();
-          
-          if (isGlobalDiving) {
-              if (!Utils.isWaterTile(this._character.x, this._character.y)) {
-                  this.visible = false;
-              }
-          }
-      }
+  // The engine hands the two halves of a character standing in a bush the
+  // parent's blend colour and tone through getBlendColor / getColorTone, four
+  // array copies a frame for everybody in the grass. setBlendColor and
+  // setColorTone only read what they are given (and copy it themselves when
+  // it differs), so the parent's own arrays are handed over instead.
+  Sprite_Character.prototype.updateHalfBodySprites = function() {
+    if (this._bushDepth > 0) {
+      this.createHalfBodySprites();
+      const upper = this._upperBody;
+      const lower = this._lowerBody;
+      upper.bitmap = this.bitmap;
+      upper.visible = true;
+      upper.y = -this._bushDepth;
+      lower.bitmap = this.bitmap;
+      lower.visible = true;
+      upper.setBlendColor(this._blendColor);
+      lower.setBlendColor(this._blendColor);
+      upper.setColorTone(this._colorTone);
+      lower.setColorTone(this._colorTone);
+      upper.blendMode = this.blendMode;
+      lower.blendMode = this.blendMode;
+    } else if (this._upperBody) {
+      this._upperBody.visible = false;
+      this._lowerBody.visible = false;
+    }
   };
 
   //=========================================================================

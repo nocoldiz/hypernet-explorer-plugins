@@ -12,5 +12,6 @@
   "priority": "Priorità",
   "active": "Attivo",
   "inactive": "Inattivo",
+  "restart": "Le modifiche si applicano al prossimo avvio del gioco.",
   "hint": "L1 / R1, riordina  ·  ← →, pannello  ·  OK, attiva"
 }

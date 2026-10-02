@@ -209,9 +209,31 @@
     // Every bitmap load funnels through here, whichever way it was requested:
     // ImageManager.loadBitmap, loadBitmapFromUrl or a bare Bitmap.load. The
     // body is the stock one with the global flag swapped for the disk answer.
+    // A mod's copy of an asset (Core/ModManager.js) answers for itself: a mod
+    // ships plain files whatever the build it is dropped into encrypts, so the
+    // engine's flag says nothing about its bytes. Remembered on the object so
+    // a retry, which comes back here with the mod url, keeps the answer.
+    function modAsset(target) {
+        if (typeof ModManager === "undefined" || typeof ModManager.assetFor !== "function") {
+            return false;
+        }
+        const found = ModManager.assetFor(target._url);
+        if (found) {
+            target._url = found.url;
+            target._modEncrypted = found.encrypted;
+        }
+        if (target._modEncrypted === undefined) {
+            return false;
+        }
+        target._encrypted = target._modEncrypted;
+        return true;
+    }
+
     Bitmap.prototype._startLoading = function() {
-        this._url = resolve(this._url);
-        this._encrypted = Utils.hasEncryptedImages() || isEncrypted(this._url) === true;
+        if (!modAsset(this)) {
+            this._url = resolve(this._url);
+            this._encrypted = Utils.hasEncryptedImages() || isEncrypted(this._url) === true;
+        }
         this._image = new Image();
         this._image.onload = this._onLoad.bind(this);
         this._image.onerror = this._onError.bind(this);
@@ -240,6 +262,9 @@
     // just before that rather than after, and answer from disk while we are at
     // it: a build whose flag disagrees with its files loads either way.
     WebAudio.prototype._realUrl = function() {
+        if (modAsset(this)) {
+            return this._url + (this._encrypted ? "_" : "");
+        }
         this._url = resolve(this._url);
         this._encrypted = Utils.hasEncryptedAudio() || isEncrypted(this._url) === true;
         return this._url + (this._encrypted ? "_" : "");
@@ -257,32 +282,45 @@
     // a softlock because the file is not going to appear on a retry.
     const reported = Object.create(null);
 
+    // Scene_Base.update asks this every tick of every scene. It used to build
+    // a closure, a key list and two filtered copies of the SE lists each time
+    // for buffers that were almost never in error, so the sweep is hoisted and
+    // a list is only copied when one of its buffers actually failed.
+    const ERROR_SLOTS = ["_bgmBuffer", "_bgsBuffer", "_meBuffer"];
+    const anyErrored = list => {
+        for (let i = 0; i < list.length; i++) {
+            if (list[i] && list[i].isError()) return true;
+        }
+        return false;
+    };
+    const drop = buffer => {
+        if (!buffer || !buffer.isError()) {
+            return false;
+        }
+        if (!reported[buffer.url]) {
+            reported[buffer.url] = true;
+            console.error(
+                "[AssetCaseResolver] " + buffer.url +
+                    " could not be loaded; playing nothing instead."
+            );
+        }
+        try {
+            buffer.stop();
+        } catch (e) {
+            // A buffer that never loaded has nothing to stop.
+        }
+        return true;
+    };
+    const keep = buffer => !drop(buffer);
+
     AudioManager.checkErrors = function() {
-        const drop = buffer => {
-            if (!buffer || !buffer.isError()) {
-                return false;
-            }
-            if (!reported[buffer.url]) {
-                reported[buffer.url] = true;
-                console.error(
-                    "[AssetCaseResolver] " + buffer.url +
-                        " could not be loaded; playing nothing instead."
-                );
-            }
-            try {
-                buffer.stop();
-            } catch (e) {
-                // A buffer that never loaded has nothing to stop.
-            }
-            return true;
-        };
-        for (const key of ["_bgmBuffer", "_bgsBuffer", "_meBuffer"]) {
-            if (drop(this[key])) {
-                this[key] = null;
+        for (let i = 0; i < ERROR_SLOTS.length; i++) {
+            if (drop(this[ERROR_SLOTS[i]])) {
+                this[ERROR_SLOTS[i]] = null;
             }
         }
-        this._seBuffers = this._seBuffers.filter(buffer => !drop(buffer));
-        this._staticBuffers = this._staticBuffers.filter(buffer => !drop(buffer));
+        if (anyErrored(this._seBuffers)) this._seBuffers = this._seBuffers.filter(keep);
+        if (anyErrored(this._staticBuffers)) this._staticBuffers = this._staticBuffers.filter(keep);
     };
 
     window.AssetCaseResolver = { resolve: resolve, isEncrypted: isEncrypted };

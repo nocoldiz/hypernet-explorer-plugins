@@ -3122,7 +3122,9 @@
     return !!(WM && typeof WM.isEmptyWorld === "function" && WM.isEmptyWorld());
   }
 
-  function catchUp(nowMinute) {
+  // opts.fromClock: asked for by the running clock; leaves the world files to
+  // the next save instead of writing them here.
+  function catchUp(nowMinute, opts) {
     if (_catchUpRunning) return;
     // No electorate, no candidates, no coups: political time does not pass in
     // an empty world. See WorldManager.populationMode.
@@ -3170,7 +3172,7 @@
       // The party's own campaigns and dues (THE PARTY'S OWN POLITICAL PARTY).
       advancePlayerPolitics(cursor);
 
-      if (deltaMinutes >= SKIP_FLUSH_MINUTES) {
+      if (deltaMinutes >= SKIP_FLUSH_MINUTES && !opts?.fromClock) {
         try { window.WorldManager?.flush?.(); } catch (_) { /* flush is best-effort */ }
       }
     } finally {
@@ -4489,7 +4491,7 @@
         this._lastPoliticsSimMinute = minute;
         const last = $gameSystem?._npcPolitics?.lastSimMinute;
         if (last === undefined || last === null || minute - last >= MINUTES_PER_DAY || minute < last) {
-          catchUp(minute);
+          catchUp(minute, { fromClock: true });
         }
       }
     };

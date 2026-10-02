@@ -424,36 +424,41 @@
         const z = activeZoom();
         const vw = Graphics.width / z;
         const vh = Graphics.height / z;
-        const x0 = (bounds.minX - $gameMap.displayX()) * tw;
-        const x1 = (bounds.maxX + 1 - $gameMap.displayX()) * tw;
-        const y0 = (bounds.minY - $gameMap.displayY()) * th;
-        const y1 = (bounds.maxY + 1 - $gameMap.displayY()) * th;
+        const ox = $gameMap.displayX() * tw;
+        const oy = $gameMap.displayY() * th;
+        const rx0 = bounds.minX * tw;
+        const rx1 = (bounds.maxX + 1) * tw;
+        const ry0 = bounds.minY * th;
+        const ry1 = (bounds.maxY + 1) * th;
 
-        // Nothing of the neighbours on screen: leave last frame's shape alone.
-        if (x0 <= 0 && y0 <= 0 && x1 >= vw && y1 >= vh) {
-            if (layer._blackoutKey !== 'none') {
-                layer._blackoutKey = 'none';
-                layer.clear();
-            }
+        // Nothing of the neighbours on screen: draw nothing at all.
+        if (rx0 - ox <= 0 && ry0 - oy <= 0 && rx1 - ox >= vw && ry1 - oy >= vh) {
+            layer.visible = false;
             return;
         }
 
-        const key = [x0, y0, x1, y1, vw, vh].map(v => Math.round(v)).join(',');
+        // The shape is drawn in MAP pixels around the room, as a frame wide
+        // enough to cover any window the camera can show, and the camera only
+        // slides it. It used to be redrawn in screen pixels, which on a scroll
+        // meant a new key string and a fresh Graphics geometry every frame the
+        // camera moved, for a shape that only changes with the room or the
+        // zoom. The camera never shows more than one window past the room (a
+        // room smaller than the screen is centred in it), so a margin of one
+        // window plus a tile is always enough.
+        layer.x = -ox;
+        layer.y = -oy;
+        const mx = Math.ceil(vw) + tw;
+        const my = Math.ceil(vh) + th;
+        const key = bounds.minX + ',' + bounds.maxX + ',' + bounds.minY + ',' + bounds.maxY + ',' + mx + ',' + my;
         if (layer._blackoutKey === key) return;
         layer._blackoutKey = key;
 
-        const left = Math.max(0, Math.min(x0, vw));
-        const right = Math.max(0, Math.min(x1, vw));
         layer.clear();
         layer.beginFill(0x000000, 1);
-        if (left > 0) layer.drawRect(0, 0, left, vh);
-        if (right < vw) layer.drawRect(right, 0, vw - right, vh);
-        if (right > left) {
-            const top = Math.max(0, Math.min(y0, vh));
-            const bottom = Math.max(0, Math.min(y1, vh));
-            if (top > 0) layer.drawRect(left, 0, right - left, top);
-            if (bottom < vh) layer.drawRect(left, bottom, right - left, vh - bottom);
-        }
+        layer.drawRect(rx0 - mx, ry0 - my, mx, (ry1 - ry0) + my * 2);   // left
+        layer.drawRect(rx1, ry0 - my, mx, (ry1 - ry0) + my * 2);        // right
+        layer.drawRect(rx0, ry0 - my, rx1 - rx0, my);                   // above
+        layer.drawRect(rx0, ry1, rx1 - rx0, my);                        // below
         layer.endFill();
     }
 
@@ -529,65 +534,93 @@
                 }
             }
         }
-        // Invalidate any cached bounds from the previous map.
+        // Invalidate any cached bounds (and room labels) from the previous map.
+        _roomIds = null;
         _interiorBounds = null;
         _interiorTileX = -1;
         _interiorTileY = -1;
         return _mapHasDividers;
     }
 
-    // Flood-fill from the player's tile, stopping at region-30 dividers (which
-    // are included in the bounds so their walls remain visible). Returns null
-    // when the player is on a divider or the area is not enclosed by dividers.
-    function computeInteriorBounds(px, py) {
+    // Every room of the map, labelled once. The bounds used to come from a
+    // flood fill out of the player's tile on every step: a fresh w*h visited
+    // array, a stack and a new neighbour array per tile, all to arrive at the
+    // same room as the step before. The regions never move while the map is
+    // loaded, so one pass labels every room (connected non-divider tiles) with
+    // the box it would have produced, divider walls included, and a step is
+    // then a single array read. Keyed on the map data itself, not the id: the
+    // procedural maps reuse one id for every place they become.
+    let _roomData = null;      // the $dataMap.data the labels were built from
+    let _roomW = 0;
+    let _roomIds = null;       // Int32Array(w*h): room index + 1, 0 on a divider
+    let _roomBounds = [];      // per room: { minX, maxX, minY, maxY } or null when open
+
+    function buildInteriorRooms() {
         const w = $gameMap.width();
         const h = $gameMap.height();
-        if (px < 0 || py < 0 || px >= w || py >= h) return null;
-        if ($gameMap.regionId(px, py) === INTERIOR_DIVIDER_REGION) return null;
-
-        const visited = new Uint8Array(w * h);
-        const start = py * w + px;
-        const stack = [start];
-        visited[start] = 1;
-
-        let minX = px, maxX = px, minY = py, maxY = py;
-        let hitDivider = false;
-
-        while (stack.length) {
-            const idx = stack.pop();
-            const x = idx % w;
-            const y = (idx / w) | 0;
-
-            const neighbors = [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]];
-            for (let n = 0; n < neighbors.length; n++) {
-                const nx = neighbors[n][0];
-                const ny = neighbors[n][1];
-                if (nx < 0 || ny < 0 || nx >= w || ny >= h) continue;
-                const nidx = ny * w + nx;
-                if (visited[nidx]) continue;
-                visited[nidx] = 1;
-
-                if ($gameMap.regionId(nx, ny) === INTERIOR_DIVIDER_REGION) {
-                    // Include the divider wall in the bounds but don't cross it.
-                    hitDivider = true;
+        _roomData = $dataMap ? $dataMap.data : null;
+        _roomW = w;
+        _roomIds = new Int32Array(w * h);
+        _roomBounds = [];
+        const isDivider = new Uint8Array(w * h);
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                if ($gameMap.regionId(x, y) === INTERIOR_DIVIDER_REGION) isDivider[y * w + x] = 1;
+            }
+        }
+        // A divider can border several rooms, so "already counted for this
+        // room" is stamped with the room number rather than a plain flag.
+        const wallSeen = new Int32Array(w * h);
+        const stack = [];
+        for (let start = 0; start < w * h; start++) {
+            if (isDivider[start] || _roomIds[start]) continue;
+            const room = _roomBounds.length + 1;
+            let minX = start % w, maxX = minX, minY = (start / w) | 0, maxY = minY;
+            let hitDivider = false;
+            _roomIds[start] = room;
+            stack.push(start);
+            while (stack.length) {
+                const idx = stack.pop();
+                const x = idx % w;
+                const y = (idx / w) | 0;
+                for (let n = 0; n < 4; n++) {
+                    const nx = n === 0 ? x - 1 : n === 1 ? x + 1 : x;
+                    const ny = n === 2 ? y - 1 : n === 3 ? y + 1 : y;
+                    if (nx < 0 || ny < 0 || nx >= w || ny >= h) continue;
+                    const nidx = ny * w + nx;
+                    if (isDivider[nidx]) {
+                        // Include the divider wall in the bounds but don't cross it.
+                        if (wallSeen[nidx] === room) continue;
+                        wallSeen[nidx] = room;
+                        hitDivider = true;
+                    } else {
+                        if (_roomIds[nidx]) continue;
+                        _roomIds[nidx] = room;
+                        stack.push(nidx);
+                    }
                     if (nx < minX) minX = nx;
                     if (nx > maxX) maxX = nx;
                     if (ny < minY) minY = ny;
                     if (ny > maxY) maxY = ny;
-                    continue;
                 }
-
-                if (nx < minX) minX = nx;
-                if (nx > maxX) maxX = nx;
-                if (ny < minY) minY = ny;
-                if (ny > maxY) maxY = ny;
-                stack.push(nidx);
             }
+            // Not enclosed by dividers => open area, no clamping.
+            _roomBounds.push(hitDivider ? { minX, maxX, minY, maxY } : null);
         }
+    }
 
-        // Not enclosed by dividers => open area, no clamping.
-        if (!hitDivider) return null;
-        return { minX, maxX, minY, maxY };
+    // The room the tile belongs to. Returns null when the tile is a divider
+    // or the area is not enclosed by dividers.
+    function computeInteriorBounds(px, py) {
+        const w = $gameMap.width();
+        const h = $gameMap.height();
+        if (px < 0 || py < 0 || px >= w || py >= h) return null;
+        if (!_roomIds || _roomData !== ($dataMap ? $dataMap.data : null) ||
+            _roomW !== w || _roomIds.length !== w * h) {
+            buildInteriorRooms();
+        }
+        const room = _roomIds[py * w + px];
+        return room ? _roomBounds[room - 1] : null;
     }
 
     function getInteriorBounds() {
@@ -834,10 +867,13 @@
         }
 
 
-        // Pan back to player when moving
+        // Pan back to player when moving. The target is where the player is
+        // DRAWN (_realX/_realY), not the tile they are walking to: aiming at
+        // the destination ran the camera ahead of the sprite at the start of
+        // every step and parked it until the walk caught up, a sway per tile.
         if (this.isMoving()) {
-            const targetX = this.x - this.centerX();
-            const targetY = this.y - this.centerY();
+            const targetX = this._realX - this.centerX();
+            const targetY = this._realY - this.centerY();
 
             const dx = $gameMap.deltaX(targetX, $gameMap.displayX());
             const dy = $gameMap.deltaY(targetY, $gameMap.displayY());
@@ -1231,6 +1267,33 @@
             }
     };
 
+    // What the cursor says over an event, or null when it should say nothing
+    // at all (an Enemy event the spawner has not dealt a troop yet).
+    function hoverLabelFor(hoveredEvent) {
+        if (isUnspawnedEnemy(hoveredEvent)) return null;
+        const evName  = hoveredEvent.event().name;
+        const evNotes = hoveredEvent.event().note || "";
+        let name = formatEventName(evName);
+
+        const hoveredEnemyName = enemyDisplayName(hoveredEvent);
+        if (hoveredEnemyName) {
+            name = hoveredEnemyName;
+        } else {
+            const npcMatch = evNotes.match(/NPC-(\d+)/);
+            if (npcMatch) {
+                const classId = parseInt(npcMatch[1]);
+                const className = (_classI18n && _classI18n[classId] ? _classI18n[classId].name : null) || classNames[classId] || "Unknown";
+                name = `${name}, ${className.trim()}`;
+            } else {
+                const shopPersona = shopPersonaDisplay(hoveredEvent);
+                if (shopPersona) {
+                    name = shopPersona.className ? `${shopPersona.name}, ${shopPersona.className.trim()}` : shopPersona.name;
+                }
+            }
+        }
+        return name;
+    }
+
     Scene_Map.prototype.updateEventHover = function () {
         if (!this._eventHoverWindow) return;
 
@@ -1257,8 +1320,10 @@
         // event that walks onto or off the tile the cursor is already resting
         // on, within about a tenth of a second.
         const tileChanged = mapX !== this._hoverTileX || mapY !== this._hoverTileY;
+        let scanned = false;
         if (tileChanged || !window.FrameBudget ||
             window.FrameBudget.every('mousePanHoverScan', 10)) {
+            scanned = true;
             this._hoverTileX = mapX;
             this._hoverTileY = mapY;
             this._hoverEvent = $gameMap.eventsXy(mapX, mapY).find(ev => {
@@ -1276,36 +1341,27 @@
         const hoveredEvent = this._hoverEvent;
 
         if (hoveredEvent) {
-            const evName  = hoveredEvent.event().name;
-            const evNotes = hoveredEvent.event().note || "";
-            let name = formatEventName(evName);
-
-            const hoveredEnemyName = enemyDisplayName(hoveredEvent);
-            if (isUnspawnedEnemy(hoveredEvent)) {
+            // The label is a handful of regexes, a note scan and a shop rota
+            // lookup, and it was rebuilt sixty times a second while the cursor
+            // rested on the same event. It is worked out again on the frames
+            // the lookup above runs, which is every new tile and a few times a
+            // second besides, so a name that changes under a still cursor (a
+            // shift handover, a won fight) still shows within a tenth of a
+            // second. Only the placement below stays per frame.
+            if (scanned || this._hoverLabelEvent !== hoveredEvent) {
+                this._hoverLabelEvent = hoveredEvent;
+                this._hoverLabel = hoverLabelFor(hoveredEvent);
+            }
+            if (this._hoverLabel === null) {
                 // The troop can be cleared under a cursor that is already
                 // resting on it (the fight was won), so the held event is
                 // tested again rather than trusting the scan.
                 this._eventHoverWindow.hide();
                 return;
             }
-            if (hoveredEnemyName) {
-                name = hoveredEnemyName;
-            } else {
-                const npcMatch = evNotes.match(/NPC-(\d+)/);
-                if (npcMatch) {
-                    const classId = parseInt(npcMatch[1]);
-                    const className = (_classI18n && _classI18n[classId] ? _classI18n[classId].name : null) || classNames[classId] || "Unknown";
-                    name = `${name}, ${className.trim()}`;
-                } else {
-                    const shopPersona = shopPersonaDisplay(hoveredEvent);
-                    if (shopPersona) {
-                        name = shopPersona.className ? `${shopPersona.name}, ${shopPersona.className.trim()}` : shopPersona.name;
-                    }
-                }
-            }
 
             // Name (and class, when known) only, no simulation details.
-            this._eventHoverWindow.setText(name);
+            this._eventHoverWindow.setText(this._hoverLabel);
             const winWidth  = this._eventHoverWindow._neededWidth;
             const winHeight = 70;
             const eventOffset = Number((hoveredEvent.event().meta || {}).xOffset || X_OFFSET);

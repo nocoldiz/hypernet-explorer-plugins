@@ -271,8 +271,34 @@ class Main {
     onScriptLoad() {
         if (++this.loadCount === this.numScripts) {
             this.patchFullscreenForNwjs();
-            PluginManager.setup($plugins);
+            this.loadModManager(() => PluginManager.setup($plugins));
         }
+    }
+
+    // Core/ModManager.js points every file the game reads at the active mods'
+    // copies, plugin scripts included. PluginManager.setup requests every
+    // plugin in one go, so the mod manager has to have run before it is called,
+    // not merely be first in the list.
+    loadModManager(next) {
+        const entry = $plugins.find(p => p.name === "Core/ModManager" && p.status);
+        if (!entry || !Utils.isNwjs()) {
+            next();
+            return;
+        }
+        const name = Utils.extractFileName(entry.name);
+        PluginManager.setParameters(name, entry.parameters);
+        PluginManager._scripts.push(name);
+        const url = PluginManager.makeUrl(entry.name);
+        const script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = url;
+        script.onload = next;
+        script.onerror = e => {
+            PluginManager.onError(e);
+            next();
+        };
+        script._url = url;
+        document.body.appendChild(script);
     }
 
     patchFullscreenForNwjs() {

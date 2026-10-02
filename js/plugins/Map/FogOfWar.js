@@ -2294,6 +2294,32 @@
         this.refreshFogOfWar(true);
     };
 
+    // The fog texture came from PIXI.Texture.from(canvas), which files its
+    // BaseTexture in PIXI.utils.BaseTextureCache. The scene teardown destroys
+    // the sprite with {texture: true}, and that frees the Texture but never
+    // the base, so the cache kept the map sized canvas (and the ImageData
+    // mirroring it) alive after every transfer and every menu closed. The
+    // base goes by hand once the children are gone, and the canvas is shrunk
+    // to nothing so its backing store is released at once.
+    const _Spriteset_Map_destroy_fog = Spriteset_Map.prototype.destroy;
+    Spriteset_Map.prototype.destroy = function (options) {
+        const base = this._fogTexture ? this._fogTexture.baseTexture : null;
+        const canvas = this._fogCanvas;
+        _Spriteset_Map_destroy_fog.call(this, options);
+        if (base && !base.destroyed) base.destroy();
+        if (canvas) {
+            canvas.width = 0;
+            canvas.height = 0;
+        }
+        this._fogTexture = null;
+        this._fogCanvas = null;
+        this._fogCtx = null;
+        this._fogImageData = null;
+        this._fogPixels = null;
+        this._fogPixels32 = null;
+        this._fogWrapSprites = null;
+    };
+
     // True when the fog layer should be drawn at all on this map.
     Spriteset_Map.prototype.isFogOfWarActive = function () {
         return fogActive();
@@ -2432,6 +2458,56 @@
         }
     };
 
+    // MZ's setColorTone hangs a ColorFilter on the sprite the first time it is
+    // called and never takes it off again: setting the tone back to zero only
+    // turns it into an identity pass. Every filter is its own framebuffer
+    // pass and breaks the sprite batch, so an event that had once been out of
+    // sight paid for one on every frame for the rest of the map. Once the
+    // tone is back to nothing, and neither a hue nor a blend colour is using
+    // the same filter, it is taken off; MZ builds a fresh one on demand.
+    function detachIdleColorFilter(sprite) {
+        const cf = sprite._colorFilter;
+        if (!cf || !sprite.filters) return;
+        const tone = sprite._colorTone;
+        const blend = sprite._blendColor;
+        if (sprite._hue) return;
+        if (tone && (tone[0] || tone[1] || tone[2] || tone[3])) return;
+        if (blend && (blend[0] || blend[1] || blend[2] || blend[3])) return;
+        const kept = sprite.filters.filter(f => f !== cf);
+        sprite.filters = kept.length ? kept : null;
+        sprite._colorFilter = null;
+    }
+    // Shared with the hit flash and target blink code (BattleSystemEnhanced,
+    // NPCEmpathize), which set a blend colour and reset it to zero the same
+    // way and so leave the same identity pass behind. Looked up at call time,
+    // so it does not matter that those plugins load before this one.
+    if (typeof window !== 'undefined') {
+        window.FogOfWar = window.FogOfWar || {};
+        window.FogOfWar.detachIdleColorFilter = detachIdleColorFilter;
+    }
+
+    // Whether an event's sprite could be on screen, read in tiles off the
+    // display origin (adjustX/adjustY already fold a looping map). The margin
+    // is generous so the grey is in place before a sprite scrolls in, even
+    // though the tone is only checked every third frame, and the bottom one
+    // is wider still because a sprite is drawn upward from its foot tile, so
+    // a tall one standing below the edge already shows its head.
+    const FOG_SCREEN_MARGIN = 3;
+    const FOG_SCREEN_MARGIN_BOTTOM = 6;
+    function fogEventOnScreen(event) {
+        if (typeof $gameMap === 'undefined' || !$gameMap ||
+            typeof $gameMap.adjustX !== 'function') return true;
+        const zoom = (typeof $gameScreen !== 'undefined' && $gameScreen && $gameScreen.zoomScale)
+            ? $gameScreen.zoomScale() : 1;
+        const shrink = zoom > 0 && zoom < 1 ? zoom : 1;
+        const sx = $gameMap.adjustX(event._realX);
+        const sy = $gameMap.adjustY(event._realY);
+        return sx > -FOG_SCREEN_MARGIN &&
+            sx < $gameMap.screenTileX() / shrink + FOG_SCREEN_MARGIN &&
+            sy > -FOG_SCREEN_MARGIN &&
+            sy < $gameMap.screenTileY() / shrink + FOG_SCREEN_MARGIN_BOTTOM;
+    }
+
     Spriteset_Map.prototype.clearFogFilter = function (sprite) {
         if (!sprite) return;
         if (sprite._fogColorToneApplied) {
@@ -2439,6 +2515,7 @@
                 sprite.setColorTone([0, 0, 0, 0]);
             }
             sprite._fogColorToneApplied = false;
+            detachIdleColorFilter(sprite);
         }
         if (sprite._fogColorFilter && sprite.filters) {
             sprite.filters = sprite.filters.filter(f => f !== sprite._fogColorFilter);
@@ -2804,8 +2881,20 @@
             sprite.opacity = event.opacity();
             if (!checkTone) continue;
 
-            const isGrayscale = event.isFogOfWarGrayscale() ||
-                (event.isFogOfWarTransitioning && event.isFogOfWarTransitioning());
+            // An event with no graphic (most triggers, doors drawn by the
+            // tilemap, audio emitters) has nothing to grey, but a filter on it
+            // still costs a framebuffer pass and a batch break every frame.
+            // The grey stays a real desaturation: a tint only multiplies, so
+            // a red chest would read as dark red rather than as a memory.
+            //
+            // Off screen the grey shows nobody, yet it was a filter pass per
+            // sprite all the same, so on a big map every remembered event
+            // anywhere paid for one. It is only worn near the screen; the
+            // margin in fogEventOnScreen puts it back before the sprite shows.
+            const drawsSomething = !!(sprite._characterName || sprite._tileId > 0);
+            const isGrayscale = drawsSomething && fogEventOnScreen(event) &&
+                (event.isFogOfWarGrayscale() ||
+                (event.isFogOfWarTransitioning && event.isFogOfWarTransitioning()));
 
             if (isGrayscale) {
                 if (!sprite._fogColorToneApplied) {

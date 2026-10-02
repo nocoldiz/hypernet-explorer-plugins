@@ -231,33 +231,21 @@
     return (forMap && forMap[s._shopEventId]) || null;
   };
 
-  // Which index a thing is quoted against is what the thing IS, not what shelf
-  // it sits on: anything carrying `<Nature: Magical>` is priced off the SOUL
-  // index and anything `<Nature: Mundane>` off the price of oil, because in
-  // this world the ordinary economy genuinely runs on crude. Every real entry
-  // of Items, Weapons and Armors carries the tag (tools/nature/gen_nature_tags.js)
-  // and window.MagicNature is the one reader of it.
-  //
-  // The category list survives only as the fallback for an entry with no tag
-  // (a plugin-made item, a third-party database), so nothing is left unpriced.
-  const SOUL_CATEGORIES = ["jungle", "magic", "plants", "monsters",
-                           "bodypart", "collectibles", "alchemistry",
-                           "homeopathy", "books"];  // i18n-ignore  <category:> tag values
+  // A thing is priced off the company that makes it: every entry of Items,
+  // Weapons and Armors names its maker in <Company: Key> and window.ItemCompany
+  // (StockMarketSystem.js) is the one reader of it. A maker trading above its
+  // listing price makes its goods dearer, a slump puts them on sale.
 
-  // How far the two indices are allowed to move a price: half off at worst,
+  // How far a maker's shares are allowed to move a price: half off at worst,
   // three times at best.
   const MARKET_FLOOR = 0.5;
   const MARKET_CEIL = 3.0;
 
-  // True when the item is quoted against souls, false when against oil.
-  const isSoulPriced = (item) => {
-    const MN = window.MagicNature;
-    const nature = MN && typeof MN.natureOf === "function"
-      ? safe("natureOf", () => MN.natureOf(item), null)
-      : null;
-    if (nature) return nature === "magical";
-    return SOUL_CATEGORIES.includes(categoryOf(item).toLowerCase());
-  };
+  // The company key that makes the item, or null.
+  const companyOf = (item) => safe("companyOf", () => {
+    const IC = window.ItemCompany;
+    return IC ? IC.of(item) : null;
+  }, null);
 
   // The fixed price of a collectible, or null for everything the indices are
   // allowed to move. window.ItemCollectibles is the only place that boundary
@@ -288,11 +276,23 @@
     return C ? C.fixed(item) : null;
   }, null);
 
+  // A counter reads each maker's share price once a day, the first time it
+  // prices one of its goods, so a line keeps its price while the shop is open
+  // and the next day's restock is priced on the next day's market.
   const marketFactor = (shopData, item) => {
     if (!shopData) return 1.0;
-    const raw = isSoulPriced(item) ? shopData.soulFactor : shopData.oilFactor;
-    const factor = Number(raw);
-    return Number.isFinite(factor) && factor > 0 ? factor : 1.0;
+    const key = companyOf(item);
+    if (!key) return 1.0;
+    if (!shopData.companyFactors || typeof shopData.companyFactors !== "object") shopData.companyFactors = {};
+    const saved = Number(shopData.companyFactors[key]);
+    if (Number.isFinite(saved) && saved > 0) return saved;
+    // No market yet is no reading: nothing is kept, so the day's first
+    // real quote is the one the counter holds to.
+    const index = safe("priceIndex", () => window.ItemCompany.priceIndex(key), null);
+    if (!(Number.isFinite(index) && index > 0)) return 1.0;
+    const factor = Math.max(MARKET_FLOOR, Math.min(MARKET_CEIL, index));
+    shopData.companyFactors[key] = factor;
+    return factor;
   };
 
   // The one place a buy price is worked out: the sticker moved by today's
@@ -773,7 +773,7 @@
   };
 
   // The same quote the HTML panel prints, for the canvas window behind it: how
-  // far today's index has moved this line, and the price it lands on. A bare
+  // far the maker's share price has moved this line, and the price it lands on. A bare
   // "112%" said nothing about what was being paid, so the figure that matters
   // is printed next to it.
   Window_ItemDetail.prototype.drawMarketPriceInfo = function (item, y) {
@@ -786,7 +786,7 @@
     let currentY = y;
 
     if (quote.percent !== 0) {
-      const label = quote.soul ? T('Shop.soulIndex') : T('Shop.oilIndex');
+      const label = T('Shop.companyIndex', { company: quote.companyName });
       const value = quote.percent < 0
         ? T('Shop.marketOff', { percent: -quote.percent })
         : T('Shop.marketUp', { percent: quote.percent });
@@ -2040,8 +2040,8 @@
           ? T(isBuyMode ? 'Shop.buySelected' : 'Shop.sellSelected', { lines: cartLines })
           : T(isBuyMode ? 'Shop.buy' : 'Shop.sell');
 
-        // What this line is worth today, and how much of that is the day's
-        // OIL/SOUL index rather than the sticker. The figure quoted here is
+        // What this line is worth today, and how much of that is the maker's
+        // share price rather than the sticker. The figure quoted here is
         // the one the till uses, per copy, so a bulk sale is just this times
         // the pile.
         const quote = this.priceQuote(selectedItem);
@@ -2053,7 +2053,7 @@
           const favourable = quote.buying ? pct < 0 : pct > 0;
           const marketRowsHTML = pct === 0 ? "" : `
               <div class="detail-price-row">
-                  <span class="detail-price-lbl">${esc(quote.soul ? T('Shop.soulIndex') : T('Shop.oilIndex'))}</span>
+                  <span class="detail-price-lbl">${esc(T('Shop.companyIndex', { company: quote.companyName }))}</span>
                   <span class="market-tag ${favourable ? 'good' : 'bad'}">${esc(pct < 0
                     ? T('Shop.marketOff', { percent: -pct })
                     : T('Shop.marketUp', { percent: pct }))}</span>
@@ -3024,40 +3024,9 @@
     if (!stocks[mapId][eventId]) stocks[mapId][eventId] = { date: "" };
 
     if (stocks[mapId][eventId].date !== dateKey) {
-      stocks[mapId][eventId] = { date: dateKey, oilFactor: 1.0, soulFactor: 1.0 };
-      const newShopData = stocks[mapId][eventId];
-
-      // The market only moves prices when it is a live StockMarketSystem
-      // instance. A save written without that plugin restores a plain object
-      // with no methods on it, and asking that object for a price threw before
-      // the shop had drawn a single item.
-      const market = $gameSystem.stockMarket;
-      if (market && typeof market.getOilPrice === "function" && typeof market.getSoulsPrice === "function") {
-        safe("market factors", () => {
-          const smParams = PluginManager.parameters("StockMarketSystem");
-          const initOil = Number(smParams["Initial Oil Price"]) || 30000;
-          const initSoul = Number(smParams["Initial SOUL Price"]) || 66666;
-
-          const currentOil = Number(market.getOilPrice());
-          const currentSoul = Number(market.getSoulsPrice());
-          if (!Number.isFinite(currentOil) || !Number.isFinite(currentSoul)) return;
-
-          const maxOil = 80000;
-          const minOil = 3000;
-          let oilFactor = 1.0;
-          if (currentOil >= initOil) {
-            oilFactor = 1.0 + ((currentOil - initOil) / (maxOil - initOil)) * 2.0;
-          } else {
-            oilFactor = 1.0 - ((initOil - currentOil) / (initOil - minOil)) * 0.5;
-          }
-          // A crash takes half off the sticker price and a squeeze trebles it.
-          // The floor is deliberate: goods really do go to 50% off in a world
-          // where the price of oil has collapsed.
-          newShopData.oilFactor = Math.max(MARKET_FLOOR, Math.min(MARKET_CEIL, oilFactor));
-          newShopData.soulFactor = Math.max(MARKET_FLOOR, Math.min(MARKET_CEIL, currentSoul / initSoul));
-        }, null);
-      }
-
+      // Each maker's share price is read into companyFactors the first time
+      // the day prices one of its goods (marketFactor).
+      stocks[mapId][eventId] = { date: dateKey, companyFactors: {} };
     }
 
     // Every row on the shelf is counted, whatever put the record there. The
@@ -3152,12 +3121,12 @@
     let record = stocks[mapId][eventId];
     if (!record) {
       if (!create) return null;
-      record = stocks[mapId][eventId] = { date: dateKey, oilFactor: 1.0, soulFactor: 1.0 };
+      record = stocks[mapId][eventId] = { date: dateKey, companyFactors: {} };
     }
     // A record left over from another day is a record of nothing: the counter
     // has been restocked since, so it starts again empty of numbers.
     if (record.date !== dateKey) {
-      record = stocks[mapId][eventId] = { date: dateKey, oilFactor: 1.0, soulFactor: 1.0 };
+      record = stocks[mapId][eventId] = { date: dateKey, companyFactors: {} };
     }
     return record;
   };
@@ -3260,7 +3229,7 @@
 
   // Everything the detail panel needs to quote a line: what one copy is worth
   // on the side of the counter the player is standing on, what it would be
-  // worth with the indices flat, and how far today's OIL or SOUL price has
+  // worth with its maker's shares at par, and how far today's share price has
   // moved it. The price is the till's own, so the panel is a quote and not an
   // estimate - a pile of n copies is exactly n times this.
   Scene_Shop.prototype.priceQuote = function (item) {
@@ -3270,12 +3239,14 @@
     if (!(price > 0)) return null;
     // A collectible has no move to report: it is quoted flat on both sides.
     const factor = fixedPrice(item) !== null ? 1 : marketFactor(currentShopData(this), item);
+    const company = companyOf(item);
     return {
       buying: buying,
       price: price,
       base: Math.max(1, Math.round(price / factor)),
       percent: Math.round((factor - 1) * 100),
-      soul: isSoulPriced(item)
+      company: company,
+      companyName: company ? safe("companyName", () => window.ItemCompany.nameOf(company), company) : ""
     };
   };
 
@@ -3377,7 +3348,7 @@
 
   // What the till pays for one copy. It goes through the scene's own
   // sellingPrice() rather than repeating its arithmetic, so every factor that
-  // moves it - Appraising, today's OIL/SOUL index, a passive skill another
+  // moves it - Appraising, the maker's share price, a passive skill another
   // plugin wrapped on top - reaches the card and the counter as well as the
   // receipt. Quoting the sticker here is what had a two-item pile advertised
   // at 2.20 € pay out 5.36 €.

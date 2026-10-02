@@ -405,6 +405,10 @@
     return _stackEl;
   }
 
+  // What syncPosition last wrote, so a frame where nothing moved writes
+  // nothing. It runs on every animation frame a toast is up.
+  let _lastPos = { right: "", top: "", fontSize: "" };
+
   function syncPosition() {
     if (!_stackEl) return;
     // Shared read: the stack is one of a dozen overlays that all want the
@@ -413,13 +417,11 @@
     if (!r) return;
     const sx = r.width / Graphics.width;
     const sy = r.height / Graphics.height;
-    const s = _stackEl.style;
-    // Anchored to the canvas' top-right corner: the party HUD (PartyHud.js)
-    // owns the top-left one, so the two never have to dodge each other.
-    s.left = "auto";
-    s.right = (window.innerWidth - r.right) + 20 * sx + "px";
 
     // All toasts are drawn below the location name (MapLevelDisplay / #html-map-name-overlay).
+    // Every read happens before any write: measuring the banner right after
+    // the stack's own style had been written forced the browser to lay the
+    // page out again on the spot, every frame a toast was up.
     let top = r.top + 20 * sy;
     const mapNameEl = (typeof document !== "undefined" && document.getElementById)
       ? document.getElementById("html-map-name-overlay")
@@ -436,8 +438,22 @@
         }
       }
     }
-    s.top = Math.round(top) + "px";
-    s.fontSize = Math.round(16 * sy) + "px";
+
+    const s = _stackEl.style;
+    // Anchored to the canvas' top-right corner: the party HUD (PartyHud.js)
+    // owns the top-left one, so the two never have to dodge each other.
+    const right = (window.innerWidth - r.right) + 20 * sx + "px";
+    const topPx = Math.round(top) + "px";
+    const fontSize = Math.round(16 * sy) + "px";
+    // A stack rebuilt by ensureStack starts with no style at all, so the cache
+    // is only trusted while it is the element it was written on.
+    if (_lastPos.el !== _stackEl) {
+      _lastPos = { el: _stackEl, right: "", top: "", fontSize: "" };
+      s.left = "auto";
+    }
+    if (_lastPos.right !== right) { _lastPos.right = right; s.right = right; }
+    if (_lastPos.top !== topPx) { _lastPos.top = topPx; s.top = topPx; }
+    if (_lastPos.fontSize !== fontSize) { _lastPos.fontSize = fontSize; s.fontSize = fontSize; }
   }
 
   function tick() {

@@ -681,7 +681,9 @@
     return !!(WM && typeof WM.isEmptyWorld === "function" && WM.isEmptyWorld());
   }
 
-  function catchUp(nowMinute) {
+  // opts.fromClock: asked for by the running clock; leaves the world files to
+  // the next save instead of writing them here.
+  function catchUp(nowMinute, opts) {
     if (_catchUpRunning) return;
     // Nothing pulses through a world with nobody in it: no settlement news,
     // no trade, no rumour. See WorldManager.populationMode.
@@ -694,8 +696,8 @@
       nowMinute = Number(nowMinute ?? $gameVariables.value(114)) || 0;
 
       // The web reads other simulations' outputs, make sure they're current.
-      try { window.NPCLifeSim?.catchUp?.(nowMinute); } catch (_) {}
-      try { window.NPCPolitics?.catchUp?.(nowMinute); } catch (_) {}
+      try { window.NPCLifeSim?.catchUp?.(nowMinute, opts); } catch (_) {}
+      try { window.NPCPolitics?.catchUp?.(nowMinute, opts); } catch (_) {}
       hookBustle();
 
       // Ensure a pulse exists for every known map group.
@@ -810,7 +812,7 @@
 
       refreshModifiers(state);
 
-      if (deltaMinutes >= SKIP_FLUSH_MINUTES && window.WorldManager?.flush) {
+      if (deltaMinutes >= SKIP_FLUSH_MINUTES && !opts?.fromClock && window.WorldManager?.flush) {
         try { window.WorldManager.flush("npcs"); } catch (e) {
           console.error("[NPCWorldWeb] world flush failed:", e);
         }
@@ -1445,7 +1447,7 @@
         this._lastWorldWebMinute = minute;
         const last = $gameSystem?._npcWorldWeb?.lastSimMinute;
         if (last === undefined || last === null || minute - last >= MINUTES_PER_DAY || minute < last) {
-          catchUp(minute);
+          catchUp(minute, { fromClock: true });
         }
       }
     };

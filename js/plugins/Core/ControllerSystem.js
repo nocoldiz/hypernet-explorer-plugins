@@ -130,6 +130,64 @@
         return navigator.getGamepads ? (navigator.getGamepads() || []) : [];
     }
 
+    //=========================================================================
+    // One read of the pads per frame: PadSnapshot
+    //=========================================================================
+    // navigator.getGamepads() is not a property read. Chromium builds a fresh
+    // snapshot of every pad on each call, and on Windows that costs a sizeable
+    // fraction of a millisecond. A map frame used to ask for it six to ten
+    // times: core's own poll, the analog helper, the device tracker in
+    // MouseControls, this file's ports and edges, the split screen, each on
+    // its own. The answers were identical, because nothing in a frame waits
+    // for the pad to change, so the frame now pays for ONE of them.
+    //
+    // The array is kept until either of two things happens:
+    //   * a new Input.update begins (see the wrapper at the bottom of this
+    //     file), so every engine frame, including the catch-up frames
+    //     SceneManager runs back to back inside a single tick, reads its own;
+    //   * the task that filled it ends. The expiry is a microtask, and the
+    //     browser drains microtasks after every callback, so a minigame's own
+    //     requestAnimationFrame loop, a setInterval poll (the piano) or a DOM
+    //     handler always starts from a live read even when Graphics.frameCount
+    //     is standing still because no engine frame has run.
+    // Sharing inside one task is exactly what calling again would give: the
+    // Gamepad objects are snapshots in Chromium, never live views.
+    //
+    // Anything that truly needs a read of its own uses Controller.livePads(),
+    // or calls navigator.getGamepads.__original with navigator as `this`.
+    const PadSnapshot = (() => {
+        const nav = typeof navigator !== 'undefined' ? navigator : null;
+        if (!nav || typeof nav.getGamepads !== 'function') {
+            return { installed: false, expire() {}, live: () => [] };
+        }
+        const existing = nav.getGamepads.__padSnapshot;
+        if (existing) return existing;
+        const original = nav.getGamepads;
+        const defer = typeof queueMicrotask === 'function'
+            ? queueMicrotask
+            : (fn) => Promise.resolve().then(fn);
+        let cached = null;
+        const expire = () => { cached = null; };
+        const live = () => original.call(nav) || [];
+        const memo = function () {
+            if (cached !== null) return cached;
+            cached = live();
+            defer(expire);
+            return cached;
+        };
+        const api = { installed: true, expire, live, original };
+        memo.__original = original;
+        memo.__padSnapshot = api;
+        try {
+            Object.defineProperty(nav, 'getGamepads', {
+                value: memo, writable: true, configurable: true, enumerable: true
+            });
+        } catch (e) {
+            return { installed: false, expire() {}, live };
+        }
+        return api;
+    })();
+
     function isRealPad(pad) {
         return !!(pad && pad.connected !== false && pad.buttons && pad.buttons.length);
     }
@@ -850,9 +908,18 @@
                 const tabs = Array.prototype.slice.call(strip.children || []);
                 // Whatever the strip was wearing comes off first: a strip is
                 // redrawn as the player walks it, and a device can change
-                // between two redraws.
-                for (const tab of tabs) this.unstamp(tab);
-                if (!on || tabs.length < 2) continue;
+                // between two redraws. The two ends keep theirs when they are
+                // about to wear it again, since stamp() corrects a badge in
+                // place: pulling it off and putting it back is a mutation, the
+                // observer above answers every mutation with another decorate,
+                // and a strip on screen kept the whole document query running
+                // every frame.
+                const ends = on && tabs.length >= 2;
+                for (let i = 0; i < tabs.length; i++) {
+                    if (ends && (i === 0 || i === tabs.length - 1)) continue;
+                    this.unstamp(tabs[i]);
+                }
+                if (!ends) continue;
                 this.stamp(tabs[0], this.BUTTON.tabPrev, true);
                 this.stamp(tabs[tabs.length - 1], this.BUTTON.tabNext, false);
             }
@@ -872,8 +939,14 @@
                     row.parentElement.closest(this.SWITCHERS)) continue;
                 if (!row.querySelectorAll) continue;
                 const tabs = Array.prototype.slice.call(row.querySelectorAll('.companion-tab'));
-                for (const tab of tabs) this.unstamp(tab);
-                if (!on || tabs.length < 2) continue;
+                // The ends are restamped in place, for the reason given in
+                // decorateTabs above.
+                const ends = on && tabs.length >= 2;
+                for (let i = 0; i < tabs.length; i++) {
+                    if (ends && (i === 0 || i === tabs.length - 1)) continue;
+                    this.unstamp(tabs[i]);
+                }
+                if (!ends) continue;
                 this.stamp(tabs[0], this.BUTTON.partyPrev, true);
                 this.stamp(tabs[tabs.length - 1], this.BUTTON.partyNext, false);
             }
@@ -1537,6 +1610,8 @@
     if (typeof Input !== 'undefined') {
         const _Input_update = Input.update;
         Input.update = function () {
+            // A new engine frame reads the pads afresh (see PadSnapshot).
+            PadSnapshot.expire();
             UINav._frame();
             return _Input_update.apply(this, arguments);
         };
@@ -1554,6 +1629,11 @@
 
     Controller.Nav = UINav;
     window.UINav = UINav;
+
+    // The bypass: a read nobody else shares, for code that has to see the pad
+    // change inside one task (see PadSnapshot).
+    Controller.livePads = () => PadSnapshot.live();
+    Controller.PadSnapshot = PadSnapshot;
 
     window.Controller = Controller;
     // Every screen that already asks for window.PadUI is asking this.

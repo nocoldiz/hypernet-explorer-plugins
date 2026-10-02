@@ -254,11 +254,18 @@
 
     // Whether the character the plate belongs to is inside the viewport, with
     // a tile of slack so a plate does not blink out on the edge of a scroll.
+    //
+    // The sprite's x and y are map pixels inside a spriteset the camera zoom
+    // scales as a whole, so the screen is NOT Graphics.width of them: zoomed
+    // out to 0.5 it spans twice that, and measuring against the canvas size
+    // dropped every plate on the right and bottom half of the view. The
+    // camera's own tile count (MousePan makes screenTileX/Y the zoomed one)
+    // times the tile size is the span the player actually sees.
     Sprite_Character.prototype.isOwnerOnScreen = function() {
-        const w = Graphics.width;
-        const h = Graphics.height;
         const padX = $gameMap ? $gameMap.tileWidth() : 48;
         const padY = $gameMap ? $gameMap.tileHeight() : 48;
+        const w = $gameMap ? $gameMap.screenTileX() * padX : Graphics.width;
+        const h = $gameMap ? $gameMap.screenTileY() * padY : Graphics.height;
         return this.x >= -padX && this.x <= w + padX &&
                this.y >= -padY && this.y <= h + padY;
     };

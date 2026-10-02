@@ -77,13 +77,14 @@
   // Listed Assets
   //=============================================================================
   //
-  // Two things are traded here. OIL and SOUL are the commodities the rest of
-  // the economy prices off (fuel, shop mark-ups, the SOUL median variable),
-  // priced on the same hourly engine as the companies. Everything else
-  // is a company the world already knows about: the listings are read straight
-  // from js/db/WorldGen/Companies.json, the same register the Real Estate
-  // market and the Assets pockets trade, so a share bought at the terminal is
-  // the same share the party owns anywhere else.
+  // Two things are traded here. OIL and SOUL are commodities (the SOUL median
+  // variable follows the second), priced on the same hourly engine as the
+  // companies; shop prices follow the company that makes the goods instead
+  // (window.ItemCompany). Everything else is a company the world already
+  // knows about: the listings are read straight from
+  // js/db/WorldGen/Companies.json, the same register the Real Estate market
+  // and the Assets pockets trade, so a share bought at the terminal is the
+  // same share the party owns anywhere else.
 
   const COMMODITY_CONFIG = {
     oil: {
@@ -124,6 +125,7 @@
     agriculture: 0.035,
     finance: 0.05,
     transport: 0.03,
+    health: 0.035,
     misc: 0.03
   };
   const DIVIDEND_DAYS_PER_YEAR = 365;
@@ -151,6 +153,7 @@
     agriculture: 0.20,
     finance: 0.11,
     transport: 0.20,
+    health: 0.22,
     misc: 0.20
   };
 
@@ -229,6 +232,7 @@
     agriculture: { harvest: 0.5, mouths: 0.5 },
     finance: { mood: 0.5, jobs: 0.5 },
     transport: { trips: 0.6, moves: 0.4 },
+    health: { plague: 0.6, mouths: 0.4 },
     misc: { prosperity: 1 }
   };
   // How far a signal must stray before it counts as a full point: the larger
@@ -2383,6 +2387,75 @@
     COMPANY_DRIVERS,
     SIGNALS: Object.keys(SIGNAL_FLOOR),
     readSocietySignals
+  };
+
+  //=============================================================================
+  // Who makes what (window.ItemCompany)
+  //=============================================================================
+  // Every entry of Items, Weapons and Armors carries <Company: Key>, stamped by
+  // tools/items/gen_company_tags.js from the `produces` lists in
+  // js/db/WorldGen/Companies.json, and a shop prices the thing off its maker's
+  // share price: a company trading above its listing price makes its goods
+  // dearer, a slump puts them on sale. OIL and SOUL price nothing on a shelf.
+  //
+  // An untagged entry (a plugin-made item, a mod) is matched against the same
+  // `produces` lists here, so nothing goes without a maker.
+  const COMPANY_TAG_RE = /<Company:\s*([^>]+?)\s*>/i;
+  const ITEM_CATEGORY_RE = /<category:\s*([^>]+?)\s*>/i;
+
+  function companyDefs() {
+    return (window.WorldGen && window.WorldGen.Companies) || {};
+  }
+
+  // The `produces` list an entry is looked up in, and the name it is filed under.
+  function producedAs(item) {
+    if (!item || typeof DataManager === "undefined") return null;
+    const sys = (typeof $dataSystem !== "undefined" && $dataSystem) || {};
+    if (DataManager.isItem(item)) {
+      const m = String(item.note || '').match(ITEM_CATEGORY_RE);
+      return { kind: "items", name: m ? m[1] : '' };
+    }
+    if (DataManager.isWeapon(item)) return { kind: "weapons", name: (sys.weaponTypes || [])[item.wtypeId] || '' };
+    if (DataManager.isArmor(item)) return { kind: "armors", name: (sys.armorTypes || [])[item.atypeId] || '' };
+    return null;
+  }
+
+  function producerOf(kind, name) {
+    const want = String(name || '').toLowerCase();
+    if (!want) return null;
+    const defs = companyDefs();
+    for (const key of Object.keys(defs)) {
+      const list = (defs[key].produces || {})[kind] || [];
+      if (list.some(n => String(n).toLowerCase() === want)) return key;
+    }
+    return null;
+  }
+
+  window.ItemCompany = {
+    // The company key that makes this item, weapon or armour, or null.
+    of(item) {
+      if (!item) return null;
+      const m = String(item.note || '').match(COMPANY_TAG_RE);
+      if (m) return m[1];
+      const as = producedAs(item);
+      return as ? producerOf(as.kind, as.name) : null;
+    },
+    // A company's display name.
+    nameOf(key) {
+      const def = companyDefs()[key];
+      return (def && def.name) || String(key || '');
+    },
+    // How far the company's shares stand from their listing price: 1 at par,
+    // 1.2 when they trade a fifth above it. Null with no live market or no
+    // such listing.
+    priceIndex(key) {
+      const def = companyDefs()[key];
+      const base = def ? Math.round((Number(def.sharePrice) || 0) * 100) : 0;
+      const m = liveMarket();
+      if (!m || !(base > 0)) return null;
+      const price = Number(m.priceOfKey(key));
+      return Number.isFinite(price) && price > 0 ? price / base : null;
+    }
   };
 
   //=============================================================================

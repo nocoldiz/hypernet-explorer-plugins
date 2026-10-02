@@ -838,11 +838,15 @@
         document.addEventListener('keydown', () => { device = 'keyboard'; }, { passive: true });
 
         // The pad is polled rather than delivered, so it is read once a frame
-        // off the same hook the triggers use.
+        // off the same hook the triggers use. Only while the keyboard holds
+        // the answer, though: once the pad has it, nothing the pad does can
+        // change it, and only a keydown hands it back. Scanning every button
+        // and axis of every pad each frame only confirmed what was already
+        // known.
         const _updateInput = Input.update;
         Input.update = function () {
             _updateInput.apply(this, arguments);
-            if (padPressed()) device = 'pad';
+            if (device !== 'pad' && padPressed()) device = 'pad';
         };
 
         Input.lastInputDevice = function () {

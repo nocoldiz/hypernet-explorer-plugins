@@ -98,6 +98,60 @@
     },
     "aetherlogistics": {
       "description": "Transport operator. Trains, buses and helicopters carrying passengers and cargo."
+    },
+    "hearthmillfoods": {
+      "description": "Food processor. Bread, tins, soups and bottled water for every pantry."
+    },
+    "carnifexreclamation": {
+      "description": "Reclaims limbs and organs from the fallen and sells them on to surgeons and collectors."
+    },
+    "contagionbiolabs": {
+      "description": "Research laboratory. Cultures, vials and samples of every known disease."
+    },
+    "panaceapharmaceuticals": {
+      "description": "Pharmaceutical house. Tablets, creams and drops sold over the counter."
+    },
+    "cradlegenetics": {
+      "description": "Fertility clinic chain. Samples, tests and gestation aids."
+    },
+    "aquamemoriaremedies": {
+      "description": "Homeopathic remedies diluted past the last molecule. Cheap and fiercely loyal customers."
+    },
+    "curiokeepsake": {
+      "description": "Dealer in keepsakes, trophies and memorabilia."
+    },
+    "cruciblereagents": {
+      "description": "Supplies reagents, salts and resins to alchemists and chemists alike."
+    },
+    "quillmarkpress": {
+      "description": "Publishing house. Novels, scripture, fragments and blank spellbooks."
+    },
+    "artisanguildsupply": {
+      "description": "Tools and materials for every trade, from the cobbler to the clockmaker."
+    },
+    "beastmarrowexports": {
+      "description": "Trades venoms, glands, feathers and other parts taken from monsters."
+    },
+    "salvomunitions": {
+      "description": "Throwables, firebombs and combat tapes for the street and the arena."
+    },
+    "northboundoutfitters": {
+      "description": "Survival gear for the cold, the wild and the long road."
+    },
+    "scrapheaprecycling": {
+      "description": "Buys rubbish by the tonne. Thin margins, endless supply."
+    },
+    "ironcladarms": {
+      "description": "Forges blades, axes, spears and every other weapon held close."
+    },
+    "longshotballistics": {
+      "description": "Bows, throwing weapons and firearms. Rises with every war."
+    },
+    "bulwarkarmory": {
+      "description": "Plate, mail and shields. Heavy goods, steady orders."
+    },
+    "mantlehexoutfitters": {
+      "description": "Tailors and enchanters. Clothes, robes, trinkets and casting staves."
     }
   },
   "sector": {
@@ -109,6 +163,7 @@
     "agriculture": "Agriculture",
     "finance": "Finance",
     "transport": "Transport",
-    "misc": "Misc"
+    "misc": "Misc",
+    "health": "Health"
   }
 }

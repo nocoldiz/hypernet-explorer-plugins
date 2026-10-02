@@ -6,7 +6,12 @@
     "sharePrice": 45,
     "totalShares": 500000,
     "color": "#e0b000",
-    "description": "RealEstate.company.lemoncorp.description"
+    "description": "RealEstate.company.lemoncorp.description",
+    "produces": {
+      "items": [
+        "Lifestyle"
+      ]
+    }
   },
   "LimeCorp": {
     "name": "LimeCorp",
@@ -15,7 +20,12 @@
     "sharePrice": 62,
     "totalShares": 400000,
     "color": "#8bc34a",
-    "description": "RealEstate.company.limecorp.description"
+    "description": "RealEstate.company.limecorp.description",
+    "produces": {
+      "items": [
+        "Misc"
+      ]
+    }
   },
   "PetroDyne": {
     "name": "PetroDyne",
@@ -33,7 +43,12 @@
     "sharePrice": 88,
     "totalShares": 300000,
     "color": "#7b3f9e",
-    "description": "RealEstate.company.soulforge.description"
+    "description": "RealEstate.company.soulforge.description",
+    "produces": {
+      "items": [
+        "Magic"
+      ]
+    }
   },
   "HyperNet Systems": {
     "name": "HyperNet Systems",
@@ -42,7 +57,12 @@
     "sharePrice": 210,
     "totalShares": 650000,
     "color": "#1e88a8",
-    "description": "RealEstate.company.hypernetsystems.description"
+    "description": "RealEstate.company.hypernetsystems.description",
+    "produces": {
+      "items": [
+        "Component"
+      ]
+    }
   },
   "Ferro Steelworks": {
     "name": "Ferro Steelworks",
@@ -51,7 +71,12 @@
     "sharePrice": 34,
     "totalShares": 1200000,
     "color": "#8b5a2b",
-    "description": "RealEstate.company.ferrosteelworks.description"
+    "description": "RealEstate.company.ferrosteelworks.description",
+    "produces": {
+      "items": [
+        "Tools"
+      ]
+    }
   },
   "GreenWitch Organics": {
     "name": "GreenWitch Organics",
@@ -60,7 +85,12 @@
     "sharePrice": 27,
     "totalShares": 900000,
     "color": "#5c7a3d",
-    "description": "RealEstate.company.greenwitchorganics.description"
+    "description": "RealEstate.company.greenwitchorganics.description",
+    "produces": {
+      "items": [
+        "Farming"
+      ]
+    }
   },
   "Vault Bank Holdings": {
     "name": "Vault Bank Holdings",
@@ -78,6 +108,279 @@
     "sharePrice": 62,
     "totalShares": 700000,
     "color": "#5a6b8c",
-    "description": "RealEstate.company.aetherlogistics.description"
+    "description": "RealEstate.company.aetherlogistics.description",
+    "produces": {
+      "items": [
+        "Vehicles"
+      ]
+    }
+  },
+  "Hearthmill Foods": {
+    "name": "Hearthmill Foods",
+    "ticker": "HRTH",
+    "sector": "Agriculture",
+    "sharePrice": 18,
+    "totalShares": 1500000,
+    "color": "#c9822b",
+    "description": "RealEstate.company.hearthmillfoods.description",
+    "produces": {
+      "items": [
+        "Food"
+      ]
+    }
+  },
+  "Carnifex Reclamation": {
+    "name": "Carnifex Reclamation",
+    "ticker": "CRNX",
+    "sector": "Health",
+    "sharePrice": 41,
+    "totalShares": 350000,
+    "color": "#8e2b2b",
+    "description": "RealEstate.company.carnifexreclamation.description",
+    "produces": {
+      "items": [
+        "BodyPart"
+      ]
+    }
+  },
+  "Contagion Biolabs": {
+    "name": "Contagion Biolabs",
+    "ticker": "CNTG",
+    "sector": "Health",
+    "sharePrice": 73,
+    "totalShares": 300000,
+    "color": "#6a8f2c",
+    "description": "RealEstate.company.contagionbiolabs.description",
+    "produces": {
+      "items": [
+        "Diseases"
+      ]
+    }
+  },
+  "Panacea Pharmaceuticals": {
+    "name": "Panacea Pharmaceuticals",
+    "ticker": "PNCA",
+    "sector": "Health",
+    "sharePrice": 96,
+    "totalShares": 600000,
+    "color": "#2f8fc9",
+    "description": "RealEstate.company.panaceapharmaceuticals.description",
+    "produces": {
+      "items": [
+        "Medical"
+      ]
+    }
+  },
+  "Cradle Genetics": {
+    "name": "Cradle Genetics",
+    "ticker": "CRDL",
+    "sector": "Health",
+    "sharePrice": 54,
+    "totalShares": 250000,
+    "color": "#d77fa1",
+    "description": "RealEstate.company.cradlegenetics.description",
+    "produces": {
+      "items": [
+        "Fertility"
+      ]
+    }
+  },
+  "Aquamemoria Remedies": {
+    "name": "Aquamemoria Remedies",
+    "ticker": "AQMR",
+    "sector": "Health",
+    "sharePrice": 9,
+    "totalShares": 800000,
+    "color": "#7fb8c9",
+    "description": "RealEstate.company.aquamemoriaremedies.description",
+    "produces": {
+      "items": [
+        "Homeopathy"
+      ]
+    }
+  },
+  "Curio & Keepsake": {
+    "name": "Curio & Keepsake",
+    "ticker": "CURI",
+    "sector": "Misc",
+    "sharePrice": 22,
+    "totalShares": 300000,
+    "color": "#a07850",
+    "description": "RealEstate.company.curiokeepsake.description",
+    "produces": {
+      "items": [
+        "Collectibles"
+      ]
+    }
+  },
+  "Crucible Reagents": {
+    "name": "Crucible Reagents",
+    "ticker": "CRCB",
+    "sector": "Occult",
+    "sharePrice": 47,
+    "totalShares": 400000,
+    "color": "#b5651d",
+    "description": "RealEstate.company.cruciblereagents.description",
+    "produces": {
+      "items": [
+        "Alchemistry"
+      ]
+    }
+  },
+  "Quillmark Press": {
+    "name": "Quillmark Press",
+    "ticker": "QUIL",
+    "sector": "Misc",
+    "sharePrice": 16,
+    "totalShares": 500000,
+    "color": "#5b4a3a",
+    "description": "RealEstate.company.quillmarkpress.description",
+    "produces": {
+      "items": [
+        "Books"
+      ]
+    }
+  },
+  "Artisan Guild Supply": {
+    "name": "Artisan Guild Supply",
+    "ticker": "ARTG",
+    "sector": "Industrial",
+    "sharePrice": 29,
+    "totalShares": 600000,
+    "color": "#9c7a3c",
+    "description": "RealEstate.company.artisanguildsupply.description",
+    "produces": {
+      "items": [
+        "Crafting"
+      ]
+    }
+  },
+  "Beastmarrow Exports": {
+    "name": "Beastmarrow Exports",
+    "ticker": "BMRW",
+    "sector": "Occult",
+    "sharePrice": 58,
+    "totalShares": 300000,
+    "color": "#6b4226",
+    "description": "RealEstate.company.beastmarrowexports.description",
+    "produces": {
+      "items": [
+        "Monsters"
+      ]
+    }
+  },
+  "Salvo Munitions": {
+    "name": "Salvo Munitions",
+    "ticker": "SLVO",
+    "sector": "Industrial",
+    "sharePrice": 67,
+    "totalShares": 450000,
+    "color": "#5c5c3d",
+    "description": "RealEstate.company.salvomunitions.description",
+    "produces": {
+      "items": [
+        "Combat"
+      ]
+    }
+  },
+  "Northbound Outfitters": {
+    "name": "Northbound Outfitters",
+    "ticker": "NRTH",
+    "sector": "Misc",
+    "sharePrice": 24,
+    "totalShares": 500000,
+    "color": "#4f7f9f",
+    "description": "RealEstate.company.northboundoutfitters.description",
+    "produces": {
+      "items": [
+        "Survival"
+      ]
+    }
+  },
+  "Scrapheap Recycling": {
+    "name": "Scrapheap Recycling",
+    "ticker": "SCRP",
+    "sector": "Industrial",
+    "sharePrice": 6,
+    "totalShares": 2000000,
+    "color": "#7a7a6a",
+    "description": "RealEstate.company.scrapheaprecycling.description",
+    "produces": {
+      "items": [
+        "Trash"
+      ]
+    }
+  },
+  "Ironclad Arms": {
+    "name": "Ironclad Arms",
+    "ticker": "IRCL",
+    "sector": "Industrial",
+    "sharePrice": 84,
+    "totalShares": 700000,
+    "color": "#6d6d75",
+    "description": "RealEstate.company.ironcladarms.description",
+    "produces": {
+      "weapons": [
+        "Light",
+        "Sword",
+        "Heavy",
+        "Axe",
+        "Whip",
+        "Claw",
+        "Glove",
+        "Spear"
+      ]
+    }
+  },
+  "Longshot Ballistics": {
+    "name": "Longshot Ballistics",
+    "ticker": "LNGS",
+    "sector": "Industrial",
+    "sharePrice": 112,
+    "totalShares": 500000,
+    "color": "#3d4f3a",
+    "description": "RealEstate.company.longshotballistics.description",
+    "produces": {
+      "weapons": [
+        "Bow",
+        "Projectile",
+        "Gun"
+      ]
+    }
+  },
+  "Bulwark Armory": {
+    "name": "Bulwark Armory",
+    "ticker": "BLWK",
+    "sector": "Industrial",
+    "sharePrice": 76,
+    "totalShares": 600000,
+    "color": "#5a6470",
+    "description": "RealEstate.company.bulwarkarmory.description",
+    "produces": {
+      "armors": [
+        "Light Armor",
+        "Heavy Armor",
+        "Shield"
+      ]
+    }
+  },
+  "Mantle & Hex Outfitters": {
+    "name": "Mantle & Hex Outfitters",
+    "ticker": "MNTL",
+    "sector": "Consumer Tech",
+    "sharePrice": 39,
+    "totalShares": 800000,
+    "color": "#7d4f8c",
+    "description": "RealEstate.company.mantlehexoutfitters.description",
+    "produces": {
+      "weapons": [
+        "Staff"
+      ],
+      "armors": [
+        "Clothes",
+        "Robe",
+        "Equipment"
+      ]
+    }
   }
 }

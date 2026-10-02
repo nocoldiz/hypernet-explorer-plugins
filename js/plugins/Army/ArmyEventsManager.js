@@ -1023,12 +1023,10 @@ Spriteset_Map.prototype.createArmyLabels = function () {
   }
 };
 
-const _Spriteset_Map_update_ArmyEvents = Spriteset_Map.prototype.update;
-Spriteset_Map.prototype.update = function () {
-  _Spriteset_Map_update_ArmyEvents.call(this);
-  this.updateArmyLabels();
-};
-
+// No Spriteset_Map.update hook any more: every label is a child of the
+// tilemap, and Tilemap.update already updates each of its children once a
+// frame, so calling updateArmyLabels from here as well ran every label twice.
+// The method stays for anybody who holds labels outside the tilemap.
 Spriteset_Map.prototype.updateArmyLabels = function () {
   if (this._armyLabelSprites) {
     for (const sprite of this._armyLabelSprites) {
@@ -2378,30 +2376,52 @@ Sprite_ArmyLabel.prototype.refresh = function () {
     const regions = groundOf(army);
     // Under orders it walks TOWARDS somewhere, and the marker says so; with
     // none it patrols, which is the step in any legal direction it always was.
-    const target = (army.status === STATUS_MARCH || army.status === STATUS_RETREAT)
-      ? { x: army.targetX, y: army.targetY }
-      : (army.status === STATUS_REINFORCE ? armyById(army.engagedWith) : null);
-    const legal = [2, 4, 6, 8].filter(dir => {
+    // Read as plain numbers rather than a {x, y} made up for the purpose, and
+    // the legal steps go into one scratch list: this runs for every army on
+    // every step the party takes, and each pass used to raise two arrays, a
+    // sorted copy and a closure per direction.
+    let hasTarget = false;
+    let targetX = 0;
+    let targetY = 0;
+    if (army.status === STATUS_MARCH || army.status === STATUS_RETREAT) {
+      hasTarget = true;
+      targetX = army.targetX;
+      targetY = army.targetY;
+    } else if (army.status === STATUS_REINFORCE) {
+      const ally = armyById(army.engagedWith);
+      if (ally) { hasTarget = true; targetX = ally.x; targetY = ally.y; }
+    }
+    const legal = ARMY_STEP_SCRATCH;
+    legal.length = 0;
+    for (let i = 0; i < ARMY_STEP_DIRS.length; i++) {
+      const dir = ARMY_STEP_DIRS[i];
       const x2 = $gameMap.roundXWithDirection(this.x, dir);
       const y2 = $gameMap.roundYWithDirection(this.y, dir);
-      if (!$gameMap.isPassable(x2, y2, this.reverseDir(dir))) return false;
-      if (this.isCollidedWithEvents(x2, y2)) return false;
+      if (!$gameMap.isPassable(x2, y2, this.reverseDir(dir))) continue;
+      if (this.isCollidedWithEvents(x2, y2)) continue;
       // A state's army keeps to the ground its power holds, and a private
       // column to the ground no power claims.
-      return !regions.length || regions.includes($gameMap.regionId(x2, y2));
-    });
+      if (regions.length && !regions.includes($gameMap.regionId(x2, y2))) continue;
+      legal.push(dir);
+    }
     if (!legal.length) return;
-    if (target && target.x >= 0) {
-      const towards = legal.slice().sort((d1, d2) => {
-        const cost = dir => Math.abs($gameMap.roundXWithDirection(this.x, dir) - target.x)
-          + Math.abs($gameMap.roundYWithDirection(this.y, dir) - target.y);
-        return cost(d1) - cost(d2);
-      })[0];
+    if (hasTarget && targetX >= 0) {
+      // The first cheapest step, as the stable sort it replaces picked.
+      let towards = legal[0];
+      let best = Infinity;
+      for (let i = 0; i < legal.length; i++) {
+        const dir = legal[i];
+        const cost = Math.abs($gameMap.roundXWithDirection(this.x, dir) - targetX)
+          + Math.abs($gameMap.roundYWithDirection(this.y, dir) - targetY);
+        if (cost < best) { best = cost; towards = dir; }
+      }
       this.moveStraight(towards);
       return;
     }
     this.moveStraight(legal[Math.floor(Math.random() * legal.length)]);
   };
+  const ARMY_STEP_DIRS = [2, 4, 6, 8];
+  const ARMY_STEP_SCRATCH = [];
 
   //---------------------------------------------------------------------------
   // The crossed swords over the camp

@@ -88,12 +88,12 @@
     // 0.5 to latch and fall under 0.35 to let go, so a held direction latches
     // once and stays latched. Diagonal MOVEMENT is untouched, because both axes
     // may be latched at the same time; it is only the flapping that stops.
+    const LATCH_KEYS = ['x', 'y'];
     function snapAxes(axes) {
         const out = Array.prototype.slice.call(axes || []);
-        const raw = ['x', 'y'];
         for (let i = 0; i < 2; i++) {
             const v = out[i] || 0;
-            const key = raw[i];
+            const key = LATCH_KEYS[i];
             if (Math.abs(v) >= STEP_THRESHOLD) {
                 _latch[key] = v < 0 ? -1 : 1;
             } else if (Math.abs(v) < STEP_RELEASE) {
@@ -232,21 +232,34 @@
             return null;
         },
 
+        // The two button arrays are swapped and refilled rather than rebuilt:
+        // this runs every frame of the whole game, pad or no pad, and a fresh
+        // array (plus a closure to map into it) each time is garbage the map
+        // frame then pays to collect.
+        _btnSpare: [],
+
         update() {
             const pad = this._readPads();
             this._padOn = !!pad;
+            const next = this._btnSpare;
+            this._btnSpare = this._btnPrev;
             this._btnPrev = this._btn;
-            this._btn = pad
-                ? Array.prototype.map.call(pad.buttons || [], (b) => !!(b && b.pressed))
-                : [];
+            next.length = 0;
             if (pad) {
-                const [lx, ly] = this._applyDeadzone(pad.axes[0] || 0, pad.axes[1] || 0);
-                this._lx = lx;
-                this._ly = ly;
+                const buttons = pad.buttons || [];
+                for (let i = 0; i < buttons.length; i++) {
+                    next[i] = !!(buttons[i] && buttons[i].pressed);
+                }
+            }
+            this._btn = next;
+            if (pad) {
+                const dz = this._applyDeadzone(pad.axes[0] || 0, pad.axes[1] || 0);
+                this._lx = dz[0];
+                this._ly = dz[1];
                 if (pad.axes.length >= 4) {
-                    const [rx, ry] = this._applyDeadzone(pad.axes[2] || 0, pad.axes[3] || 0);
-                    this._rx = rx;
-                    this._ry = ry;
+                    const dr = this._applyDeadzone(pad.axes[2] || 0, pad.axes[3] || 0);
+                    this._rx = dr[0];
+                    this._ry = dr[1];
                 } else {
                     this._rx = this._ry = 0;
                 }
@@ -265,24 +278,21 @@
             // DOM scene stepping through a list and a Window_Selectable doing
             // the same both see one steady press instead of a stick flapping
             // across the threshold.
-            const dirState = {
-                up: _latch.y < 0,
-                down: _latch.y > 0,
-                left: _latch.x < 0,
-                right: _latch.x > 0
-            };
-            const wait = Input.keyRepeatWait;
-            const interval = Input.keyRepeatInterval;
-            for (const dir of ['up', 'down', 'left', 'right']) {
-                if (dirState[dir]) {
-                    this._hold[dir]++;
-                    const t = this._hold[dir];
-                    this._pulse[dir] = (t === 1) ||
-                        (t >= wait && (t - wait) % interval === 0);
-                } else {
-                    this._hold[dir] = 0;
-                    this._pulse[dir] = false;
-                }
+            this._step('up', _latch.y < 0);
+            this._step('down', _latch.y > 0);
+            this._step('left', _latch.x < 0);
+            this._step('right', _latch.x > 0);
+        },
+
+        _step(dir, held) {
+            if (held) {
+                const t = ++this._hold[dir];
+                const wait = Input.keyRepeatWait;
+                this._pulse[dir] = (t === 1) ||
+                    (t >= wait && (t - wait) % Input.keyRepeatInterval === 0);
+            } else {
+                this._hold[dir] = 0;
+                this._pulse[dir] = false;
             }
         }
     };

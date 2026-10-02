@@ -2017,6 +2017,13 @@
         if (typeof document === "undefined") return false;
         const el = document.getElementById(id);
         if (!el) return false;
+        // The panels are hidden by an inline display:none (DialogueSystem,
+        // the sleep and travel overlays), and the encounter tick asks about a
+        // dozen of them every frame. getComputedStyle there forced a style
+        // recalculation per frame after the HUDs had written theirs, so the
+        // inline answer is read first and the computed one only when inline
+        // says nothing.
+        if (el.hidden || el.style.display === "none" || el.style.visibility === "hidden") return false;
         const style = (typeof window !== "undefined" && window.getComputedStyle)
             ? window.getComputedStyle(el) : el.style;
         if (!style) return true;
@@ -2696,6 +2703,13 @@
                 this._flashDuration--;
                 if (this._flashDuration === 0) {
                     this.setBlendColor([0, 0, 0, 0]);
+                    // MZ keeps the ColorFilter the flash hung on the sprite,
+                    // as an identity pass, for as long as the sprite lives.
+                    // FogOfWar's helper takes it off once hue, tone and blend
+                    // are all neutral; the monster hue below is its own
+                    // filter and is left alone.
+                    const fow = window.FogOfWar;
+                    if (fow && fow.detachIdleColorFilter) fow.detachIdleColorFilter(this);
                 }
             }
             const char = this._character;

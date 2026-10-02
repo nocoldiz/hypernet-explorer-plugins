@@ -793,9 +793,15 @@
 
   // The sheet somebody met out there is DRAWN on, or null for anybody who keeps
   // their own: only catalogued people of this world are issued a suit.
+  //
+  // The ground is asked first: it is a cached answer, while isEVASheet cuts the
+  // sheet name apart into fresh strings. Both Game_Event overrides below ask
+  // this for every event every frame, and on Earth, where the ground answers
+  // no, that was a couple of thousand throwaway strings a frame on a busy map.
   function evaSheetFor(sheet) {
-    if (!sheet || isEVASheet(sheet)) return null;
+    if (!sheet) return null;
     if (!evaSuitGroundHere()) return null;
+    if (isEVASheet(sheet)) return null;
     if (breathesUnaided(sheet)) return null;
     const entry = evaWardrobeEntry(sheet);
     if (!entry || entry.npc !== true) return null;

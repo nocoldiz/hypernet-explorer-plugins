@@ -434,7 +434,8 @@
     ev._moveType = 1;   // wander, until something is seen
     ev._npcZombieHunt = 0;
     ev._npcZombieLast = null;
-    ev._npcZombieScan = 0;
+    // Staggered by event id: a horde scanning on one frame was a hitch.
+    ev._npcZombieScan = (ev._eventId || 0) % ZOMBIE_SCAN_INTERVAL;
   }
 
   // Is the party inside the arc this one is facing? The same question the

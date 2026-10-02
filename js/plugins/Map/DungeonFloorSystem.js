@@ -2081,6 +2081,29 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     return keys;
   }
 
+  // Whether this map could hold a band at all. bandUpdate runs every frame
+  // on every map, and walking the whole event list to learn "nobody" was the
+  // whole of its cost off the tower. A spawn says so at once; otherwise the
+  // list is looked at again once a second (a save loaded onto a band floor).
+  const BAND_RESCAN_FRAMES = 60;
+  let bandSeen = false;
+  let bandSeenMapId = 0;
+  let bandScanFrame = -Infinity;
+  function bandMaybePresent() {
+    const mapId = $gameMap.mapId();
+    const frame = typeof Graphics !== "undefined" ? Graphics.frameCount : 0;
+    if (bandSeenMapId !== mapId) {
+      bandSeenMapId = mapId;
+      bandSeen = false;
+      bandScanFrame = -Infinity;
+    }
+    if (bandSeen) return true;
+    if (frame - bandScanFrame < BAND_RESCAN_FRAMES) return false;
+    bandScanFrame = frame;
+    bandSeen = bandMembers().length > 0;
+    return bandSeen;
+  }
+
   function bandMembers() {
     const out = [];
     if (typeof $gameMap === "undefined" || !$gameMap) return out;
@@ -2213,6 +2236,8 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     if (!$gameMap._events) $gameMap._events = [];
     const ev = new Game_Event($gameMap.mapId(), id);
     ev._towerBandData = data;
+    bandSeen = true;
+    bandSeenMapId = $gameMap.mapId();
     ev._towerBand = {
       band: bandId, leader: !!isLeader, name: member.name,
       // Null means Earth (window.TowerWorlds).
@@ -2597,7 +2622,8 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     if (typeof $gameMap === "undefined" || !$gameMap) return;
     if ($gameMap.isEventRunning() || $gameMessage.isBusy()) return;
     if (window.MapBattleMode && window.MapBattleMode.isActive()) return;
-    if (!bandMembers().length) return;
+    if (!bandMaybePresent()) return;
+    if (!bandMembers().length) { bandSeen = false; return; }
     bandUpdateYield();
     bandTick++;
     if (bandTick % BAND_STEP_INTERVAL === 0) bandUpdateMovement();
