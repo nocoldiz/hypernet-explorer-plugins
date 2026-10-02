@@ -836,11 +836,11 @@
     // on. The rebalance that wrote SkillTrees.json set every skill's MP, TP,
     // damage and StatReq from that same rung, so the price follows the power:
     // a basic skill is a handful of fights, a capstone a long campaign's worth.
-    // An <Esoteric> or <Forbidden> working costs a little more on top of its
-    // rung; the level floor in window.SkillArcana is what really guards it.
+    // On top of its rung an <Esoteric> working costs double and a <Forbidden>
+    // one ten times over, besides the level floor in window.SkillArcana.
     const KP_TIER_COST = [60, 120, 220, 380, 600, 900];
-    const KP_ESOTERIC_MULT = 1.25;
-    const KP_FORBIDDEN_MULT = 1.5;
+    const KP_ESOTERIC_MULT = 2;
+    const KP_FORBIDDEN_MULT = 10;
 
     function kpOccultMultiplier(skill) {
         const note = (skill && skill.note) || '';
