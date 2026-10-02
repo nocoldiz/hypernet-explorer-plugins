@@ -1917,7 +1917,7 @@
 // the game. Two tags on a skill raise a level floor:
 //
 //   <Esoteric>   readable from level 15
-//   <Forbidden>  readable from level 80
+//   <Forbidden>  readable from level 40
 //
 // (a Forbidden skill is also Esoteric; the higher floor wins). Each floor can
 // be switched off for a whole world on its creation form
@@ -1939,7 +1939,7 @@
 
   const SkillArcana = {
     ESOTERIC_LEVEL: 15,
-    FORBIDDEN_LEVEL: 80,
+    FORBIDDEN_LEVEL: 40,
     CULTIST_CLASS_ID: 8,
 
     skillOf(skill) {
