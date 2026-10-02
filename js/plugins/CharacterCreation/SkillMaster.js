@@ -367,10 +367,17 @@
     window.HandTrees = HandTrees;
     SkillMaster.HandTrees = HandTrees;
 
+    // A retired skill somebody in the party already learned (by class
+    // levelling, a book, an older save) is still theirs to see and carry.
+    function partyKnows(skillId) {
+        if (typeof $gameParty === 'undefined' || !$gameParty || !$gameParty.allMembers) return false;
+        return $gameParty.allMembers().some(actor => actor && actor.isLearnedSkill && actor.isLearnedSkill(skillId));
+    }
+
     function isHiddenFromSkillMaster(skill) {
         if (!skill) return true;
         if (isMenuCommandSkill(skill.id)) return true;
-        if (!skill._customSpell && HandTrees.isRetired(skill.id)) return true;
+        if (!skill._customSpell && HandTrees.isRetired(skill.id) && !partyKnows(skill.id)) return true;
         const match = (skill.note || '').match(/<category:\s*(.+?)\s*>/i);
         return !!match && isBasicCategory(match[1]);
     }
