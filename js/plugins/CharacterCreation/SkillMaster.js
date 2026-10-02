@@ -309,15 +309,12 @@
     //
     // Every school's Training tree is written by hand: one tree per school,
     // rooted in its basic skills, each node naming its tier and the node(s)
-    // it grows out of. A skill of the school that the file lists as retired
-    // has left the school's curriculum: it stays in the database for the
-    // monsters and the class levelling that use it, but Training no longer
-    // shows or teaches it.
+    // it grows out of.
     //=============================================================================
 
     const HandTrees = {
         _data: undefined,
-        _retired: null,
+        _tiers: null,
 
         all: function () {
             if (this._data !== undefined) return this._data;
@@ -338,27 +335,16 @@
             return (tree && Array.isArray(tree.nodes)) ? tree : null;
         },
 
-        _indexAll: function () {
-            if (this._retired) return;
-            const retired = new Set();
-            const tiers = new Map();
-            const all = this.all() || {};
-            for (const name of Object.keys(all)) {
-                for (const id of (all[name].retired || [])) retired.add(id);
-                for (const node of (all[name].nodes || [])) tiers.set(node.id, node.tier);
-            }
-            this._retired = retired;
-            this._tiers = tiers;
-        },
-
-        isRetired: function (skillId) {
-            this._indexAll();
-            return this._retired.has(Number(skillId));
-        },
-
         // The rung a skill stands on in its school's tree, -1 when it has none.
         tierOf: function (skillId) {
-            this._indexAll();
+            if (!this._tiers) {
+                const tiers = new Map();
+                const all = this.all() || {};
+                for (const name of Object.keys(all)) {
+                    for (const node of (all[name].nodes || [])) tiers.set(node.id, node.tier);
+                }
+                this._tiers = tiers;
+            }
             const tier = this._tiers.get(Number(skillId));
             return tier === undefined ? -1 : tier;
         }
@@ -367,17 +353,9 @@
     window.HandTrees = HandTrees;
     SkillMaster.HandTrees = HandTrees;
 
-    // A retired skill somebody in the party already learned (by class
-    // levelling, a book, an older save) is still theirs to see and carry.
-    function partyKnows(skillId) {
-        if (typeof $gameParty === 'undefined' || !$gameParty || !$gameParty.allMembers) return false;
-        return $gameParty.allMembers().some(actor => actor && actor.isLearnedSkill && actor.isLearnedSkill(skillId));
-    }
-
     function isHiddenFromSkillMaster(skill) {
         if (!skill) return true;
         if (isMenuCommandSkill(skill.id)) return true;
-        if (!skill._customSpell && HandTrees.isRetired(skill.id) && !partyKnows(skill.id)) return true;
         const match = (skill.note || '').match(/<category:\s*(.+?)\s*>/i);
         return !!match && isBasicCategory(match[1]);
     }
