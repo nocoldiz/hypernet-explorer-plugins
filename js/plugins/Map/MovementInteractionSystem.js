@@ -1946,26 +1946,18 @@
     return $gameMap.layeredTiles(x, y).some((tileId) => (flags[tileId] & 0x10) !== 0);
   };
 
-  // Cached per tile: the classification only changes when the character moves.
-  // The map id is part of the key for the same reason as in _misZTileFacts.
+  // Not cached: procedural maps reuse one map id and their tiles change at
+  // runtime (regeneration, digging), so a position keyed cache went stale and
+  // star tiles stopped hiding the character.
   const _misUnderStarTile = (character) => {
-    const mapId = $gameMap ? $gameMap.mapId() : 0;
-    if (character._misStarX !== character.x || character._misStarY !== character.y ||
-        character._misStarMap !== mapId) {
-      character._misStarX = character.x;
-      character._misStarY = character.y;
-      character._misStarMap = mapId;
-      const x = character.x;
-      const y = character.y;
-      character._misStarOverhead =
-        !_misStarTileAt(x, y) &&
-        _misStarTileAt(x, y - 1) &&
-        // "Passable" in the sense the star tile itself promises: the scenery is
-        // walk-through, so a solid tile hidden beneath it (a wall, a cliff) is
-        // not something the sprite should be drawn over.
-        !!$gameMap.isPassable(x, y - 1, 2);
-    }
-    return character._misStarOverhead;
+    const x = character.x;
+    const y = character.y;
+    return !_misStarTileAt(x, y) &&
+      _misStarTileAt(x, y - 1) &&
+      // "Passable" in the sense the star tile itself promises: the scenery is
+      // walk-through, so a solid tile hidden beneath it (a wall, a cliff) is
+      // not something the sprite should be drawn over.
+      !!$gameMap.isPassable(x, y - 1, 2);
   };
 
   // Above the upper tile layer (z 4), below the bridge deck (z 7).
@@ -4092,6 +4084,44 @@
   // itself is untouched; only the flash is silenced, and only outside battle,
   // which is the only case this ever ran in to begin with.
   Game_Actor.prototype.performMapDamage = function() {};
+
+  // --- Underwater events ---
+  // An event whose note holds "Underwater" lives below the surface: fully
+  // visible and solid while the party dives, almost transparent and walk-over
+  // (a swimmer passes above it) otherwise.
+  const UNDERWATER_NOTE = /underwater/i;
+  const UNDERWATER_SURFACE_OPACITY = 40;
+  const UNDERWATER_FADE_STEP = 12;
+
+  const _misIsUnderwaterEvent = (event) => {
+    if (!event || typeof event.event !== 'function') return false;
+    const data = event.event();
+    return !!(data && data.note && UNDERWATER_NOTE.test(data.note));
+  };
+
+  const _Game_CharacterBase_isCollidedWithEvents = Game_CharacterBase.prototype.isCollidedWithEvents;
+  Game_CharacterBase.prototype.isCollidedWithEvents = function (x, y) {
+    if (isPartyDiving()) return _Game_CharacterBase_isCollidedWithEvents.call(this, x, y);
+    return $gameMap.eventsXyNt(x, y).some(
+      (event) => event.isNormalPriority() && !_misIsUnderwaterEvent(event)
+    );
+  };
+
+  const _Game_Event_update_underwater = Game_Event.prototype.update;
+  Game_Event.prototype.update = function () {
+    _Game_Event_update_underwater.call(this);
+    if (this._misUnderwater === undefined) this._misUnderwater = _misIsUnderwaterEvent(this);
+    if (!this._misUnderwater) return;
+    const target = isPartyDiving() ? 255 : UNDERWATER_SURFACE_OPACITY;
+    if (this._opacity < target) this._opacity = Math.min(target, this._opacity + UNDERWATER_FADE_STEP);
+    else if (this._opacity > target) this._opacity = Math.max(target, this._opacity - UNDERWATER_FADE_STEP);
+  };
+
+  const _Game_Event_setupPage_underwater = Game_Event.prototype.setupPage;
+  Game_Event.prototype.setupPage = function () {
+    _Game_Event_setupPage_underwater.call(this);
+    this._misUnderwater = undefined;
+  };
 
   // Export
   // The one answer to "is the party under the surface", asked by anything

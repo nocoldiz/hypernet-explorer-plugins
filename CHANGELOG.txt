@@ -1,3 +1,8 @@
+0.7.7a
+
+Fixed:
+ - star tiles sometimes not hiding the character anymore
+
 0.7.6a
 
 Fixed:
