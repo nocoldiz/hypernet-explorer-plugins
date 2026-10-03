@@ -3178,8 +3178,11 @@
       const api = window.Medicines;
       if (!api) return null;
       const all = api.forDisease(diseaseId);
+      // The last-resort cure (Dragon's Blood Elixir, the one that finishes even
+      // a lifelong illness) is prescribed only when nothing ordinary cures it.
       const cures = all.filter((r) => r.kind === "cure");
-      const pool = cures.length ? cures : all;
+      const ordinary = cures.filter((r) => !r.lastResort);
+      const pool = ordinary.length ? ordinary : cures.length ? cures : all;
       if (!pool.length) return null;
       const priced = pool
         .map((r) => ({ r, price: ($dataItems[r.itemId] && $dataItems[r.itemId].price) || 0 }))

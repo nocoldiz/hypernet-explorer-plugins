@@ -1666,12 +1666,20 @@ Imported.DialogueSystem = true;
         },
     };
 
+    // A tutorial is the game talking to the player, so an event whose name
+    // starts with "Tutorial" is always spoken, portrait or not.
+    const VOICE_TUTORIAL_PREFIX = 'tutorial'; // i18n-ignore: event name matched at runtime
+    function _voiceIsTutorialEvent() {
+        return _voiceEventKey().trim().toLowerCase().indexOf(VOICE_TUTORIAL_PREFIX) === 0;
+    }
+
     // Is anybody actually on stage? The chatter is the voice of whoever is
     // drawn beside the box, so a line with no portrait next to it is read
     // rather than spoken: a shop counter, a system notice, a chest, a sign, any
     // box raised outside a conversation stays silent.
     function _voiceIsStaged() {
         if (_voiceOver.on) return true;
+        if (_voiceIsTutorialEvent()) return true;
         try {
             const bm = SceneManager._scene && SceneManager._scene._bustManager;
             if (!bm) return false;
@@ -1780,14 +1788,37 @@ Imported.DialogueSystem = true;
         speakLetter(letter, gold, now) {
             if (!_voiceEnabled()) return false;
             if (!_voiceIsStaged()) return false;
-            const tier = _voiceTierFor(this._pitch);
+            return this._playLetter(letter, gold, now, this._pitch, this);
+        },
+
+        // A voice that speaks outside the message box, named outright so nobody
+        // has to be on stage, with its own pace so it never steals the box's.
+        // The map legend reads Bubba's notices aloud with it.
+        speaker(name) {
+            const voice = this;
+            const pace = { _last: 0, _count: 0 };
+            const pitch = _voicePitchFor('', name);
+            return {
+                pitch,
+                speakRange(text, from, to, now) {
+                    if (!_voiceEnabled() || !text) return;
+                    for (let i = Math.max(0, from); i < Math.min(text.length, to); i++) {
+                        voice._playLetter(text.charAt(i), false, now, pitch, pace);
+                    }
+                },
+            };
+        },
+
+        // One blip at `pitch`, paced on `pace` (its _last and _count).
+        _playLetter(letter, gold, now, pitch0, pace) {
+            const tier = _voiceTierFor(pitch0);
             const se   = _voiceSeFor(letter, tier);
             if (!se) return false;
             const t = (now === undefined) ? Date.now() : now;
-            if (t - this._last < VOICE_GAP_MS) return false;
-            if ((this._count++ % VOICE_STEP) !== 0) return false;
-            this._last = t;
-            const ratio = (this._pitch / tier.nominal) * (gold ? VOICE_KEY_MUL : 1);
+            if (t - pace._last < VOICE_GAP_MS) return false;
+            if ((pace._count++ % VOICE_STEP) !== 0) return false;
+            pace._last = t;
+            const ratio = (pitch0 / tier.nominal) * (gold ? VOICE_KEY_MUL : 1);
             const pitch = Math.max(50, Math.min(150, Math.round(100 * ratio)));
             // A blip whose ogg was never shipped is simply not heard: the
             // chatter is decoration, and neither a missing file nor an audio

@@ -175,6 +175,22 @@
     // base price per in-game month. Charged from processMonthlyRent().
     const RENT_MONTHLY_RATE = 0.03;
 
+    // A bought ProceduralHouseSystem floor let to tenants: each tenant pays
+    // this fraction of the floor's value a day, the floor holds at most
+    // PROC_HOUSE_MAX_TENANTS, and it fills slowly, one tenant at a time with
+    // PROC_HOUSE_TENANT_CHANCE a day.
+    const PROC_HOUSE_RENT_RATE = 0.0025;
+    const PROC_HOUSE_MAX_TENANTS = 4;
+    const PROC_HOUSE_TENANT_CHANCE = 0.5;
+
+    // Euros a day one tenant pays for a floor worth `valueGold`.
+    function procHouseRentPerTenant(valueGold) {
+        const euros = (Number(valueGold) || 0) / 100;
+        return Math.max(0.01, Math.round(euros * PROC_HOUSE_RENT_RATE * 100) / 100);
+    }
+    // Read by the Assets pockets, which list let floors with their rent.
+    window.RealEstateLetting = { rentPerTenant: procHouseRentPerTenant, MAX_TENANTS: PROC_HOUSE_MAX_TENANTS };
+
     // Real Estate Manager Class
     class RealEstateManager {
         constructor() {
@@ -311,7 +327,9 @@
                 price: worthless ? 0 : Math.floor(basePrice * priceVariation),
                 maxOccupants: typeData.maxCap,
                 currentOccupants: 0,
-                rentPerOccupant: worthless ? 0 : Math.floor((basePrice * priceVariation * 0.001) / 30), // ~0.1% daily
+                // ~0.1% daily, kept to the cent: floored to whole euros it came
+                // out as 0 on every 1-star dump, which could then never be let.
+                rentPerOccupant: worthless ? 0 : Math.max(0.01, Math.round((basePrice * priceVariation * 0.001) / 30 * 100) / 100),
                 isOwned: false,
                 isRentedByPlayer: false, // player is a tenant here (not owner)
                 isForSale: true,
@@ -580,6 +598,62 @@
             this.save();
         }
 
+        // =====================================================================
+        // Letting a bought procedural house floor to NPC tenants
+        // =====================================================================
+
+        procHouseRentPerTenant(valueGold) {
+            return procHouseRentPerTenant(valueGold);
+        }
+
+        // Puts the floor up for tenants. Party members living there move out
+        // to the halls first, since the floor stops being theirs. Answers the
+        // names that moved, or null when the floor could not be let.
+        letProceduralHouse(houseKey) {
+            const PHS = window.ProceduralHouseSystem;
+            if (!PHS || typeof PHS.setHouseLet !== 'function' || PHS.isHouseLet(houseKey)) return null;
+            const moved = [];
+            const PL = window.PartyLodging;
+            if (PL && typeof PL.residents === 'function') {
+                const placeId = 'house:' + houseKey; // i18n-ignore: place id
+                PL.residents().forEach(person => {
+                    if (person.lodging === placeId && PL.assign(person.name, PL.DEFAULT)) moved.push(person.name);
+                });
+            }
+            if (!PHS.setHouseLet(houseKey, true)) return null;
+            this.save();
+            return moved;
+        }
+
+        // The tenants leave and the floor is the party's again.
+        stopLettingProceduralHouse(houseKey) {
+            const PHS = window.ProceduralHouseSystem;
+            if (!PHS || typeof PHS.setHouseLet !== 'function' || !PHS.isHouseLet(houseKey)) return false;
+            PHS.setHouseLet(houseKey, false);
+            this.save();
+            return true;
+        }
+
+        // Every let floor, each with its tenants and their daily rent.
+        letProceduralHouses() {
+            const PHS = window.ProceduralHouseSystem;
+            const houses = (PHS && typeof PHS.listOwnedHouses === 'function') ? (PHS.listOwnedHouses() || []) : [];
+            return houses.filter(h => h && h.letting);
+        }
+
+        // Once a day: a let floor may take one more tenant, then every tenant
+        // pays. Answers the euros collected.
+        processProceduralHouseLetting() {
+            const PHS = window.ProceduralHouseSystem;
+            let income = 0;
+            this.letProceduralHouses().forEach(h => {
+                if (Math.random() < PROC_HOUSE_TENANT_CHANCE) PHS.addHouseTenant(h.key, PROC_HOUSE_MAX_TENANTS);
+                const letting = PHS.houseLetting(h.key);
+                income += (letting ? letting.tenants : 0) * this.procHouseRentPerTenant(h.value);
+            });
+            return income;
+        }
+
         getActiveEffectsForLocation(location) {
             if (window.$newsManager) {
                 return window.$newsManager.getActiveEffectsForLocation(location);
@@ -630,8 +704,15 @@
                 this.totalIncome += dailyRent;
             });
 
+            // Bought procedural house floors let to tenants
+            const letIncome = this.processProceduralHouseLetting();
+            this.dailyIncome += letIncome;
+            this.totalIncome += letIncome;
+
             // Convert euros to gold and add to party
-            const goldIncome = Math.floor(this.dailyIncome * 100);
+            // Rent is kept to the cent, so the sum is squared to whole cents here.
+            this.dailyIncome = Math.round(this.dailyIncome * 100) / 100;
+            const goldIncome = Math.round(this.dailyIncome * 100);
             $gameParty.gainGold(goldIncome);
 
             // Rent that arrives while the party is out walking is announced on
@@ -699,6 +780,9 @@
                     income += property.currentOccupants * property.rentPerOccupant;
                 }
             });
+            this.letProceduralHouses().forEach(h => {
+                income += h.letting.tenants * this.procHouseRentPerTenant(h.value);
+            });
             return income;
         }
 
@@ -751,13 +835,13 @@
                         location: loc,
                         stars: 1,
                         price: priceEuros,
-                        maxOccupants: 4,
-                        currentOccupants: 0,
-                        rentPerOccupant: 0,
+                        maxOccupants: PROC_HOUSE_MAX_TENANTS,
+                        currentOccupants: h.letting ? h.letting.tenants : 0,
+                        rentPerOccupant: this.procHouseRentPerTenant(h.value),
                         isOwned: true,
                         isRentedByPlayer: false,
                         isForSale: false,
-                        isForRent: false,
+                        isForRent: !!h.letting,
                         marketTrend: 0,
                         isNormalHome: true,
                         normalHomeType: 'procedural',
@@ -1291,6 +1375,27 @@
             }
         }
 
+        // A bought procedural floor put up for tenants. Whoever of the party
+        // lived there is sent back to the halls, and told so.
+        commandLetHouse(property) {
+            const moved = property ? $realEstateManager.letProceduralHouse(property.houseKey) : null;
+            if (!moved) { SoundManager.playBuzzer(); return; }
+            SoundManager.playShop();
+            if (moved.length && window.ParchmentToast) {
+                window.ParchmentToast.show(T('RealEstate.ui.movedToHalls', { names: moved.join(', ') }));
+            }
+            this.refreshAllWindows();
+        }
+
+        commandStopLetting(property) {
+            if (property && $realEstateManager.stopLettingProceduralHouse(property.houseKey)) {
+                SoundManager.playCancel();
+                this.refreshAllWindows();
+            } else {
+                SoundManager.playBuzzer();
+            }
+        }
+
         onCommandCancel() {
             // Unused but kept for base compatibility
         }
@@ -1457,6 +1562,10 @@
                         ownedRows = row(T('Assets.ui.coordinates'), selectedProperty.entranceCoords || '-')
                             + (selectedProperty.floor > 0 ? row(T('Assets.ui.floor'), String(selectedProperty.floor)) : '')
                             + row(T('Assets.ui.buildRights'), T('Assets.ui.owner'), 'color:var(--text-success-active);');
+                        if (selectedProperty.isForRent) {
+                            ownedRows += row(T('RealEstate.ui.tenants'), `${selectedProperty.currentOccupants} / ${selectedProperty.maxOccupants}`)
+                                + row(t('dailyIncome'), `€${(selectedProperty.currentOccupants * selectedProperty.rentPerOccupant).toLocaleString()}`, 'color:var(--text-success-active);');
+                        }
                     } else {
                         ownedRows = row(T('Assets.ui.buildRights'), T('Assets.ui.owner'), 'color:var(--text-success-active);');
                     }
@@ -1815,6 +1924,10 @@
                 this.commandRent();
             } else if (action === 'vacate') {
                 this.commandVacate();
+            } else if (action === 'let') {
+                this.commandLetHouse(property);
+            } else if (action === 'unlet') {
+                this.commandStopLetting(property);
             } else if (action === 'manage') {
                 this.commandManageShop();
                 return;
@@ -1852,6 +1965,11 @@
                 }
                 if (this.lodgingPlaceIdFor(property)) {
                     commands.push({ label: T('RealEstate.ui.assignResidents'), action: 'residents' });
+                }
+                if (property.normalHomeType === 'procedural') {
+                    commands.push(property.isForRent
+                        ? { label: T('RealEstate.ui.stopLetting'), action: 'unlet', secondary: true }
+                        : { label: T('RealEstate.ui.letToTenants'), action: 'let' });
                 }
                 commands.push({
                     label: property.isNormalHome
@@ -2755,8 +2873,8 @@
 
     PluginManager.registerCommand(pluginName, 'checkDailyIncome', args => {
         ensureRealEstateManager();
-        const income = $realEstateManager.calculateDailyIncome();
-        const goldIncome = Math.floor(income * 100);
+        const income = Math.round($realEstateManager.calculateDailyIncome() * 100) / 100;
+        const goldIncome = Math.round(income * 100);
         if (window.ParchmentToast) {
           window.ParchmentToast.report([
             t('dailyIncomeMsg', { income: income, gold: goldIncome }),

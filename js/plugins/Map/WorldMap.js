@@ -4017,6 +4017,7 @@
     let chromeReadoutEl = null;
     let chromeCoordsEl = null;
     let chromeCountryEl = null;
+    let chromeMinimapBtnEl = null;
     let chromeSuppressZoom = false;
     let chromePointerIn = false;   // the pointer is over the chrome, not the chart
 
@@ -4073,11 +4074,13 @@
         const button = (key) =>
             `<div class="inspect-btn focusable wm-view-btn${key === view ? ' is-active' : ''}" ` +
             `data-wm-view="${key}">${escapeSheet(names[key])}</div>`;
+        const minimapLabel = isMinimapVisible() ? T('WorldMap.view.hideMinimap') : T('WorldMap.view.showMinimap');
         return `
             <div class="wm-chrome-panel wm-view-box">
                 <div class="wm-chrome-title">${escapeSheet(T('WorldMap.view.title'))}</div>
                 <div class="wm-view-buttons">${button('europe')}${button('world')}</div>
                 <div class="wm-view-key">${escapeSheet(T('WorldMap.view.key'))}</div>
+                <div class="inspect-btn focusable wm-minimap-btn" id="wm-minimap-btn">${escapeSheet(minimapLabel)}</div>
             </div>`;
     }
 
@@ -4121,6 +4124,7 @@
         chromeCoordsEl = el.querySelector('#wm-coords');
         coordsKey = null;
         chromeCountryEl = el.querySelector('#wm-country');
+        chromeMinimapBtnEl = el.querySelector('#wm-minimap-btn');
 
         chromeZoomEl.addEventListener('input', () => {
             chromeSuppressZoom = true;
@@ -4159,6 +4163,15 @@
             if (ev.target.closest('.wm-show-map, .wm-note-btn')) chromePointerIn = false;
         });
         el.addEventListener('click', ev => {
+            const mmBtn = ev.target.closest('#wm-minimap-btn');
+            if (mmBtn) {
+                ev.stopPropagation();
+                setMinimapVisible(!isMinimapVisible());
+                SoundManager.playCursor();
+                TouchInput.clear();
+                syncMinimapButton();
+                return;
+            }
             const viewBtn = ev.target.closest('[data-wm-view]');
             if (viewBtn) {
                 ev.stopPropagation();
@@ -4182,10 +4195,16 @@
         return el;
     }
 
+    function syncMinimapButton() {
+        if (!chromeMinimapBtnEl) return;
+        const label = isMinimapVisible() ? T('WorldMap.view.hideMinimap') : T('WorldMap.view.showMinimap');
+        chromeMinimapBtnEl.textContent = label;
+    }
+
     function destroyChrome() {
         if (chromeEl) { chromeEl.remove(); chromeEl = null; }
         chromeView = null;
-        chromeZoomEl = chromeReadoutEl = chromeCountryEl = chromeCoordsEl = null;
+        chromeZoomEl = chromeReadoutEl = chromeCountryEl = chromeCoordsEl = chromeMinimapBtnEl = null;
         chromePointerIn = false;
         readoutKey = null;
         closeNoteModal();
@@ -4287,6 +4306,7 @@
         if (!chromeWanted()) { destroyChrome(); return; }
         if (chromeEl && chromeView !== sheetView()) destroyChrome();
         buildChrome();
+        syncMinimapButton();
         if (chromeZoomEl && !chromeSuppressZoom) {
             const want = String(zoomToSlider(zoomScale));
             if (chromeZoomEl.value !== want) chromeZoomEl.value = want;

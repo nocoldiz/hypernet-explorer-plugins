@@ -268,6 +268,16 @@
         delete owned[key];
         return true;
       },
+      // ── Letting an owned floor to tenants ──────────────────────────────────
+      // The deed record carries `letting: { tenants, names }` while the floor
+      // is let. Tenants move in one at a time (addHouseTenant, driven daily by
+      // the Real Estate Board) and are dealt as people by NPCSystem when the
+      // party walks in (isCurrentFloorLet / houseLetting).
+      isHouseLet(key) { return !!houseLetting(key); },
+      houseLetting(key) { return houseLetting(key); },
+      setHouseLet(key, on) { return setHouseLet(key, on); },
+      addHouseTenant(key, max) { return addHouseTenant(key, max); },
+      isCurrentFloorLet() { return isCurrentFloorLet(); },
       // Procedural-map interactive FEATURES. Building/dungeon doors are ENTERED
       // BY WALKING into them (ProceduralTerrainInteractions' walk-entrance hook
       // calls enterDoorFeatureAt with the door's own tile), the same way the
@@ -941,6 +951,34 @@
     return isCurrentInheritedHouse();
   }
 
+  // ── Letting an owned floor ───────────────────────────────────────────────
+  // `letting` on the deed record: how many tenants have moved in and, once
+  // NPCSystem has dealt them, their names. Gone the moment letting stops.
+  function houseLetting(key) {
+    const rec = key ? getOwnedHouses()[key] : null;
+    return (rec && rec.letting) || null;
+  }
+
+  function setHouseLet(key, on) {
+    const rec = key ? getOwnedHouses()[key] : null;
+    if (!rec) return false;
+    if (on) { if (!rec.letting) rec.letting = { tenants: 0, names: [] }; }
+    else delete rec.letting;
+    return true;
+  }
+
+  // One more tenant, up to `max`. Answers whether somebody moved in.
+  function addHouseTenant(key, max) {
+    const letting = houseLetting(key);
+    if (!letting || letting.tenants >= max) return false;
+    letting.tenants++;
+    return true;
+  }
+
+  function isCurrentFloorLet() {
+    return !!houseLetting(getCurrentOwnershipKey());
+  }
+
   function isCurrentInheritedHouse() {
     if (typeof $gameSystem === 'undefined' || !$gameSystem) return false;
     const list = $gameSystem._npcInheritedHouses;
@@ -1035,7 +1073,7 @@
       } else if (mapId != null && $dataMapInfos && $dataMapInfos[mapId] && $dataMapInfos[mapId].name) {
         mapName = $dataMapInfos[mapId].name;
       }
-      return { key, mapId, x, y, floor, value, mapName, day: rec.day, gameMin: rec.gameMin };
+      return { key, mapId, x, y, floor, value, mapName, day: rec.day, gameMin: rec.gameMin, letting: rec.letting || null };
     });
   }
 

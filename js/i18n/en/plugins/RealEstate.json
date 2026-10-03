@@ -69,7 +69,11 @@
     "residents": "Residents",
     "residentHere": "{name}: lives here",
     "residentElsewhere": "Move in {name} (now at {place})",
-    "residentsDone": "DONE"
+    "residentsDone": "DONE",
+    "letToTenants": "LET TO TENANTS",
+    "stopLetting": "STOP LETTING",
+    "tenants": "Tenants",
+    "movedToHalls": "{names} moved out to the Stairs Hall."
   },
   "company": {
     "lemoncorp": {

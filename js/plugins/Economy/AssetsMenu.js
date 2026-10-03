@@ -195,7 +195,7 @@
         const currentEuros = Math.floor(prop.price * mult);
         const value = currentEuros * 100;
         const bought = prop.price * 100;
-        const rentPerDay = (prop.currentOccupants || 0) * (prop.rentPerOccupant || 0) * 100;
+        const rentPerDay = Math.round((prop.currentOccupants || 0) * (prop.rentPerOccupant || 0) * 100);
         assets.push({
           cat: T('Towns.deeds.sectionHouses'),
           kind: 'realEstate',
@@ -223,6 +223,14 @@
       const houses = window.ProceduralHouseSystem.listOwnedHouses() || [];
       houses.forEach(h => {
         const floorTxt = h.floor > 0 ? ` • ${T('Assets.ui.floor')} ${h.floor}` : '';
+        // A floor let to tenants (Real Estate Board) pays its rent daily.
+        const REL = window.RealEstateLetting;
+        const rentPerDay = (h.letting && REL)
+          ? Math.round(h.letting.tenants * REL.rentPerTenant(h.value) * 100) : 0;
+        const letDetails = h.letting ? [
+          { label: T('Assets.ui.occupancy'), val: `${h.letting.tenants}` },
+          { label: T('Assets.ui.dailyRent'), val: euro(rentPerDay) },
+        ] : [];
         assets.push({
           cat: T('Towns.deeds.sectionHouses'),
           kind: 'proceduralHouse',
@@ -230,6 +238,7 @@
           sub: `${T('Assets.ui.entrance')} X:${h.x} Y:${h.y}`,
           value: h.value,
           bought: h.value,
+          rentPerDay,
           color: 'var(--text-forest-green)',
           details: [
             { label: T('Assets.ui.entranceMap'), val: h.mapName },
@@ -238,6 +247,7 @@
             { label: T('Assets.ui.mapId'), val: h.mapId != null ? String(h.mapId) : '-' },
             { label: T('Assets.ui.vaultValue'), val: euro(h.value) },
             { label: T('Assets.ui.boughtValue'), val: euro(h.value) },
+            ...letDetails,
           ],
         });
       });

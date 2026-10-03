@@ -30,7 +30,10 @@
  *
  * The notices beside it are not a setting: a map's tips open in full the first
  * time the party visits it and collapse to their title on every visit after.
- * No option, settings page or Bubba entry turns them off.
+ * No option, settings page or Bubba entry turns them off. The very first time
+ * a notice is on the paper its text is written out letter by letter, in
+ * Bubba's letter voice when Dialogue Voices is on, inside a box already at its
+ * final size; leaving the zone stops it, and back there it is drawn whole.
  *
  * The sheet wears the interface's own theme. Every colour, size and space on
  * it is a token out of css/vars.css and every rule that draws it lives in
@@ -580,6 +583,7 @@
   function resetNoticesSeen() {
     if ($gameSystem) $gameSystem._mapLegendNoticesSeen = {};
     noticeWatch.showing = null;
+    stopTyping();
   }
 
   // The tip the sheet is allowed to draw under the current setting. A tip
@@ -591,8 +595,110 @@
       return null;
     }
     noticeWatch.showing = notice.key;
-    markNoticeSeen(notice.key);
+    if (markNoticeSeen(notice.key)) {
+      if ($gameSystem) $gameSystem._mapLegendNoticeFolded = false;
+      startTyping(notice.key);
+    }
     return notice;
+  }
+
+  //===========================================================================
+  // The first reading, letter by letter
+  //===========================================================================
+  // The first time a notice is ever on the paper its text is written out a
+  // letter at a time, chattered in Bubba's voice when the Dialogue Voices
+  // option is on. The box is laid out off the finished text from the first
+  // letter (the unwritten rest is there but not painted), so it stands at its
+  // final size and never grows. Walking out of the zone stops the writing for
+  // good: the notice is already marked read, so back on the zone it is drawn
+  // whole, with no reading at all.
+  const TYPE_LETTERS_PER_FRAME = 1;
+  const VOICE_SPEAKER_NAME = "Bubba";   // i18n-ignore: actor name matched by DialogueSystem's cast pitch
+  const typing = { key: null, shown: 0, voice: null };
+
+  function startTyping(key) {
+    typing.key = key;
+    typing.shown = 0;
+    typing.voice = null;
+  }
+
+  function stopTyping() {
+    typing.key = null;
+    typing.shown = 0;
+    typing.voice = null;
+  }
+
+  // The rendered notice, cut into tags and the letters a reader sees, an
+  // entity counting as the one letter it draws.
+  const HTML_ENTITIES = { "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"', "&#39;": "'" };
+
+  function htmlTokens(html) {
+    const tokens = [];
+    const re = /<[^>]*>|&[#\w]+;|[\s\S]/g;
+    let m;
+    while ((m = re.exec(html))) {
+      const s = m[0];
+      if (s.charAt(0) === "<" && s.length > 1) tokens.push({ tag: true, s });
+      else tokens.push({ tag: false, s, ch: s.length > 1 ? (HTML_ENTITIES[s] || " ") : s });
+    }
+    return tokens;
+  }
+
+  function htmlLetters(html) {
+    let text = "";
+    for (const t of htmlTokens(html)) if (!t.tag) text += t.ch;
+    return text;
+  }
+
+  // The same markup with only its first `count` letters painted. Every run of
+  // the rest is wrapped where it stands, so no tag is ever split open.
+  function revealHtml(html, count) {
+    if (!(count < Infinity)) return html;
+    let out = "";
+    let run = "";
+    let n = 0;
+    const flush = () => {
+      if (run) out += '<span class="mlg-unrevealed">' + run + "</span>";
+      run = "";
+    };
+    for (const t of htmlTokens(html)) {
+      if (t.tag) { flush(); out += t.s; continue; }
+      if (n < count) { out += t.s; n++; } else run += t.s;
+    }
+    flush();
+    return out;
+  }
+
+  // One frame of the reading. Returns how many letters of the notice's text
+  // are painted, Infinity once it is all there. Folded, the paragraph is not on
+  // the paper, so the reading waits for it to be opened.
+  function updateTyping(notice, folded, hasPad) {
+    if (!notice || notice.key !== typing.key) {
+      stopTyping();
+      return Infinity;
+    }
+    if (!notice.text) {
+      stopTyping();
+      return Infinity;
+    }
+    const letters = htmlLetters(noticeHtml(notice.text, hasPad));
+    if (!folded) {
+      const from = typing.shown;
+      typing.shown = Math.min(letters.length, typing.shown + TYPE_LETTERS_PER_FRAME);
+      speakTyped(letters, from, typing.shown);
+    }
+    if (typing.shown >= letters.length) {
+      stopTyping();
+      return Infinity;
+    }
+    return typing.shown;
+  }
+
+  function speakTyped(letters, from, to) {
+    const dv = window.DialogueVoice;
+    if (!dv || typeof dv.speaker !== "function" || to <= from) return;
+    if (!typing.voice) typing.voice = dv.speaker(VOICE_SPEAKER_NAME);
+    typing.voice.speakRange(letters, from, to);
   }
 
   function proceduralMapId() {
@@ -1165,7 +1271,7 @@
       // party is walking, and the notice is four fields.
       const noticeFolded = state.noticeFolded === undefined ? folded : !!state.noticeFolded;
       const noticeSig = (notice ? notice.key + "" + notice.title + "" + notice.text : "-") +
-        "" + (noticeFolded ? 1 : 0) + (state.foldable ? 1 : 0) + (state.hasPad ? 1 : 0) + "" + (state.foldChip || "");
+        "" + state.reveal + "" + (noticeFolded ? 1 : 0) + (state.foldable ? 1 : 0) + (state.hasPad ? 1 : 0) + "" + (state.foldChip || "");
       if (notice) {
         const el = this.element();
         if (noticeSig !== this._signature) {
@@ -1231,7 +1337,10 @@
         // own sign is not signed at all, it just says what it says.
         const speaker = notice.voice === VOICE_GENERIC ? "" :
           `<span class="mlg-speaker">${escapeHtml(T("MapLegend.speaker"))}:</span> `;
-        parts.push(`<div class="mlg-text">${speaker}${noticeHtml(notice.text, state.hasPad)}</div>`);
+        // The speaker's name is there from the first frame; the words are
+        // written out after it on their first reading (see updateTyping).
+        const words = revealHtml(noticeHtml(notice.text, state.hasPad), state.reveal);
+        parts.push(`<div class="mlg-text">${speaker}${words}</div>`);
       }
       if (state.foldable) {
         parts.push(this._foldHtml(
@@ -1420,8 +1529,9 @@
     }
     // The pad is asked once and the answer handed to both fields that need it.
     const hasPad = padConnected();
+    const noticeFolded = isNoticeFolded();
     sheet.draw(notice, rows, {
-      folded, noticeFolded: isNoticeFolded(),
+      folded, noticeFolded, reveal: updateTyping(notice, noticeFolded, hasPad),
       foldable: foldable(), hasPad, foldChip: foldChipLabel(),
       foldPad: foldPadChip(hasPad),
     });
@@ -1508,6 +1618,13 @@
     markNoticeSeen,
     resetNoticesSeen,
     allowedNotice,
+    typing,
+    startTyping,
+    stopTyping,
+    updateTyping,
+    revealHtml,
+    htmlLetters,
+    TYPE_LETTERS_PER_FRAME,
     visibleRows,
     rowKeys,
     rowFace,

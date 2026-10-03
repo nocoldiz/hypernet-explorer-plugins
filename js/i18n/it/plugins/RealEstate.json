@@ -69,7 +69,11 @@
     "residents": "Residenti",
     "residentHere": "{name}: vive qui",
     "residentElsewhere": "Fai trasferire {name} (ora a {place})",
-    "residentsDone": "FATTO"
+    "residentsDone": "FATTO",
+    "letToTenants": "AFFITTA AGLI INQUILINI",
+    "stopLetting": "SMETTI DI AFFITTARE",
+    "tenants": "Inquilini",
+    "movedToHalls": "{names}: trasferimento nella Sala delle Scale."
   },
   "company": {
     "lemoncorp": {

@@ -50,7 +50,9 @@
     "title": "View",
     "europe": "Europe",
     "world": "World",
-    "key": "Tab or X: switch view"
+    "key": "Tab or X: switch view",
+    "showMinimap": "Show minimap",
+    "hideMinimap": "Hide minimap"
   },
   "coords": {
     "title": "Coordinates",

@@ -1216,6 +1216,51 @@
       return made;
     },
 
+    // A floor the party owns and lets (Real Estate Board): its tenants live
+    // here instead of whoever the door was dealt. They are minted one by one as
+    // the floor fills (ProceduralHouseSystem letting.tenants) and their names
+    // kept on the deed, so the same people are met on every visit. All of them
+    // are in at night, half of them by day. Answers how many are standing here.
+    populateTenants: (building, groupName) => {
+      const PHS = window.ProceduralHouseSystem;
+      const key = PHS?.getCurrentOwnershipKey?.();
+      const letting = key ? PHS.houseLetting?.(key) : null;
+      if (!letting || !groupName || !$gameMap || !$dataMap || !$gameSystem) return 0;
+      if (!Array.isArray(letting.names)) letting.names = [];
+      const seed = ProceduralManager.procInteriorSeed(`tenants|${key}`);
+      const ages = ProceduralManager._creatureRng(seed);
+      for (let i = 0; i < letting.tenants; i++) {
+        const member = { role: "regular", age: ages.nextInt(18, 77), gender: null };
+        letting.names[i] = ProceduralManager._mintInteriorCitizen(
+          member, (seed ^ Math.imul(i + 1, 0x85ebca6b)) >>> 0, groupName, letting.names[i] || null) || letting.names[i] || null;
+      }
+      const society = $gameSystem._npcSociety || {};
+      const inParty = new Set(($gameParty?.members?.() || []).map(a => a?.name?.()));
+      const onMap = new Set($gameMap.events().filter(e => e && !e._erased).map(e => e.event()?.name));
+      const tenants = letting.names.slice(0, letting.tenants).filter(n =>
+        !!n && !!society[n] && !inParty.has(n) && !onMap.has(n) && !GoneRegistry.isNameGone(n));
+
+      const hour = $gameVariables?.value(23) ?? 12;
+      const night = hour >= 20 || hour < 8;
+      const rng = ProceduralManager._creatureRng((seed ^ Math.imul(hour + 1, 0x9e3779b1)) >>> 0);
+      const order = tenants.slice();
+      for (let i = order.length - 1; i > 0; i--) {
+        const j = Math.floor(rng.next() * (i + 1));
+        [order[i], order[j]] = [order[j], order[i]];
+      }
+      const present = night ? order : order.slice(0, Math.ceil(order.length * ProceduralManager.HOME_PRESENCE_FLOOR));
+
+      const tiles = ProceduralManager._interiorTiles();
+      let made = 0;
+      for (const name of present) {
+        const tile = tiles.shift();
+        if (!tile) break;
+        if (ProceduralManager._spawnInteriorResident(name, tile)) made++;
+      }
+      Utils.debug(`let floor ${key}: ${made} of ${letting.tenants} tenants standing`);
+      return made;
+    },
+
     // Free floor to stand people on, spread out, never on the party or the
     // tiles around it (that is the doorway they just came in by).
     _interiorTiles: () => {

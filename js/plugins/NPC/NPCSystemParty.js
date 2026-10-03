@@ -715,8 +715,8 @@
     //                 are met in the Stairs Hall itself and NINE on any other
     //                 floor, drawn again every time the party walks in, so the
     //                 halls are never the same crowd twice.
-    //   a house     , any floor the party holds the deed to
-    //                 (ProceduralHouseSystem.listOwnedHouses)
+    //   a house     , any floor the party holds the deed to and has not let
+    //                 to tenants (ProceduralHouseSystem.listOwnedHouses)
     //   a residence , a companion's home inherited on joining, known by its
     //                 interior map ($gameSystem._npcInheritedHouses)
     //   an estate   , a home bought on the Real Estate Board (any owned deed
@@ -865,6 +865,8 @@
             const houses = window.ProceduralHouseSystem?.listOwnedHouses?.() ?? [];
             for (const house of houses) {
                 if (!house || !house.key) continue;
+                // A floor let to tenants is their home, not the party's.
+                if (house.letting) continue;
                 out.push({
                     id: "house:" + house.key,   // i18n-ignore: place id
                     kind: "house",

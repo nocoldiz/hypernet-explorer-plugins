@@ -37204,6 +37204,12 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     color: var(--text-success-active);
 }
 
+/* The part of a notice its first reading has not written yet. Laid out with
+   the rest, so the sheet stands at its final size from the first letter. */
+.mlg-sheet .mlg-text .mlg-unrevealed {
+    visibility: hidden;
+}
+
 /* Whose note this is, said once at the head of the paragraph. */
 .mlg-sheet .mlg-speaker {
     font-weight: bold;
@@ -37301,6 +37307,16 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     bottom: var(--mlg-bottom, 16px);
     width: var(--mlg-width, 360px);
     transform-origin: 100% 100%;
+    background: var(--bg-dark-overlay-78);
+    backdrop-filter: blur(4px);
+}
+
+#map-legend.mlg-shown {
+    opacity: 0.88;
+}
+
+#map-legend.mlg-behind.mlg-shown {
+    opacity: 0.16;
 }
 
 #map-legend.mlg-folded {
@@ -42928,6 +42944,12 @@ body.pad-input .kb-only {
     margin-top: var(--sp-2);
     font-size: var(--fs-caption);
     color: var(--text-text-alt-12);
+}
+
+#worldmap-chrome .wm-minimap-btn {
+    margin-top: var(--sp-2);
+    width: 100%;
+    text-align: center;
 }
 
 /* -- Writing on a square --------------------------------------------------- */

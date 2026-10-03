@@ -1,3 +1,22 @@
+0.7.5a
+
+Added:
+ - stairs connections test for maps of omega tower
+ - 3d parallax background for Great Divide
+ 
+Changed:
+ - map legend for bubba semitransparent and triggers first time when folded
+ - partyhud hidden on worldmap, added show/hide minimap button
+ - slow wave water reflections for pixel art
+- bought procedural houses can be rented to NPC tenants
+- bought 1 star real estate can be rented to NPC tenants
+- Dragon Elixir cures incurable diseases, pricier, offered in medical menu
+- new map for first floor of the dungeon, the old one is still reachable
+
+Fixed:
+- Collision and stairs connections
+- water reflections not turning
+
 0.7.4a
 
 Perfomance:
@@ -76,6 +95,7 @@ Maps:
  - removed incomplete treasure room from selection
 
 Added:
+ - Secret First Floor commands and letter by letter first map notices
  - opt-in hook profiler logging per-plugin map update cost to perf-log.txt
 
 Changed:

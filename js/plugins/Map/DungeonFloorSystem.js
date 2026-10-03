@@ -29,7 +29,7 @@
  * world switch, it is shared by every savegame of that world.
  *
  * --- Special Floor Transitions ---
- * - From Town (Floor 0), using "nextFloor" teleports you to Map ID 101 (X:16, Y:38).
+ * - From Town (Floor 0), using "nextFloor" teleports you to Map ID 1399 (X:22, Y:68).
  * - From Floor 1, using "prevFloor" teleports you to the dungeon base Map ID 635 at (X:13, Y:27).
  *
  * --- The lower tower (floors -1 to -92) ---
@@ -46,7 +46,9 @@
  * generateDungeon - Creates a new random dungeon layout (resets max floor)
  * nextFloor      - Move to the next floor (up)
  * prevFloor      - Move to the previous floor (down)
- * setFloor       - Set a specific floor to visit (spawns near downstairs)
+ * secretFirstFloor - Floor 1 by the secret way: map 101 (16, 38), facing up
+ * returnFromSecretFirstFloor - Out of the dungeon the secret way: map 1 (22, 21)
+ * setFloor      - Set a specific floor to visit (spawns near downstairs)
  * elevator       - Teleport to the floor stored in variable 17
  * teleportToHighest - Teleport to highest reached floor
  * teleportToNearestStairs - Teleport player to the nearest staircase on current map
@@ -162,6 +164,14 @@
  * @command prevFloor
  * @text Go to Previous Floor
  * @desc Move to the previous floor in the dungeon (downstairs)
+ *
+ * @command secretFirstFloor
+ * @text Secret First Floor
+ * @desc Places the player on the first floor at map 101 (16, 38), facing up
+ *
+ * @command returnFromSecretFirstFloor
+ * @text Return from Secret First Floor
+ * @desc Places the player outside the dungeon at map 1 (22, 21)
  *
  * @command setFloor
  * @text Set Floor
@@ -1096,6 +1106,19 @@ Game_System.prototype.isPassableTileFromTilesets = function (mapData, x, y) {
     moveToFloor(currentFloor - 1, false); // false for going down
   });
 
+  PluginManager.registerCommand(pluginName, "secretFirstFloor", () => {
+    moveToFloor(TOWER.SECRET_FIRST_FLOOR.floor, "secret");
+  });
+
+  PluginManager.registerCommand(pluginName, "returnFromSecretFirstFloor", () => {
+    const exit = TOWER.SECRET_FIRST_FLOOR_EXIT;
+    clearTowerSession();
+    $gameVariables.setValue(params.currentFloorVariable, exit.floor);
+    $gameVariables.setValue(params.elevatorFloorVariable, exit.floor);
+    $gameScreen.startFadeOut(1);
+    $gamePlayer.reserveTransfer(exit.mapId, exit.x, exit.y, exit.dir, 0);
+  });
+
   PluginManager.registerCommand(pluginName, "setFloor", (args) => {
     const floor = parseInt(args.floor || 1);
     const maxFloor = params.demoMode ? params.demoMaxFloor : 100;
@@ -1230,6 +1253,12 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     // Where climbing out of floor -1 puts the party: not the Stairs Hall, but
     // the mouth the lower tower actually opens onto.
     LOWER_EXIT: { mapId: 314, x: 61, y: 100, dir: 8 },
+    // Where the stairs up out of town land on floor 1.
+    FIRST_FLOOR: { floor: 1, mapId: 1399, x: 22, y: 68, dir: 8 },
+    // The hidden way onto floor 1, reached through the Secret First Floor command.
+    SECRET_FIRST_FLOOR: { floor: 1, mapId: 101, x: 16, y: 38, dir: 8 },
+    // Where Return from Secret First Floor lets the party out, off the tower.
+    SECRET_FIRST_FLOOR_EXIT: { floor: 0, mapId: 1, x: 22, y: 21, dir: 2 },
     SECRET_STAIRWAY: {
       floor: -22, mapId: 1177,
       down: { x: 3, y: 6, dir: 2 },   // arrived from -21, on the way deeper
@@ -3303,12 +3332,19 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
 
     $gameScreen.startFadeOut(1);
 
+    if (spawnMode === "secret") {
+        const secret = TOWER.SECRET_FIRST_FLOOR;
+        mapId = secret.mapId;
+        x = secret.x;
+        y = secret.y;
+        direction = secret.dir;
     // Hardcoded transition: From Town/Home (Floor 0 or Map 635) to Floor 1
-    if (floor === 1 && (previousFloor === 0 || $gameMap.mapId() === 635)) {
-        mapId = 101;
-        x = 16;
-        y = 38;
-        direction = 8; // Face up
+    } else if (floor === 1 && (previousFloor === 0 || $gameMap.mapId() === 635)) {
+        const first = TOWER.FIRST_FLOOR;
+        mapId = first.mapId;
+        x = first.x;
+        y = first.y;
+        direction = first.dir;
     // Hardcoded transition: From Floor 1 to Town
     } else if (floor === 0 && previousFloor === 1) {
         mapId = 635;

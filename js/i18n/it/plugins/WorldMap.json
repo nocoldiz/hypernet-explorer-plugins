@@ -50,7 +50,9 @@
     "title": "Vista",
     "europe": "Europa",
     "world": "Mondo",
-    "key": "Tab o X: cambia vista"
+    "key": "Tab o X: cambia vista",
+    "showMinimap": "Mostra minimappa",
+    "hideMinimap": "Nascondi minimappa"
   },
   "coords": {
     "title": "Coordinate",

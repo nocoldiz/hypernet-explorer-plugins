@@ -867,6 +867,19 @@
       // stageShopPersonas above, with a seeded three-shift rota drawn from the
       // townspeople the player just came from.
 
+      // A floor the party owns and lets: its tenants live here, nobody else.
+      if (PHS?.isCurrentFloorLet?.()) {
+        try {
+          // The template's stand-ins are nobody here: the tenants are dealt
+          // fresh, so the slots a household would have filled are cleared.
+          SpawnManager.getPlaceholders().forEach(slot => slot.event.erase());
+          ProceduralManager.populateTenants(building, houseGrpName);
+        } catch (e) {
+          console.error("[NPC System] tenant population failed", e);
+        }
+        return;
+      }
+
       // A door on the procedural map: every home floor has a household of its
       // own and every public floor a crowd of regulars, minted here because no
       // interior template carries the slots to dress them in.

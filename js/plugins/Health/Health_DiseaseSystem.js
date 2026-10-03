@@ -1700,24 +1700,34 @@
   function buildMedicines() {
     if (MED.built) return MED;
     if (!window.$dataItems) return MED;
+    ensureDb();
     for (const item of $dataItems) {
       const entry = _parseMedicine(item);
       if (!entry) continue;
+      // A remedy that cures what the library calls incurable (Dragon's Blood
+      // Elixir) is the last resort: it is reached for only when nothing
+      // ordinary cures the illness, never spent on a cold.
+      entry.lastResort = Object.keys(entry.cures).some(id => DB.byId[id] && !_treatOf(DB.byId[id]).curable);
       MED.built = true;
       MED.byItem.set(item.id, entry);
       MED.list.push(entry);
       const push = (diseaseId, kind, days) => {
         const bag = MED.byDisease.get(diseaseId) || [];
-        bag.push({ itemId: item.id, cls: entry.cls, kind, days });
+        bag.push({ itemId: item.id, cls: entry.cls, kind, days, lastResort: entry.lastResort });
         MED.byDisease.set(diseaseId, bag);
       };
       for (const id in entry.cures) push(id, 'cure', entry.cures[id]);
       for (const id of entry.treats) push(id, 'manage', 0);
     }
     // The shortest course first: that is the drug a doctor would reach for,
-    // and the one auto-dosing takes when the pack holds several.
+    // and the one auto-dosing takes when the pack holds several. A cure beats
+    // a suppressant, and an ordinary cure beats the last resort.
     for (const bag of MED.byDisease.values()) {
-      bag.sort((a, b) => (a.kind === b.kind ? a.days - b.days : (a.kind === 'cure' ? -1 : 1)));
+      bag.sort((a, b) => {
+        if (a.kind !== b.kind) return a.kind === 'cure' ? -1 : 1;
+        if (!!a.lastResort !== !!b.lastResort) return a.lastResort ? 1 : -1;
+        return a.days - b.days;
+      });
     }
     MED.built = true;
     return MED;
@@ -1758,7 +1768,8 @@
         return Object.assign({ price: item ? (item.price || 0) : Infinity }, r);
       });
       const pick = bag => bag.sort((a, b) => (a.price - b.price) || (a.days - b.days))[0] || null;
-      return pick(priced.filter(r => r.kind === 'cure')) || pick(priced);
+      return pick(priced.filter(r => r.kind === 'cure' && !r.lastResort)) ||
+        pick(priced.filter(r => r.kind === 'cure')) || pick(priced);
     },
     className(cls) {
       const key = 'Diseases.drug.' + String(cls || '');
@@ -2948,7 +2959,10 @@
     const lines = [];
     lines.push(`<div class="dz-line"><span class="dz-key">${_esc(T('Diseases.ui.carriedFor'))}</span>` +
       `<span class="dz-val">${_esc(T('Diseases.ui.days', { days: st.days }))}</span></div>`);
-    if (st.curable) {
+    // A lifelong illness on a course of the last-resort cure shows that course
+    // too: it is being finished, not merely held down.
+    const onCourse = st.curable || st.dosed > 0;
+    if (onCourse) {
       const need = st.need || (_treatOf(d).courseDays || 0);
       lines.push(`<div class="dz-line"><span class="dz-key">${_esc(T('Diseases.ui.course'))}</span>` +
         `<span class="dz-val">${_esc(T('Diseases.ui.courseProgress', { done: st.dosed, need: need || '?' }))}</span></div>`);
@@ -2979,7 +2993,7 @@
         `<span class="dz-val">${_esc(needs)}</span></div>`);
     }
 
-    const bar = st.curable && st.need
+    const bar = onCourse && st.need
       ? `<div class="dz-bar"><div class="dz-bar-fill" style="width:${Math.min(100, Math.round(st.dosed / st.need * 100))}%"></div></div>`
       : '';
     return `<div class="dz-card dz-sev-${_esc(d.severity)}">` +

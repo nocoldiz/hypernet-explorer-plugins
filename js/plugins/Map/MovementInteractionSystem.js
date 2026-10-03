@@ -1451,12 +1451,16 @@
           if (reflection) {
             const characterSprite = this.findCharacterSprite(spriteset, character);
             if (characterSprite) {
-              // Only recompute the reflection when the source moved or its
-              // animation pattern changed; otherwise the reflection is static.
+              // Only recompute the reflection when the source moved, turned or
+              // its animation pattern changed; otherwise the reflection is
+              // static. Turning in place changes neither position nor pattern,
+              // so without the direction a reflection kept its old facing.
               const pattern = character.pattern ? character.pattern() : 0;
+              const direction = character.direction ? character.direction() : 2;
               if (reflection._lastSrcX !== characterSprite.x ||
                   reflection._lastSrcY !== characterSprite.y ||
-                  reflection._lastPattern !== pattern) {
+                  reflection._lastPattern !== pattern ||
+                  reflection._lastDirection !== direction) {
                 reflection.x = characterSprite.x;
                 reflection.y = characterSprite.y + $gameMap.tileHeight() * 2;
                 reflection._character = character;
@@ -1464,6 +1468,7 @@
                 reflection._lastSrcX = characterSprite.x;
                 reflection._lastSrcY = characterSprite.y;
                 reflection._lastPattern = pattern;
+                reflection._lastDirection = direction;
               }
             }
           }
@@ -1491,6 +1496,9 @@
     updateGround(spriteset) {
       const mask = getBlueMaskFilter();
       if (!mask || !mask.uniforms) return;
+      if (typeof Graphics !== "undefined" && typeof Graphics.frameCount === "number") {
+        mask.uniforms.uTime = Graphics.frameCount * 0.02;
+      }
       const layer = spriteset._tilemap && spriteset._tilemap._lowerLayer;
       const renderer = Graphics.app && Graphics.app.renderer;
       if (!layer || !renderer || !PIXI.RenderTexture) {
@@ -1619,6 +1627,7 @@
       uniform sampler2D uGround;
       uniform vec2 uGroundSize;
       uniform float uUseGround;
+      uniform float uTime;
       // highp to match PIXI's filter vertex shader, which declares both. A
       // uniform shared across the two stages must agree on precision, and the
       // fragment default is mediump: strict drivers refused to link the
@@ -1628,7 +1637,17 @@
       uniform highp vec4 outputFrame;
 
       void main(void) {
-        vec4 color = texture2D(uSampler, vTextureCoord);
+        // Snap screen coordinates to 2x2 pixel blocks so reflections match the pixel art grid
+        vec2 screen = vTextureCoord * inputSize.xy + outputFrame.xy;
+        float pixelSize = 2.0;
+        vec2 snappedScreen = floor(screen / pixelSize) * pixelSize;
+
+        // Slow animated stepped water ripple displacement across scanlines
+        float wave = floor(sin(snappedScreen.y * 0.10 + uTime * 0.5) * 1.5) * pixelSize;
+        snappedScreen.x += wave;
+
+        vec2 sampleCoord = (snappedScreen - outputFrame.xy) / inputSize.xy;
+        vec4 color = texture2D(uSampler, sampleCoord);
         float r = color.r;
         float g = color.g;
         float b = color.b;
@@ -1643,10 +1662,12 @@
 
         float keep = max(blueDominant, isBlueTinted);
 
+        // Stylized alternating scanline dither to blend reflection into water tiles
+        float dither = 0.85 + 0.15 * mod(floor(screen.y / pixelSize), 2.0);
+
         // Culled wherever the tile underneath is not water blue (teal counts:
         // blue well above red, green no stronger than blue).
         if (uUseGround > 0.5) {
-          vec2 screen = vTextureCoord * inputSize.xy + outputFrame.xy;
           vec4 ground = texture2D(uGround, screen / uGroundSize);
           float groundBlue = step(0.15, ground.b - ground.r) *
                              step(ground.g - 0.12, ground.b) *
@@ -1654,12 +1675,13 @@
           keep *= groundBlue;
         }
 
-        gl_FragColor = vec4(color.rgb, color.a * keep);
+        gl_FragColor = vec4(color.rgb, color.a * keep * dither);
       }
     `, {
       uGround: PIXI.Texture ? PIXI.Texture.EMPTY : null,
       uGroundSize: [1, 1],
-      uUseGround: 0
+      uUseGround: 0,
+      uTime: 0
     });
     filter.padding = 0;
     return filter;

@@ -1077,6 +1077,7 @@
         if (!ConfigManager.partyHud) return false;
         if (!$gameParty || $gameParty.members().length === 0) return false;
         if ($gameMap && $gameMap.mapId() === 557) return false;
+        if (typeof window !== 'undefined' && window.isWorldMapFullscreen && window.isWorldMapFullscreen()) return false;
         if (!wantsHud(SceneManager._scene)) return false;
         // A menu is a scene of its own and is answered above, but a good many
         // of this game's pages - the phone, the grimorie, an OS window - are
