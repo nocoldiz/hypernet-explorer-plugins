@@ -148,6 +148,8 @@
 
             const costTextOf = (skill) => {
                 if (!skill) return "";
+                // A ki strike or a spellblade cut is paid from both pools.
+                if (skill.mpCost > 0 && skill.tpCost > 0) return T("SkillsMenu.cost.both", { ap: skill.tpCost, mp: skill.mpCost });
                 if (skill.mpCost > 0) return T("SkillsMenu.cost.mp", { n: skill.mpCost });
                 if (skill.tpCost > 0) return T("SkillsMenu.cost.ap", { n: skill.tpCost });
                 return "";
@@ -701,12 +703,11 @@
     const getRoleDisplayName = roleKey => getRoleInfo(roleKey).name;
     const getRoleDescription = roleKey => getRoleInfo(roleKey).description;
 
-    // What a skill takes out of the pool it is actually paid from, so cards
-    // sharing a role sort cheapest first regardless of which pool that is.
+    // What a skill takes out of the pools it is actually paid from, so cards
+    // sharing a role sort cheapest first regardless of which pool that is. A
+    // skill paid from both pools counts both.
     function battleSkillCost(actor, skill) {
-        const tp = actor.skillTpCost(skill);
-        if (tp > 0) return tp;
-        return actor.skillMpCost(skill);
+        return actor.skillTpCost(skill) + actor.skillMpCost(skill);
     }
 
     // Role first (Offensive/Healing/Support, ROLE_KEYS order), cost second: the
@@ -1688,7 +1689,8 @@
             if (this._actor) {
                 const tpCost = this._actor.skillTpCost(skill);
                 const mpCost = this._actor.skillMpCost(skill);
-                const costText = tpCost > 0 ? tpCost + ' AP' : (mpCost > 0 ? mpCost + ' MP' : '');
+                const costText = tpCost > 0 && mpCost > 0 ? tpCost + ' AP + ' + mpCost + ' MP'
+                    : tpCost > 0 ? tpCost + ' AP' : (mpCost > 0 ? mpCost + ' MP' : '');
                 if (costText) {
                     const costSpan = document.createElement('span');
                     costSpan.style.color = 'var(--text-primary-hover)';
@@ -1855,11 +1857,12 @@
 
     const ALLY_ROW_ICON    = 73;
 
-    // What a row's tail says: the pool the skill is actually paid from.
+    // What a row's tail says: the pool(s) the skill is actually paid from.
     function battleRowCost(actor, skill) {
         const tp = actor.skillTpCost(skill);
-        if (tp > 0) return T('SkillsMenu.cost.ap', { n: tp });
         const mp = actor.skillMpCost(skill);
+        if (tp > 0 && mp > 0) return T('SkillsMenu.cost.both', { ap: tp, mp: mp });
+        if (tp > 0) return T('SkillsMenu.cost.ap', { n: tp });
         if (mp > 0) return T('SkillsMenu.cost.mp', { n: mp });
         return '';
     }
@@ -2636,7 +2639,7 @@
                 name: dbText(skill.name),
                 category: window.SkillDetails.categoryOf(skill) || '',
                 subtitle: dbText(skill.description),
-                cost: skill.mpCost || skill.tpCost || 0,
+                cost: (skill.mpCost || 0) + (skill.tpCost || 0),
                 // On the Level Up ledger the level is the level it is learned at.
                 level: entry && entry.level ? entry.level : 0
             };
@@ -2645,6 +2648,7 @@
 
     Scene_Skill.prototype.getUISkillCostText = function (skill) {
         if (!skill) return "";
+        if (skill.mpCost > 0 && skill.tpCost > 0) return `${skill.tpCost} AP + ${skill.mpCost} MP`;
         if (skill.mpCost > 0) return `${skill.mpCost} MP`;
         if (skill.tpCost > 0) return `${skill.tpCost} AP`;
         return "";

@@ -111,13 +111,13 @@
     "10": {
       "primary": [
         "Pyromancy",
-        "Arcanism",
-        "Performance"
+        "Cryomancy",
+        "Electromancy"
       ],
       "secondary": [
         "Geomancy",
-        "HolyMagic",
-        "ForbiddenMagic"
+        "Aeromancy",
+        "Idromancy"
       ]
     },
     "11": {
@@ -183,13 +183,13 @@
     "16": {
       "primary": [
         "Firearms",
-        "MartialArts",
-        "Bestial"
+        "Technomagical",
+        "Pyromancy"
       ],
       "secondary": [
-        "Leadership",
-        "Roguery",
-        "Vocation"
+        "Electromancy",
+        "ChaosMagic",
+        "Arcanism"
       ]
     },
     "17": {
@@ -220,12 +220,12 @@
       "primary": [
         "Pyromancy",
         "Arcanism",
-        "Performance"
+        "MetaMagic"
       ],
       "secondary": [
         "Convokation",
-        "MetaMagic",
-        "Geomancy"
+        "Geomancy",
+        "Electromancy"
       ]
     },
     "20": {
@@ -790,6 +790,54 @@
         "StatusMagic",
         "Leadership",
         "Pyromancy"
+      ]
+    },
+    "67": {
+      "primary": [
+        "VoidMagic",
+        "Illusion",
+        "AstralMagic"
+      ],
+      "secondary": [
+        "Necromancy",
+        "PsychicAbilities",
+        "Oneiromancy"
+      ]
+    },
+    "68": {
+      "primary": [
+        "Bestial",
+        "Necromancy",
+        "Mutation"
+      ],
+      "secondary": [
+        "ForbiddenMagic",
+        "StatusMagic",
+        "Pastoral"
+      ]
+    },
+    "69": {
+      "primary": [
+        "Mutation",
+        "Bestial",
+        "ChaosMagic"
+      ],
+      "secondary": [
+        "ForbiddenMagic",
+        "Alchemistry",
+        "StatusMagic"
+      ]
+    },
+    "70": {
+      "primary": [
+        "Tactical",
+        "Firearms",
+        "Vocation"
+      ],
+      "secondary": [
+        "Roguery",
+        "Leadership",
+        "MartialArts"
       ]
     }
   },

@@ -8,10 +8,11 @@
  "assist": {
   "none": "There is no one to assist.",
   "borrowed": "Borrowed \\C[3]{skill}\\C[0] from {actor}."
-  },
+ },
  "cost": {
   "mp": "{n} MP",
-  "ap": "{n} AP"
+  "ap": "{n} AP",
+  "both": "{ap} AP + {mp} MP"
  },
  "battle": {
   "back": "Back",
@@ -31,9 +32,9 @@
   "standard": "Standard Discipline"
  },
  "section": {
-"info": "Info",
+  "info": "Info",
   "incantation": "Incantation",
-"damage": "Damage",
+  "damage": "Damage",
   "skillEffects": "Skill Effects",
   "training": "Training"
  },

@@ -2293,7 +2293,14 @@
   const _Window_SkillList_drawSkillCost =
     Window_SkillList.prototype.drawSkillCost;
   Window_SkillList.prototype.drawSkillCost = function (skill, x, y, width) {
-    if (this._actor.skillTpCost(skill) > 0) {
+    if (this._actor.skillTpCost(skill) > 0 && this._actor.skillMpCost(skill) > 0) {
+      // Paid from both pools: "14+9", grey unless both can be paid.
+      const tpCost = this._actor.skillTpCost(skill);
+      const mpCost = this._actor.skillMpCost(skill);
+      const enough = this._actor.tp >= tpCost && this._actor.mp >= mpCost;
+      this.changeTextColor(enough ? tpSkillColor : "#888888");
+      this.drawText(tpCost + "+" + mpCost, x, y, width, "right");
+    } else if (this._actor.skillTpCost(skill) > 0) {
       const tpCost = this._actor.skillTpCost(skill);
       const hasEnoughTp = this._actor.tp >= tpCost;
       if (hasEnoughTp) {
