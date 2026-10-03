@@ -175,7 +175,7 @@
   },
   "38": {
     "name": "Pugno Dormiente",
-    "description": "Infligge danni fisici a tutti i nemici, ne\nriduce FRZ e può applicare Dormiente.",
+    "description": "Infligge danni fisici a tutti i nemici, ne\nriduce FRZ e può applicare Dormiente. Va a segno\nl'85% delle volte.",
     "message1": "%1 esegue una tecnica ipnotica!",
     "message2": ""
   },
@@ -397,7 +397,7 @@
   },
   "75": {
     "name": "Calci Uragano",
-    "description": "Infligge danni fisici a tutti i nemici sei volte\ne ne riduce DES. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a tutti i nemici sei volte\ne ne riduce DES. Può applicare Sbilanciato.\nColpisce per ultimo. Va a segno l'85% delle\nvolte.",
     "message1": "%1 scatena una raffica di calci!",
     "message2": ""
   },
@@ -409,13 +409,13 @@
   },
   "77": {
     "name": "Colpo Combinato",
-    "description": "Infligge danni fisici a un nemico sei volte e ne\nriduce DES. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a un nemico sei volte e ne\nriduce DES. Può applicare Sbilanciato. Va a\nsegno l'80% delle volte.",
     "message1": "%1 esegue un attacco combo!",
     "message2": ""
   },
   "78": {
     "name": "Lariat",
-    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce DES. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce DES. Può applicare Sbilanciato. Va a\nsegno l'85% delle volte.",
     "message1": "%1 esegue un lariat!",
     "message2": ""
   },
@@ -451,7 +451,7 @@
   },
   "84": {
     "name": "Rissa di Strada",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sbilanciato. Va a segno il\n95% delle volte.",
     "message1": "%1 usa Rissa di Strada!",
     "message2": ""
   },
@@ -469,13 +469,13 @@
   },
   "87": {
     "name": "Raffica di Pugni",
-    "description": "Infligge danni fisici a un nemico sette volte e\nne riduce DES. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a un nemico sette volte e\nne riduce DES. Può applicare Sbilanciato.\nColpisce per ultimo. Va a segno l'85% delle\nvolte.",
     "message1": "%1 scatena una raffica di pugni!",
     "message2": ""
   },
   "88": {
     "name": "Combo Eskrima",
-    "description": "Infligge danni fisici a un nemico cinque volte e\nne riduce DES. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a un nemico cinque volte e\nne riduce DES. Può applicare Sbilanciato.\nColpisce per primo. Va a segno il 90% delle\nvolte.",
     "message1": "%1 esegue combinazioni di Eskrima!",
     "message2": ""
   },
@@ -499,7 +499,7 @@
   },
   "92": {
     "name": "Tripla Proiezione a Ponte",
-    "description": "Infligge danni fisici a un nemico e può\npreparare una Combo. Colpisce per ultimo.",
+    "description": "Infligge danni fisici a un nemico e può\npreparare una Combo. Colpisce per ultimo. Va a\nsegno il 95% delle volte.",
     "message1": "%1 esegue una serie di proiezioni a ponte!",
     "message2": ""
   },
@@ -511,7 +511,7 @@
   },
   "94": {
     "name": "Furia di Gomiti",
-    "description": "Infligge danni fisici a un nemico tre volte e ne\nriduce COS. Può applicare Senza Fiato.",
+    "description": "Infligge danni fisici a un nemico tre volte e ne\nriduce COS. Può applicare Senza Fiato. Colpisce\nper primo.",
     "message1": "%1 scatena una raffica di gomitate!",
     "message2": ""
   },
@@ -547,7 +547,7 @@
   },
   "100": {
     "name": "Combo di Calci Taekwondo",
-    "description": "Infligge danni fisici a un nemico quattro volte\ne può applicare Punto Vitale Esposto.",
+    "description": "Infligge danni fisici a un nemico quattro volte\ne può applicare Punto Vitale Esposto. Va a segno\nil 90% delle volte.",
     "message1": "%1 scatena una raffica di calci!",
     "message2": ""
   },
@@ -565,7 +565,7 @@
   },
   "103": {
     "name": "Tsuppari del Sumo",
-    "description": "Infligge danni fisici a un nemico sei volte e ne\nriduce COS. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a un nemico sei volte e ne\nriduce COS. Può applicare Sbilanciato. Colpisce\nper ultimo. Va a segno l'85% delle volte.",
     "message1": "%1 esegue una spinta di palmo Sumo!",
     "message2": ""
   },
@@ -595,7 +595,7 @@
   },
   "108": {
     "name": "Pugni a Catena",
-    "description": "Infligge danni fisici a un nemico sei volte e ne\nriduce FRZ. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a un nemico sei volte e ne\nriduce FRZ. Può applicare Sbilanciato. Colpisce\nper primo. Va a segno il 90% delle volte.",
     "message1": "%1 scatena pugni a catena!",
     "message2": ""
   },
@@ -649,7 +649,7 @@
   },
   "117": {
     "name": "Sunset Flip",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Senza Fiato.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Senza Fiato. Va a segno il\n95% delle volte.",
     "message1": "%1 esegue un Sunset Flip!",
     "message2": ""
   },
@@ -661,25 +661,25 @@
   },
   "119": {
     "name": "Attacco Duplice",
-    "description": "Colpisce due nemici a caso sei volte e riduce\nDES. Può causare Squilibrio.",
+    "description": "Colpisce due nemici a caso sei volte e riduce\nDES. Può causare Squilibrio. Colpisce per\nultimo. Va a segno l'85% delle volte.",
     "message1": "%1 attacca",
     "message2": ""
   },
   "120": {
     "name": "Attacco Triplo",
-    "description": "Infligge danni fisici a tre nemici a caso\nquattro volte e ne riduce FRZ.",
+    "description": "Infligge danni fisici a tre nemici a caso\nquattro volte e ne riduce FRZ. Va a segno il 90%\ndelle volte.",
     "message1": "%1 attacca",
     "message2": ""
   },
   "121": {
     "name": "Bodyslam",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Guardia Rotta.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Guardia Rotta. Va a segno il\n90% delle volte.",
     "message1": "%1 esegue un bodyslam!",
     "message2": ""
   },
   "122": {
     "name": "Pugno Rapido",
-    "description": "Infligge danni fisici a un nemico quattro volte\ne ne riduce COS. Può applicare Senza Fiato.",
+    "description": "Infligge danni fisici a un nemico quattro volte\ne ne riduce COS. Può applicare Senza Fiato.\nColpisce per primo.",
     "message1": "%1 scatena una raffica di pugni!",
     "message2": ""
   },
@@ -721,7 +721,7 @@
   },
   "129": {
     "name": "Bi-colpo",
-    "description": "Infligge danni fisici a un nemico cinque volte e\npuò applicare Punto Vitale Esposto.",
+    "description": "Infligge danni fisici a un nemico cinque volte e\npuò applicare Punto Vitale Esposto. Va a segno\nl'80% delle volte.",
     "message1": "%1 attacchi doppi!",
     "message2": ""
   },
@@ -763,7 +763,7 @@
   },
   "136": {
     "name": "Pugno dei Cinque Animali",
-    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce COS. Può applicare Guardia Rotta.",
+    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce COS. Può applicare Guardia Rotta. Va a\nsegno il 90% delle volte.",
     "message1": "%1 scatena colpi di Kung Fu!",
     "message2": ""
   },
@@ -799,7 +799,7 @@
   },
   "142": {
     "name": "Mille Pugni",
-    "description": "Infligge danni fisici a un nemico tre volte e ne\nriduce DES. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a un nemico tre volte e ne\nriduce DES. Può applicare Sbilanciato. Colpisce\nper primo.",
     "message1": "%1 usa Mille Pugni!",
     "message2": ""
   },
@@ -823,7 +823,7 @@
   },
   "146": {
     "name": "Ippon Seoi Nage",
-    "description": "Infligge danni fisici a un nemico e può\napplicare Sbilanciato. Colpisce per ultimo.",
+    "description": "Infligge danni fisici a un nemico e può\napplicare Sbilanciato. Colpisce per ultimo. Va a\nsegno il 90% delle volte.",
     "message1": "%1 esegue un perfetto Ippon Seoi Nage!",
     "message2": ""
   },
@@ -841,13 +841,13 @@
   },
   "149": {
     "name": "Avambraccio Volante",
-    "description": "Infligge danni fisici a un nemico e può\napplicare Senza Fiato. Colpisce per ultimo.",
+    "description": "Infligge danni fisici a un nemico e può\napplicare Senza Fiato. Colpisce per ultimo. Va a\nsegno il 95% delle volte.",
     "message1": "%1 esegue uno Smash Volante con l'Avambraccio!",
     "message2": ""
   },
   "150": {
     "name": "Armada",
-    "description": "Infligge danni fisici a tutti i nemici e può\npreparare una Combo. Colpisce per primo.",
+    "description": "Infligge danni fisici a tutti i nemici e può\npreparare una Combo. Colpisce per primo. Va a\nsegno l'85% delle volte.",
     "message1": "%1 esegue un'Armada!",
     "message2": ""
   },
@@ -859,19 +859,19 @@
   },
   "152": {
     "name": "Uki Goshi",
-    "description": "Infligge danni fisici a un nemico e può\npreparare una Combo. Colpisce per ultimo.",
+    "description": "Infligge danni fisici a un nemico e può\npreparare una Combo. Colpisce per ultimo. Va a\nsegno il 90% delle volte.",
     "message1": "%1 esegue un Uki Goshi!",
     "message2": ""
   },
   "153": {
     "name": "Proiezione Aikido",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Senza Fiato.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Senza Fiato. Va a segno il\n90% delle volte.",
     "message1": "%1 esegue una proiezione!",
     "message2": ""
   },
   "154": {
     "name": "Gomitata Volante",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nDES. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nDES. Può applicare Sbilanciato. Va a segno l'85%\ndelle volte.",
     "message1": "%1 esegue un Flying Elbow Drop!",
     "message2": ""
   },
@@ -889,7 +889,7 @@
   },
   "157": {
     "name": "Spezzastirpe",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nDES. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nDES. Può applicare Sbilanciato. Va a segno il\n90% delle volte.",
     "message1": "%1 esegue uno Spezzastirpe!",
     "message2": ""
   },
@@ -1021,7 +1021,7 @@
   },
   "179": {
     "name": "Calcio Rotante",
-    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce FRZ. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce FRZ. Può applicare Sbilanciato. Va a\nsegno il 95% delle volte.",
     "message1": "%1 usa %2",
     "message2": ""
   },
@@ -1051,7 +1051,7 @@
   },
   "184": {
     "name": "Yorikiri del Sumo",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nDES. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nDES. Può applicare Sbilanciato. Va a segno il\n90% delle volte.",
     "message1": "%1 esegue una spinta Sumo!",
     "message2": ""
   },
@@ -1105,7 +1105,7 @@
   },
   "193": {
     "name": "Combo Suprema",
-    "description": "Infligge danni fisici a un nemico cinque volte e\nne riduce DES. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a un nemico cinque volte e\nne riduce DES. Può applicare Sbilanciato. Va a\nsegno l'85% delle volte.",
     "message1": "%1 scatena la combo definitiva!",
     "message2": ""
   },
@@ -1117,19 +1117,19 @@
   },
   "195": {
     "name": "Trivella al Suolo",
-    "description": "Infligge danni fisici a un nemico e può\napplicare Presa. Colpisce per ultimo.",
+    "description": "Infligge danni fisici a un nemico e può\napplicare Presa. Colpisce per ultimo. Va a segno\nil 95% delle volte.",
     "message1": "%1 esegue una Trivella al Suolo!",
     "message2": ""
   },
   "196": {
     "name": "Pugno del Drago",
-    "description": "Infligge danni fisici a un nemico e può\napplicare Commozione Cerebrale.",
+    "description": "Infligge danni fisici a un nemico e può\napplicare Commozione Cerebrale. Va a segno il\n90% delle volte.",
     "message1": "%1 usa la sua tecnica definitiva!",
     "message2": ""
   },
   "197": {
     "name": "Cannone Spirituale",
-    "description": "Infligge danni fisici a un nemico cinque volte e\nne riduce COS. Può applicare Senza Fiato.",
+    "description": "Infligge danni fisici a un nemico cinque volte e\nne riduce COS. Può applicare Senza Fiato. Va a\nsegno l'85% delle volte.",
     "message1": "%1 scatena %2!",
     "message2": ""
   },
@@ -1141,13 +1141,13 @@
   },
   "199": {
     "name": "Segreto del Gran Maestro",
-    "description": "Infligge danni fisici a un nemico tre volte e ne\nriduce COS. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a un nemico tre volte e ne\nriduce COS. Può applicare Sbilanciato. Colpisce\nper primo. Va a segno l'80% delle volte.",
     "message1": "%1 scatena la sua tecnica definitiva!",
     "message2": ""
   },
   "200": {
     "name": "Ira di Asura",
-    "description": "Infligge danni fisici a tutti i nemici e può\napplicare Presa. Colpisce per ultimo.",
+    "description": "Infligge danni fisici a tutti i nemici e può\napplicare Presa. Colpisce per ultimo. Va a segno\nil 90% delle volte.",
     "message1": "%1 usa Ira di Asura!",
     "message2": ""
   },
@@ -1165,7 +1165,7 @@
   },
   "203": {
     "name": "Colpo dello Spirito Drago",
-    "description": "Infligge danni fisici a un nemico tre volte e\npuò applicare Presa. Colpisce per primo.",
+    "description": "Infligge danni fisici a un nemico tre volte e\npuò applicare Presa. Colpisce per primo. Va a\nsegno l'80% delle volte.",
     "message1": "%1 canalizza lo spirito del drago!",
     "message2": ""
   },
@@ -1177,7 +1177,7 @@
   },
   "205": {
     "name": "Finisher Supremo",
-    "description": "Infligge danni fisici a un nemico cinque volte e\nne riduce COS. Può applicare Senza Fiato.",
+    "description": "Infligge danni fisici a un nemico cinque volte e\nne riduce COS. Può applicare Senza Fiato. Va a\nsegno l'85% delle volte.",
     "message1": "%1 scatena la sua mossa finale!",
     "message2": ""
   },
@@ -1213,19 +1213,19 @@
   },
   "211": {
     "name": "Combo di Jab",
-    "description": "Infligge danni fisici a un nemico sei volte e ne\nriduce DES. Colpisce per ultimo.",
+    "description": "Infligge danni fisici a un nemico sei volte e ne\nriduce DES. Colpisce per ultimo. Va a segno\nl'85% delle volte.",
     "message1": "%1 usa Combo di Jab!",
     "message2": ""
   },
   "212": {
     "name": "Paradiso Finale",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sbilanciato. Va a segno il\n90% delle volte.",
     "message1": "%1 scatena Paradiso Finale!",
     "message2": ""
   },
   "213": {
     "name": "Danza della Tigre",
-    "description": "Infligge danni fisici a tutti i nemici cinque\nvolte e ne riduce DES.",
+    "description": "Infligge danni fisici a tutti i nemici cinque\nvolte e ne riduce DES. Va a segno l'85% delle\nvolte.",
     "message1": "%1 usa %2",
     "message2": ""
   },
@@ -1261,13 +1261,13 @@
   },
   "219": {
     "name": "Raffica Acrobatica",
-    "description": "Infligge danni fisici a un nemico sei volte e\npuò applicare Presa. Colpisce per ultimo.",
+    "description": "Infligge danni fisici a un nemico sei volte e\npuò applicare Presa. Colpisce per ultimo. Va a\nsegno l'85% delle volte.",
     "message1": "%1 usa Raffica Acrobatica!",
     "message2": ""
   },
   "220": {
     "name": "Raffica Furiosa",
-    "description": "Infligge danni fisici a un nemico quattro volte\ne può applicare Commozione Cerebrale.",
+    "description": "Infligge danni fisici a un nemico quattro volte\ne può applicare Commozione Cerebrale. Va a segno\nil 90% delle volte.",
     "message1": "%1 usa Raffica Furiosa!",
     "message2": ""
   },
@@ -1291,7 +1291,7 @@
   },
   "224": {
     "name": "Pugno da KO",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Senza Fiato.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Senza Fiato. Va a segno l'80%\ndelle volte.",
     "message1": "%1 usa Pugno da KO!",
     "message2": ""
   },
@@ -1321,13 +1321,13 @@
   },
   "239": {
     "name": "Iaijutsu",
-    "description": "Infligge danni fisici a un nemico e può\napplicare Sanguinamento. Colpisce per ultimo.",
+    "description": "Infligge danni fisici a un nemico e può\napplicare Sanguinamento. Colpisce per ultimo. Va\na segno l'80% delle volte.",
     "message1": "%1 usa Iaijutsu!",
     "message2": ""
   },
   "240": {
     "name": "Affondo di Precisione",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nDES. Può applicare Sanguinamento.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nDES. Può applicare Sanguinamento. Va a segno il\n90% delle volte.",
     "message1": "%1 esegue un affondo preciso!",
     "message2": ""
   },
@@ -1423,7 +1423,7 @@
   },
   "256": {
     "name": "Affondo Rapido",
-    "description": "Infligge danni fisici a un nemico sei volte e ne\nriduce FRZ. Colpisce per primo.",
+    "description": "Infligge danni fisici a un nemico sei volte e ne\nriduce FRZ. Colpisce per primo. Va a segno il\n90% delle volte.",
     "message1": "%1 esegue più affondi!",
     "message2": ""
   },
@@ -1459,7 +1459,7 @@
   },
   "262": {
     "name": "Fendente della Luna Crescente",
-    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce FRZ. Può applicare Sanguinamento.",
+    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce FRZ. Può applicare Sanguinamento. Va a\nsegno l'85% delle volte.",
     "message1": "%1 usa Fendente della Luna Crescente!",
     "message2": ""
   },
@@ -1495,7 +1495,7 @@
   },
   "268": {
     "name": "Schianto Rotante",
-    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce COS. Può applicare Guardia Rotta.",
+    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce COS. Può applicare Guardia Rotta. Va a\nsegno il 90% delle volte.",
     "message1": "%1 falcia il nemico!",
     "message2": ""
   },
@@ -1561,7 +1561,7 @@
   },
   "279": {
     "name": "Iperfendente",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sanguinamento.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sanguinamento. Va a segno\nl'85% delle volte.",
     "message1": "%1 esegue un Hyperslash!",
     "message2": ""
   },
@@ -1729,7 +1729,7 @@
   },
   "317": {
     "name": "Morso",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nFRZ. Può applicare Sanguinamento.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nFRZ. Può applicare Sanguinamento. Va a segno il\n90% delle volte.",
     "message1": "%1 usa Morso!",
     "message2": ""
   },
@@ -1753,7 +1753,7 @@
   },
   "321": {
     "name": "Sventagliata di Tentacoli",
-    "description": "Infligge danni fisici a un nemico sette volte e\nne riduce FRZ. Può applicare Sanguinamento.",
+    "description": "Infligge danni fisici a un nemico sette volte e\nne riduce FRZ. Può applicare Sanguinamento. Va a\nsegno l'80% delle volte.",
     "message1": "%1 attacca con i tentacoli!",
     "message2": ""
   },
@@ -1837,7 +1837,7 @@
   },
   "335": {
     "name": "Fendente Avventato",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nFRZ. Può applicare Sanguinamento.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nFRZ. Può applicare Sanguinamento. Va a segno il\n90% delle volte.",
     "message1": "%1 usa Fendente Avventato!",
     "message2": ""
   },
@@ -1927,7 +1927,7 @@
   },
   "350": {
     "name": "Scuotiterra",
-    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce FRZ. Può applicare Sanguinamento.",
+    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce FRZ. Può applicare Sanguinamento. Va a\nsegno l'85% delle volte.",
     "message1": "%1 usa Scuotiterra!",
     "message2": ""
   },
@@ -1969,7 +1969,7 @@
   },
   "357": {
     "name": "Predatore Alfa",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sanguinamento.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sanguinamento. Va a segno\nl'80% delle volte.",
     "message1": "%1 usa Predatore Alfa!",
     "message2": ""
   },
@@ -1987,7 +1987,7 @@
   },
   "360": {
     "name": "Risveglio del Kaiju",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sanguinamento.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sanguinamento. Va a segno il\n90% delle volte.",
     "message1": "%1 usa Risveglio del Kaiju!",
     "message2": ""
   },
@@ -2191,7 +2191,7 @@
   },
   "402": {
     "name": "TempestaSabbiosa",
-    "description": "Infligge danni di Pietra a tutti i nemici e ne\nriduce COS. Può applicare Galleggiante.",
+    "description": "Infligge danni di Pietra a tutti i nemici e ne\nriduce COS. Può applicare Galleggiante. Va a\nsegno l'85% delle volte.",
     "message1": "%1 usa %2",
     "message2": ""
   },
@@ -2245,7 +2245,7 @@
   },
   "411": {
     "name": "NubeMagnetica",
-    "description": "Infligge danni a tutti i nemici e ne riduce INT.\nPuò applicare Statico. Colpisce per ultimo.",
+    "description": "Infligge danni a tutti i nemici e ne riduce INT.\nPuò applicare Statico. Colpisce per ultimo. Va a\nsegno l'85% delle volte.",
     "message1": "%1 crea disorientamento magnetico!",
     "message2": ""
   },
@@ -2311,7 +2311,7 @@
   },
   "422": {
     "name": "SalvaGelida",
-    "description": "Infligge danni di Ghiaccio a tutti i nemici tre\nvolte e ne riduce DES.",
+    "description": "Infligge danni di Ghiaccio a tutti i nemici tre\nvolte e ne riduce DES. Colpisce per ultimo. Va a\nsegno il 95% delle volte.",
     "message1": "%1 rilascia schegge di ghiaccio!",
     "message2": ""
   },
@@ -2323,13 +2323,13 @@
   },
   "424": {
     "name": "SoppressioneNeurale",
-    "description": "Infligge danni di Fulmine a tutti i nemici e può\napplicare Statico. Colpisce per ultimo.",
+    "description": "Infligge danni di Fulmine a tutti i nemici e può\napplicare Statico. Colpisce per ultimo. Va a\nsegno l'80% delle volte.",
     "message1": "%1 infligge uno shock neurale!",
     "message2": ""
   },
   "425": {
     "name": "ScossaRisonante",
-    "description": "Infligge danni di Fulmine a tutti i nemici e può\napplicare Stordire. Colpisce per ultimo.",
+    "description": "Infligge danni di Fulmine a tutti i nemici e può\napplicare Stordire. Colpisce per ultimo. Va a\nsegno il 90% delle volte.",
     "message1": "%1 crea uno shock di risonanza!",
     "message2": ""
   },
@@ -2383,7 +2383,7 @@
   },
   "434": {
     "name": "Terremoto",
-    "description": "Infligge danni di Pietra a tutti i nemici e ne\nriduce DES. Può applicare Immobilizzato.",
+    "description": "Infligge danni di Pietra a tutti i nemici e ne\nriduce DES. Può applicare Immobilizzato. Va a\nsegno l'85% delle volte.",
     "message1": "%1 provoca un terremoto!",
     "message2": ""
   },
@@ -2401,13 +2401,13 @@
   },
   "437": {
     "name": "InfernoSerpentino",
-    "description": "Infligge danni di Fuoco a tutti i nemici e ne\nriduce COS. Può applicare Caldo.",
+    "description": "Infligge danni di Fuoco a tutti i nemici e ne\nriduce COS. Può applicare Caldo. Va a segno il\n95% delle volte.",
     "message1": "%1 evoca un serpente di fuoco!",
     "message2": ""
   },
   "438": {
     "name": "MaelstromCorrosivo",
-    "description": "Infligge danni d'Acqua a tutti i nemici e può\napplicare Infetto. Colpisce per ultimo.",
+    "description": "Infligge danni d'Acqua a tutti i nemici e può\napplicare Infetto. Colpisce per ultimo. Va a\nsegno il 95% delle volte.",
     "message1": "%1 evoca un vortice corrosivo!",
     "message2": ""
   },
@@ -2425,31 +2425,31 @@
   },
   "441": {
     "name": "ScartoTettonico",
-    "description": "Infligge danni di Pietra a tutti i nemici e ne\nriduce COS. Può applicare Oleoso.",
+    "description": "Infligge danni di Pietra a tutti i nemici e ne\nriduce COS. Può applicare Oleoso. Va a segno il\n95% delle volte.",
     "message1": "%1 innesca uno spostamento tettonico!",
     "message2": ""
   },
   "442": {
     "name": "CicloneLamavento",
-    "description": "Infligge danni di Vento a tutti i nemici tre\nvolte e ne riduce DES. Colpisce per ultimo.",
+    "description": "Infligge danni di Vento a tutti i nemici tre\nvolte e ne riduce DES. Colpisce per ultimo. Va a\nsegno il 95% delle volte.",
     "message1": "%1 scatena un ciclone di lame!",
     "message2": ""
   },
   "443": {
     "name": "DiluvioCorrosivo",
-    "description": "Infligge danni d'Acqua a tutti i nemici e ne\nriduce SAG. Può applicare Nausea.",
+    "description": "Infligge danni d'Acqua a tutti i nemici e ne\nriduce SAG. Può applicare Nausea. Va a segno il\n90% delle volte.",
     "message1": "%1 crea un'ondata di acido!",
     "message2": ""
   },
   "444": {
     "name": "CascataTemporalesca",
-    "description": "Infligge danni di Fulmine a tutti i nemici tre\nvolte e può applicare Paralisi.",
+    "description": "Infligge danni di Fulmine a tutti i nemici tre\nvolte e può applicare Paralisi. Va a segno il\n90% delle volte.",
     "message1": "%1 crea una cascata di fulmini!",
     "message2": ""
   },
   "445": {
     "name": "SovraccaricoSinaptico",
-    "description": "Infligge danni di Fulmine a tutti i nemici e ne\nriduce DES. Può applicare Paralisi.",
+    "description": "Infligge danni di Fulmine a tutti i nemici e ne\nriduce DES. Può applicare Paralisi. Va a segno\nl'85% delle volte.",
     "message1": "%1 crea un campo di sovraccarico neurale!",
     "message2": ""
   },
@@ -2467,7 +2467,7 @@
   },
   "448": {
     "name": "ZeroAssoluto",
-    "description": "Infligge danni di Ghiaccio a tutti i nemici e ne\nriduce DES. Può applicare Congelare.",
+    "description": "Infligge danni di Ghiaccio a tutti i nemici e ne\nriduce DES. Può applicare Congelare. Va a segno\nil 95% delle volte.",
     "message1": "%1 scatena lo zero assoluto!",
     "message2": ""
   },
@@ -2479,7 +2479,7 @@
   },
   "450": {
     "name": "GuglieCristalline",
-    "description": "Infligge danni di Pietra a tutti i nemici e può\napplicare Commozione Cerebrale.",
+    "description": "Infligge danni di Pietra a tutti i nemici e può\napplicare Commozione Cerebrale. Va a segno il\n90% delle volte.",
     "message1": "%1 solleva guglie di cristallo!",
     "message2": ""
   },
@@ -2503,13 +2503,13 @@
   },
   "454": {
     "name": "Temporale",
-    "description": "Infligge danni di Fulmine a tutti i nemici tre\nvolte e ne riduce INT. Colpisce per ultimo.",
+    "description": "Infligge danni di Fulmine a tutti i nemici tre\nvolte e ne riduce INT. Colpisce per ultimo. Va a\nsegno il 90% delle volte.",
     "message1": "%1 evoca una tempesta devastante!",
     "message2": ""
   },
   "455": {
     "name": "NovaSolare",
-    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Acceca. Colpisce per ultimo.",
+    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Acceca. Colpisce per ultimo. Va a\nsegno il 90% delle volte.",
     "message1": "%1 crea un'eruzione solare!",
     "message2": ""
   },
@@ -2605,7 +2605,7 @@
   },
   "471": {
     "name": "ElettroRovina",
-    "description": "Infligge danni di Fulmine a tutti i nemici e può\napplicare Statico. Colpisce per ultimo.",
+    "description": "Infligge danni di Fulmine a tutti i nemici e può\napplicare Statico. Colpisce per ultimo. Va a\nsegno il 90% delle volte.",
     "message1": "%1 casta %2",
     "message2": ""
   },
@@ -2647,7 +2647,7 @@
   },
   "478": {
     "name": "SovraccaricoElettrico",
-    "description": "Infligge danni di Fulmine a un nemico e può\napplicare Silenzio. Colpisce per ultimo.",
+    "description": "Infligge danni di Fulmine a un nemico e può\napplicare Silenzio. Colpisce per ultimo. Va a\nsegno il 90% delle volte.",
     "message1": "%1 canalizza sovraccarico elettrico!",
     "message2": ""
   },
@@ -2989,19 +2989,19 @@
   },
   "545": {
     "name": "PilastriSacri",
-    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Acceca. Colpisce per ultimo.",
+    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Acceca. Colpisce per ultimo. Va a\nsegno il 90% delle volte.",
     "message1": "%1 evoca colonne di fuoco sacro!",
     "message2": ""
   },
   "546": {
     "name": "GiudizioCeleste",
-    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Marchio della morte.",
+    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Marchio della morte. Va a segno il 90%\ndelle volte.",
     "message1": "%1 scatena il giudizio celeste!",
     "message2": ""
   },
   "547": {
     "name": "MartelloDivino",
-    "description": "Infligge danni sacri a un nemico e può applicare\nVulnerabilità. Colpisce per ultimo.",
+    "description": "Infligge danni sacri a un nemico e può applicare\nVulnerabilità. Colpisce per ultimo. Va a segno\nil 95% delle volte.",
     "message1": "%1 evoca un martello divino!",
     "message2": ""
   },
@@ -3013,7 +3013,7 @@
   },
   "549": {
     "name": "GiudizioAngelico",
-    "description": "Infligge danni sacri a tutti i nemici e ne\nriduce INT. Può applicare Acceca. Colpisce per\nultimo.",
+    "description": "Infligge danni sacri a tutti i nemici e ne\nriduce INT. Può applicare Acceca. Colpisce per\nultimo. Va a segno l'85% delle volte.",
     "message1": "%1 evoca un angelo del giudizio!",
     "message2": ""
   },
@@ -3031,7 +3031,7 @@
   },
   "552": {
     "name": "AnnichilimentoDivino",
-    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Vulnerabilità. Colpisce per ultimo.",
+    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Vulnerabilità. Colpisce per ultimo. Va\na segno l'80% delle volte.",
     "message1": "%1 scatena l'annientamento divino!",
     "message2": ""
   },
@@ -3307,7 +3307,7 @@
   },
   "608": {
     "name": "SquarcioReale",
-    "description": "Infligge danni oscuri a tutti i nemici e ne\nriduce INT. Può applicare Vulnerabilità.",
+    "description": "Infligge danni oscuri a tutti i nemici e ne\nriduce INT. Può applicare Vulnerabilità. Va a\nsegno l'85% delle volte.",
     "message1": "%1 crea una frattura nella realtà!",
     "message2": ""
   },
@@ -3319,7 +3319,7 @@
   },
   "610": {
     "name": "DivoraAbisso",
-    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Marchio della morte.",
+    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Marchio della morte. Va a segno l'80%\ndelle volte.",
     "message1": "%1 evoca il vuoto tra i mondi!",
     "message2": ""
   },
@@ -3397,7 +3397,7 @@
   },
   "633": {
     "name": "ContagioNecromantico",
-    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Silenzio. Colpisce per ultimo.",
+    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Silenzio. Colpisce per ultimo. Va a\nsegno il 75% delle volte.",
     "message1": "%1 scatena una piaga necromantica!",
     "message2": ""
   },
@@ -3439,7 +3439,7 @@
   },
   "640": {
     "name": "RitoNecromantico",
-    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Veleno. Colpisce per ultimo.",
+    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Veleno. Colpisce per ultimo. Va a\nsegno il 95% delle volte.",
     "message1": "%1 esegue un rituale necromantico!",
     "message2": ""
   },
@@ -3451,7 +3451,7 @@
   },
   "642": {
     "name": "RitoAnima",
-    "description": "Assorbe HP da un nemico e ne riduce FRZ. Può\napplicare Marchio della morte.",
+    "description": "Assorbe HP da un nemico e ne riduce FRZ. Può\napplicare Marchio della morte. Va a segno l'85%\ndelle volte.",
     "message1": "%1 esegue un rituale che prosciuga l'anima!",
     "message2": ""
   },
@@ -3463,7 +3463,7 @@
   },
   "644": {
     "name": "VitaFurtivus",
-    "description": "Assorbe HP da tutti i nemici e ne riduce COS.\nPuò applicare Infetto. Colpisce per ultimo.",
+    "description": "Assorbe HP da tutti i nemici e ne riduce COS.\nPuò applicare Infetto. Colpisce per ultimo. Va a\nsegno l'85% delle volte.",
     "message1": "%1 drena la forza vitale caotica!",
     "message2": ""
   },
@@ -3535,7 +3535,7 @@
   },
   "666": {
     "name": "ResurrezioneProibita",
-    "description": "Cura Morto a un alleato caduto. Ripristina HP e\nripristina MP. Colpisce per ultimo.",
+    "description": "Cura Morto a un alleato caduto. Ripristina HP e\nripristina MP. Colpisce per ultimo. Va a segno\nl'85% delle volte.",
     "message1": "%1 esegue una resurrezione proibita!",
     "message2": ""
   },
@@ -3565,13 +3565,13 @@
   },
   "671": {
     "name": "VorticeCorruttore",
-    "description": "Infligge danni a un nemico e ne riduce FRZ/COS.\nPuò applicare Silenzio e Rabbia.",
+    "description": "Infligge danni a un nemico e ne riduce FRZ/COS.\nPuò applicare Silenzio e Rabbia. Va a segno il\n95% delle volte.",
     "message1": "%1 crea un vortice di corruzione!",
     "message2": ""
   },
   "672": {
     "name": "PiagaVelenosa",
-    "description": "Infligge danni a tutti i nemici e può applicare\nVeleno e Silenzio. Colpisce per ultimo.",
+    "description": "Infligge danni a tutti i nemici e può applicare\nVeleno e Silenzio. Colpisce per ultimo. Va a\nsegno il 95% delle volte.",
     "message1": "%1 scatena un'invasione di locuste!",
     "message2": ""
   },
@@ -3595,7 +3595,7 @@
   },
   "676": {
     "name": "CorrompiSangue",
-    "description": "Infligge danni a un nemico e ne riduce PSI. Può\napplicare Silenzio. Colpisce per ultimo.",
+    "description": "Infligge danni a un nemico e ne riduce PSI. Può\napplicare Silenzio. Colpisce per ultimo. Va a\nsegno il 90% delle volte.",
     "message1": "%1 esegue un rituale di corruzione del sangue!",
     "message2": ""
   },
@@ -3607,13 +3607,13 @@
   },
   "678": {
     "name": "ContoInesorabile",
-    "description": "Infligge danni oscuri a tutti i nemici e ne\nraddoppia il bottino. Colpisce per ultimo.",
+    "description": "Infligge danni oscuri a tutti i nemici e ne\nraddoppia il bottino. Colpisce per ultimo. Va a\nsegno il 65% delle volte.",
     "message1": "%1 imposta un conto alla rovescia per la morte!",
     "message2": ""
   },
   "679": {
     "name": "VenenumChaos",
-    "description": "Infligge danni a tutti i nemici e applica\nVeleno.",
+    "description": "Infligge danni a tutti i nemici e applica\nVeleno. Colpisce per ultimo. Va a segno il 90%\ndelle volte.",
     "message1": "%1 rilascia una tossina metamorfica!",
     "message2": ""
   },
@@ -3631,13 +3631,13 @@
   },
   "682": {
     "name": "OssaVetro",
-    "description": "Infligge danni di Pietra a un nemico e ne riduce\nDES. Applica Veleno e Stordire.",
+    "description": "Infligge danni di Pietra a un nemico e ne riduce\nDES. Applica Veleno e Stordire. Va a segno il\n90% delle volte.",
     "message1": "%1 trasforma le ossa in vetri rotti!",
     "message2": ""
   },
   "683": {
     "name": "AquaPrimordialis",
-    "description": "Assorbe HP da un nemico a caso e può applicare\nVeleno e Sonno. Colpisce per ultimo.",
+    "description": "Assorbe HP da un nemico a caso e può applicare\nVeleno e Sonno. Colpisce per ultimo. Va a segno\nil 95% delle volte.",
     "message1": "%1 evoca acque primordiali!",
     "message2": ""
   },
@@ -3655,37 +3655,37 @@
   },
   "686": {
     "name": "NidoParassiti",
-    "description": "Infligge danni a tutti i nemici e ne riduce FRZ.\nApplica Veleno e può applicare Confusione.",
+    "description": "Infligge danni a tutti i nemici e ne riduce FRZ.\nApplica Veleno e può applicare Confusione.\nColpisce per ultimo. Va a segno il 90% delle\nvolte.",
     "message1": "%1 evoca parassiti invisibili che scavano la\r\ncarne!",
     "message2": ""
   },
   "687": {
     "name": "RecidiOmbre",
-    "description": "Infligge danni a un nemico e ne riduce COS. Può\napplicare Morto e Acceca. Colpisce per ultimo.",
+    "description": "Infligge danni a un nemico e ne riduce COS. Può\napplicare Morto e Acceca. Colpisce per ultimo.\nVa a segno l'80% delle volte.",
     "message1": "%1 strappa via l'ombra del nemico!",
     "message2": ""
   },
   "688": {
     "name": "CancellazioneEsistenziale",
-    "description": "Infligge danni a un nemico e ne riduce COS/PSI.\nApplica Confusione e può applicare Paralisi.",
+    "description": "Infligge danni a un nemico e ne riduce COS/PSI.\nApplica Confusione e può applicare Paralisi.\nColpisce per ultimo. Va a segno il 75% delle\nvolte.",
     "message1": "%1 cancella temporaneamente il nemico\r\ndall'esistenza!",
     "message2": ""
   },
   "689": {
     "name": "NumerusBestia",
-    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Veleno/Silenzio/Sonno.",
+    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Veleno/Silenzio/Sonno. Va a segno il\n66% delle volte.",
     "message1": "%1 invoca la numerologia proibita!",
     "message2": ""
   },
   "690": {
     "name": "AmplificaDolore",
-    "description": "Infligge danni di Fulmine a un nemico e ne\nriduce FRZ.",
+    "description": "Infligge danni di Fulmine a un nemico e ne\nriduce FRZ. Colpisce per ultimo. Va a segno il\n90% delle volte.",
     "message1": "%1 amplifica tutti i recettori del dolore!",
     "message2": ""
   },
   "691": {
     "name": "TempestasOmnium",
-    "description": "Assorbe HP da un nemico a caso e ne riduce\nFRZ/COS. Può applicare Confusione.",
+    "description": "Assorbe HP da un nemico a caso e ne riduce\nFRZ/COS. Può applicare Confusione. Va a segno il\n90% delle volte.",
     "message1": "%1 evoca una tempesta caotica!",
     "message2": ""
   },
@@ -3703,19 +3703,19 @@
   },
   "694": {
     "name": "EstraiAnima",
-    "description": "Infligge danni oscuri a un nemico e ne riduce\nFRZ/COS. Applica Paralisi e Silenzio.",
+    "description": "Infligge danni oscuri a un nemico e ne riduce\nFRZ/COS. Applica Paralisi e Silenzio. Colpisce\nper ultimo. Va a segno l'80% delle volte.",
     "message1": "%1 esegue l'estrazione dell'anima!",
     "message2": ""
   },
   "695": {
     "name": "CongiuraMorte",
-    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Morto. Colpisce per ultimo.",
+    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Morto. Colpisce per ultimo. Va a segno\nil 65% delle volte.",
     "message1": "%1 evoca la forza della mortalità!",
     "message2": ""
   },
   "696": {
     "name": "TerraFractus",
-    "description": "Infligge danni di Pietra a tutti i nemici e può\napplicare Stordire. Colpisce per ultimo.",
+    "description": "Infligge danni di Pietra a tutti i nemici e può\napplicare Stordire. Colpisce per ultimo. Va a\nsegno il 90% delle volte.",
     "message1": "%1 fa a pezzi la terra!",
     "message2": ""
   },
@@ -3733,19 +3733,19 @@
   },
   "699": {
     "name": "PortaleIncubi",
-    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Confusione. Colpisce per ultimo.",
+    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Confusione. Colpisce per ultimo. Va a\nsegno l'85% delle volte.",
     "message1": "%1 apre una dimensione da incubo!",
     "message2": ""
   },
   "700": {
     "name": "FulmenChaos",
-    "description": "Infligge danni di Fulmine a tutti i nemici tre\nvolte e ne riduce DES. Può applicare Paralisi.",
+    "description": "Infligge danni di Fulmine a tutti i nemici tre\nvolte e ne riduce DES. Può applicare Paralisi.\nColpisce per ultimo. Va a segno il 90% delle\nvolte.",
     "message1": "%1 evoca fulmini caotici!",
     "message2": ""
   },
   "701": {
     "name": "LuxDivinus",
-    "description": "Infligge danni sacri a un nemico a caso e ne\nriduce FRZ/COS/INT. Può applicare Morto.",
+    "description": "Infligge danni sacri a un nemico a caso e ne\nriduce FRZ/COS/INT. Può applicare Morto.\nColpisce per ultimo. Va a segno l'85% delle\nvolte.",
     "message1": "%1 invoca il giudizio divino!",
     "message2": ""
   },
@@ -3763,7 +3763,7 @@
   },
   "704": {
     "name": "UltimumJudicium",
-    "description": "Infligge danni a tutti i nemici e ne riduce\nFRZ/COS/INT/SAG. Può applicare Morto.",
+    "description": "Infligge danni a tutti i nemici e ne riduce\nFRZ/COS/INT/SAG. Può applicare Morto. Va a segno\nil 75% delle volte.",
     "message1": "%1 invoca il giudizio finale!",
     "message2": ""
   },
@@ -3775,13 +3775,13 @@
   },
   "706": {
     "name": "UltimatumCaotico",
-    "description": "Colpisce un nemico a caso, ne riduce le\nstatistiche, infligge malanni e può uccidere.",
+    "description": "Colpisce un nemico a caso, ne riduce le\nstatistiche, infligge malanni e può uccidere.\nColpisce per ultimo. Va a segno l'80% delle\nvolte.",
     "message1": "%1 scatena il caos più assoluto!",
     "message2": ""
   },
   "707": {
     "name": "Xhul'Morketh",
-    "description": "Infligge danni oscuri a tutti i nemici e applica\nSilenzio/Paralisi/Stordire. Può applicare Morto.",
+    "description": "Infligge danni oscuri a tutti i nemici e applica\nSilenzio/Paralisi/Stordire. Può applicare Morto.\nColpisce per ultimo. Va a segno l'80% delle\nvolte.",
     "message1": "%1 sussurra: 'Malkur vy'heem k'goth...'",
     "message2": ""
   },
@@ -3793,13 +3793,13 @@
   },
   "709": {
     "name": "Nil'Zhothep",
-    "description": "Assorbe HP da tutti i nemici e applica diversi\nmalus. Può applicare Morto. Colpisce per ultimo.",
+    "description": "Assorbe HP da tutti i nemici e applica diversi\nmalus. Può applicare Morto. Colpisce per ultimo.\nVa a segno il 75% delle volte.",
     "message1": "%1 occhi sanguinano: 'Nith'ghuloth shar'thrak...'",
     "message2": ""
   },
   "710": {
     "name": "IgnisViventis",
-    "description": "Infligge danni di Fuoco a un nemico a caso e ne\nriduce FRZ/INT/COS/SAG. Colpisce per ultimo.",
+    "description": "Infligge danni di Fuoco a un nemico a caso e ne\nriduce FRZ/INT/COS/SAG. Colpisce per ultimo. Va\na segno il 90% delle volte.",
     "message1": "%1 diventa una fiamma del caos vivente!",
     "message2": ""
   },
@@ -3811,13 +3811,13 @@
   },
   "712": {
     "name": "Nozh'Krathek",
-    "description": "Colpisce un nemico a caso, ne riduce FRZ/COS/INT\ne infligge vari malanni. Può uccidere.",
+    "description": "Colpisce un nemico a caso, ne riduce FRZ/COS/INT\ne infligge vari malanni. Può uccidere. Colpisce\nper ultimo. Va a segno il 90% delle volte.",
     "message1": "%1 canta: 'Vruk'nath shar'goleth!'",
     "message2": ""
   },
   "713": {
     "name": "Ur'Akimoth",
-    "description": "Infligge danni oscuri a tutti i nemici e ne\nriduce FRZ/COS/INT/SAG. Può applicare Morto.",
+    "description": "Infligge danni oscuri a tutti i nemici e ne\nriduce FRZ/COS/INT/SAG. Può applicare Morto. Va\na segno il 75% delle volte.",
     "message1": "%1 parla al contrario: 'Htoysgoy'T pehtos'goyn...'",
     "message2": ""
   },
@@ -3829,13 +3829,13 @@
   },
   "715": {
     "name": "MortalitàMultiversale",
-    "description": "Infligge danni fisici a un nemico otto volte e\nne riduce COS. Colpisce per ultimo.",
+    "description": "Infligge danni fisici a un nemico otto volte e\nne riduce COS. Colpisce per ultimo. Va a segno\nl'85% delle volte.",
     "message1": "%1 rivela tutte le possibili morti!",
     "message2": ""
   },
   "716": {
     "name": "Vril'Nazoketh",
-    "description": "Danni elettrici a tutti i nemici, riduce quattro\nstatistiche, infligge vari malanni.",
+    "description": "Danni elettrici a tutti i nemici, riduce quattro\nstatistiche, infligge vari malanni. Colpisce per\nultimo. Va a segno il 90% delle volte.",
     "message1": "%1 urla: 'Kl'yex nazog'eth vril'qux!'",
     "message2": ""
   },
@@ -3853,19 +3853,19 @@
   },
   "719": {
     "name": "Zin'Tharaq",
-    "description": "Danni pietrificanti a tutti i nemici, ne riduce\ntutte le statistiche, infligge vari malanni.",
+    "description": "Danni pietrificanti a tutti i nemici, ne riduce\ntutte le statistiche, infligge vari malanni.\nColpisce per ultimo. Va a segno l'80% delle\nvolte.",
     "message1": "La voce di %1 riecheggia: 'Quhl'nek zin'thrak volguth...'",
     "message2": ""
   },
   "720": {
     "name": "Yog'Thulex",
-    "description": "Danni sacri a un nemico a caso, ne riduce tutte\nle statistiche, infligge vari malanni.",
+    "description": "Danni sacri a un nemico a caso, ne riduce tutte\nle statistiche, infligge vari malanni. Colpisce\nper ultimo. Va a segno il 70% delle volte.",
     "message1": "%1 sangue ribolle: 'YTH'NAX ZHUL'GUROTH NAQ'THEL!'",
     "message2": ""
   },
   "721": {
     "name": "ObliterazioneEsistenziale",
-    "description": "Colpisce un nemico, ne riduce le statistiche,\ninfligge malanni e può uccidere.",
+    "description": "Colpisce un nemico, ne riduce le statistiche,\ninfligge malanni e può uccidere. Colpisce per\nultimo. Va a segno il 70% delle volte.",
     "message1": "%1 cancella il nemico dall'esistenza!",
     "message2": ""
   },
@@ -3877,19 +3877,19 @@
   },
   "723": {
     "name": "Azath'Othep",
-    "description": "Infligge danni a un nemico a caso e ne riduce\ntutte le statistiche. Applica diversi malus.",
+    "description": "Infligge danni a un nemico a caso e ne riduce\ntutte le statistiche. Applica diversi malus.\nColpisce per ultimo.",
     "message1": "%1 infrange la realtà: 'KTHUL'ZHOTEP nITH'GHULOQ\r\nyOG'XHUL!'",
     "message2": ""
   },
   "724": {
     "name": "Thezom'Vrux",
-    "description": "Infligge danni a un nemico a caso e ne riduce\ntutte le statistiche.",
+    "description": "Infligge danni a un nemico a caso e ne riduce\ntutte le statistiche. Colpisce per ultimo. Va a\nsegno l'85% delle volte.",
     "message1": "%1 urla: \"'VYR'ZHUL NAQU'ETH FHA'GON!\"",
     "message2": ""
   },
   "725": {
     "name": "Fhor'Qithor",
-    "description": "Infligge danni di Fuoco a tutti i nemici e\napplica diversi malus. Colpisce per ultimo.",
+    "description": "Infligge danni di Fuoco a tutti i nemici e\napplica diversi malus. Colpisce per ultimo. Va a\nsegno l'85% delle volte.",
     "message1": "%1 intona: 'Zhul'thrak nyg'lathotep...'",
     "message2": ""
   },
@@ -3949,13 +3949,13 @@
   },
   "745": {
     "name": "VorticeSpirituale",
-    "description": "Infligge danni di Pietra a tutti i nemici e può\napplicare Oleoso. Colpisce per ultimo.",
+    "description": "Infligge danni di Pietra a tutti i nemici e può\napplicare Oleoso. Colpisce per ultimo. Va a\nsegno il 90% delle volte.",
     "message1": "%1 crea un campo che prosciuga lo spirito!",
     "message2": ""
   },
   "746": {
     "name": "FrammentoStellare",
-    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Acceca. Colpisce per ultimo.",
+    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Acceca. Colpisce per ultimo. Va a\nsegno il 90% delle volte.",
     "message1": "%1 crea un frammento di stella!",
     "message2": ""
   },
@@ -3967,7 +3967,7 @@
   },
   "748": {
     "name": "SilenziatoreGravitico",
-    "description": "Infligge danni di Pietra a tutti i nemici e può\napplicare Stordire e Silenzio.",
+    "description": "Infligge danni di Pietra a tutti i nemici e può\napplicare Stordire e Silenzio. Va a segno l'85%\ndelle volte.",
     "message1": "%1 crea un'anomalia gravitazionale!",
     "message2": ""
   },
@@ -3979,7 +3979,7 @@
   },
   "750": {
     "name": "TemporisDistortio",
-    "description": "Infligge danni a tutti i nemici e può applicare\nParalisi e Stordire. Colpisce per ultimo.",
+    "description": "Infligge danni a tutti i nemici e può applicare\nParalisi e Stordire. Colpisce per ultimo. Va a\nsegno l'85% delle volte.",
     "message1": "%1 distorce il flusso del tempo!",
     "message2": ""
   },
@@ -3991,7 +3991,7 @@
   },
   "752": {
     "name": "NessoTemporale",
-    "description": "Infligge danni a tutti i nemici e ne riduce DES.\nApplica Confusione. Colpisce per ultimo.",
+    "description": "Infligge danni a tutti i nemici e ne riduce DES.\nApplica Confusione. Colpisce per ultimo. Va a\nsegno il 90% delle volte.",
     "message1": "%1 crea una distorsione temporale!",
     "message2": ""
   },
@@ -4003,7 +4003,7 @@
   },
   "754": {
     "name": "ImpattoStellare",
-    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Acceca. Colpisce per ultimo.",
+    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Acceca. Colpisce per ultimo. Va a\nsegno il 95% delle volte.",
     "message1": "%1 provoca un impatto stellare!",
     "message2": ""
   },
@@ -4075,7 +4075,7 @@
   },
   "776": {
     "name": "MietiSogni",
-    "description": "Assorbe HP da un nemico e ne riduce INT. Può\napplicare Silenzio. Colpisce per ultimo.",
+    "description": "Assorbe HP da un nemico e ne riduce INT. Può\napplicare Silenzio. Colpisce per ultimo. Va a\nsegno il 95% delle volte.",
     "message1": "%1 raccoglie l'energia dei sogni!",
     "message2": ""
   },
@@ -4159,7 +4159,7 @@
   },
   "790": {
     "name": "AnnichilimentoArcano",
-    "description": "Infligge danni di Fulmine a tutti i nemici e può\napplicare Confusione. Colpisce per ultimo.",
+    "description": "Infligge danni di Fulmine a tutti i nemici e può\napplicare Confusione. Colpisce per ultimo. Va a\nsegno l'80% delle volte.",
     "message1": "%1 scatena l'annientamento arcano!",
     "message2": ""
   },
@@ -4267,7 +4267,7 @@
   },
   "818": {
     "name": "MaledizioneFiaccante",
-    "description": "Riduce FRZ/COS/DES di tutti i nemici. Può\napplicare Vulnerabilità. Colpisce per ultimo.",
+    "description": "Riduce FRZ/COS/DES di tutti i nemici. Può\napplicare Vulnerabilità. Colpisce per ultimo. Va\na segno il 90% delle volte.",
     "message1": "%1 lancia una maledizione di indebolimento!",
     "message2": ""
   },
@@ -4285,7 +4285,7 @@
   },
   "821": {
     "name": "InversioneSensoriale",
-    "description": "Riduce FRZ/INT di un nemico. Può applicare\nConfusione e Sbilanciato. Colpisce per ultimo.",
+    "description": "Riduce FRZ/INT di un nemico. Può applicare\nConfusione e Sbilanciato. Colpisce per ultimo.\nVa a segno l'80% delle volte.",
     "message1": "%1 inverte i sensi!",
     "message2": ""
   },
@@ -4321,7 +4321,7 @@
   },
   "827": {
     "name": "NebbiaAccecante",
-    "description": "Riduce PSI di tutti i nemici e può applicare\nCecità. Colpisce per ultimo.",
+    "description": "Riduce PSI di tutti i nemici e può applicare\nCecità. Colpisce per ultimo. Va a segno il 90%\ndelle volte.",
     "message1": "%1 crea una nube oscura!",
     "message2": ""
   },
@@ -4411,7 +4411,7 @@
   },
   "842": {
     "name": "CerchioAbilità",
-    "description": "Infligge danni a tutti i nemici e ne riduce\nFRZ/INT/DES. Può applicare Rabbia.",
+    "description": "Infligge danni a tutti i nemici e ne riduce\nFRZ/INT/DES. Può applicare Rabbia. Va a segno\nl'85% delle volte.",
     "message1": "%1 crea un cerchio di simboli arcani!",
     "message2": ""
   },
@@ -4423,7 +4423,7 @@
   },
   "844": {
     "name": "MilleMorti",
-    "description": "Infligge danni a un nemico e ne riduce INT/SAG.\nApplica Sonno e Confusione. Colpisce per ultimo.",
+    "description": "Infligge danni a un nemico e ne riduce INT/SAG.\nApplica Sonno e Confusione. Colpisce per ultimo.\nVa a segno l'85% delle volte.",
     "message1": "%1 provoca mille visioni di morte!",
     "message2": ""
   },
@@ -4471,7 +4471,7 @@
   },
   "852": {
     "name": "InvecchiamentoInverso",
-    "description": "Infligge danni a un nemico e ne riduce\nFRZ/COS/DES. Può applicare Morto.",
+    "description": "Infligge danni a un nemico e ne riduce\nFRZ/COS/DES. Può applicare Morto. Va a segno il\n75% delle volte.",
     "message1": "%1 crea una sacca temporale inversa!",
     "message2": ""
   },
@@ -4681,7 +4681,7 @@
   },
   "898": {
     "name": "Nube Allucinogena",
-    "description": "Infligge danni a tutti i nemici e ne riduce DES.\nPuò applicare Confusione. Colpisce per ultimo.",
+    "description": "Infligge danni a tutti i nemici e ne riduce DES.\nPuò applicare Confusione. Colpisce per ultimo.\nVa a segno l'85% delle volte.",
     "message1": "%1 rilascia spore allucinogene!",
     "message2": ""
   },
@@ -4741,7 +4741,7 @@
   },
   "918": {
     "name": "Furia di Motosega",
-    "description": "Infligge danni fisici a tutti i nemici due volte\ne ne riduce FRZ. Può applicare Sanguinamento.",
+    "description": "Infligge danni fisici a tutti i nemici due volte\ne ne riduce FRZ. Può applicare Sanguinamento.\nColpisce per primo.",
     "message1": "%1 usa Furia di Motosega!",
     "message2": ""
   },
@@ -4897,7 +4897,7 @@
   },
   "954": {
     "name": "Drena Concetti",
-    "description": "Assorbe MP da un nemico e ne riduce INT. Può\napplicare Silenzio. Colpisce per ultimo.",
+    "description": "Assorbe MP da un nemico e ne riduce INT. Può\napplicare Silenzio. Colpisce per ultimo. Va a\nsegno l'80% delle volte.",
     "message1": "%1 prosciuga i concetti!",
     "message2": ""
   },
@@ -4909,7 +4909,7 @@
   },
   "956": {
     "name": "Trance Ipnotica",
-    "description": "Infligge danni a tutti i nemici e può applicare\nSonno e Fascino. Colpisce per ultimo.",
+    "description": "Infligge danni a tutti i nemici e può applicare\nSonno e Fascino. Colpisce per ultimo. Va a segno\nil 75% delle volte.",
     "message1": "%1 crea uno schema ipnotico!",
     "message2": ""
   },
@@ -4945,7 +4945,7 @@
   },
   "962": {
     "name": "Cascata di Trauma PSI",
-    "description": "Infligge danni a un nemico e ne riduce INT/SAG.\nApplica Confusione e può applicare Sonno.",
+    "description": "Infligge danni a un nemico e ne riduce INT/SAG.\nApplica Confusione e può applicare Sonno.\nColpisce per ultimo. Va a segno l'85% delle\nvolte.",
     "message1": "%1 crea una cascata di traumi!",
     "message2": ""
   },
@@ -4987,7 +4987,7 @@
   },
   "969": {
     "name": "Ciclo di Memoria PSI",
-    "description": "Infligge danni oscuri a un nemico e ne riduce\nINT/SAG. Applica Confusione.",
+    "description": "Infligge danni oscuri a un nemico e ne riduce\nINT/SAG. Applica Confusione. Va a segno l'85%\ndelle volte.",
     "message1": "%1 intrappola il nemico nel suo peggior ricordo!",
     "message2": ""
   },
@@ -5119,7 +5119,7 @@
   },
   "1001": {
     "name": "Afflizione Incurabile",
-    "description": "Infligge danni a tutti i nemici e ne riduce COS.\nPuò applicare Veleno. Colpisce per ultimo.",
+    "description": "Infligge danni a tutti i nemici e ne riduce COS.\nPuò applicare Veleno. Colpisce per ultimo. Va a\nsegno l'85% delle volte.",
     "message1": "%1 scatena una tossina incurabile!",
     "message2": ""
   },
@@ -5317,13 +5317,13 @@
   },
   "1044": {
     "name": "Salva di Munizioni Speciali",
-    "description": "Infligge danni fisici a tutti i nemici tre volte\ne ne riduce FRZ. Può applicare Sanguinamento.",
+    "description": "Infligge danni fisici a tutti i nemici tre volte\ne ne riduce FRZ. Può applicare Sanguinamento.\nColpisce per primo. Va a segno il 90% delle\nvolte.",
     "message1": "%1 scatena una speciale raffica di munizioni!",
     "message2": ""
   },
   "1045": {
     "name": "Sbarramento di Proiettili",
-    "description": "Infligge danni fisici a tutti i nemici quattro\nvolte e ne riduce FRZ.",
+    "description": "Infligge danni fisici a tutti i nemici quattro\nvolte e ne riduce FRZ. Va a segno l'80% delle\nvolte.",
     "message1": "%1 scatena una raffica di proiettili!",
     "message2": ""
   },
@@ -5365,7 +5365,7 @@
   },
   "1052": {
     "name": "Scarica di Caricatore",
-    "description": "Infligge danni fisici a un nemico e può\napplicare Sanguinamento. Colpisce per ultimo.",
+    "description": "Infligge danni fisici a un nemico e può\napplicare Sanguinamento. Colpisce per ultimo. Va\na segno il 95% delle volte.",
     "message1": "%1 utilizza la scarica completa della clip!",
     "message2": ""
   },
@@ -5413,7 +5413,7 @@
   },
   "1070": {
     "name": "Brodo Bollente",
-    "description": "Infligge danni d'Acqua a tutti i nemici e può\napplicare Bruciato. Colpisce per primo.",
+    "description": "Infligge danni d'Acqua a tutti i nemici e può\napplicare Bruciato. Colpisce per primo. Va a\nsegno l'85% delle volte.",
     "message1": "%1 schizza zuppa bollente!",
     "message2": ""
   },
@@ -5545,7 +5545,7 @@
   },
   "1102": {
     "name": "Dissonanza Armonica",
-    "description": "Infligge danni a tutti i nemici e ne riduce INT.\nPuò applicare Silenzio. Colpisce per ultimo.",
+    "description": "Infligge danni a tutti i nemici e ne riduce INT.\nPuò applicare Silenzio. Colpisce per ultimo. Va\na segno il 90% delle volte.",
     "message1": "%1 crea dissonanza armonica!",
     "message2": ""
   },
@@ -5605,7 +5605,7 @@
   },
   "1112": {
     "name": "Proiezione a Ponte dei Massimi",
-    "description": "Infligge danni fisici a un nemico e può\napplicare Stordire. Colpisce per ultimo.",
+    "description": "Infligge danni fisici a un nemico e può\napplicare Stordire. Colpisce per ultimo. Va a\nsegno il 90% delle volte.",
     "message1": "%1 usa Proiezione a Ponte dei Massimi!",
     "message2": ""
   },
@@ -5647,7 +5647,7 @@
   },
   "1119": {
     "name": "Gran Finale",
-    "description": "Infligge danni fisici a tutti i nemici tre volte\ne può applicare Guardia Rotta.",
+    "description": "Infligge danni fisici a tutti i nemici tre volte\ne può applicare Guardia Rotta. Va a segno l'80%\ndelle volte.",
     "message1": "%1 usa Gran Finale!",
     "message2": ""
   },
@@ -5881,7 +5881,7 @@
   },
   "1168": {
     "name": "Impennata di Efficienza",
-    "description": "Concede a un alleato un'azione extra in questo\nturno.",
+    "description": "Concede a un alleato un'azione extra in questo\nturno. Colpisce per primo.",
     "message1": "%1 aumenta la produttività al massimo!",
     "message2": ""
   },
@@ -6145,13 +6145,13 @@
   },
   "1222": {
     "name": "Manichetta",
-    "description": "Infligge danni d'Acqua a tutti i nemici e può\napplicare Bagnato. Colpisce per primo.",
+    "description": "Infligge danni d'Acqua a tutti i nemici e può\napplicare Bagnato. Colpisce per primo. Va a\nsegno l'85% delle volte.",
     "message1": "%1 usa Manichetta!",
     "message2": ""
   },
   "1223": {
     "name": "Sovraccarico di Circuito",
-    "description": "Infligge danni di Fulmine a tutti i nemici e può\napplicare Paralisi. Colpisce per ultimo.",
+    "description": "Infligge danni di Fulmine a tutti i nemici e può\napplicare Paralisi. Colpisce per ultimo. Va a\nsegno il 95% delle volte.",
     "message1": "%1 causa un sovraccarico del circuito!",
     "message2": ""
   },
@@ -6199,7 +6199,7 @@
   },
   "1231": {
     "name": "Giustizia Fatta",
-    "description": "Infligge danni fisici a un nemico e può\napplicare Sbilanciato. Colpisce per ultimo.",
+    "description": "Infligge danni fisici a un nemico e può\napplicare Sbilanciato. Colpisce per ultimo. Va a\nsegno il 90% delle volte.",
     "message1": "%1 usa Giustizia Fatta!",
     "message2": ""
   },
@@ -6481,13 +6481,13 @@
   },
   "1298": {
     "name": "SguardoMilleOcchi",
-    "description": "Infligge danni a tutti i nemici tre volte e ne\nriduce INT. Colpisce per ultimo.",
+    "description": "Infligge danni a tutti i nemici tre volte e ne\nriduce INT. Colpisce per ultimo. Va a segno il\n95% delle volte.",
     "message1": "%1 evoca occhi che osservano!",
     "message2": ""
   },
   "1299": {
     "name": "SciameFuochiFatui",
-    "description": "Colpisce tutti i nemici tre volte, riduce PSI e\nchiama le fate. Può confondere.",
+    "description": "Colpisce tutti i nemici tre volte, riduce PSI e\nchiama le fate. Può confondere. Colpisce per\nultimo. Va a segno il 90% delle volte.",
     "message1": "%1 evoca sciami di fuochi fatui!",
     "message2": ""
   },
@@ -6499,13 +6499,13 @@
   },
   "1301": {
     "name": "EvocazioneUrlante",
-    "description": "Colpisce tutti i nemici e risveglia i non morti.\nPuò confondere e addormentare.",
+    "description": "Colpisce tutti i nemici e risveglia i non morti.\nPuò confondere e addormentare. Colpisce per\nultimo. Va a segno il 90% delle volte.",
     "message1": "%1 evoca teschi urlanti!",
     "message2": ""
   },
   "1302": {
     "name": "VuotoViticci",
-    "description": "Infligge danni oscuri a un nemico e chiama un\nprole del vuoto. Può paralizzare.",
+    "description": "Infligge danni oscuri a un nemico e chiama un\nprole del vuoto. Può paralizzare. Colpisce per\nultimo. Va a segno il 95% delle volte.",
     "message1": "%1 evoca viticci del vuoto!",
     "message2": ""
   },
@@ -6517,31 +6517,31 @@
   },
   "1304": {
     "name": "InfernalPortale",
-    "description": "Danni oscuri a tutti i nemici, apre un varco\ndemoniaco. Può uccidere.",
+    "description": "Danni oscuri a tutti i nemici, apre un varco\ndemoniaco. Può uccidere. Colpisce per ultimo. Va\na segno l'85% delle volte.",
     "message1": "%1 apre un portale degli inferi!",
     "message2": ""
   },
   "1305": {
     "name": "TetroMietitore",
-    "description": "Danni oscuri a tutti i nemici e risveglia\nl'ultimo caduto. Può uccidere.",
+    "description": "Danni oscuri a tutti i nemici e risveglia\nl'ultimo caduto. Può uccidere. Colpisce per\nultimo. Va a segno il 90% delle volte.",
     "message1": "%1 evoca il mietitore!",
     "message2": ""
   },
   "1306": {
     "name": "TentacoliAbissali",
-    "description": "Colpisce un nemico, ne riduce FRZ/COS e desta un\ntitano. Può zittire.",
+    "description": "Colpisce un nemico, ne riduce FRZ/COS e desta un\ntitano. Può zittire. Colpisce per ultimo. Va a\nsegno l'85% delle volte.",
     "message1": "%1 apre un portale per l'abisso!",
     "message2": ""
   },
   "1307": {
     "name": "CatastrofeDemoniaca",
-    "description": "Colpisce tutti i nemici, chiama un demone e\ninfligge vari malanni.",
+    "description": "Colpisce tutti i nemici, chiama un demone e\ninfligge vari malanni. Colpisce per ultimo. Va a\nsegno il 75% delle volte.",
     "message1": "%1 invoca un antico nome demoniaco!",
     "message2": ""
   },
   "1308": {
     "name": "EntitàVuoto",
-    "description": "Assorbe HP da tutti i nemici e chiama un prole\ndel vuoto. Colpisce per ultimo.",
+    "description": "Assorbe HP da tutti i nemici e chiama un prole\ndel vuoto. Colpisce per ultimo. Va a segno l'80%\ndelle volte.",
     "message1": "%1 evoca un'entità divoratrice!",
     "message2": ""
   },
@@ -6631,7 +6631,7 @@
   },
   "1333": {
     "name": "DisgregazioneTotale",
-    "description": "Infligge danni a tutti i nemici e ne riduce DES.\nApplica Acceca e Confusione.",
+    "description": "Infligge danni a tutti i nemici e ne riduce DES.\nApplica Acceca e Confusione. Va a segno l'85%\ndelle volte.",
     "message1": "%1 crea una totale interruzione sensoriale!",
     "message2": ""
   },
@@ -6643,7 +6643,7 @@
   },
   "1335": {
     "name": "BaglioreOculare",
-    "description": "Infligge danni a tutti i nemici e ne riduce PSI.\nApplica Acceca. Colpisce per ultimo.",
+    "description": "Infligge danni a tutti i nemici e ne riduce PSI.\nApplica Acceca. Colpisce per ultimo. Va a segno\nil 95% delle volte.",
     "message1": "%1 crea un lampo accecante!",
     "message2": ""
   },
@@ -6661,19 +6661,19 @@
   },
   "1338": {
     "name": "MarchioDannato",
-    "description": "Infligge danni a un nemico e ne riduce DES. Può\napplicare Silenzio. Colpisce per ultimo.",
+    "description": "Infligge danni a un nemico e ne riduce DES. Può\napplicare Silenzio. Colpisce per ultimo. Va a\nsegno l'85% delle volte.",
     "message1": "%1 pone il marchio della dannazione!",
     "message2": ""
   },
   "1339": {
     "name": "VisioneIncubo",
-    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Confusione e Veleno.",
+    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Confusione e Veleno. Va a segno l'80%\ndelle volte.",
     "message1": "%1 evoca visioni da incubo!",
     "message2": ""
   },
   "1340": {
     "name": "MaelstromTossico",
-    "description": "Infligge danni di Vento a tutti i nemici, ne\nriduce COS/SAG e può applicare Veleno.",
+    "description": "Infligge danni di Vento a tutti i nemici, ne\nriduce COS/SAG e può applicare Veleno. Va a\nsegno il 95% delle volte.",
     "message1": "%1 crea un vortice tossico!",
     "message2": ""
   },
@@ -6691,7 +6691,7 @@
   },
   "1343": {
     "name": "NessoACascata",
-    "description": "Infligge danni a tutti i nemici e può applicare\ndiversi malus. Colpisce per ultimo.",
+    "description": "Infligge danni a tutti i nemici e può applicare\ndiversi malus. Colpisce per ultimo. Va a segno\nil 75% delle volte.",
     "message1": "%1 scatena una maledizione a cascata!",
     "message2": ""
   },
@@ -8119,7 +8119,7 @@
   },
   "1722": {
     "name": "OndaMarea",
-    "description": "Infligge danni d'Acqua a tutti i nemici e può\napplicare Nausea. Colpisce per primo.",
+    "description": "Infligge danni d'Acqua a tutti i nemici e può\napplicare Nausea. Colpisce per primo. Va a segno\nl'85% delle volte.",
     "message1": "%1 scatena OndaMarea!",
     "message2": ""
   },
@@ -8173,7 +8173,7 @@
   },
   "1731": {
     "name": "Giudizio",
-    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Acceca. Colpisce per ultimo.",
+    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Acceca. Colpisce per ultimo. Va a\nsegno l'80% delle volte.",
     "message1": "%1 scatena Giudizio!",
     "message2": ""
   },
@@ -8185,13 +8185,13 @@
   },
   "1733": {
     "name": "SaettaOmbrosa",
-    "description": "Infligge danni oscuri a un nemico e ne riduce\nINT. Può applicare Vulnerabilità.",
+    "description": "Infligge danni oscuri a un nemico e ne riduce\nINT. Può applicare Vulnerabilità. Va a segno\nl'85% delle volte.",
     "message1": "%1 scatena SaettaDOmbra!",
     "message2": ""
   },
   "1734": {
     "name": "PresagioFunesto",
-    "description": "Infligge danni oscuri a tutti i nemici e ne\nriduce PSI. Può applicare Vulnerabilità.",
+    "description": "Infligge danni oscuri a tutti i nemici e ne\nriduce PSI. Può applicare Vulnerabilità. Va a\nsegno il 90% delle volte.",
     "message1": "%1 scatena PresagioFunesto!",
     "message2": ""
   },
@@ -8311,7 +8311,7 @@
   },
   "1754": {
     "name": "OndaDiluvio",
-    "description": "Infligge danni d'Acqua a tutti i nemici e può\napplicare Sonno. Colpisce per primo.",
+    "description": "Infligge danni d'Acqua a tutti i nemici e può\napplicare Sonno. Colpisce per primo. Va a segno\nl'85% delle volte.",
     "message1": "%1 scatena OndaDiluvio!",
     "message2": ""
   },
@@ -8371,7 +8371,7 @@
   },
   "1764": {
     "name": "NovaSacra",
-    "description": "Infligge danni sacri a tutti i nemici e ne\nriduce FRZ. Può applicare Marchio della morte.",
+    "description": "Infligge danni sacri a tutti i nemici e ne\nriduce FRZ. Può applicare Marchio della morte.\nVa a segno il 90% delle volte.",
     "message1": "%1 scatena NovaSacra!",
     "message2": ""
   },
@@ -8389,7 +8389,7 @@
   },
   "1767": {
     "name": "RaggioEclittico",
-    "description": "Infligge danni oscuri a tutti i nemici e ne\nriduce SAG. Può applicare Vulnerabilità.",
+    "description": "Infligge danni oscuri a tutti i nemici e ne\nriduce SAG. Può applicare Vulnerabilità. Va a\nsegno il 95% delle volte.",
     "message1": "%1 scatena RaggioDEclissi!",
     "message2": ""
   },
@@ -8503,7 +8503,7 @@
   },
   "1786": {
     "name": "Calcio Girato",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sbilanciato. Va a segno il\n90% delle volte.",
     "message1": "%1 usa Calcio a Giro!",
     "message2": ""
   },
@@ -8515,7 +8515,7 @@
   },
   "1788": {
     "name": "Doppio Fendente",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sbilanciato.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sbilanciato. Va a segno l'85%\ndelle volte.",
     "message1": "%1 usa Doppio Fendente!",
     "message2": ""
   },
@@ -8605,7 +8605,7 @@
   },
   "1803": {
     "name": "Colpo di Becco",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sanguinamento.",
+    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sanguinamento. Va a segno il\n90% delle volte.",
     "message1": "%1 usa Colpo di Becco!",
     "message2": ""
   },
@@ -8725,7 +8725,7 @@
   },
   "1823": {
     "name": "FronteTempesta",
-    "description": "Infligge danni di Vento a tutti i nemici e ne\nriduce SAG. Può applicare Galleggiante.",
+    "description": "Infligge danni di Vento a tutti i nemici e ne\nriduce SAG. Può applicare Galleggiante. Va a\nsegno il 95% delle volte.",
     "message1": "%1 fonde Fulmine+Vento!",
     "message2": ""
   },
@@ -8767,7 +8767,7 @@
   },
   "1830": {
     "name": "Tempesta",
-    "description": "Infligge danni di Vento a tutti i nemici e ne\nriduce DES. Può applicare Senza Fiato.",
+    "description": "Infligge danni di Vento a tutti i nemici e ne\nriduce DES. Può applicare Senza Fiato. Va a\nsegno l'85% delle volte.",
     "message1": "%1 fonde Fulmine+Vento+Acqua!",
     "message2": ""
   },
@@ -8815,7 +8815,7 @@
   },
   "1838": {
     "name": "MareaRadiante",
-    "description": "Infligge danni d'Acqua a tutti i nemici e può\napplicare Confusione. Colpisce per primo.",
+    "description": "Infligge danni d'Acqua a tutti i nemici e può\napplicare Confusione. Colpisce per primo. Va a\nsegno l'85% delle volte.",
     "message1": "%1 fonde Acqua+Sacro!",
     "message2": ""
   },
@@ -8887,7 +8887,7 @@
   },
   "1850": {
     "name": "NovaCadente",
-    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Silenzio. Colpisce per primo.",
+    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Silenzio. Colpisce per primo. Va a\nsegno l'85% delle volte.",
     "message1": "%1 scatena %2!",
     "message2": ""
   },
@@ -8911,7 +8911,7 @@
   },
   "1854": {
     "name": "SismaCristallo",
-    "description": "Infligge danni di Pietra a tutti i nemici e ne\nriduce COS. Può applicare Oleoso.",
+    "description": "Infligge danni di Pietra a tutti i nemici e ne\nriduce COS. Può applicare Oleoso. Va a segno\nl'85% delle volte.",
     "message1": "%1 scatena %2!",
     "message2": ""
   },
@@ -9127,7 +9127,7 @@
   },
   "1890": {
     "name": "CollassoEventi",
-    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Marchio della morte.",
+    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Marchio della morte. Va a segno l'80%\ndelle volte.",
     "message1": "%1 scatena %2!",
     "message2": ""
   },
@@ -9397,49 +9397,49 @@
   },
   "1935": {
     "name": "RiaccendiVita",
-    "description": "Cura Morte su un alleato caduto e restituisce un\npo' di HP.",
+    "description": "Cura Morte su un alleato caduto e restituisce un\npo' di HP. Colpisce per ultimo. Va a segno il\n90% delle volte.",
     "message1": "%1 riaccende una scintilla di vita!",
     "message2": ""
   },
   "1936": {
     "name": "Rianimazione sul campo",
-    "description": "Cura Morte su un alleato caduto con mani e\nrespiro, senza magia.",
+    "description": "Cura Morte su un alleato caduto con mani e\nrespiro, senza magia. Colpisce per ultimo. Va a\nsegno il 90% delle volte.",
     "message1": "%1 si adopera sul caduto!",
     "message2": ""
   },
   "1937": {
     "name": "Dispiega Torretta",
-    "description": "Posa un treppiede armato che falcia i nemici.\nColpisce due volte.",
+    "description": "Posa un treppiede armato che falcia i nemici.\nColpisce due volte. Va a segno il 95% delle\nvolte.",
     "message1": "%1 dispiega una torretta!",
     "message2": ""
   },
   "1938": {
     "name": "Riparazione sul campo",
-    "description": "Rattoppa armatura e cablaggi di un alleato,\nripristinando HP.",
+    "description": "Rattoppa armatura e cablaggi di un alleato,\nripristinando HP. Va a segno il 95% delle volte.",
     "message1": "%1 esegue una riparazione sul campo!",
     "message2": ""
   },
   "1939": {
     "name": "Trappola a scarica",
-    "description": "Stende un cavo scoperto sotto un nemico.\nPuò applicare Paralisi.",
+    "description": "Stende un cavo scoperto sotto un nemico. Può\napplicare Paralisi. Va a segno il 95% delle\nvolte.",
     "message1": "%1 stende una trappola a scarica!",
     "message2": ""
   },
   "1940": {
     "name": "Spinta Servo",
-    "description": "Allaccia un tutore motorizzato a un alleato,\nalzandone DES e FRZ.",
+    "description": "Allaccia un tutore motorizzato a un alleato,\nalzandone DES e FRZ. Va a segno il 95% delle\nvolte.",
     "message1": "%1 allaccia un tutore servoassistito!",
     "message2": ""
   },
   "1941": {
     "name": "Cannone a Rottami",
-    "description": "Spara una tramoggia di bulloni e scarti\ncontro un nemico.",
+    "description": "Spara una tramoggia di bulloni e scarti contro\nun nemico. Va a segno il 95% delle volte.",
     "message1": "%1 spara il cannone a rottami!",
     "message2": ""
   },
   "1942": {
     "name": "Overclock",
-    "description": "Spinge la propria centralina oltre i limiti,\nalzando INT e DES.",
+    "description": "Spinge la propria centralina oltre i limiti,\nalzando INT e DES. Va a segno il 95% delle\nvolte.",
     "message1": "%1 va in overclock!",
     "message2": ""
   }
