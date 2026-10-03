@@ -439,7 +439,7 @@
   },
   "82": {
     "name": "Tai Chi Healing",
-    "description": "Restores HP to the user.",
+    "description": "Restores HP to the user. Grants HP Regeneration.",
     "message1": "%1 channels healing chi!",
     "message2": ""
   },
@@ -925,7 +925,7 @@
   },
   "163": {
     "name": "Capoeira Roda",
-    "description": "Deals Physical damage to one enemy and lowers\nCON. May inflict Guard Broken. Strikes first.",
+    "description": "Deals Physical damage to all enemies and lowers\nCON. May inflict Guard Broken. Strikes first.",
     "message1": "%1 performs a Capoeira attack!",
     "message2": ""
   },
@@ -1387,7 +1387,7 @@
   },
   "250": {
     "name": "Windmill",
-    "description": "Deals Wind damage to all enemies.",
+    "description": "Deals Wind damage to three random enemies.",
     "message1": "%1 does %2!",
     "message2": ""
   },
@@ -1939,7 +1939,7 @@
   },
   "352": {
     "name": "Filth Toss",
-    "description": "Deals light Physical damage to one enemy and may\ninflict Infected.",
+    "description": "Deals light Physical damage to two random\nenemies and may inflict Infected.",
     "message1": "%1 uses Filth Toss!",
     "message2": ""
   },
@@ -2275,7 +2275,7 @@
   },
   "416": {
     "name": "FlameJet",
-    "description": "Deals heavy Fire damage to all enemies and\nlowers their CON. May inflict Burned.",
+    "description": "Deals heavy Fire damage to two random enemies\nand lowers their CON. May inflict Burned.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
@@ -3475,7 +3475,7 @@
   },
   "646": {
     "name": "DespairingSacrifice",
-    "description": "Restores MP to the user.",
+    "description": "Restores MP to the user. Grants MP Regeneration.",
     "message1": "%1 makes a terrible life sacrifice!",
     "message2": ""
   },
@@ -4873,7 +4873,7 @@
   },
   "950": {
     "name": "PSI Mind Fog",
-    "description": "Lowers one enemy's INT and WIS. Strikes last.\nLands 85% of the time.",
+    "description": "Lowers all enemies's INT and WIS. Strikes last.\nLands 85% of the time.",
     "message1": "%1 clouds the enemy's mind!",
     "message2": ""
   },
@@ -5149,7 +5149,7 @@
   },
   "1006": {
     "name": "Healing Potion",
-    "description": "Restores HP to one ally.",
+    "description": "Restores HP to one ally. Grants HP Regeneration.",
     "message1": "%1 administers a healing potion!",
     "message2": ""
   },
@@ -8083,7 +8083,7 @@
   },
   "1716": {
     "name": "SnowSquall",
-    "description": "Deals light Ice damage to all enemies and may\ninflict Sleep. Lands 90% of the time.",
+    "description": "Deals light Ice damage to three random enemies\nand may inflict Sleep. Lands 90% of the time.",
     "message1": "%1 unleashes SnowSquall!",
     "message2": ""
   },
@@ -8161,7 +8161,7 @@
   },
   "1729": {
     "name": "GravelSpray",
-    "description": "Deals light Petro damage to one enemy and lowers\ntheir STR. May inflict Oily.",
+    "description": "Deals light Petro damage to two random enemies\nand lowers their STR. May inflict Oily.",
     "message1": "%1 unleashes GravelSpray!",
     "message2": ""
   },
@@ -8257,7 +8257,7 @@
   },
   "1745": {
     "name": "FlameWheel",
-    "description": "Deals heavy Fire damage to all enemies and may\ninflict Blind.",
+    "description": "Deals heavy Fire damage to three random enemies\nand may inflict Blind.",
     "message1": "%1 unleashes FlameWheel!",
     "message2": ""
   },
@@ -8359,7 +8359,7 @@
   },
   "1762": {
     "name": "PrismBeam",
-    "description": "Deals light Sacred damage to all enemies and\nlowers their PSI. Lands 85% of the time.",
+    "description": "Deals light Sacred damage to two random enemies\nand lowers their PSI. Lands 85% of the time.",
     "message1": "%1 unleashes PrismBeam!",
     "message2": ""
   },
@@ -8461,7 +8461,7 @@
   },
   "1779": {
     "name": "StardustHeal",
-    "description": "Restores HP to all allies.",
+    "description": "Restores HP to all allies. Grants HP\nRegeneration.",
     "message1": "%1 unleashes StardustHeal!",
     "message2": ""
   },
@@ -8617,7 +8617,7 @@
   },
   "1805": {
     "name": "FireSpark",
-    "description": "Deals light Fire damage to one enemy and may\ninflict Blind. Strikes first.",
+    "description": "Deals light Fire damage to two random enemies\nand may inflict Blind. Strikes first.",
     "message1": "%1 uses FireSpark!",
     "message2": ""
   },
@@ -8851,7 +8851,7 @@
   },
   "1844": {
     "name": "FrostLance",
-    "description": "Deals Ice damage to one enemy and lowers their\nINT. Lands 95% of the time.",
+    "description": "Deals Ice damage to two random enemies and\nlowers their INT. Lands 95% of the time.",
     "message1": "%1 unleashes %2!",
     "message2": ""
   },

@@ -439,7 +439,7 @@
   },
   "82": {
     "name": "Guarigione Tai Chi",
-    "description": "Ripristina HP a chi la usa.",
+    "description": "Ripristina HP a chi la usa. Applica\nRigenerazione HP.",
     "message1": "%1 canalizza il chi curativo!",
     "message2": ""
   },
@@ -925,7 +925,7 @@
   },
   "163": {
     "name": "Roda di Capoeira",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Guardia Rotta.",
+    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce COS. Può applicare Guardia Rotta.",
     "message1": "%1 esegue un attacco di Capoeira!",
     "message2": ""
   },
@@ -1387,7 +1387,7 @@
   },
   "250": {
     "name": "Mulinello",
-    "description": "Infligge danni di Vento a tutti i nemici.",
+    "description": "Infligge danni di Vento a tre nemici a caso.",
     "message1": "%1 usa %2",
     "message2": ""
   },
@@ -1939,7 +1939,7 @@
   },
   "352": {
     "name": "Lancio di Sozzura",
-    "description": "Infligge danni fisici lievi a un nemico e può\napplicare Infetto.",
+    "description": "Infligge danni fisici lievi a due nemici a caso\ne può applicare Infetto.",
     "message1": "%1 usa Lancio di Sozzura!",
     "message2": ""
   },
@@ -2275,7 +2275,7 @@
   },
   "416": {
     "name": "GettoIgneo",
-    "description": "Infligge danni di Fuoco pesanti a tutti i nemici\ne ne riduce COS. Può applicare Bruciato.",
+    "description": "Infligge danni di Fuoco pesanti a due nemici a\ncaso e ne riduce COS. Può applicare Bruciato.",
     "message1": "%1 casta %2",
     "message2": ""
   },
@@ -3475,7 +3475,7 @@
   },
   "646": {
     "name": "SacrificioDisperato",
-    "description": "Ripristina MP a chi la usa.",
+    "description": "Ripristina MP a chi la usa. Applica\nRigenerazione MP.",
     "message1": "%1 compie un terribile sacrificio di vita!",
     "message2": ""
   },
@@ -4873,7 +4873,7 @@
   },
   "950": {
     "name": "Nebbia Mentale PSI",
-    "description": "Riduce INT e SAG di un nemico. Colpisce per\nultimo. Va a segno l'85% delle volte.",
+    "description": "Riduce INT e SAG di tutti i nemici. Colpisce per\nultimo. Va a segno l'85% delle volte.",
     "message1": "%1 offusca la mente del nemico!",
     "message2": ""
   },
@@ -5149,7 +5149,7 @@
   },
   "1006": {
     "name": "Pozione Curativa",
-    "description": "Ripristina HP a un alleato.",
+    "description": "Ripristina HP a un alleato. Applica\nRigenerazione HP.",
     "message1": "%1 somministra una pozione curativa!",
     "message2": ""
   },
@@ -8083,7 +8083,7 @@
   },
   "1716": {
     "name": "BuferaDiNeve",
-    "description": "Infligge danni di Ghiaccio a tutti i nemici e\npuò applicare Sonno.",
+    "description": "Infligge danni di Ghiaccio a tre nemici a caso e\npuò applicare Sonno.",
     "message1": "%1 scatena BuferaDiNeve!",
     "message2": ""
   },
@@ -8161,7 +8161,7 @@
   },
   "1729": {
     "name": "SpruzzoGhiaia",
-    "description": "Infligge danni di Pietra lievi a un nemico e ne\nriduce FRZ. Può applicare Oleoso.",
+    "description": "Infligge danni di Pietra lievi a due nemici a\ncaso e ne riduce FRZ. Può applicare Oleoso.",
     "message1": "%1 scatena SpruzzoGhiaia!",
     "message2": ""
   },
@@ -8257,7 +8257,7 @@
   },
   "1745": {
     "name": "RuotaFiamma",
-    "description": "Infligge danni di Fuoco pesanti a tutti i nemici\ne può applicare Acceca.",
+    "description": "Infligge danni di Fuoco pesanti a tre nemici a\ncaso e può applicare Acceca.",
     "message1": "%1 scatena RuotaFiamma!",
     "message2": ""
   },
@@ -8359,7 +8359,7 @@
   },
   "1762": {
     "name": "RaggioPrismatico",
-    "description": "Infligge danni sacri lievi a tutti i nemici e ne\nriduce PSI. Va a segno l'85% delle volte.",
+    "description": "Infligge danni sacri lievi a due nemici a caso e\nne riduce PSI. Va a segno l'85% delle volte.",
     "message1": "%1 scatena RaggioPrismatico!",
     "message2": ""
   },
@@ -8461,7 +8461,7 @@
   },
   "1779": {
     "name": "CuraStellare",
-    "description": "Ripristina HP a tutti gli alleati.",
+    "description": "Ripristina HP a tutti gli alleati. Applica\nRigenerazione HP.",
     "message1": "%1 scatena CuraStellare!",
     "message2": ""
   },
@@ -8617,7 +8617,7 @@
   },
   "1805": {
     "name": "ScintillaFuoco",
-    "description": "Infligge danni di Fuoco lievi a un nemico e può\napplicare Acceca. Colpisce per primo.",
+    "description": "Infligge danni di Fuoco lievi a due nemici a\ncaso e può applicare Acceca. Colpisce per primo.",
     "message1": "%1 usa ScintillaFuoco!",
     "message2": ""
   },
@@ -8851,7 +8851,7 @@
   },
   "1844": {
     "name": "LanciaBrina",
-    "description": "Infligge danni di Ghiaccio a un nemico e ne\nriduce INT. Va a segno il 95% delle volte.",
+    "description": "Infligge danni di Ghiaccio a due nemici a caso e\nne riduce INT. Va a segno il 95% delle volte.",
     "message1": "%1 scatena %2!",
     "message2": ""
   },
