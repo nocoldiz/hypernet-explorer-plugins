@@ -216,10 +216,24 @@
         if (data) {
             var type = MIME[match[1].toLowerCase()] || "application/octet-stream";
             url = URL.createObjectURL(new Blob([data], { type: type }));
+            cachedUrls[url] = 1;
         }
         urlCache[rel] = url;
         return url;
     }
+
+    // A cached url is handed to every caller asking for that file, so nobody
+    // may revoke it: the engine's Bitmap._onLoad revokes its image src after
+    // loading, and when that src was one of these the next load of the same
+    // file died with "Failed to load blob:...".
+    var cachedUrls = Object.create(null);
+    var revokeObjectURL = URL.revokeObjectURL;
+    URL.revokeObjectURL = function (url) {
+        if (typeof url === "string" && cachedUrls[url] === 1) {
+            return;
+        }
+        return revokeObjectURL.apply(this, arguments);
+    };
 
     //-------------------------------------------------------------------------
     // Text rewriting
