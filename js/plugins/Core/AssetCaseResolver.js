@@ -232,7 +232,8 @@
     Bitmap.prototype._startLoading = function() {
         if (!modAsset(this)) {
             this._url = resolve(this._url);
-            this._encrypted = Utils.hasEncryptedImages() || isEncrypted(this._url) === true;
+            const enc = isEncrypted(this._url);
+            this._encrypted = enc !== null ? enc : Utils.hasEncryptedImages();
         }
         this._image = new Image();
         this._image.onload = this._onLoad.bind(this);
@@ -266,7 +267,8 @@
             return this._url + (this._encrypted ? "_" : "");
         }
         this._url = resolve(this._url);
-        this._encrypted = Utils.hasEncryptedAudio() || isEncrypted(this._url) === true;
+        const enc = isEncrypted(this._url);
+        this._encrypted = enc !== null ? enc : Utils.hasEncryptedAudio();
         return this._url + (this._encrypted ? "_" : "");
     };
 

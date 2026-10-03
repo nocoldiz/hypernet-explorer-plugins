@@ -1,3 +1,9 @@
+0.7.6a
+
+Fixed:
+ - consonant letter sounds skipping in the build
+
+
 0.7.5a
 
 Added:

@@ -1752,13 +1752,14 @@ Imported.DialogueSystem = true;
     const _AudioManager_checkErrors = AudioManager.checkErrors;
     AudioManager.checkErrors = function() {
         try {
-            const buffers = this._seBuffers || [];
-            for (let i = buffers.length - 1; i >= 0; i--) {
-                const b = buffers[i];
-                if (!b || !b.isError() || !_voiceIsVoiceUrl(b.url)) continue;
-                const m = /\/((?:Vowels|Consonants)\/[^/.]+)/.exec(String(b.url));
-                if (m) DialogueVoice._missing[m[1]] = true;
-                buffers.splice(i, 1);
+            for (const list of [this._seBuffers || [], this._staticBuffers || []]) {
+                for (let i = list.length - 1; i >= 0; i--) {
+                    const b = list[i];
+                    if (!b || !b.isError() || !_voiceIsVoiceUrl(b.url)) continue;
+                    const m = /\/((?:Vowels|Consonants)\/[^/.]+)/.exec(String(b.url));
+                    if (m) DialogueVoice._missing[m[1]] = true;
+                    list.splice(i, 1);
+                }
             }
         } catch (err) { /* the sweep is never allowed to be the crash itself */ }
         if (typeof _AudioManager_checkErrors === 'function') _AudioManager_checkErrors.call(this);
@@ -1826,7 +1827,14 @@ Imported.DialogueSystem = true;
             // error. A name that failed once is never asked for again.
             if (DialogueVoice._missing[se]) return false;
             try {
-                if (typeof AudioManager !== 'undefined' && AudioManager.playSe) {
+                // Static buffers, not playSe: in an encrypted build the ogg_ is
+                // fetched and decrypted asynchronously, and AudioManager.cleanupSe
+                // destroys any SE buffer that is not yet playing, so a blip still
+                // loading was killed by the next letter and never heard. A static
+                // buffer is kept and loaded once.
+                if (typeof AudioManager !== 'undefined' && AudioManager.playStaticSe) {
+                    AudioManager.playStaticSe({ name: se, volume: _voiceVolume(), pitch, pan: 0 });
+                } else if (typeof AudioManager !== 'undefined' && AudioManager.playSe) {
                     AudioManager.playSe({ name: se, volume: _voiceVolume(), pitch, pan: 0 });
                 }
             } catch (err) {

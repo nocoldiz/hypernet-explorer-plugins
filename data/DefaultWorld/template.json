@@ -1,12 +1,11 @@
 {
   "seed": "esoteric",
-  "generatedAt": "2026-09-29T18:33:57.606Z",
+  "generatedAt": "2026-10-03T11:50:36.093Z",
   "files": [
     "artifacts.json",
     "dungeon.json",
     "forgedGear.json",
     "history.json",
-    "market.json",
     "npcs.json",
     "state.json",
     "towerworlds.json",
