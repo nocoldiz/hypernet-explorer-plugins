@@ -245,6 +245,9 @@
       [99, 329, 330], [31, 164, 425, 426], [34, 328], [32, 345, 428],
       [30, 316]
     ],
+    // Floors the default world ("esoteric" seed) always gets, whatever the
+    // deal: floor -> the map (or the first room of its group) that holds it.
+    defaultWorldFloors: { 2: 15 }, // Shadowed meadows
     elevatorMaps: [112,113,114,115,116,117,118,119],
     demoMode: String(parameters.demoMode) === "true",
     demoMaxFloor: 10,
@@ -604,6 +607,25 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
     return 19002001;
   }
 
+  // Same FNV-1a coercion as ProcGenUtils.normalizeSeed, so "esoteric" and its
+  // stored uint32 form compare equal.
+  function normalizeWorldSeed(value) {
+    if (typeof value === "number" && isFinite(value)) return value >>> 0;
+    const str = String(value == null ? "" : value);
+    if (/^\d+$/.test(str)) return Number(str) >>> 0;
+    let h = 0x811c9dc5;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 0x01000193);
+    }
+    return h >>> 0;
+  }
+
+  function isDefaultWorldSeed() {
+    const defaultSeed = (window.WorldManager && window.WorldManager.DEFAULT_SEED) || "esoteric";  // i18n-ignore  seed word
+    return normalizeWorldSeed(dungeonWorldSeed()) === normalizeWorldSeed(defaultSeed);
+  }
+
   // The tower's random draws. The generator used to be stored on $gameSystem
   // as a CLOSURE, and JSON.stringify drops function-valued properties, so it
   // was gone after any save: every draw outside generateDungeon would have
@@ -647,6 +669,7 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
 
         // Final demo floor: map 112
         this._dungeonFloors[lastFloor] = params.demoFinalMapId;
+        this.pinDefaultWorldFloors();
 
         // Floors past the demo limit stay empty and are unreachable.
         for (let floor = lastFloor + 1; floor <= 100; floor++) {
@@ -701,11 +724,37 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
       this._dungeonFloors[floor] = entry;
     }
 
+    this.pinDefaultWorldFloors();
     this.initializeStairLocations();
 
     this.markDungeonGenerated();
     $gameVariables.setValue(params.maxFloorVariable, 0);
 
+  };
+
+  // On the default seed some floors are fixed. The pinned map is swapped in
+  // from wherever the deal put it, so the rest of the layout stays the same;
+  // when the deal never used it, it simply takes the floor.
+  Game_System.prototype.pinDefaultWorldFloors = function () {
+    if (!isDefaultWorldSeed()) return;
+    const headOf = (entry) => (Array.isArray(entry) ? entry[0] : entry);
+    const lastFloor = params.demoMode ? params.demoMaxFloor - 1 : 99;
+    const pool = this.dungeonMapPool();
+    for (const key of Object.keys(params.defaultWorldFloors)) {
+      const floor = Number(key);
+      const mapId = params.defaultWorldFloors[key];
+      const entry = pool.find((e) => headOf(e) === mapId);
+      if (!entry || floor < 2 || floor > lastFloor) continue;
+      let from = -1;
+      for (let f = 2; f <= lastFloor; f++) {
+        if (headOf(this._dungeonFloors[f]) === mapId) { from = f; break; }
+      }
+      if (from === floor) continue;
+      if (from > 0) {
+        this._dungeonFloors[from] = this._dungeonFloors[floor];
+      }
+      this._dungeonFloors[floor] = entry;
+    }
   };
 
   // The layout is world data, so the flag announcing it exists is a world
