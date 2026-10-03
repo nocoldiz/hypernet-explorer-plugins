@@ -113,10 +113,9 @@
         {"id":772,"tier":4,"requires":[774]},
         {"id":779,"tier":4,"requires":[1777]},
         {"id":785,"tier":4,"requires":[1778]},
-        {"id":788,"tier":4,"requires":[1776]},
         {"id":793,"tier":4,"requires":[792]},
         {"id":795,"tier":4,"requires":[791]},
-        {"id":786,"tier":5,"requires":[785,788]},
+        {"id":786,"tier":5,"requires":[785,1776]},
         {"id":789,"tier":5,"requires":[790]}
       ]
     },
@@ -174,9 +173,9 @@
         {"id":1408,"tier":1,"requires":[1401]},
         {"id":1403,"tier":2,"requires":[1407]},
         {"id":1406,"tier":2,"requires":[1402]},
-        {"id":1410,"tier":4,"requires":[1403,1408]},
-        {"id":1411,"tier":4,"requires":[1401,1406]},
-        {"id":1409,"tier":5,"requires":[1410,1406]}
+        {"id":1410,"tier":3,"requires":[1403,1408]},
+        {"id":1411,"tier":3,"requires":[1401,1406]},
+        {"id":1409,"tier":4,"requires":[1410,1406]}
       ]
     },
     "Bestial": {
@@ -191,14 +190,17 @@
         {"id":310,"tier":1,"requires":[318]},
         {"id":311,"tier":1,"requires":[300]},
         {"id":313,"tier":1,"requires":[318]},
+        {"id":314,"tier":1,"requires":[318]},
         {"id":316,"tier":1,"requires":[318]},
         {"id":319,"tier":1,"requires":[317]},
         {"id":325,"tier":1,"requires":[317]},
         {"id":327,"tier":1,"requires":[317]},
         {"id":338,"tier":1,"requires":[300]},
         {"id":344,"tier":1,"requires":[343]},
+        {"id":363,"tier":1,"requires":[343]},
         {"id":368,"tier":1,"requires":[343]},
         {"id":1800,"tier":1,"requires":[317]},
+        {"id":1933,"tier":1,"requires":[343]},
         {"id":302,"tier":2,"requires":[313]},
         {"id":306,"tier":2,"requires":[310]},
         {"id":307,"tier":2,"requires":[368]},
@@ -218,11 +220,9 @@
         {"id":1801,"tier":2,"requires":[327]},
         {"id":1802,"tier":2,"requires":[327]},
         {"id":1803,"tier":2,"requires":[319]},
-        {"id":1933,"tier":1,"requires":[343]},
         {"id":301,"tier":3,"requires":[306]},
         {"id":304,"tier":3,"requires":[310]},
         {"id":305,"tier":3,"requires":[337]},
-        {"id":314,"tier":1,"requires":[318]},
         {"id":315,"tier":3,"requires":[351]},
         {"id":322,"tier":3,"requires":[1799]},
         {"id":324,"tier":3,"requires":[339]},
@@ -258,7 +258,6 @@
         {"id":357,"tier":5,"requires":[361]},
         {"id":359,"tier":5,"requires":[348]},
         {"id":360,"tier":5,"requires":[355]},
-        {"id":363,"tier":1,"requires":[343]},
         {"id":366,"tier":5,"requires":[364]}
       ]
     },
@@ -307,14 +306,14 @@
         {"id":1480,"tier":0,"requires":[]},
         {"id":1481,"tier":0,"requires":[]},
         {"id":1476,"tier":1,"requires":[1475]},
-        {"id":1477,"tier":3,"requires":[1476]},
-        {"id":1478,"tier":3,"requires":[1476]},
-        {"id":1479,"tier":3,"requires":[1480]},
-        {"id":1482,"tier":4,"requires":[1478]},
-        {"id":1486,"tier":4,"requires":[1478,1479]},
-        {"id":1483,"tier":5,"requires":[1482]},
-        {"id":1484,"tier":5,"requires":[1482]},
-        {"id":1485,"tier":5,"requires":[1482]}
+        {"id":1477,"tier":2,"requires":[1476]},
+        {"id":1478,"tier":2,"requires":[1476]},
+        {"id":1479,"tier":2,"requires":[1480]},
+        {"id":1482,"tier":3,"requires":[1478]},
+        {"id":1486,"tier":3,"requires":[1478,1479]},
+        {"id":1483,"tier":4,"requires":[1482]},
+        {"id":1484,"tier":4,"requires":[1482]},
+        {"id":1485,"tier":4,"requires":[1482]}
       ]
     },
     "Convokation": {
@@ -500,16 +499,16 @@
     },
     "Economy": {
       "nodes": [
-        {"id":1537,"tier":4,"requires":[]},
-        {"id":1538,"tier":4,"requires":[]},
-        {"id":1539,"tier":4,"requires":[]},
-        {"id":1541,"tier":4,"requires":[]},
-        {"id":1542,"tier":4,"requires":[]},
-        {"id":1543,"tier":4,"requires":[]},
-        {"id":1540,"tier":5,"requires":[1539]},
-        {"id":1544,"tier":5,"requires":[1543]},
-        {"id":1545,"tier":5,"requires":[1543,1538]},
-        {"id":1546,"tier":5,"requires":[1537,1538]}
+        {"id":1537,"tier":0,"requires":[]},
+        {"id":1539,"tier":0,"requires":[]},
+        {"id":1538,"tier":1,"requires":[1539]},
+        {"id":1541,"tier":1,"requires":[1537]},
+        {"id":1540,"tier":2,"requires":[1539]},
+        {"id":1542,"tier":2,"requires":[1541]},
+        {"id":1543,"tier":3,"requires":[1542]},
+        {"id":1544,"tier":4,"requires":[1543]},
+        {"id":1545,"tier":5,"requires":[1544,1538]},
+        {"id":1546,"tier":5,"requires":[1538,1540]}
       ]
     },
     "Electromancy": {
@@ -530,7 +529,6 @@
         {"id":383,"tier":2,"requires":[420]},
         {"id":411,"tier":2,"requires":[471]},
         {"id":423,"tier":2,"requires":[414]},
-        {"id":464,"tier":2,"requires":[406]},
         {"id":470,"tier":2,"requires":[1720]},
         {"id":1719,"tier":2,"requires":[1751]},
         {"id":1750,"tier":2,"requires":[1718]},
@@ -540,7 +538,6 @@
         {"id":424,"tier":3,"requires":[423]},
         {"id":452,"tier":3,"requires":[470]},
         {"id":483,"tier":3,"requires":[1825]},
-        {"id":496,"tier":3,"requires":[464]},
         {"id":1833,"tier":3,"requires":[394]},
         {"id":1836,"tier":3,"requires":[1752]},
         {"id":1851,"tier":3,"requires":[1841]},
@@ -548,7 +545,6 @@
         {"id":445,"tier":4,"requires":[424]},
         {"id":454,"tier":4,"requires":[1851]},
         {"id":478,"tier":4,"requires":[452]},
-        {"id":503,"tier":4,"requires":[496]},
         {"id":444,"tier":5,"requires":[454,425]},
         {"id":484,"tier":5,"requires":[454]}
       ]
@@ -572,11 +568,8 @@
         {"id":1053,"tier":2,"requires":[1040]},
         {"id":1044,"tier":3,"requires":[1048]},
         {"id":1051,"tier":3,"requires":[1046]},
-        {"id":1796,"tier":3,"requires":[1052]},
-        {"id":1797,"tier":3,"requires":[1053]},
         {"id":1041,"tier":4,"requires":[1044]},
-        {"id":1045,"tier":4,"requires":[1044]},
-        {"id":1798,"tier":5,"requires":[1051,1796]}
+        {"id":1045,"tier":5,"requires":[1044,1041]}
       ]
     },
     "ForbiddenMagic": {
@@ -713,9 +706,9 @@
         {"id":1781,"tier":0,"requires":[]},
         {"id":1737,"tier":1,"requires":[1736]},
         {"id":1738,"tier":1,"requires":[1736]},
+        {"id":1575,"tier":2,"requires":[1781,1737]},
         {"id":1779,"tier":2,"requires":[1738]},
         {"id":1780,"tier":2,"requires":[1738]},
-        {"id":1575,"tier":3,"requires":[1781,1737]},
         {"id":1577,"tier":3,"requires":[1780]},
         {"id":1579,"tier":3,"requires":[1779]},
         {"id":1580,"tier":3,"requires":[1779]},
@@ -824,7 +817,10 @@
     },
     "Hunting": {
       "nodes": [
-        {"id":1050,"tier":0,"requires":[]}
+        {"id":1797,"tier":0,"requires":[]},
+        {"id":1050,"tier":1,"requires":[1797]},
+        {"id":1796,"tier":1,"requires":[1797]},
+        {"id":1798,"tier":2,"requires":[1796]}
       ]
     },
     "Idromancy": {
@@ -837,10 +833,10 @@
         {"id":472,"tier":1,"requires":[1723]},
         {"id":473,"tier":1,"requires":[1658]},
         {"id":1754,"tier":1,"requires":[1755]},
+        {"id":1808,"tier":1,"requires":[1723]},
         {"id":413,"tier":2,"requires":[472]},
         {"id":1722,"tier":2,"requires":[435]},
         {"id":1753,"tier":2,"requires":[1754]},
-        {"id":1808,"tier":1,"requires":[1723]},
         {"id":436,"tier":3,"requires":[1722]},
         {"id":438,"tier":3,"requires":[1753]},
         {"id":485,"tier":3,"requires":[435]},
@@ -860,10 +856,10 @@
         {"id":1589,"tier":1,"requires":[1587]},
         {"id":1592,"tier":1,"requires":[392]},
         {"id":384,"tier":2,"requires":[386]},
+        {"id":385,"tier":2,"requires":[1592]},
         {"id":1590,"tier":2,"requires":[1589]},
         {"id":1591,"tier":2,"requires":[1589]},
-        {"id":385,"tier":3,"requires":[1592]},
-        {"id":1594,"tier":4,"requires":[1590,1592]}
+        {"id":1594,"tier":3,"requires":[1590,1592]}
       ]
     },
     "Leadership": {
@@ -1224,10 +1220,10 @@
         {"id":1601,"tier":1,"requires":[1599]},
         {"id":1603,"tier":1,"requires":[1602]},
         {"id":1604,"tier":1,"requires":[1602]},
+        {"id":1596,"tier":2,"requires":[1601]},
         {"id":1605,"tier":2,"requires":[1604]},
-        {"id":1596,"tier":3,"requires":[1601]},
+        {"id":1597,"tier":3,"requires":[1596]},
         {"id":1598,"tier":3,"requires":[1605]},
-        {"id":1597,"tier":4,"requires":[1596]},
         {"id":1932,"tier":4,"requires":[1598]},
         {"id":1607,"tier":5,"requires":[1597,1932]}
       ]
@@ -1270,39 +1266,33 @@
         {"id":1616,"tier":1,"requires":[1615]},
         {"id":1618,"tier":1,"requires":[1617]},
         {"id":1619,"tier":2,"requires":[1618]},
-        {"id":1621,"tier":4,"requires":[1619,1616]},
-        {"id":1622,"tier":5,"requires":[1621]}
+        {"id":1621,"tier":3,"requires":[1619,1616]},
+        {"id":1622,"tier":4,"requires":[1621]}
       ]
     },
     "Pastoral": {
       "nodes": [
         {"id":887,"tier":0,"requires":[]},
+        {"id":893,"tier":0,"requires":[]},
+        {"id":897,"tier":0,"requires":[]},
         {"id":900,"tier":0,"requires":[]},
-        {"id":915,"tier":0,"requires":[]},
-        {"id":916,"tier":0,"requires":[]},
         {"id":890,"tier":1,"requires":[900]},
         {"id":892,"tier":1,"requires":[887]},
-        {"id":893,"tier":1,"requires":[887]},
-        {"id":897,"tier":1,"requires":[916]},
-        {"id":917,"tier":1,"requires":[915]},
-        {"id":1436,"tier":1,"requires":[915]},
-        {"id":1437,"tier":1,"requires":[915]},
+        {"id":917,"tier":1,"requires":[893]},
+        {"id":1436,"tier":1,"requires":[900]},
+        {"id":1437,"tier":1,"requires":[900]},
         {"id":888,"tier":2,"requires":[890]},
         {"id":891,"tier":2,"requires":[893]},
         {"id":894,"tier":2,"requires":[893]},
         {"id":895,"tier":2,"requires":[892]},
         {"id":896,"tier":2,"requires":[892]},
         {"id":903,"tier":2,"requires":[900]},
-        {"id":919,"tier":2,"requires":[917]},
-        {"id":920,"tier":2,"requires":[897]},
         {"id":898,"tier":3,"requires":[894]},
         {"id":899,"tier":3,"requires":[896]},
         {"id":901,"tier":3,"requires":[903]},
-        {"id":918,"tier":3,"requires":[920]},
         {"id":1438,"tier":3,"requires":[1436]},
         {"id":886,"tier":4,"requires":[901]},
         {"id":902,"tier":4,"requires":[899]},
-        {"id":922,"tier":4,"requires":[918]},
         {"id":921,"tier":5,"requires":[902]},
         {"id":1442,"tier":5,"requires":[1438]}
       ]
@@ -1320,6 +1310,7 @@
         {"id":1100,"tier":1,"requires":[1099]},
         {"id":1103,"tier":1,"requires":[1101]},
         {"id":1106,"tier":1,"requires":[1092]},
+        {"id":1109,"tier":1,"requires":[1092]},
         {"id":1111,"tier":1,"requires":[1107]},
         {"id":1090,"tier":2,"requires":[1096]},
         {"id":1093,"tier":2,"requires":[1106]},
@@ -1330,7 +1321,6 @@
         {"id":1108,"tier":2,"requires":[1097]},
         {"id":1112,"tier":2,"requires":[1097]},
         {"id":1089,"tier":3,"requires":[1090]},
-        {"id":1109,"tier":1,"requires":[1092]},
         {"id":1110,"tier":3,"requires":[1102]},
         {"id":1113,"tier":3,"requires":[1108]},
         {"id":1114,"tier":3,"requires":[1094]},
@@ -1449,21 +1439,19 @@
         {"id":1256,"tier":0,"requires":[]},
         {"id":1259,"tier":0,"requires":[]},
         {"id":1266,"tier":0,"requires":[]},
-        {"id":1268,"tier":0,"requires":[]},
+        {"id":1794,"tier":0,"requires":[]},
         {"id":1257,"tier":1,"requires":[1259]},
         {"id":1258,"tier":1,"requires":[1256]},
         {"id":1261,"tier":1,"requires":[1266]},
         {"id":1262,"tier":1,"requires":[1259]},
         {"id":1265,"tier":1,"requires":[1266]},
-        {"id":1272,"tier":1,"requires":[1268]},
         {"id":1445,"tier":1,"requires":[1259]},
-        {"id":1794,"tier":1,"requires":[1268]},
         {"id":1260,"tier":2,"requires":[1258]},
         {"id":1263,"tier":2,"requires":[1262]},
         {"id":1267,"tier":2,"requires":[1261]},
         {"id":1270,"tier":2,"requires":[1265]},
         {"id":1271,"tier":2,"requires":[1257]},
-        {"id":1275,"tier":2,"requires":[1272]},
+        {"id":1275,"tier":2,"requires":[1256]},
         {"id":1278,"tier":2,"requires":[1258]},
         {"id":1449,"tier":2,"requires":[1445]},
         {"id":1795,"tier":2,"requires":[1794]},
@@ -1533,8 +1521,10 @@
         {"id":263,"tier":1,"requires":[261]},
         {"id":265,"tier":1,"requires":[264]},
         {"id":266,"tier":1,"requires":[261]},
+        {"id":270,"tier":1,"requires":[257]},
         {"id":277,"tier":1,"requires":[264]},
         {"id":281,"tier":1,"requires":[257]},
+        {"id":287,"tier":1,"requires":[257]},
         {"id":238,"tier":2,"requires":[281]},
         {"id":242,"tier":2,"requires":[249]},
         {"id":243,"tier":2,"requires":[255]},
@@ -1567,8 +1557,6 @@
         {"id":239,"tier":4,"requires":[252]},
         {"id":276,"tier":4,"requires":[258]},
         {"id":285,"tier":4,"requires":[283]},
-        {"id":287,"tier":1,"requires":[257]},
-        {"id":270,"tier":1,"requires":[257]},
         {"id":273,"tier":5,"requires":[1788]},
         {"id":279,"tier":5,"requires":[1788,239]}
       ]
@@ -1627,14 +1615,26 @@
     },
     "Technomagical": {
       "nodes": [
-        {"id":1654,"tier":0,"requires":[]}
+        {"id":464,"tier":0,"requires":[]},
+        {"id":496,"tier":1,"requires":[464]},
+        {"id":503,"tier":2,"requires":[496]},
+        {"id":788,"tier":3,"requires":[503]},
+        {"id":1654,"tier":4,"requires":[788]}
       ]
     },
     "Vocation": {
       "nodes": [
+        {"id":915,"tier":0,"requires":[]},
+        {"id":916,"tier":0,"requires":[]},
+        {"id":1268,"tier":0,"requires":[]},
         {"id":1685,"tier":0,"requires":[]},
-        {"id":1686,"tier":0,"requires":[]},
-        {"id":1687,"tier":1,"requires":[1685]}
+        {"id":919,"tier":1,"requires":[915]},
+        {"id":920,"tier":1,"requires":[916]},
+        {"id":1272,"tier":1,"requires":[1268]},
+        {"id":1686,"tier":1,"requires":[1685]},
+        {"id":918,"tier":2,"requires":[920]},
+        {"id":1687,"tier":2,"requires":[1686]},
+        {"id":922,"tier":3,"requires":[918,919]}
       ]
     },
     "VoidMagic": {

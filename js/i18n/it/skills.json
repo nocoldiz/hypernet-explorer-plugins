@@ -187,7 +187,7 @@
   },
   "40": {
     "name": "Posizione di Potenza",
-    "description": "Aumenta COS di chi la usa. Colpisce per primo.",
+    "description": "Aumenta FRZ e COS di chi la usa. Colpisce per\nprimo.",
     "message1": "%1 si potenzia!",
     "message2": ""
   },
@@ -199,19 +199,19 @@
   },
   "42": {
     "name": "Forza di Volontà",
-    "description": "Aumenta DES di chi la usa. Colpisce per primo.",
+    "description": "Aumenta SAG e PSI di chi la usa. Colpisce per\nprimo.",
     "message1": "%1 oppone la propria volontà a tutto!",
     "message2": ""
   },
   "43": {
     "name": "Mente Sgombra",
-    "description": "Aumenta COS di chi la usa. Colpisce per primo.",
+    "description": "Aumenta SAG di chi la usa. Applica Messa a fuoco\nperfetta. Colpisce per primo.",
     "message1": "%1 ha schiarito la mente!",
     "message2": ""
   },
   "44": {
     "name": "Posizione Peek-a-boo",
-    "description": "Aumenta DES di chi la usa. Colpisce per primo.",
+    "description": "Aumenta DES di chi la usa. Applica Schivata.\nColpisce per primo.",
     "message1": "%1 assume la posizione peek-a-boo!",
     "message2": ""
   },
@@ -229,13 +229,13 @@
   },
   "47": {
     "name": "Siu Nim Tau",
-    "description": "Aumenta COS di chi la usa. Colpisce per primo.",
+    "description": "Aumenta DES di chi la usa. Può applicare Combo.\nColpisce per primo.",
     "message1": "%1 assume la posizione del Wing Chun!",
     "message2": ""
   },
   "48": {
     "name": "Forma Tai Chi",
-    "description": "Aumenta DES di chi la usa. Colpisce per primo.",
+    "description": "Aumenta DES e SAG di chi la usa. Colpisce per\nprimo.",
     "message1": "%1 assume forma Tai Chi!",
     "message2": ""
   },
@@ -247,13 +247,13 @@
   },
   "50": {
     "name": "Flusso Aikido",
-    "description": "Aumenta COS di chi la usa. Colpisce per primo.",
+    "description": "Aumenta DES e COS di chi la usa. Applica Flusso.\nColpisce per primo.",
     "message1": "%1 scorre come l'acqua!",
     "message2": ""
   },
   "51": {
     "name": "Shiko del Sumo",
-    "description": "Aumenta DES di chi la usa. Colpisce per primo.",
+    "description": "Aumenta FRZ e COS di chi la usa. Applica In\nposizione. Colpisce per primo.",
     "message1": "%1 calpesta con autorità!",
     "message2": ""
   },
@@ -271,13 +271,13 @@
   },
   "54": {
     "name": "Guardia Muscolare",
-    "description": "Aumenta DES di chi la usa. Colpisce per primo.",
+    "description": "Aumenta COS di chi la usa. Applica Proteggi.\nColpisce per primo.",
     "message1": "%1 flette i muscoli ed è nel vuoto!",
     "message2": ""
   },
   "55": {
     "name": "Allungo Dinamico",
-    "description": "Aumenta COS di chi la usa. Colpisce per primo.",
+    "description": "Aumenta DES di chi la usa. Ripristina 10 AP.\nColpisce per primo.",
     "message1": "%1 esegue allungamenti dinamici!",
     "message2": ""
   },
@@ -313,7 +313,7 @@
   },
   "61": {
     "name": "Marziale Fondamentale",
-    "description": "Aumenta COS di chi la usa. Colpisce per primo.",
+    "description": "Aumenta FRZ e COS di chi la usa. Colpisce per\nprimo.",
     "message1": "%1 Rafforza il loro nucleo!",
     "message2": ""
   },
@@ -697,7 +697,7 @@
   },
   "125": {
     "name": "Posizione di Contro",
-    "description": "Aumenta COS di chi la usa. Colpisce per primo.",
+    "description": "Aumenta COS di chi la usa. Applica Contrattacco.\nColpisce per primo.",
     "message1": "%1 si prepara al contrattacco!",
     "message2": ""
   },
@@ -829,7 +829,7 @@
   },
   "147": {
     "name": "Flusso Systema",
-    "description": "Aumenta FRZ di chi la usa. Colpisce per primo.",
+    "description": "Aumenta FRZ di chi la usa. Applica Flusso.\nColpisce per primo.",
     "message1": "%1 si muove con efficienza fluida!",
     "message2": ""
   },
@@ -1717,7 +1717,7 @@
   },
   "315": {
     "name": "Foraggiamento",
-    "description": "Aumenta COS di tutti gli alleati.",
+    "description": "Aumenta COS di tutti gli alleati. Applica\nRigenerazione HP.",
     "message1": "%1 usa Foraggiamento!",
     "message2": ""
   },
@@ -1806,7 +1806,7 @@
     "message2": ""
   },
   "330": {
-    "name": "Zampata",
+    "name": "Artigli Laceranti",
     "description": "Infligge danni fisici devastanti a un nemico e\npuò applicare Infetto.",
     "message1": "%1 dà un graffio doloroso!",
     "message2": ""
@@ -2209,7 +2209,7 @@
   },
   "405": {
     "name": "FioccoNeve",
-    "description": "Infligge danni di Ghiaccio a un nemico e ne\nriduce DES. Può applicare In posizione.",
+    "description": "Infligge danni di Ghiaccio lievi a un nemico e\nne riduce INT. Può applicare Acceca. Colpisce\nper primo.",
     "message1": "%1 crea un fiocco di neve!",
     "message2": ""
   },
@@ -2341,32 +2341,32 @@
   },
   "427": {
     "name": "ScintillaBrace",
-    "description": "Infligge danni fisici lievi a un nemico e ne\nriduce COS. Può applicare Acceca.",
+    "description": "Infligge danni di Fuoco lievi a un nemico e può\napplicare Caldo.",
     "message1": "%1 usa ScintillaBrace!",
     "message2": ""
   },
   "428": {
-    "name": "MorsoGelido",
-    "description": "Infligge danni fisici lievi a un nemico e può\napplicare Sonno.",
-    "message1": "%1 usa MorsoGelido!",
+    "name": "GeloIntorpidente",
+    "description": "Infligge danni di Ghiaccio lievi a un nemico e può\napplicare Sonno.",
+    "message1": "%1 usa GeloIntorpidente!",
     "message2": ""
   },
   "429": {
     "name": "SferaDemolitrice",
-    "description": "Infligge danni fisici lievi a un nemico e può\napplicare Sbilanciato.",
+    "description": "Infligge danni di Pietra lievi a un nemico e può\napplicare Sbilanciato.",
     "message1": "%1 usa SferaDemolitrice!",
     "message2": ""
   },
   "430": {
     "name": "ScavoProfondo",
-    "description": "Infligge danni fisici lievi a un nemico e ne\nriduce DES. Può applicare Immobilizzato.",
+    "description": "Infligge danni di Pietra lievi a un nemico e ne\nriduce DES. Può applicare Immobilizzato.",
     "message1": "%1 usa ScavoProfondo!",
     "message2": ""
   },
   "431": {
-    "name": "PozzoGravitico",
-    "description": "Infligge danni fisici lievi a un nemico e ne\nriduce COS. Può applicare In Presa.",
-    "message1": "%1 usa PozzoGravitico!",
+    "name": "Voragine",
+    "description": "Infligge danni di Pietra lievi a un nemico e ne\nriduce COS. Può applicare In Presa.",
+    "message1": "%1 usa Voragine!",
     "message2": ""
   },
   "432": {
@@ -2539,7 +2539,7 @@
   },
   "460": {
     "name": "MuroFuoco",
-    "description": "Infligge danni fisici lievi a tutti i nemici e\npuò applicare Acceca.",
+    "description": "Infligge danni di Fuoco lievi a tutti i nemici e\npuò applicare Acceca.",
     "message1": "%1 usa MuroFuoco!",
     "message2": ""
   },
@@ -2551,13 +2551,13 @@
   },
   "462": {
     "name": "ColpoTrave",
-    "description": "Infligge danni fisici lievi a tutti i nemici e\nne riduce FRZ. Può applicare Oleoso.",
+    "description": "Infligge danni di Pietra lievi a tutti i nemici e\nne riduce FRZ. Può applicare Oleoso.",
     "message1": "%1 usa ColpoTrave!",
     "message2": ""
   },
   "463": {
     "name": "MaledizioneAntica",
-    "description": "Infligge danni fisici minimi a tutti i nemici.",
+    "description": "Infligge danni oscuri minimi a tutti i nemici.",
     "message1": "%1 usa MaledizioneAntica!",
     "message2": ""
   },
@@ -2569,7 +2569,7 @@
   },
   "465": {
     "name": "Mareggiata",
-    "description": "Infligge danni fisici lievi a tutti i nemici e\nne riduce COS.",
+    "description": "Infligge danni di Vento lievi a tutti i nemici e\nne riduce COS.",
     "message1": "%1 usa Mareggiata!",
     "message2": ""
   },
@@ -2610,7 +2610,7 @@
     "message2": ""
   },
   "472": {
-    "name": "Bolla",
+    "name": "ScoppioDiBolle",
     "description": "Infligge danni d'Acqua a un nemico e può\napplicare Sonno. Colpisce per primo.",
     "message1": "%1 casta %2",
     "message2": ""
@@ -2725,7 +2725,7 @@
   },
   "491": {
     "name": "TempestaCataclismica",
-    "description": "Infligge danni fisici pesanti a tutti i nemici e\nne riduce SAG.",
+    "description": "Infligge danni di Vento pesanti a tutti i nemici e\nne riduce SAG.",
     "message1": "%1 usa TempestaCataclismica!",
     "message2": ""
   },
@@ -2736,14 +2736,14 @@
     "message2": ""
   },
   "493": {
-    "name": "PuntaGlaciale",
+    "name": "PioggiaDiGhiaccioli",
     "description": "Infligge danni di Ghiaccio pesanti a tutti i\nnemici e può applicare Congelare.",
-    "message1": "%1 usa PuntaGlaciale!",
+    "message1": "%1 usa PioggiaDiGhiaccioli!",
     "message2": ""
   },
   "494": {
     "name": "MuoviTerra",
-    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce COS.",
+    "description": "Infligge danni di Pietra a tutti i nemici e ne\nriduce COS.",
     "message1": "%1 usa MuoviTerra!",
     "message2": ""
   },
@@ -2761,7 +2761,7 @@
   },
   "497": {
     "name": "AllertaTornado",
-    "description": "Infligge danni fisici pesanti a tutti i nemici e\nne riduce DES. Può applicare Acceca.",
+    "description": "Infligge danni di Vento pesanti a tutti i nemici e\nne riduce DES. Può applicare Acceca.",
     "message1": "%1 usa AllertaTornado!",
     "message2": ""
   },
@@ -2773,19 +2773,19 @@
   },
   "499": {
     "name": "Supernova",
-    "description": "Infligge danni di Fuoco pesanti a tutti i nemici\ne può applicare Bruciato.",
+    "description": "Infligge danni di Fuoco pesanti a tutti i nemici\ne può applicare Acceca.",
     "message1": "%1 usa Supernova!",
     "message2": ""
   },
   "500": {
     "name": "ApocalisseGlaciale",
-    "description": "Infligge danni fisici pesanti a tutti i nemici e\nne riduce DES.",
+    "description": "Infligge danni di Ghiaccio pesanti a tutti i nemici e\nne riduce DES.",
     "message1": "%1 usa ApocalisseGlaciale!",
     "message2": ""
   },
   "501": {
     "name": "CadutaGrattacielo",
-    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce DES. Può applicare In posizione.",
+    "description": "Infligge danni di Pietra a tutti i nemici e ne\nriduce DES. Può applicare In posizione.",
     "message1": "%1 usa CadutaGrattacielo!",
     "message2": ""
   },
@@ -2803,7 +2803,7 @@
   },
   "504": {
     "name": "UraganoCategoria5",
-    "description": "Infligge danni fisici a tutti i nemici e può\napplicare Galleggiante.",
+    "description": "Infligge danni di Vento a tutti i nemici e può\napplicare Galleggiante.",
     "message1": "%1 usa UraganoCategoria5!",
     "message2": ""
   },
@@ -2833,7 +2833,7 @@
   },
   "519": {
     "name": "TrasfigurazioneLuminosa",
-    "description": "Aumenta FRZ di un alleato. Colpisce per ultimo.",
+    "description": "Aumenta FRZ e INT di un alleato. Applica\nIspirato. Colpisce per ultimo.",
     "message1": "%1 si trasforma in energia luminosa!",
     "message2": ""
   },
@@ -2845,7 +2845,7 @@
   },
   "521": {
     "name": "PerfezioneDivina",
-    "description": "Aumenta FRZ di tutti gli alleati. Colpisce per\nultimo.",
+    "description": "Aumenta FRZ e SAG di tutti gli alleati. Colpisce\nper ultimo.",
     "message1": "%1 scatena il potenziamento definitivo!",
     "message2": ""
   },
@@ -2863,7 +2863,7 @@
   },
   "524": {
     "name": "PreghieraPurificante",
-    "description": "Aumenta FRZ di un alleato. Colpisce per ultimo.",
+    "description": "Cura Veleno e Acceca a un alleato e ne aumenta\nSAG. Colpisce per ultimo.",
     "message1": "%1 esegue la purificazione rituale!",
     "message2": ""
   },
@@ -2905,7 +2905,7 @@
   },
   "531": {
     "name": "TempraDivina",
-    "description": "Aumenta INT di chi la usa.",
+    "description": "Aumenta COS e SAG di chi la usa.",
     "message1": "%1 prega per la resilienza divina!",
     "message2": ""
   },
@@ -2929,7 +2929,7 @@
   },
   "535": {
     "name": "ScritturaSanante",
-    "description": "Ripristina HP a tutti gli alleati e ne aumenta\nFRZ.",
+    "description": "Ripristina HP a tutti gli alleati e ne aumenta\nSAG.",
     "message1": "%1 recita le scritture curative!",
     "message2": ""
   },
@@ -2941,7 +2941,7 @@
   },
   "537": {
     "name": "CuraCollettiva",
-    "description": "Ripristina HP a tutti gli alleati.",
+    "description": "Ripristina HP a tutti gli alleati. Applica\nRigenerazione HP.",
     "message1": "%1 prega per la guarigione di massa!",
     "message2": ""
   },
@@ -2952,7 +2952,7 @@
     "message2": ""
   },
   "539": {
-    "name": "Rianima",
+    "name": "SoffioDiVita",
     "description": "Ripristina HP a un alleato caduto e cura Morto.",
     "message1": "%1 casta %2",
     "message2": ""
@@ -3013,7 +3013,7 @@
   },
   "549": {
     "name": "GiudizioAngelico",
-    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Marchio della morte.",
+    "description": "Infligge danni sacri a tutti i nemici e ne\nriduce INT. Può applicare Acceca. Colpisce per\nultimo.",
     "message1": "%1 evoca un angelo del giudizio!",
     "message2": ""
   },
@@ -3061,7 +3061,7 @@
   },
   "557": {
     "name": "SacroSacramento",
-    "description": "Ripristina HP a tutti gli alleati e ne aumenta\nFRZ.",
+    "description": "Ripristina HP a tutti gli alleati. Applica\nRigenerazione HP.",
     "message1": "%1 usa SacroSacramento!",
     "message2": ""
   },
@@ -3097,7 +3097,7 @@
   },
   "563": {
     "name": "ImmagineSpecchio",
-    "description": "Aumenta FRZ di tutti gli alleati.",
+    "description": "Applica Riflesso magico a tutti gli alleati.",
     "message1": "%1 usa ImmagineSpecchio!",
     "message2": ""
   },
@@ -3109,7 +3109,7 @@
   },
   "565": {
     "name": "PioggiaVita",
-    "description": "Ripristina HP a tutti gli alleati e ne aumenta\nINT.",
+    "description": "Ripristina HP a tutti gli alleati e ne aumenta\nPSI.",
     "message1": "%1 casta %2",
     "message2": ""
   },
@@ -3133,13 +3133,13 @@
   },
   "569": {
     "name": "SantuarioChimico",
-    "description": "Ripristina HP a tutti gli alleati e ne aumenta\nINT.",
+    "description": "Ripristina HP a tutti gli alleati e ne aumenta\nCOS.",
     "message1": "%1 usa SantuarioChimico!",
     "message2": ""
   },
   "570": {
     "name": "ImposizioneMani",
-    "description": "Ripristina HP a tutti gli alleati e ne aumenta\nFRZ.",
+    "description": "Ripristina HP a un alleato e cura Veleno e\nSanguinamento.",
     "message1": "%1 usa ImposizioneMani!",
     "message2": ""
   },
@@ -3181,7 +3181,7 @@
   },
   "577": {
     "name": "CuraGruppo",
-    "description": "Ripristina HP a tutti gli alleati e ne aumenta\nFRZ.",
+    "description": "Ripristina HP a tutti gli alleati e cura Acceca\ne Silenzio.",
     "message1": "%1 casta %2",
     "message2": ""
   },
@@ -3193,7 +3193,7 @@
   },
   "579": {
     "name": "AuraProtettiva",
-    "description": "Aumenta FRZ di tutti gli alleati.",
+    "description": "Aumenta COS di tutti gli alleati.",
     "message1": "%1 usa AuraProtettiva!",
     "message2": ""
   },
@@ -3211,7 +3211,7 @@
   },
   "582": {
     "name": "LabirintoMentale",
-    "description": "Infligge danni fisici a un nemico e può\napplicare Silenzio.",
+    "description": "Infligge danni sacri a un nemico e può\napplicare Silenzio.",
     "message1": "%1 usa LabirintoMentale!",
     "message2": ""
   },
@@ -3235,7 +3235,7 @@
   },
   "586": {
     "name": "EgidaLuce",
-    "description": "Aumenta INT di tutti gli alleati.",
+    "description": "Aumenta COS di tutti gli alleati. Applica Scudo\nDivino.",
     "message1": "%1 usa AegisDiLuce!",
     "message2": ""
   },
@@ -3253,7 +3253,7 @@
   },
   "589": {
     "name": "DistorsioneReale",
-    "description": "Infligge danni fisici a tutti i nemici e può\napplicare Acceca.",
+    "description": "Infligge danni sacri a tutti i nemici e può\napplicare Acceca.",
     "message1": "%1 usa DistorsioneReale!",
     "message2": ""
   },
@@ -3282,8 +3282,8 @@
     "message2": ""
   },
   "604": {
-    "name": "PioggiaMeteorica",
-    "description": "Infligge danni di Fuoco a tutti i nemici e può\napplicare Vulnerabilità.",
+    "name": "MeteoraAbissale",
+    "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Vulnerabilità.",
     "message1": "%1 invoca una pioggia di meteoriti!",
     "message2": ""
   },
@@ -3469,7 +3469,7 @@
   },
   "645": {
     "name": "DrenaggioVitale",
-    "description": "Ripristina MP a chi la usa.",
+    "description": "Ripristina MP a chi la usa e ne aumenta PSI.",
     "message1": "%1 drena la propria forza vitale!",
     "message2": ""
   },
@@ -4435,7 +4435,7 @@
   },
   "846": {
     "name": "IncantoMinore",
-    "description": "Aumenta FRZ di tutti gli alleati. Applica\nImpulso Arcano e ripristina 15 AP.",
+    "description": "Aumenta INT di tutti gli alleati. Applica\nImpulso Arcano e ripristina 15 AP.",
     "message1": "%1 usa IncantoMinore!",
     "message2": ""
   },
@@ -5017,7 +5017,7 @@
   },
   "974": {
     "name": "Manifestazione PSI",
-    "description": "Infligge danni fisici minimi a tutti i nemici e\npuò applicare Sbilanciato.",
+    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce PSI. Può applicare Sbilanciato.",
     "message1": "%1 scatena il massimo potenziale psi!",
     "message2": ""
   },
@@ -5245,7 +5245,7 @@
   },
   "1022": {
     "name": "Grazia di Nightingale",
-    "description": "Ripristina HP a tutti gli alleati e ne aumenta\nCOS.",
+    "description": "Ripristina HP a tutti gli alleati. Applica\nRigenerazione HP.",
     "message1": "%1 usa Grazia di Nightingale!",
     "message2": ""
   },
@@ -5329,7 +5329,7 @@
   },
   "1046": {
     "name": "Colpo al Punto Debole",
-    "description": "Infligge danni a un nemico e ne riduce FRZ. Può\napplicare Sanguinamento.",
+    "description": "Infligge danni lievi a un nemico e ne riduce\nCOS. Può applicare Punto Vitale Esposto. Va a\nsegno l'85% delle volte.",
     "message1": "%1 prende di mira un punto debole!",
     "message2": ""
   },
@@ -5743,7 +5743,7 @@
   },
   "1145": {
     "name": "Coordinamento di Squadra",
-    "description": "Aumenta DES di tutti gli alleati. Colpisce per\nultimo.",
+    "description": "Aumenta DES di tutti gli alleati. Applica\nFlusso. Colpisce per ultimo.",
     "message1": "%1 coordina il team!",
     "message2": ""
   },
@@ -6762,7 +6762,7 @@
     "message2": ""
   },
   "1411": {
-    "name": "Onniscienza",
+    "name": "Onniveggenza",
     "description": "Svela ogni bestia e l'intera cronaca.",
     "message1": "%1 mette a nudo il mondo intero!",
     "message2": ""
@@ -7518,7 +7518,7 @@
     "message2": ""
   },
   "1584": {
-    "name": "Panacea",
+    "name": "GrandePanacea",
     "description": "Risana ogni carne e ristora corpo e mente.",
     "message1": "%1 opera una vera panacea!",
     "message2": ""
@@ -8082,9 +8082,9 @@
     "message2": ""
   },
   "1716": {
-    "name": "Bufera",
+    "name": "BuferaDiNeve",
     "description": "Infligge danni di Ghiaccio a tutti i nemici e\npuò applicare Sonno.",
-    "message1": "%1 scatena Bufera!",
+    "message1": "%1 scatena BuferaDiNeve!",
     "message2": ""
   },
   "1717": {
@@ -8154,7 +8154,7 @@
     "message2": ""
   },
   "1728": {
-    "name": "Terremoto",
+    "name": "Faglia",
     "description": "Infligge danni di Pietra a tutti i nemici e può\napplicare Sbilanciato.",
     "message1": "%1 scatena SismaProfondo!",
     "message2": ""
@@ -8190,9 +8190,9 @@
     "message2": ""
   },
   "1734": {
-    "name": "Condanna",
+    "name": "PresagioFunesto",
     "description": "Infligge danni oscuri a tutti i nemici e ne\nriduce PSI. Può applicare Vulnerabilità.",
-    "message1": "%1 scatena Condanna!",
+    "message1": "%1 scatena PresagioFunesto!",
     "message2": ""
   },
   "1735": {
@@ -8263,7 +8263,7 @@
   },
   "1746": {
     "name": "RitornoFiamma",
-    "description": "Infligge danni di Fuoco a un nemico e ne riduce\nSAG. Può applicare Bruciato.",
+    "description": "Infligge danni di Fuoco a un nemico e ne riduce\nDES. Può applicare Senza Fiato.",
     "message1": "%1 scatena RitornoFiamma!",
     "message2": ""
   },
@@ -8383,7 +8383,7 @@
   },
   "1766": {
     "name": "LanciaVuoto",
-    "description": "Infligge danni oscuri lievi a un nemico e ne\nriduce PSI. Va a segno il 95% delle volte.",
+    "description": "Infligge danni oscuri lievi a un nemico e ne\nriduce INT. Può applicare Acceca. Va a segno il\n95% delle volte.",
     "message1": "%1 scatena LanciaVuoto!",
     "message2": ""
   },
@@ -8502,7 +8502,7 @@
     "message2": ""
   },
   "1786": {
-    "name": "Calcio Circolare",
+    "name": "Calcio Girato",
     "description": "Infligge danni fisici a un nemico e ne riduce\nCOS. Può applicare Sbilanciato.",
     "message1": "%1 usa Calcio a Giro!",
     "message2": ""
@@ -8532,9 +8532,9 @@
     "message2": ""
   },
   "1791": {
-    "name": "Colpo di Pomo",
+    "name": "Colpo d'Elsa",
     "description": "Infligge danni fisici pesanti a un nemico e ne\nriduce FRZ.",
-    "message1": "%1 usa Colpo di Pomo!",
+    "message1": "%1 usa Colpo d'Elsa!",
     "message2": ""
   },
   "1792": {
@@ -8580,9 +8580,9 @@
     "message2": ""
   },
   "1799": {
-    "name": "Morso",
+    "name": "Morso Selvaggio",
     "description": "Infligge danni fisici pesanti a un nemico e ne\nriduce COS. Può applicare Provocare.",
-    "message1": "%1 usa Morso!",
+    "message1": "%1 usa Morso Selvaggio!",
     "message2": ""
   },
   "1800": {
@@ -8635,7 +8635,7 @@
   },
   "1808": {
     "name": "ZampilloAcqueo",
-    "description": "Infligge danni d'Acqua lievi a un nemico e può\napplicare Sonno. Colpisce per primo.",
+    "description": "Infligge danni d'Acqua lievi a un nemico e ne\nriduce DES. Può applicare Bagnato. Colpisce per\nprimo.",
     "message1": "%1 usa ZampilloDAcqua!",
     "message2": ""
   },
@@ -8713,19 +8713,19 @@
   },
   "1821": {
     "name": "ScoppioVapore",
-    "description": "Infligge danni fisici pesanti a tutti i nemici e\nne riduce SAG. Può applicare Nausea.",
+    "description": "Infligge danni d'Acqua pesanti a tutti i nemici e\nne riduce SAG. Può applicare Nausea.",
     "message1": "%1 fonde Fuoco+Acqua!",
     "message2": ""
   },
   "1822": {
     "name": "GeloFuoco",
-    "description": "Infligge danni di Fuoco a un nemico e ne riduce\nSAG.",
+    "description": "Infligge danni di Fuoco a un nemico e ne riduce\nSAG. Può applicare Freddo.",
     "message1": "%1 fonde Fuoco+Ghiaccio!",
     "message2": ""
   },
   "1823": {
     "name": "FronteTempesta",
-    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce SAG. Può applicare Galleggiante.",
+    "description": "Infligge danni di Vento a tutti i nemici e ne\nriduce SAG. Può applicare Galleggiante.",
     "message1": "%1 fonde Fulmine+Vento!",
     "message2": ""
   },
@@ -8767,7 +8767,7 @@
   },
   "1830": {
     "name": "Tempesta",
-    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce DES. Può applicare Senza Fiato.",
+    "description": "Infligge danni di Vento a tutti i nemici e ne\nriduce DES. Può applicare Senza Fiato.",
     "message1": "%1 fonde Fulmine+Vento+Acqua!",
     "message2": ""
   },
@@ -8785,13 +8785,13 @@
   },
   "1833": {
     "name": "TempestaAurorale",
-    "description": "Infligge danni fisici a tutti i nemici e ne\nriduce INT. Colpisce per ultimo.",
+    "description": "Infligge danni di Fulmine a tutti i nemici e ne\nriduce INT. Colpisce per ultimo.",
     "message1": "%1 fonde Ghiaccio+Sacro+Vento!",
     "message2": ""
   },
   "1834": {
     "name": "Purgatorio",
-    "description": "Infligge danni fisici a un nemico e ne riduce\nSAG.",
+    "description": "Infligge danni di Fuoco a un nemico e ne riduce\nSAG.",
     "message1": "%1 fonde Fuoco+Tenebra!",
     "message2": ""
   },
@@ -8821,7 +8821,7 @@
   },
   "1839": {
     "name": "CollassoVortice",
-    "description": "Infligge danni fisici a tutti i nemici e può\napplicare Confusione. Colpisce per ultimo.",
+    "description": "Infligge danni di Vento a tutti i nemici e può\napplicare Confusione. Colpisce per ultimo.",
     "message1": "%1 scatena %2!",
     "message2": ""
   },
@@ -9019,7 +9019,7 @@
   },
   "1872": {
     "name": "ImpattoMeteora",
-    "description": "Infligge danni di Fuoco pesanti a tutti i nemici\ne può applicare Bruciato.",
+    "description": "Infligge danni di Fuoco pesanti a tutti i nemici\ne può applicare Stordire.",
     "message1": "%1 evoca %2!",
     "message2": ""
   },

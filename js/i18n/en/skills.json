@@ -187,7 +187,7 @@
   },
   "40": {
     "name": "Power Stance",
-    "description": "Raises the user's CON. Strikes first.",
+    "description": "Raises the user's STR and CON. Strikes first.",
     "message1": "%1 powers up!",
     "message2": ""
   },
@@ -199,19 +199,19 @@
   },
   "42": {
     "name": "Willpower",
-    "description": "Raises the user's DEX. Strikes first.",
+    "description": "Raises the user's WIS and PSI. Strikes first.",
     "message1": "%1 sets their mind against it all!",
     "message2": ""
   },
   "43": {
     "name": "Clear Mind",
-    "description": "Raises the user's CON. Strikes first.",
+    "description": "Raises the user's WIS. Grants Perfect Focus.\nStrikes first.",
     "message1": "%1 cleared their mind!",
     "message2": ""
   },
   "44": {
     "name": "Peek-a-boo Stance",
-    "description": "Raises the user's DEX. Strikes first.",
+    "description": "Raises the user's DEX. Grants Dodge. Strikes\nfirst.",
     "message1": "%1 assumes a peek-a-boo stance!",
     "message2": ""
   },
@@ -229,13 +229,13 @@
   },
   "47": {
     "name": "Siu Nim Tau",
-    "description": "Raises the user's CON. Strikes first.",
+    "description": "Raises the user's DEX. May grant Combo. Strikes\nfirst.",
     "message1": "%1 assumes the Wing Chun stance!",
     "message2": ""
   },
   "48": {
     "name": "Tai Chi Form",
-    "description": "Raises the user's DEX. Strikes first.",
+    "description": "Raises the user's DEX and WIS. Strikes first.",
     "message1": "%1 assumes Tai Chi stance!",
     "message2": ""
   },
@@ -247,13 +247,13 @@
   },
   "50": {
     "name": "Aikido Flow",
-    "description": "Raises the user's CON. Strikes first.",
+    "description": "Raises the user's DEX and CON. Grants Flow.\nStrikes first.",
     "message1": "%1 flows like water!",
     "message2": ""
   },
   "51": {
     "name": "Sumo Shiko",
-    "description": "Raises the user's DEX. Strikes first.",
+    "description": "Raises the user's STR and CON. Grants Rooted.\nStrikes first.",
     "message1": "%1 stomps with authority!",
     "message2": ""
   },
@@ -271,13 +271,13 @@
   },
   "54": {
     "name": "Muscle Guard",
-    "description": "Raises the user's DEX. Strikes first.",
+    "description": "Raises the user's CON. Grants Protect. Strikes\nfirst.",
     "message1": "%1 tenses their muscles!",
     "message2": ""
   },
   "55": {
     "name": "Dynamic Stretch",
-    "description": "Raises the user's CON. Strikes first.",
+    "description": "Raises the user's DEX. Restores 10 AP. Strikes\nfirst.",
     "message1": "%1 performs dynamic stretches!",
     "message2": ""
   },
@@ -313,7 +313,7 @@
   },
   "61": {
     "name": "Core Martial Arts",
-    "description": "Raises the user's CON. Strikes first.",
+    "description": "Raises the user's STR and CON. Strikes first.",
     "message1": "%1 strengthens their core!",
     "message2": ""
   },
@@ -697,7 +697,7 @@
   },
   "125": {
     "name": "Counter Stance",
-    "description": "Raises the user's CON. Strikes first.",
+    "description": "Raises the user's CON. Grants Counter Attack.\nStrikes first.",
     "message1": "%1 prepares to counter!",
     "message2": ""
   },
@@ -829,7 +829,7 @@
   },
   "147": {
     "name": "Systema Flow",
-    "description": "Raises the user's STR. Strikes first.",
+    "description": "Raises the user's STR. Grants Flow. Strikes\nfirst.",
     "message1": "%1 moves with fluid efficiency!",
     "message2": ""
   },
@@ -1717,7 +1717,7 @@
   },
   "315": {
     "name": "Forage",
-    "description": "Raises all allies' CON.",
+    "description": "Raises all allies' CON. Grants HP Regeneration.",
     "message1": "%1 uses Forage!",
     "message2": ""
   },
@@ -1806,7 +1806,7 @@
     "message2": ""
   },
   "330": {
-    "name": "Scratch",
+    "name": "Rending Claws",
     "description": "Deals massive Physical damage to one enemy and\nmay inflict Infected.",
     "message1": "%1 does a painful scratch!",
     "message2": ""
@@ -2209,7 +2209,7 @@
   },
   "405": {
     "name": "Snowflake",
-    "description": "Deals light Ice damage to one enemy and lowers\ntheir DEX. May inflict Rooted. Strikes first.",
+    "description": "Deals light Ice damage to one enemy and lowers\ntheir INT. May inflict Blind. Strikes first.",
     "message1": "%1 creates a snowflake!",
     "message2": ""
   },
@@ -2341,31 +2341,31 @@
   },
   "427": {
     "name": "EmberSpark",
-    "description": "Deals light Physical damage to one enemy and\nlowers their CON. May inflict Blind.",
+    "description": "Deals light Fire damage to one enemy and may\ninflict Hot.",
     "message1": "%1 uses Ember Spark!",
     "message2": ""
   },
   "428": {
-    "name": "Frostbite",
-    "description": "Deals light Physical damage to one enemy and may\ninflict Sleep.",
-    "message1": "%1 uses Frostbite!",
+    "name": "NumbingChill",
+    "description": "Deals light Ice damage to one enemy and may\ninflict Sleep.",
+    "message1": "%1 uses NumbingChill!",
     "message2": ""
   },
   "429": {
     "name": "WreckingBall",
-    "description": "Deals light Physical damage to one enemy and may\ninflict Unbalanced.",
+    "description": "Deals light Petro damage to one enemy and may\ninflict Unbalanced.",
     "message1": "%1 uses Wrecking Ball!",
     "message2": ""
   },
   "430": {
     "name": "Excavation",
-    "description": "Deals light Physical damage to one enemy and\nlowers their DEX. May inflict Pinned.",
+    "description": "Deals light Petro damage to one enemy and\nlowers their DEX. May inflict Pinned.",
     "message1": "%1 uses Excavation!",
     "message2": ""
   },
   "431": {
-    "name": "GravityWell",
-    "description": "Deals light Physical damage to one enemy and\nlowers their CON. May inflict Grappled.",
+    "name": "Sinkhole",
+    "description": "Deals light Petro damage to one enemy and\nlowers their CON. May inflict Grappled.",
     "message1": "%1 uses Gravity Well!",
     "message2": ""
   },
@@ -2539,7 +2539,7 @@
   },
   "460": {
     "name": "WallOfFire",
-    "description": "Deals light Physical damage to all enemies and\nmay inflict Blind.",
+    "description": "Deals light Fire damage to all enemies and\nmay inflict Blind.",
     "message1": "%1 uses Wall of Fire!",
     "message2": ""
   },
@@ -2551,13 +2551,13 @@
   },
   "462": {
     "name": "SteelBeamStrike",
-    "description": "Deals light Physical damage to all enemies and\nlowers their STR. May inflict Oily.",
+    "description": "Deals light Petro damage to all enemies and\nlowers their STR. May inflict Oily.",
     "message1": "%1 uses Steel Beam Strike!",
     "message2": ""
   },
   "463": {
     "name": "AncientCurse",
-    "description": "Deals minor Physical damage to all enemies.",
+    "description": "Deals minor Cursed damage to all enemies.",
     "message1": "%1 uses Ancient Curse!",
     "message2": ""
   },
@@ -2569,7 +2569,7 @@
   },
   "465": {
     "name": "StormSurge",
-    "description": "Deals light Physical damage to all enemies and\nlowers their CON.",
+    "description": "Deals light Wind damage to all enemies and\nlowers their CON.",
     "message1": "%1 calls up a storm surge!",
     "message2": ""
   },
@@ -2610,7 +2610,7 @@
     "message2": ""
   },
   "472": {
-    "name": "Bubble",
+    "name": "BubbleBurst",
     "description": "Deals Water damage to one enemy and may inflict\nSleep. Strikes first.",
     "message1": "%1 casts %2!",
     "message2": ""
@@ -2725,7 +2725,7 @@
   },
   "491": {
     "name": "CataclysmicStorm",
-    "description": "Deals heavy Physical damage to all enemies and\nlowers their WIS.",
+    "description": "Deals heavy Wind damage to all enemies and\nlowers their WIS.",
     "message1": "%1 uses Cataclysmic Storm!",
     "message2": ""
   },
@@ -2736,14 +2736,14 @@
     "message2": ""
   },
   "493": {
-    "name": "GlacialSpike",
+    "name": "IcicleRain",
     "description": "Deals heavy Ice damage to all enemies and may\ninflict Freeze.",
     "message1": "%1 uses Glacial Spike!",
     "message2": ""
   },
   "494": {
     "name": "Earthmover",
-    "description": "Deals Physical damage to all enemies and lowers\ntheir CON.",
+    "description": "Deals Petro damage to all enemies and lowers\ntheir CON.",
     "message1": "%1 uses Earthmover!",
     "message2": ""
   },
@@ -2761,7 +2761,7 @@
   },
   "497": {
     "name": "TornadoWarning",
-    "description": "Deals heavy Physical damage to all enemies and\nlowers their DEX. May inflict Blind.",
+    "description": "Deals heavy Wind damage to all enemies and\nlowers their DEX. May inflict Blind.",
     "message1": "%1 uses Tornado Warning!",
     "message2": ""
   },
@@ -2773,19 +2773,19 @@
   },
   "499": {
     "name": "Supernova",
-    "description": "Deals heavy Fire damage to all enemies and may\ninflict Burned.",
+    "description": "Deals heavy Fire damage to all enemies and may\ninflict Blind.",
     "message1": "%1 uses Supernova!",
     "message2": ""
   },
   "500": {
     "name": "GlacialApocalypse",
-    "description": "Deals heavy Physical damage to all enemies and\nlowers their DEX.",
+    "description": "Deals heavy Ice damage to all enemies and\nlowers their DEX.",
     "message1": "%1 brings down a glacial apocalypse!",
     "message2": ""
   },
   "501": {
     "name": "SkyscraperDrop",
-    "description": "Deals massive Physical damage to all enemies and\nlowers their DEX. May inflict Rooted.",
+    "description": "Deals massive Petro damage to all enemies and\nlowers their DEX. May inflict Rooted.",
     "message1": "%1 uses Skyscraper Drop!",
     "message2": ""
   },
@@ -2803,7 +2803,7 @@
   },
   "504": {
     "name": "Category5Hurricane",
-    "description": "Deals Physical damage to all enemies and may\ninflict Floating.",
+    "description": "Deals Wind damage to all enemies and may\ninflict Floating.",
     "message1": "%1 uses Category 5 Hurricane!",
     "message2": ""
   },
@@ -2833,7 +2833,7 @@
   },
   "519": {
     "name": "LuminousTransfiguration",
-    "description": "Raises one ally's STR. Strikes last.",
+    "description": "Raises one ally's STR and INT. Grants Inspired.\nStrikes last.",
     "message1": "%1 transforms into luminous energy!",
     "message2": ""
   },
@@ -2845,7 +2845,7 @@
   },
   "521": {
     "name": "DivinePerfection",
-    "description": "Raises all allies' STR. Strikes last.",
+    "description": "Raises all allies' STR and WIS. Strikes last.",
     "message1": "%1 unleashes ultimate enhancement!",
     "message2": ""
   },
@@ -2863,7 +2863,7 @@
   },
   "524": {
     "name": "PurifyingPrayer",
-    "description": "Raises one ally's STR. Strikes last.",
+    "description": "Cures Poison and Blind on one ally and raises\ntheir WIS. Strikes last.",
     "message1": "%1 performs ritual cleansing!",
     "message2": ""
   },
@@ -2905,7 +2905,7 @@
   },
   "531": {
     "name": "DivineResilience",
-    "description": "Raises the user's INT.",
+    "description": "Raises the user's CON and WIS.",
     "message1": "%1 prays for divine resilience!",
     "message2": ""
   },
@@ -2929,7 +2929,7 @@
   },
   "535": {
     "name": "HealingScripture",
-    "description": "Restores HP to all allies and raises their STR.",
+    "description": "Restores HP to all allies and raises their WIS.",
     "message1": "%1 recites healing scripture!",
     "message2": ""
   },
@@ -2941,7 +2941,7 @@
   },
   "537": {
     "name": "MassHealing",
-    "description": "Restores HP to all allies.",
+    "description": "Restores HP to all allies. Grants HP\nRegeneration.",
     "message1": "%1 prays for mass healing!",
     "message2": ""
   },
@@ -2952,7 +2952,7 @@
     "message2": ""
   },
   "539": {
-    "name": "Resurrect",
+    "name": "BreathOfLife",
     "description": "Restores HP to one fallen ally and cures Dead.",
     "message1": "%1 casts %2!",
     "message2": ""
@@ -3013,7 +3013,7 @@
   },
   "549": {
     "name": "AngelJudgment",
-    "description": "Deals Sacred damage to all enemies and may\ninflict Death Mark. Strikes last.",
+    "description": "Deals Sacred damage to all enemies and lowers\ntheir INT. May inflict Blind. Strikes last.",
     "message1": "%1 summons an angel of judgment!",
     "message2": ""
   },
@@ -3061,7 +3061,7 @@
   },
   "557": {
     "name": "HolySacrament",
-    "description": "Restores HP to all allies and raises their STR.",
+    "description": "Restores HP to all allies. Grants HP\nRegeneration.",
     "message1": "%1 uses Holy Sacrament!",
     "message2": ""
   },
@@ -3097,7 +3097,7 @@
   },
   "563": {
     "name": "MirrorImage",
-    "description": "Raises all allies' STR.",
+    "description": "Grants Magic Reflection to all allies.",
     "message1": "%1 uses Mirror Image!",
     "message2": ""
   },
@@ -3109,7 +3109,7 @@
   },
   "565": {
     "name": "LifeShower",
-    "description": "Restores HP to all allies and raises their INT.",
+    "description": "Restores HP to all allies and raises their PSI.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
@@ -3133,13 +3133,13 @@
   },
   "569": {
     "name": "ChemicalSanctuary",
-    "description": "Restores HP to all allies and raises their INT.",
+    "description": "Restores HP to all allies and raises their CON.",
     "message1": "%1 uses Chemical Sanctuary!",
     "message2": ""
   },
   "570": {
     "name": "LayOnHands",
-    "description": "Restores HP to all allies and raises their STR.",
+    "description": "Restores HP to one ally and cures Poison and\nBleeding.",
     "message1": "%1 uses Lay on Hands!",
     "message2": ""
   },
@@ -3181,7 +3181,7 @@
   },
   "577": {
     "name": "HealParty",
-    "description": "Restores HP to all allies and raises their STR.",
+    "description": "Restores HP to all allies and cures Blind and\nSilence.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
@@ -3193,7 +3193,7 @@
   },
   "579": {
     "name": "AuraOfProtection",
-    "description": "Raises all allies' STR.",
+    "description": "Raises all allies' CON.",
     "message1": "%1 uses Aura of Protection!",
     "message2": ""
   },
@@ -3211,7 +3211,7 @@
   },
   "582": {
     "name": "MindMaze",
-    "description": "Deals Physical damage to one enemy and may\ninflict Silence.",
+    "description": "Deals Sacred damage to one enemy and may\ninflict Silence.",
     "message1": "%1 uses Mind Maze!",
     "message2": ""
   },
@@ -3235,7 +3235,7 @@
   },
   "586": {
     "name": "AegisOfLight",
-    "description": "Raises all allies' INT.",
+    "description": "Raises all allies' CON. Grants Divine Shield.",
     "message1": "%1 raises an aegis of light!",
     "message2": ""
   },
@@ -3253,7 +3253,7 @@
   },
   "589": {
     "name": "RealityWarp",
-    "description": "Deals Physical damage to all enemies and may\ninflict Blind.",
+    "description": "Deals Sacred damage to all enemies and may\ninflict Blind.",
     "message1": "%1 uses Reality Warp!",
     "message2": ""
   },
@@ -3282,8 +3282,8 @@
     "message2": ""
   },
   "604": {
-    "name": "MeteorShower",
-    "description": "Deals Fire damage to all enemies and may inflict\nVulnerability. Lands 90% of the time.",
+    "name": "AbyssalMeteor",
+    "description": "Deals Cursed damage to all enemies and may inflict\nVulnerability. Lands 90% of the time.",
     "message1": "%1 calls down a meteor shower!",
     "message2": ""
   },
@@ -3469,7 +3469,7 @@
   },
   "645": {
     "name": "VitalDrain",
-    "description": "Restores MP to the user.",
+    "description": "Restores MP to the user and raises their PSI.",
     "message1": "%1 drains their own life force!",
     "message2": ""
   },
@@ -4435,7 +4435,7 @@
   },
   "846": {
     "name": "MinorEnchantment",
-    "description": "Raises all allies' STR. Grants Arcane Surge and\nrestores 15 AP.",
+    "description": "Raises all allies' INT. Grants Arcane Surge and\nrestores 15 AP.",
     "message1": "%1 uses Minor Enchantment!",
     "message2": ""
   },
@@ -5017,7 +5017,7 @@
   },
   "974": {
     "name": "PSI Manifestation",
-    "description": "Deals minor Physical damage to all enemies and\nmay inflict Unbalanced.",
+    "description": "Deals Physical damage to all enemies and lowers\ntheir PSI. May inflict Unbalanced.",
     "message1": "%1 unleashes ultimate psi potential!",
     "message2": ""
   },
@@ -5245,7 +5245,7 @@
   },
   "1022": {
     "name": "Nightingales Grace",
-    "description": "Restores HP to all allies and raises their CON.",
+    "description": "Restores HP to all allies. Grants HP\nRegeneration.",
     "message1": "%1 uses Nightingale's Grace!",
     "message2": ""
   },
@@ -5329,7 +5329,7 @@
   },
   "1046": {
     "name": "Weak Point Shot",
-    "description": "Deals light damage to one enemy and lowers STR.\nMay inflict Bleeding. Lands 85% of the time.",
+    "description": "Deals light damage to one enemy and lowers CON.\nMay inflict Vital Exposed. Lands 85% of the\ntime.",
     "message1": "%1 targets a weak point!",
     "message2": ""
   },
@@ -5743,7 +5743,7 @@
   },
   "1145": {
     "name": "Team Coordination",
-    "description": "Raises all allies' DEX. Strikes last.",
+    "description": "Raises all allies' DEX. Grants Flow. Strikes\nlast.",
     "message1": "%1 coordinates the team!",
     "message2": ""
   },
@@ -6762,7 +6762,7 @@
     "message2": ""
   },
   "1411": {
-    "name": "Omniscience",
+    "name": "AllSeeing",
     "description": "Lays bare every beast and the whole chronicle.",
     "message1": "%1 lays the whole world bare!",
     "message2": ""
@@ -7518,7 +7518,7 @@
     "message2": ""
   },
   "1584": {
-    "name": "Panacea",
+    "name": "GrandPanacea",
     "description": "Knits all flesh and restores body and mind.",
     "message1": "%1 works a true panacea!",
     "message2": ""
@@ -8082,9 +8082,9 @@
     "message2": ""
   },
   "1716": {
-    "name": "Blizzard",
+    "name": "SnowSquall",
     "description": "Deals light Ice damage to all enemies and may\ninflict Sleep. Lands 90% of the time.",
-    "message1": "%1 unleashes Blizzard!",
+    "message1": "%1 unleashes SnowSquall!",
     "message2": ""
   },
   "1717": {
@@ -8154,9 +8154,9 @@
     "message2": ""
   },
   "1728": {
-    "name": "Earthquake",
+    "name": "FaultLine",
     "description": "Deals light Petro damage to all enemies and may\ninflict Unbalanced. Lands 90% of the time.",
-    "message1": "%1 unleashes Earthquake!",
+    "message1": "%1 unleashes FaultLine!",
     "message2": ""
   },
   "1729": {
@@ -8190,9 +8190,9 @@
     "message2": ""
   },
   "1734": {
-    "name": "Doom",
+    "name": "DreadOmen",
     "description": "Deals Cursed damage to all enemies and lowers\nPSI. May inflict Vulnerability. Strikes last.",
-    "message1": "%1 unleashes Doom!",
+    "message1": "%1 unleashes DreadOmen!",
     "message2": ""
   },
   "1735": {
@@ -8263,7 +8263,7 @@
   },
   "1746": {
     "name": "Backdraft",
-    "description": "Deals Fire damage to one enemy and lowers their\nWIS. May inflict Burned.",
+    "description": "Deals Fire damage to one enemy and lowers their\nDEX. May inflict Winded.",
     "message1": "%1 unleashes Backdraft!",
     "message2": ""
   },
@@ -8383,7 +8383,7 @@
   },
   "1766": {
     "name": "VoidLance",
-    "description": "Deals light Cursed damage to one enemy and\nlowers their PSI. Lands 95% of the time.",
+    "description": "Deals light Cursed damage to one enemy and\nlowers their INT. May inflict Blind. Lands 95%\nof the time.",
     "message1": "%1 unleashes VoidLance!",
     "message2": ""
   },
@@ -8502,9 +8502,9 @@
     "message2": ""
   },
   "1786": {
-    "name": "Roundhouse Kick",
+    "name": "Turning Kick",
     "description": "Deals Physical damage to one enemy and lowers\nCON. May inflict Unbalanced.",
-    "message1": "%1 uses Roundhouse Kick!",
+    "message1": "%1 uses Turning Kick!",
     "message2": ""
   },
   "1787": {
@@ -8532,9 +8532,9 @@
     "message2": ""
   },
   "1791": {
-    "name": "Pommel Strike",
+    "name": "Hilt Crush",
     "description": "Deals heavy Physical damage to one enemy and\nlowers their STR.",
-    "message1": "%1 uses Pommel Strike!",
+    "message1": "%1 uses Hilt Crush!",
     "message2": ""
   },
   "1792": {
@@ -8580,9 +8580,9 @@
     "message2": ""
   },
   "1799": {
-    "name": "Bite",
+    "name": "Savage Bite",
     "description": "Deals heavy Physical damage to one enemy and\nlowers their CON. May inflict Provoke.",
-    "message1": "%1 uses Bite!",
+    "message1": "%1 uses Savage Bite!",
     "message2": ""
   },
   "1800": {
@@ -8635,7 +8635,7 @@
   },
   "1808": {
     "name": "WaterSpurt",
-    "description": "Deals light Water damage to one enemy and may\ninflict Sleep. Strikes first.",
+    "description": "Deals light Water damage to one enemy and lowers\ntheir DEX. May inflict Wet. Strikes first.",
     "message1": "%1 uses WaterSpurt!",
     "message2": ""
   },
@@ -8713,19 +8713,19 @@
   },
   "1821": {
     "name": "SteamBurst",
-    "description": "Deals heavy Physical damage to all enemies and\nlowers their WIS. May inflict Nausea.",
+    "description": "Deals heavy Water damage to all enemies and\nlowers their WIS. May inflict Nausea.",
     "message1": "%1 fuses Fire+Water!",
     "message2": ""
   },
   "1822": {
     "name": "Frostfire",
-    "description": "Deals Fire damage to one enemy and lowers their\nWIS.",
+    "description": "Deals Fire damage to one enemy and lowers their\nWIS. May inflict Cold.",
     "message1": "%1 fuses Fire+Ice!",
     "message2": ""
   },
   "1823": {
     "name": "Stormfront",
-    "description": "Deals Physical damage to all enemies and lowers\nWIS. May inflict Floating.",
+    "description": "Deals Wind damage to all enemies and lowers\nWIS. May inflict Floating.",
     "message1": "%1 fuses Thunder+Wind!",
     "message2": ""
   },
@@ -8767,7 +8767,7 @@
   },
   "1830": {
     "name": "Tempest",
-    "description": "Deals Physical damage to all enemies and lowers\nDEX. May inflict Winded. Strikes first.",
+    "description": "Deals Wind damage to all enemies and lowers\nDEX. May inflict Winded. Strikes first.",
     "message1": "%1 fuses Thunder+Wind+Water!",
     "message2": ""
   },
@@ -8785,13 +8785,13 @@
   },
   "1833": {
     "name": "AuroraStorm",
-    "description": "Deals Physical damage to all enemies and lowers\ntheir INT. Strikes last.",
+    "description": "Deals Thunder damage to all enemies and lowers\ntheir INT. Strikes last.",
     "message1": "%1 fuses Ice+Holy+Wind!",
     "message2": ""
   },
   "1834": {
     "name": "Purgatory",
-    "description": "Deals Physical damage to one enemy and lowers\ntheir WIS.",
+    "description": "Deals Fire damage to one enemy and lowers\ntheir WIS.",
     "message1": "%1 fuses Fire+Dark!",
     "message2": ""
   },
@@ -8821,7 +8821,7 @@
   },
   "1839": {
     "name": "VortexCollapse",
-    "description": "Deals Physical damage to all enemies and may\ninflict Confusion. Strikes last.",
+    "description": "Deals Wind damage to all enemies and may\ninflict Confusion. Strikes last.",
     "message1": "%1 unleashes %2!",
     "message2": ""
   },
@@ -9019,7 +9019,7 @@
   },
   "1872": {
     "name": "MeteorImpact",
-    "description": "Deals heavy Fire damage to all enemies and may\ninflict Burned.",
+    "description": "Deals heavy Fire damage to all enemies and may\ninflict Stun.",
     "message1": "%1 conjures %2!",
     "message2": ""
   },
