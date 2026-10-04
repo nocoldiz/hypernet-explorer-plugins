@@ -17,7 +17,6 @@
   "insufficientFunds": "\\C[18]INSUFFICIENT FUNDS!\\C[0]",
   "ui": {
     "fuelStation": "FUEL STATION",
-    "hint": "↑↓ NAVIGATE · OK CONFIRM · ESC BACK",
     "noVehicles": "NO REFUELABLE VEHICLES OWNED",
     "fuelOverview": "FUEL OVERVIEW",
     "vehicleFuel": "{name} FUEL",
@@ -25,5 +24,30 @@
     "level": "LEVEL",
     "pricePerLitre": "PRICE/L",
     "wallet": "WALLET"
+  },
+  "help": {
+    "title": "DA FUEL STATION",
+    "items": {
+      "vehicles": {
+        "name": "VEHICLES",
+        "text": "EVERY VEHICLE DA PARTY OWNS DAT TAKES FUEL. PICK ONE TA SEE ITS REFUELLIN' OPTIONS!"
+      },
+      "options": {
+        "name": "REFUEL OPTIONS",
+        "text": "BUY A SET NUMBER OF LITRES OR FILL DA TANK. DA PRICE OF EACH OPTION IZ SHOWN BESIDE IT!"
+      },
+      "overview": {
+        "name": "FUEL OVERVIEW",
+        "text": "DA FUEL LEVEL OF DA SELECTED VEHICLE, DA PRICE PER LITRE AN' WHAT DA PARTY HAB IN ITS WALLET!"
+      },
+      "exit": {
+        "name": "EXIT STATION",
+        "text": "LEAVES DA STATION."
+      },
+      "help": {
+        "name": "? HELP",
+        "text": "OPENS DIS SHEET. ON A CONTROLLER, PRESS SELECT; PRESS IT AGAIN, BACK OR CONFIRM TA CLOSE!"
+      }
+    }
   }
 }

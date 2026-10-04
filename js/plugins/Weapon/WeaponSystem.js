@@ -976,6 +976,23 @@
   // Window_BattleLog - Weapon Sounds
   //=============================================================================
 
+  // The Gunmancer (data/Classes.json): every spell they cast is fired.
+  const GUNMANCER_CLASS_ID = 16;
+
+  /**
+   * Whether a skill is performed as a shot from the gun in hand: a skill of
+   * the Firearms school (window.SkillWeaponReq says which those are), or any
+   * magic skill cast by a Gunmancer.
+   */
+  function isFiredSkill(subject, skill) {
+    if (!skill) return false;
+    if (window.SkillWeaponReq && window.SkillWeaponReq.needOf(skill) === "ranged") return true;
+    if (!window.SkillWeaponReq && /<category:\s*Firearms\s*>/i.test(skill.note || "")) return true;
+    const cls = subject && typeof subject.currentClass === "function" ? subject.currentClass() : null;
+    return !!cls && cls.id === GUNMANCER_CLASS_ID && skill.stypeId === 1;
+  }
+  window.WeaponSkillShot = { isFiredSkill };
+
   const _Window_BattleLog_startAction = Window_BattleLog.prototype.startAction;
   Window_BattleLog.prototype.startAction = function (subject, action, targets) {
     if (action && subject && subject.isActor()) {
@@ -995,8 +1012,12 @@
         // the gun and a slash is cut with the sword, rather than both being
         // played on whatever hangs in the right hand. -1, and every skill that
         // asks for no weapon at all, keeps the leading hand.
-        const reqIndex = window.SkillWeaponReq
+        let reqIndex = window.SkillWeaponReq
           ? window.SkillWeaponReq.indexIn(weapons, skill) : -1;
+        // A Gunmancer's spell leaves the gun, in whichever hand it hangs.
+        if (reqIndex < 0 && isFiredSkill(subject, skill)) {
+          reqIndex = weapons.findIndex((w) => w && RANGED_WTYPES.includes(w.wtypeId));
+        }
         this._skillWeaponIndex = reqIndex >= 0 ? reqIndex : null;
         const hand = reqIndex >= 0 ? reqIndex : 0;
         const wtypeId = (weapons.length && weapons[hand]) ? weapons[hand].wtypeId : 0;
@@ -1006,11 +1027,23 @@
         // (WeaponSystemProcedural.rangedMotionFor), so there is no sword swing
         // to suppress here: suppressing it is what left an archer standing
         // still for every skill they used, holding a bow that never moved.
-        const shoots = wtypeId === 7 || wtypeId === 8 || wtypeId === 9;
+        const shoots = RANGED_WTYPES.includes(wtypeId);
+        // Only a shot is fired as one: a Firearms skill, or any spell a
+        // Gunmancer casts, since their spells leave through the barrel. A
+        // Baton Strike thrown with a pistol in hand is not a shot, so the gun
+        // does not play one.
+        // The vector gun keeps still for anything turned on her own side: a
+        // buff on herself or a spell on a companion is not aimed down the
+        // barrel, whatever shape the frame is folded into.
+        const vgInHand = !!(window.VectorGun && weapons[hand] &&
+          window.VectorGun.isVectorGun(weapons[hand]));
+        const ownSide = typeof action.isForOpponent === "function" && !action.isForOpponent();
+        const fired = shoots && isFiredSkill(subject, skill) && !(vgInHand && ownSide);
         const declared = !!(skill && skill.weaponAnimations && skill.weaponAnimations.length > 0);
         // Claws and gloves are still left out: they have no motion of their own
-        // to fall back on, so a skill would swing them like a sword.
-        const swings = declared && wtypeId !== 10 && wtypeId !== 11;
+        // to fall back on, so a skill would swing them like a sword. Nor is a
+        // gun swung like a sword for a skill it does not fire.
+        const swings = declared && !shoots && wtypeId !== 10 && wtypeId !== 11;
 
         // A skill tagged <HandAnimation> is thrown with the hands, so a hand
         // with nothing in it throws it: the bare fists in frame swing. It only
@@ -1018,7 +1051,7 @@
         // the sword's motion whatever the skill is called.
         const throwsHands = !!(skill && skill.handAnimation) && !weapons[hand];
 
-        if (shoots && (declared || action.isPhysical())) {
+        if (fired) {
           this._lastAttacker = subject;
           this._multiAttackHitCount = 0;
           // null: its own shot, not whatever movement the skill named.

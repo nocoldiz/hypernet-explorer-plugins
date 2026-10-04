@@ -5,5 +5,44 @@
     "Storm": "STORM",
     "Snow": "SNOW",
     "Unknown": "UNKNOWN"
+  },
+  "app": {
+    "appName": "WHETHER CHANNEL",
+    "location": "LOCATION",
+    "here": "WHERE ME IZ",
+    "updated": "LAST OBSERVATION: {date}",
+    "today": "TODAY",
+    "indoors": "(INDOORS)",
+    "season": "SEASON",
+    "sunrise": "SUNRISE",
+    "sunset": "SUNSET",
+    "dayNight": "DAY / NIGHT",
+    "humidity": "HUMIDITY",
+    "wind": "WIND",
+    "cloud": "CLOUD COVER",
+    "kmh": "{n} KM/H",
+    "outlook": "FIVE-DAY OUTLOOK",
+    "precip": "{n}% PRECIP.",
+    "disclaimer": "OUTLOOKS IZ ROLLED FROM DA SEASON TABLES AN' DA CALENDAR. DA SKY OWES DEM NOTHIN'!",
+    "months": [
+      "JAN",
+      "FEB",
+      "MAR",
+      "APR",
+      "MAY",
+      "JUN",
+      "JUL",
+      "AUG",
+      "SEP",
+      "OCT",
+      "NOV",
+      "DEC"
+    ],
+    "seasons": {
+      "winter": "WINTER",
+      "spring": "SPRIN'",
+      "summer": "SUMMER",
+      "autumn": "AUTUMN"
+    }
   }
 }

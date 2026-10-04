@@ -27,14 +27,15 @@
   "filterAll": "ALL RECIPES",
   "tradeLabel": "{spec}: {level}",
   "knownBySkill": "RECOGNISED ON SIGHT: {spec} AT {level}!",
-  "revealHint": "{spec} TRAINED TA {level} WOULD READ DIS FORMULA AT SIGHT!",
+  "revealHint": "{spec} TRAINED TA {level} COULD READ DIS FORMULA WITHOUT UNLOCKIN' IT!",
   "reclaimChance": "{pct}% CHANCE TA SAVE EACH MATERIAL",
   "reclaimed": "SAVED FROM DA BENCH: {items}",
   "tierLabel": "TIER {tier} WORK - FABRICATION: {level}",
+  "starterRecipe": "COMMON KNOWLEDGE - ANYONE CAN MAKE DIS, TRAINED OR NOT",
   "botchRisk": "{pct}% CHANCE OF BOTCHIN' IT",
   "needFabrication": "TOO COMPLEX FOR DEZE HANDS. REQUIRES FABRICATION: {level}",
   "botchTitle": "BOTCHED",
-  "botchNote": "HALF DA MATERIALS IZ WASTED, BUT DA MISTAKE TAUGHT YOU SOMETHIN'!",
+  "botchNote": "HALF DA MATERIALS IZ WASTED, BUT YOU GAIN EXPERIENCE FROM DA MISTAKE!",
   "botched": "DA {item} CAME APART ON DA BENCH!",
   "category": {
     "Books": "BOOKS",
@@ -59,5 +60,6 @@
     "Weapons": "WEAPONS",
     "Armor": "ARMOR",
     "Misc": "MISC"
-  }
+  },
+  "searchPlaceholder": "SEARCH RECIPES…"
 }

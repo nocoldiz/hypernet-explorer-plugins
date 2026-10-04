@@ -1292,6 +1292,8 @@
 
     shouldHaveReflection(character) {
       if (!character) return false;
+      // An Underwater event lies below the surface: nothing of it is mirrored.
+      if (character instanceof Game_Event && _misIsUnderwaterEvent(character)) return false;
       const x = character.x;
       const y = character.y;
       const waterY = y + 1;
@@ -2019,6 +2021,24 @@
       }
     }
     return _Game_CharacterBase_screenZ.call(this);
+  };
+
+  // Every depth above only holds if the tilemap's sort holds. The engine's
+  // comparator subtracts z (then y) straight, so ONE child with no z (a sprite
+  // some plugin hung on the tilemap before it ever set a depth) makes it answer
+  // NaN, the sort stops being consistent, and characters added after that child
+  // land above the upper tile layer: walking in front of star tiles after every
+  // Scene_Map rebuild until enough sorting passes shuffled them back. A missing
+  // depth reads as 0, a missing y as 0, so the order is total again.
+  const _misSortKey = (v) => (typeof v === "number" && v === v ? v : 0);
+  Tilemap.prototype._compareChildOrder = function (a, b) {
+    const az = _misSortKey(a.z);
+    const bz = _misSortKey(b.z);
+    if (az !== bz) return az - bz;
+    const ay = _misSortKey(a.y);
+    const by = _misSortKey(b.y);
+    if (ay !== by) return ay - by;
+    return _misSortKey(a.spriteId) - _misSortKey(b.spriteId);
   };
 
   const _Game_Player_isDashing = Game_Player.prototype.isDashing;
@@ -3024,7 +3044,7 @@
           $gameMap.events().forEach(event => {
             if (event && event.event()) {
               const isMonster = event.event().name === "Enemy";  // i18n-ignore  event name
-              if (!isMonster) {
+              if (!isMonster && !_misIsUnderwaterEvent(event)) {
                 event._originalTransparent = event.isTransparent();
                 event.setTransparent(true);
               }
@@ -3066,9 +3086,9 @@
         // Hide parallax
         $gameMap.changeParallax("", false, false, 0, 0);
         
-        // Hide all map events
+        // Hide all map events but the Underwater ones, which a diver sees
         $gameMap.events().forEach(event => {
-          if (event) {
+          if (event && !_misIsUnderwaterEvent(event)) {
             event._originalTransparent = event.isTransparent();
             event.setTransparent(true);
           }
@@ -3306,9 +3326,9 @@
             // Hide parallax
             $gameMap.changeParallax("", false, false, 0, 0);
             
-            // Hide all map events
+            // Hide all map events but the Underwater ones, which a diver sees
             $gameMap.events().forEach(event => {
-              if (event) {
+              if (event && !_misIsUnderwaterEvent(event)) {
                 event._originalTransparent = event.isTransparent();
                 event.setTransparent(true);
               }
@@ -3582,6 +3602,26 @@
     return result;
   };
 
+  // A diver on an authored map leaving region 99 surfaces on the tile stepped
+  // onto (updateSwimState ends the dive there), so that step is judged the way
+  // a surface swimmer's would be, against the tileset the map wore before the
+  // seabed one replaced it: a wall or a cliff stays blocked rather than reading
+  // as open sea floor.
+  const _misDiverLeavesDeepWater = (map, character, x, y) =>
+    !!(character && character._isDiving && map.mapId() !== 636 && map.regionId(x, y) !== 99);
+
+  const _misAsSurfaceSwimmer = (map, character, ask) => {
+    const savedTileset = map._tilesetId;
+    if (character._originalTilesetId !== undefined) map._tilesetId = character._originalTilesetId;
+    character._isDiving = false;
+    try {
+      return ask();
+    } finally {
+      character._isDiving = true;
+      map._tilesetId = savedTileset;
+    }
+  };
+
   const _Game_Map_isPassable = Game_Map.prototype.isPassable;
   Game_Map.prototype.isPassable = function (x, y, d) {
     const character = window._currentlyCheckingCharacter;
@@ -3589,6 +3629,9 @@
     // never hit any of the special branches below.
     if (this._misHasSpecialPassability === false && !(character && character._isDiving)) {
       return _Game_Map_isPassable.call(this, x, y, d);
+    }
+    if (_misDiverLeavesDeepWater(this, character, x, y)) {
+      return _misAsSurfaceSwimmer(this, character, () => this.isPassable(x, y, d));
     }
     const regionId = this.regionId(x, y);
     const terrainTag = this.terrainTag(x, y);
@@ -3672,6 +3715,9 @@
     // The rules below are a walker's. A boat, ship or airship asks with its
     // own bit (0x0200 / 0x0400 / 0x0800) and is answered off the tileset.
     if ((bit & 0x0f) === 0) return _Game_Map_checkPassage.call(this, x, y, bit);
+    if (_misDiverLeavesDeepWater(this, character, x, y)) {
+      return _misAsSurfaceSwimmer(this, character, () => this.checkPassage(x, y, bit));
+    }
     const regionId = this.regionId(x, y);
     const terrainTag = this.terrainTag(x, y);
     const charIsSwimming = character ? character._isSwimming : false;
@@ -4013,7 +4059,7 @@
       }
 
       if (isEvent && ($gamePlayer._isDiving || _isProcDivingGlobal())) {
-          if (!_misSpriteOnWater(this, c)) {
+          if (!_misIsUnderwaterEvent(c) && !_misSpriteOnWater(this, c)) {
               this.visible = false;
           }
       }
@@ -4057,8 +4103,8 @@
   //
   // The leader is never stopped from running: the drain is a cost, not a gate,
   // and a party stranded at walking pace mid-chase would be a worse game. The
-  // rest of the party runs when the leader does, since they walk the column
-  // behind them (Core/AutoIdleExplorer.js), so the meter costs them the same.
+  // rest of the party pays only while the leader runs AND they are running
+  // too (Core/AutoIdleExplorer.js); a walking leader costs nobody anything.
   const SPRINT_DRAIN_PER_SEC = 5.0;  // a full meter is about twenty seconds of running
   const SPRINT_WALK_REGEN = 1.5;     // on the move at walking pace
   const SPRINT_IDLE_REGEN = 4.0;     // standing still, which is a rest
@@ -4092,10 +4138,11 @@
       }
     },
 
-    // One frame of the party going about the map. Everybody running pays for
-    // it, the leader and the column behind them alike; everybody who is not
-    // running gets a little of it back, faster while the party is standing
-    // still than while it is walking.
+    // One frame of the party going about the map. Nobody pays while the
+    // leader walks: a run is only charged while the leader is running, to the
+    // leader and to each member who is running with them (on the move in the
+    // column, or hurrying under their own steam). Everybody else gets a little
+    // back, faster while the party is standing still than while it is walking.
     tick() {
       if (!$gameParty || !$gamePlayer) return;
       const members = $gameParty.members();
@@ -4103,8 +4150,19 @@
       const moving = $gamePlayer.isMoving();
       const leaderSprinting = moving && $gamePlayer.isDashing();
       const regen = perFrame(moving ? SPRINT_WALK_REGEN : SPRINT_IDLE_REGEN);
-      for (const actor of members) {
-        const running = actor._sprintRunningThisFrame || leaderSprinting;
+      const followers = typeof $gamePlayer.followers === "function"
+        ? $gamePlayer.followers() : null;
+      for (let i = 0; i < members.length; i++) {
+        const actor = members[i];
+        let running = false;
+        if (leaderSprinting) {
+          if (i === 0) {
+            running = true;
+          } else {
+            const ch = followers && followers.follower ? followers.follower(i - 1) : null;
+            running = !!actor._sprintRunningThisFrame || !!(ch && ch.isMoving());
+          }
+        }
         if (running) this.spend(actor);
         else addAp(actor, regen);
         actor._sprintRunningThisFrame = false;
@@ -4140,8 +4198,10 @@
 
   const _misIsUnderwaterEvent = (event) => {
     if (!event || typeof event.event !== 'function') return false;
+    if (event._misUnderwater !== undefined) return event._misUnderwater;
     const data = event.event();
-    return !!(data && data.note && UNDERWATER_NOTE.test(data.note));
+    event._misUnderwater = !!(data && data.note && UNDERWATER_NOTE.test(data.note));
+    return event._misUnderwater;
   };
 
   const _Game_CharacterBase_isCollidedWithEvents = Game_CharacterBase.prototype.isCollidedWithEvents;
@@ -4152,11 +4212,61 @@
     );
   };
 
+  // A path search (findDirectionTo: the party's followers, click to move, the
+  // autopilot, any event walking toward somebody) weighs a few hundred tiles,
+  // and canPass asks eventsXyNt of every one of them, which filters every
+  // event on the map into a fresh array each time. On a crowded map that was
+  // a frame of tens of milliseconds whenever a follower lost sight of the way.
+  // Nobody moves while a search runs, so for its length the solid events are
+  // indexed by tile once, lazily, and every ask reads the index: the same
+  // events, in the same order, for a fraction of the cost.
+  let _misSearchDepth = 0;
+  let _misSearchIndex = null;
+  function _misBuildSearchIndex(map) {
+    const index = new Map();
+    const w = map.width();
+    const events = map.events();
+    for (let i = 0; i < events.length; i++) {
+      const ev = events[i];
+      if (ev.isThrough()) continue;
+      if (!(ev._x >= 0 && ev._x < w)) continue;
+      const key = ev._y * w + ev._x;
+      const list = index.get(key);
+      if (list) list.push(ev);
+      else index.set(key, [ev]);
+    }
+    return index;
+  }
+
+  const _Game_Character_findDirectionTo_mis = Game_Character.prototype.findDirectionTo;
+  Game_Character.prototype.findDirectionTo = function (goalX, goalY) {
+    if (_misSearchDepth === 0) _misSearchIndex = null;
+    _misSearchDepth++;
+    try {
+      return _Game_Character_findDirectionTo_mis.call(this, goalX, goalY);
+    } finally {
+      if (--_misSearchDepth === 0) _misSearchIndex = null;
+    }
+  };
+
+  const _Game_Map_eventsXyNt_mis = Game_Map.prototype.eventsXyNt;
+  Game_Map.prototype.eventsXyNt = function (x, y) {
+    if (_misSearchDepth === 0 || this !== $gameMap) return _Game_Map_eventsXyNt_mis.call(this, x, y);
+    const w = this.width();
+    // Off the map or between tiles, the index has no key for it: ask the stock way.
+    if (!(x >= 0 && x < w && y >= 0 && y < this.height()) || (x | 0) !== x || (y | 0) !== y) {
+      return _Game_Map_eventsXyNt_mis.call(this, x, y);
+    }
+    if (!_misSearchIndex) _misSearchIndex = _misBuildSearchIndex(this);
+    // Copied out, so a caller that edits what it was given edits its own.
+    const list = _misSearchIndex.get(y * w + x);
+    return list ? list.slice() : [];
+  };
+
   const _Game_Event_update_underwater = Game_Event.prototype.update;
   Game_Event.prototype.update = function () {
     _Game_Event_update_underwater.call(this);
-    if (this._misUnderwater === undefined) this._misUnderwater = _misIsUnderwaterEvent(this);
-    if (!this._misUnderwater) return;
+    if (!_misIsUnderwaterEvent(this)) return;
     const target = isPartyDiving() ? 255 : UNDERWATER_SURFACE_OPACITY;
     if (this._opacity < target) this._opacity = Math.min(target, this._opacity + UNDERWATER_FADE_STEP);
     else if (this._opacity > target) this._opacity = Math.max(target, this._opacity - UNDERWATER_FADE_STEP);

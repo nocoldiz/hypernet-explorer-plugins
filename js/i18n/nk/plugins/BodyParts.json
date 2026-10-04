@@ -1,0 +1,123 @@
+{
+  "_comment": "DISPLAY TEXT FOR JS/DB/HEALTH/BODYPARTS.JSON, WHICH CARRIES ONLY IDS AN' KEYS. DA ROOT JS/I18N/<lang>/BODYPARTS.JSON STAYS AS HENDRIX_LOCALIZATION'S ENGLISH-STRIN' DICTIONARY FOR TEXT AUTHORED OUTSIDE DA DATA FILES!",
+  "brain": {
+    "name": "BRAIN",
+    "damage_msg": "BRAIN WAZ CONCUSSED"
+  },
+  "genitals": {
+    "name": "GENITALS",
+    "damage_msg": "GENITALS DAMAGED"
+  },
+  "head": {
+    "name": "HEAD",
+    "damage_msg": "SKULL WAZ FRACTURED"
+  },
+  "heart": {
+    "name": "HEART",
+    "damage_msg": "HEART WAZ DAMAGED"
+  },
+  "intestines": {
+    "name": "INTESTINES",
+    "damage_msg": "INTESTINES WAZ PERFORATED"
+  },
+  "left_arm": {
+    "name": "LEFT ARM",
+    "damage_msg": "LEFT ARM WAZ DAMAGED"
+  },
+  "left_ear": {
+    "name": "LEFT EAR",
+    "damage_msg": "LEFT EAR IZ RINGIN'"
+  },
+  "left_eye": {
+    "name": "LEFT EYE",
+    "damage_msg": "LEFT EYE WAZ SWOLLEN SHUT"
+  },
+  "left_fingers": {
+    "name": "LEFT FINGERS",
+    "damage_msg": "LEFT FINGERS WAZ BROKEN"
+  },
+  "left_foot": {
+    "name": "LEFT FOOT",
+    "damage_msg": "LEFT FOOT WAZ DAMAGED"
+  },
+  "left_hand": {
+    "name": "LEFT HAND",
+    "damage_msg": "LEFT HAND WAZ MANGLED"
+  },
+  "left_leg": {
+    "name": "LEFT LEG",
+    "damage_msg": "LEFT LEG WAZ DAMAGED"
+  },
+  "left_lung": {
+    "name": "LEFT LUNG",
+    "damage_msg": "LEFT LUNG COLLAPSED"
+  },
+  "left_toes": {
+    "name": "LEFT TOES",
+    "damage_msg": "LEFT TOES WAZ CRUSHED"
+  },
+  "liver": {
+    "name": "LIVER",
+    "damage_msg": "LIVER WAZ LACERATED"
+  },
+  "mouth": {
+    "name": "MOUTH",
+    "damage_msg": "JAW WAZ DISLOCATED"
+  },
+  "nose": {
+    "name": "NOSE",
+    "damage_msg": "NOSE WAZ BROKEN"
+  },
+  "right_arm": {
+    "name": "RIGHT ARM",
+    "damage_msg": "RIGHT ARM WAZ DAMAGED"
+  },
+  "right_ear": {
+    "name": "RIGHT EAR",
+    "damage_msg": "RIGHT EAR IZ RINGIN'"
+  },
+  "right_eye": {
+    "name": "RIGHT EYE",
+    "damage_msg": "RIGHT EYE WAZ SWOLLEN SHUT"
+  },
+  "right_fingers": {
+    "name": "RIGHT FINGERS",
+    "damage_msg": "RIGHT FINGERS WAZ BROKEN"
+  },
+  "right_foot": {
+    "name": "RIGHT FOOT",
+    "damage_msg": "RIGHT FOOT WAZ DAMAGED"
+  },
+  "right_hand": {
+    "name": "RIGHT HAND",
+    "damage_msg": "RIGHT HAND WAZ MANGLED"
+  },
+  "right_leg": {
+    "name": "RIGHT LEG",
+    "damage_msg": "RIGHT LEG WAZ DAMAGED"
+  },
+  "right_lung": {
+    "name": "RIGHT LUNG",
+    "damage_msg": "RIGHT LUNG COLLAPSED"
+  },
+  "right_toes": {
+    "name": "RIGHT TOES",
+    "damage_msg": "RIGHT TOES WAZ CRUSHED"
+  },
+  "spleen": {
+    "name": "SPLEEN",
+    "damage_msg": "SPLEEN WAZ RUPTURED"
+  },
+  "stomach": {
+    "name": "STOMACH",
+    "damage_msg": "STOMACH WAZ RUPTURED"
+  },
+  "teeth": {
+    "name": "TEETH",
+    "damage_msg": "TEETH WAZ KNOCKED OUT"
+  },
+  "torso": {
+    "name": "TORSO",
+    "damage_msg": "RIBS WAZ BROKEN"
+  }
+}

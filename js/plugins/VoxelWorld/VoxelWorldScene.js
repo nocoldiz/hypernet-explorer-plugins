@@ -51,8 +51,9 @@
         ALONGSIDE_MAX, RIDER_SEATS, RIDE_ALONGSIDE, PILOT_SEATS, VEHICLE_DRIVE, SHIP_ATMOSPHERE_Y,
         SHIP_BRIDGE_BOUNDS, SHIP_HELM_SEAT, SHIP_LAND_KMH, SHIP_LAND_CLEAR,
         SHIP_FLY_MIN, SHIP_FLY_MAX, SHIP_CLIMB_RATE,
-        STEER_EASE, STEER_FALLOFF, STEP_SOUNDS, SURFACES, SkyFx, SolomonRitualFx, SpeedWarpFx, TALK_RANGE,
+        STEER_EASE, STEER_FALLOFF, STEP_SOUNDS, SURFACES, SkyFx, SolomonRitualFx, SpeedWarpFx, TALK_RANGE, UfoFx,
         SpellCaster, SpellFx, SPELL_SLOTS, BAR_MODES, isHealingSkill,
+        CombatSession, COMBAT, isForFriendScope, reachOfSteps,
         ParkedVehicles, TrafficManager, RoadTravellerManager, UnderwaterFx, VanModel, VoxelTerrain,
         WALK_LANTERN_INTENSITY, WARP_START_KMH, WHEELBASE, WORLD_MAP_ID,
         WORLD_SCALE, WORLD_TILES, WORLD_TILE_SIZE, WaterPlane, WeatherParticles, skyFogColor,
@@ -122,6 +123,14 @@
     // _holdBattleAim). High enough that the turn is done before the first round
     // is, low enough to read as a turn rather than a cut.
     const BATTLE_AIM_EASE = 6;
+
+    // The battle's Guard state (States.json 2, what the Guard skill adds): R
+    // with nothing to reload holds it for a moment (_defend).
+    const GUARD_STATE_ID = 2;
+    // How far in front of the leader a vehicle called from the bar stands.
+    const VEHICLE_CALL_D = 34;
+    // A vehicle with no icon of its own on the bar wears the key.
+    const VEHICLE_BAR_ICON = 195;
 
     // How close to a chest counts as standing at it (about four metres): a
     // little more generous than the scenery, because a chest is small and its
@@ -783,6 +792,7 @@
             // The pick. Only ever live on foot, and never on the title screen.
             this._tool     = this._titleMode ? null : new VoxelTool(this._scene, this._terrain);
             this._digHeld  = false;
+            this._altHeld  = false;
             this._placeReq = false;
             this._cycleReq = 0;
             // The spell bar, and the door onto the game's own battle animations
@@ -854,6 +864,9 @@
 
             // Environment + physics state.
             this._env            = 'road';     // road | air | water | underwater | cave
+            // The map this world was opened over, so a menu that moves the
+            // party off it can be told apart from one that did not.
+            this._startMapId     = (typeof $gameMap !== 'undefined' && $gameMap) ? $gameMap.mapId() : null;
             // True while the party has rock over their head. Everything a cave
             // is - the dark, the close fog, the lantern, the sea taken away,
             // and the passages being meshed at all - hangs off this one flag.
@@ -978,6 +991,10 @@
             this._traffic      = new TrafficManager(this._scene, this._titleMode);
             this._underwaterFx = new UnderwaterFx(this._scene);
             this._skyFx        = new SkyFx(this._scene);
+            // What crosses Earth's sky around midnight, now and then
+            // (VoxelWorldFx's UfoFx). Not over the title, and not over
+            // another world, whose own hours are not Earth's.
+            this._ufo          = (this._titleMode || this._alien) ? null : new UfoFx(this._scene);
             // Whose sky this is. Earth's, unless the walk is somewhere else, in
             // which case that world's own moons go up instead of ours.
             this._skyFx.setWorld(this._sky);
@@ -1006,6 +1023,18 @@
             this._travellers   = noGround || !RoadTravellerManager ? null : new RoadTravellerManager(this._scene);
             this._interiors    = noGround ? null : new BuildingInteriors(this._scene, this._terrain);
             this._followers    = noGround ? null : new FollowerCrowd(this._scene);
+            // The fight, fought out here in real time (VoxelWorldEntities'
+            // CombatSession). A world with no creatures has nothing to fight.
+            this._combat       = this._bioEnemies ? new CombatSession(this) : null;
+            if (this._bioEnemies) {
+                // What the food web leaves behind: a body like any other, and a
+                // number over whoever took the blow.
+                this._bioEnemies.onEcoKill = (ent) => this._layOutBody(ent);
+                this._bioEnemies.onEcoHit = (ent, dmg) => {
+                    const pop = this._combat && this._combat._popups;
+                    if (pop) pop.add(ent.x, (ent.y || 0) + (ent.hgt || 8), ent.z, String(dmg), '#ffffff');
+                };
+            }
             this._engine       = (this._titleMode || this._footOnly) ? null : new EngineAudio();
             this._liminal      = new LiminalFx(this._scene, this._overlay);
             this._liminalI     = 0;   // smoothed cosmic-horror intensity 0..1
@@ -1117,8 +1146,10 @@
                     else if (e.code === 'KeyE') this._interact();
                     // Shifted, R is the wait menu instead (see _runMenuHotkey):
                     // the world and the party menu both want this letter, and
-                    // only one of them can have the plain press.
-                    else if (e.code === 'KeyR' && !e.shiftKey) this._respawnCamper();
+                    // only one of them can have the plain press. On foot it is
+                    // the weapon's (reload, Em's fold, a guard); at the wheel it
+                    // still puts a stuck camper back on the road.
+                    else if (e.code === 'KeyR' && !e.shiftKey) this._actionR();
                     else if (e.code === 'KeyG') this._placeReq = true;
                     else if (e.code === 'KeyQ') this._cycleReq = e.shiftKey ? -1 : 1;
                     else if (e.code === 'F7' || e.keyCode === 118) {
@@ -1153,18 +1184,30 @@
                 // Digging is the swing itself: hold the attack button and the
                 // cube under the crosshair comes apart. Nothing new to learn,
                 // and it is why a pick through rock is slower than through turf.
+                // The right button is the bar's in a fight (_fightButtons): the
+                // spell, item or block in hand, while the left swings the weapon.
                 this._onDigDown = (e) => {
-                    if (e.button !== 0 || !VoxelWorldSystem.isActive()) return;
+                    if (!VoxelWorldSystem.isActive()) return;
                     if (document.pointerLockElement !== document.body) return;
+                    if (e.button === 2) { this._altHeld = true; return; }
+                    if (e.button !== 0) return;
                     this._digHeld = true;
                     // The mouse is grabbed, so they are looking around with it
                     // as well as swinging with it.
                     this._teachControl('voxLook');
                     this._teachControl('voxDig');
                 };
-                this._onDigUp = (e) => { if (e.button === 0) this._digHeld = false; };
+                this._onDigUp = (e) => {
+                    if (e.button === 0) this._digHeld = false;
+                    else if (e.button === 2) this._altHeld = false;
+                };
+                // A right click with the mouse grabbed is a use, not a browser menu.
+                this._onDigMenu = (e) => {
+                    if (VoxelWorldSystem.isActive() && document.pointerLockElement === document.body) e.preventDefault();
+                };
                 document.addEventListener('mousedown', this._onDigDown);
                 document.addEventListener('mouseup',   this._onDigUp);
+                document.addEventListener('contextmenu', this._onDigMenu);
             }
 
             // ---------------------------------------------------------------
@@ -1273,6 +1316,7 @@
             if (!looking) return;
             const mx = e.movementX || e.mozMovementX || e.webkitMovementX || 0;
             const my = e.movementY || e.mozMovementY || e.webkitMovementY || 0;
+            if (mx || my) this._chaseLookAt = performance.now();
             this._freeCamYaw -= mx * 0.005;
             this._freeCamPitch += my * 0.005;
             this._freeCamPitch = Math.max(0.1, Math.min(Math.PI / 2 - 0.1, this._freeCamPitch));
@@ -1420,8 +1464,9 @@
                 // Keep the camera world-up so lookAt never rolls the view (the
                 // chase cam could otherwise spawn upside down).
                 this._camera.up.set(0, 1, 0);
+                this._chaseYaw = this._van.group.rotation.y;
                 const _yaw  = this._van.group.rotation.y + Math.PI;
-                const _dist = 42;
+                const _dist = this._chaseFrame().dist;
                 this._camera.position.set(
                     this._vanX + _dist * Math.cos(0.34) * Math.sin(_yaw),
                     this._vanY + _dist * Math.sin(0.34),
@@ -2225,19 +2270,70 @@
             return line || T('CamperDrive.npc.nothingToSay');
         }
 
+        // How far behind a vehicle the chase camera sits, and how high on it
+        // the camera looks. One distance for everything framed a bicycle as a
+        // speck in the middle of the road and a starship as a wall.
+        _chaseFrame() {
+            const key = this._vehicleKey();
+            const F = {
+                bike:  { dist: 24, min: 12, look: 5 },
+                broom: { dist: 24, min: 12, look: 6 },
+                car:   { dist: 32, min: 16, look: 4 },
+                boat:  { dist: 36, min: 18, look: 4 }
+            };
+            return F[key] || { dist: 42, min: 22, look: 4 };
+        }
+
         _updateCarCamera(delta) {
-            // Orbit around van using same spherical state as free cam (mid-click drag to rotate)
-            // Scroll wheel / right stick adjust _zoomDist for a wide zoom range while driving.
-            const dist = Math.max(22, 42 + this._zoomDist * 0.05);
-            const cy   = this._vanY + Math.max(5, dist * Math.sin(this._freeCamPitch));
+            // Orbit round the vehicle on the same spherical state as the free
+            // cam; the wheel, L2/R2 and the right stick change _zoomDist.
+            //
+            // The camera used to chase a point behind the vehicle with a plain
+            // lerp on its position. At speed that point ran away from it, so
+            // the view trailed further back the faster you went and swung wide
+            // through every bend. Now only the HEADING is smoothed: the camera
+            // is put exactly where that heading says, so it stays at its
+            // distance at any speed and eases round a corner instead of
+            // cutting it.
+            const fr   = this._chaseFrame();
+            const kmh  = this._speedKmh || 0;
+            const dist = Math.max(fr.min, fr.dist + this._zoomDist * 0.05) + Math.min(8, kmh * 0.02);
+            const k    = 1 - Math.exp(-delta * 4.5);
+            const k2   = 1 - Math.exp(-delta * 7);
+            const head = this._van.group.rotation.y;
+            if (this._chaseYaw === undefined || this._chaseYaw === null) this._chaseYaw = head;
+            let dh = head - this._chaseYaw;
+            while (dh >  Math.PI) dh -= Math.PI * 2;
+            while (dh < -Math.PI) dh += Math.PI * 2;
+            this._chaseYaw += dh * k;
+
+            // Looked away and then let go: once the hands have been off the
+            // look for a couple of seconds and the vehicle is moving, the
+            // camera drifts back round behind it.
+            const now = performance.now();
+            if (kmh > 8 && now - (this._chaseLookAt || 0) > 2200 && this._freeCamYaw) {
+                let fy = this._freeCamYaw % (Math.PI * 2);
+                if (fy >  Math.PI) fy -= Math.PI * 2;
+                if (fy < -Math.PI) fy += Math.PI * 2;
+                fy -= fy * Math.min(1, delta * 1.5);
+                this._freeCamYaw = Math.abs(fy) < 0.002 ? 0 : fy;
+            }
+
+            const yaw  = this._chaseYaw + Math.PI + this._freeCamYaw;
             const gr   = dist * Math.cos(this._freeCamPitch);
-            const yaw  = this._van.group.rotation.y + Math.PI + this._freeCamYaw;
+            let   cy   = this._vanY + Math.max(5, dist * Math.sin(this._freeCamPitch));
             const tx   = this._vanX + gr * Math.sin(yaw);
             const tz   = this._vanZ + gr * Math.cos(yaw);
+            // Never inside a hill behind the vehicle: on a climb or with the
+            // camera dropped low it was looking out from under the ground.
+            if (!this._underground && this._terrain) {
+                const g = this._terrain.getTerrainHeight(tx / WORLD_TILE_SIZE, tz / WORLD_TILE_SIZE);
+                if (isFinite(g)) cy = Math.max(cy, g + 4);
+            }
 
-            this._camera.position.x += (tx - this._camera.position.x) * 6 * delta;
-            this._camera.position.y += (cy - this._camera.position.y) * 6 * delta;
-            this._camera.position.z += (tz - this._camera.position.z) * 6 * delta;
+            this._camera.position.x = tx;
+            this._camera.position.z = tz;
+            this._camera.position.y += (cy - this._camera.position.y) * k2;
 
             // Sense of speed: widen FOV and shake the camera as you go faster.
             const targetFov = this._baseFov + Math.min(28, this._speedKmh * 0.012);
@@ -2251,7 +2347,13 @@
             }
             this._camera.updateProjectionMatrix();
             this._camera.up.set(0, 1, 0);
-            this._camera.lookAt(this._vanX, this._vanY + 4, this._vanZ);
+            // A little ahead of the vehicle at speed, so the road it is about
+            // to be on is in the middle of the picture rather than its tail.
+            const ahead = Math.min(10, kmh * 0.03);
+            this._camera.lookAt(
+                this._vanX + Math.sin(head) * ahead,
+                this._vanY + fr.look,
+                this._vanZ + Math.cos(head) * ahead);
 
             this._terrain.update(this._vanX, this._vanZ);
         }
@@ -2565,27 +2667,166 @@
 
             this._waterRescue = true;   // reuse the freeze-during-fade guard
             this._fade(1, () => {
-                this._vanX = land.x * WORLD_TILE_SIZE + WORLD_TILE_SIZE * 0.5;
-                this._vanZ = land.y * WORLD_TILE_SIZE + WORLD_TILE_SIZE * 0.5;
-                this._velX = 0; this._velZ = 0;
-                this._fwdSpeed = 0; this._latSpeed = 0;
-                this._speedKmh = 0; this._speedUnitsSigned = 0; this._steerSmooth = 0;
-                this._flying = false; this._dived = false;
-                this._suspVel = 0;
-                // Upright: clear the terrain tilt so the chassis sits level.
-                this._groundPitch = 0; this._groundRoll = 0;
-                this._van.group.rotation.x = 0; this._van.group.rotation.z = 0;
-                this._van.group.rotation.y = this._driveAngle;
-                this._terrain.update(this._vanX, this._vanZ, true);
-                this._vanY = this._resolveEnv();
-                this._van.group.position.set(this._vanX, this._vanY, this._vanZ);
-                this._lastLandX = this._vanX;
-                this._lastLandZ = this._vanZ;
-                this._lastLandAngle = this._driveAngle;
-                this._stuck = false; this._stuckReason = ''; this._wedgeTimer = 0;
+                this._standVehicleAt(land.x * WORLD_TILE_SIZE + WORLD_TILE_SIZE * 0.5,
+                    land.y * WORLD_TILE_SIZE + WORLD_TILE_SIZE * 0.5);
                 if (this._hud) this._hud.setRespawnHint(false);
                 this._fade(0, () => { this._waterRescue = false; });
             });
+        }
+
+        // Put the vehicle the party came in down at a point, upright, still
+        // and standing on whatever is under it. What a respawn does after its
+        // fade, and what calling it over from the vehicle bar does at once.
+        _standVehicleAt(x, z) {
+            this._vanX = x;
+            this._vanZ = z;
+            this._velX = 0; this._velZ = 0;
+            this._fwdSpeed = 0; this._latSpeed = 0;
+            this._speedKmh = 0; this._speedUnitsSigned = 0; this._steerSmooth = 0;
+            this._flying = false; this._dived = false;
+            this._suspVel = 0;
+            // Upright: clear the terrain tilt so the chassis sits level.
+            this._groundPitch = 0; this._groundRoll = 0;
+            this._van.group.rotation.x = 0; this._van.group.rotation.z = 0;
+            this._van.group.rotation.y = this._driveAngle;
+            this._terrain.update(this._vanX, this._vanZ, true);
+            this._vanY = this._resolveEnv();
+            this._van.group.position.set(this._vanX, this._vanY, this._vanZ);
+            this._lastLandX = this._vanX;
+            this._lastLandZ = this._vanZ;
+            this._lastLandAngle = this._driveAngle;
+            this._stuck = false; this._stuckReason = ''; this._wedgeTimer = 0;
+        }
+
+        // ---------------------------------------------------------------------
+        // R, on foot
+        // ---------------------------------------------------------------------
+        // One key for whatever the weapon in hand wants doing, in this order:
+        //   Em holding the Vector gun  the frame folds into another shape
+        //                              (the Dice of Yaldabaoth thrown first)
+        //   a magazine not full        it is reloaded
+        //   anything else              a guard held for a second
+        // At the wheel there is no weapon in hand, and R puts a stuck camper
+        // back on the road as it always has.
+        _actionR() {
+            if (this._viewMode !== 'foot') { this._respawnCamper(); return; }
+            const actor = (typeof $gameParty !== 'undefined' && $gameParty) ? $gameParty.leader() : null;
+            if (!actor || actor.isDead()) return;
+            const VG = window.VectorGun;
+            if (VG && VG.isEm && VG.isEm(actor) && VG.bladeReady && VG.bladeReady(actor)) {
+                this._startVectorSwitch(actor);
+                return;
+            }
+            const cfg = actor.getWeaponBulletConfig ? actor.getWeaponBulletConfig() : null;
+            if (cfg && actor.getCurrentBullets && actor.getCurrentBullets() < cfg.max) {
+                CamperWeapon.withHands(() => actor.reloadBullets());
+                if (window.ParchmentToast) {
+                    window.ParchmentToast.show(T('VoxelWorld.combat.reloaded'), { key: 'vwammo' });
+                }
+                return;
+            }
+            this._defend(actor);
+        }
+
+        // A guard, held for a moment: the battle's own Guard state, so the
+        // battle's own rule for it (half of what lands) is what it does.
+        _defend(actor) {
+            if (this._defendT > 0) return;
+            const id = GUARD_STATE_ID;
+            const had = actor.isStateAffected(id);
+            if (!had) actor.addState(id);
+            this._defendT = COMBAT.DEFEND_SECS;
+            this._defendState = had ? 0 : id;
+            this._defendActor = actor;
+            if (typeof SoundManager !== 'undefined') SoundManager.playEquip();
+            if (window.ParchmentToast) {
+                window.ParchmentToast.show(T('VoxelWorld.combat.guard'), { key: 'vwguard', duration: 60 });
+            }
+        }
+
+        _tickDefend(delta) {
+            if (!(this._defendT > 0)) return;
+            this._defendT -= delta;
+            if (this._defendT > 0) return;
+            this._defendT = 0;
+            const a = this._defendActor;
+            if (a && this._defendState && a.isStateAffected(this._defendState)) a.removeState(this._defendState);
+            this._defendActor = null;
+            this._defendState = 0;
+        }
+
+        // Em's fold, run as the battle runs it (Scene_Battle.commandVectorSwitch:
+        // the die, the fold shut, the new shape opening) but on the world's own
+        // clock, a step a frame. Nothing waits for it: the fight goes on while
+        // the die is in the air and the frame is coming apart in her hands.
+        _startVectorSwitch(actor) {
+            const VG = window.VectorGun;
+            if (!VG || this._vgSwitch) return;
+            if (this._vgCool > 0) {
+                if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer();
+                return;
+            }
+            // While the book is open the frame has nowhere to fold to: the
+            // same press turns a page instead.
+            const LB = window.LimitBreak;
+            if (LB && LB.isGrimoireOpen && LB.isGrimoireOpen(actor)) {
+                if (LB.rerollGrimoire) LB.rerollGrimoire(actor);
+                this._vgCool = COMBAT.SWITCH_COOLDOWN;
+                return;
+            }
+            this._vgSwitch = { actorId: actor.actorId(), stage: 'dice', wait: 0 };
+            if (VG.willThrowDice && VG.preRollDice && VG.willThrowDice()) {
+                VG.preRollDice(actor);
+                return;
+            }
+            this._foldVectorSwitch();
+        }
+
+        _foldVectorSwitch() {
+            const s = this._vgSwitch;
+            const ms = CamperWeapon.withHands(() => window.VectorGun.playSwitchFx('fold'));
+            s.stage = 'fold';
+            s.wait = (ms || 200) / 1000;
+        }
+
+        _riseVectorSwitch() {
+            const s = this._vgSwitch;
+            const VG = window.VectorGun;
+            const actor = $gameParty.leader();
+            if (!actor || actor.actorId() !== s.actorId) { this._vgSwitch = null; return; }
+            VG.switchForm(actor);
+            // The model in the hand is rebuilt at the turn of the animation, so
+            // what opens out of the folded packet is the NEW shape.
+            CamperWeapon.rebuild();
+            const ms = CamperWeapon.withHands(() => VG.playSwitchFx('rise'));
+            const key = (VG.formKey && VG.formKey()) || VG.GUN_FORM;
+            const shape = key === VG.GRIMOIRE_FORM ? VG.SOLOMON_FORM : key;
+            if (window.ParchmentToast) {
+                window.ParchmentToast.show(T('VectorGun.log.switched', {
+                    name: actor.name(), form: T('VectorGun.shape.' + shape + '.name')
+                }), { key: 'vgform' });
+            }
+            s.stage = 'rise';
+            s.wait = (ms || 300) / 1000;
+        }
+
+        _tickVectorSwitch(delta) {
+            if (this._vgCool > 0) this._vgCool -= delta;
+            const s = this._vgSwitch;
+            if (!s) return;
+            s.wait -= delta;
+            if (s.stage === 'dice') {
+                // The die lands before anything folds: the shape never changes
+                // under a die still in the air.
+                const D3 = window.Dice3D;
+                if (D3 && D3.isRolling && D3.isRolling()) return;
+                this._foldVectorSwitch();
+                return;
+            }
+            if (s.wait > 0) return;
+            if (s.stage === 'fold') { this._riseVectorSwitch(); return; }
+            this._vgSwitch = null;
+            this._vgCool = COMBAT.SWITCH_COOLDOWN;
         }
 
         _computeDriveAngle(wx, wy) {
@@ -2980,11 +3221,16 @@
                     // their heels the moment they are back out here.
                     CamperWeapon.refresh();
                     if (this._followers) this._followers.refresh();
-                    // Something in that menu took the party off the world map (a
-                    // journey, a return, a teleport): the drive/walk is over, and where
-                    // they went is not this scene's business.
-                    if (typeof $gameMap !== 'undefined' &&
-                        $gameMap.mapId() !== WORLD_MAP_ID) {
+                    // Something in that menu took the party off the map this
+                    // world was opened over (a journey, a return, a teleport):
+                    // the drive/walk is over, and where they went is not this
+                    // scene's business. Measured against the map it STARTED on:
+                    // a liminal drive opens from the camper's interior, a ship
+                    // from its bridge, an alien walk from the planet's map, and
+                    // every one of those used to be killed by a trip to the
+                    // party menu because it was not map 315.
+                    if (typeof $gameMap !== 'undefined' && this._startMapId != null &&
+                        $gameMap.mapId() !== this._startMapId) {
                         VoxelWorldSystem.stop();
                         return;
                     }
@@ -2992,6 +3238,15 @@
                 } else {
                     return;
                 }
+            }
+
+            // An engine window nobody here asked for: a choice a menu command
+            // left on the map behind it (the Omega Tower's confirm), a line a
+            // tool item's common event spoke. The world holds for it the way it
+            // holds for its own, drawn under it rather than over it.
+            if (typeof $gameMessage !== 'undefined' && $gameMessage && $gameMessage.isBusy()) {
+                this._msgWatch = true;
+                return this._holdForWindow(delta, now);
             }
 
             // A menu over the world takes the controls; the world itself goes
@@ -3102,6 +3357,7 @@
             if (this._driven2d) {
                 const fpdrive = this._viewMode === 'fpdrive';
                 this._driven2d.setVisible(!fpdrive);
+                this._updateRideCard(delta);
                 if (!fpdrive) {
                     this._driven2d.yaw = this._driveAngle;
                     this._driven2d.setPosition(this._vanX, this._vanY, this._vanZ);
@@ -3208,8 +3464,18 @@
                 // rather than on the hillside overhead, so the manager is told
                 // how deep they are as well as where.
                 this._bioEnemies.setUnderground(this._underground, at.y);
+                // Which way the party is looking: a stalker only closes on a
+                // turned back.
+                this._bioEnemies.setPartyYaw(this._viewMode === 'foot' ? this._cameraYaw() : null);
                 this._bioEnemies.update(delta, at.x, at.z);
             }
+            // The fight, a frame of it: clocks, who strikes whom, the numbers
+            // over the hits, how it ends.
+            if (this._combat) this._combat.update(delta);
+            // A lost fight has just closed the world from inside that call.
+            if (this._disposed) return;
+            this._tickDefend(delta);
+            this._tickVectorSwitch(delta);
             // Townspeople and the party's own line, both drawn as walk-sheet
             // cards that turn to the camera (see CharacterBillboard). The crowd
             // only lives in towns; the followers only show on foot.
@@ -3243,8 +3509,16 @@
                     this._followers.setVisible(onFoot || riding);
                     if (onFoot) {
                         const rig = this._fpc.getRig().position;
-                        this._followers.update(delta, rig.x, rig.y - FOOT_EYE, rig.z, camYaw, df,
-                            (x, z) => this._groundUnderfoot(x, z));
+                        // In a fight the line breaks up and every member goes
+                        // where their next action wants them.
+                        if (this._combat && this._combat.active) {
+                            this._followers.fight(delta, rig.x, rig.y - FOOT_EYE, rig.z, camYaw, df,
+                                (x, z) => this._groundUnderfoot(x, z),
+                                (m) => this._combat.allyGoal(m));
+                        } else {
+                            this._followers.update(delta, rig.x, rig.y - FOOT_EYE, rig.z, camYaw, df,
+                                (x, z) => this._groundUnderfoot(x, z));
+                        }
                     }
                 }
             }
@@ -3756,6 +4030,12 @@
                 this._skyFx.update(this._vanX, this._vanZ, hour, df, delta,
                     underwater || cave, (totalMins + 600) / 60, this._camera.position.y);
             }
+            // ...and whatever is up there tonight, over wherever the party is.
+            if (this._ufo && !cave && !underwater) {
+                const at = this._contactPoint();
+                const gy = this._terrain.getTerrainHeight(at.x / WORLD_TILE_SIZE, at.z / WORLD_TILE_SIZE);
+                this._ufo.update(delta, at.x, at.z, hour, totalMins, gy, df);
+            }
         }
 
         _handleInput() {
@@ -3875,6 +4155,7 @@
                 const look = this._padLook();
                 const rx = look.x;
                 const ry = look.y;
+                if (rx || ry) this._chaseLookAt = performance.now();
                 if (rx) this._freeCamYaw -= rx * PAD_LOOK_X * 0.03;
                 if (ry) {
                     this._freeCamPitch = Math.max(0.1, Math.min(Math.PI / 2 - 0.1,
@@ -4055,9 +4336,12 @@
         }
 
         isPaused() {
+            // The wait / sleep popup and the rest it starts are the map's, not
+            // a scene: the flag is the only thing that says they are up.
+            const sleeping = (typeof $gameTemp !== 'undefined') && $gameTemp && $gameTemp._sleepMenuOpen;
             return !!(this._menuOpen || this._suspended || this._msgWatch || this._liftRiding ||
                       this._battleWatch || this._stationRefuelWatch || this._domMenuOpen ||
-                      this._isFullMapOpen());
+                      sleeping || this._isFullMapOpen());
         }
 
         // The dragged, zoomed world map covers the screen and owns the mouse, so
@@ -4087,6 +4371,17 @@
         // wait menu opens on SHIFT+R and the codex on SHIFT+H, which is the
         // only place in the game a menu key is doubled up and the only way to
         // reach either from a drive.
+        // No menu in a fight: the party is busy. One buzz, one line, and the
+        // key is swallowed so the map underneath does not open it instead.
+        _refuseMenuInCombat() {
+            if (!(this._combat && this._combat.inCombat())) return false;
+            if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer();
+            if (window.ParchmentToast) {
+                window.ParchmentToast.show(T('VoxelWorld.combat.noMenu'), { key: 'vwcombat', duration: 60 });
+            }
+            return true;
+        }
+
         _runMenuHotkey(e) {
             const MH = window.MenuHotkeys;
             if (!MH || !MH.list) return;
@@ -4109,6 +4404,7 @@
             if (letter === 'V' && !shift) {
                 if (this._footOnly) return;
                 e.preventDefault();
+                if (this._refuseMenuInCombat()) return;
                 this._openDriveMenu();
                 return;
             }
@@ -4130,12 +4426,22 @@
             }
             if (!MH.has(symbol)) return;
             e.preventDefault();
+            // Only a key that would have opened something is refused: W, A,
+            // S, D and the rest of the walk never get this far.
+            if (this._refuseMenuInCombat()) return;
             this._suspended = true;
             if (this._overlay) this._overlay.style.display = 'none';
             releasePointerLock();
-            if (!MH.run(symbol, SceneManager._scene)) {
-                // Nothing opened after all: put the world straight back rather
-                // than leaving it hidden behind a menu that never came up.
+            const ran = MH.run(symbol, SceneManager._scene);
+            // Nothing opened after all, or what opened is a window OVER the
+            // world rather than a scene in place of it (the vehicle list, the
+            // builder, the wait menu, the radio): the world is put straight
+            // back and goes on being drawn under it. A scene that was pushed
+            // keeps it suspended until the party is back on the map.
+            const pushed = SceneManager.isSceneChanging() || !(SceneManager._scene instanceof Scene_Map);
+            const held = $gameTemp._sleepMenuOpen ||
+                (typeof $gameMessage !== 'undefined' && $gameMessage && $gameMessage.isBusy());
+            if (!ran || (!pushed && !held)) {
                 this._suspended = false;
                 if (this._overlay) this._overlay.style.display = '';
             }
@@ -4164,6 +4470,7 @@
         // by _loop when the player returns to the map scene.
         _openMainMenu() {
             if (this.isPaused()) return;
+            if (this._refuseMenuInCombat()) return;
             if (typeof Scene_Menu === 'undefined') return;
             if (!(SceneManager._scene instanceof Scene_Map)) return;
             this._suspended = true;
@@ -5362,59 +5669,42 @@
             }
         }
 
-        // Touch a roaming BiomeEnemyManager animal: pull it out of the wildlife
-        // pool and drop straight into a fight. The tactical map-battle layer is
-        // never used out here (MapBattleMode.js turns itself off for as long as
-        // this world is up): the fight is fought over the world itself, on the
-        // frame the scene goes on drawing behind it. Never checked in title mode
-        // or mid auto-travel (see the ftActive gate at the call site), and never
-        // a fight at all where nothing fights (_noEncounters).
+        // Walk up to a roaming BiomeEnemyManager creature and the fight is on,
+        // right there: no battle scene, no fade, no turn of the eye taken away
+        // from the player (see CombatSession). Close enough and in sight of the
+        // party is all it takes, from any side; a creature already in a fight
+        // that comes this close is simply in it. Never checked in title mode or
+        // mid auto-travel (see the ftActive gate at the call site), and never a
+        // fight at all where nothing fights (_noEncounters).
         _checkBioEnemyCollision() {
             if (!this._bioEnemies || this.isPaused()) return;
-            if (this._pendingFought) return;
             if (this._msgWatch || this._pendingSay || this._pendingEmpathize) return;
             const ents = this._bioEnemies._ents;
             // On foot the party IS the walker, not the parked camper: what they
             // walk into is what they meet.
             const here = this._contactPoint();
-            const R = (this._viewMode === 'foot' ? 6 : FOOT_VAN_HALF_LEN) + ENEMY_3D_CONTACT_R;
-
-            // Determine player forward facing direction
-            let fwdX = 0, fwdZ = -1;
-            if (this._viewMode === 'foot' && this._fpc && this._fpc.yaw) {
-                const yaw = this._fpc.yaw.rotation.y;
-                fwdX = -Math.sin(yaw);
-                fwdZ = -Math.cos(yaw);
-            } else if (this._camera) {
-                const dir = new THREE.Vector3();
-                this._camera.getWorldDirection(dir);
-                fwdX = dir.x;
-                fwdZ = dir.z;
-            }
-            const fwdLen = Math.hypot(fwdX, fwdZ) || 1;
-            fwdX /= fwdLen;
-            fwdZ /= fwdLen;
+            const foot = this._viewMode === 'foot';
+            const bump = (foot ? 6 : FOOT_VAN_HALF_LEN) + ENEMY_3D_CONTACT_R;
+            const R = foot ? Math.max(bump, COMBAT.ENGAGE_R) : bump;
+            const hereY = here.y != null ? here.y
+                : (this._terrain ? this._terrain.getTerrainHeight(here.x / WORLD_TILE_SIZE, here.z / WORLD_TILE_SIZE) : 0);
+            const fighting = !!(this._combat && this._combat.active);
 
             for (let i = ents.length - 1; i >= 0; i--) {
                 const ent = ents[i];
                 if (!ent.alive || !ent.root) continue;
                 if (ent.dead) continue;              // a body is looted, not fought
-                if (ent.spooked > 0) continue;       // it is running from the last fight
+                if (ent.battler) continue;           // already in the fight
                 const dx = ent.x - here.x, dz = ent.z - here.z;
                 const distSq = dx * dx + dz * dz;
-                if (distSq > R * R) continue;
+                // Something already hunting the party piles in from further off.
+                const joinR = fighting && ent.state === 'commit' ? COMBAT.JOIN_R : R;
+                if (distSq > joinR * joinR) continue;
+                if (ent.spooked > 0 && distSq > bump * bump) continue;   // running from the last fight
 
-                // Height check: if a flying enemy is still high in the sky, let it swoop down first
-                const hereY = here.y != null ? here.y : (this._terrain ? this._terrain.getTerrainHeight(here.x / WORLD_TILE_SIZE, here.z / WORLD_TILE_SIZE) : 0);
+                // A flyer still high in the sky has to come down first.
                 const entY = ent.y != null ? ent.y : hereY;
                 if (ent.flies && Math.abs(entY - hereY) > 28) continue;
-
-                // Trigger encounter only if enemy is in front of the player (forward vision cone)
-                const dist = Math.sqrt(distSq);
-                if (dist > 0.001) {
-                    const dot = (dx * fwdX + dz * fwdZ) / dist;
-                    if (dot < 0.2) continue; // Behind or to the side of the player
-                }
 
                 // Hit while driving: the party is behind a windscreen doing
                 // eighty, not squaring up to anything. Whatever it was gets
@@ -5426,13 +5716,13 @@
                 // what a bump on foot comes to as well: the animal is knocked
                 // clear and runs, so the creatures still react to being walked
                 // into without a battle ever opening.
-                if (this._noEncounters ||
-                    (this._viewMode !== 'foot' && this._viewMode !== 'fp')) {
-                    this._shoveBioEnemy(ent, here, R);
+                if (this._noEncounters || !foot) {
+                    if (distSq <= bump * bump) this._shoveBioEnemy(ent, here, bump);
                     continue;
                 }
+                // Not through a hill.
+                if (!this._bioEnemies._clearLine(ent, here.x, here.z)) continue;
                 this._startBioEnemyBattle(ent);
-                return;
             }
         }
 
@@ -5684,12 +5974,19 @@
         // <Range:> tag, the same number the tactical battle layer measures it
         // by: one step for a fist or a knife, a good deal more for a bow or a
         // gun.
+        //
+        // The blow itself is the leader's Attack, through the same Game_Action
+        // every action in the fight goes through (CombatSession.strike): it
+        // lands, it spends a round of ammunition, it opens the fight if there
+        // was none.
         _weaponStrike(weapon) {
             if (this._viewMode !== 'foot' || !this._bioEnemies) return;
             if (this.isPaused()) return;
-            if (this._pendingFought) return;
             const m = weapon && weapon.note && weapon.note.match(/<Range:\s*(\d+)\s*>/i);
-            const steps = m ? Math.max(1, parseInt(m[1], 10)) : 1;
+            let steps = m ? Math.max(1, parseInt(m[1], 10)) : 1;
+            // A dry magazine swings the gun itself, which reaches an arm.
+            const lead = (typeof $gameParty !== 'undefined' && $gameParty) ? $gameParty.leader() : null;
+            if (lead && lead.isOutOfBullets && lead.isOutOfBullets()) steps = 1;
             // A swing reaches about as far as an arm; anything with reach on it
             // carries that reach in steps of the world's own grid.
             const range = Math.max(STRIKE_MIN_REACH, steps * STRIKE_STEP);
@@ -5701,7 +5998,8 @@
             const ent = this._bioEnemies.aimedAt(
                 here.x, here.z, -Math.sin(yaw), -Math.cos(yaw), range, halfAngle);
             if (!ent) return;
-            this._startBioEnemyBattle(ent);
+            if (!this._startBioEnemyBattle(ent)) return;
+            this._combat.strike(ent);
         }
 
         // ---------------------------------------------------------------------
@@ -5823,11 +6121,57 @@
                 bb.setVisible(show);
                 if (!show || !seat) continue;
                 bb.yaw = yaw;
+                // The pair alongside ride the way the leader does: the same
+                // lean through a bend, the pedals a beat out of step.
+                const ride = this._ride || { lean: 0, step: 0, lift: 0 };
+                bb.anim = true;
+                bb.lean = ride.lean;
+                bb.step = ride.step + 1 + i;
+                bb.lift = ride.lift * (i % 2 ? 0.7 : 1.2);
                 bb.setPosition(seat.x, seat.y, seat.z);
                 bb.setDaylight(this._dayFactor == null ? 1 : this._dayFactor);
                 bb.update(camPos.x, camPos.z, camYaw);
                 bb.faceCamera(camPos.x, camPos.z, camYaw);
             }
+        }
+
+        // How the sprite of a ridden machine moves with the ride. A bicycle
+        // and a broom lean into a bend - by how hard the heading is turning
+        // and how fast it is going, as a rider does - the pedals go round
+        // with the distance covered, and a broom bobs on the air even at a
+        // standstill. A car or a boat keeps its card upright and still.
+        _updateRideCard(delta) {
+            const bb = this._driven2d;
+            const key = this._vehicleKey();
+            const rides = key === 'bike' || key === 'broom';
+            const r = this._ride || (this._ride = { lean: 0, step: 0, lift: 0, t: 0, prev: this._driveAngle });
+            let dYaw = this._driveAngle - r.prev;
+            r.prev = this._driveAngle;
+            while (dYaw >  Math.PI) dYaw -= Math.PI * 2;
+            while (dYaw < -Math.PI) dYaw += Math.PI * 2;
+            const yawRate = delta > 0 ? dYaw / delta : 0;
+            const kmh = this._speedKmh || 0;
+            // Increasing _driveAngle turns the nose LEFT, so a right-hand bend
+            // is a negative rate, and a rider leans toward the inside of it.
+            const want = rides
+                ? Math.max(-0.42, Math.min(0.42, -yawRate * Math.min(1, kmh / 25) * 0.55))
+                : 0;
+            r.lean += (want - r.lean) * Math.min(1, delta * 6);
+            r.t += delta;
+            if (key === 'bike') {
+                r.step += kmh * delta * 0.09;
+                r.lift = 0;
+            } else if (key === 'broom') {
+                r.step += delta * (2 + kmh * 0.02);
+                r.lift = 1 + Math.sin(r.t * 2.6) * 0.8;
+            } else {
+                r.lift = 0;
+            }
+            if (!bb) return;
+            bb.anim = rides && (key === 'broom' || kmh > 0.5);
+            bb.lean = r.lean;
+            bb.step = r.step;
+            bb.lift = r.lift;
         }
 
         // Put the driven body away: off the vehicle it was riding on and out
@@ -6386,69 +6730,90 @@
             return at;
         }
 
-        // Open a fight against the touched creature's own troop. The world is
-        // NOT put away for it: the scene keeps drawing and the frame it draws
-        // is what the fight is fought over (see the battle view section below).
+        // A creature is in the fight. The first one opens it, every one after
+        // that joins it, and it is fought where everybody stands, in real time
+        // (VoxelWorldEntities' CombatSession). The player never loses the walk,
+        // the mouse or the eye: the fight is something that happens to them,
+        // not a scene they are taken to. Fought as a persistent creature, the
+        // way a monster standing on a map is: it keeps the HP it was left with,
+        // and running leaves it wounded rather than whole.
+        //
+        // The tactical map battle (MapBattleMode.js) is never part of this,
+        // whatever the option says: it stands down for as long as this world
+        // is up, and nothing here goes through startPersistentBattle, which is
+        // the one door that would have reached it.
         _startBioEnemyBattle(ent) {
-            if (this._noEncounters) return;
-            const troopId = troopForBioEnemy(ent.enemyId);
-            // Nothing to fight it with. Push it clear and let it bolt rather
-            // than leaving it standing in the party's chest, asking for a fight
-            // that can never open, once every frame.
-            if (!troopId) { this._shoveBioEnemy(ent, this._contactPoint(), ENEMY_3D_CONTACT_R + 6); return; }
-            this._pendingFought = ent;
-            // Hands off the controls from this instant. The battle scene is a
-            // frame or two away yet, and without this the party keeps walking
-            // and keeps looking around through the handover, which reads as the
-            // fight starting late and somewhere else.
-            this._lockControls();
-            // The strip along the bottom becomes the spell bar for the fight.
-            // It is the same widget the battle puts up (Core/HotbarUI.js) and
-            // the spell view is built from the same carried loadout
-            // (window.BattleLoadout), so when the battle's own bar takes the
-            // slot a moment later it is showing the same nine skills in the
-            // same nine cells and nothing appears to move. The mode the player
-            // had is handed back when the fight ends.
-            if (this._tool && this._tool.setBarMode) {
+            if (this._noEncounters || !this._combat || !ent) return false;
+            if (this._combat.isFoe(ent)) return true;
+            const ok = this._combat.active ? this._combat.join(ent) : this._combat.begin(ent);
+            // Nothing to fight it with (no troop holds it, the battle system
+            // refused). Push it clear and let it bolt rather than leaving it
+            // standing in the party's chest asking for a fight that can never
+            // open, once every frame.
+            if (!ok) {
+                this._shoveBioEnemy(ent, this._contactPoint(),
+                    (this._viewMode === 'foot' ? 6 : FOOT_VAN_HALF_LEN) + ENEMY_3D_CONTACT_R);
+            }
+            return ok;
+        }
+
+        // The fight has opened. The strip along the bottom becomes the spell
+        // bar for it - the leader's carried loadout, the same nine skills the
+        // party fights with - and the bar the player had is handed back when it
+        // ends. Tab still walks the other bars the whole way through.
+        _onCombatBegin() {
+            if (this._tool && this._tool.setBarMode && this._preBattleBarMode == null) {
                 this._preBattleBarMode = this._tool.setBarMode('spells');
             }
-            // Turn to the thing that just walked into you before the first round
-            // opens, so the fight is framed on it rather than on whatever the
-            // party happened to be looking at.
-            this._faceEntity(ent);
-            releasePointerLock();
-
-            // Fought as a persistent creature, exactly like a monster standing on
-            // a map: it keeps the HP it was left with, it keeps the limbs that
-            // were taken off it, and running away leaves it wounded rather than
-            // whole (BattleSystemEnhanced.startPersistentBattle). The event id is
-            // 0 because there is no map event behind this one; every path that
-            // touches an event guards on it.
-            const BSE = window.BattleSystemEnhanced;
-            if (BSE && BSE.Functions && BSE.Functions.startPersistentBattle) {
-                BSE.Functions.startPersistentBattle(troopId, ent.pid, 0, $gameMap.mapId());
-                // A blocked or cooled-down battle never pushes the scene: come
-                // straight back to the drive rather than waiting on a fight that
-                // was never opened.
-                if (!(SceneManager.isSceneChanging() || SceneManager._scene instanceof Scene_Battle)) {
-                    this._pendingFought = null;
-                    this._unlockControls();
-                    this._restoreBarMode();
-                    // The fight was refused (blocked, on cooldown, nothing left
-                    // of the troop). Without this the creature is still standing
-                    // where it was, still touching the party, and the next frame
-                    // asks for the same refused fight again: the view snaps onto
-                    // it, the keys are taken and handed back, and the walk reads
-                    // as a spin the party cannot get out of. It is shoved clear
-                    // and spooked exactly as a creature that was walked into
-                    // where nothing fights.
-                    this._shoveBioEnemy(ent, this._contactPoint(),
-                        (this._viewMode === 'foot' ? 6 : FOOT_VAN_HALF_LEN) + ENEMY_3D_CONTACT_R);
-                }
-                return;
+            if (window.ParchmentToast) {
+                window.ParchmentToast.show(T('VoxelWorld.combat.begin'), { key: 'vwcombat' });
             }
-            BattleManager.setup(troopId, true, false);
-            SceneManager.push(Scene_Battle);
+        }
+
+        // The fight is over, however it ended.
+        _onCombatEnd(result) {
+            this._restoreBarMode();
+            if (this._followers && this._followers.endFight) this._followers.endFight();
+            if (this._defendT > 0) { this._defendT = 0.0001; this._tickDefend(1); }
+            if (result !== 'lose') return;
+            // Nobody in the party is standing. The world goes, exactly as it
+            // went when the battle scene was lost, and the map takes it from
+            // there: the respawn, the gravestone and permadeath all live in
+            // BattleSystemEnhancedState's own return to the map.
+            if (this._disposed) return;
+            VoxelWorldSystem.stop();
+            if (typeof SceneManager !== 'undefined' && typeof Scene_Map !== 'undefined') {
+                SceneManager.goto(Scene_Map);
+            }
+        }
+
+        // The leader is down and the fight goes on: the next member standing
+        // takes the lead, and the eye with it. They are put where they were
+        // standing in the line, and the fallen leader lies where they fell.
+        _handOffLeader() {
+            if (typeof $gameParty === 'undefined' || !$gameParty) return;
+            const mem = $gameParty.members();
+            const i = mem.findIndex((a, k) => k > 0 && k < 4 && a && a.isAlive());
+            if (i < 0) return;
+            const was = mem[0], next = mem[i];
+            const rig = this._fpc ? this._fpc.getRig().position : null;
+            const fell = rig ? { x: rig.x, z: rig.z } : null;
+            const m = this._followers && this._followers.memberFor ? this._followers.memberFor(next) : null;
+            // swapOrder indexes the whole roster, members() only who is shown.
+            const all = $gameParty.allMembers ? $gameParty.allMembers() : mem;
+            $gameParty.swapOrder(0, Math.max(0, all.indexOf(next)));
+            if (m && rig) { rig.x = m.x; rig.z = m.z; }
+            if (this._followers) {
+                this._followers.refresh(this._footOnly ? null : this._vehicleId);
+                const body = this._followers.memberFor ? this._followers.memberFor(was) : null;
+                if (body && fell) { body.x = fell.x; body.z = fell.z; body.placed = true; }
+            }
+            if (typeof $gamePlayer !== 'undefined' && $gamePlayer.refresh) $gamePlayer.refresh();
+            CamperWeapon.refresh();
+            if (window.ParchmentToast) {
+                window.ParchmentToast.show(T('VoxelWorld.combat.lead', { name: next.name() }),
+                    { key: 'vwcombat' });
+            }
         }
 
         // ---------------------------------------------------------------------
@@ -7539,16 +7904,26 @@
                 this._padBarWas = null;
             }
 
+            // In a fight a swing of the weapon is a blow at a creature and
+            // nothing else: it never takes the ground apart. A block in hand
+            // still goes down where it is aimed (dig with a block IS the build).
+            // The buttons split as well: left (and R2) is the weapon, swung by
+            // CamperWeapon, and right (and R1) is whatever the bar holds - the
+            // spell, the item, the block - so a fight never has to put the
+            // weapon away to cast. Out of a fight one button still does both.
+            const fighting = this._fightButtons();
+            const use = fighting ? (this._altHeld || padDig) : (this._digHeld || padDig);
+            const swingDigs = !(fighting && this._tool.bar.holdingWeapon);
             this._tool.update(delta, onBlocks ? {
                 origin: this._digOrigin,
                 dir:    this._digDir,
-                dig:    this._digHeld || padDig,
+                dig:    use && swingDigs,
                 place:  this._placeReq,
                 cycle:  this._cycleReq
             } : null);
 
             // Items and spells: the same swing, doing what is in hand instead.
-            if (!onBlocks) this._useHeldBar(this._digHeld || padDig, this._cycleReq);
+            if (!onBlocks) this._useHeldBar(use, this._cycleReq);
             if (this._caster) {
                 this._caster.aim(this._digOrigin, this._digDir,
                     this._tool.barMode === 'spells');
@@ -7572,6 +7947,12 @@
         // ---------------------------------------------------------------------
         // The three quick bars
         // ---------------------------------------------------------------------
+        // Is a fight on, so the left button is the weapon's and the right the
+        // bar's? Asked by CamperWeapon too, so the two never disagree.
+        _fightButtons() {
+            return !!(this._combat && this._combat.active);
+        }
+
         // What the strip along the bottom is showing right now. Blocks is the
         // tool's own readout; the other two are views onto what the game already
         // keeps (the map's item favourites, the leader's battle loadout), so
@@ -7581,6 +7962,7 @@
             const mode = this._tool.barMode;
             if (mode === 'blocks') return this._tool.bar.readout(this._tool.weaponName);
             if (mode === 'spells') return this._caster ? this._caster.readout() : null;
+            if (mode === 'vehicles') return this._vehicleRows();
             const IH = window.ItemHotbar;
             if (!IH || !IH.itemAt) return null;
             const sel = this._itemSlot || 0;
@@ -7624,6 +8006,7 @@
                 canFly: onFoot ? leaderCanFly() : this._canFly(),
                 canDive: !onFoot && camperCan('dive'),
                 canDig: !!this._tool,
+                fighting: onFoot && this._fightButtons(),
             };
         }
 
@@ -7647,15 +8030,20 @@
             const mode = this._tool.barMode;
             if (mode === 'blocks') { this._tool.bar.select(index); return; }
             if (mode === 'spells') { if (this._caster) this._caster.select(index); return; }
+            if (mode === 'vehicles') { this._vehicleSlot = Math.max(0, Math.min(SPELL_SLOTS - 1, index)); return; }
             this._itemSlot = Math.max(0, Math.min(SPELL_SLOTS - 1, index));
         }
 
         // The swing, with something other than a block in hand: an item is used
-        // on the spot, a spell is thrown down the crosshair.
+        // on the spot, a spell is thrown down the crosshair, a vehicle is called.
         _useHeldBar(pressed, cycle) {
             const mode = this._tool.barMode;
             if (cycle) {
                 if (mode === 'spells' && this._caster) this._caster.cycle(cycle);
+                else if (mode === 'vehicles') {
+                    const n = SPELL_SLOTS;
+                    this._vehicleSlot = (((this._vehicleSlot || 0) + (cycle < 0 ? -1 : 1)) % n + n) % n;
+                }
                 else if (mode === 'items') {
                     const IH = window.ItemHotbar;
                     const next = IH && IH.stepSlot ? IH.stepSlot(this._itemSlot || 0, cycle) : -1;
@@ -7665,30 +8053,124 @@
             if (!pressed || this._barHeld) { this._barHeld = pressed; return; }
             this._barHeld = true;
             if (mode === 'spells') {
-                if (this._caster) this._caster.cast(this._digOrigin, this._digDir);
+                this._castHeldSpell();
+                return;
+            }
+            if (mode === 'vehicles') {
+                const keys = this._vehicleKeys();
+                const key = keys[this._vehicleSlot || 0];
+                if (key) this._callVehicle(key);
+                else if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer();
                 return;
             }
             const IH = window.ItemHotbar;
             if (IH && IH.use) IH.use(this._itemSlot || 0);
         }
 
+        // The spell in hand. One aimed at the party (a heal, a ward, a raise)
+        // goes to whoever it is for, chosen the way an ally would choose; any
+        // other is thrown down the crosshair as a bolt. In a fight, every cast
+        // costs the leader the time it costs anybody (CombatSession.recoveryFor).
+        _castHeldSpell() {
+            if (!this._caster) return;
+            const skill = this._caster.held();
+            const fight = this._combat && this._combat.active;
+            const lead = $gameParty.leader();
+            if (skill && this._combat && isForFriendScope(skill)) {
+                if (this._caster._cool > 0) return;
+                if (!this._combat.friendlyCast(skill)) {
+                    if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer();
+                    return;
+                }
+                this._caster._cool = fight ? this._combat.recoveryFor(lead, skill) : 0.45;
+                return;
+            }
+            if (this._caster.cast(this._digOrigin, this._digDir) && fight && skill) {
+                this._caster._cool = Math.max(this._caster._cool, this._combat.recoveryFor(lead, skill));
+            }
+        }
+
+        // ---------------------------------------------------------------------
+        // The vehicle bar
+        // ---------------------------------------------------------------------
+        // Everything the party owns, in the garage's own order (VehicleModels):
+        // pick one and it is brought round to stand in front of the leader,
+        // to be boarded the usual way (E, _boardParked).
+        _vehicleKeys() {
+            const VM = window.VehicleModels;
+            const VP = window.VehiclePosition;
+            const keys = (VM && VM.KEYS) ? VM.KEYS : [];
+            return keys.filter(k => VP && VP.owns ? VP.owns(k) : true).slice(0, SPELL_SLOTS);
+        }
+
+        _vehicleRows() {
+            const keys = this._vehicleKeys();
+            const sel = this._vehicleSlot || 0;
+            const rows = [];
+            for (let i = 0; i < SPELL_SLOTS; i++) {
+                const key = keys[i];
+                if (!key) { rows.push(null); continue; }
+                rows.push({
+                    vehicle: true, key, on: i === sel, iconIndex: VEHICLE_BAR_ICON,
+                    enabled: this._viewMode === 'foot',
+                    name: T('VoxelWorld.vehicle.' + key)
+                });
+            }
+            // Nothing owned: one empty cell that says so, rather than no bar.
+            if (!keys.length) rows[0] = { vehicle: true, on: true, iconIndex: 0, enabled: false, name: T('VoxelWorld.vehicle.none') };
+            return rows;
+        }
+
+        _callVehicle(key) {
+            if (this._viewMode !== 'foot' || !this._fpc) {
+                if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer();
+                return;
+            }
+            const rig = this._fpc.getRig().position;
+            const yaw = this._cameraYaw();
+            const x = rig.x - Math.sin(yaw) * VEHICLE_CALL_D;
+            const z = rig.z - Math.cos(yaw) * VEHICLE_CALL_D;
+            const wx = Math.floor(x / WORLD_TILE_SIZE), wy = Math.floor(z / WORLD_TILE_SIZE);
+            if (wx < 0 || wy < 0 || wx >= WORLD_TILES || wy >= WORLD_TILES) {
+                if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer();
+                return;
+            }
+            // The one the party came in is not parked anywhere: it stands where
+            // the drive left it, and is simply driven round.
+            const current = this._vehicleId || 'camper';
+            if (key === current && !this._footOnly) {
+                this._driveAngle = yaw + Math.PI / 2;
+                this._standVehicleAt(x, z);
+            } else if (this._parked && this._parked.placeAt) {
+                this._parked.placeAt(key, x, z, yaw + Math.PI / 2);
+            } else {
+                return;
+            }
+            if (typeof SoundManager !== 'undefined') SoundManager.playOk();
+            if (window.ParchmentToast) {
+                window.ParchmentToast.show(T('VoxelWorld.vehicle.called', { name: T('VoxelWorld.vehicle.' + key) }),
+                    { key: 'vwvehicle' });
+            }
+        }
+
         // Where a spell landed. The crater is the caster's own business (it
         // knows the formula); this is the half only the scene can answer: who
-        // was standing in it. A creature caught in the blast is not damaged - no
-        // turn has been taken and nothing out here has hit points - it turns
-        // round and the fight opens, which is what casting across a valley is
-        // FOR: picking a fight before the thing has seen you.
+        // was standing in it. Everything caught in the blast takes the skill,
+        // through the fight's own Game_Action (CombatSession.burst), and is in
+        // the fight from that moment - which is what casting across a valley
+        // is FOR: picking a fight before the thing has seen you.
         _spellBurst(x, y, z, radius, force, skill) {
-            if (!this._bioEnemies || this._pendingFought) return;
-            if (this._noEncounters || isHealingSkill(skill)) return;
-            const ents = this._bioEnemies._ents || [];
-            for (const ent of ents) {
+            if (!this._bioEnemies || !this._combat) return;
+            if (this._noEncounters || isHealingSkill(skill) || isForFriendScope(skill)) return;
+            if (this._viewMode !== 'foot') return;
+            const caught = [];
+            for (const ent of this._bioEnemies._ents || []) {
                 if (!ent.alive || !ent.root || ent.dead) continue;
                 const dx = ent.x - x, dz = ent.z - z;
                 if (dx * dx + dz * dz > radius * radius) continue;
-                this._startBioEnemyBattle(ent);
-                return;
+                caught.push(ent);
             }
+            if (caught.length) this._combat.burst(skill, caught);
         }
 
         // Persist the world's dug cubes. Called when the scene closes, so a
@@ -7780,11 +8262,16 @@
             try { this._saveVoxelEdits(); } catch (e) { console.error('[VoxelWorld] saveEdits', e); }
             if (this._tool) { this._tool.dispose(); this._tool = null; }
             if (this._caster) { this._caster.dispose(); this._caster = null; }
+            // A fight still on when the world goes: the creatures keep their
+            // wounds and the party is out of it, with nothing paid or lost.
+            if (this._combat) { this._combat.abort(); this._combat = null; }
+            if (this._defendT > 0) { this._defendT = 0.0001; this._tickDefend(1); }
             if (this._spellFx) { this._spellFx.dispose(); this._spellFx = null; }
             if (this._onDigDown) {
                 document.removeEventListener('mousedown', this._onDigDown);
                 document.removeEventListener('mouseup',   this._onDigUp);
-                this._onDigDown = this._onDigUp = null;
+                document.removeEventListener('contextmenu', this._onDigMenu);
+                this._onDigDown = this._onDigUp = this._onDigMenu = null;
             }
             if (this._animId) cancelAnimationFrame(this._animId);
             if (this._fadeTimer) { clearTimeout(this._fadeTimer); this._fadeTimer = null; }
@@ -7831,6 +8318,7 @@
             this._stopCoop();
             if (this._underwaterFx) this._underwaterFx.dispose();
             if (this._skyFx)        this._skyFx.dispose();
+            if (this._ufo)          { this._ufo.dispose(); this._ufo = null; }
             if (this._solomon)      this._solomon.dispose();
             if (this._wheelFx)      this._wheelFx.dispose();
             if (this._bioEnemies)   this._bioEnemies.dispose();

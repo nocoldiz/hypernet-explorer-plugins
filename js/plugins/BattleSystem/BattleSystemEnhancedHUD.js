@@ -2713,7 +2713,7 @@
   };
 
   //=============================================================================
-  // Battle Hotbar , Daggerfall-style quickbar of the acting member's first
+  // Battle Hotbar , classic RPG quickbar of the acting member's first
   // nine synced (carried) skills. Numbers 1-9 arm a slot while held and cast
   // it on release; the bar itself
   // can take keyboard/gamepad focus away from the actor command window with

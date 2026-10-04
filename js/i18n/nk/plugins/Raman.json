@@ -1,6 +1,12 @@
 {
+  "knowledgeTitle": "SPECTRUM CATALOGUED",
   "unknownObject": "UNKNOWN OBJECT",
   "unknown": "UNKNOWN",
+  "title": "◈ RAMAN SPECTROSCOPY ANALYZER V2.4 ◈",
+  "identLine": "{name} [{formula}] MATCH: {confidence}%",
+  "readout": "Ν {shift} CM⁻¹ ME {intensity}%",
+  "rangeLine": "VIEW: {min} - {max} CM⁻¹",
+  "hintZoom": "WHEEL / L2 R2 / A D TA ZOOM · HOVER A POINT TA READ IT",
   "targetLine": "TARGET: {target} TYPE: {type} LASER: 532NM CW",
   "axisX": "RAMAN SHIFT (CM⁻¹)",
   "axisY": "INTENSITY",
@@ -11,6 +17,11 @@
   "msgHeader": "\\C[8][ RAMAN SCANNER ]\\C[0]",
   "msgNoMaterial": "NO SPECTRALLY ACTIVE MATERIAL DETECTED IN SCAN AREA!",
   "msgHint": "TARGET MUST BE A STATUE, PAINTIN', OR LIBRARY OBJECT WITHIN 1M!",
+  "choices": [
+    "LOOK",
+    "ANALYZE",
+    "CANCEL"
+  ],
   "objectType": {
     "tagged": "TAGGED",
     "fossil": "FOSSIL",

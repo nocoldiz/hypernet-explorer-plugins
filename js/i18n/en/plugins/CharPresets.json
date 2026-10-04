@@ -355,7 +355,7 @@
     "774": "Raises one ally's INT. May grant Arcane Surge. Strikes last. A Arcanism technique, a heavy spell to pay for.",
     "776": "Drains HP from one enemy and lowers INT. May inflict Silence. Strikes last. A Arcanism technique, a heavy spell to pay for.",
     "777": "Curses a target to lower their attack strength and make them take more damage.",
-    "778": "Calls up the familiar bound to the caster: it goes through the whole enemy line twice, clawing, and often leaves them bleeding.",
+    "778": "Wounds one enemy and summons a random monster near the caster's level to fight beside them.",
     "783": "Raises all allies' INT. A Arcanism technique, a heavy spell to pay for.",
     "791": "Restores HP to all allies. A Arcanism technique, a real draw on the mana bar.",
     "807": "Raises one ally's STR. A MetaMagic technique, cheap to cast.",

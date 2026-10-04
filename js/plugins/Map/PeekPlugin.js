@@ -72,13 +72,14 @@
         },
 
         startPeek: function(eventId) {
+            // Read before isPeeking is raised, which makes the player read as hidden
+            this.originalTransparency = $gamePlayer.isTransparent();
             this.isPeeking = true;
             this._isReturning = false;
             this.originalMapId = $gameMap.mapId();
             this.originalX = $gamePlayer.x;
             this.originalY = $gamePlayer.y;
             this.originalDirection = $gamePlayer.direction();
-            this.originalTransparency = $gamePlayer.isTransparent();
             this.peekEventId = eventId;
             this.cooldown = 45; // 45 frames (0.75s) cooldown before return is allowed
 
@@ -324,6 +325,32 @@
             }
         }
         return _Game_Interpreter_command201.call(this, params);
+    };
+
+    // Hook: While a single player peek is looking into the interior the party
+    // is not there. Read live rather than set once, because Scene_Map.start
+    // restores the player's transparency after the transfer. Followers copy
+    // the player's transparency, and the pet reads the followers' visibility.
+    PeekSystem.hidesParty = function() {
+        return this.isPeeking && !this.isSplitScreenActive();
+    };
+
+    const _Game_Player_isTransparent = Game_Player.prototype.isTransparent;
+    Game_Player.prototype.isTransparent = function() {
+        if (PeekSystem.hidesParty()) return true;
+        return _Game_Player_isTransparent.call(this);
+    };
+
+    const _Game_Follower_isVisible = Game_Follower.prototype.isVisible;
+    Game_Follower.prototype.isVisible = function() {
+        if (PeekSystem.hidesParty()) return false;
+        return _Game_Follower_isVisible.call(this);
+    };
+
+    const _Game_Followers_isVisible = Game_Followers.prototype.isVisible;
+    Game_Followers.prototype.isVisible = function() {
+        if (PeekSystem.hidesParty()) return false;
+        return _Game_Followers_isVisible.call(this);
     };
 
     // Hook: Player Mobility checks

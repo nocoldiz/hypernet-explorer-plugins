@@ -12,7 +12,7 @@
  * - Renders companion circular frames to switch active character sheets dynamically.
  * - Renders dynamic pixel character portraits directly on DOM canvases.
  * - Maintains full keyboard, mouse, and gamepad arrow key navigation support.
- * - Owns the game's hotkey layout, laid out to Bethesda (Skyrim/Fallout)
+ * - Owns the game's hotkey layout, laid out to open world RPG
  *   muscle memory. Every key lives in the HOTKEYS table near the top of the
  *   file, which drives Input.keyMapper, the badges on the pockets tiles, the
  *   in-menu shortcuts and the on-map shortcuts at once.
@@ -142,7 +142,7 @@
     // commands (Equip advertised U but listened on E, Save advertised I but
     // listened on A, ...).
     //
-    // The layout follows Skyrim/Fallout muscle memory:
+    // The layout follows open world RPG muscle memory:
     //   I Inventory · J Journal (Quest Log) · U Magic(Spells)
     //   C Character(Status) · M Map · O Outfit(Equip) · R Rest(Wait)
     //   B Build · H Help · Tab open/close menu
@@ -178,7 +178,7 @@
         // field (the piano's L is its own scene's), and it is out of WASD.
         { symbol: "politics",    key: "L", code: 76 },
         // Digits stay the favourites hotbar on the map (ItemSystem/
-        // ItemSystemInventory.js already maps 1-9 to it, Skyrim-style), so these
+        // ItemSystemInventory.js already maps 1-9 to it, hotbar-style), so these
         // one only listens on the symbol that plugin defines and is reachable
         // by key from inside the menu, never from the field.
         { symbol: "thinker",     key: "1", input: "1", menuOnly: true },
@@ -291,10 +291,10 @@
         { symbol: "world_map",       labelKey: "MainMenu.cmd.worldMap" },
         { symbol: "vehicles",        labelKey: "MainMenu.cmd.vehicles" },
         { symbol: "sleep_menu",      labelKey: "MainMenu.cmd.wait" },
-        { symbol: "cooking",         labelKey: "MainMenu.cmd.cooking" },
+        { symbol: "build",           labelKey: "MainMenu.cmd.build" },
         { symbol: "thinker",         labelKey: "MainMenu.cmd.thinker" },
         { symbol: "alchemistry",     labelKey: "MainMenu.cmd.alchemistry" },
-        { symbol: "build",           labelKey: "MainMenu.cmd.build" },
+        { symbol: "cooking",         labelKey: "MainMenu.cmd.cooking" },
         { symbol: "search",          labelKey: "MainMenu.cmd.find" },
         { symbol: "quest_log",       labelKey: "MainMenu.cmd.questLog" },
         { symbol: "diary",           labelKey: "MainMenu.cmd.diary" },
@@ -2831,6 +2831,18 @@
                 console.warn("commandGoDown is not defined on Scene_Menu!");
             }
         } else if (action === "open") {
+            // Over the 3D world the chart is the world's own (the M key's full
+            // map), drawn where it can be seen: the 2D one would open under
+            // the overlay with the party marker on the square the drive began.
+            if (inVoxelWorld()) {
+                SceneManager.pop();
+                setTimeout(() => {
+                    const sc = window.VoxelWorldSystem && window.VoxelWorldSystem._scene;
+                    // The views cycle; step until the full one is up.
+                    for (let n = 0; sc && sc._cycleMapView && !sc._isFullMapOpen() && n < 4; n++) sc._cycleMapView();
+                }, 250);
+                return;
+            }
             if (typeof this.commandOpenWorldMap === "function") {
                 this.commandOpenWorldMap();
             } else {
@@ -2857,6 +2869,9 @@
     // via VehicleSystem, then close the menu so the reserved transfer runs.
     Scene_Menu.prototype.commandReturnToShip = function () {
         if (window.VoxelWorldSystem && window.VoxelWorldSystem.isActive()) {
+            // Where they got to is kept: the drive ends here, not back where
+            // it started.
+            if (window.VoxelWorldSystem.syncWorldTile) window.VoxelWorldSystem.syncWorldTile();
             window.VoxelWorldSystem.stop();
         }
         if (window.MergedVehicleSystem &&
@@ -2967,6 +2982,9 @@
     // Vehicles page: "Teleport to Ship" on the Starship row boards its interior.
     Scene_Menu.prototype.teleportToShipUI = function () {
         if (window.VoxelWorldSystem && window.VoxelWorldSystem.isActive()) {
+            // Where they got to is kept: the drive ends here, not back where
+            // it started.
+            if (window.VoxelWorldSystem.syncWorldTile) window.VoxelWorldSystem.syncWorldTile();
             window.VoxelWorldSystem.stop();
         }
         if (window.MergedVehicleSystem &&
@@ -4017,7 +4035,7 @@
                         this.generateUICommandItemHTML(T('MainMenu.cmd.training'), "training"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.thinker'), "thinker"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.alchemistry'), "alchemistry"),
-                        this.generateUICommandItemHTML(T('MainMenu.cmd.build'), "build"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.cooking'), "cooking"),
                     ],
                     // Records & standing: the pockets you consult
                     [
@@ -4042,7 +4060,7 @@
                     [
                         this.generateUICommandItemHTML(T('MainMenu.cmd.assets'), "assets"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.pets'), "pets"),
-                        this.generateUICommandItemHTML(T('MainMenu.cmd.cooking'), "cooking"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.build'), "build"),
                         this.generateUICommandItemHTML(emLabel("menuWorkforce", T('MainMenu.cmd.workforce')), "army"),
                     ],
                     // System: meta / out-of-world
@@ -4551,6 +4569,9 @@
                     SceneManager.push(Scene_Status);
                     break;
                 case "save":
+                    // A save taken over the 3D world keeps the square the party
+                    // has reached, not the one the drive began on.
+                    if (window.VoxelWorldSystem?.syncWorldTile) window.VoxelWorldSystem.syncWorldTile();
                     SceneManager.push(Scene_Save);
                     break;
                 case "options":
@@ -4964,6 +4985,8 @@
             }
         },
         build:      scene => {
+            // Not over the 3D world: the builder works the hidden 2D map.
+            if (inVoxelWorld()) { window.FurnitureSystem?.warnCannotBuild?.(); return; }
             const canBuild = window.FurnitureSystem?.canBuildOnCurrentMap?.() ?? ($gameMap.mapId() !== 315);
             if (canBuild) {
                 SoundManager.playOk();
@@ -5086,8 +5109,14 @@
             const sandboxActive = !!($gameSystem && $gameSystem._isSandboxMode);
             switch (symbol) {
                 case "sandbox": return sandboxTester || sandboxActive;
+                // Out in the 3D world the 2D map under it is hidden and its
+                // tiles are not where the party stands: nothing is built on
+                // it, and the chart of it is the world's own (M).
                 case "build":
+                    if (inVoxelWorld()) return false;
                     return window.FurnitureSystem?.canBuildOnCurrentMap?.() ?? ($gameMap.mapId() !== 315);
+                case "world_map":
+                    return !inVoxelWorld();
                 case "alchemistry": return isAlchemistryAvailable();
                 case "pets": return (window.PetSystem?.getPets?.() ?? []).length > 0;
                 case "vehicles": return (window.MergedVehicleSystem?.getOwnedVehicles?.() ?? []).length > 0;

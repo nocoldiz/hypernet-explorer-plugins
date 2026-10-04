@@ -1,0 +1,15 @@
+{
+  "HP": "HP",
+  "MP": "MP",
+  "TP": "AP",
+  "ATT": "STR",
+  "DEF": "CON",
+  "M.ATT": "INT",
+  "M.DEF": "WIS",
+  "AGILITY": "DEX",
+  "LUCK": "PSI",
+  "ARCANE": "ARCANE",
+  "SUBSTANCE": "SUBSTANCE",
+  "STEALTH": "STEALTH",
+  "INTIMIDATION": "INTIMIDATION"
+}

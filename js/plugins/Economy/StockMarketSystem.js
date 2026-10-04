@@ -1063,6 +1063,7 @@
         score: {},         // last score per company (-1..1)
         drivers: {},       // last normalised driver values per signal
         dayOpen: {},       // price a day ago, for the big-move wire
+        oilMidnight: null, // { day, price }: OIL as it stood at the last midnight
         newsHour: {},      // last headline hour per company
         lastSwing: {}      // sign of each signal's last reported swing
       };
@@ -1313,6 +1314,10 @@
             const was = E.target[id];
             const next = this._commodityStep(id, was, dt, stepRng(hashString(id + ":" + at) ^ seed), sentiment);
             commodityMove[id] = was > 0 ? (next - was) / was : 0;
+            // The pump price follows OIL as it stood at midnight (oilIndex).
+            if (id === "oil" && Math.floor(at / 24) > Math.floor((at - dt) / 24)) {
+              E.oilMidnight = { day: Math.floor(at / 24), price: next };
+            }
             if (s === plan.length - 1) E.open[id] = was;
             E.target[id] = next;
             (path[id] || (path[id] = [])).push(next);
@@ -1366,6 +1371,19 @@
       this._marketWire(endHour, ctx, hours);
       this.syncWorldMarket();
       return hours;
+    }
+
+    // OIL as it stood at today's midnight, in cents. A day with no midnight
+    // priced yet (a fresh market, a frozen one, a clock wound back) takes
+    // today's quote and keeps it until the next midnight.
+    oilMidnightPrice() {
+      this.advanceToNow();
+      const E = this._engine;
+      const day = Math.floor((gameMinute() || 0) / 1440);
+      if (!E.oilMidnight || E.oilMidnight.day !== day) {
+        E.oilMidnight = { day, price: this._stocks.oil.currentPrice };
+      }
+      return E.oilMidnight.price;
     }
 
     // Earnings land once a quarter per company, each on its own day.
@@ -2359,6 +2377,17 @@
     isOpen() { const m = liveMarket(); return !!(m && m.isOpen()); },
     listings() { const m = liveMarket(); return m ? m.listings() : []; },
     priceOf(key) { const m = liveMarket(); return m ? m.priceOfKey(key) : 0; },
+    // OIL's midnight quote over the centre it reverts to (_commodityStep): 1 is
+    // a normal day, 2 a day oil trades at double. The fuel pump multiplies its
+    // price by this.
+    oilIndex() {
+      const m = liveMarket();
+      const def = COMMODITY_CONFIG.oil;
+      const base = def.centerPrice || (def.minPrice + def.maxPrice) / 2;
+      if (!m || !(base > 0)) return 1;
+      const p = Number(m.oilMidnightPrice()) || 0;
+      return p > 0 ? p / base : 1;
+    },
     centreOf(key) { const m = liveMarket(); return m ? m.centreOfKey(key) : 0; },
     freeFloat(key) { const m = liveMarket(); return m ? m.freeFloat(key) : 0; },
     partyShares: partySharesOf,

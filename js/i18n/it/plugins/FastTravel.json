@@ -133,5 +133,25 @@
     "offlineBlurb": "Nessuna linea di trasporto raggiunge questa citta.",
     "wantedBlurb": "Il gruppo e ricercato, quindi le biglietterie rifiutano il servizio. I trasporti privati ed esotici restano disponibili.",
     "footer": "I prezzi sono calcolati dalla posizione attuale del gruppo e cambiano quando si sposta. Questa pagina non puo prenotare ne rimborsare nulla."
+  },
+  "taxi": {
+    "appName": "Hail",
+    "subtitle": "Chiama un taxi verso qualsiasi fermata in catalogo. La corsa si paga alla prenotazione e parte subito.",
+    "status": "I taxi si chiamano dalla strada: all'aperto o sulla mappa del mondo, solo sulla Terra.",
+    "search": "Cerca un luogo",
+    "noMatch": "Nessun luogo con quel nome.",
+    "noDestinations": "Nessuna fermata in elenco.",
+    "pickupAt": "Ritiro a {place}",
+    "headline": "{type}, terreno tarato su {level}.",
+    "levelUnknown": "nessun livello dichiarato",
+    "fare": "Tariffa",
+    "journey": "Viaggio",
+    "wallet": "Nel portafoglio",
+    "hail": "Chiama un taxi",
+    "cannotPay": "Il gruppo non puo coprire questa tariffa.",
+    "offlineBlurb": "Nessun taxi raggiunge questa citta.",
+    "footer": "La tariffa e calcolata dalla posizione attuale del gruppo. Prenotare la addebita e spegne il deck: il taxi aspetta fuori.",
+    "refuseIndoors": "Nessun taxi puo raggiungerti qui dentro. Esci all'aperto o sulla mappa del mondo e richiama.",
+    "refuseOffEarth": "Nessuna compagnia di taxi opera cosi lontano dalla Terra."
   }
 }

@@ -287,7 +287,8 @@
           });
         }
 
-        const traitsList = window.ItemSystemUtils.traitLines(selectedItem);
+        const traitsList = window.ItemSystemUtils.traitLines(selectedItem)
+          .concat(window.ItemSystemUtils.handLines(selectedItem));
 
         const noteTags = []; const nutritionSpecs = [];
         if (selectedItem.note) {
@@ -306,6 +307,8 @@
               // above, and a weapon carries one tag per stat, so leaving it here
               // repeated the same answer once per stat.
               if (nl === 'scale') return;
+              // Read as plain lines in the traits (ItemSystemUtils.handLines).
+              if (nl === 'twohanded' || nl === 'onehanded' || nl === 'martialarts' || nl === 'nunchaku') return;
               if (nl === 'needrestore') return; // rendered as its own "Needs Restored" section below
               if (nl === 'leisure') return;     // printed as its own spec row above
               // <Medicine:>, <Cures:> and <Treats:> are already rendered as

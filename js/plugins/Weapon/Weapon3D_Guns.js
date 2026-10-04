@@ -8064,40 +8064,40 @@
         sightWindow.position.set(0, 0.05, 0.006);
         group.add(sightWindow);
 
-        // The limbs: three panels each, swept forward, the outermost the
-        // thinnest, so the bow reads as a machine that opened rather than as
+        // The limbs: three panels each, swept back toward the archer like any
+        // braced bow, the outermost the thinnest, so the bow reads as a machine that opened rather than as
         // wood that was bent.
         for (const side of [-1, 1]) {
           const panels = this.isLowDetail() ? 2 : 3;
           for (let i = 0; i < panels; i++) {
             const limb = new THREE.Mesh(
               new THREE.BoxGeometry(0.016 - i * 0.003, 0.11 - i * 0.02, 0.014), mats.plate);
-            limb.position.set(0, side * (0.09 + i * 0.09), 0.012 + i * 0.03);
-            limb.rotation.x = side * (0.22 + i * 0.16);
+            limb.position.set(0, side * (0.09 + i * 0.09), -0.012 - i * 0.03);
+            limb.rotation.x = -side * (0.22 + i * 0.16);
             group.add(limb);
             const vein = new THREE.Mesh(
               new THREE.BoxGeometry(0.005, 0.1 - i * 0.02, 0.004),
               seams[(i + (side > 0 ? 0 : 3)) % seams.length]);
             vein.position.copy(limb.position);
             vein.rotation.copy(limb.rotation);
-            vein.position.z += 0.009;
+            vein.position.z -= 0.009;
             vein.userData.pulse = { min: 0.2, max: 1.4, freq: 1.1, phase: i + side };
             group.add(vein);
           }
           const nock = new THREE.Mesh(new THREE.ConeGeometry(0.009, 0.03, 4), mats.black);
-          nock.position.set(0, side * 0.29, 0.085);
-          nock.rotation.x = side * Math.PI / 2;
+          nock.position.set(0, side * 0.29, -0.085);
+          nock.rotation.x = -side * Math.PI / 2;
           group.add(nock);
         }
 
         // The string is a line of the element, drawn between the nocks.
         const string = new THREE.Mesh(
           new THREE.CylinderGeometry(0.0022, 0.0022, 0.58, this.seg(6, 4)), mats.glow);
-        string.position.set(0, 0, 0.085);
+        string.position.set(0, 0, -0.085);
         string.userData.pulse = { min: 0.35, max: 1.2, freq: 1.6 };
         group.add(string);
         const nockPoint = new THREE.Mesh(new THREE.OctahedronGeometry(0.012, 0), seams[0]);
-        nockPoint.position.set(0, 0, 0.085);
+        nockPoint.position.set(0, 0, -0.085);
         nockPoint.userData.pulse = { min: 0.3, max: 1.5, freq: 1.3 };
         nockPoint.userData.gun = 'muzzle';
         group.add(nockPoint);
@@ -8105,7 +8105,7 @@
         // on are the only thing holding them to it.
         for (const side of [-1, 1]) {
           this._vectorHinge(group, mats,
-            { axis: 'x', r: 0.01, len: 0.03, y: side * 0.058, z: 0.008, phase: side });
+            { axis: 'x', r: 0.01, len: 0.03, y: side * 0.058, z: -0.008, phase: side });
         }
         this._vectorGunFittings(group, mats, this.VECTOR_FIT_LAYOUTS.bow);
         return group;

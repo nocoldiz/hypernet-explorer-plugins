@@ -10,7 +10,7 @@
  * A reading now happens on a real table: a three.js scene rendered through the
  * shared PSXShader (vertex snapping, 4-bit colour, ordered dither, low-res
  * upscale) with a PSXHud overlay drawn in a 240-line virtual framebuffer, the
- * way a PlayStation drew its menus. The lacquer and keylines are framebuffer
+ * way a 32-bit console drew its menus. The lacquer and keylines are framebuffer
  * work; the lettering on them is crisp HTML type (PSXHud.domPanel), and there
  * is no scanline or vignette pass over any of it.
  *

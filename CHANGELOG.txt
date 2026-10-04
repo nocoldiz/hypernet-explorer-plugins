@@ -1,4 +1,48 @@
+0.7.11a
+
+   Added:
+
+ - voxel battle: left click weapon, right click selected skill, item or block
+ - martial arts skills need 2 free hand slots, Gun-Fu allows ranged weapons
+ - fists, claws and nunchakus take 2 hand slots and enable martial arts
+ - rare UFOs and real time clock in voxel world
+ - taxi app in HypernetOS, exterior maps and world map only
+ - Bologna map teleport to selected tile, Bubba/Em/Eris dialogue busts
+ - repair bodypart in prosthetic menu, works in blood and oil mode
+
+   Changed:
+ - Em starting skills
+ - swordsmanship skills need a melee weapon in hand
+ - reworked summonshot skills: summon a random monster around your level
+ - level and stat raising items are now very expensive
+ - implant limit uses permanent CON, temporary CON increases no longer count
+ - steam builds no longer ship the updates plugin
+ - reworked battle mode in voxel mode into real time combat
+ - maplegend dialogue no longer triggers automatically, H shows it
+ - improved vehicles riding and placed block collision in voxel mode
+ - infusion skills always grant their state and buff STR, CON, DEX
+ - translated all UI elements of Naguka translations
+ - loading spinner is now a rotating hypertriangle
+ - maps use "I Knew a Guy" instead of Industrial Cinematic bgm
+ - OIL price changes the price of fuel every day at midnight
+ - switched position of build with cooking in main menu
+
+Fixed:
+ - vector gun no longer uses attack animation for self or party spells
+ - peeking hides player and party until break in or lockpick success
+ - party AP only drains on the map while the leader is running
+ - firearms skills always use the gun or bow attack animation
+ - post battle crash "invalid index into function table" from animations
+ - Em's grimoire now closes when battle ends in any way
+ - crash when pressing "Carry Into Battle" in spellcrafting
+ - story mode start now uses map 169 world coordinates
+ - bow of aiwass no longer backward, own SE for all forms, chainsaw SE
+ - low fps on map moving, Ninth Symphony title music at epic moments
+ - new storymode always places Em's camper at 1414 87 29
+ - characters appearing above star tiles after closing main menu
+
 0.7.10a
+
 
 Changed:
  - quest log todo and done notes small, whiteboard in omega tower
@@ -6,6 +50,8 @@ Changed:
  - spike trap damages only the party leader for 25% of health
 
 Fixed:
+ - underwater events visible while diving, RiverBed battlebacks when diving
+ - spawned animals from build system now move
  - prosthetic menu and quest details buttons follow default style
  - current system tab golden border different from other tabs
  - downed characters in water no longer cut

@@ -1,0 +1,92 @@
+{
+  "kinsey": {
+    "0": "EXCLUSIVELY HETEROSEXUAL",
+    "1": "PREDOMINANTLY HETEROSEXUAL, INCIDENTALLY HOMOSEXUAL",
+    "2": "PREDOMINANTLY HETEROSEXUAL, MORE DEN INCIDENTALLY HOMOSEXUAL",
+    "3": "EQUALLY HETEROSEXUAL AN' HOMOSEXUAL",
+    "4": "PREDOMINANTLY HOMOSEXUAL, MORE DEN INCIDENTALLY HETEROSEXUAL",
+    "5": "PREDOMINANTLY HOMOSEXUAL, INCIDENTALLY HETEROSEXUAL",
+    "6": "EXCLUSIVELY HOMOSEXUAL",
+    "X": "ASEXUAL, NO SOCIO-SEXUAL REACTIONS"
+  },
+  "sexual": {
+    "heterosexual": {
+      "name": "HETEROSEXUAL",
+      "desc": "SEXUAL ATTRACTION TOWARD PEOPLE OF A DIFFERENT GENDER!"
+    },
+    "bisexual": {
+      "name": "BISEXUAL",
+      "desc": "SEXUAL ATTRACTION TOWARD MORE DEN ONE GENDER!"
+    },
+    "homosexual": {
+      "name": "HOMOSEXUAL",
+      "desc": "SEXUAL ATTRACTION EXCLUSIVELY TOWARD PEOPLE OF DA SAME GENDER!"
+    },
+    "pansexual": {
+      "name": "PANSEXUAL",
+      "desc": "SEXUAL ATTRACTION TA PEOPLE REGARDLESS OF DEY GENDER!"
+    },
+    "asexual": {
+      "name": "ASEXUAL",
+      "desc": "LITTLE OR NO SEXUAL ATTRACTION TOWARD ANYONE!"
+    },
+    "demisexual": {
+      "name": "DEMISEXUAL",
+      "desc": "SEXUAL ATTRACTION DAT ONLY FORMS AFTER A STRONG EMOTIONAL BOND!"
+    },
+    "queer": {
+      "name": "QUEER",
+      "desc": "A FLUID OR DELIBERATELY UNLABELED ORIENTATION OUTSIDE DA USUAL CATEGORIES!"
+    },
+    "digisexual": {
+      "name": "DIGISEXUAL",
+      "desc": "ATTRACTION FELT ONLY TOWARD SYNTHETIC MINDS: ROBOTS, ANDROIDS AN' ARTIFICIAL INTELLIGENCES!"
+    },
+    "dendrosexual": {
+      "name": "DENDROSEXUAL",
+      "desc": "ATTRACTION FELT ONLY TOWARD PLANTS AN' BOTANICAL LIFE!"
+    }
+  },
+  "romantic": {
+    "heteroromantic": {
+      "name": "HETEROROMANTIC",
+      "desc": "ROMANTIC ATTRACTION TOWARD PEOPLE OF A DIFFERENT GENDER!"
+    },
+    "bubbaromantic": {
+      "name": "BUBBAROMANTIC",
+      "desc": "ROMANTIC ATTRACTION FELT EXCLUSIVELY TOWARD BUBBA WILSON, DA INVENTOR OF DA LIMINAL ENGINE!"
+    },
+    "biromantic": {
+      "name": "BIROMANTIC",
+      "desc": "ROMANTIC ATTRACTION TOWARD MORE DEN ONE GENDER!"
+    },
+    "aromantic": {
+      "name": "AROMANTIC",
+      "desc": "LITTLE OR NO ROMANTIC ATTRACTION TOWARD ANYONE!"
+    },
+    "homoromantic": {
+      "name": "HOMOROMANTIC",
+      "desc": "ROMANTIC ATTRACTION EXCLUSIVELY TOWARD DA SAME GENDER!"
+    },
+    "panromantic": {
+      "name": "PANROMANTIC",
+      "desc": "ROMANTIC ATTRACTION TA PEOPLE REGARDLESS OF DEY GENDER!"
+    },
+    "demiromantic": {
+      "name": "DEMIROMANTIC",
+      "desc": "ROMANTIC ATTRACTION DAT ONLY FORMS AFTER A STRONG EMOTIONAL BOND!"
+    },
+    "sapioromantic": {
+      "name": "SAPIOROMANTIC",
+      "desc": "ROMANTIC ATTRACTION DRIVEN CHIEFLY BY A PARTNER'S INTELLECT!"
+    },
+    "botromantic": {
+      "name": "BOTROMANTIC",
+      "desc": "ROMANTIC ATTRACTION FELT ONLY TOWARD ROBOTS AN' ARTIFICIAL MINDS!"
+    },
+    "dendroromantic": {
+      "name": "DENDROROMANTIC",
+      "desc": "ROMANTIC ATTRACTION FELT ONLY TOWARD PLANTS AN' BOTANICAL LIFE!"
+    }
+  }
+}

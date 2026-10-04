@@ -1236,7 +1236,21 @@
     return lines;
   }
 
+  // How a weapon sits in the hands: <TwoHanded> fills two hand slots, and a
+  // <MartialArts> weapon (fists, claws, nunchakus) always does, leaving the
+  // martial arts usable (window.SkillWeaponReq). Shown by the backpack, the
+  // equip menu and the shop alike.
+  function handLines(item) {
+    if (!item || !item.wtypeId || !item.meta) return [];
+    const T = window.T;
+    const lines = [];
+    if (item.meta.TwoHanded || item.meta.MartialArts) lines.push(T('Inventory.trait.twoHanded'));
+    if (item.meta.MartialArts) lines.push(T('Inventory.trait.martialArts'));
+    return lines;
+  }
+
   window.ItemSystemUtils = window.ItemSystemUtils || {};
+  window.ItemSystemUtils.handLines = handLines;
   window.ItemSystemUtils.fillLore = fill;
   window.ItemSystemUtils.resolveLoreTokens = resolve;
   window.ItemSystemUtils.loreFor = loreFor;

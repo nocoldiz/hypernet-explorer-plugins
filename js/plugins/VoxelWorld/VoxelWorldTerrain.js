@@ -1165,6 +1165,7 @@
                 if (w) out.push(line(-box, 0, -H, 0));
                 if (e) out.push(line( box, 0,  H, 0));
                 out.junction = true;
+                out.open = { n: !!n, s: !!s, e: !!e, w: !!w };
                 return out;
             };
 
@@ -1213,8 +1214,10 @@
                 { from: med + 0.4, to: shoulder, col: C.asphalt },
                 { from: shoulder, to: half, col: C.shoulder },
                 // The embankment: the paved edge falls away to the country, and
-                // covers the lip of the roadbed cubes while it is about it.
-                { from: half, to: half + 18, drop: ROAD_SKIRT, col: C.skirt },
+                // covers the lip of the roadbed cubes while it is about it. How
+                // far it falls is worked out per section (see _roadFoot), so it
+                // always meets the ground instead of hanging in the air.
+                { from: half, to: half + 18, drop: ROAD_SKIRT, col: C.skirt, skirt: true },
                 // Paint. Solid either side of each carriageway, broken down the
                 // middle of it.
                 { from: med + 2.4, to: med + 2.4 + L, lift: ROAD_MARK_LIFT, col: C.paint, paint: true },
@@ -1234,6 +1237,37 @@
             return this._roadMat;
         }
 
+        // Where an embankment that leaves the paved edge `e` (tile-local, with
+        // its outward normal) comes down. It is 18 units wide and ROAD_SKIRT
+        // deep on the level; wherever the country beside it is lower than
+        // that, it is carried further out and further down until its foot is
+        // under the ground, so nothing can be seen beneath the road.
+        _roadFoot(at, e) {
+            const CLEAR = 6, MAX_W = 70;
+            let w = 18;
+            let g = at(e.x + e.nx * w, e.z + e.nz * w);
+            let drop = Math.max(ROAD_SKIRT, e.y - g + CLEAR);
+            if (drop > ROAD_SKIRT) {
+                w = Math.min(MAX_W, 18 + (drop - ROAD_SKIRT) * 0.6);
+                g = at(e.x + e.nx * w, e.z + e.nz * w);
+                drop = Math.max(drop, e.y - g + CLEAR);
+            }
+            return { x: e.x + e.nx * w, y: e.y - drop, z: e.z + e.nz * w };
+        }
+
+        // The square a path point on the edge of this one runs into, and
+        // whether it is a road too. Null for a point that is not on an edge.
+        _roadNeighbourAt(wx, wy, x, z, ts) {
+            const H = ts / 2, eps = 1e-3;
+            let nx = wx, ny = wy;
+            if (Math.abs(x - H) < eps) nx++;
+            else if (Math.abs(x + H) < eps) nx--;
+            else if (Math.abs(z - H) < eps) ny++;
+            else if (Math.abs(z + H) < eps) ny--;
+            else return null;
+            return { wx: nx, wy: ny, road: profileFor(sampleBiomeAt(nx, ny).name).key === 'road' };
+        }
+
         // Lay the carriageway of one square.
         _buildRoadRibbon(grp, wx, wy, step) {
             const ts  = this._ts;
@@ -1250,6 +1284,24 @@
                 return pos.length / 3 - 1;
             };
             const quad = (a, b, c, d) => { idx.push(a, b, c, a, c, d); };
+
+            // An embankment along a run of edge points: from the paved edge
+            // (each point's own `y`) outwards along its normal and down to a
+            // foot that is always under the ground there. A fixed drop left
+            // the downhill verge of every road on a hillside hanging in the
+            // air, with the hollow over the roadbed showing under it as a
+            // tunnel; on flat country it is the same 18-unit shoulder it was.
+            const curtain = (edge, flip, c) => {
+                const feet = edge.map(e => this._roadFoot(at, e));
+                for (let i = 0; i + 1 < edge.length; i++) {
+                    const a = edge[i], b = edge[i + 1], fa = feet[i], fb = feet[i + 1];
+                    const v0 = push(a.x, a.y, a.z, c);
+                    const v1 = push(b.x, b.y, b.z, c);
+                    const v2 = push(fb.x, fb.y, fb.z, c);
+                    const v3 = push(fa.x, fa.y, fa.z, c);
+                    if (flip) quad(v3, v2, v1, v0); else quad(v0, v1, v2, v3);
+                }
+            };
 
             const fine  = step === 1;
             const bands = this._roadBands();
@@ -1281,6 +1333,18 @@
                 }
 
                 const strip = (band) => {
+                    if (band.skirt) {
+                        // The embankment hangs off each paved edge down to
+                        // wherever the country actually is.
+                        for (const side of [1, -1]) {
+                            const edge = S.map(p => ({
+                                x: p.x + p.nx * band.from * side, z: p.z + p.nz * band.from * side,
+                                y: p.y, nx: p.nx * side, nz: p.nz * side
+                            }));
+                            curtain(edge, side < 0, band.col);
+                        }
+                        return;
+                    }
                     for (let i = 0; i + 1 < S.length; i++) {
                         const a = S[i], b = S[i + 1];
                         if (band.dash) {
@@ -1305,6 +1369,50 @@
                     // the dashes are dropped and the solid lines kept.
                     if (band.dash && !fine) continue;
                     strip(band);
+                }
+
+                // A road that runs off its square into one that is not a road
+                // (the edge of a town, a dead end) would leave the hollow over
+                // the roadbed open to the world: from the field it reads as a
+                // tunnel mouth under the tarmac. The end is closed with the
+                // same embankment, falling away along the road.
+                for (const end of [0, S.length - 1]) {
+                    const p = S[end], q = S[end === 0 ? 1 : end - 1];
+                    const nb = this._roadNeighbourAt(wx, wy, p.x, p.z, ts);
+                    if (!nb || nb.road) continue;
+                    let tx = p.x - q.x, tz = p.z - q.z;
+                    const tl = Math.hypot(tx, tz) || 1;
+                    tx /= tl; tz /= tl;
+                    const reach = ROAD_TOTAL_W / 2 + 18;
+                    const edge = [];
+                    for (let k = 0; k <= 8; k++) {
+                        const l = -reach + (2 * reach * k) / 8;
+                        edge.push({ x: p.x + p.nx * l, z: p.z + p.nz * l, y: p.y, nx: tx, nz: tz });
+                    }
+                    curtain(edge, end === 0, ROAD_COL.skirt);
+                }
+            }
+
+            // The sides of a junction box with no road leaving them: a T has
+            // one, and it used to stand open over the hollow under the box.
+            if (paths.junction && paths.open) {
+                const b = ROAD_TOTAL_W / 2, ext = b + 18;
+                const sides = [
+                    { key: 'n', nx: 0, nz: -1 }, { key: 's', nx: 0, nz: 1 },
+                    { key: 'w', nx: -1, nz: 0 }, { key: 'e', nx: 1, nz: 0 }
+                ];
+                for (const sd of sides) {
+                    if (paths.open[sd.key]) continue;
+                    const edge = [];
+                    for (let k = 0; k <= 8; k++) {
+                        const l = -ext + (2 * ext * k) / 8;
+                        const lc = Math.max(-b, Math.min(b, l));
+                        const x = sd.nx ? sd.nx * b : l, z = sd.nz ? sd.nz * b : l;
+                        const y = at(sd.nx ? x : lc, sd.nz ? z : lc);
+                        edge.push({ x, z, y, nx: sd.nx, nz: sd.nz });
+                    }
+                    // Wound so each faces out of the box, whichever side it is.
+                    curtain(edge, sd.key === 'n' || sd.key === 'e', ROAD_COL.skirt);
                 }
             }
 

@@ -525,7 +525,17 @@
 
       window.CharacterPresets?.applyPresetIdentity?.(preset, actor);
       // The camper a dossier arrives in belongs to the founding of a party.
-      if (!joining) window.CharacterPresets?.applyPresetVehicle?.(preset);
+      // A new story always opens with Em's camper on the story's berth (Map1414
+      // 87,29), whatever her world record says about a vehicle. The park lives
+      // in this savegame only, so no other party's garage is touched.
+      if (!joining) {
+        const storyRun = Scene_CharacterCreation._storyMode || $gameSwitches.value(100);
+        const isEm = preset.proceduralLore === "em" || preset.loreKey === "em" || preset.name === "Em";
+        const camperDossier = isEm || (preset.vehicle && (preset.vehicle.key || "camper") === "camper");
+        const storyCamper = storyRun && camperDossier && window.CCStartVehicles?.parkStoryMode;
+        if (storyCamper) window.CCStartVehicles.parkStoryMode("vehicle_camper");
+        else window.CharacterPresets?.applyPresetVehicle?.(preset);
+      }
 
       // A dossier is played as it was written, so the Bio page it hands over is
       // already answered rather than sitting on its own defaults with nobody

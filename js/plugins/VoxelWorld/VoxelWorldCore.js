@@ -814,7 +814,11 @@
         'html-toast-stack',            // Core/ParchmentToast.js
         'party-hud',                   // UI/PartyHud.js
         'map-legend',                  // Map/MapLegend.js, the notice
-        'map-legend-controls'          // Map/MapLegend.js, the checklist
+        'map-legend-controls',         // Map/MapLegend.js, the checklist
+        // The die in the air (Core/Dice3D.js). Thrown over a fight, never in
+        // the way of one: it takes no click, and the world must not read it
+        // as a menu and stop while it tumbles (Em's fold, the Solomon dice).
+        'dice3d-container'
     ];
     // Water. A walker wades until the bottom drops away from under them, and
     // swims from there: on the surface with their head out, or under it, where
@@ -2393,12 +2397,67 @@
         // `length` is the vehicle's real length in world units.
         constructor(sheet, length) {
             super(sheet, 0, length);
-            this.moving = false;   // nothing in a vehicle sheet is a walk cycle
+            this.moving = false;   // a car sheet's three frames are one car
+            // A bicycle and a broom DO carry a cycle (pedals, a bobbing rider):
+            // whoever drives one sets `anim` and advances `step` with it.
+            this.anim = false;
+            // Roll into a turn, radians toward the vehicle's own right, and
+            // how far the card is lifted off the ground (a broom's hover).
+            this.lean = 0;
+            this.lift = 0;
+            this._row = -1;
         }
 
         _cut(fw, fh, fig) {
             const w = fig && fig.wide ? this.h / fig.wide : this.h;
             return { w, h: w * (fh / fw) };
+        }
+
+        // Which of the four drawings to show. Four rows for a full turn is a
+        // quarter each, and a chase camera sits right on the line between two
+        // of them whenever the vehicle is turning: without some give the card
+        // flickered between the back and the flank all through a bend. The
+        // row in use is kept until the eye is clearly into the next quarter.
+        _facingRow(dx, dz) {
+            const HYST = 0.18;
+            const TAU = Math.PI * 2;
+            let a = Math.atan2(dx, dz) - this.yaw;
+            a = ((a % TAU) + TAU) % TAU;
+            if (this._row >= 0) {
+                const centre = { 0: 0, 2: Math.PI * 0.5, 3: Math.PI, 1: Math.PI * 1.5 }[this._row];
+                let d = Math.abs(a - centre);
+                if (d > Math.PI) d = TAU - d;
+                if (d < Math.PI * 0.25 + HYST) return this._row;
+            }
+            this._row = characterFacingRow(this.yaw, dx, dz);
+            return this._row;
+        }
+
+        faceCamera(camX, camZ, camYaw) {
+            if (!this.tex) return;
+            const gx = this._gx !== undefined ? this._gx : this.mesh.position.x;
+            const gz = this._gz !== undefined ? this._gz : this.mesh.position.z;
+            const row = this._facingRow(camX - gx, camZ - gz);
+            const col = this.anim ? WALK_CYCLE[Math.floor(this.step) % 4] : 1;
+            this.tex.offset.set((this.colBase + col) / this.cols,
+                1 - (this.rowBase + row + 1) / this.rows);
+
+            // The lean is drawn as a roll of the card in its own plane, turned
+            // by how much of the vehicle's flank faces the lens: seen from
+            // behind a bike leans left or right, seen side on it does not.
+            // Pivoted on the wheels, not on the middle of the card.
+            const rx = -Math.cos(this.yaw), rz = Math.sin(this.yaw);   // the vehicle's right
+            const cx = Math.cos(camYaw),    cz = -Math.sin(camYaw);    // the card's right
+            const roll = -this.lean * (rx * cx + rz * cz);
+            this.mesh.rotation.set(0, camYaw, roll);
+            if (this._gy !== undefined) {
+                const c = this.cardH * (this.foot - 0.5);
+                const s = Math.sin(roll);
+                this.mesh.position.set(
+                    this._gx - c * s * cx,
+                    this._gy + this.lift + c * Math.cos(roll),
+                    this._gz - c * s * cz);
+            }
         }
     }
     // Handed to the rest of the suite.

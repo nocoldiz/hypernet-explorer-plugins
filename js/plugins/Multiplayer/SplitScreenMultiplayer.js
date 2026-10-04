@@ -2159,8 +2159,8 @@
     // SplitScreenManager.registerMinigameScene("Scene_Foo").
     // =========================================================================
     const MINIGAME_SCENES = new Set([
-        // ArcadeCabinetManager (covers every arcade cart: Snake, Frogger,
-        // Space Invaders, Bubble Pop, ... which all read ArcadeManager.getInput()
+        // ArcadeCabinetManager (covers every arcade cart: Snake, Hoppa,
+        // Invaders, Bubble Pop, ... which all read ArcadeManager.getInput()
         // -> Input.isPressed under the hood).
         "Scene_Arcade", "Scene_GameSelect", "Scene_HighScores", "Scene_InitialEntry",
         // Standalone minigame scenes.

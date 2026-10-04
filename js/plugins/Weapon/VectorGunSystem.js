@@ -242,43 +242,60 @@
   //   rider     the skill category a shape fires off its swing, if it has one
   //   scale     what the blow is worked out from, when the shape says so
   const FORM_MODES = {
-    abrasax:   { wtypeId: 1, range: 1, builder: 'createVectorAthameModel' },    // Athame of Abrasax
-    thelema:   { wtypeId: 2, range: 1, builder: 'createVectorBladeModel',
-                 rider: 'Swordsmanship' },  // Blade of Thelema
-    choronzon: { wtypeId: 3, range: 1, builder: 'createVectorMaulModel' },    // Maul of Choronzon
-    babalon:   { wtypeId: 4, range: 1, builder: 'createVectorAxeModel' },    // Axe of Babalon
-    nuit:      { wtypeId: 5, range: 2, builder: 'createVectorScourgeModel' },    // Scourge of Nuit
-    hadit:     { wtypeId: 6, range: 2, builder: 'createVectorStaffModel' },    // Staff of Hadit
-    aiwass:    { wtypeId: 7, range: 6, builder: 'createVectorBowModel' },    // Bow of Aiwass
-    zos:       { wtypeId: 8, range: 4, builder: 'createVectorDartsModel' },    // Darts of Zos
-    baphomet:  { wtypeId: 10, range: 1, builder: 'createVectorTalonsModel' },   // Talons of Baphomet
-    kia:       { wtypeId: 11, range: 1, builder: 'createVectorGauntletModel' },   // Gauntlet of Kia
-    longinus:  { wtypeId: 12, range: 2, builder: 'createVectorLanceModel' },   // Lance of Longinus
+    abrasax:   { wtypeId: 1, range: 1, builder: 'createVectorAthameModel',   // Athame of Abrasax
+                 sounds: ['knifeSlice', 'drawKnife2', 'HitPierce2', 'HitMagic1'] },
+    thelema:   { wtypeId: 2, range: 1, builder: 'createVectorBladeModel',   // Blade of Thelema
+                 rider: 'Swordsmanship',
+                 sounds: ['Sword1', 'Sword3', 'HitSlash1', 'HitSlash7', 'sword_sound'] },
+    choronzon: { wtypeId: 3, range: 1, builder: 'createVectorMaulModel',   // Maul of Choronzon
+                 sounds: ['HitBlunt3', 'HitBlunt6', 'Hammer2', 'Impact/crack04_mp3'] },
+    babalon:   { wtypeId: 4, range: 1, builder: 'createVectorAxeModel',   // Axe of Babalon
+                 sounds: ['HitCleave1', 'HitCleave3', 'HitCleave5', 'Items/chop'] },
+    nuit:      { wtypeId: 5, range: 2, builder: 'createVectorScourgeModel',   // Scourge of Nuit
+                 sounds: ['HitLash1', 'HitLash2', 'HitLash3', 'Whip2'] },
+    hadit:     { wtypeId: 6, range: 2, builder: 'createVectorStaffModel',   // Staff of Hadit
+                 sounds: ['HitMagic2', 'HitMagic3', 'Magic/spell_01', 'HitBlunt2'] },
+    aiwass:    { wtypeId: 7, range: 6, builder: 'createVectorBowModel',   // Bow of Aiwass
+                 sounds: ['Bow', 'Bow2', 'Bow3', 'HitPierce4'] },
+    zos:       { wtypeId: 8, range: 4, builder: 'createVectorDartsModel',   // Darts of Zos
+                 sounds: ['Throw1', 'Throw3', 'Blowgun1', 'HitPierce1', 'HitPierce5'] },
+    baphomet:  { wtypeId: 10, range: 1, builder: 'createVectorTalonsModel',   // Talons of Baphomet
+                 sounds: ['HitFlesh2', 'HitFlesh4', 'HitFlesh6', 'HitSlash4'] },
+    kia:       { wtypeId: 11, range: 1, builder: 'createVectorGauntletModel',   // Gauntlet of Kia
+                 sounds: ['Punch2', 'Punch3', 'HitBlunt1', 'SciFi/magnet_action'] },
+    longinus:  { wtypeId: 12, range: 2, builder: 'createVectorLanceModel',   // Lance of Longinus
+                 sounds: ['Spear1', 'Spear2', 'HitPierce3', 'HitPierce6'] },
     // The shapes the frame learned later. Each one is a weapon the game
     // already knows how to hold, and each one carries a gimmick of its own
     // rather than the bays and the element the pistol keeps for itself.
     //
     // The empty hands: Em drops the gun outright and the game's own unarmed
     // rig is what she fights with, so this shape names no builder at all.
-    fists:     { wtypeId: 11, range: 1, unarmed: true, rider: 'MartialArts' },
-    eris:      { wtypeId: 5, range: 1, builder: 'createVectorNunchakuModel' },   // Nunchaku of Eris
-    maat:      { wtypeId: 3, range: 2, builder: 'createVectorFlailModel' },      // Mail of Maat
-    bubba:     { wtypeId: 3, range: 1, builder: 'createVectorWrenchModel' },     // Wrench of Bubba
+    fists:     { wtypeId: 11, range: 1, unarmed: true, rider: 'MartialArts',
+                 sounds: ['Punch1', 'Punch2', 'Punch3', 'Melee/hit_02'] },
+    eris:      { wtypeId: 5, range: 1, builder: 'createVectorNunchakuModel',   // Nunchaku of Eris
+                 sounds: ['HitBlunt4', 'HitBlunt5', 'Items/chain_02', 'Wind/swish_4'] },
+    maat:      { wtypeId: 3, range: 2, builder: 'createVectorFlailModel',   // Mail of Maat
+                 sounds: ['HitBlunt2', 'Items/chain_01', 'Items/chain_03', 'Items/chainmail1'] },
+    bubba:     { wtypeId: 3, range: 1, builder: 'createVectorWrenchModel',   // Wrench of Bubba
+                 sounds: ['HitBlunt3', 'Items/tools_02', 'Items/metal_04', 'Impact/bfh1_metal_hit_03'] },
     yaldabaoth:{ wtypeId: 4, range: 1, builder: 'createVectorChainsawModel',     // Chainsaw of YHWH
-                 sounds: ['Machine', 'Saw1', 'Slash1'] },
-    nyarlathotep: { wtypeId: 12, range: 2, builder: 'createVectorScytheModel' }, // Scythe of Nyarlathotep
+                 sounds: ['Chainsaw1', 'Chainsaw2', 'Chainsaw3', 'Chainsaw4', 'HitCleave4'] },
+    nyarlathotep: { wtypeId: 12, range: 2, builder: 'createVectorScytheModel',   // Scythe of Nyarlathotep
+                 sounds: ['HitSlash2', 'HitSlash6', 'Wind/swosh_12', 'Items/shade3'] },
     // The one blade that is not swung with the arm: it reads the mind behind
     // it, so the blow is worked out from PSI and the words it answers to are
     // the mind's own rather than a swordsman's.
     freud:     { wtypeId: 2, range: 1, builder: 'createVectorKatanaModel',       // Katana of Freud
-                 rider: 'PsychicAbilities', scale: ['PSI'] },
+                 rider: 'PsychicAbilities', scale: ['PSI'],
+                 sounds: ['Sword2', 'sword_unsheathe3', 'HitSlash3', 'HitSlash5', 'Psi1', 'Psi2'] },
     // The one shape that mends rather than strikes: a plain attack with it is
     // turned on her own side. Everything it gives up is the price of that.
     // Held up face-on, the loop open to the camera: posed as the staff its
     // type is, the loop stood edge-on and read as a skewer of beads.
     gautama:   { wtypeId: 6, range: 4, builder: 'createVectorRosaryModel',       // Rosary of Gautama
                  mends: true, motion: 'cast', pose: { x: 80, y: 0, z: -12 }, fraction: 0.6,
-                 sounds: ['Items/bookFlip1', 'Bell1', 'Items/paper_02'] },
+                 sounds: ['Items/bookFlip1', 'Items/bell_01', 'Items/paper_02'] },
     // Grimoire of Solomon: the twelfth shape, and the only one that is not a
     // weapon. Fitted, the book is already open when the fight starts: Em walks
     // in reading. It is a pact, not a gift, so her limit break buys no turn of

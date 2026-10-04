@@ -7,15 +7,20 @@
     "firstCases": "FIRST CASES FILED IN {place}.",
     "reaches": "REACHES {place} (FROM {from}).",
     "declaredOver": "DECLARED OVER. {cases} CASES, {dead} DEAD!",
-    "incubation": ""
+    "incubation": "INITIAL INFECTION INCUBATIN' IN {place}!"
   },
   "toast": {
-    "threshold": ""
+    "threshold": "OUTBREAK ALERT: {disease} HAB REACHED {count} CASES!"
   },
-  "discovered": "",
+  "discovered": "OUTBREAK OF {disease} OFFICIALLY DISCOVERED IN {place}!",
   "news": {
     "hysteria": "{disease} SPREADS THROUGH {place}; OFFICIALS APPEAL FOR CALM!",
-    "medical": "OUTBREAK OF {disease} CONFIRMED IN {place}. EURODEMICS RAISES DA ALERT!"
+    "medical": "OUTBREAK OF {disease} CONFIRMED IN {place}. EURODEMICS RAISES DA ALERT!",
+    "daily": "{disease}: {infected} ILL IN {towns} TOWNS, {dead} DEAD",
+    "dailyBody": "DA {disease} OUTBREAK CENTRED ON {place} STANDS AT {infected} KNOWN CASES ACROSS {towns} TOWNS, WIT {dead} DEAD. EURODEMICS KEEPS DA ALERT IN FORCE!",
+    "terrorDaily": "BIOTERROR ALERT: {disease} SPREADIN' FROM {place}, {infected} ILL",
+    "terrorBody": "INVESTIGATORS TREAT DA {disease} OUTBREAK AT {place} AS A DELIBERATE RELEASE. {infected} IZ ILL ACROSS {towns} TOWNS AN' {dead} HAB DIED. DA ALERT STANDS UNTIL DA LAST CASE IZ CLOSED!",
+    "over": "{disease} OUTBREAK OVER IN {place}: {cases} CASES, {dead} DEAD"
   },
   "caught": "{actor} CAUGHT {disease}.",
   "caughtFrom": "{actor} CAUGHT {disease} FROM {source}.",

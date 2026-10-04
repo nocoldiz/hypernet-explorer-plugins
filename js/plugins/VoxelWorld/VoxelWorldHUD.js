@@ -112,11 +112,17 @@
         talk:     ['E',             'walk:interact', 'CamperDrive.hud.cmdTalk'],
         dig:      ['LMB',           'walk:dig',     'VoxelWorld.hud.cmdDig'],
         place:    ['G',             'walk:place',   'VoxelWorld.hud.cmdPlace'],
+        // In a fight the two buttons split: the weapon on the left (R2), the
+        // spell, item or block in hand on the right (R1).
+        fightHit: ['LMB',           'R2',           'VoxelWorld.hud.cmdFightHit'],
+        fightUse: ['RMB',           'R1',           'VoxelWorld.hud.cmdFightUse'],
         // The d-pad walks the cells of the bar in hand, which is the same thing
         // the digit row does; it is no binding-table action, so the faces are
         // written out here.
         block:    ['Q / 1-9',       'D-PAD &uarr;&darr;', 'VoxelWorld.hud.cmdBlock'],
         bar:      ['TAB',           'walk:bar',     'VoxelWorld.hud.cmdBar'],
+        // R has no pad binding of its own out here: the badge stands as written.
+        ready:    ['R',             'R',            'VoxelWorld.hud.cmdReady'],
         exitWalk: ['T',             'walk:exit',    'CamperDrive.hud.cmdExitWalk'],
 
         drive:    ['WASD',          'L-STICK',      'CamperDrive.hud.cmdDrive'],
@@ -165,8 +171,9 @@
             const ids = ['walk', 'look', 'run', 'jump'];
             ids.push(wet ? 'swim' : 'crouch');
             if (c.canFly) ids.push('footFly');
-            if (c.canDig) ids.push('dig', 'place', 'block', 'bar');
-            ids.push('talk', 'map', 'menu', 'exitWalk');
+            if (c.canDig && c.fighting) ids.push('fightHit', 'fightUse', 'block', 'bar');
+            else if (c.canDig) ids.push('dig', 'place', 'block', 'bar');
+            ids.push('ready', 'talk', 'map', 'menu', 'exitWalk');
             return ids;
         }
         if (c.mode === 'fly') {
@@ -1137,6 +1144,11 @@
                         iconIndex: r.iconIndex || 0, enabled: r.enabled !== false,
                         count: r.count, label: r.name || ''
                     };
+                }
+                // A vehicle the party owns, to be called over (or the one empty
+                // cell that says there is none).
+                if (r.vehicle) {
+                    return { iconIndex: r.iconIndex || 0, enabled: r.enabled !== false, label: r.name || '' };
                 }
                 if (r.weapon) {
                     // The sword off the game's own icon sheet rather than a

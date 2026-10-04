@@ -17,7 +17,6 @@
   "inProgress": "IN PROGRESS",
   "done": "DONE",
   "noQuests": "NO QUESTS",
-  "colShiftMoveCardOk": "↑↓ · ←→ COL · SHIFT+←→ MOVE CARD · OK DETAILS · ESC CLOSE",
   "back": "BACK",
   "questLog": "QUEST LOG",
   "appName": "TASK MASTER",
@@ -30,6 +29,10 @@
     "FAILED"
   ],
   "showOnMapAt": "SHOW ON MAP: {place} · SHIFT",
+  "moveToInProgress": "MOVE TA IN PROGRESS · →",
+  "moveToToDo": "MOVE BACK TA TA DO · ←",
+  "boardHint": "DRAG A NOTE, OR HOLD OK AN' PRESS ←/→, TA MOVE IT BETWEEN COLUMNS",
+  "mapMarker": "MAP MARKER",
   "notify": {
     "newQuest": "NEW QUEST: {title}",
     "newQuestUnknown": "NEW QUEST:???",

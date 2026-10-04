@@ -1,34 +1,43 @@
 {
   "menu": {
-    "explore": "EXPLORE",
-    "reconnect": "RECONNECT",
+    "defaultStart": "DEFAULT START",
+    "explore": "NEW PARTY",
+    "reconnect": "SELECT PARTY",
     "storyMode": "NEW STORY",
     "continueStory": "CONTINUE STORY",
     "minigames": "MINIGAMES",
     "sandbox": "SANDBOX",
     "worlds": "WORLDS",
-    "wiki": "WIKI",
+    "wiki": "WORLD HISTORY",
     "preferences": "PREFERENCES",
     "mods": "MODS",
+    "music": "MUSIC",
+    "musicRandom": "RANDOM",
     "exit": "EXIT",
-    "continue": "CONTINUE"
+    "continue": "CONTINUE",
+    "quickContinue": "CONTINUE"
   },
   "menuOverlay": {
-    "explore": "EXPLORE",
-    "reconnect": "RECONNECT",
+    "defaultStart": "DEFAULT START",
+    "explore": "NEW PARTY",
+    "reconnect": "SELECT PARTY",
     "storyMode": "NEW STORY",
     "continueStory": "CONTINUE STORY",
     "minigames": "MINIGAMES",
     "sandbox": "SANDBOX",
     "worlds": "WORLDS",
-    "wiki": "WIKI",
+    "wiki": "WORLD HISTORY",
     "preferences": "PREFERENCES",
     "mods": "MODS",
+    "music": "MUSIC",
     "exit": "EXIT",
-    "noWorld": "NO WORLD"
+    "noWorld": "NO WORLD",
+    "quickContinue": "CONTINUE"
   },
   "minigame": {
     "arena": "ARENA",
+    "liminalWorld": "LIMINAL WORLD",
+    "galaxyMap": "GALAXY MAP",
     "dream": "DREAM",
     "surfing": "SURFIN'",
     "targetRange": "SHOOTIN' RANGE",
@@ -57,7 +66,9 @@
     "arcadeManpac": "ARCADE: MANPAC",
     "arcadeAsteroids": "ARCADE: METEOROIDS",
     "arcadeCentipede": "ARCADE: CRAWLER",
-    "piano": "PIANO"
+    "piano": "PIANO",
+    "hyperdeck": "BUILD A HYPERDECK",
+    "rocketLaunch": "ROCKET LAUNCH"
   },
   "minigameSetup": {
     "venueTitle": "WHERE",
@@ -68,6 +79,14 @@
     "afternoon": "AFTERNOON",
     "evening": "EVENIN'",
     "night": "NIGHT",
+    "vehicleTitle": "HOW",
+    "destinationTitle": "WHERE FROM",
+    "onFoot": "ON FOOT",
+    "camper": "CAMPER",
+    "car": "CAR",
+    "bike": "BIKE",
+    "boat": "BOAT",
+    "broom": "BROOMSTICK",
     "back": "BACK"
   },
   "disclaimer": {
@@ -75,7 +94,10 @@
     "noclip": "IF YOU GET STUCK IN A WALL, HOLD CTRL TA USE NOCLIP MODE!"
   },
   "news": {
-    "header": "NEWS // EARLY BUILD"
+    "header": "NEWS // EARLY BUILD",
+    "older": "‹ BACK",
+    "newer": "NEXT ›",
+    "empty": "DIS BUILD SHIPPED WITHOUT A CHANGELOG!"
   },
   "support": {
     "header": "SUPPORT DA DEVELOPMENT",
@@ -120,34 +142,38 @@
     "curvature": "SPATIAL CURVATURE DETECTED"
   },
   "version": {
-    "text": "0.6.8a"
+    "text": "0.7.9A"
   },
   "language": {
     "label": "✦ LANG"
   },
   "update": {
-    "checking": "✦ CHECKIN' BUILDS",
+    "checking": "✦ CHECKIN' BUILDS…",
     "checkingTip": "ASKIN' DA UPDATE SERVER WHAT DA NEWEST BUILD IZ!",
     "ready": "✦ BUILD {build} READY",
     "readyPlain": "✦ NEW BUILD READY",
     "download": "✦ DOWNLOAD {name}",
     "downloadBuild": "✦ DOWNLOAD BUILD {build}",
     "preparing": "✦ PREPARIN' UPDATE",
-    "downloading": "✦ DOWNLOADIN' {percent}%",
+    "downloading": "✦ DOWNLOADIN' {name}…",
+    "downloadingPlain": "✦ DOWNLOADIN' {percent}%",
     "installing": "✦ INSTALLIN' UPDATE",
-    "restarting": "✦ RESTARTIN'",
-    "restartReady": "✦ RESTART TA FINISH",
-    "restartTip": "DA NEW BUILD IZ INSTALLED. CLICK TA RESTART DA GAME ONTO IT!",
+    "installReady": "✦ INSTALL {name}",
+    "installReadyPlain": "✦ INSTALL DA NEW BUILD",
+    "installReadyTip": "DA NEW BUILD IZ DOWNLOADED AN' WAITIN'. CLICK TA INSTALL IT; DA GAME WILL CLOSE AFTERWARDS SO YOU CAN REOPEN IT!",
+    "restarting": "✦ CLOSIN' DA GAME",
+    "restartReady": "✦ CLOSE TA FINISH",
+    "restartTip": "DA NEW BUILD IZ INSTALLED. CLICK TA CLOSE DA GAME, DEN REOPEN IT YOURSELF TA FINISH!",
     "upToDate": "✦ ALREADY UP TA DATE",
     "failed": "✦ UPDATE FAILED, RETRY",
-    "tip": "A NEWER BUILD IZ WAITIN'. CLICK TA INSTALL IT AN' RESTART!",
+    "tip": "A NEWER BUILD IZ WAITIN'. CLICK TA DOWNLOAD AN' INSTALL IT; DA GAME CLOSES ON ITS OWN WHEN IT IZ DONE, SO YOU CAN REOPEN IT ON DA NEW BUILD!",
     "majorLine": "MAJOR UPDATE, DOWNLOAD DA FULL GAME AFTERWARDS",
     "majorTip": "DIS BUILD IZ A MAJOR UPDATE. IT INSTALLS FROM HERE, BUT DA WHOLE GAME MUST BE DOWNLOADED AGAIN FOR FULL COMPATIBILITY!",
     "majorInstalled": "MAJOR UPDATE INSTALLED",
     "majorInstalledLine": "DOWNLOAD DA FULL GAME AGAIN FOR FULL COMPATIBILITY",
     "majorInstalledTip": "DIS COPY WAZ PATCHED ACROSS A MAJOR UPDATE. DOWNLOAD DA WHOLE GAME AGAIN FOR FULL COMPATIBILITY!",
     "redownload": "✦ REDOWNLOAD DA GAME",
-    "redownloadTip": "A MAJOR UPDATE IZ OUT AN' DIS COPY IZ BEHIND IT. PATCHIN' WON'T FINISH DA JOB, SO DA WHOLE GAME MUST BE DOWNLOADED AGAIN. CLICK TA OPEN DA DOWNLOAD PAGE!"
+    "redownloadTip": "A MAJOR UPDATE IZ OUT AN' DIS COPY IZ BEHIND IT. PATCHIN' NO CAN FINISH DA JOB, SO DA WHOLE GAME HAB TA BE DOWNLOADED AGAIN. CLICK TA OPEN DA DOWNLOAD PAGE; DA UPDATER SCREEN CAN STILL INSTALL DA BUILD BY HAND!"
   },
   "hyperverse": {
     "lead": "HYPERVERSE // ",
@@ -186,31 +212,32 @@
     }
   },
   "card": {
-    "weapon": "WEAPON",
-    "artifact": "ARTIFACT",
+    "queryType": "QUERY_TYPE",
+    "idAbbr": "ID",
+    "type": {
+      "weapon": "WEAPON",
+      "artifact": "ARTIFACT",
+      "armor": "ARMOR",
+      "item": "ITEM",
+      "skill": "SKILL",
+      "enemy": "ENEMY"
+    },
     "levelAbbr": "LV",
     "price": "PRICE",
     "element": "ELEMENT",
     "inflicts": "INFLICTS",
     "info": "INFO",
-    "stats": {
-      "str": "STR",
-      "con": "CON",
-      "int": "INT",
-      "wis": "WIS",
-      "dex": "DEX",
-      "psi": "PSI"
-    },
+    "desc": "DESC",
+    "exec": "EXEC",
+    "eof": "EOF",
     "donorSuffix": " DONOR"
   },
   "bgMode": {
     "hyperverse": "HYPERVERSE",
     "autodrive": "CAMPER DRIVE",
+    "eris": "ERIS CAMERA",
     "cards": "DATA CARDS",
     "space": "SPACE",
-    "bestiary": "BESTIARY",
-    "artifacts": "ARTIFACTS",
-    "weapons": "WEAPONS",
     "random": "RANDOM"
   },
   "artifact": {
@@ -255,5 +282,8 @@
     ],
     "nameFormat": "{adj} {noun}",
     "fallbackType": "RELIC"
+  },
+  "music": {
+    "label": "✦ "
   }
 }

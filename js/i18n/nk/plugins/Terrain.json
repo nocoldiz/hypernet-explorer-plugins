@@ -31,5 +31,10 @@
   "poster": "DA POSTER READS: \"{text}\"",
   "signStop": "STOP",
   "signDanger": "DANGER. WORKS IN PROGRESS!",
-  "signHelipad": "HELIPAD. KEEP CLEAR."
+  "signHelipad": "HELIPAD. KEEP CLEAR.",
+  "feature": {
+    "statue": "STATUE",
+    "library": "BOOKCASE",
+    "book": "BOOK"
+  }
 }

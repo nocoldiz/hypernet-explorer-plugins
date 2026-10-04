@@ -229,7 +229,7 @@
   },
   "47": {
     "name": "Siu Nim Tau",
-    "description": "Aumenta DES di chi la usa. Può applicare Combo.\nColpisce per primo.",
+    "description": "Aumenta DES di chi la usa. Applica Combo.\nColpisce per primo.",
     "message1": "%1 assume la posizione del Wing Chun!",
     "message2": ""
   },
@@ -751,7 +751,7 @@
   },
   "134": {
     "name": "Chi Sao",
-    "description": "Può applicare Combo a chi la usa. Colpisce per\nprimo.",
+    "description": "Applica Combo a chi la usa. Colpisce per\nprimo.",
     "message1": "%1 reindirizza l'attacco!",
     "message2": ""
   },
@@ -1639,7 +1639,7 @@
   },
   "302": {
     "name": "Modalità Berserker",
-    "description": "Aumenta COS di chi la usa. Può applicare Rabbia.",
+    "description": "Aumenta COS di chi la usa. Applica Rabbia.",
     "message1": "%1 entra in modalità berserker!",
     "message2": ""
   },
@@ -1711,7 +1711,7 @@
   },
   "314": {
     "name": "Frenesia",
-    "description": "Aumenta COS di tutti gli alleati. Può applicare\nRabbia.",
+    "description": "Aumenta COS di tutti gli alleati. Applica\nRabbia.",
     "message1": "%1 usa Frenesia!",
     "message2": ""
   },
@@ -2071,7 +2071,7 @@
   },
   "382": {
     "name": "ArmaFulminea",
-    "description": "Aumenta COS di un alleato. Può applicare\nStatico.",
+    "description": "Aumenta COS di un alleato. Applica Statico.",
     "message1": "%1 casta %2",
     "message2": ""
   },
@@ -2107,19 +2107,19 @@
   },
   "388": {
     "name": "InfusioneGelida",
-    "description": "Aumenta INT di tutti gli alleati. Può applicare\nFreddo. Colpisce per ultimo.",
+    "description": "Aumenta COS di tutti gli alleati. Applica\nFreddo. Colpisce per ultimo.",
     "message1": "%1 infonde le armi con il ghiaccio!",
     "message2": ""
   },
   "389": {
     "name": "InfusioneFulminea",
-    "description": "Aumenta DES di tutti gli alleati. Colpisce per\nultimo.",
+    "description": "Aumenta DES di tutti gli alleati. Applica\nStatico. Colpisce per ultimo.",
     "message1": "%1 infonde le armi con i fulmini!",
     "message2": ""
   },
   "390": {
     "name": "ScudoVento",
-    "description": "Aumenta DES di tutti gli alleati. Può applicare\nGalleggiante. Colpisce per ultimo.",
+    "description": "Aumenta DES di tutti gli alleati. Applica\nGalleggiante. Colpisce per ultimo.",
     "message1": "%1 crea una barriera antivento!",
     "message2": ""
   },
@@ -3271,7 +3271,7 @@
   },
   "602": {
     "name": "EscaFantasmatica",
-    "description": "Può applicare Etereo a tutti gli alleati.\nColpisce per ultimo. Precisione 90%.",
+    "description": "Applica Etereo a tutti gli alleati. Colpisce\nper ultimo.",
     "message1": "%1 crea un'esca fantasmagorica!",
     "message2": ""
   },
@@ -3919,7 +3919,7 @@
   },
   "740": {
     "name": "CronologiaFratta",
-    "description": "Applica Berserk a tutti gli alleati. Colpisce\nper ultimo. Precisione 90%.",
+    "description": "Applica Flusso a tutti gli alleati. Colpisce\nper ultimo.",
     "message1": "%1 interrompe la sequenza temporale!",
     "message2": ""
   },
@@ -4087,7 +4087,7 @@
   },
   "778": {
     "name": "EvocaColpo",
-    "description": "Infligge danni fisici a un nemico e convoca un\nfamiglio.",
+    "description": "Infligge danni fisici a un nemico ed evoca un\nmostro casuale vicino al tuo livello.",
     "message1": "%1 spara un colpo di convocazione!",
     "message2": ""
   },

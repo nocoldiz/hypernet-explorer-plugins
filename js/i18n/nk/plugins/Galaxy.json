@@ -16,13 +16,16 @@
     "proceduralGalaxy": "PROCEDURAL GALAXY",
     "starSystem": "STAR SYSTEM",
     "milkyWay": "MILKY WAY GALAXY",
-    "near": "NEAR {name}"
+    "near": "NEAR {name}",
+    "cockpit": "COCKPIT"
   },
   "sky": {
     "european": "EUROPEAN",
     "chinese": "CHINESE",
-    "hint": "ARROWS OR WASD PAN · Q/E ZOOM · SHIFT SWITCHES DA SKY · ESC CLOSES",
-    "hintPad": "LS PAN · LB/RB ZOOM · X SWITCHES DA SKY · B CLOSES"
+    "center": "CENTER",
+    "zodiac": "ZODIAC",
+    "hint": "DRAG OR WASD/ARROWS TA PAN · WHEEL OR Q/E TA ZOOM · OK CENTERS VIEW · TAB SWITCHES DA SKY · ESC CLOSES",
+    "hintPad": "LS PAN · LB/RB ZOOM · A CENTERS VIEW · X SWITCHES DA SKY · B CLOSES"
   },
   "cluster": {
     "virgo": "VIRGO CLUSTER",
@@ -34,7 +37,10 @@
     "yourDestination": "YA DESTINATION",
     "arrivedAt": "YOU HAB ARRIVED AT {place}",
     "timeToArrival": "TIME TA ARRIVAL",
-    "lyRemaining": "{ly} LY REMAININ'"
+    "lyRemaining": "{ly} LY REMAININ'",
+    "refuelling": "REFUELLIN'",
+    "otherGalaxy": "NO COURSE CROSSES TA ANOTHER GALAXY. ONLY A SCHRÖDINGER-BOHR BRIDGE REACHES IT!",
+    "harvesting": "HARVESTIN' SCHRÖDINGERITE"
   },
   "bodyType": {
     "Dark + emission nebula": "DARK + EMISSION NEBULA",
@@ -58,7 +64,10 @@
     "higher-dimensional anomaly": "HIGHER-DIMENSIONAL ANOMALY",
     "spiral galaxy": "SPIRAL GALAXY",
     "rich galaxy cluster": "RICH GALAXY CLUSTER",
-    "elliptical galaxy": "ELLIPTICAL GALAXY"
+    "elliptical galaxy": "ELLIPTICAL GALAXY",
+    "supercluster": "SUPERCLUSTER",
+    "rich supercluster": "RICH SUPERCLUSTER",
+    "galaxy filament": "GALAXY FILAMENT"
   },
   "row": {
     "type": "TYPE",
@@ -82,6 +91,15 @@
     "dysonAbandoned": "ABANDONED DYSON SPHERE",
     "orbit": "ORBIT",
     "period": "PERIOD",
+    "gravity": "GRAVITY",
+    "gValue": "{g} G",
+    "dayLength": "DAY LENGTH",
+    "tidallyLocked": "ROTATION",
+    "hoursValue": "{hours} H",
+    "daysValue": "{days} EARTH DAYS",
+    "noDayNight": "NONE · ONE FACE ALWAYS LIT",
+    "lockedToStar": "TIDALLY LOCKED TA ITS STAR",
+    "lockedToPlanet": "TIDALLY LOCKED TA ITS PLANET",
     "atmosphere": "ATMOSPHERE",
     "yes": "YAH!",
     "no": "NAH!",
@@ -92,7 +110,11 @@
     "oreBody": "ORE BODY",
     "units": "{remaining} / {capacity} UNITS",
     "condition": "CONDITION",
-    "weakSigns": "WEAK SIGNS"
+    "traceSigns": "TRACE SIGNS",
+    "bioReading": "DETECTED · {tier}"
+  },
+  "fridayMoons": {
+    "reseated": "DA SECOND AN' THIRD MOONS IZ NOT OUT TODAY. DA SHIP FALLS BACK INTO ORBIT AROUND {body}!"
   },
   "nibiru": {
     "impactRow": "EARTH IMPACT",
@@ -113,7 +135,9 @@
     "mly": "{n} MLY",
     "thousandLy": "{n},000 LY",
     "billionStars": "~{n} BILLION",
-    "galaxies": "~{n} GALAXIES"
+    "galaxies": "~{n} GALAXIES",
+    "gly": "{n} GLY",
+    "clusters": "~{n} CLUSTERS"
   },
   "hud": {
     "centreTheViewOnYour": "CENTRE DA VIEW ON YA SHIP, WHEREVER IT IZ",
@@ -130,10 +154,12 @@
     "catalog": "CATALOG",
     "home": "HOME",
     "returnToEarth": "RETURN TA EARTH",
-    "ebBridge": "EB BRIDGE",
+    "closeMap": "CLOSE MAP",
+    "closeMapTooltip": "CLOSE DA STAR MAP",
     "engines": "ENGINES",
     "warpSpeed": "WARP SPEED",
     "hyperfluxBurn": "HYPERFLUX BURN",
+    "eta": "TIME TA ARRIVAL",
     "stop": "STOP",
     "fuel": "FUEL",
     "hyperfluxReserve": "HYPERFLUX RESERVE",
@@ -143,6 +169,14 @@
     "refuel": "REFUEL",
     "orbit": "ORBIT",
     "chooseLandingSite": "CHOOSE LANDIN' SITE",
+    "landingSite": "LANDIN' SITE",
+    "otherGalaxy": "ANOTHER GALAXY: BRIDGE ONLY",
+    "landingSiteCell": "SQUARE {x}, {y}",
+    "landOnFoot": "LAND ON FOOT",
+    "landWithShip": "LAND WIT DA SHIP",
+    "spaceportAtCell": "{name} · SQUARE {x}, {y}",
+    "landHere": "LAND HERE",
+    "liminalWalk": "LIMINAL WALK",
     "cancel": "CANCEL",
     "servicingBay": "SERVICIN' BAY",
     "stripMining": "STRIP MININ'",
@@ -154,22 +188,27 @@
     "parkedInOrbit": "PARKED IN ORBIT",
     "openSchrDingerBohrBridge": "OPEN SCHRÖDINGER BOHR BRIDGE",
     "flyHere": "FLY HERE",
-    "landHere": "LAND HERE",
     "stripMine": "STRIP ME",
     "serviceTelescope": "SERVICE TELESCOPE",
     "serviced": "SERVICED",
     "repair": "REPAIR",
     "close": "CLOSE",
-    "landingGridHelp": "CLICK A SQUARE, OR MOVE WIT ARROW KEYS AN' CONFIRM WIT ENTER/OK. ESC CANCELS!",
     "refuelTooltip": "REFUEL HERE, OR PLOT A COURSE TA DA NEAREST STAR DAT CAN REFUEL DA SHIP",
-    "orbitHint": "DRAG ROTATE · WHEEL ZOOM · CLICK SELECT · ESC EXIT",
     "nothingCatalogued": "NOTHIN' CATALOGUED.",
+    "nothingInView": "NOTHIN' CATALOGUED IZ IN VIEW. POINT DA CAMERA ELSEWHERE, OR SHOW DA WHOLE CATALOG!",
+    "catalogInView": "IN VIEW",
+    "catalogAll": "ALL",
+    "catalogViewTooltip": "SHOW ONLY WHAT DA CAMERA HAB IN FRAME, OR DA WHOLE CATALOG",
     "rechargesIn": "RECHARGES IN",
     "nominal": "NOMINAL",
     "mineProgress": "{mined} / {capacity} UNITS · ~{eta}S TA DEPLETION",
     "ship": "SHIP",
     "scanForBiosignatures": "SCAN FOR BIOSIGNATURES",
+    "grandTour": "GRAND TOUR",
+    "grandTourTooltip": "A SCENIC, HANDS-OFF FLYTHROUGH OF EVERY BODY IN DIS SYSTEM",
     "sbBridge": "SB-BRIDGE",
+    "bridge": "BRIDGE",
+    "bridgeTooltip": "TAKE DA HELM AN' FLY DA SHIP YOURSELF",
     "setCourse": "SET COURSE",
     "parkInOrbit": "PARK IN ORBIT",
     "stopRefuel": "STOP REFUEL",
@@ -179,7 +218,11 @@
     "bookmarkAdd": "BOOKMARK DIS",
     "bookmarkRemove": "REMOVE BOOKMARK",
     "bookmarked": "BOOKMARKED",
-    "bookmark": "BOOKMARK"
+    "bookmark": "BOOKMARK",
+    "harvestRunning": "HARVEST FLYBY UNDER WAY",
+    "flyby": "FLYBY",
+    "noSolidSurface": "NO SOLID SURFACE: DIS WORLD CAN ONLY BE FLOWN OVER!",
+    "noLandingSite": "NOTHIN' TA SET DOWN ON: DIS OBJECT CAN ONLY BE FLOWN PAST!"
   },
   "hubblePart": {
     "DF-224 Computer": {
@@ -267,6 +310,8 @@
   },
   "core": {
     "noSpaceports": "NO SPACEPORTS IN DIS PLANET",
+    "portOnFoot": "{name} (ON FOOT)",
+    "portWithShip": "{name} (WIT DA SHIP)",
     "cancel": "CANCEL",
     "theStar": "DA STAR",
     "refuellingFrom": "REFUELLIN' FROM {star}.",
@@ -275,29 +320,8 @@
     "mayRunOut": "HYPERFLUX MAY RUN OUT BEFORE ARRIVAL!",
     "alreadyRefuelling": "ALREADY REFUELLIN' FROM {star}.",
     "tankFull": "HYPERFLUX TANK IZ ALREADY FULL!",
-    "noStarInRange": "NO STAR ABLE TA REFUEL DA SHIP WITHIN RANGE!"
-  },
-  "hint": {
-    "cockpit": "<b>COCKPIT</b> &nbsp;·&nbsp; WASD THRUST · SPACE/C UP·DOWN · SHIFT BOOST · MOUSE LOOK · F ORBIT · ESC EXIT",
-    "planet": "CLICK DA STAR OR ZOOM OUT TA LEAVE",
-    "system": "CLICK A PLANET TA ZOOM IN · CLICK IT AGAIN TA CLOSE IN",
-    "galaxy": "CLICK A STAR TA TARGET IT · CLICK IT AGAIN TA ZOOM TA IT",
-    "galaxyFocus": "ZOOM OUT TA LEAVE",
-    "cluster": "CLICK A GALAXY TA TARGET IT · CLICK IT AGAIN TA ENTER IT",
-    "web": "CLICK ANY NODE · CLICK IT AGAIN TA ZOOM INTO ITS CLUSTER",
-    "outer": "CLICK A GALAXY TA TARGET IT · CLICK IT AGAIN TA ENTER IT",
-    "modeLine": "<b>{scale}</b> &nbsp;·&nbsp; DRAG ROTATE · WHEEL ZOOM · TAB PICK · {tail} · SPACE ZOOM TA TARGET · F COCKPIT · ESC EXIT"
-  },
-  "hintPad": {
-    "cockpit": "<b>COCKPIT</b> &nbsp;·&nbsp; [LS] THRUST · [RS] LOOK · [RT]/[LT] CLIMB·DIVE · [X] BOOST · [B] EXIT",
-    "planet": "[B] OR ZOOM OUT TA LEAVE",
-    "system": "[LB]/[RB] PICK A BODY · ZOOM IN ON IT TA MOVE IN",
-    "galaxy": "[LB]/[RB] PICK A STAR · ZOOM IN ON IT TA ENTER",
-    "galaxyFocus": "ZOOM OUT TA LEAVE",
-    "cluster": "[LB]/[RB] PICK A GALAXY · ZOOM IN ON IT TA ENTER",
-    "web": "[LB]/[RB] PICK A NODE · ZOOM IN ON IT TA ENTER ITS CLUSTER",
-    "outer": "[LB]/[RB] PICK A GALAXY · ZOOM IN ON IT TA ENTER",
-    "modeLine": "<b>{scale}</b> &nbsp;·&nbsp; [RS] ROTATE · [LT]/[RT] ZOOM · {tail} · [A] ZOOM TA TARGET · [Y] CATALOG · [X] COCKPIT · [B] EXIT"
+    "noStarInRange": "NO STAR ABLE TA REFUEL DA SHIP WITHIN RANGE!",
+    "courseKept": "{star} IZ ALREADY ON DA CURRENT COURSE{distance}. REFUELLIN' ON ARRIVAL!"
   },
   "service": {
     "hubbleName": "HUBBLE SPACE TELESCOPE",
@@ -333,7 +357,11 @@
     "donor": "{type} CLASS · DONOR",
     "life": " · LIFE",
     "moonOf": "{type} · MOON OF {planet}",
-    "weakLife": " · WEAK SIGNS"
+    "moons": {
+      "one": "{count} MOON",
+      "other": "{count} MOONS"
+    },
+    "traceLife": " · TRACE SIGNS"
   },
   "tab": {
     "current": "CURRENT SYSTEM",
@@ -359,7 +387,7 @@
     "patrons": "PATRONS",
     "patronsEmpty": "NO PATRON WORLDS ON FILE.",
     "patronWorlds": "PATRON WORLDS",
-    "weakSignatures": "WEAK SIGNATURES"
+    "traceSignatures": "TRACE SIGNATURES"
   },
   "scan": {
     "worldsFound": {
@@ -369,9 +397,9 @@
     "hubbleOnline": " (HUBBLE ONLINE)",
     "newCount": " · {count} NEW",
     "loggedInCatalog": " · LOGGED IN DA CATALOG",
-    "weakCount": {
-      "one": " · {count} WEAK READIN'",
-      "other": " · {count} WEAK READINGS"
+    "traceCount": {
+      "one": " · {count} TRACE READIN'",
+      "other": " · {count} TRACE READINGS"
     }
   },
   "refuel": {
@@ -386,6 +414,97 @@
     "inSystem": "FUEL STAR IN DIS SYSTEM",
     "nearest": "NEAREST FUEL STAR",
     "mayBeOutOfRange": "NEAREST FUEL STAR MAY BE OUT OF RANGE",
-    "noneInRange": "NO FUSIN' STAR IN RANGE"
+    "noneInRange": "NO FUSIN' STAR IN RANGE",
+    "harvesting": "HARVESTIN' DA DISK",
+    "eta": "{time} REMAININ'",
+    "harvested": "{amount} SCHRÖDINGERITE CHARGES DRAWN FROM DA DISK",
+    "onCourse": "FUEL STAR ON DA CURRENT COURSE"
+  },
+  "bio": {
+    "weak": "WEAK",
+    "strong": "STRONG",
+    "hyper": "HYPER"
+  },
+  "bodyNote": {
+    "2060chiron": "COMET OR ASTEROID, DEPENDIN' WHICH YEAR YOU ASK. IT GREW A COMA IN 1988, AFTER A DECADE FILED AS A MINOR PLANET, AN' DA ARGUMENT HAB NOT BEEN SETTLED SINCE!",
+    "3753cruithne": "EARTH'S SECOND MOON, IF YOU IZ GENEROUS. A HORSESHOE CO-ORBITAL DAT TAKES 770 YEARS TA WALK ONE LAP OF ITS BEAN-SHAPED PATH AROUND US, AN' IZ NEVER CAPTURED!",
+    "433eros": "NEAR SHOEMAKER TOUCHED DOWN HERE ON 12 FEBRUARY 2001, A SPACECRAFT NEVER DESIGNED TA LAND ON ANYTHIN'. IT KEPT TRANSMITTIN' FROM DA SURFACE FOR A FORTNIGHT!",
+    "antichthon": "PHILOLAUS PLACED A COUNTER-EARTH OPPOSITE OUR OWN, FOREVER BEHIND DA SUN, TA ROUND DA COUNT OF MOVIN' BODIES UP TA TEN. EVERY PROBE SENT TA CHECK HAB BEEN AIMED SOMEWHERE ELSE!",
+    "earth": "DA SHELL AROUND IT IZ NOT DECORATION. FORTY YEARS OF SPENT UPPER STAGES, DEAD SATELLITES AN' FROZEN COOLANT, EVERY COLLISION BREEDIN' DA FRAGMENTS FOR DA NEXT ONE!",
+    "hubblespacetelescope": "LAUNCHED 1990 WIT A PRIMARY MIRROR GROUND TA DA WRONG PRESCRIPTION BY TWO MICRONS. THREE SERVICIN' MISSIONS HAB BEEN FLOWN TA IT. IT NEEDS A FOURTH!",
+    "moon2": "DA SECOND MOON KEEPS A FIVE DAY WEEK. IT IZ UP DERE ON A FRIDAY, FULL AN' UNHURRIED, AN' ON EVERY OTHER DAY DA SKY WHERE IT SHOULD BE IZ EMPTY. NO EPHEMERIS IN PRINT ADMITS IT!",
+    "moon3": "DA THIRD RISES WIT DA SECOND AN' SETS WIT IT, FURTHER OUT AN' SMALLER, AN' HAB NEVER BEEN PHOTOGRAPHED ON A THURSDAY. DA TWO OF DEM IZ ALWAYS IN DA SAME PHASE AS EACH OTHER AN' NEVER IN DA MOON'S!",
+    "pioneer10": "LAUNCHED 1972. IT KEEPS FALLIN' SHORT OF WHERE DA ARITHMETIC SAYS IT SHOULD BE, BY A HAIR, EVERY YEAR. CARRIES A GOLD PLAQUE OF TWO NAKED STRANGERS WAVIN'!",
+    "pioneer11": "LAUNCHED 1973, FIRST TA SATURN. LAST CONTACT 30 NOVEMBER 1995: DA TRANSMITTER IZ DEAD, DA TRAJECTORY IZ EXACT, AN' DA PLAQUE ABOARD IZ STILL LEGIBLE TA NOBODY!",
+    "russellsteapot": "CHINA, ELLIPTICAL ORBIT BETWEEN EARTH AN' MARS, TOO SMALL FOR DA MOST POWERFUL TELESCOPE TA CONFIRM. DA BURDEN OF PROOF IZ NOT ON DA OBSERVER. CONFIRMED!",
+    "titania": "ONE OCEAN, ALL OF IT ACID, WRAPPED AROUND A HOLE FOUR HUNDRED THOUSAND TIMES DA SUN. DA DARGOS LIVE ON DA WATER AN' REFER TA DA HOLE AS DA NEIGHBOUR. HUMANITY HAB HAB A STANDIN' INVITATION HERE SINCE 1977 AN' NOBODY ON TITANIA HAB YET STOPPED FINDIN' DAT FUNNY!",
+    "tma2": "A BLACK SLAB IN JUPITER SPACE, ITS EDGES IN DA EXACT RATIO 1:4:9 TA DA LIMIT OF MEASUREMENT. EVERY INSTRUMENT AIMED AT IT RETURNS DA REFLECTANCE OF NOTHIN' AT ALL!",
+    "voyager1": "DA FURTHEST HUMAN OBJECT FROM DA SUN, RETURNIN' 160 BITS A SECOND FROM DA EDGE OF DA HELIOSPHERE. DA GOLDEN RECORD IZ BOLTED TA ITS FLANK, NEVER ONCE PLAYED!",
+    "voyager2": "LAUNCHED 1977, DA ONLY CRAFT TA PASS ALL FOUR GIANTS. ITS PLASMA INSTRUMENT IZ STILL SWITCHED ON. NOBODY AT DA DEEP SPACE NETWORK HAB EVER HAB A REASON TA SWITCH IT OFF!",
+    "vulcan": "DA PLANET LE VERRIER PUT INSIDE MERCURY'S ORBIT IN 1859 TA EXPLAIN DA WANDERIN' OF MERCURY'S PERIHELION. GENERAL RELATIVITY EXPLAINED IT INSTEAD. VULCAN WAZ NEVER WITHDRAWN, ONLY STOPPED BEING LOOKED FOR!"
+  },
+  "shipControls": {
+    "title": "SHIP CONTROLS",
+    "speed": "SPEED",
+    "warpSpeed": "WARP SPEED",
+    "stop": "STOP",
+    "stopped": "HOLDIN' STATION",
+    "flyingTo": "EN ROUTE TA {target}",
+    "eta": "ETA: ~{seconds}S",
+    "currentSystem": "CURRENT SYSTEM",
+    "orbiting": "ORBITIN' {name}",
+    "parkedAtStar": "PARKED AT {name}",
+    "deepSpace": "DEEP SPACE",
+    "hyperfluxFuel": "HYPERFLUX FUEL",
+    "sbPellets": "SB PELLETS",
+    "tabCurrentSystem": "CURRENT SYSTEM",
+    "tabBookmarks": "BOOKMARKS",
+    "tabCatalogStars": "CATALOG STARS",
+    "noBookmarks": "NO BOOKMARKED STARS OR BODIES!",
+    "searchPlaceholder": "SEARCH STARS...",
+    "setCourse": "SET COURSE",
+    "sbJump": "SB JUMP",
+    "courseSetTo": "COURSE SET TA {name}",
+    "sbJumpTo": "SB JUMPED TA {name}",
+    "returnHome": "RETURN HOME",
+    "returnHomeHint": "SPEND ONE SB PELLET TA JUMP BACK TA EARTH ORBIT",
+    "noPellets": "NO SCHRÖDINGERITE PELLETS REMAININ'",
+    "alreadyThere": "ALREADY AT DESTINATION",
+    "primaryStar": "PRIMARY STAR",
+    "companionStar": "COMPANION STAR",
+    "donorStar": "DONOR STAR",
+    "planet": "PLANET",
+    "moon": "MOON",
+    "here": "HERE",
+    "planetsCount": "{count} PLANETS",
+    "planetsCountOne": "1 PLANET",
+    "starsGroup": "STARS",
+    "planetsGroup": "PLANETS & MOONS",
+    "noStarsFound": "NO STARS FOUND MATCHIN' SEARCH!",
+    "resources": "RESOURCES",
+    "navigation": "NAVIGATION",
+    "tabGalaxies": "GALAXIES",
+    "galaxiesGroup": "NEAREST GALAXIES",
+    "noGalaxiesFound": "NO GALAXIES FOUND MATCHIN' SEARCH!",
+    "searchGalaxiesPlaceholder": "SEARCH GALAXIES...",
+    "distanceKly": "{dist} KLY",
+    "jump": "JUMP",
+    "tabPatronStars": "PATREON STARS",
+    "patronsGroup": "PATREON WORLDS",
+    "noPatronsFound": "NO PATRON STARS FOUND MATCHIN' SEARCH!",
+    "searchPatronsPlaceholder": "SEARCH PATRON STARS...",
+    "tabBiosignatures": "BIOSIGNATURES",
+    "tabSpaceports": "SPACEPORTS",
+    "scanBiosignatures": "SCAN BIOSIGNATURES",
+    "scanning": "SCANNIN'...",
+    "bioscanReport": "SCAN COMPLETE: {found} LIFE-BEARIN' WORLDS, {weak} TRACE SIGNS ({fresh} NEW)",
+    "noBiosignatures": "NO BIOSIGNATURES LOGGED. SCAN NEARBY SYSTEMS TA DETECT LIFE!",
+    "noBiosignaturesFound": "NO BIOSIGNATURES FOUND MATCHIN' SEARCH!",
+    "searchBiosignaturesPlaceholder": "SEARCH BIOSIGNATURES...",
+    "landingSitesGroup": "LANDIN' SITES",
+    "noSpaceportsFound": "NO SPACEPORTS FOUND MATCHIN' SEARCH!",
+    "searchSpaceportsPlaceholder": "SEARCH SPACEPORTS...",
+    "lifeBearingGroup": "LIFE-BEARIN' WORLDS",
+    "traceLifeGroup": "TRACE BIOSIGNATURES"
   }
 }

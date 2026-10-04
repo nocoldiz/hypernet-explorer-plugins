@@ -1,19 +1,18 @@
 {
+  "workshopTitle": "WORKSHOP",
   "title": "BLACKSMITHIN'",
   "anvil": "ANVIL",
   "trades": "TRADES",
-  "smithable": "SMITHABLE",
-  "needMaterials": "NEED MATERIALS",
+  "methods": "PRODUCTION METHODS",
   "tooComplex": "TOO COMPLEX",
   "tooComplexShort": "BEYOND DEZE HANDS",
   "materials": "MATERIALS",
   "forge": "FORGE",
   "forged": "FORGED!",
   "noMaterials": "NOT ENOUGH MATERIALS",
-  "noTrades": "NO TRADES ON DIS SIDE OF DA BOARD...",
   "noRecipes": "NOTHIN' HERE...",
-  "selectHint": "PICK A TRADE, DEN A PIECE, TA SEE WHAT IT TAKES TA MAKE!",
   "back": "BACK",
+  "close": "CLOSE",
   "needs": "{trade}, {level}",
   "have": "{who}: {level}",
   "weaponType": "WEAPON TYPE",
@@ -22,5 +21,419 @@
   "rarity": "RARITY",
   "value": "VALUE",
   "weight": "WEIGHT",
-  "yes": "YAH!"
+  "bonuses": "BONUSES",
+  "specs": "PROPERTIES",
+  "yes": "YAH!",
+  "searchPlaceholder": "SEARCH PIECES…",
+  "forgedTab": "FORGED",
+  "alreadyForged": "ALREADY OFF DA ANVIL",
+  "finish": "FINISH",
+  "finishStrange": "STRANGE",
+  "finishAuto": "AS IT FALLS",
+  "smeltNone": "NONE TA SMELT",
+  "smelted": "BACK INTO DA CRUCIBLE",
+  "madeBy": "BEATEN OUT BY {smith}",
+  "forgedName": "{smith}'S {name}",
+  "forgedNameNumbered": "{smith}'S {name} {mark}",
+  "forgedDesc": "FORGED BY {smith}. {quality} WORK, AN' ONE OF A KIND!",
+  "nameHeader": "NAME",
+  "namePlaceholder": "NAME DIS PIECE…",
+  "nameReroll": "ROLL ANOTHER NAME",
+  "quality": {
+    "crude": "CRUDE",
+    "sound": "SOUND",
+    "fine": "FINE",
+    "superb": "SUPERB",
+    "masterwork": "MASTERWORK"
+  },
+  "nameBank": {
+    "blade": {
+      "prefix": [
+        "WIDOW",
+        "GRIM",
+        "BLOOD",
+        "RAVEN",
+        "ASH",
+        "FROST",
+        "NIGHT",
+        "IRON",
+        "GHOST",
+        "STORM",
+        "PALE",
+        "BLACK"
+      ],
+      "noun": [
+        "FANG",
+        "EDGE",
+        "THORN",
+        "REAVER",
+        "WHISPER",
+        "BITER",
+        "CLEAVER",
+        "TOOTH",
+        "SONG",
+        "SEVER",
+        "STING",
+        "BITE"
+      ]
+    },
+    "heavy": {
+      "prefix": [
+        "IRON",
+        "STONE",
+        "SKULL",
+        "STORM",
+        "GRAVE",
+        "DOOM",
+        "WIDOW",
+        "ASH",
+        "BONE",
+        "THUNDER",
+        "BLACK",
+        "OLD"
+      ],
+      "noun": [
+        "BREAKER",
+        "CRUSHER",
+        "MAUL",
+        "RUIN",
+        "SPLITTER",
+        "RENDER",
+        "WRECKER",
+        "QUAKE",
+        "HAMMER",
+        "FALL",
+        "GRINDER",
+        "SMASHER"
+      ]
+    },
+    "gun": {
+      "prefix": [
+        "RED",
+        "IRON",
+        "NIGHT",
+        "GHOST",
+        "SILENT",
+        "DEAD",
+        "HIGH",
+        "LAST",
+        "COLD",
+        "LONG",
+        "BLACK",
+        "GREY"
+      ],
+      "noun": [
+        "LINE",
+        "MAKER",
+        "WHISPER",
+        "CALLER",
+        "RECKONIN'",
+        "RATTLE",
+        "ECHO",
+        "WATCH",
+        "SHOT",
+        "MARK",
+        "BARK",
+        "SONG"
+      ]
+    },
+    "wood": {
+      "prefix": [
+        "WILLOW",
+        "STORM",
+        "WIND",
+        "SILVER",
+        "GREEN",
+        "MOON",
+        "WILD",
+        "ASH",
+        "DEEP",
+        "OLD",
+        "GREY",
+        "LONG"
+      ],
+      "noun": [
+        "BOUGH",
+        "REACH",
+        "WHISTLE",
+        "STRIDER",
+        "BRANCH",
+        "NEEDLE",
+        "THORN",
+        "WISP",
+        "ROOT",
+        "STING",
+        "SONG",
+        "FLETCH"
+      ]
+    },
+    "magic": {
+      "prefix": [
+        "ASTRAL",
+        "VOID",
+        "ARCANE",
+        "EMBER",
+        "SPECTRAL",
+        "RUNIC",
+        "LUNAR",
+        "PRISMATIC",
+        "WYRD",
+        "HOLLOW",
+        "UMBRAL",
+        "GILDED"
+      ],
+      "noun": [
+        "WEAVE",
+        "SIGIL",
+        "FLARE",
+        "HEX",
+        "WHISPER",
+        "BLOOM",
+        "VEIL",
+        "SPARK",
+        "RIFT",
+        "CHANT",
+        "WARD",
+        "BIND"
+      ]
+    },
+    "default": {
+      "prefix": [
+        "IRON",
+        "GREY",
+        "OLD",
+        "TRUE",
+        "SILENT",
+        "WILD",
+        "FAR",
+        "LONE",
+        "HIGH",
+        "LAST",
+        "QUIET",
+        "PLAIN"
+      ],
+      "noun": [
+        "HAND",
+        "WATCH",
+        "PATH",
+        "MARK",
+        "CALL",
+        "HOLD",
+        "WARD",
+        "REACH",
+        "STAND",
+        "KEEP",
+        "GRIP",
+        "LINE"
+      ]
+    }
+  },
+  "status": {
+    "all": "ALL",
+    "ready": "READY",
+    "short": "NO MATERIALS",
+    "locked": "UNTRAINED",
+    "owned": "CARRIED",
+    "forged": "FORGED"
+  },
+  "allTrades": "ALL TRADES",
+  "shortBy": "MISSIN' {n}",
+  "readyCount": "{n} READY",
+  "tradeHint": "{known} OF {total} FORMULAS KNOWN",
+  "pieceCount": "{n} PIECES",
+  "pickHint": "PICK A PIECE TA SEE WHAT IT TAKES TA MAKE!",
+  "smelt": "SMELT",
+  "qtyMax": "MAX",
+  "batchCount": "X{n}",
+  "autoSmith": "AUTO",
+  "autoSmithHint": "EACH PIECE IZ CRAFTED BY DA PARTY MEMBER BEST AT IT",
+  "modelEdit": "EDIT MODEL",
+  "modelEditFitted": "EDIT MODEL ({n} FITTED)",
+  "sculpt": {
+    "title": "MODEL EDITOR",
+    "hint": "DRAG DA BACKGROUND TA TURN DA PIECE. PICK A FITTED PART TA MOVE, TURN OR SIZE IT!",
+    "thePiece": "DA PIECE",
+    "fitted": "FITTED PARTS",
+    "noneFitted": "NOTHIN' FITTED YET",
+    "kept": "KEPT",
+    "removed": "TAKEN OFF",
+    "remove": "TAKE DIS PART OFF",
+    "pickHint": "PICK A FITTED PART, OR TAKE ONE FROM ANOTHER WEAPON SHOWN ALONGSIDE!",
+    "search": "SEARCH WEAPONS",
+    "noDonors": "NO WEAPON MATCHES",
+    "undo": "UNDO",
+    "redo": "REDO",
+    "revert": "REVERT",
+    "done": "DONE",
+    "tooMany": "A PIECE CARRIES AT MOST {n} FITTED PARTS",
+    "partName": "{name} ({band})",
+    "band": {
+      "head": "HEAD",
+      "shaft": "SHAFT",
+      "grip": "GRIP",
+      "whole": "WHOLE WEAPON"
+    },
+    "mode": {
+      "move": "MOVE",
+      "turn": "TURN",
+      "size": "SIZE"
+    },
+    "axisX": "ACROSS",
+    "axisY": "ALONG",
+    "axisZ": "DEPTH",
+    "turn": "TURN",
+    "tilt": "TILT",
+    "roll": "ROLL",
+    "size": "SIZE"
+  },
+  "backToBoard": "BACK TA DA BOARD",
+  "appearanceHeader": "HOW IT COMES OUT",
+  "detailsHeader": "WHAT IT IZ",
+  "carrying": "CARRYIN' {n}",
+  "fixedPattern": "MADE TA ONE PATTERN: DIS FRAME IZ NOT A SMITH’S TA RE-CUT!",
+  "nameEdit": "WRITE DA NAME",
+  "tips": {
+    "pick": "PICK",
+    "page": "OPEN",
+    "batch": "HOW MANY",
+    "member": "MEMBER",
+    "trade": "TRADES",
+    "state": "STATE",
+    "leave": "LEAVE",
+    "reroll": "ROLL AGAIN",
+    "sculpt": "MOVE PART",
+    "mode": "HANDLE",
+    "fitting": "FITTIN'",
+    "done": "DONE"
+  },
+  "npcUnique": {
+    "name": "{{owner}'S {adjective} {base}|DA {adjective} {base} OF {owner}}",
+    "adjective": {
+      "weapon": [
+        "{RUST|BLOOD}-BITTEN",
+        "MOON-ETCHED",
+        "ASH-HANDLED",
+        "TWICE-QUENCHED",
+        "THORN-WOUND",
+        "SALT-BLUED",
+        "NIGHT-LACQUERED",
+        "COPPER-RINGED",
+        "GRAVE-COLD",
+        "LUCKY",
+        "CROOKED",
+        "BONE-GRIPPED",
+        "WHISPERIN'",
+        "STUBBORN",
+        "BRASS-STUDDED",
+        "SILVER-VEINED",
+        "{OLD|FAITHFUL}"
+      ],
+      "armor": [
+        "PATCHED",
+        "LUCKY",
+        "MOTH-EATEN",
+        "BRASS-BUTTONED",
+        "RAIN-STAINED",
+        "{GOLD|SILVER}-STITCHED",
+        "SUN-FADED",
+        "IRON-LACED",
+        "VELVET-LINED",
+        "HAND-DYED",
+        "SALT-CRUSTED",
+        "EMBER-SINGED",
+        "WELL-WORN",
+        "SUNDAY-BEST"
+      ]
+    },
+    "madeFor": "CUSTOMISED BY {maker} FOR {owner}.",
+    "madeOwn": "CUSTOMISED BY {owner} FOR DEY OWN HAND!",
+    "history": "SINCE DEN: {chain}.",
+    "how": {
+      "crafted": "MADE BY {holder}",
+      "commissioned": "MADE FOR {holder}",
+      "purchased": "BOUGHT BY {holder}",
+      "stole": "STOLEN BY {holder}",
+      "seized": "TAKEN BY {holder}",
+      "returned": "GIVEN BACK TA {holder}",
+      "acquired": "PASSED TA {holder}",
+      "recruited": "BROUGHT INTO DA PARTY BY {holder}",
+      "sold": "SOLD TA {holder}",
+      "soldAt": "SOLD OVER A COUNTER IN {holder}"
+    },
+    "tip": "ONE OF A KIND. CUSTOMISED BY {maker} FOR {owner}!",
+    "tipHeld": "ONE OF A KIND. CUSTOMISED BY {maker} FOR {owner}, NOW CARRIED BY {holder}!"
+  },
+  "help": {
+    "board": {
+      "title": "DA WORKSHOP",
+      "intro": "PICK A TRADE ON DA LEFT, DEN A PIECE ON DA RIGHT TA SEE WHAT IT TAKES TA MAKE!",
+      "items": {
+        "back": {
+          "name": "BACK",
+          "text": "LEAVES DA WORKSHOP."
+        },
+        "trades": {
+          "name": "PRODUCTION METHODS",
+          "text": "DA TRADES DA PARTY WORKS IN, WIT HOW MANY OF EACH TRADE'S FORMULAS IZ KNOWN. PICKIN' ONE NARROWS DA PIECES ON DA RIGHT PAGE TA DAT TRADE!"
+        },
+        "member": {
+          "name": "COMPANION TABS",
+          "text": "WHOSE HANDS IZ AT DA BENCH. AUTO HANDS EVERY PIECE TA DA MEMBER BEST AT MAKIN' IT; A NAME MAKES DAT MEMBER CRAFT EVERYTHIN'!"
+        },
+        "search": {
+          "name": "SEARCH",
+          "text": "FILTERS DA PIECES BY NAME!"
+        },
+        "status": {
+          "name": "STATE TABS",
+          "text": "SORT DA PIECES BY WHAT CAN BE DONE WIT DEM: READY TA MAKE, MISSIN' MATERIALS, BEYOND DA SMITH'S TRAININ', ALREADY CARRIED OR ALREADY FORGED!"
+        },
+        "context": {
+          "name": "SUMMARY LINE",
+          "text": "DA TRADE AN' STATE BEING SHOWN AN' HOW MANY PIECES MATCH DEM!"
+        },
+        "list": {
+          "name": "PIECES",
+          "text": "EVERYTHIN' DAT MATCHES. OPEN A PIECE TA SEE ITS MATERIALS, ITS LOOK AN' ITS STATS, AN' TA MAKE IT!"
+        },
+        "help": {
+          "name": "? HELP",
+          "text": "OPENS DIS SHEET. ON A CONTROLLER, PRESS SELECT; PRESS IT AGAIN, BACK OR CONFIRM TA CLOSE!"
+        }
+      }
+    },
+    "piece": {
+      "title": "MAKIN' A PIECE",
+      "items": {
+        "back": {
+          "name": "BACK TA DA BOARD",
+          "text": "RETURNS TA DA LIST OF PIECES!"
+        },
+        "look": {
+          "name": "HOW IT COMES OUT",
+          "text": "A PREVIEW OF DA FINISHED PIECE. EDIT MODEL OPENS DA MODEL EDITOR, WHERE FITTED PARTS CAN BE MOVED, TURNED AN' SIZED!"
+        },
+        "details": {
+          "name": "WHAT IT IZ",
+          "text": "TYPE, SLOT, RARITY, VALUE, WEIGHT AN' BONUSES OF DA PIECE, AN' DA MATERIALS IT TAKES AGAINST WHAT DA PARTY CARRIES!"
+        },
+        "name": {
+          "name": "NAME",
+          "text": "WHAT DA PIECE WILL BE CALLED. TYPE YA OWN NAME OR ROLL A NEW ONE!"
+        },
+        "batch": {
+          "name": "QUANTITY",
+          "text": "HOW MANY TA MAKE IN ONE GO, CAPPED BY DA MATERIALS IN HAND!"
+        },
+        "forge": {
+          "name": "FORGE AN' SMELT",
+          "text": "FORGE MAKES DA PIECE AN' SPENDS DA MATERIALS. SMELT BREAKS A CARRIED COPY BACK DOWN!"
+        },
+        "help": {
+          "name": "? HELP",
+          "text": "OPENS DIS SHEET. ON A CONTROLLER, PRESS SELECT; PRESS IT AGAIN, BACK OR CONFIRM TA CLOSE!"
+        }
+      }
+    }
+  }
 }

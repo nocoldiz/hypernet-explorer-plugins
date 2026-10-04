@@ -6,10 +6,45 @@
   "refuelAtStation": "REFUEL AT STATION",
   "continue": "CONTINUE",
   "splashdown": "DA CAMPER SPLASHES DOWN AN' WASHES ASHORE!",
+  "shipTouchedDown": "DA SHIP SETS DOWN.",
+  "shipRammedTerrain": "DA HULL GRINDS AGAINST ROCK!",
   "wedged": "CAMPER WEDGED",
   "flipped": "CAMPER FLIPPED",
   "destination": "DESTINATION",
   "freeDrive": "FREE DRIVE",
+  "freeWalk": "LIMINAL WALK",
+  "prompt": {
+    "key": "E",
+    "talk": "{key} TALK TA {name}",
+    "loot": "{key} SEARCH DA {name}",
+    "board": "{key} CLIMB INTO DA CAMPER",
+    "fish": "{key} CAST A LINE",
+    "lift": "{key} CALL DA LIFT",
+    "chest": {
+      "item": "{key} OPEN DA SUPPLY CHEST",
+      "armor": "{key} OPEN DA ARMOUR CHEST",
+      "weapon": "{key} OPEN DA WEAPON CHEST"
+    }
+  },
+  "enemy": {
+    "level": "L. {n}"
+  },
+  "npc": {
+    "approach": "{name} STOPS TA SEE WHAT YOU WANT!",
+    "talk": "TALK",
+    "empathize": "EMPATHIZE",
+    "leave": "LEAVE DEM BE",
+    "nothingToSay": "DEY HAB NOTHIN' TA SAY TA A STRANGER!"
+  },
+  "place": {
+    "visit": "GO INTO {place}",
+    "keepGoing": "KEEP GOING"
+  },
+  "shop": {
+    "greeting": "{name} IZ MINDIN' DA {shop}.",
+    "browse": "SEE DA STOCK",
+    "generic": "SHOP"
+  },
   "openRoad": "OPEN ROAD",
   "autopilot": "AUTOPILOT",
   "hud": {
@@ -18,17 +53,51 @@
     "destination": "DESTINATION",
     "time": "TIME",
     "distance": "DISTANCE",
+    "kmh": "KM/H",
     "view": "VIEW:",
     "mode": "MODE:",
-    "controls": "TAB: FP DRIVE &harr; CHASE CAM<br/>W THROTTLE &middot; S BRAKE / REVERSE &middot; SHIFT TURBO &middot; A/D STEER<br/>SPACE HANDBRAKE &middot; WHEN STOPPED SPACE OPENS VEHICLE OPTIONS<br/>F FLY &middot; C DIVE &middot; M MAP VIEW &middot; MOUSE/WHEEL/RIGHT-STICK LOOK &amp; ZOOM<br/>E DOOR: STEP OUT / CLIMB IN &middot; R RESPAWN IF STUCK<br/>ON FOOT: SHIFT SPRINT, SPACE/A JUMP &middot; ESC/BACK EXIT DRIVE",
-    "controllerHint": "CONTROLLER: L2/R2 ZOOM OUT/IN &middot; Y SWITCH VIEW",
+    "cmdDrive": "DRIVE / STEER",
+    "cmdWalk": "WALK",
+    "cmdTalk": "TALK, LOOT A BODY",
+    "cmdRun": "RUN (HOLD IT AT A WALL TA RUN UP DA WALL)",
+    "cmdJump": "JUMP (AGAIN AT A WALL TA KICK OFF IT, AS OFTEN AS YOU LIKE)",
+    "cmdFly": "TAKE OFF / LAND (NEEDS DA FLY SKILL)",
+    "cmdCrouch": "CROUCH",
+    "cmdSwim": "IN WATER: KICK UP / DIVE DOWN",
+    "cmdMenu": "PARTY MENU",
+    "cmdExitWalk": "END WALK",
+    "cmdTurbo": "TURBO (ON FOOT: SPRINT)",
+    "cmdDoor": "DOOR: STEP OUT / SIT",
+    "cmdView": "CHANGE VIEW",
+    "cmdExit": "EXIT DRIVE",
+    "cmdVehicle": "VEHICLE OPTIONS",
+    "cmdHelp": "CONTROLS",
+    "cmdHandbrake": "HANDBRAKE (WHILE ROLLIN')",
+    "cmdRespawn": "RECALL DA CAMPER",
+    "cmdZoom": "ZOOM DA CAMERA IN / OUT",
+    "cmdOrbit": "SWING DA CHASE CAMERA",
     "fly": "FLY",
     "float": "FLOAT",
     "dive": "DIVE",
+    "swim": "SWIM",
     "cond": "COND",
     "trip": "TRIP",
     "camperStuck": "CAMPER STUCK",
-    "pressRToRespawn": "PRESS {key} TA RESPAWN"
+    "pressRToRespawn": "PRESS {key} TA RESPAWN",
+    "alt": "ALT",
+    "crush": "PRESSURE",
+    "cmdPitch": "MOUSE / RIGHT STICK: NOSE UP AN' DOWN",
+    "cmdClimb": "CLIMB",
+    "cmdDescend": "DESCEND",
+    "cmdFlight": "TAKE OFF / LAND",
+    "cmdLook": "LOOK AROUND",
+    "cmdMap": "MAP: WINDOW, CORNER, FULL SCREEN, OFF",
+    "cmdDive": "DIVE / SURFACE (NEEDS DA DIVE MODULE)",
+    "cmdThrust": "THROTTLE UP / BACK",
+    "noteGasGiant": "NOTHIN' HERE TA LAND ON, AN' DA PRESSURE BELOW CRUSHES A HULL. KEEP DA ALTITUDE UP!",
+    "noteUnderwater": "UNDER DA SURFACE. DA TRIM TAKES DA HULL DOWN AN' BRINGS IT BACK UP!",
+    "noteSwimming": "IN DA WATER. KICK UP FOR DA SURFACE, OR HOLD DA CROUCH TA GO UNDER!",
+    "noteFlying": "AT DA HELM. DA NOSE DOES DA CLIMBIN', DA TRIM HOLDS DA ALTITUDE!"
   },
   "viewMode": {
     "fpdrive": "FP DRIVIN'",
@@ -39,8 +108,21 @@
   },
   "envMode": {
     "road": "ROAD",
+    "land": "ON LAND",
+    "cave": "UNDERGROUND",
     "air": "FLYIN'",
     "water": "AFLOAT",
     "underwater": "SUBMERGED"
+  },
+  "driverSave": {
+    "avoided": "[DRIVER DEX SAVE: {roll}{mod}={total}] EXPERTLY COUNTERSTEERED, CRASH AVOIDED!",
+    "failed": "[DRIVER DEX SAVE: {roll}{mod}={total} VS DC {dc}] REFLEX SAVE FAILED, DA VEHICLE HITS!"
+  },
+  "maintenance": "VEHICLE MAINTENANCE",
+  "refuel": "REFUEL FROM DA CANS",
+  "gasGiant": {
+    "noGround": "DERE IZ NOTHIN' HERE TA SET DOWN ON!",
+    "tooDeep": "DA PRESSURE IZ CRUSHIN' DA HULL. CLIMB, NOW!",
+    "crushed": "DA HULL GIVES WAY."
   }
 }

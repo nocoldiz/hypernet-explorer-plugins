@@ -65,11 +65,36 @@
     "cmdPlace": "Place block",
     "cmdBlock": "Change block",
     "cmdBar": "Change quick bar",
-    "cmdCast": "Cast the spell in hand"
+    "cmdCast": "Cast the spell in hand",
+    "cmdReady": "Reload, fold the gun, or guard",
+    "cmdFightHit": "Attack with the weapon",
+    "cmdFightUse": "Use the spell, item or block in hand"
   },
   "bar": {
     "blocks": "Blocks",
     "items": "Items",
-    "spells": "Spells"
+    "spells": "Spells",
+    "vehicles": "Vehicles"
+  },
+  "vehicle": {
+    "camper": "Camper",
+    "car": "Car",
+    "bike": "Bike",
+    "boat": "Boat",
+    "broom": "Broomstick",
+    "starship": "Starship",
+    "none": "No vehicles owned",
+    "called": "{name} brought round."
+  },
+  "combat": {
+    "begin": "Fight!",
+    "miss": "Miss",
+    "down": "{name} is down!",
+    "lead": "{name} takes the lead.",
+    "escaped": "You got away.",
+    "empty": "Empty! Press R to reload.",
+    "reloaded": "Reloaded.",
+    "guard": "Guarding",
+    "noMenu": "No menus in a fight."
   }
 }

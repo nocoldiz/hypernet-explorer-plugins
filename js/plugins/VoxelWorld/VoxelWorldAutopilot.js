@@ -517,8 +517,11 @@
                 if (document.pointerLockElement !== document.body) return;   // the first click only grabs the mouse
                 // Holding a block, not a weapon: that click is a wall going up,
                 // not a blow being thrown (VoxelWorldDigging's BlockBar).
+                // In a fight the left button is the weapon's and nothing else's:
+                // whatever the bar holds goes off on the right (_fightButtons).
                 const sc = VoxelWorldSystem._scene;
-                if (sc && sc._tool && sc._tool.bar && !sc._tool.bar.holdingWeapon) return;
+                const fighting = !!(sc && sc._fightButtons && sc._fightButtons());
+                if (!fighting && sc && sc._tool && sc._tool.bar && !sc._tool.bar.holdingWeapon) return;
                 CamperWeapon.swing();
             });
             document.addEventListener('mousedown', this._onMouseDown);
@@ -600,6 +603,44 @@
             this._left = this._set('_left', left, true);
         },
 
+        /**
+         * Builds both hands again from nothing. The Vector gun is the same row
+         * of the database whatever shape it is folded into, so refresh() would
+         * never notice a fold: this is what puts the new shape in hand.
+         */
+        rebuild() {
+            if (!this._held) return;
+            for (const slot of ['_right', '_left']) {
+                if (this[slot]) this[slot].terminate();
+                this[slot] = null;
+            }
+            this.refresh();
+        },
+
+        /**
+         * Runs `fn` with this layer's hands standing where the weapon code looks
+         * for the hands of a fight (the scene's spriteset._3dWeaponSprites).
+         * A reload and the Vector gun's fold both animate whatever they find
+         * there, and out here what they should find is these two.
+         */
+        withHands(fn) {
+            const scene = typeof SceneManager !== 'undefined' ? SceneManager._scene : null;
+            const ss = scene && scene._spriteset;
+            if (!ss) return fn();
+            const had = Object.prototype.hasOwnProperty.call(ss, '_3dWeaponSprites');
+            const was = ss._3dWeaponSprites;
+            const hands = {};
+            if (this._right) hands.right = this._right;
+            if (this._left) hands.left = this._left;
+            ss._3dWeaponSprites = hands;
+            try {
+                return fn();
+            } finally {
+                if (had) ss._3dWeaponSprites = was;
+                else delete ss._3dWeaponSprites;
+            }
+        },
+
         _set(slot, weapon, isLeft) {
             const held = this[slot];
             if (!weapon) {
@@ -672,7 +713,11 @@
             // Cheap enough to re-read every frame, and it is the only way a
             // weapon changed in the menu turns up in the driver's hand.
             this.refresh();
-            if (typeof Input !== 'undefined' && Input.isTriggered('pagedown')) this.swing();
+            // In a fight R1 is the bar's (the right button's twin) and R2 alone
+            // is the weapon's.
+            const sc = VoxelWorldSystem._scene;
+            const fighting = !!(sc && sc._fightButtons && sc._fightButtons());
+            if (!fighting && typeof Input !== 'undefined' && Input.isTriggered('pagedown')) this.swing();
             this._updatePad();
             for (const s of [this._right, this._left]) {
                 if (!s) continue;

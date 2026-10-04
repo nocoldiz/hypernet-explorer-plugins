@@ -1,6 +1,6 @@
 /*:
  * @target MZ
- * @plugindesc v1.2.0 Daggerfall-style procedural quest engine (multi-step, factions, deadlines) and the board the party posts their own contracts on. Exposes window.ProceduralQuests. [Claude]
+ * @plugindesc v1.2.0 classic open world style procedural quest engine (multi-step, factions, deadlines) and the board the party posts their own contracts on. Exposes window.ProceduralQuests. [Claude]
  * @author Hypernet
  *
  * @help ProceduralQuestSystem.js

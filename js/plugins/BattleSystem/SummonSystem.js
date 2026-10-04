@@ -2581,6 +2581,28 @@ window.Game_SummonFollower = Game_SummonFollower;
         summonByKind(keys[Math.floor(Math.random() * keys.length)], 0);
     }
 
+    // The summoning shot: not the caster's familiar but whatever creature in
+    // the whole bestiary stands nearest THEIR level, one of the closest
+    // handful at random, so the same shot rarely answers with the same thing.
+    function summonWildShot() {
+        if (!canSummonNow()) return;
+        const summoner = resolveSummoner();
+        const level = Math.max(1, summoner ? summoner.level : partyMedianLevel());
+        const pool = archetypePool(null);
+        if (!pool.length) {
+            toast(T('Battle.summon.nothingAnswers'), 'warning');
+            return;
+        }
+        const sorted = pool.slice().sort((a, b) =>
+            Math.abs(enemyLevel(a) - level) - Math.abs(enemyLevel(b) - level));
+        const band = sorted.slice(0, Math.min(12, sorted.length));
+        const enemy = band[Math.floor(Math.random() * band.length)];
+        const spec = buildEnemySpec('enemy', enemy);                // i18n-ignore: internal tag
+        spec.level = level;
+        spec.tierLevel = level;
+        beginSummon(spec);
+    }
+
     function summonMarkedEnemy(enemyId) {
         const id = Number(enemyId) || marks().enemyId || 0;
         summonByKind('enemy', id);
@@ -2747,6 +2769,7 @@ window.Game_SummonFollower = Game_SummonFollower;
         // line, so a skill can cast one without naming a plugin command.
         familiar() { summonFamiliar(); },
         random() { summonRandomKind(); },
+        wildShot() { summonWildShot(); },
         beast(petId) { summonPetOrBeast(petId); },
         enemy(enemyId) { summonMarkedEnemy(enemyId); },
         lastSlain() { summonLastSlain(); },

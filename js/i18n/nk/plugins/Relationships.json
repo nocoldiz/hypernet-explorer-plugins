@@ -1,0 +1,154 @@
+{
+  "style": {
+    "monogamous": {
+      "name": "MONOGAMOUS",
+      "desc": "ONE EXCLUSIVE PARTNER AT A TIME!"
+    },
+    "civil_union": {
+      "name": "CIVIL UNION",
+      "desc": "A LEGALLY RECOGNIZED PARTNERSHIP WITHOUT A FORMAL MARRIAGE!"
+    },
+    "long_distance": {
+      "name": "LONG-DISTANCE",
+      "desc": "A COMMITTED COUPLE SEPARATED BY GEOGRAPHY!"
+    },
+    "open_relationship": {
+      "name": "OPEN RELATIONSHIP",
+      "desc": "A PRIMARY COUPLE WHO AGREE TA ADDITIONAL PARTNERS!"
+    },
+    "polyamorous": {
+      "name": "POLYAMOROUS",
+      "desc": "SEVERAL LOVIN' RELATIONSHIPS MAINTAINED OPENLY AN' AT ONCE!"
+    },
+    "companionate": {
+      "name": "COMPANIONATE",
+      "desc": "DEEP AFFECTION AN' PARTNERSHIP WIT LITTLE OR NO PASSION!"
+    },
+    "throuple": {
+      "name": "THROUPLE",
+      "desc": "A COMMITTED RELATIONSHIP BETWEEN THREE PEOPLE!"
+    },
+    "arranged_marriage": {
+      "name": "ARRANGED MARRIAGE",
+      "desc": "A UNION ARRANGED BY FAMILIES RATHER DEN CHOSEN BY DA COUPLE!"
+    },
+    "portland_polycule": {
+      "name": "PORTLAND POLYCULE",
+      "desc": "A SPRAWLIN', DENSELY INTERCONNECTED NETWORK OF POLYAMOROUS PARTNERS, METAMOURS AN' DEY EXES, ALL SOMEHOW STILL ON GOOD TERMS!"
+    },
+    "serial_monogamy": {
+      "name": "SERIAL MONOGAMIST",
+      "desc": "ONE EXCLUSIVE PARTNER AT A TIME, IN A LONG STRIN' OF RELATIONSHIPS!"
+    },
+    "single_content": {
+      "name": "CONTENTEDLY SINGLE",
+      "desc": "NOT SEEKIN' A PARTNER AN' AT PEACE WIT IT!"
+    },
+    "situationship": {
+      "name": "SITUATIONSHIP",
+      "desc": "AN UNDEFINED ROMANTIC ENTANGLEMENT DAT NEVER QUITE BECOMES A RELATIONSHIP!"
+    },
+    "friends_with_benefits": {
+      "name": "FRIENDS WIT BENEFITS",
+      "desc": "CASUAL INTIMACY BETWEEN FRIENDS WIT NO ROMANTIC COMMITMENT!"
+    },
+    "queerplatonic": {
+      "name": "QUEERPLATONIC PARTNERSHIP",
+      "desc": "A COMMITTED BOND STRONGER DEN FRIENDSHIP BUT NOT ROMANTIC!"
+    },
+    "aromantic_solo": {
+      "name": "AROMANTIC SOLO",
+      "desc": "LIVIN' BY CHOICE WITHOUT ANY ROMANTIC PARTNERSHIP!"
+    }
+  },
+  "bond": {
+    "none": {
+      "name": "NO TIE",
+      "desc": "DEY HAB NO STANDIN' WIT EACH OTHER BEYOND TRAVELLIN' TOGETHER!"
+    },
+    "acquaintances": {
+      "name": "ACQUAINTANCES",
+      "desc": "DEY KNOW EACH OTHER BY NAME AN' LITTLE ELSE!"
+    },
+    "friends": {
+      "name": "FRIENDS",
+      "desc": "A SETTLED FRIENDSHIP, TESTED AN' KEPT!"
+    },
+    "best_friends": {
+      "name": "BEST FRIENDS",
+      "desc": "DA FIRST PERSON EACH OF DEM WOULD CALL!"
+    },
+    "childhood_friends": {
+      "name": "CHILDHOOD FRIENDS",
+      "desc": "DEY GREW UP IN DA SAME STREETS AN' NEVER LOST TOUCH!"
+    },
+    "comrades": {
+      "name": "COMRADES IN ARMS",
+      "desc": "DEY FOUGHT ON DA SAME SIDE AN' EACH OWES DA OTHER A LIFE!"
+    },
+    "partners": {
+      "name": "PARTNERS",
+      "desc": "A ROMANCE BOTH OF DEM ACKNOWLEDGE!"
+    },
+    "spouses": {
+      "name": "MARRIED",
+      "desc": "LEGALLY AN' OPENLY BOUND TA EACH OTHER!"
+    },
+    "engaged": {
+      "name": "ENGAGED",
+      "desc": "PROMISED TA EACH OTHER, WIT DA DATE STILL TA COME!"
+    },
+    "lovers": {
+      "name": "LOVERS",
+      "desc": "A PHYSICAL ROMANCE NEITHER HAB PUT A NAME TA!"
+    },
+    "situationship": {
+      "name": "SITUATIONSHIP",
+      "desc": "SOMETHIN' IZ GOING ON AN' NEITHER WILL DEFINE IT!"
+    },
+    "exes": {
+      "name": "EXES",
+      "desc": "A ROMANCE DAT ENDED, WIT WHATEVER IT LEFT BEHIND!"
+    },
+    "unrequited": {
+      "name": "PINES FOR DEM",
+      "desc": "A LOVE CARRIED ALONE AN' NEVER SPOKEN OUT LOUD!"
+    },
+    "unaware": {
+      "name": "UNAWARE OF DEY FEELINGS",
+      "desc": "DA OTHER ONE IZ IN LOVE; DIS ONE HAB NEVER NOTICED!"
+    },
+    "siblings": {
+      "name": "SIBLINGS",
+      "desc": "BORN OF DA SAME FAMILY."
+    },
+    "twins": {
+      "name": "TWINS",
+      "desc": "BORN DA SAME DAY, OF DA SAME WOMB!"
+    },
+    "parent": {
+      "name": "DEY PARENT",
+      "desc": "DIS ONE RAISED DA OTHER."
+    },
+    "child": {
+      "name": "DEY CHILD",
+      "desc": "DIS ONE WAZ RAISED BY DA OTHER!"
+    },
+    "cousins": {
+      "name": "COUSINS",
+      "desc": "FAMILY, ONE BRANCH REMOVED!"
+    },
+    "mentor": {
+      "name": "DEY MENTOR",
+      "desc": "DIS ONE TAUGHT DA OTHER DA TRADE!"
+    },
+    "student": {
+      "name": "DEY STUDENT",
+      "desc": "DIS ONE LEARNED DA TRADE FROM DA OTHER!"
+    },
+    "rivals": {
+      "name": "RIVALS",
+      "desc": "A RUNNIN' CONTEST NEITHER OF DEM WILL CONCEDE!"
+    }
+  }
+}

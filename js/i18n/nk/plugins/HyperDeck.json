@@ -1,0 +1,228 @@
+{
+  "case": {
+    "slab": "FIELD SLAB",
+    "wedge": "DRAUGHTSMAN'S WEDGE",
+    "book": "GRIMORIE FOLD",
+    "brick": "SITE BRICK",
+    "palmtop": "POCKET PALM",
+    "dualhinge": "TWIN HINGE"
+  },
+  "kind": {
+    "cpu": "PROCESSOR",
+    "ram": "MEMORY",
+    "storage": "STORAGE",
+    "gpu": "GRAPHICS",
+    "display": "PANEL",
+    "battery": "CELL",
+    "modem": "UPLINK",
+    "cooling": "COOLIN'",
+    "sound": "AUDIO",
+    "sensor": "SENSOR"
+  },
+  "specs": {
+    "heading": "TOTAL SPECIFICATION",
+    "processor": "PROCESSOR",
+    "memory": "MEMORY",
+    "storage": "STORAGE",
+    "graphics": "GRAPHICS",
+    "battery": "CELL",
+    "draw": "DRAW",
+    "slots": "BOARD",
+    "caseLabel": "CASE",
+    "endurance": "ENDURANCE"
+  },
+  "unit": {
+    "mhz": "{n} MHZ",
+    "mb": "{n} MB",
+    "gb": "{n} GB",
+    "mah": "{n} MAH",
+    "watt": "{n} W",
+    "cells": "{used} OF {total} CELLS",
+    "grid": "{cols} X {rows} BOARD"
+  },
+  "value": {
+    "none": "NOT FITTED",
+    "infinite": "UNBOUNDED",
+    "integrated": "INTEGRATED, {n} MB SHARED",
+    "index": "{n} POINTS",
+    "passive": "NO COOLIN', {n} W BOARD",
+    "cooled": "{n} FITTED, {w} W BOARD",
+    "hours": "{n} H",
+    "beeper": "SYSTEM BEEPER"
+  },
+  "required": {
+    "heading": "REQUIRED"
+  },
+  "rail": {
+    "heading": "PARTS CARRIED",
+    "empty": "YOU IZ CARRYIN' NO COMPONENTS!",
+    "count": "X{n}"
+  },
+  "hint": {
+    "idle": "CLICK DA SCREEN TA SWITCH ON. CLICK DA BOARD TA OPEN IT. DRAG OR ARROWS TA TURN, WHEEL OR L2/R2 TA ZOOM, MIDDLE BUTTON TA PAN!",
+    "edit": "DRAG A PART ONTO DA BOARD. L1/R1 OR TAB TURNS IT. WHEEL OR L2/R2 ZOOMS, MIDDLE BUTTON PANS. ESC STEPS BACK!"
+  },
+  "boot": {
+    "banner": "★ ESOTERIC HEAVY INDUSTRIES",
+    "copyright": "COPYRIGHT (C) 2001, ESOTERIC SYSTEMS DIVISION",
+    "firmware": "ARCHWAYS XP SYSTEM V3.14",
+    "processor": "MAIN PROCESSOR : {name}",
+    "memory": "MEMORY TEST : {size} OK",
+    "memoryInfinite": "MEMORY TEST : COUNTIN'... COUNTIN'... OK",
+    "quantum": "QUANTUM BUFFER : {size} OK",
+    "storage": "PRIMARY VOLUME : {size} OK",
+    "cell": "POWER CELL : {size} OK",
+    "detectMaster": "DETECTIN' PRIMARY MASTER... OK",
+    "detectBioslave": "DETECTIN' PRIMARY BIOSLAVE... OK",
+    "detectNeural": "DETECTIN' NEURAL INTERFACE... OK",
+    "detectMana": "DETECTIN' MANA CAPACITORS... OK",
+    "detectUplink": "DETECTIN' HYPERNET UPLINK... OK",
+    "detectNoUplink": "DETECTIN' HYPERNET UPLINK... NONE DETECTED",
+    "loadingFiles": "LOADIN' ARCHWAYS XP SYSTEM FILES...",
+    "driverKernel": "HEXKERN.SYS",
+    "driverMagic": "MAGIDRV.SYS",
+    "driverLink": "ETHLINK.DRV",
+    "driverLine": "{name} {bar} {pct}%",
+    "protocols": "INITIALIZIN' ARCANE PROTOCOLS...",
+    "manaFlow": "CALIBRATIN' MANA FLOW... OK",
+    "ethereal": "SYNCIN' ETHEREAL NETWORK... OK",
+    "loading": "LOADIN' GAME ENVIRONMENT... ",
+    "ready": "✓ SYSTEM READY - LAUNCHIN' ARCHWAYS XP...",
+    "quantumShared": "QUANTUM BUFFER : {size} SHARED"
+  },
+  "post": {
+    "failHeading": "POST FAILURE",
+    "failLine": "NO {kind} DETECTED",
+    "failFooter": "FIT DA MISSIN' PARTS AN' TRY AGAIN!",
+    "overdrawHeading": "POWER FAULT",
+    "overdrawLine": "DA CELL NO CAN CARRY {n} W"
+  },
+  "tool": {
+    "auto": "AUTO-FIT",
+    "case": "CASE",
+    "finish": "SHELL",
+    "bios": "BIOS",
+    "face": "LOWER HALF",
+    "clear": "CLEAR",
+    "chip": "CHIP",
+    "boot": "BOOT",
+    "open": "OPEN"
+  },
+  "face": {
+    "keyboard": "KEYBOARD",
+    "handheld": "HANDHELD PAD",
+    "phone": "TELEPHONE KEYPAD"
+  },
+  "caseWarning": "CHANGIN' DA CASE EMPTIES DA BOARD. EVERY PART GOES BACK IN DA BAG!",
+  "fault": {
+    "missing": "NO {kind} IZ FITTED. DA MACHINE WILL NOT START WITHOUT ONE!",
+    "power": "DA CELL IZ {n} W SHORT OF WHAT DA FITTED PARTS DRAW!",
+    "heat": "NOTHIN' IZ COOLIN' A {n} W BOARD. EXPECT IT TA THROTTLE!",
+    "uplink": "NO UPLINK FITTED. DA HYPERNET WILL NOT ANSWER!",
+    "memory": "ONLY {n} MB OF MEMORY. ARCHWAYS XP WILL CRAWL!",
+    "integrated": "NO GRAPHICS ADAPTER. DA PROCESSOR DRIVES DA PANEL ITSELF, ON {n} MB BORROWED FROM MAIN MEMORY!"
+  },
+  "chip": {
+    "heading": "CHIP LAB",
+    "hint": "LEFT BUTTON DRAWS, RIGHT BUTTON RUBS OUT, MIDDLE BUTTON PANS, WHEEL ZOOMS. PICK A TILE TWICE TA STEP THROUGH ITS SETTINGS!",
+    "tile": {
+      "wire": "WIRE",
+      "source": "SOURCE",
+      "torch": "TORCH",
+      "repeater": "REPEATER",
+      "gate": "GATE",
+      "bridge": "BRIDGE",
+      "in": "INPUT PIN",
+      "out": "OUTPUT PIN",
+      "clock": "CLOCK",
+      "lamp": "LAMP",
+      "chip": "8066 PROCESSOR"
+    },
+    "gate": {
+      "and": "AN'",
+      "or": "OR",
+      "xor": "XOR",
+      "nand": "NAND",
+      "nor": "NOR",
+      "xnor": "XNOR",
+      "not": "NOT"
+    },
+    "dir": {
+      "0": "NORTH",
+      "1": "EAST",
+      "2": "SOUTH",
+      "3": "WEST"
+    },
+    "delay": "{n} TICK DELAY",
+    "period": "EVERY {n} TICKS",
+    "pin": "PIN {n}",
+    "facing": "FACIN' {d}",
+    "variant": "SETTIN'",
+    "rotate": "TURN",
+    "run": "RUN",
+    "pause": "PAUSE",
+    "step": "STEP",
+    "speed": "SPEED X{n}",
+    "wipe": "WIPE",
+    "fabricate": "ETCH DIE",
+    "done": "BACK",
+    "gates": "LOGIC",
+    "tiles": "TILES",
+    "rating": "RATED",
+    "cost": "SCRAP",
+    "pins": "PINS",
+    "scrap": "{n} OF {held}",
+    "dieName": "HOME-ETCHED DIE MK{serial}",
+    "dieDesc": "A LOGIC DIE CUT FROM SCRAP. {gates} GATES, RATED {mhz} MHZ!",
+    "made": "{name} ETCHED, {n} SCRAP SPENT.",
+    "needScrap": "NOT ENOUGH SALVAGED STEEL: {n} NEEDED!",
+    "fail": {
+      "noGates": "NOTHIN' TA ETCH. DRAW SOME LOGIC FIRST!",
+      "noSlot": "NO BLANK DIE LEFT. USE OR SELL AN OLD ONE!",
+      "noLab": "DA BENCH IZ NOT READY."
+    },
+    "gateGroup": "GATES",
+    "preset": {
+      "inverter": "INVERTER",
+      "latch": "SR LATCH",
+      "clock": "CLOCK",
+      "halfadder": "HALF ADDER",
+      "toggle": "TOGGLE",
+      "counter": "RING COUNTER",
+      "cpu8066": "8066 MACHINE",
+      "fulladder": "FULL ADDER",
+      "adder4": "4-BIT ADDER"
+    },
+    "presetGroup": "CIRCUITS",
+    "stamped": "{name} STAMPED, {n} TILES.",
+    "rom": {
+      "counter": "ROM: BUS COUNTER",
+      "fib": "ROM: FIBONACCI",
+      "strcpy": "ROM: STRIN' COPY",
+      "muldiv": "ROM: MULTIPLY AN' DIVIDE"
+    },
+    "bus": "BUS",
+    "instr": "INSTR",
+    "presetHeading": "CANNED SCHEMATICS",
+    "presetHint": "PICK A PRESET AN' IT IZ DRAWN WHERE YOU IZ LOOKIN', AS ORDINARY TILES. MOVE IT, WIRE IT INTO SOMETHIN' BIGGER, OR ETCH IT AS IT IZ!",
+    "placing": "{name} IN HAND. CLICK TA PLACE IT, RIGHT BUTTON OR ESC TA PUT IT BACK!",
+    "app": {
+      "name": "CIRCUIT BOARD EDITOR",
+      "dies": "ETCHED DIES",
+      "noDies": "NOTHIN' ETCHED YET.",
+      "fitted": "ON DA DECK",
+      "inBag": "IN DA BAG",
+      "gone": "SPENT"
+    }
+  },
+  "bios": {
+    "heading": "HYPERDECK FIRMWARE SETUP",
+    "tabMain": "MAIN",
+    "tabHealth": "HEALTH",
+    "noFaults": "NO FAULTS REPORTED. EVERY FITTED PART ANSWERED!",
+    "willBoot": "DIS MACHINE WILL POST.",
+    "willNotBoot": "DIS MACHINE WILL NOT POST!",
+    "boot": "POWER ON",
+    "exit": "EXIT"
+  }
+}

@@ -3,8 +3,11 @@
   "faction": "FACTION",
   "locations": "LOCATIONS",
   "unknown": "UNKNOWN",
+  "moreLocations": "+{count} MORE",
   "requirements": "REQUIREMENTS",
   "successRate": "SUCCESS RATE",
+  "deficitWarning": "DEFICITS DETECTED. TAKIN' DIS CONTRACT ON CARRIES A HIGHER RISK OF FAILURE AN' INJURY!",
+  "successRatePct": "{pct}% SUCCESS",
   "selectWorker": "SELECT WORKER:",
   "noGuildLaborRequisitionsCurrently": "NO GUILD LABOR REQUISITIONS CURRENTLY AVAILABLE!",
   "dismiss": "DISMISS",
@@ -51,6 +54,7 @@
   "mapNumbered": "MAP {id}",
   "locationInGroup": "{group} - {location}",
   "finishedWorking": "\\C[6]{actor}\\C[0] FINISHED WORKIN' AS \\C[4]{job}\\C[0].",
+  "shiftCheck": "{job} SHIFT",
   "earned": "\\C[14]EARNED: €{amount}\\C[0]",
   "lost": "\\C[18]LOST: €{amount} (DAMAGES)\\C[0]",
   "noPay": "\\C[7]NO PAYMENT RECEIVED.\\C[0]",
@@ -58,6 +62,26 @@
   "mpDamage": "\\C[23]EXHAUSTED {amount} MP.\\C[0]",
   "afflicted": "\\C[18]AFFLICTED: {states}\\C[0]",
   "hoursPassed": "\\C[6]{hours} HOURS PASSED.\\C[0]",
+  "lookBonus": "\\C[14]DRESSED FOR IT: +€{amount}\\C[0]",
+  "eventBonus": "\\C[14]BONUS: +€{amount}\\C[0]",
+  "eventPenalty": "\\C[18]DOCKED: -€{amount}\\C[0]",
+  "hazardPay": "HAZARD PAY: €{amount}",
+  "event": {
+    "richCustomer": "A PATRON WIT MORE MONEY DEN SENSE TOOK A LIKIN' TA {actor} AN' LEFT A TIP TA MATCH!",
+    "collector": "A COLLECTOR RECOGNISED DA TRAPPINGS OF DA TRADE AN' PAID WELL TA HAB {actor}'S EYE ON A PIECE!",
+    "skimmed": "NOBODY WAZ WATCHIN' CLOSELY ENOUGH. {actor} LEFT WIT RATHER MORE DEN DA JOB PAID FOR!",
+    "shakedown": "SOMEONE DECIDED, ON SEEIN' {actor}, DAT PAYIN' UP WAZ CHEAPER DEN NOT!",
+    "headhunted": "WORD GOT AROUND. SOMEONE SLIPPED {actor} A CARD AN' A RETAINER TA GO WIT IT!",
+    "quietShift": "DA SHIFT RAN SHORT AN' DA PAY DID NOT. NOBODY COMPLAINED!",
+    "apprentice": "{actor} SPENT HALF DA SHIFT SHOWIN' A NEW HIRE DA TRADE, AN' LEARNED IT BETTER FOR DA TELLIN'!",
+    "ambush": "DA SHIFT ENDED IN AN ALLEY, AN' DA ALLEY WAZ NOT EMPTY!",
+    "raid": "SOMEBODY CAME FOR DA STOCK, AN' {actor} WAZ DA ONLY ONE STANDIN' BETWEEN DEM AN' IT!",
+    "difficultCustomer": "A CUSTOMER TOOK AGAINST {actor} ON SIGHT AN' MADE A SHOW OF IT IN FRONT OF DA MANAGER!",
+    "inspection": "AN INSPECTOR TURNED UP ASKIN' QUESTIONS {actor} WOULD RATHER NOT HAB BEEN ASKED!",
+    "nearMiss": "SOMETHIN' HEAVY CAME DOWN WHERE {actor} HAB BEEN STANDIN' A MOMENT BEFORE!",
+    "backlash": "DA WORKIN' TURNED BACK ON {actor} HALFWAY THROUGH AN' HAB TA BE WRESTLED SHUT!",
+    "docked": "DA DAMAGE CAME OUT OF {actor}'S PAY, AS DA DAMAGE TENDS TA!"
+  },
   "factionName": {
     "0": "MAGES GUILD",
     "1": "ARCHIVE FOUNDATION",
@@ -77,12 +101,17 @@
     "27": "VATICAN",
     "30": "BATTLE NUNS"
   },
-  "ui": {
-    "navSelectOffer": "W/S: NAVIGATE | OK: SELECT OFFER",
-    "navAcceptContract": "W/S: NAVIGATE | OK: ACCEPT CONTRACT",
-    "navChooseJob": "W/S: NAVIGATE | OK: CHOOSE JOB",
-    "navSignContract": "W/S: NAVIGATE | OK: SIGN CONTRACT"
-  },
+  "ui": {},
   "guildRegistry": "GUILD LABOR REGISTRY",
-  "guildRegistryCategory": "GUILD LABOR REGISTRY: {category}"
+  "guildRegistryCategory": "GUILD LABOR REGISTRY: {category}",
+  "shift": {
+    "dispatched": "{actor} LEAVES FOR A {hours}H SHIFT AT {job}!",
+    "returned": "{actor} IZ BACK FROM {job} WIT {amount}€.",
+    "benched": "{actor} FINISHED AT {job} WIT {amount}€, AN' WAITS WIT DA MEMBERS IN RESERVES!",
+    "awayTitle": "AWAY ON A SHIFT",
+    "awayOn": "WORKIN' {job}",
+    "remaining": "{hours}H {minutes}M LEFT",
+    "leavesParty": "WHOEVER TAKES DIS CONTRACT LEAVES DA PARTY FOR ITS HOURS AN' REJOINS WHEN DEY IZ UP!",
+    "lastMemberWarning": "NOBODY WOULD BE LEFT TA TRAVEL WIT. DIS SHIFT IZ WORKED DA OLD WAY INSTEAD: DA SCREEN FADES AN' DA HOURS IZ SKIPPED!"
+  }
 }

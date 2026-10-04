@@ -1335,11 +1335,20 @@
             return;
         }
 
+        // Under the surface the fight is on the bottom, whatever the map above
+        // says: the procedural ocean's sea floor, or the bed of an authored
+        // map's river or lake.
+        const moveSys = (typeof window !== 'undefined' && window) ? window.MovementSystem : null;
+        const diving = !isBattleTest && !!(moveSys && moveSys.isPartyDiving && moveSys.isPartyDiving());
+        const diveBiome = !diving ? null : ($gameMap.mapId() === 636 ? 'Seabed' : 'RiverBed');
+
         // A map with its battleback explicitly set in the editor always wins,
-        // overriding biome, forced biome (arena/gauntlet) and random biome alike.
+        // overriding biome, forced biome (arena/gauntlet) and random biome alike,
+        // except under water: the editor picked a picture of the surface.
         // The vanilla createBattleback call above already loaded it.
         if ($dataMap && $dataMap.specifyBattleback) {
-            return;
+            if (!diveBiome) return;
+            this._back2Sprite.bitmap = new Bitmap(1, 1);
         }
 
         // Biome always takes priority over any hardcoded battleback1 set on the map
@@ -1380,12 +1389,10 @@
             biome = 'Ocean';
         }
 
-        // Under the surface: the fight is on the sea floor, whatever the map
-        // above says. Wins over the shore biome, the RiverBank water override
-        // and the open-water one, since a diver is in none of those places.
-        const moveSys = (typeof window !== 'undefined' && window) ? window.MovementSystem : null;
-        if (!isBattleTest && moveSys && moveSys.isPartyDiving && moveSys.isPartyDiving()) {
-            biome = 'Seabed';
+        // Under the surface: wins over the shore biome, the RiverBank water
+        // override and the open-water one, since a diver is in none of those places.
+        if (diveBiome) {
+            biome = diveBiome;
         }
 
         // Battle Test (editor "Battle Test..." button): the test map has no

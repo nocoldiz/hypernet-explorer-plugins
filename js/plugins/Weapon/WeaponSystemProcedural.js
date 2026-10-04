@@ -2682,7 +2682,11 @@ var WeaponSystemProcedural = {
     // large, the fist itself lands at about the size a held Glove weapon
     // reads at while the forearm runs on past the bottom edge of the screen,
     // rather than a held weapon's grip simply floating at the anchor.
-    if (weapon.unarmedArchetype) return 2.10;
+    // Only the humanoid fist carries that forearm: every creature hand (a
+    // summon's claw, pseudopod, fin) ends at the wrist, so fitting it at the
+    // forearm's figure drew it several times too big. Without the arm it is
+    // sized like a held claw.
+    if (weapon.unarmedArchetype) return this.unarmedHasForearm(weapon) ? 2.10 : 0.60;
     // Shields sit compactly in the off-hand corner rather than towering over
     // the whole combat arena.
     if (weapon.shieldArmorId || weapon.id === 166) {
@@ -6412,6 +6416,17 @@ var WeaponSystemProcedural = {
     };
     this._shieldWeapons[armor.id] = weapon;
     return weapon;
+  },
+
+  /**
+   * Whether an archetype's empty hand is built with a forearm attached
+   * (Weapon3D_Unarmed _uArm). Only the humanoid fist is, and every archetype
+   * that borrows it or falls back to it.
+   */
+  unarmedHasForearm(weapon) {
+    if (!weapon || !weapon.unarmedArchetype) return false;
+    const name = this.UNARMED_MODELS[weapon.unarmedArchetype] || this.UNARMED_MODELS[this.DEFAULT_ARCHETYPE];
+    return name === this.UNARMED_MODELS[this.DEFAULT_ARCHETYPE];
   },
 
   /** Builds the fist for an archetype, falling back to the default one. */

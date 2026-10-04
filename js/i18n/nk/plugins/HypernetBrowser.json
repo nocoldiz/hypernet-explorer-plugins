@@ -242,7 +242,7 @@
   "mail": {
     "title": "HYPERNET MAIL",
     "heading": "INBOX",
-    "hint": "MAIL HELD FOR DIS TERMINAL. NOTHIN' HERE CAN BE REPLIED TA; DA RELAY HAB BEEN ONE-WAY SINCE DA Y2K ROLLOVER!",
+    "hint": "MAIL HELD FOR DIS TERMINAL. REPLIES IZ NOT POSSIBLE: DA RELAY HAB BEEN ONE-WAY SINCE DA Y2K ROLLOVER!",
     "from": "FROM",
     "subject": "SUBJECT",
     "received": "RECEIVED",
@@ -504,5 +504,20 @@
     "size": "SIZE:",
     "zone": "ZONE:",
     "close": "OK"
+  },
+  "hexapedia": {
+    "appName": "HEXAPEDIA",
+    "tooltip": "DA FREE ENCYCLOPEDIA OF POST-SQUISHIN' KNOWLEDGE",
+    "peopleTitle": "LIVIN' PERSONS OF NOTE",
+    "peopleIntro": "DIS SERVER WRITES UP ANYBODY DA WORLD HAB HEARD OF. A TRAVELLER WHO REACHES LEVEL {level} EARNS AN ARTICLE, AN' IT IZ KEPT WIT DA WORLD RATHER DEN WIT DA PARTY, SO IT OUTLIVES DEM!",
+    "peopleEmpty": "NO ARTICLE YET. NOBODY IN DIS WORLD HAB REACHED LEVEL {level}!",
+    "peopleLine": "LEVEL {level} {cls}",
+    "personMeta": "LEVEL {level} {cls}, OF DA WORLD OF {world}.",
+    "personDiary": "FROM DA RECORD",
+    "personNoDiary": "DA RECORD HOLDS NOTHIN' UNDER DIS NAME YET!",
+    "personFooter": "WRITTEN BY DA ENCYCLOPEDIA FROM DA PARTY DIARY. KEPT WIT DA WORLD, AN' READABLE BY WHOEVER PLAYS IT NEXT!",
+    "backToPortal": "HEXAPEDIA PORTAL",
+    "written": "HEXAPEDIA HAB WRITTEN UP {name}",
+    "updated": "HEXAPEDIA PAGES FOR {name} UPDATED WIT LATEST EXPLOITS"
   }
 }

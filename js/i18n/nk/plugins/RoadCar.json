@@ -2,6 +2,7 @@
   "unattendedCar": "AN UNATTENDED CAR.",
   "stealCar": "STEAL CAR",
   "cancel": "CANCEL",
+  "usedDriverKeys": "YOU UNLOCK IT WIT DA DRIVER'S OWN KEYS!",
   "usedSkeletonKey": "USED SKELETON KEY!",
   "needLockpick": "YOU NEED A LOCKPICK TA HOTWIRE A CAR!",
   "lockStuck": "DA LOCK WILL NOT BUDGE.",
@@ -11,5 +12,24 @@
   "ramKilled": "{name} GOES UNDER DA WHEELS AN' DOES NOT GET UP!",
   "ramAngered": "{name} PICKS ITSELF UP AN' COMES FOR YOU!",
   "vehicleScuffed": "SOMETHIN' GIVES WAY AGAINST DA FRONT. DAMAGED: {parts}!",
-  "vehicleCrashed": "YOU CRASH INTO ANOTHER VEHICLE. DAMAGED: {parts}!"
+  "vehicleCrashed": "YOU CRASH INTO ANOTHER VEHICLE. DAMAGED: {parts}!",
+  "emptyWorldUnlocked": "DA DOOR IZ UNLOCKED. WHOEVER LEFT IT HERE WAZ NOT COMIN' BACK FOR IT!",
+  "driverSave": {
+    "nearMiss": "[DRIVER DEX SAVE: {roll}{mod}={total}] NEAR MISS, SWERVED IN TIME!",
+    "failed": "[DRIVER DEX SAVE: {roll}{mod}={total} VS DC {dc}] REFLEX SAVE FAILED, DA VEHICLE HITS!"
+  },
+  "incident": {
+    "hitParty1": "WATCH WHERE YOU WALK! DAT IZ A ROAD!",
+    "hitParty2": "YOU CAME OUT OF NOWHERE. IZ YOU HURT?",
+    "crashParty1": "LOOK AT ME CAR! DO YOU KNOW WHAT DAT COSTS?",
+    "crashParty2": "WHERE DID YOU LEARN TA DRIVE, A FAIRGROUND?",
+    "hitPerson1": "DEY STEPPED RIGHT OUT IN FRONT OF ME!",
+    "hitPerson2": "OH NO. SOMEBODY CALL FOR HELP!",
+    "hitCreature1": "SOMETHIN' WENT UNDER DA WHEELS. IZ IT DEAD?",
+    "hitCreature2": "DAT THING JUST RAN ACROSS DA ROAD!",
+    "fender1": "YOU DROVE STRAIGHT INTO ME!",
+    "fender2": "DID YOU NOT SEE ME BRAKIN'?",
+    "theft1": "HEY! DAT IZ ME CAR!",
+    "theft2": "THIEF! SOMEBODY STOP DEM, DEY TOOK ME CAR!"
+  }
 }

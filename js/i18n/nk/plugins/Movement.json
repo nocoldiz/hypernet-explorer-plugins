@@ -14,7 +14,10 @@
   "fish": "FISH",
   "useBoat": "USE BOAT",
   "swim": "SWIM",
-  "drinkSaltWater": "YOU DRINK SOME SALT WATER AN' IMMEDIATELY FEEL NAUSEOUS!",
-  "drinkWater": "YOU DRINK SOME WATER, EASIN' YA HUNGER A LITTLE!",
-  "cannotSwimHere": "YOU NO CAN SWIM HERE."
+  "drinkSaltWaterChoice": "DRINK SALT WATER",
+  "drankSaltWater": "YOU DRANK SALT WATER",
+  "drankWater": "YOU DRANK WATER",
+  "cannotSwimHere": "YOU NO CAN SWIM HERE.",
+  "swimExhausted": "YOU IZ OUT OF BREATH. GET TA LAND!",
+  "surf": "SURF"
 }

@@ -1,0 +1,23 @@
+{
+  "hyperamp": {
+    "appName": "HYPERAMP",
+    "idle": "HYPERAMP - IT REALLY WHIPS DA GOBLIN",
+    "loading": "--:--",
+    "prev": "PREVIOUS",
+    "play": "PLAY",
+    "pause": "PAUSE",
+    "stop": "STOP",
+    "next": "NEXT",
+    "shuffle": "SHUFFLE",
+    "repeatOff": "REPEAT: OFF",
+    "repeatAll": "REPEAT: ALL",
+    "repeatOne": "REPEAT: ONE",
+    "volume": "VOLUME",
+    "search": "SEARCH DA LIBRARY...",
+    "allFolders": "ALL FOLDERS",
+    "rootFolder": "(ROOT)",
+    "empty": "NO TRACKS FOUND UNDER AUDIO/BGM!",
+    "count": "{n} TRACKS",
+    "unknownArtist": "UNKNOWN ARTIST"
+  }
+}

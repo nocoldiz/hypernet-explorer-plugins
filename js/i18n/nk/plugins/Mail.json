@@ -101,7 +101,7 @@
     "postageLine": "POSTAGE: {fee}. WIT WHAT IZ ENCLOSED, {total} LEAVES DA PURSE!",
     "cannotAfford": "DA PURSE IZ {short} SHORT OF WHAT DIS WOULD COST!",
     "subjectPlaceholder": "WHAT IZ IT ABOUT?",
-    "bodyPlaceholder": "WRITE FREELY. WHOEVER OPENS DIS WILL READ IT EXACTLY AS YOU LEAVE IT!"
+    "bodyPlaceholder": "TYPE DA MESSAGE."
   },
   "toast": {
     "sent": "SEALED AN' SENT.",
@@ -131,5 +131,78 @@
     "notYet": "DAT LETTER HAB NOT BEEN DELIVERED YET!",
     "emptyEnvelope": "DERE IZ NOTHIN' IN DA ENVELOPE TA TAKE OUT!",
     "stillFull": "EMPTY DA ENVELOPE BEFORE BURNIN' DA LETTER!"
+  },
+  "app": {
+    "appName": "POST EXPRESS",
+    "newMessage": "NEW MESSAGE",
+    "folder": {
+      "inbox": "MAILBOX",
+      "transit": "IN TRANSIT",
+      "compose": "NEW MESSAGE",
+      "book": "ADDRESS BOOK"
+    },
+    "tool": {
+      "write": "WRITE",
+      "collect": "EMPTY ENVELOPE",
+      "discard": "BURN",
+      "sync": "SEND AN' RECEIVE"
+    },
+    "synced": "DA ADDRESS BOOK HAB BEEN READ AGAIN!",
+    "account": "{party} - {world}",
+    "counts": "{unread} UNREAD, {transit} IN TRANSIT",
+    "nothingInTransit": "NOTHIN' IZ ON ITS WAY TA DIS PARTY!",
+    "arrivesOn": "ARRIVES {date}",
+    "replyTo": "WRITE BACK",
+    "reSubject": "RE: {subject}",
+    "purse": "IN DA PURSE: {money}",
+    "holdBack": "HELD BACK BEFORE DELIVERY",
+    "clear": "TEAR DA SHEET UP",
+    "bookBlurb": "EVERY PARTY WIT A REGISTERED ADDRESS, IN DIS WORLD AN' IN OTHERS. POSTAGE IZ CHARGED PER DIMENSION CROSSED!",
+    "colParty": "PARTY",
+    "colMembers": "MEMBERS",
+    "colSeen": "LAST SEEN",
+    "thisIsYou": "(YOU)"
+  },
+  "nudge": {
+    "appName": "NUDGE",
+    "signedIn": "SIGNED IN AS {who}",
+    "signedOut": "NOBODY IZ SIGNED IN.",
+    "groupParty": "WALKIN' WIT YOU",
+    "groupWorld": "ELSEWHERE IN DIS WORLD",
+    "groupOthers": "ALWAYS ON",
+    "withParty": "WIT {leader}",
+    "alwaysOn": "ANSWERS WHOEVER ASKS",
+    "status": {
+      "online": "(ONLINE)",
+      "away": "(AWAY)",
+      "busy": "(BUSY)",
+      "offline": "(OFFLINE)"
+    },
+    "pickSomebody": "PICK SOMEBODY ON DA LEFT.",
+    "sayHello": "NOTHIN' SAID TA {who} YET.",
+    "typing": "{who} IZ TYPIN'...",
+    "placeholder": "TYPE A LINE AN' PRESS ENTER",
+    "send": "SEND",
+    "nudge": "NUDGE",
+    "you": "YOU",
+    "noAnswer": "...",
+    "situation": "A TYPED CONVERSATION OVER DA HYPERNET, LATE AT NIGHT, IN A WINDOW WIT A BLUE TITLE BAR!",
+    "bioMember": "{who} WALKS WIT DA PARTY AN' IZ TYPIN' FROM A FEW FEET AWAY, WHICH NEITHER OF YOU MENTIONS!",
+    "bioStranger": "{who} WALKS WIT ANOTHER PARTY IN DIS SAME WORLD, DA ONE {leader} LEADS. YOU HAB NEVER MET!",
+    "lore": {
+      "eris": {
+        "name": "ERIS",
+        "bio": "ERIS, DA GODDESS OF DISCORD, KEEPIN' A HUMAN SHAPE AN' A HUMAN SIZED LIFE. SHE BENDS PROBABILITY RATHER DEN BREAKIN' IT, AN' SHE RUINS EM'S LIFE OUT OF JEALOUSY OVER BUBBA, WHO LOVES HER BACK AN' NO CAN HAB HER. HER OWN FUTURE SELF KILLED MAAT IN 2012 AN' DRAGGED HER ONTO DA PATH TA DA THRONE, WHICH SHE RESENTS AN' NO CAN GET OFF. SHE IZ CHARMIN', GLIB, ALLERGIC TA A STRAIGHT ANSWER ABOUT HERSELF, AN' SHE WILL CHANGE DA SUBJECT DA MOMENT ANY OF DA ABOVE GETS CLOSE!"
+      },
+      "bubba": {
+        "name": "BUBBA",
+        "bio": "BUBBA, WHO LOVES ERIS AN' ALWAYS HAB, AN' WHO FEELS NOTHIN' FOR EM AN' HAB NEVER HAB DA NERVE TA SAY SO PLAINLY. WARM, SLOW, DECENT, EASILY EMBARRASSED. HE TALKS ABOUT ORDINARY THINGS AT LENGTH AN' ABOUT DA TWO WOMEN IN HIS LIFE NOT AT ALL, AN' HE IZ DA ONLY ONE OF DA THREE WHO ASKS HOW YOU IZ AN' WAITS FOR DA ANSWER!"
+      },
+      "em": {
+        "name": "EM",
+        "bio": "EM, WHOSE LIFE A GODDESS HAB BEEN QUIETLY WRECKIN' FOR YEARS OUT OF JEALOUSY, WHO HALF KNOWS IT AN' HAB NO PROOF. SHE LOVES BUBBA, WHO DOES NOT LOVE HER. SHARP, FUNNY IN A WAY DAT IZ MOSTLY DEFENCE, TIRED, AN' QUICKER DEN ANYBODY GIVES HER CREDIT FOR. SHE HAB A SPEAR AN' SHE KNOWS WHERE DA TOWER IZ!"
+      }
+    },
+    "groupBenched": "NOT TRAVELLIN'"
   }
 }

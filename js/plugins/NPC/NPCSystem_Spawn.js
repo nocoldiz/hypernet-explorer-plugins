@@ -745,24 +745,21 @@
       }
     },
 
-initializeGroupNPCs: (groupName, activeMapId = null) => {
+// The hour's answer for a whole town is one schedule resolution per resident,
+    // often hundreds, and done in one go on the hour it was the hourly hitch. So
+    // it is built as a job: step(deadline) works through the residents until the
+    // deadline and picks up where it left off on the next call, and nothing is
+    // written to $gameSystem until the last resident has been placed. The answer
+    // is a pure function of (name, group, hour), so slicing it changes nothing.
+    beginGroupAssignment: (groupName, activeMapId = null) => {
       const group = GroupRegistry.get(groupName);
-      if (!group) return;
+      if (!group) return null;
 
       // A world made before the residents existed deals its towns the first
       // time the party walks into them.
       ResidentRegistry.ensureGroup(groupName);
       const npcPool = SpawnManager.getNPCPool(groupName);
-      if (!npcPool.length) return;
-
-      // Last hour's answer, kept so an arrival can be brought in through the
-      // door they would have walked from rather than dropped in the middle.
-      const previous = {};
-      for (const [mId, list] of Object.entries($gameSystem._npcGroupAssignments || {})) {
-        for (const o of list || []) if (o?.name) previous[o.name] = Number(mId);
-      }
-      $gameSystem._npcPrevAssignment = previous;
-      $gameSystem._npcGroupAssignments = {};
+      if (!npcPool.length) return null;
 
       const allMaps = group.maps;
       const hour = $gameVariables?.value(23) ?? 12;
@@ -782,19 +779,21 @@ initializeGroupNPCs: (groupName, activeMapId = null) => {
       // between the group's maps within the same hour never reshuffles anyone.
       const resolver = window.NPCSim?.scheduledMapForNPC;
       const assignedNames = new Set();
-      for (const npc of npcPool) {
+      let cursor = 0;
+
+      const placeOne = (npc) => {
         const name = npc.eventData?.name;
-        if (!name || name === "NPC" || assignedNames.has(name)) continue;
+        if (!name || name === "NPC" || assignedNames.has(name)) return;
         // Only the town's residents are dealt round its maps. An authored
         // person stands on the map they were written on (their own event is
         // there), and a <Local> is met elsewhere only as a visitor.
-        if (!ResidentRegistry.isResident(name)) continue;
+        if (!ResidentRegistry.isResident(name)) return;
         assignedNames.add(name);
 
         // Out of town. Somebody on a trip is on no map of the town they left:
         // the empty place they leave behind is the whole point of them having
         // gone (NPC/NPCLifeSimulator.js, resolveTravel).
-        if (window.NPCLifeSim?.isAwayFromTown?.(name)) continue;
+        if (window.NPCLifeSim?.isAwayFromTown?.(name)) return;
 
         let mId = resolver ? resolver(name, groupName, hour) : null;
         if (!mId || !mapAssignments[mId]) {
@@ -803,18 +802,47 @@ initializeGroupNPCs: (groupName, activeMapId = null) => {
           mId = allMaps[Math.abs(Utils.nameHash(name)) % allMaps.length];
         }
         mapAssignments[mId].push({ name });
-      }
+      };
 
-      // Save
-      let totalPlaced = 0;
-      for (const mId of allMaps) {
-        $gameSystem._npcGroupAssignments[mId] = mapAssignments[mId];
-        totalPlaced += mapAssignments[mId].length;
-      }
+      const commit = () => {
+        // Last hour's answer, kept so an arrival can be brought in through the
+        // door they would have walked from rather than dropped in the middle.
+        const previous = {};
+        for (const [mId, list] of Object.entries($gameSystem._npcGroupAssignments || {})) {
+          for (const o of list || []) if (o?.name) previous[o.name] = Number(mId);
+        }
+        $gameSystem._npcPrevAssignment = previous;
+        $gameSystem._npcGroupAssignments = {};
 
-      $gameSystem._currentNpcGroup = groupName;
-      $gameSystem._npcAssignmentHour = hour;
-      Utils.debug(`Group ${groupName} schedule-assigned: ${totalPlaced} NPCs across ${allMaps.length} maps at hour ${hour} (active: ${activeMapId}).`);
+        let totalPlaced = 0;
+        for (const mId of allMaps) {
+          $gameSystem._npcGroupAssignments[mId] = mapAssignments[mId];
+          totalPlaced += mapAssignments[mId].length;
+        }
+
+        $gameSystem._currentNpcGroup = groupName;
+        $gameSystem._npcAssignmentHour = hour;
+        Utils.debug(`Group ${groupName} schedule-assigned: ${totalPlaced} NPCs across ${allMaps.length} maps at hour ${hour} (active: ${activeMapId}).`);
+      };
+
+      return {
+        // True once every resident is placed and the answer is written. Always
+        // places at least one resident a call, so the job cannot stall.
+        step(deadline = Infinity) {
+          if (cursor >= npcPool.length) return true;
+          do {
+            placeOne(npcPool[cursor++]);
+          } while (cursor < npcPool.length && performance.now() < deadline);
+          if (cursor < npcPool.length) return false;
+          commit();
+          return true;
+        },
+      };
+    },
+
+    initializeGroupNPCs: (groupName, activeMapId = null) => {
+      const job = SpawnManager.beginGroupAssignment(groupName, activeMapId);
+      if (job) job.step();
     },
 
     // Live, in-place turnover of the *current* map's NPCs when an in-game hour

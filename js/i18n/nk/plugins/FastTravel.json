@@ -35,6 +35,7 @@
   "hubTitle": "SERVED BY DA TRANSPORT NETWORK",
   "hubBadge": "HUB",
   "hubLabel": "{place}, TRANSPORT HUB",
+  "patreonStation": "PATRON STATION",
   "fuelRate": "FUEL RATE: {rate} L/TILE",
   "rateMultiplier": "RATE MULTIPLIER: {multiplier}X",
   "editing": "EDITIN'",
@@ -46,6 +47,7 @@
   "timeToArrival": "TIME TA ARRIVAL:",
   "destFuel": "{place} ({liters}L, {km} KM)",
   "destCost": "{place} ({cost}€, {km} KM)",
+  "destLevel": "LV. {level}",
   "ui": {
     "back": "BACK",
     "edit": "EDIT",
@@ -60,6 +62,76 @@
     "travelTime": "TRAVEL TIME:",
     "transportPlaceholder": "TRAIN",
     "cancel": "CANCEL",
-    "travel": "TRAVEL"
+    "travel": "TRAVEL",
+    "free": "FREE",
+    "startHere": "START HERE",
+    "travelNoTicket": "TRAVEL WIT NO TICKET",
+    "enemyLevel": "ENEMY LEVEL:"
+  },
+  "refused": {
+    "title": "TURNED AWAY AT DA COUNTER",
+    "wanted": "DA CLERK LOOKS UP YA NAME, LOOKS AT DA QUEUE BEHIND YOU, AN' DOES NOT PRINT DA TICKET. FIND YA OWN WAY DERE!"
+  },
+  "custom": {
+    "add": "WRITE DOWN A PLACE OF YA OWN",
+    "title": "A PLACE OF YA OWN",
+    "x": "X",
+    "y": "Y",
+    "name": "NAME",
+    "defaultName": "{nation} - {place}",
+    "unclaimed": "NO MAN'S LAND",
+    "unknownBiome": "UNKNOWN GROUND",
+    "allowed": "OPEN {biome}, AN' NOTHIN' STANDIN' ON IT",
+    "save": "WRITE IT DOWN",
+    "saved": "{name} IZ ON DA MAP NOW",
+    "savedTitle": "MARKED ON DA MAP",
+    "refused": {
+      "range": "DAT SQUARE IZ OFF DA MAP",
+      "reserved": "A PLACE ALREADY STANDS DERE",
+      "duplicate": "YOU HAB WRITTEN DAT SQUARE DOWN ALREADY",
+      "river": "A RIVER RUNS THROUGH DERE",
+      "water": "DAT SQUARE IZ OPEN WATER",
+      "mountain": "NOTHIN' CAN BE DRIVEN UP DERE"
+    }
+  },
+  "arrival": {
+    "title": "JOURNEY'S END",
+    "visit": "VISIT DA {biome}",
+    "worldMap": "STAY ON DA WORLD MAP"
+  },
+  "offline": "OFFLINE",
+  "book": {
+    "appName": "WAYFARE",
+    "subtitle": "LISTS DA PRICE AN' TRAVEL TIME OF EVERY TRANSPORT MODE TA EACH DESTINATION!",
+    "quotesOnly": "PRICES ONLY. TICKETS IZ BOUGHT AT DA STOP, NOT FROM DIS PAGE!",
+    "search": "FIND A PLACE",
+    "noMatch": "NO PLACE BY DAT NAME.",
+    "noDestinations": "DA BOOK HAB NO PAGES YET.",
+    "departingFrom": "QUOTED FROM {place}",
+    "headline": "{type}, GROUND PITCHED AT {level}.",
+    "levelUnknown": "NO STATED LEVEL",
+    "colMode": "WAY",
+    "colArranged": "ARRANGED",
+    "colFare": "FARE",
+    "colTime": "JOURNEY",
+    "colNote": "NOTE",
+    "free": "NO CHARGE",
+    "minutes": "{m} MIN",
+    "hoursMinutes": "{h}H {m}M",
+    "arrangement": {
+      "own": "UNDER YA OWN STEAM",
+      "scheduled": "SCHEDULED SERVICE",
+      "hired": "HIRED AT DA STAND",
+      "quoted": "TARIFF ONLY"
+    },
+    "noteOwn": "COSTS TIME AN' FUEL INSTEAD OF A FARE!",
+    "noteScheduled": "BOARD IT WHERE DA LINE RUNS. TICKETS IZ SOLD AT DA COUNTER!",
+    "noteHired": "AVAILABLE AT A TAXI RANK, WHERE DERE IZ ONE!",
+    "noteQuoted": "NOT OPERATED FROM HERE. DA PRICE IZ LISTED FOR REFERENCE!",
+    "noteRefused": "DA COUNTER WILL NOT SELL TA A WANTED PARTY!",
+    "noteOffline": "NOTHIN' RUNS DERE.",
+    "offlineBlurb": "NO TRANSPORT LINE REACHES DIS TOWN!",
+    "wantedBlurb": "DA PARTY IZ WANTED, SO TICKET COUNTERS REFUSE SERVICE. PRIVATE AN' EXOTIC TRANSPORT STILL WORKS!",
+    "footer": "PRICES IZ CALCULATED FROM DA PARTY'S CURRENT POSITION AN' CHANGE AS IT MOVES. DIS PAGE NO CAN BOOK OR REFUND ANYTHIN'!"
   }
 }

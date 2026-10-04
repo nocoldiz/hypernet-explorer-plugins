@@ -1,4 +1,5 @@
 {
+  "cannotBuildHere": "YOU NO CAN BUILD HERE.",
   "materialFallback": "MATERIAL",
   "materialsRecovered": "MATERIALS RECOVERED:",
   "dismantle": "DISMANTLE",
@@ -11,6 +12,10 @@
   "illegal": {
     "warning": "DIS LAND IZ NOT YA. ANYTHIN' YOU PUT DOWN HERE IZ ILLEGAL CONSTRUCTION, AN' DA N€POLICE WILL BILL YOU FOR IT!",
     "charge": "ILLEGAL CONSTRUCTION"
+  },
+  "cannotAfford": {
+    "gold": "NOT ENOUGH MONEY: DIS COSTS %1!",
+    "materials": "NOT ENOUGH MATERIALS TA BUILD DIS!"
   },
   "placing": "PLACIN'",
   "materials": "MATERIALS",
@@ -31,7 +36,10 @@
     "terrain": "TERRAIN",
     "houses": "HOUSES",
     "features": "FEATURES",
-    "animals": "ANIMALS"
+    "animals": "ANIMALS",
+    "prefabs": "PREFABS",
+    "town": "TOWN",
+    "stock": "STOCK"
   },
   "empty": {
     "walls": "DIS TILESET HAB NO WALL (A3/A4) TILES!",
@@ -42,24 +50,23 @@
     "search": "NO FURNITURE MATCHES YA SEARCH!",
     "cannotAfford": "YOU NO CAN AFFORD ANY FURNITURE RIGHT NOW!",
     "cannotBuild": "YOU NO CAN BUILD ANYTHIN' WIT YA CURRENT MATERIALS!",
-    "category": "NO FURNITURE IN DIS CATEGORY!"
-  },
-  "hint": {
-    "placeSweep": "● CLICK / A TA PLACE, HOLD AN' SWEEP TA PAINT A RUN",
-    "cannotAfford": "● NO CAN AFFORD IT YET",
-    "place": "● CLICK / A TA PLACE",
-    "noMoney": "● NOT ENOUGH MONEY",
-    "noMaterials": "● NOT ENOUGH MATERIALS"
+    "category": "NO FURNITURE IN DIS CATEGORY!",
+    "prefabs": "NO PREFABS IZ BUILT IN DIS BIOME!",
+    "stock": "NOTHIN' IN STOCK. ORDER FROM DA HOMELY CATALOGUE ON DA HYPERDECK!"
   },
   "tip": {
     "construct": "SPEND CRAFTIN' MATERIALS",
     "purchase": "BUY ANY PIECE WIT MONEY (PRICE = MATERIAL VALUE +25%)",
     "money": "YA MONEY",
     "purchasePrice": "PURCHASE PRICE",
-    "dragToPlace": "DRAG ONTO DA MAP OR CLICK TA PLACE",
+    "dragToPlace": "PLACE IT ON DA MAP",
     "cannotAfford": "YOU NO CAN AFFORD DIS",
     "clearAll": "DELETE EVERYTHIN' BUILT ON DIS MAP AN' REFUND MATERIALS",
-    "clearAllConfirm": "CLICK AGAIN TA CONFIRM"
+    "clearAllConfirm": "CLICK AGAIN TA CONFIRM",
+    "cycleVariants": "OTHER COLOURWAYS AVAILABLE",
+    "backToCategories": "BACK TA DA FOLDER LIST",
+    "stock": "ALREADY ORDERED AN' PAID FOR. SETTIN' IT DOWN SPENDS ONE!",
+    "mirror": "FLIP DA PIECE LEFT TA RIGHT (NOT FOR DOORS, WALLS, ROOFS OR TERRAIN)"
   },
   "category": {
     "Ads": "ADS",
@@ -192,16 +199,42 @@
     "Wood": "WOOD",
     "WorldMap": "WORLDMAP"
   },
-  "help": {
-    "mouse": "<b>MOUSE:</b> CLICK A PIECE, DEN CLICK DA MAP TA PLACE IT. <b>HOLD</b> AN' SWEEP TA LAY A RUN OF WALLS OR TERRAIN. CLICK A PLACED PIECE TA REMOVE IT, OR SWEEP TA CLEAR A RUN!",
-    "pad": "<b>PAD / KEYS:</b> <b>D-PAD/ARROWS</b> BROWSE · <b>L/R</b> TAB · <b>A/ENTER</b> PICK, DEN AIM AN' PLACE (HOLD TA PAINT) · <b>X/SHIFT</b> FLIP · <b>B/ESC</b> BACK · <b>ESC</b> EXITS!",
-    "armed": "D-PAD/ARROWS AIM &nbsp;·&nbsp; L1/R1 OR WHEEL SWAP PIECE &nbsp;·&nbsp; X/SHIFT FLIP &nbsp;·&nbsp; B/RIGHT-CLICK CANCEL",
-    "idle": "<b>CLICK</b> A PIECE, DEN <b>CLICK DA MAP</b> TA PLACE IT. <b>HOLD AN' SWEEP</b> TA LAY A RUN · <b>SHIFT</b> FLIPS · <b>CLICK</b> A PLACED PIECE TA REMOVE IT FOR A PARTIAL REFUND · <b>ESC</b> EXITS!"
-  },
   "freeBadge": "FREE",
   "buildMode": "BUILD MODE",
   "mode": {
     "construct": "CONSTRUCT",
     "purchase": "PURCHASE"
-  }
+  },
+  "variantCount": "{i}/{n}",
+  "status": {
+    "ready": "READY TA PLACE",
+    "cannotAfford": "NO CAN AFFORD IT YET",
+    "noMoney": "NOT ENOUGH MONEY",
+    "noMaterials": "NOT ENOUGH MATERIALS",
+    "idle": "NOTHIN' IN HAND."
+  },
+  "selection": "SELECTION",
+  "backToCategories": "BACK TA DA FOLDERS",
+  "homely": {
+    "appName": "HOMELY",
+    "subtitle": "ORDER FURNITURE BY MAIL. DELIVERED PIECES IZ READY TA PLACE!",
+    "hint": "ORDERED PIECES SHOW UP IN DA BUILD PANEL'S STOCK TAB!",
+    "search": "SEARCH DA CATALOGUE",
+    "yourStock": "YA STOCK",
+    "stockBlurb": "EACH ORDERED PIECE CAN BE PLACED {n} TIMES. ONCE BROKEN IT IZ GONE AN' MUST BE REORDERED!",
+    "stockEmpty": "NOTHIN' ON ORDER. PICK A DEPARTMENT AN' BUY SOMETHIN'!",
+    "delivered": "DELIVERED",
+    "leftInStock": "{n} SETTINGS-DOWN LEFT",
+    "order": "ORDER ONE",
+    "ordered": "{item} ORDERED FOR {price}. {n} SETTINGS-DOWN WAITIN' IN STOCK!",
+    "cannotAfford": "DA PURSE WILL NOT COVER IT, DELIVERY INCLUDED!",
+    "unknownPiece": "DA CATALOGUE HAB NO SUCH PIECE!",
+    "searchResults": "ANYTHIN' CALLED \"{q}\"",
+    "nothingHere": "NOTHIN' IN DIS DEPARTMENT!",
+    "pageOf": "PAGE {page} OF {pages}",
+    "prev": "BACK A PAGE",
+    "next": "ON A PAGE"
+  },
+  "stockLeft": "{n} LEFT",
+  "mirror": "MIRROR"
 }

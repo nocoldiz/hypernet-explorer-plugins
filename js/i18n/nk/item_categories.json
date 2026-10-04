@@ -1,0 +1,23 @@
+{
+  "Alchemistry": "ALCHEMISTRY",
+  "BodyPart": "BODY PART",
+  "Books": "BOOKS",
+  "Collectibles": "COLLECTIBLES",
+  "Combat": "COMBAT",
+  "Component": "COMPONENT",
+  "Crafting": "CRAFTIN'",
+  "Diseases": "DISEASES",
+  "Farming": "FARMIN'",
+  "Fertility": "FERTILITY",
+  "Food": "FOOD",
+  "Homeopathy": "HOMEOPATHY",
+  "Lifestyle": "LIFESTYLE",
+  "Magic": "MAGIC",
+  "Medical": "MEDICAL",
+  "Misc": "MISCELLANEOUS",
+  "Monsters": "MONSTERS",
+  "Survival": "SURVIVAL",
+  "Tools": "TOOLS",
+  "Trash": "TRASH",
+  "Vehicles": "VEHICLES"
+}

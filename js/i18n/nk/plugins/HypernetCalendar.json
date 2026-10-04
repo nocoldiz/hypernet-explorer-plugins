@@ -1,0 +1,65 @@
+{
+  "title": "CALENDAR",
+  "prevYear": "PREVIOUS YEAR",
+  "nextYear": "NEXT YEAR",
+  "prevMonth": "PREVIOUS MONTH",
+  "nextMonth": "NEXT MONTH",
+  "today": "TODAY",
+  "nationHere": "HERE: {nation}",
+  "nationAll": "ALL NATIONS",
+  "nowhere": "NO NATION",
+  "nationsCount": "HOLIDAY IN {count}",
+  "dayTitle": "{weekday} {day} {month} {year}",
+  "newAppointment": "NEW APPOINTMENT ON DIS DAY",
+  "placeholder": "WHAT, WHERE, WIT WHOM",
+  "add": "ADD",
+  "remove": "REMOVE",
+  "weekday": {
+    "0": "SUN",
+    "1": "MON",
+    "2": "TUE",
+    "3": "WED",
+    "4": "THU",
+    "5": "FRI",
+    "6": "SAT"
+  },
+  "weekdayLong": {
+    "0": "SUNDAY",
+    "1": "MONDAY",
+    "2": "TUESDAY",
+    "3": "WEDNESDAY",
+    "4": "THURSDAY",
+    "5": "FRIDAY",
+    "6": "SATURDAY"
+  },
+  "tag": {
+    "election": "ELECTION",
+    "deadline": "DEADLINE X{count}"
+  },
+  "election": {
+    "power": "{election} OF DA {power}",
+    "nation": "NATIONAL VOTE IN {nation}"
+  },
+  "section": {
+    "holidays": "PUBLIC HOLIDAYS",
+    "holidaysIn": "PUBLIC HOLIDAYS IN {nation}",
+    "elections": "ELECTIONS",
+    "deadlines": "QUEST DEADLINES",
+    "appointments": "APPOINTMENTS"
+  },
+  "none": {
+    "holidays": "AN ORDINARY WORKIN' DAY.",
+    "deadlines": "NO CONTRACT FALLS DUE.",
+    "appointments": "NOTHIN' WRITTEN DOWN."
+  },
+  "status": {
+    "added": "APPOINTMENT WRITTEN DOWN.",
+    "removed": "APPOINTMENT CROSSED OUT.",
+    "empty": "WRITE WHAT DA APPOINTMENT IZ FIRST!"
+  },
+  "toast": {
+    "title": "APPOINTMENT",
+    "today": "TODAY AT {time}: {text}",
+    "now": "IT IZ {time}: {text}"
+  }
+}

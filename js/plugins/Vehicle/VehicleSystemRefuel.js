@@ -24,7 +24,7 @@
  *
  * @param fuelPricePerLiter
  * @text Fuel Price Per Liter (gold)
- * @desc Pump price for one liter, in gold (100 gold = 1 euro).
+ * @desc Pump price for one liter, in gold (100 gold = 1 euro), on a day OIL trades at its usual price.
  * @type number
  * @default 120
  *
@@ -48,7 +48,8 @@
  * It manages:
  * - Refueling menu (Standard MZ Window Style)
  * - Fuel levels for Car and Camper (using MZ Gauge bars)
- * - Fuel price calculations (fuelPricePerLiter parameter, in gold)
+ * - Fuel price calculations (fuelPricePerLiter parameter, in gold), scaled
+ *   every midnight by the OIL quote over its usual price
  *
  * Requirements:
  * - FastTravelSystem.js (optional but recommended for travel integration)
@@ -109,7 +110,9 @@
         getFuelPrice: function() {
             // Variable 53 is the market soul-tendency / tax value (baseline
             // 66666), NOT a price: reading it here quoted €600+/L at the pump.
-            return fuelPricePerLiter;
+            // The pump price moves with OIL, re-quoted once a day at midnight.
+            const index = window.StockSociety ? window.StockSociety.oilIndex() : 1;
+            return Math.max(1, Math.round(fuelPricePerLiter * index));
         }
     };
 

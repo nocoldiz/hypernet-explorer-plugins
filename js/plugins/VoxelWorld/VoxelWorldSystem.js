@@ -278,7 +278,9 @@
         },
         // True once the world's road tags are available to plan a route from.
         isWorldRoadDataReady() { return roadDataReady(); },
-        stop() {
+        // `opts.noCatchUp`: the session itself is being thrown away (a new
+        // game, a load), so the time that passed is nobody's to pay.
+        stop(opts) {
             if (!this._scene) return;
             // The live spriteset may still be holding the sprite keyed to the
             // world's canvas texture, which dispose() is about to destroy.
@@ -294,6 +296,15 @@
             this._scene = null;
             try { sc.dispose(); } catch (e) { console.error('[VoxelWorld] stop', e); }
             sweepOverlays();
+            // The time that went by out there is paid to the simulation now.
+            if (!sc._titleMode && this.WorldClock && !(opts && opts.noCatchUp)) {
+                this._catchingUp = true;
+                try { this.WorldClock.catchUp(); } finally { this._catchingUp = false; }
+            } else if (this.WorldClock) {
+                // Thrown away, not owed: the next world must not inherit it.
+                this.WorldClock._from = null;
+                this.WorldClock._frames = 0;
+            }
         },
         isActive() { return !!this._scene; },
         isTitleDrive() { return !!(this._scene && this._scene._titleMode); },
@@ -304,6 +315,13 @@
         // the whole battle HUD on that frame (see the hooks at the foot of this
         // file), so a fight met on a road is fought on that road.
         isBattleView() { return !!(this._scene && this._scene._battleWatch); },
+        // True while a real-time fight is on out here (VoxelWorldEntities'
+        // CombatSession), including the moment it is being wound up. There is
+        // no battle scene behind one, so the battle hooks below ask this.
+        inCombat() {
+            const c = this._scene && this._scene._combat;
+            return !!(c && c.inCombat && c.inCombat());
+        },
         // True while one of the ENGINE's own windows is up over the world: a
         // line of dialogue, a choice list, a shop counter. Those are drawn into
         // the game's canvas, which the world's DOM layer covers completely, so
@@ -333,6 +351,43 @@
             const sc = this._scene;
             if (!sc || sc._titleMode || sc._standalone) return false;
             sc._endDriveToWorldMap();   // answers for the walk as well as the drive
+            return true;
+        },
+        // Write where the party stands into the 2D map's records without
+        // ending the drive: what a save, or a teleport out of the menu, reads.
+        syncWorldTile() {
+            const sc = this._scene;
+            if (!sc || sc._titleMode || sc._standalone || sc._alien) return false;
+            if (typeof $gameVariables === 'undefined' || !$gameVariables) return false;
+            // The drive keeps the camper's square written as it goes
+            // (_syncWorldTile); asked for outright it writes whatever the
+            // square is now. On foot the party is the WALKER, not the parked
+            // camper, so their own square is what a save has to put them on.
+            const ts = window.VoxelWorld.WORLD_TILE_SIZE;
+            const WORLD = window.VoxelWorld.WORLD_MAP_ID;
+            const clamp = (v) => Math.max(0, Math.min(255, Math.floor(v / ts)));
+            if (sc._viewMode === 'foot' && sc._contactPoint) {
+                const at = sc._contactPoint();
+                var tx = clamp(at.x), ty = clamp(at.z);
+                $gameVariables.setValue(43, tx);
+                $gameVariables.setValue(44, ty);
+            } else {
+                if (!sc._syncWorldTile) return false;
+                sc._lastSyncTileX = null;
+                sc._lastSyncTileY = null;
+                sc._syncWorldTile();
+                tx = clamp(sc._vanX); ty = clamp(sc._vanZ);
+                if (typeof $gameMap !== 'undefined' && $gameMap && $gameMap.vehicle) {
+                    const ship = $gameMap.vehicle('ship');
+                    if (ship && ship.setLocation) ship.setLocation(WORLD, tx, ty);
+                }
+            }
+            // On the world map the save keeps the 2D player's own square, and
+            // the drive reopens from it: the player is stood on it as well.
+            if (typeof $gameMap !== 'undefined' && $gameMap && $gameMap.mapId() === WORLD &&
+                typeof $gamePlayer !== 'undefined' && $gamePlayer && $gamePlayer.locate) {
+                $gamePlayer.locate(tx, ty);
+            }
             return true;
         },
         // The canvas the world is being drawn into, for the battle layer - or
@@ -434,6 +489,177 @@
         return _Scene_Map_isMenuEnabled_CDS.call(this);
     };
 
+    // =========================================================================
+    // Time out here, and the world that waits for it
+    //
+    // The clock is moved by steps (Core/TimeDateSystem.js), and nobody steps
+    // while this world is up: the day used to stand still for as long as the
+    // party was out driving. It runs in REAL TIME now, a game minute a second,
+    // the rate the PC and the trading terminal already run it at.
+    //
+    // What does NOT run is the simulation under it. Every event on the 2D
+    // map, the NPC society's hourly tick, the parallel processes: none of it
+    // is seen from out here and all of it was being paid for every frame. The
+    // map is held still (only a running interpreter still gets its frames, so
+    // a conversation held over the world finishes), and when the party comes
+    // back the simulation is caught up in one pass over the time that passed,
+    // exactly as it is after a night's sleep.
+    // =========================================================================
+    const WORLD_FRAMES_PER_MINUTE = 60;
+    const WorldClock = {
+        _frames: 0,
+        _from: null,      // the minute the world opened on, for the catch-up
+
+        _live() {
+            return VoxelWorldSystem.isActive() && !VoxelWorldSystem.isTitleDrive() &&
+                !!window.TimeDateSystem && !!window.$gameVariables;
+        },
+
+        // One frame of the day. Called from the map scene, which keeps
+        // running under the overlay.
+        tick() {
+            if (!this._live()) return;
+            const TD = window.TimeDateSystem;
+            if (this._from == null) this._from = TD.getGameTimeMinutes();
+            this._watchSkips(TD);
+            if (++this._frames < WORLD_FRAMES_PER_MINUTE) return;
+            this._frames = 0;
+            TD.setGameTimeMinutes(TD.getGameTimeMinutes() + 1);
+            if (TD.updateGameDateVariable) TD.updateGameDateVariable();
+        },
+
+        // A rest taken out here (the wait menu, a night's sleep) moves the
+        // clock and pays for the time itself, through this very door. That
+        // time is then not owed again at the exit: the start of the stretch
+        // the catch-up will pay for moves along with it.
+        _watchSkips(TD) {
+            if (TD._vwSkipWatched || typeof TD.onTimeSkipped !== 'function') return;
+            TD._vwSkipWatched = true;
+            // A listener, not a wrapper: the rests call the clock's own local
+            // notifier, which never passes through the exported one.
+            TD.onTimeSkipped((minutes) => {
+                if (this._from != null && this._live() && !VoxelWorldSystem._catchingUp) {
+                    this._from += Math.max(0, Number(minutes) || 0);
+                }
+            });
+        },
+
+        // The world has closed: everything that lives by the clock is told
+        // how much of it went by. The delta engines no-op on a short drive
+        // and take a long one in a handful of chunks.
+        catchUp() {
+            const from = this._from;
+            this._from = null;
+            this._frames = 0;
+            const TD = window.TimeDateSystem;
+            if (from == null || !TD) return 0;
+            const now = TD.getGameTimeMinutes();
+            const gone = now - from;
+            if (gone <= 0) return 0;
+            const run = (obj, fn, arg) => {
+                if (obj && typeof obj[fn] === 'function') {
+                    try { obj[fn](arg); } catch (e) { console.error('[VoxelWorld] catch-up ' + fn, e); }
+                }
+            };
+            // The society reads the hour off variable 23, not off the minute
+            // it is handed, so the hour is set before every pass.
+            const setHour = (minute) => {
+                if (!$gameVariables) return;
+                const hour = parseInt(TD.getDateTimeFromMinutes(minute).hours, 10);
+                if ($gameVariables.value(23) !== hour) $gameVariables.setValue(23, hour);
+            };
+            // The society lives an hour at a time (its tick clamps to one), so
+            // the hours are walked in order rather than handed over as one
+            // lump; a very long stretch is taken in bigger steps, as a sleep
+            // takes it, so no exit ever runs more than a few dozen passes.
+            const NS = window.NPCSim;
+            if (NS && typeof NS.tick === 'function') {
+                const STEP = Math.max(60, Math.ceil(gone / 48));
+                for (let t = from + STEP; t < now; t += STEP) { setHour(t); run(NS, 'tick', t); }
+                setHour(now);
+                run(NS, 'tick', now);
+            } else {
+                setHour(now);
+            }
+            run(window.NPCLifeSim, 'catchUp', now);
+            run(window.NPCPolitics, 'catchUp', now);
+            run(window.NPCWorldWeb, 'catchUp', now);
+            run(window.EpidemicSystem, 'catchUp', now);
+            run(window.HistoryManager, 'catchUpLiveHistory', now);
+            run(window.ONUAssembly, 'catchUpSessions', now);
+            run(TD, 'notifyTimeSkipped', gone);
+            return gone;
+        }
+    };
+    VoxelWorldSystem.WorldClock = WorldClock;
+
+    const _Scene_Map_update_WC = Scene_Map.prototype.update;
+    Scene_Map.prototype.update = function() {
+        _Scene_Map_update_WC.call(this);
+        WorldClock.tick();
+    };
+
+    // The map, held still: a running interpreter is the one thing on it that
+    // still has to finish. Everything else waits for the party to come back.
+    function holdMap(map, sceneActive) {
+        holdNpcSim();
+        holdMapOuter();
+        map.refreshIfNeeded();
+        if (sceneActive) map.updateInterpreter();
+        // An interpreter waiting on an event (a move route it was told to
+        // wait for) needs that event to move, or it waits for ever.
+        if (map.isEventRunning() || (typeof $gameMessage !== 'undefined' && $gameMessage.isBusy())) {
+            map.updateEvents();
+        }
+    }
+    const _Game_Map_update_WC = Game_Map.prototype.update;
+    Game_Map.prototype.update = function(sceneActive) {
+        if (VoxelWorldSystem.isActive() && !VoxelWorldSystem.isTitleDrive()) {
+            holdMap(this, sceneActive);
+            return;
+        }
+        _Game_Map_update_WC.call(this, sceneActive);
+    };
+
+    // This plugin loads early, so the NPC plugins that hang their own work off
+    // the map's update (controllers, commutes, street crime) wrap the hold
+    // above rather than being held by it, and went on stepping every frame.
+    // Once everything is loaded the hold is put on again at the OUTSIDE, the
+    // first time the world is up, so the whole chain under it stands still.
+    let _mapOuterHeld = false;
+    function holdMapOuter() {
+        if (_mapOuterHeld) return;
+        _mapOuterHeld = true;
+        const outer = Game_Map.prototype.update;
+        Game_Map.prototype.update = function(sceneActive) {
+            if (VoxelWorldSystem.isActive() && !VoxelWorldSystem.isTitleDrive()) {
+                holdMap(this, sceneActive);
+                return;
+            }
+            outer.call(this, sceneActive);
+        };
+    }
+
+    // The society's hourly tick is hung off the map's update by a plugin that
+    // loads after this one, so it wraps the hold above rather than being held
+    // by it. It is held at its own door instead, the first time the world is
+    // up with it loaded: NPCSim.tick does nothing while the party is out
+    // here, and the catch-up pays for the hours when they are back.
+    function holdNpcSim() {
+        const NS = window.NPCSim;
+        if (!NS || NS._vwHeld || typeof NS.tick !== 'function') return;
+        NS._vwHeld = true;
+        const tick = NS.tick;
+        NS.tick = function() {
+            // ...except through a rest taken out here (the wait menu, a night's
+            // sleep), which simulates the hours it passes as it passes them.
+            const resting = typeof $gameTemp !== 'undefined' && $gameTemp && $gameTemp._sleepMenuOpen;
+            if (VoxelWorldSystem.isActive() && !VoxelWorldSystem.isTitleDrive() &&
+                !VoxelWorldSystem._catchingUp && !resting) return;
+            return tick.apply(this, arguments);
+        };
+    }
+
     // Resigning to the title (or dying) while the world is up leaves the scene
     // running: its overlay sits over the title menu with the walk still under
     // the player's hands. Anything that is not the title's own background drive
@@ -498,7 +724,11 @@
         const _Game_BattlerBase_die_VW = Game_BattlerBase.prototype.die;
         Game_BattlerBase.prototype.die = function() {
             _Game_BattlerBase_die_VW.call(this);
-            if (this.isActor && this.isActor() && VoxelWorldSystem.isActive() && !VoxelWorldSystem.isTitleDrive()) {
+            // ...except in a fight out here, where one of the party going down
+            // is part of the fight (the lead passes on, see CombatSession) and
+            // only the whole party going down ends it.
+            if (this.isActor && this.isActor() && VoxelWorldSystem.isActive() &&
+                !VoxelWorldSystem.isTitleDrive() && !VoxelWorldSystem.inCombat()) {
                 VoxelWorldSystem.stop();
             }
         };
@@ -514,10 +744,28 @@
         };
     }
 
+    // A fight lost out here runs the battle system's own defeat (permadeath,
+    // the wipe, who comes round where), and that defeat ends by leaving the
+    // battle scene. There is none to leave: the engine's pop would take the
+    // MAP off the stack instead. The scene change is the world's own business
+    // (CombatSession.finish hands it back to the map).
+    if (typeof BattleManager !== 'undefined') {
+        const _BattleManager_updateBattleEnd_VW = BattleManager.updateBattleEnd;
+        BattleManager.updateBattleEnd = function() {
+            if (VoxelWorldSystem.inCombat()) { this._phase = ''; return; }
+            _BattleManager_updateBattleEnd_VW.call(this);
+        };
+    }
+
     if (typeof BattleManager !== 'undefined') {
         const _BattleManager_processDefeat_VW = BattleManager.processDefeat;
         BattleManager.processDefeat = function() {
-            if (VoxelWorldSystem.isActive() && !VoxelWorldSystem.isTitleDrive()) {
+            // A fight lost out here is the world's own to close (CombatSession
+            // finish -> _onCombatEnd): stopping it from under the defeat would
+            // drop the guard above, pop the map off an empty stack and close
+            // the game.
+            if (VoxelWorldSystem.isActive() && !VoxelWorldSystem.isTitleDrive() &&
+                !VoxelWorldSystem.inCombat()) {
                 VoxelWorldSystem.stop();
             }
             if (_BattleManager_processDefeat_VW) _BattleManager_processDefeat_VW.call(this);
@@ -527,13 +775,13 @@
     if (typeof DataManager !== 'undefined') {
         const _DataManager_setupNewGame_VW = DataManager.setupNewGame;
         DataManager.setupNewGame = function() {
-            if (VoxelWorldSystem.isActive()) VoxelWorldSystem.stop();
+            if (VoxelWorldSystem.isActive()) VoxelWorldSystem.stop({ noCatchUp: true });
             _DataManager_setupNewGame_VW.call(this);
         };
 
         const _DataManager_loadGame_VW = DataManager.loadGame;
         DataManager.loadGame = function(savefileId) {
-            if (VoxelWorldSystem.isActive()) VoxelWorldSystem.stop();
+            if (VoxelWorldSystem.isActive()) VoxelWorldSystem.stop({ noCatchUp: true });
             return _DataManager_loadGame_VW.call(this, savefileId);
         };
     }

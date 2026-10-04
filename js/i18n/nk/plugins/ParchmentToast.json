@@ -1,3 +1,63 @@
 {
-  "obtained": "OBTAINED:"
+  "obtained": "OBTAINED:",
+  "simLog": {
+    "optionName": "SIMULATION LOG",
+    "line": "[{kind}] {text}",
+    "kind": {
+      "party": "PARTY",
+      "monster": "MONSTER",
+      "npc": "NPC"
+    },
+    "npc": {
+      "need": {
+        "sleep": "{name} DECIDES TA GO TA SLEEP",
+        "hunger": "{name} DECIDES TA FIND SOMETHIN' TA EAT",
+        "hygiene": "{name} DECIDES TA GO AN' WASH",
+        "work": "{name} DECIDES TA GO TA WORK",
+        "shopwork": "{name} DECIDES TA MIND DA SHOP",
+        "money": "{name} DECIDES TA GO AN' EARN SOME MONEY",
+        "crime": "{name} DECIDES TA TRY DEY LUCK AT CRIME",
+        "safety": "{name} DECIDES TA LOOK FOR SOMEWHERE SAFE",
+        "comfort": "{name} DECIDES TA FIND SOMEWHERE COMFORTABLE",
+        "social": "{name} DECIDES TA LOOK FOR COMPANY",
+        "shopping": "{name} DECIDES TA GO SHOPPIN'",
+        "leisure": "{name} DECIDES TA HAB SOME FUN"
+      },
+      "goal": {
+        "wander": "{name} DECIDES TA WANDER ABOUT",
+        "socialize": "{name} DECIDES TA JOIN DA CROWD"
+      },
+      "flee": "{name} DECIDES TA RUN FROM A MONSTER",
+      "engage": "{name} DECIDES TA FIGHT A MONSTER"
+    },
+    "monster": {
+      "idle": "{name} SETTLES DOWN",
+      "alert": "{name} NOTICES SOMETHIN'",
+      "commit": "{name} DECIDES TA GIVE CHASE",
+      "search": "{name} SEARCHES FOR ITS LOST QUARRY",
+      "return": "{name} HEADS BACK TA ITS LAIR",
+      "recover": "{name} STOPS TA CATCH ITS BREATH"
+    },
+    "party": {
+      "idle": "{name} DECIDES TA STAND AROUND",
+      "follow": "{name} DECIDES TA WALK WIT DA LEADER",
+      "walk": "{name} DECIDES TA TAKE A STROLL",
+      "visit": "{name} DECIDES TA GO AN' CHAT WIT SOMEONE",
+      "look": "{name} DECIDES TA LOOK AT SOMETHIN'",
+      "return": "{name} DECIDES TA CATCH UP WIT DA LEADER",
+      "need": {
+        "hunger": "{name} DECIDES TA FIND SOMETHIN' TA EAT",
+        "sleep": "{name} DECIDES TA GET SOME REST",
+        "hygiene": "{name} DECIDES TA GO AN' WASH",
+        "social": "{name} DECIDES TA LOOK FOR COMPANY",
+        "leisure": "{name} DECIDES TA HAB SOME FUN"
+      }
+    },
+    "battle": {
+      "acts": "{name} USES {skill} ON {target}",
+      "actsPlain": "{name} USES {skill}",
+      "approaches": "{name} MOVES IN TA USE {skill}",
+      "holds": "{name} HOLDS POSITION"
+    }
+  }
 }

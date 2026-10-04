@@ -4,7 +4,7 @@
     "sleep": "SLEEP",
     "hygiene": "HYGIENE",
     "social": "SOCIAL",
-    "leisure": "FUN"
+    "leisure": "MOOD"
   },
   "category": {
     "materials": "MATERIALS",
@@ -21,11 +21,57 @@
   },
   "encumbrance": {
     "title": "OVERENCUMBERED",
-    "load": "{load} CARRIED, MOVEMENT SLOWED"
+    "load": "+{load}"
   },
   "addiction": {
     "all": "EVERY CRAVIN'",
     "label": "CRAVIN'",
     "feeds": "FEEDS"
+  },
+  "year": {
+    "deepTime": "{years} YEARS AGO",
+    "bce": "{year} BCE"
+  },
+  "leisure": {
+    "label": "LEISURE",
+    "gain": "MOOD +{amount}",
+    "action": {
+      "enjoy": "{name} IZ ENJOYIN' DA {item}",
+      "read": "{name} IZ READIN' DA {item}",
+      "music": "{name} IZ LISTENIN' TA DA {item}",
+      "instrument": "{name} IZ PLAYIN' DA {item}",
+      "videogame": "{name} IZ PLAYIN' VIDEOGAMES ON DA {item}",
+      "boardgame": "{name} IZ SETTIN' UP DA {item}",
+      "cards": "{name} IZ DEALIN' OUT DA {item}",
+      "toy": "{name} IZ FIDDLIN' WIT DA {item}",
+      "album": "{name} IZ LEAFIN' THROUGH DA {item}",
+      "art": "{name} IZ STUDYIN' DA {item}",
+      "garden": "{name} IZ TENDIN' DA {item}",
+      "photo": "{name} IZ TAKIN' PICTURES WIT DA {item}",
+      "stargaze": "{name} IZ STARGAZIN' THROUGH DA {item}",
+      "fish": "{name} IZ CASTIN' DA {item}",
+      "phone": "{name} IZ GLUED TA DA {item}",
+      "write": "{name} IZ SCRIBBLIN' IN DA {item}",
+      "bath": "{name} IZ SOAKIN' WIT DA {item}",
+      "scratch": "{name} IZ SCRATCHIN' DA {item}",
+      "relax": "{name} IZ UNWINDIN' WIT DA {item}",
+      "feast": "{name} IZ TUCKIN' INTO DA {item}",
+      "watch": "{name} IZ WATCHIN' DA {item}",
+      "exercise": "{name} IZ WORKIN' OUT WIT DA {item}",
+      "smoke": "{name} IZ SMOKIN' DA {item}",
+      "bet": "{name} IZ STUDYIN' DA ODDS ON DA {item}",
+      "gamble": "{name} IZ PLAYIN' DA {item}",
+      "surf": "{name} IZ RIDIN' DA SWELL ON DA {item}"
+    }
+  },
+  "targetCard": {
+    "level": "LV {n}",
+    "hp": "HP",
+    "mp": "MP",
+    "ap": "AP"
+  },
+  "help": {
+    "button": "HELP",
+    "close": "CLOSE"
   }
 }

@@ -1,4 +1,8 @@
 {
+  "hotbar": {
+    "title": "QUICK SLOTS",
+    "starHint": "ADD TA DA QUICK SLOTS (1-9)"
+  },
   "title": "BACKPACK",
   "back": "BACK",
   "searchPlaceholder": "SEARCH ITEMS...",
@@ -6,9 +10,12 @@
   "sort": {
     "name": "NAME",
     "weight": "WEIGHT",
-    "price": "PRICE"
+    "price": "PRICE",
+    "count": "COUNT",
+    "rarity": "RARITY"
   },
   "category": {
+    "New": "NEW",
     "All": "ALL",
     "Favorites": "FAVORITES",
     "Food": "FOOD",
@@ -23,7 +30,23 @@
     "Magic": "MAGIC",
     "Misc": "MISC",
     "Usable": "USABLE",
-    "Quest": "QUEST"
+    "Quest": "QUEST",
+    "Alchemistry": "ALCHEMISTRY",
+    "BodyPart": "BODY PARTS",
+    "Collectibles": "COLLECTIBLES",
+    "Component": "COMPONENTS",
+    "Crafting": "CRAFTIN'",
+    "Diseases": "DISEASES",
+    "Farming": "FARMIN'",
+    "Homeopathy": "HOMEOPATHY",
+    "Jungle": "JUNGLE",
+    "Monsters": "MONSTERS",
+    "Plants": "PLANTS",
+    "Survival": "SURVIVAL",
+    "Trash": "TRASH",
+    "Vehicles": "VEHICLES",
+    "Leisure": "LEISURE",
+    "Fertility": "FERTILITY"
   },
   "itemType": {
     "standard": "STANDARD ITEM",
@@ -43,7 +66,7 @@
     ],
     "occasion": [
       "ALWAYS",
-      "BATTLE SCREEN",
+      "BATTLE",
       "OUTSIDE BATTLE",
       "NEVER"
     ],
@@ -81,13 +104,15 @@
       "equipSlot": "EQUIP SLOT",
       "slotFallback": "SLOT",
       "consumable": "CONSUMABLE",
-      "occasion": "OCCASION",
+      "occasion": "USABLE",
       "scope": "SCOPE",
       "speedAdjust": "SPEED ADJUST",
       "successRate": "SUCCESS RATE",
       "repeatActions": "REPEAT ACTIONS",
       "apGain": "AP GAIN",
       "hitClassification": "HIT CLASSIFICATION",
+      "damageCategory": "DAMAGE CLASS",
+      "scaling": "SCALIN'",
       "damageType": "DAMAGE TYPE",
       "attackElement": "ATTACK ELEMENT",
       "formula": "FORMULA",
@@ -96,7 +121,9 @@
       "skillType": "SKILL TYPE",
       "skillFallback": "SKILL",
       "target": "TARGET",
-      "useCost": "USE COST"
+      "useCost": "USE COST",
+      "year": "YEAR",
+      "teaches": "TEACHES"
     },
     "maxHp": "MAX HP",
     "maxMp": "MAX MP",
@@ -129,6 +156,7 @@
     "susceptibility": "{state} SUSCEPTIBILITY: {pct}%",
     "resistState": "RESIST STATE: {state}",
     "attackElement": "ATTACK ELEMENT: {element}",
+    "attackState": "ATTACK STATE: {state} ({pct}%)",
     "attackSpeed": "ATTACK SPEED: {value}",
     "attackTimes": "ATTACK TIMES: +{value}",
     "paramRate": "{param} RATE: {pct}%",
@@ -142,8 +170,20 @@
     "allowsArmor": "ALLOWS ARMOR: {type}",
     "lockSlot": "LOCK EQUIP SLOT: {slot}",
     "sealSlot": "SEAL EQUIP SLOT: {slot}",
-    "dualWielding": "DUAL WIELDIN'"
+    "dualWielding": "DUAL WIELDIN'",
+    "allowsSkillType": "ALLOWS SKILL TYPE: {type}",
+    "sealSkillType": "SEAL SKILL TYPE: {type}",
+    "grantsSkill": "GRANTS SKILL: {skill}",
+    "sealsSkill": "SEALS SKILL: {skill}",
+    "actionPlus": "EXTRA ACTION CHANCE: +{pct}%",
+    "specialFlagLine": "{name}"
   },
+  "specialFlag": [
+    "AUTO BATTLE",
+    "GUARD",
+    "SUBSTITUTE",
+    "PRESERVE AP"
+  ],
   "xparam": [
     "HIT RATE",
     "EVASION RATE",
@@ -168,6 +208,9 @@
     "FLOOR DMG RATE",
     "EXP RATE"
   ],
+  "model": {
+    "fullscreenHint": "DRAG TA TURN, WHEEL TA ZOOM, MIDDLE DRAG TA PAN"
+  },
   "section": {
     "specifications": "SPECIFICATIONS",
     "invocationStats": "INVOCATION STATS",
@@ -183,7 +226,8 @@
     "blueprints": "BLUEPRINTS & COMPONENTS",
     "marketValue": "MARKET VALUE:",
     "cravingsFed": "CRAVINGS FED",
-    "medicine": "MEDICINE"
+    "medicine": "MEDICINE",
+    "allergens": "ALLERGENS"
   },
   "rarity": {
     "common": "COMMON",
@@ -193,12 +237,12 @@
     "mythic": "MYTHIC"
   },
   "blurb": {
-    "remedy": "AN ANTIQUE ALCHEMICAL EXTRACTION FROM LICENSED APOTHECARIES: VITAL HERBS IN PURIFIED SPRIN' WATER, REBUILDIN' CELL MEMBRANES AN' STEADYIN' DA NERVES!",
-    "provision": "A FIELD NUTRIENT PACKET CURED WIT PURE ROCK SALT. STANDARD SURVIVAL ISSUE AGAINST EXHAUSTION, CALORIE-DENSE WITHOUT DA RISK OF OVEREATIN'!",
-    "armament": "MARTIAL FIELD EQUIPMENT TEMPERED IN INDUSTRIAL GEOTHERMAL HEARTHS, ETCHED WIT RUNIC VEINS DAT FEED LEY STRAIGHT TA DA REFLEXES!",
-    "shield": "A PROTECTIVE COMPOSITE WEAVE LAYERED WIT HEAVY SHOCK-MITIGATION STRUCTURES, SPREADIN' KINETIC AN' THERMAL IMPACTS ACROSS DA BODY!",
-    "apparatus": "AN EXPLORER'S UTILITY APPARATUS OF FINE GEARS AN' LOCK-BYPASS SYSTEMS, BUILT FOR EXCAVATION AN' MECHANICAL REPAIR IN ROUGH WEATHER!",
-    "specimen": "AN EXOTIC SPECIMEN RECOVERED FROM DEEP SECTOR RUINS, CATALOGUED FOR ITS STABLE LEY-RESONANCE AN' PRIZED BY ALCHEMISTS AN' COLLECTORS ALIKE!"
+    "remedy": "VITAL HERBS IN PURIFIED SPRIN' WATER, FROM A LICENSED APOTHECARY. MENDS FLESH AN' STEADIES DA NERVES!",
+    "provision": "A SALT-CURED FIELD RATION. SURVIVAL ISSUE AGAINST EXHAUSTION, FILLIN' WITHOUT OVEREATIN'!",
+    "armament": "FIELD GEAR FORGED IN GEOTHERMAL HEARTHS, VEINED WIT RUNES DAT FEED LEY TA DA REFLEXES!",
+    "shield": "A LAYERED COMPOSITE WEAVE DAT SPREADS IMPACT AN' HEAT ACROSS DA WHOLE BODY!",
+    "apparatus": "AN EXPLORER'S TOOLKIT OF FINE GEARS AN' LOCK BYPASS, BUILT FOR DIGGIN' AN' REPAIRS IN BAD WEATHER!",
+    "specimen": "AN EXOTIC FIND FROM DEEP SECTOR RUINS, CATALOGUED FOR ITS STEADY LEY-RESONANCE AN' PRIZED BY COLLECTORS!"
   },
   "items": "ITEMS",
   "weight": "WEIGHT",
@@ -245,7 +289,18 @@
     "Enchant": "ENCHANT",
     "Transmute": "TRANSMUTE",
     "Absorb": "ABSORB",
-    "Reflect": "REFLECT"
+    "Reflect": "REFLECT",
+    "Study": "STUDY"
+  },
+  "study": {
+    "title": "STUDY",
+    "who": "WHO STUDIES \"{item}\"? ({duration})",
+    "done": "{name} STUDIED \"{item}\" FOR {duration}. {subject} +{points}",
+    "known": "{name} HAB ALREADY TAKEN EVERYTHIN' \"{item}\" HAB TA GIVE!",
+    "nothing": "DERE IZ NOTHIN' IN \"{item}\" TA STUDY!",
+    "hours": "{hours}H",
+    "minutes": "{minutes}MIN",
+    "hoursMinutes": "{hours}H {minutes}MIN"
   },
   "ui": {
     "carryWeight": "CARRY WEIGHT",
@@ -255,13 +310,26 @@
     "eatItem": "EAT {item}",
     "cancel": "CANCEL",
     "inspectionLog": "DETAILS",
-    "inspectionPlaceholder": "SELECT AN ITEM FROM DA BACKPACK ON DA LEFT TA INSPECT ITS NATURAL PROPERTIES, CHEMICAL COMPOSITION, AN' MECHANICAL DETAILS!",
+    "inspectionPlaceholder": "SELECT AN ITEM FROM DA BACKPACK ON DA LEFT TA SEE ITS PROPERTIES, COMPOSITION AN' STATS!",
     "useItem": "USE ITEM",
     "equip": "EQUIP",
+    "favorite": "FAVOURITE",
+    "unfavorite": "UNFAVOURITE",
     "throw": "THROW",
     "discard": "DISCARD",
     "discardItem": "DISCARD ITEM",
     "discardBody": "REMOVE {qty} OF {item} FROM DA BACKPACK? (HAB {owned})"
   },
-  "medicineDoses": "{days} DAILY DOSES"
+  "medicineDoses": "{days} DAILY DOSES",
+  "medicineIllnessCount": "{count} ILLNESSES",
+  "medicineInfoButton": "INFO",
+  "nature": {
+    "label": "NATURE",
+    "mundane": "MUNDANE",
+    "magical": "MAGICAL"
+  },
+  "allergyContains": "CONTAINS",
+  "allergyUnsafeFor": "UNSAFE FOR",
+  "allergyRelief": "ALLERGY RELIEF",
+  "allergyReliefHours": "{hours} HOURS"
 }

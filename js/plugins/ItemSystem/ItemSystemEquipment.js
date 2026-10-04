@@ -241,7 +241,8 @@
     }
 
     function isTwoHandedWeapon(item) {
-        return !!(item && item.wtypeId && item.meta && item.meta.TwoHanded);
+        // A <MartialArts> weapon (fists, claws, nunchakus) always fills both.
+        return !!(item && item.wtypeId && item.meta && (item.meta.TwoHanded || item.meta.MartialArts));
     }
 
     // A weapon or an off-hand piece: the two things a hand can close around.

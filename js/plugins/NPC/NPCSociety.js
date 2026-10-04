@@ -1393,6 +1393,9 @@
     }
   }
 
+  // Milliseconds of profile minting a frame may spend before the rest waits.
+  const PROFILE_STEP_BUDGET_MS = 4;
+
   const _setupNPCControllers = Game_Map.prototype.setupNPCControllers;
   Game_Map.prototype.setupNPCControllers = function() {
     _setupNPCControllers.call(this);
@@ -1419,20 +1422,25 @@
 
     if (!toDefer.length) return;
 
-    // Generate profiles for new NPCs in chunks across frames so the first frame
-    // isn't blocked. Once generated the profile persists in $gameSystem._npcSociety.
+    // Generate profiles for new NPCs across frames so no frame is blocked: each
+    // frame mints at least one and stops once its time budget is spent. Once
+    // generated the profile persists in $gameSystem._npcSociety. Nobody takes or
+    // leaves office inside one frame, so the leader book is asked once per name
+    // per batch instead of once per name per minted profile.
     const mapId = $gameMap.mapId();
     let i = 0;
     const step = () => {
       if ($gameMap.mapId() !== mapId) return; // player left before we finished, discard
-      const end = Math.min(i + 6, toDefer.length);
-      for (; i < end; i++) {
-        const c  = toDefer[i];
-        const ev = evByName.get(c.eventName);
-        SocietyRegistry.ensureProfile(c.eventName, _extractClassId(ev), undefined, mapId,
-          { initSpec: NPCInitSpec.fromEvent(ev) });
-        _applySocietySprite(c.eventName, ev);
-      }
+      const t0 = performance.now();
+      _withLeaderMemo(() => {
+        do {
+          const c  = toDefer[i++];
+          const ev = evByName.get(c.eventName);
+          SocietyRegistry.ensureProfile(c.eventName, _extractClassId(ev), undefined, mapId,
+            { initSpec: NPCInitSpec.fromEvent(ev) });
+          _applySocietySprite(c.eventName, ev);
+        } while (i < toDefer.length && performance.now() - t0 < PROFILE_STEP_BUDGET_MS);
+      });
       if (i < toDefer.length) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);

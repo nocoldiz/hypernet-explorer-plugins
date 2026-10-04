@@ -57,5 +57,108 @@
     "brewery": "BREWERY",
     "recipes": "RECIPES",
     "ingredients": "INGREDIENTS"
+  },
+  "recipe": {
+    "herbal_tea": {
+      "name": "HERBAL TEA",
+      "description": "A SIMPLE STEEPIN' OF HERB EXTRACT IN WATER. NO YEAST, NO FERMENTATION, JUST WARMTH AN' TIME!",
+      "outputPreview": "2-4X HERBAL TEA"
+    },
+    "honey_mead": {
+      "name": "HONEY MEAD",
+      "description": "WILD HONEY DISSOLVED IN SPRIN' WATER AN' LEFT TA FERMENT IN DA DARK. DA OLDEST BREW KNOWN!",
+      "outputPreview": "2-5X HONEY MEAD"
+    },
+    "nun_beer": {
+      "name": "NUN BEER",
+      "description": "A DARK MALT-STYLE BREW MADE FROM HONEY AN' BOTTLED WATER, FERMENTED SLOW AN' COLD LIKE DA MONASTERY CELLARS!",
+      "outputPreview": "3-6X NUN BEER"
+    },
+    "varlenias_wine": {
+      "name": "VARLENIA'S WINE",
+      "description": "A RUBY-GOLD WINE PRESSED FROM GOLDEN SUNFRUIT, AGED WIT A TOUCH OF WILD HONEY FOR SWEETNESS!",
+      "outputPreview": "2-4X VARLENIA'S WINE"
+    },
+    "aged_wine": {
+      "name": "AGED WINE",
+      "description": "CRYSTAL NECTAR FRUIT BLENDED WIT ROYAL MEAT HONEY PRODUCES A LUXURIOUS VINTAGE DAT DEMANDS PATIENCE!",
+      "outputPreview": "1-3X AGED WINE"
+    },
+    "ethanol": {
+      "name": "ETHANOL",
+      "description": "A POTENT DISTILLATE FERMENTED FROM DRAGON'S BREATH FRUIT AN' VOID STARFRUIT. DANGEROUSLY PURE ALCOHOL!",
+      "outputPreview": "1-4X ETHANOL"
+    }
+  },
+  "grange": {
+    "appName": "GRANGE",
+    "subtitle": "BARRELS, HIVES, FIELDS AN' LIVESTOCK, VIEWABLE FROM ANYWHERE!",
+    "readOnly": "READIN' ONLY. DA WORK IZ STILL DONE ON DA SPOT!",
+    "seasonLabel": "SEASON:",
+    "season": {
+      "spring": "SPRIN'",
+      "summer": "SUMMER",
+      "autumn": "AUTUMN",
+      "winter": "WINTER"
+    },
+    "tab": {
+      "overview": "OVERVIEW",
+      "cellar": "CELLAR",
+      "apiary": "APIARY",
+      "fields": "FIELDS",
+      "livestock": "LIVESTOCK"
+    },
+    "overviewTitle": "DA HOLDINGS AT A GLANCE",
+    "waitingOnYou": "{n} WAITIN' ON YOU",
+    "nothingWaiting": "NOTHIN' WAITIN'",
+    "needsYou": "WANTS YOU IN PERSON",
+    "allQuiet": "EVERYTHIN' IZ COMIN' ALONG. NOTHIN' NEEDS A JOURNEY TODAY!",
+    "projectionNote": "FIELDS AN' BARRELS IZ PROJECTED FROM DA LAST VISIT, ASSUMIN' FAIR WEATHER IN OPEN GROUND. GREENHOUSE CROPS FINISH SOONER DEN SHOWN!",
+    "tile": {
+      "barrels": "BARRELS GOING",
+      "barrelsReady": "READY TA BOTTLE",
+      "plots": "PLOTS PLANTED",
+      "cropsRipe": "RIPE",
+      "animals": "HEAD OF STOCK",
+      "honey": "HONEY IN STORE",
+      "bees": "BEES",
+      "mood": "COLONY MOOD",
+      "efficiency": "EFFICIENCY"
+    },
+    "job": {
+      "barrel": "{name} HAB FINISHED AT {where}.",
+      "crop": "{name} IZ RIPE AT {where}.",
+      "produce": "{animal} AT {where} IZ HOLDIN' {what}.",
+      "hiveUnhappy": "DA COLONY IZ UNSETTLED (MOOD {mood})!",
+      "outOfSeason": "{name} AT {where} IZ OUT OF SEASON AN' STANDIN' STILL!"
+    },
+    "colBrew": "BREW",
+    "colWhere": "WHERE",
+    "colProgress": "PROGRESS",
+    "colLeft": "LEFT",
+    "colCrop": "CROP",
+    "colYield": "YIELD",
+    "colAnimal": "BEAST",
+    "colGrowth": "GROWTH",
+    "colProduce": "PRODUCE",
+    "now": "NOW",
+    "ripe": "RIPE",
+    "outOfSeason": "OUT OF SEASON",
+    "daysLeft": "{n} DAYS",
+    "grown": "GROWN",
+    "noProduce": "GIVES NOTHIN'",
+    "noBarrels": "NO BARREL ANYWHERE IZ WORKIN'. FILL ONE AN' IT SHOWS UP HERE!",
+    "noHive": "NO COLONY HAB BEEN FOUNDED YET!",
+    "noPlots": "NOTHIN' IZ PLANTED. A TILLED PLOT APPEARS HERE DA MOMENT A SEED GOES IN!",
+    "noAnimals": "DA PARTY OWNS NO STOCK.",
+    "cellarNote": "BOTTLIN' IZ DONE AT DA BARREL. A BREW LEFT PAST ITS TIME DOES NOT SPOIL, BUT DOES NOT IMPROVE EITHER!",
+    "hiveNote": "SMOKIN', HARVESTIN' AN' SPLITTIN' A COLONY IZ DONE AT DA HIVE!",
+    "fieldsNote": "A PLOT OUT OF SEASON IZ NOT DEAD, IT IZ WAITIN' FOR ITS GROWIN' MONTHS!",
+    "livestockNote": "FEEDIN', PETTIN' AN' COLLECTIN' IZ DONE IN DA FIELD!",
+    "queen": "DA QUEEN",
+    "queenAlive": "ALIVE, HEALTH {health}, {eggs} EGGS LAID!",
+    "queenDead": "NO QUEEN. DA COLONY IZ RUNNIN' DOWN!",
+    "castes": "CASTES",
+    "stores": "STORES"
   }
 }

@@ -231,10 +231,24 @@
     const FIT_TIMEOUT_MS = 2000;
     let fitHandle = 0;
 
+    // Refitting resizes the WebGL backbuffer and forces a layout, a long frame
+    // every time. The settle loop and the fullscreen events often ask for a fit
+    // the canvas already has (alt-tab, a focus change), so a fit is remembered
+    // by window and game size and only redone when one of them moved.
+    let lastFitKey = '';
+    function fitKey() {
+        return window.innerWidth + 'x' + window.innerHeight + '/' + Graphics.width + 'x' + Graphics.height;
+    }
+
     function refitCanvas() {
         if (typeof Graphics._updateAllElements === 'function') {
+            lastFitKey = fitKey();
             Graphics._updateAllElements();
         }
+    }
+
+    function refitCanvasIfMoved() {
+        if (fitKey() !== lastFitKey) refitCanvas();
     }
 
     function refitCanvasWhenSettled() {
@@ -258,11 +272,11 @@
                 stable = 0;
                 lastW = w;
                 lastH = h;
-                refitCanvas();
+                refitCanvasIfMoved();
             }
             if (stable >= FIT_STABLE_FRAMES || Date.now() > deadline) {
                 fitHandle = 0;
-                refitCanvas();
+                refitCanvasIfMoved();
                 return;
             }
             fitHandle = requestAnimationFrame(step);

@@ -1,0 +1,103 @@
+{
+  "_comment": "DISPLAY TEXT FOR DA PERSONALITY LIST IN JS/DB/HEALTH/PERSONALITYDATA.JSON, WHICH CARRIES ONLY KEYS. DA THOUGHT POOLS IZ IN PERSONALITYTHOUGHTS.JSON!",
+  "nervous": {
+    "name": "NERVOUS",
+    "description": "PRONE TA ANXIETY AN' HIGH STRESS!"
+  },
+  "calm": {
+    "name": "CALM",
+    "description": "RESISTANT TA STRESS, THINKS CLEARLY!"
+  },
+  "aggressive": {
+    "name": "AGGRESSIVE",
+    "description": "QUICK TA ANGER, HIGH PHYSICAL DRIVE!"
+  },
+  "melancholic": {
+    "name": "MELANCHOLIC",
+    "description": "PRONE TA SADNESS AN' INTROSPECTION!"
+  },
+  "sanguine": {
+    "name": "SANGUINE",
+    "description": "ENERGETIC, OPTIMISTIC, AN' SOCIAL!"
+  },
+  "cautious": {
+    "name": "CAUTIOUS",
+    "description": "THINKS BEFORE ACTIN', ANALYZES RISK!"
+  },
+  "impulsive": {
+    "name": "IMPULSIVE",
+    "description": "ACTS ON INSTINCT, LOW SELF-CONTROL!"
+  },
+  "stoic": {
+    "name": "STOIC",
+    "description": "ENDURES HARDSHIP WITHOUT COMPLAINT!"
+  },
+  "paranoid": {
+    "name": "PARANOID",
+    "description": "DISTRUSTFUL AN' SUSPICIOUS OF OTHERS!"
+  },
+  "empathetic": {
+    "name": "EMPATHETIC",
+    "description": "HIGHLY SENSITIVE TA DA EMOTIONS OF OTHERS!"
+  },
+  "authoritative": {
+    "name": "AUTHORITATIVE",
+    "description": "A NATURAL LEADER, DECISIVE AN' COMMANDIN'!"
+  },
+  "scholarly": {
+    "name": "SCHOLARLY",
+    "description": "INTELLECT-DRIVEN, CURIOUS, AN' ANALYTICAL!"
+  },
+  "artistic": {
+    "name": "ARTISTIC",
+    "description": "SENSITIVE, CREATIVE, AN' PERCEPTIVE!"
+  },
+  "adventurous": {
+    "name": "ADVENTUROUS",
+    "description": "SEEKS NOVELTY AN' THRILLS, HIGH-RISK!"
+  },
+  "nurturing": {
+    "name": "NURTURIN'",
+    "description": "CARIN', PROTECTIVE, AN' COMPASSIONATE!"
+  },
+  "mischievous": {
+    "name": "MISCHIEVOUS",
+    "description": "PLAYFUL, CLEVER, AN' ENJOYS CHAOS!"
+  },
+  "cynical": {
+    "name": "CYNICAL",
+    "description": "DISTRUSTFUL OF HUMAN SINCERITY OR INTEGRITY!"
+  },
+  "disciplined": {
+    "name": "DISCIPLINED",
+    "description": "HIGH SELF-CONTROL, FOLLOWS A STRICT CODE!"
+  },
+  "fatalistic": {
+    "name": "FATALISTIC",
+    "description": "BELIEVES ALL EVENTS IZ PREDETERMINED!"
+  },
+  "grumpy": {
+    "name": "GRUMPY",
+    "description": "CHRONICALLY IRRITABLE AN' BAD-TEMPERED!"
+  },
+  "loyal": {
+    "name": "LOYAL",
+    "description": "STEADFAST AN' DEVOTED TA ALLIES!"
+  },
+  "brave": {
+    "name": "BRAVE",
+    "description": "FACES DANGER WIT LOW FEAR RESPONSE!"
+  },
+  "timid": {
+    "name": "TIMID",
+    "description": "EASILY FRIGHTENED, AVOIDANT OF CONFLICT!"
+  },
+  "hedonistic": {
+    "name": "HEDONISTIC",
+    "description": "BELIEVES DA PURSUIT OF PLEASURE IZ DA HIGHEST GOOD!"
+  },
+  "apathetic": {
+    "name": "APATHETIC",
+    "description": "LACKIN' INTEREST, ENTHUSIASM, OR CONCERN!"
+  }
+}

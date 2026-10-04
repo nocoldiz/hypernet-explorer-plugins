@@ -1,9 +1,19 @@
 {
+  "title": "LOCKPICKIN'",
   "complexity": "LOCK COMPLEXITY: ",
+  "timeLabel": "TIME",
+  "nextLabel": "NEXT",
+  "tensionLabel": "TENSION",
   "seconds": "S",
   "lockPicked": "LOCK PICKED!",
   "lockJammed": "LOCK JAMMED...",
   "timeUp": "TIME UP!",
+  "seized": "DA CYLINDER SEIZED!",
+  "abandoned": "PICK WITHDRAWN...",
   "usedSkeletonKey": "USED SKELETON KEY!",
-  "noLockpicks": "YOU NO HAB ANY LOCKPICKS"
+  "noLockpicks": "YOU NO HAB ANY LOCKPICKS",
+  "craftOffer": "NO LOCKPICKS LEFT, BUT DERE IZ ENOUGH TA BEND ONE: {materials}. MAKE A {item}?",
+  "craftYes": "BEND ONE NOW",
+  "craftNo": "LEAVE DA LOCK",
+  "craftedOne": "BENT A {item} AT DA DOOR"
 }

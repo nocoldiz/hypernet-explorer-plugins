@@ -509,9 +509,34 @@
     let _interiorTileX = -1;
     let _interiorTileY = -1;
 
+    // Every region id of the map, read straight off the region plane of
+    // $dataMap.data (layer 5): this walks every tile, and $gameMap.regionId
+    // runs a validity check and the data lookup through the engine for each
+    // one. Falls back to regionId when the data is not the expected shape.
+    function forEachDividerTile(w, h, fn) {
+        const data = $dataMap && $dataMap.data;
+        if (data && $dataMap.width === w && $dataMap.height === h && data.length >= 6 * w * h) {
+            const base = 5 * w * h;
+            for (let i = 0; i < w * h; i++) {
+                if ((data[base + i] || 0) === INTERIOR_DIVIDER_REGION && fn(i) === false) return;
+            }
+            return;
+        }
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                if ($gameMap.regionId(x, y) === INTERIOR_DIVIDER_REGION && fn(y * w + x) === false) return;
+            }
+        }
+    }
+
+    // Keyed on the map data as well as the id: the procedural maps reuse one id
+    // for every place they become, and slide a new data array in as they go.
+    let _dividerData = null;
     function mapHasDividers() {
-        if (_dividerMapId === $gameMap.mapId()) return _mapHasDividers;
+        const data = $dataMap ? $dataMap.data : null;
+        if (_dividerMapId === $gameMap.mapId() && _dividerData === data) return _mapHasDividers;
         _dividerMapId = $gameMap.mapId();
+        _dividerData = data;
         _mapHasDividers = false;
         // The world map's region plane holds one country id per tile (see
         // Countries.json / getWorldRegionId), so its ~320 region-30 tiles are a
@@ -524,16 +549,10 @@
             _interiorTileY = -1;
             return false;
         }
-        const w = $gameMap.width();
-        const h = $gameMap.height();
-        for (let y = 0; y < h && !_mapHasDividers; y++) {
-            for (let x = 0; x < w; x++) {
-                if ($gameMap.regionId(x, y) === INTERIOR_DIVIDER_REGION) {
-                    _mapHasDividers = true;
-                    break;
-                }
-            }
-        }
+        forEachDividerTile($gameMap.width(), $gameMap.height(), () => {
+            _mapHasDividers = true;
+            return false;
+        });
         // Invalidate any cached bounds (and room labels) from the previous map.
         _roomIds = null;
         _interiorBounds = null;
@@ -563,11 +582,7 @@
         _roomIds = new Int32Array(w * h);
         _roomBounds = [];
         const isDivider = new Uint8Array(w * h);
-        for (let y = 0; y < h; y++) {
-            for (let x = 0; x < w; x++) {
-                if ($gameMap.regionId(x, y) === INTERIOR_DIVIDER_REGION) isDivider[y * w + x] = 1;
-            }
-        }
+        forEachDividerTile(w, h, (i) => { isDivider[i] = 1; });
         // A divider can border several rooms, so "already counted for this
         // room" is stamped with the room number rather than a plain flag.
         const wallSeen = new Int32Array(w * h);

@@ -36,7 +36,7 @@
  * With SplitScreenMultiplayer active the CPU is replaced by Player 2 and the
  * two take alternate frames hot-seat style, driven by the P2 controller.
  *
- * The HUD is built the way a PlayStation built one, minus the television: a
+ * The HUD is built the way a 32-bit console built one, minus the television: a
  * 240-line virtual framebuffer upscaled with nearest filtering for the boxes,
  * keylines and block gauges, with every label on top of them as crisp HTML type
  * (window.PSXHud / PSXHud.domPanel). No scanlines, no vignette.
@@ -1305,7 +1305,7 @@
 
     //=========================================================================
     // HUD. Every 2D widget here is drawn in a 320-wide virtual framebuffer and
-    // upscaled with nearest filtering, the way a PlayStation drew its overlays:
+    // upscaled with nearest filtering, the way a 32-bit console drew its overlays:
     // an 8px bitmap face, hard one-pixel shadows and gauges built out of
     // discrete blocks. The dressing is art deco, gold on black lacquer, which
     // is what a bowling alley's overhead board looked like before neon: see
@@ -1516,7 +1516,7 @@
     //=========================================================================
     // Status strip and result card. Sprites rather than windows: an RMMZ
     // windowskin frame is the one thing on screen that could never have come
-    // off a PlayStation.
+    // off a 32-bit console.
     //=========================================================================
     class Sprite_BowlStatus extends Sprite {
         constructor() {

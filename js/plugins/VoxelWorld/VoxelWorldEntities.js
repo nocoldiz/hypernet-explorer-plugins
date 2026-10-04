@@ -142,6 +142,104 @@
     const FLY_SWOOP_H    = 4;         // how far over the party feet a diving flyer levels out
     // Frames, as the personality table counts them, into seconds.
     const FRAME = 1 / 60;
+    // How a personality closes in (BiomeEnemyManager._steer): a dive or a
+    // charge runs at this many times the creature's own speed, a charger
+    // paws the ground this long first, and both take this long to come round
+    // again afterwards.
+    const STEER_DASH     = 2.6;
+    const STEER_WINDUP   = 0.6;    // seconds
+    const STEER_RECOVER  = 0.9;    // seconds
+    // A pack counts its own within this, and calls them in from this far.
+    const PACK_RANGE      = 5 * TILE_UNITS;
+    const PACK_CALL_RANGE = 14 * TILE_UNITS;
+    // The food web: how far a creature notices what it hunts or what hunts it
+    // (the battle system's ECOLOGY_AWARENESS, six steps), how often it looks,
+    // and how often two creatures locked in a fight trade a blow.
+    const ECO_AWARE_UNITS = 6 * TILE_UNITS;
+    const ECO_SCAN_SECS   = 0.5;
+    const ECO_ROUND_SECS  = 1.0;
+
+    // Real-time combat (CombatSession, at the end of this file). Every number
+    // the fight is tuned by, in one place. Distances are world units, times
+    // are seconds.
+    const COMBAT = {
+        ENGAGE_R:        48,    // a creature this close to the leader is in the fight (~4 steps)
+        JOIN_R:          160,   // ...and one already hunting the party this close joins it
+        DISENGAGE_R:     420,   // the leader this far from every foe...
+        ESCAPE_SECS:     3,     // ...for this long, and the party got away
+        BASE_INTERVAL:   2.2,   // between two actions of a battler of the fight's middling speed
+        INTERVAL_MIN:    0.9,
+        INTERVAL_MAX:    4.5,
+        RECOVERY_BASE:   0.35,  // what any action costs on top of the interval
+        RECOVERY_MP:     0.02,  // ...per point of MP it spent
+        RECOVERY_TP:     0.015, // ...per point of TP
+        RECOVERY_REPEAT: 0.3,   // ...per extra hit it makes
+        PLAN_GIVEUP:     6,     // an action that cannot reach its target for this long is rethought
+        REACH_MIN:       34,    // an arm's length, whatever a tag says (the swing's own reach)
+        REACH_STEP:      26,    // world units per step of <Range:>
+        REACH_MAX:       600,   // an "unlimited" range, out here
+        SKILL_STEPS:     4,     // a skill that says nothing about its range (MapBattleMode's default)
+        BLAST_R:         30,    // an area skill catches everybody this close to its target
+        ALLY_LEASH:      150,   // allies never chase further than this from the leader
+        LOW_HP:          0.4,   // an ally under this share of HP is worth a heal
+        FLY_STRIKE_H:    22,    // a flyer higher than this over its quarry is not yet in reach
+        BOLT_SPEED:      300,   // a shot or a spell from one of the party or a creature
+        LEADER_FX_D:     14,    // the leader's own hits are shown this far in front of the eye
+        DEFEND_SECS:     1,     // R with nothing to reload: the guard is held this long
+        SWITCH_COOLDOWN: 2.5,   // and the Vector gun folds at most this often
+        POPUP_LIFE:      1.1,
+        POPUP_RISE:      14
+    };
+    // The party's own line, broken up for a fight.
+    const FIGHT_SPREAD  = 16;   // how far from the leader an idle ally stands
+    const FIGHT_SPEED   = 52;   // how fast an ally crosses the ground
+    const FIGHT_SPACING = 7;    // nobody stands closer than this to anybody else
+
+    // Is a party looking along `yaw` turned away from something standing at
+    // (relX, relZ) from them? The eye looks down -z at yaw 0.
+    function facesAway(yaw, relX, relZ) {
+        return (-Math.sin(yaw)) * relX + (-Math.cos(yaw)) * relZ < 0;
+    }
+
+    // A roaming creature's wounds are filed with the battle system under its
+    // pid, exactly where a fight with the party files them, so a creature
+    // mauled by a wolf is the same wounded creature when the party meets it.
+    function bioPersistentStore() {
+        const BSE = window.BattleSystemEnhanced;
+        return (BSE && BSE.State && BSE.State.persistentEnemyData) || null;
+    }
+    function bioPersistentRecord(ent) {
+        const p = bioPersistentStore();
+        return p ? (p[ent.pid] || null) : null;
+    }
+    function bioWriteHp(ent, hp) {
+        const p = bioPersistentStore();
+        if (!p) return;
+        const rec = p[ent.pid] || { troopId: troopForBioEnemy(ent.enemyId), enemyHp: {} };
+        if (!rec.enemyHp) rec.enemyHp = {};
+        rec.enemyHp[0] = hp;
+        p[ent.pid] = rec;
+    }
+    function bioForget(ent) {
+        const p = bioPersistentStore();
+        if (p) delete p[ent.pid];
+    }
+
+    // A creature lunges, flinches or casts with its own model's clip, and
+    // goes back to walking (or standing) when the clip is done.
+    function restoreGait(ent) {
+        const m = ent && ent.model;
+        if (!m || ent.dead) return;
+        try {
+            if (ent.gait === 'idle' || !(ent.moveSpeed > 0)) m.playIdleAnimation();
+            else m.playGait(ent.gait);
+        } catch (e) { /* some families auto-idle */ }
+    }
+    function playCreatureClip(ent, name) {
+        const m = ent && ent.model;
+        if (!m || ent.dead || typeof m.playAnimation !== 'function') return;
+        try { m.playAnimation(name, false, () => restoreGait(ent)); } catch (e) { /* no such clip */ }
+    }
 
     // Which creatures live in the water, which can go either way, and which
     // drown in it. The battle system owns those lists (its archetype tables in
@@ -207,11 +305,15 @@
         return 0;
     }
 
-    function makeEnemyPlate(name, level) {
-        const cv = document.createElement('canvas');
-        cv.width = 512; cv.height = 96;
+    // The plate's lettering, and in a fight the health bar under it. Drawn
+    // into the plate's own canvas, so a creature being fought reads its
+    // wounds off the same card that names it rather than off a second one.
+    const PLATE_HP_COLORS = ['#3ec46d', '#e8c53a', '#e04a3a'];
+    function paintPlate(cv, name, level, hpRate) {
         const ctx = cv.getContext('2d');
+        ctx.clearRect(0, 0, cv.width, cv.height);
         const lvText = level > 0 ? T('CamperDrive.enemy.level', { n: level }) : '';
+        const fighting = hpRate != null;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.lineJoin = 'round';
@@ -223,8 +325,38 @@
             ctx.fillStyle = color;
             ctx.fillText(text, cv.width / 2, y);
         };
-        draw(String(name || ''), 30, 40, '#f4ead6');
-        if (lvText) draw(lvText, 74, 34, ENEMY_PLATE_COLORS[enemyLevelBand(level)] || '#FFFFFF');
+        // In a fight the two lines close up to make room for the bar.
+        draw(String(name || ''), fighting ? 22 : 30, fighting ? 34 : 40, '#f4ead6');
+        if (lvText) {
+            draw(lvText, fighting ? 56 : 74, fighting ? 28 : 34,
+                ENEMY_PLATE_COLORS[enemyLevelBand(level)] || '#FFFFFF');
+        }
+        if (!fighting) return;
+        const rate = Math.max(0, Math.min(1, hpRate));
+        const w = 300, h = 14, x = (cv.width - w) / 2, y = 76;
+        ctx.fillStyle = 'rgba(0,0,0,0.8)';
+        ctx.fillRect(x - 3, y - 3, w + 6, h + 6);
+        ctx.fillStyle = PLATE_HP_COLORS[rate > 0.5 ? 0 : rate > 0.25 ? 1 : 2];
+        ctx.fillRect(x, y, Math.round(w * rate), h);
+    }
+
+    // Redraw a plate with the health it should be showing (null takes the bar
+    // off again). Only when the number it shows has actually moved: a canvas
+    // upload a frame per creature is not free.
+    function setPlateHp(sp, hpRate) {
+        const d = sp && sp.userData;
+        if (!d || !d._cv) return;
+        const key = hpRate == null ? -1 : Math.round(Math.max(0, Math.min(1, hpRate)) * 100);
+        if (d._hpKey === key) return;
+        d._hpKey = key;
+        paintPlate(d._cv, d._name, d._level, hpRate);
+        if (sp.material && sp.material.map) sp.material.map.needsUpdate = true;
+    }
+
+    function makeEnemyPlate(name, level) {
+        const cv = document.createElement('canvas');
+        cv.width = 512; cv.height = 96;
+        paintPlate(cv, name, level, null);
 
         const tex = new THREE.CanvasTexture(cv);
         if (THREE.SRGBColorSpace !== undefined) tex.colorSpace = THREE.SRGBColorSpace;
@@ -235,6 +367,10 @@
         // head instead of sinking it into the model.
         if (sp.center && sp.center.set) sp.center.set(0.5, 0);
         sp.userData._plate = true;
+        sp.userData._cv = cv;
+        sp.userData._name = name;
+        sp.userData._level = level;
+        sp.userData._hpKey = -1;
         return sp;
     }
 
@@ -406,8 +542,11 @@
                 }
                 if (ent.plate) this._sizePlate(ent, vanX, vanZ);
                 const dx = ent.x - vanX, dz = ent.z - vanZ;
-                if (dx * dx + dz * dz > ENEMY_3D_DESPAWN * ENEMY_3D_DESPAWN) this._remove(i);
+                // A creature the party is fighting is never recycled from under
+                // the fight, however far the chase has carried it.
+                if (!ent.battler && dx * dx + dz * dz > ENEMY_3D_DESPAWN * ENEMY_3D_DESPAWN) this._remove(i);
             }
+            this._ecoTick(delta, vanX, vanZ);
             this._timer += delta;
             if (this._timer < ENEMY_3D_SPAWN_INT) return;
             this._timer = 0;
@@ -477,6 +616,26 @@
         // the actual step to _advance, which owns where a creature may go.
         _roam(ent, delta, px, pz) {
             const beh = ent.beh || {};
+            // In a fight with the party: the fight says who it is after and
+            // when it wants to strike (CombatSession), its nature says how it
+            // goes about getting there.
+            if (ent.fight) { this._fightStep(ent, beh, delta); return; }
+            // Something it eats, or something that eats it, is in sight: the
+            // food web out here runs the way it does on the 2D map.
+            if (ent.ecoFight) { this._advance(ent, delta, 0, px, pz); return; }
+            if (ent.threat && ent.threat.alive && !ent.threat.dead && ent.spooked <= 0 && ent.state === 'idle') {
+                ent.heading = Math.atan2(ent.z - ent.threat.z, ent.x - ent.threat.x);
+                this._advance(ent, delta, ent.moveSpeed * (1.4 + (beh.chaseSpeed || 0) * 0.5), px, pz);
+                return;
+            }
+            if (ent.prey && ent.prey.alive && !ent.prey.dead && ent.spooked <= 0 && ent.state === 'idle') {
+                const pd = Math.hypot(ent.prey.x - ent.x, ent.prey.z - ent.z);
+                const k = this._steer(ent, beh, ent.prey.x, ent.prey.z, pd,
+                    { range: ENEMY_3D_CONTACT_R, strike: true, faceAway: true }, delta);
+                this._advance(ent, delta, ent.moveSpeed * k * (1 + (beh.chaseSpeed || 0) * 0.5),
+                    ent.prey.x, ent.prey.z);
+                return;
+            }
             const toParty = px == null ? 0 : Math.hypot(px - ent.x, pz - ent.z);
             const faceParty = px == null ? ent.heading : Math.atan2(pz - ent.z, px - ent.x);
             // A creature that has just been in a fight and lived wants nothing
@@ -514,7 +673,7 @@
                     } else {
                         speed = ent.moveSpeed * (1 + (beh.chaseSpeed || 0));
                     }
-                    this._react(ent, beh, faceParty, toParty, seen, delta);
+                    speed *= this._react(ent, beh, px, pz, toParty, seen, delta);
                     if (seen) ent.memT = (beh.memory || 120) * FRAME;
                     else ent.memT -= delta;
                     if (!beh.relentless) {
@@ -614,50 +773,319 @@
             }
         }
 
-        // What it does once it HAS noticed. Sets the heading; the caller has
-        // already worked out the speed.
-        _react(ent, beh, faceParty, toParty, seen, delta) {
-            const band = beh.band;
-            if (ent.flies) {
-                // Flying enemies swoop down directly at the player
-                ent.heading = faceParty;
-                ent.diving = true;
-                return;
+        // What it does once it HAS noticed the party, before any fight is on.
+        // Sets the heading and hands back how hard it is moving (a share of
+        // the speed the caller has already worked out).
+        _react(ent, beh, px, pz, toParty, seen, delta) {
+            if (px == null) return 1;
+            // Out of a fight nothing is ready to strike yet: a swooper dives,
+            // a charger charges, and the fight opens when they arrive.
+            return this._steer(ent, beh, px, pz, toParty, {
+                range: ENEMY_3D_CONTACT_R, strike: true,
+                faceAway: this._partyFacesAway(ent, px, pz)
+            }, delta);
+        }
+
+        // Is the party's back turned to this creature? The eye's own yaw,
+        // handed over by the scene every frame (setPartyYaw); a stalker only
+        // closes on a back, exactly as it does on the 2D map.
+        setPartyYaw(yaw) { this._partyYaw = yaw; }
+        _partyFacesAway(ent, px, pz) {
+            if (this._partyYaw == null) return true;
+            return facesAway(this._partyYaw, ent.x - px, ent.z - pz);
+        }
+
+        // ---------------------------------------------------------------------
+        // How a personality closes on its quarry
+        // ---------------------------------------------------------------------
+        // One answer for all three hunts: the party before a fight, the party
+        // during one, and a creature's prey. The same tags drive it as drive
+        // the 2D map's aiActCommit (BattleSystemEnhancedEncounters): a swooper
+        // drops in a straight line and climbs back out, a charger paws the
+        // ground and runs straight through, a stalker only closes on a turned
+        // back, a circler orbits and darts in, an ambusher waits for you to
+        // walk into it, a pack holds off and calls until the pack is with it.
+        //
+        //   tx, tz, dist   where the quarry is, and how far
+        //   o.range        how close it has to be to land what it means to land
+        //   o.strike       it is ready to strike: what it is waiting for
+        //   o.faceAway     the quarry's back is turned to it
+        //
+        // Sets ent.heading and returns how hard it is moving, as a share of its
+        // own speed: 0 stands still, 1 is its gait, above 1 is a sprint.
+        _steer(ent, beh, tx, tz, dist, o, delta) {
+            const face = Math.atan2(tz - ent.z, tx - ent.x);
+            const reach = Math.max(4, o.range || ENEMY_3D_CONTACT_R);
+            const near = dist <= reach * 0.85;
+            const band = beh.band
+                ? [beh.band[0] * TILE_UNITS, beh.band[1] * TILE_UNITS] : null;
+            if (ent.orbitDir == null) ent.orbitDir = Math.random() < 0.5 ? 1 : -1;
+
+            // A dash under way runs its line out whatever the quarry does: a
+            // dive or a charge is something to be sidestepped.
+            if (ent.dashT > 0) {
+                ent.dashT -= delta;
+                ent.heading = ent.dashYaw;
+                if (ent.dashT <= 0) {
+                    ent.dashT = 0;
+                    ent.recoverT = STEER_RECOVER;
+                    ent.diving = false;
+                }
+                return STEER_DASH;
             }
-            if (ent.swims) {
-                // Swimming enemies swim directly towards the player
-                ent.heading = faceParty;
-                return;
+            // ...and after it, a moment of climbing back out or catching breath.
+            if (ent.recoverT > 0) {
+                ent.recoverT -= delta;
+                ent.heading = face + Math.PI * 0.6 * ent.orbitDir;
+                if (ent.flies) ent.diving = false;
+                return 0.7;
             }
-            switch (beh.react) {
+
+            // A flyer of any temper comes down out of the sky the one way it
+            // can; a swimmer simply swims at you.
+            let react = beh.react;
+            if (ent.flies && react !== 'flee' && react !== 'coward') react = 'swoop';
+            else if (ent.swims && react !== 'flee' && react !== 'coward') react = 'chase';
+
+            switch (react) {
                 case 'flee':
-                case 'coward':
-                    ent.heading = faceParty + Math.PI;
-                    break;
-                case 'stalk':
-                    // Keeps its distance and its eyes on you: closes to the near
-                    // edge of its band, backs off past the far one.
-                    if (band && toParty < band[0] * TILE_UNITS) ent.heading = faceParty + Math.PI;
-                    else if (band && toParty > band[1] * TILE_UNITS) ent.heading = faceParty;
-                    else ent.heading = faceParty + Math.PI / 2;
-                    break;
-                case 'circle':
-                    // Orbits, holding its band, always turned inward.
-                    ent.heading = faceParty + Math.PI / 2 +
-                        (band && toParty > band[1] * TILE_UNITS ? -0.7 : band && toParty < band[0] * TILE_UNITS ? 0.7 : 0);
-                    break;
+                    ent.heading = face + Math.PI;
+                    return 1.4;
+
+                case 'coward': {
+                    // Wants you gone, wants to know where you went.
+                    const b = band || [5 * TILE_UNITS, 9 * TILE_UNITS];
+                    if (dist < b[0]) { ent.heading = face + Math.PI; return 1.2; }
+                    ent.heading = face;
+                    return dist > b[1] ? 0.8 : 0;
+                }
+
+                case 'stalk': {
+                    // Holds the gap. Closes only on a back, freezes on a face.
+                    const b = band || [4 * TILE_UNITS, 7 * TILE_UNITS];
+                    ent.heading = face;
+                    if (near) return 0;
+                    if (o.faceAway) return 1.15;
+                    if (dist > b[1]) return 0.9;
+                    if (dist < b[0]) { ent.heading = face + Math.PI; return 0.9; }
+                    return 0;
+                }
+
+                case 'circle': {
+                    // Round and round, in on the beat.
+                    if (o.strike) { ent.heading = face; return near ? 0 : 1.5; }
+                    const b = band || [4 * TILE_UNITS, 5 * TILE_UNITS];
+                    const lo = Math.max(b[0], reach * 1.2), hi = Math.max(b[1], lo + TILE_UNITS);
+                    ent.heading = face + Math.PI / 2 * ent.orbitDir +
+                        (dist > hi ? -0.7 * ent.orbitDir : dist < lo ? 0.7 * ent.orbitDir : 0);
+                    return 1;
+                }
+
+                case 'pack': {
+                    // Alone it holds off and calls; with the pack it comes in.
+                    ent.heading = face + (ent.packOff || 0) * (near ? 0 : 1);
+                    if (this._packMates(ent) > 0 || dist <= reach * 1.5) return near ? 0 : 1;
+                    this._callPack(ent, tx, tz);
+                    const b = band || [3 * TILE_UNITS, 6 * TILE_UNITS];
+                    if (dist > b[1]) return 1;
+                    if (dist < b[0]) { ent.heading = face + Math.PI; return 0.8; }
+                    return 0;
+                }
+
                 case 'swoop':
-                    ent.heading = faceParty;
-                    ent.diving = toParty > TILE_UNITS * 2;
-                    break;
+                    // Up high and turning until it is ready, then one straight
+                    // dive through the quarry and a climb back out.
+                    if (!o.strike) {
+                        ent.diving = false;
+                        ent.heading = face + Math.PI / 2 * ent.orbitDir;
+                        return 0.8;
+                    }
+                    ent.dashYaw = face;
+                    ent.dashT = Math.max(0.35, (dist + reach) / Math.max(1, ent.moveSpeed * STEER_DASH));
+                    ent.diving = true;
+                    ent.heading = face;
+                    return STEER_DASH;
+
+                case 'charge':
+                    // Paws the ground, then runs the whole line at you and
+                    // well past, which is what makes a charge dodgeable.
+                    ent.heading = face;
+                    if (!o.strike) return near ? 0 : 0.6;
+                    if (!(ent.windT > 0)) ent.windT = STEER_WINDUP;
+                    ent.windT -= delta;
+                    if (ent.windT > 0) return 0;
+                    ent.windT = 0;
+                    ent.dashYaw = face;
+                    ent.dashT = (dist + 3 * TILE_UNITS) / Math.max(1, ent.moveSpeed * STEER_DASH);
+                    return STEER_DASH;
+
+                case 'ambush':
+                    // Part of the scenery until the quarry walks into it.
+                    if (!ent.sprung) {
+                        if (dist > Math.max(reach, (beh.sight || 3) * TILE_UNITS)) return 0;
+                        ent.sprung = true;
+                    }
+                    ent.heading = face;
+                    return near ? 0 : 1.8;
+
                 default:
-                    // chase, track, ambush, charge, pack: all of them come at you.
-                    ent.heading = faceParty;
-                    break;
+                    // chase, track and anything without a word for it.
+                    ent.heading = face;
+                    return near ? 0 : 1;
             }
-            // A pack hunter fans out a little rather than queueing up behind
-            // whoever got there first.
-            if (beh.react === 'pack') ent.heading += (ent.packOff || 0);
+        }
+
+        // Same-species company within earshot, and a call that brings them
+        // to where the caller is looking.
+        _packMates(ent) {
+            let n = 0;
+            for (const o of this._ents) {
+                if (o === ent || !o.alive || o.dead || o.enemyId !== ent.enemyId) continue;
+                if (Math.hypot(o.x - ent.x, o.z - ent.z) <= PACK_RANGE) n++;
+            }
+            return n;
+        }
+        _callPack(ent, tx, tz) {
+            if ((ent.calledT || 0) > 0) return;
+            ent.calledT = 1.5;
+            for (const o of this._ents) {
+                if (o === ent || !o.alive || o.dead || o.enemyId !== ent.enemyId) continue;
+                if (o.fight || o.state === 'commit') continue;
+                if (Math.hypot(o.x - ent.x, o.z - ent.z) > PACK_CALL_RANGE) continue;
+                o.state = 'commit';
+                o.memT = ((o.beh && o.beh.memory) || 120) * FRAME;
+                o.lastX = tx; o.lastZ = tz;
+            }
+        }
+
+        // One tick of a creature in the party's fight. CombatSession fills in
+        // ent.fight every frame; this only moves it.
+        _fightStep(ent, beh, delta) {
+            const f = ent.fight;
+            if (ent.calledT > 0) ent.calledT -= delta;
+            const dist = Math.hypot(f.x - ent.x, f.z - ent.z);
+            const k = (ent.moveSpeed > 0)
+                ? this._steer(ent, beh, f.x, f.z, dist, f, delta) : 0;
+            if (!(ent.moveSpeed > 0)) ent.heading = Math.atan2(f.z - ent.z, f.x - ent.x);
+            const pace = ent.moveSpeed * (ent.flies ? 2.2 : 1) * (1 + (beh.chaseSpeed || 0) * 0.5);
+            this._advance(ent, delta, pace * k, f.x, f.z);
+        }
+
+        // ---------------------------------------------------------------------
+        // The food web
+        // ---------------------------------------------------------------------
+        // Every creature carries its role (<Hunter>, <Predator>, <Prey>,
+        // <Neutral>) and the battle system's own table says who hunts whom
+        // and who wins (BattleSystemEnhancedEncounters, BSE.Helpers.ecology*).
+        // A hunter that catches what it hunts fights it, one exchange a
+        // second, on the very rules the 2D map's monster fights use
+        // (BSE.Skirmish.round), and what loses is left lying as a body.
+        _ecoTick(delta, px, pz) {
+            const H = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+            if (!H || !H.getEnemyEcology || !H.ecologyChases) return;
+            for (const ent of this._ents) if (ent.calledT > 0 && !ent.fight) ent.calledT -= delta;
+            this._ecoScanT = (this._ecoScanT || 0) - delta;
+            if (this._ecoScanT <= 0) {
+                this._ecoScanT = ECO_SCAN_SECS;
+                this._ecoScan(H);
+            }
+            this._ecoFights(delta, H);
+        }
+
+        _ecoScan(H) {
+            const R = ECO_AWARE_UNITS;
+            const live = this._ents.filter(e => e.alive && e.root && !e.dead);
+            for (const ent of live) {
+                ent.prey = null; ent.threat = null;
+                if (ent.battler || ent.ecoFight) continue;
+                const mine = H.getEnemyEcology($dataEnemies[ent.enemyId]);
+                let bestPrey = null, bestThreat = null, dp = R, dt = R;
+                for (const other of live) {
+                    if (other === ent || other.battler) continue;
+                    const d = Math.hypot(other.x - ent.x, other.z - ent.z);
+                    if (d > R) continue;
+                    const theirs = H.getEnemyEcology($dataEnemies[other.enemyId]);
+                    if (H.ecologyChases(mine, theirs) && d < dp) { bestPrey = other; dp = d; }
+                    else if (H.ecologyChases(theirs, mine) && d < dt) { bestThreat = other; dt = d; }
+                }
+                ent.prey = bestPrey;
+                ent.threat = bestThreat;
+                // Caught up with it: the fight is on.
+                if (bestPrey && dp <= ENEMY_3D_CONTACT_R && !bestPrey.ecoFight) {
+                    this._startEcoFight(ent, bestPrey, H);
+                }
+            }
+        }
+
+        _startEcoFight(a, b, H) {
+            if (!this._eco) this._eco = [];
+            const side = (ent) => {
+                const data = $dataEnemies[ent.enemyId];
+                if (ent.ecoHp == null) {
+                    const rec = bioPersistentRecord(ent);
+                    const stored = rec && rec.enemyHp ? rec.enemyHp[0] : undefined;
+                    ent.ecoMhp = (data && data.params && data.params[0]) || 1;
+                    ent.ecoHp = stored !== undefined ? stored : ent.ecoMhp;
+                }
+                return {
+                    kind: 'monster', ent, level: ent.level || 1,
+                    eco: H.getEnemyEcology(data),
+                    hp: ent.ecoHp, mhp: ent.ecoMhp,
+                    morale: null,
+                    blow: 'Blunt'
+                };
+            };
+            const fight = { a: side(a), b: side(b), t: ECO_ROUND_SECS * 0.5 };
+            const BSE = window.BattleSystemEnhanced;
+            const S = BSE && BSE.Skirmish;
+            if (S && S.MORALE) {
+                fight.a.morale = S.MORALE[fight.a.eco];
+                fight.b.morale = S.MORALE[fight.b.eco];
+            }
+            a.ecoFight = fight; b.ecoFight = fight;
+            a.heading = Math.atan2(b.z - a.z, b.x - a.x);
+            b.heading = a.heading + Math.PI;
+            this._eco.push(fight);
+        }
+
+        _ecoFights(delta, H) {
+            if (!this._eco || !this._eco.length) return;
+            const S = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Skirmish;
+            for (let i = this._eco.length - 1; i >= 0; i--) {
+                const f = this._eco[i];
+                const A = f.a.ent, B = f.b.ent;
+                const over = !A.alive || !B.alive || A.dead || B.dead || A.battler || B.battler ||
+                    Math.hypot(A.x - B.x, A.z - B.z) > ENEMY_3D_CONTACT_R * 2.5 || !S || !S.round;
+                if (over) { this._endEcoFight(i); continue; }
+                f.t -= delta;
+                if (f.t > 0) continue;
+                f.t = ECO_ROUND_SECS;
+                const r = S.round(f.a, f.b, Math.random);
+                const atk = r.attacker, def = r.defender;
+                def.hp = Math.max(0, def.hp - r.damage);
+                def.ent.ecoHp = def.hp;
+                bioWriteHp(def.ent, def.hp);
+                playCreatureClip(atk.ent, 'attack');
+                playCreatureClip(def.ent, 'hit');
+                if (this.onEcoHit) this.onEcoHit(def.ent, r.damage);
+                if (def.hp <= 0) {
+                    this._endEcoFight(i);
+                    bioForget(def.ent);
+                    if (this.onEcoKill) this.onEcoKill(def.ent, atk.ent);
+                    continue;
+                }
+                if (S.breaksOff && S.breaksOff(def, atk, Math.random)) {
+                    this._endEcoFight(i);
+                    def.ent.spooked = 8;
+                }
+            }
+        }
+
+        _endEcoFight(i) {
+            const f = this._eco[i];
+            this._eco.splice(i, 1);
+            if (f.a.ent.ecoFight === f) f.a.ent.ecoFight = null;
+            if (f.b.ent.ecoFight === f) f.b.ent.ecoFight = null;
         }
 
         // Move a creature along its heading, and put it at the height its
@@ -1872,28 +2300,118 @@
                     if (!a || !a.characterName || !a.characterName()) continue;
                     if (this._skipId && a.actorId && a.actorId() === this._skipId) continue;
                     if (isBike) {
-                        wanted.push({ sheet: 'Vehicles/!$BikeRiding', index: 0 });
+                        wanted.push({ sheet: 'Vehicles/!$BikeRiding', index: 0, actor: a });
                     } else if (isBroom) {
-                        wanted.push({ sheet: broomSheet, index: 0 });
+                        wanted.push({ sheet: broomSheet, index: 0, actor: a });
                     } else {
-                        wanted.push({ sheet: a.characterName(), index: a.characterIndex() });
+                        wanted.push({ sheet: a.characterName(), index: a.characterIndex(), actor: a });
                     }
                 }
             }
             const pet = window.PetSystem && window.PetSystem.getActivePet
                 ? window.PetSystem.getActivePet() : null;
             if (pet && pet.characterName) {
-                wanted.push({ sheet: pet.characterName, index: pet.characterIndex || 0 });
+                wanted.push({ sheet: pet.characterName, index: pet.characterIndex || 0, actor: null });
             }
-            const sig = wanted.map(w => w.sheet + '#' + w.index).join('|');
+            // Who each card IS goes into the signature as well as what it looks
+            // like: a fight hands the lead to another member (CombatSession),
+            // and two members drawn off the same sheet must not keep each
+            // other's places.
+            const sig = wanted.map(w => w.sheet + '#' + w.index + '@' +
+                (w.actor && w.actor.actorId ? w.actor.actorId() : 0)).join('|');
             if (sig === this._sig) return;
+            // Where everybody was standing goes with them into the new line,
+            // so a reshuffle in the middle of a fight does not teleport anyone.
+            const was = new Map();
+            for (const m of this._members) if (m.actor) was.set(m.actor, m);
             this._sig = sig;
             for (const m of this._members) m.bb.dispose();
-            this._members = wanted.map((w) => ({
-                bb: new CharacterBillboard(w.sheet, w.index, PERSON_H),
-                x: 0, y: 0, z: 0
-            }));
+            this._members = wanted.map((w) => {
+                const prev = w.actor ? was.get(w.actor) : null;
+                return {
+                    bb: new CharacterBillboard(w.sheet, w.index, PERSON_H),
+                    actor: w.actor,
+                    x: prev ? prev.x : 0, y: prev ? prev.y : 0, z: prev ? prev.z : 0,
+                    placed: !!prev && !!prev.placed
+                };
+            });
             for (const m of this._members) this._scene.add(m.bb.mesh);
+        }
+
+        // The card standing for one of the party, or null (the leader has
+        // none: the leader is the eye).
+        memberFor(actor) {
+            if (!actor) return null;
+            for (const m of this._members) if (m.actor === actor) return m;
+            return null;
+        }
+        members() { return this._members; }
+
+        // ---------------------------------------------------------------------
+        // Fighting
+        // ---------------------------------------------------------------------
+        // In a fight the line breaks: every member goes where the fight wants
+        // them (CombatSession.allyGoal), and the trail is dropped so the line
+        // re-forms from where they actually are once it is over. `goalFn(m)`
+        // hands back the point a member is heading for, or null to stay by
+        // the leader. A member who is down lies where they fell, dimmed.
+        fight(delta, lx, ly, lz, camYaw, df, groundFn, goalFn) {
+            this._trail.length = 0;
+            const light = df == null ? 1 : df;
+            for (let i = 0; i < this._members.length; i++) {
+                const m = this._members[i];
+                // By the leader, each on a side of their own: behind and
+                // fanned out, the eye looking down -z at yaw 0.
+                const side = camYaw + (i - 1) * 0.9;
+                const byX = lx + Math.sin(side) * FIGHT_SPREAD;
+                const byZ = lz + Math.cos(side) * FIGHT_SPREAD;
+                if (!m.placed) {
+                    // Nobody has stood anywhere yet (a fight opened before the
+                    // line ever walked): start them where they would stand.
+                    m.x = byX; m.z = byZ;
+                    m.placed = true;
+                }
+                const down = !!(m.actor && m.actor.isDead && m.actor.isDead());
+                let gx = m.x, gz = m.z;
+                if (!down) {
+                    const goal = goalFn ? goalFn(m) : null;
+                    if (goal) { gx = goal.x; gz = goal.z; }
+                    else { gx = byX; gz = byZ; }
+                }
+                const dx = gx - m.x, dz = gz - m.z;
+                const d = Math.hypot(dx, dz);
+                const moving = !down && d > 1.5;
+                if (moving) {
+                    const step = Math.min(d, FIGHT_SPEED * delta);
+                    m.x += dx / d * step;
+                    m.z += dz / d * step;
+                    m.bb.yaw = Math.atan2(dx, dz);
+                }
+                // Nobody stands inside anybody else.
+                for (let j = 0; j < this._members.length; j++) {
+                    if (j === i) continue;
+                    const o = this._members[j];
+                    const ox = m.x - o.x, oz = m.z - o.z;
+                    const od = Math.hypot(ox, oz);
+                    if (od > 0.001 && od < FIGHT_SPACING) {
+                        m.x += ox / od * (FIGHT_SPACING - od) * 0.5;
+                        m.z += oz / od * (FIGHT_SPACING - od) * 0.5;
+                    }
+                }
+                const gy = groundFn ? groundFn(m.x, m.z) : ly;
+                m.y = gy;
+                m.bb.moving = moving;
+                m.bb.setPosition(m.x, gy + (m.lungeT > 0 ? Math.sin(m.lungeT * 12) * 1.5 : 0), m.z);
+                if (m.lungeT > 0) m.lungeT -= delta;
+                m.bb.setDaylight(down ? light * 0.3 : light);
+                m.bb.update(lx, lz, camYaw);
+            }
+        }
+
+        // The line takes up again from where everybody is standing.
+        endFight() {
+            this._trail.length = 0;
+            for (const m of this._members) m.placed = false;
         }
 
         setVisible(on) {
@@ -1957,6 +2475,7 @@
                 if (pos) {
                     const gy = groundFn ? groundFn(pos.x, pos.z) : ly;
                     m.x = pos.x; m.y = gy; m.z = pos.z;
+                    m.placed = true;
                     m.bb.yaw = pos.yaw;
                     m.bb.moving = pos.moving;
                     m.bb.setPosition(pos.x, gy, pos.z);
@@ -2026,6 +2545,30 @@
         // Which vehicle the party is aboard, so it is not drawn twice.
         setDriving(key) { this._driving = key || null; }
 
+        // Call a vehicle over: it is parked on the square the party stands on
+        // (the one record both maps read, window.VehiclePosition) and drawn at
+        // exactly this point in the world rather than at the square's middle.
+        // The point is kept for as long as the record still names that square,
+        // so it is the 2D map's answer the moment the party leaves the world.
+        placeAt(key, x, z, yaw) {
+            const VP = window.VehiclePosition;
+            if (!key || !VP || !VP.set) return false;
+            const wx = Math.floor(x / WORLD_TILE_SIZE), wy = Math.floor(z / WORLD_TILE_SIZE);
+            VP.set(key, WORLD_MAP_ID, wx, wy, wx, wy);
+            if (!this._spots) this._spots = {};
+            this._spots[key] = { x, z, yaw: yaw || 0, wx, wy };
+            this._timer = PARKED_INT;   // stood up on the very next frame
+            return true;
+        }
+
+        // Where a vehicle parked on a square is drawn: the spot it was called
+        // to, while the record still names that square, else the middle.
+        _spotFor(key, wx, wy) {
+            const s = this._spots && this._spots[key];
+            if (s && s.wx === wx && s.wy === wy) return s;
+            return null;
+        }
+
         // The nearest vehicle standing within reach of a point, or null. What
         // pressing E on foot asks before it decides there is nothing out here
         // to get into (see the scene's _boardParked).
@@ -2069,10 +2612,11 @@
                 if (VP.mapId(key) !== WORLD_MAP_ID) continue;
                 const wx = VP.worldX(key), wy = VP.worldY(key);
                 if (!(wx > 0) && !(wy > 0)) continue;
-                const x = wx * WORLD_TILE_SIZE + WORLD_TILE_SIZE * 0.5;
-                const z = wy * WORLD_TILE_SIZE + WORLD_TILE_SIZE * 0.5;
+                const spot = this._spotFor(key, wx, wy);
+                const x = spot ? spot.x : wx * WORLD_TILE_SIZE + WORLD_TILE_SIZE * 0.5;
+                const z = spot ? spot.z : wy * WORLD_TILE_SIZE + WORLD_TILE_SIZE * 0.5;
                 if (Math.hypot(x - atX, z - atZ) > PARKED_RANGE) continue;
-                want.set(key, { x, z });
+                want.set(key, { x, z, yaw: spot ? spot.yaw : null });
             }
             for (const [key, rec] of [...this._live]) {
                 const w = want.get(key);
@@ -2095,7 +2639,7 @@
             for (const [key, w] of want) {
                 if (this._live.has(key)) continue;
                 const gy = this._terrain.getTerrainHeight(w.x / WORLD_TILE_SIZE, w.z / WORLD_TILE_SIZE);
-                const yaw = ((w.x * 7 + w.z * 13) % 360) * Math.PI / 180;
+                const yaw = w.yaw != null ? w.yaw : ((w.x * 7 + w.z * 13) % 360) * Math.PI / 180;
 
                 if (key !== 'camper' && key !== 'starship' && VEHICLE_2D_PARKED[key]) {
                     const cfg = VEHICLE_2D_PARKED[key];
@@ -2134,8 +2678,1023 @@
         }
     }
 
+    // =========================================================================
+    // Real-time combat
+    //
+    // A fight out here is not a battle scene. Nothing is pushed, nothing fades,
+    // the world never stops: the party meets a creature on the ground they are
+    // standing on and fights it there, in real time.
+    //
+    // The player is the leader and only the leader. Everybody else - the rest
+    // of the party and every creature - acts by themselves, each on a clock of
+    // its own set by its speed. And every action anybody takes goes through the
+    // one door the battle itself uses: a Game_Action, applied to a target. The
+    // party's skills are their carried loadout (window.BattleLoadout), the
+    // same nine the battle's own bar is built from; a creature's are its
+    // database action patterns (Game_Enemy.makeActions). So every rule the
+    // battle system has - the damage formulas, Health_Core's limbs, the body
+    // parts a creature loses, ammunition, the fumble on a skill reached for too
+    // early - is in force out here without being written a second time.
+    //
+    // $gameTroop is a real troop for as long as the fight lasts and
+    // $gameParty.inBattle() is true, exactly as MapBattleMode leaves them on
+    // the 2D map, so every hook that asks "is this a fight?" gets the right
+    // answer. Creatures that join a fight already under way are appended to
+    // the troop.
+    //
+    // The scene is the host: it owns where everybody stands, the bodies, the
+    // eye and the quick bar, and is told when a fight starts and ends
+    // (_onCombatBegin / _onCombatEnd) and when the leader must be handed on
+    // (_handOffLeader).
+    // =========================================================================
+
+    // Which side of the fight an item is aimed at, off its scope alone.
+    function isForFriendScope(item) {
+        const s = item ? item.scope : 0;
+        return s >= 7 && s <= 14;
+    }
+    function isForAllScope(item) {
+        const s = item ? item.scope : 0;
+        return s === 2 || s === 8 || s === 10 || s === 13 || s === 14;
+    }
+    function isForDeadScope(item) {
+        const s = item ? item.scope : 0;
+        return s === 9 || s === 10;
+    }
+
+    // A number off a note tag, read the way MapBattleMode reads <Range:> so
+    // the two never disagree about how far anything reaches.
+    function metaSteps(obj, key) {
+        const n = Number(obj && obj.meta && obj.meta[key]);
+        return Number.isFinite(n) && n > 0 ? n : 0;
+    }
+    function reachOfSteps(steps) {
+        if (steps >= 99) return COMBAT.REACH_MAX;
+        return Math.min(COMBAT.REACH_MAX, Math.max(COMBAT.REACH_MIN, steps * COMBAT.REACH_STEP));
+    }
+
+    // Numbers rising off whoever was hit: damage, healing, a miss. One small
+    // canvas per number, thrown away when it has faded.
+    class CombatPopups {
+        constructor(scene) {
+            this._scene = scene;
+            this._live = [];
+        }
+
+        add(x, y, z, text, colour) {
+            if (typeof document === 'undefined' || typeof THREE === 'undefined') return;
+            const cv = document.createElement('canvas');
+            cv.width = 256; cv.height = 96;
+            const ctx = cv.getContext('2d');
+            ctx.font = "bold 64px GameFont, 'Bitter', serif";  // i18n-ignore  CSS font stack
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.lineJoin = 'round';
+            ctx.lineWidth = 10;
+            ctx.strokeStyle = 'rgba(0,0,0,0.9)';
+            ctx.strokeText(String(text), 128, 48);
+            ctx.fillStyle = colour || '#ffffff';
+            ctx.fillText(String(text), 128, 48);
+            const tex = new THREE.CanvasTexture(cv);
+            if (THREE.SRGBColorSpace !== undefined) tex.colorSpace = THREE.SRGBColorSpace;
+            const sp = new THREE.Sprite(new THREE.SpriteMaterial({
+                map: tex, transparent: true, depthWrite: false, depthTest: false
+            }));
+            sp.renderOrder = 950;
+            sp.position.set(x + (Math.random() - 0.5) * 3, y, z + (Math.random() - 0.5) * 3);
+            this._scene.add(sp);
+            this._live.push({ sp, t: 0 });
+        }
+
+        // Kept the same size on screen at any distance, like the name plates.
+        update(delta, camX, camZ) {
+            for (let i = this._live.length - 1; i >= 0; i--) {
+                const p = this._live[i];
+                p.t += delta;
+                p.sp.position.y += COMBAT.POPUP_RISE * delta;
+                const k = p.t / COMBAT.POPUP_LIFE;
+                p.sp.material.opacity = k < 0.6 ? 1 : Math.max(0, 1 - (k - 0.6) / 0.4);
+                const d = Math.hypot(p.sp.position.x - camX, p.sp.position.z - camZ);
+                const w = Math.max(5, Math.min(40, d * 0.07));
+                p.sp.scale.set(w, w * 0.375, 1);
+                if (p.t >= COMBAT.POPUP_LIFE) this._drop(i);
+            }
+        }
+
+        _drop(i) {
+            const p = this._live[i];
+            this._live.splice(i, 1);
+            this._scene.remove(p.sp);
+            if (p.sp.material.map) p.sp.material.map.dispose();
+            p.sp.material.dispose();
+        }
+
+        clear() { for (let i = this._live.length - 1; i >= 0; i--) this._drop(i); }
+    }
+
+    // A shot or a spell in flight between two of the fighters. It flies at
+    // where its target IS, not where it was, so a running target is still
+    // hit; what it does is applied the moment it arrives.
+    class CombatBolts {
+        constructor(scene) {
+            this._scene = scene;
+            this._live = [];
+            this._geo = null;
+        }
+
+        launch(from, target, colour, onHit) {
+            if (typeof THREE === 'undefined') { onHit(); return; }
+            if (!this._geo) this._geo = new THREE.SphereGeometry(1.6, 8, 6);
+            const mesh = new THREE.Mesh(this._geo, new THREE.MeshBasicMaterial({
+                color: colour, transparent: true, opacity: 0.9, depthWrite: false
+            }));
+            mesh.position.set(from.x, from.y, from.z);
+            mesh.frustumCulled = false;
+            this._scene.add(mesh);
+            this._live.push({ mesh, target, onHit, t: 0 });
+        }
+
+        update(delta) {
+            for (let i = this._live.length - 1; i >= 0; i--) {
+                const b = this._live[i];
+                b.t += delta;
+                const to = b.target();
+                const p = b.mesh.position;
+                const dx = to.x - p.x, dy = to.y - p.y, dz = to.z - p.z;
+                const d = Math.hypot(dx, dy, dz);
+                const step = COMBAT.BOLT_SPEED * delta;
+                // Arrived, or flying so long something has gone wrong with it.
+                if (d <= step || b.t > 4) {
+                    this._drop(i);
+                    b.onHit();
+                    continue;
+                }
+                p.x += dx / d * step; p.y += dy / d * step; p.z += dz / d * step;
+            }
+        }
+
+        _drop(i) {
+            const b = this._live[i];
+            this._live.splice(i, 1);
+            this._scene.remove(b.mesh);
+            b.mesh.material.dispose();
+        }
+
+        clear() {
+            for (let i = this._live.length - 1; i >= 0; i--) this._drop(i);
+            if (this._geo) { this._geo.dispose(); this._geo = null; }
+        }
+    }
+
+    // The colour a bolt burns, by the element of what it carries.
+    const BOLT_COLOURS = [0xfff0c0, 0xff6a3a, 0x8fd8ff, 0xffe45a, 0x5ab4ff, 0x9ae07a, 0xe0c890, 0xffffff, 0x9a6aff];
+    function boltColour(item) {
+        const id = (item && item.damage && item.damage.elementId) || 0;
+        return id > 0 ? BOLT_COLOURS[id % BOLT_COLOURS.length] : BOLT_COLOURS[0];
+    }
+
+    class CombatSession {
+        constructor(host) {
+            this._host = host;
+            this.active = false;
+            this._ending = false;
+            this._foes = [];
+            this._clock = new Map();     // battler -> fight time it may act again at
+            this._plans = new Map();     // battler -> { item, target, since }
+            this._downed = new Set();    // party members already counted as down
+            this._t = 0;
+            this._awayT = 0;
+            this._popups = host && host._scene ? new CombatPopups(host._scene) : null;
+            this._bolts  = host && host._scene ? new CombatBolts(host._scene) : null;
+        }
+
+        // Is a fight on, or being wound up? The battle hooks ask the second
+        // half too: the fight's own ending runs engine code that must not be
+        // read as a fight in a battle scene.
+        inCombat() { return this.active || this._ending; }
+        get foes() { return this._foes; }
+        isFoe(ent) { return this._foes.indexOf(ent) >= 0; }
+
+        // ---------------------------------------------------------------------
+        // Opening and joining
+        // ---------------------------------------------------------------------
+        // The fight opens on `ent` and on nothing else: anything else that
+        // wants in comes in through join(), on its own feet.
+        begin(ent) {
+            if (this.active) return this.join(ent);
+            if (!ent || !ent.alive || ent.dead) return false;
+            if (typeof BattleManager === 'undefined' || typeof $gameTroop === 'undefined') return false;
+            const troopId = troopForBioEnemy(ent.enemyId);
+            if (!troopId) return false;
+            const BSE = window.BattleSystemEnhanced;
+            // No map event stands behind a creature out here, and its wounds
+            // are its own record (bioPersistentRecord), so the battle system's
+            // per-event bookkeeping is told there is none.
+            if (BSE && BSE.State) {
+                BSE.State.currentBattleEventId = null;
+                BSE.State.currentEventId = 0;
+                BSE.State.reinforcement = null;
+            }
+            // The 2D screen's weather and pictures survive the setup: the
+            // engine clears them for a battle, and a creature walked into out
+            // here is not a reason for the map to come back without its rain.
+            const screen = (typeof $gameScreen !== 'undefined' && $gameScreen) ? {
+                type: $gameScreen._weatherType, power: $gameScreen._weatherPower,
+                duration: $gameScreen._weatherDuration, pictures: $gameScreen._pictures
+            } : null;
+            try {
+                BattleManager.setup(troopId, true, false);
+            } catch (e) {
+                console.error('[VoxelWorld] combat setup', e);
+                return false;
+            } finally {
+                if (screen) {
+                    $gameScreen._weatherType = screen.type;
+                    $gameScreen._weatherPower = screen.power;
+                    $gameScreen._weatherDuration = screen.duration;
+                    if (screen.pictures) $gameScreen._pictures = screen.pictures;
+                }
+            }
+            // The battle system refuses a setup now and then (a window up, a
+            // journey running): the troop is then still the LAST fight's, and
+            // fighting that would pay its spoils twice.
+            const first = $gameTroop.members()[0];
+            if (!first || $gameTroop._troopId !== troopId || !first.isAlive() ||
+                first.enemyId() !== ent.enemyId) return false;
+            // One creature, one battler: the troop is the fight, not the table.
+            $gameTroop._enemies.length = 1;
+
+            this.active = true;
+            this._ending = false;
+            this._t = 0;
+            this._awayT = 0;
+            this._foes = [];
+            this._clock.clear();
+            this._plans.clear();
+            this._downed.clear();
+            try {
+                $gameSystem.onBattleStart();
+                $gameParty.onBattleStart(false);
+                $gameTroop.onBattleStart(false);
+            } catch (e) { console.error('[VoxelWorld] combat start', e); }
+            try {
+                BattleManager.saveBgmAndBgs();
+                BattleManager.playBattleBgm();
+            } catch (e) { /* no music is not a reason to stop */ }
+            for (const a of this._party()) {
+                this._clock.set(a, this._interval(a) * (0.2 + Math.random() * 0.5));
+            }
+            this._bind(ent, first);
+            if (this._host && this._host._onCombatBegin) this._host._onCombatBegin(ent);
+            return true;
+        }
+
+        // A creature walks into a fight already under way.
+        join(ent) {
+            if (!this.active) return this.begin(ent);
+            if (!ent || !ent.alive || ent.dead || this.isFoe(ent)) return false;
+            if (typeof Game_Enemy === 'undefined') return false;
+            let battler;
+            try { battler = new Game_Enemy(ent.enemyId, 0, 0); } catch (e) { return false; }
+            $gameTroop._enemies.push(battler);
+            try { battler.onBattleStart(false); } catch (e) { /* it fights all the same */ }
+            this._bind(ent, battler);
+            return true;
+        }
+
+        _bind(ent, battler) {
+            const rec = bioPersistentRecord(ent);
+            const hp = rec && rec.enemyHp ? rec.enemyHp[0] : undefined;
+            if (hp !== undefined && hp !== null) {
+                battler.setHp(Math.max(1, Math.min(battler.mhp, Number(hp) || 1)));
+            }
+            ent.battler = battler;
+            battler._vwEnt = ent;
+            ent.fight = { x: ent.x, z: ent.z, range: COMBAT.REACH_MIN, strike: false, faceAway: false };
+            ent.fightActor = null;
+            ent.state = 'commit';
+            ent.sprung = false;
+            ent.prey = null;
+            ent.threat = null;
+            ent.spooked = 0;
+            this._foes.push(ent);
+            this._clock.set(battler, this._t + this._interval(battler) * (0.4 + Math.random() * 0.6));
+            setPlateHp(ent.plate, battler.hpRate());
+        }
+
+        // ---------------------------------------------------------------------
+        // Who is in it
+        // ---------------------------------------------------------------------
+        _party() {
+            return (typeof $gameParty !== 'undefined' && $gameParty) ? $gameParty.battleMembers() : [];
+        }
+        _leader() {
+            return (typeof $gameParty !== 'undefined' && $gameParty) ? $gameParty.leader() : null;
+        }
+        _foeBattlers() {
+            return this._foes.map(e => e.battler).filter(b => b && b.isAlive() && !b._vwGone);
+        }
+
+        // Where a fighter stands. The leader is the eye; an ally is their card
+        // in the line; a creature is its model. y is the middle of the body.
+        _posOf(b) {
+            const H = this._host;
+            if (b && b.isEnemy && b.isEnemy()) {
+                const ent = b._vwEnt;
+                if (ent) {
+                    const y = (ent.y != null ? ent.y : 0) + (ent.hgt || 8) * 0.5;
+                    return { x: ent.x, y, z: ent.z };
+                }
+            }
+            const here = H && H._contactPoint ? H._contactPoint() : { x: 0, y: 0, z: 0 };
+            if (b && b !== this._leader() && H && H._followers && H._followers.memberFor) {
+                const m = H._followers.memberFor(b);
+                if (m && m.placed) return { x: m.x, y: (m.y || 0) + PERSON_H * 0.5, z: m.z };
+            }
+            return { x: here.x, y: here.y != null ? here.y : 0, z: here.z };
+        }
+
+        // Where a hit on somebody is SHOWN: the leader's own wounds come up in
+        // front of the eye rather than inside it.
+        _fxPos(b) {
+            const H = this._host;
+            if (b && b === this._leader() && H && H._cameraYaw) {
+                const p = this._posOf(b);
+                const yaw = H._cameraYaw();
+                return {
+                    x: p.x - Math.sin(yaw) * COMBAT.LEADER_FX_D,
+                    y: p.y - 3,
+                    z: p.z - Math.cos(yaw) * COMBAT.LEADER_FX_D
+                };
+            }
+            return this._posOf(b);
+        }
+
+        _dist(a, b) {
+            const p = this._posOf(a), q = this._posOf(b);
+            return Math.hypot(p.x - q.x, p.z - q.z);
+        }
+
+        // ---------------------------------------------------------------------
+        // Clocks
+        // ---------------------------------------------------------------------
+        // A battler acts once an interval, the interval set by its AGI against
+        // everybody else's in the fight: twice as quick as the middle of the
+        // field acts about half again as often.
+        _interval(b) {
+            const all = this._party().concat(this._foeBattlers());
+            let sum = 0, n = 0;
+            for (const x of all) { if (x && x.agi > 0) { sum += x.agi; n++; } }
+            const ref = n ? sum / n : 1;
+            const agi = Math.max(1, (b && b.agi) || 1);
+            const k = Math.sqrt(ref / agi);
+            return Math.max(COMBAT.INTERVAL_MIN, Math.min(COMBAT.INTERVAL_MAX, COMBAT.BASE_INTERVAL * k));
+        }
+
+        // What an action costs on top of the wait. There is no cooldown tag on
+        // any skill; the price of one is what it spends.
+        recoveryFor(b, item) {
+            if (!item) return COMBAT.RECOVERY_BASE;
+            let mp = 0, tp = 0;
+            try {
+                if (b && b.skillMpCost && DataManager.isSkill(item)) mp = b.skillMpCost(item);
+                if (b && b.skillTpCost && DataManager.isSkill(item)) tp = b.skillTpCost(item);
+            } catch (e) { /* costs unreadable: the base it is */ }
+            const reps = Math.max(1, (item.repeats || 1)) - 1;
+            return COMBAT.RECOVERY_BASE + mp * COMBAT.RECOVERY_MP +
+                tp * COMBAT.RECOVERY_TP + reps * COMBAT.RECOVERY_REPEAT;
+        }
+
+        _ready(b) { return this._t >= (this._clock.get(b) || 0); }
+        _rest(b, item) {
+            this._clock.set(b, this._t + this._interval(b) + this.recoveryFor(b, item));
+        }
+
+        // How far an action reaches, in world units. The plain attack reaches
+        // as far as the weapon (or the creature's own <Range:>), a skill as far
+        // as its tag, and a skill on oneself does not reach anywhere at all.
+        rangeOf(b, item) {
+            if (item && item.scope === 11) return Infinity;
+            const attack = !item || (b && b.attackSkillId && item.id === b.attackSkillId() &&
+                DataManager.isSkill(item));
+            if (attack) {
+                if (b && b.isActor && b.isActor()) {
+                    if (b.isOutOfBullets && b.isOutOfBullets()) return reachOfSteps(1);
+                    let best = 0;
+                    for (const w of (b.weapons ? b.weapons() : [])) best = Math.max(best, metaSteps(w, 'Range'));
+                    return reachOfSteps(best || 1);
+                }
+                const data = b && b.enemy ? b.enemy() : null;
+                return reachOfSteps(metaSteps(data, 'Range') || 1);
+            }
+            return reachOfSteps(metaSteps(item, 'Range') || COMBAT.SKILL_STEPS);
+        }
+
+        // Is it a shot or a spell that has to cross the gap, or a blow?
+        _isRanged(b, item) {
+            const steps = (!item || (b.attackSkillId && item.id === b.attackSkillId()))
+                ? this.rangeOf(b, item) / COMBAT.REACH_STEP
+                : (metaSteps(item, 'Range') || COMBAT.SKILL_STEPS);
+            return steps > 2;
+        }
+
+        // ---------------------------------------------------------------------
+        // One frame of the fight
+        // ---------------------------------------------------------------------
+        update(delta) {
+            const H = this._host;
+            const cam = H && H._camera ? H._camera.position : { x: 0, z: 0 };
+            if (this._bolts) this._bolts.update(delta);
+            if (this._popups) this._popups.update(delta, cam.x, cam.z);
+            if (!this.active) return;
+            this._t += delta;
+
+            // A creature the world took away (recycled, dug out from under)
+            // leaves the fight as if it had run.
+            for (let i = this._foes.length - 1; i >= 0; i--) {
+                const ent = this._foes[i];
+                if (!ent.alive) this._release(ent, i);
+            }
+
+            const leader = this._leader();
+            const lp = leader ? this._posOf(leader) : { x: 0, z: 0 };
+            const yaw = H && H._cameraYaw ? H._cameraYaw() : 0;
+
+            // Where every creature is going, and whether it is ready to strike.
+            for (let i = this._foes.length - 1; i >= 0; i--) {
+                const ent = this._foes[i];
+                const b = ent.battler;
+                if (!b || ent.dead) continue;
+                if (b.isDead()) { this._fell(b); continue; }
+                const tgt = this._foeTarget(ent);
+                ent.fightActor = tgt;
+                const p = tgt ? this._posOf(tgt) : lp;
+                const plan = this._plans.get(b);
+                const f = ent.fight || (ent.fight = {});
+                f.x = p.x; f.z = p.z;
+                f.range = this.rangeOf(b, plan ? plan.item : null);
+                f.strike = this._ready(b);
+                f.faceAway = tgt === leader ? facesAway(yaw, ent.x - lp.x, ent.z - lp.z) : true;
+                setPlateHp(ent.plate, b.hpRate());
+                // A creature whose nature is to run leaves the fight once it is
+                // past its leash; it lives to be met again.
+                const beh = ent.beh || {};
+                if ((beh.react === 'flee' || beh.react === 'coward') &&
+                    Math.hypot(ent.x - lp.x, ent.z - lp.z) > (beh.leash || 10) * TILE_UNITS) {
+                    this._release(ent, i);
+                }
+            }
+
+            for (const ent of this._foes.slice()) this._foeAct(ent);
+            for (const a of this._party()) if (a !== leader) this._allyAct(a);
+            for (const a of this._party()) {
+                if (a.isDead() && !this._downed.has(a)) this._fell(a);
+                else if (a.isAlive()) this._downed.delete(a);
+            }
+
+            // The leader went down and somebody is still standing: they lead.
+            if (leader && leader.isDead() && !$gameParty.isAllDead() &&
+                H && H._handOffLeader) {
+                H._handOffLeader();
+            }
+
+            if ($gameParty.isAllDead()) { this.finish('lose'); return; }
+            if (!this._foes.some(e => e.battler && e.battler.isAlive())) {
+                const anyDead = $gameTroop.members().some(e => e.isDead());
+                this.finish(anyDead ? 'win' : 'escape');
+                return;
+            }
+            // Out of reach of every one of them for long enough: got away.
+            let nearest = Infinity;
+            for (const ent of this._foes) {
+                if (!ent.battler || !ent.battler.isAlive()) continue;
+                nearest = Math.min(nearest, Math.hypot(ent.x - lp.x, ent.z - lp.z));
+            }
+            this._awayT = nearest > COMBAT.DISENGAGE_R ? this._awayT + delta : 0;
+            if (this._awayT >= COMBAT.ESCAPE_SECS) this.finish('escape');
+        }
+
+        // Who a creature is after: the one it was already after, unless
+        // somebody else has come a good deal closer.
+        _foeTarget(ent) {
+            let best = null, bestD = Infinity;
+            for (const a of this._party()) {
+                if (!a.isAlive()) continue;
+                const p = this._posOf(a);
+                const d = Math.hypot(p.x - ent.x, p.z - ent.z);
+                if (d < bestD) { best = a; bestD = d; }
+            }
+            const cur = ent.fightActor;
+            if (cur && cur.isAlive() && this._party().indexOf(cur) >= 0) {
+                const p = this._posOf(cur);
+                const d = Math.hypot(p.x - ent.x, p.z - ent.z);
+                if (d <= bestD * 2) return cur;
+            }
+            return best;
+        }
+
+        // ---------------------------------------------------------------------
+        // A creature's turn
+        // ---------------------------------------------------------------------
+        _foeAct(ent) {
+            const b = ent.battler;
+            if (!b || !b.isAlive() || ent.dead || !this._ready(b)) return;
+            if (!b.canMove()) { this._rest(b, null); return; }
+            let plan = this._plans.get(b);
+            if (!plan) {
+                let item = null;
+                try {
+                    b.makeActions();
+                    const act = b.currentAction();
+                    item = act ? act.item() : null;
+                } catch (e) { item = null; }
+                try { b.clearActions(); } catch (e) { /* nothing queued */ }
+                if (!item) { this._rest(b, null); return; }
+                plan = { item, since: this._t };
+                this._plans.set(b, plan);
+            }
+            const item = plan.item;
+            let targets;
+            if (isForFriendScope(item)) {
+                targets = this._friendTargets(b, item, this._foeBattlers(), []);
+            } else {
+                const tgt = ent.fightActor;
+                if (!tgt || !tgt.isAlive()) return;
+                const p = this._posOf(tgt);
+                const d = Math.hypot(p.x - ent.x, p.z - ent.z);
+                const gy = this._host && this._host._terrain
+                    ? this._host._terrain.getTerrainHeight(p.x / WORLD_TILE_SIZE, p.z / WORLD_TILE_SIZE) : 0;
+                const high = ent.flies && ent.y != null && (ent.y - gy) > COMBAT.FLY_STRIKE_H;
+                if (d > this.rangeOf(b, item) || high) {
+                    if (this._t - plan.since > COMBAT.PLAN_GIVEUP) this._plans.delete(b);
+                    return;
+                }
+                targets = this._opponentTargets(item, tgt, this._party().filter(a => a.isAlive()));
+            }
+            this._plans.delete(b);
+            if (!targets.length) { this._rest(b, null); return; }
+            this._perform(b, item, targets);
+            this._rest(b, item);
+        }
+
+        // ---------------------------------------------------------------------
+        // An ally's turn
+        // ---------------------------------------------------------------------
+        // What a member of the party does with their turn is what the player
+        // would have them do with the same nine skills: the most damage for
+        // what it costs, a heal when somebody is hurt, somebody fetched back
+        // when they are down.
+        _allyAct(actor) {
+            if (!actor || !actor.isAlive() || !this._ready(actor)) return;
+            if (!actor.canMove()) { this._rest(actor, null); return; }
+            let plan = this._plans.get(actor);
+            if (plan && !this._planStands(plan)) { this._plans.delete(actor); plan = null; }
+            if (!plan) {
+                plan = this._allyChoose(actor);
+                if (!plan) { this._rest(actor, null); return; }
+                plan.since = this._t;
+                this._plans.set(actor, plan);
+            }
+            const item = plan.item;
+            const range = this.rangeOf(actor, item);
+            if (range !== Infinity && this._dist(actor, plan.target) > range) {
+                if (this._t - plan.since > COMBAT.PLAN_GIVEUP) this._plans.delete(actor);
+                return;
+            }
+            const targets = isForFriendScope(item)
+                ? this._friendTargets(actor, item, this._party().filter(a => a.isAlive()),
+                    this._party().filter(a => a.isDead()), plan.target)
+                : this._opponentTargets(item, plan.target, this._foeBattlers());
+            this._plans.delete(actor);
+            if (!targets.length) { this._rest(actor, null); return; }
+            try { if (!actor.canUse(item)) { this._rest(actor, null); return; } } catch (e) { return; }
+            actor.useItem(item);
+            this._perform(actor, item, targets);
+            this._rest(actor, item);
+        }
+
+        _planStands(plan) {
+            const t = plan.target;
+            if (!t) return false;
+            if (isForDeadScope(plan.item)) return t.isDead();
+            if (!t.isAlive()) return false;
+            if (t.isEnemy && t.isEnemy() && (!t._vwEnt || !this.isFoe(t._vwEnt))) return false;
+            return true;
+        }
+
+        _allyChoose(actor) {
+            const foes = this._foeBattlers();
+            const party = this._party();
+            const hurt = party.filter(a => a.isAlive() && a.hpRate() < COMBAT.LOW_HP);
+            const dead = party.filter(a => a.isDead());
+            let nearFoe = null, nd = Infinity;
+            for (const f of foes) {
+                const d = this._dist(actor, f);
+                if (d < nd) { nd = d; nearFoe = f; }
+            }
+            const skills = [];
+            if (actor.attackSkillId && $dataSkills[actor.attackSkillId()]) skills.push($dataSkills[actor.attackSkillId()]);
+            const ids = window.BattleLoadout && window.BattleLoadout.ids
+                ? window.BattleLoadout.ids(actor) : [];
+            for (const id of ids) if ($dataSkills[id]) skills.push($dataSkills[id]);
+
+            let best = null, bestScore = -1;
+            for (const skill of skills) {
+                let usable = false;
+                try { usable = actor.canUse(skill); } catch (e) { usable = false; }
+                if (!usable) continue;
+                const action = new Game_Action(actor);
+                action.setSkill(skill.id);
+                let target = null, score = 0;
+                if (isForFriendScope(skill)) {
+                    if (isForDeadScope(skill)) {
+                        target = dead[0] || null;
+                        score = target ? 2 : 0;
+                    } else if (hurt.length && (action.isHpRecover() ||
+                               (skill.effects || []).some(e => e.code === 11))) {
+                        target = hurt.slice().sort((a, b) => a.hpRate() - b.hpRate())[0];
+                        try { score = (action.evaluateWithTarget(target) || 0) + 0.5; }
+                        catch (e) { score = 0.5; }
+                    }
+                } else if (nearFoe) {
+                    target = nearFoe;
+                    try { score = action.evaluateWithTarget(target) || 0; } catch (e) { score = 0; }
+                    if (isForAllScope(skill)) score *= Math.max(1, this._near(foes, target).length);
+                    if (skill.id === actor.attackSkillId()) score = Math.max(score, 0.05);
+                    else if (score <= 0) score = 0.03 * Math.random();
+                }
+                if (!target) continue;
+                score *= 0.85 + Math.random() * 0.3;
+                if (score > bestScore) { bestScore = score; best = { item: skill, target }; }
+            }
+            return best;
+        }
+
+        // Where an ally is heading: into reach of what they mean to do next,
+        // and never further from the leader than the leash. Null leaves them
+        // at the leader's side.
+        allyGoal(m) {
+            if (!this.active || !m || !m.actor) return null;
+            const actor = m.actor;
+            let plan = this._plans.get(actor);
+            let target = plan ? plan.target : null;
+            let item = plan ? plan.item : null;
+            if (!target) {
+                let nd = Infinity;
+                for (const f of this._foeBattlers()) {
+                    const d = this._dist(actor, f);
+                    if (d < nd) { nd = d; target = f; }
+                }
+            }
+            if (!target) return null;
+            const range = this.rangeOf(actor, item);
+            if (range === Infinity) return null;
+            const tp = this._posOf(target);
+            const dx = m.x - tp.x, dz = m.z - tp.z;
+            const d = Math.hypot(dx, dz) || 1;
+            const want = Math.min(d, range * 0.8);
+            let gx = tp.x + dx / d * want, gz = tp.z + dz / d * want;
+            const lp = this._posOf(this._leader());
+            const ld = Math.hypot(gx - lp.x, gz - lp.z);
+            if (ld > COMBAT.ALLY_LEASH) {
+                gx = lp.x + (gx - lp.x) / ld * COMBAT.ALLY_LEASH;
+                gz = lp.z + (gz - lp.z) / ld * COMBAT.ALLY_LEASH;
+            }
+            return { x: gx, z: gz };
+        }
+
+        // ---------------------------------------------------------------------
+        // Targets
+        // ---------------------------------------------------------------------
+        _near(pool, centre) {
+            const c = this._posOf(centre);
+            return pool.filter(b => {
+                const p = this._posOf(b);
+                return Math.hypot(p.x - c.x, p.z - c.z) <= COMBAT.BLAST_R;
+            });
+        }
+
+        _opponentTargets(item, primary, pool) {
+            if (!primary) return [];
+            if (isForAllScope(item)) {
+                const hit = this._near(pool, primary);
+                if (hit.indexOf(primary) < 0) hit.unshift(primary);
+                return hit;
+            }
+            return [primary];
+        }
+
+        _friendTargets(subject, item, alive, dead, prefer) {
+            const s = item ? item.scope : 0;
+            if (s === 11) return [subject];
+            if (isForDeadScope(item)) {
+                const pool = dead || [];
+                if (s === 10) return pool.slice();
+                return prefer && pool.indexOf(prefer) >= 0 ? [prefer] : pool.slice(0, 1);
+            }
+            if (isForAllScope(item)) return alive.slice();
+            if (prefer && alive.indexOf(prefer) >= 0) return [prefer];
+            const sorted = alive.slice().sort((a, b) => a.hpRate() - b.hpRate());
+            return sorted.slice(0, 1);
+        }
+
+        // ---------------------------------------------------------------------
+        // Doing it
+        // ---------------------------------------------------------------------
+        // The one way anybody does anything out here. `paid` when the cost has
+        // already been taken (the spell bar pays as it casts).
+        cast(subject, item, targets, paid) {
+            if (!subject || !item || !targets || !targets.length) return false;
+            if (!subject.isAlive || !subject.isAlive()) return false;
+            if (!paid) {
+                let ok = false;
+                try { ok = subject.canUse(item); } catch (e) { ok = false; }
+                if (!ok) return false;
+                subject.useItem(item);
+            }
+            this._land(subject, item, targets);
+            return true;
+        }
+
+        // A creature's or an ally's action: a blow lands at once, a shot or a
+        // spell flies first. An ally has paid for it already (_allyAct); a
+        // creature pays here.
+        _perform(subject, item, targets) {
+            const ent = subject.isEnemy && subject.isEnemy() ? subject._vwEnt : null;
+            const magical = !!(item && item.hitType === 2);
+            if (ent) {
+                try { if (!subject.canUse(item)) return; subject.useItem(item); } catch (e) { return; }
+                playCreatureClip(ent, magical ? 'cast' : 'attack');
+            } else if (this._host && this._host._followers && this._host._followers.memberFor) {
+                const m = this._host._followers.memberFor(subject);
+                if (m) m.lungeT = 0.3;
+            }
+            if (!this._isRanged(subject, item) || !this._bolts) {
+                this._land(subject, item, targets);
+                return;
+            }
+            const from = this._posOf(subject);
+            const first = targets[0];
+            this._bolts.launch(from, () => this._fxPos(first), boltColour(item),
+                () => { if (this.active) this._land(subject, item, targets); });
+        }
+
+        // What it does, to each of them, through the battle's own Game_Action.
+        _land(subject, item, targets) {
+            if (typeof Game_Action === 'undefined') return;
+            const action = new Game_Action(subject, false);
+            if (DataManager.isSkill(item)) action.setSkill(item.id);
+            else action.setItem(item.id);
+            // A creature fighting on its own is in no troop; the action is told
+            // straight who is doing it rather than looking it up by index.
+            action.subject = function () { return subject; };
+            const BSE = window.BattleSystemEnhanced;
+            try {
+                if (BSE && BSE.Helpers && BSE.Helpers.rollStatReqFumble) BSE.Helpers.rollStatReqFumble(action);
+            } catch (e) { /* no fumble rule loaded */ }
+            const H = this._host;
+            let anim = item.animationId;
+            if (anim < 0) anim = subject.isActor && subject.isActor() && subject.attackAnimationId1
+                ? subject.attackAnimationId1() : 0;
+            // No friendly fire out here: whatever is aimed at the other side
+            // only ever lands on the other side, whatever picked the targets
+            // (a confused battler, an area that swept up somebody of its own).
+            const sideOf = (b) => !!(b && b.isActor && b.isActor());
+            const hostile = !isForFriendScope(item);
+            const mine = sideOf(subject);
+            for (const t of targets) {
+                if (hostile && t && sideOf(t) === mine) continue;
+                if (!t) continue;
+                const fx = this._fxPos(t);
+                if (anim > 0 && H && H._spellFx) {
+                    try { H._spellFx.play(anim, fx.x, fx.y, fx.z); } catch (e) { /* no FX context */ }
+                }
+                let reps = 1;
+                try { reps = Math.max(1, action.numRepeats()); } catch (e) { reps = 1; }
+                for (let r = 0; r < reps; r++) {
+                    if (!isForDeadScope(item) && t.isDead()) break;
+                    try { action.apply(t); } catch (e) { console.error('[VoxelWorld] combat action', e); break; }
+                    this._report(t, t.result());
+                }
+                if (t.isDead()) this._fell(t);
+            }
+            try { action.applyGlobal(); } catch (e) { /* a common event that cannot run out here */ }
+        }
+
+        // The number over whoever was hit, and the sound of it.
+        _report(target, result) {
+            if (!result) return;
+            const p = this._fxPos(target);
+            const say = (text, colour) => { if (this._popups) this._popups.add(p.x, p.y + 2, p.z, text, colour); };
+            const SM = typeof SoundManager !== 'undefined' ? SoundManager : null;
+            if (result.missed || result.evaded) {
+                say(T('VoxelWorld.combat.miss'), '#d8d8d8');
+                if (SM) { if (result.evaded) SM.playEvasion(); else SM.playMiss(); }
+                return;
+            }
+            if (result.hpAffected) {
+                const v = result.hpDamage;
+                if (v > 0) {
+                    say(String(v), result.critical ? '#ffd54a' : (target.isActor() ? '#ff6a5a' : '#ffffff'));
+                    if (SM) { if (target.isActor()) SM.playActorDamage(); else SM.playEnemyDamage(); }
+                } else if (v < 0) {
+                    say('+' + (-v), '#7dff8a');
+                    if (SM) SM.playRecovery();
+                }
+            }
+            if (target.isEnemy && target.isEnemy() && target._vwEnt) {
+                playCreatureClip(target._vwEnt, 'hit');
+                setPlateHp(target._vwEnt.plate, target.hpRate());
+            }
+        }
+
+        // Somebody went down.
+        _fell(b) {
+            const H = this._host;
+            if (b.isEnemy && b.isEnemy()) {
+                const ent = b._vwEnt;
+                if (!ent || ent.dead) return;
+                ent.fight = null;
+                ent.fightActor = null;
+                bioForget(ent);
+                // The collapse is already heard: Game_Enemy.die performs it
+                // while the party is in a fight.
+                if (H && H._layOutBody) H._layOutBody(ent);
+                return;
+            }
+            if (this._downed.has(b)) return;
+            this._downed.add(b);
+            if (typeof SoundManager !== 'undefined') SoundManager.playActorCollapse();
+            if (window.ParchmentToast) {
+                window.ParchmentToast.show(T('VoxelWorld.combat.down', { name: b.name() }),
+                    { key: 'vwcombat', severity: 'danger' });
+            }
+        }
+
+        // A creature leaves the fight alive (ran, or the world took it): its
+        // wounds go with it into its own record.
+        _release(ent, index) {
+            const b = ent.battler;
+            if (b) {
+                b._vwGone = true;
+                if (b.isAlive()) bioWriteHp(ent, b.hp);
+                // Out of the troop as well: a creature that ran is not paid
+                // for in knowledge or spoils at the end.
+                const k = $gameTroop._enemies.indexOf(b);
+                if (k >= 0) $gameTroop._enemies.splice(k, 1);
+            }
+            ent.fight = null;
+            ent.fightActor = null;
+            ent.battler = null;
+            ent.state = 'idle';
+            if (ent.alive && !ent.dead) ent.spooked = Math.max(ent.spooked || 0, 10);
+            setPlateHp(ent.plate, null);
+            if (index != null && index >= 0) this._foes.splice(index, 1);
+        }
+
+        // ---------------------------------------------------------------------
+        // What the leader does (the scene calls these)
+        // ---------------------------------------------------------------------
+        // A blow struck or a shot fired at a creature under the crosshair.
+        strike(ent) {
+            const a = this._leader();
+            if (!a || !a.isAlive() || !ent || ent.dead) return false;
+            if (!this.isFoe(ent) && !this.join(ent)) return false;
+            if (a.isOutOfBullets && a.isOutOfBullets() && window.ParchmentToast) {
+                window.ParchmentToast.show(T('VoxelWorld.combat.empty'), { key: 'vwammo' });
+            }
+            const skill = $dataSkills[a.attackSkillId()];
+            return this.cast(a, skill, [ent.battler]);
+        }
+
+        // Where one of the leader's spells burst, and who it caught. The spell
+        // bar has already paid for it.
+        burst(skill, ents) {
+            const a = this._leader();
+            if (!a || !skill) return false;
+            const targets = [];
+            for (const ent of ents) {
+                if (!ent || ent.dead || !ent.alive) continue;
+                if (!this.isFoe(ent) && !(this.active ? this.join(ent) : this.begin(ent))) continue;
+                if (ent.battler) targets.push(ent.battler);
+            }
+            if (!targets.length) return false;
+            return this.cast(a, skill, isForAllScope(skill) ? targets : targets.slice(0, 1), true);
+        }
+
+        // A spell or a skill the leader turns on the party: no bolt, it lands
+        // on whoever it is for, chosen the way an ally would choose.
+        friendlyCast(skill) {
+            const a = this._leader();
+            if (!a || !skill) return false;
+            const party = this._party();
+            const targets = this._friendTargets(a, skill, party.filter(x => x.isAlive()),
+                party.filter(x => x.isDead()));
+            return this.cast(a, skill, targets);
+        }
+
+        // ---------------------------------------------------------------------
+        // The end of it
+        // ---------------------------------------------------------------------
+        //   'win'     every creature in it is down (rewards for the ones that are)
+        //   'escape'  the party got clear, or everything in it ran
+        //   'lose'    nobody in the party is standing
+        finish(result) {
+            if (!this.active) return;
+            this.active = false;
+            this._ending = true;
+            const won = result === 'win';
+            for (const ent of this._foes) {
+                const b = ent.battler;
+                ent.fight = null;
+                ent.fightActor = null;
+                if (b && b.isAlive() && !ent.dead) {
+                    bioWriteHp(ent, b.hp);
+                    ent.state = 'idle';
+                    if (!won) ent.spooked = Math.max(ent.spooked || 0, 12);
+                }
+                setPlateHp(ent.plate, null);
+                ent.battler = null;
+            }
+            const BSE = window.BattleSystemEnhanced;
+            try {
+                if (won) {
+                    // The spoils, the way the battle pays them: knowledge first,
+                    // then the engine's own exp, gold and drops. The levels they
+                    // buy are held for the popup while the fight still reads as
+                    // a fight (BattleSystemEnhancedState's displayLevelUp).
+                    if (BSE && BSE.Functions && BSE.Functions.payVictoryKnowledge) BSE.Functions.payVictoryKnowledge();
+                    BattleManager.makeRewards();
+                    BattleManager.gainRewards();
+                    BattleManager.playVictoryMe();
+                    if (window.BattleMood && window.BattleMood.onVictory) window.BattleMood.onVictory();
+                    $gameSystem.onBattleWin();
+                } else if (result === 'escape') {
+                    $gameSystem.onBattleEscape();
+                    const r = BSE && BSE.State && BSE.State.battleRewards;
+                    if (r) { r.exp = 0; r.gold = 0; r.items = []; r.knowledge = 0; }
+                } else if (result === 'lose') {
+                    // The battle system's own defeat: permadeath, the wipe, who
+                    // comes round where. Its scene change is held off
+                    // (VoxelWorldSystem's updateBattleEnd) - there is no battle
+                    // scene to leave - and the map takes it from there.
+                    BattleManager.processDefeat();
+                    $gameSystem.setBattleEnded(true);
+                }
+            } catch (e) { console.error('[VoxelWorld] combat end', e); }
+            try {
+                $gameParty.onBattleEnd();
+                $gameTroop.onBattleEnd();
+            } catch (e) { console.error('[VoxelWorld] combat teardown', e); }
+            if (result !== 'lose') {
+                try { BattleManager.replayBgmAndBgs(); } catch (e) { /* no music to put back */ }
+            }
+            if (won) {
+                const sc = typeof SceneManager !== 'undefined' ? SceneManager._scene : null;
+                if (sc && sc.createRewardsPopup) {
+                    try { sc.createRewardsPopup(); } catch (e) { /* nothing to show */ }
+                }
+            } else if (result === 'escape' && window.ParchmentToast) {
+                window.ParchmentToast.show(T('VoxelWorld.combat.escaped'), { key: 'vwcombat' });
+            }
+            this._plans.clear();
+            this._clock.clear();
+            this._downed.clear();
+            this._foes = [];
+            this._ending = false;
+            if (this._host && this._host._onCombatEnd) this._host._onCombatEnd(result);
+        }
+
+        // The world is going away in the middle of a fight (a teleport, the
+        // party leaving it): the creatures keep their wounds, the party keeps
+        // what it has, and nothing is paid or lost.
+        abort() {
+            if (this.active) {
+                this.active = false;
+                this._ending = true;
+                for (const ent of this._foes) {
+                    const b = ent.battler;
+                    if (b && b.isAlive() && !ent.dead) bioWriteHp(ent, b.hp);
+                    ent.fight = null;
+                    ent.fightActor = null;
+                    ent.battler = null;
+                }
+                try { $gameParty.onBattleEnd(); $gameTroop.onBattleEnd(); } catch (e) { /* already gone */ }
+                try { BattleManager.replayBgmAndBgs(); } catch (e) { /* no music */ }
+                this._foes = [];
+                this._plans.clear();
+                this._clock.clear();
+                this._ending = false;
+            }
+            if (this._bolts) this._bolts.clear();
+            if (this._popups) this._popups.clear();
+        }
+    }
+
     // Handed to the rest of the suite.
     Object.assign(VW, {
+        CombatSession, CombatPopups, CombatBolts, COMBAT, setPlateHp, facesAway,
+        isForFriendScope, reachOfSteps,
         BiomeEnemyManager, ParkedVehicles, BuildingInteriors, CityCrowd, ENEMY_3D_CONTACT_R,
         ENEMY_3D_DESPAWN, ENEMY_3D_MAX, ENEMY_3D_SPAWN_INT, ENEMY_PLATE_COLORS,
         ENEMY_PLATE_K, ENEMY_PLATE_MAX, ENEMY_PLATE_MIN, ENEMY_PLATE_RANGE,

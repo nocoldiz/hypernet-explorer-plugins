@@ -53,7 +53,7 @@
  *   openFishingMinigame   opens the fishing scene
  *   closeFishingMinigame  closes the fishing scene
  *
- * The HUD is built the way a PlayStation built one, minus the television: a
+ * The HUD is built the way a 32-bit console built one, minus the television: a
  * 240-line virtual framebuffer upscaled with nearest filtering for the bevelled
  * boxes, block gauges and the hook marker, with the labels on top of them as
  * crisp HTML type (window.PSXHud / PSXHud.domPanel). No scanlines, no vignette.
@@ -186,7 +186,7 @@
     // The lake's own geometry is patched with a harsher version of the player's
     // retro settings than the shared default: chunkier vertex snapping, fewer
     // shades and heavier dithering, because a wide flat water plane is exactly
-    // where a PlayStation's lack of precision showed most.
+    // where a 32-bit console's lack of precision showed most.
     const PSX_HARD = { vertexSnap: 0.55, colorLevels: 0.75, dither: 1.3 };
 
     // Lake stock beyond the fish themselves.
@@ -1704,7 +1704,7 @@
         }
 
         // Boxes, gauges and the hook marker are drawn in a 320-wide virtual
-        // framebuffer, the way a PlayStation drew its overlay; the labels on top
+        // framebuffer, the way a 32-bit console drew its overlay; the labels on top
         // of them are HTML (PSXHud.domPanel) so the type is as sharp as the
         // display allows. Nothing is laid over the 3D view: no scanlines, no
         // vignette, nothing that costs the picture contrast.

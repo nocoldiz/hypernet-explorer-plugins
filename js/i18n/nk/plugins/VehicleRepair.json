@@ -15,11 +15,11 @@
   "anAdvancedDeepSpaceExplorer": "AN ADVANCED DEEP-SPACE EXPLORER EQUIPPED WIT HYPER-NAVIGATION DRIVES. CRITICAL PARTS MUST BE FLAWLESS TA PERMIT ASCENT!",
   "inflatableDinghy": "INFLATABLE DINGHY",
   "aLightPackableBoatFor": "A LIGHT PACKABLE BOAT FOR OPEN WATER. ITS HULL AN' AIR CHAMBERS MUST STAY INTACT TA KEEP IT AFLOAT!",
-  "critical": "CRITICAL",
+  "critical": "ESSENTIAL",
   "changeAppearance": "CHANGE APPEARANCE",
   "statusBroken": "STATUS: BROKEN",
   "statusOperational": "STATUS: OPERATIONAL",
-  "allCriticalComponentsMustMaintain": "ALL CRITICAL COMPONENTS MUST MAINTAIN ABOVE 0% INTEGRITY TA OPERATE!",
+  "allCriticalComponentsMustMaintain": "EVERY ESSENTIAL COMPONENT MUST STAY ABOVE 0% INTEGRITY FOR DA VEHICLE TA RUN!",
   "repair": "REPAIR",
   "upgrades": "UPGRADES",
   "close": "CLOSE",
@@ -29,6 +29,7 @@
   "lv": "LV.",
   "maxed": "MAXED",
   "install": "INSTALL",
+  "upgradeAction": "UPGRADE",
   "upgrade": {
     "accel": {
       "name": "TURBO INJECTORS",
@@ -100,13 +101,49 @@
   "partiallyRepaired": "DA {vehicle} HAB BEEN PARTIALLY REPAIRED ({percent}%)!",
   "nowOperational": "\\C[3]DA {vehicle} IZ NOW OPERATIONAL!\\C[0]",
   "brokenCannotUse": "DA {vehicle} IZ BROKEN AN' NO CAN BE USED!",
-  "repairCriticalFirstLong": "CRITICAL PARTS MUST BE REPAIRED BEFORE IT CAN BE USED!",
-  "repairCriticalFirst": "CRITICAL PARTS MUST BE REPAIRED FIRST!",
+  "repairCriticalFirstLong": "ESSENTIAL PARTS MUST BE REPAIRED BEFORE IT CAN BE USED!",
+  "repairCriticalFirst": "ESSENTIAL PARTS MUST BE REPAIRED FIRST!",
   "vehicle": {
     "camper": "CAMPER",
     "car": "CAR",
     "starship": "STARSHIP",
     "bike": "BIKE",
     "boat": "BOAT"
+  },
+  "toast": {
+    "criticalFailure": "{part} HAB FAILED. DA VEHICLE WILL NOT MOVE!"
+  },
+  "help": {
+    "title": "DA GARAGE",
+    "items": {
+      "close": {
+        "name": "CLOSE",
+        "text": "LEAVES DA GARAGE."
+      },
+      "portrait": {
+        "name": "VEHICLE",
+        "text": "DA VEHICLE, ITS DESCRIPTION AN' WHETHER IT RUNS. A STARSHIP CAN CHANGE ITS APPEARANCE FROM HERE!"
+      },
+      "status": {
+        "name": "STATUS",
+        "text": "BROKEN MEANS AN ESSENTIAL COMPONENT IZ AT 0% AN' DA VEHICLE WILL NOT MOVE UNTIL IT IZ REPAIRED!"
+      },
+      "tabs": {
+        "name": "REPAIR AN' UPGRADES",
+        "text": "TURN BETWEEN MENDIN' PARTS AN' IMPROVIN' DA VEHICLE!"
+      },
+      "repair": {
+        "name": "COMPONENTS REGISTRY",
+        "text": "EVERY PART WIT ITS INTEGRITY. ESSENTIAL ONES KEEP DA VEHICLE RUNNIN'. REPAIR ONE PART, OR FULL REPAIR FOR ALL OF DEM, SPENDIN' MATERIALS!"
+      },
+      "upgrades": {
+        "name": "UPGRADE WORKSHOP",
+        "text": "IMPROVEMENTS BOUGHT IN LEVELS: ACCELERATION, TOP SPEED, FUEL CAPACITY, DAMAGE REDUCTION, AN' FOR DA CAMPER DRIVIN' ON WATER AN' FLIGHT!"
+      },
+      "help": {
+        "name": "? HELP",
+        "text": "OPENS DIS SHEET. ON A CONTROLLER, PRESS SELECT; PRESS IT AGAIN, BACK OR CONFIRM TA CLOSE!"
+      }
+    }
   }
 }

@@ -1,0 +1,652 @@
+{
+  "menu": "VECTOR GUN",
+  "title": "VECTOR GUN",
+  "back": "BACK",
+  "subtitle": "OPERATIN' MODES",
+  "tab": {
+    "modes": "OPERATIN' MODES",
+    "element": "ELEMENT",
+    "form": "FORMS",
+    "calibrate": "CALIBRATION"
+  },
+  "slots": "{used} OF {max} MODES RUNNIN'",
+  "state": {
+    "on": "RUNNIN'",
+    "off": "IDLE"
+  },
+  "full": "MAXIMUM 3 MODES AT ONCE.",
+  "noGun": "DA PARTY DOES NOT HAB DA GUN!",
+  "detail": {
+    "damageType": "DAMAGE TYPE",
+    "status": "STATUS",
+    "effect": "EFFECT",
+    "modesTitle": "ACTIVE MODES",
+    "fitted": "FITTED",
+    "elementTitle": "ELEMENT",
+    "formTitle": "WEAPON FORM",
+    "range": "RANGE",
+    "rangeTiles": "{n} TILES",
+    "magazine": "SHOTS",
+    "calibrateTitle": "CALIBRATION",
+    "damage": "DAMAGE",
+    "face": "DICE FACE"
+  },
+  "mode": {
+    "mana": {
+      "name": "MANA BULLETS",
+      "desc": "DAMAGE SCALES OFF INT.",
+      "effect": "ATTACK DAMAGE USES INT INSTEAD OF DA WEAPON'S OWN SCALIN'!"
+    },
+    "recoil": {
+      "name": "VECTOR RECOIL",
+      "desc": "KNOCKBACK ON HIT.",
+      "effect": "TARGETS HIT IZ KNOCKED BACK AN' FLOATED!"
+    },
+    "solomonIncantation": {
+      "name": "SOLOMON INCANTATION",
+      "desc": "SPELLS IZ SPOKEN ALOUD AN' DEAL 15% MORE DAMAGE!",
+      "effect": "RUNS ONLY WIT DA GRIMOIRE OF SOLOMON FITTED, OR WHILE DA BOOK IZ OPEN IN GRACEFUL DEATH. EVERY SPELL CAST IZ READ OUT IN FULL FIRST, IN A BOX OF ITS OWN, AN' DEN DEALS OR HEALS 15% MORE!"
+    },
+    "card": {
+      "name": "CARD",
+      "desc": "KILLS DROP MONSTER CARDS.",
+      "effect": "A KILLIN' BLOW ADDS DAT ENEMY'S MONSTER CARD TA DA COLLECTION!"
+    },
+    "wide": {
+      "name": "WIDE SHOTS",
+      "desc": "HITS SEVERAL BODY PARTS FOR LESS DAMAGE!",
+      "effect": "LOWER TOTAL DAMAGE, SPLIT ACROSS SEVERAL BODY PARTS PER ATTACK!"
+    },
+    "psi": {
+      "name": "PSI VECTORS",
+      "desc": "DAMAGE SCALES OFF PSI.",
+      "effect": "ATTACK DAMAGE USES PSI INSTEAD OF DA WEAPON'S OWN SCALIN'!"
+    },
+    "burst": {
+      "name": "BURST FIRE",
+      "desc": "TWO SHOTS PER ATTACK AT 70% DAMAGE!",
+      "effect": "EACH ATTACK FIRES TWICE AT 70% DAMAGE!"
+    },
+    "pierce": {
+      "name": "PIERCIN' VECTORS",
+      "desc": "IGNORES GUARD.",
+      "effect": "DAMAGE IGNORES DA TARGET'S GUARD!"
+    },
+    "drain": {
+      "name": "VAMPIRIC VECTORS",
+      "desc": "25% HP LIFESTEAL.",
+      "effect": "DA USER RECOVERS HP EQUAL TA 25% OF DAMAGE DEALT!"
+    },
+    "siphon": {
+      "name": "MANA SIPHON",
+      "desc": "15% MP LEECH.",
+      "effect": "DA USER RECOVERS MP EQUAL TA 15% OF DAMAGE DEALT!"
+    },
+    "deadeye": {
+      "name": "DEADEYE",
+      "desc": "+40% CRITICAL RATE.",
+      "effect": "CRITICAL HIT CHANCE INCREASES BY 40 POINTS!"
+    },
+    "tracker": {
+      "name": "TRACKER ROUNDS",
+      "desc": "ATTACKS NEVER MISS.",
+      "effect": "ATTACKS ALWAYS HIT, IGNORIN' EVASION!"
+    },
+    "overload": {
+      "name": "OVERLOAD",
+      "desc": "DOUBLE COILGUN RACK, 85% DAMAGE!",
+      "effect": "DA COILGUN'S RACK OF SHOTS IZ DOUBLED. ALL SHOTS DEAL 85% DAMAGE!"
+    },
+    "hex": {
+      "name": "HEXED ROUNDS",
+      "desc": "40% CHANCE OF A RANDOM DEBUFF!",
+      "effect": "A HIT HAB A 40% CHANCE TA INFLICT ONE OF: BLIND, SILENCE, UNBALANCE, VULNERABILITY, BROKEN GUARD!"
+    },
+    "longshot": {
+      "name": "LONG SHOT",
+      "desc": "DOUBLE RANGE.",
+      "effect": "DOUBLES WEAPON RANGE ON DA BATTLE MAP, IN ANY RANGED FORM!"
+    },
+    "venom": {
+      "name": "VENOM ROUNDS",
+      "desc": "30% CHANCE TA POISON.",
+      "effect": "A HIT HAB A 30% CHANCE TA INFLICT POISON!"
+    },
+    "concussion": {
+      "name": "CONCUSSIVE ROUNDS",
+      "desc": "30% CHANCE TA STUN.",
+      "effect": "A HIT HAB A 30% CHANCE TA INFLICT STUN!"
+    },
+    "thermalOverload": {
+      "name": "THERMAL OVERLOAD",
+      "desc": "30% CHANCE TA BURN.",
+      "effect": "A HIT HAB A 30% CHANCE TA INFLICT BURNIN'!"
+    },
+    "thermalUnderload": {
+      "name": "THERMAL UNDERLOAD",
+      "desc": "30% CHANCE TA FREEZE.",
+      "effect": "A HIT HAB A 30% CHANCE TA INFLICT FREEZE!"
+    },
+    "executioner": {
+      "name": "EXECUTIONER",
+      "desc": "MORE DAMAGE TA LOW HP TARGETS!",
+      "effect": "DAMAGE RISES AS TARGET HP FALLS, UP TA +60% AGAINST A TARGET NEAR DEATH!"
+    },
+    "ambush": {
+      "name": "AMBUSH PROTOCOL",
+      "desc": "150% DAMAGE ON DA FIRST TURN!",
+      "effect": "ATTACKS MADE IN DA FIRST TURN OF A BATTLE DEAL 150% DAMAGE!"
+    },
+    "resonance": {
+      "name": "RESONANCE",
+      "desc": "MORE DAMAGE AT HIGH MP.",
+      "effect": "DAMAGE RISES WIT DA USER'S CURRENT MP, UP TA +40% AT FULL MP!"
+    },
+    "overpressure": {
+      "name": "OVERPRESSURE",
+      "desc": "135% DAMAGE, 2 COILGUN SHOTS PER ROUND FIRED!",
+      "effect": "EACH SHOT DEALS 135% DAMAGE AN' COUNTS AS 2 OF DA COILGUN'S SHOTS!"
+    },
+    "hollowPoint": {
+      "name": "HOLLOW POINT",
+      "desc": "+75% CRITICAL DAMAGE.",
+      "effect": "CRITICAL HITS DEAL 75% MORE DAMAGE. DOES NOT CHANGE CRITICAL RATE!"
+    },
+    "deepMagazine": {
+      "name": "DEEP MAGAZINE",
+      "desc": "+4 COILGUN SHOTS.",
+      "effect": "DA COILGUN HOLDS 4 MORE SHOTS BEFORE IT FOLDS BACK. DAMAGE UNCHANGED!"
+    }
+  },
+  "toast": {
+    "fitted": "{mode} IZ RUNNIN'.",
+    "removed": "{mode} IZ IDLE.",
+    "card": "{name} CARD OBTAINED.",
+    "element": "ELEMENT SET TA {element}.",
+    "swapped": "{mode} IZ RUNNIN', {old} IZ IDLE.",
+    "form": "FORM SET TA {form}.",
+    "unracked": "COILGUN SPENT, FOLDED BACK INTO DA PISTOL!",
+    "calibrated": "{shape} CALIBRATED: {choice}.",
+    "uncalibrated": "{choice} DROPPED.",
+    "calSwapped": "{choice} CHOSEN, {old} DROPPED.",
+    "reaped": "DA SCYTHE TAKES {name}.",
+    "noSky": "NO SKY IN HERE TA TURN OVER!",
+    "spent": "{form} SPENT, FOLDED BACK INTO DA PISTOL!",
+    "locked": "{mode} OPENS AT LEVEL {n}.",
+    "roll": "DICE OF YALDABAOTH: {n}. {form}.",
+    "natural": "DICE OF YALDABAOTH: NATURAL {n}. DA GRIMOIRE OF SOLOMON OPENS!",
+    "grimoire": "GRIMOIRE OF SOLOMON",
+    "formLocked": "{form} UNLOCKS AT LEVEL {n}."
+  },
+  "log": {
+    "switched": "{name} SWITCHES TA {form}."
+  },
+  "lock": {
+    "title": "NOT YET EARNED",
+    "level": "LEVEL {n}",
+    "unlocksAt": "OPENS AT LEVEL",
+    "current": "EM'S LEVEL",
+    "remaining": "{n} MODES STILL SHUT, NEXT AT LEVEL {next}",
+    "formsRemaining": "{n} FORMS STILL SHUT, NEXT AT LEVEL {next}"
+  },
+  "locked": {
+    "equip": "ONLY EM CAN EQUIP DA VECTOR GUN!",
+    "part": "DA VECTOR GUN NO CAN LEAVE EM!"
+  },
+  "cmd": {
+    "toBlade": "SWITCH TA BLADE",
+    "toGun": "SWITCH TA GUN",
+    "switch": "SWITCH"
+  },
+  "element": {
+    "title": "ELEMENT",
+    "hint": "DA ELEMENT IZ STORED ON DA PISTOL. WEAPON FORMS DROP IT AN' ATTACK WITHOUT AN ELEMENT. DA COILGUN HAB ITS OWN ELEMENT, SET ON DA CALIBRATION PAGE, SO DA FRAME CAN HOLD TWO AT ONCE!",
+    "physicalDesc": "PHYSICAL DAMAGE, NO ELEMENT!",
+    "desc": {
+      "1": "PHYSICAL DAMAGE, NO ELEMENT!",
+      "2": "FIRE DAMAGE, CAN SET DA TARGET BURNIN'!",
+      "3": "ICE DAMAGE, CAN FREEZE DA TARGET!",
+      "4": "LIGHTNIN' DAMAGE.",
+      "5": "WATER DAMAGE.",
+      "6": "EARTH DAMAGE.",
+      "7": "WIND DAMAGE.",
+      "8": "HOLY DAMAGE, EXTRA EFFECTIVE AGAINST UNDEAD!",
+      "9": "DARK DAMAGE."
+    }
+  },
+  "damageType": {
+    "Blunt": "BLUNT",
+    "Cutting": "CUTTIN'",
+    "Piercing": "PIERCIN'",
+    "Area": "AREA",
+    "Explosive": "EXPLOSIVE",
+    "Abstract": "ABSTRACT"
+  },
+  "form": {
+    "gun": "GUN",
+    "blade": "BLADE OF THELEMA",
+    "fitted": "FITTED",
+    "gain": "{bonus}% DAMAGE.",
+    "gunGain": "USES DA ELEMENT AN' UP TA 3 MODES!",
+    "diceGain": "DA PISTOL KEEPS DA ELEMENT AN' MODES UNTIL DA ROLL!"
+  },
+  "bay": {
+    "slot": "BAY {n}",
+    "empty": "EMPTY",
+    "loaded": "BAY {n}"
+  },
+  "shape": {
+    "dice": {
+      "name": "DICE OF YALDABAOTH",
+      "desc": "ROLLS A D20 FOR DA FORM.",
+      "effect": "SWITCH ROLLS A D20 AN' TURNS INTO DAT FACE'S FORM, LOCKED OR NOT. 1: FISTS OF EM. 20: GRIMOIRE OF SOLOMON, NO HP COST. SWITCH AGAIN RETURNS TA DA PISTOL!"
+    },
+    "gun": {
+      "name": "COILGUN OF TESLA",
+      "desc": "BASE FORM.",
+      "effect": "SWITCH: COILGUN, 3 SHOTS, 4X RANGE. BACK TA DA PISTOL AFTER DA THIRD SHOT!"
+    },
+    "abrasax": {
+      "name": "ATHAME OF ABRASAX",
+      "desc": "INFLICTS A STATUS.",
+      "effect": "HITS CAN INFLICT DA CHOSEN STATUS. STRONGER STATUSES HAB LOWER ODDS. PSI RAISES DA ODDS!"
+    },
+    "thelema": {
+      "name": "BLADE OF THELEMA",
+      "desc": "CASTS A SWORD SKILL.",
+      "effect": "NORMAL ATTACKS CAN BECOME DA CHOSEN SWORD SKILL, PAYIN' ITS AP. DA SKILL DOES NOT NEED TA BE LEARNED!"
+    },
+    "choronzon": {
+      "name": "MAUL OF CHORONZON",
+      "desc": "CHOSEN DAMAGE TYPE.",
+      "effect": "DEALS DA CHOSEN DAMAGE TYPE!"
+    },
+    "babalon": {
+      "name": "AXE OF BABALON",
+      "desc": "HITS SEVERAL TARGETS.",
+      "effect": "HITS DA CHOSEN NUMBER OF TARGETS. MORE TARGETS, LESS DAMAGE EACH!"
+    },
+    "nuit": {
+      "name": "SCOURGE OF NUIT",
+      "desc": "LOWERS A STAT.",
+      "effect": "HITS LOWER DA CHOSEN STAT. LESS DAMAGE!"
+    },
+    "hadit": {
+      "name": "STAFF OF HADIT",
+      "desc": "CHANGES DA WEATHER.",
+      "effect": "SWITCHIN' TA IT SETS DA CHOSEN WEATHER. NO EFFECT INDOORS!"
+    },
+    "aiwass": {
+      "name": "BOW OF AIWASS",
+      "desc": "ADJUSTABLE DRAW.",
+      "effect": "LONGER DRAW: MORE RANGE, LESS DAMAGE!"
+    },
+    "zos": {
+      "name": "DARTS OF ZOS",
+      "desc": "APPLY A STATUS.",
+      "effect": "HITS APPLY DA CHOSEN STATUS!"
+    },
+    "baphomet": {
+      "name": "TALONS OF BAPHOMET",
+      "desc": "DRAIN DA TARGET.",
+      "effect": "HITS DRAIN DA CHOSEN RESOURCE. DRAININ' AP COSTS DA MOST!"
+    },
+    "kia": {
+      "name": "GAUNTLET OF KIA",
+      "desc": "GRANTS A STANCE.",
+      "effect": "GRANTS DA CHOSEN STANCE WHILE EQUIPPED. LOWERS DAMAGE DEALT!"
+    },
+    "longinus": {
+      "name": "LANCE OF LONGINUS",
+      "desc": "CHOSEN ATTACK STYLE.",
+      "effect": "ATTACKS WIT DA CHOSEN STYLE!"
+    },
+    "sniper": {
+      "name": "COILGUN",
+      "desc": "EXTENDED GUN FORM.",
+      "effect": "3 SHOTS, 4X RANGE. DA LAST SHOT REVERTS IT TA DA PISTOL!"
+    },
+    "solomon": {
+      "name": "GRIMOIRE OF SOLOMON",
+      "desc": "GRIMOIRE SPELLS.",
+      "effect": "BATTLES START WIT DA GRIMOIRE OPEN, AS A PERMANENT GRACEFUL DEATH WIT NO COSTS OR LIMITS. GRACEFUL DEATH DEALS DA STRONGEST SPELLS OF DA CALIBRATED SCHOOLS. NORMAL ATTACKS REACH 4 TILES!"
+    },
+    "fists": {
+      "name": "FISTS OF EM",
+      "desc": "MARTIAL ARTS.",
+      "effect": "NORMAL ATTACKS CAN BECOME ONE OF DA CHOSEN MARTIAL ARTS SKILLS, PAYIN' ITS AP!"
+    },
+    "eris": {
+      "name": "NUNCHAKU OF ERIS",
+      "desc": "RANDOM DAMAGE.",
+      "effect": "WIDER SPREAD: HIGHER AVERAGE DAMAGE, LESS CONSISTENT!"
+    },
+    "maat": {
+      "name": "MAIL OF MAAT",
+      "desc": "PUNISHES IMBALANCE.",
+      "effect": "MORE DAMAGE DA MORE DA TARGET'S CHOSEN STAT IZ OUT OF BALANCE. LESS DAMAGE TA BALANCED TARGETS!"
+    },
+    "bubba": {
+      "name": "WRENCH OF BUBBA",
+      "desc": "STRONG VS ONE TYPE.",
+      "effect": "MUCH MORE DAMAGE TA DA CHOSEN CREATURE TYPE, LESS TA OTHERS!"
+    },
+    "yaldabaoth": {
+      "name": "CHAINSAW OF YHWH",
+      "desc": "STRONG VS WOUNDED.",
+      "effect": "MORE DAMAGE DA MORE HURT DA TARGET IZ, BY DA CHOSEN READIN'. LESS DAMAGE TA UNHURT TARGETS!"
+    },
+    "nyarlathotep": {
+      "name": "SCYTHE OF NYARLATHOTEP",
+      "desc": "CRITS CAN KILL.",
+      "effect": "CRITICAL HITS HAB A 50% CHANCE TA KILL OUTRIGHT, ON DA CHOSEN SIDE. NEVER EM, BOSSES, PETRODEMONS OR ANYTHIN' OVER 10 LEVELS ABOVE HER!"
+    },
+    "freud": {
+      "name": "KATANA OF FREUD",
+      "desc": "SCALES ON PSI.",
+      "effect": "DAMAGE SCALES ON PSI. NORMAL ATTACKS CAN BECOME DA CHOSEN PSYCHIC SKILL, PAYIN' ITS AP!"
+    },
+    "gautama": {
+      "name": "ROSARY OF GAUTAMA",
+      "desc": "HEALS ALLIES.",
+      "effect": "NO DAMAGE. ATTACKS HEAL ALLIES. CHOOSE WHAT IT HEALS!"
+    }
+  },
+  "section": {
+    "forms": "WEAPON FORMS",
+    "elements": "ELEMENTS"
+  },
+  "cal": {
+    "none": "NOTHIN' TA CALIBRATE",
+    "known": "LEARNED",
+    "borrowed": "READ OFF DA FRAME",
+    "apCost": "{ap} AP",
+    "chip": {
+      "selected": "CHOSEN"
+    },
+    "section": {
+      "element": "DA COILGUN'S ELEMENT",
+      "rack": "DA RACK",
+      "marks": "DA MARK IT LEAVES",
+      "stance": "DA STANCE SHE HOLDS IT IN",
+      "sky": "DA SKY IT CALLS",
+      "schools": "DA SCHOOLS IT DEALS FROM",
+      "quarry": "WHAT IT WAZ BUILT FOR",
+      "lash": "WHAT DA LASH TEARS DOWN",
+      "venom": "WHAT DA DARTS CARRY",
+      "head": "WHAT DA HEAD DELIVERS",
+      "cleave": "HOW WIDE DA SWING CARRIES",
+      "draw": "HOW FAR IT IZ DRAWN",
+      "charge": "HOW IT IZ BROUGHT TA BEAR",
+      "discord": "HOW WILD DA BLOW IZ",
+      "measure": "WHAT IT WEIGHS DEM AGAINST",
+      "reads": "WHAT DA BAR READS",
+      "bargain": "DA BARGAIN STRUCK",
+      "mends": "WHAT DA BEADS MEND",
+      "known": "WHAT SHE KNOWS",
+      "reach": "WITHIN HER REACH"
+    },
+    "lash": {
+      "desc": "LOWERS DIS PARAMETER ON HIT FOR A FEW ROUNDS. 45% CHANCE, 85% DAMAGE!"
+    },
+    "head": {
+      "Blunt": {
+        "name": "BLUNT",
+        "desc": "BLUNT DAMAGE. EFFECTIVE AGAINST BONES AN' ARMOUR!"
+      },
+      "Cutting": {
+        "name": "CUTTIN'",
+        "desc": "CUTTIN' DAMAGE. EFFECTIVE AGAINST FLESH AN' SOFT TARGETS!"
+      },
+      "Piercing": {
+        "name": "PIERCIN'",
+        "desc": "PIERCIN' DAMAGE. EFFECTIVE AGAINST JOINTS AN' WEAK POINTS!"
+      },
+      "Explosive": {
+        "name": "EXPLOSIVE",
+        "desc": "EXPLOSIVE DAMAGE. SPREAD ACROSS EVERY BODY PART!"
+      }
+    },
+    "cleave": {
+      "single": {
+        "name": "ONE HEAVY",
+        "desc": "HITS ONE TARGET AT 140% DAMAGE!"
+      },
+      "double": {
+        "name": "TWO",
+        "desc": "HITS TWO TARGETS AT 72% DAMAGE EACH!"
+      },
+      "triple": {
+        "name": "THREE",
+        "desc": "HITS THREE TARGETS AT 50% DAMAGE EACH!"
+      }
+    },
+    "draw": {
+      "short": {
+        "name": "SHORT DRAW",
+        "desc": "RANGE 3 TILES, +15% CRITICAL CHANCE!"
+      },
+      "standard": {
+        "name": "STANDARD DRAW",
+        "desc": "RANGE 6 TILES, NORMAL DAMAGE!"
+      },
+      "long": {
+        "name": "LONG DRAW",
+        "desc": "RANGE 12 TILES, 80% DAMAGE!"
+      }
+    },
+    "charge": {
+      "brace": {
+        "name": "BRACED",
+        "desc": "IGNORES DA TARGET'S GUARD. 90% DAMAGE!"
+      },
+      "reach": {
+        "name": "HELD OUT",
+        "desc": "RANGE 4 TILES INSTEAD OF 2. NORMAL DAMAGE!"
+      },
+      "overrun": {
+        "name": "RUN THROUGH",
+        "desc": "HITS TWICE AT 70% DAMAGE EACH!"
+      }
+    },
+    "discord": {
+      "tight": {
+        "name": "TIGHT",
+        "desc": "DAMAGE VARIES BY 10%. NORMAL AVERAGE!"
+      },
+      "wide": {
+        "name": "WIDE",
+        "desc": "DAMAGE VARIES BY 45%. 112% AVERAGE!"
+      },
+      "chaotic": {
+        "name": "CHAOTIC",
+        "desc": "DAMAGE VARIES BY 90%. 125% AVERAGE!"
+      }
+    },
+    "measure": {
+      "health": {
+        "name": "DEY WOUNDS",
+        "desc": "MORE DAMAGE DA LOWER DA TARGET'S HP!"
+      },
+      "mana": {
+        "name": "DEY RESERVOIR",
+        "desc": "MORE DAMAGE DA LOWER DA TARGET'S MP!"
+      },
+      "states": {
+        "name": "WHAT DEY CARRY",
+        "desc": "MORE DAMAGE FOR EVERY STATE ON DA TARGET!"
+      },
+      "level": {
+        "name": "DA GAP BETWEEN YOU",
+        "desc": "MORE DAMAGE DA BIGGER DA LEVEL GAP, IN EITHER DIRECTION!"
+      }
+    },
+    "reads": {
+      "wound": {
+        "name": "DA WOUND",
+        "desc": "MORE DAMAGE DA MORE OVERALL DAMAGE DA TARGET'S BODY HAB TAKEN!"
+      },
+      "ruin": {
+        "name": "DA RUIN",
+        "desc": "MORE DAMAGE DA WORSE DA TARGET'S MOST DAMAGED PART IZ!"
+      },
+      "tally": {
+        "name": "DA TALLY",
+        "desc": "MORE DAMAGE FOR EVERY BODY PART DA TARGET HAB LOST!"
+      }
+    },
+    "bargain": {
+      "patron": {
+        "name": "PATRON",
+        "desc": "20% CHANCE TA REAP AN ENEMY ON A CRITICAL HIT. NORMAL DAMAGE!"
+      },
+      "tithe": {
+        "name": "TITHE",
+        "desc": "50% CHANCE TA REAP AN ALLY ON A CRITICAL HIT. 130% DAMAGE!"
+      },
+      "chaos": {
+        "name": "CHAOS",
+        "desc": "50% CHANCE TA REAP ANYONE ON A CRITICAL HIT. 110% DAMAGE!"
+      }
+    },
+    "mends": {
+      "hp": {
+        "name": "WOUNDS",
+        "desc": "RESTORES HP TA DA TARGET."
+      },
+      "mp": {
+        "name": "DA RESERVOIR",
+        "desc": "RESTORES MP TA DA TARGET."
+      },
+      "tp": {
+        "name": "ACTION POINTS",
+        "desc": "RESTORES AP TA DA TARGET."
+      },
+      "state": {
+        "name": "AN AFFLICTION",
+        "desc": "REMOVES ONE STATE FROM DA TARGET!"
+      },
+      "party": {
+        "name": "ALL OF DEM",
+        "desc": "RESTORES A SMALLER AMOUNT OF HP TA DA WHOLE PARTY!"
+      }
+    },
+    "marks": {
+      "5": {
+        "desc": "30% CHANCE TA INFLICT BLIND!"
+      },
+      "6": {
+        "desc": "30% CHANCE TA INFLICT SILENCE!"
+      },
+      "13": {
+        "desc": "30% CHANCE TA INFLICT STUN!"
+      },
+      "38": {
+        "desc": "30% CHANCE TA INFLICT UNBALANCED!"
+      },
+      "48": {
+        "desc": "30% CHANCE TA INFLICT BLEEDIN'!"
+      },
+      "52": {
+        "desc": "30% CHANCE TA INFLICT PINNED!"
+      }
+    },
+    "stance": {
+      "22": {
+        "desc": "COUNTER ATTACK: STRIKES BACK WHEN HIT!"
+      },
+      "34": {
+        "desc": "PERFECT FOCUS: ATTACKS NEVER MISS!"
+      },
+      "49": {
+        "desc": "DODGE: GREATLY RAISED EVASION!"
+      },
+      "55": {
+        "desc": "COMBO: ATTACKS CHAIN INTO EXTRA HITS!"
+      }
+    },
+    "sky": {
+      "none": {
+        "name": "CLEAR",
+        "desc": "CLEARS DA WEATHER."
+      },
+      "rain": {
+        "name": "RAIN",
+        "desc": "SETS RAIN."
+      },
+      "storm": {
+        "name": "STORM",
+        "desc": "SETS A THUNDERSTORM."
+      },
+      "snow": {
+        "name": "SNOW",
+        "desc": "SETS SNOW."
+      }
+    },
+    "form": {
+      "gun": {
+        "hint": "DA COILGUN HAB ITS OWN ELEMENT, SO DA FRAME HOLDS TWO AT ONCE. RACK DEPTH IZ UP TA YOU, BUT A DOUBLED RACK DOUBLES DA AMMO COST OF EVERY SHOT!"
+      },
+      "abrasax": {
+        "hint": "APPLIES ONE AFFLICTION. HARSHER AFFLICTIONS HAB LOWER ODDS OF LANDIN', AN' PSI RAISES DA ODDS!"
+      },
+      "thelema": {
+        "hint": "A NORMAL ATTACK SOMETIMES BECOMES DIS SWORD SKILL INSTEAD, PAYIN' ITS AP COST. DA SKILL DOES NOT NEED TA BE LEARNED!"
+      },
+      "freud": {
+        "hint": "DAMAGE IZ BASED ON PSI. A NORMAL ATTACK SOMETIMES BECOMES DIS SKILL INSTEAD, PAYIN' ITS AP COST!"
+      },
+      "fists": {
+        "hint": "A NORMAL ATTACK SOMETIMES BECOMES A RANDOM FORM FROM DA SELECTED SET, PAYIN' ITS AP COST!"
+      },
+      "kia": {
+        "hint": "DA STANCE IZ ACTIVE WHILE DA GAUNTLET IZ EQUIPPED, AN' LOWERS DA DAMAGE YOU DEAL WHILE IT IZ UP!"
+      },
+      "hadit": {
+        "hint": "SWITCHIN' TA DA STAFF CHANGES DA WEATHER TA DIS ONE. WEATHER AFFECTS ENEMIES TOO, AN' HAB NO EFFECT INDOORS!"
+      },
+      "solomon": {
+        "hint": "DA PACT IZ DRAWN FROM DA SELECTED SCHOOLS. WIT NOTHIN' SELECTED IT DRAWS FROM EVERY SCHOOL. A REAL NARROW SELECTION MAY HAB NOTHIN' TA DRAW!"
+      },
+      "choronzon": {
+        "hint": "DA DAMAGE TYPE DEALT. IT DECIDES WHAT DA ATTACK IZ STRONG AN' WEAK AGAINST!"
+      },
+      "babalon": {
+        "hint": "HOW MANY TARGETS DA ATTACK HITS. EVERY EXTRA TARGET LOWERS DA DAMAGE DEALT TA ALL OF DEM!"
+      },
+      "nuit": {
+        "hint": "DA LASH LOWERS ONE PARAMETER INSTEAD OF DEALIN' FULL DAMAGE. DA ATTACK DEALS LESS DAMAGE IN EXCHANGE!"
+      },
+      "aiwass": {
+        "hint": "HOW FAR DA BOW IZ DRAWN. LONGER DRAW TRADES OFF AGAINST ARROW DAMAGE!"
+      },
+      "zos": {
+        "hint": "DA STATUS EFFECT ON DA DARTS, TAKEN FROM DA SAME LOADED ROUNDS!"
+      },
+      "baphomet": {
+        "hint": "WHAT DA TALONS DRAIN FROM DA TARGET. DRAININ' AP COSTS DA MOST, SINCE AP POWERS ATTACKS DAT TURN INTO SKILLS!"
+      },
+      "longinus": {
+        "hint": "HOW DA LANCE ATTACKS. EACH MODE TRADES ONE PROPERTY FOR ANOTHER!"
+      },
+      "eris": {
+        "hint": "DAMAGE VARIANCE. WIDER VARIANCE RAISES DA AVERAGE DAMAGE BUT MAKES SINGLE HITS LESS PREDICTABLE!"
+      },
+      "maat": {
+        "hint": "DA PARAMETER DA ANKH WEIGHS DA TARGET AGAINST. A BALANCED TARGET TAKES LESS DAMAGE DEN FROM A NORMAL ATTACK!"
+      },
+      "bubba": {
+        "hint": "DA TARGET TYPE DA WRENCH IZ BUILT FOR. MUCH MORE DAMAGE AGAINST IT, LESS AGAINST EVERYTHIN' ELSE!"
+      },
+      "yaldabaoth": {
+        "hint": "DA READIN' DA BAR TAKES FROM DA TARGET. AGAINST AN UNAFFECTED TARGET IT DEALS LESS DEN A NORMAL ATTACK!"
+      },
+      "nyarlathotep": {
+        "hint": "WHICH SIDE DA REAPIN' TARGETS. IT NEVER TAKES EM, AN' NO CAN TARGET A BOSS, A PETRODEMON, OR ANYTHIN' MORE DEN TEN LEVELS ABOVE HER!"
+      },
+      "gautama": {
+        "hint": "WHAT DA ROSARY HEALS. IT DEALS NO DAMAGE AT ALL!"
+      }
+    }
+  }
+}

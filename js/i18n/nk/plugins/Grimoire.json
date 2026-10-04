@@ -7,7 +7,9 @@
   "schoolTitle": "{school} GRIMOIRE",
   "noSpells": "NOBODY HERE CAN GRASP A SPELL FROM DEZE PAGES.<br>(NONE WITHIN DA PARTY'S MP REACH, OR ALL ALREADY KNOWN)",
   "ui": {
-    "blurb": "DA PAGES REVEAL DA SAME FIVE SPELLS TA EVERYONE. CHOOSE A READER WHO CAN BEAR ONE, DEN CLAIM IT!",
+    "beyondStat": "✧ NEEDS {stat} {points}, HAB {value}",
+    "requires": "REQUIRES {stat} {points}",
+    "blurb": "DA SAME FIVE SPELLS IZ OFFERED TA EVERYONE. PICK A READER WHO CAN LEARN ONE, DEN CLAIM IT!",
     "alreadyKnown": "✧ ALREADY KNOWN",
     "beyondReach": "✧ BEYOND DIS READER'S MP",
     "partyReader": "PARTY READER",
@@ -15,6 +17,18 @@
     "medianPsi": "MEDIAN PSI (LUCK)",
     "forbiddenSurfacing": "FORBIDDEN SURFACIN'",
     "forbidden": "✦ FORBIDDEN",
-    "whisperedSpells": "WHISPERED SPELLS"
+    "whisperedSpells": "WHISPERED SPELLS",
+    "esoteric": "✦ ESOTERIC",
+    "beyondLevelEsoteric": "✧ ESOTERIC, NEEDS LEVEL {level}",
+    "beyondLevelForbidden": "✧ FORBIDDEN, NEEDS LEVEL {level}"
+  },
+  "toast": {
+    "title": "SPELL LEARNED",
+    "learned": "{actor} COPIED {skill} OUT OF DA {book}."
+  },
+  "custom": {
+    "title": "A WRITTEN VOLUME",
+    "blurb": "EVERY PAGE HAB TA BE READ OUT BEFORE DIS VOLUME CLOSES. {left} OF {total} IZ STILL UNREAD. LEAVE NOW AN' IT GOES BACK IN DA PACK, WHOLE!",
+    "takenBy": "READ OUT TA {actor}"
   }
 }

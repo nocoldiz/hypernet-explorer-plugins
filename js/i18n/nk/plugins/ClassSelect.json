@@ -11,6 +11,7 @@
   "primary": "PRIMARY:",
   "secondary": "SECONDARY:",
   "elementHeading": "ELEMENT:",
+  "magicSystemHeading": "MAGIC SYSTEM:",
   "element": {
     "1": "PHYSICAL",
     "2": "FIRE",
@@ -29,5 +30,26 @@
     "nonSentient": "NON SENTIENT",
     "sentient": "SENTIENT"
   },
-  "vocation": "VOCATION"
+  "vocation": "VOCATION",
+  "natureMagical": "MAGICAL",
+  "natureMundane": "MUNDANE",
+  "natureBoth": "BOTH",
+  "dualWield": "DUAL WIELD",
+  "bonuses": "BONUSES",
+  "learnset": "SKILLS",
+  "levelShort": "LV",
+  "xparam": {
+    "hit": "HIT RATE",
+    "eva": "EVASION RATE",
+    "cri": "CRITICAL RATE",
+    "cev": "CRIT. EVASION",
+    "mev": "MAGIC EVASION",
+    "mrf": "MAGIC REFLECT",
+    "cnt": "COUNTER ATK",
+    "hrg": "HP REGEN",
+    "mrg": "MP REGEN",
+    "trg": "AP REGEN",
+    "unknown": "MODIFIER {n}"
+  },
+  "noDescription": "NO DESCRIPTION AVAILABLE."
 }

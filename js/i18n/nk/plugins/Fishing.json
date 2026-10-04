@@ -4,6 +4,8 @@
   "lineSnapped": "LINE SNAPPED",
   "nothingBiting": "NOTHIN' BITIN'",
   "tooSlow": "TOO SLOW",
+  "freeCamOn": "FREE CAMERA",
+  "freeCamOff": "ANGLER CAMERA",
   "something": "SOMETHIN'",
   "hint": {
     "loading": "LOADIN' DA LAKE...",

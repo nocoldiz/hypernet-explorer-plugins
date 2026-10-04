@@ -1,30 +1,171 @@
 {
- "titleTraits": "TRAITS",
- "confirm": "CONFIRM",
- "noBonusesYet": "NO BONUSES YET",
- "confirmTraits": "CONFIRM DEZE TRAITS?",
- "yes": "YAH!",
- "no": "NAH!",
- "headerText": "SPEND YA {budget} TRAIT POINTS! DRAWBACKS PAY POINTS BACK!",
- "pointsLabel": "POINTS SPENT",
- "refundLabel": "PAID BACK BY DRAWBACKS",
- "picksLabel": "TRAITS TAKEN",
- "costLabel": "COST:",
- "selectedTraitsLabel": "SELECTED TRAITS",
- "emptySlot": "[NUFFIN CHOSEN]",
- "totalBonuses": "TOTAL BONUSES:",
- "benefits": "BENEFITS:",
- "drawbacks": "DRAWBACKS:",
- "startingItems": "STARTS WIT:",
- "grantsSkills": "GRANTS SKILLS:",
- "finalSkills": "GRANTED SKILLS",
- "noSkills": "NO SKILLS GRANTED",
- "tabGenetic": "GENETIC",
- "tabPhysical": "PHYSICAL",
- "tabMental": "MENTAL",
- "tabMagical": "MAGICAL",
- "tabDiseases": "DISEASES",
- "selectedDiseasesLabel": "ILLNESSES CARRIED",
- "incompatibleNote": "CLASHES WIV SUMFIN YOU ALREADY GOT.",
- "unaffordableNote": "NOT ENOUGH POINTS LEFT, MATE."
+  "titleTraits": "TRAITS",
+  "confirm": "CONFIRM",
+  "resetTraits": "RESET",
+  "noBonusesYet": "NO BONUSES YET",
+  "confirmTraits": "CONFIRM DEZE TRAITS?",
+  "confirmSplice": "SPLICE DEZE GENES?",
+  "spliceCost": "TOTAL: {cost} €",
+  "spliceTooExpensive": "NOT ENOUGH MONEY FOR DA SPLICE!",
+  "yes": "YAH!",
+  "no": "NAH!",
+  "headerText": "SPEND YA {budget} TRAIT POINTS. DRAWBACKS PAY POINTS BACK!",
+  "pointsLabel": "POINTS SPENT",
+  "refundLabel": "PAID BACK BY DRAWBACKS",
+  "picksLabel": "TRAITS TAKEN",
+  "costLabel": "COST:",
+  "selectedTraitsLabel": "SELECTED TRAITS",
+  "emptySlot": "[NO TRAITS CHOSEN]",
+  "totalBonuses": "TOTAL BONUSES:",
+  "benefits": "BENEFITS:",
+  "drawbacks": "DRAWBACKS:",
+  "startingItems": "STARTS WIT:",
+  "grantsSkills": "GRANTS SKILLS:",
+  "finalSkills": "GRANTED SKILLS",
+  "noSkills": "NO SKILLS GRANTED",
+  "tabGenetic": "GENETIC",
+  "tabPhysical": "PHYSICAL",
+  "tabMental": "MENTAL",
+  "tabMagical": "MAGICAL",
+  "tabDiseases": "DISEASES",
+  "selectedDiseasesLabel": "ILLNESSES CARRIED",
+  "searchPlaceholder": "SEARCH TRAITS…",
+  "incompatibleNote": "CLASHES WIT A TRAIT YOU HAB ALREADY TAKEN!",
+  "unaffordableNote": "NOT ENOUGH TRAIT POINTS LEFT FOR DIS ONE!",
+  "noneInCategory": "NOTHIN' HERE",
+  "purseSpent": "SPENT",
+  "purseRefunds": "REFUNDS",
+  "purseLeft": "REMAININ'",
+  "pts": "PTS",
+  "refundWord": "REFUND",
+  "packs": {
+    "soldier": {
+      "name": "OLD SOLDIER",
+      "description": "YEARS UNDER ARMS, A FLAT VOICE AN' A HABIT DAT CAME HOME WIT DEM!"
+    },
+    "scholar": {
+      "name": "SCHOLAR",
+      "description": "A BRILLIANT, WELL-READ MIND DAT HAB SPENT TOO LONG TOO CLOSE TA DA PAGE!"
+    },
+    "outlaw": {
+      "name": "OUTLAW",
+      "description": "LIGHT FINGERS, LIGHTER SCRUPLES, AN' A NAME SOMEBODY IZ STILL LOOKIN' FOR!"
+    },
+    "healer": {
+      "name": "HEALER",
+      "description": "HERBS, PATIENCE AN' A REFUSAL TA RAISE A HAND TA ANYONE!"
+    },
+    "mystic": {
+      "name": "MYSTIC",
+      "description": "BORN TA DA WORK, VERSED IN DA STILL, AN' CAREFUL ABOUT OMENS!"
+    },
+    "brawler": {
+      "name": "BRAWLER",
+      "description": "BUILT FOR IT, TRAINED FOR IT, AN' QUICK TA FIND A REASON!"
+    },
+    "noble": {
+      "name": "NOBLE BORN",
+      "description": "A HOUSE, AN INHERITANCE AN' A MANNER DAT OPENS DOORS!"
+    },
+    "wanderer": {
+      "name": "WANDERER",
+      "description": "READS DA LAND, FOLLOWS A TRACK AN' NEVER LOSES DA WAY HOME!"
+    },
+    "gunslinger": {
+      "name": "GUNSLINGER",
+      "description": "A STEADY EYE, A FAST HAND AN' REAL LITTLE HESITATION!"
+    },
+    "pilgrim": {
+      "name": "PILGRIM",
+      "description": "A ROAD WALKED FOR A CREED, AN' A CREED CARRIED QUIETLY!"
+    },
+    "performer": {
+      "name": "PERFORMER",
+      "description": "A VOICE DAT CARRIES, A TASTE FOR PLEASURE AN' A WAY WIT AN AUDIENCE!"
+    },
+    "merchant": {
+      "name": "MERCHANT",
+      "description": "A NOSE FOR A PRICE, AN EYE ON DA LADDER AN' A TONGUE DAT CLOSES DEALS!"
+    },
+    "hexed": {
+      "name": "HEXED",
+      "description": "MARKED, SCARRED AN' OUT OF FAVOUR WIT WHOEVER IZ MEANT TA BE LISTENIN'!"
+    },
+    "tinkerer": {
+      "name": "TINKERER",
+      "description": "FORGE, WORKBENCH AN' A WORKIN' DAY NOBODY ELSE WOULD KEEP!"
+    },
+    "beastkin": {
+      "name": "BEASTKIN",
+      "description": "RAISED BY SOMETHIN' WIT FOUR LEGS, AN' IT STILL SHOWS IN DA WALK!"
+    },
+    "hermit": {
+      "name": "HERMIT",
+      "description": "OWNS THREE THINGS, SPEAKS TA NOBODY, AN' WANTS IT KEPT DAT WAY!"
+    },
+    "nightborn": {
+      "name": "NIGHTBORN",
+      "description": "SOMETHIN' OLD IN DA BLOOD, A TASTE FOR PAIN, AN' SCARS DAT CAME WIT BOTH!"
+    },
+    "oracle": {
+      "name": "ORACLE",
+      "description": "SEES WHAT HAB NOT HAPPENED, HEARS COLOUR, AN' IZ BELIEVED TOO LATE!"
+    },
+    "firebug": {
+      "name": "FIREBUG",
+      "description": "LIGHTS IT, WATCHES IT, AN' IZ KNOWN IN THREE TOWNS FOR EXACTLY DAT!"
+    },
+    "savant": {
+      "name": "SAVANT",
+      "description": "NO CAN SIT STILL, FORGETS NOTHIN' READ, AN' ANSWERS IN FOUR LANGUAGES!"
+    },
+    "giant": {
+      "name": "GIANT",
+      "description": "TOO BIG FOR DA DOOR, STRONG ENOUGH NOT TA MIND, AN' HEARD FROM DA NEXT STREET!"
+    },
+    "smallfolk": {
+      "name": "SMALLFOLK",
+      "description": "SMALL, FOLDED IN WAYS A BODY SHOULD NOT FOLD, AN' HANDY WIT EITHER HAND!"
+    },
+    "shadow": {
+      "name": "SHADOW",
+      "description": "TRAINED TA END THINGS QUIETLY, REMEMBERED BY NOBODY, MOVED BY NOTHIN'!"
+    },
+    "monk": {
+      "name": "MONK",
+      "description": "YEARS IN A COLD CLOISTER, ONE BOWL, AN' NO GRUDGE WORTH KEEPIN'!"
+    },
+    "silent": {
+      "name": "SILENT ONE",
+      "description": "HAB NOT SPOKEN IN YEARS, SEES FACES WRONG, AN' WEARS DA REASON!"
+    },
+    "doomsayer": {
+      "name": "DOOMSAYER",
+      "description": "BELIEVES IN NOTHIN', EXPECTS DA WORST, AN' IZ TERRIFIED OF DA END ANYWAY!"
+    },
+    "caveborn": {
+      "name": "CAVEBORN",
+      "description": "BORN UNDER DA ROCK, WHITE AS DA STONE, AN' AFRAID OF DA DARK ALL DA SAME!"
+    },
+    "gambler": {
+      "name": "GAMBLER",
+      "description": "NO CAN WALK PAST A TABLE, WINS MORE DEN DEY SHOULD, AN' LIES ABOUT BOTH!"
+    },
+    "predator": {
+      "name": "LONE PREDATOR",
+      "description": "IT HUNTS ALONE, MARKS A RANGE AN' DOES NOT SHARE IT!"
+    },
+    "packbeast": {
+      "name": "PACK BEAST",
+      "description": "IT READS A PACK DA WAY PEOPLE READ A ROOM, AN' IT HAB ALREADY CHOSEN A LEADER!"
+    },
+    "scavenger": {
+      "name": "SCAVENGER",
+      "description": "IT EATS WHAT IZ LEFT, DIGS WHERE IT MUST AN' RUNS FROM ALMOST EVERYTHIN'!"
+    },
+    "armoured": {
+      "name": "ARMOURED THING",
+      "description": "HIDE TOO THICK TA CUT, A BITE WORTH AVOIDIN' AN' A LONG WINTER SLEEP!"
+    }
+  }
 }

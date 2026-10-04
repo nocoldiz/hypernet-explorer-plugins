@@ -1,0 +1,274 @@
+{
+  "crime": {
+    "pettytheft": {
+      "name": "PETTY THEFT"
+    },
+    "pickpocketing": {
+      "name": "PICKPOCKETIN'"
+    },
+    "shoplifting": {
+      "name": "SHOPLIFTIN'"
+    },
+    "burglary": {
+      "name": "BURGLARY"
+    },
+    "graverobbing": {
+      "name": "GRAVE ROBBIN'"
+    },
+    "robbery": {
+      "name": "ROBBERY"
+    },
+    "armedrobbery": {
+      "name": "ARMED ROBBERY"
+    },
+    "bankrobbery": {
+      "name": "BANK ROBBERY"
+    },
+    "grandtheft": {
+      "name": "GRAND THEFT"
+    },
+    "assault": {
+      "name": "ASSAULT"
+    },
+    "battery": {
+      "name": "BATTERY"
+    },
+    "aggravatedassault": {
+      "name": "AGGRAVATED ASSAULT"
+    },
+    "abandonchild": {
+      "name": "CHILD ABANDONMENT"
+    },
+    "murder": {
+      "name": "MURDER"
+    },
+    "manslaughter": {
+      "name": "MANSLAUGHTER"
+    },
+    "serialkilling": {
+      "name": "SERIAL KILLIN'"
+    },
+    "vandalism": {
+      "name": "VANDALISM"
+    },
+    "graffiti": {
+      "name": "GRAFFITI"
+    },
+    "arson": {
+      "name": "ARSON"
+    },
+    "propertydestruction": {
+      "name": "PROPERTY DESTRUCTION"
+    },
+    "illegalconstruction": {
+      "name": "ILLEGAL CONSTRUCTION"
+    },
+    "publicdisturbance": {
+      "name": "PUBLIC DISTURBANCE"
+    },
+    "disorderlyconduct": {
+      "name": "DISORDERLY CONDUCT"
+    },
+    "harassment": {
+      "name": "HARASSMENT"
+    },
+    "trespassing": {
+      "name": "TRESPASSIN'"
+    },
+    "breakingandentering": {
+      "name": "BREAKIN' AN' ENTERIN'"
+    },
+    "unlawfulentry": {
+      "name": "UNLAWFUL ENTRY"
+    },
+    "drugpossession": {
+      "name": "DRUG POSSESSION"
+    },
+    "drugdealing": {
+      "name": "DRUG DEALIN'"
+    },
+    "drugtrafficking": {
+      "name": "DRUG TRAFFICKIN'"
+    },
+    "smuggling": {
+      "name": "SMUGGLIN'"
+    },
+    "contraband": {
+      "name": "CONTRABAND POSSESSION"
+    },
+    "fraud": {
+      "name": "FRAUD"
+    },
+    "embezzlement": {
+      "name": "EMBEZZLEMENT"
+    },
+    "bribery": {
+      "name": "BRIBERY"
+    },
+    "corruption": {
+      "name": "CORRUPTION"
+    },
+    "taxevasion": {
+      "name": "TAX EVASION"
+    },
+    "moneylaundering": {
+      "name": "MONEY LAUNDERIN'"
+    },
+    "forgery": {
+      "name": "FORGERY"
+    },
+    "counterfeiting": {
+      "name": "COUNTERFEITIN'"
+    },
+    "identitytheft": {
+      "name": "IDENTITY THEFT"
+    },
+    "cybercrime": {
+      "name": "CYBERCRIME"
+    },
+    "hacking": {
+      "name": "COMPUTER HACKIN'"
+    },
+    "datatheft": {
+      "name": "DATA THEFT"
+    },
+    "piracy": {
+      "name": "DIGITAL PIRACY"
+    },
+    "extortion": {
+      "name": "EXTORTION"
+    },
+    "blackmail": {
+      "name": "BLACKMAIL"
+    },
+    "kidnapping": {
+      "name": "KIDNAPPIN'"
+    },
+    "hostage": {
+      "name": "HOSTAGE TAKIN'"
+    },
+    "humantrafficking": {
+      "name": "HUMAN TRAFFICKIN'"
+    },
+    "slavery": {
+      "name": "SLAVERY"
+    },
+    "poaching": {
+      "name": "POACHIN'"
+    },
+    "illegalhunting": {
+      "name": "ILLEGAL HUNTIN'"
+    },
+    "animalcruelty": {
+      "name": "ANIMAL CRUELTY"
+    },
+    "abandonpet": {
+      "name": "PET ABANDONMENT"
+    },
+    "environmentalcrime": {
+      "name": "ENVIRONMENTAL CRIME"
+    },
+    "pollutionviolation": {
+      "name": "POLLUTION VIOLATION"
+    },
+    "illegaldumping": {
+      "name": "ILLEGAL DUMPIN'"
+    },
+    "speedingminor": {
+      "name": "MINOR SPEEDIN'"
+    },
+    "speedingmajor": {
+      "name": "MAJOR SPEEDIN'"
+    },
+    "recklessdriving": {
+      "name": "RECKLESS DRIVIN'"
+    },
+    "dui": {
+      "name": "DRIVIN' UNDER INFLUENCE"
+    },
+    "hitandrun": {
+      "name": "HIT AN' RUN"
+    },
+    "vehicletheft": {
+      "name": "VEHICLE THEFT"
+    },
+    "carjacking": {
+      "name": "CARJACKIN'"
+    },
+    "illegalracing": {
+      "name": "ILLEGAL STREET RACIN'"
+    },
+    "publicintoxication": {
+      "name": "PUBLIC INTOXICATION"
+    },
+    "underagedrinking": {
+      "name": "UNDERAGE DRINKIN'"
+    },
+    "disturbing": {
+      "name": "DISTURBIN' DA PEACE"
+    },
+    "loitering": {
+      "name": "LOITERIN'"
+    },
+    "jaywalking": {
+      "name": "JAYWALKIN'"
+    },
+    "littering": {
+      "name": "LITTERIN'"
+    },
+    "noisepollution": {
+      "name": "NOISE POLLUTION"
+    },
+    "perjury": {
+      "name": "PERJURY"
+    },
+    "contemptofcourt": {
+      "name": "CONTEMPT OF COURT"
+    },
+    "obstructingjustice": {
+      "name": "OBSTRUCTIN' JUSTICE"
+    },
+    "resistingarrest": {
+      "name": "RESISTIN' ARREST"
+    },
+    "escapingcustody": {
+      "name": "ESCAPIN' CUSTODY"
+    },
+    "prisonbreak": {
+      "name": "PRISON BREAK"
+    },
+    "weaponspossession": {
+      "name": "ILLEGAL WEAPONS POSSESSION"
+    },
+    "illegalweapons": {
+      "name": "ILLEGAL WEAPONS MANUFACTURIN'"
+    },
+    "weaponstrafficking": {
+      "name": "WEAPONS TRAFFICKIN'"
+    },
+    "terrorism": {
+      "name": "TERRORISM"
+    },
+    "bioterrorism": {
+      "name": "BIOTERRORISM"
+    },
+    "treason": {
+      "name": "TREASON"
+    },
+    "espionage": {
+      "name": "ESPIONAGE"
+    },
+    "warcrimes": {
+      "name": "WAR CRIMES"
+    },
+    "genocide": {
+      "name": "GENOCIDE"
+    },
+    "crimesagainsthumanity": {
+      "name": "CRIMES AGAINST HUMANITY"
+    },
+    "fareevasion": {
+      "name": "FARE EVASION"
+    }
+  }
+}

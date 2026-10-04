@@ -17,6 +17,50 @@
       "DIS CREATURE IZ TOO STRONG!\nME SHOULD RUN AWAY!"
     ]
   },
+  "cautionWarning": {
+    "party": [
+      "DIS ONE OUTRANKS US.\nSTAY SHARP AN' COVER EACH OTHER!",
+      "WE IZ PUNCHIN' ABOVE OUR WEIGHT HERE.\nNO MISTAKES!",
+      "DAT THING HAB YEARS ON US.\nWE CAN WIN, BUT NOT CARELESSLY!",
+      "IT IZ STRONGER DEN ANYTHIN' WE HAB FOUGHT.\nLETZ PACE OURSELVES!",
+      "WE CAN TAKE IT, BUT IT WILL COST US.\nKEEP AN EYE ON DA WOUNDED!",
+      "DIS IZ A STEP ABOVE OUR LEVEL.\nFIGHT IT PROPERLY!"
+    ],
+    "single": [
+      "DIS ONE OUTRANKS ME.\nME WILL HAB TA BE CAREFUL!",
+      "ME IZ PUNCHIN' ABOVE ME WEIGHT HERE.\nNO MISTAKES!",
+      "DAT THING HAB YEARS ON ME.\nME CAN WIN, BUT NOT CARELESSLY!",
+      "IT IZ STRONGER DEN ANYTHIN' ME HAB FOUGHT.\nLET ME PACE MYSELF!",
+      "ME CAN TAKE IT, BUT IT WILL COST ME.\nWATCH ME HEALTH!",
+      "DIS IZ A STEP ABOVE ME LEVEL.\nFIGHT IT PROPERLY!"
+    ]
+  },
+  "mercy": {
+    "tooStrong": [
+      "YOU IZ NOT EVEN A CHALLENGE. GO HOME BEFORE ME GET BORED!",
+      "ME HAB BEATEN BETTER. RUN ALONG, DIS NO IZ WORTH ME TIME!",
+      "KILLIN' YOU NO WOULD PROVE ANYTHIN'. GET OUT OF ME SIGHT!",
+      "YOU BORE ME. LEAVE, BEFORE ME CHANGE ME MIND!",
+      "DIS WAZ NEVER A FIGHT. GO, WHILE ME STILL FIND YOU AMUSIN'!",
+      "ME HAB CRUSHED STRONGER FOOLS DEN YOU. WALK AWAY!"
+    ],
+    "friendly": [
+      "WE HAB TALKED. ME NO WILL RAISE A HAND AGAINST YOU NOW!",
+      "YOU SPOKE TA ME LIKE ME MATTERED. ME NO CAN FIGHT YOU AFTER DAT!",
+      "NO... NOT YOU. WE UNDERSTAND EACH OTHER NOW. GO IN PEACE!",
+      "ME LIKE YOU TOO MUCH FOR DIS. GET OUT OF HERE BEFORE DA OTHERS NOTICE!",
+      "YOU SHOWED ME KINDNESS. ME OWE YOU DA SAME!",
+      "DIS FIGHT ENDS HERE. ME NO WILL HURT SOMEONE WHO LISTENED TA ME!"
+    ],
+    "pity": [
+      "LOOK AT YOU... DERE IZ NO HONOR IN FINISHIN' DIS. GO!",
+      "YOU IZ ALREADY BEATEN. ME NO WILL STAND OVER A CORPSE!",
+      "ENOUGH. ME NO FIGHT DA DYING!",
+      "TAKE YA FALLEN AN' GO. ME HAB SEEN ENOUGH BLOOD TODAY!",
+      "DIS STOPPED BEING A FIGHT. IT IZ A MERCY KILLIN' NOW. ME WILL PASS!",
+      "GET YA PEOPLE OUT OF HERE BEFORE IT IZ TOO LATE!"
+    ]
+  },
   "moonPhase": {
     "newMoon": "NEW MOON",
     "waxingCrescent": "WAXIN' CRESCENT",
@@ -49,8 +93,15 @@
     "skill": "SKILL",
     "skills": "SKILLS",
     "basic": "BASIC",
+    "actions": "ACTIONS",
+    "aim": "AIM",
+    "aimAt": "AIM: {part}",
+    "wrestle": "WRESTLE",
+    "talk": "TALK",
     "reload": "RELOAD",
-    "run": "RUN"
+    "run": "RUN",
+    "bash": "BASH",
+    "throw": "THROW"
   },
   "states": {
     "removalHeader": "REMOVAL CONDITIONS",
@@ -61,7 +112,6 @@
     "byWalkingSteps": "{label} ({steps} STEPS)",
     "byDamageChance": "{label} ({pct}% CHANCE)",
     "statusEffects": "STATUS EFFECTS",
-    "navHint": "↑↓ NAVIGATE · ←→ PAGE · ESC CLOSE",
     "back": "← BACK",
     "countLabel": "{n} EFFECTS CATALOGUED",
     "noStates": "NO STATUS EFFECTS IZ DEFINED!",
@@ -108,6 +158,71 @@
       "guard": "ALWAYS GUARDIN'",
       "substitute": "COVERS WOUNDED ALLIES",
       "preserveTp": "KEEPS AP BETWEEN BATTLES"
+    },
+    "desc": {
+      "Dead": "KNOCKED OUT. DA BATTLER IZ DOWN AN' TAKES NO TURN UNTIL IT IZ REVIVED!",
+      "Guard": "GUARDIN'. DAMAGE TAKEN DIS TURN IZ HALVED!",
+      "Immortal": "NO CAN BE REDUCED BELOW ONE HIT POINT WHILE IT LASTS!",
+      "Poison": "LOSES 5% OF ITS MAXIMUM HEALTH AT DA END OF EVERY TURN!",
+      "Blind": "ACCURACY DROPS BY HALF: PHYSICAL ATTACKS MISS FAR MORE OFTEN!",
+      "Silence": "MAGIC IZ SEALED. SPELLS NO CAN BE CAST UNTIL IT LIFTS!",
+      "Rage": "ATTACKS A RANDOM ENEMY, BUT DEALS 50% MORE DAMAGE!",
+      "Confusion": "ACTS AT RANDOM AN' MAY HIT FRIENDS AS READILY AS FOES!",
+      "Charm": "FIGHTS FOR DA OTHER SIDE UNTIL DA CHARM BREAKS!",
+      "Sleep": "NO CAN ACT AN' NO CAN EVADE. TAKIN' DAMAGE TENDS TA WAKE IT!",
+      "Freeze": "NO CAN ACT. FIRE OR ICE MAGIC BREAKS DA ICE!",
+      "Paralysis": "NO CAN ACT AN' NO CAN EVADE FOR DA NEXT THREE TURNS!",
+      "Stun": "LOSES ITS NEXT TURN OR TWO. NO ACTION, NO EVASION!",
+      "Locked on": "CRITICAL HITS LAND THREE TIMES AS OFTEN!",
+      "HP Regeneration": "RECOVERS 10% OF ITS MAXIMUM HEALTH AT DA END OF EVERY TURN!",
+      "MP Regeneration": "RECOVERS 10% OF ITS MAXIMUM MAGIC AT DA END OF EVERY TURN!",
+      "AP Regeneration": "RECOVERS 10% OF ITS ACTION POINTS AT DA END OF EVERY TURN!",
+      "Magic Reflection": "SPELLS CAST AT IT BOUNCE BACK AT DA CASTER!",
+      "Protect": "TAKES HITS AIMED AT A WOUNDED ALLY INSTEAD OF DEM!",
+      "Provoke": "DRAWS ENEMY ATTACKS: IT IZ TARGETED NINE TIMES AS OFTEN AS ANYONE ELSE!",
+      "Hide": "OUT OF SIGHT. ENEMIES WILL NOT PICK IT AS A TARGET!",
+      "Counter Attack": "ANSWERS EVERY PHYSICAL ATTACK WIT ONE OF ITS OWN!",
+      "Status Ailment Block": "IMMUNE TA POISON, BLINDNESS, SILENCE, RAGE, CONFUSION, CHARM, SLEEP, PARALYSIS AN' STUN!",
+      "Inspired": "SPELLS COST A QUARTER LESS MAGIC!",
+      "Hot": "ATTACKS CARRY FIRE, ICE DAMAGE IZ DOUBLED, AN' AGILITY RISES!",
+      "Cold": "ATTACKS CARRY ICE, FIRE DAMAGE IZ TRIPLED, AN' THUNDER DAMAGE IZ HALVED!",
+      "Static": "ATTACKS CARRY LIGHTNIN', AN' LIGHTNIN' DAMAGE TAKEN IZ HALVED!",
+      "Wet": "ATTACKS CARRY WATER, FIRE DAMAGE IZ HALVED AN' LIGHTNIN' DAMAGE IZ DOUBLED!",
+      "Half Encounters": "WANDERIN' MONSTERS IZ MET HALF AS OFTEN WHILE WALKIN'!",
+      "Double Money/Items": "A WON FIGHT PAYS TWICE DA MONEY AN' DROPS TWICE DA LOOT!",
+      "Berserk": "ATTACKS AT RANDOM, 50% HARDER, WIT DEFENCE DOWN BY A THIRD!",
+      "Divine Shield": "ALL INCOMIN' DAMAGE IZ CUT BY 30% AN' CRITICAL HITS NO CAN LAND!",
+      "Death Mark": "TAKES 30% MORE DAMAGE FROM EVERYTHIN' AN' IZ TARGETED FIRST!",
+      "Perfect Focus": "EVERY HIT IZ A CRITICAL, BUT DEFENCE DROPS BY A FIFTH!",
+      "Shadow Veil": "EVASION RISES, BUT ITS OWN ACCURACY FALLS!",
+      "Arcane Surge": "MAGIC POWER AN' MAGIC DEFENCE RISE BY HALF, AT DA COST OF 10% MAGIC EACH TURN!",
+      "Ethereal": "PHYSICAL BLOWS PASS STRAIGHT THROUGH, BUT MAGIC DOES DOUBLE DAMAGE!",
+      "Unbalanced": "ACCURACY FALLS AN' AN ACTION MAY FAIL OUTRIGHT!",
+      "Life Link": "DAMAGE DEALT TA IT IZ SHARED OUT AMONG DA WHOLE PARTY!",
+      "Vulnerability": "PHYSICAL DEFENCE IZ HALVED!",
+      "Nausea": "AGILITY FALLS BY A QUARTER, SO IT ACTS LATER IN DA ROUND!",
+      "Drunk": "ACTION POINTS BUILD UP MUCH MORE SLOWLY!",
+      "Burned": "LOSES 10% OF ITS MAXIMUM HEALTH AT DA END OF EVERY TURN!",
+      "Infected": "LOSES 10% OF ITS HEALTH EACH TURN AN' CATCHES OTHER AILMENTS MORE EASILY!",
+      "Floating": "FASTER, TAKES HALF DAMAGE FROM PHYSICAL HITS AN' IZ IMMUNE TA EARTH, BUT LIGHTNIN' DOES DOUBLE DAMAGE!",
+      "Invisible": "ATTACKS AGAINST IT ALMOST ALWAYS MISS, AN' IT IZ RARELY PICKED AS A TARGET!",
+      "Oily": "ATTACKS CARRY A CURSE, AN' FIRE DAMAGE IZ CLOSE TA LETHAL!",
+      "Bleeding": "LOSES 10% OF ITS MAXIMUM HEALTH AT DA END OF EVERY TURN!",
+      "Dodge": "EVASION AGAINST WEAPONS AN' MAGIC ALIKE IZ DOUBLED!",
+      "Withdrawal": "ATTACK, MAGIC AN' AGILITY ALL FALL, AN' ACCURACY SUFFERS!",
+      "Grappled": "AGILITY AN' EVASION COLLAPSE, AN' PHYSICAL BLOWS LAND A QUARTER HARDER!",
+      "Pinned": "NO CAN ACT. ONE SOLID HIT BREAKS IT FREE!",
+      "Guard Broken": "DEFENCE IZ HALVED, MAGIC DEFENCE FALLS, AN' GUARDIN' HAB NO EFFECT!",
+      "Winded": "SLOWER, AN' ALMOST NO ACTION POINTS BUILD UP WHILE IT LASTS!",
+      "Combo": "ACCURACY AN' CRITICAL RATE RISE, AN' SOME TECHNIQUES DO FAR MORE DAMAGE FROM IT!",
+      "Vital Exposed": "EVERY PHYSICAL BLOW DAT FOLLOWS DOES HALF AGAIN AS MUCH DAMAGE!",
+      "Rooted": "MUCH HARDER TA DAMAGE OR KNOCK OVER, BUT SLOWER!",
+      "Flow": "TURNS SOME ATTACKS ASIDE AN' COUNTERS DEM!",
+      "Chi Burn": "LOSES HEALTH EACH TURN, MAGIC POWER FALLS AN' ACTION POINTS BUILD UP SLOWLY!",
+      "Concussed": "MAGIC POWER, MAGIC DEFENCE AN' ACCURACY ALL FALL!",
+      "Allergic Reaction": "HIVES, ITCHIN' AN' A RUNNIN' NOSE FROM AN ALLERGEN. ATTACK AN' AGILITY FALL AN' AIM SLIPS UNTIL IT PASSES OR AN ANTIHISTAMINE CLEARS IT!",
+      "Anaphylaxis": "DA AIRWAY SWELLS SHUT AFTER AN ALLERGEN. HEALTH DRAINS EVERY TURN AN' DA BODY BARELY ANSWERS UNTIL AN ANTIHISTAMINE OR A HEALTH POTION OPENS IT AGAIN!",
+      "Hay Fever": "STREAMIN' EYES AN' FITS OF SNEEZIN' FROM POLLEN IN DA AIR. SPELLS AN' AIM SUFFER UNTIL IT PASSES OR AN ANTIHISTAMINE CLEARS IT!"
     }
   },
   "spirit": {
@@ -128,16 +243,31 @@
     "pickUpPrompt": "PICK UP ITEM?",
     "pickUp": "PICK UP",
     "cancel": "CANCEL",
-    "pickedUp": "PICKED UP {item}!"
+    "pickedUp": "PICKED UP {item}!",
+    "hitNpc": "{name} IZ STRUCK FOR {damage}!",
+    "infectedQuietly": "DA VIAL BREAKS ON {name}. NOBODY SAW A THING!",
+    "infectedSeen": "DA VIAL BREAKS ON {name}, IN FULL VIEW!"
   },
   "mimic": {
     "mirrored": "{actor} MIRRORED DA ENEMY'S ABILITIES!",
     "hasLearned": "{actor} HAB LEARNED {skill}!",
     "learnedFromEnemy": "{actor} LEARNED {skill} FROM DA ENEMY!",
-    "learnableSkills": "LEARNABLE SKILLS:"
+    "learnableSkills": "LEARNABLE SKILLS:",
+    "nothingToCopy": "{actor} FINDS NOTHIN' WORTH COPYIN'!",
+    "tookLook": "{actor} TAKES DA SHAPE OF {enemy}!",
+    "becameEnemy": "{actor} BECOMES {enemy}, BODY AN' ALL!",
+    "becameAlly": "{actor} BECOMES {ally}!",
+    "mirrorMove": "{actor} THROWS {skill} STRAIGHT BACK!",
+    "nothingToMirror": "{actor} HAB NO MOVE TA THROW BACK YET!",
+    "mutated": "{actor}'S BODY GROWS INTO {body}!"
   },
   "summon": {
     "alreadyActive": "A SUMMON IZ ALREADY ACTIVE!",
+    "mapWalks": "{name} ANSWERS DA CALL AN' WALKS WIT DA PARTY FOR {steps} STEPS!",
+    "mapBound": "{name} ANSWERS DA CALL AN' WALKS WIT DA PARTY UNTIL IT IZ SENT AWAY!",
+    "mapExpired": "DA BINDIN' RUNS OUT, AN' {name} SLIPS BACK WHERE IT CAME FROM!",
+    "mapReplaced": "{name} IZ LET GO TA MAKE ROOM FOR WHAT IZ BEING CALLED!",
+    "noBodyToWalk": "{name} HAB NO BODY IT COULD WALK BESIDE DA PARTY IN!",
     "summoned": "SUMMONED {name}!",
     "dismissed": "{name} WAZ SENT AWAY.",
     "slain": "{name} WAZ DESTROYED AN' COULD NOT BE HELD!",
@@ -267,9 +397,14 @@
         "mirror": "REFLECTED RUIN",
         "revenant": "OLD DEBT REPAID"
       }
-    }
+    },
+    "perfectRitual": "[NAT 20] PERFECT RITUAL! {name} GAINS FULL HYPER AN' DA MASTER BUFFS!",
+    "empowered": "[INT +{mod}] DA SUMMONIN' RITUAL EMPOWERED {name} WIT COMBAT BUFFS!"
   },
   "actorDied": "{actor} HAB DIED.",
+  "knockout": {
+    "cameRound": "{actor} COMES ROUND, BARELY STANDIN'!"
+  },
   "bulletHellDamage": "TOTAL BULLET HELL DAMAGE: {amount}",
   "petrodemon": {
     "name": "{first}{second}, {epithet}",
@@ -360,5 +495,272 @@
       "DA LAST EXTRACTION",
       "WHO SEEPS UPWARD"
     ]
+  },
+  "rarity": {
+    "desc": "{build} {habit} {rumour}",
+    "build": [
+      "SOMETHIN' DA WORLD MADE ONCE AN' DID NOT MAKE AGAIN!",
+      "A BODY ASSEMBLED OUT OF PARTS NO SINGLE SPECIES OWNS!",
+      "IT IZ DA WRONG SIZE FOR EVERYTHIN' AROUND IT, AN' ALWAYS HAB BEEN!",
+      "NOTHIN' IN DA BOOK ACCOUNTS FOR IT, AN' DA BOOK HAB BEEN CHECKED!",
+      "IT READS AS AN ORDINARY ANIMAL UNTIL YOU HAB WATCHED IT FOR A WHILE!",
+      "A SHAPE DAT LOOKS DRAWN FROM A DESCRIPTION RATHER DEN FROM LIFE!",
+      "IT CARRIES DA PROPORTIONS OF THREE CREATURES AN' DA MANNERS OF NONE!",
+      "WHATEVER IT IZ, DERE IZ EXACTLY ONE OF IT!"
+    ],
+    "habit": [
+      "IT KEEPS TA GROUND NOBODY CROSSES TWICE!",
+      "IT MOVES AT DA HOUR DA MAPS IZ NOT BEING DRAWN!",
+      "IT HAB BEEN WALKIN' DA SAME LINE ACROSS DA CONTINENT FOR YEARS!",
+      "IT GOES WHERE IT IZ GOING AN' DOES NOT STOP TA BE LOOKED AT!",
+      "IT IZ NEVER FOUND WHERE IT WAZ LAST REPORTED!",
+      "IT WALKS IN DA OPEN AN' IZ SOMEHOW NEVER IN ANYBODY'S WAY!",
+      "IT GRAZES, HUNTS OR WAITS, AN' NO TWO WITNESSES AGREE WHICH!",
+      "IT KEEPS A DISTANCE DAT NEVER CHANGES, WHATEVER DA DISTANCE WAZ!"
+    ],
+    "rumour": [
+      "THREE PEOPLE HAB WRITTEN IT DOWN AN' NO TWO ACCOUNTS AGREE!",
+      "EVERY SIGHTIN' IZ SOMEBODY'S ONLY SIGHTIN'!",
+      "DA LAST PERSON TA SEE ONE STOPPED TRAVELLIN' AFTERWARDS!",
+      "IT IZ IN ONE FIELD GUIDE, IN DA MARGIN, IN PENCIL!",
+      "DERE IZ A REWARD POSTED FOR A PHOTOGRAPH AN' NOBODY HAB CLAIMED IT!",
+      "DA VILLAGE DAT NAMED IT HAB SINCE NAMED IT SOMETHIN' ELSE!",
+      "IT HAB A LOCAL NAME IN FOUR LANGUAGES AN' A PROPER ONE IN NONE!",
+      "WHOEVER MEETS IT IZ DA LAST PERSON WHO WILL!"
+    ]
+  },
+  "alien": {
+    "desc": "{biology} {behaviour} {world}",
+    "biology": [
+      "ITS CHEMISTRY IZ NOT EARTH'S AN' DOES NOT PRETEND TA BE!",
+      "IT IZ SYMMETRICAL ALONG AN AXIS NOTHIN' HERE IZ SYMMETRICAL ALONG!",
+      "WHAT IT USES FOR BLOOD RUNS AT A TEMPERATURE NOTHIN' HERE SURVIVES!",
+      "IT BREATHES SOMETHIN', AN' DA SOMETHIN' IZ NOT AIR!",
+      "ITS BODY REPEATS ONE ORGAN UNTIL DA REPETITION IZ DA ANIMAL!",
+      "IT HAB SENSE ORGANS FACIN' DIRECTIONS DAT OUGHT NOT TA MATTER!",
+      "NOTHIN' ABOUT IT IZ WARM, AN' NOTHIN' ABOUT IT IZ SLOW!",
+      "IT GREW INTO WHATEVER SHAPE ITS GRAVITY WOULD ALLOW!"
+    ],
+    "behaviour": [
+      "IT ANSWERS MOVEMENT RATHER DEN SOUND!",
+      "IT HUNTS ON A SCHEDULE KEYED TA A DAY NOBODY HERE IZ LIVIN'!",
+      "IT HAB NO REACTION TA BEING LOOKED AT. DAT IN ITSELF TELLS YOU SOMETHIN'!",
+      "IT TREATS A LANDIN' PARTY AS WEATHER!",
+      "IT IZ TERRITORIAL ABOUT GROUND IDENTICAL TA ALL DA OTHER GROUND!",
+      "IT SWARMS, DEN DOES NOT, AN' DA CHANGE HAB NO VISIBLE CAUSE!",
+      "IT TRAVELS IN A FORMATION DAT HOLDS TA DA CENTIMETRE!",
+      "IT IZ WAITIN' FOR SOMETHIN' DAT HAB NOT HAPPENED YET!"
+    ],
+    "world": [
+      "IT WAZ CATALOGUED ON DA FIRST LANDIN' DAT SURVIVED ONE!",
+      "ITS WORLD IZ LISTED AS HABITABLE, WHICH IZ A CLERICAL OPINION!",
+      "IT IZ DA ONLY THING DAT MOVES FOR A HUNDRED KILOMETRES!",
+      "DA BIOSIGNATURE PROMISED SOMETHIN' LIKE DIS AN' UNDERSTATED IT!",
+      "IT BELONGS TA A WORLD DAT HAB NEVER HAB A VISITOR TWICE!",
+      "NOTHIN' ELSE ON ITS PLANET SHARES A SINGLE FEATURE WIT IT!",
+      "DA SURVEY DAT NAMED IT WAZ CUT SHORT!",
+      "IT IZ, AS FAR AS ANYBODY CAN PROVE, NATIVE!"
+    ]
+  },
+  "weapons": {
+    "pair": "{actor} TAKES UP {first} AN' {second}."
+  },
+  "escape": {
+    "failed": "YOU FAIL TA BREAK AWAY!",
+    "boss": "DIS FOE WILL NOT LET YOU GO!",
+    "tooClose": "DEY IZ TOO CLOSE TA BREAK AWAY!",
+    "tooCloseMember": "{name} IZ TOO CLOSE TA BREAK AWAY! ANOTHER OF DA PARTY MAY STILL TRY!"
+  },
+  "hud": {
+    "elementRate": "{rate}X",
+    "elementAbsorb": "ABSORBS",
+    "elementImmune": "IMMUNE"
+  },
+  "statReq": {
+    "fumble": "{actor} LOSES DA THREAD OF {skill}: NOT ENOUGH BASE {stat}!"
+  },
+  "critSever": {
+    "roll": "KILLIN' BLOW ON {enemy}: D20 {roll} {mod} = {total}/{dc}",
+    "outcomeBehead": "IT GOES CLEAN THROUGH.",
+    "outcomeMaim": "A LIMB COMES AWAY.",
+    "outcomeNone": "DA GUARD HOLDS.",
+    "bossEndures": "{enemy} IZ TOO GREAT TA FALL TA A SINGLE BLOW!"
+  },
+  "mbm": {
+    "pinned": "PINNED",
+    "rear": "REAR",
+    "flank": "FLANK",
+    "rangeTail": "R{range}",
+    "rangeUnlimited": "R∞",
+    "moveTail": "M{n}"
+  },
+  "vehicleHitMonster": "YOU RUN SOMETHIN' DOWN. DA {part} TAKES DA WORST OF IT!",
+  "vehicleHitMonsterPlain": "YOU RUN SOMETHIN' DOWN, AN' DA BODYWORK TAKES DA WORST OF IT!",
+  "hyper": {
+    "name": {
+      "1": "HYPER",
+      "2": "OVERLOAD",
+      "3": "MIRACLE",
+      "4": "OATH",
+      "5": "CONVERGENCE",
+      "6": "BUYOUT",
+      "7": "SANGUINE",
+      "8": "RAISE",
+      "9": "TRIAGE",
+      "10": "CONFLUENCE",
+      "11": "HUNDRED FISTS",
+      "12": "ENTHRALL",
+      "13": "BLOODRAGE",
+      "14": "CASCADE",
+      "15": "SERENITY",
+      "16": "GRACE",
+      "17": "HAYMAKER",
+      "18": "FINISHER",
+      "19": "PYRE",
+      "20": "ABSOLUTE ZERO",
+      "21": "SHAKEDOWN",
+      "22": "AEGIS",
+      "23": "PACT",
+      "24": "VOLLEY",
+      "25": "BENEDICTION",
+      "26": "IAIDO",
+      "27": "CATACLYSM",
+      "28": "AMBUSH",
+      "29": "REVELATION",
+      "30": "COLISEUM",
+      "31": "EXHUMATION",
+      "32": "RALLY",
+      "33": "VIGIL",
+      "34": "RUNEBLADE",
+      "35": "CRESCENDO",
+      "36": "MIRAGE",
+      "37": "BARRAGE",
+      "38": "PAYDAY",
+      "39": "ENLIGHTENMENT",
+      "40": "WARCRY",
+      "41": "OPERATION",
+      "42": "BREAKTHROUGH",
+      "43": "BACKDRAFT",
+      "44": "CRACKDOWN",
+      "45": "BANQUET",
+      "46": "EXPOSE",
+      "47": "WALL",
+      "48": "THESIS",
+      "49": "PSI STORM",
+      "50": "EXCAVATION",
+      "51": "WARD",
+      "52": "HARVEST",
+      "53": "SINGULARITY",
+      "54": "ASSEMBLY",
+      "55": "CLEARANCE",
+      "56": "REAPIN'",
+      "57": "TIMBER",
+      "58": "STORM FRONT",
+      "59": "ABSOLUTION",
+      "60": "ENCORE",
+      "61": "APOTHEOSIS",
+      "62": "SPITE",
+      "default": "HYPER",
+      "grimoire": "GRACEFUL DEATH"
+    },
+    "armed": "{actor} IZ ON DA FLOOR. {hyper} IZ READY!",
+    "armedToast": "{actor}: {hyper} READY",
+    "unleash": "{actor} BREAKS DA LIMIT: {hyper}!",
+    "shielded": "NOTHIN' TOUCHES {actor}.",
+    "walled": "DA WALL TAKES IT INSTEAD OF {actor}!",
+    "turnPage": "TURN PAGE",
+    "act": {
+      "barrage": "{actor} SWEEPS DA WHOLE FIELD FOR {damage}!",
+      "strike": "{actor} PUTS EVERYTHIN' INTO {target} FOR {damage}!",
+      "multi": "{actor} LANDS {hits} BLOWS FOR {damage}.",
+      "drain": "{actor} TAKES {damage} OUT OF DEM AN' {healed} BACK!",
+      "execute": "{actor} FINISHES {killed} OF DEM AN' CUTS DA REST FOR {damage}!",
+      "heal": "DA PARTY IZ WHOLE AGAIN.",
+      "healParts": "DA PARTY IZ WHOLE AGAIN, EVERY BREAK MENDED!",
+      "raise": "{count} OF DA FALLEN GET UP, AN' NOT ONE OF DEM IZ BREATHIN'!",
+      "raiseNobody": "{actor} CALLS, AN' NOBODY DOWN DERE ANSWERS!",
+      "wall": "A WALL GOES UP. NOTHIN' PHYSICAL GETS THROUGH FOR {turns} TURNS!",
+      "assembly": "{actor} THROWS {count} THINGS TOGETHER AN' SETS DEM OFF!",
+      "assemblyEmpty": "{actor} REACHES INTO AN EMPTY BAG!",
+      "overload": "{actor} CASTS {count} SPELLS AT ONCE, AN' PAYS FOR NONE OF DEM!",
+      "overloadEmpty": "{actor} HAB NOTHIN' LEFT TA CAST!",
+      "rally": "DA PARTY IZ ON ITS FEET AN' POINTED AT DEM!",
+      "disable": "DEY IZ LEFT UNABLE TA DO MUCH ABOUT ANYTHIN'!",
+      "gold": "{actor} THROWS MONEY AT DA PROBLEM FOR {damage}!",
+      "wild": "{actor} TAKES SOMEBODY ELSE'S LIMIT AN' USES IT ANYWAY!",
+      "grimoire": "DA GUN OPENS INTO A BOOK. {count} PAGES ANSWER!",
+      "grimoireEmpty": "DA BOOK OPENS ON BLANK PAGES!",
+      "reroll": "{actor} TEARS {cost} OUT OF HERSELF AN' READS ON. {count} NEW PAGES ANSWER!",
+      "regen": "DA OPEN BOOK READS {actor} BACK, PAGE BY PAGE!",
+      "pactOpen": "{actor} WALKS IN ALREADY READIN'. {count} PAGES IZ OPEN!",
+      "pactReroll": "{actor} TURNS DA PAGE AN' READS ON. {count} NEW PAGES ANSWER!",
+      "natural": "DA DICE OF YALDABAOTH LANDS ON 20. DA GRIMOIRE OF SOLOMON OPENS FOR {actor}, AN' ASKS NOTHIN' BACK!"
+    },
+    "em": {
+      "enter": [
+        "{actor} STOPS TALKIN'. DAT IZ DA FIRST THING ANYBODY NOTICES!",
+        "\"EVERYONE STEP BACK. ME IZ GOING TA READ NOW.\"",
+        "\"ME KNOW WHAT DIS COSTS. ME HAB KNOWN FOR A WHILE.\"",
+        "\"NOBODY TALK TA ME UNTIL DA LAST PAGE.\"",
+        "{actor} SETS HER FEET, DA WAY SHE SETS DEM BEFORE A SERVE!",
+        "\"IT OPENS FOR ME BECAUSE ME IZ DYING. FINE. LET IT.\"",
+        "\"DO NOT TOUCH DA BOOK. DO NOT READ OVER ME SHOULDER.\"",
+        "{actor}'S HANDS IZ PERFECTLY STEADY, WHICH IZ HOW BAD IT IZ!",
+        "\"RIGHT. SERIOUS VOICE.\"",
+        "\"DIS IZ DA PART ME IZ GOOD AT.\""
+      ],
+      "page": "{actor} TEARS DA PAGE LOOSE AN' READS ON WITHOUT LOOKIN' UP!",
+      "incant": "{actor} READS IT OUT, FLAT AN' EXACT: \"{lore}\"",
+      "incantBox": "{actor}, READIN': \"{lore}\"",
+      "incantPlain": "{actor} READS {skill} OUT OF DA BOOK, WORD FOR WORD!"
+    },
+    "kindDesc": {
+      "default": "ONE OVERWHELMIN' ACT, ONCE A DAY, FROM DA FLOOR!",
+      "wild": "A DIFFERENT ONE OF EVERY OTHER CLASS'S LIMIT BREAK, ROLLED ON DA SPOT!",
+      "strike": "ONE BLOW FOR {mult} TIMES ITS DAMAGE!",
+      "multi": "{hits} BLOWS AT {mult} TIMES DAMAGE EACH!",
+      "barrage": "EVERY ENEMY STILL STANDIN' TAKES {mult} TIMES DAMAGE!",
+      "drain": "{mult} TIMES MAGIC DAMAGE, {leech}% OF IT TAKEN BACK AS HEALTH!",
+      "execute": "{mult} TIMES DAMAGE, AN' ANYTHIN' UNDER {percent}% HEALTH SIMPLY DIES!",
+      "overload": "{casts} SPELLS CAST IN DA SAME TURN, FREE!",
+      "heal": "DA WHOLE PARTY BACK ON ITS FEET, BROKEN PARTS AN' ALL!",
+      "raise": "DA FALLEN STAND BACK UP AN' FIGHT ON!",
+      "rally": "DA PARTY IZ HEALED FOR {heal}% AN' STEELED FOR DA REST OF DA FIGHT!",
+      "wall": "NOTHIN' TOUCHES DA PARTY FOR {turns} TURNS!",
+      "disable": "DA ENEMY LINE IZ PUT TA SLEEP, CHARMED AN' MADE USELESS!",
+      "gold": "MONEY SPENT AS A WEAPON: {mult} TIMES DAMAGE, PAID FOR OUT OF DA PURSE!",
+      "grimoire": "DA PACT BOOK OPENS ON {slots} SPELLS AN' TAKES HEALTH FOR EVERY PAGE TURNED!",
+      "assembly": "EVERYTHIN' DA CLASS HAB LEARNED, THROWN AT ONCE!",
+      "barrageMulti": "EVERY ENEMY STILL STANDIN' TAKES {mult} TIMES DAMAGE, {hits} TIMES OVER!"
+    }
+  },
+  "cmdPosition": {
+    "positionOption": "COMMAND POSITION",
+    "positionLeft": "LEFT",
+    "positionRight": "RIGHT"
+  },
+  "skirmish": {
+    "npcEngages": "{npc} ENGAGES DA {monster}!",
+    "monsterAttacks": "DA {monster} ATTACKS {target}!",
+    "won": "{winner} BRINGS DOWN DA {loser}.",
+    "killed": "{winner} KILLED {loser}.",
+    "downed": "{winner} KNOCKS {loser} TA DA GROUND.",
+    "spared": "{winner} SPARES {loser} AN' WALKS AWAY.",
+    "fled": "{loser} BREAKS OFF AN' FLEES FROM {winner}!",
+    "partyHit": "DA {monster} LASHES OUT AT {name}!"
+  },
+  "downedBody": {
+    "promptMonster": "DA {name} LIES ON DA GROUND, TOO HURT TA FIGHT!",
+    "promptNpc": "{name} LIES ON DA GROUND, TOO HURT TA GET UP!",
+    "promptCorpse": "DA BODY OF {name} LIES HERE.",
+    "implantsHarvested": "PRIED FROM DA BODY: {items}",
+    "coupDeGrace": "COUP DE GRACE",
+    "loot": "LOOT",
+    "firstAid": "FIRST AID",
+    "firstAidDone": "{name} COMES ROUND, SHAKEN BUT ON DEY FEET!",
+    "butcher": "BUTCHER",
+    "cancel": "CANCEL",
+    "pocketMoney": "{name} HANDS OVER {money}.",
+    "notBattleable": "{name} IZ LYING ON DA GROUND AN' NO CAN FIGHT!"
   }
 }

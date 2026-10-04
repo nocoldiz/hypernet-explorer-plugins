@@ -14,7 +14,27 @@
     "faceDown": "[ FACE DOWN ]",
     "unclearNumbered": "DA MEANIN' IZ UNCLEAR... ({n})",
     "chooseSpread": "CHOOSE A SPREAD",
-    "readingComplete": "READIN' COMPLETE"
+    "readingComplete": "READIN' COMPLETE",
+    "actionRead": "READ TAROTS",
+    "actionReadWho": "READ DA TAROTS FOR WHOM?",
+    "actionPick": "PICK A CARD",
+    "actionSpread": "FREE SPREAD",
+    "pickTitle": "PICK A CARD",
+    "sandboxTitle": "FREE SPREAD",
+    "sandboxDeck": "DECK {count}",
+    "sandboxShuffle": "SHUFFLE",
+    "sandboxCut": "CUT",
+    "sandboxCastle": "CASTLE",
+    "sandboxScramble": "SCRAMBLE",
+    "sandboxGather": "GATHER",
+    "sandboxShuffled": "DA DECK IZ SHUFFLED.",
+    "sandboxDrawn": "{name} COMES OFF DA TOP OF DA DECK!",
+    "sandboxDeckEmpty": "DERE IZ NOTHIN' LEFT IN DA DECK!",
+    "sandboxScrambled": "{count} CARDS, FACE DOWN, ALL OVER DA CLOTH!",
+    "sandboxGathered": "EVERY CARD IZ BACK IN DA DECK!",
+    "sandboxCastleFew": "TOO FEW CARDS ON DA TABLE TA BUILD ANYTHIN'!",
+    "sandboxCutDone": "DA DECK IZ CUT AN' SET BACK DOWN!",
+    "sandboxCastleBuilt": "A HOUSE OF {levels} STOREYS, {cards} CARDS!"
   },
   "cards": {
     "The Fool": {
@@ -351,7 +371,7 @@
   "spreads": {
     "three": {
       "name": "DA THREE FATES",
-      "blurb": "THREE CARDS. DA SHAPE OF A LIFE IN ONE GLANCE!",
+      "blurb": "THREE CARDS: PAST, PRESENT AN' FUTURE!",
       "slots": {
         "0": "PAST",
         "1": "PRESENT",
@@ -360,7 +380,7 @@
     },
     "cross": {
       "name": "DA ELEMENTAL CROSS",
-      "blurb": "FIVE CARDS. WHAT HOLDS YOU, AN' WHAT PULLS!",
+      "blurb": "FIVE CARDS IN A CROSS.",
       "slots": {
         "0": "DA HEART",
         "1": "WHAT IZ BEHIND",
@@ -371,7 +391,7 @@
     },
     "horseshoe": {
       "name": "DA HORSESHOE",
-      "blurb": "SEVEN CARDS LAID IN AN ARC. DA LONG ANSWER!",
+      "blurb": "SEVEN CARDS LAID IN AN ARC!",
       "slots": {
         "0": "DA PAST",
         "1": "DA PRESENT",
@@ -384,7 +404,7 @@
     },
     "celtic": {
       "name": "DA CELTIC CROSS",
-      "blurb": "TEN CARDS. DA FULL WORKIN'. DO NOT ASK IT TWICE!",
+      "blurb": "TEN CARDS IN A CELTIC CROSS!",
       "slots": {
         "0": "DA SIGNIFICATOR",
         "1": "DA CROSSIN'",
@@ -396,6 +416,13 @@
         "7": "YA HOUSE",
         "8": "HOPES AN' FEARS",
         "9": "DA OUTCOME"
+      }
+    },
+    "single": {
+      "name": "DA CARD",
+      "blurb": "ONE CARD OFF DA TOP.",
+      "slots": {
+        "0": "DA CARD"
       }
     }
   },

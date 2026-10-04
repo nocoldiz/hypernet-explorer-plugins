@@ -43,8 +43,17 @@
     "sameItemNeutral": "\nIT IZ NOTHIN' SPECIAL, BUT EDIBLE!",
     "sameItemNegative": "\nPERHAPS YOU NO SHOULD HAB TRIED DAT...",
     "recoveredHunger": "\nRECOVERED {percent}% HUNGER PER MEMBER",
-    "splitAmong": " (SPLIT AMONG {count} MEMBERS)",
-    "ate": "YOU ATE {name} RAW."
+    "ate": "YOU ATE {name} RAW.",
+    "cannotCombine": "RAW MEAT AN' PLANT MATTER NO CAN BE COOKED TOGETHER!",
+    "cookware": "\nCOOKWARE BONUS +{percent}%",
+    "fedParty": "\n (A PARTY OF {count} AT TABLE)",
+    "cannotPrepare": "NOT ENOUGH INGREDIENTS FOR {name}!",
+    "recipePrepared": "{name} PREPARED (X{count}) AN' PUT IN DA PACK!",
+    "recipeSpoiled": "{name} WENT WRONG IN DA PAN: ALL DAT IZ LEFT IZ A SPOILED DISH!"
+  },
+  "names": {
+    "meaty": "MEATY {name}",
+    "vegetarian": "VEGETARIAN {name}"
   },
   "ui": {
     "selectFirstIngredient": "SELECT FIRST INGREDIENT TA COOK",
@@ -55,14 +64,15 @@
     "eatButton": "EAT RAW",
     "menuLabel": "COOKIN'",
     "selectIngredients": "SELECT INGREDIENTS.",
-    "cookTheseItems": "COOK DEZE ITEMS?"
+    "cookTheseItems": "COOK DEZE ITEMS?",
+    "cookAnyway": "COOK ANYWAY"
   },
   "back": "BACK",
   "ingredients": "INGREDIENTS",
   "cooking": "COOKIN'",
   "nutritionalBase": "NUTRITIONAL BASE",
   "aromaticBinder": "AROMATIC BINDER",
-  "yourBackpackContainsNoEdible": "YA BACKPACK CONTAINS NO EDIBLE INGREDIENTS...",
+  "yourBackpackContainsNoEdible": "[EMPTY]",
   "selectBase": "SELECT BASE...",
   "selectBinder": "SELECT BINDER...",
   "extraordinaryEffect50": "EXTRAORDINARY EFFECT (+50%)",
@@ -71,13 +81,50 @@
   "calories": "CALORIES",
   "protein": "PROTEIN",
   "fat": "FAT",
-  "satietyPerMember": "SATIETY PER MEMBER",
-  "split": "SPLIT",
-  "combineANutritionalBaseAnd": "COMBINE A NUTRITIONAL BASE AN' AN AROMATIC BINDER TA CALCULATE DA TOTAL CALORIES AN' PARTY SATIETY RECOVERY DETAILS!",
+  "satietyPerMember": "PARTY SATIETY",
+  "split": "AT TABLE",
   "clearSelection": "CLEAR SELECTION",
   "nutrition": {
     "calories": "CALORIES",
     "protein": "PROTEIN",
     "fat": "FAT"
+  },
+  "nutritionShort": {
+    "calories": "CAL",
+    "protein": "PROT",
+    "fat": "FAT"
+  },
+  "roll": {
+    "masterpiece": "[NAT 20 CULINARY ROLL] GOURMET MASTERPIECE! {dish} GAINED +50% NUTRITION!",
+    "scorched": "[NAT 1 CULINARY ROLL] SCORCHED DISH! {dish} LOST NUTRITION!",
+    "delicious": "[CULINARY ROLL: {roll}{mod}={total}] DELICIOUSLY PREPARED {dish}!",
+    "action": "COOKIN': {dish}"
+  },
+  "cookware": "COOKWARE",
+  "tabs": {
+    "combine": "COMBINE",
+    "recipes": "RECIPES"
+  },
+  "recipes": {
+    "empty": "NO RECIPES IN DA BOOK.",
+    "ingredients": "INGREDIENTS",
+    "amount": "{have} / {need}",
+    "ready": "READY",
+    "missing": "MISSIN' INGREDIENTS",
+    "levelShort": "LV {level}",
+    "allergyShort": "ALLERGENS",
+    "level": "COOKIN' LEVEL",
+    "levelLine": "{need} ({cook}: {have})",
+    "spoil": "CHANCE TA SPOIL",
+    "reward": "COOKIN'",
+    "points": "+{points} POINTS",
+    "keeps": "DA DISH GOES INTO DA PACK INSTEAD OF BEING EATEN!",
+    "prepareButton": "PREPARE",
+    "prepareAnyway": "PREPARE ANYWAY"
+  },
+  "allergy": {
+    "title": "ALLERGY WARNIN'",
+    "line": "{actor}: {allergens}",
+    "toast": "ALLERGY WARNIN': {list}. PRESS AGAIN TA GO AHEAD!"
   }
 }

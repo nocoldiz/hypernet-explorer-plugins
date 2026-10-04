@@ -2172,6 +2172,7 @@
             if (trStr) effectLines.push(trStr);
           });
         }
+        if (typeof utils.handLines === "function") effectLines.push(...utils.handLines(selectedItem));
 
         const effectsHTML = effectLines
           .map(line => `<span class="detail-effect-chip">${esc(line)}</span>`)

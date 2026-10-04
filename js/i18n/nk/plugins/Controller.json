@@ -1,0 +1,153 @@
+{
+  "options": {
+    "cameraSpeed": "CAMERA SPEED",
+    "invertY": "INVERT CAMERA Y"
+  },
+  "verbs": {
+    "confirm": [
+      "CONFIRM",
+      "OK",
+      "ACCEPT",
+      "APPLY",
+      "DONE",
+      "YAH!",
+      "START",
+      "SELECT"
+    ],
+    "use": [
+      "USE",
+      "READ",
+      "EAT",
+      "DRINK",
+      "WEAR",
+      "LEARN",
+      "READ IT"
+    ],
+    "buy": [
+      "BUY",
+      "PURCHASE",
+      "ORDER",
+      "HIRE",
+      "RENT"
+    ],
+    "sell": [
+      "SELL",
+      "TRADE",
+      "DELIVER"
+    ],
+    "equip": [
+      "EQUIP",
+      "WIELD",
+      "FIT",
+      "INSTALL"
+    ],
+    "craft": [
+      "CRAFT",
+      "COOK",
+      "BREW",
+      "FORGE",
+      "BUILD",
+      "MAKE",
+      "RESEARCH"
+    ],
+    "continue": [
+      "CONTINUE",
+      "PROCEED",
+      "GO",
+      "TRAVEL",
+      "ENTER",
+      "PLAY",
+      "DEAL",
+      "ROLL"
+    ],
+    "cancel": [
+      "CANCEL",
+      "NAH!",
+      "STOP"
+    ],
+    "back": [
+      "BACK",
+      "RETURN",
+      "GO BACK"
+    ],
+    "close": [
+      "CLOSE",
+      "DISMISS",
+      "OK, CLOSE"
+    ],
+    "exit": [
+      "EXIT",
+      "LEAVE",
+      "QUIT",
+      "LOG OFF",
+      "HANG UP"
+    ],
+    "discard": [
+      "DISCARD",
+      "THROW AWAY",
+      "JUNK"
+    ],
+    "drop": [
+      "DROP",
+      "PUT DOWN",
+      "RELEASE"
+    ],
+    "delete": [
+      "DELETE",
+      "ERASE",
+      "WIPE",
+      "CLEAR"
+    ],
+    "remove": [
+      "REMOVE",
+      "UNEQUIP",
+      "TAKE OFF",
+      "EJECT"
+    ],
+    "sort": [
+      "SORT",
+      "REORDER",
+      "ARRANGE"
+    ],
+    "filter": [
+      "FILTER",
+      "SEARCH",
+      "FIND"
+    ],
+    "favorite": [
+      "FAVOURITE",
+      "FAVORITE",
+      "PIN",
+      "STAR"
+    ],
+    "prev": [
+      "PREVIOUS",
+      "PREV",
+      "BACK ONE",
+      "EARLIER"
+    ],
+    "next": [
+      "NEXT",
+      "FORWARD",
+      "LATER",
+      "SKIP"
+    ]
+  },
+  "tips": {
+    "camera": "CAMERA",
+    "zoom": "ZOOM",
+    "recentre": "RECENTRE",
+    "leave": "LEAVE",
+    "act": "ACT",
+    "view": "VIEW"
+  },
+  "text": {
+    "shift": "SHIFT",
+    "space": "SPACE",
+    "back": "BACK",
+    "clear": "CLEAR",
+    "done": "DONE",
+    "cancel": "CANCEL",
+    "tipKey": "KEY"
+  }
+}

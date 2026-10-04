@@ -1,6 +1,6 @@
 /*:
  * @target MZ
- * @plugindesc Dwarf Fortress-inspired Europe Alternate History Generator (1900-2001).
+ * @plugindesc Fortress sim inspired Europe Alternate History Generator (1900-2001).
  * @author Omni-Lex
  * @url https://nocoldiz.itch.io/hypernet-explorer
  *

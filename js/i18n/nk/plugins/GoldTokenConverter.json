@@ -17,7 +17,8 @@
     "rate": "PRICE: 1 TOKEN = €{price}",
     "max": "(MAX: {max})",
     "bought": "BOUGHT {amount} TOKEN(S) FOR €{total}!",
-    "sold": "SOLD {amount} TOKEN(S) FOR €{total}!"
+    "sold": "SOLD {amount} TOKEN(S) FOR €{total}!",
+    "pocketFull": "YOU NO CAN CARRY ANY MORE TOKENS!"
   },
   "confirm": {
     "buy": "BUY {amount} TOKEN(S) FOR €{total}?",

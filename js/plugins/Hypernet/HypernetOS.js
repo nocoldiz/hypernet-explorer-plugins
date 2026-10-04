@@ -5189,7 +5189,7 @@
             'tv-guide', 'app-eurodemics', 'app-neuropolice', 'app-bank-system',
             'app-stock-market', 'app-real-estate', 'app-token-exchange', 'app-job-offers',
             'app-virtuahealer', 'app-remote-bistury', 'app-cadd-trader', 'app-slamgrimorie',
-            'app-colosseum', 'app-weather', 'app-hypermail'
+            'app-colosseum', 'app-weather', 'app-hypermail', 'app-taxi'
         ],
         // Squares of the procedural map that are underground without being one
         // of the catalogued structures.

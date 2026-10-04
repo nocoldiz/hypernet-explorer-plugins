@@ -133,5 +133,25 @@
     "offlineBlurb": "No transport line reaches this town.",
     "wantedBlurb": "The party is wanted, so ticket counters refuse service. Private and exotic transport still works.",
     "footer": "Prices are calculated from the party's current position and change as it moves. This page cannot book or refund anything."
+  },
+  "taxi": {
+    "appName": "Hail",
+    "subtitle": "Calls a cab to any catalogued stop. The fare is paid on booking and the ride leaves at once.",
+    "status": "Cabs are called from the street: open ground or the world map, Earth only.",
+    "search": "Find a place",
+    "noMatch": "No place by that name.",
+    "noDestinations": "No stop is listed yet.",
+    "pickupAt": "Pickup at {place}",
+    "headline": "{type}, ground pitched at {level}.",
+    "levelUnknown": "no stated level",
+    "fare": "Fare",
+    "journey": "Journey",
+    "wallet": "In the wallet",
+    "hail": "Hail a cab",
+    "cannotPay": "The party cannot cover this fare.",
+    "offlineBlurb": "No cab reaches this town.",
+    "footer": "The fare is quoted from the party's current position. Booking charges it and shuts the deck: the cab is waiting outside.",
+    "refuseIndoors": "No cab can reach you in here. Step out onto open ground or the world map and call again.",
+    "refuseOffEarth": "No cab company operates this far from Earth."
   }
 }

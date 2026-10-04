@@ -9,5 +9,7 @@
   "frame": "FRAME {frame}/10 {bowler}",
   "aimPrompt": "{bowler}: LININ' UP",
   "powerPrompt": "{bowler}: POWER",
-  "hookPrompt": "{bowler}: HOOK"
+  "hookPrompt": "{bowler}: HOOK",
+  "player2": "PLAYER 2",
+  "cpu": "CPU"
 }

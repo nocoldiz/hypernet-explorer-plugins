@@ -1,6 +1,9 @@
 {
   "optionName": "AUTO IDLE EXPLORER",
   "badge": "AUTO P2",
+  "lead": {
+    "toast": "{name} TAKES DA LEAD"
+  },
   "loose": {
     "thought": [
       "A GOOD SPOT TA CATCH ME BREATH!",
@@ -33,30 +36,6 @@
       "YOU IZ NOT FROM AROUND HERE!",
       "MIND YOURSELF AFTER DARK.",
       "ME HAB SAID TOO MUCH ALREADY!"
-    ],
-    "partyGreet": [
-      "DO YOU EVER THINK ABOUT GOING HOME?",
-      "YOU HAB BEEN QUIET ALL DAY!",
-      "TELL ME AGAIN WHY WE TOOK DIS ROAD!",
-      "ME WOULD NOT HAB MADE IT DIS FAR ALONE!",
-      "HOW IZ DAT WOUND OF YA HOLDIN' UP?",
-      "IF WE GET PAID, ME IZ BUYIN' DA FIRST ROUND!",
-      "DO YOU TRUST DA PEOPLE WE MET BACK DERE?",
-      "ME HAB A DREAM ABOUT DIS PLACE. DO NOT ASK!",
-      "YOU CARRY TOO MUCH. GIVE ME HALF!",
-      "ONE OF DEZE DAYS WE SHOULD STOP FOR A WHOLE WEEK!"
-    ],
-    "partyReply": [
-      "HOME IZ WHEREVER DA PACKS IZ!",
-      "ME WAZ THINKIN'. IT HAPPENS!",
-      "BECAUSE YOU ASKED, AN' ME SAID YES. FOOL DAT ME IZ!",
-      "NOR ME. DO NOT LET IT GO TA YA HEAD!",
-      "IT HAB STOPPED BLEEDIN', WHICH IZ SOMETHIN'!",
-      "YOU SAID DAT IN DA LAST THREE TOWNS!",
-      "ME TRUST NOBODY ME NO CAN OUTRUN!",
-      "YOU ALWAYS DREAM ABOUT DA WRONG THINGS!",
-      "ME CAN MANAGE. ASK ME AGAIN ON DA HILL!",
-      "A WEEK. LISTEN TA US."
     ],
     "look": [
       "HUH. DAT HAB BEEN HERE A WHILE!",
@@ -109,11 +88,237 @@
         "ME NEEDED DAT MORE DEN ME KNEW!",
         "NOBODY TELL DA PARTY HOW MUCH ME LOST!",
         "FOR A MOMENT DERE ME FORGOT DA ROAD!"
+      ],
+      "fish": [
+        "DA WATER DID MOST OF DA TALKIN'!",
+        "AN HOUR ON DA BANK PUTS A ROAD BEHIND YOU!",
+        "ME HAB NOT THOUGHT ABOUT ANYTHIN' IN AN HOUR. IT WAZ WONDERFUL!",
+        "SAY WHAT YOU LIKE ABOUT DA WEATHER, DA FISH WAZ BITIN'!"
       ]
     },
     "toastRent": "{name} RENTED A ROOM FOR {price}",
     "toastEat": "{name} ATE {item}",
+    "toastFish": "{name} CAUGHT {item}",
+    "toastFishNothing": "{name} CAUGHT NOTHIN', AN' DID NOT MIND",
     "toastOpinion": "{npc} THINKS OF {name}: {delta}",
     "toastPartyTalk": "{name} AN' {other} TALKED ({other}: {delta}, {name}: {back})"
+  },
+  "corpse": {
+    "prompt": "FALLEN COMRADE: {name}. WHAT WILL YOU DO?",
+    "choiceLoot": "LOOT",
+    "choiceCommemorate": "COMMEMORATE",
+    "choicePray": "PRAY",
+    "choiceDissect": "DISSECT",
+    "choiceBury": "BURY",
+    "choiceCancel": "CANCEL",
+    "looted": "RECOVERED EQUIPMENT FROM {name}!",
+    "nothingToLoot": "DERE IZ NOTHIN' LEFT TA LOOT ON {name}!",
+    "examined": "YOU EXAMINE DA ANATOMY AN' BODY CONDITION OF DA FALLEN COMRADE!",
+    "buried": "BURIED {name} WIT DIGNITY."
+  },
+  "grave": {
+    "prompt": "GRAVE OF {name}. WHAT WILL YOU DO?",
+    "choiceRead": "READ",
+    "choiceDesecrate": "DESECRATE",
+    "choiceDismantle": "DISMANTLE",
+    "choiceCancel": "CANCEL",
+    "epitaph": "\"HERE LIES {name}. BORN: {born}\"",
+    "bornUnknown": "UNKNOWN",
+    "desecrated": "YOU DESECRATED DA GRAVE OF {name}. RECOVERED BONES AN' REMAININ' PERSONAL BELONGINGS!",
+    "dismantled": "DISMANTLED DA GRAVE OF {name}."
+  },
+  "succession": {
+    "takesCommand": "{name} TAKES COMMAND OF DA PARTY!"
+  },
+  "pet": {
+    "actionPet": "PET",
+    "actionTalk": "TALK",
+    "actionEmpathize": "EMPATHIZE",
+    "actionCancel": "NEVER MIND",
+    "petting": [
+      "YOU CROUCH DOWN AN' SCRATCH {name} BEHIND DA EARS!",
+      "YOU RUB {name} ALONG DA JAW, DA WAY IT LIKES!",
+      "YOU KNEEL AN' LET {name} PUT ITS WHOLE WEIGHT AGAINST YOU!",
+      "YOU SCRUB {name} BETWEEN DA SHOULDERS WIT BOTH HANDS!",
+      "YOU SIT DOWN IN DA ROAD AN' MAKE A PROPER FUSS OF {name}!"
+    ],
+    "petted": [
+      "{name} LEANS INTO YA HAND AN' REFUSES TA BE MOVED!",
+      "{name} MAKES A LOW, PLEASED NOISE!",
+      "YOU SCRATCH {name} WHERE IT NO CAN REACH. IT FORGIVES YOU EVERYTHIN'!",
+      "{name} BUMPS ITS HEAD AGAINST YA LEG AN' SETTLES!",
+      "{name} ROLLS OVER. DIS IZ APPARENTLY DA CORRECT RESPONSE!"
+    ],
+    "said": [
+      "ME IZ KEEPIN' UP. MOSTLY.",
+      "DIS ROAD SMELLS WRONG TA ME!",
+      "SAY DA WORD AN' ME GO FIRST!",
+      "ME COULD EAT. WHEN COULD ME NOT?",
+      "DO NOT LEAVE ME BEHIND AGAIN!",
+      "DERE WAZ SOMETHIN' BACK DERE. IT IZ GONE NOW!",
+      "ME LIKE IT BETTER WHEN WE WALK!"
+    ],
+    "actionStop": "STOP FOLLOWIN'",
+    "stopped": "{name} STAYS WHERE IT IZ AN' STOPS FOLLOWIN' YOU!"
+  },
+  "member": {
+    "actionTalk": "TALK",
+    "actionEmpathize": "EMPATHIZE",
+    "actionReserves": "SEND TA RESERVES",
+    "actionJoin": "COME BACK WIT US",
+    "rejoined": "{name} TAKES A PLACE ON DA ROAD AGAIN!",
+    "actionCancel": "NEVER MIND"
+  },
+  "auto": {
+    "equipped": "{name} PUTS ON {item}",
+    "usedItem": "{name} USES {item} ON {target}",
+    "learned": "{name} LEARNS {skill} FOR {cost} KNOWLEDGE",
+    "worked": "{name} WORKS DA GROUND IN FRONT OF DEM",
+    "bought": "{name} BUYS {item} FOR {price}",
+    "stole": "{name} LIFTS {item} OFF DA SHELF",
+    "caught": "{name} IZ CAUGHT TAKIN' {item}",
+    "goesTo": "{name} GOES TA SEE {target}",
+    "heads": "{name} HEADS FOR {target}",
+    "door": "{name} TAKES DA DOOR AT {target}",
+    "wanders": "{name} WANDERS OFF",
+    "avoided": "{name} KEEPS AWAY FROM {target}, LEVEL {level}",
+    "stuck": "{name} NO CAN GET ANYWHERE WIT {target} AN' LOOKS FOR SOMETHIN' ELSE",
+    "restless": "{name} HAB STOOD HERE LONG ENOUGH AN' MOVES ON",
+    "flees": "{name} RUNS FROM DA FIGHT",
+    "worldMap": "{name} STEPS OUT ONTO DA WORLD MAP",
+    "rim": "{name} HEADS FOR DA EDGE OF DA MAP",
+    "avoidedUnknown": "{name} KEEPS AWAY FROM {target}, WHOSE LEVEL NO CAN BE READ",
+    "evades": "{name} RUNS FROM {target} BEFORE IT CAN CLOSE IN",
+    "travelled": "{name} GOES DOWN INTO {place}",
+    "targetsPlace": "{name} SETS OUT ACROSS DA WORLD MAP FOR {place}",
+    "targetsSquare": "{name} PICKS OUT {place} AN' WALKS TOWARD IT",
+    "namedSquare": "{target}, {place}",
+    "toVehicle": "{name} WALKS OVER TA DA {target}",
+    "boards": "{name} CLIMBS INTO DA {target}",
+    "stepsOut": "{name} PULLS OVER AN' GETS OUT",
+    "shore": "{name} MAKES FOR DA SHORE",
+    "swims": "{name} WADES IN AN' SWIMS FOR IT",
+    "ate": "{name} EATS {item}",
+    "stocked": "{name} STOCKS UP ON {item} FOR {price}",
+    "handsOver": "{name} HANDS DA PARTY TA {other}",
+    "surveyed": "{name} READS {map}: {notes}",
+    "routes": "{name} SETS OFF FOR {map}, {hops} MAPS AWAY: {why}",
+    "routeStep": "{name} TAKES DA WAY TOWARD {target}",
+    "travels": "{name} TAKES DA NETWORK TA {target}",
+    "puzzle": "{name} WORKS {target}",
+    "puzzleWalk": "{name} GETS IN BEHIND {target}",
+    "note": {
+      "shop": "A COUNTER",
+      "hunger": "FOOD",
+      "sleep": "A BED",
+      "hygiene": "CLEAN WATER",
+      "leisure": "SOMETHIN' TA DO",
+      "money": "WORK",
+      "comfort": "SOMEWHERE TA SIT",
+      "puzzle": "A PUZZLE",
+      "nothing": "NOTHIN' WORTH COMIN' BACK FOR"
+    },
+    "why": {
+      "hunger": "DA PACK IZ EMPTY",
+      "shop": "DA PARTY NEEDS A COUNTER",
+      "money": "DA PURSE IZ EMPTY",
+      "sleep": "NOBODY HAB SLEPT",
+      "frontier": "NOBODY HAB BEEN DERE",
+      "work": "DERE IZ A DAY'S PAY IN IT",
+      "mail": "DERE IZ POST WAITIN'",
+      "bed": "NOBODY HAB SLEPT"
+    },
+    "shelters": "{name} LOOKS FOR A ROOF, OUT OF DA {weather}",
+    "turnsIn": "{name} CALLS IT A NIGHT AN' GOES LOOKIN' FOR A BED"
+  },
+  "mind": {
+    "wants": "{name} SETS DEY MIND ON {why}",
+    "givesUp": "{name} GIVES UP ON {target}",
+    "why": {
+      "errand": "SOMETHIN' WORTH SEEIN'",
+      "onward": "DA WAY ONWARD",
+      "quest": "DA JOB DEY TOOK",
+      "work": "A DAY'S PAY",
+      "mail": "DA POST WAITIN' FOR DEM",
+      "bed": "A BED"
+    }
+  },
+  "voice": {
+    "words": {
+      "yes": [
+        "YAH!",
+        "SURE",
+        "AGREE",
+        "ACCEPT",
+        "OF COURSE",
+        "REAL WELL",
+        "ALL RIGHT",
+        "ME WILL",
+        "DEAL"
+      ],
+      "no": [
+        "NAH!",
+        "REFUSE",
+        "DECLINE",
+        "NEVER",
+        "NOT INTERESTED",
+        "ME NO CAN",
+        "ANOTHER TIME"
+      ],
+      "leave": [
+        "LEAVE",
+        "GOODBYE",
+        "FAREWELL",
+        "NOTHIN'",
+        "NEVER MIND",
+        "FORGET IT",
+        "WALK AWAY",
+        "CANCEL"
+      ],
+      "fight": [
+        "FIGHT",
+        "ATTACK",
+        "DUEL",
+        "CHALLENGE",
+        "KILL",
+        "STRIKE"
+      ],
+      "buy": [
+        "BUY",
+        "PURCHASE",
+        "PAY",
+        "HIRE",
+        "TRADE",
+        "HOW MUCH",
+        "DA PRICE"
+      ],
+      "ask": [
+        "ASK",
+        "WHO",
+        "WHAT",
+        "WHERE",
+        "WHY",
+        "TELL ME",
+        "MORE",
+        "ABOUT"
+      ],
+      "help": [
+        "HELP",
+        "GIVE",
+        "SHARE",
+        "HEAL",
+        "SAVE",
+        "LET ME"
+      ],
+      "rude": [
+        "SHUT",
+        "IDIOT",
+        "FOOL",
+        "THREATEN",
+        "ROB",
+        "GET LOST",
+        "MIND YA OWN"
+      ]
+    }
   }
 }

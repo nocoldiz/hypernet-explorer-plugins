@@ -578,18 +578,14 @@
         return currentMapState === 3;
     };
 
-    // Sandbox / debug access: enabled when the party leader is named "Test" or
-    // SandboxMode.js has flagged the save. Used to gate click-to-teleport on the
-    // Bologna fullscreen overlay.
-    function isSandboxEnabled() {
-        const leader = $gameParty && $gameParty.leader();
-        const isTest = !!(leader && leader.name() === "Test");  // i18n-ignore  debug account name
-        return isTest || !!($gameSystem && $gameSystem._isSandboxMode === true);
-    }
-
-    // Click tracking for Bologna overlay teleport (distinguishes tap from drag).
+    // Click tracking for the Bologna sheet (distinguishes tap from drag).
     let bolognaPressing = false;
     let bolognaPressX = 0, bolognaPressY = 0, bolognaPressMoved = false;
+    // The Bologna sheet's tile pick, the way Europe's sheet picks a square:
+    // the tile the pad cursor stands on, and the tile that has been picked.
+    // Both in whole-city tiles, (0,0) the top left of the top left cell.
+    let bolognaPadTile = null;
+    let bolognaPickedTile = null;
 
     // Plugin Commands
     PluginManager.registerCommand(pluginName, "openWorldMap", args => {
@@ -3564,8 +3560,11 @@
     // The ruled square under the pointer and the square the player has actually
     // picked. The whole sheet is never ruled: a grid over 65536 squares is
     // noise, and the only square anybody is reading is the one they are
-    // pointing at, so only that one square is drawn.
-    function drawSheetGrid(hover, selected) {
+    // pointing at, so only that one square is drawn. `rectFor` maps a square
+    // to the screen: Europe's world squares by default, Bologna's city tiles
+    // on its own sheet.
+    function drawSheetGrid(hover, selected, rectFor) {
+        const rectOf = rectFor || squareScreenRect;
         if (!sheetGfx) return;
         const key = (hover ? hover.x + ',' + hover.y : '') + '|' +
                     (selected ? selected.x + ',' + selected.y : '') + '|' +
@@ -3574,14 +3573,14 @@
         sheetGfxKey = key;
         sheetGfx.clear();
         if (hover) {
-            const cell = squareScreenRect(hover.x, hover.y);
+            const cell = rectOf(hover.x, hover.y);
             if (cell && cell.w >= 3) {
                 sheetGfx.lineStyle(2, 0xFFFFFF, 0.9);
                 sheetGfx.drawRect(cell.x, cell.y, cell.w, cell.h);
             }
         }
         if (selected) {
-            const cell = squareScreenRect(selected.x, selected.y);
+            const cell = rectOf(selected.x, selected.y);
             if (cell) {
                 const w = Math.max(cell.w, 10);
                 const h = Math.max(cell.h, 10);
@@ -3654,6 +3653,12 @@
         }
         if (!ensureSheetLayer()) return;
         sheetLayer.visible = true;
+        if (isBolognaView()) {
+            const hover = bolognaPadTile || (bolognaPointerIn ? null : bolognaTileAtPointer());
+            drawSheetGrid(hover, bolognaPickedTile, bolognaTileRect);
+            refreshSheetNames();
+            return;
+        }
         drawSheetGrid(padSquare || squareAtPointer(), selectedSquare);
         refreshSheetNames();
     }
@@ -4778,6 +4783,8 @@
     // handler (updateSheetPointer); this is the same set of actions reached
     // without a pointer, so the two stay in step by calling the same functions.
     function updateSheetKeys() {
+        // Bologna's sheet answers its own keys (updateBolognaKeys).
+        if (isBolognaView()) return;
         // The note box owns the keyboard while it is open (its field stops key
         // events reaching Input), so only a pad ever gets this far, and all it
         // can do there is put the box away.
@@ -5035,6 +5042,7 @@
             destroyChrome();
             clearSelectedSquare();
         }
+        if (currentMapState !== 3 && bolognaChromeEl) destroyBolognaChrome();
         // Europe or World is picked per opening: shut, the chart forgets it and
         // opens next time on whichever the party is standing in.
         if (currentMapState !== 3) sheetViewChoice = null;
@@ -5077,10 +5085,9 @@
         // check is cheap, so it rides the same frame rather than a redraw.
         wrapFullscreenPan();
         updateFullscreenStreaming();
-        // Sandbox: tap a cell on the Bologna overlay to teleport there.
-        if ($gameMap.mapId() === BOLOGNA_MAP_ID && isSandboxEnabled()) {
-            updateBolognaTeleportClick();
-        }
+        // Bologna: pick a tile on the sheet and teleport onto it.
+        if (isBolognaView()) updateBolognaSheet();
+        else destroyBolognaChrome();
     }
 
     // Detects vehicle fast travel starting/ending and keeps the minimap animating
@@ -5206,12 +5213,218 @@
         }
     }
 
-    // Sandbox click-to-teleport on the draggable Bologna fullscreen overlay.
-    // A press that does not move (within a small threshold) is treated as a tap:
-    // the clicked grid cell + in-cell position become the warp destination.
-    function updateBolognaTeleportClick() {
-        if (!window.BolognaMapSystem || !window.BolognaMapSystem.teleportToCell) return;
+    // -- The Bologna sheet ------------------------------------------------------
+    //
+    // Picked the way Europe's sheet picks a square: the tile under the pointer
+    // is ruled, a click (not a drag) picks it and pins the readout to it,
+    // clicking it again puts it down, and a pad walks a cursor of its own with
+    // the d-pad. A picked tile can be teleported onto from the readout (OK
+    // again on a pad). BolognaMapSystem steps the party off a roof or out of a
+    // canal onto the nearest street when they land.
+    //
+    // The tiles are the whole city's: (0,0) is the top left of the top left
+    // cell, one tile per BOLOGNA_CELL_PX / BOLOGNA_MAP_TILES bitmap pixels.
+    const BOLOGNA_SHEET_TILES_W = (BOLOGNA_COL_MAX - BOLOGNA_COL_MIN + 1) * BOLOGNA_MAP_TILES;
+    const BOLOGNA_SHEET_TILES_H = (BOLOGNA_ROW_MAX - BOLOGNA_ROW_MIN + 1) * BOLOGNA_MAP_TILES;
 
+    let bolognaChromeEl = null;
+    let bolognaReadoutEl = null;
+    let bolognaReadoutKey = null;
+    let bolognaPointerIn = false;
+
+    // Screen pixels -> city tile, or null off the sheet.
+    function bolognaTileAt(screenX, screenY) {
+        if (!zoomScale) return null;
+        const perTile = BOLOGNA_CELL_PX / BOLOGNA_MAP_TILES;
+        const x = Math.floor((screenX - panX) / zoomScale / perTile);
+        const y = Math.floor((screenY - panY) / zoomScale / perTile);
+        if (x < 0 || y < 0 || x >= BOLOGNA_SHEET_TILES_W || y >= BOLOGNA_SHEET_TILES_H) return null;
+        return { x, y };
+    }
+
+    function bolognaTileAtPointer() {
+        return bolognaTileAt(TouchInput.x, TouchInput.y);
+    }
+
+    // Screen rect of one city tile, for drawSheetGrid.
+    function bolognaTileRect(x, y) {
+        const px = (BOLOGNA_CELL_PX / BOLOGNA_MAP_TILES) * zoomScale;
+        return { x: panX + x * px, y: panY + y * px, w: px, h: px };
+    }
+
+    // City tile -> the cell it lies in and where in that cell.
+    function bolognaCellOfTile(tile) {
+        return {
+            row: BOLOGNA_ROW_MIN + Math.floor(tile.y / BOLOGNA_MAP_TILES),
+            col: BOLOGNA_COL_MIN + Math.floor(tile.x / BOLOGNA_MAP_TILES),
+            x: tile.x % BOLOGNA_MAP_TILES,
+            y: tile.y % BOLOGNA_MAP_TILES,
+        };
+    }
+
+    // The party's own city tile, where the pad cursor first appears.
+    function bolognaPartyTile() {
+        const state = $gameSystem && $gameSystem._bologna;
+        if (!state || state.row == null || state.col == null) {
+            return { x: Math.floor(BOLOGNA_SHEET_TILES_W / 2), y: Math.floor(BOLOGNA_SHEET_TILES_H / 2) };
+        }
+        const t = bolognaPlayerTile();
+        return {
+            x: (state.col - BOLOGNA_COL_MIN) * BOLOGNA_MAP_TILES + Math.floor(t.x),
+            y: (state.row - BOLOGNA_ROW_MIN) * BOLOGNA_MAP_TILES + Math.floor(t.y),
+        };
+    }
+
+    function bolognaActiveTile() {
+        return bolognaPadTile || bolognaPickedTile || (bolognaPointerIn ? null : bolognaTileAtPointer());
+    }
+
+    function sameTile(a, b) {
+        return !!(a && b && a.x === b.x && a.y === b.y);
+    }
+
+    // Clicking the tile already picked puts it down again.
+    function pickBolognaTile(tile) {
+        bolognaPickedTile = (tile && !sameTile(tile, bolognaPickedTile)) ? { x: tile.x, y: tile.y } : null;
+        bolognaReadoutKey = null;
+        sheetGfxKey = null;
+        SoundManager.playCursor();
+    }
+
+    function teleportToBolognaTile(tile) {
+        const BMS = window.BolognaMapSystem;
+        if (!tile || !BMS || typeof BMS.teleportToCell !== 'function') { SoundManager.playBuzzer(); return false; }
+        const at = bolognaCellOfTile(tile);
+        if (!BMS.teleportToCell(at.row, at.col, at.x, at.y)) { SoundManager.playBuzzer(); return false; }
+        SoundManager.playOk();
+        // The chart goes away so the party drops back onto the street.
+        currentMapState = savedMinimapState();
+        clearFullscreenCache();
+        destroyBolognaChrome();
+        refreshWorldMapDisplay();
+        TouchInput.clear();
+        return true;
+    }
+
+    function buildBolognaChrome() {
+        if (bolognaChromeEl) return bolognaChromeEl;
+        // Europe's chrome is never up over Bologna (chromeWanted), so the
+        // readout borrows its id and with it every rule theme.css has for it.
+        const el = document.createElement('div');
+        el.id = CHROME_ID;
+        el.innerHTML =
+            '<div class="wm-chrome-panel wm-readout" id="wm-bologna-readout"></div>' +
+            `<div class="wm-chrome-panel wm-sheet-hint">${escapeSheet(T('WorldMap.bologna.hint'))}</div>`;
+        document.body.appendChild(el);
+        bolognaChromeEl = el;
+        bolognaReadoutEl = el.querySelector('#wm-bologna-readout');
+        bolognaReadoutKey = null;
+        // Only the button claims the pointer: the readout is a label and must
+        // not swallow a click on the tile it is describing.
+        el.addEventListener('pointerover', ev => {
+            if (ev.target.closest('.wm-teleport-btn')) bolognaPointerIn = true;
+        });
+        el.addEventListener('pointerout', ev => {
+            if (ev.target.closest('.wm-teleport-btn')) bolognaPointerIn = false;
+        });
+        el.addEventListener('click', ev => {
+            const hit = ev.target.closest('[data-wm-teleport]');
+            if (!hit) return;
+            ev.stopPropagation();
+            const at = String(hit.dataset.wmTeleport).split(',');
+            bolognaPointerIn = false;
+            teleportToBolognaTile({ x: Number(at[0]), y: Number(at[1]) });
+        });
+        return el;
+    }
+
+    function destroyBolognaChrome() {
+        if (bolognaChromeEl) { bolognaChromeEl.remove(); bolognaChromeEl = null; }
+        bolognaReadoutEl = null;
+        bolognaReadoutKey = null;
+        bolognaPointerIn = false;
+        bolognaPadTile = null;
+        bolognaPickedTile = null;
+        bolognaPressing = false;
+    }
+
+    // Says which cell and tile the active tile is, and offers the teleport on
+    // the tile that has been picked. Rewritten only when the tile changes.
+    function refreshBolognaReadout(tile) {
+        if (!bolognaReadoutEl) return;
+        const picked = sameTile(tile, bolognaPickedTile);
+        const key = tile ? tile.x + ',' + tile.y + (picked ? ':p' : '') : '';
+        if (key === bolognaReadoutKey) return;
+        bolognaReadoutKey = key;
+        if (!tile) { bolognaReadoutEl.style.display = 'none'; return; }
+        const at = bolognaCellOfTile(tile);
+        const row = (label, value) =>
+            `<div class="wm-read-row"><span class="wm-read-label">${escapeSheet(label)}</span>` +
+            `<span class="wm-read-value">${escapeSheet(value)}</span></div>`;
+        bolognaReadoutEl.style.display = 'block';
+        bolognaReadoutEl.innerHTML =
+            `<div class="wm-read-head">${escapeSheet(T('WorldMap.bologna.title'))}</div>` +
+            row(T('WorldMap.bologna.cell'), T('WorldMap.coords.value', { x: at.col, y: at.row })) +
+            row(T('WorldMap.bologna.tile'), T('WorldMap.coords.value', { x: at.x, y: at.y })) +
+            (picked
+                ? '<div class="wm-read-buttons">' +
+                  `<div class="inspect-btn focusable wm-teleport-btn" data-wm-teleport="${tile.x},${tile.y}">` +
+                  `${escapeSheet(T('WorldMap.bologna.teleport'))}</div></div>`
+                : '');
+    }
+
+    // The sheet is bigger than the screen, so the pan follows the pad cursor
+    // out rather than letting it walk off the edge.
+    function keepBolognaPadInView() {
+        if (!bolognaPadTile || !isLiveSprite(worldMapSprite)) return;
+        const cell = bolognaTileRect(bolognaPadTile.x, bolognaPadTile.y);
+        const sx = cell.x + cell.w / 2, sy = cell.y + cell.h / 2;
+        const mx = Math.max(cell.w, Graphics.width * 0.18);
+        const my = Math.max(cell.h, Graphics.height * 0.18);
+        if (sx < mx) panX += mx - sx;
+        else if (sx > Graphics.width - mx) panX -= sx - (Graphics.width - mx);
+        if (sy < my) panY += my - sy;
+        else if (sy > Graphics.height - my) panY -= sy - (Graphics.height - my);
+        worldMapSprite.x = panX;
+        worldMapSprite.y = panY;
+    }
+
+    function moveBolognaPad(dx, dy) {
+        if (!bolognaPadTile) {
+            // The first press only summons the cursor, on the party's own tile.
+            bolognaPadTile = bolognaPartyTile();
+        } else {
+            bolognaPadTile = {
+                x: Math.max(0, Math.min(BOLOGNA_SHEET_TILES_W - 1, bolognaPadTile.x + dx)),
+                y: Math.max(0, Math.min(BOLOGNA_SHEET_TILES_H - 1, bolognaPadTile.y + dy)),
+            };
+        }
+        sheetGfxKey = null;
+        keepBolognaPadInView();
+        SoundManager.playCursor();
+    }
+
+    // The keys: cancel puts the chart away, the d-pad walks the cursor, OK
+    // picks the cursor's tile and OK on the picked tile teleports onto it.
+    function updateBolognaKeys() {
+        if (Input.isTriggered('cancel')) { toggleMapState(); return; }
+        let dx = 0, dy = 0;
+        if (Input.isRepeated('left')) dx = -1;
+        else if (Input.isRepeated('right')) dx = 1;
+        else if (Input.isRepeated('up')) dy = -1;
+        else if (Input.isRepeated('down')) dy = 1;
+        if (dx || dy) { moveBolognaPad(dx, dy); return; }
+        if (Input.isTriggered('ok') && bolognaPadTile) {
+            if (sameTile(bolognaPadTile, bolognaPickedTile)) teleportToBolognaTile(bolognaPickedTile);
+            else pickBolognaTile(bolognaPadTile);
+        }
+    }
+
+    // The pointer: right-click puts the chart away, a press that does not
+    // move is a tap that picks a tile, a press that moves is the pan.
+    function updateBolognaPointer() {
+        if (bolognaPointerIn) { bolognaPressing = false; return; }
+        if (TouchInput.isCancelled()) { TouchInput.clear(); toggleMapState(); return; }
         if (TouchInput.isTriggered()) {
             bolognaPressing = true;
             bolognaPressMoved = false;
@@ -5220,34 +5433,27 @@
         } else if (bolognaPressing && TouchInput.isPressed()) {
             if (Math.abs(TouchInput.x - bolognaPressX) > 8 ||
                 Math.abs(TouchInput.y - bolognaPressY) > 8) {
-                bolognaPressMoved = true; // it's a drag-pan, not a tap
+                bolognaPressMoved = true; // a drag-pan, not a tap
             }
         } else if (bolognaPressing && TouchInput.isReleased()) {
             bolognaPressing = false;
             if (bolognaPressMoved) return;
-
-            // Convert screen -> assembled-bitmap pixels (undo pan + zoom).
-            const bmpX = (TouchInput.x - panX) / zoomScale;
-            const bmpY = (TouchInput.y - panY) / zoomScale;
-
-            const col = BOLOGNA_COL_MIN + Math.floor(bmpX / BOLOGNA_CELL_PX);
-            const row = BOLOGNA_ROW_MIN + Math.floor(bmpY / BOLOGNA_CELL_PX);
-            if (row < BOLOGNA_ROW_MIN || row > BOLOGNA_ROW_MAX ||
-                col < BOLOGNA_COL_MIN || col > BOLOGNA_COL_MAX) return;
-
-            // In-cell tile position (cell drawn at BOLOGNA_CELL_PX for 256 tiles).
-            const localPxX = bmpX - (col - BOLOGNA_COL_MIN) * BOLOGNA_CELL_PX;
-            const localPxY = bmpY - (row - BOLOGNA_ROW_MIN) * BOLOGNA_CELL_PX;
-            const tileX = (localPxX / BOLOGNA_CELL_PX) * BOLOGNA_MAP_TILES;
-            const tileY = (localPxY / BOLOGNA_CELL_PX) * BOLOGNA_MAP_TILES;
-
-            if (window.BolognaMapSystem.teleportToCell(row, col, tileX, tileY)) {
-                // Close the overlay so the player drops back onto the map.
-                currentMapState = 0;
-                clearFullscreenCache();
-                if (worldMapSprite) worldMapSprite.visible = false;
-            }
+            const tile = bolognaTileAtPointer();
+            if (!tile) return;
+            // The mouse takes over from the pad cursor the moment it is used.
+            bolognaPadTile = null;
+            pickBolognaTile(tile);
         }
+    }
+
+    function updateBolognaSheet() {
+        if (currentMapState !== 3) { destroyBolognaChrome(); return; }
+        buildBolognaChrome();
+        updateBolognaKeys();
+        if (currentMapState !== 3) return; // put away by a key
+        updateBolognaPointer();
+        if (currentMapState !== 3) return;
+        refreshBolognaReadout(bolognaActiveTile());
     }
 
     // Cancel is the sheet's own key while the sheet is up: right-clicking a
@@ -5594,15 +5800,32 @@
         return spriteIsBlank(sprite, ch);
     }
 
+    // The gate wraps the chain as it stands when this file loads, but every
+    // plugin loaded after it wraps the gate in turn and would still run for
+    // every sprite every frame, seen or not. So at boot, once every plugin has
+    // hooked in, the gate takes the outermost place as well (restGateOnTop):
+    // it is asked first, and when the sprite may not rest it runs the whole
+    // chain above it, whose own call back down into the gate goes straight
+    // through to the links below.
     const _Sprite_Character_update_rest = Sprite_Character.prototype.update;
-    Sprite_Character.prototype.update = function() {
+    let _spriteChainTop = null;
+    let _spriteGateBusy = false;
+    function spriteRestGate() {
+        if (_spriteGateBusy) return _Sprite_Character_update_rest.call(this);
         if (spriteMayRest(this)) {
             this.visible = false;
             restSiblings(this);
             return;
         }
-        _Sprite_Character_update_rest.call(this);
-    };
+        if (!_spriteChainTop) return _Sprite_Character_update_rest.call(this);
+        _spriteGateBusy = true;
+        try {
+            return _spriteChainTop.call(this);
+        } finally {
+            _spriteGateBusy = false;
+        }
+    }
+    Sprite_Character.prototype.update = spriteRestGate;
 
     // -- Events ---------------------------------------------------------------
 
@@ -5694,10 +5917,45 @@
         return true;
     }
 
+    // Same arrangement as the sprite gate above.
     const _Game_Event_update = Game_Event.prototype.update;
-    Game_Event.prototype.update = function() {
+    let _eventChainTop = null;
+    let _eventGateBusy = false;
+    function eventRestGate() {
+        if (_eventGateBusy) return _Game_Event_update.apply(this, arguments);
         if (eventMayRest(this)) return;
-        _Game_Event_update.apply(this, arguments);
-    };
+        if (!_eventChainTop) return _Game_Event_update.apply(this, arguments);
+        _eventGateBusy = true;
+        try {
+            return _eventChainTop.apply(this, arguments);
+        } finally {
+            _eventGateBusy = false;
+        }
+    }
+    Game_Event.prototype.update = eventRestGate;
+
+    // Puts both gates outermost, over whatever wrapped them after this file
+    // loaded. Idempotent: a chain already topped by its gate is left be.
+    function restGateOnTop() {
+        const spriteTop = Sprite_Character.prototype.update;
+        if (spriteTop !== spriteRestGate) {
+            _spriteChainTop = spriteTop;
+            Sprite_Character.prototype.update = spriteRestGate;
+        }
+        const eventTop = Game_Event.prototype.update;
+        if (eventTop !== eventRestGate) {
+            _eventChainTop = eventTop;
+            Game_Event.prototype.update = eventRestGate;
+        }
+    }
+    window.WorldMapRestGateOnTop = restGateOnTop;
+
+    if (typeof Scene_Boot !== 'undefined') {
+        const _Scene_Boot_start_rest = Scene_Boot.prototype.start;
+        Scene_Boot.prototype.start = function() {
+            restGateOnTop();
+            _Scene_Boot_start_rest.apply(this, arguments);
+        };
+    }
 
 })();

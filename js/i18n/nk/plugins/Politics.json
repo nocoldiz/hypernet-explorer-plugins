@@ -1,5 +1,13 @@
 {
   "power": {
+    "nationalGovernment": {
+      "govType": "NATIONAL GOVERNMENT",
+      "headTitle": "HEAD OF GOVERNMENT",
+      "legislature": "NATIONAL ASSEMBLY",
+      "partyKind": "PARTY",
+      "electorTitle": "ELECTOR",
+      "electorTitlePlural": "ELECTORS"
+    },
     "holyvaticanempire": {
       "govType": "THEOCRACY",
       "headTitle": "SUPREME PONTIFEX",
@@ -72,6 +80,12 @@
       "legislature": "DA BIT",
       "partyKind": "ROUTINE"
     },
+    "kukulkanascendancy": {
+      "govType": "DIVINE EMPIRE",
+      "headTitle": "GOD-EMPEROR",
+      "legislature": "COUNCIL OF AJAWOB",
+      "partyKind": "CULT"
+    },
     "default": {
       "govType": "REPUBLIC",
       "headTitle": "PRESIDENT",
@@ -79,6 +93,58 @@
       "partyKind": "PARTY",
       "electorTitle": "ELECTOR",
       "electorTitlePlural": "ELECTORS"
+    },
+    "democraticpeoplesrepublicofkorea": {
+      "govType": "HEREDITARY REPUBLIC",
+      "headTitle": "ETERNAL CHAIRMAN",
+      "legislature": "SUPREME PEOPLE'S ASSEMBLY",
+      "partyKind": "PARTY"
+    },
+    "dharmadirectorate": {
+      "govType": "HARMONIOUS EMPIRE",
+      "headTitle": "CHANCELLOR OF RITES",
+      "legislature": "HALL OF TEN THOUSAND VOICES",
+      "partyKind": "SCHOOL",
+      "electorTitle": "PRECEPTOR",
+      "electorTitlePlural": "PRECEPTORS"
+    },
+    "illuminatedkhanate": {
+      "govType": "ILLUMINATED KHANATE",
+      "headTitle": "ILLUMINATED KHAN",
+      "legislature": "IKH KHURALDAI",
+      "partyKind": "BANNER",
+      "electorTitle": "ABBOT",
+      "electorTitlePlural": "ABBOTS"
+    },
+    "solomonicrepublic": {
+      "govType": "SOLOMONIC REPUBLIC",
+      "headTitle": "NASI OF DA REPUBLIC",
+      "legislature": "RESTORED SANHEDRIN",
+      "partyKind": "COUNCIL"
+    },
+    "petrokingdomofarabia": {
+      "govType": "PETRO MONARCHY",
+      "headTitle": "OIL-EMIR",
+      "legislature": "CONCESSION MAJLIS",
+      "partyKind": "CONCESSION"
+    },
+    "sanatanarashtra": {
+      "govType": "DHARMIC REPUBLIC",
+      "headTitle": "PRIME MINISTER",
+      "legislature": "RASHTRA SABHA",
+      "partyKind": "SABHA"
+    },
+    "longchile": {
+      "govType": "EXPANSIONIST REPUBLIC",
+      "headTitle": "PRESIDENT-MARSHAL",
+      "legislature": "CONGRESS OF DA LONG SOUTH",
+      "partyKind": "MOVEMENT"
+    },
+    "imperialstateofpersia": {
+      "govType": "IMPERIAL STATE",
+      "headTitle": "PRIME MINISTER",
+      "legislature": "NATIONAL CONSULTATIVE ASSEMBLY",
+      "partyKind": "PARTY"
     }
   },
   "election": {
@@ -156,7 +222,12 @@
     "revolution": "REVOLUTION: DA {govType} OF {power} IZ OVERTHROWN; A PROVISIONAL GOVERNMENT CALLS AN EMERGENCY {election}!",
     "assassination": "{name}, {title} OF {power}, IZ ASSASSINATED.",
     "politicianDies": "{name} DIES AT {age}.",
-    "headDies": "{name} DIES AT {age}. {power} MOURNS ITS {title}."
+    "headDies": "{name} DIES AT {age}. {power} MOURNS ITS {title}.",
+    "diagnosed": "{name} HAB BEEN DIAGNOSED WIT {disease}. DA PHYSICIANS OF {power} GIVE NO HOPE OF A CURE!",
+    "diesOfIllness": "{name} DIES OF {disease}. {power} MOURNS ITS {title}.",
+    "hordeFlight": "DA GOBLIN HORDE TAKES {country}; {n} OF ITS PEOPLE PREPARE TA FLEE!",
+    "hordeLiberation": "{country} IZ FREE OF DA GOBLIN HORDE; {n} REFUGEES CAN START FOR HOME!",
+    "candidateWins": "{name} WON DA ELECTION AS AN OUTSIDER WIT {share}% AN' BECAME {title}!"
   },
   "note": {
     "coalition": "COALITION FORMED WIT {party}.",
@@ -182,17 +253,25 @@
     "radicalized": "HARDENED VIEWS AS UNREST SPREAD!",
     "grudge": "BITTER ABOUT {winner} WINNIN' DA {election}!",
     "electedMayor": "ELECTED MAYOR OF {group} ({votes}/{total} VOTES)!",
-    "appointed": "APPOINTED {office} OF {group}."
+    "appointed": "APPOINTED {office} OF {group}.",
+    "campaigned": "WON OVER TA DA {party} BY A CAMPAIGN (WAZ WIT {from})!",
+    "smeared": "LOST FAITH IN DA {party} AFTER A SMEAR CAMPAIGN!",
+    "smearedOut": "WALKED OUT OF DA {party}, DISGUSTED BY WHAT DA PAPERS SAID!",
+    "driftedTo": "DRIFTED FROM DA {from} TA DA {to}.",
+    "driftedOut": "DRIFTED AWAY FROM DA {from} AN' NOW BELONGS TA NO PARTY!",
+    "joinedBy": "JOINED DA {party}, TALKED ROUND BY {by} (WAZ WIT {from})!"
   },
   "story": {
     "electedMayor": "ELECTED MAYOR OF {group}",
     "appointed": "APPOINTED {office} OF {group}"
   },
   "death": {
+    "diedInWorld": "DIED",
     "wolfpigs": "FED TA DA WOLFPIGS AFTER LOSIN' DA MOOT",
     "succession": "KILLED IN DA WAR OF SUCCESSION",
     "assassinated": "ASSASSINATED",
-    "naturalCauses": "DIED OF NATURAL CAUSES AT {age}"
+    "naturalCauses": "DIED OF NATURAL CAUSES AT {age}",
+    "illness": "DIED OF {disease}"
   },
   "report": {
     "noPower": "NO HYPERPOWER NAMED \"{power}\".",
@@ -240,5 +319,395 @@
   "accession": {
     "elected": "ELECTED",
     "coup": "COUP"
+  },
+  "role": {
+    "head": "HEAD OF STATE",
+    "minister": "MINISTER",
+    "partyLeader": "PARTY LEADER",
+    "legislator": "LEGISLATOR"
+  },
+  "life": {
+    "tookOffice": "TOOK OFFICE AS {office} OF {polity}.",
+    "leftOffice": "LEFT OFFICE AS {office} OF {polity}.",
+    "diedInOffice": "DIED IN OFFICE: {cause}."
+  },
+  "menu": {
+    "title": "POLITICS",
+    "back": "BACK",
+    "searchPlaceholder": "SEARCH OFFICE HOLDERS",
+    "tab": {
+      "here": "HERE",
+      "nation": "NATION",
+      "power": "HYPERPOWER",
+      "elected": "ELECTED",
+      "parties": "PARTIES",
+      "own": "OWN PARTY"
+    },
+    "row": {
+      "townHall": "TOWN HALL",
+      "government": "GOVERNMENT",
+      "elections": "ELECTIONS",
+      "members": "MEMBERS AN' WARS",
+      "filter": "FILTER",
+      "found": "FOUND DA PARTY",
+      "save": "SAVE CHANGES",
+      "discard": "DISCARD CHANGES",
+      "edit": "EDIT PARTY",
+      "confirm": "CONFIRM",
+      "cancel": "CANCEL"
+    },
+    "level": {
+      "local": "TOWN",
+      "nation": "NATION",
+      "power": "HYPERPOWER"
+    },
+    "empty": {
+      "noPolitics": "NOBODY GOVERNS ANYBODY IN DIS WORLD: NO OFFICE IZ HELD AN' NO VOTE IZ CAST!",
+      "noPlace": "DA PARTY IZ STANDIN' NOWHERE ANY GOVERNMENT HAB MAPPED!",
+      "noLocal": "DIS PLACE KEEPS NO TOWN HALL OF ITS OWN!",
+      "noNation": "{country} KEEPS NO GOVERNMENT OF ITS OWN DAT ANYBODY HERE HAB HEARD OF!",
+      "noCountry": "NO NATION CLAIMS DA GROUND UNDER DA PARTY!",
+      "noPower": "NO HYPERPOWER HOLDS DIS GROUND!",
+      "noElected": "NOBODY HOLDS AN OFFICE OVER DIS PLACE!",
+      "noSelection": "NOTHIN' CHOSEN.",
+      "noParties": "NO PARTY SITS IN DIS CHAMBER!",
+      "noElections": "NO ELECTION HAB BEEN HELD HERE YET!",
+      "noWars": "AT PEACE WIT EVERYBODY.",
+      "noMatch": "NOTHIN' MATCHES.",
+      "noPartiesFound": "NO PARTY STANDS HERE."
+    },
+    "lbl": {
+      "place": "PLACE",
+      "country": "NATION",
+      "power": "HYPERPOWER",
+      "govType": "GOVERNMENT",
+      "head": "HEAD",
+      "rulingParty": "RULIN' PARTY",
+      "coalition": "COALITION",
+      "legislature": "CHAMBER",
+      "seats": "SEATS",
+      "nextElection": "NEXT ELECTION",
+      "nextLocalElection": "NEXT TOWN ELECTION",
+      "lastElection": "LAST ELECTION",
+      "winner": "WINNER",
+      "turnout": "TURNOUT",
+      "legitimacy": "LEGITIMACY",
+      "stability": "STABILITY",
+      "unrest": "UNREST",
+      "economy": "ECONOMY",
+      "treasury": "TREASURY",
+      "taxRate": "TAX RATE",
+      "censorship": "CENSORSHIP",
+      "conscription": "CONSCRIPTION",
+      "welfare": "WELFARE",
+      "festivals": "FESTIVALS",
+      "curfew": "CURFEW",
+      "office": "OFFICE",
+      "level": "LEVEL",
+      "polity": "OF",
+      "party": "PARTY",
+      "share": "SHARE",
+      "leader": "LEADER",
+      "votes": "VOTERS",
+      "founded": "FOUNDED",
+      "age": "AGE",
+      "status": "STANDIN'",
+      "members": "MEMBER NATIONS",
+      "wars": "WARS",
+      "onu": "ONU ASSEMBLY",
+      "mayorElected": "MAYOR ELECTED",
+      "supporters": "SUPPORTERS",
+      "ideology": "IDEOLOGY",
+      "name": "NAME",
+      "fee": "SUBSCRIPTION",
+      "tenet": "TENET",
+      "tenets": "TENETS",
+      "attracts": "ATTRACTS",
+      "takings": "WEEKLY TAKINGS",
+      "lastPayout": "LAST PAYOUT",
+      "totalEarned": "TOTAL EARNED",
+      "campaigns": "CAMPAIGNS RUNNIN'"
+    },
+    "sec": {
+      "government": "GOVERNMENT",
+      "state": "STATE OF DA REALM",
+      "policies": "POLICIES",
+      "chamber": "CHAMBER",
+      "lastResults": "LAST RESULTS",
+      "history": "PAST ELECTIONS",
+      "offices": "OFFICES",
+      "person": "OFFICE HOLDER",
+      "members": "MEMBER NATIONS",
+      "wars": "WARS",
+      "platform": "PLATFORM",
+      "founding": "FOUND A POLITICAL PARTY",
+      "editing": "EDIT DA PARTY",
+      "partyMembers": "PARTY MEMBERS"
+    },
+    "val": {
+      "vacant": "VACANT",
+      "none": "NONE",
+      "independent": "INDEPENDENT",
+      "notScheduled": "NOT SCHEDULED",
+      "curfewOn": "IN FORCE",
+      "curfewOff": "NONE",
+      "snap": "SNAP",
+      "seated": "SEATED",
+      "observer": "OBSERVER",
+      "notSeated": "NO SEAT",
+      "livesIn": "LIVES IN {place}",
+      "mainPlayer": "A MAIN PLAYER OF DA CENTURY",
+      "recordOnly": "KNOWN ONLY FROM DA RECORD",
+      "townsperson": "A RESIDENT OF DA TOWN",
+      "partyShare": "{share}% · {seats} SEATS",
+      "warLine": "{attacker} AGAINST {defender}, SINCE {since}",
+      "coalitionPartners": "{party} AN' {n} MORE",
+      "supporters": "{n} SUPPORTERS",
+      "yours": "YA PARTY",
+      "chooseCreed": "CHOOSE AN IDEOLOGY",
+      "feeWeekly": "{fee} A WEEK",
+      "held": "HELD",
+      "member": "FOUNDIN' MEMBER",
+      "payout": "{gold} OVER {weeks} WEEKS, {date}"
+    },
+    "empathize": "EMPATHIZE",
+    "scope": {
+      "world": "WHOLE WORLD",
+      "place": "TOWN OR VILLAGE",
+      "nation": "NATION",
+      "power": "HYPERPOWER",
+      "placeOf": "IN {name}",
+      "nationOf": "NATION: {name}",
+      "powerOf": "HYPERPOWER: {name}"
+    },
+    "hint": {
+      "fee": "EVERY SUPPORTER PAYS DIS EACH WEEK AN' DA TAKINGS IZ PAID TA DA PARTY. A CHEAP CARD FILLS WIT DA POOR, A DEAR ONE ONLY WIT DA ELITE!",
+      "feeEntry": "WEEKLY SUBSCRIPTION, IN EUROS",
+      "creed": "DA CREED DA PARTY STANDS ON. ITS TENETS BEND IT FROM DERE!",
+      "found": "EVERYBODY IN DA TEAM JOINS AS A FOUNDIN' MEMBER. A WORLD HOLDS ONLY ONE PARTY OF YA!",
+      "save": "DA NEW PLATFORM TAKES EFFECT AT ONCE!",
+      "tenets": "PICK UP TA {n} TENETS. TWO DAT PULL DA SAME WAY AGAINST EACH OTHER NO CAN BOTH BE HELD!",
+      "propaganda": "CAMPAIGNS, SMEARS AN' CANDIDACIES IZ RUN FROM PROPAGANDA2 ON DA HYPERDECK!",
+      "pick": "CONFIRM TA CHOOSE IT.",
+      "filter": "NARROW DA LIST TA A TOWN OR VILLAGE, A NATION OR A HYPERPOWER!"
+    },
+    "msg": {
+      "needCreed": "CHOOSE AN IDEOLOGY FIRST.",
+      "alreadyFounded": "DIS WORLD ALREADY HAB A PARTY OF YA!",
+      "founded": "{party} IZ FOUNDED. {n} FOUNDIN' MEMBERS JOINED!",
+      "noParty": "YOU HAB NOT FOUNDED A PARTY YET!",
+      "saved": "{party} HAB ITS NEW PLATFORM.",
+      "tooManyTenets": "A PARTY CAN HOLD AT MOST {n} TENETS!"
+    },
+    "feeClass": {
+      "0": "DA POOREST",
+      "1": "WORKIN' CLASS",
+      "2": "MIDDLE CLASS",
+      "3": "DA WELL-TA-DO",
+      "4": "DA ELITE"
+    }
+  },
+  "player": {
+    "nameForm": [
+      "{adj} {noun} PARTY",
+      "PARTY OF {adj} {noun}",
+      "{noun} FRONT",
+      "{adj} {noun} MOVEMENT",
+      "{adj} UNION FOR {noun}",
+      "DA {adj} {noun} LEAGUE"
+    ],
+    "nameAdj": [
+      "POPULAR",
+      "NEW",
+      "UNITED",
+      "FREE",
+      "RADICAL",
+      "HONEST",
+      "COMMON",
+      "CIVIC",
+      "WORKIN'",
+      "LIBERATED",
+      "AWAKENED",
+      "ESOTERIC",
+      "MODERN",
+      "SOVEREIGN",
+      "DEMOCRATIC",
+      "HIDDEN"
+    ],
+    "nameNoun": [
+      "PROGRESS",
+      "RENEWAL",
+      "ORDER",
+      "LIBERTY",
+      "TOMORROW",
+      "UNITY",
+      "DIGNITY",
+      "REFORM",
+      "HOPE",
+      "LABOUR",
+      "REASON",
+      "HARMONY",
+      "JUSTICE",
+      "PROSPERITY",
+      "BALANCE",
+      "VIGIL"
+    ],
+    "fallbackName": "DA PEOPLE'S PARTY"
+  },
+  "tenet": {
+    "commonOwnership": {
+      "name": "COMMON OWNERSHIP",
+      "desc": "LAND, FACTORIES AN' WEALTH BELONG TA EVERYBODY. PULLS DA ECONOMY LEFT!"
+    },
+    "freeEnterprise": {
+      "name": "FREE ENTERPRISE",
+      "desc": "LET PEOPLE TRADE, HIRE AN' PROFIT AS DEY. PULLS DA ECONOMY RIGHT!"
+    },
+    "liberty": {
+      "name": "LIBERTY",
+      "desc": "DA STATE KEEPS OUT OF PRIVATE LIVES. PULLS AUTHORITY DOWN!"
+    },
+    "order": {
+      "name": "ORDER",
+      "desc": "LAWS OBEYED, STREETS POLICED, DISORDER PUNISHED. PULLS AUTHORITY UP!"
+    },
+    "progress": {
+      "name": "PROGRESS",
+      "desc": "OLD CUSTOMS GIVE WAY TA NEW IDEAS. PULLS TRADITION DOWN!"
+    },
+    "heritage": {
+      "name": "HERITAGE",
+      "desc": "KEEP DA FAITH, DA LANGUAGE AN' DA OLD WAYS. PULLS TRADITION UP!"
+    },
+    "peace": {
+      "name": "PEACE",
+      "desc": "DISARM, NEGOTIATE, NEVER MARCH FIRST. PULLS MILITARISM DOWN!"
+    },
+    "strength": {
+      "name": "STRENGTH",
+      "desc": "A STRONG ARMY IZ DA ONLY REAL GUARANTEE. PULLS MILITARISM UP!"
+    },
+    "reason": {
+      "name": "REASON",
+      "desc": "SCIENCE AN' EVIDENCE OVER SPELLS AN' OMENS. PULLS MYSTICISM DOWN!"
+    },
+    "arcana": {
+      "name": "ARCANA",
+      "desc": "DA HIDDEN ARTS BELONG IN GOVERNMENT. PULLS MYSTICISM UP!"
+    },
+    "welfare": {
+      "name": "WELFARE",
+      "desc": "A SAFETY NET FOR EVERYBODY, RUN BY A CARIN' STATE. A LITTLE LEFT AN' A LITTLE MORE AUTHORITY!"
+    },
+    "localRule": {
+      "name": "LOCAL RULE",
+      "desc": "TOWNS AN' VILLAGES DECIDE FOR THEMSELVES. LESS AUTHORITY, A LITTLE MORE TRADITION!"
+    }
+  },
+  "app": {
+    "name": "PROPAGANDA2",
+    "subtitle": "PARTY OFFICE, CAMPAIGNS AN' ELECTIONS",
+    "purse": "FUNDS: {money}",
+    "statusParty": "{party} · {n} SUPPORTERS · {takings} A WEEK",
+    "statusNoParty": "NO PARTY FOUNDED YET.",
+    "tab": {
+      "party": "PARTY",
+      "parties": "PARTIES",
+      "campaigns": "CAMPAIGNS",
+      "elections": "ELECTIONS"
+    },
+    "reroll": "ANOTHER NAME",
+    "chooseCreed": "CHOOSE",
+    "closeList": "CLOSE LIST",
+    "searchCreed": "SEARCH IDEOLOGIES",
+    "searchPlace": "SEARCH PLACES",
+    "searchParty": "SEARCH PARTIES",
+    "searchElection": "SEARCH ELECTIONS",
+    "shown": "{n} OF {total}",
+    "promote": "CAMPAIGN FOR IT",
+    "smear": "SMEAR IT",
+    "newCampaign": "NEW CAMPAIGN",
+    "campaignKind": "KIND",
+    "kind": {
+      "convert": "CONVERSION",
+      "smear": "SMEAR"
+    },
+    "kindHint": {
+      "convert": "WINS PEOPLE OVER TA DA PARTY AN' PULLS DEY VIEWS TOWARD ITS PLATFORM!",
+      "smear": "DRAINS ITS SUPPORTERS' FAITH AN' SOURS DEM ON ITS PLATFORM. DA SHAKEN IZ EASIER TA WIN LATER; DA FAITHLESS WALK OUT!"
+    },
+    "target": "PARTY",
+    "chooseTarget": "CHOOSE A PARTY",
+    "noOwnParty": "NO PARTY OF YA",
+    "where": "WHERE",
+    "intensity": "INTENSITY",
+    "intensityOf": {
+      "leaflets": "LEAFLETS ({money}/DAY)",
+      "rallies": "RALLIES ({money}/DAY)",
+      "broadcast": "BROADCASTS ({money}/DAY)",
+      "saturation": "SATURATION ({money}/DAY)"
+    },
+    "duration": {
+      "title": "DURATION",
+      "day": "{n} DAY",
+      "days": "{n} DAYS",
+      "month": "{n} MONTH",
+      "months": "{n} MONTHS"
+    },
+    "projection": "PROJECTION",
+    "eligible": {
+      "convert": "PEOPLE IT CAN WIN",
+      "smear": "SUPPORTERS IT CAN REACH"
+    },
+    "reach": "REACH",
+    "expected": {
+      "convert": "EXPECTED CONVERTS",
+      "smear": "EXPECTED SHAKEN"
+    },
+    "cost": "COST",
+    "noProjection": "CHOOSE A PARTY TA SEE DA PROJECTION!",
+    "launch": "LAUNCH CAMPAIGN",
+    "launched": "CAMPAIGN FOR {party} LAUNCHED: ABOUT {n} PEOPLE BY DA END, FOR {cost}!",
+    "campaigns": "CAMPAIGNS",
+    "progress": "RESULT",
+    "progressOf": "{n} OF {of} EXPECTED",
+    "state": "STATE",
+    "done": "FINISHED",
+    "running": "RUNNIN' UNTIL {date}",
+    "noCampaigns": "NO CAMPAIGN RUN YET.",
+    "candidate": "CANDIDATE",
+    "noTeam": "NOBODY IN DA TEAM.",
+    "runsFor": "RUNS FOR {party}, ON ITS PLATFORM!",
+    "runsAlone": "RUNS AS AN INDEPENDENT. FOUND A PARTY SO ITS SUPPORTERS VOTE FOR DA CANDIDATE!",
+    "date": "DATE",
+    "deposit": "DEPOSIT",
+    "stand": "STAND",
+    "standing": "STANDIN': {names}",
+    "closed": {
+      "conclave": "CONCLAVE, NO OUTSIDERS",
+      "other": "NOT OPEN"
+    },
+    "noElections": "NO ELECTION IZ COMIN' HERE!",
+    "candidacies": "CANDIDACIES",
+    "cand": {
+      "standing": "STANDIN'",
+      "won": "WON",
+      "lost": "LOST",
+      "withdrawn": "WITHDRAWN"
+    },
+    "candResult": "{status}: {share}% AGAINST {winnerShare}%",
+    "withdraw": "WITHDRAW",
+    "noCandidacies": "NOBODY HAB STOOD YET.",
+    "standingNow": "{name} STANDS IN DA ELECTION OF {date}!",
+    "fail": {
+      "noWorld": "NO WORLD TA CAMPAIGN IN.",
+      "noTarget": "CHOOSE A PARTY FIRST.",
+      "nobody": "NOBODY DERE CAN BE REACHED!",
+      "funds": "NOT ENOUGH MONEY.",
+      "notInTeam": "CHOOSE A CANDIDATE FROM DA TEAM!",
+      "noElection": "DAT ELECTION IZ NOT OPEN.",
+      "conclave": "A CONCLAVE TAKES NO OUTSIDE CANDIDATES!",
+      "alreadyStanding": "DAT CANDIDATE IZ ALREADY STANDIN' IN AN ELECTION!"
+    }
   }
 }

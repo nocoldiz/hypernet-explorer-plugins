@@ -1,5 +1,11 @@
 {
-  "vaultName": "{patron}'S HOLY PATRON BUNKER",
+  "vaultName": "HOLY PATRON BUNKER OF {patron}",
   "starLabel": "{planet} STAR",
-  "surveyNote": "CHARTED, NAMED AN' LEFT ALONE. DA SURVEY TAG READS {patron}, PATRON OF DIS REALITY!"
+  "surveyNote": "SURVEYED AN' NAMED. REGISTERED TA {patron}, PATRON OF DIS REALITY!",
+  "hatchReturn": "BACK ON {patron}'S HATCH.",
+  "hatchReturnUnknown": "BACK ON DA HATCH.",
+  "vesselSender": "DA HOLY PATRON BUNKER",
+  "vesselSubject": "YA WAY DOWN",
+  "vesselBody": "DA COORDINATES HAB BEEN SPOKEN ALOUD IN DIS WORLD, SO DA BUNKER ANSWERS TA IT NOW. ENCLOSED IZ DA VESSEL DAT CARRIES YOU BACK DOWN TA {patron}'S HATCH, WHENEVER YOU WANT IT!",
+  "vaultSealed": "DA HATCH WILL NOT OPEN: DERE IZ NO GROUND OVER IT ANY MORE!"
 }

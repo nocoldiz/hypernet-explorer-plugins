@@ -1246,7 +1246,7 @@
     }
 
     // The initials the cover is stamped with: the first letter of up to two
-    // words, so "Space Invaders" reads SI and "Chess" reads CH.
+    // words, so "Invaders" reads SI and "Chess" reads CH.
     function mgInitials(name) {
         const words = String(name).toUpperCase().split(/[^A-Z0-9]+/).filter(Boolean);
         if (!words.length) return '??';
@@ -2131,20 +2131,37 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // Every classical piece shipped under audio/bgm/Classical is on the dial, so
     // any of them can be the one the title opens on. The entry names the piece playing
     // and steps to the next one, so the pick is made by ear without leaving the
-    // screen. Unpicked, the game opens on one of the four default openers.
+    // screen. Unpicked, the game opens on the finale of Beethoven's Ninth.
     // -------------------------------------------------------------------------
     // i18n-ignore-start  bgm tracks, named after their file
+    const TITLE_MUSIC_NINTH = 'Classical/Ludwig van Beethoven - symphony no. 9 in d minor, op. 125 - iv. finale';
     const TITLE_MUSIC_DEFAULTS = [
-        { name: 'New World Symphony',
-          value: "Classical/Antonin Dvorak - symphony no. 9 in e minor 'from the new world', op. 95 - iv. al" },
-        { name: 'Ode to Joy (Concert Band)',
-          value: 'Classical/Beethoven - Ode to Joy (Concert Band)' },
-        { name: 'Ode to Joy (Allegro)',
-          value: 'Classical/Beethoven - Ode to Joy Allegro' },
-        { name: '1812 Overture',
-          value: 'Classical/Pyotr Ilyich Tchaikovsky - 1812 overture' }
+        { name: 'Ninth Symphony', value: TITLE_MUSIC_NINTH }
     ];
     // i18n-ignore-end
+
+    // Where a long piece may start, in seconds into its file. The title is not
+    // long enough to wait out a twenty minute movement for its climax, so the
+    // piece opens on one of these, drawn each time it starts. Found by a
+    // loudness and brightness pass over the recording (Horenstein, Pro Musica
+    // Symphony Orchestra): each is two or three seconds before a sharp rise
+    // into a sustained full tutti, so the title comes in on the build.
+    const TITLE_MUSIC_MOMENTS = {
+        [TITLE_MUSIC_NINTH]: [
+            279,    // 4:39  the whole orchestra takes up the Ode to Joy
+            508,    // 8:28  the chorus's climax, "vor Gott!"
+            644,    // 10:44 the Alla marcia breaks into the orchestral fugue
+            772,    // 12:52 full chorus, "Freude, schoner Gotterfunken"
+            1041,   // 17:21 the double fugue, "Seid umschlungen"
+            1307,   // 21:47 out of the silence into the Prestissimo coda
+        ],
+    };
+
+    function titleMusicStart(value) {
+        const moments = TITLE_MUSIC_MOMENTS[value];
+        if (!moments || !moments.length) return 0;
+        return moments[Math.floor(Math.random() * moments.length)];
+    }
 
     const TITLE_MUSIC_EXT = /\.(ogg|m4a)_?$/i;
 
@@ -2255,10 +2272,11 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // The title BGM is whichever of the three is currently picked, so the choice
     // is heard the moment it is made and again on every return to the title.
     Scene_Title.prototype.playTitleBgm = function () {
+        const name = titleMusicValue();
         AudioManager.playBgm({
-            name: titleMusicValue(),
+            name,
             volume: 55, pitch: 100, pan: 0
-        });
+        }, titleMusicStart(name));
         AudioManager.stopBgs();
         AudioManager.stopMe();
     };

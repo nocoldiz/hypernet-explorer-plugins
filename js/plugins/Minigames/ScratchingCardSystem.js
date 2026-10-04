@@ -142,7 +142,7 @@
     const SYMBOL_FONT = '"Segoe UI Symbol", "Arial Unicode MS", "DejaVu Sans", sans-serif';
 
     //=========================================================================
-    // The retro dose. Both screens are PlayStation-styled, but not equally: the
+    // The retro dose. Both screens are 32-bit console styled, but not equally: the
     // rack is scenery and can take the full wobble, while the ticket in the
     // player's hands carries printed type and symbols that have to survive it.
     // Wrap BOTH the model building (the tunables are baked into the material at
@@ -751,7 +751,7 @@
             this.targetDist = 3.35;
 
             this._initThree();
-            // The whole counter is a PlayStation picture, ticket included: the
+            // The whole counter is a 32-bit console picture, ticket included: the
             // printed face loses its filtering to the retro pass, which is the
             // point. The dose is the lighter one so the symbols stay readable.
             cardPSX(() => {
@@ -1392,7 +1392,7 @@
         createCard() {
             // A touch under native, scaled back up with nearest filtering on
             // top of the shader's own downsample: the two together are what
-            // makes the counter read as a PlayStation rather than a smooth
+            // makes the counter read as a 32-bit console rather than a smooth
             // modern render.
             const scale = 0.92;
             const w = Math.round(Graphics.width * scale);
@@ -1900,7 +1900,7 @@
                 this._rack.add(root);
 
                 // A flat quad on the counter under each ticket: the shadow a
-                // PlayStation could afford, and enough to sit them down.
+                // a 32-bit console could afford, and enough to sit them down.
                 const shadow = new THREE.Mesh(this._shadowGeo, this._mat({
                     color: 0x000000, transparent: true, opacity: 0.42, depthWrite: false
                 }, 'basic'));
@@ -2102,7 +2102,7 @@
     //=========================================================================
     // Scene_ScratchCardSelect - the counter. The rack is 3D and the lettering
     // over it is the shared PSXHud art deco layer: a black field, gold
-    // keylines and 8px type, the way a PlayStation drew a shop screen.
+    // keylines and 8px type, the way a 32-bit console drew a shop screen.
     //
     // Where three.js or PSXHud is missing, the old stack of command windows is
     // still here and takes over: the counter degrades, it does not vanish.

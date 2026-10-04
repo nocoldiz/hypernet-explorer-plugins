@@ -7,6 +7,8 @@
   "log": "LOG",
   "autosave": "AUTOSAVE",
   "slot": "SLOT {n}",
+  "storySlot": "STORY MODE",
+  "sandboxSlot": "SANDBOX",
   "quickslot": "QUICKSAVE {n}",
   "partyOf": "PARTY OF {name}",
   "levelShort": "LV {n}",
@@ -19,6 +21,7 @@
   "world": "WORLD",
   "worldDate": "WORLD DATE:",
   "artifacts": "ARTIFACTS:",
+  "epidemics": "EPIDEMICS:",
   "worldType": "TIMELINE:",
   "worldMagic": "MAGIC:",
   "worldStarted": "BEGAN:",
@@ -35,6 +38,7 @@
   "thisPageOfHistoryRemains": "DIS PAGE OF HISTORY REMAINS BLANK. PRESS TWICE OR PRESS ENTER TA RECORD YA CURRENT ADVENTURE INTO DIS SLOT!",
   "deleteParty": "DELETE PARTY",
   "areYouSureYouWant": "IZ YOU SURE YOU WANT TA DELETE DIS PARTY? DIS NO CAN BE UNDONE!",
+  "cannotDeleteCurrent": "DIS IZ DA PARTY YOU IZ PLAYIN'. YOU NO CAN DELETE IT FROM INSIDE ITS OWN STORY!",
   "cancel": "CANCEL",
   "theAdventurer": "DA ADVENTURER",
   "playTime2": "PLAY TIME",
@@ -59,5 +63,7 @@
     "noQuicksaveFound": "NO QUICKSAVE FOUND",
     "gameLoaded": "GAME LOADED",
     "quicksaveLoaded": "QUICKSAVE {n} LOADED"
-  }
+  },
+  "rememberedFor": "WHAT WILL BE REMEMBERED",
+  "diaryStamp": "{date}, {time}"
 }

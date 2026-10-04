@@ -35,9 +35,14 @@
   "simulatedHours": "SIMULATED {hours} HOURS",
   "honeyProduced": "HONEY PRODUCED: {amount}",
   "currentPopulation": "CURRENT POPULATION: {total}",
+  "cell": {
+    "brood": "BROOD",
+    "empty": "BARE WAX"
+  },
   "ui": {
     "back": "BACK",
     "apiary": "APIARY",
+    "crossSection": "CROSS SECTION",
     "colony": "COLONY",
     "state": "STATE",
     "mood": "MOOD",
@@ -57,5 +62,8 @@
     "honeyProduced": "HONEY PRODUCED",
     "enemiesRepelled": "ENEMIES REPELLED",
     "swarms": "SWARMS"
+  },
+  "toast": {
+    "swarmed": "DA HIVE SWARMED: {bees} BEES LEFT WIT DA OLD QUEEN!"
   }
 }

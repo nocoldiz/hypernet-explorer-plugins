@@ -1,263 +1,365 @@
 {
   "andromeda": {
-    "name": ""
+    "name": "ANDROMEDA"
   },
   "aquarius": {
-    "name": ""
+    "name": "AQUARIUS"
   },
   "aquila": {
-    "name": ""
+    "name": "AQUILA"
   },
   "aries": {
-    "name": ""
+    "name": "ARIES"
   },
   "auriga": {
-    "name": ""
+    "name": "AURIGA"
   },
   "bootes": {
-    "name": ""
+    "name": "BOÖTES"
   },
   "canis_major": {
-    "name": ""
+    "name": "CANIS MAJOR"
   },
   "canis_minor": {
-    "name": ""
+    "name": "CANIS MINOR"
   },
   "capricornus": {
-    "name": ""
+    "name": "CAPRICORNUS"
   },
   "cassiopeia": {
-    "name": ""
+    "name": "CASSIOPEIA"
   },
   "cepheus": {
-    "name": ""
+    "name": "CEPHEUS"
   },
   "cetus": {
-    "name": ""
+    "name": "CETUS"
   },
   "corona_borealis": {
-    "name": ""
+    "name": "CORONA BOREALIS"
   },
   "corvus": {
-    "name": ""
+    "name": "CORVUS"
   },
   "crater": {
-    "name": ""
+    "name": "CRATER"
   },
   "cygnus": {
-    "name": ""
+    "name": "CYGNUS"
   },
   "delphinus": {
-    "name": ""
+    "name": "DELPHINUS"
   },
   "draco": {
-    "name": ""
+    "name": "DRACO"
   },
   "equuleus": {
-    "name": ""
+    "name": "EQUULEUS"
   },
   "eridanus": {
-    "name": ""
+    "name": "ERIDANUS"
   },
   "gemini": {
-    "name": ""
+    "name": "GEMINI"
   },
   "hercules": {
-    "name": ""
+    "name": "HERCULES"
   },
   "hydra": {
-    "name": ""
+    "name": "HYDRA"
   },
   "lacerta": {
-    "name": ""
+    "name": "LACERTA"
   },
   "leo": {
-    "name": ""
+    "name": "LEO"
   },
   "leo_minor": {
-    "name": ""
+    "name": "LEO MINOR"
   },
   "lepus": {
-    "name": ""
+    "name": "LEPUS"
   },
   "libra": {
-    "name": ""
+    "name": "LIBRA"
   },
   "lynx": {
-    "name": ""
+    "name": "LYNX"
   },
   "lyra": {
-    "name": ""
+    "name": "LYRA"
   },
   "monoceros": {
-    "name": ""
+    "name": "MONOCEROS"
   },
   "ophiuchus": {
-    "name": ""
+    "name": "OPHIUCHUS"
   },
   "orion": {
-    "name": ""
+    "name": "ORION"
   },
   "pegasus": {
-    "name": ""
+    "name": "PEGASUS"
   },
   "perseus": {
-    "name": ""
+    "name": "PERSEUS"
   },
   "pisces": {
-    "name": ""
+    "name": "PISCES"
   },
   "piscis_austrinus": {
-    "name": ""
+    "name": "PISCIS AUSTRINUS"
   },
   "sagitta": {
-    "name": ""
+    "name": "SAGITTA"
   },
   "sagittarius": {
-    "name": ""
+    "name": "SAGITTARIUS"
   },
   "scorpius": {
-    "name": ""
+    "name": "SCORPIUS"
   },
   "scutum": {
-    "name": ""
+    "name": "SCUTUM"
   },
   "serpens": {
-    "name": ""
+    "name": "SERPENS"
   },
   "taurus": {
-    "name": ""
+    "name": "TAURUS"
   },
   "triangulum": {
-    "name": ""
+    "name": "TRIANGULUM"
   },
   "ursa_major": {
-    "name": ""
+    "name": "URSA MAJOR"
   },
   "ursa_minor": {
-    "name": ""
+    "name": "URSA MINOR"
   },
   "virgo": {
-    "name": ""
+    "name": "VIRGO"
   },
   "vulpecula": {
-    "name": ""
+    "name": "VULPECULA"
   },
   "antlia": {
-    "name": ""
+    "name": "ANTLIA"
   },
   "apus": {
-    "name": ""
+    "name": "APUS"
   },
   "ara": {
-    "name": ""
+    "name": "ARA"
   },
   "caelum": {
-    "name": ""
+    "name": "CAELUM"
   },
   "camelopardalis": {
-    "name": ""
+    "name": "CAMELOPARDALIS"
   },
   "cancer": {
-    "name": ""
+    "name": "CANCER"
   },
   "canes_venatici": {
-    "name": ""
+    "name": "CANES VENATICI"
   },
   "carina": {
-    "name": ""
+    "name": "CARINA"
   },
   "centaurus": {
-    "name": ""
+    "name": "CENTAURUS"
   },
   "chamaeleon": {
-    "name": ""
+    "name": "CHAMAELEON"
   },
   "circinus": {
-    "name": ""
+    "name": "CIRCINUS"
   },
   "columba": {
-    "name": ""
+    "name": "COLUMBA"
   },
   "coma_berenices": {
-    "name": ""
+    "name": "COMA BERENICES"
   },
   "corona_australis": {
-    "name": ""
+    "name": "CORONA AUSTRALIS"
   },
   "crux": {
-    "name": ""
+    "name": "CRUX"
   },
   "dorado": {
-    "name": ""
+    "name": "DORADO"
   },
   "fornax": {
-    "name": ""
+    "name": "FORNAX"
   },
   "grus": {
-    "name": ""
+    "name": "GRUS"
   },
   "horologium": {
-    "name": ""
+    "name": "HOROLOGIUM"
   },
   "hydrus": {
-    "name": ""
+    "name": "HYDRUS"
   },
   "indus": {
-    "name": ""
+    "name": "INDUS"
   },
   "mensa": {
-    "name": ""
+    "name": "MENSA"
   },
   "microscopium": {
-    "name": ""
+    "name": "MICROSCOPIUM"
   },
   "musca": {
-    "name": ""
+    "name": "MUSCA"
   },
   "norma": {
-    "name": ""
+    "name": "NORMA"
   },
   "octans": {
-    "name": ""
+    "name": "OCTANS"
   },
   "pavo": {
-    "name": ""
+    "name": "PAVO"
   },
   "phoenix": {
-    "name": ""
+    "name": "PHOENIX"
   },
   "pictor": {
-    "name": ""
+    "name": "PICTOR"
   },
   "puppis": {
-    "name": ""
+    "name": "PUPPIS"
   },
   "pyxis": {
-    "name": ""
+    "name": "PYXIS"
   },
   "reticulum": {
-    "name": ""
+    "name": "RETICULUM"
   },
   "sculptor": {
-    "name": ""
+    "name": "SCULPTOR"
   },
   "sextans": {
-    "name": ""
+    "name": "SEXTANS"
   },
   "telescopium": {
-    "name": ""
+    "name": "TELESCOPIUM"
   },
   "triangulum_australe": {
-    "name": ""
+    "name": "TRIANGULUM AUSTRALE"
   },
   "tucana": {
-    "name": ""
+    "name": "TUCANA"
   },
   "vela": {
-    "name": ""
+    "name": "VELA"
   },
   "volans": {
-    "name": ""
+    "name": "VOLANS"
+  },
+  "cn_jiao": {
+    "name": "角 (JIAO) - HORN"
+  },
+  "cn_kang": {
+    "name": "亢 (KANG) - NECK"
+  },
+  "cn_di": {
+    "name": "氐 (DI) - ROOT"
+  },
+  "cn_fang": {
+    "name": "房 (FANG) - ROOM"
+  },
+  "cn_xin": {
+    "name": "心 (XIN) - HEART"
+  },
+  "cn_wei": {
+    "name": "尾 (WEI) - TAIL"
+  },
+  "cn_ji": {
+    "name": "箕 (JI) - WINNOWIN' BASKET"
+  },
+  "cn_dou": {
+    "name": "斗 (DOU) - DIPPER"
+  },
+  "cn_niu": {
+    "name": "牛 (NIU) - OX"
+  },
+  "cn_nu": {
+    "name": "女 (NÜ) - GIRL"
+  },
+  "cn_xu": {
+    "name": "虛 (XU) - EMPTINESS"
+  },
+  "cn_wei_north": {
+    "name": "危 (WEI) - ROOFTOP"
+  },
+  "cn_shi": {
+    "name": "室 (SHI) - ENCAMPMENT"
+  },
+  "cn_bi": {
+    "name": "壁 (BI) - WALL"
+  },
+  "cn_kui": {
+    "name": "奎 (KUI) - LEGS"
+  },
+  "cn_lou": {
+    "name": "婁 (LOU) - BOND"
+  },
+  "cn_wei_west": {
+    "name": "胃 (WEI) - STOMACH"
+  },
+  "cn_mao": {
+    "name": "昴 (MAO) - HAIRY HEAD"
+  },
+  "cn_bi_west": {
+    "name": "畢 (BI) - NET"
+  },
+  "cn_zui": {
+    "name": "觜 (ZUI) - TURTLE BEAK"
+  },
+  "cn_shen": {
+    "name": "參 (SHEN) - THREE STARS"
+  },
+  "cn_jing": {
+    "name": "井 (JING) - WELL"
+  },
+  "cn_gui": {
+    "name": "鬼 (GUI) - GHOST"
+  },
+  "cn_liu": {
+    "name": "柳 (LIU) - WILLOW"
+  },
+  "cn_xing": {
+    "name": "星 (XING) - STAR"
+  },
+  "cn_zhang": {
+    "name": "張 (ZHANG) - EXTENDED NET"
+  },
+  "cn_yi": {
+    "name": "翼 (YI) - WINGS"
+  },
+  "cn_zhen": {
+    "name": "軫 (ZHEN) - CHARIOT"
+  },
+  "cn_ziwei": {
+    "name": "紫微垣 (ZIWEI YUAN) - PURPLE FORBIDDEN ENCLOSURE"
+  },
+  "cn_taiwei": {
+    "name": "太微垣 (TAIWEI YUAN) - SUPREME PALACE ENCLOSURE"
+  },
+  "cn_tianshi": {
+    "name": "天市垣 (TIANSHI YUAN) - HEAVENLY MARKET ENCLOSURE"
+  },
+  "cn_beidou": {
+    "name": "北斗七星 (BEIDOU QIXIN') - BIG DIPPER"
+  },
+  "cn_nandou": {
+    "name": "南斗六星 (NANDOU LIUXIN') - SOUTHERN DIPPER"
+  },
+  "cn_sanxing": {
+    "name": "參宿三星 (SANSHU SANXIN') - ORION'S BELT"
   }
 }

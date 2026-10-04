@@ -4,7 +4,7 @@
 
 /*:
  * @target MZ
- * @plugindesc v2.0.0 Tactical battle mode: fights play out on the live map, Final Fantasy Tactics crossed with D&D.
+ * @plugindesc v2.0.0 Tactical battle mode: fights play out on the live map, a tactics JRPG crossed with tabletop roleplay.
  * @author Assistant
  *
  * @help MapBattleMode.js

@@ -457,8 +457,34 @@
                 for (let vy = vy0; vy <= vy1; vy++) if (solid(vx, vy, vz)) return true;
                 return false;
             };
-            // Standing in it already: nothing to push out of, only out of the way.
-            if (blocked(Math.floor(p.x / S), Math.floor(p.z / S))) return;
+            const blockedAt = (x, z) => blocked(Math.floor(x / S), Math.floor(z / S));
+
+            // The middle of the body inside a wall of cubes. That is not always
+            // somebody embedded: one frame's stride at a sprint, a diagonal
+            // into a corner or a long frame carries the centre clean past the
+            // face, and giving up there is how a walker ended up standing
+            // inside the blocks they had just placed. If where they were a
+            // moment ago was clear, they walked in, and they are put back on
+            // the outside: sliding along whichever axis is still open, or
+            // returned to that spot if neither is.
+            const prev = this._voxPrev;
+            if (blockedAt(p.x, p.z)) {
+                const near = prev && Math.abs(prev.x - p.x) < S * 3 && Math.abs(prev.z - p.z) < S * 3;
+                if (!near || blockedAt(prev.x, prev.z)) {
+                    // Truly embedded: every direction is a wall, leave them be.
+                    this._voxPrev = null;
+                    return;
+                }
+                const hitX = p.x - prev.x, hitZ = p.z - prev.z;
+                if (!blockedAt(p.x, prev.z))      { p.z = prev.z; this.wallNormalX = 0; this.wallNormalZ = hitZ > 0 ? -1 : 1; }
+                else if (!blockedAt(prev.x, p.z)) { p.x = prev.x; this.wallNormalX = hitX > 0 ? -1 : 1; this.wallNormalZ = 0; }
+                else {
+                    p.x = prev.x; p.z = prev.z;
+                    const l = Math.hypot(hitX, hitZ) || 1;
+                    this.wallNormalX = -hitX / l; this.wallNormalZ = -hitZ / l;
+                }
+                this.wallContact = 0.22;
+            }
 
             for (let pass = 0; pass < 3; pass++) {
                 let bestPen = 0, bestX = 0, bestZ = 0, bestSide = 0;
@@ -490,6 +516,28 @@
                 }
                 this.wallContact = 0.22;
             }
+
+            // Flush with a face, or running along one, never pushes, so a wall
+            // of cubes only counted as a wall while it was being shoved into:
+            // a wall run along placed blocks dropped out from under the runner
+            // and a kick off them missed as often as not. The same slim reach
+            // past the body that a building gets (see _pushOutOfSolids) makes
+            // the cubes a wall to run on and kick off as well.
+            if (this.wallContact <= 0) {
+                const reach = r + WALL_STICK_R;
+                const cvx = Math.floor(p.x / S), cvz = Math.floor(p.z / S);
+                const probes = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+                for (const [nx, nz] of probes) {
+                    if (blockedAt(p.x + nx * reach, p.z + nz * reach) &&
+                        (Math.floor((p.x + nx * reach) / S) !== cvx ||
+                         Math.floor((p.z + nz * reach) / S) !== cvz)) {
+                        this.wallNormalX = -nx; this.wallNormalZ = -nz;
+                        this.wallContact = 0.12;
+                        break;
+                    }
+                }
+            }
+            this._voxPrev = { x: p.x, z: p.z };
         }
 
         // Jump / OK held down, from the key or from the pad. The edge of that

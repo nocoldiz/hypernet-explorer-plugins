@@ -91,12 +91,15 @@
     //   blocks   the weapon and everything dug out of the world (the default)
     //   items    the party's own quick-use favourites, the map bar's nine slots
     //   spells   the leader's carried battle loadout, cast out into the world
+    //   vehicles everything the party owns, called round to stand in front of
+    //            the leader (window.VehiclePosition, VoxelWorldScene's
+    //            _callVehicle)
     //
-    // The bars are not three inventories: each is a view onto something the game
-    // already keeps (window.ItemHotbar, window.BattleLoadout), so a favourite
-    // starred in the backpack is on the bar out here without anything being
-    // copied anywhere.
-    const BAR_MODES = ['blocks', 'items', 'spells'];  // i18n-ignore  mode ids
+    // The bars are not inventories: each is a view onto something the game
+    // already keeps (window.ItemHotbar, window.BattleLoadout,
+    // window.VehiclePosition), so a favourite starred in the backpack is on the
+    // bar out here without anything being copied anywhere.
+    const BAR_MODES = ['blocks', 'items', 'spells', 'vehicles'];  // i18n-ignore  mode ids
     // Nine cells, the same nine the item bar and the battle loadout both carry,
     // so the number keys mean the same thing whichever bar is up.
     const SPELL_SLOTS = 9;
@@ -485,13 +488,16 @@
             const actor = SpellCaster.leader();
             return SpellCaster.spells().map((skill, i) => {
                 if (!skill) return null;
+                // Dimmed while the last cast is still being recovered from: in a
+                // fight a spell costs the leader time as well as magic.
                 return {
                     spell: true,
                     on: i === this._sel,
                     id: skill.id,
                     name: skill.name,
                     iconIndex: skill.iconIndex || 0,
-                    enabled: !!(actor && actor.canPaySkillCost && actor.canPaySkillCost(skill))
+                    enabled: this._cool <= 0 &&
+                        !!(actor && actor.canPaySkillCost && actor.canPaySkillCost(skill))
                 };
             });
         }

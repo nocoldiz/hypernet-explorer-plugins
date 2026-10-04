@@ -3,7 +3,11 @@
   "bookedBy": "ALREADY BOOKED BY {name}'S PARTY",
   "someoneElse": "ANOTHER PARTY",
   "ui": {
-    "rooms": "ROOMS",
-    "hint": "↑↓ NAVIGATE · OK TA RENT · ESC TA CLOSE"
+    "rooms": "ROOMS"
+  },
+  "toast": {
+    "rented": "{name} RENTED FOR 24H!",
+    "notEnough": "NOT ENOUGH EURO!",
+    "room": "ROOM"
   }
 }

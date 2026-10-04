@@ -5558,16 +5558,10 @@
         const actor = $gameActors.actor(actorId);
         const skill = this.focusedSkill();
         if (!actor || !skill || !window.BattleLoadout) return;
-        const LO = window.BattleLoadout;
-        if (LO.isAlwaysCarried(actor, skill)) { SoundManager.playBuzzer(); return; }
-        if (LO.isActive(actor, skill)) {
-            LO.remove(actor, skill);
-            SoundManager.playCancel();
-        } else {
-            if (!LO.hasRoom(actor)) { SoundManager.playBuzzer(); return; }
-            LO.add(actor, skill);
-            SoundManager.playOk();
-        }
+        const result = window.BattleLoadout.toggle(actor, skill);
+        if (result === 'on') SoundManager.playOk();
+        else if (result === 'off') SoundManager.playCancel();
+        else { SoundManager.playBuzzer(); return; }
         this.refreshUISkillDOM();
     };
 

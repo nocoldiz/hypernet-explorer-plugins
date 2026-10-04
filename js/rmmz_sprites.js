@@ -1211,6 +1211,7 @@ Sprite_Animation.prototype.initMembers = function() {
     this._previous = null;
     this._effect = null;
     this._handle = null;
+    this._effectGeneration = -1;
     this._playing = false;
     this._started = false;
     this._frameIndex = 0;
@@ -1223,7 +1224,7 @@ Sprite_Animation.prototype.initMembers = function() {
 
 Sprite_Animation.prototype.destroy = function(options) {
     Sprite.prototype.destroy.call(this, options);
-    if (this._handle) {
+    if (this._handle && !this.isHandleStale()) {
         // Guard: if the underlying effect was already released elsewhere, the
         // handle points at freed WASM memory and stop() would fault with
         // "invalid index into function table". Swallow that so teardown finishes.
@@ -1249,6 +1250,7 @@ Sprite_Animation.prototype.setup = function(
     this._delay = delay;
     this._previous = previous;
     this._effect = EffectManager.load(animation.effectName);
+    this._effectLoadGeneration = EffectManager._generation;
     this._playing = true;
     const timings = animation.soundTimings.concat(animation.flashTimings);
     for (const timing of timings) {
@@ -1263,24 +1265,69 @@ Sprite_Animation.prototype.update = function() {
     if (this._delay > 0) {
         this._delay--;
     } else if (this._playing) {
+        if (this._handle && this.isHandleStale()) {
+            // Its effect was released (map transfer, battle end) while this
+            // sprite lived on: the handle is freed memory, never touch it.
+            this._handle = null;
+        }
         if (!this._started && this.canStart()) {
-            if (this._effect) {
-                if (this._effect.isLoaded) {
-                    this._handle = Graphics.effekseer.play(this._effect);
-                    this._started = true;
-                } else {
-                    EffectManager.checkErrors();
-                }
-            } else {
-                this._started = true;
-            }
+            this.startEffect();
         }
         if (this._started) {
-            this.updateEffectGeometry();
-            this.updateMain();
+            try {
+                this.updateEffectGeometry();
+                this.updateMain();
+            } catch (e) {
+                // A faulting Effekseer call must never reach the error screen:
+                // the effect is dropped and the animation ends on its own.
+                this.dropFaultedHandle(e, "animation update");
+            }
             this.updateFlash();
         }
     }
+};
+
+Sprite_Animation.prototype.startEffect = function() {
+    if (this._effect && this._effectLoadGeneration !== EffectManager._generation) {
+        // Queued (delayed, or waiting on the previous one) when its effect was
+        // released: playing it would hand the runtime a null effect pointer.
+        // Ask for a fresh copy and start once that one has loaded.
+        this._effect = EffectManager.load(this._animation.effectName);
+        this._effectLoadGeneration = EffectManager._generation;
+        if (this._effect) {
+            return;
+        }
+    }
+    if (this._effect && EffectManager.isRuntimeUsable()) {
+        if (this._effect.isLoaded && this._effect.nativeptr === null) {
+            // Released behind the manager's back: run without the effect.
+            this._started = true;
+        } else if (this._effect.isLoaded) {
+            try {
+                this._handle = Graphics.effekseer.play(this._effect);
+                this._effectGeneration = EffectManager._generation;
+            } catch (e) {
+                this.dropFaultedHandle(e, "play");
+            }
+            this._started = true;
+        } else {
+            EffectManager.checkErrors();
+        }
+    } else {
+        this._started = true;
+    }
+};
+
+Sprite_Animation.prototype.isHandleStale = function() {
+    return (
+        Graphics._effekseerDisabled ||
+        this._effectGeneration !== EffectManager._generation
+    );
+};
+
+Sprite_Animation.prototype.dropFaultedHandle = function(error, where) {
+    this._handle = null;
+    EffectManager.onRuntimeFault(error, where);
 };
 
 Sprite_Animation.prototype.canStart = function() {
@@ -1366,14 +1413,27 @@ Sprite_Animation.prototype.setRotation = function(x, y, z) {
 };
 
 Sprite_Animation.prototype._render = function(renderer) {
-    if (this._targets.length > 0 && this._handle && this._handle.exists) {
+    if (this._targets.length === 0 || !this._handle || this.isHandleStale()) {
+        return;
+    }
+    let began = false;
+    try {
+        if (!this._handle.exists) {
+            return;
+        }
         this.onBeforeRender(renderer);
+        began = true;
         this.setProjectionMatrix(renderer);
         this.setCameraMatrix(renderer);
         this.setViewport(renderer);
         Graphics.effekseer.beginDraw();
         Graphics.effekseer.drawHandle(this._handle);
         Graphics.effekseer.endDraw();
+    } catch (e) {
+        this.dropFaultedHandle(e, "draw");
+    }
+    if (began) {
+        // Hand the GL state back to PIXI even when the draw faulted.
         this.resetViewport(renderer);
         this.onAfterRender(renderer);
     }

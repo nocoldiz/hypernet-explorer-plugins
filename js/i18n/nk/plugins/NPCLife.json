@@ -1,4 +1,5 @@
 {
+  "refugeeCamp": "REFUGEE CAMP ({country})",
   "partsUnknown": "PARTS UNKNOWN",
   "jobFallback": "JOB {id}",
   "moveReason": {
@@ -10,7 +11,9 @@
     "freshStart": "SEEKIN' A FRESH START",
     "cheapHousing": "DRAWN BY CHEAP HOUSIN'",
     "fallingOut": "AFTER A FALLIN'-OUT",
-    "changeOfAir": "FOR A CHANGE OF AIR"
+    "changeOfAir": "FOR A CHANGE OF AIR",
+    "homecoming": "COMIN' BACK HOME",
+    "fledHorde": "FLEEIN' DA GOBLIN HORDE"
   },
   "marital": {
     "married": "MARRIED",
@@ -27,7 +30,16 @@
     "widowed": "WIDOWED"
   },
   "event": {
+    "widowed": "WAZ WIDOWED BY DA DEATH OF {name}",
+    "died": "DIED",
+    "diedNatural": "DIED OF NATURAL CAUSES",
+    "diedIllness": "DIED OF {illness}",
+    "takenInBy": "WAZ TAKEN IN BY {name}",
     "moved": "MOVED TA {place}, {reason}",
+    "fled": "FLED DA GOBLIN HORDE'S RULE OVER {country}, FOR {place}",
+    "survivorFear": "HID FROM DA DEAD IN {place} AN' LIVED TA TELL OF IT",
+    "survivorFled": "FLED DA DEAD OF {from}, FOR {place}",
+    "returnedHome": "CAME HOME TA {place}, {country} FREE OF DA GOBLIN HORDE AGAIN",
     "convictedSentenced": "CONVICTED OF {crime} AN' SENTENCED TA {days} DAYS",
     "convicted": "CONVICTED OF {crime}, SENTENCED TA {days} DAYS",
     "arrestedNotConvicted": "ARRESTED FOR {crime} BUT NEVER CONVICTED",
@@ -45,9 +57,68 @@
     "brokeUpWith": "BROKE UP WIT {name}",
     "wasAbandonedBy": "WAZ ABANDONED BY {name}",
     "abandonedPartner": "ABANDONED {name} AN' NEVER LOOKED BACK",
+    "introduced": "MET {name} THROUGH {by} AN' STARTED SEEIN' DEM",
+    "sheltered": "TOOK SHELTER IN A HOME IN {place}",
     "startedSeeing": "STARTED SEEIN' {name}",
     "bought": "BOUGHT {item}",
-    "worldviewShifted": "DEY WORLDVIEW SHIFTED"
+    "gotImplant": "HAB A {augment} FITTED ({bodyPart})",
+    "gotProsthetic": "HAB A LOST {bodyPart} REPLACED WIT A {augment}",
+    "sickLeave": "WENT ON SICK LEAVE FOR {days} DAYS WIT {illness}",
+    "parentalLeave": "TOOK {days} DAYS OF PARENTAL LEAVE",
+    "fellIll": "FELL ILL WIT {illness}",
+    "fellIllFrom": "FELL ILL WIT {illness}, CAUGHT FROM {name}",
+    "infidelityRevealed": "CAUGHT {illness} FROM {name} AN' LEARNED OF DA AFFAIR",
+    "formedUnion": "ENTERED A CIVIL UNION WIT {name}",
+    "arrangedMarriage": "MARRIED {name} IN A MATCH DA FAMILIES ARRANGED",
+    "formedBond": "FORMED A QUEERPLATONIC BOND WIT {name}",
+    "pregnant": "WAZ EXPECTIN' A CHILD WIT {name}",
+    "childBorn": "WELCOMED A CHILD, {name}",
+    "childAdopted": "ADOPTED A CHILD, {name}",
+    "movedOut": "MOVED OUT AFTER PARTIN' FROM {name}",
+    "movedOutRough": "MOVED OUT AFTER PARTIN' FROM {name}, WIT NOWHERE TA GO",
+    "cameOfAge": "CAME OF AGE",
+    "worldviewShifted": "DEY WORLDVIEW SHIFTED",
+    "worldviewShiftedBy": {
+      "age": "GREW OLDER AN' CAME ROUND TA {creed}",
+      "wealth": "A CHANGE OF FORTUNE TURNED DEM TA {creed}",
+      "job": "DEY LINE OF WORK TURNED DEM TA {creed}",
+      "prison": "CAME OUT OF DA CELLS BELIEVIN' IN {creed}",
+      "partner": "CAME ROUND TA {creed} ALONGSIDE DEY PARTNER",
+      "family": "CAME ROUND TA {creed}, DA WAY DEY WAZ RAISED",
+      "government": "DA GOVERNMENT OF DA DAY TURNED DEM TA {creed}",
+      "friends": "DEY FRIENDS TALKED DEM ROUND TA {creed}",
+      "war": "DA WAR TURNED DEM TA {creed}",
+      "politics": "DEY POLITICS HARDENED INTO {creed}"
+    },
+    "converted": "WAZ TALKED ROUND TA {creed} BY {by}",
+    "bandSetOut": {
+      "tower": "SET OUT TA CLIMB DA OMEGA TOWER WIT {leader}'S BAND",
+      "dungeon": "WENT DOWN INTO DA UNDERGROUND WIT {leader}'S BAND",
+      "space": "FLEW OUT TA EXPLORE SPACE WIT {leader}'S CREW"
+    },
+    "bandLost": {
+      "tower": "FELL IN DA OMEGA TOWER",
+      "dungeon": "WAZ LOST IN DA UNDERGROUND",
+      "space": "WAZ LOST IN SPACE"
+    },
+    "bandBack": {
+      "plain": {
+        "tower": "CAME BACK FROM DA OMEGA TOWER",
+        "dungeon": "CAME BACK UP FROM DA UNDERGROUND",
+        "space": "CAME BACK FROM SPACE"
+      },
+      "hurt": {
+        "tower": "CAME BACK FROM DA OMEGA TOWER BADLY HURT",
+        "dungeon": "CAME BACK UP FROM DA UNDERGROUND BADLY HURT",
+        "space": "CAME BACK FROM SPACE BADLY HURT"
+      },
+      "rich": {
+        "tower": "CAME BACK FROM DA OMEGA TOWER WIT A HAUL OF LOOT",
+        "dungeon": "CAME BACK UP FROM DA UNDERGROUND WIT A HAUL OF LOOT",
+        "space": "CAME BACK FROM SPACE WIT A RICH FIND"
+      }
+    },
+    "accusedBy": "WAZ ACCUSED OF {crime} BY {by}"
   },
   "bio": {
     "noLife": "{name}: NO RECORDED LIFE.",
@@ -67,6 +138,11 @@
     "marriedTo": "MARRIED TA {name}.",
     "seeing": "SEEIN' {name}.",
     "formerPartner": "FORMER PARTNER: {name} ({from}-{to}, {outcome}).",
+    "kinParent": "PARENT OF {names}.",
+    "kinChild": "CHILD OF {names}.",
+    "kinSibling": "SIBLIN' OF {names}.",
+    "kinGrandparent": "GRANDPARENT OF {names}.",
+    "kinGrandchild": "GRANDCHILD OF {names}.",
     "cleanRecord": "CLEAN CRIMINAL RECORD.",
     "criminalRecord": "CRIMINAL RECORD: {convictions} ({served} SERVED), LATEST: {crime} ({year})!",
     "convictionCount": {
@@ -82,6 +158,11 @@
       "other": "SUSPECTED IN {n} UNSOLVED CASES!"
     },
     "standing": "SOCIAL STANDIN': {value}/100."
+  },
+  "procPlace": {
+    "inCountry": "{place}, {country}",
+    "unclaimed": "{place}",
+    "frontier": "FRONTIER AT ({x} {y})"
   },
   "wildsNear": "{biome} NEAR {city}",
   "wildBiome": {
@@ -122,5 +203,37 @@
     "Tundra": "TUNDRA",
     "Underdark": "UNDERDARK",
     "Volcano": "VOLCANO"
+  },
+  "animal": {
+    "event": {
+      "born": "{WAZ BORN|CAME INTO DA WORLD} {where}",
+      "bornTo": "{WAZ BORN TA {mother}|CAME INTO DA WORLD AT {mother}'S SIDE} {where}",
+      "bornToBoth": "{WAZ BORN TA {mother} AN' {father}|CAME INTO DA WORLD, DA YOUNG OF {mother} AN' {father},} {where}",
+      "weaned": "{WAZ WEANED|LEFT ITS MOTHER'S SIDE|BEGAN TA FIND ITS OWN FOOD}",
+      "firstLitter": "{HAB A FIRST LITTER OF {count}|GAVE BIRTH FOR DA FIRST TIME, TA {count}}",
+      "litter": "{HAB A LITTER OF {count}|GAVE BIRTH TA {count}|BROUGHT {count} MORE INTO DA WORLD}",
+      "lostMate": "{LOST ITS MATE, {name}|WAZ LEFT WITHOUT {name}}",
+      "survivedPredator": "{SURVIVED A PREDATOR|GOT AWAY FROM SOMETHIN' DAT HUNTS|ESCAPED A HUNTER WIT ITS LIFE}",
+      "fedBy": "{WAZ FED BY {name}|ATE FROM {name}'S HAND}",
+      "soldTo": "{WAZ SOLD TA {name}|CHANGED HANDS, TA {name}}",
+      "movedPen": "{WAZ MOVED {where}|WAZ BROUGHT TA A NEW PEN, {where}}",
+      "grewOld": "{GREW OLD|SLOWED WIT AGE|REACHED OLD AGE}",
+      "diedAge": "{DIED OF OLD AGE|DIED, OLD AN' WORN OUT}",
+      "diedHunger": "{STARVED|DIED OF HUNGER}",
+      "diedIllness": "{DIED OF ILLNESS|WAZ TAKEN BY SICKNESS}",
+      "diedPredator": "{WAZ KILLED BY A PREDATOR|WAZ TAKEN BY SOMETHIN' DAT HUNTS}",
+      "killedBy": "{WAZ KILLED BY {name}|DIED AT DA HANDS OF {name}}",
+      "adoptedAsPet": "{WAZ ADOPTED AS A PET BY {name}|WENT TA LIVE WIT {name} AS A PET}",
+      "ownerLost": "{LOST ONE OF DA FARM'S ANIMALS, A {animal}|LOST A {animal} FROM DA FARM}"
+    },
+    "onFarm": "ON {owner}'S FARM",
+    "inPlace": "IN {place}",
+    "inWild": "IN DA WILD",
+    "stage": {
+      "newborn": "NEWBORN",
+      "young": "YOUNG",
+      "adult": "ADULT",
+      "old": "OLD"
+    }
   }
 }

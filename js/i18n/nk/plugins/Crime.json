@@ -9,6 +9,56 @@
     "availableCrimes": "AVAILABLE CRIMES BY CATEGORY",
     "errorUnknown": "ERROR: UNKNOWN CRIME TYPE:",
     "total": "TOTAL",
-    "selfPardon": "YOU SELF PARDON DIS CRIME"
-  }
+    "selfPardon": "YOU SELF PARDON DIS CRIME",
+    "lawfulPardon": "{name} COMMITTED {crime} IN DA NAME OF DA LAW!"
+  },
+  "bribe": {
+    "action": "BRIBE {name}: {cost}",
+    "theOfficer": "DA OFFICER",
+    "taken": "{name} POCKETS {cost} AN' LOOKS DA OTHER WAY!",
+    "rejected": "{name} REFUSES DA MONEY AN' ADDS BRIBERY TA YA CHARGES!",
+    "incorruptible": "{name} IZ INCORRUPTIBLE AN' WILL NEVER TAKE YA MONEY. BRIBERY IZ ADDED TA YA CHARGES!",
+    "cannotAfford": "{name} WANTS {cost}, AN' YOU DO NOT HAB IT!"
+  },
+  "law": {
+    "notRecognised": "YA CRIME IZ NOT RECOGNIZED IN DIS TERRITORY",
+    "enterCanon": "YOU CROSS INTO DA HOLY VATICAN EMPIRE. CANON LAW HOLDS HERE, AN' YA RECORD BEYOND ITS BORDERS DOES NOT!",
+    "leaveCanon": "YOU LEAVE DA HOLY VATICAN EMPIRE. ITS CANON LAW AN' ITS RECORD STAY BEHIND!",
+    "enterHorde": "YOU CROSS INTO GOBLIN HORDE GROUND. ANYTHIN' GOES HERE, EXCEPT STEALIN'!",
+    "leaveHorde": "YOU LEAVE GOBLIN HORDE GROUND. DA COMMON LAW AN' ITS RECORD HOLD AGAIN!"
+  },
+  "canon": {
+    "onPerson": "{charge}: {name}",
+    "spell": "{charge}: {spell}",
+    "theftFromTheFaithful": "THEFT FROM DA FAITHFUL",
+    "violationOfTheHearth": "VIOLATION OF DA HEARTH",
+    "trespassOnConsecratedGround": "TRESPASS ON CONSECRATED GROUND",
+    "desecrationOfTheDead": "DESECRATION OF DA DEAD",
+    "sheddingOfBlood": "SHEDDIN' OF BLOOD",
+    "mortalSin": "MORTAL SIN",
+    "abandonmentOfAnInnocent": "ABANDONMENT OF AN INNOCENT",
+    "crueltyToCreation": "CRUELTY TA CREATION",
+    "sacrilege": "SACRILEGE",
+    "disturbingTheHolyPeace": "DISTURBIN' DA HOLY PEACE",
+    "intemperance": "INTEMPERANCE",
+    "peddlingOfVice": "PEDDLIN' OF VICE",
+    "simony": "SIMONY",
+    "usury": "USURY",
+    "falseWitness": "FALSE WITNESS",
+    "tradeInSouls": "TRADE IN SOULS",
+    "defianceOfTheHolyOffice": "DEFIANCE OF DA HOLY OFFICE",
+    "armingTheUnfaithful": "ARMIN' DA UNFAITHFUL",
+    "treasonAgainstTheThrone": "TREASON AGAINST DA THRONE OF PETER",
+    "abomination": "ABOMINATION",
+    "witchcraft": "WITCHCRAFT",
+    "gunmancy": "GUNMANCY",
+    "heresy": "HERESY",
+    "forbiddenArts": "FORBIDDEN ARTS",
+    "atheism": "ATHEISM"
+  },
+  "nobodyLeftToJudgeYou": "NOBODY LEFT TA JUDGE YOU",
+  "nobodySaw": "NOBODY SAW A THING.",
+  "theShopkeeper": "DA SHOPKEEPER",
+  "vendorRefusesForever": "{keeper} WILL NEVER SELL TA YOU AGAIN!",
+  "vendorRefusesEntry": "{keeper} TURNS AWAY. YOU IZ NOT WELCOME AT DIS COUNTER!"
 }

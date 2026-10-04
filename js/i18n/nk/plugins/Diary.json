@@ -4,7 +4,7 @@
   "empty": "NOTHIN' WRITTEN HERE YET.",
   "date": {
     "heading": "{day} {month} {year}",
-    "continued": "{day} {month} {year}, MORE!"
+    "continued": "{day} {month} {year}, CONTINUED"
   },
   "month": {
     "jan": "JANUARY",
@@ -33,6 +33,7 @@
     "work": "WORK",
     "knowledge": "LEARNIN'",
     "leisure": "DIVERSIONS",
+    "written": "OUR HAND",
     "other": "OTHER"
   },
   "foot": {
@@ -43,7 +44,8 @@
   },
   "fmt": {
     "itemCount": "{name} X{count}",
-    "and": "{a} AN' {b}"
+    "and": "{a} AN' {b}",
+    "repeat": "{text} (X{count})"
   },
   "eris": {
     "wonderful": "WONDERFULLY",
@@ -146,7 +148,9 @@
     "item": {
       "found": "FOUND {item} X{count} AT {place}.",
       "artifactGot": "DA {item} IZ OURS, TAKEN AT {place}.",
-      "artifactLost": "DA {item} IZ GONE."
+      "artifactLost": "DA {item} IZ GONE.",
+      "foundMany": "FOUND {items} AT {place}.",
+      "artifactGotMany": "DA {items} IZ OURS, TAKEN AT {place}."
     },
     "container": {
       "stored": "PLACED {items} IN A CONTAINER AT {place}!"
@@ -154,7 +158,12 @@
     "shop": {
       "buy": "BOUGHT {items} FROM {place}, {total}.",
       "sell": "SOLD {items} AT {place} FOR {total}.",
-      "order": "ORDERED {items} OFF DA HYPERNET, {total}!"
+      "order": "ORDERED {items} OFF DA HYPERNET, {total}!",
+      "banned": "{keeper} AT {place} WILL NEVER SERVE US AGAIN!",
+      "owned": "TOOK DA KEYS OF {shop}, A {trade}.",
+      "hired": "PUT {name} BEHIND DA COUNTER AT {shop}!",
+      "dismissed": "LET {name} GO FROM {shop}.",
+      "delivery": "SENT {items} TA DA WAREHOUSE AT {shop}!"
     },
     "property": {
       "bought": "BOUGHT {property} AT {place}.",
@@ -199,14 +208,18 @@
       "forge": "FORGED {item} X{count} AT {place}.",
       "cook": "COOKED {item} X{count} AT {place}.",
       "alchemy": "BREWED {item} X{count} AT DA BENCH.",
-      "brew": "SET {item} X{count} TA FERMENT AT {place}."
+      "brew": "SET {item} X{count} TA FERMENT AT {place}.",
+      "enchant": "BOUND {spell} INTO {item}.",
+      "unmade": "UNMADE DA BINDIN' ON {item}.",
+      "book": "WROTE OUT {item}."
     },
     "build": {
       "placed": "PUT UP {item} AT {place}.",
       "dismantled": "PULLED DOWN {item} AT {place}."
     },
     "skill": {
-      "learned": "{name} LEARNED {skill}."
+      "learned": "{name} LEARNED {skill}.",
+      "learnedMany": "{name} LEARNED {skills}."
     },
     "spec": {
       "tier": "{name} IZ {tier} AT {spec} NOW."
@@ -239,7 +252,41 @@
     },
     "mining": {
       "stripped": "STRIPPED {body} OUT ENTIRELY, IN {system}!"
-    }
+    },
+    "adventure": {
+      "done": "ANSWERED {adventure} AT {place}. {reward}"
+    },
+    "launch": {
+      "rocket": "RODE DA {mode} FROM {site} TA {dest}, HULL AT {integrity} PER CENT!",
+      "rocketNoDest": "RODE DA {mode} UP FROM {site}, HULL AT {integrity} PER CENT!"
+    },
+    "card": {
+      "won": "BEAT {rival} AT CARDS.",
+      "lost": "LOST TA {rival} AT CARDS.",
+      "drew": "DREW WIT {rival} AT CARDS.",
+      "champion": "TOOK DA {level} CARD BRACKET, {amount} DA RICHER!",
+      "knockedOut": "KNOCKED OUT OF DA CARD BRACKET AT DA {round}!"
+    },
+    "army": {
+      "recruited": "SIGNED {name} OF {faction} INTO DA COMPANY!",
+      "won": "DA COMPANY HELD DA FIELD AGAINST {enemy}!",
+      "lost": "DA COMPANY WAZ BROKEN BY {enemy}!"
+    },
+    "onu": {
+      "vote": "SPOKE FOR {power} AN' VOTED {stance} ON {motion}; IT {outcome}!"
+    },
+    "blade": {
+      "evolved": "{name} TURNED, AN' IZ A {stage} BLADE NOW!"
+    },
+    "bet": {
+      "won": "WON {amount} ON {pick}.",
+      "lost": "LOST {amount} BETTIN' ON {pick}."
+    },
+    "lock": {
+      "picked": "PICKED DA LOCK AT {place}.",
+      "failed": "DA LOCK AT {place} BEAT US."
+    },
+    "autoIdlePurpose": "{name} SPENT A GOOD WHILE ON {why}: {target}!"
   },
   "game": {
     "arcade": "DA ARCADE",
@@ -250,13 +297,13 @@
     "bowling": "BOWLIN'",
     "pool": "POOL",
     "lockpick": "A LOCK",
-    "bitstack": "",
+    "bitstack": "BITSTACK",
     "scratchCard": "A SCRATCH CARD",
     "horseRace": "DA HORSES",
     "tarot": "DA TAROT",
     "fishing": "FISHIN'",
     "surfing": "SURFIN'",
-  "targetRange": "DA SHOOTIN' RANGE",
+    "targetRange": "DA SHOOTIN' RANGE",
     "piano": "DA PIANO",
     "periodicTable": "DA PERIODIC TABLE",
     "raman": "DA SPECTROSCOPE",
@@ -304,5 +351,19 @@
   },
   "place": {
     "stockbusters": "STOCKBUSTERS"
+  },
+  "write": {
+    "button": "WRITE",
+    "title": "WRITE IN DA DIARY",
+    "placeholder": "WHAT IZ WORTH REMEMBERIN'?",
+    "save": "WRITE IT",
+    "cancel": "NEVER MIND"
+  },
+  "onu": {
+    "for": "IN FAVOUR",
+    "against": "AGAINST",
+    "abstained": "TA ABSTAIN",
+    "passed": "CARRIED",
+    "failed": "FELL"
   }
 }

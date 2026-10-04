@@ -57,5 +57,12 @@
   "coords": {
     "title": "Coordinate",
     "value": "{x}, {y}"
+  },
+  "bologna": {
+    "title": "Bologna",
+    "cell": "Cella",
+    "tile": "Casella",
+    "teleport": "Teletrasportati qui",
+    "hint": "Clicca una casella per selezionarla, poi teletrasportati lì. Clic destro per chiudere la mappa."
   }
 }

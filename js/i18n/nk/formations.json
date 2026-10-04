@@ -1,0 +1,11 @@
+{
+  "circle": "CIRCLE",
+  "box": "BOX",
+  "phalanx": "PHALANX",
+  "double": "DOUBLE",
+  "wedge": "WEDGE",
+  "line": "LINE",
+  "crescent": "CRESCENT",
+  "column": "COLUMN",
+  "scattered": "SCATTERED"
+}

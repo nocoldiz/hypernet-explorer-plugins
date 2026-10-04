@@ -78,6 +78,19 @@
     "cancel": "CANCEL",
     "silent": "DEY LOOK THROUGH YOU, SOMEWHERE ELSE ENTIRELY!",
     "otherParty": "TRAVELLIN' WIT {leader}'S PARTY",
-    "readOnly": "DEY BELONG TA ANOTHER JOURNEY. YOU CAN TALK, AN' NOTHIN' MORE!"
-  }
+    "readOnly": "DEY BELONG TA ANOTHER JOURNEY. YOU CAN TALK, AN' NOTHIN' MORE!",
+    "join": "ASK DEM ALONG"
+  },
+  "towerWorldOfFloor": "{world}, FLOOR {floor}",
+  "streetCrime": {
+    "pickpocket": "{thief} PICKED {victim}'S POCKET AN' GOT AWAY WIT {amount}!",
+    "pickpocketCaught": "{victim} CAUGHT {thief} WIT A HAND IN DEY POCKET!",
+    "pickpocketValuable": "{thief} LIFTED {item} OFF {victim}.",
+    "valuableRecovered": "{victim} TOOK {item} BACK OFF {thief}.",
+    "fight": "{a} AN' {b} IZ FIGHTIN'!",
+    "grudge": "{a} PICKED A FIGHT WIT {b}.",
+    "knockedOut": "{winner} KNOCKED {loser} OUT COLD.",
+    "recovered": "{victim} TOOK BACK WHAT {thief} STOLE."
+  },
+  "bountyCollected": "BOUNTY COLLECTED ON {name}: {amount}"
 }

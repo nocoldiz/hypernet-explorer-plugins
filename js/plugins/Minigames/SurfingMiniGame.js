@@ -159,7 +159,7 @@
     const LOOK_PITCH_MAX = 0.55;
 
     // The sea gets a harsher retro pass than the shared default: a wide, almost
-    // flat, gently curved surface is exactly where a PlayStation's precision
+    // flat, gently curved surface is exactly where a 32-bit console's precision
     // showed most, and hiding that would be hiding the point.
     const PSX_HARD = { vertexSnap: 0.6, colorLevels: 0.8, dither: 1.25 };
 

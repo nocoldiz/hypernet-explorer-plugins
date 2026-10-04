@@ -1,12 +1,12 @@
 {
   "appName": "EURODEMICS",
-  "subtitle": "CONTINENTAL EPIDEMIC OBSERVATORY. SURVEILLANCE &amp; PUBLIC BULLETIN",
+  "subtitle": "CONTINENTAL EPIDEMIC OBSERVATORY!",
   "tab": {
     "situation": "SITUATION",
     "outbreaks": "OUTBREAKS",
     "archive": "ARCHIVE"
   },
-  "curveHint": "DA CURVE IZ DRAWN ONCE DA OUTBREAK HAB RUN A SECOND DAY!",
+  "curveHint": "DA CURVE APPEARS ON DA OUTBREAK'S SECOND DAY!",
   "dayNumbered": "DAY {day}",
   "currentlyIll": "CURRENTLY ILL",
   "deadSoFar": "DEAD SO FAR",
@@ -52,7 +52,7 @@
   "spreadRate": "SPREAD RATE R",
   "bureauLog": "BUREAU LOG",
   "archiveTitle": "ARCHIVE",
-  "archiveBlurb": "OUTBREAKS DIS WORLD HAB CLOSED, AN' DA EPIDEMICS AN' MASS HYSTERIAS RECORDED OVER DA LAST CENTURY. SELECT A CLOSED OUTBREAK TA SEE ITS CURVE!",
+  "archiveBlurb": "OUTBREAKS DIS WORLD HAB CLOSED, AN' EPIDEMICS RECORDED OVER DA LAST CENTURY. SELECT ONE TA SEE ITS CURVE!",
   "closedThisWorld": "CLOSED DIS WORLD",
   "nothingClosed": "NOTHIN' HAB RUN ITS COURSE YET!",
   "lastCentury": "DA LAST CENTURY",

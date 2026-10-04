@@ -1,0 +1,10 @@
+{
+  "moveRight": "MOVE OVER",
+  "moveLeft": "MOVE BACK",
+  "moveAll": "ALL OF DEM",
+  "empty": "NOTHIN' HERE",
+  "ofMax": "{count} OF {max}",
+  "full": "{panel} HOLDS NO MORE.",
+  "refused": "DAT WILL NOT GO DERE.",
+  "hint": "DRAG A ROW ACROSS, OR USE DA BUTTON ON IT!"
+}

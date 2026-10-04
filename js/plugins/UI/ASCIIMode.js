@@ -51,7 +51,7 @@
  * @type string
  * @default #00FF00
  * 
- * This plugin adds an ASCII render mode inspired by Dwarf Fortress.
+ * This plugin adds an ASCII render mode inspired by fortress sims.
  * Press the toggle key (default F9) to switch between normal and ASCII mode.
  * 
  * Passable tiles show as '.' (floor)
@@ -554,7 +554,7 @@
             }
         }
 
-        // Grass/Dirt variations (Tag 2) - Dwarf Fortress style
+        // Grass/Dirt variations (Tag 2) - fortress sim style
         if (terrainTag === 2) {
             if (isPassable) {
                 const variations = ['.', ',', "'", '"'];

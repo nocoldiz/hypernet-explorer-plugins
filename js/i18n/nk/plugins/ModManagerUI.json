@@ -12,5 +12,6 @@
   "priority": "PRIORITY",
   "active": "ACTIVE",
   "inactive": "INACTIVE",
+  "restart": "CHANGES APPLY DA NEXT TIME DA GAME STARTS!",
   "hint": "L1 / R1, REORDER · ← →, SWITCH PANEL · OK, TOGGLE"
 }

@@ -2339,8 +2339,8 @@
     //   weapon is drawn. Swapping the weapon lights it back up with no visit
     //   to the skills menu.
     //
-    //   Bare hands are not a ranged weapon: a character holding nothing still
-    //   swings, so only what is actually equipped can bar a melee school.
+    //   Bare hands are not a blade either: Swordsmanship needs a melee weapon
+    //   in hand, and fists, claws and nunchakus (<MartialArts>) do not count.
     //
     //   Carrying both (a sword on the hip and a pistol in the holster) bars
     //   neither: weaponFor() is then what says which of the two the blow is
@@ -2359,6 +2359,14 @@
     // The schools that are a weapon rather than a technique. 'ranged' asks for
     // one of the three above, 'melee' refuses to be practised with only those.
     const WEAPON_REQ_SCHOOLS = { Swordsmanship: 'melee', Firearms: 'ranged' };
+    // 'unarmed' is a skill tagged <FreeHandsNeeded> (the Martial Arts blows,
+    // stamped by tools/skills/tag_free_hands_skills.js): it needs two hand
+    // slots with nothing tying them up. A weapon tagged <MartialArts> (fists,
+    // claws, nunchakus) fills two slots but is fought with, so it leaves the
+    // skill usable, and a Gun-Fu fighter (trait passive, read through
+    // window.BattleSystemPassiveSkills.hasGunFu) may throw it with a bow, a
+    // sling or a gun in hand.
+    const FREE_HANDS_NEEDED = 2;
 
     const weaponReqCache = new Map();
 
@@ -2374,6 +2382,10 @@
         needOf(skill) {
             if (!skill || skill.id === undefined) return null;
             if (weaponReqCache.has(skill.id)) return weaponReqCache.get(skill.id);
+            if (/<FreeHandsNeeded>/i.test(skill.note || '')) {
+                weaponReqCache.set(skill.id, 'unarmed');
+                return 'unarmed';
+            }
             const m = /<category:\s*([A-Za-z]+)\s*>/i.exec(skill.note || '');
             const school = m ? m[1] : '';
             let need = null;
@@ -2404,14 +2416,46 @@
             const need = this.needOf(skill);
             if (!need || !battler || !battler.isActor || !battler.isActor()) return null;
             const held = this.weaponsOf(battler);
+            if (need === 'unarmed') return { need, met: this.hasFreeHands(battler), weapon: null };
             const ranged = held.filter(w => this.isRanged(w));
-            const melee = held.filter(w => w && !this.isRanged(w));
-            const met = need === 'ranged'
-                ? ranged.length > 0
-                // Empty hands are hands: only a hand already full of something
-                // that shoots can bar a blow struck at arm's length.
-                : melee.length > 0 || held.length === 0;
+            // A blade school needs a blade: empty hands, fists, claws and
+            // nunchakus (<MartialArts>) and anything that shoots all refuse it.
+            const melee = held.filter(w => this.isMeleeWeapon(w));
+            const met = need === 'ranged' ? ranged.length > 0 : melee.length > 0;
             return { need, met, weapon: (need === 'ranged' ? ranged[0] : melee[0]) || null };
+        },
+
+        // A weapon a Swordsmanship blow can be struck with.
+        isMeleeWeapon(item) {
+            return !!item && !this.isRanged(item) && !this.isMartialWeapon(item);
+        },
+
+        // A weapon fought with the body rather than instead of it.
+        isMartialWeapon(item) {
+            return !!(item && item.wtypeId && item.meta && item.meta.MartialArts);
+        },
+
+        // Whether this battler has the two hand slots a <FreeHandsNeeded>
+        // skill asks for. Read off window.HandSlots, so a body with four arms
+        // and a sword in two of them still has a pair to fight with. A body
+        // with fewer than two hands needs every one it has.
+        hasFreeHands(battler) {
+            const HS = window.HandSlots;
+            const gunFu = !!(window.BattleSystemPassiveSkills &&
+                typeof window.BattleSystemPassiveSkills.hasGunFu === 'function' &&
+                window.BattleSystemPassiveSkills.hasGunFu(battler));
+            const ties = (item) => !!item && !this.isMartialWeapon(item) &&
+                !(gunFu && this.isRanged(item));
+            if (HS && typeof HS.layout === 'function' && typeof battler.equips === 'function') {
+                const layout = HS.layout(battler);
+                const equips = battler.equips() || [];
+                let used = 0;
+                for (let i = 0; i < layout.hands; i++) {
+                    if (ties(equips[i])) used += HS.handCost('hand', equips[i]);
+                }
+                return layout.hands - used >= Math.min(FREE_HANDS_NEEDED, layout.hands);
+            }
+            return this.weaponsOf(battler).every(w => !ties(w));
         },
 
         meets(battler, skill) {
@@ -2425,11 +2469,11 @@
         // battle log passes the pair swinging this turn.
         indexIn(list, skill) {
             const need = this.needOf(skill);
-            if (!need || !list || !list.length) return -1;
+            if (!need || need === 'unarmed' || !list || !list.length) return -1;
             for (let i = 0; i < list.length; i++) {
                 const weapon = list[i];
                 if (!weapon) continue;
-                if (need === 'ranged' ? this.isRanged(weapon) : !this.isRanged(weapon)) return i;
+                if (need === 'ranged' ? this.isRanged(weapon) : this.isMeleeWeapon(weapon)) return i;
             }
             return -1;
         },

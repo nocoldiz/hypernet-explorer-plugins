@@ -65,11 +65,36 @@
     "cmdPlace": "Posa un blocco",
     "cmdBlock": "Cambia blocco",
     "cmdBar": "Cambia barra rapida",
-    "cmdCast": "Lancia l'incantesimo in mano"
+    "cmdCast": "Lancia l'incantesimo in mano",
+    "cmdReady": "Ricarica, ripiega la pistola o parata",
+    "cmdFightHit": "Attacca con l'arma",
+    "cmdFightUse": "Usa l'incantesimo, l'oggetto o il blocco in mano"
   },
   "bar": {
     "blocks": "Blocchi",
     "items": "Oggetti",
-    "spells": "Incantesimi"
+    "spells": "Incantesimi",
+    "vehicles": "Veicoli"
+  },
+  "vehicle": {
+    "camper": "Camper",
+    "car": "Auto",
+    "bike": "Bici",
+    "boat": "Barca",
+    "broom": "Manico di scopa",
+    "starship": "Astronave",
+    "none": "Nessun veicolo posseduto",
+    "called": "{name} portato qui."
+  },
+  "combat": {
+    "begin": "Scontro!",
+    "miss": "Mancato",
+    "down": "{name} è a terra!",
+    "lead": "{name} prende il comando.",
+    "escaped": "Sei riuscito a fuggire.",
+    "empty": "Scarico! Premi R per ricaricare.",
+    "reloaded": "Ricaricato.",
+    "guard": "In guardia",
+    "noMenu": "Niente menu durante uno scontro."
   }
 }

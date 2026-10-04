@@ -29,7 +29,7 @@
  *
  * There is no shooter model, the camera stands where the shooter would.
  *
- * The HUD is built the way a PlayStation built one, minus the television: a
+ * The HUD is built the way a 32-bit console built one, minus the television: a
  * 240-line virtual framebuffer upscaled with nearest filtering for the boxes,
  * keylines and block gauges, with every label on top of them as crisp HTML type
  * (window.PSXHud / PSXHud.domPanel). No scanlines, no vignette.
@@ -1260,7 +1260,7 @@
 
     //=============================================================================
     // HUD. Drawn in a 320-wide virtual framebuffer and upscaled with nearest
-    // filtering, the way a PlayStation drew its overlays: an 8px bitmap face,
+    // filtering, the way a 32-bit console drew its overlays: an 8px bitmap face,
     // hard one-pixel shadows, block gauges. Dressed art deco, gold on black
     // lacquer, matching the alley and the tarot parlour: see PSXHud.DECO and
     // the deco* primitives in PSXShader.js.
@@ -1452,7 +1452,7 @@
 
     //=============================================================================
     // Status strip and result card, as sprites: an RMMZ windowskin frame is the
-    // one thing on screen that could never have come off a PlayStation.
+    // one thing on screen that could never have come off a 32-bit console.
     //=============================================================================
     class Sprite_BasketballStatus extends Sprite_PSXWidget {
         constructor() {

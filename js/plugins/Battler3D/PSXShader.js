@@ -12,7 +12,7 @@
  * title-screen mesh and the model previews in the status, bestiary, equipment
  * and creature-creation screens.
  *
- *   SnapVertex (window.SnapVertexShader)  the PlayStation-1 look
+ *   SnapVertex (window.SnapVertexShader)  the 32-bit console look
  *     - Vertex snapping (the signature "wobble" from low-precision vertex math)
  *     - Color-depth reduction with ordered (Bayer) dithering
  *     - Low-resolution rendering upscaled with nearest-neighbor sampling
@@ -25,7 +25,7 @@
  *     - Flat cel bands of light instead of a smooth ramp, with the darkest band
  *       pushed toward ink so shapes read as outlined
  *     - Every colour snapped to a palette (Aurora 256 default, Splendor 128,
- *       LCD monochrome Game Boy, or custom), through a lookup texture
+ *       LCD monochrome handheld, or custom), through a lookup texture
  *     - Chunky pixels, and no vertex wobble (a sprite does not swim)
  *     Tunables: levels, lightSteps, saturation, inkStrength, palette, dither,
  *     downscale, weaponBoost, pixelSnap.
@@ -63,7 +63,7 @@
  * ---------------------------------------------------------------------------
  * window.PSXHud - the 2D half of the same look
  * ---------------------------------------------------------------------------
- * A PlayStation game's HUD was drawn in the framebuffer, at the framebuffer's
+ * A 32-bit console game's HUD was drawn in the framebuffer, at the framebuffer's
  * own resolution: 320x240-ish, an 8px bitmap font, hard 1px drop shadows and
  * boxes with a single-pixel keyline. PSXHud draws that. Everything is authored
  * in VIRTUAL PIXELS on a low-res bitmap which is then upscaled with nearest
@@ -87,7 +87,7 @@
  *   PSXHud.PAL                         the fixed 16-colour HUD palette
  *
  * There is no CRT pass. Scanlines and a vignette are a filter over the picture,
- * not part of how a PlayStation drew: they cost contrast, they beat on 8px type
+ * not part of how a 32-bit console drew: they cost contrast, they beat on 8px type
  * and they read as a photo of a television rather than a game. The look here is
  * the geometry (vertex snap, banding, nearest sampling, block gauges, one pixel
  * keylines) with nothing smeared on top, and the type is real HTML so it is as
@@ -472,7 +472,7 @@
             0xf7f4ff, 0xdad3f4, 0xb1a5de, 0x7f6eb9, 0x523d7c, 0x2e2344, 0x43251e, 0x7c4130,
             0xbd684a, 0xf0986d, 0xffc79a, 0xffeacc
             ],
-            // LCD monochrome Game Boy palette (4 shades)
+            // LCD monochrome handheld palette (4 shades)
             lcd: [
             0x0f380f, 0x306230, 0x8bac0f, 0x9bbc0f
             ]

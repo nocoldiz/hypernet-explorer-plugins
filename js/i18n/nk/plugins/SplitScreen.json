@@ -37,5 +37,6 @@
   "keyboardWasd": "KEYBOARD (WASD)",
   "p2Input": "P2 INPUT: {mode}",
   "activeSession": "ACTIVE MULTIPLAYER SESSION",
-  "terminateSession": "TERMINATE SESSION"
+  "terminateSession": "TERMINATE SESSION",
+  "p2TakesOver": "PLAYER 2 TAKES OVER {name}"
 }

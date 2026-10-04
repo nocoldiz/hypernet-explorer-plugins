@@ -16,5 +16,64 @@
     "other": "A YOUNG \\c[14]{animal}\\c[0]. FULLY GROWN IN ABOUT {count} DAYS!"
   },
   "pleased": "DA \\c[14]{animal}\\c[0] IZ PLEASED TA SEE YOU!",
-  "nothingReady": "DA \\c[14]{animal}\\c[0] HAB NOTHIN' READY YET!"
+  "nothingReady": "DA \\c[14]{animal}\\c[0] HAB NOTHIN' READY YET!",
+  "company": "YOU SPEND A WHILE WIT DA \\c[14]{animal}\\c[0]. DA COMPANY DOES EVERYONE GOOD!",
+  "age": {
+    "years": {
+      "one": "{count} YEAR OLD",
+      "other": "{count} YEARS OLD"
+    },
+    "days": {
+      "one": "{count} DAY OLD",
+      "other": "{count} DAYS OLD"
+    }
+  },
+  "panel": {
+    "title": "ANIMAL",
+    "breed": "BREED",
+    "age": "AGE",
+    "growth": "GROWN",
+    "grownAlready": "FULLY GROWN",
+    "daysToAdult": {
+      "one": "{count} DAY TA GO",
+      "other": "{count} DAYS TA GO"
+    },
+    "nutrition": "FED",
+    "hungry": "HUNGRY",
+    "company": "COMPANY",
+    "produce": "PRODUCE",
+    "producesNothing": "PRODUCES NOTHIN'",
+    "yield": "{min}-{max} EVERY {days}D",
+    "ready": "READY",
+    "readyIn": {
+      "one": "IN {count} DAY",
+      "other": "IN {count} DAYS"
+    },
+    "notYetAdult": "NOT YET GROWN"
+  },
+  "actionCollect": "COLLECT",
+  "actionPet": "PET",
+  "actionEmpathize": "EMPATHIZE",
+  "actionCancel": "CANCEL",
+  "petting": [
+    "YOU CROUCH DOWN AN' SCRATCH DA {animal} BEHIND DA EARS!",
+    "YOU RUN A HAND ALONG DA {animal}'S BACK AN' LET IT LEAN INTO YOU!",
+    "YOU STAND A WHILE WIT DA {animal}, SAYIN' NOTHIN' IN PARTICULAR!",
+    "YOU RUB DA {animal} UNDER DA CHIN UNTIL IT CLOSES ITS EYES!",
+    "YOU PAT DA {animal} AN' IT DECIDES YOU IZ ALLOWED TA STAY!"
+  ],
+  "fed": "DA \\c[14]{animal}\\c[0] EATS OUT OF YA HAND.",
+  "notHungry": "DA \\c[14]{animal}\\c[0] HAB HAB ENOUGH.",
+  "tooHungryToProduce": "DA \\c[14]{animal}\\c[0] IZ TOO HUNGRY TA GIVE ANYTHIN'!",
+  "farmerOf": "DA FARMER OF {place}",
+  "owner": "OWNER",
+  "wildAnimal": "WILD",
+  "actionConvince": "CONVINCE TA JOIN",
+  "actionJoinPet": "JOIN AS PET",
+  "actionJoinPartyAnimal": "JOIN PARTY",
+  "toast": {
+    "grownUp": "DA {animal} HAB GROWN UP.",
+    "died": "YA {animal} AT {place} HAB DIED.",
+    "born": "A YOUNG {animal} WAZ BORN AT {place}."
+  }
 }

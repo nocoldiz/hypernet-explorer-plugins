@@ -938,7 +938,7 @@ UnlockingBlocks.version = 3.0;
                 this.root.add(mesh);
             }
 
-            // Rivets, six sided because a PlayStation would not have spent more.
+            // Rivets, six sided because a 32-bit console would not have spent more.
             const rivetGeo = this._track(new THREE.CylinderGeometry(0.22, 0.22, 0.34, 6));
             const rivetMat = this._track(new THREE.MeshLambertMaterial({ color: 0xf0dda6 }));
             for (const sx of [-1, 1]) {
@@ -1809,7 +1809,7 @@ UnlockingBlocks.version = 3.0;
             );
         };
         PluginManager.registerCommand(PLUGIN, 'startMinigame', startMinigame);
-        // This puzzle used to be called LockpickTetris, and eight locks on the
+        // This puzzle used to carry its old block-puzzle name, and eight locks on the
         // lockpicking map still call it under that name. Nothing registered it,
         // so those eight could not be picked at all. The old name stays a live
         // alias rather than having the event pages rewritten.

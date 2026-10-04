@@ -22,9 +22,11 @@
  "weapon": {
   "melee": "Needs a melee weapon",
   "ranged": "Needs a ranged weapon",
+  "unarmed": "Needs 2 free hand slots",
   "chip": {
    "melee": "Needs melee",
-   "ranged": "Needs ranged"
+   "ranged": "Needs ranged",
+   "unarmed": "2 free hands"
   }
  },
  "discipline": {

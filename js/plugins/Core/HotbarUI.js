@@ -1,6 +1,6 @@
 /*:
  * @target MZ
- * @plugindesc Shared quick-bar widget v1.0.0 - the Daggerfall-style row of numbered slots used by the battle skill bar and the item favourites bar.
+ * @plugindesc Shared quick-bar widget v1.0.0 - the classic RPG row of numbered slots used by the battle skill bar and the item favourites bar.
  * @author Omni-Lex
  * @help HotbarUI.js
  *

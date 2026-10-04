@@ -65,5 +65,72 @@
     "people": "PEOPLE: {population} KNOWN, {employed} WORKIN', {unemployed} IDLE, {imprisoned} IN PRISON, {retired} RETIRED, {criminals} OF ILL REPUTE!",
     "rightNow": "RIGHT NOW: {list}.",
     "quiet": "QUIET TIMES, NOTHIN' REMARKABLE UNDERWAY!"
+  },
+  "deed": {
+    "someone": "SOMEONE",
+    "trade": "{actor} TRADED OPENLY IN {place}.",
+    "gift": "{actor} GAVE {target} AWAY IN {place}.",
+    "drop": "{actor} LEFT {target} LYING IN {place}.",
+    "trespass": "{actor} WAZ FOUND WHERE DEY HAB NO BUSINESS BEING IN {place}!",
+    "vandalism": "{actor} BROKE SOMETHIN' DAT WAZ NOT DEY IN {place}!",
+    "bribery": "{actor} PUT MONEY IN DA WRONG HAND IN {place}!",
+    "pickpocket": "{actor} LIGHTENED A POCKET IN {place}.",
+    "theft": "{actor} STOLE {target} IN {place}.",
+    "burglary": "{actor} BROKE INTO A BUILDIN' IN {place}!",
+    "assault": "{actor} BEAT {target} IN DA OPEN IN {place}.",
+    "arson": "FIRE WAZ SET DELIBERATELY IN {place}!",
+    "bodyFound": "A BODY WAZ FOUND IN {place}.",
+    "killing": "{actor} KILLED {target} IN {place}.",
+    "massacre": "A SLAUGHTER WAZ DONE IN {place}.",
+    "rescue": "{actor} PULLED {target} OUT OF TROUBLE IN {place}!",
+    "healing": "{actor} TENDED DA HURT IN {place}.",
+    "charity": "{actor} GAVE TA DOZE WIT NOTHIN' IN {place}!"
+  },
+  "gathering": {
+    "title": "{type} UNTIL {end}",
+    "type": {
+      "festival": "FESTIVAL",
+      "danceFestival": "DANCE FESTIVAL",
+      "protest": "PROTEST",
+      "ceremony": "HOLY CEREMONY",
+      "procession": "PROCESSION",
+      "parade": "PARADE",
+      "vigil": "VIGIL",
+      "electionRally": "CAMPAIGN RALLY",
+      "electionDay": "POLLIN' DAY"
+    },
+    "toast": {
+      "festival": "{place} IZ OUT IN DA STREETS FOR {occasion}!",
+      "danceFestival": "MUSIC FILLS {place}: DA TOWN DANCES FOR {occasion}!",
+      "protest": "A PROTEST FILLS DA SQUARE IN {place}, {occasion}!",
+      "ceremony": "DA HOLY VATICAN EMPIRE HOLDS A CEREMONY IN {place} FOR {occasion}!",
+      "procession": "A PROCESSION WINDS THROUGH {place} FOR {occasion}!",
+      "parade": "{place} HOLDS A PARADE FOR {occasion}.",
+      "vigil": "{place} GATHERS IN SILENCE FOR {occasion}.",
+      "electionRally": "CAMPAIGN RALLIES CROWD {place} AHEAD OF {occasion}!",
+      "electionDay": "{place} QUEUES AT DA POLLS FOR {occasion}."
+    },
+    "occasion": {
+      "localElection": "DA TOWN ELECTIONS",
+      "nationalElection": "DA {election}",
+      "local": {
+        "festival": "DA TOWN'S OWN FEAST",
+        "danceFestival": "A SUMMER OF MUSIC",
+        "ceremony": "A PONTIFICAL BLESSIN'",
+        "procession": "DA TOWN'S PATRON SAINT",
+        "parade": "DA TOWN'S FOUNDIN'",
+        "vigil": "DA TOWN'S DEAD"
+      }
+    },
+    "grievance": {
+      "taxes": "AGAINST DA NEW TAXES",
+      "rents": "AGAINST RISIN' RENTS",
+      "wages": "FOR BETTER WAGES",
+      "curfew": "AGAINST DA CURFEW",
+      "war": "AGAINST DA WAR",
+      "corruption": "AGAINST CORRUPTION IN DA TOWN HALL",
+      "prices": "AGAINST DA PRICE OF BREAD",
+      "police": "AGAINST DA POLICE"
+    }
   }
 }

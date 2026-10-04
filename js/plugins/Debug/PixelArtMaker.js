@@ -1,6 +1,6 @@
 /*:
  * @target MZ
- * @plugindesc A complex pixel art maker inspired by Aseprite.
+ * @plugindesc A complex pixel art maker inspired by classic pixel art editors.
  * @author Omni-Lex
  *
  * @command openMaker
@@ -622,7 +622,7 @@
     // =========================================================================
     // Pain: the HypernetOS paint program
     // =========================================================================
-    // The Aseprite-style maker above is the pixel tool the debug menu opens.
+    // The pixel art maker above is the pixel tool the debug menu opens.
     // This is the other one: a plain bitmap editor in a desktop window, with
     // the old paint layout (tool box on the left, colour box along the
     // bottom, primary and secondary colours on left and right click). Pictures

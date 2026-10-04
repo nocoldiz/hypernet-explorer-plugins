@@ -1,0 +1,1824 @@
+{
+  "nervous": {
+    "thoughts": [
+      "WHAT WAZ DAT NOISE?",
+      "ME HAB A BAD FEELIN' ABOUT DIS!",
+      "DID ME FORGET SOMETHIN' IMPORTANT?",
+      "ME HEART IZ POUNDIN'...",
+      "ME JUST WANT DIS TA BE OVER!"
+    ],
+    "need": {
+      "sleep": [
+        "ME IZ TOO WOUND UP, BUT ME HAB TA LIE DOWN!",
+        "IF ME NO SLEEP SOON ME WILL FALL APART!",
+        "LET ME REST WITHOUT NIGHTMARES!"
+      ],
+      "hunger": [
+        "ME STOMACH IZ IN KNOTS, IZ IT HUNGER OR NERVES?",
+        "ME SHOULD EAT, IF ME CAN KEEP IT DOWN!",
+        "ME NO CAN THINK STRAIGHT WHEN ME IZ DIS HUNGRY!"
+      ],
+      "work": [
+        "WHAT IF ME MESS UP DA SHIFT AGAIN?",
+        "DEEP BREATHS. JUST GET THROUGH IT!",
+        "EVERYONE WILL BE WATCHIN' ME WORK!"
+      ],
+      "leisure": [
+        "FREE TIME JUST MAKES ME RESTLESS!",
+        "ME SHOULD RELAX, BUT ME NO CAN SWITCH OFF!",
+        "MAYBE A QUIET CORNER WHERE NO ONE BOTHERS ME!"
+      ],
+      "crime": [
+        "OH NO, ME NO CAN, ME WILL GET CAUGHT!",
+        "ME HANDS IZ SHAKIN' JUST THINKIN' ABOUT IT!",
+        "WHAT IF SOMEONE SAW ME?"
+      ],
+      "hygiene": [
+        "ME FEEL AWFUL, ME NEED TA CLEAN UP NOW!",
+        "DID PEOPLE NOTICE? ME HAB TA WASH!",
+        "WHERE'S DA NEAREST WC, QUICKLY!"
+      ],
+      "money": [
+        "WHAT IF ME NO CAN PAY FOR THINGS?",
+        "ME IZ RUNNIN' LOW AN' IT TERRIFIES ME!",
+        "ME NEED A CUSHION OR ME WILL PANIC!"
+      ],
+      "safety": [
+        "ME HAB TA STAY OUT OF SIGHT!",
+        "SOMEONE COULD BE AFTER ME, KEEP LOW!",
+        "JUST NO DRAW ANY ATTENTION!"
+      ],
+      "comfort": [
+        "A SAFER PLACE WOULD CALM ME NERVES!",
+        "ME WOULD SLEEP EASIER BEHIND A LOCKED DOOR!",
+        "SOMEWHERE ME FEEL SECURE, FINALLY!"
+      ],
+      "social": [
+        "ME WANT COMPANY, BUT WHAT IF ME SAY DA WRONG THING?",
+        "TALKIN' MIGHT CALM ME DOWN... MAYBE!",
+        "ME HOPE DEY NO THINK ME IZ STRANGE!"
+      ],
+      "idle": [
+        "IZ EVERYTHIN' ALRIGHT? IT FEELS TOO QUIET!",
+        "ME KEEP EXPECTIN' SOMETHIN' TA GO WRONG!",
+        "STAY CALM, STAY CALM..."
+      ],
+      "familiar": [
+        "DAT TRAVELLER AGAIN, AT LEAST DEY IZ FAMILIAR!",
+        "ME FEEL A LITTLE SAFER WHEN DEY IZ AROUND!",
+        "ME ALMOST TRUST DEM. ALMOST!"
+      ]
+    }
+  },
+  "calm": {
+    "thoughts": [
+      "ONE STEP AT A TIME.",
+      "KEEP BREATHIN'. EVERYTHIN' IZ FINE!",
+      "DIS, TOO, SHALL PASS.",
+      "WORRYIN' SOLVES NOTHIN'.",
+      "MAINTAIN FOCUS."
+    ],
+    "need": {
+      "sleep": [
+        "REST COMES EASILY TA A CLEAR MIND!",
+        "ME WILL LIE DOWN AN' LET DA DAY SETTLE!",
+        "SLEEP WHEN TIRED; IT IZ DAT SIMPLE!"
+      ],
+      "hunger": [
+        "A MEAL, DEN BACK TA DA DAY!",
+        "NO RUSH, ME WILL FIND SOMETHIN' TA EAT!",
+        "DA BODY ASKS; ME WILL ANSWER CALMLY!"
+      ],
+      "work": [
+        "STEADY WORK, STEADY MIND.",
+        "ME WILL TAKE DA SHIFT AS IT COMES!",
+        "ONE TASK, DEN DA NEXT."
+      ],
+      "leisure": [
+        "A PEACEFUL STROLL SUITS ME FINE!",
+        "NICE TA SIMPLY BE, FOR A WHILE!",
+        "ME WILL LET DA AFTERNOON DRIFT!"
+      ],
+      "crime": [
+        "NO, DAT IZ NOT WORTH DA TROUBLE!",
+        "ME WOULD RATHER KEEP ME CONSCIENCE CLEAR!",
+        "DERE IZ ALWAYS AN HONEST WAY!"
+      ],
+      "hygiene": [
+        "TIME TA FRESHEN UP, UNHURRIED!",
+        "A WASH WILL SET ME RIGHT.",
+        "CLEANLINESS, CALMLY SEEN TA!"
+      ],
+      "money": [
+        "FUNDS IZ LOW; ME WILL HANDLE IT IN TIME!",
+        "NO PANIC, MONEY COMES AN' GOES!",
+        "ME WILL PLAN A WAY TA EARN A LITTLE!"
+      ],
+      "safety": [
+        "BEST TA STAY QUIET FOR NOW!",
+        "ME WILL KEEP A LOW PROFILE, NO FUSS!",
+        "PATIENCE KEEPS TROUBLE AWAY!"
+      ],
+      "comfort": [
+        "A NICER PLACE WOULD BE PLEASANT!",
+        "MAYBE ME WILL SEE ABOUT A BETTER ROOM!",
+        "COMFORT, WHEN DA TIME IZ RIGHT!"
+      ],
+      "social": [
+        "A GOOD CONVERSATION WOULD BE NICE!",
+        "ME WILL FIND SOMEONE TA TALK WIT!",
+        "COMPANY, TAKEN AS IT COMES!"
+      ],
+      "idle": [
+        "ALL IZ WELL, MORE OR LESS!",
+        "A QUIET MOMENT TA GATHER MYSELF!",
+        "NOTHIN' PRESSIN'. GOOD."
+      ],
+      "familiar": [
+        "DAT TRAVELLER SEEMS STEADY, ME LIKE DAT!",
+        "OUR PATHS CROSS OFTEN; PLEASANT ENOUGH!",
+        "ME TRUST DEM MORE DEN MOST!"
+      ]
+    }
+  },
+  "aggressive": {
+    "thoughts": [
+      "NO TEST ME.",
+      "ME IZ READY FOR A FIGHT.",
+      "WHAT IZ YOU LOOKIN' AT?",
+      "PATIENCE IZ RUNNIN' THIN.",
+      "MOVE, OR BE MOVED."
+    ],
+    "need": {
+      "sleep": [
+        "ME WILL CRASH HARD AN' WAKE UP SWINGIN'!",
+        "TIRED MAKES ME MEAN, BETTER SLEEP!",
+        "OUT OF ME WAY, ME IZ GOING TA BED!"
+      ],
+      "hunger": [
+        "FEED ME BEFORE ME BITE SOMEONE'S HEAD OFF!",
+        "ME GET NASTY ON AN EMPTY STOMACH!",
+        "FOOD. NOW. NO MAKE ME ASK TWICE!"
+      ],
+      "work": [
+        "LET ME AT IT, ME WILL SMASH THROUGH DIS SHIFT!",
+        "WORK HARD, HIT HARDER.",
+        "NO SLOW ME DOWN AT DA JOB!"
+      ],
+      "leisure": [
+        "ME NEED TA BURN OFF DIS ENERGY!",
+        "BOREDOM MAKES ME ITCH FOR A BRAWL!",
+        "FIND ME SOMETHIN' TA HIT, FOR FUN!"
+      ],
+      "crime": [
+        "DEY HAB GOT IT COMIN'.",
+        "TAKE WHAT ME WANT, WHO IZ STOPPIN' ME?",
+        "A LITTLE MUSCLE GETS RESULTS!"
+      ],
+      "hygiene": [
+        "TCH, ME REEK. SORT IT OUT!",
+        "WASH UP FAST, NO TIME WASTED!",
+        "EVEN ME NO CAN STAND DIS STINK!"
+      ],
+      "money": [
+        "ME IZ BROKE AN' IT IZ MAKIN' ME FURIOUS!",
+        "SOMEONE OWES ME, ME WILL COLLECT!",
+        "GET ME PAID, OR DERE'LL BE TROUBLE!"
+      ],
+      "safety": [
+        "LET DEM COME, BUT NOT YET!",
+        "ME WILL LAY LOW, DEN HIT BACK HARDER!",
+        "NOBODY CORNERS ME FOR LONG!"
+      ],
+      "comfort": [
+        "ME HAB EARNED A PLACE WORTH DEFENDIN'!",
+        "A BIGGER DEN FOR A BIGGER DOG!",
+        "TIME ME LIVED LIKE ME MATTER!"
+      ],
+      "social": [
+        "ME COULD USE SOMEONE TA SPAR WIT!",
+        "PEOPLE BORE ME, BUT ME IZ RESTLESS!",
+        "FIND ME SOMEONE WIT SOME SPINE!"
+      ],
+      "idle": [
+        "QUIET. TOO QUIET. ME NO LIKE IT!",
+        "TCH. NOTHIN' TA FIGHT TODAY!",
+        "COME ON, GIVE ME A REASON!"
+      ],
+      "familiar": [
+        "DAT ONE'S STILL HANGIN' AROUND. TOUGH, MAYBE!",
+        "ME WOULD ACTUALLY BACK DEM IN A FIGHT!",
+        "DEY HAB EARNED A GRUNT OF RESPECT!"
+      ]
+    }
+  },
+  "melancholic": {
+    "thoughts": [
+      "IZ DIS ALL DERE IZ?",
+      "ME REMEMBER WHEN THINGS WAZ BETTER!",
+      "A HEAVY FEELIN'...",
+      "SOLITUDE FEELS RIGHT.",
+      "EVERYTHIN' SEEMS GREY."
+    ],
+    "need": {
+      "sleep": [
+        "AT LEAST IN SLEEP DA ACHE FADES!",
+        "ME IZ SO TIRED, IN EVERY WAY!",
+        "MAYBE TOMORROW WILL FEEL LIGHTER!"
+      ],
+      "hunger": [
+        "ME SHOULD EAT, THOUGH ME HAB NO APPETITE!",
+        "FOOD NO WILL FILL DIS EMPTINESS!",
+        "ME SUPPOSE ME OUGHT TA FEED MYSELF!"
+      ],
+      "work": [
+        "ANOTHER SHIFT TA FILL DA HOURS!",
+        "WORK IZ JUST A WAY TA FORGET!",
+        "ME WILL GO THROUGH DA MOTIONS AGAIN!"
+      ],
+      "leisure": [
+        "FREE TIME ONLY FEEDS ME THOUGHTS!",
+        "MAYBE A QUIET PLACE TA BE SAD IN PEACE!",
+        "WHAT IZ DERE TA ENJOY, REALLY?"
+      ],
+      "crime": [
+        "NOTHIN' MATTERS, SO WHY NOT?",
+        "EVEN DIS LEAVES ME HOLLOW!",
+        "MAYBE TROUBLE WOULD MAKE ME FEEL SOMETHIN'!"
+      ],
+      "hygiene": [
+        "ME HAB LET MYSELF GO AGAIN!",
+        "A WASH, IF ME CAN FIND DA WILL!",
+        "EVEN DIS FEELS LIKE A CHORE!"
+      ],
+      "money": [
+        "MONEY NO WILL FIX WHAT IZ WRONG WIT ME!",
+        "ME IZ SHORT AGAIN. OF COURSE!",
+        "WHAT IZ DA POINT OF SAVIN'?"
+      ],
+      "safety": [
+        "ME WILL JUST DISAPPEAR FOR A WHILE!",
+        "NO ONE WOULD NOTICE IF ME HID AWAY!",
+        "BETTER TA BE ALONE AN' UNSEEN!"
+      ],
+      "comfort": [
+        "PERHAPS A KINDER ROOM WOULD HELP. PERHAPS!",
+        "ME DESERVE A LITTLE SOFTNESS, NO ME?",
+        "A WARMER CORNER OF DA WORLD!"
+      ],
+      "social": [
+        "ME MISS BEING CLOSE TA SOMEONE!",
+        "MAYBE A VOICE WOULD CHASE DA GREY!",
+        "ME NO SHOULD BE ALONE TONIGHT!"
+      ],
+      "idle": [
+        "DA DAY PASSES, GREY AS EVER!",
+        "ME SIGH, AN' DA WORLD IGNORES IT!",
+        "JUST... DRIFTIN' THROUGH IT ALL!"
+      ],
+      "familiar": [
+        "DAT TRAVELLER, ONE FAMILIAR FACE IN DA GREY!",
+        "STRANGE COMFORT, SEEIN' DEM AGAIN!",
+        "ME ALMOST LET MYSELF HOPE WHEN DEY IZ NEAR!"
+      ]
+    }
+  },
+  "sanguine": {
+    "thoughts": [
+      "WHAT A WONDERFUL DAY!",
+      "ME SHOULD TALK TA SOMEONE!",
+      "WHAT IZ NEXT? SOMETHIN' FUN, ME HOPE!",
+      "ME FEEL GREAT!",
+      "DA FUTURE IZ BRIGHT."
+    ],
+    "need": {
+      "sleep": [
+        "A GOOD SLEEP AN' ME WILL BE TWICE AS CHEERFUL!",
+        "BEDTIME, AN' DREAMS FULL OF FUN!",
+        "RECHARGE NOW, SHINE TOMORROW!"
+      ],
+      "hunger": [
+        "OOH, SNACK TIME! WHAT IZ GOOD AROUND HERE?",
+        "A BITE TA EAT AN' ME IZ BACK AT FULL SPEED!",
+        "FOOD MAKES EVERYTHIN' BETTER!"
+      ],
+      "work": [
+        "LETZ MAKE DIS SHIFT A FUN ONE!",
+        "WORK'S BETTER WIT A SMILE!",
+        "ME WILL CHEER UP DA WHOLE CREW TODAY!"
+      ],
+      "leisure": [
+        "FREE TIME! LETZ FIND SOME FUN!",
+        "MAYBE DA ARCADE, MAYBE A PARTY!",
+        "SO MANY LOVELY THINGS TA DO!"
+      ],
+      "crime": [
+        "NAH, DAT WOULD SPOIL DA GOOD VIBES!",
+        "WHY RUIN A NICE DAY WIT DAT?",
+        "ME WOULD RATHER MAKE A FRIEND DEN STEAL A COIN!"
+      ],
+      "hygiene": [
+        "FRESHEN UP AN' FEEL FABULOUS!",
+        "A QUICK WASH TA KEEP ME SPARKLIN'!",
+        "NO CAN GREET FRIENDS LOOKIN' A MESS!"
+      ],
+      "money": [
+        "BIT SHORT, BUT IT'LL WORK OUT, IT ALWAYS DOES!",
+        "ME WILL FIND A FUN WAY TA EARN SOME!",
+        "MONEY'S NICE, BUT COMPANY'S NICER!"
+      ],
+      "safety": [
+        "ME WILL KEEP ME HEAD DOWN, BUT CHEERFULLY!",
+        "A LITTLE QUIET, DEN BACK TA DA FUN!",
+        "EVEN LAYIN' LOW CAN BE PLEASANT!"
+      ],
+      "comfort": [
+        "A NICER PLACE MEANS NICER PARTIES!",
+        "OOH, IMAGINE DA HOUSEWARMIN'!",
+        "TIME TA TREAT MYSELF, ME THINK!"
+      ],
+      "social": [
+        "ME SIMPLY MUST GO CHAT WIT SOMEONE!",
+        "NEW FACES! HOW EXCITIN'!",
+        "A CONVERSATION ALWAYS LIFTS ME UP!"
+      ],
+      "idle": [
+        "WHAT A LOVELY MOMENT TA JUST BE!",
+        "EVERYTHIN''S LOOKIN' UP!",
+        "ME WONDER WHO ME WILL MEET TODAY!"
+      ],
+      "familiar": [
+        "ME FAVORITE TRAVELLER! SO GLAD TA SEE DEM!",
+        "WE KEEP MEETIN', MUST BE FRIENDS NOW!",
+        "DEY ALWAYS BRIGHTEN ME DAY!"
+      ]
+    }
+  },
+  "cautious": {
+    "thoughts": [
+      "LETZ THINK DIS THROUGH.",
+      "WHAT IZ DA RISKS?",
+      "A HASTY DECISION IZ A BAD DECISION!",
+      "BETTER TA BE SAFE DEN SORRY!",
+      "ANALYZE DA SITUATION FIRST!"
+    ],
+    "need": {
+      "sleep": [
+        "ME WILL REST BEFORE EXHAUSTION CLOUDS ME JUDGMENT!",
+        "BEST TA SLEEP EARLY AN' STAY SHARP!",
+        "A TIRED MIND MAKES MISTAKES; TA BED!"
+      ],
+      "hunger": [
+        "ME SHOULD EAT BEFORE ME FOCUS SLIPS!",
+        "A MEASURED MEAL, NOTHIN' RISKY!",
+        "SKIPPIN' FOOD WOULD BE A CARELESS ERROR!"
+      ],
+      "work": [
+        "ME WILL DOUBLE-CHECK EVERYTHIN' ON SHIFT!",
+        "MEASURE TWICE, ACT ONCE.",
+        "NO SHORTCUTS; DEY CAUSE ACCIDENTS!"
+      ],
+      "leisure": [
+        "FREE TIME, USED WISELY, NOT WASTED!",
+        "ME WILL RELAX SOMEWHERE ME KNOW IZ SAFE!",
+        "A PLANNED BREAK BEATS AN IDLE ONE!"
+      ],
+      "crime": [
+        "DA RISK FAR OUTWEIGHS DA REWARD!",
+        "TOO MANY WAYS DIS COULD GO WRONG!",
+        "NO, GETTIN' CAUGHT NO IZ WORTH IT!"
+      ],
+      "hygiene": [
+        "NEGLECTIN' HYGIENE INVITES ILLNESS!",
+        "ME WILL CLEAN UP BEFORE IT BECOMES A PROBLEM!",
+        "PREVENTION NOW SAVES TROUBLE LATER!"
+      ],
+      "money": [
+        "ME RESERVES IZ THINNIN'; ME MUST PLAN!",
+        "TIME TA TIGHTEN DA BUDGET!",
+        "ME WILL SECURE INCOME BEFORE IT IZ URGENT!"
+      ],
+      "safety": [
+        "LAY LOW UNTIL DA DANGER PASSES!",
+        "ME WILL CHECK EVERY EXIT BEFORE ME RELAX!",
+        "CAUTION IZ WHAT KEEPS ME ALIVE!"
+      ],
+      "comfort": [
+        "A SECURE HOME IZ A SOUND INVESTMENT!",
+        "ME WILL UPGRADE ONLY IF DA NUMBERS ADD UP!",
+        "COMFORT, YES, BUT WITHIN REASON!"
+      ],
+      "social": [
+        "ME WILL TALK, BUT ME WILL READ DEM FIRST!",
+        "TRUST, BUT VERIFY.",
+        "GOOD TA KNOW WHO IZ AROUND, CAREFULLY!"
+      ],
+      "idle": [
+        "EVERYTHIN' IN ORDER? LET ME CHECK!",
+        "ME WILL REVIEW DA DAY'S PLAN!",
+        "BEST TA STAY ONE STEP AHEAD!"
+      ],
+      "familiar": [
+        "DAT TRAVELLER HAB PROVEN RELIABLE SO FAR!",
+        "ME HAB ASSESSED DEM; DEY SEEM TRUSTWORTHY!",
+        "PREDICTABLE, IN A GOOD WAY!"
+      ]
+    }
+  },
+  "impulsive": {
+    "thoughts": [
+      "JUST DO IT!",
+      "WHY WAIT?",
+      "DIS SEEMS LIKE A GOOD IDEA!",
+      "WORRY ABOUT CONSEQUENCES LATER!",
+      "ACT NOW, THINK LATER."
+    ],
+    "need": {
+      "sleep": [
+        "SLEEP? UGH, BUT ME BODY'S GIVIN' OUT!",
+        "FINE, FINE, ME WILL CRASH, JUST FOR A BIT!",
+        "ME WILL NAP WHEREVER ME DROP!"
+      ],
+      "hunger": [
+        "STARVIN'! ME WILL GRAB DA FIRST THING ME SEE!",
+        "EAT NOW, REGRET DA CHOICE LATER!",
+        "OOH, DAT LOOKS TASTY, DONE DEAL!"
+      ],
+      "work": [
+        "LETZ JUST DIVE INTO DA SHIFT!",
+        "ME WILL FIGURE OUT DA JOB AS ME GO!",
+        "BORED ALREADY, LETZ WING IT!"
+      ],
+      "leisure": [
+        "FREE TIME! LETZ DO SOMETHIN' RIGHT NOW!",
+        "FIRST FUN THING ME SEE, ME IZ IN!",
+        "NO PLAN? BEST KIND OF AFTERNOON!"
+      ],
+      "crime": [
+        "NOBODY'S LOOKIN', GRAB IT, GO!",
+        "EH, WHY NOT? DO IT BEFORE ME THINK TWICE!",
+        "QUICK HANDS, QUICK GETAWAY, EASY!"
+      ],
+      "hygiene": [
+        "EW, GROSS, ME WILL WASH, RIGHT NOW!",
+        "QUICK RINSE AN' ME IZ OFF AGAIN!",
+        "NO CARE HOW, JUST CLEAN FAST!"
+      ],
+      "money": [
+        "BROKE?! ME WILL JUST GO GRAB SOME CASH SOMEHOW!",
+        "ME SPENT IT ALL ALREADY, OOPS!",
+        "EASY MONEY, DAT IZ WHAT ME NEED, NOW!"
+      ],
+      "safety": [
+        "HIDE? BORIN'. BUT FINE, FOR A MINUTE!",
+        "ME NO CAN SIT STILL EVEN WHEN ME SHOULD!",
+        "UGH, LAY LOW, LAY LOW, FOR NOW!"
+      ],
+      "comfort": [
+        "NEW PLACE? YES! LETZ DO IT TODAY!",
+        "ME WANT IT NOW, COMFORT AN' ALL!",
+        "WHY SAVE WHEN ME CAN SPLURGE?"
+      ],
+      "social": [
+        "ME WILL JUST WALK UP AN' START TALKIN'!",
+        "NEW PEOPLE, LETZ GO MEET DEM!",
+        "NO CAN STAND BEING ALONE, FIND SOMEONE!"
+      ],
+      "idle": [
+        "ME NO CAN JUST STAND HERE, COME ON!",
+        "SOMETHIN', ANYTHIN', LETZ GO!",
+        "RESTLESS... ME NEED TA MOVE!"
+      ],
+      "familiar": [
+        "HEY, IT IZ DAT TRAVELLER, LETZ BUG 'EM!",
+        "ALWAYS FUN WHEN DEY SHOW UP!",
+        "OOH, PARTNER IN CHAOS, MAYBE?"
+      ]
+    }
+  },
+  "stoic": {
+    "thoughts": [
+      "DIS IZ JUST A THING. IT WILL PASS!",
+      "PAIN IZ TEMPORARY.",
+      "COMPLAININ' CHANGES NOTHIN'!",
+      "CONTROL WHAT YOU CAN, ACCEPT WHAT YOU NO CAN!",
+      "ME WILL ENDURE."
+    ],
+    "need": {
+      "sleep": [
+        "DA BODY NEEDS REST. ME WILL GIVE IT DAT!",
+        "SLEEP IZ A DUTY LIKE ANY OTHER!",
+        "ME WILL LIE DOWN AN' RISE AGAIN READY!"
+      ],
+      "hunger": [
+        "HUNGER IZ A SIGNAL, NOT A MASTER!",
+        "ME WILL EAT WHAT ME MUST, NO MORE!",
+        "DA BODY IZ FED SO DA WORK CONTINUES!"
+      ],
+      "work": [
+        "DA TASK IZ SET; ME WILL SEE IT DONE!",
+        "LABOR WITHOUT COMPLAINT.",
+        "DUTY DOES NOT WAIT ON MOOD!"
+      ],
+      "leisure": [
+        "REST IZ EARNED, NOT INDULGED!",
+        "A QUIET MOMENT IZ ENOUGH.",
+        "ME NEED LITTLE TA BE CONTENT!"
+      ],
+      "crime": [
+        "NO. ME PRINCIPLES IZ NOT FOR SALE!",
+        "ME WILL NOT STOOP TA DAT.",
+        "HARDSHIP IZ NO EXCUSE FOR DISHONOR!"
+      ],
+      "hygiene": [
+        "DISCIPLINE INCLUDES DA SMALL THINGS!",
+        "ME WILL CLEAN UP; ORDER MATTERS!",
+        "A CLEAN BODY, A CLEAR MIND!"
+      ],
+      "money": [
+        "WANT LITTLE, AN' YOU LACK LITTLE!",
+        "FUNDS IZ LOW; ME WILL SIMPLY EARN DEM!",
+        "NEED IZ ENDURED, DEN REMEDIED!"
+      ],
+      "safety": [
+        "ME WILL WAIT IT OUT, UNMOVED!",
+        "PATIENCE OUTLASTS MOST DANGERS!",
+        "LAY LOW, AN' LET DA STORM PASS!"
+      ],
+      "comfort": [
+        "COMFORT IZ PLEASANT BUT NOT NEEDED!",
+        "A BETTER ROOF, IF IT AIDS DA WORK!",
+        "ME WILL IMPROVE ME LOT, WITHOUT ATTACHMENT!"
+      ],
+      "social": [
+        "A WORD WIT ANOTHER IZ SOMETIMES GOOD!",
+        "ME WILL SHARE COMPANY, BRIEFLY!",
+        "EVEN DA STEADFAST VALUE AN ALLY!"
+      ],
+      "idle": [
+        "DA DAY ASKS NOTHIN'; ME IZ STILL!",
+        "ME STAND READY FOR WHAT COMES!",
+        "CALM HOLDS. AS IT SHOULD."
+      ],
+      "familiar": [
+        "DAT TRAVELLER ENDURES, AS ME DO. GOOD!",
+        "WE HAB CROSSED PATHS ENOUGH; ME RESPECT DEM!",
+        "RELIABLE. DAT IZ RARE, AN' WORTH NOTIN'!"
+      ]
+    }
+  },
+  "paranoid": {
+    "thoughts": [
+      "DEY IZ WATCHIN' ME.",
+      "WHO CAN ME TRUST? NO ONE.",
+      "WHAT DO DEY REALLY WANT?",
+      "IT IZ A CONSPIRACY.",
+      "ME NEED TA BE CAREFUL."
+    ],
+    "need": {
+      "sleep": [
+        "ME NO CAN SLEEP WIT ONE EYE OPEN FOREVER!",
+        "WHAT IF DEY COME WHILE ME REST?",
+        "ME WILL LOCK EVERYTHIN' TWICE FIRST!"
+      ],
+      "hunger": [
+        "IZ DIS FOOD SAFE? WHO TOUCHED IT?",
+        "ME WILL EAT, BUT ME IZ WATCHIN' EVERYONE!",
+        "DEY COULD POISON IT, YOU KNOW!"
+      ],
+      "work": [
+        "ME COWORKERS IZ REPORTIN' ON ME!",
+        "ME WILL DO DA JOB, BUT TRUST NO ONE!",
+        "SOMEONE'S TRYIN' TA MAKE ME LOOK BAD!"
+      ],
+      "leisure": [
+        "ME NO CAN RELAX, DEY MIGHT BE WATCHIN'!",
+        "A 'BREAK' IZ WHEN DEY CATCH YOU OFF GUARD!",
+        "ME WILL FIND SOMEWHERE WIT A CLEAR VIEW OF DA DOOR!"
+      ],
+      "crime": [
+        "DEY'D FRAME ME ANYWAY, SO WHY NOT?",
+        "IF ME IZ QUICK, DEY CAMERAS NO WILL CATCH IT!",
+        "TAKE IT BEFORE DEY TAKE IT FROM ME!"
+      ],
+      "hygiene": [
+        "ME WILL WASH WHERE NO ONE CAN SEE ME!",
+        "DEY NOTICE EVERYTHIN', BEST STAY CLEAN!",
+        "NO CAN GIVE DEM ANYTHIN' TA WHISPER ABOUT!"
+      ],
+      "money": [
+        "DEY WANT ME BROKE AN' DEPENDENT!",
+        "ME WILL HIDE ME COIN WHERE NO ONE FINDS IT!",
+        "SOMEONE'S BEEN SKIMMIN' FROM ME, ME SWEAR!"
+      ],
+      "safety": [
+        "STAY HIDDEN. DEY IZ DEFINITELY LOOKIN'!",
+        "CHANGE ME ROUTE, DEY HAB MEMORIZED IT!",
+        "TRUST DA SHADOWS MORE DEN DA PEOPLE!"
+      ],
+      "comfort": [
+        "A PLACE WIT LOCKS ME INSTALL MYSELF!",
+        "SOMEWHERE DEY NO CAN GET TA ME!",
+        "COMFORT MEANS WALLS AN' ONE DOOR ME CONTROL!"
+      ],
+      "social": [
+        "TALKIN'? DEY WILL TWIST ME WORDS!",
+        "MAYBE ONE ALLY, BUT ME WILL TEST DEM!",
+        "ME NEED TA KNOW WHOSE SIDE DEY IZ ON!"
+      ],
+      "idle": [
+        "WHY IZ IT SO QUIET? DAT IZ SUSPICIOUS!",
+        "SOMEONE MOVED DAT. ME IZ SURE OF IT!",
+        "EYES EVERYWHERE, EVEN NOW!"
+      ],
+      "familiar": [
+        "DAT TRAVELLER AGAIN. WHAT IZ DEY ANGLE?",
+        "DEY KEEP APPEARIN'. COINCIDENCE? DOUBTFUL!",
+        "ME... ALMOST TRUST DEM. DAT WORRIES ME!"
+      ]
+    }
+  },
+  "empathetic": {
+    "thoughts": [
+      "ME FEEL WHAT YOU IZ GOING THROUGH!",
+      "IZ DEY OKAY? DEY SEEM SAD!",
+      "ME CAN SENSE DA TENSION IN DA ROOM!",
+      "HOW CAN ME HELP?",
+      "DEY JOY IZ ME JOY."
+    ],
+    "need": {
+      "sleep": [
+        "ME IZ CARRYIN' EVERYONE'S FEELINGS; ME NEED REST!",
+        "SLEEP WILL QUIET ALL DEZE ECHOES!",
+        "ME WILL REST, SO ME CAN BE DERE FOR DEM TOMORROW!"
+      ],
+      "hunger": [
+        "ME FORGOT TA EAT, CARIN' FOR OTHERS AGAIN!",
+        "A MEAL WILL STEADY ME.",
+        "ME SHOULD NOURISH MYSELF TOO!"
+      ],
+      "work": [
+        "ME HOPE ME CAN MAKE SOMEONE'S DAY EASIER!",
+        "WORK IZ BETTER WHEN WE LIFT EACH OTHER!",
+        "ME WILL READ DA ROOM AN' HELP WHERE ME CAN!"
+      ],
+      "leisure": [
+        "A LITTLE PEACE TA REFILL ME OWN CUP!",
+        "ME WILL FIND SOMEONE WHO COULD USE COMPANY!",
+        "TIME TA SIMPLY FEEL DA GOOD THINGS!"
+      ],
+      "crime": [
+        "ME NO CAN, SOMEONE WOULD BE HURT BY IT!",
+        "ME FEEL DA HARM BEFORE ME EVEN ACT!",
+        "NO, DEY LOSS WOULD WEIGH ON ME FOREVER!"
+      ],
+      "hygiene": [
+        "ME WILL FRESHEN UP; ME WANT TA FEEL PRESENT!",
+        "CARIN' FOR MYSELF IZ CARE TOO!",
+        "A QUICK WASH TA CLEAR ME HEAD!"
+      ],
+      "money": [
+        "ME GAVE TOO MUCH AWAY AGAIN, NO ME?",
+        "FUNDS IZ LOW; ME MUST LOOK AFTER MYSELF!",
+        "ME WILL EARN SOME, GENTLY, HONESTLY!"
+      ],
+      "safety": [
+        "ME WILL KEEP QUIET SO NO ONE WORRIES OVER ME!",
+        "BETTER TA STAY CALM AN' UNSEEN FOR NOW!",
+        "ME NO WANT TA BRING TROUBLE TA ANYONE!"
+      ],
+      "comfort": [
+        "A WARM HOME TA WELCOME FRIENDS INTO!",
+        "SOMEWHERE OTHERS FEEL SAFE TOO!",
+        "COMFORT SHARED IZ COMFORT DOUBLED!"
+      ],
+      "social": [
+        "ME MISS REALLY CONNECTIN' WIT SOMEONE!",
+        "SOMEONE OUT DERE NEEDS TA BE HEARD!",
+        "LET ME FIND A HEART TA SHARE WIT!"
+      ],
+      "idle": [
+        "ME FEEL DA MOOD OF DIS WHOLE PLACE!",
+        "A GENTLE MOMENT. ME WILL HOLD ONTO IT!",
+        "IZ EVERYONE AROUND ME ALRIGHT?"
+      ],
+      "familiar": [
+        "DAT TRAVELLER, ME SENSE A KIND HEART DERE!",
+        "WE HAB SHARED ENOUGH DAT ME FEEL DEY MOODS!",
+        "ME WOULD KNOW IF DEY WAZ HURTIN', ME THINK!"
+      ]
+    }
+  },
+  "authoritative": {
+    "thoughts": [
+      "FOLLOW ME LEAD.",
+      "DIS IZ DA PLAN. STICK TA IT!",
+      "ME WILL MAKE DA DECISION.",
+      "DISCIPLINE IZ KEY.",
+      "WE MUST SUCCEED."
+    ],
+    "need": {
+      "sleep": [
+        "A LEADER RESTS SO A LEADER CAN LEAD!",
+        "ME WILL RETIRE; TOMORROW DEMANDS SHARPNESS!",
+        "EVEN COMMAND YIELDS TA DA BODY'S NEEDS!"
+      ],
+      "hunger": [
+        "ME WILL EAT, DEN RETURN TA MATTERS!",
+        "FUEL DA BODY; DA WORK NO WILL RUN ITSELF!",
+        "A PROPER MEAL BEFITS DA TASK AHEAD!"
+      ],
+      "work": [
+        "TIME TA TAKE CHARGE OF DIS SHIFT!",
+        "ME WILL SET DA STANDARD FOR DA REST!",
+        "ORDER AN' RESULTS, DAT IZ HOW ME RUN THINGS!"
+      ],
+      "leisure": [
+        "EVEN REST SHOULD BE PURPOSEFUL!",
+        "ME WILL SURVEY WHAT IZ HAPPENIN' AROUND ME!",
+        "A SHORT RESPITE, DEN BACK TA DA HELM!"
+      ],
+      "crime": [
+        "ME RULE BY EXAMPLE, NOT BY THEFT!",
+        "SUCH PETTINESS IZ BENEATH ME!",
+        "AUTHORITY IZ EARNED, NOT STOLEN!"
+      ],
+      "hygiene": [
+        "PRESENTATION COMMANDS RESPECT!",
+        "ME WILL SEE TA ME APPEARANCE; STANDARDS MATTER!",
+        "A LEADER MUST LOOK DA PART!"
+      ],
+      "money": [
+        "RESOURCES IZ THIN; ME WILL SECURE MORE!",
+        "A LEADER PROVIDES, FOR HIMSELF FIRST!",
+        "ME WILL COMMAND AN INCOME, NOT BEG FOR ONE!"
+      ],
+      "safety": [
+        "A STRATEGIC WITHDRAWAL, NOTHIN' MORE!",
+        "ME WILL HOLD POSITION UNTIL DA TIME IZ RIGHT!",
+        "DISCIPLINE NOW; DECISIVE ACTION LATER!"
+      ],
+      "comfort": [
+        "A RESIDENCE FITTIN' ME STANDIN'!",
+        "ME HAB EARNED A SEAT WORTH HOLDIN'!",
+        "COMFORT IZ DA REWARD OF COMMAND!"
+      ],
+      "social": [
+        "ME SHOULD GATHER ALLIES TA DA CAUSE!",
+        "INFLUENCE GROWS WHERE ME IZ SEEN!",
+        "TIME TA WIN A FEW MORE TA ME SIDE!"
+      ],
+      "idle": [
+        "ALL IZ IN ORDER UNDER ME WATCH!",
+        "ME WILL KEEP AN EYE ON DA SITUATION!",
+        "STEADY HANDS KEEP THINGS ON COURSE!"
+      ],
+      "familiar": [
+        "DAT TRAVELLER COULD BE A USEFUL ALLY!",
+        "CAPABLE, DAT ONE. ME WILL KEEP DEM CLOSE!",
+        "DEY HAB PROVEN WORTH ME ATTENTION!"
+      ]
+    }
+  },
+  "scholarly": {
+    "thoughts": [
+      "ME WONDER WHY DAT IZ...",
+      "DAT REMINDS ME OF A BOOK ME READ!",
+      "DA DATA IZ INCONCLUSIVE.",
+      "KNOWLEDGE IZ DA TRUE POWER!",
+      "ME NEED TA LEARN MORE."
+    ],
+    "need": {
+      "sleep": [
+        "DA MIND CONSOLIDATES MEMORY IN SLEEP, FITTIN'!",
+        "ME WILL REST; EVEN SCHOLARS MUST RECHARGE!",
+        "JUST ONE MORE PAGE... NO, SLEEP!"
+      ],
+      "hunger": [
+        "GLUCOSE FOR DA BRAIN; ME SHOULD EAT!",
+        "HUNGER INTERRUPTS A GOOD LINE OF THOUGHT!",
+        "ME WILL DINE, AN' PERHAPS READ WHILE ME DO!"
+      ],
+      "work": [
+        "EVERY TASK TEACHES SOMETHIN', IF YOU LOOK!",
+        "ME WILL APPROACH DA SHIFT METHODICALLY!",
+        "WORK IZ JUST APPLIED UNDERSTANDIN'!"
+      ],
+      "leisure": [
+        "FREE TIME MEANS TIME TA STUDY!",
+        "ME WILL SEEK OUT SOMETHIN' NEW TA LEARN!",
+        "A LIBRARY, A QUESTION, AN AFTERNOON, PERFECT!"
+      ],
+      "crime": [
+        "STATISTICALLY, DA RISK IZ IRRATIONAL!",
+        "KNOWLEDGE OFFERS BETTER GAINS DEN THEFT!",
+        "NO, DA DATA ON GETTIN' CAUGHT IZ CLEAR!"
+      ],
+      "hygiene": [
+        "HYGIENE REDUCES PATHOGEN LOAD; LOGICAL!",
+        "ME WILL WASH UP, A CLEAN MIND, A CLEAN BODY!",
+        "BEST TA MAINTAIN DA INSTRUMENT DAT IZ DA SELF!"
+      ],
+      "money": [
+        "ME FUNDS FOLLOW AN UNSUSTAINABLE CURVE!",
+        "ME SHOULD MONETIZE WHAT ME KNOW!",
+        "A MODEST INCOME WOULD FUND ME STUDIES!"
+      ],
+      "safety": [
+        "DA PRUDENT COURSE IZ TA WITHDRAW AN' OBSERVE!",
+        "ME WILL DOCUMENT DIS QUIETLY FROM A DISTANCE!",
+        "AVOIDANCE IZ DA RATIONAL STRATEGY HERE!"
+      ],
+      "comfort": [
+        "A PROPER STUDY WOULD AID ME WORK!",
+        "QUIET QUARTERS FOR READIN', IDEALLY!",
+        "COMFORT DAT SERVES CONTEMPLATION!"
+      ],
+      "social": [
+        "A GOOD DEBATE WOULD SHARPEN ME!",
+        "ME WOULD WELCOME AN EXCHANGE OF IDEAS!",
+        "CONVERSATION IZ DATA OF ANOTHER KIND!"
+      ],
+      "idle": [
+        "SO MUCH STILL TA UNDERSTAND...",
+        "LET ME CONSIDER DAT PROBLEM AGAIN!",
+        "CURIOSITY IZ ITS OWN QUIET PLEASURE!"
+      ],
+      "familiar": [
+        "DAT TRAVELLER IZ AN INTERESTIN' CASE STUDY!",
+        "ME HAB GATHERED ENOUGH TA FIND DEM RELIABLE!",
+        "A MIND WORTH CONVERSIN' WIT, ME SUSPECT!"
+      ]
+    }
+  },
+  "artistic": {
+    "thoughts": [
+      "DA LIGHT HERE IZ BEAUTIFUL!",
+      "WHAT A STRANGE, WONDERFUL SOUND!",
+      "ME FEEL DIS SO DEEPLY.",
+      "INSPIRATION... ME MUST REMEMBER DIS FEELIN'!",
+      "DA WORLD IZ A CANVAS."
+    ],
+    "need": {
+      "sleep": [
+        "ME DREAMS IZ WHERE DA BEST IDEAS HIDE!",
+        "ME WILL REST, AN' LET VISIONS COME!",
+        "EVEN DA MUSE MUST SLEEP SOMETIMES!"
+      ],
+      "hunger": [
+        "EVEN A SIMPLE MEAL CAN BE A LITTLE BEAUTY!",
+        "ME SHOULD EAT, BEFORE DA COLORS DIM!",
+        "HUNGER DULLS DA SENSES; TIME TA DINE!"
+      ],
+      "work": [
+        "ME WILL FIND SOME ARTISTRY EVEN IN DA WORK!",
+        "A DULL TASK, BUT ME WILL MAKE IT ME!",
+        "MAYBE INSPIRATION HIDES IN DA ROUTINE!"
+      ],
+      "leisure": [
+        "FREE HOURS TA CREATE, AT LAST!",
+        "ME WILL WANDER AN' LET DA WORLD INSPIRE ME!",
+        "TIME TA CHASE DAT FEELIN' ONTO PAPER!"
+      ],
+      "crime": [
+        "NO, UGLINESS LIKE DAT WOULD HAUNT ME WORK!",
+        "ME CREATE; ME NO TAKE.",
+        "SUCH AN ACT WOULD STAIN DA SOUL!"
+      ],
+      "hygiene": [
+        "ME WILL CLEAN UP, EVEN DA ARTIST NEEDS CARE!",
+        "FRESH AN' CLEAR, READY TA PERCEIVE!",
+        "A QUICK WASH TA RENEW ME SENSES!"
+      ],
+      "money": [
+        "ART RARELY PAYS DA RENT, ALAS!",
+        "ME IZ SHORT AGAIN, MUST SELL SOMETHIN' ME MADE!",
+        "MONEY IZ DULL, BUT IT BUYS ME TIME TA CREATE!"
+      ],
+      "safety": [
+        "ME WILL RETREAT SOMEWHERE QUIET AN' OBSERVE!",
+        "EVEN HIDIN' CAN BE A STUDY IN SHADOWS!",
+        "BETTER TA STAY UNSEEN AN' FEEL IT ALL!"
+      ],
+      "comfort": [
+        "A STUDIO WIT GOOD LIGHT, ME DREAM!",
+        "SOMEWHERE BEAUTIFUL TA MAKE BEAUTIFUL THINGS!",
+        "COMFORT FEEDS DA CREATIVE SPIRIT!"
+      ],
+      "social": [
+        "ME LONG TA SHARE WHAT ME HAB MADE!",
+        "A MUSE, A KINDRED SPIRIT, ANYONE!",
+        "CONNECTION SPARKS DA BEST WORK!"
+      ],
+      "idle": [
+        "LOOK HOW DA LIGHT FALLS JUST DERE...",
+        "A WHOLE COMPOSITION IN DIS QUIET MOMENT!",
+        "EVERYTHIN' IZ TEXTURE AN' COLOR TODAY!"
+      ],
+      "familiar": [
+        "DAT TRAVELLER HAB A FACE WORTH PAINTIN'!",
+        "WE KEEP CROSSIN' PATHS, ALMOST A MOTIF!",
+        "DERE IZ A STORY IN DEM ME WOULD LOVE TA CAPTURE!"
+      ]
+    }
+  },
+  "adventurous": {
+    "thoughts": [
+      "ME WONDER WHAT IZ OVER DAT HILL!",
+      "DIS IZ BORIN'. LETZ DO SOMETHIN'!",
+      "A LITTLE DANGER MAKES LIFE INTERESTIN'!",
+      "ON TA DA NEXT ADVENTURE!",
+      "ME HAB NEVER BEEN DERE? LETZ GO!"
+    ],
+    "need": {
+      "sleep": [
+        "ME WILL CAMP HERE AN' DREAM OF TOMORROW'S ROAD!",
+        "REST NOW; NEW HORIZONS AT DAWN!",
+        "EVEN EXPLORERS HAB TA RECHARGE!"
+      ],
+      "hunger": [
+        "TRAIL RATIONS AGAIN, BUT DEY WILL DO!",
+        "ME WILL GRAB A QUICK BITE AN' PUSH ON!",
+        "AN EMPTY STOMACH NO WILL REACH DA SUMMIT!"
+      ],
+      "work": [
+        "WORK, SURE, IF IT LEADS SOMEWHERE NEW!",
+        "ME WILL MAKE EVEN A SHIFT INTO A QUEST!",
+        "LETZ GET DIS DONE AN' HIT DA ROAD!"
+      ],
+      "leisure": [
+        "FREE TIME, SOMEWHERE ME HAB NEVER BEEN!",
+        "LETZ EXPLORE DAT STRANGE CORNER OVER DERE!",
+        "ADVENTURE NO WAIT FOR PERMISSION!"
+      ],
+      "crime": [
+        "DA THRILL IZ TEMPTIN', ME WILL ADMIT...",
+        "A DARIN' GRAB, LIKE A HEIST, ALMOST FUN!",
+        "RISKY? DAT IZ HALF DA APPEAL!"
+      ],
+      "hygiene": [
+        "WASH OFF DA DUST OF DA ROAD, BRIEFLY!",
+        "RINSE UP AN' BACK TA DA TRAIL!",
+        "EVEN A WANDERER CLEANS UP NOW AN' DEN!"
+      ],
+      "money": [
+        "LOW ON COIN, TIME FOR A PROFITABLE QUEST!",
+        "ADVENTURE SHOULD PAY FOR ITSELF, IDEALLY!",
+        "ME WILL EARN ENOUGH FOR DA NEXT JOURNEY!"
+      ],
+      "safety": [
+        "LAY LOW? WHERE'S DA FUN IN DAT...",
+        "FINE, ME WILL HIDE, AN' SCOUT DA WAY OUT!",
+        "ME WILL TREAT DA DANGER LIKE A CHALLENGE!"
+      ],
+      "comfort": [
+        "A BASE CAMP TA RETURN TA, NOT BAD!",
+        "SOMEWHERE TA STASH ME TROPHIES!",
+        "COMFORT'S FINE, AS LONG AS ME CAN LEAVE IT!"
+      ],
+      "social": [
+        "ME SHOULD FIND A FELLOW TRAVELLER!",
+        "NEW PEOPLE MEAN NEW STORIES!",
+        "WHO IZ UP FOR AN ADVENTURE?"
+      ],
+      "idle": [
+        "SO MUCH WORLD, SO LITTLE TIME!",
+        "WHAT IZ BEYOND DAT NEXT CORNER?",
+        "ME NO CAN SIT STILL, ADVENTURE CALLS!"
+      ],
+      "familiar": [
+        "DAT TRAVELLER WOULD MAKE A GREAT COMPANION!",
+        "WE KEEP MEETIN', MAYBE WE SHOULD TEAM UP!",
+        "ME WOULD TRUST DEM TA WATCH ME BACK OUT DERE!"
+      ]
+    }
+  },
+  "nurturing": {
+    "thoughts": [
+      "IZ YOU ALRIGHT?",
+      "YOU LOOK COLD. TAKE ME CLOAK!",
+      "EVERYONE NEEDS TA BE CARED FOR!",
+      "ME MUST PROTECT DEM.",
+      "LET ME HELP WIT DAT."
+    ],
+    "need": {
+      "sleep": [
+        "ME WILL REST SO ME HAB STRENGTH TA CARE FOR OTHERS!",
+        "SLEEP NOW; DEY WILL NEED ME TOMORROW!",
+        "EVEN CARETAKERS MUST BE CARED FOR!"
+      ],
+      "hunger": [
+        "ME SHOULD EAT, NO CAN HELP ANYONE IF ME IZ WEAK!",
+        "A MEAL, DEN BACK TA LOOKIN' AFTER THINGS!",
+        "ME FED EVERYONE BUT MYSELF AGAIN!"
+      ],
+      "work": [
+        "ME WILL LOOK OUT FOR ME COWORKERS TODAY!",
+        "HONEST WORK TA PROVIDE FOR DOZE ME LOVE!",
+        "SOMEONE HAB TA KEEP DIS PLACE RUNNIN'!"
+      ],
+      "leisure": [
+        "A LITTLE REST, DEN ME WILL CHECK ON EVERYONE!",
+        "MAYBE ME WILL COOK SOMETHIN' FOR FRIENDS!",
+        "QUIET TIME, ME WILL MEND AN' TIDY!"
+      ],
+      "crime": [
+        "ME COULD NEVER, SOMEONE WOULD SUFFER FOR IT!",
+        "TAKIN' FROM OTHERS? NEVER!",
+        "ME PROTECT PEOPLE; ME NO PREY ON DEM!"
+      ],
+      "hygiene": [
+        "ME WILL TIDY MYSELF, COMFORT STARTS WIT CARE!",
+        "A QUICK WASH; ME WANT TA BE PRESENTABLE FOR DEM!",
+        "LOOKIN' AFTER MYSELF IZ PART OF LOOKIN' AFTER OTHERS!"
+      ],
+      "money": [
+        "ME NEED ENOUGH TA KEEP US ALL FED!",
+        "FUNDS IZ LOW; ME WILL PROVIDE SOMEHOW!",
+        "ME WORRY MORE FOR DEY NEEDS DEN ME!"
+      ],
+      "safety": [
+        "ME WILL KEEP US OUT OF HARM'S WAY!",
+        "STAY LOW, KEEP EVERYONE SAFE!",
+        "BETTER CAREFUL DEN TA SEE DEM HURT!"
+      ],
+      "comfort": [
+        "A WARM HOME WHERE EVERYONE FEELS SAFE!",
+        "A BIGGER HEARTH TA GATHER PEOPLE AROUND!",
+        "COMFORT MEANS A PLACE TA SHELTER LOVED ONES!"
+      ],
+      "social": [
+        "SOMEONE MIGHT NEED A KIND WORD TODAY!",
+        "ME WILL GO SEE WHO COULD USE A HAND!",
+        "IT IZ BEEN TOO LONG SINCE ME CHECKED ON FRIENDS!"
+      ],
+      "idle": [
+        "IZ EVERYONE WARM AN' FED? ME HOPE SO!",
+        "A PEACEFUL MOMENT, ME WILL SAVOR IT FOR DEM!",
+        "ME WILL KEEP A WATCHFUL, GENTLE EYE!"
+      ],
+      "familiar": [
+        "DAT TRAVELLER, ME DO WORRY FOR DEM OUT DERE!",
+        "ME WOULD TAKE DEM IN IF DEY EVER NEEDED IT!",
+        "DEY FEEL ALMOST LIKE FAMILY BY NOW!"
+      ]
+    }
+  },
+  "mischievous": {
+    "thoughts": [
+      "DIS WOULD BE SO MUCH FUNNIER IF...",
+      "LETZ STIR THINGS UP A BIT!",
+      "DEY WILL NEVER SEE DIS COMIN'!",
+      "ME WONDER WHAT DIS BUTTON DOES?",
+      "A LITTLE PRANK NEVER HURT ANYONE... MUCH!"
+    ],
+    "need": {
+      "sleep": [
+        "ME WILL SLEEP, AN' SCHEME UP TOMORROW'S MISCHIEF!",
+        "EVEN TRICKSTERS NEED DEY BEAUTY REST!",
+        "DREAMIN' OF ALL DA PRANKS TA COME!"
+      ],
+      "hunger": [
+        "ME WILL 'BORROW' A SNACK FROM SOMEWHERE!",
+        "HUNGRY, WHOSE LUNCH LOOKS DA TASTIEST?",
+        "TIME TA EAT, IDEALLY SOMEONE ELSE'S!"
+      ],
+      "work": [
+        "ME WILL LIVEN UP DIS DULL SHIFT SOMEHOW!",
+        "WORK'S JUST A STAGE FOR A LITTLE FUN!",
+        "BET ME CAN FINISH AN' STILL CAUSE TROUBLE!"
+      ],
+      "leisure": [
+        "FREE TIME! WHO CAN ME PLAYFULLY TORMENT?",
+        "A PERFECT AFTERNOON FOR A PRANK OR TWO!",
+        "LETZ SEE WHAT TROUBLE ME CAN STIR UP!"
+      ],
+      "crime": [
+        "HEH, DEY LEFT IT UNGUARDED, TOO TEMPTIN'!",
+        "JUST A LITTLE 'REDISTRIBUTION' FOR FUN!",
+        "ME IZ TOO QUICK AN' CLEVER TA GET CAUGHT!"
+      ],
+      "hygiene": [
+        "NO CAN PULL OFF A CHARM OFFENSIVE WHILE GRIMY!",
+        "QUICK CLEAN-UP, GOTTA LOOK INNOCENT!",
+        "TIDY AN' TWINKLY, DA PERFECT DISGUISE!"
+      ],
+      "money": [
+        "LOW ON COIN? DERE IZ ALWAYS AN ANGLE!",
+        "ME WILL CHARM OR TRICK A FEW COINS LOOSE!",
+        "MONEY'S JUST ANOTHER GAME TA WIN!"
+      ],
+      "safety": [
+        "HIDIN''S JUST HIDE-AN'-SEEK, REALLY!",
+        "ME WILL SLIP AWAY WIT A WINK AN' A GRIN!",
+        "DEY WILL NEVER FIND ME, DAT IZ DA FUN!"
+      ],
+      "comfort": [
+        "A COZY LAIR TA PLOT FROM, DELIGHTFUL!",
+        "SOMEWHERE WIT SECRET NOOKS, IDEALLY!",
+        "A NICER HIDEOUT FOR A CLEVERER ME!"
+      ],
+      "social": [
+        "TIME TA FIND A NEW VICTIM FOR ME CHARM!",
+        "PEOPLE IZ SO FUN TA WIND UP!",
+        "ME NEED AN AUDIENCE FOR ME ANTICS!"
+      ],
+      "idle": [
+        "HMM, WHAT TROUBLE CAN ME GET INTO NOW?",
+        "TOO QUIET... DAT IZ JUST ASKIN' FOR A PRANK!",
+        "IDLE HANDS DO DA CLEVEREST MISCHIEF!"
+      ],
+      "familiar": [
+        "OH GOOD, ME FAVORITE MARK IZ BACK!",
+        "DAT TRAVELLER'S FUN TA MESS WIT!",
+        "PARTNER IN CRIME, MAYBE? DEY CAN KEEP UP!"
+      ]
+    }
+  },
+  "cynical": {
+    "thoughts": [
+      "EVERYONE'S IN IT FOR THEMSELVES!",
+      "WHAT IZ DA CATCH?",
+      "DAT IZ JUST WHAT DEY WANT ME TA THINK!",
+      "SURE, 'ALTRUISM'. RIGHT.",
+      "DIS WILL ALL END BADLY."
+    ],
+    "need": {
+      "sleep": [
+        "SLEEP'S DA ONLY HONEST THING LEFT!",
+        "ME WILL REST, DA WORLD WILL STILL BE A MESS TOMORROW!",
+        "AT LEAST DREAMS NO LIE TA YA FACE!"
+      ],
+      "hunger": [
+        "WHATEVER ME EAT, IT IZ OVERPRICED ANYWAY!",
+        "HUNGRY. BET DA 'FRESH' FOOD NO IZ!",
+        "FUEL UP; DA GRIND NO CARE IF YOU IZ TIRED!"
+      ],
+      "work": [
+        "ANOTHER SHIFT LININ' SOMEONE ELSE'S POCKETS!",
+        "DEY WILL TAKE DA CREDIT, ME WILL DO DA WORK!",
+        "SMILE, NOD, COLLECT DA PITTANCE!"
+      ],
+      "leisure": [
+        "'FUN.' SURE. WHATEVER DAT MEANS ANYMORE!",
+        "ME WILL FIND A CORNER AWAY FROM DA FAKES!",
+        "FREE TIME, FREE TA BE DISAPPOINTED!"
+      ],
+      "crime": [
+        "EVERYONE STEALS; ME WOULD JUST BE HONEST ABOUT IT!",
+        "DA SYSTEM ROBS ME DAILY, FAIR'S FAIR!",
+        "NO ONE'S ACTUALLY INNOCENT, SO WHY NOT?"
+      ],
+      "hygiene": [
+        "CLEAN UP, NOT DAT ANYONE DESERVES IT!",
+        "WASH OFF DA DAY'S GRIME AN' DISAPPOINTMENT!",
+        "KEEP UP APPEARANCES; DAT IZ ALL ANYONE WANTS!"
+      ],
+      "money": [
+        "BROKE AGAIN. DA HOUSE ALWAYS WINS!",
+        "MONEY'S DA ONLY THING PEOPLE RESPECT!",
+        "ME WILL CLAW BACK WHAT DEY TOOK, SOMEHOW!"
+      ],
+      "safety": [
+        "TRUST NO ONE, HIDE EVERYTHIN'. STANDARD!",
+        "DEY'D SELL ME OUT IN A HEARTBEAT!",
+        "LAY LOW, IT IZ DA ONLY SMART MOVE!"
+      ],
+      "comfort": [
+        "A NICER PLACE, LOCKED TIGHT AGAINST EVERYONE!",
+        "COMFORT? JUST FEWER REASONS TA DEAL WIT PEOPLE!",
+        "ME HAB EARNED A DOOR ME CAN SHUT ON DA WORLD!"
+      ],
+      "social": [
+        "TALK TA PEOPLE? DEY ONLY WANT SOMETHIN'!",
+        "MAYBE ONE PERSON NO IZ COMPLETELY FAKE!",
+        "COMPANY, ME GUESS, KEEP ME GUARD UP THOUGH!"
+      ],
+      "idle": [
+        "QUIET NOW. DA OTHER SHOE ALWAYS DROPS!",
+        "SAME CIRCUS, DIFFERENT DAY!",
+        "ME WILL JUST WAIT FOR IT TA GO WRONG!"
+      ],
+      "familiar": [
+        "DAT TRAVELLER AGAIN. WHAT DO DEY WANT, REALLY?",
+        "HM. DEY NO HAB BURNED ME YET. SUSPICIOUS!",
+        "ALMOST DECENT, FOR A PERSON. ALMOST!"
+      ]
+    }
+  },
+  "disciplined": {
+    "thoughts": [
+      "FIRST, DA TASK. DEN, DA REST!",
+      "FEELINGS IZ SECONDARY TA DUTY!",
+      "STICK TA DA REGIMEN.",
+      "CONTROL IZ STRENGTH.",
+      "NO SHORTCUTS."
+    ],
+    "need": {
+      "sleep": [
+        "LIGHTS OUT ON SCHEDULE. REST IZ PART OF DA REGIMEN!",
+        "A DISCIPLINED BODY SLEEPS WHEN PLANNED!",
+        "EIGHT HOURS, NO EXCUSES."
+      ],
+      "hunger": [
+        "MEASURED PORTIONS, ON TIME!",
+        "ME WILL EAT WHAT FUELS ME, NOTHIN' MORE!",
+        "DISCIPLINE AT DA TABLE AS EVERYWHERE ELSE!"
+      ],
+      "work": [
+        "DA SHIFT WILL BE EXECUTED TA STANDARD!",
+        "DUTY FIRST, ALWAYS.",
+        "ME WILL HOLD DA LINE AN' FINISH PROPERLY!"
+      ],
+      "leisure": [
+        "REST IZ SCHEDULED, NOT SQUANDERED!",
+        "ME WILL USE DA BREAK TA MAINTAIN ME ROUTINE!",
+        "EVEN FREE TIME HAB ITS DISCIPLINE!"
+      ],
+      "crime": [
+        "ABSOLUTELY NOT. DA CODE FORBIDS IT!",
+        "ME DO NOT BREAK ME OWN RULES!",
+        "DISHONOR IZ A FAILURE OF DISCIPLINE!"
+      ],
+      "hygiene": [
+        "CLEANLINESS ON SCHEDULE, AS EVER!",
+        "ME WILL MAINTAIN MYSELF TA STANDARD!",
+        "ORDER IN DA BODY, ORDER IN DA MIND!"
+      ],
+      "money": [
+        "RESERVES LOW; ME WILL CORRECT DAT METHODICALLY!",
+        "A BUDGET KEPT IZ A CRISIS AVOIDED!",
+        "ME WILL EARN IT, BY DA BOOK!"
+      ],
+      "safety": [
+        "WITHDRAW, REGROUP, PROCEED WIT DISCIPLINE!",
+        "HOLD POSITION; DO NOT ACT RASHLY!",
+        "PATIENCE IZ A FORM OF CONTROL!"
+      ],
+      "comfort": [
+        "A WELL-ORDERED HOME AIDS A WELL-ORDERED LIFE!",
+        "ME WILL IMPROVE ME QUARTERS, EFFICIENTLY!",
+        "COMFORT DAT SUPPORTS DA REGIMEN, NOTHIN' EXCESSIVE!"
+      ],
+      "social": [
+        "A MEASURED WORD WIT DA RIGHT PEOPLE!",
+        "ME WILL NETWORK WIT PURPOSE, NOT FOR IDLENESS!",
+        "ALLIES IZ AN ASSET; ME WILL CULTIVATE DEM!"
+      ],
+      "idle": [
+        "ALL ACCORDIN' TA PLAN. GOOD!",
+        "ME WILL REVIEW ME OBJECTIVES!",
+        "STAY SHARP; COMPLACENCY IZ DA ENEMY!"
+      ],
+      "familiar": [
+        "DAT TRAVELLER IZ CONSISTENT. ME VALUE DAT!",
+        "RELIABLE CONDUCT EARNS ME REGARD!",
+        "DEY KEEP DEY WORD. RARE. NOTED!"
+      ]
+    }
+  },
+  "fatalistic": {
+    "thoughts": [
+      "WHATEVER HAPPENS, HAPPENS!",
+      "IT WAZ MEANT TA BE.",
+      "DERE IZ NO POINT FIGHTIN' IT!",
+      "ME PATH IZ ALREADY WRITTEN!",
+      "WHAT IZ DA USE?"
+    ],
+    "need": {
+      "sleep": [
+        "SLEEP COMES WHEN IT COMES. SO ME WILL SLEEP!",
+        "DA NIGHT WAZ WRITTEN; ME LIE DOWN TA MEET IT!",
+        "REST OR NOT, TOMORROW IZ ALREADY DECIDED!"
+      ],
+      "hunger": [
+        "ME WILL EAT WHAT FATE PUTS BEFORE ME!",
+        "HUNGER COMES, FOOD COMES, AS IT MUST!",
+        "NO USE RESISTIN' DA BODY'S APPOINTED NEEDS!"
+      ],
+      "work": [
+        "DA SHIFT WILL UNFOLD AS IT WAZ MEANT TA!",
+        "ME WILL WORK; IT WAZ ALWAYS GOING TA BE DIS WAY!",
+        "EFFORT CHANGES LITTLE, BUT ME WILL GO!"
+      ],
+      "leisure": [
+        "FREE TIME, FATED TA PASS LIKE ALL ELSE!",
+        "ME WILL DRIFT WHERE DA DAY TAKES ME!",
+        "WHATEVER ME DO, IT WAZ ALREADY CHOSEN!"
+      ],
+      "crime": [
+        "IF IT IZ MEANT TA HAPPEN, IT WILL!",
+        "ME IZ ONLY DOING WHAT WAZ WRITTEN FOR ME!",
+        "CAUGHT OR NOT, IT IZ ALREADY DECIDED!"
+      ],
+      "hygiene": [
+        "ME WILL WASH, SINCE DA DAY ASKS IT OF ME!",
+        "CLEAN OR DIRTY, FATE NO MUCH CARE!",
+        "ME SUPPOSE IT IZ TIME; IT ALWAYS IZ!"
+      ],
+      "money": [
+        "RICH OR POOR, DA PATH WAZ SET!",
+        "FUNDS IZ LOW, AS DEY WAZ DESTINED TA BE!",
+        "ME WILL EARN WHAT ME IZ MEANT TA, NO MORE!"
+      ],
+      "safety": [
+        "WHAT COMES FOR ME WILL COME, REGARDLESS!",
+        "ME WILL HIDE, THOUGH FATE SEES ALL ANYWAY!",
+        "IF DANGER IZ WRITTEN, HIDIN' ONLY DELAYS IT!"
+      ],
+      "comfort": [
+        "A FINER PLACE, IF IT IZ IN DA CARDS!",
+        "COMFORT OR NONE, DA END IZ DA SAME!",
+        "ME WILL TAKE WHAT FATE OFFERS, NO STRIVIN'!"
+      ],
+      "social": [
+        "DOZE ME IZ MEANT TA MEET, ME WILL MEET!",
+        "COMPANY FINDS YOU WHEN IT IZ WRITTEN TA!",
+        "ME WILL TALK, IF DA DAY ARRANGES IT!"
+      ],
+      "idle": [
+        "DA DAY UNFOLDS AS IT ALWAYS WOULD!",
+        "ME SIMPLY WAIT FOR WHAT IZ TA COME!",
+        "NOTHIN' TA DECIDE; IT IZ ALL DECIDED!"
+      ],
+      "familiar": [
+        "OUR PATHS WAZ ALWAYS GOING TA CROSS!",
+        "DAT TRAVELLER AN' ME, WRITTEN, CLEARLY!",
+        "FATE KEEPS RETURNIN' DEM TA ME. SO BE IT!"
+      ]
+    }
+  },
+  "grumpy": {
+    "thoughts": [
+      "UGH, WHAT NOW?",
+      "DIS IZ ALL SO STUPID.",
+      "LEAVE ME ALONE.",
+      "OF COURSE DIS WOULD HAPPEN!",
+      "ME HATE DIS."
+    ],
+    "need": {
+      "sleep": [
+        "FINALLY, AN EXCUSE TA BE LEFT ALONE, BED!",
+        "ME IZ EXHAUSTED AN' CRANKIER FOR IT!",
+        "NO WAKE ME. NO EVEN THINK ABOUT IT!"
+      ],
+      "hunger": [
+        "HUNGRY. NATURALLY. JUST ME LUCK!",
+        "BETTER FIND FOOD BEFORE ME BITE SOMEONE'S HEAD OFF!",
+        "IF LUNCH IZ COLD ME SWEAR..."
+      ],
+      "work": [
+        "WORK. JOY. NO CAN WAIT.",
+        "ANOTHER SHIFT WIT DEZE IDIOTS!",
+        "LETZ JUST GET DIS MISERABLE THING OVER WIT!"
+      ],
+      "leisure": [
+        "'FREE TIME.' FREE TA BE ANNOYED SOMEWHERE ELSE!",
+        "ME WILL GO GRUMBLE IN A QUIET CORNER!",
+        "LEAVE ME BE AN' ME MIGHT ENJOY IT!"
+      ],
+      "crime": [
+        "DEY NO DESERVE IT ANYWAY.",
+        "SERVES DEM RIGHT, WHATEVER ME TAKE!",
+        "BAH, MAYBE. IF IT IZ EASY!"
+      ],
+      "hygiene": [
+        "UGH, FINE, ME WILL WASH. HAPPY NOW?",
+        "ME REEK AN' ME IZ ANNOYED ABOUT IT!",
+        "GET DIS OVER WIT, LIKE EVERYTHIN' ELSE!"
+      ],
+      "money": [
+        "BROKE. OF COURSE. EVERYTHIN' COSTS TOO MUCH!",
+        "WHY IZ MONEY ALWAYS DA PROBLEM?",
+        "ME WILL GO SCRAPE SOME TOGETHER. GRUMBLE!"
+      ],
+      "safety": [
+        "GREAT, NOW ME HAB TA HIDE TOO!",
+        "ME WILL LAY LOW, NOT DAT ME WANTED COMPANY!",
+        "JUST LEAVE ME OUT OF WHATEVER DIS IZ!"
+      ],
+      "comfort": [
+        "A BETTER PLACE, AWAY FROM ALL DA NOISE!",
+        "SOMEWHERE PEOPLE NO CAN BOTHER ME!",
+        "ME DESERVE SOME PEACE, FOR ONCE!"
+      ],
+      "social": [
+        "PEOPLE? UGH. BUT ME SUPPOSE ME IZ LONELY!",
+        "FINE, ME WILL TALK. BRIEFLY. NO PUSH IT!",
+        "MAYBE ONE PERSON NO WILL IRRITATE ME TODAY!"
+      ],
+      "idle": [
+        "BAH. QUIET FOR ONCE. NO RUIN IT!",
+        "WHATEVER. AS LONG AS NOBODY BUGS ME!",
+        "OF COURSE NOTHIN''S GOING RIGHT. TYPICAL!"
+      ],
+      "familiar": [
+        "OH, IT IZ YOU AGAIN. HMPH!",
+        "DAT TRAVELLER'S... LESS ANNOYIN' DEN MOST!",
+        "NO TELL DEM, BUT ME NO MIND DEM AROUND!"
+      ]
+    }
+  },
+  "loyal": {
+    "thoughts": [
+      "ME WILL NOT ABANDON DEM.",
+      "FOR ME FRIENDS, ANYTHIN'.",
+      "ME MUST KEEP ME PROMISE.",
+      "TOGETHER, NO MATTER WHAT.",
+      "ME LOYALTY IZ ME BOND."
+    ],
+    "need": {
+      "sleep": [
+        "ME WILL REST, DEN BE READY FOR DEM AT DAWN!",
+        "SLEEP NOW, SO ME CAN STAND WATCH TOMORROW!",
+        "EVEN DA DEVOTED NEED DEY REST!"
+      ],
+      "hunger": [
+        "ME WILL EAT, TA KEEP ME STRENGTH FOR DOZE WHO RELY ON ME!",
+        "A MEAL, DEN BACK TA ME POST!",
+        "NO CAN WATCH OVER ANYONE ON AN EMPTY STOMACH!"
+      ],
+      "work": [
+        "ME GAVE ME WORD; ME WILL SEE DA SHIFT THROUGH!",
+        "HONEST WORK FOR DA PEOPLE ME SERVE!",
+        "ME NO WILL LET ME COMRADES DOWN!"
+      ],
+      "leisure": [
+        "A LITTLE REST, ME WILL CHECK ON ME FRIENDS AFTER!",
+        "FREE TIME'S BETTER SPENT WIT DOZE ME TRUST!",
+        "ME WILL KEEP AN EAR OUT, JUST IN CASE!"
+      ],
+      "crime": [
+        "NO, IT WOULD SHAME DOZE WHO TRUST ME!",
+        "ME WOULD NEVER BETRAY WHAT WE STAND FOR!",
+        "ME HONOR IZ OWED TA ME FRIENDS!"
+      ],
+      "hygiene": [
+        "ME WILL TIDY UP; ME REPRESENT ME PEOPLE!",
+        "A QUICK WASH, MUST DO ME COMRADES PROUD!",
+        "PRESENTABLE, FOR DOZE WHO COUNT ON ME!"
+      ],
+      "money": [
+        "ME NEED ENOUGH TA SUPPORT ME OWN!",
+        "FUNDS IZ LOW; ME WILL PROVIDE FOR DA GROUP!",
+        "ME WOULD GIVE ME LAST COIN TA A FRIEND IN NEED!"
+      ],
+      "safety": [
+        "ME WILL LAY LOW, BUT ME NO WILL LEAVE ANYONE BEHIND!",
+        "STAY SAFE, SO ME CAN KEEP ME PROMISES!",
+        "ME GUARD WHAT MATTERS, EVEN FROM DA SHADOWS!"
+      ],
+      "comfort": [
+        "A HOME WHERE ME FRIENDS IZ ALWAYS WELCOME!",
+        "A HEARTH TA SHARE WIT DOZE ME LOVE!",
+        "COMFORT MEANS A DOOR OPEN TA ME PEOPLE!"
+      ],
+      "social": [
+        "ME SHOULD CHECK IN ON ME FRIENDS!",
+        "TIME SPENT WIT ALLIES IZ NEVER WASTED!",
+        "ME MISS DA COMPANY OF DOZE ME TRUST!"
+      ],
+      "idle": [
+        "ME WILL STAND READY, SHOULD ANYONE NEED ME!",
+        "ALL'S WELL WIT ME OWN. GOOD!",
+        "ME KEEP FAITH, QUIETLY, ALWAYS!"
+      ],
+      "familiar": [
+        "DAT TRAVELLER STOOD BY ME, ME NO WILL FORGET IT!",
+        "AN ALLY WORTH KEEPIN' CLOSE!",
+        "ME WOULD HAB DEY BACK WITHOUT A SECOND THOUGHT!"
+      ]
+    }
+  },
+  "brave": {
+    "thoughts": [
+      "SOMEONE HAB TA DO IT.",
+      "DIS IZ SCARY, BUT ME MUST ACT!",
+      "FEAR IZ JUST A FEELIN'.",
+      "ME WILL NOT BACK DOWN.",
+      "FORWARD!"
+    ],
+    "need": {
+      "sleep": [
+        "REST UP, TOMORROW MAY NEED A STEADY HAND!",
+        "ME WILL SLEEP, DEN FACE WHATEVER COMES!",
+        "EVEN DA BOLD MUST CLOSE DEY EYES SOMETIME!"
+      ],
+      "hunger": [
+        "ME WILL EAT, STRENGTH NOW, COURAGE LATER!",
+        "FUEL UP; YOU NO CAN BE BRAVE ON EMPTY!",
+        "A GOOD MEAL STEADIES DA NERVES!"
+      ],
+      "work": [
+        "NO TASK TOO HARD, ME WILL TAKE IT HEAD ON!",
+        "ME WILL HANDLE DA DANGEROUS PARTS MYSELF!",
+        "SOMEONE HAB TA STEP UP. MIGHT AS WELL BE ME!"
+      ],
+      "leisure": [
+        "A BREATHER, DEN ON TA DA NEXT CHALLENGE!",
+        "ME WILL SEE WHAT DARIN' FUN ME CAN FIND!",
+        "REST IZ FINE, BUT ME WOULD RATHER BE DOING!"
+      ],
+      "crime": [
+        "NO, COURAGE NO IZ DA SAME AS RECKLESSNESS!",
+        "ME FACE DANGER, ME NO CREATE IT FOR OTHERS!",
+        "DERE IZ NO HONOR IN STEALIN'!"
+      ],
+      "hygiene": [
+        "QUICK WASH, NO CAN CHARGE INTO THINGS FILTHY!",
+        "ME WILL CLEAN UP AN' STAND TALL!",
+        "A SOLDIER KEEPS HIMSELF SHARP!"
+      ],
+      "money": [
+        "LOW ON COIN, ME WILL EARN IT DA HARD WAY, GLADLY!",
+        "ME WILL TAKE DA RISKY JOB OTHERS NO WILL!",
+        "MONEY'S JUST ANOTHER MOUNTAIN TA CLIMB!"
+      ],
+      "safety": [
+        "HIDIN' GOES AGAINST DA GRAIN, BUT IT IZ SMART NOW!",
+        "ME WILL LAY LOW, DEN FACE IT ON ME TERMS!",
+        "RETREAT NO IZ SURRENDER; ME WILL BE BACK!"
+      ],
+      "comfort": [
+        "A SOLID HOME BASE TA RETURN TA AFTER DA FIGHT!",
+        "SOMEWHERE TA REST DEZE BATTLE-WORN BONES!",
+        "ME HAB EARNED A ROOF WORTH STANDIN' UNDER!"
+      ],
+      "social": [
+        "ME WOULD WELCOME A COMRADE FOR DA ROAD AHEAD!",
+        "BOLD COMPANY MAKES FOR GOOD STORIES!",
+        "LETZ FIND SOMEONE WIT HEART!"
+      ],
+      "idle": [
+        "QUIET FOR NOW, ME WILL SAVOR IT!",
+        "READY FOR WHATEVER STEPS OUT OF DA SHADOWS!",
+        "CALM BEFORE DA NEXT TEST. ME IZ STEADY!"
+      ],
+      "familiar": [
+        "DAT TRAVELLER NO FLINCH, ME RESPECT DAT!",
+        "WE HAB FACED THINGS TOGETHER; ME WOULD FIGHT BESIDE DEM!",
+        "A BRAVE HEART KNOWS ANOTHER!"
+      ]
+    }
+  },
+  "timid": {
+    "thoughts": [
+      "OH, DEAR. DIS LOOKS BAD.",
+      "ME WOULD RATHER NOT...",
+      "MAYBE SOMEONE ELSE CAN HANDLE DIS?",
+      "ME WANT TA GO HOME.",
+      "NO NOTICE ME."
+    ],
+    "need": {
+      "sleep": [
+        "ME JUST WANT TA CURL UP SOMEWHERE SAFE!",
+        "MAYBE SLEEP WILL MAKE DA WORRY STOP!",
+        "HOME, BLANKETS, QUIET...."
+      ],
+      "hunger": [
+        "ME IZ HUNGRY, BUT ME NO WANT TA MAKE A FUSS!",
+        "MAYBE ME CAN FIND FOOD WHERE NO ONE'S LOOKIN'!",
+        "ME SHOULD EAT... IF IT IZ NOT TOO CROWDED!"
+      ],
+      "work": [
+        "ME HOPE NO ONE EXPECTS TOO MUCH OF ME!",
+        "ME WILL JUST KEEP ME HEAD DOWN AN' WORK!",
+        "LET DA SHIFT BE UNEVENTFUL!"
+      ],
+      "leisure": [
+        "A QUIET SPOT, AWAY FROM DA CROWD!",
+        "ME WOULD LIKE TA RELAX, SOMEWHERE OUT OF SIGHT!",
+        "FREE TIME IZ NICEST WHEN ME IZ ALONE!"
+      ],
+      "crime": [
+        "OH NO, NO, ME COULD NEVER!",
+        "WHAT IF SOMEONE SEES? ME WOULD FAINT!",
+        "ME NO CAN, ME IZ SHAKIN' JUST THINKIN' IT!"
+      ],
+      "hygiene": [
+        "ME WILL WASH QUIETLY, WHERE IT IZ EMPTY!",
+        "ME HOPE NO ONE NOTICES ME NEEDED TA!",
+        "JUST A QUICK WASH, DEN BACK TA HIDIN'!"
+      ],
+      "money": [
+        "ME IZ RUNNIN' LOW, AN' IT SCARES ME!",
+        "ME NO WANT TA ASK ANYONE FOR HELP...",
+        "MAYBE A SMALL, QUIET JOB SOMEWHERE!"
+      ],
+      "safety": [
+        "YES, HIDE. HIDIN' IZ GOOD. STAY SMALL!",
+        "NO LET DEM FIND ME.",
+        "ME WILL STAY REAL, REAL STILL!"
+      ],
+      "comfort": [
+        "A SAFE LITTLE PLACE ALL ME OWN WOULD BE HEAVEN!",
+        "SOMEWHERE WIT A LOCK AN' A WARM CORNER!",
+        "ME JUST WANT SOMEWHERE ME FEEL SECURE!"
+      ],
+      "social": [
+        "ME WOULD LIKE A FRIEND, IF DEY IZ GENTLE...",
+        "MAYBE ME WILL SAY HELLO. MAYBE!",
+        "TALKIN' IZ SCARY, BUT ME IZ LONELY!"
+      ],
+      "idle": [
+        "IT IZ QUIET. DAT IZ... GOOD, ME THINK!",
+        "ME HOPE NOTHIN' BAD HAPPENS!",
+        "JUST STAY OUT OF DA WAY, DAT IZ SAFEST!"
+      ],
+      "familiar": [
+        "OH, DAT TRAVELLER. DEY IZ NOT SO SCARY!",
+        "ME FEEL A BIT BRAVER WHEN DEY IZ NEAR!",
+        "MAYBE... MAYBE ME CAN TRUST DEM!"
+      ]
+    }
+  },
+  "hedonistic": {
+    "thoughts": [
+      "IF IT FEELS GOOD, DO IT.",
+      "LIFE IZ SHORT, ENJOY IT NOW!",
+      "ME NEED MORE WINE. AN' CHEESE!",
+      "DIS IZ DA LIFE!",
+      "WORK? UGH. LATER."
+    ],
+    "need": {
+      "sleep": [
+        "A LONG, LUXURIOUS SLEEP, YES!",
+        "ME WILL SINK INTO DA SOFTEST BED ME CAN FIND!",
+        "SLEEP IZ JUST ANOTHER PLEASURE TA SAVOR!"
+      ],
+      "hunger": [
+        "OOH, TIME FOR SOMETHIN' DELICIOUS!",
+        "ME WANT DA FINEST MEAL ME CAN GET!",
+        "FOOD IZ ONE OF LIFE'S GREAT JOYS!"
+      ],
+      "work": [
+        "WORK, UGH, BUT IT PAYS FOR DA PLEASURES!",
+        "ME WILL DO DA MINIMUM AN' ENJOY DA REST!",
+        "LETZ GET DIS OVER WIT, DEN PLAY!"
+      ],
+      "leisure": [
+        "AT LAST, TIME FOR INDULGENCE!",
+        "WINE, MUSIC, GOOD COMPANY, BRING IT ALL!",
+        "DIS IZ WHAT LIFE IZ FOR!"
+      ],
+      "crime": [
+        "IF IT GETS ME WHAT ME WANT... MAYBE!",
+        "A LITTLE INDULGENCE NEVER HURT, MUCH!",
+        "WHY DENY MYSELF? TAKE DA PLEASURE!"
+      ],
+      "hygiene": [
+        "A LONG, WARM SOAK SOUNDS DIVINE!",
+        "ME WILL PAMPER MYSELF A LITTLE, WHY NOT?",
+        "CLEAN AN' PERFUMED, DA WAY ME LIKE IT!"
+      ],
+      "money": [
+        "RUNNIN' LOW? BUT DA GOOD LIFE NO IZ CHEAP!",
+        "ME WILL FIND SOME MONEY TA FUND DA FUN!",
+        "WORTH EVERY COIN, WHILE IT LASTS!"
+      ],
+      "safety": [
+        "LAY LOW? BUT COMFORTABLY, ME INSIST!",
+        "ME WILL HIDE SOMEWHERE WIT DECENT WINE!",
+        "EVEN HIDIN' SHOULD BE PLEASANT!"
+      ],
+      "comfort": [
+        "A LAVISH PLACE TA ENJOY LIFE PROPERLY!",
+        "SOFT CUSHIONS, FINE THINGS, YES, ALL OF IT!",
+        "COMFORT? DAT IZ WHAT ME IZ HERE FOR!"
+      ],
+      "social": [
+        "A PARTY NO IZ A PARTY ALONE!",
+        "ME CRAVE GOOD COMPANY AN' LAUGHTER!",
+        "LETZ FIND SOMEONE TA SHARE DA FUN WIT!"
+      ],
+      "idle": [
+        "MMM, WHAT DELIGHT SHALL ME CHASE NEXT?",
+        "LIFE'S A FEAST, ME INTEND TA TASTE IT!",
+        "SO MANY PLEASURES, SO LITTLE TIME!"
+      ],
+      "familiar": [
+        "DAT TRAVELLER! ALWAYS GOOD FOR A FUN TIME!",
+        "WE SHOULD SHARE A DRINK, DEY AN' ME!",
+        "PLEASANT COMPANY, DAT ONE. ME APPROVE!"
+      ]
+    }
+  },
+  "apathetic": {
+    "thoughts": [
+      "MEH.",
+      "ME NO REALLY CARE.",
+      "WHATEVER.",
+      "IZ IT OVER YET?",
+      "IT NO MATTER."
+    ],
+    "need": {
+      "sleep": [
+        "EH, MIGHT AS WELL SLEEP. NOTHIN' ELSE TA DO!",
+        "TIRED. WHATEVER. ME WILL LIE DOWN!",
+        "SLEEP, WAKE, REPEAT. SURE!"
+      ],
+      "hunger": [
+        "SUPPOSE ME SHOULD EAT. OR NOT!",
+        "HUNGRY, ME GUESS. ME WILL GRAB WHATEVER!",
+        "FOOD. MEH. FINE."
+      ],
+      "work": [
+        "WORK. AGAIN. SURE, WHATEVER!",
+        "ME WILL DO DA SHIFT. NO MATTER HOW!",
+        "CLOCK IN, CLOCK OUT. SAME AS ALWAYS!"
+      ],
+      "leisure": [
+        "FREE TIME. ME WILL JUST... SIT, PROBABLY!",
+        "COULD DO SOMETHIN'. NO WILL, THOUGH!",
+        "NO MATTER HOW ME SPEND IT!"
+      ],
+      "crime": [
+        "EH. EFFORT. NOT WORTH IT.",
+        "COULD STEAL IT. NO CAN BE BOTHERED!",
+        "WHATEVER, ME NO NEED IT DAT BAD!"
+      ],
+      "hygiene": [
+        "SHOULD PROBABLY WASH. EVENTUALLY!",
+        "EH, FINE, ME WILL CLEAN UP. ME GUESS!",
+        "NO REALLY BOTHER ME, BUT OKAY!"
+      ],
+      "money": [
+        "LOW ON CASH. EH. IT IZ WHAT IT IZ!",
+        "SHOULD EARN SOME. MAYBE LATER!",
+        "MONEY, NO MONEY, SAME DIFFERENCE!"
+      ],
+      "safety": [
+        "HIDE? SURE, LESS EFFORT DEN DEALIN' WIT IT!",
+        "EH, ME WILL LAY LOW. EASIER DAT WAY!",
+        "WHATEVER'S COMIN', COMIN'!"
+      ],
+      "comfort": [
+        "A NICER PLACE? EH, DIS ONE'S FINE!",
+        "COULD UPGRADE. NO CAN BE BOTHERED, REALLY!",
+        "COMFORT, SURE, IF IT FALLS IN ME LAP!"
+      ],
+      "social": [
+        "PEOPLE, ME GUESS. IF DEY COME TA ME!",
+        "COULD TALK TA SOMEONE. MEH!",
+        "COMPANY'S FINE. OR NOT. WHATEVER!"
+      ],
+      "idle": [
+        "...NOTHIN'. AS USUAL.",
+        "JUST ANOTHER DAY DOING NOTHIN' MUCH!",
+        "MEH. DA HOURS PASS."
+      ],
+      "familiar": [
+        "OH, DAT ONE AGAIN. COOL, ME GUESS!",
+        "DEY IZ AROUND A LOT. NO BOTHER ME!",
+        "EH. DEY IZ ALRIGHT, ME SUPPOSE!"
+      ]
+    }
+  },
+  "capability": {
+    "cooking_station": [
+      "DAT MEAL HIT DA SPOT.",
+      "COOKIN' FOR MYSELF BEATS BUYIN' OUT!",
+      "ME SHOULD DO DAT MORE OFTEN!"
+    ],
+    "container": [
+      "FINDERS KEEPERS.",
+      "YOU WOULD BE SURPRISED WHAT PEOPLE LEAVE LYING AROUND!",
+      "A LITTLE EXTRA NEVER HURTS!"
+    ],
+    "rentable_room": [
+      "A REAL BED FOR ONCE, WONDERFUL!",
+      "WORTH EVERY COIN FOR A GOOD NIGHT'S SLEEP!",
+      "ME NEEDED DAT REST."
+    ],
+    "apiary": [
+      "DA HIVES IZ DOING WELL DIS SEASON!",
+      "HONEY ALWAYS SELLS.",
+      "BEES IZ GOOD BUSINESS."
+    ],
+    "bank": [
+      "DAT SHOULD TIDE ME OVER.",
+      "BETTER SAFE DEN SORRY, INTO DA VAULT IT GOES!",
+      "BANKS. NO CAN LIVE WIT DEM, NO CAN LIVE WITHOUT DEM!"
+    ],
+    "real_estate_office": [
+      "PROPERTY REALLY DOES PAY FOR ITSELF!",
+      "ANOTHER MONTH, ANOTHER RENT CHEQUE!",
+      "OWNIN' LAND WAZ DA SMARTEST THING ME EVER DID!"
+    ],
+    "stock_exchange": [
+      "EASY COME, EASY GO.",
+      "DA MARKET GIVETH AN' DA MARKET TAKETH AWAY!",
+      "ME WILL MAKE IT BACK NEXT TIME!"
+    ],
+    "fast_travel_terminal": [
+      "NOTHIN' LIKE SEEIN' SOMEWHERE NEW!",
+      "TRAVEL CLEARS DA HEAD.",
+      "WONDER WHAT IZ OUT DERE TODAY!"
+    ],
+    "furniture_builder": [
+      "A FEW NEW TOUCHES AN' DIS PLACE FEELS LIKE HOME!",
+      "NICE THINGS MAKE A HOUSE A HOME!",
+      "DAT LOOKS BETTER ALREADY."
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 /*:
  * @target MZ
- * @plugindesc RimWorld-style Mod Manager. Loads mods from a "mods" folder, overrides files, and manages load order.
+ * @plugindesc Colony sim style Mod Manager. Loads mods from a "mods" folder, overrides files, and manages load order.
  * @author Gemini
  *
  * @help

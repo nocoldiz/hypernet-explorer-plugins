@@ -1,0 +1,33 @@
+{
+  "check": {
+    "default": "ACTION CHECK",
+    "percentage": "PERCENTAGE CHECK"
+  },
+  "outcome": {
+    "success": "SUCCESS",
+    "failure": "FAILURE",
+    "critSuccess": "CRITICAL SUCCESS!",
+    "critFailure": "CRITICAL FAILURE!"
+  },
+  "card": {
+    "rolledLabel": "ROLLED",
+    "neededLabel": "NEEDED",
+    "anyTarget": "--",
+    "breakdown": "D20 {roll} {mod} {stat}",
+    "breakdownFlat": "D20 {roll}"
+  },
+  "toast": {
+    "line": "[{action}] ROLL: {roll}{mod}{stat} = {total}{versus} -> {outcome}",
+    "versus": " VS DC {dc}"
+  },
+  "prompt": {
+    "title": "TRIAL OF {stat}",
+    "titleFlat": "A TURN OF FORTUNE",
+    "who": "{name} STEPS UP",
+    "target": "{dc} OR BETTER",
+    "formula": "D20 {mod} {stat}",
+    "formulaFlat": "D20, AN' NOTHIN' ELSE",
+    "try": "TRY IT",
+    "cancel": "WALK AWAY"
+  }
+}

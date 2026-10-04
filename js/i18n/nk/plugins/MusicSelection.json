@@ -1,15 +1,23 @@
 {
   "trackNone": "NONE",
-  "trackRandom": "RANDOM!",
+  "trackRandom": "RANDOM",
   "trackMap": "CONTINUE MAP MUSIC",
+  "trackBiome": "BIOME",
   "battleMusic": "BATTLE MUSIC",
+  "battleTrack": "BATTLE TRACK",
+  "mode": {
+    "biome": "BIOME",
+    "track": "SELECTED TRACK",
+    "random": "RANDOM",
+    "none": "NONE"
+  },
   "noMusic": "NO MUSIC DURIN' BATTLES.",
-  "randomEachBattle": "A DIFFERENT TUNE GETS PICKED AT DA START OF EVERY SCRAP!",
+  "randomEachBattle": "A DIFFERENT TRACK IZ DRAWN AT DA START OF EVERY BATTLE!",
   "continueMap": "CONTINUE PLAYIN' DA CURRENT MAP BGM!",
+  "biomeEachBattle": "EACH BIOME PLAYS ITS OWN BATTLE TRACK!",
   "playingAsBattle": "PLAYIN' AS BATTLE BACKGROUND MUSIC!",
   "composer": "COMPOSER",
   "currentSelection": "✓ CURRENT SELECTION",
-  "hint": "↑↓ PREVIEW · OK SELECT · ESC CANCEL",
   "ui": {
     "pressOkHint": "PRESS OK TA SET AS BATTLE MUSIC"
   }

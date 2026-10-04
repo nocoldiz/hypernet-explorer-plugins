@@ -143,10 +143,6 @@
       "title": "Chaos",
       "text": "Dobbiamo levarci da qui, hexo, Em! La [Quinta dimensione | Fifth dimension] sta colando dai buchi nella realtà, e ci vuole poco a caderci dentro e finire nel [Deserto bianco | White desert].\nNon è un bel posto, Em. Ci sono rimasta intrappolata per eoni nel 1997, prima che tu infrangessi le leggi dello spaziotempo per salvarmi."
     },
-    "m169_zone4": {
-      "title": "Materials",
-      "text": "We can collect materials by defeating enemies."
-    },
     "m169_zone6": {
       "title": "Sacrificial altar",
       "text": "This place reeks of gasoline, something powerful is buried there."
@@ -332,12 +328,12 @@
       "text": ""
     },
     "m169_zone5": {
-      "title": "Hyperviolence",
-      "text": "We don't have to punch new holes into every enemy we encounter Em, use the [Talk] option in battle to use diplomacy. Or just shut their mouths with the [Wrestle] option if talking doesn't work darlin'."
+      "title": "Iperviolenza",
+      "text": "Non dobbiamo per forza fare nuovi buchi in ogni nemico che incontriamo, Em: usa l'opzione [Parla] in battaglia per tentare la diplomazia."
     },
     "m721_zone4": {
       "title": "Shuttle bay",
-      "text": ""
+      "text": "If we need to abandonship or we want to return to Earth with style.\n"
     },
     "m721_zone5": {
       "title": "Television",
@@ -374,6 +370,14 @@
     "m102_zone2": {
       "title": "Training center",
       "text": "Did you see the training center at Ghent? In reality it's a fake building that, on entry, transports you to the interior of this training center. I was hired to design the mechanism; it's not magical, it's pure physics!"
+    },
+    "m1414_zone14": {
+      "title": "Camper",
+      "text": "Here is our RV, the [Beast]!\nWe can use it to go anywhere we want, in any planet, in any dimension.\nI have some upgrades pending, like insulating it to make it go underwater, you can upgrade the camper from [Menu] and [Vehicles].\nAnd if we leave it behind we can summon it together by joining our liminal cuffs."
+    },
+    "m1414_zone22": {
+      "title": "Bear mauling cave",
+      "text": "This is the famous [Bear mauling cave], we should probably avoid it."
     }
   },
   "tips": {

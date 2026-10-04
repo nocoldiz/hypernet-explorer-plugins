@@ -1,0 +1,61 @@
+{
+  "pin": {
+    "vaultUnnamed": "AN UNNAMED PATRON",
+    "vaultKnown": "{patron}'S HOLY PATRON BUNKER (SEALED)",
+    "vaultOpen": "{patron}'S HOLY PATRON BUNKER (OPEN)"
+  },
+  "read": {
+    "square": "{place}",
+    "place": "HERE",
+    "nation": "CLAIMED BY",
+    "unclaimed": "NO NATION",
+    "ground": "GROUND",
+    "unsurveyed": "UNSURVEYED",
+    "crossed": "CROSSED BY",
+    "river": "A RIVER",
+    "road": "A ROAD",
+    "note": "YA NOTE",
+    "built": "BUILT ON",
+    "builtWhat": "{count}: {what}",
+    "builtCount": "{count} PIECES",
+    "power": "HELD BY"
+  },
+  "country": {
+    "title": "HIGHLIGHT A COUNTRY",
+    "none": "NO COUNTRY"
+  },
+  "hint": {
+    "sheet": "CLICK A SQUARE TA PICK IT. RIGHT-CLICK TA PUT DA CHART AWAY!",
+    "travel": "CLICK TA SET OFF FOR {place}.",
+    "needVehicle": "YOU NEED TA BE ABOARD A VEHICLE TA SET OFF FROM DA CHART!",
+    "world": "CLICK EUROPE TA LOOK CLOSER. RIGHT-CLICK TA PUT DA CHART AWAY!"
+  },
+  "note": {
+    "title": "{place}",
+    "placeholder": "WRITE SOMETHIN' ABOUT DIS SQUARE",
+    "save": "KEEP",
+    "delete": "RUB OUT",
+    "cancel": "BACK",
+    "write": "WRITE A NOTE"
+  },
+  "preview": {
+    "showMap": "SHOW MAP",
+    "title": "{place}",
+    "building": "LAYIN' DA GROUND OUT...",
+    "notKept": "DRAWN FOR DIS LOOK ONLY, AN' KEPT NOWHERE!",
+    "close": "CLOSE",
+    "unbuildable": "DERE IZ NO GROUND TA LAY OUT ON DAT SQUARE!"
+  },
+  "view": {
+    "title": "VIEW",
+    "europe": "EUROPE",
+    "world": "WORLD",
+    "key": "TAB OR X: SWITCH VIEW",
+    "showMinimap": "SHOW MINIMAP",
+    "hideMinimap": "HIDE MINIMAP"
+  },
+  "coords": {
+    "title": "COORDINATES",
+    "value": "{x}, {y}"
+  }
+}

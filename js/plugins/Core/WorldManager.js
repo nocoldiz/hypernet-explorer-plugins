@@ -4,7 +4,7 @@
 
 /*:
  * @target MZ
- * @plugindesc Dwarf Fortress-style world folders: world history, NPC status, artifacts, dungeon layout and public state live in per-world JSON files; savegames stay minimal.
+ * @plugindesc Fortress sim style world folders: world history, NPC status, artifacts, dungeon layout and public state live in per-world JSON files; savegames stay minimal.
  * @author Omni-Lex
  * @url https://nocoldiz.itch.io/hypernet-explorer
  *
@@ -29,7 +29,7 @@
  * @help
  * WorldManager.js
  * ============================================================================
- * Implements a Dwarf Fortress-style "world folder" save layout:
+ * Implements a fortress sim style "world folder" save layout:
  *
  *   save/worlds/<WorldName>/
  *     world.json      - world info (name, seed, world clock, timestamps)

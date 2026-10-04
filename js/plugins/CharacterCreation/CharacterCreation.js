@@ -2080,6 +2080,9 @@
     itemIds: () => Object.keys(STORY_MODE_VEHICLES).map((k) => STORY_MODE_VEHICLES[k].itemId),
     ownsItemId: (itemId) => ccStartVehicleKeys().some((k) => STORY_MODE_VEHICLES[k] && STORY_MODE_VEHICLES[k].itemId === itemId),
     apply: applyStartingVehicles,
+    // Park one vehicle on the story mode's own berth (the camper at Map1414
+    // 87,29), whoever asked for it: the Vehicles tab or a dossier's own camper.
+    parkStoryMode: applyStoryModeVehicle,
   };
 
   // --- Scene_CharacterCreation ---

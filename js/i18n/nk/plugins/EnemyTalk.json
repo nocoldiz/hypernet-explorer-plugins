@@ -19,7 +19,8 @@
     "stoneThrown": "YOU THREW A STONE AT DA ENEMY!",
     "petSuccess": "DA ENEMY SEEMS TA ENJOY BEING PETTED!",
     "petFail": "DA ENEMY NO WANT TA BE PETTED!",
-    "petRefuse": "DIS CREATURE NO RESPOND TA PETTIN'!"
+    "petRefuse": "DIS CREATURE NO RESPOND TA PETTIN'!",
+    "outOfReach": "{name} LOOKS YOU OVER AN' TURNS AWAY.\nIT HAB NO REASON TA FOLLOW A PARTY DIS FAR BENEATH IT!"
   },
   "choices": [
     "CHAT",
@@ -31,7 +32,6 @@
     "CANCEL"
   ],
   "opinion": "OPINION",
-  "navHint": "↑↓ NAVIGATE · OK CONFIRM · ESC CANCEL",
   "recruit": {
     "askToFollow": "ASK TA FOLLOW",
     "adoptAsPet": "ADOPT AS PET"
@@ -42,5 +42,9 @@
     "follower": "FOLLOWER",
     "pet": "PET",
     "joined": "{name} NOW TRAVELS WIT YOU AS YA {kind}!"
+  },
+  "menu": {
+    "header": "{name} {opinion} {value}/100",
+    "row": "{name} {chance}%"
   }
 }

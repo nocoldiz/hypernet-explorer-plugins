@@ -205,20 +205,24 @@
       if (!window.HistoryManager?.addMinorEvent) return;
       const society = $gameSystem?._npcSociety;
       if (!society) return;
-      for (const [name, profile] of Object.entries(society)) {
-        if (!profile.eventLog?.length) continue;
+      // The whole society is walked in one frame, so everything per person
+      // that can wait does: the text is only resolved for an event not fed yet.
+      const date = $gameVariables ? $gameVariables.value(113) : T('NPCSim.unknownDate');
+      for (const name in society) {
+        const profile = society[name];
+        if (!profile?.eventLog?.length) continue;
         const latest = profile.eventLog[0];
         if (!latest) continue;
         // Dedup: only feed an NPC's latest event once. Without a last-fed
         // marker the unchanged eventLog[0] is re-pushed every interval,
         // churning older real events out of the bounded HistorySimulator log.
-        const latestText = this.textOf(latest);
-        const marker = `${latest.date ?? ""}|${latest.key ?? latest.desc ?? ""}|${JSON.stringify(latest.params ?? null)}`;
+        const marker = `${latest.date ?? ""}|${latest.key ?? latest.desc ?? ""}|${latest.params == null ? "null" : JSON.stringify(latest.params)}`;
         if (profile._lastFedEvent === marker) continue;
         profile._lastFedEvent = marker;
+        const latestText = this.textOf(latest);
         try {
           window.HistoryManager.addMinorEvent({
-            date: $gameVariables ? $gameVariables.value(113) : T('NPCSim.unknownDate'),
+            date,
             actor: name,
             desc: latestText,
           });

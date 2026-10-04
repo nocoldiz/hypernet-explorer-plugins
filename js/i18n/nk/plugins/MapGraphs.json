@@ -4,7 +4,7 @@
   "cacheCleared": "CONNECTION CACHE CLEARED!",
   "mostConnected": "MOST CONNECTED: MAP {map} ({links} LINKS)",
   "mode": "MODE: {mode} ANALYSIS",
-  "modeHardcoded": "HARDCODED",
+  "modeHardcoded": "SHIPPED TABLE",
   "modeRuntime": "RUNTIME",
   "noMapLoaded": "NO CAN DISPLAY MAP. NO MAP IZ CURRENTLY LOADED!",
   "controls": "MOUSE: PAN | WHEEL: ZOOM | CLICK: SELECT/DESELECT | ESC: EXIT",
@@ -15,5 +15,6 @@
   "status": "STATUS",
   "visited": "VISITED",
   "notVisited": "NOT VISITED",
-  "connections": "CONNECTIONS"
+  "connections": "CONNECTIONS",
+  "mapStats": "MAP STATS: {maps} MAPS, {links} CONNECTIONS"
 }

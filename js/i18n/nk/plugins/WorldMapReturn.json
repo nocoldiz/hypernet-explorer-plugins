@@ -1,20 +1,36 @@
 {
   "needDivingSuit": "YOU NEED A DIVIN' SUIT",
-  "cannotDigHere": "AIN'T NO GROUND TA DIG INTA 'ERE",
+  "cannotDigHere": "DERE IZ NO GROUND TA DIG INTO HERE",
   "returnToWorldMap": "RETURN TA WORLD MAP",
+  "returnToElevator": "RETURN TA DA ELEVATOR",
   "chooseLandingSite": "CHOOSE LANDIN' SITE",
   "goToSurface": "GO TA DA SURFACE",
   "goUnderground": "UNDERGROUND",
   "toggleWorldMap": "TOGGLE WORLD MAP",
+  "minimapOption": "CORNER MINIMAP",
+  "minimapModes": [
+    "OFF",
+    "EXPLORIN' ONLY",
+    "ALWAYS"
+  ],
   "openWorldMap": "OPEN WORLD MAP",
   "cancel": "CANCEL",
   "visit": "VISIT {place}",
+  "explorePlace": "EXPLORE {place}",
+  "investigatePlace": "INVESTIGATE {place}",
+  "freeWalk": "LIMINAL WALK",
+  "forage": "FORAGE",
   "makeCamp": "MAKE A CAMP",
+  "returnDisabledHere": "YOU NO CAN RETURN TA WORLD MAP FROM HERE",
   "icebushBlocked": "DA FIELDS AROUND ICEBUSH IZ INFESTED WIT PETRODEMONS AN' NEUROFOG, WHY NO YOU TAKE DA HYPERMETRO LIKE ANY SANE HUMAN BEING",
   "stop": "STOP",
   "worldMapMenu": "WORLD MAP",
   "wilderness": "WILDERNESS",
   "mapNumbered": "MAP {id}",
   "underground": "UNDERGROUND LEVEL {depth}",
-  "atTile": "AT {x},{y}"
+  "squareAt": "{place} AT ({x} {y})",
+  "squareBare": "({x} {y})",
+  "atTile": "AT {x},{y}",
+  "lockedPlace": "{place} IZ TRAPPED IN A SPACE AN' TIME BUBBLE",
+  "lockedAhead": "DERE IZ A SPACETIME BUBBLE AHEAD, YOU NO CAN PROCEED"
 }

@@ -263,11 +263,11 @@
  * Furniture that has wandered in out of the other games keeps its own colours,
  * because it has to read as an intrusion: bowling pins and balls, playing,
  * tarot and scratch cards, a slot reel, a pool ball and cue, a die, an arcade
- * cabinet, piano keys, a fishing float, a surfboard, a tetris block, a booster
+ * cabinet, piano keys, a fishing float, a surfboard, a falling block, a booster
  * pack, a horseshoe, a coin - and the party's own camper, loaded off disk
  * (models/Camper.glb).
  *
- * The whole scene renders through the shared PSXShader for a PlayStation-1
+ * The whole scene renders through the shared PSXShader for a 32-bit console
  * wobble, dithering and low-res crunch. The world is populated with battlers
  * from 3DBattlerSystem.js, their generation randomized and their scale pushed
  * large, with a rare chance of gigantic, world-filling horrors.

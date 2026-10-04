@@ -1,0 +1,52 @@
+{
+  "found": {
+    "title": "FOUND A TOWN",
+    "nameLabel": "NAME OF DA TOWN",
+    "namePlaceholder": "NAME IT…",
+    "button": "FOUND DA TOWN",
+    "requirement": "HOUSES STANDIN' HERE: {have} OF {need}",
+    "here": "DIS SQUARE: {place}",
+    "reason": {
+      "notHere": "A TOWN IZ FOUNDED ON OPEN GROUND, NOT FROM INSIDE A BUILDIN'!",
+      "claimed": "{place} ALREADY STANDS ON DIS SQUARE!",
+      "exists": "A TOWN OF YA ALREADY STANDS ON DIS SQUARE!",
+      "houses": "THREE HOUSES HAB TA STAND HERE BEFORE ANYONE WILL CALL IT A TOWN!",
+      "noName": "DA TOWN NEEDS A NAME.",
+      "duplicate": "YOU HAB ALREADY NAMED A TOWN DAT!"
+    },
+    "success": "{name} IZ FOUNDED.",
+    "founded": "{name}, FOUNDED HERE."
+  },
+  "deeds": {
+    "title": "DEEDS",
+    "back": "BACK",
+    "empty": "YOU HAB FOUNDED NO TOWNS.",
+    "colTown": "TOWN",
+    "colWhere": "WHERE",
+    "colHouses": "HOUSES",
+    "colShops": "SHOPS",
+    "colResidents": "RESIDENTS",
+    "colRent": "RENT",
+    "rentPerDay": "{amount} A DAY",
+    "collected": "RENT COLLECTED: {amount}",
+    "nothingDue": "NO RENT IZ DUE YET.",
+    "collect": "COLLECT RENT",
+    "growing": "STILL FILLIN' UP",
+    "full": "FULLY SETTLED",
+    "onPlanet": "ON {planet}",
+    "square": "{place}",
+    "sectionTowns": "TOWNS",
+    "sectionHouses": "HOUSES",
+    "sectionShops": "SHOPS",
+    "sectionAnimals": "ANIMALS",
+    "emptyHouses": "YOU OWN NO HOUSES.",
+    "emptyShops": "YOU OWN NO SHOPS.",
+    "emptyAnimals": "YOU OWN NO ANIMALS.",
+    "colType": "TYPE",
+    "colOccupancy": "OCCUPANCY",
+    "colCategory": "TRADE",
+    "colBalance": "BALANCE",
+    "colStage": "STAGE",
+    "manageShop": "OPEN DA SHOP BOOK"
+  }
+}

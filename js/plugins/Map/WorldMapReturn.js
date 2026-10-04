@@ -160,13 +160,26 @@
     // The Omega Tower's own maps (<MapGroup: OmegaTower>) are the exception: for
     // them the pair is the truth, so a new game started inside the tower knows
     // where in the world it is (see isTemplateCoords).
+    //
+    // A party that has never stood on a world square at all (Variables 43/44
+    // still 0 0, a new game starting on a hand-made map such as story mode's
+    // Ritual Island) has nothing better to offer, so there the pair is honoured
+    // as written rather than leaving them on square (0, 0).
     const TEMPLATE_COORDS = { x: 79, y: 125 };
+
+    // Is this the editor template's pair on a map outside the Omega Tower? Says
+    // nothing about the party; isTemplateCoords adds that.
+    function isTemplatePair(pair, note) {
+        if (!pair || pair.x !== TEMPLATE_COORDS.x || pair.y !== TEMPLATE_COORDS.y) return false;
+        return !/<\s*MapGroup\s*:\s*OmegaTower\s*>/i.test(String(note || ''));
+    }
 
     // Is this <Coords> pair the editor template's leftover rather than a real
     // statement about where the map stands? `note` is the map's own note box.
     function isTemplateCoords(pair, note) {
-        if (!pair || pair.x !== TEMPLATE_COORDS.x || pair.y !== TEMPLATE_COORDS.y) return false;
-        return !/<\s*MapGroup\s*:\s*OmegaTower\s*>/i.test(String(note || ''));
+        if (!isTemplatePair(pair, note)) return false;
+        const known = playerWorldCoords();
+        return known.x > 0 && known.y > 0;
     }
 
     const BORDER_DETECTION_RANGE = 3;
@@ -5517,7 +5530,7 @@
         }
         // A crossing from one procedural square to the next is SHOWN, whether
         // the squares are streamed or not: the screen pans from the one being
-        // left to the one being entered, Zelda style, so take the picture of the
+        // left to the one being entered, classic screen-flip style, so take the picture of the
         // old one now, while it is still on screen, and hold the brightness
         // where it is. Streaming only decides which edges reach here at all -
         // with it on a matching neighbour is stitched on instead and there is no
@@ -5916,7 +5929,7 @@
     // matching neighbour is a seam inside one big stitched map and never comes
     // here, so what is left is the tileset changing under the party, and with
     // streaming off only the party's own square is ever loaded, so every border
-    // is one. Either way it is drawn the way the first Zelda drew it: the
+    // is one. Either way it is drawn the way the first screen-by-screen adventures drew it: the
     // picture of the square being left slides off one side while the square
     // being entered slides in behind it, and control comes back when it stops.
     //
@@ -7447,11 +7460,12 @@
         return m ? { x: parseInt(m[1], 10), y: parseInt(m[2], 10) } : null;
     }
 
-    // The map's pair together with its note, which decides whether the editor
-    // template's pair is meant (see isTemplateCoords).
+    // The map's pair, flagged when it is the editor template's (see
+    // isTemplatePair). Whether a flagged pair counts depends on the party, so
+    // that is decided on every read (mapCoordsTag), never cached.
     function declaredCoordsFromNote(note) {
         const pair = coordsFromNote(note);
-        return (pair && !isTemplateCoords(pair, note)) ? pair : null;
+        return pair ? { x: pair.x, y: pair.y, template: isTemplatePair(pair, note) } : null;
     }
 
     function readMapCoordsTag(mapId) {
@@ -7478,14 +7492,20 @@
 
     // The world square a map DECLARES it stands on, or null when it declares
     // nothing usable (no tag, or the editor template's default pair outside the
-    // Omega Tower).
+    // Omega Tower while the party already knows a square of its own).
     function mapCoordsTag(mapId) {
         const id = Number(mapId) || 0;
         if (!id || id === worldMapId || id === procMapId) return null;
         if (!mapCoordsCache.has(id)) {
             mapCoordsCache.set(id, readMapCoordsTag(id));
         }
-        return mapCoordsCache.get(id);
+        const tag = mapCoordsCache.get(id);
+        if (!tag) return null;
+        if (tag.template) {
+            const known = playerWorldCoords();
+            if (known.x > 0 && known.y > 0) return null;
+        }
+        return { x: tag.x, y: tag.y };
     }
 
     // The party's last known world square. Written by every path that moves them

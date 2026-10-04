@@ -14,7 +14,7 @@
   "permanentBuffs": "PERMANENT PARTY BUFFS",
   "rewardLabel": "REWARD",
   "exp": "EXP",
-  "gold": "GOLD",
+  "gold": "EUROS",
   "complete": "COMPLETE",
   "locked": "LOCKED",
   "research": "RESEARCH",
@@ -29,6 +29,7 @@
   "procDesc": "A LINE OF WORK DAT CLOSED ELSEWHERE AN' STAYED OPEN HERE. DA RESULT REPRODUCES ON DIS WORLD'S APPARATUS; NO DERIVATION FOR IT HAB EVER BEEN PUBLISHED!",
   "unknownDiscoverer": "UNKNOWN",
   "progressCleared": "\\C[3]RESEARCH PROGRESS CLEARED.\\C[0]",
+  "treeRegenerated": "\\C[3]A NEW TREE OF INVENTION TAKES ROOT.\\C[0]",
   "theme": {
     "Physics": {
       "a": [
@@ -282,5 +283,39 @@
     "nobelSuffix": "AN' DERE IZ TALK OF A NOBEL PRIZE",
     "credit": " WORD CREDITS {who} AN' DEY CIRCLE!",
     "theotecnical": "DA HOLY VATICAN EMPIRE HAB PROMULGATED {name}"
+  },
+  "toast": {
+    "title": "DISCOVERY"
+  },
+  "lyceum": {
+    "appName": "LYCEUM",
+    "subtitle": "DA REGISTER OF WHAT DIS WORLD HAB WORKED OUT, AN' WHAT IZ STILL OPEN!",
+    "register": "DA REGISTER",
+    "worldProgress": "{done} OF {total} WORKED OUT",
+    "benchNote": "READIN' AN' DIRECTIN' ONLY. DA RESEARCH ITSELF IZ DONE AT DA BENCH!",
+    "project": "STANDIN' PROJECT",
+    "noProject": "DA LAB HAB NO STANDIN' PROJECT. NAME ONE AN' DA WORKFORCE GOES TA IT!",
+    "makeProject": "SET AS DA PROJECT",
+    "clearProject": "CALL IT OFF",
+    "currentProject": "DA LAB IZ ON DIS.",
+    "projectSet": "DA LAB HAB ITS ORDERS.",
+    "projectCleared": "DA PROJECT IZ CALLED OFF.",
+    "daysOfWork": "({n} DAYS OF WORK AWAY)",
+    "noWorkforce": "(NOBODY IZ GATHERIN' IT)",
+    "colField": "FIELD",
+    "colAbout": "ABOUT",
+    "colWorkedOut": "WORKED OUT",
+    "colWork": "WORK",
+    "colState": "STATE",
+    "colTakes": "TAKES",
+    "workedOut": "{done} OF {total} WORKED OUT IN DIS FIELD!",
+    "done": "KNOWN",
+    "ready": "READY TA RUN",
+    "open": "OPEN",
+    "locked": "WAITS ON EARLIER WORK",
+    "noMaterials": "NOTHIN' BUT TIME",
+    "latest": "LATELY",
+    "nothingYet": "NOBODY IN DIS WORLD HAB WRITTEN ANYTHIN' DOWN YET!",
+    "by": "BY {who}"
   }
 }

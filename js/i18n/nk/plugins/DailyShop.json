@@ -13,7 +13,7 @@
     "pupil": "PUPIL",
     "todaySSchools": "TODAY'S SCHOOLS",
     "todaySDisciplines": "TODAY'S DISCIPLINES",
-    "gold": "GOLD",
+    "gold": "EUROS",
     "nothingToTeachToday": "NOTHIN' TA TEACH TODAY.",
     "forbidden": "FORBIDDEN",
     "spellsForSale": "SPELLS FOR SALE",
@@ -24,7 +24,7 @@
     "tavern": "TAVERN",
     "weaponsmith": "WEAPONSMITH",
     "armorer": "ARMORER",
-    "clothing": "CLOTHING STORE",
+    "clothing": "CLOTHIN' STORE",
     "pharmacy": "PHARMACY",
     "magicShop": "MAGIC SHOP",
     "luxury": "LUXURY BOUTIQUE",
@@ -80,6 +80,7 @@
     "surplusArmory": "SURPLUS ARMORY",
     "junkShop": "JUNK SHOP",
     "academy": "ACADEMY BOOKSTORE",
-    "grimoire": "GRIMOIRE EMPORIUM"
+    "grimoire": "GRIMOIRE EMPORIUM",
+    "doctor": "DOCTOR'S OFFICE"
   }
 }

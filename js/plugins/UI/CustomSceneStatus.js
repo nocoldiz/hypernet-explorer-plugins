@@ -51,7 +51,7 @@
  * - Alignment elemental badge, and a traits page writing every trait out in full
  * - Right-page sections (Attributes / Traits / Passives / Anatomy), the last one
  *   read being the one the sheet opens on next time
- * - Scrollable biological limb-health vitals tracking (Dwarf Fortress limb damage)
+ * - Scrollable biological limb-health vitals tracking (fortress sim limb damage)
  * - Fast, flicker-free rendering with page caching
  */
 

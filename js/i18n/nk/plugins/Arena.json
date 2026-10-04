@@ -52,6 +52,14 @@
   "gauntletHasEnded": "GAUNTLET HAB ENDED.",
   "streak": "STREAK",
   "noDescription": "NO DESCRIPTION AVAILABLE",
+  "bossRush": "BOSS RUSH",
+  "faceEveryAuthoredBoss": "FACE EVERY AUTHORED BOSS, IN LEVEL ORDER",
+  "bossRush2": "BOSS RUSH",
+  "faceEveryBossInLevel": "FACE EVERY BOSS IN DA GAME, IN ASCENDIN' LEVEL ORDER!",
+  "yourPartyIsSetToEach": "YA PARTY IZ SET TA EACH BOSS'S OWN LEVEL AN' RE-EQUIPPED!",
+  "defeatEndsTheRush": "DEFEAT ENDS DA RUSH.",
+  "beginTheRush": "BEGIN DA RUSH",
+  "bossRushHasEnded": "BOSS RUSH HAB ENDED.",
   "msg": {
     "noEnemiesInBracket": "NO SUITABLE ENEMIES FOUND IN DIS LEVEL BRACKET!"
   }

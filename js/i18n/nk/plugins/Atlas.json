@@ -1,0 +1,75 @@
+{
+  "title": "WORLD ATLAS",
+  "back": "CLOSE",
+  "noData": "DA ATLAS SHEETS IZ MISSIN'!",
+  "selectPrompt": "PICK A NATION OFF DA MAP.",
+  "countLabel": "{n} NATIONS CHARTED",
+  "unaligned": "UNALIGNED",
+  "here": "YOU IZ HERE",
+  "fragment": "A FRAGMENT OF ANOTHER DIMENSION, CHARTED WHERE IT FELL!",
+  "noClimate": "NO WEATHER RECORDS FOR DIS NATION!",
+  "mode": {
+    "power": "POWERS",
+    "region": "REGIONS",
+    "climate": "CLIMATE"
+  },
+  "region": {
+    "europe": "EUROPE",
+    "asia": "ASIA",
+    "middleEast": "MIDDLE EAST",
+    "northAmerica": "NORTHERN CANADAFRICA",
+    "southAmerica": "SOUTHERN CANADAFRICA",
+    "africa": "AFRICA",
+    "oceania": "OCEANIA"
+  },
+  "season": {
+    "winter": "WINTER",
+    "spring": "SPRIN'",
+    "summer": "SUMMER",
+    "autumn": "AUTUMN"
+  },
+  "field": {
+    "region": "REGION",
+    "faction": "ALLEGIANCE",
+    "enemyLevel": "ENEMY LEVEL",
+    "controller": "HELD BY",
+    "climate": "CLIMATE THROUGH DA YEAR",
+    "heldIn": "HELD IN {year}",
+    "changedHands": "CHANGED HANDS"
+  },
+  "enemyLevelValue": "LV. {median} (BAND {min}-{max})",
+  "climate": {
+    "dayTemp": "DAY",
+    "nightTemp": "NIGHT",
+    "precipitation": "RAINFALL",
+    "wind": "WIND",
+    "cloud": "CLOUD",
+    "humidity": "HUMIDITY",
+    "daylight": "DAYLIGHT"
+  },
+  "units": {
+    "temp": "{value} °C",
+    "mm": "{value} MM",
+    "speed": "{value} KM/H",
+    "percent": "{value}%"
+  },
+  "climateScale": [
+    "FROZEN",
+    "COLD",
+    "MILD",
+    "HOT",
+    "SCORCHIN'"
+  ],
+  "today": "TODAY",
+  "openArticle": "OPEN DA NATION'S ARTICLE",
+  "era": {
+    "before": "BEFORE DA SQUISHIN'",
+    "during": "DA SQUISHIN', {pct}%",
+    "after": "AFTER DA SQUISHIN'"
+  },
+  "hyperpowersTitle": "HYPERPOWERS",
+  "hyperpowersSubtitle": "TERRITORY BREAKDOWN IN {year}",
+  "territoryCount": "{n} TERRITORIES",
+  "territoriesCovered": "TERRITORY COVERED",
+  "allPowers": "ALL HYPERPOWERS"
+}

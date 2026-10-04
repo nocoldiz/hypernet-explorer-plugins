@@ -1,0 +1,23 @@
+{
+  "rent": {
+    "rent_question": "RENT",
+    "free_access": "FREE ACCESS",
+    "already_rented": "YOU HAB ALREADY RENTED DIS ROOM",
+    "for_24h_rent": "FOR 24H RENT",
+    "cancel": "CANCEL",
+    "bash": "BASH DA DOOR IN",
+    "free_access_granted": "FREE ACCESS GRANTED TA",
+    "access_restored": "ACCESS RESTORED TA",
+    "rented_for_24h": "ENJOY YA STAY!",
+    "for_24_hours": "FOR 24 HOURS!",
+    "not_enough_gold": "NOT ENOUGH EURO!",
+    "error_event_id": "ERROR: NO CAN DETERMINE EVENT ID",
+    "rented": "RENTED",
+    "expired": "EXPIRED",
+    "available_rooms": "AVAILABLE ROOMS",
+    "hours_remaining": "HOURS REMAININ'",
+    "rent_now": "RENT NOW",
+    "no_rooms": "NO ROOMS AVAILABLE",
+    "empty_world": "DA DOOR IZ ALREADY OPEN AN' DA GRIMORIE IZ BARE. DERE IZ NOBODY LEFT TA RENT DIS FROM!"
+  }
+}

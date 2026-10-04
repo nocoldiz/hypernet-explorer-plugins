@@ -2,14 +2,30 @@
   "ui": {
     "back": "BACK",
     "specializations": "SPECIALIZATIONS",
+    "searchPlaceholder": "SEARCH SPECIALIZATIONS…",
     "trained": "TRAINED",
     "all": "ALL",
     "noneTrained": "NO SPECIALIZATIONS TRAINED YET!",
+    "noMatches": "NOTHIN' UNDER DAT NAME.",
     "untrained": "UNTRAINED",
     "noneSelected": "NO SPECIALIZATION SELECTED!",
     "towards": "TOWARDS {level}",
     "pointsToNext": "{points} MORE POINTS TA {level}",
     "mastered": "FULLY MASTERED. NOTHIN' LEFT TA LEARN!",
-    "governingStat": "GOVERNIN' STAT: {stat}"
-  }
+    "governingStat": "GOVERNIN' STAT: {stat}",
+    "statLabel": "GOVERNIN' STAT",
+    "category": "CATEGORY",
+    "tier": "TIER {n}",
+    "notImplemented": "NOT IMPLEMENTED",
+    "purse": "UNSPENT POINTS",
+    "spendPoint": "SPEND A POINT: {level}",
+    "spendBlocked": "NOTHIN' LEFT TA BUY HERE"
+  },
+  "rankNames": [
+    "UNTRAINED",
+    "NOVICE (+1)",
+    "ADEPT (+2)",
+    "EXPERT (+3)",
+    "MASTER (+4)"
+  ]
 }

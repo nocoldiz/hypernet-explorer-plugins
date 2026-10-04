@@ -191,7 +191,7 @@
             return frame === this._rStickFrame ? this._rStickReads : 0;
         },
 
-        // Standard gamepad mapping (Xbox layout labels). The four d-pad
+        // Standard gamepad mapping (standard pad layout labels). The four d-pad
         // buttons are here as themselves: core folds the LEFT STICK into the
         // same Input directions, so a scene that wants the d-pad alone (the 3D
         // world's quick bar, stepped with up/down while the stick still walks)

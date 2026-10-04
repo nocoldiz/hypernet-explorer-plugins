@@ -955,7 +955,13 @@
         this.newMapId() === BOLOGNA_MAP_ID) {
       this.requestMapReload();
     }
+    const settle = _settleOnArrival && this.isTransferring() && this.newMapId() === BOLOGNA_MAP_ID;
     _Game_Player_performTransfer.call(this);
+    // A teleport onto a roof or into a canal lands on the nearest street.
+    if (settle) {
+      _settleOnArrival = false;
+      if ($gameMap.mapId() === BOLOGNA_MAP_ID) settlePlayerOnGround();
+    }
   };
 
   // ===== FAUNA SPAWN OVERRIDE =====
@@ -977,6 +983,60 @@
   // Load the requested cell and warp the player into it. spawnX/spawnY are in
   // tile coordinates within the 256x256 cell; when omitted the player lands in
   // the centre. Returns true if the (row,col) is in range and the warp started.
+  //
+  // The tile picked on the chart is often a roof, a wall or a canal. The warp
+  // only knows the cell's ground once it has landed, so it is flagged here and
+  // the party is stepped onto the nearest tile they can stand on as the
+  // transfer completes (see performTransfer below).
+
+  let _settleOnArrival = false;
+
+  // How far out the search for ground goes before giving up and leaving the
+  // party where they landed. A city block is rarely more than a few dozen
+  // tiles across, so this is generous.
+  const SETTLE_RADIUS = 96;
+
+  // The nearest tile to (x, y) that `standable` accepts, searched in rings of
+  // growing distance so the first hit is the closest one (by the larger of
+  // the two offsets). Null when nothing within `radius` will do.
+  function nearestStandableTile(x, y, standable, width, height, radius) {
+    if (standable(x, y)) return { x, y };
+    for (let r = 1; r <= radius; r++) {
+      let best = null, bestD = Infinity;
+      for (let dy = -r; dy <= r; dy++) {
+        for (let dx = -r; dx <= r; dx++) {
+          if (Math.abs(dx) !== r && Math.abs(dy) !== r) continue; // the ring only
+          const nx = x + dx, ny = y + dy;
+          if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+          const d = dx * dx + dy * dy;
+          if (d < bestD && standable(nx, ny)) { best = { x: nx, y: ny }; bestD = d; }
+        }
+      }
+      if (best) return best;
+    }
+    return null;
+  }
+
+  // A tile the party can stand on AND walk off: passable in at least one
+  // direction into a neighbour that lets them in. A lone passable speck in
+  // the middle of a roof is not ground.
+  function isStandableTile(x, y) {
+    if (!$gameMap.isValid(x, y)) return false;
+    const DIRS = [[2, 0, 1], [4, -1, 0], [6, 1, 0], [8, 0, -1]];
+    return DIRS.some(([d, dx, dy]) => {
+      const nx = x + dx, ny = y + dy;
+      return $gameMap.isPassable(x, y, d) && $gameMap.isValid(nx, ny) &&
+        $gameMap.isPassable(nx, ny, 10 - d);
+    });
+  }
+
+  function settlePlayerOnGround() {
+    const spot = nearestStandableTile($gamePlayer.x, $gamePlayer.y, isStandableTile,
+      $gameMap.width(), $gameMap.height(), SETTLE_RADIUS);
+    if (spot && (spot.x !== $gamePlayer.x || spot.y !== $gamePlayer.y)) {
+      $gamePlayer.locate(spot.x, spot.y);
+    }
+  }
 
   function teleportToCell(row, col, spawnX, spawnY) {
     row = Number(row);
@@ -1004,6 +1064,7 @@
         state.row     = row;
         state.col     = col;
         setMapData(mapObj);
+        _settleOnArrival = true;
         $gamePlayer.reserveTransfer(BOLOGNA_MAP_ID, sx, sy, $gamePlayer.direction(), 0);
       })
       .catch(err => {
@@ -1028,6 +1089,9 @@
     MAP_W, MAP_H,
     getState,
     teleportToCell,
+    // Where a teleport onto unwalkable ground puts the party instead.
+    nearestStandableTile,
+    isStandableTile,
     // The cell the party is standing in, as a seed. ProceduralHouseSystem mixes
     // it into every door seed so two cells' doors at the same coordinates open
     // into different buildings; anything else that has to be stable per cell

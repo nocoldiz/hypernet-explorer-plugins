@@ -5,19 +5,37 @@
     "ap": "AP",
     "mp": "MP"
   },
+  "assist": {
+    "none": "DERE IZ NO ONE TA ASSIST.",
+    "borrowed": "BORROWED \\C[3]{skill}\\C[0] FROM {actor}."
+  },
   "cost": {
     "mp": "{n} MP",
     "ap": "{n} AP",
     "both": "{ap} AP + {mp} MP"
+  },
+  "battle": {
+    "back": "BACK",
+    "none": "NOTHIN' TA CAST",
+    "elementNone": "NON-ELEMENTAL"
+  },
+  "weapon": {
+    "melee": "NEEDS A MELEE WEAPON",
+    "ranged": "NEEDS A RANGED WEAPON",
+    "chip": {
+      "melee": "NEEDS MELEE",
+      "ranged": "NEEDS RANGED"
+    }
   },
   "discipline": {
     "basic": "BASIC DISCIPLINE",
     "standard": "STANDARD DISCIPLINE"
   },
   "section": {
+    "info": "INFO",
+    "incantation": "INCANTATION",
     "damage": "DAMAGE",
     "skillEffects": "SKILL EFFECTS",
-    "classifications": "CLASSIFICATIONS",
     "training": "TRAININ'"
   },
   "role": {
@@ -73,13 +91,32 @@
   },
   "empty": {
     "title": "GRIMOIRE CODICIL",
-    "hint": "SELECT A SKILL FROM DA LIST ON DA LEFT TA INSPECT ITS ELEMENTAL SCALE, USE COST, AN' ALCHEMICAL ACTIONS!",
-    "section": "NO SKILLS CATALOGED UNDER DIS SECTION!",
-    "category": "NO SKILLS CATALOGED IN DIS CATEGORY!"
+    "hint": "SELECT A SKILL FROM DA LIST ON DA LEFT TA SEE ITS ELEMENT, COST AN' EFFECTS!",
+    "section": "[EMPTY]",
+    "category": "[EMPTY]"
   },
   "spec": {
+    "statMet": "{value} OF {points} BASE (MET)",
+    "statShort": "{value} OF {points} BASE ({percent}% TA FUMBLE)",
+    "statBaseNote": "BASE STAT ONLY: GEAR, BUFFS AN' STATES DO NOT COUNT!",
     "trains": "TRAINS",
-    "bonus": "SKILL BONUS"
+    "bonus": "SKILL BONUS",
+    "label": {
+      "damage": "DAMAGE",
+      "damageCategory": "DAMAGE CLASS",
+      "statReq": "REQUIRES",
+      "statHeld": "BASE HELD",
+      "statCounts": "WHAT COUNTS",
+      "grantedBy": "GRANTED BY",
+      "range": "RANGE"
+    },
+    "range": {
+      "tiles": {
+        "one": "{count} TILE",
+        "other": "{count} TILES"
+      },
+      "unlimited": "ANYWHERE"
+    }
   },
   "loadout": {
     "skills": "SKILLS",
@@ -89,9 +126,96 @@
     "benched": "DESYNCED",
     "always": "ALWAYS",
     "hint": "SHIFT SYNCS OR DESYNCS DA SELECTED SKILL",
-    "full": "{group} LOADOUT IZ FULL ({max} SYNCED). DESYNC ONE FIRST!"
+    "full": "{group} LOADOUT IZ FULL ({max} SYNCED). DESYNC ONE FIRST!",
+    "best": "BEST",
+    "random": "RANDOM",
+    "bestApplied": "SYNCED DA {n} MOST USEFUL SKILLS!",
+    "randomApplied": "SYNCED {n} RANDOM SKILLS.",
+    "statLocked": "{name} NEEDS {stat} BASE; DIS ONE HAB {value}!"
   },
   "tag": {
     "field": "FIELD"
+  },
+  "magicSystem": {
+    "label": "MAGIC SYSTEM",
+    "Arcane": "ARCANE",
+    "Sacred": "SACRED",
+    "Sympathetic": "SYMPATHETIC",
+    "Dimensional": "DIMENSIONAL",
+    "Psionics": "PSIONICS",
+    "Technomagic": "TECHNOMAGIC",
+    "Pataphysic": "PATAPHYSIC",
+    "Natural": "NATURAL",
+    "Thermodynamics": "THERMODYNAMICS",
+    "Ritual": "RITUAL"
+  },
+  "searchPlaceholder": "SEARCH SKILLS…",
+  "help": {
+    "menu": {
+      "title": "SKILLS",
+      "items": {
+        "back": {
+          "name": "BACK",
+          "text": "LEAVES DA SKILLS PAGE."
+        },
+        "types": {
+          "name": "TABS",
+          "text": "DA KINDS OF SKILL DA CHARACTER KNOWS. LEVEL UP LISTS DA SKILLS DAT CAN BE LEARNED NOW!"
+        },
+        "search": {
+          "name": "SEARCH AN' SORT",
+          "text": "FILTERS DA LIST BY NAME AN' CHANGES ITS ORDER!"
+        },
+        "grid": {
+          "name": "SKILLS",
+          "text": "EVERY SKILL IN DA OPEN TAB. PICK ONE TA SEE ITS CARD ON DA RIGHT PAGE!"
+        },
+        "loadout": {
+          "name": "LOADOUT",
+          "text": "DA NINE SKILLS CARRIED INTO BATTLE. ONLY DEZE CAN BE CAST IN A FIGHT; BEST AN' RANDOM FILL DA STRIP FOR YOU!"
+        },
+        "sync": {
+          "name": "SYNC AN' DESYNC",
+          "text": "SYNC PUTS DA SELECTED SKILL IN DA LOADOUT, DESYNC TAKES IT OUT. SOME SKILLS IZ ALWAYS CARRIED AN' SPEND NO SLOT!"
+        },
+        "card": {
+          "name": "SKILL CARD",
+          "text": "COST, ELEMENT, DAMAGE AN' EFFECTS OF DA SELECTED SKILL, AN' USE TA CAST IT OUTSIDE BATTLE!"
+        },
+        "member": {
+          "name": "COMPANION TABS",
+          "text": "SWITCHES DA CHARACTER."
+        },
+        "help": {
+          "name": "? HELP",
+          "text": "OPENS DIS SHEET. ON A CONTROLLER, PRESS SELECT; PRESS IT AGAIN, BACK OR CONFIRM TA CLOSE!"
+        }
+      }
+    },
+    "battle": {
+      "title": "CASTIN' IN BATTLE",
+      "items": {
+        "list": {
+          "name": "SKILLS",
+          "text": "DA SKILLS DIS CHARACTER CARRIES INTO BATTLE. PICK ONE TA CAST IT!"
+        },
+        "cost": {
+          "name": "COST",
+          "text": "DA MP OR AP A SKILL SPENDS. A SKILL DA CHARACTER NO CAN AFFORD IZ DIMMED!"
+        },
+        "weapon": {
+          "name": "WEAPON NEEDS",
+          "text": "A SKILL MARKED NEEDS MELEE OR NEEDS RANGED WORKS ONLY WIT DAT KIND OF WEAPON IN HAND!"
+        },
+        "target": {
+          "name": "TARGET",
+          "text": "A SKILL AIMED AT AN ALLY ASKS WHO IT LANDS ON AFTER BEING PICKED!"
+        },
+        "help": {
+          "name": "? HELP",
+          "text": "OPENS DIS SHEET. ON A CONTROLLER, PRESS SELECT; PRESS IT AGAIN, BACK OR CONFIRM TA CLOSE!"
+        }
+      }
+    }
   }
 }

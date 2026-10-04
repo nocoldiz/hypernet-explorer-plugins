@@ -7,9 +7,39 @@
   "listPair": " AN' ",
   "listLast": "AN' ",
   "hitsFor": " ATTACKS ",
-  "damageSuffix": ", IT TOOK %1 DAMAGE!",
-  "recoverySuffix": ", IT RECOVERED %1 HP!",
-  "noDamageSuffix": ", IT TOOK NO DAMAGE.",
+  "damageSuffix": "IT TOOK %1 DAMAGE!",
+  "recoverySuffix": "IT RECOVERED %1 HP!",
+  "noDamageSuffix": "IT TOOK NO DAMAGE!",
   "uses": " USES ",
-  "and": "AN'"
+  "and": "AN'",
+  "positionOption": "BATTLE LOG POSITION",
+  "positionBottomLeft": "BOTTOM LEFT",
+  "positionTopRight": "TOP RIGHT",
+  "skillNamesOption": "SKILL NAMES",
+  "skillName": "SKILL NAME",
+  "skillAction": "SKILL ACTION",
+  "pronouns": {
+    "he": {
+      "subject": "HE",
+      "object": "HIM",
+      "possessive": "HIS"
+    },
+    "she": {
+      "subject": "SHE",
+      "object": "HER",
+      "possessive": "HER"
+    },
+    "they": {
+      "subject": "DEY",
+      "object": "DEM",
+      "possessive": "DEY"
+    },
+    "it": {
+      "subject": "IT",
+      "object": "IT",
+      "possessive": "ITS"
+    }
+  },
+  "statDelta": "{stat} {points}",
+  "statUnchanged": "{stats} HELD WHERE DEY STAND!"
 }

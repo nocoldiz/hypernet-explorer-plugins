@@ -1040,7 +1040,7 @@ EffectManager.load = function(filename) {
     if (filename) {
         const url = this.makeUrl(filename);
         const cache = this._cache;
-        if (!cache[url] && Graphics.effekseer) {
+        if (!cache[url] && EffectManager.isRuntimeUsable()) {
             this.startLoading(url);
         }
         return cache[url];
@@ -1052,17 +1052,73 @@ EffectManager.load = function(filename) {
 EffectManager.startLoading = function(url) {
     const onLoad = () => this.onLoad(url);
     const onError = (message, url) => this.onError(url);
-    const effect = Graphics.effekseer.loadEffect(url, 1, onLoad, onError);
+    let effect = null;
+    try {
+        effect = Graphics.effekseer.loadEffect(url, 1, onLoad, onError);
+    } catch (e) {
+        this.onRuntimeFault(e, "loadEffect");
+        return null;
+    }
     this._cache[url] = effect;
     return effect;
 };
 
+// Bumped on every clear(). A handle played under an older generation points at
+// a released effect: touching it traps the WASM runtime with "invalid index
+// into function table", so Sprite_Animation drops such handles unread.
+EffectManager._generation = 0;
+EffectManager._faultStreak = 0;
+EffectManager._faultLimit = 30;
+
 EffectManager.clear = function() {
+    // Stop every live instance BEFORE releasing the effects they run, whoever
+    // calls clear (map transfer, battle end, unload); a released effect with a
+    // live instance faults on the next update() or draw.
+    this.stopAllSafely();
     for (const url in this._cache) {
         const effect = this._cache[url];
-        Graphics.effekseer.releaseEffect(effect);
+        try {
+            Graphics.effekseer.releaseEffect(effect);
+        } catch (e) {
+            // already gone with its context; nothing left to release
+        }
     }
     this._cache = {};
+    this._generation++;
+};
+
+EffectManager.stopAllSafely = function() {
+    if (Graphics.effekseer) {
+        try {
+            Graphics.effekseer.stopAll();
+        } catch (e) {
+            // a faulted runtime cannot stop anything more than it already has
+        }
+    }
+};
+
+// Called by every guarded Effekseer call that threw. Logs, stops what is left
+// and, if the runtime keeps faulting, switches Effekseer off for the session:
+// the game goes on without animations rather than locking on an error screen.
+EffectManager.onRuntimeFault = function(error, where) {
+    this._faultStreak++;
+    console.warn(
+        "[Effekseer] " + where + " faulted, effect dropped: " +
+            (error && error.message ? error.message : error)
+    );
+    this.stopAllSafely();
+    if (this._faultStreak >= this._faultLimit && !Graphics._effekseerDisabled) {
+        Graphics._effekseerDisabled = true;
+        console.warn("[Effekseer] runtime keeps faulting, animations disabled");
+    }
+};
+
+EffectManager.onRuntimeOk = function() {
+    this._faultStreak = 0;
+};
+
+EffectManager.isRuntimeUsable = function() {
+    return !!Graphics.effekseer && !Graphics._effekseerDisabled;
 };
 
 EffectManager.onLoad = function(/*url*/) {
@@ -2122,8 +2178,13 @@ SceneManager.updateInputData = function() {
 };
 
 SceneManager.updateEffekseer = function() {
-    if (Graphics.effekseer && this.isGameActive()) {
-        Graphics.effekseer.update();
+    if (EffectManager.isRuntimeUsable() && this.isGameActive()) {
+        try {
+            Graphics.effekseer.update();
+            EffectManager.onRuntimeOk();
+        } catch (e) {
+            EffectManager.onRuntimeFault(e, "update");
+        }
     }
 };
 
@@ -2184,9 +2245,7 @@ SceneManager.onBeforeSceneStart = function() {
         this._previousScene.destroy();
         this._previousScene = null;
     }
-    if (Graphics.effekseer) {
-        Graphics.effekseer.stopAll();
-    }
+    EffectManager.stopAllSafely();
 };
 
 SceneManager.onSceneStart = function() {

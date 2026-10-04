@@ -57,5 +57,12 @@
   "coords": {
     "title": "Coordinates",
     "value": "{x}, {y}"
+  },
+  "bologna": {
+    "title": "Bologna",
+    "cell": "Cell",
+    "tile": "Tile",
+    "teleport": "Teleport here",
+    "hint": "Click a tile to pick it, then teleport onto it. Right-click to put the chart away."
   }
 }

@@ -1,3 +1,230 @@
 {
-  "demoLimit": " (DEMO MODE LIMIT: {max})"
+  "demoLimit": " (DEMO MODE LIMIT: {max})",
+  "bandFallbackName": "CLIMBER",
+  "bandFell": "{name} FELL ON DIS FLOOR.",
+  "bandLooted": "SEARCHED {name}'S BELONGINGS: FOUND {gold}€ AN' EQUIPMENT!",
+  "bandLines": [
+    "WE CAME UP FOR DA LOOT. SO FAR DA FLOOR HAB TAKEN MORE DEN IT HAB GIVEN!",
+    "KEEP TA DA WALLS. WHATEVER NESTS HERE DOES NOT HEAR STONE!",
+    "LOST ONE OF OURS TWO FLOORS DOWN. WE IZ NOT TURNIN' BACK FOR DA BODY!",
+    "IF YOU FIND DA STAIR BEFORE WE DO, LEAVE DA DOOR OPEN BEHIND YOU!",
+    "THREE OF US WENT IN. COUNT US ON YA WAY OUT AN' SEE HOW MANY DERE IZ!",
+    "DA LIFT ANSWERS, BUT NOT ALWAYS TA DA FLOOR YOU ASKED IT FOR!",
+    "WE HUNT WHAT DA TOWER FEEDS. DO NOT GET BETWEEN US AN' IT!",
+    "REST IF YOU LIKE. NOTHIN' UP HERE RESTS WIT YOU!",
+    "EVERY FLOOR IZ SOMEBODY'S LAST ONE. TRY NOT TA MAKE IT DIS ONE!",
+    "YOU CLIMB FOR DA TOP, WE CLIMB FOR DA PAY. SAME STAIRS!"
+  ],
+  "nameGrammar": {
+    "machine": {
+      "onsets": [
+        "K",
+        "T",
+        "D",
+        "V",
+        "Z",
+        "X",
+        "KR",
+        "TR",
+        "DR",
+        "VK",
+        "ZT",
+        "QU",
+        "J",
+        "B",
+        "G"
+      ],
+      "nuclei": [
+        "A",
+        "O",
+        "U",
+        "ME",
+        "E",
+        "AA",
+        "OO",
+        "EI",
+        "OU"
+      ],
+      "codas": [
+        "K",
+        "T",
+        "X",
+        "N",
+        "R",
+        "S",
+        "KS",
+        "NT",
+        "RK",
+        "-7",
+        "-9",
+        "-3",
+        "-12"
+      ],
+      "joiners": [
+        "-",
+        ".",
+        ""
+      ]
+    },
+    "alien": {
+      "onsets": [
+        "SH",
+        "TH",
+        "ZH",
+        "KL",
+        "SL",
+        "VR",
+        "XI",
+        "Y",
+        "N",
+        "M",
+        "S",
+        "Z",
+        "Q",
+        "TL"
+      ],
+      "nuclei": [
+        "AA",
+        "EE",
+        "II",
+        "OO",
+        "UU",
+        "AE",
+        "IA",
+        "OU",
+        "EI",
+        "AU"
+      ],
+      "codas": [
+        "N",
+        "L",
+        "R",
+        "S",
+        "TH",
+        "SH",
+        "X",
+        "LL",
+        "NN"
+      ],
+      "joiners": [
+        "'",
+        "-",
+        ""
+      ]
+    },
+    "eldritch": {
+      "onsets": [
+        "GH",
+        "ZH",
+        "KTH",
+        "NGH",
+        "XH",
+        "PHTH",
+        "VL",
+        "TZQ",
+        "GL",
+        "RH",
+        "TS",
+        "HY",
+        "WR",
+        "YG"
+      ],
+      "nuclei": [
+        "O",
+        "U",
+        "AA",
+        "UU",
+        "YH",
+        "OA",
+        "UI",
+        "AE",
+        "AO"
+      ],
+      "codas": [
+        "TH",
+        "GH",
+        "LTH",
+        "RN",
+        "ZG",
+        "MN",
+        "KH",
+        "SS",
+        "LL",
+        "RR"
+      ],
+      "joiners": [
+        "'",
+        "-",
+        "·",
+        ""
+      ]
+    }
+  },
+  "worldKind": {
+    "mixed": "MIXED WORLD",
+    "earthling": "EARTHLIN' COLONY",
+    "goblin": "GOBLIN WORLD",
+    "monster": "MONSTER WORLD",
+    "beast": "WORLD OF BEASTS",
+    "zombie": "RISEN WORLD",
+    "fungoid": "FUNGOID WORLD",
+    "machine": "MACHINE WORLD",
+    "alien": "ALIEN WORLD",
+    "magical": "MAGICAL WORLD",
+    "undead": "WORLD OF DA DEAD",
+    "mutant": "MUTANT WORLD",
+    "severed": "SEVERED WORLD",
+    "ruin": "RUINED WORLD",
+    "mimic": "MIMIC WORLD"
+  },
+  "worldKindBlurb": {
+    "mixed": "A WORLD DAT TOOK IN WHOEVER DA SHAFT SENT IT, AN' MADE A PEOPLE OUT OF DA MIXTURE!",
+    "earthling": "EARTH PEOPLE WHO CLIMBED IN AN' NEVER CLIMBED BACK OUT. DEY STILL KEEP EARTH'S CALENDAR!",
+    "goblin": "GOBLINS ALL DA WAY DOWN, LOUD ABOUT IT, AN' ORGANISED INTO SOMETHIN' DEY INSIST IZ A GOVERNMENT!",
+    "monster": "NOTHIN' HERE WAZ EVER TAME, AN' WHAT RULES IT RULES BY BEING DA LARGEST THING IN DA ROOM!",
+    "beast": "ANIMALS, AN' DA WEATHER DAT MOVES DEM. NOTHIN' HERE BUILDS OR BELIEVES ANYTHIN'!",
+    "zombie": "DA PLAGUE RAN ITS COURSE AN' DA POPULATION STAYED ON AFTERWARDS!",
+    "fungoid": "ONE ORGANISM WEARIN' A GREAT MANY BODIES, AN' DISAGREEIN' WIT ITSELF IN ALL OF DEM!",
+    "machine": "DA PEOPLE DIED AN' DA INSTITUTIONS DID NOT. DA ELECTIONS IZ STILL HELD ON SCHEDULE!",
+    "alien": "NOTHIN' ON EARTH APPLIES HERE, AN' ITS PEOPLE IZ UNBOTHERED BY DAT!",
+    "magical": "MAGIC WAZ NEVER BOUND HERE, SO EVERY TRADE IZ A SCHOOL AN' EVERY SCHOOL IZ A FACTION!",
+    "undead": "A WORLD DAT KEPT ITS DEAD IN OFFICE!",
+    "mutant": "A WORLD DAT CHANGED FASTER DEN IT COULD AGREE ON WHAT IT WAZ!",
+    "severed": "MAGIC DOES NOT REACH HERE. WHAT IZ LEFT IZ MACHINERY, PAPERWORK AN' PATIENCE!",
+    "ruin": "WHATEVER LIVED HERE FINISHED, AN' DA BUILDINGS HAB NOT BEEN TOLD!",
+    "mimic": "EVERYTHIN' IZ FURNITURE UNTIL IT IZ NOT!"
+  },
+  "world": {
+    "heading": "WORLD",
+    "kind": "KIND",
+    "dominant": "DOMINANT PEOPLE",
+    "dominantShare": "{name} ({percent}% OF DA POPULATION)",
+    "population": "POPULATION",
+    "magic": "MAGIC",
+    "power": "HYPERPOWER",
+    "parties": "PARTIES",
+    "reachedFrom": "REACHED FROM",
+    "reachedFloor": "OMEGA TOWER, FLOOR {floor}",
+    "band": "TYPICAL LEVEL",
+    "bandRange": "AROUND {median} (FROM {min} TA {max})",
+    "noGovernment": "HOLDS NO GOVERNMENT.",
+    "earthSeat": "KEEPS EARTH'S OWN NATIONS AN' HYPERPOWERS!",
+    "offworld": "OFFWORLD. NO PLACE ON DA WORLD MAP ANSWERS FOR IT!",
+    "ofWorld": "OF {world}",
+    "unknown": "UNRECORDED"
+  },
+  "populationMode": {
+    "normal": "SETTLED",
+    "chaos": "UNSTABLE",
+    "goblin": "GOBLIN",
+    "monster": "MONSTROUS",
+    "empty": "DESERTED",
+    "zombie": "RISEN",
+    "death": "DEAD"
+  },
+  "magicalLevel": {
+    "normal": "BOUND",
+    "severed": "SEVERED",
+    "unbound": "UNBOUND"
+  }
 }

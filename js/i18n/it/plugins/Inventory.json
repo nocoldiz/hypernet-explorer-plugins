@@ -171,6 +171,8 @@
     "lockSlot": "Blocca slot: {slot}",
     "sealSlot": "Sigilla slot: {slot}",
     "dualWielding": "Doppia impugnatura",
+    "twoHanded": "A due mani: occupa 2 slot mano",
+    "martialArts": "Arma marziale: le abilità di Arti Marziali restano usabili, la Scherma no",
     "allowsSkillType": "Consente tipo abilità: {type}",
     "sealSkillType": "Sigilla tipo abilità: {type}",
     "grantsSkill": "Concede abilità: {skill}",

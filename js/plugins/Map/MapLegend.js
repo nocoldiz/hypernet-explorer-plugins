@@ -28,11 +28,11 @@
  * only thing that folds it away or brings it back. With switch 49 off there is
  * no sheet and no fold key: H is the help menu again.
  *
- * The notices beside it are not a setting: a map's tips are said the first
- * time the party visits it, in the ordinary dialogue box with Bubba's bust on
- * the right and no Em opposite him, and the sheet keeps only their title.
- * Every press of H (L2) on the zone says the notice again, letter by letter
- * and voiced. No option, settings page or Bubba entry turns them off.
+ * The notices beside it are not a setting: a map's tips are never said on
+ * their own. The sheet shows their title in the bottom right corner with the
+ * H chip before it, and every press of H (L2) on the zone says the notice in
+ * the ordinary dialogue box with Bubba's bust on the right and no Em opposite
+ * him, letter by letter and voiced. No option, settings page or Bubba entry turns them off.
  * Without DialogueSystem the sheet writes them out itself: the very first time
  * a notice is on the paper, and every time H (L2) unfolds it again, its text
  * is written out letter by letter, in Bubba's letter voice when Dialogue
@@ -66,9 +66,10 @@
  * bold, without the brackets. Every translation of a notice must keep the
  * brackets around the same name. A bracket holding an RPG Maker input command
  * in capitals, [MENU], [OK], [PAGEUP] and the rest of COMMANDS, is a button:
- * it is written out as the key on a keyboard ([ESC / RIGHT CLICK]) and as the
- * button on a pad ([Y]), read off Input's live mappers. Translations keep the
- * token in English.
+ * it is written out for the device last used and for that one alone: the key
+ * on a keyboard ([ESC]), the mouse button ([RIGHT CLICK]) or the button on a
+ * pad ([Y]), read off Input's live mappers. Translations keep the token in
+ * English.
  *
  * ---------------------------------------------------------------------------
  * The pamphlet
@@ -233,12 +234,13 @@
 
   // One exception to the bold name: a bracket holding an RPG Maker input
   // command in capitals, [MENU] or [OK], is a button, and it is written out as
-  // whatever reaches that command on the device in hand: [ESC / RIGHT CLICK] on
-  // a keyboard, [Y] on a pad. Every symbol MZ's Input answers to is here.
-  function noticeHtml(s, hasPad) {
-    const pad = hasPad === undefined ? padConnected() : !!hasPad;
+  // whatever reaches that command on the device in hand, that device alone:
+  // [ESC] on a keyboard, [RIGHT CLICK] with the mouse, [Y] on a pad. Every
+  // symbol MZ's Input answers to is here.
+  function noticeHtml(s, device) {
+    const dev = deviceOf(device);
     return escapeHtml(s).replace(NOTICE_EMPHASIS, (whole, inner) => {
-      const label = COMMANDS[inner] ? commandLabel(inner, pad) : "";
+      const label = COMMANDS[inner] ? commandLabel(inner, dev) : "";
       return label
         ? `<span class="mlg-strong">[${escapeHtml(label.toUpperCase())}]</span>`
         : `<span class="mlg-strong">${inner}</span>`;
@@ -316,8 +318,7 @@
   }
 
   // A keyboard reads one key, the first by preference, plus the letter that
-  // also reaches it for the four directions (the game walks on WASD), plus
-  // the mouse button that does the same.
+  // also reaches it for the four directions (the game walks on WASD).
   function keyboardLabel(token) {
     const cmd = COMMANDS[token];
     if (!cmd) return "";
@@ -333,8 +334,15 @@
       const letter = codes.find(c => c >= 65 && c <= 90);
       if (letter && letter !== codes[0]) parts.push(keyName(letter));
     }
-    if (cmd.mouseKey) parts.push(T(cmd.mouseKey));
     return parts.join(" / ");
+  }
+
+  // The mouse reads its button. A command no button reaches falls back to its
+  // keyboard face, the mouse hand's other half.
+  function mouseLabel(token) {
+    const cmd = COMMANDS[token];
+    if (!cmd) return "";
+    return cmd.mouseKey ? T(cmd.mouseKey) : keyboardLabel(token);
   }
 
   // A pad reads its button. A command no button reaches (tab, control, debug)
@@ -348,9 +356,10 @@
     return names.length ? names.join(" / ") : keyboardLabel(token);
   }
 
-  function commandLabel(token, hasPad) {
-    const pad = hasPad === undefined ? padConnected() : !!hasPad;
-    return pad ? padLabel(token) : keyboardLabel(token);
+  function commandLabel(token, device) {
+    const dev = deviceOf(device);
+    if (dev === "pad") return padLabel(token);
+    return dev === "mouse" ? mouseLabel(token) : keyboardLabel(token);
   }
 
   //===========================================================================
@@ -547,6 +556,29 @@
     return rawPads().length > 0;
   }
 
+  // The one device a button token is written for: "pad", "mouse" or
+  // "keyboard", whichever last did something (Input.lastInputDevice and
+  // Input.lastPointerDevice, MouseControls.js). A runtime without them reads
+  // a plugged in pad, else the keyboard.
+  function inputDevice() {
+    const input = typeof Input !== "undefined" ? Input : null;
+    if (input && typeof input.lastInputDevice === "function") {
+      if (input.lastInputDevice() === "pad") return "pad";
+      return typeof input.lastPointerDevice === "function" &&
+        input.lastPointerDevice() === "mouse" ? "mouse" : "keyboard";
+    }
+    return padConnected() ? "pad" : "keyboard";
+  }
+
+  // A device argument as the token writers take it: a name, or the older
+  // true / false for pad / keyboard, or nothing for the device in hand.
+  function deviceOf(device) {
+    if (device === undefined) return inputDevice();
+    if (device === true) return "pad";
+    if (device === false) return "keyboard";
+    return device === "pad" || device === "mouse" ? device : "keyboard";
+  }
+
   //===========================================================================
   // Whether the list is up, and what is on it
   //===========================================================================
@@ -599,11 +631,9 @@
       return null;
     }
     noticeWatch.showing = notice.key;
-    // On the dialogue stage a notice is only spent once it has been said.
-    if (noticeDialogueReady()) {
-      if (!noticeSeen()[notice.key] && playNoticeDialogue(notice)) markNoticeSeen(notice.key);
-      return notice;
-    }
+    // On the dialogue stage a notice is never said on its own: the sheet
+    // shows its title with the H chip, and only that press says it.
+    if (noticeDialogueReady()) return notice;
     if (markNoticeSeen(notice.key)) {
       if ($gameSystem) $gameSystem._mapLegendNoticeFolded = false;
       startTyping(notice.key);
@@ -682,7 +712,7 @@
   // One frame of the reading. Returns how many letters of the notice's text
   // are painted, Infinity once it is all there. Folded, the paragraph is not on
   // the paper, so the reading waits for it to be opened.
-  function updateTyping(notice, folded, hasPad) {
+  function updateTyping(notice, folded, device) {
     if (!notice || notice.key !== typing.key) {
       stopTyping();
       return Infinity;
@@ -691,7 +721,7 @@
       stopTyping();
       return Infinity;
     }
-    const letters = htmlLetters(noticeHtml(notice.text, hasPad));
+    const letters = htmlLetters(noticeHtml(notice.text, device));
     if (!folded) {
       const from = typing.shown;
       typing.shown = Math.min(letters.length, typing.shown + TYPE_LETTERS_PER_FRAME);
@@ -717,10 +747,10 @@
   // With DialogueSystem loaded a notice is not written out on the sheet at
   // all: it is said in the ordinary message box, Bubba's bust on the right and
   // nobody stood opposite him, so the letters, the blips and the box are the
-  // dialogue system's own. The sheet keeps the notice folded to its title, the
-  // sign that there is something to read here. The first time a notice is on
-  // the paper it is said as soon as the map is free to say it; after that the
-  // fold key (H, L2 on a pad) says it again, every time it is pressed. Without
+  // dialogue system's own. The sheet keeps the notice folded to its title in
+  // the bottom right corner, the H chip before it, the sign that there is
+  // something to read here. Nothing is said on arrival: only the fold key
+  // (H, L2 on a pad) says it, every time it is pressed. Without
   // DialogueSystem the sheet falls back to its own reading above.
   const NOTICE_BUST = "Bubba";          // i18n-ignore: preset bust image name
 
@@ -743,25 +773,33 @@
   // The notice as the message box prints it: a bracketed name in the box's
   // own gold marks instead of the sheet's bold, a button read off the device
   // in hand the way noticeHtml reads it.
-  function noticeSpoken(s, hasPad) {
-    const pad = hasPad === undefined ? padConnected() : !!hasPad;
+  function noticeSpoken(s, device) {
+    const dev = deviceOf(device);
     const names = (typeof window !== "undefined" && window.DialogueNames) || {};
     const open = names.OPEN || "";
     const close = names.CLOSE || "";
     return String(s == null ? "" : s).replace(NOTICE_EMPHASIS, (whole, inner) => {
-      const label = COMMANDS[inner] ? commandLabel(inner, pad) : "";
+      const label = COMMANDS[inner] ? commandLabel(inner, dev) : "";
       return open + (label ? "[" + label.toUpperCase() + "]" : inner) + close;
     });
   }
 
+  // Every line the notice is written on is a box of its own: a paragraph
+  // break in the copy is Bubba drawing breath, not a wrap inside one box.
+  function noticeParagraphs(text) {
+    return String(text == null ? "" : text).split(/\r?\n/)
+      .map((line) => line.trim()).filter(Boolean);
+  }
+
   function playNoticeDialogue(notice) {
     if (!notice || !notice.text || !noticeDialogueReady() || !dialogueFree()) return false;
-    return !!window.StoryDialogue.playSteps([{
+    const steps = noticeParagraphs(notice.text).map((line) => ({
       imageName: NOTICE_BUST,
       displayName: VOICE_SPEAKER_NAME,
-      text: noticeSpoken(notice.text),
+      text: noticeSpoken(line),
       side: "right",
-    }]);
+    }));
+    return steps.length > 0 && !!window.StoryDialogue.playSteps(steps);
   }
 
   function proceduralMapId() {
@@ -1129,7 +1167,10 @@
   function toggleFold() {
     if (!$gameSystem) return;
     if (noticeOnScreen && noticeDialogueReady()) {
-      if (playNoticeDialogue(noticeOnScreen)) SoundManager.playCursor();
+      if (playNoticeDialogue(noticeOnScreen)) {
+        markNoticeSeen(noticeOnScreen.key);
+        SoundManager.playCursor();
+      }
       return;
     }
     if (noticeOnScreen) {
@@ -1239,6 +1280,7 @@
   // the bottom edge. Reserved even while it is hidden, so the notice never has
   // to jump sideways the moment the bar comes up.
   const QUICKBAR_WIDTH = 9 * 52 + 8 * 6;
+  const BUST_GAP = 8;        // game pixels between a speaker's head and the notice over it
 
   // How wide the notice may stand in the bottom right corner without reaching
   // the quick bar: the room between the canvas's right margin and the right
@@ -1308,6 +1350,7 @@
       // Coming back the page may have moved under it, so the next draw
       // measures again.
       this._needsPosition = true;
+      this._bustDirty = true;
     }
 
     destroy() {
@@ -1343,7 +1386,7 @@
       // party is walking, and the notice is four fields.
       const noticeFolded = state.noticeFolded === undefined ? folded : !!state.noticeFolded;
       const noticeSig = (notice ? notice.key + "" + notice.title + "" + notice.text : "-") +
-        "" + state.reveal + "" + (noticeFolded ? 1 : 0) + (state.foldable ? 1 : 0) + (state.hasPad ? 1 : 0) + "" + (state.foldChip || "");
+        "" + state.reveal + "" + (noticeFolded ? 1 : 0) + (state.foldable ? 1 : 0) + (state.hasPad ? 1 : 0) + "" + (state.device || "") + "" + (state.foldChip || "");
       if (notice) {
         const el = this.element();
         if (noticeSig !== this._signature) {
@@ -1408,9 +1451,9 @@
         const chip = state.foldPad || state.foldChip || FOLD_KEY_LABEL;
         return '<div class="mlg-line">' +
           `<span class="ui-chip mlg-chip">${escapeHtml(chip)}</span>` +
-          `<span class="mlg-title">${noticeHtml(notice.title, state.hasPad)}</span></div>`;
+          `<span class="mlg-title">${noticeHtml(notice.title, noticeDevice(state))}</span></div>`;
       }
-      const parts = [`<div class="mlg-title">${noticeHtml(notice.title, state.hasPad)}</div>`];
+      const parts = [`<div class="mlg-title">${noticeHtml(notice.title, noticeDevice(state))}</div>`];
       if (!nFolded && notice.text) {
         // Bubba's reading of the place is signed with his name; the place's
         // own sign is not signed at all, it just says what it says.
@@ -1418,7 +1461,7 @@
           `<span class="mlg-speaker">${escapeHtml(T("MapLegend.speaker"))}:</span> `;
         // The speaker's name is there from the first frame; the words are
         // written out after it on their first reading (see updateTyping).
-        const words = revealHtml(noticeHtml(notice.text, state.hasPad), state.reveal);
+        const words = revealHtml(noticeHtml(notice.text, noticeDevice(state)), state.reveal);
         parts.push(`<div class="mlg-text">${speaker}${words}</div>`);
       }
       return parts.join("");
@@ -1459,11 +1502,40 @@
       return parts.join("");
     }
 
-    // Stepping back under a portrait: see bustOnScreen above.
+    // Stepping back under a portrait: see bustOnScreen above. A notice stood
+    // over the speaker's head has nothing to step back from.
     setBehindBusts(behind) {
-      for (const el of [this._el, this._ctl]) {
-        if (el) el.classList.toggle("mlg-behind", !!behind);
+      const over = !!(this._el && this._el.classList.contains("mlg-over-bust"));
+      if (this._el) this._el.classList.toggle("mlg-behind", !!behind && !over);
+      if (this._ctl) this._ctl.classList.toggle("mlg-behind", !!behind);
+    }
+
+    // The folded notice stands over the head of the portrait speaking on the
+    // right (Bubba reading it out) instead of in the corner under his face.
+    // `bounds` is BustManager.speakerBounds(), or null to go back to the corner.
+    // Measuring the canvas forces a layout, and the bust stands still for the
+    // whole time it speaks, so the head is measured again only when it has
+    // moved, the panel was rebuilt or the window resized; every other frame
+    // is one string compare.
+    placeOverBust(bounds) {
+      const el = this._el;
+      if (!el) return;
+      const key = bounds ? bounds.x + "," + bounds.top + "," + bounds.width : "";
+      if (key === this._bustKey && el === this._bustEl && !this._bustDirty) return;
+      const m = bounds ? canvasMetrics() : null;
+      el.classList.toggle("mlg-over-bust", !!m);
+      if (!m) {
+        this._bustKey = "";
+        this._bustEl = el;
+        return;
       }
+      this._bustKey = key;
+      this._bustEl = el;
+      this._bustDirty = false;
+      const cx = m.ox + (bounds.x + bounds.width / 2) * m.sx;
+      const top = m.oy + Math.max(0, bounds.top) * m.sy;
+      el.style.setProperty("--mlg-bust-cx", Math.round(cx) + "px");
+      el.style.setProperty("--mlg-bust-bottom", Math.round(window.innerHeight - top + BUST_GAP * m.sy) + "px");
     }
 
     // The notice is pinned by its bottom right corner, as wide as the room
@@ -1507,13 +1579,31 @@
     return !!(mgr && mgr.bustIsVisible);
   }
 
+  // The portrait speaking from the right, the one the folded notice stands
+  // over, or null.
+  function rightSpeakerBounds() {
+    const scene = typeof SceneManager !== "undefined" && SceneManager._scene;
+    const mgr = scene && scene._bustManager;
+    if (!mgr || typeof mgr.speakerBounds !== "function") return null;
+    const bounds = mgr.speakerBounds();
+    return bounds && bounds.side === "right" ? bounds : null;
+  }
+
+  // The device a notice's button tokens are written for, off a draw state.
+  function noticeDevice(state) {
+    return state.device || (state.hasPad === undefined ? undefined : !!state.hasPad);
+  }
+
   const sheet = new LegendSheet();
 
   // The panels are pinned to the canvas, and the canvas moves when the window
   // does. That is the only thing that moves them, so it is the only thing that
   // makes them measure again.
   if (typeof window !== "undefined" && window.addEventListener) {
-    window.addEventListener("resize", () => { sheet._needsPosition = true; });
+    window.addEventListener("resize", () => {
+      sheet._needsPosition = true;
+      sheet._bustDirty = true;
+    });
   }
 
   //===========================================================================
@@ -1601,13 +1691,15 @@
     }
     // The pad is asked once and the answer handed to both fields that need it.
     const hasPad = padConnected();
+    const device = inputDevice();
     // On the dialogue stage the box says the notice, so the sheet keeps it folded.
     const noticeFolded = noticeDialogueReady() || isNoticeFolded();
     sheet.draw(notice, rows, {
-      folded, noticeFolded, reveal: updateTyping(notice, noticeFolded, hasPad),
-      foldable: foldable(), hasPad, foldChip: foldChipLabel(),
+      folded, noticeFolded, reveal: updateTyping(notice, noticeFolded, device),
+      foldable: foldable(), hasPad, device, foldChip: foldChipLabel(),
       foldPad: foldPadChip(hasPad),
     });
+    sheet.placeOverBust(notice && noticeFolded ? rightSpeakerBounds() : null);
     sheet.setBehindBusts(bustOnScreen());
   }
 
@@ -1698,6 +1790,7 @@
     noticeDialogueReady,
     dialogueFree,
     noticeSpoken,
+    noticeParagraphs,
     playNoticeDialogue,
     revealHtml,
     htmlLetters,
@@ -1710,6 +1803,7 @@
     // Whether a pad is plugged in, exposed so a test can ask without one in
     // its hands. Which device was last touched is nobody's question any more.
     padConnected,
+    inputDevice,
     TOOLTIP_PRIORITY_FRAMES,
     ERRAND_COMMON_EVENT_ID,
     ERRAND_STEPS,

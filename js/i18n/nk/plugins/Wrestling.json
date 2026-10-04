@@ -1,0 +1,637 @@
+{
+  "appName": "SLAMGRIMORIE",
+  "subtitle": "TWO SHOWS A WEEK.",
+  "tagline": "WRESTLIN' RESULTS, UPDATED EVERY NIGHT!",
+  "oneDivision": "ONE DIVISION. EVERY GENDER IN IT. DAT HAB NEVER ONCE BEEN DA CONTROVERSIAL PART!",
+  "fed": {
+    "slam": {
+      "name": "HEXA-SLAM CONTINENTAL WRESTLIN'",
+      "short": "HEXA-SLAM",
+      "show": "SLAM VIGIL",
+      "ethos": "HEXES IZ LEGAL, GRAVITY IZ A SUGGESTION AN' DA PAPERWORK IZ WRITTEN AFTERWARDS IN WHATEVER IZ LEFT OF DA RING!",
+      "venueWord": "SLAMDROME"
+    },
+    "circle": {
+      "name": "SANCTIONED CIRCLE OF GRAPPLIN' ARTS",
+      "short": "DA CIRCLE",
+      "show": "DA SANCTIONED HOUR",
+      "ethos": "ELEVEN PERMITTED HOLDS, THREE PERMITTED INVOCATIONS, ONE NOTARY AT RINGSIDE AN' A MAT DAT REMEMBERS EVERY FOOT PLACED ON IT!",
+      "venueWord": "SALLE"
+    }
+  },
+  "tab": {
+    "tonight": "TONIGHT",
+    "card": "CARDS",
+    "roster": "ROSTER",
+    "angles": "STORYLINES",
+    "betting": "BETTIN'",
+    "ratings": "RATINGS WAR",
+    "titles": "TITLES"
+  },
+  "label": {
+    "day": "NIGHT {n}",
+    "airtime": "BOTH SHOWS GO LIVE AT {hour}. DEY ALWAYS HAB!",
+    "mainEvent": "MAIN EVENT",
+    "openDivision": "OPEN DIVISION",
+    "record": "RECORD",
+    "momentum": "MOMENTUM",
+    "alignment": "ALIGNMENT",
+    "style": "STYLE",
+    "gimmick": "GIMMICK",
+    "finisher": "FINISHER",
+    "champion": "CHAMPION",
+    "vacant": "VACANT",
+    "reign": "{n} NIGHTS",
+    "condition": "CONDITION",
+    "heat": "HEAT",
+    "viewers": "VIEWERS",
+    "share": "SHARE",
+    "wonNight": "{fed} WON DA HOUR",
+    "tiedNight": "DA HOUR WAZ SPLIT DOWN DA MIDDLE",
+    "stipulation": "STIPULATION",
+    "finish": "FINISH",
+    "odds": "ODDS",
+    "stake": "STAKE",
+    "payout": "PAYOUT",
+    "openBets": "OPEN BETS",
+    "settled": "SETTLED",
+    "noBets": "NOTHIN' STAKED ON TOMORROW YET!",
+    "placeBet": "STAKE",
+    "watchPromo": "WATCH DA PROMO",
+    "readCard": "READ DA CARD",
+    "tomorrow": "TOMORROW NIGHT",
+    "lastNight": "LAST NIGHT",
+    "signature": "SIGNATURE",
+    "school": "SCHOOL",
+    "debut": "DEBUT",
+    "banked": "BANKED",
+    "totalViewers": "COMBINED AUDIENCE",
+    "overUnder": "OVER / UNDER {n}",
+    "over": "OVER",
+    "under": "UNDER",
+    "whoWinsHour": "WHO WINS DA HOUR",
+    "noCard": "DA CARD HAB NOT BEEN POSTED YET!",
+    "injured": "HURT",
+    "cursed": "CURSED",
+    "fine": "FIT",
+    "mundane": "MUNDANE",
+    "arcana": "ARCANA",
+    "noMagic": "NO MAGIC. NONE. EVER.",
+    "mundaneFilter": "MUNDANE ONLY"
+  },
+  "alignment": {
+    "face": "BELOVED",
+    "heel": "DESPISED",
+    "enigma": "UNREADABLE"
+  },
+  "condition": {
+    "fit": "WALKIN' FINE",
+    "hurt": "TAPED UP",
+    "cursed": "CARRYIN' SOMETHIN' DAT IZ NOT AN INJURY",
+    "haunted": "BEING FOLLOWED",
+    "suspended": "SUSPENDED BY DA COMMISSION"
+  },
+  "style": {
+    "technical": "TECHNICAL GRAPPLIN'",
+    "brawler": "BRAWLER",
+    "highflyer": "HIGH FLYER",
+    "powerhouse": "POWERHOUSE",
+    "hexcaster": "HEXCASTER",
+    "ritualist": "RITUALIST",
+    "shootfighter": "SHOOT FIGHTER",
+    "puppeteer": "PUPPETEER",
+    "cryomancer": "CRYOMANCER",
+    "ironform": "IRON FORM",
+    "grinder": "GRINDER",
+    "catchwrestler": "CATCH WRESTLER",
+    "striker": "STRIKER"
+  },
+  "school": [
+    "DA BOLOGNA GRAPPLIN' NOTARIAT",
+    "A KOLA WRESTLIN' BARRACKS NOBODY WILL NAME",
+    "DA VERDEN SLOW MAT",
+    "A GHENT DOCKYARD GYM WIT ONE WORKIN' LIGHT",
+    "DA VATICAN PIN SEMINARY",
+    "AN UNLICENSED CELLAR UNDER DA OMEGA TOWER",
+    "DA NAGUKA CIRCLE OF STANDIN' STONES",
+    "A MIDWEST CARNIVAL TENT DAT TOURED FOR FORTY YEARS",
+    "DA HEXORCIST CORPS PHYSICAL WING",
+    "DEY OWN GRANDMOTHER, IN A KITCHEN",
+    "A CORRESPONDENCE COURSE DAT SHOULD NOT HAB WORKED",
+    "DA SALT RING AT TRIESTE"
+  ],
+  "gimmick": [
+    "A RETIRED NOTARY WHO WRESTLES TA SETTLE CONTRACTS",
+    "A BEEKEEPER WHOSE SWARM IZ LEGALLY PART OF DA ENTOURAGE",
+    "DA REANIMATED GIMMICK OF A WRESTLER WHO DIED IN 1974",
+    "A MONK OF A SILENCE ORDER WHO SCREAMS ONLY AT DA FINISH",
+    "A TAX AUDITOR WIT A GRUDGE AGAINST DA WHOLE CONTINENT",
+    "DA LAST GRADUATE OF A SCHOOL DAT BURNED DOWN",
+    "A WEATHER FRONT DAT TOOK A HUMAN SHAPE AN' A CONTRACT",
+    "A HEXCASTER WHO INSISTS EVERY SPELL IZ A WRESTLIN' HOLD",
+    "A BUTCHER WHO TALKS TA DA CROWD LIKE DEY IZ CUSTOMERS",
+    "SOMEBODY'S ACTUAL GRANDMOTHER, UNDEFEATED",
+    "A LIGHTHOUSE KEEPER WHO WRESTLES FOR DA HOUR OF SLEEP",
+    "ONE OF TWO TWINS WHO HAB NEVER BEEN PHOTOGRAPHED TOGETHER",
+    "A DRAG QUEEN WHO FIGHTS IN FULL REGALIA AN' HAB NEVER SMUDGED",
+    "A COURIER WHO HAB NEVER ONCE BEEN LATE TA DA RING",
+    "AN EXORCIST WHO IZ LOSIN' A LONG ARGUMENT WIT A PASSENGER",
+    "A CHESS PRODIGY WHO CALLS EVERY MOVE BEFORE MAKIN' IT",
+    "A FORMER TRAFFIC WARDEN WHO TICKETS ILLEGAL MOVES IN DA RING",
+    "AN OPERA SINGER WHOSE HIGH NOTE IZ AN ACTUAL ATTACK",
+    "A CRYPTID WHO SIGNED DA CONTRACT IN GOOD FAITH",
+    "A MINER WHO HAB NEVER SEEN DA TOP ROPE FROM DA TOP"
+  ],
+  "ring": {
+    "adjective": [
+      "CONCRETE",
+      "VELVET",
+      "HOLLOW",
+      "SANCTIONED",
+      "UNLICENSED",
+      "BRASS",
+      "SALTED",
+      "NOCTURNAL",
+      "MARBLE",
+      "SLEEPLESS",
+      "STATIC",
+      "GILDED",
+      "IRON",
+      "CANDLELIT",
+      "QUIET",
+      "MUNICIPAL",
+      "RADIANT",
+      "FORECLOSED",
+      "BARBED",
+      "TIDAL",
+      "ASHEN",
+      "CERTIFIED",
+      "CONCUSSIVE",
+      "FERAL"
+    ],
+    "noun": [
+      "CARDINAL",
+      "NOTARY",
+      "COMET",
+      "WIDOW",
+      "AUDITOR",
+      "LANDSLIDE",
+      "VERDICT",
+      "LIGHTHOUSE",
+      "BAILIFF",
+      "AUROCHS",
+      "REQUIEM",
+      "QUARRY",
+      "SEAMSTRESS",
+      "ORDINANCE",
+      "GRAVEDIGGER",
+      "HURRICANE",
+      "DEACON",
+      "MACHINIST",
+      "DOWAGER",
+      "MENHIR",
+      "FURNACE",
+      "CUSTODIAN",
+      "VESPER",
+      "THRESHOLD",
+      "BRICKLAYER",
+      "MISTRAL",
+      "ARCHIVIST",
+      "BELLRINGER"
+    ],
+    "epithet": [
+      "OF DA LONG COUNT",
+      "WHO WILL NOT BE FILED",
+      "OF NINE RETURNS",
+      "LAST OF DA SLOW MAT",
+      "OF DA SECOND BELL",
+      "UNDEFEATED ON PAPER",
+      "OF DA COLD CORNER",
+      "WHO REMEMBERS EVERY MATCH",
+      "OF GATE SEVEN",
+      "SEALED BY NOTARY",
+      "OF DA BROKEN ESCALATOR",
+      "WHO SOLD DA FARM"
+    ],
+    "given": [
+      "INES",
+      "KOVAC",
+      "MARISOL",
+      "TEODOR",
+      "HALINA",
+      "BRUNO",
+      "SEVDA",
+      "OTTILIE",
+      "REZSO",
+      "NURAY",
+      "GABOR",
+      "SOLVEIG",
+      "AMADEO",
+      "JARN",
+      "LUBOMIRA",
+      "FERRAN",
+      "YSOLDE",
+      "TIBOR",
+      "NKECHI",
+      "EMRYS",
+      "VITT",
+      "ARIADNE",
+      "OSMO",
+      "RADA",
+      "CASIMIR",
+      "NADIA",
+      "LORCAN",
+      "PERPETUA"
+    ],
+    "family": [
+      "BELLANDI",
+      "VRSIC",
+      "OKONKWO",
+      "HAVERKAMP",
+      "SZILAGYI",
+      "DUQUESNE",
+      "KARELIN",
+      "MORETTI",
+      "BJORNSDOTTIR",
+      "ACHTERBERG",
+      "FALCONE",
+      "RADULESCU",
+      "LINDQVIST",
+      "YILMAZ",
+      "CORVAGLIA",
+      "WEISZ",
+      "NOVAK",
+      "AUBERT",
+      "MARCHETTI",
+      "STAVROS",
+      "VANDERMEER",
+      "PIRLOT"
+    ]
+  },
+  "move": {
+    "finisher": [
+      "DA FILED PETITION",
+      "NINE POINTS OF CONTACT",
+      "DA LONG TUESDAY",
+      "DA SANCTIONED DROP",
+      "GRAVITY, WITHDRAWN",
+      "DA CLOSIN' ARGUMENT",
+      "DA WIDOW'S BRACE",
+      "SECOND BELL SPECIAL",
+      "DA TIDAL SLAM",
+      "DA NOTARISED CHOKE",
+      "DA CANDLE SNUFFER",
+      "MUNICIPAL COLLAPSE",
+      "DA QUIET PART",
+      "HEXLOCK ALPHA",
+      "DA INHERITANCE",
+      "DA COLD CORNER CRADLE",
+      "REQUIEM IN FOUR COUNTS",
+      "DA FORECLOSURE",
+      "DA STANDIN' STONE",
+      "SALT AN' IRON",
+      "DA LAST DELIVERY",
+      "DA UNPAID INVOICE",
+      "ASHFALL",
+      "DA REVERSAL OF FORTUNE"
+    ],
+    "signature": [
+      "A ROLLIN' ARM-DRAG DAT HUMS",
+      "A SUPLEX PERFORMED AT HALF SPEED ON PURPOSE",
+      "A HEX DAT ONLY MAKES DA OPPONENT HONEST",
+      "A TOP-ROPE ENTRY FROM NO VISIBLE ROPE",
+      "A CHOP DAT FROSTS DA ROPES",
+      "A HOLD DAT BORROWS DA CROWD'S BREATH",
+      "A LARIAT ANNOUNCED IN ADVANCE AN' UNAVOIDABLE ANYWAY",
+      "A SUBMISSION DAT RESOLVES AS A LEGAL DOCUMENT",
+      "A DIVE DAT PAUSES BRIEFLY AT DA APEX",
+      "A STRIKE DELIVERED BY A SHADOW HALF A SECOND EARLY"
+    ]
+  },
+  "stipulation": [
+    "STRAIGHT FALL, ONE REFEREE, NO INVOCATIONS",
+    "SEALED CIRCLE: NOBODY IN, NOTHIN' OUT, SALT ON DA APRON",
+    "MIRROR MATCH: DA RING IZ DOUBLED, ONLY ONE IZ REAL",
+    "INVERTED GRAVITY CAGE",
+    "CHAIN OF NOTARIES: EVERY FALL WITNESSED AN' STAMPED",
+    "CANDLE MATCH: DA LOSER IZ WHOEVER DA LAST CANDLE STOPS LIKIN'",
+    "LADDER TA A CONTRACT NOBODY HAB READ",
+    "TWO FALLS OUT OF THREE, DA THIRD FOUGHT IN DA DARK",
+    "SUMMONER'S GAUNTLET: EACH WRESTLER BRINGS ONE THING",
+    "LUMBERJACK MATCH, LUMBERJACKS PROVIDED BY DA COMMISSION",
+    "FIRST BLOOD, DEN PAPERWORK",
+    "GHOST RULES: DA REFEREE IZ DECEASED AN' COUNTIN' SLOWLY",
+    "WEATHER PERMITTIN'",
+    "STRAP MATCH, STRAP OF UNCLEAR PROVENANCE",
+    "CASKET MATCH, CASKET RENTED",
+    "NO DISQUALIFICATION, NO INSURANCE",
+    "IRON HOUR: AS MANY FALLS AS FIT IN SIXTY MINUTES",
+    "TAG RULES, PARTNERS CHOSEN BY DA CROWD",
+    "BLINDFOLD HEX MATCH",
+    "LOSER LEAVES DA CONTINENT"
+  ],
+  "finish": {
+    "pinfall": "{winner} PINNED {loser} AFTER {move}.",
+    "submission": "{loser} TAPPED TA {move} AT {time}.",
+    "knockout": "{loser} DID NOT ANSWER DA COUNT AFTER {move}!",
+    "banishment": "{move} PUT {loser} SOMEWHERE DA REFEREE COULD NOT COUNT DEM OUT OF!",
+    "countout": "{loser} WAZ COUNTED OUT AN' HAB STILL NOT COME BACK!",
+    "disqualification": "{loser} WAZ DISQUALIFIED: {reason}.",
+    "interference": "{winner} WON AFTER {third} CAME THROUGH DA CROWD AN' DID {reason}!",
+    "double": "BOTH WENT DOWN TA {move}. DA COMMISSION IZ REVIEWIN' DA TAPE AN' DA TAPE IZ REVIEWIN' BACK!",
+    "draw": "TIME LIMIT. {winner} AN' {loser} SHOOK HANDS AN' NEITHER LET GO FIRST!",
+    "titleChange": "{winner} IZ DA NEW {title}."
+  },
+  "dqReason": [
+    "AN UNLICENSED HEX IN A LICENSED BUILDIN'",
+    "DA SWARM",
+    "A CHAIR DAT WAZ, LEGALLY, A PERSON",
+    "REFUSIN' TA STOP AFTER DA BELL FOR NINE MINUTES",
+    "BRINGIN' A NOTARY INTO DA RING WITHOUT FILIN'",
+    "DA WRONG KIND OF SALT",
+    "AN INVOCATION IN A LANGUAGE DA COMMISSION NO CAN TRANSCRIBE"
+  ],
+  "interferenceDeed": [
+    "SOMETHIN' WIT A CHAIR",
+    "A HEX THROUGH DA ROPES",
+    "A REAL CALM HANDSHAKE DAT TOOK TEN YEARS OFF DA REFEREE",
+    "NOTHIN' AT ALL, WHICH WAZ WORSE",
+    "DA THING DEY PROMISED TA DO ON TUESDAY"
+  ],
+  "title": {
+    "slamOpen": "HEXA-SLAM CONTINENTAL CHAMPIONSHIP",
+    "slamChaos": "SLAMDROME HARDCORE GRIMORIE",
+    "circleOpen": "SANCTIONED CIRCLE OPEN CHAMPIONSHIP",
+    "circleTechnical": "CIRCLE TECHNICAL LAUREL"
+  },
+  "angle": {
+    "rivalry": {
+      "name": "{a} AN' {b} NO CAN BE IN DA SAME BUILDIN'",
+      "beat": [
+        "{a} CALLED {b} OUT BY DEY LEGAL NAME, WHICH IZ NOT DONE!",
+        "{b} ATTACKED {a} DURIN' SOMEONE ELSE'S ENTRANCE!",
+        "DA COMMISSION PUT A PARTITION BETWEEN DEY DRESSIN' ROOMS. {a} WRESTLED THROUGH IT!",
+        "{a} AN' {b} WAZ BOOKED AS PARTNERS. IT LASTED FOUR MINUTES!",
+        "{b} HAB STARTED ARRIVIN' AT DA BUILDIN' BEFORE IT OPENS, TA WAIT!"
+      ]
+    },
+    "betrayal": {
+      "name": "{b} OWES {a} AN EXPLANATION",
+      "beat": [
+        "{b} WALKED AWAY FROM DA RING WHILE {a} WAZ STILL IN DA HOLD!",
+        "{a} FOUND A CLAUSE IN DEY OWN CONTRACT, SIGNED BY {b}!",
+        "{b} SAYS IT WAZ FOR {a}'S OWN GOOD AN' WILL NOT ELABORATE!",
+        "{a} HAB STOPPED NAMIN' {b} IN PROMOS. DAT IZ DA WORST SIGN!"
+      ]
+    },
+    "titlechase": {
+      "name": "{a} IZ COMIN' FOR DA {title}",
+      "beat": [
+        "{a} HAB PINNED THREE CONTENDERS IN ELEVEN NIGHTS AN' ASKED FOR NOTHIN' ELSE!",
+        "DA COMMISSION NO CAN FIND A REASON TA DENY {a} A SHOT, AN' HAB LOOKED HARD!",
+        "{b} SAYS {a} IZ NOT READY. {a} AGREES, AN' WANTS DA MATCH ANYWAY!",
+        "{a} CARRIED A SECOND BELT TA DA RING AN' LEFT IT IN DA CENTRE!"
+      ]
+    },
+    "curse": {
+      "name": "SOMETHIN' IZ WRONG WIT {a}",
+      "beat": [
+        "{a}'S ENTRANCE MUSIC PLAYED TWICE, AN' ONLY ONE OF DEM WAZ IN DA BUILDIN'!",
+        "{a} WON, DEN ASKED DA REFEREE WHO HAB WON!",
+        "TWO ROWS BEHIND {a}'S CORNER IZ BEING KEPT EMPTY ON MEDICAL ADVICE!",
+        "{a} HAB BEGUN SPEAKIN' IN DA PAST TENSE ABOUT TOMORROW'S MATCH!"
+      ]
+    },
+    "possession": {
+      "name": "{a} IZ NOT ALONE IN DERE",
+      "beat": [
+        "DA PASSENGER TOOK OVER AT DA COUNT OF TWO AN' LET {a} BACK AT THREE!",
+        "{a} FILED A COMPLAINT AGAINST THEMSELVES. IT WAZ ACCEPTED!",
+        "DA HEXORCIST CORPS HAB SENT AN OBSERVER, WHO HAB STOPPED TAKIN' NOTES!",
+        "{b} HAB OFFERED TA HELP. {a}'S PASSENGER ACCEPTED BEFORE {a} COULD!"
+      ]
+    },
+    "contract": {
+      "name": "NOBODY HAB READ {a}'S CONTRACT",
+      "beat": [
+        "{a}'S CONTRACT OBLIGES DA PROMOTION TA A MATCH NOBODY REMEMBERS AGREEIN' TA!",
+        "A CLAUSE WAZ FOUND REQUIRIN' {b} TA DEFEND DA {title} ON DEMAND!",
+        "DA DOCUMENT IZ NOW THIRTY PAGES LONG AN' GROWS ON NIGHTS {a} LOSES!",
+        "{a} OFFERED TA TEAR IT UP IN DA RING. DA COMMISSION SAID NO, QUICKLY!"
+      ]
+    },
+    "factionwar": {
+      "name": "{a}'S PEOPLE AN' {b}'S PEOPLE, AGAIN",
+      "beat": [
+        "BOTH STABLES CLEARED DA RING AN' DEN DA CONCOURSE!",
+        "{b} RECRUITED SOMEBODY FROM {a}'S CORNER DURIN' DA BROADCAST!",
+        "A TRUCE WAZ SIGNED AT RINGSIDE AN' HELD FOR ONE COMMERCIAL BREAK!",
+        "DA COMMISSION HAB BANNED EVERYONE FROM RINGSIDE AN' EVERYONE CAME ANYWAY!"
+      ]
+    },
+    "ghost": {
+      "name": "DA OLD CHAMPION IZ BACK FOR {a}",
+      "beat": [
+        "A RETIRED NAME NOBODY HAB SAID ALOUD IN YEARS APPEARED ON {a}'S ENTRANCE VIDEO!",
+        "{a} HAB BEEN WRESTLIN' TOWARD A CORNER DAT IZ NOT OCCUPIED!",
+        "DA OLD BELT WAZ FOUND IN {a}'S BAG. {a} DID NOT PUT IT DERE!",
+        "{a} HAB STARTED USING A FINISH DAT BELONGS TA SOMEBODY LONG DEAD!"
+      ]
+    },
+    "respect": {
+      "name": "{a} AN' {b} KEEP TRYIN' TA FINISH DIS CLEANLY",
+      "beat": [
+        "FORTY MINUTES, ONE FALL, BOTH STILL STANDIN' AT DA END OF IT!",
+        "{b} REFUSED A COUNT WHEN {a}'S SHOULDER WAZ UP, AN' COST THEMSELVES DA MATCH!",
+        "DEY HAB AGREED ON A THIRD MATCH AN' ON NOTHIN' ELSE IN DEY LIVES!",
+        "{a} ASKED DA CROWD TA STOP BOOIN' {b}. IT DID NOT TAKE!"
+      ]
+    },
+    "invasion": {
+      "name": "{a} WANTS TA WRESTLE FOR DA OTHER LOT",
+      "beat": [
+        "{a} WAZ SEEN IN DA OTHER PROMOTION'S BUILDIN', NOT WRESTLIN', JUST LOOKIN'!",
+        "A CONTRACT OFFER FROM ACROSS DA HOUR WAZ READ OUT ON AIR!",
+        "{b} SAYS A DEFECTOR IZ WORSE DEN A HEEL AN' WOULD KNOW!",
+        "{a} HAB STARTED WEARIN' DA WRONG COLOURS TA DA WRONG SHOW!"
+      ]
+    }
+  },
+  "promo": {
+    "open": {
+      "face": [
+        "ME HAB HEARD DA COUNT THREE TIMES TONIGHT AN' GOT UP ON TWO EVERY TIME!",
+        "YOU CAME OUT IN DA RAIN FOR DIS, SO ME WILL NOT WASTE IT!",
+        "ME DO NOT HAB A SPEECH. ME HAB A MATCH AN' ME HAB YOU!"
+      ],
+      "heel": [
+        "SIT DOWN. ALL OF YOU. DA PROFESSIONALS IZ WORKIN'!",
+        "ME DO NOT NEED DIS CROWD. ME HAB NEVER NEEDED DIS CROWD!",
+        "YOU CHEER FOR DA ONES WHO LOSE BEAUTIFULLY. ME WIN UGLY AN' ME SLEEP WELL!"
+      ],
+      "enigma": [
+        "ME WAZ TOLD TA SAY SOMETHIN'. DIS IZ SOMETHIN'!",
+        "DERE IZ A VERSION OF TONIGHT WHERE ME DO NOT COME OUT HERE AT ALL. ME LOOKED AT IT!",
+        "COUNT WIT ME. NOT TA THREE. KEEP GOING!"
+      ]
+    },
+    "callout": [
+      "{foe}. YOU KNEW WHERE ME WAZ. YOU HAB ALWAYS KNOWN WHERE ME WAZ!",
+      "DEY GAVE YOU DA {title} AN' YOU HAB BEEN APOLOGISIN' FOR IT EVER SINCE, {foe}!",
+      "{foe}, ME WATCHED YA LAST MATCH TWICE, AN' DA SECOND TIME ME WATCHED DA CROWD!",
+      "ME HAB A NAME FOR WHAT YOU DID, {foe}, AN' DA COMMISSION HAB A FORM FOR IT!",
+      "{foe}, YOU WRESTLE LIKE SOMEBODY READIN' DEY OWN CONTRACT IN DA DARK!"
+    ],
+    "answer": [
+      "YOU WANT A SPEECH ABOUT RESPECT. ME WANT DA {title}!",
+      "ME DID WHAT ME DID. ME WOULD FILE IT AGAIN!",
+      "YOU SAY ME NAME LIKE IT BELONGS TA YOU. IT DOES NOT. NOTHIN' DOES!",
+      "ME IZ NOT HERE TA BE UNDERSTOOD, {foe}. ME IZ HERE AT {hour}!",
+      "ONE OF US LEAVES DAT RING STANDIN', AN' IT HAB NEVER ONCE BEEN YOU!"
+    ],
+    "boast": [
+      "{move} HAB ENDED ELEVEN CAREERS AN' STARTED TWO!",
+      "ME HAB NEVER LOST IN DIS BUILDIN' AN' DIS BUILDIN' HAB NEVER FORGIVEN ME FOR IT!",
+      "ME TRAINED AT {school}. YOU TRAINED ON TELEVISION!",
+      "DERE IZ NO HEX IN DA BOOK DAT SURVIVES CONTACT WIT ME HANDS!"
+    ],
+    "threat": [
+      "TOMORROW, UNDER DAT STIPULATION, ME IZ GOING TA BE EXTREMELY THOROUGH!",
+      "BRING WHOEVER YOU LIKE. ME WILL COUNT DEM ON DA WAY IN!",
+      "ME IZ GOING TA TAKE DA {title} OFF YOU SLOWLY, SO DA TAPE IZ USEFUL LATER!",
+      "WHEN DA BELL GOES ME STOP BEING POLITE, AN' ME IZ BEING POLITE NOW!"
+    ],
+    "close": {
+      "face": [
+        "SEE YOU AT {hour}.",
+        "SAME HOUR. SAME RING. BRING DA NOISE!",
+        "ME WILL BE DA ONE STILL STANDIN'. LOOK FOR ME!"
+      ],
+      "heel": [
+        "DO NOT APPLAUD. YOU WILL ONLY ENCOURAGE YOURSELVES!",
+        "ME HAB SAID WHAT ME CAME TA SAY. CUT ME MUSIC!",
+        "ENJOY DA REST OF DA CARD. IT IZ ALL YOU IZ GETTIN'!"
+      ],
+      "enigma": [
+        "DAT IZ ALL ME WAZ GIVEN TA SAY!",
+        "ME WILL SEE SOME OF YOU TOMORROW!",
+        "DA HOUR IZ COMIN' WHETHER WE TALK OR NOT!"
+      ]
+    },
+    "third": [
+      "NOBODY ASKED EITHER OF YOU!",
+      "ME HAB BEEN STANDIN' HERE DA WHOLE TIME. NEITHER OF YOU LOOKED!",
+      "WHATEVER YOU TWO SETTLE TOMORROW, ME IZ DA ONE WHO COLLECTS!",
+      "ME SIGNED FOR DIS MATCH BEFORE EITHER OF YOU WAZ TOLD ABOUT IT!"
+    ],
+    "fourth": [
+      "DIS WAZ A TWO-PERSON CONVERSATION AN HOUR AGO!",
+      "ME CAME OUT TA STOP DIS AN' ME HAB CHANGED ME MIND!",
+      "PUT ME NAME ON DA CONTRACT OR GET OUT OF ME BUILDIN'!"
+    ]
+  },
+  "commentary": {
+    "slam": [
+      "DAT IZ NOT A LEGAL HOLD IN ELEVEN COUNTRIES AN' WE IZ IN ONE OF DEM!",
+      "DA RING IZ ON FIRE. DA REFEREE IZ COUNTIN'. DIS IZ WRESTLIN'!",
+      "GET DA NOTARY! GET DA NOTARY!",
+      "DEY HAB BEEN BANISHED AN' DEY IZ STILL ARGUIN'!",
+      "DA CROWD IZ CHANTIN' DA FINISH BEFORE IT HAPPENS. DEY IZ USUALLY RIGHT!"
+    ],
+    "circle": [
+      "CLEAN BREAK. CORRECT. NOTED!",
+      "THIRD PERMITTED INVOCATION OF DA NIGHT, CORRECTLY DECLARED!",
+      "DAT IZ A POINT OF TECHNIQUE YOU WILL SEE ARGUED ABOUT FOR YEARS!",
+      "DA NOTARY HAB STAMPED DA FALL. IT STANDS!",
+      "FORTY SECONDS OF NOTHIN' AN' IT IZ DA BEST FORTY SECONDS ON DA CONTINENT!"
+    ]
+  },
+  "ratings": {
+    "headline": {
+      "win": "{fed} TOOK DA HOUR: {viewers} AGAINST {rival}.",
+      "tie": "DEAD HEAT AT {viewers} APIECE. NOBODY IZ ADMITTIN' IT!"
+    },
+    "reason": [
+      "DA MAIN EVENT WENT LONG AN' EVERYBODY STAYED",
+      "A TITLE CHANGED HANDS IN DA FIRST SEGMENT",
+      "DA OTHER SHOW OPENED WIT TALKIN'",
+      "HALF DA CONTINENT HAB DA WEATHER FOR STAYIN' IN",
+      "WORD GOT OUT ABOUT DA RUN-IN BEFORE DA SHOW AIRED",
+      "A DEFECTION WAZ ANNOUNCED ON AIR",
+      "DA RATINGS WAZ CARRIED BY ONE PROMO AN' EVERYONE KNOWS WHICH"
+    ]
+  },
+  "bet": {
+    "title": "TOMORROW'S BOOK",
+    "match": "{a} VS {b}",
+    "hour": "WHICH SHOW WINS DA HOUR",
+    "audience": "COMBINED AUDIENCE OVER / UNDER {n}",
+    "placed": "{stake} ON {pick} AT {odds}.",
+    "won": "PAID {amount}: {pick} CAME IN AT {odds}.",
+    "lost": "LOST {amount} ON {pick}.",
+    "tooPoor": "NOT ENOUGH IN DA PURSE FOR DAT!",
+    "closed": "DA BOOK ON DAT NIGHT IZ CLOSED!",
+    "min": "MINIMUM STAKE IZ {amount}.",
+    "max": "MAXIMUM STAKE IZ {amount}.",
+    "settledNight": "NIGHT {n} SETTLED: {net}."
+  },
+  "hexapedia": {
+    "category": "WRESTLERS",
+    "categoryIntro": "EVERY CONTRACTED WRESTLER OF DA TWO CONTINENTAL PROMOTIONS. BOTH RUN A SINGLE OPEN DIVISION!",
+    "infobox": {
+      "ringName": "RING NAME",
+      "legalName": "LEGAL NAME",
+      "promotion": "PROMOTION",
+      "billed": "BILLED FROM",
+      "trained": "TRAINED BY",
+      "style": "STYLE",
+      "finisher": "FINISHER",
+      "alignment": "DISPOSITION",
+      "record": "RECORD",
+      "titles": "TITLES HELD",
+      "debut": "DEBUT",
+      "arcana": "ARCANA"
+    },
+    "bio": [
+      "{w} WRESTLES FOR {fed}, OUT OF {place}, AN' IZ {gimmick}!",
+      "TRAINED AT {school}, {w} WORKS A {style} GAME AN' FINISHES WIT {move}!",
+      "{w} CAME UP OUT OF {place} AN' HAB NEVER GIVEN A STRAIGHT ANSWER ABOUT WHY!",
+      "FILED UNDER DA OPEN DIVISION, LIKE EVERYONE ELSE ON DA CONTINENT: {fed} HAB NEVER RUN ANY OTHER KIND!"
+    ],
+    "careerNone": "NO COMPLETED MATCHES ON FILE!",
+    "careerLine": "{wins} WINS, {losses} LOSSES ACROSS {total} NIGHTS ON TELEVISION!",
+    "anglesHeading": "CURRENT STORYLINES",
+    "matchesHeading": "RECENT MATCHES",
+    "noAngles": "NOTHIN' ON FILE. DIS IZ UNUSUAL AN' DA DESK IZ WATCHIN'!"
+  },
+  "toast": {
+    "titleChange": "{winner} TAKES DA {title}",
+    "betWon": "SLAMGRIMORIE PAID OUT {amount}",
+    "betLost": "SLAMGRIMORIE: {amount} GONE"
+  },
+  "mundane": {
+    "tag": "MUNDANE",
+    "note": "{w} HAB NO ARCANE ABILITIES.",
+    "wikiLine": "REGISTERED MUNDANE, AN' LICENSED FOR NONE OF IT. {w} WRESTLES WIT HANDS AN' WEIGHT AN' NOTHIN' ELSE!",
+    "promo": [
+      "ME DO NOT HAB A HEX. ME HAB NEVER HAB A HEX. ME HAB HANDS!",
+      "YOU BROUGHT A RITUAL TA A WRESTLIN' MATCH. ME BROUGHT FORTY MINUTES OF CARDIO!",
+      "HALF DIS ROSTER NEEDS A LICENCE TA TOUCH ME. ME NEED A TAPED WRIST!",
+      "WHEN YA CANDLE GOES OUT YOU WILL STILL BE IN DA HOLD!",
+      "DEY CALL ME MUNDANE LIKE IT IZ A WEIGHT CLASS. FINE. ME IZ DA CHAMPION OF IT!"
+    ],
+    "commentary": [
+      "NO ARCANA ON DAT SIDE OF DA RING AN' NONE NEEDED!",
+      "A MUNDANE WRESTLER OUTWORKIN' A RITUALIST, AN' DA BUILDIN' KNOWS IT!",
+      "DAT HEX DID EVERYTHIN' IT WAZ SUPPOSED TA DO AN' DA MUNDANE GOT UP ANYWAY!"
+    ]
+  },
+  "deadWorld": "NOBODY IZ PROMOTIN' ANYTHIN'. DERE IZ NO CARD, NO HOUR TA WIN AN' NOTHIN' TA BET ON: BOTH CHANNELS HAB BEEN DEAD AIR FOR AS LONG AS ANYONE HERE CAN REMEMBER!",
+  "world": {
+    "severed": "MAGIC IZ SEVERED IN DIS WORLD. EVERY WRESTLER ON BOTH ROSTERS IZ MUNDANE, EVERY MATCH IZ A STRAIGHT FALL, AN' DA COMMISSION HAB NEVER HAB TA BAN A SINGLE HEX!",
+    "unbound": "MAGIC IZ UNBOUND IN DIS WORLD. ALMOST NOBODY ON EITHER ROSTER IZ MUNDANE AN' ALMOST NOTHIN' ON EITHER CARD IZ LEGAL ANYWHERE ELSE!",
+    "monster": "BOTH PROMOTIONS CARD CREATURES AN' ANIMALS. DERE HAB NEVER BEEN A HUMAN WRESTLER IN EITHER BUILDIN' AN' DA CROWD WOULD NOT KNOW WHAT TA DO WIT ONE!",
+    "zombie": "BOTH ROSTERS IZ DEAD AN' BOTH SHOWS STILL GO OUT AT DA SAME HOUR. DA COUNT IZ SLOWER. EVERYTHIN' ELSE IZ DA SAME!",
+    "goblin": "BOTH PROMOTIONS IZ VARLENIAN CONCERNS, AN' DA CIRCLE HAB DA OLDER RULEBOOK BY ABOUT NINE HUNDRED YEARS!"
+  }
+}

@@ -1,7 +1,9 @@
 {
   "placeholder": "SEARCH…",
-  "clear": "WIPE DA SEARCH",
-  "anyCategory": "ANY KIND",
+  "open": "OPEN DA SEARCH",
+  "close": "CLOSE DA SEARCH",
+  "clear": "CLEAR DA SEARCH",
+  "anyCategory": "ANY CATEGORY",
   "showing": "{count} SHOWN",
   "min": "MIN",
   "max": "MAX",

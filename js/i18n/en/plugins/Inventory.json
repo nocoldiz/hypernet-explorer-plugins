@@ -171,6 +171,8 @@
     "lockSlot": "Lock Equip Slot: {slot}",
     "sealSlot": "Seal Equip Slot: {slot}",
     "dualWielding": "Dual Wielding",
+    "twoHanded": "Two-handed: fills 2 hand slots",
+    "martialArts": "Martial weapon: Martial Arts skills stay usable, Swordsmanship does not",
     "allowsSkillType": "Allows Skill Type: {type}",
     "sealSkillType": "Seal Skill Type: {type}",
     "grantsSkill": "Grants Skill: {skill}",

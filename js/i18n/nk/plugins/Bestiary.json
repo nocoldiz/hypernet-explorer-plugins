@@ -3,6 +3,7 @@
   "back": "BACK",
   "earth": "EARTH",
   "petrodemons": "PETRODEMONS",
+  "rarities": "RARITIES",
   "aliens": "ALIENS",
   "speciesPortfolio": "SPECIES PORTFOLIO",
   "noMonstersEncountered": "NO MONSTERS ENCOUNTERED...",
@@ -15,6 +16,8 @@
   "randomizeSeed": "RANDOMIZE SEED",
   "seed": "SEED",
   "noBiologicalDescriptionRegistered": "NO BIOLOGICAL DESCRIPTION REGISTERED!",
+  "elementAbsorb": "ABSORBS",
+  "elementImmune": "IMMUNE",
   "elementalAffinities": "ELEMENTAL AFFINITIES",
   "noElementalWeaknessOrResistance": "NO ELEMENTAL WEAKNESS OR RESISTANCE DETECTED!",
   "slower": "SLOWER",
@@ -75,8 +78,20 @@
   },
   "proceduralWorld": "PROCEDURAL WORLD",
   "unknownWeight": "?? KG",
-  "gold": "GOLD",
+  "gold": "EUROS",
   "drawing": "DRAWIN'...",
   "exp": "EXP",
-  "harvestChance": "{chance}% CHANCE"
+  "harvestChance": "{chance}% CHANCE",
+  "searchPlaceholder": "SEARCH CREATURES…",
+  "incanta": {
+    "appName": "INCANTA 96",
+    "edition": "MULTIMEDIA BESTIARY EDITION",
+    "find": "FIND AN ARTICLE...",
+    "count": "{n} ARTICLES",
+    "noMedia": "NO SPECIMEN FOOTAGE",
+    "mediaCaption": "LIVE SPECIMEN. DRAG TA ROTATE, WHEEL TA ZOOM!",
+    "vitals": "VITAL STATISTICS",
+    "welcomeTitle": "WELCOME TA INCANTA 96",
+    "welcomeBody": "PICK A CREATURE FROM DA CONTENTS PANE TA OPEN ITS ARTICLE!"
+  }
 }

@@ -1,0 +1,17 @@
+{
+  "drivingTag": "(DRIVIN')",
+  "tookWheel": "{name} TAKES DA WHEEL.",
+  "allTired": "{name} IZ EXHAUSTED, AN' NOBODY ABOARD IZ RESTED ENOUGH TA TAKE OVER!",
+  "woke": {
+    "crash": "DA CRASH THROWS EVERYONE IN DA BACK AWAKE!"
+  },
+  "aboard": {
+    "hunger": "SOMETHIN' IZ COOKIN' IN DA GALLEY!",
+    "sleep": "DA OFF-SHIFT CREW TURNS IN!",
+    "hygiene": "DA CREW TAKES TURNS IN DA SONIC SHOWER!",
+    "social": "DA CREW TALKS DA HOURS AWAY!",
+    "leisure": "SOMEBODY DIGS DA CARDS OUT OF A LOCKER!",
+    "meal": "{name} EATS {item} ABOARD.",
+    "noFood": "DA HOLD IZ OUT OF FOOD."
+  }
+}

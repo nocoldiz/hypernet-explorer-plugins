@@ -2360,8 +2360,7 @@
   // two different source sheets), so both must reach the station, otherwise
   // one of them falls through to the generic dismantle table. ---
   CUSTOM_HANDLERS.GasPump = () => {
-    const scene = SceneManager._scene;
-    if (scene && typeof scene.showRefuelWindow === "function") scene.showRefuelWindow();
+    PluginManager.callCommand($gameMap._interpreter || {}, "VehicleSystemRefuel", "ShowRefuelWindow", {});
   };
   CUSTOM_HANDLERS.RefuelStation = CUSTOM_HANDLERS.GasPump;
 

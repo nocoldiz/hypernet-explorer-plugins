@@ -43,10 +43,10 @@ Bubba:
 Then we have a problem bigger than the death of God...
 I think whatever spell you casted on God backfired on your brain Em.
 Is not like the first time it happens, last time a failed spell fusion made you forgot the concept of Friday for months.
-But everytime it happened it was just one or two junk memories, not having yourx entire identity wiped!
+But everytime it was just one or two junk memories, not having your entire identity disk wiped!
 
 Em:
-My brain feels like a datamoshed mess right now... i can barely remember breathe every second to stay alive.
+Sorry Bubba, my brain feels like a datamoshed mess right now... i can barely remember breathe every second to stay alive.
 
 Bubba:
 You don't have to breathe manually Em, it's an automatic reflex.

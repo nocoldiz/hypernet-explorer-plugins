@@ -1,14 +1,14 @@
 /*:
  * @target MZ
- * @plugindesc ASCII Frogger Game Cart v1.1.0
+ * @plugindesc ASCII Hoppa Game Cart v1.1.0
  * @author Omni-Lex
  * @url https://nocoldiz.itch.io/hypernet-explorer
  * @help
  * ============================================================================
- * ASCII Frogger Game Cart
+ * ASCII Hoppa Game Cart
  * ============================================================================
  * 
- * A classic Frogger-style game rendered in colored ASCII for the arcade cabinet.
+ * A classic road-crossing frog game rendered in colored ASCII for the arcade cabinet.
  * Guide your golden @ frog across busy roads and treacherous rivers to reach home!
  * 
  * This cart must be loaded AFTER the ArcadeCabinetManager plugin.
@@ -25,7 +25,7 @@
     'use strict';
     
     const cartId = 'AsciiFrogger';
-    const cartName = 'ASCII FROGGER';
+    const cartName = 'ASCII HOPPA';
     
     // Game constants
     const GRID_WIDTH = 15;

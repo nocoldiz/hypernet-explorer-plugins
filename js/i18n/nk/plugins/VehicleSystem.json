@@ -5,7 +5,8 @@
     "Bike": "BIKE",
     "Boat": "BOAT",
     "Starship": "STARSHIP",
-    "Broom": "FLYIN' BROOM"
+    "Broom": "FLYIN' BROOM",
+    "Mount": "MOUNT"
   },
   "genericVehicle": "VEHICLE",
   "noGasPump": "NO GAS PUMP NEAR",
@@ -14,7 +15,9 @@
   "liminalUnavailable": "DA LIMINAL DRIVE IZ UNAVAILABLE",
   "liminalDrive": "LIMINAL DRIVE",
   "noSpaceToSummon": "DERE IZ NO SPACE TA SUMMON DA VEHICLE",
+  "noStarshipIndoors": "DA STARSHIP IZ TOO BIG TA COME INDOORS",
   "noSummonIndoors": "ONLY DA BIKE AN' DA FLYIN' BROOM CAN BE SUMMONED INDOORS",
+  "noVehicleInCabin": "DERE IZ NO ROOM FOR A VEHICLE IN HERE",
   "noValidPosition": "NO VALID POSITION FOUND TA SUMMON DA VEHICLE",
   "stopDriving": "STOP DRIVIN'",
   "startDriving": "START DRIVIN'",
@@ -28,18 +31,29 @@
   "pickUp": "PICK UP",
   "starMap": "STAR MAP",
   "radio": "RADIO",
+  "makeCamp": "MAKE A CAMP",
+  "fish": "FISH",
   "visitMap": "VISIT MAP",
+  "visitBiome": "VISIT {biome}",
   "returnToWorldMap": "RETURN TA WORLD MAP",
   "continueDriving": "CONTINUE DRIVIN'",
   "leave": "LEAVE",
   "cancel": "CANCEL",
+  "listRow": "{vehicle} - {location}",
+  "listRowHere": "{vehicle} - HERE",
+  "listRowUnknown": "{vehicle}",
   "cannotFit": "DA {vehicle} NO CAN FIT DERE!",
   "notInsideVehicle": "YOU IZ NOT INSIDE A VEHICLE",
-  "noVehiclesOwned": "YOU AINT GOT NO VEHICLES",
+  "noVehiclesOwned": "YOU NO HAB VEHICLES",
   "noVehicleHere": "DERE IZ NO VEHICLE HERE",
   "cannotFindVehicle": "NO CAN FIND DAT VEHICLE",
   "vehicleNotHere": "DA {vehicle} IZ NOT HERE",
   "cannotFindLocation": "NO CAN FIND {vehicle} LOCATION",
   "pickedUpVehicle": "YOU PICKED UP DA {vehicle}.",
-  "cannotLandHere": "DERE IZ NOWHERE TA SET DOWN HERE"
+  "cannotLandHere": "DERE IZ NOWHERE TA SET DOWN HERE",
+  "status": {
+    "fuel": "FUEL",
+    "condition": "CONDITION",
+    "broken": "OUT OF ORDER - NEEDS REPAIRS"
+  }
 }

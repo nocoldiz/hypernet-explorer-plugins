@@ -1155,6 +1155,26 @@
                     if (member.isAlive()) member.setHp(1);
                 }
             });
+            this.closeAllGrimoires();
+        },
+
+        /**
+         * Every book shut, whoever is holding it. Somebody who left the party
+         * mid-fight (a permadeath, a dismissal) still gets her own row back,
+         * and the frame stands as whatever shape was fitted before the book
+         * opened: only the grimoire closes, every other form stays as it was.
+         */
+        closeAllGrimoires() {
+            const seen = new Set();
+            const sweep = (actor) => {
+                if (!actor || seen.has(actor)) return;
+                seen.add(actor);
+                restoreGrimoire(actor);
+            };
+            if ($gameParty && $gameParty.allMembers) $gameParty.allMembers().forEach(sweep);
+            const roster = typeof $gameActors !== 'undefined' && $gameActors && $gameActors._data;
+            if (Array.isArray(roster)) roster.forEach(sweep);
+            if (window.VectorGun && window.VectorGun.closeGrimoire) window.VectorGun.closeGrimoire();
         },
 
         wallTurns() {
@@ -1241,6 +1261,10 @@
     const _BattleManager_startBattle_hyper = BattleManager.startBattle;
     BattleManager.startBattle = function () {
         _BattleManager_startBattle_hyper.call(this);
+        // A book left open by a fight that ended some other way than through
+        // endBattle (a defeat, a respawn, a scene torn down) is shut before
+        // anything else: no fight starts with last fight's pages.
+        LimitBreak.closeAllGrimoires();
         if ($gameParty) {
             $gameParty._hyperWallTurns = 0;
             $gameParty.allMembers().forEach(member => {
@@ -1292,6 +1316,15 @@
     BattleManager.endBattle = function (result) {
         LimitBreak.clearBattleState();
         _BattleManager_endBattle_hyper.call(this, result);
+    };
+
+    // A defeat never reaches endBattle: processDefeat (BattleSystemEnhancedState.js)
+    // goes straight to updateBattleEnd, so the fight is closed there as well.
+    // Clearing is idempotent, so a fight that passed through both is unharmed.
+    const _BattleManager_updateBattleEnd_hyper = BattleManager.updateBattleEnd;
+    BattleManager.updateBattleEnd = function () {
+        LimitBreak.clearBattleState();
+        if (_BattleManager_updateBattleEnd_hyper) _BattleManager_updateBattleEnd_hyper.call(this);
     };
 
     // Invulnerability and the wall, where the damage is actually written: the

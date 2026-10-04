@@ -33,7 +33,7 @@
  * and the post is a bell, a cheer or a groan. Every sound is a file in audio/se
  * named by a parameter, so the whole meeting can be re-voiced.
  *
- * The HUD is built the way a PlayStation built one, minus the television: a
+ * The HUD is built the way a 32-bit console built one, minus the television: a
  * 240-line virtual framebuffer upscaled with nearest filtering for the boxes,
  * keylines and block gauges, with every label on top of them as crisp HTML type
  * (window.PSXHud / PSXHud.domPanel), dressed in the same gold on black the
@@ -2110,7 +2110,7 @@
 
     //=========================================================================
     // HUD. Drawn in a 240-line virtual framebuffer and upscaled with nearest
-    // filtering, the way a PlayStation drew its overlays: an 8px bitmap face,
+    // filtering, the way a 32-bit console drew its overlays: an 8px bitmap face,
     // hard one-pixel shadows, block gauges. Dressed art deco, gold on black,
     // matching the alley, the court, the tarot parlour and the slot cabinet:
     // see PSXHud.DECO and the deco* primitives in PSXShader.js.
@@ -2493,7 +2493,7 @@
 
     //=========================================================================
     // The hint strip. An RMMZ windowskin frame is the one thing on screen that
-    // could never have come off a PlayStation, so it is a sprite.
+    // could never have come off a 32-bit console, so it is a sprite.
     //=========================================================================
     class Sprite_RaceStatus extends Sprite_PSXWidget {
         constructor() {

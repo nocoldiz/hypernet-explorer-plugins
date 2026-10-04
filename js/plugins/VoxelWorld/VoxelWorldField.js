@@ -1703,6 +1703,20 @@
         return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
     }
 
+    // The shaft of a square, as the column it is centred on, or null where the
+    // square has none. Never on a road: a pit opening under a carriageway is a
+    // hole the ribbon is drawn straight over, which reads from the verge as a
+    // tunnel under the road and drops whatever drives over it into the rock.
+    function shaftOf(wx, wy, own) {
+        const oneIn = own >= 26 ? SHAFT_ONE_IN_MTN : SHAFT_ONE_IN;
+        if (sqHash(wx, wy, 1) >= 1 / oneIn) return null;
+        if (profileFor(sampleBiomeAt(wx, wy).name).key === 'road') return null;
+        return {
+            sx: wx * VOX.PER_TILE + Math.floor(sqHash(wx, wy, 2) * VOX.PER_TILE),
+            sz: wy * VOX.PER_TILE + Math.floor(sqHash(wx, wy, 3) * VOX.PER_TILE)
+        };
+    }
+
     // =========================================================================
     // The sewers
     // =========================================================================
@@ -2266,12 +2280,10 @@
             // that most often has none: the square is asked first, and all but a
             // handful of columns in the world stop here for the cost of a hash.
             const wx = Math.floor(vx / VOX.PER_TILE), wy = Math.floor(vz / VOX.PER_TILE);
-            const oneIn = gen >= 26 ? SHAFT_ONE_IN_MTN : SHAFT_ONE_IN;
-            if (sqHash(wx, wy, 1) >= 1 / oneIn) return gen;
-            const sx = wx * VOX.PER_TILE + Math.floor(sqHash(wx, wy, 2) * VOX.PER_TILE);
-            const sz = wy * VOX.PER_TILE + Math.floor(sqHash(wx, wy, 3) * VOX.PER_TILE);
+            const sh = shaftOf(wx, wy, gen);
+            if (!sh) return gen;
             const reach = SHAFT_RADIUS + SHAFT_FLARE;
-            if (Math.abs(vx - sx) > reach || Math.abs(vz - sz) > reach) return gen;
+            if (Math.abs(vx - sh.sx) > reach || Math.abs(vz - sh.sz) > reach) return gen;
 
             const c = this.columnCaves(vx, vz);
             if (!c || !c.shaftR || c.shaftTop < gen - 1) return gen;
@@ -2377,11 +2389,9 @@
             // why a mountainside is where caves are found.
             let shaft = 0;
             const wx = Math.floor(vx / VOX.PER_TILE), wy = Math.floor(vz / VOX.PER_TILE);
-            const oneIn = own >= 26 ? SHAFT_ONE_IN_MTN : SHAFT_ONE_IN;
-            if (sqHash(wx, wy, 1) < 1 / oneIn) {
-                const sx = wx * VOX.PER_TILE + Math.floor(sqHash(wx, wy, 2) * VOX.PER_TILE);
-                const sz = wy * VOX.PER_TILE + Math.floor(sqHash(wx, wy, 3) * VOX.PER_TILE);
-                const d = Math.hypot(vx - sx, vz - sz);
+            const sh = shaftOf(wx, wy, own);
+            if (sh) {
+                const d = Math.hypot(vx - sh.sx, vz - sh.sz);
                 if (d < SHAFT_RADIUS + SHAFT_FLARE) shaft = d;
             }
 

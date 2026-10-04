@@ -790,12 +790,23 @@
 
   /**
    * Refueling availability (replaces the old "Camper Refuel" common event 104).
-   * Refueling is allowed when a "Fuel Pump" event is present on the current map,
-   * or when standing over a City / Burg / Village biome tile on the world map (315).
+   * Refueling is allowed when a "Gas Pump" / "Fuel Pump" event or a GasPump /
+   * RefuelStation terrain feature is on the current map (hand-made or
+   * procedural), or when standing over a City / Burg / Village biome tile on
+   * the world map (315).
    */
+  const PUMP_EVENT_NAMES = new Set(['Gas Pump', 'Fuel Pump']);  // i18n-ignore  event names
+  const PUMP_FEATURE_NAMES = ['GasPump', 'RefuelStation'];      // i18n-ignore  tileset feature names
   function canRefuelHere() {
     const events = ($dataMap && $dataMap.events) ? $dataMap.events : [];
-    if (events.some(e => e && e.name === 'Fuel Pump')) return true;  // i18n-ignore  event name
+    if (events.some(e => e && PUMP_EVENT_NAMES.has(e.name))) return true;
+    // Procedural maps add their events at runtime, past $dataMap.
+    if ($gameMap.events().some(ev => {
+      const data = ev && ev.event && ev.event();
+      return !!data && PUMP_EVENT_NAMES.has(data.name);
+    })) return true;
+    const TI = window.TerrainInteractions;
+    if (TI && TI.findFeatureTiles && TI.findFeatureTiles(PUMP_FEATURE_NAMES).length > 0) return true;
 
     const PGU = window.ProcGenUtils;
     const globeBiome = (isGlobeMapId($gameMap.mapId()) && PGU && PGU.globeBiomeAt)
@@ -5555,6 +5566,10 @@
     this.anchor.x = 0.5;
     this.anchor.y = 1;
     this.visible = false;
+    // A depth from the start, hidden or not: the tilemap sorts every child by z,
+    // and an undefined one turns its comparator into NaN, which let normal
+    // characters added after these seats sort above the star tile layer.
+    this.z = 3;
     this._riderName = '';
     this._riderIndex = 0;
     this._frameKey = '';

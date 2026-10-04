@@ -22,14 +22,19 @@
     "alwaysCarried": "CARRIED INTO EVERY FIGHT; IT SPENDS NO SKILL SLOT!",
     "sockets": "SOCKETS IT FITS",
     "noSocket": "NO SOCKET ACCEPTS IT.",
+    "noSocketShort": "NO SOCKET",
+    "moreSockets": "+{count}",
+    "capacity": "CAPACITY",
+    "capacityValue": "{fitted} OF {max} SOCKETS",
     "fittedTo": "FITTED TA",
     "damagedWarning": "DA PART IT SITS IN IZ RUINED. DA AUGMENT STILL WORKS, BUT DA LIMB DOES NOT!",
     "severWarning": "SEVERIN' DA PART TAKES DA AUGMENT WIT IT!",
     "need": {
-      "halted": "{need} NEVER DEPLETES.",
-      "slowed": "{need} DRAINS {pct}% SLOWER.",
-      "hastened": "{need} DRAINS {pct}% FASTER.",
-      "restores": "{need} REFILLS INSTEAD OF DRAININ', AT {pct}% OF DA USUAL RATE!"
-    }
+      "halted": "NEVER DEPLETES",
+      "slowed": "DRAINS {pct}% SLOWER",
+      "hastened": "DRAINS {pct}% FASTER",
+      "restores": "REFILLS AT {pct}% OF DA USUAL RATE"
+    },
+    "searchPlaceholder": "SEARCH AUGMENTS…"
   }
 }

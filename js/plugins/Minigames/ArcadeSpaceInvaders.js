@@ -1,11 +1,11 @@
 /*:
  * @target MZ
- * @plugindesc ASCII Space Invaders Game Cart v1.0.0
+ * @plugindesc ASCII Invaders Game Cart v1.0.0
  * @author Omni-Lex
  * @url https://nocoldiz.itch.io/hypernet-explorer
  * @help
  * ============================================================================
- * ASCII Space Invaders Game Cart
+ * ASCII Invaders Game Cart
  * ============================================================================
  * 
  * Protect the Earth from waves of descending ASCII invaders!

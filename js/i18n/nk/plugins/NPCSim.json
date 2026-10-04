@@ -2,12 +2,12 @@
   "anItem": "AN ITEM",
   "mapFallback": "MAP {id}",
   "homePool": {
-    "huts": "HUT",
     "houses": "HOUSE",
-    "villas": "VILLA",
     "skyscrapers": "HIGH-RISE"
   },
   "log": {
+    "swam": "WENT FOR A SWIM",
+    "caughtFish": "CAUGHT A {fish}",
     "work": "WORKED AS {job} AN' EARNED {pay}",
     "harvested": "HARVESTED MATURE CROPS",
     "animalProduce": "COLLECTED ANIMAL PRODUCE",
@@ -15,6 +15,7 @@
     "caughtStealing": "CAUGHT STEALIN' {item}",
     "bought": "BOUGHT {item} FOR {price}",
     "cooked": "COOKED {a} WIT {b}",
+    "ateFromHand": "ATE DA {item} DEY WAZ CARRYIN'",
     "foundInContainer": "FOUND {amount} RUMMAGIN' THROUGH A CONTAINER",
     "rentedRoom": "RENTED A ROOM FOR DA NIGHT ({price})",
     "tookLoan": "TOOK OUT A LOAN FOR {amount}",
@@ -24,7 +25,60 @@
     "stocksLoss": "LOST {amount} TRADIN' STOCKS",
     "movedHome": "MOVED TA A {home} ({saved} SAVED)",
     "reachedLevel": "REACHED LEVEL {level}",
-    "met": "MET {name}"
+    "specHoned": "BECAME {level} IN {spec}",
+    "met": "MET {name}",
+    "minigameWon": "PLAYED {game} AN' WON {amount}",
+    "minigameLost": "PLAYED {game} AN' LOST {amount}",
+    "minigameBeat": "PLAYED {game} AN' WON",
+    "minigameBeaten": "PLAYED {game} AN' LOST",
+    "minigameDraw": "PLAYED {game} TA A DRAW",
+    "minigamePlayed": "PLAYED {game}",
+    "treated": "WAZ TREATED WIT {item} FOR {price}",
+    "prosthetic": "HAB A LOST PART REPLACED WIT {item} FOR {price}",
+    "harvestedCrop": "HARVESTED {qty} {item}",
+    "harvestedFor": "HARVESTED {qty} {item} FOR {owner}",
+    "collected": "COLLECTED {qty} {item} FROM DA ANIMALS",
+    "collectedFor": "COLLECTED {qty} {item} FOR {owner}",
+    "wateredParty": "WATERED DA PARTY'S {plant}",
+    "fedParty": "FED DA PARTY'S {animal}",
+    "wateredHive": "FILLED DA WATER AT DA PARTY'S HIVE",
+    "usedFix": "USED {item} TA FEED A {substance} CRAVIN'",
+    "withdrawal": "WENT INTO {substance} WITHDRAWAL",
+    "withdrawalOver": "CAME THROUGH {substance} WITHDRAWAL",
+    "hiveCared": "LOOKED AFTER DA BEES",
+    "hiveCaredParty": "LOOKED AFTER DA PARTY'S BEES",
+    "hiveTreated": "TREATED DA BEES FOR {threats}",
+    "honeyTaken": "TOOK {qty} {item} OFF DA HIVE",
+    "honeyTakenFor": "TOOK {qty} {item} OFF DA HIVE FOR {owner}",
+    "barrelCared": "SAW TA A BARREL OF {brew}",
+    "barrelCaredParty": "SAW TA DA PARTY'S BARREL OF {brew}",
+    "barrelBottled": "BOTTLED {qty} {item}",
+    "barrelBottledFor": "BOTTLED {qty} {item} FOR {owner}",
+    "barrelStarted": "SET A BARREL OF {brew} GOING",
+    "sippedBrew": "HELPED THEMSELVES TA A DROP OF {brew}",
+    "stocksBought": "BOUGHT {shares} SHARES OF {company} FOR {amount}",
+    "stocksInherited": "INHERITED DA SHARES OF {name}",
+    "workInKind": "WORKED AS {job} AN' WAZ PAID IN FOOD"
+  },
+  "tend": {
+    "waterFriend": "DA {plant} LOOKED THIRSTY. LEAST ME CAN DO FOR FRIENDS!",
+    "feedFriend": "GAVE DA {animal} SOMETHIN' TA EAT. FRIENDS LOOK AFTER EACH OTHER'S ANIMALS!",
+    "hiveFriend": "TOPPED UP DA WATER AT DEY HIVE. BEES GET THIRSTY TOO!",
+    "barrelFriend": "GAVE DEY BARREL OF {brew} A LOOK. FRIENDS KEEP AN EYE ON EACH OTHER'S THINGS!"
+  },
+  "minigame": {
+    "arcade": "AN ARCADE CABINET",
+    "slots": "DA SLOT MACHINE",
+    "horserace": "DA HORSE RACES",
+    "tournament": "DA MONSTER TOURNAMENT",
+    "cards": "A CARD DUEL",
+    "scratch": "A SCRATCH CARD",
+    "bowling": "A GAME OF BOWLIN'",
+    "pool": "A GAME OF POOL",
+    "basketball": "A GAME OF BASKETBALL",
+    "target": "AT DA SHOOTIN' RANGE",
+    "piano": "DA PIANO",
+    "tarot": "A TAROT READIN'"
   },
   "narrative": {
     "noHistory": "{name} HAB NO RECORDED HISTORY YET!",
@@ -44,5 +98,28 @@
     "summary": "{name}: {list}.",
     "quiet": "{name} HAB BEEN LIVIN' QUIETLY."
   },
-  "unknownDate": "UNKNOWN"
+  "unknownDate": "UNKNOWN",
+  "work": {
+    "served": [
+      "HERE YOU IZ, {name}.",
+      "NEXT! AH, {name}. DA USUAL?",
+      "DERE YOU GO, {name}. MIND HOW YOU GO!",
+      "ANYTHIN' ELSE, {name}?"
+    ],
+    "thanked": [
+      "THANKS, {name}. KEEP DA CHANGE.",
+      "QUICK SERVICE, {name}. ME LIKE DAT!",
+      "CHEERS, {name}.",
+      "JUST WHAT ME NEEDED, THANK YOU!"
+    ]
+  },
+  "addiction": {
+    "label": {
+      "nicotine": "NICOTINE",
+      "caffeine": "CAFFEINE",
+      "narcotic": "NARCOTICS",
+      "alcohol": "ALCOHOL",
+      "gambling": "GAMBLIN'"
+    }
+  }
 }

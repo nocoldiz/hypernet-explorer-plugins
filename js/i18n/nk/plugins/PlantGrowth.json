@@ -5,8 +5,8 @@
     "GROWIN'",
     "MATURE"
   ],
-  "harvested": "\\I[{icon}]HARVESTED \\c[14]{item}\\c[0] ×{qty}!",
-  "planted": "PLANTED \\c[14]{plant}\\c[0]!",
+  "harvested": "HARVESTED {item} ×{qty}",
+  "planted": "PLANTED {plant}",
   "fieldPlot": "FIELD PLOT AT {x}, {y}",
   "mapPlot": "MAP #{map}, PLOT #{plot}",
   "itemNumbered": "ITEM #{id}",
@@ -62,7 +62,7 @@
   "yield": "YIELD",
   "seeds": "SEEDS",
   "pickSeedHint": "PICK A SEED ON DA RIGHT TA SEE ITS SEASONS AN' HOW LONG IT TAKES TA GROW!",
-  "seedBlurb": "PLANT SEEDS IN DA RIGHT SEASON AN' DEY WILL GROW. INSIDE A GREENHOUSE DEY GROW ALL YEAR, AN' FASTER!",
+  "seedBlurb": "SEEDS PLANTED IN DA RIGHT SEASON WILL GROW. IN A GREENHOUSE DEY GROW ALL YEAR, AN' FASTER!",
   "seasonAbbr": {
     "SPRING": "SPR",
     "SUMMER": "SUM",
@@ -81,5 +81,9 @@
     "harvest": "HARVEST",
     "remove": "REMOVE",
     "check": "CHECK"
-  }
+  },
+  "toast": {
+    "ripe": "{plant} IZ RIPE FOR PICKIN'."
+  },
+  "plotAt": "OPEN GROUND, TILE {tile}"
 }

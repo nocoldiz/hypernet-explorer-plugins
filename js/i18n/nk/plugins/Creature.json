@@ -12,6 +12,10 @@
   "skillFallback": "SKILL {id}",
   "ui": {
     "primaryBadge": "PRI",
-    "secondaryBadge": "SEC"
+    "secondaryBadge": "SEC",
+    "weaponSlots": "CAN HOLD {n} WEAPONS",
+    "weaponSlotsOne": "CAN HOLD 1 WEAPON",
+    "weaponSlotsMouth": "CAN HOLD 1 WEAPON, IN ITS MOUTH",
+    "noWeaponSlots": "NO CAN HOLD A WEAPON"
   }
 }

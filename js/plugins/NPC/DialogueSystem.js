@@ -115,6 +115,7 @@ Imported.DialogueSystem = true;
     const bustMinHeight    = 240;   // and the shortest, on a very short screen
     const bustTopMargin    = 6;     // air above its head
     const bustEdgeMargin   = 0;     // portraits stand flush against the screen edges
+    const bustSizeFactor   = 0.85;  // drawn a little under the room they have, clear of the box
     // A story scene stages one of its speakers against either edge of the
     // screen and dims whoever is not talking.
     // The listener of a story scene is not made see-through, it is taken out of
@@ -148,7 +149,16 @@ Imported.DialogueSystem = true;
     function bustHeightFor(halfWidth) {
         const room = Math.max(0, bustFloor() - bustTopMargin);
         const wide = Math.max(0, halfWidth) / bustAspect;
-        return Math.round(Math.max(bustMinHeight, Math.min(bustMaxHeight, room, wide)));
+        return Math.round(Math.max(bustMinHeight, Math.min(bustMaxHeight, room, wide) * bustSizeFactor));
+    }
+
+    // How wide a portrait is actually drawn once scaled to fit, or the width
+    // of its slot while its pixels are still on the way. A bust narrower than
+    // the 3:4 slot would otherwise stand off the right edge by the difference.
+    function drawnBustWidth(sprite, slotWidth) {
+        const bmp = sprite && sprite.bitmap;
+        if (!bmp || !bmp.width || !sprite.scale || !sprite.scale.x) return slotWidth;
+        return Math.round(bmp.width * sprite.scale.x);
     }
 
     function getBustHeight() { return bustHeightFor(Graphics.width / 2 - bustEdgeMargin); }
@@ -729,8 +739,9 @@ Imported.DialogueSystem = true;
                 // The place is the side they stand on, not their turn order.
                 const end = sprite.storySide === 'right' ? 1 : sprite.storySide === 'left' ? 0 : i;
                 this.scaleBustToFit(sprite, layout.width, layout.height);
-                sprite._targetX = layout.x(end);
-                sprite._hiddenX = layout.hiddenX(end);
+                const drawn = drawnBustWidth(sprite, layout.width);
+                sprite._targetX = end === 1 ? Graphics.width - bustEdgeMargin - drawn : layout.x(end);
+                sprite._hiddenX = end === 1 ? Graphics.width + drawn : -drawn;
                 sprite.y        = layout.y;
                 if (sprite._slideDuration > 0) {
                     sprite._slideTarget = sprite._slideType === 'out'
@@ -745,6 +756,7 @@ Imported.DialogueSystem = true;
         // darkened, at full opacity, and drawn behind them.
         setStoryActive(key) {
             const slots = this.storySlots || [];
+            this._storyActiveKey = key || null;
             // The name tag belongs to the portrait under the light, so it
             // crosses the box with the turn instead of sitting on one end of
             // the stage while the other end talks.
@@ -767,7 +779,7 @@ Imported.DialogueSystem = true;
         }
 
         updateBustHiddenPosition() {
-            const width = getBustWidth();
+            const width = drawnBustWidth(this.characterBust, getBustWidth());
             const left  = this.bustSide === 'left';
             // A portrait slides off the edge it stands on, so a party member
             // enters from the left and an NPC from the right.
@@ -825,15 +837,41 @@ Imported.DialogueSystem = true;
                 if (!slots.length) return null;
                 const layout = this.storyLayout();
                 const side   = (this.nameWindow && this.nameWindow._side === 'right') ? 'right' : 'left';
-                let idx = slots.findIndex(s => s.storySide === side);
-                if (idx < 0) idx = side === 'right' ? 1 : 0;
-                const end = idx === 0 ? 0 : 1;
-                return layout.x(end) + layout.width / 2;
+                // The end is the side the portrait stands on, never its place
+                // in the cast: a lone speaker on the right is slot 0 too.
+                const sprite = slots.find(s => s.storySide === side);
+                const end    = side === 'right' ? 1 : 0;
+                const drawn  = drawnBustWidth(sprite, layout.width);
+                const x      = sprite && typeof sprite._targetX === 'number' ? sprite._targetX
+                             : (end === 1 ? Graphics.width - bustEdgeMargin - drawn : layout.x(end));
+                return x + drawn / 2;
             }
             if (!this.bustIsVisible || !this.characterBust) return null;
             const target = typeof this.characterBust._targetX === 'number'
                 ? this.characterBust._targetX : this.characterBust.x;
-            return target + getBustWidth() / 2;
+            return target + drawnBustWidth(this.characterBust, getBustWidth()) / 2;
+        }
+
+        // The portrait of whoever is speaking, where it stands once it has
+        // walked in: { x, top, width, side } in game pixels, or null with
+        // nobody on stage. What a DOM panel reads to stand over the speaker's
+        // head (the map legend's folded notice) instead of under their face.
+        speakerBounds() {
+            if (!this.bustIsVisible) return null;
+            let sprite = null;
+            let side   = this.bustSide === 'left' ? 'left' : 'right';
+            if (this.storyMode) {
+                const slots = this.storySlots || [];
+                sprite = slots.find(s => s.storyKey === this._storyActiveKey) || slots[0] || null;
+                if (sprite) side = sprite.storySide === 'left' ? 'left' : 'right';
+            } else {
+                sprite = this.characterBust;
+            }
+            if (!sprite || !sprite.bitmap || !sprite.bitmap.height || !sprite.scale) return null;
+            const width = drawnBustWidth(sprite, getBustWidth());
+            const x     = typeof sprite._targetX === 'number' ? sprite._targetX : sprite.x;
+            const top   = sprite.y - Math.round(sprite.bitmap.height * sprite.scale.y);
+            return { x, top, width, side };
         }
 
         setupBustPosition(sprite) { sprite.y = this.getBustY(); }
@@ -1863,32 +1901,68 @@ Imported.DialogueSystem = true;
     window.DialogueVoice = DialogueVoice;
 
     // -------------------------------------------------------------------------
-    // Speaker prefixes in an ordinary event box (story mode)
+    // Speaker prefixes in an ordinary event box
     // -------------------------------------------------------------------------
-    // A story-mode event can hand a line to one of the party by writing their
-    // name in front of it ("Bubba: Friends are forever!"). The prefix is an
-    // author's stage direction, not something anybody reads: it is taken off
-    // the text, the party member it names is stood on the LEFT of the box with
-    // the name tag over them, and whoever the party is talking to keeps the
-    // RIGHT-hand slot for the whole exchange, the way a written scene is
-    // staged. A line with no prefix is the NPC answering, so the light simply
-    // crosses back to their side instead of the stage being rebuilt.
+    // An event can hand a line to somebody by writing their name in front of
+    // it ("Bubba: Friends are forever!"). The prefix is an author's stage
+    // direction, not something anybody reads: it is taken off the text, the
+    // speaker is stood beside the box with the name tag over them, and whoever
+    // the party is talking to keeps their own slot for the whole exchange, the
+    // way a written scene is staged. A line with no prefix is the NPC
+    // answering, so the light simply crosses back to their side instead of the
+    // stage being rebuilt.
     //
-    // Outside story mode (switch 100) nothing here runs and a box carrying a
-    // colon is left exactly as it was written.
+    // The voice cast (Em, Bubba, Eris) is read in every box of every event,
+    // a signpost or a trigger as much as a person. Whoever the player is
+    // walking as stands on the LEFT and the others on the RIGHT: walking as
+    // Em, Bubba and Eris answer her from the right; walking as Bubba, he takes
+    // the left and Em and Eris the right. Anybody else at the head of the
+    // party leaves Em on the left, where the story always puts her.
+    //
+    // Any other party member is read only in story mode (switch 100) and
+    // stands on the left; outside it a box carrying their name is left exactly
+    // as it was written.
     const STORY_PREFIX_SWITCH = 100;
+
+    // The portrait each of the cast speaks behind. null: the actor's own, the
+    // same answer the Empathize panel gives.
+    const PREFIX_VOICE_CAST = { Em: 'presets/Em', Bubba: 'presets/Bubba', Eris: 'WastelandDJ' }; // i18n-ignore: actor names matched at runtime
 
     // The head of the first line, up to the first colon. Only a short token is
     // considered, and it only counts once it turns out to name an actor, so
     // prose ("Remember kiddo: ...") is never cut in half.
     const SPEAKER_PREFIX_RE = /^[ \t]*([^\s:][^:\n]{0,23}?)[ \t]*:[ \t]*/;
 
-    // The stage raised by the last prefixed line, or null. Kept so the NPC's
-    // own answer lands on the cast already standing there.
+    // The stage raised by the last prefixed line, or null: who stands on each
+    // end ({ key, image } or null) and the NPC the event belongs to. Kept so
+    // the NPC's own answer lands on the cast already standing there.
     let _prefixStage = null;
 
     function storyPrefixMode() {
         return !!(window.$gameSwitches && $gameSwitches.value(STORY_PREFIX_SWITCH));
+    }
+
+    // "bubba" or "Bubba" -> "Bubba"; anybody outside the cast -> null.
+    function voiceCastName(name) {
+        const wanted = String(name || '').trim().toLowerCase();
+        return Object.keys(PREFIX_VOICE_CAST).find(n => n.toLowerCase() === wanted) || null;
+    }
+
+    function prefixLeaderName() {
+        try {
+            const leader = $gameParty && $gameParty.leader ? $gameParty.leader() : null;
+            return leader && leader.name ? String(leader.name()).trim() : '';
+        } catch (err) { return ''; }
+    }
+
+    // The end of the box a prefixed speaker stands on. The one being walked
+    // as is on the left; of the cast, Em is on the left whenever nobody else
+    // of the cast is leading.
+    function prefixSide(castName) {
+        if (!castName) return 'left';
+        const leader = voiceCastName(prefixLeaderName());
+        if (leader) return castName === leader ? 'left' : 'right';
+        return castName === 'Em' ? 'left' : 'right';
     }
 
     // The actor a prefix names, party member or not: Bubba speaks in scenes he
@@ -1913,6 +1987,19 @@ Imported.DialogueSystem = true;
         const H    = window.NPCEmpathize?._helpers;
         const full = H?._resolveBustForActor ? H._resolveBustForActor(actor) : 'img/busts/7.png';
         return String(full || 'img/busts/7.png').replace(/^img\/busts\//, '').replace(/\.png$/, '');
+    }
+
+    // Who a prefix names: { name, image, side }, or null when it names nobody
+    // this box should stage.
+    function prefixSpeaker(raw) {
+        const cast = voiceCastName(raw);
+        if (!cast && !storyPrefixMode()) return null;
+        const actor = actorNamedForPrefix(cast || raw);
+        if (!cast && !actor) return null;
+        const painted = cast ? PREFIX_VOICE_CAST[cast] : null;
+        const image = painted || (actor ? actorBustName(actor) : '7');
+        const name  = actor ? actor.name() : cast;
+        return { name, image, side: prefixSide(cast) };
     }
 
     // The portrait of the event the party is talking to, or null when it has
@@ -1945,32 +2032,22 @@ Imported.DialogueSystem = true;
         _BM_hideBusts.call(this);
     };
 
-    // Puts the two of them up (or lights the one already up) and hands the name
-    // tag to whoever is speaking. Returns true once the stage is ours, so the
-    // single-portrait path is left alone for the rest of the box.
-    function stageSpeakerPrefix(bm, actor, displayName) {
-        const leftImage = actorBustName(actor);
-        const leftKey   = `custom_${leftImage}`;
-        const npcImage  = prefixNpcBust(bm);
-        const npcKey    = npcImage ? `custom_${npcImage}` : null;
-        const eventId   = $gameMap._interpreter ? $gameMap._interpreter._eventId : null;
+    // Stands `who` on one end. Somebody already on that end is swapped in
+    // place, so the one opposite is not walked off and back on every time the
+    // turn passes; an end that was empty means the cast is put up anew.
+    function seatOnPrefixStage(bm, side, who, rebuild) {
+        const had = _prefixStage[side];
+        _prefixStage[side] = who;
+        if (!rebuild && had && bm.replaceStorySlot(side, who.key, who.image)) return;
+        const cast = ['left', 'right']
+            .filter(s => _prefixStage[s])
+            .map(s => ({ key: _prefixStage[s].key, imageName: _prefixStage[s].image, side: s }));
+        bm.setStoryCast(cast);
+    }
 
-        bm.setStoryMode(true);
-        const sameStage = _prefixStage && _prefixStage.eventId === eventId
-            && _prefixStage.rightKey === npcKey && (bm.storySlots || []).length;
-        if (!sameStage) {
-            const cast = [{ key: leftKey, imageName: leftImage, side: 'left' }];
-            if (npcKey) cast.push({ key: npcKey, imageName: npcImage, side: 'right' });
-            bm.setStoryCast(cast);
-        } else if (_prefixStage.leftKey !== leftKey) {
-            // The other half of the party takes the turn: only their portrait
-            // is swapped, so the NPC opposite is not walked off and back on
-            // every time Em and Bubba answer each other.
-            bm.replaceStorySlot('left', leftKey, leftImage);
-        }
-        _prefixStage = { eventId, leftKey, rightKey: npcKey };
-
-        bm.setStoryActive(leftKey);
+    // Lights the one speaking and hands them the name tag.
+    function signPrefixLine(bm, key, displayName, eventId) {
+        bm.setStoryActive(key);
         if (bm.nameWindow) {
             bm.nameWindow.setCharacterName(displayName);
             bm.nameWindow.showName();
@@ -1980,23 +2057,38 @@ Imported.DialogueSystem = true;
         bm.lastKnownEventId = eventId;
         bm.bustIsVisible    = true;
         bm.hideScheduled    = false;
+    }
+
+    // Puts the speaker up (or lights the one already up). Returns true once
+    // the stage is ours, so the single-portrait path is left alone for the
+    // rest of the box.
+    function stageSpeakerPrefix(bm, speaker) {
+        const key      = `custom_${speaker.image}`;
+        const npcImage = prefixNpcBust(bm);
+        const npcKey   = npcImage ? `custom_${npcImage}` : null;
+        const eventId  = $gameMap._interpreter ? $gameMap._interpreter._eventId : null;
+
+        bm.setStoryMode(true);
+        const fresh = !_prefixStage || _prefixStage.eventId !== eventId
+            || _prefixStage.npcKey !== npcKey || !(bm.storySlots || []).length;
+        if (fresh) {
+            _prefixStage = { eventId, npcKey, npcImage, left: null,
+                             right: npcKey ? { key: npcKey, image: npcImage } : null };
+        }
+        seatOnPrefixStage(bm, speaker.side, { key, image: speaker.image }, fresh);
+        signPrefixLine(bm, key, speaker.name, eventId);
         return true;
     }
 
     // The NPC's own line inside an exchange a prefix opened: the light and the
-    // name tag cross back to the right-hand slot, nothing else moves.
+    // name tag cross back to the right-hand slot, and the NPC steps back onto
+    // it if one of the cast had taken it.
     function lightPrefixNpc(bm) {
-        if (!_prefixStage || !_prefixStage.rightKey) return false;
+        if (!_prefixStage || !_prefixStage.npcKey) return false;
         const eventId = $gameMap._interpreter ? $gameMap._interpreter._eventId : null;
         if (eventId !== _prefixStage.eventId) return false;
-        bm.setStoryActive(_prefixStage.rightKey);
-        if (bm.nameWindow) {
-            bm.nameWindow.setCharacterName(bm.getCharacterDisplayName(eventId));
-            bm.nameWindow.showName();
-            bm.nameIsVisible = true;
-        }
-        bm.bustIsVisible = true;
-        bm.hideScheduled = false;
+        seatOnPrefixStage(bm, 'right', { key: _prefixStage.npcKey, image: _prefixStage.npcImage }, false);
+        signPrefixLine(bm, _prefixStage.npcKey, bm.getCharacterDisplayName(eventId), eventId);
         return true;
     }
 
@@ -2006,13 +2098,13 @@ Imported.DialogueSystem = true;
     // portraits for this box.
     function applySpeakerPrefix() {
         const bm = SceneManager._scene && SceneManager._scene._bustManager;
-        if (!bm || bm.exchangeMode || !storyPrefixMode()) { unstageSpeakerPrefix(bm); return false; }
+        if (!bm || bm.exchangeMode) { unstageSpeakerPrefix(bm); return false; }
         const texts = ($gameMessage && $gameMessage._texts) || [];
         if (!texts.length) return _prefixStage ? lightPrefixNpc(bm) : false;
 
-        const match = SPEAKER_PREFIX_RE.exec(texts[0]);
-        const actor = match ? actorNamedForPrefix(match[1]) : null;
-        if (!actor) {
+        const match   = SPEAKER_PREFIX_RE.exec(texts[0]);
+        const speaker = match ? prefixSpeaker(match[1]) : null;
+        if (!speaker) {
             // No prefix: the NPC answering inside an exchange already staged,
             // or an ordinary box that has nothing to do with one.
             if (_prefixStage && lightPrefixNpc(bm)) return true;
@@ -2020,7 +2112,7 @@ Imported.DialogueSystem = true;
             return false;
         }
         texts[0] = texts[0].slice(match[0].length);
-        return stageSpeakerPrefix(bm, actor, actor.name());
+        return stageSpeakerPrefix(bm, speaker);
     }
 
     const _WM_initialize = Window_Message.prototype.initialize;

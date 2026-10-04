@@ -56,7 +56,7 @@
  * Army Battle View System
  *
  * This plugin provides a PIXI.js-powered tactical battle visualization
- * inspired by Total War and Mount & Blade.
+ * inspired by large scale field battle and warband games.
  *
  * Features:
  * - Real-time tactical battle visualization

@@ -35,13 +35,330 @@
     "oil": "OIL",
     "souls": "SOULS"
   },
-  "appName": "OILSOUL MARKET",
+  "appName": "QUANTUM PROJECTOR",
   "portfolio": {
-    "liquid": "LIQUID EUROS",
+    "liquid": "LIQUID GOLD",
     "netWorth": "NET WORTH"
   },
   "ui": {
-    "oilTether": "OIL:",
-    "soulCrystal": "SOUL:"
+    "oilTether": "OIL TETHER:",
+    "soulCrystal": "SOUL CRYSTAL:",
+    "assetCount": "{n} ASSETS",
+    "category": "SECTOR:",
+    "volatility": "VOLATILITY RATIN':",
+    "float": "SHARES ISSUED:",
+    "ownership": "YA STAKE:",
+    "dividend": "DAILY DIVIDEND:"
+  },
+  "assets": {
+    "oil": {
+      "name": "OIL",
+      "description": "CRUDE OIL, PRICED BY DA BARREL!"
+    },
+    "souls": {
+      "name": "SOUL",
+      "description": "CRYSTALLISED ESSENCE, TRADED BY WEIGHT. DA PRICE DRIFTS BACK TOWARD DA RESONANCE MEDIAN!"
+    }
+  },
+  "sectors": {
+    "commodities": "COMMODITIES",
+    "arcane": "ARCANE COMMODITIES"
+  },
+  "news": {
+    "justNow": "JUST NOW",
+    "minutesAgo": "{n}M AGO",
+    "moveNote": "[{sign}{pct}%]"
+  },
+  "errors": {
+    "noFloat": "NO UNISSUED SHARES LEFT",
+    "noGold": "NOT ENOUGH MONEY FOR DAT ORDER",
+    "noShares": "YOU DO NOT HOLD DAT MANY SHARES"
+  },
+  "headlines": {
+    "oil": [
+      "REFININ' MARGINS WIDEN AFTER A WEEK OF PIPELINE MAINTENANCE!",
+      "DA ENERGY CARTEL HINTS AT QUIETLY ADJUSTED EXTRACTION QUOTAS!",
+      "BIO-DIESEL SYNTHESIS PLANTS REPORT A RECORD EXPORT MONTH!",
+      "A TANKER QUEUE OUTSIDE ROTTERDAM PUSHES DA SPOT BARREL AROUND!"
+    ],
+    "souls": [
+      "RIFT DETECTORS REGISTER A BRIEF ANOMALOUS HARMONIC FLUCTUATION!",
+      "DA CATHEDRAL GUILD CERTIFIES ANOTHER BATCH OF PURIFIED CANISTERS!",
+      "DA ARCANE COUNCIL CONVENES OVER RESERVE BENCHMARKS AN' SAYS LITTLE!",
+      "A THIN VEIL WEEK HAB ASSAYERS WORKIN' DOUBLE SHIFTS!"
+    ],
+    "company": {
+      "limecorp": [
+        "{company} SHIPS A WHOLE PRODUCT LINE A SEASON EARLY, UNFINISHED AN' SOLD OUT!",
+        "ANOTHER EXECUTIVE WALKS OUT OF LEMONCORP AN' INTO A {company} CORNER OFFICE!",
+        "{company} ANNOUNCES THREE DEVICES NOBODY ASKED FOR AN' TWO OF DEM SELL!",
+        "RETAILERS REPORT QUEUES AROUND DA BLOCK FOR DA NEW {company} HANDHELD!"
+      ],
+      "lemoncorp": [
+        "{company} RECALLS A BATTERY PACK AN' CALLS IT A DESIGN REFRESH!",
+        "ANALYSTS CALL {company} OVERVALUED AGAIN, DEN BUY IT AGAIN!",
+        "{company} OPENS ANOTHER FLAGSHIP STORE IN A TOWN WIT NO SIGNAL!"
+      ],
+      "petrodyne": [
+        "{company} BRINGS A NEW PUMP LINE ONLINE UNDER DA PETROCAVE!",
+        "{company} POSTS A SOOTY BUT DEPENDABLE QUARTERLY DIVIDEND!",
+        "A {company} TANKER CONTRACT IZ RENEWED FOR ANOTHER FIVE YEARS!"
+      ],
+      "soulforge": [
+        "{company} ASSAYERS REPORT A PURER YIELD FROM DA LAST CONSIGNMENT!",
+        "AN ETHICS COMMITTEE ASKS {company} QUESTIONS IT WILL NOT ANSWER!",
+        "{company} CORNERS DA MARKET ON CANISTER GLASS, BRIEFLY!"
+      ]
+    },
+    "sector": {
+      "consumertech": [
+        "{company} UNVEILS A GADGET DAT DOES ONE THING BEAUTIFULLY!",
+        "SHELVES CLEAR AS {company} DISCOUNTS LAST SEASON'S RANGE!",
+        "A FIRMWARE FAULT HAB {company} SUPPORT LINES BUSY ALL WEEK!"
+      ],
+      "energy": [
+        "{company} SECURES DRILLIN' RIGHTS NOBODY ELSE WANTED!",
+        "MAINTENANCE SEASON TRIMS {company} OUTPUT FOR A FORTNIGHT!",
+        "{company} SIGNS A LONG HAUL SUPPLY CONTRACT WIT THREE CITIES!"
+      ],
+      "occult": [
+        "{company} REPORTS A STRONG WEEK WHEREVER DA VEIL WENT THIN!",
+        "INSPECTORS VISIT A {company} VAULT AN' LEAVE WITHOUT COMMENT!",
+        "{company} RAISES ITS ASSAY FEES AN' NOBODY TRADES ELSEWHERE!"
+      ],
+      "telecom": [
+        "{company} LIGHTS UP ANOTHER RELAY TOWER AN' DA MAPS REDRAW!",
+        "BANDWIDTH ON DA {company} BACKBONE HITS AN ALL-TIME PEAK!",
+        "{company} BUYS DA PIPES UNDER A CITY IT ALREADY SERVED!"
+      ],
+      "industrial": [
+        "{company} ROLLS DA GIRDERS FOR A BRIDGE THREE COUNTRIES WANT!",
+        "A FURNACE AT {company} GOES COLD FOR SCHEDULED RELININ'!",
+        "RAIL ORDERS KEEP {company} MILLS BOOKED OUT TA SPRIN'!"
+      ],
+      "agriculture": [
+        "{company} BRINGS IN A HARVEST DA ALMANACS SAID WAZ IMPOSSIBLE!",
+        "A WET MONTH HAB {company} MOVIN' STOCK OUT OF DA LOW FIELDS!",
+        "{company} TINCTURES CLEAR CERTIFICATION IN TWO MORE MARKETS!"
+      ],
+      "finance": [
+        "{company} LEAVES ITS LENDIN' RATE EXACTLY WHERE IT WAZ!",
+        "{company} REPORTS LIQUIDITY RESERVES AT A RECORD!",
+        "A ROUTINE BOND TRANCHE IZ REDEEMED BY {company} WITHOUT DRAMA!"
+      ],
+      "transport": [
+        "{company} ADDS A NIGHT SERVICE AN' FILLS IT IN A WEEK!",
+        "FUEL COSTS SQUEEZE DA {company} TIMETABLE ON DA LONG ROUTES!",
+        "{company} TAKES OVER A DEPOT AN' KEEPS EVERY DRIVER ON!"
+      ],
+      "misc": [
+        "{company} SAYS DA QUARTER WENT BROADLY AS EXPECTED!",
+        "TRADIN' IN {company} IZ STEADY WIT NO NEWS TA SPEAK OF!",
+        "{company} RESTATES LAST YEAR'S FIGURES BY A ROUNDIN' ERROR!"
+      ]
+    },
+    "driver": {
+      "spend": {
+        "up": [
+          "{company} CLIMBS AS SHOPPERS EMPTY DA SHELVES IN {town}!",
+          "DA TILLS RING ALL WEEK AN' {company} RIDES DA SPENDIN'!"
+        ],
+        "down": [
+          "{company} SLIPS AS PURSES STAY SHUT IN {town}!",
+          "A QUIET WEEK AT DA TILLS WEIGHS ON {company}!"
+        ]
+      },
+      "jobs": {
+        "up": [
+          "HIRIN' PICKS UP AN' {company} GAINS WIT DA PAY PACKETS!",
+          "{company} RISES AS DA DOLE QUEUES SHORTEN!"
+        ],
+        "down": [
+          "LAYOFFS SPREAD AN' {company} FALLS WIT DA WAGES!",
+          "{company} SAGS AS {town} LOSES ITS JOBS."
+        ]
+      },
+      "prosperity": {
+        "up": [
+          "{company} GAINS ON A BOOM IN {town}.",
+          "GOOD TIMES IN {town} LIFT {company}."
+        ],
+        "down": [
+          "{company} HIT BY DA {town} BUST.",
+          "HARD TIMES IN {town} DRAG ON {company}."
+        ]
+      },
+      "hq": {
+        "up": [
+          "{company} CLIMBS AS ITS HOME TOWN {town} PROSPERS!",
+          "HEAD OFFICE IN {town} REPORTS A STRONG QUARTER FOR {company}!"
+        ],
+        "down": [
+          "TROUBLE AT HOME IN {town} KNOCKS {company}!",
+          "{company} SLIDES AS ITS HOME TOWN {town} STRUGGLES!"
+        ]
+      },
+      "war": {
+        "up": [
+          "{company} UP ON DA {war}.",
+          "{company} GAINS AS DA {war} KEEPS DA ORDER BOOKS FULL!"
+        ],
+        "down": [
+          "{company} DOWN ON DA {war}.",
+          "DA {war} WEIGHS ON {company}."
+        ]
+      },
+      "sanctions": {
+        "up": [
+          "{company} GAINS AS DA SANCTIONS ON {power} TIGHTEN SUPPLY!",
+          "SANCTIONS SQUEEZE SUPPLY AN' {company} PROFITS!"
+        ],
+        "down": [
+          "{company} SLIPS AS DA SANCTIONS ON {power} EASE!",
+          "SUPPLY LOOSENS AN' {company} GIVES BACK ITS SANCTIONS GAINS!"
+        ]
+      },
+      "plague": {
+        "up": [
+          "{company} CLIMBS AS DA EPIDEMIC FILLS ITS VAULTS!",
+          "GRIM TRADE: {company} RISES WIT DA DEATH TOLL!"
+        ],
+        "down": [
+          "{company} FALLS AS DA EPIDEMIC BURNS OUT!",
+          "FEWER FUNERALS, THINNER MARGINS FOR {company}!"
+        ]
+      },
+      "horde": {
+        "up": [
+          "{company} GAINS AS DA HORDE SPREADS ITS CHAOS!",
+          "WHEREVER DA GOBLIN HORDE GOES, {company} FOLLOWS IT UP!"
+        ],
+        "down": [
+          "{company} EASES AS ORDER RETURNS TA HORDE COUNTRY!",
+          "CALM IN DA OCCUPIED LANDS TAKES DA SHINE OFF {company}!"
+        ]
+      },
+      "building": {
+        "up": [
+          "{company} CLIMBS AS MOVERS AN' CAMPS NEED STEEL!",
+          "NEW ROOFS, NEW CAMPS: DA {company} MILLS RUN HOT!"
+        ],
+        "down": [
+          "{company} SLIPS AS FEWER PEOPLE IZ ON DA MOVE!",
+          "BUILDIN' ORDERS DRY UP AN' {company} COOLS!"
+        ]
+      },
+      "greenwitch": {
+        "up": [
+          "{company} BLOOMS WIT {town}.",
+          "A GOOD SEASON IN {town} LIFTS {company}."
+        ],
+        "down": [
+          "{company} HIT BY DA {town} BUST.",
+          "{town} HAB A LEAN SEASON AN' {company} FEELS IT!"
+        ]
+      },
+      "harvest": {
+        "up": [
+          "{company} GAINS AS DA FARMS BRING IN MORE!",
+          "BUSY FIELDS, BUSY BARNS: {company} RISES!"
+        ],
+        "down": [
+          "IDLE FIELDS DRAG ON {company}.",
+          "{company} SLIPS ON A THIN HARVEST."
+        ]
+      },
+      "mouths": {
+        "up": [
+          "MORE MOUTHS TA FEED LIFT {company}!",
+          "{company} GAINS AS DA TOWNS GROW."
+        ],
+        "down": [
+          "{company} FALLS AS DA TOWNS EMPTY.",
+          "FEWER PEOPLE AT DA TABLE, FEWER SALES FOR {company}!"
+        ]
+      },
+      "mood": {
+        "up": [
+          "{company} RISES AS DA GOVERNMENTS TURN OPTIMISTIC!",
+          "TREASURIES RELAX AN' {company} GAINS!"
+        ],
+        "down": [
+          "{company} FALLS ON GLOOMY TREASURY TALK!",
+          "DA GOVERNMENTS' ECONOMIC MOOD SOURS AN' {company} FOLLOWS!"
+        ]
+      },
+      "election": {
+        "up": [
+          "{company} GAINS AS DA ELECTION UNCERTAINTY IN {power} LIFTS!",
+          "POLLIN' DAY PASSES AN' {company} RECOVERS!"
+        ],
+        "down": [
+          "{company} FALLS AHEAD OF DA {power} ELECTION!",
+          "ELECTION NERVES IN {power} WEIGH ON {company}!"
+        ]
+      },
+      "savings": {
+        "up": [
+          "DEPOSITS POUR IN AN' {company} RISES!",
+          "{company} GAINS AS SAVERS FILL DA VAULTS!"
+        ],
+        "down": [
+          "{company} SLIPS AS DEPOSITS DRY UP!",
+          "SAVERS STAY AWAY AN' {company} EASES!"
+        ]
+      },
+      "balances": {
+        "up": [
+          "{company} GAINS AS PURSES ACROSS DA LAND GROW FAT!",
+          "FULL PURSES MEAN FULL VAULTS, AN' {company} RISES!"
+        ],
+        "down": [
+          "{company} SLIPS AS DA PURSES OF DA LAND RUN THIN!",
+          "EMPTY POCKETS, EMPTY VAULTS: {company} EASES!"
+        ]
+      },
+      "trips": {
+        "up": [
+          "{company} GAINS AS DA ROADS FILL WIT TRAVELLERS!",
+          "BUSY COACHES, BUSY RAILS: {company} RISES!"
+        ],
+        "down": [
+          "{company} SLIPS AS FEWER PEOPLE TRAVEL!",
+          "EMPTY SEATS WEIGH ON {company}."
+        ]
+      },
+      "moves": {
+        "up": [
+          "{company} CLIMBS AS FAMILIES MOVE HOUSE!",
+          "REMOVAL VANS IZ BOOKED SOLID AN' {company} RISES!"
+        ],
+        "down": [
+          "{company} EASES AS PEOPLE STAY PUT!",
+          "FEWER MOVES, FEWER FREIGHT ORDERS FOR {company}!"
+        ]
+      }
+    },
+    "earnings": {
+      "beat": [
+        "{company} BEATS ITS QUARTERLY FIGURES!",
+        "{company} POSTS EARNINGS AHEAD OF EVERY ESTIMATE!"
+      ],
+      "miss": [
+        "{company} MISSES ITS QUARTERLY FIGURES!",
+        "{company} EARNINGS FALL SHORT AN' DA BOARD APOLOGISES!"
+      ]
+    }
+  },
+  "dividends": {
+    "tag": "DIV",
+    "paid": "DIVIDENDS CREDITED: {amount} FOR {days} DAY(S) OF HOLDINGS!",
+    "toast": "DIVIDENDS PAID: {amount}"
+  },
+  "drivers": {
+    "warName": "{a}-{b} WAR",
+    "someWar": "FIGHTIN' ABROAD",
+    "someTown": "DA MARKET TOWNS",
+    "somePower": "DA POWERS"
   }
 }

@@ -1964,8 +1964,325 @@
         }
     }
 
+    // =========================================================================
+    // UfoFx: something in the sky, around midnight
+    //
+    // Rare, and only ever in the small hours: when the clock crosses into the
+    // half hour either side of midnight a night rolls for a visit, and most
+    // nights nothing comes. When something does, it is one of four shapes
+    // (an orb, a tic-tac, a triangle, a crescent) high over the party, and it
+    // does what the reports say such things do - the five observables:
+    //   lift      it hangs in the air with nothing holding it up
+    //   dart      it is somewhere else before the eye has moved
+    //   turn      a right angle at speed, no bank, no arc
+    //   medium    it drops into the sea or the ground and climbs back out
+    //   cloak     it is simply not there for a moment, then it is again
+    // ...and leaves the way it came: in one line across the sky, far faster
+    // than anything with wings. A pass that never hovers is the common case;
+    // the one that stops to perform is the one worth watching.
+    //
+    // World-positioned, not camera-relative like the sky dome, so it reads
+    // as something out there crossing the land rather than painted on the
+    // horizon. Fog is off its material: at the height it flies the haze
+    // would otherwise swallow it before it was ever seen.
+    // =========================================================================
+    const UFO_SHAPES      = ['orb', 'tictac', 'triangle', 'crescent'];   // i18n-ignore  shape ids
+    const UFO_CHANCE      = 0.35;    // of a visit, per night the window opens on
+    const UFO_WINDOW_H    = 0.5;     // hours either side of midnight
+    const UFO_HOVER_SHARE = 0.4;     // the share of visits that stop to perform
+    const UFO_ALT_MIN     = 650;     // over the ground, before the world scale
+    const UFO_ALT_MAX     = 1200;
+    const UFO_ZIP_SPEED   = 1500;    // world units a second, crossing
+    const UFO_DART_SPEED  = 2600;    // ...and in a dart
+    const UFO_RANGE       = 2200;    // how far out it enters and leaves
+    const UFO_HOVER_MIN   = 9;       // seconds of performance
+    const UFO_HOVER_MAX   = 20;
+    const UFO_SIZE        = 70;      // sprite width, before the world scale
+    const UFO_TEX         = 128;
+
+    class UfoFx {
+        constructor(scene) {
+            this._scene = scene;
+            this._sp = null;       // the sprite, built on first visit
+            this._mat = null;
+            this._cv = null;
+            this._visit = null;    // the visit under way
+            this._night = null;    // the day stamp the last roll was made for
+            this._glowT = 0;
+            // Tests and anyone curious: the nights rolled and what came.
+            this.lastRoll = null;
+        }
+
+        // What tonight is: the stamp of the night the window belongs to. The
+        // half hour before midnight and the half hour after are one night.
+        static nightStamp(totalMins) {
+            const m = totalMins + 600;             // the clock's epoch is 10:00
+            return Math.floor((m + 60 * UFO_WINDOW_H) / 1440);
+        }
+        static inWindow(hour) {
+            return hour >= 24 - UFO_WINDOW_H || hour < UFO_WINDOW_H;
+        }
+
+        // The shape, painted as a glow on a small canvas.
+        static paint(cv, shape) {
+            const ctx = cv.getContext('2d');
+            const s = cv.width, c = s / 2;
+            ctx.clearRect(0, 0, s, s);
+            ctx.save();
+            ctx.translate(c, c);
+            ctx.shadowColor = 'rgba(190,230,255,0.95)';
+            ctx.shadowBlur = s * 0.18;
+            ctx.fillStyle = '#eaf6ff';
+            ctx.beginPath();
+            if (shape === 'orb') {
+                ctx.arc(0, 0, s * 0.16, 0, Math.PI * 2);
+            } else if (shape === 'tictac') {
+                const w = s * 0.42, h = s * 0.16;
+                ctx.moveTo(-w / 2 + h / 2, -h / 2);
+                ctx.arcTo(w / 2, -h / 2, w / 2, h / 2, h / 2);
+                ctx.arcTo(w / 2, h / 2, -w / 2, h / 2, h / 2);
+                ctx.arcTo(-w / 2, h / 2, -w / 2, -h / 2, h / 2);
+                ctx.arcTo(-w / 2, -h / 2, w / 2, -h / 2, h / 2);
+            } else if (shape === 'triangle') {
+                const r = s * 0.24;
+                ctx.moveTo(0, -r);
+                ctx.lineTo(r * 0.87, r * 0.5);
+                ctx.lineTo(-r * 0.87, r * 0.5);
+                ctx.closePath();
+                ctx.fill();
+                // Three lights at the corners, one in the middle.
+                ctx.fillStyle = '#ffffff';
+                for (const [x, y] of [[0, -r], [r * 0.87, r * 0.5], [-r * 0.87, r * 0.5], [0, 0]]) {
+                    ctx.beginPath(); ctx.arc(x * 0.82, y * 0.82, s * 0.03, 0, Math.PI * 2); ctx.fill();
+                }
+                ctx.restore();
+                return;
+            } else {
+                const r = s * 0.22;
+                ctx.arc(0, 0, r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.shadowBlur = 0;
+                ctx.beginPath();
+                ctx.arc(r * 0.45, -r * 0.2, r * 0.85, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+                return;
+            }
+            ctx.fill();
+            ctx.restore();
+        }
+
+        _ensure() {
+            if (this._sp || typeof THREE === 'undefined') return;
+            this._cv = document.createElement('canvas');
+            this._cv.width = this._cv.height = UFO_TEX;
+            const tex = new THREE.CanvasTexture(this._cv);
+            if (THREE.SRGBColorSpace !== undefined) tex.colorSpace = THREE.SRGBColorSpace;
+            this._mat = new THREE.SpriteMaterial({
+                map: tex, transparent: true, depthWrite: false, depthTest: true, opacity: 0
+            });
+            this._mat.fog = false;
+            this._sp = new THREE.Sprite(this._mat);
+            this._sp.frustumCulled = false;
+            this._sp.visible = false;
+            this._scene.add(this._sp);
+        }
+
+        // A night's roll, taken once as its window opens. `rng` is for tests.
+        roll(totalMins, rng) {
+            const r = rng || Math.random;
+            const hover = r() < UFO_HOVER_SHARE;
+            const comes = r() < UFO_CHANCE;
+            this.lastRoll = { stamp: UfoFx.nightStamp(totalMins), comes, hover,
+                shape: UFO_SHAPES[Math.floor(r() * UFO_SHAPES.length)] };
+            return this.lastRoll;
+        }
+
+        // Start a visit now, whatever the clock says (the roll, and the F7 of
+        // anybody who wants to see one).
+        summon(camX, camZ, groundY, opts) {
+            const o = opts || {};
+            this._ensure();
+            if (!this._sp) return null;
+            const shape = o.shape || UFO_SHAPES[Math.floor(Math.random() * UFO_SHAPES.length)];
+            UfoFx.paint(this._cv, shape);
+            this._mat.map.needsUpdate = true;
+            const size = UFO_SIZE * WORLD_SCALE * (shape === 'tictac' ? 1.4 : 1);
+            this._sp.scale.set(size, size, 1);
+            const az = Math.random() * Math.PI * 2;
+            const R = UFO_RANGE * WORLD_SCALE;
+            const alt = groundY + (UFO_ALT_MIN + Math.random() * (UFO_ALT_MAX - UFO_ALT_MIN)) * WORLD_SCALE;
+            const from = { x: camX + Math.cos(az) * R, y: alt, z: camZ + Math.sin(az) * R };
+            // Across the sky, over the party, out the far side (a little off
+            // the line, so it is never straight overhead).
+            const skew = (Math.random() - 0.5) * 0.9;
+            const to = { x: camX - Math.cos(az + skew) * R, y: alt, z: camZ - Math.sin(az + skew) * R };
+            this._visit = {
+                shape, from, to, pos: Object.assign({}, from),
+                hover: !!o.hover, over: { x: camX + (to.x - from.x) * 0.1, y: alt, z: camZ + (to.z - from.z) * 0.1 },
+                groundY, phase: 'in', t: 0, acts: [], act: null, actT: 0, hoverLeft: 0,
+                vis: 1
+            };
+            if (this._visit.hover) {
+                // The performance: the five observables, shuffled, then out.
+                const acts = ['lift', 'dart', 'turn', 'medium', 'cloak'];   // i18n-ignore  act ids
+                for (let i = acts.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [acts[i], acts[j]] = [acts[j], acts[i]];
+                }
+                this._visit.acts = acts;
+                this._visit.hoverLeft = UFO_HOVER_MIN + Math.random() * (UFO_HOVER_MAX - UFO_HOVER_MIN);
+            }
+            this._sp.visible = true;
+            return this._visit;
+        }
+
+        get visiting() { return !!this._visit; }
+
+        // One frame. `hour` is the hour of the day, `totalMins` the clock,
+        // `groundY` the ground under the party, `df` the daylight.
+        update(delta, camX, camZ, hour, totalMins, groundY, df) {
+            // The roll, once per night, as the window opens.
+            if (UfoFx.inWindow(hour)) {
+                const stamp = UfoFx.nightStamp(totalMins);
+                if (this._night !== stamp) {
+                    this._night = stamp;
+                    const r = this.roll(totalMins);
+                    if (r.comes && !this._visit) this.summon(camX, camZ, groundY, { hover: r.hover, shape: r.shape });
+                }
+            }
+            const v = this._visit;
+            if (!v) return;
+            this._glowT += delta;
+            v.t += delta;
+            const p = v.pos;
+            const step = (to, speed) => {
+                const dx = to.x - p.x, dy = to.y - p.y, dz = to.z - p.z;
+                const d = Math.hypot(dx, dy, dz);
+                const s = speed * WORLD_SCALE * delta;
+                if (d <= s) { p.x = to.x; p.y = to.y; p.z = to.z; return true; }
+                p.x += dx / d * s; p.y += dy / d * s; p.z += dz / d * s;
+                return false;
+            };
+            switch (v.phase) {
+                case 'in':
+                    // Zipping in. A pass goes straight out again; a visit
+                    // stops over the party.
+                    if (step(v.hover ? v.over : v.to, UFO_ZIP_SPEED)) {
+                        if (v.hover) { v.phase = 'hover'; v.anchor = Object.assign({}, p); }
+                        else this._end();
+                    }
+                    break;
+                case 'hover':
+                    v.hoverLeft -= delta;
+                    if (!v.act) {
+                        if (!v.acts.length || v.hoverLeft <= 0) { v.phase = 'out'; break; }
+                        v.act = v.acts.shift();
+                        v.actT = 0;
+                        this._beginAct(v);
+                    }
+                    v.actT += delta;
+                    if (this._runAct(v, delta, step)) v.act = null;
+                    break;
+                case 'out':
+                    v.vis = 1;
+                    if (step(v.to, UFO_DART_SPEED)) this._end();
+                    break;
+            }
+            if (!this._visit) return;
+            this._sp.position.set(p.x, p.y, p.z);
+            // Brighter the darker it is, and pulsing a little; gone while
+            // cloaked.
+            const glow = 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(this._glowT * 5));
+            this._mat.opacity = Math.max(0, (1 - df * 0.9)) * glow * v.vis;
+        }
+
+        _beginAct(v) {
+            const a = v.anchor;
+            const R = 260 * WORLD_SCALE;
+            switch (v.act) {
+                case 'lift':
+                    v.goal = { x: a.x, y: a.y + 90 * WORLD_SCALE, z: a.z };
+                    break;
+                case 'dart': {
+                    const az = Math.random() * Math.PI * 2;
+                    v.goal = { x: a.x + Math.cos(az) * R, y: a.y, z: a.z + Math.sin(az) * R };
+                    v.back = Object.assign({}, a);
+                    break;
+                }
+                case 'turn': {
+                    const az = Math.random() * Math.PI * 2;
+                    v.leg1 = { x: a.x + Math.cos(az) * R, y: a.y, z: a.z + Math.sin(az) * R };
+                    v.leg2 = { x: v.leg1.x + Math.cos(az + Math.PI / 2) * R, y: a.y, z: v.leg1.z + Math.sin(az + Math.PI / 2) * R };
+                    v.goal = v.leg1;
+                    v.legs = 0;
+                    break;
+                }
+                case 'medium':
+                    // Into the sea (or the ground) and back up.
+                    v.goal = { x: a.x, y: v.groundY - 30 * WORLD_SCALE, z: a.z };
+                    v.back = Object.assign({}, a);
+                    break;
+                case 'cloak':
+                    v.vis = 0;
+                    break;
+            }
+        }
+
+        // True when the act is done.
+        _runAct(v, delta, step) {
+            switch (v.act) {
+                case 'lift':
+                    // Hangs there, drifting up a little, for a few seconds.
+                    step(v.goal, 40);
+                    return v.actT > 3;
+                case 'dart':
+                    if (!v.darted) { if (step(v.goal, UFO_DART_SPEED)) v.darted = true; return false; }
+                    if (v.actT < 1.6) return false;
+                    if (step(v.back, UFO_DART_SPEED)) { v.darted = false; return true; }
+                    return false;
+                case 'turn':
+                    if (step(v.goal, UFO_ZIP_SPEED)) {
+                        if (v.legs++ === 0) { v.goal = v.leg2; return false; }
+                        v.anchor = Object.assign({}, v.pos);
+                        return true;
+                    }
+                    return false;
+                case 'medium':
+                    if (!v.dived) { if (step(v.goal, UFO_DART_SPEED)) v.dived = true; return false; }
+                    if (v.actT < 2.2) return false;
+                    if (step(v.back, UFO_DART_SPEED)) { v.dived = false; return true; }
+                    return false;
+                case 'cloak':
+                    if (v.actT > 2.5) { v.vis = 1; return true; }
+                    return false;
+            }
+            return true;
+        }
+
+        _end() {
+            this._visit = null;
+            if (this._sp) this._sp.visible = false;
+        }
+
+        dispose() {
+            this._end();
+            if (this._sp) {
+                this._scene.remove(this._sp);
+                if (this._mat) {
+                    if (this._mat.map) this._mat.map.dispose();
+                    this._mat.dispose();
+                }
+            }
+            this._sp = null; this._mat = null;
+        }
+    }
+    UfoFx.SHAPES = UFO_SHAPES;
+    UfoFx.CHANCE = UFO_CHANCE;
+
     // Handed to the rest of the suite.
     Object.assign(VW, {
-        EngineAudio, SkyFx, SolomonRitualFx, SpellFx, UnderwaterFx, WaterPlane, WheelFx
+        EngineAudio, SkyFx, SolomonRitualFx, SpellFx, UfoFx, UnderwaterFx, WaterPlane, WheelFx
     });
 })();

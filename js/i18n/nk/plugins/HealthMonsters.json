@@ -15,6 +15,7 @@
   "partElementalHit": "{enemy}'S {part} HAB BEEN {effect}!",
   "partSevered": "{enemy}'S {part} HAB BEEN SEVERED!",
   "partDestroyed": "{enemy}'S {part} HAB BEEN DESTROYED!",
+  "partBroken": "{enemy}'S {part} HAB BEEN BROKEN!",
   "customPartMessage": "{enemy}'S {message}",
   "partSeverelyDamaged": "{part} SEVERELY DAMAGED, BUT DA MONSTER IZ STILL TOO STRONG!",
   "preciseStrike": "A PRECISE STRIKE TA DA {part}!",
@@ -34,5 +35,123 @@
   "weakToLabel": "WEAK TA:",
   "statesLabel": "STATES:",
   "bodyParts": "BODY PARTS",
-  "none": "NONE"
+  "none": "NONE",
+  "panel": {
+    "check": "CHECK",
+    "aim": "AIM",
+    "hitChance": "HIT {percent}%",
+    "hp": "{current} / {max} HP",
+    "vital": "VITAL",
+    "severable": "SEVERABLE",
+    "regenerates": "REGENERATES",
+    "destroyed": "DESTROYED",
+    "broken": "BROKEN"
+  },
+  "aim": {
+    "menu": {
+      "partRow": "{part} {percent}% HIT {chance}%",
+      "partRowCurrent": "{part} {percent}% HIT {chance}% (AIMED)",
+      "clear": "AIM NOWHERE",
+      "back": "BACK",
+      "noParts": "NOTHIN' LEFT TA AIM AT",
+      "wholeName": "DA WHOLE BODY",
+      "wholeRow": "DA WHOLE BODY (WHEREVER IT LANDS)",
+      "wholeRowCurrent": "DA WHOLE BODY (WHEREVER IT LANDS) (AIMED)"
+    },
+    "log": {
+      "missed": "{actor} AIMS FOR {enemy}'S {part} AN' FINDS NOTHIN' BUT AIR!",
+      "moved": "{actor} SHIFTS AIM TA {enemy}'S {part}."
+    }
+  },
+  "wrestle": {
+    "menu": {
+      "myLimb": "WIT: {part} ({percent}%)",
+      "theirLimb": "ON: {part} ({percent}%)",
+      "limbRow": "{part} {percent}%",
+      "limbRowCurrent": "{part} {percent}% (CHOSEN)",
+      "noLimb": "NO LIMB FREE",
+      "noTarget": "NOTHIN' TA TAKE HOLD OF",
+      "back": "BACK",
+      "holdRow": "{name} {chance}%",
+      "holdBlocked": "{name} ({reason})",
+      "blocked": {
+        "limb": "WRONG LIMB",
+        "part": "WRONG TARGET",
+        "hold": "NO HOLD YET"
+      },
+      "finishers": "FINISHERS",
+      "finisherRow": "{name} {chance}% [{art}]",
+      "noFinisher": "NO ART TRAINED"
+    },
+    "limbs": {
+      "helpMine": "{part} CAN TAKE: {holds}.",
+      "helpMineNone": "{part} IZ NO USE FOR TAKIN' A HOLD!",
+      "helpTheirs": "{part}: {note}",
+      "note": {
+        "vital": "A VITAL PART, AN' IT FIGHTS TA STAY OUT OF YA HANDS!",
+        "awkward": "SMALL AN' AWKWARD, AN' HARD TA KEEP A GRIP ON!",
+        "plain": "SOLID ENOUGH TA GET BOTH HANDS AROUND!"
+      }
+    },
+    "hold": {
+      "grapple": {
+        "name": "GRAPPLE",
+        "hit": "{actor} SEIZES {enemy}'S {part} AN' HOLDS ON!",
+        "miss": "{enemy} TWISTS ITS {part} OUT OF {actor}'S HANDS!"
+      },
+      "strike": {
+        "name": "STRIKE",
+        "hit": "{actor} DRIVES A BLOW INTO {enemy}'S {part}!",
+        "miss": "{actor} SWINGS AT {enemy}'S {part} AN' FINDS ONLY AIR!"
+      },
+      "lock": {
+        "name": "JOINT LOCK",
+        "hit": "{actor} FOLDS {enemy}'S {part} DA WRONG WAY AN' PINS IT DOWN!",
+        "miss": "{enemy} SLIPS DA LOCK BEFORE {actor} CAN SET IT!"
+      },
+      "wrench": {
+        "name": "WRENCH",
+        "hit": "{actor} WRENCHES {enemy}'S {part} UNTIL SOMETHIN' GIVES!",
+        "miss": "{actor} HAULS AT {enemy}'S {part}, BUT IT WILL NOT TURN!"
+      },
+      "slam": {
+        "name": "SLAM",
+        "hit": "{actor} LIFTS {enemy} AN' DRIVES IT DOWN ON ITS {part}!",
+        "miss": "{actor} TRIES TA LIFT {enemy} AN' NO CAN GET UNDER IT!"
+      },
+      "choke": {
+        "name": "CHOKE",
+        "hit": "{actor} CLOSES ON {enemy}'S {part} AN' SQUEEZES DA AIR OUT OF IT!",
+        "miss": "{enemy} TUCKS ITS {part} AWAY BEFORE DA CHOKE CLOSES!"
+      },
+      "rip": {
+        "name": "TEAR OFF",
+        "hit": "{actor} BRACES AGAINST {enemy} AN' HAULS AT ITS {part}!",
+        "miss": "{actor} NO CAN GET A GRIP WORTH PULLIN' ON!"
+      },
+      "shove": {
+        "name": "SHOVE BACK",
+        "hit": "{actor} DRIVES {enemy} BACK A SQUARE BY ITS {part}!",
+        "miss": "{actor} SHOVES AT {enemy} AN' IT DOES NOT BUDGE!"
+      },
+      "throw": {
+        "name": "THROW",
+        "hit": "{actor} SWINGS {enemy} BY ITS {part} AN' HURLS IT AWAY!",
+        "miss": "{actor} TRIES TA SWING {enemy} AROUND AN' LOSES DA GRIP!"
+      },
+      "suplex": {
+        "name": "SUPLEX",
+        "hit": "{actor} LIFTS {enemy} OVER AN' PLANTS ITS {part} IN DA GROUND BEHIND!",
+        "miss": "{actor} TRIES TA TAKE {enemy} OVER BACKWARDS AN' BUCKLES!"
+      }
+    },
+    "log": {
+      "ripped": "{part} COMES AWAY IN {actor}'S HANDS!",
+      "ripHeld": "{enemy}'S {part} HOLDS, BARELY.",
+      "reversal": "{enemy} TURNS DA HOLD AROUND AN' WRINGS {actor}'S {part}!",
+      "noLimb": "{actor} HAB NOTHIN' LEFT TA WRESTLE WIT!",
+      "finisherHit": "{actor} SETS UP AN' LANDS {skill} ON DA {part}!",
+      "finisherMiss": "{actor} GOES FOR {skill}, BUT {enemy} IZ NOT WHERE IT SHOULD BE!"
+    }
+  }
 }

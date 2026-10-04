@@ -11,5 +11,613 @@
   "programs": "PROGRAMS",
   "noPrograms": "NO PROGRAMS SCHEDULED.",
   "transmission": "TRANSMISSION",
-  "tuneInHint": "SELECT A PROGRAM ABOVE TA TUNE IN!"
+  "tuneInHint": "SELECT A PROGRAM ABOVE TA TUNE IN!",
+  "channel": {
+    "history": {
+      "name": "DA HISTORY OF AGES CHANNEL"
+    },
+    "news": {
+      "name": "TEMPORAL NEWS 24/7"
+    },
+    "chaos": {
+      "name": "CHAOS BROADCASTIN' CO."
+    },
+    "kitchen": {
+      "name": "DA ALCHEMIST'S KITCHEN"
+    },
+    "kids": {
+      "name": "MEMORY LANE PLAYHOUSE"
+    },
+    "latenight": {
+      "name": "MIDNIGHT ON DA ROAD"
+    },
+    "faith": {
+      "name": "ANOKI FAITH HOUR"
+    },
+    "shopping": {
+      "name": "HYPERCAPITALIST SHOPPIN' NETWORK"
+    },
+    "mediahex": {
+      "name": "MEDIAHEX"
+    },
+    "slamdrome": {
+      "name": "SLAMDROME 2"
+    },
+    "circle": {
+      "name": "CIRCLE SANCTIONED"
+    }
+  },
+  "program": {
+    "history": {
+      "chronicles": {
+        "title": "CHRONICLES OF DA AGE"
+      },
+      "great_debates": {
+        "title": "DA GREAT DEBATES"
+      },
+      "in_memoriam": {
+        "title": "IN MEMORIAM"
+      },
+      "this_week_in_history": {
+        "title": "DIS WEEK IN HISTORY"
+      },
+      "before_the_tower": {
+        "title": "BEFORE DA TOWER"
+      },
+      "ninety_two": {
+        "title": "NINETY-TWO: AN ANATOMY OF DA SQUISHIN'"
+      },
+      "kola_file": {
+        "title": "DA KOLA FILE"
+      },
+      "pillars": {
+        "title": "THREE PILLARS, ONE ARGUMENT"
+      },
+      "deicide_hour": {
+        "title": "DA DEICIDE HOUR"
+      },
+      "falklands": {
+        "title": "OKEANUS: DA FALKLANDS RECONSTRUCTION"
+      },
+      "road_of_ages": {
+        "title": "DA ROAD OF AGES"
+      },
+      "archive_reading": {
+        "title": "READIN' ROOM: DA ARCHIVE EXPLAINS"
+      },
+      "footnotes": {
+        "title": "FOOTNOTES & GRIEVANCES"
+      },
+      "y2k_retrospective": {
+        "title": "TWO BILLION: A Y2K RETROSPECTIVE"
+      },
+      "ask_the_archive": {
+        "title": "ASK DA ARCHIVE"
+      },
+      "long_reconstruction": {
+        "title": "DA LONG RECONSTRUCTION"
+      },
+      "voices_from_the_loop": {
+        "title": "VOICES FROM DA LOOP"
+      },
+      "kola_tapes": {
+        "title": "DA KOLA TAPES"
+      },
+      "old_world_court": {
+        "title": "COURT RECORDS OF DA OLD WORLD"
+      },
+      "ledger_of_empires": {
+        "title": "DA GRIMORIE OF EMPIRES"
+      },
+      "antiques_parish": {
+        "title": "ANTIQUES OF DA PARISH HALL"
+      }
+    },
+    "news": {
+      "evening_desk": {
+        "title": "DA EVENIN' DESK"
+      },
+      "breaking": {
+        "title": "BREAKIN' TRANSMISSION"
+      },
+      "forecast": {
+        "title": "DA REALITY FORECAST"
+      },
+      "morning_brief": {
+        "title": "MORNIN' BRIEF"
+      },
+      "boundary_watch": {
+        "title": "BOUNDARY WATCH"
+      },
+      "road_report": {
+        "title": "DA LONG HAUL REPORT"
+      },
+      "closing_bell": {
+        "title": "DA CLOSIN' BELL"
+      },
+      "docket": {
+        "title": "DA DOCKET FROM DA JUDICIARY DIMENSION"
+      },
+      "above_the_cloud": {
+        "title": "ABOVE DA CLOUD"
+      },
+      "your_call": {
+        "title": "YA CALL, OUR SIGNAL"
+      },
+      "civil_advisory": {
+        "title": "CIVIL ADVISORY FEED"
+      },
+      "goblin_ball": {
+        "title": "GOBLIN-BALL ROUNDUP"
+      },
+      "correspondents": {
+        "title": "CORRESPONDENTS AT LARGE"
+      },
+      "night_desk": {
+        "title": "DA NIGHT DESK"
+      },
+      "weekend_review": {
+        "title": "DA WEEKEND REVIEW"
+      },
+      "foreign_desk": {
+        "title": "DA FOREIGN DESK"
+      },
+      "ministerial": {
+        "title": "DA MINISTERIAL ADDRESS"
+      },
+      "late_bulletin": {
+        "title": "DA LATE BULLETIN"
+      },
+      "obituaries": {
+        "title": "DA OBITUARIES"
+      },
+      "signal_check": {
+        "title": "SIGNAL CHECK"
+      },
+      "consumer_corner": {
+        "title": "CONSUMER CORNER"
+      }
+    },
+    "chaos": {
+      "wheel": {
+        "title": "WHEEL OF TEMPORAL FORTUNE"
+      },
+      "static_hour": {
+        "title": "DA STATIC HOUR"
+      },
+      "prophecy_corner": {
+        "title": "PROPHECY CORNER"
+      },
+      "panic_at_six": {
+        "title": "PANIC AT SIX"
+      },
+      "bubble_house": {
+        "title": "BUBBLE HOUSE"
+      },
+      "who_remembers": {
+        "title": "WHO STILL REMEMBERS DIS?"
+      },
+      "signal_bleed": {
+        "title": "SIGNAL BLEED"
+      },
+      "carrier_wave": {
+        "title": "CARRIER WAVE"
+      },
+      "corpse_paint_countdown": {
+        "title": "DA CORPSE PAINT COUNTDOWN"
+      },
+      "the_reckoning": {
+        "title": "DA RECKONIN' WIT GIDEON GRAVES"
+      },
+      "flatmates": {
+        "title": "TWO MAGES, ONE LEYLINE"
+      },
+      "dead_air": {
+        "title": "DEAD AIR"
+      },
+      "spin_again": {
+        "title": "SPIN AGAIN, FOREVER"
+      },
+      "open_lines": {
+        "title": "OPEN LINES, OPEN DOORS"
+      },
+      "unofficial_emergency": {
+        "title": "EMERGENCY BROADCAST (UNOFFICIAL)"
+      },
+      "weather_probably": {
+        "title": "DA WEATHER, PROBABLY"
+      },
+      "chef_chaos": {
+        "title": "CHEF CHAOS"
+      },
+      "sermon_of_static": {
+        "title": "SERMON OF DA STATIC"
+      },
+      "chaos_docket": {
+        "title": "DA CHAOS DOCKET"
+      },
+      "playtime_for_adults": {
+        "title": "PLAYTIME FOR ADULTS"
+      }
+    },
+    "kitchen": {
+      "frugal": {
+        "title": "DA FRUGAL ALCHEMIST"
+      },
+      "tavern_rescue": {
+        "title": "TAVERN RESCUE"
+      },
+      "pixie_dust": {
+        "title": "A PINCH OF PIXIE DUST"
+      },
+      "one_loop_meals": {
+        "title": "ONE-LOOP MEALS"
+      },
+      "verden_table": {
+        "title": "DA VERDEN TABLE"
+      },
+      "broken_leyline_bakes": {
+        "title": "BROKEN LEYLINE BAKES"
+      },
+      "pantry_politics": {
+        "title": "PANTRY POLITICS"
+      },
+      "field_rations": {
+        "title": "FIELD RATIONS OF DA LONG HAUL"
+      },
+      "kitchen_calls": {
+        "title": "KITCHEN CALLS"
+      },
+      "front_of_house": {
+        "title": "FRONT OF HOUSE"
+      },
+      "sunday_roast": {
+        "title": "DA REAL LONG SUNDAY ROAST"
+      },
+      "cellar_hour": {
+        "title": "DA CELLAR HOUR"
+      },
+      "market_morning": {
+        "title": "MARKET MORNIN'"
+      },
+      "larder_run": {
+        "title": "DA LONG HAUL LARDER"
+      },
+      "kitchen_court": {
+        "title": "KITCHEN COURT"
+      },
+      "beagle_confidential": {
+        "title": "KITCHEN CONFIDENTIAL: BEAGLE"
+      },
+      "recipe_emergency": {
+        "title": "RECIPE EMERGENCY"
+      },
+      "sermon_roast": {
+        "title": "DA SUNDAY SERMON ROAST"
+      },
+      "allotment_hour": {
+        "title": "DA ALLOTMENT HOUR"
+      },
+      "two_rooms_ladder": {
+        "title": "TWO ROOMS AN' A LADDER"
+      }
+    },
+    "kids": {
+      "tommy": {
+        "title": "TEMPORAL TOMMY'S TIME ADVENTURES"
+      },
+      "rangers": {
+        "title": "REALITY RANGERS"
+      },
+      "camelcase": {
+        "title": "DA MAGIC OF CAMELCASE"
+      },
+      "sockington": {
+        "title": "MISTER SOCKINGTON EXPLAINS DA RULES"
+      },
+      "eighty_song": {
+        "title": "DA EIGHTY SONG"
+      },
+      "first_spell": {
+        "title": "YA REAL FIRST SPELL"
+      },
+      "goblin_friends": {
+        "title": "IZ GOBLINS OUR FRIENDS? (NO)"
+      },
+      "leyline_lessons": {
+        "title": "LEYLINE LESSONS"
+      },
+      "puppet_court": {
+        "title": "SOCK COURT"
+      },
+      "storytime": {
+        "title": "STORYTIME BEFORE DA RESET"
+      },
+      "tower_tour": {
+        "title": "A REAL TALL TOWER: A TOUR"
+      },
+      "pip_lost": {
+        "title": "PIP GETS LOST AGAIN"
+      },
+      "cadet_lines": {
+        "title": "RANGER CADETS PHONE-IN"
+      },
+      "very_small_news": {
+        "title": "DA REAL SMALL NEWS"
+      },
+      "songs_from_the_road": {
+        "title": "SONGS FROM DA ROAD"
+      },
+      "sports_day": {
+        "title": "SPORTS DAY"
+      },
+      "pets_people": {
+        "title": "PETS AN' DEY PEOPLE"
+      }
+    },
+    "latenight": {
+      "insomnia": {
+        "title": "DA INSOMNIA FILES"
+      },
+      "witching_hour": {
+        "title": "DA WITCHIN' HOUR BROADCAST"
+      },
+      "after_dark": {
+        "title": "AFTER HOURS REALITY CHECK"
+      },
+      "long_haul_lines": {
+        "title": "LONG HAUL LINES"
+      },
+      "third_shift": {
+        "title": "DA THIRD SHIFT"
+      },
+      "under_the_asphalt": {
+        "title": "UNDER DA ASPHALT"
+      },
+      "who_owns_the_dark": {
+        "title": "WHO OWNS DA DARK"
+      },
+      "night_convoy": {
+        "title": "NIGHT CONVOY"
+      },
+      "the_estate": {
+        "title": "DA ESTATE AT MARROW HOLLOW"
+      },
+      "small_hours_music": {
+        "title": "SMALL HOURS, LOUD GODS"
+      },
+      "sign_off": {
+        "title": "SIGN OFF"
+      },
+      "unaired": {
+        "title": "DA UNAIRED TAPE"
+      },
+      "night_kitchen": {
+        "title": "NOBODY SLEEPS IN MARROW HOLLOW"
+      },
+      "small_hours_desk": {
+        "title": "DA SMALL HOURS DESK"
+      },
+      "nightschool": {
+        "title": "NIGHTSCHOOL"
+      },
+      "overnight_docket": {
+        "title": "DA OVERNIGHT DOCKET"
+      },
+      "cold_kitchen": {
+        "title": "COLD KITCHEN"
+      },
+      "three_am_weather": {
+        "title": "DA 3AM WEATHER"
+      },
+      "repeats": {
+        "title": "REPEATS"
+      },
+      "late_quiz": {
+        "title": "DA LATE QUIZ"
+      },
+      "night_bus": {
+        "title": "DA NIGHT BUS"
+      }
+    },
+    "faith": {
+      "gospel": {
+        "title": "DA GOSPEL ACCORDIN' TA MARGARET"
+      },
+      "infinite_loops": {
+        "title": "DA CHURCH OF INFINITE LOOPS"
+      },
+      "testimony": {
+        "title": "TEMPORAL TESTIMONY TIME"
+      },
+      "ringtone_vespers": {
+        "title": "RINGTONE VESPERS"
+      },
+      "the_stone_gods": {
+        "title": "DA STONE GODS OF DA WHITE DESERT"
+      },
+      "from_the_citadel": {
+        "title": "FROM DA FLOATIN' CITADEL"
+      },
+      "the_widow_maat": {
+        "title": "A PRAYER FOR DA WOMAN UNDER DA CRUST"
+      },
+      "discord_docket": {
+        "title": "DA MERCY OF DISCORD"
+      },
+      "open_line_to_heaven": {
+        "title": "OPEN LINE TA WHATEVER ANSWERS"
+      },
+      "seven_artefacts": {
+        "title": "SEVEN ARTEFACTS, ONE NIGHT"
+      },
+      "catechism": {
+        "title": "CATECHISM FOR A REDUCED HEAVEN"
+      },
+      "the_signal_is_the_message": {
+        "title": "DA SIGNAL IZ DA MESSAGE"
+      },
+      "faithful_line": {
+        "title": "DA FAITHFUL LINE"
+      },
+      "sacred_science": {
+        "title": "SACRED SCIENCE"
+      },
+      "reduced_miracle": {
+        "title": "DA REDUCED MIRACLE"
+      },
+      "quiet_heaven": {
+        "title": "HYMNS FOR A QUIET HEAVEN"
+      },
+      "parish_notices": {
+        "title": "PARISH NOTICES"
+      },
+      "the_vigil": {
+        "title": "DA VIGIL"
+      }
+    },
+    "shopping": {
+      "midnight_deals": {
+        "title": "MIDNIGHT DEALS MARATHON"
+      },
+      "as_seen": {
+        "title": "AS SEEN ON DA ROAD"
+      },
+      "fire_sale": {
+        "title": "REALITY ANCHOR FIRE SALE"
+      },
+      "loop_escape_hour": {
+        "title": "DA LOOP ESCAPE HOUR"
+      },
+      "warehouse_appears": {
+        "title": "IT SIMPLY APPEARED IN DA WAREHOUSE"
+      },
+      "the_ticker": {
+        "title": "DA TICKER"
+      },
+      "pyramid_hour": {
+        "title": "OPPORTUNITY HOUR"
+      },
+      "bid_your_memories": {
+        "title": "BID YA MEMORIES"
+      },
+      "customer_lines": {
+        "title": "CUSTOMER LINES IZ OPEN FOREVER"
+      },
+      "unboxing_the_tower": {
+        "title": "UNBOXIN' DA TOWER"
+      },
+      "clearance": {
+        "title": "TERMINAL CLEARANCE"
+      },
+      "brand_devotional": {
+        "title": "A DEVOTIONAL FOR DA MARKET GOD"
+      },
+      "depot_report": {
+        "title": "DEPOT REPORT"
+      },
+      "unclaimed_auction": {
+        "title": "AUCTION OF DA UNCLAIMED"
+      },
+      "complaints_line": {
+        "title": "DA COMPLAINTS LINE"
+      },
+      "warehouse_live": {
+        "title": "WAREHOUSE LIVE"
+      },
+      "sponsored_weather": {
+        "title": "SPONSORED WEATHER"
+      },
+      "before_the_boundary": {
+        "title": "BUY IT BEFORE DA BOUNDARY"
+      },
+      "car_boot": {
+        "title": "DA CAR BOOT"
+      }
+    },
+    "mediahex": {
+      "slither_news": {
+        "title": "SLITHER DA NEWS"
+      },
+      "wheel_fortunes": {
+        "title": "DA WHEEL OF FORTUNES"
+      },
+      "price_correct": {
+        "title": "OK, DA PRICE IZ CORRECT"
+      },
+      "papperissima": {
+        "title": "PAPPERISSIMA"
+      },
+      "sarabander": {
+        "title": "SARABANDER"
+      },
+      "not_the_rye": {
+        "title": "IT NO IZ DA RYE"
+      },
+      "costanza_show": {
+        "title": "DA MAURICE COSTANZA SHOW"
+      },
+      "forum_hex": {
+        "title": "FORUM"
+      },
+      "lunch_served": {
+        "title": "LUNCH IZ SERVED"
+      },
+      "telemick": {
+        "title": "TELEMICK"
+      },
+      "studio_open": {
+        "title": "STUDIO OPEN"
+      },
+      "beautifool": {
+        "title": "BEAUTIFOOL"
+      },
+      "bim_bum_bang": {
+        "title": "BIM BUM BANG"
+      },
+      "superchart": {
+        "title": "SUPERCHART SHOW"
+      },
+      "coalpo_grosso": {
+        "title": "COALPO GROSSO"
+      },
+      "know_the_latest": {
+        "title": "DO YOU KNOW DA LATEST?"
+      }
+    },
+    "slamdrome": {
+      "slam_vigil": {
+        "title": "SLAM VIGIL"
+      },
+      "slam_aftershow": {
+        "title": "AFTER DA BELL"
+      },
+      "slam_classics": {
+        "title": "TAPES NOBODY KEPT"
+      },
+      "slam_contracts": {
+        "title": "READ DA CONTRACT"
+      },
+      "slam_mundane_hour": {
+        "title": "NO HANDS BUT DEZE"
+      }
+    },
+    "circle": {
+      "sanctioned_hour": {
+        "title": "DA SANCTIONED HOUR"
+      },
+      "form_and_fall": {
+        "title": "FORM AN' FALL"
+      },
+      "the_notariat": {
+        "title": "DA NOTARIAT"
+      },
+      "open_division": {
+        "title": "OPEN DIVISION"
+      },
+      "school_of_the_week": {
+        "title": "SCHOOL OF DA WEEK"
+      }
+    }
+  }
 }

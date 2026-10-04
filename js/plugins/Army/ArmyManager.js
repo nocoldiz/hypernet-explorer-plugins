@@ -1,5 +1,5 @@
 /*:
- * @plugindesc Mount & Blade style Army Management System v1.1.0 [Claude+GPT]
+ * @plugindesc Warband style Army Management System v1.1.0 [Claude+GPT]
  * @author Omni-Lex & Antigravity
  * @target MZ
  *
@@ -37,7 +37,7 @@
  * @desc [DEBUG] Adds all troop types from a random faction (10 of each type).
  *
  * @help
- * Army Management System - Mount & Blade Warband Style
+ * Army Management System - Warband Style
  *
  * Refactored to support the D&D Parchment Double-Page Pockets Layout.
  */

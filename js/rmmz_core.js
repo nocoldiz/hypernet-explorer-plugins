@@ -1052,11 +1052,32 @@ Graphics._createEffekseerContext = function() {
             if (this._effekseer) {
                 this._effekseer.init(this._app.renderer.gl);
                 this._effekseer.setRestorationOfStatesFlag(false);
+                this._bindEffekseerDrawToOwnContext(this._effekseer);
             }
         } catch (e) {
             this._app = null;
         }
     }
+};
+
+// Effekseer keeps ONE current WebGL context for every context it creates, and
+// only loadEffect/releaseEffect/draw switch it: beginDraw/drawHandle do not.
+// With a second context alive (the voxel world's, the skill preview's) the
+// main one would draw through the other canvas's GL. Patched on the shared
+// prototype once, so every context draws into its own canvas.
+Graphics._bindEffekseerDrawToOwnContext = function(context) {
+    const proto = Object.getPrototypeOf(context);
+    if (!proto || proto._beginDrawOwnsContext || !proto.beginDraw) {
+        return;
+    }
+    const beginDraw = proto.beginDraw;
+    proto.beginDraw = function() {
+        if (this._makeContextCurrent) {
+            this._makeContextCurrent();
+        }
+        return beginDraw.apply(this, arguments);
+    };
+    proto._beginDrawOwnsContext = true;
 };
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::

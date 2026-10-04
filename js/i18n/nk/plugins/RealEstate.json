@@ -27,7 +27,6 @@
     "deedsHeld": "DEEDS HELD",
     "dailyYield": "DAILY YIELD",
     "shareProspectus": "SHARE PROSPECTUS",
-    "wSNavigateAD": "W/S: NAVIGATE | A/D: COLUMNS | TAB: VIEW",
     "deedOfTransaction": "DEED OF TRANSACTION",
     "listed": "LISTED",
     "sh": "SH.",
@@ -36,8 +35,13 @@
     "buy1": "BUY ×1",
     "buy10": "BUY ×10",
     "buy100": "BUY ×100",
+    "buy1000": "BUY ×1000",
+    "buy10000": "BUY ×10000",
     "sell1": "SELL ×1",
     "sell10": "SELL ×10",
+    "sell100": "SELL ×100",
+    "sell1000": "SELL ×1000",
+    "sell10000": "SELL ×10000",
     "sellAll": "SELL ALL",
     "sharesHeld": "SHARES HELD",
     "ownership": "OWNERSHIP",
@@ -49,6 +53,121 @@
     "totalShares": "TOTAL SHARES",
     "available2": "AVAILABLE",
     "evicted": "EVICTED FROM \"{name}\": RENT UNPAID!",
-    "appName": "REAL ESTATE BOARD"
+    "appName": "REAL ESTATE BOARD",
+    "manageShop": "RUN DA SHOP",
+    "manageFromDeeds": "DA SHOP BOOK OPENS FROM DA DEEDS PAGE!",
+    "workingPlaces": "WORKIN' PLACES",
+    "workingPlacesRegistry": "WORKIN' PLACES",
+    "businessDeed": "BUSINESS DEED",
+    "businessDeed2": "BUSINESS DEED",
+    "selectAWorkplace": "SELECT A WORKIN' PLACE TA INSPECT ITS BUSINESS!",
+    "businessesHeld": "BUSINESSES HELD",
+    "weeklyYield": "WEEKLY YIELD",
+    "weeklyPayout": "WEEKLY PAYOUT",
+    "sellHome": "SELL HOME ({price})",
+    "assignResidents": "RESIDENTS",
+    "residents": "RESIDENTS",
+    "residentHere": "{name}: LIVES HERE",
+    "residentElsewhere": "MOVE IN {name} (NOW AT {place})",
+    "residentsDone": "DONE",
+    "letToTenants": "LET TA TENANTS",
+    "stopLetting": "STOP LETTIN'",
+    "tenants": "TENANTS",
+    "movedToHalls": "{names} MOVED OUT TA DA STAIRS HALL!"
+  },
+  "company": {
+    "lemoncorp": {
+      "description": "CONSUMER ELECTRONICS CONGLOMERATE. LARGE, WIDELY HELD AN' OVERVALUED!"
+    },
+    "limecorp": {
+      "description": "CONSUMER ELECTRONICS STARTUP FOUNDED BY FORMER LEMONCORP ENGINEERS. FAST GROWIN' AN' VOLATILE!"
+    },
+    "petrodyne": {
+      "description": "OIL AN' GAS PRODUCER. STEADY DIVIDENDS, PRICED OFF DA OIL MARKET!"
+    },
+    "soulforge": {
+      "description": "REFINES AN' TRADES SOUL CRYSTALS. HIGHLY VOLATILE!"
+    },
+    "hypernetsystems": {
+      "description": "OWNS DA HYPERNET INFRASTRUCTURE: CABLES, TOWERS AN' DATA CENTRES!"
+    },
+    "ferrosteelworks": {
+      "description": "STEEL PRODUCER. GIRDERS, RAILS AN' HULL PLATIN'. LOW GROWTH, LOW VOLATILITY!"
+    },
+    "greenwitchorganics": {
+      "description": "GROWS AN' SELLS HERBS, TINCTURES AN' PRODUCE!"
+    },
+    "vaultbankholdings": {
+      "description": "BANK. DEPOSITS, LOANS AN' VAULT STORAGE!"
+    },
+    "aetherlogistics": {
+      "description": "TRANSPORT OPERATOR. TRAINS, BUSES AN' HELICOPTERS CARRYIN' PASSENGERS AN' CARGO!"
+    },
+    "hearthmillfoods": {
+      "description": "FOOD PROCESSOR. BREAD, TINS, SOUPS AN' BOTTLED WATER FOR EVERY PANTRY!"
+    },
+    "carnifexreclamation": {
+      "description": "RECLAIMS LIMBS AN' ORGANS FROM DA FALLEN AN' SELLS DEM ON TA SURGEONS AN' COLLECTORS!"
+    },
+    "contagionbiolabs": {
+      "description": "RESEARCH LABORATORY. CULTURES, VIALS AN' SAMPLES OF EVERY KNOWN DISEASE!"
+    },
+    "panaceapharmaceuticals": {
+      "description": "PHARMACEUTICAL HOUSE. TABLETS, CREAMS AN' DROPS SOLD OVER DA COUNTER!"
+    },
+    "cradlegenetics": {
+      "description": "FERTILITY CLINIC CHAIN. SAMPLES, TESTS AN' GESTATION AIDS!"
+    },
+    "aquamemoriaremedies": {
+      "description": "HOMEOPATHIC REMEDIES DILUTED PAST DA LAST MOLECULE. CHEAP AN' FIERCELY LOYAL CUSTOMERS!"
+    },
+    "curiokeepsake": {
+      "description": "DEALER IN KEEPSAKES, TROPHIES AN' MEMORABILIA!"
+    },
+    "cruciblereagents": {
+      "description": "SUPPLIES REAGENTS, SALTS AN' RESINS TA ALCHEMISTS AN' CHEMISTS ALIKE!"
+    },
+    "quillmarkpress": {
+      "description": "PUBLISHIN' HOUSE. NOVELS, SCRIPTURE, FRAGMENTS AN' BLANK SPELLBOOKS!"
+    },
+    "artisanguildsupply": {
+      "description": "TOOLS AN' MATERIALS FOR EVERY TRADE, FROM DA COBBLER TA DA CLOCKMAKER!"
+    },
+    "beastmarrowexports": {
+      "description": "TRADES VENOMS, GLANDS, FEATHERS AN' OTHER PARTS TAKEN FROM MONSTERS!"
+    },
+    "salvomunitions": {
+      "description": "THROWABLES, FIREBOMBS AN' COMBAT TAPES FOR DA STREET AN' DA ARENA!"
+    },
+    "northboundoutfitters": {
+      "description": "SURVIVAL GEAR FOR DA COLD, DA WILD AN' DA LONG ROAD!"
+    },
+    "scrapheaprecycling": {
+      "description": "BUYS RUBBISH BY DA TONNE. THIN MARGINS, ENDLESS SUPPLY!"
+    },
+    "ironcladarms": {
+      "description": "FORGES BLADES, AXES, SPEARS AN' EVERY OTHER WEAPON HELD CLOSE!"
+    },
+    "longshotballistics": {
+      "description": "BOWS, THROWIN' WEAPONS AN' FIREARMS. RISES WIT EVERY WAR!"
+    },
+    "bulwarkarmory": {
+      "description": "PLATE, MAIL AN' SHIELDS. HEAVY GOODS, STEADY ORDERS!"
+    },
+    "mantlehexoutfitters": {
+      "description": "TAILORS AN' ENCHANTERS. CLOTHES, ROBES, TRINKETS AN' CASTIN' STAVES!"
+    }
+  },
+  "sector": {
+    "consumertech": "CONSUMER TECH",
+    "energy": "ENERGY",
+    "occult": "OCCULT",
+    "telecom": "TELECOM",
+    "industrial": "INDUSTRIAL",
+    "agriculture": "AGRICULTURE",
+    "finance": "FINANCE",
+    "transport": "TRANSPORT",
+    "misc": "MISC",
+    "health": "HEALTH"
   }
 }

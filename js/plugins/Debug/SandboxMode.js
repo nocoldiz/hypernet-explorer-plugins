@@ -2982,7 +2982,7 @@
         } else if (this._mode === "minigame") {
             this._data = [
                 { id: "mini_tokens", name: "Grant 999 Tokens" },
-                { id: "mini_frogger", name: "Play Frogger" },
+                { id: "mini_frogger", name: "Play Hoppa" },
                 { id: "mini_snake", name: "Play Snake" },
                 { id: "mini_pool", name: "Play Pool" },
                 { id: "mini_lockpick", name: "Play Lockpicking" },

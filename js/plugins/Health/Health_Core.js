@@ -1,10 +1,10 @@
 /*:
  * @target MZ
- * @plugindesc Dwarf Fortress-inspired limb and organ damage system for Actors 1, 2, and 3
+ * @plugindesc Fortress sim inspired limb and organ damage system for Actors 1, 2, and 3
  * @author Omni-Lex
  * @help
  * This plugin implements a detailed limb and organ damage system
- * inspired by Dwarf Fortress. Features include:
+ * inspired by fortress sims. Features include:
  * - Individual health for limbs and organs
  * - Damage distribution to body parts
  * - Special effects for damaged body parts

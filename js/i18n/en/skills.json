@@ -229,7 +229,7 @@
   },
   "47": {
     "name": "Siu Nim Tau",
-    "description": "Raises the user's DEX. May grant Combo. Strikes\nfirst.",
+    "description": "Raises the user's DEX. Grants Combo. Strikes\nfirst.",
     "message1": "%1 assumes the Wing Chun stance!",
     "message2": ""
   },
@@ -751,7 +751,7 @@
   },
   "134": {
     "name": "Chi Sao",
-    "description": "May grant Combo to the user. Strikes first.",
+    "description": "Grants Combo to the user. Strikes first.",
     "message1": "%1 redirects the attack!",
     "message2": ""
   },
@@ -1639,7 +1639,7 @@
   },
   "302": {
     "name": "Berserker Mode",
-    "description": "Raises the user's CON. May grant Rage.",
+    "description": "Raises the user's CON. Grants Rage.",
     "message1": "%1 enters berserker mode!",
     "message2": ""
   },
@@ -1711,7 +1711,7 @@
   },
   "314": {
     "name": "Frenzy",
-    "description": "Raises all allies' CON. May grant Rage.",
+    "description": "Raises all allies' CON. Grants Rage.",
     "message1": "%1 uses Frenzy!",
     "message2": ""
   },
@@ -2071,7 +2071,7 @@
   },
   "382": {
     "name": "ThunderWeapon",
-    "description": "Raises one ally's CON. May grant Static.",
+    "description": "Raises one ally's CON. Grants Static.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
@@ -2107,19 +2107,19 @@
   },
   "388": {
     "name": "FrostInfusion",
-    "description": "Raises all allies' INT. May grant Cold. Strikes\nlast.",
+    "description": "Raises all allies' CON. Grants Cold. Strikes\nlast.",
     "message1": "%1 infuses weapons with ice!",
     "message2": ""
   },
   "389": {
     "name": "ThunderInfusion",
-    "description": "Raises all allies' DEX. Strikes last.",
+    "description": "Raises all allies' DEX. Grants Static. Strikes\nlast.",
     "message1": "%1 infuses weapons with lightning!",
     "message2": ""
   },
   "390": {
     "name": "Windshield",
-    "description": "Raises all allies' DEX. May grant Floating.\nStrikes last.",
+    "description": "Raises all allies' DEX. Grants Floating.\nStrikes last.",
     "message1": "%1 creates a wind barrier!",
     "message2": ""
   },
@@ -3271,7 +3271,7 @@
   },
   "602": {
     "name": "PhantasmalLure",
-    "description": "May grant Ethereal to all allies. Strikes last.\nLands 90% of the time.",
+    "description": "Grants Ethereal to all allies. Strikes last.",
     "message1": "%1 creates a phantasmal lure!",
     "message2": ""
   },
@@ -3919,7 +3919,7 @@
   },
   "740": {
     "name": "FracturedTimeline",
-    "description": "Grants Flow to all allies. Strikes last. Lands\n90% of the time.",
+    "description": "Grants Flow to all allies. Strikes last.",
     "message1": "%1 fractures the timeline!",
     "message2": ""
   },
@@ -4087,7 +4087,7 @@
   },
   "778": {
     "name": "SummonShot",
-    "description": "Deals Physical damage to one enemy and convokes\na familiar.",
+    "description": "Deals Physical damage to one enemy and summons\na random monster near your level.",
     "message1": "%1 fires a summoning shot!",
     "message2": ""
   },

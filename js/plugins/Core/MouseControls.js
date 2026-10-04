@@ -855,4 +855,17 @@
         };
     }
 
+    // The keyboard hand holds two devices, and a badge naming a button has to
+    // pick one of those too: 'mouse' once a button is clicked or the wheel
+    // turned, 'keyboard' again on the next key. lastInputDevice keeps answering
+    // 'keyboard' for both, so every pad check stays exactly as it was.
+    if (!Input.lastPointerDevice) {
+        let pointer = 'keyboard';
+        const toMouse = () => { pointer = 'mouse'; };
+        document.addEventListener('keydown', () => { pointer = 'keyboard'; }, { passive: true });
+        document.addEventListener('mousedown', toMouse, { passive: true });
+        document.addEventListener('wheel', toMouse, { passive: true });
+        Input.lastPointerDevice = function () { return pointer; };
+    }
+
 })();

@@ -4476,6 +4476,296 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         return true;
     };
 
+    //=========================================================================
+    // Hail: the taxi program on the HypernetOS desktop
+    //=========================================================================
+    // Where Wayfare only quotes, this page books one network. A cab is called
+    // off the line to any Destinations.json stop, the desktop is left, and the
+    // ride then runs exactly as a taxi hailed at the rank does: the taxi
+    // interior, the timer, the arrival (rideTo above). On top of the OS's own
+    // "no line" refusal the page has two of its own: a cab is called from the
+    // street, so it only answers on an <Exterior> map or on the world map
+    // itself, and no cab company operates off Earth.
+    const TAXI_APP_ID = 'app-taxi';
+    const TAXI_ICON = 190; // Local Map, per js/db/Sprites/Icons.json
+    const TAXI_TRANSPORT = 'taxi';   // i18n-ignore  transport id
+    const TAXI_WORLD_MAP_ID = 315;
+    const TAXI_STARSHIP_MAP_ID = 721;
+
+    // The planet is gone, the party has landed somewhere else, or they are
+    // sitting in the ship's hold: wherever that is, no cab is coming.
+    function taxiOffEarth() {
+        if (earthLost()) return true;
+        const GS = window.GalaxySim;
+        if (GS && typeof GS.isOffEarth === 'function' && GS.isOffEarth()) return true;
+        if (GS && typeof GS.isAlienSurface === 'function' && GS.isAlienSurface()) return true;
+        return !!($gameMap && $gameMap.mapId && $gameMap.mapId() === TAXI_STARSHIP_MAP_ID);
+    }
+
+    // Open ground: the world map, or a map tagged <Exterior> that is not one of
+    // the roofed procedural places (Game_Map.isExterior already knows those).
+    function taxiOnOpenGround() {
+        if (!$gameMap || !$gameMap.mapId || !$gameMap.mapId()) return false;
+        if ($gameMap.mapId() === TAXI_WORLD_MAP_ID) return true;
+        if (typeof $gameMap.isExterior === 'function') return !!$gameMap.isExterior();
+        return !!($dataMap && $dataMap.note && /<Exterior>/i.test($dataMap.note));
+    }
+
+    // The i18n key of the reason the page will not open, or null when it will.
+    function taxiRefusal() {
+        if (taxiOffEarth()) return 'FastTravel.taxi.refuseOffEarth';
+        if (!taxiOnOpenGround()) return 'FastTravel.taxi.refuseIndoors';
+        return null;
+    }
+
+    // The desktop is a scene over the map (Scene_HypernetOS over Scene_HyperDeck
+    // over whatever opened the deck). Powering it off is the one exit that drops
+    // all the way back out; the booking itself is taken on the next map start.
+    function taxiLeaveDesktop() {
+        const scene = SceneManager._scene;
+        if (!scene || !window.Scene_HypernetOS || !(scene instanceof window.Scene_HypernetOS)) return false;
+        if (typeof scene.onTurnOffClick === 'function') scene.onTurnOffClick();
+        else scene.popScene();
+        return true;
+    }
+
+    window.TaxiApp = {
+        win: null,
+        destName: null,
+        query: '',
+        notice: '',
+
+        refusal() { return taxiRefusal(); },
+
+        launch() {
+            const OS = window.HypernetOS;
+            if (!OS || !OS.WindowManager) return;
+            const appName = T('FastTravel.taxi.appName');
+            if (OS.Net && typeof OS.Net.hasUplink === 'function' && !OS.Net.hasUplink()) {
+                OS.Net.refuse({ name: appName });
+                return;
+            }
+            const why = taxiRefusal();
+            if (why) {
+                if (window.SoundManager) SoundManager.playBuzzer();
+                if (OS.Dialog) OS.Dialog.error(T(why), appName);
+                return;
+            }
+            this.notice = '';
+            const win = OS.WindowManager.createWindow({
+                id: TAXI_APP_ID,
+                title: appName,
+                icon: TAXI_ICON,
+                width: 780,
+                height: 520,
+                contentHTML: `
+                    <div class="wf-app">
+                        <div class="wf-header">
+                            <div class="wf-logo">${wfIcon(TAXI_ICON, 34)}</div>
+                            <div class="wf-grow">
+                                <div class="wf-title">${appName}</div>
+                                <div class="wf-subtitle">${T('FastTravel.taxi.subtitle')}</div>
+                            </div>
+                            <div id="taxi-from" class="wf-aside"></div>
+                        </div>
+                        <div class="wf-body">
+                            <div class="wf-side">
+                                <div class="wf-searchbox">
+                                    <input id="taxi-search" class="focusable wf-input" tabindex="0" placeholder="${T('FastTravel.taxi.search')}">
+                                </div>
+                                <div id="taxi-nav" class="wf-nav wf-fill"></div>
+                            </div>
+                            <div id="taxi-panel" class="wf-panel"></div>
+                        </div>
+                        <div class="wf-status">
+                            <span>${T('FastTravel.taxi.status')}</span>
+                        </div>
+                    </div>`
+            });
+            this.win = win;
+            this.bind();
+            this.render();
+        },
+
+        bind() {
+            if (!this.win || this.win.dataset.taxiBound) return;
+            this.win.dataset.taxiBound = '1';
+            this.win.addEventListener('click', ev => {
+                const go = ev.target.closest('[data-taxi-go]');
+                if (go) {
+                    ev.stopPropagation();
+                    this.hail();
+                    return;
+                }
+                const hit = ev.target.closest('[data-taxi-dest]');
+                if (!hit) return;
+                ev.stopPropagation();
+                this.destName = hit.dataset.taxiDest;
+                this.notice = '';
+                if (window.SoundManager) SoundManager.playCursor();
+                this.render();
+            });
+            this.win.addEventListener('input', ev => {
+                const box = ev.target.closest('#taxi-search');
+                if (!box) return;
+                this.query = box.value;
+                this.renderNav();
+            });
+        },
+
+        // The same list the rank quotes from: every Destinations.json stop.
+        destinations() {
+            try {
+                const list = initializeDestinationCache() || [];
+                return list.slice().sort((a, b) => String(a.name).localeCompare(String(b.name)));
+            } catch (e) {
+                console.warn('[TaxiApp]', e);
+                return [];
+            }
+        },
+
+        current() {
+            const all = this.destinations();
+            return all.find(d => d.name === this.destName) || all[0] || null;
+        },
+
+        render() {
+            if (!this.win || !this.win.isConnected) return;
+            this.renderNav();
+            this.renderPanel();
+            const from = this.win.querySelector('#taxi-from');
+            if (from) {
+                const x = $gameVariables ? $gameVariables.value(playerXVar) : 0;
+                const y = $gameVariables ? $gameVariables.value(playerYVar) : 0;
+                from.textContent = T('FastTravel.taxi.pickupAt', { place: squareLabelAt(x, y) });
+            }
+        },
+
+        renderNav() {
+            const nav = this.win && this.win.querySelector('#taxi-nav');
+            if (!nav) return;
+            const q = String(this.query || '').trim().toLowerCase();
+            const rows = this.destinations().filter(d => !q || String(d.name).toLowerCase().includes(q));
+            const chosen = this.current();
+            if (!rows.length) {
+                nav.innerHTML = `<div class="wf-note wf-pad">${T('FastTravel.taxi.noMatch')}</div>`;
+                return;
+            }
+            nav.innerHTML = rows.map(dest => {
+                const on = chosen && dest.name === chosen.name;
+                const offline = isDestOffline(dest);
+                return `<div class="focusable wf-navItem${on ? ' wf-nav-on' : ''}" tabindex="0" id="taxi-dest-${wfEsc(dest.name)}" data-taxi-dest="${wfEsc(dest.name)}">
+                    ${wfEsc(dest.name)}
+                    ${offline ? `<div class="wf-note wf-bad">${T('FastTravel.offline')}</div>` : ''}</div>`;
+            }).join('');
+        },
+
+        renderPanel() {
+            const panel = this.win && this.win.querySelector('#taxi-panel');
+            if (!panel) return;
+            const dest = this.current();
+            if (!dest) {
+                panel.innerHTML = `<div class="wf-card wf-note">${T('FastTravel.taxi.noDestinations')}</div>`;
+                return;
+            }
+            const offline = isDestOffline(dest);
+            const level = (typeof destLevelText === 'function') ? destLevelText(dest) : '';
+            let fare = null, time = null;
+            if (!offline) {
+                try {
+                    fare = calculateTravelCost(dest, TAXI_TRANSPORT);
+                    time = calculateTravelTime(dest, TAXI_TRANSPORT);
+                } catch (e) { fare = null; time = null; }
+            }
+            const canPay = !offline && fare != null && canAffordTravel(dest, TAXI_TRANSPORT);
+            const wallet = $gameParty ? $gameParty.gold() : 0;
+            const ready = !offline && fare != null && canPay;
+
+            panel.innerHTML = `
+                <h2 class="wf-h">${wfEsc(dest.name)}</h2>
+                <div class="wf-note wf-mb">
+                    ${wfEsc(T('FastTravel.taxi.headline', { type: dest.type || '', level: level || T('FastTravel.taxi.levelUnknown') }))}
+                </div>
+                ${offline ? `<div class="wf-card"><b class="wf-bad">${T('FastTravel.offline')}</b>
+                    <div class="wf-note">${T('FastTravel.taxi.offlineBlurb')}</div></div>` : ''}
+                <div class="wf-card wf-tight"><table class="wf-table"><tbody>
+                    <tr><td class="wf-td">${T('FastTravel.taxi.fare')}</td>
+                        <td class="wf-td wf-right">${offline || fare == null
+                            ? `<span class="wf-bad">${T('FastTravel.offline')}</span>`
+                            : wfEsc(wfMoney(fare))}</td></tr>
+                    <tr><td class="wf-td">${T('FastTravel.taxi.journey')}</td>
+                        <td class="wf-td wf-right">${offline || time == null ? '&mdash;' : wfEsc(wfMinutes(time))}</td></tr>
+                    <tr><td class="wf-td">${T('FastTravel.taxi.wallet')}</td>
+                        <td class="wf-td wf-right${canPay || offline ? '' : ' wf-bad'}">${wfEsc(wfMoney(wallet))}</td></tr>
+                </tbody></table></div>
+                ${!offline && fare != null && !canPay ? `<div class="wf-card wf-note wf-bad">${T('FastTravel.taxi.cannotPay')}</div>` : ''}
+                ${this.notice ? `<div class="wf-card wf-note wf-bad">${wfEsc(this.notice)}</div>` : ''}
+                <div class="wf-mb">
+                    <button class="focusable xp-btn" tabindex="0" data-taxi-go="1"${ready ? '' : ' disabled'}>${T('FastTravel.taxi.hail')}</button>
+                </div>
+                <div class="wf-note">${T('FastTravel.taxi.footer')}</div>`;
+        },
+
+        // The seat is settled here and taken on the map: the desktop is a scene
+        // over it, so the booking rides $gameTemp to the next Scene_Map start
+        // (see below), where rideTo runs it as any paid passenger's journey.
+        hail() {
+            const dest = this.current();
+            if (!dest || isDestOffline(dest)) {
+                if (window.SoundManager) SoundManager.playBuzzer();
+                return;
+            }
+            const why = taxiRefusal();
+            if (why) {
+                this.notice = T(why);
+                if (window.SoundManager) SoundManager.playBuzzer();
+                this.renderPanel();
+                return;
+            }
+            let fare = null;
+            try { fare = calculateTravelCost(dest, TAXI_TRANSPORT); } catch (e) { fare = null; }
+            if (fare == null || !canAffordTravel(dest, TAXI_TRANSPORT)) {
+                this.notice = T('FastTravel.taxi.cannotPay');
+                if (window.SoundManager) SoundManager.playBuzzer();
+                this.renderPanel();
+                return;
+            }
+            if (!$gameTemp) return;
+            $gameTemp._taxiBooking = { name: dest.name, fare: Math.max(0, Math.floor(fare)) };
+            if (window.SoundManager) SoundManager.playOk();
+            if (!taxiLeaveDesktop()) {
+                // Not running under the OS scene after all: take the seat now.
+                $gameTemp._taxiBooking = null;
+                window.FastTravelSystem.rideTo(dest.name, TAXI_TRANSPORT, fare);
+            }
+        },
+    };
+
+    // A booking made on the desktop is taken the moment the map is back: the
+    // scene's own windows exist by then (createAllWindows), so the ride runs
+    // through the same door a lift in an NPC's car does.
+    const _Scene_Map_start_Taxi = Scene_Map.prototype.start;
+    Scene_Map.prototype.start = function () {
+        _Scene_Map_start_Taxi.call(this);
+        const booking = $gameTemp && $gameTemp._taxiBooking;
+        if (!booking) return;
+        $gameTemp._taxiBooking = null;
+        const data = getFastTravelData();
+        if (data.timerActive) return;
+        window.FastTravelSystem.rideTo(booking.name, TAXI_TRANSPORT, booking.fare);
+    };
+
+    if (window.HypernetOS && window.HypernetOS.registerApp) {
+        window.HypernetOS.registerApp({
+            id: TAXI_APP_ID,
+            name: T('FastTravel.taxi.appName'),
+            icon: TAXI_ICON,
+            category: 'reference',
+            launchFn: function () { window.TaxiApp.launch(); },
+            desktopShortcut: true,
+        });
+    }
+
     /**
      * Write a square down on the party's behalf, for a place they were GIVEN
      * rather than one they drove past: the patron vault origin hands over the

@@ -1,8 +1,7 @@
 {
-  "optionName": "PARTY HUD",
+  "fuel": "FUEL",
   "alert": {
     "dead": "DOWN",
-    "hp": "WOUNDED",
     "hpCritical": "DYING",
     "hunger": "HUNGRY",
     "hungerCritical": "STARVIN'",
@@ -17,5 +16,9 @@
     "craving": "CRAVIN' {substance}",
     "ill": "{disease}",
     "illUntreated": "{disease} (UNTREATED)"
+  },
+  "gear": {
+    "held": "[{list}]",
+    "separator": ", "
   }
 }

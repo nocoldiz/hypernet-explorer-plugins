@@ -2300,7 +2300,7 @@ window.GameOptions = GameOptions;
     registerPixelArtStep('pixelArtWeaponDetail', T('GameOptions.label.weaponDetail'), 100, 400, 25, pct);
 
     // Which set of inks the colours are snapped to: None (unlimited colours, default),
-    // Aurora 256, Splendor 128, or LCD (monochrome Game Boy).
+    // Aurora 256, Splendor 128, or LCD (monochrome handheld).
     const PIXEL_PALETTES = ['none', 'aurora256', 'splendor128', 'lcd'];
     const stepPalette = (dir) => function () {
         const cur = PIXEL_PALETTES.indexOf(this.getConfigValue('pixelArtPalette'));
@@ -2423,7 +2423,7 @@ window.GameOptions = GameOptions;
     //=========================================================================
     // On, neighbouring procedural squares sharing a tileset are stitched into one
     // seamless map and walked across without a transition. Off, one square is
-    // loaded at a time and its border is crossed with a Zelda-style screen pan.
+    // loaded at a time and its border is crossed with a classic screen-by-screen pan.
     GameOptions.registerOption('mapStreaming', T('GameOptions.label.mapStreaming'),
         () => ConfigManager.mapStreaming !== false,
         (value) => {

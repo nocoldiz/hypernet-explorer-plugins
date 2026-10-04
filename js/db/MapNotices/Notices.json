@@ -53,13 +53,6 @@
           "y2": 77
         },
         {
-          "key": "MapLegend.areas.m169_zone4",
-          "x1": 2,
-          "y1": 51,
-          "x2": 13,
-          "y2": 61
-        },
-        {
           "key": "MapLegend.areas.m169_zone6",
           "x1": 61,
           "y1": 24,
@@ -82,9 +75,9 @@
         },
         {
           "key": "MapLegend.areas.m169_zone5",
-          "x1": 16,
-          "y1": 55,
-          "x2": 32,
+          "x1": 17,
+          "y1": 49,
+          "x2": 43,
           "y2": 64
         }
       ]
@@ -272,9 +265,9 @@
         {
           "key": "MapLegend.areas.m721_zone3",
           "x1": 23,
-          "y1": 2,
+          "y1": 6,
           "x2": 32,
-          "y2": 13
+          "y2": 12
         },
         {
           "key": "MapLegend.areas.m721_zone4",
@@ -503,9 +496,9 @@
         {
           "key": "MapLegend.areas.m1414_zone17",
           "x1": 0,
-          "y1": 34,
-          "x2": 4,
-          "y2": 55
+          "y1": 23,
+          "x2": 3,
+          "y2": 73
         },
         {
           "key": "MapLegend.areas.m1414_zone18",
@@ -539,15 +532,29 @@
           "key": "MapLegend.areas.m1414_zone6",
           "x1": 73,
           "y1": 31,
-          "x2": 94,
+          "x2": 83,
           "y2": 40
         },
         {
           "key": "MapLegend.areas.m1414_zone8",
-          "x1": 91,
-          "y1": 70,
+          "x1": 63,
+          "y1": 71,
           "x2": 109,
-          "y2": 83
+          "y2": 84
+        },
+        {
+          "key": "MapLegend.areas.m1414_zone14",
+          "x1": 87,
+          "y1": 23,
+          "x2": 95,
+          "y2": 33
+        },
+        {
+          "key": "MapLegend.areas.m1414_zone22",
+          "x1": 38,
+          "y1": 56,
+          "x2": 55,
+          "y2": 67
         }
       ]
     },

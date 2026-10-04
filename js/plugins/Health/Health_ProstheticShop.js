@@ -262,12 +262,21 @@
   // What a body tolerates is a matter of constitution: four augments on a +0
   // COS, and one more socket for every point of bonus above that. A COS
   // augment therefore buys the room for the next one, which is the trade.
+  // Read off the permanent COS (SkillStatReq.baseStat: the sheet, spent
+  // attribute points and what is bolted in), never param(): worn gear, buffs,
+  // hunger and illness come and go, and the sockets must not come and go with them.
   const IMPLANT_SLOTS_BASE = 4;
   const IMPLANT_SLOT_PARAM = 5; // COS
 
+  function permanentConstitution(actor) {
+    const req = window.SkillStatReq;
+    if (req && typeof req.baseStat === "function") return req.baseStat(actor, IMPLANT_SLOT_PARAM);
+    return actor.param(IMPLANT_SLOT_PARAM);
+  }
+
   function constitutionBonus(actor) {
     if (!actor) return 0;
-    return Math.floor((actor.param(IMPLANT_SLOT_PARAM) - 10) / 2);
+    return Math.floor((permanentConstitution(actor) - 10) / 2);
   }
 
   function implantCapacity(actor) {

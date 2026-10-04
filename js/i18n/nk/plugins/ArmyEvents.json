@@ -2,5 +2,30 @@
   "unknownCountry": "UNKNOWN",
   "unknownLeader": "UNKNOWN",
   "independent": "INDEPENDENT",
-  "army": "ARMY"
+  "army": "ARMY",
+  "campaign": {
+    "powerArmy": "{power} FIELD ARMY, UNDER {leader}",
+    "independentArmy": "{leader}'S OWN COLUMN",
+    "strength": "{count} UNDER ARMS.",
+    "choiceEmpathize": "EMPATHIZE WIT DA LEADER",
+    "choiceParlay": "ASK FOR A PARLAY",
+    "choiceAttack": "ATTACK DA ARMY",
+    "choiceLeave": "WALK AWAY",
+    "parlayWelcome": "{leader} RECEIVES YOU AS A FRIEND, AN' DA ROAD AHEAD IZ OPENED!",
+    "parlayPassage": "{leader} GRANTS PASSAGE, AN' NOTHIN' MORE!",
+    "parlayDemand": "{leader} HEARS YOU OUT, DEN NAMES A PRICE FOR DA COURTESY!",
+    "parlayRefused": "{leader} REFUSES DA PARLAY AN' ORDERS DA COLUMN ON!",
+    "parlayAlreadyAnswered": "{leader} HAB GIVEN YOU AN ANSWER TODAY ALREADY!",
+    "noArmy": "YOU HAB NO TROOPS TA SEND AGAINST DEM!",
+    "engagedWith": "IN DA FIELD AGAINST {leader}, {count} UNDER ARMS!",
+    "choiceHelp": "FIGHT FOR {leader}",
+    "status": {
+      "patrolling": "PATROLLIN'",
+      "garrisoned": "GARRISONED",
+      "marching": "MARCHIN'",
+      "reinforcing": "REINFORCIN'",
+      "battling": "IN BATTLE",
+      "retreating": "RETREATIN'"
+    }
+  }
 }

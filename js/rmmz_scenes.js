@@ -3205,9 +3205,7 @@ Scene_Battle.prototype.terminate = function() {
     if (this._spriteset && this._spriteset.removeAllAnimations) {
         this._spriteset.removeAllAnimations();
     }
-    if (Graphics.effekseer) {
-        Graphics.effekseer.stopAll();
-    }
+    EffectManager.stopAllSafely();
 
     // Clear managers to prevent stuck resources when starting next battle
     ImageManager.clear();

@@ -15,6 +15,12 @@
   ],
   "vitalOrganDestroyed": "{actor}'S VITAL ORGAN ({part}) WAZ DESTROYED! DEY DIED INSTANTLY AN' WAZ REMOVED FROM DA PARTY!",
   "partDestroyed": "{actor}'S {part} WAZ DESTROYED AN' REMOVED!",
+  "statusBroken": "BROKEN",
+  "statusDestroyed": "DESTROYED",
+  "statusCutOff": "CUT OFF",
+  "partRuined": "{actor}'S {part} WAZ RUINED BEYOND REPAIR!",
+  "partBroken": "{actor}'S {part} WAZ BROKEN!",
   "augmentLost": "DA AUGMENT INSTALLED DERE ({augment}) WAZ TORN OFF WIT IT!",
-  "partDamagedFallback": "{part} DAMAGED!"
+  "partDamagedFallback": "{part} DAMAGED!",
+  "limbCopy": "{name} {n}"
 }

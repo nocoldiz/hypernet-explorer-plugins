@@ -443,9 +443,23 @@
                 // The whole frame's worth of time is handed to the tick when it
                 // does run, so everything on the model moves at its own speed.
                 const PREVIEW_FRAME_MS = 1000 / 30;
-                let _frameAcc = 0;
+                // The first frame is drawn right away, inside mount, so the
+                // shader compile and texture upload land in the menu's opening
+                // instead of in a later frame of whatever runs next.
+                let _frameAcc = PREVIEW_FRAME_MS;
                 let _previewLastTime = performance.now();
+                // A caller that tears its page down without disposeAll would
+                // leave this loop drawing a detached canvas forever, out on the
+                // map too. Once the canvas has been on the page and is gone,
+                // the preview lets itself go.
+                let _wasConnected = false;
                 const animate = () => {
+                    if (canvas.isConnected) {
+                        _wasConnected = true;
+                    } else if (_wasConnected) {
+                        if (!previewEntry.disposed) disposeAll([previewEntry]);
+                        return;
+                    }
                     previewEntry.rafId = requestAnimationFrame(animate);
 
                     const now = performance.now();
@@ -1441,6 +1455,9 @@
         let traitsHtml = '';
         const traitList = (window.ItemSystemUtils && typeof window.ItemSystemUtils.traitLines === 'function')
             ? window.ItemSystemUtils.traitLines(item) : [];
+        if (window.ItemSystemUtils && typeof window.ItemSystemUtils.handLines === 'function') {
+            traitList.push(...window.ItemSystemUtils.handLines(item));
+        }
         if (traitList.length) {
             traitsHtml = `<div class="equip-traits-block">${traitList.map(line => `<div class="inspect-bullet-item">${line}</div>`).join('')}</div>`;
         }

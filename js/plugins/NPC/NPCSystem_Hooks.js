@@ -1077,6 +1077,8 @@
 
   // Pending hour-boundary refresh stages, processed one per frame (see below)
   let _hourlyRefreshQueue = null;
+  // Milliseconds a frame may spend dealing the town's hourly schedule.
+  const HOURLY_SLICE_MS = 3;
 
   const _Game_Map_update = Game_Map.prototype.update;
   Game_Map.prototype.update = function (sceneActive) {
@@ -1156,10 +1158,17 @@
           const isAbandoned = ($dataMap.note || "").includes("<Abandoned>");
           if (groupName && !isGlobal && !isAbandoned && !MapManager.isHouseMap(mapId)) {
             // Queue the three refresh stages instead of running them in one
-            // frame (visible hitch). One stage runs per frame, in order; a new
-            // hour boundary replaces any still-pending queue.
-            _hourlyRefreshQueue = { mapId, steps: [
-              () => SpawnManager.initializeGroupNPCs(groupName, mapId),
+            // frame (visible hitch). Stages run in order from the NEXT frame,
+            // so none lands on the hour's own frame where NPCSim runs its
+            // hourly tick. A stage that returns false is resumed next frame:
+            // the town's schedule is dealt under a time budget, a slice a
+            // frame. A new hour boundary replaces any still-pending queue.
+            let assignJob = null;
+            _hourlyRefreshQueue = { mapId, fresh: true, steps: [
+              () => {
+                assignJob = assignJob || SpawnManager.beginGroupAssignment(groupName, mapId);
+                return !assignJob || assignJob.step(performance.now() + HOURLY_SLICE_MS);
+              },
               () => { if (!Config.isEmptyWorld()) window.NPCSim?.ShopShiftManager?.assignPersonas?.(mapId, groupName); },
               () => SpawnManager.refreshCurrentMapForHour(groupName),
             ] };
@@ -1171,8 +1180,10 @@
           // Player left the map mid-refresh; drop the stale stages (the next
           // hour boundary recomputes everything anyway)
           _hourlyRefreshQueue = null;
+        } else if (_hourlyRefreshQueue.fresh) {
+          _hourlyRefreshQueue.fresh = false;
         } else {
-          _hourlyRefreshQueue.steps.shift()();
+          if (_hourlyRefreshQueue.steps[0]() !== false) _hourlyRefreshQueue.steps.shift();
           if (_hourlyRefreshQueue.steps.length === 0) _hourlyRefreshQueue = null;
         }
       }

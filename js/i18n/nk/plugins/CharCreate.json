@@ -1,4 +1,21 @@
 {
+  "characterCreation": "CHARACTER CREATION",
+  "randomizeMember": "RANDOMIZE MEMBER",
+  "randomizeParty": "RANDOMIZE PARTY",
+  "embark": "EMBARK",
+  "appearance": "APPEARANCE",
+  "class": "CLASS",
+  "personality": "PERSONALITY",
+  "archetype": "ARCHETYPE",
+  "humanoid": "HUMANOID",
+  "creature": "CREATURE",
+  "presets": "PRESETS",
+  "pending": "PENDIN'",
+  "ready": "READY",
+  "unnamed": "UNNAMED",
+  "addPartyMember": "ADD MEMBER",
+  "deleteMember": "REMOVE MEMBER",
+  "confirmDeleteMember": "IZ YOU SURE YOU WANT TA REMOVE DIS CHARACTER FROM DA PARTY?",
   "pastLife": "PAST LIFE",
   "warrior": "WARRIOR",
   "disciplinedFrontLineFighters": "DISCIPLINED FRONT-LINE FIGHTERS!",
@@ -18,13 +35,13 @@
   "misfitsAndTheUnclassifiable": "MISFITS AN' DA UNCLASSIFIABLE!",
   "initialSettings": "INITIAL SETTINGS",
   "confirm": "CONFIRM",
+  "difficulty": "DIFFICULTY",
   "selectDifficulty": "SELECT DIFFICULTY",
   "selectCombatMode": "SELECT COMBAT MODE",
   "chooseCreationMode": "CHOOSE CREATION MODE",
   "chooseYourHometown": "CHOOSE YA HOMETOWN",
   "worldHistory": "WORLD HISTORY",
   "chooseCharacterType": "CHOOSE CHARACTER TYPE",
-  "howIsYourCharacterPortrayed": "HOW IZ YA CHARACTER PORTRAYED?",
   "selectYourGender": "SELECT YA GENDER:",
   "male": "MALE",
   "female": "FEMALE",
@@ -40,6 +57,11 @@
   "chooseYourBirthDate": "CHOOSE YA BIRTH DATE",
   "addAnotherPartyMember": "ADD ANOTHER PARTY MEMBER?",
   "chooseYourOrigin": "CHOOSE YA ORIGIN",
+  "chooseYourVehicle": "CHOOSE YA VEHICLE",
+  "confirmParty": "CONFIRM PARTY",
+  "noCompanion": "NO FAMILIAR",
+  "petKindNone": "ALONE",
+  "noCompanionDesc": "SET OUT WIT NOBODY AT YA HEEL. DA SEAT STAYS OPEN FOR WHOEVER YOU MEET!",
   "noDefiningTraits": "NO DEFININ' TRAITS",
   "noSkillsLearned": "NO SKILLS LEARNED",
   "noSpecializations": "NO SPECIALIZATIONS",
@@ -51,7 +73,7 @@
   "origin": "ORIGIN",
   "background": "BACKGROUND",
   "personalDossier": "PERSONAL DOSSIER",
-  "identityProfile": "IDENTITY PROFILE",
+  "identityProfile": "GENDER",
   "vocation": "VOCATION",
   "startingWealth": "STARTIN' WEALTH",
   "traits": "TRAITS",
@@ -60,6 +82,7 @@
   "equipment": "EQUIPMENT",
   "presetCharacters": "PRESET CHARACTERS",
   "back": "BACK",
+  "exitWizard": "EXIT",
   "returnToTitle": "MAIN MENU",
   "pendingSense": "PENDIN' SENSE...",
   "none": "NONE",
@@ -184,14 +207,14 @@
   "biology": "BIOLOGY",
   "noAnatomicalOrgansDefined": "NO ANATOMICAL ORGANS DEFINED",
   "confirmBlueprint": "CONFIRM BLUEPRINT",
-  "custom3dModel": "CUSTOM 3D MODEL",
+  "custom3dModel": "3D MODEL",
   "sculptAUniqueCreatureFromMixedPartsSeededFro": "SCULPT A UNIQUE CREATURE FROM MIXED PARTS, SEEDED FROM YA CHOSEN ARCHETYPES!",
   "dragToRotateWheelToZoomMiddleDragToPan": "DRAG TA ROTATE · WHEEL TA ZOOM · MIDDLE-DRAG TA PAN",
   "loadingBattlerAsset": "LOADIN' BATTLER ASSET...",
   "profileImage": "PROFILE IMAGE",
   "profileImageSelection": "PROFILE IMAGE SELECTION",
   "chooseAProfileImage": "CHOOSE A PROFILE IMAGE.",
-  "sprites": "SPRITES",
+  "sprites": "APPEARANCE",
   "selectedSprite": "SELECTED SPRITE",
   "creatureSynthesisComplete": "CREATURE SYNTHESIS COMPLETE",
   "selectSprite": "SELECT SPRITE",
@@ -200,82 +223,113 @@
   "alienSprites": "ALIEN SPRITES",
   "betaSprites": "BETA SPRITES",
   "continue2": "CONTINUE",
-  "presets": "PRESETS",
   "presets2": "PRESETS",
   "humanoidSpecies": "HUMANOID SPECIES",
   "searchSpecies": "SEARCH SPECIES...",
   "choice": {
+    "vehicleBroom": {
+      "name": "FLYIN' BROOM",
+      "desc": "A BROOM DAT ANSWERS TA NOBODY'S ROAD. IT IGNORES WALLS, WATER AN' CLIFFS ALIKE, AN' LANDS WHEREVER IT LIKES!"
+    },
+    "vehicleCar": {
+      "name": "CAR",
+      "desc": "A UTILITARIAN CAR, PARKED AT DA EDGE OF DA VILLAGE. FAST OVER OPEN GROUND, AN' IT DRINKS FUEL!"
+    },
+    "vehicleCamper": {
+      "name": "CAMPER",
+      "desc": "A VAN YOU CAN LIVE IN: A BED, A STOVE AN' EVERYTHIN' YOU OWN, WHEREVER YOU DECIDE TA STOP!"
+    },
+    "vehicleBoat": {
+      "name": "BOAT",
+      "desc": "AN INFLATABLE DINGHY, MOORED DOWN AT DA WATER. COSTS NOTHIN' TA RUN, AN' IT GOES ONLY WHERE DERE IZ WATER!"
+    },
+    "vehicleBike": {
+      "name": "BIKE",
+      "desc": "A BICYCLE, LEANIN' WHERE YOU LEFT IT. NO FUEL, NO UPKEEP, AN' IT FOLLOWS EVERY ROAD DERE IZ!"
+    },
+    "vehicleStarship": {
+      "name": "STARSHIP",
+      "desc": "A SHIP DAT LEAVES DA GROUND ALTOGETHER. NO ROADSIDE PUMP WILL EVER FILL IT!"
+    },
     "originDeserter": {
       "name": "DESERTER",
-      "desc": "CHOOSE A FACTION YOU DESERTED FROM: BEGIN WIT 40 OF ITS TROOPS, BUT HATED BY IT (AN' ITS PARENT FACTION)!"
+      "desc": "CHOOSE A FACTION YOU DESERTED FROM: BEGIN WIT [40 OF ITS TROOPS], BUT [HATED] BY IT (AN' ITS PARENT FACTION)!"
     },
     "originAugmented": {
       "name": "AUGMENTED",
-      "desc": "YOU ALL WALKED OUT OF DA SAME CLINIC WIT DA HARDWARE STILL SETTLIN': EVERYONE STARTS WIT TWO OR THREE AUGMENTS, FITTED TA WHATEVER ANATOMY DEY HAB!"
+      "desc": "YOU ALL WALKED OUT OF DA SAME CLINIC WIT DA HARDWARE STILL SETTLIN': EVERYONE STARTS WIT [TWO OR THREE AUGMENTS], FITTED TA WHATEVER ANATOMY DEY HAB!"
     },
     "originFactionLeader": {
       "name": "FACTION LEADER",
-      "desc": "CHOOSE A FACTION AN' BEGIN IN COMMAND OF 40 OF ITS TROOPS, IN GOOD STANDIN' WIT IT (AN' ITS PARENT FACTION), WIT TWO WEEKS OF UPKEEP MONEY!"
+      "desc": "CHOOSE A FACTION AN' BEGIN IN COMMAND OF [40 OF ITS TROOPS], IN [GOOD STANDIN'] WIT IT (AN' ITS PARENT FACTION), WIT [TWO WEEKS OF UPKEEP MONEY]!"
     },
     "originWarlord": {
       "name": "INDEPENDENT WARLORD",
-      "desc": "BEGIN IN COMMAND OF 40 TROOPS DRAWN FROM RANDOM FACTIONS, LOYAL TA NO ONE, WIT ENOUGH GOLD TA COVER TWO WEEKS OF DEY UPKEEP!"
+      "desc": "BEGIN IN COMMAND OF [40 TROOPS] DRAWN FROM RANDOM FACTIONS, LOYAL TA NO ONE, WIT ENOUGH MONEY TA COVER [TWO WEEKS OF DEY UPKEEP]!"
+    },
+    "originGoblin": {
+      "name": "GOBLIN MODE",
+      "desc": "YA WHOLE PARTY IZ [GOBLINS]. BEGIN IN A PLACE OF YA CHOICE, BUT ONLY AMONG DA [PLACES DA GOBLIN HORDE HOLDS] WHEN DA GAME STARTS!"
+    },
+    "originGoblinHorde": {
+      "name": "GOBLIN HORDE",
+      "desc": "GOBLINS OF DA HORDE ITSELF: BEGIN IN A PLACE DA HORDE HOLDS, IN COMMAND OF [{count} GOBLIN HORDE TROOPS] WIT [TWO WEEKS OF DEY UPKEEP], WELCOME WIT DA HORDE AN' [HATED BY EVERY POWER AT WAR WIT IT]!"
     },
     "originCrash": {
       "name": "CRASH LANDED",
-      "desc": "BEGIN STRANDED ON A RANDOM PLANET IN AN UNCHARTED GALAXY, SHIP DAMAGED, NEARLY OUT OF FUEL AN' WIT NO JUMP CHARGES LEFT!"
+      "desc": "BEGIN [STRANDED ON A RANDOM PLANET] IN AN UNCHARTED GALAXY, SHIP [DAMAGED], NEARLY OUT OF FUEL AN' WIT [NO JUMP CHARGES] LEFT!"
     },
     "originArtifact": {
       "name": "ARTIFACT HEIR",
-      "desc": "INHERIT ONE OF DA WORLD'S ANCIENT ARTIFACTS, CHOSEN AT RANDOM, ALONG WIT ITS HISTORY!"
+      "desc": "INHERIT ONE OF DA WORLD'S [ANCIENT ARTIFACTS], CHOSEN AT RANDOM, ALONG WIT ITS HISTORY!"
     },
     "originCeo": {
       "name": "CEO",
-      "desc": "START RICH: €1,000,000 IN CASH AN' AN 80% CONTROLLIN' STAKE IN LIMECORP, AT ITS HEADQUARTERS!"
+      "desc": "START RICH: [€1,000,000] IN CASH AN' AN [80% CONTROLLIN' STAKE IN LIMECORP], AT ITS HEADQUARTERS!"
     },
     "originBunker": {
       "name": "BUNKER",
-      "desc": "WAKE UP IN A STOCKED LOOT CELLAR UNDER A RANDOM OVERLAND BIOME. ITS GOLD IZ YA, AN' DA HATCH YOU CLIMB OUT OF STAYS OPEN FOREVER!"
+      "desc": "WAKE UP IN A [STOCKED LOOT CELLAR] UNDER A RANDOM OVERLAND BIOME. ITS MONEY IZ YA, AN' DA [HATCH] YOU CLIMB OUT OF STAYS OPEN FOREVER!"
     },
     "originStranded": {
       "name": "STRANDED",
-      "desc": "START ON FOOT AT A RANDOM REMOTE SPOT, MILES FROM ANYWHERE ANYONE'D LOOK!"
+      "desc": "BEGIN [ON FOOT] AT A RANDOM REMOTE SPOT, FAR FROM ANYWHERE ANYONE WOULD LOOK!"
     },
     "originCriminal": {
       "name": "CRIMINAL",
-      "desc": "SAME CAMPER START AS DA CAMPER ORIGIN, BUT YA PARTY BEGINS ALREADY WANTED WIT A 10,000€ BOUNTY!"
+      "desc": "SAME CAMPER START AS DA CAMPER ORIGIN, BUT YA PARTY BEGINS ALREADY [WANTED] WIT A [10,000€ BOUNTY]!"
     },
     "originMayor": {
       "name": "MAYOR",
-      "desc": "PICK A CITY, DEN BEGIN DERE WIT 50 OF EVERY CRAFTIN' MATERIAL!"
+      "desc": "PICK A [CITY], DEN BEGIN DERE WIT [50 OF EVERY CRAFTIN' MATERIAL]!"
     },
     "originDungeon": {
       "name": "DUNGEON ENTRANCE",
-      "desc": "START AT DA TOWER GATE WIT A DELVE KIT: EXTRA POTIONS, DA TOWER ROUTES MAP, A FLASHLIGHT AN' A CLIMBIN' ROPE!"
+      "desc": "START AT DA [TOWER GATE] WIT A DELVE KIT: [EXTRA POTIONS], DA [TOWER ROUTES MAP], A [FLASHLIGHT] AN' A [CLIMBIN' ROPE]!"
     },
     "originLot": {
-      "name": "EMPTY LOT",
-      "desc": "START STANDIN' ON A RANDOM PATCH O' OPEN COUNTRY WIV A BIG PILE O' CRAFTIN' STUFF!"
+      "name": "FULL AUTOMATION",
+      "desc": "BUILD YA UTOPIA: EVERY PARTY MEMBER STARTS WIT [ADVANCED CRAFTIN' SPECIALIZATIONS], AN' DA [WORKSHOP] IZ ALREADY FULLY STOCKED. DA MACHINES WILL DO DA REST - ALL YOU NEED IZ DA VISION!"
     },
     "originBike": {
       "name": "START ON BIKE",
-      "desc": "START OUT IN DA WILDS WIV A BIKE PARKED NEXT TA YA!"
+      "desc": "BEGIN OUT IN DA COUNTRY WIT A [BIKE] PARKED BESIDE YOU!"
     },
     "originCar": {
       "name": "START IN CAR",
-      "desc": "YA WAKE UP OUT IN DA WILDS NEXT TA YA CAR, KEYS IN HAND! WHERE YA DRIVE IT IS UP TA YOU!"
+      "desc": "WAKE UP OUT IN DA COUNTRY BESIDE YA [CAR], KEYS IN HAND. WHERE YOU DRIVE IT IZ UP TA YOU!"
     },
     "originCamper": {
       "name": "START IN CAMPER",
-      "desc": "YA WAKE UP OUT IN DA WILDS NEXT TA YA CAMPER, KEYS IN HAND! WHERE YA DRIVE IT IS UP TA YOU!"
+      "desc": "WAKE UP OUT IN DA COUNTRY BESIDE YA [CAMPER], KEYS IN HAND. WHERE YOU DRIVE IT IZ UP TA YOU!"
     },
     "originSpace": {
       "name": "START IN SPACE",
-      "desc": "SKIP DA MAP SELECTION AN' BEGIN YA JOURNEY OUT IN SPACE!"
+      "desc": "SKIP DA MAP SELECTION AN' BEGIN YA JOURNEY OUT IN [SPACE]!"
     },
     "originTrain": {
       "name": "START IN TRAIN",
-      "desc": "BOARD DA TRAIN AN' PICK YA DESTINATION ON DA MAP (DEFAULT)!"
+      "desc": "BOARD DA [TRAIN] AN' PICK YA DESTINATION ON DA MAP (DEFAULT)!"
     },
     "rerollCharacter": {
       "name": "REROLL CHARACTER",
@@ -329,14 +383,6 @@
       "name": "SELECT A CLASS",
       "desc": "CHOOSE YA STARTIN' CLASS FROM A LIST OF ARCHETYPES!"
     },
-    "portraitModel": {
-      "name": "3D MODEL",
-      "desc": "CREATE A 3D MODEL. \\C[1]NO BUST IZ USED.\\C[0]"
-    },
-    "portraitBust": {
-      "name": "PORTRAIT",
-      "desc": "PICK A BUST FROM DA PORTRAIT GALLERY!"
-    },
     "randomizeAllParty": {
       "name": "RANDOMIZE ALL PARTY",
       "desc": "FILL EVERY PARTY SLOT WIT A RANDOM CHARACTER INSTANTLY, DEN CHOOSE YA ORIGIN!"
@@ -369,32 +415,16 @@
       "name": "PICK ON MAP",
       "desc": "CHOOSE YA HOMETOWN FROM DA MAP!"
     },
-    "existingCharacter": {
-      "name": "USE EXISTIN' CHARACTER",
-      "desc": "SELECT FROM PRE-MADE CHARACTERS. EACH ONE CAN BE PLAYED ONLY ONCE PER WORLD!"
-    },
-    "modeFull": {
-      "name": "FULL",
-      "desc": "DETAILED CREATION: LIVE THROUGH YA CHARACTER'S LIFE!"
-    },
-    "modeQuick": {
-      "name": "QUICK",
-      "desc": "THREE QUESTIONS AN' YA PLAYIN': A NAME, A FACE AN' A CLASS! GENDER, BODY AN' PORTRAIT COME WIV DA FACE YA PICK, AN' TRAITS IS ROLLED FOR YA!"
-    },
-    "modeNormal": {
-      "name": "NORMAL",
-      "desc": "FAST CREATION FOR EACH MEMBER!"
-    },
     "combatMonsters": {
       "name": "MONSTERS",
       "desc": "CAPTURE AN' BATTLE WIT MONSTERS. \\C[1]DIS NO CAN BE CHANGED LATER.\\C[0]"
     },
     "combatMap": {
-      "name": "MAP BATTLE",
+      "name": "STRATEGIC BATTLE",
       "desc": "TACTICAL FIGHTS ON DA LIVE MAP INSTEAD OF A SEPARATE BATTLE SCREEN. MOVE ON DA TILE GRID, WEAPONS AN' SKILLS HAB A REACH, AN' LINE OF SIGHT MATTERS. CAN BE CHANGED LATER IN OPTIONS!"
     },
     "combatRpg": {
-      "name": "CLASSIC RPG",
+      "name": "TURN BATTLE",
       "desc": "STANDARD TURN-BASED COMBAT. SKILLS COST MP/AP AN' IZ PICKED FROM YA COMMAND MENU!"
     },
     "peaceful": {
@@ -403,7 +433,7 @@
     },
     "bloodAndOil": {
       "name": "BLOOD AN' OIL",
-      "desc": "BODY PARTS REDUCED TA ZERO HP IZ LOST, WIT PERMANENT STAT DEBUFFS. LOSIN' A VITAL ORGAN KILLS DA CHARACTER INSTANTLY. ALLIES NOT RESURRECTED BY DA END OF DA BATTLE DIE PERMANENTLY!"
+      "desc": "A SLASHIN' BLOW CAN TAKE A BODY PART OFF FOR GOOD, WIT PERMANENT STAT DEBUFFS; A PART IT ONLY BREAKS STILL HEALS. LOSIN' A VITAL ORGAN KILLS DA CHARACTER INSTANTLY. ALLIES NOT RESURRECTED BY DA END OF DA BATTLE DIE PERMANENTLY!"
     },
     "permadeath": {
       "name": "PERMADEATH",
@@ -413,33 +443,41 @@
       "name": "ROGUELITE",
       "desc": "IF DEFEATED YOU REWAKE AT DA BASE FLOOR OF DA DUNGEON. FALLEN ALLIES STAY IN DA PARTY AN' CAN BE RESURRECTED AFTER BATTLE!"
     },
-    "modeDetailed": {
-      "name": "DETAILED",
-      "desc": "BUILD DA CHARACTER ON DEY OWN DOSSIER PAGE: EVERY FIELD, FROM CLASS AN' TRAITS TA HOMETOWN, ORIENTATION AN' HISTORY, EDITED BY HAND!"
-    },
     "originCardCollector": {
       "name": "CARD COLLECTOR",
-      "desc": "YOU CAME OFF DA CIRCUIT WIT A SHELF OF MONSTER CARDS AN' A DECK ALREADY SLEEVED. EVERYONE YOU MEET IZ SOMEBODY WHO MIGHT SIT DOWN FOR A GAME!"
+      "desc": "YOU CAME OFF DA CIRCUIT WIT A SHELF OF [MONSTER CARDS] AN' A [DECK] ALREADY SLEEVED. EVERYONE YOU MEET IZ SOMEBODY WHO MIGHT SIT DOWN FOR A GAME!"
     },
     "originArcanist": {
       "name": "ARCANIST",
-      "desc": "YOU LEFT DA COLLEGE WIT FOUR ESOTERIC SPELLS APIECE, A SHELF OF SCHOOL PRIMERS, A BEGINNER'S GRIMOIRE AN' ROBES DAT STILL SMELL OF CHALK. PICK WHERE DA COACH SETS YOU DOWN!"
+      "desc": "YOU LEFT DA COLLEGE WIT [FOUR ESOTERIC SPELLS] APIECE, A SHELF OF [SCHOOL PRIMERS], A [BEGINNER'S GRIMOIRE] AN' ROBES DAT STILL SMELL OF CHALK. PICK WHERE DA COACH SETS YOU DOWN!"
     },
     "originMercenary": {
       "name": "MERCENARY",
-      "desc": "DA LAST CONTRACT PAID IN KIT RATHER DEN COIN: A RANGED WEAPON EACH, A FIELD VEST, A MEDIC'S BAG AN' WHATEVER SURVIVAL GEAR WAZ LEFT IN DA TRUCK. PICK WHERE DA WORK TAKES YOU!"
+      "desc": "DA LAST CONTRACT PAID IN KIT RATHER DEN COIN: A [RANGED WEAPON] EACH, A [FIELD VEST], A [MEDIC'S BAG] AN' WHATEVER SURVIVAL GEAR WAZ LEFT IN DA TRUCK. PICK WHERE DA WORK TAKES YOU!"
     },
     "originLostConvoker": {
       "name": "LOST CONVOKER",
-      "desc": "DA RITE WORKED. IT JUST DID NOT SAY WHERE. YOU COME TA IN A FIELD, A FOREST OR A MOUNTAINSIDE NOBODY CHOSE, WIT EIGHT SUMMONIN' RITES APIECE, A STAFF, A ROBE AN' NO IDEA WHICH COUNTRY DIS IZ!"
+      "desc": "DA RITE WORKED. IT JUST DID NOT SAY WHERE. YOU COME TA IN A FIELD, A FOREST OR A MOUNTAINSIDE NOBODY CHOSE, WIT [EIGHT SUMMONIN' RITES] APIECE, A [STAFF], A [ROBE] AN' NO IDEA WHICH COUNTRY DIS IZ!"
     },
     "originSkeletonKey": {
       "name": "SKELETON KEY HOLDER",
-      "desc": "YOU OWN ONE THING, AN' IT OPENS ANY MUNDANE LOCK EVER CUT. NO RATIONS, NO BEDROLL, NO LAMP: WHATEVER YOU NEED IZ ALREADY BEHIND SOMEBODY'S DOOR. PICK DA PLACE ON DA MAP WHERE YOU START TRYIN' DEM!"
+      "desc": "YOU OWN ONE THING, AN' IT OPENS [ANY MUNDANE LOCK] EVER CUT. YOU CARRY NOTHIN' ELSE, BECAUSE WHATEVER YOU NEED IZ ALREADY BEHIND SOMEBODY'S DOOR. PICK DA PLACE ON DA MAP WHERE YOU START TRYIN' DEM!"
     },
     "originPlague": {
       "name": "PLAGUE SPREADER",
-      "desc": "YOU IZ DA REASON DA WARD FILLED UP. A CASE OF SEALED CULTURE VIALS, ONE ILLNESS TA A PHIAL, AN' ENOUGH OF DA PHARMACY TA SURVIVE OWNIN' DEM. PICK DA CITY WHERE DA FIRST SEAL GETS BROKEN!"
+      "desc": "YOU ESCAPED A BIOLAB WIT A CASE FULL OF [SEALED VIALS] HOLDIN' DA [WORST PATHOGENS] DAT EVER EXISTED!"
+    },
+    "originDiplomat": {
+      "name": "DIPLOMAT",
+      "desc": "BEGIN IN [BRUSSELS] WIT AN [ONU TERMINAL], REMOTE ACCESS INTO DA ASSEMBLY. NO RATIONS, NO ROPE: A SEAT AT DA TABLE IZ DA ONLY THING YOU BROUGHT!"
+    },
+    "originHypernetExplorer": {
+      "name": "HYPERNET EXPLORER",
+      "desc": "YOU COME ROUND AT A TERMINAL IN DA [HYPERNET POINT] WIT A BAG OF [COMPONENTS], AN ENERGY DRINK AN' NO MEMORY OF PAYIN' FOR DA HOUR. DA [DECK IZ HALF BUILT]. DA REST OF IT IZ OUT DERE SOMEWHERE, IN SHOPS, IN SKIPS, AN' IN OTHER PEOPLE'S HOUSES!"
+    },
+    "originPatronVault": {
+      "name": "HOLY PATRON BUNKER",
+      "desc": "YOU WAKE ON [FLOOR -1] OF A BUNKER NOBODY ELSE CAN REACH, NINE CELLARS DEEP UNDER A [HATCH IN OPEN COUNTRY]. DA WAY OUT IZ DA PATRON'S OWN HATCH, AN' DA WAY IN WAZ KNOWIN' WHERE IT IZ!"
     }
   },
   "hairStyle": {
@@ -476,6 +514,7 @@
     "teal": "TEAL"
   },
   "confirmBust": "CONFIRM BUST",
+  "randomBust": "RANDOM",
   "startAsClass": "START AS A {name}.",
   "slotVacant": "SLOT {slot}: VACANT",
   "heightMetres": "{m}M {cm}CM",
@@ -516,17 +555,18 @@
   "start": "START",
   "trainPickADestination": "TRAIN, PICK A DESTINATION",
   "deepSpace": "DEEP SPACE",
-  "yourCamperParkedInACity": "YA CAMPER, PARKED NEXT TA YA OUT IN DA WILDS",
-  "yourCarParkedInACity": "YA CAR, PARKED NEXT TA YA OUT IN DA WILDS",
+  "yourCamperParkedInACity": "YA CAMPER, PARKED BESIDE YOU OUT IN DA COUNTRY",
+  "yourCarParkedInACity": "YA CAR, PARKED BESIDE YOU OUT IN DA COUNTRY",
   "aRandomOverlandBiome": "A RANDOM OVERLAND BIOME",
-  "aRandomWorldMapTile": "A RANDOM PATCH O' OPEN COUNTRY",
+  "aRandomWorldMapTile": "A RANDOM PATCH OF OPEN COUNTRY",
   "theTowerGate": "DA TOWER GATE",
+  "theOnuAssemblyInBrussels": "DA ONU ASSEMBLY, BRUSSELS",
   "aCityOfYourChoice": "A CITY OF YA CHOICE",
   "bounty": "BOUNTY",
   "10000OnYourHead": "10,000€ ON YA HEAD",
   "stock": "STOCK",
   "sealedVials": "{count} SEALED CULTURE VIALS, ONE ILLNESS EACH",
-  "aRandomRemoteWorldMapSpot": "A RANDOM REMOTE SPOT, MILES FROM ANYWHERE",
+  "aRandomRemoteWorldMapSpot": "A RANDOM REMOTE SPOT, FAR FROM ANYWHERE",
   "aLootCellarUnderARandomBiome": "A LOOT CELLAR UNDER A RANDOM BIOME",
   "hoards": "HOARDS",
   "wayBack": "WAY BACK",
@@ -543,6 +583,14 @@
   "2WeeksOfTheirWagesInCash": "2 WEEKS OF DEY WAGES, IN CASH",
   "40FromTheFactionYouPick": "40, FROM DA FACTION YOU PICK",
   "40FromTheFactionYouDeserted": "40, FROM DA FACTION YOU DESERTED",
+  "aCityTheGoblinHordeHolds": "A PLACE DA GOBLIN HORDE HOLDS, OF YA CHOICE",
+  "people": "PEOPLE",
+  "everyMemberAGoblin": "EVERY MEMBER IZ A GOBLIN",
+  "goblinHordeTroopsTotal": "{count} GOBLIN HORDE TROOPS",
+  "goblinHordeUpkeep": "{weeks} WEEKS OF DEY WAGES, {amount} EUROS IN CASH",
+  "standing": "STANDIN'",
+  "goblinHordeStanding": "REVERED BY DA HORDE, HOSTILE TA ITS WAR ENEMIES",
+  "goblinNoHordeDestination": "DA GOBLIN HORDE HOLDS NO PLACE ON DA MAP RIGHT NOW: ANY CITY WILL DO!",
   "cash": "CASH",
   "startingOut": "STARTIN' OUT",
   "language": "LANGUAGE",
@@ -555,27 +603,20 @@
   "everyPartyMemberExceptTheLeaderActsAutomatic": "EVERY PARTY MEMBER EXCEPT DA LEADER ACTS AUTOMATICALLY IN BATTLE, CHOOSIN' DEY OWN ACTIONS!",
   "youManuallyControlEveryPartyMemberSActions": "YOU MANUALLY CONTROL EVERY PARTY MEMBER'S ACTIONS!",
   "onlyTheLeaderIsControlledByYouTheRestFightOn": "ONLY DA LEADER IZ CONTROLLED BY YOU, DA REST FIGHT ON DEY OWN!",
-  "partyHud": "PARTY HUD",
-  "aCardForEveryPartyMemberInTheTopLeftCornerOf": "A CARD FOR EVERY PARTY MEMBER IN DA TOP-LEFT CORNER OF DA MAP, WIT DEY HP, MP, ACTIVE STATES AN' ANYTHIN' URGENT DEY NEED SEEN TA!",
-  "theMapIsLeftClearNoPartyCardsOverIt": "DA MAP IZ LEFT CLEAR, NO PARTY CARDS OVER IT!",
-  "healthMagicStatesAndUrgentNeedsAtAGlance": "HEALTH, MAGIC, STATES AN' URGENT NEEDS AT A GLANCE!",
   "enemyBattlers": "ENEMY BATTLERS",
-  "howEnemiesAreShownInBattle2dTheClassicBattle": "HOW ENEMIES IZ SHOWN IN BATTLE. 3D: PROCEDURAL 3D MODELS (GOBLINS, SLIMES, ELEMENTALS...). SPRITES: DA ENEMY'S CHARACTER SPRITE FROM ITS INFO!",
+  "howEnemiesAreShownInBattle2dTheClassicBattle": "HOW ENEMIES IZ SHOWN IN BATTLE. 3D: PROCEDURAL 3D MODELS (GOBLINS, SLIMES, ELEMENTALS...). SPRITES: DA ENEMY'S CHARACTER SPRITE FROM ITS INFO. 2D: A STILL PICTURE OF DA SAME 3D MODEL, DA LIGHTEST OF DA THREE!",
   "3dRendersProceduralModelsSpritesUsesTheEnemy": "3D RENDERS PROCEDURAL MODELS, SPRITES USES DA ENEMY'S CHARACTER SPRITE!",
-  "globalLighting": "GLOBAL LIGHTIN'",
-  "masterSwitchForTheDynamicLightingSystemStree": "MASTER SWITCH FOR DA DYNAMIC LIGHTIN' SYSTEM: STREETLIGHTS, EVENT LIGHTS AN' DA NIGHT-LIGHT OVERLAY. TURN OFF FOR MAXIMUM PERFORMANCE!",
-  "allDynamicLightsAreDisabledBestPerformance": "ALL DYNAMIC LIGHTS IZ DISABLED, BEST PERFORMANCE!",
-  "streetlightsAndAmbientLightingReactToTheTime": "STREETLIGHTS AN' AMBIENT LIGHTIN' REACT TA DA TIME OF DAY!",
+  "battleMode": "BATTLE MODE",
+  "battleModeDesc": "BATTLE PRESENTATION. TURN BATTLE PLAYS FIGHTS IN DA CLASSIC TURN-BASED SCENE. STRATEGIC BATTLE PLAYS TACTICAL FIGHTS ON DA LIVE MAP GRID!",
+  "battleModeTurn": "TURN BATTLE",
+  "battleModeStrategic": "STRATEGIC BATTLE",
   "battleMusic": "BATTLE MUSIC",
   "musicTrackPlayedDuringCombatPressToPreviewTr": "MUSIC TRACK PLAYED DURIN' COMBAT. PRESS ←→ TA PREVIEW TRACKS!",
   "uiTheme": "UI THEME",
   "visualThemeAppliedToMenusAndHudPressToSwitch": "VISUAL THEME APPLIED TA MENUS AN' HUD. PRESS ←→ TA SWITCH. REQUIRES RESTART TA APPLY!",
-  "toCycleTracksPreviewPlaysAutomatically": "← → TA CYCLE TRACKS · PREVIEW PLAYS AUTOMATICALLY",
-  "toCycleThemesRequiresRestartToApply": "← → TA CYCLE THEMES · ⟳ REQUIRES RESTART TA APPLY",
   "settingsPreview": "SETTINGS PREVIEW",
-  "navigateChangeValueEnterConfirm": "↑↓ NAVIGATE · ←→ CHANGE VALUE · ENTER CONFIRM",
   "musicTrack": {
-    "Battle": "DRUMS (DEFAULT)",
+    "Battle": "DRUMS",
     "shortcuts": "SHORTCUTS",
     "MelodicTechno": "MELODIC TECHNO"
   },
@@ -588,7 +629,33 @@
     "dex": "DEX:",
     "int": "INT:",
     "wis": "WIS:",
-    "psi": "PSI:"
+    "psi": "PSI:",
+    "level": "LV"
+  },
+  "statInfo": {
+    "HP": "HEALTH POINTS. FALLS TA 0 AN' DA CHARACTER IZ KNOCKED OUT OF DA FIGHT!",
+    "MP": "MANA POINTS. SPENT TA CAST SKILLS AN' SPELLS; EMPTY AN' ONLY FREE ACTIONS IZ LEFT!",
+    "STR": "STRENGTH. DRIVES PHYSICAL ATTACK POWER, MELEE AN' THROWN WEAPONS ALIKE!",
+    "CON": "CONSTITUTION. PHYSICAL DEFENSE: HOW MUCH A HIT'S DAMAGE IZ SHAVED DOWN BEFORE IT LANDS!",
+    "DEX": "DEXTERITY. TURN ORDER AN' DA ODDS OF DODGIN' AN ATTACK OUTRIGHT!",
+    "INT": "INTELLIGENCE. DRIVES MAGIC ATTACK POWER, DA DAMAGE A SPELL ACTUALLY LANDS FOR!",
+    "WIS": "WISDOM. MAGIC DEFENSE: RESISTANCE TA SPELLS AN' OTHER MAGICAL HARM!",
+    "PSI": "PSYCHE. LUCK: CRITICAL HITS, RARE DROPS AN' OTHER ODDS TIPPED IN DA CHARACTER'S FAVOR!",
+    "ARCANE": "ARCANE. HOW MAGICAL DA CHARACTER LOOKS AN' FEELS TA ANYONE READIN' DEM!",
+    "SUBSTANCE": "SUBSTANCE. HOW STYLISH DA CHARACTER IZ, DA IMPRESSION DEY LOOK LEAVES!",
+    "STEALTH": "STEALTH. HOW WELL DA CHARACTER BLENDS INTO DA SURROUNDINGS!",
+    "INTIMIDATION": "INTIMIDATION. HOW THREATENIN' DA CHARACTER'S CLOTHES AN' GEAR APPEAR!"
+  },
+  "characterType": "CHARACTER TYPE",
+  "portraitStyle": "PORTRAIT",
+  "portraitBust": "2D BUST",
+  "portraitModel": "3D MODEL",
+  "traitTypeLabel": "TRAIT",
+  "traitCategoryLabel": {
+    "physical": "PHYSICAL",
+    "mental": "MENTAL",
+    "magical": "MAGICAL",
+    "genetic": "GENETIC"
   },
   "previewOff": "OFF",
   "previewOn": "ON",
@@ -607,9 +674,11 @@
     "noOptions": "NOTHIN' TA CHOOSE FROM HERE YET!",
     "pickCategory": "CHOOSE A FIELD OF STUDY",
     "section": {
+      "ideology": "IDEOLOGY",
       "identity": "IDENTITY",
       "origins": "ORIGINS",
       "talents": "TRAITS AN' TALENTS",
+      "biology": "BIOLOGY",
       "society": "STANDIN'",
       "romance": "ROMANCE",
       "history": "HISTORY",
@@ -617,30 +686,34 @@
     },
     "row": {
       "name": "NAME",
-      "nameRandom": "ROLL A NEW NAME",
+      "nameRandom": "RANDOMIZE NAME",
       "kind": "KIND",
       "archetype": "ARCHETYPE",
       "class": "CLASS",
       "level": "LEVEL",
-      "portraitStyle": "PORTRAYED BY",
       "appearance": "SPRITE AN' PORTRAIT",
       "model3d": "3D MODEL",
       "age": "AGE",
       "birthNation": "NATION OF BIRTH",
-      "traitsRandom": "ROLL NEW TRAITS",
+      "traitsRandom": "RANDOMIZE TRAITS",
       "personality": "PERSONALITY",
       "ideology": "IDEOLOGY",
       "faction": "FACTION",
+      "party": "POLITICAL PARTY",
       "wealth": "WEALTH",
       "morality": "MORALITY",
       "romantic": "ROMANTIC ORIENTATION",
       "sexual": "SEXUAL ORIENTATION",
+      "relStyle": "RELATIONSHIP STYLE",
       "reproduction": "REPRODUCTION",
+      "bloodType": "BLOOD TYPE",
+      "bloodTypeRandom": "RANDOMIZE BLOOD TYPE",
       "rerollBackstory": "REWRITE DA BACKSTORY",
       "rerollLife": "DEAL A DIFFERENT LIFE",
+      "randomizeKeepBuild": "RANDOMIZE (KEEP KIND & CLASS)",
       "randomizeAll": "RANDOMIZE EVERYTHIN'",
       "done": "DONE, DIS CHARACTER IZ READY",
-      "specsRandom": "ROLL NEW SPECIALIZATIONS",
+      "specsRandom": "RANDOMIZE SPECIALIZATIONS",
       "specPoints": "POINTS"
     },
     "kind": {
@@ -649,21 +722,30 @@
       "creature": "CREATURE",
       "creatureDesc": "BUILT IN DA CREATURE WORKSHOP FROM ONE ARCHETYPE, OR TWO FOR A HYBRID!"
     },
-    "portrait": {
-      "bust": "HAND-DRAWN BUST",
-      "model": "PROCEDURAL 3D MODEL"
-    },
     "specPoints": "POINTS LEFT: {left} OF {total}",
     "specCost": "COSTS {n}",
     "specRefund": "CLICK TA GIVE DA POINTS BACK",
     "specGranted": "(FREE TA {level})",
     "specsRandomHint": "SPEND DA WHOLE BUDGET AT RANDOM, ON TOP OF WHAT DA CLASS AN' TRAITS ALREADY GRANT!",
     "search": "SEARCH…",
-    "noMatches": "NUFFIN' 'ERE MATCHES DAT!",
+    "noMatches": "NOTHIN' HERE MATCHES DAT.",
     "specLower": "GIVE BACK {n}",
     "specPointsShort": "{left} / {total} PTS",
-    "wealthNote": "WOT DIS ONE CHUCKS IN DA GANG PURSE!",
-    "moreMatches": "{n} MORE , NARROW DA SEARCH TA SEE 'EM!"
+    "partyNote": "A NEW CHARACTER JOINS A PARTY ONLY IF YOU PICK ONE HERE. ONLY PARTIES IN DEY HOME NATION IZ LISTED!",
+    "partyMatch": "SAME CREED",
+    "wealthNote": "WHAT DIS CHARACTER BRINGS TA DA PARTY PURSE!",
+    "moreMatches": "{n} MORE, NARROW DA SEARCH TA SEE DEM!",
+    "specNotImplemented": "NOT IMPLEMENTED",
+    "factionsTab": "FACTIONS",
+    "factionsTitle": "STANDIN' WIT DA POWERS",
+    "factionsHint": "EVERY FACTION STARTS AT NEUTRAL. SPEND POINTS TA RAISE A STANDIN', OR LOWER ONE FACTION TA FUND ANOTHER!",
+    "factionsBudget": "{left} / {total} BANDS LEFT",
+    "factionsIndependents": "INDEPENDENTS",
+    "factionsSwear": "SWEAR",
+    "factionsSworn": "SWORN TA",
+    "factionsRenounce": "RENOUNCE",
+    "factionsLocked": "DIS STANDIN' IZ ALREADY WRITTEN. IT NO CAN BE CHANGED!",
+    "factionsNoData": "DA FACTIONS IZ NOT LOADED!"
   },
   "augments": "AUGMENTS",
   "augmentsPerMember": "{min}-{max} PER MEMBER, FITTED TA DEY OWN SOCKETS",
@@ -679,6 +761,366 @@
   "aRandomSquareOfTheWorld": "A RANDOM SQUARE OF DA WORLD",
   "summoningRites": "SUMMONIN' RITES",
   "summoningRitesPerMember": "{count} EACH, AN' NO MAP TA GO WIT DEM",
+  "craftingSpecsAllMembers": "{count} CRAFTIN' SPECIALIZATIONS EACH, ADVANCED TA MASTER (RANDOMIZED PER MEMBER)",
   "supplies": "SUPPLIES",
-  "nothingButTheKey": "NONE. DA KEY IZ EVERYTHIN' YOU CARRY!"
+  "nothingButTheKey": "NONE. DA KEY IZ EVERYTHIN' YOU CARRY!",
+  "primaryLocked": "PRIMARY (FIXED)",
+  "theHypernetPoint": "DA HYPERNET POINT, DA TERMINAL ROOM OF DA OMEGA TOWER",
+  "components": "COMPONENTS",
+  "componentsCarried": "{count} LOOSE HYPERDECK PARTS",
+  "startingLoadout": "STARTIN' LOADOUT",
+  "scenarioShared": "SCENARIO",
+  "noGear": "NO PERSONAL ITEMS",
+  "optional": "OPTIONAL",
+  "biography": "BIO",
+  "customized": "CUSTOMIZED",
+  "companion": "FAMILIAR",
+  "petsTab": "PETS",
+  "releasePet": "RELEASE FAMILIAR",
+  "chooseCompanion": "CHOOSE PET / FOLLOWER",
+  "companionStats": "FAMILIAR VITALS",
+  "behavioralTraits": "BEHAVIOR",
+  "chooseAsCompanion": "CHOOSE AS INITIAL FAMILIAR",
+  "selectedCompanion": "COMPANION SELECTED",
+  "budget": "BUDGET",
+  "specializationSummary": "TALENT DOSSIER",
+  "allocatedTalents": "ALLOCATED TALENTS",
+  "noTalentsSpent": "NO SPECIALIZATION POINTS ALLOCATED YET!",
+  "removeAllocated": "REMOVE",
+  "specsCurrent": "CURRENT",
+  "specGranted": "GRANTED BY CLASS AN' TRAITS",
+  "creedIdeology": "CREED",
+  "originCity": "HOMETOWN",
+  "moralityAlignment": "MORALITY",
+  "ageBand": "AGE",
+  "socialStanding": "SOCIAL STANDIN'",
+  "bloodType": "BLOOD TYPE",
+  "backgroundSummary": "BACKGROUND PROFILE",
+  "narrativeHistory": "BACKSTORY",
+  "randomize": "RANDOMIZE",
+  "randomizeCompanion": "RANDOMIZE COMPANION",
+  "suggestSpecs": "SUGGESTED",
+  "resetSpecs": "RESET",
+  "applyToMember": "APPLY TA CURRENT MEMBER",
+  "beginAdventure": "BEGIN ADVENTURE",
+  "embarkWithPreset": "EMBARK WIT PRESET",
+  "budgetPoints": "BUDGET: {remaining} / {total} PTS",
+  "bodyParts": "BODY PARTS",
+  "reproductiveOrgans": "REPRODUCTIVE ORGANS",
+  "reproductiveOrgansShort": "ORGANS:",
+  "reproNone": "STERILE",
+  "hormoneBalance": "ENDOCRINE BALANCE",
+  "hormoneBalanceShort": "ENDOCRINE:",
+  "hormoneOestrogenic": "OESTROGENIC",
+  "hormoneAndrogenic": "ANDROGENIC",
+  "hormoneLean": [
+    "STRONGLY OESTROGENIC",
+    "OESTROGENIC",
+    "EVENLY BALANCED",
+    "ANDROGENIC",
+    "STRONGLY ANDROGENIC"
+  ],
+  "hormoneReadout": "TESTOSTERONE {tLow}-{tHigh} NG/DL, ESTROGEN {eLow}-{eHigh} PG/ML",
+  "filterAll": "ALL",
+  "noClassMatches": "NO CLASS MATCHES DAT SEARCH",
+  "armorProficiencies": "ARMOR PROFICIENCIES",
+  "elementalAffinities": "ELEMENTAL AFFINITIES",
+  "classCurrent": "CURRENT CLASS",
+  "growthToLevel": "LV 1 TA LV {n}",
+  "dossierName": "NAME",
+  "presetNoLore": "A DISTINGUISHED OPERATIVE PREPARED FOR NETWORK FIELD OPERATIONS!",
+  "removeMemberTitle": "REMOVE FROM PARTY",
+  "removeMemberBody": "{name} WILL BE REMOVED FROM DA PARTY AN' DEY DOSSIER DISCARDED!",
+  "scenarioRoster": "PARTY DOSSIERS",
+  "scenarioExclusiveItems": "EXCLUSIVE KIT",
+  "scenarioNoExclusiveItems": "NO EXCLUSIVE KIT FOR DIS SCENARIO",
+  "scenarioPartyInventory": "PARTY INVENTORY",
+  "scenarioNoPartyInventory": "DA PARTY IZ NOT CARRYIN' ANYTHIN' YET",
+  "scenarioPickPrompt": "PICK DA SCENARIO DIS PARTY STARTS IN",
+  "suggestedScenarios": "SUGGESTED SCENARIOS",
+  "otherScenarios": "OTHER SCENARIOS",
+  "simpleMode": "SIMPLE MODE",
+  "detailedMode": "DETAILED MODE",
+  "toggleModeTooltip": "TOGGLE BETWEEN SIMPLE AN' DETAILED CREATION MODE",
+  "petDesc": "A COMPANION ATTUNED TA DA SURROUNDIN' ECOSYSTEM. RESILIENT, VIGILANT, AN' DEVOTED TA TRAILIN' AN' SAFEGUARDIN' DA PARTY!",
+  "petDescKind": "A WILDERNESS {kind} COMPANION ATTUNED TA DA SURROUNDIN' ECOSYSTEM!",
+  "returnToParty": "RETURN TA PARTY CONFIGURATION",
+  "startingFunds": "STARTIN' FUNDS",
+  "skillCount": "{n} SKILLS",
+  "traitCount": "{n} TRAITS",
+  "entryCount": "{n} ENTRIES",
+  "primaryArchetype": "PRIMARY ARCHETYPE",
+  "weaponSlotsHeld": "WEAPONS HELD: {n}",
+  "handSlotsHeld": "({n} GRIPS)",
+  "deletePreset": "DELETE DOSSIER",
+  "deletePresetBody": "DELETE DA DOSSIER OF {name}? DIS NO CAN BE UNDONE!",
+  "secondaryArchetype": "SECONDARY ARCHETYPE",
+  "vital": "VITAL",
+  "archetypeBoardHint": "PICK ONE ARCHETYPE FOR A BASELINE BODY, OR ADD A SECOND TA SPLICE A HYBRID!",
+  "cc3d": {
+    "hint": "OPEN A GROUP OF PARTS, DEN PICK ONE TA FIT IT. GRAB A FITTED PART TA MOVE, TURN OR RESIZE IT; PARTS ALWAYS STAY ATTACHED TA DA LIMB DEY HANG FROM. RIGHT-DRAG TURNS DA VIEW, DA WHEEL ZOOMS!",
+    "symmetry": "SYMMETRY",
+    "symMirror": "MIRROR",
+    "symOff": "OFF",
+    "parts": "PARTS",
+    "shape": "SHAPE",
+    "bare": "BARE",
+    "pickAPart": "CLICK A PART ON DA MODEL, OR OPEN A GROUP BELOW, TA WORK ON IT!",
+    "move": "MOVE",
+    "turn": "TURN",
+    "size": "SIZE",
+    "tilt": "TILT",
+    "roll": "ROLL",
+    "axisX": "LEFT / RIGHT",
+    "axisY": "UP / DOWN",
+    "axisZ": "FRONT / BACK",
+    "reset": "RESET",
+    "detach": "DETACH",
+    "structureHasNoKnobs": "DIS SKELETON IZ BUILT WHOLE. REROLL ITS VARIATION TA RESHAPE IT!",
+    "noSlots": "DIS BODY HAB NO PARTS DAT CAN BE SWAPPED. PICK ANOTHER STRUCTURE TA SCULPT ONE!",
+    "undo": "UNDO",
+    "redo": "REDO",
+    "surprise": "SURPRISE ME",
+    "build": "BUILD",
+    "skin": "SKIN",
+    "pickAGroup": "PICK A GROUP OF PARTS BELOW!",
+    "addPart": "ADD PART"
+  },
+  "confirmEmbark": "CONFIRM & EMBARK",
+  "confirmPartyScenario": "CONFIRM PARTY & SCENARIO",
+  "petKindAnimals": "ANIMALS",
+  "petKindCreatures": "CREATURES",
+  "petKindConstructs": "CONSTRUCTS",
+  "petKindUndead": "UNDEAD",
+  "petSearchPlaceholder": "SEARCH FAMILIAR MONSTERS...",
+  "petCount": "{n} MONSTERS",
+  "petNoneFound": "NO FAMILIAR MONSTERS MATCH DIS FILTER",
+  "petSpecies": "SPECIES",
+  "petClassification": "CLASSIFICATION",
+  "petMaxHp": "MAX HP",
+  "petCombatPower": "COMBAT POWER",
+  "petTraitsTitle": "TRAITS",
+  "petTraitSentient": "SENTIENT",
+  "petTraitMagical": "MAGICAL",
+  "petTraitGeneticFreak": "GENETIC FREAK",
+  "spriteTab": {
+    "monsters": "MONSTERS",
+    "all": "ALL",
+    "aliens": "ALIENS",
+    "animals": "ANIMALS",
+    "creatures": "CREATURES",
+    "varlenian": "VARLENIAN",
+    "undead": "UNDEAD",
+    "humanoid": "HUMANOID",
+    "elven": "ELVEN",
+    "goblin": "GOBLIN",
+    "dwarves": "DWARVES",
+    "insectoid": "INSECTOID",
+    "demons": "DEMONS",
+    "space": "SPACE",
+    "arcane": "ARCANE",
+    "military": "MILITARY",
+    "underworld": "UNDERWORLD",
+    "urban": "URBAN",
+    "nobility": "NOBILITY",
+    "wilderness": "WILDERNESS",
+    "bards": "BARDS"
+  },
+  "politicalGraph": "GRAPH",
+  "openPoliticalGraph": "OPEN DA POLITICAL GRAPH",
+  "classProfile": "CLASS SKILLS",
+  "estimatedValue": "ESTIMATED VALUE",
+  "standardIssueGear": "STANDARD ISSUE ITEM OR GEAR!",
+  "settings": "SETTINGS",
+  "startGame": "START GAME",
+  "presetLocked": "PRESET",
+  "noBustSelected": "NO PORTRAIT CHOSEN",
+  "spriteLockedHint": "PRESET SPRITE (LOCKED)",
+  "spriteClickHint": "SPRITE: CLICK TA OPEN DA GRID SELECTOR",
+  "bustLockedHint": "PRESET PORTRAIT (LOCKED)",
+  "bustClickHint": "PORTRAIT: CLICK TA CHOOSE A BUST",
+  "renameHint": "NAME: ROLL A NEW ONE WIT DA DIE",
+  "professionJob": "PROFESSION",
+  "defaultName": "HERO",
+  "defaultClassName": "OPERATIVE",
+  "bio": {
+    "gender": {
+      "male": "MALE ♂",
+      "female": "FEMALE ♀",
+      "nonBinary": "NON BINARY ⚦",
+      "cocoon": "COCOON ⯐"
+    },
+    "morality": {
+      "saintly": "SAINTLY (+2)",
+      "principled": "PRINCIPLED (+1)",
+      "pragmatic": "PRAGMATIC (0)",
+      "ruthless": "RUTHLESS (-1)",
+      "vile": "VILE (-2)"
+    },
+    "moralityAdj": {
+      "saintly": "SAINTLY",
+      "principled": "PRINCIPLED",
+      "pragmatic": "PRAGMATIC",
+      "ruthless": "RUTHLESS",
+      "vile": "VILE"
+    },
+    "age": {
+      "young": "YOUNG (18-25)",
+      "adult": "ADULT (26-40)",
+      "middle": "MIDDLE-AGED (41-60)",
+      "elder": "ELDER (61+)"
+    },
+    "wealth": {
+      "destitute": "DESTITUTE",
+      "working": "WORKIN' CLASS",
+      "middle": "MIDDLE CLASS",
+      "wealthy": "WEALTHY"
+    },
+    "wealthAdj": {
+      "destitute": "DESTITUTE",
+      "working": "WORKIN' CLASS",
+      "middle": "MIDDLE CLASS",
+      "wealthy": "WEALTHY"
+    },
+    "compatTitle": "PARTY TRANSFUSION COMPATIBILITY",
+    "compatSelected": "SELECTED",
+    "canDonate": "CAN DONATE TA:",
+    "canReceive": "CAN RECEIVE FROM:",
+    "noDonor": "NONE (INCOMPATIBLE DONOR)",
+    "noRecipient": "NONE (REQUIRES MATCHED DONOR)",
+    "traitLabel": "TRAIT:",
+    "bloodStandard": "STANDARD BLOOD",
+    "bloodExotic": "EXOTIC BLOOD",
+    "bloodTrait": {
+      "O_NEG": "🌟 UNIVERSAL DONOR FOR ALL STANDARD ABO/RH PATIENTS!",
+      "AB_POS": "🧬 UNIVERSAL RECIPIENT (SAFELY RECEIVES ALL STANDARD ABO/RH BLOOD)!",
+      "SYNTH_DELTA": "⚡ UNIVERSAL ARTIFICIAL CARRIER (COMPATIBLE WIT ALL HUMAN & SYNTHETIC PHYSIOLOGY)!",
+      "AZURE_HEMOCYANIN": "🦀 COPPER HEMOCYANIN (AMEBOCYTES IMPART COMPLETE IMMUNITY TA BACTERIAL ENDOTOXIN SEPSIS)!",
+      "RH_NULL": "⚜ GOLDEN BLOOD (UNIVERSAL RH DONOR, LACKS ALL 61 RH ANTIGENS; RECEIVES ONLY RH-NULL)!",
+      "BOMBAY_HH": "🔬 BOMBAY PHENOTYPE (LACKS H ANTIGEN; UNIVERSAL EMERGENCY RED CELL DONOR, RECEIVES ONLY BOMBAY HH)!",
+      "RARE_ANTIGEN": "🧬 RARE ANTIGEN-NULL PROFILE (REQUIRES MATCHED ANTIGEN DONOR FOR SAFE REPEAT TRANSFUSION)!"
+    },
+    "jobless": "UNEMPLOYED",
+    "joblessOption": "NONE",
+    "joblessShort": "UNEMPLOYED",
+    "jobGear": "STARTIN' JOB GEAR & TOOLS GRANTED:",
+    "noJobGear": "NO INITIAL PROFESSIONAL EQUIPMENT OR WORK TOOLS PROVIDED!",
+    "noBackstory": "NO BACKSTORY RECORDED YET!"
+  },
+  "specGenericDesc": "PROFICIENCY ACQUIRED THROUGH RIGOROUS STUDY AN' FIELDWORK!",
+  "name": "NAME",
+  "gender": "GENDER",
+  "coreAttributes": "CORE ATTRIBUTES",
+  "personalInventory": "PERSONAL INVENTORY & GEAR",
+  "noPersonalEquipment": "NO PERSONAL EQUIPMENT",
+  "preset": "PRESET",
+  "presetDossiers": "PRESET DOSSIERS",
+  "vip": "VIP",
+  "vipDossiers": "VIP DOSSIERS",
+  "onlyOnePreset": "ONLY 1 PRESET CHARACTER ALLOWED IN DA PARTY",
+  "romanceTab": "ROMANCE",
+  "romance": {
+    "romanticOrientation": "ROMANTIC ORIENTATION",
+    "sexualOrientation": "SEXUAL ORIENTATION",
+    "kinseyScale": "KINSEY SCALE PLACEMENT",
+    "kinseyLabel": "KINSEY",
+    "style": "PREFERRED RELATIONSHIP STYLE",
+    "bonds": "STANDIN' WIT DA REST OF DA PARTY",
+    "bondsTitle": "TIES ALREADY HELD",
+    "noBonds": "DIS ONE STARTS OUT TIED TA NOBODY IN DA PARTY!",
+    "noOthers": "NOBODY ELSE HAB BEEN CREATED YET. ADD A SECOND MEMBER AN' DEY STANDIN' WIT DIS ONE CAN BE SET HERE!",
+    "ofPopulation": "OF DA POPULATION",
+    "esoteric": "ESOTERIC",
+    "summaryTitle": "ATTACHMENT RECORD",
+    "summaryPara1": "<b>{name}</b> FALLS IN LOVE AS A <b>{romantic}</b> AN' DESIRES AS A <b>{sexual}</b>, AN' HOLDS TA A <b>{style}</b> WAY OF BEING TIED TA SOMEBODY!",
+    "summaryPara2": "ON DA KINSEY SCALE DEY IZ RECORDED AT STEP <b>{kinsey}</b>:",
+    "nonSentient": "DIS ONE HOLDS NO CREED, NO TRADE AN' NO ROMANCE. IT ANSWERS IN DA VOICE OF WHAT IT IZ!"
+  },
+  "vehiclesTab": "VEHICLES",
+  "vehicleCount": "{n} SELECTED",
+  "vehicleOwned": "IN DA GARAGE",
+  "vehicleFree": "NOT TAKEN",
+  "vehicleKeys": "KEYS IN DA PACK",
+  "vehicleNoneTaken": "NOTHIN' IN DA GARAGE. YOU SET OUT ON FOOT!",
+  "vehicleGarage": "YA GARAGE",
+  "vehicleRequired": "STORY MODE NEEDS ONE VEHICLE BEFORE YOU CAN SET OUT!",
+  "vehicleTake": "TAKE DIS VEHICLE",
+  "vehicleDrop": "LEAVE IT BEHIND",
+  "classAbilities": "CLASS ABILITIES",
+  "limitBreak": "LIMIT BREAK",
+  "genderDesc": {
+    "male": "TRADITIONAL MALE BIOLOGY AN' IDENTITY. PRONOUNS: HE/HIM. ASSOCIATED WIT TESTICULAR/INSEMINATION BIOLOGY!",
+    "female": "TRADITIONAL FEMALE BIOLOGY AN' IDENTITY. PRONOUNS: SHE/HER. ASSOCIATED WIT UTERINE/GESTATION BIOLOGY!",
+    "nonBinary": "FLUID OR NON-CONFORMIN' PRESENTATION. PRONOUNS: DEY/DEM. FEATURES ADAPTABLE BIOLOGICAL TRAITS!",
+    "cocoon": "METAMORPHIC, SYNTHETIC, OR VEGETATIVE CHASSIS. PRONOUNS: IT/DEY. OPERATES VIA MITOTIC OR ENGINEERED REPRODUCTION!"
+  },
+  "memberN": "MEMBER {n}",
+  "petDefaultName": "COMPANION",
+  "jobNumber": "JOB #{id}",
+  "skillNumber": "SKILL #{id}",
+  "specNumber": "SPEC #{id}",
+  "itemNumber": "ITEM #{id}",
+  "petsNone": "NO PET",
+  "petsNoneDesc": "SET OUT WIT NOBODY AT YA HEEL!",
+  "petsSearchPlaceholder": "SEARCH PET MONSTERS...",
+  "petsNoneFound": "NO PET MONSTERS MATCH DIS FILTER",
+  "petsChoose": "CHOOSE AS STARTIN' PET",
+  "petsTabRelease": "RELEASE PET",
+  "pickSearch": "SEARCH...",
+  "pickNoResults": "NOTHIN' MATCHES DAT.",
+  "description": "DESCRIPTION",
+  "regenerateBackstory": "REWRITE HISTORY",
+  "pickJob": "CHOOSE A PROFESSION",
+  "pickCreed": "CHOOSE A CREED",
+  "pickHometown": "CHOOSE A HOMETOWN",
+  "pickArchetype": "CHOOSE AN ANATOMY",
+  "pickSecondaryArchetype": "CHOOSE A SECOND ANATOMY",
+  "pickBond": "CHOOSE A BOND",
+  "pickClass": "CHOOSE A VOCATION",
+  "pickTraitPackage": "CHOOSE A KIND OF PERSON",
+  "embarkLocked": "EVERY CHARACTER NEEDS A NAME AN' A FACE!",
+  "saveAsPreset": "SAVE AS PRESET",
+  "presetSavedToast": "{name} FILED AS ONE OF YA DOSSIERS!",
+  "presetResaved": "DA DOSSIER OF {name} WAZ REWRITTEN!",
+  "patronVaultAskTitle": "DA SECRET COORDINATES",
+  "patronVaultAskWorld": "WORLD SQUARE",
+  "patronVaultAskWorldHint": "79, 124",
+  "patronVaultAskTile": "HATCH TILE",
+  "patronVaultAskTileHint": "38, 27",
+  "patronVaultSave": "SAVE COORDINATES",
+  "patronVaultStart": "BEGIN HERE",
+  "patronVaultSquareLine": "{place} - HATCH {tileX}, {tileY}",
+  "patronVaultNoneSaved": "NO COORDINATES SAVED YET.",
+  "patronVaultPickSquare": "PICK ONE OF DA SAVED SQUARES FIRST!",
+  "padDelete": "DEL",
+  "padNext": "NEXT",
+  "patronVaultWrongSquare": "NO HATCH ANSWERS TA DOZE COORDINATES!",
+  "patronVaultTravelName": "HOLY PATRON BUNKER",
+  "floorMinusOneOfAPatronsVault": "FLOOR -1 OF A HOLY PATRON BUNKER",
+  "thePatronsOwnHatch": "DA PATRON'S OWN HATCH, ON DA SURFACE ABOVE",
+  "locked": "LOCKED BY",
+  "theSecretCoordinates": "DA SECRET COORDINATES OF DA HATCH",
+  "exitToTitleTitle": "RETURN TA MAIN MENU",
+  "exitToTitleBody": "CREATION WILL BE ABANDONED AN' DIS PARTY DISCARDED!",
+  "exitToTitleAccept": "RETURN",
+  "partyPresets": "PARTY PRESETS",
+  "partyPresetsTitle": "PARTY DOSSIERS",
+  "loadPartyPreset": "TAKE DIS PARTY",
+  "savePartyPreset": "SAVE CURRENT PARTY",
+  "savePartyPresetBody": "FILE DA PARTY AS IT STANDS ({name}) AS A PARTY DOSSIER OF YA OWN?",
+  "partyPresetSaved": "{name} FILED AS ONE OF YA PARTIES!",
+  "partyPresetResaved": "{name} REWRITTEN.",
+  "partyPresetLoaded": "{name} TOOK DA SEATS.",
+  "deletePartyPreset": "DELETE PARTY",
+  "deletePartyPresetBody": "DELETE DA PARTY DOSSIER OF {name}? DIS NO CAN BE UNDONE!",
+  "exportPreset": "EXPORT DOSSIER",
+  "presetExported": "{name} WRITTEN TA DA CHARACTERS FOLDER!",
+  "presetExportFailed": "DA CHARACTERS FOLDER COULD NOT BE WRITTEN TA!",
+  "lab": {
+    "cancel": "DISCARD",
+    "cancelTitle": "DISCARD DIS EMBRYO?",
+    "cancelBody": "NOTHIN' WILL BE GROWN, AN' DA DEVICE IZ RETURNED UNUSED!",
+    "confirmVat": "START GROWIN'",
+    "confirmSplice": "IMPLANT EMBRYO"
+  }
 }

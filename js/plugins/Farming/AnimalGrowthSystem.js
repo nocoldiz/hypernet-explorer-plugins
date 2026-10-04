@@ -872,10 +872,13 @@
           { code: 357, indent: 0, parameters: [pluginName, "InteractAnimal", "Interact With Animal", { uid: String(rec.uid) }] },  // i18n-ignore  plugin command id  // i18n-ignore  plugin command id
           { code: 0, indent: 0, parameters: [] }
         ],
-        moveFrequency: 3,
+        // Random wander (moveType 1), kept on a leash round the tile it was
+        // put down on by the moveTypeRandom hook below. directionFix stays on:
+        // the sheet row is the growth stage, not the heading.
+        moveFrequency: 2,
         moveRoute: { list: [{ code: 0 }], repeat: true, skippable: false, wait: false },
-        moveSpeed: 3, moveType: 0, priorityType: 1, stepAnime: true,
-        through: false, trigger: 0, walkAnime: false
+        moveSpeed: 2, moveType: 1, priorityType: 1, stepAnime: true,
+        through: false, trigger: 0, walkAnime: true
       }]
     };
     if (!$gameMap._events) $gameMap._events = [];
@@ -1394,6 +1397,28 @@
       const dir = STAGE_DIRS[rec.stage] || 2;
       if (this._direction !== dir) this._direction = dir;
     }
+  };
+
+  // Placed animals graze about the tile they were put down on, never further
+  // than WANDER_RADIUS from it, so a pen keeps its herd. The stock random move
+  // also steps "forward", which under directionFix would walk every adult
+  // left forever, so only straight steps in a random direction are taken.
+  // The record keeps its home tile: the animal is back on it next map load.
+  const WANDER_RADIUS = 3;
+  const _Game_Event_moveTypeRandom = Game_Event.prototype.moveTypeRandom;
+  Game_Event.prototype.moveTypeRandom = function () {
+    if (!this._animalUid) return _Game_Event_moveTypeRandom.call(this);
+    const found = findPlacement(this._animalUid);
+    if (!found) return;
+    if (Math.randomInt(3) === 0) { this.resetStopCount(); return; }
+    const d = 2 + Math.randomInt(4) * 2;
+    const nx = $gameMap.roundXWithDirection(this.x, d);
+    const ny = $gameMap.roundYWithDirection(this.y, d);
+    if (Math.abs(nx - found.rec.x) > WANDER_RADIUS || Math.abs(ny - found.rec.y) > WANDER_RADIUS) {
+      this.resetStopCount();
+      return;
+    }
+    this.moveStraight(d);
   };
 
   const _Game_Event_setupPageSettings = Game_Event.prototype.setupPageSettings;

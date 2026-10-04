@@ -795,6 +795,17 @@
     // Run on arrival; the first survey of a map is announced, because reading a
     // place is a thing the player would have done themselves.
     function surveyMap() {
+        const job = surveyStages();
+        let step = job.next();
+        while (!step.done) step = job.next();
+        return step.value;
+    }
+
+    // The survey in stages: the walk over the events, the shop shelf, then one
+    // need at a time. Each is a scan of the whole map, and done together on the
+    // first quiet frame after a door they were a hitch on every arrival, so the
+    // arrival runs one stage a frame (see surveyMap for all of it at once).
+    function* surveyStages() {
         if (!$gameMap || !$gameSystem || !$dataMap) return null;
         const mapId = $gameMap.mapId();
         const entry = mapEntry(mapId, true);
@@ -821,8 +832,12 @@
         entry.danger = danger;
         entry.people = people;
         entry.puzzles = puzzles;
+        yield;
         entry.tags.shop = shopShelf().length > 0;
-        for (const need of GAZ_NEEDS) entry.tags[need] = needHere(need);
+        for (const need of GAZ_NEEDS) {
+            yield;
+            entry.tags[need] = needHere(need);
+        }
         entry.surveyed = true;
         // The gazetteer is written up silently: the survey line told the player
         // nothing they could act on, so the book keeps it and the screen stays clear.
@@ -3121,6 +3136,7 @@
         arrivalDoor: 0,    // event id of the way they came in, on THIS map
         _errandAt: 0,     // frame the quest board and job list were last read
         _surveyed: 0,     // map id the book was last written up for
+        _surveyJob: null, // the arrival survey under way, one stage a frame
         _overlayIgnoreUntil: 0, // frame the DOM overlay heuristic wakes up again
 
         reset() {
@@ -3218,7 +3234,14 @@
             // through a market on the player's own feet remembers the market.
             if (this._surveyed !== this.mapId && onDrivableMap() && !Loose.onWorldMap()) {
                 this._surveyed = this.mapId;
-                surveyMap();
+                this._surveyJob = { mapId: this.mapId, stages: surveyStages() };
+            }
+            if (this._surveyJob) {
+                // A stage a frame, dropped if the party left before the end:
+                // the next arrival on that map surveys it afresh.
+                if (this._surveyJob.mapId !== this.mapId || this._surveyJob.stages.next().done) {
+                    this._surveyJob = null;
+                }
             }
 
             // The title's Eris camera is walked by the autopilot whatever the

@@ -1,4 +1,27 @@
 {
+  "lab": {
+    "noRoom": "DERE IZ NO FREE PLACE IN DA PARTY TA GROW A NEW LIFE ON. MAKE ROOM FIRST!",
+    "noCarrier": "NOBODY IN DA PARTY CAN CARRY A SPLICED EMBRYO!",
+    "cannotCarry": "{actor} HAB NO ORGAN DAT CAN CARRY AN EMBRYO!",
+    "alreadyCarrying": "{actor} IZ ALREADY CARRYIN'.",
+    "augmentBlocks": "AN IMPLANT STOPS {actor} FROM CARRYIN'!",
+    "chooseCarrier": "WHO WILL CARRY DA EMBRYO?",
+    "cancel": "CANCEL",
+    "spliced": "DA SPLICE TAKES. {actor} IZ CARRYIN' {name}, DUE IN {days} DAYS!",
+    "vatStarted": "{name} IZ GROWIN' IN DA VAT. READY IN {days} DAYS!",
+    "born": "{name} HAB BEEN BORN. FIND DEM AMONG YA FOLLOWERS!",
+    "lost": "DA EMBRYO OF {name} HAB BEEN LOST!",
+    "vatParent": "GROWIN' VAT"
+  },
+  "toast": {
+    "fetusStage": "{actor}: {stage}, WEEK {week}",
+    "birth": "{actor} HAB GIVEN BIRTH",
+    "twinsBirth": "{actor} HAB GIVEN BIRTH TA TWINS",
+    "quadsBirth": "{actor} HAB GIVEN BIRTH TA QUADRUPLETS",
+    "eggProgress": "{actor}'S CLUTCH IZ {percent}% FORMED",
+    "seedProgress": "{actor}'S SEED IZ {percent}% GROWN",
+    "mitosisProgress": "{actor}'S DIVISION IZ {percent}% COMPLETE"
+  },
   "mitosisCompleteAPerfectCloneHasBeenCreated": "MITOSIS COMPLETE! A PERFECT CLONE HAB BEEN CREATED!",
   "noReproductiveSystemPresent": "NO REPRODUCTIVE SYSTEM PRESENT",
   "type": "TYPE:",
@@ -113,7 +136,10 @@
   "noActiveStates": "NO ACTIVE STATES",
   "destroyed": "DESTROYED",
   "statesReactions": "STATES & REACTIONS",
+  "additionalAnatomy": "ADDITIONAL ANATOMY",
+  "additionalRegions": "ADDITIONAL REGIONS",
   "anatomicalIntegrityLimbOrganHp": "ANATOMICAL INTEGRITY (LIMB & ORGAN HP)",
+  "bodyParts": "BODY PARTS",
   "bradycardia": "BRADYCARDIA",
   "tachycardia": "TACHYCARDIA",
   "hypertension": "HYPERTENSION",
@@ -139,6 +165,7 @@
   "bloodPressure": "BLOOD PRESSURE",
   "bodyTemperature": "BODY TEMPERATURE",
   "oxygenSaturation": "OXYGEN SATURATION",
+  "oxygenConsumption": "O₂ DRAW",
   "cortisolStress": "CORTISOL (STRESS)",
   "metabolism": " METABOLISM",
   "respiratoryRate": "RESPIRATORY RATE",
@@ -258,11 +285,11 @@
     "diseases": "DISEASES"
   },
   "reproductionType": [
-    "TESTICLES (MALE)",
-    "MAMMALIAN (UTERUS)",
-    "OVIPAROUS (EGG-LAYIN')",
-    "PLANT-BASED (SEEDS)",
-    "MITOSIS (CELL DIVISION)"
+    "TESTICLES",
+    "UTERUS",
+    "OVIDUCT",
+    "SPORANGIUM",
+    "MITOTIC GLAND"
   ],
   "mood": {
     "Enraged": "ENRAGED",
@@ -279,10 +306,10 @@
   "seedProduced": "SEED PRODUCED! TOTAL SEEDS READY: {count}",
   "pregnancyType": [
     "NONE",
-    "MAMMALIAN (UTERUS)",
-    "OVIPAROUS (EGG-LAYIN')",
-    "PLANT-BASED (SEED PRODUCTION)",
-    "MITOSIS (CELL DIVISION)"
+    "UTERUS",
+    "OVIDUCT",
+    "SPORANGIUM",
+    "MITOTIC GLAND"
   ],
   "gestationalAgeLine": "GESTATIONAL AGE: {days} DAYS ({weeks} WEEKS)",
   "cycleDayLine": "DAY {day} OF {length}",
@@ -600,6 +627,84 @@
     "ultraRare": "ULTRA RARE",
     "veryRare": "REAL RARE"
   },
+  "bloodTypes": {
+    "o_pos": {
+      "name": "O POSITIVE",
+      "desc": "DA COMMONEST TYPE ON RECORD, AN' A SAFE DONOR FOR EVERY OTHER RH-POSITIVE PATIENT!"
+    },
+    "a_pos": {
+      "name": "A POSITIVE",
+      "desc": "COMMON; COMPATIBLE WIT A AN' AB PATIENTS WHO IZ ALSO RH-POSITIVE!"
+    },
+    "b_pos": {
+      "name": "B POSITIVE",
+      "desc": "LESS COMMON; COMPATIBLE WIT B AN' AB PATIENTS WHO IZ ALSO RH-POSITIVE!"
+    },
+    "ab_pos": {
+      "name": "AB POSITIVE",
+      "desc": "DA UNIVERSAL RECIPIENT, SAFELY TRANSFUSED WIT BLOOD OF ANY ABO OR RH COMBINATION!"
+    },
+    "o_neg": {
+      "name": "O NEGATIVE",
+      "desc": "DA UNIVERSAL DONOR, SAFE FOR ANY RECIPIENT REGARDLESS OF DEY OWN TYPE!"
+    },
+    "a_neg": {
+      "name": "A NEGATIVE",
+      "desc": "COMPATIBLE WIT ANY A OR AB PATIENT, RH-POSITIVE OR NEGATIVE!"
+    },
+    "b_neg": {
+      "name": "B NEGATIVE",
+      "desc": "COMPATIBLE WIT ANY B OR AB PATIENT, RH-POSITIVE OR NEGATIVE!"
+    },
+    "ab_neg": {
+      "name": "AB NEGATIVE",
+      "desc": "DA RAREST OF DA EIGHT COMMON TYPES, AN' A DONOR ONLY FOR OTHER AB PATIENTS!"
+    },
+    "synth_delta": {
+      "name": "SYNTHETIC-Δ",
+      "desc": "HEMOGLOBIN-MIMETIC SYNTHETIC FLUOROCARBON POLYMER EMULSION. FUNCTIONS AS AN ARTIFICIAL UNIVERSAL DONOR FOR ALL STANDARD HUMAN AN' SYNTHETIC SYSTEMS!"
+    },
+    "synth_psi": {
+      "name": "SYNTHETIC-Ψ",
+      "desc": "PSIONIC-CONDUCTIVE SYNTHETIC FLUID INFUSED WIT NEURAL MICRO-NANITES FOR AUGMENTED BIO-ELECTRICAL CONDUCTIVITY!"
+    },
+    "azure_hemocyanin": {
+      "name": "AZURE (HEMOCYANIN)",
+      "desc": "COPPER-BASED BLUE BLOOD INHERITED FROM ANCIENT HORSESHOE CRAB LINEAGES. AMEBOCYTES RAPIDLY COAGULATE AROUND BACTERIAL ENDOTOXINS, CONFERRIN' COMPLETE IMMUNITY TA BACTERIAL SEPSIS!"
+    },
+    "chlorocruorin": {
+      "name": "CHLOROCRUORIN (GREEN)",
+      "desc": "IRON-PORPHYRIN RESPIRATORY PIGMENT PRODUCIN' VIBRANT GREEN BLOOD, ADAPTED FOR HYPOXIC AN' HIGH-PRESSURE AQUATIC DEPTHS!"
+    },
+    "rh_null": {
+      "name": "RH-NULL (GOLDEN BLOOD)",
+      "desc": "LACKS ALL 61 RH ANTIGENS. A PRICELESS UNIVERSAL DONOR FOR ANY RH-INCOMPATIBLE PATIENT, BUT CAN ONLY RECEIVE BLOOD FROM ANOTHER RH-NULL CARRIER!"
+    },
+    "bombay_hh": {
+      "name": "BOMBAY PHENOTYPE (HH)",
+      "desc": "LACKS DA FUNDAMENTAL H ANTIGEN REQUIRED FOR ABO EXPRESSION. CAN DONATE SAFELY TA STANDARD ABO RECIPIENTS IN EMERGENCIES, BUT ONLY RECEIVES BOMBAY (HH)!"
+    },
+    "duffy_neg": {
+      "name": "DUFFY NEGATIVE",
+      "desc": "MISSIN' DA DUFFY ANTIGEN; NATURALLY RESISTS BLOOD-BORNE PARASITES, BUT REPEAT TRANSFUSIONS CALL FOR A DUFFY-MATCHED DONOR TA AVOID IMMUNE REACTIONS!"
+    },
+    "diego_b_neg": {
+      "name": "DIEGO(B-)",
+      "desc": "AN EXCEEDINGLY RARE ANTIGEN PROFILE; A SAFE TRANSFUSION NEEDS A DONOR WHO SHARES DA SAME MISSIN' ANTIGEN!"
+    },
+    "kidd_b_neg": {
+      "name": "KIDD(B-)",
+      "desc": "A KIDD-NEGATIVE LINEAGE; REPEAT EXPOSURE TA MISMATCHED KIDD ANTIGENS PROVOKES A SHARP IMMUNE RESPONSE, SO DONORS MUST BE ANTIGEN-MATCHED!"
+    },
+    "colton_neg": {
+      "name": "COLTON(A-)",
+      "desc": "A RARE PHENOTYPE LACKIN' COLTON WATER-CHANNEL ANTIGENS ON ERYTHROCYTE MEMBRANES!"
+    },
+    "lutheran_neg": {
+      "name": "LUTHERAN(A-B-)",
+      "desc": "A RARE RECESSIVE NULL PHENOTYPE WHERE RED BLOOD CELLS LACK BOTH LU(A) AN' LU(B) ADHESION GLYCOPROTEINS!"
+    }
+  },
   "bacterial": "BACTERIAL",
   "viral": "VIRAL",
   "paramNames": [
@@ -624,6 +729,14 @@
   "estrogenShotDelivered": "{name}: DA ESTROGEN AUTOINJECTOR DELIVERED TODAY'S DOSE!",
   "androgenGlandOutput": "PUMPS TESTOSTERONE, HOLDIN' DA BLOOD AT {low}-{high} NG/DL",
   "estrogenAutoinjectorOutput": "INJECTS {dose} PG/ML OF ESTROGEN A DAY, NEVER DROPPIN' BELOW {floor} PG/ML",
+  "intrauterineSpiralOutput": "PREVENTS UTERINE IMPLANTATION AN' BLOCKS CONCEPTION WHILE FITTED!",
+  "vasectomyClipOutput": "HALTS SPERM TRANSIT, REDUCIN' EFFECTIVE GAMETE COUNT AN' MOTILITY TA ZERO!",
+  "tubalLigationBandOutput": "CONSTRICTS FALLOPIAN CHANNELS AN' OVIDUCTS, PERMANENTLY BLOCKIN' EGG FERTILIZATION!",
+  "sporangialSuppressorOutput": "SUPPRESSES SPOROGENESIS AN' COMPLETELY HALTS SEED GENERATION!",
+  "mitoticInhibitorOutput": "CYTOSTATIC MEMBRANE INHIBITOR DAT BLOCKS CELLULAR MITOSIS DIVISION!",
+  "augmentBlockedConception": "{actor}'S {augment} PREVENTED CONCEPTION.",
+  "testResultAugmentFitted": "{actor} HAB AN ACTIVE CONTRACEPTIVE IMPLANT FITTED ({augment})!",
+  "vasectomyBlockedMotility": "{actor}'S {augment} BLOCKS GAMETE TRANSIT: EJACULATE REMAINS STERILE!",
   "augmentGrantsSkill": "GRANTS DA {skill} ABILITY",
   "unit": {
     "breathsPerMinute": "{n} BR/MIN",
@@ -636,9 +749,92 @@
     "already": "{actor} ALREADY HAB {disease}"
   },
   "diagnose": {
-    "header": "DA CHECKUP IS DONE.",
-    "line": "{actor}: {diseases}",
-    "clean": "{actor}: NUFFIN",
-    "none": "NOBODY IN DA GANG IS CARRYIN NUFFIN."
+    "rowUnknown": "{actor}: UNKNOWN ILLNESS",
+    "rowKnown": "{actor}: {disease}",
+    "knownTag": "KNOWN",
+    "empty": "NOBODY IN DA PARTY IZ CARRYIN' ANYTHIN'!",
+    "tooExpensive": "NOT ENOUGH MONEY FOR DA EXAM!",
+    "revealed": "{actor}'S ILLNESS IZ {disease}.",
+    "treatTooExpensive": "NOT ENOUGH MONEY FOR DA TREATMENT!",
+    "treated": "{actor} IZ CURED OF {disease}: A FULL COURSE OF {count}X {item}!",
+    "managed": "{disease} NO CAN BE CURED: {count}X {item} TA KEEP IT AT BAY FOR {actor}!"
+  },
+  "cure": {
+    "rowLine": "{actor}: {disease}",
+    "tooExpensive": "NOT ENOUGH MONEY FOR DA MEDICINE!",
+    "bought": "BOUGHT {count}X {item} FOR {actor}.",
+    "checkout": "BUY {count} DOSES",
+    "basketEmpty": "BASKET EMPTY",
+    "inBasket": "X{count}",
+    "kindCure": "CURES IN {days} DAYS",
+    "kindLastResort": "CURES IN {days} DAYS, LAST RESORT",
+    "kindManage": "HOLDS IT AT BAY",
+    "held": "{count} IN DA PACK",
+    "boughtBasket": "BOUGHT {count} DOSES OF MEDICINE!"
+  },
+  "testResultMale": "{actor} HAB MALE REPRODUCTIVE ORGANS. GAMETES ACTIVE!",
+  "testResultPositiveUterus": "{actor}: POSITIVE! GESTATIONAL AGE: {weeks} WEEKS ({stage})!",
+  "testResultMultipleHeartbeats": "MULTIPLE HEARTBEATS DETECTED: {count}!",
+  "testResultNegativeUterus": "{actor}: NEGATIVE. NOT PREGNANT.",
+  "testResultContraceptiveActive": "CONTRACEPTIVE SHIELD IZ ACTIVE!",
+  "testResultFertileWindow": "CURRENTLY IN DA FERTILE WINDOW!",
+  "testResultPositiveOviparous": "{actor}: CLUTCH IN DEVELOPMENT ({percent}%)!",
+  "testResultNegativeOviparous": "{actor}: NO EGG CLUTCH CURRENTLY FORMIN'!",
+  "testResultPositivePlant": "{actor}: SEED GENERATION IN PROGRESS ({percent}%)!",
+  "testResultNegativePlant": "{actor}: NO SEED IN GROWTH. SEEDS READY: {seeds}!",
+  "testResultPositiveMitosis": "{actor}: MITOTIC CELL DIVISION IN PROGRESS ({percent}%)!",
+  "testResultNegativeMitosis": "{actor}: RESTIN' CELLULAR STATE. READY FOR DIVISION!",
+  "contraceptiveBlockedConception": "CONCEPTION BLOCKED BY ACTIVE CONTRACEPTIVE PROTECTION!",
+  "contraceptiveTerminatedEarly": "{actor}: EARLY IMPLANTATION INTERRUPTED. CONCEPTION PREVENTED!",
+  "contraceptiveTooLate": "{actor}: GESTATION IZ TOO ADVANCED TA INTERRUPT SAFELY. CONTRACEPTION PRIMED!",
+  "contraceptiveActive": "{actor}: CONTRACEPTIVE PROTECTION ACTIVE FOR {days} DAYS!",
+  "contraceptiveMaleActive": "{actor}: GAMETE MOTILITY TEMPORARILY SUPPRESSED FOR {days} DAYS!",
+  "contraceptiveSuppressed": "{actor}: REPRODUCTIVE CYCLE PAUSED FOR {days} DAYS!",
+  "fertilityTwinsConceived": "{actor}: OVULATION STIMULATED. EXPECTIN' TWINS!",
+  "fertilityQuadrupletsConceived": "{actor}: MAXIMUM FERTILITY SURGE! EXPECTIN' QUADRUPLETS!",
+  "fertilityBoostedTwins": "{actor}: FERTILITY HEIGHTENED. TWIN PROBABILITY INCREASED!",
+  "fertilityBoostedQuads": "{actor}: FERTILITY PEAKED! QUADRUPLET PROBABILITY INCREASED!",
+  "fertilityTooLate": "{actor}: EMBRYO DIVISION STAGE HAB ALREADY PASSED!",
+  "fertilityMaleBoosted": "{actor}: GAMETE COUNT AN' MOTILITY SIGNIFICANTLY INCREASED!",
+  "fertilityClutchBoosted": "{actor}: OVIDUCT STIMULATION INCREASED CLUTCH POTENTIAL!",
+  "fertilityGenericBoosted": "{actor}: REPRODUCTIVE VIGOR ENHANCED!",
+  "eggWarmerAccelerated": "{actor}'S CLUTCH DEVELOPMENT ACCELERATED TA {percent}%!",
+  "eggWarmerPrimed": "{actor}'S NEST WARMED AN' PRIMED FOR LAYIN'!",
+  "eggWarmerNotOviparous": "{actor} FEELS SOOTHIN' WARMTH, BUT LACKS AN OVIPAROUS OVIDUCT!",
+  "mitosisAcceleratedProgress": "{actor}'S CELLULAR DIVISION ACCELERATED TA {percent}%!",
+  "mitosisTriggered": "{actor}'S MITOSIS INITIATED! CELLULAR DIVISION BEGINS!",
+  "mitosisHealNonMitotic": "{actor}'S CELLULAR REGENERATION RAPIDLY RESTORES VITALITY!",
+  "pollenCatalyzed": "{actor}'S SPORANGIUM CATALYZED! READY SEEDS: {count}!",
+  "pollenNotPlant": "{actor} ABSORBS PHYTO-NUTRIENTS, RESTORIN' SPIRITUAL ENERGY!",
+  "motilityBoosted": "{actor}'S GAMETE MOTILITY SURGED TA {motility}%!",
+  "motilityNotTestes": "{actor} FEELS AN INTENSE SURGE OF PHYSICAL STAMINA!",
+  "cancel": "CANCEL",
+  "remote": {
+    "title": "VIRTUAHEALER",
+    "banner": "VIRTUAHEALER",
+    "tagline": "SURGERY AVAILABLE FROM ANYWHERE!",
+    "hint": "PICK A SERVICE TA PAY FOR IT!",
+    "nothingToDo": "NOBODY IN DA PARTY NEEDS ANYTHIN' TODAY!",
+    "tooExpensive": "NOT ENOUGH MONEY FOR DAT SERVICE!",
+    "noSignalUnderground": "NO SIGNAL DOWN HERE. VIRTUAHEALER NO CAN REACH A PARTY UNDERGROUND!",
+    "noSignalTower": "DA TOWER TAKES DA LINE WIT IT. VIRTUAHEALER NO CAN REACH DEZE FLOORS!",
+    "section": {
+      "diagnosis": "REMOTE DIAGNOSIS",
+      "cure": "ARCANE CURE",
+      "prescription": "PRESCRIPTIONS BY COURIER",
+      "healing": "HEALIN' RITE"
+    },
+    "diagnoseLine": "READ {actor}'S CHART",
+    "diagnoseDetail": "NAMES WHATEVER DEY IZ CARRYIN'!",
+    "riteLine": "{actor}: {disease}",
+    "riteDetail": "BURNS DA ILLNESS OUT AT ONCE!",
+    "incurable": "NO CAN BE CURED, ONLY HELD AT BAY",
+    "noRemedy": "NO REMEDY EXISTS FOR DIS",
+    "rited": "DA RITE BURNS {disease} OUT OF {actor}.",
+    "postLine": "{actor}: {disease}",
+    "postDetail": "{count}X {item} DELIVERED TA DA PACK.",
+    "healLine": "MEND {actor}",
+    "healDetail": "{hp} HP, {mp} MP AN' {parts} HURT PARTS.",
+    "healed": "{actor} IZ WHOLE AGAIN."
   }
 }

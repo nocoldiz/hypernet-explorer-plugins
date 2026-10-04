@@ -22,9 +22,11 @@
   "weapon": {
     "melee": "Richiede un'arma da mischia",
     "ranged": "Richiede un'arma a distanza",
+    "unarmed": "Richiede 2 slot mano liberi",
     "chip": {
       "melee": "Serve mischia",
-      "ranged": "Serve distanza"
+      "ranged": "Serve distanza",
+      "unarmed": "2 mani libere"
     }
   },
   "discipline": {

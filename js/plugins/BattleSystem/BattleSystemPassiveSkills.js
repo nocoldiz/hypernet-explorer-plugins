@@ -1729,6 +1729,11 @@
     hasTraitPassive(traitId) {
       return !!TRAIT_PASSIVES[traitId];
     },
+    // Whether this actor fights Gun-Fu: Martial Arts thrown with a ranged
+    // weapon in hand (window.SkillWeaponReq asks here).
+    hasGunFu(actor) {
+      return hasTrait(actor, GUNFU_TRAIT_ID);
+    },
     getTraitPassiveName(traitId) {
       return TRAIT_PASSIVES[traitId] ? traitText(traitId, "name") : "";
     },

@@ -11,6 +11,7 @@
   "backBtn": "BACK",
   "empty_backpack": "YA BACKPACK IZ EMPTY...",
   "empty_container": "DA CONTAINER IZ EMPTY...",
+  "empty_search": "NO ITEM HERE MATCHES DAT.",
   "inspect_placeholder": "SELECT AN ITEM TA INSPECT IT AN' CHOOSE AN ACTION!",
   "common": "COMMON",
   "uncommon": "UNCOMMON",
@@ -26,7 +27,10 @@
     "burglary": "BURGLARY",
     "grandTheft": "GRAND THEFT",
     "charge": "{crime}: {item}",
-    "stack": "{item} X{count}"
+    "stack": "{item} X{count}",
+    "haul": "{count} STOLEN GOODS",
+    "rollAction": "SLIPPIN' AWAY UNHEARD",
+    "unnoticed": "YOU CLOSE IT QUIETLY. NOBODY NOTICED A THING!"
   },
   "harvest": {
     "collected": "✓ COLLECTED",
@@ -45,6 +49,31 @@
     "leave": "LEAVE",
     "alreadyCollected": "ALREADY COLLECTED",
     "partDestroyed": "PART DESTROYED",
-    "needTools": "REQUIRES SURGICAL TOOLS"
+    "needTools": "REQUIRES SURGICAL TOOLS",
+    "examineTitle": "EXAMINE: {name}",
+    "bury": "BURY",
+    "buried": "YOU BURY WHAT IZ LEFT OF DA {name}!"
+  },
+  "holdall": {
+    "appName": "HOLDALL",
+    "subtitle": "BACKPACK, EXTRADIMENSIONAL CONTAINER AN' VEHICLE HOLDS, SIDE BY SIDE!",
+    "hint": "PICK AN ITEM, DEN MOVE IT. CHESTS OUT IN DA WORLD MUST BE OPENED IN PERSON!",
+    "pack": "DA PACK YOU IZ CARRYIN'",
+    "extradimensional": "EXTRADIMENSIONAL CONTAINER",
+    "camper": "CAMPER HOLD",
+    "car": "CAR BOOT",
+    "empty": "NOTHIN' IN HERE.",
+    "noLimit": "BOTTOMLESS.",
+    "onYou": "CARRIED ON YOU.",
+    "payload": "{used} OF {max} KG",
+    "moveRightOne": "MOVE ONE >",
+    "moveRightAll": "MOVE ALL >",
+    "moveLeftOne": "< MOVE ONE",
+    "moveLeftAll": "< MOVE ALL",
+    "pickSomething": "PICK SOMETHIN' ON DAT SIDE FIRST!",
+    "gone": "DERE IZ NONE OF DAT LEFT.",
+    "packFull": "DA PACK WILL NOT TAKE ANY MORE OF DOZE!",
+    "overloaded": "{hold} IZ AT ITS PAYLOAD.",
+    "moved": "{n}X {item} MOVED TA {to}."
   }
 }

@@ -61,7 +61,7 @@
     },
     "m1414_zone2": {
       "title": "Hypermetro trains",
-      "text": "We can move between hub cities using the hypermetro! Our final destination is the Omega Tower, but we should stop at Ghent to stock up on items. Don't worry, darlin', if we leave our [Camper] behind: it can be summoned by using our [Liminal cuffs]."
+      "text": "We can move between hub cities using the hypermetro! Our final destination is the Omega Tower, but we should stop at Ghent to stock up on items. \nDon't worry, darlin', if we leave our [Camper] behind: it can be summoned by joining our [Liminal cuffs]."
     },
     "m1414_zone3": {
       "title": "Crafting",
@@ -69,7 +69,7 @@
     },
     "m1414_zone4": {
       "title": "Farming plots",
-      "text": "We can use farming plots to grow our own plants, or just take what we find. Just make sure to pay the owner of the plot back, ok?"
+      "text": "We can use farming plots to grow our own plants, or just take what we find. \nJust make sure to pay the owner of the plot back, ok?"
     },
     "m1414_zone5": {
       "title": "High level enemies",
@@ -81,7 +81,7 @@
     },
     "m1414_zone10": {
       "title": "Apiary",
-      "text": "\"If the bee disappeared off the surface of the noosphere, then man would only have four years of life left.\" Aleister Crowley said that."
+      "text": "\"If the bee disappeared off the surface of the noosphere, then man would only have four years of life left.\" \nGood old Aleister Crowley said that."
     },
     "m1414_zone11": {
       "title": "Farm",
@@ -137,15 +137,11 @@
     },
     "m169_zone2": {
       "title": "Trash",
-      "text": "Ah! Trashdiving! The lottery of the brave! We can find truly marvelous gems that survived the Y2K event buried in trash. I think the trash shielded them from the [EHI] eruption and preserved most of the circuits. Make sure to wash yourself, because being [Oily] makes you vulnerable to fire attacks."
+      "text": "Ah! Trashdiving! The lottery of the brave! \nWe can find truly marvelous gems that survived the Y2K event buried in trash. \nI think the trash shielded them from the [EHI] eruption and preserved most of the circuits. \nMake sure to wash yourself, because being [Oily] makes you vulnerable to fire attacks."
     },
     "m169_zone3": {
       "title": "Chaos",
       "text": "We need to get the hex out of here, Em! The [Fifth dimension] is pouring from holes in reality, and we can easily fall into one and end up in the [White desert].\nIt's not a nice place, Em. I spent eons trapped there in 1997 before you broke the laws of spacetime to save me."
-    },
-    "m169_zone4": {
-      "title": "Materials",
-      "text": "We can collect materials by defeating enemies."
     },
     "m169_zone6": {
       "title": "Sacrificial altar",
@@ -153,7 +149,7 @@
     },
     "m169_zone7": {
       "title": "Goblins",
-      "text": "Trust me, Em, just leave Nakuga Goblins alone. Let them do their thing and just avoid them if they try to engage in battle. We share a common ancestor and most of our DNA with them, so they are our psionic black metal loving brothers.\nVerden Goblins, instead, are a totally different alien species that just happens to look like Earth goblins due to the genetic lottery. They are chill and totally integrated with human society; most goblins you see in town are Verden goblins."
+      "text": "Trust me, Em, just leave Nakuga Goblins alone. Let them do their thing and just avoid them if they try to engage in battle. \nWe share a common ancestor and most of our DNA with them, so they are our psionic black metal loving brothers.\nVerden Goblins, instead, are a totally different alien species that just happens to look like Earth goblins due to the genetic lottery. They are chill and totally integrated with human society; most goblins you see in town are Verden goblins."
     },
     "m169_zone8": {
       "title": "Block pushing puzzle",
@@ -161,7 +157,7 @@
     },
     "m689_zone": {
       "title": "Hardware stores",
-      "text": "You can upgrade your [Hyperdeck] by finding new components in hardware stores."
+      "text": "You can upgrade your [Hyperdeck] by finding new components in hardware stores, we can also find all sort of useful tools here."
     },
     "m689_zone2": {
       "title": "Tavern",
@@ -177,7 +173,7 @@
     },
     "m689_zone5": {
       "title": "Mages Guild",
-      "text": "It's a bit hidden, but this is the entrance to the Ghent mages guild. They don't easily take new associates, but you are already one, so you are free to enter."
+      "text": "It's a bit hidden, but this is the entrance to the Ghent mages guild. \nThey don't easily take new associates, but you are already one, so you are free to enter.\nJust a warning: they don't like you at ALL."
     },
     "m689_zone6": {
       "title": "Shop tunnel",
@@ -229,7 +225,7 @@
     },
     "m1414_zone20": {
       "title": "Slimes",
-      "text": "Every slime has a particular elemental weakness and resists physical attacks."
+      "text": "Every slime has a particular elemental weakness and resists physical attacks.\nAccording to your class sheet, you should relearn some elemental spells very soon."
     },
     "m1414_zone21": {
       "title": "Block pushing puzzle",
@@ -237,7 +233,7 @@
     },
     "m1415_zone": {
       "title": "Block pushing puzzle",
-      "text": "A block pushing puzzle PLUS an ice floor! Can you solve it for me, Em? I need to test your puzzle solving skills to determine how much of you is left in your soul.\nMove toward that boulder to push it and hold [Shift] to drag it with you"
+      "text": "A block pushing puzzle PLUS an ice floor! Can you solve it for me, Em? I need to test your puzzle solving skills to determine how much of you is left in your soul.\nMove toward that boulder to push it and hold [OK] to drag it with you"
     },
     "m1415_zone2": {
       "title": "Pre Y2K Cache",
@@ -281,7 +277,7 @@
     },
     "m689_zone7": {
       "title": "Casino",
-      "text": "This is the Ghent casino, Em! You loved gambling here before your mind got wiped. I think the whole deicide spell backfiring cured you of your ludopathy."
+      "text": "This is the Ghent casino, Em! \nYou loved gambling here before your mind got wiped. \nI think the whole deicide spell backfiring cured you of your ludopathy."
     },
     "m708_zone2": {
       "title": "Explorers bar",
@@ -297,11 +293,11 @@
     },
     "m721_zone3": {
       "title": "Space exploration",
-      "text": "Here we are, Em! The final frontier! Open the [Star Map] to plot our next course. I talked with commander Hack; he trusts me enough to pilot this thing."
+      "text": "Here we are, Em! The final frontier! Press [OK] in front of the console the [Star Map] to plot our next course. \nI talked with commander Hack; he trusts me enough to pilot this thing.\nAlso we are authorized to use the teleport so we don't have to go trough the Kessler field and risk our life for nothing."
     },
     "m1036_zone": {
       "title": "Stock options",
-      "text": "Buying Lime corp stocks is a good starting point if you want to start investing. You can buy and sell in the stocks [Hyperdeck] app."
+      "text": "Buying Lime corp stocks is a good starting point if you want to start investing. \nYou can buy and sell in the stocks [Hyperdeck] app.\nPrices of the various stocks affect the daily price of each item we can buy in stores."
     },
     "m1036_zone2": {
       "title": "Crime and punishment",
@@ -313,7 +309,7 @@
     },
     "m1039_zone": {
       "title": "Cursing temple",
-      "text": "I read in the Ghent tourist guide that if you even put a foot in this temple you will be cursed. The guide doesn't state the nature of the curse."
+      "text": "I read in the Ghent tourist guide that if you even put a foot in this temple you will be cursed. \nThe guide doesn't state the nature of the curse."
     },
     "m1415_zone7": {
       "title": "Locked doors",
@@ -333,11 +329,11 @@
     },
     "m169_zone5": {
       "title": "Hyperviolence",
-      "text": "We don't have to punch new holes into every enemy we encounter Em, use the [Talk] option in battle to use diplomacy. Or just shut their mouths with the [Wrestle] option if talking doesn't work darlin'."
+      "text": "We don't have to punch new holes into every enemy we encounter Em, use the [Talk] option in battle to use diplomacy."
     },
     "m721_zone4": {
       "title": "Shuttle bay",
-      "text": ""
+      "text": "If we need to abandonship or we want to return to Earth with style.\n"
     },
     "m721_zone5": {
       "title": "Television",
@@ -349,11 +345,11 @@
     },
     "m1414_zone6": {
       "title": "Icebush",
-      "text": "Use the [Empathize] option."
+      "text": "Use the [Empathize] option when talking to people to make new friend, enemies, lovers or...frenemies???\nBut wait, there is more.\nYou can influence the political opinion of people, play card with them, pickpocket them, anything socially acceptable and not should be there,"
     },
     "m1414_zone8": {
       "title": "Quick check",
-      "text": "Before we continue our adventure Em, make sure to check the [Equip] options and [Skill] option in [Menu] to change your equipment and skills you carry in battle.\nYou can have up to 9 skills and spells in battle."
+      "text": "Before we continue our adventure Em, let's do some quick checks.\nFirst check the [Equip] options and [Skill] option in [Menu] to change your equipment and skills you carry in battle.\nYou can have up to 9 skills and spells in battle."
     },
     "m635_zone3": {
       "title": "Missile launch railgun",
@@ -374,6 +370,14 @@
     "m102_zone2": {
       "title": "Training center",
       "text": "Did you see the training center at Ghent? In reality it's a fake building that, on entry, transports you to the interior of this training center. I was hired to design the mechanism; it's not magical, it's pure physics!"
+    },
+    "m1414_zone14": {
+      "title": "Camper",
+      "text": "Here is our RV, the [Beast]!\nWe can use it to go anywhere we want, in any planet, in any dimension.\nI have some upgrades pending, like insulating it to make it go underwater, you can upgrade the camper from [Menu] and [Vehicles].\nAnd if we leave it behind we can summon it together by joining our liminal cuffs."
+    },
+    "m1414_zone22": {
+      "title": "Bear mauling cave",
+      "text": "This is the famous [Bear mauling cave], we should probably avoid it."
     }
   },
   "tips": {

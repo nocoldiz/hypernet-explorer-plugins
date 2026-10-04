@@ -3,5 +3,15 @@
   "partyFull": "YA PARTY IZ FULL.",
   "introduce": "ME NAME IZ {name} AN' ME IZ A {className}",
   "joinsParty": "{name} JOINS DA PARTY!",
-  "residence": "RESIDENCE"
+  "residence": "RESIDENCE",
+  "joinedInactive": "{name} SIGNS ON, BUT DERE IZ NO ROOM ON DA ROAD: DEY WAIT IN DA RESERVES!",
+  "benchedLore": "{name} AGREED TA TRAVEL WIT DA PARTY, AN' HAB BEEN WAITIN' FOR A PLACE IN IT EVER SINCE!",
+  "lodging": {
+    "halls": "DA STAIRS HALL",
+    "house": "DA HOUSE IN {place}",
+    "ship": "DA STARSHIP",
+    "vault": "DA BUNKER",
+    "cannotJoin": "{name} NO CAN TAKE DA ROAD AGAIN RIGHT NOW!",
+    "estate": "{name} IN {place}"
+  }
 }

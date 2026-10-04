@@ -1,0 +1,16 @@
+{
+  "arcane": "ARCANE",
+  "substance": "SUBSTANCE",
+  "stealth": "STEALTH",
+  "intimidation": "INTIMIDATION",
+  "scale": "STR",
+  "str": "STR",
+  "dex": "DEX",
+  "mix": "MIX",
+  "psi": "PSI",
+  "int": "INT",
+  "con": "CON",
+  "wis": "WIS",
+  "random": "RANDOM",
+  "clear": "UNEQUIP."
+}

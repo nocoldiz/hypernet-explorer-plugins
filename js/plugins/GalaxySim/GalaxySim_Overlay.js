@@ -53,7 +53,7 @@
 
   // Controller hints are written with bracketed button ids - "[A] zoom to
   // target", "[LT]/[RT] zoom" - and expanded into chips here, so the strings
-  // stay translatable text and the Xbox layout lives in exactly one place.
+  // stay translatable text and the standard pad layout lives in exactly one place.
   // Anything unrecognised is left alone rather than swallowed.
   // i18n-ignore-start: physical controller button ids
   const PAD_FACE = { A: "gx-pad-a", B: "gx-pad-b", X: "gx-pad-x", Y: "gx-pad-y" };
