@@ -494,11 +494,19 @@
     // The region is the only answer here: a liquid-looking tile (an A1 autotile
     // reused for shelves, carpets, fountains) is read for its sound, never for
     // the menu, so a library's bookcases no longer offer Swim / Fish / Drink.
+    // Outdoor procedural squares (636) are the exception: their seas, beaches
+    // and alien liquids are terrain-tag-3 or A1 tiles the generators do not
+    // always mark 99, and they hold no bookcases, so the tile still answers
+    // there. A roofed procedural interior keeps the region-only rule.
     canPromptWater(character, x, y) {
       if (!character) return false;
       if (this.isBridgeTile(character.x, character.y)) return false;
       if (this.isBridgeTile(x, y)) return false;
-      return Config.waterRegions.includes($gameMap.regionId(x, y));
+      if (Config.waterRegions.includes($gameMap.regionId(x, y))) return true;
+      if ($gameMap.mapId() !== 636) return false;
+      if (typeof window.isProceduralInteriorMap === "function" &&
+          window.isProceduralInteriorMap()) return false;
+      return $gameMap.terrainTag(x, y) === 3 || this.isLiquidTile(x, y);
     },
 
     isWallTile(x, y) {
@@ -3919,6 +3927,25 @@
     return sprite._misWater;
   };
 
+  // A body lying on the ground (a downed or sleeping NPC, a downed monster, a
+  // knocked-out follower) is drawn turned a quarter, so neither the swimming
+  // crop nor a bush's depth may cut it: either would slice it lengthwise.
+  const _misIsLyingDown = (ch) => {
+    if (!ch) return false;
+    if (ch._npcLyingDown) return true;
+    if (ch instanceof Game_Follower) {
+      const actor = ch.actor && ch.actor();
+      return !!(actor && actor.isDead());
+    }
+    return false;
+  };
+
+  const _Game_CharacterBase_bushDepth_mis = Game_CharacterBase.prototype.bushDepth;
+  Game_CharacterBase.prototype.bushDepth = function() {
+    if (_misIsLyingDown(this)) return 0;
+    return _Game_CharacterBase_bushDepth_mis.call(this);
+  };
+
   // Sprite crop for swimming.
   //
   // An event is never cropped while the party is under water (the diver sees
@@ -3929,6 +3956,7 @@
     _Sprite_Character_updateFrame.call(this);
     const ch = this._character;
     if (!ch) return;
+    if (_misIsLyingDown(ch)) return;
     const isProcDiving = _isProcDivingGlobal();
     let isSwimming;
     let isDiving;

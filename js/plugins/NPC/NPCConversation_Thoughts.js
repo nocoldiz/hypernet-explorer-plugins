@@ -820,15 +820,22 @@
   // Words: ConvSkills (I.11), keyed by voice group. The 25 personalities fold
   // into six groups below; Em and Bubba keep a voice of their own and are
   // never framed by a creed. Pacing: ConversationManager's pair scan (every few
-  // seconds) calls scan(), which is throttled three ways: a scan chance, a
-  // global gap between two spec bubbles, and a per-person cooldown of two to
-  // four game hours. What anybody is trained in is read at most once per game
-  // hour per person, and only a few fresh reads are paid per scan.
+  // seconds) calls scan(), which is throttled four ways: a scan chance, a
+  // global gap between two spec bubbles, a per-person cooldown of two to four
+  // game days AND several real minutes, and a long gap between two lines from
+  // the party. The real-time floor matters because the clock moves with steps:
+  // on the world map a step is ten game minutes, and game time alone let a
+  // walking Master boast far too often. What anybody is trained
+  // in is read at most once per game hour per person, and only a few fresh
+  // reads are paid per scan.
 
   const SPEC_TALK_LEVEL     = 4;     // Advanced and Master talk about it
   const SPEC_ASK_LEVEL      = 3;     // Untrained to Intermediate ask about it
-  const SPEC_COOLDOWN_MIN   = 120;   // game minutes before the same person does it again
-  const SPEC_COOLDOWN_MAX   = 240;
+  const SPEC_COOLDOWN_MIN   = 2 * 1440; // game minutes (two to four days) before the same person does it again
+  const SPEC_COOLDOWN_MAX   = 4 * 1440;
+  const SPEC_REAL_COOLDOWN_MIN_MS = 5 * 60000;  // and real time, whatever the clock did meanwhile
+  const SPEC_REAL_COOLDOWN_MAX_MS = 10 * 60000;
+  const SPEC_PARTY_GAP_MS   = 4 * 60000;        // between any two party spec lines
   const SPEC_GAP_MS         = 7000;  // at most one spec bubble (or exchange) this often
   const SPEC_SCAN_CHANCE    = 0.3;   // per conversation scan
   const SPEC_ASK_DIST       = 3;     // tiles between an asker and the expert
@@ -868,8 +875,13 @@
     COOLDOWN_MIN: SPEC_COOLDOWN_MIN,
     COOLDOWN_MAX: SPEC_COOLDOWN_MAX,
     GAP_MS: SPEC_GAP_MS,
+    REAL_COOLDOWN_MIN_MS: SPEC_REAL_COOLDOWN_MIN_MS,
+    REAL_COOLDOWN_MAX_MS: SPEC_REAL_COOLDOWN_MAX_MS,
+    PARTY_GAP_MS: SPEC_PARTY_GAP_MS,
     GROUPS: SPEC_VOICE_GROUPS,
     _cooldowns: new Map(),   // person key -> game minute they may speak about a spec again
+    _realCooldowns: new Map(), // person key -> performance.now() they may speak again
+    _partyNextAt: 0,         // performance.now() before which no party member speaks about a spec
     _levels: new Map(),      // person key -> { hour, levels: Map(specId -> level) }
     _queue: [],              // pending answer beats: { at, person, text, mapId }
     _nextAt: 0,              // performance.now() before which no spec bubble starts
@@ -1006,17 +1018,30 @@
     },
 
     // ---- throttles ----------------------------------------------------------
-    onCooldown(person, minute) {
+    // On cooldown until both the game days and the real minutes have passed,
+    // and a party member also waits out the party gap.
+    onCooldown(person, minute, nowMs) {
       const until = this._cooldowns.get(person.key);
-      return until != null && (minute ?? _specMinute()) < until;
+      if (until != null && (minute ?? _specMinute()) < until) return true;
+      const t = nowMs ?? _specNowMs();
+      const realUntil = this._realCooldowns.get(person.key);
+      if (realUntil != null && t < realUntil) return true;
+      return !!person.actor && t < this._partyNextAt;
     },
 
-    setCooldown(person, minute) {
+    setCooldown(person, minute, nowMs) {
       const now = minute ?? _specMinute();
       const span = SPEC_COOLDOWN_MIN + Math.floor(Math.random() * (SPEC_COOLDOWN_MAX - SPEC_COOLDOWN_MIN + 1));
       this._cooldowns.set(person.key, now + span);
+      const t = nowMs ?? _specNowMs();
+      const realSpan = SPEC_REAL_COOLDOWN_MIN_MS + Math.random() * (SPEC_REAL_COOLDOWN_MAX_MS - SPEC_REAL_COOLDOWN_MIN_MS);
+      this._realCooldowns.set(person.key, t + realSpan);
+      if (person.actor) this._partyNextAt = t + SPEC_PARTY_GAP_MS;
       if (this._cooldowns.size > SPEC_CACHE_MAX) {
         for (const [k, until] of this._cooldowns) if (until <= now) this._cooldowns.delete(k);
+      }
+      if (this._realCooldowns.size > SPEC_CACHE_MAX) {
+        for (const [k, until] of this._realCooldowns) if (until <= t) this._realCooldowns.delete(k);
       }
     },
 
@@ -1105,7 +1130,7 @@
       let talker = null, pick = null;
       for (let k = 0; k < n && !talker; k++) {
         const p = people[(start + k) % n];
-        if (!p || this.onCooldown(p, minute)) continue;
+        if (!p || this.onCooldown(p, minute, now)) continue;
         const levels = this.levelsOf(p, budget);
         const s = levels ? this.pickSpec(levels) : null;
         if (s) { talker = p; pick = s; }
@@ -1113,21 +1138,21 @@
       if (!talker) return null;
 
       const wantAsk = o.ask != null ? !!o.ask : Math.random() < SPEC_ASK_CHANCE;
-      const asker = wantAsk ? this._findAsker(people, talker, pick.id, minute, budget, o.ask === true) : null;
+      const asker = wantAsk ? this._findAsker(people, talker, pick.id, minute, budget, o.ask === true, now) : null;
       const said = asker ? this._exchange(talker, asker, pick, now) : this._talk(talker, pick);
       if (!said) return null;
-      this.setCooldown(talker, minute);
-      if (asker) this.setCooldown(asker, minute);
+      this.setCooldown(talker, minute, now);
+      if (asker) this.setCooldown(asker, minute, now);
       this._nextAt = now + SPEC_GAP_MS + (asker ? SPEC_ANSWER_MS : 0);
       return said;
     },
 
     // Somebody near the expert who is less trained in the same thing.
-    _findAsker(people, talker, specId, minute, budget, certain) {
+    _findAsker(people, talker, specId, minute, budget, certain, now) {
       for (const q of people) {
         if (!q || q === talker || q.key === talker.key) continue;
         if (Math.abs(q.x - talker.x) + Math.abs(q.y - talker.y) > SPEC_ASK_DIST) continue;
-        if (this.onCooldown(q, minute)) continue;
+        if (this.onCooldown(q, minute, now)) continue;
         const levels = this.levelsOf(q, budget);
         if (!levels) continue;
         const lvl = levels.get(specId) || 1;
@@ -1194,6 +1219,8 @@
     reset() {
       this._queue.length = 0;
       this._cooldowns.clear();
+      this._realCooldowns.clear();
+      this._partyNextAt = 0;
       this._levels.clear();
       this._nextAt = 0;
     },

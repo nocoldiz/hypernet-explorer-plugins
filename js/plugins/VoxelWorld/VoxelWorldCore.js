@@ -1751,6 +1751,12 @@
             return farlandsBiomeAt(wx, wy);
         }
         if (typeof $gameMap !== 'undefined' && $gameMap.mapId() === 315) {
+            // $dataMap is null while the world map file reloads (coming back
+            // from a battle): answer from the other sources and do not memoize.
+            if (typeof $dataMap === 'undefined' || !$dataMap || !$dataMap.data) {
+                _sampleTransient = true;
+                return _sampleBiomeFromData(wx, wy);
+            }
             let tileId = 0;
             for (let z = 3; z >= 0; z--) {
                 const t = $gameMap.tileId(wx, wy, z);
@@ -1761,6 +1767,11 @@
                 return _findBiome(name) || { name, color: '#90ee90' };
             }
         }
+        return _sampleBiomeFromData(wx, wy);
+    }
+
+    let _sampleTransient = false;
+    function _sampleBiomeFromData(wx, wy) {
         const cache = (typeof $gameSystem !== 'undefined' && $gameSystem._procGenData)
             ? $gameSystem._procGenData.biomeCoordinateCache : null;
         if (cache) {
@@ -1781,8 +1792,9 @@
         const key = wx + ',' + wy;
         let b = _biomeTileCache.get(key);
         if (b === undefined) {
+            _sampleTransient = false;
             b = _sampleBiomeUncached(wx, wy);
-            _biomeTileCache.set(key, b);
+            if (!_sampleTransient) _biomeTileCache.set(key, b);
         }
         return b;
     }

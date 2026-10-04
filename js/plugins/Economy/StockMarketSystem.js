@@ -786,7 +786,7 @@
         if (!quoted) continue;
         this._stocks[id].currentPrice = quoted;
         this._history[id][this._history[id].length - 1] = quoted;
-        this._lastQuotedEuros[id] = Math.round(quoted / 100);
+        this._lastQuotedEuros[id] = Math.round(quoted) / 100;
       }
     }
 
@@ -851,21 +851,20 @@
       } catch (e) {}
     }
 
-    // Quote the terminal's price back to the register, in whole euros, so the
+    // Quote the terminal's price back to the register, to the cent, so the
     // Assets pockets and the Real Estate screen value the same share the same way.
     _quoteToRegister(stockId, priceCents) {
       const key = this._companyKey(stockId);
       const reg = key && shareRegister();
       if (!reg || typeof reg.setCompanyPrice !== "function") return;
-      const euros = Math.max(1, Math.round(priceCents / 100));
-      // The register keeps whole euros and the terminal keeps cents. Rounding
-      // one into the other left the two venues quoting the SAME share up to
-      // fifty cents apart, and both of them trade one inventory: buy on the
-      // cheap screen, sell on the dear one, repeat. A listed company is priced
-      // in whole euros on both sides, so there is no gap left to trade.
-      const snapped = euros * 100;
+      // Both venues trade one inventory, so they must quote the same price or
+      // the gap is free money. They used to agree by snapping the terminal to
+      // whole euros, which froze every company line (a €20 share moving 1% an
+      // hour never reached the next euro). The register keeps cents instead.
+      const euros = Math.max(100, Math.round(priceCents)) / 100;
       const stock = this._stocks && this._stocks[stockId];
-      if (stock && stock.currentPrice !== snapped) stock.currentPrice = snapped;
+      const cents = Math.round(euros * 100);
+      if (stock && stock.currentPrice !== cents) stock.currentPrice = cents;
       if (this._lastQuotedEuros[stockId] === euros) return;
       try {
         reg.setCompanyPrice(key, euros);
@@ -1041,7 +1040,9 @@
       let full = marked;
       if (moved || marked) full = this.evaluateOpenOrders() || full;
       if (this.payDividends() > 0) full = true;
-      return full ? 2 : (moved ? 1 : 0);
+      // Every live minute is a tick the terminal shows, moved or not, so the
+      // tick count and the quotes never sit still on a quiet minute.
+      return full ? 2 : 1;
     }
 
     // =========================================================================
@@ -3050,6 +3051,8 @@
             display: flex;
             flex-direction: column;
             height: 230px;
+            flex-shrink: 0;
+            overflow: hidden;
             position: relative;
           }
           .sm-orderbook-box {
@@ -3190,8 +3193,8 @@
                   <button class="sm-action-btn focusable ${this._chartMode === 'candle' ? 'active' : ''}" data-action="toggle-chart" data-mode="candle">Candlestick</button>
                 </div>
               </div>
-              <div style="flex:1; position:relative; padding:4px">
-                <canvas id="sm-chart-canvas" width="480" height="180" style="width:100%; height:100%; display:block"></canvas>
+              <div style="flex:1; position:relative; min-height:0; overflow:hidden">
+                <canvas id="sm-chart-canvas" width="480" height="180" style="position:absolute; top:4px; left:4px; right:4px; bottom:4px; width:calc(100% - 8px); height:calc(100% - 8px); display:block"></canvas>
               </div>
             </div>
 
@@ -3557,9 +3560,13 @@
       if (!canvas) return;
 
       // Resizing a canvas reallocates it: only when the box really changed.
+      // The canvas sits absolutely inside its box, so its own size never feeds
+      // back into the box's: sized off clientHeight (padding included) in the
+      // flow, it grew the box by the padding every tick and ran off downward.
       const box = canvas.parentElement;
       if (box) {
-        const bw = box.clientWidth || 480, bh = box.clientHeight || 180;
+        const bw = Math.max(1, (box.clientWidth || 488) - 8);
+        const bh = Math.max(1, (box.clientHeight || 188) - 8);
         if (canvas.width !== bw) canvas.width = bw;
         if (canvas.height !== bh) canvas.height = bh;
       }

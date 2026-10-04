@@ -1428,7 +1428,8 @@
     const part = out.part || anomAugmentPart(key);
     if (!shop || !shop.installImplant || !types[key] || !actor || !part) return false;
     try {
-      shop.installImplant(actor, part, key);
+      // A body already at its constitution's limit takes nothing more.
+      if (shop.installImplant(actor, part, key) === false) return false;
     } catch (e) {
       console.error("[ProceduralAdventure] augment failed", e);
       return false;

@@ -274,14 +274,34 @@
     return IMPLANT_SLOTS_BASE + Math.max(0, constitutionBonus(actor));
   }
 
+  // Reproductive hardware is anatomy, not augmentation: whatever sits in the
+  // genitals takes no socket of the constitution's budget.
+  function isGenitalImplant(prostheticKey) {
+    const table = getProstheticCompatibility();
+    return !!(table && table.GENITALS && table.GENITALS.includes(prostheticKey));
+  }
+
   function implantCount(actor) {
-    return actor && actor._prosthetics ? Object.keys(actor._prosthetics).length : 0;
+    if (!actor || !actor._prosthetics) return 0;
+    return Object.keys(actor._prosthetics)
+      .filter((partKey) => !isGenitalImplant(actor._prosthetics[partKey])).length;
+  }
+
+  // Whether fitting this augment in this socket still fits the body. A swap
+  // costs no room, and neither does a genital implant.
+  function hasImplantRoom(actor, partKey, prostheticKey) {
+    if (isGenitalImplant(prostheticKey)) return true;
+    const current = actor && actor._prosthetics ? actor._prosthetics[partKey] : null;
+    if (current && !isGenitalImplant(current)) return true;
+    return implantCount(actor) < implantCapacity(actor);
   }
 
   window.ProstheticCapacity = {
     capacity: implantCapacity,
     fitted: implantCount,
-    bonus: constitutionBonus
+    bonus: constitutionBonus,
+    hasRoom: hasImplantRoom,
+    isExempt: isGenitalImplant
   };
 
   // "TrashCreature" is a key, not a name: the screen prints it spaced.
@@ -1938,10 +1958,13 @@
   }
 
   // Helper Implant Install/Remove procedures (isolated from windows)
+  // Every caller goes through here (shop, origin, adventures), so the
+  // constitution's budget holds here and not only on the shop's list.
   function installProstheticImmediate(actor, partKey, prostheticKey) {
     const ProstheticTypes = getProstheticTypes();
     const prosthetic = ProstheticTypes ? ProstheticTypes[prostheticKey] : null;
-    if (!prosthetic) return;
+    if (!prosthetic) return false;
+    if (!hasImplantRoom(actor, partKey, prostheticKey)) return false;
 
     if (!actor._prosthetics) actor._prosthetics = {};
     if (!actor._prostheticEffects) actor._prostheticEffects = {};
@@ -1967,6 +1990,7 @@
 
     trainOnImplant(prostheticKey);
     actor.refresh();
+    return true;
   }
 
   function removeProstheticImmediate(actor, partKey) {
@@ -2448,8 +2472,7 @@
         const displaces = !!currentProstheticKey && currentProstheticKey !== prostheticKey;
         const noNetGain = displaces && hasNoNetGain(net);
         // A swap costs no room: only filling an empty socket takes a slot.
-        const overCapacity = !currentProstheticKey &&
-          implantCount(this._selectedActor) >= implantCapacity(this._selectedActor);
+        const overCapacity = !hasImplantRoom(this._selectedActor, this._selectedPartKey, prostheticKey);
         const noteBits = implantEffectText(prosthetic);
         if (displaces) {
           noteBits.push(noNetGain
@@ -3044,8 +3067,8 @@
       this.refreshUIShopDOM();
 
     } else if (action === "install_implant") {
+      if (!installProstheticImmediate(actor, item.partKey, item.prostheticKey)) return;
       $gameParty.loseGold(this.priceOf(item.cost));
-      installProstheticImmediate(actor, item.partKey, item.prostheticKey);
       SoundManager.playShop();
       this.showClinicNotification(T('Prosthetics.prostheticInstalledSuccessfully'));
 

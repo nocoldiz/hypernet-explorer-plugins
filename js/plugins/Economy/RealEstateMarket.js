@@ -1063,12 +1063,12 @@
             return true;
         }
 
-        // A company's price, in whole euros, as quoted by whoever is trading it.
-        // The stock terminal prices the same listings live and writes its quote
+        // A company's price, in euros to the cent, as quoted by whoever is trading
+        // it. The stock terminal prices the same listings live and writes its quote
         // back here so the Assets pockets and this screen value a share alike.
         setCompanyPrice(key, priceEuros) {
             if (!this.getCompanyDefs()[key]) return false;
-            this.companyPrices[key] = Math.max(1, Math.round(Number(priceEuros) || 1));
+            this.companyPrices[key] = Math.max(100, Math.round((Number(priceEuros) || 1) * 100)) / 100;
             return true;
         }
 
@@ -1816,7 +1816,7 @@
                         <div class="re-co-bar" style="background:${c.color}"></div>
                         <div class="item-slot-info">
                             <div class="item-slot-name">${c.name}</div>
-                            <div class="item-slot-meta"><span>${c.sectorLabel || c.sector} • €${c.price.toLocaleString()}/${T('RealEstate.ui.sh')}</span></div>
+                            <div class="item-slot-meta"><span>${c.sectorLabel || c.sector} • €${c.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/${T('RealEstate.ui.sh')}</span></div>
                         </div>
                         <div class="estate-01">
                             <span class="estate-02" style="color:${statusColor}">${statusLabel}</span>
@@ -1883,7 +1883,7 @@
                     <h3 class="title estate-06">${company.name}</h3>
                     <div class="inspect-section-title">${T('RealEstate.ui.shareProspectus2')}</div>
                     ${row(T('RealEstate.ui.sector'), company.sectorLabel || company.sector)}
-                    ${row(T('RealEstate.ui.sharePrice'), `€${company.price.toLocaleString()}`, 'color:var(--text-primary-hover);')}
+                    ${row(T('RealEstate.ui.sharePrice'), `€${company.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 'color:var(--text-primary-hover);')}
                     ${row(T('RealEstate.ui.totalShares'), company.totalShares.toLocaleString())}
                     ${row(T('RealEstate.ui.available2'), company.available.toLocaleString())}
                     ${ownedRows}
