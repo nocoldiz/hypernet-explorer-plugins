@@ -1146,6 +1146,8 @@
                 if (this._pendingRefresh) return;
                 this._pendingRefresh = true;
                 const wait = () => {
+                    // Closed before the data arrived: the page is gone.
+                    if (this._terminated) return;
                     if (window.Specializations.ready) {
                         this._pendingRefresh = false;
                         this.refreshSpecDOM();
@@ -1169,6 +1171,8 @@
             }
             const container = document.getElementById('specialization-container');
             if (container) container.remove();
+            this._dndContainer = null;
+            this._terminated = true;
             super.terminate();
         }
 

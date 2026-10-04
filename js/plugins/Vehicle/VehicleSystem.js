@@ -3578,6 +3578,17 @@
     const config = vehicleManager.getConfig(vehicle);
     if (!config || $gameMessage.isBusy()) return;
 
+    // An animal is not a machine with a dashboard: the one question worth
+    // asking from its back, on any map, the world map included, is whether to
+    // get off.
+    if (isRiding && config.mount) {
+      $gameMessage.setChoices([T('VehicleSystem.stopRiding'), T('VehicleSystem.cancel')], 0, 1);
+      $gameMessage.setChoiceCallback((choice) => {
+        if (choice === 0) dismountMount();
+      });
+      return;
+    }
+
     const choices = [];
     const handlers = [];
 
@@ -3948,6 +3959,10 @@
   const _Game_Player_getOnOffVehicle = Game_Player.prototype.getOnOffVehicle;
   Game_Player.prototype.getOnOffVehicle = function () {
     if (isPlayerRidingCustomVehicle() && !$gameMessage.isBusy()) {
+      // From an animal's back the press goes to whatever stands there first
+      // (false lets the engine run its event checks); only an empty tile asks
+      // about getting off.
+      if (isRidingMount() && mountFacesEvent(this)) return false;
       this.showVehicleActionMenu(this.vehicle(), true);
       return true;
     }
@@ -3966,8 +3981,10 @@
   }
 
   const _Game_Player_checkEventTriggerHere = Game_Player.prototype.checkEventTriggerHere;
+  // Somebody on horseback is still out in the open, among the people they are
+  // riding past, so a mount is exempt from both gates below.
   Game_Player.prototype.checkEventTriggerHere = function (triggers) {
-    if (isPlayerRidingCustomVehicle() && !isWorldMapId($gameMap.mapId())) {
+    if (isPlayerRidingCustomVehicle() && !isRidingMount() && !isWorldMapId($gameMap.mapId())) {
       if (!EventInteractionControl.isTransferEvent(this.x, this.y)) {
         return false;
       }
@@ -3977,7 +3994,7 @@
 
   const _Game_Player_checkEventTriggerThere = Game_Player.prototype.checkEventTriggerThere;
   Game_Player.prototype.checkEventTriggerThere = function (triggers) {
-    if (isPlayerRidingCustomVehicle() && !isWorldMapId($gameMap.mapId())) {
+    if (isPlayerRidingCustomVehicle() && !isRidingMount() && !isWorldMapId($gameMap.mapId())) {
       const d = this.direction();
       const x2 = $gameMap.roundXWithDirection(this.x, d);
       const y2 = $gameMap.roundYWithDirection(this.y, d);
@@ -4704,6 +4721,84 @@
     return !!pet;
   }
 
+  // True while the leader is sitting on a living companion.
+  function isRidingMount() {
+    if (!isPlayerRidingCustomVehicle()) return false;
+    const config = vehicleManager.getConfig($gamePlayer.vehicle());
+    return !!(config && config.mount);
+  }
+
+  // Temporary mounts. While the leader rides, every OTHER companion marked
+  // ridable carries one of the rest of the party, in registry order against
+  // the follower order; a member left over walks. They last exactly as long as
+  // the leader's ride: nothing is stored, the pairing is read fresh each frame
+  // (memoised for the frame, since every follower sprite asks).
+  let mountPairsFrame = -1;
+  let mountPairs = null;
+  function mountAssignments() {
+    const frame = Graphics.frameCount;
+    if (frame === mountPairsFrame && mountPairs) return mountPairs;
+    mountPairsFrame = frame;
+    mountPairs = new Map();
+    if (!isRidingMount()) return mountPairs;
+    const leaderMount = mountedPet();
+    const spare = ridableCompanions().filter(p => p && p.characterName && (!leaderMount || p.id !== leaderMount.id));
+    if (!spare.length) return mountPairs;
+    const followers = $gamePlayer.followers();
+    const data = followers && followers.data ? followers.data() : [];
+    let next = 0;
+    for (const f of data) {
+      if (next >= spare.length) break;
+      if (window.Game_PetFollower && f instanceof window.Game_PetFollower) continue;
+      if (!f.actor || !f.actor()) continue;
+      // A loose member swimming or up a wall (MovementInteractionSystem.js)
+      // has left the saddle for the moment, and keeps theirs for later.
+      if (f._isSwimming || f._isClimbing) { next++; continue; }
+      mountPairs.set(f, spare[next++]);
+    }
+    return mountPairs;
+  }
+
+  function followerMountPet(follower) {
+    return mountAssignments().get(follower) || null;
+  }
+
+  // Is this companion being sat on right now, by the leader or anybody else?
+  function isRiddenPet(petId) {
+    const lead = mountedPet();
+    if (lead && lead.id === petId && isRidingMount()) return true;
+    for (const pet of mountAssignments().values()) if (pet.id === petId) return true;
+    return false;
+  }
+
+  // A rider on an animal still talks to people and opens doors: OK only means
+  // "stop riding" when there is nothing there to act on.
+  function mountFacesEvent(player) {
+    const d = player.direction();
+    let x2 = $gameMap.roundXWithDirection(player.x, d);
+    let y2 = $gameMap.roundYWithDirection(player.y, d);
+    const acts = (e, normal) => e && e.page() && e.list().length > 1 &&
+      (normal ? e.isTriggerIn([0, 1, 2]) && e.isNormalPriority() : e.isTriggerIn([0]) && !e.isNormalPriority());
+    if ($gameMap.eventsXy(player.x, player.y).some(e => acts(e, false))) return true;
+    if ($gameMap.eventsXy(x2, y2).some(e => acts(e, true))) return true;
+    if ($gameMap.isCounter(x2, y2)) {
+      x2 = $gameMap.roundXWithDirection(x2, d);
+      y2 = $gameMap.roundYWithDirection(y2, d);
+      if ($gameMap.eventsXy(x2, y2).some(e => acts(e, true))) return true;
+    }
+    return false;
+  }
+
+  // An animal stands still when the party does: the engine sets every ridden
+  // vehicle stepping on the spot, which suits a paddle wheel and not a horse.
+  const _Game_Vehicle_getOn_mount = Game_Vehicle.prototype.getOn;
+  Game_Vehicle.prototype.getOn = function () {
+    const result = _Game_Vehicle_getOn_mount.call(this);
+    const config = vehicleManager.getConfig(this);
+    if (config && config.mount) this.setStepAnime(false);
+    return result;
+  };
+
   // ============================================================================
   // Vehicle ownership (party carries the summoning item) + menu API
   // ============================================================================
@@ -5198,6 +5293,21 @@
       return dismountMount();
     },
 
+    // True while the leader is on an animal's back.
+    isRidingMount() {
+      return isRidingMount();
+    },
+
+    // The companion a follower is riding as a temporary mount, or null.
+    followerMount(follower) {
+      return followerMountPet(follower);
+    },
+
+    // Is this companion carrying anybody right now (leader or follower)?
+    isRidden(petId) {
+      return isRiddenPet(petId);
+    },
+
     getOwnedVehicles() {
       return VEHICLE_MENU_CONFIGS.filter(ownsVehicleConfig).map(vehicleMenuInfo);
     },
@@ -5511,7 +5621,10 @@
       this.setTransparent(hasReachedVehicle(this));
       return;
     }
-    const portable = riddenPortableConfig();
+    // A leader on horseback is out in the open too: the party rides or walks
+    // beside them, each member on a temporary mount of their own when there is
+    // one (see "Riders on a mount" below).
+    const portable = riddenPortableConfig() || (isRidingMount() ? VehicleConfig.MOUNT : null);
     if (portable) {
       if (this.isTransparent()) this.setTransparent(false);
       if (isFlyingConfig(portable)) {
@@ -5589,16 +5702,19 @@
   // One frame out of the sheet, by the same arithmetic Sprite_Character uses:
   // the direction picks the row, and a seated rider always uses the middle
   // (standing) column rather than walking on the spot.
-  Sprite_VehicleRider.prototype.updateRiderFrame = function (direction) {
+  // `pattern` picks another column, for a mount walking under its rider
+  // (see "Riders on a mount").
+  Sprite_VehicleRider.prototype.updateRiderFrame = function (direction, pattern) {
     if (!this.bitmap || !this.bitmap.isReady()) return;
-    const key = direction + '|' + this.bitmap.width + 'x' + this.bitmap.height;
+    const column = pattern == null ? 1 : pattern;     // 1 = the standing column
+    const key = direction + '|' + column + '|' + this.bitmap.width + 'x' + this.bitmap.height;
     if (key === this._frameKey) return;
     this._frameKey = key;
     const pw = this._isBig ? this.bitmap.width / 3 : this.bitmap.width / 12;
     const ph = this._isBig ? this.bitmap.height / 4 : this.bitmap.height / 8;
     const blockX = this._isBig ? 0 : (this._riderIndex % 4) * 3;
     const blockY = this._isBig ? 0 : Math.floor(this._riderIndex / 4) * 4;
-    const sx = (blockX + 1) * pw;                       // 1 = the standing column
+    const sx = (blockX + column) * pw;
     const sy = (blockY + (direction - 2) / 2) * ph;
     this.setFrame(sx, sy, pw, ph);
   };
@@ -5926,6 +6042,7 @@
   Spriteset_Map.prototype.update = function () {
     _Spriteset_Map_update_VS.call(this);
     this.updateVehicleRiders();
+    this.updateMountRiders();
   };
 
   Spriteset_Map.prototype.updateVehicleRiders = function () {
@@ -5962,6 +6079,86 @@
       // Nothing is shown until the sheet has loaded and a frame has been cut out
       // of it, or the first frames would draw the whole character sheet.
       sprite.visible = !!sprite.bitmap && !!sprite._frameKey;
+    }
+  };
+
+  // ============================================================================
+  // Riders on a mount
+  // ============================================================================
+  //
+  // On an animal the rider is drawn sitting on its back, standing still in the
+  // middle column while the animal under them does the walking. For the leader
+  // the animal is the mount vehicle's own sprite; for each follower on a
+  // temporary mount both halves are drawn here and the follower's own sprite
+  // is hidden for the length of the ride.
+  //
+  // Each rider shares the ground position (z and y) of what it sits on, so the
+  // tilemap sorts the pair among everybody else by where they stand, and is
+  // lifted with its pivot rather than its y: the half pixel added to both puts
+  // the rider after its animal in that sort without moving either on screen.
+
+  const MOUNT_SEAT_LIFT = 0.42;   // the rider sits this share of the animal's frame up its back
+  const MOUNT_SORT_NUDGE = 0.5;
+
+  function sheetFrameHeight(name) {
+    if (!name) return 0;
+    const bitmap = ImageManager.loadCharacter(name);
+    if (!bitmap || !bitmap.isReady()) return 0;
+    return ImageManager.isBigCharacter(name) ? bitmap.height / 4 : bitmap.height / 8;
+  }
+
+  function placeMountSprite(sprite, name, index, direction, pattern, ch, lift, z) {
+    sprite.setRider(name, index);
+    sprite.updateRiderFrame(direction, pattern);
+    sprite.x = ch.screenX();
+    sprite.y = ch.screenY() + (lift ? MOUNT_SORT_NUDGE : 0);
+    sprite.pivot.y = lift ? lift + MOUNT_SORT_NUDGE : 0;
+    sprite.z = z;
+    sprite.opacity = ch.opacity();
+    sprite.visible = !!sprite.bitmap && !!sprite._frameKey;
+  }
+
+  Spriteset_Map.prototype.updateMountRiders = function () {
+    if (!this._mountRiderSprites) this._mountRiderSprites = [];
+    const pool = this._mountRiderSprites;
+    let used = 0;
+    const take = () => {
+      if (used >= pool.length) {
+        const sprite = new Sprite_VehicleRider();
+        pool.push(sprite);
+        this._tilemap.addChild(sprite);
+      }
+      return pool[used++];
+    };
+    if (isRidingMount()) {
+      const vehicle = $gamePlayer.vehicle();
+      const mount = mountSprite();
+      const lift = Math.round(sheetFrameHeight(mount.name) * MOUNT_SEAT_LIFT);
+      if (lift && $gamePlayer.characterName()) {
+        placeMountSprite(take(), $gamePlayer.characterName(), $gamePlayer.characterIndex(),
+          vehicle.direction(), null, vehicle, lift, vehicle.screenZ());
+      }
+      const showFollowers = $gamePlayer.followers().isVisible();
+      for (const [follower, pet] of mountAssignments()) {
+        if (!showFollowers || follower.isTransparent() || !follower.isVisible()) continue;
+        const flift = Math.round(sheetFrameHeight(pet.characterName) * MOUNT_SEAT_LIFT);
+        if (!flift) continue;
+        const z = follower.screenZ();
+        placeMountSprite(take(), pet.characterName, pet.characterIndex || 0,
+          follower.direction(), follower.pattern(), follower, 0, z);
+        placeMountSprite(take(), follower.characterName(), follower.characterIndex(),
+          follower.direction(), null, follower, flift, z);
+      }
+    }
+    for (let i = used; i < pool.length; i++) pool[i].visible = false;
+  };
+
+  // A follower on a temporary mount is drawn by the pair above instead.
+  const _Sprite_Character_updateVisibility_mount = Sprite_Character.prototype.updateVisibility;
+  Sprite_Character.prototype.updateVisibility = function () {
+    _Sprite_Character_updateVisibility_mount.call(this);
+    if (this.visible && this._character instanceof Game_Follower && followerMountPet(this._character)) {
+      this.visible = false;
     }
   };
 

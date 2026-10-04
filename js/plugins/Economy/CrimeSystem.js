@@ -543,6 +543,20 @@
         return p ? (p.playerOpinion ?? 0) : 0;
     }
 
+    // The leader's look stats (window.LookStats), 0 to 100 each.
+    function leaderLook() {
+        const leader = (typeof $gameParty !== "undefined" && $gameParty) ? $gameParty.leader() : null;
+        return (window.LookStats && leader) ? window.LookStats.ofActor(leader)
+            : { arcane: 0, substance: 0, stealth: 0, intimidation: 0 };
+    }
+    // A frightening party keeps the merely neutral quiet: the opinion a
+    // civilian witness needs before they look the other way drops with the
+    // leader's Intimidation look, by up to half of it.
+    function fearDiscount() {
+        const i = leaderLook().intimidation;
+        return Math.round(i / 2 * (i >= 100 ? 1.5 : 1));
+    }
+
     // Everybody who can actually see the given tile. Sight, not proximity:
     // inside range, inside the arc they face, with nothing in the way, exactly
     // as the constable sweep reads it. Darkness shortens and narrows it the
@@ -552,8 +566,12 @@
         const scene = (typeof SceneManager !== "undefined") ? SceneManager._scene : null;
         if (scene && typeof Scene_Map !== "undefined" && !(scene instanceof Scene_Map)) return [];
         const dark = isDarkOrNightCrimeEnvironment();
-        const range = dark ? Math.max(2, WITNESS_RANGE - 2) : WITNESS_RANGE;
-        const cone = dark ? 90 : WITNESS_CONE;
+        // Somebody dressed not to be seen is seen from less far and at a
+        // narrower angle (the leader's Stealth look, window.LookStats).
+        const look = leaderLook();
+        const hide = Math.round(look.stealth / 34);
+        const range = Math.max(2, (dark ? WITNESS_RANGE - 2 : WITNESS_RANGE) - hide);
+        const cone = Math.max(60, (dark ? 90 : WITNESS_CONE) - Math.round(look.stealth * 0.4));
         const out = [];
         for (const ev of $gameMap.events()) {
             if (!ev || ev._erased) continue;
@@ -591,7 +609,7 @@
                 : w;
             if (victimName && name === victimName) { list.push(rec); continue; }
             if (rec.party) continue;                              // one of ours
-            if (!rec.officer && rec.opinion >= WITNESS_LOYAL_OPINION) continue; // a friend
+            if (!rec.officer && rec.opinion >= WITNESS_LOYAL_OPINION - fearDiscount()) continue; // a friend, or too frightened to talk
             list.push(rec);
         }
         if (victimName && !list.some(r => r.name === victimName)) {

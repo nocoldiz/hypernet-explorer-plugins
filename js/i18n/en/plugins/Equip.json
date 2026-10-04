@@ -95,5 +95,8 @@
     "5": "Equipment",
     "6": "Shield"
   },
-  "slotGearN": "Gear {n}"
+  "slotGearN": "Gear {n}",
+  "statBoost": {
+    "applied": "{name} uses the {item}: {stat} {amount} for {hours} h."
+  }
 }

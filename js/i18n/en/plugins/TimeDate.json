@@ -17,7 +17,9 @@
     "mpRestored": "recovered all MP",
     "vomited": "{name} vomited!",
     "collapsed": "{name} collapsed from starvation!",
-    "outOfMp": "{name} ran out of MP!"
+    "outOfMp": "{name} ran out of MP!",
+    "bladderLow": "needs to find a toilet",
+    "bladderCritical": "is about to burst!"
   },
   "sleepMenu": {
     "titleMain": "Rest",
@@ -96,7 +98,8 @@
     "sleep": "Sleep",
     "hygiene": "Hygiene",
     "social": "Social",
-    "leisure": "Mood"
+    "leisure": "Mood",
+    "bladder": "Bladder"
   },
   "addictionLabel": {
     "nicotine": "Nicotine",
@@ -186,7 +189,8 @@
   "partyLife": {
     "talk": "{name} is talking to {other}",
     "wash": "{name} is going to the bathroom",
-    "idle": "{name} is stretching their legs"
+    "idle": "{name} is stretching their legs",
+    "relieve": "{name} slips away for a moment to relieve themselves"
   },
   "forage": {
     "found": "The party comes back with {items}.",
@@ -321,5 +325,16 @@
       "cyrusDay": "Cyrus Day",
       "musterDay": "Muster Day"
     }
+  },
+  "bladder": {
+    "relieved": {
+      "wc": "Used the WC.",
+      "shower": "Relieved in the shower.",
+      "bath": "Relieved before the bath."
+    },
+    "nothingToDo": "Nobody needs the WC right now.",
+    "accident": "{name} could not hold it any longer and wet themselves.",
+    "accidentBeast": "{name} relieves itself on the spot.",
+    "swim": "Somebody in the water looks a little relieved."
   }
 }

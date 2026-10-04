@@ -526,6 +526,7 @@
   "joinedParty": "{name} si è unito al gruppo!",
   "joinedPartyInactive": "{name} si unisce come membro in riserva.",
   "joinedFollower": "{name} si accoda al gruppo come seguace.",
+  "joinLevelTooLow": "Devi essere di livello {level} per reclutare {name}.",
   "joinReplacedFallen": "{name} resta dove è caduto.",
   "joinFailed": "Non ha funzionato. Restano dove sono.",
   "firstMeeting": "Primo incontro",
@@ -2259,6 +2260,29 @@
         "Weapons": "Armi",
         "StateCrimes": "Crimini di Stato"
       }
+    }
+  },
+  "bladderLabel": "Vescica",
+  "look": {
+    "hdr": "Aspetto",
+    "tier": {
+      "plain": "Anonimo",
+      "noted": "Notato",
+      "striking": "Vistoso",
+      "iconic": "Iconico"
+    },
+    "icon": "Un'icona di {stat}",
+    "reads": "{name} appare {list}",
+    "readsNone": "{name} non appare niente di particolare",
+    "effects": "Quanto conta qui:",
+    "effect": {
+      "impression": "prima impressione {v}",
+      "pickpocket": "borseggio {v}%",
+      "bribe": "corruzione {v}%",
+      "romance": "corteggiamento {v}%",
+      "join": "reclutamento {v}%",
+      "hostile": "mosse ostili {v}%",
+      "friendly": "parole gentili {v}%"
     }
   }
 }

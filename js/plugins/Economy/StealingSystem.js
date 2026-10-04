@@ -631,7 +631,17 @@
     // Public API consumed by StealingSystemUI.js
     window.StealingSystem = {
         scanItems:    () => ShopScanner.scanMapForShops(),
-        calcChance:   (item, agi, entry) => StealCalculator.calculateStealChance(item, agi, entry),
+        // The party's own counter jobs also count how little the leader is
+        // noticed (their Stealth look, window.LookStats). Kept out of
+        // calculateStealChance itself, which NPC thieves roll as well.
+        calcChance:   (item, agi, entry) => {
+            const chance = StealCalculator.calculateStealChance(item, agi, entry);
+            if (chance >= 100) return chance;
+            const leader = (typeof $gameParty !== "undefined" && $gameParty) ? $gameParty.leader() : null;
+            const look = (window.LookStats && leader) ? window.LookStats.ofActor(leader).stealth : 0;
+            const bonus = Math.round(look / 5 * (look >= 100 ? 1.5 : 1));
+            return Math.max(5, Math.min(95, chance + bonus));
+        },
         isUnattendedSource: (entry) => StealCalculator.isUnattendedSource(entry),
         performSteal: (chance, options) => StealCalculator.performSteal(chance, options),
         invisibleBonus: () => StealCalculator.invisibleBonus(),

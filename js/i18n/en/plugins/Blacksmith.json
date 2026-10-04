@@ -435,5 +435,7 @@
         }
       }
     }
-  }
+  },
+  "finishMine": "Your pictures",
+  "finishMineTitle": "One of your pictures as the finish"
 }

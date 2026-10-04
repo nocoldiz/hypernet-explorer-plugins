@@ -33,7 +33,8 @@
         console.error('[VoxelWorld] THREE.js not loaded.');
         return;
     }
-    if (typeof THREE.GLTFLoader === 'undefined') {
+    // A mesh worker (VoxelWorldTerrain) loads this file too, and never a model.
+    if (typeof THREE.GLTFLoader === 'undefined' && typeof document !== 'undefined') {
         console.warn('[VoxelWorld] THREE.GLTFLoader not found. Model loading will fail unless loaded globally.');
     }
 
@@ -387,7 +388,39 @@
         const v = h < 4 ? y : (h === 12 || h === 14 ? x : z);
         return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
     }
+    // Every caller in the suite asks for a 2D slice (z = 0), where the far
+    // half of the lattice cube is multiplied by fade(0) = 0 and thrown away:
+    // half the gradients and a third of the work for nothing. The plane is
+    // answered on its own here, with the same lattice and the same gradients,
+    // so it returns exactly what the cube did. This is the single hottest
+    // function of the terrain (a third of a meshing pass, measured).
+    function _perlin2(x, y) {
+        const fx = Math.floor(x), fy = Math.floor(y);
+        const X = fx & 255, Y = fy & 255;
+        x -= fx; y -= fy;
+        const u = x * x * x * (x * (x * 6 - 15) + 10);
+        const v = y * y * y * (y * (y * 6 - 15) + 10);
+        const A = _perm[X] + Y, B = _perm[X + 1] + Y;
+        const g00 = _pGrad2(_perm[_perm[A]],     x,     y);
+        const g10 = _pGrad2(_perm[_perm[B]],     x - 1, y);
+        const g01 = _pGrad2(_perm[_perm[A + 1]], x,     y - 1);
+        const g11 = _pGrad2(_perm[_perm[B + 1]], x - 1, y - 1);
+        const a = g00 + u * (g10 - g00);
+        const b = g01 + u * (g11 - g01);
+        return a + v * (b - a);
+    }
+    // _pGrad with z = 0.
+    function _pGrad2(h, x, y) {
+        h &= 15;
+        const u = h < 8 ? x : y;
+        const v = h < 4 ? y : (h === 12 || h === 14 ? x : 0);
+        return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+    }
     function _perlin(x, y, z) {
+        if (!z) return _perlin2(x, y);
+        return _perlin3(x, y, z);
+    }
+    function _perlin3(x, y, z) {
         z = z || 0;
         const X = Math.floor(x) & 255, Y = Math.floor(y) & 255, Z = Math.floor(z) & 255;
         x -= Math.floor(x); y -= Math.floor(y); z -= Math.floor(z);
@@ -2262,13 +2295,14 @@
             this.cols = lay.cols; this.rows = lay.rows;
             this.colBase = lay.colBase; this.rowBase = lay.rowBase;
 
+            // The sheet's ONE texture, shared by every figure cut from it. Each
+            // card used to clone it to move its own offset about, and in this
+            // build of three a clone is a texture of its own on the card: a
+            // town square uploaded the same sheet once per person standing in
+            // it. The frame is picked by the card's own UVs instead (_frame).
             this.base = characterSheetTexture(sheet);
-            this.tex  = this.base ? this.base.clone() : null;
-            if (this.tex) {
-                this.tex.repeat.set(1 / this.cols, 1 / this.rows);
-                this.tex.offset.set(this.colBase / this.cols, 1 - (this.rowBase + 1) / this.rows);
-                if (this.base.image && this.base.image.width) this.tex.needsUpdate = true;
-            }
+            this.tex  = this.base || null;
+            this._fc = -1; this._fr = -1;
             _billboards.add(this);
             // Unlit, and dimmed by hand with the hour (see setDaylight): a card
             // that always turns to the camera has no honest normal to light.
@@ -2277,6 +2311,7 @@
                 side: THREE.DoubleSide, depthWrite: true, fog: true
             });
             this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(this.h * 0.66, this.h), this.mat);
+            this._frame(1, 0);
             // Every figure in the world is a card of its own, and a town square
             // deals out a dozen and a half of them: left uncullable they were
             // all drawn, the ones behind the camera included. The plane is
@@ -2326,8 +2361,6 @@
             if (!this.tex) return;
             if (!this._sized && this.base.image && this.base.image.width) {
                 this._sized = true;
-                this.tex.image = this.base.image;
-                this.tex.needsUpdate = true;
                 const fw = this.base.image.width / this.cols;
                 const fh = this.base.image.height / this.rows;
                 if (fh > 0) {
@@ -2337,6 +2370,10 @@
                     this.cardH = cut.h;
                     this.mesh.geometry.dispose();
                     this.mesh.geometry = new THREE.PlaneGeometry(cut.w, cut.h);
+                    // A fresh plane carries the whole sheet: cut the frame again.
+                    const fc = this._fc, fr = this._fr;
+                    this._fc = this._fr = -1;
+                    this._frame(fc < 0 ? 1 : fc, fr < 0 ? 0 : fr);
                     // Whoever placed it did so against the old card, so it is
                     // put back on the same ground rather than nudged from where
                     // the old one happened to sit.
@@ -2366,8 +2403,25 @@
             const row = characterFacingRow(this.yaw,
                 camX - this.mesh.position.x, camZ - this.mesh.position.z);
             const col = this.moving ? WALK_CYCLE[Math.floor(this.step / 7) % 4] : 1;
-            this.tex.offset.set((this.colBase + col) / this.cols,
-                1 - (this.rowBase + row + 1) / this.rows);
+            this._frame(col, row);
+        }
+
+        // Show one cell of the figure's block: the card's four UVs are pointed
+        // at it, which is the same arithmetic the texture offset used to do in
+        // the shader, done here and only when the cell actually changes.
+        _frame(col, row) {
+            if (col === this._fc && row === this._fr) return;
+            const uv = this.mesh && this.mesh.geometry && this.mesh.geometry.attributes &&
+                this.mesh.geometry.attributes.uv;
+            if (!uv || !uv.array) return;
+            this._fc = col; this._fr = row;
+            const u0 = (this.colBase + col) / this.cols, u1 = u0 + 1 / this.cols;
+            const v0 = 1 - (this.rowBase + row + 1) / this.rows, v1 = v0 + 1 / this.rows;
+            const a = uv.array;
+            // PlaneGeometry's corners: top left, top right, bottom left, bottom right.
+            a[0] = u0; a[1] = v1; a[2] = u1; a[3] = v1;
+            a[4] = u0; a[5] = v0; a[6] = u1; a[7] = v0;
+            uv.needsUpdate = true;
         }
 
         dispose() {
@@ -2375,7 +2429,7 @@
             if (this.mesh.parent) this.mesh.parent.remove(this.mesh);
             this.mesh.geometry.dispose();
             this.mat.dispose();
-            if (this.tex) this.tex.dispose();
+            // The texture is the sheet's, shared with every other figure on it.
         }
     }
 
@@ -2393,6 +2447,9 @@
     // vehicle's real length puts every frame at its right size at once: the
     // head-on frame reads narrow because it is DRAWN narrow inside that same
     // cell, not because the card was cut differently for it.
+    // The bearing each facing row is drawn for (rows 0 down, 1 left, 2 right,
+    // 3 up), by row index: read on every frame for every vehicle on the road.
+    const ROW_CENTRE = [0, Math.PI * 1.5, Math.PI * 0.5, Math.PI];
     class VehicleBillboard extends CharacterBillboard {
         // `length` is the vehicle's real length in world units.
         constructor(sheet, length) {
@@ -2424,7 +2481,7 @@
             let a = Math.atan2(dx, dz) - this.yaw;
             a = ((a % TAU) + TAU) % TAU;
             if (this._row >= 0) {
-                const centre = { 0: 0, 2: Math.PI * 0.5, 3: Math.PI, 1: Math.PI * 1.5 }[this._row];
+                const centre = ROW_CENTRE[this._row];
                 let d = Math.abs(a - centre);
                 if (d > Math.PI) d = TAU - d;
                 if (d < Math.PI * 0.25 + HYST) return this._row;
@@ -2439,8 +2496,7 @@
             const gz = this._gz !== undefined ? this._gz : this.mesh.position.z;
             const row = this._facingRow(camX - gx, camZ - gz);
             const col = this.anim ? WALK_CYCLE[Math.floor(this.step) % 4] : 1;
-            this.tex.offset.set((this.colBase + col) / this.cols,
-                1 - (this.rowBase + row + 1) / this.rows);
+            this._frame(col, row);
 
             // The lean is drawn as a roll of the card in its own plane, turned
             // by how much of the vehicle's flank faces the lens: seen from
@@ -2460,8 +2516,198 @@
             }
         }
     }
+    // =========================================================================
+    // VoxelPerf: where a frame of this world goes
+    // =========================================================================
+    // A meter for the drive's own loop, off until asked for. HookProfiler sees
+    // the whole requestAnimationFrame callback as one row; this splits that row
+    // into the parts a performance pass would act on (streaming the terrain,
+    // the creatures and people, the DOM readout, the draw itself) and reads the
+    // renderer's own counters for draw calls, triangles and resident buffers.
+    //
+    //   VoxelPerf.enable() / disable() / toggle()   from the console, or on by
+    //                                                itself while HookProfiler is
+    //   VoxelPerf.report()                          the last window's averages
+    //
+    // Timing is taken by wrapping the scene's own methods the first time the
+    // meter is on for that scene, so a world nobody is measuring pays one flag
+    // test per wrapped call and nothing else.
+    const PERF_WINDOW = 30;       // frames averaged per readout
+    const PERF_TARGETS = [
+        // [field on the scene (null: the scene itself), method, section]
+        ['_terrain',    'update', 'terrain'],
+        ['_bioEnemies', 'update', 'entities'],
+        ['_combat',     'update', 'entities'],
+        ['_crowd',      'update', 'entities'],
+        ['_travellers', 'update', 'entities'],
+        ['_followers',  'update', 'entities'],
+        ['_interiors',  'update', 'entities'],
+        ['_traffic',    'update', 'entities'],
+        ['_parked',     'update', 'entities'],
+        ['_hud',        'update', 'hud'],
+        ['_hud',        'setCommandContext', 'hud'],
+        ['_hud',        'updateEnvLabel', 'hud'],
+        ['_hud',        'updateAbilities', 'hud'],
+        ['_hud',        'updateStatus', 'hud'],
+        [null,          '_surfaceDom', 'hud'],
+        [null,          '_renderFrame', 'render']
+    ];
+    const PERF_SECTIONS = ['terrain', 'entities', 'hud', 'render'];
+    const perfNow = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+
+    const VoxelPerf = {
+        _on: false,
+        _live: false,
+        _sum: { terrain: 0, entities: 0, hud: 0, render: 0 },
+        _frames: 0, _frameMs: 0, _worst: 0, _lastAt: 0,
+        _calls: 0, _tris: 0,
+        _scene: null, _el: null, _report: null,
+
+        isOn() {
+            if (this._on) return true;
+            const HP = (typeof window !== 'undefined') ? window.HookProfiler : null;
+            return !!(HP && typeof HP.isOn === 'function' && HP.isOn());
+        },
+        enable()  { this._on = true;  return true; },
+        disable() { this._on = false; return false; },
+        toggle()  { return this._on ? this.disable() : this.enable(); },
+        report()  { return this._report; },
+
+        // Put the meter on one method of one object; its time lands in `section`.
+        _wrap(obj, name, section) {
+            if (!obj || typeof obj[name] !== 'function' || obj[name].__vwPerf) return;
+            const orig = obj[name];
+            const meter = this;
+            const wrapped = function() {
+                if (!meter._live) return orig.apply(this, arguments);
+                const t0 = perfNow();
+                try { return orig.apply(this, arguments); }
+                finally { meter._sum[section] += perfNow() - t0; }
+            };
+            wrapped.__vwPerf = orig;
+            obj[name] = wrapped;
+        },
+
+        // Wrapped every frame the meter is on: the managers are built lazily
+        // (a fight, a town) and each one is wrapped the first time it exists.
+        _instrument(scene) {
+            for (const [field, method, section] of PERF_TARGETS) {
+                this._wrap(field ? scene[field] : scene, method, section);
+            }
+        },
+
+        // Called once at the top of every frame of the drive's loop.
+        frame(scene, renderer) {
+            const on = this.isOn() && !!scene && !scene._titleMode;
+            if (!on) {
+                if (this._live) {
+                    this._live = false;
+                    this._hide();
+                    if (renderer && renderer.info) renderer.info.autoReset = true;
+                    this._scene = null;
+                }
+                return;
+            }
+            const now = perfNow();
+            if (this._scene !== scene) {
+                this._scene = scene;
+                this._resetWindow();
+                this._lastAt = 0;
+            }
+            this._instrument(scene);
+            const info = renderer && renderer.info;
+            if (info) {
+                // The renderer zeroes its counters at every render() call, and a
+                // frame here is several (shadow, the retro target, its blit), so
+                // the count is kept for the whole frame and zeroed here instead.
+                if (info.autoReset !== false) info.autoReset = false;
+                else if (info.render) {
+                    this._calls += info.render.calls || 0;
+                    this._tris  += info.render.triangles || 0;
+                }
+                if (typeof info.reset === 'function') info.reset();
+            }
+            if (this._live && this._lastAt) {
+                const dt = now - this._lastAt;
+                this._frameMs += dt;
+                if (dt > this._worst) this._worst = dt;
+                this._frames++;
+            }
+            this._live = true;
+            this._lastAt = now;
+            if (this._frames >= PERF_WINDOW) this._close(info);
+        },
+
+        _resetWindow() {
+            for (const k of PERF_SECTIONS) this._sum[k] = 0;
+            this._frames = 0; this._frameMs = 0; this._worst = 0;
+            this._calls = 0; this._tris = 0;
+        },
+
+        _close(info) {
+            const n = this._frames || 1;
+            const r = {
+                fps: this._frameMs > 0 ? 1000 * n / this._frameMs : 0,
+                frameMs: this._frameMs / n,
+                worstMs: this._worst,
+                calls: Math.round(this._calls / n),
+                triangles: Math.round(this._tris / n),
+                geometries: info && info.memory ? info.memory.geometries : 0,
+                textures: info && info.memory ? info.memory.textures : 0,
+                programs: info && info.programs ? info.programs.length : 0,
+                // The terrain's mesh workers: how many, and how many patches
+                // are out with them (VoxelWorldTerrain's MeshWorkerPool).
+                workers: 0, inflight: 0, pool: 'off'
+            };
+            const pool = this._scene && this._scene._terrain && this._scene._terrain._pool;
+            if (pool) {
+                r.pool = pool.state;
+                r.workers = pool.workers ? pool.workers.length : 0;
+                r.inflight = pool._jobs ? pool._jobs.size : 0;
+            }
+            for (const k of PERF_SECTIONS) r[k] = this._sum[k] / n;
+            this._report = r;
+            this._resetWindow();
+            this._show(r);
+        },
+
+        // The readout: a small panel in the corner, over the world's own layer.
+        _show(r) {
+            if (typeof document === 'undefined') return;
+            const tr = (k) => (typeof window.T === 'function' ? window.T('CamperDrive.perf.' + k) : k);
+            if (!this._el) {
+                const el = document.createElement('div');
+                el.id = 'vw-perf';
+                el.style.cssText = 'position:fixed; top:4px; left:4px; z-index:' + (WORLD_UI_Z + 1) +
+                    '; pointer-events:none; font:11px monospace; white-space:pre; padding:4px 6px;' +
+                    ' background:rgba(0,0,0,0.72); color:#d8f0c8; border:1px solid #3a5a30;';
+                document.body.appendChild(el);
+                this._el = el;
+            }
+            const ms = (v) => v.toFixed(2);
+            this._el.textContent =
+                tr('title') + '\n' +
+                tr('fps') + ' ' + r.fps.toFixed(0) + '  ' + tr('frame') + ' ' + ms(r.frameMs) +
+                '  ' + tr('worst') + ' ' + ms(r.worstMs) + '\n' +
+                tr('terrain') + ' ' + ms(r.terrain) + '  ' + tr('entities') + ' ' + ms(r.entities) +
+                '  ' + tr('hud') + ' ' + ms(r.hud) + '  ' + tr('render') + ' ' + ms(r.render) + '\n' +
+                tr('calls') + ' ' + r.calls + '  ' + tr('triangles') + ' ' + r.triangles + '\n' +
+                tr('geometries') + ' ' + r.geometries + '  ' + tr('textures') + ' ' + r.textures +
+                '  ' + tr('programs') + ' ' + r.programs + '\n' +
+                tr('workers') + ' ' + r.workers + ' (' + tr('pool_' + r.pool) + ')  ' +
+                tr('inflight') + ' ' + r.inflight;
+        },
+
+        _hide() {
+            if (this._el && this._el.parentNode) this._el.parentNode.removeChild(this._el);
+            this._el = null;
+        }
+    };
+    if (typeof window !== 'undefined') window.VoxelPerf = VoxelPerf;
+
     // Handed to the rest of the suite.
     Object.assign(VW, {
+        VoxelPerf,
         AIR_GRAVITY, BODY_BOUNCE_MAX, BODY_PITCH_MAX, BODY_ROLL_MAX,
         BOOST_ACCEL_MULT, BOOST_FUEL_MULT, BOOST_RELEASE_DECAY, BRAKE_DECEL,
         CAMPER_BOUNDS, CAMPER_MAX_FUEL, CRITICAL_PARTS, CRUISE_KMH,
@@ -2509,7 +2755,7 @@
         WHEELBASE, WORLD_MAP_ID, WORLD_SCALE, WORLD_TILES, WORLD_TILE_SIZE, skyFogColor,
         ZOOM_MAX, _Biomes, _BiomesMap, _BiomesMapIndex, _ROCK_COLOR, _SNOW_COLOR,
         _biomeByName, _biomeTileCache, _charSheetTex, _clearBiomeCaches, _fbm,
-        _findBiome, _maxAniso, _pFade, _pGrad, _pLerp, _perlin, _perm,
+        _findBiome, _maxAniso, _pFade, _pGrad, _pLerp, _perlin, _perlin2, _perlin3, _perm,
         _renderTypeCache, _roadDirCache, _sampleBiomeUncached, _texCache,
         camperFuelConsume, camperFuelGet, camperFuelSet, camperMaxFuel,
         characterFacingRow, characterSheetLayout, characterSheetTexture, faceBillboards,

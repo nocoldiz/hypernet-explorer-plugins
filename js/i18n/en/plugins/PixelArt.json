@@ -43,5 +43,13 @@
     },
     "exported": "Saved to {file}",
     "exportError": "Could not write the picture to the game folder."
+  },
+  "pictures": {
+    "pickTitle": "Choose a picture",
+    "mine": "Your pictures",
+    "stock": "Textures",
+    "empty": "Nothing in {dir} yet. Draw something in Pain or the pixel art maker first.",
+    "close": "Close",
+    "saved": "Saved to {file}"
   }
 }

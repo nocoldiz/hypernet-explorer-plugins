@@ -705,6 +705,29 @@
         ensurePulse(state, group);
       }
 
+      const playerGroup = currentPlayerGroup();
+      const notoriety = playerNotoriety();
+      const seed = worldSeed();
+
+      // Two clocks (TOWER CLOCK): Earth's settlements pulse on Earth's minute,
+      // the Omega Tower's floors on the tower's own (NPCShared.towerTime),
+      // each from a cursor of its own, so a floor never catches up on time
+      // spent out in the world.
+      const tower = window.NPCShared?.towerTime?.() || null;
+      const onTower = (pulse) => !!tower && tower.group(pulse.group);
+      if (tower) {
+        const from = state.towerLastSimMinute;
+        if (from === undefined || from === null || from > tower.now) state.towerLastSimMinute = tower.now;
+        else if (tower.now - from >= MINUTES_PER_DAY) {
+          state.towerLastSimMinute = tower.now;
+          const towerCensus = takeCensus(from);
+          const towerDays = (tower.now - from) / MINUTES_PER_DAY;
+          for (const pulse of Object.values(state.settlements)) {
+            if (onTower(pulse)) pulseSettlement(pulse, from, tower.now, towerDays, towerCensus);
+          }
+        }
+      }
+
       const last = state.lastSimMinute;
       if (last === undefined || last === null || last > nowMinute) {
         state.lastSimMinute = nowMinute;
@@ -720,13 +743,39 @@
       state.lastSimMinute = nowMinute;
 
       const censusByGroup = takeCensus(last);
-      const playerGroup = currentPlayerGroup();
-      const notoriety = playerNotoriety();
-      const seed = worldSeed();
 
       let sentimentSum = 0, sentimentN = 0;
-
       for (const pulse of Object.values(state.settlements)) {
+        if (onTower(pulse)) continue;
+        sentimentSum += pulseSettlement(pulse, last, nowMinute, days, censusByGroup);
+        sentimentN++;
+      }
+
+      // ---- global market sentiment ----------------------------------------
+      const powers = window.NPCPolitics?.listPowers?.() || [];
+      let powerMoodSum = 0;
+      for (const name of powers) powerMoodSum += (window.NPCPolitics.getPower(name)?.state?.economyMood ?? 50) - 50;
+      const powerMood = powers.length ? powerMoodSum / powers.length / 50 : 0;
+      const local = sentimentN ? sentimentSum / sentimentN : 0;
+      state.marketSentiment = clamp(local * 0.6 + powerMood * 0.4, -1, 1);
+      state.economyIndex = 1 + state.marketSentiment * 0.4;
+
+      // ---- news out ---------------------------------------------------------
+      harvestPoliticalNews(last);
+      harvestGossipNews(state, last);
+      publishQueuedNews();
+
+      refreshModifiers(state);
+
+      if (deltaMinutes >= SKIP_FLUSH_MINUTES && !opts?.fromClock && window.WorldManager?.flush) {
+        try { window.WorldManager.flush("npcs"); } catch (e) {
+          console.error("[NPCWorldWeb] world flush failed:", e);
+        }
+      }
+
+      // One settlement's pulse over [last, nowMinute], `days` long. Returns
+      // what it adds to the market sentiment.
+      function pulseSettlement(pulse, last, nowMinute, days, censusByGroup) {
         const rng = new WebRng((nameHash("pulse:" + pulse.group) ^ seed ^ (last >>> 0)) >>> 0);
         const census = censusByGroup[pulse.group] || {
           population: 0, employed: 0, unemployed: 0, imprisoned: 0, retired: 0,
@@ -790,32 +839,9 @@
 
         updateEpisodes(state, pulse, rng, last, nowMinute, days, census);
 
-        sentimentSum += (pulse.prosperity - 50) / 50
+        return (pulse.prosperity - 50) / 50
           + (pulse.episodes.boom ? 0.4 : 0) - (pulse.episodes.bust ? 0.5 : 0)
           - (pulse.episodes.epidemic ? 0.3 : 0);
-        sentimentN++;
-      }
-
-      // ---- global market sentiment ----------------------------------------
-      const powers = window.NPCPolitics?.listPowers?.() || [];
-      let powerMoodSum = 0;
-      for (const name of powers) powerMoodSum += (window.NPCPolitics.getPower(name)?.state?.economyMood ?? 50) - 50;
-      const powerMood = powers.length ? powerMoodSum / powers.length / 50 : 0;
-      const local = sentimentN ? sentimentSum / sentimentN : 0;
-      state.marketSentiment = clamp(local * 0.6 + powerMood * 0.4, -1, 1);
-      state.economyIndex = 1 + state.marketSentiment * 0.4;
-
-      // ---- news out ---------------------------------------------------------
-      harvestPoliticalNews(last);
-      harvestGossipNews(state, last);
-      publishQueuedNews();
-
-      refreshModifiers(state);
-
-      if (deltaMinutes >= SKIP_FLUSH_MINUTES && !opts?.fromClock && window.WorldManager?.flush) {
-        try { window.WorldManager.flush("npcs"); } catch (e) {
-          console.error("[NPCWorldWeb] world flush failed:", e);
-        }
       }
     } finally {
       _catchUpRunning = false;

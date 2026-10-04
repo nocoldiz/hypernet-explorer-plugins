@@ -95,5 +95,8 @@
     "5": "Equipaggiamento",
     "6": "Scudo"
   },
-  "slotGearN": "Accessori {n}"
+  "slotGearN": "Accessori {n}",
+  "statBoost": {
+    "applied": "{name} usa {item}: {stat} {amount} per {hours} h."
+  }
 }

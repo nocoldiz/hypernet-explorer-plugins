@@ -118,6 +118,12 @@
         "Un'ora in riva si lascia una strada alle spalle.",
         "Non ho pensato a niente per un'ora. Meraviglioso.",
         "Dite quel che volete del tempo, ma i pesci abboccavano."
+      ],
+      "bladder": [
+        "Molto meglio.",
+        "Non sarei arrivato alla prossima città.",
+        "Nessuno ha visto niente.",
+        "Era una lunga strada per trattenerla."
       ]
     },
     "toastRent": "{name} ha affittato una stanza per {price}",

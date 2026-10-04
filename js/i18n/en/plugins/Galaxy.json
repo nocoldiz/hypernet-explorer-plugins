@@ -39,8 +39,11 @@
     "timeToArrival": "Time to Arrival",
     "lyRemaining": "{ly} ly remaining",
     "refuelling": "Refuelling",
-    "otherGalaxy": "No course crosses to another galaxy. Only a Schr\u00f6dinger-Bohr bridge reaches it.",
-    "harvesting": "Harvesting Schrödingerite"
+    "otherGalaxy": "No course crosses to another galaxy. Only a Schrödinger-Bohr bridge reaches it.",
+    "harvesting": "Harvesting Schrödingerite",
+    "relBraking": "Relativity braking",
+    "earthDate": "Earth: {date}",
+    "relYearsLeft": "Years still to pass: {years}"
   },
   "bodyType": {
     "Dark + emission nebula": "Dark + emission nebula",
@@ -506,5 +509,19 @@
     "searchSpaceportsPlaceholder": "Search spaceports...",
     "lifeBearingGroup": "Life-Bearing Worlds",
     "traceLifeGroup": "Trace Biosignatures"
+  },
+  "relBrake": {
+    "button": "Relativity Braking",
+    "hint": "Skim the event horizon: minutes on board, years on Earth",
+    "title": "Relativity Braking",
+    "cost": "This manoeuvre will cost you {years} years.",
+    "explain": "The ship will dive onto the event horizon of {name} and skim along it. A few minutes will pass on board, nobody will grow hungrier or wearier, and outside the years will go by.",
+    "earthNow": "Date on Earth now: {date}",
+    "earthThen": "Projected date on Earth: {date}",
+    "impactWarning": "Earth will have met Nibiru before you are back.",
+    "confirm": "Begin the dive",
+    "cancel": "Cancel",
+    "underway": "Braking · Earth: {date}",
+    "done": "Out of the horizon. {years} years have passed on Earth: it is now {date}."
   }
 }

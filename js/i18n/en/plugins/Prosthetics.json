@@ -210,5 +210,10 @@
   "grafted": "The field grafts the {part} onto {actor}.",
   "failedWound": "The field slips and opens the {part}.",
   "failed": "The field slips. Nothing takes."
- }
+ },
+  "metamorphosis": {
+    "magical": "{name} drinks the potion and becomes someone new.",
+    "surgical": "The surgerybots retreat into their case. {name} has a new body and a new face.",
+    "unchanged": "Nothing changed, so the {item} goes back in the backpack."
+  }
 }

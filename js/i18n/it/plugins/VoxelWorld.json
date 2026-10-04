@@ -96,5 +96,10 @@
     "reloaded": "Ricaricato.",
     "guard": "In guardia",
     "noMenu": "Niente menu durante uno scontro."
+  },
+  "vr": {
+    "enter": "Entra in VR",
+    "exit": "Esci dalla VR",
+    "failed": "Impossibile avviare il visore VR."
   }
 }

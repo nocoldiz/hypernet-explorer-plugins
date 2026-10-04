@@ -310,6 +310,8 @@
  * @value social
  * @option Fun
  * @value leisure
+ * @option Bladder
+ * @value bladder
  * @default hunger
  *
  * @arg amount
@@ -319,6 +321,21 @@
  * @min -100
  * @max 100
  * @default 10
+ *
+ * @command RelieveBladder
+ * @text Relieve Bladder (All Party)
+ * @desc Empties every party member's bladder at a WC, a shower or a bath, and reports it.
+ *
+ * @arg place
+ * @text Place
+ * @type select
+ * @option WC
+ * @value wc
+ * @option Shower
+ * @value shower
+ * @option Bath
+ * @value bath
+ * @default wc
  *
  * @command SleepMenu
  * @text Sleep Menu
@@ -711,12 +728,16 @@
   // needs drain, an addict feels the gap, the world simulates forward. This is
   // the ONE way a system outside this plugin puts the clock forward (studying a
   // book, SimulateTime); sleeping has its own recovery and does not come here.
-  // Pass { drain: false } for time that costs the body nothing.
+  // Pass { drain: false } for time that costs the body nothing, and
+  // { addictions: false } for time the party never lived through at all (the
+  // years outside a ship braking on a black hole's horizon).
   function passTime(minutes, opts) {
     const totalMinutes = Math.max(0, Math.round(Number(minutes) || 0));
     if (totalMinutes <= 0) return getGameTimeMinutes();
     if (!opts || opts.drain !== false) drainNeedsOverMinutes(totalMinutes);
-    if (window.AddictionSystem) window.AddictionSystem.advanceMinutes(totalMinutes);
+    if (window.AddictionSystem && (!opts || opts.addictions !== false)) {
+      window.AddictionSystem.advanceMinutes(totalMinutes);
+    }
     return advanceGameTimeSimulated(totalMinutes);
   }
 
@@ -1115,6 +1136,7 @@
       hygiene: { get: (a) => a.hygiene(), set: (a, v) => a.setExtendedNeed("hygiene", v), max: maxNeed },
       social:  { get: (a) => a.social(),  set: (a, v) => a.setExtendedNeed("social",  v), max: maxNeed },
       leisure: { get: (a) => a.leisure(), set: (a, v) => a.setExtendedNeed("leisure", v), max: maxNeed },
+      bladder: { get: (a) => a.bladder(), set: (a, v) => a.setExtendedNeed("bladder", v), max: maxNeed },
     };
     const spec = specs[need];
     if (!spec) {
@@ -1140,6 +1162,12 @@
     if (SceneManager._scene instanceof Scene_Menu && SceneManager._scene._hungerSleepStatusWindow) {
       SceneManager._scene._hungerSleepStatusWindow.refresh();
     }
+  });
+
+  // The WC, the shower and the bath (common events 20, 51 and 104): every
+  // member goes, and the bladder is empty again. window.Bladder owns it.
+  PluginManager.registerCommand(pluginName, "RelieveBladder", function (args) {
+    window.Bladder.relieveParty(String(args.place || "wc").toLowerCase());
   });
 
   PluginManager.registerCommand(pluginName, "SleepMenu", function (args) {
@@ -1232,6 +1260,7 @@
     if (this._hygiene === undefined) this._hygiene = maxNeed;
     if (this._social  === undefined) this._social  = maxNeed;
     if (this._leisure === undefined) this._leisure = maxNeed;
+    if (this._bladder === undefined) this._bladder = maxNeed;
     this._prevHungerState = "normal";
     this._prevSleepState = "normal";
   };
@@ -1419,6 +1448,221 @@
   };
 
   //===========================================================================
+  // Bladder - the one meter a drink fills
+  //===========================================================================
+  // Read the way every other need is read: 100 is an empty bladder and a
+  // comfortable body, 0 is one that cannot hold another drop. Its "fullness"
+  // is the meter read backwards (100 - meter), which is the number the water
+  // rule speaks in ("more than 80% full").
+  //
+  // It runs down at four times the sleep drain, so a body that starts the day
+  // empty wants a WC within about seven waking hours, and every liquid that
+  // goes in (ItemSystemUtils.liquidVolume: water, coffee, beer, a potion) takes
+  // a bite out of it at once, scaled by how much of it there was. Asleep it
+  // fills slower and never past BLADDER_SLEEP_FLOOR: nobody wets the bed.
+  //
+  // At 0 the member empties it where they stand: the meter is full again, their
+  // hygiene pays for it and, somebody rather than something, so does their
+  // social meter. The WC, a shower, a bath and the open water (swimming past
+  // 80% full) all empty it without the cost.
+  //
+  // Where it lives follows the other extended meters: on the actor for the
+  // player, on the society profile for a recruited companion (whose meter the
+  // NPC simulation drains, NPCSimulationCore NeedManager).
+  const BLADDER_DRAIN_SHARE   = 4;     // x the sleep drain, per step
+  const BLADDER_SLEEP_PER_MIN = 0.08;  // per slept minute
+  const BLADDER_SLEEP_FLOOR   = 5;     // a skipped stretch of time never ends in an accident
+  const BLADDER_LOW           = 20;    // under this the meter warns: over 80% full
+  const BLADDER_SWIM_FULLNESS = 80;    // fuller than this and the water does the rest
+  const BLADDER_ACCIDENT_HYGIENE = 35;
+  const BLADDER_ACCIDENT_SOCIAL  = 10;
+  const BLADDER_ML_PER_POINT  = 33;    // 500 ml of drink is 15 points of the meter
+  const BLADDER_DIURETIC      = 1.25;  // alcohol and caffeine send it through faster
+  const BLADDER_DRINK_MIN     = 3;
+  const BLADDER_DRINK_MAX     = 35;
+
+  Game_Actor.prototype.bladder = function () {
+    return this.extendedNeed("bladder");
+  };
+  Game_Actor.prototype.bladderPercent = function () {
+    return Math.floor((this.bladder() / maxNeed) * 100);
+  };
+  Game_Actor.prototype.addBladder = function (amount) {
+    this.setExtendedNeed("bladder", this.bladder() + amount);
+  };
+  Game_Actor.prototype.reduceBladder = function (amount) {
+    this.setExtendedNeed("bladder", this.bladder() - amount);
+  };
+
+  window.Bladder = {
+    DRAIN_SHARE: BLADDER_DRAIN_SHARE,
+    SLEEP_PER_MIN: BLADDER_SLEEP_PER_MIN,
+    SLEEP_FLOOR: BLADDER_SLEEP_FLOOR,
+    LOW: BLADDER_LOW,
+    SWIM_FULLNESS: BLADDER_SWIM_FULLNESS,
+    ACCIDENT_HYGIENE: BLADDER_ACCIDENT_HYGIENE,
+    ACCIDENT_SOCIAL: BLADDER_ACCIDENT_SOCIAL,
+    PLACES: ["wc", "shower", "bath"],
+
+    /** How full it is, 0 empty to 100 bursting: the meter read backwards. */
+    fullness(actor) {
+      if (!actor || !actor.bladder) return 0;
+      return Math.max(0, Math.min(100, maxNeed - actor.bladder()));
+    },
+
+    /**
+     * Whether the meter lives on the actor (and so is drained by the step
+     * here) rather than on a society profile the NPC simulation drains.
+     */
+    ownsDrain(actor) {
+      const profile = extendedNeedProfile(actor);
+      return !(profile && typeof profile.bladder === "number");
+    },
+
+    /** Empty it. Returns how much fullness went. */
+    relieve(actor) {
+      if (!actor || !actor.bladder) return 0;
+      const before = this.fullness(actor);
+      actor.setExtendedNeed("bladder", maxNeed);
+      return before;
+    },
+
+    /**
+     * The WC, a shower or a bath: everybody goes. One popup for the party,
+     * worded for the place; a party that had nothing to go for is told so.
+     */
+    relieveParty(place) {
+      if (typeof $gameParty === "undefined" || !$gameParty) return 0;
+      const where = this.PLACES.includes(place) ? place : "wc";
+      let total = 0;
+      for (const m of $gameParty.members()) total += this.relieve(m);
+      if (where === "wc" && typeof $gameVariables !== "undefined" && $gameVariables) {
+        // WcLastUsed (System.json variable 98): the game minute it was last used.
+        $gameVariables.setValue(98, getGameTimeMinutes());
+      }
+      try {
+        const toast = window.ParchmentToast;
+        if (toast) {
+          if (total > 0) {
+            toast.need("bladder", total, {
+              value: maxNeed,
+              note: T("TimeDate.bladder.relieved." + where),
+            });
+          } else if (where === "wc") {
+            toast.show(T("TimeDate.bladder.nothingToDo"), { key: "bladder:nothing" });
+          }
+        }
+      } catch (e) { /* a popup never blocks a flush */ }
+      return total;
+    },
+
+    /**
+     * Nothing left to hold it with: emptied where they stand. Returns true
+     * when it happened.
+     */
+    accident(actor) {
+      if (!actor || !actor.bladder) return false;
+      this.relieve(actor);
+      const beast = isNonSentientMember(actor);
+      if (!beast) {
+        if (actor.reduceHygiene) actor.reduceHygiene(BLADDER_ACCIDENT_HYGIENE);
+        if (actor.reduceSocial) actor.reduceSocial(BLADDER_ACCIDENT_SOCIAL);
+      }
+      try {
+        const id = actor.actorId ? actor.actorId() : actor.name();
+        window.ParchmentToast?.show(
+          T(beast ? "TimeDate.bladder.accidentBeast" : "TimeDate.bladder.accident", { name: actor.name() }),
+          { severity: beast ? "info" : "danger", key: "bladder:accident:" + id });
+      } catch (e) { /* the puddle is there either way */ }
+      return true;
+    },
+
+    /** Called once a step per member: an accident once the meter is out. */
+    check(actor) {
+      if (!actor || !actor.bladder) return false;
+      if (actor.bladder() > 0) return false;
+      return this.accident(actor);
+    },
+
+    /** The walking drain, for the members whose meter lives on the actor. */
+    step(actor, amount) {
+      if (!actor || !actor.reduceBladder || !this.ownsDrain(actor)) return;
+      actor.reduceBladder(amount);
+    },
+
+    /**
+     * Time passed with nobody at the controls (a sleep, a shift, a forage):
+     * the meter moves, but never further than the floor, so the stretch never
+     * ends in a puddle. Only the members whose meter lives on the actor.
+     */
+    skipTime(actor, amount) {
+      if (!actor || !actor.bladder || !this.ownsDrain(actor)) return;
+      const now = actor.bladder();
+      if (now <= BLADDER_SLEEP_FLOOR) return;
+      actor.setExtendedNeed("bladder", Math.max(BLADDER_SLEEP_FLOOR, now - amount));
+    },
+
+    /** Points a drink takes off the meter, 0 for anything that is not one. */
+    drinkCost(item) {
+      const utils = window.ItemSystemUtils;
+      if (!item || !utils || typeof utils.liquidVolume !== "function") return 0;
+      const ml = utils.liquidVolume(item);
+      if (!ml) return 0;
+      const note = String(item.note || "");
+      const diuretic = /<Addiction:\s*alcohol/i.test(note) || /<caffeine:\s*[1-9]/i.test(note);
+      const points = (ml / BLADDER_ML_PER_POINT) * (diuretic ? BLADDER_DIURETIC : 1);
+      return Math.round(Math.max(BLADDER_DRINK_MIN, Math.min(BLADDER_DRINK_MAX, points)));
+    },
+
+    /**
+     * Read one used item and take its liquid in. Called from the one place an
+     * item lands on an actor (ItemSystemUtils.applyNeedRestores), and from a
+     * battle action, which never goes through the backpack.
+     */
+    onConsume(actor, item) {
+      const cost = this.drinkCost(item);
+      if (!cost || !actor || !actor.reduceBladder) return 0;
+      actor.reduceBladder(cost);
+      return cost;
+    },
+
+    /**
+     * In the water: whoever is fuller than BLADDER_SWIM_FULLNESS lets it go.
+     * No hygiene cost, the water takes it. One discreet line for the party.
+     * Returns how many members went.
+     */
+    swimRelief() {
+      if (typeof $gameParty === "undefined" || !$gameParty) return 0;
+      let went = 0;
+      for (const m of $gameParty.members()) {
+        if (this.fullness(m) > BLADDER_SWIM_FULLNESS) {
+          this.relieve(m);
+          went++;
+        }
+      }
+      if (went) {
+        try {
+          window.ParchmentToast?.show(T("TimeDate.bladder.swim"), { key: "bladder:swim", duration: 90 });
+        } catch (e) { /* the water does not care */ }
+      }
+      return went;
+    },
+  };
+
+  // A potion drunk mid-fight goes through the action rather than the backpack.
+  if (typeof Game_Action !== "undefined" && Game_Action.prototype) {
+    const _Bladder_Game_Action_apply = Game_Action.prototype.apply;
+    Game_Action.prototype.apply = function (target) {
+      if (_Bladder_Game_Action_apply) _Bladder_Game_Action_apply.call(this, target);
+      try {
+        if ($gameParty && $gameParty.inBattle() && this.isItem() && target && target.isActor && target.isActor()) {
+          window.Bladder.onConsume(target, this.item());
+        }
+      } catch (e) { /* never break an action over it */ }
+    };
+  }
+
+  //===========================================================================
   // Company - the road is the party's social life
   //===========================================================================
   // Social is the one meter travelling FILLS instead of emptying. A party on
@@ -1482,7 +1726,7 @@
   // a class id written out here.
   const ACT_INTERVAL_MIN = 60;   // game minutes between one member's acts
   const ACT_THRESHOLD    = 45;   // the meter has to be under this to be worth acting on
-  const ACT_GAIN = { hygiene: 14, social: 16, leisure: 12 };
+  const ACT_GAIN = { hygiene: 14, social: 16, leisure: 12, bladder: 100 };
   const IDLE_LEISURE_SHARE = 0.5;   // a pastime with nothing in the pack is worth less
 
   function isNonSentientMember(actor) {
@@ -1550,6 +1794,12 @@
       if (key === "hygiene") {
         if (actor.addHygiene) actor.addHygiene(ACT_GAIN.hygiene);
         return T('TimeDate.partyLife.wash', { name });
+      }
+      if (key === "bladder") {
+        // No WC on this map (walkTo said no): a discreet minute behind
+        // something, which is worth the whole meter.
+        window.Bladder.relieve(actor);
+        return T('TimeDate.partyLife.relieve', { name });
       }
       return null;
     },
@@ -1766,6 +2016,7 @@
     hygiene: { low: "hygieneLow", critical: "hygieneCritical" },
     social:  { low: "socialLow",  critical: "socialCritical"  },
     leisure: { low: "leisureLow", critical: "leisureCritical" },
+    bladder: { low: "bladderLow", critical: "bladderCritical" },
   };
 
   function checkExtendedNeeds(actor) {
@@ -1776,7 +2027,7 @@
     for (const key of Object.keys(EXT_NEED_TEXT)) {
       const pct = needs[key];
       if (pct === null || pct === undefined) continue;
-      const state = pct <= 0 ? "critical" : pct < 20 ? "low" : "normal";
+      const state = pct <= 0 ? "critical" : pct < (key === "bladder" ? BLADDER_LOW : 20) ? "low" : "normal";
       const prev = actor._prevExtNeedStates[key] || "normal";
       if (state !== prev) {
         actor._prevExtNeedStates[key] = state;
@@ -1881,6 +2132,13 @@
       leader.reduceLeisure(sleepRate * 0.5 * baseMultiplier * needAugmentRate(leader, "leisure"));
     }
 
+    // The bladder fills for every member whose meter lives on the actor; a
+    // recruited companion's lives on their society profile, which the NPC
+    // simulation fills (window.Bladder.ownsDrain).
+    for (const member of this.members()) {
+      if (member) window.Bladder.step(member, sleepRate * BLADDER_DRAIN_SHARE * baseMultiplier * needAugmentRate(member, "bladder"));
+    }
+
     // Social is not the leader's meter alone: it is the party's, and the road
     // fills it as long as there is somebody to travel with. Only a lone
     // traveller watches it run down (see Company, above).
@@ -1911,7 +2169,10 @@
         actor.checkStateChange("sleep", actor._prevSleepState);
       }
 
-      // Low warnings for Hygiene / Social / Fun, every member incl. leader
+      // Out of bladder: emptied where they stand, before the warnings read it.
+      window.Bladder.check(actor);
+
+      // Low warnings for Hygiene / Social / Fun / Bladder, every member incl. leader
       checkExtendedNeeds(actor);
 
       // A mind kept awake too long starts letting go of things.
@@ -2434,6 +2695,9 @@
       }
       if (actor._leisure === undefined) {
         actor._leisure = maxNeed;
+      }
+      if (actor._bladder === undefined) {
+        actor._bladder = maxNeed;
       }
       if (actor._prevHungerState === undefined) {
         actor._prevHungerState = "normal";
@@ -3158,7 +3422,7 @@
   };
 
   window.PartyNeeds = {
-    KEYS:   ['hunger', 'sleep', 'hygiene', 'social', 'leisure'],
+    KEYS:   ['hunger', 'sleep', 'hygiene', 'social', 'leisure', 'bladder'],
     get LABELS() { return T.obj("TimeDate.needLabel"); },
 
     getMemberNeeds(mem) {
@@ -3173,6 +3437,7 @@
         hygiene: mem.hygienePercent  ? mem.hygienePercent()  : Math.round(profile?.hygiene ?? 100),
         social:  mem.socialPercent   ? mem.socialPercent()   : Math.round(profile?.social  ?? 100),
         leisure: mem.leisurePercent  ? mem.leisurePercent()  : Math.round(profile?.leisure ?? 100),
+        bladder: mem.bladderPercent  ? mem.bladderPercent()  : Math.round(profile?.bladder ?? 100),
       };
     },
 
@@ -3206,6 +3471,7 @@
         hygiene: { add: 'addHygiene', reduce: 'reduceHygiene' },
         social:  { add: 'addSocial',  reduce: 'reduceSocial'  },
         leisure: { add: 'addLeisure', reduce: 'reduceLeisure' },
+        bladder: { add: 'addBladder', reduce: 'reduceBladder' },
       }[key];
       if (!spec) return;
       const focus = opts.focus || null;
@@ -4390,7 +4656,7 @@
     this._el = null;
     this._shown = false;
     this._refreshTimer = 0;
-    this._cachedNeeds = { hunger: 100, sleep: 100, hygiene: 100, social: 100, leisure: 100 };
+    this._cachedNeeds = { hunger: 100, sleep: 100, hygiene: 100, social: 100, leisure: 100, bladder: 100 };
     this._lastPlayerX = $gamePlayer ? $gamePlayer.x : 0;
     this._lastPlayerY = $gamePlayer ? $gamePlayer.y : 0;
     this._create();
@@ -4707,7 +4973,7 @@
   // Base fill colour per need; low values override to amber/red below.
   MapInfoHUD.NEED_COLORS = {
     hunger: 'mih-green', sleep: 'mih-blue', hygiene: 'mih-purple',
-    social: 'mih-orange', leisure: 'mih-teal'
+    social: 'mih-orange', leisure: 'mih-teal', bladder: 'mih-yellow'
   };
 
   MapInfoHUD.prototype._fillClass = function (need, pct) {
@@ -4783,7 +5049,7 @@
       needs = window.PartyNeeds.partyMedian();
       this._cachedNeeds = needs;
     } else {
-      needs = this._cachedNeeds || { hunger: 100, sleep: 100, hygiene: 100, social: 100, leisure: 100 };
+      needs = this._cachedNeeds || { hunger: 100, sleep: 100, hygiene: 100, social: 100, leisure: 100, bladder: 100 };
     }
 
     const dt = getDateTimeFromMinutes(getGameTimeMinutes());
@@ -5240,6 +5506,11 @@
       if (leader.reduceHygiene) leader.reduceHygiene((maxSleep * 0.0005) * deltaMin);
       if (!a.forage && leader.reduceSocial) leader.reduceSocial((maxSleep * 0.0003) * deltaMin);
       if (leader.reduceLeisure) leader.reduceLeisure((maxSleep * 0.0003) * deltaMin);
+      // Awake hours fill the bladder at the walking rate, but the stretch
+      // never ends in an accident (window.Bladder.skipTime).
+      for (const member of $gameParty.members()) {
+        window.Bladder.skipTime(member, maxSleep * 0.0006 * BLADDER_DRAIN_SHARE * deltaMin);
+      }
       const frac = a.totalMinutes > 0 ? a.doneMinutes / a.totalMinutes : 1;
       leader._sleep = a.sleepStart + (a.sleepTarget - a.sleepStart) * frac;
     }
@@ -5554,6 +5825,10 @@
       if (leader.reduceHygiene) leader.reduceHygiene((maxSleep * 0.0005) * deltaMin);
       if (leader.reduceSocial)  leader.reduceSocial((maxSleep * 0.0003) * deltaMin);
       if (leader.reduceLeisure) leader.reduceLeisure((maxSleep * 0.0003) * deltaMin);
+      // Asleep the bladder fills slower, and nobody wets the bed.
+      for (const member of $gameParty.members()) {
+        window.Bladder.skipTime(member, BLADDER_SLEEP_PER_MIN * deltaMin);
+      }
       const frac = a.totalMinutes > 0 ? a.doneMinutes / a.totalMinutes : 1;
       leader._sleep = a.sleepStart + (a.sleepTarget - a.sleepStart) * frac;
     }
@@ -6142,7 +6417,7 @@
   // and the tests read the same two numbers the meter is clamped by.
   window.TimeDateSystem.overeatMaxHunger = overeatMaxHunger;
   window.TimeDateSystem.overeatRate = OVEREAT_RATE;
-  // Ceiling shared by the extended needs (Hygiene / Social / Fun).
+  // Ceiling shared by the extended needs (Hygiene / Social / Fun / Bladder).
   window.TimeDateSystem.maxNeed = maxNeed;
   // Company: how much of one the party is, and the step the social meter takes
   // because of it. Bared so the rule can be read and tested from outside.

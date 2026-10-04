@@ -868,77 +868,101 @@
     // Core Actor Custom Stats Engine (Variable Persistency Sync)
     // =============================================================================
 
+    // The four look stats. Every armour and weapon carries them as
+    // <Arcane: n> <Substance: n> <Stealth: n> <Intimidation: n>, 0 to 100,
+    // written by tools/items/gen_look_stats.js. A character's stat is the
+    // average over every equip slot they have, an empty slot counting as 0, so
+    // 100% means every slot holds a 100 in that stat: an icon of the look. A
+    // two-handed weapon fills both of the hands it ties up.
+    const LOOK_STATS = ['arcane', 'substance', 'stealth', 'intimidation'];  // i18n-ignore  stat ids
+    const LOOK_TAGS = { arcane: 'Arcane', substance: 'Substance', stealth: 'Stealth', intimidation: 'Intimidation' };  // i18n-ignore  note tags
+    const LookStats = {
+        STATS: LOOK_STATS,
+        ICON: 100,
+
+        // One piece's four values, read off its note tags.
+        of(item) {
+            const out = { arcane: 0, substance: 0, stealth: 0, intimidation: 0 };
+            const meta = item && item.meta;
+            if (!meta) return out;
+            for (const s of LOOK_STATS) {
+                const v = Number(String(meta[LOOK_TAGS[s]] || '').trim());
+                if (Number.isFinite(v)) out[s] = Math.max(0, Math.min(100, v));
+            }
+            return out;
+        },
+
+        // A whole outfit: `items` worn across `slotCount` slots, each item
+        // weighted by how many slots it fills.
+        fromItems(items, slotCount, weightOf) {
+            const sum = { arcane: 0, substance: 0, stealth: 0, intimidation: 0 };
+            const slots = Math.max(1, slotCount || 0);
+            (items || []).forEach((item, i) => {
+                if (!item) return;
+                const w = weightOf ? weightOf(item, i) : 1;
+                const look = this.of(item);
+                for (const s of LOOK_STATS) sum[s] += look[s] * w;
+            });
+            const out = {};
+            for (const s of LOOK_STATS) out[s] = Math.max(0, Math.min(100, Math.round(sum[s] / slots)));
+            return out;
+        },
+
+        // plain, noted, striking, iconic: the word the Empathize panel prints.
+        tier(value) {
+            const v = Number(value) || 0;
+            if (v >= 100) return 'iconic';  // i18n-ignore  tier id
+            if (v >= 70) return 'striking';  // i18n-ignore  tier id
+            if (v >= 40) return 'noted';  // i18n-ignore  tier id
+            return 'plain';  // i18n-ignore  tier id
+        },
+
+        isIcon(value) { return (Number(value) || 0) >= 100; },
+
+        // The stats of a party actor as the world reads them, boosts included.
+        ofActor(actor) {
+            if (!actor) return { arcane: 0, substance: 0, stealth: 0, intimidation: 0 };
+            return {
+                arcane: actor.pvArcane ? actor.pvArcane() : 0,
+                substance: actor.pvSubstance ? actor.pvSubstance() : 0,
+                stealth: actor.pvStealth ? actor.pvStealth() : 0,
+                intimidation: actor.pvIntimidation ? actor.pvIntimidation() : 0,
+            };
+        },
+
+        // The stats in which a character is an icon (exactly 100%).
+        icons(stats) {
+            return LOOK_STATS.filter(s => stats && this.isIcon(stats[s]));
+        },
+    };
+    window.LookStats = LookStats;
+
     Game_Actor.prototype.calculateCustomStats = function () {
         const equips = this.equips();
-        const statContributions = { arcane: 0, substance: 0, stealth: 0, intimidation: 0 };
-        let totalRelevantPieces = 0;
-
-        for (let i = 0; i < equips.length; i++) {
-            const item = equips[i];
-            if (!item) continue;
-
-            if (DataManager.isWeapon(item)) {
-                totalRelevantPieces++;
-                switch (item.wtypeId) {
-                    case 1: statContributions.stealth++;       break; // Dagger
-                    case 2: statContributions.intimidation++;  break; // Sword
-                    case 3: statContributions.intimidation++;  break; // Heavy
-                    case 4: statContributions.intimidation++;  break; // Axe
-                    case 5: statContributions.substance++;     break; // Whip
-                    case 6: statContributions.arcane++;        break; // Staff
-                    case 7: statContributions.stealth++;       break; // Bow
-                    case 8: statContributions.substance++;     break; // Projectile
-                    case 9: statContributions.substance++;     break; // Gun
-                    case 10: statContributions.intimidation++; break; // Claw
-                }
-            } else if (DataManager.isArmor(item)) {
-                const atypeId = item.atypeId;
-                if (atypeId >= 1 && atypeId <= 4) {
-                    totalRelevantPieces++;
-                    switch (atypeId) {
-                        case 1: statContributions.substance++; statContributions.stealth++; break; // Clothes
-                        case 2: statContributions.arcane++;        break; // Robe
-                        case 3: statContributions.stealth++;       break; // Light Armor
-                        case 4: statContributions.intimidation++;  break; // Heavy Armor
-                    }
-                }
-            }
-        }
-
-        const stats = { arcane: 0, substance: 0, stealth: 0, intimidation: 0 };
-        if (totalRelevantPieces > 0) {
-            stats.arcane       = Math.round((statContributions.arcane       / totalRelevantPieces) * 100);
-            stats.substance    = Math.round((statContributions.substance    / totalRelevantPieces) * 100);
-            stats.stealth      = Math.round((statContributions.stealth      / totalRelevantPieces) * 100);
-            stats.intimidation = Math.round((statContributions.intimidation / totalRelevantPieces) * 100);
-        }
-        return stats;
+        const slotCount = this.equipSlots().length;
+        return LookStats.fromItems(equips, slotCount, (item, i) => {
+            const kind = HandSlots.slotKind(this, i);
+            return kind === 'hand' ? Math.max(1, HandSlots.handCost(kind, item)) : 1;
+        });
     };
 
     Game_Actor.prototype.saveCustomStatsToVariables = function () {
-        const stats   = this.calculateCustomStats();
-        const actorId = this.actorId();
-        if (actorId === 1) {
-            $gameActors.actor(1).setPvArcane(stats.arcane);
-            $gameActors.actor(1).setPvSubstance(stats.substance);
-            $gameActors.actor(1).setPvStealth(stats.stealth);
-            $gameActors.actor(1).setPvIntimidation(stats.intimidation);
-        } else if (actorId === 2) {
-            $gameActors.actor(2).setPvArcane(stats.arcane);
-            $gameActors.actor(2).setPvSubstance(stats.substance);
-            $gameActors.actor(2).setPvStealth(stats.stealth);
-            $gameActors.actor(2).setPvIntimidation(stats.intimidation);
-        } else if (actorId === 3) {
-            $gameActors.actor(3).setPvArcane(stats.arcane);
-            $gameActors.actor(3).setPvSubstance(stats.substance);
-            // Actor 3's last two stats used to be dumped into Variables 131 and
-            // 132, left over from before the pv* actor fields existed. 131 is
-            // the police heat (CrimeSystem), so every equip change re-wrote the
-            // party's wanted level to actor 3's stealth percentage and the
-            // police were after a party that had never committed a crime.
-            $gameActors.actor(3).setPvStealth(stats.stealth);
-            $gameActors.actor(3).setPvIntimidation(stats.intimidation);
-        }
+        // The setters live in Core/ActorCharacterFields.js.
+        if (typeof this.setPvArcane !== 'function') return;
+        const stats = this.calculateCustomStats();
+        this.setPvArcane(stats.arcane);
+        this.setPvSubstance(stats.substance);
+        this.setPvStealth(stats.stealth);
+        this.setPvIntimidation(stats.intimidation);
+    };
+
+    // A party member who joined, or a save made before the look stats were
+    // read off the gear, holds no value yet: work it out the first time anyone
+    // asks rather than leaving them at nothing until their next equip change.
+    const _Game_Actor_setup_look = Game_Actor.prototype.setup;
+    Game_Actor.prototype.setup = function (actorId) {
+        _Game_Actor_setup_look.call(this, actorId);
+        if (typeof this.saveCustomStatsToVariables === 'function') this.saveCustomStatsToVariables();
     };
 
 
@@ -1490,7 +1514,109 @@
         return WeaponScaling.statsFor(weapon);
     };
 
+    // =============================================================================
+    // Temporary character stat boosts (cosmetics)
+    // =============================================================================
+    // An item tagged <StatBoost: substance 15 240> lends its wearer 15 points of
+    // Substance for 240 game minutes: lipstick, perfume, hair gel. The four
+    // character stats (arcane, substance, stealth, intimidation) are percentages
+    // read off the equipment by calculateCustomStats; a boost sits on top of
+    // that and is read through the same pv* getters every reader already uses,
+    // so it expires on the clock with nothing to re-sync. The same item used
+    // again refreshes its own boost instead of stacking on itself; different
+    // items stack, and the stat never passes 100.
+    const BOOST_TAG = /<StatBoost:\s*(arcane|substance|stealth|intimidation)\s+([+-]?\d+)\s+(\d+)\s*>/ig;
+    const BOOST_GETTERS = {
+        arcane: 'pvArcane', substance: 'pvSubstance',  // i18n-ignore  method names
+        stealth: 'pvStealth', intimidation: 'pvIntimidation'  // i18n-ignore  method names
+    };
+    const gameMinutes = () => (window.TimeDateSystem && window.TimeDateSystem.getGameTimeMinutes)
+        ? window.TimeDateSystem.getGameTimeMinutes() : 0;
+
+    const StatBoost = {
+        of(item) {
+            const out = [];
+            if (!item || !item.note) return out;
+            BOOST_TAG.lastIndex = 0;
+            let m;
+            while ((m = BOOST_TAG.exec(item.note))) {
+                out.push({ stat: m[1].toLowerCase(), amount: Number(m[2]), minutes: Number(m[3]) });
+            }
+            return out;
+        },
+
+        isBoostItem(item) {
+            return this.of(item).length > 0;
+        },
+
+        // The boosts still running on an actor; spent ones are dropped.
+        active(actor) {
+            if (!actor || !Array.isArray(actor._statBoosts)) return [];
+            const now = gameMinutes();
+            actor._statBoosts = actor._statBoosts.filter(b => b.until > now);
+            return actor._statBoosts;
+        },
+
+        bonus(actor, stat) {
+            return this.active(actor).reduce((sum, b) => sum + (b.stat === stat ? b.amount : 0), 0);
+        },
+
+        apply(actor, item) {
+            const boosts = this.of(item);
+            if (!actor || !boosts.length) return false;
+            const now = gameMinutes();
+            const kept = this.active(actor).filter(b => b.itemId !== item.id);
+            for (const b of boosts) {
+                kept.push({ itemId: item.id, stat: b.stat, amount: b.amount, until: now + b.minutes });
+            }
+            actor._statBoosts = kept;
+            return true;
+        }
+    };
+
+    for (const [stat, getter] of Object.entries(BOOST_GETTERS)) {
+        const base = Game_Actor.prototype[getter];
+        if (typeof base !== 'function') continue;
+        Game_Actor.prototype[getter] = function () {
+            const value = base.apply(this, arguments);
+            const bonus = StatBoost.bonus(this, stat);
+            if (!bonus) return value;
+            return Math.max(0, Math.min(100, (Number(value) || 0) + bonus));
+        };
+    }
+
+    // The backpack refuses an item that heals nothing, so a cosmetic is
+    // answered here, before ItemUse.onActor (ItemSystemInventory) sees it.
+    if (window.ItemUse && typeof window.ItemUse.onActor === 'function' && !window.ItemUse._statBoostWrapped) {
+        const onActor = window.ItemUse.onActor;
+        window.ItemUse.onActor = function (actor, item) {
+            if (!StatBoost.isBoostItem(item)) return onActor.apply(this, arguments);
+            if (!actor || !$gameParty.numItems(item)) {
+                SoundManager.playBuzzer();
+                return { used: false, commonEvent: 0 };
+            }
+            SoundManager.playUseItem();
+            $gameParty.consumeItem(item);
+            StatBoost.apply(actor, item);
+            const utils = window.ItemSystemUtils;
+            if (utils && utils.applyNeedRestores) utils.applyNeedRestores(actor, item);
+            if (window.ParchmentToast) {
+                for (const b of StatBoost.of(item)) {
+                    window.ParchmentToast.show(T('Equip.statBoost.applied', {
+                        name: actor.name(), item: item.name, stat: T('Equip.' + b.stat),
+                        amount: (b.amount > 0 ? '+' : '') + b.amount,
+                        hours: Math.round(b.minutes / 60 * 10) / 10
+                    }));
+                }
+            }
+            actor.refresh();
+            return { used: true, commonEvent: 0 };
+        };
+        window.ItemUse._statBoostWrapped = true;
+    }
+
     // Expose to UI layer
+    window.StatBoost = StatBoost;
     window.WeaponProficiency = WeaponProficiency;
     window.WeaponScaling = WeaponScaling;
     window.EquipI18n   = i18n;

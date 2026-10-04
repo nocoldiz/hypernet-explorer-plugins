@@ -7458,5 +7458,93 @@
   "2090": {
     "name": "Piatto rovinato",
     "description": "Un piatto riuscito male in padella.\nMangiarlo fa venire la nausea."
+  },
+  "2091": {
+    "name": "Pozione della metamorfosi",
+    "description": "Un infuso {viola|vorticoso} in fiaschetta.\nBevilo per scegliere corpo e volto nuovi."
+  },
+  "2092": {
+    "name": "Sciame di surgerybot",
+    "description": "Custodia {ronzante|chiusa} di microdroni.\nRifa corpo e volto, come la gente del posto."
+  },
+  "2093": {
+    "name": "Spazzolino",
+    "description": "Spazzolino {economico|di plastica}, un uso.\nRipristina un po' di igiene."
+  },
+  "2094": {
+    "name": "Saponetta",
+    "description": "Saponetta {semplice|alla lavanda}, un uso.\nRipristina l'igiene."
+  },
+  "2095": {
+    "name": "Bustina di shampoo",
+    "description": "Bustina di shampoo {alla mela|alle erbe}.\nRipristina l'igiene."
+  },
+  "2096": {
+    "name": "Tubetto di bagnoschiuma",
+    "description": "Tubetto di {bagnoschiuma|docciaschiuma}.\nRipristina molta igiene."
+  },
+  "2097": {
+    "name": "Salviette umidificate",
+    "description": "Salviette {stropicciate|richiudibili}.\nRipristina un po' di igiene, ovunque."
+  },
+  "2098": {
+    "name": "Deodorante stick",
+    "description": "Deodorante stick {quasi finito|da viaggio}.\nRipristina l'igiene."
+  },
+  "2099": {
+    "name": "Collutorio",
+    "description": "Un tappo di collutorio {alla menta|pungente}.\nRipristina un po' di igiene."
+  },
+  "2100": {
+    "name": "Filo interdentale",
+    "description": "Un pezzo {corto|cerato} di filo interdentale.\nRipristina un po' di igiene."
+  },
+  "2101": {
+    "name": "Rasoio usa e getta",
+    "description": "Rasoio usa e getta, {una rasatura|un uso}.\nRipristina un po' di igiene."
+  },
+  "2102": {
+    "name": "Panno per lavarsi",
+    "description": "Un panno {pulito|di cotone ruvido}.\nRipristina l'igiene a ogni lavandino."
+  },
+  "2103": {
+    "name": "Rossetto",
+    "description": "Rossetto {ciliegia|prugna}, un'ultima passata.\nSostanza +10 per qualche ora."
+  },
+  "2104": {
+    "name": "Fiala di profumo",
+    "description": "Una fiala di profumo {floreale|affumicato}.\nSostanza +15 per mezza giornata."
+  },
+  "2105": {
+    "name": "Acqua di colonia",
+    "description": "Colonia {legnosa|agli agrumi}, ultima goccia.\nSostanza +15 per mezza giornata."
+  },
+  "2106": {
+    "name": "Barattolo di gel",
+    "description": "Gel per capelli {extra forte|effetto bagnato}.\nSostanza +8 per qualche ora."
+  },
+  "2107": {
+    "name": "Mascara",
+    "description": "Uno scovolino di mascara {nero|waterproof}.\nSostanza +10 per qualche ora."
+  },
+  "2108": {
+    "name": "Matita per occhi",
+    "description": "Un eyeliner {kajal|liquido}, una riga sicura.\nSostanza +8 per qualche ora."
+  },
+  "2109": {
+    "name": "Cipria compatta",
+    "description": "Cipria {compatta|trasparente} con specchio.\nSostanza +12 per qualche ora."
+  },
+  "2110": {
+    "name": "Palette di blush",
+    "description": "Un blush {rosa|pesca}, un'ultima spolverata.\nSostanza +6 per qualche ora."
+  },
+  "2111": {
+    "name": "Smalto per unghie",
+    "description": "Uno smalto {rosso lucido|cromato}, uno strato.\nSostanza +6 per mezza giornata."
+  },
+  "2112": {
+    "name": "Bustina di tinta",
+    "description": "Una tinta per capelli {nero corvino|blu neon}.\nSostanza +20 per un giorno intero."
   }
 }

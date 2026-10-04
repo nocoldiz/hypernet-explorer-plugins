@@ -236,5 +236,9 @@
     "next": "On a page"
   },
   "stockLeft": "{n} left",
-  "mirror": "Mirror"
+  "mirror": "Mirror",
+  "painting": {
+    "pickTitle": "Which picture does it hold?",
+    "none": "As it is"
+  }
 }

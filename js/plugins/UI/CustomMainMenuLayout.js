@@ -944,6 +944,7 @@
             hygiene: isPlayer ? 100 : Math.round(profile?.hygiene ?? 100),
             social:  isPlayer ? 100 : Math.round(profile?.social  ?? 100),
             leisure: isPlayer ? 100 : Math.round(profile?.leisure ?? 100),
+            bladder: isPlayer ? 100 : Math.round(profile?.bladder ?? 100),
         };
     };
 
@@ -1352,10 +1353,25 @@
         }
         SoundManager.playOk();
         this.popScene();
-        setTimeout(() => {
+        runOnLoadedMap(() => {
             if (window.MergedVehicleSystem) window.MergedVehicleSystem.spawnVehicleByKey(key);
-        }, 100);
+        });
     };
+
+    // The menu closes back onto a Scene_Map that reloads its map file; anything
+    // that places the party's vehicle reads $dataMap, which is null until then.
+    // A fixed delay lost that race on a big map, so wait for the map itself.
+    function runOnLoadedMap(fn) {
+        let tries = 0;
+        const poll = () => {
+            const scene = SceneManager._scene;
+            const ready = scene instanceof Scene_Map && scene._mapLoaded &&
+                DataManager.isMapLoaded() && !SceneManager.isSceneChanging();
+            if (ready) { fn(); return; }
+            if (++tries < 200) setTimeout(poll, 50);
+        };
+        setTimeout(poll, 50);
+    }
 
     // Open the repair / upgrade workshop for an owned vehicle (pushes its scene
     // on top of the menu; backing out returns here).
@@ -1451,9 +1467,19 @@
         }
         SoundManager.playOk();
         this.popScene();
-        setTimeout(() => {
+        runOnLoadedMap(() => {
             if (window.MergedVehicleSystem) window.MergedVehicleSystem.mountPet(petId);
-        }, 100);
+        });
+    };
+
+    // The Ridable / Unridable toggle on a companion's row.
+    Scene_Menu.prototype.togglePetRidable = function (petId) {
+        if (window.PetSystem?.toggleRidable?.(petId) == null) {
+            SoundManager.playBuzzer();
+            return;
+        }
+        SoundManager.playOk();
+        this.refreshUIMenuDOM(false);
     };
 
     // Getting off again, which can be done from where the menu stands: the
@@ -3080,7 +3106,8 @@
             { key: 'sleep',   label: emLabel("needSleep",   T('MainMenu.need.sleep')),   val: needs.sleep ?? 100 },
             { key: 'hygiene', label: emLabel("needHygiene", T('MainMenu.need.hygiene')), val: needs.hygiene },
             { key: 'social',  label: emLabel("needSocial",  T('MainMenu.need.social')),  val: needs.social },
-            { key: 'leisure', label: emLabel("needLeisure", T('MainMenu.need.fun')),     val: needs.leisure }
+            { key: 'leisure', label: emLabel("needLeisure", T('MainMenu.need.fun')),     val: needs.leisure },
+            { key: 'bladder', label: emLabel("needBladder", T('MainMenu.need.bladder')), val: needs.bladder }
         ];
         const defs = raw
             .filter(n => n.val !== null && n.val !== undefined)
@@ -3513,6 +3540,7 @@
                     <span class="clock-value">${dateTime.dateShort} | ${dateTime.time24}</span>
                 </div>
                 ${this.generateUILocalTimeRowHTML()}
+                ${this.generateUITowerTimeRowHTML()}
                 <div class="clock-row">
                     <span class="clock-label">${T('MainMenu.label.weather')}</span>
                     <span class="clock-value">${weatherName} (${temperature}°C)</span>
@@ -3664,16 +3692,24 @@
                             ? `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.promoteDesignedPet?.(${pet.id})">${T('MainMenu.pets.promote')}</div>`
                             : `<div class="command-item roster-action is-disabled" title="${escapeHtml(T('MainMenu.pets.promoteNoRoom'))}">${T('MainMenu.pets.promote')}</div>`;
                     }
-                    // A creature the party can sit on is offered the saddle
-                    // instead of a place in the vehicle menu: there is no
-                    // summoning a mount, only climbing onto the one that is
-                    // already here. Party members are actors and never appear
-                    // on this page at all, so none of them is ever ridable.
+                    // Whether a companion may be sat on is the player's call,
+                    // off until they turn it on here; a child is never offered
+                    // the choice. Ride puts the leader straight on its back
+                    // instead of walking over to it. Party members are actors
+                    // and never appear on this page, so none is ever ridable.
                     let rideBtns = '';
-                    if (isMounted) {
-                        rideBtns = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.dismountPet?.()">${T('MainMenu.pets.dismount')}</div>`;
-                    } else if (window.PetSystem?.isRidable?.(pet.id)) {
-                        rideBtns = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.ridePet?.(${pet.id})">${T('MainMenu.pets.ride')}</div>`;
+                    if (!pet.isChild) {
+                        const ridable = !!window.PetSystem?.isRidable?.(pet.id);
+                        const toggle = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.togglePetRidable?.(${pet.id})">${ridable ? T('MainMenu.pets.ridable') : T('MainMenu.pets.unridable')}</div>`;
+                        let ride;
+                        if (isMounted) {
+                            ride = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.dismountPet?.()">${T('MainMenu.pets.dismount')}</div>`;
+                        } else if (ridable) {
+                            ride = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.ridePet?.(${pet.id})">${T('MainMenu.pets.ride')}</div>`;
+                        } else {
+                            ride = `<div class="command-item roster-action is-disabled" title="${escapeHtml(T('MainMenu.pets.rideOff'))}">${T('MainMenu.pets.ride')}</div>`;
+                        }
+                        rideBtns = toggle + ride;
                     }
                     buttons = `${activeBtn}
                         ${isSummoned ? dismissBtn : ''}
@@ -4816,6 +4852,28 @@
                 <div class="clock-row">
                     <span class="clock-label">${T('MainMenu.label.localTime')}</span>
                     <span class="clock-value">${hh}:${mm}${locked}${world}</span>
+                </div>`;
+    };
+
+    // The Omega Tower keeps its own time (DungeonFloorSystem.js,
+    // TowerWorlds.clock): it runs only while a party is on its levels and
+    // stands still otherwise, so after time away it lags behind Earth. While
+    // the party is on the tower's levels its date and hour are shown under
+    // Earth's, the way an alien world's local time is.
+    Scene_Menu.prototype.generateUITowerTimeRowHTML = function () {
+        const TW = window.TowerWorlds;
+        if (!TW || typeof TW.clock !== "function" || typeof TW.simulating !== "function") return "";
+        let minute = null;
+        try {
+            if (!TW.simulating()) return "";
+            minute = TW.clock();
+        } catch (e) { return ""; }
+        if (!Number.isFinite(minute)) return "";
+        const dt = this.getUIDateTime(minute);
+        return `
+                <div class="clock-row">
+                    <span class="clock-label">${T('MainMenu.label.towerTime')}</span>
+                    <span class="clock-value">${dt.dateShort} | ${dt.time24}</span>
                 </div>`;
     };
 

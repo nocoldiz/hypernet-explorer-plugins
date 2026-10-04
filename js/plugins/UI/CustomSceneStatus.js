@@ -1614,7 +1614,8 @@
                 { label: T("SceneStatus.need.sleep"), cls: "sleep", fn: "sleepPercent" },
                 { label: T("SceneStatus.need.hygiene"), cls: "hygiene", fn: "hygienePercent" },
                 { label: T("SceneStatus.need.social"), cls: "social", fn: "socialPercent" },
-                { label: T("SceneStatus.need.leisure"), cls: "leisure", fn: "leisurePercent" }
+                { label: T("SceneStatus.need.leisure"), cls: "leisure", fn: "leisurePercent" },
+                { label: T("SceneStatus.need.bladder"), cls: "bladder", fn: "bladderPercent" }
             ];
 
             // Uniform needs palette: gold when healthy, orange when low, red
@@ -2138,11 +2139,38 @@
     // glints off it, so the face only showed once turned side on. The same
     // export marks every material BLEND, which depth sorts skin and hair as
     // glass. A portrait is a painted figure: no metal, and cut-out alpha.
+    // The same export ships 2048 pixel maps, six of them in Em.glb: well over a
+    // hundred megabytes of video memory per context once mipmapped, which an
+    // integrated GPU did not survive. A portrait never fills more than a
+    // quarter of the screen, so every map is brought down to PORTRAIT_TEX_MAX.
+    const PORTRAIT_TEX_MAX = 1024;
+
+    function shrinkPortraitTexture(tex, done) {
+        if (!tex || !tex.isTexture || done.has(tex)) return;
+        done.add(tex);
+        const img = tex.image;
+        const w = img && (img.width || img.naturalWidth);
+        const h = img && (img.height || img.naturalHeight);
+        if (!w || !h || Math.max(w, h) <= PORTRAIT_TEX_MAX || typeof document === 'undefined') return;
+        const k = PORTRAIT_TEX_MAX / Math.max(w, h);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(w * k));
+        canvas.height = Math.max(1, Math.round(h * k));
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        try { ctx.drawImage(img, 0, 0, canvas.width, canvas.height); } catch (e) { return; }
+        if (img.close) { try { img.close(); } catch (e) {} }
+        tex.image = canvas;
+        tex.needsUpdate = true;
+    }
+
     function dressPortraitMaterials(root) {
+        const shrunk = new Set();
         root.traverse((obj) => {
             if (!obj.material) return;
             const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
             mats.forEach((m) => {
+                Object.keys(m).forEach((k) => shrinkPortraitTexture(m[k], shrunk));
                 if ('metalness' in m) m.metalness = 0;
                 if (m.transparent) {
                     m.transparent = false;

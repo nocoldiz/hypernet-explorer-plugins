@@ -237,13 +237,13 @@
     // value applied directly to the actor's need meter on use. Food items keep
     // using <calories:>/<protein:>/<fat:> for hunger instead.
     //=========================================================================
-    NEED_KEYS: ["hunger", "sleep", "hygiene", "social", "leisure"],
+    NEED_KEYS: ["hunger", "sleep", "hygiene", "social", "leisure", "bladder"],
     // Displayed label per need; "leisure" reads as "Mood" everywhere else in the UI.
     // Both label tables now resolve on read; NEED_KEYS above stay the ids.
     get NEED_LABELS() { return T.obj('ItemUtils.need'); },
     get NEED_LABELS_IT() { return T.obj('ItemUtils.need'); },
-    NEED_ADDERS:    { hunger: "addHunger", sleep: "addSleep", hygiene: "addHygiene", social: "addSocial", leisure: "addLeisure" },
-    NEED_COLORS:    { hunger: "#c0392b", sleep: "#2980b9", hygiene: "#16a085", social: "#8e44ad", leisure: "#d4a64e" },
+    NEED_ADDERS:    { hunger: "addHunger", sleep: "addSleep", hygiene: "addHygiene", social: "addSocial", leisure: "addLeisure", bladder: "addBladder" },
+    NEED_COLORS:    { hunger: "#c0392b", sleep: "#2980b9", hygiene: "#16a085", social: "#8e44ad", leisure: "#d4a64e", bladder: "#c9a227" },
 
     /**
      * Localized label for a need key.
@@ -298,6 +298,9 @@
       // off (window.Allergy, Health_DiseaseSystem). A meal thrown back up
       // feeds nobody.
       const allergy = window.Allergy && actor ? window.Allergy.onConsume(actor, item) : null;
+      // And every liquid that goes down fills the bladder (window.Bladder,
+      // TimeDateSystem), by how much of it there was (liquidVolume below).
+      if (window.Bladder && actor && !(allergy && allergy.vomit)) window.Bladder.onConsume(actor, item);
       let restores = this.getNeedRestores(item);
       if (allergy && allergy.vomit) restores = restores.filter((r) => r.key !== "hunger");
       if (!restores.length || !actor) return [];
@@ -314,6 +317,65 @@
         }
       });
       return restores;
+    },
+
+    //=========================================================================
+    // Liquids (the bladder's side of a drink)
+    //
+    // The one answer to "is this something you drink, and how much of it is
+    // there?" Every liquid that goes down, from a bottle of water to a pint of
+    // ale to a health potion, fills the bladder (window.Bladder, TimeDateSystem),
+    // and this is what it asks. Read in this order:
+    //
+    //   1. <Liquid> or <Liquid: 330> (millilitres) says yes; <NotLiquid> or
+    //      <Solid> says no. An authored tag always wins over the guesswork.
+    //   2. A category nobody drinks from (a culture vial, a reagent, a grenade)
+    //      is never a drink, whatever it is called.
+    //   3. A word in the name or description that says it is not swallowed as a
+    //      liquid (a spray, tablets, an ointment, a sauce on a pheasant).
+    //   4. An <Addiction: alcohol> tag: every drink of that kind is a drink.
+    //   5. A drink word in the NAME (water, tea, beer, wine, potion, elixir...).
+    //   6. A drink word in the DESCRIPTION ("A drink of powdered scale").
+    //
+    // The database names are English and stay English at runtime (the language
+    // layer translates on display), which is what keeps the word lists honest.
+    //
+    // How much: the <Liquid: ml> figure when there is one, otherwise the item's
+    // <Weight:> in grams read as millilitres (a drink is mostly water), and a
+    // small dose when neither is there.
+    //=========================================================================
+    LIQUID_NAME_WORDS: /\b(water|tea|coffee|espresso|cappuccino|latte|milk|milkshake|shake|smoothie|soda|cola|lemonade|juice|nectar|cider|beer|ale|lager|stout|mead|wine|champagne|whiske?y|vodka|rum|gin|brandy|grappa|limoncello|liqueur|liquor|schnapps|sake|absinthe|tequila|cocktail|grog|punch|brew|potion|tonic|elixir|draught|philt(?:er|re)|serum|tincture|drink|infusion|decoction|soup|broth|kefir|cocoa|hot chocolate|tisane|solution)\b/i,
+    LIQUID_DESC_WORDS: /\b(drink|drinks|draught|liquid|potion|tonic|infusion|brew|sip|swig|gulp|beverage|in alcohol)\b/i,
+    NOT_LIQUID_NAME_WORDS: /\b(sauce|chestnuts?|beans?|fruit|dust|spray|drops|droplets|ointment|cream|salve|lotion|mist|inhaler|injection|insulin|vancomycin|clotting|transfusion|drip|thimble|parasite|miasma|tablets?|tabs|capsules?|pills?|powder|gel|oil|antacid|salts?|kit|course|mat|pail|leaves|grounds|cake|candy|bar|pencil|eyeliner|lipstick|perfume|compact|mascara)\b/i,
+    NOT_LIQUID_DESC_WORDS: /\b(chewable|aerosol|injected|tablets?|capsules?|ointment|sachet|antiseptic)\b/i,
+    NOT_DRUNK_CATEGORIES: ["diseases", "alchemistry", "combat", "fertility", "bodypart", "trash", "books", "vehicles", "tools", "crafting", "farming"],
+    LIQUID_DEFAULT_ML: 150,
+
+    /** True when the item is a liquid that is swallowed. */
+    isLiquid: function (item) {
+      if (!item) return false;
+      const note = String(item.note || "");
+      if (/<(NotLiquid|Solid)>/i.test(note)) return false;
+      if (/<Liquid(\s*:\s*\d+)?\s*>/i.test(note)) return true;
+      const cat = (note.match(/<category:\s*([^>]+?)\s*>/i) || [])[1];
+      if (cat && this.NOT_DRUNK_CATEGORIES.includes(cat.toLowerCase())) return false;
+      const name = String(item.name || "");
+      const desc = String(item.description || "");
+      if (this.NOT_LIQUID_NAME_WORDS.test(name) || this.NOT_LIQUID_DESC_WORDS.test(desc)) return false;
+      if (/<Addiction:\s*alcohol/i.test(note)) return true;
+      if (this.LIQUID_NAME_WORDS.test(name)) return true;
+      return this.LIQUID_DESC_WORDS.test(desc);
+    },
+
+    /** Millilitres of liquid in one use of the item, 0 when it is not a liquid. */
+    liquidVolume: function (item) {
+      if (!this.isLiquid(item)) return 0;
+      const note = String(item.note || "");
+      const tagged = note.match(/<Liquid\s*:\s*(\d+)\s*>/i);
+      if (tagged) return Math.max(0, parseInt(tagged[1], 10));
+      const weight = note.match(/<Weight:\s*(\d+(?:\.\d+)?)\s*>/i);
+      if (weight) return Math.max(1, Math.round(parseFloat(weight[1])));
+      return this.LIQUID_DEFAULT_ML;
     },
 
     //=========================================================================

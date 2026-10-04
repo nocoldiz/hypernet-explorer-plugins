@@ -178,8 +178,8 @@
     // standing there all day. WARN_PCT still colours the bars themselves.
     const WARN_PCT = 30;
     const CRIT_PCT = 15;
-    const NEED_WARN = { hunger: 20, sleep: 20, hygiene: 11, social: 11, leisure: 11 };
-    const NEED_CRIT = { hunger: 15, sleep: 15, hygiene: 8, social: 8, leisure: 8 };
+    const NEED_WARN = { hunger: 20, sleep: 20, hygiene: 11, social: 11, leisure: 11, bladder: 15 };
+    const NEED_CRIT = { hunger: 15, sleep: 15, hygiene: 8, social: 8, leisure: 8, bladder: 6 };
     // A craving is worth a chip once it is close to the withdrawal state, which
     // AddictionSystem hands out at 100 and only clears again under 80.
     const CRAVING_WARN = 90;
@@ -205,7 +205,7 @@
     // wording under PartyHud.alert, in two registers: `<key>` for the warning
     // and `<key>Critical` for the emergency, so a member reads "Hungry" first
     // and "Starving" later.
-    const NEED_KEYS = ['hunger', 'sleep', 'hygiene', 'social', 'leisure'];
+    const NEED_KEYS = ['hunger', 'sleep', 'hygiene', 'social', 'leisure', 'bladder'];
 
     // The chip names the condition and nothing else: the exact figure belongs
     // to the needs menu, and a number on the card only crowded the strip.

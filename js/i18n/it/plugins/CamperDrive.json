@@ -124,5 +124,27 @@
     "noGround": "Non c'e nulla su cui posarsi qui.",
     "tooDeep": "La pressione sta schiacciando lo scafo. Sali, subito.",
     "crushed": "Lo scafo cede."
+  },
+  "perf": {
+    "title": "Prestazioni voxel",
+    "fps": "FPS",
+    "frame": "frame ms",
+    "worst": "picco ms",
+    "terrain": "terreno",
+    "entities": "entità",
+    "hud": "HUD",
+    "render": "disegno",
+    "calls": "chiamate di disegno",
+    "triangles": "triangoli",
+    "geometries": "geometrie",
+    "textures": "texture",
+    "programs": "shader",
+    "workers": "worker di mesh",
+    "inflight": "porzioni in corso",
+    "pool_off": "spenti",
+    "pool_snapshot": "lettura della mappa",
+    "pool_booting": "avvio",
+    "pool_ready": "attivi",
+    "pool_failed": "spenti, mesh sul thread principale"
   }
 }

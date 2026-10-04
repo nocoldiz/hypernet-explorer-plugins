@@ -15,7 +15,9 @@
     "leisureCritical": "Avvilito",
     "craving": "Astinenza da {substance}",
     "ill": "{disease}",
-    "illUntreated": "{disease} (senza cure)"
+    "illUntreated": "{disease} (senza cure)",
+    "bladder": "Deve andare in bagno",
+    "bladderCritical": "Sta scoppiando"
   },
   "gear": {
     "held": "[{list}]",

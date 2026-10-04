@@ -2185,12 +2185,13 @@
     return created;
   }
 
-  function simulateIdentitiesChunk(state, chunkStart, days) {
+  function simulateIdentitiesChunk(state, chunkStart, days, side) {
     const monsterOnly = monsterPowersOnly();
     for (const [npcName, identity] of Object.entries(state.identities)) {
       const power = state.powers[identity.power];
       if (!power) continue;
       if (monsterOnly && !isMonsterPolity(power)) continue;
+      if (side && !side.identity(identity)) continue;
       const rng = new PolRng(worldSeed() ^ nameHash("idchunk:" + npcName) ^ ((chunkStart >>> 0) || 1));
 
       // engagement drifts with national unrest (politics gets harder to ignore)
@@ -2396,16 +2397,20 @@
     });
   }
 
-  function ensureSettlements(state, nowMinute) {
+  // A floor of the Omega Tower keeps the tower's time (TOWER CLOCK), so its
+  // first local election is reckoned from the tower's minute, not Earth's.
+  function ensureSettlements(state, nowMinute, tower) {
     const groups = Object.keys($gameSystem?._npcMapGroups || {});
     for (const groupName of groups) {
       if (state.settlements[groupName]) continue;
       const polity = resolveGroupPolity(state, groupName);
+      const onTower = !!tower && (tower.group(groupName) || tower.power(polity.power));
+      const startMinute = onTower ? tower.now : nowMinute;
       const rng = new PolRng(worldSeed() ^ nameHash("settlement:" + groupName));
       state.settlements[groupName] = {
         group: groupName, country: polity.country, power: polity.power,
         offices: { mayor: null, guardCaptain: null, taxCollector: null, highPriest: null },
-        nextLocalElectionMinute: nowMinute - rng.int(0, LOCAL_TERM_DAYS - 1) * MINUTES_PER_DAY, // due immediately, staggered
+        nextLocalElectionMinute: startMinute - rng.int(0, LOCAL_TERM_DAYS - 1) * MINUTES_PER_DAY, // due immediately, staggered
         history: [],
       };
     }
@@ -3144,37 +3149,41 @@
     if (!state) return;
     _catchUpRunning = true;
     try {
+      // Two clocks (TOWER CLOCK): Earth's powers, settlements and people run
+      // on Earth's minute, the Omega Tower's on the tower's own
+      // (NPCShared.towerTime), each from a cursor of its own. The tower's clock
+      // only moves while a party is on its levels, so it never catches up on
+      // time spent out in the world.
+      const tower = window.NPCShared?.towerTime?.() || null;
+      const earthSide = clockSide(tower, false), towerSide = clockSide(tower, true);
       ensurePowers(state, nowMinute);
       ensureSeatNations(state, nowMinute);
       repairDeclaredCountries(state);
       ensureIdentities(state, nowMinute);
-      ensureSettlements(state, nowMinute);
+      ensureSettlements(state, nowMinute, tower);
 
       if (state.lastSimMinute === null || state.lastSimMinute === undefined) {
         state.lastSimMinute = nowMinute;
+        if (tower) state.towerLastSimMinute = tower.now;
         // Resolve any elections the bootstrap already made due (incl. local).
-        runDueElections(state, nowMinute, nowMinute);
+        runDueElections(state, nowMinute, nowMinute, earthSide);
+        if (tower) runDueElections(state, tower.now, tower.now, towerSide);
         syncRealPoliticians(state, nowMinute);
         return;
+      }
+      // The tower's own, up to the tower's minute.
+      if (tower) {
+        const from = state.towerLastSimMinute;
+        if (from === null || from === undefined || tower.now < from) state.towerLastSimMinute = tower.now;
+        else if (tower.now - from >= MINUTES_PER_DAY) {
+          state.towerLastSimMinute = simulateSpan(state, from, tower.now, towerSide);
+        }
       }
       if (nowMinute < state.lastSimMinute) { state.lastSimMinute = nowMinute; return; } // time rewound
       const deltaMinutes = nowMinute - state.lastSimMinute;
       if (deltaMinutes < MINUTES_PER_DAY) return; // accumulate sub-day deltas
 
-      const totalDays = Math.floor(deltaMinutes / MINUTES_PER_DAY);
-      let cursor = state.lastSimMinute;
-      let remaining = totalDays;
-      while (remaining > 0) {
-        const chunkDays = Math.min(CHUNK_DAYS, remaining);
-        const chunkEnd = cursor + chunkDays * MINUTES_PER_DAY;
-        runDueElections(state, cursor, chunkEnd);
-        for (const power of livePolities(state)) {
-          simulatePowerChunk(state, power, cursor, chunkDays, chunkEnd);
-        }
-        simulateIdentitiesChunk(state, cursor, chunkDays);
-        cursor = chunkEnd;
-        remaining -= chunkDays;
-      }
+      const cursor = simulateSpan(state, state.lastSimMinute, nowMinute, earthSide);
       state.lastSimMinute = cursor;
       // Whoever holds an office now is somebody in the world (REAL POLITICIANS).
       syncRealPoliticians(state, cursor);
@@ -3189,9 +3198,45 @@
     }
   }
 
-  function runDueElections(state, fromMinute, toMinute) {
+  // Which entries a pass owns: Earth's, or the Omega Tower's (TOWER CLOCK).
+  // A tower settlement or citizen is one by its group ("Tower:-5"), so an
+  // Earthling colony up the shaft lives on the tower's clock although it
+  // votes in an Earth nation. With no tower everything is Earth's.
+  function clockSide(tower, onTower) {
+    const power = (name) => !!tower && tower.power(name);
+    const settlement = (s) => !!tower && (tower.group(s.group) || tower.power(s.power));
+    const identity = (i) => !!tower && (tower.group(i.group) || tower.power(i.power));
+    return {
+      power: (name) => power(name) === onTower,
+      settlement: (s) => settlement(s) === onTower,
+      identity: (i) => identity(i) === onTower,
+    };
+  }
+
+  // Whole days from one minute to another, in chunks, for one side's
+  // entries. Returns the minute it got to.
+  function simulateSpan(state, fromMinute, toMinute, side) {
+    let cursor = fromMinute;
+    let remaining = Math.floor((toMinute - fromMinute) / MINUTES_PER_DAY);
+    while (remaining > 0) {
+      const chunkDays = Math.min(CHUNK_DAYS, remaining);
+      const chunkEnd = cursor + chunkDays * MINUTES_PER_DAY;
+      runDueElections(state, cursor, chunkEnd, side);
+      for (const power of livePolities(state)) {
+        if (side && !side.power(power.name)) continue;
+        simulatePowerChunk(state, power, cursor, chunkDays, chunkEnd);
+      }
+      simulateIdentitiesChunk(state, cursor, chunkDays, side);
+      cursor = chunkEnd;
+      remaining -= chunkDays;
+    }
+    return cursor;
+  }
+
+  function runDueElections(state, fromMinute, toMinute, side) {
     const monsterOnly = monsterPowersOnly();
     for (const power of livePolities(state)) {
+      if (side && !side.power(power.name)) continue;
       let guard = 0;
       while (power.nextElectionMinute !== null && power.nextElectionMinute <= toMinute && guard++ < 200) {
         const at = Math.max(power.nextElectionMinute, fromMinute);
@@ -3201,6 +3246,7 @@
     }
     for (const settlement of Object.values(state.settlements)) {
       if (monsterOnly && !isMonsterPolity(state.powers[settlement.power])) continue;
+      if (side && !side.settlement(settlement)) continue;
       let guard = 0;
       while (settlement.nextLocalElectionMinute <= toMinute && guard++ < 100) {
         resolveLocalElection(state, settlement, Math.max(settlement.nextLocalElectionMinute, fromMinute));

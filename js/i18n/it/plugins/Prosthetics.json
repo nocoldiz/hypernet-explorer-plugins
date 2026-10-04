@@ -210,5 +210,10 @@
   "grafted": "Il campo innesta {part} su {actor}.",
   "failedWound": "Il campo scivola e apre {part}.",
   "failed": "Il campo scivola. Niente attecchisce."
- }
+ },
+  "metamorphosis": {
+    "magical": "{name} beve la pozione e diventa qualcun altro.",
+    "surgical": "I surgerybot rientrano nella loro custodia. {name} ha un corpo e un volto nuovi.",
+    "unchanged": "Non è cambiato nulla, quindi {item} torna nello zaino."
+  }
 }

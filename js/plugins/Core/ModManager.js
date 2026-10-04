@@ -157,8 +157,9 @@ window.$dataCustom = {};
             .filter(dirent => dirent.isDirectory())
             .map(dirent => dirent.name);
 
-        // Remove deleted mods from config (only for local mods)
-        this.mods = this.mods.filter(mod => mod.path || folders.includes(mod.name));
+        // Remove deleted mods from config (only for local mods). A Workshop
+        // entry is the Workshop scan's to keep or drop, downloaded or not.
+        this.mods = this.mods.filter(mod => mod.workshop || mod.path || folders.includes(mod.name));
 
         // Add new mods to config (default to active: false)
         const existingModNames = this.mods.map(m => m.name);
@@ -169,9 +170,75 @@ window.$dataCustom = {};
         }
     };
 
-    // Pulls every subscribed Workshop item into the mod list. Installed items are wired
-    // up by their absolute content folder; not-yet-downloaded items are queued for
-    // download and picked up on a later scan (relaunch or ModManager.refreshWorkshop()).
+    //-----------------------------------------------------------------------------
+    // The mod manifest
+    //-----------------------------------------------------------------------------
+    //
+    // A mod may carry two files at its root that are about the mod, not game
+    // files it replaces:
+    //
+    //   mod.json     { "title", "description", "author", "version", "tags": [],
+    //                  "visibility": "public|friends|unlisted|private",
+    //                  "changeNote", "workshopId" }
+    //   preview.png  the Workshop thumbnail (square, under 1 MB)
+    //
+    // Both travel to the Workshop with the rest of the folder, so a subscriber
+    // sees the same title the author does. workshopId is written by the first
+    // publish and is how the author's own local copy and their subscription to
+    // it are told to be the same mod.
+    const MANIFEST_FILE = 'mod.json';  // i18n-ignore  file name
+    const PREVIEW_FILE = 'preview.png';  // i18n-ignore  file name
+    const ROOT_META = { 'mod.json': true, 'preview.png': true };  // i18n-ignore  file names
+    const VISIBILITY = { public: 0, friends: 1, private: 2, unlisted: 3 };  // i18n-ignore  steam enum keys
+
+    ModManager.manifests = Object.create(null);
+
+    ModManager.readManifest = function (mod) {
+        const root = this.modRoot(mod);
+        if (!root) return {};
+        try {
+            const data = JSON.parse(this.fs.readFileSync(this.path.join(root, MANIFEST_FILE), 'utf8'));
+            return (data && typeof data === 'object' && !Array.isArray(data)) ? data : {};
+        } catch (e) {
+            return {};
+        }
+    };
+
+    ModManager.manifestFor = function (mod) {
+        if (!mod) return {};
+        if (!this.manifests[mod.name]) this.manifests[mod.name] = this.readManifest(mod);
+        return this.manifests[mod.name];
+    };
+
+    ModManager.writeManifest = function (mod, data) {
+        const root = this.modRoot(mod);
+        this.fs.writeFileSync(this.path.join(root, MANIFEST_FILE), JSON.stringify(data, null, 2));
+        this.manifests[mod.name] = data;
+    };
+
+    // The name a mod is shown by: its manifest title, the title the Workshop
+    // gave it, or its folder.
+    ModManager.displayName = function (mod) {
+        const m = this.manifestFor(mod);
+        return (typeof m.title === 'string' && m.title.trim()) || mod.title || mod.name;
+    };
+
+    // The Workshop item a mod is, as a string, or null.
+    ModManager.workshopIdOf = function (mod) {
+        if (!mod) return null;
+        if (mod.workshopId) return String(mod.workshopId);
+        const id = this.manifestFor(mod).workshopId;
+        return (id !== undefined && id !== null && /^\d+$/.test(String(id))) ? String(id) : null;
+    };
+
+    //-----------------------------------------------------------------------------
+    // Subscribed Workshop items
+    //-----------------------------------------------------------------------------
+
+    // Pulls every subscribed Workshop item into the mod list. Installed items are
+    // wired up by their absolute content folder; one Steam has not downloaded yet
+    // is listed all the same, with no folder, and asked for at high priority. It
+    // loads at the first start after the download ends.
     ModManager.scanSteamWorkshop = function () {
         if (!this.steamClient) return;
         const workshop = this.steamClient.workshop;
@@ -188,9 +255,21 @@ window.$dataCustom = {};
             return;
         }
 
+        // An author subscribed to their own mod keeps working on the local
+        // folder: the downloaded copy would only load the last upload over it.
+        const ownedLocally = new Set();
+        for (const m of this.mods) {
+            if (m.workshop) continue;
+            const id = this.workshopIdOf(m);
+            if (id) ownedLocally.add(id);
+        }
+
         const seenNames = [];
+        const untitled = [];
         for (const itemId of itemIds) {
-            const modName = `Workshop_${itemId.toString()}`;
+            const idText = itemId.toString();
+            if (ownedLocally.has(idText)) continue;
+            const modName = `Workshop_${idText}`;
             seenNames.push(modName);
 
             let info = null;
@@ -199,26 +278,56 @@ window.$dataCustom = {};
             let state = 0;
             try { if (typeof workshop.state === 'function') state = workshop.state(itemId); } catch (e) { state = 0; }
             const needsUpdate = (state & WS_STATE.NeedsUpdate) !== 0;
+            const installed = !!(info && info.folder && this.fs.existsSync(info.folder));
 
-            if (info && info.folder && this.fs.existsSync(info.folder)) {
-                const existing = this.mods.find(m => m.name === modName);
-                if (existing) {
-                    existing.path = info.folder;
-                    existing.workshop = true;
-                    if (typeof existing.active !== 'boolean') existing.active = true;
-                } else {
-                    // New subscription defaults to active so it loads immediately.
-                    this.mods.push({ name: modName, active: true, path: info.folder, workshop: true });
-                }
-                if (needsUpdate) this.requestWorkshopDownload(itemId, modName, "update available");  // i18n-ignore  console diagnostic
+            let entry = this.mods.find(m => m.name === modName);
+            if (!entry) {
+                // New subscription defaults to active so it loads immediately.
+                entry = { name: modName, active: true };
+                this.mods.push(entry);
+            }
+            entry.workshop = true;
+            entry.workshopId = idText;
+            if (typeof entry.active !== 'boolean') entry.active = true;
+            if (installed) {
+                if (entry.path !== info.folder) delete this.manifests[modName];
+                entry.path = info.folder;
             } else {
-                // Subscribed but not on disk yet: request a high-priority download.
-                this.requestWorkshopDownload(itemId, modName, "not installed yet");  // i18n-ignore  console diagnostic
+                delete entry.path;
+            }
+            if (!entry.title && !this.manifestFor(entry).title) untitled.push(itemId);
+
+            if (!installed) {
+                const busy = (state & (WS_STATE.Downloading | WS_STATE.DownloadPending)) !== 0;
+                if (!busy) this.requestWorkshopDownload(itemId, modName, "not installed yet");  // i18n-ignore  console diagnostic
+            } else if (needsUpdate) {
+                this.requestWorkshopDownload(itemId, modName, "update available");  // i18n-ignore  console diagnostic
             }
         }
 
         // Drop Workshop mods the player has unsubscribed from (leave local mods alone).
         this.mods = this.mods.filter(m => !m.workshop || seenNames.includes(m.name));
+        if (untitled.length) this.fetchWorkshopTitles(untitled);
+    };
+
+    // Titles for subscribed items whose folder carries no mod.json (uploaded
+    // by hand, or not downloaded yet), asked of Steam once and kept in the
+    // config.
+    ModManager.fetchWorkshopTitles = function (itemIds) {
+        const workshop = this.steamClient && this.steamClient.workshop;
+        if (!workshop || typeof workshop.getItems !== 'function') return;
+        let pending;
+        try { pending = workshop.getItems(itemIds); } catch (e) { return; }
+        if (!pending || typeof pending.then !== 'function') return;
+        pending.then(result => {
+            let changed = false;
+            for (const item of (result && result.items) || []) {
+                if (!item || !item.title) continue;
+                const mod = this.mods.find(m => m.workshopId === item.publishedFileId.toString());
+                if (mod && mod.title !== item.title) { mod.title = item.title; changed = true; }
+            }
+            if (changed) this.saveModConfig();
+        }, () => {});
     };
 
     ModManager.requestWorkshopDownload = function (itemId, modName, reason) {
@@ -242,37 +351,159 @@ window.$dataCustom = {};
         return true;
     };
 
-    // --- Optional: publish a local mod folder to the Steam Workshop -----------------
-    // Usage (from console or a plugin command):
-    //   await ModManager.publishMod('MyFirstMod', { title: 'My Mod', description: '...', previewPath: 'C:/abs/preview.png', tags: ['Gameplay'] })
-    // Returns the new Workshop item id (bigint). Update later with updatePublishedMod().
-    ModManager.publishMod = async function (localModName, details) {
-        const workshop = this.steamClient && this.steamClient.workshop;
-        if (!workshop || typeof workshop.createItem !== 'function') throw new Error("Steam Workshop unavailable");
-        const modDir = this.path.join(this.modsDir, localModName);
-        if (!this.fs.existsSync(modDir)) throw new Error("Mod folder not found: " + localModName);
+    ModManager.hasWorkshop = function () {
+        return !!(this.steamClient && this.steamClient.workshop);
+    };
 
-        const created = await workshop.createItem(this.STEAM_APP_ID);
-        const update = Object.assign({
-            title: localModName,
-            description: "",
-            contentPath: modDir,
-            tags: []
-        }, details || {});
-        await workshop.updateItem(created.itemId, update, this.STEAM_APP_ID);
-        console.log("ModManager: published Workshop item", created.itemId.toString(),
-            created.needsToAcceptAgreement ? "(user must accept the Workshop legal agreement in the browser popup)" : "");
-        return created.itemId;
+    // Where a Workshop mod stands on this machine:
+    //   { status: 'installed' | 'update' | 'downloading' | 'pending', progress: 0..1 }
+    // or null for a local mod.
+    ModManager.workshopStatus = function (mod) {
+        if (!mod || !mod.workshop) return null;
+        const workshop = this.steamClient && this.steamClient.workshop;
+        let state = 0;
+        if (workshop && typeof workshop.state === 'function') {
+            try { state = workshop.state(BigInt(mod.workshopId)); } catch (e) { state = 0; }
+        }
+        let progress = 0;
+        if (workshop && typeof workshop.downloadInfo === 'function') {
+            try {
+                const d = workshop.downloadInfo(BigInt(mod.workshopId));
+                if (d && Number(d.total) > 0) progress = Math.min(1, Number(d.current) / Number(d.total));
+            } catch (e) { progress = 0; }
+        }
+        if (state & WS_STATE.Downloading) return { status: 'downloading', progress: progress };  // i18n-ignore  status id
+        if (state & WS_STATE.DownloadPending) return { status: 'pending', progress: 0 };  // i18n-ignore  status id
+        if (!mod.path) return { status: 'pending', progress: 0 };  // i18n-ignore  status id
+        if (state & WS_STATE.NeedsUpdate) return { status: 'update', progress: 0 };  // i18n-ignore  status id
+        return { status: 'installed', progress: 1 };  // i18n-ignore  status id
+    };
+
+    ModManager.unsubscribeWorkshop = function (mod) {
+        const workshop = this.steamClient && this.steamClient.workshop;
+        if (!mod || !mod.workshop || !workshop || typeof workshop.unsubscribe !== 'function') {
+            return Promise.reject(new Error("Steam Workshop unavailable"));  // i18n-ignore  internal error
+        }
+        return Promise.resolve(workshop.unsubscribe(BigInt(mod.workshopId))).then(() => {
+            // Steam removes the files once the game quits; what has loaded this
+            // session stays loaded until then.
+            this.mods = this.mods.filter(m => m !== mod);
+            this.saveModConfig();
+        });
+    };
+
+    //-----------------------------------------------------------------------------
+    // Steam pages
+    //-----------------------------------------------------------------------------
+
+    // Opened in the Steam client through a steam:// link: the in-game overlay
+    // does not draw over an NW.js window, so a page opened there would never
+    // be seen. The overlay is the fallback for a shell that cannot open links.
+    ModManager.workshopUrl = function (itemId) {
+        return itemId
+            ? 'https://steamcommunity.com/sharedfiles/filedetails/?id=' + itemId  // i18n-ignore  url
+            : 'https://steamcommunity.com/app/' + this.STEAM_APP_ID + '/workshop/';  // i18n-ignore  url
+    };
+
+    ModManager.openSteamPage = function (url) {
+        try {
+            if (typeof nw !== 'undefined' && nw.Shell && nw.Shell.openExternal) {
+                nw.Shell.openExternal('steam://openurl/' + url);  // i18n-ignore  url scheme
+                return true;
+            }
+        } catch (e) { /* fall through to the overlay */ }
+        const overlay = this.steamClient && this.steamClient.overlay;
+        if (overlay && typeof overlay.activateToWebPage === 'function') {
+            try { overlay.activateToWebPage(url); return true; } catch (e) { return false; }
+        }
+        return false;
+    };
+
+    ModManager.openWorkshopPage = function (itemId) {
+        return this.openSteamPage(this.workshopUrl(itemId));
+    };
+
+    //-----------------------------------------------------------------------------
+    // Publishing a local mod
+    //-----------------------------------------------------------------------------
+    //
+    // The mod's folder is uploaded as it stands, mod.json and preview.png
+    // included, so a subscriber's copy lands laid out exactly like the
+    // author's. The first upload creates the item, writes its id into
+    // mod.json and goes up Private unless mod.json says otherwise, so the
+    // author checks the page before anybody else sees it. Later uploads keep
+    // whatever visibility was set on the page unless mod.json names one.
+    //
+    //   await ModManager.publishToWorkshop('MyFirstMod', { changeNote, onProgress })
+    //   -> { itemId: '123', created: true, needsAgreement: false }
+    ModManager.publishToWorkshop = async function (localModName, options) {
+        const opts = options || {};
+        const workshop = this.steamClient && this.steamClient.workshop;
+        if (!workshop || typeof workshop.createItem !== 'function') throw new Error("Steam Workshop unavailable");  // i18n-ignore  internal error
+        const mod = this.mods.find(m => m.name === localModName && !m.workshop);
+        const modDir = this.path.join(this.modsDir, localModName);
+        if (!mod || !this.fs.existsSync(modDir)) throw new Error("Mod folder not found: " + localModName);  // i18n-ignore  internal error
+
+        delete this.manifests[mod.name];
+        const manifest = Object.assign({}, this.manifestFor(mod));
+        let itemId = this.workshopIdOf(mod);
+        let created = false;
+        let needsAgreement = false;
+        if (!itemId) {
+            const result = await workshop.createItem(this.STEAM_APP_ID);
+            itemId = result.itemId.toString();
+            needsAgreement = !!result.needsToAcceptAgreement;
+            created = true;
+            // Written before the upload, so a failed upload is retried as an
+            // update of the same item instead of leaving an orphan behind.
+            manifest.workshopId = itemId;
+            if (!manifest.title) manifest.title = localModName;
+            this.writeManifest(mod, manifest);
+        }
+
+        const update = {
+            title: String(manifest.title || localModName),
+            description: String(manifest.description || ''),
+            contentPath: modDir
+        };
+        if (Array.isArray(manifest.tags)) update.tags = manifest.tags.map(String);
+        const note = opts.changeNote || manifest.changeNote || (manifest.version ? 'v' + manifest.version : '');
+        if (note) update.changeNote = String(note);
+        const preview = this.path.join(modDir, PREVIEW_FILE);
+        if (this.fs.existsSync(preview)) update.previewPath = preview;
+        const vis = typeof manifest.visibility === 'string' ? VISIBILITY[manifest.visibility.toLowerCase()] : undefined;
+        if (vis !== undefined) update.visibility = vis;
+        else if (created) update.visibility = VISIBILITY.private;
+
+        const id = BigInt(itemId);
+        const result = await new Promise((resolve, reject) => {
+            if (typeof workshop.updateItemWithCallback === 'function') {
+                workshop.updateItemWithCallback(id, update, this.STEAM_APP_ID, resolve, reject, p => {
+                    if (typeof opts.onProgress !== 'function') return;
+                    const total = Number(p.total);
+                    opts.onProgress(total > 0 ? Number(p.progress) / total : 0, p.status);
+                }, 250);
+            } else {
+                workshop.updateItem(id, update, this.STEAM_APP_ID).then(resolve, reject);
+            }
+        });
+        needsAgreement = needsAgreement || !!(result && result.needsToAcceptAgreement);
+        console.log("ModManager: uploaded Workshop item", itemId, needsAgreement ? "(Workshop legal agreement not accepted yet)" : "");  // i18n-ignore  console diagnostic
+        return { itemId: itemId, created: created, needsAgreement: needsAgreement };
+    };
+
+    // Kept for console callers of the old API.
+    ModManager.publishMod = async function (localModName, details) {
+        const mod = this.mods.find(m => m.name === localModName && !m.workshop);
+        if (mod && details) this.writeManifest(mod, Object.assign({}, this.readManifest(mod), details));
+        return BigInt((await this.publishToWorkshop(localModName)).itemId);
     };
 
     ModManager.updatePublishedMod = async function (itemId, localModName, details) {
-        const workshop = this.steamClient && this.steamClient.workshop;
-        if (!workshop || typeof workshop.updateItem !== 'function') throw new Error("Steam Workshop unavailable");
-        const modDir = this.path.join(this.modsDir, localModName);
-        if (!this.fs.existsSync(modDir)) throw new Error("Mod folder not found: " + localModName);
-        const id = (typeof itemId === 'bigint') ? itemId : BigInt(itemId);
-        const update = Object.assign({ contentPath: modDir }, details || {});
-        return workshop.updateItem(id, update, this.STEAM_APP_ID);
+        const mod = this.mods.find(m => m.name === localModName && !m.workshop);
+        if (!mod) throw new Error("Mod folder not found: " + localModName);  // i18n-ignore  internal error
+        this.writeManifest(mod, Object.assign({}, this.readManifest(mod), details || {}, { workshopId: String(itemId) }));
+        return this.publishToWorkshop(localModName);
     };
 
     //-----------------------------------------------------------------------------
@@ -326,8 +557,10 @@ window.$dataCustom = {};
         return 'file:///' + encodeURI(slashed).replace(/#/g, '%23').replace(/\?/g, '%3F');  // i18n-ignore  url scheme
     }
 
+    // A Workshop item Steam has not downloaded yet has no folder at all.
     ModManager.modRoot = function (mod) {
-        return mod.path || this.path.join(this.modsDir, mod.name);
+        if (mod.path) return mod.path;
+        return mod.workshop ? null : this.path.join(this.modsDir, mod.name);
     };
 
     ModManager.buildFileIndex = function () {
@@ -347,12 +580,13 @@ window.$dataCustom = {};
         for (const mod of this.mods) {
             if (!mod.active) continue;
             const root = this.modRoot(mod);
+            if (!root) continue;
             const walk = (absDir, relDir) => {
                 let names;
                 try { names = fs.readdirSync(absDir); } catch (e) { return; }
                 for (const listed of names) {
                     if (listed.charAt(0) === '.') continue;
-                    if (!relDir && SKIP_ROOTS[listed.toLowerCase()]) continue;
+                    if (!relDir && (SKIP_ROOTS[listed.toLowerCase()] || ROOT_META[listed.toLowerCase()])) continue;
                     // lstat is the one call an encrypted build's decrypt shim
                     // leaves alone, and that shim lists "x.png_" as "x.png", so
                     // the real name on disk is asked for here rather than trusted.

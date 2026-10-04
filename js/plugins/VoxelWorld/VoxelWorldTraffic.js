@@ -332,6 +332,9 @@
             // Global head/tail light brightness by time of day.
             const night = 1 - Math.min(1, day / HEADLIGHT_NIGHT);
             this._headMat.opacity = night;
+            // By day every headlamp is an invisible transparent quad still sent
+            // to the GPU; a hidden material keeps the whole fleet's out of the frame.
+            this._headMat.visible = night > 0.002;
             this._tailMat.opacity = 0.4 + night * 0.6;
         }
 

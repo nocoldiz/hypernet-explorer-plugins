@@ -3631,6 +3631,10 @@
   let _shipControlsTab = "current";
   let _shipControlsFilter = "";
   let _shipControlsKeyHandler = null;
+  // The relativity braking confirmation stands in the right panel while set.
+  let _relBrakeConfirm = false;
+  // A pass was under way at the last live tick, so its end re-renders the panel.
+  let _relBrakeLive = false;
   // The tabs in the order the number keys, Tab and the shoulder buttons walk.
   const SC_TABS = ["current", "bookmarks", "catalog", "patrons", "life", "spaceports", "galaxies"];
 
@@ -4153,7 +4157,10 @@
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+      .replace(/"/g, "&quot;")
+      // The ship-control rows carry JSON in single-quoted attributes, so
+      // "Barnard's Star" would cut the attribute short and break the parse.
+      .replace(/'/g, "&#39;");
   }
 
   function calcSysDistance(s1, s2) {
@@ -4525,10 +4532,22 @@
         }
         updateShipControlsLive();
       }
+      // A braking pass: Earth's date on the row runs ahead, and the end of
+      // the pass brings the row's controls back.
+      if (ship && ship.relBrake) {
+        _relBrakeLive = true;
+        const el = _shipControlsOverlay.querySelector("[data-sc-relbrake-live]");
+        if (el) el.textContent = relBrakeUnderwayText(dm);
+      } else if (_relBrakeLive) {
+        _relBrakeLive = false;
+        renderShipControls();
+      }
     }, 300);
   }
 
   function closeShipControls(silent) {
+    _relBrakeConfirm = false;
+    _relBrakeLive = false;
     if (typeof TouchInput !== "undefined" && TouchInput.clear) TouchInput.clear();
     if (typeof $gameTemp !== "undefined" && $gameTemp && $gameTemp.clearDestination) {
       $gameTemp.clearDestination();
@@ -4585,6 +4604,58 @@
       // Arrived: full re-render
       renderShipControls();
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Relativity braking (see the DataManager's REL_BRAKE_* section)
+  // ---------------------------------------------------------------------------
+  function relBrakeDate(minute) {
+    const D = window.GalaxySim && window.GalaxySim.DataManager;
+    return D && D.relBrakeDateText ? D.relBrakeDateText(minute) : "";
+  }
+
+  function relBrakeUnderwayText(dm) {
+    return T('Galaxy.relBrake.underway', { date: relBrakeDate(dm.relativityBrakeEarthMinute()) });
+  }
+
+  // The parked hole's row: the control while it can be flown, the live
+  // Earth date while it is.
+  function relBrakeRowHtml(dm, ship) {
+    if (ship.relBrake) {
+      return `<span class="gx-sc-badge here npc-badge" data-sc-relbrake-live>${escHtml(relBrakeUnderwayText(dm))}</span>`;
+    }
+    if (!dm.canRelativityBrake || !dm.canRelativityBrake()) return "";
+    return `<button class="gx-sc-btn bridge focusable" data-sc-relbrake="1" style="margin:0;" ` +
+      `title="${T('Galaxy.relBrake.hint')}">${T('Galaxy.relBrake.button')}</button>`;
+  }
+
+  // The confirmation: what the pass costs and where it leaves Earth's
+  // calendar. Null once there is nothing left to confirm.
+  function relBrakeConfirmHtml(dm) {
+    const q = dm.relativityBrakeQuote ? dm.relativityBrakeQuote() : null;
+    if (!q || !dm.canRelativityBrake()) return null;
+    const impact = Nibiru.IMPACT_MINUTE;
+    const crossesImpact = typeof impact === "number" && q.fromMinute < impact && q.toMinute >= impact;
+    return `
+      <div class="npc-sec-hdr gx-sc-sec-hdr">${T('Galaxy.relBrake.title')}</div>
+      <div class="gx-sc-section">
+        <div style="font-size: 15px; font-weight: bold; color: var(--text-primary-hover, #f3f4f6);">
+          ${T('Galaxy.relBrake.cost', { years: q.years })}
+        </div>
+        <div style="margin-top: 6px; font-size: 12px; color: var(--text-text-alt-4, #9ca3af);">
+          ${T('Galaxy.relBrake.explain', { name: escHtml(q.label) })}
+        </div>
+        <div style="margin-top: 8px;">${T('Galaxy.relBrake.earthNow', { date: relBrakeDate(q.fromMinute) })}</div>
+        <div style="font-weight: bold; color: var(--gx-accent-bridge, #a880ff);">
+          ${T('Galaxy.relBrake.earthThen', { date: relBrakeDate(q.toMinute) })}
+        </div>
+        ${crossesImpact ? `<div style="margin-top: 6px; color: var(--text-amber-hint, #f59e0b);">${T('Galaxy.relBrake.impactWarning')}</div>` : ""}
+        <div style="display: flex; gap: 6px; margin-top: 10px;">
+          <button class="gx-sc-btn bridge focusable" data-sc-relbrake-go style="flex: 1;">${T('Galaxy.relBrake.confirm')}</button>
+          <button class="gx-sc-btn focusable" data-sc-relbrake-cancel style="flex: 1;">${T('Galaxy.relBrake.cancel')}</button>
+        </div>
+      </div>
+    `;
   }
 
   function renderShipControls() {
@@ -4757,6 +4828,15 @@
     const ship = dm.playerShip;
     const currentSys = dm.getSystem(ship.currentSystem);
 
+    if (_relBrakeConfirm) {
+      const html = relBrakeConfirmHtml(dm);
+      if (html) {
+        area.innerHTML = html;
+        return;
+      }
+      _relBrakeConfirm = false;
+    }
+
     if (_shipControlsTab === "current") {
       if (!currentSys) {
         area.innerHTML = `<div class="npc-empty gx-sc-empty">${T('Galaxy.tab.currentEmpty')}</div>`;
@@ -4769,7 +4849,9 @@
       // row it is parked on carries the control: Refuel while the star will
       // give (a main-sequence star, or a hole for Schrodingerite), Stop Refuel
       // while the pumps are running. Anywhere else the row is just a badge.
-      const refuelBtnHtml = () => {
+      const refuelBtnHtml = () => relBrakeRowHtml(dm, ship) + pumpBtnHtml();
+      const pumpBtnHtml = () => {
+        if (ship.relBrake) return "";
         if (ship.isRefueling) {
           return `<button class="gx-sc-btn focusable" data-sc-refuel-stop="1" style="margin:0;">` +
             `${T('Galaxy.hud.stopRefuel')}</button>`;
@@ -5294,6 +5376,34 @@
         const bioscanBtn = e.target.closest("[data-sc-bioscan]");
         if (bioscanBtn) {
           scanBiosignatures(dm);
+          renderShipControls();
+          return;
+        }
+
+        // Relativity braking: the row's button asks first, the panel decides.
+        if (e.target.closest("[data-sc-relbrake]")) {
+          if (dm.canRelativityBrake && dm.canRelativityBrake()) {
+            _relBrakeConfirm = true;
+            if (window.SoundManager && window.SoundManager.playOk) SoundManager.playOk();
+          } else if (window.SoundManager && window.SoundManager.playBuzzer) {
+            SoundManager.playBuzzer();
+          }
+          renderShipControls();
+          return;
+        }
+        if (e.target.closest("[data-sc-relbrake-go]")) {
+          _relBrakeConfirm = false;
+          if (dm.startRelativityBrake && dm.startRelativityBrake()) {
+            if (window.SoundManager && window.SoundManager.playOk) SoundManager.playOk();
+          } else if (window.SoundManager && window.SoundManager.playBuzzer) {
+            SoundManager.playBuzzer();
+          }
+          renderShipControls();
+          return;
+        }
+        if (e.target.closest("[data-sc-relbrake-cancel]")) {
+          _relBrakeConfirm = false;
+          if (window.SoundManager && window.SoundManager.playCancel) SoundManager.playCancel();
           renderShipControls();
           return;
         }

@@ -16,6 +16,11 @@
  *   R1 / W / PgDn      , move selected mod down (lower priority)
  *   Mouse click        , select; click again to toggle
  *   Right-click        , open actions panel for that mod
+ *
+ * Steam Workshop (when the game runs through Steam):
+ *   a local mod can be published, then updated, from its actions panel;
+ *   a subscribed mod shows its download state, opens its Workshop page and
+ *   can be unsubscribed. "Browse Workshop" is offered on every mod.
  * ============================================================================
  */
 
@@ -35,7 +40,31 @@
         return T.obj('ModManagerUI');
     }
 
-    const ACTIONS = ['toggle', 'moveUp', 'moveDown'];
+    // The actions panel of one mod, in order. Workshop actions appear only
+    // while Steam is up.
+    function actionsFor(mod) {
+        const list = ['toggle', 'moveUp', 'moveDown'];
+        if (!mod || !ModManager.hasWorkshop || !ModManager.hasWorkshop()) return list;
+        if (mod.workshop) {
+            list.push('openPage', 'unsubscribe');
+        } else {
+            list.push('publish');
+            if (ModManager.workshopIdOf(mod)) list.push('openPage');
+        }
+        list.push('browse');
+        return list;
+    }
+
+    function esc(text) {
+        return String(text === undefined || text === null ? '' : text)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function toast(text, severity) {
+        if (window.ParchmentToast && typeof window.ParchmentToast.show === 'function') {
+            window.ParchmentToast.show(text, { severity: severity || 'info' });  // i18n-ignore  severity id
+        }
+    }
 
     // =========================================================================
     // Input manager
@@ -131,7 +160,7 @@
                 scene._selectedActionIndex = idx - 1;
                 SoundManager.playCursor();
                 scene._updateActionsHighlight();
-            } else if (isDown && idx < ACTIONS.length - 1) {
+            } else if (isDown && idx < scene._actions().length - 1) {
                 scene._selectedActionIndex = idx + 1;
                 SoundManager.playCursor();
                 scene._updateActionsHighlight();
@@ -142,10 +171,7 @@
             }
 
             if (Input.isTriggered('ok')) {
-                const action = ACTIONS[scene._selectedActionIndex];
-                if (action === 'toggle')   scene._toggleSelectedMod();
-                if (action === 'moveUp')   scene._moveMod(-1);
-                if (action === 'moveDown') scene._moveMod(1);
+                scene._runAction(scene._actions()[scene._selectedActionIndex]);
             }
         }
     };
@@ -192,6 +218,13 @@
             this._container.style.transition = 'opacity 0.22s ease-out';
             document.body.appendChild(this._container);
 
+            // Subscriptions made since the game started (in the Steam client or
+            // the browser) show up as soon as the screen opens.
+            this._statusTick = 0;
+            this._busy = null;
+            if (ModManager.refreshWorkshop) ModManager.refreshWorkshop();
+            this._statusKey = this._workshopStatusKey();
+
             this._refreshDOM();
             UIModManagerInputManager.activate(this);
             setTimeout(() => { if (this._container) this._container.style.opacity = '1'; }, 16);
@@ -200,6 +233,44 @@
         update() {
             Scene_MenuBase.prototype.update.call(this);
             UIModManagerInputManager.update();
+            this._pollWorkshop();
+        }
+
+        // Once a second: picks up downloads finishing and new subscriptions,
+        // and redraws only when something a player can see has moved.
+        _pollWorkshop() {
+            if (!ModManager.hasWorkshop || !ModManager.hasWorkshop()) return;
+            if (++this._statusTick < 60) return;
+            this._statusTick = 0;
+            const count = ModManager.mods.length;
+            if (ModManager.mods.some(m => m.workshop && !m.path)) ModManager.refreshWorkshop();
+            const key = this._workshopStatusKey();
+            if (key === this._statusKey && count === ModManager.mods.length) return;
+            this._statusKey = key;
+            this._selectedModIndex = Math.min(this._selectedModIndex, Math.max(0, ModManager.mods.length - 1));
+            this._refreshDOM();
+        }
+
+        _workshopStatusKey() {
+            if (!ModManager.workshopStatus) return '';
+            return ModManager.mods.map(m => {
+                const st = ModManager.workshopStatus(m);
+                return st ? m.name + ':' + st.status + ':' + Math.floor(st.progress * 20) : '';
+            }).join('|');
+        }
+
+        _actions() {
+            return actionsFor(ModManager.mods[this._selectedModIndex]);
+        }
+
+        _runAction(action) {
+            if (action === 'toggle')      this._toggleSelectedMod();
+            if (action === 'moveUp')      this._moveMod(-1);
+            if (action === 'moveDown')    this._moveMod(1);
+            if (action === 'publish')     this._publishSelectedMod();
+            if (action === 'openPage')    this._openSelectedPage();
+            if (action === 'unsubscribe') this._unsubscribeSelectedMod();
+            if (action === 'browse')      this._browseWorkshop();
         }
 
         terminate() {
@@ -231,6 +302,65 @@
             this._refreshDOM();
         }
 
+        _publishSelectedMod() {
+            const mod = ModManager.mods[this._selectedModIndex];
+            if (!mod || mod.workshop || this._busy) { SoundManager.playBuzzer(); return; }
+            const T = getT();
+            const wasPublished = !!ModManager.workshopIdOf(mod);
+            SoundManager.playOk();
+            this._busy = { name: mod.name, progress: 0 };
+            this._refreshDOM();
+            ModManager.publishToWorkshop(mod.name, {
+                onProgress: (p) => {
+                    if (!this._busy) return;
+                    this._busy.progress = p;
+                    const el = this._container && this._container.querySelector('#mod-busy');
+                    if (el) el.textContent = T.publishing.replace('{pct}', Math.round(p * 100));  // i18n-ignore  placeholder name
+                }
+            }).then(res => {
+                this._busy = null;
+                toast(wasPublished ? T.updated : T.published, 'success');  // i18n-ignore  severity id
+                if (res.needsAgreement) {
+                    toast(T.agreement, 'warning');  // i18n-ignore  severity id
+                    ModManager.openSteamPage('https://steamcommunity.com/sharedfiles/workshoplegalagreement');  // i18n-ignore  url
+                } else if (res.created) {
+                    ModManager.openWorkshopPage(res.itemId);
+                }
+                this._refreshDOM();
+            }, err => {
+                this._busy = null;
+                toast(T.publishFailed.replace('{error}', (err && err.message) || String(err)), 'error');  // i18n-ignore  severity id
+                this._refreshDOM();
+            });
+        }
+
+        _openSelectedPage() {
+            const id = ModManager.workshopIdOf(ModManager.mods[this._selectedModIndex]);
+            if (!id || !ModManager.openWorkshopPage(id)) { SoundManager.playBuzzer(); return; }
+            SoundManager.playOk();
+        }
+
+        _browseWorkshop() {
+            if (!ModManager.openWorkshopPage(null)) { SoundManager.playBuzzer(); return; }
+            SoundManager.playOk();
+        }
+
+        _unsubscribeSelectedMod() {
+            const mod = ModManager.mods[this._selectedModIndex];
+            if (!mod || !mod.workshop || this._busy) { SoundManager.playBuzzer(); return; }
+            const T = getT();
+            SoundManager.playOk();
+            ModManager.unsubscribeWorkshop(mod).then(() => {
+                toast(T.unsubscribed, 'info');  // i18n-ignore  severity id
+                this._selectedModIndex = Math.min(this._selectedModIndex, Math.max(0, ModManager.mods.length - 1));
+                this._activeSection = 'list';
+                this._statusKey = this._workshopStatusKey();
+                this._refreshDOM();
+            }, err => {
+                toast(T.publishFailed.replace('{error}', (err && err.message) || String(err)), 'error');  // i18n-ignore  severity id
+            });
+        }
+
         _moveMod(dir) {
             const idx    = this._selectedModIndex;
             const mods   = ModManager.mods;
@@ -258,7 +388,7 @@
                         <div class="mod-slot${sel ? ' selected' : ''}" data-idx="${i}">
                             <span class="mod-slot-order">#${i + 1}</span>
                             <span class="mod-slot-status ${statusCls}">[${statusText}]</span>
-                            <span class="mod-slot-name">${mod.name}</span>
+                            <span class="mod-slot-name">${esc(ModManager.displayName(mod))}</span>
                         </div>`;
                 });
             }
@@ -281,30 +411,47 @@
                     </div>`;
             }
 
-            const isWorkshop  = !!mod.path;
+            const isWorkshop  = !!mod.workshop;
             const sourceLabel = isWorkshop ? T.workshop : T.local;
-            const pathDisplay = isWorkshop ? mod.path : `mods/${mod.name}/`;  // i18n-ignore  asset path
+            const pathDisplay = isWorkshop ? (mod.path || T.notDownloaded) : `mods/${mod.name}/`;  // i18n-ignore  asset path
             const statusCls   = mod.active ? 'mod-slot-status--on' : 'mod-slot-status--off';
             const statusText  = mod.active ? T.active : T.inactive;
+            const manifest    = ModManager.manifestFor(mod);
+            const workshopId  = ModManager.workshopIdOf(mod);
 
-            const actionsHTML = [
-                { key: 'toggle',   label: T.toggle   },
-                { key: 'moveUp',   label: T.moveUp   },
-                { key: 'moveDown', label: T.moveDown  }
-            ].map((a, i) => {
+            const labels = {
+                toggle: T.toggle, moveUp: T.moveUp, moveDown: T.moveDown,
+                publish: workshopId ? T.update : T.publish,
+                openPage: T.openPage, unsubscribe: T.unsubscribe, browse: T.browse
+            };
+            const actionsHTML = this._actions().map((key, i) => {
                 const sel = this._activeSection === 'actions' && i === this._selectedActionIndex;
-                return `<button class="inspect-btn${sel ? ' selected' : ''}" data-action="${a.key}">${a.label}</button>`;
+                return `<button class="inspect-btn${sel ? ' selected' : ''}" data-action="${key}">${labels[key]}</button>`;
             }).join('');
+
+            const row = (label, value) => value === undefined || value === null || value === '' ? '' : `
+                        <div class="inspect-spec-row">
+                            <span class="inspect-spec-label">${label}</span>
+                            <span class="inspect-spec-value">${esc(value)}</span>
+                        </div>`;
+            const st = ModManager.workshopStatus ? ModManager.workshopStatus(mod) : null;
+            const stText = !st ? '' : st.status === 'downloading'
+                ? T.statusDownloading.replace('{pct}', Math.round(st.progress * 100))
+                : T['status' + st.status.charAt(0).toUpperCase() + st.status.slice(1)];
+            const busy = this._busy && this._busy.name === mod.name
+                ? `<div class="inspect-spec-row"><span class="inspect-spec-value" id="mod-busy">${T.publishing.replace('{pct}', Math.round(this._busy.progress * 100))}</span></div>`  // i18n-ignore  markup
+                : '';
 
             return `
                 <div class="item-inspect">
                     <div class="inspect-header">
                         <div class="inspect-title-box">
-                            <div class="inspect-name">${mod.name}</div>
+                            <div class="inspect-name">${esc(ModManager.displayName(mod))}</div>
                             <div class="inspect-rarity ${statusCls}">${sourceLabel}, ${statusText}</div>
                         </div>
                     </div>
-                    <div class="inspect-lore">
+                    <div class="inspect-lore">${manifest.description ? `
+                        <div class="inspect-spec-row"><span class="inspect-spec-value">${esc(manifest.description)}</span></div>` : ''}${row(T.author, manifest.author)}${row(T.version, manifest.version)}${row(T.status, stText)}${row(T.workshopId, workshopId)}${busy}
                         <div class="inspect-spec-row">
                             <span class="inspect-spec-label">${T.source}</span>
                             <span class="inspect-spec-value">${sourceLabel}</span>
@@ -415,10 +562,7 @@
                 btn.addEventListener('click', () => {
                     this._activeSection       = 'actions';
                     this._selectedActionIndex = i;
-                    const action = btn.dataset.action;
-                    if (action === 'toggle')   this._toggleSelectedMod();
-                    if (action === 'moveUp')   this._moveMod(-1);
-                    if (action === 'moveDown') this._moveMod(1);
+                    this._runAction(btn.dataset.action);
                 });
             });
         }

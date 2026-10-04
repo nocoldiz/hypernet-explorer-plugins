@@ -31,6 +31,7 @@
     JobShiftManager, leaseHolderOf, LeaveManager, MinigamePlay, MiniRng, MONEY_CAP, moveInHousehold,
     moveOut, nameHash, NEED_FILL_PER_SEC, NeedManager, resettle, REST_REGION, RoutineManager,
     satisfyNeedOffscreen, satisfyNeedTick, ScheduleManager, sharesHome, SHIFT_HOURS,
+    fixtureKindOfName, fixtureNeeds, keepsBladder,
     ShopShiftManager, SocialLogger, Specs, Stocks, StoryLogger, Tending, ThoughtGenerator, Vehicles,
     Water, WealthManager, WorkServe,
   } = NPCSim._internal;
@@ -81,6 +82,13 @@
       if (profile.hygiene === undefined) profile.hygiene = _needsRng.int(40, 100);
       if (profile.social === undefined)  profile.social  = _needsRng.int(40, 100);
       if (profile.leisure === undefined) profile.leisure = _needsRng.int(40, 100);
+    }
+    // The bladder is seeded on its own (it came after the other five), off
+    // the same seed so it is the same per NPC per world.
+    // A non-sentient creature keeps no such meter (keepsBladder).
+    if (profile.bladder === undefined && keepsBladder(profile)) {
+      const _bSeed = window.HistoryManager ? window.HistoryManager.getSeed() : 19002001;
+      profile.bladder = new MiniRng(nameHash((name || 'npc') + '_bladder') ^ _bSeed).int(40, 100); // i18n-ignore: rng seed key
     }
     if (profile.currentJobId === undefined) profile.currentJobId = null;
     if (profile.workMapId === undefined)    profile.workMapId = null;
@@ -458,10 +466,16 @@
 
       const chunkNames = allNames.slice(chunkStart, chunkEnd);
       const chunkSet = new Set(chunkNames);
+      // The people of the Omega Tower's floors stand still while the party is
+      // off the tower's levels (NPCShared.towerIdle), and count their days on
+      // the tower's own clock (NPCShared.towerTime), never on Earth's.
+      const towerIdle = window.NPCShared?.towerIdle?.() || null;
+      const tower = window.NPCShared?.towerTime?.() || null;
 
       for (const name of chunkNames) {
         const profile = society[name];
         if (!profile) continue;
+        if (towerIdle && !onMapSet.has(name) && towerIdle.group(profile._homeGroupName)) continue;
         ensureSimFields(profile, name);
 
         NeedManager.update(profile, delta);
@@ -493,7 +507,8 @@
         WealthManager.maybeUpgrade(profile);
 
         // Daily EXP gain (once per in-game day)
-        const _today = Math.floor(currentMinute / 1440);
+        const _onTower = !!tower && tower.group(profile._homeGroupName);
+        const _today = Math.floor((_onTower ? tower.now : currentMinute) / 1440);
         // Every day since the last one seen is paid, so a skip of a week is a
         // week of experience rather than one day of it.
         if (profile._lastExpDay !== _today) {
@@ -551,6 +566,10 @@
     // road to 2012 frays both the off-screen sim and on-map NPC reactions.
     eraTension,
     satisfyNeedTick,
+    // What a washroom fixture is, off its event name: "wc", "shower", "bath",
+    // "sink", "washroom", "fountain" or null, and the needs it answers.
+    fixtureKind: fixtureKindOfName,
+    fixtureNeeds,
     // Sends the queued on-map controllers on their need, a few a frame.
     drainDispatch() { drainDispatchQueue($gameSystem?._npcSociety); },
     DISPATCH_PER_FRAME,

@@ -96,5 +96,10 @@
     "reloaded": "Reloaded.",
     "guard": "Guarding",
     "noMenu": "No menus in a fight."
+  },
+  "vr": {
+    "enter": "Enter VR",
+    "exit": "Exit VR",
+    "failed": "The VR headset could not be started."
   }
 }

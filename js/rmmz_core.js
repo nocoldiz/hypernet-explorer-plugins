@@ -602,6 +602,7 @@ Graphics.setStage = function(stage) {
 Graphics.startLoading = function() {
     if (!document.getElementById("loadingSpinner")) {
         document.body.appendChild(this._loadingSpinner);
+        if (this._spinnerDriver) this._spinnerDriver.run(true);
     }
 };
 
@@ -613,6 +614,7 @@ Graphics.startLoading = function() {
 Graphics.endLoading = function() {
     if (document.getElementById("loadingSpinner")) {
         document.body.removeChild(this._loadingSpinner);
+        if (this._spinnerDriver) this._spinnerDriver.run(false);
         return true;
     } else {
         return false;
@@ -904,11 +906,239 @@ Graphics._updateVideo = function() {
 
 Graphics._createLoadingSpinner = function() {
     const loadingSpinner = document.createElement("div");
-    const loadingSpinnerImage = document.createElement("div");
+    const loadingSpinnerImage = document.createElement("canvas");
     loadingSpinner.id = "loadingSpinner";
     loadingSpinnerImage.id = "loadingSpinnerImage";
     loadingSpinner.appendChild(loadingSpinnerImage);
     this._loadingSpinner = loadingSpinner;
+    this._spinnerDriver = this._createSpinnerDriver(loadingSpinnerImage);
+};
+
+// The hypertriangle is drawn live in a worker on an OffscreenCanvas, so it
+// keeps turning at full frame rate while the main thread is busy loading.
+// Without OffscreenCanvas the same program runs on the main thread.
+Graphics._createSpinnerDriver = function(canvas) {
+    const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 1), 3);
+    canvas.width = Math.round(96 * dpr);
+    canvas.height = canvas.width;
+    if (canvas.transferControlToOffscreen && typeof Worker === "function" && window.Blob && window.URL) {
+        try {
+            const source = "(" + Graphics._hypertriangleProgram.toString() + ")(self);";
+            const url = URL.createObjectURL(new Blob([source], { type: "text/javascript" }));
+            const worker = new Worker(url);
+            const offscreen = canvas.transferControlToOffscreen();
+            worker.postMessage({ canvas: offscreen }, [offscreen]);
+            return { run: on => worker.postMessage({ run: !!on }) };
+        } catch (e) {
+            // Falls through to the main thread renderer.
+        }
+    }
+    const host = { requestAnimationFrame: cb => window.requestAnimationFrame(cb) };
+    Graphics._hypertriangleProgram(host);
+    host.onmessage({ data: { canvas: canvas } });
+    return { run: on => host.onmessage({ data: { run: !!on } }) };
+};
+
+// Self contained, since it is stringified into the worker: no outer names.
+// The 5-cell, the 4D simplex, turns through the fourth axis (XW), tumbles
+// (YZ) and drifts on the screen plane (XY), projected 4D -> 3D -> 2D with
+// perspective. Edges and vertices brighten with depth, the far side fades and
+// a short afterglow trails the fold. The middle stays dark for the eye.
+Graphics._hypertriangleProgram = function(scope) {
+    const S5 = Math.sqrt(5);
+    const RAW = [
+        [1, 1, 1, -1 / S5],
+        [1, -1, -1, -1 / S5],
+        [-1, 1, -1, -1 / S5],
+        [-1, -1, 1, -1 / S5],
+        [0, 0, 0, 4 / S5]
+    ];
+    const NORM = Math.hypot(RAW[0][0], RAW[0][1], RAW[0][2], RAW[0][3]);
+    const VERTS = RAW.map(v => v.map(c => c / NORM));
+    const EDGES = [];
+    for (let i = 0; i < 5; i++) {
+        for (let j = i + 1; j < 5; j++) EDGES.push([i, j]);
+    }
+    const XW = 0.55, YZ = 0.9, XY = 0.16, XZ = 0.21; // radians per second
+    const pts = VERTS.map(() => ({ x: 0, y: 0, depth: 0 }));
+    const order = EDGES.map((e, i) => i);
+    const v = [0, 0, 0, 0];
+
+    function rot(a, b, t) {
+        const c = Math.cos(t), s = Math.sin(t);
+        const va = v[a], vb = v[b];
+        v[a] = va * c - vb * s;
+        v[b] = va * s + vb * c;
+    }
+
+    function project(t) {
+        const breath = Math.sin(t * 0.37) * 0.35;
+        const a = t * XY, ca = Math.cos(a), sa = Math.sin(a);
+        for (let i = 0; i < 5; i++) {
+            for (let c = 0; c < 4; c++) v[c] = VERTS[i][c];
+            rot(0, 3, t * XW + breath);
+            rot(1, 2, t * YZ);
+            rot(0, 2, Math.sin(t * XZ) * 0.6);
+            const w = 1 / (2.4 - v[3]);
+            const z = v[2] * w;
+            const d = w / (2.6 - z);
+            const px = v[0] * d, py = v[1] * d;
+            pts[i].x = px * ca - py * sa;
+            pts[i].y = px * sa + py * ca;
+            pts[i].depth = z + v[3] * 0.5;
+        }
+        return pts;
+    }
+
+    // Measures the widest reach and the depth range once, over a long run.
+    let reach = 0, lo = Infinity, hi = -Infinity;
+    for (let k = 0; k < 4000; k++) {
+        for (const p of project(k * 0.173)) {
+            reach = Math.max(reach, Math.hypot(p.x, p.y));
+            lo = Math.min(lo, p.depth);
+            hi = Math.max(hi, p.depth);
+        }
+    }
+    const near = d => Math.min(1, Math.max(0, (d - lo) / (hi - lo || 1)));
+    const gold = a => "rgba(255,215,0," + a.toFixed(3) + ")";
+    const edgeDepth = i => pts[EDGES[i][0]].depth + pts[EDGES[i][1]].depth;
+
+    let canvas = null, ctx = null, running = false, pending = false;
+    const clock = scope.performance || performance;
+    const next = scope.requestAnimationFrame
+        ? cb => scope.requestAnimationFrame(cb)
+        : cb => setTimeout(cb, 16);
+
+    function draw(t) {
+        const size = canvas.width, half = size / 2, k = size / 100;
+        const scale = (42 * k) / (reach || 1);
+        project(t);
+        // Afterglow: fade the previous frame instead of wiping it.
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = "rgba(0,0,0,0.42)";
+        ctx.fillRect(0, 0, size, size);
+        ctx.lineCap = "round";
+        order.sort((a, b) => edgeDepth(a) - edgeDepth(b));
+        // The eye sits at the centroid (depth 0): the far half of the cage is
+        // drawn behind it, the near half passes in front of it.
+        drawCage(half, scale, k, false);
+        drawEye(t, half, size / 96, k);
+        drawCage(half, scale, k, true);
+    }
+
+    function drawCage(half, scale, k, front) {
+        ctx.globalCompositeOperation = "lighter";
+        for (const i of order) {
+            if ((edgeDepth(i) >= 0) !== front) continue;
+            const p = pts[EDGES[i][0]], q = pts[EDGES[i][1]];
+            const np = near(p.depth), nq = near(q.depth), n = (np + nq) / 2;
+            const x1 = half + p.x * scale, y1 = half + p.y * scale;
+            const x2 = half + q.x * scale, y2 = half + q.y * scale;
+            const grad = ctx.createLinearGradient(x1, y1, x2, y2);
+            grad.addColorStop(0, gold(0.2 + 0.8 * np));
+            grad.addColorStop(1, gold(0.2 + 0.8 * nq));
+            ctx.strokeStyle = grad;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.globalAlpha = 0.16;
+            ctx.lineWidth = (3.5 + 3 * n) * k;
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+            ctx.lineWidth = (0.9 + 1.1 * n) * k;
+            ctx.stroke();
+        }
+        for (const p of pts) {
+            if ((p.depth >= 0) !== front) continue;
+            const n = near(p.depth), r = (3 + 4 * n) * k;
+            const x = half + p.x * scale, y = half + p.y * scale;
+            const glow = ctx.createRadialGradient(x, y, 0, x, y, r);
+            glow.addColorStop(0, "rgba(255,250,215," + (0.5 + 0.5 * n).toFixed(3) + ")");
+            glow.addColorStop(0.3, gold(0.35 + 0.5 * n));
+            glow.addColorStop(1, gold(0));
+            ctx.fillStyle = glow;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    // Half-closed eye: a drooping upper lid over an iris peeking out beneath,
+    // blinking every 4.5 seconds. u is one CSS pixel in canvas pixels.
+    function drawEye(t, half, u, k) {
+        const phase = (t % 4.5) / 4.5;
+        let open = 1;
+        if (phase > 0.88) {
+            const b = phase < 0.93 ? (phase - 0.88) / 0.05 : (1 - phase) / 0.07;
+            open = 1 - 0.88 * (0.5 - 0.5 * Math.cos(Math.PI * b));
+        }
+        ctx.globalCompositeOperation = "source-over";
+        ctx.globalAlpha = 1;
+        // The dark well hides the far side of the cage behind the eye.
+        const well = ctx.createRadialGradient(half, half, 9 * k, half, half, 17 * k);
+        well.addColorStop(0, "rgba(10,8,2,0.92)");
+        well.addColorStop(1, "rgba(10,8,2,0)");
+        ctx.fillStyle = well;
+        ctx.beginPath();
+        ctx.arc(half, half, 17 * k, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowColor = "rgba(255,215,0,0.7)";
+        ctx.shadowBlur = 6 * u;
+        // Iris, squashed toward its own middle while blinking.
+        const iy = half + 4 * u;
+        ctx.save();
+        ctx.translate(half, iy);
+        ctx.scale(1, open);
+        const iris = ctx.createRadialGradient(0, -0.5 * u, 0, 0, -0.5 * u, 7 * u);
+        iris.addColorStop(0, "#2a1c00");
+        iris.addColorStop(0.28, "#2a1c00");
+        iris.addColorStop(0.34, "#FFD700");
+        iris.addColorStop(1, "#FFD700");
+        ctx.fillStyle = iris;
+        ctx.beginPath();
+        ctx.arc(0, 0, 5 * u, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        // Upper lid: the top half of an ellipse, lowered as the eye shuts.
+        const ly = half - 0.5 * u;
+        ctx.save();
+        ctx.translate(half, ly);
+        ctx.scale(1, open);
+        ctx.strokeStyle = "#FFD700";
+        ctx.lineWidth = 3 * u;
+        ctx.beginPath();
+        ctx.ellipse(0, 7.5 * u, 13.5 * u, 14 * u, 0, Math.PI, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+        ctx.shadowBlur = 0;
+        ctx.shadowColor = "rgba(0,0,0,0)";
+    }
+
+    function loop() {
+        pending = false;
+        if (!running || !ctx) return;
+        draw(clock.now() / 1000);
+        pending = true;
+        next(loop);
+    }
+
+    scope.onmessage = function(e) {
+        const data = (e && e.data) || {};
+        if (data.canvas) {
+            canvas = data.canvas;
+            ctx = canvas.getContext("2d");
+        }
+        if ("run" in data) {
+            running = !!data.run;
+            if (!running && ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        if (running && ctx && !pending) {
+            pending = true;
+            next(loop);
+        }
+    };
+    scope.hypertriangle = { project: project, draw: draw, edges: EDGES };
 };
 
 Graphics._createFPSCounter = function() {

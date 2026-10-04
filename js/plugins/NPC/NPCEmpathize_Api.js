@@ -44,6 +44,7 @@
     _stanceToneMult, _traitCompatBonus, _travellingPartyCount, _wisMod, BUBBA_NAME, EM_NAME,
     FERAL_ACTIONS, FUN_ACTIONS, PET_OPINION, Scene_NPCEmpathize, SPOKEN_LOG_MAX,
     STORY_PROTECTED_ACTIONS, vary, Wiki,
+    _lookIcon, _lookStatsOfActor, _lookStatsOfProfile, _signatureLines,
   } = window.NPCEmpathize._internal;
 
   // ============================================================================
@@ -438,6 +439,9 @@
       _isEmLocalNpc, _emOpinionJitter,
       // Every line Em herself speaks in the panel comes out of here.
       _emVoiceLine,
+      // The look stats and the banks an icon of one (100%) speaks and is
+      // answered from, shared with the UI layer and the map talk.
+      _lookIcon, _lookStatsOfActor, _lookStatsOfProfile, _signatureLines,
       // Bubba (Switch 49): the same for the man who built the Liminal Engine,
       // so the UI can hide what he refuses to do and label what he walks into.
       _bubbaPlaythrough, _isBubbaActor, _bubbaContext, _bubbaDb,

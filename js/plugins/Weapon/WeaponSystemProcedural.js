@@ -142,6 +142,12 @@ var WeaponSystemProcedural = {
 
   texturePath(filename) {
     const name = String(filename || '');
+    // A picture the party drew (Pain, the pixel art maker) or a stock sheet
+    // picked at the anvil: `user:` / `tex:` tokens, resolved by
+    // window.UserPictures (Debug/PixelArtMaker.js).
+    if (window.UserPictures && window.UserPictures.isToken(name)) {
+      return window.UserPictures.resolve(name) || '';
+    }
     if (name.startsWith(this.DREAM_PREFIX)) return `img/dreamtextures/${name.slice(this.DREAM_PREFIX.length)}`;
     return name.endsWith('.jpg')
       ? `img/textures/${name}`

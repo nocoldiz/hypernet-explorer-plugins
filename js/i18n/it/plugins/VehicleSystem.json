@@ -55,5 +55,6 @@
     "fuel": "Carburante",
     "condition": "Condizioni",
     "broken": "Fuori uso - servono riparazioni"
-  }
+  },
+  "stopRiding": "Smetti di cavalcare"
 }

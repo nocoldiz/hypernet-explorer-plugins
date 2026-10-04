@@ -29,6 +29,10 @@
  *   isCarKeys(id), grantCarKeys(profile)  the RoadCarAI car keys in a hand
  *   WorldModes                 what the simulation does in each world creation
  *                              mode (also window.WorldModes)
+ *   towerTime()                the Omega Tower's own clock and the tests that
+ *                              sort a group or power onto it
+ *   towerIdle()                null while the party is on the tower's levels,
+ *                              else the same tests
  *
  * The Rng bit stream is identical to the SeededRng / LifeRng / PolRng /
  * WebRng / MiniRng classes it replaces, so existing worlds stay deterministic.
@@ -614,7 +618,53 @@
   // Published bare as well, unless something else already owns that name.
   if (typeof window !== "undefined" && !Object.prototype.hasOwnProperty.call(window, "WorldModes")) window.WorldModes = WorldModes;
 
+  // ==========================================================================
+  // The Omega Tower's own time
+  // ==========================================================================
+  // The societies on the tower's floors and the powers that govern them run on
+  // the tower's own clock (window.TowerWorlds.clock), which moves only while a
+  // party is on the tower's levels. They never catch up on time spent out in
+  // the world: frozen where they were left until somebody walks back in.
+  //
+  // towerTests() is the pair of tests that sorts an entry onto the tower: a
+  // settlement group ("Tower:-5") or a power. Built once per pass, so a loop
+  // over every identity pays for the power list only once.
+  function towerTests(TW) {
+    const prefix = String(TW.groupPrefix || "Tower") + ":";   // i18n-ignore  group key
+    let powers = [];
+    try { powers = typeof TW.powerNames === "function" ? (TW.powerNames() || []) : []; } catch (_) { powers = []; }
+    const powerSet = new Set(powers);
+    return {
+      group: (name) => !!name && String(name).indexOf(prefix) === 0,
+      power: (name) => !!name && powerSet.has(name),
+    };
+  }
+
+  // towerTime(): null with no tower, else { now, group, power }. Every daily
+  // loop simulates Earth's entries on Earth's minute and the tower's on now,
+  // each from a cursor of its own, so neither clock leaks into the other.
+  function towerTime() {
+    const TW = (typeof window !== "undefined") && window.TowerWorlds;
+    if (!TW || typeof TW.clock !== "function") return null;
+    let now = null;
+    try { now = TW.clock(); } catch (_) { return null; }
+    if (!Number.isFinite(now)) return null;
+    return Object.assign({ now }, towerTests(TW));
+  }
+
+  // towerIdle(): null while the party is on the tower's levels (or there is no
+  // tower), else the same tests. For the hourly loop, which has no cursor:
+  // off the tower, the tower's people are not ticked at all.
+  function towerIdle() {
+    const TW = (typeof window !== "undefined") && window.TowerWorlds;
+    if (!TW || typeof TW.simulating !== "function") return null;
+    try { if (TW.simulating()) return null; } catch (_) { return null; }
+    return towerTests(TW);
+  }
+
   window.NPCShared = {
+    towerIdle,
+    towerTime,
     CIVIC_V,
     Diet,
     dietAllows: (profile, item) => Diet.allows(profile, item),

@@ -1283,7 +1283,7 @@
       if (this._lastNeedTick === undefined) this._lastNeedTick = time;
       const deltaSec = (time - this._lastNeedTick) / 1000;
       if (deltaSec >= 1) {
-        window.NPCSim?.satisfyNeedTick(this.eventName, this.interactReason, deltaSec);
+        window.NPCSim?.satisfyNeedTick(this.eventName, this.interactReason, deltaSec, this.interactFixture);
         this._lastNeedTick = time;
       }
       if (time >= this.stateEndTime) {
@@ -1298,6 +1298,9 @@
     goInteract(targetEvent, reason) {
       this.target = targetEvent;
       this.interactReason = reason;
+      // A WC, a shower, a bath and a sink each give what they give, whatever
+      // the need that sent them (NPCSim.fixtureKind, NPCSimulationCore).
+      this.interactFixture = window.NPCSim?.fixtureKind?.(targetEvent?.event?.()?.name) || null;
       this.state = "goingToInteract";
       this.stateEndTime = performance.now() + 60000;
       this.approachTile = null;

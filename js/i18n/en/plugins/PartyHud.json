@@ -15,7 +15,9 @@
     "leisureCritical": "Miserable",
     "craving": "Craving {substance}",
     "ill": "{disease}",
-    "illUntreated": "{disease} (untreated)"
+    "illUntreated": "{disease} (untreated)",
+    "bladder": "Needs the toilet",
+    "bladderCritical": "Bursting"
   },
   "gear": {
     "held": "[{list}]",

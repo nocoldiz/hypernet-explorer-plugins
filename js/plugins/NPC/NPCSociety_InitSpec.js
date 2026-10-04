@@ -96,7 +96,7 @@
       wealth: 'wealth', wealthtier: 'wealth', money: 'money',
       workstart: 'workStart', workend: 'workEnd', workshift: 'workShift',
       hunger: 'hunger', sleep: 'sleep', hygiene: 'hygiene',
-      social: 'social', leisure: 'leisure',
+      social: 'social', leisure: 'leisure', bladder: 'bladder',
       opinion: 'opinion', playeropinion: 'opinion',
       birthyear: 'birthYear', age: 'age', birthplace: 'birthplace',
       orientation: 'sexual', sexual: 'sexual', sexuality: 'sexual',
@@ -357,7 +357,14 @@
       for (const key of ['atk', 'def', 'mat', 'mdf', 'agi', 'luk', 'mhp', 'mmp',
                          'arcane', 'substance', 'stealth', 'intimidation', 'exp']) {
         const v = num(key, 0, 99999999);
-        if (v != null) profile[key] = v;
+        if (v == null) continue;
+        profile[key] = v;
+        // A written look stat is a percentage and pins the value: the kit no
+        // longer decides it (NPCSociety_Gear _syncLookStats).
+        if (key === 'arcane' || key === 'substance' || key === 'stealth' || key === 'intimidation') {
+          profile[key] = Math.min(100, v);
+          profile._lookPinned = true;
+        }
       }
 
       const pi = spec.personality != null ? this.personalityIndex(spec.personality) : -1;
@@ -412,7 +419,7 @@
       const shift = num('workShift', 0, 3);
       if (shift != null) profile.workShift = shift;
 
-      for (const key of ['hunger', 'sleep', 'hygiene', 'social', 'leisure']) {
+      for (const key of ['hunger', 'sleep', 'hygiene', 'social', 'leisure', 'bladder']) {
         const v = num(key, 0, 100);
         if (v != null) profile[key] = v;
       }

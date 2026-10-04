@@ -1484,7 +1484,13 @@
         return { d: bestD, half: best.half, depth: best.depth };
     }
 
+    // Bumped every time the generated world could have changed under the memo
+    // (a fresh biome table, a planet, an override): the mesh workers hold a copy
+    // of the world map and rebuild it when this moves (VoxelWorldTerrain).
+    let _terrainEpoch = 0;
+    function terrainEpoch() { return _terrainEpoch; }
     function clearTerrainCaches() {
+        _terrainEpoch++;
         _profileCache.clear();
         _islandCache.clear();
         _oceanIsleCache.clear();
@@ -1503,14 +1509,64 @@
     // as an edit (that is the whole point of a hole), so the value stored is a
     // material id and MAT.AIR is a legitimate one.
     // =========================================================================
+    // A world square as one number, for the edit map: exact for any square
+    // within a thousand of the map in either direction.
+    const editTileKey = (wx, wy) => (wx + 1024) * 65536 + (wy + 1024);
     class VoxelEdits {
         constructor() {
-            this._tiles = new Map();   // "wx,wy" -> { cells: Map, cols: Map }
+            // Keyed by a number, not by "wx,wy": once anything is dug, every
+            // isSolid and every column top asks this map, and a string built
+            // per ask was a steady stream of garbage under the mesher. The save
+            // keeps the "wx,wy" spelling (save / load below).
+            this._tiles = new Map();   // editTileKey(wx, wy) -> { cells: Map, cols: Map, wx, wy }
             this.count  = 0;
             // A dug world is cheap but not free: past this many cubes the oldest
             // tile of edits is dropped rather than letting a save grow forever.
             this.limit  = 120000;
             this._order = [];
+            // Moves when the whole map is thrown away (clear, load), and each
+            // tile carries the stamp of its own last change: together they let
+            // a mesh worker's copy of the edits be brought up to date one tile
+            // at a time, and only when that tile has actually changed.
+            this.epoch  = 0;
+        }
+
+        // The stamp of a tile's last change, 0 for a tile with no edits.
+        tileVersion(wx, wy) {
+            if (!this._tiles.size) return 0;
+            const t = this._tiles.get(editTileKey(wx, wy));
+            return t ? t.ver : 0;
+        }
+
+        // A tile's edits as one flat [cell, mat, cell, mat...] array, in the
+        // save's own encoding, or null for a tile with none.
+        tileCells(wx, wy) {
+            const t = this._tiles.size ? this._tiles.get(editTileKey(wx, wy)) : null;
+            if (!t || !t.cells.size) return null;
+            const out = new Int32Array(t.cells.size * 2);
+            let i = 0;
+            for (const [cell, mat] of t.cells) { out[i++] = cell; out[i++] = mat; }
+            return out;
+        }
+
+        // Put one tile's edits back exactly as another copy holds them (the
+        // mesh worker's side of tileCells).
+        replaceTile(wx, wy, cells) {
+            const k = editTileKey(wx, wy);
+            const old = this._tiles.get(k);
+            if (old) {
+                this.count -= old.cells.size;
+                this._tiles.delete(k);
+                const oi = this._order.indexOf(k);
+                if (oi >= 0) this._order.splice(oi, 1);
+            }
+            if (!cells || !cells.length) return;
+            for (let i = 0; i + 1 < cells.length; i += 2) {
+                const cell = cells[i] | 0;
+                const vy   = (cell % 4096) + VOX.MIN_Y;
+                const col  = Math.floor(cell / 4096);
+                this.set(wx, wy, Math.floor(col / VOX.PER_TILE), col % VOX.PER_TILE, vy, cells[i + 1] | 0);
+            }
         }
 
         static key(lx, lz, vy) {
@@ -1519,10 +1575,10 @@
         static col(lx, lz) { return lx * VOX.PER_TILE + lz; }
 
         _tile(wx, wy, make) {
-            const k = wx + ',' + wy;
+            const k = editTileKey(wx, wy);
             let t = this._tiles.get(k);
             if (!t && make) {
-                t = { cells: new Map(), cols: new Map() };
+                t = { cells: new Map(), cols: new Map(), wx, wy };
                 this._tiles.set(k, t);
                 this._order.push(k);
                 this._prune();
@@ -1542,17 +1598,18 @@
 
         // Every read starts with the size test: a world nobody has dug in is
         // the common case, and it must not pay for a string key per column.
-        has(wx, wy) { return this._tiles.size > 0 && this._tiles.has(wx + ',' + wy); }
+        has(wx, wy) { return this._tiles.size > 0 && this._tiles.has(editTileKey(wx, wy)); }
 
         get(wx, wy, lx, lz, vy) {
             if (!this._tiles.size) return undefined;
-            const t = this._tiles.get(wx + ',' + wy);
+            const t = this._tiles.get(editTileKey(wx, wy));
             if (!t) return undefined;
             return t.cells.get(VoxelEdits.key(lx, lz, vy));
         }
 
         set(wx, wy, lx, lz, vy, mat) {
             const t = this._tile(wx, wy, true);
+            t.ver = ++VoxelEdits._seq;
             const k = VoxelEdits.key(lx, lz, vy);
             if (!t.cells.has(k)) this.count++;
             t.cells.set(k, mat);
@@ -1565,7 +1622,7 @@
         // The vertical span of edits in one column, or null when untouched.
         range(wx, wy, lx, lz) {
             if (!this._tiles.size) return null;
-            const t = this._tiles.get(wx + ',' + wy);
+            const t = this._tiles.get(editTileKey(wx, wy));
             if (!t) return null;
             return t.cols.get(VoxelEdits.col(lx, lz)) || null;
         }
@@ -1573,23 +1630,23 @@
         // Local column indices touched in a tile, for the mesher's detail pass.
         columns(wx, wy) {
             if (!this._tiles.size) return null;
-            const t = this._tiles.get(wx + ',' + wy);
+            const t = this._tiles.get(editTileKey(wx, wy));
             return t ? t.cols : null;
         }
 
-        clear() { this._tiles.clear(); this._order.length = 0; this.count = 0; }
+        clear() { this._tiles.clear(); this._order.length = 0; this.count = 0; this.epoch++; }
 
         // --- persistence ----------------------------------------------------
         // Flat number arrays: cheap to write, cheap to read back, and small
         // enough in a save that a few thousand dug cubes cost a few kilobytes.
         save() {
             const out = {};
-            for (const [k, t] of this._tiles) {
+            for (const t of this._tiles.values()) {
                 if (!t.cells.size) continue;
                 const arr = new Array(t.cells.size * 2);
                 let i = 0;
                 for (const [cell, mat] of t.cells) { arr[i++] = cell; arr[i++] = mat; }
-                out[k] = arr;
+                out[t.wx + ',' + t.wy] = arr;
             }
             return out;
         }
@@ -1612,6 +1669,10 @@
             }
         }
     }
+
+    // One counter for every tile of every edit map, so a tile dropped and
+    // dug again never comes back with a stamp it had before.
+    VoxelEdits._seq = 0;
 
     // =========================================================================
     // VoxelField
@@ -1707,14 +1768,18 @@
     // square has none. Never on a road: a pit opening under a carriageway is a
     // hole the ribbon is drawn straight over, which reads from the verge as a
     // tunnel under the road and drops whatever drives over it into the rock.
+    //
+    // The answer is one shared record, overwritten by the next call: it is
+    // asked for every column the mesher, a ray or a footfall touches, and both
+    // callers read it on the spot, so a fresh object each time was only garbage.
+    const _shaft = { sx: 0, sz: 0 };
     function shaftOf(wx, wy, own) {
         const oneIn = own >= 26 ? SHAFT_ONE_IN_MTN : SHAFT_ONE_IN;
         if (sqHash(wx, wy, 1) >= 1 / oneIn) return null;
         if (profileFor(sampleBiomeAt(wx, wy).name).key === 'road') return null;
-        return {
-            sx: wx * VOX.PER_TILE + Math.floor(sqHash(wx, wy, 2) * VOX.PER_TILE),
-            sz: wy * VOX.PER_TILE + Math.floor(sqHash(wx, wy, 3) * VOX.PER_TILE)
-        };
+        _shaft.sx = wx * VOX.PER_TILE + Math.floor(sqHash(wx, wy, 2) * VOX.PER_TILE);
+        _shaft.sz = wy * VOX.PER_TILE + Math.floor(sqHash(wx, wy, 3) * VOX.PER_TILE);
+        return _shaft;
     }
 
     // =========================================================================
@@ -3871,7 +3936,7 @@
         VoxelEdits, VoxelField, VoxelMesher, MeshBuffer,
         TERRAIN, profileFor, islandRiseAt, riverPathAt, riverAt, shapeAt,
         oceanIslandOf, oceanIslandAt, OCEAN_ISLE_MAX_R,
-        clearTerrainCaches, SEA_LEVEL, GROUND_BASE, alienSeaNear,
+        clearTerrainCaches, terrainEpoch, SEA_LEVEL, GROUND_BASE, alienSeaNear,
         voxelMaterial, voxelGrassMaterial, voxelWaterMaterial, disposeVoxelMaterial,
         voxelBlockMaterial, hotAt, oreAt, bedMat,
         isFarlands,

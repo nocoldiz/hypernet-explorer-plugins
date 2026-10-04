@@ -4,7 +4,8 @@
     "sleep": "Sleep",
     "hygiene": "Hygiene",
     "social": "Social",
-    "leisure": "Mood"
+    "leisure": "Mood",
+    "bladder": "Bladder"
   },
   "category": {
     "materials": "Materials",

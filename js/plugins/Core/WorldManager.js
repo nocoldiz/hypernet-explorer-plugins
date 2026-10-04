@@ -460,6 +460,9 @@
             _npcTimeSkipped: "timeSkipped",
             _npcLifeRecords: "lifeRecords",
             _npcLifeLastSimMinute: "lifeLastSimMinute",
+            // How far the tower's own people have been lived, on the tower's
+            // clock rather than Earth's (NPCLifeSimulator.js, TOWER PASS).
+            _npcLifeTowerLastSimMinute: "lifeTowerLastSimMinute",
             _npcPastPartyMembers: "pastPartyMembers",
             _npcPolitics: "politics",
             // Who has signed what with whom: the hyperpower-to-hyperpower
@@ -537,7 +540,12 @@
         // and a world that rebuilt differently would leave those governments
         // standing for nobody.
         towerworlds: {
-            _towerWorlds: "worlds"
+            _towerWorlds: "worlds",
+            // The tower's own clock (DungeonFloorSystem.js, TowerWorlds.clock):
+            // it runs only while a party is on the tower's levels, so it stands
+            // where it was left until a party of any savegame walks back in.
+            // The furthest any savegame has lived it to wins.
+            _towerMinute: { prop: "minute", merge: mergeMax }
         },
         conversations: {
             _npcConversations: "log"

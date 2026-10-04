@@ -37,6 +37,7 @@
     _isNonSentientActor, _isNonSentientNpc, FERAL_ACTIONS, FUN_ACTIONS,
     _feedKind, _feedCalories, _feedOpinion, _feedItemsInPack,
     _isStoryNpc, STORY_PROTECTED_ACTIONS,
+    _lookIcon, _lookStatsOfActor, _lookStatsOfProfile, _signatureLines,
   } = window.NPCEmpathize._helpers;
   const _getT = window.NPCEmpathize._getT;
   const vary = _vary || function (text) {
@@ -222,21 +223,23 @@
   // (DialogueSystem.js). Which model portrays somebody is this panel's answer,
   // so it is asked here rather than worked out twice:
   //
-  //   specForEvent(ev)    an NPC standing on the map: their dossier's model
-  //                       (Em), the model their sheet names in NPCs.json, or
-  //                       the body a creature profile is built from. Unlike
+  //   specForEvent(ev)    an NPC standing on the map: the model their sheet
+  //                       names in NPCs.json, or the body a creature profile
+  //                       is built from. A dossier's model (Em) never speaks. Unlike
   //                       the panel, the sheet's own bust does not outrank a
   //                       model here: a speaker with a body is shown by it.
-  //   specForActor(actor) a party member, by the portrait they chose.
+  //   specForActor(actor) a party member, by the portrait they chose, never
+  //                       by a dossier's model.
   //   build(spec)         Promise of the built battler, or null.
   //
   // Null means "no model: draw the bust".
   function _speakerSpecForEvent(ev) {
     if (!ev || typeof ev.event !== 'function') return null;
     const npcName = window.NPCSim?.npcNameForEvent?.(ev) ?? (ev.event()?.name?.trim() || '');
-    const preset = _presetFromEvent(ev);
-    const presetSpec = preset ? _presetModelSpec(null, preset) : null;
-    if (presetSpec) return presetSpec;
+    // A dossier with a model of its own (Em) was painted a bust too, and in
+    // dialogue that bust is who she is: the model is for the panel and the
+    // status sheet only.
+    if (_presetFromEvent(ev)) return null;
     const NC = window.NPCCreature;
     if (!NC) return null;
     const profile = npcName ? _getProfile(npcName) : null;
@@ -254,8 +257,9 @@
 
   function _speakerSpecForActor(actor) {
     if (!actor) return null;
-    return _creatureModelSpec(_creatureSubject(actor, null, actor.name()), actor)
-      || _presetModelSpec(actor, null);
+    if (window.CharacterPresets?.getActorPresetModel?.(actor)) return null;
+    const spec = _creatureModelSpec(_creatureSubject(actor, null, actor.name()), actor);
+    return spec && spec.info && spec.info.kind === 'glb' ? null : spec;
   }
 
   // The same two ways _initPortrait3D builds a spec, shared so the message box
@@ -1650,7 +1654,7 @@
 
     // Advertised odds, computed by the same helper _join() rolls against, for
     // the same member: the one the switcher has doing the talking.
-    const joinChance = _joinChance(opinion, this._focusActor());
+    const joinChance = _joinChance(opinion, this._focusActor(), profile);
 
     const nowMin            = $gameVariables?.value(114) ?? 0;
     const wasRecentlyAttacked = (profile?.eventLog ?? []).some(
@@ -1683,7 +1687,10 @@
 
     // Nobody far above the party's weight class agrees to be led by them, so
     // Join is not on the table at all for a recruit out of that reach.
+    // Out of reach is shown, not hidden: the offers stay on the board greyed
+    // out at 0%, and pressing one says what level the party needs (_join).
     const joinLevelOk = _joinLevelOk(preset?.level ?? profile?.level);
+    const joinOdds = joinLevelOk ? joinChance : 0;
 
     // Em talking to Bubba: the one person in ninety-two dimensions who is
     // simply pleased to see her. Nothing hostile and nothing romantic is on the
@@ -1767,15 +1774,15 @@
           ...(window.ProceduralHouseSystem?.canOfferPurchase?.()
             ? [{ id: 'buyHouse', label: `${T.buyHouse} (${_euros(window.ProceduralHouseSystem.getCurrentFloorPrice(opinion))})` }]
             : []),
-          ...(partyFull || !canVanishOnJoin || !joinLevelOk
+          ...(partyFull || !canVanishOnJoin
             ? []
-            : [{ id: 'join', label: `${joinAsInactive ? T.joinPartyInactive : T.joinParty} (~${joinChance}%)` }]),
+            : [{ id: 'join', label: `${joinAsInactive ? T.joinPartyInactive : T.joinParty} (~${joinOdds}%)`, disabled: !joinLevelOk }]),
           // Somebody who talks can also be asked for less than a slot: to walk
           // with the party as a follower. Same odds, and offered whether or
           // not there is room, since a follower never needs any.
-          ...(!canVanishOnJoin || !joinLevelOk
+          ...(!canVanishOnJoin
             ? []
-            : [{ id: 'joinFollower', label: `${T.joinFollower} (~${joinChance}%)` }]),
+            : [{ id: 'joinFollower', label: `${T.joinFollower} (~${joinOdds}%)`, disabled: !joinLevelOk }]),
           // Free chat closes the list. Opening the text field is an interaction
           // like any other, never a bare keypress: the panel is navigated with
           // the same keys one types with, so a stray direction must not drop
@@ -1878,7 +1885,7 @@
         ...kept.filter(a => a.id !== 'freeChat'),
         ...(this._justJoined === true
           ? []
-          : [{ id: 'join', label: `${joinAsInactive ? T.joinPartyInactive : T.joinParty} (~${joinChance}%)`, disabled: joinBlocked }]),
+          : [{ id: 'join', label: `${joinAsInactive ? T.joinPartyInactive : T.joinParty} (~${joinOdds}%)`, disabled: joinBlocked }]),
         ...kept.filter(a => a.id === 'freeChat'),
       ];
     }
@@ -1922,7 +1929,7 @@
       if (animal) {
         this._chatActions = this._chatActions.filter(a => a.id !== 'join');
         if (!this._justJoined) {
-          const odds = _animalJoinChance(animal, this._focusActor?.(), opinion);
+          const odds = joinLevelOk ? _animalJoinChance(animal, this._focusActor?.(), opinion) : 0;
           // Out of the party's weight class is out of reach for an animal too
           // (_joinLevelOk, measured on the party's median level): a beast far
           // stronger than the party does not trot along behind it either.
@@ -1951,7 +1958,7 @@
         if (!this._chatActions.some(a => a.id === 'join')) {
           this._chatActions.push({
             id: 'join',
-            label: `${joinAsInactive ? T.joinPartyInactive : T.joinParty} (~${joinChance}%)`,
+            label: `${joinAsInactive ? T.joinPartyInactive : T.joinParty} (~${joinOdds}%)`,
             disabled: partyFull || !canVanishOnJoin || !joinLevelOk,
           });
         }
@@ -1959,7 +1966,7 @@
         if (!this._chatActions.some(a => a.id === 'joinFollower')) {
           this._chatActions.push({
             id: 'joinFollower',
-            label: `${T.joinFollower} (~${joinChance}%)`,
+            label: `${T.joinFollower} (~${joinOdds}%)`,
             disabled: !canVanishOnJoin || !joinLevelOk,
           });
         }
@@ -2293,13 +2300,9 @@
       [L.agi, profile.agi], [L.mat, profile.mat],
       [L.mdf, profile.mdf], [L.luk, profile.luk],
     ].filter(shown);
-    const extra = [
-      [T.arcaneLbl,       profile.arcane],
-      [T.substanceLbl,    profile.substance],
-      [T.stealthLbl,      profile.stealth],
-      [T.intimidationLbl, profile.intimidation],
-    ].filter(shown);
-    if (!core.length && !extra.length) return '';
+    // The four look stats have a section of their own (_buildLookHTML).
+    const extra = [];
+    if (!core.length) return '';
 
     const cells = rows => rows.map(([label, value]) =>
       `<div class="npc-stat-cell"><span class="npc-stat-lbl">${_escapeHtml(label)}</span>` +
@@ -2321,6 +2324,55 @@
           `<div class="npc-exp-label">EXP ${pct}%</div>` +
           `<div class="npc-exp-track"><div class="npc-exp-fill" style="--npc-w:${pct}%"></div></div>` +
         `</div>`;
+    }
+    return html;
+  }
+
+  // The look: the NPC's Arcane, Substance, Stealth and Intimidation (0-100%,
+  // read off what they wear) as bars with the word the world has for each, then
+  // how the focused party member comes across to them and what that is worth
+  // here, from window.NPCEmpathize.Look, the same numbers the rolls add.
+  function _buildLookHTML(profile, T, actor) {
+    const LS = window.LookStats;
+    const tr = window.T;
+    if (!profile || !LS || typeof tr !== 'function') return '';
+    if (window.NPCCreature?.isNonSentientProfile?.(profile)) return '';
+    const label = { arcane: T.arcaneLbl, substance: T.substanceLbl, stealth: T.stealthLbl, intimidation: T.intimidationLbl };
+    const band = v => (v >= 100 ? 'npc-fill--good' : v >= 70 ? 'npc-fill--warm' : v >= 40 ? 'npc-fill--info' : 'npc-fill--muted');
+    const word = v => tr('Empathize.look.tier.' + LS.tier(v));
+    let html = `<div class="npc-sec-hdr npc-mt-2">${_escapeHtml(tr('Empathize.look.hdr'))}</div>`;
+    for (const s of LS.STATS) {
+      const v = Math.round(Math.max(0, Math.min(100, Number(profile[s]) || 0)));
+      html +=
+        `<div class="npc-vital-row">` +
+          `<span class="npc-vital-lbl">${_escapeHtml(label[s])}</span>` +
+          `<div class="npc-vital-track"><div class="npc-vital-fill ${band(v)}" style="--npc-w:${v}%"></div></div>` +
+          `<span class="npc-vital-pct">${v}% ${_escapeHtml(word(v))}</span>` +
+        `</div>`;
+    }
+    const icons = LS.icons(profile);
+    if (icons.length) {
+      html += `<div class="npc-sub npc-good">${_escapeHtml(tr('Empathize.look.icon', { stat: icons.map(s => label[s]).join(', ') }))}</div>`;
+    }
+    if (!actor) return html;
+    const mine = LS.ofActor(actor);
+    const shown = LS.STATS.filter(s => mine[s] >= 40).sort((a, b) => mine[b] - mine[a]);
+    const list = shown.map(s => `${word(mine[s])} ${label[s]}`).join(', ');
+    html += `<div class="npc-sub npc-mt-1">${_escapeHtml(shown.length
+      ? tr('Empathize.look.reads', { name: actor.name(), list })
+      : tr('Empathize.look.readsNone', { name: actor.name() }))}</div>`;
+    const fx = window.NPCEmpathize.Look ? window.NPCEmpathize.Look.effects(profile, actor) : null;
+    if (fx) {
+      const sign = v => (v > 0 ? '+' : '') + v;
+      const parts = ['impression', 'friendly', 'hostile', 'join', 'romance', 'bribe', 'pickpocket']
+        .filter(k => fx[k])
+        .map(k => {
+          const cls = k === 'hostile' ? 'npc-amber' : fx[k] > 0 ? 'npc-good' : 'npc-bad';
+          return `<span class="${cls}">${_escapeHtml(tr('Empathize.look.effect.' + k, { v: sign(fx[k]) }))}</span>`;
+        });
+      if (parts.length) {
+        html += `<div class="npc-note">${_escapeHtml(tr('Empathize.look.effects'))} ${parts.join(' · ')}</div>`;
+      }
     }
     return html;
   }
@@ -2414,7 +2466,7 @@
           </div>`;
       });
     }
-    const statsHTML = _buildStatsGridHTML(profile, T);
+    const statsHTML = _buildStatsGridHTML(profile, T) + _buildLookHTML(profile, T, this._focusActor?.());
 
     const topInfoHTML = (hpmpHTML || statsHTML || predHTML || attrHTML)
       ? `${hpmpHTML}${statsHTML}${predHTML}${attrHTML}<hr class="npc-r-sep">`
@@ -2431,7 +2483,8 @@
         _vitalRow(need('needSleep',   T.sleepLabel),   profile.sleep,   20) +
         _vitalRow(need('needHygiene', T.hygieneLabel), profile.hygiene, 30) +
         _vitalRow(need('needSocial',  T.socialLabel),  profile.social,  25) +
-        _vitalRow(need('needLeisure', T.leisureLabel), profile.leisure, 25);
+        _vitalRow(need('needLeisure', T.leisureLabel), profile.leisure, 25) +
+        (profile.bladder !== undefined ? _vitalRow(need('needBladder', T.bladderLabel), profile.bladder, 20) : '');
     }
 
     // An addiction meter belongs to the person, not the profile, so it is only
@@ -2537,6 +2590,7 @@
     _socialLines, _statBarRow, _swapHTML, _timesSuffix, _topicHtml, _traitDisplayName,
     _travelRowText, _viewName, _wikiDeathDate, _wikiIsDead, _wikiLink, _worldName, _wtypeName,
     FUN_ACTIONS, NEED_ICONS, T2, vary, Wiki,
+    _lookIcon, _lookStatsOfActor, _lookStatsOfProfile, _signatureLines,
   });
 
   // Owned by modules that load after this one, bound once the family is in.

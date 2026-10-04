@@ -7458,5 +7458,93 @@
   "2090": {
     "name": "Spoiled Dish",
     "description": "A dish gone wrong in the pan.\nEating it brings on nausea."
+  },
+  "2091": {
+    "name": "Metamorphosis Potion",
+    "description": "A {violet|swirling} draught in a flask.\nDrink it to choose a new body and face."
+  },
+  "2092": {
+    "name": "Surgerybot Swarm",
+    "description": "A {humming|sealed} case of surgical drones.\nRebuilds a body and face, as locals look."
+  },
+  "2093": {
+    "name": "Toothbrush",
+    "description": "A {cheap|plastic} toothbrush, one scrub left.\nRestores a little hygiene."
+  },
+  "2094": {
+    "name": "Bar of Soap",
+    "description": "A {plain|lavender} soap bar, one wash left.\nRestores hygiene."
+  },
+  "2095": {
+    "name": "Shampoo Sachet",
+    "description": "A one-use sachet of {apple|herbal} shampoo.\nRestores hygiene."
+  },
+  "2096": {
+    "name": "Shower Gel Tube",
+    "description": "A travel tube of {shower gel|body wash}.\nRestores a lot of hygiene."
+  },
+  "2097": {
+    "name": "Wet Wipes",
+    "description": "A {crumpled|resealable} pack of wet wipes.\nRestores a little hygiene, anywhere."
+  },
+  "2098": {
+    "name": "Deodorant Stick",
+    "description": "A {nearly empty|travel} deodorant stick.\nRestores hygiene."
+  },
+  "2099": {
+    "name": "Mouthwash",
+    "description": "One capful of {minty|sharp} mouthwash.\nRestores a little hygiene."
+  },
+  "2100": {
+    "name": "Dental Floss",
+    "description": "A {short|waxed} length of dental floss.\nRestores a little hygiene."
+  },
+  "2101": {
+    "name": "Disposable Razor",
+    "description": "A disposable razor, {one shave|one use} left.\nRestores a little hygiene."
+  },
+  "2102": {
+    "name": "Washcloth",
+    "description": "A {clean|rough cotton} washcloth.\nRestores hygiene at any sink."
+  },
+  "2103": {
+    "name": "Lipstick",
+    "description": "A {cherry red|plum} lipstick, one coat left.\nSubstance +10 for a few hours."
+  },
+  "2104": {
+    "name": "Perfume Vial",
+    "description": "A {floral|smoky} perfume vial, one spritz.\nSubstance +15 for half a day."
+  },
+  "2105": {
+    "name": "Cologne Splash",
+    "description": "A {woody|citrus} cologne, one splash left.\nSubstance +15 for half a day."
+  },
+  "2106": {
+    "name": "Hair Gel Tub",
+    "description": "A {strong hold|wet look} hair gel, one scoop.\nSubstance +8 for a few hours."
+  },
+  "2107": {
+    "name": "Mascara Wand",
+    "description": "A {jet black|waterproof} mascara wand.\nSubstance +10 for a few hours."
+  },
+  "2108": {
+    "name": "Eyeliner Pencil",
+    "description": "A {kohl|liquid} eyeliner, one steady line.\nSubstance +8 for a few hours."
+  },
+  "2109": {
+    "name": "Face Powder Compact",
+    "description": "A {pressed|translucent} powder compact.\nSubstance +12 for a few hours."
+  },
+  "2110": {
+    "name": "Blush Palette",
+    "description": "A {rose|peach} blush palette, one dusting.\nSubstance +6 for a few hours."
+  },
+  "2111": {
+    "name": "Nail Polish",
+    "description": "A {glossy red|chrome} nail polish, one coat.\nSubstance +6 for half a day."
+  },
+  "2112": {
+    "name": "Hair Dye Sachet",
+    "description": "A sachet of {raven black|neon blue} hair dye.\nSubstance +20 for a whole day."
   }
 }

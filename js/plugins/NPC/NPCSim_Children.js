@@ -118,8 +118,9 @@
     // What a child is doing this hour: the body first, then the day.
     activity(profile, hour) {
       if ((profile.sleep ?? 100) < 20) return "sleep";
+      if (ScheduleManager.wantsWC(profile, ScheduleManager.BLADDER_LOW)) return "hygiene";
       if ((profile.hunger ?? 100) < 30) return "hunger";
-      if ((profile.hygiene ?? 100) < 30) return "hygiene";
+      if ((profile.hygiene ?? 100) < 30) { profile.washFor = "hygiene"; return "hygiene"; }
       return RoutineManager.getActivity(profile, hour);
     },
 

@@ -773,11 +773,15 @@
     };
 
     // Preserve gauntlet mode across a winning endBattle; clear it on loss/abort.
+    // A single arena bout ends on any result that is not a win too: escaping
+    // one goes straight to endBattle(1) and used to leave arena mode on, so
+    // every wild fight after it offered no recruiting at all (0%).
     const _BattleManager_endBattle = BattleManager.endBattle;
     BattleManager.endBattle = function (result) {
         const wasGauntletMode = this.isGauntletMode();
         _BattleManager_endBattle.call(this, result);
         if (wasGauntletMode && result !== 0) _gauntletMode = false;
+        if (_arenaMode && result !== 0) _arenaMode = false;
     };
 
     const _Scene_Battle_terminate = Scene_Battle.prototype.terminate;

@@ -28,7 +28,7 @@
     _activityLabel, _addNpcAttraction, _addPairBond, _collapseByDay, _emStanceKey, _emVoiceLine,
     _escapeHtml, _euros, _extractContacts, _gameStamp, _getProfile, _getT, _goldTextToEuros,
     _hygienePenalty, _hygieneReadout, _iconSpan, _isBubbaActor, _isEmActor, _linkify, _meterRow,
-    _needLabels, _personalitySocialMult, _rand, _resolveBustPath, _socialLines, _timesSuffix,
+    _needLabels, _personalitySocialMult, _rand, _resolveBustPath, _signatureLines, _socialLines, _timesSuffix,
     NEED_ICONS, OPT, vary,
   } = Scene_NPCEmpathize._internal;
 
@@ -1544,6 +1544,8 @@
     // Nobody warms to a stranger they already dislike.
     if (opinion <= -60) c -= 15;
 
+    // Good clothes open doors, the courting kind included.
+    c += window.NPCEmpathize.Look?.odds('romance', actor, profile) || 0;
     return Math.round(Math.max(3, Math.min(95, c)));
   }
 
@@ -1760,7 +1762,7 @@
     const reason = _proposeBlockReason(profile, npcName, actor, priorAttraction);
     const bank   = (_socialLines().romance || {}).propose || {};
     // Em puts a proposal the way she puts everything: sideways.
-    const playerLine = fill(_emVoiceLine(actor, 'propose', styleKey) || _rand(bank.player));
+    let playerLine = fill(_emVoiceLine(actor, 'propose', styleKey) || _rand(bank.player));
     let npcLine, delta, landed = false;
 
     if (reason) {
@@ -1781,6 +1783,12 @@
       }
       npcLine = fill(_rand(landed ? bank.accept : bank.reject));
       delta   = landed ? 20 : -14;
+    }
+    // An icon of a look proposes in its own voice and is answered as one.
+    if (!_emVoiceLine(actor, 'propose', styleKey)) {
+      const sig = _signatureLines('propose', 'propose', landed ? 'accept' : 'reject', actor, profile);
+      if (sig.player) playerLine = fill(sig.player);
+      if (sig.npc && !reason) npcLine = fill(sig.npc);
     }
 
     if (profile && actorId != null) {
@@ -1851,7 +1859,7 @@
     // A pass made by Em is made in her register, not in the house one: she
     // does not serenade anybody, she says something flat and British about it
     // and waits. Falls straight back to the shared bank for anybody else.
-    const playerLine = fill(_emVoiceLine(actor, 'romance', def.id) || _rand(def.player));
+    let playerLine = fill(_emVoiceLine(actor, 'romance', def.id) || _rand(def.player));
     let npcLine, delta, landed = false;
 
     if (reason) {
@@ -1878,6 +1886,13 @@
       delta   = landed
         ? Math.max(1,  Math.round(def.successDelta * _personalitySocialMult(profile, 'positive')))
         : Math.min(-1, Math.round(def.failDelta    * _personalitySocialMult(profile, 'negative')));
+    }
+    // An icon of a look courts in its own voice and is answered as one. A
+    // refusal on grounds (orientation, already taken...) keeps its own reason.
+    if (!_emVoiceLine(actor, 'romance', def.id)) {
+      const sig = _signatureLines('romance', def.id, landed ? 'good' : 'bad', actor, profile);
+      if (sig.player) playerLine = fill(sig.player);
+      if (sig.npc && !reason) npcLine = fill(sig.npc);
     }
 
     // Reputation is tracked apart from attraction: a move that lands moves how

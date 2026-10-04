@@ -1960,6 +1960,9 @@
                 try { this._ctx.releaseEffect(effect); } catch (e) { /* gone */ }
             }
             this._effects.clear();
+            // One context per world session; left unreleased, its wasm buffers
+            // pile up across every drive and walk.
+            try { if (window.effekseer && window.effekseer.releaseContext) window.effekseer.releaseContext(this._ctx); } catch (e) { /* gone */ }
             this._ctx = null;
         }
     }

@@ -38,6 +38,9 @@
   const pluginName = "CharacterSpriteGridSelector";
   let _plasticSurgeryActive = false;
   let _faceSurgeryActive = false;
+  // A metamorphosis under way (see the Metamorphosis section below):
+  // { actorId, item, kind: "magical" | "surgical", changed }.
+  let _metamorphosis = null;
 
   // Bust categories are ids (the bust file name prefix). This is the one place
   // they are shown, so this is the one place they are translated.
@@ -285,6 +288,9 @@
     // carries it, not to anyone who opens the board.
     if (entry && entry.vip === true) return false;
     if (_plasticSurgeryActive) return true;
+    // The potion answers to no world's population; the surgerybots work
+    // with the bodies this world has.
+    if (_metamorphosis && _metamorphosis.kind === "magical") return true;  // i18n-ignore  kind id
     const SC = window.SpriteCatalog;
     if (!SC) return true;
     // Varlenia has not turned up yet. Until the calendar reaches the year that
@@ -499,7 +505,8 @@
 
   let boardPopulationMode = populationMode();
   function rebuildSpriteBoard() {
-    const mode = populationMode() + (_plasticSurgeryActive ? ":plastic" : "");
+    const unbound = _plasticSurgeryActive || (_metamorphosis && _metamorphosis.kind === "magical");  // i18n-ignore  kind id
+    const mode = populationMode() + (unbound ? ":plastic" : "");
     if (mode === boardPopulationMode && spriteOptions.length) return;
     boardPopulationMode = mode;
     rebuildSpriteSheets();
@@ -1214,6 +1221,7 @@
       if (!actor) return;
 
       actor.setCharacterImage(entry.name, entry.index);
+      if (_metamorphosis) _metamorphosis.changed = true;
 
       const leader = $gameParty && $gameParty.leader();
       if (leader && this._actorId === leader.actorId()) {
@@ -1269,10 +1277,18 @@
         }
       }
 
+      if (_metamorphosis) { Metamorphosis.toBust(); return; }
       this.popScene();
     }
 
     leaveWithoutPicking() {
+      // A metamorphosis carries on to the face whether or not the body changed.
+      if (_metamorphosis) {
+        this._standaloneSpriteMode = false;
+        Scene_SpriteGridSelector._standaloneSpriteMode = false;
+        Metamorphosis.toBust();
+        return;
+      }
       if (this._plasticSurgeryMode || _plasticSurgeryActive) {
         this._plasticSurgeryMode = false;
         _plasticSurgeryActive = false;
@@ -2059,6 +2075,10 @@
           window.ParchmentToast.show(T('Prosthetics.faceSurgerySuccess'));
         }
       }
+      if (_metamorphosis) {
+        _metamorphosis.changed = true;
+        Metamorphosis.finish();
+      }
       const pops = Scene_BustSelector._confirmPops || 2;
       Scene_BustSelector._confirmPops = 0;
       for (let i = 0; i < pops; i++) SceneManager.pop();
@@ -2085,9 +2105,109 @@
       SoundManager.playCancel();
       Scene_BustSelector._confirmPops = 0;
       _faceSurgeryActive = false;
+      if (_metamorphosis) Metamorphosis.finish();
       SceneManager.pop();
     }
   }
+
+  //=========================================================================
+  // Metamorphosis
+  //-------------------------------------------------------------------------
+  // An item tagged <Metamorphosis: magical> or <Metamorphosis: surgical> lets
+  // one party member choose a new body and a new face: the sprite board first,
+  // then the bust gallery takes its place, then back to the backpack. The
+  // Metamorphosis Potion is the magical one and opens the whole board, as the
+  // clinic's plastic surgery does; the Surgerybot Swarm is the mundane one and
+  // works only with the bodies this world's population has.
+  //
+  // The item is spent when the session starts; walking away from both
+  // screens without changing anything hands it back.
+  //=========================================================================
+  const METAMORPHOSIS_TAG = /<Metamorphosis:\s*(magical|surgical)\s*>/i;
+
+  const Metamorphosis = {
+    kindOf(item) {
+      const m = item && item.note ? METAMORPHOSIS_TAG.exec(item.note) : null;
+      return m ? m[1].toLowerCase() : null;
+    },
+
+    active() {
+      return _metamorphosis ? Object.assign({}, _metamorphosis) : null;
+    },
+
+    // Used on one member from the backpack. Shaped like ItemUse's answers.
+    use(actor, item) {
+      const kind = this.kindOf(item);
+      if (!actor || !kind || _metamorphosis || !$gameParty.numItems(item)) {
+        if (window.SoundManager) SoundManager.playBuzzer();
+        return { used: false, commonEvent: 0 };
+      }
+      if (window.SoundManager) SoundManager.playUseItem();
+      $gameParty.consumeItem(item);
+      _metamorphosis = { actorId: actor.actorId(), item: item, kind: kind, changed: false };
+      if (kind === "magical") rebuildSpriteBoard();  // i18n-ignore  kind id
+      // Standalone: picking the body leaves the face for the gallery that
+      // follows, instead of taking the sheet's own bust along.
+      Scene_SpriteGridSelector._standaloneSpriteMode = true;
+      SceneManager.push(Scene_SpriteGridSelector);
+      if (SceneManager._nextScene && SceneManager._nextScene.setActor) {
+        SceneManager._nextScene.setActor(actor.actorId());
+      }
+      return { used: true, commonEvent: 0 };
+    },
+
+    // The body is settled: the face gallery replaces the board, and its
+    // confirm pops straight back to the backpack.
+    toBust() {
+      if (!_metamorphosis) return;
+      Scene_BustSelector._confirmPops = 1;
+      SceneManager.goto(Scene_BustSelector);
+      if (SceneManager._nextScene && SceneManager._nextScene.setActor) {
+        SceneManager._nextScene.setActor(_metamorphosis.actorId);
+      }
+    },
+
+    finish() {
+      const session = _metamorphosis;
+      _metamorphosis = null;
+      if (!session) return;
+      if (session.kind === "magical") rebuildSpriteBoard();  // i18n-ignore  kind id
+      const toast = (text) => { if (window.ParchmentToast) window.ParchmentToast.show(text); };
+      if (!session.changed) {
+        $gameParty.gainItem(session.item, 1);
+        toast(T('Prosthetics.metamorphosis.unchanged', { item: session.item.name }));
+        return;
+      }
+      const actor = $gameActors.actor(session.actorId);
+      if (actor && actor.refresh) actor.refresh();
+      if ($gamePlayer && $gamePlayer.refresh) $gamePlayer.refresh();
+      toast(T('Prosthetics.metamorphosis.' + session.kind, { name: actor ? actor.name() : "" }));
+    }
+  };
+
+  // The backpack sends a single-ally item through ItemUse.onActor, which
+  // refuses anything that heals nothing. A metamorphosis item is answered
+  // here first. ItemSystemInventory may load after this file, so the wrap
+  // waits for boot.
+  function installMetamorphosisUse() {
+    const IU = window.ItemUse;
+    if (!IU || IU._metamorphosisWrapped || typeof IU.onActor !== "function") return;
+    const onActor = IU.onActor;
+    IU.onActor = function (actor, item) {
+      if (Metamorphosis.kindOf(item)) return Metamorphosis.use(actor, item);
+      return onActor.apply(this, arguments);
+    };
+    IU._metamorphosisWrapped = true;
+  }
+  installMetamorphosisUse();
+  if (typeof Scene_Boot !== "undefined") {
+    const _Scene_Boot_start_metamorphosis = Scene_Boot.prototype.start;
+    Scene_Boot.prototype.start = function () {
+      installMetamorphosisUse();
+      _Scene_Boot_start_metamorphosis.apply(this, arguments);
+    };
+  }
+  window.Metamorphosis = Metamorphosis;
 
   Object.defineProperty(Scene_SpriteGridSelector, "_plasticSurgeryMode", {
     get() { return _plasticSurgeryActive; },

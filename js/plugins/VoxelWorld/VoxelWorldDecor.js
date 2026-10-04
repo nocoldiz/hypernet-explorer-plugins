@@ -249,6 +249,12 @@
                 plant: mkQuad(0.95, 0.95)
             };
             this._spriteTex = new Map();   // 'Folder/name.png' -> THREE.Texture
+            // Every tile's instanced meshes point at these same shapes. A tile
+            // streaming out frees its own meshes (Terrain's disposeTree), and
+            // without this mark it freed the shared shapes too, so the next
+            // tile in had to upload every one of them to the card again.
+            for (const g of Object.values(this.geos)) if (g && g.userData) g.userData.vwShared = true;
+            for (const g of Object.values(this.spriteQuads)) if (g && g.userData) g.userData.vwShared = true;
 
             // Windowed facades, off the block palette: a concrete-and-glass
             // sheet for a tower and a brick one for anything smaller, both with

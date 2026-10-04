@@ -17,7 +17,9 @@
     "mpRestored": "ha recuperato tutti gli MP",
     "vomited": "{name} ha vomitato!",
     "collapsed": "{name} è collassato per la fame!",
-    "outOfMp": "{name} ha esaurito i MP!"
+    "outOfMp": "{name} ha esaurito i MP!",
+    "bladderLow": "deve trovare un bagno",
+    "bladderCritical": "sta per scoppiare!"
   },
   "sleepMenu": {
     "titleMain": "Riposo",
@@ -96,7 +98,8 @@
     "sleep": "Sonno",
     "hygiene": "Igiene",
     "social": "Socialità",
-    "leisure": "Umore"
+    "leisure": "Umore",
+    "bladder": "Vescica"
   },
   "addictionLabel": {
     "nicotine": "Nicotina",
@@ -186,7 +189,8 @@
   "partyLife": {
     "talk": "{name} sta parlando con {other}",
     "wash": "{name} sta andando in bagno",
-    "idle": "{name} si sta sgranchendo le gambe"
+    "idle": "{name} si sta sgranchendo le gambe",
+    "relieve": "{name} si allontana un attimo per fare i suoi bisogni"
   },
   "forage": {
     "found": "Il gruppo torna con {items}.",
@@ -321,5 +325,16 @@
       "cyrusDay": "Giorno di Ciro",
       "musterDay": "Giorno dell'Adunata"
     }
+  },
+  "bladder": {
+    "relieved": {
+      "wc": "Hai usato il WC.",
+      "shower": "Sollievo sotto la doccia.",
+      "bath": "Sollievo prima del bagno."
+    },
+    "nothingToDo": "Nessuno ha bisogno del WC adesso.",
+    "accident": "{name} non ce la faceva più e se l'è fatta addosso.",
+    "accidentBeast": "{name} fa i suoi bisogni sul posto.",
+    "swim": "Qualcuno in acqua sembra un po' sollevato."
   }
 }

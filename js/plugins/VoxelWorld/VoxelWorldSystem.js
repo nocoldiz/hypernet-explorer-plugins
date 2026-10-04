@@ -329,6 +329,21 @@
         // instead and the window lands on top of it (see the Spriteset_Map
         // hooks at the foot of this file).
         isMirrorView() { return !!(this._scene && this._scene._mirrorWatch); },
+        // True while the world's opaque DOM layer is the whole picture: the
+        // map scene is up, the layer is showing, and nothing (a window, a
+        // fight, the title) needs the game's own canvas. Whatever PIXI would
+        // draw into that canvas then is drawn under a black div nobody can
+        // see through, so the engine's render is skipped (Graphics._canRender
+        // below) for as long as this holds.
+        coversScreen() {
+            const sc = this._scene;
+            if (!sc || sc._titleMode || sc._mirrorWatch || sc._battleWatch || sc._disposed) return false;
+            const ov = sc._overlay;
+            if (!ov || !ov.isConnected || ov.style.display === 'none') return false;
+            const cur = (typeof SceneManager !== 'undefined') ? SceneManager._scene : null;
+            return !!cur && typeof Scene_Map !== 'undefined' && cur instanceof Scene_Map &&
+                !(typeof SceneManager.isSceneChanging === 'function' && SceneManager.isSceneChanging());
+        },
         // True while ANYTHING is up over the world: a choice list, a line of
         // dialogue, a fight, a pushed scene, or one of the game's own DOM menus
         // (the augments register, the prosthetics fitter, a growth ledger...).
@@ -593,6 +608,20 @@
     };
     VoxelWorldSystem.WorldClock = WorldClock;
 
+    // The game's canvas under the world. The 2D map kept being drawn into it
+    // every frame - tilemap, every character sprite, every plugin's layer - a
+    // whole second WebGL frame behind a layer that hides it completely. The
+    // scene itself still updates (the interpreter, the clock, the hooks); only
+    // the drawing is left out, and it comes back the frame a window, a fight
+    // or the end of the drive needs that canvas again.
+    if (typeof Graphics !== 'undefined' && typeof Graphics._canRender === 'function') {
+        const _Graphics_canRender_VW = Graphics._canRender;
+        Graphics._canRender = function() {
+            if (VoxelWorldSystem.coversScreen()) return false;
+            return _Graphics_canRender_VW.call(this);
+        };
+    }
+
     const _Scene_Map_update_WC = Scene_Map.prototype.update;
     Scene_Map.prototype.update = function() {
         _Scene_Map_update_WC.call(this);
@@ -728,7 +757,10 @@
             // is part of the fight (the lead passes on, see CombatSession) and
             // only the whole party going down ends it.
             if (this.isActor && this.isActor() && VoxelWorldSystem.isActive() &&
-                !VoxelWorldSystem.isTitleDrive() && !VoxelWorldSystem.inCombat()) {
+                !VoxelWorldSystem.isTitleDrive() && !VoxelWorldSystem.inCombat() &&
+                // Nor in a battle scene drawn over the world: a lost fight is
+                // the defeat hook's to handle, and stopping here blacks it out.
+                !VoxelWorldSystem.isBattleView()) {
                 VoxelWorldSystem.stop();
             }
         };

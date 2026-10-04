@@ -69,7 +69,8 @@
     "asciiHud": "HUD ASCII",
     "themeAscii": "ASCII",
     "galaxyQuality": "Qualita mappa stellare",
-    "ctrlNoclip": "Noclip con CTRL"
+    "ctrlNoclip": "Noclip con CTRL",
+    "voxelVR": "Visore VR"
   },
   "warn": {
     "language": "⚠ In lavorazione: solo l'inglese è tradotto per intero. Le altre lingue hanno ancora parti del gioco non tradotte.",
@@ -127,7 +128,8 @@
     "battleLogPosition": "In quale angolo dello schermo sta il resoconto della battaglia.",
     "battleCommandPosition": "Su quale lato dello schermo stanno i comandi di battaglia, la pagina delle abilità e lo zaino.",
     "lowModelDetail": "Costruisce armi e oggetti procedurali con meno segmenti. Aiuta sulle macchine lente; i modelli appaiono piu spigolosi.",
-    "simulationLog": "Ogni decisione presa sulla mappa da un membro del gruppo, un mostro o un PNG compare come notifica. Le mappe affollate ne producono molte."
+    "simulationLog": "Ogni decisione presa sulla mappa da un membro del gruppo, un mostro o un PNG compare come notifica. Le mappe affollate ne producono molte.",
+    "voxelVR": "Permette di vedere il mondo 3D attraverso un visore WebXR. Quando è attivo, nel mondo 3D compare un pulsante Entra in VR ogni volta che un visore è collegato; la testa guarda intorno e i soliti comandi continuano a muoverti. Ha effetto la prossima volta che entri nel mondo 3D."
   },
   "descState": {
     "musicArtistDisplay": [
@@ -191,7 +193,8 @@
     "noclip": "Noclip",
     "ascii": "ASCII",
     "other": "Altro",
-    "simulationLog": "Registro della simulazione"
+    "simulationLog": "Registro della simulazione",
+    "vr": "Realtà virtuale"
   },
   "galaxyQuality": {
     "low": "Bassa",

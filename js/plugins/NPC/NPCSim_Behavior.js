@@ -35,6 +35,7 @@
   } = NPCSim._internal));
   // SECTION 6b, WATER (Phase R).
   const { MiniRng, nameHash, RoutineManager, satisfyNeedTick, ScheduleManager } = NPCSim._internal;
+  const { fixtureKindOfName, fixtureNeeds } = NPCSim._internal;
   let Children, Specs, StoryLogger, ThoughtGenerator;
   NPCSim._internal._late.push(() => ({ Children, Specs, StoryLogger, ThoughtGenerator } = NPCSim._internal));
 
@@ -380,8 +381,11 @@
   // This table is the ONE place both the town's NPCs (BehaviorDispatcher) and
   // a loose party member (Core/AutoIdleExplorer.js) ask what a thing on the
   // map is good for, so teaching one teaches the other.
+  //
+  // The washroom is not in it: a WC, a shower, a bath and a sink are told
+  // apart by NPCSimulationCore's fixtureKindOfName, and registered below off
+  // what each one is good for (FIXTURE_WEIGHT).
   const EVENT_NAME_NEEDS = {
-    hygiene: /\b(wc|toilet|latrine|lavatory|bathroom|washroom|washbasin|basin|sink|shower|bath\w*|fountain)\b/,
     leisure: /\b(arcade|cabinet|pinball|jukebox|piano|tv|television|radio|billiard\w*|pool table|bowling|slot machine|casino|swing|playground|horse\w*|race ?track|tournament|tarot|cards?|card table|basketball)\b/,
     social:  /\b(pc|phone|bar|pub|tavern|inn|cafe|caffe|canteen|counter)\b/,
     comfort: /\b(bench|chair|stool|sofa|couch|armchair|seat|bed)\b/,
@@ -396,15 +400,41 @@
     });
   }
 
+  // Washroom fixtures, one capability per kind, scored per need: a shower or
+  // a bath is the wash of choice, a sink only a hand wash, and the WC is
+  // where a full bladder goes first (a shower will do at a pinch).
+  const FIXTURE_WEIGHT = {
+    wc:       { bladder: 50 },
+    shower:   { hygiene: 50, bladder: 25 },
+    bath:     { hygiene: 50, bladder: 25 },
+    washroom: { hygiene: 40, bladder: 45 },
+    sink:     { hygiene: 20 },
+    fountain: { hygiene: 15 },
+  };
+  for (const [kind, weights] of Object.entries(FIXTURE_WEIGHT)) {
+    InteractionScanner.registerCapability({
+      id: `fixture_${kind}`,
+      needs: Object.keys(weights),
+      fixture: kind,
+      match(ev) { return fixtureKindOfName(ev.event()?.name) === kind; },
+      weight(profile, need) { return weights[need] || 0; },
+    });
+  }
+
   // What a name says it is good for, for anything that wants the answer
   // without the scan (the party AI reads it off a single event).
   InteractionScanner.needsOfName = function (name) {
     const n = String(name || "").toLowerCase();
-    const out = [];
+    const out = fixtureNeeds(fixtureKindOfName(n)).slice();
     for (const [need, pattern] of Object.entries(EVENT_NAME_NEEDS)) {
-      if (pattern.test(n)) out.push(need);
+      if (pattern.test(n) && !out.includes(need)) out.push(need);
     }
     return out;
+  };
+
+  // The washroom fixture an event is, or null (NPCSimulationCore).
+  InteractionScanner.fixtureKind = function (name) {
+    return fixtureKindOfName(name);
   };
 
   // ============================================================================
@@ -615,7 +645,13 @@
     // too, now and then preferred to the washroom, and the only one where
     // the map has none (SECTION 6b, Water.wash); with neither, the NPC just
     // keeps going about its day.
+    //
+    // The same hour covers a toilet run: when the routine sent them for their
+    // bladder (profile.washFor, ScheduleManager.wantsWC) they go to a WC, or
+    // a shower or a bath at a pinch, and never to a sink. Open water is no
+    // toilet for somebody walking to one on purpose.
     _handleHygiene(controller, profile) {
+      if (profile.washFor === "bladder" && this._handleViaRegistry(controller, profile, "bladder", null)) return;
       const washroom = InteractionScanner.findByNeed("hygiene", profile)[0];
       if (Water.wash(controller, profile, !!(washroom && washroom.score > 0))) return;
       this._handleViaRegistry(controller, profile, "hygiene", null);
@@ -962,6 +998,10 @@
       s.lastTick = time;
       const dt = Math.max(0, Math.min(5, (time - last) / 1000));
       if (dt > 0) {
+        // In the water past 80% full, the water does the rest (the party's
+        // rule too, window.Bladder.swimRelief).
+        const swimmer = this._society()[ctrl.eventName];
+        if (swimmer && swimmer.bladder !== undefined && swimmer.bladder < 20) swimmer.bladder = 100;
         if (s.reason === WATER_WASH) satisfyNeedTick(ctrl.eventName, "hygiene", dt); // i18n-ignore: need id
         else if (s.reason !== WATER_ESCAPE) {
           satisfyNeedTick(ctrl.eventName, "leisure", dt); // i18n-ignore: need id

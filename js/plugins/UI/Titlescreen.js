@@ -86,31 +86,6 @@
     // (undefined) still shows the disclaimer.
     const enableDisclaimer = params.EnableDisclaimer !== 'false';
 
-    const DISCLAIMER_TEXT = () => T('Titlescreen.disclaimer.text');
-
-    // The news panel is the shipped CHANGELOG.txt read out loud: the newest
-    // section is what it opens on and its two buttons walk the older ones. The
-    // updater owns the read, since it is the plugin that already opens that file
-    // to learn which version this copy is. A build running with the updater
-    // turned off, or one shipped without a changelog, gets an empty list and the
-    // panel falls back to the notice written in its own i18n entry.
-    const NEWS_SECTIONS = () => {
-        try {
-            const updater = window.GameUpdater;
-            if (updater && typeof updater.changelogSections === 'function') {
-                const list = updater.changelogSections();
-                if (Array.isArray(list)) return list;
-            }
-        } catch (e) {
-            console.warn('Titlescreen: the changelog could not be read', e);
-        }
-        return [];
-    };
-
-    // The dash every changelog entry is written under, kept as punctuation
-    // rather than as a translated string.
-    const NEWS_BULLET = '- ';
-
     // plugins.js registers this file under its path ("UI/Titlescreen") while the
     // name above is the bare file name, and PluginManager keys parameters by the
     // REGISTERED name. The older parameters are read through `params` above and
@@ -227,11 +202,6 @@
     // update. The updater owns the address (its fullDownloadUrl parameter); this
     // is only what a build running without the updater plugin would use.
     const FULL_GAME_FALLBACK = "https://drive.google.com/file/d/1p9vo_Rj5xB0Bx3QJogpShveB2z7vbJzk/view?usp=drive_link";
-    const DISCLAIMER_LINK = "https://discord.gg/7gVDZa6v7E";
-    const LINKTREE_LINK = "https://linktr.ee/nocoldiz";
-    // Donation targets, shown as buttons under the links in the same panel.
-    const PATREON_LINK = "https://www.patreon.com/nocoldiz";
-    const PAYPAL_LINK = "https://www.paypal.com/donate/?hosted_button_id=A54P863NGUD9L";
 
     // The game runs under NW.js, where a plain window.open would spawn a bare
     // in-app window: hand the URL to the OS browser when the shell is available.
@@ -7649,275 +7619,26 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     };
 
     // -------------------------------------------------------------------------
-    // Early-build news panel. A dismissable gold terminal panel docked in the
-    // top-right corner, directly under the background switcher and clear of both
-    // the command column and the bottom-right readouts, carrying the build
-    // notice, the Discord invite, the Linktree and the two donation buttons.
-    // Gated by the EnableDisclaimer parameter (ON by default).
-    //
-    // The body is set in the UI serif rather than the title's Square: the notice is a
-    // full paragraph and the URLs are long, and a proportional serif keeps both
-    // readable at the small panel size. Square is kept for the header and the
-    // short labels, so the panel still reads as part of the terminal.
+    // Early-build news panel. It belongs to the updater plugin
+    // (Core/TitleScreenGameUpdater.js), which replaces these four methods when it
+    // loads: a build shipped without the updater, the Steam one, draws no news
+    // panel at all. The updater borrows the title's layout helper and link
+    // opener through window.TitleScreenKit.
     // -------------------------------------------------------------------------
-    Scene_Title.prototype.createDisclaimerBox = function () {
-        if (!enableDisclaimer) return;
-
-        // Always a fresh node: the listeners below are addEventListener-based,
-        // so a leftover element from a previous title visit would double-fire.
-        const stale = document.getElementById('title-disclaimer');
-        if (stale && stale.parentNode) stale.parentNode.removeChild(stale);
-
-        const box = document.createElement('div');
-        box.id = 'title-disclaimer';
-        document.body.appendChild(box);
-        this._disclaimerBox = box;
-        // Geometry (position, width, padding, font) is applied by
-        // layoutDisclaimerBox so the panel tracks the canvas at any resolution.
-        box.className = 'title-plate title-news-panel';
-
-        const close = document.createElement('div');
-        close.textContent = '✕';
-        close.className = 'title-news-close';
-        close.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
-        close.addEventListener('click', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            SoundManager.playCancel();
-            this.removeDisclaimerBox();
-        });
-
-        const header = document.createElement('div');
-        header.textContent = T('Titlescreen.news.header');
-        header.className = 'title-news-head';
-
-        // What the panel actually says: one version section of the changelog,
-        // walked with the two buttons over it. The list is capped and scrolls on
-        // its own, so a section as long as a release note cannot stretch the
-        // panel down over the readouts in the corner.
-        const navRow = document.createElement('div');
-        navRow.className = 'title-news-nav';
-
-        const navButton = (label, step) => {
-            const btn = document.createElement('div');
-            btn.textContent = label;
-            btn.className = 'title-news-navbtn';
-            btn.addEventListener('mouseenter', () => {
-            });
-            btn.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                if (btn.dataset.off) return;
-                SoundManager.playCursor();
-                this.showNewsSection(this._newsIndex + step);
-            });
-            return btn;
-        };
-
-        // The file is written newest first, so going back walks DOWN it.
-        const olderBtn = navButton(T('Titlescreen.news.older'), 1);
-        const newerBtn = navButton(T('Titlescreen.news.newer'), -1);
-
-        const versionLabel = document.createElement('div');
-        versionLabel.className = 'title-news-version';
-
-        navRow.appendChild(olderBtn);
-        navRow.appendChild(versionLabel);
-        navRow.appendChild(newerBtn);
-
-        const text = document.createElement('div');
-        text.className = 'title-news-body';
-        // RMMZ preventDefaults every wheel event at the document level, so a DOM
-        // pane never scrolls on its own: this one scrolls itself and swallows the
-        // event so it cannot also reach the background behind the panel.
-        text.addEventListener('wheel', (e) => {
-            const step = e.deltaMode === 1 ? e.deltaY * 40
-                : (e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY);
-            text.scrollTop += step;
-            e.preventDefault();
-            e.stopPropagation();
-        });
-
-        this._newsNav = navRow;
-        this._newsOlder = olderBtn;
-        this._newsNewer = newerBtn;
-        this._newsVersion = versionLabel;
-        this._newsBody = text;
-        this._newsSections = NEWS_SECTIONS();
-        this._newsIndex = 0;
-
-        // Escape hatch for the collision bugs the notice above asks players to
-        // report: ForceConsole ungates the engine's own debug-through in
-        // released builds, so a player wedged in a wall can always walk out.
-        const noclipTip = document.createElement('div');
-        noclipTip.textContent = T('Titlescreen.disclaimer.noclip');
-        noclipTip.className = 'title-news-tip';
-
-        // Donation buttons: same terminal frame as the rest of the title, tinted
-        // with each service's own colour so they read as two distinct choices.
-        const donateLabel = document.createElement('div');
-        donateLabel.textContent = T('Titlescreen.support.header');
-        donateLabel.className = 'title-donate-label';
-
-        // What a patron actually gets, stated on the title screen rather than
-        // buried in a tier list: a named planet (PatreonRewards builds the
-        // system) and the coordinates of their own hatch, which are never in any
-        // data file and are handed over on Patreon alone.
-        const patronPerk = document.createElement('div');
-        patronPerk.textContent = T('Titlescreen.support.patronPerk');
-        patronPerk.className = 'title-news-tip title-news-tip--perk';
-
-        const donateRow = document.createElement('div');
-        donateRow.className = 'title-donate-row';
-
-        const donateButton = (label, url) => {
-            const btn = document.createElement('div');
-            btn.textContent = label;
-            btn.className = 'title-donate-btn';
-            btn.addEventListener('mouseenter', () => {
-                btn.classList.add('title-donate-btn--on');
-            });
-            btn.addEventListener('mouseleave', () => {
-                btn.classList.remove('title-donate-btn--on');
-            });
-            btn.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                SoundManager.playOk();
-                openExternalLink(url);
-            });
-            return btn;
-        };
-
-        donateRow.appendChild(donateButton('PATREON', PATREON_LINK));
-        donateRow.appendChild(donateButton('PAYPAL', PAYPAL_LINK));
-        // The community links sit on the same row rather than as their own
-        // rows above it: four buttons, one strip.
-        donateRow.appendChild(donateButton('DISCORD', DISCLAIMER_LINK));
-        donateRow.appendChild(donateButton('LINKS', LINKTREE_LINK));
-
-        // Swallow presses on the panel itself so they never reach the canvas
-        // (free-look drag / card interaction behind it).
-        box.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
-
-        box.appendChild(close);
-        box.appendChild(header);
-        box.appendChild(navRow);
-        box.appendChild(text);
-        box.appendChild(noclipTip);
-        box.appendChild(donateLabel);
-        box.appendChild(patronPerk);
-        box.appendChild(donateRow);
-        // Filled before it is measured: the layout pass trims the list to the
-        // room left under it, which it can only read once there is a list.
-        this.showNewsSection(0);
-        this.layoutDisclaimerBox();
-    };
-
-    // Draws one version section of the changelog into the news panel and
-    // re-labels the buttons around it. An index past either end of the file is
-    // clamped rather than wrapped, and the button that would walk off the end is
-    // dimmed and stops answering. A build with no changelog to read shows the
-    // notice written in the i18n entry instead and hides the buttons entirely.
-    Scene_Title.prototype.showNewsSection = function (index) {
-        const body = this._newsBody;
-        if (!body) return;
-        const sections = this._newsSections || [];
-        const last = sections.length - 1;
-        const i = Math.max(0, Math.min(Number(index) || 0, last));
-        this._newsIndex = i;
-        const section = sections[i] || null;
-
-        while (body.firstChild) body.removeChild(body.firstChild);
-        if (this._newsVersion) this._newsVersion.textContent = section ? section.version : '';
-        window.UIPanel.toggle(this._newsNav, sections.length > 0);
-
-        if (!section) {
-            const fallback = document.createElement('div');
-            fallback.textContent = DISCLAIMER_TEXT() || T('Titlescreen.news.empty');
-            body.appendChild(fallback);
-            return;
-        }
-        // The list is read in the order the file writes it, entries under the
-        // dash and the group headings the long sections are written in, which
-        // are drawn as headings rather than as another line of news.
-        for (const entry of section.entries) {
-            const row = document.createElement('div');
-            const heading = entry && typeof entry === 'object' ? entry.heading : null;
-            row.textContent = heading ? String(heading) : NEWS_BULLET + entry;
-            row.className = 'title-news-line';
-            if (heading) {
-                row.className = 'title-news-section' +
-                    (body.firstChild ? ' title-news-section--spaced' : '');
-            }
-            body.appendChild(row);
-        }
-        body.scrollTop = 0;
-
-        const dim = (btn, off) => {
-            if (!btn) return;
-            if (off) {
-                btn.dataset.off = '1';
-                btn.classList.add('title-news-navbtn--off');
-            } else {
-                delete btn.dataset.off;
-                btn.classList.remove('title-news-navbtn--off');
-            }
-        };
-        dim(this._newsOlder, i >= last);
-        dim(this._newsNewer, i <= 0);
-    };
-
-    // Docked under the background switcher, sharing its right edge. The gap is
-    // measured off the switcher's real height (its label grows when a pad is
-    // plugged in), falling back to a design-pixel estimate while the button is
-    // not measurable yet. The width is capped against the canvas rather than the
-    // viewport so the panel never grows over the menu column on a narrow window.
-    Scene_Title.prototype.layoutDisclaimerBox = function () {
-        const box = this._disclaimerBox;
-        if (!box) return;
-        const rect = TitleLayout.rect();
-        const s = TitleLayout.scale(rect);
-        const btn = this._musicSwitchButton || this._bgSwitchButton;
-        const btnRect = btn ? btn.getBoundingClientRect() : null;
-        const below = btnRect && btnRect.height > 0
-            ? (btnRect.bottom - rect.top) / s
-            : 18 + 34 + 42; // switcher inset, its design height, the music plate
-        TitleLayout.place(box, { right: 18, top: Math.round(below + 10) });
-        box.style.setProperty('--title-w',
-            Math.round(Math.min(320 * s, rect.width * 0.3)) + 'px');
-        // The one part of the panel that grows with its content is the one part
-        // that is capped: everything under it keeps its place whichever section
-        // is being read. The cap is then trimmed to whatever room is actually
-        // left over the bottom of the canvas, so the links and the donation
-        // buttons under the list are on screen at any resolution rather than
-        // pushed off the edge by a long release note.
-        const body = this._newsBody;
-        if (body) {
-            body.style.setProperty('--title-maxh', TitleLayout.px(110, s));
-            const boxRect = box.getBoundingClientRect();
-            const bodyRect = body.getBoundingClientRect();
-            const canvasBottom = rect.top + rect.height;
-            const spill = boxRect.bottom - (canvasBottom - 18 * s);
-            if (spill > 0 && bodyRect.height > 0) {
-                body.style.setProperty('--title-maxh',
-                    Math.round(Math.max(60 * s, bodyRect.height - spill)) + 'px');
-            }
-        }
-    };
-
+    Scene_Title.prototype.createDisclaimerBox = function () { this._disclaimerBox = null; };
+    Scene_Title.prototype.showNewsSection = function () {};
+    Scene_Title.prototype.layoutDisclaimerBox = function () {};
     Scene_Title.prototype.removeDisclaimerBox = function () {
         if (this._disclaimerBox && this._disclaimerBox.parentNode) {
             this._disclaimerBox.parentNode.removeChild(this._disclaimerBox);
         }
         this._disclaimerBox = null;
-        this._newsBody = null;
-        this._newsNav = null;
-        this._newsOlder = null;
-        this._newsNewer = null;
-        this._newsVersion = null;
+    };
+
+    window.TitleScreenKit = {
+        layout: TitleLayout,
+        openExternalLink: openExternalLink,
+        disclaimerEnabled: () => enableDisclaimer
     };
 
     // Backgrounds that render into their own DOM canvas, which sits ON TOP of

@@ -936,6 +936,15 @@
         if (db.romance) _mergeLines(db.romance.propose, over.romance.propose);
       }
       ['performances', 'jokes', 'em', 'bubba'].forEach(s => _mergeLines(db[s], over[s]));
+      // The signature banks are prose only: the db carries no skeleton for
+      // them, so the language's own block is taken whole.
+      if (over.signature) db.signature = over.signature;
+    }
+    // A language that has not written its signature banks yet speaks the
+    // English ones rather than none.
+    if (!db.signature && lang !== 'en') {
+      const en = _readJson('js/i18n/en/conversations/SocialLines.json');
+      if (en && en.signature) db.signature = en.signature;
     }
     _socialLinesDb = db;
     return _socialLinesDb;
@@ -1124,7 +1133,7 @@
   const JOIN_BASE = 50;   // chance at opinion 0
   const JOIN_MIN  = 5;
   const JOIN_MAX  = 95;
-  function _joinChance(opinion, actor) {
+  function _joinChance(opinion, actor, profile) {
     if (_forceHighJoinChance()) return JOIN_MAX;
     // opinion runs -100..+100, so 0.45/point lands exactly on JOIN_MIN/JOIN_MAX
     // at the extremes. Somebody who can make a case for themselves (Public
@@ -1133,7 +1142,9 @@
     // who has to make that case, which is whoever the switcher has focused.
     const persuasion = window.SpecializationXP
       ? (window.SpecializationXP.levelOf(actor, 'Public Speaking') - 1) * 4 : 0;
-    const raw = JOIN_BASE + (Number(opinion) || 0) * 0.45 + persuasion;
+    // Somebody who looks the way they do is easier to follow (window.NPCEmpathize.Look).
+    const look = window.NPCEmpathize?.Look ? window.NPCEmpathize.Look.odds('join', actor, profile) : 0;
+    const raw = JOIN_BASE + (Number(opinion) || 0) * 0.45 + persuasion + look;
     return Math.round(Math.max(JOIN_MIN, Math.min(JOIN_MAX, raw)));
   }
 
@@ -1299,6 +1310,14 @@
     const level = Number(npcLevel);
     if (!Number.isFinite(level)) return true; // unknown level, never a blocker
     return level <= _partyMedianLevel() + JOIN_LEVEL_MARGIN;
+  }
+
+  // The party median a recruit of this level asks for: the number the greyed
+  // Join warning quotes when the party is still out of their weight class.
+  function _joinLevelNeeded(npcLevel) {
+    const level = Number(npcLevel);
+    if (!Number.isFinite(level)) return 1;
+    return Math.max(1, level - JOIN_LEVEL_MARGIN);
   }
 
   function _extractClassId(ev) {
@@ -1613,12 +1632,83 @@
     return Math.floor(latest / 1440);
   }
 
+  // ---------------------------------------------------------------------------
+  // Look stats and the signature banks
+  // ---------------------------------------------------------------------------
+  // Arcane, Substance, Stealth and Intimidation, 0 to 100%, read off what a
+  // character wears (window.LookStats, ItemSystemEquipment). A party member's
+  // come off their actor, boosts included; an NPC's off their profile, which
+  // NPCSociety_Gear keeps in step with their kit.
+  const LOOK_KEYS = ['arcane', 'substance', 'stealth', 'intimidation'];  // i18n-ignore  stat ids
+  function _lookStatsOfActor(actor) {
+    if (window.LookStats && actor) return window.LookStats.ofActor(actor);
+    return { arcane: 0, substance: 0, stealth: 0, intimidation: 0 };
+  }
+  function _lookStatsOfProfile(profile) {
+    const out = {};
+    for (const k of LOOK_KEYS) out[k] = Math.max(0, Math.min(100, Number(profile && profile[k]) || 0));
+    return out;
+  }
+  // The stat a character is an icon of (exactly 100%), or null. Somebody who
+  // is an icon of two looks speaks in either, at random.
+  function _lookIcon(stats) {
+    const icons = LOOK_KEYS.filter(k => stats && Number(stats[k]) >= 100);
+    return icons.length ? icons[Math.floor(Math.random() * icons.length)] : null;
+  }
+
+  // What the signature banks say about one move. A speaker who is an icon says
+  // it in their own voice (`speaker`); the answer comes from the listener's own
+  // voice when THEY are an icon (`listener`), otherwise from an ordinary person
+  // reacting to an icon's look (`reaction`). Either half is null when no bank
+  // applies, and the caller keeps its own line.
+  //   kind:    'interaction' | 'romance' | 'propose' | 'performance' | 'joke'
+  //   outcome: good/bad, accept/reject, or landGood/landGroan/flop for a joke
+  function _signatureLines(kind, id, outcome, actor, profile) {
+    const sig = _socialLines().signature;
+    const res = { player: null, npc: null, speakerIcon: null, listenerIcon: null };
+    if (!sig) return res;
+    const NC = window.NPCCreature;
+    const nonSentientNpc = !!(NC && profile && NC.isNonSentientProfile && NC.isNonSentientProfile(profile));
+    const sp = _lookIcon(_lookStatsOfActor(actor));
+    const ls = nonSentientNpc ? null : _lookIcon(_lookStatsOfProfile(profile));
+    res.speakerIcon = sp;
+    res.listenerIcon = ls;
+    const said = (bank) => {
+      if (!bank) return null;
+      if (kind === 'interaction') return bank.interactions && bank.interactions[id];
+      if (kind === 'romance') return bank.romance && bank.romance[id];
+      if (kind === 'propose') return bank.romance && bank.romance.propose;
+      if (kind === 'performance') return bank.performances && bank.performances[id];
+      if (kind === 'joke') return bank.jokes;
+      return null;
+    };
+    const answer = (bank) => {
+      if (!bank) return null;
+      let node = null;
+      if (kind === 'interaction') node = bank.interactions && bank.interactions[id];
+      else if (kind === 'romance') node = bank.romance && bank.romance[id];
+      else if (kind === 'propose') node = bank.romance && bank.romance.propose;
+      else if (kind === 'performance') node = bank.performances && bank.performances[id];
+      else if (kind === 'joke') node = bank.jokes;
+      return node && node[outcome];
+    };
+    if (sp) {
+      const pool = said(sig[sp] && sig[sp].speaker);
+      if (Array.isArray(pool)) res.player = _rand(pool) || null;
+    }
+    const replyBank = ls ? (sig[ls] && sig[ls].listener) : (sp ? (sig[sp] && sig[sp].reaction) : null);
+    const reply = answer(replyBank);
+    if (Array.isArray(reply)) res.npc = _rand(reply) || null;
+    return res;
+  }
+
   Object.assign(window.NPCEmpathize._internal, {
+    _lookIcon, _lookStatsOfActor, _lookStatsOfProfile, _signatureLines,
     _animalJoinChance, _buildBattleFace, _bustNameFromEvent, _bustUrl, _chatOpinionShift,
     _countRecentInteractions, _diseaseVialId, _diseaseVialItems, _eventCommentLines,
     _extractClassId, _extractContacts, _findEventByName, _forceHighJoinChance, _genJoke,
     _getNPCName, _getProfile, _getT, _hasJoinPartyCommand, _hasSelfSwitchAPage, _infectChance,
-    _isStoryNpc, _joinChance, _joinLevelOk, _lastInteractionDay, _llmCharacterSheet, _llmLifeFor,
+    _isStoryNpc, _joinChance, _joinLevelNeeded, _joinLevelOk, _lastInteractionDay, _llmCharacterSheet, _llmLifeFor,
     _llmPartyLine, _llmRelationLine, _llmSafe, _llmTopicsLine, _llmWhereabouts, _llmWorldLine,
     _partyMedianLevel, _presetFromEvent, _rand, _recruitAnimalAsMember, _recruitAnimalAsPet,
     _recruitNpcAsFollower, _resolveBustForActor, _resolveBustPath, _resolveMarkovDb, _socialById,

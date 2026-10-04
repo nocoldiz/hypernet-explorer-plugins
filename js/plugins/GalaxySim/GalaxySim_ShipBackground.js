@@ -244,6 +244,10 @@
     if (ship.harvestRun && typeof dm.tickSchrodingeriteHarvest === "function") {
       dm.tickSchrodingeriteHarvest(1 / 60);
     }
+    // And for a relativity braking pass on a supermassive hole's horizon.
+    if (ship.relBrake && typeof dm.tickRelativityBrake === "function") {
+      dm.tickRelativityBrake(1 / 60);
+    }
 
     // How far the ship has drawn in toward the body it is drinking from: the
     // star map flies the hull closer, and from inside the ship that reads as
@@ -948,6 +952,21 @@
   // Returns false (rather than a string) when the window already says it.
   function pumpTimerHtml(dm, ship) {
     const source = (ship.parkedBody && ship.parkedBody.name) || ship.currentSystem || "";
+    // Relativity braking: the window reads Earth's calendar racing ahead
+    // while the hull grazes the horizon, and the years still to come.
+    if (ship.relBrake && dm.relativityBrakeEarthMinute) {
+      const run = ship.relBrake;
+      const D = window.GalaxySim && window.GalaxySim.DataManager;
+      const minute = dm.relativityBrakeEarthMinute();
+      const date = D && D.relBrakeDateText ? D.relBrakeDateText(minute) : "";
+      const gone = run.totalMinutes > 0 ? (minute - run.fromMinute) / run.totalMinutes : 1;
+      const left = Math.max(0, Math.ceil(run.years * (1 - gone)));
+      if (sameStamp("relbrake", run.label || source, date, left)) return false;
+      return `<div class="travel-timer-label">${T('Galaxy.travel.relBraking')}` +
+        `${run.label ? " · " + run.label : ""}:</div>` +
+        `<div class="travel-timer-time">${T('Galaxy.travel.earthDate', { date })}</div>` +
+        `<div class="travel-timer-km">${T('Galaxy.travel.relYearsLeft', { years: left })}</div>`;
+    }
     if (ship.harvestRun) {
       const left = dm.schrodingeriteHarvestRemaining ? dm.schrodingeriteHarvestRemaining() : 0;
       if (sameStamp("harvest", source, Math.max(0, Math.ceil(left || 0)), null)) return false;

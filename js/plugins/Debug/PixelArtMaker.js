@@ -570,14 +570,24 @@
             this.currentColorIndicator.endFill();
         }
 
+        // Saves into the virtual file system, C:/Pictures/Pixel Art, where
+        // Pain can open it and window.UserPictures offers it as a texture.
         saveImage() {
             const dataURL = this.canvasContainer.htmlCanvas.toDataURL("image/png");
-            const link = document.createElement('a');
-            link.download = 'pixel_art.png';
-            link.href = dataURL;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const fs = window.HypernetFileSystem;
+            const dir = window.UserPictures ? window.UserPictures.PIXEL_DIR : 'C:/Pictures/Pixel Art';  // i18n-ignore  VFS path
+            if (!fs) { SoundManager.playBuzzer(); return; }
+            if (!fs.exists('C:/Pictures')) fs.mkdir('C:/Pictures');  // i18n-ignore  VFS path
+            if (!fs.exists(dir)) fs.mkdir(dir);
+            let n = 1;
+            while (fs.exists(`${dir}/pixel_art_${n}.png`)) n++;  // i18n-ignore  file name
+            const path = `${dir}/pixel_art_${n}.png`;  // i18n-ignore  file name
+            if (fs.writeFile(path, dataURL, 'png')) {
+                SoundManager.playOk();
+                if (window.ParchmentToast) window.ParchmentToast.show(T('PixelArt.pictures.saved', { file: path }));
+            } else {
+                SoundManager.playBuzzer();
+            }
         }
 
         update() {
@@ -945,6 +955,344 @@
             });
         }
     };
+
+    // =========================================================================
+    // User pictures: what Pain and the pixel art maker made, as textures
+    // =========================================================================
+    // Every picture the party drew is a file in the virtual file system: Pain
+    // saves into C:/Pictures, the pixel art maker into C:/Pictures/Pixel Art.
+    // window.UserPictures is the one place the rest of the game reads them
+    // from: the Thinker's anvil offers them as a finish for a piece of gear
+    // (<ForgeTexture: user:...>), the build menu hangs them in a painting.
+    //
+    // A picture that is chosen is copied into the save (`$gameSystem
+    // ._userTextures`, keyed by a hash of its pixels, at most 256 pixels a
+    // side) and named by a `user:` token, so a piece or a painting keeps its
+    // picture after the file is edited, renamed or thrown away. A stock sheet
+    // out of img/textures is named `tex:<file>` and is never copied.
+    //
+    // pick() is the picker modal and view() the plain viewer. Both hold the
+    // frame while they are up (the same SceneManager.updateScene seam the help
+    // sheet uses), so the page under them never reads the same key press.
+    const PIXEL_DIR = 'C:/Pictures/Pixel Art';  // i18n-ignore  VFS path
+    const USER_PREFIX = 'user:';                // i18n-ignore  texture token prefix
+    const STOCK_PREFIX = 'tex:';                // i18n-ignore  texture token prefix
+    const USER_TEXTURE_MAX = 256;
+    const PICK_COLS = 5;
+    const STOCK_CLASSES = ['blade', 'heavy', 'wood', 'magic', 'gun', 'default'];  // i18n-ignore  WeaponSystemProcedural classes
+
+    function userTextureStore() {
+        if (typeof $gameSystem === 'undefined' || !$gameSystem) return null;
+        if (!$gameSystem._userTextures) $gameSystem._userTextures = {};
+        return $gameSystem._userTextures;
+    }
+
+    function pictureHash(text) {
+        let h = 0x811c9dc5;
+        const s = String(text || '');
+        for (let i = 0; i < s.length; i++) {
+            h ^= s.charCodeAt(i);
+            h = Math.imul(h, 0x01000193) >>> 0;
+        }
+        return h.toString(16).padStart(8, '0');
+    }
+
+    function listUserPictures() {
+        const fs = window.HypernetFileSystem;
+        if (!fs) return [];
+        const out = [];
+        const walk = (dir, source) => {
+            if (!fs.exists(dir)) return;
+            for (const f of fs.readDir(dir) || []) {
+                if (!f || f.type !== 'file' || !/\.png$/i.test(f.name)) continue;
+                const path = dir + '/' + f.name;
+                const src = fs.readFile(path);
+                if (typeof src === 'string' && src.indexOf('data:image/') === 0) {
+                    out.push({ path, name: f.name, src, source });
+                }
+            }
+        };
+        walk(PAINT_DIR, 'pain');   // i18n-ignore  source id
+        walk(PIXEL_DIR, 'pixel');  // i18n-ignore  source id
+        return out;
+    }
+
+    // The seamless sheets in img/textures, the same files the forge already
+    // offers, read off WeaponSystemProcedural's lists.
+    function listStockTextures() {
+        const P = window.WeaponSystemProcedural;
+        if (!P || !P.getTexturesForType) return [];
+        const seen = new Set();
+        const out = [];
+        for (const cls of STOCK_CLASSES) {
+            for (const f of P.getTexturesForType(cls) || []) {
+                if (!/\.jpg$/i.test(f) || seen.has(f)) continue;
+                seen.add(f);
+                out.push(f);
+            }
+        }
+        return out.sort();
+    }
+
+    // Copies a picture into the save, shrunk to fit the texture budget with
+    // its pixels kept hard, and answers its token.
+    function adoptPicture(src) {
+        return new Promise((resolve) => {
+            const store = userTextureStore();
+            if (!store || !src) { resolve(null); return; }
+            const img = new Image();
+            img.onload = () => {
+                let data = src;
+                try {
+                    const scale = Math.min(1, USER_TEXTURE_MAX / Math.max(img.width || 1, img.height || 1));
+                    const w = Math.max(1, Math.round(img.width * scale));
+                    const h = Math.max(1, Math.round(img.height * scale));
+                    const c = document.createElement('canvas');
+                    c.width = w; c.height = h;
+                    const ctx = c.getContext('2d');
+                    ctx.imageSmoothingEnabled = false;
+                    ctx.drawImage(img, 0, 0, w, h);
+                    data = c.toDataURL('image/png');
+                } catch (e) { data = src; }
+                const key = pictureHash(data);
+                store[key] = data;
+                resolve(USER_PREFIX + key);
+            };
+            img.onerror = () => resolve(null);
+            img.src = src;
+        });
+    }
+
+    const picEsc = v => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const picT = (k, p) => T('PixelArt.pictures.' + k, p);
+
+    // The modal on screen, if any: { el, kind, cells, index, body, done }.
+    let picModal = null;
+
+    function swallowPictureInput() {
+        if (typeof Input !== 'undefined' && Input.clear) Input.clear();
+        if (typeof TouchInput !== 'undefined' && TouchInput.clear) TouchInput.clear();
+    }
+
+    function closePictureModal(result, silent) {
+        const m = picModal;
+        if (!m) return;
+        picModal = null;
+        if (m.el.parentNode) m.el.parentNode.removeChild(m.el);
+        swallowPictureInput();
+        if (!silent && typeof SoundManager !== 'undefined') {
+            if (result) SoundManager.playOk(); else SoundManager.playCancel();
+        }
+        m.done(result || null);
+    }
+
+    function focusPictureCell(index) {
+        const m = picModal;
+        if (!m || !m.cells.length) return;
+        m.index = Math.max(0, Math.min(m.cells.length - 1, index));
+        m.cells.forEach((c, i) => c.classList.toggle('focused', i === m.index));
+        const cell = m.cells[m.index];
+        if (cell && cell.scrollIntoView) cell.scrollIntoView({ block: 'nearest' });
+    }
+
+    function choosePictureCell(index) {
+        const m = picModal;
+        if (!m || m.kind !== 'pick') return;
+        const cell = m.cells[index];
+        if (!cell) return;
+        const kind = cell.dataset.kind;
+        if (kind === 'auto') { closePictureModal({ kind: 'auto', value: '' }); return; }  // i18n-ignore  picker kinds
+        if (kind === 'stock') {
+            const file = cell.dataset.file;
+            closePictureModal({ kind: 'stock', value: STOCK_PREFIX + file, src: 'img/textures/' + file });  // i18n-ignore  picker kind, asset path
+            return;
+        }
+        const pic = m.pictures[Number(cell.dataset.pic)];
+        if (!pic) return;
+        m.busy = true;
+        adoptPicture(pic.src).then((token) => {
+            if (picModal !== m) return;
+            m.busy = false;
+            if (!token) { if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer(); return; }
+            closePictureModal({ kind: 'user', value: token, src: window.UserPictures.resolve(token), name: pic.name });  // i18n-ignore  picker kind
+        });
+    }
+
+    function openPictureModal(kind, html, done) {
+        closePictureModal(null, true);
+        const el = document.createElement('div');
+        el.className = 'ui-overlay upic-overlay';
+        el.innerHTML = html;
+        document.body.appendChild(el);
+        const m = {
+            el, kind, done,
+            cells: Array.prototype.slice.call(el.querySelectorAll('.upic-cell')),
+            body: el.querySelector('.upic-body'),
+            index: 0, busy: false, pictures: []
+        };
+        picModal = m;
+        el.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (m.busy) return;
+            const cell = e.target.closest && e.target.closest('.upic-cell');
+            if (cell) { choosePictureCell(m.cells.indexOf(cell)); return; }
+            if (e.target === el || (e.target.closest && e.target.closest('.upic-close')) || m.kind === 'view') {
+                closePictureModal(null);
+            }
+        });
+        el.addEventListener('mousemove', (e) => {
+            const cell = e.target.closest && e.target.closest('.upic-cell');
+            if (cell && m.cells.indexOf(cell) !== m.index) focusPictureCell(m.cells.indexOf(cell));
+        });
+        // The document swallows the wheel (RMMZ), so the body is turned by hand.
+        el.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (m.body) m.body.scrollTop += e.deltaY;
+        }, { passive: false });
+        el.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            closePictureModal(null);
+        });
+        swallowPictureInput();
+        if (typeof SoundManager !== 'undefined' && SoundManager.playOk) SoundManager.playOk();
+        return m;
+    }
+
+    // The modal's own frame: walk the grid, choose, or close.
+    function pictureModalFrame() {
+        const m = picModal;
+        if (!m) return false;
+        if (!m.el.isConnected) { picModal = null; return false; }
+        if (m.busy) return true;
+        const cancel = Input.isTriggered('cancel') || Input.isTriggered('escape') ||
+            (TouchInput.isCancelled && TouchInput.isCancelled());
+        if (m.kind === 'view') {
+            if (cancel || Input.isTriggered('ok')) closePictureModal(null);
+            return true;
+        }
+        if (cancel) { closePictureModal(null); return true; }
+        if (!m.cells.length) {
+            if (Input.isTriggered('ok')) closePictureModal(null);
+            return true;
+        }
+        let step = 0;
+        if (Input.isRepeated('right')) step = 1;
+        else if (Input.isRepeated('left')) step = -1;
+        else if (Input.isRepeated('down')) step = PICK_COLS;
+        else if (Input.isRepeated('up')) step = -PICK_COLS;
+        if (step) {
+            const next = Math.max(0, Math.min(m.cells.length - 1, m.index + step));
+            if (next !== m.index) {
+                focusPictureCell(next);
+                if (typeof SoundManager !== 'undefined') SoundManager.playCursor();
+            }
+        } else if (Input.isTriggered('ok')) {
+            choosePictureCell(m.index);
+        }
+        return true;
+    }
+
+    window.UserPictures = {
+        PREFIX: USER_PREFIX,
+        STOCK_PREFIX: STOCK_PREFIX,
+        DIR: PAINT_DIR,
+        PIXEL_DIR: PIXEL_DIR,
+        list: listUserPictures,
+        stock: listStockTextures,
+        adopt: adoptPicture,
+        hash: pictureHash,
+
+        isToken(name) {
+            const s = String(name || '');
+            return s.indexOf(USER_PREFIX) === 0 || s.indexOf(STOCK_PREFIX) === 0;
+        },
+
+        // The image a token stands for, as something an <img> or a texture
+        // loader can be pointed at, or null when the save holds no such copy.
+        resolve(token) {
+            const s = String(token || '');
+            if (s.indexOf(STOCK_PREFIX) === 0) return 'img/textures/' + s.slice(STOCK_PREFIX.length);  // i18n-ignore  asset path
+            if (s.indexOf(USER_PREFIX) !== 0) return null;
+            const store = userTextureStore();
+            return (store && store[s.slice(USER_PREFIX.length)]) || null;
+        },
+
+        isOpen() { return !!(picModal && picModal.el.isConnected); },
+
+        /**
+         * The picker. Resolves with {kind: 'auto'|'user'|'stock', value, src}
+         * or null when it is closed without a choice.
+         * @param {{title?: string, auto?: string, stock?: boolean}} [opts]
+         *   auto: label of a first "leave it as it is" cell; stock: also offer
+         *   the sheets in img/textures.
+         */
+        pick(opts) {
+            const o = opts || {};
+            return new Promise((resolve) => {
+                const pictures = listUserPictures();
+                const cell = (attrs, src, label, extra) =>
+                    `<div class="upic-cell ${extra || ''}" ${attrs}>` +
+                    (src ? `<img src="${picEsc(src)}" alt="" loading="lazy" decoding="async">` : '') +
+                    `<span class="upic-label">${picEsc(label)}</span></div>`;
+                let body = '';
+                if (o.auto) body += `<div class="upic-grid">${cell('data-kind="auto"', '', o.auto, 'upic-cell--auto')}</div>`;
+                body += `<div class="upic-head">${picEsc(picT('mine'))}</div>`;
+                body += pictures.length
+                    ? `<div class="upic-grid">${pictures.map((p, i) =>
+                        cell(`data-kind="user" data-pic="${i}"`, p.src, p.name.replace(/\.png$/i, ''))).join('')}</div>`
+                    : `<p class="ui-panel-hint upic-empty">${picEsc(picT('empty', { dir: PAINT_DIR }))}</p>`;
+                if (o.stock) {
+                    const stock = listStockTextures();
+                    if (stock.length) {
+                        body += `<div class="upic-head">${picEsc(picT('stock'))}</div>`;
+                        body += `<div class="upic-grid">${stock.map(f =>
+                            cell(`data-kind="stock" data-file="${picEsc(f)}"`, 'img/textures/' + f,
+                                f.replace(/\.jpg$/i, '').replace(/_/g, ' '))).join('')}</div>`;  // i18n-ignore  asset path
+                    }
+                }
+                const html = `
+                    <div class="ui-panel upic-panel" role="dialog">
+                        <div class="upic-title">${picEsc(o.title || picT('pickTitle'))}</div>
+                        <div class="ui-panel-body ui-scroll upic-body">${body}</div>
+                        <div class="ui-panel-dismiss upic-close" data-pad="cancel">${picEsc(picT('close'))}</div>
+                    </div>`;
+                const m = openPictureModal('pick', html, resolve);
+                m.pictures = pictures;
+                focusPictureCell(0);
+            });
+        },
+
+        // A picture shown on its own, for looking at.
+        view(opts) {
+            const o = opts || {};
+            const src = o.src || (o.token ? this.resolve(o.token) : null);
+            if (!src) return Promise.resolve(null);
+            return new Promise((resolve) => {
+                const html = `
+                    <div class="ui-panel upic-panel upic-panel--view" role="dialog">
+                        ${o.title ? `<div class="upic-title">${picEsc(o.title)}</div>` : ''}
+                        <div class="upic-view"><img src="${picEsc(src)}" alt=""></div>
+                        <div class="ui-panel-dismiss upic-close" data-pad="cancel">${picEsc(picT('close'))}</div>
+                    </div>`;
+                openPictureModal('view', html, resolve);
+            });
+        },
+
+        close() { closePictureModal(null, true); },
+
+        // Test seam.
+        _frame: pictureModalFrame,
+    };
+
+    if (typeof SceneManager !== 'undefined' && SceneManager.updateScene) {
+        const _updateScene_pictures = SceneManager.updateScene;
+        SceneManager.updateScene = function () {
+            if (pictureModalFrame()) return;
+            _updateScene_pictures.apply(this, arguments);
+        };
+    }
 
     function registerPaint() {
         if (!window.HypernetOS || !window.HypernetOS.registerApp) return false;

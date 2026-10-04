@@ -2505,7 +2505,10 @@
             let renderer = null;
             let stubGeo = null;
             let stubMat = null;
-            if (typeof THREE !== 'undefined' && typeof process !== 'undefined' && !process.browser) {
+            // Headless test runs only. NW.js has `process` too, and there a
+            // WebGL renderer on a canvas already holding a 2D context fails, one
+            // "Error creating WebGL context" per category click.
+            if (typeof THREE !== 'undefined' && typeof process !== 'undefined' && !process.browser && typeof nw === 'undefined') {
                 try {
                     if (THREE.WebGLRenderer) renderer = new THREE.WebGLRenderer({ canvas: canvas });
                     if (THREE.BufferGeometry) stubGeo = new THREE.BufferGeometry();

@@ -198,6 +198,34 @@
   // ship heat offset). Degrees Celsius added on top of whatever the interior
   // would otherwise sit at, at the closest point.
   const REFUEL_HEAT_MAX_C = 45;
+  // Relativity braking: skimming the event horizon of a supermassive hole so
+  // that years pass on Earth while the crew lives through a few minutes. Only
+  // a hole at least as heavy as Sagittarius A* bends time hard enough, and the
+  // years the manoeuvre costs grow with the mass on a log scale, from 4 at
+  // Sagittarius A* to 100 at a TON 618-class monster.
+  const REL_BRAKE_MIN_MASS = 4e6;
+  const REL_BRAKE_TOP_MASS = 6.6e10;
+  const REL_BRAKE_MIN_YEARS = 4;
+  const REL_BRAKE_MAX_YEARS = 100;
+  // Real-time seconds of the whole pass: a base run plus a little per year,
+  // so a century reads longer than four years without ever dragging.
+  const REL_BRAKE_BASE_SECONDS = 18;
+  const REL_BRAKE_SECONDS_PER_YEAR = 0.12;
+  // The pass in three parts: the dive onto the horizon, the skim (where all
+  // the outside time goes by) and the climb back out.
+  const REL_BRAKE_DIVE = 0.2;
+  const REL_BRAKE_CLIMB = 0.8;
+  // The world clock is moved in this many steps across the skim, each one a
+  // full NPC and world catch-up; the travel window reads the date in between.
+  const REL_BRAKE_CLOCK_STEPS = 8;
+  // A world-clock minute as Earth's calendar date, the way the braking
+  // confirmation, the travel window and the closing notice all print it.
+  function relBrakeDateText(minute) {
+    const d = new Date(2001, 0, 1, 10, 0, 0);
+    d.setMinutes(d.getMinutes() + (minute || 0));
+    return String(d.getDate()).padStart(2, "0") + "/" +
+      String(d.getMonth() + 1).padStart(2, "0") + "/" + d.getFullYear();
+  }
   // The warp-speed slider (Variable 94) is calibrated for crossing light-years
   // between stars; applied unmodified to a hop between two planets a handful
   // of AU apart it made every intra-system trip read as instantaneous
@@ -621,6 +649,8 @@
     }
 
     startTravelToSystem(targetSystemName) {
+      // A relativity braking pass is flown to the end: nothing leaves the hole.
+      if (this.isRelativityBraking()) return false;
       const targetSystem = this.getSystem(targetSystemName);
       if (!targetSystem) return false;
 
@@ -666,6 +696,8 @@
     }
 
     startTravelToPlanet(targetSystemName, targetPlanetName) {
+      // A relativity braking pass is flown to the end: nothing leaves the hole.
+      if (this.isRelativityBraking()) return false;
       const targetSystem = this.getSystem(targetSystemName);
       if (!targetSystem) return false;
 
@@ -927,6 +959,8 @@
     // no fuel itself -- the caller checks/decrements Schrodingerite -- and works
     // for any resolvable system regardless of distance or galaxy.
     teleportToSystem(targetSystemName) {
+      // A relativity braking pass is flown to the end: nothing leaves the hole.
+      if (this.isRelativityBraking()) return false;
       const targetSystem = this.getSystem(targetSystemName);
       if (!targetSystem) return false;
       this.stopTravel(false);
@@ -944,6 +978,8 @@
     // bridge). The system view re-places the ship on the planet each frame from
     // currentPlanet, so setting the state is enough. Fuel is handled by caller.
     teleportToPlanetOrbit(systemName, planetName) {
+      // A relativity braking pass is flown to the end: nothing leaves the hole.
+      if (this.isRelativityBraking()) return false;
       const sys = this.getSystem(systemName);
       if (!sys) return false;
       if (!this.resolveOrbitBody(systemName, planetName)) return false;
@@ -976,6 +1012,8 @@
     // orbiting any of its planets. In an N-ary system any individual star
     // (companion or feeding donor included) is a valid `starName` target.
     parkAtStar(systemName, starName) {
+      // A relativity braking pass is flown to the end: nothing leaves the hole.
+      if (this.isRelativityBraking()) return false;
       const sys = this.getSystem(systemName);
       if (!sys) return false;
       const rec = this.getStarInSystem(systemName, starName) || sys;
@@ -1070,7 +1108,7 @@
       const ship = this.playerShip;
       if (!ship) return 0;
       const dt = Math.max(0, deltaSeconds || 0);
-      const drawing = !ship.isMoving && (ship.isRefueling || !!ship.harvestRun);
+      const drawing = !ship.isMoving && (ship.isRefueling || !!ship.harvestRun || !!ship.relBrake);
       const step = dt / REFUEL_APPROACH_SECONDS;
       const cur = ship.refuelApproachRaw || 0;
       const raw = drawing ? Math.min(1, cur + step) : Math.max(0, cur - step);
@@ -1438,6 +1476,160 @@
     harvestSchrodingerite() {
       if (!this.beginSchrodingeriteHarvest()) return false;
       return this.tickSchrodingeriteHarvest(SCHRODINGERITE_HARVEST_SECONDS);
+    }
+
+    // ------------------------------------------------------------------------
+    // Relativity braking (see REL_BRAKE_*). The ship dives onto the event
+    // horizon of the hole it is parked at, skims it and climbs back out. On
+    // board a few minutes go by and nobody gets any hungrier for it; outside,
+    // the world clock runs on by the years the hole's mass is worth.
+    // ------------------------------------------------------------------------
+
+    // Years a hole of this mass costs, or 0 when it is too light to bend time.
+    relativityBrakeYearsFor(mass) {
+      const m = Number(mass) || 0;
+      if (m < REL_BRAKE_MIN_MASS) return 0;
+      const lo = Math.log10(REL_BRAKE_MIN_MASS);
+      const hi = Math.log10(REL_BRAKE_TOP_MASS);
+      const f = Math.max(0, Math.min(1, (Math.log10(m) - lo) / (hi - lo)));
+      return Math.round(REL_BRAKE_MIN_YEARS + (REL_BRAKE_MAX_YEARS - REL_BRAKE_MIN_YEARS) * f);
+    }
+
+    // The hole the ship is parked at, when it is heavy enough to brake on.
+    relativityBrakeTarget() {
+      const ship = this.playerShip;
+      if (!ship || ship.isMoving || !ship.parkedBody || ship.parkedBody.kind !== "blackhole") return null;
+      const rec = this.getStarInSystem(
+        ship.parkedBody.system || ship.parkedBody.name, ship.parkedBody.name);
+      if (!rec) return null;
+      const years = this.relativityBrakeYearsFor(rec.mass);
+      if (!years) return null;
+      return { name: ship.parkedBody.name, label: rec.label || ship.parkedBody.name, mass: rec.mass, years };
+    }
+
+    canRelativityBrake() {
+      const ship = this.playerShip;
+      return !!this.relativityBrakeTarget() && !ship.relBrake && !ship.harvestRun;
+    }
+
+    isRelativityBraking() {
+      return !!(this.playerShip && this.playerShip.relBrake);
+    }
+
+    _worldMinute() {
+      const TD = window.TimeDateSystem;
+      if (TD && TD.getGameTimeMinutes) return TD.getGameTimeMinutes();
+      return ($gameVariables && $gameVariables.value(114)) || 0;
+    }
+
+    // Minutes from `fromMinute` to the same moment `years` later on Earth's
+    // calendar, leap days included (the clock's epoch is 1 Jan 2001, 10:00).
+    relativityBrakeMinutes(years, fromMinute) {
+      const now = new Date(2001, 0, 1, 10, 0, 0);
+      now.setMinutes(now.getMinutes() + (fromMinute || 0));
+      const then = new Date(now.getTime());
+      then.setFullYear(then.getFullYear() + years);
+      return Math.max(0, Math.round((then.getTime() - now.getTime()) / 60000));
+    }
+
+    // What the confirmation quotes: the hole, its cost in years and the
+    // minute Earth's calendar will read once the ship is back out.
+    relativityBrakeQuote() {
+      const target = this.relativityBrakeTarget();
+      if (!target) return null;
+      const from = this._worldMinute();
+      const minutes = this.relativityBrakeMinutes(target.years, from);
+      return Object.assign({}, target, { minutes, fromMinute: from, toMinute: from + minutes });
+    }
+
+    startRelativityBrake() {
+      if (!this.canRelativityBrake()) return false;
+      const q = this.relativityBrakeQuote();
+      const ship = this.playerShip;
+      ship.isRefueling = false;
+      ship.relBrake = {
+        name: q.name,
+        label: q.label,
+        years: q.years,
+        fromMinute: q.fromMinute,
+        totalMinutes: q.minutes,
+        committed: 0,
+        elapsed: 0,
+        duration: REL_BRAKE_BASE_SECONDS + REL_BRAKE_SECONDS_PER_YEAR * q.years,
+      };
+      return true;
+    }
+
+    // 0..1 across the whole pass, or 0 when none is flown.
+    relativityBrakeProgress() {
+      const run = this.playerShip && this.playerShip.relBrake;
+      if (!run || !(run.duration > 0)) return 0;
+      return Math.max(0, Math.min(1, run.elapsed / run.duration));
+    }
+
+    // How close the hull is to the horizon: 0 at the refuel skim, 1 grazing it.
+    relativityBrakeSkim() {
+      if (!this.isRelativityBraking()) return 0;
+      const p = this.relativityBrakeProgress();
+      const s = p < REL_BRAKE_DIVE ? p / REL_BRAKE_DIVE
+        : p > REL_BRAKE_CLIMB ? (1 - p) / (1 - REL_BRAKE_CLIMB) : 1;
+      return s * s * (3 - 2 * s);
+    }
+
+    // Share of the outside years gone by at progress p: none on the way down,
+    // all of them across the skim (racing at the deepest point), none after.
+    _relBrakeTimeShare(p) {
+      const f = Math.max(0, Math.min(1, (p - REL_BRAKE_DIVE) / (REL_BRAKE_CLIMB - REL_BRAKE_DIVE)));
+      return f * f * (3 - 2 * f);
+    }
+
+    // The minute Earth's calendar reads right now, as the hull sees it. Runs
+    // smoothly between the clock's own steps, for the travel window.
+    relativityBrakeEarthMinute() {
+      const run = this.playerShip && this.playerShip.relBrake;
+      if (!run) return this._worldMinute();
+      return run.fromMinute + Math.round(run.totalMinutes * this._relBrakeTimeShare(this.relativityBrakeProgress()));
+    }
+
+    // Outside time, which costs the crew nothing: no hunger, no sleep, no
+    // craving. Only the world moves on.
+    _passOutsideTime(minutes) {
+      if (!(minutes > 0)) return;
+      const TD = window.TimeDateSystem;
+      if (TD && TD.passTime) TD.passTime(minutes, { drain: false, addictions: false });
+      else if ($gameVariables) $gameVariables.setValue(114, this._worldMinute() + minutes);
+    }
+
+    /**
+     * Advance a relativity braking pass by the real-time delta (seconds). The
+     * world clock is moved in REL_BRAKE_CLOCK_STEPS steps across the skim.
+     * Returns true on the tick that completes the pass.
+     */
+    tickRelativityBrake(deltaSeconds) {
+      const ship = this.playerShip;
+      const run = ship && ship.relBrake;
+      if (!run) return false;
+      // Nothing moves the ship while the pass is flown (the travel calls
+      // refuse), so a ship found off the hole was put there by a load or a
+      // debug warp: the years are settled at once and the pass ends.
+      const off = ship.isMoving || !ship.parkedBody || ship.parkedBody.name !== run.name;
+      run.elapsed = off ? run.duration : Math.min(run.duration, run.elapsed + Math.max(0, deltaSeconds || 0));
+      const p = this.relativityBrakeProgress();
+      const due = Math.round(run.totalMinutes * this._relBrakeTimeShare(p));
+      const step = Math.max(1, Math.ceil(run.totalMinutes / REL_BRAKE_CLOCK_STEPS));
+      if (due - run.committed >= step || (p >= 1 && due > run.committed)) {
+        const delta = due - run.committed;
+        run.committed = due;
+        this._passOutsideTime(delta);
+      }
+      if (p < 1) return false;
+      ship.relBrake = null;
+      if (window.ParchmentToast && window.ParchmentToast.show && window.T) {
+        window.ParchmentToast.show(T('Galaxy.relBrake.done', {
+          years: run.years, date: relBrakeDateText(run.fromMinute + run.totalMinutes) }),
+          { severity: "info", duration: 300 });
+      }
+      return true;
     }
 
     // A warp change restarts the clock from where the ship is now, so the new
@@ -2775,6 +2967,9 @@
   StarMapDataManager.REFUEL_HEAT_MAX_C = REFUEL_HEAT_MAX_C;
   StarMapDataManager.REFUEL_APPROACH_SECONDS = REFUEL_APPROACH_SECONDS;
   StarMapDataManager.MAP_FUEL_MAX = MAP_FUEL_MAX;
+  StarMapDataManager.REL_BRAKE_MIN_MASS = REL_BRAKE_MIN_MASS;
+  StarMapDataManager.REL_BRAKE_TOP_MASS = REL_BRAKE_TOP_MASS;
+  StarMapDataManager.relBrakeDateText = relBrakeDateText;
   window.GalaxySim.NameGenerators = {
     generateProceduralGalaxyName,
     generateProceduralSuperclusterName,

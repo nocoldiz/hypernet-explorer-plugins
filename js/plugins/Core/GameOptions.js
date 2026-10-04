@@ -463,7 +463,8 @@ const GameOptions = {
                 { key: 'autoExplore', symbols: ['autoIdle'] },
                 { key: 'simulationLog', symbols: ['simulationLog'] },
                 { key: 'ascii', symbols: ['asciiModeEnabled', 'asciiHudEnabled'] },
-                { key: 'noclip', symbols: ['ctrlNoclip'] }
+                { key: 'noclip', symbols: ['ctrlNoclip'] },
+                { key: 'vr', symbols: ['voxelVR'] }
             ]
         }
     ]

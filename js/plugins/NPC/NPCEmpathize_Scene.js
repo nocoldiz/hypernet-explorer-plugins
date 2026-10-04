@@ -28,12 +28,12 @@
     _feedNourishment, _feedOpinion, _feralCanGift, _feralGrowlFor, _feralKind, _feralLine,
     _feralNoise, _gainSocialFromCompany, _gainSocialFromOpinion, _genJoke, _getNPCName, _getProfile,
     _getT, _infectChance, _isBubbaActor, _isNonSentientActor, _isNonSentientNpc, _isStoryNpc,
-    _joinChance, _joinLevelOk, _llmCharacterSheet, _llmLifeFor, _llmPartyLine, _llmRelationLine,
+    _joinChance, _joinLevelNeeded, _joinLevelOk, _llmCharacterSheet, _llmLifeFor, _llmPartyLine, _llmRelationLine,
     _llmSafe, _llmTopicsLine, _llmWorldLine, _npcBaseOpinion, _npcEffectiveAttraction,
     _npcEffectiveOpinion, _npcProxyTroopId, _pairBond, _pairContext, _pairSituationLine, _payFun,
     _personalityName, _personalitySocialMult, _presetFromEvent, _rand, _recruitAnimalAsMember,
     _recruitAnimalAsPet, _recruitNpcAsFollower, _resolveMarkovDb, _setNpcBaseOpinion, _socialById,
-    _socialLines, _stanceToneMult, _stripSeedEcho, _traitCompatBonus, _travellingPartyCount,
+    _signatureLines, _socialLines, _stanceToneMult, _stripSeedEcho, _traitCompatBonus, _travellingPartyCount,
     _vanishRecruitedEvent, _wisMod, CARD_REFUSE_OPINION, COMPANY_ACTIONS, FERAL_ACTION_IDS,
     FERAL_ACTIONS, NPC_ASSAULT_CRIME, NPCEmpathizeInputManager, PET_OPINION,
     STORY_PROTECTED_ACTIONS, vary,
@@ -58,6 +58,15 @@
     '.npc-chat-action-btn', '.npc-action-row',
   ].join(', ');
   // i18n-ignore-end
+
+  // A recruit out of the party's weight class (_joinLevelOk): the offer stays
+  // on the board greyed out at 0%, and pressing it says what it would take.
+  function _warnJoinLevel(npcLevel, npcName) {
+    SoundManager.playBuzzer();
+    window.ParchmentToast?.show?.(
+      _getT()('Empathize.joinLevelTooLow', { level: _joinLevelNeeded(npcLevel), name: npcName || '' }),
+      { severity: 'warning', duration: 200 });
+  }
 
   class Scene_NPCEmpathize extends Scene_MenuBase {
     constructor() {
@@ -1622,7 +1631,10 @@
       // The weight class applies to an animal exactly as it does to a person
       // (_joinLevelOk): a beast far above what the party can handle does not
       // trot along behind them, as a pet or as a member.
-      if (!_joinLevelOk(profile?.level ?? status.level)) { SoundManager.playBuzzer(); return; }
+      if (!_joinLevelOk(profile?.level ?? status.level)) {
+        _warnJoinLevel(profile?.level ?? status.level, npcName);
+        return;
+      }
 
       const chance = _animalJoinChance(status, actor);
       const wisMod = _wisMod(actor);
@@ -1858,15 +1870,21 @@
       // Tone bucket of this interaction, for the Em stance pools below. Jokes
       // and performances have no fixed tone, they take the sign of the result.
       let emTone = '';
+      // Which signature pool answers this move, if either side is an icon of
+      // a look (see _signatureLines): the bank kind and the outcome it landed.
+      let sigKind = '', sigOutcome = '';
 
       if (id === 'joke') {
         playerLine = this._genJoke();
         const land = Math.random() < Math.max(0.15, 0.7 - recent * 0.18);
+        sigKind = 'joke';
         if (land) {
           delta   = Math.round(Math.max(1, 5 - recent) * _personalitySocialMult(profile, 'positive'));
-          npcLine = fill(_rand(Math.random() < 0.5 ? db.jokes?.landGood : db.jokes?.landGroan));
+          sigOutcome = Math.random() < 0.5 ? 'landGood' : 'landGroan';
+          npcLine = fill(_rand(db.jokes?.[sigOutcome]));
         } else {
           delta   = Math.round((recent >= 2 ? -(2 + recent) : -1) * _personalitySocialMult(profile, 'negative'));
+          sigOutcome = 'flop';
           npcLine = fill(_rand(db.jokes?.flop));
         }
       } else if (id === 'story' || id === 'poem') {
@@ -1884,6 +1902,8 @@
         if (raw > 0) { delta = Math.max(1, Math.round(raw / 2 * _personalitySocialMult(profile, 'positive')));  npcLine = fill(_rand(perf.good)); }
         else         { delta = Math.min(-1, Math.round(raw / 2 * _personalitySocialMult(profile, 'negative'))); npcLine = fill(_rand(perf.bad)); }
         playerLine = fill(_rand(perf.player));
+        sigKind = 'performance';
+        sigOutcome = raw > 0 ? 'good' : 'bad';
       } else {
         const def = _socialById()[id];
         if (!def) return;
@@ -1905,6 +1925,24 @@
         const pool = def.tone === 'negative' ? def.responseBad : (sincere ? def.responseGood : def.responseBad);
         npcLine = fill(_rand(pool));
         emTone = def.tone;
+        sigKind = 'interaction';
+        // A hostile move stings while it is fresh and is shrugged off once it
+        // has been heard too often; a friendly one lands while it is sincere.
+        sigOutcome = def.tone === 'negative' ? (recent <= 1 ? 'good' : 'bad') : (sincere ? 'good' : 'bad');
+        // Menace makes a hostile move bite harder, good clothes make a
+        // sincere compliment count for more (window.NPCEmpathize.Look).
+        if (def.tone === 'negative' || (def.tone === 'positive' && sincere)) {
+          delta = Math.round(delta * (window.NPCEmpathize.Look?.socialMult(actor, def.tone) ?? 1));
+        }
+      }
+
+      // An icon of a look (100% Arcane, Substance, Stealth or Intimidation)
+      // says it in their own voice, and is answered as one. The Em, Bubba and
+      // pair layers below still own the exchange when they apply.
+      if (sigKind) {
+        const sig = _signatureLines(sigKind, id, sigOutcome, actor, profile);
+        if (sig.player) playerLine = fill(sig.player);
+        if (sig.npc) npcLine = fill(sig.npc);
       }
 
       // Em (Switch 48): the NPC answers her, not a stranger. Their stance owns
@@ -2183,7 +2221,9 @@
       const costMult     = recentBribes >= 2 ? 1.5 : 1;
       const base         = BASE_TIERS[tierIndex];
       if (!base) return;
-      const tier = { ...base, gold: Math.round(base.gold * costMult) };
+      // Money offered by somebody dressed like money is easier to take.
+      const lookBribe = window.NPCEmpathize.Look?.odds('bribe', this._focusActor() || $gameParty.leader(), profile) || 0;
+      const tier = { ...base, gold: Math.round(base.gold * costMult), chance: Math.min(99, base.chance + lookBribe) };
 
       if ($gameParty.gold() < tier.gold) {
         SoundManager.playBuzzer();
@@ -2420,7 +2460,10 @@
       if (this._stealAttempted[key]) return;
 
       const agility = $gameParty.leader()?.agi ?? 10;
-      const chance  = window.StealCalculator?.calculateStealChance(item.data, agility) ?? 50;
+      // Dressed not to be seen, a hand in a pocket goes unnoticed more often.
+      const lookSteal = window.NPCEmpathize.Look?.odds('pickpocket', this._focusActor() || $gameParty.leader(),
+        _getProfile(_getNPCName(this._eventId))) || 0;
+      const chance  = Math.max(1, Math.min(99, (window.StealCalculator?.calculateStealChance(item.data, agility) ?? 50) + lookSteal));
       const dexMod  = Math.floor(((agility || 10) - 10) / 2);
       this._stealRolling      = true;
       this._stealAttempted[key] = 'rolling';
@@ -2797,9 +2840,13 @@
       // A full party is NOT a gate any more: the fourth person to say yes signs
       // on into the reserves and waits on the Dynamics board (NPCSystemParty.joinParty).
       if (window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId))
-          || window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId))
-          || !_joinLevelOk(_presetFromEvent($gameMap?.event(evId))?.level ?? profile?.level)) {
+          || window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId))) {
         SoundManager.playBuzzer();
+        return;
+      }
+      const recruitLevel = _presetFromEvent($gameMap?.event(evId))?.level ?? profile?.level;
+      if (!_joinLevelOk(recruitLevel)) {
+        _warnJoinLevel(recruitLevel, npcName);
         return;
       }
 
@@ -2821,7 +2868,7 @@
       // Same formula the Join label advertises (50% at neutral, lower when the
       // NPC dislikes you, higher when they like you, level ignored). Debug/sandbox
       // play forces it near-certain so companions can be assembled for testing.
-      const chance  = _joinChance(opinion, this._focusActor());
+      const chance  = _joinChance(opinion, this._focusActor(), profile);
 
       // Thrown on the same d20 every other check in the game is thrown on, so
       // the player watches the odds the button quoted actually roll. Talking
@@ -2958,15 +3005,19 @@
       const T       = _getT();
 
       if (window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId))
-          || window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId))
-          || !_joinLevelOk(_presetFromEvent($gameMap?.event(evId))?.level ?? profile?.level)) {
+          || window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId))) {
         SoundManager.playBuzzer();
+        return;
+      }
+      const recruitLevel = _presetFromEvent($gameMap?.event(evId))?.level ?? profile?.level;
+      if (!_joinLevelOk(recruitLevel)) {
+        _warnJoinLevel(recruitLevel, npcName);
         return;
       }
 
       const actor   = this._focusActor() || $gameParty?.leader();
       const opinion = this._focusOpinion(profile);
-      const chance  = _joinChance(opinion, actor);
+      const chance  = _joinChance(opinion, actor, profile);
       const psiMod  = actor ? (actor.psiMod ?? Math.floor(((actor.luk || 10) - 10) / 2)) : 0;
 
       let success;

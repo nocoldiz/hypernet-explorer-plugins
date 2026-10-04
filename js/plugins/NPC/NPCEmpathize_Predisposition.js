@@ -176,6 +176,98 @@
     return Math.round(Math.max(-HYGIENE_MAX_PENALTY, total * weight));
   }
 
+  // ── Look stats: how a party member is turned out ─────────────────────────
+  // Arcane, Substance, Stealth and Intimidation, 0 to 100%, read off the gear
+  // they wear (window.LookStats, ItemSystemEquipment). They tilt what an NPC
+  // makes of them and the odds of what they try, and an icon of a look (100%)
+  // counts for more. window.NPCEmpathize.Look is the one place this is worked
+  // out: the panel prints what it returns, the rolls add what it returns.
+  const LOOK_IMPRESSION_CAP = 15;
+  const LOOK_ICON_IMPRESSION = 2;
+  const LOOK_ICON_ODDS = 1.5;
+  function _lookOf(actor) {
+    return (window.LookStats && actor) ? window.LookStats.ofActor(actor)
+      : { arcane: 0, substance: 0, stealth: 0, intimidation: 0 };
+  }
+  // What the NPC makes of each half of the look, in opinion points.
+  function _lookImpressionParts(profile, actor) {
+    const out = { arcane: 0, substance: 0, stealth: 0, intimidation: 0 };
+    if (!profile || !actor || !window.LookStats) return out;
+    if (window.NPCCreature?.isNonSentientProfile?.(profile)) return out;
+    const me = _lookOf(actor);
+    const icon = s => (me[s] >= 100 ? LOOK_ICON_IMPRESSION : 1);
+    const tier = Number(profile.wealthTierBase ?? 2);
+    // Good clothes warm the well-off and needle the poor a little.
+    out.substance = (tier >= 3 ? me.substance / 10 : tier <= 0 ? -me.substance / 25 : me.substance / 20) * icon('substance');
+    // A practitioner draws another one and unsettles everybody else.
+    out.arcane = ((Number(profile.arcane) || 0) >= 40 ? me.arcane / 10 : -me.arcane / 25) * icon('arcane');
+    // Menace frightens, unless the one looking is frightening too.
+    out.intimidation = ((Number(profile.intimidation) || 0) >= 40 ? me.intimidation / 20 : -me.intimidation / 12) * icon('intimidation');
+    // Somebody dressed not to be seen is barely registered: every other part
+    // of the impression comes through fainter.
+    const faint = 1 - Math.min(0.6, (me.stealth / 250) * icon('stealth'));
+    out.substance *= faint;
+    out.arcane *= faint;
+    out.intimidation *= faint;
+    out.stealth = -Math.round((1 - faint) * 100);
+    return out;
+  }
+  function _lookImpression(profile, actor) {
+    const p = _lookImpressionParts(profile, actor);
+    const total = p.substance + p.arcane + p.intimidation;
+    return Math.round(Math.max(-LOOK_IMPRESSION_CAP, Math.min(LOOK_IMPRESSION_CAP, total)));
+  }
+  // The percentage points a look adds to one action's odds.
+  function _lookOdds(kind, actor, profile) {
+    if (!actor || !window.LookStats) return 0;
+    const me = _lookOf(actor);
+    const icon = s => (me[s] >= 100 ? LOOK_ICON_ODDS : 1);
+    switch (kind) {
+      case 'pickpocket':
+        return Math.round(me.stealth / 4 * icon('stealth') - (Number(profile?.stealth) || 0) / 10);
+      case 'bribe':
+        return Math.round(me.substance / 5 * icon('substance'));
+      case 'romance':
+        return Math.round(me.substance / 10 * icon('substance'));
+      case 'join': {
+        // People follow somebody who looks the way they do: the NPC's own
+        // strongest look is the one that counts.
+        if (!profile) return 0;
+        const keys = window.LookStats.STATS;
+        const theirs = keys.reduce((a, b) => ((Number(profile[b]) || 0) > (Number(profile[a]) || 0) ? b : a), keys[0]);
+        if (!((Number(profile[theirs]) || 0) > 0)) return 0;
+        return Math.round(me[theirs] / 10 * icon(theirs));
+      }
+    }
+    return 0;
+  }
+  // How much harder a social move lands: a hostile one on Intimidation, a
+  // friendly one on Substance.
+  function _lookSocialMult(actor, tone) {
+    if (!actor || !window.LookStats) return 1;
+    const me = _lookOf(actor);
+    if (tone === 'negative') return 1 + (me.intimidation / 100) * (me.intimidation >= 100 ? LOOK_ICON_ODDS : 1);
+    if (tone === 'positive') return 1 + (me.substance / 200) * (me.substance >= 100 ? LOOK_ICON_ODDS : 1);
+    return 1;
+  }
+  // Everything above for one pair, for the panel to print.
+  function _lookEffects(profile, actor) {
+    return {
+      impression: _lookImpression(profile, actor),
+      parts: _lookImpressionParts(profile, actor),
+      pickpocket: _lookOdds('pickpocket', actor, profile),
+      bribe: _lookOdds('bribe', actor, profile),
+      romance: _lookOdds('romance', actor, profile),
+      join: _lookOdds('join', actor, profile),
+      hostile: Math.round((_lookSocialMult(actor, 'negative') - 1) * 100),
+      friendly: Math.round((_lookSocialMult(actor, 'positive') - 1) * 100),
+    };
+  }
+  window.NPCEmpathize.Look = {
+    impression: _lookImpression, parts: _lookImpressionParts, odds: _lookOdds,
+    socialMult: _lookSocialMult, effects: _lookEffects,
+  };
+
   // ── Personality-driven social reactions ─────────────────────────────────
   // Same Praise/Insult/Joke/etc. lands with a different weight depending on
   // the NPC's PersonalityData.json archetype, on top of the tone-based math
@@ -1070,14 +1162,16 @@
     return _setNpcBaseOpinion(profile, actorId, _npcBaseOpinion(profile, actorId) + delta);
   }
   // What the NPC actually thinks of one actor: earned base + trait
-  // compatibility + how the two of them smell to each other right now. The
-  // hygiene term is the only part of this that changes with a bath.
+  // compatibility + how the two of them smell to each other right now + what
+  // they make of how the actor is turned out. The hygiene and look terms are
+  // the parts of this that change with a bath and a change of clothes.
   function _npcEffectiveOpinion(profile, actor) {
     if (!actor) return 0;
     return Math.max(-100, Math.min(100,
       _npcBaseOpinion(profile, actor.actorId())
       + _traitCompatBonus(profile, actor)
-      + _hygienePenalty(profile, actor)));
+      + _hygienePenalty(profile, actor)
+      + _lookImpression(profile, actor)));
   }
 
   function _computePartyPredisposition(profile) {
@@ -1163,6 +1257,7 @@
     _emVoiceLine, _feedCalories, _feedItemsInPack, _feedKind, _feedNourishment, _feedOpinion,
     _feralBand, _feralCanGift, _feralGrowlFor, _feralKind, _feralLine, _feralNoise,
     _gainSocialFromCompany, _gainSocialFromOpinion, _generatePartyThoughts, _hygienePenalty,
+    _lookEffects, _lookImpression, _lookOdds, _lookSocialMult,
     _hygieneReadout, _isBubbaActor, _isBubbaNpc, _isEmActor, _isEmLocalNpc, _isEmNpc,
     _isNonSentientActor, _isNonSentientNpc, _medianScore, _npcBaseAttraction, _npcBaseOpinion,
     _npcEffectiveAttraction, _npcEffectiveOpinion, _pairBond, _pairContext, _pairData, _pairSide,

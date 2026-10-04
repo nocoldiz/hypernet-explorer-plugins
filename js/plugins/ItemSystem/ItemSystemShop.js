@@ -310,8 +310,18 @@
       : (item && Number.isFinite(item.price) ? item.price : 0);
     if (!(base > 0)) return 0;
     return Math.max(1, Math.floor(base * marketFactor(shopData, item) * haggleFactor()
-      * standingFactor() * notorietyFactor()));
+      * standingFactor() * notorietyFactor() * lookFactor()));
   };
+
+  // A well-dressed customer is quoted a little less: up to 5% off on the
+  // leader's Substance look (window.LookStats), 7.5% for an icon of it. Only
+  // ever a discount on what the party pays, never a premium on what it sells.
+  const lookFactor = () =>
+    sanePositive(safe("lookFactor", () => {
+      const leader = (typeof $gameParty !== "undefined" && $gameParty) ? $gameParty.leader() : null;
+      const s = (window.LookStats && leader) ? window.LookStats.ofActor(leader).substance : 0;
+      return 1 - (s / 2000) * (s >= 100 ? 1.5 : 1);
+    }, 1), 1);
 
   // What the counter thinks of the party, as two more multipliers on the same
   // sticker. Both are read through the plugin that owns them so the rule lives

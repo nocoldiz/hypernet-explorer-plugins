@@ -549,7 +549,12 @@
     const FISH_ODDS   = 55;
     // What one visit to the right place is worth. Deliberately partial: a bath
     // is not a spa day, and the meter has to be worth topping up again later.
-    const NEED_FILL   = { hygiene: 45, leisure: 35, social: 18, sleep: 55, comfort: 25 };
+    const NEED_FILL   = { hygiene: 45, leisure: 35, social: 18, sleep: 55, comfort: 25, bladder: 100 };
+    // A washroom fixture gives what it gives (NPCSim.fixtureKind): a sink is a
+    // hand wash worth this share of a shower, and a shower or a bath empties
+    // the bladder on the way, the way a WC does.
+    const SINK_HYGIENE_SHARE = 0.35;
+    const FIXTURES_THAT_RELIEVE = ["wc", "shower", "bath", "washroom"];
     // A meal is taken from the pack the moment it is wanted, so hunger is the
     // one need with no errand attached to it.
     const HUNGER_EAT  = 45;
@@ -7641,7 +7646,7 @@
             if (!needs) return null;
             let worst = null;
             let low = NEED_LOW;
-            for (const key of ["hunger", "sleep", "hygiene", "social", "leisure"]) {
+            for (const key of ["hunger", "sleep", "bladder", "hygiene", "social", "leisure"]) {
                 const v = Number(needs[key]);
                 if (!isFinite(v) || v > low) continue;
                 if (worst === null || v < low) {
@@ -7957,7 +7962,7 @@
                 return;
             }
             if (fished && s.fishDir) f.setDirection(s.fishDir);
-            if (!s.rent) this.fillNeed(f, need, NEED_FILL[need] || 20);
+            if (!s.rent) this.fillAtFixture(f, s, need);
             if (fished) this.landCatch(f);
             this.say(f, fished ? "AutoIdle.loose.need.fish"
                 : seat ? "AutoIdle.loose.rest" : "AutoIdle.loose.need." + need);
@@ -8000,7 +8005,7 @@
         fillNeed(f, need, amount) {
             const actor = this.actorOf(f);
             if (!actor || !amount) return;
-            const adder = { hunger: "addHunger", sleep: "addSleep", hygiene: "addHygiene", social: "addSocial", leisure: "addLeisure" }[need];
+            const adder = { hunger: "addHunger", sleep: "addSleep", hygiene: "addHygiene", social: "addSocial", leisure: "addLeisure", bladder: "addBladder" }[need];
             if (!adder || typeof actor[adder] !== "function") return;
             actor[adder](amount);
             this.toastNeed(actor, need, amount);
@@ -8070,6 +8075,22 @@
                     severity: severity || "info", duration: 150,
                 });
             } catch (e) { /* a popup never breaks an errand */ }
+        },
+
+        // What the visit was worth, read off the fixture they walked to: the
+        // need they came for at the fixture's own rate, and the bladder too
+        // when the fixture empties one.
+        fillAtFixture(f, s, need) {
+            const ev = s.partner && s.partner.event ? s.partner : null;
+            const kind = ev && window.NPCSim && window.NPCSim.fixtureKind
+                ? window.NPCSim.fixtureKind(ev.event() && ev.event().name) : null;
+            let amount = NEED_FILL[need] || 20;
+            if (need === "hygiene" && kind === "sink") amount *= SINK_HYGIENE_SHARE;
+            this.fillNeed(f, need, amount);
+            if (need !== "bladder" && FIXTURES_THAT_RELIEVE.includes(kind)) {
+                const actor = this.actorOf(f);
+                if (actor && window.Bladder) window.Bladder.relieve(actor);
+            }
         },
 
         toastNeed(actor, need, delta) {

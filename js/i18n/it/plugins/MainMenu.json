@@ -200,7 +200,8 @@
     "sleep": "Sonno",
     "hygiene": "Igiene",
     "social": "Socialità",
-    "fun": "Umore"
+    "fun": "Umore",
+    "bladder": "Vescica"
   },
   "place": {
     "unknownLand": "Terra Sconosciuta",
@@ -244,6 +245,7 @@
     "sector": "Settore:",
     "timeDate": "Ora e data:",
     "localTime": "Ora locale:",
+    "towerTime": "Ora della torre:",
     "tidallyLocked": "bloccata",
     "weather": "Meteo:",
     "currentCash": "Denaro attuale:",
@@ -313,7 +315,10 @@
       "egg": "Uova",
       "seed": "Seme",
       "mitosis": "Divisione"
-    }
+    },
+    "ridable": "Cavalcabile",
+    "unridable": "Non cavalcabile",
+    "rideOff": "Prima segnalo come cavalcabile"
   },
   "vehicles": {
     "fuel": "Carburante {fuel}L / {max}L",

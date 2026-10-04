@@ -521,6 +521,10 @@
         // is stuck (in water / flipped / wedged).
         setRespawnHint(show, reason) {
             if (!this._respawnHint) return;
+            // Called every frame: only a change reaches the DOM.
+            const sig = show ? '1|' + (reason || '') : '0';
+            if (sig === this._respawnSig) return;
+            this._respawnSig = sig;
             window.UIPanel.toggle(this._respawnHint, !!show);
             if (show && reason) {
                 const r = document.getElementById('cds-respawn-reason');
@@ -541,6 +545,10 @@
             // A walker is never "on the road": dry ground under their own two
             // feet is simply land.
             if (this._walk && env === 'road') env = 'land';
+            // Told every frame; the label only changes when the element does.
+            if (env === this._envShown && el === this._envEl) return;
+            this._envShown = env;
+            this._envEl = el;
             const key = 'CamperDrive.envMode.' + env;
             el.textContent = T.has(key) ? T(key) : env.toUpperCase();
             // The element the party is in is a NAME, and the stylesheet inks
@@ -1292,9 +1300,15 @@
             const row = LEGEND_ROWS.help || null;
             const badge = row ? legendBadge(row, pad) : '';
             const text = T('CamperDrive.hud.cmdHelp');
-            this._cmdHint.innerHTML = badge
+            const html = badge
                 ? `<span class="ui-chip cds-key">${badge}</span><span>${text}</span>`
                 : `<span>${text}</span>`;
+            // Asked every frame while the legend is folded: writing innerHTML
+            // invalidates style and layout even when the markup is the same,
+            // so the DOM is only touched when the line really changes.
+            if (html === this._cmdHintHtml) return;
+            this._cmdHintHtml = html;
+            this._cmdHint.innerHTML = html;
         }
 
         // Take the whole readout off the screen without tearing it down: a

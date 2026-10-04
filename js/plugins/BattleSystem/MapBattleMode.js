@@ -4280,6 +4280,8 @@
 
     const TALK_BORROWED = [
         "_buildTalkOptions", "_talkOk", "_talkEnemy", "_refuseUnrecruitable",
+        "_refuseOutOfReach", "_talkSpeaker", "_talkPsiEdge", "_talkLookPoints",
+        "applyRecruitPortrait", "applyRecruitAnatomy", "applyRecruitBody", "syncRecruitSeatBody",
         "calculateTalkSuccessChance", "calculateTalkSuccess", "calculateJoinSuccessChance",
         "calculatePetSuccessChance", "calculatePetFollowerChance",
         "onTalkChat", "onTalkSurrender", "onTalkInsult", "onThrowStone", "onPet",

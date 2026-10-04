@@ -10802,6 +10802,10 @@
     background: var(--gradient-25);
 }
 
+.status-gauge-bar-inner.bladder {
+    background: linear-gradient(90deg, #a8861c, #c9a227);
+}
+
 .stats-medallions-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
@@ -30713,6 +30717,97 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     font-size: 0.92rem;
     line-height: 1.45;
     color: var(--text-text-alt-4);
+}
+
+/* The picture picker and viewer (window.UserPictures, Debug/PixelArtMaker.js):
+   the shared panel over every other panel, a grid of thumbnails inside it. */
+.ui-overlay.upic-overlay {
+    z-index: 1400;
+}
+
+.upic-panel {
+    display: flex;
+    flex-direction: column;
+    max-height: 84vh;
+}
+
+.upic-title {
+    font-family: var(--font-ui);
+    font-size: 1.3rem;
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    color: var(--text-primary-hover);
+    margin-bottom: 8px;
+}
+
+.upic-head {
+    font-family: var(--font-ui);
+    font-weight: bold;
+    text-align: left;
+    color: var(--text-primary-hover);
+    margin: 10px 2px 6px 2px;
+}
+
+.upic-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.upic-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    box-sizing: border-box;
+    border: 2px solid var(--border-primary-hover-translucent-15);
+    border-radius: 4px;
+    cursor: pointer;
+    min-width: 0;
+}
+
+.upic-cell img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    image-rendering: pixelated;
+    background: var(--shadow-black-translucent-55);
+}
+
+.upic-cell--auto {
+    justify-content: center;
+    min-height: 48px;
+}
+
+.upic-cell.focused {
+    border-color: var(--text-success-active);
+}
+
+.upic-label {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    color: var(--text-text-alt-4);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.upic-empty {
+    text-align: left;
+}
+
+.upic-view {
+    display: flex;
+    justify-content: center;
+    margin: 6px 0 10px 0;
+}
+
+.upic-view img {
+    max-width: 100%;
+    max-height: 64vh;
+    image-rendering: pixelated;
 }
 
 /* The detail card: a fixed head, a body that scrolls, and an action strip that

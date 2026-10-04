@@ -72,6 +72,9 @@
       // written in (RoutineManager.generateForDay), so the two never disagree.
       const workHour = this._inWorkHours(profile, hour);
       const shopHour = this._inShopShift(profile, hour);
+      // Nearly bursting: even a shift waits for the WC (a washroom trip, the
+      // "hygiene" hour, sent to a toilet by BehaviorDispatcher._handleHygiene).
+      if (this.wantsWC(profile, this.BLADDER_URGENT)) return "hygiene";
       if (shopHour) return "shopwork";
       if (workHour) return "work";
 
@@ -88,8 +91,9 @@
       const grimy    = (profile.hygiene ?? 100) < 30;
 
       if (sleepy)   return "sleep";
+      if (this.wantsWC(profile, this.BLADDER_LOW)) return "hygiene";
       if (hungry)   return "hunger";
-      if (grimy)    return "hygiene";
+      if (grimy)    { profile.washFor = "hygiene"; return "hygiene"; }
 
       const tension  = eraTension();
       // The Goblin Horde's ground (window.HordeGround): more of the town is
@@ -110,6 +114,17 @@
 
     _inWorkHours(profile, hour, day) {
       return RoutineManager._inWorkHours(profile, hour, day);
+    },
+
+    // The bladder meter (100 empty, 0 bursting) under the line. Marks the
+    // washroom trip as one for the WC, which is how the dispatcher tells a
+    // toilet run from a wash (profile.washFor).
+    BLADDER_LOW: 25,
+    BLADDER_URGENT: 10,
+    wantsWC(profile, line) {
+      if (!profile || profile.bladder === undefined || profile.bladder >= line) return false;
+      profile.washFor = "bladder";
+      return true;
     },
 
     _inShopShift(profile, hour) {

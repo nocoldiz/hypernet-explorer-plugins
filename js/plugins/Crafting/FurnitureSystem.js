@@ -614,6 +614,14 @@
         return null;
     }
 
+    // A painting proper (img/furniture/Paintings/Paintings), as against the
+    // easels, stickers and odds in the same folder: the pieces a picture can be
+    // hung in.
+    function isPaintingPiece(id) {
+        const index = (window.Items && window.Items.FurnitureImageFolders) || null;
+        return !!(id && index && index[id] === 'Paintings/Paintings'); // i18n-ignore: asset folder
+    }
+
     // Full URL to a piece's PNG, or null when it has no indexed image.
     function furnitureImageSrc(id) {
         const folder = furnitureImageFolder(id);
@@ -2208,6 +2216,43 @@
                 this._tilemap.addChild(sprite);
             }
         });
+    };
+
+    //=============================================================================
+    // Looking at a painting
+    //=============================================================================
+    // A painting placed with a picture in it (Scene_Map.armFurniture) shows that
+    // picture in a modal when the player faces it and presses OK. Paintings
+    // placed without one, and every painting that was already standing, are
+    // left as they are: nothing to look at, nothing intercepted.
+    function placedPaintingAt(x, y) {
+        if (!$gameSystem || !$gameSystem.getMapFurniture) return null;
+        const list = $gameSystem.getMapFurniture(furnitureMapKey());
+        for (const p of list) {
+            if (!p || !p.picture) continue;
+            const f = Furniture[p.furnitureId];
+            if (!f) continue;
+            const w = f.width || 1, h = f.height || 1;
+            if (x >= p.x && x < p.x + w && y >= p.y && y < p.y + h) return p;
+        }
+        return null;
+    }
+
+    const _Game_Player_triggerButtonAction_painting = Game_Player.prototype.triggerButtonAction;
+    Game_Player.prototype.triggerButtonAction = function () {
+        if (Input.isTriggered('ok') && !this.isInVehicle() && window.UserPictures &&
+            !($gameTemp && $gameTemp.furnitureBuildActive) && !$gameMap.isEventRunning()) {
+            const d = this.direction();
+            const fx = $gameMap.roundXWithDirection(this.x, d);
+            const fy = $gameMap.roundYWithDirection(this.y, d);
+            const p = placedPaintingAt(fx, fy) || placedPaintingAt(this.x, this.y);
+            const src = p ? window.UserPictures.resolve(p.picture) : null;
+            if (src) {
+                window.UserPictures.view({ src, title: furnitureName(p.furnitureId) });
+                return true;
+            }
+        }
+        return _Game_Player_triggerButtonAction_painting.call(this);
     };
 
     Spriteset_Map.prototype.addFurnitureSprite = function (placedData) {
@@ -4525,9 +4570,11 @@
                     if (!resolvePlaceable(id)) return;
                     if (this.scene._fbArmedId !== id) {
                         SoundManager.playOk();
-                        this.scene.armFurniture(id);
+                        this.scene.armFurniture(id, { choosePicture: true });
                     }
-                    this.scene._fbDragging = true;
+                    // A painting asks for its picture first: no drag starts
+                    // under the picker, or choosing would drop the piece.
+                    this.scene._fbDragging = !(window.UserPictures && window.UserPictures.isOpen());
                 });
             });
 
@@ -4865,7 +4912,7 @@
         if (!silent) SoundManager.playCancel();
     };
 
-    Scene_Map.prototype.armFurniture = function (id) {
+    Scene_Map.prototype.armFurniture = function (id, opts) {
         if (this._fbArmedId === id) {
             this.disarmFurniture();
             return;
@@ -4893,6 +4940,21 @@
             this.scrollToFurnitureCursor();
         }
         if (this._fbUI) this._fbUI.setArmed();
+        // A painting picked off the shelf asks which picture it holds: one the
+        // party drew (Pain, the pixel art maker), a sheet out of img/textures,
+        // or none, in which case it is the plain piece it always was. The
+        // choice stays with every copy placed until something else is armed.
+        // Cycling through the shelf never asks (opts unset), only a pick does.
+        if (opts && opts.choosePicture && isPaintingPiece(id) && window.UserPictures) {
+            window.UserPictures.pick({
+                title: T('Furniture.painting.pickTitle'),
+                auto: T('Furniture.painting.none'),
+                stock: true
+            }).then(res => {
+                if (this._fbArmedId !== id) return;
+                this._fbArmedPicture = res ? res.value : '';
+            });
+        }
     };
 
     // Mirrors the piece in hand left-to-right. Refused (with a buzzer) on
@@ -4919,6 +4981,7 @@
         }
         this._fbArmedId = null;
         this._fbArmedKind = null;
+        this._fbArmedPicture = '';
         if (this._fbUI) this._fbUI.setArmed();
     };
 
@@ -5165,6 +5228,8 @@
         chargeIllegalBuild(f);
         const flipped = this._fbPreview ? this._fbPreview.getFlipped() : false;
         const placed = $gameSystem.placeFurniture(furnitureMapKey(), id, x, y, flipped);
+        // The picture chosen for it (see armFurniture), shown when it is looked at.
+        if (placed && this._fbArmedPicture && isPaintingPiece(id)) placed.picture = this._fbArmedPicture;
         if (this._spriteset) this._spriteset.addFurnitureSprite(placed);
         // What the party built, in its own diary (Diary.js). Only what the
         // PLAYER puts up: the seeded furnishing of a procedural interior goes
@@ -5510,7 +5575,7 @@
             const id = this._fbUI.getSelectedId();
             if (id && resolvePlaceable(id)) {
                 SoundManager.playOk();
-                this.armFurniture(id); // hands control to the map cursor
+                this.armFurniture(id, { choosePicture: true }); // hands control to the map cursor
                 return true;
             }
         }

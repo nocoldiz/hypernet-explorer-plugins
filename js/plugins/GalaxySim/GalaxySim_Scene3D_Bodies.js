@@ -1104,6 +1104,9 @@
     const SKIM_RADIUS = 1.09;   // star radii the pass settles at, inside the loops
     const SKIM_CLEAR = 0.30;    // radians of clearance it keeps from a loop
     const SKIM_WEAVE = 0.42;    // how far off the equator the slalom carries it
+    // Relativity braking dives deeper still: a pass just above a black hole's
+    // event horizon (drawn at 0.9 of its radius, see lensInfo.horizonR).
+    const HORIZON_SKIM_RADIUS = 0.93;
     const _skimDir = new THREE.Vector3();
     const _skimApex = new THREE.Vector3();
     const _skimPush = new THREE.Vector3();
@@ -1203,6 +1206,8 @@
         // a dwarf are skimmed at the same height above their own surface.
         const approach = clamp(state.approach || 0, 0, 1);
         r += (bodyR * SKIM_RADIUS - r) * approach;
+        const horizon = clamp(state.horizonSkim || 0, 0, 1);
+        r += (bodyR * HORIZON_SKIM_RADIUS - r) * horizon;
         // Very slow drift around the star when parked at the system centre;
         // drawing fuel turns that into a real pass, and a harvest flyby whips
         // around faster still.
@@ -1211,7 +1216,8 @@
         parkPhaseT = t;
         parkPhase += stepT * spin;
         const a = parkPhase;
-        const weave = SKIM_WEAVE * approach;
+        // Grazing the horizon is a flat equatorial pass, not a slalom.
+        const weave = SKIM_WEAVE * approach * (1 - horizon);
         const bodyRot = t * spinRate;
         // The idle parking orbit rides a little above the plane; once the pass
         // is flown the slalom's own height IS the path, so that offset fades.

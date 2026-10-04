@@ -40,7 +40,10 @@
     "lyRemaining": "restano {ly} al",
     "refuelling": "Rifornimento",
     "otherGalaxy": "Nessuna rotta attraversa lo spazio tra le galassie. Solo un ponte di Schrödinger-Bohr ci arriva.",
-    "harvesting": "Raccolta di Schrödingerite"
+    "harvesting": "Raccolta di Schrödingerite",
+    "relBraking": "Frenata relativistica",
+    "earthDate": "Terra: {date}",
+    "relYearsLeft": "Anni ancora da trascorrere: {years}"
   },
   "bodyType": {
     "Dark + emission nebula": "Nebulosa oscura e a emissione",
@@ -513,5 +516,19 @@
     "searchSpaceportsPlaceholder": "Cerca spazioporti...",
     "lifeBearingGroup": "Mondi con Vita",
     "traceLifeGroup": "Biosignature in Tracce"
+  },
+  "relBrake": {
+    "button": "Frenata relativistica",
+    "hint": "Sfiora l'orizzonte degli eventi: minuti a bordo, anni sulla Terra",
+    "title": "Frenata relativistica",
+    "cost": "Questa manovra ti costerà {years} anni.",
+    "explain": "La nave scenderà sull'orizzonte degli eventi di {name} e lo sfiorerà. A bordo passeranno pochi minuti, nessuno avrà più fame o sonno, e fuori passeranno gli anni.",
+    "earthNow": "Data attuale sulla Terra: {date}",
+    "earthThen": "Data prevista sulla Terra: {date}",
+    "impactWarning": "La Terra avrà incontrato Nibiru prima del tuo ritorno.",
+    "confirm": "Inizia la discesa",
+    "cancel": "Annulla",
+    "underway": "Frenata · Terra: {date}",
+    "done": "Fuori dall'orizzonte. Sulla Terra sono passati {years} anni: ora è il {date}."
   }
 }

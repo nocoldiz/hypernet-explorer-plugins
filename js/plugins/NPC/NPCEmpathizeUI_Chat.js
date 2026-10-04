@@ -698,7 +698,9 @@
     const bribeProfile = _getProfile(_getNPCName(this._eventId));
     const recentBribes = _countRecentInteractions(bribeProfile, 'bribe', 5);
     const costMult     = recentBribes >= 2 ? 1.5 : 1;
-    const TIERS = BASE_TIERS.map(t => ({ ...t, gold: Math.round(t.gold * costMult) }));
+    // The odds shown are the odds rolled: the look bonus is added in both places.
+    const lookBribe = window.NPCEmpathize.Look?.odds('bribe', this._focusActor() || $gameParty.leader(), bribeProfile) || 0;
+    const TIERS = BASE_TIERS.map(t => ({ ...t, gold: Math.round(t.gold * costMult), chance: Math.min(99, t.chance + lookBribe) }));
     const gold    = $gameParty?.gold() ?? 0;
     const hostile = opinion <= -60;
     // Police officers (classId 44) never take a bribe; show that up front
@@ -1113,9 +1115,11 @@
         const key    = `${item.type}_${item.id}`;
         const result = this._stealAttempted[key];
         const done   = !!result;
-        const chance = window.StealCalculator
+        const lookSteal = window.NPCEmpathize.Look?.odds('pickpocket', this._focusActor() || $gameParty.leader(),
+          _getProfile(_getNPCName(this._eventId))) || 0;
+        const chance = Math.max(1, Math.min(99, (window.StealCalculator
           ? window.StealCalculator.calculateStealChance(item.data, agility)
-          : 50;
+          : 50) + lookSteal));
         const cc = chance >= 70 ? 'good' : chance >= 40 ? 'warm' : 'bad';
         const badge = result === 'success'
           ? ` <span class="npc-good npc-em">${_escapeHtml(T.successLabel)}</span>`

@@ -94,6 +94,12 @@
         "An hour on the bank puts a road behind you.",
         "I have not thought about anything in an hour. It was wonderful.",
         "Say what you like about the weather, the fish were biting."
+      ],
+      "bladder": [
+        "Much better.",
+        "I was not going to make it to the next town.",
+        "Nobody saw anything.",
+        "That was a long road to hold it."
       ]
     },
     "toastRent": "{name} rented a room for {price}",

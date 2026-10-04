@@ -274,9 +274,13 @@
     const caps = capsFor(sentientAdults(records));
     const rng = new LifeRng((nameHash("npcBands_" + Math.floor(nowMinute / MINUTES_PER_DAY)) ^ worldSeed()) >>> 0);
     const pool = [];
+    // A floor of the Omega Tower drafts nobody while the party is away: its
+    // people stand still (NPCShared.towerIdle).
+    const towerIdle = window.NPCShared?.towerIdle?.() || null;
     for (const name of Object.keys(records).sort()) {
       const record = records[name];
       const profile = getProfile(name);
+      if (towerIdle && towerIdle.group(record?.homeGroup || profile?._homeGroupName)) continue;
       if (!mayJoinBand(record, profile)) continue;
       pool.push({ name, profile, home: record.homeGroup || profile._homeGroupName || null, w: bandWeight(name, profile) });
     }

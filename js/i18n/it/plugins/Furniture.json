@@ -236,5 +236,9 @@
     "next": "Pagina successiva"
   },
   "stockLeft": "{n} rimaste",
-  "mirror": "Specchia"
+  "mirror": "Specchia",
+  "painting": {
+    "pickTitle": "Quale immagine contiene?",
+    "none": "Così com'è"
+  }
 }

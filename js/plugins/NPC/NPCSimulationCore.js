@@ -190,6 +190,37 @@
   const HYGIENE_DRAIN_PER_MIN = 0.05;
   const SOCIAL_DRAIN_PER_MIN  = 0.03;
   const LEISURE_DRAIN_PER_MIN = 0.03;
+  // The bladder runs the party's way (TimeDateSystem window.Bladder): 100 is
+  // empty and comfortable, 0 is bursting. Slower overnight, never past
+  // BLADDER_SLEEP_FLOOR in bed, and at 0 awake it is emptied where they stand,
+  // which their hygiene and their social meter pay for. A non-sentient
+  // creature keeps no such meter (window.NPCCreature): it goes where it is.
+  const BLADDER_DRAIN_PER_MIN       = 0.24;
+  const BLADDER_SLEEP_DRAIN_PER_MIN = 0.08;
+  const BLADDER_SLEEP_FLOOR         = 5;
+  const BLADDER_ACCIDENT_HYGIENE    = 35;
+  const BLADDER_ACCIDENT_SOCIAL     = 10;
+
+  // A recruited companion's meter is the party's: TimeDateSystem decides when
+  // they have had an accident and says so, so the simulation only drains it.
+  function isPartyProfile(profile) {
+    const name = profile && profile._eventName;
+    if (!name || typeof $gameParty === "undefined" || !$gameParty || !$gameParty.members) return false;
+    try {
+      return $gameParty.members().some(m => m && m.name && m.name() === name);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function keepsBladder(profile) {
+    if (!profile || profile.isCreature) return false;
+    const NC = window.NPCCreature;
+    if (NC && NC.isNonSentientProfile && NC.isNonSentientProfile(profile)) {
+      return !!(NC.isPlayerCharacterName && NC.isPlayerCharacterName(profile._eventName));
+    }
+    return true;
+  }
 
   const NeedManager = {
     update(profile, deltaMinutes) {
@@ -203,9 +234,28 @@
       profile.hygiene = Math.max(0, (profile.hygiene ?? 100) - HYGIENE_DRAIN_PER_MIN * hygieneMul * deltaMinutes);
       profile.social  = Math.max(0, (profile.social  ?? 100) - SOCIAL_DRAIN_PER_MIN  * socialMul  * deltaMinutes);
       profile.leisure = Math.max(0, (profile.leisure ?? 100) - LEISURE_DRAIN_PER_MIN * leisureMul * deltaMinutes);
+      this.updateBladder(profile, deltaMinutes);
       // An animal has one hunger meter: its livestock record's fedAt
       // (AnimalGrowthSystem), which this meter is read back from.
       if (profile.isCreature) window.NPCLifeSim?.Animals?.syncHunger?.(profile, profile._eventName);
+    },
+
+    // Returns true when the hour ended in an accident.
+    updateBladder(profile, deltaMinutes) {
+      if (!keepsBladder(profile)) return false;
+      const now = profile.bladder ?? 100;
+      if (profile.currentNeed === "sleep") {
+        if (now > BLADDER_SLEEP_FLOOR) {
+          profile.bladder = Math.max(BLADDER_SLEEP_FLOOR, now - BLADDER_SLEEP_DRAIN_PER_MIN * deltaMinutes);
+        }
+        return false;
+      }
+      profile.bladder = Math.max(0, now - BLADDER_DRAIN_PER_MIN * deltaMinutes);
+      if (profile.bladder > 0 || isPartyProfile(profile)) return false;
+      profile.bladder = 100;
+      profile.hygiene = Math.max(0, (profile.hygiene ?? 100) - BLADDER_ACCIDENT_HYGIENE);
+      profile.social  = Math.max(0, (profile.social  ?? 100) - BLADDER_ACCIDENT_SOCIAL);
+      return true;
     },
 
     feed(profile, calories) {
@@ -219,8 +269,8 @@
   // Only needs backed by a numeric profile meter can be filled this way,
   // money/crime/safety/work resolve through their own simulated effects (§5.1
   // of docs/npc_event_interaction_design_en.md) instead of a gradual meter.
-  const NEED_FILL_PER_SEC = { hunger: 2.5, sleep: 3, hygiene: 4, social: 2, leisure: 1.5, comfort: 2 };
-  const NEED_METER_FIELD  = { hunger: "hunger", sleep: "sleep", hygiene: "hygiene", social: "social", leisure: "leisure", comfort: "leisure",
+  const NEED_FILL_PER_SEC = { hunger: 2.5, sleep: 3, hygiene: 4, social: 2, leisure: 1.5, comfort: 2, bladder: 25 };
+  const NEED_METER_FIELD  = { hunger: "hunger", sleep: "sleep", hygiene: "hygiene", social: "social", leisure: "leisure", comfort: "leisure", bladder: "bladder",
     // A creature's hours (RoutineManager.creatureDay) fill the same meters:
     // grazing, foraging and hunting feed it, rest sleeps it, grooming washes
     // it, the herd is its company and play and a wander its leisure.
@@ -228,10 +278,66 @@
     "creature.rest": "sleep", "creature.groom": "hygiene", "creature.herd": "social",
     "creature.play": "leisure", "creature.wander": "leisure" };
 
-  function satisfyNeedTick(npcName, need, deltaSeconds) {
+  // ---- Washroom fixtures ------------------------------------------------------
+  // A WC, a shower, a bath and a sink are four different things, and an NPC
+  // (or a loose party member, Core/AutoIdleExplorer.js) walking to one gets
+  // what that one gives: the WC empties the bladder and washes nobody, a
+  // shower or a bath is the full wash and the bladder too, a sink is a hand
+  // wash worth a fraction of a shower, a fountain a splash. A room called a
+  // bathroom or a washroom has a toilet and a basin in it.
+  //
+  // Read off the event NAME, most specific first, so "Bathroom sink" is a
+  // sink and "Public Toilet" a WC. This is the one place that tells them
+  // apart: the capability registry (NPCSim_Behavior.js) asks it what a fixture
+  // is good for, and the controller asks it what a second at one is worth.
+  const FIXTURE_KINDS = [
+    ["wc",       /\b(wc|toilets?|latrines?|lavatory|lavatories|urinals?|loo|privy|outhouse|potty)\b/],
+    ["shower",   /\bshowers?\b/],
+    ["bath",     /\b(bath|baths|bathtub|bathhouse|tub|hot tub|bathing)\b/],
+    ["sink",     /\b(sink|washbasin|basin|washstand|lavabo)\b/],
+    ["washroom", /\b(bathroom|washroom|restroom)\b/],
+    ["fountain", /\bfountain\b/],
+  ];
+  // Per-second fill of each meter while interacting with the fixture.
+  const FIXTURE_FILL_PER_SEC = {
+    wc:       { bladder: 25 },
+    shower:   { hygiene: 5, bladder: 25 },
+    bath:     { hygiene: 5, bladder: 25 },
+    sink:     { hygiene: 1.2 },
+    washroom: { hygiene: 3, bladder: 25 },
+    fountain: { hygiene: 2 },
+  };
+
+  function fixtureKindOfName(name) {
+    const n = String(name || "").toLowerCase();
+    if (!n) return null;
+    for (const [kind, re] of FIXTURE_KINDS) if (re.test(n)) return kind;
+    return null;
+  }
+
+  // The needs a fixture answers, in the order it is best at them.
+  function fixtureNeeds(kind) {
+    const fill = FIXTURE_FILL_PER_SEC[kind];
+    if (!fill) return [];
+    return Object.keys(fill).sort((a, b) => fill[b] - fill[a]);
+  }
+
+  // `fixture` is optional: the kind of washroom fixture the NPC is standing
+  // at (fixtureKindOfName). With one, the second is worth what that fixture
+  // gives, whatever the need that sent them; without, the need's own rate.
+  function satisfyNeedTick(npcName, need, deltaSeconds, fixture) {
     if (!npcName || !need || deltaSeconds <= 0) return;
     const profile = $gameSystem?._npcSociety?.[npcName];
     if (!profile) return;
+
+    const fill = fixture ? FIXTURE_FILL_PER_SEC[fixture] : null;
+    if (fill) {
+      for (const [field, rate] of Object.entries(fill)) {
+        if (field === "bladder" && profile.bladder === undefined) continue;
+        profile[field] = Math.min(100, (profile[field] ?? 100) + rate * deltaSeconds);
+      }
+      return;
+    }
 
     const field = NEED_METER_FIELD[need];
     const rate  = NEED_FILL_PER_SEC[need];
@@ -265,6 +371,8 @@
     if (field && rate) {
       profile[field] = Math.min(100, (profile[field] ?? 100) + rate * deltaMinutes);
     }
+    // A trip to the washroom off-screen includes the WC.
+    if (need === "hygiene" && profile.bladder !== undefined) profile.bladder = 100;
   }
 
   // ============================================================================
@@ -281,6 +389,7 @@
   Object.assign(NPCSim._internal, {
     DEFAULT_SEED, economyRng, eraTension, EventBus, FARMING_TRAITS, fmtMoney, isBlockedTerrain,
     MiniRng, MONEY_CAP, nameHash, NEED_FILL_PER_SEC, NeedManager, REST_REGION, satisfyNeedOffscreen,
+    FIXTURE_FILL_PER_SEC, fixtureKindOfName, fixtureNeeds, keepsBladder,
     satisfyNeedTick, SHIFT_COUNT, SHIFT_HOURS, SHOPKEEPER_POOL_RATIO, WEEKDAY_CATEGORIES,
     WEEKEND_TRADES,
   });

@@ -1,6 +1,11 @@
 {
   "Humanoid": {
     "sentient": true,
+    "talkLook": {
+      "arcane": 0.2,
+      "intimidation": -0.3,
+      "substance": 1
+    },
     "skills": [],
     "defaultBattler": "",
     "reproduction": 1,
@@ -750,6 +755,11 @@
   },
   "NagukaGoblin": {
     "sentient": true,
+    "talkLook": {
+      "arcane": -0.3,
+      "intimidation": 1,
+      "substance": 0.4
+    },
     "bodyPlan": "Humanoid",
     "voice": "naguka",
     "voiceWins": true,
@@ -1416,6 +1426,11 @@
   },
   "VerdenGoblin": {
     "sentient": true,
+    "talkLook": {
+      "arcane": -0.2,
+      "intimidation": 0.5,
+      "substance": 1
+    },
     "bodyPlan": "Humanoid",
     "voice": "verden",
     "skills": [],
@@ -2078,6 +2093,11 @@
   },
   "Elf": {
     "sentient": true,
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": -0.5,
+      "substance": 0.5
+    },
     "bodyPlan": "Humanoid",
     "voice": "elf",
     "voiceMode": "blend",
@@ -2747,6 +2767,11 @@
   },
   "Dwarf": {
     "sentient": true,
+    "talkLook": {
+      "arcane": -0.4,
+      "intimidation": 0.4,
+      "substance": 1
+    },
     "bodyPlan": "Humanoid",
     "voice": "dwarf",
     "voiceMode": "blend",
@@ -3412,6 +3437,11 @@
   },
   "Orc": {
     "sentient": true,
+    "talkLook": {
+      "arcane": -0.3,
+      "intimidation": 1,
+      "substance": 0.2
+    },
     "bodyPlan": "Humanoid",
     "voice": "orc",
     "skills": [],
@@ -4078,6 +4108,11 @@
   },
   "Tourist": {
     "sentient": true,
+    "talkLook": {
+      "arcane": 0.3,
+      "intimidation": -0.6,
+      "substance": 1
+    },
     "bodyPlan": "Humanoid",
     "voice": "tourist",
     "skills": [],
@@ -4742,6 +4777,11 @@
   },
   "Dargos": {
     "sentient": true,
+    "talkLook": {
+      "arcane": 0.4,
+      "intimidation": 1,
+      "substance": 0.2
+    },
     "bodyPlan": "Humanoid",
     "voice": "dargos",
     "skills": [],
@@ -5686,7 +5726,12 @@
       "TimberWolf",
       "TunnelingMole",
       "VoraciousMouse"
-    ]
+    ],
+    "talkLook": {
+      "arcane": -0.2,
+      "intimidation": 1,
+      "substance": 0
+    }
   },
   "Insectoid": {
     "skills": [],
@@ -5960,7 +6005,12 @@
       "ViciousWasp",
       "VividGrasshopper",
       "Wasp"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.2,
+      "intimidation": 0.8,
+      "substance": 0
+    }
   },
   "Frog": {
     "skills": [
@@ -6167,7 +6217,12 @@
     "sprites": [
       "CroakingToad",
       "LeapingFrog"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.8,
+      "intimidation": 0.3,
+      "substance": 0
+    }
   },
   "Dragon": {
     "skills": [
@@ -6504,7 +6559,12 @@
       "YoungCopperDragon",
       "YoungRedDragon",
       "YoungSilverDragon"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.4,
+      "intimidation": 0.6,
+      "substance": 1
+    }
   },
   "Skeleton": {
     "skills": [],
@@ -6693,10 +6753,20 @@
       "DecrepitBones",
       "DustyShambler",
       "FloatingSkeleton"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.4,
+      "substance": -0.2
+    }
   },
   "Fairy": {
     "sentient": true,
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": -0.8,
+      "substance": 0.5
+    },
     "skills": [],
     "defaultBattler": "",
     "reproduction": 1,
@@ -7136,7 +7206,12 @@
       "Slime",
       "SlimySnail",
       "Virus"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.6,
+      "intimidation": 0.3,
+      "substance": 0
+    }
   },
   "Undead": {
     "skills": [],
@@ -7334,7 +7409,12 @@
       "UndeadShuffler",
       "ZombieGiant",
       "ZombieWarrior"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.5,
+      "substance": -0.3
+    }
   },
   "Scorpion": {
     "skills": [
@@ -7700,7 +7780,12 @@
     "sprites": [
       "HoppingKangaroo",
       "LethalScorpion"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0,
+      "intimidation": 1,
+      "substance": 0
+    }
   },
   "Spider": {
     "skills": [
@@ -8022,7 +8107,12 @@
       "OnyxWidow",
       "SpiderAutomaton",
       "SpiderBrain"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.4,
+      "intimidation": 1,
+      "substance": 0
+    }
   },
   "Plant": {
     "skills": [
@@ -8186,7 +8276,12 @@
       "NatureElemental",
       "Rotwhisker",
       "Sloth"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": -0.4,
+      "substance": 0
+    }
   },
   "Elemental": {
     "skills": [],
@@ -8357,7 +8452,12 @@
       "PowerfulDjinn",
       "SandGhoul",
       "WaterElemental"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.3,
+      "substance": 0
+    }
   },
   "AquaticFish": {
     "skills": [],
@@ -8556,7 +8656,12 @@
       "Tuna",
       "Whale",
       "ZombieWhale"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0,
+      "intimidation": 0.4,
+      "substance": 0.6
+    }
   },
   "Octopus": {
     "skills": [
@@ -8733,7 +8838,12 @@
       "FloatingEye",
       "GiantSquid",
       "Octopus"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.6,
+      "intimidation": -0.3,
+      "substance": 0.8
+    }
   },
   "Robot": {
     "skills": [],
@@ -8934,7 +9044,12 @@
       "SphereAutomaton",
       "SpiderAutomaton",
       "SturdyBlacksmith"
-    ]
+    ],
+    "talkLook": {
+      "arcane": -0.6,
+      "intimidation": 0.3,
+      "substance": 1
+    }
   },
   "Bird": {
     "skills": [
@@ -9118,7 +9233,12 @@
       "Titus",
       "Vulture",
       "WiseOwl"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.2,
+      "intimidation": -0.5,
+      "substance": 1
+    }
   },
   "Reptilian": {
     "skills": [],
@@ -9341,7 +9461,12 @@
       "MudWyvern",
       "Trex",
       "Velociraptor"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0,
+      "intimidation": 1,
+      "substance": 0.3
+    }
   },
   "Mushroom": {
     "skills": [],
@@ -9479,7 +9604,12 @@
       "RedCap",
       "ShriekerMushroom",
       "Sporvox"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": -0.3,
+      "substance": 0
+    }
   },
   "Tree": {
     "skills": [],
@@ -9619,7 +9749,12 @@
       "Flower",
       "GrizzledTreant",
       "Grotmuk"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": -0.8,
+      "substance": -0.2
+    }
   },
   "Bacterial": {
     "skills": [],
@@ -9755,10 +9890,20 @@
       "Bacterium",
       "ProngedFury",
       "TransparentBacterium"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.5,
+      "intimidation": 0.2,
+      "substance": 0
+    }
   },
   "DoubleHeadedHumanoid": {
     "sentient": true,
+    "talkLook": {
+      "arcane": 0,
+      "intimidation": 0.5,
+      "substance": 1
+    },
     "skills": [],
     "defaultBattler": "",
     "reproduction": 1,
@@ -10185,7 +10330,12 @@
       "SandCobra",
       "SerpentineWyvern",
       "YoungFalseHydra"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.5,
+      "substance": 0
+    }
   },
   "Golem": {
     "skills": [],
@@ -10365,10 +10515,20 @@
       "Siltvar",
       "StoneGolem",
       "TrafficCone"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.4,
+      "substance": 0.2
+    }
   },
   "Demon": {
     "sentient": true,
+    "talkLook": {
+      "arcane": 0.7,
+      "intimidation": 1,
+      "substance": 0.3
+    },
     "skills": [],
     "defaultBattler": "",
     "reproduction": 1,
@@ -10777,7 +10937,12 @@
       "WarpSkull",
       "WickedWretch",
       "Zarquis"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": -0.4,
+      "substance": 0.3
+    }
   },
   "Drone": {
     "skills": [
@@ -10911,7 +11076,12 @@
       "IceGolem",
       "PestilenceDrake",
       "SphereAutomaton"
-    ]
+    ],
+    "talkLook": {
+      "arcane": -0.4,
+      "intimidation": 0.2,
+      "substance": 1
+    }
   },
   "Voidspawn": {
     "skills": [],
@@ -11053,7 +11223,12 @@
         "weight": 35
       }
     },
-    "sprites": []
+    "sprites": [],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.6,
+      "substance": -0.5
+    }
   },
   "Mutant": {
     "skills": [],
@@ -11238,7 +11413,12 @@
       "MutantGoblin",
       "RatkinMutant",
       "WretchedFomorian"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.2,
+      "intimidation": 1,
+      "substance": -0.4
+    }
   },
   "CrystalEntity": {
     "skills": [],
@@ -11408,7 +11588,12 @@
       "Shrimp",
       "StoneTroll",
       "ToxicSlug"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0,
+      "substance": 0.6
+    }
   },
   "Amphibian": {
     "skills": [],
@@ -11545,7 +11730,12 @@
     "sprites": [
       "Axolotl",
       "MerfolkJavelineer"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.4,
+      "intimidation": 0.6,
+      "substance": 0
+    }
   },
   "ConstructedUndead": {
     "skills": [],
@@ -11710,10 +11900,20 @@
       "PoisonousGorgon",
       "Vornskel",
       "ZombieWarrior"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.2,
+      "substance": 0.4
+    }
   },
   "Minotaur": {
     "sentient": true,
+    "talkLook": {
+      "arcane": -0.2,
+      "intimidation": 1,
+      "substance": 0
+    },
     "skills": [],
     "defaultBattler": "",
     "reproduction": 1,
@@ -12121,7 +12321,12 @@
       "Horseshoecrab",
       "Lobster",
       "Shrimp"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0,
+      "intimidation": 1,
+      "substance": 0.3
+    }
   },
   "Spherical": {
     "skills": [],
@@ -12283,7 +12488,12 @@
       "RotatingBlade",
       "SeveredGoblinHead",
       "malignantgazer"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0,
+      "substance": 0.3
+    }
   },
   "Turtle": {
     "skills": [],
@@ -12483,7 +12693,12 @@
       "SeaTurtle",
       "SlowTurtle",
       "Trex"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.8,
+      "intimidation": -0.6,
+      "substance": 0.2
+    }
   },
   "Manticore": {
     "skills": [],
@@ -12850,7 +13065,12 @@
     },
     "sprites": [
       "BarbedManticore"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.3,
+      "intimidation": 1,
+      "substance": 0
+    }
   },
   "ChestMimic": {
     "skills": [],
@@ -13051,7 +13271,12 @@
       "LivingStatue",
       "MimicDoor",
       "TrafficCone"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0,
+      "intimidation": 0.2,
+      "substance": 1
+    }
   },
   "Phoenix": {
     "skills": [
@@ -13267,7 +13492,12 @@
     },
     "sprites": [
       "Phoenix"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": -0.3,
+      "substance": 0.4
+    }
   },
   "Scarecrow": {
     "skills": [],
@@ -13441,7 +13671,12 @@
     "sprites": [
       "Scarecrow",
       "ScarecrowGolem"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.4,
+      "substance": 0
+    }
   },
   "SegmentWorm": {
     "skills": [],
@@ -13581,7 +13816,12 @@
       "GiantRoyalScarab",
       "OvergrownEarthworm",
       "SeveredHand"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0,
+      "intimidation": 1,
+      "substance": 0
+    }
   },
   "Mineral": {
     "skills": [],
@@ -13710,7 +13950,12 @@
         "weight": 20
       }
     },
-    "sprites": []
+    "sprites": [],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0,
+      "substance": 0.6
+    }
   },
   "Hydra": {
     "skills": [],
@@ -13874,10 +14119,20 @@
       "FalseHydra",
       "Hydra",
       "YoungFalseHydra"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.4,
+      "intimidation": 1,
+      "substance": 0
+    }
   },
   "Vampire": {
     "sentient": true,
+    "talkLook": {
+      "arcane": 0.7,
+      "intimidation": 0.3,
+      "substance": 1
+    },
     "skills": [],
     "defaultBattler": "",
     "reproduction": 1,
@@ -14248,7 +14503,12 @@
       "SkilledBattlemage",
       "SwoopingBat",
       "VampireBat"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.8,
+      "intimidation": 0.4,
+      "substance": 0
+    }
   },
   "Rabbit": {
     "skills": [],
@@ -14464,10 +14724,20 @@
     },
     "sprites": [
       "BouncingRabbit"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.3,
+      "intimidation": -1,
+      "substance": 0.4
+    }
   },
   "ArmoredKnight": {
     "sentient": true,
+    "talkLook": {
+      "arcane": -0.3,
+      "intimidation": 1,
+      "substance": 0.7
+    },
     "skills": [],
     "defaultBattler": "",
     "reproduction": 1,
@@ -14701,6 +14971,11 @@
   },
   "Centaur": {
     "sentient": true,
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.6,
+      "substance": 0.5
+    },
     "skills": [],
     "defaultBattler": "",
     "reproduction": 1,
@@ -15094,7 +15369,12 @@
       "SoldierAnt",
       "Swarm",
       "UmberMoth"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.8,
+      "intimidation": 0.5,
+      "substance": 0
+    }
   },
   "RoboticDefender": {
     "skills": [],
@@ -15252,7 +15532,12 @@
       "Fen",
       "NobleKing",
       "ShieldbearerAutomation"
-    ]
+    ],
+    "talkLook": {
+      "arcane": -0.5,
+      "intimidation": 1,
+      "substance": 0.6
+    }
   },
   "Turret": {
     "skills": [],
@@ -15406,10 +15691,20 @@
     "sprites": [
       "AutomaticTurret",
       "SeaTurtle"
-    ]
+    ],
+    "talkLook": {
+      "arcane": -0.5,
+      "intimidation": 0.5,
+      "substance": 1
+    }
   },
   "Gorgon": {
     "sentient": true,
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": -0.3,
+      "substance": 0.6
+    },
     "skills": [],
     "defaultBattler": "",
     "reproduction": 2,
@@ -15739,7 +16034,12 @@
       "MatureBlueDragon",
       "SharkFin",
       "Stonvar"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.5,
+      "substance": 0
+    }
   },
   "Snail": {
     "skills": [],
@@ -15908,7 +16208,12 @@
       "SlimySnail",
       "SlitheringSnail",
       "Snail"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.4,
+      "intimidation": -1,
+      "substance": 0.2
+    }
   },
   "WaterElemental": {
     "skills": [],
@@ -16066,7 +16371,12 @@
       "Skornfang",
       "Syce",
       "WaterElemental"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0,
+      "substance": 0
+    }
   },
   "ThunderElemental": {
     "skills": [],
@@ -16239,7 +16549,12 @@
         "weight": 12.5
       }
     },
-    "sprites": []
+    "sprites": [],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.6,
+      "substance": 0
+    }
   },
   "StormElemental": {
     "skills": [],
@@ -16419,7 +16734,12 @@
       "LightningCloud",
       "PowerfulDjinn",
       "Valthorne"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.6,
+      "substance": 0
+    }
   },
   "FireElemental": {
     "skills": [],
@@ -16552,7 +16872,12 @@
       "FireElemental",
       "FireGiant",
       "WarpSkull"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.8,
+      "intimidation": 1,
+      "substance": 0
+    }
   },
   "MetalElemental": {
     "skills": [],
@@ -16685,7 +17010,12 @@
         "weight": 25
       }
     },
-    "sprites": []
+    "sprites": [],
+    "talkLook": {
+      "arcane": 0.6,
+      "intimidation": 0,
+      "substance": 1
+    }
   },
   "DarkElemental": {
     "skills": [],
@@ -16862,7 +17192,12 @@
     },
     "sprites": [
       "GlowingWisp"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.5,
+      "substance": 0
+    }
   },
   "SacredElemental": {
     "skills": [],
@@ -17040,7 +17375,12 @@
     "sprites": [
       "BrittleArcher",
       "CursedGrimoire"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": -0.7,
+      "substance": 0
+    }
   },
   "Totem": {
     "skills": [],
@@ -17203,7 +17543,12 @@
       "Nyarlathoteph",
       "Ophanim",
       "Totem"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0,
+      "substance": 0.3
+    }
   },
   "Ophanim": {
     "skills": [
@@ -17372,10 +17717,20 @@
       "Ophanim",
       "RadiantPaladin",
       "Zazthul"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": -0.8,
+      "substance": 0
+    }
   },
   "Angel": {
     "sentient": true,
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": -0.8,
+      "substance": -0.2
+    },
     "skills": [
       848
     ],
@@ -17628,6 +17983,11 @@
   },
   "Gnome": {
     "sentient": true,
+    "talkLook": {
+      "arcane": 0.6,
+      "intimidation": 0,
+      "substance": 1
+    },
     "bodyPlan": "Humanoid",
     "voice": "gnome",
     "voiceMode": "blend",
@@ -18084,7 +18444,12 @@
       "Elephant",
       "Mammoth",
       "StompingElephant"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.3,
+      "intimidation": -1,
+      "substance": 0
+    }
   },
   "TentacledCreature": {
     "skills": [],
@@ -18226,10 +18591,20 @@
       "Medusa",
       "OcularWatcher",
       "Tentacle"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.4,
+      "substance": 0
+    }
   },
   "SpiderHumanHybrid": {
     "sentient": true,
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.6,
+      "substance": 0.3
+    },
     "skills": [],
     "defaultBattler": "",
     "reproduction": 2,
@@ -18694,7 +19069,12 @@
     "sprites": [
       "GhastlyEye",
       "SpikeyPorcupine"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0,
+      "intimidation": 1,
+      "substance": 0
+    }
   },
   "Horse": {
     "skills": [
@@ -18895,7 +19275,12 @@
       "Horseshoecrab",
       "PregnantSeahorse",
       "Seahorse"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0,
+      "intimidation": -1,
+      "substance": 0.5
+    }
   },
   "Unicorn": {
     "skills": [],
@@ -19101,7 +19486,12 @@
     },
     "sprites": [
       "BenevolentUnicorn"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": -0.8,
+      "substance": 0
+    }
   },
   "Hellhound": {
     "skills": [],
@@ -19301,10 +19691,20 @@
       "Hellhound",
       "Mastiff",
       "ToxicHound"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0.6,
+      "intimidation": 1,
+      "substance": 0
+    }
   },
   "WingedDemon": {
     "sentient": true,
+    "talkLook": {
+      "arcane": 0.6,
+      "intimidation": 1,
+      "substance": 0.3
+    },
     "skills": [
       848
     ],
@@ -19616,7 +20016,12 @@
       "RascallyDemonling",
       "RatkinMutant",
       "TrashBag"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 0,
+      "intimidation": 0.4,
+      "substance": 1
+    }
   },
   "SeveredHead": {
     "skills": [],
@@ -19859,7 +20264,12 @@
     "sprites": [
       "DecapitatedHead",
       "SeveredGoblinHead"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.3,
+      "substance": 0
+    }
   },
   "CrawlingHand": {
     "skills": [],
@@ -20083,6 +20493,11 @@
     "sprites": [
       "SkitteringHand",
       "SeveredHand"
-    ]
+    ],
+    "talkLook": {
+      "arcane": 1,
+      "intimidation": 0.3,
+      "substance": 0.2
+    }
   }
 }

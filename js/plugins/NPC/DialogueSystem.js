@@ -321,11 +321,11 @@ Imported.DialogueSystem = true;
     // -------------------------------------------------------------------------
     // Speaker models: a speaker with a 3D body is shown by it
     // -------------------------------------------------------------------------
-    // An NPC whose body is a model (a creature, an animal, a dossier that ships
-    // one) and a party member who picked the 3D Model portrait at creation
-    // stand in the bust slot as that model, not as the bust their sprite
-    // carries. Which model is window.NPCPortraitModel's answer
-    // (NPCEmpathizeUI.js), so the message box and the Empathize panel always
+    // An NPC whose body is a model (a creature, an animal) and a party member
+    // who picked the 3D Model portrait at creation stand in the bust slot as
+    // that model, not as the bust their sprite carries. A dossier that ships a
+    // model (Em) keeps her painted bust here. Which model is
+    // window.NPCPortraitModel's answer (NPCEmpathizeUI.js), so the message box and the Empathize panel always
     // show the same body. The model is rendered into a Bitmap on one offscreen
     // WebGL context kept for the session, and that Bitmap walks in exactly as a
     // bust does: the slide, the side and the fallback never learn the
@@ -3623,16 +3623,22 @@ Imported.DialogueSystem = true;
         const recent = H._countRecentInteractions ? H._countRecentInteractions(profile, 'social_' + move.id, 3) : 0;
         const mult   = tone => H._personalitySocialMult ? H._personalitySocialMult(profile, tone) : 1;
         let tone = '', delta = 0, playerLine = '', npcLine = '', sincere = true, subject = '';
+        // The signature bank this move is answered from when either side is an
+        // icon of a look (H._signatureLines): its kind and the outcome rolled.
+        let sigKind = '', sigOutcome = '';
 
         if (move.joke) {
             // The joke is built word by word out of the grammar in the bank, so
             // it comes out already in the language the game is played in.
             playerLine = H._genJoke ? H._genJoke() : '';
+            sigKind = 'joke';
             if (Math.random() < Math.max(0.15, 0.7 - recent * 0.18)) {
                 delta   = Math.round(Math.max(1, 5 - recent) * mult('positive'));
-                npcLine = H._rand(Math.random() < 0.5 ? db.jokes?.landGood : db.jokes?.landGroan);
+                sigOutcome = Math.random() < 0.5 ? 'landGood' : 'landGroan';
+                npcLine = H._rand(db.jokes?.[sigOutcome]);
             } else {
                 delta   = Math.round((recent >= 2 ? -(2 + recent) : -1) * mult('negative'));
+                sigOutcome = 'flop';
                 npcLine = H._rand(db.jokes?.flop);
                 sincere = false;
             }
@@ -3652,6 +3658,8 @@ Imported.DialogueSystem = true;
                 sincere = false;
             }
             playerLine = H._rand(perf.player);
+            sigKind = 'performance';
+            sigOutcome = raw > 0 ? 'good' : 'bad';
         } else {
             const def = move.def;
             tone       = def.tone;
@@ -3672,6 +3680,15 @@ Imported.DialogueSystem = true;
             }
             const pool = def.tone === 'negative' ? def.responseBad : (sincere ? def.responseGood : def.responseBad);
             npcLine = H._rand(pool) || H._rand(def.responseGood) || H._rand(def.responseBad);
+            sigKind = 'interaction';
+            sigOutcome = def.tone === 'negative' ? (recent <= 1 ? 'good' : 'bad') : (sincere ? 'good' : 'bad');
+        }
+        // An icon of a look (100% Arcane, Substance, Stealth or Intimidation)
+        // says it in their own voice and is answered as one, as in the panel.
+        if (sigKind && H._signatureLines) {
+            const sig = H._signatureLines(sigKind, move.id, sigOutcome, actor, profile);
+            if (sig.player) playerLine = sig.player;
+            if (sig.npc) npcLine = sig.npc;
         }
         // A story, a poem and a joke are content the talker chose rather than a
         // register they spoke in, which is why the stance banks below answer

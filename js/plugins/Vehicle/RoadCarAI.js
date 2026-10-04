@@ -3340,7 +3340,8 @@
       if (!scene || !scene.initializeRoadCars) return;
       if ($gameMap.mapId() !== PROC_MAP_ID) return;
       carEvents = [];
-      pedestrianCache = [];
+      // A const array: emptied in place, never rebound, or the throw skips the rebuild.
+      pedestrianCache.length = 0;
       pedestrianFrame = -1;
       parkingSpots = [];
       scene.initializeRoadCars();

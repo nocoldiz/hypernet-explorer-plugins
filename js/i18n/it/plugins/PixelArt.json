@@ -43,5 +43,13 @@
     },
     "exported": "Salvato in {file}",
     "exportError": "Impossibile scrivere l'immagine nella cartella del gioco."
+  },
+  "pictures": {
+    "pickTitle": "Scegli un'immagine",
+    "mine": "Le tue immagini",
+    "stock": "Texture",
+    "empty": "Ancora niente in {dir}. Disegna qualcosa con Pain o con l'editor di pixel art.",
+    "close": "Chiudi",
+    "saved": "Salvato in {file}"
   }
 }

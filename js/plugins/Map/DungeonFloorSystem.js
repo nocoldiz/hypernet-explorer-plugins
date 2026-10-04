@@ -65,7 +65,7 @@
  * ===========================================================================
  * @param demoMode
  * @text Demo Mode
- * @desc If true, the dungeon stops at floor 10: floor 1 is map 101, floors 2-9 come from block A, floor 10 is map 112.
+ * @desc If true, only floors 1 (map 101) and 2 of the tower and floor -1 below it can be visited. No stairs lead past them.
  * @type boolean
  *
  *
@@ -247,8 +247,10 @@
     ],
     elevatorMaps: [112,113,114,115,116,117,118,119],
     demoMode: String(parameters.demoMode) === "true",
-    demoMaxFloor: 10,
-    demoFinalMapId: 112,
+    // Demo mode: floor 1 and floor 2 above ground, floor -1 below it. The
+    // last floor of each half shows no staircase onward.
+    demoMaxFloor: 2,
+    demoDeepestFloor: -1,
     // MapInfos folder holding every dungeon floor. The whole tower, demo and
     // full run alike, draws from the maps sitting in it.
     dungeonFolderId: 166,
@@ -561,12 +563,12 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
     return this.dungeonMapPool();
   };
 
-  // True when a stored demo layout holds floors past the demo limit or has
-  // lost its final map. Old saves generated under the previous rules are
-  // rebuilt instead of being played as they are.
+  // True when a stored demo layout holds floors past the demo limit or is
+  // missing its last floor. A layout rolled under other rules is rebuilt
+  // instead of being played as it is.
   Game_System.prototype.isDemoLayoutStale = function () {
     if (!params.demoMode || !this._dungeonGenerated) return false;
-    if (this._dungeonFloors[params.demoMaxFloor] !== params.demoFinalMapId) return true;
+    if (!this._dungeonFloors[params.demoMaxFloor]) return true;
     for (let floor = params.demoMaxFloor + 1; floor <= 100; floor++) {
       if (this._dungeonFloors[floor]) return true;
     }
@@ -625,28 +627,23 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
     this._dungeonFloors[0] = $gameSwitches.value(params.arenaToggleSwitch)
       ? params.arenaMapId
       : params.townMapId;
-    // Demo mode structure: the dungeon ends at floor 10.
+    // Demo mode structure: the dungeon ends at floor 2.
       if (params.demoMode) {
         // Floor 0: map 1 (already set above)
         // Floor 1: map 101
         this._dungeonFloors[1] = 101;
 
-        // Floor 2 to (final - 1): the single pool, minus the excluded maps
+        // Floor 2 up to the demo limit: dealt from the single pool, no repeats
+        // while the pool lasts.
         const lastFloor = params.demoMaxFloor;
         const demoPool = this.demoFloorPool();
-        const uniqueNeeded = lastFloor - 2;
-        for (let floor = 2; floor < lastFloor; floor++) {
+        for (let floor = 2; floor <= lastFloor; floor++) {
             if (demoPool.length > 0) {
                 const index = Math.floor(this.dungeonRandom() * demoPool.length);
                 this._dungeonFloors[floor] = demoPool[index];
-                if (demoPool.length >= uniqueNeeded) {
-                    demoPool.splice(index, 1); // Remove to avoid duplicates if enough maps
-                }
+                if (demoPool.length > 1) demoPool.splice(index, 1);
             }
         }
-
-        // Final demo floor: map 112
-        this._dungeonFloors[lastFloor] = params.demoFinalMapId;
 
         // Floors past the demo limit stay empty and are unreachable.
         for (let floor = lastFloor + 1; floor <= 100; floor++) {
@@ -1054,7 +1051,7 @@ Game_System.prototype.isPassableTileFromTilesets = function (mapData, x, y) {
     // DEEPER, so it takes -21 to -22 and stops at the bottom of the shaft.
     const lower = activeLowerFloor();
     if (lower) {
-        if (lower <= TOWER.DEEPEST) return;
+        if (lower <= TOWER.DEEPEST || isDemoLockedLowerFloor(lower - 1)) return;
         moveToLowerFloor(lower - 1, "prev");
         return;
     }
@@ -1137,6 +1134,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
       ? chosen
       : $gameVariables.value(params.currentFloorVariable);
 
+  if (isDemoLockedLowerFloor(floor)) return;
   if (floor === TOWER.SECRET_STAIRWAY.floor) {
       // Floor -22's doors open on Omega City, never on the stairway itself.
       const city = TOWER.OMEGA_CITY;
@@ -1288,6 +1286,12 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     return Number.isFinite(floor) && floor <= -1 && floor >= TOWER.DEEPEST;
   }
 
+  // Demo mode opens only the top of the lower tower: anything deeper than
+  // demoDeepestFloor cannot be reached by stairs, lift or command.
+  function isDemoLockedLowerFloor(floor) {
+    return !!params.demoMode && isLowerFloor(floor) && floor < params.demoDeepestFloor;
+  }
+
   // The two lower floors that are authored maps: no generation, no enemies.
   function isAuthoredLowerFloor(floor) {
     return floor === TOWER.SECRET_STAIRWAY.floor || floor === TOWER.TIP_OF_THE_SPEAR.floor;
@@ -1368,7 +1372,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   // Floor -1 and floor -22 are open from the start; everything else has to have
   // been reached. The upper half keeps its own rule (variable 2).
   function isLowerFloorUnlocked(floor) {
-    if (!isLowerFloor(floor)) return false;
+    if (!isLowerFloor(floor) || isDemoLockedLowerFloor(floor)) return false;
     if (floor === -1 || floor === TOWER.SECRET_STAIRWAY.floor) return true;
     return Math.abs(floor) <= towerDepthReached();
   }
@@ -1715,7 +1719,9 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     }
     const layout = towerLayout(floor);
     towerShowEvent(events.PrevFloor, layout.prev);
-    towerShowEvent(events.NextFloor, layout.next);
+    // The deepest demo floor has no way further down: its staircase is not drawn.
+    if (isDemoLockedLowerFloor(floor - 1)) towerHideEvent(events.NextFloor);
+    else towerShowEvent(events.NextFloor, layout.next);
     towerShowEvent(events.Elevator, layout.elevator);
 
     const arrival = $gameSystem._towerArrival;
@@ -1776,7 +1782,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   }
 
   function moveToLowerFloor(floor, arrival) {
-    if (!isLowerFloor(floor)) return;
+    if (!isLowerFloor(floor) || isDemoLockedLowerFloor(floor)) return;
     $gameVariables.setValue(params.currentFloorVariable, floor);
     $gameVariables.setValue(params.elevatorFloorVariable, floor);
     recordTowerDepth(floor);
@@ -1860,6 +1866,66 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     if (currentTowerFloor()) return true;
     return isDungeonMap($gameMap.mapId()) && !onElevatorFloor();
   }
+
+  // Is the party anywhere on the tower's levels: a generated floor, an authored
+  // one, the boss floor or a lift hall? Unlike insideTower the halls count, so
+  // waiting or sleeping at the doors is still being in the tower. The tower's
+  // own worlds (their people, settlements and powers) are only simulated while
+  // this holds: out in the world they stand still, to save the frame.
+  function onTowerLevels() {
+    if (typeof $gameMap === "undefined" || !$gameMap) return false;
+    if (currentTowerFloor()) return true;
+    const mapId = $gameMap.mapId();
+    return mapId === ACCURSED_MARKET_MAP_ID || isDungeonMap(mapId);
+  }
+
+  // ── The tower's own clock ──────────────────────────────────────────────────
+  // The tower keeps its own time, as the alien worlds do. It runs only while a
+  // party is on its levels (walking, waiting or sleeping there) and stands
+  // still otherwise, so time spent out in the world never reaches it. Earth's
+  // clock keeps running as ever, inside the tower as much as out of it.
+  // $gameSystem._towerMinute is world-shared (WorldManager "towerworlds",
+  // merged by the furthest), so the tower is frozen where it was left until a
+  // party of ANY savegame of this world walks back in. It starts on Earth's
+  // time the first time it is asked for and falls behind from there.
+  // _towerClockSeen is this savegame's own last reading of Earth's clock while
+  // on the tower's levels: only the minutes between two readings both taken
+  // on the tower are added.
+  const EARTH_MINUTE_VAR = 114;
+
+  function earthMinute() {
+    if (typeof $gameVariables === "undefined" || !$gameVariables) return null;
+    const m = Number($gameVariables.value(EARTH_MINUTE_VAR));
+    return Number.isFinite(m) ? m : null;
+  }
+
+  function towerClockMinute() {
+    if (typeof $gameSystem === "undefined" || !$gameSystem) return null;
+    const earth = earthMinute();
+    if (earth === null) return null;
+    if (!Number.isFinite($gameSystem._towerMinute)) $gameSystem._towerMinute = earth;
+    if (onTowerLevels()) {
+      const seen = $gameSystem._towerClockSeen;
+      if (Number.isFinite(seen) && earth > seen) $gameSystem._towerMinute += earth - seen;
+      $gameSystem._towerClockSeen = earth;
+    } else {
+      $gameSystem._towerClockSeen = null;
+    }
+    return $gameSystem._towerMinute;
+  }
+
+  // Read whenever Earth's clock moves, so the minutes on the tower are counted
+  // as they pass and the minute the party steps off it is the last one.
+  let _towerClockLastEarth = null;
+  const _DFS_Game_Map_update = Game_Map.prototype.update;
+  Game_Map.prototype.update = function (sceneActive) {
+    _DFS_Game_Map_update.call(this, sceneActive);
+    const earth = earthMinute();
+    if (earth !== _towerClockLastEarth) {
+      _towerClockLastEarth = earth;
+      towerClockMinute();
+    }
+  };
 
   // The map the tower's own market stands on: floor 1, reached from the Stairs
   // Hall, and the one authored floor that answers to the tower's rules without
@@ -3219,6 +3285,12 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     // tower world as an upper one.
     isTowerGroup: (name) => towerGroupFloor(name) !== 0,
     worldOfGroup: towerWorldOfGroup,
+    // Whether the tower's worlds are simulated right now: only while the party
+    // is on the tower's levels. Every daily and hourly society loop asks.
+    simulating: onTowerLevels,
+    // The tower's own minute (see "The tower's own clock"): what the tower's
+    // societies and powers are simulated up to, instead of Earth's minute.
+    clock: towerClockMinute,
     // The politics layer asks for these by name.
     powerNames: () => allTowerWorlds().map((w) => w.powerName),
     worldOfPower: (power) => allTowerWorlds().filter((w) => w.powerName === power)[0] || null,
@@ -3250,6 +3322,8 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     floorLevel: towerEnemyLevel,
     // The party is on a floor the lift is the only way off of.
     insideTower,
+    // Anywhere on the tower's levels, the lift halls included.
+    onTowerLevels,
     // True when the map the party stands on is one of the authored dungeon's
     // own maps (any map under the dungeon folders, an elevator hall or the boss
     // floor). The floor variable outlives the dungeon, so anything reading it

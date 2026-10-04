@@ -26,6 +26,9 @@
     const VW = window.VoxelWorld;
     if (!VW) { console.error('[VoxelWorld] core not loaded before VoxelWorldScene.js'); return; }
 
+    // The ConfigManager key of the VR Headset option (see the end of the file).
+    const VR_OPTION = 'voxelVR';
+
     const {
         AIR_GRAVITY, BODY_BOUNCE_MAX, BODY_PITCH_MAX, BODY_ROLL_MAX, gravityScale, setGravityScale,
         BOOST_ACCEL_MULT, BOOST_FUEL_MULT, BOOST_RELEASE_DECAY, BRAKE_DECEL,
@@ -65,7 +68,7 @@
         isSandboxOrTest, pickRandomRoadTile, placeNameAt, planForTile, roadLabelAt,
         sampleBiomeAt, sampleSkyColor, setTextureAnisotropy, settlementKindAt,
         isAirlessWorld, sampleAlienSkyColor, ALIEN_BIOME_SKY_PALETTES,
-        PAD_LOOK_X, PAD_LOOK_Y,
+        PAD_LOOK_X, PAD_LOOK_Y, UNITS_PER_M,
         isGasGiantWorld, GAS_DECKS, GAS_FLOOR_Y, GAS_WARN_BAND, GAS_WARN_EVERY, GAS_TOP_Y, gasDepth01,
         GAS_ENTRY_Y, GAS_FOG_TOP, GAS_FOG_DEEP,
         flightModel, FLY_ABS_MAX,
@@ -1272,6 +1275,8 @@
 
             this._loop = this._loop.bind(this);
             this._animId = requestAnimationFrame(this._loop);
+            // The Enter VR button, when Options > Experimental asks for it.
+            this._setupVR();
             // Built, whole, and about to be handed to the caller.
             BUILDING = null;
         }
@@ -2900,9 +2905,18 @@
             // bandwidth for a discarded result is the most expensive way to do
             // nothing. The look is asked for by name: window.RetroShader owns
             // which of the two is in force, while window.PSXShader is only the
-            // facade that forwards the drawing calls to it. The other retro
-            // mode and the plain one keep their edges.
-            const wantsAA = !(window.RetroShader && window.RetroShader.isPixelArt());
+            // facade that forwards the drawing calls to it. SnapVertex draws
+            // through a low-res target too (downscale 0.88 by default), so it
+            // discards the edges just the same: MSAA is kept only when the
+            // frame really lands on the canvas at full size, which is the plain
+            // look, a downscale of 1, or a split-screen session (the split pass
+            // skips the retro target and draws straight onto the canvas).
+            const RS = window.RetroShader;
+            const look = RS && RS.active ? RS.active() : null;
+            const fullSize = !look || !look.enabled ||
+                (typeof look.downscaleFor === 'function' ? look.downscaleFor('world') : look.downscale) >= 0.999;
+            const split = !!(window.$gameSplitScreen && window.$gameSplitScreen.active);
+            const wantsAA = fullSize || split;
             this._renderer = new THREE.WebGLRenderer({ antialias: wantsAA, powerPreference: 'high-performance' });
             this._renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
             this._renderer.setSize(w, h);
@@ -3035,7 +3049,10 @@
         }
 
         _loop(now) {
-            this._animId = requestAnimationFrame(this._loop);
+            // In a headset the frame clock is the headset's: three.js calls this
+            // from its XR loop (see _startVR), and a window frame booked as well
+            // would draw a second time, outside the frame the headset shows.
+            this._animId = this._xrLooping ? null : requestAnimationFrame(this._loop);
             // The world can be torn down from INSIDE a frame: a key handled by
             // the update below (leaving a flyby, stepping back onto the map)
             // runs dispose() synchronously, which cancels the frame just booked
@@ -3052,6 +3069,8 @@
             // Kept for the draw pass: the burst effects are stepped where they
             // are drawn, which is past every path that gets there.
             this._frameDelta = delta;
+            // The frame meter (Core's VoxelPerf), a no-op unless it is on.
+            if (typeof window !== 'undefined' && window.VoxelPerf) window.VoxelPerf.frame(this, this._renderer);
 
             // The weapon in the driver's hands: in frame while they are walking,
             // put away at the wheel and whenever the drive itself is out of
@@ -3254,7 +3273,11 @@
             // coming back out of a menu is not coming back to a frozen picture.
             if (!this._domMenuOpen) {
                 this._handleInput();
+                // An exit key tears the world down synchronously; the rest of
+                // the frame would stream chunks into it and re-raise its HUD.
+                if (this._disposed) return;
                 this._updateMovement(delta);
+                if (this._disposed) return;
                 // ...and the second player, who has their own hands.
                 this._updateCoop(delta);
             }
@@ -3373,9 +3396,13 @@
             // the camper - a hand-made town's squares are not theirs to cross.
             this._guardReservedSquares();
             this._updateUnderground();
+            // Digging down to bedrock and climbing out of orbit both close the
+            // world synchronously; nothing below may run on a disposed scene.
+            if (this._disposed) return;
             this._updateOmegaTower();
             this._updateLockedDomes();
             this._checkLeavingAtmosphere();
+            if (this._disposed) return;
 
             this._updateFuel(delta);
             // Real time behind the wheel, not map steps: the driving scene
@@ -3616,7 +3643,16 @@
             // over a viewport they would blow the scissor away and paint one
             // player's view over both. A drive fast enough to bend space is a
             // drive, and a drive merges the screen anyway.
+            // A headset on: two eyes, drawn by three's XR pass (see _renderVR).
+            if (this._xrLooping && this._renderer.xr && this._renderer.xr.isPresenting) {
+                this._renderVR();
+                return;
+            }
             if (this._splitNow && this._coop) { this._renderSplit(); return; }
+            // Tiles out of the camera's view are switched off for this frame
+            // (VoxelTerrain#cull): their trees and towns are never culled by
+            // three.js itself.
+            if (this._terrain && this._terrain.cull) this._terrain.cull(this._camera);
             // Effekseer draws straight onto the canvas, over whatever three.js
             // has just put there, so every path out of this method goes through
             // one line: the world, then the spells going off in it.
@@ -3658,6 +3694,9 @@
         // the game to a left/right split on the map do not get a top/bottom one
         // the moment they walk into this world.
         _renderSplit() {
+            // Two eyes looking two ways: one camera's cull would blank the
+            // other's half, so every tile is drawn.
+            if (this._terrain && this._terrain.cull) this._terrain.cull(null);
             const r = this._renderer;
             const el = r.domElement;
             const W = el.width, H = el.height;
@@ -3699,6 +3738,203 @@
             }
             r.setScissorTest(false);
             r.setViewport(0, 0, W, H);
+        }
+
+        // =====================================================================
+        // VR headset (Options > Experimental > VR Headset)
+        // =====================================================================
+        // three.js owns the WebXR session, the headset's framebuffer and its
+        // frame clock; this world owns where the eyes stand. The headset reports
+        // its pose in metres and this world is four units to the metre, so left
+        // to three the party would be a giant's head on a doll's body: every
+        // eye is taken off the pose, scaled to world units and stood on a rig
+        // that follows the game's own camera. The rig only turns about the
+        // vertical: the head does the pitching and rolling, and a horizon the
+        // player did not tilt themselves is the quickest way to make them ill.
+        // Keyboard, mouse and pad still walk, drive and turn exactly as off it.
+
+        // Offer the Enter VR button, only when the option is on and a headset
+        // is really there to take it. requestSession needs a click of the
+        // player's own, which is why this is a button and not an automatic jump.
+        _setupVR() {
+            if (this._titleMode || !ConfigManager[VR_OPTION]) return;
+            const r = this._renderer;
+            if (!r || !r.xr || typeof navigator === 'undefined' || !navigator.xr ||
+                typeof navigator.xr.isSessionSupported !== 'function') return;
+            navigator.xr.isSessionSupported('immersive-vr').then((ok) => {
+                if (!ok || this._disposed || !this._overlay || this._vrButton) return;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'vw-vr-button';
+                btn.style.cssText = 'position:absolute;right:16px;bottom:16px;z-index:5;' +
+                    'padding:6px 14px;font:inherit;cursor:pointer;pointer-events:auto;';
+                btn.textContent = T('VoxelWorld.vr.enter');
+                // Kept off the world: a click here is not a swing or a dig.
+                btn.addEventListener('mousedown', (e) => e.stopPropagation());
+                btn.addEventListener('click', (e) => { e.stopPropagation(); this._toggleVR(); });
+                this._overlay.appendChild(btn);
+                this._vrButton = btn;
+            }).catch(() => { /* no headset runtime: no button */ });
+        }
+
+        _toggleVR() {
+            if (this._xrSession) {
+                this._xrSession.end().catch(() => { /* already over */ });
+                return;
+            }
+            if (this._xrStarting || this._disposed || !navigator.xr) return;
+            this._xrStarting = true;
+            navigator.xr.requestSession('immersive-vr')
+                .then((session) => this._startVR(session))
+                .catch((e) => {
+                    console.warn('[VoxelWorld] VR', e);
+                    if (window.ParchmentToast) {
+                        window.ParchmentToast.show(T('VoxelWorld.vr.failed'), { key: 'vwvr' });
+                    }
+                })
+                .then(() => { this._xrStarting = false; });
+        }
+
+        async _startVR(session) {
+            const r = this._renderer;
+            if (this._disposed || !r || !r.xr) { session.end().catch(() => {}); return; }
+            const xr = r.xr;
+            if (!this._xrEye) {
+                // The camera handed to three: never in the scene, its pose is
+                // written over every frame by _placeXrEyes.
+                this._xrEye = new THREE.PerspectiveCamera(65, 1, 0.5, VIEW_FAR);
+                // Where the head looked last frame, with a frustum wide enough
+                // for both eyes together: the terrain cull and the billboards
+                // turn to it, and three culls the scene against it.
+                this._xrView = new THREE.PerspectiveCamera(120, 1.4, 0.5, VIEW_FAR);
+                this._xrRig = new THREE.Matrix4();
+                this._xrPos = new THREE.Vector3();
+                this._xrMid = new THREE.Vector3();
+                this._xrQuat = new THREE.Quaternion();
+                this._xrScale = new THREE.Vector3();
+                this._xrOne = new THREE.Vector3(1, 1, 1);
+                this._xrEuler = new THREE.Euler();
+                this._xrViewReady = false;
+            }
+            // 'local': the head starts at the rig's origin, which is the game's
+            // own eye, sitting or standing alike.
+            xr.setReferenceSpaceType('local'); // i18n-ignore: WebXR reference space
+            xr.enabled = true;
+            this._hookXrCamera(xr);
+            this._xrSession = session;
+            this._onXrEnd = () => this._endVR();
+            xr.addEventListener('sessionend', this._onXrEnd);
+            try {
+                await xr.setSession(session);
+            } catch (e) {
+                this._endVR();
+                throw e;
+            }
+            if (this._disposed || !this._renderer) return;
+            if (this._animId) { cancelAnimationFrame(this._animId); this._animId = null; }
+            this._lastTime = null;
+            this._xrLooping = true;
+            this._renderer.setAnimationLoop(this._loop);
+            if (this._vrButton) this._vrButton.textContent = T('VoxelWorld.vr.exit');
+        }
+
+        // Back on the monitor: three has already let the headset go when this
+        // runs (it is its 'sessionend'), so this only hands the frame clock back.
+        _endVR() {
+            const r = this._renderer;
+            if (r && r.xr) {
+                if (this._onXrEnd) r.xr.removeEventListener('sessionend', this._onXrEnd);
+                r.setAnimationLoop(null);
+                r.xr.enabled = false;
+            }
+            this._onXrEnd = null;
+            this._xrSession = null;
+            this._xrLooping = false;
+            this._xrViewReady = false;
+            if (this._vrButton) this._vrButton.textContent = T('VoxelWorld.vr.enter');
+            if (!this._disposed && this._renderer && !this._animId) {
+                this._lastTime = null;
+                this._animId = requestAnimationFrame(this._loop);
+            }
+        }
+
+        _disposeVR() {
+            const session = this._xrSession;
+            if (session) {
+                this._endVR();
+                try { session.end().catch(() => {}); } catch (e) { /* already over */ }
+            }
+            if (this._vrButton && this._vrButton.parentNode) {
+                this._vrButton.parentNode.removeChild(this._vrButton);
+            }
+            this._vrButton = null;
+        }
+
+        // three asks its XR manager for the eye cameras inside render(), after
+        // it has read the pose off the headset. Wrapped once per renderer, and
+        // only ever touching the cameras of a frame drawn through _xrEye.
+        _hookXrCamera(xr) {
+            if (xr._vwGetCamera) return;
+            const base = xr.getCamera;
+            xr._vwGetCamera = base;
+            const scene = this;
+            xr.getCamera = function (camera) {
+                const arr = base.apply(this, arguments);
+                if (camera && camera === scene._xrEye) scene._placeXrEyes(arr, camera);
+                return arr;
+            };
+        }
+
+        // Each eye's pose, metres in the headset's space, made into world units
+        // on the rig. The projection three got from the headset is left alone:
+        // its near and far were asked for in world units (three passes the
+        // camera's own), and the rest of it is angles, which have no unit.
+        _placeXrEyes(arr, camera) {
+            const rig = this._xrRig, p = this._xrPos, q = this._xrQuat, s = this._xrScale;
+            const one = this._xrOne, mid = this._xrMid.set(0, 0, 0);
+            const eyes = arr.cameras || [];
+            for (let i = 0; i < eyes.length; i++) {
+                const c = eyes[i];
+                c.matrix.decompose(p, q, s);
+                p.multiplyScalar(UNITS_PER_M);
+                mid.add(p);
+                c.matrixWorld.compose(p, q, one).premultiply(rig);
+                c.matrixWorldInverse.copy(c.matrixWorld).invert();
+            }
+            if (eyes.length) mid.multiplyScalar(1 / eyes.length);
+            // The pair as one: between the eyes, looking where the head looks,
+            // through the wide frustum three culls the scene with.
+            arr.matrix.decompose(p, q, s);
+            arr.matrixWorld.compose(mid, q, one).premultiply(rig);
+            arr.matrixWorldInverse.copy(arr.matrixWorld).invert();
+            arr.projectionMatrix.copy(this._xrView.projectionMatrix);
+            if (arr.projectionMatrixInverse) arr.projectionMatrixInverse.copy(arr.projectionMatrix).invert();
+            camera.matrixWorld.copy(arr.matrixWorld);
+            camera.matrixWorldInverse.copy(arr.matrixWorldInverse);
+            arr.matrixWorld.decompose(this._xrView.position, this._xrView.quaternion, s);
+            this._xrView.updateMatrixWorld(true);
+            this._xrViewReady = true;
+        }
+
+        // One headset frame. The rig stands where the game's camera stands and
+        // faces where it faces, so every view mode (walking, the wheel, the
+        // chase camera) carries on as it is. The speed lens, the retro pass and
+        // the spell bursts are all full-screen passes onto the canvas, which a
+        // headset does not look at: they sit this out.
+        _renderVR() {
+            const cam = this._camera;
+            cam.updateMatrixWorld(true);
+            cam.getWorldPosition(this._xrPos);
+            this._xrRig.makeRotationY(this._cameraYaw()).setPosition(this._xrPos);
+            this._xrEye.near = cam.near;
+            this._xrEye.far = cam.far;
+            const view = this._xrViewReady ? this._xrView : null;
+            if (this._terrain && this._terrain.cull) this._terrain.cull(view);
+            if (view) {
+                const yaw = this._xrEuler.setFromQuaternion(view.quaternion, 'YXZ').y; // i18n-ignore: euler order
+                faceBillboards(view.position.x, view.position.z, yaw);
+            }
+            this._renderer.render(this._scene, this._xrEye);
         }
 
         // Which of the two bodies is drawn. One view shows the other player
@@ -3965,7 +4201,12 @@
             const bo = wantHead ? HEADLIGHT_BEAM_OPACITY : 0.0;
             const ek = Math.min(1, delta * 3);
             if (this._headlights) for (const sp of this._headlights) sp.intensity += (hi - sp.intensity) * ek;
-            if (this._beams) for (const b of this._beams) b.material.opacity += (bo - b.material.opacity) * ek;
+            // A beam faded out by day is still a transparent sprite to sort and
+            // draw, so it leaves the frame once its glow is gone.
+            if (this._beams) for (const b of this._beams) {
+                b.material.opacity += (bo - b.material.opacity) * ek;
+                b.visible = b.material.opacity > 0.002;
+            }
 
             const airless = isAirlessWorld && isAirlessWorld(this._alien);
             // Sky / fog colour. Underwater forces a deep teal regardless of camera.
@@ -4288,7 +4529,8 @@
         // first time each widget appears.
         // ---------------------------------------------------------------------
         _surfaceDom() {
-            if (this._titleMode) return;
+            // After dispose nothing would ever lower these again.
+            if (this._titleMode || this._disposed) return;
             if (!this._lifted) this._lifted = new Map();
             for (const id of WORLD_UI_IDS) {
                 const el = document.getElementById(id);
@@ -6297,7 +6539,9 @@
         _checkLeavingAtmosphere() {
             if (this._vehicleId !== 'starship' || this._titleMode || this._standalone) return;
             if (this._leavingAtmosphere) return;
-            if (this._vanY < SHIP_ATMOSPHERE_Y) return;
+            // The ride height eases toward a ceiling clamped at this very height,
+            // so it only ever creeps up on it: within a unit is out.
+            if (this._vanY < SHIP_ATMOSPHERE_Y - 1) return;
             this._leavingAtmosphere = true;
 
             // Climbing out of ANOTHER world's sky (a flyby) leaves the ship in
@@ -8246,6 +8490,8 @@
         }
 
         _disposeInner() {
+            // The frame meter's readout goes with the world it was reading.
+            if (typeof window !== 'undefined' && window.VoxelPerf) window.VoxelPerf.frame(null, this._renderer);
             // The world is going: nothing is on the game's canvas any more, so
             // the map's spriteset takes its mirror down on its next tick.
             this._mirrorWatch = false;
@@ -8358,6 +8604,9 @@
         // dispose()'s finally when something above it threw: it is written to
         // be safe to run twice.
         _disposeRenderer() {
+            // A headset still on: its session and its frame clock go first,
+            // while the renderer they hang off is still there.
+            this._disposeVR();
             if (this._renderer) {
                 // The PIXI texture a fight over this world was drawn on goes
                 // with the canvas it was keyed to; leaving it in PIXI's cache
@@ -8378,6 +8627,37 @@
                 this._renderer = null;
             }
         }
+    }
+
+    // =========================================================================
+    // VR Headset option (Options > Experimental). Off by default: on, the 3D
+    // world offers an Enter VR button whenever a WebXR headset is plugged in.
+    // Read when the world is built, so a change shows on the next visit.
+    // =========================================================================
+    ConfigManager[VR_OPTION] = false;
+
+    const _ConfigManager_makeData_vr = ConfigManager.makeData;
+    ConfigManager.makeData = function () {
+        const config = _ConfigManager_makeData_vr.call(this);
+        config[VR_OPTION] = this[VR_OPTION];
+        return config;
+    };
+
+    const _ConfigManager_applyData_vr = ConfigManager.applyData;
+    ConfigManager.applyData = function (config) {
+        _ConfigManager_applyData_vr.call(this, config);
+        this[VR_OPTION] = config[VR_OPTION] === true;
+    };
+
+    if (window.GameOptions && typeof GameOptions.registerOption === 'function') {
+        GameOptions.registerOption(
+            VR_OPTION,
+            () => T('GameOptions.label.voxelVR'),
+            () => ConfigManager[VR_OPTION],
+            (value) => { ConfigManager[VR_OPTION] = value; ConfigManager.save(); },
+            'experimental',
+            'boolean'
+        );
     }
 
     // Handed to the rest of the suite.

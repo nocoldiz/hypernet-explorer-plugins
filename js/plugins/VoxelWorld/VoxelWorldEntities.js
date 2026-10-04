@@ -42,6 +42,10 @@
     // by distance like the traffic.
     // =========================================================================
     const ENEMY_3D_MAX       = 24;     // concurrently loaded battler models
+    // How far off a creature's rig is posed every frame, and past which only
+    // every fourth (between the two: every other), in world units.
+    const ANIM_NEAR = 320;
+    const ANIM_FAR  = 760;
 
     // How tall a creature stands out here, in world units.
     //
@@ -529,10 +533,25 @@
         update(delta, vanX, vanZ) {
             if (!this._ok) return;
             // Gait animations tick, roaming updates, distance recycling.
+            this._animFrame = (this._animFrame + 1) | 0;
             for (let i = this._ents.length - 1; i >= 0; i--) {
                 const ent = this._ents[i];
                 if (ent.model && typeof ent.model.update === 'function') {
-                    try { ent.model.update(delta); } catch (e) { /* ignore */ }
+                    // Every limb of a rig is posed in JS, and a creature half
+                    // a kilometre off is a few pixels tall: past ANIM_NEAR it is
+                    // posed every other frame, past ANIM_FAR every fourth, with
+                    // the time it skipped handed over in one step so its gait
+                    // keeps the same pace. One in a fight is always posed.
+                    const ax = ent.x - vanX, az = ent.z - vanZ;
+                    const ad = ax * ax + az * az;
+                    const every = ent.battler || ad < ANIM_NEAR * ANIM_NEAR ? 1
+                        : ad < ANIM_FAR * ANIM_FAR ? 2 : 4;
+                    ent._animAcc = (ent._animAcc || 0) + delta;
+                    if (every === 1 || ((this._animFrame + i) % every) === 0) {
+                        const step = Math.min(ent._animAcc, 0.25);
+                        ent._animAcc = 0;
+                        try { ent.model.update(step); } catch (e) { /* ignore */ }
+                    }
                 }
                 // Anything that can move, and anything that can react to being
                 // walked up to even if it cannot: a mimic never takes a step and
@@ -1119,7 +1138,9 @@
             // under it and a bird passes over it.
             if (gy < -0.5 && !ent.swims && !ent.flies) { ent.heading += Math.PI; ent.turnT = 1.0; return; }
             ent.x = nx; ent.z = nz;
-            this._placeY(ent, delta, px, pz);
+            // The ground just read IS the ground under the new spot: handed on
+            // rather than asked for twice (four column lookups apiece).
+            this._placeY(ent, delta, px, pz, gy);
             ent.root.rotation.y = Math.atan2(Math.cos(ent.heading), Math.sin(ent.heading));
         }
 
@@ -1127,20 +1148,22 @@
         // at, or the air it flies in. Eased rather than snapped, so a rising
         // bed lifts a fish and a bird banks down into a dive instead of
         // teleporting onto the party's head.
-        _placeY(ent, delta, px, pz) {
+        _placeY(ent, delta, px, pz, groundY) {
             const ts = WORLD_TILE_SIZE;
-            const gy = this._terrain.getTerrainHeight(ent.x / ts, ent.z / ts);
+            const gy = groundY != null ? groundY : this._terrain.getTerrainHeight(ent.x / ts, ent.z / ts);
             let want = gy;
             if (ent.swims) {
+                // Surface and bed read once and shared with _swimY: each is a
+                // column sample, and a swimmer used to take both of them twice.
                 const top = this._terrain.waterSurfaceAt(ent.x, ent.z);
+                const bed = top != null ? this._terrain.getBlockTop(ent.x, ent.z) : null;
                 if (top != null) {
-                    const bed = this._terrain.getBlockTop(ent.x, ent.z);
                     if (ent.state === 'commit' || ent.state === 'alert') {
                         const targetD = Math.max(ENEMY_WATER_MARGIN, Math.min(Math.max(ENEMY_WATER_MARGIN, top - bed - ENEMY_WATER_MARGIN), ENEMY_WATER_MARGIN * 1.5));
                         ent.swimD = ent.swimD == null ? targetD : ent.swimD + (targetD - ent.swimD) * Math.min(1, delta * 3.0);
                     }
                 }
-                const w = this._swimY(ent.x, ent.z, ent.swimD);
+                const w = this._swimY(ent.x, ent.z, ent.swimD, top, bed);
                 want = w == null ? gy + ENEMY_WATER_MARGIN : w;
             } else if (ent.flies) {
                 // Perched while it has nothing to do, cruising while it is
@@ -1162,10 +1185,10 @@
         // Where a creature swimming at `depth` below the surface actually sits
         // at a point, clamped so it never breaks the surface and never sinks
         // into the bed. Null where there is no water worth swimming in.
-        _swimY(x, z, depth) {
-            const top = this._terrain.waterSurfaceAt(x, z);
+        _swimY(x, z, depth, knownTop, knownBed) {
+            const top = knownTop !== undefined ? knownTop : this._terrain.waterSurfaceAt(x, z);
             if (top == null) return null;
-            const bed = this._terrain.getBlockTop(x, z);
+            const bed = knownBed != null ? knownBed : this._terrain.getBlockTop(x, z);
             if (top - bed < ENEMY_WATER_MIN_D) return null;
             return Math.max(bed + ENEMY_WATER_MARGIN,
                 Math.min(top - ENEMY_WATER_MARGIN, top - (depth || 0)));
@@ -1616,7 +1639,10 @@
 
         _populate(wx, wy, big) {
             const ts   = WORLD_TILE_SIZE;
-            const plan = planSettlement(wx, wy, big, ts);
+            // The plan the decorator, the interiors and the walker already
+            // share (see Decor's _decorateSettlement), not a second one built from scratch
+            // in the frame the crowd turns up.
+            const plan = planForTile(wx, wy) || planSettlement(wx, wy, big, ts);
             const originX = wx * ts + ts * 0.5;
             const originZ = wy * ts + ts * 0.5;
             const baseY   = this._terrain.getTerrainHeight(wx + 0.5, wy + 0.5) + plan.paveH;
@@ -1849,7 +1875,18 @@
             // shared with every other building in the world; only this
             // interior's own instance buffers are freed with it.
             rec.group.traverse(o => { if (o.isInstancedMesh && o.dispose) o.dispose(); });
+            this._dropKeepers(rec);
             this._live.delete(key);
+        }
+
+        // The shopkeepers are the one thing in an interior that is NOT shared:
+        // each card owns its material, its cloned texture and its plane, and
+        // sits in the billboard registry that is turned to the camera every
+        // render. Taking the group out of the scene left all of that behind.
+        _dropKeepers(rec) {
+            if (!rec.keepers) return;
+            for (const k of rec.keepers) if (k.bb) k.bb.dispose();
+            rec.keepers = [];
         }
 
         // Put up one building's inside: the floors, the walls between the rooms,
@@ -1889,6 +1926,7 @@
                 this._scene.remove(rec.group);
                 rec.group.traverse(o => { if (o.isInstancedMesh && o.dispose) o.dispose(); });
             }
+            this._dropKeepers(rec);
             rec.focus = focus;
             const { lot, inner, base } = rec;
             const dec  = this.decorator;

@@ -69,7 +69,8 @@
     "asciiHud": "ASCII HUD",
     "themeAscii": "ASCII",
     "galaxyQuality": "Star Map Quality",
-    "ctrlNoclip": "CTRL Noclip"
+    "ctrlNoclip": "CTRL Noclip",
+    "voxelVR": "VR Headset"
   },
   "warn": {
     "language": "⚠ Work in progress: only English is fully translated. Any other language leaves large parts of the game untranslated.",
@@ -127,7 +128,8 @@
     "battleLogPosition": "Which corner of the screen the running battle commentary hangs in.",
     "battleCommandPosition": "Which side of the screen the battle command list, the skill page and the backpack stand on.",
     "lowModelDetail": "Builds procedural weapons and items with fewer segments. Helps on slower machines; the models read blockier.",
-    "simulationLog": "Every decision taken on the map by a party member, a monster or an NPC pops up as a notification. Busy maps produce a lot of them."
+    "simulationLog": "Every decision taken on the map by a party member, a monster or an NPC pops up as a notification. Busy maps produce a lot of them.",
+    "voxelVR": "Lets the 3D world be seen through a WebXR headset. While it is on, an Enter VR button appears in the 3D world whenever a headset is connected; your head looks around and the usual controls still move you. Takes effect the next time you enter the 3D world."
   },
   "descState": {
     "musicArtistDisplay": [
@@ -191,7 +193,8 @@
     "noclip": "Noclip",
     "ascii": "ASCII",
     "other": "Other",
-    "simulationLog": "Simulation Log"
+    "simulationLog": "Simulation Log",
+    "vr": "Virtual Reality"
   },
   "galaxyQuality": {
     "low": "Low",

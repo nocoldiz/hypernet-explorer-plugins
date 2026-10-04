@@ -25,7 +25,8 @@
     "sleep": "Sleep",
     "hygiene": "Hygiene",
     "social": "Social",
-    "leisure": "Mood"
+    "leisure": "Mood",
+    "bladder": "Bladder"
   },
   "classAbility": "Class Ability",
   "ui": {

@@ -41,7 +41,8 @@
         VOX, VoxelField, VoxelMesher, WORLD_TILE_SIZE, getRenderType, profileFor,
         getRoadDirectionAt, loadTex, loadVoxelTex, sampleBiomeAt, voxelMaterial, VoxelWorldState,
         voxelGrassMaterial, voxelWaterMaterial, disposeVoxelMaterial,
-        voxelBlockMaterial, alienSeaNear
+        voxelBlockMaterial, alienSeaNear,
+        getAlienTerrain, getBiomeOverride, isRiverTile, riverLinksAt, terrainEpoch
     } = VW;
 
     const WORLD_TILES_ACROSS = 256;
@@ -71,15 +72,399 @@
     // seamless, was the thing that made parts of a mountain wink in and out.
     const LOD_HYST = 0.35;
 
+    // The height a tile's culling box spans: the whole column the field can
+    // hold, from under the deepest cave to over the highest peak, with room
+    // for a tower or a tree standing on top of it.
+    const CULL_MIN_Y = VOX.MIN_Y * VOX.SIZE - 50;
+    const CULL_MAX_Y = VOX.MAX_Y * VOX.SIZE + 400;
+
     // Give back everything a subtree holds. An InstancedMesh keeps a buffer of
     // its own on top of its geometry, and a streaming world builds and drops
     // thousands of them.
+    // A shape the decorator shares across every tile (userData.vwShared) is
+    // left alone: it belongs to the decorator, not to the tile.
     function disposeTree(root) {
         root.traverse(o => {
-            if (o.geometry) o.geometry.dispose();
+            if (o.geometry && !(o.geometry.userData && o.geometry.userData.vwShared)) o.geometry.dispose();
             if (o.isInstancedMesh && o.dispose) o.dispose();
         });
     }
+
+    // =========================================================================
+    // Mesh workers
+    // =========================================================================
+    // Meshing a patch of ground is the one big piece of work this world does
+    // on the main thread while it streams: sampling the columns (noise, biome
+    // blends, rivers, islands) and greedy-meshing them. It needs nothing from
+    // the page - no WebGL, no RPG Maker, no DOM - only the world map's answers
+    // and the dig log, so it is handed to a small pool of workers that run the
+    // SAME VoxelWorldCore.js and VoxelWorldField.js (and the same three.js),
+    // loaded into them by URL. What comes back is the patch's typed arrays,
+    // handed over without a copy, and the main thread only wraps them.
+    //
+    // What a worker cannot ask the game it is told up front: a snapshot of the
+    // world map, square by square - the biome's name and colour, the road's
+    // direction, the river and where it flows - taken off the main thread's own
+    // answers, so the worker's world is the main thread's world by
+    // construction. The snapshot is built a slice per frame, and rebuilt
+    // whenever the terrain memo is cleared (a fresh biome table, a new scene).
+    //
+    // The main thread keeps meshing for itself whenever the pool cannot answer
+    // the same way: while the snapshot is being taken, on another world (the
+    // ground comes off the planet's own field, a closure that cannot be sent),
+    // under a biome override, behind a transition (that build has to finish
+    // before the fade lifts), and for the patch a pick has just changed, which
+    // must change on the next frame. A worker that fails to start turns the
+    // pool off for the rest of the session and nothing else changes.
+    // Two: each worker keeps its own column memo (tens of megabytes), and two
+    // already mesh faster than the ring can ask.
+    const MESH_WORKERS_MAX   = 2;
+    const MESH_INFLIGHT_PER  = 8;     // jobs queued on one worker at a time
+    // A job out longer than this means a worker has stopped answering; the
+    // pool is turned off rather than left holding the queue.
+    const MESH_JOB_TIMEOUT_MS = 4000;
+    const SNAP_SLICE_MS      = 2.0;   // snapshot work per frame
+    const SNAP_N             = WORLD_TILES_ACROSS;
+
+    // The worker's side, shipped as source (Function#toString) into a Blob so
+    // the suite stays the files it is. Runs in the worker's own global scope.
+    function meshWorkerMain() {
+        let VW = null, field = null;
+        self.onmessage = (e) => {
+            const m = e.data;
+            try {
+                if (m.type === 'init') init(m);
+                else if (m.type === 'edits') field.edits.replaceTile(m.wx, m.wy, m.cells);
+                else if (m.type === 'clearEdits') field.edits.clear();
+                else if (m.type === 'job') job(m);
+            } catch (err) {
+                self.postMessage({ type: m.type === 'job' ? 'jobError' : 'error', id: m.id,
+                    message: String((err && err.stack) || err) });
+            }
+        };
+        function init(m) {
+            self.window = self;
+            // The core fetches its biome tables for itself on load; here the
+            // snapshot answers instead, so the requests are left unanswered.
+            self.fetch = () => new Promise(() => {});
+            importScripts(m.urls.three);
+            importScripts(m.urls.core);
+            VW = self.VoxelWorld;
+            const S = m.snap, N = S.size;
+            const objs = S.names.map((name, i) => ({ name, color: S.colors[i] }));
+            const inside = (x, y) => x >= 0 && y >= 0 && x < N && y < N;
+            const biome = VW.sampleBiomeAt, road = VW.getRoadDirectionAt;
+            const LINKS = ['n', 's', 'w', 'e'];
+            // Off the map (the Far Lands) the core's own answers are pure
+            // arithmetic, and are used as they are.
+            VW.sampleBiomeAt = (x, y) => inside(x, y) ? objs[S.biome[y * N + x]] : biome(x, y);
+            VW.getRoadDirectionAt = (x, y) => inside(x, y) ? S.roadNames[S.road[y * N + x]] : road(x, y);
+            VW.isRiverTile = (x, y) => inside(x, y) && (S.river[y * N + x] & 1) === 1;
+            VW.riverLinksAt = (x, y) => {
+                if (!inside(x, y)) return [];
+                const v = S.river[y * N + x];
+                if (!(v & 1)) return [];
+                const out = [];
+                for (let k = 0; k < 4; k++) if (v & (2 << k)) out.push(LINKS[k]);
+                return out;
+            };
+            importScripts(m.urls.field);
+            field = new VW.VoxelField();
+            self.postMessage({ type: 'ready' });
+        }
+        function job(m) {
+            const res = VW.VoxelMesher.build(field, m.wx, m.wy, m.cx0, m.cz0, m.n, m.step,
+                m.bx, m.bz, m.caves);
+            const parts = [], transfer = [];
+            const pack = (kind, geo, mat) => {
+                if (!geo) return;
+                const a = geo.attributes, bs = geo.boundingSphere;
+                const p = {
+                    kind, mat,
+                    pos: a.position.array, nor: a.normal.array, col: a.color.array, uv: a.uv.array,
+                    idx: geo.index ? geo.index.array : null,
+                    sphere: bs ? [bs.center.x, bs.center.y, bs.center.z, bs.radius] : null
+                };
+                transfer.push(p.pos.buffer, p.nor.buffer, p.col.buffer, p.uv.buffer);
+                if (p.idx) transfer.push(p.idx.buffer);
+                parts.push(p);
+            };
+            if (res) {
+                pack('solid', res.solid, -1);
+                pack('grass', res.grass, -1);
+                if (res.blocks) for (const b of res.blocks) pack('block', b.geo, b.mat);
+                pack('water', res.water, -1);
+            }
+            self.postMessage({ type: 'done', id: m.id, empty: !res, parts }, transfer);
+        }
+    }
+
+    // A patch handed back by a worker, as the geometries VoxelMesher.build
+    // would have returned on this thread.
+    function unpackMeshResult(msg) {
+        if (msg.empty) return null;
+        const out = { solid: null, grass: null, blocks: null, water: null };
+        for (const p of msg.parts) {
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.Float32BufferAttribute(p.pos, 3));
+            geo.setAttribute('normal',   new THREE.Float32BufferAttribute(p.nor, 3));
+            geo.setAttribute('color',    new THREE.Float32BufferAttribute(p.col, 3));
+            geo.setAttribute('uv',       new THREE.Float32BufferAttribute(p.uv, 2));
+            if (p.idx) {
+                geo.setIndex(p.idx instanceof Uint32Array
+                    ? new THREE.Uint32BufferAttribute(p.idx, 1)
+                    : new THREE.Uint16BufferAttribute(p.idx, 1));
+            }
+            if (p.sphere) {
+                geo.boundingSphere = new THREE.Sphere(
+                    new THREE.Vector3(p.sphere[0], p.sphere[1], p.sphere[2]), p.sphere[3]);
+            }
+            if (p.kind === 'block') (out.blocks || (out.blocks = [])).push({ mat: p.mat, geo });
+            else out[p.kind] = geo;
+        }
+        return out;
+    }
+
+    class MeshWorkerPool {
+        // A pool for this page, or null where there cannot be one (the node
+        // tests, a page without workers).
+        static create(field) {
+            if (typeof Worker === 'undefined' || typeof Blob === 'undefined' ||
+                typeof URL === 'undefined' || !URL.createObjectURL ||
+                typeof document === 'undefined' || !document.baseURI) return null;
+            if (MeshWorkerPool.disabled) return null;
+            return new MeshWorkerPool(field);
+        }
+
+        constructor(field) {
+            this.field = field;
+            this.state = 'snapshot';      // snapshot -> booting -> ready | failed
+            this.workers = [];
+            this._jobs = new Map();       // id -> { cb, t }
+            this._nextId = 1;
+            this._epoch = -1;
+            this._snap = null;
+            this._snapAt = 0;
+        }
+
+        // The world map, as the main thread answers it, one slice a frame.
+        _takeSnapshot(budgetMs) {
+            const clock = () => ((typeof performance !== 'undefined') ? performance.now() : Date.now());
+            const t0 = clock();
+            // The world map file reloading under a transfer gives stand-in
+            // biome answers the core does not keep; a snapshot must not keep
+            // them either, so it waits for the map to be back.
+            if (typeof $gameMap !== 'undefined' && $gameMap && $gameMap.mapId &&
+                $gameMap.mapId() === 315 && (typeof $dataMap === 'undefined' || !$dataMap)) return false;
+            let s = this._snap;
+            if (!s) {
+                s = this._snap = {
+                    size: SNAP_N, names: [], colors: [], roadNames: [],
+                    biome: new Uint16Array(SNAP_N * SNAP_N),
+                    road: new Uint16Array(SNAP_N * SNAP_N),
+                    river: new Uint8Array(SNAP_N * SNAP_N),
+                    _bIdx: new Map(), _rIdx: new Map()
+                };
+                this._snapAt = 0;
+            }
+            const total = SNAP_N * SNAP_N;
+            let i = this._snapAt;
+            while (i < total) {
+                const x = i % SNAP_N, y = (i / SNAP_N) | 0;
+                const b = sampleBiomeAt(x, y);
+                const name = b && b.name, color = b && b.color;
+                const bk = name + '\u0000' + color;
+                let bi = s._bIdx.get(bk);
+                if (bi === undefined) { bi = s.names.length; s.names.push(name); s.colors.push(color); s._bIdx.set(bk, bi); }
+                s.biome[i] = bi;
+                const dir = getRoadDirectionAt(x, y);
+                let ri = s._rIdx.get(dir);
+                if (ri === undefined) { ri = s.roadNames.length; s.roadNames.push(dir); s._rIdx.set(dir, ri); }
+                s.road[i] = ri;
+                let rv = 0;
+                if (isRiverTile(x, y)) {
+                    rv = 1;
+                    const links = riverLinksAt(x, y);
+                    if (links.indexOf('n') >= 0) rv |= 2;
+                    if (links.indexOf('s') >= 0) rv |= 4;
+                    if (links.indexOf('w') >= 0) rv |= 8;
+                    if (links.indexOf('e') >= 0) rv |= 16;
+                }
+                s.river[i] = rv;
+                i++;
+                if ((i & 255) === 0 && clock() - t0 >= budgetMs) break;
+            }
+            this._snapAt = i;
+            return i >= total;
+        }
+
+        _boot() {
+            const base = document.baseURI;
+            const url = (p) => new URL(p, base).href;
+            const urls = {
+                three: url('js/libs/three.min.js'),
+                core:  url('js/plugins/VoxelWorld/VoxelWorldCore.js'),
+                field: url('js/plugins/VoxelWorld/VoxelWorldField.js')
+            };
+            const src = '(' + meshWorkerMain.toString() + ')();';
+            let blobUrl = null;
+            try {
+                blobUrl = URL.createObjectURL(new Blob([src], { type: 'application/javascript' }));
+            } catch (e) { this._fail('blob', e); return; }
+            const s = this._snap;
+            const snap = { size: s.size, names: s.names, colors: s.colors, roadNames: s.roadNames,
+                           biome: s.biome, road: s.road, river: s.river };
+            const cores = (typeof navigator !== 'undefined' && navigator.hardwareConcurrency) || 2;
+            const count = Math.max(1, Math.min(MESH_WORKERS_MAX, cores - 1));
+            this.state = 'booting';
+            this._pending = count;
+            for (let k = 0; k < count; k++) {
+                let w;
+                try { w = new Worker(blobUrl); } catch (e) { this._fail('spawn', e); return; }
+                const rec = { w, inflight: 0, ready: false, sent: new Map(), epoch: -1 };
+                w.onmessage = (e) => this._onMessage(rec, e.data);
+                w.onerror = (e) => { if (e && e.preventDefault) e.preventDefault(); this._fail('worker', e && e.message); };
+                this.workers.push(rec);
+                w.postMessage({ type: 'init', urls, snap });
+            }
+            this._blobUrl = blobUrl;
+        }
+
+        _onMessage(rec, m) {
+            if (!m) return;
+            if (m.type === 'ready') {
+                rec.ready = true;
+                if (--this._pending === 0 && this.state === 'booting') this.state = 'ready';
+                return;
+            }
+            if (m.type === 'error') { this._fail('init', m.message); return; }
+            if (m.type === 'done' || m.type === 'jobError') {
+                rec.inflight = Math.max(0, rec.inflight - 1);
+                const job = this._jobs.get(m.id);
+                this._jobs.delete(m.id);
+                if (!job) return;
+                const cb = job.cb;
+                if (m.type === 'jobError') {
+                    console.warn('[VoxelWorld] mesh worker job failed, meshing here instead', m.message);
+                    cb(null, true);
+                } else {
+                    cb(unpackMeshResult(m), false);
+                }
+            }
+        }
+
+        _fail(where, why) {
+            if (this.state === 'failed') return;
+            console.warn('[VoxelWorld] mesh workers off (' + where + ')', why || '');
+            this.state = 'failed';
+            MeshWorkerPool.disabled = true;
+            // Every job still out is answered "do it yourself".
+            this._recallAll();
+        }
+
+        _recallAll() {
+            const jobs = [...this._jobs.values()];
+            this._jobs.clear();
+            this._terminate();
+            for (const j of jobs) j.cb(null, true);
+        }
+
+        _terminate() {
+            for (const r of this.workers) { try { r.w.terminate(); } catch (e) { /* gone */ } }
+            this.workers.length = 0;
+            if (this._blobUrl) { try { URL.revokeObjectURL(this._blobUrl); } catch (e) { /* ignore */ } }
+            this._blobUrl = null;
+        }
+
+        // Once a frame, from the terrain's update.
+        tick() {
+            if (this.state === 'failed') return;
+            const ep = terrainEpoch ? terrainEpoch() : 0;
+            if (ep !== this._epoch) {
+                // The world the workers hold is out of date: start again from
+                // a fresh snapshot. Jobs already out answer for the old world
+                // and are sent back to be done here.
+                this._epoch = ep;
+                this._recallAll();
+                this._snap = null;
+                this.state = 'snapshot';
+            }
+            if (this.state === 'snapshot' && this._takeSnapshot(SNAP_SLICE_MS)) this._boot();
+            // The oldest job out is the first one sent (a Map keeps order).
+            // A long gap between frames is this thread stalled (a scene being
+            // built, a save), not a worker gone quiet: the answers are sitting
+            // in the queue behind the stall, so the clocks start again.
+            const now = (typeof performance !== 'undefined') ? performance.now() : Date.now();
+            const gap = this._lastTick ? now - this._lastTick : 0;
+            this._lastTick = now;
+            if (this._jobs.size) {
+                if (gap > 1000) { for (const j of this._jobs.values()) j.t = now; return; }
+                const first = this._jobs.values().next().value;
+                if (now - first.t > MESH_JOB_TIMEOUT_MS) this._fail('timeout');
+            }
+        }
+
+        // Whether a patch may go to a worker at all right now.
+        usable() {
+            return this.state === 'ready' && !getAlienTerrain() &&
+                !(getBiomeOverride && getBiomeOverride());
+        }
+
+        // Room for one more job.
+        hasRoom() {
+            for (const r of this.workers) if (r.ready && r.inflight < MESH_INFLIGHT_PER) return true;
+            return false;
+        }
+
+        // Bring one worker's copy of the dig log up to date for the squares a
+        // patch of (wx, wy) can see.
+        _syncEdits(rec, wx, wy) {
+            const edits = this.field.edits;
+            if (rec.epoch !== edits.epoch) {
+                rec.epoch = edits.epoch;
+                rec.sent.clear();
+                rec.w.postMessage({ type: 'clearEdits' });
+            }
+            for (let dy = -1; dy <= 1; dy++) {
+                for (let dx = -1; dx <= 1; dx++) {
+                    const tx = wx + dx, ty = wy + dy;
+                    const k = tileKey(tx, ty);
+                    const ver = edits.tileVersion(tx, ty);
+                    if ((rec.sent.get(k) || 0) === ver) continue;
+                    rec.sent.set(k, ver);
+                    const cells = edits.tileCells(tx, ty);
+                    rec.w.postMessage({ type: 'edits', wx: tx, wy: ty, cells },
+                        cells ? [cells.buffer] : []);
+                }
+            }
+        }
+
+        // Send a patch off. `cb(result, retry)`: the geometries, or retry =
+        // true when it has to be meshed on this thread after all.
+        dispatch(job, cb) {
+            let best = null;
+            for (const r of this.workers) {
+                if (!r.ready || r.inflight >= MESH_INFLIGHT_PER) continue;
+                if (!best || r.inflight < best.inflight) best = r;
+            }
+            if (!best) return false;
+            this._syncEdits(best, job.wx, job.wy);
+            const id = this._nextId++;
+            job.type = 'job';
+            job.id = id;
+            this._jobs.set(id, { cb, t: (typeof performance !== 'undefined') ? performance.now() : Date.now() });
+            best.inflight++;
+            best.w.postMessage(job);
+            return true;
+        }
+
+        dispose() {
+            this._jobs.clear();
+            this._terminate();
+            this.state = 'failed';
+        }
+    }
+    MeshWorkerPool.disabled = false;
 
     // =========================================================================
     // VoxelTerrain
@@ -133,6 +518,13 @@
             this.field = new VoxelField();
             this.field.onEdit = (wx, wy, lx, lz) => this._markDirty(wx, wy, lx, lz);
             this._dirty = new Set();            // "wx,wy,si,sj" patches to re-mesh
+            // The workers that mesh streamed ground off this thread (null where
+            // there are none), the patches out with them, and the patches a
+            // pick has just changed, which are always meshed here and now.
+            this._pool = MeshWorkerPool.create(this.field);
+            this._jobSeq = 0;
+            this._inflight = new Map();         // patch key -> { ch, si, sj, seq }
+            this._syncPatches = new Set();
             this._pendingBuilds = false;
             // Where the ring was last read from, and how fast and which way the
             // camera was going: what the build order and the look-ahead are
@@ -513,8 +905,14 @@
             // Re-mesh anything waiting first: a hole the player is still looking
             // at matters more than a tile on the horizon, and the patches of a
             // tile just streamed in are what the ground round it is made of.
-            this._drainDirty(buildAll ? 4096 : 12,
-                             buildAll ? Infinity : frameMs * 0.7);
+            if (this._pool) this._pool.tick();
+            if (buildAll) this._recallInflight();
+            // With the pool taking the streamed patches a take costs a message,
+            // not a mesh, so the count can be higher; the pool's own room is
+            // what holds it back (see _drainDirty).
+            const viaPool = !buildAll && this._pool && this._pool.usable();
+            this._drainDirty(buildAll ? 4096 : (viaPool ? 32 : 12),
+                             buildAll ? Infinity : frameMs * 0.7, buildAll);
 
             // The ring is re-read on movement rather than on tile crossings.
             // The LOD bands are fractional now, so a tile can be due a change
@@ -597,7 +995,7 @@
                 }
             }
             // Behind a transition nothing may be left on the queue.
-            if (buildAll) this._drainDirty(4096, Infinity);
+            if (buildAll) this._drainDirty(4096, Infinity, true);
             this._pendingBuilds = needed.length > built || this._dirty.size > 0;
             this._applyCaveDrawRing(cwx, cwy);
         }
@@ -614,6 +1012,60 @@
             for (const ch of this._chunks.values()) {
                 const on = !caves ||
                     (Math.abs(ch.wx - cwx) <= CAVE_DRAW_R && Math.abs(ch.wy - cwy) <= CAVE_DRAW_R);
+                // Kept on the chunk as well, so the view cull below never
+                // switches back on a tile the cave ring has put away.
+                ch.caveOff = !on;
+                if (ch.grp.visible !== on) ch.grp.visible = on;
+            }
+        }
+
+        // Only the tiles the camera can see are drawn. Every tree, plant and
+        // town piece on a tile is an InstancedMesh, and three.js can only cull
+        // those by the bounds of the ONE unit shape they all share - which is
+        // why every one of them is marked never-culled, and why a whole ring of
+        // them, the half behind the camera included, went to the GPU every
+        // frame. The tile itself has a true box (its square, from below the
+        // deepest cave to above the highest peak), so the test is made once
+        // per tile here and the group is switched off as a whole: three.js
+        // then never walks into it at all.
+        //
+        // The tiles round the camera are always drawn, whatever the test says:
+        // a creature's shadow and the ground under the eye must never depend
+        // on a box test against a camera that is about to turn. Nothing on a
+        // tile casts a shadow, so a tile switched off cannot take one away.
+        //
+        // `camera` null (split screen, two eyes) puts every tile back on.
+        cull(camera) {
+            if (!this._cullBox) {
+                this._cullBox = new THREE.Box3();
+                this._cullFrustum = new THREE.Frustum();
+                this._cullMat = new THREE.Matrix4();
+                // Generous on purpose: a tree crown or a lamp leans over the
+                // edge of its square, and a tile popping off with something of
+                // it still in frame is worse than drawing a few spare ones.
+                this._cullPad = this._ts * 0.25;
+            }
+            if (!camera) {
+                for (const ch of this._chunks.values()) {
+                    const on = !ch.caveOff;
+                    if (ch.grp.visible !== on) ch.grp.visible = on;
+                }
+                return;
+            }
+            camera.updateWorldMatrix(true, false);
+            camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
+            this._cullMat.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+            this._cullFrustum.setFromProjectionMatrix(this._cullMat);
+            const ts = this._ts, pad = this._cullPad, box = this._cullBox;
+            const camWx = Math.floor(camera.matrixWorld.elements[12] / ts);
+            const camWy = Math.floor(camera.matrixWorld.elements[14] / ts);
+            for (const ch of this._chunks.values()) {
+                let on = !ch.caveOff;
+                if (on && (Math.abs(ch.wx - camWx) > 1 || Math.abs(ch.wy - camWy) > 1)) {
+                    box.min.set(ch.wx * ts - pad, CULL_MIN_Y, ch.wy * ts - pad);
+                    box.max.set((ch.wx + 1) * ts + pad, CULL_MAX_Y, (ch.wy + 1) * ts + pad);
+                    on = this._cullFrustum.intersectsBox(box);
+                }
                 if (ch.grp.visible !== on) ch.grp.visible = on;
             }
         }
@@ -675,7 +1127,7 @@
             ch.done = new Set();
             for (let sj = 0; sj < ch.sub; sj++) {
                 for (let si = 0; si < ch.sub; si++) {
-                    if (now) this._buildSub(ch, si, sj);
+                    if (now) this._buildSub(ch, si, sj, true);
                     else this._queueDirty(ch.wx, ch.wy, si, sj);
                 }
             }
@@ -700,7 +1152,7 @@
         _relod(ch, step, now) {
             if (ch.step === step) return;
             // Whatever is still queued for the step it is leaving means nothing.
-            this._dropDirty(ch.wx + ',' + ch.wy);
+            this._dropDirty(tileKey(ch.wx, ch.wy));
             const stash = ch.old || (ch.old = new Map());
             for (const [k, rec] of ch.subs) {
                 // A patch that was never shown - it was still waiting on the
@@ -712,6 +1164,8 @@
             }
             ch.subs.clear();
             ch.stamp++;
+            // Anything still out with a worker was cut for the old grid.
+            ch.seq = null;
             this._setGrid(ch, step);
             this._queuePatches(ch, now);
             this._dressChunk(ch);
@@ -799,11 +1253,64 @@
             ch.road = g;
         }
 
-        _buildSub(ch, si, sj) {
+        // `sync` meshes it here and now; otherwise a worker may take it, and
+        // the patch lands when the worker answers (_finishSub).
+        _buildSub(ch, si, sj, sync) {
             if (si >= ch.sub || sj >= ch.sub) return;
+            // Every build of a patch gets a number, and only the latest one asked
+            // for may land: a worker's answer overtaken by a dig, a change of
+            // detail or a build done here in the meantime is dropped.
+            const seq = ++this._jobSeq;
+            (ch.seq || (ch.seq = new Map())).set(si + ':' + sj, seq);
+            const caves = !!(this._caves && ch.step === 1);
+            const pool = this._pool;
+            if (!sync && pool && pool.usable()) {
+                const pk = patchKey(ch.wx, ch.wy, si, sj);
+                const job = { wx: ch.wx, wy: ch.wy, cx0: si * ch.span, cz0: sj * ch.span,
+                              n: ch.n, step: ch.step, bx: ch.px, bz: ch.pz, caves };
+                const sent = pool.dispatch(job, (res, retry) => {
+                    const out = this._inflight.get(pk);
+                    if (out && out.seq === seq) this._inflight.delete(pk);
+                    this._finishSub(ch, si, sj, seq, res, retry);
+                });
+                if (sent) { this._inflight.set(pk, { ch, si, sj, seq }); return; }
+            }
             const geo = VoxelMesher.build(this.field, ch.wx, ch.wy,
-                si * ch.span, sj * ch.span, ch.n, ch.step, ch.px, ch.pz,
-                this._caves && ch.step === 1);
+                si * ch.span, sj * ch.span, ch.n, ch.step, ch.px, ch.pz, caves);
+            this._placeSub(ch, si, sj, geo);
+        }
+
+        // A worker's patch, back.
+        _finishSub(ch, si, sj, seq, res, retry) {
+            const live = !this._disposed && this._chunks.get(tileKey(ch.wx, ch.wy)) === ch &&
+                ch.seq && ch.seq.get(si + ':' + sj) === seq;
+            if (!live) return;
+            if (retry) {
+                // The pool could not answer for it: back on the queue, to be
+                // meshed here (or by the pool once it is back).
+                this._queueDirty(ch.wx, ch.wy, si, sj);
+                this._pendingBuilds = true;
+                return;
+            }
+            this._placeSub(ch, si, sj, res);
+        }
+
+        // Every patch still out with a worker, brought home: queued again and
+        // its worker's answer disowned. Behind a transition the whole
+        // neighbourhood has to be standing before the fade lifts, and a patch
+        // in flight would land after it.
+        _recallInflight() {
+            if (!this._inflight.size) return;
+            for (const rec of this._inflight.values()) {
+                if (rec.ch.seq) rec.ch.seq.delete(rec.si + ':' + rec.sj);
+                if (this._chunks.get(tileKey(rec.ch.wx, rec.ch.wy)) === rec.ch) {
+                    this._queueDirty(rec.ch.wx, rec.ch.wy, rec.si, rec.sj);
+                }
+            }
+            this._inflight.clear();
+        }
+
+        _placeSub(ch, si, sj, geo) {
             const box = this._patchBox(ch, si, sj);
             // Held back while the step it is replacing still stands under it, so
             // no two surfaces are ever drawn through each other. _settle shows
@@ -970,6 +1477,9 @@
                     const sj = Math.min(ch.sub - 1,
                         Math.floor((gz - twy * VOX.PER_TILE) / ch.span));
                     this._queueDirty(twx, twy, si, sj);
+                    // A dig is answered on the next frame, never a worker's
+                    // round trip later.
+                    this._syncPatches.add(patchKey(twx, twy, si, sj));
                 }
             }
             this._pendingBuilds = true;
@@ -1050,9 +1560,11 @@
         // price: half a millisecond of flat grass, a couple of milliseconds of
         // mountain, more with the caves on. The clock is read between patches,
         // so the worst a frame can overrun by is one patch.
-        _drainDirty(budget, maxMs) {
+        _drainDirty(budget, maxMs, sync) {
             const dirty = this._dirty;
             if (!dirty.size) return;
+            const pool = (!sync && this._pool && this._pool.usable()) ? this._pool : null;
+            const syncs = this._syncPatches;
             const clock = () => ((typeof performance !== 'undefined') ? performance.now() : Date.now());
             const tStart = clock();
             const cap = maxMs === undefined ? Infinity : maxMs;
@@ -1061,9 +1573,10 @@
             const take = (key) => {
                 if (!dirty.delete(key)) return true;
                 done++;
+                const now = syncs.delete(key) || !!sync;
                 const ch = this._chunks.get(keyTile(key));
                 if (!ch) return true;
-                this._buildSub(ch, keySi(key), keySj(key));
+                this._buildSub(ch, keySi(key), keySj(key), now);
                 return true;
             };
             if (order) {
@@ -1075,6 +1588,9 @@
                 for (; oi < order.length; oi++) {
                     const e = order[oi].key;
                     if (!dirty.has(e)) continue;
+                    // Every worker has its hands full: the rest waits for the
+                    // next frame, in order, rather than being meshed here.
+                    if (pool && !syncs.has(e) && !pool.hasRoom()) break;
                     if (n-- <= 0) break;
                     if (done > 0 && clock() - tStart >= cap) break;
                     take(e);
@@ -1085,6 +1601,7 @@
                 // array first copied the whole queue - tens of thousands of
                 // entries while streaming - to take twelve off the front.
                 for (const key of dirty) {
+                    if (pool && !syncs.has(key) && !pool.hasRoom()) break;
                     if (n-- <= 0) break;
                     if (done > 0 && clock() - tStart >= cap) break;
                     take(key);
@@ -1538,6 +2055,10 @@
             this._decorator.dispose();
             this.field.onEdit = null;
             this._dirty.clear();
+            this._disposed = true;
+            if (this._pool) { this._pool.dispose(); this._pool = null; }
+            this._inflight.clear();
+            this._syncPatches.clear();
         }
     }
 

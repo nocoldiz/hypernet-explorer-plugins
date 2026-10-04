@@ -62,6 +62,9 @@
  *   refreshFollower()    → re-sync the on-map trailing sprite
  *   isRidable(id)        → can this companion be ridden as a mount
  *   getRidablePets()     → every registered companion that can be ridden
+ *   setRidable(id, on) / toggleRidable(id) → the Pets page Ridable toggle
+ *   offerRideAt(x, y)    → the "Ride" choice on the trailing companion
+ *   offerRideBeside()    → the same, for the companion beside the leader
  *   canTrain(id)         → is this companion eligible for combat training
  *   trainingOptions(id)  → [classId, ...] the trainings on offer for it
  *   trainingDays(id)     → how many days its training would take right now
@@ -73,13 +76,19 @@
  *   snapshotActor(actor) → the whole actor, kept for promoteDesigned
  *   canPromote(id) / promoteDesigned(id) → a designed child into a free seat
  *
+ * Riding: a companion marked Ridable on the Pets page (off by default, never
+ * for a child) can be ridden by the party leader, from that page or by
+ * interacting with it on the map. Every other companion marked Ridable is a
+ * temporary mount for the rest of the party while the leader rides (see the
+ * Mount section of VehicleSystem.js, which draws and moves all of it).
+ *
  * Abandonment is the only way to be rid of a companion, and it is an offence:
  * leaving a pet behind is filed with the nEuroPolice as pet abandonment, and
  * leaving a child behind as the graver charge of child abandonment.
  *
  * Pet record fields: { id, name, characterName, characterIndex, isFollower,
  *   isChild, parentName, bornOn, enemyId, enemyName, level, archetype, note,
- *   skillIds, sentient, magical, geneticFreak, attrs }
+ *   skillIds, sentient, magical, geneticFreak, rideEnabled, attrs }
  *
  * sentient, magical and geneticFreak are three independent optional traits
  * (any, all or none may be true) set when a companion is taken in. Each
@@ -112,9 +121,25 @@ Game_PetFollower.prototype.actor = function () {
     return null;
 };
 
+// The active pet is not drawn trailing the party while somebody is sitting on
+// it: a party member on a temporary mount (VehicleSystem.js draws it under them).
 Game_PetFollower.prototype.isVisible = function () {
     const pet = window.PetSystem && window.PetSystem.getActivePet();
-    return !!pet && $gamePlayer.followers().isVisible();
+    if (!pet || !$gamePlayer.followers().isVisible()) return false;
+    const vs = window.MergedVehicleSystem;
+    return !(vs && vs.isRidden && vs.isRidden(pet.id));
+};
+
+// The sheet is only re-read on refresh, so a change of visibility (a ride
+// starting or ending) has to ask for one, or the pet would keep or lack its
+// sprite until the next map.
+Game_PetFollower.prototype.update = function () {
+    Game_Follower.prototype.update.call(this);
+    const shown = this.isVisible();
+    if (shown !== this._petShown) {
+        this._petShown = shown;
+        this.refresh();
+    }
 };
 
 Game_PetFollower.prototype.refresh = function () {
@@ -382,42 +407,58 @@ window.Game_PetFollower = Game_PetFollower;
     const PET_BASE_ATTR = 10;
     const PET_TRAIT_BONUS = 4;
     // ---- Ridable ---------------------------------------------------------
-    // Whether a companion is big and willing enough to be sat on. Three sources,
-    // any one of which is enough, and all three are DATA rather than a literal
-    // roster kept here:
-    //
-    //   <Ridable>  on the note of the monster it was recruited from
-    //              (data/Enemies.json), which rides along in the pet record
-    //   ridable    on its sprite's wardrobe entry in js/db/WorldGen/NPCs.json,
-    //              either at the top level or inside animalGrowth (the horses,
-    //              the donkeys and the cattle), read through AnimalGrowthSystem
-    //
-    // A PARTY MEMBER is never any of these: they are actors, not pet records,
-    // and nothing here is ever asked about one. Riding a companion goes through
-    // the pet registry alone, so a person can never be made into a mount.
-    function _isRidableRecord(record) {
-        if (!record) return false;
-        if (record.ridable === true) return true;
-        if (/<Ridable>/i.test(String(record.note || ""))) return true;
-        // The enemy it was recruited from may carry the tag even when the record
-        // was built without copying the note over.
-        const enemy = record.enemyId && typeof $dataEnemies !== "undefined" && $dataEnemies
-            ? $dataEnemies[record.enemyId] : null;
-        if (enemy && /<Ridable>/i.test(String(enemy.note || ""))) return true;
-        return _isRidableSprite(record.characterName);
+    // Whether a companion may be sat on is the player's call, made per record
+    // from the Pets page (rideEnabled), and it starts off: nothing is a mount
+    // until somebody says so. A child never is, being family. A PARTY MEMBER is
+    // never asked at all: they are actors, not pet records, so riding goes
+    // through the pet registry alone and a person can never be made a mount.
+    function _canBeRidden(pet) {
+        return !!pet && !pet.isChild && !!pet.rideEnabled;
     }
 
-    // The wardrobe answer for a sprite sheet: the animal breeds go through
-    // AnimalGrowthSystem (which folds animalGrowth.ridable up to the breed), and
-    // anything else is read off the entry itself.
-    function _isRidableSprite(spriteKey) {
-        if (!spriteKey) return false;
-        if (window.AnimalGrowthSystem && window.AnimalGrowthSystem.isRidableSprite &&
-            window.AnimalGrowthSystem.isRidableSprite(spriteKey)) return true;
-        const entry = (window.WorldGen && window.WorldGen.NPCs) ? window.WorldGen.NPCs[spriteKey] : null;
-        if (!entry) return false;
-        if (entry.ridable === true) return true;
-        return !!(entry.animalGrowth && entry.animalGrowth.ridable);
+    // Interacting with the companion trailing the party offers its saddle.
+    // Whatever event stands on the tile asked about wins, so a pet never hides
+    // a door or a shopkeeper.
+    function _ridablePetSlot() {
+        if (typeof $gamePlayer === "undefined" || !$gamePlayer || $gamePlayer.isInVehicle()) return null;
+        const followers = $gamePlayer.followers();
+        const data = followers && followers.data ? followers.data() : [];
+        const slot = data.find(f => f instanceof Game_PetFollower);
+        if (!slot || !slot.isVisible() || slot.isTransparent()) return null;
+        return _canBeRidden(window.PetSystem.getActivePet()) ? slot : null;
+    }
+
+    function _facedRidablePet(x, y) {
+        const slot = _ridablePetSlot();
+        return slot && slot.pos(x, y) ? window.PetSystem.getActivePet() : null;
+    }
+
+    // A follower is walked through rather than bumped into, so turning to face
+    // the pet trailing right behind the leader steps onto its tile instead. It
+    // therefore also counts when it stands beside or under the leader and the
+    // press found nothing else to do.
+    function _besideRidablePet() {
+        const slot = _ridablePetSlot();
+        if (!slot) return null;
+        const near = Math.abs($gameMap.deltaX(slot.x, $gamePlayer.x)) <= 1 &&
+            Math.abs($gameMap.deltaY(slot.y, $gamePlayer.y)) <= 1;
+        return near ? window.PetSystem.getActivePet() : null;
+    }
+
+    function _hasActionEventAt(x, y) {
+        return $gameMap.eventsXy(x, y).some(e => e && e.isTriggerIn([0, 1, 2]) && e.isNormalPriority());
+    }
+
+    function _offerRide(pet) {
+        $gameMessage.setChoices([
+            T('PetFollower.ride.ride', { name: pet.name }),
+            T('PetFollower.ride.cancel'),
+        ], 0, 1);
+        $gameMessage.setChoiceCallback((choice) => {
+            if (choice !== 0) return;
+            const vs = window.MergedVehicleSystem;
+            if (vs && vs.mountPet) vs.mountPet(pet.id);
+        });
     }
 
     function _petAttrs(sentient, magical, geneticFreak) {
@@ -614,6 +655,24 @@ window.Game_PetFollower = Game_PetFollower;
         _advanceTraining();
     };
 
+    // The world map answers its own OK button first (WorldMapReturn.js) and
+    // asks offerRideAt there itself; everywhere else this is where it is asked:
+    // the pet faced first, and the pet beside the leader only once nothing
+    // else (an event, a vehicle, a menu) took the press.
+    const _Game_Player_triggerButtonAction_ride = Game_Player.prototype.triggerButtonAction;
+    Game_Player.prototype.triggerButtonAction = function () {
+        const ok = Input.isTriggered("ok") && this.canMove();
+        if (ok) {
+            const d = this.direction();
+            const x2 = $gameMap.roundXWithDirection(this.x, d);
+            const y2 = $gameMap.roundYWithDirection(this.y, d);
+            if (window.PetSystem.offerRideAt(x2, y2)) return true;
+        }
+        if (_Game_Player_triggerButtonAction_ride.call(this)) return true;
+        if (ok && window.PetSystem.offerRideBeside()) return true;
+        return false;
+    };
+
     window.PetSystem = {
         // The rename field in the Pets page caps typing at the same length
         // renamePet() enforces.
@@ -673,10 +732,8 @@ window.Game_PetFollower = Game_PetFollower;
                 sentient: sentient,
                 magical: magical,
                 geneticFreak: geneticFreak,
-                // Re-derived on every read (see isRidable) so a companion whose
-                // wardrobe entry gains the flag later is not stuck on a stale
-                // answer; kept on the record so a menu row can sort on it.
-                ridable: false,
+                // Off until the player turns it on from the Pets page.
+                rideEnabled: false,
                 attrs: _petAttrs(sentient, magical, geneticFreak),
                 // A child designed in the growing vat or the gene splicer: the
                 // whole character the wizard built, promoted whole (see
@@ -690,9 +747,6 @@ window.Game_PetFollower = Game_PetFollower;
             pet.gender = record.gender != null ? Number(record.gender) : body.gender;
             pet.reproduction = record.reproduction != null
                 ? Number(record.reproduction) : body.reproduction;
-            pet.ridable = _isRidableRecord(Object.assign({}, record, {
-                characterName: pet.characterName, note: pet.note, enemyId: pet.enemyId
-            }));
             list.push(pet);
             return pet;
         },
@@ -806,18 +860,55 @@ window.Game_PetFollower = Game_PetFollower;
             return actor;
         },
 
-        // Can this companion be ridden? A child never is (it is family, and it
-        // is small), and neither is anything the data does not say so about.
+        // Can this companion be ridden? Only when the player has marked it
+        // ridable, and never a child.
         isRidable(id) {
-            const pet = this.getPet(id);
-            if (!pet || pet.isChild) return false;
-            const ok = _isRidableRecord(pet);
-            pet.ridable = ok;
-            return ok;
+            return _canBeRidden(this.getPet(id));
         },
 
         getRidablePets() {
-            return this.getPets().filter(p => p && this.isRidable(p.id));
+            return this.getPets().filter(_canBeRidden);
+        },
+
+        // The Pets page toggle. Turning it off under somebody puts them on
+        // their feet: a leader riding it gets off, and a party member on it as
+        // a temporary mount simply walks again (VehicleSystem reads the list
+        // fresh every frame). Answers the new state, or null for a refusal.
+        setRidable(id, on) {
+            const pet = this.getPet(id);
+            if (!pet || pet.isChild) return null;
+            pet.rideEnabled = !!on;
+            const vs = window.MergedVehicleSystem;
+            if (!pet.rideEnabled && vs && vs.isMounted && vs.isMounted(pet.id)) vs.dismount();
+            _refreshFollower();
+            return pet.rideEnabled;
+        },
+
+        toggleRidable(id) {
+            const pet = this.getPet(id);
+            return pet ? this.setRidable(id, !pet.rideEnabled) : null;
+        },
+
+        // The action button on the companion trailing the party: when it can
+        // be ridden, the choice to climb on. Answers true when it took the press.
+        offerRideAt(x, y) {
+            if (typeof $gameMessage === "undefined" || $gameMessage.isBusy()) return false;
+            if (_hasActionEventAt(x, y)) return false;
+            const pet = _facedRidablePet(x, y);
+            if (!pet) return false;
+            _offerRide(pet);
+            return true;
+        },
+
+        // The same choice for the pet beside or under the leader, asked only
+        // after the press found nothing else (see triggerButtonAction above).
+        offerRideBeside() {
+            if (typeof $gameMessage === "undefined" || $gameMessage.isBusy()) return false;
+            if ($gameMap.isEventRunning() || $gameTemp.isCommonEventReserved()) return false;
+            const pet = _besideRidablePet();
+            if (!pet) return false;
+            _offerRide(pet);
+            return true;
         },
 
         setActivePet(id) {

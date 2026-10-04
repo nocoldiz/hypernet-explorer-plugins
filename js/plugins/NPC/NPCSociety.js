@@ -761,11 +761,9 @@
       const luk  = Math.max(1, statMid + rng.nextInt(-3, 4));
       const mhp  = (10 + level) * 10 + rng.nextInt(0, 21);
       const mmp  = (5  + level) * 5  + rng.nextInt(0, 11);
-      const maxCustom = level * 3;
-      const arcane       = rng.nextInt(0, maxCustom + 1);
-      const substance    = rng.nextInt(0, maxCustom + 1);
-      const stealth      = rng.nextInt(0, maxCustom + 1);
-      const intimidation = rng.nextInt(0, maxCustom + 1);
+      // The look stats (0-100%) are not rolled: they are read off the kit the
+      // person is wearing once it is dealt (NPCSociety_Gear _syncLookStats).
+      const arcane = 0, substance = 0, stealth = 0, intimidation = 0;
 
       // 12. Home assignment (deterministic from name hash + world coords)
       const worldX = $gameVariables ? $gameVariables.value(43) : 1;
@@ -1141,6 +1139,9 @@
       // gets one: a local resident's is then overwritten with the party median,
       // on this and on every later access, so it keeps following the party.
       _syncLocalLevel(eventName, profile);
+      // The look stats are read off what they are wearing, the same rule the
+      // party's are (window.LookStats), so they follow the kit.
+      _syncLookStats(eventName, profile);
       // Last, so a traveller's own actor wins over both the generated roll and
       // the local-NPC party-median peg.
       _syncPartyMemberStats(eventName, profile);
@@ -1692,9 +1693,9 @@
   });
 
   // Owned by modules that load after this one, bound once the family is in.
-  let _syncLocalLevel, _syncPartyMemberStats, NPCInitSpec;
+  let _syncLocalLevel, _syncPartyMemberStats, _syncLookStats, NPCInitSpec;
   window.NPCSocietyRegistry._internal._late.push(() => ({
-    _syncLocalLevel, _syncPartyMemberStats, NPCInitSpec,
+    _syncLocalLevel, _syncPartyMemberStats, _syncLookStats, NPCInitSpec,
   } = window.NPCSocietyRegistry._internal));
 
 })();

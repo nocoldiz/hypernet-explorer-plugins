@@ -200,7 +200,8 @@
     "sleep": "Sleep",
     "hygiene": "Hygiene",
     "social": "Social",
-    "fun": "Mood"
+    "fun": "Mood",
+    "bladder": "Bladder"
   },
   "place": {
     "unknownLand": "Unknown Land",
@@ -244,6 +245,7 @@
     "sector": "Sector:",
     "timeDate": "Time & Date:",
     "localTime": "Local Time:",
+    "towerTime": "Tower Time:",
     "tidallyLocked": "locked",
     "weather": "Weather:",
     "currentCash": "Current Cash:",
@@ -313,7 +315,10 @@
       "egg": "Eggs",
       "seed": "Seed",
       "mitosis": "Division"
-    }
+    },
+    "ridable": "Ridable",
+    "unridable": "Unridable",
+    "rideOff": "Mark it Ridable first"
   },
   "vehicles": {
     "fuel": "Fuel {fuel}L / {max}L",

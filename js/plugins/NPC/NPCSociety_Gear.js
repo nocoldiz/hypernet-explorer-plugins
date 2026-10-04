@@ -191,7 +191,7 @@
     // their character sheet says they are fed.
     const NEED_FIELDS = {
       hunger:  'hungerPercent',  sleep:   'sleepPercent', hygiene: 'hygienePercent',
-      social:  'socialPercent',  leisure: 'leisurePercent',
+      social:  'socialPercent',  leisure: 'leisurePercent', bladder: 'bladderPercent',
     };
     for (const [field, fn] of Object.entries(NEED_FIELDS)) {
       if (typeof actor[fn] !== 'function') continue;
@@ -480,6 +480,33 @@
     };
   }
 
+  // --------------------------------------------------------------------------
+  // Look stats
+  // --------------------------------------------------------------------------
+  // Arcane, Substance, Stealth and Intimidation, 0 to 100%, worked out from the
+  // kit by window.LookStats (ItemSystemEquipment) the way a party member's are.
+  // A person wears a weapon and up to four armour pieces (body, head, shield,
+  // accessory), so the average is over those five: an empty one counts as 0.
+  // A page comment that writes a value (NPCInitSpec) pins it; a beast carries
+  // no kit and so reads 0 everywhere. Recomputed only when the kit changes.
+  const NPC_LOOK_SLOTS = 5;
+  const LOOK_KEYS = ["arcane", "substance", "stealth", "intimidation"]; // i18n-ignore: profile keys
+
+  function _syncLookStats(eventName, profile) {
+    if (!profile || profile._lookPinned) return;
+    const LS = window.LookStats;
+    if (!LS || typeof $dataWeapons === "undefined" || !$dataWeapons || !$dataArmors) return;
+    const kit = _generateEquipment(eventName, profile.assignedClassId ?? null, profile.wealthTierBase);
+    const key = (kit.weaponId || 0) + ":" + (kit.armorIds || []).join(",");
+    if (profile._lookKey === key) return;
+    const items = [];
+    if (kit.weaponId) items.push($dataWeapons[kit.weaponId] || null);
+    for (const id of kit.armorIds || []) items.push($dataArmors[id] || null);
+    const stats = LS.fromItems(items, NPC_LOOK_SLOTS);
+    for (const k of LOOK_KEYS) profile[k] = stats[k];
+    profile._lookKey = key;
+  }
+
   window.NPCSocietyGetEquip = _generateEquipment;
   // The gear dealer itself (SECTION 3b2), for the simulation's `_gearV` pass,
   // the shops an NPC buys from and the tests.
@@ -494,6 +521,6 @@
   };
 
   Object.assign(window.NPCSocietyRegistry._internal, {
-    _syncLocalLevel, _syncPartyMemberStats,
+    _syncLocalLevel, _syncPartyMemberStats, _syncLookStats,
   });
 })();

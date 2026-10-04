@@ -3045,6 +3045,11 @@
 
             const hasActionEvent = facingEvents.some(e => e.isTriggerIn([0]) && e.isNormalPriority());
 
+            // The companion trailing the party, when it can be ridden, offers
+            // its saddle (PetFollowerSystem.js decides whether it can).
+            if (!hasActionEvent && window.PetSystem && window.PetSystem.offerRideAt &&
+                window.PetSystem.offerRideAt(x2, y2)) return true;
+
             const facingVehicle = ['ship', 'boat', 'airship'].reduce((found, type) => {
                 if (found) return found;
                 const v = $gameMap.vehicle(type);
@@ -6052,6 +6057,10 @@
 
     const _EdgePan_Scene_Map_isBusy = Scene_Map.prototype.isBusy;
     Scene_Map.prototype.isBusy = function() {
+        // A menu or scene pushed while the map is still loading lands here
+        // before onMapLoaded has built the windows, and the engine's own
+        // isBusy reads _messageWindow.isClosing(). Wait for the map instead.
+        if (!this._messageWindow) return true;
         return edgePanRunning() || _EdgePan_Scene_Map_isBusy.call(this);
     };
 

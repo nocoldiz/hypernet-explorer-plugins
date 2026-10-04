@@ -1,3 +1,31 @@
+0.7.12a
+
+Added:
+ - three.js VR support for voxel mode in experimental modes
+ - relativity braking on supermassive black holes
+ - Pain and pixel art drawings as Thinker textures and painting pictures
+ - substance, stealth, intimidation and arcane affect gameplay and Empathize
+ - pet familiars and followers are ridable
+ - Steam Workshop, bladder need, metamorphosis potion, hygiene and cosmetic items, shop restock
+
+Changed:
+ - out of level join party and pet offers disabled at 0%, warn on click
+ - steam builds keep the updater plugin, switched off in C:\build
+ - set demo flag as off
+ - title news panel moved inside the updater, hidden on Steam builds
+ - omega tower runs on its own clock, frozen while nobody visits
+ - reworked demo switch: only dungeon floors 1, 2 and -1 visitable
+ - voxel mode performance rework: terrain meshed in background workers, view culling
+ - hypertriangle spinner looks and performs better
+
+Fixed:
+ - em no longer shows her 3D model in dialogues, status crash fixed
+ - join party and pet chance no longer stuck at 0%
+ - item model coverage tool no longer crashes on load
+ - crashes found in voxel mode and various menus
+ - steam build now disables the updates plugin in place on the build folder
+
+
 0.7.11a
 
    Added:

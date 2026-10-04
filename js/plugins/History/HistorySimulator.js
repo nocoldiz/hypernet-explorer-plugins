@@ -2345,7 +2345,9 @@
                     type: 'political',
                     callback: (mgr) => {
                         mgr._currentHyperpowers['Soviet Union'].military += 50;
-                        mgr._currentFactions['Archive Foundation'].information += 40;
+                        // The Archive Foundation is a hyperpower, not a faction.
+                        const af = mgr._currentHyperpowers['Archive Foundation'];
+                        if (af) af.information += 40;
                     }
                 },
                 '1918-11': {
@@ -2414,7 +2416,7 @@
                     type: 'disaster',
                     callback: (mgr) => {
                         for (let h in mgr._currentHyperpowers) mgr._currentHyperpowers[h].population *= 0.97;
-                        const af = mgr._currentFactions['Archive Foundation'];
+                        const af = mgr._currentHyperpowers['Archive Foundation'];
                         if (af) af.arcane += 20;
                     }
                 },

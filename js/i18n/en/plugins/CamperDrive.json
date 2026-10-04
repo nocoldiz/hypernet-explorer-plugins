@@ -124,5 +124,27 @@
     "noGround": "There is nothing here to set down on.",
     "tooDeep": "The pressure is crushing the hull. Climb, now.",
     "crushed": "The hull gives way."
+  },
+  "perf": {
+    "title": "Voxel performance",
+    "fps": "FPS",
+    "frame": "frame ms",
+    "worst": "worst ms",
+    "terrain": "terrain",
+    "entities": "entities",
+    "hud": "HUD",
+    "render": "render",
+    "calls": "draw calls",
+    "triangles": "triangles",
+    "geometries": "geometries",
+    "textures": "textures",
+    "programs": "shaders",
+    "workers": "mesh workers",
+    "inflight": "patches out",
+    "pool_off": "off",
+    "pool_snapshot": "reading the map",
+    "pool_booting": "starting",
+    "pool_ready": "running",
+    "pool_failed": "off, meshing here"
   }
 }

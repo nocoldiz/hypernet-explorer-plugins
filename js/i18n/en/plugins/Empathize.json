@@ -526,6 +526,7 @@
   "joinedParty": "{name} joined the party!",
   "joinedPartyInactive": "{name} signs on as a member in reserves.",
   "joinedFollower": "{name} falls in behind the party as a follower.",
+  "joinLevelTooLow": "You need to be level {level} to recruit {name}.",
   "joinReplacedFallen": "{name} is left where they fell.",
   "joinFailed": "That didn't work out. They stay where they are.",
   "firstMeeting": "First meeting",
@@ -2259,6 +2260,29 @@
         "Weapons": "Weapons",
         "StateCrimes": "State crimes"
       }
+    }
+  },
+  "bladderLabel": "Bladder",
+  "look": {
+    "hdr": "Look",
+    "tier": {
+      "plain": "Plain",
+      "noted": "Noted",
+      "striking": "Striking",
+      "iconic": "Iconic"
+    },
+    "icon": "An icon of {stat}",
+    "reads": "{name} comes across as {list}",
+    "readsNone": "{name} comes across as nothing in particular",
+    "effects": "What it is worth here:",
+    "effect": {
+      "impression": "first impression {v}",
+      "pickpocket": "pickpocket {v}%",
+      "bribe": "bribe {v}%",
+      "romance": "courting {v}%",
+      "join": "joining {v}%",
+      "hostile": "hostile moves {v}%",
+      "friendly": "kind words {v}%"
     }
   }
 }

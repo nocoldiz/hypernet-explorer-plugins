@@ -335,12 +335,56 @@
         return Math.max(1, Math.min(100, value));
     };
 
-    // Percent chance a talk lands: disposition, moved 2.5 points per point of
-    // luck the speaker has over the monster, held between 10 and 95.
+    // Every point of PSI modifier the speaker holds over the monster is one
+    // face of a d20: five percentage points.
+    const PSI_EDGE_POINTS = 5;
+    const psiModOfLuck = luck => Math.floor(((Number(luck) || 0) - 10) / 2);
+
+    // A battler's PSI modifier (LUK read on the D&D scale).
+    window.EnemyTalk.psiModOf = function (battler) {
+        if (!battler) return 0;
+        const mod = Number(battler.psiMod);
+        return Number.isFinite(mod) ? mod : psiModOfLuck(battler.luk);
+    };
+
+    // Percent chance a talk lands: disposition, moved five points per point
+    // of PSI modifier the speaker has over the monster and by whatever their
+    // look is worth to it, held between 10 and 95.
+    window.EnemyTalk.chanceFrom = function (disposition, psiEdge, lookPoints) {
+        const base = (Number(disposition) || 0)
+            + (Number(psiEdge) || 0) * PSI_EDGE_POINTS
+            + (Number(lookPoints) || 0);
+        return Math.floor(Math.max(10, Math.min(95, base)));
+    };
+
+    // The same contest read off two raw luck scores, for callers holding no
+    // battler (BSE.Skirmish).
     window.EnemyTalk.talkSuccessChance = function (disposition, actorLuck, enemyLuck) {
-        const luckModifier = ((Number(actorLuck) || 0) - (Number(enemyLuck) || 0)) * 2.5;
-        const baseChance = (Number(disposition) || 0) + luckModifier;
-        return Math.floor(Math.max(10, Math.min(95, baseChance)));
+        return window.EnemyTalk.chanceFrom(disposition, psiModOfLuck(actorLuck) - psiModOfLuck(enemyLuck), 0);
+    };
+
+    // What a monster makes of the speaker's look. Archetypes.json `talkLook`
+    // weighs Arcane, Intimidation and Substance per species, -1 to 1 (the
+    // largest is the look that sways it most; a negative one puts it off). A
+    // 100% look in a stat counts half again, like everywhere else it is read.
+    const TALK_LOOK_STATS = ['arcane', 'intimidation', 'substance'];  // i18n-ignore  stat ids
+    const TALK_LOOK_CAP = 20;
+    const TALK_LOOK_ICON = 1.5;
+    window.EnemyTalk.lookSwayOf = function (archetype) {
+        const table = (window.Health && window.Health.Archetypes) || {};
+        const entry = archetype && table[archetype];
+        return (entry && entry.talkLook) || null;
+    };
+    window.EnemyTalk.lookPoints = function (look, sway) {
+        if (!look || !sway) return 0;
+        let sum = 0;
+        for (const s of TALK_LOOK_STATS) {
+            const w = Number(sway[s]) || 0;
+            if (!w) continue;
+            const v = Math.max(0, Math.min(100, Number(look[s]) || 0));
+            sum += w * (v / 10) * (v >= 100 ? TALK_LOOK_ICON : 1);
+        }
+        return Math.round(Math.max(-TALK_LOOK_CAP, Math.min(TALK_LOOK_CAP, sum)));
     };
 
     // Can this monster, by its data alone, be reasoned with at all.
@@ -647,19 +691,28 @@
         return RECRUIT_ACTOR_IDS.find(id => !taken.includes(id)) || 0;
     }
 
-    // Recruiting is a persuasion or an insight check, whichever the actor is
-    // better at: PSI (LUK based) for charm, WIS (MDF based) for reading the
-    // creature. Always the higher of the two, regardless of whether the
-    // target can talk back.
-    function bestJoinStat(actor) {
-        if (!actor) return { statName: 'PSI', statMod: 0 };
-        const psiMod = actor.psiMod ?? Math.floor(((actor.luk || 10) - 10) / 2);
-        const wisMod = actor.wisMod ?? Math.floor(((actor.mdf || 10) - 10) / 2);
-        return wisMod > psiMod
-            ? { statName: 'WIS', statMod: wisMod }
-            : { statName: 'PSI', statMod: psiMod };
+    // Whoever opened the Talk panel does the talking: the actor whose command
+    // it was, not whoever happens to stand first in the party.
+    function resolveTalkSpeaker() {
+        const members = $gameParty.battleMembers();
+        const acting = typeof BattleManager.actor === 'function' ? BattleManager.actor() : null;
+        if (acting && members.includes(acting)) return acting;
+        return members[0] || $gameParty.leader() || null;
     }
-    window.EnemyTalk.bestJoinStat = bestJoinStat;
+
+    // Every talk roll is the speaker's PSI against the monster's. The shown
+    // chance already holds that edge, so the die is set from the chance
+    // without it and then handed the edge as its modifier: what the menu
+    // prints and what the die rolls stay the same odds.
+    function rollTalkCheck(chance, psiEdge, actionName) {
+        const edge = Number(psiEdge) || 0;
+        return window.Dice3D.rollPercentage(chance - edge * PSI_EDGE_POINTS, {
+            actionName,
+            statName: 'PSI',  // i18n-ignore  stat label, as Dice3D prints it
+            modifier: edge,
+            force3D: true
+        });
+    }
 
     // Nobody far above the party's weight class comes along, as a member or as
     // a pet: a level 40 beast has no reason to trail after a party of level 3s.
@@ -708,6 +761,7 @@
         } else {
             this._talkEnemyRef = resolveTalkEnemy();
         }
+        this._talkSpeakerRef = resolveTalkSpeaker();
         const enemy   = this._talkEnemy();
         if (!enemy) {
             return [
@@ -796,15 +850,38 @@
         if (fn) fn();
     };
 
+    // The party member doing the talking, pinned with the monster when the
+    // panel opens.
+    Scene_Battle.prototype._talkSpeaker = function () {
+        const pinned = this._talkSpeakerRef;
+        if (pinned && $gameParty.battleMembers().includes(pinned)) return pinned;
+        return resolveTalkSpeaker();
+    };
+
+    // How many PSI modifier points the speaker holds over the monster.
+    Scene_Battle.prototype._talkPsiEdge = function () {
+        const ET = window.EnemyTalk;
+        return ET.psiModOf(this._talkSpeaker()) - ET.psiModOf(this._talkEnemy());
+    };
+
+    // What the speaker's look is worth to this monster's kind, in points.
+    Scene_Battle.prototype._talkLookPoints = function () {
+        const enemy = this._talkEnemy();
+        const speaker = this._talkSpeaker();
+        if (!enemy || !speaker || !window.LookStats) return 0;
+        const archetype = enemy._archetypeName || enemy.getArchetype();
+        return window.EnemyTalk.lookPoints(window.LookStats.ofActor(speaker),
+            window.EnemyTalk.lookSwayOf(archetype));
+    };
+
     Scene_Battle.prototype.calculateTalkSuccessChance = function () {
-        const actor = $gameParty.battleMembers()[0];
+        const actor = this._talkSpeaker();
         const enemy = this._talkEnemy();
 
         if (!actor || !enemy) return 0;
         if (enemy.isUnrecruitable()) return 0;
 
-        // Scale luck difference (2.5% per point of PSI difference in D&D scale)
-        return window.EnemyTalk.talkSuccessChance(enemy.disposition(), actor.luk, enemy.luk);
+        return window.EnemyTalk.chanceFrom(enemy.disposition(), this._talkPsiEdge(), this._talkLookPoints());
     };
 
     Scene_Battle.prototype.calculateTalkSuccess = function () {
@@ -817,13 +894,11 @@
         if (!enemy || enemy.isUnrecruitable() || isArenaModeActive()) return 0;
         if (!withinWeightClass(enemy)) return 0;
 
-        // Small percentage to recruit even under the disposition threshold
-        const disposition = enemy.disposition();
-        if (disposition < 80) {
-            // 5% base chance if disposition is below 80
-            return Math.max(5, Math.floor(disposition / 16));
-        }
-        return this.calculateTalkSuccessChance();
+        // Under 80 disposition a full recruit is a long shot: a quarter of the
+        // talk chance, never under 5%. The speaker's PSI and look still move it.
+        const talk = this.calculateTalkSuccessChance();
+        if (enemy.disposition() < 80) return Math.max(5, Math.floor(talk / 4));
+        return talk;
     };
 
     Scene_Battle.prototype.calculatePetSuccessChance = function () {
@@ -1344,25 +1419,17 @@
         }
 
         const hasTalk = enemy.enemy() && enemy.enemy().note && enemy.enemy().note.includes('<Talk>');
-        const actor = $gameParty.battleMembers()[0] || $gameParty.leader();
-        const { statName, statMod } = bestJoinStat(actor);
         const chance = this.calculateJoinSuccessChance();
         let canJoin = false;
 
         if (chance <= 0) {
             canJoin = false;
         } else if (window.Dice3D) {
-            const rollRes = await window.Dice3D.rollPercentage(chance, {
-                actionName: `${hasTalk ? 'Recruit' : 'Tame'}: ${enemy.name()}`,
-                statName: statName,
-                modifier: statMod,
-                force3D: true
-            });
+            const rollRes = await rollTalkCheck(chance, this._talkPsiEdge(),
+                `${hasTalk ? 'Recruit' : 'Tame'}: ${enemy.name()}`);
             canJoin = rollRes.success;
         } else {
-            const success = this.calculateTalkSuccess();
-            const disposition = enemy.disposition();
-            canJoin = (disposition >= 80 && success) || (disposition < 80 && Math.random() * 100 < 5);
+            canJoin = Math.random() * 100 < chance;
         }
 
         const archetype = enemy.getArchetype();
@@ -1521,20 +1588,14 @@
         }
 
         const hasTalk = enemy.enemy() && enemy.enemy().note && enemy.enemy().note.includes('<Talk>');
-        const actor = $gameParty.battleMembers()[0] || $gameParty.leader();
-        const { statName, statMod } = bestJoinStat(actor);
         const chance = this.calculatePetFollowerChance();
         let success = false;
 
         if (chance <= 0) {
             success = false;
         } else if (window.Dice3D) {
-            const rollRes = await window.Dice3D.rollPercentage(chance, {
-                actionName: `${hasTalk ? 'Follower' : 'Tame'}: ${enemy.name()}`,
-                statName: statName,
-                modifier: statMod,
-                force3D: true
-            });
+            const rollRes = await rollTalkCheck(chance, this._talkPsiEdge(),
+                `${hasTalk ? 'Follower' : 'Tame'}: ${enemy.name()}`);
             success = rollRes.success;
         } else {
             success = Math.random() * 100 < chance;

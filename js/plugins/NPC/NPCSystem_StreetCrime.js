@@ -106,7 +106,10 @@
           Utils.manhattan(o.event.x, o.event.y, c.event.x, c.event.y) <= StreetCrime.REACH);
         if (!near.length) continue;
         if ((p.moralityScore ?? 0) <= r.criminalBelow && Math.random() < r.steal) {
-          const marks = near.filter(o => (society[o.eventName]?.money || 0) > 0);
+          // Nobody picks the pocket of somebody who looks like they would
+          // break the hand that tried (their Intimidation look, 0-100).
+          const marks = near.filter(o => (society[o.eventName]?.money || 0) > 0 &&
+            Math.random() * 100 >= (society[o.eventName]?.intimidation || 0) * 0.8);
           if (marks.length) { StreetCrime.pickpocket(c, marks[Math.floor(Math.random() * marks.length)]); continue; }
         }
         const foe = near.find(o => (p.relationships?.[o.eventName]?.opinion ?? 0) <= r.grudgeBelow);
@@ -132,7 +135,8 @@
       mp.money = Math.max(0, (mp.money || 0) - amount);
       tp.money = (tp.money || 0) + amount;
       tp.moralityScore = Math.max(-100, (tp.moralityScore ?? 0) - 2);
-      const noticed = Math.random() < StreetCrime.NOTICE_CHANCE;
+      // A thief dressed not to be seen is noticed less (their Stealth look).
+      const noticed = Math.random() < StreetCrime.NOTICE_CHANCE * (1 - Math.min(0.7, (tp.stealth || 0) / 140));
       StreetCrime._fileCrime(thief.eventName, "pickpocketing", noticed); // i18n-ignore: PresetCrimes key
       StreetCrime._sour(mark.eventName, thief.eventName, noticed ? -30 : 0);
       const money = StreetCrime._money(amount);

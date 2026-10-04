@@ -1455,16 +1455,23 @@
       }
       if (newNames.length) pairNewlyweds(newNames);
 
-      // 2. Compute the elapsed delta since the last resolved pass.
-      const last = $gameSystem._npcLifeLastSimMinute;
-      if (last === undefined || last === null || last > nowMinute) {
-        $gameSystem._npcLifeLastSimMinute = nowMinute;
-        return;
-      }
-      const deltaMinutes = nowMinute - last;
-      if (deltaMinutes < MINUTES_PER_DAY) return; // sub-day deltas accumulate
-      const deltaDays = deltaMinutes / MINUTES_PER_DAY;
-      $gameSystem._npcLifeLastSimMinute = nowMinute;
+      // 2. Compute the elapsed delta since the last resolved pass, on two
+      // clocks (TOWER PASS): Earth's people are lived up to Earth's minute,
+      // the Omega Tower's up to the tower's own (NPCShared.towerTime), each
+      // from a cursor of its own. The tower's clock only moves while a party
+      // is on its levels, so time spent out in the world never reaches it.
+      const due = (key, now) => {
+        const from = $gameSystem[key];
+        if (from === undefined || from === null || from > now) { $gameSystem[key] = now; return null; }
+        if (now - from < MINUTES_PER_DAY) return null; // sub-day deltas accumulate
+        $gameSystem[key] = now;
+        return { last: from, now, deltaMinutes: now - from, deltaDays: (now - from) / MINUTES_PER_DAY };
+      };
+      const tower = window.NPCShared?.towerTime?.() || null;
+      const onTower = (record) => !!tower && tower.group(record.homeGroup);
+      const earthPass = due("_npcLifeLastSimMinute", nowMinute);
+      const towerPass = tower ? due("_npcLifeTowerLastSimMinute", tower.now) : null;
+      if (!earthPass && !towerPass) return;
 
       // 3. Build the per-group singles pool once for this pass.
       const singlesByGroup = {};
@@ -1495,37 +1502,49 @@
       // Head counts for the relocation floor, counted fresh for this pass.
       window.NPCLifeSim._internal._relocCounts = null;
 
-      for (const record of Object.values(records)) {
-        // The dead live no further (DEATH).
-        if (record.dead) continue;
-        const rng = new LifeRng((nameHash(record.name + "_delta") ^ seed ^ (last >>> 0)) >>> 0);
-        const profile = getProfile(record.name);
-        // A beast lives a beast's life (NPCLife_Animals): it ages by its
-        // kind's lifespan, breeds, is fed or goes hungry and dies, and none
-        // of a person's passes (work, love, crime, money, creed) apply.
-        if (record.nonSentient) {
-          if (resolveAnimalLife) resolveAnimalLife(record, profile, rng, last, nowMinute, deltaDays);
-          continue;
+      // One pass over the people a clock owns, from its cursor to its minute.
+      const livePass = (pass, belongs) => {
+        const { last, now: nowMinute, deltaDays } = pass;
+        for (const record of Object.values(records)) {
+          // The dead live no further (DEATH).
+          if (record.dead) continue;
+          if (!belongs(record)) continue;
+          const rng = new LifeRng((nameHash(record.name + "_delta") ^ seed ^ (last >>> 0)) >>> 0);
+          const profile = getProfile(record.name);
+          // A beast lives a beast's life (NPCLife_Animals): it ages by its
+          // kind's lifespan, breeds, is fed or goes hungry and dies, and none
+          // of a person's passes (work, love, crime, money, creed) apply.
+          if (record.nonSentient) {
+            if (resolveAnimalLife) resolveAnimalLife(record, profile, rng, last, nowMinute, deltaDays);
+            continue;
+          }
+          // A child grows up; until eighteen nothing else in a life applies.
+          if (record.child && !resolveGrowingUp(record, profile, nowMinute)) continue;
+          // Age and illness take some (NATURAL MORTALITY, NPCLife_Death).
+          if (resolveMortality && resolveMortality(record, profile, last, nowMinute, deltaDays)) continue;
+          resolvePrison(record, last, nowMinute);
+          resolveCareer(record, rng, last, nowMinute, deltaDays);
+          resolveRelationships(record, rng, last, nowMinute, deltaDays, singlesByGroup);
+          resolveFamily(record, profile, rng, last, nowMinute, deltaDays, familyCtx);
+          resolveCrime(record, rng, last, nowMinute, deltaDays);
+          syncLiveCrimeLog(record, last);
+          resolveDailyLife(record, profile, rng, last, nowMinute, deltaDays);
+          // Worldview, even behind bars: prison is one of the things that turns it.
+          resolveWorldview(record, profile, rng, last, nowMinute, deltaDays);
+          resolveConversion(record, profile, deltaDays, nowMinute);
+          resolveStanding(record, deltaDays, profile);
+          resolveTravel(record, profile, rng, last, nowMinute, deltaDays, awayByGroup);
+          resolveRelocation(record, profile, rng, nowMinute, deltaDays);
+          resolveImplants(record, profile, last, nowMinute, deltaDays);
         }
-        // A child grows up; until eighteen nothing else in a life applies.
-        if (record.child && !resolveGrowingUp(record, profile, nowMinute)) continue;
-        // Age and illness take some (NATURAL MORTALITY, NPCLife_Death).
-        if (resolveMortality && resolveMortality(record, profile, last, nowMinute, deltaDays)) continue;
-        resolvePrison(record, last, nowMinute);
-        resolveCareer(record, rng, last, nowMinute, deltaDays);
-        resolveRelationships(record, rng, last, nowMinute, deltaDays, singlesByGroup);
-        resolveFamily(record, profile, rng, last, nowMinute, deltaDays, familyCtx);
-        resolveCrime(record, rng, last, nowMinute, deltaDays);
-        syncLiveCrimeLog(record, last);
-        resolveDailyLife(record, profile, rng, last, nowMinute, deltaDays);
-        // Worldview, even behind bars: prison is one of the things that turns it.
-        resolveWorldview(record, profile, rng, last, nowMinute, deltaDays);
-        resolveConversion(record, profile, deltaDays, nowMinute);
-        resolveStanding(record, deltaDays, profile);
-        resolveTravel(record, profile, rng, last, nowMinute, deltaDays, awayByGroup);
-        resolveRelocation(record, profile, rng, nowMinute, deltaDays);
-        resolveImplants(record, profile, last, nowMinute, deltaDays);
-      }
+      };
+
+      // The tower's people first, on the tower's clock; then Earth's. The rest
+      // of the pass (the animal stock, bands, refugees, contagion) is Earth's.
+      if (towerPass) livePass(towerPass, onTower);
+      if (!earthPass) return;
+      livePass(earthPass, (record) => !onTower(record));
+      const { last, deltaMinutes, deltaDays } = earthPass;
 
       // The animals: litters among the beasts that live here, and the farm
       // and building stock ageing, breeding and being cared for off-screen

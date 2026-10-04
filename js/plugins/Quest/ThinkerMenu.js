@@ -1367,9 +1367,27 @@
     }
 
     function finishSrc(filename) {
+        if (isUserFinish(filename)) return window.UserPictures.resolve(filename) || '';
         const P = window.WeaponSystemProcedural;
         if (P && P.texturePath) return P.texturePath(filename);
         return `img/textures/${filename}`;
+    }
+
+    // A picture the party drew in Pain or the pixel art maker, worn as a
+    // finish: a `user:` token window.UserPictures (Debug/PixelArtMaker.js)
+    // keeps a copy of in the save.
+    function isUserFinish(filename) {
+        return !!(window.UserPictures && String(filename || '').indexOf(window.UserPictures.PREFIX) === 0);
+    }
+
+    // The strip's slots, in order: 'as it falls', the picture already chosen
+    // (when it is one of the party's own), the sheets, then the button that
+    // opens the picture picker. FINISH_PICK is that button, never a file.
+    const FINISH_PICK = '\u0001pick';
+    function finishSlots(item, chosen) {
+        const list = finishesFor(item);
+        const mine = isUserFinish(chosen) ? [chosen] : [];
+        return [''].concat(mine, list, window.UserPictures ? [FINISH_PICK] : []);
     }
 
     // ── Fitted models ────────────────────────────────────────────────────────
@@ -2679,6 +2697,21 @@
             return _draft.finishes[this.finishKey(item)] || '';
         }
 
+        // Opens the picture picker (window.UserPictures) over the anvil: a
+        // picture the party drew in Pain or the pixel art maker becomes the
+        // piece's finish, copied into the save under a `user:` token.
+        pickUserFinish() {
+            const item = this._selectedItem;
+            if (!item || !window.UserPictures) { SoundManager.playBuzzer(); return; }
+            window.UserPictures.pick({ title: T('Blacksmith.finishMineTitle') }).then((res) => {
+                if (!res || !res.value || this._selectedItem !== item) return;
+                this._finishOnPick = false;
+                this.setFinish(item, res.value);
+                this._activeArea = 'finish';
+                this.refreshForge();
+            });
+        }
+
         setFinish(item, filename) {
             _draft.finishes[this.finishKey(item)] = filename || '';
         }
@@ -2794,29 +2827,39 @@
             // A piece already beaten out wears what it was given; only what is
             // still on the bill can still be chosen for.
             if (isForged(item)) return '';
-            const list = finishesFor(item);
-            if (!list.length) return '';
+            if (!finishesFor(item).length) return '';
             const chosen = this.chosenFinish(item);
             const focused = this._activeArea === 'finish';
+            const slots = finishSlots(item, chosen);
             // The cursor is read off the piece's own choice, so moving between
-            // pieces never leaves it pointing at somebody else's swatch.
-            const at = chosen ? list.indexOf(chosen) : -1;
-            this._finishIndex = at >= 0 ? at + 1 : 0;
+            // pieces never leaves it pointing at somebody else's swatch; only
+            // the picker button, which is no choice, holds it on its own.
+            const at = chosen ? slots.indexOf(chosen) : 0;
+            this._finishIndex = this._finishOnPick ? slots.length - 1 : Math.max(0, at);
 
-            let swatches = `
-                <div class="forge-swatch forge-swatch--auto ${chosen ? '' : 'selected'} ${focused && this._finishIndex === 0 ? 'focused' : ''}"
-                     data-finish="" title="${escapeHtml(T('Blacksmith.finishAuto'))}">
+            let swatches = '';
+            let broke = false;
+            slots.forEach((file, idx) => {
+                const foc = (focused && this._finishIndex === idx) ? 'focused' : '';
+                if (idx === 0) {
+                    swatches += `
+                <div class="forge-swatch forge-swatch--auto ${chosen ? '' : 'selected'} ${foc}"
+                     data-finish="" data-fidx="0" title="${escapeHtml(T('Blacksmith.finishAuto'))}">
                     <span>${escapeHtml(T('Blacksmith.finishAuto'))}</span>
                 </div>`;
-            let broke = false;
-            list.forEach((file, idx) => {
+                    return;
+                }
+                if (file === FINISH_PICK) {
+                    swatches += `<div class="forge-swatch forge-swatch--auto forge-swatch--pick ${foc}" data-finish-pick="1"
+                     title="${escapeHtml(T('Blacksmith.finishMine'))}"><span>${escapeHtml(T('Blacksmith.finishMine'))}</span></div>`;
+                    return;
+                }
                 const sel = chosen === file ? 'selected' : '';
-                const foc = (focused && this._finishIndex === idx + 1) ? 'focused' : '';
                 if (!broke && String(file).startsWith('dream/')) {
                     broke = true;
                     swatches += `<div class="forge-swatch-divider">${escapeHtml(T('Blacksmith.finishStrange'))}</div>`;
                 }
-                swatches += `<div class="forge-swatch ${sel} ${foc}" data-finish="${escapeHtml(file)}" data-fidx="${idx + 1}">
+                swatches += `<div class="forge-swatch ${sel} ${foc}" data-finish="${escapeHtml(file)}" data-fidx="${idx}">
                      <img src="${escapeHtml(finishSrc(file))}" alt="" loading="lazy" decoding="async"></div>`;
             });
 
@@ -3465,8 +3508,15 @@
                 return;
             }
 
+            if (e.target.closest('[data-finish-pick]')) {
+                this._activeArea = 'finish';
+                this.pickUserFinish();
+                return;
+            }
+
             const swatch = e.target.closest('[data-finish]');
             if (swatch) {
+                this._finishOnPick = false;
                 this.setFinish(this._selectedItem, swatch.dataset.finish);
                 this._finishIndex = parseInt(swatch.dataset.fidx) || 0;
                 this._activeArea = 'finish';
@@ -3663,15 +3713,20 @@
             // The swatch strip: left and right walk it, OK takes the one under
             // the cursor and drops down to the buttons.
             if (this._activeArea === 'finish') {
-                const list = finishesFor(this._selectedItem);
-                const last = list.length;   // slot 0 is 'as it falls'
+                const slots = finishSlots(this._selectedItem, this.chosenFinish(this._selectedItem));
+                const last = slots.length - 1;   // slot 0 is 'as it falls'
                 const step = Input.isRepeated('right') ? 1 : (Input.isRepeated('left') ? -1 : 0);
                 if (step) {
                     this._finishIndex = Math.max(0, Math.min(last, this._finishIndex + step));
-                    this.setFinish(this._selectedItem, this._finishIndex ? list[this._finishIndex - 1] : '');
+                    // Walking onto the picker button chooses nothing yet.
+                    this._finishOnPick = slots[this._finishIndex] === FINISH_PICK;
+                    if (!this._finishOnPick) this.setFinish(this._selectedItem, slots[this._finishIndex]);
                     SoundManager.playCursor();
                     this.refreshForge();
+                } else if (Input.isTriggered('ok') && slots[this._finishIndex] === FINISH_PICK) {
+                    this.pickUserFinish();
                 } else if (Input.isTriggered('ok') || Input.isRepeated('down')) {
+                    this._finishOnPick = false;
                     this._activeArea = this.areaStep('finish', 1) || this.firstButtonArea();
                     SoundManager.playOk();
                     this.refreshForge();

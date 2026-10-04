@@ -22,7 +22,7 @@
 
   const NPCSim = window.NPCSim;
   const {
-    economyRng, EventBus, fmtMoney, MiniRng, MONEY_CAP, nameHash, RoutineManager, SHIFT_COUNT,
+    economyRng, EventBus, fmtMoney, MiniRng, MONEY_CAP, nameHash, RoutineManager, ScheduleManager, SHIFT_COUNT,
     SHIFT_HOURS, SHOPKEEPER_POOL_RATIO, WEEKDAY_CATEGORIES, WEEKEND_TRADES,
   } = NPCSim._internal;
   // Owned by modules that load after this one, bound once the family is in.
@@ -1221,8 +1221,9 @@
     activity(profile, leave, hour) {
       const night = RoutineManager.isSleepHour(profile, hour);
       if (night || (profile.sleep ?? 100) < 20) return "sleep";
+      if (ScheduleManager.wantsWC(profile, ScheduleManager.BLADDER_LOW)) return "hygiene";
       if ((profile.hunger ?? 100) < 30) return "hunger";
-      if ((profile.hygiene ?? 100) < 30) return "hygiene";
+      if ((profile.hygiene ?? 100) < 30) { profile.washFor = "hygiene"; return "hygiene"; }
       if (leave.kind === "sick") return (profile.sleep ?? 100) < 60 ? "sleep" : "comfort";
       const planned = RoutineManager.getActivity(profile, hour);
       return (planned === "work" || planned === "shopwork") ? "home" : planned;

@@ -10,5 +10,9 @@
     "readyNoRoom": "{name} ha finito l'addestramento, ma nel gruppo non c'è ancora posto.",
     "graduated": "{name} completa l'addestramento e si unisce al gruppo come {className}."
   },
-  "designedJoined": "{name} prende posto nel gruppo."
+  "designedJoined": "{name} prende posto nel gruppo.",
+  "ride": {
+    "ride": "Cavalca {name}",
+    "cancel": "Annulla"
+  }
 }

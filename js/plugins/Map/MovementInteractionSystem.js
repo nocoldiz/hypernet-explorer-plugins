@@ -2488,6 +2488,9 @@
         window.PartyNeeds.addNeedToAll("hygiene", SWIM_HYGIENE_PER_STEP);
         reportSwimHygiene(before, partyHygiene());
       }
+      // Fuller than 80% and up to the neck in water: the water takes it, with
+      // no cost to anybody's hygiene (window.Bladder, TimeDateSystem).
+      if (window.Bladder?.swimRelief) window.Bladder.swimRelief();
     }
     if (walkingRecoversMp(this)) {
       this._walkMpSteps = (this._walkMpSteps || 0) + 1;
@@ -4152,15 +4155,22 @@
       const regen = perFrame(moving ? SPRINT_WALK_REGEN : SPRINT_IDLE_REGEN);
       const followers = typeof $gamePlayer.followers === "function"
         ? $gamePlayer.followers() : null;
+      // Whoever is carried does not run: the leader in or on any vehicle (an
+      // animal's back included), and a member on a temporary mount or a
+      // machine of their own (Vehicle/VehicleSystem.js).
+      const vs = window.MergedVehicleSystem;
+      const leaderCarried = $gamePlayer.isInVehicle();
+      const carried = (ch) => !!(ch && vs &&
+        ((vs.followerMount && vs.followerMount(ch)) || (vs.followerRides && vs.followerRides(ch))));
       for (let i = 0; i < members.length; i++) {
         const actor = members[i];
         let running = false;
         if (leaderSprinting) {
           if (i === 0) {
-            running = true;
+            running = !leaderCarried;
           } else {
             const ch = followers && followers.follower ? followers.follower(i - 1) : null;
-            running = !!actor._sprintRunningThisFrame || !!(ch && ch.isMoving());
+            running = !carried(ch) && (!!actor._sprintRunningThisFrame || !!(ch && ch.isMoving()));
           }
         }
         if (running) this.spend(actor);

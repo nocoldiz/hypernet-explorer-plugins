@@ -3596,6 +3596,16 @@
           hint: T('Galaxy.refuel.eta', { time: this._clockText(dm.schrodingeriteHarvestRemaining()) }),
         };
       }
+      // So does a relativity braking pass, with Earth's date running ahead.
+      if (dm.isRelativityBraking && dm.isRelativityBraking()) {
+        const D = GS.DataManager;
+        const date = D && D.relBrakeDateText ? D.relBrakeDateText(dm.relativityBrakeEarthMinute()) : "";
+        return {
+          label: T('Galaxy.refuel.refuel'), enabled: false, active: true,
+          sub: T('Galaxy.travel.relBraking'),
+          hint: T('Galaxy.travel.earthDate', { date }),
+        };
+      }
       if (!plan) return { label: T('Galaxy.refuel.refuel'), hint: "", enabled: false, active: false };
       // In transit on an auto-refuel course: say so rather than re-advertising
       // the search (pressing the button again simply re-plots).
@@ -4031,6 +4041,9 @@
       // out; the ship interior reads it as a hot cabin.
       if (dm.tickRefuelHeat && GS.nudgeCabinHeat) GS.nudgeCabinHeat(dm.tickRefuelHeat(delta));
       else if (dm.tickRefuelHeat) dm.tickRefuelHeat(delta);
+      // A relativity braking pass too: the world clock moves on in steps while
+      // the hull skims the horizon, and ending it changes the panel.
+      if (dm.tickRelativityBrake && dm.tickRelativityBrake(delta)) this._lastShipStatus = null;
       // An open Schrodingerite flyby runs on the same clock; completing it
       // (or breaking it off) changes what the panel may offer.
       if (dm.tickSchrodingeriteHarvest && dm.tickSchrodingeriteHarvest(delta)) {
@@ -4078,6 +4091,9 @@
             // A harvest is a fast low pass, not the lazy parking drift.
             approachSpin: (dm.isHarvestingSchrodingerite &&
               dm.isHarvestingSchrodingerite()) ? 1 : 0,
+            // Relativity braking takes the hull on past the refuel skim, down
+            // to a pass grazing the event horizon itself.
+            horizonSkim: dm.relativityBrakeSkim ? dm.relativityBrakeSkim() : 0,
           };
         } else {
           state = { mode: "hidden" };

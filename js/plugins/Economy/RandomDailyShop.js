@@ -305,9 +305,17 @@
     highValue: entry => !!(entry && entry.price && entry.price > 300000)
   };
 
+  // An artifact is what says so: ArctifactGenerator stamps <Category: Artifact>
+  // on every piece it makes. An id alone says nothing, the database runs past
+  // 1500 with ordinary goods (crops, processors, occult books), and an id test
+  // kept every one of them off every shelf. A reserved slot not yet filled
+  // ("Empty Artifact Slot") is no artifact either.
   function isArtifact(entry) {
-    if (!entry) return false;
-    return entry.id >= 1500 || (entry.note && hasCategory(entry, "artifact"));
+    return !!(entry && entry.note && hasCategory(entry, "artifact"));
+  }
+
+  function isUnfilledArtifactSlot(entry) {
+    return !!(entry && /<Procedural:\s*true>/i.test(entry.note || "") && /^Empty /.test(entry.name || ""));  // i18n-ignore  sentinel name
   }
 
   // The databases are divided by named separator rows ("<-- Whip -->"), which
@@ -365,6 +373,9 @@
         if (isArtifact(entry)) continue;
         if (NEVER_SWEPT.some(category => hasCategory(entry, category))) continue;
         if (def.exclude && def.exclude.some(category => hasCategory(entry, category))) continue;
+        // A gift shop sweeping Collectibles stocks keyrings, not a Penny
+        // Black: the rare end of a category belongs to the antiques dealer.
+        if (def.maxPrice && entry.price > def.maxPrice) continue;
         // Armor types split the two trades that sell armor: a clothier hangs
         // Clothes and Robes, an armorer works everything harder than that.
         if (def.atypes && source === "armors" && !def.atypes.includes(entry.atypeId)) continue;
@@ -424,33 +435,21 @@
     if (isSandbox || seededRandom(seed + 999) < 0.02) { // 100% in sandbox, 2% otherwise
       const validArtifacts = [];
       const checkArtifact = (item) => {
-        if (!item || !isArtifact(item)) return false;
+        if (!item || !isArtifact(item) || isUnfilledArtifactSlot(item)) return false;
         if (!isSellableEntry(item)) return false;
         if (typeof $gameParty !== 'undefined' && $gameParty.hasItem(item, true)) return false;
         return true;
       };
+      const sweep = (db) => {
+        if (!db) return;
+        for (let i = 1; i < db.length; i++) {
+          if (checkArtifact(db[i])) validArtifacts.push(db[i]);
+        }
+      };
 
-      if (typeStr === 'item' || typeStr === 'all') {
-        if (typeof $dataItems !== 'undefined') {
-          for (let i = 1500; i < $dataItems.length; i++) {
-            if (checkArtifact($dataItems[i])) validArtifacts.push($dataItems[i]);
-          }
-        }
-      }
-      if (typeStr === 'weapon' || typeStr === 'all') {
-        if (typeof $dataWeapons !== 'undefined') {
-          for (let i = 1500; i < $dataWeapons.length; i++) {
-            if (checkArtifact($dataWeapons[i])) validArtifacts.push($dataWeapons[i]);
-          }
-        }
-      }
-      if (typeStr === 'armor' || typeStr === 'all') {
-        if (typeof $dataArmors !== 'undefined') {
-          for (let i = 1500; i < $dataArmors.length; i++) {
-            if (checkArtifact($dataArmors[i])) validArtifacts.push($dataArmors[i]);
-          }
-        }
-      }
+      if (typeStr === 'item' || typeStr === 'all') sweep(typeof $dataItems !== 'undefined' ? $dataItems : null);
+      if (typeStr === 'weapon' || typeStr === 'all') sweep(typeof $dataWeapons !== 'undefined' ? $dataWeapons : null);
+      if (typeStr === 'armor' || typeStr === 'all') sweep(typeof $dataArmors !== 'undefined' ? $dataArmors : null);
       if (validArtifacts.length > 0) {
         const art = validArtifacts[Math.floor(seededRandom(seed + 888) * validArtifacts.length)];
         // Takes the last slot: the first ones are the shop's always-stocked staples.
@@ -499,6 +498,7 @@
   //   all:        databases the sweep takes wholesale, category or not.
   //   include:    an extra named test (ENTRY_TESTS) the sweep accepts.
   //   exclude:    categories the sweep skips.
+  //   maxPrice:   the sweep skips anything dearer (a hand-picked id is kept).
   //   atypes:     armor types the sweep accepts, splitting the clothier
   //               (Clothes, Robe) from the armorer (everything harder).
   //   priority:   {test, share} reserving part of the sweep for the heart of
@@ -520,8 +520,9 @@
     generalStore: {
       get label() { return T('DailyShop.shopType.generalStore'); },
       ids: [418, 1, 3, 113, 118, 120, 121, 126, 127, 130, 132, 136, 149, 161,
-            178, 244, 390, 711, 804, 807, 811, 870],
-      fixed: [115, 179],        // candle, batteries
+            178, 244, 390, 711, 804, 807, 811, 870,
+            2013, 2093, 2097],
+      fixed: [115, 179, 2094],        // candle, batteries, bar of soap
       from: ["items", "weapons", "armors"],
       all: ["items", "weapons", "armors"],
       exclude: ["food", "bodypart"],
@@ -531,7 +532,8 @@
     tavern: {
       get label() { return T('DailyShop.shopType.tavern'); },
       ids: [480, 535, 544, 486, 465, 479, 447, 518, 459, 467, 434, 442, 510,
-            473, 456, 454, 549, 541, 550, 567],
+            473, 456, 454, 549, 541, 550, 567,
+            2018],
       // A tavern's whole board, not a sample of it: everything a house is
       // expected to be able to pour or plate at any hour.
       fixed: [499, 179, 573, 22, 39, 24, 438, 535, 430, 439, 460, 518, 468,
@@ -542,8 +544,10 @@
     },
     weaponsmith: {
       get label() { return T('DailyShop.shopType.weaponsmith'); },
-      ids: [811, 870, 816, 863],    // whetstone, oil flask, eternal whetstone, salvaged steel
-      fixedWeapons: [11, 46],       // knife, cheap sword
+      ids: [811, 870, 816, 863, 2016],    // whetstone, oil flask, eternal whetstone, salvaged steel
+      // knife, cheap sword, training sword, practice axe, flimsy bow,
+      // warped arrows, crude spear:
+      fixedWeapons: [11, 46, 44, 199, 338, 337, 621],
       from: ["weapons"],
       all: ["weapons"],
       curatedShare: 0.25,
@@ -551,8 +555,10 @@
     },
     armorer: {
       get label() { return T('DailyShop.shopType.armorer'); },
-      ids: [868, 863, 811, 870],        // leather, salvaged steel, whetstone, oil flask
-      fixedArmors: [762, 555, 557],     // patrol shield, skull cap, salvage vest
+      ids: [868, 863, 811, 870, 2015],        // leather, salvaged steel, whetstone, oil flask
+      // patrol shield, skull cap, salvage vest, battered round shield,
+      // pitted iron helm, rebel's hide jacket:
+      fixedArmors: [762, 555, 557, 49, 48, 558],
       from: ["armors"],
       all: ["armors"],
       atypes: [3, 4, 5, 6],             // light, heavy, equipment, shields
@@ -561,7 +567,8 @@
     },
     clothing: {
       get label() { return T('DailyShop.shopType.clothing'); },
-      ids: [861, 132, 152, 117, 142, 235, 239, 231],
+      ids: [861, 132, 152, 117, 142, 235, 239, 231, 2020,
+            2103, 2104, 2105, 2106],
       fixedArmors: [53, 458],           // homespun tunic, comfort robe
       from: ["armors"],
       all: ["armors"],
@@ -571,12 +578,13 @@
     pharmacy: {
       get label() { return T('DailyShop.shopType.pharmacy'); },
       ids: [4, 5, 9, 13, 16, 17, 25, 737, 740, 741, 742, 746, 1444, 1445, 1450, 1453, 1466, 1468,
-            1469, 1470, 1462, 2068, 2069],   // ...the growing vat and the gene splicer
+            1469, 1470, 1462, 2068, 2069,
+            2014, 2032, 2050, 2099, 2100, 2101],   // ...the growing vat and the gene splicer
       // Never out of the things a pharmacy is for: a kit, an antibiotic
       // course, rehydration salts, a multivitamin, the surgical tools and the
       // antihistamine (window.Allergy), on top of the three over-the-counter
       // staples.
-      fixed: [1, 3, 12, 19, 1443, 1446, 1464, 1465, 244],
+      fixed: [1, 3, 12, 19, 1443, 1446, 1464, 1465, 244, 2093],
       categories: ["medical", "fertility"],
       // The one shop the disease system sends the player to by name, so it
       // draws several times as deep and reserves most of that for real drugs.
@@ -587,8 +595,11 @@
     magicShop: {
       get label() { return T('DailyShop.shopType.magicShop'); },
       ids: [649, 650, 652, 653, 654, 655, 656, 657, 658, 661, 662, 663, 664,
-            673, 675, 679, 685, 686],
-      fixed: [648, 651, 168],   // health potion, mana potion, flying broom
+            673, 675, 679, 685, 686,
+            2017, 1984, 1997, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2030,
+            2031, 2037, 2047, 2055],
+      // health potion, mana potion, flying broom, metamorphosis potion:
+      fixed: [648, 651, 168, 2091],
       categories: ["magic", "monsters", "potion"],
       curatedShare: 0.5,
       artifacts: "item"
@@ -596,7 +607,9 @@
     luxury: {
       get label() { return T('DailyShop.shopType.luxury'); },
       ids: [230, 232, 233, 234, 235, 236, 241, 242, 245, 246, 247, 249, 866,
-            865, 691],
+            865, 691,
+            2057, 1932, 1933, 1934, 1949,
+            2104, 2105, 2112],
       fixed: [543, 535],        // gourmet chocolate, aged wine
       categories: ["artisan"],
       include: "highValue",
@@ -607,7 +620,8 @@
     adventurer: {
       get label() { return T('DailyShop.shopType.adventurer'); },
       ids: [1443, 136, 810, 813, 126, 129, 161, 512, 465, 466, 811, 870, 808,
-            806, 815, 145],
+            806, 815, 145,
+            2097, 2020],
       fixed: [648, 125, 121],   // health potion, bedroll, lantern
       categories: ["medical", "food", "counterfeits", "potion", "magic", "monsters"],
       from: ["items", "weapons", "armors"],
@@ -618,14 +632,16 @@
     alchemistry: {
       get label() { return T('DailyShop.shopType.alchemistry'); },
       ids: [883, 886, 889, 890, 891, 893, 896, 897, 899, 900, 903, 904, 905,
-            871, 390, 805],
+            871, 390, 805,
+            2022, 2091],
       fixed: [884, 898],        // distilled water, ethanol
       categories: ["alchemistry"],
       curatedShare: 0.4
     },
     organTrader: {
       get label() { return T('DailyShop.shopType.organTrader'); },
-      ids: [999, 1000, 1005, 1006, 1011, 1012, 1015, 1018, 1020, 1063, 1064, 244],
+      ids: [999, 1000, 1005, 1006, 1011, 1012, 1015, 1018, 1020, 1063, 1064, 244,
+            2024],
       fixed: [1014, 1017],      // heart, liver
       categories: ["bodypart"],
       curatedShare: 0.35
@@ -650,7 +666,8 @@
     gym: {
       get label() { return T('DailyShop.shopType.gym'); },
       ids: [52, 53, 36, 40, 41, 33, 55, 54, 26, 47, 17, 18, 23, 431, 463, 195,
-            315, 325, 331, 832, 833, 834, 50, 723, 728, 91, 87, 38],
+            315, 325, 331, 832, 833, 834, 50, 723, 728, 91, 87, 38,
+            2041, 2042, 2067, 2094, 2098],
       fixed: [431, 315],        // protein bar, grip powder
       categories: ["lifestyle"],
     },
@@ -670,8 +687,13 @@
             177, 178, 179, 185, 711, 804, 806, 807,
             // the kitchen's staples (CookingSystem recipes)
             2070, 2071, 2072, 2073, 2074, 2075, 2076, 2077, 2078, 2079,
-            2080, 2081, 2082, 2083, 2084, 2085, 2086, 2087, 2088, 2089],
-      fixed: [418, 438, 454],   // bottled water, milk, bread
+            2080, 2081, 2082, 2083, 2084, 2085, 2086, 2087, 2088, 2089,
+            2093, 2094, 2095, 2096, 2097, 2098, 2099, 2100, 2101, 2102, 1726,
+            1731, 1737, 1791,
+            2103, 2106, 2108, 2111],
+      // bottled water, milk, bread, flour, bag of rice, dried pasta, olive oil,
+      // chicken egg, toothbrush, bar of soap:
+      fixed: [418, 438, 454, 2070, 2072, 2073, 2074, 1791, 2093, 2094],
       categories: ["food"],
       curatedShare: 0.7,
       stockMult: 6
@@ -679,7 +701,8 @@
     cafe: {
       get label() { return T('DailyShop.shopType.cafe'); },
       ids: [459, 528, 564, 547, 585, 467, 434, 455, 516, 574, 471, 439, 540,
-            560, 468, 473, 196, 543, 511, 589, 719, 178, 711],
+            560, 468, 473, 196, 543, 511, 589, 719, 178, 711,
+            2086],
       fixed: [459, 528, 439],   // coffee, cup of coffee, donut
       categories: ["food"],
       dining: true
@@ -687,7 +710,8 @@
     liquor: {
       get label() { return T('DailyShop.shopType.liquor'); },
       ids: [480, 498, 517, 535, 544, 572, 587, 552, 557, 568, 37, 178, 466,
-            441, 440, 442, 445, 444, 449, 461, 898],
+            441, 440, 442, 445, 444, 449, 461, 898,
+            2034],
       fixed: [480, 535, 544],   // ale, wine, whiskey
       categories: ["food"],
     },
@@ -695,8 +719,14 @@
       get label() { return T('DailyShop.shopType.electronics'); },
       ids: [122, 133, 134, 136, 137, 143, 144, 149, 153, 154, 157, 160, 162,
             179, 185, 186, 190, 193, 721, 726, 394, 852, 853, 854, 135, 130,
-            388, 387, 2066],
-      fixed: [179, 122, 1319, 1325],   // batteries, charger, a processor, a memory module
+            388, 387, 2066,
+            1795, 1796, 1797, 1798, 1799, 1800, 1801, 1802, 1803, 1804, 1805,
+            1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816,
+            1817, 1818, 1819, 1820, 1821, 1822, 1823, 1824, 1825, 1972, 1981,
+            1989, 2035],
+      // batteries, charger, a processor, a memory module, hex 1.6gb travel disk,
+      // alkaline cage:
+      fixed: [179, 122, 1319, 1325, 1805, 1819],
       categories: ["tools", "lifestyle", "component"],
     },
     // The hardware store absorbed the old tools shop, so anything tagged Tools
@@ -705,44 +735,54 @@
       get label() { return T('DailyShop.shopType.hardware'); },
       ids: [138, 156, 814, 811, 813, 132, 119, 807, 118, 121, 115, 870, 859,
             863, 867, 855, 856, 146, 406, 151, 374, 739, 861, 868, 805, 804,
-            2066, 2068],   // ...the growing vat, a tank before it is medicine
-      fixed: [374, 814, 138, 136],   // lockpick, multi-tool, shovel, flashlight
+            2066, 2068,
+            2021, 2033, 2043, 1988],   // ...the growing vat, a tank before it is medicine
+      // lockpick, multi-tool, shovel, flashlight, builder's level:
+      fixed: [374, 814, 138, 136, 2033],
       categories: ["tools", "component"],
     },
     camping: {
       get label() { return T('DailyShop.shopType.camping'); },
       ids: [125, 126, 129, 815, 806, 813, 810, 807, 804, 809, 808, 120, 121,
             136, 137, 142, 116, 117, 152, 159, 161, 512, 421, 465, 466, 418,
-            123, 811],
-      fixed: [125, 136, 813],   // bedroll, flashlight, climbing rope
+            123, 811,
+            2052, 2094],
+      fixed: [125, 136, 813, 2097],   // bedroll, flashlight, climbing rope, wet wipes
       categories: ["survival"],
     },
     butcher: {
       get label() { return T('DailyShop.shopType.butcher'); },
       ids: [862, 430, 465, 452, 479, 486, 496, 497, 514, 522, 527, 529, 538,
-            548, 573, 577, 550, 524, 493, 860, 575, 500, 505, 539],
+            548, 573, 577, 550, 524, 493, 860, 575, 500, 505, 539,
+            1791, 1792],
       fixed: [862, 430],        // meat, mystery meat
       categories: ["food"],
     },
     bakery: {
       get label() { return T('DailyShop.shopType.bakery'); },
       ids: [454, 424, 419, 533, 456, 471, 439, 443, 488, 540, 511, 562, 560,
-            589, 719, 539, 505, 536, 432, 428],
-      fixed: [454, 439],        // fresh bread, donut
+            589, 719, 539, 505, 536, 432, 428,
+            2070, 2071, 2076],
+      fixed: [454, 439, 2070],        // fresh bread, donut, flour
       categories: ["food"],
       dining: true
     },
     greengrocer: {
       get label() { return T('DailyShop.shopType.greengrocer'); },
       ids: [423, 437, 448, 476, 499, 435, 546, 554, 555, 583, 584, 591, 590,
-            551, 578, 563, 565, 792, 858, 406, 660, 240, 492, 429],
-      fixed: [437, 448],        // apple, wild berries
+            551, 578, 563, 565, 792, 858, 406, 660, 240, 492, 429,
+            1726, 1727, 1728, 1729, 1730, 1731, 1732, 1733, 1734, 1735, 1736,
+            1737, 1738, 1739, 1740, 1741, 1742, 1743, 1744, 1791, 1792, 1793,
+            2087, 2088],
+      // apple, wild berries, tomato, potato, onion, lemon:
+      fixed: [437, 448, 1726, 1731, 1737, 2088],
       categories: ["food", "plants"],
     },
     deli: {
       get label() { return T('DailyShop.shopType.deli'); },
       ids: [510, 542, 828, 456, 462, 440, 524, 479, 438, 473, 550, 567, 535,
-            452, 465, 493, 587, 466],
+            452, 465, 493, 587, 466,
+            2084, 2085],
       fixed: [510, 524],        // cheese wheel, prosciutto
       categories: ["food"],
       dining: true
@@ -750,7 +790,8 @@
     streetFood: {
       get label() { return T('DailyShop.shopType.streetFood'); },
       ids: [470, 478, 482, 484, 489, 490, 491, 494, 495, 502, 503, 504, 520,
-            521, 525, 475, 477, 485, 501, 508, 530, 483, 487, 433],
+            521, 525, 475, 477, 485, 501, 508, 530, 483, 487, 433,
+            2082, 2089],
       fixed: [442, 490],        // soda, pad thai
       categories: ["food"],
       dining: true
@@ -758,7 +799,8 @@
     trattoria: {
       get label() { return T('DailyShop.shopType.trattoria'); },
       ids: [518, 541, 549, 545, 553, 536, 531, 532, 540, 511, 473, 550, 524,
-            720, 719, 535, 459, 510, 567, 573],
+            720, 719, 535, 459, 510, 567, 573,
+            2073, 2083, 2085],
       fixed: [518, 535],        // bolognese, house wine
       categories: ["food"],
       dining: true
@@ -766,22 +808,28 @@
     giftShop: {
       get label() { return T('DailyShop.shopType.giftShop'); },
       ids: [114, 192, 316, 318, 313, 311, 321, 322, 710, 128, 127, 113, 144,
-            150, 163, 185, 189, 180, 211, 326, 332],
+            150, 163, 185, 189, 180, 211, 326, 332,
+            1867, 1868, 1869, 1870, 1871, 1872, 1873, 1874, 1875, 1876, 1877,
+            1878, 1879, 1880, 1881, 1882,
+            2104, 2105, 2110],
       fixed: [114, 316],        // rose, keychain
       categories: ["collectibles"],
+      maxPrice: 15000,
     },
     newsstand: {
       get label() { return T('DailyShop.shopType.newsstand'); },
       ids: [711, 178, 181, 182, 183, 187, 442, 445, 441, 436, 431, 418, 113,
-            127, 159, 161, 179, 124, 528, 185],
-      fixed: [711, 178],        // newspaper, cigarettes
+            127, 159, 161, 179, 124, 528, 185,
+            1978, 1983, 2026, 2027, 2029],
+      fixed: [711, 178, 1978],        // newspaper, cigarettes, postings bulletin
       categories: ["books", "lifestyle"],
     },
     tabaccheria: {
       get label() { return T('DailyShop.shopType.tabaccheria'); },
       ids: [178, 181, 182, 183, 187, 711, 113, 127, 124, 528, 442, 445, 436,
             441, 466, 179, 122, 153, 161, 159, 130, 185, 543, 459, 719, 184,
-            535, 544, 480, 115],
+            535, 544, 480, 115,
+            2040, 1992, 2097],
       fixed: [178, 181, 711],   // cigarettes, scratch card, newspaper
       categories: ["lifestyle"],
     },
@@ -795,8 +843,13 @@
     occult: {
       get label() { return T('DailyShop.shopType.occult'); },
       ids: [352, 354, 346, 675, 676, 683, 673, 724, 725, 650, 652, 97, 98,
-            262, 264, 680, 349, 359, 360, 355, 679, 682, 348, 2066],
-      fixed: [262, 115],        // empty spellbook, candle
+            262, 264, 680, 349, 359, 360, 355, 679, 682, 348, 2066,
+            1826, 1827, 1828, 1829, 1830, 1831, 1832, 1833, 1834, 1835, 1836,
+            1837, 1838, 1839, 1840, 1841, 1842, 1843, 1844, 1845, 1846, 1847,
+            1848, 1849, 1850, 1851, 1852, 1853, 1854, 1855, 1856, 1857, 1858,
+            1859, 1860, 1861, 1862, 1863, 1864, 1865, 1866, 1915, 1916, 1917,
+            1918, 1919, 1920, 1921],
+      fixed: [262, 115, 1834],        // empty spellbook, candle, the lesser key of solomon
       categories: ["monsters", "books"],
       artifacts: "item",
     },
@@ -810,49 +863,58 @@
     spy: {
       get label() { return T('DailyShop.shopType.spy'); },
       ids: [374, 375, 377, 378, 379, 381, 382, 383, 384, 385, 386, 387, 388,
-            389, 390, 391, 392, 393, 394, 148, 157, 158, 718],
+            389, 390, 391, 392, 393, 394, 148, 157, 158, 718,
+            1982, 2056, 1925],
       fixed: [374, 388, 384],   // lockpick, recorder, disguise kit
       categories: ["espionage"],
     },
     stationery: {
       get label() { return T('DailyShop.shopType.stationery'); },
       ids: [113, 127, 128, 148, 230, 647, 672, 386, 262, 711, 394, 393, 130,
-            185, 159, 161, 145, 277],
+            185, 159, 161, 145, 277,
+            1973, 1974, 1975, 1976, 2028, 2048, 2049],
       fixed: [113, 127],        // pen, notebook
       categories: ["books"],
     },
     toyStore: {
       get label() { return T('DailyShop.shopType.toyStore'); },
       ids: [124, 318, 726, 180, 710, 348, 347, 316, 432, 446, 181, 182, 183,
-            187, 193, 192, 114, 186],
+            187, 193, 192, 114, 186,
+            1879, 1880, 1881, 1895, 1896, 1897, 2036, 2038, 2039, 2045, 1991],
       fixed: [318, 180],        // action figure, board game
       categories: ["collectibles"],
+      maxPrice: 15000,
     },
     arcticOutfitter: {
       get label() { return T('DailyShop.shopType.arcticOutfitter'); },
       ids: [208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 155, 579, 529,
-            815, 812, 655, 678, 121, 120, 467],
+            815, 812, 655, 678, 121, 120, 467,
+            1773, 1774, 1775, 1776],
       fixed: [208, 815],        // pemmican, sleeping bag
       categories: ["arctic"],
     },
     jungleTrader: {
       get label() { return T('DailyShop.shopType.jungleTrader'); },
       ids: [623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 588,
-            476, 472, 141, 810, 869],
+            476, 472, 141, 810, 869,
+            1764, 1765, 1766, 1767, 1768],
       fixed: [810, 869],        // rope, herb extract
       categories: ["jungle"],
     },
     wellness: {
       get label() { return T('DailyShop.shopType.wellness'); },
       ids: [604, 605, 606, 607, 608, 609, 610, 611, 177, 184, 434, 516, 574,
-            869, 42, 229, 192, 4, 15, 13],
-      fixed: [177, 516],        // bath kit, herbal tea
+            869, 42, 229, 192, 4, 15, 13,
+            2093, 2094, 2095, 2096, 2097, 2098, 2099, 2100, 2101, 2102,
+            2103, 2104, 2105, 2106, 2107, 2108, 2109, 2110, 2111, 2112],
+      fixed: [177, 516, 2094, 2102],        // bath kit, herbal tea, bar of soap, washcloth
       categories: ["homeopathy", "lifestyle"],
     },
     materials: {
       get label() { return T('DailyShop.shopType.materials'); },
       ids: [849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861,
-            862, 863, 864, 865, 866, 867, 868, 869, 870, 871],
+            862, 863, 864, 865, 866, 867, 868, 869, 870, 871,
+            2051, 2058],
       fixed: [859, 861, 863],   // wood, cloth, salvaged steel
       categories: ["crafting"],
     },
@@ -867,7 +929,8 @@
     pizzeria: {
       get label() { return T('DailyShop.shopType.pizzeria'); },
       ids: [536, 460, 462, 720, 473, 451, 450, 442, 445, 480, 535, 540, 719,
-            510, 456, 532, 539, 505, 549, 518, 458, 481],
+            510, 456, 532, 539, 505, 549, 518, 458, 481,
+            2073, 2083, 2085],
       fixed: [536, 460, 442],   // margherita, slice, soda
       categories: ["food"],
       dining: true
@@ -882,14 +945,16 @@
     jeweler: {
       get label() { return T('DailyShop.shopType.jeweler'); },
       ids: [242, 334, 332, 322, 328, 866, 865, 864, 211, 214, 649, 659, 685,
-            675, 681, 677, 678, 674, 673, 316, 241, 663],
+            675, 681, 677, 678, 674, 673, 316, 241, 663,
+            2019, 1930, 1934],
       fixed: [242, 866],        // loupe, crystal
       categories: ["artisan", "collectibles"],
     },
     tailor: {
       get label() { return T('DailyShop.shopType.tailor'); },
       ids: [132, 861, 868, 235, 231, 239, 246, 212, 682, 384, 91, 330, 325,
-            834, 326, 329, 152, 117, 116, 815],
+            834, 326, 329, 152, 117, 116, 815,
+            2106, 2111],
       fixed: [132, 861],        // sewing kit, cloth
       // What a tailor sells is not a category but a type: the same two racks
       // the clothing store hangs, cut by the same hands.
@@ -901,14 +966,21 @@
     musicStore: {
       get label() { return T('DailyShop.shopType.musicStore'); },
       ids: [236, 133, 134, 154, 185, 186, 190, 321, 213, 1428, 193, 726, 179,
-            122, 184, 187, 543],
-      fixed: [185, 133],        // CD case, mp3 player
+            122, 184, 187, 543,
+            1885, 1886, 1887, 1892, 1894],
+      fixed: [185, 133, 1887],        // CD case, mp3 player, demo cassette
       categories: ["lifestyle", "collectibles"],
+      maxPrice: 100000,
     },
     antiques: {
       get label() { return T('DailyShop.shopType.antiques'); },
       ids: [331, 324, 313, 327, 333, 97, 249, 241, 234, 150, 320, 710, 675,
-            289, 262, 317, 312, 323, 294, 290],
+            289, 262, 317, 312, 323, 294, 290,
+            1908, 1909, 1910, 1911, 1912, 1913, 1914, 1928, 1929, 1930, 1931,
+            1932, 1933, 1934, 1935, 1936, 1937, 1938, 1939, 1940, 1941, 1942,
+            1943, 1944, 1945, 1946, 1947, 1948, 1949, 1950, 1951, 1952, 1953,
+            1954, 1955, 1956, 1957, 1958, 1959, 1960, 1961, 1962, 1963, 1964,
+            1965, 1966],
       fixed: [320, 324],        // old chair, ancient coin
       categories: ["collectibles"],
       artifacts: "all",
@@ -916,7 +988,8 @@
     florist: {
       get label() { return T('DailyShop.shopType.florist'); },
       ids: [114, 671, 792, 757, 681, 192, 240, 660, 670, 406, 858, 869, 690,
-            674, 626, 229, 119, 546],
+            674, 626, 229, 119, 546,
+            1733, 1736],
       fixed: [114, 792],        // rose, dandelion
       // Two growing things is all the database has, so the shelf leans on what
       // else a florist actually sells: gifts and small comforts.
@@ -925,7 +998,8 @@
     petShop: {
       get label() { return T('DailyShop.shopType.petShop'); },
       ids: [27, 710, 145, 147, 680, 777, 752, 862, 78, 1423, 311, 121, 126,
-            807, 869, 858, 32],
+            807, 869, 858, 32,
+            1985, 1986, 1987, 2046],
       fixed: [710, 862],        // pet rock, feed meat
       categories: ["food", "monsters"],
     },
@@ -939,13 +1013,15 @@
     cyberClinic: {
       get label() { return T('DailyShop.shopType.cyberClinic'); },
       ids: [731, 732, 733, 734, 735, 736, 59, 763, 768, 769, 857, 851, 853,
-            727, 722, 715, 852, 961, 960, 2066],
-      fixed: [59, 731],         // repair nanites, neural amplifier
+            727, 722, 715, 852, 961, 960, 2066,
+            2092],
+      fixed: [59, 731, 2092],         // repair nanites, neural amplifier, surgerybot swarm
       categories: ["bodypart", "medical"],
     },
     doctor: {
       get label() { return T('DailyShop.shopType.doctor'); },
-      ids: [1, 3, 19, 25, 244, 729, 737, 740, 741, 742, 746, 1443, 1446, 1464, 1465, 2068, 2069],
+      ids: [1, 3, 19, 25, 244, 729, 737, 740, 741, 742, 746, 1443, 1446, 1464, 1465, 2068, 2069,
+            2032, 2093],
       fixed: [1, 740, 1443],    // hand sanitizer, pregnancy test, first aid kit
       categories: ["medical", "fertility"],
       shelf: [10, 20],
@@ -954,50 +1030,61 @@
     travelAgency: {
       get label() { return T('DailyShop.shopType.travelAgency'); },
       ids: [159, 161, 163, 155, 137, 135, 128, 129, 130, 152, 142, 164, 131,
-            166, 668, 696, 234, 162, 120],
-      fixed: [159, 161],        // routes map, local map
+            166, 668, 696, 234, 162, 120,
+            2044],
+      fixed: [159, 161, 2044],        // routes map, local map, bologna ticket
       categories: ["survival", "lifestyle"],
     },
     garage: {
       get label() { return T('DailyShop.shopType.garage'); },
       ids: [164, 131, 146, 909, 917, 854, 863, 928, 855, 814, 156, 167, 668,
-            852, 870, 138, 811, 856, 864],
+            852, 870, 138, 811, 856, 864,
+            1996],
       fixed: [146, 870],        // fuel tank, oil flask
       categories: ["vehicles"],
     },
     drogheria: {
       get label() { return T('DailyShop.shopType.drogheria'); },
       ids: [1, 177, 884, 890, 896, 883, 886, 894, 901, 905, 893, 115, 132,
-            861, 118, 13, 11, 7, 867],
-      fixed: [1, 883, 115],     // sanitizer, salt, candle
+            861, 118, 13, 11, 7, 867,
+            2093, 2094, 2095, 2096, 2097, 2098, 2099, 2100, 2101, 2102, 2075,
+            2076,
+            2103, 2104, 2105, 2106, 2107, 2108, 2109, 2110, 2111, 2112],
+      fixed: [1, 883, 115, 2094, 2103, 2104],     // sanitizer, salt, candle, bar of soap, lipstick, perfume vial
       categories: ["food", "alchemistry"],
     },
     casalinghi: {
       get label() { return T('DailyShop.shopType.casalinghi'); },
       ids: [118, 119, 807, 804, 809, 120, 232, 1427, 542, 811, 115, 867, 805,
-            121, 136, 179, 132, 870],
-      fixed: [118, 119, 804],   // utensils, clay pot, bowl set
+            121, 136, 179, 132, 870,
+            2093, 2094, 2095, 2096, 2097, 2098, 2099, 2100, 2101, 2102],
+      fixed: [118, 119, 804, 2094, 2102],   // utensils, clay pot, bowl set, bar of soap, washcloth
       categories: ["tools"],
     },
     bettingParlor: {
       get label() { return T('DailyShop.shopType.bettingParlor'); },
       ids: [181, 182, 183, 187, 124, 311, 313, 323, 1437, 178, 544, 568,
-            26, 346, 312, 322, 445],
-      fixed: [181, 182, 183],   // the three scratch cards
+            26, 346, 312, 322, 445,
+            2040, 1992, 1993, 1994],
+      fixed: [181, 182, 183, 2040],   // the three scratch cards, race card
       categories: ["lifestyle", "collectibles"],
     },
     reliquary: {
       get label() { return T('DailyShop.shopType.reliquary'); },
       ids: [45, 265, 278, 282, 293, 263, 275, 276, 115, 692, 1401, 498, 229,
-            230, 673, 681, 355, 267, 266, 264],
+            230, 673, 681, 355, 267, 266, 264,
+            1915, 1916, 1917, 1918, 1919, 1920, 1921],
       fixed: [115, 45],         // votive candle, holy remedy
       categories: ["magic", "collectibles"],
       artifacts: "all",
     },
     surplusArmory: {
+      fixedWeapons: [428],
+      weaponIds: [428, 429],
       get label() { return T('DailyShop.shopType.surplusArmory'); },
       ids: [512, 718, 76, 78, 80, 73, 79, 77, 712, 88, 1430, 1426, 136, 129,
-            808, 141, 715, 940, 957, 811],
+            808, 141, 715, 940, 957, 811,
+            2054, 1995, 1993],
       fixed: [512, 808],        // field ration, escape kit
       categories: ["combat"],
     },
@@ -1016,7 +1103,8 @@
     academy: {
       get label() { return T('DailyShop.shopType.academy'); },
       ids: [1421, 1422, 1423, 1425, 1426, 1427, 1428, 1429, 1430, 1431,
-            1433, 1436, 1437, 1441, 145, 147],
+            1433, 1436, 1437, 1441, 145, 147,
+            2023, 2025, 1979, 1980],
       fixed: [113, 127, 262, 128],   // pen, notebook, blank spellbook, travel journal
       categories: ["books", "skillbooks"],
     },
@@ -1024,7 +1112,8 @@
       get label() { return T('DailyShop.shopType.grimoire'); },
       ids: [1400, 1401, 1402, 1403, 1404, 1405, 1406, 1407, 1409, 1410, 1411,
             1412, 1413, 1414, 1415, 1416, 1417, 1418, 1419, 1420, 1434, 1435,
-            1438, 1439, 262],
+            1438, 1439, 262,
+            2059, 2060, 2061, 2062, 2063, 2064, 2065],
       fixed: [262, 1400],       // empty spellbook, pyromancy grimoire
       categories: ["books", "magic", "grimoires"],
       artifacts: "item",
