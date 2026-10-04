@@ -133,7 +133,7 @@
       }
       const isCreature = !!actor._isCreatureActor ||
         NC.isNonSentientActor(actor) ||
-        (keys.length > 0 && !(keys.length === 1 && keys[0] === 'Humanoid'));
+        (keys.length > 0 && !keys.every((k) => (window.HealthCore?.isHumanoidBody ? window.HealthCore.isHumanoidBody(k) : k === 'Humanoid'))); // i18n-ignore: Archetypes.json key
       if (!isCreature || !keys.length) return null;
       return { keys, seed: actor.actorId ? actor.actorId() : 0, name: actor.name() };
     }

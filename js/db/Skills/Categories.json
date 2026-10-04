@@ -111,20 +111,20 @@
     "10": {
       "primary": [
         "Pyromancy",
-        "Arcanism",
-        "Performance"
+        "Cryomancy",
+        "Electromancy"
       ],
       "secondary": [
         "Geomancy",
-        "HolyMagic",
-        "ForbiddenMagic"
+        "Aeromancy",
+        "Idromancy"
       ]
     },
     "11": {
       "primary": [
         "MartialArts",
-        "Vocation",
-        "Bestial"
+        "Bestial",
+        "Tactical"
       ],
       "secondary": [
         "Swordsmanship",
@@ -148,10 +148,10 @@
       "primary": [
         "Bestial",
         "MartialArts",
-        "Vocation"
+        "Swordsmanship"
       ],
       "secondary": [
-        "Swordsmanship",
+        "Vocation",
         "Cooking",
         "Leadership"
       ]
@@ -182,14 +182,14 @@
     },
     "16": {
       "primary": [
-        "MartialArts",
-        "Bestial",
-        "Vocation"
+        "Firearms",
+        "Technomagical",
+        "Pyromancy"
       ],
       "secondary": [
-        "Leadership",
-        "Roguery",
-        "Performance"
+        "Electromancy",
+        "ChaosMagic",
+        "Arcanism"
       ]
     },
     "17": {
@@ -220,12 +220,12 @@
       "primary": [
         "Pyromancy",
         "Arcanism",
-        "Performance"
+        "MetaMagic"
       ],
       "secondary": [
         "Convokation",
-        "MetaMagic",
-        "Geomancy"
+        "Geomancy",
+        "Electromancy"
       ]
     },
     "20": {
@@ -304,10 +304,10 @@
       "primary": [
         "Swordsmanship",
         "MartialArts",
-        "Vocation"
+        "Leadership"
       ],
       "secondary": [
-        "Leadership",
+        "Vocation",
         "Firearms",
         "Alchemistry"
       ]
@@ -686,10 +686,14 @@
     },
     "58": {
       "primary": [
-        "Aeromancy"
+        "Aeromancy",
+        "Idromancy",
+        "Electromancy"
       ],
       "secondary": [
-        "Augury"
+        "Augury",
+        "Cryomancy",
+        "Geomancy"
       ]
     },
     "59": {
@@ -786,6 +790,54 @@
         "StatusMagic",
         "Leadership",
         "Pyromancy"
+      ]
+    },
+    "67": {
+      "primary": [
+        "VoidMagic",
+        "Illusion",
+        "AstralMagic"
+      ],
+      "secondary": [
+        "Necromancy",
+        "PsychicAbilities",
+        "Oneiromancy"
+      ]
+    },
+    "68": {
+      "primary": [
+        "Bestial",
+        "Necromancy",
+        "Mutation"
+      ],
+      "secondary": [
+        "ForbiddenMagic",
+        "StatusMagic",
+        "Pastoral"
+      ]
+    },
+    "69": {
+      "primary": [
+        "Mutation",
+        "Bestial",
+        "ChaosMagic"
+      ],
+      "secondary": [
+        "ForbiddenMagic",
+        "Alchemistry",
+        "StatusMagic"
+      ]
+    },
+    "70": {
+      "primary": [
+        "Tactical",
+        "Firearms",
+        "Vocation"
+      ],
+      "secondary": [
+        "Roguery",
+        "Leadership",
+        "MartialArts"
       ]
     }
   },
@@ -924,14 +976,14 @@
   "Necromancy": {
     "name": {
       "en": "Necromancy",
-      "it": "Necromancy"
+      "it": "Necromanzia"
     },
     "description": {
-      "en": "Harness the power of life itself.\n",
-      "it": "Sfrutta il potere della vita"
+      "en": "Bargain with death and the dead.\nDrain life and raise what has fallen.",
+      "it": "Patteggia con la morte e con i morti.\nProsciuga la vita e rialza ciò che è caduto."
     },
     "type": "Magic",
-    "icon": 96
+    "icon": 191
   },
   "Firearms": {
     "name": {
@@ -975,8 +1027,8 @@
       "it": "Magia del Vuoto"
     },
     "description": {
-      "en": "Purify with sacred light.\nSmite evil with righteous power.",
-      "it": "Purifica con luce sacra.\nColpisci il male con potere giusto."
+      "en": "Reach into the dark between stars.\nUnmake, consume and curse.",
+      "it": "Attingi al buio tra le stelle.\nDisfa, consuma e maledici."
     },
     "type": "Magic",
     "icon": 70
@@ -1035,8 +1087,8 @@
       "it": "Magia Astrale"
     },
     "description": {
-      "en": "Wield the power of the starr",
-      "it": "Brandisci il potere delle stelle."
+      "en": "Wield the power of the stars.\nCall down meteors and bend space.",
+      "it": "Brandisci il potere delle stelle.\nFai cadere meteore e piega lo spazio."
     },
     "type": "Magic",
     "icon": 191
@@ -1101,18 +1153,6 @@
     "type": "Skill",
     "icon": 131
   },
-  "Technomancy": {
-    "name": {
-      "en": "Technomancy",
-      "it": "Tecnomanzia"
-    },
-    "description": {
-      "en": "Blend magic with technology.\nControl machines through arcane means.",
-      "it": "Unisci magia e tecnologia.\nControlla le macchine con mezzi arcani."
-    },
-    "type": "Magic",
-    "icon": 83
-  },
   "Augury": {
     "name": {
       "en": "Augury",
@@ -1131,8 +1171,8 @@
       "it": "Pastorale"
     },
     "description": {
-      "en": "Tame and command wild creatures.\nBind beasts to your will.",
-      "it": "Doma e comanda creature selvagge.\nLega le bestie al tuo volere."
+      "en": "Grow, reap and wield the living land.\nRoots, spores and the beasts of the farm.",
+      "it": "Coltiva, mieti e brandisci la terra viva.\nRadici, spore e le bestie della fattoria."
     },
     "type": "Skill",
     "icon": 90
@@ -1263,8 +1303,8 @@
       "it": "Vocazione"
     },
     "description": {
-      "en": "Apply battle and labor crafts.\nMaster the trades of daily life.",
-      "it": "Applica arti da battaglia e da lavoro.\nDomina i mestieri della vita quotidiana."
+      "en": "Apply the tools of trade and arena.\nPitchfork, axe and wrench, swung in anger.",
+      "it": "Usa gli attrezzi del mestiere e dell'arena.\nForcone, ascia e chiave inglese, brandite con rabbia."
     },
     "type": "Skill",
     "icon": 96
@@ -1275,8 +1315,8 @@
       "it": "Caccia"
     },
     "description": {
-      "en": "Track and take down quarry.\nFight alongside a loyal beast.",
-      "it": "Insegui e abbatti la preda.\nCombatti al fianco di una bestia fedele."
+      "en": "Track and take down quarry.\nBow, sling and a loyal beast.",
+      "it": "Insegui e abbatti la preda.\nArco, fionda e una bestia fedele."
     },
     "type": "Skill",
     "icon": 103

@@ -1,6 +1,37 @@
+0.7.8a
+
+Added:
+ - teleport fx plays sound when beams take the party up
+ - bigger star catalog, return home button using a SB pellet
+ - gene splicing at surgeon
+ - a pharmacy for any illness in the clinic
+ - new Naguka, Verden, Elf, Dwarf, Orc, Tourist, Dargos archetypes with voice banks
+ - allergy traits, pharmacy antihistamine
+ - cooking menu recipe tab
+ - free camera in fishing minigame
+
+Changed:
+ - sync plugin repo is second build encrypted option, build zip last
+ - procedural houses keep playing the village or city biome music
+ - reworked equip screen to show 1 character per time on right page
+ - reworked rocket destination screen, music, body renderers and galaxy warp
+ - you can buy medicine doses
+ - reworked rocketsystem planet transitions between every destination
+ - summons are player controlled, merged the skill rework branches
+ - story mode legend notices play as Bubba dialogue, unfold renamed Info
+
+Fixed:
+ - landing menu ways down now open as a modal after picking a destination
+ - star tiles sometimes not hiding event right away
+ - images and audio not loading in the encrypted build
+ - encrypted mod files loading the base game's copy instead
+ - skill battle messages naming the wrong skill
+
+
 0.7.7a
 
 Fixed:
+ - c.update is not a function error when loading
  - star tiles sometimes not hiding the character anymore
 
 0.7.6a

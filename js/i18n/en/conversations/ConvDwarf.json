@@ -1,0 +1,1105 @@
+{
+  "_comment": "The Dwarf voice (NPCConversation II.1b, SpeciesVoice). speech: the rules run over any shared line they say. voice: openers and closers. thought: their own thoughts by situation. script: two-person scripts, speaker 0 is always the Dwarf.",
+  "voice": {
+    "openers": [
+      "By my beard,",
+      "Mark my words:",
+      "Hmph.",
+      "Listen here,",
+      "As my grandfather used to say,",
+      "Aye.",
+      "Now then,",
+      "Between you, me and the anvil,",
+      "Stone and ale,",
+      "On my mother's forge,",
+      "By the deep halls,",
+      "Hear a dwarf out:",
+      "Begging your pardon,",
+      "*strokes beard*",
+      "Hammer and tongs,",
+      "I will say this once, and slowly:",
+      "Right, then.",
+      "Granite and grudges,",
+      "Measure twice, speak once:",
+      "Ach,",
+      "Speaking as a craftsman,",
+      "Well, by iron,",
+      "*sets down the tankard*",
+      "Down in the halls we say,",
+      "Honest truth, stone truth:"
+    ],
+    "closers": [
+      "Mark my words.",
+      "By my beard.",
+      "Stone does not lie.",
+      "Aye, that it is.",
+      "That is dwarf wisdom, free of charge.",
+      "Measure twice.",
+      "And that is the end of it.",
+      "Now pass the ale.",
+      "Hmph. So there.",
+      "My grandfather said so, and he was never wrong.",
+      "Carve that somewhere.",
+      "I will remember this.",
+      "Like iron.",
+      "*taps the table twice*",
+      "On my mother's anvil.",
+      "Nothing built in a hurry, mind.",
+      "Solid as granite.",
+      "That goes in the book.",
+      "Write it down. No, carve it.",
+      "Or I am a gnome.",
+      "As sure as the deep halls.",
+      "So say the hammers.",
+      "Take it or leave it, but take it.",
+      "*grunts approvingly*",
+      "Ale and anvils."
+    ]
+  },
+  "thought": {
+    "generic": [
+      "The mortar on this street is {crumbling|rotten|a disgrace}. Somebody should be ashamed.",
+      "Iron prices up again. {My anvil weeps|My purse weeps|Everybody weeps}.",
+      "Must sharpen the {chisels|axe|kitchen knives} tonight. They have gone dull with shame.",
+      "A grudge kept warm is a grudge kept well.",
+      "This town's beer is {thin|cloudy|criminal}. I will drink it anyway. Out of politeness.",
+      "Who built that balcony? It is held up by hope and two nails.",
+      "My beard has a knot in it. I will not rest until it is out.",
+      "My forge was cold this morning. I took it personally.",
+      "A good door should shut with one sound, not three.",
+      "{Granite|Basalt|Marble} on the church steps. Somebody here once had taste.",
+      "I have been chewing on this problem for {three days|a week|eleven years}. It is nearly soft.",
+      "Tall folk keep patting my head. I keep a list.",
+      "Nothing worth having was ever made in a hurry. Except beer. Beer is urgent.",
+      "The new bridge sings in the wind. Bridges should not sing.",
+      "I can hear a {loose bolt|cracked bell|bad hinge} from across the square. Curse of the trade.",
+      "My apprentice used glue again. We will be having words.",
+      "Stone remembers. That is why I talk to it kindly.",
+      "Thinkering on a new lock. {Seven|Nine|Thirteen} pins. Nobody will open it, including me.",
+      "A song for the hammer: one strike per word. My songs are short.",
+      "These chairs are built for giants. My feet have not touched the floor all day.",
+      "My cousin wrote from the mines. The seam runs {deeper|richer|stranger} than anyone thought.",
+      "A dwarf forgives. A dwarf also writes it down, just in case.",
+      "Somebody painted over good oak. I may never recover.",
+      "I need a pint and a problem, in that order.",
+      "Valkyrie drill at dawn. {My shield arm|My back|My pride} still aches from yesterday.",
+      "The guard roster has me on nights again. Good. The night is honest.",
+      "Polished my helmet. I can see my beard in it. Magnificent.",
+      "The tram rails here are badly laid. I could do it with my eyes shut.",
+      "Nobody hums while they work anymore. The work can tell.",
+      "My grandfather's anvil is three hundred years old and still rings true. Like him.",
+      "{One more|Just one|A final} pint and then home. The usual lie.",
+      "Gnomes make things clever. Dwarves make things last. Elves make things pretty. Guess who gets paid.",
+      "Wrote to the town council about that drain. My {fourth|ninth|twelfth} letter.",
+      "Coal smoke in the air. Somebody is working. Good.",
+      "My knees know the weather before the radio does.",
+      "The best hammer is the one your hand forgets it is holding.",
+      "Somebody whistled at my beard. I will take it as a compliment. Then as a grudge.",
+      "I dreamt of hinges again. Perfect, silent hinges.",
+      "A crack in the wall is a story. This wall has written a novel.",
+      "Earned {forty|sixty|ninety} euros mending pots today. Honest money, sooty hands."
+    ],
+    "need": {
+      "sleep": [
+        "My eyelids weigh more than an anvil. Bed.",
+        "Awake since {the first shift|the cock crowed|the forge was lit}. Enough.",
+        "Need sleep. Somewhere low, dark and quiet. Like a cellar.",
+        "I nearly nodded off into my beer. That is a crime against beer.",
+        "Even stone gets tired. Well, no. But I do.",
+        "Bed, and a pillow under the beard. Nothing more."
+      ],
+      "hunger": [
+        "Hungry enough to eat {a roast|a whole ham|a cart of sausages}.",
+        "My stomach is grumbling louder than I do. That takes effort.",
+        "Dark bread and hard cheese. That is all I ask of this world.",
+        "Cannot work on an empty belly. The hammer knows.",
+        "Something with gravy. Anything with gravy.",
+        "If I do not eat soon I will start holding grudges against food."
+      ],
+      "work": [
+        "Back to the forge. The {horseshoes|hinges|blades} will not shape themselves.",
+        "Idle hands rust. Time to work.",
+        "Shift starts soon. Boots laced, beard tucked.",
+        "A day without work is a day without a story.",
+        "That commission is overdue. Overdue is a dirty word.",
+        "I can hear my workbench calling. It sounds hurt."
+      ],
+      "leisure": [
+        "An evening off. A pint, a pipe, a song.",
+        "Even an anvil gets Sundays off. Mostly.",
+        "Time for darts. I throw like I hammer: hard and straight.",
+        "I should do something for fun. Carving counts. Carving always counts.",
+        "A long song in a low room. That is what I need.",
+        "Too much work makes a dwarf {a boulder|a grump|a bore}."
+      ],
+      "crime": [
+        "That merchant cheated my cousin in 1987. His window is right there... No. Grudges are for books.",
+        "That lock is shoddy work. I could open it with {a spoon|a hairpin|a harsh word}. I will not.",
+        "Nobody guards that tool shed. Lovely chisels in there. Lovely, unguarded chisels.",
+        "A dwarf takes what is owed. Is it owed? Let me check the book.",
+        "That purse is heavy. Heavier than my conscience? Close.",
+        "Shoddy door, cheap hinge, nobody home. It is practically an invitation."
+      ],
+      "hygiene": [
+        "My beard smells of {soot|onions|three different taverns}. Bath.",
+        "Soot to the elbows. Time to scrub.",
+        "I found yesterday's lunch in my beard. Enough.",
+        "Need a wash, and the comb, and the good beard oil.",
+        "I smell like a forge. Lovely to me, less to others.",
+        "Dust from the mine in every crease. Hot water, please."
+      ],
+      "money": [
+        "{Eight|Twelve|Twenty} euros until payday. Iron does not buy itself.",
+        "Purse is light. A dwarf with a light purse is a dwarf in a bad mood.",
+        "Someone still owes me for that gate. It is in the book.",
+        "Need coin. Could take on a few repair jobs. Pots, locks, anything.",
+        "Gold in the hills and nothing in my pocket. The world is badly arranged.",
+        "Counted my savings twice. They did not grow. Counted a third time anyway."
+      ],
+      "safety": [
+        "Something is off on this street. My beard is bristling.",
+        "Hand on the hammer. Just in case.",
+        "Too many shadows, too few walls. I want stone around me.",
+        "Heard {boots|shouting|glass breaking} behind me. Not turning round. Yet.",
+        "Feet planted, back to the wall. Old guard habit.",
+        "If goblins come, they come through me first. Short, but wide."
+      ],
+      "comfort": [
+        "My chair at home was cut to my height. Everything here is cut for herons.",
+        "Miss my hearth. Miss my slippers. Miss my anvil, oddly most of all.",
+        "A low ceiling and a thick wall. That is all comfort is.",
+        "This room is too {draughty|tall|bright}. Give me a cellar.",
+        "A warm fire and boots off. Is that so much to ask?",
+        "My back wants a proper bench, not this wobbly elf-built thing."
+      ],
+      "social": [
+        "Nobody to argue with for {two days|a week|too long}. I am going soft.",
+        "Need a crowded table and somebody to out-sing.",
+        "Should visit my cousins. They will have new grudges to share.",
+        "A pint alone is just a drink. A pint with friends is a feast.",
+        "Been talking to my hammer again. It is a good listener, but dull.",
+        "Somebody, anybody, come and tell me I am wrong. I miss it."
+      ]
+    },
+    "weather": {
+      "rain": [
+        "Rain. Now we see what {the gutters|the drains|the roof tiles} of this town are worth.",
+        "Rain on the forge roof. Best music there is.",
+        "Wet beard, wet boots, wet mood.",
+        "Rain. Stone loves rain. Iron does not. I am torn.",
+        "Good day for the workshop. Bad day for whoever built that leaky roof.",
+        "Rain finds every crack. That is how you learn where the cracks are."
+      ],
+      "storm": [
+        "Thunder! Sounds like the old halls on a feast day.",
+        "Lightning likes tall things. One more reason to be short.",
+        "Storm. Shutters down, fire up, ale out.",
+        "That roof will not last the night. I said so {in spring|in March|in writing}.",
+        "The wind is testing every weld in town. Let us see who did honest work.",
+        "A storm is just the sky swinging a hammer."
+      ],
+      "snow": [
+        "Snow. Like home in the high passes. Almost.",
+        "Snow up to my knees. Which is not very much snow, to be fair.",
+        "Cold iron sticks to the fingers. Gloves today.",
+        "Snow on the beard. Very distinguished.",
+        "Snowed in? Good. Mulled ale and a long story.",
+        "Shovelled {the path|the steps|the whole street} before anyone woke. Nobody thanked me. Noted."
+      ],
+      "clear": [
+        "Clear sky. Good light for fine work.",
+        "Sun on the stone. The whole town looks warmer, even the ugly bits.",
+        "Clear day. You can see the mountains. I always look.",
+        "Too much sun for a dwarf. I will find shade under an arch.",
+        "Bright day. Perfect for {drying hides|airing the forge|a beer outside}.",
+        "Dry weather. Mortar sets well today. Good day to build."
+      ]
+    },
+    "time": {
+      "morning": [
+        "Morning. Forge lit before sunrise, as it should be.",
+        "Dawn. My beard is still asleep, the rest of me is working.",
+        "Porridge, strong tea, cold water on the face. Ready.",
+        "Morning shift. The best hammering is done before anyone complains.",
+        "Early. The streets belong to bakers and dwarves.",
+        "Woke before the {rooster|bells|baker}. As usual. Smug about it."
+      ],
+      "afternoon": [
+        "Afternoon. The work is half done and the beer is half earned.",
+        "Sun is high. My shadow is the same size as me, for once.",
+        "Lunch settling. The hammer feels heavier after lunch.",
+        "Afternoon lull. Good time for fine filing.",
+        "Halfway through the day and only one argument so far. Slow day.",
+        "Long afternoon. I will {mend a chair|sharpen something|nap on a sack}."
+      ],
+      "evening": [
+        "Evening. Fire banked, tools hung, tankard found.",
+        "The tavern lights are on. My feet know the way.",
+        "Evening. Time to polish the grudges.",
+        "Sunset on the hills. Somewhere under them, ore is sleeping.",
+        "End of the shift. My hands smell of iron and honest sweat.",
+        "Evening song time. Low voices, long verses."
+      ],
+      "night": [
+        "Night. Quiet as a mineshaft. I like it.",
+        "Night watch. Lantern, axe, flask of tea. Mostly tea.",
+        "Dark. Dwarves see well enough in the dark. We just do not brag.",
+        "Late. Still thinking about that hinge. It will not let me sleep.",
+        "Night. The stars look like sparks off a big anvil.",
+        "{Midnight|Past one|Nearly two}. Last pint. Truly the last. Probably."
+      ]
+    },
+    "season": {
+      "SPRING": [
+        "Spring. The thaw finds every bad roof in town.",
+        "Spring cleaning: forge, bellows, beard.",
+        "Mountain passes open again. Letters from home soon.",
+        "Spring. The young ones are dancing. I am supervising, with ale.",
+        "Mud season. Boots twice as heavy, temper too."
+      ],
+      "SUMMER": [
+        "Summer. A forge in summer is a punishment for old sins.",
+        "Hot. Even my beard is sweating.",
+        "Summer. Cold cellar, cold beer, closed door.",
+        "Long days. Good light for long work.",
+        "Summer fair in town. I will judge the metalwork stalls. Harshly."
+      ],
+      "AUTUMN": [
+        "Autumn. Brewing season. The best season.",
+        "Leaves falling. Time to check the chimney before winter checks it for me.",
+        "Autumn. Wood stacked, coal ordered, grudges sorted.",
+        "Harvest beer is in. My heart is full, my tankard fuller.",
+        "Autumn wind in the beard. Feels like the old country."
+      ],
+      "WINTER": [
+        "Winter. The forge is the warmest place in town. Everyone visits.",
+        "Long nights, long songs, long beards. Dwarf season.",
+        "Ice on the tools. Bring them in, warm them up, apologise.",
+        "Winter feast soon. I have been growing my appetite since autumn.",
+        "Frost on the windows. Pretty, like elf work. Gone by noon, like elf work."
+      ]
+    },
+    "wealth": {
+      "poor": [
+        "Bread and dripping again. Honest food for an honest purse.",
+        "Mended my boots a {third|fifth|seventh} time. They are more patch than boot.",
+        "Sold my second hammer. A dwarf with one hammer is half a dwarf.",
+        "No coin for coal. Cold forge, cold heart.",
+        "Poor, aye. But nobody can say my work is poor.",
+        "Water instead of ale tonight. My ancestors are turning in their cairns."
+      ],
+      "comfortable": [
+        "Enough for coal, enough for ale, a little for the good beard oil. Plenty.",
+        "Steady work, steady pay. Like a steady hammer.",
+        "Bought new tongs. Not needed. Wanted. That is comfort.",
+        "Rent paid, larder full, grudges up to date. A good month.",
+        "Put a little aside for {a new anvil|my nephew's apprenticeship|a barrel of good ale}.",
+        "Not rich. Not poor. Solid. Like a good wall."
+      ],
+      "rich": [
+        "Commissioned a gold-inlaid tankard. For myself. Every dwarf deserves one.",
+        "Bought the whole mine. Well, a share. A big share.",
+        "Rich enough to pay off my grudges. Not going to. Grudges are not for sale.",
+        "My vault door is a metre of steel. I forged it myself. Twice.",
+        "Bought a round for the whole tavern. {Twice|Three times|All night}.",
+        "Varlenia folk keep inviting me to dinner. They want my vault door, not my company."
+      ]
+    },
+    "familiar": [
+      "Those travellers again. I {remember them well|had not forgotten|never forget} faces like theirs.",
+      "Ah, the ones with the van. They owe me nothing. Yet.",
+      "Back again? Good. Familiar faces are like old tools: they fit the hand.",
+      "Those folk. They paid fair last time. That goes in the good book.",
+      "I know that lot. One of them leans on my walls.",
+      "The travellers! Somebody put the kettle on. And the ale.",
+      "Them again. A dwarf never forgets a face, or a debt, or a kindness.",
+      "There they are. Still in one piece, I see. Mostly.",
+      "Those wanderers. Their boots look worse each time. I could fix them.",
+      "Familiar faces. I will nod. A dwarf nod is worth a hug from anyone else."
+    ],
+    "hordeGround": [
+      "Horde ground. They have pulled down good stone walls to build ugly ones.",
+      "Goblin banners on a dwarf-built bridge. My grandfather would weep.",
+      "The Horde does not keep grudges. It keeps everything else.",
+      "Horde land. Hammer close, mouth shut, eyes open.",
+      "I am writing every goblin I see into the book. I will need a bigger book.",
+      "Their forges burn too hot and too fast. Everything they make cracks by spring.",
+      "They paint everything. Paint hides bad work. I would know.",
+      "One shared head, they say. I would like a word with it.",
+      "Horde ground. Keep the beard tucked. They grab.",
+      "Even here the mountains are not theirs. Mountains belong to nobody, and a little to dwarves."
+    ],
+    "abroad": [
+      "Far from the halls. The beer here is a foreign concept, in every sense.",
+      "They build with brick here. Brick! Like bread for walls.",
+      "Nobody here has heard of my family. Their loss.",
+      "A long way from home. My boots know every mile of it.",
+      "Foreigners keep asking if the beard is real. Pull it and see. Gently.",
+      "Wrote home. Told them the stone here is soft and the people softer.",
+      "Abroad, a dwarf is a rumour. I am happy to be a solid one.",
+      "The locals here are kind. Kind, and very tall.",
+      "No dwarf hall for {a hundred|three hundred|five hundred} kilometres. I am the hall now.",
+      "Strange land, strange food, same hammer. Everything is fine."
+    ],
+    "lore": {
+      "forge": [
+        "A dwarf child's first word is often 'hot'. Forge children learn fast.",
+        "We name our anvils. Mine is called Patience. She is not.",
+        "A blade takes {a hundred|a thousand|ten thousand} strikes. A reputation takes one bad one.",
+        "Thinkerers are dwarves who forge ideas. Most of them explode. Some of them fly.",
+        "The fire in the old hall has not gone out in four hundred years. Someone always stays.",
+        "Never quench in anger. The steel remembers.",
+        "The Mages' Guild buys our steel for their staff caps. They never ask how. We never tell.",
+        "A master's mark is tiny and hidden. If you have to show it, the work was not good enough."
+      ],
+      "deep": [
+        "Deep down, the stone is warm and it hums. Miners say it is the world thinking.",
+        "Since 1992, some tunnels come out somewhere they did not go in. We mark those with red chalk.",
+        "Every miner knows the canary. Ours sing in harmony.",
+        "Never whistle in a mine. The mountain thinks you are mocking it.",
+        "My grandmother found a seam of {silver|blue quartz|something nameless} that hummed in two dimensions at once.",
+        "Under the Alps there are halls older than any map. We do not draw them on maps.",
+        "Stone tells you where it will break, if you listen. Most people do not listen.",
+        "A cave-in is the mountain changing its mind. You respect that, and you dig faster."
+      ],
+      "grudges": [
+        "My family's grudge book runs to {eleven|fourteen|twenty} volumes. Volume one is mostly about a goat.",
+        "A grudge is crossed out only when the debt is paid. Some of the ink is three hundred years old.",
+        "We do not hate. We remember precisely. It is different.",
+        "Grandfather held a grudge against a bridge for forty years. The bridge fell first.",
+        "There is a page in the book for the Horde. It is a very long page.",
+        "Forgiving is allowed. Forgetting is not. That is the whole rule.",
+        "My aunt crossed out a grudge on her deathbed. The family still talks about it.",
+        "A good grudge makes you work harder. Spite has built more halls than gold."
+      ],
+      "ale": [
+        "Every hall has its own yeast. Ours came over the mountains in a beard. Do not ask.",
+        "A wedding needs three barrels: one for the guests, one for the family, one for the arguments.",
+        "Ale is liquid bread. Bread is solid ale. The cycle is sacred.",
+        "We toast the dead with dark ale and the newborn with light. Everyone in between gets what is left.",
+        "Never brew in a hurry. Hurried ale tastes like regret.",
+        "My uncle brewed a stout so thick you could {stand a spoon|float a coin|drive a nail} in it.",
+        "Valkyries drink last at the feast. It is an honour. They pretend it is not a hardship.",
+        "A singer drinks free in any hall. That is why we have so many singers."
+      ],
+      "beards": [
+        "A beard is a record. Every braid is a deed, every bead a promise.",
+        "Cutting a dwarf's beard is a crime in three countries and a war in a fourth.",
+        "My first braid was for my first hinge. I was {nine|eleven|twelve}.",
+        "Valkyries braid steel wire into theirs. It stops a sword. It has also stopped a wedding.",
+        "Beard oil recipes are family secrets. Ours has juniper and something we do not name.",
+        "Clean-shaven dwarves exist. We are polite about it. Mostly.",
+        "Tuck your beard near machines. Every dwarf learns this exactly once.",
+        "A grey beard is not old. A grey beard is seasoned, like good timber."
+      ],
+      "squishing": [
+        "Varlenia appeared in one night in January. Nothing built in a night can be trusted. Not even a continent.",
+        "The Rule of 80: nothing faster than eighty an hour. Dwarves obeyed it for centuries before it existed.",
+        "That Omega tower goes down further than it goes up, they say. I would love to see its footings.",
+        "Ninety-two dimensions, squeezing together since 1992. Somewhere, a very bad mason is responsible.",
+        "A time bubble swallowed a quarry near us. The same block gets cut every morning, forever.",
+        "That Liminal Engine folds the road. Clever. I would never ride in it. I would take it apart, though.",
+        "Rich folk moved to Varlenia by the boatload. Let them. Its stone has no memory.",
+        "Since the Squishing, some ores turn up from {other worlds|nowhere|tomorrow}. They ring wrong on the anvil."
+      ]
+    }
+  },
+  "script": {
+    "positive": [
+      [
+        [
+          0,
+          "{b}! I fixed your gate. It squeaked. I could not bear it."
+        ],
+        [
+          1,
+          "You didn't have to do that, {a}. Thank you."
+        ],
+        [
+          0,
+          "I did have to. The squeak was personal."
+        ]
+      ],
+      [
+        [
+          0,
+          "First round is on me, {b}. Second one too."
+        ],
+        [
+          1,
+          "What's the occasion?"
+        ],
+        [
+          0,
+          "You paid me back on time. That earns a dwarf's respect and two pints."
+        ]
+      ],
+      [
+        [
+          0,
+          "I made you something. A knife. Do not argue."
+        ],
+        [
+          1,
+          "It's beautiful. Look at the handle!"
+        ],
+        [
+          0,
+          "Ash wood, oiled three times. It will outlive both of us."
+        ],
+        [
+          1,
+          "Then I'll leave it to someone in my will."
+        ]
+      ],
+      [
+        [
+          0,
+          "You remembered my grandfather's name, {b}. Nobody remembers."
+        ],
+        [
+          1,
+          "You told the story four times. It stuck."
+        ],
+        [
+          0,
+          "Four times! Then you are practically family."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your new shelf is level. I checked. I was impressed."
+        ],
+        [
+          1,
+          "Coming from you, that's something."
+        ],
+        [
+          0,
+          "It is everything. Do not let it go to your head."
+        ]
+      ],
+      [
+        [
+          0,
+          "Sing with me, {b}. The old mining song."
+        ],
+        [
+          1,
+          "I don't know the words."
+        ],
+        [
+          0,
+          "Nobody knows the words. That is not the point of the song."
+        ],
+        [
+          1,
+          "Fine. Loudly, then."
+        ]
+      ],
+      [
+        [
+          0,
+          "I am crossing you out of the book, {b}."
+        ],
+        [
+          1,
+          "What book?"
+        ],
+        [
+          0,
+          "The grudge book. That business with the ladder. Forgiven."
+        ],
+        [
+          1,
+          "I didn't even know I was in it!"
+        ],
+        [
+          0,
+          "Since 1996. Do not worry. It was a small entry."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your bread is good, {b}. Heavy. Honest."
+        ],
+        [
+          1,
+          "Heavy is a compliment?"
+        ],
+        [
+          0,
+          "From a dwarf, heavy is the highest compliment there is."
+        ]
+      ]
+    ],
+    "negative": [
+      [
+        [
+          0,
+          "You used nails on that oak, {b}. Nails."
+        ],
+        [
+          1,
+          "It's a fence, not a cathedral."
+        ],
+        [
+          0,
+          "Everything is a cathedral if you do it right."
+        ]
+      ],
+      [
+        [
+          0,
+          "You patted my head again."
+        ],
+        [
+          1,
+          "It was friendly!"
+        ],
+        [
+          0,
+          "So is a grudge, at first."
+        ]
+      ],
+      [
+        [
+          0,
+          "That knife I sold you. You used it as a screwdriver."
+        ],
+        [
+          1,
+          "It worked fine."
+        ],
+        [
+          0,
+          "It worked. It did not work fine. There is a difference."
+        ],
+        [
+          1,
+          "Not to me."
+        ]
+      ],
+      [
+        [
+          0,
+          "You still owe me for the hinges, {b}. Six months now."
+        ],
+        [
+          1,
+          "I said I'd pay you next week."
+        ],
+        [
+          0,
+          "You said that in the spring. I wrote it down."
+        ]
+      ],
+      [
+        [
+          0,
+          "Did you touch my anvil?"
+        ],
+        [
+          1,
+          "I put my coffee on it for a second."
+        ],
+        [
+          0,
+          "A second is all it takes to lose a friend."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your beer is thin, {b}, and your tap is crooked."
+        ],
+        [
+          1,
+          "Then drink somewhere else."
+        ],
+        [
+          0,
+          "I would, if anywhere else were better. That is what makes me angry."
+        ]
+      ]
+    ],
+    "neutral": [
+      [
+        [
+          0,
+          "Excuse me. Who laid these cobbles?"
+        ],
+        [
+          1,
+          "The council, I think. Years ago."
+        ],
+        [
+          0,
+          "Tell the council a dwarf noticed. They will know what that means."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is there a smithy in this town?"
+        ],
+        [
+          1,
+          "Down by the river. Old Marco runs it."
+        ],
+        [
+          0,
+          "Is old Marco any good?"
+        ],
+        [
+          1,
+          "He's the only one."
+        ],
+        [
+          0,
+          "That is not what I asked."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your door is out of true, you know."
+        ],
+        [
+          1,
+          "It shuts, doesn't it?"
+        ],
+        [
+          0,
+          "It shuts. It does not shut properly. Good day."
+        ]
+      ],
+      [
+        [
+          0,
+          "Which way to the tram stop?"
+        ],
+        [
+          1,
+          "Straight on, then left at the bakery."
+        ],
+        [
+          0,
+          "A bakery. Good. That makes two stops, then."
+        ]
+      ],
+      [
+        [
+          0,
+          "Weather is turning."
+        ],
+        [
+          1,
+          "Is it? The sky looks clear."
+        ],
+        [
+          0,
+          "My knees disagree with the sky. My knees are usually right."
+        ]
+      ],
+      [
+        [
+          0,
+          "How much for the iron pan?"
+        ],
+        [
+          1,
+          "Twelve euros."
+        ],
+        [
+          0,
+          "Hm. *taps it* Eleven, and I will not mention the casting flaw."
+        ],
+        [
+          1,
+          "Done."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is that a chess set? Who carved it?"
+        ],
+        [
+          1,
+          "My father, a long time ago."
+        ],
+        [
+          0,
+          "Then your father had good hands. Tell him a dwarf said so."
+        ]
+      ],
+      [
+        [
+          0,
+          "Does this tavern have a low stool?"
+        ],
+        [
+          1,
+          "We have a crate."
+        ],
+        [
+          0,
+          "A crate. Well. I have sat on worse thrones."
+        ]
+      ],
+      [
+        [
+          0,
+          "Seen the news? They are building a new bridge on the ring road."
+        ],
+        [
+          1,
+          "About time, the old one shakes."
+        ],
+        [
+          0,
+          "The new one will shake too. Mark my words. They are rushing it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Good morning. Is this the queue for the post office?"
+        ],
+        [
+          1,
+          "It is. It's been the queue since nine."
+        ],
+        [
+          0,
+          "Good. I am patient. I am built for queues."
+        ]
+      ],
+      [
+        [
+          0,
+          "Are {those mountains|those hills|those peaks} to the north mined?"
+        ],
+        [
+          1,
+          "There was a quarry once. It closed."
+        ],
+        [
+          0,
+          "Closed. Hmph. Nothing is ever finished with a mountain, only interrupted."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is it always this loud in this square?"
+        ],
+        [
+          1,
+          "Market day. It's worse on Saturdays."
+        ],
+        [
+          0,
+          "Good. Noise means trade. Trade means work. Work means beer."
+        ]
+      ]
+    ],
+    "debate": [
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Machines will never replace a smith's hands."
+          ],
+          [
+            1,
+            "Factories make a thousand nails an hour."
+          ],
+          [
+            0,
+            "A thousand bad nails. I make twelve good ones."
+          ],
+          [
+            1,
+            "And I need a thousand."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Things should be built to last a hundred years."
+          ],
+          [
+            1,
+            "Agreed. My grandmother's table is still the best thing in the house."
+          ],
+          [
+            0,
+            "There. That is how a table should be."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Varlenia should not be trusted. It appeared overnight."
+          ],
+          [
+            1,
+            "It's a whole continent. People live there now."
+          ],
+          [
+            0,
+            "People lived in Pompeii too."
+          ],
+          [
+            1,
+            "That's not the same thing at all!"
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "A grudge is just memory with a sense of duty."
+          ],
+          [
+            1,
+            "Ha! My mother would agree with you."
+          ],
+          [
+            0,
+            "Your mother sounds like a wise woman."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Magic is a craft, like smithing. Practice and calluses."
+          ],
+          [
+            1,
+            "Magic is a gift. Some people just have it."
+          ],
+          [
+            0,
+            "Nobody just has anything. They practised where you could not see."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "The best beer is brewed slowly."
+          ],
+          [
+            1,
+            "No argument there. The fast stuff tastes like tin."
+          ],
+          [
+            0,
+            "Tin! Exactly. Let me buy you a slow one."
+          ]
+        ]
+      }
+    ],
+    "ambient": [
+      [
+        [
+          0,
+          "Morning, {b}. Forge is lit."
+        ],
+        [
+          1,
+          "I can smell it from here."
+        ]
+      ],
+      [
+        [
+          0,
+          "That cart wheel is wobbling."
+        ],
+        [
+          1,
+          "It's been wobbling for years."
+        ]
+      ],
+      [
+        [
+          0,
+          "Pint later, {b}?"
+        ],
+        [
+          1,
+          "If you're buying."
+        ]
+      ],
+      [
+        [
+          0,
+          "Cold enough for gloves today."
+        ],
+        [
+          1,
+          "Cold enough for two pairs."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mind the step, it is cracked."
+        ],
+        [
+          1,
+          "Thanks, I nearly went over."
+        ]
+      ],
+      [
+        [
+          0,
+          "Good stone, this wall."
+        ],
+        [
+          1,
+          "If you say so."
+        ]
+      ],
+      [
+        [
+          0,
+          "*nods gravely*"
+        ],
+        [
+          1,
+          "Afternoon to you too."
+        ]
+      ],
+      [
+        [
+          0,
+          "Long day at the bench, {b}."
+        ],
+        [
+          1,
+          "Every day's long at the bench."
+        ]
+      ],
+      [
+        [
+          0,
+          "Smell that? Rain by evening."
+        ],
+        [
+          1,
+          "Your knees again?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Seen my apprentice?"
+        ],
+        [
+          1,
+          "Ran off towards the bakery."
+        ]
+      ],
+      [
+        [
+          0,
+          "Fine weather for {building|mending|brewing}."
+        ],
+        [
+          1,
+          "Fine weather for sitting, too."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hinge on your shutter needs oil."
+        ],
+        [
+          1,
+          "I'll get to it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Evening, {b}. Singing tonight?"
+        ],
+        [
+          1,
+          "Only if you start."
+        ]
+      ],
+      [
+        [
+          0,
+          "Busy market."
+        ],
+        [
+          1,
+          "Too busy for my liking."
+        ]
+      ],
+      [
+        [
+          0,
+          "New boots, {b}? Good leather."
+        ],
+        [
+          1,
+          "Cost me a fortune."
+        ]
+      ],
+      [
+        [
+          0,
+          "Quiet street tonight."
+        ],
+        [
+          1,
+          "Let's keep it that way."
+        ]
+      ],
+      [
+        [
+          0,
+          "Tram's late again."
+        ],
+        [
+          1,
+          "Tram's always late."
+        ]
+      ],
+      [
+        [
+          0,
+          "That bell is cracked, you know."
+        ],
+        [
+          1,
+          "I always thought it sounded odd."
+        ]
+      ]
+    ]
+  }
+}

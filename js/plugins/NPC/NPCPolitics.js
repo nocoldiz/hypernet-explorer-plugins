@@ -617,6 +617,7 @@
         if (f && f !== "Neutral") found.add(f);
       }
     }
+    if (!hordeExists()) found.delete(GOBLIN_HORDE);
     for (const name of Object.keys(OFFWORLD_POWERS)) found.add(name);
     // Every floor world that seats a government seats it here.
     for (const world of governedTowerWorlds()) found.add(world.powerName);
@@ -855,13 +856,21 @@
   }
 
   // A monster world (WorldModes.monsterPowersOnly) has politics only where a
-  // monster power governs: a polity whose naming register is the Horde's
-  // (nameFlavor "goblin": the Goblin Horde, the nations it holds, the warband
-  // worlds of the tower). Nobody else holds an office there, and where no
-  // monster power exists at all political time does not pass.
+  // monster power governs: a polity whose naming register is a warband's
+  // (nameFlavor "goblin": the warband worlds of the tower). Nobody else holds
+  // an office there, and where no monster power exists at all political time
+  // does not pass. The Goblin Horde itself does not exist in a monster world
+  // (WorldModes.hordeExists), so it and the nations it would hold are never
+  // a monster power.
   const MONSTER_POWER_FLAVORS = new Set(["goblin"]); // i18n-ignore: nameFlavor ids
+  const GOBLIN_HORDE = "Goblin Horde"; // i18n-ignore: Hyperpowers.json key
+  function hordeExists() {
+    const WMo = window.NPCShared?.WorldModes;
+    return !WMo || typeof WMo.hordeExists !== "function" || !!WMo.hordeExists();
+  }
   function isMonsterPolity(polity) {
-    return !!polity && MONSTER_POWER_FLAVORS.has(polity.nameFlavor);
+    if (!polity || !MONSTER_POWER_FLAVORS.has(polity.nameFlavor)) return false;
+    return hordeExists() || (polity.power || polity.name) !== GOBLIN_HORDE;
   }
   function monsterPowersOnly() {
     const WMo = window.NPCShared?.WorldModes;

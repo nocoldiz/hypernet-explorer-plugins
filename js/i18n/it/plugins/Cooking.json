@@ -46,7 +46,10 @@
     "ate": "Hai mangiato {name} crudo.",
     "cannotCombine": "Carne cruda e materia vegetale non possono essere cucinate insieme.",
     "cookware": "\nBonus utensili +{percent}%",
-    "fedParty": "\n (un gruppo di {count} a tavola)"
+    "fedParty": "\n (un gruppo di {count} a tavola)",
+    "cannotPrepare": "Ingredienti insufficienti per {name}.",
+    "recipePrepared": "{name} preparato (x{count}) e messo nello zaino.",
+    "recipeSpoiled": "{name} è venuto male in padella: resta solo un piatto rovinato."
   },
   "names": {
     "meaty": "{name} alla carne",
@@ -61,7 +64,8 @@
     "eatButton": "Mangia crudo",
     "menuLabel": "Cucina",
     "selectIngredients": "Scegli gli ingredienti.",
-    "cookTheseItems": "Cucinare questi ingredienti?"
+    "cookTheseItems": "Cucinare questi ingredienti?",
+    "cookAnyway": "Cucina comunque"
   },
   "back": "Indietro",
   "ingredients": "Ingredienti",
@@ -93,7 +97,34 @@
   "roll": {
     "masterpiece": "[Tiro Culinario NAT 20] Capolavoro gastronomico! {dish} ha guadagnato +50% di nutrizione!",
     "scorched": "[Tiro Culinario NAT 1] Piatto bruciato! {dish} ha perso nutrizione!",
-    "delicious": "[Tiro Culinario: {roll}{mod}={total}] {dish} preparato in modo delizioso!"
+    "delicious": "[Tiro Culinario: {roll}{mod}={total}] {dish} preparato in modo delizioso!",
+    "action": "Cucina: {dish}"
   },
-  "cookware": "Utensili"
+  "cookware": "Utensili",
+  "tabs": {
+    "combine": "Combina",
+    "recipes": "Ricette"
+  },
+  "recipes": {
+    "empty": "Nessuna ricetta nel libro.",
+    "ingredients": "Ingredienti",
+    "amount": "{have} / {need}",
+    "ready": "Pronta",
+    "missing": "Ingredienti mancanti",
+    "levelShort": "Liv {level}",
+    "allergyShort": "Allergeni",
+    "level": "Livello di cucina",
+    "levelLine": "{need} ({cook}: {have})",
+    "spoil": "Probabilità di rovinarlo",
+    "reward": "Cucina",
+    "points": "+{points} punti",
+    "keeps": "Il piatto finisce nello zaino invece di essere mangiato.",
+    "prepareButton": "Prepara",
+    "prepareAnyway": "Prepara comunque"
+  },
+  "allergy": {
+    "title": "Attenzione allergie",
+    "line": "{actor}: {allergens}",
+    "toast": "Attenzione allergie: {list}. Premi di nuovo per procedere."
+  }
 }

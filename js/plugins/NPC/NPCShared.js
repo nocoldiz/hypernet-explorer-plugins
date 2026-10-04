@@ -339,8 +339,10 @@
   // The one answer to "may this person eat this?", read by the profile dealer,
   // the food an NPC carries and eats from hand, and every shop they buy from.
   // Traits.json holds two dietary traits, vegan and vegetarian (found by their
-  // name key, never by id). No halal, kosher or allergy trait exists yet; a
-  // rule added to DIET_RULES below is all one would need.
+  // name key, never by id). No halal or kosher trait exists yet; a rule added
+  // to DIET_RULES below is all one would need. Allergies are not diet rules:
+  // their traits and the food's <Allergens:> tag belong to window.Allergy
+  // (Health_DiseaseSystem), which allows() asks as well.
   //
   // A food item says what it holds with a `<Diet: meat, dairy>` note tag. The
   // database carries none today, so an untagged food is read off its English
@@ -404,10 +406,19 @@
       return out;
     },
 
-    // Anything that is not food is always allowed.
+    // Anything that is not food is always allowed, and no food that would set
+    // off one of their allergies is.
     allows(profile, item) {
       if (!item) return false;
       if (!this.isFood(item)) return true;
+      const Allergy = typeof window !== "undefined" ? window.Allergy : null;
+      if (Allergy && profile) {
+        const held = Allergy.allergensOf(item);
+        if (held.length) {
+          const allergic = Allergy.allergensForProfile(profile);
+          if (held.some(k => allergic.has(k))) return false;
+        }
+      }
       const no = this.forbiddenFor(profile);
       if (!no.size) return true;
       return !this.contentOf(item).some(k => no.has(k));
@@ -547,6 +558,8 @@
   //   stocksCrashed()        the stock market has crashed (zombie)
   //   hordeIsNormalOrder()   the Goblin Horde is the normal order, not an
   //                          invader (goblin)
+  //   hordeExists()          the Goblin Horde is a hyperpower at all (off in
+  //                          monster: no goblins, no Horde, no Horde ground)
   //   survivorsOnly()        only the survivors run the society (zombie)
   //   rules(mode?)           the whole frozen answer row for a mode
   //
@@ -557,7 +570,7 @@
     monsterPowersOnly: false, hasWars: true, hasFamilies: true,
     familiesFollowAnimalRules: false, hasTravel: true, animalsBreed: true, hasAnimals: true,
     stocksFrozen: false, stocksNoisy: false, stocksCrashed: false,
-    hordeIsNormalOrder: false, survivorsOnly: false,
+    hordeIsNormalOrder: false, hordeExists: true, survivorsOnly: false,
   });
   const NOBODY_LEFT = {
     simulatesPeople: false, hasEconomy: false, hasPolitics: false, hasWars: false,
@@ -567,7 +580,7 @@
     normal:  {},
     chaos:   { stocksNoisy: true },
     goblin:  { hordeIsNormalOrder: true },
-    monster: { beastsWork: true, monsterPowersOnly: true, familiesFollowAnimalRules: true },
+    monster: { beastsWork: true, monsterPowersOnly: true, familiesFollowAnimalRules: true, hordeExists: false },
     empty:   NOBODY_LEFT,
     zombie:  { survivorsOnly: true, stocksCrashed: true },
     death:   Object.assign({}, NOBODY_LEFT, { animalsBreed: false, hasAnimals: false }),

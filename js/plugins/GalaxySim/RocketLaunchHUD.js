@@ -34,7 +34,7 @@
     return;
   }
   const K = P.K;
-  const { HUD_BASE_W, KARMAN_M, KESSLER_IN_M, KESSLER_OUT_M, LIT_BEATS, MOON_SITE_ID, PROFILES, SE, SITES, altText, altitudeAt, availableProfiles, availableSites, clamp, clamp01, clockText, crossing, descentFrom, destinationsFor, fareText, greatCircleM, hazardSeverity, integrityAt, lunarProfileFrom, modeBlurb, modeName, nearestSite, otherSite, pctText, phaseAt, refreshVaultSite, se, siteBlurb, siteName, speedText, start, t, tapeBands, tapeFraction, tapeIsTimeline, tapeTimeFraction, trackText, weatherLabel } = K;
+  const { HUD_BASE_W, KARMAN_M, KESSLER_IN_M, KESSLER_OUT_M, LIT_BEATS, MOON_SITE_ID, PROFILES, SE, SITES, altText, altitudeAt, availableProfiles, availableSites, clamp, clamp01, clockText, descentFrom, destinationsFor, fareText, greatCircleM, hazardSeverity, integrityAt, lunarProfileFrom, modeBlurb, modeName, nearestSite, otherSite, pctText, phaseAt, refreshVaultSite, se, siteBlurb, siteName, speedText, start, t, tapeBands, tapeFraction, tapeIsTimeline, tapeTimeFraction, trackText, weatherLabel } = K;
 
   // PSXHud is not on window yet when the base file builds the parts table, so
   // the HUD handed over was still null and would have stayed null here for
@@ -96,6 +96,7 @@
       this._drawCaution(st, P);
       this._drawChart(st, P);
       this._drawHints(st, P);
+      this._drawSkip(st, P);
       if (b._baseTexture && b._baseTexture.update) b._baseTexture.update();
     }
 
@@ -169,23 +170,25 @@
 
       // SPEED first, because it is what a gun is for: the whole velocity over
       // the ground, with the rate of climb under it.
+      // The big number has a row to itself and drawText condenses it into the
+      // panel; speedText steps its unit up long before it could need to.
       HUD.text(b, t("hud.speed"), x + 4, y + 3, w - 8, "left", P.dim, 8);
       HUD.text(b, speedText(st.speed), x + 4, y + 12, w - 8, "right", P.amber, 16);
-      HUD.text(b, t("hud.velocity"), x + 4, y + 30, w - 8, "left", P.dim, 8);
-      HUD.text(b, speedText(st.vspeed), x + 4, y + 30, w - 8, "right", P.cyan, 8);
+      // Every label / value row below goes through the card's _pairRow: the
+      // value keeps its side and the label condenses into what is left, so a
+      // long speed can no longer be painted over VERTICAL.
+      const row = (k, v, ry, kc, vc) => this._pairRow(b, k, v, x + 4, ry, w - 8, kc, vc);
+      row(t("hud.velocity"), speedText(st.vspeed), y + 30, P.dim, P.cyan);
 
       // On a hop the second line is the distance still to run; on the orbital
       // flight there is nowhere to run to, so it is the air outside instead.
       if (this.profile.downrange) {
-        HUD.text(b, t("hud.downrange"), x + 4, y + 42, w - 8, "left", P.dim, 8);
-        HUD.text(b, altText(Math.max(0, st.trackM - st.downrangeM)), x + 4, y + 42, w - 8, "right", P.amber, 8);
+        row(t("hud.downrange"), altText(Math.max(0, st.trackM - st.downrangeM)), y + 42, P.dim, P.amber);
       } else {
-        HUD.text(b, t("hud.density"), x + 4, y + 42, w - 8, "left", P.dim, 8);
-        HUD.text(b, pctText(st.density * 100), x + 4, y + 42, w - 8, "right", P.dim, 8);
+        row(t("hud.density"), pctText(st.density * 100), y + 42, P.dim, P.dim);
       }
 
-      HUD.text(b, t("hud.plates", { n: st.plates }), x + 4, y + 54, w - 8, "left", P.dim, 8);
-      HUD.text(b, t("hud.stages", { n: this.profile.stages }), x + 4, y + 54, w - 8, "right", P.dim, 8);
+      row(t("hud.plates", { n: st.plates }), t("hud.stages", { n: this.profile.stages }), y + 54, P.dim, P.dim);
 
       // Hull integrity. The bar runs green to red and the number is never
       // allowed to read zero, because it never is zero.
@@ -194,13 +197,18 @@
       const frac = clamp01(st.integrity / 100);
       const crit = st.integrity < 25;
       const blink = crit && (Math.floor(st.time * 6) % 2 === 0);
-      HUD.text(b, t("hud.integrity"), x + 4, iy + 2, w - 8, "left", crit ? P.red : P.dim, 8);
-      HUD.text(b, pctText(st.integrity), x + 4, iy + 2, w - 8, "right",
-        blink ? P.ink : (crit ? P.red : P.green), 8);
+      row(t("hud.integrity"), pctText(st.integrity), iy + 2,
+        crit ? P.red : P.dim, blink ? P.ink : (crit ? P.red : P.green));
       HUD.bar(b, x + 4, iy + 13, w - 8, 9, frac, {
         seg: 2, gap: 1,
         colorAt: (k) => (k < 0.25 ? P.red : k < 0.55 ? P.amber : P.green),
       });
+    }
+
+    // The same label-left value-right row the launch card draws, borrowed
+    // rather than copied so the two never drift apart.
+    _pairRow(b, k, v, x, y, w, kc, vc) {
+      SiteCard.prototype._pairRow.call(this, b, k, v, x, y, w, kc, vc);
     }
 
     // --- the clock ---------------------------------------------------------
@@ -343,6 +351,32 @@
       const b = this.bmp;
       if (st.free) HUD.text(b, t("hud.freeCam"), 6, 6, 80, "left", P.amber, 8);
     }
+
+    // THE SKIP BUTTON. Under the tape, in the one corner nothing else uses,
+    // and it moves the flight on to the next beat: the tape, the radio and
+    // the camera all follow, because all of them read the same clock. It is a
+    // thing on the screen to be pressed, not a key legend, so it carries no
+    // key name.
+    skipRect() {
+      return { x: this.w - 52, y: this.h - 16, w: 46, h: 13 };
+    }
+
+    // Screen pixels in, true when they are on the button.
+    hitSkip(px, py) {
+      const r = this.skipRect();
+      const sx = px / (Graphics.width / this.w);
+      const sy = py / (Graphics.height / this.h);
+      return sx >= r.x && sx <= r.x + r.w && sy >= r.y && sy <= r.y + r.h;
+    }
+
+    _drawSkip(st, P) {
+      if (!st.skip) return;
+      const b = this.bmp;
+      const r = this.skipRect();
+      const hot = !!st.skipHot;
+      HUD.panel(b, r.x, r.y, r.w, r.h, { fill: hot ? "#1d3a52" : "#0a1220", dither: !hot });
+      HUD.text(b, t("hud.skip"), r.x + 2, r.y + 2, r.w - 4, "center", hot ? P.ink : P.cyan, 8);
+    }
   }
 
   class SiteCard {
@@ -458,8 +492,36 @@
     // The screen rectangle of a card, so a click can be resolved against it.
     rectOf(i) {
       const n = this.count;
+      if (this.page === "dest") return this._destRect(i, n);   // i18n-ignore  page id
       const cw = Math.floor((this.w - 10 * (n + 1)) / n);
       return { x: 10 + i * (cw + 10), y: 34, w: cw, h: this.h - 72 };
+    }
+
+    // THE DESTINATION GRID.
+    //
+    // A destination card holds a title, a blurb and four numbers, nothing that
+    // grows with the window, so it is drawn at its own height instead of being
+    // stretched down the screen. The cards wrap into rows rather than all
+    // sharing one: six pads side by side left each one too narrow for its own
+    // name and every line came out condensed.
+    _destRect(i, n) {
+      const GAP = 10, MIN_W = 150;
+      const maxCols = Math.max(1, Math.floor((this.w - GAP) / (MIN_W + GAP)));
+      const ch = 38 + this._destRows(this.destIds[0]).length * 10 + 10;
+      const top = 34, avail = this.h - 20 - top;
+      // On a window too short for that many rows the cards narrow instead of
+      // running off the bottom.
+      const fitRows = Math.max(1, Math.floor((avail + GAP) / (ch + GAP)));
+      const rows = Math.min(Math.ceil(n / maxCols), fitRows);
+      const cols = Math.ceil(n / rows);
+      const cw = Math.floor((this.w - GAP * (cols + 1)) / cols);
+      const gridH = rows * ch + (rows - 1) * GAP;
+      const y0 = top + Math.max(0, Math.floor((avail - gridH) / 2));
+      const row = Math.floor(i / cols), col = i % cols;
+      // A short last row is centred under the full ones.
+      const inRow = row === rows - 1 ? n - row * cols : cols;
+      const x0 = Math.floor((this.w - (inRow * cw + (inRow - 1) * GAP)) / 2);
+      return { x: x0 + col * (cw + GAP), y: y0 + row * (ch + GAP), w: cw, h: ch };
     }
 
     hitTest(px, py) {
@@ -504,15 +566,17 @@
 
         const rows = mode ? this._modeRows(id) : dest ? this._destRows(id) : this._siteRows(id);
         // The flight itself, in the space the rows do not want. On the plan
-        // page it is the plan this card IS; on the pad and destination pages
-        // it is the plan the flight is already committed to, drawn from the
-        // pad or to the pad this card names.
-        const shape = mode ? PROFILES[id]
-          : (dest ? this._profileTo(id) : this._profileFrom(id));
-        this._drawTrace(b, P, {
-          x: r.x + 5, y: r.y + 34, w: r.w - 10,
-          h: r.h - 44 - rows.length * 10,
-        }, shape, on);
+        // page it is the plan this card IS; on the pad page it is the plan the
+        // flight is already committed to, drawn from the pad this card names.
+        // The destination page draws none: every card on it flies the same
+        // plan, so the chart only repeated itself six times over.
+        if (!dest) {
+          const shape = mode ? PROFILES[id] : this._profileFrom(id);
+          this._drawTrace(b, P, {
+            x: r.x + 5, y: r.y + 34, w: r.w - 10,
+            h: r.h - 44 - rows.length * 10,
+          }, shape, on);
+        }
         rows.forEach(([k, v], n) => {
           const ry = r.y + r.h - 10 - (rows.length - n) * 10;
           this._pairRow(b, k, v, r.x + 5, ry, r.w - 10, P.dim, on ? P.amber : P.dim);

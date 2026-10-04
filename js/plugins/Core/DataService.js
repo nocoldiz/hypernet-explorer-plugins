@@ -958,8 +958,19 @@
             // once, here, rather than at each caller: the sprite and bust
             // wardrobe, the creature-creation board and the enemies that roam
             // the map all read this one list. A two-headed one is still a
-            // person, which is why DoubleHeadedHumanoid is on it.
-            PEOPLE_ARCHETYPES: ["Humanoid", "DoubleHeadedHumanoid"],
+            // person, which is why DoubleHeadedHumanoid is on it, and so is
+            // every people built on the Humanoid body (Archetypes.json
+            // `bodyPlan`: the Naguka and Verden goblins, Elves, Dwarves, Orcs,
+            // Gnomes, the Tourists and the Dargos), read off the health table
+            // so a new people needs no edit here.
+            get PEOPLE_ARCHETYPES() {
+                const base = ["Humanoid", "DoubleHeadedHumanoid"]; // i18n-ignore: Archetypes.json keys
+                const table = (window.Health && window.Health.Archetypes) || {};
+                for (const key of Object.keys(table)) {
+                    if (table[key] && table[key].bodyPlan === "Humanoid" && !base.includes(key)) base.push(key); // i18n-ignore: Archetypes.json key
+                }
+                return base;
+            },
 
             // Whether one wardrobe entry belongs in this world at all. This is
             // the single rule behind both the sprite a procedural inhabitant is
@@ -984,6 +995,9 @@
                 const e = entry || this.entry(key);
                 const archetype = (e && e.Archetype) || "";
                 if (m === "goblin") return this.isGoblinSheet(key, e);
+                // A monster world has no people and no goblins, whatever
+                // archetype a goblin's sheet happens to name.
+                if (this.isGoblinSheet(key, e)) return false;
                 return !this.PEOPLE_ARCHETYPES.includes(archetype);
             },
 
@@ -1170,6 +1184,9 @@
             // the square's: the live timeline, then Countries.json.
             goblinHordeHoldsCountry(country, nationEntry) {
                 if (!country) return false;
+                // A monster world has no Horde to hold anything.
+                const WMo = window.WorldModes;
+                if (WMo && typeof WMo.hordeExists === "function" && !WMo.hordeExists()) return false;
                 const nation = nationEntry ||
                     ((window.WorldGen && Array.isArray(window.WorldGen.Countries))
                         ? window.WorldGen.Countries.find(c => c && c.country === country) : null) || {};

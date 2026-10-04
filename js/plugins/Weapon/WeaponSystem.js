@@ -1615,10 +1615,19 @@
     let leftShield = null;
     if (!leftWeapon && shields.length) leftShield = shields.shift();
     if (!leftWeapon && !leftShield && isClaws) leftWeapon = weapons[0];
+    // A creature with only a right hand built (Weapon3D_Unarmed) shows both:
+    // the empty left hand is that model's mirror. The authored fists rig of
+    // humanoids, goblins, elves and dwarves is already a pair and is left alone.
+    const WSP = window.WeaponSystemProcedural;
+    if (!leftWeapon && !leftShield && !vgFists && WSP && WSP.wantsMirroredOffhand &&
+        WSP.wantsMirroredOffhand(rightWeapon)) {
+      leftWeapon = WSP.mirroredWeaponFor(rightWeapon);
+    }
     // Remembered for the swing: the off hand holds a copy of the right hand's
-    // claw rather than a weapon of its own, so nothing in the action tells
-    // playWeaponAnimation that there is a second claw to move.
-    this._mirroredOffhand = (!weapons[1] && isClaws && leftWeapon === weapons[0]);
+    // claw (or its mirror) rather than a weapon of its own, so nothing in the
+    // action tells playWeaponAnimation that there is a second hand to move.
+    this._mirroredOffhand = (!weapons[1] && isClaws && leftWeapon === weapons[0]) ||
+      !!(leftWeapon && leftWeapon.mirrorOf && leftWeapon.mirrorOf === rightWeapon);
 
     // Whose hands these are. A rig is the same file for every humanoid, so one
     // unarmed party member taking over from another is the same sprite holding
@@ -1899,7 +1908,7 @@
     // which is what reads as a pair of claws instead of one doubled model.
     if (!isLeftHand && this._mirroredOffhand) {
       const offhand = this._3dWeaponSprites && this._3dWeaponSprites['left'];
-      if (offhand && offhand._weapon === weapon) {
+      if (offhand && (offhand._weapon === weapon || offhand._weapon.mirrorOf === weapon)) {
         setTimeout(() => {
           const spriteset = SceneManager._scene && SceneManager._scene._spriteset;
           if (spriteset !== this) return;

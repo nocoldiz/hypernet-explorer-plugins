@@ -2195,7 +2195,8 @@
           { cmd: 'replace', icon: 180, label: T('Prosthetics.replaceBodypart') },
           { cmd: 'implant', icon: 128, label: T('Prosthetics.installImplant') },
           { cmd: 'plastic_surgery', icon: 84, label: T('Prosthetics.plasticSurgery'), meta: T('Prosthetics.plasticSurgeryMeta'), value: formatPriceInEuros(PLASTIC_SURGERY_COST) },
-          { cmd: 'face_surgery', icon: 188, label: T('Prosthetics.faceSurgery'), meta: T('Prosthetics.faceSurgeryMeta'), value: formatPriceInEuros(FACE_SURGERY_COST) }
+          { cmd: 'face_surgery', icon: 188, label: T('Prosthetics.faceSurgery'), meta: T('Prosthetics.faceSurgeryMeta'), value: formatPriceInEuros(FACE_SURGERY_COST) },
+          { cmd: 'gene_splicing', icon: 197, label: T('Prosthetics.geneSplicing'), meta: T('Prosthetics.geneSplicingMeta'), value: T('Prosthetics.geneSplicingPrice') }
         ];
     return {
       title: this._fieldMode ? T('Prosthetics.fieldTheatre') : T('Prosthetics.biologicLaboratory'),
@@ -2764,6 +2765,8 @@
       this.openPlasticSurgery();
     } else if (cmd === 'face_surgery') {
       this.openFaceSurgery();
+    } else if (cmd === 'gene_splicing') {
+      this.openGeneSplicing();
     } else if (cmd === 'cancel') {
       this._viewState = 'party';
       this.refreshUIShopDOM();
@@ -2807,6 +2810,20 @@
     if (SceneManager._nextScene && SceneManager._nextScene.setActor) {
       SceneManager._nextScene.setActor(actorId);
     }
+  };
+
+  // Gene splicing: the trait board (CharacterCreation/TraitSelector.js) opened
+  // on the patient in splice mode, which offers only the genetic traits their
+  // body can carry, prices every change at 100 euros a trait point and shows
+  // the bill before it is paid. The board charges, so nothing is taken here.
+  Scene_ProstheticShop.prototype.openGeneSplicing = function () {
+    if (!this._selectedActor) return;
+    const Board = window.Scene_TraitSelector;
+    if (!Board || !Board.prepare) return;
+    const actorId = this._selectedActor.actorId ? this._selectedActor.actorId() : this._selectedActor._actorId;
+    Scene_ProstheticShop._returnActorId = actorId;
+    Board.prepare(false, actorId, true);
+    SceneManager.push(Board);
   };
 
   Scene_ProstheticShop.prototype.chooseArchetype = function (key) {

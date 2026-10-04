@@ -28,12 +28,16 @@
  * only thing that folds it away or brings it back. With switch 49 off there is
  * no sheet and no fold key: H is the help menu again.
  *
- * The notices beside it are not a setting: a map's tips open in full the first
- * time the party visits it and collapse to their title on every visit after.
- * No option, settings page or Bubba entry turns them off. The very first time
- * a notice is on the paper its text is written out letter by letter, in
- * Bubba's letter voice when Dialogue Voices is on, inside a box already at its
- * final size; leaving the zone stops it, and back there it is drawn whole.
+ * The notices beside it are not a setting: a map's tips are said the first
+ * time the party visits it, in the ordinary dialogue box with Bubba's bust on
+ * the right and no Em opposite him, and the sheet keeps only their title.
+ * Every press of H (L2) on the zone says the notice again, letter by letter
+ * and voiced. No option, settings page or Bubba entry turns them off.
+ * Without DialogueSystem the sheet writes them out itself: the very first time
+ * a notice is on the paper, and every time H (L2) unfolds it again, its text
+ * is written out letter by letter, in Bubba's letter voice when Dialogue
+ * Voices is on, inside a box already at its final size; leaving the zone
+ * stops it, and back there it is drawn whole until it is unfolded again.
  *
  * The sheet wears the interface's own theme. Every colour, size and space on
  * it is a token out of css/vars.css and every rule that draws it lives in
@@ -595,6 +599,11 @@
       return null;
     }
     noticeWatch.showing = notice.key;
+    // On the dialogue stage a notice is only spent once it has been said.
+    if (noticeDialogueReady()) {
+      if (!noticeSeen()[notice.key] && playNoticeDialogue(notice)) markNoticeSeen(notice.key);
+      return notice;
+    }
     if (markNoticeSeen(notice.key)) {
       if ($gameSystem) $gameSystem._mapLegendNoticeFolded = false;
       startTyping(notice.key);
@@ -609,9 +618,10 @@
   // letter at a time, chattered in Bubba's voice when the Dialogue Voices
   // option is on. The box is laid out off the finished text from the first
   // letter (the unwritten rest is there but not painted), so it stands at its
-  // final size and never grows. Walking out of the zone stops the writing for
-  // good: the notice is already marked read, so back on the zone it is drawn
-  // whole, with no reading at all.
+  // final size and never grows. Walking out of the zone stops the writing:
+  // the notice is already marked read, so back on the zone it is drawn whole.
+  // Unfolding it with the fold key (toggleFold) reads it again from the first
+  // letter, every time.
   const TYPE_LETTERS_PER_FRAME = 1;
   const VOICE_SPEAKER_NAME = "Bubba";   // i18n-ignore: actor name matched by DialogueSystem's cast pitch
   const typing = { key: null, shown: 0, voice: null };
@@ -699,6 +709,59 @@
     if (!dv || typeof dv.speaker !== "function" || to <= from) return;
     if (!typing.voice) typing.voice = dv.speaker(VOICE_SPEAKER_NAME);
     typing.voice.speakRange(letters, from, to);
+  }
+
+  //===========================================================================
+  // Read on the dialogue stage
+  //===========================================================================
+  // With DialogueSystem loaded a notice is not written out on the sheet at
+  // all: it is said in the ordinary message box, Bubba's bust on the right and
+  // nobody stood opposite him, so the letters, the blips and the box are the
+  // dialogue system's own. The sheet keeps the notice folded to its title, the
+  // sign that there is something to read here. The first time a notice is on
+  // the paper it is said as soon as the map is free to say it; after that the
+  // fold key (H, L2 on a pad) says it again, every time it is pressed. Without
+  // DialogueSystem the sheet falls back to its own reading above.
+  const NOTICE_BUST = "Bubba";          // i18n-ignore: preset bust image name
+
+  function noticeDialogueReady() {
+    const sd = typeof window !== "undefined" && window.StoryDialogue;
+    return !!(sd && typeof sd.playSteps === "function");
+  }
+
+  // The stage is free when nothing else is talking and no event holds the map.
+  function dialogueFree() {
+    const scene = typeof SceneManager !== "undefined" && SceneManager._scene;
+    const bm = scene && scene._bustManager;
+    if (!bm || bm.exchangeMode) return false;
+    if (typeof $gameMessage !== "undefined" && $gameMessage && $gameMessage.isBusy && $gameMessage.isBusy()) return false;
+    if ($gameMap && $gameMap.isEventRunning && $gameMap.isEventRunning()) return false;
+    if ($gamePlayer && $gamePlayer.isTransferring && $gamePlayer.isTransferring()) return false;
+    return true;
+  }
+
+  // The notice as the message box prints it: a bracketed name in the box's
+  // own gold marks instead of the sheet's bold, a button read off the device
+  // in hand the way noticeHtml reads it.
+  function noticeSpoken(s, hasPad) {
+    const pad = hasPad === undefined ? padConnected() : !!hasPad;
+    const names = (typeof window !== "undefined" && window.DialogueNames) || {};
+    const open = names.OPEN || "";
+    const close = names.CLOSE || "";
+    return String(s == null ? "" : s).replace(NOTICE_EMPHASIS, (whole, inner) => {
+      const label = COMMANDS[inner] ? commandLabel(inner, pad) : "";
+      return open + (label ? "[" + label.toUpperCase() + "]" : inner) + close;
+    });
+  }
+
+  function playNoticeDialogue(notice) {
+    if (!notice || !notice.text || !noticeDialogueReady() || !dialogueFree()) return false;
+    return !!window.StoryDialogue.playSteps([{
+      imageName: NOTICE_BUST,
+      displayName: VOICE_SPEAKER_NAME,
+      text: noticeSpoken(notice.text),
+      side: "right",
+    }]);
   }
 
   function proceduralMapId() {
@@ -1061,12 +1124,21 @@
 
   // Which of the two the fold button is holding right now: the notice while
   // there is one on the paper, the list otherwise. Written by updateLegend.
-  let noticeOnScreen = false;
+  let noticeOnScreen = null;
 
   function toggleFold() {
     if (!$gameSystem) return;
+    if (noticeOnScreen && noticeDialogueReady()) {
+      if (playNoticeDialogue(noticeOnScreen)) SoundManager.playCursor();
+      return;
+    }
     if (noticeOnScreen) {
-      $gameSystem._mapLegendNoticeFolded = !isNoticeFolded();
+      const opening = isNoticeFolded();
+      $gameSystem._mapLegendNoticeFolded = !opening;
+      // Every unfold is a fresh reading, letter by letter and voiced; a
+      // fold puts the half-written one away.
+      if (opening) startTyping(noticeWatch.showing);
+      else stopTyping();
     } else {
       $gameSystem._mapLegendFolded = !isFolded();
     }
@@ -1342,9 +1414,9 @@
         const words = revealHtml(noticeHtml(notice.text, state.hasPad), state.reveal);
         parts.push(`<div class="mlg-text">${speaker}${words}</div>`);
       }
-      if (state.foldable) {
-        parts.push(this._foldHtml(
-          T(nFolded ? "MapLegend.unfoldHint" : "MapLegend.foldHint"), state));
+      // Folded, the chip reads Info; open, there is no fold line at all.
+      if (state.foldable && nFolded) {
+        parts.push(this._foldHtml(T("MapLegend.infoHint"), state));
       }
       return parts.join("");
     }
@@ -1378,11 +1450,8 @@
         }
         parts.push('</div>');
       }
-      if (state.foldable && !hasNotice) {
-        const hint = bareFold
-          ? T("MapLegend.controlsHeading")
-          : T("MapLegend.foldHint");
-        parts.push(this._foldHtml(hint, state));
+      if (state.foldable && !hasNotice && bareFold) {
+        parts.push(this._foldHtml(T("MapLegend.controlsHeading"), state));
       }
       return parts.join("");
     }
@@ -1513,7 +1582,7 @@
     updateArrival();
     readFoldKey();
     const notice = noticesShown() ? allowedNotice(resolveNotice()) : null;
-    noticeOnScreen = !!notice;
+    noticeOnScreen = notice || null;
     const folded = isFolded();
     const rows = folded ? [] : visibleRows();
     // Folded, the sheet stays up as a strip only where it is pinned: the
@@ -1529,7 +1598,8 @@
     }
     // The pad is asked once and the answer handed to both fields that need it.
     const hasPad = padConnected();
-    const noticeFolded = isNoticeFolded();
+    // On the dialogue stage the box says the notice, so the sheet keeps it folded.
+    const noticeFolded = noticeDialogueReady() || isNoticeFolded();
     sheet.draw(notice, rows, {
       folded, noticeFolded, reveal: updateTyping(notice, noticeFolded, hasPad),
       foldable: foldable(), hasPad, foldChip: foldChipLabel(),
@@ -1622,6 +1692,10 @@
     startTyping,
     stopTyping,
     updateTyping,
+    noticeDialogueReady,
+    dialogueFree,
+    noticeSpoken,
+    playNoticeDialogue,
     revealHtml,
     htmlLetters,
     TYPE_LETTERS_PER_FRAME,

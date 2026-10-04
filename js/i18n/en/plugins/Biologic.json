@@ -704,10 +704,16 @@
  },
  "cure": {
   "rowLine": "{actor}: {disease}",
-  "stockedTag": "Stocked",
-  "empty": "Nobody has a diagnosed illness that needs medicine.",
   "tooExpensive": "Not enough money for the medicine.",
-  "bought": "Bought {count}x {item} for {actor}."
+  "bought": "Bought {count}x {item} for {actor}.",
+  "checkout": "Buy {count} doses",
+  "basketEmpty": "Basket empty",
+  "inBasket": "x{count}",
+  "kindCure": "Cures in {days} days",
+  "kindLastResort": "Cures in {days} days, last resort",
+  "kindManage": "Holds it at bay",
+  "held": "{count} in the pack",
+  "boughtBasket": "Bought {count} doses of medicine."
  },
  "testResultMale": "{actor} has male reproductive organs. Gametes active.",
  "testResultPositiveUterus": "{actor}: Positive! Gestational age: {weeks} weeks ({stage}).",

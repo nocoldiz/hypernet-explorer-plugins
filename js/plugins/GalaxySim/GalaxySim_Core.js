@@ -1800,7 +1800,6 @@
   // ============================================================================
   const LG_TITLE_H = 52;  // strip above the grid, inside the panel
   const LG_HELP_H = 40;   // strip below it
-  const LG_MODE_H = 64;   // the row of ways down along the panel's foot
   const LG_INSET = 24;    // panel border to grid
 
   // The page is the whole screen (Graphics.width/height), not MZ's smaller UI
@@ -1813,7 +1812,7 @@
   function landingGridDestSize(grid) {
     const availW = Graphics.width - LG_INSET * 2;
     const availH = Graphics.height - LG_INSET * 2 -
-      LG_TITLE_H - LG_HELP_H - LG_MODE_H;
+      LG_TITLE_H - LG_HELP_H;
     let w = availW;
     let h = Math.round((w * grid.h) / grid.w);
     if (h > availH) {
@@ -1828,7 +1827,7 @@
   // and ways down is simply centred on a dark page.
   function landingPanelRect(size) {
     const w = size.w + LG_INSET * 2;
-    const h = LG_TITLE_H + size.h + LG_HELP_H + LG_MODE_H + LG_INSET * 2;
+    const h = LG_TITLE_H + size.h + LG_HELP_H + LG_INSET * 2;
     return new Rectangle(
       Math.floor((Graphics.width - w) / 2),
       Math.floor((Graphics.height - h) / 2),
@@ -1836,130 +1835,142 @@
     );
   }
 
-  // The three ways down, asked once a square has been chosen - and asked ONLY
-  // there. They used to double as a row of buttons along the bottom of the
-  // picker, which meant the same choice was on screen twice and could be made
-  // before any square had been picked at all.
+  // The ways down, asked once a square has been chosen - and asked ONLY there.
+  // They were a row of canvas plates along the foot of the picker, drawn dim
+  // while the square was still being chosen, so the same choice sat on screen
+  // the whole time. They are a DOM modal now, opened over the picture once a
+  // square is picked and drawn by css/theme.css (#gx-landing-mode) like every
+  // other modal in the game.
   //
-  // Drawn in the game's own gold rather than the default windowskin blue: the
-  // frame and the skin's cursor are both dropped and every command is a plate
-  // of its own, lit when it is the one selected.
-  const LG_GOLD = "#ffd98a";
-  const LG_GOLD_DIM = "rgba(255, 217, 138, 0.45)";
-  class Window_LandingMode extends Window_Command {
-    // The planet is handed over BEFORE the command list is built, because on a
-    // world with no ground two of the three commands do not exist at all.
-    // Window_Command builds its list inside initialize(), so the planet cannot
-    // arrive as a setter afterwards: it comes in as a constructor argument.
-    constructor(rect, planet) {
-      Window_LandingMode._pending = planet || null;
-      super(rect);
-      Window_LandingMode._pending = null;
-    }
-
-    // Which spaceport the square under the cursor holds, or null. The list is
-    // rebuilt around it, because a square with a pad on it is not landed on: the
-    // pad is walked or flown into, on foot or with the ship.
-    setSpaceport(port) {
-      if ((this._port || null) === (port || null)) return;
-      this._port = port || null;
-      this.refresh();
-    }
-
-    makeCommandList() {
-      // _planet is not assigned yet on the first build (super() runs the list
-      // before the subclass body), so the pending planet answers for it.
-      const planet = this._planet || Window_LandingMode._pending;
-      this._planet = planet;
-      const surfaceless = isSurfacelessWorld(planet);
-      if (!surfaceless) {
-        // A square with a spaceport on it has nothing to generate: the pad is
-        // the map, so the two ways in replace Land Here rather than joining it.
-        if (this._port) {
-          this.addCommand(T('Galaxy.hud.landOnFoot'), "portFoot");
-          this.addCommand(T('Galaxy.hud.landWithShip'), "portShip");
-        } else {
-          this.addCommand(T('Galaxy.hud.landHere'), "land");
-        }
-        this.addCommand(T('Galaxy.hud.liminalWalk'), "walk");
-      }
-      this.addCommand(T('Galaxy.hud.flyby'), "flyby");
-    }
-
-    // The ways down are a row along the foot of the modal, not a column: every
-    // command is on screen at once, so the walk and the two pad landings are
-    // read before a square is even chosen.
-    maxCols() {
-      return Math.max(1, this.maxItems());
-    }
-
-    itemHeight() {
-      return 44;
-    }
-
-    // The skin's own cursor is the blue this window is getting rid of; the lit
-    // plate in drawBackgroundRect says which command is selected instead.
-    _refreshCursor() {
-      /* intentionally nothing */
-    }
-
-    // Repaint so the lit plate follows the selection.
-    select(index) {
-      super.select(index);
-      if (this.contents) this.refresh();
-    }
-
-    // ...and follows the focus: the row stays on screen while the square is
-    // being chosen, drawn dim, and lights up once it is the row's turn.
-    activate() {
-      super.activate();
-      if (this.contents) this.refresh();
-    }
-
-    deactivate() {
-      super.deactivate();
-      if (this.contents) this.refresh();
-    }
-
-    drawBackgroundRect(rect) {
-      // The row backdrops live on the back layer, under the text the item
-      // itself draws (MZ keeps contents and contentsBack apart).
-      const ctx = this.contentsBack.context;
-      const on = this.active && this.index() === this._bgIndex;
-      ctx.save();
-      ctx.fillStyle = on ? "rgba(46, 34, 8, 0.92)" : "rgba(10, 12, 20, 0.82)";
-      ctx.strokeStyle = on ? LG_GOLD : LG_GOLD_DIM;
-      ctx.lineWidth = on ? 2 : 1.5;
-      if (ctx.roundRect) {
-        ctx.beginPath();
-        ctx.roundRect(rect.x + 1, rect.y + 3, rect.width - 2, rect.height - 6, 5);
-        ctx.fill();
-        ctx.stroke();
+  // Which commands a square offers. On a world with no ground only the flyby
+  // exists; a square with a spaceport on it has nothing to generate, so the
+  // two ways into the pad replace Land Here rather than joining it.
+  function landingModeCommands(planet, port) {
+    const list = [];
+    if (!isSurfacelessWorld(planet)) {
+      if (port) {
+        list.push({ symbol: "portFoot", label: T('Galaxy.hud.landOnFoot') });
+        list.push({ symbol: "portShip", label: T('Galaxy.hud.landWithShip') });
       } else {
-        ctx.fillRect(rect.x + 1, rect.y + 3, rect.width - 2, rect.height - 6);
-        ctx.strokeRect(rect.x + 1, rect.y + 3, rect.width - 2, rect.height - 6);
+        list.push({ symbol: "land", label: T('Galaxy.hud.landHere') });
       }
-      ctx.restore();
+      list.push({ symbol: "walk", label: T('Galaxy.hud.liminalWalk') });
+    }
+    list.push({ symbol: "flyby", label: T('Galaxy.hud.flyby') });
+    return list;
+  }
+  window.GalaxySim.landingModeCommands = landingModeCommands;
+
+  // The modal itself. Keyboard and pad walk its buttons through its own index,
+  // read from Input by the scene's update; the mouse picks them directly.
+  // `handlers` maps a command symbol to what it does. A handler that fails
+  // leaves the modal open, so the party can choose another way down.
+  class LandingModeModal {
+    constructor(handlers) {
+      this._handlers = handlers || {};
+      this._commands = [];
+      this._index = 0;
+      const root = document.createElement("div");
+      root.id = "gx-landing-mode";
+      root.className = "ui-closed";
+      root.innerHTML =
+        `<div class="gx-lm-card">` +
+        `<div class="gx-lm-title">${T('Galaxy.hud.landingSite')}</div>` +
+        `<div class="gx-lm-sub" data-role="lm-sub"></div>` +
+        `<div class="gx-lm-actions" data-role="lm-actions"></div>` +
+        `</div>`;
+      // A click on the scrim, off the card, is a cancel. On click rather than
+      // mousedown: the press is still read by TouchInput a frame later, and by
+      // then the modal must still be open or the press would pick a square.
+      root.addEventListener("click", (e) => {
+        if (e.target === root) this.cancel();
+      });
+      document.body.appendChild(root);
+      this._root = root;
+      this._sub = root.querySelector('[data-role="lm-sub"]');
+      this._actions = root.querySelector('[data-role="lm-actions"]');
     }
 
-    // drawBackgroundRect only gets the rectangle, so which row it belongs to
-    // is carried across from the one call that knows it.
-    drawItemBackground(index) {
-      this._bgIndex = index;
-      super.drawItemBackground(index);
+    isOpen() {
+      return !!this._root && window.UIPanel.isOpen(this._root);
     }
 
-    drawItem(index) {
-      const rect = this.itemLineRect(index);
-      this.resetTextColor();
-      this.changePaintOpacity(this.isCommandEnabled(index));
-      this.contents.textColor =
-        this.active && this.index() === index ? LG_GOLD : LG_GOLD_DIM;
-      this.drawText(this.commandName(index), rect.x, rect.y, rect.width, "center");
-      this.changePaintOpacity(true);
+    open(commands, subtitle) {
+      this._commands = commands.concat([{ symbol: "cancel", label: T('Galaxy.hud.cancel') }]);
+      this._sub.textContent = subtitle || "";
+      this._actions.innerHTML = "";
+      this._commands.forEach((cmd, i) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.tabIndex = -1;
+        btn.className = "gx-lm-btn";
+        btn.setAttribute("data-symbol", cmd.symbol);
+        btn.textContent = cmd.label;
+        // Never take the browser's focus: Enter is read through Input, and a
+        // focused button would fire a second click on top of it.
+        btn.addEventListener("mousedown", (e) => e.preventDefault());
+        btn.addEventListener("mouseenter", () => this.select(i));
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.select(i);
+          this.ok();
+        });
+        this._actions.appendChild(btn);
+      });
+      this.select(0);
+      window.UIPanel.open(this._root);
+      SoundManager.playOk();
+    }
+
+    close() {
+      if (this._root) window.UIPanel.close(this._root);
+    }
+
+    select(index) {
+      this._index = index;
+      Array.prototype.forEach.call(this._actions.children, (b, i) => {
+        b.classList.toggle("focused", i === index);
+      });
+    }
+
+    ok() {
+      const cmd = this._commands[this._index];
+      if (!cmd) return;
+      if (cmd.symbol === "cancel") {
+        this.cancel();
+        return;
+      }
+      const fn = this._handlers[cmd.symbol];
+      if (fn) fn();
+    }
+
+    cancel() {
+      SoundManager.playCancel();
+      this.close();
+    }
+
+    update() {
+      if (!this.isOpen()) return;
+      const n = this._commands.length;
+      let step = 0;
+      if (Input.isRepeated("right") || Input.isRepeated("down")) step = 1;
+      else if (Input.isRepeated("left") || Input.isRepeated("up")) step = -1;
+      if (step && n) {
+        this.select(((this._index + step) % n + n) % n);
+        SoundManager.playCursor();
+      } else if (Input.isTriggered("ok")) {
+        this.ok();
+      } else if (Input.isTriggered("cancel") || TouchInput.isCancelled()) {
+        this.cancel();
+      }
+    }
+
+    destroy() {
+      if (this._root && this._root.parentNode) this._root.parentNode.removeChild(this._root);
+      this._root = null;
     }
   }
-  window.Window_LandingMode = Window_LandingMode;
+  window.GalaxySim.LandingModeModal = LandingModeModal;
 
   class Scene_AlienLandingGrid extends Scene_MenuBase {
     create() {
@@ -1981,7 +1992,7 @@
       this.createBackdrop();
       this.createGridSprite();
       this.createTextSprite();
-      this.createModeWindow();
+      this.createModeModal();
       this.redrawAll();
     }
 
@@ -1994,37 +2005,21 @@
       this.addChild(sprite);
     }
 
-    createModeWindow() {
-      // One plate on a world with no ground, two or three on one that can be
-      // landed on: the row is as wide as the picture above it and the plates
-      // divide it between them (see layoutModeWindow, which divides it again
-      // every time the list is rebuilt around the square just picked).
-      const h = this.calcWindowHeight(1, true);
-      const rect = new Rectangle(
-        this._panel.x + LG_INSET,
-        this._panel.y + this._panel.height - LG_INSET - LG_MODE_H +
-          Math.floor((LG_MODE_H - h) / 2),
-        this._size.w, h
-      );
-      // The page fills the whole screen, but windows live on the window layer,
-      // which MZ centres on the smaller UI box: take its offset back out so the
-      // row lands where the sprites above it were laid out.
-      rect.x -= Math.floor((Graphics.width - Graphics.boxWidth) / 2);
-      rect.y -= Math.floor((Graphics.height - Graphics.boxHeight) / 2);
-      const win = new Window_LandingMode(rect, this._planet);
-      // No windowskin frame or back: the gold plates are the whole modal.
-      win.opacity = 0;
-      win.setHandler("land", this.commandLand.bind(this));
-      win.setHandler("portFoot", this.commandSpaceport.bind(this, false));
-      win.setHandler("portShip", this.commandSpaceport.bind(this, true));
-      win.setHandler("walk", this.commandLiminalWalk.bind(this));
-      win.setHandler("flyby", this.commandFlyby.bind(this));
-      win.setHandler("cancel", this.commandModeCancel.bind(this));
-      // Shown from the start, drawn dim: the walk, the flyby and the two pad
-      // landings are all readable while the square is still being chosen.
-      win.deactivate();
-      this._modeWindow = win;
-      this.addWindow(win);
+    // Nothing is on screen until a square is picked: see confirm().
+    createModeModal() {
+      this._modeModal = new LandingModeModal({
+        land: this.commandLand.bind(this),
+        portFoot: this.commandSpaceport.bind(this, false),
+        portShip: this.commandSpaceport.bind(this, true),
+        walk: this.commandLiminalWalk.bind(this),
+        flyby: this.commandFlyby.bind(this),
+      });
+    }
+
+    terminate() {
+      super.terminate();
+      if (this._modeModal) this._modeModal.destroy();
+      this._modeModal = null;
     }
 
     createGridSprite() {
@@ -2082,7 +2077,7 @@
       bmp.drawText(title, textX, panel.y + LG_INSET, width, LG_TITLE_H, "left");
 
       // The ways down are NOT drawn here any more: a square is picked first and
-      // the gold modal (Window_LandingMode) asks what to do with it.
+      // the modal (LandingModeModal) asks what to do with it.
       const helpY = this._gridSprite.y + this._size.h;
       bmp.fontSize = 18;
       bmp.textColor = "#cfd8e6";
@@ -2112,10 +2107,6 @@
       this._cursor.gx = ((this._cursor.gx + dx) % this._grid.w + this._grid.w) % this._grid.w;
       this._cursor.gy = ((this._cursor.gy + dy) % this._grid.h + this._grid.h) % this._grid.h;
       SoundManager.playCursor();
-      if (this._modeWindow) {
-        this._modeWindow.setSpaceport(this.portAtCursor());
-        this.layoutModeWindow();
-      }
       this.redrawAll();
     }
 
@@ -2136,17 +2127,13 @@
     // around THIS square: one with a spaceport on it offers the pad instead of a
     // generated surface, so the modal is rebuilt and resized before it opens.
     confirm() {
-      SoundManager.playOk();
-      this._modeWindow.setSpaceport(this.portAtCursor());
-      this.layoutModeWindow();
-      this._modeWindow.select(0);
-      this._modeWindow.activate();
-    }
-
-    // The row keeps its place and its width; only how many plates share it
-    // changes when the square under the cursor gains or loses a pad.
-    layoutModeWindow() {
-      this._modeWindow.refresh();
+      const port = this.portAtCursor();
+      const { gx, gy } = this._cursor;
+      let sub;
+      if (isSurfacelessWorld(this._planet)) sub = surfacelessReason(this._planet);
+      else if (port) sub = T('Galaxy.hud.spaceportAtCell', { name: port.name, x: gx, y: gy });
+      else sub = T('Galaxy.hud.landingSiteCell', { x: gx, y: gy });
+      this._modeModal.open(landingModeCommands(this._planet, port), sub);
     }
 
     // Into the spaceport on the chosen square: on foot, or with the ship set
@@ -2162,16 +2149,10 @@
         withShip: !!withShip,
       })) {
         SoundManager.playBuzzer();
-        this.commandModeCancel();
-        this._modeWindow.activate();
         return;
       }
       this._leaving = true;
       SceneManager.goto(Scene_Map);
-    }
-
-    commandModeCancel() {
-      this._modeWindow.deactivate();
     }
 
     // Set the ship down: a fresh surface square at the chosen grid cell.
@@ -2192,8 +2173,6 @@
       } else {
         SoundManager.playBuzzer();
         this._leaving = false;
-        this.commandModeCancel();
-        this._modeWindow.activate();
       }
     }
 
@@ -2209,8 +2188,6 @@
       });
       if (!started) {
         SoundManager.playBuzzer();
-        this.commandModeCancel();
-        this._modeWindow.activate();
         return;
       }
       this._leaving = true;
@@ -2231,8 +2208,6 @@
       });
       if (!started) {
         SoundManager.playBuzzer();
-        this.commandModeCancel();
-        this._modeWindow.activate();
         return;
       }
       this._leaving = true;
@@ -2248,7 +2223,10 @@
         this._texWait = (this._texWait || 0) + 1;
         if (this._texWait % 15 === 0) this.redrawAll();
       }
-      if (this._modeWindow && this._modeWindow.active) return;
+      if (this._modeModal && this._modeModal.isOpen()) {
+        this._modeModal.update();
+        return;
+      }
       let dx = 0, dy = 0;
       if (Input.isRepeated("left")) dx = -1;
       else if (Input.isRepeated("right")) dx = 1;
@@ -3783,8 +3761,9 @@
       }
       #gx-ship-controls-modal {
         position: relative;
-        width: min(1060px, 96vw);
-        height: min(740px, 92vh);
+        /* Large but never fullscreen: the game keeps a visible margin all round. */
+        width: min(1560px, 84vw);
+        height: min(960px, 86vh);
         background: transparent;
         display: flex;
         flex-direction: column;
@@ -3882,7 +3861,7 @@
         border: 1px solid var(--border-primary-hover-translucent-15, rgba(255, 255, 255, 0.12));
       }
       .gx-sc-left-col {
-        width: 330px;
+        width: 380px;
         flex-shrink: 0;
         display: flex;
         flex-direction: column;
@@ -4733,6 +4712,7 @@
               <button class="gx-sc-btn" data-sc-speed-set="50">×50</button>
               <button class="gx-sc-btn" data-sc-speed-set="100">×100</button>
             </div>
+            <button class="gx-sc-btn bridge focusable" data-sc-home title="${T('Galaxy.shipControls.returnHomeHint')}" style="width: 100%; margin-top: 8px;">${T('Galaxy.shipControls.returnHome')}</button>
           </div>
         </div>
 
@@ -5262,6 +5242,10 @@
     });
 
     // Stop
+    modal.querySelector("[data-sc-home]")?.addEventListener("click", () => {
+      handleShipControlsSbJump({ kind: "home", name: "Earth", systemName: "Sol" }); // i18n-ignore: planet id
+    });
+
     modal.querySelector("[data-sc-stop]")?.addEventListener("click", () => {
       if (dm.stopTravel) dm.stopTravel(true);
       if (window.SoundManager && window.SoundManager.playCancel) SoundManager.playCancel();
@@ -5476,6 +5460,14 @@
         ok = dm.teleportToSystem(target.name);
       } else {
         ok = dm.parkAtStar(target.systemName, target.name);
+      }
+    } else if (target.kind === "home") {
+      // Return Home: one pellet back to Earth orbit from any galaxy.
+      const abroad = ship && ship.currentSystem && isForeignGalaxySystem(ship.currentSystem);
+      ok = dm.teleportToPlanetOrbit(target.systemName, target.name);
+      if (ok && ship) ship.currentGalaxy = "Milky Way";
+      if (ok && abroad && window.SceneManager && window.SceneManager._scene && typeof window.SceneManager._scene._exitGalaxyFocus === "function") {
+        window.SceneManager._scene._exitGalaxyFocus();
       }
     } else if (target.kind === "planet") {
       ok = dm.teleportToPlanetOrbit(target.systemName, target.name);

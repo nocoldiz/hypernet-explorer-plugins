@@ -187,8 +187,47 @@
         return systemMessages;
     }
 
+    // The lines are written per archetype. A people built on another body (a
+    // Naguka goblin: Archetypes.json `bodyPlan`) with none of its own answers
+    // out of that body's lines, said in its own voice when the voice has a
+    // patois (NPCConversation.SpeciesVoice). One view per language table,
+    // each borrowed entry voiced once and kept.
+    const _archetypeMessageViews = new Map();
+    function voicedEntry(entry, voice) {
+        const SV = window.NPCConversation && window.NPCConversation.SpeciesVoice;
+        const say = (v) => {
+            if (typeof v === 'string') return SV && voice ? SV.transform(v, voice) : v;
+            if (Array.isArray(v)) return v.map(say);
+            if (v && typeof v === 'object') {
+                const out = {};
+                for (const k of Object.keys(v)) out[k] = say(v[k]);
+                return out;
+            }
+            return v;
+        };
+        return say(entry);
+    }
     function getArchetypeMessages() {
-        return isItalian() ? archetypeMessagesIT : archetypeMessagesEN;
+        const table = isItalian() ? archetypeMessagesIT : archetypeMessagesEN;
+        if (!table) return table;
+        if (!_archetypeMessageViews.has(table)) {
+            const borrowed = new Map();
+            _archetypeMessageViews.set(table, new Proxy(table, {
+                get(target, key) {
+                    if (typeof key !== 'string' || target[key] !== undefined) return target[key];
+                    if (borrowed.has(key)) return borrowed.get(key);
+                    const HC = window.HealthCore;
+                    const keys = HC && HC.archetypeLookupKeys ? HC.archetypeLookupKeys(key) : [key];
+                    const base = keys.map(k => target[k]).find(Boolean);
+                    const NC = window.NPCCreature;
+                    const voice = NC && NC.speciesVoiceOf ? NC.speciesVoiceOf({ archetype: key }) : null;
+                    const entry = base ? voicedEntry(base, voice) : undefined;
+                    borrowed.set(key, entry);
+                    return entry;
+                },
+            }));
+        }
+        return _archetypeMessageViews.get(table);
     }
 
     function getDefaultMessages() {
@@ -1037,6 +1076,21 @@
     // archetype. Shared by actor recruitment and pet/follower recruitment.
     Scene_Battle.prototype.getArchetypeSprite = function (archetype) {
         let characterName, characterIndex;
+
+        // A goblin people (the Naguka, the Verden) walks as a goblin: one of
+        // the catalogue's living goblin sheets. Any other people built on the
+        // Humanoid body walks as a person.
+        const NC = window.NPCCreature;
+        if (NC && NC.isGoblinArchetype && NC.isGoblinArchetype(archetype)) {
+            const db = (window.WorldGen && window.WorldGen.NPCs) || {};
+            const goblins = Object.keys(db).filter(k => db[k] && db[k].goblin === true && db[k].npc === true &&
+                !db[k].zombie && !db[k].beta);
+            if (goblins.length) {
+                return { characterName: goblins[Math.floor(Math.random() * goblins.length)], characterIndex: 0 };
+            }
+        }
+        const HC = window.HealthCore;
+        if (HC && HC.isHumanoidBody && HC.isHumanoidBody(archetype)) archetype = 'Humanoid'; // i18n-ignore: Archetypes.json id
 
         // Every sheet below holds a single character (img/characters/NPCs), so
         // the index is always 0; the joined sheets these were cut out of are

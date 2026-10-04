@@ -407,8 +407,8 @@
  *
  * THE HYPER GAUGE
  *
- * While anything is summoned, a HYPER bar is drawn across the top centre of
- * the screen. It fills with the damage the party deals to the enemy for as
+ * While anything is summoned, a HYPER bar is drawn on the summon's own party
+ * card, right under its MP bar. It fills with the damage the party deals to the enemy for as
  * long as the summon is on the field, one hit contributing at most a third of
  * it, so it is earned over a fight rather than in one blow. Full, the summon
  * unleashes its ULTIMATE at the end of the current action and the gauge empties
@@ -423,7 +423,8 @@
  * ultimate is always a large hit and never a delete button. The elder entity's
  * is uncapped, like everything else about it.
  *
- * The summon is ALWAYS CPU-controlled (auto-battle) and never receives the
+ * The summon is commanded by the player on its own turn, like any member of
+ * the line, and never receives the
  * 1-HP death protection the real party members have: when it dies it is gone,
  * and it cannot be revived.
  *
@@ -750,7 +751,6 @@ window.Game_SummonFollower = Game_SummonFollower;
     let pendingUltimate = false;// the gauge is full: it fires at the next safe point
     let lastUpkeepFrame = -1;   // dedupe: one upkeep per frame, whatever calls it
     let heldBody = null;        // the follower slot a tactical summon stands in
-    let gauge = null;           // the HYPER sprite, while a summon is on the field
 
     // ------------------------------------------------------------------
     // Outside a fight the rite is answered all the same, and what it calls
@@ -925,8 +925,12 @@ window.Game_SummonFollower = Game_SummonFollower;
             // party line, so it is not something that can be called.
             if (!enemyCharName(enemy)) continue;
             if (wanted) {
+                // A people built on another body answers for that body too
+                // (a Naguka goblin is called up as a Humanoid would be).
                 const arch = enemyArchetype(enemy);
-                if (!arch || !wanted.has(arch.toLowerCase())) continue;
+                const HC = window.HealthCore;
+                const keys = arch ? (HC && HC.archetypeLookupKeys ? HC.archetypeLookupKeys(arch) : [arch]) : [];
+                if (!keys.some(k => wanted.has(String(k).toLowerCase()))) continue;
             }
             pool.push(enemy);
         }
@@ -1702,6 +1706,16 @@ window.Game_SummonFollower = Game_SummonFollower;
         return true;
     }
 
+    // The archetype a summon's body is: the <Archetype:> of the enemy it was
+    // called from, the first of a hybrid's pair. A called person or a pet with
+    // no creature behind it stays a plain humanoid.
+    function summonArchetypeOf(spec) {
+        const enemy = spec && spec.enemyId ? $dataEnemies[spec.enemyId] : null;
+        const raw = enemy && enemy.meta ? enemy.meta.Archetype : null;
+        const key = typeof raw === 'string' ? raw.split('/')[0].trim() : '';
+        return key || 'Humanoid';                                      // i18n-ignore: archetype key
+    }
+
     // Turn the proxy actor into whatever was called.
     function configureProxy(spec) {
         const actor = actorProxy();
@@ -1729,6 +1743,14 @@ window.Game_SummonFollower = Game_SummonFollower;
         if (actor.setVnBattler) actor.setVnBattler(spec.battlerName || '');
         actor._recruitedEnemyId = spec.enemyId || 0;
         actor._recruitedLook = null;   // the look roll of whoever held the slot before goes with them
+
+        // Its body is the creature's own, so the hands the first person view
+        // shows on its turn (WeaponSystemProcedural.archetypeOf) are that
+        // archetype's and never the last summon's. Only the identity is
+        // written: HealthCore's changeArchetype would also rebuild the kit.
+        const archetype = summonArchetypeOf(spec);
+        actor._currentArchetype = archetype;
+        actor._creatureArchetypes = archetype ? [archetype] : null;
 
         actor.recoverAll();
         actor.clearActions();
@@ -1758,7 +1780,6 @@ window.Game_SummonFollower = Game_SummonFollower;
         }
 
         releaseBattlefieldBody();
-        removeHyperGauge();
 
         const actor = actorProxy();
         if (actor) {
@@ -2233,105 +2254,10 @@ window.Game_SummonFollower = Game_SummonFollower;
         }
     };
 
-    // ------------------------------------------------------------------
-    // The bar itself, across the top centre of the screen. It is drawn by the
-    // plugin rather than by the battle HUD because it belongs to the summon and
-    // has to survive both the battle scene and the tactical map battles, where
-    // the HUD's own party cards are not what is on screen.
-    // ------------------------------------------------------------------
-    const GAUGE_W = 420;
-    const GAUGE_H = 34;
-    const GAUGE_TOP = 8;
-
-    function Sprite_HyperGauge() {
-        this.initialize.apply(this, arguments);
-    }
-    Sprite_HyperGauge.prototype = Object.create(Sprite.prototype);
-    Sprite_HyperGauge.prototype.constructor = Sprite_HyperGauge;
-
-    Sprite_HyperGauge.prototype.initialize = function () {
-        Sprite.prototype.initialize.call(this);
-        this.bitmap = new Bitmap(GAUGE_W, GAUGE_H);
-        this.x = Math.round((Graphics.width - GAUGE_W) / 2);
-        this.y = GAUGE_TOP;
-        this._drawnRate = -1;
-        this._drawnReady = null;
-        this._pulse = 0;
-        this.refresh(0, false);
-    };
-
-    Sprite_HyperGauge.prototype.update = function () {
-        Sprite.prototype.update.call(this);
-        const rate = hyperRate();
-        const ready = rate >= 1;
-        if (Math.abs(rate - this._drawnRate) > 0.004 || ready !== this._drawnReady) {
-            this.refresh(rate, ready);
-        }
-        // Full and waiting to fire: the bar breathes so it is read as a state
-        // rather than as a bar that simply stopped moving.
-        this._pulse = ready ? (this._pulse + 0.08) : 0;
-        this.opacity = ready ? 200 + Math.round(55 * Math.sin(this._pulse)) : 255;
-    };
-
-    Sprite_HyperGauge.prototype.refresh = function (rate, ready) {
-        this._drawnRate = rate;
-        this._drawnReady = ready;
-        const b = this.bitmap;
-        b.clear();
-        b.paintOpacity = 170;
-        b.fillRect(0, 0, GAUGE_W, GAUGE_H, '#0a0a12');
-        b.paintOpacity = 255;
-        b.fillRect(0, 0, GAUGE_W, 1, '#5c5c78');
-        b.fillRect(0, GAUGE_H - 1, GAUGE_W, 1, '#5c5c78');
-
-        const barX = 82;
-        const barY = 9;
-        const barW = GAUGE_W - barX - 66;
-        const barH = GAUGE_H - 18;
-        b.fillRect(barX, barY, barW, barH, '#1b1b2c');
-        const filled = Math.round(barW * clamp(rate, 0, 1));
-        if (filled > 0) {
-            const from = ready ? '#ffe66d' : '#2f7bd6';
-            const to = ready ? '#ff8a3d' : '#63e2ff';
-            b.gradientFillRect(barX, barY, filled, barH, from, to);
-        }
-
-        b.fontFace = $gameSystem ? $gameSystem.mainFontFace() : 'sans-serif';
-        b.fontSize = 16;
-        b.outlineWidth = 3;
-        b.outlineColor = '#000000';
-        b.textColor = ready ? '#ffe66d' : '#c8d4ff';
-        b.drawText(T('Battle.summon.hyper.label'), 10, 0, barX - 14, GAUGE_H, 'left');
-        b.fontSize = 14;
-        b.textColor = '#ffffff';
-        const right = ready
-            ? T('Battle.summon.hyper.ready')
-            : Math.floor(clamp(rate, 0, 1) * 100) + '%';
-        b.drawText(right, barX + barW + 6, 0, GAUGE_W - barX - barW - 12, GAUGE_H, 'right');
-    };
-
-    function ensureHyperGauge() {
-        const scene = SceneManager._scene;
-        if (!scene || !scene.addChild) return;
-        if (gauge && gauge.parent === scene) return;
-        removeHyperGauge();
-        gauge = new Sprite_HyperGauge();
-        scene.addChild(gauge);
-    }
-
-    function removeHyperGauge() {
-        if (!gauge) return;
-        if (gauge.parent) gauge.parent.removeChild(gauge);
-        if (gauge.destroy) gauge.destroy();
-        gauge = null;
-    }
-
-    // Both scenes a summon can be standing in call this every frame: it puts
-    // the bar up while something is summoned and takes it down when nothing is.
-    function updateHyperGauge() {
-        if (active) ensureHyperGauge();
-        else if (gauge) removeHyperGauge();
-    }
+    // The bar itself is drawn on the summon's own party card, right under its
+    // MP bar (UI/PartyHud.js reads hyperRate() through window.SummonSystem), so
+    // it stands wherever the party cards stand: the battle scene and the
+    // tactical map battles alike.
 
     // ==================================================================
     // 8. THE BODY ON THE FIELD
@@ -2423,14 +2349,9 @@ window.Game_SummonFollower = Game_SummonFollower;
         return _Game_Actor_paramBase.call(this, paramId);
     };
 
-    // Always CPU-driven: nobody holds a controller for a summon, in the battle
-    // scene or on the tactical map. isAutoBattle() also makes canInput() false,
-    // so it is skipped by every input step.
-    const _Game_Actor_isAutoBattle = Game_Actor.prototype.isAutoBattle;
-    Game_Actor.prototype.isAutoBattle = function () {
-        if (isSummonBattler(this)) return true;
-        return _Game_Actor_isAutoBattle.call(this);
-    };
+    // The summon is the player's to command: no auto-battle override, so on
+    // its turn it asks for input like any other member of the line, from the
+    // kit configureProxy() taught it.
 
     // One turn of upkeep, taken on the summon's own turn. This is the one hook
     // every turn driver in the project agrees on.
@@ -2552,20 +2473,6 @@ window.Game_SummonFollower = Game_SummonFollower;
         _Game_Party_onBattleEnd.call(this);
     };
 
-    // The gauge is put up and taken down from the two scenes a fight can be
-    // running in, so it survives a summon called in either of them.
-    const _Scene_Battle_update = Scene_Battle.prototype.update;
-    Scene_Battle.prototype.update = function () {
-        _Scene_Battle_update.call(this);
-        updateHyperGauge();
-    };
-
-    const _Scene_Map_update = Scene_Map.prototype.update;
-    Scene_Map.prototype.update = function () {
-        _Scene_Map_update.call(this);
-        updateHyperGauge();
-    };
-
     // The BATTLE summon is battle-only, always: a save can never hold one and a
     // load never restores one. The map summon is the opposite and lives on
     // $gameSystem, so a loaded save resumes walking with whatever it was
@@ -2577,7 +2484,6 @@ window.Game_SummonFollower = Game_SummonFollower;
         pendingLeave = null;
         pendingUltimate = false;
         heldBody = null;
-        gauge = null;
         lastUpkeepFrame = -1;
     };
 

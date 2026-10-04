@@ -226,7 +226,8 @@
     "blueprints": "Progetti e componenti",
     "marketValue": "Valore di mercato:",
     "cravingsFed": "Voglie Soddisfatte",
-    "medicine": "FARMACO"
+    "medicine": "FARMACO",
+    "allergens": "Allergeni"
   },
   "rarity": {
     "common": "Comune",
@@ -326,5 +327,9 @@
     "label": "Natura",
     "mundane": "Mondano",
     "magical": "Magico"
-  }
+  },
+  "allergyContains": "Contiene",
+  "allergyUnsafeFor": "Pericoloso per",
+  "allergyRelief": "Sollievo allergico",
+  "allergyReliefHours": "{hours} ore"
 }

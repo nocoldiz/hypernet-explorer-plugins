@@ -27,7 +27,7 @@
     CAPABILITY_THOUGHTS, CRAVING_THOUGHTS, CRAVING_WITHDRAWAL_THOUGHTS, CREED_ASIDE_CHANCE,
     CreedVoice, CRIME_CAUGHT_THOUGHTS, CRIME_INTENT_THOUGHTS, CRIME_SUCCESS_THOUGHTS, ElectionClock,
     FAMILIAR_THOUGHTS, isTacticalFight, ITEM_BROWSE_THOUGHTS, ITEM_BUY_THOUGHTS,
-    ITEM_DISPOSITION_THOUGHTS, LifeTalk, NEED_THOUGHTS, PERSONALITY_CORE_THOUGHTS, PoliticsProvider,
+    ITEM_DISPOSITION_THOUGHTS, LifeTalk, NEED_THOUGHTS, PERSONALITY_CORE_THOUGHTS, PoliticsProvider, SpeciesVoice,
     SEASON_THOUGHTS, SPEC_TALK, TIME_THOUGHTS, vary, WATER_THOUGHTS, WEALTH_THOUGHTS, WEATHER_THOUGHTS,
     WorldProvider,
   } = window.NPCConversation._internal;
@@ -60,6 +60,20 @@
     return found || 'WINTER';
   }
 
+  // The sky as the weather banks key it: rain, storm, snow, or clear.
+  function _weatherKey() {
+    const w = ($gameScreen && ($gameScreen.weatherType?.() ?? $gameScreen._weatherType)) || 'none';
+    return (w === 'rain' || w === 'storm' || w === 'snow') ? w : 'clear';
+  }
+
+  // The hour as the time banks key it.
+  function _timeOfDay() {
+    const hour = $gameVariables?.value(23) ?? 12;
+    return hour >= 5 && hour < 12 ? 'morning'
+         : hour >= 12 && hour < 17 ? 'afternoon'
+         : hour >= 17 && hour < 21 ? 'evening' : 'night';
+  }
+
   const SituationalThoughts = {
     pick(profile) {
       const persName = _personalityNameOf(profile);
@@ -70,17 +84,10 @@
         if (pool?.length) return vary(_pickFrom(pool), persName);
       }
       if (Math.random() < 0.5) {
-        let type = 'clear';
-        const w = ($gameScreen && ($gameScreen.weatherType?.() ?? $gameScreen._weatherType)) || 'none';
-        if (w === 'rain' || w === 'storm' || w === 'snow') type = w;
-        const pool = WEATHER_THOUGHTS()[type];
+        const pool = WEATHER_THOUGHTS()[_weatherKey()];
         return vary(_pickFrom((persName && pool[persName]) || pool.default), persName);
       }
-      const hour = $gameVariables?.value(23) ?? 12;
-      const tod  = hour >= 5 && hour < 12 ? 'morning'
-                 : hour >= 12 && hour < 17 ? 'afternoon'
-                 : hour >= 17 && hour < 21 ? 'evening' : 'night';
-      const pool = TIME_THOUGHTS()[tod];
+      const pool = TIME_THOUGHTS()[_timeOfDay()];
       return vary(_pickFrom((persName && pool[persName]) || pool.default), persName);
     },
   };
@@ -157,10 +164,56 @@
     },
   };
 
+  // A people's own thoughts (Conv<Voice>.thought, II.1b), weighed by what is
+  // true for the thinker right now: the need on their mind, the sky, the
+  // hour, the season, the purse, whether the party is a friend, whether they
+  // live on the Horde's ground or away from it, and the lore of their people
+  // (for a Naguka: the shared head, Junehem, the Kola shaft, the eggs...).
+  // How often their own words win over the ordinary ones: most of the time for
+  // a voice of their own, now and then for a blend voice (II.1b).
+  const SPECIES_THOUGHT_CHANCE = { own: 0.65, blend: 0.25 };
+  const SpeciesThoughts = {
+    pick(profile, voiceId) {
+      const id = voiceId || SpeciesVoice.voiceOf(profile);
+      const t = id ? SpeciesVoice.bank(id).thought : null;
+      if (!profile || !t) return null;
+      const options = [];
+      const add = (weight, pool) => {
+        if (Array.isArray(pool) && pool.length) options.push([weight, pool]);
+      };
+      add(3, t.need?.[profile.currentNeed]);
+      add(1, t.weather?.[_weatherKey()]);
+      add(1, t.time?.[_timeOfDay()]);
+      add(1, t.season?.[_currentSeason()]);
+      const tier = profile.wealthTierBase;
+      if (tier != null) add(1, t.wealth?.[tier <= 1 ? 'poor' : tier <= 3 ? 'comfortable' : 'rich']);
+      if ((profile.playerOpinion ?? 0) >= 20) add(1, t.familiar);
+      let horde = false;
+      try { horde = !!window.SpriteCatalog?.isGoblinHordeGround?.(); } catch (_) { horde = false; }
+      add(2, horde ? t.hordeGround : t.abroad);
+      const lore = t.lore && typeof t.lore === 'object' ? Object.values(t.lore).filter((p) => Array.isArray(p) && p.length) : [];
+      if (lore.length) add(2, _pickFrom(lore));
+      add(3, t.generic);
+      if (!options.length) return null;
+      let roll = Math.random() * options.reduce((sum, [w]) => sum + w, 0);
+      for (const [w, pool] of options) {
+        roll -= w;
+        if (roll <= 0) return vary(_pickFrom(pool), null);
+      }
+      return vary(_pickFrom(options[options.length - 1][1]), null);
+    },
+  };
+
   const ThoughtProvider = {
     get personalityCoreThoughts() { return PERSONALITY_CORE_THOUGHTS(); },
 
+    // Whatever comes to mind, said the way they say it: in their people's
+    // voice for anybody who has one (II.1b), exactly as picked otherwise.
     pickThought(profile) {
+      return SpeciesVoice.render(this._pickThought(profile), profile);
+    },
+
+    _pickThought(profile) {
       if (!profile) return null;
       // A body that wants something talks over everything else it might say.
       const craving = CravingProvider.pick(profile);
@@ -170,6 +223,12 @@
       // a job, a war, the Horde or an election each speak when they apply.
       const life = LifeTalk.pickThought(profile);
       if (life) return life;
+      // A people with a voice of their own mostly think in their own words.
+      const voiceId = SpeciesVoice.voiceOf(profile);
+      if (voiceId && Math.random() < (SPECIES_THOUGHT_CHANCE[SpeciesVoice.mode(voiceId)] ?? SPECIES_THOUGHT_CHANCE.own)) {
+        const own = SpeciesThoughts.pick(profile, voiceId);
+        if (own) return own;
+      }
       // Babies and children have no politics, purse or creed to muse on.
       if (LifeTalk.isNewborn(profile)) return LifeTalk.lineFor('kidNewborn', null, profile) || '...';
       if (LifeTalk.isChild(profile)) return this.pickNeedThought(profile);
@@ -727,7 +786,9 @@
     const _tryRegister = () => {
       if (!window.NPCSim?.on) return false;
       window.NPCSim.on('npc:thought', ({ name, thought }) => {
-        ThoughtBubbleManager.queue(name, thought);
+        // Every bubble over a head comes through here, whoever raised it, so a
+        // species voice is heard however the line reached them (II.1b).
+        ThoughtBubbleManager.queue(name, SpeciesVoice.render(thought, name));
       });
       return true;
     };
@@ -1104,6 +1165,7 @@
     // or the follower, the one every party line uses.
     _say(person, text) {
       if (!person || !text) return;
+      text = SpeciesVoice.render(text, person.actor || person.profile || person.name);
       if (person.actor) {
         const api = window.AutoIdleExplorer && window.AutoIdleExplorer.bubble;
         if (api && person.char) api.show(person.char, text);
@@ -1138,7 +1200,7 @@
   };
 
   Object.assign(window.NPCConversation._internal, {
-    AddictionThoughts, BubbleLayout, CareThoughts, CravingProvider, SituationalThoughts, SpecTalk,
+    AddictionThoughts, BubbleLayout, CareThoughts, CravingProvider, SituationalThoughts, SpeciesThoughts, SpecTalk,
     ThoughtBubbleManager, ThoughtProvider,
   });
 })();

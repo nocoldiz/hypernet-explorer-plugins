@@ -1,0 +1,2964 @@
+{
+  "_comment": "La voce Orc (NPCConversation II.1b, SpeciesVoice). speech: le regole applicate a ogni battuta condivisa. voice: aperture e chiusure. thought: i loro pensieri per situazione. script: dialoghi a due, chi parla per primo e' sempre Orc.",
+  "voice": {
+    "openers": [
+      "Bene,",
+      "Ascolta,",
+      "Oi. Scusa. Ehi,",
+      "Guarda,",
+      "Detto chiaro,",
+      "Senza offesa, ma",
+      "Il fatto è che",
+      "Tra me e te,",
+      "Mia madre direbbe che",
+      "A dirla tutta,",
+      "Giusto, però",
+      "Aspetta,",
+      "Ecco il punto:",
+      "Parlando chiaro,",
+      "Zanna a zanna,",
+      "Ah. Comunque,",
+      "Io dico che",
+      "Non ti mento,",
+      "Per come la vedo io,",
+      "Va bene, va bene,",
+      "DA... cioè, sì,",
+      "Semplice:",
+      "Amico,",
+      "Eh,",
+      "Lo giuro sulle zanne,",
+      "Mano sul cuore,",
+      "Seriamente,",
+      "Cosa buffa,",
+      "Non ridere, ma",
+      "Mia nonna diceva che",
+      "In breve:",
+      "Non per essere scortese, ma",
+      "Hmph,",
+      "Bah,",
+      "Certo,",
+      "Intendiamoci,",
+      "Vedi,",
+      "La verità è che",
+      "Se lo chiedi a me,",
+      "Allora,",
+      "Al lavoro diciamo che",
+      "Metà di me dice che",
+      "Il goblin che ho dentro dice che",
+      "L'umano che ho dentro dice che",
+      "Uff, va bene,",
+      "Calma,",
+      "Non per niente, ma",
+      "Paroloni in arrivo:",
+      "Zitto un attimo,",
+      "Ti dico una cosa,"
+    ],
+    "closers": [
+      "Semplice.",
+      "E basta.",
+      "Non farmelo ripetere.",
+      "Ah!",
+      "Senza offesa.",
+      "Fidati delle zanne.",
+      "O sono lo zio di un goblin.",
+      "Giusto?",
+      "Segnatelo.",
+      "Ho finito di parlare.",
+      "Hmph.",
+      "Oi. Scusa. Abitudine.",
+      "DA. Cioè, sì.",
+      "Chiaro come una zanna.",
+      "Non è complicato.",
+      "Eh eh.",
+      "Chiedi a chiunque.",
+      "Mia madre è d'accordo.",
+      "Lo giuro.",
+      "Fine della storia.",
+      "È il lavoro.",
+      "Non discutere.",
+      "Mezzo goblin, tutto onesto.",
+      "Mi hai sentito.",
+      "Prendere o lasciare.",
+      "Ridi pure.",
+      "Niente di speciale.",
+      "Parola di zanna.",
+      "Prossima domanda.",
+      "Più onesto di così non posso.",
+      "Bene, bene.",
+      "Ci stringiamo la mano?",
+      "Non urlavo. È la mia voce normale.",
+      "Non è una minaccia. Solo volume.",
+      "Bah.",
+      "Gente semplice, parole semplici.",
+      "Niente parole da BIG-HEAD. Scusa, niente paroloni.",
+      "È buon senso da orco.",
+      "Comunque.",
+      "Andiamo avanti.",
+      "Non citarmi.",
+      "Probabilmente.",
+      "Ah. Bella questa, me la segno.",
+      "Passami il pane.",
+      "Torniamo al lavoro.",
+      "È tutto quello che ho.",
+      "Così diceva mia nonna.",
+      "Ogni volta.",
+      "Zanne in alto.",
+      "Quel che è giusto è giusto."
+    ]
+  },
+  "thought": {
+    "generic": [
+      "Mi sono abbassato sotto {lo stipite|l'insegna|la maniglia del tram}. Quasi.",
+      "Qualcuno nella testa goblin urla di {formaggio|una guerra|un secchio}. Non capisco quale.",
+      "Stivali buoni. Calze pessime. È la vita.",
+      "Un bambino mi fissava le zanne. Ho salutato. Ha salutato. Bravo bambino.",
+      "Mi serve {una sedia più grande|una porta più larga|una tazza con un manico vero}. Sempre.",
+      "Ho riso troppo forte sull'autobus. Metà autobus ha riso con me, quindi va bene.",
+      "Cera per zanne. Devo comprare la cera per zanne.",
+      "OI... no. Voce da interni.",
+      "Dicono che gli orchi sono arrabbiati. Io sono solo {affamato|stanco|alto}.",
+      "Mamma goblin, papà umano. Il Natale è rumoroso.",
+      "Ho aggiustato {il lavandino|la mensola|il cancello del vicino} con una mano. Bella sensazione.",
+      "La radio è accesa nella stanza accanto della mia testa. Stazione goblin. Abbassata.",
+      "Qualcuno mi ha chiesto se mordo. Solo {panini|mele|matite, quando penso}.",
+      "Non mi fido delle scale fatte dagli umani. Troppo {strette|ripide|scricchiolanti}.",
+      "Oggi ho tenuto a bada il caratteraccio. Due volte. Qualcuno mi dia una medaglia.",
+      "Ho comprato {un cappello|una sciarpa|un cappotto} della mia taglia. Al primo colpo. Giornata fortunata.",
+      "Il tranviere mi fa un cenno ogni mattina. Siamo amici ormai. Lui non lo sa.",
+      "Mani grandi, tazzine minuscole. Chi le progetta?",
+      "Qualcuno mi ha chiamato 'signore'. Mi sono girato a guardare dietro.",
+      "Le scartoffie. Il mostro peggiore che abbia mai affrontato.",
+      "I goblin mi trovano troppo umano. Gli umani troppo goblin. Lo specchio mi trova bello.",
+      "Dovrei chiamare {mamma|mia sorella|la nonna}. Telefonata breve. Lei parla, io grugnisco.",
+      "Ho sollevato {il pianoforte|il frigo|il furgone} per i traslocatori. Ci ho guadagnato un pranzo.",
+      "Ho letto un libro intero questa settimana. Caratteri piccoli. Occhi a pezzi. Bel libro.",
+      "Quel piccione mi guarda strano.",
+      "Non so sussurrare. Mai saputo. Le zanne si mettono in mezzo.",
+      "Se è rotto, dagli un colpo. Se è ancora rotto, leggi il manuale.",
+      "Ho sentito una barzelletta ieri. Rido ancora. Non me la ricordo.",
+      "Mi fischiano le orecchie. I goblin al nord staranno cantando di nuovo.",
+      "Lavoro onesto, paga onesta. Quasi.",
+      "Il cane del vicino mi adora. Il vicino, meno.",
+      "Imparerò {la fisarmonica|la chitarra|la batteria}. Dita grosse, suono grosso.",
+      "Denti puliti, zanne lucidate. Pronto a tutto.",
+      "La commessa mi ha dato la borsa grande senza chiedere. Rispetto.",
+      "Ogni sedia su cui mi siedo fa un rumore. Tutte quante.",
+      "Non sono scontroso. È solo la mia faccia.",
+      "Ho visto un manifesto della Gilda dei Maghi. Un sacco di BIG-HEAD. Cervelloni, volevo dire.",
+      "Qualcuno mi deve {cinque euro|una birra|delle scuse}. Me lo ricordo.",
+      "Le mani sanno di {olio di motore|cipolla|sapone}. Poteva andare peggio.",
+      "Lo specchio dice che mi serve un taglio. Il barbiere dice che gli serve una poltrona più grande.",
+      "Ho imparato una parola nuova: diplomazia. Vuol dire parlare prima di menare.",
+      "Metà di me vuole cantare. L'altra metà vuole aggiustare qualcosa. Vincono tutte e due.",
+      "Ho perso le chiavi. Erano nel mio pugno. Le stringevo da un'ora.",
+      "La testa goblin dice VAI A NORD. Il mio calendario dice dentista martedì.",
+      "Le zanne hanno ticchettato sulla tazza di nuovo. Si sono girati tutti.",
+      "Bella giornata per una rissa. Scherzo. Bella giornata per una zuppa.",
+      "Qualcuno mi ha dato la mancia. Tenevo solo aperta la porta.",
+      "Non mi serve molto. Un tetto, pane, amici, una porta dove non sbatto la testa.",
+      "Ho fischiettato al lavoro. Il capo ha chiesto se arrivava un treno.",
+      "La ricetta dello stufato della nonna: carne, altra carne, una rapa per decenza.",
+      "Chissà di cosa urlano oggi i goblin. Probabilmente {metal|merende|Norvegia}.",
+      "Ho provato lo yoga. Il tappetino era troppo piccolo. Il pavimento andava bene.",
+      "La mia ombra spaventa i gatti. Non io. L'ombra.",
+      "Ho firmato in maiuscolo di nuovo. Vecchia abitudine.",
+      "Oggi mi sento tenero. Non ditelo a nessuno.",
+      "La gente si scansa sul marciapiede. Vorrei che si fermasse a chiacchierare.",
+      "Cartolina da {mio cugino|un vecchio amico|la nonna}. Dice WAAAGH. Vuol dire ciao.",
+      "Nella testa goblin nessuno sa il mio nome. Bene. Resta tranquilla.",
+      "Dovrei fare stretching. La schiena è strana da quando ho portato {quell'armadio|quell'incudine|quello zio}.",
+      "Il pane è più buono se lo spezzi da solo.",
+      "Ho imparato a lavorare a maglia. Ferri grossi. Sciarpa per un cavallo.",
+      "Fiero delle mie zanne. Fiero anche della tessera della biblioteca.",
+      "Qualcuno ha detto 'bruto' alle mie spalle. Mi giro. Era 'saldi brutali'. Va bene.",
+      "Nessuno spinge in fila come un orco. E nessuno ci aspetta paziente come un orco.",
+      "Ho mangiato in piedi. Le sedie scricchiolano, i pavimenti no.",
+      "Ogni mappa è sbagliata dallo Schiacciamento. Cammina, non fidarti della carta.",
+      "Mi sono beccato a canticchiare i Junehem. Smesso. Ho canticchiato una pubblicità.",
+      "Giornata lunga. Giornata buona. Più o meno la stessa cosa.",
+      "Qualcuno ha detto che gli orchi sono 'mezzi'. Io sono doppio. Due famiglie intere.",
+      "Miccia corta, memoria corta. Ho già scordato perché ero arrabbiato.",
+      "Tè con cinque zollette. Non giudicare.",
+      "Pugno contro pugno col fornaio. Farina ovunque. Ne valeva la pena.",
+      "Posso portare tutta la spesa in un viaggio. Quindi lo faccio. Ogni volta.",
+      "Letto il giornale. I goblin hanno preso un altro fiordo. Anche il tram è in ritardo. Giornata piena.",
+      "Mai trovata una porta che non sapessi aprire. Molte che non avrei dovuto.",
+      "Mi hanno detto di sorridere di più. Ho sorriso. Sono scappati. Le zanne.",
+      "Un giorno avrò un orto. Zucche grosse. Zucche enormi.",
+      "I miei stivali sono più vecchi di certi miei amici. Bravi stivali.",
+      "Un po' di pioggia non ha mai fatto male a un orco. Un po' di nevischio, forse.",
+      "Il sedile dell'autobus ha cigolato. L'autista è sobbalzato. Ho chiesto scusa a tutti e due."
+    ],
+    "need": {
+      "sleep": [
+        "Gli occhi si chiudono. Il letto è {troppo corto|troppo lontano|troppo morbido}. Non importa.",
+        "Potrei dormire su {una panchina|un mucchio di sacchi|un tram}. L'ho già fatto.",
+        "Ho sbadigliato così forte che le zanne hanno fatto clac.",
+        "Letto. Subito. Piedi fuori dal fondo, come sempre.",
+        "La testa goblin è rumorosa stanotte. Devo dormire lo stesso.",
+        "Troppo stanco per essere scontroso. Questo è essere stanchi.",
+        "Solo {dieci minuti|un'ora|un pisolino}. Poi torno una persona.",
+        "Mi sono appisolato in piedi. Trucco da orco. Non dei migliori.",
+        "Il mio russare fa tremare i vetri. I vicini si adatteranno.",
+        "Prima dormire, poi {parlare|lavorare|pensare}.",
+        "Cuscino. Coperta. Silenzio. Desideri semplici.",
+        "Non riesco a tenere gli occhi aperti. Corpo grande, stanchezza grande.",
+        "Ho sognato tamburi goblin stanotte. Mi sono svegliato distrutto.",
+        "Il letto mi chiama. Il letto vince sempre.",
+        "Materasso per terra. Tanto nessuna rete mi sopravvive."
+      ],
+      "hunger": [
+        "Lo stomaco ringhia più forte di me.",
+        "Mi serve {carne|pane|una torta intera}. Subito.",
+        "Mangerei {un cavallo|una capra|un carretto di rape}. Non un cavallo vero. Probabilmente.",
+        "Odore di salsicce. Lo seguo.",
+        "Orco affamato è orco scontroso. Ci rimedio.",
+        "Porzioni piccole qui. Ne ordino tre.",
+        "Lo stufato della nonna mi rimetterebbe in sesto. La nonna è lontana.",
+        "Prima il cibo. Poi sarò gentile.",
+        "Mi sono masticato la manica pensando. È ora di mangiare.",
+        "Dov'è {la friggitoria|il chiosco di kebab|il forno} più vicino?",
+        "Telaio grande, serve tanto carburante.",
+        "Le zanne servono per le mele. Trovatemi delle mele.",
+        "Ho saltato il pranzo. Errore enorme.",
+        "I goblin mangiano di tutto. Gli umani vogliono un menù. Io voglio tutti e due.",
+        "Pancia vuota. Testa vuota. Una sistema l'altra."
+      ],
+      "work": [
+        "Il turno comincia presto. Stivali ai piedi.",
+        "Il capo mi ha assunto per la schiena. Mi tiene per le battute.",
+        "Il lavoro è lavoro. Fallo bene, torna a casa.",
+        "Un altro giorno a {sollevare|smistare|sorvegliare} cose. Per me va bene.",
+        "Ho timbrato presto. Nessuno se n'è accorto. Io sì.",
+        "Ho un lavoro, ho un tetto. Il lato goblin non ha mai avuto entrambi.",
+        "Mani occupate, testa tranquilla. Per questo mi piace lavorare.",
+        "Dovrei essere al mio posto. Mi muovo.",
+        "La paga è onesta. Le ore sono lunghe. Scambio giusto.",
+        "Mi hanno messo {all'accoglienza|alle casse pesanti|alla porta di notte}. Di nuovo.",
+        "I clienti sobbalzano, poi lasciano la mancia. Ogni volta.",
+        "Il lavoro fatto bene è un orgoglio silenzioso.",
+        "Non mi serve una promozione. Mi serve una sedia che regga.",
+        "Di nuovo in ritardo. Il tram è finito in una bolla temporale. Il capo non ci crederà.",
+        "Prima il lavoro. Poi si brontola."
+      ],
+      "leisure": [
+        "Giorno libero. Non farò niente. A voce alta.",
+        "Pub, parco o {sala giochi|fiume|mercato}? Scelte importanti.",
+        "Voglia di {freccette|carte|braccio di ferro}. Nessuno gioca con me due volte.",
+        "C'è il sole. Mi siedo su un muretto a giudicare i piccioni.",
+        "Pomeriggio libero. Forse pesco. Forse dormo. Forse tutte e due.",
+        "La sala giochi ha la macchina dei pugni. L'ho rotta l'ultima volta. L'ho pagata.",
+        "Voglio musica. Musica forte. Non forte da goblin. Forte normale.",
+        "Potrei fare la strada lunga per tornare. Alle gambe piace.",
+        "Annoiato. Gli orchi annoiati spostano i mobili.",
+        "Stasera c'è la partita alla tele. Snack pronti.",
+        "Forse {il cinema|il bowling|la fiera}. Posti piccoli. Divertente lo stesso.",
+        "Niente da fare. Ottimo. Lo faccio.",
+        "Piedi in alto, tazza piena, il mondo può aspettare.",
+        "Voglio ridere di qualcosa. Qualsiasi cosa.",
+        "Dovrei trovarmi un hobby. La nonna dice ceramica. Io dico di no."
+      ],
+      "crime": [
+        "Nessuno guarda. Mani grandi, mani svelte.",
+        "Solo {questa volta|stanotte|una volta}. Poi torno onesto.",
+        "Tanto tutti pensano che gli orchi rubino. Tanto vale.",
+        "No. La nonna lo saprebbe. La nonna sa sempre. Però...",
+        "Veloce, silenzioso, sparito. Difficile con la mia stazza.",
+        "Il lato goblin dice prendilo. Il lato umano dice poi scappa.",
+        "Non {se ne accorgeranno|rimpiangeranno una cassa|noteranno qualche euro}. I ricchi non ci fanno caso.",
+        "Eris ha occhi dappertutto. Mi serve un punto cieco.",
+        "Il cuore martella. Brutto segno. Lo faccio lo stesso.",
+        "Una presa. Dentro e fuori. Facile. Probabilmente.",
+        "Cappuccio su. Le zanne mi tradiscono.",
+        "L'affitto scade. La morale può aspettare un giorno.",
+        "Non mi piace. Ma mi serve più di quanto non mi piaccia.",
+        "Aspetto che {la guardia|il negoziante|la ronda} si giri. Poi vado.",
+        "Se mi beccano, dico che lo tenevo per un amico."
+      ],
+      "hygiene": [
+        "Puzzo come {una stalla|un calzino da palestra|un accampamento goblin}. Mi serve un bagno.",
+        "Le zanne vanno strofinate. Ci sono pezzi di pranzo.",
+        "La doccia è troppo bassa. Di nuovo a lavarmi in ginocchio.",
+        "La gente si allontana più del solito. Brutto segno.",
+        "Acqua calda, sapone grosso, strofinata lunga. Questo è il piano.",
+        "I goblin pensano che il fango sia un cappotto. Oggi non sono d'accordo.",
+        "Ho sudato tutta la camicia. Di nuovo.",
+        "Devo lavarmi prima che mi veda mamma.",
+        "Mani nere di {grasso|fuliggine|qualcosa}. Un lavandino, per favore.",
+        "Orco pulito, orco felice. Orco sporco, orco solo.",
+        "I capelli sono un nido. Il pettine ci si è perso dentro.",
+        "Dovrei lavarmi. Dovrei anche mangiare. Prima lavarsi, dicono.",
+        "La vasca è troppo piccola, quindi secchio e cortile.",
+        "Strofinare dietro le orecchie. Orecchie grandi, lavoro lungo.",
+        "Mi annuso. Me ne pento."
+      ],
+      "money": [
+        "Il portafoglio è magro. Più di quanto io sia mai stato.",
+        "Sono ridotto a {spiccioli|il biglietto del bus|un bottone}. Mi serve lavoro.",
+        "I buttafuori li assumono sempre. Chiedo in giro nei locali.",
+        "L'affitto scade. Gli euro no.",
+        "Potrei vendere {la vecchia armatura|la vecchia chitarra|i vecchi stivali}. Non gli stivali.",
+        "Il lavoro da mercenario paga. Mamma lo odia. Mamma non paga l'affitto.",
+        "Tutto costa di più. Il cibo costa di più, e io mangio di più.",
+        "Conto le monete due volte. Sempre lo stesso numero.",
+        "Dovrei chiedere degli straordinari. La schiena regge.",
+        "Spostare casse si paga in contanti. I contanti sono buoni.",
+        "Tasche vuote. Testa piena di piani. I piani non comprano il pane.",
+        "Potrei fare {un trasloco|un turno di guardia|la porta} questo fine settimana.",
+        "In banca mi guardavano come se volessi rapinarla. Volevo solo un prestito.",
+        "I soldi scarseggiano. La cintura stringe di più.",
+        "Paga venerdì. Venerdì è lontano."
+      ],
+      "safety": [
+        "Tenere la testa bassa. Difficile quando sta sopra quella di tutti.",
+        "C'è aria pesante. Resto a casa qualche giorno.",
+        "La polizia adora un sospettato alto. Mi tengo nascosto.",
+        "Nasconderlo {sotto l'asse del pavimento|nella cassa del carbone|dalla nonna}.",
+        "Niente guai. Non oggi. Sorridi e annuisci.",
+        "Ogni sirena sembra che sia per me.",
+        "Strada tranquilla. Porta sul retro. Bene.",
+        "Non avrei dovuto farlo. Non lo rifarò. Questa settimana.",
+        "La gente di Eris sta cercando. Metti il cappello grande.",
+        "Stai calmo. Gli orchi calmi non si notano. Troppo.",
+        "Non correre. Un orco che corre sembra colpevole.",
+        "Stare nascosto {finché passa|una settimana|fino alla paga}.",
+        "Cambiare camminata. Tutti conoscono la camminata da orco.",
+        "Mio cugino ha una stanza libera. Potrei andarlo a trovare. Per un po'.",
+        "Testa bassa, bocca chiusa. Difficile, la seconda."
+      ],
+      "comfort": [
+        "Voglio una casa coi soffitti alti. Almeno una volta.",
+        "Un letto della mia misura. Questo è il sogno.",
+        "Appartamento umido. Muri sottili. Vicini rumorosi. Anch'io.",
+        "Ho qualche risparmio. Potrei trasferirmi {vicino al lavoro|in un posto asciutto|fuori dalla cantina}.",
+        "Una poltrona grande. Un camino vero. Un cane. Un giorno.",
+        "Stanco di abbassarmi in casa mia.",
+        "Lo stipite è ammaccato dalla mia testa. È ora di traslocare.",
+        "Voglio una cucina dove potermi girare.",
+        "I goblin dormono ammucchiati. Io voglio una stanza. Con la serratura.",
+        "Pavimento caldo, muri spessi, strada tranquilla. Non è chiedere tanto.",
+        "Il padrone non sistema {il tetto|la caldaia|la finestra}. Io potrei. Per lui, no.",
+        "Appartamento al piano terra. Niente scale da rompere.",
+        "Mi sono guadagnato un posto migliore. Vado a cercare.",
+        "Una molla del divano mi punge. La molla sta vincendo.",
+        "Un giardino. Anche piccolo. Per zucche grandi."
+      ],
+      "social": [
+        "Mi serve una birra e un amico. In quest'ordine.",
+        "Non rido con qualcuno da giorni. Male.",
+        "Chi c'è {al pub|in piazza|in giro}? Vado a vedere.",
+        "La testa goblin è piena di voci. Nessuna parla con me.",
+        "Dovrei chiamare i cugini. Famiglia grande, qualcuno risponderà.",
+        "Voglio parlare. Parlare davvero. Non solo annuire.",
+        "La gente ha paura di cominciare. Allora comincio io.",
+        "La solitudine è peggio della fame. La fame la sistemi col pane.",
+        "Potrei entrare in {una squadra di freccette|un coro|un campionato di bowling}. Conoscere gente.",
+        "Abbraccio forte al prossimo amico che vedo. Li ho avvisati.",
+        "Settimana tranquilla. Troppo. Mi servono rumore e facce.",
+        "Persino i goblin hanno gli altri goblin. Io ho il gatto.",
+        "Qualcuno con cui litigare di calcio. Tutto qui.",
+        "Sorridere agli sconosciuti. Qualcuno ricambia. I più scappano.",
+        "Busso dal vicino. Con dei biscotti."
+      ]
+    },
+    "weather": {
+      "rain": [
+        "Pioggia. Gli ombrelli non esistono della mia taglia.",
+        "Zanne bagnate, stivali bagnati, tutto bagnato.",
+        "Pozzanghere fino alle caviglie di tutti. Alle mie, niente.",
+        "La pioggia fa bene agli orti. Male al mio umore.",
+        "Mi sono messo sotto una tenda. L'ho occupata tutta. Scusate, gente.",
+        "Qui fuori odora di cane bagnato. Forse sono io.",
+        "Pioggia sul tetto di lamiera. Il suono migliore per dormire.",
+        "Cappuccio su. Le orecchie restano fuori. Sempre.",
+        "I goblin adorano il fango. Metà di me è contenta, metà è {fradicia|seccata|infreddolita}.",
+        "Pioviggine. Non vale la pena lamentarsi. Mi lamento lo stesso.",
+        "Mi gocciola dal naso. Delizioso.",
+        "La pioggia rende la città silenziosa. Mi piace il silenzio.",
+        "Calze fradice. Giornata rovinata. Un po' drammatico. Però vero.",
+        "Bambini che saltano nelle pozzanghere. Mi sono unito. Nessun rimpianto.",
+        "Piove di nuovo. Di questo passo mi cresce il muschio."
+      ],
+      "storm": [
+        "Tuoni! Ah. Sembra casa.",
+        "La tempesta è forte. La testa goblin di più. Bella serata per il mal di testa.",
+        "Il vento ha provato a prendermi il cappello. Ha perso.",
+        "Un lampo. Conta i secondi. Grossi, vicini.",
+        "La cosa più alta della strada durante un temporale. Non ideale.",
+        "Le imposte sbattono. Le sistemo domani. O adesso.",
+        "La tempesta ha buttato giù un albero. L'ho spostato. Qualcuno doveva.",
+        "Tamburi goblin o tuoni? Stanotte non capisco.",
+        "È saltata la luce. Candele e storie. Per me va bene.",
+        "Pioggia di traverso. Cappotto inutile. Cammina più svelto.",
+        "Le tempeste non mi spaventano. {I dentisti|Le scartoffie|La nonna} mi spaventano.",
+        "Ho tenuto la porta contro il vento per un negozio intero.",
+        "Il cielo è arrabbiato. Anch'io, un po'. Solidarietà.",
+        "Il vento ulula. Mi unisco. Piano.",
+        "Grande tempesta. Bollitore acceso, porta chiusa, fatto."
+      ],
+      "snow": [
+        "Neve! Impronte grandi dappertutto. Le mie.",
+        "Ho fatto un pupazzo di neve della mia taglia. Ha spaventato il postino.",
+        "Il freddo morde le zanne. Sensazione strana.",
+        "I goblin al nord adorano la neve. Gli dà qualcosa da dipingere di nero.",
+        "Ho spalato tutta la strada. Nessuno l'ha chiesto. Mi sembrava giusto.",
+        "Fiato da drago. Divertente.",
+        "Battaglia di palle di neve coi bambini. Ho perso. Apposta. Quasi.",
+        "Scivolato sul ghiaccio. Si è crepato il marciapiede, non io.",
+        "La neve rende tutto silenzioso. Persino la testa goblin.",
+        "Servono guanti più grandi. Dita {intorpidite|rosse|rigide}.",
+        "Ho spinto fuori da un cumulo un'auto bloccata. Mi hanno salutato.",
+        "Tempo da zuppa calda. Ogni ora è tempo da zuppa calda.",
+        "Neve sulle zanne. Sembro un tricheco.",
+        "Avvolto in tre sciarpe. Ho ancora freddo.",
+        "Bianco dappertutto. Carino. Non dite a nessuno che ho detto carino."
+      ],
+      "clear": [
+        "Cielo sereno. Bella giornata per combinare qualcosa.",
+        "C'è il sole. Le zanne brillano.",
+        "Bella giornata. Mangio fuori. Su un sasso grosso.",
+        "Cielo blu, niente nuvole. Sospetto. Me lo godo lo stesso.",
+        "Caldo sulla schiena. Come una mano grande.",
+        "Tempo da togliersi la camicia. Non qui. Non in città.",
+        "Limpido come una campana. Per una volta si vedono le colline.",
+        "C'è sole. Strizzo gli occhi. Sembro più arrabbiato di quanto sia.",
+        "Bel tempo. La gente sorride di più. Anche a me.",
+        "Giornata perfetta per {pescare|una passeggiata|un pranzo lungo}.",
+        "Il sole è bello. L'ombra di più. Ma ombra grande.",
+        "Oggi il bucato asciuga in fretta. Ho un sacco di bucato.",
+        "Bella luce. Per una volta leggo i caratteri piccoli.",
+        "Cielo pulito. Testa pulita. Bene.",
+        "Troppo bello per stare dentro. Troppo bello per lavorare. Lavoro lo stesso."
+      ]
+    },
+    "time": {
+      "morning": [
+        "Mattina. Caffè. Tazza grande. Più grande.",
+        "In piedi prima degli uccelli. Vecchia abitudine dell'accampamento.",
+        "La mattina si grugnisce. Si parla dalle dieci.",
+        "Odore di pane fresco. Lo seguo di nuovo.",
+        "Rasato intorno alle zanne. Mi sono tagliato. Ahi.",
+        "Tram presto. Stesse facce. Cenno, cenno, cenno.",
+        "La testa goblin è quieta la mattina. Dormono fino a tardi.",
+        "Colazione: {uova|porridge|stufato avanzato}. Tanta.",
+        "L'aria del mattino è pungente. Sveglia le zanne.",
+        "Giorno nuovo. Non ho ancora urlato con nessuno. Buon inizio.",
+        "Stiracchiato. La schiena ha fatto crac come un ramo. Meglio.",
+        "Giornale del mattino, tè del mattino, brontolio del mattino.",
+        "Ho dormito oltre la sveglia. La sveglia è a pezzi. Non è colpa mia.",
+        "Il sole è appena sorto. Ho già sbrigato un po' di roba.",
+        "Rugiada sugli stivali. Si ricomincia."
+      ],
+      "afternoon": [
+        "Calo del pomeriggio. Serve {un panino|un pisolino|un caffè}.",
+        "Metà giornata fatta. L'altra metà aspetta.",
+        "Il pranzo pesa. Ne valeva la pena.",
+        "Il sole è alto. L'ombra è occupata. Da me.",
+        "Il pomeriggio è per i lavori pesanti. I muscoli sono caldi.",
+        "A quest'ora nessuno ha fretta. Bene.",
+        "Ancora qualche ora. Poi il pub.",
+        "Pausa tè. Cinque zollette. Due biscotti. Va bene, quattro.",
+        "Ho sbadigliato davanti a un cliente. Zanne in mostra. Il cliente se n'è andato.",
+        "Ora pigra. Buona per pensare. O no.",
+        "Le ombre si allungano. La mia è la più lunga.",
+        "Metà giornata. Metà strada. A metà di tutto, io.",
+        "I bambini escono da scuola. Rumore. Rumore buono.",
+        "La luce del pomeriggio indora la città. Pure i bidoni.",
+        "A metà giornata e ancora di buon umore. Record."
+      ],
+      "evening": [
+        "Sera. Stivali via. Piedi in alto.",
+        "Il pub si sta scaldando. Anch'io.",
+        "Tramonto. Il cielo ha il colore della pittura di guerra goblin. Non lo dico ad alta voce.",
+        "La cena è sul fuoco. Pentola grande.",
+        "La giornata è finita. Fatta bene. Bene.",
+        "Passeggiata serale. I lampioni si accendono al mio passaggio. Non sono io. Probabilmente.",
+        "Tele, stufato, divano. Paradiso dell'orco.",
+        "La testa goblin si sveglia. A loro piace il buio.",
+        "Chiamare {mamma|la nonna|mio fratello} stasera. Veloce.",
+        "Lampade accese. Ombre grandi. La mia più di tutte.",
+        "Stanchezza buona. Non quella cattiva. Buona.",
+        "La sera è per gli amici e il rumore.",
+        "Lavato i piatti. Asciugati. Seduto. Finito.",
+        "Odore di cena di tutti per strada. Di nuovo fame.",
+        "Ora fa più fresco. Bello. Buono per tornare a casa a piedi."
+      ],
+      "night": [
+        "Notte. La testa goblin è al massimo adesso.",
+        "Non riesco a dormire. Conto {pecore|goblin|mattoni}.",
+        "Strade buie. La gente cambia marciapiede. Non è colpa mia se sono grosso.",
+        "Turno di notte. Caffè e una torcia.",
+        "Ci sono le stelle. Da qualche parte al nord battono i tamburi.",
+        "Occhi da orco. Vedo bene al buio. Il pezzo goblin serve.",
+        "È tardi. Dovrei essere a letto. Non ci sono.",
+        "Notte tranquilla. Notte sospetta.",
+        "Ho accompagnato a casa una signora. Aveva paura del buio, poi di me, poi tutto bene.",
+        "La luna è grande. Mi fa venire voglia di cantare. Non lo farò.",
+        "Gufi. Gatti. Io. La squadra della notte.",
+        "Spuntino di mezzanotte. Poi un altro. Poi a letto.",
+        "Strade vuote. Finalmente spazio per camminare.",
+        "I sogni stanotte saranno rumorosi. Lo sono sempre.",
+        "Chiudi la porta, controlla la serratura, controlla ancora."
+      ]
+    },
+    "season": {
+      "SPRING": [
+        "Primavera. Semi di zucca piantati. Quest'anno saranno enormi.",
+        "Stagione del fango. Il lato goblin è entusiasta.",
+        "Fiori sbocciati. Starnuti. Starnuti grossi.",
+        "Via il cappotto. Braccia scoperte. La gente fissa. Primavera.",
+        "Pulizie di primavera. Trovati tre cappelli persi.",
+        "Uccelli che fanno il nido nella grondaia. Li lascio stare.",
+        "Agnellini nei campi. Carini. Adesso ho fame. Peccato.",
+        "I goblin al nord si muovono in primavera. Il giornale ne sarà pieno.",
+        "Giornate più lunghe. Più lavoro. Più pub.",
+        "Pioggia e sole ogni dieci minuti. Deciditi."
+      ],
+      "SUMMER": [
+        "Estate. Sudo come una fucina.",
+        "Troppo caldo per l'armatura. Troppo caldo per le camicie. Troppo caldo.",
+        "Gelato. Quattro palline. Cono piccolo. Disastro.",
+        "Nuotata al lago. Ho spostato metà dell'acqua.",
+        "Sere lunghe, birra fresca, pietra calda. Bene.",
+        "Scottato sulle orecchie. Ogni anno.",
+        "Festa d'estate. Tiro alla fune. Sono squalificato.",
+        "Le mosche mi adorano. Non so perché.",
+        "Tempo da grigliata. Portate carne.",
+        "Troppo caldo per essere scontroso. Troppo caldo per essere qualsiasi cosa."
+      ],
+      "AUTUMN": [
+        "Autunno. Zucche pronte. Moderatamente enormi.",
+        "Foglie dappertutto. Le prendo a calci. Orco adulto. Non m'importa.",
+        "Torna la stagione dello stufato. La migliore.",
+        "Il vento si fa freddo. Il cappottone esce dall'armadio.",
+        "Lavori del raccolto. Sacchi da sollevare. Buona paga, schiena dolente.",
+        "Mele. Crunch. Le zanne adorano le mele.",
+        "Le oche vanno a sud. Anche i goblin. Per motivi diversi.",
+        "Buio all'ora del tè. Lampade presto.",
+        "Castagne arrosto. Mi sono bruciato le dita. Ne valeva la pena.",
+        "Nebbia la mattina. Non vedo i miei piedi. Sono lontani laggiù."
+      ],
+      "WINTER": [
+        "Inverno. Tre coperte. I piedi spuntano lo stesso.",
+        "Freddo da spaccare le zanne. Non le mie. Zanne dure.",
+        "Presto Natale. Il lato di mamma vuole il banchetto, quello di papà i canti. Tutte e due, forte.",
+        "Il fuoco è acceso. Non mi muovo fino a marzo.",
+        "Ghiaccio sui vetri. Fiato sul vetro. Ho disegnato un goblin.",
+        "In inverno l'Orda si agita. Il giornale lo dice ogni anno.",
+        "Sidro caldo. Tazza grande. Più grande.",
+        "Giorni corti. Notti lunghe. Pisolini lunghi.",
+        "Spalo la neve per gli anziani. Pagano in torta.",
+        "Calze di lana, due paia. Gli stivali si chiudono a malapena."
+      ]
+    },
+    "wealth": {
+      "poor": [
+        "Di nuovo pane e acqua. Gli orchi forti non hanno bisogno di molto. Bugia.",
+        "Le scarpe hanno i buchi. Le dita salutano.",
+        "Negli accampamenti goblin mangiano tutti. Ci ho pensato. Non l'ho fatto.",
+        "Dormo in una stanza con altri quattro. Gara di russate. Vinco io.",
+        "Ho rammendato di nuovo il cappotto. Più toppa che cappotto.",
+        "Lo stufato più economico della città. Soprattutto acqua. Un po' di speranza.",
+        "Fila per il lavoro a giornata. Mi scelgono sempre per primo. Piccola grazia.",
+        "Devo soldi {al padrone di casa|al fornaio|a mio cugino}. Pagherò. Pago sempre.",
+        "Conto le monete per l'autobus. Vado a piedi.",
+        "Essere poveri non è una vergogna. Essere pigri sì. Non sono pigro.",
+        "I reclutatori dell'Orda girano intorno alla mensa dei poveri. Li ignoro.",
+        "Un pasto buono al giorno. Lo faccio valere."
+      ],
+      "comfortable": [
+        "Paga fissa, appartamento piccolo, frigo pieno. Niente male per un orco.",
+        "Ho comprato stivali nuovi senza contare. Mi sono sentito ricco. Non lo sono.",
+        "Mando qualcosa a casa a mamma ogni mese. Bella sensazione.",
+        "Abbastanza per il pub e l'affitto. È abbastanza.",
+        "Ho dei risparmi. Pochi. Miei.",
+        "Sto bene. Però la sedia è ancora troppo piccola.",
+        "Ho finito di pagare {il divano|la bici|il dentista delle zanne}. Niente debiti. Ah.",
+        "Vacanza quest'anno. Mare. Asciugamano grande.",
+        "Né ricco né povero. Solo orco.",
+        "Ho offerto il pranzo a tutta la squadra. Una volta. Ne parlano ancora.",
+        "Buon lavoro, buoni amici, buoni stivali. Cos'altro.",
+        "Ora posso permettermi il sacco grande di {patate|mele|cipolle}. Piccole gioie."
+      ],
+      "rich": [
+        "Ricco. Ho comprato un letto della mia misura. Su misura. Ho pianto un po'.",
+        "Ristorante elegante. Cibo minuscolo. Ho ordinato tutto il menù.",
+        "Casa coi soffitti alti. Mai più abbassarmi.",
+        "I soldi sono belli. Faccio ancora la spesa al mercato. Abitudine.",
+        "I ricchi mi invitano alle feste. Per fare paura alla porta. Ora ci vado da ospite.",
+        "Capsule d'oro per le zanne? No. Pacchiano. Però ci ho pensato.",
+        "Ho comprato una casa a mamma. La cosa migliore che abbia mai fatto.",
+        "Il banchiere ora mi sorride. Strano.",
+        "Potrei ritirarmi. Mi annoierei. Continuo a lavorare.",
+        "Ho lasciato una mancia grossa. Il cameriere è svenuto. Ho esagerato.",
+        "Penso a una casa in Varlenia. Troppo snob. Troppo elfica.",
+        "Un orco ricco è sempre un orco. Sempre rumoroso. Sempre onesto."
+      ]
+    },
+    "familiar": [
+      "Di nuovo quelli. Brava gente. Rumorosi, come me.",
+      "Quei viaggiatori non sobbalzano mai per le zanne. Mi piace.",
+      "Devo a quella compagnia {una birra|un favore|un abbraccio}. Pago quando li vedo.",
+      "Hanno salutato per primi. Di solito la gente non lo fa.",
+      "Brava gente. Gli porterei le borse se me lo chiedessero.",
+      "Quella compagnia combatte come orchi e parla come umani. Il meglio dei due.",
+      "Li ho visti in città. Ho salutato troppo forte. Ho colpito un'insegna.",
+      "Si ricordano il mio nome. Vuol dire qualcosa.",
+      "Mi fido di quella compagnia. Non mi fido di molti.",
+      "Se hanno bisogno di muscoli, ci sono io. Gliel'ho detto.",
+      "Di nuovo quei viaggiatori. Ancora vivi. Bene. Mi preoccupavo un po'.",
+      "Hanno riso della mia barzelletta. Quella brutta. Amici veri.",
+      "Dovrei cucinare per quelli. Pentola grande. Ricetta della nonna.",
+      "Quel loro camper. Scommetto che è rumoroso. Rispetto.",
+      "Non mi hanno mai chiesto se mordo. Buone maniere.",
+      "Amici miei, quella compagnia. Non fategli storie.",
+      "Aiutano la gente da queste parti. Me ne sono accorto. Gli orchi se ne accorgono.",
+      "Facce buone. Ne ho viste abbastanza di cattive per saperlo.",
+      "Spero che mangino come si deve. Sembrano magri. Tutti mi sembrano magri.",
+      "Seguirei quelli in una rissa. Non in un coro, però."
+    ],
+    "hordeGround": [
+      "Terra dell'Orda. Qui la testa goblin è così forte che quasi sento le parole.",
+      "Pittura cadaverica su ogni faccia. Continuano a offrirmi un pennello.",
+      "Qui mi chiamano cugino. Hanno ragione a metà.",
+      "Un reclutatore mi ha chiesto se voglio uno stendardo. Voglio un panino.",
+      "Qui urlano tutti. Per una volta sono io quello tranquillo.",
+      "Junehem da ogni altoparlante. Ogni. Singolo. Altoparlante.",
+      "Bambini goblin che mi si arrampicano addosso come su un albero. Va bene. Oggi sono un albero.",
+      "Pensano che sia uno di loro. Non dico di no. Non dico di sì.",
+      "Qui il richiamo è forte. Come una canzone incastrata tra i denti.",
+      "Il cibo è {crudo|strano|ancora in movimento}. Lo mangio. Per educazione.",
+      "Qui nessuno fissa le zanne. Strano. Piacevole.",
+      "DA, DA, DA tutto il giorno. Mi sono beccato a rispondere.",
+      "Tamburi grossi di notte. Non riesco a dormire. Batto il piede.",
+      "Mi vogliono in prima linea. Io faccio {il bibliotecario|il barista|il segretario}. Gliel'ho detto.",
+      "L'accampamento goblin sa di fumo e pelo bagnato. Sa del lato di mamma.",
+      "Qualcuno mi ha dipinto la porta di nero. Era un complimento.",
+      "L'Orda è tutto cuore e niente piano. Come mio zio.",
+      "Qui sono io il BIG-HEAD. Perché so leggere. Buffo.",
+      "Fai male a un goblin qui, lo sa tutta l'Orda. Cammino con attenzione.",
+      "Stendardi ovunque, regole da nessuna parte. Quasi riposante.",
+      "Mi hanno dato una lancia a colazione. L'ho restituita. Ho tenuto il pane tostato.",
+      "Cantano della Norvegia come fosse il paradiso. Fa freddo. Ci sono stato.",
+      "La testa comune urla vittoria. Di cosa? Nessuno lo sa.",
+      "La metà umana vuole un orario. L'Orda non ha orari.",
+      "Una nonna goblin mi ha pizzicato la guancia. Mi ha chiamato ragazzone. Giusto.",
+      "Non ci vivrei. Non mi dispiacerebbe venirci a trovare la nonna.",
+      "Qui sono tutti famiglia. È questa la trappola. È questa la consolazione.",
+      "Ho chiesto un menù. Quaranta goblin mi hanno riso in faccia.",
+      "Terra dell'Orda, ma il pane è buono. Lo fa qualcuno di umano.",
+      "Tengo la testa. Non quella goblin. La mia."
+    ],
+    "abroad": [
+      "Le città pagano bene gli orchi. Schiene forti, mani oneste.",
+      "Qui la testa goblin è debole. Come una radio a due strade di distanza.",
+      "Gli umani qui sono educati. Spaventati, ma educati.",
+      "Ho la tessera della biblioteca. La bibliotecaria me l'ha fatta firmare due volte. In maiuscolo.",
+      "I vicini mi hanno portato una torta quando sono arrivato. Poi una sedia più piccola. Gentili.",
+      "Qui nessuno urla DA. Mi manca un po'. Solo un po'.",
+      "La polizia mi ferma più spesso. Sorrido, mostro i documenti, avanti.",
+      "Città umana, porte umane, tutto a misura d'uomo.",
+      "Ho imparato a fare la fila. Ne vado fiero.",
+      "Il giornale dice che l'Orda ha preso un'altra valle. La gente mi guarda. Io leggo lo sport.",
+      "La negoziante mi chiama 'ragazzone'. Io la chiamo 'signora piccola'. Ridiamo.",
+      "Pago le tasse. Molto umano. Oggi mi sento molto umano.",
+      "Faccio la scuola serale. {Matematica|Francese|Contabilità}. L'insegnante ha paura di me. Migliora.",
+      "In città mi chiedono dell'Orda come se lo sapessi. Io sono di Brema.",
+      "Mi sono fatto degli amici al deposito. Ci è voluto un anno. Ne valeva la pena.",
+      "Campane di chiesa, campanelli del tram, campanelli dei negozi. Gli umani adorano le campane.",
+      "Sono entrato nel coro. Basso. Molto basso.",
+      "Il cibo umano è troppo piccolo e troppo pulito. Mi ci abituo.",
+      "Dicevano che non mi sarei mai integrato. Integrato benissimo. Sono gli autobus che non mi stanno.",
+      "Ho un fondo pensione. I goblin riderebbero fino a star male.",
+      "Uno della Gilda dei Maghi voleva studiare il mio udito. Ho detto di no. Un no educato.",
+      "Città tranquilla. Testa tranquilla. Strano, il silenzio.",
+      "L'autista ora mi aspetta. Sa che arrivo tardi.",
+      "Il pub all'angolo ha uno sgabello col mio nome. Rinforzato.",
+      "Ho messo un completo a un matrimonio. Si è scucito. Ho ballato lo stesso.",
+      "Qui pensano che le zanne siano maleducate. Sorrido a bocca chiusa.",
+      "Gli umani fanno regole per tutto. Più facile che indovinare.",
+      "Il negozio ora vende guanti grandi per orchi. Progresso.",
+      "Lontano dall'Orda. Vicino al forno. Scelta giusta.",
+      "I bambini qui pensano che sia un gigante delle fiabe. Lasciamoli fare."
+    ],
+    "lore": {
+      "collective": [
+        "La testa goblin. Tutti urlano, nessuno ascolta. A me arriva l'eco.",
+        "I goblin veri sentono la testa comune chiara. Io la sento attraverso un muro.",
+        "Oggi la testa comune è stata zitta un secondo. Staranno mangiando tutti.",
+        "Non posso mandare niente nella testa goblin. Prendo solo pezzi. Come origliare.",
+        "Qualcuno ha fatto male a un Naguka al nord. Ho sentito tutta la testa rizzarsi.",
+        "La testa comune è soprattutto {merende|canzoni|urla}. Come un pub.",
+        "Mamma sente la testa comune chiara. Dice che sono fortunato a non sentirla.",
+        "La testa goblin ronza quando sono arrabbiato. Brutta combinazione. Respira.",
+        "I Verden leggono la testa goblin con la magia. A me arriva gratis. Segnale peggiore.",
+        "Ho sentito 'BIG-HEAD' nella testa comune. Era un mago. O un cavolo.",
+        "La testa comune sembra la famiglia che urla dalla cucina.",
+        "A volte la testa goblin canta. Junehem. Sempre Junehem.",
+        "Vorrei poter spegnere la testa goblin. Vorrei alzarla. Tutte e due.",
+        "Nessuno nella testa comune sa del dentista. Quello è mio.",
+        "La testa goblin dice marcia. Le gambe dicono siediti. Vincono le gambe.",
+        "Sentire mezza guerra è sempre sentire una guerra.",
+        "La testa comune non dorme mai. I goblin fanno i turni, credo.",
+        "Ho sentito mille goblin ridere insieme. Ho riso anch'io. Non so perché.",
+        "I maghi chiedono com'è la testa goblin. Come uno stadio nella casa accanto.",
+        "Un giorno prenderò una frase intera nella testa goblin. Probabilmente sulla zuppa."
+      ],
+      "tusks": [
+        "Prima le zanne, poi la faccia. È così che mi vede la gente.",
+        "Lucidato le zanne. Cura da orco come si deve.",
+        "Il dentista delle zanne fa pagare doppio. Dice che sono due lavori.",
+        "Ho scheggiato una zanna su {un coperchio|un boccale|una maniglia}. Imbarazzante.",
+        "Le zanne mi tengono su la sciarpa. Utili.",
+        "Il lato umano non dimentica mai le zanne. Gli occhi umani neppure.",
+        "La nonna dice che zanne belle portano fortuna. La nonna dice tante cose.",
+        "Non so suonare il flauto. Le zanne. Ci ho provato.",
+        "Baciare è complicato. Non chiedete.",
+        "Anellino sulla zanna sinistra. Mamma lo odia. Io lo adoro.",
+        "Le zanne crescono un po' ogni anno. Anche il conto del dentista.",
+        "Cabina per fototessere. Quattro foto. Quattro zanne in mezzo.",
+        "I goblin si limano i denti a punta. I miei vanno bene così.",
+        "Ho messo una maschera una volta. Le zanne bucavano. Non ho ingannato nessuno.",
+        "Spazzolino per i denti, spazzola per le zanne.",
+        "Fiero delle mie zanne. Le ho prese da mamma. E dal naso di papà, in qualche modo.",
+        "Sorridere è un rischio. Sorrido lo stesso.",
+        "Zanne e cravatta. Look da colloquio. Mi hanno preso."
+      ],
+      "horde": [
+        "L'Orda vuole ogni orco. Manda lettere. Lettere grandi. Soprattutto disegni.",
+        "L'Orda scende dalla Scandinavia. La città mi paga ancora. Resto.",
+        "Mio cugino si è unito all'Orda. Scrive a casa del cibo. Mente.",
+        "L'Orda mi darebbe uno stendardo e una lancia. La città mi dà la pensione.",
+        "L'Orda lo chiama tornare a casa. Non ci ho mai vissuto.",
+        "Mi chiedono da che parte sto. La mia. Della nonna. Del forno.",
+        "L'Orda non è cattiva. Solo rumorosa, affamata e molto convinta.",
+        "Ogni volta che l'Orda vince una battaglia, qualcuno al lavoro si zittisce vicino a me.",
+        "Reclutatore dell'Orda in stazione. Pittura cadaverica e un blocco per appunti. Strano mix.",
+        "Se l'Orda arriva qui, faccio il tè. Prima si parla. Regola da orco.",
+        "L'Orda non ha scartoffie. Allettante. Non così tanto.",
+        "I goblin del pozzo di Kola sono andati a sud. Alcuni in Norvegia. Alcuni da mamma.",
+        "Il Vaticano vuole l'Orda come esercito. L'Orda vuole il Vaticano come merenda.",
+        "L'Orda marcia quando suonano i Junehem. Anche qui i piedi battono. Non marciano.",
+        "La gente pensa che gli orchi spiino per l'Orda. Non so tenere un segreto nemmeno con la nonna.",
+        "L'Orda ha preso un altro fiordo. Brutta settimana per i fiordi.",
+        "Due famiglie tirano. L'Orda da una parte, la città dall'altra. Ho le braccia lunghe. Me la cavo.",
+        "L'Orda manda un messaggero ogni inverno. Io rimando biscotti.",
+        "Ho combattuto per la città una volta. Contro i goblin. Non è stato bello. L'ho fatto.",
+        "L'Orda dice che gli umani ci odiano. Gli umani mi hanno dato un lavoro. L'Orda un mal di testa."
+      ],
+      "family": [
+        "Mamma è Naguka. Papà è umano. Si sono conosciuti a una zuffa di confine. Romantico, dicono.",
+        "Papà mi ha insegnato a leggere. Mamma a dare testate. Utili tutte e due.",
+        "Cena di famiglia. Metà mangia con la forchetta. Metà no. A nessuno importa.",
+        "La nonna mi parla in goblin. Io rispondo in umano. Ci capiamo benissimo.",
+        "I parenti di papà chiedono se mangio. Quelli di mamma se vinco.",
+        "Mia sorella minore è all'università. La prima orca della famiglia con la toga.",
+        "Troppi cugini. Metà nell'Orda, metà autisti d'autobus.",
+        "Mamma mi voleva duro. Papà mi voleva buono. Sono tutti e due. Fatica.",
+        "Natale da noi: canti, poi un incontro di lotta. Tradizione.",
+        "La mamma di papà non sopportava mamma. Poi mamma le ha aggiustato il tetto. Ora sono amiche per la pelle.",
+        "Foto da neonato orco. Neonato enorme. Carrozzina minuscola. Disastro.",
+        "Mamma dice che la testa goblin la culla. Papà dice che russa.",
+        "Ho gli occhi di papà e tutto il resto di mamma.",
+        "Mio fratello è monaco. Testa rasata, zanne grandi, calmissimo. Mi fa paura.",
+        "La nonna manda calze. Maglia goblin. Tre dita di troppo. Le metto lo stesso.",
+        "Voglio figli un giorno. Grandi. Rumorosi. Buoni.",
+        "Motto di famiglia: dillo chiaro, poi abbracciatevi.",
+        "Lo zio dice a tutti che è goblin puro. Sua madre era una fornaia di Lione.",
+        "La gente di mamma non scorda un torto. Quella di papà non scorda un compleanno. Io li scordo tutti e due.",
+        "Ho chiamato a casa. Mamma urlava, papà piangeva, la nonna ha riattaccato. Telefonata normale."
+      ],
+      "kola": [
+        "I sovietici hanno scavato troppo nel 1970. I goblin sono saliti. Ed eccomi qui, alla fine.",
+        "La nonna è salita dal pozzo di Kola. Dice che il primo cielo era troppo grande.",
+        "Il pozzo di Kola. Dodici chilometri di buco e una pessima idea.",
+        "Dovrei mandare ai sovietici un biglietto di ringraziamento. O un conto.",
+        "La nonna ancora non prende l'ascensore. Dice che la salita si fa a piedi.",
+        "I goblin hanno vissuto in caverne per milioni di anni. Io soffro di claustrofobia in ascensore.",
+        "Kola, 1970. Mamma lo chiama il giorno in cui si è aperto il soffitto.",
+        "Ho visitato il sito di Kola una volta. Adesso è solo un coperchio. Un grosso coperchio arrugginito.",
+        "Laggiù era buio e caldo. Quassù, luce e affitto.",
+        "La prima parola della nonna in superficie è stata 'uccello'. Poi l'ha mangiato.",
+        "Gli scienziati di Kola volevano misurare la Terra. Hanno misurato i goblin.",
+        "Certi giorni mi chiedo cosa ci sia ancora laggiù. Poi pranzo.",
+        "Una vecchia punta da trivella sovietica nel giardino della nonna. La usa come vaso.",
+        "Un buco in Russia, un orco in città. Storia lunga. Bella.",
+        "La nonna dice che le caverne erano più antiche degli dei. Poi lo ripete."
+      ],
+      "junehem": [
+        "I Junehem alla radio di nuovo. I goblin si sono zittiti ad ascoltare. Io ho spento.",
+        "Una band black metal diventata divinità. Mamma ha il poster. Papà i tappi.",
+        "I Junehem non possono morire finché un goblin ci crede. Tournée lunga.",
+        "So le parole di {una|due|quasi tutte le} canzoni dei Junehem. Non ditelo al lavoro.",
+        "Ogni governo ha provato ad ammazzare i Junehem. Le vendite degli album sono salite.",
+        "Un riff dei Junehem nella testa goblin. Bloccato lì da giorni.",
+        "Pittura cadaverica. I goblin la mettono in guerra. Io l'ho messa a una festa. Festa sbagliata.",
+        "Non sono un credente. Mi piacciono solo i tamburi. Davvero.",
+        "I Junehem guidano l'Orda con le chitarre. I generali lo odiano.",
+        "Un membro dei Junehem è sparito. Nessuno sa dove. La testa goblin lo chiede sempre.",
+        "Ho messo i Junehem al contrario una volta. Suonavano uguale. Inquietante.",
+        "Il vicino si è lamentato della mia musica. Era la lavatrice.",
+        "Mamma prega i Junehem. Papà prega che smetta. Armonia familiare.",
+        "Il biglietto per il concerto dei Junehem è una lancia. Non ci vado.",
+        "I goblin fanno headbanging all'unisono. Tutta la valle annuisce. L'ho visto al telegiornale.",
+        "Dei del metal. Certi dei hanno templi. Questi hanno amplificatori.",
+        "I Junehem sono un piacere proibito. Molto proibito. Molto rumoroso.",
+        "In negozio hanno messo i Junehem. Due goblin e io ci siamo bloccati. Poi ha suonato la cassa.",
+        "Ho comprato a mamma una maglietta dei Junehem. Taglia più grande. Le sta stretta.",
+        "Quando i Junehem cantano lento, la testa goblin piange. La prima volta che l'ho sentito, ho pianto anch'io."
+      ],
+      "squishing": [
+        "Dallo Schiacciamento, l'autobus ci mette una vita. Regola dell'80. Nessuno corre più.",
+        "Un amico ha superato gli 80 una volta. Ha vissuto lo stesso martedì per un mese.",
+        "Una bolla temporale vicino al lavoro. Stesso piccione ogni giorno. Gli ho dato un nome.",
+        "Novantadue dimensioni schiacciate insieme. Come un divano di famiglia.",
+        "Ora ci sono gli autobus col motore liminale. Veloci e niente bolle. I posti però sono ancora piccoli.",
+        "Quel tipo, Bubba, ha fatto il motore liminale. Ora è ricco. Buon per lui.",
+        "Pezzi di altri mondi cadono nel nostro. Ho trovato {un sasso blu|un pesce strano|un cappello} nel parco.",
+        "Lo Schiacciamento è cominciato nel 1992. Le cose sono diventate strane. Più strane. Siamo ancora qui.",
+        "Ho corso troppo dietro a un autobus. Quasi finito in loop. Ora cammino.",
+        "La Gilda dei Maghi dice di avere lo Schiacciamento in pugno. Il pugno trema.",
+        "I Campi Verdi sono stati schiacciati male. I Verden sono venuti qui. Brava gente. Uova strane.",
+        "Ora la lava è innocua. Ti succhia la magia. Comunque non ci metto piede.",
+        "Mappa vecchia, strade nuove. Lo Schiacciamento sposta le cose.",
+        "Una bolla temporale si è mangiata il mio martedì. Me l'ha ridato mercoledì. Lo stesso martedì.",
+        "La Torre Omega tiene insieme le dimensioni. Spero che qualcuno controlli la colla.",
+        "Lo Schiacciamento è come un tram affollato. Spingi, urta, chiedi scusa.",
+        "Il limite è 80 per tutti. Anche per i cavalli. Anche per gli orchi.",
+        "Il mondo è finito un paio di volte dal '92. Lunedì si lavora lo stesso."
+      ],
+      "trades": [
+        "Barista. Nessuno attacca briga al mio bancone. Strano, eh.",
+        "Orco bibliotecario. Shh. Shh grosso.",
+        "Segretario. Scrivo a macchina con due dita. Due dita veloci.",
+        "Il mercenario paga, ma mangi freddo.",
+        "I monaci mi hanno preso a vent'anni. Mi hanno insegnato la pazienza. Sto ancora imparando.",
+        "Giullare alla fiera. Giocoleria con le incudini. La folla impazzisce.",
+        "Commerciare è facile. Sembra grosso, di' un prezzo giusto, sii sincero.",
+        "Addestramento da samurai. Spade piccole. Rispetto grande.",
+        "Studente. Banco vecchio. Ginocchia sotto il mento. Ma passo gli esami.",
+        "La suora del convento in fondo alla strada è un'orca. La migliore giardiniera della città.",
+        "Guerriero di mestiere. Soprattutto sorveglio magazzini. Non c'è molta gloria nelle casse.",
+        "Agli orchi danno i lavori {pesanti|notturni|rumorosi}. Va bene. Ci riescono bene.",
+        "Il capo ha detto che sono il lavoratore più affidabile che ha. Poi mi ha chiesto di spostare un'auto.",
+        "Ora sono rappresentante sindacale. Nessuno discute col rappresentante sindacale.",
+        "Le città assumono orchi. L'Orda vuole orchi. Le città pagano puntuali.",
+        "Ho fatto un turno da cameriere. Vassoi troppo piccoli. Mani troppo grandi. Piatti ovunque.",
+        "Ho imparato la contabilità. I numeri non sobbalzano per le zanne.",
+        "Buttafuori di notte, poeta di mattina. Non ditelo a nessuno.",
+        "Ogni lavoro che ho avuto è cominciato con 'sei più grande di quanto pensassi'.",
+        "Stivali da lavoro, mani da lavoro, lavoro fatto. Bella giornata."
+      ]
+    }
+  },
+  "script": {
+    "positive": [
+      [
+        [
+          0,
+          "{b}! Che piacere vederti. Abbraccio?"
+        ],
+        [
+          1,
+          "Piano stavolta, {a}. Le costole si ricordano."
+        ],
+        [
+          0,
+          "Piano. Promesso. Quasi."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ti ho sistemato il cancello, {b}. Il cardine pendeva."
+        ],
+        [
+          1,
+          "Non dovevi farlo."
+        ],
+        [
+          0,
+          "Passavo di lì. Le mani si annoiavano."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ho portato la zuppa. Ricetta della nonna. Ne ho fatta troppa. Sempre."
+        ],
+        [
+          1,
+          "Sei un angelo, {a}. Ha un profumo incredibile."
+        ],
+        [
+          0,
+          "Angelo con le zanne. Modello nuovo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi hanno preso, {b}. Quello {della biblioteca|del deposito|dell'albergo}."
+        ],
+        [
+          1,
+          "Lo sapevo! Si festeggia."
+        ],
+        [
+          0,
+          "Il primo giro lo offro io. Anche il secondo. Sono contento."
+        ]
+      ],
+      [
+        [
+          0,
+          "Non hai sobbalzato quando ci siamo conosciuti. Me lo ricordo."
+        ],
+        [
+          1,
+          "Perché avrei dovuto? Tenevi in braccio un gattino."
+        ],
+        [
+          0,
+          "Comunque. Quasi tutti sobbalzano. Tu no. Amici per questo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ti alzo così vedi la parata?"
+        ],
+        [
+          1,
+          "Ah! Dai, allora."
+        ],
+        [
+          0,
+          "Il posto migliore della città. Gratis."
+        ]
+      ],
+      [
+        [
+          0,
+          "Grazie per la sciarpa, {b}. Mi va. Niente mi va. Questa sì."
+        ],
+        [
+          1,
+          "Mi ci sono volute tre settimane e tutta la lana del negozio."
+        ],
+        [
+          0,
+          "La porto finché non si sfascia. Poi porto i pezzi."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ridi delle mie battute, {b}. Anche di quelle brutte."
+        ],
+        [
+          1,
+          "Soprattutto di quelle brutte."
+        ],
+        [
+          0,
+          "Ah! Bene. Ne ho un sacco."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ti serve una mano per il trasloco? Sabato sono libero."
+        ],
+        [
+          1,
+          "Davvero? Mi risparmieresti un furgone."
+        ],
+        [
+          0,
+          "Il furgone sono io. Porta i panini."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ho passato l'esame, {b}. Contabilità. Il voto più alto."
+        ],
+        [
+          1,
+          "Fantastico! Te l'avevo detto che i numeri ti vogliono bene."
+        ],
+        [
+          0,
+          "Ai numeri non importano le zanne. Bravi amici, i numeri."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ti ho tenuto un posto. Quello rinforzato. Puoi averlo tu."
+        ],
+        [
+          1,
+          "E tu dove ti siedi?"
+        ],
+        [
+          0,
+          "Per terra. Il pavimento non si rompe mai."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ho saputo che stavi male. Ho portato {arance|del brodo|una coperta}."
+        ],
+        [
+          1,
+          "Sei troppo gentile, {a}."
+        ],
+        [
+          0,
+          "Non gentile. Pratico. Guarisci. Poi freccette."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mia madre vuole conoscerti. È... tanta."
+        ],
+        [
+          1,
+          "Mi piacerebbe tantissimo!"
+        ],
+        [
+          0,
+          "Preparati. Abbraccia più forte di me."
+        ],
+        [
+          1,
+          "È possibile?"
+        ],
+        [
+          0,
+          "Sì."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ho trovato il tuo cane. Era dal macellaio. Di nuovo."
+        ],
+        [
+          1,
+          "Oh, meno male. Cosa farei senza di te?"
+        ],
+        [
+          0,
+          "Senza un cane. E senza una salsiccia."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi hai difeso al mercato. Non l'ho dimenticato."
+        ],
+        [
+          1,
+          "Quell'uomo era orribile. Qualcuno doveva dirglielo."
+        ],
+        [
+          0,
+          "Di solito quel qualcuno sono io. Bello, stare dall'altra parte."
+        ]
+      ],
+      [
+        [
+          0,
+          "Zucca. La più grande finora. Per te."
+        ],
+        [
+          1,
+          "È più grande della mia porta, {a}."
+        ],
+        [
+          0,
+          "La faccio rotolare dentro. Poi zuppa per un mese."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi rinsegni quel gioco di carte? L'ultima volta mi sono perso."
+        ],
+        [
+          1,
+          "L'ultima volta hai vinto tutte le mani."
+        ],
+        [
+          0,
+          "Sì. Non so come. Voglio sapere come."
+        ]
+      ],
+      [
+        [
+          0,
+          "Buona notizia. Viene la nonna. Brutta notizia. Vuole conoscere tutti."
+        ],
+        [
+          1,
+          "Preparo qualcosa di dolce."
+        ],
+        [
+          0,
+          "Preparane due. Mangia come me."
+        ]
+      ],
+      [
+        [
+          0,
+          "Grazie per non avermi chiesto delle zanne, {b}. Lo chiedono tutti."
+        ],
+        [
+          1,
+          "Pensavo che me ne avresti parlato se volevi."
+        ],
+        [
+          0,
+          "Va bene. Sono fantastiche. Questa è la storia."
+        ]
+      ],
+      [
+        [
+          0,
+          "Guarda. Ho aggiustato la vecchia radio. Ora prende tre stazioni."
+        ],
+        [
+          1,
+          "Non funzionava da dieci anni!"
+        ],
+        [
+          0,
+          "Le serviva un colpo. Posto giusto, colpo giusto."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ieri sera ti ho fatto strada fino a casa. Strade sicure."
+        ],
+        [
+          1,
+          "Nessuno ci ha dato fastidio nemmeno una volta. Strano, eh."
+        ],
+        [
+          0,
+          "Non strano. Zanne."
+        ]
+      ],
+      [
+        [
+          0,
+          "Buon compleanno, {b}. Ho fatto un biglietto. Brillantini ovunque."
+        ],
+        [
+          1,
+          "È bellissimo, {a}. Davvero."
+        ],
+        [
+          0,
+          "Ci ho messo quattro tentativi. Dita grosse. Forbici piccole."
+        ]
+      ]
+    ],
+    "negative": [
+      [
+        [
+          0,
+          "Mi hai spostato di nuovo la sedia, {b}. Quella robusta."
+        ],
+        [
+          1,
+          "Era in mezzo alla stanza!"
+        ],
+        [
+          0,
+          "In mezzo è dove mi siedo io. Rimettila a posto."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ho sentito cosa hai detto. Degli orchi. Al pub."
+        ],
+        [
+          1,
+          "Era una battuta, {a}. Rilassati."
+        ],
+        [
+          0,
+          "Rido delle battute buone. Non ho riso."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi devi venti euro. Da tre settimane."
+        ],
+        [
+          1,
+          "Te li do venerdì, lo giuro."
+        ],
+        [
+          0,
+          "L'hai detto anche venerdì scorso. Io i venerdì me li ricordo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Smettila di cambiare marciapiede quando mi vedi. Ti vedo, sai."
+        ],
+        [
+          1,
+          "Non era... dovevo andare dall'altra parte."
+        ],
+        [
+          0,
+          "Ogni giorno? Ti serviva ogni giorno?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai chiamato la polizia per mio cugino. Stava cantando."
+        ],
+        [
+          1,
+          "Alle tre di notte! In goblin!"
+        ],
+        [
+          0,
+          "Va bene. Giusto. Però. Potevi bussare."
+        ]
+      ],
+      [
+        [
+          0,
+          "OI! Quello è il mio pranzo, {b}."
+        ],
+        [
+          1,
+          "Era nel frigo comune."
+        ],
+        [
+          0,
+          "C'era il mio nome. Lettere grandi. Maiuscole."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai detto al capo che ho rotto {la porta|lo scaffale|la pressa}."
+        ],
+        [
+          1,
+          "Beh, non l'hai rotta tu?"
+        ],
+        [
+          0,
+          "Sì. Volevo dirglielo io. Gli orchi onesti confessano."
+        ]
+      ],
+      [
+        [
+          0,
+          "Il tuo cane mi ha morso di nuovo."
+        ],
+        [
+          1,
+          "Sta solo giocando! Gli piaci."
+        ],
+        [
+          0,
+          "Gli piace la mia caviglia. È diverso."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi hai chiesto se sto con l'Orda. Davanti a tutti."
+        ],
+        [
+          1,
+          "Era solo curiosità, {a}."
+        ],
+        [
+          0,
+          "Curiosità. Curiosità ad alta voce. La gente mi ha guardato tutto il giorno."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai preso in prestito i miei attrezzi. Me li hai ridati piegati."
+        ],
+        [
+          1,
+          "Erano già piegati!"
+        ],
+        [
+          0,
+          "No. Sono io che piego le cose. Le mie pieghe le conosco."
+        ]
+      ],
+      [
+        [
+          0,
+          "Smettila di chiamarmi 'bestione', {b}."
+        ],
+        [
+          1,
+          "È un vezzeggiativo!"
+        ],
+        [
+          0,
+          "Ho un nome. Usalo. Nome corto. Facile."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ti ho visto barare a freccette."
+        ],
+        [
+          1,
+          "Dimostralo."
+        ],
+        [
+          0,
+          "Il piede era oltre la linea. Sono alto. Le linee le vedo."
+        ]
+      ],
+      [
+        [
+          0,
+          "La tua musica. Troppo forte."
+        ],
+        [
+          1,
+          "Senti chi parla."
+        ],
+        [
+          0,
+          "Io sono rumoroso di giorno. Tu di notte. Reato diverso."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi hai pestato il piede e non hai chiesto scusa."
+        ],
+        [
+          1,
+          "I tuoi piedi sono dappertutto, {a}!"
+        ],
+        [
+          0,
+          "Sono sempre i miei piedi. Voglio sempre delle scuse."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai detto al padrone che gli orchi rompono tutto. Ora non mi aggiusta il lavandino."
+        ],
+        [
+          1,
+          "Non ho mai detto una cosa simile!"
+        ],
+        [
+          0,
+          "Lui dice di sì. Qualcuno mente. Non io."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ti sei nascosto da me al mercato. Ti ho visto dietro i cavoli."
+        ],
+        [
+          1,
+          "Non mi nascondevo. Sceglievo i cavoli."
+        ],
+        [
+          0,
+          "Per dieci minuti? In ginocchio?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai riso del mio anello sulla zanna."
+        ],
+        [
+          1,
+          "È un po' esagerato, no?"
+        ],
+        [
+          0,
+          "È mio. Resta. Tu puoi andare."
+        ]
+      ],
+      [
+        [
+          0,
+          "Continui a parcheggiare dalla mia parte. Ti ho già spostato l'auto due volte."
+        ],
+        [
+          1,
+          "Mi hai spostato l'auto? Con le mani?"
+        ],
+        [
+          0,
+          "La terza volta finisce sul tetto."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai detto che nel coro non sono gradito."
+        ],
+        [
+          1,
+          "Ho detto che la tua voce è troppo bassa per i contralti."
+        ],
+        [
+          0,
+          "Allora mettimi coi bassi. Problema risolto. Scusa se ho urlato."
+        ]
+      ]
+    ],
+    "neutral": [
+      [
+        [
+          0,
+          "Buongiorno. Il tram è in ritardo."
+        ],
+        [
+          1,
+          "Di nuovo? Terza volta questa settimana."
+        ],
+        [
+          0,
+          "Bolla temporale sul ponte. Il tranviere non rischia."
+        ]
+      ],
+      [
+        [
+          0,
+          "Dov'è {l'ufficio postale|la ferramenta|il forno} da queste parti?"
+        ],
+        [
+          1,
+          "Seconda a sinistra, dopo la fontana."
+        ],
+        [
+          0,
+          "Grazie. La sinistra è la mano che non scrive, giusto?"
+        ],
+        [
+          1,
+          "Esatto."
+        ]
+      ],
+      [
+        [
+          0,
+          "È occupato questo posto?"
+        ],
+        [
+          1,
+          "No, prego."
+        ],
+        [
+          0,
+          "Forse ne occupo due. Scusa in anticipo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Fila lunga oggi."
+        ],
+        [
+          1,
+          "È giorno di paga. Sono usciti tutti."
+        ],
+        [
+          0,
+          "Bene. Aspetto. Ora sono bravo ad aspettare."
+        ]
+      ],
+      [
+        [
+          0,
+          "Il giornale dice pioggia domani."
+        ],
+        [
+          1,
+          "Il giornale sbaglia metà delle volte."
+        ],
+        [
+          0,
+          "Allora porto mezzo ombrello."
+        ]
+      ],
+      [
+        [
+          0,
+          "Conosci un buon dentista? Bocca grande. Lavoro grande."
+        ],
+        [
+          1,
+          "Ce n'è uno in via del Mercato. Molto paziente."
+        ],
+        [
+          0,
+          "Deve esserlo. Grazie."
+        ]
+      ],
+      [
+        [
+          0,
+          "Quel negozio vende stivali grandi. Lo conosci?"
+        ],
+        [
+          1,
+          "Quello vicino alla stazione? Sì, mio fratello compra lì."
+        ],
+        [
+          0,
+          "Tuo fratello è grosso?"
+        ],
+        [
+          1,
+          "Non come te. Piedi grandi, però."
+        ]
+      ],
+      [
+        [
+          0,
+          "Sentito il telegiornale? L'Orda ha preso un'altra città al nord."
+        ],
+        [
+          1,
+          "Ho sentito. Tempi brutti."
+        ],
+        [
+          0,
+          "Lassù fa paura. Quaggiù abbiamo gli autobus. Calma."
+        ]
+      ],
+      [
+        [
+          0,
+          "Tanto lavoro?"
+        ],
+        [
+          1,
+          "Da impazzire. Tu?"
+        ],
+        [
+          0,
+          "Spostato quaranta casse prima di pranzo. Martedì normale."
+        ]
+      ],
+      [
+        [
+          0,
+          "Questo autobus passa per {l'ospedale|lo stadio|il municipio}?"
+        ],
+        [
+          1,
+          "Sì. Quattro fermate."
+        ],
+        [
+          0,
+          "Bene. Sto in piedi. Io e i sedili non andiamo d'accordo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Bel cane."
+        ],
+        [
+          1,
+          "Grazie. Di solito ha paura degli sconosciuti."
+        ],
+        [
+          0,
+          "Mi sta leccando lo stivale."
+        ],
+        [
+          1,
+          "Beh. Di solito."
+        ]
+      ],
+      [
+        [
+          0,
+          "Al mercato oggi le mele costano poco."
+        ],
+        [
+          1,
+          "Ah sì? Faccio un salto."
+        ],
+        [
+          0,
+          "Vai presto. Ci vado anch'io. Ne compro tante."
+        ]
+      ],
+      [
+        [
+          0,
+          "Fino a che ora è aperta la biblioteca?"
+        ],
+        [
+          1,
+          "Fino alle sette, credo."
+        ],
+        [
+          0,
+          "Bene. Devo restituire un libro. In ritardo. Multa grossa."
+        ]
+      ],
+      [
+        [
+          0,
+          "Fa caldo oggi."
+        ],
+        [
+          1,
+          "A chi lo dici."
+        ],
+        [
+          0,
+          "Sudo come una fucina. Scusa. Mi metto sottovento."
+        ]
+      ],
+      [
+        [
+          0,
+          "Il tuo tetto perde. L'ho visto dalla strada."
+        ],
+        [
+          1,
+          "Lo so. Non posso ancora permettermi un muratore."
+        ],
+        [
+          0,
+          "Hai una scala? Ci do un'occhiata. Gratis. Magari un pranzo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Scusi. Le è caduto questo."
+        ],
+        [
+          1,
+          "Oh! Il mio portafoglio. Grazie."
+        ],
+        [
+          0,
+          "Lo controlli. La gente pensa che gli orchi rubino."
+        ],
+        [
+          1,
+          "C'è tutto. Grazie, davvero."
+        ]
+      ],
+      [
+        [
+          0,
+          "È questa la fila per i biglietti?"
+        ],
+        [
+          1,
+          "Sì, ma per stasera è tutto esaurito."
+        ],
+        [
+          0,
+          "Bah. Allora domani."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai visto la partita ieri sera?"
+        ],
+        [
+          1,
+          "Arbitro pessimo."
+        ],
+        [
+          0,
+          "Cieco. Doveva essere un orco. Noi vediamo tutto."
+        ]
+      ],
+      [
+        [
+          0,
+          "Consegnano qui? Ho comprato un letto. Misura speciale."
+        ],
+        [
+          1,
+          "Sì, ma ci vuole una settimana."
+        ],
+        [
+          0,
+          "Ho aspettato vent'anni un letto della mia misura. Un'altra settimana. Va bene."
+        ]
+      ],
+      [
+        [
+          0,
+          "Il prezzo del pane è salito di nuovo."
+        ],
+        [
+          1,
+          "Tutto è salito."
+        ],
+        [
+          0,
+          "Io mangio tanto pane. La prendo sul personale."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ho visto un mago all'angolo. Aggiustava un lampione con un incantesimo."
+        ],
+        [
+          1,
+          "La Gilda lo fa adesso. Si risparmia sugli elettricisti."
+        ],
+        [
+          0,
+          "Ci ha messo un'ora. Io gli avrei dato un colpo. Dieci secondi."
+        ]
+      ],
+      [
+        [
+          0,
+          "È aperta la piscina?"
+        ],
+        [
+          1,
+          "Fino alle sei. Perché?"
+        ],
+        [
+          0,
+          "L'ultima volta che mi sono tuffato l'hanno chiusa per tutto il giorno. Controllo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Serve una mano con quello?"
+        ],
+        [
+          1,
+          "È un po' pesante, sì."
+        ],
+        [
+          0,
+          "Dove lo porto?"
+        ],
+        [
+          1,
+          "Solo al terzo piano."
+        ],
+        [
+          0,
+          "Facile. Le scale forse protesteranno."
+        ]
+      ],
+      [
+        [
+          0,
+          "Tanta gente alla fiera quest'anno."
+        ],
+        [
+          1,
+          "Tempo migliore dell'anno scorso."
+        ],
+        [
+          0,
+          "È tornato il gioco del forzuto. Ci riprovo. Di nuovo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Il tuo gatto è sul mio tetto."
+        ],
+        [
+          1,
+          "Lo fa sempre. Scenderà."
+        ],
+        [
+          0,
+          "Mi fissa. La fisso. Lunga giornata."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hanno spostato questa strada? La mappa dice che è vicino al fiume."
+        ],
+        [
+          1,
+          "Lo Schiacciamento l'ha spostata la primavera scorsa. Ora è vicino alla chiesa."
+        ],
+        [
+          0,
+          "Ah. Le strade si spostano, io cammino. Grazie."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai da cambiare dieci euro?"
+        ],
+        [
+          1,
+          "Fammi vedere. Due da cinque?"
+        ],
+        [
+          0,
+          "Perfetto. Il parchimetro è avido."
+        ]
+      ],
+      [
+        [
+          0,
+          "Stanotte fa freddo."
+        ],
+        [
+          1,
+          "Gelata entro domattina, dicono."
+        ],
+        [
+          0,
+          "Fuori le coperte. Tutte e tre."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ho sentito che il forno assume."
+        ],
+        [
+          1,
+          "Orari presto, però."
+        ],
+        [
+          0,
+          "Gli orchi si svegliano presto. E l'odore mi piace."
+        ]
+      ],
+      [
+        [
+          0,
+          "Da che parte {la stazione|il porto|la piazza}?"
+        ],
+        [
+          1,
+          "Sempre dritto, non puoi sbagliare."
+        ],
+        [
+          0,
+          "Si può sempre sbagliare. Proverò di no."
+        ]
+      ],
+      [
+        [
+          0,
+          "Bell'orto. Zucche grandi."
+        ],
+        [
+          1,
+          "Grazie! Tanto letame."
+        ],
+        [
+          0,
+          "Ah. Ecco il segreto. Le mie sono piccole. Più o meno."
+        ]
+      ],
+      [
+        [
+          0,
+          "È tua questa bancarella? Quanto per {le pere|il miele|le uova}?"
+        ],
+        [
+          1,
+          "Due euro al sacchetto."
+        ],
+        [
+          0,
+          "Ne prendo cinque. Non chiedere."
+        ]
+      ],
+      [
+        [
+          0,
+          "Qualcuno sopra sta ascoltando i Junehem."
+        ],
+        [
+          1,
+          "Ah, è quello? Pensavo fosse la caldaia."
+        ],
+        [
+          0,
+          "Errore comprensibile."
+        ]
+      ],
+      [
+        [
+          0,
+          "Il barbiere è aperto oggi?"
+        ],
+        [
+          1,
+          "Chiuso il lunedì."
+        ],
+        [
+          0,
+          "Un'altra settimana di capelli a nido. Va bene."
+        ]
+      ],
+      [
+        [
+          0,
+          "Attento a dove metti i piedi. Ghiaccio."
+        ],
+        [
+          1,
+          "Grazie. Ieri ho quasi fatto un volo."
+        ],
+        [
+          0,
+          "Io il volo l'ho fatto. Il marciapiede ha perso."
+        ]
+      ],
+      [
+        [
+          0,
+          "Riesci a leggere questo cartello? Lettere piccole."
+        ],
+        [
+          1,
+          "Divieto di sosta dopo le sei."
+        ],
+        [
+          0,
+          "Bene. Niente auto. Volevo solo sapere se posso stare qui."
+        ]
+      ],
+      [
+        [
+          0,
+          "Turno lungo?"
+        ],
+        [
+          1,
+          "Dodici ore. Ho i piedi a pezzi."
+        ],
+        [
+          0,
+          "Anch'io. Mettili a bagno. Acqua e sale. Trucco della nonna."
+        ]
+      ],
+      [
+        [
+          0,
+          "Chi è la statua in piazza?"
+        ],
+        [
+          1,
+          "Un generale. Nessuno se lo ricorda."
+        ],
+        [
+          0,
+          "I piccioni se lo ricordano. Lo vanno a trovare ogni giorno."
+        ]
+      ],
+      [
+        [
+          0,
+          "L'autobus è pieno. Aspettiamo il prossimo?"
+        ],
+        [
+          1,
+          "Tanto vale."
+        ],
+        [
+          0,
+          "Bene. Tanto ne occuperei metà."
+        ]
+      ]
+    ],
+    "debate": [
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Gli orchi dovrebbero unirsi all'Orda. È il nostro sangue."
+          ],
+          [
+            1,
+            "Metà del tuo sangue. L'altra metà paga le tasse qui."
+          ],
+          [
+            0,
+            "Le tasse non mi cantano di notte."
+          ],
+          [
+            1,
+            "Nemmeno una lancia nelle costole."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Le porte dovrebbero essere più alte. Ovunque."
+          ],
+          [
+            1,
+            "Sinceramente? Ho sbattuto la testa anch'io."
+          ],
+          [
+            0,
+            "Visto. Soffrono tutti. Costruite più in alto."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Se qualcuno ti insulta, gli dai un colpo. Semplice."
+          ],
+          [
+            1,
+            "Poi in cella ci finisci tu."
+          ],
+          [
+            0,
+            "Allora prima parli. Poi colpisci."
+          ],
+          [
+            1,
+            "O parli e basta."
+          ],
+          [
+            0,
+            "...Va bene. A volte."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "La Gilda dei Maghi parla tanto e non fa niente."
+          ],
+          [
+            1,
+            "Due fazioni che litigano mentre il mondo si schiaccia. Tipico."
+          ],
+          [
+            0,
+            "Chiudeteli in una stanza. A chiave. Pranzo quando si mettono d'accordo."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Gli autobus col motore liminale sono un miracolo. Veloci, sicuri."
+          ],
+          [
+            1,
+            "Sicuri? Vicino a una bolla temporale si sfasciano."
+          ],
+          [
+            0,
+            "Allora gli autisti stanno lontani. Come da un cane cattivo."
+          ],
+          [
+            1,
+            "Io prendo il tram lento, grazie."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "I ragazzi dovrebbero imparare un mestiere. Mani, non solo libri."
+          ],
+          [
+            1,
+            "Tutti e due, direi. Mio nipote non sa cambiare un fusibile."
+          ],
+          [
+            0,
+            "Tutti e due. Sì. Libri e fusibili."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "I Junehem fanno buona musica. Dite quello che volete."
+          ],
+          [
+            1,
+            "Sembra un frullatore pieno di chiodi."
+          ],
+          [
+            0,
+            "Sì. Bel frullatore."
+          ],
+          [
+            1,
+            "Stanno guidando un'invasione, {a}!"
+          ],
+          [
+            0,
+            "Politica cattiva. Tamburi buoni. Vere tutte e due."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "L'affitto è una rapina. I padroni di casa andrebbero multati."
+          ],
+          [
+            1,
+            "Il mio l'ha alzato due volte quest'anno."
+          ],
+          [
+            0,
+            "Due volte! Dammi l'indirizzo. Per parlare. Solo parlare."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Il Vaticano non dovrebbe trattare coi goblin."
+          ],
+          [
+            1,
+            "Meglio parlare che combattere, no?"
+          ],
+          [
+            0,
+            "Non vogliono la pace. Vogliono un esercito."
+          ],
+          [
+            1,
+            "Chi lo dice?"
+          ],
+          [
+            0,
+            "Mia madre. Mamma sente le cose."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Il limite è 80 e la gente prova ancora con 81."
+          ],
+          [
+            1,
+            "E poi restano bloccati in un loop per un mese."
+          ],
+          [
+            0,
+            "Gli sta bene. Camminate. Camminare è gratis."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Gli orchi sono le guardie migliori. Fatto."
+          ],
+          [
+            1,
+            "I nani sono più duri."
+          ],
+          [
+            0,
+            "I nani non vedono oltre il bancone."
+          ],
+          [
+            1,
+            "Non gli serve. Ti sentono arrivare."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Il calcio è meglio di qualsiasi guerra. Stesse urla. Non muore nessuno."
+          ],
+          [
+            1,
+            "A meno che tu non sia l'arbitro."
+          ],
+          [
+            0,
+            "Ah! L'arbitro è un bersaglio lecito."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "La magia è un imbroglio. Fallo con le mani."
+          ],
+          [
+            1,
+            "Le tue mani non guariscono una gamba rotta."
+          ],
+          [
+            0,
+            "Stecca. Benda. Riposo. Mani."
+          ],
+          [
+            1,
+            "E tre mesi di attesa."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Il pane dovrebbe costare poco. Sempre. È pane."
+          ],
+          [
+            1,
+            "Non potrei essere più d'accordo."
+          ],
+          [
+            0,
+            "Bene. Andiamo a dirlo al fornaio. Insieme."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "La gente dovrebbe dire quello che pensa. Chiaro."
+          ],
+          [
+            1,
+            "Certe cose vanno dette con delicatezza."
+          ],
+          [
+            0,
+            "La delicatezza è mentire piano."
+          ],
+          [
+            1,
+            "Dillo a mia suocera."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "I mezzosangue le prendono da tutte e due le parti. Orchi, mezzelfi, tutti."
+          ],
+          [
+            1,
+            "Mio padre veniva dall'estero. So cosa intendi."
+          ],
+          [
+            0,
+            "Allora anche tu hai due metà. Benvenuti nel club."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "I tribunali di Eris sono una barzelletta. Condanne a caso."
+          ],
+          [
+            1,
+            "Meglio che nessun tribunale."
+          ],
+          [
+            0,
+            "Mio cugino ha preso sei mesi per un singhiozzo."
+          ],
+          [
+            1,
+            "Era un singhiozzo molto maleducato?"
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Il pasto migliore è quello dopo una giornata di lavoro duro."
+          ],
+          [
+            1,
+            "La fame è il miglior condimento, diceva mia nonna."
+          ],
+          [
+            0,
+            "Tua nonna e mia nonna. Stessa nonna. Zanne diverse."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "I goblin non sono mostri. Sono famiglia. Famiglia rumorosa."
+          ],
+          [
+            1,
+            "Hanno bruciato una città in Svezia la settimana scorsa."
+          ],
+          [
+            0,
+            "Alcuni sì. Altri fanno il pane nella mia strada."
+          ],
+          [
+            1,
+            "Difficile capire chi è chi."
+          ],
+          [
+            0,
+            "Chiedi. Prima si parla. Sempre."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Una promessa è una promessa. Se la rompi, non sei niente."
+          ],
+          [
+            1,
+            "Certi giorni la mia parola è tutto quello che ho."
+          ],
+          [
+            0,
+            "Allora sei ricco. Qua la mano."
+          ]
+        ]
+      }
+    ],
+    "ambient": [
+      [
+        [
+          0,
+          "Buongiorno, {b}."
+        ],
+        [
+          1,
+          "Buongiorno! Dormito bene?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Che freddo."
+        ],
+        [
+          1,
+          "Si gela. Copriti."
+        ]
+      ],
+      [
+        [
+          0,
+          "Bel cappello."
+        ],
+        [
+          1,
+          "Grazie! Era di mio padre."
+        ]
+      ],
+      [
+        [
+          0,
+          "Giornata piena?"
+        ],
+        [
+          1,
+          "Non si ferma mai."
+        ]
+      ],
+      [
+        [
+          0,
+          "Attenzione, passo io. Grosso."
+        ],
+        [
+          1,
+          "Ah, prego."
+        ]
+      ],
+      [
+        [
+          0,
+          "Profuma di pioggia."
+        ],
+        [
+          1,
+          "Meglio ritirare il bucato."
+        ]
+      ],
+      [
+        [
+          0,
+          "Buonasera."
+        ],
+        [
+          1,
+          "Buonasera. Si torna a casa?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Al forno oggi ci sono i panini buoni."
+        ],
+        [
+          1,
+          "Oh, ne prendo un po'."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ti tengo la porta? Fatto."
+        ],
+        [
+          1,
+          "Grazie!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Bella giornata."
+        ],
+        [
+          1,
+          "Era ora."
+        ]
+      ],
+      [
+        [
+          0,
+          "Arriva il tram."
+        ],
+        [
+          1,
+          "Finalmente."
+        ]
+      ],
+      [
+        [
+          0,
+          "Come sta tua madre, {b}?"
+        ],
+        [
+          1,
+          "Meglio, grazie per avermelo chiesto."
+        ]
+      ],
+      [
+        [
+          0,
+          "Bella partita ieri sera."
+        ],
+        [
+          1,
+          "Derubati all'ultimo minuto!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Attento alla pozzanghera."
+        ],
+        [
+          1,
+          "Troppo tardi. Grazie lo stesso."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ho fame."
+        ],
+        [
+          1,
+          "Hai sempre fame."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ah! Hai visto quel piccione?"
+        ],
+        [
+          1,
+          "È andato dritto contro la vetrina!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Serve portare qualcosa?"
+        ],
+        [
+          1,
+          "Non oggi, ma grazie."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mercato affollato."
+        ],
+        [
+          1,
+          "Gente del sabato."
+        ]
+      ],
+      [
+        [
+          0,
+          "Buongiorno. Che bel cane."
+        ],
+        [
+          1,
+          "Gli piaci!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Di nuovo in ritardo, {b}."
+        ],
+        [
+          1,
+          "Non dirlo al capo."
+        ]
+      ],
+      [
+        [
+          0,
+          "C'è il sole."
+        ],
+        [
+          1,
+          "Approfittane."
+        ]
+      ],
+      [
+        [
+          0,
+          "Che vento."
+        ],
+        [
+          1,
+          "Tieniti il cappello."
+        ]
+      ],
+      [
+        [
+          0,
+          "Pranzo?"
+        ],
+        [
+          1,
+          "Dammi dieci minuti."
+        ]
+      ],
+      [
+        [
+          0,
+          "Giornata lunga."
+        ],
+        [
+          1,
+          "È quasi finita."
+        ]
+      ],
+      [
+        [
+          0,
+          "Belle scarpe."
+        ],
+        [
+          1,
+          "Nuove! Si vede?"
+        ]
+      ],
+      [
+        [
+          0,
+          "L'autobus è di nuovo pieno."
+        ],
+        [
+          1,
+          "Allora cammina con me."
+        ]
+      ],
+      [
+        [
+          0,
+          "Pane fresco. Ne vuoi?"
+        ],
+        [
+          1,
+          "Dai, solo un pezzetto."
+        ]
+      ],
+      [
+        [
+          0,
+          "Tranquillo oggi."
+        ],
+        [
+          1,
+          "Goditela finché dura."
+        ]
+      ],
+      [
+        [
+          0,
+          "Oi! Scusa. Ciao."
+        ],
+        [
+          1,
+          "Ah, ciao anche a te."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ci vediamo al pub?"
+        ],
+        [
+          1,
+          "Alle otto."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ho sistemato il gradino fuori dal negozio."
+        ],
+        [
+          1,
+          "Ecco perché oggi non ho inciampato!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Al nord nevica, dicono."
+        ],
+        [
+          1,
+          "Arriva da noi la settimana prossima."
+        ]
+      ],
+      [
+        [
+          0,
+          "Notte, {b}."
+        ],
+        [
+          1,
+          "Dormi bene."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ti serve una mano?"
+        ],
+        [
+          1,
+          "Sto a posto, grazie."
+        ]
+      ],
+      [
+        [
+          0,
+          "Buona zuppa al locale all'angolo."
+        ],
+        [
+          1,
+          "La provo domani."
+        ]
+      ],
+      [
+        [
+          0,
+          "Tuo figlio è cresciuto."
+        ],
+        [
+          1,
+          "Troppo in fretta, sinceramente."
+        ]
+      ],
+      [
+        [
+          0,
+          "Borsa pesante. Faccio io."
+        ],
+        [
+          1,
+          "Oh, sei un tesoro."
+        ]
+      ],
+      [
+        [
+          0,
+          "È già venerdì?"
+        ],
+        [
+          1,
+          "Dovrebbe esserlo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Quella bolla temporale si è allargata."
+        ],
+        [
+          1,
+          "Resta da questa parte della strada."
+        ]
+      ],
+      [
+        [
+          0,
+          "Buona fortuna per oggi."
+        ],
+        [
+          1,
+          "Mi servirà!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Il caffè qui è terribile."
+        ],
+        [
+          1,
+          "Costa poco, però."
+        ]
+      ],
+      [
+        [
+          0,
+          "Sentito la notizia dei Junehem?"
+        ],
+        [
+          1,
+          "Non cominciare, {a}."
+        ]
+      ],
+      [
+        [
+          0,
+          "Attento alla testa. Trave bassa."
+        ],
+        [
+          1,
+          "Tu ne sai qualcosa."
+        ]
+      ],
+      [
+        [
+          0,
+          "Bel giardino."
+        ],
+        [
+          1,
+          "Grazie! Ho strappato erbacce tutta la mattina."
+        ]
+      ],
+      [
+        [
+          0,
+          "Quiz al pub stasera?"
+        ],
+        [
+          1,
+          "Solo se sei nella nostra squadra."
+        ]
+      ],
+      [
+        [
+          0,
+          "I treni sono in ritardo."
+        ],
+        [
+          1,
+          "Quando non lo sono?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Luna grande stanotte."
+        ],
+        [
+          1,
+          "Bellissima, vero?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Sai che ore sono?"
+        ],
+        [
+          1,
+          "E un quarto."
+        ]
+      ],
+      [
+        [
+          0,
+          "Che caldo, eh?"
+        ],
+        [
+          1,
+          "Insopportabile."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ciao, piccolino."
+        ],
+        [
+          1,
+          "Saluta anche tu, tesoro."
+        ]
+      ],
+      [
+        [
+          0,
+          "Bel lavoro sulla staccionata."
+        ],
+        [
+          1,
+          "Ci ho messo tutto il fine settimana."
+        ]
+      ],
+      [
+        [
+          0,
+          "Stai all'asciutto, {b}."
+        ],
+        [
+          1,
+          "Anche tu, gigante."
+        ]
+      ],
+      [
+        [
+          0,
+          "Al mercato hanno finito le mele."
+        ],
+        [
+          1,
+          "Le hai comprate tutte di nuovo?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Che bello vederti di nuovo in piedi."
+        ],
+        [
+          1,
+          "Mi sento molto meglio."
+        ]
+      ],
+      [
+        [
+          0,
+          "Al lavoro?"
+        ],
+        [
+          1,
+          "Qualcuno deve pur farlo."
+        ]
+      ]
+    ]
+  }
+}

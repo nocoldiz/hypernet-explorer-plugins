@@ -495,6 +495,12 @@
             #party-hud .phud-fuel .phud-fill {
                 background: linear-gradient(to bottom, rgba(255,255,255,0.28) 50%, transparent 50%), linear-gradient(to right, #3d1466, #a05ce0) !important;
             }
+            #party-hud .phud-hyper .phud-fill {
+                background: linear-gradient(to bottom, rgba(255,255,255,0.28) 50%, transparent 50%), linear-gradient(to right, #2f7bd6, #63e2ff) !important;
+            }
+            #party-hud .phud-hyper.phud-hyper-ready .phud-fill {
+                background: linear-gradient(to bottom, rgba(255,255,255,0.28) 50%, transparent 50%), linear-gradient(to right, #ffe66d, #ff8a3d) !important;
+            }
             #party-hud .phud-bar-low .phud-fill {
                 background: linear-gradient(to bottom, rgba(255,255,255,0.28) 50%, transparent 50%), linear-gradient(to right, #7a4a10, #e0a63a) !important;
             }
@@ -651,11 +657,22 @@
         barsContainer.appendChild(mp.bar);
         root.appendChild(barsContainer);
 
+        // The summon's HYPER gauge (BattleSystem/SummonSystem.js), right under
+        // its MP bar. Its own container so it wears the same slant as the bars
+        // above without pushing the AP orb off the middle of them; every card
+        // has one and only the summon's card ever shows it.
+        const hyper = this._makeBar('hyper');
+        const hyperRow = document.createElement('div');
+        hyperRow.className = 'phud-bars-container phud-hyper-row';
+        hyperRow.style.display = 'none';
+        hyperRow.appendChild(hyper.bar);
+        root.appendChild(hyperRow);
+
         row.appendChild(root);
         row.appendChild(chips);
 
         return {
-            row, root, caret, name, mid, states, stats, hp, mp, alerts, orb,
+            row, root, caret, name, mid, states, stats, hp, mp, alerts, orb, hyper, hyperRow,
             statesKey: null, alertsKey: null, statsKey: null, deadKey: null,
             orbKey: null, activeKey: null, targetKey: null
         };
@@ -767,6 +784,29 @@
             const low = !critical && rate > 0 && rate <= WARN_PCT / 100;
             slot.bar.classList.toggle('phud-bar-low', low);
         }
+    };
+
+    // The summon's HYPER gauge: shown on the summon's own card while it is on
+    // the field, as a percentage that turns into READY and breathes when full.
+    PartyHudOverlay.prototype._writeHyper = function (card, actor) {
+        const SS = window.SummonSystem;
+        const shown = !!(SS && SS.isActive && SS.isActive() &&
+            SS.isProxyActor && SS.isProxyActor(actor.actorId()));
+        if (card.hyperShownKey !== shown) {
+            card.hyperShownKey = shown;
+            card.hyperRow.style.display = shown ? '' : 'none';
+        }
+        if (!shown) return;
+        const rate = Math.max(0, Math.min(1, Number(SS.hyperRate()) || 0));
+        const ready = rate >= 1;
+        const percent = Math.floor(rate * 100);
+        const key = percent + (ready ? '!' : '');
+        if (card.hyperKey === key) return;
+        card.hyperKey = key;
+        card.hyper.fill.style.width = (rate * 100).toFixed(1) + '%';
+        card.hyper.label.textContent = T('Battle.summon.hyper.label') + ' ' +
+            (ready ? T('Battle.summon.hyper.ready') : percent + '%');
+        card.hyper.bar.classList.toggle('phud-hyper-ready', ready);
     };
 
     // The AP orb: how much of it is left, and (while a skill is armed) how much
@@ -983,6 +1023,9 @@
                 card.kHp !== hp || card.kMp !== mp;
             const mhp = readMax ? actor.mhp : card.kMhp;
             const mmp = readMax ? actor.mmp : card.kMmp;
+            // The HYPER gauge moves on its own, between HP and MP changes, so it
+            // is written before the quiet-frame check rather than behind it.
+            this._writeHyper(card, actor);
             if (!writeChips &&
                 card.kDead === dead && card.kActing === isActing &&
                 card.kTargeted === isTargeted && card.kHp === hp &&

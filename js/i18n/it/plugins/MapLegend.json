@@ -1,7 +1,6 @@
 {
   "speaker": "Bubba",
-  "foldHint": "richiudi il foglio",
-  "unfoldHint": "leggi il foglio",
+  "infoHint": "Info",
   "controlsHeading": "Comandi",
   "controls": {
     "action": "Azione",

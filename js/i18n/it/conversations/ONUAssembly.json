@@ -587,31 +587,6 @@
         "\"Buco va SU\", dice {leader}, senza motivo. \"Tanto tempo. Poi SU. Tutto qui. Adesso siediti.\""
       ]
     },
-    "verden": {
-      "open": [
-        "Hanno la parola i Verden. Il loro delegato {si alza|si alza lentamente|tocca il tavolo prima di parlare, che da loro è una cortesia}.",
-        "{leader}, per i Verden, {esordisce|esordisce in un MarkovSpeak impeccabile|si scusa per la lunghezza di ciò che segue e non mente}.",
-        "La delegazione verden {viene chiamata|viene chiamata e ringrazia il presidente per nome|si inclina, azzurra e senza fretta}."
-      ],
-      "for": [
-        "\"I Verden sostengono {topic}. {È un buon assetto|È un assetto paziente|Sarà un buon assetto anche fra quattrocento anni, ed è così che leggiamo una mozione}.\"",
-        "\"Una volta abbiamo gettato le nostre macchine dentro una stella e ci abbiamo messo tremila anni a esserne certi. {topic} è una decisione più piccola di quella. Sì.\"",
-        "\"Siamo favorevoli, {e vorremmo vedere come viene costruita|e vorremmo osservarne l'ingegneria|e, se l'assemblea permette, toccare la macchina}.\"",
-        "\"Sì. {I Campi Verdi non ci sono più|Abbiamo perso una dimensione per la fretta|Non abbiamo fretta, e diciamo sì}.\""
-      ],
-      "against": [
-        "\"I Verden non possono sostenere {topic}. {È scritta di fretta|Sa di fretta|La fretta è ciò di cui è morto il settantasette}.\"",
-        "\"No. {Abbiamo letto i Naguka su questo|Abbiamo letto l'inconscio collettivo su questo, cosa che possiamo fare e che loro non possono impedire|Sappiamo cosa faranno prima che lo facciano, e {topic} peggiora le cose}.\"",
-        "\"Ci opponiamo, {con garbo|e saremmo lieti di essere dissuasi|e ci opporremo con lo stesso garbo la settimana prossima}.\"",
-        "\"I Verden votano contro. {Un nostro arto, reciso e piantato, diventa un altro di noi|Mettiamo radici dove ci mettono|Non metteteci qui}.\""
-      ],
-      "odd": [
-        "\"I Verden si complimentano con chi ha progettato l'illuminazione di quest'aula. È la settima volta che lo chiediamo e nessuno lo sa.\"",
-        "{leader} spende due dei suoi quattro minuti ad ammirare l'orologio da polso del delegato accanto.",
-        "\"Non abbiamo posizione su {topic}. Abbiamo una domanda sul soffitto a cui il presidente ha già rifiutato due volte di rispondere.\"",
-        "\"I nostri cugini stanno gridando di nuovo. Lo sentiamo che ascoltiamo o no. La delegazione si scusa per la distrazione e non smette di sentirlo.\""
-      ]
-    },
     "truckers": {
       "open": [
         "Ha la parola la Società dei Camionisti. {leader} {si alza|si appoggia al banco|prima posa sul tavolo un telefono vecchissimo}.",

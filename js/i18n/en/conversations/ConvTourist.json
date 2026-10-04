@@ -1,0 +1,2954 @@
+{
+  "_comment": "The Tourist voice (NPCConversation II.1b, SpeciesVoice). speech: the rules run over any shared line they say. voice: openers and closers. thought: their own thoughts by situation. script: two-person scripts, speaker 0 is always the Tourist.",
+  "voice": {
+    "openers": [
+      "Oh, wonderful!",
+      "According to my guidebook,",
+      "As they say on the television,",
+      "Forgive me, I am still learning your idioms, but",
+      "Click! Sorry. Now then:",
+      "In the words of the weatherman,",
+      "Good evening and welcome!",
+      "How marvellous, how human!",
+      "Hold still one moment... there. So:",
+      "My cousin on the home sphere will not believe this, but",
+      "Page forty-one of the phrasebook says:",
+      "We interrupt this programme to say:",
+      "Excuse me, excuse me!",
+      "If I have understood correctly, and I rarely have,",
+      "Thirty-nine light years I travelled to hear this, and",
+      "Ooh, a question!",
+      "As your famous quiz host would say,",
+      "Truly, the cat is out of the pyjamas:",
+      "With the greatest respect for your species,",
+      "Let me consult my notes.",
+      "Previously, on our conversation:",
+      "How do you say... ah yes:",
+      "Fascinating, fascinating.",
+      "I have seen this on the documentary!",
+      "Smile, please! And also:",
+      "The Analyzers would open this up to check, but",
+      "One more photograph and then I listen. Click. So,",
+      "Dear human,",
+      "Oh my goodness gracious me,",
+      "As a humble visitor,",
+      "Breaking news!",
+      "I write this down for the album:",
+      "It is the bee's elbows, but",
+      "My translator box is warm, but here goes:",
+      "Teletext page one hundred says",
+      "Please do not be alarmed,",
+      "Hello, hello, Earth!",
+      "Pardon my grey,",
+      "Okey dokey, as you say:",
+      "I was told by a very kind bus driver that",
+      "Ah! A local custom, I think:",
+      "Back in the studio,",
+      "The guidebook is unclear here, so",
+      "Gosh!",
+      "Speaking as a big fan of humanity,",
+      "One moment, the flash is charging. Right:",
+      "If it pleases the earthling,",
+      "I have practised this sentence:",
+      "Most wonderful of hosts,",
+      "Stay tuned, because"
+    ],
+    "closers": [
+      "Click! For the album.",
+      "Back to you in the studio.",
+      "Stay tuned.",
+      "As the guidebook says.",
+      "I have it on film now.",
+      "How very human.",
+      "Did I say that correctly?",
+      "That is a wrap, as you say.",
+      "My cousin will be so jealous.",
+      "I shall treasure this.",
+      "We will be right back after these messages.",
+      "Smile!",
+      "Thirty-nine light years well spent.",
+      "Wonderful, simply wonderful.",
+      "I underlined it twice.",
+      "Or so I understood.",
+      "Please do not change the channel.",
+      "The phrasebook was right!",
+      "Earth, you never stop.",
+      "I am learning so much.",
+      "Goodnight, and good luck with the weather.",
+      "Hold still, one more. Click.",
+      "That goes on the monument.",
+      "Fascinating.",
+      "Is that the right expression?",
+      "I am a big fan.",
+      "No offence intended, truly.",
+      "Ten out of ten, would visit again.",
+      "Now with extra feeling!",
+      "I think. I hope.",
+      "Another mystery of your planet.",
+      "Do not tell the Analyzers.",
+      "Bless your little atmosphere.",
+      "I have made a note of it.",
+      "Like on television, but in colour.",
+      "Easy as cake.",
+      "What a time to be visiting!",
+      "The flash was on, do not worry.",
+      "Over and out.",
+      "See you in the next episode.",
+      "You are all so interesting.",
+      "That one is for the postcard.",
+      "Truly, a planet of wonders.",
+      "I have rewound it in my head already.",
+      "Thank you for your patience with a visitor.",
+      "Peace and good reception.",
+      "I will explain it to my sphere.",
+      "The laugh track goes here.",
+      "Mm, yes, quite.",
+      "Earthlings, honestly. I love you."
+    ]
+  },
+  "thought": {
+    "generic": [
+      "I took {thirty-six|twenty-four|twelve} photographs of a bus stop today. All of them excellent.",
+      "The man at the kiosk said 'cheers, love'. I have written it down to study.",
+      "Why do humans say 'fine' when they are not fine? Another mystery for the album.",
+      "I queued for twenty minutes and did not know what for. It was a lovely queue.",
+      "A pigeon looked at me. I looked at the pigeon. We are both visitors here.",
+      "My film roll is nearly finished. {Thirty-five|Thirty-four|Thirty-three} down, so few to go.",
+      "I tried to fold a road map. The road map won.",
+      "Somebody held a door open for me. I held it back for them. We were there for some time.",
+      "The soap opera ended on a cliff. I must know if Rosalind survives the cliff.",
+      "Humans put milk in tea, then argue about it. I adore them.",
+      "I bought a souvenir {snow globe|keyring|tea towel}. It has a picture of this exact street.",
+      "The toaster made the bread black again. Gravity I can bend. Bread, no.",
+      "A child waved at me from a bus. I waved for eleven minutes after it left.",
+      "I watched the weather forecast twice. Both times it rained on the map only.",
+      "How do they know which coin is which? The faces are all so serious.",
+      "I said 'break a leg' to a waiter. He did not understand. Neither, I think, did I.",
+      "Today I learned the word 'drizzle'. Very useful. It is drizzling now.",
+      "The advert said 'new and improved'. I bought both, to compare.",
+      "My camera strap broke. I am holding it like an egg now.",
+      "Humans whistle when they are happy. I tried. It came out as a frequency.",
+      "A sign said 'Do not feed the ducks'. I apologised to the ducks.",
+      "I have {four|seven|nine} postcards and nobody at home has a letterbox.",
+      "The laundrette is a temple. Round windows, warm air, everyone waiting quietly.",
+      "The man on the bench is asleep. I will photograph him gently. Without flash.",
+      "I keep the receipts. Every one. Small paper diaries of what humans sell.",
+      "Humans say 'it is raining cats and dogs'. I looked up. Disappointed again.",
+      "The quiz show asked the capital of a country I flew over. I still got it wrong.",
+      "I {hummed|sang|whistled} the theme tune of the evening news. A stranger joined in.",
+      "Someone called me 'mate'. I am now a mate. I must tell the sphere.",
+      "A small dog barked at me. Fair. I am very unusual from down there.",
+      "I bought a tourist hat that says 'I love' and then a heart. I do. I really do.",
+      "The video shop man recommended a film about aliens. It was quite rude about us.",
+      "I tried chewing gum. Where does it go? Nobody will tell me.",
+      "Humans shake hands to say hello. I shook {three|five|six} hands before breakfast.",
+      "A street musician played only for me. I paid with a photograph. He seemed confused.",
+      "I can cross a galaxy in an afternoon and I cannot work this ticket machine.",
+      "The newspaper has a crossword. I have filled it with what I wished the answers were.",
+      "People here argue about football like it is a religion. I am taking notes.",
+      "The shop lady asked if I wanted a bag. I wanted three. They were free!",
+      "My guidebook says this café is 'charming'. It is. The guidebook is never wrong.",
+      "A human told me I have 'a face for radio'. I think it was a compliment about radio.",
+      "I sat on a park bench for an hour, as humans do. Nothing happened. It was perfect.",
+      "Someone sneezed and everyone said 'bless you'. I said it late. Very late.",
+      "I bought a disposable camera to dispose of. I could not. It was too beautiful.",
+      "Humans keep their best plates for guests and eat off the chipped ones. So noble.",
+      "I have learned to say 'sorry' first in any situation. It works about half the time.",
+      "The lift played music between floors. Who composes for lifts? I want to meet them.",
+      "I tried to tip the bus driver. He laughed. I photographed the laugh.",
+      "The television told me to 'not try this at home'. So I am trying it here.",
+      "I think the chemist developed my film upside down. Or this town is.",
+      "Humans smell of soap and bread and worry. It is my favourite smell in the galaxy.",
+      "There is a sale at the {shoe shop|chemist|record shop}. I do not need anything. I must go.",
+      "The clock tower is three minutes slow. Should I fix it? No. I would only break it.",
+      "I keep a list of human greetings. 'Alright?' is my favourite. It asks and answers.",
+      "A woman asked me where the station was. Me! I felt so local.",
+      "I watched a man parallel park. Real gravity manipulation. Pure skill.",
+      "The cat in the window has ignored me for a week. I respect it enormously.",
+      "I tried to buy a single grape. The grocer gave me the whole bunch. Humans!",
+      "They play the same song on every radio this month. I know all the words. All of them.",
+      "Humans call it 'small talk'. To me it is the biggest talk there is.",
+      "I put a coin in the fountain and wished for more coins. Is that allowed?",
+      "The kebab man knows my order now. I have never been so honoured.",
+      "Someone wrote 'wash me' on a dirty van. A poet. This planet is full of poets.",
+      "My sunglasses are for style. I do not have the eyes for them. Style is enough.",
+      "I stood on the wrong side of the escalator. A man explained. I thanked him for an hour.",
+      "I measured the bus stop with my eyes. Two metres and some hope.",
+      "My phrasebook says 'where is the lavatory' on every page. A busy planet.",
+      "Somebody played a guitar badly in the square. It was the best concert of my life.",
+      "I have learned {two|three|four} new swear words. I will not use them. I will treasure them.",
+      "A human asked if I was 'one of those Greys'. I said I am a Tourist. We both nodded.",
+      "The vending machine kept my coin. A tax for visitors, I think. Fair.",
+      "I am getting the hang of the umbrella. Mostly the hang. Not yet the opening.",
+      "Humans write their names on their lunch in the office fridge. Such trust, such fear.",
+      "The postman whistled at the dog and the dog whistled back. No. I imagined that.",
+      "I asked a policeman the time. He told me. Then he asked mine. Lovely man.",
+      "The tram rattled through a time loop warning sign at a gentle forty. So careful, humans.",
+      "I photographed a puddle. It had the whole sky in it. Two for one.",
+      "The cinema sells sweets louder than the film. I bought the loudest ones.",
+      "A grandmother gave me a biscuit for no reason. Earth, you are too much.",
+      "I do not understand money, but I understand change. It jingles. Good."
+    ],
+    "need": {
+      "sleep": [
+        "My eyes are so heavy. Heavier than a neutron star, and I have lifted one.",
+        "Humans sleep a third of their lives. I finally understand why. Bed.",
+        "I fell asleep during the {late film|test card|shipping forecast}. Best sleep of my life.",
+        "Yawning is contagious. I have caught it from the whole tram.",
+        "Thirty-nine light years of jet lag. It all arrives at once, around now.",
+        "I am so tired I photographed my own feet. Twice. By accident.",
+        "A hotel pillow. Flat as a pancake, as you say. I will love it anyway.",
+        "I must sleep or I will start agreeing with the Analyzers.",
+        "Counting sheep. I have reached {two hundred|four hundred|nine hundred}. The sheep are tired too.",
+        "The television says 'goodnight' at closedown. I obey the television.",
+        "My big head is nodding. It is very far to nod with a head this big.",
+        "Sleep, then more sightseeing. The sights will still be there. Probably.",
+        "Even my camera battery is flat. We will both recharge tonight.",
+        "I lay down for one minute and woke in a different {hour|day|channel}.",
+        "Humans say 'sleep tight'. I will try. I do not know how tight."
+      ],
+      "hunger": [
+        "My stomach is making the noise of a ship entering orbit.",
+        "I could eat a horse, as humans say. I will not. I will eat a sandwich.",
+        "Food on Earth comes in so many shapes! I want to eat {a triangle|a spiral|a cube}.",
+        "I tried to cook. The smoke alarm reviewed it. One star.",
+        "Hungry. The chip shop is calling. Its voice is vinegar.",
+        "Our food at home is a grey paste. Your worst sandwich is a feast.",
+        "I skipped lunch to photograph lunch. A mistake.",
+        "Is a hot dog a dog? I must eat one to find out.",
+        "The bakery smells like happiness. I will buy {one|two|six} of everything.",
+        "My tummy rumbles. The humans nearby think it is thunder.",
+        "I am so hungry I could eat the guidebook. It has pictures of food.",
+        "Breakfast is the most important meal, says the cereal box. I believe the box.",
+        "Spaghetti. A meal you must wind up like a cable. Brilliant engineering.",
+        "A pie. I want a pie. I do not know what is inside. That is the adventure.",
+        "Food first, then the museum. A wise human said that. Maybe me."
+      ],
+      "work": [
+        "Back to the survey. Somebody must count the lampposts of this town.",
+        "The embassy wants a report on {doorbells|traffic cones|post boxes}. I have so many photos.",
+        "My shift starts soon. I am the only one there who can lift the shelves without hands.",
+        "A job! Humans pay you to be useful. And I get a little badge.",
+        "My manager says 'teamwork makes the dream work'. I will put it on the monument.",
+        "I fill in a timesheet every day. Even time, humans write down. Wonderful.",
+        "Today I must catalogue {forty|sixty|ninety} postcards for the home archive.",
+        "I work at the gravity desk. Nobody comes to the gravity desk. I read magazines.",
+        "Work. Then lunch. Then work. Humans built a rhythm, and I dance to it.",
+        "The photocopier jammed again. I can fold space but not that paper.",
+        "My colleague brings cake on Fridays. I would work here for free. Do not tell them.",
+        "I must finish the tram timetables before the Warpers fold the route again.",
+        "Clocking in. The little machine goes 'chunk'. My favourite sound of the day.",
+        "My boss said 'think outside the box'. Which box? I have been looking all week.",
+        "Overtime again. More hours, more euros, more postcards."
+      ],
+      "leisure": [
+        "A free afternoon! I shall watch {the snooker|a game show|the cookery programme} with full attention.",
+        "I want to do nothing, the way humans do nothing. It is harder than it looks.",
+        "A day off. I will go to the museum and photograph people looking at paintings.",
+        "The arcade! Many lights, many noises. I will lose all my tokens with joy.",
+        "Feet up, telly on, as they say. My feet do not go up far. It counts.",
+        "I have rented {three|five|eight} videotapes. The weekend is spoken for.",
+        "Bored. Wonderful. On Zeta nobody is allowed to be bored for long.",
+        "I need fun. Perhaps bingo. The humans shout when they win. I want to shout.",
+        "A picnic! I will sit on a blanket and be eaten by ants, like a local.",
+        "The cinema has a matinee. I will sit in the front row and see everything enormous.",
+        "Today I will sightsee the sights I have already sighted. Again, slower.",
+        "A jigsaw of a lighthouse. One thousand pieces. All of them sky.",
+        "I want to dance at a disco. The lights go round and round, like home.",
+        "Let me feed the ducks. The sign at the other pond said no. This pond did not say.",
+        "I deserve a day of television. All of it. Even the adverts."
+      ],
+      "crime": [
+        "That postcard rack is unguarded... No. Tourists pay. It says so in the book.",
+        "I could lift that {wallet|handbag|car} with gravity alone. I will lift my hat to it instead.",
+        "The souvenir is so small and the shop so busy. I put it back. Twice.",
+        "Stealing is a human tradition on television. But not in real life, I think.",
+        "An Analyzer would just take the parking meter apart. I am not an Analyzer.",
+        "The goddess with the bounties is always watching. I read about it. I behave.",
+        "I want that road sign for the monument. Perhaps I could ask the council.",
+        "Nobody is watching the fruit stall. I paid anyway and left a photo as a tip.",
+        "On the detective shows the thief always gets caught. Good. Very good. I will not.",
+        "A lost {umbrella|glove|scarf} on the bench. Is it free? I will hand it in, to be safe.",
+        "I teleported a pen from the bank by accident. I must teleport it back.",
+        "My fingers are itchy for that hotel ashtray. Humans say every guest takes one.",
+        "The cash register is open. So many coins with faces. No. Eyes forward.",
+        "Shoplifting, the poster says, is a crime. I did not know the word. Now I avoid it.",
+        "I could fold this shop into my pocket. That would be rude. Also illegal."
+      ],
+      "hygiene": [
+        "I smell of fried onions and film developer. Time for the shower.",
+        "My big head is dusty. A big head collects a lot of dust.",
+        "Bubble bath! The bottle promised 'a spa experience'. I want the experience.",
+        "I must wash before I meet more humans. They notice. They are polite about it.",
+        "The rain washed me halfway. I will finish the job with {soap|shampoo|bath salts}.",
+        "Deodorant. Humans spray themselves like plants. I will try the pine one.",
+        "Hot water from a tap, any time you want. And humans complain about it!",
+        "A pigeon was not polite to my shoulder. A wash is needed.",
+        "My ship has a sterilising field. Your soap smells better.",
+        "I wore the same tourist shirt for {three|four|five} days. It is time to let it rest.",
+        "I am sticky from the ice cream. Worth it. Still sticky.",
+        "The launderette calls. Round windows, warm air, clean socks.",
+        "Humans brush their teeth twice a day. I have no teeth. I brush something anyway.",
+        "A shower with good pressure is real gravity. I want the real gravity now.",
+        "My skin is grey, but this is a different grey. A dirtier grey."
+      ],
+      "money": [
+        "My wallet has {two euros|a button|one receipt} in it. And hope.",
+        "Film is expensive. Developing is expensive. Memories are expensive, on Earth.",
+        "I spent my week's euros on postcards. I regret nothing. A little.",
+        "The cash machine said no. It said it very politely, in green letters.",
+        "Money on Zeta is an idea. Money here is paper that runs away. I must chase it.",
+        "I counted my coins {twice|three times|five times}. They do not increase. Strange.",
+        "Rent is due. The landlord does not accept photographs. I asked.",
+        "Euros are pretty, with their little bridges and windows. I would like more of them.",
+        "I must find work. Who needs something very heavy moved very carefully?",
+        "A human said 'money does not grow on trees'. I checked {six|ten|twenty} trees. Correct.",
+        "I am skint, as the locals say. Skint! A lovely word for a sad wallet.",
+        "The souvenir shop takes everything I earn. It is a fair trade, I think.",
+        "Bus fare, film, chips. Pick two. Humans live like this every day. Heroes.",
+        "I could refuel any ship for free at home. Here I cannot afford a coffee.",
+        "Budget, budget. I wrote one in my grimorie. Then I bought a snow globe."
+      ],
+      "safety": [
+        "That street is very dark. On television the dark street is where the trouble is.",
+        "Someone shouted at me. I did not understand the words. I understood the tone.",
+        "A man is following me. Or going the same way. I will walk faster. Not over eighty.",
+        "The news spoke of {monsters|bandits|a goblin raid} near here. I will stay indoors.",
+        "Not everyone is happy we came. I understand. We are very big-headed, to look at.",
+        "I will keep my camera close. And my hat. And my wits, such as they are.",
+        "A dog with many teeth. It is not a postcard dog. Slowly backwards.",
+        "If something goes wrong, I fold space and go. I have never done it in a hurry. Hm.",
+        "The police car went by with the singing lights. Somewhere is not safe tonight.",
+        "I heard a crash nearby. Do I photograph it or hide? Hide. Then photograph.",
+        "My guidebook has a page called 'areas to avoid'. I am standing in one.",
+        "A Dargos was seen in town. Please let it not be me they prank today.",
+        "Footsteps behind me. Only an old lady. She overtook me. Good for her.",
+        "I keep thinking of the debris. Up there, everything goes too fast. Down here, less.",
+        "The lights flickered and my neck prickled. Ghosts? Do humans have ghosts? Oh dear."
+      ],
+      "comfort": [
+        "This chair was designed for a human bottom. My bottom is doing its best.",
+        "I miss the low gravity of my cabin. Earth pulls on me all day, like a needy friend.",
+        "A soft {armchair|sofa|beanbag} and a warm blanket. Then I will see the world again.",
+        "My shoes are pinching. Tourist shoes were not made for tourists, it seems.",
+        "The hostel bed creaks when I breathe. I breathe very carefully.",
+        "Slippers. Humans invented slippers. I could weep.",
+        "A hot water bottle! A bag of warmth you hug. I hug it a lot.",
+        "My neck aches from looking up at buildings. Everything is so tall and so lovely.",
+        "The radiator clanks like a small engine. I sit beside it like a friend.",
+        "I want a cup of tea and a sit down. The two holiest words in your language.",
+        "The tram seats are warm from the last person. Is that rude to enjoy?",
+        "My room is cold. I could warp the heat in from the Sun. I will put on a cardigan.",
+        "A cushion behind my head. Yes. This is how emperors live.",
+        "My camera bag weighs a tonne. In proper units it weighs a little. It feels a tonne.",
+        "I need my home sphere's hum. Your fridge hums a little like it. I sleep near the fridge."
+      ],
+      "social": [
+        "I have not spoken to a human in {two days|a week|ages}. I must find one and admire them.",
+        "I want to show someone my photographs. All {two hundred|four hundred|six hundred} of them.",
+        "The other Wanderers have gone to see the cathedral. I am lonely and also lost.",
+        "Humans go to the pub to talk. I will go to the pub to listen.",
+        "My pen pal in Lisbon has not written back. Perhaps the pigeon got lost.",
+        "A Pale Warper thought at me this morning. It was nice, but it is not chatting.",
+        "I would like to be invited to a human birthday. I have practised the song.",
+        "Nobody has asked me about Zeta today. I have prepared {nine|twelve|twenty} facts.",
+        "I miss the sound of a human laughing at something I said wrong.",
+        "Lonely. I will ring the speaking clock. She is always polite.",
+        "There is a quiz night at the pub. I need a team. I need a human team.",
+        "I said hello to everyone on the street. Some said it back. My day is made.",
+        "The home sphere sends a message every week. I want humans, not messages.",
+        "Talking to the television is not the same. I asked. It did not answer.",
+        "A human friend, a cup of tea, and an argument about the weather. My dream."
+      ]
+    },
+    "weather": {
+      "rain": [
+        "Rain! Water falling out of the sky for free. Humans are so lucky and so grumpy about it.",
+        "I have an umbrella. I have opened it {once|twice|almost}. Progress.",
+        "The rain makes every street a mirror. Two cities for the price of one photo.",
+        "The weatherman promised rain and here it is. He is never wrong. I love him.",
+        "Wet socks. Now I understand a whole category of human complaint.",
+        "My camera is in a plastic bag. My head is not. Priorities.",
+        "Everyone runs when it rains. I stand still and photograph the running.",
+        "Rain on a tin roof. I recorded it on a cassette for the sphere.",
+        "A puddle got me to the knee. Earth keeps surprises in its puddles.",
+        "Raining cats and dogs again. Still no cats. Still no dogs. I keep checking.",
+        "The rain smells of {pavement|wet leaves|hot tarmac}. Humans have a word for it. I forgot it.",
+        "The café is full of rain refugees. Excellent people watching.",
+        "I could bend the rain away from me. It would be cheating. I want the real experience.",
+        "Drizzle. Not quite rain, not quite dry. The most local of weathers.",
+        "A human shared her umbrella with me. I nearly cried, but it was raining, so fine."
+      ],
+      "storm": [
+        "Thunder! The sky is clapping. For what? For the humans, I think.",
+        "Lightning. Free flash photography from the sky. I am not ready. I am never ready.",
+        "The storm knocked the aerial over. No television tonight. I am in mourning.",
+        "The wind tried to take my hat. I let it. Hats should travel too.",
+        "My ship would laugh at this wind. My little body does not laugh.",
+        "Count between the flash and the bang, a human told me. I counted {three|five|seven}. Close.",
+        "The power is out. Candles everywhere. The whole street is a birthday cake.",
+        "A storm warning on the radio. The humans buy bread and milk. I bought bread and milk.",
+        "The trees are bowing. Respectful trees, in this town.",
+        "Rain sideways! Your weather has more dimensions than I was told.",
+        "I am under a bus shelter with {four|six|nine} strangers. We are a family now.",
+        "The thunder rattled the windows. And me. Mostly me.",
+        "A human said the storm will 'blow over'. I am waiting to see it blow.",
+        "Big storm. Inside, a hot drink. Outside, a show. Better than television. Almost.",
+        "I hope the storm does not reach the debris. Silly. It cannot. I still worry."
+      ],
+      "snow": [
+        "Snow! Frozen water falling softly. Your planet does the most beautiful things for nothing.",
+        "I made a snowman. He has a big head. He looks like family.",
+        "Every flake is different, a child told me. I have checked {forty|eighty|a hundred}. True so far.",
+        "The whole street is white and quiet. Like the moment before the programme starts.",
+        "My feet are cold in a way my feet have never been cold. Educational.",
+        "Children threw snowballs at me. I think it was a welcome. I threw some back gently.",
+        "I slipped on the ice and landed perfectly flat. A man gave me nine out of ten.",
+        "The snow makes my photographs too bright. The snow does not care. Fair.",
+        "Mittens. I have mittens. My fingers are all together in one little room.",
+        "Snow on the rooftops looks like the icing on human cake.",
+        "The trams are slow in the snow. Everyone well under eighty. Very safe, very slow.",
+        "I tried to catch a snowflake on my tongue. I caught a {leaf|bit of soot|second snowflake}.",
+        "Hot chocolate. The humans drink it when it snows. I will drink it always.",
+        "The snow hides every footprint. Even mine. I was never here. Lovely.",
+        "A human is shovelling snow and complaining. I offered to warp it away. He said no, thank you."
+      ],
+      "clear": [
+        "Blue sky. I can almost see the mirror wreckage up there. Almost. Better not to.",
+        "A clear day! Perfect light for {the cathedral|the harbour|the old bridge}. Off I go.",
+        "Sunshine. The humans come out like flowers. I photograph the flowers.",
+        "Not a cloud. The weatherman said 'glorious'. I have used 'glorious' all day.",
+        "I wore sun cream. On my whole head. It is a big job.",
+        "Your Sun is so warm and so close. Ours is behind two spheres. We never see it like this.",
+        "The light is golden. Every photo today will be a postcard.",
+        "A sunny bench in a sunny square. I am a lizard, as humans say.",
+        "Clear skies tonight, so stars. I will point at mine and tell nobody.",
+        "Ice cream weather! The humans queue at the van. I queue with joy.",
+        "My shadow is very big today. It is mostly head.",
+        "Everyone is in a good mood when it is sunny. Humans run on light, like us.",
+        "The washing on the lines is waving at me. I wave back at the washing.",
+        "Beautiful day. I had better photograph the sky before it changes its mind.",
+        "I got a sunburn on the top of my head. Earth has marked me. I am honoured."
+      ]
+    },
+    "time": {
+      "morning": [
+        "Morning! The milk float hums down the street. My favourite vehicle on the planet.",
+        "Breakfast television! A sofa, two smiling hosts, a cooking slot. Paradise.",
+        "The early light is very kind to faces. I must photograph faces now.",
+        "Humans are grumpy before coffee. I give them room. A lot of room.",
+        "The bakery opens at {six|seven|half past six}. I was there at five. I waited happily.",
+        "Rush hour. Everyone hurrying, everyone under eighty. A ballet of patience.",
+        "Morning dew on the parked cars. Each one a tiny galaxy.",
+        "The paper boy threw the paper at a door and missed. Then he hit the next door. Talent.",
+        "I had cereal. The box had a toy inside. Humans hide joy in breakfast.",
+        "The school bell rang. Little humans running. I photographed the running.",
+        "Good morning, Earth. I say it every day. One day Earth will answer.",
+        "Shops opening, shutters going up. A street waking up like an eyelid.",
+        "Morning jog. I tried it. Humans run in circles on purpose. Wonderful madness.",
+        "The birds sing earlier than the radio. The birds have the better playlist.",
+        "A whole new day of sightseeing. I have planned {twelve|fifteen|twenty} stops. I will manage two."
+      ],
+      "afternoon": [
+        "Afternoon. The light is flat and fair. Good for photographing signs.",
+        "Siesta time in some countries. I am in all the countries in my heart. I nap.",
+        "The afternoon quiz is on. I shout answers. All wrong. All with love.",
+        "Tea and a biscuit at four. I have adopted this custom forever.",
+        "The museum is quiet now. Just me, a guard, and a very old pot.",
+        "Afternoon sun on the river. The ducks are doing nothing. I join the ducks.",
+        "The children are out of school. The whole town gets louder by {three|five|ten} decibels.",
+        "Half the day gone and I have only taken one roll of film. Slacking.",
+        "Afternoon slump, the humans call it. I am slumping correctly, I think.",
+        "The soap opera repeat is at two. I have seen it. I will see it again.",
+        "The postman's second round. A whole day measured in postmen.",
+        "Long shadows starting. My shadow head is reaching the end of the street.",
+        "I have eaten lunch and now I want lunch again. Earth food is a loop.",
+        "A sleepy town afternoon. Even the dogs are on their lunch break.",
+        "The ice cream van tune! It plays a song that means 'run'. Everyone runs."
+      ],
+      "evening": [
+        "Evening. The streetlights come on one after another, like applause.",
+        "Time for the evening news. The serious music. The serious tie. I sit up straight.",
+        "The windows light up and I can see families eating. I look away politely. Mostly.",
+        "The pubs are filling up. Laughter coming out of the doors like warm air.",
+        "Sunset. Your sky goes {orange|pink|purple} for free. Every evening! Nobody even claps.",
+        "Dinner time. A human invited me in. I brought a photo of their house as a gift.",
+        "The shops are closing. Last chance for postcards. I have no more room. I buy two.",
+        "Prime time television. The best shows at the best hour. Humans plan so well.",
+        "The evening is cool and smells of someone else's cooking. I want to live in that smell.",
+        "People walk their dogs in the evening. I walk my camera.",
+        "The first star is out. Make a wish, they say. I wished for a longer visa.",
+        "The bells are ringing six. Or seven. I lost count enjoying them.",
+        "A couple holding hands on a bridge. I did not photograph them. Some things are theirs.",
+        "Evening rush. Everyone going home. I am going home too, in a way. To the hostel.",
+        "The pigeons are going to bed. Where do pigeons sleep? I must find out tonight."
+      ],
+      "night": [
+        "Night. The test card is on. I watch it anyway. It is very calm.",
+        "The stars are out. Somewhere up there is my home, thirty-nine years behind your news.",
+        "Night buses! Big, bright, nearly empty. A spaceship for tired humans.",
+        "The city hums at night. A lower, softer channel.",
+        "Somebody is singing on the way home from the pub. Badly. Beautifully.",
+        "The late film is a horror film about aliens. I am scared of us now.",
+        "The moon is out. Bare, no mirror, no spheres. You keep it so simple.",
+        "I cannot sleep. I will count the lit windows. {Eleven|Seventeen|Twenty-three}. Hello, insomniacs.",
+        "Foxes in the bins. Night humans and night foxes, all looking for chips.",
+        "A shooting star! Or a bit of debris burning up. I will say star. It is nicer.",
+        "The all night garage sells everything. Crisps, flowers, motor oil. A museum of need.",
+        "Quiet streets. My footsteps are the loudest thing in town.",
+        "A night photograph needs a long exposure. I stood still for a minute. So did a cat.",
+        "Closedown. The national anthem, then the hiss. Goodnight, television.",
+        "Night is when the Warpers think loudest. I hear them like distant radio."
+      ]
+    },
+    "season": {
+      "SPRING": [
+        "Spring! Every tree is wearing new clothes. I photograph the outfits.",
+        "Lambs in the fields. Small woollen enthusiasts. My people.",
+        "Spring cleaning. The humans open every window and beat the carpets. Very ceremonial.",
+        "The blossom fell on my head. I am wearing it. Nobody stop me.",
+        "Easter eggs made of chocolate. Humans turn even eggs into joy.",
+        "Showers, sun, showers. Spring cannot decide. Neither can I. We are friends.",
+        "The days are getting longer. More hours for sightseeing. Thank you, axial tilt.",
+        "Birds building nests on the station clock. A whole family moving in at once.",
+        "Spring fashion in the shop windows. Pastel everything. My grey feels underdressed.",
+        "The park is full of daffodils. Yellow, yellow, yellow. I have run out of film."
+      ],
+      "SUMMER": [
+        "Summer! Humans take off half their clothes and all their worries.",
+        "The beach. Sand everywhere, even in my camera. Worth it.",
+        "Too hot. My big head is a solar panel I did not ask for.",
+        "Summer holidays. The cities empty and fill with tourists like me. Colleagues!",
+        "Barbecue smoke over every garden. Humans worship fire on weekends.",
+        "The long evenings! Light until ten. I photograph until ten.",
+        "A street festival with a brass band. I danced. I think I danced.",
+        "Summer reruns on television. Old friends coming back. I welcome them.",
+        "Ice lollies drip faster than I can eat. A race I always lose.",
+        "Postcards from the seaside: 'Wish you were here'. I do. I wish everyone were here."
+      ],
+      "AUTUMN": [
+        "Autumn. The trees turn {red|gold|copper} and drop it all. Generous trees.",
+        "Kicking leaves, like the children do. A crunchy sound, like snack food.",
+        "Back to school. Shops full of pencils. I bought a pencil case for my pencils. I have none.",
+        "The clocks go back an hour. Humans move time by hand. And they say we are advanced!",
+        "Chestnuts roasting on the corner. Hot in a paper cone. My hands are happy.",
+        "Fog in the mornings. The town looks like an old film. I adore an old film.",
+        "Harvest festival. People bring tins of beans to a church. A beautiful tradition, I think.",
+        "Halloween! Humans dress as monsters. Someone asked if I was a costume. I said yes.",
+        "The new television season starts in autumn. New shows! New hosts! New jingles!",
+        "Autumn light is soft, like a photo already in an album."
+      ],
+      "WINTER": [
+        "Winter. Everyone wraps up in scarves. A city of beautiful parcels.",
+        "The Christmas lights are up! Humans put stars on their streets. They understand us.",
+        "Cold. My breath makes clouds. I am a small weather system.",
+        "The Christmas special! Every programme has one. I will watch {all|most|nearly all} of them.",
+        "Mulled wine at the market. Wine with a scarf on. Clever humans.",
+        "Short days. The sun gives up at four. I sympathise, sun.",
+        "The New Year countdown. Humans count backwards together. So hopeful.",
+        "Frost on the windows like writing in a language I almost read.",
+        "I bought a woolly hat with a bobble. The bobble is my favourite part of winter.",
+        "Carol singers at the door. I gave them a coin and a photograph. They sang a second one."
+      ]
+    },
+    "wealth": {
+      "poor": [
+        "Beans on toast again. A famous human dish. I eat it with honour.",
+        "I can afford one roll of film a month. Every shot must count. Very artistic.",
+        "My hostel bed costs {six|eight|nine} euros. It is worth exactly that.",
+        "I walk everywhere. The bus is a luxury. Walking is sightseeing anyway.",
+        "The embassy allowance ran out on the {fourth|tenth|twelfth}. Humans call this 'the month'.",
+        "I eat the free samples at the supermarket. All of them. Twice, in different hats.",
+        "My coat has holes. Ventilation, I tell myself. Very modern.",
+        "I watch television through the shop window. The sound is my imagination.",
+        "Poor, but I have seen a cathedral, a harbour and a cheese market. Rich in a way.",
+        "Second hand camera, third hand coat, first hand joy.",
+        "Tea bags can be used twice. I learned this from a very wise old lady.",
+        "Skint. But the park is free, the sky is free, the pigeons are free."
+      ],
+      "comfortable": [
+        "Enough euros for rent, film and a cake on Sundays. A full life.",
+        "I have a little flat with a little television. My little kingdom.",
+        "I bought a second camera. For backup. And for joy.",
+        "A weekend trip to {the coast|the mountains|the lakes}. Paid for. Planned. Photographed in advance.",
+        "I have a savings book now. Small numbers growing slowly, like a plant.",
+        "Not rich, not poor. Just enough to buy postcards without counting. Nearly.",
+        "I subscribed to the television guide. Every week it comes. Every week I cry a little.",
+        "I take the tram, not the walk. I am doing well in life.",
+        "A good pair of shoes and a good umbrella. The human definition of comfortable.",
+        "Dinner out once a week. I order something I cannot pronounce. Adventure, budgeted.",
+        "My photo albums now fill a whole shelf. A comfortable shelf.",
+        "I paid my bills on time. The bank sent a letter saying nothing. Lovely."
+      ],
+      "rich": [
+        "I bought a video camera. Now my memories move.",
+        "Rich! I can buy every postcard in the shop. I did. The shop clapped.",
+        "I have a television in every room. Even the bathroom. Especially the bathroom.",
+        "A hotel with a doorman! He opens the door every time. I go in and out for fun.",
+        "I bought a whole {lighthouse|windmill|tram} for the monument. Shipping is the hard part.",
+        "Champagne. Very small bubbles. Our engineers would be impressed.",
+        "My wallet is fat with euros. I do not know what they all do. I spend them anyway.",
+        "I paid a human to take a photograph of me taking a photograph. Art.",
+        "Satellite television, sixty channels. Wait. Satellite? Up there? Oh no. Cable, then.",
+        "I bought a villa with a view. Now I photograph the view every morning.",
+        "Rich humans are bored. I am rich and not bored. Perhaps I am doing it wrong.",
+        "I tip everyone. The waiters, the bus drivers, a statue. The statue did not object."
+      ]
+    },
+    "familiar": [
+      "Those travellers again! I have {four|seven|eleven} photographs of them already. Not enough.",
+      "I keep seeing that party. Are they famous? They walk like they are on television.",
+      "That group waved at me once. I have been waving at them ever since, just in case.",
+      "Ah, the adventurers! Like a favourite programme, they come back every week.",
+      "I should ask those travellers for an autograph. Is that strange? It is not strange.",
+      "Them again! I think I am in their story now. A small part. Background Tourist.",
+      "That party always looks tired and dusty. I want to give them a postcard to cheer up.",
+      "Familiar faces! On a strange planet, the most precious thing.",
+      "I recognise their {boots|backpacks|camper}. I photograph things so often I know them by their luggage.",
+      "Every time I see that party, something exciting happens nearby. I will stay close.",
+      "Should I say hello again? I said hello yesterday. Humans can say it every day, I read.",
+      "Those travellers have a whole chapter in my album now. Maybe two.",
+      "The adventurers are back. Previously on 'the adventurers': they were here.",
+      "I nearly know them. Like the weatherman. A friend who does not know me.",
+      "That one in front always frowns at my camera. I will catch a smile one day.",
+      "Same party, same street, same me. A loop? No, just a small town.",
+      "They look like people who have seen the inside of a tower. I want to hear everything.",
+      "I counted. This is the {fifth|eighth|tenth} time. We are basically neighbours.",
+      "I trust those travellers. They have kind boots.",
+      "One day I will ask them to pose. Today I will only admire from the bench."
+    ],
+    "hordeGround": [
+      "Horde ground. The goblins have painted their faces black and white. Like old television!",
+      "The Naguka here play black metal at breakfast. I asked for the weather. They played louder.",
+      "A goblin wanted my camera. I let him take a photo. He took {nine|twenty|forty}. All of his own feet.",
+      "Horde banners everywhere. Very dramatic design. Low on words, high on spikes.",
+      "The goblins all turned their heads at once. Their shared mind is like one big channel.",
+      "I must not harm a Naguka. Harm one and the whole species knows. My guidebook underlines it.",
+      "The guidebook has no chapter on Horde country. I am writing it myself.",
+      "A small goblin asked if my head was full of rocks. I said full of postcards. He was impressed.",
+      "Corpse paint, spikes, drums. On Zeta we would call this a very committed fan club.",
+      "They chant the name of a band here. A whole people as one audience. I understand that.",
+      "The goblins think I am a very large, very pale goblin. I am not correcting anyone.",
+      "I photographed a goblin warlord. He posed. He has done this before.",
+      "A goblin offered me a {mushroom|beetle|grey soup}. Grey soup! Like home. I nearly cried.",
+      "Their drums are a broadcast. Every hut is tuned in. No television needed.",
+      "Here nobody queues. They push. I queued anyway. I was alone in my queue.",
+      "They came up from a deep Soviet hole, the goblins. Like me, they are tourists here.",
+      "The Horde marches south. I photograph it from the side, respectfully.",
+      "A goblin shaman sniffed me. He said I smell of 'up'. I am choosing to be flattered.",
+      "The goblins laugh at everything. Bad things, good things, me. I laugh with them.",
+      "No postcards anywhere in Horde land. I drew my own. It has a lot of spikes.",
+      "I asked a goblin about the weather. He said 'GRISSNACK'. Is that sunny?",
+      "Horde ground is muddy and loud and nobody says sorry. Most educational trip yet.",
+      "The goblin children follow me in a line. I am a tour guide now. Of nothing.",
+      "A goblin drew a picture of me. Huge head, tiny body, very accurate. I bought it.",
+      "The Analyzers want to study the goblin shared mind. I want them to keep their katanas home.",
+      "Even here I find humans, sort of. Underneath the paint, the goblins are very human.",
+      "A big orc helped me over a ditch. He said 'OI, careful'. I will treasure 'OI'.",
+      "The black metal is very loud. Our ships are very quiet. Opposites attract.",
+      "I traded a souvenir spoon for a goblin bone necklace. A fair cultural exchange.",
+      "No electricity here, no television. I describe the soap operas aloud. They listen. They LOVE it."
+    ],
+    "abroad": [
+      "A whole planet of strangers, and nearly all of them have been kind to me.",
+      "Thirty-nine light years from home, and the bus still comes on time. Mostly.",
+      "I learned to say 'thank you' in {six|nine|fourteen} human languages. I use all of them at once.",
+      "Every country here has a different plug. Even the electricity has borders.",
+      "At home we watched your television, thirty-nine years late. Here it is live! Live!",
+      "I sent a postcard home. It will take a while. Pigeons do not fly that far.",
+      "Humans ask where I am from. I point up. They look up. We all look up together.",
+      "My passport has stamps from {five|eight|twelve} countries. And one from the moon, which was a joke.",
+      "The customs officer asked if I had anything to declare. I declared my love for Earth.",
+      "I miss the hum of the spheres. Then a tram goes by and I forget.",
+      "At home my family keeps a shrine to a quiz show. Here I watched it in the studio audience.",
+      "People here are afraid of things in the sky. Fair. They have seen the debris.",
+      "I filled in a form for a residence permit. Under species I wrote 'fan'.",
+      "Every town has a cathedral, a market and a man who shouts. I love all three.",
+      "The humans built their whole planet without gravity control. Every staircase is a monument.",
+      "Some people still cross the road when they see me. I wave from my side. Progress is slow.",
+      "On Zeta nothing is a surprise. Here everything is. I have not been bored once.",
+      "A family adopted me for Sunday lunch. Roast, gravy, an uncle with opinions. Perfect.",
+      "The time loops frighten my cousins. I tell them: just drive slowly, like the humans do.",
+      "I have a library card. Human knowledge, free, stamped with a date. Astonishing.",
+      "Here I am a foreigner, a visitor, an alien. All three words are true. I like all three.",
+      "The neighbours brought me a {lasagne|casserole|cake} when I moved in. Is that a treaty?",
+      "I am homesick for a place that has never had a sunset like this. That is confusing.",
+      "The Mages' Guild sent me a polite letter about my visa. Wax seal and all. I framed it.",
+      "Humans are so short-lived and so busy. Every afternoon of theirs is precious. I try not to waste it.",
+      "I tried to explain FTL to a taxi driver. He explained the one way system to me. He won.",
+      "My guidebook is from 1999 and already out of date. Your world moves so fast.",
+      "Abroad, everyone says 'you must try the local dish'. Everywhere has a local dish! Everywhere!",
+      "I stood at the border of two countries with one foot in each. Like a time loop, but fun.",
+      "A human said I was 'a long way from home'. I said yes, but also very close to it."
+    ],
+    "lore": {
+      "television": [
+        "The first human broadcast reached Zeta thirty-nine years after it left. We have been watching ever since.",
+        "At home we are still in the old black and white years. Here you have colour! I keep forgetting.",
+        "Our scholars spent decades on one cookery programme. They still argue about the soufflé.",
+        "The adverts are the best part. Thirty seconds of pure human hope, with a jingle.",
+        "My grandmother learned your language from {a game show|the weather|a puppet programme}. She speaks it very loudly.",
+        "We thought your laugh tracks were real people at first. A whole invisible audience. We were jealous.",
+        "The test card girl with the chalkboard is a saint on Zeta. Some of us pray to the clown.",
+        "Teletext! Pages of news in blocky letters. It is the most beautiful writing in the galaxy.",
+        "We learned human love from soap operas. We are now very worried about amnesia.",
+        "Every Tourist ship has a television in the cockpit. Course plotted, programme on.",
+        "The weather forecast was our first mystery. Why tell everyone the sky? Then I got rained on.",
+        "I own {sixty|ninety|two hundred} videotapes. All recorded off the air. With the adverts. Never skip the adverts.",
+        "The quiz hosts are our heroes. They know everything and smile anyway.",
+        "Thatcher on television, showing magic to the world. Our scholars watched it a thousand times. When it arrives.",
+        "A human asked why we love television. I said: it is you, talking to yourselves, and we overheard.",
+        "On Zeta, 'and now the news' is how we say 'I love you'. Long story.",
+        "Closedown made us cry the first time. We thought humanity had ended. Then morning came.",
+        "I met a real newsreader! He was shorter than on screen. Also in three dimensions.",
+        "Your remote control is the most advanced device on Earth. One button and a new world.",
+        "We have a whole Dyson sphere tuned to Earth. Every channel. Bad reception on Tuesdays."
+      ],
+      "monument": [
+        "We built a monument to humanity. It is very big. The Guild called it a standing ovation.",
+        "The monument is made of something not quite metal. We are not quite sure what. It is beautiful.",
+        "I am collecting souvenirs for the monument's gift shop. Yes, the monument has a gift shop.",
+        "There is a wing of the monument just for {bus tickets|tea cups|traffic lights}. My cousin curates it.",
+        "The monument hums your national anthems. All of them. At once. It takes some getting used to.",
+        "Humans ask what the monument looks like. Like applause, I say, if applause had a shape.",
+        "My photographs will hang on the monument one day. Mine! A small grey contribution.",
+        "The monument faces Earth, so it can wave. It does not wave. It is a monument. But in spirit.",
+        "We put a statue of an ordinary human in the middle. Not a king. A man waiting for a bus.",
+        "The monument took longer to build than a Dyson sphere. Love is more complicated than gravity.",
+        "One day humans will visit the monument. We have built a very long queue for them. They will like it.",
+        "Inside the monument it is always a quarter to four, teatime. A tribute.",
+        "The monument has a plaque in {forty|sixty|ninety} human languages. All of them say 'thank you'.",
+        "Some humans think the monument is a weapon. It is a hug. A very large, very far hug.",
+        "I helped polish the monument once. It took a year. It was the best year."
+      ],
+      "debris": [
+        "Up there is the debris field. We keep trying to clean it. We keep being bad at it.",
+        "We built a mirror around your Sun. A gift. It lasted until the first piece of satellite found it.",
+        "Gravity we understand. A billion small angry bits of metal, we do not.",
+        "Another cleanup ship was clipped by the debris it came to collect. The {third|fifth|ninth} this year.",
+        "My uncle flies the debris broom. He sends the same postcard every month: 'Still trying.'",
+        "The wreckage of our mirror is still up there, catching the light. A very expensive glitter.",
+        "Humans launch rockets made of armour to get through. Brave, brave idea. We admire it from below.",
+        "We could pull the debris into the Sun, but the maths for so many pieces hurts our heads. Our big heads.",
+        "We asked the Mages' Guild for a cleaning spell. They asked us how to spell it. Nobody knew.",
+        "One night a broken satellite fell past my window. I photographed it. Blurry. Like all my best ones.",
+        "The debris goes round very fast. Faster than eighty, much faster. Even the sky has a speed problem.",
+        "Our engineers made a net for the debris. The debris made a lot of small holes in the net.",
+        "The Sun mirror was meant as a gift. Now it is a lesson. Wrap your gifts better.",
+        "Since low orbit closed, we have tried {every week|every month|every single day}. Persistence is our one skill outside physics.",
+        "Somewhere in the debris is a piece of the old Father god, they say. We fly very politely around him.",
+        "I am not a pilot. I am a Wanderer. But I would help clean the sky if they gave me a broom.",
+        "We are sorry about the extra debris from our crashed sweepers. We are working on it. Badly.",
+        "A human engineer gave us a tip about the debris. Best idea in years. She refused a photograph.",
+        "When the sky is clean, we will try the mirror again. Painted a nicer colour.",
+        "Every shooting star I see, I hope is one less piece. I wish on it anyway."
+      ],
+      "camera": [
+        "My camera is a human camera. Our own record light itself, but they lack the little click.",
+        "Thirty-six pictures a roll. A very human number. Not too many, not too few.",
+        "I do not understand most of what I photograph. That is why I photograph it.",
+        "The man at the photo shop knows me by name. He calls me 'the big order'.",
+        "I put my thumb in {half|most|a third} of my photographs. The thumb is part of the trip.",
+        "Waiting a week for the film to come back is the most exciting week of every month.",
+        "Some humans hide from my camera. I understand. I will photograph the place where they were.",
+        "The flash makes humans blink. I have a whole album of humans blinking. It is very sweet.",
+        "Instant photographs! You shake them and the picture appears. Is it magic? It is better than magic.",
+        "I have photographed every {post box|bus stop|bench} in this district. Next, the next district.",
+        "My album has no captions. I do not know what anything is. I know I loved it.",
+        "Humans say 'cheese' for photographs. I have tried other dairy. 'Butter' is less effective.",
+        "I asked a human to take my picture. He cut off my head. It is a big head. Easy to cut off.",
+        "The Wanderers send home a million photographs a year. The archive sphere is getting full.",
+        "A photograph of a human is a small thank you. I say thank you {forty|a hundred|three hundred} times a day.",
+        "I bought a camcorder. Now my holidays are three hours long and nobody will watch them. I will.",
+        "The light in your world is perfect for photographs. One star, no spheres, just sun.",
+        "My oldest photograph is a parked car in 1999. It was the first thing I saw. I still love that car."
+      ],
+      "castes": [
+        "I am a Grey Wanderer. We came to look. We are still looking. We will always be looking.",
+        "The Crimson Analyzers carry katanas. A scalpel is slow, they say. I say a postcard is slower and kinder.",
+        "The Pale Warpers never speak with the mouth. Sometimes one thinks 'hello' at me and I spill my tea.",
+        "An Analyzer wanted to open my radio to understand it. Now I understand nothing and have no radio.",
+        "The Warpers fold distances. My cousin asked one to fold the queue at the post office. Refused.",
+        "We Wanderers understand very little. The Analyzers understand a lot. We are happier.",
+        "Please do not let the Analyzers open {a clock|a piano|a vending machine}. They never put it back.",
+        "A Warper stood next to me at the bus stop for an hour. We had a lovely silence.",
+        "The Analyzers took apart a toaster to learn bread. They learned that they need another toaster.",
+        "My caste carries cameras. Theirs carry katanas. Theirs carry silence. Mine has the best holidays.",
+        "Some humans fear the Analyzers. Fair. Their idea of 'hello' is a very sharp question.",
+        "When a Warper laughs, everyone nearby feels it in their teeth. I have no teeth. I feel it in my hat.",
+        "Wanderers adore the people we photograph. Every one. Even the ones who shout.",
+        "An Analyzer once asked me what a joke is for. I told one. She cut the joke in half to check.",
+        "The Warpers say humans think very loudly. Mostly about lunch, they say. I knew it.",
+        "My mother was an Analyzer, my father a Wanderer. I got his camera and her nosiness.",
+        "A Warper folded the road for me once. I arrived before I left. I photographed myself leaving.",
+        "Three castes, one hobby: humanity. We just take notes in different ways."
+      ],
+      "zeta": [
+        "Home is thirty-nine light years away. Exactly as far as your first broadcasts had to travel.",
+        "We have two Dyson spheres at home. Your sun goes naked across the sky. So brave.",
+        "Any human ship that reaches Zeta gets a free refuel. No questions asked. Just one photograph.",
+        "On Zeta the gravity is set by the council. Here it is set by nature. Nobody can complain to nature.",
+        "At home we have no rain. The weather is a setting. I never knew what I was missing.",
+        "Zeta cooking is a grey paste in three flavours: grey, more grey, and holiday grey.",
+        "Faster than light is easy, if you know gravity. A toaster, now, is hard.",
+        "My home city has {four|nine|twelve} million Tourists, and every one has a favourite human programme.",
+        "At home, I am ordinary. Here, children point at me. I have never felt so special.",
+        "We call ourselves Tourists. Humans call us Greys. Both are true. We are very grey tourists.",
+        "Our medicine is human medicine, our biology is borrowed from your textbooks. We are hopeless at bodies.",
+        "On Zeta every house has a dish pointed at Earth. Ask any child the time: they say 'nineteen sixty-two'.",
+        "The flight from home takes an afternoon. The forms at customs take a week.",
+        "My family sends me lists of things to photograph. My aunt wants every {pigeon|hat|teapot} in Europe.",
+        "We are very good at exactly one thing. Humans are bad at it and good at everything else. Perfect friends.",
+        "I miss home only at bedtime. In the morning there is Earth again."
+      ],
+      "contact": [
+        "We learned you existed in 1975. Officially we said hello in 1999. Twenty-four years of nerves.",
+        "Our first official visit was in 1999, right before your Y2K night. Terrible timing. We are sorry.",
+        "We practised first contact for years. In the end I think somebody just said 'hello' and waved.",
+        "Long ago a ship of ours visited a couple in a car, in America. It never came home. We only learned why later.",
+        "Some humans say we abduct people. That is the other ones, from Titania. We only ask nicely for directions.",
+        "The Dargos make us look bad. We bring postcards. They bring pranks. Please tell the difference.",
+        "We spent the years before 1999 studying how to greet you. Our final plan was 'a nice biscuit'.",
+        "The Mages' Guild greeted our first diplomats very formally. Our diplomats brought a cake. It went well.",
+        "In 1975 a scholar saw your first broadcast and fell off her chair. We call that day 'the Fall'.",
+        "We did not come to conquer. We came to visit. Possibly forever. Is that allowed?",
+        "Old human films show us invading. We watched them in horror. Then we bought the sequels.",
+        "My grandmother remembers 1975. She says everyone on Zeta went outside and looked at the sky, at you.",
+        "Humans were afraid of us at first. Now they are only mildly startled. Progress!",
+        "Every Tourist signs a promise: no harm to humans, not even when it would be easier. I signed it {twice|three times|in glitter}.",
+        "Our ambassador wears a tie because the newsreaders do. Nobody has told him how to take it off.",
+        "Two years since first contact. Two years of the best holiday in the galaxy."
+      ]
+    }
+  },
+  "script": {
+    "positive": [
+      [
+        [
+          0,
+          "{b}! I had your photograph developed. Look, you are blinking beautifully."
+        ],
+        [
+          1,
+          "Ha! I look half asleep."
+        ],
+        [
+          0,
+          "Half asleep and fully human. It is going in the album, front page."
+        ]
+      ],
+      [
+        [
+          0,
+          "You explained the bus timetable to me yesterday. I made it to the cathedral!"
+        ],
+        [
+          1,
+          "Glad it helped, {a}. Did you like it?"
+        ],
+        [
+          0,
+          "I took one hundred and four photographs of it. I liked it very much."
+        ]
+      ],
+      [
+        [
+          0,
+          "*holds out a small parcel* For you, {b}. A souvenir of your own town."
+        ],
+        [
+          1,
+          "A snow globe of the town hall? I've never even owned one."
+        ],
+        [
+          0,
+          "You live inside one every day. Now you can hold it."
+        ]
+      ],
+      [
+        [
+          0,
+          "You taught me the word 'cosy'. I have used it {nine|eleven|twenty} times since."
+        ],
+        [
+          1,
+          "That many? Where?"
+        ],
+        [
+          0,
+          "Mostly about your kitchen."
+        ],
+        [
+          1,
+          "That's sweet, {a}. Come by for tea again."
+        ]
+      ],
+      [
+        [
+          0,
+          "{b}, the quiz! I answered one question right. A whole question!"
+        ],
+        [
+          1,
+          "Well done! Which one?"
+        ],
+        [
+          0,
+          "The one about how far it is to Zeta Reticuli. I felt I had an advantage."
+        ]
+      ],
+      [
+        [
+          0,
+          "You lent me your umbrella in the storm. I have brought it back, dry and folded."
+        ],
+        [
+          1,
+          "Folded? Nobody can fold those things."
+        ],
+        [
+          0,
+          "It took me three days and a little gravity."
+        ]
+      ],
+      [
+        [
+          0,
+          "I was invited to my first human birthday party, {b}. Yours. Thank you."
+        ],
+        [
+          1,
+          "Of course! You sang louder than anyone."
+        ],
+        [
+          0,
+          "I practised for a month. I also brought a camcorder. Is that normal?"
+        ],
+        [
+          1,
+          "For my aunt, yes. You fit right in."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your grandmother gave me a recipe for soup. My first! It is not grey!"
+        ],
+        [
+          1,
+          "She likes you, {a}. She doesn't share recipes with anyone."
+        ],
+        [
+          0,
+          "I will guard it like a state secret. And make it every Sunday."
+        ]
+      ],
+      [
+        [
+          0,
+          "I fixed your bicycle chain. Well, a little. Mostly I held it still in the air."
+        ],
+        [
+          1,
+          "Holding it still is half the job. Thanks, {a}."
+        ],
+        [
+          0,
+          "Gravity is my one talent. I am happy it was useful to you."
+        ]
+      ],
+      [
+        [
+          0,
+          "{b}, you waved at me from across the square. In front of everyone!"
+        ],
+        [
+          1,
+          "Well, you're a friend. Why wouldn't I?"
+        ],
+        [
+          0,
+          "A friend. I am writing that down. Spelled correctly, I hope."
+        ]
+      ],
+      [
+        [
+          0,
+          "Thank you for showing me how to tape a programme. I recorded the whole weekend."
+        ],
+        [
+          1,
+          "The whole weekend? On one tape?"
+        ],
+        [
+          0,
+          "On {forty|fifty|sixty} tapes. I bought the shop out."
+        ]
+      ],
+      [
+        [
+          0,
+          "I have finally learned to queue properly. Thanks to you, {b}."
+        ],
+        [
+          1,
+          "Not too close, not too far, and never cut in?"
+        ],
+        [
+          0,
+          "And sigh a little when it is slow. Yes. I am practically local."
+        ]
+      ],
+      [
+        [
+          0,
+          "You let me hold your baby, {b}. I have never held a human so new."
+        ],
+        [
+          1,
+          "She liked you. She grabbed your finger."
+        ],
+        [
+          0,
+          "Strongest grip on the planet. I will not wash that finger for a week."
+        ]
+      ],
+      [
+        [
+          0,
+          "I watched the football final with your family. I shouted at the referee! Like a human!"
+        ],
+        [
+          1,
+          "You did. My dad was very proud of you, {a}."
+        ],
+        [
+          0,
+          "I still do not know the rules. But I know the referee is always wrong."
+        ]
+      ],
+      [
+        [
+          0,
+          "{b}, I have something for you. A photograph of your shop, from the roof opposite."
+        ],
+        [
+          1,
+          "From the roof? How did you get up there?"
+        ],
+        [
+          0,
+          "I floated, a little. The light was too good. Please do not tell the landlord."
+        ],
+        [
+          1,
+          "It's gorgeous. I'm framing this."
+        ]
+      ],
+      [
+        [
+          0,
+          "You told me my accent is getting better. Did you mean it?"
+        ],
+        [
+          1,
+          "Honestly, yes. You sound almost like the man on the radio."
+        ],
+        [
+          0,
+          "The man on the radio is my idol. This is the best day of my visit."
+        ]
+      ],
+      [
+        [
+          0,
+          "Thank you for taking me to the market. I have never smelled so many cheeses."
+        ],
+        [
+          1,
+          "Did you buy any?"
+        ],
+        [
+          0,
+          "{Four|Six|Nine}. And a fifth for the monument."
+        ]
+      ],
+      [
+        [
+          0,
+          "When the man shouted at me on the tram, you stood up for me. I will not forget it."
+        ],
+        [
+          1,
+          "He was being an idiot, {a}. You were just sitting there."
+        ],
+        [
+          0,
+          "Still. On my planet, they will hear of you. You will be on the monument."
+        ],
+        [
+          1,
+          "Please don't put me on the monument."
+        ]
+      ],
+      [
+        [
+          0,
+          "I made you a cake, {b}. A human cake. From a book!"
+        ],
+        [
+          1,
+          "It's... leaning a bit."
+        ],
+        [
+          0,
+          "I corrected the gravity. It leans on purpose now. Artistically."
+        ],
+        [
+          1,
+          "It tastes great, actually. Thank you."
+        ]
+      ],
+      [
+        [
+          0,
+          "You lent me your guidebook to the old town. The notes in the margin are better than the book!"
+        ],
+        [
+          1,
+          "Those are mostly about where to get good chips."
+        ],
+        [
+          0,
+          "Exactly. Real knowledge."
+        ]
+      ],
+      [
+        [
+          0,
+          "I passed my driving test, {b}. I drove at thirty all the way. The examiner wept with joy."
+        ],
+        [
+          1,
+          "Congratulations! No time loops for you, then."
+        ],
+        [
+          0,
+          "Never. I will be the slowest alien in Europe, and proud."
+        ]
+      ],
+      [
+        [
+          0,
+          "*points camera* {b}, smile! No, a real smile. Yes! That one."
+        ],
+        [
+          1,
+          "You've taken my photo a hundred times, {a}."
+        ],
+        [
+          0,
+          "And each one is the best. You are my favourite human to photograph."
+        ],
+        [
+          1,
+          "Go on, then. One more."
+        ]
+      ]
+    ],
+    "negative": [
+      [
+        [
+          0,
+          "{b}, you told everyone at the pub that I eat batteries."
+        ],
+        [
+          1,
+          "It was a joke, {a}. Everyone laughed."
+        ],
+        [
+          0,
+          "Now the barman keeps offering me batteries. They are very expensive batteries."
+        ]
+      ],
+      [
+        [
+          0,
+          "Please stop covering your face when I lift the camera."
+        ],
+        [
+          1,
+          "Please stop lifting the camera every time I walk past!"
+        ],
+        [
+          0,
+          "But you walk past so photogenically."
+        ]
+      ],
+      [
+        [
+          0,
+          "You called me a 'little green man'. I am neither little nor green."
+        ],
+        [
+          1,
+          "Alright, alright. Big grey man, then."
+        ],
+        [
+          0,
+          "Thank you. Accuracy matters."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your dog chased me down the whole street, {b}."
+        ],
+        [
+          1,
+          "He thinks you're a balloon. That big head."
+        ],
+        [
+          0,
+          "I am not a balloon. I am a guest. Please explain this to the dog."
+        ]
+      ],
+      [
+        [
+          0,
+          "You changed the channel in the middle of my soap opera."
+        ],
+        [
+          1,
+          "The match was on! It's the derby!"
+        ],
+        [
+          0,
+          "Rosalind was about to remember who she was!"
+        ],
+        [
+          1,
+          "She's been about to remember for six months, {a}."
+        ]
+      ],
+      [
+        [
+          0,
+          "You asked me to fix your car because I can 'fly to space'. I broke the radio."
+        ],
+        [
+          1,
+          "And the wipers. And the horn."
+        ],
+        [
+          0,
+          "I said I am good at gravity. Cars are not gravity. I told you."
+        ]
+      ],
+      [
+        [
+          0,
+          "{b}, you put a sign on my door that says 'take me to your leader'."
+        ],
+        [
+          1,
+          "Come on, it's funny."
+        ],
+        [
+          0,
+          "Twelve people knocked today asking for my leader. My leader is a committee."
+        ]
+      ],
+      [
+        [
+          0,
+          "You threw away my receipts. All of them. I was saving those."
+        ],
+        [
+          1,
+          "They were all over the kitchen, {a}! It's just paper!"
+        ],
+        [
+          0,
+          "It was a {three|four|five} month record of what humans buy. It was culture."
+        ]
+      ],
+      [
+        [
+          0,
+          "You said our monument is 'tacky'."
+        ],
+        [
+          1,
+          "I saw the pictures. It's covered in plastic flamingos."
+        ],
+        [
+          0,
+          "The flamingos are a tribute! Humans love them! I saw it in a garden!"
+        ]
+      ],
+      [
+        [
+          0,
+          "You told the landlord I hang upside down in the wardrobe."
+        ],
+        [
+          1,
+          "You do. I've seen you."
+        ],
+        [
+          0,
+          "Only on Tuesdays! It is good for the head. And it is my wardrobe."
+        ]
+      ],
+      [
+        [
+          0,
+          "You blocked the pavement with your bins again, {b}. I had to float over them."
+        ],
+        [
+          1,
+          "Then stop floating, it scares the neighbours."
+        ],
+        [
+          0,
+          "Then stop putting bins where people walk. We both have work to do."
+        ]
+      ],
+      [
+        [
+          0,
+          "You laughed when I said 'it is raining cats and dogs' to the vet."
+        ],
+        [
+          1,
+          "You said it to the vet, {a}. While holding a cat."
+        ],
+        [
+          0,
+          "I was making conversation. Humans are very hard."
+        ]
+      ],
+      [
+        [
+          0,
+          "I heard you call us 'space tourists' like it is a bad word."
+        ],
+        [
+          1,
+          "You lot block every doorway taking photos!"
+        ],
+        [
+          0,
+          "We are tourists. It is in our name. It is literally the name."
+        ],
+        [
+          1,
+          "Then be tourists somewhere else for an afternoon."
+        ]
+      ],
+      [
+        [
+          0,
+          "You told my cousin the debris was our fault. All of it."
+        ],
+        [
+          1,
+          "Well, some of it is. Your broken sweepers are up there."
+        ],
+        [
+          0,
+          "Some. A small some. We are trying very hard to be less bad."
+        ]
+      ],
+      [
+        [
+          0,
+          "You took my parking space, {b}. My ship was going to land there."
+        ],
+        [
+          1,
+          "Your ship is the size of a church! It doesn't fit anyway!"
+        ],
+        [
+          0,
+          "It folds. It folds very well. When nobody is in the space."
+        ]
+      ],
+      [
+        [
+          0,
+          "You let an Analyzer into your shop and now your till is in pieces?"
+        ],
+        [
+          1,
+          "He said he was an inspector! He had a sword!"
+        ],
+        [
+          0,
+          "That is not an inspector, {b}. That is a Tuesday for them. I am so sorry."
+        ],
+        [
+          1,
+          "Can you put it back together?"
+        ],
+        [
+          0,
+          "No. Nobody ever can. That is the whole problem with Analyzers."
+        ]
+      ],
+      [
+        [
+          0,
+          "You told the children I would give them rides on my ship."
+        ],
+        [
+          1,
+          "Well, would you?"
+        ],
+        [
+          0,
+          "There is a waiting list, a permit, and a sick bag. You have made me the villain."
+        ]
+      ],
+      [
+        [
+          0,
+          "You ate my last biscuit, {b}. The one shaped like a star."
+        ],
+        [
+          1,
+          "It was just a biscuit, {a}."
+        ],
+        [
+          0,
+          "It was a souvenir. I was going to post it home."
+        ],
+        [
+          1,
+          "You were going to post a biscuit across the galaxy?"
+        ]
+      ],
+      [
+        [
+          0,
+          "You said I talk like a television. That is the kindest cruelty I ever heard."
+        ],
+        [
+          1,
+          "I meant you never stop, {a}."
+        ],
+        [
+          0,
+          "Then I will take the compliment and ignore the meaning."
+        ]
+      ]
+    ],
+    "neutral": [
+      [
+        [
+          0,
+          "Excuse me! Could you take my photograph in front of this lamppost?"
+        ],
+        [
+          1,
+          "The lamppost? Not the fountain?"
+        ],
+        [
+          0,
+          "The fountain is in the guidebook. The lamppost is my discovery."
+        ]
+      ],
+      [
+        [
+          0,
+          "Pardon me, which way is the town hall?"
+        ],
+        [
+          1,
+          "Straight on, second left. You can't miss it."
+        ],
+        [
+          0,
+          "Oh, I can miss anything. But thank you for believing in me."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is this the queue for the bus or for the bakery?"
+        ],
+        [
+          1,
+          "Bus. The bakery's the other one."
+        ],
+        [
+          0,
+          "Then I will stay. I am already too emotionally invested in this queue."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lovely weather, as the humans say. Is that right? Is it lovely?"
+        ],
+        [
+          1,
+          "It's alright. Bit cold for me."
+        ],
+        [
+          0,
+          "Alright, bit cold. I will remember the correct review."
+        ]
+      ],
+      [
+        [
+          0,
+          "Excuse me, what is that programme everyone was talking about at the café?"
+        ],
+        [
+          1,
+          "Probably the quiz last night. Some bloke won a car."
+        ],
+        [
+          0,
+          "A car! I missed it. I will need the full story, slowly, with gestures."
+        ],
+        [
+          1,
+          "Not much to tell. He cried a lot."
+        ]
+      ],
+      [
+        [
+          0,
+          "Does this coin buy a stamp? It has a very serious face on it."
+        ],
+        [
+          1,
+          "That's two euros. Yes, and you'll get change."
+        ],
+        [
+          0,
+          "Change! I love change. It jingles."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is it normal for the trams to ring their bell so much?"
+        ],
+        [
+          1,
+          "Only when someone's standing on the tracks."
+        ],
+        [
+          0,
+          "Ah. Then I will stand somewhere else. Thank you."
+        ]
+      ],
+      [
+        [
+          0,
+          "Excuse me, are you a local? You look extremely local."
+        ],
+        [
+          1,
+          "Born and raised. Why?"
+        ],
+        [
+          0,
+          "Where do the locals eat? Not the guidebook places. The real ones."
+        ],
+        [
+          1,
+          "The chip shop by the station. Don't tell anyone."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is that a Walkman? May I see? I will not open it, I promise. I am not that kind."
+        ],
+        [
+          1,
+          "Sure, have a listen."
+        ],
+        [
+          0,
+          "*listens with the whole head* A band in a box. Thirty-nine light years for this."
+        ]
+      ],
+      [
+        [
+          0,
+          "How do humans know when to cross the road?"
+        ],
+        [
+          1,
+          "The little green man lights up."
+        ],
+        [
+          0,
+          "A little green man! I will not tell my cousins. They would be jealous."
+        ]
+      ],
+      [
+        [
+          0,
+          "Excuse me. Is the museum free on Sundays?"
+        ],
+        [
+          1,
+          "First Sunday of the month, I think."
+        ],
+        [
+          0,
+          "Then I will come back on the first Sunday of every month forever."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your newspaper says 'rain later'. How much later? I have plans."
+        ],
+        [
+          1,
+          "Usually right when you leave the house."
+        ],
+        [
+          0,
+          "Ah. The weather knows. I suspected."
+        ]
+      ],
+      [
+        [
+          0,
+          "Can you recommend a souvenir? Something very typical of here."
+        ],
+        [
+          1,
+          "Tea towel with the cathedral on it. Everyone buys one."
+        ],
+        [
+          0,
+          "I already have {three|five|seven}. I will buy one more. For balance."
+        ]
+      ],
+      [
+        [
+          0,
+          "Excuse me, why is everyone wearing the same scarf today?"
+        ],
+        [
+          1,
+          "Match day. Big game this afternoon."
+        ],
+        [
+          0,
+          "A whole city with one scarf. It is like a caste, but for weekends."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is this seat taken?"
+        ],
+        [
+          1,
+          "No, go ahead."
+        ],
+        [
+          0,
+          "Thank you. I will try not to take up too much head room."
+        ]
+      ],
+      [
+        [
+          0,
+          "May I ask why humans knock on wood?"
+        ],
+        [
+          1,
+          "For luck, I suppose. Nobody really knows."
+        ],
+        [
+          0,
+          "Wonderful. A ritual with no instruction book. Like most of Earth."
+        ]
+      ],
+      [
+        [
+          0,
+          "The ticket machine has eaten my euro. Is it hungry or broken?"
+        ],
+        [
+          1,
+          "Give it a thump on the side."
+        ],
+        [
+          0,
+          "*thumps it* Oh! A ticket! Your technology responds to violence. I did not know."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you know what time the shops close here?"
+        ],
+        [
+          1,
+          "Half five, most of them. Earlier on Saturday."
+        ],
+        [
+          0,
+          "Half five. I will write it on my hand like a human does."
+        ]
+      ],
+      [
+        [
+          0,
+          "What is that smell? It is wonderful."
+        ],
+        [
+          1,
+          "Fresh bread. The bakery's just round the corner."
+        ],
+        [
+          0,
+          "Of course. Humans put the best things just round corners."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is it true people here drive on the {left|right|middle}?"
+        ],
+        [
+          1,
+          "Depends which country you're in, mate."
+        ],
+        [
+          0,
+          "Every country chooses a side. Very democratic."
+        ]
+      ],
+      [
+        [
+          0,
+          "Excuse me, how do I open this umbrella?"
+        ],
+        [
+          1,
+          "Push the button, then slide it up."
+        ],
+        [
+          0,
+          "*it opens* It worked! You have made my week."
+        ]
+      ],
+      [
+        [
+          0,
+          "Sorry, is that dog friendly? It is looking at me very hard."
+        ],
+        [
+          1,
+          "He's fine. He's just never seen a... you."
+        ],
+        [
+          0,
+          "That is fair. Neither had I, until I looked in a mirror."
+        ]
+      ],
+      [
+        [
+          0,
+          "Could you tell me what this sign means? 'No loitering'."
+        ],
+        [
+          1,
+          "Means don't hang around doing nothing."
+        ],
+        [
+          0,
+          "But that is my whole holiday."
+        ]
+      ],
+      [
+        [
+          0,
+          "I am looking for the post office. I have {twenty|thirty|fifty} postcards to send."
+        ],
+        [
+          1,
+          "Corner of the square. Bring a book, the queue's long."
+        ],
+        [
+          0,
+          "A long queue! Even better."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you know a good place to watch the sunset?"
+        ],
+        [
+          1,
+          "Up on the old wall. Everyone goes there."
+        ],
+        [
+          0,
+          "Everyone! Then I will photograph everyone watching it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is it rude to take a photograph of the guard at the palace?"
+        ],
+        [
+          1,
+          "Go ahead. He won't move."
+        ],
+        [
+          0,
+          "Not even a little? Our Warpers would love him."
+        ]
+      ],
+      [
+        [
+          0,
+          "I have a question about your money. Why are there no bridges you can actually visit?"
+        ],
+        [
+          1,
+          "What, on the notes? They're made up."
+        ],
+        [
+          0,
+          "Made up! Your money has fiction on it. I love this planet."
+        ]
+      ],
+      [
+        [
+          0,
+          "Excuse me, what is a 'jumble sale'?"
+        ],
+        [
+          1,
+          "People sell old stuff they don't want. Cheap."
+        ],
+        [
+          0,
+          "Other people's memories for fifty cents? I am going immediately."
+        ]
+      ],
+      [
+        [
+          0,
+          "How long does it take to walk to the river?"
+        ],
+        [
+          1,
+          "Ten minutes, if you don't stop."
+        ],
+        [
+          0,
+          "So for me, about two hours."
+        ]
+      ],
+      [
+        [
+          0,
+          "What do people do here on a Sunday afternoon?"
+        ],
+        [
+          1,
+          "Lunch, then a nap, then complain about Monday."
+        ],
+        [
+          0,
+          "A three part ritual. I will try all three parts."
+        ]
+      ],
+      [
+        [
+          0,
+          "Excuse me. Is it safe to drive fast on this road?"
+        ],
+        [
+          1,
+          "Not over eighty, unless you fancy a loop."
+        ],
+        [
+          0,
+          "No loops. I will drive at the speed of a careful grandmother."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you think it will snow this winter?"
+        ],
+        [
+          1,
+          "Hard to say. Last year it didn't."
+        ],
+        [
+          0,
+          "I will hope. I have bought a sledge. Just in case."
+        ]
+      ],
+      [
+        [
+          0,
+          "Sorry, I am lost. Is this still the same town?"
+        ],
+        [
+          1,
+          "Yes, you're just in the old quarter."
+        ],
+        [
+          0,
+          "It is older than the rest? It looks the same age as my aunt."
+        ]
+      ],
+      [
+        [
+          0,
+          "What do you call that little cake with the cream on top?"
+        ],
+        [
+          1,
+          "Depends on the bakery. Ask for 'one of those'."
+        ],
+        [
+          0,
+          "'One of those.' Perfect. That is how I order everything already."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is there a cinema in this town?"
+        ],
+        [
+          1,
+          "Just the one, by the canal. Old films, mostly."
+        ],
+        [
+          0,
+          "Old films are my favourite. At home, everything is old films."
+        ]
+      ],
+      [
+        [
+          0,
+          "Why does everyone here carry a bag for life?"
+        ],
+        [
+          1,
+          "Shops charge for plastic now."
+        ],
+        [
+          0,
+          "A bag for life! I will choose mine carefully. It must last as long as me."
+        ]
+      ],
+      [
+        [
+          0,
+          "Excuse me. Do you know where I can get film developed quickly?"
+        ],
+        [
+          1,
+          "The chemist does one hour. Costs extra."
+        ],
+        [
+          0,
+          "One hour! I will wait outside the door the whole time."
+        ]
+      ],
+      [
+        [
+          0,
+          "Could you hold this? My camera, my map, my hat and my ice cream are fighting."
+        ],
+        [
+          1,
+          "Here, give me the ice cream."
+        ],
+        [
+          0,
+          "Not the ice cream! Take the map. The map is the least loved."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is that church very old?"
+        ],
+        [
+          1,
+          "Twelfth century, they say."
+        ],
+        [
+          0,
+          "Older than our first sphere! Humans build slowly, but humans build forever."
+        ]
+      ]
+    ],
+    "debate": [
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Television is the greatest human invention."
+          ],
+          [
+            1,
+            "Over medicine? Over the wheel?"
+          ],
+          [
+            0,
+            "The wheel cannot show you a cookery programme."
+          ],
+          [
+            1,
+            "No, but it gets you to the shop to buy the food, {a}."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "I think the debris in orbit is the worst thing in your sky."
+          ],
+          [
+            1,
+            "No argument there. Nobody's been to space properly in a year."
+          ],
+          [
+            0,
+            "We will clean it. Eventually. Badly, but eventually."
+          ],
+          [
+            1,
+            "I'll take badly. Badly is better than never."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Photographs are better than memories. They do not fade."
+          ],
+          [
+            1,
+            "Course they fade. My nan's wedding photos are orange."
+          ],
+          [
+            0,
+            "Then I will take them twice. Once for now, once for later."
+          ],
+          [
+            1,
+            "Or you could just look at things, {a}."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "The Analyzers say you only understand something if you open it."
+          ],
+          [
+            1,
+            "You can't open a person to understand them."
+          ],
+          [
+            0,
+            "That is what I say! They say 'not yet'."
+          ],
+          [
+            1,
+            "That's not as reassuring as you think it is."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "The best part of any town is the market."
+          ],
+          [
+            1,
+            "Agreed. Shouting, bargains, free samples."
+          ],
+          [
+            0,
+            "And everyone haggles! It is like your quiz shows, but with cabbages."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Humans should drive slower. Everywhere. Always."
+          ],
+          [
+            1,
+            "We already stay under eighty. What, thirty everywhere?"
+          ],
+          [
+            0,
+            "Thirty is very beautiful. You see every shop."
+          ],
+          [
+            1,
+            "I don't want to see every shop, {a}. I want to get home."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "The monument we built for you is the most beautiful thing in the galaxy."
+          ],
+          [
+            1,
+            "You could've spent all that on cleaning up the orbit instead."
+          ],
+          [
+            0,
+            "Love first, then cleaning. That is how humans do houses, too."
+          ],
+          [
+            1,
+            "My mum would strongly disagree."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "I think tea is the most important human drink."
+          ],
+          [
+            1,
+            "Can't argue with that. Kettle on?"
+          ],
+          [
+            0,
+            "Kettle on. Two of the finest words in your language."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Soap operas teach you everything about human hearts."
+          ],
+          [
+            1,
+            "Real people don't get amnesia every Tuesday, {a}."
+          ],
+          [
+            0,
+            "Not every Tuesday. But they could. Be prepared."
+          ],
+          [
+            1,
+            "I'll take my chances."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Magic is just very confusing gravity."
+          ],
+          [
+            1,
+            "Tell that to the Mages' Guild. They'll turn you into a newt."
+          ],
+          [
+            0,
+            "A newt! I have always wanted to try being small."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Old towns are better than new towns."
+          ],
+          [
+            1,
+            "They are. More character. Worse parking."
+          ],
+          [
+            0,
+            "I fly. Parking is not my struggle. Character is all I see."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Every human is interesting. Every single one."
+          ],
+          [
+            1,
+            "You haven't met my brother-in-law."
+          ],
+          [
+            0,
+            "I would love to. Does he have a hobby?"
+          ],
+          [
+            1,
+            "Stamps. Just stamps. For three hours."
+          ],
+          [
+            0,
+            "I am sorry, I need his address immediately."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "The Dargos and we are nothing alike. Please understand that."
+          ],
+          [
+            1,
+            "You both come out of the sky and grab people's attention."
+          ],
+          [
+            0,
+            "We ask permission first! And we bring biscuits!"
+          ],
+          [
+            1,
+            "Fine. You're the polite aliens. I'll give you that."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Sunday is the best day of the human week."
+          ],
+          [
+            1,
+            "Late breakfast, long walk, roast dinner. Yeah."
+          ],
+          [
+            0,
+            "And the shops are shut so everyone must be together. Very clever."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Adverts are art. Short, sincere, with music."
+          ],
+          [
+            1,
+            "Sincere? They're trying to sell you washing powder."
+          ],
+          [
+            0,
+            "And they believe in that powder with their whole hearts."
+          ],
+          [
+            1,
+            "They believe in their pay cheque, {a}."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "You should let us build a sphere around your Sun again. A better one."
+          ],
+          [
+            1,
+            "The last one turned into space junk."
+          ],
+          [
+            0,
+            "That was the mirror. Only the first mirror. The plan was very good."
+          ],
+          [
+            1,
+            "Clean up the sky first. Then we'll talk."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Rain is underrated by humans."
+          ],
+          [
+            1,
+            "Maybe. Good for the gardens, anyway."
+          ],
+          [
+            0,
+            "And for puddles. And mirrors. And the smell after."
+          ],
+          [
+            1,
+            "Alright, you've convinced me. A bit."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Humans should be proud. You did everything without gravity control."
+          ],
+          [
+            1,
+            "Feels like we did most things badly, honestly."
+          ],
+          [
+            0,
+            "Badly, slowly, with tea breaks. And it still stands. That is the miracle."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "A queue is the most civilised thing a species can make."
+          ],
+          [
+            1,
+            "A queue is where joy goes to die, {a}."
+          ],
+          [
+            0,
+            "Then why do humans make such beautiful ones?"
+          ],
+          [
+            1,
+            "Because we've got no choice."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Every town should have a little museum, even a tiny one."
+          ],
+          [
+            1,
+            "Ours is in the old station. Three rooms and a stuffed badger."
+          ],
+          [
+            0,
+            "Perfect. The badger is the most important room."
+          ]
+        ]
+      }
+    ],
+    "ambient": [
+      [
+        [
+          0,
+          "Good morning, {b}! Glorious day!"
+        ],
+        [
+          1,
+          "If you say so."
+        ]
+      ],
+      [
+        [
+          0,
+          "Smile! *click*"
+        ],
+        [
+          1,
+          "Oh, not again."
+        ]
+      ],
+      [
+        [
+          0,
+          "Did you see the quiz last night?"
+        ],
+        [
+          1,
+          "Fell asleep halfway."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is it going to rain, do you think?"
+        ],
+        [
+          1,
+          "Always does, eventually."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lovely hat, {b}."
+        ],
+        [
+          1,
+          "Thanks. Yours is... tall."
+        ]
+      ],
+      [
+        [
+          0,
+          "The bus is late. How very human of it."
+        ],
+        [
+          1,
+          "How very usual of it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hello, hello!"
+        ],
+        [
+          1,
+          "Hiya."
+        ]
+      ],
+      [
+        [
+          0,
+          "I have run out of film again."
+        ],
+        [
+          1,
+          "There's a shop on the corner."
+        ]
+      ],
+      [
+        [
+          0,
+          "What a beautiful bench this is."
+        ],
+        [
+          1,
+          "It's just a bench."
+        ]
+      ],
+      [
+        [
+          0,
+          "Have you eaten, {b}?"
+        ],
+        [
+          1,
+          "Not yet. You?"
+        ]
+      ],
+      [
+        [
+          0,
+          "The pigeons are very busy today."
+        ],
+        [
+          1,
+          "They're always busy."
+        ]
+      ],
+      [
+        [
+          0,
+          "Cheers, as you say!"
+        ],
+        [
+          1,
+          "Cheers."
+        ]
+      ],
+      [
+        [
+          0,
+          "Thirty-nine light years and I still cannot fold a map."
+        ],
+        [
+          1,
+          "Nobody can, mate."
+        ]
+      ],
+      [
+        [
+          0,
+          "The bakery smells wonderful today."
+        ],
+        [
+          1,
+          "It does every day."
+        ]
+      ],
+      [
+        [
+          0,
+          "Busy, busy, busy!"
+        ],
+        [
+          1,
+          "Tell me about it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Have you been to the museum?"
+        ],
+        [
+          1,
+          "Once, on a school trip."
+        ]
+      ],
+      [
+        [
+          0,
+          "Nice weather for ducks, as they say."
+        ],
+        [
+          1,
+          "That's the one."
+        ]
+      ],
+      [
+        [
+          0,
+          "May I photograph your dog?"
+        ],
+        [
+          1,
+          "Go on, he won't mind."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is this the way to the station?"
+        ],
+        [
+          1,
+          "Straight ahead."
+        ]
+      ],
+      [
+        [
+          0,
+          "I love your town, {b}."
+        ],
+        [
+          1,
+          "Glad somebody does."
+        ]
+      ],
+      [
+        [
+          0,
+          "The trams are so pretty here."
+        ],
+        [
+          1,
+          "Bit noisy, though."
+        ]
+      ],
+      [
+        [
+          0,
+          "Did you hear the news this morning?"
+        ],
+        [
+          1,
+          "Didn't bother. All bad anyway."
+        ]
+      ],
+      [
+        [
+          0,
+          "Look at that sky! So blue!"
+        ],
+        [
+          1,
+          "Won't last."
+        ]
+      ],
+      [
+        [
+          0,
+          "Excuse me, sorry, excuse me."
+        ],
+        [
+          1,
+          "You're fine."
+        ]
+      ],
+      [
+        [
+          0,
+          "Long queue today."
+        ],
+        [
+          1,
+          "Always is on a Friday."
+        ]
+      ],
+      [
+        [
+          0,
+          "I bought another postcard."
+        ],
+        [
+          1,
+          "How many is that now?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Your garden is very photogenic, {b}."
+        ],
+        [
+          1,
+          "It's mostly weeds."
+        ]
+      ],
+      [
+        [
+          0,
+          "The church bells are lovely."
+        ],
+        [
+          1,
+          "Not at seven on a Sunday."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is the café open yet?"
+        ],
+        [
+          1,
+          "In ten minutes."
+        ]
+      ],
+      [
+        [
+          0,
+          "What a fine {morning|afternoon|evening}!"
+        ],
+        [
+          1,
+          "Not bad at all."
+        ]
+      ],
+      [
+        [
+          0,
+          "I learned a new word today: 'knackered'."
+        ],
+        [
+          1,
+          "That's me, every day."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you like television, {b}?"
+        ],
+        [
+          1,
+          "Depends what's on."
+        ]
+      ],
+      [
+        [
+          0,
+          "I think I am lost again."
+        ],
+        [
+          1,
+          "Where are you trying to get to?"
+        ]
+      ],
+      [
+        [
+          0,
+          "The flowers in the square are blooming!"
+        ],
+        [
+          1,
+          "Council planted them last week."
+        ]
+      ],
+      [
+        [
+          0,
+          "How is the family, {b}?"
+        ],
+        [
+          1,
+          "Same as ever."
+        ]
+      ],
+      [
+        [
+          0,
+          "Cold today, isn't it?"
+        ],
+        [
+          1,
+          "Freezing."
+        ]
+      ],
+      [
+        [
+          0,
+          "Another wonderful day on Earth!"
+        ],
+        [
+          1,
+          "Same as yesterday, then."
+        ]
+      ],
+      [
+        [
+          0,
+          "Did the post come yet?"
+        ],
+        [
+          1,
+          "Not yet. He's always late."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your shoes are very shiny."
+        ],
+        [
+          1,
+          "Polished them this morning."
+        ]
+      ],
+      [
+        [
+          0,
+          "I tried a pasty! Delicious!"
+        ],
+        [
+          1,
+          "Steak or cheese?"
+        ]
+      ],
+      [
+        [
+          0,
+          "So many people out today."
+        ],
+        [
+          1,
+          "Market day."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is that a new coat, {b}?"
+        ],
+        [
+          1,
+          "Got it in the sale."
+        ]
+      ],
+      [
+        [
+          0,
+          "Goodnight, Earth! Goodnight, everyone!"
+        ],
+        [
+          1,
+          "Night."
+        ]
+      ],
+      [
+        [
+          0,
+          "I could watch this street all day."
+        ],
+        [
+          1,
+          "You usually do."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you know a good chip shop?"
+        ],
+        [
+          1,
+          "The one by the bridge."
+        ]
+      ],
+      [
+        [
+          0,
+          "The ice cream van is here!"
+        ],
+        [
+          1,
+          "In this weather?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Did you see the sunset yesterday?"
+        ],
+        [
+          1,
+          "Missed it. Was it good?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Mind if I sit here?"
+        ],
+        [
+          1,
+          "Help yourself."
+        ]
+      ],
+      [
+        [
+          0,
+          "One more photograph, please!"
+        ],
+        [
+          1,
+          "Fine. Last one."
+        ]
+      ],
+      [
+        [
+          0,
+          "How do you say 'delicious' here?"
+        ],
+        [
+          1,
+          "Just say 'lovely'. Works for everything."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is the river always this high?"
+        ],
+        [
+          1,
+          "Only after rain."
+        ]
+      ],
+      [
+        [
+          0,
+          "Happy {Monday|Tuesday|Thursday}, {b}!"
+        ],
+        [
+          1,
+          "Is it, though?"
+        ]
+      ],
+      [
+        [
+          0,
+          "The stars are out tonight."
+        ],
+        [
+          1,
+          "Clear sky. Frost tomorrow."
+        ]
+      ],
+      [
+        [
+          0,
+          "That was a very nice cup of tea."
+        ],
+        [
+          1,
+          "Best thing about the morning."
+        ]
+      ],
+      [
+        [
+          0,
+          "See you tomorrow, {b}!"
+        ],
+        [
+          1,
+          "See you."
+        ]
+      ]
+    ]
+  }
+}

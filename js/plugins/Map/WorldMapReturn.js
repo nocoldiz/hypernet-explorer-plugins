@@ -445,6 +445,26 @@
         return (mapData.meta && mapData.meta.Biome) || null;
     }
 
+    // The biome each hand-made map declared when it last loaded, so a building
+    // entered from one can still name the town it stands in once its own map
+    // has replaced $dataMap.
+    const _declaredBiomeByMap = {};
+
+    // True while the party is inside a ProceduralHouseSystem building whose
+    // door opens onto a village, burg or city. The procedural map keeps its
+    // square's biome on _procGenData while the party is indoors; a hand-made
+    // town answers from the record above.
+    function insideSettlementBuilding() {
+        const PHS = window.ProceduralHouseSystem;
+        const building = PHS && PHS.getCurrentBuilding ? PHS.getCurrentBuilding() : null;
+        if (!building) return false;
+        const procGenData = $gameSystem && $gameSystem._procGenData;
+        const outdoor = building.mapId === PROC_MAP_ID
+            ? (procGenData && procGenData.currentBiome)
+            : _declaredBiomeByMap[building.mapId];
+        return !!outdoor && isSettlementBiome(outdoor);
+    }
+
     // Everything that is not Earth. ProceduralMapBiomeGenerator owns this one
     // (it silences the alien vaults on the same rule); same fallback story.
     function isOffworldBiome(biomeName) {
@@ -7217,13 +7237,19 @@
         // declares a settlement biome of its own is still in the town: the
         // theme is its fallback music, and updateBiomeAudio is about to confirm
         // the very same track - cutting it here would restart it a frame later.
+        //
+        // A generated building (ProceduralHouseSystem) entered from a village
+        // or a city is still in the town too, so its theme plays on indoors.
         if ($gameMap.mapId() !== PROC_MAP_ID && !($dataMap && $dataMap.autoplayBgm) &&
-            !isSettlementBiome(declaredBiomeOf($dataMap))) {
+            !isSettlementBiome(declaredBiomeOf($dataMap)) && !insideSettlementBuilding()) {
             if (stopBiomeBgm()) {
                 console.log('[Scene_Map.onMapLoaded] Left the procedural map, stopped the biome BGM');  // i18n-ignore  console diagnostic
             }
         }
 
+        if ($gameMap.mapId() !== PROC_MAP_ID) {
+            _declaredBiomeByMap[$gameMap.mapId()] = declaredBiomeOf($dataMap);
+        }
         _lastLoadedMapId = $gameMap.mapId();
 
         // Update audio for non-proc maps with biome notes

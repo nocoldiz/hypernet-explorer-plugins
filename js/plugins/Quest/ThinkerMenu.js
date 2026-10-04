@@ -134,10 +134,12 @@
         // i18n-ignore-end
     }
 
-    // Check if item is uncraftable
+    // Check if item is uncraftable. Food never is, here: a <Recipe:> on a food
+    // item is a dish, cooked in the kitchen's Recipes tab (CookingSystem), and
+    // the bench neither assembles one nor takes one apart.
     function isUncraftable(item) {
         if (!item || !item.note) return false;
-        return /<Uncraftable>/i.test(item.note);
+        return /<Uncraftable>/i.test(item.note) || /<category:\s*Food>/i.test(item.note);
     }
 
     // The recipes a party already has on the first morning. A starter recipe is

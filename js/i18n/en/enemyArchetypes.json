@@ -153,6 +153,24 @@
         "brokenMsg": "Right Toes mangled!"
       }
     },
+    "nagukagoblin": {
+      "name": "Naguka Goblin"
+    },
+    "verdengoblin": {
+      "name": "Verden Goblin"
+    },
+    "elf": {
+      "name": "Elf"
+    },
+    "orc": {
+      "name": "Orc"
+    },
+    "tourist": {
+      "name": "Tourist"
+    },
+    "dargos": {
+      "name": "Dargos"
+    },
     "humanoid_roguelite": {
       "name": "Humanoid",
       "head": {
@@ -3551,6 +3569,117 @@
         "name": "Refuse Maw",
         "msg": "Refuse Maw smashed apart!",
         "brokenMsg": "Refuse Maw chipped!"
+      }
+    },
+    "severedhead": {
+      "name": "Severed Head",
+      "head": {
+        "name": "Head",
+        "msg": "Head severed!",
+        "brokenMsg": "Head broken!"
+      },
+      "brain": {
+        "name": "Brain",
+        "msg": "Brain severed!",
+        "brokenMsg": "Brain broken!"
+      },
+      "left_eye": {
+        "name": "Left Eye",
+        "msg": "Left Eye severed!",
+        "brokenMsg": "Left Eye broken!"
+      },
+      "right_eye": {
+        "name": "Right Eye",
+        "msg": "Right Eye severed!",
+        "brokenMsg": "Right Eye broken!"
+      },
+      "nose": {
+        "name": "Nose",
+        "msg": "Nose severed!",
+        "brokenMsg": "Nose broken!"
+      },
+      "left_ear": {
+        "name": "Left Ear",
+        "msg": "Left Ear severed!",
+        "brokenMsg": "Left Ear broken!"
+      },
+      "right_ear": {
+        "name": "Right Ear",
+        "msg": "Right Ear severed!",
+        "brokenMsg": "Right Ear broken!"
+      },
+      "mouth": {
+        "name": "Mouth",
+        "msg": "Mouth severed!",
+        "brokenMsg": "Mouth broken!"
+      },
+      "teeth": {
+        "name": "Teeth",
+        "msg": "Teeth severed!",
+        "brokenMsg": "Teeth broken!"
+      },
+      "neck_stump": {
+        "name": "Neck Stump",
+        "msg": "Neck Stump severed!",
+        "brokenMsg": "Neck Stump broken!"
+      },
+      "grafted_head": {
+        "name": "Extra Head",
+        "msg": "Extra Head severed!",
+        "brokenMsg": "Extra Head broken!"
+      }
+    },
+    "crawlinghand": {
+      "name": "Crawling Hand",
+      "palm": {
+        "name": "Palm",
+        "msg": "Palm severed!",
+        "brokenMsg": "Palm broken!"
+      },
+      "wrist_stump": {
+        "name": "Wrist Stump",
+        "msg": "Wrist Stump severed!",
+        "brokenMsg": "Wrist Stump broken!"
+      },
+      "thumb": {
+        "name": "Thumb",
+        "msg": "Thumb severed!",
+        "brokenMsg": "Thumb broken!"
+      },
+      "index_finger": {
+        "name": "Index Finger",
+        "msg": "Index Finger severed!",
+        "brokenMsg": "Index Finger broken!"
+      },
+      "middle_finger": {
+        "name": "Middle Finger",
+        "msg": "Middle Finger severed!",
+        "brokenMsg": "Middle Finger broken!"
+      },
+      "ring_finger": {
+        "name": "Ring Finger",
+        "msg": "Ring Finger severed!",
+        "brokenMsg": "Ring Finger broken!"
+      },
+      "little_finger": {
+        "name": "Little Finger",
+        "msg": "Little Finger severed!",
+        "brokenMsg": "Little Finger broken!"
+      },
+      "knuckles": {
+        "name": "Knuckles",
+        "msg": "Knuckles severed!",
+        "brokenMsg": "Knuckles broken!"
+      },
+      "nails": {
+        "name": "Nails",
+        "msg": "Nails severed!",
+        "brokenMsg": "Nails broken!"
+      },
+      "grafted_hand": {
+        "name": "Extra Hand",
+        "msg": "Extra Hand severed!",
+        "brokenMsg": "Extra Hand broken!"
       }
     }
   }

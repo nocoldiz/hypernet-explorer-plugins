@@ -473,6 +473,8 @@
     "sbJump": "Salto SB",
     "courseSetTo": "Rotta impostata verso {name}",
     "sbJumpTo": "Salto SB completato verso {name}",
+    "returnHome": "Torna a casa",
+    "returnHomeHint": "Spendi un pellet SB per tornare in orbita attorno alla Terra",
     "noPellets": "Nessun pellet di Schrödingerite rimasto",
     "alreadyThere": "Già a destinazione",
     "primaryStar": "Stella Primaria",

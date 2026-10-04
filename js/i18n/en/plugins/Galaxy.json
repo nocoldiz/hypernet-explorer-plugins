@@ -466,6 +466,8 @@
     "sbJump": "SB Jump",
     "courseSetTo": "Course set to {name}",
     "sbJumpTo": "SB Jumped to {name}",
+    "returnHome": "Return Home",
+    "returnHomeHint": "Spend one SB pellet to jump back to Earth orbit",
     "noPellets": "No Schrödingerite pellets remaining",
     "alreadyThere": "Already at destination",
     "primaryStar": "Primary Star",

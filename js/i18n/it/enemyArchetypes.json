@@ -153,6 +153,24 @@
       },
       "name": "Umanoide"
     },
+    "nagukagoblin": {
+      "name": "Goblin Naguka"
+    },
+    "verdengoblin": {
+      "name": "Goblin Verden"
+    },
+    "elf": {
+      "name": "Elfo"
+    },
+    "orc": {
+      "name": "Orco"
+    },
+    "tourist": {
+      "name": "Turista"
+    },
+    "dargos": {
+      "name": "Dargos"
+    },
     "humanoid_roguelite": {
       "name": "Humanoid",
       "head": {
@@ -3551,6 +3569,117 @@
         "name": "Fauci di Rifiuti",
         "msg": "Fauci di Rifiuti in frantumi!",
         "brokenMsg": "Fauci di Rifiuti con crepe!"
+      }
+    },
+    "severedhead": {
+      "name": "Testa Mozzata",
+      "head": {
+        "name": "Testa",
+        "msg": "Testa via di netto!",
+        "brokenMsg": "Testa fuori uso!"
+      },
+      "brain": {
+        "name": "Cervello",
+        "msg": "Cervello via di netto!",
+        "brokenMsg": "Cervello fuori uso!"
+      },
+      "left_eye": {
+        "name": "Occhio Sinistro",
+        "msg": "Occhio Sinistro via di netto!",
+        "brokenMsg": "Occhio Sinistro fuori uso!"
+      },
+      "right_eye": {
+        "name": "Occhio Destro",
+        "msg": "Occhio Destro via di netto!",
+        "brokenMsg": "Occhio Destro fuori uso!"
+      },
+      "nose": {
+        "name": "Naso",
+        "msg": "Naso via di netto!",
+        "brokenMsg": "Naso fuori uso!"
+      },
+      "left_ear": {
+        "name": "Orecchio Sinistro",
+        "msg": "Orecchio Sinistro via di netto!",
+        "brokenMsg": "Orecchio Sinistro fuori uso!"
+      },
+      "right_ear": {
+        "name": "Orecchio Destro",
+        "msg": "Orecchio Destro via di netto!",
+        "brokenMsg": "Orecchio Destro fuori uso!"
+      },
+      "mouth": {
+        "name": "Bocca",
+        "msg": "Bocca via di netto!",
+        "brokenMsg": "Bocca fuori uso!"
+      },
+      "teeth": {
+        "name": "Denti",
+        "msg": "Denti via di netto!",
+        "brokenMsg": "Denti fuori uso!"
+      },
+      "neck_stump": {
+        "name": "Moncone del Collo",
+        "msg": "Moncone del Collo via di netto!",
+        "brokenMsg": "Moncone del Collo fuori uso!"
+      },
+      "grafted_head": {
+        "name": "Testa in Più",
+        "msg": "Testa in Più via di netto!",
+        "brokenMsg": "Testa in Più fuori uso!"
+      }
+    },
+    "crawlinghand": {
+      "name": "Mano Strisciante",
+      "palm": {
+        "name": "Palmo",
+        "msg": "Palmo via di netto!",
+        "brokenMsg": "Palmo fuori uso!"
+      },
+      "wrist_stump": {
+        "name": "Moncone del Polso",
+        "msg": "Moncone del Polso via di netto!",
+        "brokenMsg": "Moncone del Polso fuori uso!"
+      },
+      "thumb": {
+        "name": "Pollice",
+        "msg": "Pollice via di netto!",
+        "brokenMsg": "Pollice fuori uso!"
+      },
+      "index_finger": {
+        "name": "Indice",
+        "msg": "Indice via di netto!",
+        "brokenMsg": "Indice fuori uso!"
+      },
+      "middle_finger": {
+        "name": "Medio",
+        "msg": "Medio via di netto!",
+        "brokenMsg": "Medio fuori uso!"
+      },
+      "ring_finger": {
+        "name": "Anulare",
+        "msg": "Anulare via di netto!",
+        "brokenMsg": "Anulare fuori uso!"
+      },
+      "little_finger": {
+        "name": "Mignolo",
+        "msg": "Mignolo via di netto!",
+        "brokenMsg": "Mignolo fuori uso!"
+      },
+      "knuckles": {
+        "name": "Nocche",
+        "msg": "Nocche via di netto!",
+        "brokenMsg": "Nocche fuori uso!"
+      },
+      "nails": {
+        "name": "Unghie",
+        "msg": "Unghie via di netto!",
+        "brokenMsg": "Unghie fuori uso!"
+      },
+      "grafted_hand": {
+        "name": "Mano in Più",
+        "msg": "Mano in Più via di netto!",
+        "brokenMsg": "Mano in Più fuori uso!"
       }
     }
   }

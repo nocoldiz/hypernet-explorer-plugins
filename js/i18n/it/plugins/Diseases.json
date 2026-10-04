@@ -1493,5 +1493,27 @@
     "void": "Unguento del vuoto",
     "panacea": "Panacea",
     "placebo": "Omeopatia"
+  },
+  "allergy": {
+    "allergen": {
+      "peanut": "arachidi",
+      "treenut": "frutta a guscio",
+      "shellfish": "crostacei",
+      "fish": "pesce",
+      "dairy": "latticini",
+      "egg": "uova",
+      "wheat": "frumento",
+      "soy": "soia",
+      "pollen": "polline",
+      "penicillin": "penicillina"
+    },
+    "toast": {
+      "mild": "{actor} reagisce a {source}: orticaria e prurito.",
+      "mildVomit": "{actor} reagisce a {source} e lo vomita.",
+      "severe": "{actor} va in shock anafilattico dopo {source}! Serve subito un antistaminico o una pozione di cura.",
+      "held": "L'antistaminico di {actor} blocca una reazione a {source}.",
+      "guard": "Le allergie di {actor} sono tenute a bada per {hours} ore.",
+      "pollen": "Polline nell'aria: {actor} ha un attacco di febbre da fieno."
+    }
   }
 }

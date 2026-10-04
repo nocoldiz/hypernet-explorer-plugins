@@ -660,6 +660,15 @@ body {
 #party-hud .phud-fuel .phud-fill {
     background: linear-gradient(to right, #3d1466, #a05ce0);
 }
+/* The summon's HYPER gauge, under its MP bar: blue while it charges, gold and
+   breathing once it is full and the ultimate is waiting to fire. */
+#party-hud .phud-hyper .phud-fill {
+    background: linear-gradient(to right, #2f7bd6, #63e2ff);
+}
+#party-hud .phud-hyper.phud-hyper-ready .phud-fill {
+    background: linear-gradient(to right, #ffe66d, #ff8a3d);
+    animation: phud-pulse 0.9s ease-in-out infinite;
+}
 #party-hud .phud-bar-low .phud-fill {
     background: linear-gradient(to right, #7a4a10, #e0a63a);
 }

@@ -179,6 +179,9 @@
   "faceSurgery": "Chirurgia del viso",
   "faceSurgeryMeta": "Modifica il busto e l'aspetto del ritratto",
   "faceSurgerySuccess": "Chirurgia del viso completata con successo.",
+  "geneSplicing": "Ingegneria genetica",
+  "geneSplicingMeta": "Aggiungi o rimuovi tratti genetici compatibili con questo corpo",
+  "geneSplicingPrice": "100 € per punto tratto",
   "tooExpensive": "Non hai abbastanza denaro per questo intervento.",
  "remote": {
   "title": "Remote Bistury",

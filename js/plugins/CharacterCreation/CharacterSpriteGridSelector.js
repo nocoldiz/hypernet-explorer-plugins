@@ -155,7 +155,7 @@
     // second argument every match is handed) instead of an archetype that no
     // longer exists. A secondary archetype counts as much as the primary: a
     // sheet spliced with a beast belongs on that beast's rail too.
-    { id: "humanoid", label: spriteTabLabel("humanoid"), match: (e) => !e.Archetype || e.Archetype === "Humanoid" },
+    { id: "humanoid", label: spriteTabLabel("humanoid"), match: (e) => !e.Archetype || (window.HealthCore && window.HealthCore.isHumanoidBody ? window.HealthCore.isHumanoidBody(e.Archetype) : e.Archetype === "Humanoid") }, // i18n-ignore: Archetypes.json key
     { id: "elven", label: spriteTabLabel("elven"), match: (e, key) => /elven|elf/i.test(key || "") },
     { id: "goblin", label: spriteTabLabel("goblin"), match: (e, key) => /goblin/i.test(key || "") },
     { id: "dwarves", label: spriteTabLabel("dwarves"), match: (e, key) => /dwarf|dwarven/i.test(key || "") || archetypesOf(e).includes("Gnome") },

@@ -4,6 +4,8 @@
   "lineSnapped": "Lenza spezzata",
   "nothingBiting": "Non abbocca niente",
   "tooSlow": "Troppo lento",
+  "freeCamOn": "Camera libera",
+  "freeCamOff": "Camera del pescatore",
   "something": "Qualcosa",
   "hint": {
     "loading": "Carico il lago...",

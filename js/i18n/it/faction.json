@@ -540,65 +540,6 @@
         }
       }
     },
-    "verden": {
-      "name": "Verden",
-      "description": "Goblin delle foreste che conducono una guerriglia contro l'espansione dell'industria pesante.",
-      "troops": {
-        "forestscout": {
-          "name": "Esploratore della Foresta"
-        },
-        "saplingdefender": {
-          "name": "Difensore Alberello"
-        },
-        "guerillafighter": {
-          "name": "Combattente Guerrigliero"
-        },
-        "treeambusher": {
-          "name": "Imboscatore degli Alberi"
-        },
-        "natureswrath": {
-          "name": "Ira della Natura"
-        },
-        "forestchampion": {
-          "name": "Campione della Foresta"
-        },
-        "scientist": {
-          "name": "Chimico di Verden"
-        }
-      },
-      "leaders": {
-        "foresteldersylvara": {
-          "name": "Forest Elder Sylvara"
-        },
-        "groveguardianthorne": {
-          "name": "Grove Guardian Thorne"
-        },
-        "leafsageverdant": {
-          "name": "Leaf Sage Verdant"
-        },
-        "treekeeperfauna": {
-          "name": "Tree Keeper Fauna"
-        },
-        "woodlandchampionash": {
-          "name": "Woodland Champion Ash"
-        },
-        "natureoraclemoss": {
-          "name": "Nature Oracle Moss"
-        },
-        "branchwarriorrowan": {
-          "name": "Branch Warrior Rowan"
-        },
-        "vinemasterflora": {
-          "name": "Vine Master Flora"
-        },
-        "rootdefenderoakley": {
-          "name": "Root Defender Oakley"
-        },
-        "wildwoodsageivy": {
-          "name": "Wildwood Sage Ivy"
-        }
-      }
-    },
     "truckerssociety": {
       "name": "Società dei Camionisti",
       "description": "Le anime coraggiose che trasportano merci attraverso le terre desolate. Sono la linfa vitale dell'economia e non obbediscono a nessun codice della strada.",
@@ -1295,50 +1236,6 @@
         },
         "sovereignofself": {
           "name": "Sovereign of Self"
-        }
-      }
-    },
-    "goblincollectiveunconsciuous": {
-      "name": "Inconscio Collettivo Goblin",
-      "description": "Il legame psichico che connette tutte le menti goblin, conservando la loro caotica saggezza ancestrale.",
-      "troops": {
-        "psychicgoblin": {
-          "name": "Goblin Psichico"
-        },
-        "mindstriker": {
-          "name": "Colpitore Mentale"
-        },
-        "hivemindwarrior": {
-          "name": "Guerriero Mente Alveare"
-        },
-        "psychicslinger": {
-          "name": "Lanciatore Psichico"
-        },
-        "collectiveconduit": {
-          "name": "Condotto Collettivo"
-        },
-        "telepathicsniper": {
-          "name": "Cecchino Telepatico"
-        },
-        "ancestralecho": {
-          "name": "Eco Ancestrale"
-        },
-        "scientist": {
-          "name": "Armeggione Goblin"
-        }
-      },
-      "leaders": {
-        "hivealphagriknak": {
-          "name": "Hive Alpha Griknak"
-        },
-        "psychicprimeskizzik": {
-          "name": "Psychic Prime Skizzik"
-        },
-        "collectiveonegribblik": {
-          "name": "Collective One Gribblik"
-        },
-        "mindunityzogwort": {
-          "name": "Mind-Unity Zogwort"
         }
       }
     },

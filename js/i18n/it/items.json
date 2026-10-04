@@ -7374,5 +7374,89 @@
   "2069": {
     "name": "Ricombinatore genico portatile",
     "description": "Un ricombinatore genico che impianta un embrione\numanoide di tua invenzione in un membro del gruppo."
+  },
+  "2070": {
+    "name": "Farina",
+    "description": "Un sacco di carta di farina di frumento."
+  },
+  "2071": {
+    "name": "Burro",
+    "description": "Un panetto di burro zangolato in carta cerata."
+  },
+  "2072": {
+    "name": "Sacchetto di riso",
+    "description": "Un sacchetto di tela di riso bianco."
+  },
+  "2073": {
+    "name": "Pasta secca",
+    "description": "Un fascio di pasta all'uovo essiccata."
+  },
+  "2074": {
+    "name": "Olio d'oliva",
+    "description": "Una bottiglia di olio d'oliva\nspremuto a freddo."
+  },
+  "2075": {
+    "name": "Sale marino",
+    "description": "Un barattolo di sale marino grosso."
+  },
+  "2076": {
+    "name": "Zucchero",
+    "description": "Un sacchetto di carta di zucchero bianco."
+  },
+  "2077": {
+    "name": "Pesce fresco",
+    "description": "Un pesce intero, eviscerato e sotto ghiaccio."
+  },
+  "2078": {
+    "name": "Gamberi crudi",
+    "description": "Un cartoccio di gamberi crudi."
+  },
+  "2079": {
+    "name": "Arachidi",
+    "description": "Un sacchetto di arachidi tostate sgusciate."
+  },
+  "2080": {
+    "name": "Mandorle",
+    "description": "Una manciata di mandorle sgusciate."
+  },
+  "2081": {
+    "name": "Tofu",
+    "description": "Un blocco pressato di cagliata di soia."
+  },
+  "2082": {
+    "name": "Salsa di soia",
+    "description": "Una bottiglietta di salsa di soia scura."
+  },
+  "2083": {
+    "name": "Salsa di pomodoro",
+    "description": "Un barattolo di pomodori ridotti nell'olio."
+  },
+  "2084": {
+    "name": "Panna fresca",
+    "description": "Un cartone di panna fresca densa."
+  },
+  "2085": {
+    "name": "Mozzarella",
+    "description": "Una mozzarella fresca nel suo siero."
+  },
+  "2086": {
+    "name": "Chicchi di caffè",
+    "description": "Un sacchetto di chicchi\ndi caffè tostati scuri."
+  },
+  "2087": {
+    "name": "Menta fresca",
+    "description": "Un mazzetto di foglie di menta fresca."
+  },
+  "2088": {
+    "name": "Limone",
+    "description": "Un limone brillante e aspro."
+  },
+  "2089": {
+    "name": "Tagliatelle di riso",
+    "description": "Un pacchetto di tagliatelle di riso essiccate."
+  },
+  "2090": {
+    "name": "Piatto rovinato",
+    "description": "Un piatto riuscito male in padella.\nMangiarlo fa venire la nausea."
   }
 }

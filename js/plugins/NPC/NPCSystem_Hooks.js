@@ -1097,7 +1097,7 @@
     if (window.MapBattleMode && window.MapBattleMode.isActive()) {
       $gameSystem.npcControllers?.forEach(c => c.updateTacticalStep?.());
     } else if (drivesMap) {
-      $gameSystem.npcControllers?.forEach(c => c.update());
+      $gameSystem.npcControllers?.forEach(c => c && typeof c.update === "function" && c.update());
       // Somebody who has reached their door has gone through it.
       SpawnManager.updateCommutes();
       // Visitors coming into and leaving the building, once a game minute.

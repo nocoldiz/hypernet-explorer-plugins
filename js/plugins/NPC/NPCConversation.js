@@ -199,6 +199,223 @@
   }
 
   // ---------------------------------------------------------------------------
+  // II.1b SPECIES VOICES
+  // ---------------------------------------------------------------------------
+  // Some peoples talk their own way whatever their personality: the Naguka,
+  // the goblins who came up the Kola shaft, shout in a patois like children;
+  // their Verden cousins speak a careful, faintly antique MarkovSpeak. Which
+  // voice a body has is data: an archetype names it in Archetypes.json
+  // (`voice`), and NPCCreature.speciesVoiceOf answers it for an NPC profile or
+  // a party actor alike. A body spliced from two archetypes speaks with its
+  // PRIMARY half's voice, except that an archetype marked `voiceWins` (the
+  // Naguka) is heard over any other half.
+  //
+  // Each voice has a full bank of its own, js/i18n/<lang>/conversations/
+  // Conv<Voice>.json (ConvNaguka, ConvVerden, ...):
+  //
+  //   speech   the patois rules (words, whole lines, suffixes) run over any
+  //            line the speaker is handed; a voice with none keeps the words
+  //   voice    openers and closers put on a line now and then
+  //   thought  their own thoughts by situation (NagukaThoughts, II.5)
+  //   script   two-person scripts by tone, the speaker of the voice as 0
+  //
+  // and PartyBanter.json holds a pool keyed by the voice id in every
+  // personality-keyed section, for a party member of that people.
+  //
+  // A voice is used one of two ways (Archetypes.json `voiceMode`, read by
+  // NPCCreature.speciesVoiceModeOf): "own", where their bank takes over from
+  // the ordinary lines (the Naguka, the Orcs, the Verden, the aliens), or
+  // "blend", where they keep the ordinary lines and their people's are mixed
+  // in among them, less often (the Elves, the Dwarves, the Gnomes).
+  //
+  // render() never voices a line twice: one with a patois is skipped once it
+  // has no lower-case letter left in it, and an opener or closer is only ever
+  // added to a line on its first pass (the line is remembered for a while).
+  const SPECIES_VOICE_CHANCE = { own: 0.35, blend: 0.2 };
+  const SPECIES_SCRIPT_CHANCE = { own: 0.6, blend: 0.25 };
+  const SPECIES_SPOKEN_MEMORY = 96;
+  // {token}, %1, \V[63], \G, <br>, &amp;: never re-cased, never reworded.
+  const SPEECH_TOKEN_RE = /\{[^{}]*\}|%\d+|\\[A-Za-z]+(?:\[[^\]]*\])?|\\[.|!><^$]|<[^>]+>|&[a-zA-Z]+;/g;
+  const SPEECH_WORD_RE = /[\p{L}']+/gu;
+  const SPEECH_LOWER_RE = /\p{Ll}/u;
+  const SPEECH_MASK_RE = /(\d+)/g;
+
+  const SpeciesVoice = {
+    _rules: new Map(),
+    _rulesLang: null,
+    _spoken: [],
+
+    // "ConvNaguka" for "naguka".
+    bankKey(id) {
+      const s = String(id || '');
+      return 'Conv' + s.charAt(0).toUpperCase() + s.slice(1);
+    },
+
+    bank(id) {
+      if (!id || !bank) return {};
+      return bank(this.bankKey(id)) || {};
+    },
+
+    // "own" or "blend" (see above).
+    mode(id) {
+      const NC = window.NPCCreature;
+      return (NC && NC.speciesVoiceModeOf && NC.speciesVoiceModeOf(id)) || 'own';
+    },
+
+    // The voice of whoever is speaking (a society profile, a party actor or a
+    // name), or null for somebody with none. A party member's society profile
+    // does not carry their body, the actor does, so a profile is asked about
+    // the party member of that name as well.
+    voiceOf(source) {
+      const NC = window.NPCCreature;
+      if (!source || !NC || typeof NC.speciesVoiceOf !== 'function') return null;
+      if (typeof source === 'string') {
+        return NC.speciesVoiceOf(_getProfile(source)) || NC.speciesVoiceOf(this._partyActorNamed(source));
+      }
+      if (typeof source.actorId === 'function') return NC.speciesVoiceOf(source);
+      const member = source._eventName ? this._partyActorNamed(source._eventName) : null;
+      return (member && NC.speciesVoiceOf(member)) || NC.speciesVoiceOf(source);
+    },
+
+    _partyActorNamed(name) {
+      if (!name || typeof $gameParty === 'undefined' || !$gameParty?.members) return null;
+      try {
+        return $gameParty.members().find((a) => a && a.name && a.name() === name) || null;
+      } catch (_) {
+        return null;
+      }
+    },
+
+    // A voice's patois table in the language being played, compiled once per
+    // language switch. Null for a voice that keeps the words as they are.
+    rules(id) {
+      const lang = (typeof T !== 'undefined' && T.language) ? T.language() : 'en';
+      if (this._rulesLang !== lang) { this._rules.clear(); this._rulesLang = lang; }
+      if (this._rules.has(id)) return this._rules.get(id);
+      const raw = this.bank(id).speech;
+      let compiled = null;
+      if (raw && typeof raw === 'object') {
+        const upperKeys = (obj) => {
+          const out = Object.create(null);
+          for (const k of Object.keys(obj || {})) out[String(k).toUpperCase()] = String(obj[k]);
+          return out;
+        };
+        compiled = {
+          upper: raw.upper !== false,
+          words: upperKeys(raw.words),
+          whole: upperKeys(raw.whole),
+          suffixes: (Array.isArray(raw.suffixes) ? raw.suffixes : [])
+            .filter((pair) => Array.isArray(pair) && pair.length === 2)
+            .map(([from, to]) => [String(from).toUpperCase(), String(to)]),
+          minStem: Number(raw.minStem) || 3,
+        };
+      }
+      this._rules.set(id, compiled);
+      return compiled;
+    },
+
+    // A voice's patois applied to one line. Placeholders are masked first and
+    // put back byte-identical afterwards. A line already in an all-capitals
+    // patois (no lower-case letter left) is handed back as it came.
+    transform(text, id) {
+      const rules = this.rules(id);
+      if (!rules || typeof text !== 'string') return text;
+      if (rules.upper && !SPEECH_LOWER_RE.test(text)) return text;
+      const lead = (text.match(/^\s+/) || [''])[0];
+      const tail = (text.match(/\s+$/) || [''])[0];
+      const core = text.slice(lead.length, text.length - tail.length);
+      if (!core) return text;
+      const bare = core.toUpperCase().replace(/[.!?]+$/, '');
+      if (rules.whole[bare] !== undefined) return lead + rules.whole[bare] + tail;
+
+      const store = [];
+      const masked = core.replace(SPEECH_TOKEN_RE, (m) => {
+        store.push(m);
+        return '' + (store.length - 1) + '';
+      });
+      const swap = (word) => {
+        const key = word.toUpperCase();
+        if (rules.words[key] !== undefined) return rules.words[key];
+        for (const [from, to] of rules.suffixes) {
+          if (key.length - from.length >= rules.minStem && key.endsWith(from)) {
+            return key.slice(0, key.length - from.length) + to;
+          }
+        }
+        return rules.upper ? key : word;
+      };
+      let out = (rules.upper ? masked.toUpperCase() : masked).replace(SPEECH_WORD_RE, swap);
+      out = out.replace(/[ \t]{2,}/g, ' ').replace(/\s+([,.!?;:])/g, '$1').replace(/^[ ,;:]+/, '').trim();
+      out = out.replace(SPEECH_MASK_RE, (_, i) => store[Number(i)]);
+      return lead + (out || core) + tail;
+    },
+
+    _remember(line) {
+      this._spoken.push(line);
+      if (this._spoken.length > SPECIES_SPOKEN_MEMORY) this._spoken.shift();
+      return line;
+    },
+
+    // One line as `speaker` would say it: unchanged for anybody with no
+    // species voice, in their people's words (and now and then with one of
+    // their openers or closers) for anybody with one.
+    render(text, speaker) {
+      if (text === null || text === undefined || text === '') return text;
+      const line = String(text);
+      if (this._spoken.includes(line)) return text;
+      const id = this.voiceOf(speaker);
+      if (!id) return text;
+      let out = this.transform(line, id);
+      if (out.startsWith('*')) return this._remember(out);
+      const voice = this.bank(id).voice;
+      if (out === line && this.rules(id)?.upper) return this._remember(out);
+      if (voice && Math.random() < (SPECIES_VOICE_CHANCE[this.mode(id)] ?? SPECIES_VOICE_CHANCE.own)) {
+        const opener = Math.random() < 0.5;
+        const list = opener ? voice.openers : voice.closers;
+        if (Array.isArray(list) && list.length) {
+          const extra = vary(_pickFrom(list), null);
+          out = opener ? `${extra} ${out}` : `${out} ${extra}`;
+        }
+      }
+      return this._remember(out);
+    },
+
+    // A two-person script out of a voice's bank. The bank writes the speaker
+    // of that voice as 0; when they are the OTHER participant, the turns and
+    // the {a}/{b} names are swapped so the right mouth speaks each line. Null
+    // when the bank has none of this kind.
+    script(id, kind, ownIsSecond) {
+      const pool = this.bank(id).script?.[kind];
+      if (!Array.isArray(pool) || !pool.length) return null;
+      const entry = _pickFrom(pool);
+      const lines = Array.isArray(entry) ? entry : entry?.lines;
+      if (!Array.isArray(lines)) return null;
+      const swap = (t) => String(t).replace(/\{([ab])\}/g, (_, k) => (k === 'a' ? '{b}' : '{a}'));
+      const turned = ownIsSecond ? lines.map(([who, t]) => [1 - who, swap(t)]) : lines;
+      return Array.isArray(entry) ? { lines: turned } : { lines: turned, agreement: !!entry.agreement };
+    },
+
+    // Whether this exchange is told out of a species bank: one of the two has
+    // a voice and the coin falls that way (less often for a blend voice).
+    // Answers null, or { id, second } with `second` true when it is the
+    // second participant's voice.
+    scriptSide(profA, profB, aName, bName) {
+      const a = this.voiceOf(profA || aName);
+      const b = this.voiceOf(profB || bName);
+      if (!a && !b) return null;
+      const side = (a && b) ? (Math.random() < 0.5 ? { id: a, second: false } : { id: b, second: true })
+        : a ? { id: a, second: false } : { id: b, second: true };
+      const chance = SPECIES_SCRIPT_CHANCE[this.mode(side.id)] ?? SPECIES_SCRIPT_CHANCE.own;
+      return Math.random() < chance ? side : null;
+    },
+
+    // A whole script of this kind out of the bank of one of the pair, or null.
+    scriptFor(kind, profA, profB, aName, bName) {
+      const side = this.scriptSide(profA, profB, aName, bName);
+      return side ? this.script(side.id, kind, side.second) : null;
+    },
+  };
+
+  // ---------------------------------------------------------------------------
   // II.2 CONVERSATION LOG (persisted to <world>/conversations.json)
   // ---------------------------------------------------------------------------
   // $gameSystem._npcConversations is a WorldManager prototype accessor backed
@@ -339,11 +556,18 @@
     // pundit: x1 normally, up to x4 in the last month and x6 on election week.
     const electionWeight = ElectionClock.weightNow(profA);
     debateChance = Math.min(0.6, debateChance * electionWeight);
+    // One of the pair with a species voice tells it out of their own bank
+    // more often than not (II.1b).
+    const side = SpeciesVoice.scriptSide(profA, profB, aName, bName);
     if (grownUps && Math.random() < debateChance) {
+      const own = side ? SpeciesVoice.script(side.id, 'debate', side.second) : null;
+      if (own) return { kind: 'debate', lines: own.lines, agreement: own.agreement, frame: 'politics' };
       const debate = _pickFrom(DEBATE_SCRIPTS());
       return { kind: 'debate', lines: debate.lines, agreement: debate.agreement, frame: 'politics' };
     }
     const tone = _pickTone(profA, profB, aName, bName);
+    const own = side ? SpeciesVoice.script(side.id, tone, side.second) : null;
+    if (own) return { kind: tone, lines: own.lines, agreement: tone === 'positive' };
     const pool = tone === 'positive' ? POSITIVE_SCRIPTS()
                : tone === 'negative' ? NEGATIVE_SCRIPTS() : NEUTRAL_SCRIPTS();
     return { kind: tone, lines: _pickFrom(pool), agreement: tone === 'positive' };
@@ -706,6 +930,10 @@
       // A topic from their lives when one is pressing (II.8), small talk otherwise.
       let lines = null;
       try { lines = LifeTalk.pickAmbient(_getProfile(a.eventName), _getProfile(b.eventName), a.eventName, b.eventName); } catch (_) { lines = null; }
+      if (!lines) {
+        lines = SpeciesVoice.scriptFor('ambient', _getProfile(a.eventName), _getProfile(b.eventName),
+          a.eventName, b.eventName)?.lines || null;
+      }
 
       this._active.push({
         kind: 'ambient', agreement: true,
@@ -791,6 +1019,9 @@
         a.turnToward?.(b.event);
         b.turnToward?.(a.event);
       }
+      // A species voice says it their own way (II.1b), and the log keeps what
+      // was said.
+      text = SpeciesVoice.render(text, _getProfile(speakerCtrl.eventName) || speakerCtrl.eventName);
       window.NPCSim?.emit?.('npc:thought', { name: speakerCtrl.eventName, thought: text });
       convo.spoken.push({ speaker: speakerCtrl.eventName, text });
 
@@ -1014,7 +1245,7 @@
   window.NPCConversation = { _internal: { _late: [] } };
   Object.assign(window.NPCConversation._internal, {
     _buildScript, _getProfile, _personalityNameOf, _personalityOf, _pickFrom, _resolveLine,
-    applyVoice, ConversationLog, ConversationManager, isTacticalFight, PoliticsProvider, vary,
+    applyVoice, ConversationLog, ConversationManager, isTacticalFight, PoliticsProvider, SpeciesVoice, vary,
     VOICE_CHANCE_DIALOGUE, WorldProvider,
   });
 

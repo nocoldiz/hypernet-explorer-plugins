@@ -294,7 +294,12 @@
       // And so does what the drink or the dose actually does to them: the same
       // tag says how much of it went down (window.Intoxication, TimeDateSystem).
       if (window.Intoxication) window.Intoxication.onConsume(actor, item);
-      const restores = this.getNeedRestores(item);
+      // And what it sets off: an allergen goes in, an antihistamine holds it
+      // off (window.Allergy, Health_DiseaseSystem). A meal thrown back up
+      // feeds nobody.
+      const allergy = window.Allergy && actor ? window.Allergy.onConsume(actor, item) : null;
+      let restores = this.getNeedRestores(item);
+      if (allergy && allergy.vomit) restores = restores.filter((r) => r.key !== "hunger");
       if (!restores.length || !actor) return [];
       const isLeaderActor = actor.actorId && actor.actorId() === 1;
       const profile = (!isLeaderActor && window.NPCSocietyRegistry && window.NPCSocietyRegistry.getProfile)
@@ -436,11 +441,12 @@
 
     /**
      * True when using this item is worthwhile on its own terms, with no HP/MP
-     * or state effect to register a hit: it replenishes a need or feeds a
-     * craving.
+     * or state effect to register a hit: it replenishes a need, feeds a
+     * craving or holds allergies off.
      */
     satisfiesNeed: function (item) {
-      return this.getNeedRestores(item).length > 0 || this.getAddictionRelief(item).length > 0;
+      return this.getNeedRestores(item).length > 0 || this.getAddictionRelief(item).length > 0 ||
+        !!(window.Allergy && window.Allergy.guardHoursOf(item) > 0);
     },
 
     /**

@@ -418,5 +418,26 @@
     "message2": "%1 ha una commozione cerebrale!",
     "message3": "%1 ha ancora la testa che rimbomba...",
     "message4": "%1 riprende lucidità."
+  },
+  "61": {
+    "name": "Reazione Allergica",
+    "message1": "%1 si copre di orticaria!",
+    "message2": "%1 si copre di orticaria!",
+    "message3": "",
+    "message4": "La reazione di %1 si placa."
+  },
+  "62": {
+    "name": "Anafilassi",
+    "message1": "La gola di %1 si sta chiudendo!",
+    "message2": "La gola di %1 si sta chiudendo!",
+    "message3": "",
+    "message4": "%1 torna a respirare."
+  },
+  "63": {
+    "name": "Febbre da Fieno",
+    "message1": "%1 comincia a starnutire!",
+    "message2": "%1 comincia a starnutire!",
+    "message3": "",
+    "message4": "%1 smette di starnutire."
   }
 }

@@ -2838,6 +2838,12 @@ var WeaponSystemProcedural = {
    * lift it by a share of its drawn height to keep the pommel in view.
    */
   anchorOffsetFor(weapon, screenHeight) {
+    // A mirrored left hand (mirroredWeaponFor) sits where its right hand
+    // would, reflected: the same nudge, toward its own edge of the screen.
+    if (weapon && weapon.mirrorOf) {
+      const right = this.anchorOffsetFor(weapon.mirrorOf, screenHeight);
+      return { x: -right.x, y: right.y };
+    }
     const screenH = screenHeight || ((typeof Graphics !== 'undefined' && Graphics.height) ? Graphics.height : 624);
     // A weapon that is aimed is carried up toward the line of sight rather than
     // resting low like a blade, but it still hangs off the bottom right corner
@@ -6334,6 +6340,52 @@ var WeaponSystemProcedural = {
   },
 
   /**
+   * The left hand of an archetype that has only a right one built: the same
+   * stand-in weapon, flagged to be drawn mirrored (mirrorModel). Same id, so
+   * the model cache hands it the right hand's build; one object per weapon,
+   * so a held sprite compares equal frame to frame and is never rebuilt.
+   */
+  mirroredWeaponFor(weapon) {
+    if (!weapon) return null;
+    if (weapon.mirrorOf) return weapon;
+    if (!this._mirroredWeapons) this._mirroredWeapons = new Map();
+    let left = this._mirroredWeapons.get(weapon);
+    if (!left) {
+      left = Object.assign({}, weapon, { mirrorOf: weapon });
+      this._mirroredWeapons.set(weapon, left);
+    }
+    return left;
+  },
+
+  /**
+   * Whether an empty hand is a built archetype hand that wants its mirror on
+   * the other side: anything unarmed that is not the authored fists rig, which
+   * is already a pair.
+   */
+  wantsMirroredOffhand(weapon) {
+    return !!(weapon && weapon.unarmedArchetype && !weapon.mirrorOf && !this.rigSpecFor(weapon));
+  },
+
+  /**
+   * Turns a right-hand model into a left one, in place, by reflecting it
+   * through its own vertical plane. The model's own transform is left for the
+   * sprite to pose; the reflection sits on a group inside it (three flips the
+   * winding of a negatively scaled mesh by itself), and the idle tilt is
+   * mirrored with it so the hand leans in toward the middle of the screen
+   * like its partner does.
+   */
+  mirrorModel(model, baseRotation) {
+    if (!model || !window.THREE) return baseRotation;
+    const flip = new THREE.Group();
+    flip.scale.x = -1;
+    flip.userData.mirror = true;
+    while (model.children.length) flip.add(model.children[0]);
+    model.add(flip);
+    const r = baseRotation || { x: 0, y: 0, z: 0 };
+    return { x: r.x, y: -r.y, z: -r.z };
+  },
+
+  /**
    * A shield is an off-hand armour, and hands hold weapons and shields alike
    * (ItemSystem/ItemSystemEquipment.js), so one has to be able to appear in
    * frame beside a sword. Wrapping it as a weapon is all it takes: the cache,
@@ -6398,7 +6450,22 @@ var WeaponSystemProcedural = {
   // fist, so a missing model costs a look and never a crash.
   UNARMED_RIG: {
     file: 'fists_2025__first_person_animations.glb',
-    archetypes: ['Humanoid'],
+    // Humanoids and the peoples built like them (goblins, elves, dwarves,
+    // orcs). Every other archetype keeps its own built hand, drawn as a pair:
+    // the right one and its mirror on the left (mirroredWeaponFor).
+    archetypes: ['Humanoid', 'NagukaGoblin', 'VerdenGoblin', 'Elf', 'Dwarf', 'Orc'],
+    // The same pair of arms in each people's own skin: a multiplier laid over
+    // the rig's skin texture (tintRig), so the pores and creases still show
+    // through. A channel over 1 pushes the colour past the texture's own,
+    // which is what makes the Naguka green vivid rather than muddy. An
+    // archetype not listed wears the rig as authored.
+    tints: {
+      NagukaGoblin: [0.45, 1.35, 0.30],   // vivid green
+      VerdenGoblin: [0.40, 1.00, 1.05],   // blue-green
+      Orc:          [0.28, 0.42, 0.24],   // dark green, almost black
+      Elf:          [1.20, 1.00, 0.55],   // golden
+      Dwarf:        [0.50, 0.36, 0.28]    // dark skinned
+    },
     // The rig was authored for a perspective camera sitting behind the hands;
     // the overlay's is orthographic and looks straight down -Z, where arms
     // pointing away from it would project to almost nothing. So it is turned
@@ -6485,6 +6552,31 @@ var WeaponSystemProcedural = {
     action.clampWhenFinished = !loop;
     action.play();
     return Math.ceil(action.getClip().duration * 1000);
+  },
+
+  /**
+   * Dresses a rig taken out of the pool in the skin of whoever is holding it
+   * (UNARMED_RIG.tints). Every material keeps its authored colour on the side
+   * the first time it is touched, and each tint is laid over THAT, so a pooled
+   * copy handed from an orc to a human goes back to the authored skin rather
+   * than staying green.
+   */
+  tintRig(entry, archetype) {
+    if (!entry || !entry.scene || !window.THREE) return;
+    const spec = entry.spec || this.UNARMED_RIG;
+    const tint = (spec && spec.tints && spec.tints[archetype]) || null;
+    entry.scene.traverse((obj) => {
+      if (!obj.isMesh || !obj.material) return;
+      const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+      for (const mat of mats) {
+        if (!mat.color) continue;
+        if (!mat.userData) mat.userData = {};
+        if (!mat.userData.rigBaseColor) mat.userData.rigBaseColor = mat.color.clone();
+        const base = mat.userData.rigBaseColor;
+        if (tint) mat.color.setRGB(base.r * tint[0], base.g * tint[1], base.b * tint[2]);
+        else mat.color.copy(base);
+      }
+    });
   },
 
   /** The rig an empty hand shows, or null for one that builds its own fist. */
@@ -7087,6 +7179,10 @@ var WeaponSystemProcedural = {
       if (!this._weapon.model3d) {
         if (!window.THREE) return;
         this._model = WeaponSystemProcedural.createModel(this._weapon);
+        if (this._model && this._weapon.mirrorOf) {
+          // The left hand of a creature with only a right one built.
+          this._baseRotation = WeaponSystemProcedural.mirrorModel(this._model, this._baseRotation);
+        }
         if (this._model) {
           const _retro = window.RetroShader ? window.RetroShader.active() : window.PSXShader;
           if (_retro) _retro.applyToObject(this._model);
@@ -7200,6 +7296,8 @@ var WeaponSystemProcedural = {
         }
         this._rigEntry = entry;
         this._model = entry.scene;
+        // In the skin of whoever is holding them (a goblin's green, an elf's gold).
+        WeaponSystemProcedural.tintRig(entry, this._weapon.unarmedArchetype);
         const _retro = window.RetroShader ? window.RetroShader.active() : window.PSXShader;
         if (_retro) _retro.applyToObject(this._model);
         this._mixer = new THREE.AnimationMixer(this._model);

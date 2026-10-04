@@ -192,7 +192,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -499,7 +499,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -588,7 +588,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -737,7 +737,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -764,7 +764,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -1323,7 +1323,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -1353,7 +1353,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -1383,7 +1383,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -2732,7 +2732,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "model": "orc",
     "Gender": 0,
@@ -3588,7 +3588,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -4491,7 +4491,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -4635,7 +4635,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -4663,7 +4663,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -4691,7 +4691,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -6151,7 +6151,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -6393,7 +6393,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -6423,7 +6423,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -6453,7 +6453,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -6483,7 +6483,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -6513,7 +6513,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -6543,7 +6543,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -6573,7 +6573,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -6603,7 +6603,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -6865,7 +6865,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -6896,7 +6896,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -6927,7 +6927,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -6958,7 +6958,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -6989,7 +6989,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -7020,7 +7020,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -7175,7 +7175,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -7443,7 +7443,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -7643,7 +7643,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Gnome",
     "SecondaryArchetype": "Gnome",
     "Gender": 0,
     "chars": [
@@ -7971,7 +7971,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -8199,7 +8199,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -8230,7 +8230,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -8261,7 +8261,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -8292,7 +8292,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -8324,7 +8324,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -8356,7 +8356,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -8388,7 +8388,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -8420,7 +8420,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -8480,7 +8480,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Gnome",
     "SecondaryArchetype": "Gnome",
     "Gender": 3,
     "chars": [
@@ -8830,7 +8830,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -9013,7 +9013,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -9397,7 +9397,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -9427,7 +9427,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -9457,7 +9457,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -9487,7 +9487,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -9517,7 +9517,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -9547,7 +9547,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -9577,7 +9577,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -9607,7 +9607,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -9750,7 +9750,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Dargos",
     "SecondaryArchetype": "",
     "Gender": 3,
     "chars": [
@@ -9777,7 +9777,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Tourist",
     "SecondaryArchetype": "",
     "Gender": 3,
     "chars": [
@@ -9804,7 +9804,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Tourist",
     "SecondaryArchetype": "",
     "Gender": 3,
     "chars": [
@@ -10429,7 +10429,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -10457,7 +10457,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -10485,7 +10485,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -10512,7 +10512,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -10539,7 +10539,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -10730,7 +10730,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Gnome",
     "SecondaryArchetype": "Gnome",
     "Gender": 1,
     "chars": [
@@ -11246,7 +11246,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -11273,7 +11273,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -11300,7 +11300,7 @@
     ],
     "beta": false,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -11843,7 +11843,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Tourist",
     "SecondaryArchetype": "",
     "Gender": 3,
     "chars": [
@@ -11870,7 +11870,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Tourist",
     "SecondaryArchetype": "",
     "Gender": 3,
     "chars": [
@@ -11897,7 +11897,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Tourist",
     "SecondaryArchetype": "",
     "Gender": 3,
     "chars": [
@@ -15509,7 +15509,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Dwarf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -15535,7 +15535,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Dwarf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -15589,7 +15589,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -15616,7 +15616,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -15643,7 +15643,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -15670,7 +15670,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -15698,7 +15698,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -15725,7 +15725,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -15753,7 +15753,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -15781,7 +15781,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -15809,7 +15809,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -15837,7 +15837,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -15865,7 +15865,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -15892,7 +15892,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -15918,7 +15918,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -15945,7 +15945,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -15971,7 +15971,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -15998,7 +15998,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -16024,7 +16024,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -16051,7 +16051,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -16077,7 +16077,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -16103,7 +16103,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -16130,7 +16130,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -16156,7 +16156,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -16182,7 +16182,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -16208,7 +16208,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -16235,7 +16235,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -16261,7 +16261,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -16288,7 +16288,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -16314,7 +16314,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -16341,7 +16341,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -16367,7 +16367,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -16393,7 +16393,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -16420,7 +16420,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -16446,7 +16446,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -16472,7 +16472,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -16500,7 +16500,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -16527,7 +16527,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -16554,7 +16554,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -16581,7 +16581,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -16607,7 +16607,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -16634,7 +16634,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -16660,7 +16660,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -16687,7 +16687,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -16767,7 +16767,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Elf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -19778,7 +19778,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -19805,7 +19805,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -19832,7 +19832,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -19859,7 +19859,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -19887,7 +19887,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -19914,7 +19914,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -19941,7 +19941,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -19969,7 +19969,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -19996,7 +19996,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -20023,7 +20023,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -20050,7 +20050,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -20077,7 +20077,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -20104,7 +20104,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -20131,7 +20131,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -20158,7 +20158,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -20185,7 +20185,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -20212,7 +20212,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -20239,7 +20239,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -20266,7 +20266,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -20293,7 +20293,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -20320,7 +20320,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -20347,7 +20347,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -20374,7 +20374,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -20401,7 +20401,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -26324,7 +26324,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Dwarf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -26350,7 +26350,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Dwarf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -26376,7 +26376,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Dwarf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -26403,7 +26403,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Dwarf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -26430,7 +26430,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Dwarf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -26456,7 +26456,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Dwarf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -26482,7 +26482,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Dwarf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -26508,7 +26508,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Dwarf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -26534,7 +26534,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Dwarf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -26560,7 +26560,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Dwarf",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [
@@ -26586,7 +26586,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Dwarf",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -27131,7 +27131,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Gnome",
     "SecondaryArchetype": "Gnome",
     "Gender": 0,
     "chars": [
@@ -27157,7 +27157,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Gnome",
     "SecondaryArchetype": "Gnome",
     "Gender": 1,
     "chars": [
@@ -27183,7 +27183,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Gnome",
     "SecondaryArchetype": "Gnome",
     "Gender": 1,
     "chars": [
@@ -27210,7 +27210,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Gnome",
     "SecondaryArchetype": "Gnome",
     "Gender": 0,
     "chars": [
@@ -27236,7 +27236,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Gnome",
     "SecondaryArchetype": "Gnome",
     "Gender": 0,
     "chars": [
@@ -27263,7 +27263,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Gnome",
     "SecondaryArchetype": "Gnome",
     "Gender": 1,
     "chars": [
@@ -27289,7 +27289,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Gnome",
     "SecondaryArchetype": "Gnome",
     "Gender": 1,
     "chars": [
@@ -27315,7 +27315,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Gnome",
     "SecondaryArchetype": "Gnome",
     "Gender": 1,
     "chars": [
@@ -27341,7 +27341,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Gnome",
     "SecondaryArchetype": "",
     "Gender": 1,
     "chars": [
@@ -27368,7 +27368,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Gnome",
     "SecondaryArchetype": "Gnome",
     "Gender": 1,
     "chars": [
@@ -27394,7 +27394,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Gnome",
     "SecondaryArchetype": "Gnome",
     "Gender": 0,
     "chars": [
@@ -27421,7 +27421,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Gnome",
     "SecondaryArchetype": "Gnome",
     "Gender": 0,
     "chars": [
@@ -28040,7 +28040,7 @@
     ],
     "beta": true,
     "animations": false,
-    "Archetype": "Humanoid",
+    "Archetype": "Orc",
     "SecondaryArchetype": "",
     "Gender": 0,
     "chars": [

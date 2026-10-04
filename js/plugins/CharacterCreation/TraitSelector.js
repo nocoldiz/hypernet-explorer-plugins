@@ -244,6 +244,13 @@
   // trait points at all, and it is handed to Health_DiseaseSystem rather
   // than folded into paramPlus.
   const TRAIT_CATEGORIES = ["genetic", "physical", "mental", "magical", "diseases"];
+  // Gene splicing (opened from Health_ProstheticShop): only a body's genes are
+  // rewritten on that table, so the board opens on the genetic tab alone, and
+  // every trait put in or taken out costs SPLICE_GOLD_PER_POINT gold (100
+  // euros) for each trait point it carries, a drawback's points included.
+  const SPLICE_CATEGORIES = ["genetic"];
+  const SPLICE_GOLD_PER_POINT = 10000;
+  const isSpliceable = (trait) => !!trait && !trait.diseaseId && (trait.category || "mental") === "genetic";
   const TRAIT_CATEGORY_LABELS = {
     genetic: "tabGenetic",
     physical: "tabPhysical",
@@ -406,17 +413,26 @@
   class Scene_TraitSelector extends Scene_MenuBase {
     static _returnToCharacterCreation = false; // Flag to control return behavior
     static _targetActorId = null; // Track which actor to apply traits to
+    static _spliceMode = false; // Opened as gene splicing from the clinic
 
-    static prepare(returnToCreation = false, targetActorId = null) {
+    static prepare(returnToCreation = false, targetActorId = null, splice = false) {
       Scene_TraitSelector._returnToCharacterCreation = returnToCreation;
       Scene_TraitSelector._targetActorId = targetActorId;
+      Scene_TraitSelector._spliceMode = !!splice;
+    }
+
+    static clearPrepared() {
+      Scene_TraitSelector._returnToCharacterCreation = false;
+      Scene_TraitSelector._targetActorId = null;
+      Scene_TraitSelector._spliceMode = false;
     }
 
     create() {
       super.create();
+      this._splice = Scene_TraitSelector._spliceMode;
       this._selectedTraits = [];
       this._selectedDiseases = [];
-      this._currentCategory = TRAIT_CATEGORIES[0];
+      this._currentCategory = this.categories()[0];
       this._cursor = 0;
       // Confirmation prompt: null when closed, otherwise the focused answer.
       this._confirmYes = null;
@@ -446,6 +462,8 @@
         this.resetSwitches();
         this.resetActorTraits();
         this.loadActorTraits();
+        // What the patient walked in with: the splice is priced against it.
+        this._spliceStart = this._selectedTraits.slice();
         this.createUIOverlay();
       });
     }
@@ -554,9 +572,39 @@
     }
 
     cycleCategory(step) {
-      const at = TRAIT_CATEGORIES.indexOf(this._currentCategory);
-      const next = TRAIT_CATEGORIES[(at + step + TRAIT_CATEGORIES.length) % TRAIT_CATEGORIES.length];
+      const cats = this.categories();
+      const at = cats.indexOf(this._currentCategory);
+      const next = cats[(at + step + cats.length) % cats.length];
       this.onTabClick(next);
+    }
+
+    // The tabs this board offers: all of them, or the genes alone when splicing.
+    categories() {
+      return this._splice ? SPLICE_CATEGORIES : TRAIT_CATEGORIES;
+    }
+
+    // --- Gene splicing ------------------------------------------------------
+
+    // The traits put in or taken out since the patient sat down.
+    spliceChanges() {
+      const start = this._spliceStart || [];
+      const added = this._selectedTraits.filter((trait) => !start.includes(trait));
+      const removed = start.filter((trait) => !this._selectedTraits.includes(trait));
+      return added.concat(removed);
+    }
+
+    // What the table charges: every trait point of every changed trait.
+    spliceCost() {
+      return this.spliceChanges()
+        .reduce((sum, trait) => sum + Math.abs(traitCost(trait)) * SPLICE_GOLD_PER_POINT, 0);
+    }
+
+    // Whether Continue leads anywhere. A build seals once it carries a trait
+    // and has not overspent; a splice once something has actually changed.
+    canSeal() {
+      const tally = this.tally();
+      if (tally.remaining < 0) return false;
+      return this._splice ? this.spliceChanges().length > 0 : tally.count >= 1;
     }
 
     // A trait can be bound unless it is already bound, the purse cannot pay
@@ -612,7 +660,7 @@
     // the Back / Random / Continue bar. Five separately-scrolling dossier cards
     // used to compete for that page and none of them ever had enough height.
     buildOverlayDOM() {
-      const tabsHtml = TRAIT_CATEGORIES.map((category) =>
+      const tabsHtml = this.categories().map((category) =>
         `<div class="ts-tab" data-category="${category}">${t(TRAIT_CATEGORY_LABELS[category])}</div>`
       ).join("");
 
@@ -1023,7 +1071,8 @@
       if (!this._promptBtns) {
         layer.innerHTML = `
           <div class="ts-prompt-box">
-            <h2 class="cc-header-gothic ts-prompt-title">${t('confirmTraits')}</h2>
+            <h2 class="cc-header-gothic ts-prompt-title">${t(this._splice ? 'confirmSplice' : 'confirmTraits')}</h2>
+            <div class="ts-prompt-cost"></div>
             <!-- Same three-slot bar as the page behind it, so the answer that
                  goes back is on the left and the one that goes on is on the
                  right, exactly where Back and Continue are. -->
@@ -1042,6 +1091,14 @@
         this._promptBtns.forEach((btn) => {
           btn.addEventListener("click", () => this.answerPrompt(btn.dataset.yes === "1"));
         });
+      }
+      // The bill, only ever on the splicing table, written fresh each time the
+      // prompt opens since the genes may have changed in between.
+      const costEl = layer.querySelector(".ts-prompt-cost");
+      if (costEl) {
+        costEl.textContent = this._splice
+          ? t("spliceCost", { cost: window.MoneyFormatter ? window.MoneyFormatter.format(this.spliceCost()) : this.spliceCost() / 100 })
+          : "";
       }
       window.CCPanel.show(layer);
       this._promptBtns.forEach((btn) => {
@@ -1073,8 +1130,7 @@
         // Continue only reads as available when openPrompt would actually open:
         // at least one trait bound, and the purse not overspent.
         if (this._confirmEl) {
-          const tally = this.tally();
-          this._confirmEl.classList.toggle("disabled", tally.count < 1 || tally.remaining < 0);
+          this._confirmEl.classList.toggle("disabled", !this.canSeal());
         }
       }
 
@@ -1123,6 +1179,10 @@
     // Binds a free trait, releases a bound one, buzzes on anything blocked.
     toggleTrait(trait) {
       if (!trait) return;
+      if (this._splice && !isSpliceable(trait)) {
+        SoundManager.playBuzzer();
+        return;
+      }
       if (trait.diseaseId) {
         const at = this._selectedDiseases.indexOf(trait);
         if (at >= 0) { SoundManager.playCancel(); this._selectedDiseases.splice(at, 1); }
@@ -1142,6 +1202,11 @@
     }
 
     releaseTrait(trait) {
+      // Only genes come out on the splicing table.
+      if (this._splice && !isSpliceable(trait)) {
+        SoundManager.playBuzzer();
+        return;
+      }
       if (trait && trait.diseaseId) {
         const idx = this._selectedDiseases.indexOf(trait);
         if (idx < 0) return;
@@ -1158,6 +1223,12 @@
     }
 
     releaseLast() {
+      if (this._splice) {
+        const genes = this._selectedTraits.filter(isSpliceable);
+        if (genes.length) this.releaseTrait(genes[genes.length - 1]);
+        else this.onTraitsBack();
+        return;
+      }
       if (this._selectedTraits.length > 0) {
         this.releaseTrait(this._selectedTraits[this._selectedTraits.length - 1]);
       } else if (this._selectedDiseases.length > 0) {
@@ -1178,8 +1249,7 @@
       if (Scene_TraitSelector._returnToCharacterCreation && SC && SC.cancelSubScreens) {
         SC.cancelSubScreens();
       }
-      Scene_TraitSelector._returnToCharacterCreation = false;
-      Scene_TraitSelector._targetActorId = null;
+      Scene_TraitSelector.clearPrepared();
       this.popScene();
     }
 
@@ -1190,6 +1260,11 @@
     // plugin-command randomizer skips them , that category is decided by the
     // biology chosen earlier in creation.
     onTraitsRandom() {
+      // Genes are rewritten one by one on the splicing table, never rolled.
+      if (this._splice) {
+        SoundManager.playBuzzer();
+        return;
+      }
       this._selectedTraits = pickRandomTraits({
         pool: traitsForActorId(Scene_TraitSelector._targetActorId || actorId)
           .filter((trait) => (trait.category || "mental") !== "genetic"),
@@ -1202,6 +1277,19 @@
     // back and the purse reads full again. Nothing has been handed to the
     // member yet at this point, so this only ever clears the page.
     onTraitsReset() {
+      // On the splicing table Reset puts back the genes the patient came in
+      // with: nothing else on the sheet is the table's to clear.
+      if (this._splice) {
+        if (!this.spliceChanges().length) {
+          SoundManager.playBuzzer();
+          return;
+        }
+        SoundManager.playCancel();
+        this._selectedTraits = this._spliceStart.slice();
+        this._cursor = 0;
+        this.syncOverlay(false);
+        return;
+      }
       if (this._selectedTraits.length === 0 && this._selectedDiseases.length === 0) {
         SoundManager.playBuzzer();
         return;
@@ -1216,8 +1304,7 @@
     // A build is sealable once it carries at least one trait and has not
     // overspent. Leaving points on the table is the player's business.
     openPrompt() {
-      const tally = this.tally();
-      if (tally.count < 1 || tally.remaining < 0) {
+      if (!this.canSeal()) {
         SoundManager.playBuzzer();
         return;
       }
@@ -1233,9 +1320,21 @@
         return;
       }
       this._confirmYes = null;
+      if (this._splice) {
+        const cost = this.spliceCost();
+        if ($gameParty.gold() < cost) {
+          SoundManager.playBuzzer();
+          if (window.ParchmentToast) {
+            window.ParchmentToast.show(t("spliceTooExpensive"), { severity: "warning", duration: 150 });
+          }
+          this.syncOverlay(false);
+          return;
+        }
+        $gameParty.loseGold(cost);
+        SoundManager.playShop();
+      }
       this.applyTraits();
-      Scene_TraitSelector._returnToCharacterCreation = false;
-      Scene_TraitSelector._targetActorId = null;
+      Scene_TraitSelector.clearPrepared();
       this.popScene();
     }
 

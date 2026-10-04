@@ -1,0 +1,1089 @@
+{
+  "_comment": "The Gnome voice (NPCConversation II.1b, SpeciesVoice). speech: the rules run over any shared line they say. voice: openers and closers. thought: their own thoughts by situation. script: two-person scripts, speaker 0 is always the Gnome.",
+  "voice": {
+    "openers": [
+      "Cogs and sprockets,",
+      "By the mainspring,",
+      "To be exceedingly precise,",
+      "Gears and gaskets,",
+      "If my sums are right,",
+      "Speaking as a small person,",
+      "Measure twice, as we say,",
+      "Now then, now then,",
+      "Oh! Oh! Listen,",
+      "From down here,",
+      "As my grandmother used to say,",
+      "Springs and spindles,",
+      "Hold on, hold on,",
+      "Give or take a millimetre,",
+      "Right, by my reckoning,",
+      "Little observation:",
+      "Tinker's honour,",
+      "Brass and bother,",
+      "In gnomish terms,",
+      "Carry the one, and",
+      "Footnote first:",
+      "Oh, splendid, splendid,",
+      "Small voice, big point:",
+      "Hear a gnome out:",
+      "Pardon the precision, but"
+    ],
+    "closers": [
+      "Measure twice, cut once.",
+      "To the millimetre, more or less.",
+      "The sums always balance in the end.",
+      "Small, but correct.",
+      "I have it written down somewhere.",
+      "The cogs keep turning.",
+      "Carry the one.",
+      "That is the gnomish view, anyway.",
+      "Mark my words, in pencil.",
+      "Trust the springs.",
+      "Every bolt has its nut.",
+      "So says the small one.",
+      "Tinker's honour.",
+      "To the cent, mind you.",
+      "A spot of oil fixes most things.",
+      "Footnote to follow.",
+      "Nobody aims low, you see.",
+      "My grandmother would agree.",
+      "In triplicate, ideally.",
+      "Small hands, fine work.",
+      "Precisely so.",
+      "Ask any clockmaker.",
+      "The little wheels turn fastest.",
+      "I could draw you a diagram.",
+      "Splendid, splendid."
+    ]
+  },
+  "thought": {
+    "generic": [
+      "Forty-one tools in my belt and I still need the {forty-second|odd one|one at home}.",
+      "That lamp post leans two degrees east. {Someone should fix it|I could fix it|It is bothering me}.",
+      "Accounts balanced to the cent. {Bliss|Pure bliss|What a morning}.",
+      "Everyone is tall today. {Again|As usual|Consistently}.",
+      "I could build a better {kettle|doorbell|mousetrap} than that one. In an afternoon.",
+      "A self-tying bootlace. Then I would never need to bend down. Not that I bend far.",
+      "My pocket watch is {two seconds fast|one second slow|exactly right}. Adjusting.",
+      "Copper wire, three metres, eleven cents. Bargain. Must tell {somebody|the family|everybody}.",
+      "A loose cobble, fourth from the kerb. Mental complaint filed.",
+      "Nobody aims low. That is why gnomes {live long|get far|stay lucky}.",
+      "The bakery counter is too high again. Tomorrow I bring {a crate|my stool|stilts}.",
+      "Thirteen-hour clock. Thirteen-hour clock. Where does the extra hour go...",
+      "I wonder what that machine {does|costs|weighs}. I must know.",
+      "My hat is slightly crooked. I can feel it. The whole world feels crooked with it.",
+      "Alchemy test tonight: {copper and vinegar|salt and lightning|honey and mercury}. What could go wrong.",
+      "Seventy-nine kilometres an hour. Not one more. Gnomes respect the Rule.",
+      "The tram is three minutes late. {Written down|Driver told|Nobody forgiven}.",
+      "A spring in my step, and two in my pocket.",
+      "Fixed a stranger's {umbrella|bicycle bell|spectacles} without asking. Lovely feeling.",
+      "My cousin the pirate writes again. The {ship|parrot|rum} is fine, the accounts are not.",
+      "Another day, another doorway built for giants.",
+      "I counted the stairs here. {Fourteen|Twenty-two|Thirty-one}. Every one far too tall.",
+      "Grease under the fingernails. The sign of an honest day.",
+      "Bubba's engine is a marvel. I would still add a {spring|valve|little bell}.",
+      "Somebody left the gas a quarter turn open. I can smell it from here. Turned off.",
+      "If the world ends in 2012, I want my accounts closed by 2011.",
+      "A brass button on the pavement! {Pocketed|Treasured|Catalogued}.",
+      "My cousin the princess wants a clockwork swan for her birthday. {Again|Bigger this year|With wings that flap}.",
+      "Must remember: buy {solder|rivets|lamp oil}, sell {gossip|old gears|nothing}.",
+      "The square here is not square. It is a rhombus. Nobody else cares.",
+      "Tiny screwdriver, where are you. In the other trousers, of course.",
+      "Chef's rule: weigh the salt, trust the garlic.",
+      "That pigeon is carrying the post between bubbles. I {envy|admire|pity} it.",
+      "A very good hinge on that gate. I {nodded|bowed|saluted} at it.",
+      "Interest at four percent, compounded monthly. Ah, the music of it.",
+      "A hat with a periscope. Then crowds would be no problem at all.",
+      "Somebody whistled in tune today. In tune! I nearly cried.",
+      "Small folk, big plans. {Today: a better can opener|Tomorrow: a better tram|Next week: who knows}.",
+      "The wind smells of hot iron. {A forge nearby|A tram brake|My kind of town}.",
+      "My diary says I was happy at {nine|eleven|half past two}. Accurate as always."
+    ],
+    "need": {
+      "sleep": [
+        "My eyes keep {slipping|drifting|sliding} out of focus. Even the screws look blurry.",
+        "Too tired to count. That has never happened. {Bed|Pillow|Drawer}, now.",
+        "If I sleep now I will dream of {gears|sums|soup}. Acceptable.",
+        "Awake {nineteen|twenty-two|twenty-seven} hours. I have the exact figure, of course.",
+        "Yawned so wide my hat fell off. Time for bed.",
+        "My mainspring is fully unwound. {Wind me tomorrow|Bed|Lights out}."
+      ],
+      "hunger": [
+        "Stomach making a dry-bearing noise. {Soup|Bread and cheese|Mushrooms}, please.",
+        "Small stomach, loud complaints. {Lunch|Dinner|Anything} soon.",
+        "I could eat a whole wheel of {cheese|gouda|emmental}. Well, a slice of one.",
+        "Hungry hands slip on fine screws. Must eat before I {solder|wind|file} anything.",
+        "Priced the bakery window: {four|six|nine} things I want, one I can afford.",
+        "Cook's instinct says {stew|omelette|risotto}. Stomach says yes."
+      ],
+      "work": [
+        "Off to the {workshop|counting house|kitchen}. Lovely, lovely work.",
+        "Today's job: {forty clocks|three boilers|a duke's accounts}. Bring them on.",
+        "Work is just tinkering somebody pays for. Best arrangement ever invented.",
+        "Columns to add, {invoices|receipts|bills} to file. A happy morning.",
+        "Shift starts in {four|seven|twelve} minutes. Early. Always early.",
+        "My bench is waiting. My bench misses me. I miss my bench."
+      ],
+      "leisure": [
+        "Need a game. A puzzle. {A crossword|A chess problem|A broken radio}. Anything.",
+        "A song, a pint and somebody to beat at {cards|dice|darts}.",
+        "My brain is all sums. It needs {a tune|a joke|a jigsaw} to loosen up.",
+        "Off to the arcade. I want to see how the {cabinets|token slots|joysticks} are wired.",
+        "A little fun would oil the gears nicely.",
+        "Too much work makes a gnome a {grumpy|creaky|squeaky} gnome."
+      ],
+      "crime": [
+        "That {lock|latch|padlock} is a toy. A hairpin would open it. I won't. Probably.",
+        "A very small person fits through a very small window. {Only a thought|A bad thought|Shoo}.",
+        "Nobody counts their {change|coins|cents} like I do. Easy to skim. No. No skimming.",
+        "Cooking the books is a crime. Also an art. {Still a crime|Mostly a crime|Stop it}.",
+        "Nobody looks down. Nobody ever looks down. {Tempting|Useful|Dreadful}.",
+        "Grandfather the pirate would have taken it already. I am not my grandfather."
+      ],
+      "hygiene": [
+        "Grease to the elbows. {Bath|Basin|Bucket}, now.",
+        "I smell of {sulphur|solder|burnt toast}. Even I can tell.",
+        "Soot in the beard again. A gnome must not go to market like this.",
+        "Dirty hands ruin fine work. {Scrub|Wash|Soap}, then the springs.",
+        "Need a basin at my height. Or a stool. Or both, and soap.",
+        "My spectacles are smudged and so is the rest of me."
+      ],
+      "money": [
+        "Accounts say {nine|fourteen|twenty-two} euros until month's end. Recalculating.",
+        "Sold a clock, bought springs, sold a clock. The springs are winning.",
+        "Every cent in its column. The columns are worryingly short.",
+        "Invent something and be rich. Invent nothing and be {thrifty|frugal|clever}.",
+        "Rent is due. I have the exact figure. I lack the exact euros.",
+        "Note: charge more for {repairs|recipes|advice}. Gnomish modesty is expensive."
+      ],
+      "safety": [
+        "Low profile. Easy for me. {Lower still|Under the table|Behind a crate}.",
+        "Better {hide this|stash this|forget this} in the drawer with the false bottom.",
+        "Too many tall shapes in the street tonight. Home, quick, small steps.",
+        "A good lock costs eleven euros. My {door|workshop|strongbox} needs three.",
+        "Keep the head down. Mine is already quite far down.",
+        "If trouble comes, I am {under the counter|up the chimney|behind the barrel}."
+      ],
+      "comfort": [
+        "A room built to my height. Shelves I can reach. {One day|Soon|I dream of it}.",
+        "My bed is a drawer again. {A nice drawer|A clean drawer|Still a drawer}.",
+        "I could use a workshop with a {window|chimney|proper vice}.",
+        "Saved enough for a stepladder in every room. {Luxury|Opulence|Finally}.",
+        "A warm hearth and a quiet clock ticking. That is comfort.",
+        "My chair has a cushion on a cushion on a cushion. Time for a real one."
+      ],
+      "social": [
+        "Nobody to talk gears with all day. {Lonely|Too quiet|Dreadful}.",
+        "I should visit {the clockmaker|my cousin|the café}. I have eleven things to say.",
+        "Must tell somebody about my new {valve|recipe|knot}. Anybody.",
+        "Talking to the kettle again. Good listener, but it boils over.",
+        "Need company. Small or tall, I am not fussy.",
+        "A party! With {singing|cards|cake}. A gnome needs a party."
+      ]
+    },
+    "weather": {
+      "rain": [
+        "Rain. Counted {forty|sixty|a hundred} drops on the brim before it soaked through.",
+        "Puddles are lakes at my height. {Galoshes|Boots|A boat}, then.",
+        "Wet copper smells marvellous. Rain improves a town.",
+        "An umbrella my size costs as much as a full one. Robbery.",
+        "Rain on a tin roof, in four-four time. Lovely.",
+        "Must check the gutters. Somebody always forgets the gutters."
+      ],
+      "storm": [
+        "Lightning! {Twelve|Fourteen|Nine} seconds to the thunder. Four kilometres off.",
+        "Storm. If I had a copper rod and a kite... no. Inside.",
+        "Hold on to your hat. Hold on to me. I am very light.",
+        "The wind is {rattling|testing|shaking} every hinge in town. Taking notes.",
+        "Thunder. My springs all shiver in sympathy.",
+        "Stormy nights are for the workshop. Something always gets invented."
+      ],
+      "snow": [
+        "Snow up to my knees. Up to your ankles. {Unfair|Typical|Character building}.",
+        "Every snowflake six-sided. Somebody up there is a good engineer.",
+        "Need a small sledge with a small engine. {Drawing it now|Tonight|Patent pending}.",
+        "Snow muffles the street. I can hear clocks ticking through walls.",
+        "Cold oil runs slow. So do cold gnomes.",
+        "Snowman built to scale. It is taller than me. Of course it is."
+      ],
+      "clear": [
+        "Clear sky. Good light for fine work.",
+        "Sunshine! Everything brass is glinting. {Glorious|Splendid|Dazzling}.",
+        "Perfect day to dry out a {gearbox|carburettor|grimorie}.",
+        "Blue sky, low humidity. Ideal for gluing.",
+        "Shadows at noon are short, like me. A fair day.",
+        "The sun catches every spring on my windowsill. Pretty."
+      ]
+    },
+    "time": {
+      "morning": [
+        "Up at {six|six sharp|six exactly}. Wound four clocks before breakfast.",
+        "Morning. First coffee, first sum, first screw of the day.",
+        "Early market. Best prices before the tall folk wake up.",
+        "Fresh morning light. My workbench glows.",
+        "Breakfast eaten, accounts opened, day begun. In that order.",
+        "Morning bells: {three|two|one} late. I have noted which."
+      ],
+      "afternoon": [
+        "Afternoon. The long stretch between lunch and tea. Must tinker through it.",
+        "{Half past two|Quarter past three|Four o'clock}, and the soldering is going well.",
+        "After-lunch nap? No. After-lunch {sums|rivets|recipes}.",
+        "Afternoon sun on the workbench. Perfect angle for close work.",
+        "Tea at four. Biscuits counted. Two each.",
+        "Halfway through the day and three-quarters through my list."
+      ],
+      "evening": [
+        "Evening. Lamp on, gears out, mind humming.",
+        "Closing the day's accounts. {In the black|Nearly even|A whisker short}.",
+        "Supper, a song, a small brandy. A gnome's evening.",
+        "The street lamps came on {four|two|nine} minutes late. Somebody is slacking.",
+        "Dusk. Every tall person looks even taller in the long shadows.",
+        "Evening chores: oil the hinges, wind the clocks, tell somebody about it."
+      ],
+      "night": [
+        "Night. The town ticks quieter. I can hear my own watch.",
+        "Can't sleep. Inventing. {A better lamp|A quieter hinge|A cat feeder}.",
+        "Stars out. Some of them must run on clockwork. Surely.",
+        "Late. Last sum of the day: one gnome, very tired.",
+        "Midnight oil, quite literally. My lamp is nearly dry.",
+        "The night watchman is two streets off. I counted his steps."
+      ]
+    },
+    "season": {
+      "SPRING": [
+        "Spring cleaning: every tool polished, every drawer relabelled.",
+        "Spring! {Gardens|Fairs|Markets} again. And new things to fix.",
+        "Rain and sun in turns. Spring is a very indecisive engineer.",
+        "Blossom on the trees and oil on my hands. Spring.",
+        "Spring sales. Prices down {six|eight|ten} percent. Bless the season."
+      ],
+      "SUMMER": [
+        "Summer heat. The brass expands. Must loosen the {clocks|hinges|valves} a touch.",
+        "Long days, more light for fine work. Summer is a gnome's friend.",
+        "Too hot for a hat. Wearing it anyway. Principles.",
+        "Summer fair! Somebody will have built {a carousel|a steam organ|a balloon}. I must see.",
+        "Sunburn on the tips of my ears. The only part that gets anywhere near the sun."
+      ],
+      "AUTUMN": [
+        "Autumn. Time to check the boilers before somebody else forgets.",
+        "Leaves everywhere. Leaves in the gears. Leaves in my hat.",
+        "Mushroom season! Bless every {damp|shady|mossy} corner of this town.",
+        "Year-end accounts already on my mind. Autumn does that.",
+        "The clocks go back soon. I have opinions about that."
+      ],
+      "WINTER": [
+        "Winter. Every pipe in town is a frozen puzzle I could solve.",
+        "Cold fingers, slow screws. Gloves with no fingertips, then.",
+        "Snowed in? Perfect. {Workshop|Kitchen|Accounts} all day.",
+        "Short days. I work by lamplight and count the oil.",
+        "Winter markets, hot wine, warm hands. Worth the chilblains."
+      ]
+    },
+    "wealth": {
+      "poor": [
+        "Down to my last {four|seven|twelve} euros. Every cent named and placed.",
+        "Can't afford new springs. Taking the old ones out of the old clock.",
+        "Poor, but tidy. A tidy poverty is half a fortune.",
+        "Pawned my good screwdriver. The pawnbroker did not appreciate it.",
+        "Soup again. Excellent soup, though. Skill costs nothing.",
+        "No money, many ideas. One day the ideas will turn into money."
+      ],
+      "comfortable": [
+        "Enough for rent, rivets and the occasional cake. A balanced life.",
+        "Accounts comfortable. Not exciting. Comfortable is excellent.",
+        "Bought a better stool this month. A treat.",
+        "Savings up {three|four|five} percent. Steady, small, like me.",
+        "I could afford a holiday. I would spend it in a clock museum.",
+        "A full toolbox and a full pantry. Nothing more needed. Well, a lathe."
+      ],
+      "rich": [
+        "Rich enough to have every counter in the house built low.",
+        "My workshop has a workshop now. For the smaller jobs.",
+        "Money in three banks, four currencies, and one secret drawer.",
+        "Bought a whole broken carousel just to fix it. {Worth it|No regrets|Wonderful}.",
+        "Wealth is just accounts with good news in them.",
+        "My cousin the princess asks me for loans now. How the wheel turns."
+      ]
+    },
+    "familiar": [
+      "Those travellers again. Their camper rattles at the {back|left wheel|exhaust}. I could fix it.",
+      "That party pays to the cent, I have noticed. Good people.",
+      "If they come by, I will show them my {new valve|clockwork bird|best sum}.",
+      "The tall one in that group always ducks under doorways. It makes me laugh every time.",
+      "Those travellers take the long way. I would have drawn them a shorter map.",
+      "I have started keeping a small file on that party. Purely admiring.",
+      "They listened to my whole explanation of escapements. Nobody does that.",
+      "Next time they pass, I will {oil their hinges|weigh their luggage|feed them stew}.",
+      "That party survived another bubble season. A great relief, mathematically.",
+      "I would like to travel with them. My legs say no. My head says yes."
+    ],
+    "hordeGround": [
+      "Horde ground. The goblins take me for kin until I start talking. Then they are sure of it.",
+      "The goblins took the town and kept the clock tower. They like the bells. Taste, at least.",
+      "Horde banners on every lamp post. Badly hung. I could hang them straight. I won't.",
+      "Being small helps here. Goblins look down at me and see a {cousin|snack|pet}. I smile.",
+      "No accounts under the Horde. Nobody counts anything. My soul itches.",
+      "The goblins smashed the town's machines. I mourn each one by name.",
+      "A goblin asked me to fix his drum. I tuned it instead. He wept.",
+      "Under the Horde, trade is barter. I am very good at barter.",
+      "Every machine here is hidden in a cellar. Mine too. Quietly ticking.",
+      "Goblins once built the finest machines in 92 dimensions, they say. Then broke them all. Why."
+    ],
+    "abroad": [
+      "Humans build their doors far too tall. I have stopped minding. Mostly.",
+      "My neighbours bring me their broken {radios|toasters|clocks}. I am beloved.",
+      "People here crouch to talk to me. I let them. It is polite of them.",
+      "The humans here keep good accounts. Better than they think.",
+      "A child asked if I live in a mushroom. I said only on holidays.",
+      "Here {six|eleven|twenty} years and I still need a stool at the post office.",
+      "Human towns are full of clever machines nobody looks at. I look at all of them.",
+      "The tram driver waits for me now. Small kindnesses, noted and filed.",
+      "They call me 'the little tinker' here. I accept the title.",
+      "Paid my taxes early. The clerk did not know what to do with himself."
+    ],
+    "lore": {
+      "clockwork": [
+        "A good escapement is a heartbeat you can hold in your hand.",
+        "Never trust a machine you cannot hear. Grandfather's rule.",
+        "Brass for the gears, steel for the springs, patience for the rest.",
+        "Every clock in town runs a little differently. I know each one's mood.",
+        "Even in a bubble the clocks tick on. They just tick the same day again.",
+        "Gnome guilds file their patents in triplicate. The third copy goes in the cellar.",
+        "My first clock ran backwards. Grandmother framed it.",
+        "The finest clocks hide a spare gear. For luck, and for repairs."
+      ],
+      "accounts": [
+        "Double entry: every euro has a twin somewhere. Find the twin.",
+        "Gnome children learn to count before they walk. Walking is overrated anyway.",
+        "A grimorie of accounts can be as dangerous as a grimorie of spells. Ask any auditor.",
+        "Euro notes carry Fantablack, they say. A bubble can reset the day, not the bill.",
+        "Interest compounds. So does trouble. Track both.",
+        "Our family motto: carry the one, never the grudge.",
+        "The Hypercapitalist Collective's accounts would make me faint. In a good way.",
+        "Every gnome noble keeps two sets of books. One for the tax man, one for the truth."
+      ],
+      "alchemy": [
+        "Alchemy is cooking with consequences.",
+        "Mercury, salt and sulphur. The three ingredients, and one fire bucket.",
+        "Weigh twice, mix once. Alchemists who skip the weighing lose their eyebrows.",
+        "Leylines rise from oil, they say. I keep a jar of crude by the stove, for luck.",
+        "Gnome alchemists prefer small batches. Small explosions too.",
+        "Grandmother turned lead into gold once. It cost her more than the gold was worth.",
+        "Every potion is a recipe. Every recipe is a sum. Every sum is a song.",
+        "A badly written spell eats the words beside it. Keep recipes on separate pages."
+      ],
+      "smallness": [
+        "Small is efficient. Less to feed, less to clothe, less to hit.",
+        "Gnomes measure by the gnome. One gnome, two gnomes, a gnome and a hat.",
+        "Nobody aims low. Every gnome soldier knows it.",
+        "Our princesses ride ponies. Our pirates sail barges. It works out.",
+        "Big folk think in metres. We think in millimetres. That is why our things work.",
+        "A gnome on a stepladder is a gnome on a throne.",
+        "Small hands built half the watches in Switzerland. Ask who gets the credit.",
+        "Proud to be small. Being tall would only slow the thinking down."
+      ],
+      "ruleOf80": [
+        "Rule of 80: keep steady at seventy-nine and the bubbles leave you be.",
+        "Pigeons carry the post between bubbles now. Ninety with a tailwind. Clever birds.",
+        "I set my cart's governor to cut out at seventy-nine. Sold forty of them since.",
+        "Inside a bubble, the day resets. Even the accounts. Especially the accounts.",
+        "Since 1992 every speedometer is a safety device. I make very good speedometers.",
+        "Bubbles are marked on the road maps. I mark mine more precisely.",
+        "Every year the bubbles grow a little. I keep a chart. The chart worries me.",
+        "To leave a bubble you need eighty, outward. Nobody plans an exit like a gnome."
+      ],
+      "liminal": [
+        "Bubba's liminal engine folds the road. I would very much like to unfold one.",
+        "The liminal engine ignores the Rule of 80. Rules should not be ignorable. It bothers me.",
+        "Liminal engines on every tram now. I have peeked inside three. Lovely work.",
+        "Fantablack inside every liminal cabin. Scraped off the Omega Tower, they say. Pricey paint.",
+        "Run a liminal engine near a bubble and it comes apart. I would fit a warning bell.",
+        "One day a gnome will build a liminal engine the size of a pocket watch.",
+        "Bubba is a mechanic. Not a gnome, but nearly. Very nearly.",
+        "Every road in every world joins the Encompassing Road. Imagine the toll accounts."
+      ]
+    }
+  },
+  "script": {
+    "positive": [
+      [
+        [
+          0,
+          "{b}! I fixed your gate. It was squeaking in the wrong key."
+        ],
+        [
+          1,
+          "You didn't have to do that, {a}."
+        ],
+        [
+          0,
+          "I did. It was keeping me awake, and you are my friend."
+        ]
+      ],
+      [
+        [
+          0,
+          "I brought you a loaf, {b}. It weighed exactly a kilo before I nibbled the corner."
+        ],
+        [
+          1,
+          "Ha! Thank you. I'll pretend I didn't see the corner."
+        ],
+        [
+          0,
+          "Kind of you. It was a very small corner."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your accounts, {b}. Balanced. The grocer owes you eleven euros."
+        ],
+        [
+          1,
+          "Eleven? I had no idea."
+        ],
+        [
+          0,
+          "Now you do. Go and fetch it before he does the sums himself."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hold still. There. Your watch runs true now."
+        ],
+        [
+          1,
+          "It's been slow for years! What do I owe you?"
+        ],
+        [
+          0,
+          "A coffee, and ten minutes of listening to me explain why."
+        ],
+        [
+          1,
+          "Deal."
+        ]
+      ],
+      [
+        [
+          0,
+          "{b}, you always crouch when we talk. You don't have to."
+        ],
+        [
+          1,
+          "I just like seeing your face."
+        ],
+        [
+          0,
+          "Well. That's the nicest thing a tall person has said to me all week."
+        ]
+      ],
+      [
+        [
+          0,
+          "Taste this. Mushroom soup, my grandmother's way."
+        ],
+        [
+          1,
+          "Oh, that's wonderful, {a}."
+        ],
+        [
+          0,
+          "Point four grams more salt than hers. Don't tell her."
+        ]
+      ],
+      [
+        [
+          0,
+          "I made you a little something. A music box. It plays your name."
+        ],
+        [
+          1,
+          "How does it play a name?"
+        ],
+        [
+          0,
+          "Very carefully, {b}. Wind it and see."
+        ]
+      ],
+      [
+        [
+          0,
+          "You lent me your ladder last spring. I've built you a better one."
+        ],
+        [
+          1,
+          "It folds into a stool? That's brilliant."
+        ],
+        [
+          0,
+          "And back into a ladder. And then into a slightly smaller stool, for me."
+        ]
+      ]
+    ],
+    "negative": [
+      [
+        [
+          0,
+          "{b}, you've been rounding my bill up. Three weeks running."
+        ],
+        [
+          1,
+          "It's a few cents, {a}."
+        ],
+        [
+          0,
+          "Four euros twelve, to be precise. I have it in writing."
+        ]
+      ],
+      [
+        [
+          0,
+          "You stepped right over me again."
+        ],
+        [
+          1,
+          "I didn't see you down there!"
+        ],
+        [
+          0,
+          "Nobody ever does. That's not an excuse, it's a pattern."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your cart is blocking my workshop door."
+        ],
+        [
+          1,
+          "Just for an hour."
+        ],
+        [
+          0,
+          "You said that yesterday. I timed it. Three hours, nine minutes."
+        ]
+      ],
+      [
+        [
+          0,
+          "Did you touch my bench? Somebody touched my bench."
+        ],
+        [
+          1,
+          "I only moved a few screws."
+        ],
+        [
+          0,
+          "A few screws! There were forty of them and they were in order!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Stop calling me 'little fella', {b}."
+        ],
+        [
+          1,
+          "It's meant kindly."
+        ],
+        [
+          0,
+          "Then mean it kindly with my name."
+        ]
+      ],
+      [
+        [
+          0,
+          "That clock you sold me runs eight minutes slow."
+        ],
+        [
+          1,
+          "It's an antique, it's got character."
+        ],
+        [
+          0,
+          "Character is fine. Eight minutes is fraud."
+        ]
+      ]
+    ],
+    "neutral": [
+      [
+        [
+          0,
+          "Excuse me, is the post office counter still the tall one?"
+        ],
+        [
+          1,
+          "Afraid so."
+        ],
+        [
+          0,
+          "Then I'll bring the crate again."
+        ]
+      ],
+      [
+        [
+          0,
+          "What time do you have?"
+        ],
+        [
+          1,
+          "About half past."
+        ],
+        [
+          0,
+          "Half past and eleven seconds. But about, yes."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you know where I can buy brass screws?"
+        ],
+        [
+          1,
+          "The ironmonger by the bridge, I think."
+        ],
+        [
+          0,
+          "Splendid. I'll check his threads before I trust him."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is the tram running to schedule today?"
+        ],
+        [
+          1,
+          "Mostly, I'd say."
+        ],
+        [
+          0,
+          "Mostly. I'll write that down. Mostly."
+        ]
+      ],
+      [
+        [
+          0,
+          "How much did you pay for those apples?"
+        ],
+        [
+          1,
+          "Two euros the kilo."
+        ],
+        [
+          0,
+          "The stall across the square does one ninety. Just so you know."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lovely bicycle. Is it a three-speed?"
+        ],
+        [
+          1,
+          "Five, actually."
+        ],
+        [
+          0,
+          "Five! May I look at the gears? I won't touch. Much."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you know if there's a bubble near the east road?"
+        ],
+        [
+          1,
+          "They say there's one past the mill."
+        ],
+        [
+          0,
+          "Past the mill. Then I'll keep to seventy-nine after the mill."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lots on at work today?"
+        ],
+        [
+          1,
+          "Same as ever."
+        ],
+        [
+          0,
+          "Same as ever is underrated. It's very easy to plan around."
+        ]
+      ],
+      [
+        [
+          0,
+          "Could you reach that jar for me? Top shelf."
+        ],
+        [
+          1,
+          "This one?"
+        ],
+        [
+          0,
+          "The one beside it. Thank you. I'd have climbed, but the shelf looks nervous."
+        ]
+      ],
+      [
+        [
+          0,
+          "Rain coming, do you think?"
+        ],
+        [
+          1,
+          "Looks like it."
+        ],
+        [
+          0,
+          "The barometer agrees. It's fallen three millimetres since breakfast."
+        ]
+      ],
+      [
+        [
+          0,
+          "New in town?"
+        ],
+        [
+          1,
+          "Just passing through."
+        ],
+        [
+          0,
+          "Then try the bakery on the corner. Honest scales. I checked."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is that your dog?"
+        ],
+        [
+          1,
+          "My neighbour's."
+        ],
+        [
+          0,
+          "Lovely animal. Exactly my height. We understand each other."
+        ]
+      ]
+    ],
+    "debate": [
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "The Rule of 80 is a design flaw in the universe. Somebody should fix it."
+          ],
+          [
+            1,
+            "Fix the universe? With what?"
+          ],
+          [
+            0,
+            "A very small screwdriver and a great deal of patience."
+          ],
+          [
+            1,
+            "Leave it alone. The last people who fixed things made it worse."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Every shop should have a low counter. It's simple courtesy."
+          ],
+          [
+            1,
+            "For children too, really."
+          ],
+          [
+            0,
+            "Exactly. Children, gnomes, anybody sitting down."
+          ],
+          [
+            1,
+            "I'd sign a petition for that."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Magic is just engineering nobody has bothered to write down."
+          ],
+          [
+            1,
+            "No. Magic doesn't follow rules like that."
+          ],
+          [
+            0,
+            "Everything follows rules. Some rules are just shy."
+          ],
+          [
+            1,
+            "Tell that to the mages who lost their voices."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Bubba's liminal engine is the best thing anybody has built this century."
+          ],
+          [
+            1,
+            "Can't argue. I took the liminal tram to Vienna in an hour."
+          ],
+          [
+            0,
+            "An hour! And nobody stuck in a bubble. Marvellous."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Money belongs in an account, not under a mattress."
+          ],
+          [
+            1,
+            "Banks fail. Mattresses don't."
+          ],
+          [
+            0,
+            "Mattresses get sat on, slept on, and stolen along with the bed."
+          ],
+          [
+            1,
+            "I'll take my chances with the mattress."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Things were built better in the old days."
+          ],
+          [
+            1,
+            "My grandfather's tools still work. Mine break in a year."
+          ],
+          [
+            0,
+            "Hand-filed teeth. Nobody files teeth any more."
+          ],
+          [
+            1,
+            "Sad, really."
+          ]
+        ]
+      }
+    ],
+    "ambient": [
+      [
+        [
+          0,
+          "Morning, {b}. Your hinge still holding?"
+        ],
+        [
+          1,
+          "Not a squeak since you fixed it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lovely weather for soldering."
+        ],
+        [
+          1,
+          "If you say so."
+        ]
+      ],
+      [
+        [
+          0,
+          "Bread's up five cents at the bakery."
+        ],
+        [
+          1,
+          "Of course you noticed."
+        ]
+      ],
+      [
+        [
+          0,
+          "Afternoon! Mind your step, I'm down here."
+        ],
+        [
+          1,
+          "Sorry! Afternoon."
+        ]
+      ],
+      [
+        [
+          0,
+          "Busy, {b}?"
+        ],
+        [
+          1,
+          "Always. You?"
+        ]
+      ],
+      [
+        [
+          0,
+          "The clock tower's four minutes slow again."
+        ],
+        [
+          1,
+          "I'll take your word for it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Evening, {b}. Supper smells good."
+        ],
+        [
+          1,
+          "Come by later, there's plenty."
+        ]
+      ],
+      [
+        [
+          0,
+          "Seen any good machines lately?"
+        ],
+        [
+          1,
+          "Only yours, {a}."
+        ]
+      ],
+      [
+        [
+          0,
+          "Cold one today."
+        ],
+        [
+          1,
+          "Freezing. Stay warm."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your laces are untied, {b}. Both of them."
+        ],
+        [
+          1,
+          "Thanks. You'd see that first."
+        ]
+      ],
+      [
+        [
+          0,
+          "Off to the market? Mind the fishmonger's scales."
+        ],
+        [
+          1,
+          "Just for bread."
+        ]
+      ],
+      [
+        [
+          0,
+          "How's the family, {b}?"
+        ],
+        [
+          1,
+          "Well, thanks. And all your cousins?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Nice hat."
+        ],
+        [
+          1,
+          "Not as nice as yours."
+        ]
+      ],
+      [
+        [
+          0,
+          "I'm counting pigeons. Forty-three."
+        ],
+        [
+          1,
+          "Of course you are."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hello up there!"
+        ],
+        [
+          1,
+          "Hello down there!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Lovely day, isn't it?"
+        ],
+        [
+          1,
+          "Can't complain."
+        ]
+      ],
+      [
+        [
+          0,
+          "Need anything fixed?"
+        ],
+        [
+          1,
+          "Not today, thanks."
+        ]
+      ],
+      [
+        [
+          0,
+          "Good night, {b}. Lock your door. Twice."
+        ],
+        [
+          1,
+          "Night, {a}."
+        ]
+      ]
+    ]
+  }
+}

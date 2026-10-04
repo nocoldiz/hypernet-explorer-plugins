@@ -422,6 +422,33 @@
     return null;
   }
 
+  // How many days the one carrying is pregnant for: the term their own
+  // archetype declares (Archetypes.json `pregnancyDuration`, the median of the
+  // two for a spliced body), so a Naguka's clutch is laid in weeks and a
+  // Verden's sporangium ripens for over a year. GESTATION_DAYS stands in when
+  // the health tables are not loaded.
+  function gestationDaysOf(profile) {
+    const HC = window.HealthCore;
+    const keys = window.NPCCreature?.archetypeKeysOf?.(profile) || [];
+    const terms = HC?.getArchetypePregnancyDuration
+      ? keys.map((k) => HC.getArchetypePregnancyDuration(k)).filter((d) => d > 0).sort((a, b) => a - b)
+      : [];
+    if (!terms.length) return FAMILY.GESTATION_DAYS;
+    const mid = terms.length >> 1;
+    return Math.max(1, Math.round(terms.length % 2 ? terms[mid] : (terms[mid - 1] + terms[mid]) / 2));
+  }
+
+  // A child born to goblins is one of its parents' people, the carrier's first.
+  function inheritGoblinSpecies(profile, leadProfile, parentProfiles) {
+    const NC = window.NPCCreature;
+    if (!profile || !NC?.goblinSpeciesOf) return;
+    const from = [leadProfile, ...parentProfiles].find((p) => p && NC.goblinSpeciesOf(p));
+    if (!from) return;
+    profile.archetype = NC.goblinSpeciesOf(from) === "naguka" // i18n-ignore: species id
+      ? NC.NAGUKA_ARCHETYPE : NC.VERDEN_ARCHETYPE;
+    delete profile._goblinSpeciesDealt;
+  }
+
   function carrierOf(ra, pa, rb, pb) {
     const ba = bodyOf(ra.name, pa), bb = bodyOf(rb.name, pb);
     if (ba === "carry" && bb === "sire") return ra.name; // i18n-ignore: body role id
@@ -622,6 +649,7 @@
         spriteKey, bustIndex, gender, age, group,
         home: leadProfile?.homeBuilding || null,
       });
+      if (!adopted) inheritGoblinSpecies(profile, leadProfile, parentProfiles);
     }
 
     // Family, both ways: parents, the brothers and sisters already there, and
@@ -683,7 +711,8 @@
         (lived.kids ?? 1) * (ageAt(sRec, nowMinute) >= MIN_NPC_AGE ? 1 : 0);
       if (rate > 0 && sampleCount(rng, rate * deltaDays) > 0) {
         const at = lastMinute + Math.floor(rng.next() * span);
-        cRec.pregnancy = { sinceMin: at, dueMin: at + FAMILY.GESTATION_DAYS * MINUTES_PER_DAY, otherParent: sRec.name };
+        const term = gestationDaysOf(cRec === record ? profile : pb);
+        cRec.pregnancy = { sinceMin: at, dueMin: at + term * MINUTES_PER_DAY, otherParent: sRec.name };
         pushLifeEvent(cRec, at, "family", "NPCLife.event.pregnant", { name: sRec.name });
         // Conceived early in a long skip: already born by now.
         if (cRec.pregnancy.dueMin <= nowMinute) {

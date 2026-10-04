@@ -48,6 +48,15 @@
  * If two of the same item are used, the name will be "Random Adjective Item"
  * where the adjective determines if there's a bonus or penalty effect.
  * 
+ * RECIPES TAB (PageUp / PageDown switch tabs)
+ * A food item with <Recipe: 2070x2, 418x1> is a dish made out of other
+ * food. It goes into the pack instead of being eaten, and pays more
+ * Cooking than the free pot. <CookLevel: n> (1-5) is the Cooking level it
+ * is meant for: below it, each level short is a 30% chance the dish comes
+ * out as the <SpoiledDish> item, which brings on nausea. A meal that would
+ * set off a party member's allergy (window.Allergy) is warned about first
+ * and needs a second press. Food is never made at the Thinker's bench.
+ * 
  * Plugin Commands:
  * - openCookingMenu: Opens the cooking menu interface
  * - cookItems: Directly combine specified items by their IDs
@@ -68,9 +77,10 @@
     const recoverySoundName = parameters['Recovery Sound'] || 'Recovery';
     const requiredItemIds = [127, 128]; // Replace with your desired item IDs
 
-    // Raw meat and raw plant matter carry no nutrition of their own
-    // (category:Crafting, not Food) and are cookable only through their own
-    // fixed recipe, or paired with any other food item under their own name.
+    // Raw meat and raw plant matter are food (eaten raw at a risk) as well as
+    // crafting materials. Cooked with a second unit of themselves they follow
+    // their own fixed recipe, and paired with any other food item they name
+    // the dish.
     const RAW_MEAT_ID = 862;
     const COOKED_MEAT_ID = 447;
     const RAW_VEG_ID = 858;
@@ -362,6 +372,273 @@
             return Math.floor(((Number(value) || 10) - 10) / 2);
         },
 
+        // The culinary d20 on the cook's Wisdom, DC 12. The flat roll is
+        // worked out first and stands as the answer, so a Dice3D that is
+        // missing, that throws (no WebGL, a scene torn down under it) or that
+        // resolves to nothing never leaves the meal half-cooked with a
+        // TypeError. Shared by the free pot and the recipe book.
+        flatRoll: function (cook) {
+            const wisMod = this.cookAbilityMod(cook);
+            const cookRoll = Math.floor(Math.random() * 20) + 1;
+            return {
+                roll: cookRoll,
+                modifier: wisMod,
+                total: cookRoll + wisMod,
+                nat1: cookRoll === 1,
+                nat20: cookRoll === 20,
+                success: cookRoll === 20 || (cookRoll !== 1 && cookRoll + wisMod >= 12)
+            };
+        },
+
+        hasDice: function () {
+            return !!(window.Dice3D && typeof window.Dice3D.rollD20 === 'function');
+        },
+
+        // Only the thrown die is waited on: with no Dice3D the flat roll is the
+        // answer on the same tick, so the meal lands the moment it is cooked.
+        culinaryRoll: async function (cook, dishName) {
+            let rollRes = this.flatRoll(cook);
+            const wisMod = rollRes.modifier;
+            const cookRoll = rollRes.roll;
+            if (this.hasDice()) {
+                try {
+                    const shown = await window.Dice3D.rollD20({
+                        actionName: _ci18n('roll.action', { dish: dishName }),
+                        statName: 'WIS',  // i18n-ignore  ability id
+                        modifier: wisMod,
+                        dc: 12,
+                        forcedRoll: cookRoll,
+                        force3D: true
+                    });
+                    if (shown && typeof shown === 'object') rollRes = shown;
+                } catch (e) {
+                    console.warn('CookingSystem: culinary check fell back to a flat roll', e);
+                }
+            }
+            return rollRes;
+        },
+
+        //=====================================================================
+        // Recipes
+        //=====================================================================
+        // A food item with a <Recipe: 2070x2, 418x1> note is a dish the
+        // kitchen's Recipes tab can make out of other food. Unlike the free pot
+        // the dish is not eaten on the spot: it goes into the pack. Food is
+        // never made at the Thinker's bench; this is the only place it is.
+        RECIPE_POINTS: 4,
+        MASTERPIECE_POINTS: 5,
+        SPOILED_POINTS: 1,
+        // Every dish names the Cooking level it is meant for (<CookLevel: n>,
+        // 1..5). A cook below it can still try, and each level short is this
+        // much more chance of the dish coming out spoiled.
+        SPOIL_PER_LEVEL: 0.3,
+        SPOIL_CAP: 0.9,
+
+        _tr: function (name) {
+            return window.translateText ? window.translateText(name || '') : (name || '');
+        },
+
+        // The bill of one dish as [{ item, qty }], or null when the item is not
+        // a dish (not food, no recipe, or an ingredient that does not exist).
+        recipeOf: function (dish) {
+            if (!dish || !dish.note || !/<category:\s*Food>/i.test(dish.note)) return null;
+            if (!this._recipeCache) this._recipeCache = new Map();
+            if (this._recipeCache.has(dish)) return this._recipeCache.get(dish);
+            const m = dish.note.match(/<Recipe:\s*([^>]+)>/i);
+            let bill = null;
+            if (m) {
+                const db = (typeof $dataItems !== 'undefined' && $dataItems) ? $dataItems : [];
+                bill = [];
+                for (const part of m[1].split(',')) {
+                    const bits = part.trim().split(/x/i);
+                    const item = db[parseInt(bits[0], 10)];
+                    if (!item || !item.name) { bill = null; break; }
+                    bill.push({ item, qty: Math.max(1, parseInt(bits[1], 10) || 1) });
+                }
+                if (bill && !bill.length) bill = null;
+            }
+            this._recipeCache.set(dish, bill);
+            return bill;
+        },
+
+        // Every dish in the book, sorted by the name the player reads.
+        recipes: function () {
+            const db = (typeof $dataItems !== 'undefined' && $dataItems) ? $dataItems : [];
+            if (this._recipeList && this._recipeListDb === db) return this._recipeList;
+            const list = db.filter(item => item && item.name && this.recipeOf(item))
+                .filter(item => !window.MagicNature || !window.MagicNature.allowsData || window.MagicNature.allowsData(item));
+            list.sort((a, b) => this._tr(a.name).localeCompare(this._tr(b.name)));
+            this._recipeList = list;
+            this._recipeListDb = db;
+            return list;
+        },
+
+        cookLevelOf: function (dish) {
+            const m = dish && dish.note ? dish.note.match(/<CookLevel:\s*(\d+)\s*>/i) : null;
+            return m ? Math.max(1, Math.min(5, parseInt(m[1], 10) || 1)) : 1;
+        },
+
+        // The Cooking level of the member at the stove, 1..5.
+        cookLevelFor: function (cook) {
+            const xp = window.SpecializationXP;
+            const level = xp && xp.levelOf ? Number(xp.levelOf(cook, 'Cooking')) : 1;  // i18n-ignore  Specialization.json id
+            return Number.isFinite(level) ? Math.max(1, Math.min(5, level)) : 1;
+        },
+
+        // The chance this cook spoils this dish on top of a natural 1.
+        spoilChance: function (dish, cook) {
+            const short = Math.max(0, this.cookLevelOf(dish) - this.cookLevelFor(cook));
+            return Math.min(this.SPOIL_CAP, short * this.SPOIL_PER_LEVEL);
+        },
+
+        // What a dish gone wrong turns into: the one item tagged <SpoiledDish>.
+        spoiledDish: function () {
+            const db = (typeof $dataItems !== 'undefined' && $dataItems) ? $dataItems : [];
+            if (this._spoiledDb !== db) {
+                this._spoiledDb = db;
+                this._spoiled = db.find(item => item && item.note && /<SpoiledDish>/i.test(item.note)) || null;
+            }
+            return this._spoiled;
+        },
+
+        // The bill against the pack: [{ item, qty, have }].
+        recipeStock: function (dish) {
+            const bill = this.recipeOf(dish) || [];
+            const has = typeof $gameParty !== 'undefined' && $gameParty;
+            return bill.map(b => ({ item: b.item, qty: b.qty, have: has ? $gameParty.numItems(b.item) : 0 }));
+        },
+
+        canPrepare: function (dish) {
+            const stock = this.recipeStock(dish);
+            return stock.length > 0 && stock.every(s => s.have >= s.qty);
+        },
+
+        // What the cook is about to put in front of somebody, as allergen ids:
+        // the dish's own tag and everything that went into it.
+        allergensOfMeal: function (items) {
+            const A = window.Allergy;
+            if (!A) return [];
+            const out = new Set();
+            for (const item of items) {
+                if (!item) continue;
+                A.allergensOf(item).forEach(k => out.add(k));
+                const bill = this.recipeOf(item);
+                if (bill) bill.forEach(b => A.allergensOf(b.item).forEach(k => out.add(k)));
+            }
+            return [...out];
+        },
+
+        // Party members a meal would set off: [{ actor, allergens }]. Asked
+        // before anything is cooked, so the warning comes before the pan.
+        allergyWarnings: function (items) {
+            const A = window.Allergy;
+            if (!A || typeof $gameParty === 'undefined' || !$gameParty) return [];
+            const held = this.allergensOfMeal(items);
+            if (!held.length) return [];
+            const out = [];
+            for (const actor of ($gameParty.members() || [])) {
+                const hit = A.allergiesOf(actor).map(a => a.allergen).filter(k => held.includes(k));
+                if (hit.length) out.push({ actor, allergens: [...new Set(hit)] });
+            }
+            return out;
+        },
+
+        // One line per member, ready to print: "Ann: peanuts, eggs".
+        allergyWarningLines: function (items) {
+            const A = window.Allergy;
+            return this.allergyWarnings(items).map(w => _ci18n('allergy.line', {
+                actor: w.actor.name(),
+                allergens: w.allergens.map(k => (A ? A.label(k) : k)).join(', ')
+            }));
+        },
+
+        // A meal the party sits down to straight from the pot: each member's
+        // allergies answer to what was in it (window.Allergy).
+        feedAllergens: function (items, dishName) {
+            const A = window.Allergy;
+            if (!A || typeof $gameParty === 'undefined' || !$gameParty) return;
+            const held = this.allergensOfMeal(items);
+            if (!held.length) return;
+            const meal = {
+                id: 'cook:' + items.map(i => i && i.id).join('+'),  // i18n-ignore  dedupe key
+                name: dishName,
+                note: '<category:Food>\n<Allergens: ' + held.join(', ') + '>'  // i18n-ignore  note tags
+            };
+            for (const actor of ($gameParty.members() || [])) {
+                try { A.onConsume(actor, meal); } catch (e) { /* the meal still counted */ }
+            }
+        },
+
+        // Cook one dish off the book. The ingredients go in, the culinary d20
+        // decides how it comes out, and the dish goes into the pack:
+        //   a natural 1, or a cook short of the dish's level failing the
+        //   spoil roll (spoilChance), leaves only a spoiled dish,
+        //   a natural 20 makes two,
+        //   the kit in the pack is a chance of one portion more.
+        // A recipe followed is worth more Cooking than a free pot.
+        //
+        // Returns the outcome at once when no die is thrown, or a promise of it
+        // while the 3D die is in the air.
+        prepareRecipe: function (dish) {
+            if (!this.canPrepare(dish)) {
+                SoundManager.playBuzzer();
+                if (window.ParchmentToast && dish) {
+                    window.ParchmentToast.show(_ci18n('messages.cannotPrepare', { name: this._tr(dish.name) }),
+                        { severity: 'warning', duration: 180 });
+                }
+                return null;
+            }
+            for (const b of this.recipeOf(dish)) $gameParty.loseItem(b.item, b.qty);
+            if (SceneManager._scene && SceneManager._scene.invalidateFoodList) {
+                SceneManager._scene.invalidateFoodList();
+            }
+
+            const name = this._tr(dish.name);
+            const cook = this.activeCook();
+            if (this.hasDice()) {
+                return this.culinaryRoll(cook, name).then(roll => this._serveRecipe(dish, name, cook, roll));
+            }
+            return this._serveRecipe(dish, name, cook, this.flatRoll(cook));
+        },
+
+        // How the dish comes out of the pan, once the d20 has landed.
+        _serveRecipe: function (dish, name, cook, roll) {
+            const kit = this.cookware();
+            const spoiled = !!roll.nat1 || Math.random() < this.spoilChance(dish, cook);
+            let made = spoiled ? 0 : (roll.nat20 ? 2 : 1);
+            if (made > 0 && kit.bonus > 0 && Math.random() < kit.bonus / 100) made++;
+            if (made > 0) $gameParty.gainItem(dish, made);
+            const ruin = spoiled ? this.spoiledDish() : null;
+            if (ruin) $gameParty.gainItem(ruin, 1);
+            if (window.Diary && made > 0) window.Diary.onCrafted('cook', name, made);
+
+            const points = spoiled ? this.SPOILED_POINTS
+                : (roll.nat20 ? this.MASTERPIECE_POINTS : this.RECIPE_POINTS);
+            const gained = window.SpecializationXP
+                ? (window.SpecializationXP.award('Cooking', points, { actor: cook, silent: true }) || [])  // i18n-ignore  Specialization.json id
+                : [];
+            if (window.ParchmentToast) {
+                const line = made > 0
+                    ? _ci18n('messages.recipePrepared', { name, count: made })
+                    : _ci18n('messages.recipeSpoiled', { name });
+                window.ParchmentToast.group([
+                    () => window.ParchmentToast.show(line, {
+                        severity: made > 0 ? (roll.nat20 ? 'good' : 'info') : 'danger',
+                        duration: 200,
+                        icon: dish.iconIndex
+                    }),
+                    ...gained.map(g => () => window.SpecializationXP.announce(g))
+                ]);
+            }
+            if (playRecoverySound && made > 0) {
+                AudioManager.playSe({ name: recoverySoundName, pan: 0, pitch: 100, volume: 90 });
+            }
+            if (SceneManager._scene && SceneManager._scene.refreshStatus) {
+                SceneManager._scene.refreshStatus();
+            }
+            return { made, spoiled, points, roll };
+        },
+
         cookItems: async function (item1, item2) {
 
             // Every entry point checks this first, but cookItems is public and
@@ -421,35 +698,7 @@
             // Roll 3D d20 culinary check based on cook's WIS (Wisdom)
             const cook = this.activeCook();
             const wisMod = this.cookAbilityMod(cook);
-            // The flat roll is worked out first and stands as the answer, so a
-            // Dice3D that is missing, that throws (no WebGL, a scene torn down
-            // under it) or that resolves to nothing never leaves the meal
-            // half-cooked with a TypeError.
-            const cookRoll = Math.floor(Math.random() * 20) + 1;
-            let rollRes = {
-                roll: cookRoll,
-                modifier: wisMod,
-                total: cookRoll + wisMod,
-                nat1: cookRoll === 1,
-                nat20: cookRoll === 20,
-                success: cookRoll === 20 || (cookRoll !== 1 && cookRoll + wisMod >= 12)
-            };
-
-            if (window.Dice3D && typeof window.Dice3D.rollD20 === 'function') {
-                try {
-                    const shown = await window.Dice3D.rollD20({
-                        actionName: `Cooking: ${cookedName}`,
-                        statName: 'WIS',
-                        modifier: wisMod,
-                        dc: 12,
-                        forcedRoll: cookRoll,
-                        force3D: true
-                    });
-                    if (shown && typeof shown === 'object') rollRes = shown;
-                } catch (e) {
-                    console.warn('CookingSystem: culinary check fell back to a flat roll', e);
-                }
-            }
+            const rollRes = this.hasDice() ? await this.culinaryRoll(cook, cookedName) : this.flatRoll(cook);
 
             const isNat20 = rollRes.nat20;
             const isNat1 = rollRes.nat1;
@@ -523,6 +772,8 @@
                 this.hungerWorthOf(totalCalories, totalProtein, totalFat) * cookSkill;
 
             const { partySize, hungerGained, report } = this.serveToParty(totalHungerRecovery);
+            // Eaten at once, so whatever was in the pot reaches every allergy.
+            this.feedAllergens([item1, item2], cookedName);
 
             // What the dish did to every meter it touched, drawn as bars that
             // run up from where each one stood before it.
@@ -648,6 +899,7 @@
             const { partySize, hungerGained, report } = this.serveToParty(totalHungerRecovery);
 
             const itemName = window.translateText ? window.translateText(item.name) : item.name;
+            this.feedAllergens([item], itemName);
             // Raw off the shelf is still a meal: the same card, the same bars.
             if (window.PartyMeal) window.PartyMeal.announce(report, { title: itemName });
             let recoverMsg = _ci18n('messages.ate', { name: itemName });
@@ -772,6 +1024,11 @@
         this._cookActorIndex = 0;
         this._cookingRenderMode = null;
         this._cookingLeaving = false;
+        // Two tabs: the free pot (two foods, eaten at once) and the recipe
+        // book (a dish off its <Recipe:>, kept in the pack).
+        this._kitchenTab = 'combine';  // i18n-ignore  tab id
+        this._recipeIndex = 0;
+        this._allergyArmed = null;
         // Name the skill this menu runs on, and whose hands are on it. The badge
         // and the switcher are decorations owned by other plugins: neither is
         // allowed to stop the kitchen from being built.
@@ -992,6 +1249,98 @@
     };
     Scene_Cooking.prototype.invalidateFoodList = function () {
         this._cachedFoodList = null;
+        this._cachedRecipeList = null;
+    };
+
+    // ── The recipe book tab ───────────────────────────────────────────────
+    Scene_Cooking.prototype.isRecipeTab = function () {
+        return this._kitchenTab === 'recipes';  // i18n-ignore  tab id
+    };
+
+    Scene_Cooking.prototype.setKitchenTab = function (tab) {
+        if (tab === this._kitchenTab) return;
+        this._kitchenTab = tab;
+        this._allergyArmed = null;
+        this._activeArea = 'pantry';  // i18n-ignore  focus area id
+        this._activeWindow = 'list';  // i18n-ignore  focus area id
+        this._pantryStamp = null;
+        this._slotsKey = null;
+        this._recipeStamp = null;
+        this._asciiCookingSig = null;
+        SoundManager.playCursor();
+        if (this._cookingRenderMode === 'parchment') this.refreshUICooking();  // i18n-ignore  render mode id
+    };
+
+    Scene_Cooking.prototype.toggleKitchenTab = function () {
+        this.setKitchenTab(this.isRecipeTab() ? 'combine' : 'recipes');  // i18n-ignore  tab ids
+    };
+
+    // Every dish in the book, the ones the pack can make right now first.
+    Scene_Cooking.prototype.recipeList = function () {
+        if (!this._cachedRecipeList) {
+            const all = CookingSystem.recipes();
+            const ready = all.filter(d => CookingSystem.canPrepare(d));
+            const short = all.filter(d => !CookingSystem.canPrepare(d));
+            this._cachedRecipeList = ready.concat(short);
+        }
+        return this._cachedRecipeList;
+    };
+
+    Scene_Cooking.prototype.selectedRecipe = function () {
+        return this.recipeList()[this._recipeIndex] || null;
+    };
+
+    // Nothing goes in the pan that would set off somebody at the table without
+    // the cook being told first: the first press names who and what, and only
+    // a second press on the same meal goes ahead.
+    Scene_Cooking.prototype.confirmAllergy = function (key, items) {
+        const lines = CookingSystem.allergyWarningLines(items);
+        if (!lines.length) { this._allergyArmed = null; return true; }
+        if (this._allergyArmed === key) { this._allergyArmed = null; return true; }
+        this._allergyArmed = key;
+        SoundManager.playBuzzer();
+        if (window.ParchmentToast) {
+            window.ParchmentToast.show(_ci18n('allergy.toast', { list: lines.join('; ') }),
+                { severity: 'danger', duration: 260, key: 'cook-allergy' });  // i18n-ignore  toast dedupe key
+        }
+        this._recipeStamp = null;
+        this._slotsKey = null;
+        this._asciiCookingSig = null;
+        if (this._cookingRenderMode === 'parchment') this.refreshUICooking();  // i18n-ignore  render mode id
+        return false;
+    };
+
+    Scene_Cooking.prototype.onPrepareOk = function () {
+        if (this._cooking) return;
+        const dish = this.selectedRecipe();
+        if (!dish || !CookingSystem.canPrepare(dish)) {
+            SoundManager.playBuzzer();
+            return;
+        }
+        if (!this.confirmAllergy('recipe:' + dish.id, [dish])) return;  // i18n-ignore  arm key
+        SoundManager.playOk();
+        this._cooking = true;
+        const done = () => {
+            this._cooking = false;
+            if (SceneManager._scene !== this) return;
+            this.invalidateFoodList();
+            // The dish keeps the cursor even when the list reorders.
+            const at = this.recipeList().indexOf(dish);
+            if (at >= 0) this._recipeIndex = at;
+            this._recipeStamp = null;
+            this._asciiCookingSig = null;
+            if (this._cookingRenderMode === 'parchment') this.refreshUICooking();  // i18n-ignore  render mode id
+        };
+        let out = null;
+        try { out = CookingSystem.prepareRecipe(dish); }
+        catch (e) { console.error('CookingSystem: recipe failed', e); }
+        // A thrown die keeps the kitchen deaf until it lands; a flat roll is
+        // already done.
+        if (out && typeof out.then === 'function') {
+            out.catch(e => console.error('CookingSystem: recipe failed', e)).then(done);
+        } else {
+            done();
+        }
     };
 
     // The pantry can shrink under an open kitchen: a follower eats, a timed
@@ -1003,6 +1352,8 @@
         const clamp = (v) => (len > 0 ? Math.max(0, Math.min(len - 1, v || 0)) : 0);
         this._pantryIndex = clamp(this._pantryIndex);
         this._selectedIndex = clamp(this._selectedIndex);
+        const recipes = this.recipeList().length;
+        this._recipeIndex = recipes > 0 ? Math.max(0, Math.min(recipes - 1, this._recipeIndex || 0)) : 0;
         this._confirmIndex = (this._confirmIndex || 0) % 2;
         this._selectedConfirmIndex = (this._selectedConfirmIndex || 0) % 2;
         // An ingredient that is no longer carried cannot stay in a pot.
@@ -1147,6 +1498,28 @@
     };
 
     Scene_Cooking.prototype.updateAsciiCookingInput = function () {
+        if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
+            this.toggleKitchenTab();
+            return;
+        }
+        if (this.isRecipeTab()) {
+            const recipes = this.recipeList();
+            if (Input.isTriggered('cancel')) {
+                SoundManager.playCancel();
+                this.popScene();
+                return;
+            }
+            if (!recipes.length) return;
+            if (Input.isRepeated('down') || Input.isRepeated('up')) {
+                const step = Input.isRepeated('down') ? 1 : -1;
+                this._recipeIndex = (this._recipeIndex + step + recipes.length) % recipes.length;
+                this._allergyArmed = null;
+                SoundManager.playCursor();
+            } else if (Input.isTriggered('ok')) {
+                this.onPrepareOk();
+            }
+            return;
+        }
         const list = this.getCachedFoodList();
 
         if (this._activeWindow === 'list') {
@@ -1231,8 +1604,10 @@
         const _item2 = CookingSystem.getSecondItem();
         const _list = this.getCachedFoodList();
         const sig = [
+            this._kitchenTab, this._recipeIndex, this._allergyArmed || '',
             this._activeWindow, this._selectedIndex, this._selectedConfirmIndex,
-            _item1 ? _item1.id : -1, _item2 ? _item2.id : -1, _list.length
+            _item1 ? _item1.id : -1, _item2 ? _item2.id : -1, _list.length,
+            this.isRecipeTab() ? this.recipeList().map(d => CookingSystem.canPrepare(d) ? 1 : 0).join('') : ''
         ].join('|');
         if (sig === this._asciiCookingSig) return;
         this._asciiCookingSig = sig;
@@ -1243,6 +1618,11 @@
 
         const fontSize = window.AsciiMode.fontSize;
         ctx.font = `${fontSize}px ${window.AsciiMode.fontFamily}`;
+
+        if (this.isRecipeTab()) {
+            this.renderAsciiRecipes(ctx, canvas, Number(fontSize) || 16);
+            return;
+        }
 
         // Header
         ctx.fillStyle = '#FFD700';
@@ -1416,12 +1796,15 @@
                       </div>
                       <h2 class="title">${pantryTitle}</h2>
                     </div>
+                    <div id="cooking-tabs" class="cooking-tabs"></div>
                     <div class="pantry-list-container" style="flex: 1; display: flex; flex-direction: column; overflow: hidden"></div>
                 </div>
                 <div class="right-page">
                     <div class="ui-detail">
                         <div id="cooking-companion-row" class="companion-switcher companion-switcher--header"></div>
 
+                        <div id="cooking-recipe-pane" class="cooking-recipe-pane" style="display: none"></div>
+                        <div id="cooking-combine-pane" class="cooking-combine-pane">
                         <h3 class="inspect-section-title">${_T('Cooking.nutritionalBase')}</h3>
                         <div class="slot-container-1"></div>
 
@@ -1433,11 +1816,13 @@
                         <h3 class="inspect-section-title">${_T('Cooking.aromaticBinder')}</h3>
                         <div class="slot-container-2"></div>
 
+                        <div class="cook-allergy-container"></div>
                         <div class="result-card-container"></div>
 
                         <div class="inspect-actions">
                             <div class="inspect-btn" id="cook-btn"></div>
                             <div class="inspect-btn inspect-btn--secondary focusable" id="eat-raw-btn">${_ci18n('ui.eatButton')}</div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -1492,6 +1877,21 @@
                 window.SpecBadge.show('Cooking', { actor: this.cookActor() });  // i18n-ignore  Specialization.json id
             }
         } catch (e) { console.warn('CookingSystem: badge', e); }
+
+        this.renderKitchenTabs(container);
+        const recipeTab = this.isRecipeTab();
+        const recipePane = container.querySelector("#cooking-recipe-pane");
+        const combinePane = container.querySelector("#cooking-combine-pane");
+        if (recipePane) recipePane.style.display = recipeTab ? "" : "none";
+        if (combinePane) combinePane.style.display = recipeTab ? "none" : "";
+        if (recipeTab) {
+            this._pantryStamp = null;
+            this._slotsKey = null;
+            this.refreshRecipeUI(container);
+            return;
+        }
+        this._recipeStamp = null;
+        this._recipeListStamp = null;
 
         const itemsList = this.getCachedFoodList();
         const item1 = CookingSystem.getFirstItem();
@@ -1617,9 +2017,13 @@
         }
 
         // 2. Render Slots and Result Card (only when selected ingredients change)
-        const slotsKey = `${item1 ? item1.id : 0}|${item2 ? item2.id : 0}|${CookingSystem._lastAdjectiveEffect || ''}`;
+        const slotsKey = `${item1 ? item1.id : 0}|${item2 ? item2.id : 0}|${CookingSystem._lastAdjectiveEffect || ''}|${this._allergyArmed || ''}`;
         if (this._slotsKey !== slotsKey) {
             this._slotsKey = slotsKey;
+            const allergyContainer = container.querySelector(".cook-allergy-container");
+            if (allergyContainer) {
+                allergyContainer.innerHTML = item1 ? this.allergyBlockHTML(item2 ? [item1, item2] : [item1]) : "";
+            }
             const slotContainer1 = container.querySelector(".slot-container-1");
             if (slotContainer1) {
                 let slot1HTML = `
@@ -1769,7 +2173,9 @@
         const cookBtn = container.querySelector("#cook-btn");
         if (cookBtn) {
             cookBtn.className = "inspect-btn focusable" + (isCookEnabled ? "" : " unusable") + (isCookFocused ? " selected" : "");
-            cookBtn.textContent = _ci18n('ui.cookButton');
+            const potKey = item1 && item2 ? 'pot:' + item1.id + '+' + item2.id : null;  // i18n-ignore  arm key
+            cookBtn.textContent = potKey && this._allergyArmed === potKey
+                ? _ci18n('ui.cookAnyway') : _ci18n('ui.cookButton');
             if (!cookBtn._hasClickListener) {
                 cookBtn._hasClickListener = true;
                 cookBtn.addEventListener("click", () => {
@@ -1785,6 +2191,14 @@
     };
 
     Scene_Cooking.prototype.updateUICookingInput = function () {
+        if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
+            this.toggleKitchenTab();
+            return;
+        }
+        if (this.isRecipeTab()) {
+            this.updateRecipeInput();
+            return;
+        }
         const itemsList = this.getCachedFoodList();
         const item1 = CookingSystem.getFirstItem();
         const item2 = CookingSystem.getSecondItem();
@@ -1881,6 +2295,237 @@
         }
     };
 
+    // ── Recipe tab (parchment) ────────────────────────────────────────────
+    const _esc = (text) => String(text == null ? '' : text)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+    const _iconStyle = (iconIdx) =>
+        `background: url('img/system/IconSet.png') -${(iconIdx % 16) * 32}px -${Math.floor(iconIdx / 16) * 32}px no-repeat;`;
+
+    const _levelName = (level) => (window.Specializations && window.Specializations.levelName)
+        ? window.Specializations.levelName(level) : String(level);
+
+    // Who at the table a meal would set off, as a warning block, or nothing.
+    Scene_Cooking.prototype.allergyBlockHTML = function (items) {
+        const lines = CookingSystem.allergyWarningLines(items);
+        if (!lines.length) return "";
+        return `<div class="cook-verdict gauge-ink gauge-band--bad">${_esc(_ci18n('allergy.title'))}</div>` +
+            lines.map(l => `<div class="cook-kit-line gauge-ink gauge-band--bad">${_esc(l)}</div>`).join('');
+    };
+
+    Scene_Cooking.prototype.renderKitchenTabs = function (container) {
+        const el = container.querySelector("#cooking-tabs");
+        if (!el) return;
+        if (el._tabKey === this._kitchenTab && el.innerHTML) return;
+        el._tabKey = this._kitchenTab;
+        const chip = (id, label) =>
+            `<div class="backpack-tab focusable ${this._kitchenTab === id ? 'active' : ''}" data-tab="${id}">${_esc(label)}</div>`;
+        el.innerHTML = `<div class="backpack-tabs"><div class="backpack-tabs-row">` +
+            chip('combine', _ci18n('tabs.combine')) + chip('recipes', _ci18n('tabs.recipes')) +  // i18n-ignore  tab ids
+            `</div></div>`;
+        el.querySelectorAll(".backpack-tab").forEach(node => {
+            node.addEventListener("click", (e) => {
+                if (e && e.stopPropagation) e.stopPropagation();
+                this.setKitchenTab(node.getAttribute("data-tab"));
+            });
+        });
+    };
+
+    Scene_Cooking.prototype.refreshRecipeUI = function (container) {
+        const list = this.recipeList();
+        const cook = this.cookActor();
+        const cookLevel = CookingSystem.cookLevelFor(cook);
+        const members = (typeof $gameParty !== 'undefined' && $gameParty) ? ($gameParty.members() || []) : [];
+        const party = members.map(m => m.name()).join(',');
+
+        // The left page: the book. Rebuilt only when what it shows changes;
+        // walking it moves one mark.
+        const listEl = container.querySelector(".pantry-list-container");
+        const listStamp = list.map(d => d.id + (CookingSystem.canPrepare(d) ? 'r' : 's')).join(',') +
+            '|' + party + '|' + cookLevel;
+        if (listEl && this._recipeListStamp === listStamp && listEl.innerHTML) {
+            listEl.querySelectorAll(".recipe-row").forEach(node => {
+                const idx = parseInt(node.getAttribute("data-idx"), 10);
+                node.classList.toggle("selected", this._recipeIndex === idx);
+            });
+        } else if (listEl) {
+            this._recipeListStamp = listStamp;
+            if (!list.length) {
+                listEl.innerHTML = `<div class="ui-empty empty-pantry-msg">${_esc(_ci18n('recipes.empty'))}</div>`;
+            } else {
+                let html = `<div class="backpack-grid pantry-list recipe-list">`;
+                list.forEach((dish, idx) => {
+                    const ready = CookingSystem.canPrepare(dish);
+                    const level = CookingSystem.cookLevelOf(dish);
+                    const risky = CookingSystem.allergyWarnings([dish]).length > 0;
+                    let cls = "item-slot pantry-row recipe-row";
+                    if (idx === this._recipeIndex) cls += " selected";
+                    if (!ready) cls += " unusable";
+                    const meta = (ready ? _ci18n('recipes.ready') : _ci18n('recipes.missing')) +
+                        ' | ' + _ci18n('recipes.levelShort', { level }) +
+                        (risky ? ' | ' + _ci18n('recipes.allergyShort') : '');
+                    html += `
+                        <div class="${cls}" data-idx="${idx}">
+                            <div class="item-slot-icon"><div class="item-icon" style="${_iconStyle(dish.iconIndex)}"></div></div>
+                            <div class="item-slot-info">
+                                <div class="item-slot-name">${_esc(CookingSystem._tr(dish.name))}</div>
+                                <div class="item-slot-meta">
+                                    <span class="cook-nutrition-line${risky ? ' gauge-ink gauge-band--bad' : ''}">${_esc(meta)}</span>
+                                    <span class="item-slot-count">x${$gameParty.numItems(dish)}</span>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                html += `</div>`;
+                listEl.innerHTML = html;
+                listEl.querySelectorAll(".recipe-row").forEach(node => {
+                    node.addEventListener("click", () => {
+                        const idx = parseInt(node.getAttribute("data-idx"), 10);
+                        if (idx === this._recipeIndex) return;
+                        this._recipeIndex = idx;
+                        this._allergyArmed = null;
+                        SoundManager.playCursor();
+                        this.refreshUICooking();
+                    });
+                });
+            }
+        }
+
+        // The right page: the dish open in the book.
+        const pane = container.querySelector("#cooking-recipe-pane");
+        if (!pane) return;
+        const dish = this.selectedRecipe();
+        const stock = dish ? CookingSystem.recipeStock(dish) : [];
+        const armedKey = dish ? 'recipe:' + dish.id : null;  // i18n-ignore  arm key
+        const stamp = (dish ? dish.id : 0) + '|' + stock.map(st => st.have).join(',') + '|' +
+            (this._allergyArmed || '') + '|' + cookLevel + '|' + party;
+        if (this._recipeStamp === stamp && pane.innerHTML) return;
+        this._recipeStamp = stamp;
+        if (!dish) { pane.innerHTML = ""; return; }
+
+        const need = CookingSystem.cookLevelOf(dish);
+        const spoil = CookingSystem.spoilChance(dish, cook);
+        // A natural 1 spoils any dish; the shortfall adds to it.
+        const spoilPct = Math.round((1 - 0.95 * (1 - spoil)) * 100);
+        const nut = CookingSystem.getRecoveryValues(dish);
+        const ready = CookingSystem.canPrepare(dish);
+        const armed = this._allergyArmed === armedKey;
+        const row = (label, value, cls) =>
+            `<span class="inspect-spec-label">${_esc(label)}</span><span class="inspect-spec-value${cls ? ' ' + cls : ''}">${_esc(value)}</span>`;
+
+        pane.innerHTML = `
+            <div class="cook-result">
+                <div class="item-slot item-slot--compact">
+                    <div class="item-icon" style="${_iconStyle(dish.iconIndex)}"></div>
+                    <div class="item-slot-info">
+                        <div class="item-slot-name">${_esc(CookingSystem._tr(dish.name))}</div>
+                        <div class="cook-nutrition-line">${_ci18n('nutritionShort.calories')}: ${nut.hunger} | ${_ci18n('nutritionShort.protein')}: ${nut.tp} | ${_ci18n('nutritionShort.fat')}: ${nut.mp}</div>
+                    </div>
+                </div>
+                <h3 class="inspect-section-title">${_esc(_ci18n('recipes.ingredients'))}</h3>
+                <div class="inspect-spec-grid">
+                    ${stock.map(st => row(CookingSystem._tr(st.item.name),
+                        _ci18n('recipes.amount', { have: st.have, need: st.qty }),
+                        st.have >= st.qty ? 'gauge-ink gauge-band--ok' : 'gauge-ink gauge-band--bad')).join('')}
+                </div>
+                <div class="inspect-spec-grid">
+                    ${row(_ci18n('recipes.level'), _ci18n('recipes.levelLine', {
+                        need: _levelName(need), cook: cook ? cook.name() : '', have: _levelName(cookLevel) }),
+                        cookLevel >= need ? 'gauge-ink gauge-band--ok' : 'gauge-ink gauge-band--bad')}
+                    ${row(_ci18n('recipes.spoil'), spoilPct + '%', spoil > 0 ? 'gauge-ink gauge-band--bad' : '')}
+                    ${row(_ci18n('recipes.reward'), _ci18n('recipes.points', { points: CookingSystem.RECIPE_POINTS }), 'inspect-spec-value--gain')}
+                </div>
+                ${this.allergyBlockHTML([dish])}
+                <div class="cook-kit-line">${_esc(_ci18n('recipes.keeps'))}</div>
+            </div>
+            <div class="inspect-actions">
+                <div class="inspect-btn focusable${ready ? '' : ' unusable'}" id="prepare-btn">${_esc(armed ? _ci18n('recipes.prepareAnyway') : _ci18n('recipes.prepareButton'))}</div>
+            </div>`;
+        const btn = pane.querySelector("#prepare-btn");
+        if (btn) {
+            btn.addEventListener("click", (e) => {
+                if (e && e.stopPropagation) e.stopPropagation();
+                this.onPrepareOk();
+            });
+        }
+    };
+
+    Scene_Cooking.prototype.updateRecipeInput = function () {
+        if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+            SoundManager.playCancel();
+            this.popScene();
+            return;
+        }
+        const list = this.recipeList();
+        if (!list.length) return;
+        const gridEl = document.querySelector(".recipe-list");
+        const cols = gridEl && window.MenuVirtualList && typeof MenuVirtualList.columnsOf === 'function'
+            ? MenuVirtualList.columnsOf(gridEl, 3) : 3;
+        const dir = window.UINav ? UINav.navDir() : null;
+        const next = dir ? UINav.gridStep(this._recipeIndex, dir, list.length, cols) : this._recipeIndex;
+        if (dir) {
+            if (next === this._recipeIndex) return;
+            this._recipeIndex = next;
+            this._allergyArmed = null;
+            SoundManager.playCursor();
+            this.refreshUICooking();
+            const activeRow = document.querySelector(".recipe-row.selected");
+            if (activeRow && activeRow.scrollIntoView) activeRow.scrollIntoView({ block: "nearest" });
+        } else if (Input.isTriggered('ok')) {
+            this.onPrepareOk();
+        }
+    };
+
+    // The recipe book in ASCII: a window of the list, and the open dish.
+    Scene_Cooking.prototype.renderAsciiRecipes = function (ctx, canvas, fontSize) {
+        const list = this.recipeList();
+        const line = fontSize + 8;
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#FFD700';
+        ctx.fillText(`--- ${_ci18n('tabs.recipes')} ---`, canvas.width / 2, 30);
+        ctx.textAlign = 'left';
+        if (!list.length) {
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillText(_ci18n('recipes.empty'), 50, 80);
+            return;
+        }
+        const rows = Math.max(5, Math.floor((canvas.height - 120) / line));
+        const top = Math.max(0, Math.min(list.length - rows, this._recipeIndex - Math.floor(rows / 2)));
+        for (let i = top; i < Math.min(list.length, top + rows); i++) {
+            const dish = list[i];
+            const y = 80 + (i - top) * line;
+            const ready = CookingSystem.canPrepare(dish);
+            ctx.fillStyle = i === this._recipeIndex ? '#FF0000' : (ready ? '#FFFFFF' : '#777777');
+            ctx.fillText(`${i === this._recipeIndex ? '>' : ' '} ${CookingSystem._tr(dish.name)}`, 50, y);
+        }
+        const dish = this.selectedRecipe();
+        if (!dish) return;
+        const x = Math.floor(canvas.width / 2);
+        let y = 80;
+        const cook = this.cookActor();
+        ctx.fillStyle = '#FFD700';
+        ctx.fillText(CookingSystem._tr(dish.name), x, y); y += line;
+        ctx.fillStyle = '#00FFFF';
+        ctx.fillText(_ci18n('recipes.level') + ': ' + _ci18n('recipes.levelLine', {
+            need: _levelName(CookingSystem.cookLevelOf(dish)), cook: cook ? cook.name() : '',
+            have: _levelName(CookingSystem.cookLevelFor(cook)) }), x, y); y += line;
+        for (const st of CookingSystem.recipeStock(dish)) {
+            ctx.fillStyle = st.have >= st.qty ? '#FFFFFF' : '#FF6666';
+            ctx.fillText(`${CookingSystem._tr(st.item.name)}  ${_ci18n('recipes.amount', { have: st.have, need: st.qty })}`, x, y);
+            y += line;
+        }
+        const warnings = CookingSystem.allergyWarningLines([dish]);
+        if (warnings.length) {
+            ctx.fillStyle = '#FF6666';
+            ctx.fillText(_ci18n('allergy.title'), x, y); y += line;
+            for (const w of warnings) { ctx.fillText(w, x, y); y += line; }
+        }
+        ctx.fillStyle = '#FFFF00';
+        const armed = this._allergyArmed === 'recipe:' + dish.id;  // i18n-ignore  arm key
+        ctx.fillText(`[ ${armed ? _ci18n('recipes.prepareAnyway') : _ci18n('recipes.prepareButton')} ]`, x, y + line);
+    };
+
+
     // The only way the kitchen cooks, whichever front end asked (parchment,
     // ASCII, mouse). The kitchen stays open across the culinary d20 and the
     // dish itself: the die is a DOM overlay drawn over this scene, so the
@@ -1897,6 +2542,7 @@
             SoundManager.playBuzzer();
             return;
         }
+        if (!this.confirmAllergy('pot:' + item1.id + '+' + item2.id, [item1, item2])) return;  // i18n-ignore  arm key
         SoundManager.playOk();
         this._cooking = true;
         CookingSystem.clearSelectedItems();

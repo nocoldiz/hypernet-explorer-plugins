@@ -276,33 +276,6 @@
         }
       }
     },
-    "verden": {
-      "name": "Verden",
-      "description": "Des gobelins des forêts qui mènent une guérilla contre l'expansion de l'industrie lourde.",
-      "troops": {
-        "forestscout": {
-          "name": "Éclaireur des Forêts"
-        },
-        "saplingdefender": {
-          "name": "Défenseur des Jeunes Pousses"
-        },
-        "guerillafighter": {
-          "name": "Combattant de Guérilla"
-        },
-        "treeambusher": {
-          "name": "Embusqué des Arbres"
-        },
-        "natureswrath": {
-          "name": "Courroux de la Nature"
-        },
-        "forestchampion": {
-          "name": "Champion des Forêts"
-        },
-        "scientist": {
-          "name": "Chimiste Verden"
-        }
-      }
-    },
     "truckerssociety": {
       "name": "Société des Routiers",
       "description": "Les âmes courageuses qui convoient les marchandises à travers les terres désolées. Ils sont le sang de l'économie et n'obéissent à aucun code de la route.",
@@ -681,36 +654,6 @@
         },
         "scientist": {
           "name": "Érudit Indépendant"
-        }
-      }
-    },
-    "goblincollectiveunconsciuous": {
-      "name": "Inconscient Collectif Gobelin",
-      "description": "Le lien psychique qui relie tous les esprits gobelins et conserve leur sagesse chaotique ancestrale.",
-      "troops": {
-        "psychicgoblin": {
-          "name": "Gobelin Psychique"
-        },
-        "mindstriker": {
-          "name": "Frappeur Mental"
-        },
-        "hivemindwarrior": {
-          "name": "Guerrier de l'Esprit-Ruche"
-        },
-        "psychicslinger": {
-          "name": "Lanceur Psychique"
-        },
-        "collectiveconduit": {
-          "name": "Conduit du Collectif"
-        },
-        "telepathicsniper": {
-          "name": "Tireur d'Élite Télépathe"
-        },
-        "ancestralecho": {
-          "name": "Écho Ancestral"
-        },
-        "scientist": {
-          "name": "Bricoleur Gobelin"
         }
       }
     },

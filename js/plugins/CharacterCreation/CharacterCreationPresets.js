@@ -825,7 +825,11 @@
     return Object.keys(catalog).filter((key) => {
       const entry = catalog[key];
       if (!entry || entry.npc !== true || entry.beta === true) return false;
-      if (entry.Archetype !== archetype) return false;
+      // "Humanoid" is every person's body, whichever people the sheet names
+      // (an Elf, a Dwarf, an Orc: HealthCore.isHumanoidBody).
+      const HC = window.HealthCore;
+      const person = archetype === "Humanoid" && HC && HC.isHumanoidBody; // i18n-ignore: Archetypes.json key
+      if (person ? !HC.isHumanoidBody(entry.Archetype || archetype) : entry.Archetype !== archetype) return false;
       return extra ? extra(entry) : true;
     });
   }

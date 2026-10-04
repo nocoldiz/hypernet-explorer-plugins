@@ -26,7 +26,7 @@
     BubbleLayout, CAPABILITY_THOUGHTS, ConversationLog, ConversationManager, CRAVING_THOUGHTS,
     CRAVING_WITHDRAWAL_THOUGHTS, CravingProvider, CreedVoice, DEBATE_SCRIPTS, ELECTION_THOUGHTS,
     ElectionClock, FAMILIAR_THOUGHTS, LIFE_SCRIPT_TOPICS, LIFE_TOPICS, LifeContext, LifeTalk,
-    NEED_THOUGHTS, NEGATIVE_SCRIPTS, NEUTRAL_SCRIPTS, OFFICE_HOLDER_THOUGHTS,
+    NEED_THOUGHTS, SpeciesThoughts, SpeciesVoice, NEGATIVE_SCRIPTS, NEUTRAL_SCRIPTS, OFFICE_HOLDER_THOUGHTS,
     PERSONALITY_CORE_THOUGHTS, PERSONALITY_DEBATE_AFFINITY, PERSONALITY_TONE_BIAS,
     PERSONALITY_VOICES, POLICY_GRUMBLES, POLITICAL_DEBATE_SCRIPTS, POLITICAL_RUMOR_THOUGHTS,
     POLITICAL_THOUGHTS, PoliticsProvider, POSITIVE_SCRIPTS, SEASON_THOUGHTS, SituationalThoughts, SpecTalk,
@@ -50,6 +50,8 @@
     ElectionClock,
     WorldFacts,
     CreedVoice,           // II.9 ideology families and special creeds
+    SpeciesVoice,         // II.1b a people's own voice: render(text, speaker), voiceOf, script
+    SpeciesThoughts,      // a people's own thoughts by situation
     PoliticsProvider,
     WorldProvider,
     ThoughtBubbleManager, // null when running headless (Node test harness)

@@ -3359,6 +3359,13 @@ Imported.DialogueSystem = true;
     // opened the conversation, so a beat reads as two people facing each other.
     // Each step carries the speaker's 3D body too, when they have one (see
     // BustManager._eventModelSpec / _actorModelSpec).
+    // Either side of an exchange says it the way their people do: the Naguka
+    // in their patois, the Verden in theirs (NPCConversation.SpeciesVoice).
+    function speciesVoiced(text, speaker) {
+        const SV = window.NPCConversation?.SpeciesVoice;
+        return SV ? SV.render(text, speaker) : text;
+    }
+
     function playerStep(actor, text) {
         const H    = window.NPCEmpathize?._helpers;
         const full = H?._resolveBustForActor ? H._resolveBustForActor(actor) : 'img/busts/7.png';
@@ -3366,7 +3373,7 @@ Imported.DialogueSystem = true;
         return {
             imageName: String(full).replace(/^img\/busts\//, '').replace(/\.png$/, ''),
             displayName: actor ? actor.name() : '',
-            text,
+            text: speciesVoiced(text, actor),
             side: 'left',
             modelSpec: bm ? bm._actorModelSpec(actor) : null,
         };
@@ -3377,7 +3384,7 @@ Imported.DialogueSystem = true;
         return {
             imageName: _npcExchangeBust(ev),
             displayName: bm ? bm.getCharacterDisplayName(ev.eventId()) : npcName,
-            text,
+            text: speciesVoiced(text, npcName),
             side: 'right',
             modelSpec: bm ? bm._eventModelSpec(ev.eventId()) : null,
         };

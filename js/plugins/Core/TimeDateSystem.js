@@ -6386,10 +6386,19 @@
       return window.WorldNames && window.WorldNames.nation ? window.WorldNames.nation(country) : String(country || "");
     }
 
+    // The toast only ever shows on the world map itself: anywhere else (towns,
+    // dungeons, alien planets, space) the party is not standing in a nation.
+    function onWorldMap() {
+      if (typeof $gameMap === "undefined" || !$gameMap || typeof $gameMap.mapId !== "function") return false;
+      const id = (window.WorldMapReturn && window.WorldMapReturn.worldMapId) || 315;
+      return $gameMap.mapId() === Number(id);
+    }
+
     // The toast for a holiday in the nation the party is in, once per nation
     // per day (a new day on the map, or crossing a border on one).
     function announceHere() {
       if (!window.ParchmentToast || typeof $gameSystem === "undefined" || !$gameSystem) return;
+      if (!onWorldMap()) return;
       const country = here();
       if (!country) return;
       const day = todayIndex();

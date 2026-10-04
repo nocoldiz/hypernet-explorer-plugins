@@ -276,33 +276,6 @@
         }
       }
     },
-    "verden": {
-      "name": "Verden",
-      "description": "Forest goblins who wage guerilla warfare against the expansion of heavy industry.",
-      "troops": {
-        "forestscout": {
-          "name": "Forest Scout"
-        },
-        "saplingdefender": {
-          "name": "Sapling Defender"
-        },
-        "guerillafighter": {
-          "name": "Guerilla Fighter"
-        },
-        "treeambusher": {
-          "name": "Tree Ambusher"
-        },
-        "natureswrath": {
-          "name": "Nature's Wrath"
-        },
-        "forestchampion": {
-          "name": "Forest Champion"
-        },
-        "scientist": {
-          "name": "Verden Chemist"
-        }
-      }
-    },
     "truckerssociety": {
       "name": "Truckers Society",
       "description": "The brave souls who transport goods across the wastelands. They are the lifeblood of the economy and obey no road laws.",
@@ -681,36 +654,6 @@
         },
         "scientist": {
           "name": "Freelance Scholar"
-        }
-      }
-    },
-    "goblincollectiveunconsciuous": {
-      "name": "Goblin Collective Unconsciuous",
-      "description": "The psychic link that connects all goblin minds, storing their ancestral chaotic wisdom.",
-      "troops": {
-        "psychicgoblin": {
-          "name": "Psychic Goblin"
-        },
-        "mindstriker": {
-          "name": "Mind Striker"
-        },
-        "hivemindwarrior": {
-          "name": "Hive Mind Warrior"
-        },
-        "psychicslinger": {
-          "name": "Psychic Slinger"
-        },
-        "collectiveconduit": {
-          "name": "Collective Conduit"
-        },
-        "telepathicsniper": {
-          "name": "Telepathic Sniper"
-        },
-        "ancestralecho": {
-          "name": "Ancestral Echo"
-        },
-        "scientist": {
-          "name": "Goblin Tinkerer"
         }
       }
     },

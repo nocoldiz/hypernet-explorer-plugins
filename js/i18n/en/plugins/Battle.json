@@ -219,7 +219,10 @@
       "Rooted": "Much harder to damage or knock over, but slower.",
       "Flow": "Turns some attacks aside and counters them.",
       "Chi Burn": "Loses health each turn, magic power falls and action points build up slowly.",
-      "Concussed": "Magic power, magic defence and accuracy all fall."
+      "Concussed": "Magic power, magic defence and accuracy all fall.",
+      "Allergic Reaction": "Hives, itching and a running nose from an allergen. Attack and agility fall and aim slips until it passes or an antihistamine clears it.",
+      "Anaphylaxis": "The airway swells shut after an allergen. Health drains every turn and the body barely answers until an antihistamine or a health potion opens it again.",
+      "Hay Fever": "Streaming eyes and fits of sneezing from pollen in the air. Spells and aim suffer until it passes or an antihistamine clears it."
     }
   },
   "spirit": {

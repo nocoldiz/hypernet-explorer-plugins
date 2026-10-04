@@ -109,6 +109,12 @@
         const WMo = worldModes();
         return !!(WMo && WMo.hordeIsNormalOrder());
     }
+    // The Goblin Horde is a hyperpower at all (not in a monster world).
+    const HORDE_POWER = 'Goblin Horde';  // i18n-ignore  hyperpower id
+    function hordeExists() {
+        const WMo = worldModes();
+        return !WMo || typeof WMo.hordeExists !== 'function' || !!WMo.hordeExists();
+    }
     const AUTO_RUN = params.autoRunOnNewGame === "true";
     const CANON_END_YEAR = 2001; // The true end year of the canon timeline
 
@@ -942,6 +948,18 @@
             this._currentHyperpowers = useFdm ? JSON.parse(JSON.stringify(fdm._hyperpowers)) : JSON.parse(JSON.stringify(HYPERPOWERS));
             this._currentFactions = useFdm ? JSON.parse(JSON.stringify(fdm._historicalFactions)) : JSON.parse(JSON.stringify(FACTIONS));
             this._currentCountries = useFdm ? JSON.parse(JSON.stringify(fdm._countries)) : JSON.parse(JSON.stringify(COUNTRIES));
+            // A monster world has no Goblin Horde: the power is never on the
+            // board, and whatever it would have held starts the century as
+            // nobody's, so its ground, its refugees, its armies and its
+            // politics never come to be.
+            if (!hordeExists()) {
+                delete this._currentHyperpowers[HORDE_POWER];
+                for (const info of Object.values(this._currentCountries || {})) {
+                    if (!info) continue;
+                    if (info.controller === HORDE_POWER) info.controller = 'Neutral';  // i18n-ignore  controller id
+                    if (info.faction === HORDE_POWER) info.faction = 'Neutral';  // i18n-ignore  faction id
+                }
+            }
 
             // Ensure every leader has a valid years range. FactionDataManager's
             // hyperpower/faction data may omit it, which would crash the
@@ -2350,7 +2368,7 @@
                 },
                 '1970-05': {
                     type: 'paranormal',
-                    callback: (mgr) => { mgr._currentHyperpowers['Goblin Horde'].military += 200; }
+                    callback: (mgr) => { const horde = mgr._currentHyperpowers[HORDE_POWER]; if (horde) horde.military += 200; }
                 },
                 '1978-10': {
                     type: 'political',

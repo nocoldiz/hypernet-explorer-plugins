@@ -216,10 +216,24 @@
         if (data) {
             var type = MIME[match[1].toLowerCase()] || "application/octet-stream";
             url = URL.createObjectURL(new Blob([data], { type: type }));
+            cachedUrls[url] = 1;
         }
         urlCache[rel] = url;
         return url;
     }
+
+    // A cached url is handed to every caller asking for that file, so nobody
+    // may revoke it: the engine's Bitmap._onLoad revokes its image src after
+    // loading, and when that src was one of these the next load of the same
+    // file died with "Failed to load blob:...".
+    var cachedUrls = Object.create(null);
+    var revokeObjectURL = URL.revokeObjectURL;
+    URL.revokeObjectURL = function (url) {
+        if (typeof url === "string" && cachedUrls[url] === 1) {
+            return;
+        }
+        return revokeObjectURL.apply(this, arguments);
+    };
 
     //-------------------------------------------------------------------------
     // Text rewriting
@@ -598,8 +612,17 @@
             }
         };
 
+        // The decrypted bytes come back the way the plain file would have:
+        // a string when the caller asked for an encoding, a Buffer otherwise.
+        var asRead = function (data, options) {
+            var buf = Buffer.from(data.buffer, data.byteOffset, data.byteLength);
+            var encoding = typeof options === "string" ? options
+                : options && typeof options.encoding === "string" ? options.encoding : null;
+            return encoding ? buf.toString(encoding) : buf;
+        };
+
         var origReadFileSync = nodeFs.readFileSync;
-        nodeFs.readFileSync = function (target) {
+        nodeFs.readFileSync = function (target, options) {
             try {
                 return origReadFileSync.apply(this, arguments);
             } catch (e) {
@@ -611,7 +634,7 @@
                 if (!data) {
                     throw e;
                 }
-                return Buffer.from(data.buffer, data.byteOffset, data.byteLength);
+                return asRead(data, options);
             }
         };
 
@@ -637,7 +660,7 @@
             };
 
             var origPromiseReadFile = promises.readFile;
-            promises.readFile = function (target) {
+            promises.readFile = function (target, options) {
                 var self = this;
                 var args = arguments;
                 return origPromiseReadFile.apply(self, args).catch(function (err) {
@@ -650,7 +673,7 @@
                         if (!data) {
                             throw err;
                         }
-                        return Buffer.from(data.buffer, data.byteOffset, data.byteLength);
+                        return asRead(data, options);
                     });
                 });
             };
@@ -659,8 +682,41 @@
 
     //-------------------------------------------------------------------------
 
+    // A blob url for an encrypted file named by its full path on disk,
+    // wherever it lives: a mod's sealed copy of an asset (Core/ModManager.js)
+    // may sit in the Steam Workshop folder, outside the game root that
+    // blobUrlFor reads from. null when the file is not one this key opens.
+    var fileUrlCache = Object.create(null);
+    function blobUrlForFile(abs) {
+        if (typeof abs !== "string" || !rawReadFileSync) {
+            return null;
+        }
+        if (abs in fileUrlCache) {
+            return fileUrlCache[abs];
+        }
+        var match = abs.match(ENCRYPTED_EXT);
+        var url = null;
+        if (match) {
+            var raw = null;
+            try {
+                raw = rawReadFileSync(abs);
+            } catch (e) {
+                raw = null;
+            }
+            var data = decrypt(raw);
+            if (data) {
+                var type = MIME[match[1].toLowerCase()] || "application/octet-stream";
+                url = URL.createObjectURL(new Blob([data], { type: type }));
+                cachedUrls[url] = 1;
+            }
+        }
+        fileUrlCache[abs] = url;
+        return url;
+    }
+
     window.AssetDecrypt = {
         url: blobUrlFor,
+        fileUrl: blobUrlForFile,
         rewrite: rewriteDoc,
         rescanStyleSheets: scanThisDocument
     };

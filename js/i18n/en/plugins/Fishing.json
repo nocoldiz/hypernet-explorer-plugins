@@ -4,6 +4,8 @@
   "lineSnapped": "Line snapped",
   "nothingBiting": "Nothing biting",
   "tooSlow": "Too slow",
+  "freeCamOn": "Free camera",
+  "freeCamOff": "Angler camera",
   "something": "Something",
   "hint": {
     "loading": "Loading the lake...",

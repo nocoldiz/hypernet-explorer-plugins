@@ -1547,8 +1547,11 @@
             const archetype = BSE.Helpers.getEnemyArchetype(data);
             if (mode === "zombie") return !BSE.Helpers.isZombieWorldEnemyData(data);
             // Both remaining modes bar the peoples; the empty world bars
-            // everything that can be spoken to on top of them.
+            // everything that can be spoken to on top of them. A monster world
+            // has no goblins either, whatever body a goblin enemy is built on
+            // (a severed goblin head is still a goblin).
             if (BSE.Helpers.isFolkArchetype(archetype)) return true;
+            if (mode === "monster" && BSE.Helpers.isGoblinEnemyData(data)) return true;
             return mode === "empty" && String(data.note || "").includes("<Talk>");
         });
     };
@@ -1939,7 +1942,12 @@
             const data = $dataEnemies[member.enemyId];
             if (!data) continue;
             const arch = BSE.Helpers.getEnemyArchetype(data);
-            if (arch && archetypes.indexOf(arch) >= 0) return true;
+            if (!arch) continue;
+            // A people built on another body (a Naguka goblin) is at home
+            // wherever that body is (HealthCore.archetypeLookupKeys).
+            const HC = window.HealthCore;
+            const keys = HC && HC.archetypeLookupKeys ? HC.archetypeLookupKeys(arch) : [arch];
+            if (keys.some(k => archetypes.indexOf(k) >= 0)) return true;
         }
         return false;
     };

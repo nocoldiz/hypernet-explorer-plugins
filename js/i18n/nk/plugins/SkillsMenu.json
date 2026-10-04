@@ -7,7 +7,8 @@
   },
   "cost": {
     "mp": "{n} MP",
-    "ap": "{n} AP"
+    "ap": "{n} AP",
+    "both": "{ap} AP + {mp} MP"
   },
   "discipline": {
     "basic": "BASIC DISCIPLINE",

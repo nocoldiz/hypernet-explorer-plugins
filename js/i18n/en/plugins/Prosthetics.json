@@ -179,6 +179,9 @@
   "faceSurgery": "Face surgery",
   "faceSurgeryMeta": "Change bust and portrait appearance",
   "faceSurgerySuccess": "Face surgery completed successfully.",
+  "geneSplicing": "Gene splicing",
+  "geneSplicingMeta": "Add or remove genetic traits compatible with this body",
+  "geneSplicingPrice": "100 € per trait point",
   "tooExpensive": "Not enough money for that surgery.",
  "remote": {
   "title": "Remote Bistury",

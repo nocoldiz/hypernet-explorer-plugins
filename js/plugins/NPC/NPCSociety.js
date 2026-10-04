@@ -953,6 +953,17 @@
           changed = true;
         }
       } else {
+        // A goblin's face is a Naguka's or a Verden's, and which one depends on
+        // where they were met (NPCCreature.assignGoblinSpecies).
+        if (NC.assignGoblinSpecies?.(profile, eventName)) changed = true;
+        // Any other people's face (an Elf, a Dwarf, an Orc, a Tourist...) is
+        // that people, a plain Humanoid profile included.
+        const people = entry.Archetype;
+        if (people && people !== profile.archetype && (profile.archetype || "Humanoid") === "Humanoid" && // i18n-ignore: Archetypes.json key
+            window.HealthCore?.isHumanoidBody?.(people) && !NC.isGoblinArchetype?.(people)) {
+          profile.archetype = people;
+          changed = true;
+        }
         const risen = !!NC.isRisenSheet?.(profile.spriteKey);
         if (profile.isCreature) {
           // A beast's anatomy does not follow it into a person's clothes.

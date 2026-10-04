@@ -926,7 +926,11 @@ Game_Factions.prototype.getHyperpowers = function () {
   const src = (window.WorldGen && window.WorldGen.Hyperpowers &&
     window.WorldGen.Hyperpowers.hyperpowers) ||
     (FactionDataManager.instance && FactionDataManager.instance._hyperpowers) || {};
+  // A monster world has no Goblin Horde (WorldModes.hordeExists).
+  const WMo = window.WorldModes;
+  const noHorde = !!(WMo && typeof WMo.hordeExists === "function" && !WMo.hordeExists());
   return Object.keys(src)
+    .filter((name) => !(noHorde && name === "Goblin Horde")) // i18n-ignore: Hyperpowers.json key
     .map((name) => ({ name: name, id: Number(src[name].id), data: src[name] }))
     .filter((h) => Number.isFinite(h.id))
     .sort((a, b) => a.id - b.id);

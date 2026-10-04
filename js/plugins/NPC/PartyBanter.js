@@ -315,12 +315,52 @@
         return name ? String(name).toLowerCase() : null;
     }
 
+    // A member of a people with a voice of their own (NPCCreature.speciesVoiceOf:
+    // the Naguka, the Verden...) is written a pool keyed by that voice in every
+    // personality-keyed section. A voice of their own ("own") is theirs before
+    // their personality's; a blend voice (the Elves, the Dwarves, the Gnomes)
+    // is mixed into the personality's pool instead (speciesPool below).
+    function speciesKey(actor) {
+        const NC = window.NPCCreature;
+        return (actor && NC && NC.speciesVoiceOf) ? NC.speciesVoiceOf(actor) : null;
+    }
+
+    function isBlendVoice(species) {
+        const NC = window.NPCCreature;
+        return !!(species && NC && NC.speciesVoiceModeOf && NC.speciesVoiceModeOf(species) === 'blend');
+    }
+
+    // The pool a member reads at `path` (a section holding per-personality
+    // pools), species first: their own voice's pool alone, or for a blend
+    // voice the personality's `fallback` pool with their people's lines added.
+    function speciesPool(actor, path, fallback) {
+        const species = speciesKey(actor);
+        if (!species || !has(path + '.' + species)) return fallback();
+        const own = pool(path + '.' + species);
+        return isBlendVoice(species) ? fallback().concat(own) : own;
+    }
+
+    // Says it the way their people do (NPCConversation.SpeciesVoice), for the lines
+    // that came out of a shared pool rather than their own.
+    function voiced(actor, text) {
+        const SV = window.NPCConversation && window.NPCConversation.SpeciesVoice;
+        return (SV && text) ? SV.render(text, actor) : text;
+    }
+
+    function voicedBeats(beats, cast) {
+        if (!beats) return beats;
+        for (const beat of beats) beat.text = voiced(cast[beat.who], beat.text);
+        return beats;
+    }
+
     // The bank for this member's archetype, or the shared one when nobody has
     // written that archetype's lines yet.
     function personalPool(actor, section) {
-        const key = personalityKey(actor);
-        if (key && has(section + '.' + key)) return pool(section + '.' + key);
-        return pool(section + '.any');
+        return speciesPool(actor, section, () => {
+            const key = personalityKey(actor);
+            if (key && has(section + '.' + key)) return pool(section + '.' + key);
+            return pool(section + '.any');
+        });
     }
 
     // ------------------------------------------------------------- the world
@@ -808,12 +848,14 @@
     // The purchase was the first of these; the road brought the rest (a crash, a
     // handover at the wheel, a tank going dry, a border sign).
     function reactionPool(actor, section) {
-        const key = personalityKey(actor);
-        if (key && has(section + '.opinion.' + key)) return pool(section + '.opinion.' + key);
-        if (has(section + '.opinion.any')) return pool(section + '.opinion.any');
-        // Nobody has written this archetype's line for this event: they answer
-        // the way they answer anything, which is still their own voice.
-        return personalPool(actor, 'reply');
+        return speciesPool(actor, section + '.opinion', () => {
+            const key = personalityKey(actor);
+            if (key && has(section + '.opinion.' + key)) return pool(section + '.opinion.' + key);
+            if (has(section + '.opinion.any')) return pool(section + '.opinion.any');
+            // Nobody has written this archetype's line for this event: they
+            // answer the way they answer anything, which is still their own voice.
+            return personalPool(actor, 'reply');
+        });
     }
 
     function reactionBeats(section, cast, ctx) {
@@ -1231,7 +1273,7 @@
                 }
                 if (!beats || beats.length < 2) return null;
                 if (beats.length < 4 && Math.random() < 0.45) appendCloser(beats, people, true);
-                return beats;
+                return voicedBeats(beats, people);
             }
 
             for (let attempt = 0; attempt < 4; attempt++) {
@@ -1257,7 +1299,7 @@
                 if (beats.length < 4 && Math.random() < 0.55) {
                     appendCloser(beats, people, !!topic.reaction);
                 }
-                return beats;
+                return voicedBeats(beats, people);
             }
             return null;
         },
@@ -1276,11 +1318,13 @@
             if (!/^[\w.]+$/.test(kind)) return null;
             const section = 'solo.' + kind;
             const archetype = personalityKey(actor);
-            const own = archetype ? pool(section + '.' + archetype) : [];
-            const line = pick(own.length ? own : pool(section + '.any'));
+            const line = pick(speciesPool(actor, section, () => {
+                const own = archetype ? pool(section + '.' + archetype) : [];
+                return own.length ? own : pool(section + '.any');
+            }));
             if (!line) return null;
             const text = fill(line, baseContext([actor]));
-            return unresolved(text) ? null : text;
+            return unresolved(text) ? null : voiced(actor, text);
         },
 
         // How this member opens with somebody who is not one of their own. The
@@ -1292,7 +1336,7 @@
             const line = pick(personalPool(actor, 'stranger'));
             if (!line) return null;
             const text = fill(line, baseContext([actor]));
-            return unresolved(text) ? null : text;
+            return unresolved(text) ? null : voiced(actor, text);
         },
 
         // Something the party DID, for a plugin that keeps no diary line and

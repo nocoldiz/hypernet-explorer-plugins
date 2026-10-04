@@ -1029,7 +1029,8 @@
     // gender at all. Nothing stored defaults to Humanoid, same as everywhere
     // else that reads this field (see _archetypeRowLabel).
     const archetype = profile?.archetype || 'Humanoid';
-    if (gender === 2 || gender === 3 || archetype !== 'Humanoid') return pick(_GENITAL_ALL);
+    const humanBody = window.HealthCore?.isHumanoidBody ? window.HealthCore.isHumanoidBody(archetype) : archetype === 'Humanoid'; // i18n-ignore: Archetypes.json key
+    if (gender === 2 || gender === 3 || !humanBody) return pick(_GENITAL_ALL);
 
     // A Humanoid reads its rolled gender onto its body 80% of the time; the
     // other 20% it is any of the remaining five options.

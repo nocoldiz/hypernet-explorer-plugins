@@ -61,8 +61,14 @@
     if (enemy && typeof enemy.getArchetype === "function") {
       const arch = enemy.getArchetype();
       if (arch) {
-        const key = "PeacefulMode.idle." + String(arch).toLowerCase();
-        if (T.has(key)) pool = T.pool(key);
+        // The archetype's own lines, else the body it is built on (a Naguka
+        // goblin idles as a Humanoid does).
+        const HC = window.HealthCore;
+        const keys = HC && HC.archetypeLookupKeys ? HC.archetypeLookupKeys(arch) : [arch];
+        for (const k of keys) {
+          const key = "PeacefulMode.idle." + String(k).toLowerCase();
+          if (T.has(key)) { pool = T.pool(key); break; }
+        }
       }
     }
     if (!pool || !pool.length) pool = T.pool("PeacefulMode.idle.default");

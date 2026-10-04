@@ -1,12 +1,12 @@
 //=============================================================================
 // Weapon 3D Models - unarmed, one fist per archetype
-// Version: 1.1.0
+// Version: 1.2.0
 //=============================================================================
 
 /*:
  * @target MZ
- * @plugindesc One right-hand model per Archetypes.json archetype, shown
- * when a character is fighting with an empty hand. Loaded automatically by
+ * @plugindesc One right-hand model per Archetypes.json archetype, drawn with
+ * its mirror as the left hand when a character is fighting empty-handed. Loaded automatically by
  * WeaponSystemProcedural.js.
  * @author AntiGravity
  *
@@ -17,8 +17,18 @@
  *
  * A character with nothing in their hand still has a hand, and what it looks
  * like depends on what they are. This family carries one right-hand model per
- * archetype key in js/db/Health/Archetypes.json, all 78 of them, so
- * nothing in the database falls back to somebody else's fist.
+ * archetype key in js/db/Health/Archetypes.json, all of them, so nothing in
+ * the database falls back to somebody else's fist.
+ *
+ * Only the RIGHT hand is built. The battle view draws its mirror as the left
+ * one (WeaponSystemProcedural.mirroredWeaponFor), and that hand follows the
+ * right one's blow a beat behind it, the way a pair of claws does.
+ *
+ * Humanoids, goblins (NagukaGoblin, VerdenGoblin), elves, dwarves and orcs
+ * do not use these at all: their empty hands are the authored fists rig,
+ * already a pair and tinted to each people's skin
+ * (WeaponSystemProcedural.UNARMED_RIG). Their entries below point at the
+ * humanoid fist, which is only ever seen if that rig file is missing.
  *
  * Registered through the `unarmed` map rather than `unique`, because there is
  * no database weapon to key on:
@@ -87,14 +97,21 @@
       Amphibian: 'createUnarmedAmphibianModel',
       ConstructedUndead: 'createUnarmedConstructedUndeadModel',
       Minotaur: 'createUnarmedMinotaurModel',
-      Goblin: 'createUnarmedGoblinModel',
+      // Goblins, elves, dwarves and orcs take the authored fists rig (UNARMED_RIG in
+      // WeaponSystemProcedural), like a humanoid; this is the built fist they
+      // fall back on if that file is missing.
+      NagukaGoblin: 'createUnarmedHumanoidModel',
+      VerdenGoblin: 'createUnarmedHumanoidModel',
       Crustacean: 'createUnarmedCrustaceanModel',
       Spherical: 'createUnarmedSphericalModel',
       Turtle: 'createUnarmedTurtleModel',
       Manticore: 'createUnarmedManticoreModel',
       ChestMimic: 'createUnarmedChestMimicModel',
       Phoenix: 'createUnarmedPhoenixModel',
-      Ogre: 'createUnarmedOgreModel',
+      Tourist: 'createUnarmedTouristModel',
+      Dargos: 'createUnarmedDargosModel',
+      SeveredHead: 'createUnarmedSeveredHeadModel',
+      CrawlingHand: 'createUnarmedCrawlingHandModel',
       Scarecrow: 'createUnarmedScarecrowModel',
       SegmentWorm: 'createUnarmedSegmentWormModel',
       Mineral: 'createUnarmedMineralModel',
@@ -120,7 +137,9 @@
       Totem: 'createUnarmedTotemModel',
       Ophanim: 'createUnarmedOphanimModel',
       Angel: 'createUnarmedAngelModel',
-      Elven: 'createUnarmedElvenModel',
+      Elf: 'createUnarmedHumanoidModel',
+      Dwarf: 'createUnarmedHumanoidModel',
+      Orc: 'createUnarmedHumanoidModel',
       Gnome: 'createUnarmedGnomeModel',
       Elephant: 'createUnarmedElephantModel',
       TentacledCreature: 'createUnarmedTentacledModel',
@@ -2020,44 +2039,6 @@
         return group;
       },
 
-      // ---- Goblin --------------------------------------------------------
-      createUnarmedGoblinModel(weapon, rand) {
-        const group = new THREE.Group();
-        const skin = this._mat(this.getRandomColor(rand, [0x6A8A3A, 0x8A9A4A, 0x5A7A2A]), { roughness: 0.9, metalness: 0.03 });
-        const nail = this._mat(0x6A5A3A, { roughness: 0.9, metalness: 0.05 });
-        const loot = this._mat(0xC8A03A, { roughness: 0.3, metalness: 0.85 });
-        const ragMat = this._mat(0x6A4A3A, { roughness: 1.0, metalness: 0.0 });
-        // Small, and every knuckle on it has been broken at least once. The
-        // rings are not his and neither is the string holding them on.
-        this._fist(group, skin, { width: 0.066, knuckleR: 0.012, cuff: 0.038 });
-        for (let i = 0; i < 4; i++) {
-          const x = -0.024 + i * 0.016;
-          const n = new THREE.Mesh(new THREE.ConeGeometry(0.004, 0.024, this.seg(6, 4)), nail);
-          n.position.set(x, 0.058, 0.046);
-          n.rotation.x = 1.1;
-          group.add(n);
-        }
-        const rings = this.isLowDetail() ? 1 : 3;
-        for (let i = 0; i < rings; i++) {
-          const r = new THREE.Mesh(new THREE.TorusGeometry(0.011, 0.003, this.seg(5, 3), this.seg(10, 6)), loot);
-          r.position.set(-0.02 + i * 0.018, 0.05, 0.03);
-          r.rotation.x = Math.PI / 2 - 0.3;
-          group.add(r);
-        }
-        const wraps = this.isLowDetail() ? 2 : 4;
-        for (let i = 0; i < wraps; i++) {
-          const w = new THREE.Mesh(new THREE.TorusGeometry(0.03, 0.004, this.seg(4, 3), this.seg(10, 6)), ragMat);
-          w.rotation.set(Math.PI / 2 + (rand() - 0.5) * 0.4, 0, 0);
-          w.position.y = -0.04 - i * 0.016;
-          w.scale.z = 0.72;
-          group.add(w);
-        }
-        const wart = new THREE.Mesh(new THREE.SphereGeometry(0.006, this.seg(7, 5), this.seg(5, 4)), skin);
-        wart.position.set(0.018, 0.02, 0.028);
-        group.add(wart);
-        return group;
-      },
-
       // ---- Crustacean ----------------------------------------------------
       createUnarmedCrustaceanModel(weapon, rand) {
         const group = new THREE.Group();
@@ -2296,41 +2277,172 @@
         return group;
       },
 
-      // ---- Ogre ----------------------------------------------------------
-      createUnarmedOgreModel(weapon, rand) {
+      // ---- Tourist -------------------------------------------------------
+      createUnarmedTouristModel(weapon, rand) {
         const group = new THREE.Group();
-        const skin = this._mat(this.getRandomColor(rand, [0x8A9A6A, 0xA08A6A, 0x7A8A8A]), { roughness: 0.95, metalness: 0.02 });
-        const nail = this._mat(0x8A7A5A, { roughness: 0.85, metalness: 0.05 });
-        const rope = this._mat(0x8A6A3A, { roughness: 1.0, metalness: 0.0 });
-        // Enormous and blunt, and it does not need to be sharp: there is more
-        // of it than there is of whatever it lands on.
-        this._fist(group, skin, { width: 0.115, knuckleR: 0.023, fingers: false, cuff: 0.06 });
+        const skin = this._mat(this.getRandomColor(rand, [0x9A9AC8, 0xA8B8C0, 0xB0A0C8]), { roughness: 0.4, metalness: 0.08 });
+        const band = this._mat(this.getRandomColor(rand, [0xE85A9A, 0x3AC8E8, 0xF0C83A]), { roughness: 0.6, metalness: 0.0 });
+        const bead = this._mat(0xF4ECD8, { roughness: 0.3, metalness: 0.2 });
+        const lens = this._mat(0x1A1A24, { roughness: 0.1, metalness: 0.6 });
+        const body = this._mat(0x2A2A30, { roughness: 0.5, metalness: 0.3 });
+        // A visitor's hand: three long fingers that were not made for making a
+        // fist, a wristband from wherever it went last, and a camera on a
+        // strap, because it is never put down.
+        const palm = new THREE.Mesh(new THREE.SphereGeometry(0.036, this.seg(12, 8), this.seg(10, 6)), skin);
+        palm.position.y = 0.02;
+        palm.scale.set(1.0, 1.15, 0.6);
+        group.add(palm);
+        for (let i = 0; i < 3; i++) {
+          const x = -0.022 + i * 0.022;
+          const finger = new THREE.Mesh(new THREE.CylinderGeometry(0.0075, 0.009, 0.07, this.seg(7, 5)), skin);
+          finger.position.set(x, 0.07, 0.02);
+          finger.rotation.x = 0.9;
+          group.add(finger);
+          const tip = new THREE.Mesh(new THREE.SphereGeometry(0.009, this.seg(7, 5), this.seg(5, 4)), skin);
+          tip.position.set(x, 0.094, 0.05);
+          group.add(tip);
+        }
+        const thumb = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.01, 0.05, this.seg(7, 5)), skin);
+        thumb.position.set(0.04, 0.024, 0.016);
+        thumb.rotation.set(0.4, 0, -1.0);
+        group.add(thumb);
+        const wrist = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.026, 0.06, this.seg(10, 6)), skin);
+        wrist.position.y = -0.04;
+        wrist.scale.z = 0.7;
+        group.add(wrist);
+        const strap = new THREE.Mesh(new THREE.TorusGeometry(0.026, 0.005, this.seg(5, 3), this.seg(14, 8)), band);
+        strap.rotation.x = Math.PI / 2;
+        strap.position.y = -0.03;
+        strap.scale.z = 0.72;
+        group.add(strap);
+        const beads = this.isLowDetail() ? 4 : 9;
+        for (let i = 0; i < beads; i++) {
+          const a = (i / beads) * Math.PI * 2;
+          const b = new THREE.Mesh(new THREE.SphereGeometry(0.0042, this.seg(6, 4), this.seg(4, 3)), bead);
+          b.position.set(Math.cos(a) * 0.028, -0.048, Math.sin(a) * 0.02);
+          group.add(b);
+        }
+        const camera = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.02, 0.014), body);
+        camera.position.set(-0.03, -0.072, 0.02);
+        camera.userData.sway = { axis: 'z', amp: 0.18, freq: 0.9 };
+        group.add(camera);
+        const glass = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.008, this.seg(10, 6)), lens);
+        glass.rotation.x = Math.PI / 2;
+        glass.position.set(-0.03, -0.072, 0.03);
+        glass.userData.sway = { axis: 'z', amp: 0.18, freq: 0.9 };
+        group.add(glass);
+        return group;
+      },
+
+      // ---- Dargos --------------------------------------------------------
+      createUnarmedDargosModel(weapon, rand) {
+        const group = new THREE.Group();
+        const hide = this._mat(this.getRandomColor(rand, [0x2A8A7A, 0x3A9A8A, 0x2A7A8A]), { roughness: 0.25, metalness: 0.15 });
+        const shell = this._mat(0x1A3A3A, { roughness: 0.35, metalness: 0.45 });
+        const web = this._mat(0x6ADACA, { roughness: 0.2, metalness: 0.05, transparent: true, opacity: 0.55 });
+        const acid = this._mat(0xC8F03A, { roughness: 0.1, metalness: 0.0, emissive: 0x6A8A1A, transparent: true, opacity: 0.8 });
+        // A hand from an ocean of acid: webbed between the fingers, plated on
+        // the back against what it swims in, and still wet with it.
+        this._fist(group, hide, { width: 0.088, knuckleR: 0.015, cuff: 0.05 });
+        for (let i = 0; i < 3; i++) {
+          const x = -0.027 + i * 0.027;
+          const membrane = new THREE.Mesh(new THREE.BoxGeometry(0.016, 0.026, 0.002), web);
+          membrane.position.set(x + 0.0135, 0.05, 0.04);
+          membrane.rotation.x = 0.3;
+          group.add(membrane);
+        }
+        this._uPlates(group, shell, { rows: 3, per: 4, box: true });
+        const suckers = this.isLowDetail() ? 3 : 6;
+        for (let i = 0; i < suckers; i++) {
+          const s = new THREE.Mesh(new THREE.TorusGeometry(0.0045, 0.0018, this.seg(4, 3), this.seg(8, 6)), shell);
+          s.position.set(-0.03 + (i % 3) * 0.03, 0.0 + Math.floor(i / 3) * 0.02, -0.026);
+          group.add(s);
+        }
+        const drops = this.isLowDetail() ? 2 : 5;
+        for (let i = 0; i < drops; i++) {
+          const d = new THREE.Mesh(new THREE.SphereGeometry(0.004 + rand() * 0.003, this.seg(6, 4), this.seg(5, 3)), acid);
+          d.position.set(-0.035 + i * 0.018, 0.035 - rand() * 0.03, 0.031);
+          d.scale.y = 1.6;
+          d.userData.pulse = { min: 0.4, max: 1.3, freq: 1.4, phase: i };
+          group.add(d);
+        }
+        return group;
+      },
+
+      // ---- SeveredHead ---------------------------------------------------
+      createUnarmedSeveredHeadModel(weapon, rand) {
+        const group = new THREE.Group();
+        const flesh = this._uSkinMat(this.getRandomColor(rand, [0xB8A090, 0xA89080, 0x9A8A7A]), { roughness: 0.7, bump: 0.016 });
+        const gum = this._mat(0x8A3A3A, { roughness: 0.6, metalness: 0.0 });
+        const tooth = this._mat(0xE8DCC0, { roughness: 0.45, metalness: 0.0 });
+        const raw = this._mat(0x6A1A1A, { roughness: 0.5, metalness: 0.05 });
+        // No hand to strike with: what comes up into frame is the jaw it bites
+        // with, the neck it was cut from trailing sinew underneath.
+        const jaw = new THREE.Mesh(new THREE.SphereGeometry(0.045, this.seg(12, 8), this.seg(10, 6), 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), flesh);
+        jaw.position.y = 0.04;
+        jaw.scale.set(1.0, 0.8, 0.85);
+        group.add(jaw);
+        const gums = new THREE.Mesh(new THREE.TorusGeometry(0.034, 0.008, this.seg(5, 3), this.seg(16, 9), Math.PI), gum);
+        gums.position.set(0, 0.044, 0.004);
+        gums.rotation.x = Math.PI / 2;
+        group.add(gums);
+        const n = this.isLowDetail() ? 6 : 12;
+        for (let i = 0; i < n; i++) {
+          const a = (i / (n - 1)) * Math.PI;
+          const t = new THREE.Mesh(new THREE.ConeGeometry(0.0045, 0.014, this.seg(5, 3)), tooth);
+          t.position.set(Math.cos(a) * 0.034, 0.056, Math.sin(a) * 0.034 + 0.004);
+          group.add(t);
+        }
+        const stump = new THREE.Mesh(new THREE.CylinderGeometry(0.024, 0.02, 0.04, this.seg(10, 6)), flesh);
+        stump.position.y = -0.006;
+        group.add(stump);
+        const cut = new THREE.Mesh(new THREE.CircleGeometry(0.02, this.seg(10, 6)), raw);
+        cut.rotation.x = Math.PI / 2;
+        cut.position.y = -0.0265;
+        group.add(cut);
+        const sinews = this.isLowDetail() ? 3 : 6;
+        for (let i = 0; i < sinews; i++) {
+          const s = new THREE.Mesh(new THREE.CylinderGeometry(0.0022, 0.001, 0.03 + rand() * 0.03, this.seg(4, 3)), raw);
+          s.position.set((rand() - 0.5) * 0.03, -0.05, (rand() - 0.5) * 0.02);
+          s.userData.sway = { axis: 'z', amp: 0.25, freq: 1.0 + i * 0.15, phase: i };
+          group.add(s);
+        }
+        return group;
+      },
+
+      // ---- CrawlingHand --------------------------------------------------
+      createUnarmedCrawlingHandModel(weapon, rand) {
+        const group = new THREE.Group();
+        const skin = this._uSkinMat(this.getRandomColor(rand, [0xC8B8A0, 0xB0A890, 0xA8A098]), { roughness: 0.75, bump: 0.016 });
+        const nail = this._mat(0x7A7060, { roughness: 0.7, metalness: 0.05 });
+        const raw = this._mat(0x6A1A1A, { roughness: 0.5, metalness: 0.05 });
+        const thread = this._mat(0x1A1A1A, { roughness: 1.0, metalness: 0.0 });
+        // It is all hand and nothing else: the fingers spread to walk on, long
+        // grey nails, and a wrist that stops where it was cut and stitched.
+        this._fist(group, skin, { width: 0.084, knuckleR: 0.014, fingers: false, cuff: 0.03 });
         for (let i = 0; i < 4; i++) {
-          const x = -0.04 + i * 0.026;
-          const k = new THREE.Mesh(new THREE.SphereGeometry(0.021, this.seg(9, 6), this.seg(7, 5)), skin);
-          k.position.set(x, 0.07, 0.028);
-          group.add(k);
-          const n = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.011, 0.008, this.seg(7, 5)), nail);
-          n.position.set(x, 0.062, 0.056);
-          n.rotation.x = Math.PI / 2;
+          const x = -0.03 + i * 0.02;
+          const finger = new THREE.Mesh(new THREE.CylinderGeometry(0.0085, 0.0075, 0.06, this.seg(7, 5)), skin);
+          finger.position.set(x, 0.09, 0.016);
+          finger.rotation.set(0.35, 0, (i - 1.5) * 0.12);
+          group.add(finger);
+          const n = new THREE.Mesh(new THREE.ConeGeometry(0.006, 0.02, this.seg(5, 3)), nail);
+          n.position.set(x + (i - 1.5) * 0.007, 0.124, 0.03);
+          n.rotation.x = 0.5;
           group.add(n);
         }
-        const warts = this.isLowDetail() ? 3 : 8;
-        for (let i = 0; i < warts; i++) {
-          const w = new THREE.Mesh(new THREE.SphereGeometry(0.008 + rand() * 0.005, this.seg(7, 5), this.seg(5, 4)), skin);
-          w.position.set((rand() - 0.5) * 0.09, (rand() - 0.4) * 0.07, 0.03);
-          group.add(w);
+        const cut = new THREE.Mesh(new THREE.CircleGeometry(0.029, this.seg(10, 6)), raw);
+        cut.rotation.x = Math.PI / 2;
+        cut.position.y = -0.04;
+        cut.scale.y = 0.72;
+        group.add(cut);
+        const stitches = this.isLowDetail() ? 5 : 10;
+        for (let i = 0; i < stitches; i++) {
+          const a = (i / stitches) * Math.PI * 2;
+          const st = new THREE.Mesh(new THREE.BoxGeometry(0.002, 0.012, 0.002), thread);
+          st.position.set(Math.cos(a) * 0.03, -0.034, Math.sin(a) * 0.022);
+          group.add(st);
         }
-        const knot = new THREE.Mesh(new THREE.TorusGeometry(0.042, 0.008, this.seg(5, 3), this.seg(12, 7)), rope);
-        knot.rotation.x = Math.PI / 2;
-        knot.position.y = -0.06;
-        knot.scale.z = 0.8;
-        group.add(knot);
-        const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.008, 0.06, this.seg(6, 4)), rope);
-        tail.position.set(0.04, -0.08, 0.02);
-        tail.rotation.z = 0.5;
-        tail.userData.sway = { axis: 'z', amp: 0.12, freq: 0.9 };
-        group.add(tail);
         return group;
       },
 
@@ -3332,48 +3444,6 @@
           m.userData.pulse = { min: 0.2, max: 1.3, freq: 1.0, phase: i };
           group.add(m);
         }
-        return group;
-      },
-
-      // ---- Elven ---------------------------------------------------------
-      createUnarmedElvenModel(weapon, rand) {
-        const group = new THREE.Group();
-        const skin = this._mat(this.getRandomColor(rand, [0xEDD9C4, 0xD8C0A8, 0xC8B8A8]), { roughness: 0.7, metalness: 0.03 });
-        const leaf = this._mat(0x5A8A3A, { roughness: 0.6, metalness: 0.05 });
-        const bracer = this._mat(0x6A5A3A, { roughness: 0.8, metalness: 0.1 });
-        const silver = this._mat(0xD8DCE0, { roughness: 0.2, metalness: 0.95 });
-        // Longer in the fingers than it needs to be, and the only marks on it
-        // are the two grooves a bowstring leaves after a few centuries.
-        this._fist(group, skin, { width: 0.076, knuckleR: 0.012, fingers: false, cuff: 0.046, cuffMat: bracer });
-        for (let i = 0; i < 4; i++) {
-          const x = -0.027 + i * 0.018;
-          const finger = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.009, 0.044, this.seg(8, 5)), skin);
-          finger.position.set(x, 0.058, 0.036);
-          finger.rotation.set(Math.PI / 2 - 0.45, 0, (i - 1.5) * 0.07);
-          group.add(finger);
-        }
-        for (let i = 0; i < 2; i++) {
-          const groove = new THREE.Mesh(new THREE.BoxGeometry(0.003, 0.024, 0.004), bracer);
-          groove.position.set(-0.014 + i * 0.02, 0.058, 0.056);
-          group.add(groove);
-        }
-        const band = new THREE.Mesh(new THREE.TorusGeometry(0.01, 0.003, this.seg(5, 3), this.seg(12, 7)), silver);
-        band.position.set(-0.027, 0.05, 0.03);
-        band.rotation.x = Math.PI / 2 - 0.4;
-        group.add(band);
-        const vines = this.isLowDetail() ? 2 : 4;
-        for (let i = 0; i < vines; i++) {
-          const l = this._plate([[0, 0], [0.014, 0.008], [0.02, 0.03], [0.004, 0.022]], 0.002, leaf);
-          l.position.set(-0.024 + i * 0.018, -0.055, 0.026);
-          l.rotation.set(0, i * 0.8, 0.25 + i * 0.2);
-          l.userData.sway = { axis: 'z', amp: 0.08, freq: 0.9, phase: i };
-          group.add(l);
-        }
-        const stitch = new THREE.Mesh(new THREE.TorusGeometry(0.032, 0.003, this.seg(4, 3), this.seg(12, 7)), silver);
-        stitch.rotation.x = Math.PI / 2;
-        stitch.position.y = -0.07;
-        stitch.scale.z = 0.76;
-        group.add(stitch);
         return group;
       },
 

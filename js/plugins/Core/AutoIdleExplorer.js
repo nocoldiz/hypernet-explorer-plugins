@@ -6456,7 +6456,10 @@
             const lines = T.pool(key);
             if (!lines.length) return false;
             this._stampTalk(char);
-            Bubbles.show(char, lines[Math.floor(Math.random() * lines.length)]);
+            // The plain pool is everybody's, so a member of a people with a
+            // voice of their own says it their way (NPCConversation.SpeciesVoice).
+            const line = lines[Math.floor(Math.random() * lines.length)];
+            Bubbles.show(char, window.NPCConversation?.SpeciesVoice ? window.NPCConversation.SpeciesVoice.render(line, actor) : line);
             return true;
         },
 
@@ -6467,7 +6470,7 @@
             const actor = this.partyActorOf(char);
             if (window.PartyBanter?.canSpeak && !window.PartyBanter.canSpeak(actor)) return;
             this._stampTalk(char);
-            Bubbles.show(char, text);
+            Bubbles.show(char, window.NPCConversation?.SpeciesVoice ? window.NPCConversation.SpeciesVoice.render(text, actor) : text);
         },
 
         // The leader is running, not walking. Read as "covering ground at dash
@@ -7994,6 +7997,8 @@
                     ? utils.isFoodItem(item)
                     : /<category:\s*Food>/i.test(item.note);
                 if (!isFood) continue;
+                // Nobody idles their way into a reaction (window.Allergy).
+                if (window.Allergy && window.Allergy.triggersFor(actor, item).length) continue;
                 const value = this.foodValue(item);
                 if (value <= 0) continue;
                 // Anything that covers the gap, else the largest thing there is.

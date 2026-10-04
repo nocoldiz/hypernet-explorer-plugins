@@ -1,7 +1,6 @@
 {
   "speaker": "Bubba",
-  "foldHint": "fold this away",
-  "unfoldHint": "read this",
+  "infoHint": "Info",
   "controlsHeading": "Controls",
   "controls": {
     "action": "Action",

@@ -317,6 +317,9 @@
               // and printed as the flavour paragraph above, so listing it here
               // only leaks the key ("LoreItems.119") onto the page.
               if (nl === 'lore') return;
+              // <Allergens:> and <Antiallergic:> get their own "Allergens"
+              // section below, with the allergens named and the party checked.
+              if (nl === 'allergens' || nl === 'allergen' || nl === 'antiallergic') return;
               if (nl === 'calories' || nl === 'fat' || nl === 'protein') { nutritionSpecs.push({ label: nl.charAt(0).toUpperCase()+nl.slice(1), val }); return; }
               if (nl === 'recipe') { noteTags.push({ name: T('Inventory.section.craftingRecipe'), value: parseRecipeToNames(val) }); return; }
               // <Nature:> says whether a thing is worked by hand or by art.
@@ -387,6 +390,20 @@
           if (medicine.cures.length || medicine.treats.length) {
             const ref = itemRefOf(selectedItem);
             detailedInfoHTML += `<div class="inspect-medicine-info"><div class="army-dialog-btn focusable" onclick="window.ItemInspect.showMedicineInfo('${ref.kind}', ${ref.id})">${T('Inventory.medicineInfoButton')}</div></div>`;
+          }
+        }
+        // What it holds that somebody may be allergic to, who in the party that
+        // is, and how long it holds allergies off (window.Allergy).
+        const allergy = window.Allergy;
+        if (allergy) {
+          const held = allergy.allergensOf(selectedItem);
+          const guardHours = allergy.guardHoursOf(selectedItem);
+          if (held.length || guardHours > 0) {
+            const unsafe = allergy.unsafeMembers(selectedItem).map(m => escapeHtml(m.name()));
+            detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.allergens')}</div>` + specBlock(
+              (held.length ? specRowHTML(T('Inventory.allergyContains'), held.map(k => allergy.label(k)).join(', '), 'inspect-spec-value--wrap') : '')
+              + (unsafe.length ? specRowHTML(T('Inventory.allergyUnsafeFor'), unsafe.join(', '), 'inspect-spec-value--wrap') : '')
+              + (guardHours > 0 ? specRowHTML(T('Inventory.allergyRelief'), T('Inventory.allergyReliefHours', { hours: guardHours })) : ''));
           }
         }
         const cravingsFed = window.ItemSystemUtils && window.ItemSystemUtils.getAddictionRelief ? window.ItemSystemUtils.getAddictionRelief(selectedItem) : [];

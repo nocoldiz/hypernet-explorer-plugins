@@ -7374,5 +7374,89 @@
   "2069": {
     "name": "Portable Gene Splicer",
     "description": "A gene splicer that implants a humanoid embryo\nof your design in a party member."
+  },
+  "2070": {
+    "name": "Flour",
+    "description": "A paper sack of milled wheat flour."
+  },
+  "2071": {
+    "name": "Butter",
+    "description": "A block of churned butter in waxed paper."
+  },
+  "2072": {
+    "name": "Bag of Rice",
+    "description": "A cloth bag of dry white rice."
+  },
+  "2073": {
+    "name": "Dried Pasta",
+    "description": "A bundle of dried egg pasta."
+  },
+  "2074": {
+    "name": "Olive Oil",
+    "description": "A bottle of cold-pressed olive oil."
+  },
+  "2075": {
+    "name": "Sea Salt",
+    "description": "A jar of coarse sea salt."
+  },
+  "2076": {
+    "name": "Sugar",
+    "description": "A paper bag of white sugar."
+  },
+  "2077": {
+    "name": "Fresh Fish",
+    "description": "A whole fish, gutted and on ice."
+  },
+  "2078": {
+    "name": "Raw Prawns",
+    "description": "A paper cone of raw prawns."
+  },
+  "2079": {
+    "name": "Peanuts",
+    "description": "A bag of shelled roasted peanuts."
+  },
+  "2080": {
+    "name": "Almonds",
+    "description": "A handful of shelled almonds."
+  },
+  "2081": {
+    "name": "Tofu",
+    "description": "A pressed block of soybean curd."
+  },
+  "2082": {
+    "name": "Soy Sauce",
+    "description": "A small bottle of dark soy sauce."
+  },
+  "2083": {
+    "name": "Tomato Sauce",
+    "description": "A jar of tomatoes cooked down in oil."
+  },
+  "2084": {
+    "name": "Fresh Cream",
+    "description": "A carton of thick fresh cream."
+  },
+  "2085": {
+    "name": "Mozzarella",
+    "description": "A ball of fresh mozzarella in brine."
+  },
+  "2086": {
+    "name": "Coffee Beans",
+    "description": "A bag of dark roasted coffee beans."
+  },
+  "2087": {
+    "name": "Fresh Mint",
+    "description": "A bunch of fresh mint leaves."
+  },
+  "2088": {
+    "name": "Lemon",
+    "description": "A bright, sour lemon."
+  },
+  "2089": {
+    "name": "Rice Noodles",
+    "description": "A packet of flat dried rice noodles."
+  },
+  "2090": {
+    "name": "Spoiled Dish",
+    "description": "A dish gone wrong in the pan.\nEating it brings on nausea."
   }
 }

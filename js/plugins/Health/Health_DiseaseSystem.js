@@ -25,6 +25,9 @@
  *     the street (dirtier on Goblin Horde ground), and live on the map after a
  *     conversation, a greeting or a customer served at a counter. Run once
  *     per NPCLifeSim catch-up.
+ *   - Allergies (window.Allergy): genetic traits that react when their
+ *     allergen (an item's <Allergens:> tag, or pollen outdoors in spring and
+ *     summer) goes in. <Antiallergic: hours> items cure and hold them off.
  *   - Each NPC gets a deterministic, world-seeded medical history (past
  *     diseases + lasting conditions such as broken bones) shown on the
  *     Empathize "Health" tab.
@@ -1755,8 +1758,14 @@
         .filter(r => r.have > 0);
     },
     // The dose the party would take this morning: a cure before a suppressant,
-    // the shortest course before a longer one.
-    bestHeldFor(diseaseId) { return this.heldFor(diseaseId)[0] || null; },
+    // the shortest course before a longer one. Given the patient, nothing they
+    // are allergic to is picked: the morning round never hands penicillin to
+    // somebody it would put in shock (window.Allergy).
+    bestHeldFor(diseaseId, actor) {
+      const held = this.heldFor(diseaseId);
+      if (!actor || !window.Allergy) return held[0] || null;
+      return held.find(r => !window.Allergy.triggersFor(actor, $dataItems[r.itemId]).length) || null;
+    },
     // The remedy to send somebody to the shop for: the cheapest thing on the
     // shelf that actually clears the illness, and only if nothing cures it the
     // cheapest thing that holds it down. Price beats course length here, which
@@ -1868,6 +1877,10 @@
       if (hp > 0) actor.gainHp(hp);
       if (mp > 0) actor.gainMp(mp);
     }
+    // A dose forced on an allergic patient by hand still sets the allergy off.
+    if (actor && window.Allergy) {
+      try { window.Allergy.onConsume(actor, item); } catch (e) { /* the dose still counted */ }
+    }
     return true;
   }
 
@@ -1881,7 +1894,7 @@
     // A disease still inside its window period has not been diagnosed: nobody
     // knows to treat it, which is the whole danger of a long window.
     if (!st.known) return;
-    const pick = forced || window.Medicines.bestHeldFor(entry.id);
+    const pick = forced || window.Medicines.bestHeldFor(entry.id, actor);
     if (!pick) {
       entry.missed = (entry.missed || 0) + 1;
       if (entry.missed > st.missTolerance && entry.dosed) {
@@ -3475,6 +3488,7 @@
       if (hourStamp !== this._lastHealthHour) {
         this._lastHealthHour = hourStamp;
         try { runHealthClock(); } catch (e) { console.warn('[Health_DiseaseSystem]', e); }
+        try { window.Allergy.hourly(); } catch (e) { console.warn('[Health_DiseaseSystem]', e); }
       }
       const day = _dayOf(nowMin());
       if (day === this._lastEpidemicDay) return;
@@ -3493,6 +3507,269 @@
     Scene_Map.prototype._finishSleepAdvance = function () {
       _finishSleep.call(this);
       try { runHealthClock(); } catch (e) { console.warn('[Health_DiseaseSystem]', e); }
+    };
+  }
+
+  // ==========================================================================
+  // ALLERGIES (window.Allergy)
+  // ==========================================================================
+  // An allergy is a genetic trait (Traits.json `allergen` + `allergySeverity`),
+  // not a disease: nobody catches it and nothing cures it for good. What it
+  // does is react, the moment its allergen goes into the body:
+  //   - food and drink say what they hold with <Allergens: peanut, dairy>;
+  //   - a penicillin-family medicine carries <Allergens: penicillin>;
+  //   - pollen is in the air outdoors in spring and summer (hourly, below).
+  // A reaction is one of three states, found by their <AllergyReaction:> note
+  // tag rather than by id: mild (hives), severe (anaphylaxis, which drains HP
+  // and can kill in a fight) and pollen (hay fever).
+  //
+  // An item tagged <Antiallergic: hours> (the antihistamine, and the health
+  // potion for a shorter spell) clears every reaction and holds allergies off
+  // for that many game hours. A held mild or moderate allergy does nothing at
+  // all; a held severe one still comes out, but only as hives.
+  //
+  // The same rules answer for NPCs: NPCShared.Diet reads allergensForProfile,
+  // so nobody buys, carries or eats what would put them in shock.
+  // i18n-ignore-start: allergen ids, severity ids and note-tag values
+  const ALLERGENS = ['peanut', 'treenut', 'shellfish', 'fish', 'dairy', 'egg', 'wheat', 'soy', 'pollen', 'penicillin'];
+  const ALLERGY_RANK = { mild: 1, moderate: 2, severe: 3 };
+  const ALLERGY_STATE_KEYS = ['mild', 'severe', 'pollen'];
+  const POLLEN_SEASONS = { spring: 0.25, summer: 0.12 };
+  const POLLEN_WASH = /rain|storm|snow/i;
+  // i18n-ignore-end
+  const ALLERGEN_TAG = /<Allergens?:\s*([^>]*)>/i;
+  const GUARD_TAG = /<Antiallergic:\s*(\d+(?:\.\d+)?)\s*>/i;
+  const ANAPHYLAXIS_HP = 0.25;   // share of max HP the first minute of shock takes
+
+  let _allergyStates = null;
+  const _allergenCache = new Map();
+
+  const Allergy = {
+    ALLERGENS,
+    // Overridable so a test can pin every roll.
+    _rand: () => Math.random(),
+
+    label(key) {
+      const path = 'Diseases.allergy.allergen.' + key;
+      const text = T(path);
+      return text === path ? String(key) : text;
+    },
+
+    // What an item holds, as allergen ids. Untagged means nothing.
+    allergensOf(item) {
+      if (!item || !item.note) return [];
+      const key = String(item.id) + ':' + item.note.length;
+      if (_allergenCache.has(key)) return _allergenCache.get(key);
+      const m = ALLERGEN_TAG.exec(item.note);
+      const out = m ? m[1].split(/[,\s]+/).map(s => s.trim().toLowerCase()).filter(s => ALLERGENS.includes(s)) : [];
+      _allergenCache.set(key, out);
+      return out;
+    },
+
+    // How many game hours an item holds allergies off. 0 for anything else.
+    guardHoursOf(item) {
+      const m = item && item.note ? GUARD_TAG.exec(item.note) : null;
+      return m ? Math.max(0, Number(m[1]) || 0) : 0;
+    },
+
+    // The trait book entry's allergy, or null.
+    ruleOf(trait) {
+      if (!trait || !trait.allergen || !ALLERGENS.includes(trait.allergen)) return null;
+      const severity = ALLERGY_RANK[trait.allergySeverity] ? trait.allergySeverity : 'moderate';
+      return { traitId: trait.id, allergen: trait.allergen, severity };
+    },
+
+    // Every allergy a list of trait ids carries.
+    fromTraitIds(ids) {
+      if (!Array.isArray(ids) || !ids.length) return [];
+      const book = (window.Health && window.Health.Traits) || [];
+      const out = [];
+      for (const id of ids) {
+        const rule = this.ruleOf(Array.isArray(book) ? book.find(t => t && t.id === Number(id)) : null);
+        if (rule) out.push(rule);
+      }
+      return out;
+    },
+
+    // The traits the player bought at creation, falling back to the set the
+    // society rolled for a companion whose actor carries none of its own.
+    _traitIdsOf(actor) {
+      const bought = ((actor && actor._selectedTraits) || []).map(t => t && t.id).filter(id => id != null);
+      if (bought.length) return bought;
+      try {
+        const profile = actor && actor.name && window.NPCSocietyRegistry && window.NPCSocietyRegistry.getProfile
+          ? window.NPCSocietyRegistry.getProfile(actor.name()) : null;
+        return (profile && Array.isArray(profile.traitIds)) ? profile.traitIds : [];
+      } catch (e) { return []; }
+    },
+
+    allergiesOf(actor) { return actor ? this.fromTraitIds(this._traitIdsOf(actor)) : []; },
+
+    // Everything an NPC must not eat, for NPCShared.Diet.
+    allergensForProfile(profile) {
+      return new Set(this.fromTraitIds(profile && profile.traitIds).map(a => a.allergen));
+    },
+
+    // The allergies of this person one item would set off.
+    triggersFor(actor, item) {
+      const held = this.allergensOf(item);
+      if (!held.length) return [];
+      return this.allergiesOf(actor).filter(a => held.includes(a.allergen));
+    },
+
+    // Party members one item is unsafe for, for the inspect card.
+    unsafeMembers(item) {
+      if (!window.$gameParty || !this.allergensOf(item).length) return [];
+      return $gameParty.members().filter(m => this.triggersFor(m, item).length);
+    },
+
+    // ── the reaction states ───────────────────────────────────────────────
+    stateId(kind) {
+      if (!_allergyStates) {
+        _allergyStates = {};
+        for (const s of (window.$dataStates || [])) {
+          const m = s && s.note && /<AllergyReaction:\s*(\w+)\s*>/i.exec(s.note);
+          if (m) _allergyStates[m[1].toLowerCase()] = s.id;
+        }
+      }
+      return _allergyStates[kind] || 0;
+    },
+
+    reactingTo(actor) {
+      if (!actor || !actor.isStateAffected) return null;
+      return ALLERGY_STATE_KEYS.find(k => this.stateId(k) && actor.isStateAffected(this.stateId(k))) || null;
+    },
+
+    // Take every reaction off.
+    cure(actor) {
+      if (!actor || !actor.removeState) return false;
+      let any = false;
+      for (const k of ALLERGY_STATE_KEYS) {
+        const id = this.stateId(k);
+        if (id && actor.isStateAffected && actor.isStateAffected(id)) { actor.removeState(id); any = true; }
+      }
+      return any;
+    },
+
+    // ── the guard ─────────────────────────────────────────────────────────
+    isGuarded(actor) {
+      return !!actor && (Number(actor._allergyGuardMin) || 0) > nowMin();
+    },
+
+    guardMinutesLeft(actor) {
+      return actor ? Math.max(0, (Number(actor._allergyGuardMin) || 0) - nowMin()) : 0;
+    },
+
+    guard(actor, hours) {
+      if (!actor || !(hours > 0)) return;
+      actor._allergyGuardMin = Math.max(Number(actor._allergyGuardMin) || 0, nowMin() + Math.round(hours * 60));
+      this.cure(actor);
+    },
+
+    // ── exposure ──────────────────────────────────────────────────────────
+    // One item into one body. Every path that hands an item to somebody comes
+    // through here (ItemSystemUtils.applyNeedRestores, the morning dose, an
+    // item used in battle), and the same item on the same frame is read once,
+    // so a path that runs two of those does not react twice.
+    onConsume(actor, item) {
+      if (!actor || !item) return null;
+      const frame = (window.Graphics && Graphics.frameCount) || null;
+      if (frame != null) {
+        const stamp = frame + ':' + item.id;
+        if (actor._allergyLastDose === stamp) return null;
+        actor._allergyLastDose = stamp;
+      }
+      const hours = this.guardHoursOf(item);
+      if (hours > 0) {
+        this.guard(actor, hours);
+        this._toast('guard', actor, { hours }, 'good');
+      }
+      const hits = this.triggersFor(actor, item);
+      if (!hits.length) return hours > 0 ? { guarded: true } : null;
+      const worst = hits.reduce((a, b) => (ALLERGY_RANK[b.severity] > ALLERGY_RANK[a.severity] ? b : a));
+      return this.react(actor, worst.severity, item.name, {
+        food: !!(window.ItemSystemUtils && window.ItemSystemUtils.isFoodItem && window.ItemSystemUtils.isFoodItem(item)),
+      });
+    },
+
+    // What an exposure does, by how bad the allergy is. Returns
+    // { reaction: 'mild' | 'severe' | null, vomit, held }.
+    react(actor, severity, source, opts) {
+      const o = opts || {};
+      const rand = this._rand;
+      let rank = ALLERGY_RANK[severity] || 1;
+      if (this.isGuarded(actor)) {
+        if (rank < 3) {
+          this._toast('held', actor, { source }, 'info');
+          return { reaction: null, vomit: false, held: true };
+        }
+        rank = 0; // a held severe allergy still breaks out, as hives only
+      }
+      let shock = false, vomit = false;
+      if (rank === 2) { vomit = rand() < 0.5; shock = rand() < 0.1; }
+      else if (rank === 3) { shock = rand() < 0.6; vomit = !shock; }
+      if (!o.food) vomit = false;
+
+      if (shock) {
+        const id = this.stateId('severe');
+        if (actor.mhp > 0 && actor.hp > 1 && actor.gainHp) {
+          actor.gainHp(-Math.min(actor.hp - 1, Math.floor(actor.mhp * ANAPHYLAXIS_HP)));
+        }
+        if (this.stateId('mild') && actor.removeState) actor.removeState(this.stateId('mild'));
+        if (id && actor.addState) actor.addState(id);
+        this._toast('severe', actor, { source }, 'danger');
+        return { reaction: 'severe', vomit: false, held: false };
+      }
+      const id = this.stateId('mild');
+      if (id && actor.addState) actor.addState(id);
+      this._toast(vomit ? 'mildVomit' : 'mild', actor, { source }, 'warning');
+      return { reaction: 'mild', vomit, held: false };
+    },
+
+    // Pollen, once an hour: outdoors, dry weather, spring or summer.
+    hourly() {
+      if (!window.$gameParty || !window.$gameMap) return;
+      if ($gameParty.inBattle && $gameParty.inBattle()) return;
+      const outdoors = $gameMap.isExterior ? $gameMap.isExterior()
+        : !($gameMap.isInterior && $gameMap.isInterior());
+      if (!outdoors) return;
+      const weather = window.$gameWeather;
+      const season = String((weather && weather.getSeason && weather.getSeason()) || '').toLowerCase();
+      const chance = POLLEN_SEASONS[season] || 0;
+      if (!chance || (weather && POLLEN_WASH.test(String(weather.currentWeatherType || '')))) return;
+      const id = this.stateId('pollen');
+      for (const actor of $gameParty.members()) {
+        if (!actor || (actor.isDead && actor.isDead())) continue;
+        if (!this.allergiesOf(actor).some(a => a.allergen === 'pollen')) continue; // i18n-ignore: allergen id
+        if (this.isGuarded(actor) || (id && actor.isStateAffected && actor.isStateAffected(id))) continue;
+        if (this._rand() >= chance) continue;
+        if (id && actor.addState) actor.addState(id);
+        this._toast('pollen', actor, {}, 'warning');
+      }
+    },
+
+    _toast(kind, actor, params, severity) {
+      if (!window.ParchmentToast || !actor) return;
+      const id = actor.actorId ? actor.actorId() : 0;
+      window.ParchmentToast.show(
+        T('Diseases.allergy.toast.' + kind, Object.assign({ actor: actor.name() }, params)),
+        { severity, key: 'allergy:' + kind + ':' + id }); // i18n-ignore: toast dedupe key
+    },
+  };
+  window.Allergy = Allergy;
+
+  // An item used in a fight goes through the action rather than the backpack,
+  // so the guard of a potion drunk mid-battle and the reaction to a ration
+  // eaten there are read off the action.
+  if (typeof Game_Action !== 'undefined' && Game_Action.prototype.apply) {
+    const _Allergy_Game_Action_apply = Game_Action.prototype.apply;
+    Game_Action.prototype.apply = function (target) {
+      _Allergy_Game_Action_apply.call(this, target);
+      try {
+        if (window.$gameParty && $gameParty.inBattle() && this.isItem() && target && target.isActor && target.isActor()) {
+          Allergy.onConsume(target, this.item());
+        }
+      } catch (e) { /* never break an action over it */ }
     };
   }
 

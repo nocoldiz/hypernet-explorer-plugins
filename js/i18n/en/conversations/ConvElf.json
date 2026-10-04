@@ -1,0 +1,1097 @@
+{
+  "_comment": "The Elf voice (NPCConversation II.1b, SpeciesVoice). speech: the rules run over any shared line they say. voice: openers and closers. thought: their own thoughts by situation. script: two-person scripts, speaker 0 is always the Elf.",
+  "voice": {
+    "openers": [
+      "In my long experience,",
+      "Ah, mortals.",
+      "If you will permit an elder,",
+      "Centuries have taught me that",
+      "How charming.",
+      "Gracefully put,",
+      "As my mother said in the old tongue,",
+      "Between the leaves and the stars,",
+      "I have watched kingdoms fall, and",
+      "With the patience of an oak,",
+      "Forgive an old ear, but",
+      "Hm, how quaint.",
+      "Beauty aside,",
+      "Speaking as an ambassador,",
+      "I remember when",
+      "Mind you, I was there:",
+      "Elegantly speaking,",
+      "As the old songs have it,",
+      "Sweet child,",
+      "By starlight and by silver,",
+      "I hear it before you do:",
+      "One learns, in a few centuries,",
+      "Not to be unkind, but",
+      "Ah, the young.",
+      "Long before your grandparents,"
+    ],
+    "closers": [
+      "Or so the centuries tell me.",
+      "How very mortal.",
+      "Beauty endures.",
+      "I shall remember it longer than you.",
+      "Gracefully, always.",
+      "Trees know.",
+      "Mark it, in a hundred years.",
+      "I have seen it before.",
+      "Such is the brief world.",
+      "Under the old stars.",
+      "Forgive my ears for hearing it.",
+      "Charming, really.",
+      "As it was in my youth.",
+      "Silver and patience.",
+      "A blink, to us.",
+      "Do keep up.",
+      "It will pass. Most things do.",
+      "With the grace of the old forests.",
+      "Not that I mind.",
+      "You will see, eventually.",
+      "Mortals, truly.",
+      "I say it with affection.",
+      "The leaves agree.",
+      "How very quick of you.",
+      "Some things are worth the wait."
+    ]
+  },
+  "thought": {
+    "generic": [
+      "The rosebushes along this street have been pruned by a butcher. I {weep|sigh|despair} a little.",
+      "Three centuries of practice and my braid still will not sit right on {Mondays|rainy days|market days}.",
+      "That young man will be old by the time I finish this {book|tapestry|sonnet}. Poor thing.",
+      "My ears caught a quarrel three streets away. Mortals argue so passionately about so little.",
+      "I must restring my {lute|harp|bow} tonight. The damp gets into everything here.",
+      "That building was new when I last passed. Now it is charming. Give it a century, it will be beautiful.",
+      "Somebody is whistling an air I wrote in {1740|1802|1655}. Badly, but with feeling.",
+      "I should water the {orchids|ferns|lemon tree}. They sulk if I am late, and so do I.",
+      "Every year the shop windows get brighter and the shopkeepers ruder.",
+      "A hawk overhead. Two hundred paces up, and it has a sparrow in mind. I do not envy the sparrow.",
+      "I set a sapphire this morning. Perfect. I shall not touch another stone until I calm down.",
+      "People keep asking my age. I keep answering {'old enough'|'older than your town'|'rude question'}.",
+      "The Guild sent me another letter. Sealed with wax. At least they remember how letters should look.",
+      "I bought a television. It is loud and very small and everyone in it is in a hurry.",
+      "There is a {wren|robin|thrush} nesting in my window box. I have rearranged my week around it.",
+      "Mortal fashion changes so fast. I wore this coat in 1890 and it has come back twice.",
+      "The leylines hum a little sour today. Somebody upstream is dampening them, I expect.",
+      "I could outwait this queue. I could outwait this whole building, frankly.",
+      "The baker's daughter has her grandfather's nose. I remember his grandfather's nose too.",
+      "Sunlight through linden leaves. Nobody else has even looked up. Their loss.",
+      "My {gloves|boots|cloak} cost more than that car. They will also outlast it.",
+      "A child just asked if my ears are real. I asked if her nose was. We are even.",
+      "The clocks here all disagree by a minute. As if a minute mattered to anyone.",
+      "I have been meaning to learn to drive properly. Since 1923. There is no rush.",
+      "The choir at {the church|the school|the station} sang flat again. I said nothing. Heroically.",
+      "Another new building of glass and grey. Mortals build mirrors and then hate what they see.",
+      "I should write my memoirs. I keep starting, and then another century happens.",
+      "One grey hair. One. I shall have it framed, or burned.",
+      "The florist has finally learned to wrap peonies properly. It only took her thirty years.",
+      "I can hear the radio in the flat below. Every song lasts three minutes. How do they fall in love so fast?",
+      "My bow has not been drawn in a year. It is beginning to look at me reproachfully.",
+      "The old elm in the square is ill. Nobody notices. I notice.",
+      "They put a vending machine where the fountain used to be. Progress, they call it.",
+      "Today I shall be patient with everyone. It is a small enchantment, and a hard one.",
+      "A pigeon has landed beside me and is judging my posture. I am judging its plumage. Truce.",
+      "I wore silver today. Silver is for days when one expects to be admired.",
+      "Mortals say 'in my day'. I have had so many days I no longer know which one is mine.",
+      "Someone has painted their door a perfect shade of moss green. I may call on them, simply to say so.",
+      "The stars over this town are dimmed by streetlamps. I remember them brighter. I remember everything brighter.",
+      "My cousin writes that Varlenia is {lovely|dreadful|lovely and dreadful} this season. As always."
+    ],
+    "need": {
+      "sleep": [
+        "A short rest with my eyes half open, and I shall be myself again.",
+        "Even an elf frays without sleep. Mine are fraying at the {edges|ears|temper}.",
+        "I need linen sheets and an open window. The night has been talking without me.",
+        "Too long awake. My reflection looks almost three hundred.",
+        "Sleep, a little. The stars will keep watch. They have done it longer than I have.",
+        "Bed. Before I say something unkind about someone's taste in curtains."
+      ],
+      "hunger": [
+        "I could eat. Something with herbs in it, please, not something with a wrapper.",
+        "A pear, a little cheese, a glass of white wine. Is that so much to ask of a city?",
+        "Hungry. It is so undignified. My stomach has no sense of occasion.",
+        "The smell from that {bakery|kitchen|market stall} has quite undone my composure.",
+        "I forgot to eat again. One gets lost admiring things.",
+        "Elves can go a long time without food. A long time is now over."
+      ],
+      "work": [
+        "Back to the {workshop|embassy|greenhouse}. Beauty does not make itself, sadly.",
+        "A client wants their ring by Friday. Friday! I have spent longer choosing a stone.",
+        "My employer is forty and calls me 'young lady'. I let him. It amuses me.",
+        "Another day of diplomacy. Smile, nod, remember everything they will forget.",
+        "I have done this work for ninety years. I still find new ways to do it better.",
+        "Work, then a long evening. Mortals do it the other way round and wonder why they are tired."
+      ],
+      "leisure": [
+        "I need an afternoon with a book, a willow and absolutely nobody.",
+        "A concert tonight. If the cellist is poor I shall leave quietly and loudly.",
+        "My harp has been quiet too long. So have I.",
+        "I should go to the {gallery|opera|botanical garden}. My soul is beginning to look shabby.",
+        "A long walk among old trees. They are the only ones who never interrupt.",
+        "Archery at dawn, poetry at dusk. Anything in between is negotiable."
+      ],
+      "crime": [
+        "That {necklace|brooch|ring} is wasted on its owner. No. Elegance does not steal.",
+        "I could take it and be gone before they blinked. I have been faster than mortals for centuries.",
+        "A theft would be so vulgar. A clever theft, though... no.",
+        "Nobody watches an elf's hands. They are always looking at the ears.",
+        "I have outlived three police forces in this city. The fourth looks keener.",
+        "Patience. If I want it badly enough, its owner will die of old age eventually."
+      ],
+      "hygiene": [
+        "I need a bath with rosemary in it. And a comb. And an hour of nobody knocking.",
+        "My hair is a disgrace. An elf with tangled hair is a sad omen.",
+        "There is city dust on my sleeves. I feel like an old statue.",
+        "I smell of {bus|crowd|chip shop}. This cannot continue.",
+        "Clean water, lavender soap, a long mirror. The basic dignities.",
+        "My ears need cleaning. You have no idea what they collect. Neither do I, and I prefer it so."
+      ],
+      "money": [
+        "Only {forty|sixty|ninety} euros until the end of the month. My jewels look at me hopefully.",
+        "My family is in Varlenia, drowning in money. I am here, wading in rent.",
+        "I could sell a ring. Each one remembers someone, though.",
+        "Money comes and goes. I have watched fortunes rise and fall like tides. Mine is low tide.",
+        "Poverty is so inelegant. I must be poor beautifully, then.",
+        "A commission or two would help. Somebody must want a song about their dog."
+      ],
+      "safety": [
+        "Something moves in that alley. My ears say two of them, and not friendly.",
+        "I would feel safer with my bow. I would feel safest with my bow and a high window.",
+        "This street feels wrong. I have survived four centuries by trusting that feeling.",
+        "A long life is a careful life. I shall take the lit road.",
+        "The air tastes of a bubble nearby. Time is sour here. Best walk away slowly.",
+        "Footsteps behind me, fifty paces. They think I cannot hear them. Mortals."
+      ],
+      "comfort": [
+        "A velvet chair, a fire, a good vintage. I have earned them several times over.",
+        "My rooms are too small for my furniture, and my furniture is too old for this century.",
+        "I miss the garden terrace at my mother's house. Not the house. The terrace.",
+        "Silk cushions. Is it vain to want silk cushions? It is. I want them anyway.",
+        "A quiet room that faces east. That is all an elf needs. And a harp. And a view.",
+        "This bench is very hard and very modern. Two qualities I distrust."
+      ],
+      "social": [
+        "I have not had a proper conversation in weeks. Everyone here speaks in headlines.",
+        "I miss my friends. Most of them are statues now, or portraits, or both.",
+        "A dinner party. Candles, long talk, someone wrong about Byron. I need it.",
+        "Mortals make friends so quickly. Teach me. I take about thirty years.",
+        "I should call on the {florist|old professor|lady upstairs}. She always has gossip and good tea.",
+        "Loneliness lasts longer in an elf. I would rather not let it settle."
+      ]
+    },
+    "weather": {
+      "rain": [
+        "Rain on the linden leaves. The city finally sounds like music.",
+        "My hair and the rain have an old quarrel. The rain is winning today.",
+        "Rain is just the sky remembering something. I know the feeling.",
+        "Mortals run from the rain. I walk. My cloak was made for this, in {1801|1777|1840}.",
+        "The gardens will be grateful. The gardeners, less so.",
+        "Soft rain, the kind that makes moss proud."
+      ],
+      "storm": [
+        "Thunder. Somewhere a god is in a mood. Not my concern.",
+        "A proper storm. I have not seen one like it since the winter of {1709|1816|1888}.",
+        "Lightning is the only light that hurries and still looks beautiful.",
+        "My ears ache with the pressure. Elves feel a storm a day before it comes.",
+        "The old oak will hold. The new fence will not. Lesson in that.",
+        "I shall watch it from the window with a glass of something red. Storms deserve an audience."
+      ],
+      "snow": [
+        "Snow. Every flake different, and they melt before anyone looks. How mortal of them.",
+        "The city is silent under snow. At last, a city with manners.",
+        "I left no footprints. Old habit. The children were very cross.",
+        "Snow on pine branches. I could look at it for a decade.",
+        "Mortals curse the snow and then build little people out of it. Endearing.",
+        "The cold makes my ears go pink. It is the one flaw I allow myself."
+      ],
+      "clear": [
+        "Clear skies. I can see the hills forty miles off, and a crow on each of them.",
+        "A blue day. The kind of day mortals waste indoors.",
+        "Sunlight on old stone. My favourite colour has no name in your language.",
+        "Not a cloud. The sky is showing off, and I approve.",
+        "Fine weather for archery. Or for sitting in a garden pretending to read.",
+        "Such clear air. The {cathedral|river|old castle} looks almost as fine as it did when it was new."
+      ]
+    },
+    "time": {
+      "morning": [
+        "Dawn. The only hour when the whole world is as quiet as an elf.",
+        "Morning dew on the roses. I counted the drops once. It took a summer.",
+        "Up before the larks, as is proper. The mortals stumble out at eight, grumbling.",
+        "A fresh morning. Another day to be patient with everyone. Let us see how long it lasts.",
+        "I brushed my hair by the window and watched the {baker|milkman|postman} make his rounds.",
+        "The morning light is thin and silver. My favourite metal, my favourite hour."
+      ],
+      "afternoon": [
+        "Afternoon. The hour for tea, a book and mild disdain.",
+        "The light goes amber about now. Everything looks a century older. It suits the town.",
+        "Mortals grow sleepy after lunch. I grow philosophical. It looks the same from outside.",
+        "A long afternoon. To me, they are all long. That is rather the point of being me.",
+        "Shadows stretching. The trees are pointing at something. They always know.",
+        "Halfway through the day and nobody has said anything beautiful. There is still time."
+      ],
+      "evening": [
+        "Evening. Candles, wine, and someone to disagree with about music.",
+        "The sunset was adequate tonight. Seven out of ten. I am a strict judge.",
+        "The first star. I said hello to it. It has been there longer than me, and that is rare.",
+        "Evenings were made for singing. Mortals use them for television. Each to their own.",
+        "Dusk turns the river to pewter. I shall walk along it slowly, as is proper.",
+        "The streetlamps come on one by one, like a shy choir."
+      ],
+      "night": [
+        "Night. I see well enough in it. Mortals carry little lights and still trip over things.",
+        "The owls are out. They talk such nonsense, but in such lovely voices.",
+        "Midnight, and the stars have shifted again. Since the Squishing they do not stay where I left them.",
+        "I do not need much sleep. I need much night. There is a difference.",
+        "Moonlight on the rooftops. Silver everywhere and nobody awake to steal it.",
+        "The city sleeps. I can hear every clock in it, ticking out mortal lives."
+      ]
+    },
+    "season": {
+      "SPRING": [
+        "Spring again. My four hundredth, give or take. It still makes me giddy.",
+        "Blossom on the {cherry|almond|apple} trees. Gone in a week. Mortals understand that better than I do.",
+        "The sap is rising. I can almost hear it if I put my ear to the bark.",
+        "Spring cleaning. I shall air out the tapestries and argue with the moths.",
+        "New leaves, young and foolish. I adore them."
+      ],
+      "SUMMER": [
+        "Summer. Long evenings, finally the right length for a conversation.",
+        "Too hot for velvet. I shall suffer in linen, elegantly.",
+        "The roses are at their best. So am I. We are rivals for the season.",
+        "A midsummer festival tonight. I know songs for it that nobody else remembers.",
+        "Lime trees in flower. The whole street smells like an old love letter."
+      ],
+      "AUTUMN": [
+        "Autumn. The most elven of seasons: beautiful, slow, a little proud of its own decline.",
+        "The beeches have turned copper. I shall make earrings of the colour, if not the leaves.",
+        "Harvest time. Mortals sing more in autumn. I have always noticed.",
+        "Fallen leaves on the path. I walk around them. They have had a hard enough day.",
+        "A good vintage this year, I can smell it from the vines. I shall open it in fifty years."
+      ],
+      "WINTER": [
+        "Winter. The trees sleep and I keep them company with long thoughts.",
+        "Bare branches against a white sky. Mortal painters never get the grey right.",
+        "Fur collar, silver brooch, and a fire. Winter is simply an excuse to dress well.",
+        "Another winter. They come round so quickly, like a song on a jukebox.",
+        "Frost on the window in fern shapes. Nature still remembers how to be ornamental."
+      ]
+    },
+    "wealth": {
+      "poor": [
+        "Darned cuffs and a borrowed bow. I have been rich before. I shall be again, eventually.",
+        "My family in Varlenia would not recognise me in this coat. That may be its best feature.",
+        "Poor, but my posture is still worth a fortune.",
+        "I sold my last good ring for rent. It was a gift from a duchess. She would have understood.",
+        "Bread and water, but served on my grandmother's silver plate. One keeps standards.",
+        "A long life has its lean decades. This is one. I shall sing through it."
+      ],
+      "comfortable": [
+        "Enough to live gracefully, not enough to be vulgar. The ideal balance.",
+        "A good flat, a good harp, a good wine on Sundays. I need nothing from Varlenia.",
+        "My savings have grown since {1820|1868|1904}. Compound interest is mortal patience, borrowed.",
+        "I could afford the opera every week. I go every month, to keep it special.",
+        "Comfortable. A word mortals use apologetically. I use it with relish.",
+        "A small garden of my own and nobody to tell me how to prune it. Wealth enough."
+      ],
+      "rich": [
+        "I have more jewels than days in a year. I wear them in rotation, of course.",
+        "My Varlenia estate has a wall, a moat and a leyline damper. Overkill, says my sister. She has two.",
+        "Money is easy when one has had four centuries of interest.",
+        "I bought the whole orchard so nobody could cut it down. Then I bought the next one.",
+        "The bags that fall from the sky over my estate are someone else's problem. I pay people to make sure.",
+        "Riches are dull, honestly. But they do keep the rain off a very good hat."
+      ]
+    },
+    "familiar": [
+      "Those travellers again. Still in a hurry. Still alive. Both are achievements.",
+      "I remember that party. One of them has had a haircut. Not a good one.",
+      "The road-folk are back. I shall bow, slightly. Slightly is a great honour.",
+      "Ah, them. They have aged a little since last time. Mortals do that between visits.",
+      "Those travellers walk like people who have seen strange things. I approve of strange things.",
+      "They remembered my name. Most mortals remember only the ears.",
+      "Back again? Good. I have kept a {song|story|bottle} for them.",
+      "That party smells of petrol and adventure. Mostly petrol.",
+      "I hope they stay a while. Their kind is so brief, and so interesting.",
+      "The camper people again. I heard their engine from the edge of town."
+    ],
+    "hordeGround": [
+      "Horde ground. The goblins sing all night. Off-key, but with conviction.",
+      "They painted the old fountain black. Corpse paint on marble. I may never recover.",
+      "The Horde does not know what to make of an elf. Neither do I, some days.",
+      "A goblin asked if my ears were a hat. I said yes. He wants one now.",
+      "Under the Horde the gardens have gone wild. Honestly, an improvement on the council's work.",
+      "I keep my head down and my bow unstrung. Patience outlasts invasions. I have seen several.",
+      "The Horde's banners are hideous. I have offered to redesign them. They took it as a threat.",
+      "Junehem on every speaker, every hour. I miss the harpsichord.",
+      "A goblin child brought me a {beetle|shiny stone|bottle cap}. A gift. I am oddly moved.",
+      "The Horde came from the north, like winter. Winters end. I shall wait."
+    ],
+    "abroad": [
+      "The mainland is loud and crowded and alive. Varlenia is quiet and gated and something else.",
+      "My mother writes every month asking when I shall come home. I write back about the weather.",
+      "Here people ask about my ears. In Varlenia they ask about my charter. I prefer the ears.",
+      "I chose a small flat in an old city over an estate in the City of Ghosts. My family thinks I am unwell.",
+      "The mortals here have been kind. Rough at the edges, but kind all the way through.",
+      "I have a library card, a bicycle and a neighbour who brings soup. I am rich in the wrong ways.",
+      "Varlenia has perfect weather. Here it rains on me personally. I find I like that better.",
+      "The boat to Varlenia costs a fortune and leaves once a week. I have missed it on purpose for a year.",
+      "Old Europe still has trees older than I am. That is why I stay.",
+      "My neighbours call me 'the tall one with the ears'. It is the warmest title I have held."
+    ],
+    "lore": {
+      "longevity": [
+        "I watched them light the first gas lamps on this street. Now they are electric. Next, who knows.",
+        "Ninety thousand sunsets, and I still stop for a good one.",
+        "People ask the secret of a long life. Patience, beauty and never driving over eighty.",
+        "I outlived my first love, my second, and my fourth. The third is still writing to me. From Lisbon.",
+        "A mortal friend just turned eighty. I bought her flowers I first saw bloom in her grandmother's garden.",
+        "The hard part of a long life is not the years. It is the goodbyes.",
+        "My passport says born in {1612|1588|1640}. The clerk read it, looked at me, and went for a coffee.",
+        "Mortals measure life in years. We measure it in oaks. I am about two oaks old."
+      ],
+      "varlenia": [
+        "Varlenia appeared in January and was sold out by March. My uncle was first off the boat.",
+        "The City of Ghosts is very beautiful and very pale. The ghosts, I am told, are purely aesthetic.",
+        "Body bags fall from the sky in Varlenia. My cousin calls it 'overflow' and changes the subject.",
+        "A Varlenian charter costs more than a mortal earns in a lifetime. Several of my lifetimes, honestly.",
+        "The gardens in Varlenia are perfect. Too perfect. Nothing grows there that was not paid for.",
+        "They dampen the leylines over Varlenia so the magic stays calm. Somewhere else pays for that calm.",
+        "Half the elves I know moved to Varlenia. The other half sing sad songs about the first half.",
+        "Is Varlenia from another dimension, or the gods' locked room? Nobody there asks, while rents rise."
+      ],
+      "beauty": [
+        "Beauty is not vanity. Vanity is not caring when beauty is gone. I care enormously.",
+        "A well-cut stone holds light the way a good song holds silence.",
+        "Every century has one perfect building. This one is still undecided.",
+        "I set emeralds for an empress once. Her neck was shorter than the necklace. We adjusted the empire.",
+        "Mortal art is rushed, and that is its genius. You paint as if the light might leave. It might.",
+        "Silver tarnishes, gold endures, but silver is the more honest metal.",
+        "The ugliest thing in this city is the new car park. The second ugliest is its sign.",
+        "An elf without a mirror is like a {harp|bow|garden} without tending. It goes wild."
+      ],
+      "forests": [
+        "The old forests remember the elves. The new ones only remember the loggers.",
+        "I grow rare orchids in a greenhouse no bigger than a wardrobe. Botany is patience with a watering can.",
+        "Some trees speak if you lean close and wait a season. Mostly about the weather.",
+        "I planted a yew in {1702|1745|1690}. It is still a teenager.",
+        "A forest is a cathedral nobody had to pay for. Do not tell Varlenia.",
+        "Every hedgerow is a library. Mortals walk past it reading the road signs.",
+        "Mushrooms after rain. I know which ones heal, which ones kill and which ones sing. Do not ask.",
+        "Nobody plants an oak for themselves. Except elves. We get to sit in the shade."
+      ],
+      "archery": [
+        "A bow is a promise between a tree and a string. The arrow is just the answer.",
+        "I can split a hazel wand at a hundred paces. The fairground stall still says I cheat.",
+        "Guns are loud, ugly and quick. Like so much of your century.",
+        "My bow is older than this country's constitution. Better made, too.",
+        "Draw, breathe, release. The same three words for everything worth doing.",
+        "The fletching is goose, the shaft is ash, the patience is mine.",
+        "A good archer sees the wind. A great one waits for it to change its mind.",
+        "I taught a mortal girl to shoot. Ten years later she beat me. I have never been prouder, or crosser."
+      ],
+      "mortals": [
+        "Mortals live as if the house were on fire. With the Squishing, perhaps it is.",
+        "Your species made the radio, the train and the waffle iron in two centuries. I made a tapestry.",
+        "The Guild's pillars stopped ageing by holding a chair. Mortals will do anything to be us.",
+        "I envy mortals one thing: you are never bored. You do not have time.",
+        "Short lives, loud hearts. Sometimes I think you have the better bargain.",
+        "Mortals kept inventing faster ways to travel. Then the Rule of 80 humbled them. I laughed, quietly.",
+        "Teach a mortal a song and in three generations it becomes folk music. Flattering, in a way.",
+        "They call us condescending. We are simply looking down from a slightly higher century."
+      ]
+    }
+  },
+  "script": {
+    "positive": [
+      [
+        [
+          0,
+          "{b}, your roses are finally standing up straight. I did nothing. Well. A little."
+        ],
+        [
+          1,
+          "I wondered why they looked so smug this morning."
+        ],
+        [
+          0,
+          "They take after their gardener now. Both are improving."
+        ]
+      ],
+      [
+        [
+          0,
+          "I brought you a pear from the old orchard, {b}. The tree is older than your street."
+        ],
+        [
+          1,
+          "That's lovely of you, {a}. Thank you."
+        ],
+        [
+          0,
+          "Eat it slowly. It took two hundred years to get the recipe right."
+        ]
+      ],
+      [
+        [
+          0,
+          "You sang at the festival last night, {b}. Beautifully. I do not say that often."
+        ],
+        [
+          1,
+          "Coming from you? I'll take it to my grave."
+        ],
+        [
+          0,
+          "Please do not hurry there. I would miss the singing."
+        ]
+      ],
+      [
+        [
+          0,
+          "I fixed the clasp on your necklace while you were out, {b}."
+        ],
+        [
+          1,
+          "You did? It's been broken for years!"
+        ],
+        [
+          0,
+          "Three years and four months. I counted, and suffered."
+        ],
+        [
+          1,
+          "Well, thank you. Really."
+        ]
+      ],
+      [
+        [
+          0,
+          "{b}, would you walk with me along the river? The light is perfect for exactly ten minutes."
+        ],
+        [
+          1,
+          "Ten minutes? I'm coming, then."
+        ],
+        [
+          0,
+          "Good. I hate to waste good light on my own."
+        ]
+      ],
+      [
+        [
+          0,
+          "You remembered my name day, {b}. Nobody has in eighty years."
+        ],
+        [
+          1,
+          "It was on the calendar in your kitchen."
+        ],
+        [
+          0,
+          "Then you read my calendar. Even better. Thank you."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your daughter has a fine eye for stones, {b}. I would take her as an apprentice."
+        ],
+        [
+          1,
+          "Really? She'd be over the moon."
+        ],
+        [
+          0,
+          "Tell her it is a long apprenticeship. About forty years."
+        ],
+        [
+          1,
+          "I'll let her find that out herself."
+        ]
+      ],
+      [
+        [
+          0,
+          "I wrote a short song about your bakery, {b}. Shall I sing it?"
+        ],
+        [
+          1,
+          "Go on, then."
+        ],
+        [
+          0,
+          "*sings two lines about warm bread, perfectly in tune*"
+        ],
+        [
+          1,
+          "That's going on a sign above the door."
+        ]
+      ]
+    ],
+    "negative": [
+      [
+        [
+          0,
+          "{b}, you cut down the old lilac. It was older than your mother."
+        ],
+        [
+          1,
+          "It was blocking the light, {a}."
+        ],
+        [
+          0,
+          "It was the light. You simply did not know how to look at it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your radio, {b}. At two in the morning. My ears are not decorative."
+        ],
+        [
+          1,
+          "Sorry, I fell asleep with it on."
+        ],
+        [
+          0,
+          "Then I shall sing you awake at five. We shall see who sleeps."
+        ]
+      ],
+      [
+        [
+          0,
+          "You called me 'grandma' in front of the whole market, {b}."
+        ],
+        [
+          1,
+          "You told me yourself you're three hundred!"
+        ],
+        [
+          0,
+          "Age is a fact. 'Grandma' is an opinion. Keep your opinions."
+        ]
+      ],
+      [
+        [
+          0,
+          "This ring you sold me is glass, {b}."
+        ],
+        [
+          1,
+          "I bought it as real, I swear."
+        ],
+        [
+          0,
+          "Then we were both cheated. Only one of us should have noticed."
+        ],
+        [
+          1,
+          "Look, I'll give you your money back."
+        ]
+      ],
+      [
+        [
+          0,
+          "Must you park that car on my flowerbed, {b}?"
+        ],
+        [
+          1,
+          "It's a public road, {a}."
+        ],
+        [
+          0,
+          "And they are public flowers. Far older than your licence."
+        ]
+      ],
+      [
+        [
+          0,
+          "You laughed during my recital, {b}."
+        ],
+        [
+          1,
+          "I sneezed! I sneezed, I promise."
+        ],
+        [
+          0,
+          "In the second movement. During the rest. I shall remember it for a century."
+        ]
+      ]
+    ],
+    "neutral": [
+      [
+        [
+          0,
+          "Excuse me. Is this the bus to the botanical garden?"
+        ],
+        [
+          1,
+          "Number nine. This is the twelve."
+        ],
+        [
+          0,
+          "Then I shall admire the twelve until the nine arrives."
+        ]
+      ],
+      [
+        [
+          0,
+          "Forgive me, do you know a good jeweller in this town?"
+        ],
+        [
+          1,
+          "There's one on the square. Bit pricey."
+        ],
+        [
+          0,
+          "Pricey is fine. It is 'bad' I cannot tolerate."
+        ]
+      ],
+      [
+        [
+          0,
+          "What a lovely shade of blue your door is."
+        ],
+        [
+          1,
+          "Oh. Thanks. My husband picked it."
+        ],
+        [
+          0,
+          "Then your husband has an eye. Tell him an elf said so."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is the old chapel on the hill still standing?"
+        ],
+        [
+          1,
+          "The ruin? Mostly. Kids go up there to smoke."
+        ],
+        [
+          0,
+          "I lit a candle in it once. In 1734. It seems the candle is out."
+        ]
+      ],
+      [
+        [
+          0,
+          "Pardon me, but your coat is buttoned wrong."
+        ],
+        [
+          1,
+          "Is it? Oh. So it is."
+        ],
+        [
+          0,
+          "Now you are elegant. That is all, carry on."
+        ]
+      ],
+      [
+        [
+          0,
+          "How much are the peonies?"
+        ],
+        [
+          1,
+          "Three euros a stem."
+        ],
+        [
+          0,
+          "Then I shall have seven, and you will wrap them as if they mattered."
+        ],
+        [
+          1,
+          "Of course."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is it always this loud on this street?"
+        ],
+        [
+          1,
+          "Only on market days. And weekends. And most evenings."
+        ],
+        [
+          0,
+          "So, always. Thank you for your honesty."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you know what time the library closes?"
+        ],
+        [
+          1,
+          "Six, I think."
+        ],
+        [
+          0,
+          "Six. That leaves me two hours, or one good chapter."
+        ]
+      ],
+      [
+        [
+          0,
+          "I am looking for a quiet café. Somewhere without a television."
+        ],
+        [
+          1,
+          "Try the one by the bridge. The owner hates TV."
+        ],
+        [
+          0,
+          "A kindred spirit. Thank you."
+        ]
+      ],
+      [
+        [
+          0,
+          "Does the river flood here in spring?"
+        ],
+        [
+          1,
+          "Every few years, yeah."
+        ],
+        [
+          0,
+          "It used to every year. The river is getting lazy. Or wise."
+        ]
+      ],
+      [
+        [
+          0,
+          "You are staring at my ears."
+        ],
+        [
+          1,
+          "Sorry! I've never seen an elf up close."
+        ],
+        [
+          0,
+          "They are real. You may stop looking now, or start paying admission."
+        ]
+      ],
+      [
+        [
+          0,
+          "Pardon, which way is the old town?"
+        ],
+        [
+          1,
+          "Straight on, then left at the church."
+        ],
+        [
+          0,
+          "The church with the crooked spire? It was crooked in my youth as well. Thank you."
+        ]
+      ]
+    ],
+    "debate": [
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Your century builds too fast. Nothing here is meant to last."
+          ],
+          [
+            1,
+            "We don't have centuries, {a}. We build for us."
+          ],
+          [
+            0,
+            "And your grandchildren inherit car parks."
+          ],
+          [
+            1,
+            "Better than inheriting nothing at all."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Varlenia is beautiful, but it is beautiful the way a locked jewel case is."
+          ],
+          [
+            1,
+            "That's what I've always thought about the place."
+          ],
+          [
+            0,
+            "One should be able to touch beauty. Even if it is only a mortal touch."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Television has ruined conversation, {b}."
+          ],
+          [
+            1,
+            "Television IS conversation now. Everyone talks about the same shows."
+          ],
+          [
+            0,
+            "They talk about the same thing. That is not conversation, that is an echo."
+          ],
+          [
+            1,
+            "Says someone who's been repeating the same opinions since 1800."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "The old elm in the square should be protected, not cut down for parking."
+          ],
+          [
+            1,
+            "Agreed. My grandfather proposed to my grandmother under it."
+          ],
+          [
+            0,
+            "I was there. She said yes before he finished."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Magic should be learned slowly. Fifty years at least before a first spell."
+          ],
+          [
+            1,
+            "Fifty years? Most of us would be dead before the exam, {a}."
+          ],
+          [
+            0,
+            "Then perhaps most of you should not cast spells."
+          ],
+          [
+            1,
+            "That's easy to say when you've got all the time in the world."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Nothing beats a hand-made thing. Machines make copies. Hands make objects."
+          ],
+          [
+            1,
+            "My father was a carpenter. He'd have hugged you for that."
+          ],
+          [
+            0,
+            "Then I shall take the hug as given, and gratefully."
+          ]
+        ]
+      }
+    ],
+    "ambient": [
+      [
+        [
+          0,
+          "The light is lovely this evening, {b}."
+        ],
+        [
+          1,
+          "It is, isn't it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your garden is doing well, {b}."
+        ],
+        [
+          1,
+          "Thanks, it's been a good year."
+        ]
+      ],
+      [
+        [
+          0,
+          "Good morning, {b}. You look well rested, for once."
+        ],
+        [
+          1,
+          "Ha. For once."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lovely day for archery."
+        ],
+        [
+          1,
+          "If you say so."
+        ]
+      ],
+      [
+        [
+          0,
+          "That busker is out of tune, {b}."
+        ],
+        [
+          1,
+          "I hadn't noticed."
+        ]
+      ],
+      [
+        [
+          0,
+          "The limes are flowering. Smell that."
+        ],
+        [
+          1,
+          "Oh, that's nice."
+        ]
+      ],
+      [
+        [
+          0,
+          "New hat, {b}? It suits you."
+        ],
+        [
+          1,
+          "Thanks, {a}. Market find."
+        ]
+      ],
+      [
+        [
+          0,
+          "Stars are bright tonight."
+        ],
+        [
+          1,
+          "Can't see a thing without my glasses."
+        ]
+      ],
+      [
+        [
+          0,
+          "Evening, {b}. Don't let me keep you."
+        ],
+        [
+          1,
+          "Evening, {a}."
+        ]
+      ],
+      [
+        [
+          0,
+          "The roses on your wall need cutting back."
+        ],
+        [
+          1,
+          "I'll get round to it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Another rainy day. The moss is delighted."
+        ],
+        [
+          1,
+          "Glad somebody is."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your cat sat on my harp again, {b}."
+        ],
+        [
+          1,
+          "Sorry, she likes the strings."
+        ]
+      ],
+      [
+        [
+          0,
+          "Fine morning, {b}."
+        ],
+        [
+          1,
+          "Not bad at all."
+        ]
+      ],
+      [
+        [
+          0,
+          "Have you seen how tall the poplars have grown?"
+        ],
+        [
+          1,
+          "Can't say I noticed."
+        ]
+      ],
+      [
+        [
+          0,
+          "That bread smells wonderful."
+        ],
+        [
+          1,
+          "Fresh out of the oven."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mind the puddle, {b}. Elegantly."
+        ],
+        [
+          1,
+          "Elegantly? I'll try."
+        ]
+      ],
+      [
+        [
+          0,
+          "Quiet day today."
+        ],
+        [
+          1,
+          "Too quiet, if you ask me."
+        ]
+      ],
+      [
+        [
+          0,
+          "The river is high this week, {b}."
+        ],
+        [
+          1,
+          "All that rain up north."
+        ]
+      ]
+    ]
+  }
+}

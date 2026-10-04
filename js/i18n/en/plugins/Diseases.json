@@ -1493,5 +1493,27 @@
     "void": "Void salve",
     "panacea": "Panacea",
     "placebo": "Homeopathy"
+  },
+  "allergy": {
+    "allergen": {
+      "peanut": "peanuts",
+      "treenut": "tree nuts",
+      "shellfish": "shellfish",
+      "fish": "fish",
+      "dairy": "dairy",
+      "egg": "eggs",
+      "wheat": "wheat",
+      "soy": "soy",
+      "pollen": "pollen",
+      "penicillin": "penicillin"
+    },
+    "toast": {
+      "mild": "{actor} reacts to the {source}: hives and itching.",
+      "mildVomit": "{actor} reacts to the {source} and throws it back up.",
+      "severe": "{actor} goes into anaphylactic shock after the {source}! An antihistamine or a health potion, now.",
+      "held": "{actor}'s antihistamine holds off a reaction to the {source}.",
+      "guard": "{actor}'s allergies are held at bay for {hours} hours.",
+      "pollen": "Pollen in the air: {actor} has a hay fever attack."
+    }
   }
 }

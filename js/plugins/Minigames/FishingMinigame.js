@@ -37,6 +37,11 @@
  * never lost off screen (and a marker frames it wherever it is). The angler
  * may still walk the bank at any point, the fight included.
  *
+ * F switches on a free camera: a spectator eye that flies anywhere over or
+ * under the lake (WASD and look as usual, Q / E down and up) while the game
+ * carries on, so the whole cast and fight can be watched from any angle.
+ * F again hands the view back to the angler.
+ *
  * The line is a real verlet rope pinned between the rod tip and the hook, with
  * gravity, drag and wind on the slack, so it whips out on the cast, hangs in a
  * catenary while you wait and pulls straight when a fish loads it up.
@@ -156,6 +161,19 @@
     const CAM_X_LIMIT = LAKE_HALF_X - 9;
     const CAM_Z_MIN   = SHORE_Z + 1.0;
     const CAM_Z_MAX   = SHORE_Z + 10;
+
+    // Free camera. A spectator eye detached from the angler: it flies anywhere
+    // over (or under) the lake while the game carries on beneath it, so a cast,
+    // a bite or a fight can be watched from any angle. The rod and the line stay
+    // with the angler, and the camera is boxed inside the scenery so it never
+    // looks out past the edge of the world.
+    const FREE_SPEED     = 12.0;             // units per second
+    const FREE_PITCH_MAX = 1.50;
+    const FREE_X_LIMIT   = LAKE_HALF_X + 6;
+    const FREE_Z_MIN     = LAKE_FAR_Z + 4;
+    const FREE_Z_MAX     = SHORE_Z + 22;
+    const FREE_Y_MIN     = -MAX_DEPTH + 0.6;
+    const FREE_Y_MAX     = 40;
 
     // Nothing hooked is ever dragged past the water's edge or under the lake
     // bed: the fight ends the moment the catch is close enough to lift, and
@@ -426,6 +444,7 @@
             this.yaw = 0;
             this.pitch = -0.08;
             this._autoAim = null;   // THREE.Vector3 the camera eases toward
+            this.freeCam = null;    // the spectator camera, while it is on
 
             this._initThree();
             this._buildSky();
@@ -457,6 +476,7 @@
             this.camera = new THREE.PerspectiveCamera(58, this._w / this._h, 0.1, 400);
             this.camera.position.set(0, CAM_EYE_Y, SHORE_Z + 2.2);
             this.scene.add(this.camera);   // the rod is a child of the camera
+            this._freeView = new THREE.PerspectiveCamera(58, this._w / this._h, 0.1, 400);
 
             this.renderer = new THREE.WebGLRenderer({ alpha: false, antialias: false, powerPreference: 'high-performance' });
             this.renderer.setPixelRatio(1);
@@ -1207,6 +1227,59 @@
             this.camera.updateMatrixWorld(true);
         }
 
+        // The camera the frame is drawn through: the spectator eye while the
+        // free camera is on, the angler's own otherwise.
+        get viewCamera() { return this.freeCam || this.camera; }
+
+        get isFreeCam() { return !!this.freeCam; }
+
+        // Detach the view from the angler. It starts exactly where the angler is
+        // looking from, so switching on never cuts; switching off hands the view
+        // straight back to the angler, who never moved.
+        setFreeCam(on) {
+            if (!on) { this.freeCam = null; return; }
+            if (this.freeCam) return;
+            const c = this._freeView;
+            c.position.copy(this.camera.position);
+            this._freeYaw = this.yaw;
+            this._freePitch = this.pitch;
+            this.freeCam = c;
+            this._applyFreeCam();
+        }
+
+        // Look without a leash: a full turn on yaw, nearly straight up or down
+        // on pitch.
+        lookFreeCam(dYaw, dPitch) {
+            if (!this.freeCam) return;
+            this._freeYaw = (this._freeYaw + dYaw) % (Math.PI * 2);
+            this._freePitch = clamp(this._freePitch + dPitch, -FREE_PITCH_MAX, FREE_PITCH_MAX);
+            this._applyFreeCam();
+        }
+
+        // Fly along the view: forward follows the pitch too, so looking down and
+        // pressing forward dives. `rise` moves straight up or down in world space.
+        moveFreeCam(fwd, strafe, rise, dt) {
+            if (!this.freeCam || (!fwd && !strafe && !rise)) return;
+            const len = Math.sqrt(fwd * fwd + strafe * strafe + rise * rise) || 1;
+            const f = fwd / len, r = strafe / len, u = rise / len;
+            const sy = Math.sin(this._freeYaw), cy = Math.cos(this._freeYaw);
+            const sp = Math.sin(this._freePitch), cp = Math.cos(this._freePitch);
+            const step = FREE_SPEED * dt;
+            const pos = this.freeCam.position;
+            pos.x = clamp(pos.x + (-sy * cp * f + cy * r) * step, -FREE_X_LIMIT, FREE_X_LIMIT);
+            pos.y = clamp(pos.y + (sp * f + u) * step, FREE_Y_MIN, FREE_Y_MAX);
+            pos.z = clamp(pos.z + (-cy * cp * f - sy * r) * step, FREE_Z_MIN, FREE_Z_MAX);
+            this._applyFreeCam();
+        }
+
+        _applyFreeCam() {
+            const c = this.freeCam;
+            c.rotation.set(0, 0, 0);
+            c.rotateY(this._freeYaw);
+            c.rotateX(this._freePitch);
+            c.updateMatrixWorld(true);
+        }
+
         // Walk the bank. Input is read in camera space (forward is wherever the
         // player is looking, flattened onto the ground) and the result is clamped
         // to the shore, so the angler can pick a stretch of water but can never
@@ -1430,10 +1503,11 @@
                 if (ent.battler && ent.battler.update) ent.battler.update(dt);
             }
             if (this._reelMesh) this._reelMesh.rotation.x += this._reelSpin || 0;
-            // Item billboards always face the camera.
+            // Item billboards always face the camera the frame is drawn through.
+            const eye = this.viewCamera.position;
             for (const ent of this.entities) {
                 if (ent.type === 'item' && ent.rig.userData.billboard) {
-                    ent.rig.lookAt(this.camera.position.x, ent.rig.position.y, this.camera.position.z);
+                    ent.rig.lookAt(eye.x, ent.rig.position.y, eye.z);
                 }
             }
             this._applyCamera(dt);
@@ -1444,9 +1518,9 @@
         render() {
             if (this._disposed) return;
             if (window.PSXShader && window.PSXShader.render) {
-                window.PSXShader.render(this.renderer, this.scene, this.camera);
+                window.PSXShader.render(this.renderer, this.scene, this.viewCamera);
             } else {
-                this.renderer.render(this.scene, this.camera);
+                this.renderer.render(this.scene, this.viewCamera);
             }
         }
 
@@ -1455,10 +1529,11 @@
         // it when it draws, and the 3D pass runs at half the update rate, so a
         // HUD marker reading the stale one would sit a frame behind the camera.
         projectToScreen(x, y, z, out) {
-            this.camera.updateMatrixWorld();
-            this.camera.matrixWorldInverse.copy(this.camera.matrixWorld).invert();
+            const cam = this.viewCamera;
+            cam.updateMatrixWorld();
+            cam.matrixWorldInverse.copy(cam.matrixWorld).invert();
             const v = this._tmpProj || (this._tmpProj = new THREE.Vector3());
-            v.set(x, y, z).project(this.camera);
+            v.set(x, y, z).project(cam);
             const o = out || {};
             o.x = (v.x * 0.5 + 0.5) * this._w;
             o.y = (-v.y * 0.5 + 0.5) * this._h;
@@ -1497,6 +1572,8 @@
             }
             this.scene = null;
             this.camera = null;
+            this.freeCam = null;
+            this._freeView = null;
         }
     }
 
@@ -2189,9 +2266,11 @@
         // shop, for one, steals A), so the scene claims them for the duration and
         // hands them straight back. They walk the bank rather than turn the head:
         // the arrow keys, the stick and the mouse all look, and an angler who
-        // wants a different stretch of water walks to it.
+        // wants a different stretch of water walks to it. F switches the free
+        // camera on and off, and Q / E fly it down and up.
         _bindLookKeys() {
-            const map = { 87: 'fishFwd', 65: 'fishLeft', 83: 'fishBack', 68: 'fishRight' };
+            const map = { 87: 'fishFwd', 65: 'fishLeft', 83: 'fishBack', 68: 'fishRight',
+                          70: 'fishFreeCam', 81: 'fishDown', 69: 'fishUp' };
             this._savedKeys = {};
             for (const code in map) {
                 this._savedKeys[code] = Input.keyMapper[code];
@@ -2241,7 +2320,26 @@
                     dp -= stick.y * 0.030 * gain * invert;
                 }
             }
-            if (dy || dp) W.applyLook(dy, dp);
+            if (!dy && !dp) return;
+            if (W.isFreeCam) W.lookFreeCam(dy, dp);
+            else W.applyLook(dy, dp);
+        }
+
+        // The free camera is a spectator: the game keeps running under it and
+        // Confirm still casts, strikes and reels, so a fight can be played while
+        // it is watched from out over the lake.
+        _toggleFreeCam() {
+            const W = this._world;
+            if (!W) return;
+            const on = !W.isFreeCam;
+            W.setFreeCam(on);
+            this._lastTouch = null;
+            this._se('Cursor1', on ? 110 : 90, 70);
+            if (window.ParchmentToast) {
+                window.ParchmentToast.show(T(on ? 'Fishing.freeCamOn' : 'Fishing.freeCamOff'), {
+                    severity: 'info'
+                });
+            }
         }
 
         // Walking is allowed at every stage, the fight included: the frozen cast
@@ -2255,6 +2353,13 @@
             if (Input.isPressed('fishBack'))  fwd -= 1;
             if (Input.isPressed('fishRight')) strafe += 1;
             if (Input.isPressed('fishLeft'))  strafe -= 1;
+            if (W.isFreeCam) {
+                let rise = 0;
+                if (Input.isPressed('fishUp'))   rise += 1;
+                if (Input.isPressed('fishDown')) rise -= 1;
+                W.moveFreeCam(fwd, strafe, rise, SIM_DT);
+                return;
+            }
             W.moveCamera(fwd, strafe, SIM_DT);
         }
 
@@ -2292,11 +2397,17 @@
                 this._handleConfirm();
             }
 
+            if (this._state !== 'loading' && Input.isTriggered('fishFreeCam')) this._toggleFreeCam();
+
             // Looking around is allowed at every stage except the power swing,
             // where the aim has to stay put. Once the line is out the input only
-            // offsets the tracking camera, so the hook is never lost.
-            if (this._state !== 'power' && this._state !== 'loading') this._updateLook();
-            if (this._state !== 'power' && this._state !== 'loading') this._updateMove();
+            // offsets the tracking camera, so the hook is never lost. The free
+            // camera moves the spectator, not the aim, so it flies at every stage.
+            const freeCam = this._world.isFreeCam;
+            if (freeCam || (this._state !== 'power' && this._state !== 'loading')) {
+                this._updateLook();
+                this._updateMove();
+            }
 
             switch (this._state) {
                 case 'power':

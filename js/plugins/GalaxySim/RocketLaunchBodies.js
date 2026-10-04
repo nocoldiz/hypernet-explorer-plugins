@@ -41,7 +41,14 @@
   // route's landing opens on "approach", the older lunar tail on "transit".
   const MOON_RANGED = ["transit", "approach", "flyby", "skim", "touchdown", "arrived"];   // i18n-ignore  phase keys
 
-  const { DYSON_VIS_R, EARTH_VIS_R, HOME_SKY, MOON_BEARING, MOON_DIST_M, MOON_LAYER, MOON_R_M, MOON_VIS_R, SITES, clamp, clamp01, crossing, earthGone, hashOf, lerp, makeRng, onLayer, ramp, smooth, start, t, worldRecord, worldSystem } = K;
+  const { DYSON_VIS_R, EARTH_VIS_R, HOME_SKY, MOON_BEARING, MOON_DIST_M, MOON_LAYER, MOON_R_M, MOON_VIS_R, RAIL_LEN_M, SITES, clamp, clamp01, earthGone, hashOf, lerp, makeRng, onLayer, ramp, smooth, start, t, worldRecord, worldSystem } = K;
+
+  // The beats on which a world at the far end of a crossing is UNDER the
+  // round, with the altimeter reading the height over it: the circuit and
+  // the way down. Earth is under it for the whole of a homecoming.
+  const BALL_BEATS = ["flyby", "skim", "touchdown", "arrived"];   // i18n-ignore  phase keys
+  // The Zeta binary's other sun, which a jump out of Zeta is flown round.
+  const SISTER_SYSTEM = "Zeta Reticuli A";                        // i18n-ignore  system name from Systems.json
 
   // THE WORLD AT THE FAR END, AND THE TWO BEATS IT IS COME UP ON.
   //
@@ -67,6 +74,32 @@
     ],
   };
   // i18n-ignore-end
+
+  // HOW HARD EACH WORLD IS LIT FROM INSIDE, so the dark side still reads.
+  //
+  // The far key is pulled round toward the camera and burns at 2.1 so the
+  // EARTH reads at every hour, and the Earth's photograph is mostly ocean:
+  // dark. The Moon's is bright grey regolith end to end, and under the same
+  // key and the same emissive rescue it came out a blown-white disc that read
+  // as nothing at all, least of all the Moon. So a bright airless world takes
+  // the earthshine the Moon in the sky wears and has its albedo pulled down
+  // to where the key leaves it a surface; everything else keeps the Earth's.
+  // i18n-ignore-start  world ids
+  const WORLD_TONE = {
+    earth: { emissive: 0x9aa6b6, intensity: 0.62, albedo: 1 },
+    moon: { emissive: 0x2a3038, intensity: 0.22, albedo: 0.55 },
+    jupiter: { emissive: 0x3a3028, intensity: 0.45, albedo: 1 },
+    // The Earth hung in the Moon's sky: a disc two degrees across against
+    // black, which the full rescue turned white.
+    earthrise: { emissive: 0x2a3038, intensity: 0.22, albedo: 0.7 },
+  };
+  // i18n-ignore-end
+  // The galaxy the far end of every jump is in, as Systems.json names it, for
+  // a game with no data manager to ask.
+  const FAR_GALAXY = "Andromeda (M31)";                           // i18n-ignore  galaxy name from Systems.json
+  // The radius, in far-scene units, the galaxies are drawn at before a beat
+  // scales them: the disc the old painted plates carried.
+  const GALAXY_VIS_R = 1200;
 
   Object.assign(P.Stage.prototype, {
 
@@ -117,7 +150,7 @@
         this.earthBody = body;
         body.scale.setScalar(EARTH_VIS_R);
         body.visible = false;
-        this._brighten(body);
+        this._brighten(body, this._toneOf(homeId));
         holder.add(body);
       });
 
@@ -128,7 +161,7 @@
         specular: homeId === "earth" ? 0x223344 : 0x1a1d12,
       });
       this.earthFallback = new THREE.Mesh(geo, mat);
-      this._brighten(this.earthFallback);
+      this._brighten(this.earthFallback, this._toneOf(homeId));
       holder.add(this.earthFallback);
 
       // THE CITY LIGHTS.
@@ -143,7 +176,9 @@
       // A megapixel of painted grid, and nothing above the pad can see it
       // until the vehicle is high enough for the planet to be a ball. Queued.
       // And nowhere but Earth: an embassy and a base are not a wired planet.
-      if (homeId === "earth") this._defer("cityLights", () => {
+      // A crossing HOME brings them back: the ball under the round on the
+      // way down is the Earth's, and so are its lights.
+      if (homeId === "earth" || this.profile.world === "earth") this._defer("cityLights", () => {
         const lightGeo = this._geo(new THREE.SphereGeometry(EARTH_VIS_R * 1.002, 48, 32));
         this.cityLights = new THREE.Mesh(lightGeo, this._mat(new THREE.MeshBasicMaterial({
           map: this._paintCityLights(),
@@ -216,15 +251,213 @@
         });
       }
 
-      // And after 21 December 2012, if the strike happened, there is no planet
-      // down there to climb away from: the sphere, its lights and its limb all
-      // come off and what is under the vehicle is the same stars that are over
-      // it. The pad the flight left is a chunk of rock or a tower, and that is
-      // built in the near scene like any other pad.
-      if (earthGone()) {
-        holder.visible = false;
-        this.earthLost = true;
+      // And after 21 December 2012, if the strike happened, there is no
+      // EARTH down there to climb away from: the sphere, its lights and its
+      // limb all come off and what is under the vehicle is the same stars that
+      // are over it. The pad the flight left is a chunk of rock or a tower, and
+      // that is built in the near scene like any other pad. Only the Earth: a
+      // launch off the Monument has the Monument's world under it whatever
+      // happened to this one, and so does a landing there. See _ballWorld.
+      this.earthLost = earthGone();
+    },
+
+    // WHICH WORLD IS UNDER THE ROUND, RIGHT NOW. One ball, swapped at the
+    // ends of the gap:
+    //
+    //   departing   the world the pad stands on
+    //   in the gap  none: there is nothing to be over
+    //   arriving    the world being come down on, on the beats the altimeter
+    //               is the height over it - the whole of a homecoming to the
+    //               Earth, and the circuit and the descent anywhere else. The
+    //               Moon is its own body in the sky and is never this ball.
+    //
+    // The Earth is never the answer once it is gone.
+    _ballWorld(ph) {
+      const at = ph || this.phase;
+      const leg = this._leg(at);
+      let w = null;
+      if (leg === "depart") w = this._homeId || this._homeWorld();                     // i18n-ignore  leg id
+      else if (leg === "arrive") {                                                     // i18n-ignore  leg id
+        const to = this.profile.world;
+        if (to === "earth") w = to;                                                    // i18n-ignore  world id
+        else if (to && to !== "moon" && at && BALL_BEATS.indexOf(at.key) >= 0) w = to; // i18n-ignore  world id
       }
+      if (w === "earth" && this.earthLost) return null;                                // i18n-ignore  world id
+      return w;
+    },
+
+    // THE WORLD AT THE FAR END, as a ball under the round. It hangs in the
+    // same holder as the world the round left, at the same size, so the far
+    // camera does the same thing over both: only which one is shown changes.
+    _buildArrivalBall() {
+      const id = this.profile && this.profile.world;
+      if (!id || id === "moon" || id === (this._homeId || this._homeWorld())) return;   // i18n-ignore  world id
+      if (id === "earth" && this.earthLost) return;                                     // i18n-ignore  world id
+      const holder = this.earthPivot;
+      if (!holder) return;
+      const isEarth = id === "earth";                                                   // i18n-ignore  world id
+      const site = isEarth ? (this.arriveGeo || SITES.taranto) : this._siteOfWorld(id);
+      const fallback = new THREE.Mesh(
+        this._geo(new THREE.SphereGeometry(EARTH_VIS_R, 64, 48)),
+        this._phong({
+          map: isEarth ? this._paintEarth() : this._paintHome(site),
+          shininess: isEarth ? 14 : 6, specular: isEarth ? 0x223344 : 0x1a1d12,
+        })
+      );
+      this._brighten(fallback);
+      fallback.visible = false;
+      holder.add(fallback);
+      this.arrivalFallback = fallback;
+      const limb = new THREE.Mesh(
+        this._geo(new THREE.SphereGeometry(EARTH_VIS_R * 1.022, 48, 32)),
+        this._basic({
+          color: isEarth ? 0x5aa8ff : (site.sea || 0x5aa8ff),
+          transparent: true, opacity: 0,
+          side: THREE.BackSide, blending: THREE.AdditiveBlending, depthWrite: false,
+        })
+      );
+      limb.visible = false;
+      holder.add(limb);
+      this.arrivalLimb = limb;
+      // GalaxySim's own body over the painting, once its map has decoded.
+      const R3D = this._r3d || (window.GalaxySim && window.GalaxySim.Renderer3D);
+      if (R3D && typeof R3D.buildPlanetGroup === "function") {
+        let body = null;
+        try { body = R3D.buildPlanetGroup(isEarth ? this._earthData() : (worldRecord(id) || this._earthData()), 1); } catch (e) { body = null; }
+        if (body) {
+          body.scale.setScalar(EARTH_VIS_R);
+          body.visible = false;
+          this._brighten(body);
+          holder.add(body);
+          this.arrivalBody = body;
+        }
+      }
+    },
+
+    // The Earth in the Moon's sky: over the base when the round leaves it, and
+    // over the regolith when it comes down on it. Two degrees across, which is
+    // what it is from there, and lit by the same key as the Earth anywhere.
+    //
+    // AND IT IS GALAXYSIM'S EARTH, the one the star map shows and the one the
+    // ball under every Earth launch is: the painted sphere is only the
+    // stand-in while the photograph decodes, exactly as it is down there. It
+    // used to be the painting for good, a cartoon of the planet with the
+    // whole emissive rescue on it, which read from the Moon as a white disc.
+    _buildEarthrise() {
+      const g = new THREE.Group();
+      g.visible = false;
+      this.far.add(g);
+      this.earthrise = g;
+      const spin = new THREE.Group();
+      g.add(spin);
+      this.earthriseBody = spin;
+      const R = EARTH_VIS_R * 0.16;
+      const ball = new THREE.Mesh(
+        this._geo(new THREE.SphereGeometry(R, 32, 24)),
+        this._phong({ map: this._paintEarth(), shininess: 14, specular: 0x223344 })
+      );
+      this._brighten(ball, WORLD_TONE.earthrise);
+      spin.add(ball);
+      this.earthriseFallback = ball;
+      const R3D = this._r3d || (window.GalaxySim && window.GalaxySim.Renderer3D);
+      if (R3D && typeof R3D.buildPlanetGroup === "function") {
+        let real = null;
+        try { real = R3D.buildPlanetGroup(this._earthData(), 1); } catch (e) { real = null; }
+        if (real) {
+          real.scale.setScalar(R);
+          real.visible = false;
+          // Earthshine's opposite number: the dark side of the Earth seen
+          // from the Moon is lit by nothing but its cities, so it gets the
+          // little the Moon in the Earth's sky gets and not the full rescue.
+          this._brighten(real, WORLD_TONE.earthrise);
+          spin.add(real);
+          this.earthriseReal = real;
+        }
+      }
+      g.add(new THREE.Mesh(
+        this._geo(new THREE.SphereGeometry(EARTH_VIS_R * 0.16 * 1.04, 24, 16)),
+        this._basic({
+          color: 0x5aa8ff, transparent: true, opacity: 0.3,
+          side: THREE.BackSide, blending: THREE.AdditiveBlending, depthWrite: false,
+        })
+      ));
+    },
+
+    _updateEarthrise(dt, ph) {
+      const leg = this._leg(ph);
+      const up = !this.earthLost && (
+        (leg === "depart" && (this._homeId || this._homeWorld()) === "moon") ||        // i18n-ignore  leg / world id
+        (leg === "arrive" && this.profile.world === "moon" && BALL_BEATS.indexOf(ph.key) >= 0));   // i18n-ignore  leg / world id
+      if (up) this._ensure("earthrise");
+      if (!this.earthrise) return;
+      this.earthrise.visible = up;
+      if (!up) return;
+      // Low over the horizon and off to one side, the way it is in every
+      // photograph anybody has taken of it from there.
+      this._placeFar(this.earthrise, -MOON_BEARING * 1.1, 0.12, 520);
+      this.earthriseBody.rotation.y = this._time * 0.02;
+      // The photograph once it has landed, the painting until then.
+      if (this.earthriseReal) {
+        const real = this._realMapsReady();
+        this.earthriseReal.visible = real;
+        this.earthriseFallback.visible = !real;
+      }
+    },
+
+    // THE SISTER SUN. The other star of the Zeta binary, which a round leaving
+    // the Monument on a jump falls round the way a round leaving Earth falls
+    // round Jupiter: it is the only mass in that system worth the name. Built
+    // by the star map's own routine off its own record, and wearing its own
+    // shell where the record says it has one.
+    _buildSister() {
+      const g = new THREE.Group();
+      g.visible = false;
+      this.far.add(g);
+      this.sister = g;
+      const starR = DYSON_VIS_R / 2.4;
+      let sys = null;
+      try {
+        const dm = window.GalaxySim && window.GalaxySim.getDataManager && window.GalaxySim.getDataManager();
+        sys = dm && dm.getSystem(SISTER_SYSTEM);
+      } catch (e) { sys = null; }
+      const R3D = this._r3d || (window.GalaxySim && window.GalaxySim.Renderer3D);
+      let star = null;
+      if (sys && R3D && typeof R3D.buildStarGroup === "function") {
+        try { star = R3D.buildStarGroup(sys); } catch (e) { star = null; }
+      }
+      if (star && star.isObject3D) {
+        star.scale.setScalar(starR);
+      } else {
+        star = new THREE.Group();
+        star.add(new THREE.Mesh(
+          this._geo(new THREE.SphereGeometry(starR, 32, 24)),
+          this._basic({ color: 0xfff4d8 })
+        ));
+        star.add(new THREE.Mesh(
+          this._geo(new THREE.SphereGeometry(starR * 1.4, 24, 16)),
+          this._basic({
+            color: 0xffd27a, transparent: true, opacity: 0.32,
+            blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.BackSide,
+          })
+        ));
+      }
+      g.add(star);
+      this.sisterStar = star;
+      if (!sys || !sys.dyson) return;
+      const Cosmos = window.GalaxySim && window.GalaxySim.Scene3DCosmos;
+      if (!Cosmos || typeof Cosmos.buildDysonSphere !== "function") return;
+      let built = null;
+      try {
+        built = Cosmos.buildDysonSphere({
+          radius: DYSON_VIS_R,
+          mode: sys.dyson === "abandoned" ? "abandoned" : "active",   // i18n-ignore  data value
+          seed: hashOf(sys.name) & 0x7fffffff,
+        });
+      } catch (e) { built = null; }
+      const shell = built && (built.group || built);
+      if (!shell || !shell.isObject3D) return;
+      this.sisterShell = built;
+      g.add(shell);
     },
 
     // The Moon, and the pivot that carries it.
@@ -420,19 +653,31 @@
     // is also hung on its material as an emissive map: the sun still models
     // the sphere and the terminator still runs across it, but the night side
     // is a dim photograph of the Earth instead of a black disc.
-    _brighten(root) {
+    //
+    // How much is the world's own: see WORLD_TONE. The Earth's when no tone
+    // is given.
+    _brighten(root, tone) {
       if (!root || typeof root.traverse !== "function") return;
+      const k = tone || WORLD_TONE.earth;
       root.traverse((o) => {
         if (!o || !o.material) return;
         const mats = Array.isArray(o.material) ? o.material : [o.material];
         mats.forEach((m) => {
           if (!m || !m.map || m.emissiveMap || !m.emissive) return;
           m.emissiveMap = m.map;
-          try { m.emissive.setHex(0x9aa6b6); } catch (e) { /* a stub colour */ }
-          if ("emissiveIntensity" in m) m.emissiveIntensity = 0.62;
+          try { m.emissive.setHex(k.emissive); } catch (e) { /* a stub colour */ }
+          if ("emissiveIntensity" in m) m.emissiveIntensity = k.intensity;
+          if (k.albedo < 1 && m.color && typeof m.color.multiplyScalar === "function") {
+            m.color.multiplyScalar(k.albedo);
+          }
           m.needsUpdate = true;
         });
       });
+    },
+
+    // The tone a world is lit with, by world id.
+    _toneOf(id) {
+      return WORLD_TONE[id] || WORLD_TONE.earth;
     },
 
     // Is GalaxySim's photograph of the Earth decoded yet? Until it is, the
@@ -651,7 +896,27 @@
       });
     },
 
+    // THE STAR MAP'S OWN SKY, where GalaxySim is loaded: the background dome
+    // its 3D scene sits in, the same stars on the same sprite, so the sky over
+    // the launch is the sky the party later flies through. Its opacity is
+    // this plugin's to drive (it fades in with the air), so the material is
+    // the starMat the rest of the stage already knows.
     _buildStarfield() {
+      const Cosmos = window.GalaxySim && window.GalaxySim.Scene3DCosmos;
+      if (Cosmos && typeof Cosmos.buildBackgroundStarfield === "function") {
+        let pts = null;
+        try { pts = Cosmos.buildBackgroundStarfield({ radius: 9000, seed: 1337 }); } catch (e) { pts = null; }
+        if (pts && pts.isObject3D && pts.material) {
+          // Its geometry and material are this stage's; its star sprite is
+          // GalaxySim's shared one and is never freed here.
+          if (pts.geometry) this._geo(pts.geometry);
+          this.starMat = this._mat(pts.material);
+          this.starMat.transparent = true;
+          this.starMat.opacity = 0;
+          this.stars = pts;
+          return this.stars;
+        }
+      }
       const n = 1400;
       const pos = new Float32Array(n * 3);
       const col = new Float32Array(n * 3);
@@ -680,43 +945,71 @@
       return this.stars;
     },
 
-    // THE SURFACE, and there is no gun on it.
+    // THE SURFACE AT THE FAR END, and it is THAT world's surface.
     //
-    // Every other arrival in this plugin is a second coilgun that catches the
-    // round out of the air. The Moon has no air to catch anything out of and
-    // nothing to build a receiving barrel with: what is down there is a
-    // regolith plain, a scatter of boulders, a pad lit by a ring of lamps and
-    // two pressure domes beside it. The round comes down onto it on its own
-    // drive, which is the only landing in the plugin the vehicle makes itself.
+    // It used to be the Moon's whatever the round was aimed at: a crossing to
+    // the Monument or to the embassy on Titania came down out of their skies
+    // onto grey regolith, craters and a pair of lunar domes. The base is now
+    // built out of the same site record the pad there is launched from - its
+    // ground, its sea, its domes, its lamps and its gun - so the place a round
+    // sets down on is recognisably the place a round later leaves from.
+    //
+    // The round comes down beside the gun on the apron, under its own drive:
+    // the only landing in the plugin the vehicle makes itself.
     _buildMoonGround() {
       const g = new THREE.Group();
       this.moonGround = g;
       g.visible = false;
       this.near.add(g);
 
-      const dust = this._phong({ map: this._paintRegolith(), shininess: 1, color: 0xbdb8ae });
+      const world = this.profile.world || "moon";                       // i18n-ignore  world id
+      const site = this._siteOfWorld(world);
+      const lunar = world === "moon";                                   // i18n-ignore  world id
+      const hex = (c, d) => (c == null ? d : c);
+
+      const dust = lunar
+        ? this._phong({ map: this._paintRegolith(), shininess: 1, color: 0xbdb8ae })
+        : this._phong({ map: this._paintGround(site), shininess: 2 });
       const plain = new THREE.Mesh(this._geo(new THREE.CircleGeometry(26000, 48)), dust);
       plain.rotation.x = -Math.PI / 2;
       g.add(plain);
 
+      // The sea, where the world has one, on one side of the base the way it
+      // is on one side of the pad.
+      if (!site.noSea) {
+        const sea = new THREE.Mesh(
+          this._geo(new THREE.PlaneGeometry(48000, 20000, 1, 1)),
+          this._phong({
+            color: hex(site.sea, 0x2b3a3f), shininess: 90, specular: 0x6f9ec0,
+            transparent: true, opacity: 0.93,
+          })
+        );
+        sea.rotation.x = -Math.PI / 2;
+        sea.position.set(0, 0.3, -14000);
+        g.add(sea);
+      }
+
       // Craters, as rims rather than holes: a ring of low cone is all the eye
-      // reads from above, and it costs nothing.
-      const rimGeo = this._geo(new THREE.TorusGeometry(1, 0.22, 4, 14));
-      const rimMat = this._phong({ color: 0x8e8a82, shininess: 1, flatShading: true });
-      for (let i = 0; i < 46; i++) {
-        const a = this.rng() * Math.PI * 2;
-        const d = 400 + this.rng() * 18000;
-        const rad = 120 + this.rng() * 900;
-        const rim = new THREE.Mesh(rimGeo, rimMat);
-        rim.position.set(Math.cos(a) * d, 2, Math.sin(a) * d);
-        rim.rotation.x = Math.PI / 2;
-        rim.scale.setScalar(rad);
-        g.add(rim);
+      // reads from above, and it costs nothing. Only an airless world keeps
+      // them: anywhere with weather has worn its own away.
+      if (lunar) {
+        const rimGeo = this._geo(new THREE.TorusGeometry(1, 0.22, 4, 14));
+        const rimMat = this._phong({ color: 0x8e8a82, shininess: 1, flatShading: true });
+        for (let i = 0; i < 46; i++) {
+          const a = this.rng() * Math.PI * 2;
+          const d = 400 + this.rng() * 18000;
+          const rad = 120 + this.rng() * 900;
+          const rim = new THREE.Mesh(rimGeo, rimMat);
+          rim.position.set(Math.cos(a) * d, 2, Math.sin(a) * d);
+          rim.rotation.x = Math.PI / 2;
+          rim.scale.setScalar(rad);
+          g.add(rim);
+        }
       }
 
       // Boulders, close in, so the skim has something to be low over.
       const rockGeo = this._geo(new THREE.IcosahedronGeometry(1, 0));
-      const rockMat = this._phong({ color: 0x77736c, shininess: 2, flatShading: true });
+      const rockMat = this._phong({ color: lunar ? 0x77736c : hex(site.groundLo, 0x3a3a30), shininess: 2, flatShading: true });
       for (let i = 0; i < 90; i++) {
         const a = this.rng() * Math.PI * 2;
         const d = 260 + this.rng() * 5200;
@@ -727,14 +1020,15 @@
         g.add(rock);
       }
 
-      // THE BASE. Two domes, a mast and a lit landing ring, and the ring is
-      // what the round is coming down inside.
+      // THE BASE. Domes, a mast and a lit landing ring, and the ring is what
+      // the round is coming down inside.
       const base = new THREE.Group();
       base.position.set(0, 0, 0);
       g.add(base);
 
-      const shell = this._phong({ color: 0xc6c9cf, shininess: 26, specular: 0x9aa2ad });
-      [[-64, -40, 34], [58, -66, 24]].forEach(([x, z, rad]) => {
+      const shell = this._phong({ color: lunar ? 0xc6c9cf : hex(site.town, 0xc6c9cf), shininess: 26, specular: 0x9aa2ad });
+      const DOMES = [[-64, -40, 34], [58, -66, 24], [-30, 70, 28]];
+      DOMES.slice(0, clamp(site.domes || 2, 1, 3)).forEach(([x, z, rad]) => {
         const dome = new THREE.Mesh(
           this._geo(new THREE.SphereGeometry(rad, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2)),
           shell
@@ -750,7 +1044,8 @@
       mast.position.set(96, 80, 30);
       base.add(mast);
 
-      // The apron, and the ring of lamps round it.
+      // The apron, and the ring of lamps round it, in the colour that base's
+      // gun is wound in.
       const apron = new THREE.Mesh(
         this._geo(new THREE.CircleGeometry(78, 28)),
         this._phong({ color: 0x4a4e57, shininess: 14, specular: 0x8d949e })
@@ -759,6 +1054,8 @@
       apron.position.y = 0.6;
       base.add(apron);
 
+      const lit = hex(site.coil, 0x8affc4);
+      this.padLampColor = lit;
       this.padLamps = [];
       const lampGeo = this._geo(new THREE.SphereGeometry(2.6, 6, 5));
       for (let i = 0; i < 16; i++) {
@@ -769,9 +1066,26 @@
         base.add(L);
         this.padLamps.push(L);
       }
-      this.padGlow = new THREE.PointLight(0x8affc4, 0, 700, 2);
+      this.padGlow = new THREE.PointLight(lit, 0, 700, 2);
       this.padGlow.position.set(0, 30, 0);
       base.add(this.padGlow);
+
+      // AND THE GUN. Every base the round can be sent to is also a pad it can
+      // be launched from, and the gun it would leave by is standing beside the
+      // apron it has just come down on. Built by the same routine that builds
+      // it as a departure, at the same size, without touching the departure's
+      // own record of which barrel is which.
+      if (site && site.rail != null) {
+        const keep = this._railGroups ? this._railGroups.a : undefined;
+        const yard = new THREE.Group();
+        yard.position.set(420, 0, -180);
+        base.add(yard);
+        try { this._buildRail(yard, site, false); } catch (e) { /* the base is still a base */ }
+        if (this._railGroups) this._railGroups.a = keep;
+        // Seen from the apron the muzzle is the tallest thing for kilometres,
+        // which is how anybody on the regolith would find their way back to it.
+        this.baseGunTop = 86 + RAIL_LEN_M * (site.railScale || 1) - 40;
+      }
     },
 
     _paintRegolith() {
@@ -792,9 +1106,11 @@
     // The ground comes up under the round exactly the way a pad drops away
     // from one: the vehicle never moves, so this is the whole landing.
     _updateMoonGround(dt, ph) {
-      if (!this.profile.lunar) return;
-      const near = ph.key === "transit" || ph.key === "flyby" || ph.key === "skim" ||
-        ph.key === "touchdown" || ph.key === "arrived";
+      if (!this.profile.lunar || this.profile.world === "earth") return;   // i18n-ignore  world id
+      // The far end, and only the far end: a round leaving the base has its
+      // own pad under it, and every landing ends at the altimeter's zero.
+      const near = this._leg(ph) === "arrive" && (ph.key === "flyby" ||    // i18n-ignore  leg id
+        ph.key === "skim" || ph.key === "touchdown" || ph.key === "arrived");
       if (near && this.alt < 140000) this._ensure("moonGround");
       const g = this.moonGround;
       if (!g) return;
@@ -811,23 +1127,19 @@
       // rest. A retrograde pass streams the other way, which is the whole
       // point of rolling a direction.
       const o = this.orbit;
-      const heading = o.entry + o.dir * this._orbitPhase(ph) * Math.PI * 2 * o.revs;
+      const heading = o.entry + this._orbitHeading(ph);
       g.rotation.y = heading;
-      if (ph.key === "flyby") {
-        // Running flat out, a full circuit's worth of ground per revolution.
-        const span = 26000;
-        const run = (this._orbitPhase(ph) * o.revs) % 1;
-        g.position.x = Math.sin(heading) * span * (1 - run);
-        g.position.z = -Math.cos(heading) * span * (1 - run);
-      } else if (ph.key === "skim") {
-        // The last of the run, closing on the base until it is underneath.
-        const k = smooth(ph.progress);
-        g.position.x = Math.sin(heading) * lerp(9000, 0, k);
-        g.position.z = -Math.cos(heading) * lerp(9000, 0, k);
-      } else {
-        g.position.x = 0;
-        g.position.z = 0;
-      }
+      // ONE CONTINUOUS RUN IN ON THE BASE. The ground streamed a whole plain
+      // past per revolution and then snapped back to the far edge to do it
+      // again, up to three times in eight seconds: a strobe, not an orbit. It
+      // is now one long glide, the base sliding in from over the horizon on
+      // the same eased curve the circuit is flown on, and arriving under the
+      // round exactly as the skim ends.
+      const SPAN = 22000;
+      const run = (ph.key === "flyby" || ph.key === "skim") ? this._orbitPhase(ph) : 1;
+      const left = SPAN * (1 - run);
+      g.position.x = Math.sin(heading) * left;
+      g.position.z = -Math.cos(heading) * left;
 
       if (this.padLamps) {
         const k = clamp01(1 - this.alt / 12000);
@@ -835,7 +1147,7 @@
           const on = ph.key === "arrived"
             ? true
             : ((Math.floor(this._time * (2 + k * 10)) + L.userData.order) % 8) < 3;
-          L.material.color.setHex(on ? 0x8affc4 : 0x0d2a18);
+          L.material.color.setHex(on ? (this.padLampColor || 0x8affc4) : 0x0d2a18);
         });
         if (this.padGlow) this.padGlow.intensity = 0.4 + k * 3.2;
       }
@@ -855,21 +1167,22 @@
       this.far.add(g);
 
       const R = EARTH_VIS_R * 11.2;   // it really is eleven Earths across
+      // What turns: the photograph and the painting both, so the swap from
+      // one to the other never jumps the Spot round the planet.
+      const spin = new THREE.Group();
+      g.add(spin);
+      this.jupiterBody = spin;
       const body = new THREE.Mesh(
         this._geo(new THREE.SphereGeometry(R, 48, 32)),
         this._phong({ map: this._paintJupiter(), shininess: 6, specular: 0x241c14 })
       );
-      if (body.material.emissive) {
-        body.material.emissiveMap = body.material.map;
-        body.material.emissive.setHex(0x3a3028);
-        if ("emissiveIntensity" in body.material) body.material.emissiveIntensity = 0.45;
-        body.material.needsUpdate = true;
-      }
-      g.add(body);
-      this.jupiterBody = body;
+      this._brighten(body, WORLD_TONE.jupiter);
+      spin.add(body);
+      this.jupiterFallback = body;
 
       // The ring. Faint, dark and edge-on to almost everything, which is why
-      // nobody knew it was there until 1979.
+      // nobody knew it was there until 1979. The painting's only: GalaxySim's
+      // own body carries whatever ring the star map gives it.
       const ring = new THREE.Mesh(
         this._geo(new THREE.RingGeometry(R * 1.45, R * 1.82, 64, 1)),
         this._basic({
@@ -879,6 +1192,50 @@
       );
       ring.rotation.x = Math.PI / 2 - 0.06;
       g.add(ring);
+      this.jupiterRing = ring;
+
+      // GALAXYSIM'S JUPITER, off the Sol record, wearing the same NASA map the
+      // star map puts on it. The painted bands above are only the stand-in
+      // while that photograph decodes: they used to be the planet for good,
+      // so the one Solar System body the whole jump is flown round was the
+      // one that did not look like itself.
+      const rec = this._jupiterData();
+      const R3D = this._r3d || (window.GalaxySim && window.GalaxySim.Renderer3D);
+      if (R3D && typeof R3D.buildPlanetGroup === "function") {
+        let real = null;
+        try { real = R3D.buildPlanetGroup(rec, 5); } catch (e) { real = null; }
+        if (real) {
+          real.scale.setScalar(R);
+          real.visible = false;
+          this._brighten(real, WORLD_TONE.jupiter);
+          spin.add(real);
+          this.jupiterReal = real;
+          this._disposeLater(() => { try { R3D.disposeBodyGroup && R3D.disposeBodyGroup(real); } catch (e) { /* not ours */ } });
+        }
+      }
+    },
+
+    // The photograph once it has decoded, the painting (and its ring) until
+    // then. Asked every frame Jupiter is up, because the swap lands mid-flight.
+    _jupiterMaps() {
+      if (!this.jupiterReal) return;
+      const real = this._realMapsReady();
+      this.jupiterReal.visible = real;
+      if (this.jupiterFallback) this.jupiterFallback.visible = !real;
+      if (this.jupiterRing) this.jupiterRing.visible = !real;
+    },
+
+    // Jupiter as GalaxySim records it, out of the Sol system.
+    _jupiterData() {
+      const sol = this._solSystem();
+      const rec = sol && (sol.planets || []).find((p) => p.name === "Jupiter");   // i18n-ignore  body id
+      return rec || { name: "Jupiter", type: "gas_giant" };                        // i18n-ignore  body id / type
+    },
+
+    // Something to release when the stage goes, that is not a plain geometry,
+    // material or texture: a group GalaxySim built and knows how to free.
+    _disposeLater(fn) {
+      this._disposables.push({ dispose: fn });
     },
 
     _paintJupiter() {
@@ -1070,18 +1427,104 @@
         g.add(m);
         return m;
       };
+      // THE STAR MAP'S OWN GALAXIES, where GalaxySim is loaded: the Milky Way
+      // its galaxy scale is built round, and Andromeda as its procedural
+      // galaxy builder makes it off the very name Titania's record carries -
+      // the seed is the name, so the galaxy the round crosses into is the one
+      // the star map zooms into. The painted plates are only for a game with
+      // no GalaxySim to ask.
+      const Cosmos = window.GalaxySim && window.GalaxySim.Scene3DCosmos;
       // Home, seen from outside it. Tilted well over, because the one thing
       // everybody knows about our galaxy is what it looks like flat on and
       // nobody has ever seen it that way.
-      this.milkyWay = mk(this._paintGalaxy(0x9fb6ff, 0x3a5a9a), 2600);
+      this.milkyWay = this._starMapGalaxy(Cosmos, "milkyWay") ||   // i18n-ignore  galaxy key
+        mk(this._paintGalaxy(0x9fb6ff, 0x3a5a9a), 2600);
+      if (!this.milkyWay.parent) g.add(this.milkyWay);
       this.milkyWay.rotation.z = 0.5;
       // And the other one, which from home is the brighter of the two.
-      this.andromeda = mk(this._paintGalaxy(0xffe6c0, 0x8a6a48), 2600);
+      this.andromeda = this._starMapGalaxy(Cosmos, "andromeda") ||   // i18n-ignore  galaxy key
+        mk(this._paintGalaxy(0xffe6c0, 0x8a6a48), 2600);
+      if (!this.andromeda.parent) g.add(this.andromeda);
       this.andromeda.rotation.z = -0.9;
       // Each plate keeps its own tilt, because which of the two is ahead and
       // which is astern depends on which way the crossing is being flown.
       this.milkyWay.userData.tilt = 0.5;
       this.andromeda.userData.tilt = -0.9;
+    },
+
+    // One of the two galaxies as GalaxySim's star map builds it, in a holder
+    // that stands in for the old painted plate: a disc of GALAXY_VIS_R facing
+    // +Z, so the beats place, lie and tilt it exactly as they did the plate.
+    // Null where GalaxySim is not there to build it.
+    _starMapGalaxy(Cosmos, which) {
+      if (!Cosmos) return null;
+      let built = null, group = null, diskR = 0;
+      try {
+        if (which === "milkyWay" && typeof Cosmos.buildMilkyWay === "function") {   // i18n-ignore  galaxy key
+          group = Cosmos.buildMilkyWay({ seed: 19002001 });
+          // From outside the whole disc is in view, which is where its
+          // nucleus and plane glow are meant to be lit.
+          if (group && group.userData && typeof group.userData.setZoomDistance === "function") {
+            group.userData.setZoomDistance(1e9);
+          }
+          diskR = (Cosmos.GAL && Cosmos.GAL.RADIUS && Cosmos.GAL.U) ? Cosmos.GAL.RADIUS / Cosmos.GAL.U : 2600;
+        } else if (which === "andromeda" && typeof Cosmos.buildProceduralGalaxy === "function") {   // i18n-ignore  galaxy key
+          const sys = worldSystem("titania");                                                  // i18n-ignore  world id
+          const name = (sys && sys.galaxy) || FAR_GALAXY;
+          const seed = typeof Cosmos.galaxySeedFromName === "function" ? Cosmos.galaxySeedFromName(name) : undefined;
+          built = Cosmos.buildProceduralGalaxy({ name, seed });
+          group = built && built.group;
+          if (built && typeof built.setZoomDistance === "function") built.setZoomDistance(1e9);
+          diskR = (built && built.diskRadius) || 1800;
+        }
+      } catch (e) { group = null; }
+      if (!group || !group.isObject3D) return null;
+      const holder = new THREE.Group();
+      // The star map lays a galaxy in its XZ plane; the plate stood in XY.
+      group.rotation.x = Math.PI / 2;
+      group.scale.setScalar(GALAXY_VIS_R / Math.max(1, diskR));
+      holder.add(group);
+      holder.userData.starMap = true;
+      holder.userData.opacity = 0;
+      this._galaxyOpacity(holder, 0);
+      if (built && typeof built.animate === "function") holder.userData.animate = built.animate;
+      this._disposeLater(() => {
+        try {
+          if (built && typeof built.dispose === "function") built.dispose();
+          else if (typeof Cosmos.disposeObject3D === "function") Cosmos.disposeObject3D(group);
+        } catch (e) { /* not ours */ }
+      });
+      return holder;
+    },
+
+    // How bright a galaxy is, 0 to 1. The painted plate is one material; the
+    // star map's galaxy is a whole tree of them, each with the opacity
+    // GalaxySim gave it, so every one is scaled from its own.
+    _galaxyOpacity(obj, op) {
+      if (!obj) return 0;
+      if (op === undefined) {
+        if (obj.userData && obj.userData.opacity !== undefined) return obj.userData.opacity;
+        return obj.material ? obj.material.opacity : 0;
+      }
+      obj.userData.opacity = op;
+      if (!obj.userData.starMap) {
+        if (obj.material) obj.material.opacity = op;
+        return op;
+      }
+      obj.traverse((o) => {
+        const mats = !o.material ? [] : (Array.isArray(o.material) ? o.material : [o.material]);
+        mats.forEach((m) => {
+          if (!m || !m.userData) return;
+          if (m.userData.rlBase === undefined) {
+            m.userData.rlBase = m.opacity == null ? 1 : m.opacity;
+            m.userData.rlShown = m.visible !== false;
+            m.transparent = true;
+          }
+          m.opacity = m.userData.rlBase * op;
+          m.visible = m.userData.rlShown && op > 0.001;
+        });
+      });
+      return op;
     },
 
     _paintGalaxy(core, arm) {
@@ -1137,8 +1580,7 @@
     // They trade places across the jump: home going away astern, the
     // destination growing ahead, crossing over inside the throat.
     _updateGalaxies(dt, ph) {
-      const on = ph.key === "breach" || ph.key === "gods" ||
-        ph.key === "crossing" || ph.key === "emerge";
+      const on = ph.key === "breach" || ph.key === "crossing" || ph.key === "emerge";
       if (on) this._ensure("galaxies");
       if (!this.galaxies) return;
       this.galaxies.visible = on;
@@ -1146,9 +1588,8 @@
 
       // How far through the crossing between them this beat is, 0 to 1.
       const k = ph.key === "breach" ? smooth(ph.progress) * 0.12
-        : ph.key === "gods" ? 0.12                       // nothing moves in the gold
-          : ph.key === "crossing" ? 0.12 + smooth(ph.progress) * 0.78
-            : 0.9 + smooth(ph.progress) * 0.1;
+        : ph.key === "crossing" ? 0.12 + smooth(ph.progress) * 0.78
+          : 0.9 + smooth(ph.progress) * 0.1;
 
       // WHICH OF THE TWO IS BEING LEFT. Nine of the seventeen jump plans are
       // flown OUT of Andromeda - home from Titania, or across from Titania to
@@ -1160,48 +1601,87 @@
       const astern = outbound ? this.milkyWay : this.andromeda;
       const ahead = outbound ? this.andromeda : this.milkyWay;
 
-      // THE ONE BEING LEFT. It starts as the sky the round has been inside all
-      // its life and ends as a smudge. Hung dead astern it was never in the
-      // window at all, so it is kept up and off to one side, drawing away
-      // across the frame while the other one comes up ahead: both galaxies
-      // and nothing else, in a sky with no stars in it.
-      const mwD = lerp(1500, 9000, k);
-      this._placeFar(astern, lerp(0.42, 0.62, k), lerp(0.22, 0.16, k), mwD);
+      // THE ONE BEING LEFT, AND THE ROUND RISES OUT OF IT.
+      //
+      // Through the breach the round is still INSIDE its galaxy - the star
+      // field streaming past it is that galaxy's stars, see _warpState - so the
+      // disc is not a thing in the sky yet. As the stars thin, it opens out
+      // UNDERNEATH the round: a vast floor of light seen from just above it,
+      // and then, across the first half of the crossing, it zooms away below
+      // and behind as the round climbs clear, until it is a smudge off to one
+      // side of a sky with nothing else in it.
+      const u = smooth(ph.progress);
+      let aD, aAz, aEl, aScale, aOp, aLie;
+      if (ph.key === "breach") {
+        const rise = smooth(clamp01((ph.progress - 0.35) / 0.65));
+        aD = lerp(240, 900, u);
+        aAz = lerp(0.12, 0.35, u);
+        aEl = -0.42;
+        aScale = lerp(3.4, 1.8, u);
+        aOp = lerp(0.12, 0.92, rise);
+        aLie = -0.95;
+      } else if (ph.key === "crossing") {
+        const up = smooth(clamp01(ph.progress / 0.6));
+        aD = lerp(900, 9000, up);
+        aAz = lerp(0.35, 0.6, up);
+        aEl = lerp(-0.42, -0.2, up);
+        aScale = lerp(1.8, 0.45, up);
+        aOp = lerp(0.92, 0.35, up);
+        aLie = lerp(-0.95, -0.3, up);
+      } else {
+        aD = 9000; aAz = 0.6; aEl = -0.2; aScale = 0.45;
+        aOp = lerp(0.35, 0.12, u);
+        aLie = -0.3;
+      }
+      this._placeFar(astern, aAz, aEl, aD);
       astern.quaternion.copy((this._farAim || this.farCamera).quaternion);
+      // Laid back toward flat, so it reads as a disc the round is above.
+      astern.rotateX(aLie);
       astern.rotateZ(astern.userData.tilt || 0);
-      astern.material.opacity = lerp(0.85, 0.4, k);
-      astern.scale.setScalar(lerp(1.35, 0.45, k));
+      this._galaxyOpacity(astern, aOp);
+      astern.scale.setScalar(aScale);
 
       // AND THE ONE BEING ARRIVED AT, AHEAD, WHICH IS THE WHOLE POINT OF THIS
       // CROSSING.
       //
-      // The corridor to Zeta is a tunnel with walls rushing past. This is not
-      // a tunnel and must not read as one: there is no corridor, there is a
-      // galaxy coming at the round. So the plate does not merely brighten, it
-      // CLOSES - from a smudge nine thousand out to something the camera is
-      // nearly inside of by the time the throat lets go - and it goes on
-      // closing through emerge, which is the beat it fills the frame on.
-      // AND IT CLOSES FROM THE FIRST BEAT, not from the third. Hung off the
-      // crossing progress alone it spent the breach and the whole of the gold -
-      // fifteen seconds of the flight - as a smudge eight thousand units out at
-      // a tenth opacity, which is a galaxy nobody can see coming. It has a
-      // closing curve of its own: it is already a thing in the frame when the
-      // round breaks through, it looms over the gold without moving in it, and
-      // the crossing and the emergence are it arriving.
-      const anD = ph.key === "breach" ? lerp(9000, 4200, smooth(ph.progress))
-        : ph.key === "gods" ? 4200
-          : ph.key === "crossing" ? lerp(4200, 700, smooth(ph.progress))
-            : lerp(700, 260, smooth(ph.progress));
-      this._placeFar(ahead, -0.10, 0.06, anD);
+      // It is a smudge in the distance through the breach, it CLOSES across
+      // the whole of the crossing until it fills the window - and then the
+      // round goes INTO it. Out of the gap, the plate opens past the edges of
+      // the frame and dissolves, and what is left is that galaxy's own stars
+      // streaming at the round, slowing, all the way in to the world it is
+      // aimed at.
+      let bD, bScale, bOp;
+      if (ph.key === "breach") {
+        bD = lerp(9000, 7000, u);
+        bScale = 0.55;
+        bOp = lerp(0.22, 0.4, u);
+      } else if (ph.key === "crossing") {
+        bD = lerp(7000, 380, u);
+        bScale = lerp(0.55, 1.3, u);
+        bOp = lerp(0.4, 0.95, u);
+      } else {
+        bD = lerp(380, 120, u);
+        bScale = lerp(1.3, 2.6, u);
+        bOp = lerp(0.95, 0.08, u);
+      }
+      // ON THE ROUND'S OWN LINE through the breach and the crossing: the nose,
+      // the lens in front of it and this galaxy are one straight line, so it
+      // is hung on the bearing the nose points along rather than off to one
+      // side of the camera. Out of the gap it drifts back off the axis as the
+      // shot swings round.
+      if (!(ph.key !== "emerge" && this._hangOnNose(ahead, bD))) {
+        const off = ph.key === "emerge" ? smooth(ph.progress) : 0;
+        this._placeFar(ahead, -0.10 * off, 0.06 * off, bD);
+      }
       ahead.quaternion.copy((this._farAim || this.farCamera).quaternion);
       ahead.rotateZ(ahead.userData.tilt || 0);
-      ahead.material.opacity = ph.key === "breach" ? lerp(0.28, 0.55, smooth(ph.progress))
-        : ph.key === "gods" ? 0.55
-          : ph.key === "crossing" ? lerp(0.55, 0.95, smooth(ph.progress))
-            : 0.95;
-      // Its apparent size is the range closing, so the scale only has to keep
-      // the plate from outrunning its own texture as it arrives.
-      ahead.scale.setScalar(lerp(0.55, 1.1, k));
+      this._galaxyOpacity(ahead, bOp);
+      ahead.scale.setScalar(bScale);
+      // The hole at the heart of the star map's Andromeda turns, as it does
+      // there.
+      [astern, ahead].forEach((gx) => {
+        if (gx.userData.animate) { try { gx.userData.animate(this._time); } catch (e) { /* a still frame */ } }
+      });
     },
 
     // How far away the Moon is, in metres, right now.
@@ -1267,7 +1747,16 @@
       // sky from the approach, which is where the crossing lets go of it.
       const toMoon = this.profile.world === "moon" &&                 // i18n-ignore  world id
         (!this._fromAfar() || MOON_RANGED.indexOf(ph.key) >= 0);
-      const nearEarth = !this._leftSol(ph) && (homeId === "earth" || toMoon ||
+      // AND NEVER WHILE IT IS THE GROUND. A climb off the base has the Moon
+      // UNDER it as the ball, and the sky's Moon was hung over that same
+      // Moon on every beat of the way up, so a launch off the Moon had two
+      // of them and no Earth. The Earth is in that sky instead: see
+      // _updateEarthrise.
+      const underMoon = this._ballWorld(ph) === "moon";              // i18n-ignore  world id
+      // And home: from the first beat of a crossing back to the Earth, the
+      // Moon is in the sky it is coming home to.
+      const homeward = this.profile.world === "earth" && this._leg(ph) === "arrive";   // i18n-ignore  world / leg id
+      const nearEarth = !underMoon && !this._leftSol(ph) && (homeId === "earth" || toMoon || homeward ||
         HOME_SKY.indexOf(ph.key) >= 0);
       this.moonPivot.visible = nearEarth;
       if (!nearEarth) return;
@@ -1301,15 +1790,16 @@
           // it slides as the round goes round. k is the fraction of the whole
           // circuit completed, so a three-revolution pass slides three times
           // as fast as a one.
-          const into = ph.key === "flyby" ? smooth(clamp01(ph.progress / 0.3)) : 1;
+          const into = ph.key === "flyby" ? smooth(clamp01(ph.progress / 0.35)) : 1;
           const o = this.orbit;
           az = lerp(0, o.side * 0.46, into);
           el = lerp(0, -o.drop, into);
           // A little weave off the circuit, so the round is visibly going
-          // ROUND something rather than hanging beside it.
+          // ROUND something rather than hanging beside it - one slow swell
+          // across the whole pass, not a wobble per revolution.
           const k = this._orbitPhase(ph);
-          az += o.side * 0.10 * Math.sin(k * Math.PI * 2) * into;
-          el += 0.07 * Math.cos(k * Math.PI * 2) * into;
+          az += o.side * 0.08 * Math.sin(k * Math.PI) * into;
+          el += 0.05 * Math.sin(k * Math.PI) * into;
         }
       }
 
@@ -1383,8 +1873,10 @@
       // world do not look remotely alike, and the axis is what makes that so.
       const o = this.orbit;
       this.moonBody.rotation.z = o.incl;
+      // The surface turns under the round by the same arc the ground does in
+      // the near scene, so the two never disagree about how fast it is going.
       this.moonBody.rotation.y = (lunar && (ph.key === "flyby" || ph.key === "skim"))
-        ? o.entry + o.dir * this._orbitPhase(ph) * Math.PI * 2 * o.revs
+        ? o.entry + this._orbitHeading(ph)
         : this._time * 0.01;
     },
 
@@ -1408,10 +1900,24 @@
 
     // How far round the circuit the round is, 0 to 1. The skim is the last of
     // it: the descent is flown on the same track, not on a new one.
+    //
+    // EASED, AND CONTINUOUS ACROSS THE SEAM. It used to be linear in time and
+    // multiplied by up to three whole revolutions, which spun the surface and
+    // the camera round in eight seconds and kinked at the hand-over to the
+    // skim. It now gathers way out of the approach, cruises, and is already
+    // slowing by the time the skim takes it down to the pad.
     _orbitPhase(ph) {
-      if (ph.key === "flyby") return ph.progress * 0.86;
-      if (ph.key === "skim") return 0.86 + ph.progress * 0.14;
+      const SPLIT = 0.86;
+      if (ph.key === "flyby") return SPLIT * smooth(ph.progress) * 0.82 + SPLIT * ph.progress * 0.18;
+      if (ph.key === "skim") return SPLIT + (1 - SPLIT) * (1 - Math.pow(1 - ph.progress, 2));
       return 0;
+    },
+
+    // The angle the circuit has carried the round round the world, in
+    // radians, signed by which way round the pass was rolled.
+    _orbitHeading(ph) {
+      const o = this.orbit;
+      return o.dir * this._orbitPhase(ph) * Math.PI * 2 * (o.arc || 0.25);
     },
 
     // THE DESTINATION WORLD.
@@ -1512,6 +2018,25 @@
       dir.set(Math.sin(az) * ce, Math.sin(el), -Math.cos(az) * ce)
         .applyQuaternion(aim.quaternion);
       obj.position.copy(aim.position).addScaledVector(dir, dist);
+    },
+
+    // Put something in the far scene dead ahead of the round's NOSE, wherever
+    // the director happens to be looking: the near scene's nose direction is
+    // taken into the director's own frame and back out through the far
+    // director, so on screen it sits exactly where the nose axis meets the
+    // sky. Returns false where the rotations it needs are not there (a
+    // headless build), and the caller falls back to _placeFar.
+    _hangOnNose(obj, dist) {
+      const fd = this._farDirector, dc = this._directorCam, veh = this.vehicle;
+      if (!fd || !dc || !veh || !THREE.Quaternion) return false;
+      const q = this._noseQ || (this._noseQ = new THREE.Quaternion());
+      if (typeof q.invert !== "function" || !dc.quaternion || dc.quaternion.w === undefined) return false;
+      const v = this._noseV || (this._noseV = new THREE.Vector3());
+      v.set(0, 1, 0).applyQuaternion(veh.quaternion);
+      q.copy(dc.quaternion).invert();
+      v.applyQuaternion(q).applyQuaternion(fd.quaternion);
+      obj.position.copy(fd.position).addScaledVector(v, dist);
+      return true;
     },
 
   });

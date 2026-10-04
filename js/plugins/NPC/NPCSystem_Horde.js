@@ -113,6 +113,7 @@
         const own = isGoblinSheet(profile.spriteKey) ? profile.spriteKey : (goblinSheetFor(ev, true) || null);
         if (own && !isGoblinSheet(ev.characterName && ev.characterName())) applyGoblinSheet(ev, own);
         if (own && profile.spriteKey !== own) { profile.spriteKey = own; profile.bustIndex = 0; }
+        window.NPCCreature?.assignGoblinSpecies?.(profile, data.name);
         continue;
       }
       // Already a goblin (the catalogue dealt them one): nothing to re-skin.
@@ -125,6 +126,9 @@
       if (profile && !profile._hordeIntegrated) {
         profile._hordeGoblin = !!sheet;
         if (sheet) { profile.spriteKey = sheet; profile.bustIndex = 0; }
+        // A goblin met on the Horde's ground is one of its two peoples, nine
+        // Naguka in ten (NPCCreature.assignGoblinSpecies).
+        if (sheet) window.NPCCreature?.assignGoblinSpecies?.(profile, data.name);
       }
     }
   }

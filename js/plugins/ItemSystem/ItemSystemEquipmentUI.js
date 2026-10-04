@@ -270,6 +270,7 @@
                     startRig = () => WSP.acquireRig(rigSpec, (entry) => {
                         if (previewEntry.disposed) { WSP.releaseRig(rigSpec, entry); return; }
                         if (!entry) { buildModel(); return; }
+                        if (WSP.tintRig) WSP.tintRig(entry, item.unarmedArchetype);
                         const root = entry.scene;
                         const mixer = new THREE.AnimationMixer(root);
                         const rig = {
@@ -929,7 +930,7 @@
     };
 
     // =============================================================================
-    // Right Page: 3 Party Members Paperdolls (Triangle disposition) & 3D Detail
+    // Right Page: the selected member's paperdoll & 3D Detail
     // =============================================================================
 
     Scene_Equip.prototype.partyMembers = function () {
@@ -1251,19 +1252,21 @@
         this._bindStatTooltips();
     };
 
+    // The right page holds one character at a time: the one the switcher has
+    // picked. Their index into partyMembers() is kept on every slot so drag
+    // and drop and the stat strip still find the right actor.
     Scene_Equip.prototype._buildPartyPaperdollsHTML = function () {
         const members = this.partyMembers();
-        let rowsHtml = '';
-        members.forEach((member, idx) => {
-            if (member) {
-                rowsHtml += `
+        let idx = members.indexOf(this._actor);
+        if (idx < 0) idx = Math.max(0, Math.min(this._memberIndex || 0, members.length - 1));
+        const member = members[idx];
+        if (member) this._memberIndex = idx;
+        const rowHtml = member ? `
                     <div class="paperdoll-row-item" data-member-idx="${idx}">
                         ${this._buildSinglePaperdollHTML(member, idx)}
-                    </div>`;
-            }
-        });
+                    </div>` : '';
 
-        return `<div class="party-paperdolls-stacked">${rowsHtml}</div>`;
+        return `<div class="party-paperdolls-stacked party-paperdolls-single">${rowHtml}</div>`;
     };
 
     Scene_Equip.prototype._buildPaperdollHTML = function (specificActor) {
@@ -2452,21 +2455,10 @@
                 if (this._slotIndex < 4 && this._slotIndex + 4 < slotsCount) {
                     this._slotIndex += 4;
                     this._updateSlotHighlight();
-                } else if (this._memberIndex < members.length - 1) {
-                    this._memberIndex++;
-                    this._actor = members[this._memberIndex];
-                    this._slotIndex = 0;
-                    this._updateSlotHighlight();
                 }
             } else if (isUp) {
                 if (this._slotIndex >= 4) {
                     this._slotIndex -= 4;
-                    this._updateSlotHighlight();
-                } else if (this._memberIndex > 0) {
-                    this._memberIndex--;
-                    this._actor = members[this._memberIndex];
-                    const prevSlotsCount = this._actor ? this._actor.equipSlots().length : 1;
-                    this._slotIndex = Math.min(this._slotIndex, prevSlotsCount - 1);
                     this._updateSlotHighlight();
                 } else {
                     this._clearAllHighlights();

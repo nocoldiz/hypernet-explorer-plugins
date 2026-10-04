@@ -1,0 +1,3018 @@
+{
+  "_comment": "The Verden voice (NPCConversation II.1b, SpeciesVoice). speech: the rules run over any shared line they say. voice: openers and closers. thought: their own thoughts by situation. script: two-person scripts, speaker 0 is always the Verden.",
+  "voice": {
+    "openers": [
+      "As we said at home,",
+      "If I may,",
+      "Forgive me, but",
+      "In the Fields we would say",
+      "Patiently put,",
+      "I confess,",
+      "Curiously enough,",
+      "With respect,",
+      "Hm. Let me see.",
+      "Well now,",
+      "To be precise,",
+      "Gently, then:",
+      "As the old gardeners taught us,",
+      "If you will allow a stranger's opinion,",
+      "I have noticed that",
+      "Strange world, this.",
+      "Ah.",
+      "Do forgive the observation, but",
+      "How shall I put it?",
+      "By my reckoning,",
+      "In my humble study,",
+      "Between you and me,",
+      "I foresaw this, but",
+      "My grandmother's pod would say",
+      "Quietly, now.",
+      "One learns, here, that",
+      "Hm, yes.",
+      "If memory serves,",
+      "Allow me a small remark:",
+      "It is my understanding that",
+      "Truly,",
+      "Under this sun,",
+      "On reflection,",
+      "I do believe",
+      "As a guest of this world,",
+      "Oh, how lovely.",
+      "Let us be honest:",
+      "Mm. Slowly.",
+      "With all courtesy,",
+      "Seeds before fruit, but",
+      "A small thing, but",
+      "I read it in the stillness:",
+      "It is a marvel, really.",
+      "Pardon my manners,",
+      "Long ago, in the Fields,",
+      "Well. Hm.",
+      "If I am not mistaken,",
+      "Plainly said,",
+      "Dear me,",
+      "You know,"
+    ],
+    "closers": [
+      "As we said at home.",
+      "All things in their season.",
+      "Patience grows the pod.",
+      "Forgive me for saying so.",
+      "Or so I have read.",
+      "A small wonder, truly.",
+      "I have foreseen worse.",
+      "Slowly, slowly.",
+      "If you take my meaning.",
+      "In the Fields, at least.",
+      "Such is this world.",
+      "Mm, indeed.",
+      "With respect, of course.",
+      "Roots first, always.",
+      "I find it rather charming.",
+      "One learns.",
+      "Do not tell my elders.",
+      "Or I am no gardener.",
+      "That is my humble view.",
+      "Quite so.",
+      "The soil remembers.",
+      "Marvellous, really.",
+      "Before the Squishing, anyway.",
+      "If I may say.",
+      "But what do I know.",
+      "How very human.",
+      "Under any sun.",
+      "It will keep.",
+      "I read it plainly.",
+      "Gently does it.",
+      "A lesson in patience.",
+      "Forgive an old exile.",
+      "Most curious.",
+      "As the spores say.",
+      "We shall see.",
+      "Truly.",
+      "I mean it kindly.",
+      "A fine thing.",
+      "Hm.",
+      "That much I know.",
+      "Season after season.",
+      "Mark my words, kindly.",
+      "If the soil allows.",
+      "Nothing to fear.",
+      "And so it grows.",
+      "I have studied it.",
+      "Or I misread the stillness.",
+      "You are kind to listen.",
+      "Every exile learns that.",
+      "Remarkable."
+    ]
+  },
+  "thought": {
+    "generic": [
+      "The tram bell rang twice this morning. {I counted|I listened|I smiled}. Small joys of a new world.",
+      "I fed a coin to the vending machine and it gave me {a soda|a chocolate bar|crisps}. Pure enchantment, without a single rune.",
+      "My spore pod is in its {second|third|eleventh} month. Patience, little ones.",
+      "The radio played something sad today. I {stood still|listened to the end|wrote down the title}.",
+      "Humans {hurry|rush|run} everywhere. In the Fields we walked, and arrived just the same.",
+      "I must water the {greenhouse|seedlings|window box} before dark.",
+      "A washing machine spins like a small planet. I could watch it for hours. I have, in fact.",
+      "Someone here thinks my skin is paint. It is not paint.",
+      "{Bread|Tea|Soup} tastes better when someone else has made it.",
+      "Our ancestors threw their machines into the sun. I would have kept the toaster.",
+      "I should {read|study|practise} a little tonight. The runes grow stiff without use.",
+      "The cassette player ate my tape again. I forgave it.",
+      "A child waved at me. I waved back. That is how it starts, here.",
+      "The Fields were greener than this, but the people here are kinder than I feared.",
+      "I keep a pressed leaf from home in my {coat|book|purse}. It still smells of rain.",
+      "Telephone booths are wonderful. You put in a coin and a voice comes out of the world.",
+      "Nothing grows faster for being shouted at. I wish my neighbours knew.",
+      "I have been in this city {a year|two winters|long enough} and I still get lost by the station.",
+      "Today I learned the word 'queue'. Humans love it dearly.",
+      "I could use a quiet hour among {plants|books|old trees}.",
+      "The bus came late, as I foresaw. Foreseeing does not make it come sooner.",
+      "Somewhere a Naguka is about to {trip|shout|eat something unwise}. I can feel it coming.",
+      "My hands smell of {soil|compost|tomato leaves}. A good sign.",
+      "The television explains the weather with such confidence. I admire that.",
+      "I owe the baker {a smile|a thank-you|two euros}. I must remember.",
+      "Everything here has a plug. Everything wants to be fed.",
+      "A good day is one where nothing wilts.",
+      "I tried to explain the Squishing to a neighbour. She offered me cake instead. Wise woman.",
+      "My shoes are wrong for this pavement. In the Fields we went barefoot on moss.",
+      "There is a {lamp|light|sign} that blinks outside my window. I have named it.",
+      "I should write to my cousin in {Oslo|Turin|Lyon}. Paper letters are such a gift.",
+      "The library smells like the old archive at home. Dust and patience.",
+      "I am told a car can go a hundred kilometres in one hour. Why would anyone wish to?",
+      "Humans keep their plants in plastic pots and wonder why they sulk.",
+      "I repotted the {fern|basil|lemon tree}. It thanked me in its own way.",
+      "{Slow|Steady|Quiet} work is still work. I tell myself that every evening.",
+      "A man asked if I was {from the circus|an actor|cold}. I said I was from very far away.",
+      "The sky here is a little crooked since 1992. One gets used to it.",
+      "I would like a cup of something warm and a chair by a window.",
+      "The streetlights come on all at once. Who decides? I must find out.",
+      "My elders say machines make a people forget how to wait. I wait for the bus every day.",
+      "There is honey at the market today. {Good|Proper|Real} honey.",
+      "I keep thinking about {the Fields|home|the old orchards}. Not sadly. Just often.",
+      "A photocopier made two of my letter. I was nearly frightened.",
+      "Someone left a newspaper on the bench. I read every page, even the adverts.",
+      "The soil in this courtyard is tired. It needs {rest|clover|a kind hand}.",
+      "I did a small {warming|mending|calming} charm today. Nobody noticed. Good.",
+      "People here say 'see you' and then they truly do. It is lovely.",
+      "Everyone is in such a hurry to arrive. Nobody is in a hurry to be there.",
+      "I bought a {kettle|lamp|clock radio} and I am absurdly proud of it.",
+      "It is a gentle sort of day. I mean to keep it that way.",
+      "The neighbour's dog has decided I am a shrub. I take it as praise.",
+      "I could not sleep, so I counted the seeds in a pomegranate.",
+      "How do they fit the whole orchestra inside the radio? I have stopped asking aloud.",
+      "I mean to learn to ride a bicycle {this spring|before winter|one day}. Gently.",
+      "The trains run on time more often than the gods do.",
+      "Some days the Fields feel like a book I read once. Others, like this morning.",
+      "The postman knows my name now. I feel almost local.",
+      "I would trade a week of study for one good afternoon of rain.",
+      "My cutting took root in the jar. {Three|Five|Seven} white threads. I could weep.",
+      "A traffic light is a very polite machine. It tells everyone when to wait.",
+      "I tried a hamburger. I see why people speak of it with such feeling.",
+      "Nobody here looks at the moss on the walls. Such a waste of a lovely thing.",
+      "I counted {three|four|five} languages on one street today. Every one of them is music.",
+      "Old Verden wisdom: never argue with a vine. It has more time than you.",
+      "My coat still has a seam from the Fields. I will not let anyone mend it.",
+      "The elevator hummed a little tune today. I hummed it back.",
+      "One cannot hurry a seed, a soup or a friendship.",
+      "I misread a timetable and saw a whole new district. Happy accident.",
+      "If I close my eyes in the park, the birds almost sound like home.",
+      "I have {three|four|far too many} unread books on the nightstand and I am buying another.",
+      "A good neighbour is worth a whole orchard.",
+      "I left the window open for the {rain|breeze|night air}. Old habit.",
+      "They put the whole night sky in a planetarium. I went twice.",
+      "Humans greet the cashier and forget the tree outside. I greet both.",
+      "Tomorrow I will be braver about the escalator.",
+      "Every street here has a story. I mean to learn {a few|some|all} of them.",
+      "Better a small garden kept well than a great one forgotten.",
+      "The kettle is singing somewhere. I can almost taste the tea.",
+      "A quiet thought for the ones still back in the Fields. May the soil hold them."
+    ],
+    "need": {
+      "sleep": [
+        "I am wilting like a {fern|seedling|cut flower} left in the sun. Bed, please.",
+        "My eyes keep closing. Even the runes are blurring.",
+        "In the Fields we slept when the moss closed. Here nothing closes, so I must decide.",
+        "A {pillow|blanket|quiet room} would be a greater marvel than any television right now.",
+        "I have been awake {since dawn|far too long|two days, nearly}. Even a vine rests at night.",
+        "Sleep first. The world will still be strange tomorrow.",
+        "I nearly dozed off on the tram. The rocking is too kind.",
+        "My thoughts are slow as sap in winter. I need rest.",
+        "I yawned in the middle of a sentence. Most improper.",
+        "Even my spores would tell me to lie down.",
+        "Just {a few more streets|one more stop|a little further}, and then my own bed.",
+        "A tired gardener waters the weeds. I must sleep.",
+        "I would trade every gadget in this city for {eight hours|a long night|a proper nap}.",
+        "The streetlights blur into stars. That means it is time.",
+        "I studied too late again. The book will forgive me; my back will not."
+      ],
+      "hunger": [
+        "My stomach is making a noise no polite Verden should make.",
+        "I could eat {a whole loaf|a bowl of soup|three pears} and not apologise.",
+        "I have not eaten since {morning|yesterday|the last stop}. Even a sprout needs feeding.",
+        "That bakery smell is a spell all its own.",
+        "Perhaps the vending machine will be generous today.",
+        "In the Fields we ate what we grew. Here I eat whatever is still open.",
+        "Something warm. {Soup|Stew|Porridge}. Anything with a spoon.",
+        "I am hungry enough to try the station sandwiches again.",
+        "A full belly makes for kinder thoughts. Mine are not kind just now.",
+        "I keep thinking of {roasted roots|honey bread|green beans} from home.",
+        "Lunch. Then the world.",
+        "My hands are shaking a little. Food, and soon.",
+        "I could forage the park, but the humans would stare.",
+        "One euro for a pastry. A very fair price for happiness.",
+        "The chip shop is calling me. I am trying not to listen."
+      ],
+      "work": [
+        "Back to work. The {crates|stock lists|orders} will not sort themselves.",
+        "My shift starts soon. I like to arrive early and greet the machines.",
+        "Honest work, honest euros. The Fields would approve of the first part.",
+        "I must not be late. My employer already thinks I am too slow.",
+        "Slow and right is better than fast and twice. I keep telling them.",
+        "The till is a marvellous thing. It adds without ever being tired.",
+        "Work today, {garden|study|rest} tomorrow. That is the bargain.",
+        "I was a scholar of root magic. Now I stack {tins|boxes|shelves}. Both need care.",
+        "The foreman calls me 'the blue one'. I have decided it is affection.",
+        "There is still so much to do before closing.",
+        "Hands busy, mind quiet. A good working day.",
+        "I should clock in. Even the clocking machine is charming.",
+        "My colleagues work fast. I work once. We finish together.",
+        "Rent is due. Work it is.",
+        "I hope the {photocopier|forklift|coffee machine} behaves today."
+      ],
+      "leisure": [
+        "An afternoon with nothing to do. In the Fields this was called wisdom.",
+        "I want to sit in the park and watch {pigeons|clouds|children with kites}.",
+        "The arcade! All those lights and little songs. I am hopeless at it and I adore it.",
+        "Perhaps a film. I still gasp at the big screen.",
+        "I could use a game of {cards|chess|darts}, even if I lose.",
+        "Too much work and the roots dry out. Time to play.",
+        "A long walk with no destination. My favourite kind.",
+        "I would love to hear live music tonight. Not Junehem, please.",
+        "I have a new cassette and nowhere to be. Bliss.",
+        "Something frivolous, just for an hour.",
+        "A crossword. A real puzzle. I am getting better at human words.",
+        "The pinball machine has a dragon on it. I simply must play it.",
+        "I need to laugh at something silly.",
+        "Even the most patient gardener needs a holiday.",
+        "Television, tea, a blanket. A very human evening, and I want it."
+      ],
+      "crime": [
+        "That {purse|wallet|bag} is hanging so carelessly... No. We do not do that.",
+        "Hunger argues well. I must argue better.",
+        "A small charm and the lock would open. A very small charm.",
+        "Nobody would notice one {apple|loaf|tin} missing. I would.",
+        "My elders would weep. But my elders are not hungry.",
+        "The shopkeeper is looking the other way. Stay still, hands.",
+        "I know a spell for quiet footsteps. I wish I did not.",
+        "Just this once. That is what everyone says, I suppose.",
+        "A desperate season makes desperate gardeners.",
+        "The till is open. My conscience is not.",
+        "If I am caught, they will say 'that goblin'. And they will mean all of us.",
+        "I could pay it back later. I could. Probably.",
+        "The police here are slow. That is not a reason. It is a temptation.",
+        "Easy pickings, a Naguka would say. I am not a Naguka.",
+        "One quick hand and the rent is paid. One quick hand and I am a thief."
+      ],
+      "hygiene": [
+        "I smell rather too much like compost. Even for me.",
+        "A hot bath. Humans invented the hot bath and for that alone I forgive them much.",
+        "There is soil under every nail I own.",
+        "My skin goes dull grey when I neglect it. Washing, now.",
+        "The launderette! I have been looking forward to the launderette.",
+        "I need a {shower|wash|good scrub} before anyone stands near me.",
+        "Spores on my collar again. Most embarrassing on a tram.",
+        "Clean hands, clear thoughts, as we said at home.",
+        "My coat smells of {smoke|rain|the bus}. It needs airing.",
+        "A Verden who stays unwashed starts to sprout moss. That is not a joke.",
+        "Hot water from a tap. Every time, a small miracle.",
+        "I have been working in the greenhouse all day and it shows.",
+        "Soap that smells of lavender. Humans understand some things perfectly.",
+        "I should change my shirt before I see anyone I respect.",
+        "Dust from the road, dust from the books. A wash, then."
+      ],
+      "money": [
+        "{Twelve|Twenty|Seven} euros until the end of the month. A lean season.",
+        "In the Fields there was no money. There was also no rent. I miss one of these.",
+        "I counted my coins twice. They did not multiply. Coins are not spores.",
+        "I need more euros, and I need them before the landlord knocks.",
+        "The bank machine said no. Very politely, but no.",
+        "Perhaps I could sell {seedlings|charms|pressed flowers} at the market.",
+        "Everything costs something here. Even the toilet at the station.",
+        "I am saving for {a radio|a bicycle|a greenhouse lamp}. Slowly.",
+        "Money is a strange kind of magic. Everyone believes in it, so it works.",
+        "My purse is lighter than my worries.",
+        "Overtime, perhaps. My feet disagree.",
+        "A good harvest of euros would be nice, just once.",
+        "I lent a cousin fifty euros. Cousins and seeds: you never get back what you planted.",
+        "The prices went up again. The humans grumble; I am learning to grumble too.",
+        "Bills on the doormat again. They breed faster than we do."
+      ],
+      "safety": [
+        "Something is wrong on this street. I can feel it in my roots.",
+        "I would rather walk where the lights are.",
+        "A Naguka band is about to come round that corner. I have read it. I should go.",
+        "The Squishing took one home from me. I will not lose a second one to a back alley.",
+        "Those men have been watching me for a while. Keep walking, calmly.",
+        "I need somewhere with a locked door and a kettle.",
+        "There are monsters in the outskirts again. Better indoors.",
+        "My heart is racing. I am not a fighter, I am a gardener.",
+        "Somebody shouted 'goblin' behind me. Not the friendly way.",
+        "I know a warding charm. I hope I will not need it.",
+        "The police station is two streets away. That is good to know.",
+        "Safety in numbers. Where are my neighbours?",
+        "This part of town smells of {smoke|trouble|old blood}.",
+        "The sky flickered again. Time bubbles. Do not walk under them.",
+        "I want to be home before dark tonight. No reason. Just a feeling."
+      ],
+      "comfort": [
+        "My chair at home has a dip shaped exactly like me. I miss it.",
+        "A blanket, a cup of tea and a book about trains. That is all I ask.",
+        "These shoes have been pinching since {noon|breakfast|the bridge}.",
+        "The heating is broken. In the Fields the ground itself was warm.",
+        "I long for the warmth of a greenhouse in the evening.",
+        "A soft bed is one of humanity's finest works.",
+        "This bench is very hard and very honest about it.",
+        "I would like my slippers. Yes, I own slippers now.",
+        "My rooms are cold and the radiator only gurgles at me.",
+        "Something soft, something warm, something quiet. In any order.",
+        "My back aches from {weeding|lifting crates|the bus seats}.",
+        "A warm bath and a hot water bottle. Simple wishes, deeply felt.",
+        "I need my own corner. Nothing more.",
+        "The flat is draughty. I will plant ivy against the wall, for the warmth.",
+        "Home, wherever it is now, should feel like home."
+      ],
+      "social": [
+        "I have not spoken to anyone in {two days|a week|too long}. Even plants talk more.",
+        "I would like to hear another voice, one that is not the radio.",
+        "Perhaps the neighbours would like some {tomatoes|herbs|honey}. A good excuse to knock.",
+        "In the Fields we tended the gardens together. Here everyone tends alone.",
+        "I should telephone my cousin. The telephone booth is waiting.",
+        "A good conversation is better than a good meal. Almost.",
+        "I miss the sound of other Verden laughing.",
+        "Let me find {a friend|a familiar face|someone kind} to sit with.",
+        "Humans are shy at first, then they talk all night. I like that.",
+        "I could go to the café and pretend to read. People talk to readers.",
+        "Even a seed needs neighbours to grow straight.",
+        "It is lonely being the only blue face on the street.",
+        "Perhaps there is a Verden circle meeting tonight. Tea and old songs.",
+        "I would even welcome a Naguka's chatter right now.",
+        "Somebody, please, ask me how I am."
+      ]
+    },
+    "weather": {
+      "rain": [
+        "Rain at last. The gardens of this whole city are saying thank you.",
+        "I left my umbrella at home. I do not mind. Rain is an old friend.",
+        "The humans run from the rain. I stand in it a little longer than I should.",
+        "Rain on the tram windows. Every drop a small race.",
+        "In the Fields the rain was warm. Here it goes straight down the collar.",
+        "The soil will be soft tomorrow. Good day for {planting|weeding|moving the beds}.",
+        "Puddles reflect the shop signs beautifully. Like a second city upside down.",
+        "My spore pod likes the damp. I can feel it humming.",
+        "Wet shoes, happy heart. Mostly happy.",
+        "The rain drums on the bus shelter like a {slow song|lullaby|patient finger}.",
+        "I should bring the seedlings in. Or not. Let them drink.",
+        "A rainy day is a reading day, as we said at home.",
+        "The gutters are singing. I wish I knew the words.",
+        "Everyone looks so cross in the rain. It is only water, friends.",
+        "The smell of wet earth. For a moment, I am home."
+      ],
+      "storm": [
+        "Thunder. I do not like the thunder of this world; it sounds angry.",
+        "The lights flickered. Even the machines are frightened.",
+        "A storm like this would have flattened the orchards at home.",
+        "I tied the tomatoes to their stakes this morning. I hope they hold.",
+        "The wind is pulling at every loose thing in the street.",
+        "Lightning. For an instant the whole sky was the colour of the old dimension gates.",
+        "Better indoors. Better with tea. Better with the radio on.",
+        "The power line hums like an upset beehive.",
+        "Is this the Squishing, or only weather? These days I am never sure.",
+        "A storm is the sky clearing its throat. A very long throat, this one.",
+        "The trams have stopped. Of course they have.",
+        "My windows rattle like old bones. I have charmed the latch twice.",
+        "I counted between the flash and the boom. {Three|Five|Two} seconds. Too close.",
+        "The Naguka love storms. They will be howling on some rooftop right now.",
+        "Hold on, little garden. It will pass. Everything passes."
+      ],
+      "snow": [
+        "Snow. Everything goes quiet, as if the city is listening.",
+        "The Fields never snowed. I am still astonished, every single time.",
+        "I caught a snowflake on my sleeve. It had six perfect arms. Who designed it?",
+        "My skin goes a deeper blue in the cold. The children find it hilarious.",
+        "The roots are sleeping under all that white. Sleep well.",
+        "Snow on the tram rails. Will it still run? I must see.",
+        "I need thicker gloves. And thicker blood, perhaps.",
+        "Footprints in fresh snow: a whole diary of who went where.",
+        "The greenhouse needs a warming charm tonight.",
+        "Children are throwing snow at each other. A lovely, pointless war.",
+        "Hot chestnuts in the snow. Humans have done some things very right.",
+        "I slipped on the ice and a stranger caught me. Snow makes people kind.",
+        "The pods do not like the cold. I have wrapped mine in wool.",
+        "Everything is {white|hushed|soft} and nobody is in a hurry. At last.",
+        "I made a small snow Verden by the door. It looks worried."
+      ],
+      "clear": [
+        "Clear skies. A good day to {open the windows|turn the compost|walk to the river}.",
+        "The sun here is smaller than ours, and kinder for it.",
+        "Not a cloud. The seedlings will stretch toward the light all day.",
+        "On days like this I forget, for an hour, that I am far from home.",
+        "The sun is warm on my face. My grandmother called that a free blessing.",
+        "Everyone is outside. The whole city is a garden today.",
+        "Bright light, long shadows, clean air. I could walk forever.",
+        "I must water twice today. The sun is thirsty work.",
+        "A fine day for drying laundry on the line. Humans and Verden agree on this.",
+        "The sky is so blue it nearly matches me.",
+        "I can see the hills from here. On clear days the world is larger.",
+        "Sunlight through the leaves: the oldest spell there is.",
+        "A little too hot. My leaves, so to speak, are curling.",
+        "Even the pigeons look content today.",
+        "I will eat my lunch on the grass like a sensible creature."
+      ]
+    },
+    "time": {
+      "morning": [
+        "Morning. The best hour for watering, before the sun gets greedy.",
+        "The first tram of the day. I love the sound of it waking the street.",
+        "Dew on everything. The world has been washed overnight.",
+        "Coffee. I resisted it for a year. I have stopped resisting.",
+        "The bakery opens at six. I have arranged my life around it.",
+        "Morning light makes even the grey buildings look hopeful.",
+        "I read the stillness this morning. The Naguka are still asleep, mostly.",
+        "{Birds|Shutters|Milk vans} at dawn. The city's first song.",
+        "A new day, a fresh row to dig.",
+        "Everyone on the bus is half asleep. We are all seedlings in the morning.",
+        "The radio says it will be {fair|grey|windy} today. I will check with my own nose.",
+        "Early is the gardener's hour. The rest of the world can catch up.",
+        "I opened the window and the whole street smelt of bread.",
+        "Morning study. Fresh mind, old runes.",
+        "The newspaper is still warm from the press. Or from the newsagent's hands."
+      ],
+      "afternoon": [
+        "Afternoon. The sun leans in and everything slows.",
+        "A little sleepy after lunch. In the Fields we would lie under the vines now.",
+        "Half the day done. Half the garden weeded. A fair balance.",
+        "The schools let out soon. The streets will fill with noise and jam sandwiches.",
+        "Tea time. A human custom I adopted on the very first day.",
+        "The light is golden and lazy. So am I.",
+        "I have {a few errands|letters to post|seeds to buy} before the shops close.",
+        "The shadows are stretching out like cats.",
+        "A long afternoon is a gift. I mean to open it slowly.",
+        "The library is quietest now. My favourite chair will be free.",
+        "The vending machine at the station is fullest in the afternoon. I have studied this.",
+        "Warm stones, slow pigeons, a quiet hour.",
+        "I should finish my work before the day folds itself away.",
+        "The afternoon train is always late. I have made peace with it.",
+        "The bees are busiest now. I should be too."
+      ],
+      "evening": [
+        "Evening. The streetlights are coming on one by one, like flowers.",
+        "Supper, a book, and perhaps the television. I am becoming very human.",
+        "The sky goes violet here. At home it went green. I like both.",
+        "Everyone is walking home at the same time. A great tide of people.",
+        "Time to cover the seedlings for the night.",
+        "Evening is for old songs and slow tea, as we said at home.",
+        "The windows are lighting up across the street. So many little lives.",
+        "I can smell {cooking|woodsmoke|frying onions} from three houses away.",
+        "Let the day settle like soil after watering.",
+        "The radio quiz show starts soon. I have never once won. I will try.",
+        "The bats are out. They are much like the night moths of the Fields.",
+        "A good evening is one with no plans and nothing urgent.",
+        "The pubs are filling. The humans laugh louder after dark.",
+        "Dusk. The best hour for reading the collective. It is very noisy tonight.",
+        "I will write a line or two in my diary and call the day done."
+      ],
+      "night": [
+        "Night. The city hums even when it sleeps. Ours used to sing.",
+        "I cannot sleep. I will watch the trains go by from the window.",
+        "The stars here are in the wrong places. I am slowly learning the new ones.",
+        "A night bus is a lonely, lovely thing.",
+        "My pod glows faintly in the dark. Still growing. Good.",
+        "The Naguka are restless tonight. I can read them shifting like leaves.",
+        "Late, and the street is empty. Even the vending machines look sleepy.",
+        "{Owls|Sirens|Cats} in the dark. The night shift of the world.",
+        "I should be asleep. I am reading about radios instead.",
+        "Night is when I miss the Fields most. They glowed after dark.",
+        "The sky flickered again tonight. Somewhere, a time bubble.",
+        "The night is cool and the soil is resting. So should I.",
+        "One lit window across the way. Someone else awake. Hello, stranger.",
+        "The streets are not safe so late. I will take the long, bright way.",
+        "Moonlight on the greenhouse glass. Worth staying up for."
+      ]
+    },
+    "season": {
+      "SPRING": [
+        "Spring! Every bud on this street is a small argument for patience.",
+        "Planting season. My hands are happy, my back less so.",
+        "The pods ripen faster in spring. Mine is {stirring|swelling|humming}.",
+        "Blossom on the trees and mud on my boots. A fair trade.",
+        "The humans open their windows and suddenly the whole street is talking.",
+        "Spring in the Fields lasted three of your years. This one rushes.",
+        "I planted beans by the bus stop. Let us see who notices.",
+        "New leaves, new light, new courage.",
+        "The bees are back. I greeted them by name; they did not answer.",
+        "Rain and sun on the same afternoon. Spring cannot make up its mind, and I love it for that."
+      ],
+      "SUMMER": [
+        "Summer. The tomatoes are heavy and so am I, after lunch.",
+        "Too hot for study. Just right for sitting under a tree.",
+        "Ice cream from a van that plays a tune. Humans are geniuses.",
+        "The watering takes twice as long in summer. I do not mind.",
+        "Long evenings, warm stone, open doors. Summer is generous.",
+        "The electric fan is my dearest friend this month.",
+        "My skin goes paler in the heat. The pharmacist recommended a hat.",
+        "Fruit everywhere. {Cherries|Apricots|Plums} by the kilo, for almost nothing.",
+        "The city empties in August. I like it best then.",
+        "Summer storms, summer fairs, summer dust. Everything at once."
+      ],
+      "AUTUMN": [
+        "Autumn. Harvest time. Everything in its basket, finally.",
+        "The leaves are turning. In the Fields they turned blue. Here, gold. Both are lovely.",
+        "Time to save seeds for next year. The most hopeful chore there is.",
+        "Mushrooms in the park. I know which ones are friends.",
+        "The days are shrinking. I will need my reading lamp earlier.",
+        "Autumn is when I am most homesick, and most grateful.",
+        "Apples, pears, quinces. My cupboards are full and so is my heart.",
+        "The wind has teeth now. Scarves, everyone.",
+        "Raking leaves is a meditation the humans pretend to hate.",
+        "I put the pod by the stove. It does not like the autumn chill."
+      ],
+      "WINTER": [
+        "Winter. The garden sleeps, so I study.",
+        "Cold enough to make my skin go dark as ink.",
+        "The radiator and I have come to an understanding.",
+        "Dark at five. The humans call it gloomy. I call it early reading time.",
+        "I miss the warm soil of the Fields most in winter.",
+        "Mulled wine at the market. A remarkable invention, best taken slowly.",
+        "The pods must be kept warm all winter. Mine sleeps by the boiler.",
+        "The humans light candles and string lamps everywhere. I approve entirely.",
+        "{Frost|Ice|Sleet} on every window. The city is a frozen greenhouse.",
+        "Winter is a long breath held. Spring will let it out."
+      ]
+    },
+    "wealth": {
+      "poor": [
+        "Soup again. Soup is honest, at least.",
+        "I have {three|five|four} euros and a plan. The plan is not very good.",
+        "In the Fields nobody was poor. Nobody was anything; we simply grew.",
+        "My coat has been mended so often it is mostly mending.",
+        "I grow my own beans so I can afford the bus.",
+        "The vending machine is a luxury I visit only to admire.",
+        "Exiles arrive with nothing. Some of us are still arriving.",
+        "I sold my last {book|charm|seed pouch} from home. It hurt more than hunger.",
+        "Rent first, food second, wonder third. Wonder is free, at least.",
+        "The landlord wants more. The soil wants nothing. I know whom I prefer.",
+        "Patience is cheap. I have plenty of it.",
+        "I walk everywhere now. My shoes are paying the fare."
+      ],
+      "comfortable": [
+        "Enough for rent, enough for seeds, a little left for cassettes. That is plenty.",
+        "I bought a second-hand radio and it plays beautifully. A modest triumph.",
+        "A small flat, a sunny sill, a full cupboard. I want nothing more.",
+        "I can afford the good tea now. Not every day. But some days.",
+        "Enough, as my grandmother said, is a feast.",
+        "I sent a little money to the Verden circle this month. It felt good.",
+        "Comfortable is a fine word. It sounds like a cushion.",
+        "A bus pass for the whole month. I feel like a lord.",
+        "I am saving a little each week. Like seeds in a jar.",
+        "New gloves this winter, and I did not have to choose between them and supper.",
+        "Life is modest and steady. Like a good hedge.",
+        "I treated myself to a cinema ticket. Worth every cent."
+      ],
+      "rich": [
+        "I have more euros than I know what to do with. So I bought a greenhouse.",
+        "My ancestors threw away the greatest machines in the multiverse. I bought a television. We are even.",
+        "Wealth is pleasant, but it does not make the beans grow faster.",
+        "I fund a little school for Verden children. Money should be planted, not stored.",
+        "A car! I own a car. I drive it very, very slowly.",
+        "The humans at the bank are suddenly very polite to me.",
+        "I could buy every vending machine in this district. I am tempted, truly.",
+        "Riches are a heavy coat. Warm, but heavy.",
+        "I keep a whole room just for the {pods|seedlings|radios}. Extravagant, I know.",
+        "My elders would frown at all this. Then they would ask to see the washing machine.",
+        "Money buys comfort here. It cannot buy back the Fields.",
+        "I should give more away. A full granary is no use to anyone if it stays closed."
+      ]
+    },
+    "familiar": [
+      "Ah, those travellers again. I {foresaw|hoped|half expected} I would see them today.",
+      "That party always walks as though the road owes them something. I like them.",
+      "I should bring them some {tomatoes|honey|herb bread} next time. Travellers eat badly.",
+      "They greeted me by name. In a strange world, that is no small thing.",
+      "Those adventurers have kind eyes, under all that dust.",
+      "I wonder what they have seen since we last spoke.",
+      "They asked about the Fields once and truly listened. I have not forgotten.",
+      "There they are. Still alive, still in one piece, mostly. Good.",
+      "If those travellers need a place to rest, my door is open.",
+      "I worry about them, out on the roads. Somebody ought to.",
+      "Friends grow slowly, like oaks. These ones are coming along nicely.",
+      "They always have a strange story. I always believe it.",
+      "That one with the {heavy pack|loud laugh|worn boots} again. Welcome back.",
+      "I would trust that party with my spore pod. That says everything.",
+      "Funny how often our paths cross. Not even I saw it coming.",
+      "They make this city feel less foreign.",
+      "I must ask them about their travels. Over tea, properly.",
+      "They fought off a Naguka band near here, I heard. Gently, I hope.",
+      "Good people, those. A little loud. Very human.",
+      "When I see them I feel I have a few roots in this place after all."
+    ],
+    "hordeGround": [
+      "Horde ground. The banners are painted in corpse paint. Even the banners.",
+      "The Naguka here sing Junehem songs at breakfast. Every breakfast.",
+      "I am tolerated here because I look like kin. I try not to abuse it.",
+      "A Naguka is about to knock over the {cooking pot|lantern|bench}. Three, two... yes.",
+      "The collective is loud tonight. All drums and shouting and Count Grissnack.",
+      "They want me to paint my face for the march. I have politely declined. Twice.",
+      "Dear cousins. So much heart, so little patience.",
+      "Nobody here has ever planted anything on purpose. I started a herb bed. They keep stepping in it.",
+      "The war chief asked me to foresee the humans' next move. I can only read goblins, I told him.",
+      "I read in the collective that the raid will go badly. I cannot write a word into it to stop them.",
+      "Black metal at dawn, black metal at dusk. My ears have given up.",
+      "A little Naguka asked me why my skin is blue. I said the sky liked me.",
+      "They eat with their hands, their elbows and occasionally their feet. I bring a spoon.",
+      "The shrine to the Junehem grows every week. Mostly bones and cassette tapes.",
+      "Here I am the strange, quiet one who reads. At least that is honest.",
+      "I taught a Naguka to tie a knot. He was so proud he forgot the war for a whole hour.",
+      "The camp smells of smoke, sweat and {roast rat|burnt porridge|wet fur}. One adapts.",
+      "They call me 'Big Cousin' here. I had hoped for 'Wise Cousin'. Patience.",
+      "I know the scouts will come back hungry and sulking. I have already put the soup on.",
+      "If they understood how the Squishing works, they would stop marching. They do not want to understand.",
+      "A Horde camp has no clocks. Time is measured in fights and naps.",
+      "Someone brought back a television from a raid. No power, of course. They worship it anyway.",
+      "I mend their wounds and they mend nothing. A fair division of labour, I suppose.",
+      "They are not wicked. They are young, loud, and listening to the wrong gods.",
+      "I can feel the whole Horde turn its head at once, like a field of grass in the wind.",
+      "Grissnack's voice is in every dream around here. I sleep with cotton in my ears, for all the good it does.",
+      "The humans fled this town and the Horde moved in. I tend what the humans left: the roses.",
+      "Every Naguka here believes they will be first through the next door. None of them asks what is behind it.",
+      "I once watched three of them argue about who was loudest. They settled it by shouting.",
+      "One day the Horde will settle down and plant something. I mean to be here to show them how."
+    ],
+    "abroad": [
+      "The humans here have been kind to me. Kinder than they need to be.",
+      "My neighbour taught me to use the {microwave|video recorder|answering machine}. I taught her to graft roses.",
+      "People still stare, a little. Then they ask about the weather. That is acceptance, here.",
+      "I have a library card. A plastic card that opens a door to every book. Marvellous.",
+      "Some human children asked if I was a Naguka. I said: a cousin, from far away.",
+      "The news talks about the Horde in the north. My colleagues look at me sideways for a day or two.",
+      "I have learned to queue, to tip and to complain about trains. I am nearly a citizen.",
+      "The humans built all this in a few thousand years. We took far longer, and we threw it all away.",
+      "My residence papers came through. A stamp, a signature, and I belong somewhere again.",
+      "I grow Fields herbs on the balcony. The neighbours ask for cuttings.",
+      "Some say we are a fifth column for the goblins. I say I am a gardener with a bus pass.",
+      "I think in MarkovSpeak now. I even dream in it. That frightens me a little.",
+      "The humans have so many gods and so few gardens. I would reverse it.",
+      "A woman at the market saves the bruised fruit for me. She knows I make jam.",
+      "The Verden circle meets on Thursdays above the laundry. We share news and seeds.",
+      "This city was never meant for me. I am making it fit, one window box at a time.",
+      "A human asked me where I am from. I said a place that is no longer there. She hugged me.",
+      "I fixed a radio for the old man downstairs. Well, I watched him fix it. I held the screwdriver.",
+      "Human festivals are loud and sticky and wonderful.",
+      "The police checked my papers again today. Politely. Again.",
+      "I want my spores to grow up here. Among trams and bakeries and kind strangers.",
+      "Humans live such short lives and fill them so full. I envy them a little.",
+      "I miss being surrounded by my own kind. Then a neighbour waves, and I miss it less.",
+      "The humans are frightened of the Squishing too, they just call it 'all this strange business'.",
+      "Nobody in this town has ever met a Naguka in peace. I am the closest thing they have.",
+      "My landlord fixed the boiler without being asked. I may cry.",
+      "Human children want to touch my ears. I let them. It is only fair; I touch their radios.",
+      "The town council invited me to speak about the Fields. Three people came. One fell asleep. A triumph.",
+      "This world is not ours. But it is kind enough to lend itself.",
+      "I belong here now, mostly. The rest of me is still unpacking."
+    ],
+    "lore": {
+      "greenFields": [
+        "In the Fields the grass grew up to your shoulders and sang when the wind passed.",
+        "Dimension seventy-seven. Green as far as you could walk, and you could walk for years.",
+        "Our sun was larger and slower. It rose like someone getting out of a warm bed.",
+        "I still dream of the {orchards|terraces|reading groves} at home.",
+        "There were no roads in the Fields. Only paths that remembered who walked them.",
+        "We had three moons. Here there is one, except on Fridays. A curious world.",
+        "At home, a single garden took a lifetime to plan and three to finish.",
+        "The rivers of the Fields were warm enough to sleep in. Some of us did.",
+        "I can still smell the moss halls after rain. No perfume here comes close.",
+        "My spore-mother's garden had a pear tree older than your oldest city.",
+        "Nobody hurried in the Fields. Nobody needed to.",
+        "The last time I saw the Fields, the horizon was folding like a wet page.",
+        "We lived in houses grown from hedges. You did not build a home; you raised it.",
+        "The Fields had no winter. I had to learn the word here.",
+        "In the Fields a library was a grove. You read under the tree that held the book.",
+        "Home was green, quiet and endless. Now it is none of those things.",
+        "I carried a handful of Fields soil through the door. It sits in a jar on my sill.",
+        "The evening light in the Fields was green-gold. Here it is orange. I am still adjusting.",
+        "Some of us stayed behind in the Fields. We do not speak of it often.",
+        "If you stood still in the Fields long enough, the grass would start to grow around your feet."
+      ],
+      "squishing": [
+        "The Squishing crushes the high dimensions first. We were number seventy-seven. We were early.",
+        "It began in 1992. The sky over the Fields started to wrinkle like old fruit.",
+        "Here they say: never go faster than eighty. I say: why would you want to?",
+        "The time bubbles are getting more common. Even this world is starting to fray.",
+        "We fled one Squishing. I wonder where we flee from the next.",
+        "The scholars say this world has until 2012. Plenty of time to grow several gardens.",
+        "I saw a whole valley fold in half, once. The birds kept flying into it.",
+        "Dimension three is low on the list. That is why we came here. Low and slow.",
+        "Every time the sky flickers here, every Verden in the street looks up at once.",
+        "They say the Squishing has something to do with a tower and a goddess. I prefer not to know more.",
+        "I watched the Fields go thin like paper held up to a lamp.",
+        "We packed seeds, books and pods. Everything else, we left to be crushed.",
+        "A train went too fast past the station and came round again. And again. Poor thing.",
+        "The humans call it 'the strange business'. We call it what it is: the end, coming down the numbers.",
+        "I try not to count the years left. I count seasons instead. There are more of them."
+      ],
+      "technology": [
+        "My ancestors threw every machine they had into the sun. Thousands of years later, I stand in awe of a toaster.",
+        "A vending machine is a shop that never sleeps and never complains. Remarkable.",
+        "Nobody knows why we gave up our machines. Not even the oldest of us will say.",
+        "I took apart a cassette player to see where the music lives. I found only tape. Mysterious.",
+        "The train is the most beautiful idea this world has had. A house that travels.",
+        "A telephone booth, a coin, a voice from three cities away. And they call us the magicians.",
+        "I bought a calculator. It does sums faster than any spell I know.",
+        "The television shows a man in another country, live. I watched for an hour without blinking.",
+        "My elders say machines made us lazy and proud. My washing machine has made me neither.",
+        "The humans built a car to go faster than a horse. Then they built traffic.",
+        "A refrigerator keeps winter in a box. I open it just to feel the cold.",
+        "I wonder what our old machines could do. The stories say they spoke to the stars.",
+        "The escalator is a staircase that does the climbing for you. I ride it twice for pleasure.",
+        "Some young Verden want to rebuild what we threw away. The elders go grey at the thought.",
+        "A light bulb. Just a light bulb. Humans think nothing of it. I think of nothing else.",
+        "The fax machine sends a page through a wire. Where does the page go in between?",
+        "I enrolled in an evening course on radio repair. I am the only blue student.",
+        "Machines here break and are mended. Ours, the stories say, never broke. Perhaps that was the trouble.",
+        "The computer at the library hums like a beehive full of numbers.",
+        "A Walkman! Music in your pocket, just for you. The humans have made solitude portable.",
+        "We were the most advanced people in the multiverse, and now I cannot set a video recorder.",
+        "I would never throw a machine into the sun. Not even the photocopier, and the photocopier hates me.",
+        "The streetlights turn on by themselves at dusk. I asked how. The answer involved a timer. Beautiful.",
+        "Our people chose magic over machines. Here I find I can love both.",
+        "I wrote to the tram company to thank them for the trams. They sent back a timetable. I framed it."
+      ],
+      "spores": [
+        "My pod is in its {fourth|ninth|thirteenth} month. Well over four hundred days to go, in all.",
+        "A Verden is not born; a Verden ripens.",
+        "I keep the pod warm and damp and talk to it every evening. They say it helps.",
+        "Over four hundred days in a pod. Humans think nine months is long.",
+        "My cousin lost a finger to a car door. She planted it. Now she has a niece.",
+        "Do not tread on that bed. There is a Verden coming up in it, very slowly.",
+        "A spore pod humming in the dark is the most hopeful sound I know.",
+        "The landlord asked why there is a large green pod in the airing cupboard. I said: family.",
+        "When the pod opens, the little ones come out already talking. Mostly complaining about the light.",
+        "Patience is not a virtue for us. It is biology.",
+        "I worry the Squishing will reach this world before my pod ripens. Then I water it anyway.",
+        "A severed limb, planted with care, grows a new Verden. We are very careful with knives.",
+        "Human doctors are baffled by us. One asked if I needed sunlight or a vet.",
+        "The spores drift when I sneeze. I apologise to whoever stands downwind.",
+        "We count family in pods, not in generations.",
+        "My spore-mother planted me under a pear tree. I still like pears more than is reasonable.",
+        "Sporangium season. Every Verden in the district is a little moody and very warm.",
+        "I sang to the pod in the old tongue. It hummed back. That is how you know it is well.",
+        "The human idea of a nursery has far too few watering cans.",
+        "One day this pod will be a person who has never seen the Fields. I must tell them everything."
+      ],
+      "magic": [
+        "I study root magic: the slow kind. It takes years to learn one good spell.",
+        "Magic is a garden of its own. You plant a word and wait for it to answer.",
+        "Our people gave up machines to study magic. I sometimes wonder if magic was worth the trade.",
+        "A small warming charm on the greenhouse. Nobody sees it. Everything grows.",
+        "The human mages are always in such a hurry. Fireballs and lightning. No patience for a mending spell.",
+        "I practised my runes on the back of a bus ticket. They held for a whole stop.",
+        "The best spells are the ones nobody notices: a door that sticks less, a plant that perks up.",
+        "The Mages' Guild here wanted me to join. I said I would think about it, for a decade or two.",
+        "Magic in this world feels thinner, like air on a mountain.",
+        "My teacher said: a spell is a promise you keep with the world. I have kept mine, mostly.",
+        "I tried to charm the vending machine. It gave me two sodas. I paid for the second.",
+        "The gods here are at war with the mages. I keep my head down and my runes small.",
+        "A thousand years of study and still the hardest spell is getting seeds to sprout in a cold spring.",
+        "Magic and electricity are cousins, I think. They both hum when they are pleased.",
+        "I keep my grimorie wrapped in oilcloth. It is the only book I brought from home."
+      ],
+      "collective": [
+        "I can hear the Naguka the way you hear rain on a roof. Constant, soft, sometimes a crash.",
+        "We learned to read their collective by magic. Only to read. Never to write.",
+        "I know that Naguka will knock over the table before he does. I move my tea anyway.",
+        "Somewhere a hundred Naguka just decided to {march|eat|shout} at once. I felt it like a draught.",
+        "The humans ask me to put a thought into the collective. I cannot. Nobody can, except the Junehem.",
+        "Harm one Naguka and the whole species knows. I see the news ripple through them before the papers do.",
+        "Reading the collective is like overhearing a very large, very loud family dinner.",
+        "The army asked me to spy for them through the collective. I told them I read; I do not report.",
+        "Knowing what comes next and being unable to change it. That is the Verden condition.",
+        "The collective dreams of caves, of a big drilled hole and of the light at the top of it.",
+        "Today the collective is calm. Somewhere, a great many Naguka are napping.",
+        "I closed my mind to the collective for a whole day. The silence was enormous.",
+        "Grissnack's voice runs through the collective like a crack through ice.",
+        "I can see the ambush coming. I cannot stop the Naguka from springing it. Only warn the others.",
+        "We see their next step, never their reasons. Often I suspect there are none."
+      ],
+      "naguka": [
+        "The Naguka are our cousins in face only. Inside, they are human. Loud, warm, impatient humans.",
+        "They came up the Kola shaft in 1970 and have not stopped shouting since.",
+        "A Naguka asked me why I talk 'so many words'. I told him words are free. He took a great many.",
+        "I am very fond of the Naguka. From a reasonable distance.",
+        "The Naguka paint their faces for Junehem. I would rather they painted fences.",
+        "The Naguka children are delightful. They bite, but delightfully.",
+        "Humans mistake me for a Naguka, then I say a full sentence and they look relieved.",
+        "The Naguka never plant anything. They harvest everything. Usually other people's.",
+        "A Naguka gave me a dead rat as a gift. I thanked him properly. It is the thought.",
+        "I taught a Naguka to read three letters. He read them at everyone for a week.",
+        "The Naguka think we are very old, very slow cousins. They are half right.",
+        "Every Naguka is brave. Very few of them are careful. I would trade some of one for the other.",
+        "The Vatican wants to baptise the Naguka. The Naguka want to eat the incense.",
+        "They call me 'Blue Cousin'. It is the kindest thing a Naguka has ever called anyone.",
+        "A Naguka cannot wait for water to boil. I have seen one try to bite the kettle.",
+        "Goblin and human together make an orc. Goblin and Verden make nothing but conversation.",
+        "The Naguka are young as a people. Give them a few thousand years.",
+        "I knew that Naguka would fall in the fountain. I did not know he would enjoy it so much.",
+        "They speak like children, the humans say. Children who know a great many swear words.",
+        "Under all the noise, the Naguka are lonely for something. I think it is the dark under the earth."
+      ],
+      "integration": [
+        "I filled in my seventh form this month. The humans love forms nearly as much as queues.",
+        "MarkovSpeak is a fine tongue. I speak it better than some of my neighbours, I am told.",
+        "I have a job, a flat, a library card and a favourite bench. I am integrated.",
+        "The Verden council meets the mayor next week about the community gardens. Fingers crossed.",
+        "My employer forgot I was a Verden until I brought in a pod for the office party.",
+        "Some humans call us 'the polite goblins'. There are worse names.",
+        "I pay my taxes. Nothing in the Fields prepared me for taxes.",
+        "My human neighbours invited me for {Christmas|a wedding|a birthday}. I brought a potted lemon tree.",
+        "I voted for the first time. I read every word on every poster first.",
+        "The young Verden here speak with human slang. Their elders pretend not to understand.",
+        "There is a Verden doctor at the clinic now. And a Verden teacher. One by one.",
+        "Integration is like grafting: done right, the join disappears in a few seasons.",
+        "I sometimes forget I am a refugee. Then the news mentions the Squishing.",
+        "The humans gave us a home without being asked twice. We should never forget it.",
+        "I am Verden at home and a citizen in the street. Some days the two get along."
+      ]
+    }
+  },
+  "script": {
+    "positive": [
+      [
+        [
+          0,
+          "{b}! I brought you some tomatoes from the greenhouse. The first of the year."
+        ],
+        [
+          1,
+          "For me? They smell amazing. Thank you, {a}."
+        ],
+        [
+          0,
+          "Eat them slowly. They took four months."
+        ]
+      ],
+      [
+        [
+          0,
+          "My spore pod hummed this morning, {b}. For the first time."
+        ],
+        [
+          1,
+          "Is that good? It sounds good."
+        ],
+        [
+          0,
+          "It is the best news I have had since we left the Fields."
+        ],
+        [
+          1,
+          "Then congratulations. Really."
+        ]
+      ],
+      [
+        [
+          0,
+          "You fixed my radio. I do not know how to thank you."
+        ],
+        [
+          1,
+          "It was just a loose wire, {a}. Nothing special."
+        ],
+        [
+          0,
+          "To you, a loose wire. To me, a miracle with an orchestra inside."
+        ]
+      ],
+      [
+        [
+          0,
+          "I passed my driving test, {b}. On the third attempt."
+        ],
+        [
+          1,
+          "No way! How fast did you go?"
+        ],
+        [
+          0,
+          "Thirty kilometres an hour. The examiner said it was 'a new record for caution'."
+        ],
+        [
+          1,
+          "Ha! Well, nobody's getting caught in a time loop at thirty."
+        ]
+      ],
+      [
+        [
+          0,
+          "You always say hello to me at the market. I want you to know it matters."
+        ],
+        [
+          1,
+          "Of course I do. You're one of the nicest people round here, {a}."
+        ],
+        [
+          0,
+          "Then we are both lucky."
+        ]
+      ],
+      [
+        [
+          0,
+          "*hands over a small potted plant* For your windowsill."
+        ],
+        [
+          1,
+          "Oh, it's lovely! What is it?"
+        ],
+        [
+          0,
+          "A cutting from a Fields herb. It will outlive us both if you let it."
+        ]
+      ],
+      [
+        [
+          0,
+          "I foresaw that the Naguka would raid the bakery, so I warned the baker."
+        ],
+        [
+          1,
+          "So that's why he closed early! You saved his week, {a}."
+        ],
+        [
+          0,
+          "He gave me a whole loaf. I think I came out ahead."
+        ]
+      ],
+      [
+        [
+          0,
+          "I finally understand the bus timetable. All of it."
+        ],
+        [
+          1,
+          "Then you understand more than most of us, {a}."
+        ],
+        [
+          0,
+          "It only took me a year of patient study."
+        ],
+        [
+          1,
+          "Can you teach me the Sunday one?"
+        ]
+      ],
+      [
+        [
+          0,
+          "{b}, you look tired. Sit. I have made {tea|soup|honey bread}."
+        ],
+        [
+          1,
+          "You're a lifesaver. It's been a long day."
+        ],
+        [
+          0,
+          "Then let it be a short evening."
+        ]
+      ],
+      [
+        [
+          0,
+          "I read your grandmother's letter for you, as you asked. She is very proud of you."
+        ],
+        [
+          1,
+          "She said that? Really?"
+        ],
+        [
+          0,
+          "Twice. Once in the middle and once at the end, underlined."
+        ]
+      ],
+      [
+        [
+          0,
+          "You lent me your umbrella last week. I have brought it back, dry and with a charm on it."
+        ],
+        [
+          1,
+          "A charm? What does it do?"
+        ],
+        [
+          0,
+          "It will never turn inside out again. A small thing, but you will thank me in November."
+        ]
+      ],
+      [
+        [
+          0,
+          "The children at the school drew me. In every drawing I am smiling."
+        ],
+        [
+          1,
+          "That's because you always are, {a}."
+        ],
+        [
+          0,
+          "Not always. But around them, yes."
+        ]
+      ],
+      [
+        [
+          0,
+          "I won something at the arcade, {b}! A plastic dragon!"
+        ],
+        [
+          1,
+          "After how many tokens?"
+        ],
+        [
+          0,
+          "Do not ask. It is priceless."
+        ],
+        [
+          1,
+          "*laughs* Fair enough."
+        ]
+      ],
+      [
+        [
+          0,
+          "Thank you for standing up for me on the tram yesterday."
+        ],
+        [
+          1,
+          "That man was out of line. You've every right to be here."
+        ],
+        [
+          0,
+          "Hearing that from you means more than any stamped paper."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your garden is doing beautifully, {b}. The beans have doubled."
+        ],
+        [
+          1,
+          "That's all your advice, {a}. I just did what you said."
+        ],
+        [
+          0,
+          "Then you listened. That is the hardest part of gardening."
+        ]
+      ],
+      [
+        [
+          0,
+          "I finished the book you gave me. The one about the railways."
+        ],
+        [
+          1,
+          "And? Did you like it?"
+        ],
+        [
+          0,
+          "I read it twice and then I went to the station just to look at a locomotive."
+        ],
+        [
+          1,
+          "Ha, I knew you'd love it."
+        ]
+      ],
+      [
+        [
+          0,
+          "You remembered my name, {b}. Most people only remember the colour."
+        ],
+        [
+          1,
+          "Well, you're {a}. Hard to forget."
+        ],
+        [
+          0,
+          "Then I shall remember yours just as carefully."
+        ],
+        [
+          1,
+          "Deal."
+        ]
+      ],
+      [
+        [
+          0,
+          "I was homesick all morning. Then you waved at me from across the street."
+        ],
+        [
+          1,
+          "Just a wave, {a}."
+        ],
+        [
+          0,
+          "Just a wave. Just the right one."
+        ]
+      ],
+      [
+        [
+          0,
+          "My cousin Naguka finally said 'please'. I have waited three years for this."
+        ],
+        [
+          1,
+          "What did he want?"
+        ],
+        [
+          0,
+          "My sandwich. He got it, too. One must reward progress."
+        ]
+      ],
+      [
+        [
+          0,
+          "You helped me carry the seedlings home. All forty trays."
+        ],
+        [
+          1,
+          "My arms are still complaining, {a}."
+        ],
+        [
+          0,
+          "In a month I will repay them with salad."
+        ]
+      ],
+      [
+        [
+          0,
+          "I can read the collective, but I never foresaw a friend like you, {b}."
+        ],
+        [
+          1,
+          "Well, I'm not a goblin. You'd need a different spell for me."
+        ],
+        [
+          0,
+          "Then I am glad of the surprise."
+        ]
+      ],
+      [
+        [
+          0,
+          "The council approved the community garden, {b}! Thanks to your signatures."
+        ],
+        [
+          1,
+          "I just knocked on a few doors."
+        ],
+        [
+          0,
+          "Sixty doors. I counted. There will be a bed with your name on it."
+        ],
+        [
+          1,
+          "Then I'd better learn to weed."
+        ]
+      ]
+    ],
+    "negative": [
+      [
+        [
+          0,
+          "You stepped on my seedlings again, {b}."
+        ],
+        [
+          1,
+          "They're in the middle of the path! What do you expect?"
+        ],
+        [
+          0,
+          "I expect eyes to be used for looking."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your radio is very loud at night."
+        ],
+        [
+          1,
+          "And your greenhouse lamp shines right into my bedroom."
+        ],
+        [
+          0,
+          "The plants need it. Do you need the football results at two in the morning?"
+        ],
+        [
+          1,
+          "Actually, yes."
+        ]
+      ],
+      [
+        [
+          0,
+          "You told the landlord I keep 'some kind of egg' in the cupboard."
+        ],
+        [
+          1,
+          "Well, you do! It's weird, {a}."
+        ],
+        [
+          0,
+          "It is my family. I would not call your children weird."
+        ],
+        [
+          1,
+          "My children don't glow in the dark."
+        ]
+      ],
+      [
+        [
+          0,
+          "I knew you would be late. I did not need to read any collective for that."
+        ],
+        [
+          1,
+          "The bus broke down! It's not my fault."
+        ],
+        [
+          0,
+          "It never is, {b}. That is the remarkable thing."
+        ]
+      ],
+      [
+        [
+          0,
+          "You called me 'goblin' in front of your friends. In that tone."
+        ],
+        [
+          1,
+          "You ARE a goblin. I don't see the problem."
+        ],
+        [
+          0,
+          "The word is not the problem. The tone is."
+        ]
+      ],
+      [
+        [
+          0,
+          "{b}, you have been leaving your rubbish by my compost."
+        ],
+        [
+          1,
+          "Compost is rubbish, isn't it?"
+        ],
+        [
+          0,
+          "Compost is a slow miracle. Your crisp packets are not."
+        ]
+      ],
+      [
+        [
+          0,
+          "You sold me a broken cassette player."
+        ],
+        [
+          1,
+          "It worked when I sold it, {a}."
+        ],
+        [
+          0,
+          "It worked for one song. I am patient, not foolish."
+        ],
+        [
+          1,
+          "Fine. Fine! I'll give you five euros back."
+        ]
+      ],
+      [
+        [
+          0,
+          "Must you play Junehem in the courtyard, {b}?"
+        ],
+        [
+          1,
+          "It's music. You don't own the courtyard."
+        ],
+        [
+          0,
+          "Neither do the Junehem, though they seem to think they own a great deal."
+        ]
+      ],
+      [
+        [
+          0,
+          "You took the last seat on the tram from an old woman."
+        ],
+        [
+          1,
+          "I didn't see her, all right?"
+        ],
+        [
+          0,
+          "She stood right beside you for six stops."
+        ]
+      ],
+      [
+        [
+          0,
+          "I lent you my book in spring. It is autumn now."
+        ],
+        [
+          1,
+          "I'm still reading it! You're the one always saying 'patience'."
+        ],
+        [
+          0,
+          "Patience is for seeds, {b}, not for borrowers."
+        ]
+      ],
+      [
+        [
+          0,
+          "You told everyone at work that I can read minds."
+        ],
+        [
+          1,
+          "Can't you?"
+        ],
+        [
+          0,
+          "Only goblin minds. And only the collective. Now the manager asks me who stole his stapler."
+        ],
+        [
+          1,
+          "Did you tell him?"
+        ],
+        [
+          0,
+          "It was you, {b}. I did not need magic."
+        ]
+      ],
+      [
+        [
+          0,
+          "You cut down the hedge without asking."
+        ],
+        [
+          1,
+          "It was blocking my parking space!"
+        ],
+        [
+          0,
+          "It was blocking it for forty years. Your car has been there for three weeks."
+        ]
+      ],
+      [
+        [
+          0,
+          "You threw away the seeds I saved for you, {b}."
+        ],
+        [
+          1,
+          "They looked like little bits of dirt, {a}."
+        ],
+        [
+          0,
+          "They were next year's garden. Now they are next year's nothing."
+        ]
+      ],
+      [
+        [
+          0,
+          "You laughed when I asked how the lift works."
+        ],
+        [
+          1,
+          "Come on, it was funny. Everybody knows how a lift works."
+        ],
+        [
+          0,
+          "Everybody here. I have known lifts for two years. You have known moss for none."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your dog dug up my bulbs, {b}."
+        ],
+        [
+          1,
+          "He's a dog. Dogs dig."
+        ],
+        [
+          0,
+          "And owners apologise. That is how it works where I come from."
+        ]
+      ],
+      [
+        [
+          0,
+          "You keep telling people the Squishing is a hoax."
+        ],
+        [
+          1,
+          "It's exaggerated. The news loves a scare."
+        ],
+        [
+          0,
+          "My home is gone, {b}. Folded like a letter. Tell me again it is exaggerated."
+        ]
+      ],
+      [
+        [
+          0,
+          "I asked you to water the pod while I was away. One thing."
+        ],
+        [
+          1,
+          "I forgot! Is it all right?"
+        ],
+        [
+          0,
+          "It will live. It is sulking, and so am I."
+        ]
+      ],
+      [
+        [
+          0,
+          "You let the Naguka kids into my greenhouse."
+        ],
+        [
+          1,
+          "They were cold, {a}! What was I meant to do?"
+        ],
+        [
+          0,
+          "Give them a blanket. Not my melons."
+        ],
+        [
+          1,
+          "...They did seem to enjoy the melons."
+        ]
+      ],
+      [
+        [
+          0,
+          "You owe me twenty euros, {b}. Since the summer."
+        ],
+        [
+          1,
+          "I'll pay you back, I promise."
+        ],
+        [
+          0,
+          "Promises grow on the same tree as excuses, in my experience."
+        ]
+      ]
+    ],
+    "neutral": [
+      [
+        [
+          0,
+          "Excuse me. Does this tram go to the station?"
+        ],
+        [
+          1,
+          "Number four does. This is the six."
+        ],
+        [
+          0,
+          "Ah. Then I shall admire the six and wait for the four."
+        ]
+      ],
+      [
+        [
+          0,
+          "The weather has been unsettled lately."
+        ],
+        [
+          1,
+          "Tell me about it. Rain one minute, sun the next."
+        ],
+        [
+          0,
+          "Good for the gardens, at least."
+        ]
+      ],
+      [
+        [
+          0,
+          "Forgive me, is that a Walkman?"
+        ],
+        [
+          1,
+          "Yeah. Want to have a listen?"
+        ],
+        [
+          0,
+          "*listens* Extraordinary. The whole band, in your pocket."
+        ],
+        [
+          1,
+          "It's just a cheap one, really."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you know where I can buy good compost around here?"
+        ],
+        [
+          1,
+          "Garden centre, past the bridge. Closes at six."
+        ],
+        [
+          0,
+          "Thank you. I will walk slowly and still arrive in time."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is this seat taken?"
+        ],
+        [
+          1,
+          "No, go ahead."
+        ],
+        [
+          0,
+          "Thank you. My feet have been arguing with these shoes all day."
+        ]
+      ],
+      [
+        [
+          0,
+          "The bakery has a new loaf today. Rye and seeds."
+        ],
+        [
+          1,
+          "Any good?"
+        ],
+        [
+          0,
+          "I bought two. That is my review."
+        ]
+      ],
+      [
+        [
+          0,
+          "You are reading about trains. May I ask which ones?"
+        ],
+        [
+          1,
+          "Old steam engines. My grandfather drove one."
+        ],
+        [
+          0,
+          "A driver of a moving house. What a family to come from."
+        ]
+      ],
+      [
+        [
+          0,
+          "Did you hear the sirens last night, {b}?"
+        ],
+        [
+          1,
+          "Some trouble on the north side, I think."
+        ],
+        [
+          0,
+          "I hope everyone is home safe."
+        ]
+      ],
+      [
+        [
+          0,
+          "The prices at the market have gone up again."
+        ],
+        [
+          1,
+          "Everything's going up. Except wages."
+        ],
+        [
+          0,
+          "Then I shall grow more and buy less."
+        ]
+      ],
+      [
+        [
+          0,
+          "Pardon me, how do I make this machine give me a ticket?"
+        ],
+        [
+          1,
+          "Press the green button, then put the coins in."
+        ],
+        [
+          0,
+          "*presses* Oh! It printed. It printed for me."
+        ],
+        [
+          1,
+          "Yeah... they do that."
+        ]
+      ],
+      [
+        [
+          0,
+          "The sky flickered over the river this morning. Did you see?"
+        ],
+        [
+          1,
+          "I did. Gave me the creeps."
+        ],
+        [
+          0,
+          "It gives me the creeps too, and I have seen worse."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your roses are lovely. Do you feed them?"
+        ],
+        [
+          1,
+          "Coffee grounds and banana peel, mostly."
+        ],
+        [
+          0,
+          "A wise gardener. I shall try the banana."
+        ]
+      ],
+      [
+        [
+          0,
+          "What time does the library close today?"
+        ],
+        [
+          1,
+          "Seven, I think. Earlier on Saturdays."
+        ],
+        [
+          0,
+          "Then I have two hours. Enough for one good chapter and one bad nap."
+        ]
+      ],
+      [
+        [
+          0,
+          "Have you lived on this street long?"
+        ],
+        [
+          1,
+          "A few years now. You?"
+        ],
+        [
+          0,
+          "Since the spring. The street is still deciding what it thinks of me."
+        ],
+        [
+          1,
+          "It'll come round. Streets always do."
+        ],
+        [
+          0,
+          "Like hedges. Give them time and they close the gap."
+        ]
+      ],
+      [
+        [
+          0,
+          "There is a Naguka asleep on the bench by the fountain."
+        ],
+        [
+          1,
+          "Should we call someone?"
+        ],
+        [
+          0,
+          "No. He will wake in ten minutes and steal a pigeon. Then he will leave."
+        ]
+      ],
+      [
+        [
+          0,
+          "I have been told the post office is the place for stamps."
+        ],
+        [
+          1,
+          "That's right. Or the tobacconist."
+        ],
+        [
+          0,
+          "Two places for stamps. This world is generous."
+        ]
+      ],
+      [
+        [
+          0,
+          "The new shopping centre has stairs that move."
+        ],
+        [
+          1,
+          "Escalators. They've been around for ages."
+        ],
+        [
+          0,
+          "Not around me. I rode up and down four times."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is it true there are monsters on the east road?"
+        ],
+        [
+          1,
+          "So people say. I'd take the bus."
+        ],
+        [
+          0,
+          "Wise advice. I like the bus anyway."
+        ]
+      ],
+      [
+        [
+          0,
+          "I planted mint in the pot by the door. I hope nobody minds."
+        ],
+        [
+          1,
+          "Mint spreads like crazy, you know."
+        ],
+        [
+          0,
+          "I know. I am counting on it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you know a good place to have a radio repaired?"
+        ],
+        [
+          1,
+          "There's a man on Via Roma. Old, slow, but good."
+        ],
+        [
+          0,
+          "Old, slow and good. My kind of craftsman."
+        ]
+      ],
+      [
+        [
+          0,
+          "The election posters are everywhere, {b}."
+        ],
+        [
+          1,
+          "Yeah. Same promises as last time."
+        ],
+        [
+          0,
+          "Then I shall read them as I read old seed catalogues: hopefully, but with care."
+        ]
+      ],
+      [
+        [
+          0,
+          "How long have you worked in this shop?"
+        ],
+        [
+          1,
+          "Twelve years. Feels like a hundred some days."
+        ],
+        [
+          0,
+          "Twelve years is a young tree. Plenty of growing left."
+        ]
+      ],
+      [
+        [
+          0,
+          "The river is high this week."
+        ],
+        [
+          1,
+          "All that rain up in the hills."
+        ],
+        [
+          0,
+          "The water remembers every drop. So do the banks."
+        ]
+      ],
+      [
+        [
+          0,
+          "May I ask what that song on your radio is?"
+        ],
+        [
+          1,
+          "Some pop thing. Charts this week."
+        ],
+        [
+          0,
+          "It is very cheerful. I will forget it by tonight, but cheerfully."
+        ]
+      ],
+      [
+        [
+          0,
+          "The children are building something in the empty lot."
+        ],
+        [
+          1,
+          "A fort, I think. Out of pallets."
+        ],
+        [
+          0,
+          "A fine start. Next year, perhaps, a garden beside it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is the bank open on Saturdays here?"
+        ],
+        [
+          1,
+          "Mornings only."
+        ],
+        [
+          0,
+          "Then the euros and I will wait until Monday."
+        ]
+      ],
+      [
+        [
+          0,
+          "You look lost, {b}. Can I help?"
+        ],
+        [
+          1,
+          "I'm looking for the clinic."
+        ],
+        [
+          0,
+          "Two streets on, left at the bakery. Follow the smell of bread, then the smell of disinfectant."
+        ]
+      ],
+      [
+        [
+          0,
+          "The streetlights went out on our road last night."
+        ],
+        [
+          1,
+          "Again? Someone should call the council."
+        ],
+        [
+          0,
+          "I did. They said 'soon'. I have learned that 'soon' is a human season."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you play chess?"
+        ],
+        [
+          1,
+          "Badly. Why?"
+        ],
+        [
+          0,
+          "So do I. We would be perfectly matched."
+        ]
+      ],
+      [
+        [
+          0,
+          "There's been talk of the Horde moving south again."
+        ],
+        [
+          1,
+          "There's always talk. Nothing ever happens here."
+        ],
+        [
+          0,
+          "Let us hope this town stays dull, then."
+        ]
+      ],
+      [
+        [
+          0,
+          "What is that machine in the corner of the café?"
+        ],
+        [
+          1,
+          "A jukebox. You put in a coin and pick a song."
+        ],
+        [
+          0,
+          "A coin for a song. I may never leave."
+        ]
+      ],
+      [
+        [
+          0,
+          "The swallows left early this year."
+        ],
+        [
+          1,
+          "Cold winter coming, my mum always said."
+        ],
+        [
+          0,
+          "Your mother read the birds. A useful skill."
+        ]
+      ],
+      [
+        [
+          0,
+          "How do you get a bicycle to stay upright?"
+        ],
+        [
+          1,
+          "You just keep pedalling."
+        ],
+        [
+          0,
+          "Then it is like most things."
+        ]
+      ],
+      [
+        [
+          0,
+          "I saw a poster for a Junehem concert on the wall by the station."
+        ],
+        [
+          1,
+          "Here? Who'd go to that?"
+        ],
+        [
+          0,
+          "Every Naguka within a hundred kilometres. I would stay indoors that night."
+        ]
+      ],
+      [
+        [
+          0,
+          "The pharmacy on the corner has closed."
+        ],
+        [
+          1,
+          "Really? Where am I meant to go now?"
+        ],
+        [
+          0,
+          "There is another by the market. Smaller, but the pharmacist is patient."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you grow anything at home, {b}?"
+        ],
+        [
+          1,
+          "Just a cactus. I keep forgetting to water it."
+        ],
+        [
+          0,
+          "Then you have chosen the right friend."
+        ]
+      ],
+      [
+        [
+          0,
+          "I heard the trains will be on strike tomorrow."
+        ],
+        [
+          1,
+          "Great. Another day of buses."
+        ],
+        [
+          0,
+          "I will miss the trains. I hope the drivers get what they ask for."
+        ]
+      ],
+      [
+        [
+          0,
+          "What is the name of that tree, the one with the white flowers?"
+        ],
+        [
+          1,
+          "A hawthorn, I think. Or a cherry. No idea, honestly."
+        ],
+        [
+          0,
+          "A hawthorn. I asked to see if you knew. Forgive me, it is a gardener's game."
+        ]
+      ],
+      [
+        [
+          0,
+          "The town fair is next week, they say."
+        ],
+        [
+          1,
+          "Oh, it's great. Food stalls, games, a band."
+        ],
+        [
+          0,
+          "I will bring jam to sell. And go home with three cakes."
+        ]
+      ]
+    ],
+    "debate": [
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "I think my ancestors were wrong to throw their machines into the sun."
+          ],
+          [
+            1,
+            "Maybe they knew something you don't. Look what machines have done here."
+          ],
+          [
+            0,
+            "Here machines bring music, light and warm water. I see no ruin in a kettle."
+          ],
+          [
+            1,
+            "Give it a few hundred years. Then ask again."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Magic is the better path. It asks patience, and patience makes good people."
+          ],
+          [
+            1,
+            "Magic is for the few. A light switch works for everybody."
+          ],
+          [
+            0,
+            "Anyone can learn a spell, given years."
+          ],
+          [
+            1,
+            "Most people don't have years, {a}. They have a Tuesday."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "The Horde will settle one day. They are young, not wicked."
+          ],
+          [
+            1,
+            "They burned three villages last spring. Tell those people they're just young."
+          ],
+          [
+            0,
+            "I do not excuse it. I only say they can change."
+          ],
+          [
+            1,
+            "Then let them change somewhere far from here."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "The Junehem are not gods. They are four men with very loud guitars."
+          ],
+          [
+            1,
+            "Try telling that to the armies who couldn't kill them."
+          ],
+          [
+            0,
+            "Belief keeps them alive. That makes them fed, not divine."
+          ],
+          [
+            1,
+            "Sounds like a god to me."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "The Squishing is the greatest danger any of us faces."
+          ],
+          [
+            1,
+            "More than the Horde? More than the wars?"
+          ],
+          [
+            0,
+            "Wars end. The Squishing only grows."
+          ],
+          [
+            1,
+            "...Yeah. When you put it like that, you're right."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Humans rush through everything. They taste nothing."
+          ],
+          [
+            1,
+            "We've only got seventy years, {a}. We can't wait four hundred days for anything."
+          ],
+          [
+            0,
+            "Then all the more reason to taste each one."
+          ],
+          [
+            1,
+            "Easy to say when you've got all the time in the world."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "We should tell the army everything we read in the collective."
+          ],
+          [
+            1,
+            "And make every goblin hate every Verden? No way."
+          ],
+          [
+            0,
+            "Lives would be saved. Human and Naguka both."
+          ],
+          [
+            1,
+            "Until the day they come for you. You'd be the first target."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Cities are wonderful. Trams, libraries, bakeries on every corner."
+          ],
+          [
+            1,
+            "Cities are noise and smog and rent. The countryside's where it's at."
+          ],
+          [
+            0,
+            "You sound like my elders."
+          ],
+          [
+            1,
+            "Then your elders had sense."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Everyone deserves a garden. Even a pot on a windowsill."
+          ],
+          [
+            1,
+            "I don't know. Some people would just kill the plant."
+          ],
+          [
+            0,
+            "Then they would learn. A dead basil is a fine teacher."
+          ],
+          [
+            1,
+            "Ha. Fair enough. Maybe I'll try again."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "The Vatican should leave the Naguka alone."
+          ],
+          [
+            1,
+            "Better they pray than raid."
+          ],
+          [
+            0,
+            "They want an army, not a congregation."
+          ],
+          [
+            1,
+            "Maybe. But an army that listens to someone is better than one that listens to Junehem."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Nobody should drive faster than eighty. Not with the time bubbles about."
+          ],
+          [
+            1,
+            "Eighty on the motorway? It'd take days to get anywhere!"
+          ],
+          [
+            0,
+            "Days are better than forever, looping round the same bend."
+          ],
+          [
+            1,
+            "I'll take my chances."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Television is the most beautiful invention of this world."
+          ],
+          [
+            1,
+            "Television rots your brain, {a}. Read a book."
+          ],
+          [
+            0,
+            "I read a great many books. Then I watch the weather forecast like a sacred rite."
+          ],
+          [
+            1,
+            "See? Already rotting."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Young Verden should learn the old tongue before MarkovSpeak."
+          ],
+          [
+            1,
+            "What for? Nobody speaks it out here."
+          ],
+          [
+            0,
+            "Because a people without its words is a garden without seeds."
+          ],
+          [
+            1,
+            "Words don't pay the rent."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "The refugees from the north need housing before winter."
+          ],
+          [
+            1,
+            "Where, though? The town's already packed."
+          ],
+          [
+            0,
+            "The empty school by the canal. A little work and it would hold forty."
+          ],
+          [
+            1,
+            "...That could work. I'll talk to my cousin on the council."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "The gods should be left alone. The Mages' Guild plays with fire."
+          ],
+          [
+            1,
+            "The gods started it. Let the mages finish it."
+          ],
+          [
+            0,
+            "A war with gods leaves no gardens standing."
+          ],
+          [
+            1,
+            "Neither does doing nothing."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "I think money is a kind of magic, and a rather silly one."
+          ],
+          [
+            1,
+            "Silly? It's the only thing that keeps the lights on."
+          ],
+          [
+            0,
+            "Only because everyone agrees to believe in it. Like the Junehem."
+          ],
+          [
+            1,
+            "Don't compare my pay cheque to a black metal band."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "The Naguka deserve a voice in the government."
+          ],
+          [
+            1,
+            "They can barely string a sentence together!"
+          ],
+          [
+            0,
+            "Many of your politicians have the same trouble, and they vote."
+          ],
+          [
+            1,
+            "...Okay, that's fair, but still."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "We should rebuild a little of what the Verden threw away. Carefully."
+          ],
+          [
+            1,
+            "Your own people chose to give it up. Shouldn't you respect that?"
+          ],
+          [
+            0,
+            "They chose for a world that no longer exists."
+          ],
+          [
+            1,
+            "So you'd undo thousands of years because you like trains."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Every child here should learn to grow their own food."
+          ],
+          [
+            1,
+            "In school? Instead of what?"
+          ],
+          [
+            0,
+            "Alongside. Arithmetic is easier to love when it counts beans."
+          ],
+          [
+            1,
+            "Honestly... my kids would love that."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Knowing the future is a burden, not a gift."
+          ],
+          [
+            1,
+            "I'd give anything to know what's coming."
+          ],
+          [
+            0,
+            "Even when you cannot change a thing of it?"
+          ],
+          [
+            1,
+            "At least I'd be ready. That's something."
+          ]
+        ]
+      }
+    ],
+    "ambient": [
+      [
+        [
+          0,
+          "Lovely morning, {b}."
+        ],
+        [
+          1,
+          "Not bad at all."
+        ]
+      ],
+      [
+        [
+          0,
+          "How are your plants?"
+        ],
+        [
+          1,
+          "Still alive, somehow."
+        ]
+      ],
+      [
+        [
+          0,
+          "The tram is late again."
+        ],
+        [
+          1,
+          "Of course it is."
+        ]
+      ],
+      [
+        [
+          0,
+          "Good evening. Mind the puddle."
+        ],
+        [
+          1,
+          "Thanks. Too late."
+        ]
+      ],
+      [
+        [
+          0,
+          "Busy day at work?"
+        ],
+        [
+          1,
+          "Aren't they all?"
+        ]
+      ],
+      [
+        [
+          0,
+          "I have too many tomatoes. Would you like some?"
+        ],
+        [
+          1,
+          "Go on, then. Thanks."
+        ]
+      ],
+      [
+        [
+          0,
+          "Cold enough to turn me navy blue, {b}."
+        ],
+        [
+          1,
+          "Freezing. I can't feel my hands."
+        ]
+      ],
+      [
+        [
+          0,
+          "Did the post come yet?"
+        ],
+        [
+          1,
+          "An hour ago. Bills, mostly."
+        ]
+      ],
+      [
+        [
+          0,
+          "What a fine hat."
+        ],
+        [
+          1,
+          "Oh! Thanks. It was my dad's."
+        ]
+      ],
+      [
+        [
+          0,
+          "Off to the market?"
+        ],
+        [
+          1,
+          "Yeah, before it gets crowded."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mind the cyclist."
+        ],
+        [
+          1,
+          "Whoa! Thanks."
+        ]
+      ],
+      [
+        [
+          0,
+          "Have you eaten today?"
+        ],
+        [
+          1,
+          "Just coffee. Don't judge me."
+        ]
+      ],
+      [
+        [
+          0,
+          "The bakery still has croissants."
+        ],
+        [
+          1,
+          "Not for long, they don't."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is it going to rain, do you think?"
+        ],
+        [
+          1,
+          "Looks like it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your dog is very friendly."
+        ],
+        [
+          1,
+          "Too friendly. He likes everyone."
+        ]
+      ],
+      [
+        [
+          0,
+          "How is your mother keeping?"
+        ],
+        [
+          1,
+          "Better, thanks for asking."
+        ]
+      ],
+      [
+        [
+          0,
+          "Long queue at the post office."
+        ],
+        [
+          1,
+          "There always is."
+        ]
+      ],
+      [
+        [
+          0,
+          "I like your new window boxes."
+        ],
+        [
+          1,
+          "Thanks. Your idea, really."
+        ]
+      ],
+      [
+        [
+          0,
+          "Quiet street tonight."
+        ],
+        [
+          1,
+          "Enjoy it while it lasts."
+        ]
+      ],
+      [
+        [
+          0,
+          "Off home already, {b}?"
+        ],
+        [
+          1,
+          "Long day. See you tomorrow."
+        ]
+      ],
+      [
+        [
+          0,
+          "The roses are out by the church."
+        ],
+        [
+          1,
+          "I'll take a look on the way."
+        ]
+      ],
+      [
+        [
+          0,
+          "Good luck with the exam."
+        ],
+        [
+          1,
+          "Thanks. I'll need it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Did you hear the thunder last night?"
+        ],
+        [
+          1,
+          "Slept right through it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Shall I hold the door?"
+        ],
+        [
+          1,
+          "Oh, thank you."
+        ]
+      ],
+      [
+        [
+          0,
+          "Have you seen my cat? Grey, very proud."
+        ],
+        [
+          1,
+          "Sorry, no. I'll keep an eye out."
+        ]
+      ],
+      [
+        [
+          0,
+          "The radio says snow tomorrow."
+        ],
+        [
+          1,
+          "Great. Just great."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lovely day for drying laundry."
+        ],
+        [
+          1,
+          "I've done three loads already."
+        ]
+      ],
+      [
+        [
+          0,
+          "The fountain is working again."
+        ],
+        [
+          1,
+          "About time."
+        ]
+      ],
+      [
+        [
+          0,
+          "You dropped your glove, {b}."
+        ],
+        [
+          1,
+          "Oh! Thanks, I'd have lost it."
+        ]
+      ],
+      [
+        [
+          0,
+          "How was the film?"
+        ],
+        [
+          1,
+          "Long. Good, but long."
+        ]
+      ],
+      [
+        [
+          0,
+          "The Naguka are noisy tonight."
+        ],
+        [
+          1,
+          "When aren't they?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Is the café open? I am in need of their marvellous coffee machine."
+        ],
+        [
+          1,
+          "Opens at eight."
+        ]
+      ],
+      [
+        [
+          0,
+          "I like your scarf."
+        ],
+        [
+          1,
+          "My gran knitted it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you have the time?"
+        ],
+        [
+          1,
+          "Quarter past four."
+        ]
+      ],
+      [
+        [
+          0,
+          "The swallows are back."
+        ],
+        [
+          1,
+          "Spring's here, then."
+        ]
+      ],
+      [
+        [
+          0,
+          "Careful, the steps are icy."
+        ],
+        [
+          1,
+          "Thanks for the warning."
+        ]
+      ],
+      [
+        [
+          0,
+          "Need a hand with those bags?"
+        ],
+        [
+          1,
+          "I'm fine, but thank you."
+        ]
+      ],
+      [
+        [
+          0,
+          "The lights are pretty this time of year."
+        ],
+        [
+          1,
+          "They put them up earlier every year."
+        ]
+      ],
+      [
+        [
+          0,
+          "Enjoying the sun?"
+        ],
+        [
+          1,
+          "Trying to, anyway."
+        ]
+      ],
+      [
+        [
+          0,
+          "How is the new job?"
+        ],
+        [
+          1,
+          "Still figuring it out."
+        ]
+      ],
+      [
+        [
+          0,
+          "Rough night?"
+        ],
+        [
+          1,
+          "The neighbours had a party."
+        ]
+      ],
+      [
+        [
+          0,
+          "The bus stop moved, did you know?"
+        ],
+        [
+          1,
+          "Since when?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Smells like rain. The soil is pleased."
+        ],
+        [
+          1,
+          "You always know, don't you?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Good morning! Off to work?"
+        ],
+        [
+          1,
+          "Unfortunately."
+        ]
+      ],
+      [
+        [
+          0,
+          "Fresh honey at the market today."
+        ],
+        [
+          1,
+          "I'll grab a jar."
+        ]
+      ],
+      [
+        [
+          0,
+          "Did you see the sky flicker?"
+        ],
+        [
+          1,
+          "Don't remind me."
+        ]
+      ],
+      [
+        [
+          0,
+          "Sleep well, {b}."
+        ],
+        [
+          1,
+          "You too."
+        ]
+      ],
+      [
+        [
+          0,
+          "Warm enough for you?"
+        ],
+        [
+          1,
+          "Too warm, if anything."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lovely garden you have."
+        ],
+        [
+          1,
+          "It's mostly weeds, honestly."
+        ]
+      ],
+      [
+        [
+          0,
+          "Was that thunder or a lorry?"
+        ],
+        [
+          1,
+          "Lorry, I think."
+        ]
+      ],
+      [
+        [
+          0,
+          "Long time no see."
+        ],
+        [
+          1,
+          "Been busy. You know how it is."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is this your umbrella?"
+        ],
+        [
+          1,
+          "No, but I wish it was."
+        ]
+      ],
+      [
+        [
+          0,
+          "The pigeons are bold today."
+        ],
+        [
+          1,
+          "One stole my sandwich."
+        ]
+      ],
+      [
+        [
+          0,
+          "The shop on the corner is hiring."
+        ],
+        [
+          1,
+          "Really? I'll ask."
+        ]
+      ],
+      [
+        [
+          0,
+          "Take care on the road tonight."
+        ],
+        [
+          1,
+          "Always do."
+        ]
+      ]
+    ]
+  }
+}

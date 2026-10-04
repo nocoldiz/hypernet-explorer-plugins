@@ -1,0 +1,2964 @@
+{
+  "_comment": "The Orc voice (NPCConversation II.1b, SpeciesVoice). speech: the rules run over any shared line they say. voice: openers and closers. thought: their own thoughts by situation. script: two-person scripts, speaker 0 is always the Orc.",
+  "voice": {
+    "openers": [
+      "Right,",
+      "Listen,",
+      "Oi. Sorry. Hey,",
+      "Look,",
+      "Straight up,",
+      "No offence, but",
+      "Thing is,",
+      "Between you and me,",
+      "My mum would say",
+      "Honest truth,",
+      "Fair enough, but",
+      "Hold on,",
+      "Here's the thing:",
+      "Plain talk,",
+      "Tusk to tusk,",
+      "Ha. Anyway,",
+      "Me, I think",
+      "Not gonna lie,",
+      "Way I see it,",
+      "Okay, okay,",
+      "DA... I mean, yes,",
+      "Simple:",
+      "Mate,",
+      "Heh,",
+      "Swear on my tusks,",
+      "Hand on heart,",
+      "Real talk,",
+      "Funny thing,",
+      "Don't laugh, but",
+      "My gran used to say",
+      "Short version:",
+      "Not to be rude, but",
+      "Hmph,",
+      "Bah,",
+      "Course,",
+      "Mind you,",
+      "See,",
+      "Truth is,",
+      "If you ask me,",
+      "Well, then,",
+      "On the job we say",
+      "Half of me says",
+      "The goblin in me says",
+      "The human in me says",
+      "Ugh, fine,",
+      "Easy now,",
+      "Not for nothing, but",
+      "Big words coming:",
+      "Quiet a sec,",
+      "Tell you what,"
+    ],
+    "closers": [
+      "Simple as.",
+      "That's that.",
+      "Don't make me say it twice.",
+      "Ha!",
+      "No offence.",
+      "Trust the tusks.",
+      "Or I'm a goblin's uncle.",
+      "Right?",
+      "Mark me.",
+      "Done talking.",
+      "Hmph.",
+      "Oi. Sorry. Habit.",
+      "DA. I mean, yes.",
+      "Plain as a tusk.",
+      "Not complicated.",
+      "Heh.",
+      "Ask anyone.",
+      "My mum agrees.",
+      "Swear it.",
+      "End of story.",
+      "That's the job.",
+      "Don't argue.",
+      "Half goblin, all honest.",
+      "You heard me.",
+      "Take it or leave it.",
+      "Laugh if you want.",
+      "Nothing fancy.",
+      "Mark my tusks.",
+      "Next question.",
+      "Can't say fairer.",
+      "Good, good.",
+      "Shake on it?",
+      "Wasn't shouting. That's my normal voice.",
+      "Not a threat. Just loud.",
+      "Bah.",
+      "Simple folk, simple talk.",
+      "No BIG-HEAD talk. Sorry, no fancy talk.",
+      "That's orc sense.",
+      "Anyway.",
+      "Moving on.",
+      "Don't quote me.",
+      "Probably.",
+      "Ha. Good one, me.",
+      "Pass the bread.",
+      "Back to work.",
+      "That's all I got.",
+      "Or so my gran said.",
+      "Every time.",
+      "Tusks up.",
+      "Fair's fair."
+    ]
+  },
+  "thought": {
+    "generic": [
+      "Ducked under the {doorframe|shop sign|tram strap} again. Nearly.",
+      "Somebody in the goblin head is shouting about {cheese|a war|a bucket}. Can't make out which.",
+      "Good boots. Bad socks. That's life.",
+      "Kid stared at my tusks. I waved. Kid waved back. Good kid.",
+      "Need a {bigger chair|wider door|cup with a proper handle}. Always do.",
+      "Laughed too loud on the bus again. Half the bus laughed too, so fine.",
+      "Tusk wax. Must buy tusk wax.",
+      "OI... no. Inside voice.",
+      "People say orcs are angry. I'm just {hungry|tired|tall}.",
+      "Mum's goblin, Dad's human. Christmas is loud.",
+      "Fixed the {sink|shelf|neighbour's gate} with one hand. Felt good.",
+      "Radio's on in the next room of my head again. Goblin station. Turned it down.",
+      "Someone asked if I bite. Only {sandwiches|apples|pencils, when I think}.",
+      "Don't trust stairs built by humans. Too {narrow|steep|creaky}.",
+      "Kept my temper today. Twice. Somebody give me a medal.",
+      "Bought a {hat|scarf|coat} that fits. First try. Lucky day.",
+      "Tram driver nods at me every morning. We're friends now. He doesn't know.",
+      "Big hands, small coffee cups. Who designs these?",
+      "Somebody called me 'sir'. I looked behind me.",
+      "Paperwork. Worst monster I ever fought.",
+      "Goblins think I'm too human. Humans think I'm too goblin. Mirror thinks I'm handsome.",
+      "Should call {Mum|my sister|Gran}. Short call. She talks, I grunt.",
+      "Lifted the {piano|fridge|van} for the movers. Got a free lunch out of it.",
+      "Read a whole book this week. Small print. Eyes hurt. Good book.",
+      "That pigeon's looking at me funny.",
+      "Can't whisper. Never could. Tusks get in the way.",
+      "If it's broken, hit it. If it's still broken, read the manual.",
+      "Heard a joke yesterday. Still laughing. Can't remember it.",
+      "Ears ringing. Goblins must be singing again up north.",
+      "Honest day's work, honest day's pay. Nearly.",
+      "Neighbour's dog loves me. Neighbour, less.",
+      "Gonna learn the {accordion|guitar|drums}. Big fingers, big sound.",
+      "Teeth cleaned, tusks polished. Ready for anything.",
+      "Shop lady gave me the big bag without asking. Respect.",
+      "Every chair I sit on makes a noise. Every single one.",
+      "I'm not grumpy. My face is just like this.",
+      "Saw a Mages' Guild poster. Lot of BIG-HEADS. Big brains, I mean.",
+      "Somebody owes me {five euros|a beer|an apology}. I remember.",
+      "Hands smell of {engine oil|onions|soap}. Could be worse.",
+      "Mirror says I need a haircut. Barber says he needs a bigger chair.",
+      "Learned a new word: diplomacy. Means talking before hitting.",
+      "Half of me wants to sing. Other half wants to fix something. Both win.",
+      "Lost my keys. Found them in my fist. Been holding them an hour.",
+      "Goblin head says GO NORTH. My calendar says dentist on Tuesday.",
+      "Tusks clicked on the cup again. Everyone looked.",
+      "Good day for a fight. Joking. Good day for soup.",
+      "Somebody tipped me. I was only holding the door.",
+      "Don't need much. Roof, bread, friends, a door I don't hit my head on.",
+      "Whistled at work. Boss asked if a train was coming.",
+      "Gran's stew recipe: meat, more meat, one turnip for shame.",
+      "Wonder what the goblins are shouting about today. Probably {metal|snacks|Norway}.",
+      "Tried yoga. Mat was too small. Floor was fine.",
+      "My shadow scares cats. Not me. The shadow.",
+      "Signed my name in capitals again. Old habit.",
+      "Feeling soft today. Don't tell anyone.",
+      "People step aside on the pavement. Wish they'd stop and chat.",
+      "Postcard from {my cousin|an old mate|Gran}. Says WAAAGH. Means hello.",
+      "Nobody in the goblin head knows my name. Good. Keeps it quiet.",
+      "Should stretch. Back's been funny since I carried that {wardrobe|anvil|uncle}.",
+      "Bread's better when you break it yourself.",
+      "Learned to knit. Big needles. Scarf for a horse.",
+      "Proud of my tusks. Proud of my library card too.",
+      "Somebody said 'brute' behind me. Turned round. It was 'brute force sale'. Fair.",
+      "Nobody pushes a queue like an orc. Nobody waits in one like an orc either.",
+      "Ate standing up. Chairs creak, floors don't.",
+      "Every map's wrong since the Squishing. Walk it, don't trust paper.",
+      "Caught myself humming Junehem. Stopped. Hummed a jingle instead.",
+      "Long day. Good day. Same thing, mostly.",
+      "Somebody called orcs 'half'. I'm double. Two whole families.",
+      "Short fuse, short memory. Already forgot what made me angry.",
+      "Tea with five sugars. Don't judge.",
+      "Fist bump with the baker. Flour everywhere. Worth it.",
+      "Can carry the shopping in one trip. So I do. Every time.",
+      "Read the paper. Goblins took another fjord. Tram's late too. Busy day.",
+      "Never met a door I couldn't open. Met plenty I shouldn't have.",
+      "Got told to smile more. Smiled. They ran. Tusks.",
+      "One day I'll have a garden. Big pumpkins. Huge pumpkins.",
+      "My boots are older than some of my friends. Good boots.",
+      "Bit of rain never hurt an orc. Bit of sleet, maybe.",
+      "Bus seat squeaked. Driver flinched. I said sorry to both."
+    ],
+    "need": {
+      "sleep": [
+        "Eyes closing. Bed's {too short|too far|too soft}. Don't care.",
+        "Could sleep on a {bench|pile of sacks|tram}. Have before.",
+        "Yawned so wide my tusks clacked.",
+        "Bed. Now. Feet hanging off the end, like always.",
+        "Goblin head's loud tonight. Need sleep anyway.",
+        "Too tired to be grumpy. That's tired.",
+        "Just {ten minutes|one hour|a quick nap}. Then I'm a person again.",
+        "Nodded off standing up. Orc trick. Not a good one.",
+        "My snoring shakes the windows. Neighbours will cope.",
+        "Sleep first, {talk|work|think} later.",
+        "Pillow. Blanket. Silence. Simple wants.",
+        "Can't keep my eyes open. Big body, big tired.",
+        "Dreamt of goblin drums last night. Woke up worn out.",
+        "Bed's calling. Bed always wins.",
+        "Mattress on the floor. No frame survives me anyway."
+      ],
+      "hunger": [
+        "Stomach's growling louder than I do.",
+        "Need {meat|bread|a whole pie}. Now.",
+        "Could eat a {horse|goat|cart of turnips}. Not a real horse. Probably.",
+        "Smell of sausages. Following it.",
+        "Hungry orc is a grumpy orc. Fixing that.",
+        "Small portions here. Ordering three.",
+        "Gran's stew would sort me out. Gran's far.",
+        "Food first. Then I'll be nice.",
+        "Chewed my own sleeve thinking. Time to eat.",
+        "Where's the nearest {chip shop|kebab stand|bakery}?",
+        "Big frame needs big fuel.",
+        "Tusks are for apples. Find me apples.",
+        "Skipped lunch. Huge mistake.",
+        "Goblins eat anything. Humans want a menu. I want both.",
+        "Belly's empty. Head's empty. One fixes the other."
+      ],
+      "work": [
+        "Shift starts soon. Boots on.",
+        "Boss hired me for my back. Stays for my jokes.",
+        "Work's work. Do it right, go home.",
+        "Another day {lifting|sorting|guarding} things. Fine by me.",
+        "Clocked in early. Nobody noticed. I noticed.",
+        "Got a job, got a roof. Goblin side never had both.",
+        "Hands busy, head quiet. That's why I like work.",
+        "Should be at my post. Moving.",
+        "Paycheck's honest. Hours are long. Fair trade.",
+        "They put me on the {front desk|heavy crates|night door}. Again.",
+        "Customers flinch, then they tip. Every time.",
+        "Work done right is a quiet kind of proud.",
+        "Don't need a promotion. Need a chair that holds.",
+        "Late again. Tram got stuck in a loop bubble. Boss won't buy it.",
+        "Work first. Grumble after."
+      ],
+      "leisure": [
+        "Day off. Gonna do nothing. Loudly.",
+        "Pub, park or {arcade|river|market}? Big choices.",
+        "Fancy a game of {darts|cards|arm wrestling}. Nobody plays me twice.",
+        "Sun's out. Gonna sit on a wall and judge pigeons.",
+        "Free afternoon. Might fish. Might nap. Might both.",
+        "Arcade's got a punching machine. Broke it last time. Paid for it.",
+        "Want music. Loud music. Not goblin loud. Normal loud.",
+        "Could walk the long way home. Legs like it.",
+        "Bored. Bored orcs rearrange furniture.",
+        "Football on the telly tonight. Snacks ready.",
+        "Maybe the {cinema|bowling alley|fair}. Seats are small. Still fun.",
+        "Nothing to do. Great. Doing it.",
+        "Feet up, mug full, world can wait.",
+        "Want to laugh at something. Anything.",
+        "Should find a hobby. Gran says pottery. I say no."
+      ],
+      "crime": [
+        "Nobody looking. Big hands, quick hands.",
+        "Just {this once|tonight|the one time}. Then honest again.",
+        "Everyone already thinks orcs steal. Might as well.",
+        "No. Gran would know. Gran always knows. Still...",
+        "Quick, quiet, gone. Hard when you're my size.",
+        "The goblin side says take it. Human side says run after.",
+        "They won't miss {it|a crate|a few euros}. Rich folk never do.",
+        "Eris has eyes everywhere. Need a blind spot.",
+        "Heart's pounding. Bad sign. Doing it anyway.",
+        "One grab. In and out. Easy. Probably.",
+        "Keep the hood up. Tusks give me away.",
+        "Rent's due. Morals can wait a day.",
+        "Don't like this. Need it more than I don't like it.",
+        "Wait for the {guard|shopkeep|patrol} to turn. Then go.",
+        "If they catch me, I'll say I was holding it for a friend."
+      ],
+      "hygiene": [
+        "Smell like a {stable|gym sock|goblin war camp}. Need a bath.",
+        "Tusks need a scrub. Bits of lunch in there.",
+        "Shower's too low. Wash on my knees again.",
+        "People stepping back further than usual. Bad sign.",
+        "Hot water, big soap, long scrub. That's the plan.",
+        "Goblins think mud's a coat. I disagree today.",
+        "Sweated through my shirt. Again.",
+        "Need a wash before Mum sees me.",
+        "Hands black with {grease|soot|something}. Sink, please.",
+        "Clean orc, happy orc. Dirty orc, lonely orc.",
+        "Hair's a nest. Comb's lost in it.",
+        "Should wash. Should also eat. Wash first, they say.",
+        "Bath's too small, so it's the bucket and the yard.",
+        "Scrub behind the ears. Big ears, long job.",
+        "Smell myself. Regret it."
+      ],
+      "money": [
+        "Wallet's thin. Thinner than me ever was.",
+        "Down to {coins|bus fare|a button}. Need work.",
+        "Bouncers always get hired. Asking round the clubs.",
+        "Rent's due. Euros aren't.",
+        "Could sell my old {armour|guitar|boots}. Not the boots.",
+        "Mercenary work pays. Mum hates it. Mum's not paying rent.",
+        "Everything costs more. Food costs most, and I eat most.",
+        "Counting coins twice. Still the same number.",
+        "Should ask about overtime. Back can take it.",
+        "Lifting crates pays cash. Cash is good.",
+        "Pockets empty. Head full of plans. Plans don't buy bread.",
+        "Could do a {removal|guard shift|door job} this weekend.",
+        "Bank looked at me like I'd rob it. I only wanted a loan.",
+        "Money's tight. Belt's tighter.",
+        "Payday Friday. Friday's far."
+      ],
+      "safety": [
+        "Keep my head down. Hard when it's above everyone's.",
+        "Heat's on. Stay home a few days.",
+        "Police love a tall suspect. Lying low.",
+        "Hide it {under the floorboard|in the coal box|at Gran's}.",
+        "No trouble. Not today. Smile and nod.",
+        "Every siren sounds like it's for me.",
+        "Quiet street. Back door. Good.",
+        "Shouldn't have done that. Won't do it again. This week.",
+        "Eris's lot are looking. Wear the big hat.",
+        "Keep calm. Calm orcs don't get noticed. Much.",
+        "Don't run. Running orcs look guilty.",
+        "Lay low {till it blows over|a week|till payday}.",
+        "Change my walk. Everybody knows the orc walk.",
+        "Cousin's got a spare room. Might visit. For a while.",
+        "Head down, mouth shut. Hard, the second one."
+      ],
+      "comfort": [
+        "Want a place with high ceilings. Just once.",
+        "Bed that fits me. That's the dream.",
+        "Flat's damp. Walls are thin. Neighbours are loud. Me too.",
+        "Saved up a bit. Could move {closer to work|somewhere dry|out of the cellar}.",
+        "Big armchair. Real fire. A dog. Some day.",
+        "Tired of ducking in my own home.",
+        "Door frame's dented from my head. Time to move.",
+        "Want a kitchen with room to turn round.",
+        "Goblins sleep in heaps. I want a room. With a lock.",
+        "Warm floor, thick walls, quiet street. Not much to ask.",
+        "Landlord won't fix the {roof|boiler|window}. I could. Won't, for him.",
+        "Ground floor flat. No stairs to break.",
+        "Earned a better place. Gonna look.",
+        "Spring in the sofa's poking me. Spring's winning.",
+        "A garden. Just a small one. For big pumpkins."
+      ],
+      "social": [
+        "Need a pint and a mate. In that order.",
+        "Haven't laughed with anyone in days. Bad.",
+        "Who's {at the pub|in the square|about}? Gonna look.",
+        "Goblin head's full of voices. None of them talk to me.",
+        "Should call my cousins. Big family, someone'll pick up.",
+        "Want to talk. Real talk. Not just nodding.",
+        "People are scared to start. So I'll start.",
+        "Lonely's worse than hungry. Hungry you can fix with bread.",
+        "Might join a {darts team|choir|bowling league}. Meet folk.",
+        "Big hug for the next friend I see. Warned them.",
+        "Quiet week. Too quiet. Need noise and faces.",
+        "Even the goblins have each other. I've got the cat.",
+        "Someone to argue football with. That's all.",
+        "Smile at strangers. Some smile back. Most run.",
+        "Gonna knock on the neighbour's door. With biscuits."
+      ]
+    },
+    "weather": {
+      "rain": [
+        "Rain. Umbrellas don't come in my size.",
+        "Wet tusks, wet boots, wet everything.",
+        "Puddles up to everyone's ankles. Up to my nothing.",
+        "Rain's good for gardens. Bad for my mood.",
+        "Stood under a shop awning. Took up all of it. Sorry, everyone.",
+        "Smells like wet dog out here. Might be me.",
+        "Rain on the tin roof. Best sleep sound there is.",
+        "Hood up. Doesn't cover the ears. Never does.",
+        "Goblins love mud. Half of me's happy, half's {soaked|cross|cold}.",
+        "Drizzle. Not worth complaining. Complaining anyway.",
+        "Dripping off my nose. Lovely.",
+        "Rain makes the city quiet. I like quiet.",
+        "Socks soaked through. Day's ruined. Bit dramatic. True though.",
+        "Kids jumping in puddles. Joined in. No regrets.",
+        "Rain again. Gonna grow moss at this rate."
+      ],
+      "storm": [
+        "Thunder! Ha. Sounds like home.",
+        "Storm's loud. Goblin head's louder. Good night for a headache.",
+        "Wind tried to take my hat. Lost.",
+        "Lightning. Count the seconds. Big ones, close.",
+        "Tallest thing in the street during a storm. Not ideal.",
+        "Shutters banging. I'll fix them tomorrow. Or now.",
+        "Storm knocked a tree down. Moved it. Somebody had to.",
+        "Goblin drums or thunder? Can't tell tonight.",
+        "Power's out. Candles and stories. Fine by me.",
+        "Rain sideways. Coat useless. Walk faster.",
+        "Storms don't scare me. {Dentists|Paperwork|Gran} scare me.",
+        "Held the door against the wind for a whole shop.",
+        "Sky's angry. Me too, a bit. Sympathy.",
+        "Wind howling. Joining in. Quietly.",
+        "Big storm. Kettle on, door shut, done."
+      ],
+      "snow": [
+        "Snow! Big footprints everywhere. Mine.",
+        "Built a snowman my size. Scared the postman.",
+        "Cold bites the tusks. Weird feeling.",
+        "Goblins up north love snow. Gives them something to paint black.",
+        "Shovelled the whole street. Nobody asked. Felt right.",
+        "Breath like a dragon. Fun.",
+        "Snowball fight with the kids. I lost. On purpose. Mostly.",
+        "Slipped on ice. Pavement cracked, not me.",
+        "Snow makes everything quiet. Even the goblin head.",
+        "Need bigger gloves. Fingers {numb|red|stiff}.",
+        "Pushed a stuck car out of a drift. Got a wave.",
+        "Hot soup weather. Every hour's hot soup weather.",
+        "Snow on the tusks. Look like a walrus.",
+        "Wrapped in three scarves. Still cold.",
+        "White everywhere. Pretty. Don't tell anyone I said pretty."
+      ],
+      "clear": [
+        "Clear sky. Good day to get things done.",
+        "Sun's out. Tusks shining.",
+        "Nice day. Gonna eat outside. On a big rock.",
+        "Blue sky, no clouds. Suspicious. Enjoying it anyway.",
+        "Warm on the back. Like a big hand.",
+        "Shirt off weather. Not here. Not in town.",
+        "Clear as a bell. Can see the hills for once.",
+        "Sunny. Squinting. Look angrier than I am.",
+        "Fine weather. People smile more. Even at me.",
+        "Perfect day for {fishing|a walk|a long lunch}.",
+        "Sun's nice. Shade's nicer. Big shadow, though.",
+        "Washing dries fast today. Got a lot of washing.",
+        "Good light. Can read the small print for once.",
+        "Sky's clean. Head's clean. Good.",
+        "Too nice to stay in. Too nice to work. Working anyway."
+      ]
+    },
+    "time": {
+      "morning": [
+        "Morning. Coffee. Big mug. Bigger.",
+        "Up before the birds. Old habit from the camp.",
+        "Mornings are for grunting. Talking starts at ten.",
+        "Fresh bread smell. Following it again.",
+        "Shaved round the tusks. Nicked one. Ow.",
+        "Early tram. Same faces. Nod, nod, nod.",
+        "Goblin head's quiet in the mornings. They sleep late.",
+        "Breakfast: {eggs|porridge|leftover stew}. Lots.",
+        "Morning air's sharp. Wakes the tusks up.",
+        "New day. Haven't shouted at anyone yet. Good start.",
+        "Stretched. Back cracked like a branch. Better.",
+        "Morning paper, morning tea, morning grumble.",
+        "Slept through the alarm. Alarm's in pieces. Not my fault.",
+        "Sun's barely up. Already got stuff done.",
+        "Dew on the boots. Fresh start."
+      ],
+      "afternoon": [
+        "Afternoon slump. Need a {sandwich|nap|coffee}.",
+        "Half the day done. Other half's waiting.",
+        "Lunch sitting heavy. Worth it.",
+        "Sun's high. Shade's taken. By me.",
+        "Afternoon's for heavy lifting. Muscles are warm.",
+        "Nobody's in a hurry this time of day. Good.",
+        "Few more hours. Then pub.",
+        "Tea break. Five sugars. Two biscuits. Fine, four.",
+        "Yawned in front of a customer. Tusks out. Customer left.",
+        "Lazy hour. Good for thinking. Or not.",
+        "Shadows getting long. Mine's longest.",
+        "Middle of the day. Middle of the road. Middle of everything, me.",
+        "Kids out of school. Noise. Good noise.",
+        "Afternoon light makes the city gold. Even the bins.",
+        "Halfway through and still in a good mood. Record."
+      ],
+      "evening": [
+        "Evening. Boots off. Feet up.",
+        "Pub's warming up. So am I.",
+        "Sunset. Sky's the colour of goblin war paint. Not saying that out loud.",
+        "Dinner's on. Big pot.",
+        "Day's done. Did it right. Good.",
+        "Evening walk. Streetlamps flicker on as I pass. Not me. Probably.",
+        "Telly, stew, sofa. Orc heaven.",
+        "Goblin head waking up. They like the dark.",
+        "Call {Mum|Gran|my brother} tonight. Quick one.",
+        "Lamps on. Shadows big. Mine biggest.",
+        "Good tired. Not bad tired. Good.",
+        "Evening's for friends and noise.",
+        "Washed up. Dried up. Sat down. Done.",
+        "Smell of everyone's dinner in the street. Hungry again.",
+        "Cooler now. Nice. Good for a long walk home."
+      ],
+      "night": [
+        "Night. Goblin head's loudest now.",
+        "Can't sleep. Counting {sheep|goblins|bricks}.",
+        "Dark streets. People cross the road. Not my fault I'm big.",
+        "Night shift. Coffee and a torch.",
+        "Stars out. Somewhere up north they're drumming.",
+        "Good orc eyes. See fine in the dark. Goblin bit's useful.",
+        "Late. Should be in bed. Am not.",
+        "Quiet night. Suspicious night.",
+        "Walked a lady home. She was scared of the dark, then of me, then fine.",
+        "Moon's big. Makes me want to sing. Won't.",
+        "Owls. Cats. Me. The night crew.",
+        "Midnight snack. Then another. Then bed.",
+        "Streets empty. Finally room to walk.",
+        "Dreams tonight will be loud. Always are.",
+        "Lock the door, check the lock, check again."
+      ]
+    },
+    "season": {
+      "SPRING": [
+        "Spring. Pumpkin seeds in. This year they'll be huge.",
+        "Mud season. Goblin side's thrilled.",
+        "Flowers out. Sneezing. Big sneezes.",
+        "Coat off. Arms out. People stare. Spring.",
+        "Spring cleaning. Found three lost hats.",
+        "Birds nesting in the gutter. Leaving them.",
+        "Lambs in the fields. Cute. Hungry now. Shame.",
+        "Goblins up north move in spring. Paper will be full of it.",
+        "Longer days. More work. More pub.",
+        "Rain and sun every ten minutes. Make up your mind."
+      ],
+      "SUMMER": [
+        "Summer. Sweating like a forge.",
+        "Too hot for armour. Too hot for shirts. Too hot.",
+        "Ice cream. Four scoops. Small cone. Disaster.",
+        "Lake swim. Displaced half the water.",
+        "Long evenings, cold beer, warm stone. Good.",
+        "Sunburnt on the ears. Every year.",
+        "Summer festival. Tug of war. I'm banned.",
+        "Flies love me. Don't know why.",
+        "Barbecue weather. Bring meat.",
+        "Too hot to be grumpy. Too hot to be anything."
+      ],
+      "AUTUMN": [
+        "Autumn. Pumpkins ready. Moderately huge.",
+        "Leaves everywhere. Kicking them. Grown orc. Don't care.",
+        "Stew season's back. Best season.",
+        "Wind's getting cold. Big coat out of the cupboard.",
+        "Harvest work. Lifting sacks. Good pay, sore back.",
+        "Apples. Crunch. Tusks love apples.",
+        "Geese going south. Goblins going south too. Different reasons.",
+        "Dark by tea time. Lamps early.",
+        "Chestnuts roasting. Burnt my fingers. Worth it.",
+        "Fog in the mornings. Can't see my own feet. Far down there."
+      ],
+      "WINTER": [
+        "Winter. Three blankets. Feet still stick out.",
+        "Cold enough to crack tusks. Not mine. Tough tusks.",
+        "Christmas soon. Mum's side wants a feast, Dad's side wants carols. Both, loud.",
+        "Fire's lit. Not moving till March.",
+        "Ice on the windows. Breath on the glass. Drew a goblin.",
+        "Winter's when the Horde gets restless. Paper says so every year.",
+        "Hot cider. Big mug. Bigger.",
+        "Short days. Long nights. Long naps.",
+        "Shovelling snow for the old folks. Pays in cake.",
+        "Wool socks, two pairs. Boots barely close."
+      ]
+    },
+    "wealth": {
+      "poor": [
+        "Bread and water again. Strong orcs don't need much. Lie.",
+        "Shoes have holes. Toes say hello.",
+        "Goblin camps feed everyone. Thought about it. Didn't.",
+        "Sleeping in a room with four others. Snoring contest. I win.",
+        "Mended my coat again. More patch than coat.",
+        "Cheapest stew in town. Mostly water. Some hope.",
+        "Day labour line. Get picked first, every time. Small mercy.",
+        "Owe {the landlord|the baker|my cousin}. Will pay. Always pay.",
+        "Counting coins for the bus. Walking instead.",
+        "Poor's not shameful. Lazy is. Not lazy.",
+        "Recruiters for the Horde hang round the soup kitchen. Ignore them.",
+        "One good meal a day. Making it count."
+      ],
+      "comfortable": [
+        "Steady wage, small flat, full fridge. Not bad for an orc.",
+        "Bought new boots without counting. Felt rich. Am not.",
+        "Send a bit home to Mum every month. Good feeling.",
+        "Enough for the pub and the rent. That's enough.",
+        "Got savings. Small. Mine.",
+        "Comfortable. Chair still too small, though.",
+        "Paid off the {sofa|bike|tusk dentist}. Debt free. Ha.",
+        "Holiday this year. Seaside. Big towel.",
+        "Not rich, not poor. Just orc.",
+        "Treated the whole crew to lunch. Once. Still talking about it.",
+        "Good job, good mates, good boots. What else.",
+        "Can afford the big bag of {potatoes|apples|onions} now. Small joys."
+      ],
+      "rich": [
+        "Rich. Bought a bed my size. Custom. Cried a bit.",
+        "Fancy restaurant. Tiny food. Ordered the whole menu.",
+        "House with high ceilings. Never ducking again.",
+        "Money's nice. Still shop at the market. Habit.",
+        "Rich folk invite me to parties. To look scary at the door. I go as a guest now.",
+        "Gold tusk caps? No. Tacky. Thought about it, though.",
+        "Bought Mum a house. Best thing I ever did.",
+        "Banker smiles at me now. Weird.",
+        "Could retire. Would get bored. Keep working.",
+        "Gave a big tip. Waiter fainted. Overdid it.",
+        "Thinking of a place in Varlenia. Too posh. Too elfy.",
+        "Rich orc's still an orc. Still loud. Still honest."
+      ]
+    },
+    "familiar": [
+      "That lot again. Good lot. Loud, like me.",
+      "Those travellers never flinch at the tusks. I like that.",
+      "Owe that crew a {beer|favour|hug}. Pay when I see them.",
+      "They said hello first. People don't, usually.",
+      "Good people. Would carry their bags if they asked.",
+      "That party fights like orcs and talks like humans. Best of both.",
+      "Saw them in town. Waved too hard. Knocked a sign.",
+      "They remember my name. Means something.",
+      "Trust that crew. Don't trust many.",
+      "If they need muscle, I'm here. Told them.",
+      "Those travellers again. Still alive. Good. Worried a bit.",
+      "They laughed at my joke. The bad one. Real friends.",
+      "Should cook for that lot. Big pot. Gran's recipe.",
+      "That camper of theirs. Bet it's loud. Respect.",
+      "They never once asked if I bite. Good manners.",
+      "Friends of mine, that party. Don't mess with them.",
+      "They help folk round here. Noticed. Orcs notice.",
+      "Good faces. Seen enough bad ones to know.",
+      "Hope they're eating right. Look thin. Everyone looks thin to me.",
+      "Would follow that lot into a fight. Not a choir, though."
+    ],
+    "hordeGround": [
+      "Horde ground. Goblin head's so loud here I can almost hear words.",
+      "Corpse paint on every face. They keep offering me a brush.",
+      "They call me cousin here. Half right.",
+      "Recruiter asked if I want a banner. I want a sandwich.",
+      "Everyone shouts here. For once I'm the quiet one.",
+      "Junehem on every loudspeaker. Every. Single. One.",
+      "Goblin kids climbing on me like a tree. Fine. I'm a tree today.",
+      "They think I'm one of them. Not saying I'm not. Not saying I am.",
+      "The pull's strong here. Like a song stuck in my teeth.",
+      "Food's {raw|strange|still moving}. Eating it. Being polite.",
+      "Nobody stares at the tusks here. Feels odd. Feels nice.",
+      "DA, DA, DA all day. Caught myself saying it back.",
+      "Big drums at night. Can't sleep. Tapping my foot.",
+      "They want me for the front line. I'm a {librarian|bartender|secretary}. Told them.",
+      "Goblin camp smells of smoke and wet fur. Smells like Mum's side.",
+      "Someone painted my door black. Meant as a compliment.",
+      "Horde's all heart and no plan. Like my uncle.",
+      "Here I'm the BIG-HEAD. Because I can read. Funny.",
+      "Hurt one goblin here, the whole Horde knows. Walking careful.",
+      "Banners everywhere, rules nowhere. Kind of restful.",
+      "Got handed a spear at breakfast. Gave it back. Kept the toast.",
+      "They sing about Norway like it's heaven. It's cold. I've been.",
+      "Shared head's shouting victory. Of what? Nobody knows.",
+      "Human half wants a timetable. Horde has no timetable.",
+      "Goblin granny pinched my cheek. Called me tall boy. Fair.",
+      "Wouldn't live here. Wouldn't mind visiting Gran here.",
+      "Everyone's family here. That's the trap. That's the comfort.",
+      "Asked for a menu. Got laughed at by forty goblins.",
+      "Horde ground, but the bread's good. Somebody human bakes it.",
+      "Keep my head. Not the goblin head. My own."
+    ],
+    "abroad": [
+      "Cities pay orcs well. Strong backs, honest hands.",
+      "Goblin head's faint here. Like a radio two streets over.",
+      "Humans here are polite. Scared, but polite.",
+      "Got a library card. Librarian made me sign it twice. Capitals.",
+      "Neighbours brought me a cake when I moved in. Then a smaller chair. Kind.",
+      "Nobody here shouts DA. Miss it a bit. Just a bit.",
+      "Police stop me more. Smile, show papers, move on.",
+      "Human town, human doors, human-sized everything.",
+      "Learned to queue. Proud of it.",
+      "Paper says the Horde took another valley. Folk look at me. I read the sports page.",
+      "Shopkeeper calls me 'big lad'. I call her 'small lady'. We laugh.",
+      "Paying taxes. Very human. Feel very human today.",
+      "Doing night school. {Maths|French|Bookkeeping}. Teacher's scared of me. Getting better.",
+      "City folk ask about the Horde like I'd know. I'm from Bremen.",
+      "Made friends at the depot. Took a year. Worth it.",
+      "Church bells, tram bells, shop bells. Humans love bells.",
+      "Joined the choir. Bass. Very bass.",
+      "Human food's too small and too clean. Getting used to it.",
+      "They said I'd never fit in. Fit in fine. Don't fit the buses.",
+      "Got a pension plan. Goblins would laugh themselves sick.",
+      "Mages' Guild man asked to study my hearing. Said no. Polite no.",
+      "Town's quiet. Head's quiet. Strange, quiet.",
+      "Bus driver waits for me now. Knows I run late.",
+      "Corner pub's got a stool with my name on it. Reinforced.",
+      "Wore a suit to a wedding. Split a seam. Still danced.",
+      "People here think tusks are rude. Smile with my mouth shut.",
+      "Humans make rules for everything. Easier than guessing.",
+      "Shop sells big gloves for orcs now. Progress.",
+      "Far from the Horde. Close to the bakery. Right choice.",
+      "Kids here think I'm a giant from a story. Let them."
+    ],
+    "lore": {
+      "collective": [
+        "The goblin head. Everyone shouting, nobody listening. I get the echo.",
+        "Full goblins hear the shared head clear. I hear it through a wall.",
+        "Shared head went quiet for a second today. Everyone must be eating.",
+        "Can't send anything into the goblin head. Only catch bits. Like eavesdropping.",
+        "Someone hurt a Naguka up north. Felt the whole head bristle.",
+        "Shared head's mostly {snacks|songs|shouting}. Like a pub.",
+        "Mum hears the shared head clear. Says I'm lucky I don't.",
+        "Goblin head hums when I'm angry. Bad combo. Breathe.",
+        "Verden read the goblin head with magic. I get it free. Worse signal.",
+        "Heard 'BIG-HEAD' in the shared head. Meant a mage. Or a cabbage.",
+        "Shared head feels like family shouting from the kitchen.",
+        "Sometimes the goblin head sings. Junehem. Always Junehem.",
+        "Wish I could switch the goblin head off. Wish I could turn it up. Both.",
+        "Nobody in the shared head knows about the dentist. That's mine.",
+        "Goblin head says march. Legs say sit. Legs win.",
+        "Half hearing a war is still hearing a war.",
+        "Shared head never sleeps. Goblins take shifts, I reckon.",
+        "Felt a thousand goblins laugh at once. Laughed too. Didn't know why.",
+        "Mages ask what the goblin head is like. Like a stadium next door.",
+        "One day I'll catch a full sentence in the goblin head. Probably about soup."
+      ],
+      "tusks": [
+        "Tusks first, face second. That's how people see me.",
+        "Polished the tusks. Proper orc grooming.",
+        "Tusk dentist charges double. Says it's two jobs.",
+        "Chipped a tusk on a {jar lid|pint glass|door handle}. Embarrassing.",
+        "Tusks keep my scarf in place. Useful.",
+        "Human side never forgets the tusks. Human eyes never do either.",
+        "Gran says good tusks mean good luck. Gran says a lot.",
+        "Can't play the flute. Tusks. Tried.",
+        "Kissing's tricky. Don't ask.",
+        "Little tusk ring on the left one. Mum hates it. I love it.",
+        "Tusks grow a bit every year. So does the dentist's bill.",
+        "Photo booth. Four pictures. Four tusks in the way.",
+        "Goblins file their teeth sharp. Mine are fine as they are.",
+        "Wore a mask once. Tusks poked through. Fooled nobody.",
+        "Toothbrush for the teeth, scrubbing brush for the tusks.",
+        "Proud of my tusks. Got them from Mum. And from Dad's nose, somehow.",
+        "Smiling's a risk. Smiling anyway.",
+        "Tusks and a tie. Job interview look. Got the job."
+      ],
+      "horde": [
+        "Horde wants every orc. Sends letters. Big letters. Mostly drawings.",
+        "Horde's coming down from Scandinavia. City's still paying me. I stay.",
+        "Cousin joined the Horde. Writes home about the food. Lies.",
+        "The Horde would give me a banner and a spear. The city gives me a pension.",
+        "Horde calls it coming home. Never lived there.",
+        "People ask whose side I'm on. Mine. Gran's. Bakery's.",
+        "Horde's not evil. Just loud and hungry and very sure.",
+        "Every time the Horde wins a battle, someone at work gets quiet near me.",
+        "Horde recruiter at the station. Corpse paint and a clipboard. Weird mix.",
+        "If the Horde comes here, I'll make tea. Talk first. Orc rule.",
+        "Horde has no paperwork. Tempting. Not that tempting.",
+        "Goblins from the Kola shaft went south. Some went to Norway. Some went to Mum.",
+        "Vatican wants the Horde as an army. Horde wants the Vatican as a snack.",
+        "Horde marches when Junehem plays. Feet tap here too. Not marching.",
+        "Folk think orcs spy for the Horde. Can't even keep a secret from Gran.",
+        "Horde took another fjord. Bad week for fjords.",
+        "Two families pulling. Horde one way, city the other. Arms are long. Coping.",
+        "Horde sends a messenger every winter. I send back biscuits.",
+        "Fought for the city once. Against goblins. Didn't feel good. Did it.",
+        "Horde says humans hate us. Humans gave me a job. Horde gave me a headache."
+      ],
+      "family": [
+        "Mum's Naguka. Dad's human. They met at a border fight. Romantic, they say.",
+        "Dad taught me to read. Mum taught me to headbutt. Both useful.",
+        "Family dinner. Half eat with forks. Half don't. Nobody minds.",
+        "Gran speaks goblin to me. I answer in human. We understand fine.",
+        "Dad's side asks if I'm eating. Mum's side asks if I'm winning.",
+        "Little sister's at university. First orc in the family to wear a gown.",
+        "Too many cousins. Half of them Horde, half of them bus drivers.",
+        "Mum wanted me tough. Dad wanted me kind. Got both. Hard work.",
+        "Christmas at ours: carols, then a wrestling match. Tradition.",
+        "Dad's mum never liked Mum. Then Mum fixed her roof. Best friends now.",
+        "Orc baby photos. Big baby. Tiny pram. Disaster.",
+        "Mum says the goblin head sings her to sleep. Dad says she snores.",
+        "Got Dad's eyes and Mum's everything else.",
+        "Brother's a monk. Shaved head, big tusks, very calm. Scares me.",
+        "Gran sends socks. Goblin knitting. Three toes too many. Wear them anyway.",
+        "Want kids one day. Big ones. Loud ones. Kind ones.",
+        "Family motto: say it straight, hug it out.",
+        "Uncle tells everyone he's full goblin. His mum was a baker from Lyon.",
+        "Mum's people never forget a slight. Dad's people never forget a birthday. I forget both.",
+        "Phoned home. Mum shouted, Dad cried, Gran hung up. Normal call."
+      ],
+      "kola": [
+        "Soviets dug too deep in 1970. Goblins climbed out. Here I am, eventually.",
+        "Gran came up the Kola shaft. Says the first sky was too big.",
+        "Kola borehole. Twelve kilometres of hole and one bad idea.",
+        "Should send the Soviets a thank you card. Or a bill.",
+        "Gran still won't take lifts. Says up should be climbed.",
+        "Underground goblins lived in caves for millions of years. I get claustrophobic in a lift.",
+        "Kola, 1970. Mum calls it the day the roof opened.",
+        "Visited the Kola site once. Just a lid now. Big rusty lid.",
+        "Down there it was dark and warm. Up here, it's bright and rent.",
+        "Gran's first word on the surface was 'bird'. Then she ate it.",
+        "Kola scientists wanted to measure the Earth. Measured goblins instead.",
+        "Some days I wonder what's still down there. Then I eat lunch.",
+        "Old Soviet drill bit in Gran's garden. Uses it as a flower pot.",
+        "Hole in Russia, orc in the city. Long story. Good one.",
+        "Gran says the caves were older than the gods. Then she says it again."
+      ],
+      "junehem": [
+        "Junehem on the radio again. Goblins went quiet to listen. I turned it off.",
+        "Black metal band turned gods. Mum's got a poster. Dad's got earplugs.",
+        "Junehem can't die while one goblin believes. Long tour.",
+        "Know all the words to {one|two|most} Junehem songs. Don't tell work.",
+        "Every government tried to kill Junehem. Album sales went up.",
+        "Junehem riff in the goblin head. Stuck there for days.",
+        "Corpse paint. Goblins wear it to war. I wore it to a party once. Wrong party.",
+        "Not a believer. Just like the drums. Honest.",
+        "Junehem lead the Horde with guitars. Generals hate that.",
+        "One Junehem member vanished. Nobody knows where. Goblin head's always asking.",
+        "Played Junehem backwards once. Sounded the same. Scary.",
+        "Neighbour complained about my music. It was the washing machine.",
+        "Mum prays to Junehem. Dad prays she'll stop. Family harmony.",
+        "Junehem concert ticket is a spear. Not going.",
+        "Goblins headbang in unison. Whole valley nods. Saw it on the news.",
+        "Gods of metal. Some gods get temples. These get amplifiers.",
+        "Junehem's a guilty pleasure. Very guilty. Very loud.",
+        "Shop played Junehem. Two goblins and me froze. Then the till rang.",
+        "Bought a Junehem shirt for Mum. Biggest size. Tight on her.",
+        "When Junehem sing slow, the goblin head cries. First time I felt that, I cried too."
+      ],
+      "squishing": [
+        "Since the Squishing, the bus takes forever. Rule of 80. Nobody speeds now.",
+        "Mate drove past 80 once. Lived the same Tuesday for a month.",
+        "Loop bubble near work. Same pigeon every day. I named it.",
+        "Ninety-two dimensions squashed together. Like a family sofa.",
+        "Liminal engine buses now. Fast and no bubbles. Seats still small.",
+        "Bubba fellow made the liminal engine. Rich now. Good for him.",
+        "Bits of other worlds falling into ours. Found a {blue rock|weird fish|hat} in the park.",
+        "Squishing started in 1992. Things got weird. Weirder. Still here.",
+        "Ran too fast chasing a bus. Nearly got looped. Walk now.",
+        "Mages' Guild says they've got the Squishing in hand. Hand's shaking.",
+        "Green Fields got squished bad. Verden came here. Nice folk. Odd eggs.",
+        "Lava's harmless now. Drains your magic. Still not stepping in it.",
+        "Old map, new roads. Squishing moves things round.",
+        "Loop bubble ate my Tuesday. Gave it back Wednesday. Same Tuesday.",
+        "The Omega Tower holds the dimensions together. Hope somebody's checking the glue.",
+        "Squishing's like a crowded tram. Push, shove, apologise.",
+        "Speed limit's 80 for everyone. Even horses. Even orcs.",
+        "World ended a few times since '92. Still got work Monday."
+      ],
+      "trades": [
+        "Bartender. Nobody starts a fight at my bar. Funny that.",
+        "Librarian orc. Shh. Big shh.",
+        "Secretary. Type with two fingers. Fast two fingers.",
+        "Mercenary work pays, but you eat cold.",
+        "Monks took me in at twenty. Taught me patience. Still learning.",
+        "Jester at the fair. Juggling anvils. Crowd loves it.",
+        "Trading's easy. Look big, say a fair price, mean it.",
+        "Samurai training. Small swords. Big respect.",
+        "Student. Old desk. Knees under the chin. Passing, though.",
+        "Nun at the convent down the road's an orc. Best gardener in town.",
+        "Warrior by trade. Mostly guard warehouses. Not a lot of glory in crates.",
+        "Orcs get the {heavy|night|loud} jobs. Fine. We're good at them.",
+        "Boss said I'm the most reliable worker he has. Then asked me to move a car.",
+        "Union rep now. Nobody argues with the union rep.",
+        "Cities hire orcs. Horde wants orcs. Cities pay on time.",
+        "Did a shift as a waiter. Trays too small. Hands too big. Plates everywhere.",
+        "Learned bookkeeping. Numbers don't flinch at tusks.",
+        "Bouncer at night, poet in the morning. Tell no one.",
+        "Every job I've had started with 'you're bigger than I expected'.",
+        "Work boots, work hands, work done. Good day."
+      ]
+    }
+  },
+  "script": {
+    "positive": [
+      [
+        [
+          0,
+          "{b}! Good to see you. Hug?"
+        ],
+        [
+          1,
+          "Gently this time, {a}. My ribs remember."
+        ],
+        [
+          0,
+          "Gently. Promise. Mostly."
+        ]
+      ],
+      [
+        [
+          0,
+          "Fixed your gate, {b}. Hinge was hanging."
+        ],
+        [
+          1,
+          "You didn't have to do that."
+        ],
+        [
+          0,
+          "Was walking past. Hands were bored."
+        ]
+      ],
+      [
+        [
+          0,
+          "Brought soup. Gran's recipe. Made too much. Always do."
+        ],
+        [
+          1,
+          "You're an angel, {a}. Smells amazing."
+        ],
+        [
+          0,
+          "Angel with tusks. New kind."
+        ]
+      ],
+      [
+        [
+          0,
+          "Got the job, {b}. The {library|depot|hotel} one."
+        ],
+        [
+          1,
+          "I knew you would! We're celebrating."
+        ],
+        [
+          0,
+          "First round's mine. Second too. I'm happy."
+        ]
+      ],
+      [
+        [
+          0,
+          "You didn't flinch when we met. Remember that."
+        ],
+        [
+          1,
+          "Why would I? You were holding a kitten."
+        ],
+        [
+          0,
+          "Still. Most people flinch. You didn't. Friends for that."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lift you up so you can see the parade?"
+        ],
+        [
+          1,
+          "Ha! Go on, then."
+        ],
+        [
+          0,
+          "Best seat in town. Free."
+        ]
+      ],
+      [
+        [
+          0,
+          "Thanks for the scarf, {b}. Fits. Nothing fits. This fits."
+        ],
+        [
+          1,
+          "Took me three weeks and every ball of wool in the shop."
+        ],
+        [
+          0,
+          "Wearing it till it falls apart. Then wearing the bits."
+        ]
+      ],
+      [
+        [
+          0,
+          "You laugh at my jokes, {b}. Even the bad ones."
+        ],
+        [
+          1,
+          "Especially the bad ones."
+        ],
+        [
+          0,
+          "Ha! Good. Got loads."
+        ]
+      ],
+      [
+        [
+          0,
+          "Need help moving house? I'm free Saturday."
+        ],
+        [
+          1,
+          "Really? That'd save me a van."
+        ],
+        [
+          0,
+          "I am the van. Bring sandwiches."
+        ]
+      ],
+      [
+        [
+          0,
+          "Passed my exam, {b}. Bookkeeping. Top marks."
+        ],
+        [
+          1,
+          "That's brilliant! Told you numbers liked you."
+        ],
+        [
+          0,
+          "Numbers don't care about tusks. Good friends, numbers."
+        ]
+      ],
+      [
+        [
+          0,
+          "Saved you a seat. Reinforced one. You can have it."
+        ],
+        [
+          1,
+          "Then where will you sit?"
+        ],
+        [
+          0,
+          "Floor. Floor never breaks."
+        ]
+      ],
+      [
+        [
+          0,
+          "Heard you were ill. Brought {oranges|broth|a blanket}."
+        ],
+        [
+          1,
+          "You're too kind, {a}."
+        ],
+        [
+          0,
+          "Not kind. Practical. Get well. Then darts."
+        ]
+      ],
+      [
+        [
+          0,
+          "My mum wants to meet you. She's... a lot."
+        ],
+        [
+          1,
+          "I'd love to meet her!"
+        ],
+        [
+          0,
+          "Brace yourself. She hugs harder than me."
+        ],
+        [
+          1,
+          "Is that possible?"
+        ],
+        [
+          0,
+          "Yes."
+        ]
+      ],
+      [
+        [
+          0,
+          "Found your dog. He was at the butcher's. Again."
+        ],
+        [
+          1,
+          "Oh, thank goodness. Where would I be without you?"
+        ],
+        [
+          0,
+          "Out a dog. And a sausage."
+        ]
+      ],
+      [
+        [
+          0,
+          "You stood up for me at the market. Didn't forget."
+        ],
+        [
+          1,
+          "That man was being horrible. Somebody had to say it."
+        ],
+        [
+          0,
+          "Usually that somebody's me. Nice, being on the other side."
+        ]
+      ],
+      [
+        [
+          0,
+          "Pumpkin. Biggest one yet. For you."
+        ],
+        [
+          1,
+          "It's bigger than my door, {a}."
+        ],
+        [
+          0,
+          "I'll roll it in. Then soup for a month."
+        ]
+      ],
+      [
+        [
+          0,
+          "Teach me that card game again? Lost track last time."
+        ],
+        [
+          1,
+          "You won every hand last time."
+        ],
+        [
+          0,
+          "Yes. Don't know how. Want to know how."
+        ]
+      ],
+      [
+        [
+          0,
+          "Good news. Gran's coming to visit. Bad news. She wants to meet everyone."
+        ],
+        [
+          1,
+          "I'll bake something."
+        ],
+        [
+          0,
+          "Bake two somethings. She eats like me."
+        ]
+      ],
+      [
+        [
+          0,
+          "Thanks for not asking about the tusks, {b}. Everybody asks."
+        ],
+        [
+          1,
+          "I figured you'd tell me if you wanted."
+        ],
+        [
+          0,
+          "Okay. They're great. That's the story."
+        ]
+      ],
+      [
+        [
+          0,
+          "Look. Fixed the old radio. Plays three stations now."
+        ],
+        [
+          1,
+          "It hasn't worked in ten years!"
+        ],
+        [
+          0,
+          "Needed a bang. Right place, right bang."
+        ]
+      ],
+      [
+        [
+          0,
+          "Walked you home last night. Safe streets."
+        ],
+        [
+          1,
+          "Nobody bothered us once. Funny, that."
+        ],
+        [
+          0,
+          "Not funny. Tusks."
+        ]
+      ],
+      [
+        [
+          0,
+          "Happy birthday, {b}. Made a card. Glitter's everywhere."
+        ],
+        [
+          1,
+          "It's beautiful, {a}. Really."
+        ],
+        [
+          0,
+          "Took four tries. Big fingers. Small scissors."
+        ]
+      ]
+    ],
+    "negative": [
+      [
+        [
+          0,
+          "You moved my chair again, {b}. The strong one."
+        ],
+        [
+          1,
+          "It was in the middle of the room!"
+        ],
+        [
+          0,
+          "Middle's where I sit. Put it back."
+        ]
+      ],
+      [
+        [
+          0,
+          "Heard what you said. About orcs. At the pub."
+        ],
+        [
+          1,
+          "It was a joke, {a}. Lighten up."
+        ],
+        [
+          0,
+          "I laugh at good jokes. Didn't laugh."
+        ]
+      ],
+      [
+        [
+          0,
+          "You owe me twenty euros. Three weeks now."
+        ],
+        [
+          1,
+          "I'll pay you Friday, I swear."
+        ],
+        [
+          0,
+          "Said that last Friday. I remember Fridays."
+        ]
+      ],
+      [
+        [
+          0,
+          "Stop crossing the street when you see me. I see you do it."
+        ],
+        [
+          1,
+          "I wasn't... I needed the other side."
+        ],
+        [
+          0,
+          "Every day? Needed it every day?"
+        ]
+      ],
+      [
+        [
+          0,
+          "You called the police on my cousin. He was singing."
+        ],
+        [
+          1,
+          "At three in the morning! In goblin!"
+        ],
+        [
+          0,
+          "Fine. Fair. Still. Could've knocked."
+        ]
+      ],
+      [
+        [
+          0,
+          "OI! That's my lunch, {b}."
+        ],
+        [
+          1,
+          "It was in the shared fridge."
+        ],
+        [
+          0,
+          "Had my name on it. Big letters. Capitals."
+        ]
+      ],
+      [
+        [
+          0,
+          "You told the boss I broke the {door|shelf|press}."
+        ],
+        [
+          1,
+          "Well, didn't you?"
+        ],
+        [
+          0,
+          "Yes. Wanted to tell him myself. Honest orcs confess."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your dog bit me again."
+        ],
+        [
+          1,
+          "He's just playing! He likes you."
+        ],
+        [
+          0,
+          "He likes my ankle. Different thing."
+        ]
+      ],
+      [
+        [
+          0,
+          "You asked if I'm with the Horde. In front of everyone."
+        ],
+        [
+          1,
+          "I was only curious, {a}."
+        ],
+        [
+          0,
+          "Curious. Loud curious. Folk looked at me all day."
+        ]
+      ],
+      [
+        [
+          0,
+          "Borrowed my tools. Returned them bent."
+        ],
+        [
+          1,
+          "They were bent already!"
+        ],
+        [
+          0,
+          "No. I bend things. I know my bends."
+        ]
+      ],
+      [
+        [
+          0,
+          "Stop calling me 'big guy', {b}."
+        ],
+        [
+          1,
+          "It's affectionate!"
+        ],
+        [
+          0,
+          "Got a name. Use it. Short name. Easy."
+        ]
+      ],
+      [
+        [
+          0,
+          "Saw you cheat at darts."
+        ],
+        [
+          1,
+          "Prove it."
+        ],
+        [
+          0,
+          "Your foot was over the line. I'm tall. I see lines."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your music. Too loud."
+        ],
+        [
+          1,
+          "Rich, coming from you."
+        ],
+        [
+          0,
+          "I'm loud in the day. You're loud at night. Different crime."
+        ]
+      ],
+      [
+        [
+          0,
+          "You stepped on my foot and didn't say sorry."
+        ],
+        [
+          1,
+          "Your feet are everywhere, {a}!"
+        ],
+        [
+          0,
+          "Still my feet. Still want a sorry."
+        ]
+      ],
+      [
+        [
+          0,
+          "Told the landlord orcs break things. Now he won't fix my sink."
+        ],
+        [
+          1,
+          "I never said that!"
+        ],
+        [
+          0,
+          "He said you did. Somebody's lying. Not me."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hid from me at the market. Saw you behind the cabbages."
+        ],
+        [
+          1,
+          "I wasn't hiding. I was choosing cabbages."
+        ],
+        [
+          0,
+          "For ten minutes? Crouching?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Laughed at my tusk ring."
+        ],
+        [
+          1,
+          "It's a bit much, isn't it?"
+        ],
+        [
+          0,
+          "It's mine. It stays. You can go."
+        ]
+      ],
+      [
+        [
+          0,
+          "You keep parking on my side. Moved your car twice now."
+        ],
+        [
+          1,
+          "You moved my car? With your hands?"
+        ],
+        [
+          0,
+          "Third time it goes on the roof."
+        ]
+      ],
+      [
+        [
+          0,
+          "You said I wasn't welcome at the choir."
+        ],
+        [
+          1,
+          "I said your voice was too low for the altos."
+        ],
+        [
+          0,
+          "So put me with the basses. Problem solved. Sorry I shouted."
+        ]
+      ]
+    ],
+    "neutral": [
+      [
+        [
+          0,
+          "Morning. Tram's late."
+        ],
+        [
+          1,
+          "Again? Third time this week."
+        ],
+        [
+          0,
+          "Loop bubble on the bridge. Driver won't risk it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Where's the {post office|hardware shop|bakery} round here?"
+        ],
+        [
+          1,
+          "Second left, past the fountain."
+        ],
+        [
+          0,
+          "Thanks. Left's the one with the hand that doesn't write, yes?"
+        ],
+        [
+          1,
+          "That's the one."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is this seat taken?"
+        ],
+        [
+          1,
+          "No, go ahead."
+        ],
+        [
+          0,
+          "Might take two. Sorry in advance."
+        ]
+      ],
+      [
+        [
+          0,
+          "Big queue today."
+        ],
+        [
+          1,
+          "Payday. Everyone's out."
+        ],
+        [
+          0,
+          "Good. I'll wait. I'm good at waiting now."
+        ]
+      ],
+      [
+        [
+          0,
+          "Paper says rain tomorrow."
+        ],
+        [
+          1,
+          "Paper's wrong half the time."
+        ],
+        [
+          0,
+          "Then I'll bring half an umbrella."
+        ]
+      ],
+      [
+        [
+          0,
+          "You know a good dentist? Big mouth. Big job."
+        ],
+        [
+          1,
+          "There's one on Market Street. Very patient."
+        ],
+        [
+          0,
+          "Needs to be. Thanks."
+        ]
+      ],
+      [
+        [
+          0,
+          "That shop sells big boots. You know it?"
+        ],
+        [
+          1,
+          "The one by the station? Yes, my brother buys there."
+        ],
+        [
+          0,
+          "Your brother's big?"
+        ],
+        [
+          1,
+          "Not like you. Big feet, though."
+        ]
+      ],
+      [
+        [
+          0,
+          "Heard the news? Horde took another town up north."
+        ],
+        [
+          1,
+          "I heard. Scary times."
+        ],
+        [
+          0,
+          "Scary up there. Down here we've got buses. Keep calm."
+        ]
+      ],
+      [
+        [
+          0,
+          "Busy at work?"
+        ],
+        [
+          1,
+          "Mad. You?"
+        ],
+        [
+          0,
+          "Moved forty crates before lunch. Normal Tuesday."
+        ]
+      ],
+      [
+        [
+          0,
+          "Does this bus go past the {hospital|stadium|town hall}?"
+        ],
+        [
+          1,
+          "It does. Four stops."
+        ],
+        [
+          0,
+          "Good. I'll stand. Seats and me don't get on."
+        ]
+      ],
+      [
+        [
+          0,
+          "Nice dog."
+        ],
+        [
+          1,
+          "Thanks. He's usually scared of strangers."
+        ],
+        [
+          0,
+          "He's licking my boot."
+        ],
+        [
+          1,
+          "Well. Usually."
+        ]
+      ],
+      [
+        [
+          0,
+          "Market's got cheap apples today."
+        ],
+        [
+          1,
+          "Oh? I'll pop by."
+        ],
+        [
+          0,
+          "Go early. I'm going too. I buy a lot."
+        ]
+      ],
+      [
+        [
+          0,
+          "What time's the library open till?"
+        ],
+        [
+          1,
+          "Seven, I think."
+        ],
+        [
+          0,
+          "Good. Got a book to return. Late. Big fine."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hot today."
+        ],
+        [
+          1,
+          "Tell me about it."
+        ],
+        [
+          0,
+          "Sweating like a forge. Sorry. Standing downwind."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your roof's leaking. Saw it from the street."
+        ],
+        [
+          1,
+          "I know. Can't afford a roofer yet."
+        ],
+        [
+          0,
+          "Got a ladder? I'll look. No charge. Lunch, maybe."
+        ]
+      ],
+      [
+        [
+          0,
+          "Excuse me. You dropped this."
+        ],
+        [
+          1,
+          "Oh! My wallet. Thank you."
+        ],
+        [
+          0,
+          "Check it. People think orcs pinch."
+        ],
+        [
+          1,
+          "It's all here. Thank you, really."
+        ]
+      ],
+      [
+        [
+          0,
+          "This the line for tickets?"
+        ],
+        [
+          1,
+          "Yes, but it's sold out for tonight."
+        ],
+        [
+          0,
+          "Bah. Tomorrow, then."
+        ]
+      ],
+      [
+        [
+          0,
+          "You watch the match last night?"
+        ],
+        [
+          1,
+          "Terrible referee."
+        ],
+        [
+          0,
+          "Blind. Should've been an orc. We see everything."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do they deliver here? Bought a bed. Special size."
+        ],
+        [
+          1,
+          "They do, but it takes a week."
+        ],
+        [
+          0,
+          "Waited twenty years for a bed that fits. One more week. Fine."
+        ]
+      ],
+      [
+        [
+          0,
+          "Price of bread's gone up again."
+        ],
+        [
+          1,
+          "Everything has."
+        ],
+        [
+          0,
+          "I eat a lot of bread. Feels personal."
+        ]
+      ],
+      [
+        [
+          0,
+          "Saw a mage on the corner. Fixing a streetlamp with a spell."
+        ],
+        [
+          1,
+          "The Guild does that now. Saves on electricians."
+        ],
+        [
+          0,
+          "Took him an hour. I'd have hit it. Ten seconds."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is the swimming pool open?"
+        ],
+        [
+          1,
+          "Till six. Why?"
+        ],
+        [
+          0,
+          "Last time I jumped in, they closed it for the day. Checking."
+        ]
+      ],
+      [
+        [
+          0,
+          "Need a hand with that?"
+        ],
+        [
+          1,
+          "It's a bit heavy, yes."
+        ],
+        [
+          0,
+          "Where to?"
+        ],
+        [
+          1,
+          "Just the third floor."
+        ],
+        [
+          0,
+          "Easy. Stairs might complain."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lot of folk at the fair this year."
+        ],
+        [
+          1,
+          "Better weather than last year."
+        ],
+        [
+          0,
+          "Strongman game's back. Going to have a go. Again."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your cat's on my roof."
+        ],
+        [
+          1,
+          "She does that. She'll come down."
+        ],
+        [
+          0,
+          "She's staring at me. Staring back. Long day."
+        ]
+      ],
+      [
+        [
+          0,
+          "This street got moved? Map says it's by the river."
+        ],
+        [
+          1,
+          "Squishing moved it last spring. It's by the church now."
+        ],
+        [
+          0,
+          "Ha. Streets move, I walk. Thanks."
+        ]
+      ],
+      [
+        [
+          0,
+          "Got change for a ten?"
+        ],
+        [
+          1,
+          "Let me look. Two fives?"
+        ],
+        [
+          0,
+          "Perfect. Parking meter's greedy."
+        ]
+      ],
+      [
+        [
+          0,
+          "Cold one tonight."
+        ],
+        [
+          1,
+          "Frost by morning, they say."
+        ],
+        [
+          0,
+          "Blankets out. All three."
+        ]
+      ],
+      [
+        [
+          0,
+          "Heard the bakery's hiring."
+        ],
+        [
+          1,
+          "Early hours, though."
+        ],
+        [
+          0,
+          "Orcs wake early. And I like the smell."
+        ]
+      ],
+      [
+        [
+          0,
+          "Which way to the {station|harbour|square}?"
+        ],
+        [
+          1,
+          "Straight on, you can't miss it."
+        ],
+        [
+          0,
+          "Can always miss it. I'll try not to."
+        ]
+      ],
+      [
+        [
+          0,
+          "Nice garden. Big pumpkins."
+        ],
+        [
+          1,
+          "Thanks! Lots of manure."
+        ],
+        [
+          0,
+          "Ah. Secret's out. Mine are small. Ish."
+        ]
+      ],
+      [
+        [
+          0,
+          "This your stall? How much for the {pears|honey|eggs}?"
+        ],
+        [
+          1,
+          "Two euros a bag."
+        ],
+        [
+          0,
+          "I'll take five. Don't ask."
+        ]
+      ],
+      [
+        [
+          0,
+          "Somebody's playing Junehem upstairs."
+        ],
+        [
+          1,
+          "Is that what that is? I thought it was the boiler."
+        ],
+        [
+          0,
+          "Easy mistake."
+        ]
+      ],
+      [
+        [
+          0,
+          "Barber open today?"
+        ],
+        [
+          1,
+          "Closed Mondays."
+        ],
+        [
+          0,
+          "Another week of nest hair. Fine."
+        ]
+      ],
+      [
+        [
+          0,
+          "Watch your step. Ice."
+        ],
+        [
+          1,
+          "Thanks. Nearly went over yesterday."
+        ],
+        [
+          0,
+          "I did go over. Pavement lost."
+        ]
+      ],
+      [
+        [
+          0,
+          "Can you read this sign? Small letters."
+        ],
+        [
+          1,
+          "No parking after six."
+        ],
+        [
+          0,
+          "Good. No car. Just checking I can stand here."
+        ]
+      ],
+      [
+        [
+          0,
+          "Long shift?"
+        ],
+        [
+          1,
+          "Twelve hours. Feet are dead."
+        ],
+        [
+          0,
+          "Same. Soak them. Salt water. Gran's trick."
+        ]
+      ],
+      [
+        [
+          0,
+          "Who's the statue in the square?"
+        ],
+        [
+          1,
+          "Some general. Nobody remembers."
+        ],
+        [
+          0,
+          "Pigeons remember. They visit daily."
+        ]
+      ],
+      [
+        [
+          0,
+          "Bus is packed. Wait for the next one?"
+        ],
+        [
+          1,
+          "Might as well."
+        ],
+        [
+          0,
+          "Good. I'd fill half of it anyway."
+        ]
+      ]
+    ],
+    "debate": [
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Orcs should join the Horde. It's our blood."
+          ],
+          [
+            1,
+            "Half your blood. The other half pays taxes here."
+          ],
+          [
+            0,
+            "Taxes don't sing to me at night."
+          ],
+          [
+            1,
+            "Neither does a spear in the ribs."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Doors should be taller. Everywhere."
+          ],
+          [
+            1,
+            "Honestly? I've hit my head too."
+          ],
+          [
+            0,
+            "See. Everyone suffers. Build up."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "If someone insults you, you hit them. Simple."
+          ],
+          [
+            1,
+            "Then you're the one in a cell."
+          ],
+          [
+            0,
+            "Then you talk first. Then hit."
+          ],
+          [
+            1,
+            "Or just talk."
+          ],
+          [
+            0,
+            "...Fine. Sometimes."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "The Mages' Guild talks big and does nothing."
+          ],
+          [
+            1,
+            "Two factions arguing while the world squishes. Typical."
+          ],
+          [
+            0,
+            "Put them in a room. Lock it. Lunch when they agree."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Liminal engine buses are a miracle. Fast, safe."
+          ],
+          [
+            1,
+            "Safe? Near a loop bubble they fall apart."
+          ],
+          [
+            0,
+            "So drivers keep away. Like a bad dog."
+          ],
+          [
+            1,
+            "I'll take the slow tram, thanks."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Kids should learn a trade. Hands, not just books."
+          ],
+          [
+            1,
+            "Both, I'd say. My nephew can't change a fuse."
+          ],
+          [
+            0,
+            "Both. Yes. Books and fuses."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Junehem's good music. Say what you like."
+          ],
+          [
+            1,
+            "It sounds like a blender full of nails."
+          ],
+          [
+            0,
+            "Yes. Good blender."
+          ],
+          [
+            1,
+            "They're leading an invasion, {a}!"
+          ],
+          [
+            0,
+            "Bad politics. Good drums. Both true."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Rent's robbery. Landlords should be fined."
+          ],
+          [
+            1,
+            "Mine raised it twice this year."
+          ],
+          [
+            0,
+            "Twice! Give me his address. To talk. Only talk."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "The Vatican shouldn't be talking to the goblins."
+          ],
+          [
+            1,
+            "Better talking than fighting, surely."
+          ],
+          [
+            0,
+            "They don't want peace. They want an army."
+          ],
+          [
+            1,
+            "Says who?"
+          ],
+          [
+            0,
+            "My mum. Mum hears things."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Speed limit's 80 and folk still try 81."
+          ],
+          [
+            1,
+            "And then they're stuck in a loop for a month."
+          ],
+          [
+            0,
+            "Serves them right. Walk. Walking's free."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Orcs make the best guards. Fact."
+          ],
+          [
+            1,
+            "Dwarves are tougher."
+          ],
+          [
+            0,
+            "Dwarves can't see over the counter."
+          ],
+          [
+            1,
+            "They don't need to. They hear you coming."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Football's better than any war. Same shouting. Nobody dies."
+          ],
+          [
+            1,
+            "Unless you're the referee."
+          ],
+          [
+            0,
+            "Ha! Referee's fair game."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Magic's cheating. Do it with your hands."
+          ],
+          [
+            1,
+            "Your hands can't heal a broken leg."
+          ],
+          [
+            0,
+            "Splint. Bandage. Rest. Hands."
+          ],
+          [
+            1,
+            "And a three month wait."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Bread should be cheap. Always. It's bread."
+          ],
+          [
+            1,
+            "Couldn't agree more."
+          ],
+          [
+            0,
+            "Good. Let's tell the baker. Together."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "People should say what they mean. Straight."
+          ],
+          [
+            1,
+            "Some things need a softer touch."
+          ],
+          [
+            0,
+            "Soft touch is lying slowly."
+          ],
+          [
+            1,
+            "Tell that to my mother-in-law."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Half-folk get it from both sides. Orcs, half-elves, all of us."
+          ],
+          [
+            1,
+            "My dad was from abroad. I know what you mean."
+          ],
+          [
+            0,
+            "Then you've got two halves too. Welcome to the club."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Eris's courts are a joke. Random sentences."
+          ],
+          [
+            1,
+            "Better than no courts at all."
+          ],
+          [
+            0,
+            "My cousin got six months for a hiccup."
+          ],
+          [
+            1,
+            "Was it a very rude hiccup?"
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Best meal is the one after a hard day's work."
+          ],
+          [
+            1,
+            "Hunger's the best sauce, my gran said."
+          ],
+          [
+            0,
+            "Your gran and my gran. Same gran. Different tusks."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Goblins aren't monsters. They're family. Loud family."
+          ],
+          [
+            1,
+            "They burned a town in Sweden last week."
+          ],
+          [
+            0,
+            "Some did. Some bake bread in my street."
+          ],
+          [
+            1,
+            "Hard to tell which is which."
+          ],
+          [
+            0,
+            "Ask. Talk first. Always."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "A promise is a promise. Break it, you're nothing."
+          ],
+          [
+            1,
+            "My word's all I've got some days."
+          ],
+          [
+            0,
+            "Then you're rich. Shake."
+          ]
+        ]
+      }
+    ],
+    "ambient": [
+      [
+        [
+          0,
+          "Morning, {b}."
+        ],
+        [
+          1,
+          "Morning! Sleep well?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Cold one."
+        ],
+        [
+          1,
+          "Freezing. Stay warm."
+        ]
+      ],
+      [
+        [
+          0,
+          "Nice hat."
+        ],
+        [
+          1,
+          "Thanks! It was my dad's."
+        ]
+      ],
+      [
+        [
+          0,
+          "Busy day?"
+        ],
+        [
+          1,
+          "Never stops."
+        ]
+      ],
+      [
+        [
+          0,
+          "Watch out, coming through. Big."
+        ],
+        [
+          1,
+          "Ha, go on."
+        ]
+      ],
+      [
+        [
+          0,
+          "Smells like rain."
+        ],
+        [
+          1,
+          "Better get the washing in."
+        ]
+      ],
+      [
+        [
+          0,
+          "Evening."
+        ],
+        [
+          1,
+          "Evening. Heading home?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Bakery's got the good rolls today."
+        ],
+        [
+          1,
+          "Oh, I'll grab some."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hold the door? Got it."
+        ],
+        [
+          1,
+          "Thank you!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Lovely day."
+        ],
+        [
+          1,
+          "About time."
+        ]
+      ],
+      [
+        [
+          0,
+          "Tram's coming."
+        ],
+        [
+          1,
+          "Finally."
+        ]
+      ],
+      [
+        [
+          0,
+          "How's your mum, {b}?"
+        ],
+        [
+          1,
+          "Better, thanks for asking."
+        ]
+      ],
+      [
+        [
+          0,
+          "Good match last night."
+        ],
+        [
+          1,
+          "Robbed in the last minute!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Mind the puddle."
+        ],
+        [
+          1,
+          "Too late. Thanks, though."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hungry."
+        ],
+        [
+          1,
+          "You're always hungry."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ha! Saw that pigeon?"
+        ],
+        [
+          1,
+          "It walked right into the window!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Need anything carried?"
+        ],
+        [
+          1,
+          "Not today, but thanks."
+        ]
+      ],
+      [
+        [
+          0,
+          "Market's busy."
+        ],
+        [
+          1,
+          "Saturday crowd."
+        ]
+      ],
+      [
+        [
+          0,
+          "Good morning. Lovely dog."
+        ],
+        [
+          1,
+          "He likes you!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Late again, {b}."
+        ],
+        [
+          1,
+          "Don't tell the boss."
+        ]
+      ],
+      [
+        [
+          0,
+          "Sun's out."
+        ],
+        [
+          1,
+          "Make the most of it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Windy."
+        ],
+        [
+          1,
+          "Hold onto your hat."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lunch?"
+        ],
+        [
+          1,
+          "Give me ten minutes."
+        ]
+      ],
+      [
+        [
+          0,
+          "Long day."
+        ],
+        [
+          1,
+          "Nearly over."
+        ]
+      ],
+      [
+        [
+          0,
+          "Nice shoes."
+        ],
+        [
+          1,
+          "New! Do they show?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Bus is full again."
+        ],
+        [
+          1,
+          "Walk with me, then."
+        ]
+      ],
+      [
+        [
+          0,
+          "Fresh bread. Want some?"
+        ],
+        [
+          1,
+          "Go on, just a bit."
+        ]
+      ],
+      [
+        [
+          0,
+          "Quiet today."
+        ],
+        [
+          1,
+          "Enjoy it while it lasts."
+        ]
+      ],
+      [
+        [
+          0,
+          "Oi! Sorry. Hello."
+        ],
+        [
+          1,
+          "Ha, hello to you too."
+        ]
+      ],
+      [
+        [
+          0,
+          "See you at the pub?"
+        ],
+        [
+          1,
+          "Eight o'clock."
+        ]
+      ],
+      [
+        [
+          0,
+          "Fixed that step outside the shop."
+        ],
+        [
+          1,
+          "So that's why I didn't trip today!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Snowing up north, they say."
+        ],
+        [
+          1,
+          "Coming our way next week."
+        ]
+      ],
+      [
+        [
+          0,
+          "Night, {b}."
+        ],
+        [
+          1,
+          "Sleep well."
+        ]
+      ],
+      [
+        [
+          0,
+          "Need a hand?"
+        ],
+        [
+          1,
+          "I'm fine, thank you."
+        ]
+      ],
+      [
+        [
+          0,
+          "Good soup at the corner place."
+        ],
+        [
+          1,
+          "I'll try it tomorrow."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your kid's grown."
+        ],
+        [
+          1,
+          "Too fast, honestly."
+        ]
+      ],
+      [
+        [
+          0,
+          "Heavy bag. Let me."
+        ],
+        [
+          1,
+          "Oh, you're a gem."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is it Friday yet?"
+        ],
+        [
+          1,
+          "Feels like it should be."
+        ]
+      ],
+      [
+        [
+          0,
+          "That loop bubble's grown."
+        ],
+        [
+          1,
+          "Stay on this side of the road."
+        ]
+      ],
+      [
+        [
+          0,
+          "Good luck today."
+        ],
+        [
+          1,
+          "I'll need it!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Coffee's terrible here."
+        ],
+        [
+          1,
+          "It's cheap, though."
+        ]
+      ],
+      [
+        [
+          0,
+          "Heard the Junehem news?"
+        ],
+        [
+          1,
+          "Don't start, {a}."
+        ]
+      ],
+      [
+        [
+          0,
+          "Watch your head. Low beam."
+        ],
+        [
+          1,
+          "You'd know."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lovely garden."
+        ],
+        [
+          1,
+          "Thank you! Weeding all morning."
+        ]
+      ],
+      [
+        [
+          0,
+          "Pub quiz tonight?"
+        ],
+        [
+          1,
+          "Only if you're on our team."
+        ]
+      ],
+      [
+        [
+          0,
+          "Trains are running late."
+        ],
+        [
+          1,
+          "When aren't they?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Big moon tonight."
+        ],
+        [
+          1,
+          "Beautiful, isn't it?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Got the time?"
+        ],
+        [
+          1,
+          "Quarter past."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hot one, eh?"
+        ],
+        [
+          1,
+          "Unbearable."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hello, little one."
+        ],
+        [
+          1,
+          "Say hello back, sweetheart."
+        ]
+      ],
+      [
+        [
+          0,
+          "Nice work on the fence."
+        ],
+        [
+          1,
+          "Took me all weekend."
+        ]
+      ],
+      [
+        [
+          0,
+          "Stay dry, {b}."
+        ],
+        [
+          1,
+          "You too, big one."
+        ]
+      ],
+      [
+        [
+          0,
+          "Market's out of apples."
+        ],
+        [
+          1,
+          "Did you buy them all again?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Good to see you up and about."
+        ],
+        [
+          1,
+          "Feeling much better."
+        ]
+      ],
+      [
+        [
+          0,
+          "Off to work?"
+        ],
+        [
+          1,
+          "Someone has to."
+        ]
+      ]
+    ]
+  }
+}

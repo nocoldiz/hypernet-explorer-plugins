@@ -276,33 +276,6 @@
         }
       }
     },
-    "verden": {
-      "name": "베르덴",
-      "description": "중공업의 확장에 맞서 게릴라전을 벌이는 숲 고블린들.",
-      "troops": {
-        "forestscout": {
-          "name": "숲 척후"
-        },
-        "saplingdefender": {
-          "name": "묘목 수호자"
-        },
-        "guerillafighter": {
-          "name": "게릴라 전사"
-        },
-        "treeambusher": {
-          "name": "나무 매복자"
-        },
-        "natureswrath": {
-          "name": "자연의 진노"
-        },
-        "forestchampion": {
-          "name": "숲의 용사"
-        },
-        "scientist": {
-          "name": "베르덴 화학자"
-        }
-      }
-    },
     "truckerssociety": {
       "name": "트럭 운전사 협회",
       "description": "황무지를 가로질러 물자를 나르는 용감한 이들. 경제의 핏줄이며 어떤 교통 법규도 따르지 않는다.",
@@ -681,36 +654,6 @@
         },
         "scientist": {
           "name": "자유 계약 학자"
-        }
-      }
-    },
-    "goblincollectiveunconsciuous": {
-      "name": "고블린 집단 무의식",
-      "description": "모든 고블린의 마음을 잇고 그 조상 대대의 혼돈스러운 지혜를 담아두는 정신적 연결.",
-      "troops": {
-        "psychicgoblin": {
-          "name": "초능력 고블린"
-        },
-        "mindstriker": {
-          "name": "정신 타격자"
-        },
-        "hivemindwarrior": {
-          "name": "군집정신 전사"
-        },
-        "psychicslinger": {
-          "name": "초능력 투척꾼"
-        },
-        "collectiveconduit": {
-          "name": "집단의 통로"
-        },
-        "telepathicsniper": {
-          "name": "텔레파시 저격수"
-        },
-        "ancestralecho": {
-          "name": "조상의 메아리"
-        },
-        "scientist": {
-          "name": "고블린 땜장이"
         }
       }
     },

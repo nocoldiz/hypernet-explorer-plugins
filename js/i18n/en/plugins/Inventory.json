@@ -226,7 +226,8 @@
     "blueprints": "Blueprints & Components",
     "marketValue": "Market Value:",
     "cravingsFed": "Cravings Fed",
-    "medicine": "MEDICINE"
+    "medicine": "MEDICINE",
+    "allergens": "Allergens"
   },
   "rarity": {
     "common": "Common",
@@ -326,5 +327,9 @@
     "label": "Nature",
     "mundane": "Mundane",
     "magical": "Magical"
-  }
+  },
+  "allergyContains": "Contains",
+  "allergyUnsafeFor": "Unsafe for",
+  "allergyRelief": "Allergy relief",
+  "allergyReliefHours": "{hours} hours"
 }

@@ -319,7 +319,15 @@
             if (this._phaseTimer >= duration) {
                 this._phase = 'beam';
                 this._phaseTimer = 0;
+                this.playLiftSound();
             }
+        }
+
+        // The pillars take the party up: one teleport whoosh as the climb
+        // starts.
+        playLiftSound() {
+            if (typeof AudioManager === 'undefined' || !AudioManager.playSe) return;
+            AudioManager.playSe({ name: 'Teleport', volume: 90, pitch: 100, pan: 0 });
         }
 
         // Exterior only: the party rises to the sky inside their pillars of

@@ -1949,15 +1949,32 @@
   // Not cached: procedural maps reuse one map id and their tiles change at
   // runtime (regeneration, digging), so a position keyed cache went stale and
   // star tiles stopped hiding the character.
+  //
+  // Judged on the tiles the sprite is drawn over, not on its logical tile: a
+  // step sets x and y at once while the sprite is still sliding out of the
+  // tile it left. Read off x and y alone, a character stepping out of a star
+  // tile was lifted over it on the first frame of the step and walked out of
+  // the bush in plain view. While any tile under its feet is a star tile it
+  // stays below the scenery.
   const _misUnderStarTile = (character) => {
-    const x = character.x;
-    const y = character.y;
-    return !_misStarTileAt(x, y) &&
-      _misStarTileAt(x, y - 1) &&
-      // "Passable" in the sense the star tile itself promises: the scenery is
-      // walk-through, so a solid tile hidden beneath it (a wall, a cliff) is
-      // not something the sprite should be drawn over.
-      !!$gameMap.isPassable(x, y - 1, 2);
+    const rx = character._realX !== undefined ? character._realX : character.x;
+    const ry = character._realY !== undefined ? character._realY : character.y;
+    const xs = [Math.floor(rx), Math.ceil(rx)];
+    const ys = [Math.floor(ry), Math.ceil(ry)];
+    let lifted = false;
+    for (const x of xs) {
+      for (const y of ys) {
+        if (_misStarTileAt(x, y)) return false;
+        if (!lifted && _misStarTileAt(x, y - 1) &&
+            // "Passable" in the sense the star tile itself promises: the
+            // scenery is walk-through, so a solid tile hidden beneath it (a
+            // wall, a cliff) is not something the sprite should be drawn over.
+            $gameMap.isPassable(x, y - 1, 2)) {
+          lifted = true;
+        }
+      }
+    }
+    return lifted;
   };
 
   // Above the upper tile layer (z 4), below the bridge deck (z 7).

@@ -843,6 +843,46 @@
     "hibernator": {
       "name": "Letargico",
       "description": "Dorme via il freddo con un corpo fatto per conservarlo"
+    },
+    "peanut_allergy": {
+      "name": "Allergia alle Arachidi",
+      "description": "Le arachidi possono chiudere la gola"
+    },
+    "tree_nut_allergy": {
+      "name": "Allergia alla Frutta a Guscio",
+      "description": "Mandorle, nocciole e noci scatenano una reazione"
+    },
+    "shellfish_allergy": {
+      "name": "Allergia ai Crostacei",
+      "description": "Gamberi, granchi e aragoste sono pericolosi"
+    },
+    "fish_allergy": {
+      "name": "Allergia al Pesce",
+      "description": "Il pesce provoca orticaria e nausea"
+    },
+    "milk_allergy": {
+      "name": "Allergia al Latte",
+      "description": "I latticini provocano orticaria e crampi"
+    },
+    "egg_allergy": {
+      "name": "Allergia alle Uova",
+      "description": "Le uova provocano un'eruzione cutanea"
+    },
+    "wheat_allergy": {
+      "name": "Allergia al Frumento",
+      "description": "Frumento e orzo provocano un'eruzione cutanea"
+    },
+    "soy_allergy": {
+      "name": "Allergia alla Soia",
+      "description": "La soia provoca prurito"
+    },
+    "hay_fever": {
+      "name": "Febbre da Fieno",
+      "description": "Il polline primaverile scatena attacchi di starnuti all'aperto"
+    },
+    "penicillin_allergy": {
+      "name": "Allergia alla Penicillina",
+      "description": "La penicillina scatena una reazione violenta"
     }
   }
 }

@@ -1,0 +1,1105 @@
+{
+  "_comment": "La voce Dwarf (NPCConversation II.1b, SpeciesVoice). speech: le regole applicate a ogni battuta condivisa. voice: aperture e chiusure. thought: i loro pensieri per situazione. script: dialoghi a due, chi parla per primo e' sempre Dwarf.",
+  "voice": {
+    "openers": [
+      "Per la mia barba,",
+      "Ricordati le mie parole:",
+      "Hmpf.",
+      "Ascolta bene,",
+      "Come diceva mio nonno,",
+      "Già.",
+      "Allora,",
+      "Detto tra te, me e l'incudine,",
+      "Pietra e birra,",
+      "Sulla forgia di mia madre,",
+      "Per le sale profonde,",
+      "Ascolta un nano:",
+      "Chiedo scusa,",
+      "*si liscia la barba*",
+      "Martello e tenaglie,",
+      "Lo dirò una volta, e lentamente:",
+      "Bene, allora.",
+      "Granito e rancori,",
+      "Misura due volte, parla una:",
+      "Ah, bah,",
+      "Parlando da artigiano,",
+      "Beh, per il ferro,",
+      "*posa il boccale*",
+      "Giù nelle sale diciamo,",
+      "Verità onesta, verità di pietra:"
+    ],
+    "closers": [
+      "Ricordatelo.",
+      "Per la mia barba.",
+      "La pietra non mente.",
+      "Già, proprio così.",
+      "Saggezza nanica, gratis.",
+      "Misura due volte.",
+      "E con questo basta.",
+      "Ora passa la birra.",
+      "Hmpf. Ecco.",
+      "Lo diceva mio nonno, e non sbagliava mai.",
+      "Incidilo da qualche parte.",
+      "Me lo ricorderò.",
+      "Come il ferro.",
+      "*batte due volte sul tavolo*",
+      "Sull'incudine di mia madre.",
+      "Niente fatto di fretta, bada.",
+      "Solido come il granito.",
+      "Questa va nel libro.",
+      "Scrivilo. No, incidilo.",
+      "O io sono uno gnomo.",
+      "Sicuro come le sale profonde.",
+      "Così dicono i martelli.",
+      "Prendere o lasciare, ma prendi.",
+      "*grugnisce in segno di approvazione*",
+      "Birra e incudini."
+    ]
+  },
+  "thought": {
+    "generic": [
+      "La malta di questa strada è {friabile|marcia|una vergogna}. Qualcuno dovrebbe vergognarsi.",
+      "Il ferro è rincarato di nuovo. {La mia incudine piange|Il mio borsellino piange|Piangono tutti}.",
+      "Stasera devo affilare {gli scalpelli|l'ascia|i coltelli da cucina}. Si sono smussati per la vergogna.",
+      "Un rancore tenuto al caldo è un rancore ben conservato.",
+      "La birra di questo paese è {annacquata|torbida|criminale}. La berrò comunque. Per educazione.",
+      "Chi ha costruito quel balcone? Sta su con la speranza e due chiodi.",
+      "Ho un nodo nella barba. Non avrò pace finché non l'avrò sciolto.",
+      "Stamattina la mia forgia era fredda. L'ho presa sul personale.",
+      "Una buona porta si chiude con un suono solo, non tre.",
+      "{Granito|Basalto|Marmo} sui gradini della chiesa. Qualcuno qui un tempo aveva gusto.",
+      "Mastico questo problema da {tre giorni|una settimana|undici anni}. È quasi tenero.",
+      "La gente alta continua a darmi pacche sulla testa. Tengo una lista.",
+      "Niente che valga è mai stato fatto di fretta. Tranne la birra. La birra è urgente.",
+      "Il ponte nuovo canta nel vento. I ponti non dovrebbero cantare.",
+      "Sento {un bullone allentato|una campana incrinata|un cardine difettoso} dall'altra parte della piazza. Maledizione del mestiere.",
+      "Il mio apprendista ha usato di nuovo la colla. Dovremo fare due chiacchiere.",
+      "La pietra ricorda. Per questo le parlo con gentilezza.",
+      "Sto ingegnando una nuova serratura. {Sette|Nove|Tredici} perni. Nessuno la aprirà, me compreso.",
+      "Una canzone per il martello: un colpo per parola. Le mie canzoni sono corte.",
+      "Queste sedie sono fatte per i giganti. I miei piedi non hanno toccato terra tutto il giorno.",
+      "Mio cugino ha scritto dalle miniere. La vena è {più profonda|più ricca|più strana} di quanto pensassero.",
+      "Un nano perdona. Un nano lo scrive anche, non si sa mai.",
+      "Qualcuno ha verniciato sopra una buona quercia. Potrei non riprendermi mai.",
+      "Mi servono una pinta e un problema, in quest'ordine.",
+      "Addestramento da valchiria all'alba. {Il braccio dello scudo|La schiena|L'orgoglio} mi fa ancora male da ieri.",
+      "Il turno di guardia mi mette di nuovo di notte. Bene. La notte è onesta.",
+      "Ho lucidato l'elmo. Ci vedo riflessa la barba. Magnifica.",
+      "Qui i binari del tram sono posati male. Lo farei a occhi chiusi.",
+      "Nessuno canticchia più mentre lavora. Il lavoro se ne accorge.",
+      "L'incudine di mio nonno ha trecento anni e suona ancora giusta. Come lui.",
+      "{Ancora una|Solo una|Un'ultima} pinta e poi a casa. La solita bugia.",
+      "Gli gnomi fanno cose ingegnose. I nani cose che durano. Gli elfi cose carine. Indovina chi viene pagato.",
+      "Ho scritto al consiglio comunale per quello scarico. La mia {quarta|nona|dodicesima} lettera.",
+      "Fumo di carbone nell'aria. Qualcuno lavora. Bene.",
+      "Le mie ginocchia sanno il tempo prima della radio.",
+      "Il martello migliore è quello che la mano dimentica di tenere.",
+      "Qualcuno ha fischiato alla mia barba. Lo prendo come un complimento. Poi come un rancore.",
+      "Ho sognato di nuovo dei cardini. Cardini perfetti, silenziosi.",
+      "Una crepa nel muro è una storia. Questo muro ha scritto un romanzo.",
+      "Guadagnati {quaranta|sessanta|novanta} euro oggi a riparare pentole. Soldi onesti, mani fuligginose."
+    ],
+    "need": {
+      "sleep": [
+        "Le palpebre pesano più di un'incudine. A letto.",
+        "Sveglio {da inizio turno|da quando ha cantato il gallo|da quando è stata accesa la forgia}. Basta.",
+        "Ho bisogno di dormire. Da qualche parte in basso, buio e silenzioso. Come una cantina.",
+        "Stavo per addormentarmi nella birra. È un crimine contro la birra.",
+        "Anche la pietra si stanca. Beh, no. Ma io sì.",
+        "Un letto, e un cuscino sotto la barba. Nient'altro."
+      ],
+      "hunger": [
+        "Ho una fame da mangiarmi {un arrosto|un prosciutto intero|un carretto di salsicce}.",
+        "Il mio stomaco brontola più di me. Ci vuole impegno.",
+        "Pane nero e formaggio stagionato. È tutto quello che chiedo al mondo.",
+        "Non si lavora a pancia vuota. Il martello lo sa.",
+        "Qualcosa col sugo. Qualunque cosa col sugo.",
+        "Se non mangio presto comincerò a serbare rancore contro il cibo."
+      ],
+      "work": [
+        "Si torna alla forgia. {I ferri di cavallo|I cardini|Le lame} non si forgiano da soli.",
+        "Le mani oziose arrugginiscono. Al lavoro.",
+        "Il turno comincia presto. Stivali allacciati, barba infilata.",
+        "Un giorno senza lavoro è un giorno senza storia.",
+        "Quella commissione è in ritardo. Ritardo è una parolaccia.",
+        "Sento il mio banco da lavoro che mi chiama. Sembra offeso."
+      ],
+      "leisure": [
+        "Una serata libera. Una pinta, una pipa, una canzone.",
+        "Anche un'incudine ha la domenica libera. Più o meno.",
+        "È ora delle freccette. Lancio come martello: forte e dritto.",
+        "Dovrei fare qualcosa per divertimento. Intagliare conta. Intagliare conta sempre.",
+        "Una canzone lunga in una stanza bassa. Ecco cosa mi serve.",
+        "Troppo lavoro rende un nano {un macigno|un brontolone|una noia}."
+      ],
+      "crime": [
+        "Quel mercante ha imbrogliato mio cugino nel 1987. La sua vetrina è lì... No. I rancori vanno nei libri.",
+        "Quella serratura è fatta male. La aprirei con {un cucchiaio|una forcina|una parola dura}. Non lo farò.",
+        "Nessuno sorveglia quella rimessa. Begli scalpelli là dentro. Begli scalpelli incustoditi.",
+        "Un nano prende ciò che gli è dovuto. È dovuto? Fammi controllare il libro.",
+        "Quella borsa è pesante. Più della mia coscienza? Quasi.",
+        "Porta scadente, cardine economico, nessuno in casa. È praticamente un invito."
+      ],
+      "hygiene": [
+        "La mia barba sa di {fuliggine|cipolla|tre taverne diverse}. Bagno.",
+        "Fuliggine fino ai gomiti. Ora di strofinare.",
+        "Ho trovato il pranzo di ieri nella barba. Basta.",
+        "Mi serve un lavaggio, il pettine e l'olio buono per la barba.",
+        "Puzzo di forgia. Bello per me, meno per gli altri.",
+        "Polvere di miniera in ogni piega. Acqua calda, per favore."
+      ],
+      "money": [
+        "{Otto|Dodici|Venti} euro fino alla paga. Il ferro non si compra da solo.",
+        "Il borsellino è leggero. Un nano col borsellino leggero è un nano di cattivo umore.",
+        "Qualcuno mi deve ancora quel cancello. È nel libro.",
+        "Servono soldi. Potrei prendere qualche riparazione. Pentole, serrature, qualunque cosa.",
+        "Oro nelle colline e niente in tasca. Il mondo è organizzato male.",
+        "Ho contato i risparmi due volte. Non sono cresciuti. Li ho contati una terza volta lo stesso."
+      ],
+      "safety": [
+        "C'è qualcosa che non va in questa strada. Mi si rizza la barba.",
+        "Mano sul martello. Non si sa mai.",
+        "Troppe ombre, troppo pochi muri. Voglio della pietra intorno a me.",
+        "Ho sentito {stivali|urla|vetri rotti} dietro di me. Non mi giro. Per ora.",
+        "Piedi piantati, spalle al muro. Vecchia abitudine da guardia.",
+        "Se arrivano i goblin, passano prima da me. Basso, ma largo."
+      ],
+      "comfort": [
+        "La mia sedia di casa era tagliata sulla mia altezza. Qui è tutto tagliato per gli aironi.",
+        "Mi manca il focolare. Mi mancano le pantofole. Mi manca l'incudine, stranamente più di tutto.",
+        "Un soffitto basso e un muro spesso. Il comfort è tutto lì.",
+        "Questa stanza è troppo {piena di spifferi|alta|luminosa}. Datemi una cantina.",
+        "Un fuoco caldo e gli stivali tolti. È chiedere tanto?",
+        "La mia schiena vuole una panca seria, non questa cosa traballante fatta da elfi."
+      ],
+      "social": [
+        "Nessuno con cui litigare da {due giorni|una settimana|troppo tempo}. Mi sto rammollendo.",
+        "Mi serve una tavola affollata e qualcuno da battere a cantare.",
+        "Dovrei andare a trovare i cugini. Avranno nuovi rancori da condividere.",
+        "Una pinta da soli è solo una bevuta. Una pinta con gli amici è una festa.",
+        "Ho di nuovo parlato al martello. Ascolta bene, ma è noioso.",
+        "Qualcuno, chiunque, venga a dirmi che ho torto. Mi manca."
+      ]
+    },
+    "weather": {
+      "rain": [
+        "Pioggia. Adesso vediamo quanto valgono {le grondaie|gli scarichi|le tegole} di questo paese.",
+        "Pioggia sul tetto della forgia. La musica migliore che ci sia.",
+        "Barba bagnata, stivali bagnati, umore bagnato.",
+        "Pioggia. La pietra ama la pioggia. Il ferro no. Sono combattuto.",
+        "Bella giornata per l'officina. Brutta giornata per chi ha fatto quel tetto che perde.",
+        "La pioggia trova ogni crepa. È così che scopri dove sono le crepe."
+      ],
+      "storm": [
+        "Tuoni! Sembrano le vecchie sale in un giorno di festa.",
+        "Il fulmine ama le cose alte. Un motivo in più per essere bassi.",
+        "Temporale. Imposte chiuse, fuoco acceso, birra fuori.",
+        "Quel tetto non reggerà la notte. L'ho detto {in primavera|a marzo|per iscritto}.",
+        "Il vento mette alla prova ogni saldatura del paese. Vediamo chi ha lavorato onestamente.",
+        "Un temporale è solo il cielo che dà martellate."
+      ],
+      "snow": [
+        "Neve. Come a casa sui passi alti. Quasi.",
+        "Neve fino alle ginocchia. Che non è molta neve, a dire il vero.",
+        "Il ferro freddo si attacca alle dita. Guanti, oggi.",
+        "Neve sulla barba. Molto distinto.",
+        "Bloccati dalla neve? Bene. Birra speziata e una lunga storia.",
+        "Ho spalato {il vialetto|i gradini|tutta la strada} prima che si svegliassero. Nessuno mi ha ringraziato. Annotato."
+      ],
+      "clear": [
+        "Cielo sereno. Buona luce per il lavoro di precisione.",
+        "Sole sulla pietra. Tutto il paese sembra più caldo, anche le parti brutte.",
+        "Giornata limpida. Si vedono le montagne. Le guardo sempre.",
+        "Troppo sole per un nano. Cercherò ombra sotto un arco.",
+        "Giornata luminosa. Perfetta per {far seccare le pelli|arieggiare la forgia|una birra all'aperto}.",
+        "Tempo asciutto. Oggi la malta fa presa bene. Buon giorno per costruire."
+      ]
+    },
+    "time": {
+      "morning": [
+        "Mattina. Forgia accesa prima dell'alba, come si deve.",
+        "Alba. La barba dorme ancora, il resto di me lavora.",
+        "Porridge, tè forte, acqua fredda sulla faccia. Pronto.",
+        "Turno del mattino. Le martellate migliori si danno prima che qualcuno si lamenti.",
+        "Presto. Le strade appartengono ai fornai e ai nani.",
+        "Sveglio prima {del gallo|delle campane|del fornaio}. Come al solito. E ne vado fiero."
+      ],
+      "afternoon": [
+        "Pomeriggio. Il lavoro è a metà e la birra è guadagnata a metà.",
+        "Il sole è alto. La mia ombra è grande come me, per una volta.",
+        "Il pranzo si assesta. Il martello sembra più pesante dopo pranzo.",
+        "Calma del pomeriggio. Buon momento per la limatura fine.",
+        "Metà giornata e finora una sola discussione. Giornata fiacca.",
+        "Pomeriggio lungo. {Riparerò una sedia|Affilerò qualcosa|Farò un pisolino su un sacco}."
+      ],
+      "evening": [
+        "Sera. Fuoco coperto, attrezzi appesi, boccale trovato.",
+        "Le luci della taverna sono accese. I miei piedi conoscono la strada.",
+        "Sera. È ora di lucidare i rancori.",
+        "Tramonto sulle colline. Da qualche parte sotto, il minerale dorme.",
+        "Fine turno. Le mani sanno di ferro e di sudore onesto.",
+        "Ora del canto serale. Voci basse, strofe lunghe."
+      ],
+      "night": [
+        "Notte. Silenziosa come un pozzo di miniera. Mi piace.",
+        "Guardia notturna. Lanterna, ascia, borraccia di tè. Soprattutto tè.",
+        "Buio. I nani ci vedono abbastanza al buio. Solo che non ce ne vantiamo.",
+        "Tardi. Penso ancora a quel cardine. Non mi lascia dormire.",
+        "Notte. Le stelle sembrano scintille da una grande incudine.",
+        "{Mezzanotte|L'una passata|Quasi le due}. Ultima pinta. Davvero l'ultima. Probabilmente."
+      ]
+    },
+    "season": {
+      "SPRING": [
+        "Primavera. Il disgelo trova ogni tetto difettoso del paese.",
+        "Pulizie di primavera: forgia, mantice, barba.",
+        "I passi di montagna riaprono. Presto le lettere da casa.",
+        "Primavera. I giovani ballano. Io sorveglio, con la birra.",
+        "Stagione del fango. Stivali pesanti il doppio, e anche il carattere."
+      ],
+      "SUMMER": [
+        "Estate. Una forgia d'estate è una punizione per vecchi peccati.",
+        "Caldo. Suda persino la barba.",
+        "Estate. Cantina fresca, birra fresca, porta chiusa.",
+        "Giornate lunghe. Buona luce per lavori lunghi.",
+        "Fiera d'estate in paese. Giudicherò le bancarelle dei metalli. Con severità."
+      ],
+      "AUTUMN": [
+        "Autunno. Stagione della birra. La stagione migliore.",
+        "Cadono le foglie. Ora di controllare il camino prima che lo controlli l'inverno.",
+        "Autunno. Legna accatastata, carbone ordinato, rancori in ordine.",
+        "La birra del raccolto è arrivata. Ho il cuore pieno, il boccale di più.",
+        "Vento d'autunno nella barba. Sa di vecchio paese."
+      ],
+      "WINTER": [
+        "Inverno. La forgia è il posto più caldo del paese. Vengono tutti.",
+        "Notti lunghe, canzoni lunghe, barbe lunghe. Stagione dei nani.",
+        "Ghiaccio sugli attrezzi. Portarli dentro, scaldarli, chiedere scusa.",
+        "Presto il banchetto d'inverno. Allevo l'appetito dall'autunno.",
+        "Brina sui vetri. Graziosa, come il lavoro degli elfi. Sparita a mezzogiorno, come il lavoro degli elfi."
+      ]
+    },
+    "wealth": {
+      "poor": [
+        "Pane e strutto di nuovo. Cibo onesto per un borsellino onesto.",
+        "Ho riparato gli stivali per la {terza|quinta|settima} volta. Sono più toppa che stivale.",
+        "Ho venduto il secondo martello. Un nano con un martello solo è mezzo nano.",
+        "Niente soldi per il carbone. Forgia fredda, cuore freddo.",
+        "Povero, sì. Ma nessuno può dire che il mio lavoro sia povero.",
+        "Acqua invece di birra stasera. I miei antenati si rigirano nei loro tumuli."
+      ],
+      "comfortable": [
+        "Abbastanza per il carbone, per la birra, e un po' per l'olio buono da barba. Basta e avanza.",
+        "Lavoro costante, paga costante. Come un martello costante.",
+        "Ho comprato tenaglie nuove. Non servivano. Le volevo. Questo è il benessere.",
+        "Affitto pagato, dispensa piena, rancori aggiornati. Un buon mese.",
+        "Ho messo da parte un po' per {una nuova incudine|l'apprendistato di mio nipote|un barile di birra buona}.",
+        "Né ricco né povero. Solido. Come un buon muro."
+      ],
+      "rich": [
+        "Ho commissionato un boccale intarsiato d'oro. Per me. Ogni nano se lo merita.",
+        "Ho comprato tutta la miniera. Beh, una quota. Una grossa quota.",
+        "Abbastanza ricco da saldare i miei rancori. Non lo farò. I rancori non sono in vendita.",
+        "La porta della mia cassaforte è un metro di acciaio. L'ho forgiata io. Due volte.",
+        "Ho offerto un giro a tutta la taverna. {Due volte|Tre volte|Tutta la notte}.",
+        "La gente di Varlenia continua a invitarmi a cena. Vogliono la mia cassaforte, non la mia compagnia."
+      ]
+    },
+    "familiar": [
+      "Di nuovo quei viaggiatori. {Ricordo bene|Non avevo scordato|Non dimentico mai} facce come le loro.",
+      "Ah, quelli col furgone. Non mi devono niente. Per ora.",
+      "Di nuovo qui? Bene. Le facce conosciute sono come i vecchi attrezzi: stanno bene in mano.",
+      "Quella gente. L'ultima volta hanno pagato il giusto. Questo va nel libro buono.",
+      "Li conosco, quelli. Uno di loro si appoggia ai miei muri.",
+      "I viaggiatori! Qualcuno metta su il bollitore. E la birra.",
+      "Di nuovo loro. Un nano non dimentica mai una faccia, né un debito, né una gentilezza.",
+      "Eccoli. Ancora interi, vedo. Più o meno.",
+      "Quei girovaghi. I loro stivali sembrano peggio ogni volta. Potrei sistemarli.",
+      "Facce conosciute. Farò un cenno. Un cenno di nano vale un abbraccio di chiunque altro."
+    ],
+    "hordeGround": [
+      "Terra dell'Orda. Hanno abbattuto buoni muri di pietra per farne di brutti.",
+      "Stendardi goblin su un ponte costruito dai nani. Mio nonno piangerebbe.",
+      "L'Orda non tiene rancori. Si tiene tutto il resto.",
+      "Terra dell'Orda. Martello vicino, bocca chiusa, occhi aperti.",
+      "Scrivo nel libro ogni goblin che vedo. Mi servirà un libro più grande.",
+      "Le loro forge bruciano troppo calde e troppo in fretta. Tutto quello che fanno si crepa entro la primavera.",
+      "Dipingono tutto. La vernice nasconde il lavoro fatto male. Lo so bene.",
+      "Una testa sola in comune, dicono. Vorrei scambiarci due parole.",
+      "Terra dell'Orda. Tieni la barba infilata. Afferrano.",
+      "Anche qui le montagne non sono loro. Le montagne non sono di nessuno, e un po' dei nani."
+    ],
+    "abroad": [
+      "Lontano dalle sale. La birra qui è un concetto straniero, in ogni senso.",
+      "Qui costruiscono coi mattoni. Mattoni! Come pane per muri.",
+      "Qui nessuno ha sentito parlare della mia famiglia. Peggio per loro.",
+      "Molto lontano da casa. I miei stivali ne conoscono ogni chilometro.",
+      "Gli stranieri continuano a chiedere se la barba è vera. Tirala e vedrai. Piano.",
+      "Ho scritto a casa. Ho detto che qui la pietra è tenera e la gente ancora di più.",
+      "All'estero, un nano è una diceria. Io sono felice di essere una diceria solida.",
+      "La gente del posto è gentile. Gentile, e altissima.",
+      "Nessuna sala nanica per {cento|trecento|cinquecento} chilometri. Ora la sala sono io.",
+      "Terra strana, cibo strano, stesso martello. Va tutto bene."
+    ],
+    "lore": {
+      "forge": [
+        "La prima parola di un piccolo nano spesso è 'caldo'. I bambini della forgia imparano in fretta.",
+        "Diamo un nome alle nostre incudini. La mia si chiama Pazienza. Non lo è.",
+        "Una lama richiede {cento|mille|diecimila} colpi. Per una reputazione ne basta uno sbagliato.",
+        "Gli ingegnatori sono nani che forgiano idee. Quasi tutte esplodono. Qualcuna vola.",
+        "Il fuoco nella vecchia sala non si spegne da quattrocento anni. Qualcuno resta sempre.",
+        "Mai temprare con rabbia. L'acciaio ricorda.",
+        "La Gilda dei Maghi compra il nostro acciaio per i puntali dei bastoni. Non chiedono mai come. Noi non lo diciamo mai.",
+        "Il marchio di un maestro è minuscolo e nascosto. Se devi mostrarlo, il lavoro non era abbastanza buono."
+      ],
+      "deep": [
+        "In profondità la pietra è calda e ronza. I minatori dicono che è il mondo che pensa.",
+        "Dal 1992, certi tunnel sbucano in posti diversi da dove sono entrati. Li segniamo col gesso rosso.",
+        "Ogni minatore conosce il canarino. I nostri cantano in armonia.",
+        "Mai fischiare in miniera. La montagna pensa che la prendi in giro.",
+        "Mia nonna trovò una vena di {argento|quarzo blu|qualcosa senza nome} che ronzava in due dimensioni insieme.",
+        "Sotto le Alpi ci sono sale più vecchie di qualsiasi mappa. Noi non le disegniamo sulle mappe.",
+        "La pietra ti dice dove si spezzerà, se ascolti. Quasi nessuno ascolta.",
+        "Un crollo è la montagna che cambia idea. Lo rispetti, e scavi più in fretta."
+      ],
+      "grudges": [
+        "Il libro dei rancori della mia famiglia conta {undici|quattordici|venti} volumi. Il primo parla quasi solo di una capra.",
+        "Un rancore si cancella solo quando il debito è saldato. Certo inchiostro ha trecento anni.",
+        "Noi non odiamo. Ricordiamo con precisione. È diverso.",
+        "Il nonno tenne rancore a un ponte per quarant'anni. Il ponte è crollato prima.",
+        "Nel libro c'è una pagina per l'Orda. È una pagina molto lunga.",
+        "Perdonare è permesso. Dimenticare no. Tutta la regola è questa.",
+        "Mia zia ha cancellato un rancore sul letto di morte. In famiglia se ne parla ancora.",
+        "Un buon rancore ti fa lavorare di più. Il dispetto ha costruito più sale dell'oro."
+      ],
+      "ale": [
+        "Ogni sala ha il suo lievito. Il nostro è arrivato oltre le montagne dentro una barba. Non chiedere.",
+        "A un matrimonio servono tre barili: uno per gli ospiti, uno per la famiglia, uno per le liti.",
+        "La birra è pane liquido. Il pane è birra solida. Il ciclo è sacro.",
+        "Brindiamo ai morti con la birra scura e ai neonati con la chiara. A tutti gli altri tocca quel che resta.",
+        "Mai fare la birra di fretta. La birra fatta di fretta sa di rimpianto.",
+        "Mio zio faceva una stout così densa che ci {stava dritto un cucchiaio|galleggiava una moneta|si piantava un chiodo}.",
+        "Le valchirie bevono per ultime al banchetto. È un onore. Fingono che non sia un sacrificio.",
+        "Un cantore beve gratis in qualsiasi sala. Ecco perché abbiamo tanti cantori."
+      ],
+      "beards": [
+        "Una barba è un archivio. Ogni treccia un'impresa, ogni perlina una promessa.",
+        "Tagliare la barba a un nano è reato in tre paesi e una guerra in un quarto.",
+        "La mia prima treccia è stata per il mio primo cardine. Avevo {nove|undici|dodici} anni.",
+        "Le valchirie ci intrecciano filo d'acciaio. Ferma una spada. Ha fermato anche un matrimonio.",
+        "Le ricette dell'olio da barba sono segreti di famiglia. La nostra ha ginepro e qualcosa che non nominiamo.",
+        "Esistono nani senza barba. Siamo educati al riguardo. Più o meno.",
+        "Infila la barba vicino alle macchine. Ogni nano lo impara esattamente una volta.",
+        "Una barba grigia non è vecchia. Una barba grigia è stagionata, come il buon legname."
+      ],
+      "squishing": [
+        "Varlenia è comparsa in una notte di gennaio. Di niente costruito in una notte ci si può fidare. Neanche di un continente.",
+        "La Regola dell'80: niente più veloce di ottanta all'ora. I nani la rispettavano da secoli prima che esistesse.",
+        "Dicono che quella torre Omega scenda più in basso di quanto salga. Mi piacerebbe vederne le fondamenta.",
+        "Novantadue dimensioni che si schiacciano dal 1992. Da qualche parte, il colpevole è un pessimo muratore.",
+        "Una bolla temporale ha inghiottito una cava vicino a noi. Lo stesso blocco viene tagliato ogni mattina, per sempre.",
+        "Quel Motore Liminale piega la strada. Ingegnoso. Non ci salirei mai. Però lo smonterei.",
+        "I ricchi si sono trasferiti a Varlenia a barconi. Lasciali. La sua pietra non ha memoria.",
+        "Dallo Squishing, certi minerali arrivano {da altri mondi|dal nulla|da domani}. Suonano storti sull'incudine."
+      ]
+    }
+  },
+  "script": {
+    "positive": [
+      [
+        [
+          0,
+          "{b}! Ti ho aggiustato il cancello. Cigolava. Non lo sopportavo."
+        ],
+        [
+          1,
+          "Non dovevi, {a}. Grazie."
+        ],
+        [
+          0,
+          "Dovevo eccome. Il cigolio era una cosa personale."
+        ]
+      ],
+      [
+        [
+          0,
+          "Il primo giro lo offro io, {b}. Anche il secondo."
+        ],
+        [
+          1,
+          "Qual è l'occasione?"
+        ],
+        [
+          0,
+          "Mi hai restituito i soldi in tempo. Questo vale il rispetto di un nano e due pinte."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ti ho fatto una cosa. Un coltello. Non discutere."
+        ],
+        [
+          1,
+          "È bellissimo. Guarda il manico!"
+        ],
+        [
+          0,
+          "Frassino, oliato tre volte. Sopravviverà a tutti e due."
+        ],
+        [
+          1,
+          "Allora lo lascerò a qualcuno nel testamento."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ti sei ricordato il nome di mio nonno, {b}. Nessuno se lo ricorda."
+        ],
+        [
+          1,
+          "Hai raccontato la storia quattro volte. Mi è rimasta."
+        ],
+        [
+          0,
+          "Quattro volte! Allora sei praticamente di famiglia."
+        ]
+      ],
+      [
+        [
+          0,
+          "La tua mensola nuova è in bolla. Ho controllato. Sono rimasto colpito."
+        ],
+        [
+          1,
+          "Detto da te, è tanto."
+        ],
+        [
+          0,
+          "È tutto. Non montarti la testa."
+        ]
+      ],
+      [
+        [
+          0,
+          "Canta con me, {b}. La vecchia canzone dei minatori."
+        ],
+        [
+          1,
+          "Non conosco le parole."
+        ],
+        [
+          0,
+          "Nessuno conosce le parole. Non è quello il senso della canzone."
+        ],
+        [
+          1,
+          "Va bene. A squarciagola, allora."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ti cancello dal libro, {b}."
+        ],
+        [
+          1,
+          "Quale libro?"
+        ],
+        [
+          0,
+          "Il libro dei rancori. La faccenda della scala. Perdonata."
+        ],
+        [
+          1,
+          "Non sapevo nemmeno di esserci!"
+        ],
+        [
+          0,
+          "Dal 1996. Non preoccuparti. Era una voce piccola."
+        ]
+      ],
+      [
+        [
+          0,
+          "Il tuo pane è buono, {b}. Pesante. Onesto."
+        ],
+        [
+          1,
+          "Pesante è un complimento?"
+        ],
+        [
+          0,
+          "Detto da un nano, pesante è il complimento più alto che ci sia."
+        ]
+      ]
+    ],
+    "negative": [
+      [
+        [
+          0,
+          "Hai usato i chiodi su quella quercia, {b}. I chiodi."
+        ],
+        [
+          1,
+          "È una staccionata, non una cattedrale."
+        ],
+        [
+          0,
+          "Tutto è una cattedrale, se lo fai bene."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi hai di nuovo dato una pacca sulla testa."
+        ],
+        [
+          1,
+          "Era un gesto affettuoso!"
+        ],
+        [
+          0,
+          "Anche un rancore lo è, all'inizio."
+        ]
+      ],
+      [
+        [
+          0,
+          "Quel coltello che ti ho venduto. L'hai usato come cacciavite."
+        ],
+        [
+          1,
+          "Ha funzionato benissimo."
+        ],
+        [
+          0,
+          "Ha funzionato. Non benissimo. C'è una differenza."
+        ],
+        [
+          1,
+          "Non per me."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi devi ancora i cardini, {b}. Sono sei mesi."
+        ],
+        [
+          1,
+          "Ho detto che ti pago la settimana prossima."
+        ],
+        [
+          0,
+          "L'hai detto in primavera. L'ho scritto."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai toccato la mia incudine?"
+        ],
+        [
+          1,
+          "Ci ho appoggiato il caffè per un secondo."
+        ],
+        [
+          0,
+          "Basta un secondo per perdere un amico."
+        ]
+      ],
+      [
+        [
+          0,
+          "La tua birra è annacquata, {b}, e la spina è storta."
+        ],
+        [
+          1,
+          "Allora vai a bere altrove."
+        ],
+        [
+          0,
+          "Lo farei, se altrove fosse meglio. È questo che mi fa arrabbiare."
+        ]
+      ]
+    ],
+    "neutral": [
+      [
+        [
+          0,
+          "Scusa. Chi ha posato questi ciottoli?"
+        ],
+        [
+          1,
+          "Il comune, credo. Anni fa."
+        ],
+        [
+          0,
+          "Di' al comune che un nano l'ha notato. Capiranno."
+        ]
+      ],
+      [
+        [
+          0,
+          "C'è una fucina in questo paese?"
+        ],
+        [
+          1,
+          "Giù vicino al fiume. La gestisce il vecchio Marco."
+        ],
+        [
+          0,
+          "E il vecchio Marco è bravo?"
+        ],
+        [
+          1,
+          "È l'unico."
+        ],
+        [
+          0,
+          "Non è quello che ho chiesto."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lo sai che la tua porta è fuori squadra?"
+        ],
+        [
+          1,
+          "Si chiude, no?"
+        ],
+        [
+          0,
+          "Si chiude. Non si chiude bene. Buona giornata."
+        ]
+      ],
+      [
+        [
+          0,
+          "Da che parte è la fermata del tram?"
+        ],
+        [
+          1,
+          "Sempre dritto, poi a sinistra al forno."
+        ],
+        [
+          0,
+          "Un forno. Bene. Allora le fermate sono due."
+        ]
+      ],
+      [
+        [
+          0,
+          "Il tempo sta cambiando."
+        ],
+        [
+          1,
+          "Davvero? Il cielo sembra sereno."
+        ],
+        [
+          0,
+          "Le mie ginocchia non sono d'accordo col cielo. Di solito hanno ragione loro."
+        ]
+      ],
+      [
+        [
+          0,
+          "Quanto per la padella di ferro?"
+        ],
+        [
+          1,
+          "Dodici euro."
+        ],
+        [
+          0,
+          "Mh. *la picchietta* Undici, e non parlerò del difetto di fusione."
+        ],
+        [
+          1,
+          "Affare fatto."
+        ]
+      ],
+      [
+        [
+          0,
+          "Quella è una scacchiera? Chi l'ha intagliata?"
+        ],
+        [
+          1,
+          "Mio padre, tanto tempo fa."
+        ],
+        [
+          0,
+          "Allora tuo padre aveva buone mani. Digli che l'ha detto un nano."
+        ]
+      ],
+      [
+        [
+          0,
+          "Questa taverna ha uno sgabello basso?"
+        ],
+        [
+          1,
+          "Abbiamo una cassetta."
+        ],
+        [
+          0,
+          "Una cassetta. Beh. Mi sono seduto su troni peggiori."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai visto il notiziario? Costruiscono un ponte nuovo sulla tangenziale."
+        ],
+        [
+          1,
+          "Era ora, il vecchio trema."
+        ],
+        [
+          0,
+          "Tremerà anche il nuovo. Ricordati le mie parole. Hanno fretta."
+        ]
+      ],
+      [
+        [
+          0,
+          "Buongiorno. È questa la fila per la posta?"
+        ],
+        [
+          1,
+          "Sì. È la fila dalle nove."
+        ],
+        [
+          0,
+          "Bene. Sono paziente. Sono fatto per le file."
+        ]
+      ],
+      [
+        [
+          0,
+          "{Quelle montagne|Quelle colline|Quei picchi} a nord, ci sono miniere?"
+        ],
+        [
+          1,
+          "Una volta c'era una cava. Ha chiuso."
+        ],
+        [
+          0,
+          "Chiusa. Hmpf. Con una montagna non si finisce mai, si interrompe soltanto."
+        ]
+      ],
+      [
+        [
+          0,
+          "In questa piazza c'è sempre tanto rumore?"
+        ],
+        [
+          1,
+          "È giorno di mercato. Il sabato è peggio."
+        ],
+        [
+          0,
+          "Bene. Rumore vuol dire commercio. Commercio vuol dire lavoro. Lavoro vuol dire birra."
+        ]
+      ]
+    ],
+    "debate": [
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Le macchine non sostituiranno mai le mani di un fabbro."
+          ],
+          [
+            1,
+            "Le fabbriche fanno mille chiodi all'ora."
+          ],
+          [
+            0,
+            "Mille chiodi scadenti. Io ne faccio dodici buoni."
+          ],
+          [
+            1,
+            "E a me ne servono mille."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Le cose andrebbero costruite per durare cent'anni."
+          ],
+          [
+            1,
+            "D'accordo. Il tavolo di mia nonna è ancora la cosa migliore di casa."
+          ],
+          [
+            0,
+            "Ecco. Così deve essere un tavolo."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Di Varlenia non bisogna fidarsi. È comparsa in una notte."
+          ],
+          [
+            1,
+            "È un continente intero. Adesso ci vive gente."
+          ],
+          [
+            0,
+            "Anche a Pompei ci viveva gente."
+          ],
+          [
+            1,
+            "Non c'entra niente!"
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Un rancore è solo memoria con il senso del dovere."
+          ],
+          [
+            1,
+            "Ah! Mia madre sarebbe d'accordo con te."
+          ],
+          [
+            0,
+            "Tua madre sembra una donna saggia."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "La magia è un mestiere, come forgiare. Pratica e calli."
+          ],
+          [
+            1,
+            "La magia è un dono. Certe persone ce l'hanno e basta."
+          ],
+          [
+            0,
+            "Nessuno ha niente e basta. Si sono esercitati dove tu non vedevi."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "La birra migliore si fa con calma."
+          ],
+          [
+            1,
+            "Nessuna obiezione. Quella fatta in fretta sa di latta."
+          ],
+          [
+            0,
+            "Latta! Esatto. Lascia che te ne offra una fatta con calma."
+          ]
+        ]
+      }
+    ],
+    "ambient": [
+      [
+        [
+          0,
+          "Buongiorno, {b}. La forgia è accesa."
+        ],
+        [
+          1,
+          "Lo sento dall'odore fin qui."
+        ]
+      ],
+      [
+        [
+          0,
+          "Quella ruota del carretto balla."
+        ],
+        [
+          1,
+          "Balla da anni."
+        ]
+      ],
+      [
+        [
+          0,
+          "Una pinta più tardi, {b}?"
+        ],
+        [
+          1,
+          "Se offri tu."
+        ]
+      ],
+      [
+        [
+          0,
+          "Oggi fa abbastanza freddo per i guanti."
+        ],
+        [
+          1,
+          "Abbastanza per due paia."
+        ]
+      ],
+      [
+        [
+          0,
+          "Attento al gradino, è crepato."
+        ],
+        [
+          1,
+          "Grazie, stavo per cadere."
+        ]
+      ],
+      [
+        [
+          0,
+          "Buona pietra, questo muro."
+        ],
+        [
+          1,
+          "Se lo dici tu."
+        ]
+      ],
+      [
+        [
+          0,
+          "*annuisce con gravità*"
+        ],
+        [
+          1,
+          "Buon pomeriggio anche a te."
+        ]
+      ],
+      [
+        [
+          0,
+          "Giornata lunga al banco, {b}."
+        ],
+        [
+          1,
+          "Al banco ogni giornata è lunga."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lo senti? Pioggia entro sera."
+        ],
+        [
+          1,
+          "Di nuovo le tue ginocchia?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai visto il mio apprendista?"
+        ],
+        [
+          1,
+          "È corso verso il forno."
+        ]
+      ],
+      [
+        [
+          0,
+          "Bel tempo per {costruire|riparare|fare la birra}."
+        ],
+        [
+          1,
+          "Bel tempo anche per stare seduti."
+        ]
+      ],
+      [
+        [
+          0,
+          "Il cardine della tua imposta vuole olio."
+        ],
+        [
+          1,
+          "Ci penserò."
+        ]
+      ],
+      [
+        [
+          0,
+          "Buonasera, {b}. Si canta stasera?"
+        ],
+        [
+          1,
+          "Solo se cominci tu."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mercato affollato."
+        ],
+        [
+          1,
+          "Troppo affollato per i miei gusti."
+        ]
+      ],
+      [
+        [
+          0,
+          "Stivali nuovi, {b}? Buon cuoio."
+        ],
+        [
+          1,
+          "Mi sono costati una fortuna."
+        ]
+      ],
+      [
+        [
+          0,
+          "Strada tranquilla stasera."
+        ],
+        [
+          1,
+          "Teniamola così."
+        ]
+      ],
+      [
+        [
+          0,
+          "Il tram è di nuovo in ritardo."
+        ],
+        [
+          1,
+          "Il tram è sempre in ritardo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Quella campana è incrinata, lo sai."
+        ],
+        [
+          1,
+          "Ho sempre pensato che suonasse strana."
+        ]
+      ]
+    ]
+  }
+}

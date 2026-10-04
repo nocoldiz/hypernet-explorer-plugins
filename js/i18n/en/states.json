@@ -418,5 +418,26 @@
     "message2": "%1 is concussed!",
     "message3": "%1's head is still ringing...",
     "message4": "%1's head clears."
+  },
+  "61": {
+    "name": "Allergic Reaction",
+    "message1": "%1 breaks out in hives!",
+    "message2": "%1 breaks out in hives!",
+    "message3": "",
+    "message4": "%1's reaction subsides."
+  },
+  "62": {
+    "name": "Anaphylaxis",
+    "message1": "%1's throat is closing!",
+    "message2": "%1's throat is closing!",
+    "message3": "",
+    "message4": "%1 can breathe again."
+  },
+  "63": {
+    "name": "Hay Fever",
+    "message1": "%1 starts sneezing!",
+    "message2": "%1 starts sneezing!",
+    "message3": "",
+    "message4": "%1 stops sneezing."
   }
 }

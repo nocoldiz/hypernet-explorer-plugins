@@ -1263,6 +1263,13 @@
     }
   }
 
+  // A food whose database effects add a state (the nausea of a spoiled dish,
+  // the poisoning of raw meat) works on a full stomach too: only the healing
+  // half of a meal waits for missing HP.
+  function foodAddsState(item) {
+    return !!(item && Array.isArray(item.effects) && item.effects.some((e) => e && e.code === 21));
+  }
+
   const ItemUse = {
     /** One ally: the target picker's answer, wherever it was asked. */
     onActor(actor, item) {
@@ -1275,7 +1282,7 @@
       if (isFood) {
         playItemSound(item);
 
-        if (actor.hp < actor.mhp && item.damage && item.damage.type === 3) {
+        if ((actor.hp < actor.mhp && item.damage && item.damage.type === 3) || foodAddsState(item)) {
           const action = new Game_Action(actor);
           action.setItemObject(item);
           action.apply(actor);
@@ -1341,7 +1348,7 @@
         $gameParty.loseItem(item, 1);
 
         for (const actor of targets) {
-          if (item.damage && item.damage.type === 3 && actor.hp < actor.mhp) {
+          if ((item.damage && item.damage.type === 3 && actor.hp < actor.mhp) || foodAddsState(item)) {
             const action = new Game_Action(actor);
             action.setItemObject(item);
             action.apply(actor);

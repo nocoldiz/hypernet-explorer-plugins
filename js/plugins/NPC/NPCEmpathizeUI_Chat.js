@@ -426,7 +426,16 @@
   Scene_NPCEmpathize.prototype._buildChatHTML = function (displayName, T, profile, opinion, npcName, remoteMode) {
     const bubblesHTML = this._chatHistory.map(entry => {
       if (entry.role === 'convo') return this._buildConvoBubble(entry);
-      const text = vary(entry.text);
+      // A member of a people with a voice of their own (NPCConversation.SpeciesVoice:
+      // the Naguka patois, the Verden turn of phrase) says it their way, on
+      // either side of the table. Voiced once and kept on the entry, so a
+      // redraw of the log never rewords what was already said.
+      if (entry._voiced === undefined) {
+        const SV = typeof window !== 'undefined' ? window.NPCConversation?.SpeciesVoice : null;
+        const speaker = entry.role === 'player' ? this._focusActor?.() : (profile || npcName);
+        entry._voiced = SV ? SV.render(vary(entry.text), speaker) : null;
+      }
+      const text = entry._voiced || vary(entry.text);
       return entry.role === 'player'
         ? `<div class="npc-bubble npc-bubble-player">${_escapeHtml(text)}</div>`
         // The speaker of a left-hand bubble is never in doubt - the portrait,

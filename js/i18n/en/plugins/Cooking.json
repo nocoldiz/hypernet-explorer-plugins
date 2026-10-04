@@ -46,7 +46,10 @@
     "ate": "You ate {name} raw.",
     "cannotCombine": "Raw meat and plant matter can't be cooked together.",
     "cookware": "\nCookware bonus +{percent}%",
-    "fedParty": "\n (a party of {count} at table)"
+    "fedParty": "\n (a party of {count} at table)",
+    "cannotPrepare": "Not enough ingredients for {name}.",
+    "recipePrepared": "{name} prepared (x{count}) and put in the pack.",
+    "recipeSpoiled": "{name} went wrong in the pan: all that is left is a spoiled dish."
   },
   "names": {
     "meaty": "Meaty {name}",
@@ -61,7 +64,8 @@
     "eatButton": "Eat Raw",
     "menuLabel": "Cooking",
     "selectIngredients": "Select ingredients.",
-    "cookTheseItems": "Cook these items?"
+    "cookTheseItems": "Cook these items?",
+    "cookAnyway": "Cook anyway"
   },
   "back": "Back",
   "ingredients": "Ingredients",
@@ -93,7 +97,34 @@
   "roll": {
     "masterpiece": "[NAT 20 Culinary Roll] Gourmet masterpiece! {dish} gained +50% nutrition!",
     "scorched": "[NAT 1 Culinary Roll] Scorched dish! {dish} lost nutrition!",
-    "delicious": "[Culinary Roll: {roll}{mod}={total}] Deliciously prepared {dish}!"
+    "delicious": "[Culinary Roll: {roll}{mod}={total}] Deliciously prepared {dish}!",
+    "action": "Cooking: {dish}"
   },
-  "cookware": "Cookware"
+  "cookware": "Cookware",
+  "tabs": {
+    "combine": "Combine",
+    "recipes": "Recipes"
+  },
+  "recipes": {
+    "empty": "No recipes in the book.",
+    "ingredients": "Ingredients",
+    "amount": "{have} / {need}",
+    "ready": "Ready",
+    "missing": "Missing ingredients",
+    "levelShort": "Lv {level}",
+    "allergyShort": "Allergens",
+    "level": "Cooking level",
+    "levelLine": "{need} ({cook}: {have})",
+    "spoil": "Chance to spoil",
+    "reward": "Cooking",
+    "points": "+{points} points",
+    "keeps": "The dish goes into the pack instead of being eaten.",
+    "prepareButton": "Prepare",
+    "prepareAnyway": "Prepare anyway"
+  },
+  "allergy": {
+    "title": "Allergy warning",
+    "line": "{actor}: {allergens}",
+    "toast": "Allergy warning: {list}. Press again to go ahead."
+  }
 }

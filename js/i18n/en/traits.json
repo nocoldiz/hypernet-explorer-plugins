@@ -843,6 +843,46 @@
     "hibernator": {
       "name": "Hibernator",
       "description": "Sleeps out the cold on a body built to store it"
+    },
+    "peanut_allergy": {
+      "name": "Peanut Allergy",
+      "description": "Peanuts can close the throat"
+    },
+    "tree_nut_allergy": {
+      "name": "Tree Nut Allergy",
+      "description": "Almonds, hazelnuts and walnuts bring on a reaction"
+    },
+    "shellfish_allergy": {
+      "name": "Shellfish Allergy",
+      "description": "Prawns, crab and lobster are dangerous"
+    },
+    "fish_allergy": {
+      "name": "Fish Allergy",
+      "description": "Fish brings out hives and nausea"
+    },
+    "milk_allergy": {
+      "name": "Milk Allergy",
+      "description": "Dairy brings out hives and cramps"
+    },
+    "egg_allergy": {
+      "name": "Egg Allergy",
+      "description": "Eggs bring out a rash"
+    },
+    "wheat_allergy": {
+      "name": "Wheat Allergy",
+      "description": "Wheat and barley bring out a rash"
+    },
+    "soy_allergy": {
+      "name": "Soy Allergy",
+      "description": "Soy brings out an itch"
+    },
+    "hay_fever": {
+      "name": "Hay Fever",
+      "description": "Spring pollen brings on sneezing fits outdoors"
+    },
+    "penicillin_allergy": {
+      "name": "Penicillin Allergy",
+      "description": "Penicillin brings on a violent reaction"
     }
   }
 }

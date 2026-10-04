@@ -287,7 +287,7 @@
     21: "clerical", 22: "dharmic", 23: "longsouth",
   };
   const FAC_REGISTERS = {
-    8: "naguka", 9: "verden", 10: "truckers", 11: "industries",
+    8: "naguka", 10: "truckers", 11: "industries",
     12: "northpoint", 13: "citadel", 14: "petrodemons",
   };
 

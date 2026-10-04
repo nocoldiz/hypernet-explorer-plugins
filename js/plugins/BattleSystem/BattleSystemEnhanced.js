@@ -1166,7 +1166,28 @@
     //
     //   The under-level half is the mirror at half weight: fauna the party
     //   has outgrown swings and misses rather than becoming unable to act.
+    //   The party never gets that half. A party member swinging up past the
+    //   fair gap always lands (isChipStrike), and levelDampingFactor turns
+    //   the blow into chip damage instead: a miss reads as bad luck, a
+    //   scratch reads as the monster being out of their league.
     // ------------------------------------------------------------------
+
+    /**
+     * True when a party member attacks a monster that outranks them by more
+     * than the fair gap. Such a blow always lands; its damage is what the
+     * gap takes away.
+     */
+    BSE.Helpers.isChipStrike = function(subject, target) {
+        if (!BSE.Params.levelAccuracyEnabled) return false;
+        if (!subject || !target) return false;
+        if (!subject.isActor || !subject.isActor()) return false;
+        if (!target.isEnemy || !target.isEnemy()) return false;
+        if (!levelGapRulesApply()) return false;
+        const enemyLevel = BSE.Helpers.getBattlerLevel(target) || (target.level || 0);
+        const actorLevel = BSE.Helpers.getBattlerLevel(subject) || (subject.level || 0);
+        if (enemyLevel <= 0 || actorLevel <= 0) return false;
+        return enemyLevel - actorLevel > BSE.Params.levelGapFair;
+    };
 
     /**
      * A monster's authored hit rate, with the roster-wide floor underneath.
@@ -1230,8 +1251,9 @@
     const _Game_Action_itemHit_BSE = Game_Action.prototype.itemHit;
     Game_Action.prototype.itemHit = function(target) {
         if (BSE.Helpers.isFriendlyAction(this, target)) return 1;
-        let rate = _Game_Action_itemHit_BSE.call(this, target);
         const subject = this.subject ? this.subject() : null;
+        if (BSE.Helpers.isChipStrike(subject, target)) return 1;
+        let rate = _Game_Action_itemHit_BSE.call(this, target);
         const shift = BSE.Helpers.levelAccuracyShift(subject, target);
         if (shift > 0) rate += (1 - rate) * shift;
         else if (shift < 0) rate *= (1 + shift);
@@ -1241,9 +1263,11 @@
     const _Game_Action_itemEva_BSE = Game_Action.prototype.itemEva;
     Game_Action.prototype.itemEva = function(target) {
         if (BSE.Helpers.isFriendlyAction(this, target)) return 0;
+        const subject = this.subject ? this.subject() : null;
+        if (BSE.Helpers.isChipStrike(subject, target)) return 0;
         let eva = _Game_Action_itemEva_BSE.call(this, target);
         if (!(eva > 0)) return eva;
-        const shift = BSE.Helpers.levelAccuracyShift(this.subject ? this.subject() : null, target);
+        const shift = BSE.Helpers.levelAccuracyShift(subject, target);
         if (shift > 0) eva *= (1 - shift);
         else if (shift < 0) eva += (1 - eva) * (-shift);
         return Math.max(0, Math.min(1, eva));

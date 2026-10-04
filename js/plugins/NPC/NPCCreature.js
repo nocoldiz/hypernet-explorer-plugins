@@ -390,6 +390,22 @@
       entry.animalGrowth.indoors === true);
   }
 
+  // A monster world is made of no people at all: nothing on a people's body
+  // (Humanoid and every people built on it, SpriteCatalog.PEOPLE_ARCHETYPES:
+  // elves, dwarves, orcs, gnomes...) and no goblin of any kind, whichever
+  // archetype the sheet happens to name (a mutated goblin, a severed head).
+  const GOBLIN_NAME_RE = /goblin/i;
+  function isPeopleArchetype(archetype) {
+    const SC = window.SpriteCatalog;
+    if (SC && Array.isArray(SC.PEOPLE_ARCHETYPES) && SC.PEOPLE_ARCHETYPES.includes(archetype)) return true;
+    if (archetype === DEFAULT_ARCHETYPE) return true;
+    const entry = archetypes()[archetype];
+    return !!(entry && entry.bodyPlan === DEFAULT_ARCHETYPE);
+  }
+  function barredFromMonsterWorld(spriteKey, archetype) {
+    return isPeopleArchetype(archetype) || GOBLIN_NAME_RE.test(String(spriteKey || ""));
+  }
+
   function creatureWardrobe(exterior = true) {
     const slot = wardrobeSlot(exterior);
     if (_wardrobe && _wardrobeSlot === slot) return _wardrobe;
@@ -397,6 +413,7 @@
 
     const data = npcData();
     const known = archetypes();
+    const monsters = isMonsterWorld();
     const out = [];
     for (const key of catalogueKeys(exterior)) {
       const entry = data[key];
@@ -404,6 +421,7 @@
       // An entry naming an archetype the health tables never heard of has no
       // class roster and no anatomy to be built from, so it is not dealt.
       if (!archetype || !known[archetype]) continue;
+      if (monsters && barredFromMonsterWorld(key, archetype)) continue;
       // Which half of the wardrobe the sheet came out of, the `creature` or
       // the `animal` one. A monster world deals the two evenly and needs to be
       // able to tell them apart after the fact.
@@ -418,8 +436,9 @@
     if (isMonsterWorld()) {
       const seen = new Set(out.map((e) => e.spriteKey));
       for (const archetype of Object.keys(known)) {
+        if (isPeopleArchetype(archetype)) continue;
         for (const spriteKey of spritesForArchetypes([archetype])) {
-          if (seen.has(spriteKey)) continue;
+          if (seen.has(spriteKey) || GOBLIN_NAME_RE.test(spriteKey)) continue;
           seen.add(spriteKey);
           // A Monsters/ sheet is one character wide and carries no bust of
           // its own; the panel draws its 3D model instead. It counts as the
@@ -1077,6 +1096,154 @@
     return !!(life && life.ageless);
   }
 
+  // ---------------------------------------------------------------------------
+  // Goblin species
+  // ---------------------------------------------------------------------------
+  // A goblin sheet (NPCs.json `goblin: true`) is one of two peoples, and the
+  // sheet cannot tell which: the Naguka, the goblins who came up the Kola shaft,
+  // lay eggs and share the collective unconscious, or the Verden, their blue
+  // cousins out of the Green Fields who grow from spores. Both are copies of
+  // the Humanoid body (Archetypes.json `bodyPlan`). Which one a goblin NPC is
+  // depends on where it was first met:
+  //
+  //   on ground the Goblin Horde holds   nine Naguka in ten
+  //   anywhere else                      nine Verden in ten
+  //   a goblin world, everywhere         an even split
+  //
+  // The roll is seeded off the name and the world, so the same goblin is the
+  // same people every time it is asked about.
+  // i18n-ignore-start: Archetypes.json keys and species ids
+  const NAGUKA_ARCHETYPE = "NagukaGoblin";
+  const VERDEN_ARCHETYPE = "VerdenGoblin";
+  const GOBLIN_ARCHETYPES = [NAGUKA_ARCHETYPE, VERDEN_ARCHETYPE];
+  // i18n-ignore-end
+  const NAGUKA_SHARE_HORDE = 0.9;
+  const NAGUKA_SHARE_ABROAD = 0.1;
+  const NAGUKA_SHARE_GOBLIN_WORLD = 0.5;
+
+  function isGoblinArchetype(key) {
+    return GOBLIN_ARCHETYPES.includes(String(key || "").trim());
+  }
+
+  function isGoblinSheet(spriteKey) {
+    const entry = spriteKey ? npcData()[spriteKey] : null;
+    if (entry && entry.goblin === true) return true;
+    const SC = window.SpriteCatalog;
+    return !!(spriteKey && SC && typeof SC.isGoblinSheet === "function" && SC.isGoblinSheet(spriteKey));
+  }
+
+  function isGoblinWorld() {
+    const WM = window.WorldModes;
+    return !!(WM && typeof WM.hordeIsNormalOrder === "function" && WM.hordeIsNormalOrder());
+  }
+
+  function isHordeGround(mapId) {
+    const SC = window.SpriteCatalog;
+    try {
+      return !!(SC && typeof SC.isGoblinHordeGround === "function" && SC.isGoblinHordeGround(mapId));
+    } catch (_) {
+      return false;
+    }
+  }
+
+  // The share of the goblins met here who are Naguka.
+  function nagukaShareAt(mapId) {
+    if (isGoblinWorld()) return NAGUKA_SHARE_GOBLIN_WORLD;
+    return isHordeGround(mapId) ? NAGUKA_SHARE_HORDE : NAGUKA_SHARE_ABROAD;
+  }
+
+  // Which of the two peoples the goblin called `name` is, met on `mapId`.
+  function goblinSpeciesFor(name, mapId) {
+    const S = window.NPCShared;
+    const hash = S && S.nameHash ? S.nameHash("goblinSpecies:" + String(name || "")) : 0; // i18n-ignore: seed key
+    const seed = S && S.worldSeed ? S.worldSeed() : 19002001;
+    const roll = (((hash ^ seed) >>> 0) % 10000) / 10000;
+    return roll < nagukaShareAt(mapId) ? NAGUKA_ARCHETYPE : VERDEN_ARCHETYPE;
+  }
+
+  // Every archetype a profile, an actor or a stored "A / B" carries, the
+  // spliced pair of a party member included.
+  function allArchetypeKeysOf(source) {
+    if (!source) return [];
+    if (typeof source !== "string" && Array.isArray(source._creatureArchetypes) && source._creatureArchetypes.length) {
+      return source._creatureArchetypes.map((k) => String(k || "").trim()).filter(Boolean);
+    }
+    return archetypeKeysOf(source);
+  }
+
+  // "naguka", "verden" or null. A body with both in it is Naguka: that half
+  // always wins, in how it speaks and in everything else that asks.
+  function goblinSpeciesOf(source) {
+    const keys = allArchetypeKeysOf(source);
+    if (keys.includes(NAGUKA_ARCHETYPE)) return "naguka"; // i18n-ignore: species id
+    if (keys.includes(VERDEN_ARCHETYPE)) return "verden"; // i18n-ignore: species id
+    return null;
+  }
+
+  function isNaguka(source) {
+    return goblinSpeciesOf(source) === "naguka"; // i18n-ignore: species id
+  }
+
+  // The voice a body talks in (NPCConversation's SpeciesVoice), or null. Read
+  // off the archetypes: each names its own (Archetypes.json `voice`). A body
+  // spliced from two speaks with its PRIMARY half's voice (the next half's
+  // when the primary, a plain Humanoid say, has none), except that a half
+  // marked `voiceWins` (the Naguka) is heard over any other.
+  function speciesVoiceOf(source) {
+    const data = archetypes();
+    const keys = allArchetypeKeysOf(source);
+    for (const key of keys) {
+      const entry = data[key];
+      if (entry && entry.voiceWins && entry.voice) return String(entry.voice);
+    }
+    for (const key of keys) {
+      const entry = data[key];
+      if (entry && entry.voice) return String(entry.voice);
+    }
+    return null;
+  }
+
+  // How a voice is used: "own" (their bank replaces the ordinary lines: the
+  // Naguka, the Orcs, the Verden, the aliens) or "blend" (the ordinary lines
+  // stay theirs too, and their people's lines are mixed in among them: the
+  // Elves, the Dwarves, the Gnomes). Read off whichever archetype names the
+  // voice (Archetypes.json `voiceMode`).
+  function speciesVoiceModeOf(voiceId) {
+    if (!voiceId) return null;
+    const data = archetypes();
+    for (const key of Object.keys(data)) {
+      const entry = data[key];
+      if (entry && entry.voice === voiceId) return entry.voiceMode === "blend" ? "blend" : "own"; // i18n-ignore: voice mode ids
+    }
+    return "own"; // i18n-ignore: voice mode id
+  }
+
+  // Puts the profile of a goblin on the right people. A goblin's sheet with a
+  // plain Humanoid archetype is dealt one; one already dealt keeps it. A sheet
+  // that is no longer a goblin's (the population pass changed the face) drops
+  // the goblin people again. Answers whether the profile changed.
+  function assignGoblinSpecies(profile, name, mapId, wearsGoblin) {
+    if (!profile) return false;
+    const goblin = wearsGoblin === undefined ? isGoblinSheet(profile.spriteKey) : !!wearsGoblin;
+    const keys = archetypeKeysOf(profile);
+    const hasGoblin = keys.some(isGoblinArchetype);
+    if (goblin && !hasGoblin) {
+      if (keys.length > 1 || (keys[0] && keys[0] !== DEFAULT_ARCHETYPE)) return false;
+      profile.archetype = goblinSpeciesFor(name || profile._eventName || "", mapId);
+      profile._goblinSpeciesDealt = true;
+      return true;
+    }
+    // Only a people this pass dealt is taken back: one an author wrote onto
+    // the event (a page comment `archetype: NagukaGoblin`) stands.
+    if (!goblin && hasGoblin && profile._goblinSpeciesDealt) {
+      const rest = keys.filter((k) => !isGoblinArchetype(k));
+      profile.archetype = rest.length ? rest.join(" / ") : DEFAULT_ARCHETYPE;
+      delete profile._goblinSpeciesDealt;
+      return true;
+    }
+    return false;
+  }
+
   window.NPCCreature = {
     CREATURE_CHANCE_MONSTER, CREATURE_CHANCE_NORMAL,
     CREATURE_CHANCE_SETTLEMENT, CREATURE_CHANCE_WILD, CREATURE_CHANCE_ZOMBIE,
@@ -1097,5 +1264,8 @@
     isHeldToBeastRules, mayHoldMoney, sanitizeMoney, beastsWork, mayWork,
     CREATURE_RHYTHMS, CREATURE_SLOTS, creatureLife, lifespanDaysOf, isAgeless,
     ZOMBIE_CLASS_ID, isRisenSheet,
+    NAGUKA_ARCHETYPE, VERDEN_ARCHETYPE, NAGUKA_SHARE_HORDE, NAGUKA_SHARE_ABROAD, NAGUKA_SHARE_GOBLIN_WORLD,
+    isGoblinArchetype, isGoblinSheet, nagukaShareAt, goblinSpeciesFor, goblinSpeciesOf, isNaguka,
+    assignGoblinSpecies, allArchetypeKeysOf, speciesVoiceOf, speciesVoiceModeOf,
   };
 })();

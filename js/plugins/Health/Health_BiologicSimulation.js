@@ -97,8 +97,8 @@
  * ones still inside their window period; each can be paid to be named.
  *
  * @command CureDiseases
- * @desc Opens a screen to buy a course of medicine for every diagnosed
- * illness the party carries.
+ * @desc Opens the pharmacy, sick or not: doses of any medicine, for any
+ * illness, in any combination, paid for together.
  *
  */
 
@@ -3223,66 +3223,231 @@
     },
   };
 
-  function Window_BiologicCure() {
+  // ── The pharmacy counter ───────────────────────────────────────────────────
+  // Open to anyone, sick or not: the left list is every illness the shelf has
+  // a remedy for, the party's own diagnosed ones on top, and the right one the
+  // remedies for the illness picked there. Doses of any of them go into one
+  // basket, carried across illnesses, and are paid for together. Nothing is
+  // prescribed: which medicines, and how many of each, is the player's call.
+  Object.assign(window.BiologicCure, {
+    // [{ disease, actor|null }]: the party's diagnosed illnesses first, then
+    // every illness in the library with at least one remedy, by name.
+    diseaseRows() {
+      const api = window.DiseaseSystem;
+      const meds = window.Medicines;
+      if (!api || !meds) return [];
+      const rows = [];
+      for (const actor of window.BiologicDiagnosis.targets()) {
+        for (const entry of api.actorEntries(actor)) {
+          const disease = api.resolve(entry);
+          const st = disease && api.courseState(actor, entry);
+          if (!st || !st.known || !meds.forDisease(entry.id).length) continue;
+          rows.push({ disease, actor });
+        }
+      }
+      const library = api.all().filter((d) => meds.forDisease(d.id).length > 0)
+        .slice().sort((a, b) => String(a.name).localeCompare(String(b.name)));
+      for (const disease of library) rows.push({ disease, actor: null });
+      return rows;
+    },
+
+    // Every remedy on the shelf for one illness, with the item behind it.
+    medicineRows(diseaseId) {
+      const meds = window.Medicines;
+      if (!meds) return [];
+      return meds.forDisease(diseaseId)
+        .map((r) => ({ remedy: r, item: $dataItems[r.itemId] }))
+        .filter((row) => !!row.item);
+    },
+
+    // How many more of an item the pack can take, so the basket never asks
+    // for doses that would be thrown away at the item cap.
+    room(item) {
+      return Math.max(0, $gameParty.maxItems(item) - $gameParty.numItems(item));
+    },
+
+    // The basket is a Map itemId -> doses.
+    basketCount(basket) {
+      let n = 0;
+      for (const qty of basket.values()) n += qty;
+      return n;
+    },
+
+    basketCost(basket) {
+      let cost = 0;
+      for (const [itemId, qty] of basket) cost += qty * (($dataItems[itemId] && $dataItems[itemId].price) || 0);
+      return cost;
+    },
+
+    // Paying for the whole basket. The caller has checked the gold.
+    buyBasket(basket) {
+      $gameParty.loseGold(this.basketCost(basket));
+      for (const [itemId, qty] of basket) {
+        if (qty > 0 && $dataItems[itemId]) $gameParty.gainItem($dataItems[itemId], qty);
+      }
+      basket.clear();
+    },
+  });
+
+  // Left: the basket row, then the illnesses.
+  function Window_BiologicCureDiseases() {
     this.initialize(...arguments);
   }
 
-  Window_BiologicCure.prototype = Object.create(Window_Command.prototype);
-  Window_BiologicCure.prototype.constructor = Window_BiologicCure;
+  Window_BiologicCureDiseases.prototype = Object.create(Window_Command.prototype);
+  Window_BiologicCureDiseases.prototype.constructor = Window_BiologicCureDiseases;
 
-  Window_BiologicCure.prototype.makeCommandList = function () {
-    for (const row of window.BiologicCure.rows()) {
-      const name = T("Biologic.cure.rowLine", { actor: row.actor.name(), disease: row.disease.name });
-      this.addCommand(name, "buy", true, row);
+  Window_BiologicCureDiseases.prototype.initialize = function (rect, basket) {
+    this._basket = basket;
+    Window_Command.prototype.initialize.call(this, rect);
+  };
+
+  Window_BiologicCureDiseases.prototype.makeCommandList = function () {
+    const cure = window.BiologicCure;
+    const count = cure.basketCount(this._basket);
+    const label = count > 0 ? T("Biologic.cure.checkout", { count }) : T("Biologic.cure.basketEmpty");
+    this.addCommand(label, "checkout", count > 0, null);
+    for (const row of cure.diseaseRows()) {
+      const name = row.actor
+        ? T("Biologic.cure.rowLine", { actor: row.actor.name(), disease: row.disease.name })
+        : row.disease.name;
+      this.addCommand(name, "disease", true, row);
     }
   };
 
-  Window_BiologicCure.prototype.drawItem = function (index) {
+  Window_BiologicCureDiseases.prototype.drawItem = function (index) {
     const cmd = this._list[index];
-    const row = cmd.ext;
     const rect = this.itemLineRect(index);
     this.resetTextColor();
     this.changePaintOpacity(this.isCommandEnabled(index));
-    this.drawText(cmd.name, rect.x, rect.y, rect.width - 140);
-    if (row.needed <= 0) {
-      // Same as the diagnosis list: the palette lives on ColorManager in MZ.
-      this.changeTextColor(ColorManager.textColor(3));
-      this.drawText(T("Biologic.cure.stockedTag"), rect.x, rect.y, rect.width, "right");
+    if (cmd.symbol === "checkout") {
+      this.changeTextColor(ColorManager.systemColor());
+      this.drawText(cmd.name, rect.x, rect.y, rect.width - 160);
       this.resetTextColor();
-    } else {
-      this.drawCurrencyValue(row.cost, $dataSystem.currencyUnit, rect.x, rect.y, rect.width);
-    }
-  };
-
-  Window_BiologicCure.prototype.processOk = function () {
-    const cmd = this._list[this.index()];
-    const row = cmd && cmd.ext;
-    if (!row) return;
-    if (row.needed <= 0) {
-      SoundManager.playBuzzer();
-      return;
-    }
-    if ($gameParty.gold() < row.cost) {
-      SoundManager.playBuzzer();
-      if (window.ParchmentToast) {
-        window.ParchmentToast.show(T("Biologic.cure.tooExpensive"), { severity: "warning", duration: 150 });
+      if (cmd.enabled) {
+        this.drawCurrencyValue(window.BiologicCure.basketCost(this._basket), $dataSystem.currencyUnit,
+          rect.x, rect.y, rect.width);
       }
       return;
     }
-    const actorName = row.actor.name();
-    const itemName = row.item.name;
-    const iconIndex = row.item.iconIndex;
-    const count = row.needed;
-    window.BiologicCure.buy(row);
-    SoundManager.playShop();
-    if (window.ParchmentToast) {
-      window.ParchmentToast.show(
-        T("Biologic.cure.bought", { actor: actorName, item: itemName, count }),
-        { severity: "good", duration: 200, icon: iconIndex }
-      );
+    if (cmd.ext.actor) this.changeTextColor(ColorManager.textColor(2));
+    this.drawText(cmd.name, rect.x, rect.y, rect.width);
+    this.resetTextColor();
+  };
+
+  Window_BiologicCureDiseases.prototype.select = function (index) {
+    Window_Command.prototype.select.call(this, index);
+    if (this._medicineWindow) {
+      const cmd = this._list && this._list[this.index()];
+      this._medicineWindow.setDisease(cmd && cmd.ext ? cmd.ext.disease : null);
     }
+  };
+
+  Window_BiologicCureDiseases.prototype.setMedicineWindow = function (win) {
+    this._medicineWindow = win;
+    this.select(this.index());
+  };
+
+  // Right: the remedies for the picked illness, two lines each.
+  function Window_BiologicCureMedicines() {
+    this.initialize(...arguments);
+  }
+
+  Window_BiologicCureMedicines.prototype = Object.create(Window_Selectable.prototype);
+  Window_BiologicCureMedicines.prototype.constructor = Window_BiologicCureMedicines;
+
+  Window_BiologicCureMedicines.prototype.initialize = function (rect, basket) {
+    this._basket = basket;
+    this._disease = null;
+    this._rows = [];
+    Window_Selectable.prototype.initialize.call(this, rect);
+  };
+
+  Window_BiologicCureMedicines.prototype.setDisease = function (disease) {
+    if (this._disease === disease) return;
+    this._disease = disease;
+    this._rows = disease ? window.BiologicCure.medicineRows(disease.id) : [];
+    this.select(-1);
+    this.scrollTo(0, 0);
     this.refresh();
-    this.activate();
+  };
+
+  Window_BiologicCureMedicines.prototype.maxItems = function () {
+    return this._rows.length;
+  };
+
+  Window_BiologicCureMedicines.prototype.itemHeight = function () {
+    return this.lineHeight() * 2 + 8;
+  };
+
+  Window_BiologicCureMedicines.prototype.row = function () {
+    return this._rows[this.index()] || null;
+  };
+
+  Window_BiologicCureMedicines.prototype.qty = function (row) {
+    return this._basket.get(row.item.id) || 0;
+  };
+
+  Window_BiologicCureMedicines.prototype.drawItem = function (index) {
+    const row = this._rows[index];
+    if (!row) return;
+    const rect = this.itemRectWithPadding(index);
+    const lh = this.lineHeight();
+    const qty = this.qty(row);
+    this.resetTextColor();
+    this.drawItemName(row.item, rect.x, rect.y, rect.width - 80);
+    if (qty > 0) {
+      this.changeTextColor(ColorManager.powerUpColor());
+      this.drawText(T("Biologic.cure.inBasket", { count: qty }), rect.x, rect.y, rect.width, "right");
+      this.resetTextColor();
+    }
+    const r = row.remedy;
+    const kind = r.kind === "cure"
+      ? T(r.lastResort ? "Biologic.cure.kindLastResort" : "Biologic.cure.kindCure", { days: r.days })
+      : T("Biologic.cure.kindManage");
+    const held = T("Biologic.cure.held", { count: $gameParty.numItems(row.item) });
+    const y2 = rect.y + lh;
+    this.changeTextColor(ColorManager.textColor(r.kind === "cure" ? 3 : 6));
+    this.drawText(kind, rect.x + 36, y2, rect.width - 36);
+    this.changeTextColor(ColorManager.textColor(8));
+    this.drawText(held, rect.x, y2, rect.width - 170, "right");
+    this.resetTextColor();
+    this.drawCurrencyValue(row.item.price || 0, $dataSystem.currencyUnit, rect.x, y2, rect.width);
+  };
+
+  // A dose more or less of the medicine under the cursor.
+  Window_BiologicCureMedicines.prototype.changeQty = function (delta) {
+    const row = this.row();
+    if (!row) return;
+    const now = this.qty(row);
+    const next = Math.max(0, Math.min(window.BiologicCure.room(row.item), now + delta));
+    if (next === now) {
+      SoundManager.playBuzzer();
+      return;
+    }
+    if (next > 0) this._basket.set(row.item.id, next);
+    else this._basket.delete(row.item.id);
+    SoundManager.playCursor();
+    this.redrawCurrentItem();
+    if (this._onBasketChange) this._onBasketChange();
+  };
+
+  Window_BiologicCureMedicines.prototype.cursorRight = function () {
+    this.changeQty(1);
+  };
+
+  Window_BiologicCureMedicines.prototype.cursorLeft = function () {
+    this.changeQty(-1);
+  };
+
+  // OK, a click or a tap adds one dose; the list stays active for more.
+  Window_BiologicCureMedicines.prototype.processOk = function () {
+    if (!this.row()) return;
+    this.changeQty(1);
+  };
+
+  Window_BiologicCureMedicines.prototype.isCurrentItemEnabled = function () {
+    return !!this.row();
   };
 
   function Scene_BiologicCure() {
@@ -3294,23 +3459,71 @@
 
   Scene_BiologicCure.prototype.create = function () {
     Scene_MenuBase.prototype.create.call(this);
-    const rowCount = window.BiologicCure.rows().length;
-    const ww = 640;
-    const wh = this.calcWindowHeight(Math.min(Math.max(rowCount, 1), 10), true);
-    const wx = (Graphics.boxWidth - ww) / 2;
-    const wy = (Graphics.boxHeight - wh) / 2;
-    this._listWindow = new Window_BiologicCure(new Rectangle(wx, wy, ww, wh));
-    this._listWindow.setHandler("cancel", this.popScene.bind(this));
-    this.addWindow(this._listWindow);
+    this._basket = new Map();
+    const margin = 24;
+    const top = this.mainAreaTop() + margin;
+    const wh = Graphics.boxHeight - top - margin;
+    const total = Math.min(1100, Graphics.boxWidth - margin * 2);
+    const lw = Math.floor(total * 0.42);
+    const rw = total - lw;
+    const lx = (Graphics.boxWidth - total) / 2;
+    this._diseaseWindow = new Window_BiologicCureDiseases(new Rectangle(lx, top, lw, wh), this._basket);
+    this._medicineWindow = new Window_BiologicCureMedicines(new Rectangle(lx + lw, top, rw, wh), this._basket);
+    this._diseaseWindow.setHandler("checkout", this.onCheckout.bind(this));
+    this._diseaseWindow.setHandler("disease", this.onDisease.bind(this));
+    this._diseaseWindow.setHandler("cancel", this.popScene.bind(this));
+    this._medicineWindow.setHandler("cancel", this.onMedicineCancel.bind(this));
+    this._medicineWindow._onBasketChange = this.onBasketChange.bind(this);
+    this.addWindow(this._diseaseWindow);
+    this.addWindow(this._medicineWindow);
+    this._diseaseWindow.setMedicineWindow(this._medicineWindow);
+    // Straight onto the first illness, past the empty basket row.
+    if (this._diseaseWindow.maxItems() > 1) this._diseaseWindow.select(1);
   };
 
-  PluginManager.registerCommand("Health_BiologicSimulation", "CureDiseases", () => {
-    if (!window.BiologicCure.rows().length) {
-      if (window.ParchmentToast) {
-        window.ParchmentToast.show(T("Biologic.cure.empty"), { severity: "info", duration: 180 });
-      }
+  Scene_BiologicCure.prototype.onDisease = function () {
+    if (!this._medicineWindow.maxItems()) {
+      this._diseaseWindow.activate();
       return;
     }
+    this._medicineWindow.select(0);
+    this._medicineWindow.activate();
+  };
+
+  Scene_BiologicCure.prototype.onMedicineCancel = function () {
+    this._medicineWindow.deselect();
+    this._diseaseWindow.activate();
+  };
+
+  // The basket row's count and total follow every dose added or taken off.
+  Scene_BiologicCure.prototype.onBasketChange = function () {
+    this._diseaseWindow.refresh();
+  };
+
+  Scene_BiologicCure.prototype.onCheckout = function () {
+    const cure = window.BiologicCure;
+    const cost = cure.basketCost(this._basket);
+    if ($gameParty.gold() < cost) {
+      SoundManager.playBuzzer();
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T("Biologic.cure.tooExpensive"), { severity: "warning", duration: 150 });
+      }
+      this._diseaseWindow.activate();
+      return;
+    }
+    const count = cure.basketCount(this._basket);
+    cure.buyBasket(this._basket);
+    SoundManager.playShop();
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T("Biologic.cure.boughtBasket", { count }), { severity: "good", duration: 200 });
+    }
+    this._diseaseWindow.refresh();
+    this._medicineWindow.refresh();
+    this._diseaseWindow.activate();
+  };
+
+  // Always opens: a healthy party may stock up for whatever it fears.
+  PluginManager.registerCommand("Health_BiologicSimulation", "CureDiseases", () => {
     SceneManager.push(Scene_BiologicCure);
   });
 

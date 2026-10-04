@@ -230,7 +230,10 @@
       // The ground, the sea and the town are NOT in this group and stay level,
       // which is what makes the gun read as a gun on a mounting rather than as
       // a tipped-over world.
-      g.rotation.x = this._railTilt(arrival);
+      // Negated: _updatePad recedes the pad +Z by bore * sin(tilt), so the
+      // round leaves along -Z and a positive turn about X would lean the
+      // barrel the other way, off the bore the round is flying up.
+      g.rotation.x = -this._railTilt(arrival);
       this._railGroups = this._railGroups || {};
       this._railGroups[arrival ? "b" : "a"] = g;
 
@@ -607,10 +610,16 @@
       const away = Math.max(0, this.descent
         ? this.startAlt - this.alt
         : this.alt - this.startAlt);
-      const gone = away > 60000;
+      // AND THE PAD BELONGS TO THE DEPARTURE. Every landing ends with the
+      // altimeter back where the climb began, so measured by height alone the
+      // gun the round LEFT came back up under it on the far side of the gap:
+      // Apulia's yard, sea and town under the touchdown on the Moon, and the
+      // Monument's gun catching a round coming home to Greenwich.
+      const gone = away > 60000 || this._leg(ph) !== "depart";   // i18n-ignore  leg id
       this.pad.visible = !gone;
       // The far gun is asked for while it is still under the horizon.
-      if (this.destSite && (this.descent ? this.alt < 90000 : this.downrange > 0.4)) this._ensure("padB");
+      const fallsTo = this.descent || (this.landsOnGun && this._leg(ph) === "arrive");   // i18n-ignore  leg id
+      if (this.destSite && (fallsTo ? this.alt < 90000 : (!this.landsOnGun && this.downrange > 0.4))) this._ensure("padB");
       if (this.padB) this._updateArrivalPad(dt, ph);
       if (gone) return;
       const loadA = loadYOf(this.site);
@@ -720,12 +729,16 @@
       // A hop closes on the far gun along the ground track. A descent closes
       // on it straight down, so "how far there is to go" is the altimeter and
       // the gun is directly under the vehicle from the moment it can be seen.
-      const closing = this.descent ? clamp01(1 - this.alt / 60000) : this.downrange;
-      const show = this.alt < 60000 && closing > 0.55;
+      // A crossing home is a descent from the braking pass on, and before
+      // that its altimeter is the climb off another world.
+      const down = this.descent || this.landsOnGun;
+      const closing = down ? clamp01(1 - this.alt / 60000) : this.downrange;
+      const show = this.alt < 60000 && closing > 0.55 &&
+        (!this.landsOnGun || this._leg(ph) === "arrive");   // i18n-ignore  leg id
       b.visible = show;
       if (!show) return;
 
-      const ahead = this.descent ? 0 : (1 - this.downrange) * DOWNRANGE_VIS_M;
+      const ahead = down ? 0 : (1 - this.downrange) * DOWNRANGE_VIS_M;
       // The same decomposition the launching pad uses, mirrored: the far gun
       // is laid over toward the incoming round, so the round runs down ITS
       // bore at the same angle it left the other one at.

@@ -219,7 +219,10 @@
       "Rooted": "Molto piu difficile da danneggiare o abbattere, ma piu lento.",
       "Flow": "Devia alcuni attacchi e li contrattacca.",
       "Chi Burn": "Perde salute ogni turno, il potere magico cala e i punti azione si accumulano lentamente.",
-      "Concussed": "Potere magico, difesa magica e precisione calano tutti."
+      "Concussed": "Potere magico, difesa magica e precisione calano tutti.",
+      "Allergic Reaction": "Orticaria, prurito e naso che cola per colpa di un allergene. Attacco e agilità calano e la mira vacilla finché non passa o un antistaminico non la cura.",
+      "Anaphylaxis": "Le vie respiratorie si chiudono dopo un allergene. La salute cala a ogni turno e il corpo risponde a fatica finché un antistaminico o una pozione di cura non le riapre.",
+      "Hay Fever": "Occhi che lacrimano e attacchi di starnuti per il polline nell'aria. Incantesimi e mira ne risentono finché non passa o un antistaminico non la cura."
     }
   },
   "spirit": {

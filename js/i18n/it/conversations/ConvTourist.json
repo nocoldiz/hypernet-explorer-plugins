@@ -1,0 +1,2954 @@
+{
+  "_comment": "La voce Tourist (NPCConversation II.1b, SpeciesVoice). speech: le regole applicate a ogni battuta condivisa. voice: aperture e chiusure. thought: i loro pensieri per situazione. script: dialoghi a due, chi parla per primo e' sempre Tourist.",
+  "voice": {
+    "openers": [
+      "Oh, meraviglioso!",
+      "Secondo la mia guida turistica,",
+      "Come dicono alla televisione,",
+      "Perdonate, sto ancora imparando i vostri modi di dire, ma",
+      "Clic! Scusate. Dunque:",
+      "Con le parole del signore del meteo,",
+      "Buonasera e benvenuti!",
+      "Che meraviglia, che cosa umana!",
+      "Fermi un attimo... ecco. Allora:",
+      "Mio cugino sulla sfera di casa non ci crederà, ma",
+      "Pagina quarantuno del frasario dice:",
+      "Interrompiamo il programma per dire:",
+      "Scusate, scusate!",
+      "Se ho capito bene, e capita di rado,",
+      "Ho viaggiato trentanove anni luce per sentire questo, e",
+      "Ooh, una domanda!",
+      "Come direbbe il vostro famoso presentatore di quiz,",
+      "Davvero, il gatto è uscito dal pigiama:",
+      "Con il massimo rispetto per la vostra specie,",
+      "Lasciatemi consultare gli appunti.",
+      "Nella puntata precedente della nostra conversazione:",
+      "Come si dice... ah, ecco:",
+      "Affascinante, affascinante.",
+      "L'ho visto nel documentario!",
+      "Sorridete, prego! E inoltre:",
+      "Gli Analizzatori lo aprirebbero per controllare, ma",
+      "Ancora una foto e poi ascolto. Clic. Dunque,",
+      "Caro umano,",
+      "Oh santo cielo benedetto,",
+      "Da umile visitatore,",
+      "Ultime notizie!",
+      "Lo scrivo per l'album:",
+      "È il gomito dell'ape, ma",
+      "La mia scatola traduttrice è calda, ma ecco:",
+      "La pagina cento del televideo dice che",
+      "Per favore, non allarmatevi,",
+      "Ciao, ciao, Terra!",
+      "Perdonate il mio grigio,",
+      "Okey dokey, come dite voi:",
+      "Un autista di autobus molto gentile mi ha detto che",
+      "Ah! Un'usanza locale, credo:",
+      "Tornando in studio,",
+      "La guida qui non è chiara, quindi",
+      "Perbacco!",
+      "Parlando da grande ammiratore dell'umanità,",
+      "Un momento, il flash si sta caricando. Bene:",
+      "Se aggrada al terrestre,",
+      "Mi sono esercitato su questa frase:",
+      "Meraviglioso fra gli ospiti,",
+      "Restate sintonizzati, perché"
+    ],
+    "closers": [
+      "Clic! Per l'album.",
+      "A voi lo studio.",
+      "Restate sintonizzati.",
+      "Come dice la guida.",
+      "Adesso ce l'ho in pellicola.",
+      "Molto umano.",
+      "L'ho detto bene?",
+      "Ed è buona la prima, come dite voi.",
+      "Mio cugino sarà così geloso.",
+      "Lo custodirò come un tesoro.",
+      "Torniamo subito dopo la pubblicità.",
+      "Sorridete!",
+      "Trentanove anni luce ben spesi.",
+      "Meraviglioso, semplicemente meraviglioso.",
+      "L'ho sottolineato due volte.",
+      "O così ho capito.",
+      "Per favore non cambiate canale.",
+      "Il frasario aveva ragione!",
+      "Terra, non ti fermi mai.",
+      "Sto imparando così tanto.",
+      "Buonanotte, e buona fortuna col meteo.",
+      "Fermi, un'altra. Clic.",
+      "Questo va sul monumento.",
+      "Affascinante.",
+      "È l'espressione giusta?",
+      "Sono un grande ammiratore.",
+      "Senza offesa, davvero.",
+      "Dieci su dieci, ci tornerei.",
+      "Ora con più sentimento!",
+      "Credo. Spero.",
+      "Un altro mistero del vostro pianeta.",
+      "Non ditelo agli Analizzatori.",
+      "Benedetta la vostra piccola atmosfera.",
+      "Me lo sono annotato.",
+      "Come in televisione, ma a colori.",
+      "Facile come una torta.",
+      "Che momento per essere in visita!",
+      "Il flash era acceso, non preoccupatevi.",
+      "Passo e chiudo.",
+      "Ci vediamo alla prossima puntata.",
+      "Siete tutti così interessanti.",
+      "Questa è per la cartolina.",
+      "Davvero, un pianeta di meraviglie.",
+      "L'ho già riavvolto nella mia testa.",
+      "Grazie della pazienza con un visitatore.",
+      "Pace e buona ricezione.",
+      "Lo spiegherò alla mia sfera.",
+      "Qui ci vanno le risate registrate.",
+      "Mm, sì, appunto.",
+      "Terrestri, davvero. Vi voglio bene."
+    ]
+  },
+  "thought": {
+    "generic": [
+      "Oggi ho fatto {trentasei|ventiquattro|dodici} foto a una fermata dell'autobus. Tutte eccellenti.",
+      "L'uomo dell'edicola mi ha detto 'grazie, tesoro'. L'ho annotato per studiarlo.",
+      "Perché gli umani dicono 'bene' quando non stanno bene? Un altro mistero per l'album.",
+      "Ho fatto la fila per venti minuti senza sapere per cosa. Era una fila bellissima.",
+      "Un piccione mi ha guardato. Io ho guardato il piccione. Siamo entrambi ospiti qui.",
+      "Il mio rullino è quasi finito. {Trentacinque|Trentaquattro|Trentatré} scattate, poche rimaste.",
+      "Ho provato a ripiegare una cartina stradale. Ha vinto la cartina.",
+      "Qualcuno mi ha tenuto la porta. Gliel'ho tenuta anch'io. Siamo rimasti lì per un po'.",
+      "La telenovela è finita sul più bello. Devo sapere se Rosalinda sopravvive.",
+      "Gli umani mettono il latte nel tè, poi ci litigano sopra. Li adoro.",
+      "Ho comprato {una palla di neve|un portachiavi|uno strofinaccio} ricordo. C'è sopra proprio questa via.",
+      "Il tostapane ha bruciato di nuovo il pane. La gravità la piego. Il pane no.",
+      "Un bambino mi ha salutato da un autobus. Io ho salutato per undici minuti dopo che era partito.",
+      "Ho guardato il meteo due volte. Tutte e due le volte pioveva solo sulla mappa.",
+      "Come fanno a capire quale moneta è quale? Le facce sono tutte così serie.",
+      "Ho detto 'in bocca al lupo' a un cameriere. Non ha capito. Neanch'io, credo.",
+      "Oggi ho imparato la parola 'pioviggine'. Molto utile. Adesso pioviggina.",
+      "La pubblicità diceva 'nuovo e migliorato'. Li ho comprati tutti e due, per confrontare.",
+      "La cinghia della macchina fotografica si è rotta. Ora la tengo come un uovo.",
+      "Gli umani fischiettano quando sono felici. Ci ho provato. È uscita una frequenza.",
+      "Un cartello diceva 'Non dare da mangiare alle anatre'. Mi sono scusato con le anatre.",
+      "Ho {quattro|sette|nove} cartoline e a casa nessuno ha una cassetta delle lettere.",
+      "La lavanderia a gettoni è un tempio. Oblò rotondi, aria calda, tutti che aspettano in silenzio.",
+      "L'uomo sulla panchina dorme. Lo fotograferò con delicatezza. Senza flash.",
+      "Tengo gli scontrini. Tutti. Piccoli diari di carta di ciò che vendono gli umani.",
+      "Gli umani dicono 'piove a catinelle'. Ho guardato su. Nessuna catinella. Deluso di nuovo.",
+      "Il quiz chiedeva la capitale di un paese che ho sorvolato. Ho sbagliato lo stesso.",
+      "Ho {canticchiato|cantato|fischiettato} la sigla del telegiornale. Uno sconosciuto si è unito.",
+      "Qualcuno mi ha chiamato 'amico'. Ora sono un amico. Devo dirlo alla sfera.",
+      "Un cagnolino mi ha abbaiato. Giusto. Da laggiù sono molto insolito.",
+      "Ho comprato un cappellino con scritto 'I love' e poi un cuore. È vero. È proprio vero.",
+      "Il tizio del videonoleggio mi ha consigliato un film sugli alieni. Era piuttosto scortese con noi.",
+      "Ho provato la gomma da masticare. Dove va a finire? Nessuno me lo dice.",
+      "Gli umani si stringono la mano per salutarsi. Ho stretto {tre|cinque|sei} mani prima di colazione.",
+      "Un musicista di strada ha suonato solo per me. L'ho pagato con una foto. Sembrava confuso.",
+      "Attraverso una galassia in un pomeriggio e non so usare questa macchinetta dei biglietti.",
+      "Il giornale ha un cruciverba. L'ho riempito con le risposte che speravo fossero giuste.",
+      "Qui la gente discute di calcio come fosse una religione. Prendo appunti.",
+      "La signora del negozio mi ha chiesto se volevo un sacchetto. Ne volevo tre. Erano gratis!",
+      "La guida dice che questo caffè è 'incantevole'. Lo è. La guida non sbaglia mai.",
+      "Un umano mi ha detto che ho 'una faccia da radio'. Credo fosse un complimento alla radio.",
+      "Sono stato su una panchina per un'ora, come fanno gli umani. Non è successo niente. Perfetto.",
+      "Qualcuno ha starnutito e tutti hanno detto 'salute'. Io l'ho detto tardi. Molto tardi.",
+      "Ho comprato una macchina usa e getta per gettarla. Non ce l'ho fatta. Era troppo bella.",
+      "Gli umani tengono i piatti buoni per gli ospiti e mangiano su quelli sbeccati. Che nobiltà.",
+      "Ho imparato a dire 'scusi' per primo in ogni situazione. Funziona più o meno metà delle volte.",
+      "L'ascensore suonava musica tra un piano e l'altro. Chi compone per gli ascensori? Voglio conoscerlo.",
+      "Ho provato a lasciare la mancia all'autista. Ha riso. Ho fotografato la risata.",
+      "La televisione mi ha detto di 'non provarlo a casa'. Quindi lo provo qui.",
+      "Credo che il fotografo mi abbia sviluppato il rullino al contrario. O è questa città.",
+      "Gli umani sanno di sapone, pane e preoccupazione. È il mio odore preferito della galassia.",
+      "C'è il saldo {dal calzolaio|in farmacia|al negozio di dischi}. Non mi serve niente. Devo andare.",
+      "L'orologio della torre è indietro di tre minuti. Lo aggiusto? No. Lo romperei e basta.",
+      "Tengo una lista dei saluti umani. 'Tutto a posto?' è il mio preferito. Chiede e risponde.",
+      "Una signora mi ha chiesto dov'era la stazione. A me! Mi sono sentito del posto.",
+      "Ho guardato un uomo parcheggiare in parallelo. Vera manipolazione gravitazionale. Talento puro.",
+      "Il gatto alla finestra mi ignora da una settimana. Lo rispetto enormemente.",
+      "Ho provato a comprare un acino d'uva. Il fruttivendolo mi ha dato il grappolo intero. Umani!",
+      "Questo mese su ogni radio passa la stessa canzone. So tutte le parole. Tutte.",
+      "Gli umani le chiamano 'chiacchiere'. Per me sono i discorsi più importanti che ci siano.",
+      "Ho buttato una moneta nella fontana e ho desiderato altre monete. È permesso?",
+      "Quello del kebab conosce già la mia ordinazione. Non sono mai stato così onorato.",
+      "Qualcuno ha scritto 'lavami' su un furgone sporco. Un poeta. Questo pianeta è pieno di poeti.",
+      "Gli occhiali da sole sono per stile. Non ho gli occhi adatti. Lo stile basta.",
+      "Sono stato dal lato sbagliato della scala mobile. Un uomo mi ha spiegato. L'ho ringraziato per un'ora.",
+      "Ho misurato la fermata con gli occhi. Due metri e un po' di speranza.",
+      "Il mio frasario dice 'dov'è il bagno' a ogni pagina. Un pianeta molto indaffarato.",
+      "Qualcuno suonava male la chitarra in piazza. È stato il concerto più bello della mia vita.",
+      "Ho imparato {due|tre|quattro} parolacce nuove. Non le userò. Le custodirò.",
+      "Un umano mi ha chiesto se ero 'uno di quei Grigi'. Ho detto che sono un Turista. Abbiamo annuito.",
+      "Il distributore si è tenuto la moneta. Una tassa per i visitatori, credo. Giusto.",
+      "Sto prendendo la mano con l'ombrello. Soprattutto la mano. Non ancora l'apertura.",
+      "Gli umani scrivono il nome sul pranzo nel frigo dell'ufficio. Quanta fiducia, quanta paura.",
+      "Il postino ha fischiato al cane e il cane ha risposto. No. Me lo sono immaginato.",
+      "Ho chiesto l'ora a un poliziotto. Me l'ha detta. Poi ha chiesto la mia. Un tesoro.",
+      "Il tram è passato vicino al cartello delle bolle temporali a quaranta. Che prudenti, gli umani.",
+      "Ho fotografato una pozzanghera. C'era dentro tutto il cielo. Due al prezzo di una.",
+      "Il cinema vende caramelle più rumorose del film. Ho preso le più rumorose.",
+      "Una nonna mi ha dato un biscotto senza motivo. Terra, sei troppo.",
+      "Non capisco i soldi, ma capisco il resto. Tintinna. Bene."
+    ],
+    "need": {
+      "sleep": [
+        "I miei occhi sono pesantissimi. Più di una stella di neutroni, e ne ho sollevata una.",
+        "Gli umani dormono un terzo della vita. Finalmente capisco perché. A letto.",
+        "Mi sono addormentato durante {il film di mezzanotte|il monoscopio|il bollettino del mare}. Il sonno migliore della mia vita.",
+        "Lo sbadiglio è contagioso. L'ho preso da tutto il tram.",
+        "Trentanove anni luce di fuso orario. Arrivano tutti insieme, più o meno adesso.",
+        "Sono così stanco che ho fotografato i miei piedi. Due volte. Per sbaglio.",
+        "Un cuscino d'albergo. Piatto come una frittella, come dite voi. Lo amerò lo stesso.",
+        "Devo dormire o comincerò a dare ragione agli Analizzatori.",
+        "Conto le pecore. Sono arrivato a {duecento|quattrocento|novecento}. Anche le pecore sono stanche.",
+        "La televisione dice 'buonanotte' a fine trasmissioni. Io obbedisco alla televisione.",
+        "La mia testona ciondola. Con una testa così grande è un bel viaggio.",
+        "Dormire, poi altro turismo. I monumenti saranno ancora lì. Probabilmente.",
+        "Anche la batteria della macchina è scarica. Ci ricarichiamo tutti e due stanotte.",
+        "Mi sono steso un minuto e mi sono svegliato in {un'altra ora|un altro giorno|un altro canale}.",
+        "Gli umani dicono 'dormi stretto'. Ci proverò. Non so quanto stretto."
+      ],
+      "hunger": [
+        "Il mio stomaco fa il rumore di una nave che entra in orbita.",
+        "Mangerei un cavallo, come dicono gli umani. Non lo farò. Mangerò un panino.",
+        "Il cibo sulla Terra ha tante forme! Voglio mangiare {un triangolo|una spirale|un cubo}.",
+        "Ho provato a cucinare. Il rilevatore di fumo l'ha recensito. Una stella.",
+        "Ho fame. La friggitoria mi chiama. La sua voce è aceto.",
+        "A casa il nostro cibo è una pappa grigia. Il vostro panino peggiore è un banchetto.",
+        "Ho saltato il pranzo per fotografare il pranzo. Un errore.",
+        "Un hot dog è un cane? Devo mangiarne uno per scoprirlo.",
+        "Il forno ha l'odore della felicità. Comprerò {uno|due|sei} di tutto.",
+        "La mia pancia brontola. Gli umani vicini pensano che sia un tuono.",
+        "Ho così fame che mangerei la guida. Ci sono le foto del cibo.",
+        "La colazione è il pasto più importante, dice la scatola dei cereali. Credo alla scatola.",
+        "Gli spaghetti. Un pasto da arrotolare come un cavo. Ingegneria geniale.",
+        "Una torta salata. Voglio una torta salata. Non so cosa c'è dentro. È questa l'avventura.",
+        "Prima il cibo, poi il museo. L'ha detto un umano saggio. Forse io."
+      ],
+      "work": [
+        "Si torna al censimento. Qualcuno deve contare i lampioni di questa città.",
+        "L'ambasciata vuole un rapporto su {campanelli|coni stradali|cassette postali}. Ho tantissime foto.",
+        "Il mio turno comincia presto. Sono l'unico lì che solleva gli scaffali senza mani.",
+        "Un lavoro! Gli umani ti pagano per essere utile. E mi danno anche un cartellino.",
+        "Il mio capo dice 'il lavoro di squadra fa i sogni avverare'. Lo metterò sul monumento.",
+        "Compilo il foglio ore ogni giorno. Persino il tempo, gli umani lo annotano. Meraviglioso.",
+        "Oggi devo catalogare {quaranta|sessanta|novanta} cartoline per l'archivio di casa.",
+        "Lavoro allo sportello gravità. Nessuno viene allo sportello gravità. Leggo riviste.",
+        "Lavoro. Poi pranzo. Poi lavoro. Gli umani hanno creato un ritmo, e io ci ballo.",
+        "La fotocopiatrice si è inceppata di nuovo. Piego lo spazio ma non quella carta.",
+        "La mia collega porta la torta il venerdì. Lavorerei qui gratis. Non diteglielo.",
+        "Devo finire gli orari del tram prima che i Deformatori pieghino di nuovo il percorso.",
+        "Timbro il cartellino. La macchinetta fa 'ciac'. Il mio suono preferito della giornata.",
+        "Il mio capo ha detto 'pensa fuori dagli schemi'. Quali schemi? Li cerco da tutta la settimana.",
+        "Di nuovo straordinari. Più ore, più euro, più cartoline."
+      ],
+      "leisure": [
+        "Un pomeriggio libero! Guarderò {lo snooker|un quiz|il programma di cucina} con la massima attenzione.",
+        "Voglio non fare niente, come gli umani. È più difficile di quanto sembri.",
+        "Giorno libero. Andrò al museo a fotografare la gente che guarda i quadri.",
+        "La sala giochi! Tante luci, tanti rumori. Perderò tutti i gettoni con gioia.",
+        "Piedi in alto e tivù accesa, come si dice. I miei piedi non salgono molto. Conta lo stesso.",
+        "Ho noleggiato {tre|cinque|otto} videocassette. Il fine settimana è occupato.",
+        "Mi annoio. Meraviglioso. Su Zeta nessuno ha il permesso di annoiarsi a lungo.",
+        "Ho bisogno di divertirmi. Forse la tombola. Gli umani urlano quando vincono. Voglio urlare.",
+        "Un picnic! Mi siedo su una coperta e mi faccio mangiare dalle formiche, come la gente del posto.",
+        "Il cinema ha uno spettacolo pomeridiano. Mi siedo in prima fila e vedo tutto enorme.",
+        "Oggi rivedrò i monumenti che ho già visto. Di nuovo, più piano.",
+        "Un puzzle di un faro. Mille pezzi. Tutti cielo.",
+        "Voglio ballare in discoteca. Le luci girano e girano, come a casa.",
+        "Fatemi dare da mangiare alle anatre. Il cartello dell'altro stagno diceva di no. Questo non dice niente.",
+        "Merito una giornata di televisione. Tutta. Anche la pubblicità."
+      ],
+      "crime": [
+        "Quell'espositore di cartoline è incustodito... No. I Turisti pagano. Lo dice la guida.",
+        "Potrei sollevare {quel portafoglio|quella borsetta|quell'auto} con la sola gravità. Invece mi tolgo il cappello.",
+        "Il souvenir è così piccolo e il negozio così pieno. L'ho rimesso a posto. Due volte.",
+        "Rubare è una tradizione umana in televisione. Ma non nella vita vera, credo.",
+        "Un Analizzatore smonterebbe il parchimetro e basta. Io non sono un Analizzatore.",
+        "La dea delle taglie guarda sempre. L'ho letto. Mi comporto bene.",
+        "Voglio quel cartello stradale per il monumento. Forse potrei chiederlo al comune.",
+        "Nessuno guarda la bancarella della frutta. Ho pagato lo stesso e ho lasciato una foto di mancia.",
+        "Nei telefilm polizieschi il ladro viene sempre preso. Bene. Molto bene. Io no.",
+        "{Un ombrello perso|Un guanto perso|Una sciarpa persa} sulla panchina. È gratis? Lo consegno, per sicurezza.",
+        "Ho teletrasportato per sbaglio una penna dalla banca. Devo rimandarla indietro.",
+        "Le dita mi prudono per quel posacenere dell'albergo. Gli umani dicono che ogni ospite ne prende uno.",
+        "Il registratore di cassa è aperto. Tante monete con le facce. No. Occhi avanti.",
+        "Il taccheggio, dice il manifesto, è reato. Non conoscevo la parola. Ora la evito.",
+        "Potrei piegare questo negozio in tasca. Sarebbe scortese. E anche illegale."
+      ],
+      "hygiene": [
+        "Profumo di cipolla fritta e di sviluppo fotografico. È ora della doccia.",
+        "La mia testona è impolverata. Una testa grande raccoglie un sacco di polvere.",
+        "Bagnoschiuma! La bottiglia prometteva 'un'esperienza da spa'. Voglio l'esperienza.",
+        "Devo lavarmi prima di vedere altri umani. Se ne accorgono. Sono educati, però.",
+        "La pioggia mi ha lavato a metà. Finirò il lavoro con {il sapone|lo shampoo|i sali da bagno}.",
+        "Deodorante. Gli umani si spruzzano come piante. Proverò quello al pino.",
+        "Acqua calda dal rubinetto, quando vuoi. E gli umani si lamentano!",
+        "Un piccione non è stato educato con la mia spalla. Serve un lavaggio.",
+        "La mia nave ha un campo sterilizzante. Il vostro sapone ha un odore migliore.",
+        "Ho portato la stessa camicia da turista per {tre|quattro|cinque} giorni. È ora di lasciarla riposare.",
+        "Sono appiccicoso per il gelato. Ne valeva la pena. Ma resto appiccicoso.",
+        "La lavanderia chiama. Oblò rotondi, aria calda, calzini puliti.",
+        "Gli umani si lavano i denti due volte al giorno. Io non ho denti. Mi lavo qualcosa lo stesso.",
+        "Una doccia con una buona pressione è vera gravità. Voglio la vera gravità adesso.",
+        "La mia pelle è grigia, ma questo è un grigio diverso. Un grigio più sporco."
+      ],
+      "money": [
+        "Nel portafoglio ho {due euro|un bottone|uno scontrino}. E la speranza.",
+        "La pellicola costa. Lo sviluppo costa. I ricordi costano, sulla Terra.",
+        "Ho speso gli euro della settimana in cartoline. Non rimpiango niente. Un pochino.",
+        "Il bancomat ha detto di no. L'ha detto molto educatamente, in lettere verdi.",
+        "Su Zeta il denaro è un'idea. Qui è carta che scappa. Devo inseguirla.",
+        "Ho contato le monete {due|tre|cinque} volte. Non aumentano. Strano.",
+        "Scade l'affitto. Il padrone di casa non accetta fotografie. Ho chiesto.",
+        "Gli euro sono belli, con i loro ponticelli e le finestre. Ne vorrei di più.",
+        "Devo trovare lavoro. A chi serve spostare qualcosa di pesantissimo con grande cura?",
+        "Un umano ha detto 'i soldi non crescono sugli alberi'. Ho controllato {sei|dieci|venti} alberi. Esatto.",
+        "Sono al verde, come dice la gente. Al verde! Che bel colore per un portafoglio triste.",
+        "Il negozio di souvenir si prende tutto quello che guadagno. Uno scambio giusto, credo.",
+        "Biglietto, rullino, patatine. Scegline due. Gli umani vivono così ogni giorno. Eroi.",
+        "A casa rifornirei qualsiasi nave gratis. Qui non posso permettermi un caffè.",
+        "Bilancio, bilancio. L'ho scritto nel mio grimorie. Poi ho comprato una palla di neve."
+      ],
+      "safety": [
+        "Quella strada è molto buia. In televisione la strada buia è dove arrivano i guai.",
+        "Qualcuno mi ha urlato. Non ho capito le parole. Ho capito il tono.",
+        "Un uomo mi segue. O va dalla stessa parte. Camminerò più veloce. Non sopra gli ottanta.",
+        "Il telegiornale parlava di {mostri|banditi|un'incursione goblin} qui vicino. Resto in casa.",
+        "Non tutti sono contenti che siamo arrivati. Capisco. Abbiamo una gran testa, a vederci.",
+        "Terrò vicina la macchina fotografica. E il cappello. E la testa, per quel che vale.",
+        "Un cane con tanti denti. Non è un cane da cartolina. Lentamente all'indietro.",
+        "Se qualcosa va storto, piego lo spazio e vado. Non l'ho mai fatto di fretta. Mm.",
+        "È passata la polizia con le luci che cantano. Da qualche parte stanotte non è sicuro.",
+        "Ho sentito uno schianto qui vicino. Fotografo o mi nascondo? Mi nascondo. Poi fotografo.",
+        "La mia guida ha una pagina intitolata 'zone da evitare'. Ci sono dentro.",
+        "In città hanno visto un Dargos. Speriamo che oggi lo scherzo non tocchi a me.",
+        "Passi dietro di me. Solo una vecchietta. Mi ha superato. Brava lei.",
+        "Continuo a pensare ai detriti. Lassù tutto va troppo veloce. Quaggiù, meno.",
+        "Le luci hanno tremolato e mi si è rizzato il collo. Fantasmi? Gli umani hanno fantasmi? Oh cielo."
+      ],
+      "comfort": [
+        "Questa sedia è progettata per un sedere umano. Il mio sedere fa del suo meglio.",
+        "Mi manca la bassa gravità della mia cabina. La Terra mi tira tutto il giorno, come un amico appiccicoso.",
+        "{Una poltrona morbida|Un divano morbido|Un pouf morbido} e una coperta calda. Poi tornerò a vedere il mondo.",
+        "Le scarpe mi stringono. Le scarpe da turista non sono fatte per i turisti, pare.",
+        "Il letto dell'ostello scricchiola quando respiro. Respiro con molta attenzione.",
+        "Le pantofole. Gli umani hanno inventato le pantofole. Potrei piangere.",
+        "Una borsa dell'acqua calda! Un sacchetto di calore da abbracciare. La abbraccio spesso.",
+        "Mi fa male il collo a forza di guardare in su. Tutto è così alto e così bello.",
+        "Il termosifone sferraglia come un motorino. Mi siedo accanto come a un amico.",
+        "Voglio una tazza di tè e sedermi. Le due cose più sacre della vostra lingua.",
+        "I sedili del tram sono caldi dal passeggero prima. È scortese godersela?",
+        "La mia stanza è fredda. Potrei deviare il calore dal Sole. Mi metto un cardigan.",
+        "Un cuscino dietro la testa. Sì. È così che vivono gli imperatori.",
+        "La borsa della macchina pesa una tonnellata. In unità vere pesa poco. Sembra una tonnellata.",
+        "Mi manca il ronzio della mia sfera. Il vostro frigo ronza un po' così. Dormo vicino al frigo."
+      ],
+      "social": [
+        "Non parlo con un umano da {due giorni|una settimana|un'eternità}. Devo trovarne uno e ammirarlo.",
+        "Voglio mostrare a qualcuno le mie foto. Tutte e {duecento|quattrocento|seicento}.",
+        "Gli altri Viandanti sono andati a vedere la cattedrale. Sono solo e anche perso.",
+        "Gli umani vanno al pub per parlare. Io andrò al pub per ascoltare.",
+        "Il mio amico di penna a Lisbona non ha risposto. Forse il piccione si è perso.",
+        "Stamattina un Deformatore Pallido mi ha pensato addosso. Carino, ma non è chiacchierare.",
+        "Vorrei essere invitato a un compleanno umano. Ho provato la canzone.",
+        "Oggi nessuno mi ha chiesto di Zeta. Avevo preparato {nove|dodici|venti} curiosità.",
+        "Mi manca il suono di un umano che ride di qualcosa che ho detto male.",
+        "Mi sento solo. Telefonerò all'ora esatta. Lei è sempre gentile.",
+        "Al pub c'è la serata quiz. Mi serve una squadra. Mi serve una squadra umana.",
+        "Ho salutato tutti per strada. Qualcuno ha risposto. La giornata è fatta.",
+        "La sfera di casa manda un messaggio ogni settimana. Io voglio umani, non messaggi.",
+        "Parlare alla televisione non è la stessa cosa. Ho chiesto. Non ha risposto.",
+        "Un amico umano, una tazza di tè e una discussione sul meteo. Il mio sogno."
+      ]
+    },
+    "weather": {
+      "rain": [
+        "Pioggia! Acqua che cade gratis dal cielo. Gli umani sono così fortunati e così brontoloni.",
+        "Ho un ombrello. L'ho aperto {una volta|due volte|quasi}. Progressi.",
+        "La pioggia fa di ogni strada uno specchio. Due città al prezzo di una foto.",
+        "Il signore del meteo aveva promesso pioggia ed eccola. Non sbaglia mai. Lo adoro.",
+        "Calzini bagnati. Ora capisco un'intera categoria di lamentele umane.",
+        "La macchina fotografica è in un sacchetto di plastica. La mia testa no. Priorità.",
+        "Quando piove tutti corrono. Io sto fermo e fotografo la corsa.",
+        "Pioggia su un tetto di lamiera. L'ho registrata su cassetta per la sfera.",
+        "Una pozzanghera mi ha preso fino al ginocchio. La Terra tiene sorprese nelle pozzanghere.",
+        "Piove di nuovo a catinelle. Ancora niente catinelle. Continuo a controllare.",
+        "La pioggia sa di {marciapiede|foglie bagnate|asfalto caldo}. Gli umani hanno una parola. L'ho dimenticata.",
+        "Il caffè è pieno di profughi della pioggia. Ottimo per osservare la gente.",
+        "Potrei deviare la pioggia da me. Sarebbe barare. Voglio l'esperienza vera.",
+        "Pioggerella. Non proprio pioggia, non proprio asciutto. Il tempo più locale che ci sia.",
+        "Un'umana ha diviso l'ombrello con me. Ho quasi pianto, ma pioveva, quindi va bene."
+      ],
+      "storm": [
+        "Tuoni! Il cielo applaude. Per cosa? Per gli umani, credo.",
+        "Fulmini. Flash gratis dal cielo. Non sono pronto. Non lo sono mai.",
+        "La tempesta ha buttato giù l'antenna. Niente televisione stasera. Sono in lutto.",
+        "Il vento ha provato a prendermi il cappello. L'ho lasciato fare. Anche i cappelli devono viaggiare.",
+        "La mia nave riderebbe di questo vento. Il mio corpicino no.",
+        "Conta tra il lampo e il tuono, mi ha detto un umano. Ho contato {tre|cinque|sette}. Vicino.",
+        "È saltata la corrente. Candele dappertutto. Tutta la via è una torta di compleanno.",
+        "Allerta tempesta alla radio. Gli umani comprano pane e latte. Ho comprato pane e latte.",
+        "Gli alberi si inchinano. Alberi educati, in questa città.",
+        "Pioggia di traverso! Il vostro meteo ha più dimensioni di quanto mi avessero detto.",
+        "Sono sotto una pensilina con {quattro|sei|nove} sconosciuti. Ormai siamo una famiglia.",
+        "Il tuono ha fatto tremare le finestre. E me. Soprattutto me.",
+        "Un umano ha detto che la tempesta 'passerà'. Aspetto di vederla passare.",
+        "Grande tempesta. Dentro una bevanda calda. Fuori uno spettacolo. Meglio della televisione. Quasi.",
+        "Spero che la tempesta non arrivi ai detriti. Sciocchezza. Non può. Mi preoccupo lo stesso."
+      ],
+      "snow": [
+        "Neve! Acqua gelata che cade piano. Il vostro pianeta fa le cose più belle per niente.",
+        "Ho fatto un pupazzo di neve. Ha una testa grande. Sembra di famiglia.",
+        "Ogni fiocco è diverso, mi ha detto un bambino. Ne ho controllati {quaranta|ottanta|cento}. Finora è vero.",
+        "Tutta la via è bianca e silenziosa. Come l'attimo prima che inizi il programma.",
+        "Ho i piedi freddi come non li ho mai avuti. Istruttivo.",
+        "I bambini mi hanno tirato palle di neve. Credo fosse un benvenuto. Ne ho tirate qualcuna con dolcezza.",
+        "Sono scivolato sul ghiaccio e sono atterrato piatto. Un uomo mi ha dato nove su dieci.",
+        "La neve rende le mie foto troppo chiare. Alla neve non importa. Giusto.",
+        "Muffole. Ho le muffole. Le mie dita stanno tutte insieme in una stanzetta.",
+        "La neve sui tetti sembra la glassa delle torte umane.",
+        "I tram vanno piano con la neve. Tutti ben sotto gli ottanta. Sicurissimo, lentissimo.",
+        "Ho provato a prendere un fiocco con la lingua. Ho preso {una foglia|un po' di fuliggine|un secondo fiocco}.",
+        "Cioccolata calda. Gli umani la bevono quando nevica. Io la berrò sempre.",
+        "La neve copre ogni impronta. Anche le mie. Non sono mai stato qui. Bellissimo.",
+        "Un umano spala la neve e si lamenta. Mi sono offerto di deviarla. Ha detto no, grazie."
+      ],
+      "clear": [
+        "Cielo azzurro. Quasi vedo i resti dello specchio lassù. Quasi. Meglio di no.",
+        "Una giornata limpida! Luce perfetta per {la cattedrale|il porto|il ponte vecchio}. Vado.",
+        "Sole. Gli umani escono come fiori. Io fotografo i fiori.",
+        "Neanche una nuvola. Il signore del meteo ha detto 'splendido'. Ho detto 'splendido' tutto il giorno.",
+        "Ho messo la crema solare. Su tutta la testa. È un lavoro grosso.",
+        "Il vostro Sole è così caldo e vicino. Il nostro sta dietro due sfere. Non lo vediamo mai così.",
+        "La luce è dorata. Ogni foto di oggi sarà una cartolina.",
+        "Una panchina al sole in una piazza al sole. Sono una lucertola, come dicono gli umani.",
+        "Cielo sereno stanotte, quindi stelle. Indicherò la mia e non lo dirò a nessuno.",
+        "Tempo da gelato! Gli umani fanno la fila al furgoncino. Io la faccio con gioia.",
+        "La mia ombra oggi è grandissima. È quasi tutta testa.",
+        "Quando c'è il sole tutti sono di buon umore. Gli umani vanno a luce, come noi.",
+        "Il bucato sui fili mi saluta. Io saluto il bucato.",
+        "Giornata stupenda. Meglio fotografare il cielo prima che cambi idea.",
+        "Mi sono scottato in cima alla testa. La Terra mi ha segnato. Sono onorato."
+      ]
+    },
+    "time": {
+      "morning": [
+        "Buongiorno! Il furgoncino del latte ronza giù per la strada. Il mio veicolo preferito del pianeta.",
+        "La televisione del mattino! Un divano, due conduttori sorridenti, l'angolo cucina. Il paradiso.",
+        "La luce del mattino è molto gentile con le facce. Devo fotografare facce adesso.",
+        "Gli umani sono scorbutici prima del caffè. Lascio loro spazio. Tanto spazio.",
+        "Il forno apre alle {sei|sette|sei e mezza}. Io ero lì alle cinque. Ho aspettato felice.",
+        "Ora di punta. Tutti di fretta, tutti sotto gli ottanta. Un balletto di pazienza.",
+        "Rugiada sulle auto parcheggiate. Ognuna una piccola galassia.",
+        "Il ragazzo dei giornali ha lanciato il giornale a una porta e l'ha mancata. Poi ha preso la porta dopo. Talento.",
+        "Ho mangiato i cereali. Nella scatola c'era un giocattolo. Gli umani nascondono la gioia nella colazione.",
+        "È suonata la campanella. Piccoli umani che corrono. Ho fotografato la corsa.",
+        "Buongiorno, Terra. Lo dico ogni giorno. Un giorno la Terra risponderà.",
+        "I negozi aprono, le serrande salgono. Una via che si sveglia come una palpebra.",
+        "Corsetta del mattino. Ci ho provato. Gli umani corrono in tondo apposta. Una follia meravigliosa.",
+        "Gli uccelli cantano prima della radio. Gli uccelli hanno la scaletta migliore.",
+        "Una giornata intera di turismo. Ho previsto {dodici|quindici|venti} tappe. Ne farò due."
+      ],
+      "afternoon": [
+        "Pomeriggio. La luce è piatta e onesta. Buona per fotografare i cartelli.",
+        "In certi paesi è l'ora della siesta. Nel mio cuore sono in tutti i paesi. Pisolino.",
+        "C'è il quiz del pomeriggio. Urlo le risposte. Tutte sbagliate. Tutte con amore.",
+        "Tè e biscotto alle quattro. Ho adottato questa usanza per sempre.",
+        "Il museo adesso è tranquillo. Solo io, un custode e un vaso antichissimo.",
+        "Sole pomeridiano sul fiume. Le anatre non fanno niente. Mi unisco alle anatre.",
+        "I bambini sono usciti da scuola. Tutta la città si alza di {tre|cinque|dieci} decibel.",
+        "Metà giornata passata e ho finito solo un rullino. Sto battendo la fiacca.",
+        "Il calo del pomeriggio, lo chiamano gli umani. Credo di calare correttamente.",
+        "La replica della telenovela è alle due. L'ho vista. La rivedrò.",
+        "Il secondo giro del postino. Un'intera giornata misurata in postini.",
+        "Cominciano le ombre lunghe. La testa della mia ombra arriva in fondo alla via.",
+        "Ho pranzato e ora voglio di nuovo pranzare. Il cibo terrestre è un loop.",
+        "Un pomeriggio sonnolento. Anche i cani sono in pausa pranzo.",
+        "La musichetta del furgoncino dei gelati! Suona una canzone che vuol dire 'corri'. Tutti corrono."
+      ],
+      "evening": [
+        "Sera. I lampioni si accendono uno dopo l'altro, come un applauso.",
+        "È l'ora del telegiornale. La musica seria. La cravatta seria. Mi siedo dritto.",
+        "Le finestre si illuminano e vedo le famiglie a cena. Distolgo lo sguardo per educazione. Quasi sempre.",
+        "I pub si riempiono. Le risate escono dalle porte come aria calda.",
+        "Tramonto. Il vostro cielo diventa {arancione|rosa|viola} gratis. Ogni sera! Nessuno applaude.",
+        "Ora di cena. Un umano mi ha invitato. Gli ho portato in regalo una foto di casa sua.",
+        "I negozi chiudono. Ultima occasione per le cartoline. Non ho più posto. Ne compro due.",
+        "La prima serata. I programmi migliori all'ora migliore. Gli umani organizzano benissimo.",
+        "La sera è fresca e sa della cucina di qualcun altro. Voglio vivere in quell'odore.",
+        "La sera la gente porta a spasso il cane. Io porto a spasso la macchina fotografica.",
+        "È uscita la prima stella. Esprimi un desiderio, dicono. Ho chiesto un visto più lungo.",
+        "Le campane suonano le sei. O le sette. Ho perso il conto a godermele.",
+        "Una coppia per mano su un ponte. Non li ho fotografati. Certe cose sono loro.",
+        "Il rientro serale. Tutti a casa. Anch'io vado a casa, in un certo senso. All'ostello.",
+        "I piccioni vanno a dormire. Dove dormono i piccioni? Stanotte devo scoprirlo."
+      ],
+      "night": [
+        "Notte. C'è il monoscopio. Lo guardo lo stesso. È molto rilassante.",
+        "Ci sono le stelle. Lassù c'è casa mia, trentanove anni indietro rispetto ai vostri notiziari.",
+        "Gli autobus notturni! Grandi, illuminati, quasi vuoti. Un'astronave per umani stanchi.",
+        "Di notte la città ronza. Un canale più basso, più morbido.",
+        "Qualcuno canta tornando dal pub. Male. Benissimo.",
+        "Il film di mezzanotte è un horror sugli alieni. Adesso ho paura di noi.",
+        "C'è la luna. Nuda, senza specchio, senza sfere. La tenete così semplice.",
+        "Non riesco a dormire. Conterò le finestre accese. {Undici|Diciassette|Ventitré}. Ciao, insonni.",
+        "Volpi nei bidoni. Umani notturni e volpi notturne, tutti a caccia di patatine.",
+        "Una stella cadente! O un pezzo di detrito che brucia. Dirò stella. È più bello.",
+        "Il distributore aperto tutta la notte vende di tutto. Patatine, fiori, olio motore. Un museo del bisogno.",
+        "Strade silenziose. I miei passi sono la cosa più rumorosa in città.",
+        "Una foto notturna vuole una lunga esposizione. Sono rimasto fermo un minuto. Anche un gatto.",
+        "Fine delle trasmissioni. L'inno, poi il fruscio. Buonanotte, televisione.",
+        "Di notte i Deformatori pensano più forte. Li sento come una radio lontana."
+      ]
+    },
+    "season": {
+      "SPRING": [
+        "Primavera! Ogni albero ha i vestiti nuovi. Fotografo i completi.",
+        "Agnellini nei campi. Piccoli entusiasti di lana. La mia gente.",
+        "Pulizie di primavera. Gli umani aprono tutte le finestre e battono i tappeti. Molto cerimoniale.",
+        "I fiori mi sono caduti in testa. Li porto. Nessuno mi fermi.",
+        "Uova di Pasqua di cioccolato. Gli umani trasformano in gioia perfino le uova.",
+        "Acquazzoni, sole, acquazzoni. La primavera non sa decidere. Neanch'io. Siamo amici.",
+        "Le giornate si allungano. Più ore per il turismo. Grazie, inclinazione assiale.",
+        "Uccelli che fanno il nido sull'orologio della stazione. Una famiglia intera che trasloca insieme.",
+        "Moda di primavera nelle vetrine. Tutto pastello. Il mio grigio si sente sottovestito.",
+        "Il parco è pieno di narcisi. Giallo, giallo, giallo. Ho finito il rullino."
+      ],
+      "SUMMER": [
+        "Estate! Gli umani si tolgono metà dei vestiti e tutte le preoccupazioni.",
+        "La spiaggia. Sabbia ovunque, anche nella macchina fotografica. Ne vale la pena.",
+        "Troppo caldo. La mia testona è un pannello solare che non ho chiesto.",
+        "Vacanze estive. Le città si svuotano e si riempiono di turisti come me. Colleghi!",
+        "Fumo di barbecue su ogni giardino. Gli umani adorano il fuoco nel fine settimana.",
+        "Le sere lunghe! Luce fino alle dieci. Fotografo fino alle dieci.",
+        "Una festa di strada con la banda. Ho ballato. Credo di aver ballato.",
+        "Le repliche estive in televisione. Vecchi amici che tornano. Do loro il benvenuto.",
+        "I ghiaccioli gocciolano più in fretta di quanto riesca a mangiarli. Una gara che perdo sempre.",
+        "Cartoline dal mare: 'Vorrei che fossi qui'. È vero. Vorrei che tutti fossero qui."
+      ],
+      "AUTUMN": [
+        "Autunno. Gli alberi diventano {rossi|dorati|color rame} e lasciano cadere tutto. Alberi generosi.",
+        "Prendo a calci le foglie, come i bambini. Un rumore croccante, come le patatine.",
+        "Si torna a scuola. Negozi pieni di matite. Ho comprato un astuccio. Non ho matite.",
+        "Si spostano indietro le lancette. Gli umani muovono il tempo a mano. E dicono che gli avanzati siamo noi!",
+        "Caldarroste all'angolo. Calde in un cono di carta. Le mie mani sono felici.",
+        "Nebbia la mattina. La città sembra un film vecchio. Adoro i film vecchi.",
+        "Festa del raccolto. La gente porta scatolette di fagioli in chiesa. Una bella tradizione, credo.",
+        "Halloween! Gli umani si travestono da mostri. Qualcuno mi ha chiesto se ero un costume. Ho detto di sì.",
+        "In autunno inizia la nuova stagione televisiva. Nuovi programmi! Nuovi conduttori! Nuove sigle!",
+        "La luce d'autunno è morbida, come una foto già nell'album."
+      ],
+      "WINTER": [
+        "Inverno. Tutti avvolti nelle sciarpe. Una città di pacchi bellissimi.",
+        "Hanno messo le luci di Natale! Gli umani mettono stelle nelle strade. Ci capiscono.",
+        "Freddo. Il mio fiato fa le nuvole. Sono un piccolo sistema meteorologico.",
+        "Lo speciale di Natale! Ogni programma ne ha uno. Li guarderò {tutti|quasi tutti|praticamente tutti}.",
+        "Vin brulé al mercatino. Vino con la sciarpa. Umani geniali.",
+        "Giornate corte. Il sole si arrende alle quattro. Ti capisco, sole.",
+        "Il conto alla rovescia di Capodanno. Gli umani contano all'indietro tutti insieme. Che speranza.",
+        "Brina sui vetri come scritte in una lingua che quasi riesco a leggere.",
+        "Ho comprato un berretto di lana col pompon. Il pompon è la mia parte preferita dell'inverno.",
+        "Cantori natalizi alla porta. Gli ho dato una moneta e una foto. Ne hanno cantata un'altra."
+      ]
+    },
+    "wealth": {
+      "poor": [
+        "Fagioli sul pane tostato di nuovo. Un famoso piatto umano. Lo mangio con onore.",
+        "Posso permettermi un rullino al mese. Ogni scatto deve contare. Molto artistico.",
+        "Il letto dell'ostello costa {sei|otto|nove} euro. Vale esattamente quello.",
+        "Vado ovunque a piedi. L'autobus è un lusso. Camminare è comunque turismo.",
+        "L'indennità dell'ambasciata è finita il {quattro|dieci|dodici}. Gli umani lo chiamano 'il mese'.",
+        "Mangio gli assaggi gratis al supermercato. Tutti. Due volte, con cappelli diversi.",
+        "Il cappotto ha i buchi. Ventilazione, mi dico. Molto moderno.",
+        "Guardo la televisione dalla vetrina del negozio. L'audio è la mia immaginazione.",
+        "Povero, ma ho visto una cattedrale, un porto e un mercato del formaggio. Ricco, in un certo senso.",
+        "Macchina di seconda mano, cappotto di terza mano, gioia di prima mano.",
+        "Le bustine di tè si usano due volte. L'ho imparato da una vecchietta molto saggia.",
+        "Al verde. Ma il parco è gratis, il cielo è gratis, i piccioni sono gratis."
+      ],
+      "comfortable": [
+        "Abbastanza euro per l'affitto, i rullini e una torta la domenica. Una vita piena.",
+        "Ho un appartamentino con un televisorino. Il mio piccolo regno.",
+        "Ho comprato una seconda macchina fotografica. Di scorta. E per gioia.",
+        "Un weekend {al mare|in montagna|ai laghi}. Pagato. Organizzato. Fotografato in anticipo.",
+        "Ho un libretto di risparmio. Piccoli numeri che crescono piano, come una pianta.",
+        "Non ricco, non povero. Abbastanza per comprare cartoline senza contare. Quasi.",
+        "Mi sono abbonato alla guida tv. Arriva ogni settimana. Ogni settimana piango un po'.",
+        "Prendo il tram, non vado a piedi. La vita mi va bene.",
+        "Un buon paio di scarpe e un buon ombrello. La definizione umana di benessere.",
+        "Cena fuori una volta a settimana. Ordino qualcosa che non so pronunciare. Avventura, a bilancio.",
+        "I miei album di foto riempiono un'intera mensola. Una mensola comoda.",
+        "Ho pagato le bollette in tempo. La banca mi ha mandato una lettera che non diceva niente. Bellissimo."
+      ],
+      "rich": [
+        "Ho comprato una videocamera. Ora i miei ricordi si muovono.",
+        "Ricco! Posso comprare tutte le cartoline del negozio. L'ho fatto. Il negozio ha applaudito.",
+        "Ho una televisione in ogni stanza. Anche in bagno. Soprattutto in bagno.",
+        "Un albergo col portiere! Apre la porta ogni volta. Io entro ed esco per divertimento.",
+        "Ho comprato {un faro intero|un mulino intero|un tram intero} per il monumento. Il difficile è la spedizione.",
+        "Champagne. Bollicine piccolissime. I nostri ingegneri sarebbero colpiti.",
+        "Il portafoglio è gonfio di euro. Non so a cosa servano tutti. Li spendo lo stesso.",
+        "Ho pagato un umano per fotografarmi mentre fotografo. Arte.",
+        "Tv satellitare, sessanta canali. Un momento. Satellite? Lassù? Oh no. Allora via cavo.",
+        "Ho comprato una villa con vista. Ora fotografo la vista ogni mattina.",
+        "Gli umani ricchi si annoiano. Io sono ricco e non mi annoio. Forse sbaglio qualcosa.",
+        "Lascio la mancia a tutti. Camerieri, autisti, una statua. La statua non ha protestato."
+      ]
+    },
+    "familiar": [
+      "Di nuovo quei viaggiatori! Ho già {quattro|sette|undici} foto di loro. Non bastano.",
+      "Continuo a vedere quel gruppo. Sono famosi? Camminano come se fossero in televisione.",
+      "Quel gruppo una volta mi ha salutato. Da allora li saluto sempre, non si sa mai.",
+      "Ah, gli avventurieri! Come un programma preferito, tornano ogni settimana.",
+      "Dovrei chiedere un autografo a quei viaggiatori. È strano? Non è strano.",
+      "Ancora loro! Credo di essere nella loro storia. Una piccola parte. Turista sullo sfondo.",
+      "Quel gruppo sembra sempre stanco e impolverato. Voglio dargli una cartolina per tirarli su.",
+      "Facce conosciute! Su un pianeta strano, la cosa più preziosa.",
+      "Riconosco {gli stivali|gli zaini|il camper}. Fotografo così spesso che li riconosco dai bagagli.",
+      "Ogni volta che vedo quel gruppo, succede qualcosa di emozionante. Starò vicino.",
+      "Saluto di nuovo? Ho salutato ieri. Gli umani possono farlo ogni giorno, ho letto.",
+      "Quei viaggiatori ormai hanno un capitolo intero nel mio album. Forse due.",
+      "Tornano gli avventurieri. Nella puntata precedente degli 'avventurieri': erano qui.",
+      "Li conosco quasi. Come il signore del meteo. Un amico che non mi conosce.",
+      "Quello davanti fa sempre la faccia scura alla mia macchina. Un giorno coglierò un sorriso.",
+      "Stesso gruppo, stessa strada, stesso me. Un loop? No, solo una città piccola.",
+      "Hanno l'aria di gente che ha visto l'interno di una torre. Voglio sentire tutto.",
+      "Ho contato. È la {quinta|ottava|decima} volta. Praticamente siamo vicini di casa.",
+      "Mi fido di quei viaggiatori. Hanno stivali gentili.",
+      "Un giorno chiederò loro di mettersi in posa. Oggi ammiro soltanto dalla panchina."
+    ],
+    "hordeGround": [
+      "Terra dell'Orda. I goblin si sono dipinti la faccia di bianco e nero. Come la vecchia televisione!",
+      "I Naguka qui mettono black metal a colazione. Ho chiesto il meteo. Hanno alzato il volume.",
+      "Un goblin voleva la mia macchina. Gli ho fatto fare una foto. Ne ha fatte {nove|venti|quaranta}. Tutte dei suoi piedi.",
+      "Stendardi dell'Orda ovunque. Design molto drammatico. Poche parole, tante punte.",
+      "I goblin hanno girato la testa tutti insieme. La loro mente comune è come un unico grande canale.",
+      "Non devo fare del male a un Naguka. Ne tocchi uno e lo sa tutta la specie. La guida lo sottolinea.",
+      "La guida non ha un capitolo sulla terra dell'Orda. Lo sto scrivendo io.",
+      "Un goblinetto mi ha chiesto se la mia testa era piena di sassi. Ho detto di cartoline. Era colpito.",
+      "Trucco da cadavere, punte, tamburi. Su Zeta lo chiameremmo un fan club molto impegnato.",
+      "Qui cantano il nome di una band. Un intero popolo come unico pubblico. Lo capisco.",
+      "I goblin pensano che io sia un goblin molto grande e molto pallido. Non correggo nessuno.",
+      "Ho fotografato un signore della guerra goblin. Si è messo in posa. L'ha già fatto.",
+      "Un goblin mi ha offerto {un fungo|uno scarabeo|una zuppa grigia}. Zuppa grigia! Come a casa. Ho quasi pianto.",
+      "I loro tamburi sono una trasmissione. Ogni capanna è sintonizzata. Niente televisione.",
+      "Qui nessuno fa la fila. Spingono. Io ho fatto la fila lo stesso. Ero solo nella mia fila.",
+      "Sono saliti da un pozzo sovietico profondissimo, i goblin. Come me, sono turisti quaggiù.",
+      "L'Orda marcia verso sud. La fotografo di lato, con rispetto.",
+      "Uno sciamano goblin mi ha annusato. Ha detto che so di 'su'. Scelgo di sentirmi lusingato.",
+      "I goblin ridono di tutto. Cose brutte, cose belle, me. Rido con loro.",
+      "Neanche una cartolina in terra dell'Orda. Me ne sono disegnata una. Ha tante punte.",
+      "Ho chiesto a un goblin il meteo. Ha detto 'GRISSNACK'. Vuol dire sole?",
+      "La terra dell'Orda è fangosa, rumorosa e nessuno chiede scusa. Il viaggio più istruttivo finora.",
+      "I bambini goblin mi seguono in fila. Ora sono una guida turistica. Del niente.",
+      "Un goblin mi ha disegnato. Testa enorme, corpo minuscolo, molto preciso. L'ho comprato.",
+      "Gli Analizzatori vogliono studiare la mente comune dei goblin. Io voglio che lascino le katane a casa.",
+      "Anche qui trovo umani, più o meno. Sotto il trucco, i goblin sono molto umani.",
+      "Un orco grosso mi ha aiutato a superare un fosso. Ha detto 'OI, attento'. Custodirò quell'OI.",
+      "Il black metal è fortissimo. Le nostre navi sono silenziosissime. Gli opposti si attraggono.",
+      "Ho scambiato un cucchiaino ricordo con una collana d'ossa goblin. Uno scambio culturale equo.",
+      "Qui niente corrente, niente televisione. Racconto le telenovelas a voce. Ascoltano. Le ADORANO."
+    ],
+    "abroad": [
+      "Un pianeta intero di sconosciuti, e quasi tutti sono stati gentili con me.",
+      "Trentanove anni luce da casa, e l'autobus arriva comunque in orario. Quasi sempre.",
+      "Ho imparato a dire 'grazie' in {sei|nove|quattordici} lingue umane. Le uso tutte insieme.",
+      "Ogni paese qui ha una spina diversa. Anche la corrente ha i confini.",
+      "A casa guardavamo la vostra televisione con trentanove anni di ritardo. Qui è in diretta! In diretta!",
+      "Ho spedito una cartolina a casa. Ci vorrà un po'. I piccioni non volano così lontano.",
+      "Gli umani mi chiedono da dove vengo. Indico in su. Guardano in su. Guardiamo in su tutti insieme.",
+      "Il mio passaporto ha timbri di {cinque|otto|dodici} paesi. E uno della luna, che era uno scherzo.",
+      "Il doganiere mi ha chiesto se avevo qualcosa da dichiarare. Ho dichiarato il mio amore per la Terra.",
+      "Mi manca il ronzio delle sfere. Poi passa un tram e me ne dimentico.",
+      "A casa la mia famiglia tiene un altarino a un quiz. Qui l'ho visto dal pubblico in studio.",
+      "Qui la gente ha paura delle cose nel cielo. Giusto. Hanno visto i detriti.",
+      "Ho compilato un modulo per il permesso di soggiorno. Alla voce specie ho scritto 'fan'.",
+      "Ogni città ha una cattedrale, un mercato e un uomo che urla. Li amo tutti e tre.",
+      "Gli umani hanno costruito un pianeta intero senza controllo gravitazionale. Ogni scala è un monumento.",
+      "Qualcuno attraversa ancora la strada quando mi vede. Saluto dal mio lato. Il progresso è lento.",
+      "Su Zeta niente è una sorpresa. Qui lo è tutto. Non mi sono annoiato neanche una volta.",
+      "Una famiglia mi ha adottato per il pranzo della domenica. Arrosto, sugo, uno zio con le sue idee. Perfetto.",
+      "I loop temporali spaventano i miei cugini. Dico loro: guidate piano, come fanno gli umani.",
+      "Ho la tessera della biblioteca. Il sapere umano, gratis, con il timbro della data. Sbalorditivo.",
+      "Qui sono straniero, visitatore, alieno. Tutte e tre le parole sono vere. Mi piacciono tutte.",
+      "I vicini mi hanno portato {una lasagna|uno sformato|una torta} quando mi sono trasferito. È un trattato?",
+      "Ho nostalgia di un posto che non ha mai avuto un tramonto così. È confuso.",
+      "La Gilda dei Maghi mi ha mandato una lettera cortese per il visto. Con sigillo di ceralacca. L'ho incorniciata.",
+      "Gli umani vivono così poco e sono così indaffarati. Ogni loro pomeriggio è prezioso. Cerco di non sprecarlo.",
+      "Ho provato a spiegare il viaggio superluminale a un tassista. Lui mi ha spiegato i sensi unici. Ha vinto lui.",
+      "La mia guida è del 1999 ed è già vecchia. Il vostro mondo corre così in fretta.",
+      "All'estero tutti dicono 'devi assaggiare il piatto tipico'. Ogni posto ha un piatto tipico! Ognuno!",
+      "Sono stato sul confine tra due paesi con un piede per parte. Come un loop temporale, ma divertente.",
+      "Un umano mi ha detto che ero 'lontano da casa'. Ho detto di sì, ma anche molto vicino."
+    ],
+    "lore": {
+      "television": [
+        "La prima trasmissione umana è arrivata su Zeta trentanove anni dopo la partenza. Da allora guardiamo.",
+        "A casa siamo ancora agli anni del bianco e nero. Qui avete il colore! Me ne dimentico sempre.",
+        "I nostri studiosi hanno passato decenni su un solo programma di cucina. Discutono ancora del soufflé.",
+        "La pubblicità è la parte migliore. Trenta secondi di pura speranza umana, con la musichetta.",
+        "Mia nonna ha imparato la vostra lingua da {un quiz|il meteo|un programma di pupazzi}. La parla molto forte.",
+        "All'inizio credevamo che le risate registrate fossero persone vere. Un pubblico invisibile. Eravamo gelosi.",
+        "La bambina del monoscopio con la lavagna è una santa su Zeta. Alcuni di noi pregano il pagliaccio.",
+        "Il televideo! Pagine di notizie in lettere a blocchetti. È la scrittura più bella della galassia.",
+        "Abbiamo imparato l'amore umano dalle telenovelas. Ora siamo molto preoccupati per l'amnesia.",
+        "Ogni nave turista ha una televisione in cabina di pilotaggio. Rotta tracciata, programma acceso.",
+        "Le previsioni del tempo sono state il nostro primo mistero. Perché raccontare a tutti il cielo? Poi mi ha piovuto addosso.",
+        "Possiedo {sessanta|novanta|duecento} videocassette. Tutte registrate dalla tv. Con la pubblicità. Mai saltare la pubblicità.",
+        "I presentatori dei quiz sono i nostri eroi. Sanno tutto e sorridono lo stesso.",
+        "La Thatcher in televisione che mostra la magia al mondo. I nostri studiosi la vedranno mille volte. Quando arriva.",
+        "Un umano mi ha chiesto perché amiamo la televisione. Ho detto: siete voi che parlate a voi stessi, e noi abbiamo origliato.",
+        "Su Zeta, 'e ora il telegiornale' è come diciamo 'ti amo'. Lunga storia.",
+        "La prima volta la fine delle trasmissioni ci ha fatto piangere. Pensavamo fosse finita l'umanità. Poi è arrivato il mattino.",
+        "Ho conosciuto un vero conduttore del telegiornale! Più basso che in tv. E anche in tre dimensioni.",
+        "Il vostro telecomando è il dispositivo più avanzato della Terra. Un tasto e un mondo nuovo.",
+        "Abbiamo un'intera sfera di Dyson sintonizzata sulla Terra. Ogni canale. Cattiva ricezione il martedì."
+      ],
+      "monument": [
+        "Abbiamo costruito un monumento all'umanità. È molto grande. La Gilda l'ha chiamato una standing ovation.",
+        "Il monumento è fatto di qualcosa che non è proprio metallo. Non siamo proprio sicuri cosa. È bellissimo.",
+        "Raccolgo souvenir per il negozio del monumento. Sì, il monumento ha un negozio di souvenir.",
+        "Il monumento ha un'ala solo per {i biglietti dell'autobus|le tazze da tè|i semafori}. La cura mio cugino.",
+        "Il monumento canticchia i vostri inni nazionali. Tutti. Insieme. Ci vuole un po' ad abituarsi.",
+        "Gli umani chiedono com'è il monumento. Come un applauso, dico, se l'applauso avesse una forma.",
+        "Un giorno le mie foto saranno appese al monumento. Le mie! Un piccolo contributo grigio.",
+        "Il monumento è rivolto alla Terra, così può salutare. Non saluta. È un monumento. Ma nello spirito.",
+        "Al centro abbiamo messo la statua di un umano qualsiasi. Non un re. Un uomo che aspetta l'autobus.",
+        "Il monumento ha richiesto più tempo di una sfera di Dyson. L'amore è più complicato della gravità.",
+        "Un giorno gli umani visiteranno il monumento. Abbiamo costruito una fila lunghissima per loro. Gli piacerà.",
+        "Dentro il monumento sono sempre le quattro meno un quarto, l'ora del tè. Un omaggio.",
+        "Il monumento ha una targa in {quaranta|sessanta|novanta} lingue umane. Tutte dicono 'grazie'.",
+        "Alcuni umani pensano che il monumento sia un'arma. È un abbraccio. Un abbraccio molto grande e molto lontano.",
+        "Una volta ho aiutato a lucidare il monumento. Ci è voluto un anno. È stato l'anno più bello."
+      ],
+      "debris": [
+        "Lassù c'è il campo di detriti. Continuiamo a cercare di ripulirlo. Continuiamo a farlo male.",
+        "Abbiamo costruito uno specchio intorno al vostro Sole. Un regalo. È durato finché il primo pezzo di satellite l'ha trovato.",
+        "La gravità la capiamo. Un miliardo di pezzetti di metallo arrabbiati, no.",
+        "Un'altra nave per le pulizie è stata colpita dai detriti che doveva raccogliere. La {terza|quinta|nona} quest'anno.",
+        "Mio zio pilota la scopa per i detriti. Manda la stessa cartolina ogni mese: 'Ci sto ancora provando.'",
+        "I rottami del nostro specchio sono ancora lassù a catturare la luce. Un brillantino molto costoso.",
+        "Gli umani lanciano razzi fatti di corazza per passare. Un'idea coraggiosissima. La ammiriamo da sotto.",
+        "Potremmo trascinare i detriti nel Sole, ma i calcoli per tanti pezzi ci fanno male alla testa. Alla testona.",
+        "Abbiamo chiesto alla Gilda dei Maghi un incantesimo di pulizia. Ci hanno chiesto come si scrive. Nessuno lo sapeva.",
+        "Una notte un satellite rotto è caduto davanti alla mia finestra. L'ho fotografato. Sfocato. Come tutte le mie migliori.",
+        "I detriti girano velocissimi. Più di ottanta, molto di più. Anche il cielo ha un problema di velocità.",
+        "I nostri ingegneri hanno fatto una rete per i detriti. I detriti hanno fatto tanti piccoli buchi nella rete.",
+        "Lo specchio solare doveva essere un regalo. Ora è una lezione. Incartate meglio i regali.",
+        "Da quando l'orbita bassa si è chiusa, ci proviamo {ogni settimana|ogni mese|ogni singolo giorno}. La costanza è la nostra unica dote fuori dalla fisica.",
+        "Dicono che nei detriti ci sia un pezzo del vecchio Dio Padre. Gli giriamo intorno con molto rispetto.",
+        "Non sono un pilota. Sono un Viandante. Ma aiuterei a pulire il cielo se mi dessero una scopa.",
+        "Ci scusiamo per i detriti in più delle nostre spazzatrici precipitate. Ci stiamo lavorando. Male.",
+        "Un'ingegnera umana ci ha dato un consiglio sui detriti. La migliore idea da anni. Ha rifiutato una foto.",
+        "Quando il cielo sarà pulito, riproveremo con lo specchio. Dipinto di un colore più bello.",
+        "Ogni stella cadente che vedo, spero sia un pezzo in meno. Esprimo un desiderio lo stesso."
+      ],
+      "camera": [
+        "La mia macchina è umana. Le nostre registrano la luce stessa, ma non hanno il piccolo clic.",
+        "Trentasei foto a rullino. Un numero molto umano. Né troppe né troppo poche.",
+        "Non capisco quasi niente di quello che fotografo. È per questo che lo fotografo.",
+        "L'uomo del negozio di foto mi conosce per nome. Mi chiama 'l'ordine grosso'.",
+        "Ho messo il pollice in {metà|quasi tutte|un terzo} delle mie foto. Il pollice fa parte del viaggio.",
+        "Aspettare una settimana che torni il rullino è la settimana più emozionante di ogni mese.",
+        "Alcuni umani si nascondono dalla mia macchina. Capisco. Fotograferò il posto dove erano.",
+        "Il flash fa sbattere le palpebre agli umani. Ho un album intero di umani che sbattono le palpebre. È dolcissimo.",
+        "Le foto istantanee! Le scuoti e appare l'immagine. È magia? È meglio della magia.",
+        "Ho fotografato ogni {cassetta postale|fermata|panchina} di questo quartiere. Poi, il quartiere dopo.",
+        "Il mio album non ha didascalie. Non so cos'è niente. So che l'ho amato.",
+        "Gli umani dicono 'cheese' per le foto. Ho provato altri latticini. 'Burro' funziona meno.",
+        "Ho chiesto a un umano di farmi una foto. Mi ha tagliato la testa. È una testa grande. Facile da tagliare.",
+        "I Viandanti mandano a casa un milione di foto all'anno. La sfera archivio si sta riempiendo.",
+        "Una foto a un umano è un piccolo grazie. Dico grazie {quaranta|cento|trecento} volte al giorno.",
+        "Ho comprato una videocamera. Ora le mie vacanze durano tre ore e nessuno le guarderà. Io sì.",
+        "La luce del vostro mondo è perfetta per le foto. Una stella, niente sfere, solo sole.",
+        "La mia foto più vecchia è un'auto parcheggiata nel 1999. È la prima cosa che ho visto. Amo ancora quell'auto."
+      ],
+      "castes": [
+        "Sono un Viandante Grigio. Siamo venuti a guardare. Guardiamo ancora. Guarderemo sempre.",
+        "Gli Analizzatori Cremisi portano la katana. Il bisturi è lento, dicono. Io dico che una cartolina è più lenta e più gentile.",
+        "I Deformatori Pallidi non parlano mai con la bocca. A volte uno mi pensa 'ciao' e mi rovescio il tè.",
+        "Un Analizzatore voleva aprire la mia radio per capirla. Ora non capisco niente e non ho la radio.",
+        "I Deformatori piegano le distanze. Mio cugino ne ha chiesto uno per piegare la fila alla posta. Rifiutato.",
+        "Noi Viandanti capiamo pochissimo. Gli Analizzatori capiscono tanto. Noi siamo più felici.",
+        "Per favore non lasciate che gli Analizzatori aprano {un orologio|un pianoforte|un distributore}. Non lo rimontano mai.",
+        "Un Deformatore è rimasto accanto a me alla fermata per un'ora. Abbiamo avuto un silenzio bellissimo.",
+        "Gli Analizzatori hanno smontato un tostapane per capire il pane. Hanno capito che serve un altro tostapane.",
+        "La mia casta porta macchine fotografiche. La loro katane. L'altra silenzio. La mia fa le vacanze migliori.",
+        "Alcuni umani temono gli Analizzatori. Giusto. Il loro modo di dire 'ciao' è una domanda molto affilata.",
+        "Quando un Deformatore ride, tutti intorno lo sentono nei denti. Io non ho denti. Lo sento nel cappello.",
+        "I Viandanti adorano le persone che fotografano. Tutte. Anche quelle che urlano.",
+        "Un'Analizzatrice una volta mi ha chiesto a cosa serve una barzelletta. Gliene ho raccontata una. L'ha tagliata a metà per controllare.",
+        "I Deformatori dicono che gli umani pensano a voce altissima. Soprattutto al pranzo, dicono. Lo sapevo.",
+        "Mia madre era un'Analizzatrice, mio padre un Viandante. Da lui la macchina fotografica, da lei la curiosità.",
+        "Una volta un Deformatore mi ha piegato la strada. Sono arrivato prima di partire. Mi sono fotografato mentre partivo.",
+        "Tre caste, un solo hobby: l'umanità. Solo che prendiamo appunti in modi diversi."
+      ],
+      "zeta": [
+        "Casa è a trentanove anni luce. Esattamente quanto hanno dovuto viaggiare le vostre prime trasmissioni.",
+        "A casa abbiamo due sfere di Dyson. Il vostro sole attraversa il cielo nudo. Che coraggio.",
+        "Ogni nave umana che arriva su Zeta fa il pieno gratis. Senza domande. Solo una foto.",
+        "Su Zeta la gravità la decide il consiglio. Qui la decide la natura. Nessuno può lamentarsi con la natura.",
+        "A casa non abbiamo la pioggia. Il tempo è un'impostazione. Non sapevo cosa mi perdevo.",
+        "La cucina di Zeta è una pappa grigia in tre gusti: grigio, più grigio e grigio delle feste.",
+        "Superare la luce è facile, se conosci la gravità. Un tostapane, invece, è difficile.",
+        "La mia città ha {quattro|nove|dodici} milioni di Turisti, e ognuno ha un programma umano preferito.",
+        "A casa sono una persona qualunque. Qui i bambini mi indicano. Non mi sono mai sentito così speciale.",
+        "Ci chiamiamo Turisti. Gli umani ci chiamano Grigi. Sono vere tutte e due. Siamo turisti molto grigi.",
+        "La nostra medicina è medicina umana, la nostra biologia viene dai vostri libri. Coi corpi siamo un disastro.",
+        "Su Zeta ogni casa ha una parabola puntata sulla Terra. Chiedi l'ora a un bambino: risponde 'millenovecentosessantadue'.",
+        "Il volo da casa dura un pomeriggio. I moduli alla dogana una settimana.",
+        "La mia famiglia mi manda liste di cose da fotografare. Mia zia vuole ogni {piccione|cappello|teiera} d'Europa.",
+        "Siamo bravissimi in una cosa sola. Gli umani ci sono negati e sono bravi in tutto il resto. Amici perfetti.",
+        "Mi manca casa solo all'ora di andare a letto. La mattina c'è di nuovo la Terra."
+      ],
+      "contact": [
+        "Abbiamo scoperto che esistevate nel 1975. Ufficialmente vi abbiamo salutato nel 1999. Ventiquattro anni di nervosismo.",
+        "La nostra prima visita ufficiale è stata nel 1999, giusto prima della vostra notte del Y2K. Pessimo tempismo. Ci dispiace.",
+        "Abbiamo provato il primo contatto per anni. Alla fine credo che qualcuno abbia solo detto 'ciao' e salutato con la mano.",
+        "Tanto tempo fa una nostra nave ha visitato una coppia in macchina, in America. Non è mai tornata. Abbiamo saputo il perché solo dopo.",
+        "Alcuni umani dicono che rapiamo la gente. Sono quelli di Titania. Noi chiediamo solo le indicazioni con gentilezza.",
+        "I Dargos ci fanno fare brutta figura. Noi portiamo cartoline. Loro scherzi. Per favore distingueteci.",
+        "Prima del 1999 abbiamo studiato come salutarvi. Il piano finale era 'un bel biscotto'.",
+        "La Gilda dei Maghi ha accolto i nostri primi diplomatici con molta formalità. I diplomatici hanno portato una torta. È andata bene.",
+        "Nel 1975 una studiosa ha visto la vostra prima trasmissione ed è caduta dalla sedia. Chiamiamo quel giorno 'la Caduta'.",
+        "Non siamo venuti a conquistare. Siamo venuti in visita. Forse per sempre. È permesso?",
+        "I vecchi film umani ci mostrano mentre invadiamo. Li abbiamo guardati inorriditi. Poi abbiamo comprato i seguiti.",
+        "Mia nonna ricorda il 1975. Dice che tutti su Zeta sono usciti a guardare il cielo, voi.",
+        "All'inizio gli umani avevano paura di noi. Ora si spaventano solo un pochino. Progressi!",
+        "Ogni Turista firma una promessa: nessun male agli umani, neanche quando sarebbe più facile. L'ho firmata {due volte|tre volte|coi brillantini}.",
+        "Il nostro ambasciatore porta la cravatta perché ce l'hanno i conduttori del telegiornale. Nessuno gli ha spiegato come toglierla.",
+        "Due anni dal primo contatto. Due anni della vacanza più bella della galassia."
+      ]
+    }
+  },
+  "script": {
+    "positive": [
+      [
+        [
+          0,
+          "{b}! Ho fatto sviluppare la tua foto. Guarda, sbatti le palpebre benissimo."
+        ],
+        [
+          1,
+          "Ah! Sembro mezzo addormentato."
+        ],
+        [
+          0,
+          "Mezzo addormentato e completamente umano. Va nell'album, in prima pagina."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ieri mi hai spiegato l'orario degli autobus. Sono arrivato alla cattedrale!"
+        ],
+        [
+          1,
+          "Sono contento che sia servito, {a}. Ti è piaciuta?"
+        ],
+        [
+          0,
+          "Le ho fatto centoquattro foto. Mi è piaciuta moltissimo."
+        ]
+      ],
+      [
+        [
+          0,
+          "*porge un pacchettino* Per te, {b}. Un souvenir della tua città."
+        ],
+        [
+          1,
+          "Una palla di neve col municipio? Non ne ho mai avuta una."
+        ],
+        [
+          0,
+          "Ci vivi dentro ogni giorno. Ora puoi tenerla in mano."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi hai insegnato la parola 'accogliente'. Da allora l'ho usata {nove|undici|venti} volte."
+        ],
+        [
+          1,
+          "Così tante? Dove?"
+        ],
+        [
+          0,
+          "Soprattutto per la tua cucina."
+        ],
+        [
+          1,
+          "Che carino, {a}. Torna per un tè."
+        ]
+      ],
+      [
+        [
+          0,
+          "{b}, il quiz! Ho risposto giusto a una domanda. Una domanda intera!"
+        ],
+        [
+          1,
+          "Bravo! Quale?"
+        ],
+        [
+          0,
+          "Quella su quanto dista Zeta Reticuli. Mi sentivo avvantaggiato."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi hai prestato l'ombrello nella tempesta. Te lo riporto, asciutto e chiuso."
+        ],
+        [
+          1,
+          "Chiuso? Nessuno riesce a chiudere quegli affari."
+        ],
+        [
+          0,
+          "Mi ci sono voluti tre giorni e un po' di gravità."
+        ]
+      ],
+      [
+        [
+          0,
+          "Sono stato invitato alla mia prima festa di compleanno umana, {b}. La tua. Grazie."
+        ],
+        [
+          1,
+          "Ma certo! Hai cantato più forte di tutti."
+        ],
+        [
+          0,
+          "Mi sono esercitato per un mese. Ho portato anche la videocamera. È normale?"
+        ],
+        [
+          1,
+          "Per mia zia, sì. Eri perfettamente a tuo agio."
+        ]
+      ],
+      [
+        [
+          0,
+          "Tua nonna mi ha dato una ricetta per la zuppa. La mia prima! Non è grigia!"
+        ],
+        [
+          1,
+          "Le piaci, {a}. Non dà le ricette a nessuno."
+        ],
+        [
+          0,
+          "La custodirò come un segreto di Stato. E la farò ogni domenica."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ti ho aggiustato la catena della bici. Be', un pochino. Soprattutto l'ho tenuta ferma a mezz'aria."
+        ],
+        [
+          1,
+          "Tenerla ferma è metà del lavoro. Grazie, {a}."
+        ],
+        [
+          0,
+          "La gravità è il mio unico talento. Sono felice che ti sia servita."
+        ]
+      ],
+      [
+        [
+          0,
+          "{b}, mi hai salutato dall'altra parte della piazza. Davanti a tutti!"
+        ],
+        [
+          1,
+          "Be', sei un amico. Perché non avrei dovuto?"
+        ],
+        [
+          0,
+          "Un amico. Me lo scrivo. Spero di scriverlo giusto."
+        ]
+      ],
+      [
+        [
+          0,
+          "Grazie per avermi insegnato a registrare un programma. Ho registrato tutto il fine settimana."
+        ],
+        [
+          1,
+          "Tutto il fine settimana? Su una cassetta?"
+        ],
+        [
+          0,
+          "Su {quaranta|cinquanta|sessanta} cassette. Ho svuotato il negozio."
+        ]
+      ],
+      [
+        [
+          0,
+          "Finalmente ho imparato a fare la fila come si deve. Grazie a te, {b}."
+        ],
+        [
+          1,
+          "Né troppo vicino, né troppo lontano, e mai passare davanti?"
+        ],
+        [
+          0,
+          "E sospirare un po' quando è lenta. Sì. Sono praticamente del posto."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi hai fatto tenere il tuo bambino, {b}. Non ho mai tenuto un umano così nuovo."
+        ],
+        [
+          1,
+          "Le sei piaciuto. Ti ha preso il dito."
+        ],
+        [
+          0,
+          "La presa più forte del pianeta. Non mi laverò quel dito per una settimana."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ho visto la finale di calcio con la tua famiglia. Ho urlato all'arbitro! Come un umano!"
+        ],
+        [
+          1,
+          "È vero. Mio padre era molto fiero di te, {a}."
+        ],
+        [
+          0,
+          "Non conosco ancora le regole. Ma so che l'arbitro sbaglia sempre."
+        ]
+      ],
+      [
+        [
+          0,
+          "{b}, ho una cosa per te. Una foto del tuo negozio, dal tetto di fronte."
+        ],
+        [
+          1,
+          "Dal tetto? Come ci sei salito?"
+        ],
+        [
+          0,
+          "Ho fluttuato, un pochino. La luce era troppo bella. Non dirlo al padrone di casa."
+        ],
+        [
+          1,
+          "È stupenda. La metto in cornice."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi hai detto che il mio accento sta migliorando. Lo pensavi davvero?"
+        ],
+        [
+          1,
+          "Sinceramente sì. Sembri quasi il tizio della radio."
+        ],
+        [
+          0,
+          "Il tizio della radio è il mio idolo. È il giorno più bello della mia visita."
+        ]
+      ],
+      [
+        [
+          0,
+          "Grazie per avermi portato al mercato. Non ho mai sentito l'odore di così tanti formaggi."
+        ],
+        [
+          1,
+          "Ne hai comprato?"
+        ],
+        [
+          0,
+          "{Quattro|Sei|Nove}. E un altro per il monumento."
+        ]
+      ],
+      [
+        [
+          0,
+          "Quando quell'uomo mi ha urlato sul tram, mi hai difeso. Non lo dimenticherò."
+        ],
+        [
+          1,
+          "Si stava comportando da idiota, {a}. Tu eri solo seduto lì."
+        ],
+        [
+          0,
+          "Comunque. Sul mio pianeta sentiranno parlare di te. Finirai sul monumento."
+        ],
+        [
+          1,
+          "Per favore non mettermi sul monumento."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ti ho fatto una torta, {b}. Una torta umana. Da un libro!"
+        ],
+        [
+          1,
+          "È... un po' storta."
+        ],
+        [
+          0,
+          "Ho corretto la gravità. Adesso pende apposta. Artisticamente."
+        ],
+        [
+          1,
+          "A dire il vero è buonissima. Grazie."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi hai prestato la tua guida della città vecchia. Gli appunti a margine sono meglio del libro!"
+        ],
+        [
+          1,
+          "Sono quasi tutti su dove trovare patatine buone."
+        ],
+        [
+          0,
+          "Appunto. Sapere vero."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ho passato l'esame di guida, {b}. Sono andato a trenta tutto il tempo. L'esaminatore piangeva di gioia."
+        ],
+        [
+          1,
+          "Complimenti! Niente loop temporali per te, allora."
+        ],
+        [
+          0,
+          "Mai. Sarò l'alieno più lento d'Europa, e fiero."
+        ]
+      ],
+      [
+        [
+          0,
+          "*punta la macchina* {b}, sorridi! No, un sorriso vero. Sì! Quello."
+        ],
+        [
+          1,
+          "Mi hai fatto cento foto, {a}."
+        ],
+        [
+          0,
+          "E ognuna è la migliore. Sei il mio umano preferito da fotografare."
+        ],
+        [
+          1,
+          "Dai, allora. Un'altra."
+        ]
+      ]
+    ],
+    "negative": [
+      [
+        [
+          0,
+          "{b}, hai detto a tutti al pub che mangio le pile."
+        ],
+        [
+          1,
+          "Era una battuta, {a}. Ridevano tutti."
+        ],
+        [
+          0,
+          "Ora il barista continua a offrirmi pile. Sono pile molto care."
+        ]
+      ],
+      [
+        [
+          0,
+          "Per favore smetti di coprirti la faccia quando alzo la macchina."
+        ],
+        [
+          1,
+          "E tu smetti di alzarla ogni volta che passo!"
+        ],
+        [
+          0,
+          "Ma passi in un modo così fotogenico."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi hai chiamato 'omino verde'. Non sono né piccolo né verde."
+        ],
+        [
+          1,
+          "Va bene, va bene. Omone grigio, allora."
+        ],
+        [
+          0,
+          "Grazie. La precisione conta."
+        ]
+      ],
+      [
+        [
+          0,
+          "Il tuo cane mi ha inseguito per tutta la strada, {b}."
+        ],
+        [
+          1,
+          "Pensa che tu sia un palloncino. Con quella testona."
+        ],
+        [
+          0,
+          "Non sono un palloncino. Sono un ospite. Per favore spiegalo al cane."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai cambiato canale nel mezzo della mia telenovela."
+        ],
+        [
+          1,
+          "C'era la partita! È il derby!"
+        ],
+        [
+          0,
+          "Rosalinda stava per ricordarsi chi era!"
+        ],
+        [
+          1,
+          "Sta per ricordarselo da sei mesi, {a}."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi hai chiesto di aggiustarti la macchina perché so 'volare nello spazio'. Ho rotto la radio."
+        ],
+        [
+          1,
+          "E i tergicristalli. E il clacson."
+        ],
+        [
+          0,
+          "Ho detto che sono bravo con la gravità. Le auto non sono gravità. Te l'avevo detto."
+        ]
+      ],
+      [
+        [
+          0,
+          "{b}, hai messo un cartello sulla mia porta con scritto 'portami dal tuo capo'."
+        ],
+        [
+          1,
+          "Dai, è divertente."
+        ],
+        [
+          0,
+          "Oggi hanno bussato dodici persone a chiedere del mio capo. Il mio capo è un comitato."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai buttato via i miei scontrini. Tutti. Li stavo conservando."
+        ],
+        [
+          1,
+          "Erano sparsi per tutta la cucina, {a}! È solo carta!"
+        ],
+        [
+          0,
+          "Era un registro di {tre|quattro|cinque} mesi di ciò che comprano gli umani. Era cultura."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai detto che il nostro monumento è 'pacchiano'."
+        ],
+        [
+          1,
+          "Ho visto le foto. È coperto di fenicotteri di plastica."
+        ],
+        [
+          0,
+          "I fenicotteri sono un omaggio! Gli umani li adorano! L'ho visto in un giardino!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai detto al padrone di casa che dormo appeso a testa in giù nell'armadio."
+        ],
+        [
+          1,
+          "Lo fai. Ti ho visto."
+        ],
+        [
+          0,
+          "Solo il martedì! Fa bene alla testa. Ed è il mio armadio."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai di nuovo bloccato il marciapiede coi bidoni, {b}. Ho dovuto fluttuarci sopra."
+        ],
+        [
+          1,
+          "Allora smettila di fluttuare, spaventi i vicini."
+        ],
+        [
+          0,
+          "Allora smettila di mettere i bidoni dove passa la gente. Abbiamo entrambi da lavorare."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai riso quando ho detto 'piove a catinelle' al veterinario."
+        ],
+        [
+          1,
+          "L'hai detto al veterinario, {a}. Tenendo in braccio un gatto."
+        ],
+        [
+          0,
+          "Facevo conversazione. Gli umani sono difficilissimi."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ti ho sentito chiamarci 'turisti spaziali' come se fosse una parolaccia."
+        ],
+        [
+          1,
+          "Voi bloccate ogni portone per fare foto!"
+        ],
+        [
+          0,
+          "Siamo turisti. È nel nome. È letteralmente il nome."
+        ],
+        [
+          1,
+          "Allora fate i turisti da un'altra parte per un pomeriggio."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai detto a mio cugino che i detriti sono colpa nostra. Tutti."
+        ],
+        [
+          1,
+          "Be', un po' sì. Le vostre spazzatrici rotte sono lassù."
+        ],
+        [
+          0,
+          "Un po'. Un pochino. Ci stiamo sforzando tantissimo di essere meno disastrosi."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi hai preso il parcheggio, {b}. La mia nave doveva atterrare lì."
+        ],
+        [
+          1,
+          "La tua nave è grande come una chiesa! Tanto non ci sta!"
+        ],
+        [
+          0,
+          "Si piega. Si piega benissimo. Quando nel posto non c'è nessuno."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai fatto entrare un Analizzatore nel negozio e ora la cassa è a pezzi?"
+        ],
+        [
+          1,
+          "Ha detto che era un ispettore! Aveva una spada!"
+        ],
+        [
+          0,
+          "Quello non è un ispettore, {b}. Per loro è un martedì qualunque. Mi dispiace tanto."
+        ],
+        [
+          1,
+          "Puoi rimontarla?"
+        ],
+        [
+          0,
+          "No. Nessuno ci riesce mai. È tutto il problema degli Analizzatori."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai detto ai bambini che li avrei portati a fare un giro sulla mia nave."
+        ],
+        [
+          1,
+          "Be', lo faresti?"
+        ],
+        [
+          0,
+          "C'è una lista d'attesa, un permesso e un sacchetto per il mal d'aria. Mi hai fatto passare per il cattivo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai mangiato il mio ultimo biscotto, {b}. Quello a forma di stella."
+        ],
+        [
+          1,
+          "Era solo un biscotto, {a}."
+        ],
+        [
+          0,
+          "Era un souvenir. Volevo spedirlo a casa."
+        ],
+        [
+          1,
+          "Volevi spedire un biscotto dall'altra parte della galassia?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai detto che parlo come una televisione. È la crudeltà più gentile che abbia mai sentito."
+        ],
+        [
+          1,
+          "Intendevo che non ti fermi mai, {a}."
+        ],
+        [
+          0,
+          "Allora prendo il complimento e ignoro il significato."
+        ]
+      ]
+    ],
+    "neutral": [
+      [
+        [
+          0,
+          "Scusi! Mi farebbe una foto davanti a questo lampione?"
+        ],
+        [
+          1,
+          "Il lampione? Non la fontana?"
+        ],
+        [
+          0,
+          "La fontana è nella guida. Il lampione è una mia scoperta."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi scusi, da che parte è il municipio?"
+        ],
+        [
+          1,
+          "Sempre dritto, seconda a sinistra. Non può sbagliare."
+        ],
+        [
+          0,
+          "Oh, io posso sbagliare qualsiasi cosa. Ma grazie della fiducia."
+        ]
+      ],
+      [
+        [
+          0,
+          "Questa è la fila per l'autobus o per il forno?"
+        ],
+        [
+          1,
+          "Autobus. Il forno è l'altra."
+        ],
+        [
+          0,
+          "Allora resto. Ormai sono troppo coinvolto emotivamente in questa fila."
+        ]
+      ],
+      [
+        [
+          0,
+          "Bel tempo, come dicono gli umani. È giusto? È bello?"
+        ],
+        [
+          1,
+          "Non male. Un po' freddo per me."
+        ],
+        [
+          0,
+          "Non male, un po' freddo. Mi ricorderò la recensione corretta."
+        ]
+      ],
+      [
+        [
+          0,
+          "Scusi, qual è quel programma di cui parlavano tutti al caffè?"
+        ],
+        [
+          1,
+          "Probabilmente il quiz di ieri sera. Un tizio ha vinto una macchina."
+        ],
+        [
+          0,
+          "Una macchina! Me lo sono perso. Mi serve tutta la storia, lentamente, coi gesti."
+        ],
+        [
+          1,
+          "Non c'è molto da dire. Ha pianto parecchio."
+        ]
+      ],
+      [
+        [
+          0,
+          "Con questa moneta ci compro un francobollo? C'è sopra una faccia molto seria."
+        ],
+        [
+          1,
+          "Sono due euro. Sì, e le danno anche il resto."
+        ],
+        [
+          0,
+          "Il resto! Adoro il resto. Tintinna."
+        ]
+      ],
+      [
+        [
+          0,
+          "È normale che i tram suonino tanto la campanella?"
+        ],
+        [
+          1,
+          "Solo quando qualcuno è in piedi sui binari."
+        ],
+        [
+          0,
+          "Ah. Allora mi metto da un'altra parte. Grazie."
+        ]
+      ],
+      [
+        [
+          0,
+          "Scusi, lei è del posto? Ha l'aria molto del posto."
+        ],
+        [
+          1,
+          "Nato e cresciuto qui. Perché?"
+        ],
+        [
+          0,
+          "Dove mangia la gente del posto? Non nei posti della guida. In quelli veri."
+        ],
+        [
+          1,
+          "La friggitoria vicino alla stazione. Non lo dica a nessuno."
+        ]
+      ],
+      [
+        [
+          0,
+          "È un Walkman? Posso vedere? Non lo apro, giuro. Non sono di quel tipo."
+        ],
+        [
+          1,
+          "Certo, ascolti pure."
+        ],
+        [
+          0,
+          "*ascolta con tutta la testa* Una band in una scatola. Trentanove anni luce per questo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Come fanno gli umani a sapere quando attraversare la strada?"
+        ],
+        [
+          1,
+          "Si accende l'omino verde."
+        ],
+        [
+          0,
+          "Un omino verde! Non lo dirò ai miei cugini. Sarebbero gelosi."
+        ]
+      ],
+      [
+        [
+          0,
+          "Scusi. Il museo è gratis la domenica?"
+        ],
+        [
+          1,
+          "La prima domenica del mese, credo."
+        ],
+        [
+          0,
+          "Allora tornerò la prima domenica di ogni mese per sempre."
+        ]
+      ],
+      [
+        [
+          0,
+          "Il suo giornale dice 'pioggia più tardi'. Quanto più tardi? Ho dei programmi."
+        ],
+        [
+          1,
+          "Di solito proprio quando esce di casa."
+        ],
+        [
+          0,
+          "Ah. Il tempo lo sa. Lo sospettavo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi consiglia un souvenir? Qualcosa di molto tipico di qui."
+        ],
+        [
+          1,
+          "Uno strofinaccio con la cattedrale. Lo comprano tutti."
+        ],
+        [
+          0,
+          "Ne ho già {tre|cinque|sette}. Ne prendo un altro. Per equilibrio."
+        ]
+      ],
+      [
+        [
+          0,
+          "Scusi, perché oggi tutti portano la stessa sciarpa?"
+        ],
+        [
+          1,
+          "Giorno di partita. Partitone oggi pomeriggio."
+        ],
+        [
+          0,
+          "Un'intera città con una sola sciarpa. È come una casta, ma per il fine settimana."
+        ]
+      ],
+      [
+        [
+          0,
+          "È libero questo posto?"
+        ],
+        [
+          1,
+          "No, si accomodi."
+        ],
+        [
+          0,
+          "Grazie. Cercherò di non occupare troppo spazio con la testa."
+        ]
+      ],
+      [
+        [
+          0,
+          "Posso chiedere perché gli umani toccano ferro?"
+        ],
+        [
+          1,
+          "Per fortuna, credo. Nessuno lo sa davvero."
+        ],
+        [
+          0,
+          "Meraviglioso. Un rituale senza libretto d'istruzioni. Come quasi tutta la Terra."
+        ]
+      ],
+      [
+        [
+          0,
+          "La macchinetta dei biglietti si è mangiata il mio euro. Ha fame o è rotta?"
+        ],
+        [
+          1,
+          "Le dia un colpo sul fianco."
+        ],
+        [
+          0,
+          "*le dà un colpo* Oh! Un biglietto! La vostra tecnologia risponde alla violenza. Non lo sapevo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Sa a che ora chiudono i negozi qui?"
+        ],
+        [
+          1,
+          "Alle cinque e mezza, quasi tutti. Il sabato prima."
+        ],
+        [
+          0,
+          "Le cinque e mezza. Me lo scrivo sulla mano come fanno gli umani."
+        ]
+      ],
+      [
+        [
+          0,
+          "Cos'è questo profumo? È meraviglioso."
+        ],
+        [
+          1,
+          "Pane fresco. Il forno è proprio dietro l'angolo."
+        ],
+        [
+          0,
+          "Ma certo. Gli umani mettono le cose migliori proprio dietro l'angolo."
+        ]
+      ],
+      [
+        [
+          0,
+          "È vero che qui si guida {a sinistra|a destra|in mezzo}?"
+        ],
+        [
+          1,
+          "Dipende in che paese si trova, amico."
+        ],
+        [
+          0,
+          "Ogni paese sceglie un lato. Molto democratico."
+        ]
+      ],
+      [
+        [
+          0,
+          "Scusi, come si apre quest'ombrello?"
+        ],
+        [
+          1,
+          "Prema il bottone, poi lo faccia scorrere su."
+        ],
+        [
+          0,
+          "*si apre* Ha funzionato! Mi ha fatto la settimana."
+        ]
+      ],
+      [
+        [
+          0,
+          "Scusi, quel cane è socievole? Mi guarda molto fisso."
+        ],
+        [
+          1,
+          "È buono. È solo che non ha mai visto un... lei."
+        ],
+        [
+          0,
+          "È giusto. Neanch'io, finché non mi sono guardato allo specchio."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi dice cosa significa questo cartello? 'Vietato bighellonare'."
+        ],
+        [
+          1,
+          "Vuol dire non stare in giro senza far niente."
+        ],
+        [
+          0,
+          "Ma è tutta la mia vacanza."
+        ]
+      ],
+      [
+        [
+          0,
+          "Cerco l'ufficio postale. Ho {venti|trenta|cinquanta} cartoline da spedire."
+        ],
+        [
+          1,
+          "All'angolo della piazza. Si porti un libro, la fila è lunga."
+        ],
+        [
+          0,
+          "Una fila lunga! Ancora meglio."
+        ]
+      ],
+      [
+        [
+          0,
+          "Conosce un bel posto per vedere il tramonto?"
+        ],
+        [
+          1,
+          "Sulle mura vecchie. Ci vanno tutti."
+        ],
+        [
+          0,
+          "Tutti! Allora fotograferò tutti mentre lo guardano."
+        ]
+      ],
+      [
+        [
+          0,
+          "È scortese fotografare la guardia del palazzo?"
+        ],
+        [
+          1,
+          "Faccia pure. Tanto non si muove."
+        ],
+        [
+          0,
+          "Neanche un pochino? I nostri Deformatori lo adorerebbero."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ho una domanda sui vostri soldi. Perché non ci sono ponti che si possono visitare davvero?"
+        ],
+        [
+          1,
+          "Cosa, sulle banconote? Sono inventati."
+        ],
+        [
+          0,
+          "Inventati! I vostri soldi hanno la narrativa sopra. Adoro questo pianeta."
+        ]
+      ],
+      [
+        [
+          0,
+          "Scusi, cos'è un 'mercatino delle pulci'?"
+        ],
+        [
+          1,
+          "La gente vende roba vecchia che non vuole più. A poco."
+        ],
+        [
+          0,
+          "I ricordi degli altri a cinquanta centesimi? Ci vado subito."
+        ]
+      ],
+      [
+        [
+          0,
+          "Quanto ci vuole a piedi fino al fiume?"
+        ],
+        [
+          1,
+          "Dieci minuti, se non si ferma."
+        ],
+        [
+          0,
+          "Quindi per me, circa due ore."
+        ]
+      ],
+      [
+        [
+          0,
+          "Cosa fa la gente qui la domenica pomeriggio?"
+        ],
+        [
+          1,
+          "Pranzo, poi pisolino, poi si lamenta del lunedì."
+        ],
+        [
+          0,
+          "Un rituale in tre parti. Le proverò tutte e tre."
+        ]
+      ],
+      [
+        [
+          0,
+          "Scusi. Si può andare veloci su questa strada?"
+        ],
+        [
+          1,
+          "Non sopra gli ottanta, se non vuole finire in un loop."
+        ],
+        [
+          0,
+          "Niente loop. Guiderò alla velocità di una nonna prudente."
+        ]
+      ],
+      [
+        [
+          0,
+          "Secondo lei quest'inverno nevicherà?"
+        ],
+        [
+          1,
+          "Difficile dirlo. L'anno scorso no."
+        ],
+        [
+          0,
+          "Spererò. Ho comprato uno slittino. Non si sa mai."
+        ]
+      ],
+      [
+        [
+          0,
+          "Scusi, mi sono perso. È ancora la stessa città?"
+        ],
+        [
+          1,
+          "Sì, è solo nel quartiere vecchio."
+        ],
+        [
+          0,
+          "È più vecchio del resto? Sembra dell'età di mia zia."
+        ]
+      ],
+      [
+        [
+          0,
+          "Come si chiama quel dolcetto con la panna sopra?"
+        ],
+        [
+          1,
+          "Dipende dal forno. Chieda 'uno di quelli'."
+        ],
+        [
+          0,
+          "'Uno di quelli.' Perfetto. È già così che ordino tutto."
+        ]
+      ],
+      [
+        [
+          0,
+          "C'è un cinema in questa città?"
+        ],
+        [
+          1,
+          "Solo uno, vicino al canale. Soprattutto film vecchi."
+        ],
+        [
+          0,
+          "I film vecchi sono i miei preferiti. A casa è tutto film vecchi."
+        ]
+      ],
+      [
+        [
+          0,
+          "Perché qui tutti hanno una borsa per la spesa riutilizzabile?"
+        ],
+        [
+          1,
+          "Ora i negozi fanno pagare la plastica."
+        ],
+        [
+          0,
+          "Una borsa per la vita! La sceglierò con cura. Deve durare quanto me."
+        ]
+      ],
+      [
+        [
+          0,
+          "Scusi. Sa dove posso far sviluppare un rullino in fretta?"
+        ],
+        [
+          1,
+          "La farmacia lo fa in un'ora. Costa di più."
+        ],
+        [
+          0,
+          "Un'ora! Aspetterò davanti alla porta tutto il tempo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Mi tiene questo? Macchina, cartina, cappello e gelato stanno litigando."
+        ],
+        [
+          1,
+          "Ecco, mi dia il gelato."
+        ],
+        [
+          0,
+          "Il gelato no! Prenda la cartina. La cartina è la meno amata."
+        ]
+      ],
+      [
+        [
+          0,
+          "Quella chiesa è molto vecchia?"
+        ],
+        [
+          1,
+          "Del dodicesimo secolo, dicono."
+        ],
+        [
+          0,
+          "Più vecchia della nostra prima sfera! Gli umani costruiscono piano, ma costruiscono per sempre."
+        ]
+      ]
+    ],
+    "debate": [
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "La televisione è la più grande invenzione umana."
+          ],
+          [
+            1,
+            "Più della medicina? Più della ruota?"
+          ],
+          [
+            0,
+            "La ruota non ti fa vedere un programma di cucina."
+          ],
+          [
+            1,
+            "No, ma ti porta al negozio a comprare il cibo, {a}."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Credo che i detriti in orbita siano la cosa peggiore del vostro cielo."
+          ],
+          [
+            1,
+            "Nessuna obiezione. Da un anno nessuno va più nello spazio come si deve."
+          ],
+          [
+            0,
+            "Lo ripuliremo. Prima o poi. Male, ma prima o poi."
+          ],
+          [
+            1,
+            "Mi accontento di male. Meglio male che mai."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Le foto sono meglio dei ricordi. Non sbiadiscono."
+          ],
+          [
+            1,
+            "Certo che sbiadiscono. Le foto del matrimonio di mia nonna sono arancioni."
+          ],
+          [
+            0,
+            "Allora le farò due volte. Una per adesso, una per dopo."
+          ],
+          [
+            1,
+            "Oppure potresti semplicemente guardare le cose, {a}."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Gli Analizzatori dicono che capisci qualcosa solo se lo apri."
+          ],
+          [
+            1,
+            "Non puoi aprire una persona per capirla."
+          ],
+          [
+            0,
+            "È quello che dico io! Loro dicono 'non ancora'."
+          ],
+          [
+            1,
+            "Non è rassicurante come pensi."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "La parte migliore di ogni città è il mercato."
+          ],
+          [
+            1,
+            "D'accordo. Urla, affari, assaggi gratis."
+          ],
+          [
+            0,
+            "E tutti contrattano! È come i vostri quiz, ma coi cavoli."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Gli umani dovrebbero guidare più piano. Ovunque. Sempre."
+          ],
+          [
+            1,
+            "Stiamo già sotto gli ottanta. Cosa, trenta dappertutto?"
+          ],
+          [
+            0,
+            "Trenta è bellissimo. Vedi ogni negozio."
+          ],
+          [
+            1,
+            "Non voglio vedere ogni negozio, {a}. Voglio arrivare a casa."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Il monumento che vi abbiamo costruito è la cosa più bella della galassia."
+          ],
+          [
+            1,
+            "Potevate spendere tutto per ripulire l'orbita, invece."
+          ],
+          [
+            0,
+            "Prima l'amore, poi le pulizie. Anche gli umani fanno così con le case."
+          ],
+          [
+            1,
+            "Mia madre sarebbe nettamente in disaccordo."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Credo che il tè sia la bevanda umana più importante."
+          ],
+          [
+            1,
+            "Non posso darti torto. Metto su il bollitore?"
+          ],
+          [
+            0,
+            "Bollitore su. Due delle parole più belle della vostra lingua."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Le telenovelas insegnano tutto sul cuore umano."
+          ],
+          [
+            1,
+            "Le persone vere non perdono la memoria ogni martedì, {a}."
+          ],
+          [
+            0,
+            "Non ogni martedì. Ma potrebbe succedere. Bisogna essere pronti."
+          ],
+          [
+            1,
+            "Correrò il rischio."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "La magia è solo una gravità molto confusa."
+          ],
+          [
+            1,
+            "Dillo alla Gilda dei Maghi. Ti trasformano in un tritone."
+          ],
+          [
+            0,
+            "Un tritone! Ho sempre voluto provare a essere piccolo."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Le città vecchie sono meglio di quelle nuove."
+          ],
+          [
+            1,
+            "È vero. Più carattere. Parcheggio peggiore."
+          ],
+          [
+            0,
+            "Io volo. Il parcheggio non è un mio problema. Vedo solo il carattere."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Ogni umano è interessante. Ognuno."
+          ],
+          [
+            1,
+            "Non hai conosciuto mio cognato."
+          ],
+          [
+            0,
+            "Mi piacerebbe tanto. Ha un hobby?"
+          ],
+          [
+            1,
+            "Francobolli. Solo francobolli. Per tre ore."
+          ],
+          [
+            0,
+            "Mi dispiace, mi serve subito il suo indirizzo."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Noi e i Dargos non ci somigliamo per niente. Per favore, capitelo."
+          ],
+          [
+            1,
+            "Venite tutti e due dal cielo e vi prendete l'attenzione della gente."
+          ],
+          [
+            0,
+            "Noi chiediamo prima il permesso! E portiamo biscotti!"
+          ],
+          [
+            1,
+            "Va bene. Siete gli alieni educati. Questo te lo concedo."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "La domenica è il giorno migliore della settimana umana."
+          ],
+          [
+            1,
+            "Colazione tardi, passeggiata lunga, arrosto. Già."
+          ],
+          [
+            0,
+            "E i negozi sono chiusi così tutti devono stare insieme. Molto furbo."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "La pubblicità è arte. Breve, sincera, con la musica."
+          ],
+          [
+            1,
+            "Sincera? Cercano di venderti il detersivo."
+          ],
+          [
+            0,
+            "E credono in quel detersivo con tutto il cuore."
+          ],
+          [
+            1,
+            "Credono nel loro stipendio, {a}."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Dovreste lasciarci costruire di nuovo una sfera intorno al vostro Sole. Una migliore."
+          ],
+          [
+            1,
+            "L'ultima è diventata spazzatura spaziale."
+          ],
+          [
+            0,
+            "Quello era lo specchio. Solo il primo specchio. Il progetto era ottimo."
+          ],
+          [
+            1,
+            "Prima ripulite il cielo. Poi ne parliamo."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Gli umani sottovalutano la pioggia."
+          ],
+          [
+            1,
+            "Forse. Fa bene ai giardini, comunque."
+          ],
+          [
+            0,
+            "E alle pozzanghere. E agli specchi. E al profumo dopo."
+          ],
+          [
+            1,
+            "Va bene, mi hai convinto. Un po'."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Gli umani dovrebbero essere fieri. Avete fatto tutto senza controllo gravitazionale."
+          ],
+          [
+            1,
+            "Sembra più che altro che abbiamo fatto quasi tutto male, sinceramente."
+          ],
+          [
+            0,
+            "Male, piano, con le pause per il tè. Ed è ancora in piedi. È questo il miracolo."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "La fila è la cosa più civile che una specie possa creare."
+          ],
+          [
+            1,
+            "La fila è dove la gioia va a morire, {a}."
+          ],
+          [
+            0,
+            "Allora perché gli umani le fanno così belle?"
+          ],
+          [
+            1,
+            "Perché non abbiamo scelta."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Ogni città dovrebbe avere un piccolo museo, anche minuscolo."
+          ],
+          [
+            1,
+            "Il nostro è nella vecchia stazione. Tre stanze e un tasso impagliato."
+          ],
+          [
+            0,
+            "Perfetto. Il tasso è la stanza più importante."
+          ]
+        ]
+      }
+    ],
+    "ambient": [
+      [
+        [
+          0,
+          "Buongiorno, {b}! Giornata splendida!"
+        ],
+        [
+          1,
+          "Se lo dici tu."
+        ]
+      ],
+      [
+        [
+          0,
+          "Sorridi! *clic*"
+        ],
+        [
+          1,
+          "Oh, di nuovo no."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai visto il quiz ieri sera?"
+        ],
+        [
+          1,
+          "Mi sono addormentato a metà."
+        ]
+      ],
+      [
+        [
+          0,
+          "Pioverà, secondo te?"
+        ],
+        [
+          1,
+          "Prima o poi piove sempre."
+        ]
+      ],
+      [
+        [
+          0,
+          "Bel cappello, {b}."
+        ],
+        [
+          1,
+          "Grazie. Il tuo è... alto."
+        ]
+      ],
+      [
+        [
+          0,
+          "L'autobus è in ritardo. Che cosa umana da parte sua."
+        ],
+        [
+          1,
+          "Che cosa normale da parte sua."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ciao, ciao!"
+        ],
+        [
+          1,
+          "Ehilà."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ho finito di nuovo il rullino."
+        ],
+        [
+          1,
+          "C'è un negozio all'angolo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Che bella panchina, questa."
+        ],
+        [
+          1,
+          "È solo una panchina."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai mangiato, {b}?"
+        ],
+        [
+          1,
+          "Non ancora. Tu?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Oggi i piccioni sono molto indaffarati."
+        ],
+        [
+          1,
+          "Lo sono sempre."
+        ]
+      ],
+      [
+        [
+          0,
+          "Salute, come dite voi!"
+        ],
+        [
+          1,
+          "Salute."
+        ]
+      ],
+      [
+        [
+          0,
+          "Trentanove anni luce e ancora non so piegare una cartina."
+        ],
+        [
+          1,
+          "Nessuno ci riesce, amico."
+        ]
+      ],
+      [
+        [
+          0,
+          "Il forno oggi ha un profumo meraviglioso."
+        ],
+        [
+          1,
+          "Ce l'ha tutti i giorni."
+        ]
+      ],
+      [
+        [
+          0,
+          "Da fare, da fare, da fare!"
+        ],
+        [
+          1,
+          "A chi lo dici."
+        ]
+      ],
+      [
+        [
+          0,
+          "Sei stato al museo?"
+        ],
+        [
+          1,
+          "Una volta, in gita scolastica."
+        ]
+      ],
+      [
+        [
+          0,
+          "Tempo da anatre, come si dice."
+        ],
+        [
+          1,
+          "Proprio così."
+        ]
+      ],
+      [
+        [
+          0,
+          "Posso fotografare il tuo cane?"
+        ],
+        [
+          1,
+          "Fai pure, non gli dà fastidio."
+        ]
+      ],
+      [
+        [
+          0,
+          "È questa la strada per la stazione?"
+        ],
+        [
+          1,
+          "Sempre dritto."
+        ]
+      ],
+      [
+        [
+          0,
+          "Adoro la tua città, {b}."
+        ],
+        [
+          1,
+          "Meno male che piace a qualcuno."
+        ]
+      ],
+      [
+        [
+          0,
+          "I tram qui sono così belli."
+        ],
+        [
+          1,
+          "Un po' rumorosi, però."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai sentito il notiziario stamattina?"
+        ],
+        [
+          1,
+          "Non mi sono preso la briga. Tanto è tutto brutto."
+        ]
+      ],
+      [
+        [
+          0,
+          "Guarda che cielo! Così azzurro!"
+        ],
+        [
+          1,
+          "Non durerà."
+        ]
+      ],
+      [
+        [
+          0,
+          "Scusi, pardon, scusi."
+        ],
+        [
+          1,
+          "Nessun problema."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lunga fila, oggi."
+        ],
+        [
+          1,
+          "Il venerdì è sempre così."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ho comprato un'altra cartolina."
+        ],
+        [
+          1,
+          "Quante sono ormai?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Il tuo giardino è molto fotogenico, {b}."
+        ],
+        [
+          1,
+          "Sono quasi tutte erbacce."
+        ]
+      ],
+      [
+        [
+          0,
+          "Le campane della chiesa sono bellissime."
+        ],
+        [
+          1,
+          "Non alle sette di domenica."
+        ]
+      ],
+      [
+        [
+          0,
+          "Il caffè è già aperto?"
+        ],
+        [
+          1,
+          "Fra dieci minuti."
+        ]
+      ],
+      [
+        [
+          0,
+          "Che {bella mattina|bel pomeriggio|bella serata}!"
+        ],
+        [
+          1,
+          "Niente male."
+        ]
+      ],
+      [
+        [
+          0,
+          "Oggi ho imparato una parola nuova: 'distrutto'."
+        ],
+        [
+          1,
+          "Sono io, tutti i giorni."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ti piace la televisione, {b}?"
+        ],
+        [
+          1,
+          "Dipende da cosa danno."
+        ]
+      ],
+      [
+        [
+          0,
+          "Credo di essermi perso di nuovo."
+        ],
+        [
+          1,
+          "Dove devi andare?"
+        ]
+      ],
+      [
+        [
+          0,
+          "I fiori della piazza stanno sbocciando!"
+        ],
+        [
+          1,
+          "Li ha piantati il comune la settimana scorsa."
+        ]
+      ],
+      [
+        [
+          0,
+          "Come sta la famiglia, {b}?"
+        ],
+        [
+          1,
+          "Come sempre."
+        ]
+      ],
+      [
+        [
+          0,
+          "Fa freddo oggi, vero?"
+        ],
+        [
+          1,
+          "Si gela."
+        ]
+      ],
+      [
+        [
+          0,
+          "Un'altra giornata meravigliosa sulla Terra!"
+        ],
+        [
+          1,
+          "Come ieri, allora."
+        ]
+      ],
+      [
+        [
+          0,
+          "È già passata la posta?"
+        ],
+        [
+          1,
+          "Non ancora. È sempre in ritardo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai delle scarpe molto lucide."
+        ],
+        [
+          1,
+          "Le ho lucidate stamattina."
+        ]
+      ],
+      [
+        [
+          0,
+          "Ho assaggiato un fagottino salato! Delizioso!"
+        ],
+        [
+          1,
+          "Carne o formaggio?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Quanta gente in giro oggi."
+        ],
+        [
+          1,
+          "Giorno di mercato."
+        ]
+      ],
+      [
+        [
+          0,
+          "È un cappotto nuovo, {b}?"
+        ],
+        [
+          1,
+          "L'ho preso in saldo."
+        ]
+      ],
+      [
+        [
+          0,
+          "Buonanotte, Terra! Buonanotte a tutti!"
+        ],
+        [
+          1,
+          "Notte."
+        ]
+      ],
+      [
+        [
+          0,
+          "Potrei guardare questa strada tutto il giorno."
+        ],
+        [
+          1,
+          "Di solito lo fai."
+        ]
+      ],
+      [
+        [
+          0,
+          "Conosci una buona friggitoria?"
+        ],
+        [
+          1,
+          "Quella vicino al ponte."
+        ]
+      ],
+      [
+        [
+          0,
+          "È arrivato il furgoncino dei gelati!"
+        ],
+        [
+          1,
+          "Con questo tempo?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Hai visto il tramonto ieri?"
+        ],
+        [
+          1,
+          "Me lo sono perso. Era bello?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Ti dispiace se mi siedo qui?"
+        ],
+        [
+          1,
+          "Accomodati."
+        ]
+      ],
+      [
+        [
+          0,
+          "Un'altra foto, per favore!"
+        ],
+        [
+          1,
+          "Va bene. L'ultima."
+        ]
+      ],
+      [
+        [
+          0,
+          "Come si dice 'delizioso' qui?"
+        ],
+        [
+          1,
+          "Di' solo 'buono'. Va bene per tutto."
+        ]
+      ],
+      [
+        [
+          0,
+          "Il fiume è sempre così alto?"
+        ],
+        [
+          1,
+          "Solo dopo la pioggia."
+        ]
+      ],
+      [
+        [
+          0,
+          "Buon {lunedì|martedì|giovedì}, {b}!"
+        ],
+        [
+          1,
+          "Ne sei sicuro?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Stanotte ci sono le stelle."
+        ],
+        [
+          1,
+          "Cielo sereno. Domani brina."
+        ]
+      ],
+      [
+        [
+          0,
+          "Era proprio una buona tazza di tè."
+        ],
+        [
+          1,
+          "La cosa migliore della mattina."
+        ]
+      ],
+      [
+        [
+          0,
+          "A domani, {b}!"
+        ],
+        [
+          1,
+          "Ciao."
+        ]
+      ]
+    ]
+  }
+}

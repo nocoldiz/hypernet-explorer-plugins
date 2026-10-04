@@ -263,12 +263,15 @@
     // (slot 0), a playthrough's own slot or a quicksave, whichever timestamp
     // is newest. Used by the title screen's one-click Continue, which unlike
     // Reconnect skips the slot picker entirely. -1 when nothing has ever been
-    // saved.
+    // saved. The sandbox slot never counts: the title's Eris camera writes it
+    // every minute and on every title command, so it would always be newest
+    // and Continue would hand every player Eris instead of their party.
     function mostRecentSaveId() {
         const globalInfo = DataManager._globalInfo || [];
         let best = -1;
         let bestTime = -1;
         for (let i = 0; i < globalInfo.length; i++) {
+            if (i === SANDBOX_SLOT) continue;
             const info = globalInfo[i];
             if (info && info.timestamp > bestTime) {
                 bestTime = info.timestamp;

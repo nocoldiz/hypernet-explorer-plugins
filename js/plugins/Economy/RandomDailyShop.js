@@ -570,12 +570,13 @@
     },
     pharmacy: {
       get label() { return T('DailyShop.shopType.pharmacy'); },
-      ids: [4, 5, 9, 12, 13, 16, 17, 25, 737, 740, 741, 742, 746, 1444, 1445, 1450, 1453, 1466, 1468,
+      ids: [4, 5, 9, 13, 16, 17, 25, 737, 740, 741, 742, 746, 1444, 1445, 1450, 1453, 1466, 1468,
             1469, 1470, 1462, 2068, 2069],   // ...the growing vat and the gene splicer
       // Never out of the things a pharmacy is for: a kit, an antibiotic
-      // course, rehydration salts, a multivitamin and the surgical tools,
-      // on top of the three over-the-counter staples.
-      fixed: [1, 3, 19, 1443, 1446, 1464, 1465, 244],
+      // course, rehydration salts, a multivitamin, the surgical tools and the
+      // antihistamine (window.Allergy), on top of the three over-the-counter
+      // staples.
+      fixed: [1, 3, 12, 19, 1443, 1446, 1464, 1465, 244],
       categories: ["medical", "fertility"],
       // The one shop the disease system sends the player to by name, so it
       // draws several times as deep and reserves most of that for real drugs.
@@ -656,7 +657,7 @@
     fisherman: {
       get label() { return T('DailyShop.shopType.fisherman'); },
       ids: [123, 167, 141, 425, 507, 523, 508, 501, 513, 576, 569, 531, 532,
-            581, 120, 811, 813, 810, 155, 161, 116, 121, 807, 78, 805, 870],
+            581, 120, 811, 813, 810, 155, 161, 116, 121, 807, 78, 805, 870, 2077, 2078],
       fixed: [123, 78],         // fishing rod, net
       categories: ["survival", "tools"],
     },
@@ -666,7 +667,10 @@
             443, 444, 445, 446, 447, 448, 452, 453, 454, 455, 456, 459, 463,
             464, 465, 466, 467, 471, 475, 492, 499, 510, 528, 533, 535, 536,
             862, 858, 1, 3, 5, 25, 115, 118, 119, 120, 127, 132, 136,
-            177, 178, 179, 185, 711, 804, 806, 807],
+            177, 178, 179, 185, 711, 804, 806, 807,
+            // the kitchen's staples (CookingSystem recipes)
+            2070, 2071, 2072, 2073, 2074, 2075, 2076, 2077, 2078, 2079,
+            2080, 2081, 2082, 2083, 2084, 2085, 2086, 2087, 2088, 2089],
       fixed: [418, 438, 454],   // bottled water, milk, bread
       categories: ["food"],
       curatedShare: 0.7,

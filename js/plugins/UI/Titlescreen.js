@@ -6267,12 +6267,22 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
         // Write the sandbox slot. The contents are serialised synchronously
         // by saveGame, so what is written is exactly the state of this frame.
+        // The slot's info is not: the engine builds it once the write lands,
+        // off whatever $game* objects stand by then, which after dispose may
+        // already be the party a title command loaded. So it is taken now and
+        // put back over the engine's.
         persist() {
             if (!this._ownsGame || this._released) return;
             try {
                 $gameSystem._isSandboxMode = true;
                 $gameSystem.onBeforeSave();
-                DataManager.saveGame(window.SaveSystem.sandboxSlot())
+                const slot = window.SaveSystem.sandboxSlot();
+                const info = DataManager.makeSavefileInfo();
+                DataManager.saveGame(slot)
+                    .then(() => {
+                        DataManager._globalInfo[slot] = info;
+                        DataManager.saveGlobalInfo();
+                    })
                     .catch(e => console.warn('[ErisCamera] sandbox save failed:', e));
             } catch (e) {
                 console.warn('[ErisCamera] sandbox save failed:', e);

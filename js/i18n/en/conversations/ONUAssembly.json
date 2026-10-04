@@ -587,31 +587,6 @@
     "\"Hole go UP,\" says {leader}, apropos of nothing. \"Long time. Then UP. That is all. Sit down now.\""
    ]
   },
-  "verden": {
-   "open": [
-    "The Verden are recognised. Their delegate {rises|rises slowly|touches the table before speaking, which is a courtesy where they come from}.",
-    "{leader}, for the Verden, {begins|begins in flawless MarkovSpeak|apologises for the length of what follows and is not lying}.",
-    "The Verden delegation {is called|is called and thanks the chair by name|inclines, blue and unhurried}."
-   ],
-   "for": [
-    "\"The Verden support {topic}. {It is a good arrangement|It is a patient arrangement|It will still be a good arrangement in four hundred years, which is how we read a motion}.\"",
-    "\"We threw our machines into a star once and spent three thousand years being sure about it. {topic} is a smaller decision than that. Yes.\"",
-    "\"We favour it, {and we would like to see how it is built|and we would like to watch the engineering|and, if the assembly permits, to touch the machine}.\"",
-    "\"Yes. {The Green Fields are gone|We lost a dimension to hurry|We are in no hurry, and we say yes}.\""
-   ],
-   "against": [
-    "\"The Verden cannot support {topic}. {It is written in a hurry|It smells of hurry|Hurry is what number seventy seven died of}.\"",
-    "\"No. {We have read the Naguka on this|We have read the collective unconscious on this, which we can do and they cannot stop|We know what they will do before they do, and {topic} makes it worse}.\"",
-    "\"We oppose, {gently|and would be glad to be argued out of it|and will oppose it just as gently next week}.\"",
-    "\"The Verden vote against. {A limb of ours, cut off and planted, becomes another of us|We take root where we are put|Do not put us here}.\""
-   ],
-   "odd": [
-    "\"The Verden would like to compliment whoever built the lighting in this chamber. It is the seventh time we have asked and nobody knows.\"",
-    "{leader} spends two of his four minutes admiring a wristwatch belonging to the delegate beside him.",
-    "\"We have no position on {topic}. We have a question about the ceiling that the chair has twice declined to answer.\"",
-    "\"Our cousins are shouting again. We hear it whether we listen or not. The delegation apologises for the distraction and does not stop hearing it.\""
-   ]
-  },
   "truckers": {
    "open": [
     "The Trucker's Society is recognised. {leader} {stands|leans on the desk|puts a very old telephone on the table first}.",

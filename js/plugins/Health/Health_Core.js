@@ -233,6 +233,18 @@
   // number of them merges the same way, so a four-armed archetype spliced onto
   // a two-armed one comes out with six.
   //
+  // A graft archetype is the exception to all of it. SeveredHead and
+  // CrawlingHand are whole bodies on their own (a lone head, a lone hand), but
+  // spliced with any other archetype they bring ONE part, declared on the
+  // archetype as `graft`: an extra head that is never vital, an extra hand
+  // that grips a weapon. The other archetype is the body, whatever its plan.
+  //
+  // Unless the two are one body underneath. An archetype that is a copy of
+  // another names it in `bodyPlan` (the Naguka and the Verden goblins are both
+  // Humanoid bodies), and a splice of two archetypes on the same plan, a Naguka
+  // with a Verden or either with a plain Humanoid, is a person with two arms,
+  // not four: a shared limb is only doubled across two DIFFERENT plans.
+  //
   // i18n-ignore-start: body-part key tokens, matched against data, never shown
   const LIMB_TOKENS = new Set([
     "HAND", "HANDS", "ARM", "ARMS", "FOREARM", "CLAW", "CLAWS", "PINCER",
@@ -241,6 +253,30 @@
     "SPIRE", "GAUNTLET", "GRIPPER", "FINGER", "FINGERS",
   ]);
   // i18n-ignore-end
+
+  // The body an archetype is built on: its `bodyPlan` when it is a copy of
+  // another archetype, otherwise its own key.
+  function bodyPlanOf(key) {
+    const { Archetypes } = window.Health || {};
+    const entry = Archetypes && Archetypes[key];
+    return String((entry && entry.bodyPlan) || key || "");
+  }
+
+  // Whether this archetype is a person's body: Humanoid itself or any copy of
+  // it. Ask this instead of comparing a key with "Humanoid".
+  function isHumanoidBody(key) {
+    return bodyPlanOf(key) === "Humanoid"; // i18n-ignore: Archetypes.json key
+  }
+
+  // The keys a table written per archetype is read with, most specific first:
+  // the archetype's own, then the body it is built on. A Naguka goblin enemy
+  // finds the Humanoid's lines, summons and spawn lists when nothing is
+  // written for the Naguka themselves.
+  function archetypeLookupKeys(key) {
+    const own = String(key || "");
+    const plan = bodyPlanOf(own);
+    return plan && plan !== own ? [own, plan] : [own];
+  }
 
   function isLimbPartKey(partKey) {
     for (const token of String(partKey || "").toUpperCase().split("_")) {
@@ -274,6 +310,26 @@
     keys.forEach((key, index) => {
       const entry = Archetypes[key];
       if (!entry || !entry.parts) return;
+      const spliced = keys.some((other, i) => i !== index && Archetypes[other] && !Archetypes[other].graft);
+      if (entry.graft && spliced) {
+        const graft = entry.graft;
+        const source = entry.parts[graft.part];
+        if (!source) return;
+        let graftKey = graft.as;
+        for (let copy = 2; merged[graftKey]; copy++) graftKey = graft.as + "_" + copy;
+        merged[graftKey] = Object.assign({}, source, {
+          fromArchetype: index,
+          graft: true,
+          vital: !!graft.vital,
+          canHoldWeapon: !!graft.canHoldWeapon,
+          canCutoff: graft.canCutoff !== undefined ? !!graft.canCutoff : !!source.canCutoff,
+          hpPercent: Number(graft.hpPercent) || source.hpPercent,
+          name: graft.name || source.name,
+          msg: graft.msg || source.msg,
+          brokenMsg: graft.brokenMsg || source.brokenMsg,
+        });
+        return;
+      }
       for (const partKey in entry.parts) {
         const part = Object.assign({}, entry.parts[partKey], { fromArchetype: index });
         if (!merged[partKey]) {
@@ -282,6 +338,8 @@
         }
         // The primary keeps every shared part that is not a limb.
         if (!isLimbPartKey(partKey)) continue;
+        // ...and every limb too when both halves are one body plan.
+        if (bodyPlanOf(keys[merged[partKey].fromArchetype]) === bodyPlanOf(key)) continue;
         let copy = 2;
         while (merged[partKey + "_" + copy]) copy++;
         part.limbCopy = copy;
@@ -3078,6 +3136,9 @@
   window.HealthCore.isBloodAndOil = isBloodAndOil;
   window.HealthCore.healBodyParts = healBodyParts;
   window.HealthCore.isLimbPartKey = isLimbPartKey;
+  window.HealthCore.bodyPlanOf = bodyPlanOf;
+  window.HealthCore.isHumanoidBody = isHumanoidBody;
+  window.HealthCore.archetypeLookupKeys = archetypeLookupKeys;
   window.HealthCore.getArchetypeDisplayName = getArchetypeDisplayName;
   // The inanimate list, kept apart from the creature one on purpose.
   window.HealthCore.getObjectArchetypes = getObjectArchetypes;

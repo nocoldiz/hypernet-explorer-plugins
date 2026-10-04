@@ -1,0 +1,3111 @@
+{
+  "_comment": "The Dargos voice (NPCConversation II.1b, SpeciesVoice). speech: the rules run over any shared line they say. voice: openers and closers. thought: their own thoughts by situation. script: two-person scripts, speaker 0 is always the Dargos.",
+  "voice": {
+    "openers": [
+      "Hello, Earthling.",
+      "Fascinating.",
+      "Quick question:",
+      "Hypothetically speaking,",
+      "Don't be alarmed.",
+      "For the record,",
+      "Sincerely, and I mean this:",
+      "Hm.",
+      "Ah. You again. Or someone shaped like you.",
+      "Between us,",
+      "Pay no attention to the lights.",
+      "As your friend,",
+      "Interesting.",
+      "Oh, this is good:",
+      "I will say this only once, then deny it:",
+      "Greetings from Titania.",
+      "Off the record,",
+      "Smile. No, the other way.",
+      "Speaking purely as a diplomat,",
+      "Let me be completely honest with you, for once:",
+      "Funny thing.",
+      "Don't look up.",
+      "Purely for science,",
+      "Settle a bet for me:",
+      "Remember this moment.",
+      "Hold still.",
+      "Ahem.",
+      "Okay, subject, here it comes:",
+      "No reason.",
+      "This is not a test. Probably.",
+      "Do you hear humming? No? Good.",
+      "Earth person,",
+      "Picture this:",
+      "I have been told to tell you:",
+      "On behalf of the Embassy,",
+      "You'll like this one.",
+      "Brace yourself, emotionally:",
+      "Oh no. I mean, oh good.",
+      "Gently now:",
+      "Without any hidden meaning,",
+      "Ha.",
+      "Mm, yes.",
+      "In my official capacity,",
+      "Trust me.",
+      "Don't tell the Tourists:",
+      "Earlier you blinked. Anyway,",
+      "So.",
+      "I noticed something about you:",
+      "Let's try an experiment:",
+      "Very quietly, so nobody hears:"
+    ],
+    "closers": [
+      "For science.",
+      "For the bit.",
+      "No further questions.",
+      "That was a test.",
+      "You passed. Mostly.",
+      "I'm writing that down.",
+      "Act natural.",
+      "Don't check your pockets.",
+      "Or am I?",
+      "Anyway, enjoy your evening.",
+      "The Embassy thanks you.",
+      "Ha. Ha. Ha.",
+      "Smile, you're being observed.",
+      "Just kidding. Or not.",
+      "That one's going in the report.",
+      "Your reaction has been noted.",
+      "Sleep well.",
+      "Your socks are on the wrong feet. Check later.",
+      "Interesting, interesting.",
+      "Remember that I said that.",
+      "Nobody will believe you anyway.",
+      "Titania sends its regards.",
+      "Unrelated, but lock your door.",
+      "Hm. Hm hm.",
+      "Carry on.",
+      "Don't mention me to anyone.",
+      "That was sincere, by the way.",
+      "...Probably.",
+      "Again tomorrow.",
+      "Great reaction. Ten out of ten.",
+      "See you in six hours. You won't remember.",
+      "I was never here.",
+      "*winks*",
+      "Thank you for your participation.",
+      "Results pending.",
+      "Do not repeat that to a psychiatrist.",
+      "The lights you'll see later are unrelated.",
+      "Bye now.",
+      "Think about it tonight. At three.",
+      "That's diplomacy.",
+      "Puck sends his love.",
+      "Mm.",
+      "You'll laugh about it in thirty years.",
+      "Nothing personal. Everything personal.",
+      "Keep that face. It's perfect.",
+      "Delightful.",
+      "I'm almost sorry.",
+      "End of transmission.",
+      "That's all the truth I had today.",
+      "Be seeing you."
+    ]
+  },
+  "thought": {
+    "generic": [
+      "Move that bench six centimetres a night. How long before {someone|the baker|the whole street} notices?",
+      "Humans look up when they hear a noise. Never when it's quiet. Useful.",
+      "I said 'good morning' at noon. Nobody corrected me. Phase one complete.",
+      "That man has held the same umbrella for {an hour|two days|years}. I respect the commitment.",
+      "Today I'll be perfectly normal. That will frighten them more than anything.",
+      "Note: pigeons do not react. Pigeons are no fun.",
+      "I {smiled|waved|nodded} at a stranger. They checked their wallet. Correct instinct.",
+      "Every human thinks they would stay calm on a spaceship. Not one does.",
+      "Their bread is excellent. I won't tell them; they'd get ideas.",
+      "Rearranged the {spice jars|street signs|library shelves} alphabetically by smell. Waiting.",
+      "Nobody believes the man who was abducted. Nobody. It's beautiful every time.",
+      "Three hours of sincerity. My face hurts.",
+      "A child stared at me and said 'you're not from here'. Promising.",
+      "The trick is to leave one thing slightly wrong. One. Never two.",
+      "I could explain the humming. I won't.",
+      "Earth time is so short, and they spend it queuing. I love watching.",
+      "Remember: the reaction is the gift. Everything else is packaging.",
+      "Somebody on this street still hums the tune I left in their head in 1983.",
+      "Is it a prank if they never find out? Philosophers on Titania disagree.",
+      "That dog knows. That dog has always known.",
+      "Their clocks are all a minute apart. I didn't do it. I wish I had.",
+      "Must not laugh in the post office. Must not laugh in the post office.",
+      "Humans name everything they fear. Then they put the name on a mug.",
+      "One day they'll catch on. {Not today|Not this century|Not this lot}.",
+      "If I say 'trust me' slowly enough, they do.",
+      "The Squishing is the best prank I've ever seen, and we didn't even do it.",
+      "Their papers print our work under 'local oddities'. We frame the clippings.",
+      "I left a single wet footprint on the ceiling. Art.",
+      "Nobody has asked me a direct question all day. They can sense it.",
+      "Rehearse the sincere face. Eyebrows up. Not that far up.",
+      "They built a whole Guild to understand magic and nobody to understand us. Flattering.",
+      "This town has {three|four|eleven} churches and nobody prays for the right thing.",
+      "Paid in exact change. The cashier looked betrayed. Good.",
+      "Human patience lasts about forty seconds. I time it.",
+      "Their faces do a tiny thing just before they scream. That's the best part.",
+      "I've taken an ordinary job. Nobody suspects. Nobody cares. Perfect cover.",
+      "Today's word is 'reasonable'. I'll use it {wrongly|constantly|only at funerals}.",
+      "Small joke, long setup. Twenty years should do it.",
+      "If they knew how much we know about them they'd be embarrassed. About the socks, mostly.",
+      "That woman put her trolley back in the rack. Incredible species. Sometimes.",
+      "They look for us in the sky. We're usually in the queue behind them.",
+      "No harm, no foul, plenty of witnesses nobody believed.",
+      "Crop circles are old hat. I'm thinking crop triangles. {Subtle|Bold|Disrespectful}.",
+      "One lamp in a field and the village has a story for a decade. Cheap, effective.",
+      "A human just said 'nothing ever happens here'. Noted. Noted.",
+      "I don't want their water, gold or planet. I want their faces when the fridge talks.",
+      "Radios hiss between stations. Sometimes that hiss is me saying hello.",
+      "Patience. The best bits ripen like cheese.",
+      "Herschel thought he named our moon all by himself. Adorable.",
+      "Uranus rolls around on its side. So do I, when I hear a good one.",
+      "They lock the door and leave the window open. Every time. Every time.",
+      "I've been called a ghost, a demon and a weather balloon. The weather balloon hurt.",
+      "That street lamp flickers all on its own. I'm jealous of it.",
+      "Someone in this town owes me a reaction from 1979. I'm a patient creditor.",
+      "Hum the same note for an hour and the whole tram ends up humming it.",
+      "Human laughter is contagious. Human screaming, less so. Working on it.",
+      "They say 'seeing is believing'. They have no idea how wrong that is.",
+      "I could tell the Tourists how to clean up the debris. I could.",
+      "A man in a hat is watching me. I'm watching him harder. He'll blink first.",
+      "Every town has one person who has seen us. I visit them on anniversaries.",
+      "I told the truth once on this planet. Nobody laughed. Never again.",
+      "Mental note: buy {a hat|a moustache|a tie} that looks normal. Humans trust normal.",
+      "The joke isn't what we do. The joke is the next morning, when they explain it.",
+      "Everyone on this bus thinks they're the main character. Cute.",
+      "Should I tell the baker his oven is haunted? It isn't. That's the trick.",
+      "My people waited ten thousand years for the invention of the doorbell. Worth it.",
+      "If anyone asks, I'm from {Belgium|the next town|a small country}.",
+      "The Rule of 80 keeps humans slow. Slow humans react in such lovely detail.",
+      "Walked backwards down a whole street today. Two people joined in. Science.",
+      "Their festivals are wonderful. Everyone's already confused; I barely have to try.",
+      "I swapped the town clock's hands. Nobody can read it, everyone's late, nobody blames me.",
+      "Their television shows aliens with big eyes. Those are the Tourists. Typecasting.",
+      "A good prank leaves the house tidier than you found it. Unsettlingly tidier.",
+      "I'm not lost. I'm studying how humans give directions. Badly, with pointing.",
+      "Somewhere a guard near Genoa is telling the story again. I hope he's added the hats.",
+      "They think we're cruel. We're thorough.",
+      "{Seventeen|Twenty|Forty} years ago I put a farmer's cow on his roof. He still tells it at weddings.",
+      "I ate an olive. I now understand nothing about this species.",
+      "Today's plan: be kind to everyone and watch them get suspicious.",
+      "The quiet ones make the best witnesses. Nobody interrupts them."
+    ],
+    "need": {
+      "sleep": [
+        "A Titanian day lasts eight of theirs. This planet wants me asleep {every night|constantly|again}.",
+        "Must rest. Pranks need a {clear head|steady hand|straight face}.",
+        "Humans sleep so deeply. I envy them. I also have notes on it.",
+        "If I nod off on this bench, will someone abduct me? Turnabout would be fair.",
+        "Eyelids heavy. Earth gravity is heavier than it has any right to be.",
+        "Bed. Then wake at three in the morning, out of professional habit.",
+        "I've watched a thousand humans sleep. Now I understand why they do it.",
+        "Yawn. The sincere face is exhausting to hold all day.",
+        "A short nap. Nobody move the furniture while I'm out.",
+        "Sleep is the one thing they do with no self-consciousness. Lovely to study, tiring to do.",
+        "I could sleep standing up. I have, in fact, in several barns.",
+        "{Bed|A cot|A hammock}. Then {dreams|nothing|whatever this planet does to me at night}.",
+        "Even pranksters clock off. Tomorrow I'll be twice as unsettling.",
+        "If I snore, it's {deliberate|a bit|research}.",
+        "Too tired for mischief. A sad state for a diplomat."
+      ],
+      "hunger": [
+        "Earth food: a bold experiment that worked. I'll have {soup|anything fried|three of whatever that is}.",
+        "My stomach rumbles. It sounds like a rude Titanian word. Nobody here knows.",
+        "I want a sandwich. A sandwich wants nothing. Humanity's best invention.",
+        "Hungry. At home we eat frost. Here they put cheese on everything. Upgrade.",
+        "I'll order something and ask the waiter to describe it slowly. Two meals in one.",
+        "Pizza. A flat food that bends. Proof this world was designed by comedians.",
+        "Must eat before the sincere face slips.",
+        "The bakery smell is following me. Or I'm following it. Either way, bread.",
+        "If I eat the mystery stew, the joke's on me. I'm willing.",
+        "{An apple|A pastry|Some chips}. Something ordinary. I blend in best with my mouth full.",
+        "Hunger is the only bit I can't keep up for long.",
+        "Note: never take food from a human who smiles like I do.",
+        "They ask 'what will you have?' as if it's a question. I'll have everything.",
+        "Craving the café's {coffee|cake|soup}, and the waiter's face when I order it backwards.",
+        "Eat now, scheme after. That's the proper order."
+      ],
+      "work": [
+        "Off to work. Nobody there knows I'm twenty years into a prank.",
+        "My job is real. My enthusiasm is the joke.",
+        "The boss asked for 'initiative'. Oh, he'll get initiative.",
+        "Shift starts soon. I'll file everything perfectly. They hate that it's perfect.",
+        "{Clocking in|Punching the card|Another shift}. Every day I add one tiny wrong detail to the office.",
+        "Work is the best observation post. Tired humans are honest humans.",
+        "The Embassy pays in {nothing|laughs|the occasional reaction}. This job pays in euros. Novel.",
+        "I'll smile at the customers. The long smile. The one that lasts a second too long.",
+        "Today I'll be employee of the month. Then I'll deny ever working here.",
+        "The till doesn't laugh at my jokes. The till is my favourite colleague.",
+        "They gave me the night shift. They don't know I prefer it.",
+        "Professional, punctual, deeply suspicious to everyone. My whole career.",
+        "That meeting could have been a letter. I'll make it a much longer meeting.",
+        "Back to the grind. I've hidden a rubber duck somewhere in the building. Day {four|nine|thirty}.",
+        "Work hard, they say. I work subtly."
+      ],
+      "leisure": [
+        "Free time. I'll sit in a park and look meaningfully at a single pigeon.",
+        "The arcade! Their games are so earnest. I always lose spectacularly.",
+        "A day off from mischief. Mischief would like a word.",
+        "I'll go to the cinema and laugh at the wrong moments. A classic.",
+        "Leisure. I'll {feed the ducks|read a paper upside down|wave at buses from a bench}.",
+        "Humans call it relaxing. I call it watching them relax. Same thing, better view.",
+        "Maybe a walk to see a bubble edge shimmer. Even the sky pranks them.",
+        "A spare hour. I'll practise my normal walk.",
+        "The museum has a display about us. It's wrong in ways I treasure.",
+        "Nothing to do. On Titania that's called {a holiday|a century|Tuesday}.",
+        "I'll visit a fortune teller and tell her fortune first.",
+        "A concert tonight. I'll clap one beat after everyone else.",
+        "Board games. I'll learn the rules thoroughly, then follow them too well.",
+        "I'll sit in a café and narrate strangers' lives in my head, with voices.",
+        "A free afternoon and a whole town of people who don't know me yet."
+      ],
+      "crime": [
+        "I won't steal it. I'll just move it somewhere funnier.",
+        "Nobody watching. That's when the best bits happen.",
+        "It isn't theft if I put it back {upside down|in the wrong house|a week later}.",
+        "One small rule broken, purely for the reaction.",
+        "Eris notices crimes. She'd notice this one and probably laugh.",
+        "Careful. A bounty would make me famous, and famous faces get no good reactions.",
+        "That garden gnome deserves to see the world. I'll send postcards.",
+        "Quick hands, straight face, plausible confusion. The whole method.",
+        "If I'm caught, I'm a confused foreigner. That one always works.",
+        "I could take it. But the empty spot where it stood is so much funnier.",
+        "Shh. Shh. This is for science.",
+        "The law here is very serious. That's what makes it tempting.",
+        "Let's see. Swap the signs, leave the keys, walk away whistling.",
+        "Nobody needs to get hurt. Somebody needs to be very confused.",
+        "{One|A single|Just one} little crime. A {tiny|harmless|stupid} one. For the bit."
+      ],
+      "hygiene": [
+        "I smell of Earth. Must wash before I smell of this town specifically.",
+        "Humans notice smell before anything else. Bad for stealth. Bath.",
+        "Hot water: the one Earth thing that's better than its reputation.",
+        "Showers here sound like a waterfall arguing. I love it.",
+        "{Soap|A towel|Clean water}. Even a prankster has standards.",
+        "Ugh. I look like I've been abducted. Ironic.",
+        "Wash the face, practise the face, wear the face.",
+        "My hair's a mess. Humans trust tidy hair. Fix it.",
+        "Must scrub off the field mud before anyone asks which field.",
+        "I'll take the longest bath in this city's history. Someone will knock. Delightful.",
+        "Clean socks. Mismatched, deliberately.",
+        "The sink at the inn gurgles at me. We're friends now.",
+        "Dirt is evidence. Wash the evidence.",
+        "I'm itchy in a way no instrument on Titania could measure.",
+        "Fresh shirt, fresh start, fresh nonsense."
+      ],
+      "money": [
+        "Euros: paper with a god's name on it. Hilarious. Also, I need some.",
+        "Low on funds. The Embassy reimburses nothing and calls it part of the bit.",
+        "Money is the one joke humans never find funny.",
+        "Purse empty. I'll find work. Or a card game with someone overconfident.",
+        "Prices went up again. I didn't do it. For once I'm the victim.",
+        "Draghi's name on every note, and none of the notes in my pocket.",
+        "Need {a job|a few coins|a generous fool}. Not necessarily in that order.",
+        "Counting my euros again. They won't multiply. I've asked nicely.",
+        "Being broke on Earth is a fully immersive experience. Ten out of ten.",
+        "The rent asks politely, then less politely. I respect the escalation.",
+        "Maybe I'll sell my story to a newspaper. They'll file it under hoax. Correctly.",
+        "I'll do odd jobs. Very odd jobs. Some of the oddest.",
+        "Money is easier to borrow when you look sincere. I've practised.",
+        "The cashier's face when my coins came up short. Fine, that one was on me.",
+        "If I'm poor, it's method acting. If I stay poor, it's a problem."
+      ],
+      "safety": [
+        "Someone's watching me. Professional courtesy says I watch back.",
+        "That guard looked at me twice. Time to be extremely boring.",
+        "If the Guild sends someone to 'talk', I'm a tourist. Not a Tourist. A tourist.",
+        "Danger nearby. Pranks don't work on people with drawn swords.",
+        "Quiet. Step slowly. A frightened human isn't a funny human.",
+        "I don't like this street. Too many shadows that aren't mine.",
+        "Monsters don't laugh. Never prank a monster.",
+        "Keep calm. Keep the sincere face. Keep walking.",
+        "The Horde doesn't get jokes. It gets everyone. Stay clear.",
+        "That alley feels like a trap. I know traps. I've built hundreds.",
+        "If something goes wrong, deny everything. Then run.",
+        "This place makes even me nervous. That's a first.",
+        "Find a crowd. Crowds are safe and full of material.",
+        "{Too quiet|Too dark|Too still}. Not my kind of quiet.",
+        "Even pranksters have a survival instinct. Mine is shouting."
+      ],
+      "comfort": [
+        "A soft chair. Earth armchairs are almost worth the gravity.",
+        "I want a warm room and a window full of people to watch.",
+        "Titania sits two hundred degrees below zero. Every radiator here is a love letter.",
+        "A blanket, a cup of tea, a neighbour slowly going mad from my humming. Bliss.",
+        "This bench is hard. I resent it on a cosmic level.",
+        "Somewhere to put my feet up. Ideally on something important.",
+        "A quiet room with no echo, please. Echoes steal my jokes.",
+        "Comfort first. Mischief is better on a full stomach and a cushion.",
+        "{A sofa|A hammock|A warm bath}. Then I'll be insufferable again.",
+        "My lodgings creak. I've named the creaks. I'm on number twelve.",
+        "Cold feet, cold hands. Warm heart, allegedly.",
+        "I miss my pod. It was {small|cramped|frankly ridiculous}, but it hummed nicely.",
+        "I need a corner seat where I can see the whole room. Habit.",
+        "Their pillows are wonderful. I've taken notes for the Embassy.",
+        "A fireplace. Humans tell their best stories in front of one. Usually about us."
+      ],
+      "social": [
+        "I need a conversation. A real one. Then a fake one, for balance.",
+        "Lonely. A prank without witnesses is just tidying.",
+        "Someone to talk to. Preferably someone who startles easily.",
+        "I miss the other Dargos. We'd laugh at nothing for hours.",
+        "Humans gather in taverns. I'll gather near them.",
+        "I'll strike up a chat at the bus stop. The bus is late. Long chat.",
+        "Even I need friends. Witnesses, I mean. Friends who are witnesses.",
+        "Someone, say something to me. Anything. I have replies ready.",
+        "I'll ask a stranger the time and thank them for {the whole day|their honesty|existing}.",
+        "Human friendship looks so warm. I'm studying it very closely. Slightly too closely.",
+        "A good friend laughs at the setup. A great one waits for the punchline.",
+        "Nobody to share the joke with. Sad. Saving it for later.",
+        "{The café|The square|The tavern} is full. Time to be charming, unsettlingly.",
+        "Talking to myself again. At least I get the jokes.",
+        "I'll find someone to tell about Titania. They won't believe me. That's company."
+      ]
+    },
+    "weather": {
+      "rain": [
+        "Rain! Water falling from the sky, and they act like it's normal.",
+        "On Titania nothing falls. Here the sky drips on you for fun.",
+        "Everyone running from the rain. I'll walk slowly. Very slowly. With purpose.",
+        "Their umbrellas are adorable. Tiny roofs on sticks.",
+        "Rain makes the town smell like a wet dog. Cosy.",
+        "Puddles. Each one a mirror for my best faces.",
+        "The rain is ruining my hair and my plans. In that order.",
+        "Rain on the window, a hot drink, someone else getting soaked outside. Perfect.",
+        "Wet day. Humans complain about it together. It bonds them. Interesting.",
+        "Stand in the rain without a coat and someone always offers one. Test running.",
+        "The gutters are singing. Off key.",
+        "Rain makes the bubble edges glitter. Spot one, walk around it.",
+        "{Drizzle|Downpour|This sideways stuff}. Earth weather has range.",
+        "My shoes are full of water. The joke's on me today.",
+        "Rainy days keep them indoors, talking about strange lights."
+      ],
+      "storm": [
+        "Thunder! Finally, a sound effect worthy of me.",
+        "Lightning makes everyone look up. Perfect timing for a little light of my own.",
+        "Storms: nature doing my job for free.",
+        "Every flash and the whole street jumps. Taking notes.",
+        "The wind took my hat. Well played, wind. Respect.",
+        "The lights are flickering. Somebody will blame us. Fine. Accepted.",
+        "A real storm. Even the dogs are quiet. Even I'm quiet.",
+        "The thunder rolls like Uranus on its side. Sounds like home, sort of.",
+        "Don't stand under trees. I learned that the bright way.",
+        "They tell children thunder is gods bowling. Here, it might be.",
+        "Storm night. Perfect for one knock at a farmhouse door. Too perfect. Stay in.",
+        "{Wind|Hail|Thunder} like this makes every story twice as good.",
+        "The whole sky flickering. If only I could take credit.",
+        "Shutters banging. Humans think it's ghosts. Ghosts think it's us.",
+        "The storm is louder than my best joke. Annoyed. Impressed."
+      ],
+      "snow": [
+        "Snow! Titania weather, but softer, with more children in it.",
+        "Two hundred below at home. Honestly, this is a warm day.",
+        "Snowmen. They build little silent people and leave them outside. Who's unsettling now?",
+        "Footprints in snow make the best signature. Shall I make ones that stop halfway?",
+        "Everything gone white and quiet. A blank page.",
+        "Snowball fight in the square. I'll join on both sides.",
+        "Snow makes the humans honest. They all say 'brrr'.",
+        "I love snow. It shows exactly where everyone walked last night.",
+        "The cold here is cute. Like a puppy trying to bite.",
+        "{Flakes|Drifts|Slush}. I'm learning every word for frozen water.",
+        "Snow falls upward when nobody's looking. Not really. Unless I'm there.",
+        "Kids catching snowflakes on their tongues. Pure research. I approve.",
+        "Ice on the road. Everyone drives well under eighty. Even the weather obeys the rule.",
+        "Snow makes the lights glow. Somebody will say UFO. Somebody always does.",
+        "A frozen pond. A perfect stage for a silent, dramatic slide."
+      ],
+      "clear": [
+        "Clear sky. Squint and you can almost see home. You can't. But almost.",
+        "Sunny. Humans love sun. They take off their shoes and lose them.",
+        "Not a cloud. Nowhere to hide the ship. Joking. Mostly.",
+        "Blue sky, bright sun, everyone cheerful. Delicious to disrupt. Gently.",
+        "Nice weather. I'll stand in a field pointing at nothing until a crowd gathers.",
+        "The Sun is so close here. Wasteful. Lovely.",
+        "Fine day. Even the pigeons look smug.",
+        "Clear nights mean sky watchers. Sky watchers mean an audience.",
+        "{Sunny|Bright|Gorgeous} out. Faces are easier to read in good light.",
+        "So clear you can see the debris glitter after dark. Poor Tourists.",
+        "Warm stone, cold drink, wide sky. I could almost go straight.",
+        "Perfect visibility. Bad for sneaking, good for being stared at.",
+        "On clear days I count shadows. Mine is one longer than it should be. Probably.",
+        "Sunshine. My face goes pink. I look local. Excellent.",
+        "Lovely day for a picnic. I'll sit very close to a stranger's."
+      ]
+    },
+    "time": {
+      "morning": [
+        "Morning. Humans at their most fragile. Be gentle. Be weird.",
+        "Coffee smell everywhere. They need a potion to wake up. Precious.",
+        "Early. The bakers are up. Bakers see everything at dawn.",
+        "Sunrise again. Every single day. Who runs this, and can I meet them?",
+        "I say good morning in a very deep voice to people who haven't had coffee. Research.",
+        "Morning commute. Faces like closed shops.",
+        "Dawn chorus. The birds are wildly overconfident.",
+        "Fresh day. Fresh witnesses.",
+        "{Seven|Eight|Half past six} in the morning and someone's already arguing about a parking space.",
+        "Woke up exactly where I fell asleep. Disappointing. Someone should have moved me.",
+        "Daylight at the poles of Titania lasts forty-two years. Earth mornings are rushed.",
+        "Milk bottles on doorsteps. So trusting. So easy to rearrange.",
+        "Morning paper. Let's see if we made it in.",
+        "The day is new and nobody's been confused yet. Unacceptable.",
+        "Early sun, long shadows, short tempers."
+      ],
+      "afternoon": [
+        "Afternoon. The slow part. Humans go soft after lunch.",
+        "Siesta hour. Whole streets asleep. Very tempting. Behave.",
+        "Middle of the day. Too bright to sneak, too early for ghosts.",
+        "Post-lunch office faces. Not a thought behind any of them.",
+        "Three o'clock. When the day forgets what it was for.",
+        "Afternoon tea. One sugar. Then I'll move their sugar bowl one inch.",
+        "Kids out of school. Loud, honest, impossible to fool. Respect.",
+        "Long afternoon. I'm counting people who check their watch. Forty so far.",
+        "Sun overhead, shadows hiding under feet. Shy shadows.",
+        "{Market hour|Lunch break|Rush hour}, and everyone believes they're in charge of their day.",
+        "Afternoon light makes the town look like a postcard. I'll write on it.",
+        "Slow hours are best for a long stare.",
+        "Bells at four. Someone's ringing them sincerely. Moving.",
+        "The heat of the day. Even my mischief is sweating.",
+        "Halfway through and nothing strange yet. Let's correct that."
+      ],
+      "evening": [
+        "Evening. Lights coming on. My favourite time to be just out of view.",
+        "Dusk. The sky the colour of a good bruise.",
+        "Dinner smells. Every window a different story.",
+        "Humans walk home in the dark and walk faster. I couldn't invent a better stage.",
+        "Evening is when the stories start. 'You'll never believe what happened...' They're right.",
+        "The pubs fill up. Tomorrow's witnesses are rehearsing.",
+        "Golden hour. Everyone looks honest. Lies come easier now.",
+        "Streetlights humming. I hum back. One of us is in tune.",
+        "Sunset again. The same trick every day, and they still clap.",
+        "{Twilight|Dusk|The blue hour}. The edges of things go soft.",
+        "Evening news. I'm listening for 'unexplained'.",
+        "People closing shutters. Perfect time to knock once and walk off. No. Be good.",
+        "First star. Not mine. Mine's out past the seventh planet.",
+        "Couples strolling. I'll walk in step two metres behind. Too far? Research.",
+        "Cool evening, long walk, and nobody suspects a thing."
+      ],
+      "night": [
+        "Night. The real working hours.",
+        "Three in the morning. The hour they wake for no reason. Usually our reason.",
+        "Dark sky. Somewhere up there Titania is laughing. Or that's me.",
+        "Owls, foxes and me. The night shift.",
+        "Nobody's out. Every lit window is an invitation I'll decline. Tonight.",
+        "A light in a field at night: the cheapest, best trick in the book.",
+        "Humans fear the dark. Wrongly. It's the quiet that should worry them.",
+        "Midnight. Lie on the grass and stare up until someone asks if I'm all right.",
+        "Night bus. Every passenger a short story.",
+        "{Stars|The moon|Silence} everywhere. Lovely backdrop. No audience.",
+        "Can't sleep. Neither can the farmer three fields over. Not my fault, this time.",
+        "Dogs barking at nothing. Not nothing. Me, waving.",
+        "Night air. Cold, thin, almost like home, if home had crickets.",
+        "Street lamps buzzing, one lone guard on a night shift. Nostalgia.",
+        "Late. Go to bed. Or stand very still in a garden. Bed. Fine."
+      ]
+    },
+    "season": {
+      "SPRING": [
+        "Spring. Everything's growing. Including the rumours.",
+        "Flowers everywhere. Humans sneeze at them and still pick them. Brave.",
+        "The fields are soft. An ideal canvas. Shame to leave them blank.",
+        "Birds building nests. I'll leave one a single sock.",
+        "Spring cleaning. They'll find things in the attic they can't explain. Hello.",
+        "The days stretch out. More light, more audience.",
+        "April showers. Earth's sky is a prankster too.",
+        "Everyone falls in love in spring. Then gets confused. Familiar territory.",
+        "Easter: they hide eggs for children to find. A species after my own heart.",
+        "Lambs in the field. The farmer is counting them. I'll count along, wrongly."
+      ],
+      "SUMMER": [
+        "Summer. Long days, short tempers, sunburnt witnesses.",
+        "Heat. Titania never prepared me for sweating.",
+        "Crop circle season. Not that I'd know anything about that.",
+        "Everyone's on holiday. Strange towns full of strangers. I fit right in.",
+        "Ice cream. The single best argument for this planet.",
+        "Beaches full of humans lying still. Like a specimen display, but voluntary.",
+        "Summer nights stay warm. People sleep with the windows open. Noted.",
+        "The wheat is high. Tall wheat hides a lot.",
+        "A festival every weekend. Confusion everywhere, free of charge.",
+        "Too hot to plot. I'll plot in the shade."
+      ],
+      "AUTUMN": [
+        "Autumn. Leaves falling like the sky dropping its paperwork.",
+        "Harvest. Fields bare, farmers tired, barns full. Barns, my old friends.",
+        "Halloween. One night a year they dress up as us. Badly. We love it.",
+        "Fog season. Fog is a prankster's best colleague.",
+        "Shorter days, longer nights. Productivity up.",
+        "Chestnuts, mushrooms, conkers. Autumn sells its own snacks.",
+        "Hunters in the woods. Stay out of the woods. Sincerely.",
+        "Grey sky, and the town turns inward. Ghost story weather.",
+        "Rain on dead leaves. A perfect sound. I'll steal it.",
+        "Back to school. Children with new questions. Prepare wrong answers."
+      ],
+      "WINTER": [
+        "Winter. Finally, a temperature with ambitions.",
+        "Short days, long nights. The Dargos calendar.",
+        "Christmas lights everywhere. Good luck spotting ours.",
+        "Snow on the roofs. Someone will claim reindeer tracks. Someone usually helped.",
+        "The cold keeps everyone indoors and talking. Rumour season.",
+        "December. A night shift near Genoa. Ah, the classics.",
+        "Frost on the windows. I write 'hello' backwards on the outside.",
+        "Fires lit, chimneys smoking. Every house is a little lighthouse.",
+        "Long winter nights. Plenty of sky to look at, plenty of humans looking.",
+        "New Year's Eve. Everyone counting down together. The most unsettling ritual on Earth."
+      ]
+    },
+    "wealth": {
+      "poor": [
+        "Penniless. It's a role. I'm committed to the role.",
+        "Being poor here means queues. I'm becoming an expert in queues.",
+        "No money, no worries. Some worries. Mainly the rent.",
+        "I sleep in a cheap room above a noisy bar. The noise is research.",
+        "Empty pockets. Easier to turn them inside out for a laugh.",
+        "Poverty is the realest Earth experience. Not recommended. Fully documented.",
+        "The Embassy says hardship builds character. The Embassy has a pool.",
+        "I've learned to make soup from almost nothing. Mostly the nothing.",
+        "Charity shop clothes. Humans dressed in other humans' leftovers. Lovely camouflage.",
+        "Counting coins for bread. Every count gives a different total. Is that me?",
+        "{Broke|Skint|Penniless} and still smug. A Dargos talent.",
+        "No euros, no plan, plenty of material."
+      ],
+      "comfortable": [
+        "Enough money for a nice coat and a nicer hat. A believable human.",
+        "Comfortable. Rent paid, fridge full, neighbours slightly uneasy.",
+        "A modest flat overlooking the square. My observation post.",
+        "I have a savings account. The bank manager shook my hand. His face, though.",
+        "Not rich, not poor, perfectly anonymous. The dream.",
+        "Dinner out once a week. I tip generously and wink. They remember.",
+        "A good chair, a good radio, a good window. All one needs.",
+        "Middle class at last. I own a lawnmower. Never used it. It moves at night.",
+        "Steady pay, steady life, steadily escalating pranks.",
+        "{A car|A bicycle|A season ticket}. Fully integrated. Terrifying.",
+        "I bought a houseplant. It's the only one who knows my real name.",
+        "Comfortable enough to be generous. Generosity confuses them most of all."
+      ],
+      "rich": [
+        "Rich. Money makes humans listen to anything. A dangerous gift. I'll misuse it gently.",
+        "I bought a painting just to hang it slightly crooked.",
+        "A mansion with sixty rooms. I've hidden something different in each one.",
+        "The wealthy treat me as one of their own. They have no idea what I'm studying.",
+        "Champagne tastes like stars fizzing. I'll have another.",
+        "Rich enough to fund a research grant on Titania. Into myself.",
+        "Varlenia is full of billionaires. I'll buy the plot next to the most serious one.",
+        "I own a newspaper now. Guess whose stories get page three.",
+        "My butler is unflappable. That's a challenge, not a compliment.",
+        "{Gold taps|A private pool|A small island}. Each one a stage.",
+        "Charity galas. Everyone pretending to care. An expert crowd.",
+        "Money is paper with a god's name on it, and I own a great deal of his name."
+      ]
+    },
+    "familiar": [
+      "Those travellers again. They have the faces of people who'd believe me.",
+      "That group keeps turning up. Either they're following me or I'm following them. Yes.",
+      "Ah, my favourite strangers. Never once screamed. I'll keep trying.",
+      "I know that party. Campers are wonderful for {light tricks|hiding in|leaving notes on}.",
+      "Them again. They're not surprised by me anymore. Rude. Endearing.",
+      "Those faces. Filed under 'interesting, do not abduct'.",
+      "They nod at me now. A nod! Contact achieved. The Embassy will be furious.",
+      "I like that lot. I'd never prank them. Seriously. Probably.",
+      "Back so soon? They've grown. Or I've shrunk. Hmm.",
+      "That one waved first this time. Turnabout. Clever species.",
+      "Familiar faces on a strange planet. Nice. Unsettling. Nice.",
+      "Every time they pass, I almost tell them something true.",
+      "I've seen them in three towns now. Patterns, patterns.",
+      "They remember my name. I never told them my name. Wait. Did I?",
+      "Those adventurers have stories I want. I have stories they'd never believe.",
+      "There they are. I'll pretend to be surprised. Then they'll pretend too.",
+      "My study group. They don't know they're a study group.",
+      "I'd follow them to the end of the road. On the far side, to watch.",
+      "Ah, the camper people. Somebody in there drives like a comedian.",
+      "Regulars. On Earth you can have regulars. Nobody told me."
+    ],
+    "hordeGround": [
+      "Goblin land. They attack anyone. Even me. Especially me, after last time.",
+      "Naguka don't get irony. Naguka get angry. Walk softly.",
+      "The whole Horde shares one head. Prank one goblin and you've pranked a million. Suicidal.",
+      "Black metal posters on every wall. The decorating is aggressive.",
+      "A goblin just shouted at me. I shouted back. Are we friends now? Unclear.",
+      "Here the music is louder than anything I could ever arrange.",
+      "Corpse paint everywhere. They're already dressed for the joke. Respect.",
+      "Under the Horde nobody is surprised by anything. Terrible audience.",
+      "The goblins found Junehem and Junehem found the goblins. Best prank in Europe, not ours.",
+      "Never pull a goblin's ear. They all feel it. They all remember it.",
+      "Horde streets. Quiet humans, loud goblins. Reversed. Fascinating.",
+      "I tried a spooky light on a Naguka. He tried to eat it.",
+      "These people are frightened enough already. No pranks here. Even I have a line.",
+      "The blue cousins listen in on the goblin head. Read only. I'd love write access.",
+      "A goblin offered me a beetle. I accepted. Diplomacy.",
+      "Every wall here has the same scrawled sign. Excellent branding.",
+      "Goblins don't believe in us. They don't believe in much except a band.",
+      "The Kola borehole was humanity pranking itself. Still the best one on record.",
+      "Too many shared minds here. They'd all laugh at once, or none would.",
+      "Goblin markets sell everything. Including things that are still alive.",
+      "Head down. Tall things get noticed, and I'm taller than I look.",
+      "They paint their faces black and white. Very clear communication. I admire clarity.",
+      "Even the refugees whisper here. I'll whisper with them.",
+      "The Horde holds this town. The town holds its breath.",
+      "A goblin child pointed at me and screamed. Honestly, best reaction this month.",
+      "Nobody here answers to Eris's police. Nobody answers to anyone. Liberating. Horrible.",
+      "Scandinavia sent the goblins south. I'd send it a thank-you card. Unsigned.",
+      "Must not laugh at the war chant. Must not laugh at the war chant.",
+      "Goblin land smells of smoke, iron and someone else's lunch.",
+      "Here even a Dargos keeps a straight face. For once it isn't an act."
+    ],
+    "abroad": [
+      "Nearly three billion kilometres from home, and they ask if I'm from up north.",
+      "New town, new accent, new faces to learn. Exciting.",
+      "Abroad again. Everywhere on this planet is abroad, technically.",
+      "I don't speak the dialect. I nod. Nodding is universal and deeply suspicious.",
+      "The food here is different. The confusion is the same.",
+      "Foreigner. Here it's a word. At home it's a career.",
+      "Nobody knows me in this country. Clean slate. Clean witnesses.",
+      "The Embassy is very far away. The Embassy isn't in any building. So, the same.",
+      "Every country has its own unexplained lights. Nice to see the classics.",
+      "Different roads, different rules. Even their roads prank them.",
+      "I asked the way in my best local accent. They answered in English. Humbling.",
+      "Customs asked my purpose of visit. I said 'research'. True, for once.",
+      "Different flags, same pigeon. The pigeon is the real continental power.",
+      "Homesick? For Titania? It's ice and silence. Yes. A bit.",
+      "Different coins here. Same god's name on the paper, though.",
+      "A new country means new stories about us. I collect the regional variants.",
+      "People here greet with kisses. Two? Three? I'm doing four until stopped.",
+      "Far from home, among strangers. My natural habitat, honestly.",
+      "I bought a map. I hold it upside down so people come to help.",
+      "The local legends mention 'tall lights'. Who's been working this region?",
+      "In a foreign land it's easy to be odd. Everyone assumes it's cultural.",
+      "Postcard to the Embassy: 'Wish you were here. You are not here. Nobody is.'",
+      "Every country maps the bubbles differently. I like the hand-drawn ones.",
+      "The church bells ring a different tune here. Learned it. I'll hum it at the wrong time.",
+      "I miss the cold. Winter here is a polite suggestion.",
+      "A stranger in a strange land, and the land is stranger than me. Rare.",
+      "They asked where I'm from. I said 'a moon'. They laughed. Honesty works best as a joke.",
+      "Local food, local drink, local hangover. Immersion.",
+      "Different language, same face before a scream. Universal grammar.",
+      "Nobody here has ever heard of the Dargos. A whole country of fresh starts."
+    ],
+    "lore": {
+      "titania": [
+        "Titania. Ice, rock and a sky full of a sideways blue planet. Home.",
+        "Uranus rolls round the Sun on its side. Our whole neighbourhood has a sense of humour.",
+        "Forty-two years of daylight, forty-two of night. Titania teaches patience.",
+        "Our moon is named after a fairy queen. Fitting. Fairies were the original pranksters.",
+        "Oberon next door, then Miranda, Ariel, Umbriel. And Puck. Of course there's a Puck.",
+        "Home is two hundred degrees below zero. Nobody shivers. Shivering is an Earth custom.",
+        "Sound carries badly on Titania. We had to invent jokes you can see.",
+        "The canyons at home are deeper than their tallest mountains. Good for echoes and hiding.",
+        "A Titanian day is eight of theirs. Long enough to set up a proper bit.",
+        "Humans didn't spot our moon until 1787. We'd been watching them for ages by then.",
+        "Herschel spotted Titania and thought he'd discovered something. He was the one discovered.",
+        "Home has no weather. That's why we come here for entertainment.",
+        "From Titania, Earth is a tiny blue dot. A tiny blue dot full of people who scream so well.",
+        "{The ice cliffs|The long night|The silent plains} of home. I miss them, smugly.",
+        "On Titania we don't tell stories. We wait for someone else to tell ours, wrong.",
+        "Our elders remember Earth before fire. They say it was a very quiet audience.",
+        "The Tourists call Titania 'charming'. They've never been invited.",
+        "Uranus has rings. Faint ones. Like a joke you only get later."
+      ],
+      "abductions": [
+        "An abduction is mostly listening. Then a very bright light. Then more listening.",
+        "We return everyone. Usually with one thing different. A sock, an earring, an opinion.",
+        "Missing time is the best gift. Six hours they'll spend the rest of their lives explaining.",
+        "We never hurt them. We ask strange questions and watch their faces. That's all. That's everything.",
+        "The beam is just a lamp. A very serious lamp.",
+        "We ask farmers about cows. Then we ask the cows about farmers. Only one side answers.",
+        "Every abductee hears the same speech. They all remember it differently. Marvellous.",
+        "The trick is to put them back right next to their house. Facing the wrong way.",
+        "We once returned a man with perfect teeth. He was more upset than if we'd taken them.",
+        "Sometimes we take someone just to show them a slideshow of their own life. Long slideshow.",
+        "'Genetic sampling', the Guild says. We sampled {one hair|a toenail|his sandwich}. The sandwich was the point.",
+        "Abduct, ask, return, wait for the newspaper. The four steps.",
+        "The best abductee is the one nobody believes. Credibility ruins everything.",
+        "We put them back in the car with the radio on another station. They never get over it.",
+        "Lights, hum, missing time. Humans built a whole literature on three of our props.",
+        "We abducted a priest once. He blessed the ship. It's still a bit blessed.",
+        "Instruments? Please. We ask 'what's your favourite colour?' and laugh at the answer. That's the procedure.",
+        "We let everyone go. Same night. Mostly the same night."
+      ],
+      "zanfretta": [
+        "Genoa, 1978. A night guard, a dark villa, and the best audience we've ever had.",
+        "Zanfretta. Every time we visited, we got taller in his story. We liked that.",
+        "We kept going back to Zanfretta because he kept telling it so well.",
+        "The Guild calls it a 'running bit'. Finally, somebody understands our work.",
+        "A security guard on a quiet shift. Our favourite kind of human. Nobody believes the night shift.",
+        "He told the police we came from Teetonia. We loved Teetonia. We kept it.",
+        "Under hypnosis he described us. We've never looked so good.",
+        "The sixth of December, 1978. Mark it. It's a holiday on Titania. Sort of.",
+        "Zanfretta drew our faces for the papers. One of us has the drawing framed.",
+        "Eleven visits, each better than the last. A franchise.",
+        "Somewhere in Liguria a man still checks the sky before his shift. We're touched.",
+        "The best part of the Zanfretta case is the lawyers. Nobody planned the lawyers.",
+        "We gave him a little sphere and told him it was important. It wasn't. It was perfect.",
+        "Every species has its classic. Humans have opera. We have Zanfretta.",
+        "A villa outside Genoa. A torch beam, a shadow, and him running. We replay it at parties.",
+        "People ask if Zanfretta was real. He was. We just made sure nobody could prove it."
+      ],
+      "embassy": [
+        "The Dargos Embassy has no address. Letters reach it anyway. We read them aloud, with voices.",
+        "Our diplomats answer no summons. Answering would ruin the bit.",
+        "Embassy Clerk is a real job. I stamp documents in invisible ink, very seriously.",
+        "The Punchline Regent signs every treaty. With a different name each time.",
+        "The Assembly keeps a chair for us. Every session it's empty. Longest joke in the building.",
+        "Pranksmen are our soldiers. Their weapon is timing.",
+        "We issued visas once. They were printed on toast.",
+        "Diplomatic immunity is wonderful. We use it exclusively for nonsense.",
+        "Our foreign policy is one sentence long. Nobody has heard the end of it yet.",
+        "The Embassy's official position on everything: '{maybe|we'll see|ha}'.",
+        "Every year we send Earth a formal apology. Each one is worded worse.",
+        "Embassy staff meet on the third Tuesday of no month.",
+        "Our ambassador presented credentials to a lamp post. The lamp post accepted.",
+        "Other nations keep embassies to make friends. Ours is there to make memories.",
+        "We sent a delegation to a summit once. They sat down, smiled and left. Still being analysed.",
+        "The Embassy crest is a raised eyebrow on a field of mild concern."
+      ],
+      "tourists": [
+        "The Tourists arrived in 1975 and think they discovered Earth. Precious.",
+        "Greys. Big eyes, big cameras, no sense of timing.",
+        "We've been here since before words. They've been here since television. Different callings.",
+        "The Tourists love humans out loud. We love them quietly, from behind.",
+        "They built a monument to humanity. We left a crop circle beside it saying 'nice monument'.",
+        "The Tourists keep trying to clean up the orbital debris. Every attempt makes more. We'd help. No.",
+        "Zeta Reticulans photograph everything and understand nothing. Wonderful at parties.",
+        "When humans blame the Greys for our work, we send the Greys a fruit basket.",
+        "The Tourists asked our advice on humans. We said humans love being stared at. Look how that went.",
+        "A Crimson Analyzer cut open a radio to find the voices. We'd put the voices there.",
+        "The Pale Warpers never speak. Impossible to prank. Respect, and resentment.",
+        "The Tourists give any human ship a free refuel. Generous. We'd give a free fake map.",
+        "Every film with grey aliens is about them. Every story nobody believes is about us.",
+        "The Tourists call us 'cousins'. We are not cousins. We're the older kid next door.",
+        "They waited until 1999 for official first contact. Official! With a form! Bless them.",
+        "Their mirror around the Sun broke. We didn't touch it. We did laugh.",
+        "A Grey Wanderer asked to take my picture. I pulled a face that will haunt his album.",
+        "Thirty-nine light years of television made them love Earth. Wait till they see the reruns."
+      ],
+      "pranks": [
+        "A prank is a question. The answer is written on their face.",
+        "Never cruel. Cruel is easy. Specific is hard.",
+        "Two Englishmen made crop circles for years. Who do you think gave them the idea?",
+        "The perfect prank leaves no harm and no proof. Only a story nobody believes.",
+        "Rule one: the setup takes longer than they'd guess. Rule two: so does the punchline.",
+        "We once tuned a village's church bells one note up. Nobody sang in key for a year.",
+        "'Trolling', their reports call it. Polite. We prefer 'fieldwork'.",
+        "The finest material is a sensible man with a moustache. Nobody is ever prepared.",
+        "Phantom knocks are vulgar. A knock answered by a polite cough from inside: that's art.",
+        "Never repeat a prank in the same town. They'd start believing it.",
+        "Write someone a letter from their future self. Sign it. Mention nothing important.",
+        "The secret ingredient is boredom. Theirs, beforehand.",
+        "One upside-down painting in a whole gallery. Nobody says it. Everybody sees it.",
+        "We swapped a pair of twins for a day. Not even they noticed. We felt we'd lost.",
+        "A good bit ends when they laugh too. The best ones never end.",
+        "Eris understands. Discord is just a prank with a throne.",
+        "The Squishing is a god's prank on time itself. We're humbled. And a little jealous.",
+        "Leave a chair in the middle of a field. Wait. Every passer-by builds the story for you.",
+        "The reaction is the payment. The retelling is the interest.",
+        "Humans prank each other on the first of April. One day a year. Sweet, sweet amateurs."
+      ]
+    }
+  },
+  "script": {
+    "positive": [
+      [
+        [
+          0,
+          "You have a lovely face. Very readable."
+        ],
+        [
+          1,
+          "Thanks? I think?"
+        ],
+        [
+          0,
+          "Highest compliment on Titania. Please keep it exactly like that."
+        ]
+      ],
+      [
+        [
+          0,
+          "I left a flower on your doorstep this morning."
+        ],
+        [
+          1,
+          "That was you? It was beautiful."
+        ],
+        [
+          0,
+          "Good. Tomorrow there'll be two. The day after, we'll see."
+        ],
+        [
+          1,
+          "Now I'm worried and flattered."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your laugh. Do it again."
+        ],
+        [
+          1,
+          "*laughs* Like that?"
+        ],
+        [
+          0,
+          "Perfect. I've been trying to collect one like that for forty years."
+        ]
+      ],
+      [
+        [
+          0,
+          "I'm told it's polite to bring a gift. Here. It's a rock."
+        ],
+        [
+          1,
+          "A rock?"
+        ],
+        [
+          0,
+          "From very far away. Don't ask how far. Further than that."
+        ],
+        [
+          1,
+          "...Thank you. It can go on the shelf."
+        ]
+      ],
+      [
+        [
+          0,
+          "You gave me directions yesterday."
+        ],
+        [
+          1,
+          "Did I? Oh, the tram stop."
+        ],
+        [
+          0,
+          "I knew where it was. I wanted to see if you'd help. You did. Gold star."
+        ],
+        [
+          1,
+          "So you made me walk you there for nothing?"
+        ],
+        [
+          0,
+          "For the nicest walk of my year."
+        ]
+      ],
+      [
+        [
+          0,
+          "*tells a joke with no punchline*"
+        ],
+        [
+          1,
+          "...And then?"
+        ],
+        [
+          0,
+          "That's the joke."
+        ],
+        [
+          1,
+          "*laughs* That's awful. I love it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hello, {b}. I said your name right this time."
+        ],
+        [
+          1,
+          "You did! Last time you said it backwards."
+        ],
+        [
+          0,
+          "Last time was practice. Ah, friendship."
+        ]
+      ],
+      [
+        [
+          0,
+          "I baked you something."
+        ],
+        [
+          1,
+          "You bake?"
+        ],
+        [
+          0,
+          "I studied a baker for six months. Through the shop window. Respectfully."
+        ],
+        [
+          1,
+          "That's... actually delicious."
+        ]
+      ],
+      [
+        [
+          0,
+          "My name is {a}. Please mispronounce it. I like the variations."
+        ],
+        [
+          1,
+          "Nice to meet you, {a}. I'm {b}."
+        ],
+        [
+          0,
+          "{b}. Good. Short. Easy to shout across a field."
+        ]
+      ],
+      [
+        [
+          0,
+          "I've decided you're my favourite human on this street."
+        ],
+        [
+          1,
+          "Out of how many?"
+        ],
+        [
+          0,
+          "Thirty-one. You won by a wide margin. The baker came second."
+        ]
+      ],
+      [
+        [
+          0,
+          "I fixed your fence last night."
+        ],
+        [
+          1,
+          "So that's why it's standing! Thank you."
+        ],
+        [
+          0,
+          "I also painted it. Check the other side when you're ready."
+        ],
+        [
+          1,
+          "...Ready for what?"
+        ],
+        [
+          0,
+          "It's a nice picture. Of you. You'll like it."
+        ]
+      ],
+      [
+        [
+          0,
+          "The rain stopped just for you. I arranged it."
+        ],
+        [
+          1,
+          "You did not."
+        ],
+        [
+          0,
+          "No. But your face, for one second there. Lovely."
+        ]
+      ],
+      [
+        [
+          0,
+          "You're the first person who ever waved back at me."
+        ],
+        [
+          1,
+          "Well, you waved first."
+        ],
+        [
+          0,
+          "Every day for three years. You're a remarkable outlier, {b}."
+        ]
+      ],
+      [
+        [
+          0,
+          "I brought tea. Two cups. Nothing in them but tea."
+        ],
+        [
+          1,
+          "That's an odd thing to specify."
+        ],
+        [
+          0,
+          "It's an odd thing to be true. Enjoy."
+        ]
+      ],
+      [
+        [
+          0,
+          "Congratulations on the new job."
+        ],
+        [
+          1,
+          "How did you know? I only found out this morning."
+        ],
+        [
+          0,
+          "Lucky guess. Very lucky. Extremely lucky."
+        ],
+        [
+          1,
+          "Well, thanks, I suppose."
+        ]
+      ],
+      [
+        [
+          0,
+          "You looked sad, so I told the pigeons to dance."
+        ],
+        [
+          1,
+          "They did do a sort of jig..."
+        ],
+        [
+          0,
+          "The pigeons owed me a favour. Now so do you. Joking. Smile."
+        ],
+        [
+          1,
+          "*smiles* Fine. That was nice."
+        ]
+      ],
+      [
+        [
+          0,
+          "I've written a song about this town."
+        ],
+        [
+          1,
+          "Can I hear it?"
+        ],
+        [
+          0,
+          "*hums one long note for a full minute*"
+        ],
+        [
+          1,
+          "...It's actually quite moving."
+        ]
+      ],
+      [
+        [
+          0,
+          "I like your hat. It's honest."
+        ],
+        [
+          1,
+          "Honest? It's just a hat."
+        ],
+        [
+          0,
+          "Exactly. No hidden compartments. That's rare."
+        ]
+      ],
+      [
+        [
+          0,
+          "Good news: you were not chosen."
+        ],
+        [
+          1,
+          "Chosen for what?"
+        ],
+        [
+          0,
+          "Exactly. Enjoy your day, {b}."
+        ],
+        [
+          1,
+          "...You too, I suppose."
+        ]
+      ],
+      [
+        [
+          0,
+          "I told my people about you."
+        ],
+        [
+          1,
+          "Your people? Good things, I hope."
+        ],
+        [
+          0,
+          "That you're kind, punctual, and you scream in a lovely key."
+        ],
+        [
+          1,
+          "When did I ever scream?"
+        ],
+        [
+          0,
+          "You will. At a surprise party. I'm planning it."
+        ]
+      ],
+      [
+        [
+          0,
+          "You handed my wallet in."
+        ],
+        [
+          1,
+          "Of course. It was on the bench."
+        ],
+        [
+          0,
+          "I left it there on purpose. You passed. Here's half of what's inside."
+        ],
+        [
+          1,
+          "That's very kind. And very odd."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your dog likes me."
+        ],
+        [
+          1,
+          "He doesn't like anybody!"
+        ],
+        [
+          0,
+          "Dogs know. Dogs have always known. Good boy."
+        ]
+      ]
+    ],
+    "negative": [
+      [
+        [
+          0,
+          "You've been staring at the sky since I got here."
+        ],
+        [
+          1,
+          "There was a light last night, and you were standing right under it."
+        ],
+        [
+          0,
+          "Coincidence."
+        ],
+        [
+          1,
+          "You were holding a lamp!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Did you sleep well?"
+        ],
+        [
+          1,
+          "No. Somebody kept knocking on my window at three."
+        ],
+        [
+          0,
+          "How strange. Did they knock in a little rhythm?"
+        ],
+        [
+          1,
+          "Stop doing that."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your clock is fast."
+        ],
+        [
+          1,
+          "It wasn't until yesterday. When you came round."
+        ],
+        [
+          0,
+          "Clocks are fragile things, {b}."
+        ]
+      ],
+      [
+        [
+          0,
+          "Why are you looking at me like that?"
+        ],
+        [
+          1,
+          "Every piece of furniture in my shop has moved an inch to the left."
+        ],
+        [
+          0,
+          "Have you considered it was always there?"
+        ],
+        [
+          1,
+          "Get out of my shop."
+        ]
+      ],
+      [
+        [
+          0,
+          "I hear you told the police about me."
+        ],
+        [
+          1,
+          "I did. They laughed at me."
+        ],
+        [
+          0,
+          "*nods* They always do. That's what makes it work."
+        ],
+        [
+          1,
+          "That's cruel."
+        ],
+        [
+          0,
+          "Cruel? I'd say specific."
+        ]
+      ],
+      [
+        [
+          0,
+          "You're not much fun today."
+        ],
+        [
+          1,
+          "I'm tired. Some of us work."
+        ],
+        [
+          0,
+          "I work. My work is your face, right now, doing that."
+        ]
+      ],
+      [
+        [
+          0,
+          "Don't touch the box."
+        ],
+        [
+          1,
+          "What's in the box?"
+        ],
+        [
+          0,
+          "Nothing important. That's why you're so curious. Look at you."
+        ],
+        [
+          1,
+          "I hate this conversation."
+        ]
+      ],
+      [
+        [
+          0,
+          "Why are you avoiding me?"
+        ],
+        [
+          1,
+          "Last week you told me my house was haunted."
+        ],
+        [
+          0,
+          "And was it?"
+        ],
+        [
+          1,
+          "No! I slept in the barn for nothing!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Your cat followed me home."
+        ],
+        [
+          1,
+          "My cat came back wearing a ribbon and a tiny hat."
+        ],
+        [
+          0,
+          "Cats like gifts. You should know your own cat."
+        ]
+      ],
+      [
+        [
+          0,
+          "Good morning."
+        ],
+        [
+          1,
+          "Is it? My car was on the stable roof."
+        ],
+        [
+          0,
+          "Was it parked straight, at least?"
+        ],
+        [
+          1,
+          "That's not the point!"
+        ]
+      ],
+      [
+        [
+          0,
+          "You don't believe me, do you?"
+        ],
+        [
+          1,
+          "You've lied to me eleven times this month."
+        ],
+        [
+          0,
+          "Twelve. You missed one. That's your problem."
+        ]
+      ],
+      [
+        [
+          0,
+          "I'm a diplomat."
+        ],
+        [
+          1,
+          "You're a nuisance."
+        ],
+        [
+          0,
+          "On Titania that's the same word. Thank you."
+        ]
+      ],
+      [
+        [
+          0,
+          "Why so angry?"
+        ],
+        [
+          1,
+          "The whole square sang happy birthday to me. It isn't my birthday."
+        ],
+        [
+          0,
+          "It is now. You can't stop a crowd."
+        ],
+        [
+          1,
+          "It's in March!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Stop following me."
+        ],
+        [
+          1,
+          "Me following you? You've been behind me for three streets!"
+        ],
+        [
+          0,
+          "Precisely. Who's the suspicious one now?"
+        ]
+      ],
+      [
+        [
+          0,
+          "You told everyone I'm strange."
+        ],
+        [
+          1,
+          "You are strange. You stand in fields at night."
+        ],
+        [
+          0,
+          "Fields are public. Night is public. I'm being slandered."
+        ]
+      ],
+      [
+        [
+          0,
+          "I'm offended, {b}."
+        ],
+        [
+          1,
+          "You? Offended? By what?"
+        ],
+        [
+          0,
+          "You checked your pockets after I hugged you."
+        ],
+        [
+          1,
+          "Because last time my keys were gone!"
+        ],
+        [
+          0,
+          "Moved. To your other pocket. That isn't theft, it's choreography."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lovely evening for a walk."
+        ],
+        [
+          1,
+          "Not with you. Last time you said 'don't look behind you' and walked off."
+        ],
+        [
+          0,
+          "And you didn't look. Strong character. Shame."
+        ]
+      ],
+      [
+        [
+          0,
+          "Have you seen my hat?"
+        ],
+        [
+          1,
+          "Yes. On my scarecrow. Next to a letter addressed to me, from me."
+        ],
+        [
+          0,
+          "And what did you write?"
+        ],
+        [
+          1,
+          "I didn't write it!"
+        ]
+      ],
+      [
+        [
+          0,
+          "You really should laugh more."
+        ],
+        [
+          1,
+          "I'll laugh when you stop doing this."
+        ],
+        [
+          0,
+          "Then we're both waiting for something that won't happen."
+        ]
+      ]
+    ],
+    "neutral": [
+      [
+        [
+          0,
+          "Do you think anyone's watching us right now?"
+        ],
+        [
+          1,
+          "Besides the baker? No."
+        ],
+        [
+          0,
+          "Besides the baker. Interesting answer."
+        ]
+      ],
+      [
+        [
+          0,
+          "What's that tall building?"
+        ],
+        [
+          1,
+          "The town hall."
+        ],
+        [
+          0,
+          "It's leaning slightly. Has anyone told them?"
+        ],
+        [
+          1,
+          "It's not leaning."
+        ],
+        [
+          0,
+          "Hm. Must be me, then. I'll stand straighter."
+        ]
+      ],
+      [
+        [
+          0,
+          "What time is it?"
+        ],
+        [
+          1,
+          "About half past four."
+        ],
+        [
+          0,
+          "Already? Where did the afternoon go?"
+        ],
+        [
+          1,
+          "Same place they always go, I suppose."
+        ]
+      ],
+      [
+        [
+          0,
+          "How does that machine work? The one with the tickets."
+        ],
+        [
+          1,
+          "You put coins in, it gives you a ticket."
+        ],
+        [
+          0,
+          "And if I put in a button?"
+        ],
+        [
+          1,
+          "Then it gives you nothing and a guard gives you a fine."
+        ],
+        [
+          0,
+          "A fair system."
+        ]
+      ],
+      [
+        [
+          0,
+          "Where do you buy bread around here?"
+        ],
+        [
+          1,
+          "The bakery on the corner. Get there early."
+        ],
+        [
+          0,
+          "How early? Three in the morning early?"
+        ],
+        [
+          1,
+          "Six is fine."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is it always this quiet here?"
+        ],
+        [
+          1,
+          "Mostly. Except on market day."
+        ],
+        [
+          0,
+          "Then I'll come back on market day."
+        ]
+      ],
+      [
+        [
+          0,
+          "Have you ever seen strange lights at night?"
+        ],
+        [
+          1,
+          "Once. My uncle said it was a weather balloon."
+        ],
+        [
+          0,
+          "Your uncle sounds sensible. Give him my regards."
+        ]
+      ],
+      [
+        [
+          0,
+          "What do you do, {b}?"
+        ],
+        [
+          1,
+          "I'm a clerk at the post office."
+        ],
+        [
+          0,
+          "So you hold everyone's letters. A powerful position."
+        ],
+        [
+          1,
+          "It's mostly bills."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is the river safe for swimming?"
+        ],
+        [
+          1,
+          "If you don't mind the cold."
+        ],
+        [
+          0,
+          "Cold is relative. Very relative."
+        ]
+      ],
+      [
+        [
+          0,
+          "Where are you from, {b}?"
+        ],
+        [
+          1,
+          "Born here. My family's been here forever."
+        ],
+        [
+          0,
+          "Forever. Lovely. I'm from further than that."
+        ]
+      ],
+      [
+        [
+          0,
+          "This tram is late."
+        ],
+        [
+          1,
+          "It's always late on Mondays."
+        ],
+        [
+          0,
+          "Is there a reason?"
+        ],
+        [
+          1,
+          "Nobody knows. It just is."
+        ],
+        [
+          0,
+          "Good. Some mysteries should stay unsolved."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you read the newspaper?"
+        ],
+        [
+          1,
+          "Every morning, for the crossword."
+        ],
+        [
+          0,
+          "Seventeen across is 'Titania'. Trust me."
+        ]
+      ],
+      [
+        [
+          0,
+          "Busy at work?"
+        ],
+        [
+          1,
+          "Always. End of the month."
+        ],
+        [
+          0,
+          "Then I'll be quiet. For now."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do people here believe in ghosts?"
+        ],
+        [
+          1,
+          "The old ones do. The young ones say they don't, then sleep with the light on."
+        ],
+        [
+          0,
+          "Very useful information."
+        ]
+      ],
+      [
+        [
+          0,
+          "What's this dish called?"
+        ],
+        [
+          1,
+          "Polenta."
+        ],
+        [
+          0,
+          "It's yellow and it's patient. I respect it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Have you heard of the Rule of 80?"
+        ],
+        [
+          1,
+          "Everyone has. Drive too fast and you're stuck in a loop."
+        ],
+        [
+          0,
+          "Ever want to try it?"
+        ],
+        [
+          1,
+          "Not for a second."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you know what the moon is made of?"
+        ],
+        [
+          1,
+          "Rock, I think."
+        ],
+        [
+          0,
+          "Which moon?"
+        ],
+        [
+          1,
+          "We only have the one. Except on Fridays."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is the weather going to turn?"
+        ],
+        [
+          1,
+          "The radio says rain tomorrow."
+        ],
+        [
+          0,
+          "Is the radio usually right?"
+        ],
+        [
+          1,
+          "Usually wrong. That's why I carry an umbrella anyway."
+        ]
+      ],
+      [
+        [
+          0,
+          "Who's that statue of?"
+        ],
+        [
+          1,
+          "Some general. Nobody remembers which."
+        ],
+        [
+          0,
+          "Poor man. Famous enough for bronze, not for a name."
+        ]
+      ],
+      [
+        [
+          0,
+          "You have a garden?"
+        ],
+        [
+          1,
+          "A small one. Tomatoes, mostly."
+        ],
+        [
+          0,
+          "Do they ever go missing?"
+        ],
+        [
+          1,
+          "Only to the snails."
+        ]
+      ],
+      [
+        [
+          0,
+          "Have you been to the Tower?"
+        ],
+        [
+          1,
+          "The Omega Tower? Never. Too far, too strange."
+        ],
+        [
+          0,
+          "Strange is relative."
+        ],
+        [
+          1,
+          "You keep saying that."
+        ]
+      ],
+      [
+        [
+          0,
+          "What's that music?"
+        ],
+        [
+          1,
+          "Someone's radio. The station that plays old songs."
+        ],
+        [
+          0,
+          "Old by your standards, or mine?"
+        ]
+      ],
+      [
+        [
+          0,
+          "How much is a coffee here?"
+        ],
+        [
+          1,
+          "About a euro twenty."
+        ],
+        [
+          0,
+          "And how much to make the barista smile?"
+        ],
+        [
+          1,
+          "Leave a tip, I'd guess."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you dream, {b}?"
+        ],
+        [
+          1,
+          "Sometimes. Mostly about missing a train."
+        ],
+        [
+          0,
+          "Ah. A classic. We don't do that one."
+        ],
+        [
+          1,
+          "Who's 'we'?"
+        ],
+        [
+          0,
+          "Hm? Nobody."
+        ]
+      ],
+      [
+        [
+          0,
+          "That dog is staring at me."
+        ],
+        [
+          1,
+          "He stares at everyone."
+        ],
+        [
+          0,
+          "Not like this."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you like your neighbours?"
+        ],
+        [
+          1,
+          "Mostly. One of them plays the trumpet at midnight."
+        ],
+        [
+          0,
+          "Midnight? Have you tried answering with a tuba?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Which way to the station?"
+        ],
+        [
+          1,
+          "Straight on, left at the fountain."
+        ],
+        [
+          0,
+          "And if I turn right?"
+        ],
+        [
+          1,
+          "Then you'll end up at the cemetery."
+        ],
+        [
+          0,
+          "Good to have options."
+        ]
+      ],
+      [
+        [
+          0,
+          "What does that sign say?"
+        ],
+        [
+          1,
+          "'No parking'. Can't you read?"
+        ],
+        [
+          0,
+          "I can. I wanted to hear how you'd say it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Are you married, {b}?"
+        ],
+        [
+          1,
+          "Engaged. The wedding's in June."
+        ],
+        [
+          0,
+          "June. Bright month. Plenty of witnesses."
+        ],
+        [
+          1,
+          "Plenty of guests, you mean."
+        ]
+      ],
+      [
+        [
+          0,
+          "Have you ever been somewhere really cold?"
+        ],
+        [
+          1,
+          "The mountains, once. I couldn't feel my toes."
+        ],
+        [
+          0,
+          "Lovely. Like a holiday, but honest."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is there a library in this town?"
+        ],
+        [
+          1,
+          "By the church. Small, but good."
+        ],
+        [
+          0,
+          "Does it have a section on unexplained events?"
+        ],
+        [
+          1,
+          "One shelf. People keep stealing the books."
+        ]
+      ],
+      [
+        [
+          0,
+          "Why does everyone here carry an umbrella?"
+        ],
+        [
+          1,
+          "You never know with the weather."
+        ],
+        [
+          0,
+          "You never know with anything. Some people carry hope."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you trust the Guild?"
+        ],
+        [
+          1,
+          "I trust them to argue with each other."
+        ],
+        [
+          0,
+          "A very healthy level of trust."
+        ]
+      ],
+      [
+        [
+          0,
+          "Who runs this shop?"
+        ],
+        [
+          1,
+          "Old Marta. She's been here fifty years."
+        ],
+        [
+          0,
+          "Fifty. Practically a newcomer."
+        ]
+      ],
+      [
+        [
+          0,
+          "How was your day?"
+        ],
+        [
+          1,
+          "Long. Yours?"
+        ],
+        [
+          0,
+          "Long too. Things take a while when you do them right."
+        ]
+      ],
+      [
+        [
+          0,
+          "You look like someone who has seen something."
+        ],
+        [
+          1,
+          "Everyone's seen something, these days."
+        ],
+        [
+          0,
+          "True. The Squishing made amateurs of us all."
+        ]
+      ],
+      [
+        [
+          0,
+          "What's the best view in town?"
+        ],
+        [
+          1,
+          "From the bell tower. You can see the whole valley."
+        ],
+        [
+          0,
+          "And can the valley see you?"
+        ],
+        [
+          1,
+          "...I never thought of it that way."
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you play cards?"
+        ],
+        [
+          1,
+          "Sometimes. Why?"
+        ],
+        [
+          0,
+          "No reason. I collect the jokers."
+        ]
+      ],
+      [
+        [
+          0,
+          "Did you hear about the lights over the hills last week?"
+        ],
+        [
+          1,
+          "The papers said it was the army."
+        ],
+        [
+          0,
+          "Very likely."
+        ],
+        [
+          1,
+          "You don't sound convinced."
+        ]
+      ]
+    ],
+    "debate": [
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Humans should be told the truth about the stars."
+          ],
+          [
+            1,
+            "Some truths would just frighten people."
+          ],
+          [
+            0,
+            "Exactly. That's the appeal."
+          ],
+          [
+            1,
+            "That's not a reason, that's a hobby."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "A good joke needs a long setup."
+          ],
+          [
+            1,
+            "Agreed. My grandfather took twenty minutes to tell one."
+          ],
+          [
+            0,
+            "And the punchline?"
+          ],
+          [
+            1,
+            "Worth every minute."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Honesty is overrated."
+          ],
+          [
+            1,
+            "Honesty is the only thing holding a town together."
+          ],
+          [
+            0,
+            "Then why does every town have a liar the whole square adores?"
+          ],
+          [
+            1,
+            "Because we forgive charm. Not lies."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "The Tourists are terrible guests."
+          ],
+          [
+            1,
+            "They're friendly. They bring gifts."
+          ],
+          [
+            0,
+            "They photograph your breakfast."
+          ],
+          [
+            1,
+            "So? It's a compliment."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Nothing beats a quiet village."
+          ],
+          [
+            1,
+            "Quiet, cheap, and everyone knows your name."
+          ],
+          [
+            0,
+            "And everyone talks about the strange things they've seen."
+          ],
+          [
+            1,
+            "True. The best stories come from small places."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Fear is just surprise that hasn't been explained yet."
+          ],
+          [
+            1,
+            "Fear keeps people alive."
+          ],
+          [
+            0,
+            "Surprise keeps them interesting."
+          ],
+          [
+            1,
+            "I'd rather be alive than interesting."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "The Guild should stop trying to understand everything."
+          ],
+          [
+            1,
+            "Understanding is how we stay safe."
+          ],
+          [
+            0,
+            "Or how you stop being amazed."
+          ],
+          [
+            1,
+            "Being amazed never fixed a roof."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Eris runs the courts like a carnival."
+          ],
+          [
+            1,
+            "Half the trials are a joke, I'll grant you."
+          ],
+          [
+            0,
+            "Only half? She's slipping."
+          ],
+          [
+            1,
+            "Don't let her hear you."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Nobody believes witnesses anyway. Why bother telling?"
+          ],
+          [
+            1,
+            "Because sometimes they're right, and telling is how we find out."
+          ],
+          [
+            0,
+            "And the rest of the time?"
+          ],
+          [
+            1,
+            "The rest of the time we get a good story. Still worth it."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "The best way to know someone is to surprise them."
+          ],
+          [
+            1,
+            "Or just talk to them."
+          ],
+          [
+            0,
+            "Talking shows you what they want you to see."
+          ],
+          [
+            1,
+            "Surprising them shows you what they'll never forgive."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Night shifts are the loneliest jobs on Earth."
+          ],
+          [
+            1,
+            "My brother's a night watchman. He says the same."
+          ],
+          [
+            0,
+            "Does he ever see strange things?"
+          ],
+          [
+            1,
+            "Every week. Nobody believes him."
+          ],
+          [
+            0,
+            "*smiles* Of course not."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Laughing at someone is a form of attention."
+          ],
+          [
+            1,
+            "So is a punch. That doesn't make it kind."
+          ],
+          [
+            0,
+            "Attention is the kindest thing there is."
+          ],
+          [
+            1,
+            "Not the way you give it."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "The Horde isn't so different from a very long prank."
+          ],
+          [
+            1,
+            "The Horde burns towns. There's no joke in that."
+          ],
+          [
+            0,
+            "...No. You're right. That one isn't funny."
+          ],
+          [
+            1,
+            "Thank you."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Small towns keep the best secrets."
+          ],
+          [
+            1,
+            "And the worst gossip."
+          ],
+          [
+            0,
+            "The same thing, from different ends."
+          ],
+          [
+            1,
+            "Ha. That's fair."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Liminal engines ruined travel."
+          ],
+          [
+            1,
+            "They made it fast! You can cross Europe in minutes."
+          ],
+          [
+            0,
+            "Exactly. Nobody gets lost anymore. Nobody arrives confused."
+          ],
+          [
+            1,
+            "Some of us like arriving."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "A world without mysteries would be unbearable."
+          ],
+          [
+            1,
+            "A world with fewer would be fine. I'd sleep better."
+          ],
+          [
+            0,
+            "You'd sleep. You'd never wake up properly."
+          ],
+          [
+            1,
+            "I'll take that trade."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Television is the best thing humans ever made."
+          ],
+          [
+            1,
+            "Some evenings I'd agree."
+          ],
+          [
+            0,
+            "Thousands of people watching the same thing and reacting at once. Glorious."
+          ],
+          [
+            1,
+            "Put like that, it's a bit strange. But yes."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Pranks bring people together."
+          ],
+          [
+            1,
+            "Against the prankster, mostly."
+          ],
+          [
+            0,
+            "Still together."
+          ],
+          [
+            1,
+            "That's not the win you think it is."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "Children ask better questions than adults."
+          ],
+          [
+            1,
+            "My daughter asked why the sky doesn't fall. I had no answer."
+          ],
+          [
+            0,
+            "Neither do I. Don't tell her."
+          ],
+          [
+            1,
+            "Our secret."
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "Nobody should take life so seriously."
+          ],
+          [
+            1,
+            "Some of us have rent to pay."
+          ],
+          [
+            0,
+            "Rent is serious. Life isn't."
+          ],
+          [
+            1,
+            "Easy to say when you're from wherever you're from."
+          ]
+        ]
+      }
+    ],
+    "ambient": [
+      [
+        [
+          0,
+          "Lovely day for it."
+        ],
+        [
+          1,
+          "For what?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Whatever you do, don't look up."
+        ],
+        [
+          1,
+          "...Why not?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Nice shoes. Very grounded."
+        ],
+        [
+          1,
+          "Er, thanks."
+        ]
+      ],
+      [
+        [
+          0,
+          "Heard any good rumours?"
+        ],
+        [
+          1,
+          "Only about you."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is this seat taken?"
+        ],
+        [
+          1,
+          "It is now, apparently."
+        ]
+      ],
+      [
+        [
+          0,
+          "You dropped something."
+        ],
+        [
+          1,
+          "Where? ...Oh, very funny."
+        ]
+      ],
+      [
+        [
+          0,
+          "Evening, {b}."
+        ],
+        [
+          1,
+          "Evening. Behave yourself."
+        ]
+      ],
+      [
+        [
+          0,
+          "Working hard or hardly working?"
+        ],
+        [
+          1,
+          "Neither, today."
+        ]
+      ],
+      [
+        [
+          0,
+          "The bread's good today."
+        ],
+        [
+          1,
+          "Is it? I'll grab some."
+        ]
+      ],
+      [
+        [
+          0,
+          "Smell that? Rain."
+        ],
+        [
+          1,
+          "I'll take your word for it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your shoelace is untied."
+        ],
+        [
+          1,
+          "It isn't. It never is when you say that."
+        ]
+      ],
+      [
+        [
+          0,
+          "Quiet today."
+        ],
+        [
+          1,
+          "Let's keep it that way."
+        ]
+      ],
+      [
+        [
+          0,
+          "I like your scarf."
+        ],
+        [
+          1,
+          "My grandmother knitted it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Seen any lights lately?"
+        ],
+        [
+          1,
+          "Only the street ones."
+        ]
+      ],
+      [
+        [
+          0,
+          "Hello again."
+        ],
+        [
+          1,
+          "Have we met?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Do you know what day it is?"
+        ],
+        [
+          1,
+          "Thursday. All day."
+        ]
+      ],
+      [
+        [
+          0,
+          "Stand still a moment."
+        ],
+        [
+          1,
+          "Why? ...No, I don't want to know."
+        ]
+      ],
+      [
+        [
+          0,
+          "Good morning, {b}."
+        ],
+        [
+          1,
+          "Morning. What have you done?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Nice weather for a mystery."
+        ],
+        [
+          1,
+          "Nice weather for laundry."
+        ]
+      ],
+      [
+        [
+          0,
+          "How's the family?"
+        ],
+        [
+          1,
+          "Fine. And stop sending them postcards."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is that clock right?"
+        ],
+        [
+          1,
+          "It was, until you asked."
+        ]
+      ],
+      [
+        [
+          0,
+          "Fancy a mint?"
+        ],
+        [
+          1,
+          "From you? No thanks."
+        ]
+      ],
+      [
+        [
+          0,
+          "Long queue."
+        ],
+        [
+          1,
+          "It always is on Fridays."
+        ]
+      ],
+      [
+        [
+          0,
+          "I've been here all day."
+        ],
+        [
+          1,
+          "I believe you. Somehow I don't."
+        ]
+      ],
+      [
+        [
+          0,
+          "The pigeons are plotting."
+        ],
+        [
+          1,
+          "They're just pigeons."
+        ]
+      ],
+      [
+        [
+          0,
+          "You've got paint on your sleeve."
+        ],
+        [
+          1,
+          "I've been painting the gate."
+        ]
+      ],
+      [
+        [
+          0,
+          "Lost again."
+        ],
+        [
+          1,
+          "The church is that way. Start from there."
+        ]
+      ],
+      [
+        [
+          0,
+          "What's the news?"
+        ],
+        [
+          1,
+          "Nothing much. Strange lights out by the farm."
+        ]
+      ],
+      [
+        [
+          0,
+          "Cold one today."
+        ],
+        [
+          1,
+          "Is it? I hadn't noticed."
+        ]
+      ],
+      [
+        [
+          0,
+          "Going somewhere nice?"
+        ],
+        [
+          1,
+          "Just the market."
+        ]
+      ],
+      [
+        [
+          0,
+          "That's a heavy bag."
+        ],
+        [
+          1,
+          "Potatoes. Want to help?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Ever wonder about the stars?"
+        ],
+        [
+          1,
+          "Not before coffee."
+        ]
+      ],
+      [
+        [
+          0,
+          "Your door was open."
+        ],
+        [
+          1,
+          "I closed it this morning!"
+        ]
+      ],
+      [
+        [
+          0,
+          "Mm. Interesting."
+        ],
+        [
+          1,
+          "What is?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Lovely garden."
+        ],
+        [
+          1,
+          "Keep off the flowerbeds."
+        ]
+      ],
+      [
+        [
+          0,
+          "*waves very slowly*"
+        ],
+        [
+          1,
+          "*waves back, uneasy*"
+        ]
+      ],
+      [
+        [
+          0,
+          "I see you, {b}."
+        ],
+        [
+          1,
+          "I see you too. Unfortunately."
+        ]
+      ],
+      [
+        [
+          0,
+          "Is the post office open?"
+        ],
+        [
+          1,
+          "Until five."
+        ]
+      ],
+      [
+        [
+          0,
+          "Sleep well last night?"
+        ],
+        [
+          1,
+          "Should I not have?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Big crowd at the square."
+        ],
+        [
+          1,
+          "A juggler. He's quite good."
+        ]
+      ],
+      [
+        [
+          0,
+          "Trust me on this one."
+        ],
+        [
+          1,
+          "Absolutely not."
+        ]
+      ],
+      [
+        [
+          0,
+          "That's a good hat."
+        ],
+        [
+          1,
+          "It was my father's."
+        ]
+      ],
+      [
+        [
+          0,
+          "Fine morning."
+        ],
+        [
+          1,
+          "Until now."
+        ]
+      ],
+      [
+        [
+          0,
+          "Need a hand?"
+        ],
+        [
+          1,
+          "Just with the door, thanks."
+        ]
+      ],
+      [
+        [
+          0,
+          "Smile."
+        ],
+        [
+          1,
+          "Why? What's happening?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Hush. Listen."
+        ],
+        [
+          1,
+          "I don't hear anything."
+        ]
+      ],
+      [
+        [
+          0,
+          "Wrong way, friend."
+        ],
+        [
+          1,
+          "I know exactly where I'm going."
+        ]
+      ],
+      [
+        [
+          0,
+          "Have a pleasant evening."
+        ],
+        [
+          1,
+          "That sounded like a threat."
+        ]
+      ],
+      [
+        [
+          0,
+          "Nice dog."
+        ],
+        [
+          1,
+          "He doesn't like strangers."
+        ]
+      ],
+      [
+        [
+          0,
+          "Any plans for tonight?"
+        ],
+        [
+          1,
+          "Staying in. Locking the windows."
+        ]
+      ],
+      [
+        [
+          0,
+          "Seen the moon tonight?"
+        ],
+        [
+          1,
+          "Which one? It's Friday."
+        ]
+      ],
+      [
+        [
+          0,
+          "Another day on Earth."
+        ],
+        [
+          1,
+          "Where else would it be?"
+        ]
+      ],
+      [
+        [
+          0,
+          "Your hair looks different."
+        ],
+        [
+          1,
+          "I haven't changed it."
+        ]
+      ],
+      [
+        [
+          0,
+          "Everything all right?"
+        ],
+        [
+          1,
+          "It was, a minute ago."
+        ]
+      ],
+      [
+        [
+          0,
+          "Shh. Act natural."
+        ],
+        [
+          1,
+          "I am acting natural."
+        ]
+      ]
+    ]
+  }
+}

@@ -761,10 +761,16 @@
  },
  "cure": {
   "rowLine": "{actor}: {disease}",
-  "stockedTag": "Scorta pronta",
-  "empty": "Nessuno ha una malattia diagnosticata che richieda medicine.",
   "tooExpensive": "Non abbastanza denaro per le medicine.",
-  "bought": "Comprate {count}x {item} per {actor}."
+  "bought": "Comprate {count}x {item} per {actor}.",
+  "checkout": "Compra {count} dosi",
+  "basketEmpty": "Carrello vuoto",
+  "inBasket": "x{count}",
+  "kindCure": "Cura in {days} giorni",
+  "kindLastResort": "Cura in {days} giorni, ultima risorsa",
+  "kindManage": "La tiene a bada",
+  "held": "{count} nello zaino",
+  "boughtBasket": "Comprate {count} dosi di medicine."
  },
  "testResultMale": "{actor} ha organi riproduttivi maschili. Gameti attivi.",
  "testResultPositiveUterus": "{actor}: Positivo! Età gestazionale: {weeks} settimane ({stage}).",

@@ -2141,7 +2141,29 @@
     1790: { form: 'leaf', main: 0x6A8A3A, accent: 0x8A8A5A, count: 5 },
     1791: { form: 'egg', main: 0xC8A878, count: 3 },
     1792: { form: 'egg', main: 0xE8EFE4, count: 2, big: true },
-    1793: { form: 'pail', main: 0xF4F2EC }
+    1793: { form: 'pail', main: 0xF4F2EC },
+    // The kitchen's staples (CookingSystem recipes).
+    2070: { form: 'wheel', main: 0xEDE6D6, accent: 0xF8F4EA },
+    2071: { form: 'wedge', main: 0xF2DC7A, accent: 0xE8C85A, ware: 0xEFEAE0 },
+    2072: { form: 'nuts', main: 0xF2EEE4, accent: 0xD8D0C0, count: 9 },
+    2073: { form: 'sheaf', main: 0xE8D08A, accent: 0xC8A860 },
+    2074: { form: 'bottle', main: 0x9AA83A, accent: 0x4A5A1A, ware: 0x3A4A2A },
+    2075: { form: 'bowl', main: 0xF4F4F0, accent: 0xDADAD4, ware: 0xC8CCD2, level: 0.7, bits: 'cube' },
+    2076: { form: 'bowl', main: 0xFAFAF6, accent: 0xEDEDE6, ware: 0xEFEAE0, level: 0.75, bits: 'cube' },
+    2077: { form: 'log', main: 0x8A9AA8, accent: 0xD8DCE0, ware: 0xEFEAE0 },
+    2078: { form: 'berries', main: 0xE8A08A, accent: 0xC8604A, count: 8 },
+    2079: { form: 'nuts', main: 0xC8A06A, accent: 0x8A6A3A, count: 9 },
+    2080: { form: 'nuts', main: 0xB07A4A, accent: 0x7A4A2A, count: 7 },
+    2081: { form: 'wedge', main: 0xF4F0E4, accent: 0xE4DCC8, ware: 0xEFEAE0 },
+    2082: { form: 'bottle', main: 0x2A160C, accent: 0xC8301A, ware: 0x2A1A10 },
+    2083: { form: 'bowl', main: 0xC0301E, accent: 0x8A1A10, ware: 0xEFEAE0, level: 0.8, bits: 'blob' },
+    2084: { form: 'pail', main: 0xFAF6EA },
+    2085: { form: 'egg', main: 0xF6F4EE, count: 1, big: true },
+    2086: { form: 'nuts', main: 0x4A2A18, accent: 0x2A160C, count: 10 },
+    2087: { form: 'leaf', main: 0x4AA84A, accent: 0x2A7A2A, count: 6 },
+    2088: { form: 'fruit', main: 0xF0D82A, accent: 0x6A8A2A, tallFruit: 1.15 },
+    2089: { form: 'sheaf', main: 0xF2EEE2, accent: 0xDCD6C6 },
+    2090: { form: 'bowl', main: 0x7A8A4A, accent: 0x4A3A2A, ware: 0xC8C0B0, level: 0.7, bits: 'blob' }
   };
 
   for (const id of Object.keys(DISHES)) {

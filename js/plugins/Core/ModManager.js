@@ -487,6 +487,21 @@ window.$dataCustom = {};
         return urlOf(entry, parsed);
     };
 
+    // The url an element or a style should show for `url`: redirectUrl, plus
+    // an encrypted mod file, which no element can decrypt for itself. In an
+    // encrypted build js/asset_decrypt.js decrypts it into a blob url; left
+    // alone, the bridge would have handed over the BASE game's copy of the
+    // same name instead of the mod's.
+    ModManager.docUrl = function (url) {
+        const parsed = this.parseUrl(url);
+        if (!parsed) return null;
+        const entry = this.entryFor(parsed.rel);
+        if (!entry) return null;
+        if (!entry.encrypted) return urlOf(entry, parsed);
+        const bridge = typeof window !== 'undefined' && window.AssetDecrypt;
+        return bridge && typeof bridge.fileUrl === 'function' ? bridge.fileUrl(entry.file) : null;
+    };
+
     // For Bitmap and WebAudio (AssetCaseResolver): the mod url to load and
     // whether its bytes are encrypted. Asked per file because a mod ships plain
     // files whatever the build it is dropped into says about its own.
@@ -511,7 +526,17 @@ window.$dataCustom = {};
     ModManager.fsTarget = function (target) {
         const rel = this.relFromFs(target);
         if (rel === null) return target;
-        if (this.files[rel]) return this.files[rel].file;
+        const entry = this.files[rel];
+        if (entry) {
+            // An encrypted mod file read by its plain name is handed to
+            // js/asset_decrypt.js under that plain name next to the twin, so
+            // the read comes back decrypted the way the base game's does.
+            // Without the bridge (a plain build) there is nobody to decrypt
+            // it, and the raw file is all there is.
+            const bridge = typeof window !== 'undefined' && window.AssetDecrypt;
+            if (entry.encrypted && bridge) return entry.file.slice(0, -1);
+            return entry.file;
+        }
         const dir = this.dirs[rel];
         if (dir && !(origFs.existsSync || this.fs.existsSync)(target)) return dir.file;
         return target;
@@ -557,8 +582,11 @@ window.$dataCustom = {};
             const dirents = !!(options && typeof options === 'object' && options.withFileTypes);  // i18n-ignore  fs option
             const have = new Set(entries.map(e => (dirents ? e.name : String(e))));
             for (const name of Object.keys(dir.names)) {
-                const shown = ENCRYPTED_EXT.test(name) && have.has(name.slice(0, -1)) ? null : name;
-                if (shown === null || have.has(shown)) continue;
+                // Listed by the plain name, the way the decrypt bridge lists
+                // the game's own encrypted twins and the way every loader asks
+                // for it ("x.png", never "x.png_").
+                const shown = ENCRYPTED_EXT.test(name) ? name.slice(0, -1) : name;
+                if (have.has(shown)) continue;
                 have.add(shown);
                 if (!dirents) { entries.push(shown); continue; }
                 const isDir = !!self.dirs[rel ? rel + '/' + shown : shown];
@@ -684,13 +712,13 @@ window.$dataCustom = {};
         const re = this.docRegex();
         if (!re) return text;
         re.lastIndex = 0;
-        return text.replace(re, (all, base, rel) => this.redirectUrl((base || '') + rel) || all);
+        return text.replace(re, (all, base, rel) => this.docUrl((base || '') + rel) || all);
     };
 
     ModManager.installDomHooks = function () {
         if (typeof Element === 'undefined') return;
         const self = this;
-        const asUrl = value => (typeof value === 'string' ? (self.redirectUrl(value) || value) : value);
+        const asUrl = value => (typeof value === 'string' ? (self.docUrl(value) || value) : value);
         const asDoc = value => self.rewriteDoc(value);
 
         const patchSetter = (proto, prop, transform) => {

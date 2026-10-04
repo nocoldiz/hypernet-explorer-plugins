@@ -823,6 +823,15 @@
     return applyArchetypesToActor(actor, [key, actorSecondaryArchetypeKey(actor)]);
   }
 
+  // A person's body: Humanoid or a copy of it (the Naguka and Verden goblins).
+  // HealthCore owns the answer; the bare comparison is only for a build that
+  // loaded without it.
+  function isHumanoidBodyKey(key) {
+    const HC = window.HealthCore;
+    if (HC && typeof HC.isHumanoidBody === "function") return HC.isHumanoidBody(key);
+    return String(key || "").toLowerCase() === "humanoid"; // i18n-ignore: Archetypes.json key
+  }
+
   // The second half of a spliced body. An empty key drops it and leaves the
   // member built from its primary alone. A person carries no archetype of its
   // own until something asks (a new actor's body is Humanoid by default), so
@@ -836,7 +845,7 @@
     // A person back on a plain Humanoid body carries no grafts. How they are
     // drawn is not touched: the portrait is the choice made on the Bio tab,
     // and a second half never made it for them in the first place.
-    if (!actor._isCreatureActor && primary === "Humanoid") { // i18n-ignore: Archetypes.json key
+    if (!actor._isCreatureActor && isHumanoidBodyKey(primary)) {
       actor._ccGraftedParts = null;
       actor._ccReplacedParts = null;
     }
@@ -2760,7 +2769,7 @@
       // grafts change their body, never how they are drawn (the Bio tab's
       // portrait choice says that).
       const primaryArch = (actor._creatureArchetypes || [])[0];
-      if (primaryArch && String(primaryArch).toLowerCase() !== "humanoid") return true; // i18n-ignore: Archetypes.json key
+      if (primaryArch && !isHumanoidBodyKey(primaryArch)) return true;
       const CC = window.CreatureClasses;
       if (CC && CC.isCreatureClass && actor._classId && CC.isCreatureClass(actor._classId)) return true;
       const NC = window.NPCCreature;
@@ -3891,7 +3900,7 @@
             actor.changeClass(window.CreatureClasses.fallbackId(), false);
           }
           if (!actorArchetypeKey(actor)) {
-            const archetypes = creatureArchetypeKeys().filter((k) => k !== "Humanoid"); // i18n-ignore: archetype id
+            const archetypes = creatureArchetypeKeys().filter((k) => !isHumanoidBodyKey(k));
             const randomArch = archetypes[Math.floor(Math.random() * archetypes.length)] || DEFAULT_CREATURE_ARCHETYPE;
             applyArchetypeToActor(actor, randomArch);
           }

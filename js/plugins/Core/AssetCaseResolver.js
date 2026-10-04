@@ -36,11 +36,11 @@
  * is plain, and then every affected file fails to load. So when the flag is off
  * and only the "_" twin is on disk, the twin is requested and decrypted anyway.
  *
- * That check only ever turns encryption ON. It cannot turn it off, because in a
- * built game js/asset_decrypt.js patches fs.existsSync to answer true for the
- * plain name whenever the twin is present - so a plain file appearing to exist
- * proves nothing, and acting on it would strip the "_" off every request in a
- * properly encrypted build.
+ * The "_" twin is always looked for first. In a built game js/asset_decrypt.js
+ * patches fs.existsSync to answer true for the plain name whenever the twin is
+ * present - so a plain file appearing to exist proves nothing until the twin
+ * is known to be absent, and asking it first would strip the "_" off every
+ * request in a properly encrypted build.
  *
  * Finally, a sound that cannot be loaded no longer stops the game. Stock
  * AudioManager.checkErrors throws a LoadError for any errored buffer, which puts
@@ -177,12 +177,10 @@
     // true: only "<name>.ext_" is on disk. false: "<name>.ext" is on disk.
     // null: neither, so there is nothing to say.
     //
-    // This answer may only ever turn the engine's flag ON, never off. In a built
-    // game js/asset_decrypt.js patches fs.existsSync to answer true for the
-    // plain name whenever the "_" twin is there, so "the plain file exists" is
-    // not evidence that the bytes are unencrypted - it is the shim being
-    // helpful. Reading it as evidence strips the "_" off every request in an
-    // encrypted build and nothing loads at all.
+    // In a built game js/asset_decrypt.js patches fs.existsSync to answer true
+    // for the plain name whenever the "_" twin is there, so "the plain file
+    // exists" is only evidence that the bytes are unencrypted once the twin has
+    // been ruled out.
     const twins = Object.create(null);
 
     function isEncrypted(url) {
@@ -194,10 +192,17 @@
         const full = nodePath.join(gameRoot, rel);
         let answer = null;
         try {
-            if (fs.existsSync(full)) {
-                answer = false;
-            } else if (fs.existsSync(full + "_")) {
+            // The twin is asked about first: js/asset_decrypt.js does not
+            // patch existsSync for a "_" name, so that answer is the disk's,
+            // whereas the plain name reads as present whenever the twin is.
+            // Asking the plain name first called every encrypted asset plain,
+            // so its src went through the shim's shared blob url, which the
+            // engine then revoked on load and the next bitmap of that file
+            // failed with "Failed to load blob:...".
+            if (fs.existsSync(full + "_")) {
                 answer = true;
+            } else if (fs.existsSync(full)) {
+                answer = false;
             }
         } catch (e) {
             answer = null;
@@ -233,7 +238,9 @@
         if (!modAsset(this)) {
             this._url = resolve(this._url);
             const enc = isEncrypted(this._url);
-            this._encrypted = enc !== null ? enc : Utils.hasEncryptedImages();
+            // The disk may only turn encryption ON: a plain file "existing" can be
+            // the existsSync shim answering for its twin, so the flag stands.
+            this._encrypted = enc === true || Utils.hasEncryptedImages();
         }
         this._image = new Image();
         this._image.onload = this._onLoad.bind(this);
@@ -251,12 +258,17 @@
         }
     };
 
-    const bitmapOnLoad = Bitmap.prototype._onLoad;
+    // Only the blob _onXhrLoad made for this bitmap is revoked. The stock body
+    // revokes whatever src holds whenever the build is encrypted, and for a
+    // plain load that can be js/asset_decrypt.js's cached blob url for the
+    // file, shared by every later bitmap, <img> and CSS url() of it.
     Bitmap.prototype._onLoad = function() {
-        if (this._encrypted && !Utils.hasEncryptedImages()) {
+        if (this._encrypted) {
             URL.revokeObjectURL(this._image.src);
         }
-        bitmapOnLoad.call(this);
+        this._loadingState = "loaded";
+        this._createBaseTexture(this._image);
+        this._callLoadListeners();
     };
 
     // WebAudio appends the "_" of an encrypted build here, so correct the url
@@ -268,7 +280,8 @@
         }
         this._url = resolve(this._url);
         const enc = isEncrypted(this._url);
-        this._encrypted = enc !== null ? enc : Utils.hasEncryptedAudio();
+        // As for bitmaps: the disk may only turn encryption ON.
+        this._encrypted = enc === true || Utils.hasEncryptedAudio();
         return this._url + (this._encrypted ? "_" : "");
     };
 
