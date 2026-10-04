@@ -1,8 +1,20 @@
 0.7.10a
 
+Changed:
+ - quest log todo and done notes small, whiteboard in omega tower
+ - reworked legend tooltip into one opaque line with H first
+ - spike trap damages only the party leader for 25% of health
+
+Fixed:
+ - prosthetic menu and quest details buttons follow default style
+ - current system tab golden border different from other tabs
+ - downed characters in water no longer cut
+
+
 0.7.9a
 
 Fixed:
+ - allergies held at bay shown only for characters with allergies
  - stock tickers frozen and chart going over UI
  - specialization bragging while walking now happens once per few days
  - implant limit based on CON, genital implants excluded

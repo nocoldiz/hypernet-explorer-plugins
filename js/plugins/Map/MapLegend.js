@@ -1403,6 +1403,13 @@
     // says the rest is still there.
     _noticeHtml(notice, state) {
       const nFolded = state.noticeFolded === undefined ? !!state.folded : !!state.noticeFolded;
+      // Folded, the notice is one line: the chip first, then the title.
+      if (state.foldable && nFolded) {
+        const chip = state.foldPad || state.foldChip || FOLD_KEY_LABEL;
+        return '<div class="mlg-line">' +
+          `<span class="ui-chip mlg-chip">${escapeHtml(chip)}</span>` +
+          `<span class="mlg-title">${noticeHtml(notice.title, state.hasPad)}</span></div>`;
+      }
       const parts = [`<div class="mlg-title">${noticeHtml(notice.title, state.hasPad)}</div>`];
       if (!nFolded && notice.text) {
         // Bubba's reading of the place is signed with his name; the place's
@@ -1413,10 +1420,6 @@
         // written out after it on their first reading (see updateTyping).
         const words = revealHtml(noticeHtml(notice.text, state.hasPad), state.reveal);
         parts.push(`<div class="mlg-text">${speaker}${words}</div>`);
-      }
-      // Folded, the chip reads Info; open, there is no fold line at all.
-      if (state.foldable && nFolded) {
-        parts.push(this._foldHtml(T("MapLegend.infoHint"), state));
       }
       return parts.join("");
     }

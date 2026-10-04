@@ -3835,8 +3835,15 @@
         font-family: var(--font-ui, sans-serif);
         transition: color 0.12s;
       }
-      .gx-sc-tab:hover:not(.active) {
+      .gx-sc-tab:hover:not(.active),
+      .gx-sc-tab.cc-nav-focus:not(.active) {
         color: var(--border-focus-hover, #ffd700);
+      }
+      /* The shared nav ring is an outline that reads as a second, different
+         frame next to the active tab's; on the rail, focus is the gold label. */
+      .gx-sc-tab.cc-nav-focus {
+        outline: none;
+        border-radius: 6px 6px 0 0;
       }
       .gx-sc-tab.active {
         background: var(--bg-black-translucent-96, #000);
@@ -3980,25 +3987,38 @@
         cursor: pointer;
         margin: 4px 0;
       }
+      /* The backpack's button stamp (.inspect-btn in theme.css): the gold
+         frame on the dark page, bold UI face, and the hover that fills the
+         frame, which the pad's cursor wears too. Sized down for list rows. */
       .gx-sc-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 5px 10px;
-        font-size: 12px;
+        white-space: nowrap;
+        padding: 5px 12px;
+        font-size: var(--fs-body, 14px);
+        font-weight: bold;
         font-family: var(--font-ui, sans-serif);
         cursor: pointer;
         border-radius: 4px;
         user-select: none;
-        border: 1px solid var(--border-primary-hover-translucent-15, rgba(255, 255, 255, 0.15));
-        background: var(--bg-primary-hover-translucent-35, rgba(255, 255, 255, 0.06));
+        box-sizing: border-box;
+        border: 2px solid var(--text-primary-hover, #f3f4f6);
+        background: var(--bg-secondary-hover, #1f2536);
         color: var(--text-primary-hover, #f3f4f6);
-        transition: background 0.12s, border-color 0.12s, color 0.12s;
+        box-shadow: 0 3px 6px var(--shadow-primary-hover-translucent-5, rgba(0, 0, 0, 0.3));
+        transition: background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
       }
-      .gx-sc-btn:hover {
-        border-color: var(--border-focus-hover, #ffd700);
-        color: var(--border-focus-hover, #ffd700);
-        background: rgba(255, 215, 0, 0.08);
+      .gx-sc-btn:hover,
+      .gx-sc-btn.cc-nav-focus {
+        background: var(--chip-active-bg, #f3f4f6);
+        color: var(--chip-active-fg, #000);
+        box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5, rgba(0, 0, 0, 0.3));
+        outline: none;
+      }
+      .gx-sc-life {
+        color: var(--text-forest-green, #6fd089);
+        font-weight: bold;
       }
       .gx-sc-btn.stop {
         background: var(--bg-danger-medium-7, #e11d48);
@@ -4010,9 +4030,11 @@
         border-color: var(--gx-accent-bridge, #a880ff);
         color: var(--gx-accent-bridge, #a880ff);
       }
-      .gx-sc-btn.bridge:hover {
-        border-color: var(--border-focus-hover, #ffd700);
-        color: var(--border-focus-hover, #ffd700);
+      .gx-sc-btn.bridge:hover,
+      .gx-sc-btn.bridge.cc-nav-focus {
+        border-color: var(--gx-accent-bridge, #a880ff);
+        background: var(--gx-accent-bridge, #a880ff);
+        color: var(--chip-active-fg, #000);
       }
       .gx-sc-btn.bookmark-on {
         color: var(--border-focus-hover, #ffd700);
@@ -4794,6 +4816,12 @@
         `;
       });
 
+      // A living world says so in green: the ship is in the system, so the
+      // instruments do not need a sweep to read it.
+      const lifeTag = (body) => (planetHasLife(body)
+        ? ` · <span class="gx-sc-life">${T('Galaxy.shipControls.tabBiosignatures')}</span>`
+        : "");
+
       // Planets & Moons
       const planets = (currentSys.planets || []).slice().sort((a, b) => (a.orbitRadius || 0) - (b.orbitRadius || 0));
       if (planets.length > 0) {
@@ -4805,7 +4833,7 @@
             <div class="gx-sc-row depth-1">
               <div class="gx-sc-item-info">
                 <span class="gx-sc-item-name">${escHtml(p.name)}</span>
-                <span class="gx-sc-item-sub">${T('Galaxy.shipControls.planet')} · ${escHtml(String(p.type || "?").replace(/_/g, " "))}${auStr}</span>
+                <span class="gx-sc-item-sub">${T('Galaxy.shipControls.planet')} · ${escHtml(String(p.type || "?").replace(/_/g, " "))}${auStr}${lifeTag(p)}</span>
               </div>
               <div class="gx-sc-item-actions">
                 ${isHere ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>` : `
@@ -4823,7 +4851,7 @@
               <div class="gx-sc-row depth-2">
                 <div class="gx-sc-item-info">
                   <span class="gx-sc-item-name">${escHtml(m.name)}</span>
-                  <span class="gx-sc-item-sub">${T('Galaxy.shipControls.moon')} (${escHtml(p.name)}) · ${escHtml(String(m.type || "?").replace(/_/g, " "))}</span>
+                  <span class="gx-sc-item-sub">${T('Galaxy.shipControls.moon')} (${escHtml(p.name)}) · ${escHtml(String(m.type || "?").replace(/_/g, " "))}${lifeTag(m)}</span>
                 </div>
                 <div class="gx-sc-item-actions">
                   ${isMoonHere ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>` : `

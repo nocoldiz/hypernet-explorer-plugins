@@ -85,7 +85,8 @@
       const items = scene._activeListItems || [];
       if (items.length === 0) {
         const empty = page.kind === 'install_inventory'
-          ? T('Prosthetics.noBodyPartItemsInInventory') : T('Prosthetics.nothingHere');
+          ? T('Prosthetics.noBodyPartItemsInInventory')
+          : (page.kind === 'repair_part' ? T('Prosthetics.nothingToRepair') : T('Prosthetics.nothingHere'));
         return `<div class="ui-empty"><p class="ui-empty-text">${empty}</p></div>`;
       }
       return items.map((item, idx) => this.row(item, idx)).join("");
@@ -150,6 +151,11 @@
         meta = (item.statEffect && item.statBonus > 0)
           ? T('Prosthetics.loses', { p1: t.paramName(item.statEffect.param), p2: item.statBonus }) : "";
         value = item.vital ? T('Prosthetics.vitalBadge') : t.price(item.cost);
+      } else if (item.isRepairBodypart) {
+        meta = item.ruined
+          ? T('Prosthetics.destroyedBadge')
+          : T('Prosthetics.repairHp', { p1: item.currentHp, p2: item.maxHp });
+        value = t.price(item.cost);
       } else if (item.isReplaceSelectPart) {
         meta = item.vital
           ? T('Prosthetics.vitalBadge')

@@ -4958,6 +4958,11 @@
     transform: none;
     transition: none;
 }
+#kanban-quest-content .kb-card.kb-compact {
+    min-height: 0;
+    padding: 6px 8px;
+}
+#kanban-quest-content .kb-card.kb-compact .kb-quest-icon { transform: none; }
 #kanban-quest-content .kb-card.focused,
 #kanban-quest-content .kb-card:hover {
     transform: none;

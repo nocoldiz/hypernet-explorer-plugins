@@ -2393,3 +2393,69 @@ select option:hover {
 /* Section headers on the Empathize / wiki spreads read as gold in the tower:
    --text-text-alt-4 is plain white here, which made every heading shout. */
 .npc-sec-hdr { color: var(--text-gold-dark); }
+
+
+/* ==========================================================================
+   Quest log (KanbanQuestLog.js): the tower hangs a white magnetic board where
+   the archive keeps its cork. Aluminium frame, marker ink for the headings,
+   and every note held up by a round magnet instead of a pin. Every rule is
+   scoped under :root so it outranks theme.css, which loads after this file.
+   ========================================================================== */
+:root #kb-board-overlay:not(.kb-app-mode) {
+    background:
+        linear-gradient(115deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.55) 42%, rgba(255,255,255,0) 54%),
+        radial-gradient(ellipse at 30% 20%, #ffffff 0%, #f1f3f5 55%, #dfe3e7 100%);
+    background-size: auto;
+    border-color: #b9bfc6;
+    box-shadow: inset 0 0 0 2px #8d949c, inset 0 0 60px rgba(70,80,90,0.18);
+}
+:root #kb-board-overlay:not(.kb-app-mode)::before {
+    border-color: #6f767e;
+    box-shadow: inset 0 0 0 2px #e9ecef;
+}
+:root #kb-board-overlay:not(.kb-app-mode)::after {
+    background:
+        radial-gradient(ellipse at 72% 82%, rgba(40,60,120,0.05) 0%, rgba(0,0,0,0) 30%),
+        radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 60%, rgba(60,70,80,0.16) 100%);
+}
+:root #kb-board-overlay:not(.kb-app-mode) #kb-board-header {
+    color: #1d2b52;
+    text-shadow: none;
+    border-bottom: 3px solid rgba(29,43,82,0.55);
+}
+:root #kb-board-overlay:not(.kb-app-mode) #kb-columns { border-top: none; }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-col-divider {
+    flex-basis: 3px;
+    background: rgba(29,43,82,0.5);
+    box-shadow: none;
+    border-radius: 2px;
+}
+:root #kb-board-overlay:not(.kb-app-mode) .kb-col-header {
+    color: #1d2b52;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid #1d2b52;
+    border-radius: 0;
+    box-shadow: none;
+}
+:root #kb-board-overlay:not(.kb-app-mode) .kb-col-title { text-shadow: none; }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-col-count {
+    color: #a3222c;
+    background: transparent;
+    border: 2px solid #a3222c;
+    border-radius: 50%;
+    padding: 1px 8px;
+}
+:root #kb-board-overlay:not(.kb-app-mode) .kb-empty-col { color: #5b6470; text-shadow: none; }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-cards-wrap::-webkit-scrollbar-track { background: rgba(70,80,90,0.12); }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-cards-wrap::-webkit-scrollbar-thumb { background: #9aa1a9; border: 2px solid #6f767e; }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-card { box-shadow: 2px 4px 8px rgba(40,50,60,0.35); }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-card.focused,
+:root #kb-board-overlay:not(.kb-app-mode) .kb-card:hover { box-shadow: 4px 8px 16px rgba(40,50,60,0.4); }
+/* The pin becomes a flat round magnet in the note's own pin colour. */
+:root #kb-board-overlay:not(.kb-app-mode) .kb-pin {
+    width: 22px; height: 22px; margin-left: -11px; top: -8px;
+    background: radial-gradient(circle at 40% 35%, rgba(255,255,255,0.55) 0 18%, var(--pin, #b03030) 30% 70%, rgba(0,0,0,0.35) 100%);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.45), inset 0 -2px 0 rgba(0,0,0,0.25);
+}
+:root #kb-board-overlay:not(.kb-app-mode) .kb-card.kb-compact .kb-pin { top: -9px; }

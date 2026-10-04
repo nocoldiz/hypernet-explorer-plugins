@@ -661,6 +661,16 @@
     return CW.price("augment:" + key, base);
   }
 
+  // A repair is quoted on the part's share of the body and how much of it is
+  // missing; a part Blood and Oil destroyed where it stands costs double.
+  const REPAIR_MIN_FEE = 500; // 5€
+  function repairCost(partKey, part, actor) {
+    const missing = part.ruined || !(part.maxHp > 0)
+      ? 1 : Math.max(0, Math.min(1, 1 - (part.currentHp || 0) / part.maxHp));
+    const base = Math.round(inferHpPercent(part, actor) * 100 * missing * (part.ruined ? 2 : 1));
+    return chaosCost("repair:" + partKey, Math.max(REPAIR_MIN_FEE, base));
+  }
+
   let chaosAugmentWorld = null;
   function ensureChaosAugmentPrices() {
     const CW = window.ChaosWorld;
@@ -2062,7 +2072,7 @@
     this._selectedArchetypeKey = null;
     this._selectedPartKey = null;
     this._removalFee = 0;
-    this._viewState = 'party'; // 'party', 'command', 'install_archetype', 'install_part', 'remove_part', 'replace_part', 'replace_archetype', 'implant_select_part', 'implant_select_prosthetic', 'surgeon_select', 'socket_select'
+    this._viewState = 'party'; // 'party', 'command', 'install_archetype', 'install_part', 'remove_part', 'repair_part', 'replace_part', 'replace_archetype', 'implant_select_part', 'implant_select_prosthetic', 'surgeon_select', 'socket_select'
     this._activeListItems = [];
     this._notification = null;
     this._notificationTimeout = null;
@@ -2172,6 +2182,7 @@
       install_part: this.pageArchetypeParts,
       install_inventory: this.pageInventoryParts,
       remove_part: this.pageRemovable,
+      repair_part: this.pageRepairable,
       replace_part: this.pageReplaceable,
       replace_archetype: this.pageReplacements,
       socket_select: this.pageSockets,
@@ -2216,6 +2227,7 @@
           { cmd: 'install', icon: 189, label: T('Prosthetics.installBodypart') },
           { cmd: 'inventory', icon: 176, label: T('Prosthetics.installFromInventory') },
           { cmd: 'remove', icon: 196, label: T('Prosthetics.removeBodypart') },
+          { cmd: 'repair', icon: 72, label: T('Prosthetics.repairBodypart'), meta: T('Prosthetics.repairBodypartMeta') },
           { cmd: 'replace', icon: 180, label: T('Prosthetics.replaceBodypart') },
           { cmd: 'implant', icon: 128, label: T('Prosthetics.installImplant') },
           { cmd: 'plastic_surgery', icon: 84, label: T('Prosthetics.plasticSurgery'), meta: T('Prosthetics.plasticSurgeryMeta'), value: formatPriceInEuros(PLASTIC_SURGERY_COST) },
@@ -2344,6 +2356,32 @@
     return {
       title: T('Prosthetics.extractSystems'),
       brief: T('Prosthetics.chooseAnActiveLimbOrOrganToRemoveVitalOrgans')
+    };
+  };
+
+  // Every part still on the body that is short of full health, a part Blood and
+  // Oil destroyed where it stands included. Rest never mends that one; money does.
+  Scene_ProstheticShop.prototype.pageRepairable = function () {
+    const actor = this._selectedActor;
+    const HC = window.HealthCore;
+    if (actor && actor._bodyParts && HC && HC.partNeedsRepair) {
+      for (const partKey of Object.keys(actor._bodyParts)) {
+        const part = actor._bodyParts[partKey];
+        if (!HC.partNeedsRepair(part)) continue;
+        this._activeListItems.push({
+          isRepairBodypart: true,
+          partKey,
+          name: part.name || partKey,
+          currentHp: Math.max(0, part.currentHp || 0),
+          maxHp: part.maxHp || 0,
+          ruined: !!part.ruined,
+          cost: repairCost(partKey, part, actor)
+        });
+      }
+    }
+    return {
+      title: T('Prosthetics.repairSystems'),
+      brief: T('Prosthetics.repairBrief')
     };
   };
 
@@ -2545,6 +2583,13 @@
         actionLabel: T('Prosthetics.amputate'),
         actionSymbol: "remove"
       };
+    } else if (state === 'repair_part') {
+      model = {
+        title: T('Prosthetics.repairProtocol'),
+        desc: T('Prosthetics.repairDesc', { p1: item.name }),
+        actionLabel: T('Prosthetics.repair'),
+        actionSymbol: "repair"
+      };
     } else if (state === 'replace_archetype') {
       model = {
         title: T('Prosthetics.upgradeProtocol'),
@@ -2625,7 +2670,7 @@
     } else if (this._viewState === 'install_inventory') {
       this._viewState = this._fieldMode ? 'command' : 'install_archetype';
       this.refreshUIShopDOM();
-    } else if (this._viewState === 'remove_part') {
+    } else if (this._viewState === 'remove_part' || this._viewState === 'repair_part') {
       this._viewState = 'command';
       this.refreshUIShopDOM();
     } else if (this._viewState === 'replace_part') {
@@ -2778,6 +2823,9 @@
     } else if (cmd === 'remove') {
       this._viewState = 'remove_part';
       this.refreshUIShopDOM();
+    } else if (cmd === 'repair') {
+      this._viewState = 'repair_part';
+      this.refreshUIShopDOM();
     } else if (cmd === 'replace') {
       this._viewState = 'replace_part';
       this.refreshUIShopDOM();
@@ -2929,6 +2977,7 @@
   Scene_ProstheticShop.prototype.canPerformAction = function (action, item) {
     if (!item) return false;
     if (action === "remove" && item.vital) return false;
+    if (action === "repair" && !item.isRepairBodypart) return false;
     if (action === "remove_implant") return !item.isRemoveOption || item.canRemove !== false;
     if (action === "install_implant" && item.overCapacity) return false;
     if (item.blockedReason) return false;
@@ -3024,6 +3073,19 @@
       this.showClinicNotification(T('Prosthetics.limbAmputatedSuccessfully'));
 
       this._viewState = 'remove_part';
+      this.refreshUIShopDOM();
+
+    } else if (action === "repair") {
+      const HC = window.HealthCore;
+      if (!HC || !HC.repairBodyPart || !HC.repairBodyPart(actor, item.partKey)) {
+        SoundManager.playBuzzer();
+        return;
+      }
+      $gameParty.loseGold(this.priceOf(item.cost));
+      SoundManager.playShop();
+      this.showClinicNotification(T('Prosthetics.partRepairedSuccessfully'));
+
+      this._viewState = 'repair_part';
       this.refreshUIShopDOM();
 
     } else if (action === "replace") {

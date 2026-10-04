@@ -1913,8 +1913,10 @@
     }
     actor._statModifiers[paramId] += amount;
 
-    // Mark as applied
+    // Mark as applied, and remember how much, so a clinic repair lifts exactly
+    // what was charged (repairBodyPart).
     part.appliedStatEffect = true;
+    part._appliedStatAmount = amount;
 
     // Refresh actor to apply stat changes
     actor.refresh();
@@ -2066,6 +2068,7 @@
           const paramId = bodyPart.statEffect.param;
           actor._statModifiers[paramId] = (actor._statModifiers[paramId] || 0) + bodyPart.statEffect.amount;
           bodyPart.appliedStatEffect = true;
+          bodyPart._appliedStatAmount = bodyPart.statEffect.amount;
         }
         continue;
       }
@@ -2077,6 +2080,7 @@
       bodyPart.currentHp = bodyPart.maxHp;
       bodyPart.damaged = false;
       bodyPart.appliedStatEffect = false;
+      delete bodyPart._appliedStatAmount;
       bodyPart.ruined = false;
       bodyPart._cutOff = false;
       bodyPart._brokenNotCut = false;
@@ -2088,6 +2092,49 @@
 
     // Refresh actor to update stats
     actor.refresh();
+  }
+
+  // Does this part, still on the body, have anything for a clinic to mend?
+  function partNeedsRepair(part) {
+    return !!part && (!!part.ruined || !!part.damaged || part.currentHp < part.maxHp);
+  }
+
+  /**
+   * One part put back to full health by a clinic: the paid repair in the
+   * prosthetic shop. Unlike a night's sleep it reaches what Blood and Oil ruined
+   * where it stands, so a destroyed part still on the body is made whole and its
+   * penalty lifts. A part that came off is not here to repair: fitting a new one
+   * is what Install is for.
+   */
+  function repairBodyPart(actor, partKey) {
+    const part = actor && actor._bodyParts ? actor._bodyParts[partKey] : null;
+    if (!partNeedsRepair(part)) return false;
+
+    if (part.appliedStatEffect && part.statEffect && part.statEffect.param !== 0) {
+      const paramId = part.statEffect.param;
+      const owed = part._appliedStatAmount !== undefined
+        ? part._appliedStatAmount
+        : statEffectAmount(part.statEffect, false);
+      if (actor._statModifiers && actor._statModifiers[paramId]) {
+        actor._statModifiers[paramId] -= owed;
+        if (actor._statModifiers[paramId] === 0) delete actor._statModifiers[paramId];
+      }
+    }
+
+    part.currentHp = part.maxHp;
+    part.damaged = false;
+    part.appliedStatEffect = false;
+    delete part._appliedStatAmount;
+    part.ruined = false;
+    part._cutOff = false;
+    part._brokenNotCut = false;
+    if (actor._removedPartDebuffs) delete actor._removedPartDebuffs[partKey];
+    if (actor._severedParts) delete actor._severedParts[partKey];
+
+    // Whole again, so what it granted comes back with it.
+    ensureBodyPartSkills(actor);
+    actor.refresh();
+    return true;
   }
 
   // Apply damage to actor with limb damage system
@@ -3063,6 +3110,8 @@
   window.getEquipText = getEquipText; // Expose equipment translation helper
   window.HealthCore = window.HealthCore || {};
   window.HealthCore.restoreAllBodyParts = restoreAllBodyParts;
+  window.HealthCore.repairBodyPart = repairBodyPart;
+  window.HealthCore.partNeedsRepair = partNeedsRepair;
   // Multi-skill body-part helpers, exposed for other plugins (prosthetics,
   // creature creation, mimic, etc.) so they read part skills consistently.
   window.HealthCore.normalizeSkillIds = normalizeSkillIds;

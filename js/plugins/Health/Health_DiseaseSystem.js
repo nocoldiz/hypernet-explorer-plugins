@@ -3682,7 +3682,8 @@
       const hours = this.guardHoursOf(item);
       if (hours > 0) {
         this.guard(actor, hours);
-        this._toast('guard', actor, { hours }, 'good');
+        // Only somebody with an allergy is told it is held off.
+        if (this.allergiesOf(actor).length) this._toast('guard', actor, { hours }, 'good');
       }
       const hits = this.triggersFor(actor, item);
       if (!hits.length) return hours > 0 ? { guarded: true } : null;

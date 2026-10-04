@@ -4780,6 +4780,11 @@
         padding: 26px 13px 13px;
     }
 
+    .kb-card.kb-compact {
+        min-height: 0;
+        padding: 11px 11px 10px 46px;
+    }
+
     .kb-checklist {
         font-size: 1.198rem;
         line-height: 1.45;

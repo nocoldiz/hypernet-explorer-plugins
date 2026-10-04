@@ -243,8 +243,9 @@
       if (tabRow) {
         tabRow.innerHTML = tabs.map((label, idx) => {
           const isSel = idx === this._tab;
-          const isFocused = isSel && this._activeArea === "tabs";
-          return `<div class="aug-tab focusable augment-05" data-tab-idx="${idx}" style="background:${isSel ? 'var(--bg-tertiary-focus-translucent-45)' : 'var(--bg-card-translucent-5)'}; border:1.5px solid ${isFocused ? 'var(--text-secondary-active)' : 'var(--border-secondary-hover-translucent-15)'}; color:${isSel ? 'var(--text-secondary-active)' : 'var(--text-card-medium)'}">${escapeHtml(label)}</div>`;
+          // The tabs are the shared .inspect-btn stamp: the open one wears its
+          // selected state, so they read like every other button in the menus.
+          return `<div class="aug-tab focusable inspect-btn augment-05${isSel ? ' selected' : ''}" data-tab-idx="${idx}">${escapeHtml(label)}</div>`;
         }).join("");
         tabRow.querySelectorAll(".aug-tab").forEach((tab) => {
           tab.addEventListener("click", () => {
