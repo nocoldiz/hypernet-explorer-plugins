@@ -2158,12 +2158,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         scanTitleMusic().filter(t =>
             !TITLE_MUSIC_DEFAULTS.some(d => d.value === t.value)));
 
-    // First on the dial is Random: the title picks a different piece of the
-    // default repertoire every time it is shown, and it is what a fresh config opens on.
-    const TITLE_MUSIC_RANDOM = '__random__';   // i18n-ignore  sentinel value
-    TITLE_MUSIC.unshift({ name: null, value: TITLE_MUSIC_RANDOM });
-
-    const TITLE_MUSIC_DEFAULT = TITLE_MUSIC_RANDOM;
+    // A fresh config opens on the Ninth, first on the dial.
+    const TITLE_MUSIC_DEFAULT = TITLE_MUSIC_NINTH;
 
     Object.defineProperty(ConfigManager, 'titleMusicName', {
         get() {
@@ -2195,43 +2191,25 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         return fallback < 0 ? 0 : fallback;
     }
 
-    let _drawnTitleMusic = null;
-
     function titleMusicValue() {
-        const track = TITLE_MUSIC[titleMusicIndex()];
-        if (track.value !== TITLE_MUSIC_RANDOM) {
-            _drawnTitleMusic = null;
-            return track.value;
-        }
-        if (!_drawnTitleMusic) {
-            const pool = TITLE_MUSIC_DEFAULTS;
-            if (!pool.length) return TITLE_MUSIC_DEFAULTS[0].value;
-            _drawnTitleMusic = pool[Math.floor(Math.random() * pool.length)].value;
-        }
-        return _drawnTitleMusic;
-    }
-
-    // Random always reads Random: the piece it drew is never shown on the
-    // dial, so the pick stays the one the player made.
-    function titleMusicTrackName(track) {
-        if (track.value === TITLE_MUSIC_RANDOM) return T('Titlescreen.menu.musicRandom');
-        return track.name;
+        return TITLE_MUSIC[titleMusicIndex()].value;
     }
 
     function titleMusicLabel(overlay) {
-        const track = TITLE_MUSIC[titleMusicIndex()];
-        const raw = titleMusicTrackName(track);
+        const raw = TITLE_MUSIC[titleMusicIndex()].name;
         return overlay ? raw.toUpperCase() : raw;
     }
 
     // The title BGM is whichever of the three is currently picked, so the choice
     // is heard the moment it is made and again on every return to the title.
-    Scene_Title.prototype.playTitleBgm = function () {
+    // A pick made on the dial plays from the top; only arriving at the title
+    // drops in on one of the piece's cues.
+    Scene_Title.prototype.playTitleBgm = function (fromTop) {
         const name = titleMusicValue();
         AudioManager.playBgm({
             name,
             volume: 55, pitch: 100, pan: 0
-        }, titleMusicStart(name));
+        }, fromTop ? 0 : titleMusicStart(name));
         AudioManager.stopBgs();
         AudioManager.stopMe();
     };
@@ -2240,7 +2218,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         const next = (titleMusicIndex() + 1) % TITLE_MUSIC.length;
         ConfigManager.titleMusicName = TITLE_MUSIC[next].value;
         ConfigManager.save();
-        this.playTitleBgm();
+        this.playTitleBgm(true);
         if (this._commandWindow) {
             const index = this._commandWindow.index();
             this._commandWindow.refresh();
@@ -6630,7 +6608,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         if (!this._musicSwitchLabel) return;
         this._musicSwitchLabel.textContent =
             T('Titlescreen.music.label') +
-            titleMusicTrackName(TITLE_MUSIC[titleMusicIndex()]).toUpperCase();
+            TITLE_MUSIC[titleMusicIndex()].name.toUpperCase();
     };
 
     Scene_Title.prototype.cycleTitleMusic = function (dir) {
@@ -6638,7 +6616,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         const next = ((titleMusicIndex() + (dir || 1)) % n + n) % n;
         ConfigManager.titleMusicName = TITLE_MUSIC[next].value;
         ConfigManager.save();
-        this.playTitleBgm();
+        this.playTitleBgm(true);
         this.refreshMusicSwitchLabel();
         this.layoutMusicSwitchButton();
         this.layoutDisclaimerBox();

@@ -872,6 +872,22 @@
     return Scene_CharacterCreation.isCreatureActor(actor);
   }
 
+  // Story mode's Em is drawn as her own dossier model (window.ActorModel3D),
+  // not as a bust or a sculpted body. Null for everybody else, and for a model
+  // file that could not be read, so the bust stands in again.
+  function storyModeModelPath(actor) {
+    const CP = window.CharacterPresets;
+    if (!actor || !CP || !CP.isStoryModeEm || !CP.isStoryModeEm(actor)) return null;
+    let path = CP.getActorPresetModel ? CP.getActorPresetModel(actor) : null;
+    if (!path && CP.getCharacterPresets && CP.getPresetModel) {
+      const em = CP.getCharacterPresets().find((p) => p && String(p.name || "").toLowerCase() === "em"); // i18n-ignore: preset key
+      path = CP.getPresetModel(em);
+    }
+    const AM = window.ActorModel3D;
+    if (!path || typeof THREE === "undefined" || !AM || !AM.modelAvailable(path)) return null;
+    return path;
+  }
+
   // A person asked to be drawn as a model gets one built off the body they
   // already have (plain Humanoid, or Humanoid spliced with a second half),
   // the same way a creature's is built off its archetypes.
@@ -5808,6 +5824,11 @@
     _syncCC3DPortrait() {
       const wrap = this._dndContainer && this._dndContainer.querySelector(".cc3d-live-portrait");
       const actor = wrap ? Scene_CharacterCreation.getCurrentActor() : null;
+      const dossierModel = storyModeModelPath(actor);
+      if (wrap && dossierModel) {
+        this._showCC3DPortrait(wrap, { kind: "glb", path: dossierModel });
+        return;
+      }
       // A creature that has never been taken into the sculptor has no saved
       // config, and asking for one answered null: the frame then stood empty
       // and the sidebar showed no body at all. The archetypes it already
@@ -5828,8 +5849,13 @@
         cfg = M3D.configFromArchetypes(keys.length ? keys : [fallbackKey]);
       }
       if (!wrap || !actor || !cfg) { this._destroyCC3DPortrait(); return; }
-      const info = { kind: "custom", cfg: cfg, actorId: actor.actorId() };
-      const key = window.ActorModel3D ? window.ActorModel3D.keyFor(info) : JSON.stringify(cfg);
+      this._showCC3DPortrait(wrap, { kind: "custom", cfg: cfg, actorId: actor.actorId() });
+    }
+
+    // Keeps the canvas showing `info` in `wrap`, rebuilding it only when the
+    // subject changed.
+    _showCC3DPortrait(wrap, info) {
+      const key = window.ActorModel3D ? window.ActorModel3D.keyFor(info) : JSON.stringify(info);
       if (this._ccPortrait3D && this._ccPortrait3D.key === key && !this._ccPortrait3D.disposed) {
         if (this._ccPortrait3D.canvas.parentNode !== wrap) wrap.appendChild(this._ccPortrait3D.canvas);
         const fallback = wrap.querySelector(".cc3d-live-portrait-fallback");
@@ -5891,9 +5917,18 @@
       if (fallback) fallback.style.display = "none";
       wrap.classList.remove("empty");
 
+      // A dossier model is a rigged figure: it is shown whole, standing in its
+      // idle loop with its hair and skirt swinging, where the status sheet
+      // only frames its head and chest.
+      const live = info.kind === "glb";
       window.ActorModel3D.build(info).then((battler) => {
         if (state.disposed || !battler || !battler.model) return;
-        try { battler.update(1 / 60); } catch (e) {}
+        if (live) {
+          battler.portraitCrop = 0.98;
+          if (battler.rig && battler.rig.reset) battler.rig.reset();
+        } else {
+          try { battler.update(1 / 60); } catch (e) {}
+        }
         const fit = window.ActorModel3D.framing(battler, camera, 1.25);
         if (!fit) return;
         const holder = new THREE.Group();
@@ -5901,6 +5936,10 @@
         holder.add(battler.model);
         if (window.PSXShader) window.PSXShader.applyToObject(battler.model);
         pivot.add(holder);
+        // Settled into the idle pose where it stands, so the first frame is
+        // neither the export's T-pose easing down nor the hair whipping after
+        // the move into the frame.
+        if (live) for (let i = 0; i < 40; i++) { try { battler.update(1 / 30); } catch (e) {} }
         camera.position.set(0, 0, fit.distance);
         camera.lookAt(0, 0, 0);
         state.model = battler;
@@ -5912,10 +5951,12 @@
         state.rafId = requestAnimationFrame(animate);
         state.frameAcc += Math.min(state.clock.getDelta(), 0.05);
         if (state.frameAcc < FRAME) return;
+        const dt = state.frameAcc;
         state.frameAcc = 0;
         // A slow turntable, not a held pose: this is a preview card the player
         // is choosing a body from, not a portrait framed once and left alone.
         pivot.rotation.y += 0.01;
+        if (live && state.model) { try { state.model.update(dt); } catch (e) {} }
         if (window.PSXShader) window.PSXShader.render(renderer, scene, camera);
         else renderer.render(scene, camera);
       };
@@ -6455,6 +6496,7 @@
     applySecondaryArchetypeToActor,
     portraitIsModel,
     setPortraitStyle,
+    storyModeModelPath,
     personalityCatalog,
     presetSkins,
     presetSkinLabel,

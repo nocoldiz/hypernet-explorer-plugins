@@ -1527,8 +1527,15 @@
             // to a new place) still paints on the spot.
             const motion = this.motionKey();
             const moved = motion !== this._paintedMotion;
+            //
+            // A headlight beam is the exception: a soft glow hides a frame of
+            // lag, a long hard-edged cone does not, and at 30Hz every beam on
+            // the road visibly snapped along behind its car. While one was
+            // drawn last paint, motion repaints on every presented frame.
             if (!resized && !this._mustPaint && window.FrameBudget) {
-                if (moved) {
+                if (moved && this._beamsDrawn > 0) {
+                    // falls through to the paint
+                } else if (moved) {
                     if (!window.FrameBudget.every('dynLightingMotion', LIGHTING_MOTION_HZ)) return;
                 } else if (!window.FrameBudget.every('dynLighting', LIGHTING_REPAINT_HZ)) {
                     return;
@@ -1640,6 +1647,7 @@
             const cw = this._canvasWidth;
             const ch = this._canvasHeight;
             const s = this._renderScale;
+            this._beamsDrawn = 0;
 
             if (cw <= 0 || ch <= 0) return;
 
@@ -1754,6 +1762,10 @@
                 for (let i = 0; i < traffic.length; i++) {
                     const car = traffic[i];
                     if (!car || !car._isRoadCar || car._erased) continue;
+                    // RoadCarAI hides a pooled car by mode + opacity 0, not by
+                    // erasing it: only a car out driving carries its beam.
+                    if (car._carMode !== undefined && car._carMode !== 'driving') continue;
+                    if (typeof car.opacity === 'function' && car.opacity() <= 0) continue;
                     if (typeof car.isTransparent === 'function' && car.isTransparent()) continue;
                     const cx2 = car.screenX() * s;
                     const cy2 = (car.screenY() - th / 2) * s;
@@ -2034,7 +2046,9 @@
             const ax = character.screenX();
             const ay = character.screenY();
             const midX = (box.left + box.right) / 2;
-            const lampY = box.top + (box.bottom - box.top) * 0.72;
+            // Side on, the beam is centred on the hull's height so the cone
+            // spreads evenly above and below the body.
+            const lampY = box.top + (box.bottom - box.top) * 0.5;
             let dx = midX;
             let dy = lampY;
             switch (character.direction()) {
@@ -2054,6 +2068,7 @@
             const angles = { 2: Math.PI / 2, 4: Math.PI, 6: 0, 8: -Math.PI / 2 };
             const angle = angles[direction];
             if (angle === undefined) return;
+            this._beamsDrawn = (this._beamsDrawn || 0) + 1;
 
             const len = (single ? 190 : 300) * s;
             const nearHalf = (single ? 6 : 22) * s;

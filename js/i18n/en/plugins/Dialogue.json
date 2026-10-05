@@ -15,13 +15,13 @@
     "yes": "Walk me through it",
     "no": "I will work it out",
     "normal": [
-      "Bubba: One action each per round, in order of speed. Pick it off the list and press [CONTINUE].",
-      "Bubba: Attack swings whatever you are holding at whoever you point it at. It never greys out: it is the one thing you are never left without.",
-      "Bubba: Defense braces you and cuts what lands on you for the round. Carrying a gun, that row is Reload instead: it fills the magazine and covers you all the same.",
-      "Bubba: Skills is the loadout you packed, each row priced in MP or AP. Actions is the plain kit you carry whatever you forget, and four things a body does besides.",
-      "Bubba: Under Actions, Aim names a limb before the swing and costs you no turn, and Wrestle takes hold of the thing with your bare hands.",
-      "Bubba: Talk is under there too, and some of them do listen. Item is the backpack, and Throw, beside Talk, is the same bag hurled at somebody's head.",
-      "Bubba: Run always works, darlin'. No shame in it either: a corpse learns nothing."
+      "Bubba: One action each per round, fastest first. Pick a row and press [CONTINUE].",
+      "Bubba: Attack hits with whatever you hold. Skills is your packed loadout, paid in MP or AP.",
+      "Bubba: Reload fills the magazine and covers you for the round. Holding your vector gun, that row is Switch instead.",
+      "Bubba: That gun answers to you alone, darlin'. Its modes and its form are set from the main menu.",
+      "Bubba: Switch folds it into that form and back again, as often as you like, and costs no turn.",
+      "Bubba: Backpack uses what you carry. Actions holds Aim, Throw and Wrestle, plus the kit you never lose.",
+      "Bubba: Talk tries words first, some of them listen. Run always works: a corpse learns nothing."
     ],
     "map": [
       "Bubba: This one plays out where we are standing, so the map is the arena. Still one action each per round, in order of speed.",

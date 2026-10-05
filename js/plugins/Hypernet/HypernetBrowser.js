@@ -646,6 +646,95 @@
         },
     };
 
+    // ── Browsing teaches ────────────────────────────────────────────────────
+    // A page the party actually stays on for a few seconds pays a few Knowledge
+    // points, once per page for the whole save: the log is never trimmed, or a
+    // forgotten page would be KP that could be farmed back. A page clicked
+    // through on the way somewhere else pays nothing, which is what the dwell is
+    // for. The browser's own about: pages and a 404 teach nothing.
+    //
+    // What was earned is not announced page by page, the desktop would drown in
+    // toasts; it is added up and told once, when the deck is put away.
+    const Study = {
+        DWELL_MS: 8000,
+        KP_MIN: 1,
+        KP_MAX: 3,
+        session: 0,
+        timer: null,
+
+        keyOf(address) {
+            return Addr.normalize(address).toLowerCase();
+        },
+
+        eligible(address) {
+            if (!address || address === 'about:blank') return false;
+            return !Addr.isInternal(address);
+        },
+
+        log() {
+            if (typeof $gameSystem === 'undefined' || !$gameSystem) return null;
+            return ($gameSystem._webKnowledgeLog = $gameSystem._webKnowledgeLog || {});
+        },
+
+        paid(address) {
+            const log = this.log();
+            return !!(log && log[this.keyOf(address)]);
+        },
+
+        // Every page is worth its own fixed amount inside the range, rolled off
+        // its address, so the same site never pays two different sums.
+        worth(address) {
+            const key = this.keyOf(address);
+            let h = 2166136261;
+            for (let i = 0; i < key.length; i++) h = Math.imul(h ^ key.charCodeAt(i), 16777619);
+            return this.KP_MIN + ((h >>> 0) % (this.KP_MAX - this.KP_MIN + 1));
+        },
+
+        // The browser landed on a page: start counting. Landing anywhere else
+        // first, or closing the browser, stops the count.
+        begin(browser, address) {
+            this.cancel();
+            if (!this.eligible(address) || this.paid(address)) return;
+            this.timer = setTimeout(() => {
+                this.timer = null;
+                if (!browser || browser._disposed) return;
+                const tab = browser.tab();
+                if (!tab || tab.address !== address) return;
+                this.pay(address);
+            }, this.DWELL_MS);
+        },
+
+        cancel() {
+            if (this.timer) { clearTimeout(this.timer); this.timer = null; }
+        },
+
+        // Returns the KP paid, 0 for a page already read.
+        pay(address) {
+            if (!this.eligible(address)) return 0;
+            if (typeof $gameSystem === 'undefined' || !$gameSystem || typeof $gameSystem.addKnowledge !== 'function') return 0;
+            const log = this.log();
+            const key = this.keyOf(address);
+            if (log[key]) return 0;
+            log[key] = true;
+            const kp = this.worth(address);
+            $gameSystem.addKnowledge(kp);
+            this.session += kp;
+            return kp;
+        },
+
+        // The deck is put away: tell what this sitting taught, then start over.
+        settle() {
+            this.cancel();
+            const total = this.session;
+            this.session = 0;
+            if (!total) return 0;
+            try {
+                if (window.ParchmentToast) window.ParchmentToast.reward({ knowledge: total, title: t('study.toastTitle') });
+            } catch (e) { /* the KP is paid whether or not it is announced */ }
+            return total;
+        }
+    };
+
     // ── Hexapedia: the party's own articles ─────────────────────────────────
     // A character who reaches level 15 is somebody the world has heard of, and
     // the encyclopedia writes them up: name, class, level, their portrait and
@@ -1332,6 +1421,7 @@
         document.removeEventListener('keydown', this._onKey, true);
         if (this._alive) clearInterval(this._alive);
         if (this.loadTimer) clearInterval(this.loadTimer);
+        Study.cancel();
         if (instance === this) instance = null;
     };
 
@@ -1553,6 +1643,7 @@
             }
         }
         this.updateNavButtons();
+        Study.begin(this, tab.address);
     };
 
     // --- navigation ---------------------------------------------------------
@@ -1869,6 +1960,7 @@
     Browser.prototype.recordVisit = function (address, title, doc) {
         if (!address || address === 'about:blank') return;
         try { Learn.read(address, title, doc || null); } catch (e) { /* reading never breaks a page */ }
+        Study.begin(this, address);
         const list = Store.history();
         const now = Date.now();
         const found = list.findIndex((h) => h.address === address);
@@ -3300,6 +3392,30 @@
             return null;
         }
     };
+
+    // Browsing pays KP for pages stayed on; the sum is announced when the deck
+    // is put away. Published for the tests and for anything that wants to know.
+    window.HypernetStudy = {
+        dwellMs: () => Study.DWELL_MS,
+        worth: (address) => Study.worth(address),
+        paid: (address) => Study.paid(address),
+        pay: (address) => Study.pay(address),
+        begin: (browser, address) => Study.begin(browser, address),
+        session: () => Study.session,
+        settle: () => Study.settle()
+    };
+
+    // Leaving the OS scene is the deck being closed, however it was left.
+    // The count is stopped before the windows go, so a page left open to the
+    // last second is not paid after the toast has already been drawn.
+    if (window.Scene_HypernetOS) {
+        const _osTerminate = window.Scene_HypernetOS.prototype.terminate;
+        window.Scene_HypernetOS.prototype.terminate = function () {
+            Study.cancel();
+            _osTerminate.apply(this, arguments);
+            Study.settle();
+        };
+    }
 
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({

@@ -4394,34 +4394,6 @@
     "theme": "Underworld",
     "pitch": 82
   },
-  "Varlenian/!$Librarian2": {
-    "varlenian": true,
-    "npc": true,
-    "animal": false,
-    "creature": false,
-    "zombie": false,
-    "aliens": false,
-    "magical": false,
-    "busts": [
-      "Librarian"
-    ],
-    "beta": false,
-    "animations": false,
-    "Archetype": "Humanoid",
-    "SecondaryArchetype": "",
-    "Gender": 0,
-    "chars": [
-      "L"
-    ],
-    "color": "golden",
-    "classes": [
-      39
-    ],
-    "markovDB": "medieval",
-    "source": "Fantasy_Characters2#4",
-    "theme": "Urban",
-    "pitch": 82
-  },
   "Varlenian/!$Fantasy_Characters27": {
     "varlenian": true,
     "npc": true,
@@ -4953,34 +4925,6 @@
     "source": "Fantasy_Characters4#7",
     "theme": "Nobility",
     "pitch": 91
-  },
-  "Varlenian/!$Wrestler1": {
-    "varlenian": true,
-    "npc": true,
-    "animal": false,
-    "creature": false,
-    "zombie": false,
-    "aliens": false,
-    "magical": false,
-    "busts": [
-      "Wrestler"
-    ],
-    "beta": false,
-    "animations": false,
-    "Archetype": "Humanoid",
-    "SecondaryArchetype": "",
-    "Gender": 0,
-    "chars": [
-      "W"
-    ],
-    "color": "golden",
-    "classes": [
-      5
-    ],
-    "markovDB": "medieval",
-    "source": "Fantasy_Character_Base#0",
-    "theme": "Urban",
-    "pitch": 77
   },
   "Varlenian/!$Fantasy_Character_Base2": {
     "varlenian": false,

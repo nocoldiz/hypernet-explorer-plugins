@@ -505,6 +505,9 @@
     "zone": "Zona:",
     "close": "OK"
   },
+  "study": {
+    "toastTitle": "Navigazione Hypernet"
+  },
   "hexapedia": {
     "appName": "Hexapedia",
     "tooltip": "La libera enciclopedia del sapere post-Compressione",

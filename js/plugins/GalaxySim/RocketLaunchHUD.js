@@ -97,6 +97,7 @@
       this._drawChart(st, P);
       this._drawHints(st, P);
       this._drawSkip(st, P);
+      this._drawManual(st, P);
       if (b._baseTexture && b._baseTexture.update) b._baseTexture.update();
     }
 
@@ -189,6 +190,14 @@
       }
 
       row(t("hud.plates", { n: st.plates }), t("hud.stages", { n: this.profile.stages }), y + 54, P.dim, P.dim);
+
+      // The throttle, flown by hand only: the autopilot's is not the
+      // player's business.
+      if (st.manual) {
+        const thr = clamp01(st.throttle == null ? 1 : st.throttle);
+        HUD.text(b, t("hud.throttle"), x + 4, y + 64, 44, "left", P.dim, 8);
+        HUD.bar(b, x + 50, y + 66, w - 54, 6, thr, { seg: 2, gap: 1, colorAt: () => P.amber });
+      }
 
       // Hull integrity. The bar runs green to red and the number is never
       // allowed to read zero, because it never is zero.
@@ -361,12 +370,32 @@
       return { x: this.w - 52, y: this.h - 16, w: 46, h: 13 };
     }
 
+    // THE MANUAL SWITCH, beside the skip button. Lit while the round is flown
+    // by hand, which is a state the player has to be able to see.
+    manualRect() {
+      return { x: this.w - 100, y: this.h - 16, w: 46, h: 13 };
+    }
+
     // Screen pixels in, true when they are on the button.
-    hitSkip(px, py) {
-      const r = this.skipRect();
+    _hitRect(r, px, py) {
       const sx = px / (Graphics.width / this.w);
       const sy = py / (Graphics.height / this.h);
       return sx >= r.x && sx <= r.x + r.w && sy >= r.y && sy <= r.y + r.h;
+    }
+
+    hitSkip(px, py) { return this._hitRect(this.skipRect(), px, py); }
+
+    hitManual(px, py) { return this._hitRect(this.manualRect(), px, py); }
+
+    _drawManual(st, P) {
+      if (!st.manualBtn) return;
+      const b = this.bmp;
+      const r = this.manualRect();
+      const on = !!st.manual;
+      const hot = !!st.manualHot;
+      const fill = on ? (hot ? "#6a4a12" : "#3a2a0c") : (hot ? "#1d3a52" : "#0a1220");
+      HUD.panel(b, r.x, r.y, r.w, r.h, { fill: fill, dither: !hot && !on });
+      HUD.text(b, t("hud.manual"), r.x + 2, r.y + 2, r.w - 4, "center", on ? P.amber : (hot ? P.ink : P.dim), 8);
     }
 
     _drawSkip(st, P) {

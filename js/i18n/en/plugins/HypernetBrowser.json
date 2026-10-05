@@ -505,6 +505,9 @@
     "zone": "Zone:",
     "close": "OK"
   },
+  "study": {
+    "toastTitle": "Hypernet browsing"
+  },
   "hexapedia": {
     "appName": "Hexapedia",
     "tooltip": "The free encyclopedia of post-Squishing knowledge",

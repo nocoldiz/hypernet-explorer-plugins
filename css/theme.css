@@ -37523,9 +37523,10 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #map-legend.mlg-folded.mlg-shown { opacity: 1; }
 #map-legend.mlg-folded.mlg-behind.mlg-shown { opacity: 0.16; }
 
-/* Read out on the dialogue stage, the folded notice stands over the head of
-   the portrait speaking on the right, centred on it, instead of in the corner
-   under its face. The plugin measures the head (--mlg-bust-cx/-bottom). */
+/* Folded, the notice stands over a head, centred on it: the portrait speaking
+   on the right while Bubba reads it out, his sprite on the map otherwise. It
+   goes back to the corner only while neither is on the screen. The plugin
+   measures the head (--mlg-bust-cx/-bottom). */
 #map-legend.mlg-folded.mlg-over-bust {
     left: var(--mlg-bust-cx, 50%);
     right: auto;
@@ -37548,16 +37549,17 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     text-overflow: ellipsis;
 }
 
-/* The controls checklist: its own window down the left edge, grown up from the
-   floor so the party HUD keeps the top left corner to itself. */
+/* The controls checklist: its own window up the right edge, grown up from the
+   floor and lifted over the notice while that stands in the corner too
+   (--mlg-ctl-lift), so the party HUD keeps the top left corner to itself. */
 /* Compact with it: the checklist is a long list and it stands over the map, so
    it is written a size down and a line tighter than the notice beside it. */
 #map-legend-controls {
-    right: auto;
-    left: var(--mlg-left, 16px);
+    left: auto;
+    right: var(--mlg-right, 16px);
     top: auto;
-    bottom: var(--mlg-bottom, 16px);
-    transform-origin: 0 100%;
+    bottom: calc(var(--mlg-bottom, 16px) + var(--mlg-ctl-lift, 0px));
+    transform-origin: 100% 100%;
     width: auto;
     padding: var(--sp-2) var(--sp-3);
     min-width: 196px;
@@ -37606,7 +37608,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 #map-legend-controls.mlg-folded .mlg-fold {
     margin-top: 0;
-    justify-content: flex-start;
+    justify-content: flex-end;
     gap: var(--sp-1);
 }
 

@@ -5,7 +5,8 @@
  *
  * @help MapLegend.js
  *
- * The one sheet of paper the map screen pins in its bottom right corner. It used
+ * The one sheet of paper the map screen pins in its bottom right corner.
+ * The controls list stands on the right too, stacked over the notice. It used
  * to live inside CharacterCreation.js as a black Window_Base panel listing the
  * story mode's controls; it is its own plugin now and it is drawn as
  * parchment. It carries two things: the notices, and the controls list.
@@ -29,8 +30,9 @@
  * no sheet and no fold key: H is the help menu again.
  *
  * The notices beside it are not a setting: a map's tips are never said on
- * their own. The sheet shows their title in the bottom right corner with the
- * H chip before it, and every press of H (L2) on the zone says the notice in
+ * their own. The sheet shows their title over the party leader's head with the
+ * H chip before it (in the bottom right corner only while the leader is off the
+ * screen), and every press of H (L2) on the zone says the notice in
  * the ordinary dialogue box with Bubba's bust on the right and no Em opposite
  * him, letter by letter and voiced. No option, settings page or Bubba entry turns them off.
  * Without DialogueSystem the sheet writes them out itself: the very first time
@@ -747,8 +749,9 @@
   // With DialogueSystem loaded a notice is not written out on the sheet at
   // all: it is said in the ordinary message box, Bubba's bust on the right and
   // nobody stood opposite him, so the letters, the blips and the box are the
-  // dialogue system's own. The sheet keeps the notice folded to its title in
-  // the bottom right corner, the H chip before it, the sign that there is
+  // dialogue system's own. The sheet keeps the notice folded to its title over
+  // Bubba's sprite on the map (the bottom right corner only when he is off the
+  // screen), the H chip before it, the sign that there is
   // something to read here. Nothing is said on arrival: only the fold key
   // (H, L2 on a pad) says it, every time it is pressed. Without
   // DialogueSystem the sheet falls back to its own reading above.
@@ -1266,10 +1269,10 @@
   // The rules themselves live in css/theme.css under "The map legend"; nothing
   // here builds a stylesheet at runtime.
 
-  // Two panels, not one sheet: what the place says stands in the bottom right
-  // corner where the party reads it, and the controls list is its own
-  // window down the left edge, which is where a list that long can stand
-  // without covering the map the notice is about.
+  // Two panels, not one sheet: what the place says stands over the leader's
+  // head (or in the bottom right corner), and the controls list is its own
+  // window up the right edge, stacked over the notice whenever the notice is
+  // down in that corner too.
   const SHEET_ID = "map-legend";
   const CONTROLS_ID = "map-legend-controls";
   const SHEET_WIDTH = 384;   // game pixels, the widest the notice is drawn
@@ -1505,22 +1508,23 @@
     // Stepping back under a portrait: see bustOnScreen above. A notice stood
     // over the speaker's head has nothing to step back from.
     setBehindBusts(behind) {
-      const over = !!(this._el && this._el.classList.contains("mlg-over-bust"));
+      const over = !!this._overSpeaker;
       if (this._el) this._el.classList.toggle("mlg-behind", !!behind && !over);
       if (this._ctl) this._ctl.classList.toggle("mlg-behind", !!behind);
     }
 
-    // The folded notice stands over the head of the portrait speaking on the
-    // right (Bubba reading it out) instead of in the corner under his face.
-    // `bounds` is BustManager.speakerBounds(), or null to go back to the corner.
-    // Measuring the canvas forces a layout, and the bust stands still for the
-    // whole time it speaks, so the head is measured again only when it has
-    // moved, the panel was rebuilt or the window resized; every other frame
-    // is one string compare.
-    placeOverBust(bounds) {
+    // The folded notice stands over a head instead of in the corner: the
+    // portrait speaking on the right (Bubba reading it out) while there is one,
+    // the leader's sprite on the map otherwise. `bounds` is in game pixels
+    // ({ x, top, width }), or null to go back to the corner; `speaker` says it
+    // is a portrait. Measuring the canvas forces a layout, so the head is
+    // measured again only when it has moved, the panel was rebuilt or the
+    // window resized; every other frame is one string compare.
+    placeOverHead(bounds, speaker) {
       const el = this._el;
       if (!el) return;
-      const key = bounds ? bounds.x + "," + bounds.top + "," + bounds.width : "";
+      this._overSpeaker = !!(bounds && speaker);
+      const key = bounds ? Math.round(bounds.x) + "," + Math.round(bounds.top) + "," + Math.round(bounds.width) : "";
       if (key === this._bustKey && el === this._bustEl && !this._bustDirty) return;
       const m = bounds ? canvasMetrics() : null;
       el.classList.toggle("mlg-over-bust", !!m);
@@ -1538,6 +1542,30 @@
       el.style.setProperty("--mlg-bust-bottom", Math.round(window.innerHeight - top + BUST_GAP * m.sy) + "px");
     }
 
+    // The list stands in the bottom right corner as well, so while the notice
+    // is down there with it the list is lifted over it by the notice's own
+    // height. Measured only when the notice was rebuilt, moved between the
+    // corner and a head, or the panels were positioned again.
+    stackControls() {
+      const ctl = this._ctl;
+      if (!ctl) return;
+      const el = this._el;
+      const cornered = !!(el && !el.classList.contains("mlg-away") && !el.classList.contains("mlg-over-bust"));
+      const key = cornered ? this._signature + "" + (this._positionStamp || 0) : "";
+      if (key === this._stackKey && ctl === this._stackEl) return;
+      this._stackKey = key;
+      this._stackEl = ctl;
+      let lift = 0;
+      if (cornered && typeof el.getBoundingClientRect === "function") {
+        const h = el.getBoundingClientRect().height || 0;
+        const m = canvasMetrics();
+        if (h) lift = Math.round(h + BAR_GAP * (m ? m.sy : 1));
+      }
+      if (ctl.style && typeof ctl.style.setProperty === "function") {
+        ctl.style.setProperty("--mlg-ctl-lift", lift + "px");
+      }
+    }
+
     // The notice is pinned by its bottom right corner, as wide as the room
     // beside the quick bar allows; the list stays pinned by its left edge.
     // Where the canvas actually sits on the page is measured, not styled, so
@@ -1550,9 +1578,10 @@
       const m = canvasMetrics();
       if (!m) return;
       this._needsPosition = false;
-      // The notice stands in the bottom right corner, the list off the left
-      // edge, both grown up from the floor: the party HUD owns the top left
-      // corner and the toasts the top right one.
+      this._positionStamp = (this._positionStamp || 0) + 1;
+      // The notice and the list both stand in the bottom right corner, grown up
+      // from the floor: the party HUD owns the top left corner and the toasts
+      // the top right one.
       const width = noticeWidth(m);
       if (this._el) this._el.style.setProperty("--mlg-width", width + "px");
       for (const el of [this._el, this._ctl]) {
@@ -1587,6 +1616,28 @@
     if (!mgr || typeof mgr.speakerBounds !== "function") return null;
     const bounds = mgr.speakerBounds();
     return bounds && bounds.side === "right" ? bounds : null;
+  }
+
+  // The leader's sprite on the map, in game pixels, while all of it that
+  // matters is on the screen: the head with room above it for the title line,
+  // the middle of the body between the side edges. Null when the sprite is
+  // hidden, not drawn, or scrolled off, and the folded notice goes back to its
+  // corner. Bounds are read off the sprite itself, so a zoom or a pulled-back
+  // camera is already in them.
+  const HEAD_ROOM = 32;      // game pixels the title line needs above the head
+  function playerHeadBounds() {
+    const scene = typeof SceneManager !== "undefined" && SceneManager._scene;
+    const set = scene && scene._spriteset;
+    const sprites = set && set._characterSprites;
+    if (!sprites || typeof $gamePlayer === "undefined" || !$gamePlayer) return null;
+    const sprite = sprites.find((s) => s && s._character === $gamePlayer);
+    if (!sprite || !sprite.visible || sprite.opacity === 0 || typeof sprite.getBounds !== "function") return null;
+    const b = sprite.getBounds();
+    if (!b || !b.width || !b.height) return null;
+    const cx = b.x + b.width / 2;
+    if (cx < 0 || cx > Graphics.width) return null;
+    if (b.y < HEAD_ROOM || b.y > Graphics.height) return null;
+    return { x: b.x, top: b.y, width: b.width };
   }
 
   // The device a notice's button tokens are written for, off a draw state.
@@ -1699,7 +1750,9 @@
       foldable: foldable(), hasPad, device, foldChip: foldChipLabel(),
       foldPad: foldPadChip(hasPad),
     });
-    sheet.placeOverBust(notice && noticeFolded ? rightSpeakerBounds() : null);
+    const speaker = notice && noticeFolded ? rightSpeakerBounds() : null;
+    sheet.placeOverHead(speaker || (notice && noticeFolded ? playerHeadBounds() : null), !!speaker);
+    sheet.stackControls();
     sheet.setBehindBusts(bustOnScreen());
   }
 
@@ -1788,6 +1841,7 @@
     stopTyping,
     updateTyping,
     noticeDialogueReady,
+    playerHeadBounds,
     dialogueFree,
     noticeSpoken,
     noticeParagraphs,

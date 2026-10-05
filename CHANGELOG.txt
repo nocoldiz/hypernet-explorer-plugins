@@ -1,7 +1,25 @@
 
+
+0.7.14a
+
+Added:
+ - manual controls switch for the rocket launch
+ - visiting hypernet pages awards KP, shown when closing hyperdeck
+ - road car drivers stop or flee by morality, then speak once
+- rigid skirt for Em and hair jiggle
+
+Fixed:
+ - car lights: hidden vehicles unlit, centered cone, no snapping
+ - continue story uses newer quicksave, titlescreen music defaults to ninth symphony
+Changed:
+ - time loop bubbles in voxel mode no longer stop you, climb over them
+ - map tooltips appear over bubba sprite, H controls moved to right side
+ - reworked bubba battle command explanation, shorter, explains vector gun switch
+
 0.7.13a
 
 Added:
+ - em 3d model shown in story mode character creation, rigid skirt and hair jiggle
  - armor type and allergens shown on every item sheet
  - new Blida and Oran villages near Algeri
  - object index order now, add to cart, view stockbusters and 3d viewer
@@ -12,6 +30,7 @@ Added:
  - inverted x for hyperverse title panning and inverted y on star map camera
 
 Changed:
+ - reworked bubba battle command explanation, shorter, explains vector gun switch
  - title screen ninth symphony starts from silence at better moments
  - reworked stock market graph, scrolling minute line toward hidden hourly price
  - demo mode unlocks floors 1, 2 and 10; floor 2 stairs fixed

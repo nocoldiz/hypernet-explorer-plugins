@@ -36,6 +36,7 @@
     actorArchetypeKey,
     actorSecondaryArchetypeKey,
     portraitIsModel,
+    storyModeModelPath,
     CharacterCreationData,
     STEP,
   } = window.CCKit;
@@ -393,7 +394,23 @@
       // a creature alike.
       let profileBoxHtml = "";
       if (!isPetActive) {
-        if (portraitIsModel(actor)) {
+        if (storyModeModelPath(actor)) {
+          // Story mode's Em stands in her own dossier model, which the scene
+          // drops into this frame (_syncCC3DPortrait). Clicking it still opens
+          // the bust gallery her portrait elsewhere is picked from.
+          const emTitle = isLocked ? ccT('CharCreate.bustLockedHint') : ccT('CharCreate.bustClickHint');
+          const emClick = isLocked ? 'SoundManager.playBuzzer()' : 'SceneManager._scene.onOpenBustGallery()';
+          profileBoxHtml = `
+            <div class="cc-compact-portrait-card cc-col cc-col-gap-2">
+              <div class="cc-compact-bust-full empty cc3d-live-portrait cc-clip" title="${emTitle}" onclick="${emClick}">
+                <div class="cc3d-live-portrait-fallback cc-col cc-col-gap-2 cc-fill-center">
+                  ${this._ccIconHtml(224, 28)}
+                  <span class="cc-portrait-caption">${actor.name()}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        } else if (portraitIsModel(actor)) {
           // The archetypes the member is built from, named the way the rest of
           // the game names them. This used to list Battler3D's ~600 raw
           // lowercase structure keys ("bigcat", "chromaticmanticore"), none of

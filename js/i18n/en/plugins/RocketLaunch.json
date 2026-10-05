@@ -212,6 +212,8 @@
     "caution": "Master caution - debris",
     "freeCam": "Free camera",
     "skip": "Skip",
+    "manual": "Manual",
+    "throttle": "Throttle",
     "noThree": "3D unavailable",
     "speed": "Velocity"
   },
@@ -414,7 +416,10 @@
     "earthAhead": "Earth. That is Earth.",
     "brakeIn": "Braking pass round the Moon.",
     "brakeCrew": "We are using the Moon as a wall. Politely.",
-    "brakeDone": "Speed is off. Ready to catch."
+    "brakeDone": "Speed is off. Ready to catch.",
+    "manualOn": "Your stick. Staging stays automatic.",
+    "manualOff": "Autopilot has her. Holding the hull.",
+    "hullLost": "Hull breach. We have lost the round."
   },
   "radio": {
     "control": "CONTROL",

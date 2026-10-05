@@ -1584,10 +1584,10 @@
             // A town is built on a level pad of its own (see _decorateSettlement),
             // and a city's pad wears a pavement on top of it.
             if (kind) {
-                return this._terrain.getTerrainHeight(tx + 0.5, tz + 0.5) +
-                    (kind === 'city' ? SETTLE.paveH : 0);
+                return this._overDome(x, z, this._terrain.getTerrainHeight(tx + 0.5, tz + 0.5) +
+                    (kind === 'city' ? SETTLE.paveH : 0));
             }
-            return this._terrain.getTerrainHeight(x / ts, z / ts);
+            return this._surfaceY(x, z);
         }
 
         // The floor above, so a jump indoors stops at the ceiling - and so a
@@ -2778,7 +2778,9 @@
         // follows the terrain on the ground (so it climbs the tall mountains) and
         // clears them when flying.
         _resolveEnv() {
-            const terrainH = this._terrain.getTerrainHeight(this._vanX / WORLD_TILE_SIZE, this._vanZ / WORLD_TILE_SIZE);
+            // The skin of a spacetime bubble counts as ground: it is driven up
+            // and over, never into.
+            const terrainH = this._surfaceY(this._vanX, this._vanZ);
             // The clearance the pilot is holding. A ship is flown down to the
             // ground and landed on it; everything else keeps the old cruise,
             // which is the height this starts at.
@@ -5372,8 +5374,8 @@
             let grade = 0;
             if (this._env === 'road') {
                 const ts = WORLD_TILE_SIZE, d = 9;
-                const hF = this._terrain.getTerrainHeight((this._vanX + sin * d) / ts, (this._vanZ + cos * d) / ts);
-                const hB = this._terrain.getTerrainHeight((this._vanX - sin * d) / ts, (this._vanZ - cos * d) / ts);
+                const hF = this._surfaceY(this._vanX + sin * d, this._vanZ + cos * d);
+                const hB = this._surfaceY(this._vanX - sin * d, this._vanZ - cos * d);
                 grade = Math.max(-0.6, Math.min(0.6, (hF - hB) / (d * 2)));
             }
             this._grade = grade;
@@ -5549,7 +5551,7 @@
             if (grounded) {
                 const ts = WORLD_TILE_SIZE;
                 const sin = Math.sin(this._driveAngle), cos = Math.cos(this._driveAngle);
-                const H = (x, z) => this._terrain.getTerrainHeight(x / ts, z / ts);
+                const H = (x, z) => this._surfaceY(x, z);
                 const dF = 9, dR = 5;
                 const hF = H(this._vanX + sin * dF, this._vanZ + cos * dF);
                 const hB = H(this._vanX - sin * dF, this._vanZ - cos * dF);
@@ -5794,9 +5796,7 @@
         // by the ride height in _resolveEnv, so the two cannot disagree.
         _flyFloor() {
             if (this._groundless) return GAS_FLOOR_Y - 60;
-            const th = this._terrain
-                ? this._terrain.getTerrainHeight(this._vanX / WORLD_TILE_SIZE, this._vanZ / WORLD_TILE_SIZE)
-                : 0;
+            const th = this._terrain ? this._surfaceY(this._vanX, this._vanZ) : 0;
             return th + SHIP_FLY_MIN;
         }
 
@@ -6215,11 +6215,6 @@
         // nothing to walk into.
         _resolveSolids(x, z, r) {
             const ts = WORLD_TILE_SIZE;
-            // The skin of a spacetime bubble, before anything else: it stands
-            // outside the town's own squares, so a walker meets it first and is
-            // never pushed INTO it by a building on the far side.
-            const dome = this._resolveDomes(x, z, r);
-            if (dome) return dome;
             const tx = Math.floor(x / ts), tz = Math.floor(z / ts);
             const plan = this._planAt(tx, tz);
             // Omega Tower: solid base collision across its entire footprint
@@ -6859,14 +6854,11 @@
         // ---------------------------------------------------------------------
         // A place sealed in Destinations.json (`"locked": true`) stands under a
         // dome out here: a hemisphere of faintly lit glass over its whole
-        // footprint, visible from a way off and solid at the skin. Drive at it
-        // and the camper stops against it; walk at it and so do you.
-        //
-        // The dome is NOT the reason the place cannot be entered - the guard on
-        // reserved squares already refuses that, and refuses it the same way in
-        // every scene. The dome is what that refusal LOOKS like from inside the
-        // 3D world, which otherwise would have the party bouncing off nothing at
-        // the edge of an ordinary-looking field.
+        // footprint, visible from a way off. The skin is GROUND, not a wall:
+        // walk or drive at it and you ride up its curve, over the top and down
+        // the far side, so the sealed squares under it are passed over and
+        // never stood on. Its profile (DOME_PROFILE) meets the ground flat, so
+        // there is no lip at the foot to catch on.
         //
         // One geometry and one material, shared by all of them: there are only a
         // couple of dozen sealed places on Earth and nearly all of them are over
@@ -6879,9 +6871,15 @@
             if (!places.length) return;
 
             const ts = WORLD_TILE_SIZE;
-            // A unit hemisphere, scaled per dome. Open at the bottom: there is
-            // ground under it and no reason to pay for a face nobody can see.
-            const geo = new THREE.SphereGeometry(1, 32, 18, 0, Math.PI * 2, 0, Math.PI / 2);
+            // A unit dome turned on a lathe from the same profile the party
+            // stands on, so the glass and the ground under the boots are one
+            // surface. Open at the bottom: there is ground under it.
+            const prof = [];
+            for (let i = 0; i <= 18; i++) {
+                const t = i / 18;
+                prof.push(new THREE.Vector2(Math.max(1e-4, t), VoxelWorldScene.DOME_PROFILE(t)));
+            }
+            const geo = new THREE.LatheGeometry(prof, 32);
             const mat = new THREE.MeshBasicMaterial({
                 color: 0x8ec8ff,
                 transparent: true,
@@ -6913,8 +6911,8 @@
                 const group = new THREE.Group();
                 const shell = new THREE.Mesh(geo, mat);
                 const wire  = new THREE.Mesh(geo, wireMat);
-                shell.scale.set(r, r * 0.78, r);
-                wire.scale.set(r * 1.002, r * 0.78 * 1.002, r * 1.002);
+                shell.scale.set(r, r, r);
+                wire.scale.set(r * 1.002, r * 1.002, r * 1.002);
                 shell.renderOrder = 3;
                 wire.renderOrder  = 4;
                 group.add(shell, wire);
@@ -6956,9 +6954,20 @@
             }
         }
 
-        // The dome whose skin this point is inside, or null. World units, and
-        // the circle in plan: the party never gets high enough for the curve of
-        // the roof to be the surface they meet.
+        // The height of a dome's skin at t = distance from its middle over its
+        // radius, as a fraction of the radius. 1 - smoothstep(t^2): a bubble
+        // that is nearly a hemisphere across the top and flattens out to meet
+        // the ground with no slope at all, so it is climbed without a step.
+        static DOME_PROFILE(t) {
+            const u = Math.min(1, t * t);
+            return VoxelWorldScene.DOME_RISE * (1 - u * u * (3 - 2 * u));
+        }
+        // A true hemisphere over a six-square town is taller than the mountains
+        // and reads as a wall rather than as a dome.
+        static get DOME_RISE() { return 0.78; }
+
+        // The dome whose footprint this point is inside, or null. World units,
+        // the circle in plan.
         _domeAt(x, z, r) {
             if (!this._domes) return null;
             const pad = r || 0;
@@ -6969,16 +6978,27 @@
             return null;
         }
 
-        // Push a point out to the skin of the dome it has got inside, along the
-        // line from the dome's middle. Returns the corrected position, or null
-        // where the point was already outside every dome.
-        _resolveDomes(x, z, r) {
-            const d = this._domeAt(x, z, r);
+        // The top of a dome's skin at this point, or null off every dome.
+        _domeSkinY(x, z) {
+            const d = this._domeAt(x, z, 0);
             if (!d) return null;
-            const dx = x - d.x, dz = z - d.z;
-            const len = Math.hypot(dx, dz) || 1;
-            const want = d.r + (r || 0);
-            return { x: d.x + (dx / len) * want, z: d.z + (dz / len) * want };
+            if (d.groundY === null) {
+                d.groundY = this._terrain.getTerrainHeight(d.x / WORLD_TILE_SIZE, d.z / WORLD_TILE_SIZE);
+            }
+            const t = Math.hypot(x - d.x, z - d.z) / d.r;
+            return (d.groundY != null ? d.groundY : 0) - 2 + d.r * VoxelWorldScene.DOME_PROFILE(t);
+        }
+
+        // A ground height lifted onto a dome's skin wherever the skin is higher.
+        _overDome(x, z, groundY) {
+            const skin = this._domes ? this._domeSkinY(x, z) : null;
+            return skin != null && skin > groundY ? skin : groundY;
+        }
+
+        // What holds a wheel or a boot up outdoors: the terrain, or the dome
+        // over it. World units in, world Y out.
+        _surfaceY(x, z) {
+            return this._overDome(x, z, this._terrain.getTerrainHeight(x / WORLD_TILE_SIZE, z / WORLD_TILE_SIZE));
         }
 
         // ---------------------------------------------------------------------
@@ -6999,7 +7019,7 @@
             this._scene.add(co.fpc.getRig());
             // The same world the first player is walking: one set of answers,
             // so neither of them is standing on ground the other cannot see.
-            co.fpc.setWorldMode(true, null, (gx, gz) => this._terrain.getTerrainHeight(gx, gz));
+            co.fpc.setWorldMode(true, null, (gx, gz) => this._surfaceY(gx * WORLD_TILE_SIZE, gz * WORLD_TILE_SIZE));
             co.fpc.solidAt   = (x, z, r) => this._resolveSolids(x, z, r);
             co.fpc.voxelSolid = (vx, vy, vz) => this._terrain.field.isSolid(vx, vy, vz);
             co.fpc.voxelSize  = VOX.SIZE;
@@ -7749,28 +7769,10 @@
             const wx = Math.floor(at.x / ts), wy = Math.floor(at.z / ts);
             this._placeAskT = Math.max(0, (this._placeAskT || 0) - 0.016);
 
-            // A sealed place is met at the skin of its dome, which stands a good
-            // way outside the squares it is drawn over: the party is stopped
-            // there and told why, and is never offered the way in. Tested before
-            // the squares below for that reason - by the time those would fire,
-            // the dome has already been driven through.
-            const sealed = this._domeAt(at.x, at.z, 0);
-            if (sealed) {
-                // The square to put them back on has to be OUTSIDE the dome, or
-                // a party that somehow began inside one is handed back into it
-                // every frame for ever. Where the last free spot is itself
-                // sealed, the skin is used instead.
-                const free = this._resolveDomes(this._lastFreeX, this._lastFreeZ, 8);
-                if (free) { this._lastFreeX = free.x; this._lastFreeZ = free.z; }
-                this._putBackOutside();
-                if (this._placeAskT > 0) return;
-                this._placeAskT = 2.5;
-                const WMR = window.WorldMapReturn;
-                if (WMR && WMR.showLockedNotice) {
-                    WMR.showLockedNotice(WMR.lockedPlaceMessage(sealed.place));
-                }
-                return;
-            }
+            // A sealed place is under its dome, and the dome is ground: the
+            // party rides up its curve and down the far side, over the squares
+            // it covers, so nothing under it is ever reached or offered.
+            if (this._domeAt(at.x, at.z, 0)) { this._lastFreeX = at.x; this._lastFreeZ = at.z; return; }
 
             const place = reservedPlaceAt(wx, wy);
             if (!place) { this._lastFreeX = at.x; this._lastFreeZ = at.z; return; }

@@ -2567,6 +2567,239 @@
         return moving ? 'walk' : 'idle';
     }
 
+    //=============================================================================
+    // Secondary motion: hair and skirt
+    //=============================================================================
+    // Hair hangs on the VRM spring-bone chains (J_Sec_*, rooted on the head):
+    // each joint's tail is a verlet point pulled back toward the rest shape,
+    // dragged, weighed down a little and kept out of the head and chest. A
+    // skirt with no chains of its own is skinned whole to a loose bone (Em's
+    // hem hangs on `neutral_bone`, outside the skeleton, so it never followed
+    // her hips at all): that bone is carried by the hips and swung as one
+    // pendulum from the waist. Everything is simulated in WORLD space, so
+    // walking, turning and the turntable all set it moving.
+    const RIG_SPRING = { stiffness: 1.1, drag: 0.32, gravity: 0.12, hitRadius: 0.02 };
+    const RIG_HEM = { length: 0.28, stiffness: 18, drag: 0.22, gravity: 0.6, maxAngle: 12 };
+    const RIG_HEM_BONES = ['neutral_bone'];
+    // Spheres the hair is kept out of: [role, offset in model metres, radius].
+    const RIG_COLLIDERS = [['head', [0, 0.08, 0.01], 0.095], ['neck', [0, 0.02, 0], 0.06],
+                           ['upperChest', [0, 0.06, -0.01], 0.11]];
+    const RIG_STEP = 1 / 60;
+
+    function RigPhysics(root, byName, entries) {
+        this.root = root;
+        this.springs = [];
+        this.colliders = [];
+        this.hem = null;
+        this.ready = false;
+        this._m = new THREE.Matrix4();
+        this._m2 = new THREE.Matrix4();
+        this._p = new THREE.Vector3();
+        this._q = new THREE.Quaternion();
+        this._q2 = new THREE.Quaternion();
+        this._s = new THREE.Vector3();
+        this._a = new THREE.Vector3();
+        this._b = new THREE.Vector3();
+        this._c = new THREE.Vector3();
+        this._e = new THREE.Vector3();
+        this._lastRoot = new THREE.Vector3();
+
+        // Chains, root to tip: a J_Sec_ bone whose parent is not one.
+        const isSec = (o) => !!(o && o.name && o.name.indexOf('J_Sec_') === 0);
+        Object.keys(byName).forEach((name) => {
+            const bone = byName[name];
+            if (!isSec(bone) || isSec(bone.parent) || /_end$/.test(name)) return;
+            let b = bone;
+            while (b && b.children.length) {
+                const tail = b.children.find((c) => isSec(c)) || b.children[0];
+                if (!tail.position.lengthSq()) break;
+                this.springs.push({
+                    bone: b, child: tail, restQ: b.quaternion.clone(),
+                    axis: tail.position.clone().normalize(),
+                    length: 0, tail: new THREE.Vector3(), prev: new THREE.Vector3()
+                });
+                b = isSec(tail) && !/_end$/.test(tail.name) ? tail : null;
+            }
+        });
+
+        RIG_COLLIDERS.forEach(([role, off, r]) => {
+            if (entries[role]) this.colliders.push({ bone: entries[role].bone, off, r, local: new THREE.Vector3(), c: new THREE.Vector3() });
+        });
+
+        // The hem bone: skinned, but not carried by the hips.
+        const hips = entries.hips && entries.hips.bone;
+        const hemBone = hips && RIG_HEM_BONES.map((n) => byName[n]).find(Boolean);
+        if (hemBone) {
+            let under = false;
+            for (let o = hemBone.parent; o; o = o.parent) if (o === hips) under = true;
+            if (!under) {
+                root.updateMatrixWorld(true);
+                const hipsInv = hips.matrixWorld.clone().invert();
+                const restHipsQ = hips.getWorldQuaternion(new THREE.Quaternion());
+                const rootQ = root.getWorldQuaternion(new THREE.Quaternion());
+                this.hem = {
+                    bone: hemBone, hips,
+                    restP: hemBone.position.clone(), restQ: hemBone.quaternion.clone(), restS: hemBone.scale.clone(),
+                    // The hem in the hips' own frame, as it was exported.
+                    offset: hipsInv.multiply(hemBone.matrixWorld),
+                    // Straight down the model, in the hips' frame.
+                    down: new THREE.Vector3(0, -1, 0).applyQuaternion(rootQ).applyQuaternion(restHipsQ.invert()).normalize(),
+                    tail: new THREE.Vector3(), prev: new THREE.Vector3(), downW: new THREE.Vector3(),
+                    pivot: new THREE.Vector3()
+                };
+            }
+        }
+    }
+
+    RigPhysics.prototype.active = function () {
+        return this.springs.length > 0 || !!this.hem;
+    };
+
+    // World units per model metre.
+    RigPhysics.prototype.scale = function () {
+        this.root.matrixWorld.decompose(this._p, this._q, this._s);
+        return this._s.x || 1;
+    };
+
+    // Lays every tail at rest where the pose puts it now: on the first step,
+    // and whenever the figure jumped rather than moved.
+    RigPhysics.prototype.settle = function () {
+        const s = this.scale();
+        this.springs.forEach((sp) => {
+            sp.bone.quaternion.copy(sp.restQ);
+            sp.bone.updateMatrixWorld(true);
+            sp.bone.getWorldPosition(this._a);
+            sp.child.getWorldPosition(sp.tail);
+            sp.length = this._a.distanceTo(sp.tail) || 0.01 * s;
+            sp.prev.copy(sp.tail);
+        });
+        this.colliders.forEach((c) => {
+            c.bone.getWorldPosition(this._a);
+            this.root.matrixWorld.decompose(this._p, this._q, this._s);
+            this._b.set(c.off[0], c.off[1], c.off[2]).multiplyScalar(s).applyQuaternion(this._q).add(this._a);
+            c.local.copy(c.bone.worldToLocal(this._b));
+        });
+        if (this.hem) {
+            const h = this.hem;
+            h.hips.getWorldPosition(this._a);
+            h.hips.getWorldQuaternion(this._q);
+            h.downW.copy(h.down).applyQuaternion(this._q);
+            h.tail.copy(h.downW).multiplyScalar(RIG_HEM.length * s).add(this._a);
+            h.prev.copy(h.tail);
+            h.pivot.copy(this._a);
+        }
+        this.root.getWorldPosition(this._lastRoot);
+        this.ready = true;
+    };
+
+    RigPhysics.prototype.reset = function () {
+        this.ready = false;
+        this.springs.forEach((sp) => sp.bone.quaternion.copy(sp.restQ));
+        const h = this.hem;
+        if (h) { h.bone.position.copy(h.restP); h.bone.quaternion.copy(h.restQ); h.bone.scale.copy(h.restS); }
+    };
+
+    // Advances the simulation by dt seconds over the pose just applied.
+    RigPhysics.prototype.update = function (dt) {
+        if (!this.active() || !(dt > 0)) return;
+        // Brought back to rest before the steps, so the colliders and chain
+        // roots read the pose this frame put the body in.
+        this.springs.forEach((sp) => sp.bone.quaternion.copy(sp.restQ));
+        this.root.updateWorldMatrix(true, true);
+        const s = this.scale();
+        this.root.getWorldPosition(this._c);
+        if (!this.ready || this._c.distanceTo(this._lastRoot) > 1.5 * s) this.settle();
+        this._lastRoot.copy(this._c);
+        this.colliders.forEach((c) => c.c.copy(c.local).applyMatrix4(c.bone.matrixWorld));
+        const n = Math.min(6, Math.max(1, Math.round(dt / RIG_STEP)));
+        for (let i = 0; i < n; i++) {
+            this.stepSprings(dt / n, s);
+            this.stepHem(dt / n, s);
+        }
+    };
+
+    RigPhysics.prototype.stepSprings = function (dt, s) {
+        const P = RIG_SPRING;
+        const pos = this._a, next = this._b, d = this._c;
+        this.springs.forEach((sp) => {
+            const bone = sp.bone;
+            // The bone's frame as its parent holds it now, at rest.
+            bone.parent.matrixWorld.decompose(this._p, this._q2, this._s);
+            this._q.copy(this._q2).multiply(sp.restQ);
+            bone.quaternion.copy(sp.restQ);
+            bone.updateMatrix();
+            bone.matrixWorld.multiplyMatrices(bone.parent.matrixWorld, bone.matrix);
+            pos.setFromMatrixPosition(bone.matrixWorld);
+
+            next.copy(sp.tail).sub(sp.prev).multiplyScalar(1 - P.drag).add(sp.tail);
+            next.addScaledVector(d.copy(sp.axis).applyQuaternion(this._q), P.stiffness * dt * s);
+            next.y -= P.gravity * dt * s;
+            next.sub(pos).setLength(sp.length).add(pos);
+            this.colliders.forEach((c) => {
+                const r = (c.r + P.hitRadius) * s;
+                d.copy(next).sub(c.c);
+                const len = d.length();
+                if (len < r && len > 1e-6) next.copy(c.c).addScaledVector(d, r / len);
+            });
+            next.sub(pos).setLength(sp.length).add(pos);
+            sp.prev.copy(sp.tail);
+            sp.tail.copy(next);
+
+            // Turned from the rest axis toward the tail, in the bone's frame.
+            d.copy(next).sub(pos).applyQuaternion(this._q.invert()).normalize();
+            this._q2.setFromUnitVectors(sp.axis, d);
+            bone.quaternion.copy(sp.restQ).multiply(this._q2);
+            bone.updateMatrix();
+            bone.matrixWorld.multiplyMatrices(bone.parent.matrixWorld, bone.matrix);
+        });
+    };
+
+    RigPhysics.prototype.stepHem = function (dt, s) {
+        const h = this.hem;
+        if (!h) return;
+        const P = RIG_HEM;
+        const pivot = this._a, next = this._b, d = this._c;
+        h.hips.matrixWorld.decompose(pivot, this._q, this._s);
+        h.downW.copy(h.down).applyQuaternion(this._q);
+        const L = P.length * s;
+        // Pulled toward hanging straight below the waist, with a little weight.
+        // Drag only damps what the hem does apart from the waist, so a steady
+        // run sways it rather than holding it streamed out behind.
+        const waist = this._e.copy(pivot).sub(h.pivot);
+        next.copy(h.tail).sub(h.prev);
+        next.addScaledVector(d.copy(waist).sub(next), P.drag);
+        // The pull is measured against the waist where the hem last was, so
+        // the waist's own travel (already in the velocity) is not added twice.
+        d.copy(h.downW).multiplyScalar(L).add(h.pivot).sub(h.tail);
+        next.addScaledVector(d, Math.min(1, P.stiffness * dt)).add(h.tail);
+        h.pivot.copy(pivot);
+        next.y -= P.gravity * dt * dt * s;
+        d.copy(next).sub(pivot).normalize();
+        // Never swung further out than a skirt would go.
+        const max = P.maxAngle * D2R;
+        const ang = Math.acos(rigClamp(d.dot(h.downW), -1, 1));
+        if (ang > max) {
+            this._q2.setFromUnitVectors(h.downW, d);
+            this._q2.slerp(new THREE.Quaternion(), 1 - max / ang);
+            d.copy(h.downW).applyQuaternion(this._q2);
+        }
+        next.copy(d).multiplyScalar(L).add(pivot);
+        h.prev.copy(h.tail);
+        h.tail.copy(next);
+
+        // The hem where the hips carry it, then swung about the waist.
+        this._q2.setFromUnitVectors(h.downW, d);
+        const swing = this._m2.makeRotationFromQuaternion(this._q2);
+        d.copy(pivot).applyQuaternion(this._q2);
+        swing.setPosition(pivot.x - d.x, pivot.y - d.y, pivot.z - d.z);
+        const m = this._m.multiplyMatrices(h.hips.matrixWorld, h.offset).premultiply(swing);
+        const bone = h.bone;
+        bone.matrixWorld.copy(m);
+        const local = this._m2.copy(bone.parent.matrixWorld).invert().multiply(m);
+        local.decompose(bone.position, bone.quaternion, bone.scale);
+        bone.matrix.copy(local);
+    };
+
     function HumanoidRig(root) {
         this.root = root;
         this.entries = {};
@@ -2606,6 +2839,9 @@
                 parentScale
             };
         });
+        // Hair and skirt, when the model has any to swing.
+        const physics = new RigPhysics(root, byName, this.entries);
+        this.physics = physics.active() ? physics : null;
     }
 
     // A figure the rig can do something with: hips, legs and arms found.
@@ -2710,6 +2946,7 @@
         });
         this.shots = this.shots.filter((s) => s.t < s.dur);
         this.apply(pose, poseOff);
+        if (this.physics) this.physics.update(dt);
     };
 
     // Writes a pose onto the bones: each rotation is turned from model axes
@@ -2741,6 +2978,7 @@
         this.cur = {};
         this.curOff = [0, 0, 0];
         this.shots = [];
+        if (this.physics) this.physics.reset();
     };
 
     // The rig a model carries, built on first ask. Null for a model with no

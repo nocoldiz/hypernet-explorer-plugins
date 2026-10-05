@@ -212,6 +212,8 @@
     "caution": "Allarme generale: detriti",
     "freeCam": "Visuale libera",
     "skip": "Salta",
+    "manual": "Manuale",
+    "throttle": "Spinta",
     "noThree": "3D non disponibile",
     "speed": "Velocità"
   },
@@ -414,7 +416,10 @@
     "earthAhead": "La Terra. Quella è la Terra.",
     "brakeIn": "Passaggio di frenata attorno alla Luna.",
     "brakeCrew": "Usiamo la Luna come un muro. Con garbo.",
-    "brakeDone": "Velocità smaltita. Pronti alla cattura."
+    "brakeDone": "Velocità smaltita. Pronti alla cattura.",
+    "manualOn": "Cloche a voi. Stadi in automatico.",
+    "manualOff": "Autopilota inserito.",
+    "hullLost": "Breccia nello scafo. Vi abbiamo persi."
   },
   "radio": {
     "control": "CONTROLLO",

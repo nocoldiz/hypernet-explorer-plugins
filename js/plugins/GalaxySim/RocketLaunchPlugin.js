@@ -421,6 +421,30 @@
   // threshold is spread down from here (see _buildArmour), so a flight whose
   // integrity never falls this far keeps its whole skin.
   const FIRST_PLATE_AT = INTEGRITY_FLOOR + 0.55 + (88 - INTEGRITY_FLOOR);
+  // MANUAL CONTROLS. Flown by hand, the hull is no longer an asymptote: the
+  // belt takes off what the wrecks the player failed to dodge take off, and
+  // that can be everything. Handing the round back to the autopilot is the
+  // safety net, and the autopilot never lets the number under this.
+  const INTEGRITY_SAFE_MIN = 0.1;
+  const MANUAL = {
+    // Throttle moves the clock of a powered beat between these two rates.
+    RATE_MIN: 0.45,
+    RATE_MAX: 1.25,
+    // How fast the throttle travels from cut to full, per second.
+    THROTTLE_PER_S: 0.7,
+    // Lateral authority of the attitude jets, in near-scene metres.
+    STEER_V: 34,
+    STEER_ACCEL: 3.2,
+    STEER_R: 42,
+    // The share of fresh wrecks that come down on wherever the round is now.
+    AIMED: 0.2,
+    // Hull taken by one hit, light and heavy.
+    HIT_LIGHT: [3, 5],
+    HIT_HEAVY: [9, 13],
+    HEAVY_R: 12,
+    // How long the wreck burns on screen before the death is handed over.
+    CRASH_HOLD_S: 1.4,
+  };
 
   // Altimeter tape. A linear tape spends nine tenths of its length on the last
   // three minutes of the flight and shows nothing at all during the part the
@@ -1391,6 +1415,27 @@
     return integrityAt(alt, severity, prof, progress);
   }
 
+  // ONE FRAME OF A HULL THAT HAS BEEN FLOWN BY HAND. Once the stick has been
+  // taken the hull is a number the flight carries rather than one the clock
+  // computes, because it now holds damage the curve knows nothing about. The
+  // curve still says how much worse this frame is than the last, and that is
+  // applied as a SHARE of what is left, so a hull handed back thin goes on
+  // thinning along the same shape instead of jumping onto the curve.
+  //   manual, in the belt   the curve's decay is ignored: the hits are the decay
+  //   manual, elsewhere     the curve's scuff still applies, and 0 is possible
+  //   auto                  the curve's share, never under INTEGRITY_SAFE_MIN
+  function stepIntegrity(prev, curvePrev, curveNow, manual, inBelt, loss) {
+    let next = prev;
+    if (!(manual && inBelt) && curvePrev > 0) next = prev * Math.min(1, curveNow / curvePrev);
+    next -= Math.max(0, loss || 0);
+    return manual ? Math.max(0, next) : Math.max(INTEGRITY_SAFE_MIN, next);
+  }
+
+  // How fast the clock of a powered beat runs at a given throttle.
+  function manualClockRate(throttle) {
+    return lerp(MANUAL.RATE_MIN, MANUAL.RATE_MAX, clamp01(throttle));
+  }
+
   // Just the SHAPE of a descent, for anything that needs to ask what falling
   // through the belt and the air costs without being a descent itself.
   const DESCENT_CURVE = { belt: true, descent: true };
@@ -1451,6 +1496,7 @@
     TAPE_KNEE_M, TAPE_TOP_M,
     phaseAt, altitudeAt, verticalSpeedAt, horizontalSpeedAt, speedAt, ORBITAL_V,
     integrityAt, integrityAtTime, hazardSeverity,
+    INTEGRITY_SAFE_MIN, MANUAL, stepIntegrity, manualClockRate,
     tapeFraction, tapeIsTimeline, tapeTimeFraction, airDensity,
   };
 
@@ -2861,6 +2907,13 @@
     "assist", "escape", "flyby", "refuel", "cleanSky", "rendezvous", "dock", "aboard",
     "skim", "touchdown", "terminal", "capture", "arrived",
   ];
+  // The beats a round flown by hand may be pushed off its axis in. Everywhere
+  // else it is eased back onto it, because a dock, a drive and a muzzle are
+  // all framed on the axis.
+  const STEER_BEATS = [
+    "coast", "ascent", "apogee", "ignition", "burn", "kessler", "clear",
+    "fall", "reentry", "prograde",
+  ];
   // i18n-ignore-end
 
   // NO retro look here, and it is not a style choice.
@@ -3097,6 +3150,20 @@
       this.shake = 0;
       this.roll = 0;
       this.impactFlash = 0;
+      // MANUAL CONTROLS. The scene sets the stick and the throttle; the stage
+      // owns what they do. Off, every one of these stays at rest and the
+      // flight is the cinematic it always was.
+      this.manual = false;
+      this._manualEver = false;
+      this.throttle = 1;
+      this.steerIn = { x: 0, y: 0 };
+      this._steerVel = { x: 0, z: 0 };
+      this._steerPos = { x: 0, z: 0 };
+      this._steerRight = { x: 1, z: 0 };
+      this._steerUp = { x: 0, z: -1 };
+      this._chaseK = 0;
+      this.manualLoss = 0;
+      this.destroyed = false;
 
       // WHAT IS BUILT NOW, AND WHAT IS BUILT LATER.
       //
@@ -4472,6 +4539,10 @@
       g.scale.setScalar(scale);
       g.userData.spin = new THREE.Vector3(r() - 0.5, r() - 0.5, r() - 0.5).multiplyScalar(2.2);
       g.userData.scale = scale;
+      // How close it has to pass to hit a round flown by hand. Its body, not
+      // its full span: a wing is thin, and a hit off a sphere that size would
+      // be a hit nobody could have dodged.
+      g.userData.hitR = Math.min(18, scale * [4, 3, 5, 1.6][kind]);
       return g;
     }
 
@@ -4481,12 +4552,25 @@
       const r = this.rng;
       // Most pass wide. A few - and the vehicle has no say in which - do not.
       const near = r() < 0.22;
-      const rad = near ? 6 + r() * 16 : 30 + r() * 150;
+      let rad = near ? 6 + r() * 16 : 30 + r() * 150;
       const a = r() * Math.PI * 2;
       // Which way the field streams. Climbing, the belt falls past overhead;
       // falling through it, the whole of it rises past from underneath.
       const s = this.descent ? -1 : 1;
-      w.position.set(Math.cos(a) * rad, s * (initial ? (r() * 1400 - 400) : 700 + r() * 500), Math.sin(a) * rad);
+      let cx = 0, cz = 0;
+      // FLOWN BY HAND, the vehicle does have a say. A share of what comes in
+      // is aimed at wherever the round is NOW, and the rest passes wide: the
+      // ones that hit are the ones the player did not get out of the way of.
+      if (this.manual && !initial) {
+        if (r() < MANUAL.AIMED) {
+          rad = r() * 6;
+          cx = this._steerPos.x; cz = this._steerPos.z;
+        } else if (near) {
+          rad = 30 + r() * 150;
+        }
+      }
+      w.position.set(cx + Math.cos(a) * rad, s * (initial ? (r() * 1400 - 400) : 700 + r() * 500), cz + Math.sin(a) * rad);
+      w.userData.hit = false;
       w.userData.fall = 190 + r() * 340;
       w.userData.drift = (r() - 0.5) * 24;
       w.userData.near = near;
@@ -5010,9 +5094,22 @@
       const u = this._camUser();
       this._rigDist = rig.dist;
 
-      const yaw = rig.yaw + u.yaw;
-      const pitch = clamp(rig.pitch + u.pitch, -1.4, 1.4);
-      const dist = rig.dist * u.dist;
+      // FLOWN BY HAND, THE BELT IS SEEN DOWN THE LINE IT COMES FROM. The
+      // director's swinging side-on shot shows the wrecks and forbids doing
+      // anything about them; the chase view puts the camera under a climbing
+      // round (over a falling one) so what is about to hit is in front of it.
+      const ck = this._chaseK || 0;
+      let rYaw = rig.yaw, rPitch = rig.pitch, rDist = rig.dist, rFov = rig.fov;
+      if (ck > 0.001) {
+        const falling = this.descent || !!this.profile.homeBelt;
+        rYaw = lerp(rYaw, 0.6, ck);
+        rPitch = lerp(rPitch, falling ? 1.05 : -1.05, ck);
+        rDist = lerp(rDist, 78, ck);
+        rFov = lerp(rFov, 64, ck);
+      }
+      const yaw = rYaw + u.yaw;
+      const pitch = clamp(rPitch + u.pitch, -1.4, 1.4);
+      const dist = rDist * u.dist;
 
       const cx = Math.cos(pitch) * Math.sin(yaw) * dist;
       const cy = Math.sin(pitch) * dist;
@@ -5025,6 +5122,12 @@
       const look = this._tmpLook || (this._tmpLook = new THREE.Vector3());
       look.copy(rig.target).addScaledVector(right, u.panX);
       look.y += u.panY;
+      // A round pushed off the axis is followed most of the way, never all of
+      // it, so the push still reads as a push.
+      if (this._steerPos) {
+        look.x += this._steerPos.x * 0.6;
+        look.z += this._steerPos.z * 0.6;
+      }
 
       // Shake is applied to the camera and not to the vehicle: the vehicle has
       // to stay exactly on the axis for the plates and the plume to line up.
@@ -5032,11 +5135,12 @@
       const jx = sh ? (Math.random() - 0.5) * sh : 0;
       const jy = sh ? (Math.random() - 0.5) * sh : 0;
 
-      this.camera.fov = rig.fov;
+      this.camera.fov = rFov;
       this.camera.updateProjectionMatrix();
       this.camera.position.set(look.x + cx + jx, look.y + cy + jy, look.z + cz);
       this.camera.up.set(0, 1, 0);
       this.camera.lookAt(look.x, look.y, look.z);
+      if (this.manual) this._updateSteerBasis();
       // THE CLEAN BASIS. The same aim without the jitter, kept for anything in
       // the far scene that is hung at a bearing off the way the camera looks.
       // See _placeFar.
@@ -5078,7 +5182,7 @@
       const shrink = d > FAR_CAM_MAX_D ? FAR_CAM_MAX_D / d : 1;
       const dCam = d * shrink;
       this.earthPivot.scale.setScalar(shrink);
-      this.farCamera.fov = rig.fov;
+      this.farCamera.fov = rFov;
       // Never further out than the height it is flying at: the planet cannot
       // be clipped by a plane that is always underneath the camera.
       const clear = Math.max(0, dCam - EARTH_VIS_R * shrink);
@@ -5187,7 +5291,17 @@
           this.siteMark.material.color.setHex(geo.coil);
         }
       }
-      this.integrity = integrityAtTime(time, this.severity || 1, prof, this.downrange);
+      const curve = integrityAtTime(time, this.severity || 1, prof, this.downrange);
+      if (!this._manualEver) {
+        this.integrity = curve;
+      } else if (!this.destroyed) {
+        const prev = this._curvePrev == null ? curve : this._curvePrev;
+        const inBelt = this.hasBelt && ph.key === "kessler";   // i18n-ignore  phase key
+        this.integrity = stepIntegrity(this.integrity, prev, curve, this.manual, inBelt, this.manualLoss);
+        if (this.manual && this.integrity <= 0) this._destroy();
+      }
+      this.manualLoss = 0;
+      this._curvePrev = curve;
       // Over the Moon the altimeter is the height above the regolith, and
       // there is no air at any height of it.
       this.density = this._overMoon() ? 0 : airDensity(this.alt);
@@ -5213,6 +5327,7 @@
       this._updateSky(dt);
       this._updatePad(dt, ph);
       this._updateVehicle(dt, ph);
+      this._updateSteer(dt, ph);
       this._updateBelt(dt, ph);
       this._updateLiminal(dt, ph);
       this._updateCrossing(dt, ph);
@@ -6919,18 +7034,14 @@
       // A DESCENT DOES NOT BURN AT ALL: it was thrown at the planet and it
       // falls the whole way. The only things that slow it are the air, the
       // canopy and the coil waiting at the bottom.
-      const LIT = falling
-        ? {}
-        : this.profile.downrange
-          ? { prograde: 1, terminal: 1 }
-          : { ignition: 1, burn: 1, kessler: 1, clear: 1 };
       const starting = falling ? null                                         // nothing lights on the way down
         : this.profile.downrange ? "prograde" : "ignition";                   // i18n-ignore  phase keys
-      let ramping = LIT[ph.key] ? 1 : 0;
+      let ramping = this._poweredBeat(ph) ? 1 : 0;
       if (ph.key === starting) ramping = smooth(clamp01(ph.progress / 0.25));
       if (ph.key === "terminal") ramping *= 0.5 + 0.5 * (1 - ph.progress);
-      // Nothing burns out of a stage that is not there any more.
+      // Flown by hand, the flame is the throttle.
       if (this.hasBooster && this.boosterGone) ramping = 0;
+      if (this.manual) ramping *= lerp(0.25, 1, clamp01(this.throttle));
       const flick = 0.85 + Math.sin(this._time * 34) * 0.1 + Math.sin(this._time * 71) * 0.05;
       const p = ramping * flick;
       this.plumeCore.material.opacity = p * 0.95;
@@ -7052,6 +7163,114 @@
       this.vehicle.rotation.x = (this.flip || 0) + (settling ? 0 : wobX);
     }
 
+    // WHETHER THE MOTOR IS BURNING ON THIS BEAT. On the orbital flight it is
+    // lit from the top of the coast to the top of the belt; on the hop only
+    // after the flip; on the way down never, because the planet does the
+    // work. And nothing burns out of a stage that is not there any more.
+    _poweredBeat(ph) {
+      const falling = this.descent || (this.landsOnGun && this._leg(ph) === "arrive");   // i18n-ignore  leg id
+      if (falling) return false;
+      if (this.hasBooster && this.boosterGone) return false;
+      const LIT = this.profile.downrange
+        ? { prograde: 1, terminal: 1 }
+        : { ignition: 1, burn: 1, kessler: 1, clear: 1 };
+      return !!LIT[ph.key];
+    }
+
+    // How fast the flight clock runs this frame. Only a burning motor flown
+    // by hand changes it: everything else is the cinematic's own pace.
+    clockRate() {
+      if (!this.manual || this.destroyed || !this.phase) return 1;
+      return this._poweredBeat(this.phase) ? manualClockRate(this.throttle) : 1;
+    }
+
+    // THE STICK. Off, it does nothing at all. On, the scene hands it a
+    // direction and the attitude jets push the round sideways in the plane
+    // the camera is looking across, which is the only plane a wreck can be
+    // dodged in. Taking it never touches the hull; handing it back to the
+    // autopilot clamps the hull at the safety minimum straight away.
+    setManual(on) {
+      if (this.destroyed) return;
+      on = !!on;
+      this.manual = on;
+      if (on) {
+        if (!this._manualEver) this._curvePrev = this.integrity;
+        this._manualEver = true;
+      } else {
+        this.integrity = Math.max(INTEGRITY_SAFE_MIN, this.integrity);
+        this.steerIn = { x: 0, y: 0 };
+      }
+    }
+
+    _updateSteer(dt, ph) {
+      const active = this.manual && !this.destroyed && STEER_BEATS.indexOf(ph.key) >= 0;
+      const p = this._steerPos, v = this._steerVel;
+      let tx, tz;
+      if (active) {
+        const ix = clamp(this.steerIn.x || 0, -1, 1), iy = clamp(this.steerIn.y || 0, -1, 1);
+        const r = this._steerRight, u = this._steerUp;
+        tx = (r.x * ix + u.x * iy) * MANUAL.STEER_V;
+        tz = (r.z * ix + u.z * iy) * MANUAL.STEER_V;
+      } else {
+        // Back onto the axis, gently: the dock and the drives are framed on it.
+        tx = -p.x * 1.4;
+        tz = -p.z * 1.4;
+      }
+      const k = Math.min(1, dt * MANUAL.STEER_ACCEL);
+      v.x += (tx - v.x) * k;
+      v.z += (tz - v.z) * k;
+      p.x += v.x * dt;
+      p.z += v.z * dt;
+      const d = Math.hypot(p.x, p.z);
+      if (d > MANUAL.STEER_R) {
+        p.x *= MANUAL.STEER_R / d;
+        p.z *= MANUAL.STEER_R / d;
+      }
+      if (this.vehicle) {
+        this.vehicle.position.x = p.x;
+        this.vehicle.position.z = p.z;
+        // Leaning into the push, on top of whatever attitude the beat holds.
+        this.vehicle.rotation.z += -v.x * 0.01;
+        this.vehicle.rotation.x += v.z * 0.01;
+      }
+      // The chase view the belt is flown from by hand.
+      const chase = this.manual && !this.destroyed && ph.key === "kessler";   // i18n-ignore  phase key
+      this._chaseK += ((chase ? 1 : 0) - this._chaseK) * Math.min(1, dt * 1.6);
+    }
+
+    // The camera's own right and up, laid flat onto the plane the round can
+    // be pushed in, so the stick is always the way the screen says it is.
+    _updateSteerBasis() {
+      const cam = this.camera;
+      if (!cam || !cam.matrixWorld || !cam.matrixWorld.elements) return;
+      if (cam.updateMatrixWorld) cam.updateMatrixWorld(true);
+      const e = cam.matrixWorld.elements;
+      const flat = (x, z, out) => {
+        const l = Math.hypot(x, z);
+        if (l > 0.15) { out.x = x / l; out.z = z / l; }
+      };
+      flat(e[0], e[2], this._steerRight);
+      flat(e[4], e[6], this._steerUp);
+    }
+
+    // OUT OF HULL. Only a round flown by hand gets here: the autopilot's
+    // hull is never under the safety minimum.
+    _destroy() {
+      if (this.destroyed) return;
+      this.destroyed = true;
+      this.integrity = 0;
+      this.shake = 4;
+      this.impactFlash = 1;
+      if (this.belt && this.sparks) { this._strike(true); this._strike(true); }
+      if (this.hasBooster && !this.boosterGone) this._separateBooster(true);
+      if (this.vehicle) this.vehicle.visible = false;
+      this._pendingSe = this._pendingSe || [];
+      this._pendingSe.push({ name: SE.hitHeavy, volume: 100, pitch: 50 });
+      // The one line that is never held back for having been said before.
+      this._lastText = null;
+      this._say("hullLost");
+    }
+
     // The way the round is moving through the near scene, as the angle about
     // X that lays its +Y nose onto it: 0 straight up, PI/2 down the +Z track,
     // PI straight down. The vehicle never moves, so this is the pad's own
@@ -7166,9 +7385,12 @@
       // The wrecks fall past. The near ones are announced a beat before they
       // arrive, which is the only warning there is.
       const s = falling ? -1 : 1;
+      const byHand = this.manual && !this.destroyed && inBelt;
       this.wrecks.forEach((w) => {
         const sp = w.userData.fall * (0.4 + dens);
+        const before = s * w.position.y;
         w.position.y -= s * sp * dt;
+        if (byHand && !w.userData.hit && before > 0 && s * w.position.y <= 0) this._collide(w);
         w.position.x += w.userData.drift * dt * 0.3;
         w.rotation.x += w.userData.spin.x * dt;
         w.rotation.y += w.userData.spin.y * dt;
@@ -7187,7 +7409,7 @@
       // takes armour off: the integrity curve is authoritative, so a hit is
       // the sound and the spark of a loss the model has already decided on.
       this._strikeTimer = (this._strikeTimer == null) ? 0.3 : this._strikeTimer - dt;
-      if (inBelt && this._strikeTimer <= 0) {
+      if (inBelt && !this.manual && this._strikeTimer <= 0) {
         const heat = 0.35 + ph.progress * 0.9;
         this._strikeTimer = (0.42 / heat) * (0.4 + this.rng());
         this._strike(this.rng() < 0.22 + ph.progress * 0.3);
@@ -7207,9 +7429,10 @@
       const a = this.rng() * Math.PI * 2;
       const y = (this.rng() - 0.5) * 14;
       const R = this.bodyR + 0.4;
-      const px = Math.cos(a) * R, pz = Math.sin(a) * R;
+      const o = this._steerPos || { x: 0, z: 0 };
+      const px = o.x + Math.cos(a) * R, pz = o.z + Math.sin(a) * R;
 
-      this.strikeFlash.position.set(px * 2, y, pz * 2);
+      this.strikeFlash.position.set(o.x + (px - o.x) * 2, y, o.z + (pz - o.z) * 2);
       this.strikeFlash.intensity = heavy ? 9 : 3.4;
       this.shake = Math.max(this.shake, heavy ? 2.6 : 0.8);
       this.roll += (this.rng() - 0.5) * (heavy ? 0.09 : 0.02);
@@ -7222,9 +7445,9 @@
         if (s.life > 0) continue;
         s.x = px; s.y = y; s.z = pz;
         const sp = (heavy ? 26 : 12) * (0.4 + this.rng());
-        s.vx = px * sp * 0.4 + (this.rng() - 0.5) * sp;
+        s.vx = (px - o.x) * sp * 0.4 + (this.rng() - 0.5) * sp;
         s.vy = (this.rng() - 0.5) * sp - 6;
-        s.vz = pz * sp * 0.4 + (this.rng() - 0.5) * sp;
+        s.vz = (pz - o.z) * sp * 0.4 + (this.rng() - 0.5) * sp;
         s.life = 0.35 + this.rng() * 0.6;
         placed++;
       }
@@ -7253,6 +7476,21 @@
       if (heavy && this.hasBooster && !this.boosterGone && this.rng() < 0.3) {
         this._separateBooster(true);
       }
+    }
+
+    // A wreck crossing the round's plane. Close enough, and it is a hit that
+    // costs what it costs: the hull is the number the player is flying for.
+    _collide(w) {
+      const dx = w.position.x - this._steerPos.x;
+      const dz = w.position.z - this._steerPos.z;
+      const reach = (w.userData.hitR || 4) + (this.bodyR || 3);
+      if (dx * dx + dz * dz > reach * reach) return false;
+      w.userData.hit = true;
+      const heavy = (w.userData.hitR || 0) >= MANUAL.HEAVY_R;
+      const band = heavy ? MANUAL.HIT_HEAVY : MANUAL.HIT_LIGHT;
+      this.manualLoss += lerp(band[0], band[1], this.rng());
+      this._strike(heavy);
+      return true;
     }
 
     _updateSparks(dt) {
@@ -8113,6 +8351,24 @@
     return profile && profile.downrange ? SUBORBITAL_CUES : ORBITAL_CUES;
   }
 
+  // Whether the last flight was flown by hand, for a game with no save to
+  // keep it on (free play from the arcade, the test harness).
+  let _manualPref = false;
+  function manualPref() {
+    try {
+      if (typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem._rocketManual != null) {
+        return !!$gameSystem._rocketManual;
+      }
+    } catch (e) { /* no save: the module flag below */ }
+    return _manualPref;
+  }
+  function setManualPref(on) {
+    _manualPref = !!on;
+    try {
+      if (typeof $gameSystem !== "undefined" && $gameSystem) $gameSystem._rocketManual = !!on;
+    } catch (e) { /* no save: the module flag holds it */ }
+  }
+
   class Scene_RocketLaunch extends Scene_Base {
     prepare(opts) {
       const o = opts || {};
@@ -8138,6 +8394,9 @@
       this._time = 0;
       this._done = new Set();
       this._skipHold = 0;
+      this._menuHold = 0;
+      this._manual = false;
+      this._crashT = 0;
       this._finished = false;
       this._dragging = false;
       this._lastTouch = null;
@@ -8279,6 +8538,9 @@
         mode: modeName(this._profile),
       }));
       se(SE.radio, 70);
+      // The switch is remembered: a player who flew the last one by hand
+      // is handed the stick again.
+      if (manualPref()) this._setManual(true, true);
     }
 
     // --- the loop ---------------------------------------------------------
@@ -8299,8 +8561,10 @@
 
       this._updateSkipButton();
       if (this._finished) return;
+      this._updateManualInput(dt);
       this._updateCameraInput(dt);
-      this._time += dt;
+      // A burning motor flown by hand runs its beat at the throttle's pace.
+      this._time += dt * (this._stage.clockRate ? this._stage.clockRate() : 1);
       this._stage.update(dt, this._time);
       this._fireCues();
       this._drainStage();
@@ -8309,6 +8573,13 @@
       if (this._view && this._view.texture) this._view.texture.update();
       this._stage.render();
 
+      // OUT OF HULL. The wreck is left burning on screen for a moment, and
+      // then the death is the game's own.
+      if (this._stage.destroyed) {
+        this._crashT += dt;
+        if (this._crashT >= MANUAL.CRASH_HOLD_S) this._crash();
+        return;
+      }
       this._updateSkip(dt);
       if (this._time >= this._profile.start._total) this._finish();
     }
@@ -8349,8 +8620,13 @@
         trackM: st ? st.trackM : 0,
         chart: !!this._chart,
         // The skip button, up for the whole flight and lit under the pointer.
-        skip: !!st && !this._finished,
+        // Flown by hand there is no skipping: the flight is the player's.
+        skip: !!st && !this._finished && !this._manual,
         skipHot: !!(this._hud && this._hud.hitSkip && this._hud.hitSkip(TouchInput.x, TouchInput.y)),
+        manual: !!this._manual,
+        manualBtn: !!st && !this._finished && !st.destroyed,
+        manualHot: !!(this._hud && this._hud.hitManual && this._hud.hitManual(TouchInput.x, TouchInput.y)),
+        throttle: st ? st.throttle : 1,
         fromSite: this._site ? this._site.id : SITE_ORDER[0],
         toSite: this._destSite ? this._destSite.id : "ship",   // i18n-ignore  site id
         env: this._env,
@@ -8387,7 +8663,7 @@
     _updateCameraInput(dt) {
       const st = this._stage;
 
-      // A press that landed on the skip button is the button's, not a drag.
+      // A press that landed on a button is the button's, not a drag.
       if (TouchInput.isPressed() && !this._skipTouch) {
         if (this._lastTouch) {
           const dx = TouchInput.x - this._lastTouch.x;
@@ -8406,21 +8682,26 @@
       const wheel = TouchInput.wheelY || 0;
       if (wheel) st.applyZoom(wheel > 0 ? 1.12 : 0.89);
 
-      const kx = (Input.isPressed("right") ? 1 : 0) - (Input.isPressed("left") ? 1 : 0);
-      const ky = (Input.isPressed("down") ? 1 : 0) - (Input.isPressed("up") ? 1 : 0);
-      if (kx || ky) {
-        if (Input.isPressed("shift")) st.applyZoom(1 + ky * dt * 1.2);
-        else st.applyLook(-kx * dt * 1.5, -ky * dt * 1.1);
+      // Flown by hand the arrows, Shift, Control and the page keys are the
+      // stick and the throttle, so the camera keeps only the pointer, the
+      // wheel and the right stick.
+      if (!this._manual) {
+        const kx = (Input.isPressed("right") ? 1 : 0) - (Input.isPressed("left") ? 1 : 0);
+        const ky = (Input.isPressed("down") ? 1 : 0) - (Input.isPressed("up") ? 1 : 0);
+        if (kx || ky) {
+          if (Input.isPressed("shift")) st.applyZoom(1 + ky * dt * 1.2);
+          else st.applyLook(-kx * dt * 1.5, -ky * dt * 1.1);
+        }
+        if (Input.isPressed("pageup")) st.applyZoom(1 - dt * 1.4);
+        if (Input.isPressed("pagedown")) st.applyZoom(1 + dt * 1.4);
       }
-      if (Input.isPressed("pageup")) st.applyZoom(1 - dt * 1.4);
-      if (Input.isPressed("pagedown")) st.applyZoom(1 + dt * 1.4);
 
       // The right stick, through the shared analog helper, so this behaves
       // like every other camera in the game on a pad.
       const A = window.AnalogStickInput;
-      if (A && typeof A.right === "function") {
-        const v = A.right();
-        if (v && (v.x || v.y)) st.applyLook(-v.x * dt * 2.2, -v.y * dt * 1.6);
+      if (A && typeof A.rightX === "function") {
+        const vx = A.rightX() || 0, vy = A.rightY() || 0;
+        if (vx || vy) st.applyLook(-vx * dt * 2.2, -vy * dt * 1.6);
       }
 
       if (Input.isTriggered("ok")) { st.recenter(); se(SE.cursor, 60); }
@@ -8529,19 +8810,118 @@
     // reads as "menu", which Escape also reads as - and Escape is CANCEL, the
     // hold that skips the whole flight - so a menu press that comes with a
     // cancel press is left to the hold.
+    //
+    // THE MANUAL SWITCH shares the corner and the pad button. On a pad the top
+    // face button acts on RELEASE: a tap is the skip, a hold of MENU_HOLD_S is
+    // the switch. F and the button on screen flip it from a keyboard or a
+    // pointer. Flown by hand, nothing skips.
     _updateSkipButton() {
       let hit = false;
-      if (TouchInput.isTriggered() && this._hud && this._hud.hitSkip &&
-        this._hud.hitSkip(TouchInput.x, TouchInput.y)) {
-        hit = true;
-        this._skipTouch = true;
+      let flip = false;
+      if (TouchInput.isTriggered() && this._hud) {
+        if (this._hud.hitManual && this._hud.hitManual(TouchInput.x, TouchInput.y)) {
+          flip = true;
+          this._skipTouch = true;
+        } else if (this._hud.hitSkip && this._hud.hitSkip(TouchInput.x, TouchInput.y)) {
+          hit = true;
+          this._skipTouch = true;
+        }
       }
       if (!TouchInput.isPressed()) this._skipTouch = false;
       try {
+        if (Input.isTriggered(MANUAL_BUTTON)) flip = true;
         if (Input.isTriggered("tab")) hit = true;                                    // i18n-ignore  input name
-        if (Input.isTriggered("menu") && !Input.isPressed("cancel")) hit = true;     // i18n-ignore  input name
+        if (Input.isPressed("menu") && !Input.isPressed("cancel")) {                 // i18n-ignore  input name
+          this._menuHold = (this._menuHold || 0) + 1 / 60;
+          if (this._menuHold >= MENU_HOLD_S && !this._menuFlipped) {
+            this._menuFlipped = true;
+            flip = true;
+          }
+        } else {
+          if (this._menuHold > 0 && !this._menuFlipped) hit = true;
+          this._menuHold = 0;
+          this._menuFlipped = false;
+        }
       } catch (e) { /* no input, no skip */ }
-      if (hit) this.skipPhase();
+      if (flip) this._setManual(!this._manual);
+      if (hit && !this._manual) this.skipPhase();
+    }
+
+    // THE SWITCH. Taking the stick costs nothing; handing it back is the
+    // safety net, and the stage clamps the hull the moment it is handed back.
+    // `quiet` is the switch being restored at the start of a flight.
+    _setManual(on, quiet) {
+      const st = this._stage;
+      if (!st || this._finished || st.destroyed) return false;
+      on = !!on;
+      if (on === this._manual && !quiet) return false;
+      this._manual = on;
+      if (st.setManual) st.setManual(on);
+      setManualPref(on);
+      this._skipHold = 0;
+      se(on ? SE.computer : SE.back, 70);
+      this._radio(on ? "manualOn" : "manualOff",
+        Radio.fromControl(on ? "manualOn" : "manualOff", {}));
+      return true;
+    }
+
+    // THE STICK AND THE THROTTLE, read only while the switch is on. The stick
+    // is the arrows (and so WASD) or the left stick; the throttle is Shift and
+    // Control, the page keys, or the two triggers on a pad.
+    _updateManualInput(dt) {
+      const st = this._stage;
+      if (!st) return;
+      if (!this._manual) { st.steerIn = { x: 0, y: 0 }; return; }
+      let x = (Input.isPressed("right") ? 1 : 0) - (Input.isPressed("left") ? 1 : 0);
+      let y = (Input.isPressed("up") ? 1 : 0) - (Input.isPressed("down") ? 1 : 0);
+      let up = (Input.isPressed("shift") || Input.isPressed("pagedown")) ? 1 : 0;
+      let down = (Input.isPressed("control") || Input.isPressed("pageup")) ? 1 : 0;
+      const A = window.AnalogStickInput;
+      if (A && typeof A.leftX === "function") {
+        const lx = A.leftX() || 0, ly = A.leftY() || 0;
+        if (lx || ly) { x = lx; y = -ly; }
+        if (typeof A.rightTrigger === "function") {
+          up = Math.max(up, A.rightTrigger() || 0);
+          down = Math.max(down, A.leftTrigger() || 0);
+        }
+      }
+      st.steerIn = { x: x, y: y };
+      st.throttle = clamp01((st.throttle == null ? 1 : st.throttle) +
+        (up - down) * MANUAL.THROTTLE_PER_S * dt);
+    }
+
+    // THE ROUND IS LOST. Nothing here decides what dying means: the game's
+    // own map death already knows whether this save respawns or ends, and a
+    // free-play flight from the arcade is only ever watched, so it just ends.
+    _crash() {
+      if (this._finished) return;
+      this._finished = true;
+      if (this._freePlay) { this._leave(); return; }
+      try {
+        $gameSystem._rocketLaunch = {
+          site: this._site ? this._site.id : null,
+          mode: this._profile ? this._profile.id : null,
+          destination: this._destSite ? this._destSite.id : null,
+          integrity: 0,
+          crashed: true,
+          fare: this._fare || 0,
+          weather: this._env.weather,
+          night: this._env.night,
+        };
+      } catch (e) { /* no save: the crash still happened */ }
+      let lead = null;
+      try {
+        const members = $gameParty.members();
+        members.forEach((a) => { if (a && a.setHp) a.setHp(0); });
+        lead = members[0] || null;
+      } catch (e) { lead = null; }
+      // Back to the map first: a respawn reserves a transfer from it, and a
+      // game over replaces it.
+      this._leave();
+      try {
+        if (lead && lead.processMapDeath) lead.processMapDeath();
+        else if (window.SaveSystem && window.SaveSystem.triggerGameOver) window.SaveSystem.triggerGameOver();
+      } catch (e) { /* the map scene will find a dead party and deal with it */ }
     }
 
     // STRAIGHT ON TO THE NEXT BEAT. The flight is a function of the clock, so
@@ -8581,6 +8961,7 @@
     }
 
     _updateSkip(dt) {
+      if (this._manual) { this._skipHold = 0; return; }
       if (Input.isPressed("cancel")) {
         this._skipHold += dt;
         if (this._skipHold > 0.6) { se(SE.back, 80); this._finish(); }
@@ -8887,6 +9268,16 @@
     if (!Input.keyMapper[77]) Input.keyMapper[77] = "map";                // i18n-ignore  input name
     return Input.keyMapper[77];
   })();
+
+  // F flips the manual switch, put on the key the same way the chart is: the
+  // name already on the key, if something else claimed it first.
+  const MANUAL_BUTTON = (() => {
+    if (typeof Input === "undefined" || !Input.keyMapper) return "rocketManual";   // i18n-ignore  input name
+    if (!Input.keyMapper[70]) Input.keyMapper[70] = "rocketManual";                // i18n-ignore  input name
+    return Input.keyMapper[70];
+  })();
+  // How long the pad's top button is held to flip the switch instead of skip.
+  const MENU_HOLD_S = 0.6;
 
   PluginManager.registerCommand("RocketLaunchPlugin", "launch", (args) => {
     // i18n-ignore-start  arg values

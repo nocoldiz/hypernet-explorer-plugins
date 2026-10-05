@@ -163,12 +163,17 @@
         return Promise.all(removals).then(() => { DataManager.saveGlobalInfo(); });
     };
 
+    // The newest save of the story run: its slot, its autosave, or a shared
+    // quicksave the story wrote last (a quicksave a party overwrote since is
+    // that party's, not the story's).
     window.SaveSystem.latestStorySlot = function () {
         let best = -1;
         let bestTime = -1;
-        [STORY_SLOT, STORY_AUTO_SLOT].forEach((id) => {
+        [STORY_SLOT, STORY_AUTO_SLOT].concat(QUICK_SLOT_IDS).forEach((id) => {
             const info = DataManager.savefileInfo(id);
-            if (info && info.timestamp > bestTime) { bestTime = info.timestamp; best = id; }
+            if (!info) return;
+            if (QUICK_SLOT_IDS.indexOf(id) >= 0 && info.runKind !== "story") return;
+            if (info.timestamp > bestTime) { bestTime = info.timestamp; best = id; }
         });
         return best;
     };

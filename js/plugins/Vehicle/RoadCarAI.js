@@ -53,7 +53,10 @@
  * is solid and completely harmless; a hidden car is not there at all.
  *
  *   - the player   -> knocked clear + accident common event
- *                     (on foot CE 163, riding the Car CE 167, the Camper CE 168)
+ *                     (on foot CE 163, riding the Car CE 167, the Camper CE 168);
+ *                     the driver pulls over or drives on, rolled on morality,
+ *                     and one who stopped has a one time word for the party,
+ *                     in their personality, before getting back in
  *   - an NPC event -> knocked clear and really injured: injury conditions from
  *                     Diseases.json are written onto their society profile, so
  *                     the wounds show up in the Empathize panel's Health tab
@@ -869,7 +872,7 @@
     CAR_KEYS_ITEM_ID, giveDriverKeys, carOfDriver, onDriverKeysTaken,
     // Who is driving (WHO IS DRIVING below).
     MODE_CAR, get CAR_TOPUP_CAP() { return CAR_TOPUP_CAP; }, driverOf, mayDrive, hasCarKeys, isCarOwner, drawDriver, dealDriver: newDriver, driverForCell,
-    driveTravellerCar, summonOwnCar, carIncident,
+    driveTravellerCar, summonOwnCar, carIncident, hitStopChance, sayHitRemark,
     travellers: null,   // filled by NPC/NPCSystem_RoadTravellers.js
   };
 
@@ -1536,6 +1539,9 @@
       driverId: null,
       waitedFrom: null,
       incident: plan.incident || null,
+      // The party was knocked down: the first word with the driver afterwards
+      // is about it (sayHitRemark), once.
+      hitRemark: plan.incident === INCIDENT.HIT_PARTY ? "pending" : null,  // i18n-ignore  state id
     };
     ev._carMode = "stopped";
     ev._carLane = null;
@@ -1748,6 +1754,10 @@
   const FENDER_BENDER_CHANCE = 0.03;   // per car pulling up behind another
   const WITNESS_RANGE = 8;
   const INCIDENT_LINES = 2;            // RoadCar.incident.<kind>1..N
+  const HIT_REMARK_LINES = 2;          // RoadCar.hitRemark.<Personality>1..N
+  // The odds a driver who knocked the party down pulls over: the most crooked
+  // (morality -100) stop this often, the most upright (+100) always.
+  const HIT_STOP_CHANCE_MIN = 0.15;
   const CAR_TOPUP_CAP = 3;             // new owners one settlement may be dealt
   // i18n-ignore-start  incident kinds and the procedural group prefix
   const INCIDENT = {
@@ -2302,12 +2312,62 @@
     return true;
   }
 
-  // A car the world is driving knocked the party down.
+  // Whether this driver pulls over after knocking the party down, rolled on
+  // their morality: the worse the person, the likelier they drive on.
+  function hitStopChance(profile) {
+    const morality = Math.max(-100, Math.min(100, Number(profile && profile.moralityScore) || 0));
+    return HIT_STOP_CHANCE_MIN + (1 - HIT_STOP_CHANCE_MIN) * (morality + 100) / 200;
+  }
+
+  // A car the world is driving knocked the party down. The driver either pulls
+  // over and gets out, or puts their foot down and is gone.
   function driverHitParty(car) {
     const name = car && car._driverName;
-    if (!name) return;
-    loseNpcRegard(driverProfileOf(name), OPINION_DRIVER_HIT_PARTY);
-    carIncident(car, INCIDENT.HIT_PARTY);
+    if (!name) return false;
+    const profile = driverProfileOf(name);
+    loseNpcRegard(profile, OPINION_DRIVER_HIT_PARTY);
+    if (Math.random() >= hitStopChance(profile)) {
+      toast(T("RoadCar.hitAndRun"));
+      return false;
+    }
+    return carIncident(car, INCIDENT.HIT_PARTY);
+  }
+
+  // The driver's personality, by its English id (PersonalityData.json).
+  function personalityNameOf(profile) {
+    if (!profile || profile.personalityIndex == null) return null;
+    const data = window._NPCSocietyDataLoader?.personalities || window.Health?.PersonalityData || null;
+    const list = Array.isArray(data) ? data : data?.list;
+    return (list && list[profile.personalityIndex]?.name) || null;
+  }
+
+  // What the driver who knocked the party down says the first time they are
+  // spoken to: asking after them, cursing them, in their own temper.
+  function hitRemarkFor(name) {
+    const n = 1 + Math.floor(Math.random() * HIT_REMARK_LINES);
+    const persona = personalityNameOf(driverProfileOf(name));
+    if (persona) {
+      const key = "RoadCar.hitRemark." + persona + n;
+      const text = T(key);
+      if (text && text !== key) return text;
+    }
+    return T("RoadCar.hitRemark.default" + n);
+  }
+
+  // Talking to the driver of a car stopped after hitting the party: the one
+  // time line, in place of the ordinary conversation. True when it was said.
+  function sayHitRemark(driver) {
+    const car = driver && driver._carDriverOf ? $gameMap.event(driver._carDriverOf) : null;
+    const stop = car && car._carStop;
+    if (!stop || stop.hitRemark !== "pending" || stop.driverId !== driver.eventId()) return false;
+    if ($gameMessage.isBusy()) return false;
+    stop.hitRemark = "said";  // i18n-ignore  state id
+    const name = stop.driverName;
+    if (!name || window.NPCCreature?.isNonSentientProfile?.(driverProfileOf(name))) return false;
+    driver.turnTowardPlayer?.();
+    $gameMessage.setSpeakerName?.(name);
+    $gameMessage.add(hitRemarkFor(name));
+    return true;
   }
 
   // The party's own vehicle went into this car.
@@ -2507,6 +2567,7 @@
   const _Game_Event_start = Game_Event.prototype.start;
   Game_Event.prototype.start = function () {
     if (this._isRoadCar) return;
+    if (this._carDriverOf && sayHitRemark(this)) return;
     _Game_Event_start.call(this);
   };
 

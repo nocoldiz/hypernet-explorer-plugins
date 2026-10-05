@@ -15,13 +15,13 @@
     "yes": "Rispiegami tutto",
     "no": "Me la cavo da sola",
     "normal": [
-      "Bubba: Un'azione a testa per round, in ordine di velocita'. Scegli dalla lista e premi [CONTINUE].",
-      "Bubba: Attacco mena quello che hai in mano contro chi decidi tu. Non si spegne mai: e' l'unica cosa che non ti manca mai.",
-      "Bubba: Difesa ti mette in guardia e taglia quello che ti arriva addosso per il round. Con una pistola in mano quella riga diventa Ricarica: riempie il caricatore e ti copre comunque.",
-      "Bubba: Abilita' e' l'assortimento che ti sei preparata, ogni riga col suo prezzo in MP o AP. Azioni e' il repertorio essenziale che porti addosso qualunque cosa dimentichi, piu' altre quattro cose che si fanno col corpo.",
-      "Bubba: Sotto Azioni, Mira sceglie un arto prima del colpo e non ti costa il turno, e Lotta afferra la bestia a mani nude.",
-      "Bubba: Anche Parla sta li' sotto, e qualcuno davvero ascolta. Oggetto e' lo zaino, e Lancia, accanto a Parla, e' lo stesso zaino tirato in testa a qualcuno.",
-      "Bubba: Fuga funziona sempre, tesoro. E non c'e' vergogna: un cadavere non impara niente."
+      "Bubba: Un'azione a testa per round, prima i piu' veloci. Scegli una riga e premi [CONTINUE].",
+      "Bubba: Attacco colpisce con quello che hai in mano. Abilita' e' il tuo assortimento, pagato in MP o AP.",
+      "Bubba: Ricarica riempie il caricatore e ti copre per il round. Con la tua vector gun in mano, quella riga diventa Cambia.",
+      "Bubba: Quella pistola risponde solo a te, tesoro. Le sue modalita' e la sua forma si scelgono dal menu principale.",
+      "Bubba: Cambia la ripiega in quella forma e poi di nuovo in pistola, quante volte vuoi, e non costa il turno.",
+      "Bubba: Zaino usa quello che porti. Azioni contiene Mira, Lancia e Lotta, piu' il repertorio che non perdi mai.",
+      "Bubba: Parla prova prima con le parole, qualcuno ascolta. Fuggi funziona sempre: un cadavere non impara niente."
     ],
     "map": [
       "Bubba: Questa si gioca dove siamo in piedi, quindi la mappa e' l'arena. Sempre un'azione a testa per round, in ordine di velocita'.",
