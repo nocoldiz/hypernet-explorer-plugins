@@ -497,6 +497,8 @@ var WeaponSystemProcedural = {
       // A sculpt fitted at the workshop is part of what the weapon looks like,
       // so two designs of one entry are two models and never one.
       ':' + this.designKeyOf(weapon) +
+      // An enemy's hand is lifted off the body it was recruited in.
+      ':' + (weapon.unarmedLookKey || '') +
       // The vector gun's form and element are part of what it looks like.
       ':' + ((window.VectorGun && window.VectorGun.isVectorGun(weapon)) ? window.VectorGun.modelKey() : '');
     const cached = this._modelCache.get(key);
@@ -6326,7 +6328,63 @@ var WeaponSystemProcedural = {
    * archetype name so the model cache keys on it.
    */
   unarmedWeaponFor(actor) {
-    return this.unarmedWeaponForArchetype(this.archetypeOf(actor));
+    const archetype = this.archetypeOf(actor);
+    const enemyId = this.handEnemyIdOf(actor);
+    if (enemyId) return this.enemyHandWeaponFor(enemyId, actor && actor._recruitedLook, archetype);
+    return this.unarmedWeaponForArchetype(archetype);
+  },
+
+  /**
+   * The enemy whose own hands a party member punches with (Weapon3D_Unarmed,
+   * "Bespoke enemy hands"), or 0 for somebody who is not one: the enemy a
+   * recruit, summon or graduated pet was taken from, and for a summoned or
+   * graduated creature drawn only by its sprite, the enemy that sprite is
+   * (js/db/Sprites/MonsterEnemies.json, tools/monster-hands/gen_sprite_enemies.js).
+   */
+  handEnemyIdOf(actor) {
+    if (!actor) return 0;
+    const id = Number(actor._recruitedEnemyId || 0);
+    if (id && typeof $dataEnemies !== 'undefined' && $dataEnemies && $dataEnemies[id]) return id;
+    const proxy = !!(window.SummonSystem && window.SummonSystem.isProxyActor &&
+      typeof actor.actorId === 'function' && window.SummonSystem.isProxyActor(actor.actorId()));
+    if (!proxy && !actor._creatureArchetypes) return 0;
+    return this.spriteEnemyId(typeof actor.characterName === 'function' ? actor.characterName() : '');
+  },
+
+  /** The enemy a creature sprite is, by its img/characters path, or 0. */
+  spriteEnemyId(characterName) {
+    if (!characterName) return 0;
+    let table = null;
+    try { table = window.Sprites && window.Sprites.MonsterEnemies; } catch (e) { table = null; }
+    const id = table ? Number(table[characterName] || 0) : 0;
+    return (id && typeof $dataEnemies !== 'undefined' && $dataEnemies && $dataEnemies[id]) ? id : 0;
+  },
+
+  /**
+   * The empty right hand of one enemy, built off its own 3D body. Its left
+   * is its own model too (mirroredWeaponFor). One object per enemy and look,
+   * so a held sprite compares equal frame to frame.
+   */
+  enemyHandWeaponFor(enemyId, look, archetype) {
+    const lookKey = enemyId + ':' + (look ? [look.seed >>> 0, look.origin >>> 0, look.index || 0].join('.') : '0');
+    if (!this._enemyHandWeapons) this._enemyHandWeapons = {};
+    if (this._enemyHandWeapons[lookKey]) return this._enemyHandWeapons[lookKey];
+    const enemy = $dataEnemies[enemyId];
+    const weapon = {
+      // A band of its own below the archetype fists and the shields.
+      id: -400000 - enemyId * 2,
+      name: enemy ? enemy.name : String(archetype),
+      wtypeId: 11,
+      note: '<Weight: 900>',
+      unarmedArchetype: archetype || this.DEFAULT_ARCHETYPE,
+      unarmedEnemyId: enemyId,
+      unarmedLook: look ? { seed: look.seed >>> 0, origin: look.origin >>> 0, index: look.index || 0 } : null,
+      unarmedLookKey: lookKey,
+      unarmedSide: 'right',
+      weaponAnimations: []
+    };
+    this._enemyHandWeapons[lookKey] = weapon;
+    return weapon;
   },
 
   /** The same stand-in, for an archetype named outright rather than read off an actor. */
@@ -6361,7 +6419,11 @@ var WeaponSystemProcedural = {
     if (!this._mirroredWeapons) this._mirroredWeapons = new Map();
     let left = this._mirroredWeapons.get(weapon);
     if (!left) {
-      left = Object.assign({}, weapon, { mirrorOf: weapon });
+      // An enemy's left hand is lifted off its own left limb: a model of its
+      // own, under its own id, that the sprite does not reflect again.
+      left = weapon.unarmedEnemyId
+        ? Object.assign({}, weapon, { mirrorOf: weapon, id: weapon.id - 1, unarmedSide: 'left' })
+        : Object.assign({}, weapon, { mirrorOf: weapon });
       this._mirroredWeapons.set(weapon, left);
     }
     return left;
@@ -6431,12 +6493,24 @@ var WeaponSystemProcedural = {
    */
   unarmedHasForearm(weapon) {
     if (!weapon || !weapon.unarmedArchetype) return false;
+    // An enemy's own hand ends where its limb was cropped, unless the body
+    // had none and the archetype's fist stood in for it.
+    if (weapon.unarmedEnemyId && !weapon._handFallback) return false;
     const name = this.UNARMED_MODELS[weapon.unarmedArchetype] || this.UNARMED_MODELS[this.DEFAULT_ARCHETYPE];
     return name === this.UNARMED_MODELS[this.DEFAULT_ARCHETYPE];
   },
 
   /** Builds the fist for an archetype, falling back to the default one. */
   buildUnarmed(weapon, rand) {
+    if (weapon.unarmedEnemyId && typeof this.createUnarmedEnemyModel === 'function') {
+      let hand = null;
+      try { hand = this.createUnarmedEnemyModel(weapon, rand); } catch (e) {
+        console.warn('[WeaponSystemProcedural] enemy hand for ' + weapon.unarmedEnemyId + ' failed', e);
+      }
+      weapon._handFallback = !hand;
+      if (weapon.mirrorOf) weapon.mirrorOf._handFallback = weapon.mirrorOf._handFallback || !hand;
+      if (hand) return hand;
+    }
     const key = weapon.unarmedArchetype;
     const name = this.UNARMED_MODELS[key] || this.UNARMED_MODELS[this.DEFAULT_ARCHETYPE];
     if (name && typeof this[name] === 'function') return this[name](weapon, rand);
@@ -6604,6 +6678,8 @@ var WeaponSystemProcedural = {
   rigSpecFor(weapon) {
     const spec = this.UNARMED_RIG;
     if (!weapon || !weapon.unarmedArchetype || !spec || spec.unavailable) return null;
+    // A creature with a body of its own punches with that body's hands.
+    if (weapon.unarmedEnemyId) return null;
     if (spec.archetypes.indexOf(weapon.unarmedArchetype) < 0) return null;
     return spec;
   },
@@ -7200,8 +7276,10 @@ var WeaponSystemProcedural = {
       if (!this._weapon.model3d) {
         if (!window.THREE) return;
         this._model = WeaponSystemProcedural.createModel(this._weapon);
-        if (this._model && this._weapon.mirrorOf) {
-          // The left hand of a creature with only a right one built.
+        if (this._model && this._weapon.mirrorOf &&
+            (!this._weapon.unarmedEnemyId || this._weapon._handFallback)) {
+          // The left hand of a creature with only a right one built (an
+          // enemy's own left hand is already built as a left one).
           this._baseRotation = WeaponSystemProcedural.mirrorModel(this._model, this._baseRotation);
         }
         if (this._model) {

@@ -318,7 +318,14 @@
     },
     "ridable": "Cavalcabile",
     "unridable": "Non cavalcabile",
-    "rideOff": "Prima segnalo come cavalcabile"
+    "rideOff": "Prima segnalo come cavalcabile",
+    "familiar": "Famiglio",
+    "familiarOf": "Legato a {owner}",
+    "familiarOwnerGone": "Il suo padrone non è nel gruppo",
+    "convoke": "Convoca ({cost} MP)",
+    "dematerialize": "Dematerializza",
+    "convokeNoMp": "{owner} ha bisogno di {cost} MP",
+    "convokeOwnerAway": "{owner} non è nel gruppo"
   },
   "vehicles": {
     "fuel": "Carburante {fuel}L / {max}L",

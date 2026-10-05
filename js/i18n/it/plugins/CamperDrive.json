@@ -67,8 +67,8 @@
     "cmdMenu": "Menu del gruppo",
     "cmdExitWalk": "Termina la passeggiata",
     "cmdTurbo": "Turbo (a piedi: corri)",
-    "cmdDoor": "Portiera: scendi / sali",
-    "cmdView": "Cambia vista",
+    "cmdDoor": "Scendi dal veicolo",
+    "cmdView": "Prima / terza persona",
     "cmdExit": "Esci dalla guida",
     "cmdVehicle": "Opzioni del veicolo",
     "cmdHelp": "Comandi",
@@ -115,8 +115,8 @@
     "underwater": "IN IMMERSIONE"
   },
   "driverSave": {
-    "avoided": "[Tiro su DES del guidatore: {roll}{mod}={total}] Controsterzata magistrale, incidente evitato!",
-    "failed": "[Tiro su DES del guidatore: {roll}{mod}={total} contro CD {dc}] Riflessi insufficienti, il veicolo va a sbattere!"
+    "avoided": "[Tiro su DES del guidatore: \\DIE[{roll}] {mod} = {total}] Controsterzata magistrale, incidente evitato!",
+    "failed": "[Tiro su DES del guidatore: \\DIE[{roll}] {mod} = {total} contro CD {dc}] Riflessi insufficienti, il veicolo va a sbattere!"
   },
   "maintenance": "Manutenzione del veicolo",
   "refuel": "Rifornisci dalle taniche",

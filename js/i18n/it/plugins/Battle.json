@@ -98,6 +98,7 @@
     "aimAt": "Mira: {part}",
     "wrestle": "Lotta",
     "talk": "Parla",
+    "special": "Speciale",
     "reload": "Ricarica",
     "run": "Fuggi",
     "bash": "Colpisci",
@@ -399,7 +400,15 @@
       }
     },
     "perfectRitual": "[NAT 20] Rituale perfetto! {name} ottiene HYPER pieno e i potenziamenti da maestro!",
-    "empowered": "[INT +{mod}] Il rituale di evocazione ha potenziato {name} con bonus da combattimento!"
+    "empowered": "[INT +{mod}] Il rituale di evocazione ha potenziato {name} con bonus da combattimento!",
+    "skillsBound": "{name} si lega con {n} delle sue {max} abilità.",
+    "attackOnly": "{name} risponde, ma ricorda soltanto come colpire.",
+    "familiarHere": "{name} è già al tuo fianco.",
+    "ownerAway": "{owner} non è nel gruppo, quindi {name} non può essere convocato.",
+    "ownerLeft": "{name} svanisce: {owner} non è più nel gruppo.",
+    "convokeNoMp": "{owner} ha bisogno di {cost} MP per convocare {name}.",
+    "dematerialized": "{name} si dematerializza.",
+    "talkDematerialize": "Dematerializza {name}"
   },
   "actorDied": "{actor} è morto.",
   "knockout": {
@@ -580,7 +589,7 @@
     "fumble": "{actor} perde il filo di {skill}: {stat} base insufficiente!"
   },
   "critSever": {
-    "roll": "Colpo mortale su {enemy}: d20 {roll} {mod} = {total}/{dc}",
+    "roll": "Colpo mortale su {enemy}: \\DIE[{roll}] {mod} = {total}/{dc}",
     "outcomeBehead": "Passa da parte a parte.",
     "outcomeMaim": "Un arto se ne va.",
     "outcomeNone": "La guardia regge.",
@@ -729,7 +738,7 @@
       "wall": "Nulla tocca il gruppo per {turns} turni.",
       "disable": "La linea nemica è addormentata, ammaliata e resa inutile.",
       "gold": "Denaro usato come arma: {mult} volte il danno, pagato dalla borsa.",
-      "grimoire": "Il libro del patto si apre su {slots} incantesimi e chiede salute a ogni pagina voltata.",
+      "grimoire": "La sua pistola si apre in un libro di {slots} incantesimi potenti per il resto dello scontro, con rigenerazione e concentrazione. Voltare pagina per nuovi incantesimi costa il {cost}% della salute.",
       "assembly": "Tutto quello che la classe ha imparato, scagliato in una volta.",
       "barrageMulti": "Ogni nemico ancora in piedi subisce {mult} volte il danno, {hits} volte di fila."
     }

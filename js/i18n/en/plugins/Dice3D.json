@@ -17,7 +17,7 @@
     "breakdownFlat": "d20 {roll}"
   },
   "toast": {
-    "line": "[{action}] Roll: {roll}{mod}{stat} = {total}{versus} -> {outcome}",
+    "line": "[{action}] \\DIE[{roll}] {mod}{stat} = {total}{versus} -> {outcome}",
     "versus": " vs DC {dc}"
   },
   "prompt": {

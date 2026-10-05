@@ -1398,6 +1398,32 @@
         if (window.MergedVehicleSystem.openRepairByKey(key)) garageReturnKey = key;
     };
 
+    // Convoking a familiar from its row: the same rite the Convoke Familiar
+    // skill casts, paid in the same MP by the same person. The binding throw
+    // is made on the map, so the menu closes first.
+    Scene_Menu.prototype.convokeFamiliarUI = function (petId) {
+        const S = window.SummonSystem;
+        const state = S?.convokeState?.(petId);
+        if (!state || !state.ok) {
+            SoundManager.playBuzzer();
+            if (state && S.convokeFamiliar) S.convokeFamiliar(petId);   // says why
+            return;
+        }
+        SoundManager.playOk();
+        this.popScene();
+        runOnLoadedMap(() => {
+            if (window.SummonSystem) window.SummonSystem.convokeFamiliar(petId);
+        });
+    };
+
+    // Sending a convoked familiar back where it came from.
+    Scene_Menu.prototype.dematerializeFamiliarUI = function () {
+        if (!window.SummonSystem?.dematerialize) return;
+        SoundManager.playCancel();
+        window.SummonSystem.dematerialize();
+        this.refreshUIMenuDOM(false);
+    };
+
     // Sending away whatever the party called. Unlike abandoning an animal this
     // breaks no law: a summon was never anyone's to keep.
     Scene_Menu.prototype.dismissSummonUI = function () {
@@ -3646,12 +3672,18 @@
             };
 
             const petRow = (pet) => {
+                // A familiar is somebody's, bound for good: its row convokes and
+                // dematerializes it instead of leashing, sending or abandoning.
+                const isFamiliar = !!window.SummonSystem?.isFamiliarPet?.(pet.id);
+                const familiarOwner = isFamiliar ? (window.SummonSystem.familiarOwnerName?.(pet.id) || '') : '';
                 const isActive = (pet.id === activeId);
                 const isRenaming = (this._petRenameId === pet.id);
                 const isAbandoning = (this._petAbandonId === pet.id);
                 const isChoosingDrill = (this._petTrainId === pet.id);
                 const drill = window.PetSystem?.trainingInfo?.(pet.id) ?? null;
-                const typeLabel = pet.isChild
+                const typeLabel = isFamiliar
+                    ? T('MainMenu.pets.familiar')
+                    : pet.isChild
                     ? T('MainMenu.roster.child')
                     : (pet.isFollower ? T('MainMenu.roster.follower') : T('MainMenu.roster.pet'));
                 const activeBtn = isActive
@@ -3728,12 +3760,30 @@
                         }
                         rideBtns = toggle + ride;
                     }
+                    if (isFamiliar) {
+                        const state = window.SummonSystem.convokeState?.(pet.id) || { ok: false, cost: 0, reason: '' };
+                        let famBtn;
+                        if (isSummoned) {
+                            famBtn = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.dematerializeFamiliarUI?.()">${T('MainMenu.pets.dematerialize')}</div>`;
+                        } else if (state.ok) {
+                            famBtn = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.convokeFamiliarUI?.(${pet.id})">${T('MainMenu.pets.convoke', { cost: state.cost })}</div>`;
+                        } else {
+                            const why = state.reason === 'noMp'                               // i18n-ignore: reason id
+                                ? T('MainMenu.pets.convokeNoMp', { owner: state.owner, cost: state.cost })
+                                : T('MainMenu.pets.convokeOwnerAway', { owner: familiarOwner || state.owner });
+                            famBtn = `<div class="command-item roster-action is-disabled" title="${escapeHtml(why)}">${T('MainMenu.pets.convoke', { cost: state.cost })}</div>`;
+                        }
+                        buttons = `${famBtn}
+                        ${rideBtns}
+                        <div class="command-item focusable roster-action" onclick="SceneManager._scene?.startPetRename?.(${pet.id})">${T('MainMenu.pets.rename')}</div>`;
+                    } else {
                     buttons = `${activeBtn}
                         ${isSummoned ? dismissBtn : ''}
                         ${rideBtns}
                         ${drillBtns}
                         <div class="command-item focusable roster-action" onclick="SceneManager._scene?.startPetAbandon?.(${pet.id})">${T('MainMenu.pets.abandon')}</div>
                         <div class="command-item focusable roster-action" onclick="SceneManager._scene?.startPetRename?.(${pet.id})">${T('MainMenu.pets.rename')}</div>`;
+                    }
                 }
                 const parentLine = pet.isChild && pet.parentName
                     ? `<div class="pet-note">${T('MainMenu.pets.childOf', { parent: escapeHtml(pet.parentName) })}</div>`
@@ -3788,7 +3838,8 @@
                                 ${escapeHtml(pet.name)}
                                 <span class="roster-sub">${typeLabel}${activeTag}${summonTag}${mountTag} · ${T('MainMenu.roster.levelAbbr')}${pet.level}</span>
                             </div>
-                            ${isSummoned ? `<div class="pet-note">${summonNote(summon)}</div>` : ''}
+                            ${isFamiliar ? `<div class="pet-note">${familiarOwner ? T('MainMenu.pets.familiarOf', { owner: escapeHtml(familiarOwner) }) : T('MainMenu.pets.familiarOwnerGone')}</div>` : ''}
+                            ${isSummoned && !isFamiliar ? `<div class="pet-note">${summonNote(summon)}</div>` : ''}
                             ${traitsLine}
                             ${drillNote}
                             ${parentLine}

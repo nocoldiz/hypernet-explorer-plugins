@@ -401,75 +401,73 @@
                 // (UIScroll in Core/MouseControls.js). Read it with axis().
                 scroll: { stick: 'right' }
             },
+            // The voxel world, played like a third-person adventure: A
+            // activates whatever is in front of you (and gets you out from
+            // behind the wheel), Y jumps, X readies, the triggers are the hands
+            // on foot and the pedals at the wheel, R3 swaps first and third
+            // person, L3 crouches on foot and takes off in a vehicle, the d-pad
+            // runs the quick bar and opens the map. There is no second layer:
+            // every control has a face of its own. VoxelWorldScene reads the
+            // faces (_updatePadButtons) and the legend prints this table.
+            //
+            // A face with a `key` is also worked by that Input key on a
+            // keyboard. A, X and Y carry none: the world lifts them out of
+            // RMMZ's mapper while it has the controls, so 'ok' is Space and
+            // Enter only, and the pad's A never jumps.
             drive: {
-                accelerate: { face: 'A', key: 'ok' },
-                brake: { face: 'B', key: 'cancel' },
-                handbrake: { face: 'X', key: 'shift' },
-                view: { face: 'Y' },
-                gearDown: { face: 'L1', key: 'pageup' },
-                gearUp: { face: 'R1', key: 'pagedown' },
-                zoomOut: { face: 'L2' },
-                zoomIn: { face: 'R2' },
-                // There is no horn in this game, on any device. L3 carried one
-                // here for a while and nothing ever read it; a binding nobody
-                // works is a row in a legend promising something that does not
-                // happen, so it is gone rather than half-kept.
-                exit: { face: 'START', key: 'wmrToggle' },
-                // The second layer (see CHORD_FACE). Keyed on a keyboard where
-                // the rest of the voxel world's keys are, so no Input name is
-                // invented here.
-                door: { chord: true, face: 'A' },
-                dive: { chord: true, face: 'B' },
-                map: { chord: true, face: 'X' },
-                flight: { chord: true, face: 'Y' },
-                respawn: { chord: true, face: 'SELECT' },
-                help: { chord: true, face: 'START' },
-                vehicle: { chord: true, face: 'R1' }
+                accelerate: { face: 'R2' },
+                brake: { face: 'L2' },
+                door: { face: 'A' },
+                boost: { face: 'X' },
+                handbrake: { face: 'Y' },
+                back: { face: 'B', key: 'cancel' },
+                dive: { face: 'L1' },
+                vehicle: { face: 'R1' },
+                flight: { face: 'L3' },
+                view: { face: 'R3' },
+                zoomIn: { face: 'UP' },
+                zoomOut: { face: 'DOWN' },
+                map: { face: 'LEFT' },
+                respawn: { face: 'RIGHT' },
+                help: { face: 'START' },
+                exit: { face: 'SELECT', key: 'wmrToggle' }
             },
             // At the helm of something that flies: a starship over a world, or
-            // a broom. The left stick still yaws and throttles the way it
-            // steers on the ground, the RIGHT STICK IS THE NOSE, and the
-            // shoulders trim the altitude - so every flight control a keyboard
-            // has is reachable from the pad as well.
-            //
-            // `thrust` is deliberately not on 'ok': on a keyboard 'ok' is
-            // Space, and Space is the CLIMB trim - the same key that climbs on
-            // foot, in the water and in the air. The face/key split is exactly
-            // what lets A be thrust on the pad while Space stays trim.
+            // a broom. The left stick still yaws, the RIGHT STICK IS THE NOSE,
+            // the pedals are the thrust and the brake, and the shoulders trim
+            // the altitude - so every flight control a keyboard has is
+            // reachable from the pad as well.
             fly: {
-                thrust: { face: 'A', key: 'up' },
-                brake: { face: 'B', key: 'down' },
-                boost: { face: 'X', key: 'shift' },
-                view: { face: 'Y' },
+                thrust: { face: 'R2' },
+                brake: { face: 'L2' },
+                door: { face: 'A' },
+                boost: { face: 'X' },
+                climb: { face: 'Y' },
+                back: { face: 'B', key: 'cancel' },
                 descend: { face: 'L1', key: 'pageup' },
-                climb: { face: 'R1', key: 'ok' },
-                zoomOut: { face: 'L2' },
-                zoomIn: { face: 'R2' },
-                land: { face: 'R3' },
-                exit: { face: 'START', key: 'wmrToggle' }
+                climbTrim: { face: 'R1' },
+                land: { face: 'L3' },
+                view: { face: 'R3' },
+                zoomIn: { face: 'UP' },
+                zoomOut: { face: 'DOWN' },
+                map: { face: 'LEFT' },
+                help: { face: 'START' },
+                exit: { face: 'SELECT', key: 'wmrToggle' }
             },
             walk: {
-                jump: { face: 'A', key: 'ok' },
+                interact: { face: 'A' },
+                jump: { face: 'Y' },
+                ready: { face: 'X' },
                 back: { face: 'B', key: 'cancel' },
-                run: { face: 'X', key: 'shift' },
-                view: { face: 'Y' },
                 bar: { face: 'L1', key: 'pageup' },
                 dig: { face: 'R1', key: 'pagedown' },
-                zoomOut: { face: 'L2' },
-                zoomIn: { face: 'R2' },
-                exit: { face: 'START', key: 'wmrToggle' },
-                // The second layer (see CHORD_FACE). On foot in the voxel world
-                // a player can do a dozen things a pad has no face left for:
-                // these are the ones a keyboard had to itself.
-                // No `key` on any of them: a keyboard already has its own key
-                // for each, read where the rest of the voxel world's keys are
-                // read (the DOM listeners in VoxelWorldScene.js), so naming an
-                // Input key here would only invent a second one.
-                interact: { chord: true, face: 'A' },
-                place: { chord: true, face: 'B' },
-                map: { chord: true, face: 'X' },
-                crouch: { chord: true, face: 'Y' },
-                help: { chord: true, face: 'START' }
+                attack: { face: 'R2' },
+                place: { face: 'L2' },
+                crouch: { face: 'L3' },
+                view: { face: 'R3' },
+                map: { face: 'LEFT' },
+                help: { face: 'START' },
+                exit: { face: 'SELECT', key: 'wmrToggle' }
             },
             dream: {
                 interact: { face: 'A', key: 'ok' },
@@ -529,8 +527,13 @@
 
         // Whether this binding's FACE is live right now. The key half is never
         // gated: a keyboard has its own key for each of these and no layer.
+        // A mode with nothing on the layer has no layer: there L2 is simply
+        // L2 (the voxel world's brake, a menu's previous member), never a
+        // button that silences the rest of the pad.
         _faceLive(bind, player) {
-            return !!bind.face && this.chordHeld(player) === !!bind.chord;
+            if (!bind.face) return false;
+            if (!this.chordActions().length) return !bind.chord;
+            return this.chordHeld(player) === !!bind.chord;
         },
 
         action(name, player) {
@@ -1687,7 +1690,7 @@
             TX('Controller.options.cameraSpeed'),
             () => ConfigManager.padCameraSpeed,
             (value) => { ConfigManager.padCameraSpeed = value; },
-            'gameplay', 'custom',
+            'video', 'custom',
             (value) => value + '%',  // i18n-ignore  a percentage
             () => step(10), () => step(-10)
         );
@@ -1695,7 +1698,7 @@
             TX('Controller.options.invertY'),
             () => ConfigManager.padCameraInvertY,
             (value) => { ConfigManager.padCameraInvertY = value; },
-            'gameplay', 'boolean'
+            'video', 'boolean'
         );
     }
 })();

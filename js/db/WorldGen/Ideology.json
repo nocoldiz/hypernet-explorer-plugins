@@ -4996,5 +4996,3910 @@
       "myst": 100,
       "esoteric": 100
     }
+  },
+  {
+    "id": "atheist",
+    "name": "ideology.atheist",
+    "religions": [],
+    "description": "",
+    "traits": [
+      37,
+      7,
+      132,
+      164
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": -10,
+      "trad": -50,
+      "mil": -10,
+      "myst": -100,
+      "esoteric": -100
+    }
+  },
+  {
+    "id": "grandmaster_loyalism",
+    "name": "ideology.grandmaster_loyalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      89,
+      30,
+      95,
+      98,
+      132
+    ],
+    "axes": {
+      "econ": 10,
+      "auth": 60,
+      "trad": 50,
+      "mil": 10,
+      "myst": 60,
+      "esoteric": 60
+    }
+  },
+  {
+    "id": "arcane_elitism",
+    "name": "ideology.arcane_elitism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      91,
+      34,
+      132,
+      190,
+      123
+    ],
+    "axes": {
+      "econ": 30,
+      "auth": 40,
+      "trad": 80,
+      "mil": -10,
+      "myst": 90,
+      "esoteric": 90
+    }
+  },
+  {
+    "id": "technomantic_futurism",
+    "name": "ideology.technomantic_futurism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      35,
+      85,
+      7,
+      24,
+      190
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": 0,
+      "trad": -70,
+      "mil": 20,
+      "myst": 60,
+      "esoteric": 60
+    }
+  },
+  {
+    "id": "scholastic_taxonomism",
+    "name": "ideology.scholastic_taxonomism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      30,
+      132,
+      41,
+      83,
+      57
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": 30,
+      "trad": 40,
+      "mil": -20,
+      "myst": 70,
+      "esoteric": 70
+    }
+  },
+  {
+    "id": "permit_magocracy",
+    "name": "ideology.permit_magocracy",
+    "religions": [],
+    "description": "",
+    "traits": [
+      30,
+      40,
+      98,
+      172,
+      190
+    ],
+    "axes": {
+      "econ": 10,
+      "auth": 70,
+      "trad": 40,
+      "mil": 0,
+      "myst": 65,
+      "esoteric": 65
+    }
+  },
+  {
+    "id": "inverted_scholasticism",
+    "name": "ideology.inverted_scholasticism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      132,
+      83,
+      118,
+      129,
+      184
+    ],
+    "axes": {
+      "econ": -10,
+      "auth": -30,
+      "trad": -40,
+      "mil": 0,
+      "myst": 75,
+      "esoteric": 75
+    }
+  },
+  {
+    "id": "northpoint_frontierism",
+    "name": "ideology.northpoint_frontierism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      136,
+      95,
+      89,
+      97,
+      98
+    ],
+    "axes": {
+      "econ": -10,
+      "auth": 60,
+      "trad": 30,
+      "mil": 85,
+      "myst": -10,
+      "esoteric": -10
+    }
+  },
+  {
+    "id": "esoteric_corporatism",
+    "name": "ideology.esoteric_corporatism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      85,
+      40,
+      87,
+      35,
+      139
+    ],
+    "axes": {
+      "econ": 70,
+      "auth": 50,
+      "trad": 0,
+      "mil": 20,
+      "myst": 55,
+      "esoteric": 55
+    }
+  },
+  {
+    "id": "cryptid_protectionism",
+    "name": "ideology.cryptid_protectionism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      186,
+      185,
+      187,
+      33,
+      36
+    ],
+    "axes": {
+      "econ": -20,
+      "auth": -10,
+      "trad": 10,
+      "mil": -40,
+      "myst": 50,
+      "esoteric": 50
+    }
+  },
+  {
+    "id": "vampiric_aristocratism",
+    "name": "ideology.vampiric_aristocratism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      123,
+      91,
+      32,
+      38,
+      131
+    ],
+    "axes": {
+      "econ": 60,
+      "auth": 60,
+      "trad": 80,
+      "mil": 20,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "liminal_somnambulism",
+    "name": "ideology.liminal_somnambulism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      196,
+      83,
+      162,
+      52,
+      38
+    ],
+    "axes": {
+      "econ": -10,
+      "auth": -40,
+      "trad": -20,
+      "mil": -60,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "seven_sisters_oligarchy",
+    "name": "ideology.seven_sisters_oligarchy",
+    "religions": [],
+    "description": "",
+    "traits": [
+      131,
+      87,
+      123,
+      85,
+      90
+    ],
+    "axes": {
+      "econ": 90,
+      "auth": 60,
+      "trad": 40,
+      "mil": 30,
+      "myst": -10,
+      "esoteric": -10
+    }
+  },
+  {
+    "id": "infernal_managerialism",
+    "name": "ideology.infernal_managerialism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      40,
+      85,
+      87,
+      32,
+      30
+    ],
+    "axes": {
+      "econ": 80,
+      "auth": 50,
+      "trad": -10,
+      "mil": 10,
+      "myst": 60,
+      "esoteric": 60
+    }
+  },
+  {
+    "id": "velocity_mysticism",
+    "name": "ideology.velocity_mysticism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      24,
+      140,
+      94,
+      53,
+      86
+    ],
+    "axes": {
+      "econ": 40,
+      "auth": -40,
+      "trad": -50,
+      "mil": 10,
+      "myst": 50,
+      "esoteric": 50
+    }
+  },
+  {
+    "id": "transactional_theism",
+    "name": "ideology.transactional_theism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      133,
+      87,
+      164,
+      16,
+      116
+    ],
+    "axes": {
+      "econ": 80,
+      "auth": -60,
+      "trad": 0,
+      "mil": -10,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "divine_indifferentism",
+    "name": "ideology.divine_indifferentism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      95,
+      162,
+      166,
+      91,
+      116
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": 20,
+      "trad": 30,
+      "mil": 0,
+      "myst": 90,
+      "esoteric": 90
+    }
+  },
+  {
+    "id": "redactionism",
+    "name": "ideology.redactionism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      29,
+      90,
+      175,
+      30,
+      132
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": 80,
+      "trad": 20,
+      "mil": 10,
+      "myst": -20,
+      "esoteric": -20
+    }
+  },
+  {
+    "id": "silent_custodianism",
+    "name": "ideology.silent_custodianism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      83,
+      30,
+      198,
+      132,
+      95
+    ],
+    "axes": {
+      "econ": -10,
+      "auth": 60,
+      "trad": 60,
+      "mil": 10,
+      "myst": 10,
+      "esoteric": 10
+    }
+  },
+  {
+    "id": "acquisitive_archivism",
+    "name": "ideology.acquisitive_archivism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      27,
+      142,
+      175,
+      98,
+      41
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": 40,
+      "trad": 0,
+      "mil": 30,
+      "myst": 10,
+      "esoteric": 10
+    }
+  },
+  {
+    "id": "curial_conservatism",
+    "name": "ideology.curial_conservatism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      116,
+      123,
+      98,
+      90,
+      16
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": 70,
+      "trad": 90,
+      "mil": 10,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "clerical_banking",
+    "name": "ideology.clerical_banking",
+    "religions": [],
+    "description": "",
+    "traits": [
+      133,
+      87,
+      29,
+      116,
+      175
+    ],
+    "axes": {
+      "econ": 80,
+      "auth": 40,
+      "trad": 60,
+      "mil": 0,
+      "myst": 50,
+      "esoteric": 50
+    }
+  },
+  {
+    "id": "militant_monasticism",
+    "name": "ideology.militant_monasticism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      116,
+      121,
+      95,
+      136,
+      89
+    ],
+    "axes": {
+      "econ": -20,
+      "auth": 60,
+      "trad": 80,
+      "mil": 80,
+      "myst": 85,
+      "esoteric": 85
+    }
+  },
+  {
+    "id": "hexorcist_technoclericalism",
+    "name": "ideology.hexorcist_technoclericalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      35,
+      116,
+      30,
+      5,
+      190
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": 50,
+      "trad": 50,
+      "mil": 40,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "aggiornamento_reformism",
+    "name": "ideology.aggiornamento_reformism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      33,
+      163,
+      81,
+      116,
+      16
+    ],
+    "axes": {
+      "econ": -20,
+      "auth": -10,
+      "trad": -30,
+      "mil": -30,
+      "myst": 60,
+      "esoteric": 60
+    }
+  },
+  {
+    "id": "lay_integralism",
+    "name": "ideology.lay_integralism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      116,
+      40,
+      30,
+      175,
+      89
+    ],
+    "axes": {
+      "econ": 40,
+      "auth": 60,
+      "trad": 90,
+      "mil": 0,
+      "myst": 75,
+      "esoteric": 75
+    }
+  },
+  {
+    "id": "pontifical_mercenarism",
+    "name": "ideology.pontifical_mercenarism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      89,
+      136,
+      95,
+      116,
+      152
+    ],
+    "axes": {
+      "econ": 30,
+      "auth": 60,
+      "trad": 70,
+      "mil": 90,
+      "myst": 60,
+      "esoteric": 60
+    }
+  },
+  {
+    "id": "red_army_vanguardism",
+    "name": "ideology.red_army_vanguardism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      136,
+      89,
+      95,
+      98,
+      197
+    ],
+    "axes": {
+      "econ": -80,
+      "auth": 80,
+      "trad": 10,
+      "mil": 95,
+      "myst": -70,
+      "esoteric": -70
+    }
+  },
+  {
+    "id": "tanzimat_reformism",
+    "name": "ideology.tanzimat_reformism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      30,
+      40,
+      98,
+      200,
+      29
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": 60,
+      "trad": 10,
+      "mil": 20,
+      "myst": 10,
+      "esoteric": 10
+    }
+  },
+  {
+    "id": "janissary_corporatism",
+    "name": "ideology.janissary_corporatism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      89,
+      136,
+      91,
+      95,
+      152
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": 60,
+      "trad": 70,
+      "mil": 90,
+      "myst": 30,
+      "esoteric": 30
+    }
+  },
+  {
+    "id": "ottomanism",
+    "name": "ideology.ottomanism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      200,
+      81,
+      164,
+      16,
+      89
+    ],
+    "axes": {
+      "econ": 10,
+      "auth": 50,
+      "trad": 40,
+      "mil": 30,
+      "myst": 30,
+      "esoteric": 30
+    }
+  },
+  {
+    "id": "commonwealth_imperialism",
+    "name": "ideology.commonwealth_imperialism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      91,
+      140,
+      98,
+      123,
+      85
+    ],
+    "axes": {
+      "econ": 50,
+      "auth": 50,
+      "trad": 60,
+      "mil": 70,
+      "myst": -10,
+      "esoteric": -10
+    }
+  },
+  {
+    "id": "black_archive_statecraft",
+    "name": "ideology.black_archive_statecraft",
+    "religions": [],
+    "description": "",
+    "traits": [
+      90,
+      98,
+      16,
+      175,
+      5
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": 80,
+      "trad": 30,
+      "mil": 40,
+      "myst": 20,
+      "esoteric": 20
+    }
+  },
+  {
+    "id": "scientific_militarism",
+    "name": "ideology.scientific_militarism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      7,
+      35,
+      98,
+      136,
+      40
+    ],
+    "axes": {
+      "econ": 10,
+      "auth": 60,
+      "trad": -20,
+      "mil": 85,
+      "myst": -60,
+      "esoteric": -60
+    }
+  },
+  {
+    "id": "horde_tributarism",
+    "name": "ideology.horde_tributarism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      53,
+      87,
+      197,
+      91,
+      10
+    ],
+    "axes": {
+      "econ": -20,
+      "auth": 70,
+      "trad": 30,
+      "mil": 95,
+      "myst": 20,
+      "esoteric": 20
+    }
+  },
+  {
+    "id": "cascadian_bioregionalism",
+    "name": "ideology.cascadian_bioregionalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      187,
+      17,
+      163,
+      137,
+      35
+    ],
+    "axes": {
+      "econ": -30,
+      "auth": 10,
+      "trad": -20,
+      "mil": -20,
+      "myst": 20,
+      "esoteric": 20
+    }
+  },
+  {
+    "id": "seaboard_federalism",
+    "name": "ideology.seaboard_federalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      133,
+      188,
+      98,
+      85,
+      16
+    ],
+    "axes": {
+      "econ": 40,
+      "auth": 10,
+      "trad": 0,
+      "mil": 30,
+      "myst": -30,
+      "esoteric": -30
+    }
+  },
+  {
+    "id": "gandan_monasticism",
+    "name": "ideology.gandan_monasticism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      121,
+      95,
+      50,
+      92,
+      132
+    ],
+    "axes": {
+      "econ": -20,
+      "auth": 40,
+      "trad": 80,
+      "mil": -30,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "banner_nomadism",
+    "name": "ideology.banner_nomadism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      158,
+      154,
+      97,
+      89,
+      181
+    ],
+    "axes": {
+      "econ": -30,
+      "auth": 10,
+      "trad": 70,
+      "mil": 80,
+      "myst": 30,
+      "esoteric": 30
+    }
+  },
+  {
+    "id": "sanhedrin_restorationism",
+    "name": "ideology.sanhedrin_restorationism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      116,
+      171,
+      89,
+      132,
+      95
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": 50,
+      "trad": 85,
+      "mil": 40,
+      "myst": 75,
+      "esoteric": 75
+    }
+  },
+  {
+    "id": "name_custodianism",
+    "name": "ideology.name_custodianism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      30,
+      175,
+      190,
+      132,
+      95
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": 60,
+      "trad": 70,
+      "mil": 10,
+      "myst": 95,
+      "esoteric": 95
+    }
+  },
+  {
+    "id": "concession_feudalism",
+    "name": "ideology.concession_feudalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      131,
+      123,
+      87,
+      89,
+      152
+    ],
+    "axes": {
+      "econ": 80,
+      "auth": 70,
+      "trad": 60,
+      "mil": 60,
+      "myst": 20,
+      "esoteric": 20
+    }
+  },
+  {
+    "id": "deep_bargaining",
+    "name": "ideology.deep_bargaining",
+    "religions": [],
+    "description": "",
+    "traits": [
+      16,
+      133,
+      164,
+      24,
+      99
+    ],
+    "axes": {
+      "econ": 60,
+      "auth": 10,
+      "trad": -10,
+      "mil": 20,
+      "myst": 85,
+      "esoteric": 85
+    }
+  },
+  {
+    "id": "imperial_shahism",
+    "name": "ideology.imperial_shahism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      123,
+      91,
+      89,
+      98,
+      60
+    ],
+    "axes": {
+      "econ": 30,
+      "auth": 85,
+      "trad": 60,
+      "mil": 60,
+      "myst": 30,
+      "esoteric": 30
+    }
+  },
+  {
+    "id": "court_scholasticism",
+    "name": "ideology.court_scholasticism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      132,
+      30,
+      89,
+      200,
+      138
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": 60,
+      "trad": 60,
+      "mil": 0,
+      "myst": 50,
+      "esoteric": 50
+    }
+  },
+  {
+    "id": "sevak_volunteerism",
+    "name": "ideology.sevak_volunteerism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      89,
+      40,
+      39,
+      116,
+      95
+    ],
+    "axes": {
+      "econ": -10,
+      "auth": 60,
+      "trad": 80,
+      "mil": 50,
+      "myst": 60,
+      "esoteric": 60
+    }
+  },
+  {
+    "id": "matha_traditionalism",
+    "name": "ideology.matha_traditionalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      132,
+      121,
+      138,
+      92,
+      116
+    ],
+    "axes": {
+      "econ": -10,
+      "auth": 30,
+      "trad": 90,
+      "mil": -30,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "cordilleran_nationalism",
+    "name": "ideology.cordilleran_nationalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      181,
+      136,
+      95,
+      89,
+      97
+    ],
+    "axes": {
+      "econ": 30,
+      "auth": 60,
+      "trad": 50,
+      "mil": 80,
+      "myst": 0,
+      "esoteric": 0
+    }
+  },
+  {
+    "id": "austral_thalassocracy",
+    "name": "ideology.austral_thalassocracy",
+    "religions": [],
+    "description": "",
+    "traits": [
+      140,
+      98,
+      182,
+      95,
+      136
+    ],
+    "axes": {
+      "econ": 40,
+      "auth": 50,
+      "trad": 40,
+      "mil": 70,
+      "myst": -10,
+      "esoteric": -10
+    }
+  },
+  {
+    "id": "psionic_meritocracy",
+    "name": "ideology.psionic_meritocracy",
+    "religions": [],
+    "description": "",
+    "traits": [
+      196,
+      7,
+      91,
+      83,
+      190
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": 50,
+      "trad": -20,
+      "mil": 0,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "pataphysical_absurdism",
+    "name": "ideology.pataphysical_absurdism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      143,
+      52,
+      94,
+      82,
+      160
+    ],
+    "axes": {
+      "econ": -10,
+      "auth": -60,
+      "trad": -60,
+      "mil": -30,
+      "myst": 70,
+      "esoteric": 70
+    }
+  },
+  {
+    "id": "druidic_naturalism",
+    "name": "ideology.druidic_naturalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      187,
+      138,
+      186,
+      50,
+      190
+    ],
+    "axes": {
+      "econ": -40,
+      "auth": -10,
+      "trad": 60,
+      "mil": -20,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "entropic_stoicism",
+    "name": "ideology.entropic_stoicism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      95,
+      37,
+      161,
+      7,
+      83
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": 10,
+      "trad": 0,
+      "mil": 0,
+      "myst": 50,
+      "esoteric": 50
+    }
+  },
+  {
+    "id": "necromantic_continuity",
+    "name": "ideology.necromantic_continuity",
+    "religions": [],
+    "description": "",
+    "traits": [
+      162,
+      32,
+      190,
+      95,
+      108
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": 30,
+      "trad": 20,
+      "mil": 20,
+      "myst": 90,
+      "esoteric": 90
+    }
+  },
+  {
+    "id": "chronomantic_preservationism",
+    "name": "ideology.chronomantic_preservationism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      30,
+      95,
+      41,
+      132,
+      190
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": 40,
+      "trad": 80,
+      "mil": -10,
+      "myst": 85,
+      "esoteric": 85
+    }
+  },
+  {
+    "id": "oneiric_democracy",
+    "name": "ideology.oneiric_democracy",
+    "religions": [],
+    "description": "",
+    "traits": [
+      196,
+      33,
+      163,
+      38,
+      52
+    ],
+    "axes": {
+      "econ": -30,
+      "auth": -50,
+      "trad": -30,
+      "mil": -40,
+      "myst": 75,
+      "esoteric": 75
+    }
+  },
+  {
+    "id": "augural_governance",
+    "name": "ideology.augural_governance",
+    "religions": [],
+    "description": "",
+    "traits": [
+      122,
+      36,
+      196,
+      98,
+      116
+    ],
+    "axes": {
+      "econ": 10,
+      "auth": 60,
+      "trad": 70,
+      "mil": 10,
+      "myst": 85,
+      "esoteric": 85
+    }
+  },
+  {
+    "id": "geomantic_feudalism",
+    "name": "ideology.geomantic_feudalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      123,
+      137,
+      181,
+      190,
+      91
+    ],
+    "axes": {
+      "econ": 30,
+      "auth": 60,
+      "trad": 80,
+      "mil": 30,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "summoner_compact",
+    "name": "ideology.summoner_compact",
+    "religions": [],
+    "description": "",
+    "traits": [
+      16,
+      190,
+      98,
+      164,
+      186
+    ],
+    "axes": {
+      "econ": 10,
+      "auth": 20,
+      "trad": 0,
+      "mil": 20,
+      "myst": 85,
+      "esoteric": 85
+    }
+  },
+  {
+    "id": "alchemical_perfectionism",
+    "name": "ideology.alchemical_perfectionism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      139,
+      30,
+      132,
+      40,
+      50
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": 10,
+      "trad": 30,
+      "mil": -10,
+      "myst": 70,
+      "esoteric": 70
+    }
+  },
+  {
+    "id": "void_nihilism",
+    "name": "ideology.void_nihilism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      162,
+      32,
+      166,
+      83,
+      192
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": -30,
+      "trad": -70,
+      "mil": 20,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "astral_cosmopolitanism",
+    "name": "ideology.astral_cosmopolitanism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      200,
+      140,
+      163,
+      196,
+      160
+    ],
+    "axes": {
+      "econ": -10,
+      "auth": -30,
+      "trad": -40,
+      "mil": -40,
+      "myst": 75,
+      "esoteric": 75
+    }
+  },
+  {
+    "id": "miracle_populism",
+    "name": "ideology.miracle_populism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      81,
+      116,
+      122,
+      197,
+      100
+    ],
+    "axes": {
+      "econ": -30,
+      "auth": 40,
+      "trad": 60,
+      "mil": 0,
+      "myst": 90,
+      "esoteric": 90
+    }
+  },
+  {
+    "id": "illusionist_relativism",
+    "name": "ideology.illusionist_relativism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      29,
+      16,
+      166,
+      52,
+      94
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": -30,
+      "trad": -50,
+      "mil": -20,
+      "myst": 70,
+      "esoteric": 70
+    }
+  },
+  {
+    "id": "forbidden_lorism",
+    "name": "ideology.forbidden_lorism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      118,
+      132,
+      193,
+      192,
+      60
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": -20,
+      "trad": -50,
+      "mil": 10,
+      "myst": 90,
+      "esoteric": 90
+    }
+  },
+  {
+    "id": "leninism",
+    "name": "ideology.leninism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      163,
+      85,
+      98,
+      132,
+      172
+    ],
+    "axes": {
+      "econ": -90,
+      "auth": 75,
+      "trad": -40,
+      "mil": 50,
+      "myst": -80,
+      "esoteric": -80
+    }
+  },
+  {
+    "id": "trotskyism",
+    "name": "ideology.trotskyism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      163,
+      132,
+      82,
+      200,
+      166
+    ],
+    "axes": {
+      "econ": -90,
+      "auth": 40,
+      "trad": -60,
+      "mil": 40,
+      "myst": -80,
+      "esoteric": -80
+    }
+  },
+  {
+    "id": "stalinism",
+    "name": "ideology.stalinism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      5,
+      32,
+      60,
+      40,
+      167
+    ],
+    "axes": {
+      "econ": -95,
+      "auth": 95,
+      "trad": 10,
+      "mil": 85,
+      "myst": -90,
+      "esoteric": -90
+    }
+  },
+  {
+    "id": "maoism",
+    "name": "ideology.maoism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      163,
+      137,
+      85,
+      197,
+      60
+    ],
+    "axes": {
+      "econ": -95,
+      "auth": 85,
+      "trad": -60,
+      "mil": 70,
+      "myst": -80,
+      "esoteric": -80
+    }
+  },
+  {
+    "id": "titoism",
+    "name": "ideology.titoism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      164,
+      136,
+      81,
+      98,
+      16
+    ],
+    "axes": {
+      "econ": -70,
+      "auth": 60,
+      "trad": -20,
+      "mil": 40,
+      "myst": -70,
+      "esoteric": -70
+    }
+  },
+  {
+    "id": "eurocommunism",
+    "name": "ideology.eurocommunism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      164,
+      132,
+      163,
+      33,
+      16
+    ],
+    "axes": {
+      "econ": -70,
+      "auth": -10,
+      "trad": -30,
+      "mil": -30,
+      "myst": -60,
+      "esoteric": -60
+    }
+  },
+  {
+    "id": "council_communism",
+    "name": "ideology.council_communism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      163,
+      88,
+      171,
+      132,
+      40
+    ],
+    "axes": {
+      "econ": -90,
+      "auth": -50,
+      "trad": -50,
+      "mil": -20,
+      "myst": -70,
+      "esoteric": -70
+    }
+  },
+  {
+    "id": "left_communism",
+    "name": "ideology.left_communism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      163,
+      132,
+      172,
+      166,
+      30
+    ],
+    "axes": {
+      "econ": -95,
+      "auth": -20,
+      "trad": -60,
+      "mil": 0,
+      "myst": -80,
+      "esoteric": -80
+    }
+  },
+  {
+    "id": "luxemburgism",
+    "name": "ideology.luxemburgism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      163,
+      33,
+      132,
+      171,
+      197
+    ],
+    "axes": {
+      "econ": -85,
+      "auth": -30,
+      "trad": -50,
+      "mil": -30,
+      "myst": -70,
+      "esoteric": -70
+    }
+  },
+  {
+    "id": "hoxhaism",
+    "name": "ideology.hoxhaism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      5,
+      55,
+      95,
+      89,
+      30
+    ],
+    "axes": {
+      "econ": -95,
+      "auth": 95,
+      "trad": 0,
+      "mil": 80,
+      "myst": -100,
+      "esoteric": -100
+    }
+  },
+  {
+    "id": "guevarism",
+    "name": "ideology.guevarism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      24,
+      163,
+      97,
+      136,
+      81
+    ],
+    "axes": {
+      "econ": -90,
+      "auth": 50,
+      "trad": -40,
+      "mil": 85,
+      "myst": -70,
+      "esoteric": -70
+    }
+  },
+  {
+    "id": "castroism",
+    "name": "ideology.castroism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      81,
+      197,
+      89,
+      136,
+      91
+    ],
+    "axes": {
+      "econ": -85,
+      "auth": 80,
+      "trad": -10,
+      "mil": 60,
+      "myst": -60,
+      "esoteric": -60
+    }
+  },
+  {
+    "id": "agrarian_communism",
+    "name": "ideology.agrarian_communism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      34,
+      137,
+      55,
+      47,
+      32
+    ],
+    "axes": {
+      "econ": -100,
+      "auth": 95,
+      "trad": 40,
+      "mil": 80,
+      "myst": -90,
+      "esoteric": -90
+    }
+  },
+  {
+    "id": "austromarxism",
+    "name": "ideology.austromarxism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      132,
+      164,
+      200,
+      163,
+      30
+    ],
+    "axes": {
+      "econ": -60,
+      "auth": 10,
+      "trad": -20,
+      "mil": -20,
+      "myst": -60,
+      "esoteric": -60
+    }
+  },
+  {
+    "id": "bundism",
+    "name": "ideology.bundism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      200,
+      163,
+      88,
+      89,
+      132
+    ],
+    "axes": {
+      "econ": -60,
+      "auth": -10,
+      "trad": 20,
+      "mil": -20,
+      "myst": -20,
+      "esoteric": -20
+    }
+  },
+  {
+    "id": "fabianism",
+    "name": "ideology.fabianism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      132,
+      164,
+      30,
+      40,
+      7
+    ],
+    "axes": {
+      "econ": -50,
+      "auth": 10,
+      "trad": -20,
+      "mil": -30,
+      "myst": -50,
+      "esoteric": -50
+    }
+  },
+  {
+    "id": "guild_socialism",
+    "name": "ideology.guild_socialism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      141,
+      40,
+      88,
+      171,
+      163
+    ],
+    "axes": {
+      "econ": -60,
+      "auth": -20,
+      "trad": 20,
+      "mil": -20,
+      "myst": -20,
+      "esoteric": -20
+    }
+  },
+  {
+    "id": "christian_socialism",
+    "name": "ideology.christian_socialism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      116,
+      88,
+      33,
+      92,
+      163
+    ],
+    "axes": {
+      "econ": -50,
+      "auth": 10,
+      "trad": 40,
+      "mil": -40,
+      "myst": 60,
+      "esoteric": 60
+    }
+  },
+  {
+    "id": "market_socialism",
+    "name": "ideology.market_socialism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      164,
+      133,
+      7,
+      40,
+      16
+    ],
+    "axes": {
+      "econ": -40,
+      "auth": 10,
+      "trad": -20,
+      "mil": -10,
+      "myst": -40,
+      "esoteric": -40
+    }
+  },
+  {
+    "id": "utopian_socialism",
+    "name": "ideology.utopian_socialism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      163,
+      160,
+      88,
+      33,
+      137
+    ],
+    "axes": {
+      "econ": -70,
+      "auth": -30,
+      "trad": -40,
+      "mil": -60,
+      "myst": -10,
+      "esoteric": -10
+    }
+  },
+  {
+    "id": "revolutionary_syndicalism",
+    "name": "ideology.revolutionary_syndicalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      40,
+      148,
+      89,
+      197,
+      10
+    ],
+    "axes": {
+      "econ": -80,
+      "auth": -20,
+      "trad": -30,
+      "mil": 40,
+      "myst": -50,
+      "esoteric": -50
+    }
+  },
+  {
+    "id": "eco_socialism",
+    "name": "ideology.eco_socialism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      187,
+      17,
+      163,
+      88,
+      33
+    ],
+    "axes": {
+      "econ": -70,
+      "auth": 0,
+      "trad": -20,
+      "mil": -40,
+      "myst": -20,
+      "esoteric": -20
+    }
+  },
+  {
+    "id": "situationism",
+    "name": "ideology.situationism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      143,
+      166,
+      94,
+      82,
+      118
+    ],
+    "axes": {
+      "econ": -70,
+      "auth": -70,
+      "trad": -80,
+      "mil": -30,
+      "myst": -30,
+      "esoteric": -30
+    }
+  },
+  {
+    "id": "autonomism",
+    "name": "ideology.autonomism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      163,
+      188,
+      82,
+      166,
+      24
+    ],
+    "axes": {
+      "econ": -80,
+      "auth": -60,
+      "trad": -60,
+      "mil": 10,
+      "myst": -50,
+      "esoteric": -50
+    }
+  },
+  {
+    "id": "new_left",
+    "name": "ideology.new_left",
+    "religions": [],
+    "description": "",
+    "traits": [
+      163,
+      33,
+      82,
+      143,
+      18
+    ],
+    "axes": {
+      "econ": -60,
+      "auth": -40,
+      "trad": -70,
+      "mil": -50,
+      "myst": -30,
+      "esoteric": -30
+    }
+  },
+  {
+    "id": "nehruvian_socialism",
+    "name": "ideology.nehruvian_socialism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      164,
+      132,
+      200,
+      163,
+      81
+    ],
+    "axes": {
+      "econ": -50,
+      "auth": 30,
+      "trad": -10,
+      "mil": -10,
+      "myst": -20,
+      "esoteric": -20
+    }
+  },
+  {
+    "id": "jamahiriya",
+    "name": "ideology.jamahiriya",
+    "religions": [],
+    "description": "",
+    "traits": [
+      60,
+      197,
+      81,
+      91,
+      183
+    ],
+    "axes": {
+      "econ": -60,
+      "auth": 80,
+      "trad": 30,
+      "mil": 70,
+      "myst": 30,
+      "esoteric": 30
+    }
+  },
+  {
+    "id": "nasserism",
+    "name": "ideology.nasserism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      81,
+      197,
+      91,
+      136,
+      89
+    ],
+    "axes": {
+      "econ": -50,
+      "auth": 70,
+      "trad": 0,
+      "mil": 60,
+      "myst": -10,
+      "esoteric": -10
+    }
+  },
+  {
+    "id": "sandinismo",
+    "name": "ideology.sandinismo",
+    "religions": [],
+    "description": "",
+    "traits": [
+      163,
+      89,
+      136,
+      97,
+      81
+    ],
+    "axes": {
+      "econ": -75,
+      "auth": 40,
+      "trad": -20,
+      "mil": 60,
+      "myst": 10,
+      "esoteric": 10
+    }
+  },
+  {
+    "id": "zapatismo",
+    "name": "ideology.zapatismo",
+    "religions": [],
+    "description": "",
+    "traits": [
+      137,
+      163,
+      88,
+      97,
+      175
+    ],
+    "axes": {
+      "econ": -75,
+      "auth": -50,
+      "trad": 40,
+      "mil": 40,
+      "myst": 0,
+      "esoteric": 0
+    }
+  },
+  {
+    "id": "cooperativism",
+    "name": "ideology.cooperativism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      88,
+      171,
+      40,
+      137,
+      164
+    ],
+    "axes": {
+      "econ": -40,
+      "auth": -30,
+      "trad": 0,
+      "mil": -30,
+      "myst": -10,
+      "esoteric": -10
+    }
+  },
+  {
+    "id": "ordoliberalism",
+    "name": "ideology.ordoliberalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      30,
+      132,
+      164,
+      171,
+      40
+    ],
+    "axes": {
+      "econ": 50,
+      "auth": 20,
+      "trad": 10,
+      "mil": -10,
+      "myst": -40,
+      "esoteric": -40
+    }
+  },
+  {
+    "id": "neoliberalism",
+    "name": "ideology.neoliberalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      85,
+      133,
+      164,
+      87,
+      35
+    ],
+    "axes": {
+      "econ": 80,
+      "auth": 0,
+      "trad": -10,
+      "mil": 10,
+      "myst": -40,
+      "esoteric": -40
+    }
+  },
+  {
+    "id": "georgism",
+    "name": "ideology.georgism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      171,
+      132,
+      163,
+      88,
+      137
+    ],
+    "axes": {
+      "econ": 30,
+      "auth": -20,
+      "trad": -10,
+      "mil": -20,
+      "myst": -30,
+      "esoteric": -30
+    }
+  },
+  {
+    "id": "utilitarianism",
+    "name": "ideology.utilitarianism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      164,
+      132,
+      7,
+      37,
+      171
+    ],
+    "axes": {
+      "econ": 10,
+      "auth": 0,
+      "trad": -40,
+      "mil": -10,
+      "myst": -70,
+      "esoteric": -70
+    }
+  },
+  {
+    "id": "radicalism",
+    "name": "ideology.radicalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      172,
+      163,
+      37,
+      82,
+      132
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": -20,
+      "trad": -60,
+      "mil": -20,
+      "myst": -60,
+      "esoteric": -60
+    }
+  },
+  {
+    "id": "whiggism",
+    "name": "ideology.whiggism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      123,
+      131,
+      164,
+      16,
+      132
+    ],
+    "axes": {
+      "econ": 50,
+      "auth": 0,
+      "trad": 10,
+      "mil": 0,
+      "myst": -20,
+      "esoteric": -20
+    }
+  },
+  {
+    "id": "manchester_liberalism",
+    "name": "ideology.manchester_liberalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      133,
+      40,
+      87,
+      164,
+      131
+    ],
+    "axes": {
+      "econ": 90,
+      "auth": -30,
+      "trad": -10,
+      "mil": -30,
+      "myst": -40,
+      "esoteric": -40
+    }
+  },
+  {
+    "id": "objectivism",
+    "name": "ideology.objectivism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      85,
+      91,
+      37,
+      7,
+      172
+    ],
+    "axes": {
+      "econ": 95,
+      "auth": -50,
+      "trad": -30,
+      "mil": 0,
+      "myst": -90,
+      "esoteric": -90
+    }
+  },
+  {
+    "id": "progressivism",
+    "name": "ideology.progressivism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      163,
+      132,
+      171,
+      33,
+      160
+    ],
+    "axes": {
+      "econ": -30,
+      "auth": 10,
+      "trad": -40,
+      "mil": -10,
+      "myst": -30,
+      "esoteric": -30
+    }
+  },
+  {
+    "id": "new_deal_liberalism",
+    "name": "ideology.new_deal_liberalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      88,
+      164,
+      81,
+      160,
+      40
+    ],
+    "axes": {
+      "econ": -35,
+      "auth": 20,
+      "trad": -10,
+      "mil": 10,
+      "myst": -20,
+      "esoteric": -20
+    }
+  },
+  {
+    "id": "jeffersonian_agrarianism",
+    "name": "ideology.jeffersonian_agrarianism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      137,
+      171,
+      132,
+      163,
+      97
+    ],
+    "axes": {
+      "econ": 40,
+      "auth": -40,
+      "trad": 30,
+      "mil": 0,
+      "myst": 0,
+      "esoteric": 0
+    }
+  },
+  {
+    "id": "hamiltonianism",
+    "name": "ideology.hamiltonianism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      85,
+      133,
+      98,
+      7,
+      40
+    ],
+    "axes": {
+      "econ": 50,
+      "auth": 40,
+      "trad": 10,
+      "mil": 30,
+      "myst": -20,
+      "esoteric": -20
+    }
+  },
+  {
+    "id": "physiocracy",
+    "name": "ideology.physiocracy",
+    "religions": [],
+    "description": "",
+    "traits": [
+      137,
+      132,
+      164,
+      123,
+      171
+    ],
+    "axes": {
+      "econ": 50,
+      "auth": -10,
+      "trad": 30,
+      "mil": -20,
+      "myst": -10,
+      "esoteric": -10
+    }
+  },
+  {
+    "id": "cyberlibertarianism",
+    "name": "ideology.cyberlibertarianism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      35,
+      163,
+      175,
+      83,
+      24
+    ],
+    "axes": {
+      "econ": 60,
+      "auth": -70,
+      "trad": -60,
+      "mil": -30,
+      "myst": -40,
+      "esoteric": -40
+    }
+  },
+  {
+    "id": "extropianism",
+    "name": "ideology.extropianism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      35,
+      7,
+      160,
+      85,
+      24
+    ],
+    "axes": {
+      "econ": 60,
+      "auth": -50,
+      "trad": -80,
+      "mil": -10,
+      "myst": -50,
+      "esoteric": -50
+    }
+  },
+  {
+    "id": "burkean_conservatism",
+    "name": "ideology.burkean_conservatism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      95,
+      164,
+      123,
+      132,
+      89
+    ],
+    "axes": {
+      "econ": 40,
+      "auth": 20,
+      "trad": 70,
+      "mil": 10,
+      "myst": 20,
+      "esoteric": 20
+    }
+  },
+  {
+    "id": "gaullism",
+    "name": "ideology.gaullism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      91,
+      81,
+      197,
+      136,
+      98
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": 50,
+      "trad": 40,
+      "mil": 50,
+      "myst": -10,
+      "esoteric": -10
+    }
+  },
+  {
+    "id": "reaganism",
+    "name": "ideology.reaganism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      81,
+      160,
+      197,
+      133,
+      116
+    ],
+    "axes": {
+      "econ": 75,
+      "auth": 20,
+      "trad": 50,
+      "mil": 60,
+      "myst": 30,
+      "esoteric": 30
+    }
+  },
+  {
+    "id": "neoconservatism",
+    "name": "ideology.neoconservatism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      98,
+      85,
+      197,
+      132,
+      91
+    ],
+    "axes": {
+      "econ": 60,
+      "auth": 40,
+      "trad": 30,
+      "mil": 80,
+      "myst": 0,
+      "esoteric": 0
+    }
+  },
+  {
+    "id": "paleoconservatism",
+    "name": "ideology.paleoconservatism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      55,
+      172,
+      116,
+      161,
+      89
+    ],
+    "axes": {
+      "econ": 40,
+      "auth": 30,
+      "trad": 80,
+      "mil": -10,
+      "myst": 40,
+      "esoteric": 40
+    }
+  },
+  {
+    "id": "christian_right",
+    "name": "ideology.christian_right",
+    "religions": [],
+    "description": "",
+    "traits": [
+      116,
+      197,
+      89,
+      36,
+      91
+    ],
+    "axes": {
+      "econ": 50,
+      "auth": 40,
+      "trad": 90,
+      "mil": 40,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "poujadism",
+    "name": "ideology.poujadism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      133,
+      172,
+      166,
+      197,
+      87
+    ],
+    "axes": {
+      "econ": 50,
+      "auth": 10,
+      "trad": 50,
+      "mil": 0,
+      "myst": 0,
+      "esoteric": 0
+    }
+  },
+  {
+    "id": "bonapartism",
+    "name": "ideology.bonapartism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      60,
+      81,
+      98,
+      91,
+      136
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": 80,
+      "trad": 30,
+      "mil": 85,
+      "myst": -10,
+      "esoteric": -10
+    }
+  },
+  {
+    "id": "legitimism",
+    "name": "ideology.legitimism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      123,
+      89,
+      116,
+      91,
+      95
+    ],
+    "axes": {
+      "econ": 30,
+      "auth": 70,
+      "trad": 95,
+      "mil": 30,
+      "myst": 60,
+      "esoteric": 60
+    }
+  },
+  {
+    "id": "carlism",
+    "name": "ideology.carlism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      116,
+      89,
+      123,
+      136,
+      167
+    ],
+    "axes": {
+      "econ": 10,
+      "auth": 60,
+      "trad": 95,
+      "mil": 60,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "enlightened_absolutism",
+    "name": "ideology.enlightened_absolutism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      123,
+      132,
+      7,
+      98,
+      91
+    ],
+    "axes": {
+      "econ": 10,
+      "auth": 85,
+      "trad": 0,
+      "mil": 40,
+      "myst": -50,
+      "esoteric": -50
+    }
+  },
+  {
+    "id": "cameralism",
+    "name": "ideology.cameralism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      30,
+      40,
+      132,
+      98,
+      171
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": 70,
+      "trad": 30,
+      "mil": 20,
+      "myst": -20,
+      "esoteric": -20
+    }
+  },
+  {
+    "id": "jacksonian_populism",
+    "name": "ideology.jacksonian_populism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      197,
+      172,
+      81,
+      136,
+      55
+    ],
+    "axes": {
+      "econ": 30,
+      "auth": 30,
+      "trad": 50,
+      "mil": 60,
+      "myst": 20,
+      "esoteric": 20
+    }
+  },
+  {
+    "id": "american_isolationism",
+    "name": "ideology.american_isolationism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      55,
+      172,
+      137,
+      95,
+      89
+    ],
+    "axes": {
+      "econ": 40,
+      "auth": 10,
+      "trad": 60,
+      "mil": -40,
+      "myst": 20,
+      "esoteric": 20
+    }
+  },
+  {
+    "id": "militia_patriotism",
+    "name": "ideology.militia_patriotism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      97,
+      5,
+      4,
+      136,
+      172
+    ],
+    "axes": {
+      "econ": 50,
+      "auth": -50,
+      "trad": 70,
+      "mil": 80,
+      "myst": 30,
+      "esoteric": 30
+    }
+  },
+  {
+    "id": "sovereign_citizenship",
+    "name": "ideology.sovereign_citizenship",
+    "religions": [],
+    "description": "",
+    "traits": [
+      5,
+      29,
+      172,
+      91,
+      166
+    ],
+    "axes": {
+      "econ": 60,
+      "auth": -80,
+      "trad": 30,
+      "mil": 0,
+      "myst": 20,
+      "esoteric": 20
+    }
+  },
+  {
+    "id": "italian_fascism",
+    "name": "ideology.italian_fascism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      60,
+      197,
+      81,
+      91,
+      47
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": 95,
+      "trad": 60,
+      "mil": 90,
+      "myst": -10,
+      "esoteric": -10
+    }
+  },
+  {
+    "id": "national_socialism",
+    "name": "ideology.national_socialism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      55,
+      60,
+      47,
+      32,
+      197
+    ],
+    "axes": {
+      "econ": 10,
+      "auth": 100,
+      "trad": 70,
+      "mil": 100,
+      "myst": 30,
+      "esoteric": 30
+    }
+  },
+  {
+    "id": "falangism",
+    "name": "ideology.falangism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      116,
+      91,
+      89,
+      136,
+      197
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": 85,
+      "trad": 85,
+      "mil": 80,
+      "myst": 60,
+      "esoteric": 60
+    }
+  },
+  {
+    "id": "francoism",
+    "name": "ideology.francoism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      116,
+      95,
+      89,
+      136,
+      5
+    ],
+    "axes": {
+      "econ": 30,
+      "auth": 90,
+      "trad": 90,
+      "mil": 70,
+      "myst": 60,
+      "esoteric": 60
+    }
+  },
+  {
+    "id": "estado_novo_corporatism",
+    "name": "ideology.estado_novo_corporatism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      95,
+      30,
+      116,
+      83,
+      89
+    ],
+    "axes": {
+      "econ": 30,
+      "auth": 85,
+      "trad": 85,
+      "mil": 40,
+      "myst": 50,
+      "esoteric": 50
+    }
+  },
+  {
+    "id": "clerical_fascism",
+    "name": "ideology.clerical_fascism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      116,
+      55,
+      47,
+      91,
+      197
+    ],
+    "axes": {
+      "econ": 10,
+      "auth": 90,
+      "trad": 90,
+      "mil": 70,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "integral_nationalism",
+    "name": "ideology.integral_nationalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      91,
+      55,
+      132,
+      172,
+      123
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": 80,
+      "trad": 90,
+      "mil": 60,
+      "myst": 40,
+      "esoteric": 40
+    }
+  },
+  {
+    "id": "national_bolshevism",
+    "name": "ideology.national_bolshevism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      55,
+      60,
+      118,
+      24,
+      197
+    ],
+    "axes": {
+      "econ": -60,
+      "auth": 90,
+      "trad": 40,
+      "mil": 80,
+      "myst": -20,
+      "esoteric": -20
+    }
+  },
+  {
+    "id": "eurasianism",
+    "name": "ideology.eurasianism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      132,
+      60,
+      55,
+      91,
+      200
+    ],
+    "axes": {
+      "econ": -10,
+      "auth": 80,
+      "trad": 70,
+      "mil": 60,
+      "myst": 40,
+      "esoteric": 40
+    }
+  },
+  {
+    "id": "caudillismo",
+    "name": "ideology.caudillismo",
+    "religions": [],
+    "description": "",
+    "traits": [
+      81,
+      91,
+      60,
+      136,
+      197
+    ],
+    "axes": {
+      "econ": 30,
+      "auth": 85,
+      "trad": 50,
+      "mil": 80,
+      "myst": 20,
+      "esoteric": 20
+    }
+  },
+  {
+    "id": "military_juntaism",
+    "name": "ideology.military_juntaism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      136,
+      95,
+      5,
+      98,
+      32
+    ],
+    "axes": {
+      "econ": 40,
+      "auth": 95,
+      "trad": 50,
+      "mil": 95,
+      "myst": 0,
+      "esoteric": 0
+    }
+  },
+  {
+    "id": "state_shinto",
+    "name": "ideology.state_shinto",
+    "religions": [],
+    "description": "",
+    "traits": [
+      89,
+      116,
+      95,
+      91,
+      123
+    ],
+    "axes": {
+      "econ": 10,
+      "auth": 90,
+      "trad": 95,
+      "mil": 80,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "pan_slavism",
+    "name": "ideology.pan_slavism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      89,
+      91,
+      200,
+      197,
+      116
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": 40,
+      "trad": 70,
+      "mil": 40,
+      "myst": 30,
+      "esoteric": 30
+    }
+  },
+  {
+    "id": "pan_germanism",
+    "name": "ideology.pan_germanism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      91,
+      55,
+      89,
+      136,
+      30
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": 60,
+      "trad": 60,
+      "mil": 60,
+      "myst": 0,
+      "esoteric": 0
+    }
+  },
+  {
+    "id": "pan_africanism",
+    "name": "ideology.pan_africanism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      163,
+      200,
+      81,
+      89,
+      91
+    ],
+    "axes": {
+      "econ": -40,
+      "auth": 10,
+      "trad": 10,
+      "mil": 0,
+      "myst": 10,
+      "esoteric": 10
+    }
+  },
+  {
+    "id": "pan_turkism",
+    "name": "ideology.pan_turkism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      91,
+      89,
+      158,
+      197,
+      55
+    ],
+    "axes": {
+      "econ": 10,
+      "auth": 60,
+      "trad": 60,
+      "mil": 60,
+      "myst": 20,
+      "esoteric": 20
+    }
+  },
+  {
+    "id": "irish_republicanism",
+    "name": "ideology.irish_republicanism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      89,
+      167,
+      143,
+      197,
+      136
+    ],
+    "axes": {
+      "econ": -20,
+      "auth": 10,
+      "trad": 40,
+      "mil": 60,
+      "myst": 30,
+      "esoteric": 30
+    }
+  },
+  {
+    "id": "basque_nationalism",
+    "name": "ideology.basque_nationalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      89,
+      181,
+      40,
+      91,
+      172
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": 10,
+      "trad": 60,
+      "mil": 20,
+      "myst": 20,
+      "esoteric": 20
+    }
+  },
+  {
+    "id": "catalan_nationalism",
+    "name": "ideology.catalan_nationalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      133,
+      89,
+      91,
+      143,
+      200
+    ],
+    "axes": {
+      "econ": 10,
+      "auth": -10,
+      "trad": 40,
+      "mil": -20,
+      "myst": 0,
+      "esoteric": 0
+    }
+  },
+  {
+    "id": "scottish_nationalism",
+    "name": "ideology.scottish_nationalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      89,
+      172,
+      91,
+      181,
+      197
+    ],
+    "axes": {
+      "econ": -20,
+      "auth": 0,
+      "trad": 30,
+      "mil": -10,
+      "myst": 0,
+      "esoteric": 0
+    }
+  },
+  {
+    "id": "quebec_sovereigntism",
+    "name": "ideology.quebec_sovereigntism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      89,
+      91,
+      143,
+      200,
+      172
+    ],
+    "axes": {
+      "econ": -10,
+      "auth": 0,
+      "trad": 40,
+      "mil": -20,
+      "myst": 0,
+      "esoteric": 0
+    }
+  },
+  {
+    "id": "kurdish_nationalism",
+    "name": "ideology.kurdish_nationalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      89,
+      97,
+      181,
+      167,
+      136
+    ],
+    "axes": {
+      "econ": -20,
+      "auth": 20,
+      "trad": 40,
+      "mil": 60,
+      "myst": 10,
+      "esoteric": 10
+    }
+  },
+  {
+    "id": "black_nationalism",
+    "name": "ideology.black_nationalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      91,
+      81,
+      197,
+      167,
+      89
+    ],
+    "axes": {
+      "econ": -30,
+      "auth": 30,
+      "trad": 30,
+      "mil": 30,
+      "myst": 30,
+      "esoteric": 30
+    }
+  },
+  {
+    "id": "three_principles",
+    "name": "ideology.three_principles",
+    "religions": [],
+    "description": "",
+    "traits": [
+      163,
+      81,
+      132,
+      89,
+      164
+    ],
+    "axes": {
+      "econ": -20,
+      "auth": 40,
+      "trad": 10,
+      "mil": 30,
+      "myst": -20,
+      "esoteric": -20
+    }
+  },
+  {
+    "id": "gandhism",
+    "name": "ideology.gandhism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      25,
+      50,
+      92,
+      171,
+      17
+    ],
+    "axes": {
+      "econ": -40,
+      "auth": -40,
+      "trad": 40,
+      "mil": -100,
+      "myst": 60,
+      "esoteric": 60
+    }
+  },
+  {
+    "id": "non_alignment",
+    "name": "ideology.non_alignment",
+    "religions": [],
+    "description": "",
+    "traits": [
+      164,
+      200,
+      16,
+      98,
+      92
+    ],
+    "axes": {
+      "econ": -20,
+      "auth": 20,
+      "trad": 0,
+      "mil": -20,
+      "myst": -20,
+      "esoteric": -20
+    }
+  },
+  {
+    "id": "negritude",
+    "name": "ideology.negritude",
+    "religions": [],
+    "description": "",
+    "traits": [
+      143,
+      91,
+      163,
+      132,
+      81
+    ],
+    "axes": {
+      "econ": -20,
+      "auth": -10,
+      "trad": 40,
+      "mil": -20,
+      "myst": 30,
+      "esoteric": 30
+    }
+  },
+  {
+    "id": "christian_fundamentalism",
+    "name": "ideology.christian_fundamentalism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      116,
+      172,
+      36,
+      55,
+      89
+    ],
+    "axes": {
+      "econ": 30,
+      "auth": 60,
+      "trad": 95,
+      "mil": 30,
+      "myst": 90,
+      "esoteric": 90
+    }
+  },
+  {
+    "id": "social_gospel",
+    "name": "ideology.social_gospel",
+    "religions": [],
+    "description": "",
+    "traits": [
+      116,
+      88,
+      33,
+      163,
+      168
+    ],
+    "axes": {
+      "econ": -50,
+      "auth": 0,
+      "trad": 30,
+      "mil": -50,
+      "myst": 70,
+      "esoteric": 70
+    }
+  },
+  {
+    "id": "quaker_pacifism",
+    "name": "ideology.quaker_pacifism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      25,
+      171,
+      92,
+      168,
+      116
+    ],
+    "axes": {
+      "econ": -30,
+      "auth": -40,
+      "trad": 40,
+      "mil": -100,
+      "myst": 60,
+      "esoteric": 60
+    }
+  },
+  {
+    "id": "calvinist_theocracy",
+    "name": "ideology.calvinist_theocracy",
+    "religions": [],
+    "description": "",
+    "traits": [
+      116,
+      40,
+      50,
+      30,
+      172
+    ],
+    "axes": {
+      "econ": 50,
+      "auth": 80,
+      "trad": 90,
+      "mil": 20,
+      "myst": 85,
+      "esoteric": 85
+    }
+  },
+  {
+    "id": "amish_separatism",
+    "name": "ideology.amish_separatism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      34,
+      137,
+      92,
+      116,
+      25
+    ],
+    "axes": {
+      "econ": -20,
+      "auth": 30,
+      "trad": 100,
+      "mil": -90,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "salafism",
+    "name": "ideology.salafism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      116,
+      50,
+      172,
+      55,
+      89
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": 70,
+      "trad": 100,
+      "mil": 30,
+      "myst": 90,
+      "esoteric": 90
+    }
+  },
+  {
+    "id": "sufi_mysticism",
+    "name": "ideology.sufi_mysticism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      121,
+      50,
+      92,
+      143,
+      196
+    ],
+    "axes": {
+      "econ": -20,
+      "auth": -20,
+      "trad": 60,
+      "mil": -60,
+      "myst": 95,
+      "esoteric": 95
+    }
+  },
+  {
+    "id": "rastafarianism",
+    "name": "ideology.rastafarianism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      187,
+      143,
+      17,
+      163,
+      94
+    ],
+    "axes": {
+      "econ": -40,
+      "auth": -50,
+      "trad": 40,
+      "mil": -60,
+      "myst": 80,
+      "esoteric": 80
+    }
+  },
+  {
+    "id": "theosophy",
+    "name": "ideology.theosophy",
+    "religions": [],
+    "description": "",
+    "traits": [
+      132,
+      196,
+      163,
+      200,
+      190
+    ],
+    "axes": {
+      "econ": -10,
+      "auth": -10,
+      "trad": 10,
+      "mil": -50,
+      "myst": 90,
+      "esoteric": 90
+    }
+  },
+  {
+    "id": "anthroposophy",
+    "name": "ideology.anthroposophy",
+    "religions": [],
+    "description": "",
+    "traits": [
+      137,
+      163,
+      132,
+      143,
+      187
+    ],
+    "axes": {
+      "econ": -20,
+      "auth": -10,
+      "trad": 20,
+      "mil": -50,
+      "myst": 85,
+      "esoteric": 85
+    }
+  },
+  {
+    "id": "spiritualism",
+    "name": "ideology.spiritualism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      196,
+      36,
+      33,
+      160,
+      122
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": -20,
+      "trad": 10,
+      "mil": -40,
+      "myst": 90,
+      "esoteric": 90
+    }
+  },
+  {
+    "id": "new_age",
+    "name": "ideology.new_age",
+    "religions": [],
+    "description": "",
+    "traits": [
+      160,
+      33,
+      17,
+      187,
+      94
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": -50,
+      "trad": -30,
+      "mil": -60,
+      "myst": 85,
+      "esoteric": 85
+    }
+  },
+  {
+    "id": "neopaganism",
+    "name": "ideology.neopaganism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      187,
+      138,
+      193,
+      143,
+      94
+    ],
+    "axes": {
+      "econ": -20,
+      "auth": -40,
+      "trad": 40,
+      "mil": -30,
+      "myst": 85,
+      "esoteric": 85
+    }
+  },
+  {
+    "id": "laveyan_satanism",
+    "name": "ideology.laveyan_satanism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      94,
+      91,
+      166,
+      118,
+      37
+    ],
+    "axes": {
+      "econ": 60,
+      "auth": -40,
+      "trad": -60,
+      "mil": 0,
+      "myst": 60,
+      "esoteric": 60
+    }
+  },
+  {
+    "id": "secular_humanism",
+    "name": "ideology.secular_humanism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      37,
+      117,
+      33,
+      132,
+      171
+    ],
+    "axes": {
+      "econ": -10,
+      "auth": -30,
+      "trad": -50,
+      "mil": -40,
+      "myst": -90,
+      "esoteric": -90
+    }
+  },
+  {
+    "id": "deism",
+    "name": "ideology.deism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      132,
+      37,
+      164,
+      95,
+      171
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": -20,
+      "trad": 0,
+      "mil": -20,
+      "myst": 10,
+      "esoteric": 10
+    }
+  },
+  {
+    "id": "agnosticism",
+    "name": "ideology.agnosticism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      37,
+      164,
+      83,
+      95,
+      132
+    ],
+    "axes": {
+      "econ": 0,
+      "auth": -20,
+      "trad": -20,
+      "mil": -20,
+      "myst": -50,
+      "esoteric": -50
+    }
+  },
+  {
+    "id": "subgenius_slackism",
+    "name": "ideology.subgenius_slackism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      86,
+      94,
+      143,
+      166,
+      52
+    ],
+    "axes": {
+      "econ": 30,
+      "auth": -80,
+      "trad": -70,
+      "mil": -30,
+      "myst": 60,
+      "esoteric": 60
+    }
+  },
+  {
+    "id": "jacobinism",
+    "name": "ideology.jacobinism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      163,
+      60,
+      172,
+      167,
+      197
+    ],
+    "axes": {
+      "econ": -30,
+      "auth": 80,
+      "trad": -90,
+      "mil": 60,
+      "myst": -70,
+      "esoteric": -70
+    }
+  },
+  {
+    "id": "chartism",
+    "name": "ideology.chartism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      163,
+      40,
+      171,
+      197,
+      88
+    ],
+    "axes": {
+      "econ": -40,
+      "auth": -20,
+      "trad": -20,
+      "mil": -20,
+      "myst": -30,
+      "esoteric": -30
+    }
+  },
+  {
+    "id": "narodism",
+    "name": "ideology.narodism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      137,
+      163,
+      88,
+      24,
+      132
+    ],
+    "axes": {
+      "econ": -60,
+      "auth": -20,
+      "trad": 50,
+      "mil": 10,
+      "myst": 10,
+      "esoteric": 10
+    }
+  },
+  {
+    "id": "russian_nihilism",
+    "name": "ideology.russian_nihilism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      162,
+      37,
+      118,
+      166,
+      24
+    ],
+    "axes": {
+      "econ": -20,
+      "auth": -60,
+      "trad": -90,
+      "mil": 30,
+      "myst": -80,
+      "esoteric": -80
+    }
+  },
+  {
+    "id": "slavophilism",
+    "name": "ideology.slavophilism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      116,
+      132,
+      89,
+      92,
+      91
+    ],
+    "axes": {
+      "econ": -10,
+      "auth": 50,
+      "trad": 90,
+      "mil": 10,
+      "myst": 70,
+      "esoteric": 70
+    }
+  },
+  {
+    "id": "italian_futurism",
+    "name": "ideology.italian_futurism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      24,
+      85,
+      143,
+      10,
+      197
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": 60,
+      "trad": -90,
+      "mil": 80,
+      "myst": -30,
+      "esoteric": -30
+    }
+  },
+  {
+    "id": "radical_feminism",
+    "name": "ideology.radical_feminism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      163,
+      172,
+      171,
+      132,
+      91
+    ],
+    "axes": {
+      "econ": -50,
+      "auth": -20,
+      "trad": -70,
+      "mil": -30,
+      "myst": -30,
+      "esoteric": -30
+    }
+  },
+  {
+    "id": "gay_liberation",
+    "name": "ideology.gay_liberation",
+    "religions": [],
+    "description": "",
+    "traits": [
+      82,
+      163,
+      143,
+      94,
+      91
+    ],
+    "axes": {
+      "econ": -30,
+      "auth": -50,
+      "trad": -80,
+      "mil": -40,
+      "myst": -30,
+      "esoteric": -30
+    }
+  },
+  {
+    "id": "animal_liberation",
+    "name": "ideology.animal_liberation",
+    "religions": [],
+    "description": "",
+    "traits": [
+      17,
+      33,
+      186,
+      163,
+      25
+    ],
+    "axes": {
+      "econ": -30,
+      "auth": -30,
+      "trad": -40,
+      "mil": -50,
+      "myst": -20,
+      "esoteric": -20
+    }
+  },
+  {
+    "id": "deep_ecology",
+    "name": "ideology.deep_ecology",
+    "religions": [],
+    "description": "",
+    "traits": [
+      187,
+      50,
+      28,
+      17,
+      162
+    ],
+    "axes": {
+      "econ": -40,
+      "auth": -30,
+      "trad": 20,
+      "mil": -50,
+      "myst": 40,
+      "esoteric": 40
+    }
+  },
+  {
+    "id": "civil_rights_integrationism",
+    "name": "ideology.civil_rights_integrationism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      25,
+      81,
+      163,
+      171,
+      116
+    ],
+    "axes": {
+      "econ": -30,
+      "auth": -20,
+      "trad": 0,
+      "mil": -80,
+      "myst": 40,
+      "esoteric": 40
+    }
+  },
+  {
+    "id": "social_credit",
+    "name": "ideology.social_credit",
+    "religions": [],
+    "description": "",
+    "traits": [
+      133,
+      163,
+      137,
+      160,
+      116
+    ],
+    "axes": {
+      "econ": 10,
+      "auth": 0,
+      "trad": 40,
+      "mil": -10,
+      "myst": 20,
+      "esoteric": 20
+    }
+  },
+  {
+    "id": "realpolitik",
+    "name": "ideology.realpolitik",
+    "religions": [],
+    "description": "",
+    "traits": [
+      164,
+      98,
+      16,
+      95,
+      90
+    ],
+    "axes": {
+      "econ": 20,
+      "auth": 60,
+      "trad": 10,
+      "mil": 50,
+      "myst": -40,
+      "esoteric": -40
+    }
+  },
+  {
+    "id": "atlanticism",
+    "name": "ideology.atlanticism",
+    "religions": [],
+    "description": "",
+    "traits": [
+      98,
+      200,
+      164,
+      136,
+      16
+    ],
+    "axes": {
+      "econ": 40,
+      "auth": 20,
+      "trad": 10,
+      "mil": 50,
+      "myst": -30,
+      "esoteric": -30
+    }
   }
 ]

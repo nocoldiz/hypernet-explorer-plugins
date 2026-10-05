@@ -79,7 +79,29 @@
   // believes, what she does for a living and the body she was born in are the
   // player's, while her name, her face, her class and her gender are the
   // story's (see _storyModeEmLocksField).
-  const STORY_EM_OPEN_FIELDS = ["ideology", "job", "reproduction"];
+  const STORY_EM_OPEN_FIELDS = ["ideology", "job", "reproduction", "skinColour", "hairColour", "dressColour",
+    "beltColour", "bootsColour", "underwearColour", "glassesColour"];
+
+  // The colours her dossier model can be worn in (Actor.modelColours): a row of
+  // ready swatches each, and a free picker beside them for any colour at all.
+  const MODEL_COLOUR_SWATCHES = {
+    // The last three are goblin greens.
+    skin:      ["#ffe0c8", "#f1c27d", "#e0ac69", "#c68642", "#8d5524", "#5c3a1e", "#3b2414", "#2a170c", "#1f110a", "#140b06",
+                "#9bbf6a", "#5f8a3c", "#3a5a28"],
+    hair:      ["#f5e6a8", "#d8a24a", "#a0522d", "#5a3825", "#2b1b12", "#0e0e10", "#c0c0c0"],
+    dress:     ["#f2efe6", "#7a1f2b", "#2d4a7a", "#3f6b3a", "#c9a227", "#6b3f87"],
+    belt:      ["#5a3825", "#8b5a2b", "#c9a227", "#c0c0c0", "#7a1f2b", "#f2efe6"],
+    boots:     ["#3b2414", "#5a3825", "#7a1f2b", "#2d4a7a", "#f2efe6", "#c0c0c0"],
+    underwear: ["#f2efe6", "#7a1f2b", "#e88aa8", "#2d4a7a", "#6b3f87", "#c9a227"],
+    glasses:   ["#1c1c22", "#c9a227", "#c0c0c0", "#2d4a7a", "#3f6b3a", "#e88aa8"]
+  };
+  // What each part looks like as the model ships, averaged off Em.glb's own
+  // textures. Its swatch leads the row and puts the shipped colour back, so
+  // the presets above leave out anything that would only repeat it.
+  const MODEL_COLOUR_ORIGINALS = {
+    skin: "#ae8579", hair: "#ea1b00", dress: "#262a30", belt: "#323337",
+    boots: "#303030", underwear: "#141414", glasses: "#d7001d"
+  };
   // The same three, named as the pick kinds the sheet draws them with.
   const STORY_EM_OPEN_PICKS = { creed: "ideology", job: "job" };
 
@@ -1628,13 +1650,26 @@
         { id: "democratic_socialist" }, { id: "high_frequency_trader" },
         { id: "neo_feudalism" }, { id: "pragmatist" },
       ];
+      // The story mode's Em picks from her own shelf only, in its order, her
+      // default first, and is never left believing nothing.
+      const emChoices = this._storyEmCreedChoices();
+      if (emChoices) {
+        return emChoices.map((id) => ({ value: id, label: this._formatIdeologyName(id) }));
+      }
       const rows = (all.length > 0 ? all : coreQuickPicks)
         .map((item) => ({ value: item.id || item, label: this._formatIdeologyName(item) }))
         .sort((a, b) => a.label.localeCompare(b.label));
-      // A creed held is a creed chosen: the list opens on nobody's. The story
-      // mode's Em is offered the whole bank like anybody else - what she
-      // believes after the Ritual took everything else is the player's to say.
+      // A creed held is a creed chosen: the list opens on nobody's.
       return [{ value: "", label: ccT('CharCreate.none') }].concat(rows);
+    }
+
+    // The creeds story mode offers Em (CharacterPresets.storyModeEmIdeologyChoices),
+    // or null for anybody else.
+    _storyEmCreedChoices() {
+      const CP = window.CharacterPresets;
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (!CP || !CP.isStoryModeEm || !CP.isStoryModeEm(actor) || !CP.storyModeEmIdeologyChoices) return null;
+      return CP.storyModeEmIdeologyChoices();
     }
 
     _hometownPickOptions() {
@@ -1863,6 +1898,48 @@
           ${slotsHtml}
         </div>
       `;
+    }
+
+    // The colours of a dossier model, one cell a part on a grid of two rows:
+    // the model's own colour first, the ready swatches,
+    // and a free picker that takes any colour. The sidebar model repaints as
+    // the picker is dragged.
+    _modelColoursHtml(actor) {
+      if (!actor || typeof actor.modelColours !== "function") return "";
+      const colours = actor.modelColours();
+      const rows = Object.keys(MODEL_COLOUR_SWATCHES).map((part) => {
+        const field = part + "Colour";
+        const current = colours[part];
+        const openClass = this._storyOpenClass(field);
+        const shipped = MODEL_COLOUR_ORIGINALS[part];
+        const original = `<button type="button" class="cc-bio-chip cc-colour-swatch${openClass} ${current ? '' : 'selected'}" style="background:${shipped} !important" data-colour="${shipped}" title="${ccT('CharCreate.colourOriginal')}" onclick="SceneManager._scene.onBioOptionChange('${field}', '')"></button>`;
+        const swatches = MODEL_COLOUR_SWATCHES[part].map((hex) => (
+          `<button type="button" class="cc-bio-chip cc-colour-swatch${openClass} ${current === hex ? 'selected' : ''}" style="background:${hex} !important" data-colour="${hex}" onclick="SceneManager._scene.onBioOptionChange('${field}', '${hex}')"></button>`
+        )).join("");
+        const free = `<input type="color" class="cc-colour-free${openClass}" value="${current || shipped}" title="${ccT('CharCreate.colourAny')}"
+          oninput="SceneManager._scene.onModelColourPreview('${part}', this.value)"
+          onchange="SceneManager._scene.onBioOptionChange('${field}', this.value)">`;
+        return `
+          <div class="cc-colour-cell">
+            <div class="cc-colour-label">${ccT('CharCreate.' + field)}</div>
+            <div class="cc-colour-row" data-colour-part="${part}">${original}${swatches}${free}</div>
+          </div>
+        `;
+      }).join("");
+      return `
+        <div class="cc-bio-section">
+          <div class="cc-bio-section-title">${this._ccIconHtml(234, 16)} <span>${ccT('CharCreate.modelColours')}</span></div>
+          <div class="cc-colour-grid">${rows}</div>
+        </div>
+      `;
+    }
+
+    // Live repaint while the free picker is dragged: the colour is written and
+    // the sidebar model picks it up on its next frame. Nothing is rebuilt, or
+    // the open picker would be torn down under the cursor.
+    onModelColourPreview(part, hex) {
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (actor && actor.setModelColour) actor.setModelColour(part, hex);
     }
 
     _bioPickerLeftHtml() {
@@ -2142,8 +2219,9 @@
 
       // Story mode's Em is a written character: her second archetype, gender,
       // organs (held to a uterus by applyStoryModeEmLocks), endocrine balance,
-      // creed, morality, age, standing and blood are the dossier's, so the
-      // sheet stops asking them. Her trade and her home town are all it keeps.
+      // morality, age, standing and blood are the dossier's, so the sheet stops
+      // asking them. It keeps her trade, her creed (from her own shelf), her
+      // home town and the colours her model wears.
       // The room the settled fields free is given to her class card, so the
       // facing page is left to her written history alone.
       if (isStoryEm) {
@@ -2154,9 +2232,14 @@
               ${typePillsHtml}
               ${professionSectionHtml}
               <div class="cc-bio-section">
+                <div class="cc-bio-section-title">${this._ccIconHtml(183, 16)} <span>${ccT('CharCreate.creedIdeology')}</span></div>
+                ${this._pickTriggerHtml('creed', this._pickLabel('creed'))}
+              </div>
+              <div class="cc-bio-section">
                 <div class="cc-bio-section-title">${this._ccIconHtml(190, 16)} <span>${ccT('CharCreate.originCity')}</span></div>
                 ${this._pickTriggerHtml('hometown', this._pickLabel('hometown'))}
               </div>
+              ${this._modelColoursHtml(actor)}
               ${this._renderSimpleClassDetailsHtml(actor, storyClassData, { maxLevel: 99, grid: true })}
             </div>
           </div>
@@ -2299,9 +2382,14 @@
           ${passiveDesc ? `<p class="cc-class-passive-desc">${passiveDesc}</p>` : ''}
         </div>
       ` : "";
-      // ...and the once-a-day act the class pulls off the floor.
-      const limit = window.LimitBreak && window.LimitBreak.cardForClass
-        ? window.LimitBreak.cardForClass(c.id) : null;
+      // ...and the once-a-day act the class pulls off the floor. Story mode's
+      // Em opens her book instead, whatever her class.
+      const LB = window.LimitBreak;
+      const CP = window.CharacterPresets;
+      const storyEm = !!(CP && CP.isStoryModeEm && CP.isStoryModeEm(actor));
+      const limit = !LB ? null
+        : (storyEm && LB.grimoireCard) ? LB.grimoireCard()
+        : (LB.cardForClass ? LB.cardForClass(c.id) : null);
       const limitHtml = limit && limit.name ? `
         <div class="cc-class-passive cc-gap-above-tight">
           <div class="cc-class-passive-name">${this._ccIconHtml(76, 18)} <span>${limit.name}</span>
@@ -2497,7 +2585,11 @@
       const CP = window.CharacterPresets;
       const isStoryEm = !!(CP && CP.isStoryModeEm && CP.isStoryModeEm(actor));
       const simpleClassHtml = (isSimpleMode && !isStoryEm) ? this._renderSimpleClassDetailsHtml(actor, classData) : "";
-      const sheetHistoryHtml = (isSimpleMode || isStoryEm) ? this._simpleSheetHistoryHtml(actor, age) : "";
+      // The history reads in the sidebar's portrait well on this sheet, and the
+      // portrait stands here in its place (see _bioSwapsPortraitAndHistory).
+      const sheetHistoryHtml = this._bioSwapsPortraitAndHistory()
+        ? `<div class="cc-bio-portrait-page">${this._ccPortraitCardHtml(actor, this._isActorLockedPreset(actor), Scene_CharacterCreation.isCreatureActor(actor))}</div>`
+        : ((isSimpleMode || isStoryEm) ? this._simpleSheetHistoryHtml(actor, age) : "");
 
       return `
         <div class="cc-page cc-page-right ts-page cc-page-column">
@@ -2803,7 +2895,23 @@
       const memberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       actor._bioSet = true;
 
-      if (field === "class") {
+      if (/^(skin|hair|dress|belt|boots|underwear|glasses)Colour$/.test(field)) {
+        const part = field.replace("Colour", "");
+        if (actor.setModelColour) actor.setModelColour(part, value || null);
+        SoundManager.playCursor();
+        // A colour only moves the mark in its own row (and the free picker to
+        // match); going back to the original rebuilds the page.
+        const row = value && this._dndContainer && this._dndContainer.querySelector(`.cc-colour-row[data-colour-part="${part}"]`);
+        if (row) {
+          const hex = actor.modelColours()[part];
+          Array.from(row.querySelectorAll(".cc-bio-chip")).forEach((el) => {
+            el.classList.toggle("selected", el.getAttribute("data-colour") === hex);
+          });
+          const free = row.querySelector(".cc-colour-free");
+          if (free && hex) free.value = hex;
+          return;
+        }
+      } else if (field === "class") {
         const classId = Number(value) || 1;
         actor.changeClass(classId, true);
         if (typeof equipRandomCompatibleWeapon === "function") {
@@ -2865,6 +2973,8 @@
         }
         this._applyJobSpecPreset(actor, jobId);
       } else if (field === "ideology") {
+        const emCreeds = this._storyEmCreedChoices();
+        if (emCreeds && !emCreeds.includes(value)) { SoundManager.playBuzzer(); return; }
         actor._ideologyId = value;
         // Same as the wizard's own ideology step: the registry is NPCSocietyRegistry.
         if (window.NPCSocietyRegistry && window.NPCSocietyRegistry.getActorProfile) {
@@ -3391,6 +3501,11 @@
 
       const catalog = [];
       const npcDb = (window.WorldGen && window.WorldGen.NPCs) || {};
+      // Every pet is an enemy underneath (js/db/Sprites/MonsterEnemies.json):
+      // as a familiar or a summon it fights with that enemy's own hands.
+      let spriteEnemies = null;
+      try { spriteEnemies = window.Sprites && window.Sprites.MonsterEnemies; } catch (e) { spriteEnemies = null; }
+      const enemyOf = (spriteKey) => Number((spriteEnemies && spriteEnemies[spriteKey]) || 0);
 
       const formatName = (raw) => {
         return raw
@@ -3447,6 +3562,7 @@
           icon: icon,
           sprite: spriteKey,
           spriteIndex: 0,
+          enemyId: enemyOf(spriteKey),
           hp: hp,
           atk: atk,
           def: def,
@@ -3488,6 +3604,7 @@
               icon: icon,
               sprite: spriteKey,
               spriteIndex: 0,
+              enemyId: enemyOf(spriteKey),
               hp: hp,
               atk: atk,
               def: def,

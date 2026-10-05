@@ -3,7 +3,13 @@
 0.7.14a
 
 Added:
- - manual controls switch for the rocket launch
+ - belt, boots, underwear, glasses colour pickers for Em's model
+ - much more ideologies, lore based plus real ones until 2001
+ - first person hands for every enemy, used by recruits, summons, familiars
+ - Em bio tab: skin, hair, dress colour pickers and creed selector
+ - growth tube and design a heir in the surgery menu
+ - rocket manual controls switch
+ - reworked summoning with dice-bound familiars
  - visiting hypernet pages awards KP, shown when closing hyperdeck
  - road car drivers stop or flee by morality, then speak once
 - rigid skirt for Em and hair jiggle
@@ -12,6 +18,12 @@ Fixed:
  - car lights: hidden vehicles unlit, centered cone, no snapping
  - continue story uses newer quicksave, titlescreen music defaults to ninth symphony
 Changed:
+ - changing theme warns to restart the game instead of applying live
+ - reworked weapon skills into a special command replacing defend and reload
+ - switched position of bio description and 3d model
+ - reorganized options: theme, battle log, camera in video
+ - dice rolls in battlelog and toasts show a d20 icon plus modifier
+ - reworked liminal shader into alcubierre drive space distortion
  - time loop bubbles in voxel mode no longer stop you, climb over them
  - map tooltips appear over bubba sprite, H controls moved to right side
  - reworked bubba battle command explanation, shorter, explains vector gun switch

@@ -67,8 +67,8 @@
     "cmdMenu": "Party menu",
     "cmdExitWalk": "End walk",
     "cmdTurbo": "Turbo (on foot: sprint)",
-    "cmdDoor": "Door: step out / sit",
-    "cmdView": "Change view",
+    "cmdDoor": "Step out of the vehicle",
+    "cmdView": "First / third person",
     "cmdExit": "Exit drive",
     "cmdVehicle": "Vehicle options",
     "cmdHelp": "Controls",
@@ -115,8 +115,8 @@
     "underwater": "SUBMERGED"
   },
   "driverSave": {
-    "avoided": "[Driver DEX save: {roll}{mod}={total}] Expertly countersteered, crash avoided!",
-    "failed": "[Driver DEX save: {roll}{mod}={total} vs DC {dc}] Reflex save failed, the vehicle hits!"
+    "avoided": "[Driver DEX save: \\DIE[{roll}] {mod} = {total}] Expertly countersteered, crash avoided!",
+    "failed": "[Driver DEX save: \\DIE[{roll}] {mod} = {total} vs DC {dc}] Reflex save failed, the vehicle hits!"
   },
   "maintenance": "Vehicle maintenance",
   "refuel": "Refuel from the cans",

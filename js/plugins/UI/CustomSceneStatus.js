@@ -2094,7 +2094,7 @@
         const presetModel = window.CharacterPresets && window.CharacterPresets.getActorPresetModel
             ? window.CharacterPresets.getActorPresetModel(actor) : null;
         if (presetModel && !glbPortraitFailed[presetModel]) {
-            return { kind: 'glb', path: presetModel, actorId: actor.actorId() };
+            return { kind: 'glb', path: presetModel, actorId: actor.actorId(), colours: actorModelColours(actor) };
         }
 
         // Humanoids: the portrait style is an exclusive choice made at character
@@ -2195,6 +2195,212 @@
             });
         });
         return root;
+    }
+
+    //=============================================================================
+    // Dossier model colours: skin, hair, dress, belt, boots, underwear, glasses
+    //=============================================================================
+    // The export names every material after what it covers (_SKIN_, _HAIR_,
+    // _CLOTH_), so that is what says which colour it wears. Shoes stay as they
+    // are; the brows follow the hair. A tinted material is repainted in the
+    // shader: the texture's own shading is kept as a brightness, measured
+    // against the texture's average, and the chosen colour is laid over it, so
+    // any colour reads as itself at mid-tone rather than multiplied darker.
+    // Uniforms, not a rebuild: a picker dragged across the wheel repaints live.
+    const MODEL_COLOUR_MATCH = {
+        skin:    (n) => /_SKIN_/i.test(n),
+        hair:    (n) => /_HAIR_/i.test(n) || /FaceBrow/i.test(n),
+        belt:    (n) => /_CLOTH_02/i.test(n),
+        boots:   (n) => /Shoes/i.test(n),
+        glasses: (n) => /GlassesHiFrame/i.test(n),
+        dress:   (n) => /_CLOTH/i.test(n)
+    };
+
+    // The body texture carries more than skin: the stockings down the legs and
+    // under the feet, and the underwear across the hips, are painted on it.
+    // They are told apart from skin by colour (skin is warm, they are grey to
+    // black) and from each other by where they sit on the texture, so the
+    // body takes three colours at once. Regions are texture fractions, top
+    // left origin, as the export lays them out.
+    const BODY_SPLIT_MATCH = (n) => /Body_\d+_SKIN/i.test(n);
+    const BODY_SPLIT_GLSL = [
+        'float splitHi = max(diffuseColor.r, max(diffuseColor.g, diffuseColor.b));',
+        'float splitLo = min(diffuseColor.r, min(diffuseColor.g, diffuseColor.b));',
+        'float splitCloth = (1.0 - smoothstep(0.04, 0.10, splitHi - splitLo)) * (1.0 - step(0.35, splitHi));',
+        'float splitMid = step(0.24, vUv.x) * step(vUv.x, 0.76);',
+        'float splitThong = step(abs(vUv.x - 0.5), 0.04) * step(0.47, vUv.y) * step(vUv.y, 0.66);',
+        'float splitUnder = max(splitMid * step(0.47, vUv.y) * step(vUv.y, 0.585), splitThong);',
+        'float splitBoots = max((1.0 - splitMid) * step(0.5, vUv.y), splitMid * step(0.585, vUv.y) * step(vUv.y, 0.80) * (1.0 - splitThong));',
+        'splitUnder *= splitCloth; splitBoots *= splitCloth;'
+    ].join('\n');
+
+    // The same split on the CPU, for the reference brightness of each region.
+    function bodySplitRegion(u, v, hi, lo) {
+        const cloth = (hi - lo) < 0.07 && hi < 0.35;
+        if (!cloth) return 'skin';
+        const mid = u >= 0.24 && u <= 0.76;
+        const thong = Math.abs(u - 0.5) <= 0.04 && v >= 0.47 && v <= 0.66;
+        if ((mid && v >= 0.47 && v <= 0.585) || thong) return 'underwear';
+        if ((!mid && v >= 0.5) || (mid && v >= 0.585 && v <= 0.80)) return 'boots';
+        return 'skin';
+    }
+
+    function modelColourPart(name) {
+        const n = String(name || '');
+        return Object.keys(MODEL_COLOUR_MATCH).find((p) => MODEL_COLOUR_MATCH[p](n)) || null;
+    }
+
+    // Mean brightness of a map, in the space the shader reads it in. Opaque
+    // texels only: the cut-out around a hair card is not part of the hair.
+    // Mean brightness of the stockings and of the underwear on a body texture,
+    // in linear space, each fitted on its own texels only.
+    function textureSplitLuma(tex) {
+        const out = { boots: 0.03, underwear: 0.03 };
+        if (!tex || !tex.image) return out;
+        tex.userData = tex.userData || {};
+        if (tex.userData.splitLuma) return tex.userData.splitLuma;
+        try {
+            const S = 128;
+            const canvas = document.createElement('canvas');
+            canvas.width = S; canvas.height = S;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(tex.image, 0, 0, S, S);
+            const d = ctx.getImageData(0, 0, S, S).data;
+            const srgb = THREE.sRGBEncoding !== undefined && tex.encoding === THREE.sRGBEncoding;
+            const lin = (x) => srgb ? Math.pow(x / 255, 2.2) : x / 255;
+            const sum = { boots: 0, underwear: 0 }, n = { boots: 0, underwear: 0 };
+            for (let y = 0; y < S; y++) {
+                for (let x = 0; x < S; x++) {
+                    const i = (y * S + x) * 4;
+                    if (d[i + 3] < 128) continue;
+                    const r = lin(d[i]), g = lin(d[i + 1]), b = lin(d[i + 2]);
+                    const part = bodySplitRegion((x + 0.5) / S, (y + 0.5) / S, Math.max(r, g, b), Math.min(r, g, b));
+                    if (part === 'skin') continue;
+                    sum[part] += 0.299 * r + 0.587 * g + 0.114 * b;
+                    n[part]++;
+                }
+            }
+            if (n.boots) out.boots = sum.boots / n.boots;
+            if (n.underwear) out.underwear = sum.underwear / n.underwear;
+        } catch (e) {}
+        out.boots = Math.max(0.01, out.boots);
+        out.underwear = Math.max(0.01, out.underwear);
+        tex.userData.splitLuma = out;
+        return out;
+    }
+
+    function textureMeanLuma(tex) {
+        if (!tex || !tex.image) return 0.5;
+        tex.userData = tex.userData || {};
+        if (tex.userData.meanLuma) return tex.userData.meanLuma;
+        let mean = 0.5;
+        try {
+            const S = 64;
+            const canvas = document.createElement('canvas');
+            canvas.width = S; canvas.height = S;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(tex.image, 0, 0, S, S);
+            const d = ctx.getImageData(0, 0, S, S).data;
+            let sum = 0, n = 0;
+            for (let i = 0; i < d.length; i += 4) {
+                if (d[i + 3] < 128) continue;
+                sum += (0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]) / 255;
+                n++;
+            }
+            if (n) mean = sum / n;
+            if (THREE.sRGBEncoding !== undefined && tex.encoding === THREE.sRGBEncoding) mean = Math.pow(mean, 2.2);
+        } catch (e) {}
+        tex.userData.meanLuma = Math.max(0.02, mean);
+        return tex.userData.meanLuma;
+    }
+
+    // Hooks the recolour into a material once. The program cache key is held
+    // behind a property so a later shader patch (PSXShader sets its own key)
+    // still compiles a tinted material apart from a plain one.
+    // A split material (the body) also takes uBoots and uUnder, laid over
+    // the stockings and the underwear only, while uTint keeps to the skin.
+    function tintableMaterial(m, split) {
+        if (m.userData.modelTint) return m.userData.modelTint;
+        split = !!split && !!m.map;
+        const refs = split ? textureSplitLuma(m.map) : null;
+        const u = {
+            uTint:     { value: new THREE.Color(1, 1, 1) },
+            uTintOn:   { value: 0 },
+            uTintRef:  { value: m.map ? textureMeanLuma(m.map) : 1 },
+            uBoots:    { value: new THREE.Color(1, 1, 1) },
+            uBootsOn:  { value: 0 },
+            uBootsRef: { value: refs ? refs.boots : 1 },
+            uUnder:    { value: new THREE.Color(1, 1, 1) },
+            uUnderOn:  { value: 0 },
+            uUnderRef: { value: refs ? refs.underwear : 1 }
+        };
+        m.userData.modelTint = u;
+        m.userData.modelTintSplit = split;
+        const body = split ? [
+            '#include <map_fragment>',
+            'if (uTintOn + uBootsOn + uUnderOn > 0.5) {',
+            '  float tintL = dot(diffuseColor.rgb, vec3(0.299, 0.587, 0.114));',
+            BODY_SPLIT_GLSL,
+            '  vec3 tinted = diffuseColor.rgb;',
+            '  if (uTintOn > 0.5) tinted = mix(tinted, uTint * clamp(tintL / uTintRef, 0.0, 1.6), 1.0 - splitCloth);',
+            '  if (uBootsOn > 0.5) tinted = mix(tinted, uBoots * clamp(tintL / uBootsRef, 0.0, 1.6), splitBoots);',
+            '  if (uUnderOn > 0.5) tinted = mix(tinted, uUnder * clamp(tintL / uUnderRef, 0.0, 1.6), splitUnder);',
+            '  diffuseColor.rgb = tinted;',
+            '}'
+        ] : [
+            '#include <map_fragment>',
+            'if (uTintOn > 0.5) {',
+            '  float tintL = dot(diffuseColor.rgb, vec3(0.299, 0.587, 0.114));',
+            '  diffuseColor.rgb = uTint * clamp(tintL / uTintRef, 0.0, 1.6);',
+            '}'
+        ];
+        const prev = m.onBeforeCompile;
+        m.onBeforeCompile = function (shader, renderer) {
+            if (typeof prev === 'function') prev.call(this, shader, renderer);
+            Object.assign(shader.uniforms, u);
+            shader.fragmentShader = 'uniform vec3 uTint;\nuniform float uTintOn;\nuniform float uTintRef;\n' +
+                'uniform vec3 uBoots;\nuniform float uBootsOn;\nuniform float uBootsRef;\n' +
+                'uniform vec3 uUnder;\nuniform float uUnderOn;\nuniform float uUnderRef;\n' +
+                shader.fragmentShader.replace('#include <map_fragment>', body.join('\n'));
+        };
+        let innerKey = m.customProgramCacheKey;
+        Object.defineProperty(m, 'customProgramCacheKey', {
+            configurable: true,
+            get() { return () => 'modelTint|' + (typeof innerKey === 'function' ? innerKey.call(m) : ''); },
+            set(fn) { innerKey = fn; }
+        });
+        m.needsUpdate = true;
+        return u;
+    }
+
+    // Paints `colours` ({ skin, hair, dress, belt, boots, underwear, glasses },
+    // "#rrggbb" or null) onto a dossier model. A null part goes back to the
+    // colour it shipped with.
+    function tintDossierModel(root, colours) {
+        if (!root || typeof THREE === 'undefined') return;
+        const c = colours || {};
+        const paint = (on, col, hex) => { on.value = hex ? 1 : 0; if (hex) col.value.set(hex); };
+        root.traverse((obj) => {
+            if (!obj.material) return;
+            (Array.isArray(obj.material) ? obj.material : [obj.material]).forEach((m) => {
+                const part = modelColourPart(m.name);
+                if (!part) return;
+                const split = BODY_SPLIT_MATCH(m.name);
+                const hex = c[part];
+                const any = hex || (split && (c.boots || c.underwear));
+                if (!any && !m.userData.modelTint) return;
+                const u = tintableMaterial(m, split);
+                paint(u.uTintOn, u.uTint, hex);
+                if (m.userData.modelTintSplit) {
+                    paint(u.uBootsOn, u.uBoots, c.boots);
+                    paint(u.uUnderOn, u.uUnder, c.underwear);
+                }
+            });
+        });
+    }
+
+    function actorModelColours(actor) {
+        return (actor && typeof actor.modelColours === 'function') ? actor.modelColours() : null;
     }
 
     //=============================================================================
@@ -3061,8 +3267,31 @@
     // fraction of its height a portrait should show, and only that top slice is
     // fitted, and only vertically: the head and chest fill the frame the way the
     // bust art did, and arms held out to the sides fall outside it.
+    // The box a skinned figure actually fills in its current pose. Box3 reads
+    // the geometry as exported, which for a rigged dossier model is the
+    // T-pose, arms out, so a figure framed off it stood far too small or
+    // spilled out of the frame. Every few vertices are run through the skin.
+    function posedBox(root) {
+        const box = new THREE.Box3();
+        const v = new THREE.Vector3();
+        root.updateMatrixWorld(true);
+        root.traverse((obj) => {
+            if (!obj.isMesh || !obj.geometry || !obj.geometry.attributes.position) return;
+            if (!obj.visible) return;
+            const pos = obj.geometry.attributes.position;
+            const step = Math.max(1, Math.floor(pos.count / 1500));
+            for (let i = 0; i < pos.count; i += step) {
+                v.fromBufferAttribute(pos, i);
+                if (obj.isSkinnedMesh && obj.boneTransform) obj.boneTransform(i, v);
+                v.applyMatrix4(obj.matrixWorld);
+                box.expandByPoint(v);
+            }
+        });
+        return box;
+    }
+
     function portraitFraming(battler, camera, margin) {
-        const box    = new THREE.Box3().setFromObject(battler.model);
+        const box    = battler.rig ? posedBox(battler.model) : new THREE.Box3().setFromObject(battler.model);
         const size   = new THREE.Vector3(); box.getSize(size);
         const center = new THREE.Vector3(); box.getCenter(center);
         const vHalf  = (camera.fov * Math.PI / 180) / 2;
@@ -3088,7 +3317,10 @@
     function buildActorModel3D(info) {
         if (!info) return Promise.resolve(null);
         if (info.kind === "glb") {
-            return loadPortraitGLB(info.path);
+            return loadPortraitGLB(info.path).then((b) => {
+                if (b) tintDossierModel(b.model, info.colours);
+                return b;
+            });
         }
         if (info.kind === "custom") {
             return Promise.resolve(window.CC3DModel.buildModel(info.cfg, info.actorId));
@@ -3140,8 +3372,14 @@
         figureFor(actor) {
             const path = window.CharacterPresets && window.CharacterPresets.getActorPresetModel
                 ? window.CharacterPresets.getActorPresetModel(actor) : null;
-            return loadFigureGLB(path).then((fig) => (fig && fig.rig) ? fig : null);
+            return loadFigureGLB(path).then((fig) => {
+                if (!fig || !fig.rig) return null;
+                tintDossierModel(fig.model, actorModelColours(actor));
+                return fig;
+            });
         },
+        // Repaints a dossier model in { skin, hair, dress } on the spot.
+        tint(root, colours) { tintDossierModel(root, colours); },
         rigFor(root) { return humanoidRigFor(root); },
         animations() { return RIG_LOOPS.concat(Object.keys(RIG_ONESHOTS)); }
     };
@@ -3155,6 +3393,7 @@
             const m = this._status3D.model;
             const parts = actorPartStates(this.actor());
             if (m && parts && m.hideBrokenParts) { try { m.hideBrokenParts(parts); } catch (e) {} }
+            if (m && info.kind === 'glb') tintDossierModel(m.model, info.colours);
             return;
         }
         this._status3DKey = key;
@@ -3232,7 +3471,15 @@
                 if (info.kind === 'glb') this.drawUIStatusBust(this.actor(), 'status-bust');
                 return;
             }
-            try { battler.update(1 / 60); } catch (e) {}
+            // A dossier model stands whole on the status sheet, settled into
+            // its idle pose before it is measured, so she always fits the frame.
+            if (battler.rig) {
+                battler.portraitCrop = 0;
+                if (battler.rig.reset) battler.rig.reset();
+                for (let i = 0; i < 40; i++) { try { battler.update(1 / 30); } catch (e) {} }
+            } else {
+                try { battler.update(1 / 60); } catch (e) {}
+            }
             try { if (brokenParts && battler.hideBrokenParts) battler.hideBrokenParts(brokenParts); } catch (e) {}
             const fit    = portraitFraming(battler, camera, 1.15);
             const holder = new THREE.Group();

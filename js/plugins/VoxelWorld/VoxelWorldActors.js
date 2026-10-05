@@ -37,6 +37,9 @@
         WALL_RUN_CLIMB, WALL_RUN_TIME, WALL_STICK_R
     } = VW;
 
+    // How far the left stick has to be pushed before a walk becomes a run.
+    const PAD_RUN_TILT = 0.9;
+
     // Wall-clock, for the double tap on jump. performance.now where it exists
     // (it is monotonic and does not jump when the system clock is set).
     const nowMs = () => (typeof performance !== 'undefined' && performance.now)
@@ -267,6 +270,10 @@
             const dpadY = !!(pads && pads.hasPad && pads.hasPad() && VW.CamperWeapon._visible &&
                 (pads.isButtonPressed(pads.BUTTON.DPAD_UP) ||
                  pads.isButtonPressed(pads.BUTTON.DPAD_DOWN)));
+            // LEFT on the cross is the map out here, so the cross never strafes.
+            const dpadX = !!(pads && pads.hasPad && pads.hasPad() &&
+                (pads.isButtonPressed(pads.BUTTON.DPAD_LEFT) ||
+                 pads.isButtonPressed(pads.BUTTON.DPAD_RIGHT)));
             // A SECOND PLAYER'S rig reads nothing off the keyboard or the
             // shared gamepad at all: both of those are Player 1's, and a rig
             // that listened to them would walk two people with one hand. It is
@@ -294,20 +301,28 @@
             } else {
                 fwd   = this.move.forward  || (Input.isPressed('up') && !dpadY);
                 back  = this.move.backward || (Input.isPressed('down') && !dpadY);
-                left  = this.move.left     || Input.isPressed('left');
-                right = this.move.right    || Input.isPressed('right');
-                sprint = this.move.sprint || Input.isPressed('shift');
-                // Crouch is held, like sprint, and on a pad it is on the second
-                // layer: L2 turns the faces into the controls a keyboard had to
-                // itself, and Y is this one (Controller.BINDINGS.walk).
+                left  = this.move.left     || (Input.isPressed('left') && !dpadX);
+                right = this.move.right    || (Input.isPressed('right') && !dpadX);
+                // On a pad there is no run button: the stick pushed all the way
+                // runs, the way a third-person adventure walks on half a push.
+                const lx = (pads && pads.leftX) ? pads.leftX() : 0;
+                const ly = (pads && pads.leftY) ? pads.leftY() : 0;
+                this.padRunning = !!(pads && pads.hasPad && pads.hasPad() &&
+                    (lx * lx + ly * ly) > PAD_RUN_TILT * PAD_RUN_TILT);
+                sprint = this.move.sprint || Input.isPressed('shift') || this.padRunning;
+                // Crouch on a pad is the left stick clicked (L3), and it is a
+                // toggle, the sneak of a third-person adventure: click to go
+                // down, click again to stand (Controller.BINDINGS.walk).
                 //
                 // Added to whatever else has set the flag rather than replacing
                 // it: the key sets it directly, and so does anything driving a
                 // walker from outside, so the pad only ever clears a crouch the
                 // pad itself began.
                 const C = window.Controller;
-                const padCrouch = !!(this.worldMode && C && C.action && C.mode &&
-                    C.mode() === 'walk' && C.action('crouch'));
+                if (this.worldMode && C && C.triggered && C.mode && C.mode() === 'walk' &&
+                    C.triggered('L3')) this._padCrouchOn = !this._padCrouchOn;
+                if (!this.worldMode) this._padCrouchOn = false;
+                const padCrouch = !!this._padCrouchOn;
                 if (padCrouch) this.crouching = true;
                 else if (this._padCrouchWas) this.crouching = false;
                 this._padCrouchWas = padCrouch;
@@ -545,6 +560,9 @@
         // climbs, in the water and in the air alike.
         _liftHeld() {
             if (this.move.jump) return true;
+            // Y on a pad is the jump (A activates, see VoxelWorldScene#_setPadProfile).
+            const C = window.Controller;
+            if (C && C.pressed && C.pressed('Y')) return true;
             return typeof Input !== 'undefined' && Input.isPressed('ok');
         }
 

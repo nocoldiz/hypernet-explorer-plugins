@@ -584,6 +584,33 @@
     box-sizing: border-box;
 }
 
+/* On the simple bio sheet the portrait well holds the written history
+   instead, read top down and scrolled inside the well. */
+.cc-compact-portrait-card.cc-sidebar-history {
+    align-items: stretch;
+    justify-content: flex-start;
+    height: 340px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+.cc-sidebar-history > .cc-dossier-card {
+    margin-top: 0;
+}
+
+/* ...and the portrait stands on the facing page, as tall as the page lets it. */
+.cc-bio-portrait-page {
+    display: flex;
+    height: calc(100vh - 220px);
+    min-height: 260px;
+}
+
+.cc-bio-portrait-page .cc-compact-portrait-card {
+    max-height: none;
+    height: 100%;
+}
+
 /* Drawn at the bust art's own 883x1200 shape, so the box IS the picture:
    there is no empty background to either side of it any more. It takes
    whatever height the card was left with and its width follows from that. */
@@ -4717,6 +4744,53 @@
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+/* The colours of a dossier model on the Bio tab: one cell a part, laid out
+   on two rows, each a label over plain swatches and a free picker. */
+.cc-colour-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px 16px;
+    margin-top: 6px;
+}
+
+.cc-colour-label {
+    color: var(--text-primary);
+    font-size: var(--fs-label);
+    margin-bottom: 4px;
+}
+
+.cc-colour-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+.cc-colour-swatch {
+    width: 18px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0;
+    border-radius: 50%;
+}
+
+
+/* The shared chip rule strips a selected chip's background and shadow with
+   !important, so the swatch keeps its colour inline and is ringed instead. */
+.cc-colour-swatch.selected {
+    outline: 2px solid var(--text-primary-hover);
+    outline-offset: 2px;
+}
+
+.cc-colour-free {
+    width: 26px;
+    height: 20px;
+    padding: 0;
+    border: 1px solid var(--border-gold-amber-30);
+    background: transparent;
+    cursor: pointer;
 }
 
 .cc-bio-slider-end {

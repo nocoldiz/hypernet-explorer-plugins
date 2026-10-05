@@ -580,7 +580,7 @@
     "fumble": "{actor} LOSES DA THREAD OF {skill}: NOT ENOUGH BASE {stat}!"
   },
   "critSever": {
-    "roll": "KILLIN' BLOW ON {enemy}: D20 {roll} {mod} = {total}/{dc}",
+    "roll": "KILLIN' BLOW ON {enemy}: \\DIE[{roll}] {mod} = {total}/{dc}",
     "outcomeBehead": "IT GOES CLEAN THROUGH.",
     "outcomeMaim": "A LIMB COMES AWAY.",
     "outcomeNone": "DA GUARD HOLDS.",
@@ -729,7 +729,7 @@
       "wall": "NOTHIN' TOUCHES DA PARTY FOR {turns} TURNS!",
       "disable": "DA ENEMY LINE IZ PUT TA SLEEP, CHARMED AN' MADE USELESS!",
       "gold": "MONEY SPENT AS A WEAPON: {mult} TIMES DAMAGE, PAID FOR OUT OF DA PURSE!",
-      "grimoire": "DA PACT BOOK OPENS ON {slots} SPELLS AN' TAKES HEALTH FOR EVERY PAGE TURNED!",
+      "grimoire": "HER GUN OPENS INTO A BOOK OF {slots} BIG SPELLS FOR DA REST OF DA FIGHT, WIT REGEN AN' FOCUS. TURNIN' A PAGE FOR NEW ONES COSTS {cost}% HEALTH!",
       "assembly": "EVERYTHIN' DA CLASS HAB LEARNED, THROWN AT ONCE!",
       "barrageMulti": "EVERY ENEMY STILL STANDIN' TAKES {mult} TIMES DAMAGE, {hits} TIMES OVER!"
     }

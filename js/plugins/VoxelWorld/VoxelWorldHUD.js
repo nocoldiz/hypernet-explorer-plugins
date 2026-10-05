@@ -104,7 +104,8 @@
     const LEGEND_ROWS = {
         walk:     ['WASD',          'L-STICK',      'CamperDrive.hud.cmdWalk'],
         look:     ['MOUSE',         'R-STICK',      'CamperDrive.hud.cmdLook'],
-        run:      ['SHIFT',         'walk:run',     'CamperDrive.hud.cmdRun'],
+        // No run button on a pad: the stick pushed all the way runs.
+        run:      ['SHIFT',         'L-STICK &uArr;', 'CamperDrive.hud.cmdRun'],
         jump:     ['SPACE',         'walk:jump',    'CamperDrive.hud.cmdJump'],
         footFly:  ['SPACE&times;2', 'walk:jump',    'CamperDrive.hud.cmdFly'],
         crouch:   ['CTRL',          'walk:crouch',  'CamperDrive.hud.cmdCrouch'],
@@ -121,34 +122,33 @@
         // written out here.
         block:    ['Q / 1-9',       'D-PAD &uarr;&darr;', 'VoxelWorld.hud.cmdBlock'],
         bar:      ['SHIFT+TAB',     'walk:bar',     'VoxelWorld.hud.cmdBar'],
-        // Over the shoulder and back (VoxelWorldScene#_toggleThirdPerson).
-        footView: ['TAB',           'walk:view',    'CamperDrive.hud.cmdView'],
-        // R has no pad binding of its own out here: the badge stands as written.
-        ready:    ['R',             'R',            'VoxelWorld.hud.cmdReady'],
+        // Over the shoulder and back (VoxelWorldScene#_toggleCamera).
+        footView: ['MMB',           'walk:view',    'CamperDrive.hud.cmdView'],
+        ready:    ['R',             'walk:ready',   'VoxelWorld.hud.cmdReady'],
         exitWalk: ['T',             'walk:exit',    'CamperDrive.hud.cmdExitWalk'],
 
-        drive:    ['WASD',          'L-STICK',      'CamperDrive.hud.cmdDrive'],
-        turbo:    ['SHIFT',         'drive:handbrake', 'CamperDrive.hud.cmdTurbo'],
-        handbrake:['SPACE',         'drive:accelerate', 'CamperDrive.hud.cmdHandbrake'],
+        drive:    ['WASD',          'L-STICK / R2 L2', 'CamperDrive.hud.cmdDrive'],
+        turbo:    ['SHIFT',         'drive:boost',  'CamperDrive.hud.cmdTurbo'],
+        handbrake:['SPACE',         'drive:handbrake', 'CamperDrive.hud.cmdHandbrake'],
         door:     ['E',             'drive:door',   'CamperDrive.hud.cmdDoor'],
         dive:     ['C',             'drive:dive',   'CamperDrive.hud.cmdDive'],
-        view:     ['TAB',           'drive:view',   'CamperDrive.hud.cmdView'],
+        view:     ['MMB',           'drive:view',   'CamperDrive.hud.cmdView'],
         vehicle:  ['V',             'drive:vehicle', 'CamperDrive.hud.cmdVehicle'],
         respawn:  ['R',             'drive:respawn', 'CamperDrive.hud.cmdRespawn'],
-        zoom:     ['WHEEL',         'L2 / R2',      'CamperDrive.hud.cmdZoom'],
+        zoom:     ['WHEEL',         'D-PAD &uarr;&darr;', 'CamperDrive.hud.cmdZoom'],
         orbit:    ['DRAG',          'R-STICK',      'CamperDrive.hud.cmdOrbit'],
         exit:     ['T',             'drive:exit',   'CamperDrive.hud.cmdExit'],
 
-        flight:   ['F',             'fly:land',     'CamperDrive.hud.cmdFlight'],
+        flight:   ['F',             'drive:flight', 'CamperDrive.hud.cmdFlight'],
         pitch:    ['MOUSE',         'R-STICK',      'CamperDrive.hud.cmdPitch'],
-        thrust:   ['W / S',         'fly:thrust',   'CamperDrive.hud.cmdThrust'],
+        thrust:   ['W / S',         'R2 / L2',      'CamperDrive.hud.cmdThrust'],
         climb:    ['SPACE',         'fly:climb',    'CamperDrive.hud.cmdClimb'],
         descend:  ['C',             'fly:descend',  'CamperDrive.hud.cmdDescend'],
-        flyView:  ['TAB',           'fly:view',     'CamperDrive.hud.cmdView'],
+        flyView:  ['MMB',           'fly:view',     'CamperDrive.hud.cmdView'],
 
         map:      ['M',             'walk:map',     'CamperDrive.hud.cmdMap'],
         driveMap: ['M',             'drive:map',    'CamperDrive.hud.cmdMap'],
-        menu:     ['ESC',           'walk:exit',    'CamperDrive.hud.cmdMenu'],
+        menu:     ['ESC',           'walk:back',    'CamperDrive.hud.cmdMenu'],
         // Never listed IN the legend: this is the line the legend is folded
         // behind, and it names the way to open it (see _writeCmdHint).
         help:     ['H',             'walk:help',    'CamperDrive.hud.cmdHelp'],
@@ -208,6 +208,12 @@
     // 'mode:action' is asked of the controller layer, which is the only place
     // that knows; anything else stands as written, and an empty one falls back
     // to the key so a keyboard-only control is still named.
+    // The faces that read better as what is printed on the pad.
+    // i18n-ignore-start  physical pad faces
+    const PAD_FACE_LABEL = {
+        UP: 'D-PAD &uarr;', DOWN: 'D-PAD &darr;', LEFT: 'D-PAD &larr;', RIGHT: 'D-PAD &rarr;'
+    };
+    // i18n-ignore-end
     function legendBadge(row, pad) {
         if (!pad || !row[1]) return row[0];
         const spec = row[1];
@@ -215,7 +221,7 @@
         if (i < 0) return spec;
         const C = window.Controller;
         const face = (C && C.faceOf) ? C.faceOf(spec.slice(i + 1), spec.slice(0, i)) : '';
-        return face || row[0];
+        return PAD_FACE_LABEL[face] || face || row[0];
     }
 
     class CamperHUD {

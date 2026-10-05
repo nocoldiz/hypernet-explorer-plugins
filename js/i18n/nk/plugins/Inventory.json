@@ -209,7 +209,7 @@
     "EXP RATE"
   ],
   "model": {
-    "fullscreenHint": "DRAG TA TURN, WHEEL TA ZOOM, MIDDLE DRAG TA PAN"
+    "fullscreenHint": "DRAG TA TURN, WHEEL TA ZOOM, MIDDLE DRAG TA PAN, RIGHT CLICK TA CLOSE"
   },
   "section": {
     "specifications": "SPECIFICATIONS",

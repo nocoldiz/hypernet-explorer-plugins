@@ -1974,6 +1974,8 @@
         openAlly(win, actorWindow) {},
         closeAlly(win) {},
     };
+    // The cost tail a skill row wears, for the command rail's Special row.
+    BattleSkillMenu.rowCost = battleRowCost;
     window.BattleSkillMenu = BattleSkillMenu;
 
     // -------------------------------------------------------------------------

@@ -3886,4 +3886,371 @@
       }
     }
   });
+
+  // ==========================================================================
+  // Bespoke enemy hands
+  // ==========================================================================
+  // A creature that fights for the party (a recruit, a summon, a familiar, a
+  // pet that graduated) punches with ITS OWN hands, not with its archetype's.
+  // Every enemy already has a bespoke 3D body (Battler3D), so the hands are
+  // lifted straight off it rather than written a second time: the body is
+  // built once, under the look the creature was recruited in, the limb it
+  // strikes with is picked out of its part map, everything but the working
+  // end of that limb is cropped away, and what is left is re-seated in the
+  // frame every fist here is built in (wrist at the bottom, reaching up +Y,
+  // its front toward +Z).
+  //
+  // The right hand comes from the creature's right limb and the left from its
+  // left, so a fiddler crab's two claws are not the same claw twice. A limb
+  // with no partner (a turret's barrel, a single stinger) is mirrored for the
+  // other hand. A creature with nothing to strike with at all (an eye, an
+  // orb) keeps its archetype's fist (createUnarmed<Archetype>Model above).
+  //
+  // The part tables below are tried in order; the first that the body has
+  // answers. `crop: false` keeps the whole part: a gun barrel or a stinger is
+  // all working end.
+  const HAND_LIMBS = [
+    // Arms, whole, with whatever hangs off their end.
+    { right: ['RIGHT_UPPER_ARM', 'RIGHT_ARM', 'RIGHT_FOREARM', 'RIGHT_HAND', 'RIGHT_FINGERS'],
+      left: ['LEFT_UPPER_ARM', 'LEFT_ARM', 'LEFT_FOREARM', 'LEFT_HAND', 'LEFT_FINGERS'] },
+    { right: ['PINCER_RIGHT'], left: ['PINCER_LEFT'] },
+    { right: ['CLAW_RIGHT'], left: ['CLAW_LEFT'] },
+    { right: ['RIGHT_CLAW'], left: ['LEFT_CLAW'] },
+    { right: ['RIGHT_APPENDAGE'], left: ['LEFT_APPENDAGE'] },
+    { right: ['RIGHT_RAIN_ARM'], left: ['LEFT_RAIN_ARM'] },
+    { right: ['WATER_ARMS'] }, { right: ['EMBER_ARMS'] }, { right: ['SPIKE_ARMS'] },
+    // A turret has no limb: what it hits with is the gun. Only the barrel:
+    // the traversing plate's rim stands further out than the muzzle and
+    // would turn the whole thing on its side.
+    { right: ['GUN_BARREL'], crop: false },
+    { right: ['ARM_CANNON'], crop: false },
+    // Paired soft limbs: the first of the pair is the right hand.
+    { right: ['TENTACLE_ONE'], left: ['TENTACLE_TWO'] },
+    { right: ['TENTACLE_1'], left: ['TENTACLE_2'] },
+    { right: ['VOID_TENDRIL_1'], left: ['VOID_TENDRIL_2'] },
+    { right: ['PSEUDOPOD_1'], left: ['PSEUDOPOD_2'] },
+    { right: ['VINE_1'], left: ['VINE_2'] },
+    { right: ['BRANCH_1'], left: ['BRANCH_2'] },
+    { right: ['EXTRA_LIMB_1'], left: ['EXTRA_LIMB_2'] },
+    { right: ['RIGHT_WISP'], left: ['LEFT_WISP'] },
+    { right: ['RIGHT_SPIRE'], left: ['LEFT_SPIRE'] },
+    // Beasts strike with the forefoot.
+    { right: ['FRONT_RIGHT_PAW'], left: ['FRONT_LEFT_PAW'] },
+    { right: ['RIGHT_LEG_FRONT'], left: ['LEFT_LEG_FRONT'] },
+    { right: ['TALONS'], crop: false },
+    { right: ['RIGHT_PECTORAL_FIN'], left: ['LEFT_PECTORAL_FIN'] },
+    { right: ['RIGHT_WING'], left: ['LEFT_WING'] },
+    // Whatever single weapon the body carries.
+    { right: ['CLAWS'], crop: false },
+    { right: ['TENTACLES'] },
+    { right: ['LIMBS'] },
+    { right: ['SNAKE_HAIR'], crop: false },
+    { right: ['SPIKES'], crop: false },
+    { right: ['STINGER'], crop: false }, { right: ['STINGERS'], crop: false },
+    { right: ['TAIL_SPIKE'], crop: false },
+    { right: ['MANDIBLES'], crop: false },
+    { right: ['FLAGELLUM'] },
+    { right: ['LURE'] },
+    { right: ['TONGUE'] },
+    // A sawblade, an Ophanim, a crystal: the edge it spins or the shard it
+    // grows is what lands.
+    { right: ['SPIN_SPINES'], crop: false },
+    { right: ['WHEEL_ONE'], left: ['WHEEL_TWO'], crop: false },
+    { right: ['CRYSTALS'], crop: false },
+    { right: ['SENSOR_ARRAY'], crop: false },
+    { right: ['ROOTS'] },
+    // The head that bites, for bodies that are nothing else.
+    { right: ['HEAD_RIGHT'], left: ['HEAD_LEFT'], crop: false },
+    { right: ['HEAD_ONE'], left: ['HEAD_TWO'], crop: false },
+    { right: ['JAWS'], crop: false }, { right: ['MAW'], crop: false },
+    { right: ['FANGS'], crop: false }, { right: ['BEAK'], crop: false },
+    { right: ['BILL'], crop: false },
+    { right: ['HEAD'], crop: false, biter: true }
+  ];
+  // Bodies that walk on more than two legs list their forelegs under the
+  // plain leg keys and the rest under REAR_ / HIND_ / MIDDLE_; a frog's
+  // forelegs are its hands as well. A biped's legs never are.
+  const FORELEGS = { right: ['RIGHT_LEG'], left: ['LEFT_LEG'] };
+  const MORE_LEG_KEYS = ['REAR_LEFT_LEG', 'REAR_RIGHT_LEG', 'HIND_LEFT_LEG', 'HIND_RIGHT_LEG',
+    'MIDDLE_LEFT_LEG', 'MIDDLE_RIGHT_LEG', 'MID_LEFT_LEG', 'MID_RIGHT_LEG'];
+  const FORELEG_ARCHETYPES = /^(Frog|Amphibian|Turtle|Insectoid)$/;
+  // Bodies whose head is the whole of their attack: they ram or bite.
+  const BITER_ARCHETYPES = /^(SegmentWorm|AquaticFish|Serpent|AbyssalLeviathan|Hydra)$/;
+  const BITER_KEYS = ['BODY_SEGMENT', 'HEART_SEGMENT', 'TAIL_FIN', 'DORSAL_FIN'];
+
+  // The names a body or a limb keeps its held things under.
+  // A part the hand is lifted from is never one of them, whatever its name
+  // (a turret's gun barrel is exactly the hand).
+  const HELD_FIELD = /^_?(weapon|weaponMesh|wpn|shield|shieldCrystal|staff|staffOrb|bow|axe|sword|spear|wand|orbWeapons)$/i;
+
+  // The share of a limb, measured from its root, that is cropped away: what
+  // stays is the forearm and the hand, the way the humanoid fist is drawn.
+  const CROP_FROM = 0.45;
+  // How tall a lifted hand is built, in the fists' own units (Weapon3D_Unarmed
+  // fists stand about this high wrist to knuckle). The overlay fits by the
+  // widest extent anyway; this keeps it in the same scale as every other fist.
+  const HAND_HEIGHT = 0.16;
+  const WRIST_Y = -0.05;
+  // Built bodies whose other hand has not been asked for yet, by look key.
+  const PENDING_MAX = 8;
+  const pendingHands = new Map();
+  // Bodies already found to have no hand to lift, so they are not rebuilt.
+  const handless = new Set();
+
+  window.WeaponSystemProcedural.registerFamily({
+    name: 'Weapon3D_Unarmed',
+    models: {
+
+      /**
+       * The hand of one enemy (weapon.unarmedEnemyId), for the side the stand
+       * in weapon names. Null when the body cannot be built here or has no
+       * limb to strike with, and the core then builds the archetype's fist.
+       */
+      createUnarmedEnemyModel(weapon) {
+        const key = weapon.unarmedLookKey || String(weapon.unarmedEnemyId);
+        if (handless.has(key)) return null;
+        const side = weapon.unarmedSide === 'left' ? 'left' : 'right';
+        let pair = pendingHands.get(key);
+        // A side already handed out is asked for again only once the model
+        // cache has let it go: the body is built afresh.
+        if (!pair || !pair[side]) {
+          pair = this._liftEnemyHands(weapon.unarmedEnemyId, weapon.unarmedLook);
+          if (!pair) { handless.add(key); return null; }
+          pendingHands.set(key, pair);
+          while (pendingHands.size > PENDING_MAX) pendingHands.delete(pendingHands.keys().next().value);
+        }
+        const hand = pair[side];
+        pair[side] = null;
+        if (!pair.right && !pair.left) pendingHands.delete(key);
+        return hand;
+      },
+
+      /** Builds the enemy's body once and lifts both hands off it. */
+      _liftEnemyHands(enemyId, look) {
+        const B = window.Battler3D;
+        const data = (typeof $dataEnemies !== 'undefined' && $dataEnemies) ? $dataEnemies[enemyId] : null;
+        if (!B || !B.create || !B.resolveKey || !data) return null;
+        const bodyKey = B.resolveKey(data);
+        if (!bodyKey) return null;
+        // The body is built under the look it was recruited in, or the
+        // canonical one: never the look of whatever fight is running now.
+        const ps = B._battleLookSeed, po = B._battleOriginSeed;
+        B._battleLookSeed = look ? (look.seed >>> 0) : 0;
+        B._battleOriginSeed = look ? (look.origin >>> 0) : 0;
+        let body = null;
+        try {
+          const stub = { enemyId: () => enemyId, index: () => (look && look.index) || 0, isEnemy: () => true, isActor: () => false };
+          body = B.create(bodyKey, undefined, 0, stub, 0);
+          if (body) {
+            const pending = body.load(null, 0, 0, 0);
+            if (pending && typeof pending.catch === 'function') pending.catch(() => {});
+          }
+        } catch (e) {
+          body = null;
+        } finally {
+          B._battleLookSeed = ps;
+          B._battleOriginSeed = po;
+        }
+        // An authored GLB body arrives later, if at all: nothing to lift now.
+        if (!body || !body.model) return null;
+        const root = body.model;
+        root.position.set(0, 0, 0);
+        root.rotation.set(0, 0, 0);
+        root.updateMatrixWorld(true);
+
+        const archetype = String((data.meta && data.meta.Archetype) || '').split('/')[0].trim();
+        const limb = this._pickHandLimb(body._partMeshMap || {}, archetype);
+        if (!limb) return null;
+        // What the body holds is not its hand: the bare hand is the point.
+        const held = this._heldItems(body, (limb.right || []).concat(limb.left || []));
+        const middle = new THREE.Box3().setFromObject(root).getCenter(new THREE.Vector3());
+        // A side the body has no limb on gets the other side's, reflected.
+        const lift = (parts, mirror) => this._liftLimb(parts, limb.crop, mirror, held, middle);
+        const right = limb.right ? lift(limb.right, false) : lift(limb.left, true);
+        const left = limb.left ? lift(limb.left, false) : lift(limb.right, true);
+        if (!right || !left) return null;
+        return { right, left };
+      },
+
+      /** The first entry of HAND_LIMBS the body has, as part objects. */
+      _pickHandLimb(map, archetype) {
+        const parts = (keys) => (keys || []).map((k) => map[k]).filter((p) => p && p.isObject3D && this._hasDrawnMesh(p));
+        const walksOnForelegs = MORE_LEG_KEYS.some((k) => map[k]) || FORELEG_ARCHETYPES.test(archetype);
+        const biter = BITER_ARCHETYPES.test(archetype) || BITER_KEYS.some((k) => map[k]);
+        const table = walksOnForelegs ? HAND_LIMBS.slice(0, 1).concat([FORELEGS], HAND_LIMBS.slice(1)) : HAND_LIMBS;
+        for (const entry of table) {
+          if (entry.biter && !biter) continue;
+          const right = parts(entry.right);
+          const left = parts(entry.left);
+          if (!right.length && !left.length) continue;
+          return { right: right.length ? right : null, left: left.length ? left : null, crop: entry.crop !== false };
+        }
+        return null;
+      },
+
+      /**
+       * Every object a body or one of its limbs keeps as something held (a
+       * Folk arm's `_weapon`, a caster's `staff`, a body's `weaponMesh`), and
+       * all that hangs off it.
+       */
+      _heldItems(body, partObjs) {
+        const held = new Set();
+        const take = (owner) => {
+          for (const k of Object.keys(owner)) {
+            if (!HELD_FIELD.test(k)) continue;
+            const v = owner[k];
+            for (const o of (Array.isArray(v) ? v : [v])) {
+              if (o && o.isObject3D && o !== owner && partObjs.indexOf(o) < 0) o.traverse((c) => held.add(c));
+            }
+          }
+        };
+        take(body);
+        for (const p of partObjs) p.traverse(take);
+        return held;
+      },
+
+      _hasDrawnMesh(part) {
+        let found = false;
+        part.traverse((o) => { if (!found && o.isMesh && o.geometry && this._drawn(o, part)) found = true; });
+        return found;
+      },
+
+      /**
+       * Visible all the way up: a hidden stump waiting for a lost limb is not
+       * part of the hand. The part's own flag is not asked: a ghost's wisps
+       * and the like are hidden at rest and only shown by the moves that use
+       * them, and the hand is exactly that move.
+       */
+      _drawn(obj, part) {
+        for (let o = obj; o; o = o.parent) if (o !== part && o.visible === false) return false;
+        return true;
+      },
+
+      /**
+       * Bakes one limb's meshes into a new group in the fists' frame: rooted
+       * at the limb's own pivot, cropped to its working end, turned to reach
+       * up +Y with the creature's front kept toward +Z, and scaled to a fist.
+       * `mirror` reflects it, for the hand on the side the body has no limb.
+       */
+      _liftLimb(partObjs, crop, mirror, held, anchor) {
+        const meshes = [];
+        const seen = new Set();
+        for (const p of partObjs) {
+          const skip = held && !held.has(p) ? held : null;
+          p.traverse((o) => {
+            if (seen.has(o) || (skip && skip.has(o)) || !o.isMesh || o.isInstancedMesh || o.isSkinnedMesh) return;
+            const pos = o.geometry && o.geometry.attributes && o.geometry.attributes.position;
+            if (!pos || !pos.count || !this._drawn(o, p)) return;
+            seen.add(o);
+            meshes.push(o);
+          });
+        }
+        if (!meshes.length) return null;
+
+        // World-space copies of every mesh, and the limb's root and reach. A
+        // limb reaches out from its own pivot (the shoulder); a whole part
+        // (a barrel, a stinger, a talon) reaches out from the body's middle.
+        const rootPos = new THREE.Vector3();
+        if (crop || !anchor) partObjs[0].getWorldPosition(rootPos);
+        else rootPos.copy(anchor);
+        const baked = meshes.map((m) => {
+          const g = m.geometry.clone();
+          g.applyMatrix4(m.matrixWorld);
+          g.computeBoundingBox();
+          return { mesh: m, geo: g, center: g.boundingBox.getCenter(new THREE.Vector3()) };
+        });
+        const tip = new THREE.Vector3();
+        let far = -1;
+        const v = new THREE.Vector3();
+        for (const b of baked) {
+          const pos = b.geo.attributes.position;
+          for (let i = 0; i < pos.count; i++) {
+            v.fromBufferAttribute(pos, i);
+            const d = v.distanceToSquared(rootPos);
+            if (d > far) { far = d; tip.copy(v); }
+          }
+        }
+        const reach = Math.sqrt(far);
+        if (!(reach > 1e-5)) return null;
+        const dir = tip.clone().sub(rootPos).divideScalar(reach);
+
+        // Keep the working end: everything past CROP_FROM of the reach, and
+        // always the piece the tip is on.
+        let kept = baked;
+        if (crop && baked.length > 1) {
+          kept = baked.filter((b) => {
+            const t = b.center.clone().sub(rootPos).dot(dir) / reach;
+            return t >= CROP_FROM || b.geo.boundingBox.distanceToPoint(tip) < 1e-6;
+          });
+          if (!kept.length) kept = baked;
+        }
+        for (const b of baked) if (kept.indexOf(b) < 0) b.geo.dispose();
+
+        // Turn the reach to +Y, then spin about Y so that what faced the
+        // camera on the body still faces it here.
+        const turn = new THREE.Quaternion().setFromUnitVectors(dir, new THREE.Vector3(0, 1, 0));
+        const front = new THREE.Vector3(0, 0, 1).applyQuaternion(turn);
+        const spin = new THREE.Quaternion();
+        if (front.x * front.x + front.z * front.z > 1e-4) {
+          spin.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.atan2(front.x, front.z));
+        }
+        const orient = new THREE.Matrix4().makeRotationFromQuaternion(spin.multiply(turn));
+        const box = new THREE.Box3();
+        for (const b of kept) {
+          b.geo.applyMatrix4(new THREE.Matrix4().makeTranslation(-rootPos.x, -rootPos.y, -rootPos.z));
+          b.geo.applyMatrix4(orient);
+          b.geo.computeBoundingBox();
+          box.union(b.geo.boundingBox);
+        }
+        const size = box.getSize(new THREE.Vector3());
+        if (!(size.y > 1e-6) && !(size.x > 1e-6)) return null;
+        const scale = HAND_HEIGHT / Math.max(size.y, size.x * 0.75, size.z * 0.75, 1e-6);
+        const centre = box.getCenter(new THREE.Vector3());
+        const seat = new THREE.Matrix4().makeScale(mirror ? -scale : scale, scale, scale)
+          .multiply(new THREE.Matrix4().makeTranslation(-centre.x, -box.min.y, -centre.z));
+        seat.premultiply(new THREE.Matrix4().makeTranslation(0, WRIST_Y, 0));
+
+        const group = new THREE.Group();
+        group.userData.enemyHand = true;
+        for (const b of kept) {
+          b.geo.applyMatrix4(seat);
+          // A reflection turns every triangle inside out; wind them back.
+          if (mirror) this._rewind(b.geo);
+          b.geo.computeBoundingBox();
+          b.geo.computeBoundingSphere();
+          const src = b.mesh.material;
+          const mat = Array.isArray(src) ? src.map((m) => m.clone()) : src.clone();
+          const mesh = new THREE.Mesh(b.geo, mat);
+          // Nothing of the body's animation state comes along: the overlay
+          // reads spin / bob / sway descriptors off userData, and a battler's
+          // userData means something else.
+          mesh.userData = {};
+          group.add(mesh);
+        }
+        return group;
+      },
+
+      _rewind(geo) {
+        if (geo.index) {
+          const idx = geo.index.array;
+          for (let i = 0; i + 2 < idx.length; i += 3) { const t = idx[i + 1]; idx[i + 1] = idx[i + 2]; idx[i + 2] = t; }
+          geo.index.needsUpdate = true;
+        } else {
+          for (const name of Object.keys(geo.attributes)) {
+            const a = geo.attributes[name];
+            const n = a.itemSize, arr = a.array;
+            for (let i = 0; i + 2 < a.count; i += 3) {
+              for (let k = 0; k < n; k++) {
+                const p = (i + 1) * n + k, q = (i + 2) * n + k;
+                const t = arr[p]; arr[p] = arr[q]; arr[q] = t;
+              }
+            }
+            a.needsUpdate = true;
+          }
+        }
+        // The normals were reflected along with the positions, which is
+        // already right for a mirrored surface: only the winding needed turning.
+      }
+    }
+  });
 })();

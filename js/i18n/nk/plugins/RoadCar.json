@@ -15,8 +15,8 @@
   "vehicleCrashed": "YOU CRASH INTO ANOTHER VEHICLE. DAMAGED: {parts}!",
   "emptyWorldUnlocked": "DA DOOR IZ UNLOCKED. WHOEVER LEFT IT HERE WAZ NOT COMIN' BACK FOR IT!",
   "driverSave": {
-    "nearMiss": "[DRIVER DEX SAVE: {roll}{mod}={total}] NEAR MISS, SWERVED IN TIME!",
-    "failed": "[DRIVER DEX SAVE: {roll}{mod}={total} VS DC {dc}] REFLEX SAVE FAILED, DA VEHICLE HITS!"
+    "nearMiss": "[DRIVER DEX SAVE: \\DIE[{roll}] {mod} = {total}] NEAR MISS, SWERVED IN TIME!",
+    "failed": "[DRIVER DEX SAVE: \\DIE[{roll}] {mod} = {total} VS DC {dc}] REFLEX SAVE FAILED, DA VEHICLE HITS!"
   },
   "incident": {
     "hitParty1": "WATCH WHERE YOU WALK! DAT IZ A ROAD!",

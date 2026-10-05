@@ -7512,6 +7512,11 @@
   //     that can carry anything at all can carry it: testicles, a mitotic gland
   //     and no organs at all are refused.
   //
+  // The surgery clinic (Health_ProstheticShop.js) sells both as services, the
+  // Growth tube and Design a heir: no device changes hands, the patient is the
+  // carrier, and the fee (the device's own price) is taken only once the
+  // embryo is growing.
+  //
   // The embryo is the whole character the wizard built, kept as a snapshot.
   // At birth it joins the Pets page as one of the party's children, and from
   // there it is promoted into a free seat whole (PetSystem.promoteDesigned).
@@ -7571,6 +7576,38 @@
     }
   }
 
+  // The device a session was opened with, handed back when it ends unused.
+  // A clinic session was opened with none (itemId 0).
+  function sessionItem(session) {
+    if (session && session.itemId != null) return session.itemId;
+    return session && session.kind === 'splice' ? GENE_SPLICER_ITEM : GROWING_VAT_ITEM;
+  }
+
+  // What the clinic asks for a service: the price of the device it stands in for.
+  function clinicCost(kind) {
+    var item = window.$dataItems && $dataItems[kind === 'splice' ? GENE_SPLICER_ITEM : GROWING_VAT_ITEM];
+    return item ? Number(item.price) || 0 : 0;
+  }
+
+  // The clinic's Growth tube ('vat') and Design a heir ('splice', carried by
+  // `carrier`). Answers the i18n key of why it cannot start, or '' once the
+  // wizard is open.
+  function openAtClinic(kind, carrier) {
+    var k = kind === 'splice' ? 'splice' : 'vat';
+    if (k === 'splice') {
+      var why = carrierRefusal(carrier);
+      if (why) return why;
+    }
+    var lab = window.CCLab;
+    if (!lab || !lab.hasFreeSeat || !lab.open || !lab.hasFreeSeat()) return 'Biologic.lab.noRoom';
+    var opened = lab.open(k, {
+      itemId: 0,
+      carrierId: k === 'splice' ? carrier.actorId() : 0,
+      cost: clinicCost(k),
+    });
+    return opened ? '' : 'Biologic.lab.noRoom';
+  }
+
   function openWizard(kind, itemId, carrierId) {
     var lab = window.CCLab;
     if (!lab || !lab.hasFreeSeat || !lab.open) {
@@ -7623,10 +7660,17 @@
     var carrier = kind === 'splice' ? $gameActors.actor(session.carrierId) : null;
     if (kind === 'splice' && carrierRefusal(carrier)) {
       labToast(T(carrierRefusal(carrier), { actor: carrier ? carrier.name() : '' }), 'warning');
-      refund(GENE_SPLICER_ITEM);
+      refund(sessionItem(session));
       if (window.CCLab && window.CCLab.release) window.CCLab.release(actor);
       return null;
     }
+    var cost = Math.max(0, Number(session.cost) || 0);
+    if (cost > 0 && (!window.$gameParty || $gameParty.gold() < cost)) {
+      labToast(T('Biologic.lab.cannotPay'), 'warning');
+      if (window.CCLab && window.CCLab.release) window.CCLab.release(actor);
+      return null;
+    }
+    if (cost > 0) $gameParty.loseGold(cost);
 
     if (!$gameSystem._labGestationCounter) $gameSystem._labGestationCounter = 0;
     var id = ++$gameSystem._labGestationCounter;
@@ -7774,6 +7818,8 @@
     vatTerm: vatTerm,
     humanTerm: getHumanTerm,
     conceive: conceive,
+    clinicCost: clinicCost,
+    openAtClinic: openAtClinic,
     deliver: deliverDesigned,
     gestations: gestations,
     tick: tickLabGestations,
@@ -7781,7 +7827,7 @@
     // Used from the wizard when it is closed without building anything.
     cancel: function (session) {
       if (!session) return;
-      refund(session.kind === 'splice' ? GENE_SPLICER_ITEM : GROWING_VAT_ITEM);
+      refund(sessionItem(session));
     },
   };
 

@@ -173,6 +173,7 @@
     "Only UI"
   ],
   "resetDefaults": "Defaults",
+  "themeRestart": "Theme saved: restart the game to apply it",
   "resetDefaultsDone": "All settings restored to their defaults",
   "group": {
     "language": "Language",

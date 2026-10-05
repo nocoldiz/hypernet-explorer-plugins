@@ -109,7 +109,7 @@
 
     commandRows(commands) {
       return commands.map((c) => `
-        <div class="item-slot focusable" onclick="SceneManager._scene.chooseCommand('${c.cmd}')">
+        <div class="item-slot focusable${c.blocked ? ' pshop-row--blocked' : ''}" onclick="SceneManager._scene.chooseCommand('${c.cmd}')">
           <div class="item-slot-icon"><span class="pshop-icon" style="${IconSet(c.icon, 32)}"></span></div>
           <div class="item-slot-info">
             <div class="item-slot-name">${esc(c.label)}</div>

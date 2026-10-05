@@ -64,6 +64,9 @@
     // The Hyper takes the row Defense or Reload was standing in, and is the
     // one command in the rail that is not offered twice in a day.
     hyper:        { accent: "#ffb347", rgb: [190, 110, 20 ] },
+    // The Special stands in the same row, and casts the skill bound to the
+    // weapon or the gear (window.BoundSkill).
+    special:      { accent: "#c77dff", rgb: [110, 45,  160] },
     skill:        { accent: "#9944ee", rgb: [90,  35,  170] },
     basic:        { accent: "#66bbdd", rgb: [40,  120, 150] },
     item:         { accent: "#44cc88", rgb: [25,  140, 80 ] },
@@ -106,6 +109,7 @@
     vectorSwitch: 118,
     defense:      81,
     hyper:        87,
+    special:      79,
     skill:        76,
     basic:        248,
     item:         209,
@@ -376,6 +380,21 @@
     // the moment it has been used.
     const hyperReady = !!(window.LimitBreak && window.LimitBreak.isReady(this._actor));
 
+    // The Special: the one skill bound to the weapon in hand or to a piece of
+    // magical gear (window.BoundSkill, SkillMaster.js). It stands where Defense
+    // or Reload would, and only while the actor can pay for it in MP and AP;
+    // otherwise the row is Defense or Reload as it always was. Cast from a
+    // ranged weapon it reloads the weapon too (commandSpecial).
+    const special = window.BoundSkill ? window.BoundSkill.ready(this._actor) : null;
+    const addSpecialRow = () => {
+      const skill = special.skill;
+      const cost = (window.BattleSkillMenu && window.BattleSkillMenu.rowCost)
+        ? window.BattleSkillMenu.rowCost(this._actor, skill) : "";
+      // The row wears the name of the skill it casts.
+      this.addCommandWithIcon(skill.name || T('Battle.cmd.special'), "special", true, skill.id,
+        skill.iconIndex > 0 ? skill.iconIndex : FALLBACK_ICONS.special, false, null, cost);
+    };
+
     // Skills stands second, straight under Attack (and above Defense), so
     // the list reads Attack, Skills, Defense, Backpack, Actions, Talk, Run.
     const addSkillsRow = () => {
@@ -400,6 +419,7 @@
       // action, followed by Bash (the fallback melee strike). A Hyper takes
       // that row instead: an empty magazine is exactly the moment for it.
       if (hyperReady) this.addCommandWithIcon("", "hyper", true, null, 87);
+      else if (special) addSpecialRow();
       else this.addCommandWithIcon("", "reload", true, null, 115);
       this.addCommandWithIcon("", "attack", true, attackExt, attackIcon);
       addSkillsRow();
@@ -426,9 +446,12 @@
       } else if (hasRanged) {
         // Reload doubles as Defense for ranged actors: commandReload both recharges
         // projectiles and guards. The bullet count now shows on Attack instead.
-        this.addCommandWithIcon("", "reload", true, null, 115);
+        if (special) addSpecialRow();
+        else this.addCommandWithIcon("", "reload", true, null, 115);
       } else if (hyperReady) {
         this.addCommandWithIcon("", "hyper", true, null, 87);
+      } else if (special) {
+        addSpecialRow();
       } else {
         const defenseSkill = $dataSkills[2];
         const canDefend = defenseSkill && this._actor.canUse(defenseSkill);
@@ -1262,7 +1285,7 @@
     // a reload for anybody holding a gun, and a guard for everybody else. They
     // are never on the window together (see makeCommandList above), so one
     // button can mean whichever of them is actually there.
-    { symbols: ["hyper", "vectorSwitch", "reload", "defense"], trigger: "right" },
+    { symbols: ["hyper", "vectorSwitch", "special", "reload", "defense"], trigger: "right" },
   ];
   // i18n-ignore-end
 
@@ -1357,6 +1380,7 @@
   Scene_Battle.prototype.createActorCommandWindow = function () {
     _Scene_Battle_createActorCommandWindow.call(this);
     this._actorCommandWindow.setHandler("reload",  this.commandReload.bind(this));
+    this._actorCommandWindow.setHandler("special", this.commandSpecial.bind(this));
     this._actorCommandWindow.setHandler("vectorSwitch", this.commandVectorSwitch.bind(this));
     this._actorCommandWindow.setHandler("defense", this.commandDefense.bind(this));
     this._actorCommandWindow.setHandler("hyper",   this.commandHyper.bind(this));
@@ -1487,6 +1511,45 @@
       }
       this.selectNextCommand();
     }
+  };
+
+  // The Special casts the skill bound to the weapon or the gear. It is asked
+  // again here rather than read off the row: MP or AP may have moved since the
+  // list was built. A ranged weapon is reloaded by the cast, when the action
+  // actually runs (BattleManager.startAction below), so backing out of the
+  // target choice reloads nothing.
+  Scene_Battle.prototype.commandSpecial = function () {
+    const actor = BattleManager.actor();
+    const action = BattleManager.inputtingAction();
+    const entry = actor && window.BoundSkill ? window.BoundSkill.ready(actor) : null;
+    if (!action || !entry) {
+      SoundManager.playBuzzer();
+      this._actorCommandWindow.activate();
+      return;
+    }
+    action.setSkill(entry.skill.id);
+    const ranged = !!(actor.getWeaponBulletConfig && actor.getWeaponBulletConfig());
+    action._specialReload = ranged ? entry.skill.id : 0;
+    this._battleSkillReturn = null;
+    this.onSelectAction();
+  };
+
+  // The reload rides on the action only while it is still the Special that
+  // was chosen: an action slot cleared and refilled keeps the object, so the
+  // mark is checked against the skill it was written for.
+  const _BattleManager_startAction_special = BattleManager.startAction;
+  BattleManager.startAction = function () {
+    const subject = this._subject;
+    const action = subject && subject.currentAction ? subject.currentAction() : null;
+    if (action && action._specialReload) {
+      const item = action.isSkill() ? action.item() : null;
+      if (item && item.id === action._specialReload &&
+          typeof subject.reloadBullets === "function") {
+        subject.reloadBullets();
+      }
+      action._specialReload = 0;
+    }
+    _BattleManager_startAction_special.call(this);
   };
 
   // The vector gun folds into whatever shape is fitted and back, and it does

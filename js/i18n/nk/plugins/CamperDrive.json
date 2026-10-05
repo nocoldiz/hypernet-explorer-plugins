@@ -67,8 +67,8 @@
     "cmdMenu": "PARTY MENU",
     "cmdExitWalk": "END WALK",
     "cmdTurbo": "TURBO (ON FOOT: SPRINT)",
-    "cmdDoor": "DOOR: STEP OUT / SIT",
-    "cmdView": "CHANGE VIEW",
+    "cmdDoor": "STEP OUT OF THE VEHICLE",
+    "cmdView": "FIRST / THIRD PERSON",
     "cmdExit": "EXIT DRIVE",
     "cmdVehicle": "VEHICLE OPTIONS",
     "cmdHelp": "CONTROLS",
@@ -115,8 +115,8 @@
     "underwater": "SUBMERGED"
   },
   "driverSave": {
-    "avoided": "[DRIVER DEX SAVE: {roll}{mod}={total}] EXPERTLY COUNTERSTEERED, CRASH AVOIDED!",
-    "failed": "[DRIVER DEX SAVE: {roll}{mod}={total} VS DC {dc}] REFLEX SAVE FAILED, DA VEHICLE HITS!"
+    "avoided": "[DRIVER DEX SAVE: \\DIE[{roll}] {mod} = {total}] EXPERTLY COUNTERSTEERED, CRASH AVOIDED!",
+    "failed": "[DRIVER DEX SAVE: \\DIE[{roll}] {mod} = {total} VS DC {dc}] REFLEX SAVE FAILED, DA VEHICLE HITS!"
   },
   "maintenance": "VEHICLE MAINTENANCE",
   "refuel": "REFUEL FROM DA CANS",

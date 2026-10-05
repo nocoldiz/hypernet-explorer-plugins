@@ -1330,6 +1330,10 @@
       else if (tr.code === 62) { const flagN = T.list('Inventory.specialFlag'); desc = T('Inventory.trait.specialFlagLine', { name: flagN[did] || T('Inventory.trait.specialProperty') }); }
       if (desc) lines.push(desc);
     });
+    // The one skill bound to the piece, cast from the battle menu's Special row
+    // (window.BoundSkill owns the tag and the enchanting bench's binding).
+    const bound = window.BoundSkill ? window.BoundSkill.of(item) : null;
+    if (bound && bound.name) lines.push(T('Inventory.trait.boundSkill', { skill: bound.name }));
     return lines;
   }
 

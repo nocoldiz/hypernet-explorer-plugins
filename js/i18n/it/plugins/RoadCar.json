@@ -15,8 +15,8 @@
   "vehicleCrashed": "Ti schianti contro un altro veicolo. Danni: {parts}.",
   "emptyWorldUnlocked": "La portiera è aperta. Chi l’ha lasciata qui non sarebbe tornato a riprenderla.",
   "driverSave": {
-    "nearMiss": "[Tiro su DES del guidatore: {roll}{mod}={total}] Per un pelo, sterzata all'ultimo istante!",
-    "failed": "[Tiro su DES del guidatore: {roll}{mod}={total} contro CD {dc}] Riflessi insufficienti, il veicolo va a sbattere!"
+    "nearMiss": "[Tiro su DES del guidatore: \\DIE[{roll}] {mod} = {total}] Per un pelo, sterzata all'ultimo istante!",
+    "failed": "[Tiro su DES del guidatore: \\DIE[{roll}] {mod} = {total} contro CD {dc}] Riflessi insufficienti, il veicolo va a sbattere!"
   },
   "incident": {
     "hitParty1": "Guarda dove cammini! Questa è una strada!",

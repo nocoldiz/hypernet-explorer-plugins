@@ -1832,13 +1832,81 @@
     // anything learned off those branches is learned for good. Take the piece
     // off and the lent skill goes with it; what was paid for out of it stays.
     //
-    // The grant itself is the stock Add Skill trait (code 43) on the equipped
-    // item, so nothing is written onto the character and nothing has to be
-    // cleaned up on unequip. window.EquipSkills is the one answer to "is this
-    // skill lent, and by what?": never re-derive it from a trait code.
+    // The grant is the piece's bound skill (window.BoundSkill, below), so
+    // nothing is written onto the character and nothing has to be cleaned up
+    // on unequip. A bound skill never joins the character's skill list: it is
+    // cast from the battle menu's Special row, in the place of Defense or
+    // Reload. window.EquipSkills is the one answer to "is this skill lent, and
+    // by what?": never re-derive it from a note tag.
     //=============================================================================
 
-    const T_ADD_SKILL = 43;
+    //=============================================================================
+    // BoundSkill
+    //
+    // At most ONE skill per piece of gear: the authored <BoundSkill: id> tag,
+    // or, on a piece that has none, the spell the enchanting bench bound to it.
+    // Only magical gear is authored with one, so most pieces carry nothing.
+    // window.BoundSkill is the one answer to "what does this piece cast, and
+    // what would this character cast from the Special row right now?".
+    //=============================================================================
+
+    const BOUND_TAG = /<BoundSkill:\s*(\d+)\s*>/i; // i18n-ignore: note tag
+
+    const BoundSkill = {
+        // The skill id a piece carries, or 0.
+        idOf: function (item) {
+            if (!item) return 0;
+            const meta = item.meta || {};
+            let id = Number(meta.BoundSkill || 0);
+            if (!id && typeof item.note === 'string') {
+                const m = item.note.match(BOUND_TAG);
+                if (m) id = Number(m[1]);
+            }
+            if (!id) id = Number(meta.EnchantSpell || item._enchantSpellId || 0);
+            return id > 0 ? id : 0;
+        },
+
+        of: function (item) {
+            const id = this.idOf(item);
+            if (!id || typeof $dataSkills === 'undefined' || !$dataSkills) return null;
+            return $dataSkills[id] || null;
+        },
+
+        // Whether a piece already carries one: a second can never be added.
+        has: function (item) {
+            return this.idOf(item) > 0;
+        },
+
+        // Every bound skill the character wears, as [{ skill, item }], in slot
+        // order: the hands first, then the rest of the gear.
+        list: function (actor) {
+            if (!actor || typeof actor.equips !== 'function') return [];
+            const out = [];
+            const seen = new Set();
+            for (const item of actor.equips() || []) {
+                const skill = this.of(item);
+                if (!skill || seen.has(skill.id)) continue;
+                seen.add(skill.id);
+                out.push({ skill, item });
+            }
+            return out;
+        },
+
+        // The Special this character would cast now: the first bound skill
+        // they can pay for (MP and AP) and are not sealed out of. null when
+        // there is none, and the row stands as Defense or Reload instead.
+        ready: function (actor) {
+            if (!actor || typeof actor.canUse !== 'function') return null;
+            for (const entry of this.list(actor)) {
+                if (actor.canUse(entry.skill)) return entry;
+            }
+            return null;
+        }
+    };
+
+    window.BoundSkill = BoundSkill;
+    SkillMaster.BoundSkill = BoundSkill;
+
     const _lentCache = new WeakMap();
 
     const EquipSkills = {
@@ -1857,12 +1925,8 @@
             if (hit && hit.frame === frame && hit.sig === sig) return hit.map;
             const map = new Map();
             for (const item of equips) {
-                if (!item || !Array.isArray(item.traits)) continue;
-                for (const trait of item.traits) {
-                    if (trait && trait.code === T_ADD_SKILL && trait.dataId > 0 && !map.has(trait.dataId)) {
-                        map.set(trait.dataId, item);
-                    }
-                }
+                const id = BoundSkill.idOf(item);
+                if (id && !map.has(id)) map.set(id, item);
             }
             _lentCache.set(actor, { frame, sig, map });
             return map;
@@ -8035,6 +8099,9 @@
         // Anything either bench already wrote: a bound piece, and a volume the
         // writing bench filled with pages. Neither is raw material again.
         if (item._enchanted || (item.meta && (item.meta.EnchantSpell || item.meta.Enchanted))) return false;
+        // One skill per piece: a wand or a robe that came with its own is
+        // never bound a second.
+        if (window.BoundSkill && window.BoundSkill.has(item)) return false;
         const VG = window.VectorGun;
         if (VG && typeof VG.isVectorGun === 'function' && VG.isVectorGun(item)) return false;
         return true;

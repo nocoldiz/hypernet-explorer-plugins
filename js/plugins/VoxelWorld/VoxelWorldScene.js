@@ -75,6 +75,13 @@
         troopForBioEnemy
     } = VW;
 
+    // The pad faces lifted out of RMMZ's mapper while the world has the
+    // controls (see _setPadProfile), and the d-pad face of each direction.
+    // i18n-ignore-start  input names and physical faces
+    const PAD_LIFTED = { 0: 'voxPadA', 2: 'voxPadX', 3: 'voxPadY' };
+    const PAD_DIR_FACE = { up: 'UP', down: 'DOWN', left: 'LEFT', right: 'RIGHT' };
+    // i18n-ignore-end
+
     // How pocked a world is. A body with no air to burn an impactor up and no
     // weather to wear the scar down keeps every one it ever took; anything with
     // a crust still turning over keeps only the recent few. Unlisted worlds of
@@ -1119,16 +1126,14 @@
                 };
                 document.addEventListener('keydown', this._onHelpKey);
 
-                // Tab is the camera: over the shoulder and back on foot, the
-                // view at the wheel. On foot Shift+Tab walks the quick bar
-                // instead (L1 on a pad does the same, see _updateBarInput).
+                // The camera is the middle mouse button now (_onFreeCamMouseDown).
+                // Tab is left with one job: on foot Shift+Tab walks the quick
+                // bar (L1 on a pad does the same, see _updateBarInput).
                 this._onTabKey = (e) => {
                     if (e.code === 'Tab' && VoxelWorldSystem.isActive()) {
                         if (this.isPaused()) return;   // that Tab is the menu's
                         e.preventDefault();
                         if (this._viewMode === 'foot' && e.shiftKey) this._cycleBarMode(1);
-                        else if (this._viewMode === 'foot') this._toggleThirdPerson();
-                        else this._cycleViewMode();
                     }
                 };
                 document.addEventListener('keydown', this._onTabKey);
@@ -1303,10 +1308,23 @@
             this._zoomDist = Math.max(0, Math.min(ZOOM_MAX, this._zoomDist + dir * step));
         }
         
+        // THE MIDDLE BUTTON IS THE CAMERA. A click swaps first and third person:
+        // over the shoulder and back on foot, the seat and the chase camera at
+        // the wheel. The detached free camera has no other view to swap to, so
+        // there it is still the orbit drag it always was.
         _onFreeCamMouseDown(e) {
-            if ((this._freeCamActive || this._viewMode === 'car') && e.button === 1) {
-                this._freeCamDrag = true;
-            }
+            if (e.button !== 1) return;
+            if (this._freeCamActive) { this._freeCamDrag = true; return; }
+            if (!VoxelWorldSystem.isActive() || this.isPaused() || this._titleMode) return;
+            e.preventDefault();
+            this._toggleCamera();
+        }
+
+        // First person <-> third person, whatever the party is doing: the one
+        // answer the middle button and the pad's R3 both ask for.
+        _toggleCamera() {
+            if (this._viewMode === 'foot') this._toggleThirdPerson();
+            else this._cycleViewMode();
         }
 
         _onFreeCamMouseUp(e) {
@@ -1345,10 +1363,11 @@
             return !!(d && d.timerActive && d.timerTransport === 'camper' && d.timerRemainingTime > 0);
         }
 
-        // Accelerate ("turbo") button. The 'shift' symbol maps to keyboard Shift
-        // and gamepad X by default, so this works on controller too.
+        // Accelerate ("turbo") button: Shift, or X on a pad at the wheel (X is
+        // lifted out of 'shift' while the world has the pad, see _setPadProfile).
         _isAcceleratePressed() {
-            return typeof Input !== 'undefined' && Input.isPressed('shift');
+            if (typeof Input !== 'undefined' && Input.isPressed('shift')) return true;
+            return this._viewMode !== 'foot' && this._padPressed('X');
         }
 
         // How far the wheel is turned, -1 (left) to 1 (right).
@@ -1374,10 +1393,8 @@
                 }
             }
             this._steerAnalog = false;
-            const left  = this._freeMoveKeys.has('KeyA') ||
-                (typeof Input !== 'undefined' && Input.isPressed('left'));
-            const right = this._freeMoveKeys.has('KeyD') ||
-                (typeof Input !== 'undefined' && Input.isPressed('right'));
+            const left  = this._freeMoveKeys.has('KeyA') || this._dirHeld('left');
+            const right = this._freeMoveKeys.has('KeyD') || this._dirHeld('right');
             return (right ? 1 : 0) - (left ? 1 : 0);
         }
 
@@ -1710,12 +1727,12 @@
         }
 
         _cycleViewMode() {
-            // Tab toggles between first-person driving (eye at the wheel) and the
-            // third-person chase camera only. The free-roam cabin walk and the
+            // The middle mouse button (R3 on a pad) toggles between first-person
+            // driving (eye at the wheel) and the third-person chase camera only. The free-roam cabin walk and the
             // detached free camera are reached other ways (E / interact, door),
             // not by cycling. Changing mode while on foot always climbs back
             // into the cabin. A free walk has nowhere else to be: the walk IS
-            // the mode, so TAB / Y do nothing there.
+            // the mode, so the camera toggle does nothing there.
             if (this._footOnly) return;
             if (this._viewMode === 'foot') { this._setMode('fp'); return; }
             const order = ['fpdrive', 'car'];
@@ -1727,7 +1744,8 @@
         // ---------------------------------------------------------------
         // Third person on foot
         // ---------------------------------------------------------------
-        // Tab (Y on a pad) pulls the camera back over the walker's shoulder.
+        // The middle mouse button (R3 on a pad) pulls the camera back over the
+        // walker's shoulder.
         // The controller is left alone: it still owns the eye, the look and
         // every step, and the camera is only placed behind that eye once the
         // step has been taken. The walker is drawn by the leader's dossier
@@ -1954,14 +1972,14 @@
         // wheel and leaves you standing in the cabin so you can walk to the door.
         _interact() {
             this._teachControl('voxInteract');
-            // At the wheel, E means one thing and one thing only: get out. The
-            // scenery, the chests and the people in front of the bonnet are all
-            // things to walk up to, and none of them may swallow the key that
-            // ends a drive.
+            // At the wheel, E means one thing and one thing only: get out, onto
+            // the ground beside the vehicle, from either view and at any speed
+            // (stepping down parks it, see _enterOnFoot). The scenery, the
+            // chests and the people in front of the bonnet are all things to
+            // walk up to, and none of them may swallow the key that ends a drive.
             if (this._viewMode === 'car' || this._viewMode === 'fpdrive') {
                 if (typeof SoundManager !== 'undefined') SoundManager.playOk();
-                this._setMode(this._viewMode === 'car' ? 'foot'
-                    : (this._hasCabin() ? 'fp' : 'foot'));
+                this._setMode('foot');
                 return;
             }
             // A body at your feet, then somebody standing right there, then the
@@ -3284,6 +3302,8 @@
             this._frameDelta = delta;
             // The frame meter (Core's VoxelPerf), a no-op unless it is on.
             if (typeof window !== 'undefined' && window.VoxelPerf) window.VoxelPerf.frame(this, this._renderer);
+            // The pad's faces belong to the world only while nothing is over it.
+            this._syncPadProfile();
 
             // The weapon in the driver's hands: in frame while they are walking,
             // put away at the wheel and whenever the drive itself is out of
@@ -3887,20 +3907,49 @@
             };
 
             if (this._speedFx && this._warpAmount > 0) {
-                // In the first-person views the camper IS the camera, so the lens
-                // sits at the centre of the screen; otherwise it is bent around
-                // wherever the vehicle happens to be drawn.
+                // In the first-person views the vehicle IS the camera, so the
+                // bubble sits round the centre of the screen; otherwise it is
+                // wrapped round wherever the vehicle happens to be drawn. Its
+                // size is the vehicle's own (_warpBounds), and the hull is
+                // masked out of the bend.
                 const fp = this._viewMode === 'fp' || this._viewMode === 'fpdrive' ||
                     this._viewMode === 'foot';
-                this._warpCentre.set(this._vanX, this._vanY + 6, this._vanZ);
+                const wb = this._warpBounds();
+                this._warpCentre.set(this._vanX, this._vanY + wb.lift, this._vanZ);
+                const hd = this._warpHeading || (this._warpHeading = new THREE.Vector3());
+                hd.set(Math.sin(this._driveAngle || 0), 0, Math.cos(this._driveAngle || 0));
                 const done = this._speedFx.render(this._renderer, drawInto, {
                     amount: this._warpAmount, time: tsec, center: this._warpCentre,
-                    camera: this._camera, centered: fp
+                    camera: this._camera, centered: fp, radius: wb.radius, heading: hd,
+                    group: this._van && this._van.group
                 });
                 if (done) { bursts(); return; }
             }
             drawInto(null);
             bursts();
+        }
+
+        // How big the vehicle is, for the warp bubble: its bounding radius and
+        // the height of its middle above the ride point, in world units.
+        // Measured once per vehicle off the model itself (a car wears a small
+        // bubble, a starship a big one) and kept until the vehicle changes.
+        _warpBounds() {
+            const key = this._vehicleKey();
+            const g = this._van && this._van.group;
+            const c = this._warpBoundsCache;
+            if (c && c.key === key && c.group === g) return c;
+            const out = { key, group: g, radius: 40, lift: 6 };
+            if (g) {
+                const box = new THREE.Box3().setFromObject(g);
+                if (!box.isEmpty()) {
+                    const size = box.getSize(new THREE.Vector3());
+                    const mid = box.getCenter(new THREE.Vector3());
+                    out.radius = Math.max(8, Math.max(size.x, size.y, size.z) * 0.5);
+                    out.lift = Math.max(0, mid.y - g.position.y);
+                }
+            }
+            this._warpBoundsCache = out;
+            return out;
         }
 
         // Draw the world twice, into the two halves of the canvas. The split is
@@ -4526,10 +4575,9 @@
                 !this._flying && this._env !== 'air';
             const rolling = this._speedKmh > 6;
             const airborneNow = this._flying && this._canFly();
-            // Not while the second layer is held: A is the door there, and a
-            // reach for it should not lock the rears on the way past.
-            this._handbrake = drivingMode && rolling && !this._chordHeld() &&
-                (this._freeMoveKeys.has('Space') || Input.isPressed('ok'));
+            // Y on a pad, the jump's face, is the handbrake at the wheel.
+            this._handbrake = drivingMode && rolling &&
+                (this._freeMoveKeys.has('Space') || Input.isPressed('ok') || this._padPressed('Y'));
 
             // The legend's rows have two faces, and a pad reaches most of them
             // through Input rather than through the page's own key events, so
@@ -4542,22 +4590,18 @@
                     if (Math.abs(ASI.rightX ? ASI.rightX() : 0) > 0.4 ||
                         Math.abs(ASI.rightY ? ASI.rightY() : 0) > 0.4) this._teachControl('voxLook');
                 }
-                if (Input.isPressed('shift')) this._teachControl('voxRun');
-                if (Input.isTriggered('ok')) this._teachControl('voxJump');
+                if (Input.isPressed('shift') || (this._fpc && this._fpc.padRunning)) this._teachControl('voxRun');
+                if (Input.isTriggered('ok') || this._padTriggered('Y')) this._teachControl('voxJump');
                 if (Input.isPressed('pagedown')) this._teachControl('voxDig');
                 if (Input.isTriggered('pageup')) this._teachControl('voxSlot');
             }
 
-            // THE SECOND LAYER. Hold L2 and the faces mean the controls that
-            // only ever had a key: interact, place, the map, the crouch, the
-            // legend itself. Read before the plain faces, and every plain face
-            // below is deaf while it is held, so one press of A is an interact
-            // OR a jump and never both. The sticks are NOT gated: looking around
-            // while reaching for a door is the whole point of a second layer
-            // rather than a second mode.
-            const chord = this._updateChordInput();
+            // The pad's own faces: A activates, X readies, the sticks clicked
+            // are the camera and the crouch, the d-pad the map (see
+            // _updatePadButtons). Y is the jump below, beside the key.
+            this._updatePadButtons();
 
-            if (!chord && Input.isTriggered('ok')) {
+            if (Input.isTriggered('ok') || this._padTriggered('Y')) {
                 if (this._viewMode === 'foot') {
                     this._fpc.requestJump();
                 } else if (!(drivingMode && rolling) && !airborneNow) {
@@ -4573,7 +4617,7 @@
             // party's on foot, the vehicle's at the wheel. A walk can still be
             // ended outright with T / Select, the key that puts the world map
             // away everywhere else in the game.
-            if (!chord && Input.isTriggered('cancel') && VoxelWorldSystem.isActive()) {
+            if (Input.isTriggered('cancel') && VoxelWorldSystem.isActive()) {
                 this._openEscMenu();
             }
             // T / Select is the way out of this world, walking or driving. It
@@ -4582,7 +4626,7 @@
             // Where exactly that is - the square walked to, the square driven
             // to, the ship in orbit of an alien world, the menu a free-play
             // session came from - is _endDriveToWorldMap's own answer.
-            if (!chord && !this._titleMode && Input.isTriggered('wmrToggle')) this._requestExit();
+            if (!this._titleMode && Input.isTriggered('wmrToggle')) this._requestExit();
 
             // FLYING CLAIMS THE RIGHT STICK FIRST. AnalogStickInput.rightY()
             // claims the stick for the frame, so exactly one reader may ask:
@@ -4620,23 +4664,17 @@
                 }
             }
 
-            // L2/R2 mirror the scroll wheel: R2 zooms in, L2 zooms out.
+            // The d-pad's up and down mirror the scroll wheel over a vehicle:
+            // up pulls the chase camera in, down lets it out. The triggers are
+            // the pedals now.
             if (this._viewMode === 'car' || this._viewMode === 'free') {
-                const zoomIn  = GamepadRaw.value(GamepadRaw.R2);
-                const zoomOut = GamepadRaw.value(GamepadRaw.L2);
-                if (zoomIn > 0.08 || zoomOut > 0.08) {
+                const zoomIn  = this._padPressed('UP') ? 1 : 0;
+                const zoomOut = this._padPressed('DOWN') ? 1 : 0;
+                if (zoomIn || zoomOut) {
                     const step = Math.max(150, this._zoomDist * 0.15 + 150);
                     this._zoomDist = Math.max(0, Math.min(ZOOM_MAX,
-                        this._zoomDist + (zoomOut - zoomIn) * step * 0.5));
+                        this._zoomDist + (zoomOut - zoomIn) * step * 0.25));
                 }
-            }
-
-            // Y toggles first/third person, mirroring TAB: over the shoulder
-            // on foot, the chase camera at the wheel. On the second layer it is
-            // the crouch on foot and the flight toggle at the wheel.
-            if (!chord && GamepadRaw.triggeredY() && !this.isPaused()) {
-                if (this._viewMode === 'foot') this._toggleThirdPerson();
-                else this._cycleViewMode();
             }
 
             // In first person / on foot, the right stick looks around (mouse parity).
@@ -4651,13 +4689,6 @@
                         this._fpc.pitch.rotation.x - ry * 0.05));
                 }
             }
-        }
-
-        // Whether the pad's second layer is held right now, for the controls
-        // that are read somewhere other than _updateChordInput.
-        _chordHeld() {
-            const C = window.Controller;
-            return !!(C && C.chordHeld && C.chordHeld());
         }
 
         // THE RIGHT STICK IS THE GAME'S RIGHT STICK. Every 3D camera in the
@@ -4678,49 +4709,118 @@
             return { x: x * gain, y: y * gain * inv };
         }
 
-        // The pad's second layer, held on L2. The mode decides what the faces
-        // mean, exactly as it does for the plain ones, and the ONE table that
-        // says so is Controller.BINDINGS - nothing about the pairing is written
-        // out here. Every action lands on the same method the key lands on, so
-        // there is one implementation of each and one place to change it.
+        // ---------------------------------------------------------------------
+        // The pad, played like a third-person adventure
+        // ---------------------------------------------------------------------
+        // One layout, the one an open-world RPG taught everybody: A activates
+        // whatever is in front of you (a door, a chest, a person, the wheel and
+        // the way out of it), Y jumps, X readies the weapon, the triggers are
+        // the hands (R2 swings, L2 lays a block) and at the wheel the pedals
+        // (R2 gas, L2 brake), the right stick clicked swaps first and third
+        // person, the left one clicked crouches, and the d-pad is the quick
+        // bar and the map. No second layer: every control has a face of its
+        // own. Controller.BINDINGS ('walk', 'drive', 'fly') is the table the
+        // legend prints, and it says exactly this.
         //
-        // Returns true while the layer is held, which is what makes the plain
-        // faces stand down for as long as it is.
-        _updateChordInput() {
-            const C = window.Controller;
-            if (!C || !C.chordHeld || !C.actionTriggered) return false;
-            const onFoot = this._viewMode === 'foot';
-            // Only two tables carry a second layer: what a walker needs and
-            // what a driver needs. A pilot reaching for the map or the legend is
-            // answered out of the driving one rather than out of nothing, which
-            // is why flying is not a third case here. The legend asks for its
-            // badges by mode BY NAME, so it is unaffected by this.
-            C.setMode(onFoot ? 'walk' : 'drive');
-            if (!C.chordHeld()) return false;
-            if (this.isPaused() && !this._isFullMapOpen()) return true;
-
-            const fired = (name) => C.actionTriggered(name);
-
-            if (onFoot) {
-                if (fired('interact')) this._interact();
-                if (fired('place'))    this._placeReq = true;
-                if (fired('map'))      this._cycleMapView();
-                if (fired('help') && this._hud && this._hud.toggleCommands) {
-                    this._hud.toggleCommands();
-                }
-                return true;
-            }
-
-            if (fired('door'))     this._interact();
-            if (fired('dive'))     this._toggleDive();
-            if (fired('flight'))   this._toggleFlight();
-            if (fired('respawn'))  this._respawnCamper();
-            if (fired('vehicle'))  this._openDriveMenu();
-            if (fired('map'))      this._cycleMapView();
-            if (fired('help') && this._hud && this._hud.toggleCommands) {
-                this._hud.toggleCommands();
-            }
+        // RMMZ folds A into 'ok', X into 'shift' and Y into 'menu', and out
+        // here those three mean something else. So while the world has the
+        // controls the three faces are lifted out of the engine's mapper and
+        // read raw; a menu, a message, a fight or a scene over the world puts
+        // them straight back, so A confirms in every menu as it always did.
+        // Input.clear (AnalogStickInput's) reseeds a held button as held, never
+        // as a fresh press, so the swap never confirms anything by itself.
+        _padProfileWanted() {
+            if (this._disposed || this._titleMode || this._locked) return false;
+            if (!VoxelWorldSystem.isActive() || VoxelWorldSystem._scene !== this) return false;
+            if (this.isPaused() || this._domMenuOpen) return false;
+            if (typeof $gameMessage !== 'undefined' && $gameMessage && $gameMessage.isBusy()) return false;
+            const S = (typeof SceneManager !== 'undefined') ? SceneManager._scene : null;
+            if (S && ((typeof Scene_MenuBase !== 'undefined' && S instanceof Scene_MenuBase) ||
+                      (typeof Scene_Battle !== 'undefined' && S instanceof Scene_Battle))) return false;
             return true;
+        }
+
+        _syncPadProfile() {
+            const want = this._padProfileWanted();
+            if (want !== !!this._padProfileOn) this._setPadProfile(want);
+        }
+
+        _setPadProfile(on) {
+            if (typeof Input === 'undefined' || !Input.gamepadMapper) return;
+            const M = Input.gamepadMapper;
+            if (on) {
+                this._padSaved = {};
+                for (const i of Object.keys(PAD_LIFTED)) {
+                    this._padSaved[i] = M[i];
+                    M[i] = PAD_LIFTED[i];
+                }
+            } else if (this._padSaved) {
+                for (const i of Object.keys(this._padSaved)) {
+                    // Somebody else rebound it meanwhile (CustomCommandMapper):
+                    // theirs stands.
+                    if (M[i] === PAD_LIFTED[i]) M[i] = this._padSaved[i];
+                }
+                this._padSaved = null;
+            }
+            this._padProfileOn = !!on;
+            if (Input.clear) Input.clear();
+        }
+
+        _padPressed(face) {
+            const C = window.Controller;
+            return !!(C && C.pressed && C.pressed(face));
+        }
+        _padTriggered(face) {
+            const C = window.Controller;
+            return !!(C && C.triggered && C.triggered(face));
+        }
+        _padValue(face) {
+            const C = window.Controller;
+            return (C && C.value) ? C.value(face) : 0;
+        }
+
+        // An arrow direction from the keyboard or the LEFT STICK, never the
+        // d-pad: the d-pad is the quick bar, the map and the zoom out here, and
+        // core folds all three into the same Input direction.
+        _dirHeld(dir) {
+            if (typeof Input === 'undefined' || !Input.isPressed(dir)) return false;
+            const face = PAD_DIR_FACE[dir];
+            if (!this._padPressed(face)) return true;
+            const A = window.AnalogStickInput;
+            if (!A) return false;
+            const x = A.leftX ? A.leftX() : 0, y = A.leftY ? A.leftY() : 0;
+            return dir === 'up' ? y < -0.5 : dir === 'down' ? y > 0.5
+                : dir === 'left' ? x < -0.5 : x > 0.5;
+        }
+
+        // The faces that are not pedals, sticks or the quick bar: read once a
+        // frame, each landing on the same method its key lands on, so there is
+        // one implementation of every action.
+        _updatePadButtons() {
+            const C = window.Controller;
+            if (!C || !C.connected || !C.connected()) return;
+            const t = (face) => this._padTriggered(face);
+            // START is the legend and LEFT the map everywhere, the big map
+            // included, which is the one thing that may be up while they are.
+            if (t('START') && this._hud && this._hud.toggleCommands) this._hud.toggleCommands();
+            if (t('LEFT')) this._cycleMapView();
+            if (this.isPaused()) return;
+            if (t('R3')) this._toggleCamera();
+            if (t('A')) { this._interact(); return; }
+            if (this._viewMode === 'foot') {
+                if (t('X')) this._actionR();
+                // L2 lays the block in hand, once per pull.
+                const l2 = this._padValue('L2');
+                if (l2 > 0.55 && !this._padL2Down) { this._padL2Down = true; this._placeReq = true; }
+                else if (l2 < 0.3) this._padL2Down = false;
+                return;
+            }
+            if (t('L3')) this._toggleFlight();
+            // In the air the shoulders are the altitude trim (_updateFlight).
+            if (this._flying && this._canFly()) return;
+            if (t('L1')) this._toggleDive();
+            if (t('R1')) this._openDriveMenu();
+            if (t('RIGHT')) this._respawnCamper();
         }
 
         // Cycling the map views, from the pad as well as from M. Was written
@@ -5316,12 +5416,17 @@
             // An autopilot, when one is driving, stands in for the pedals and the
             // wheel; its throttle is continuous rather than a key press.
             const auto = this._autopilot ? this._autopilot.controls : null;
+            // R2 is the gas pedal on a pad, and an analog one: half a pull is
+            // half the throttle. L2 is the brake.
             const throttleTarget = auto ? auto.throttle
-                : ((readInput && canDrive &&
-                    (this._freeMoveKeys.has('KeyW') || Input.isPressed('up'))) ? 1 : 0);
+                : ((readInput && canDrive)
+                    ? ((this._freeMoveKeys.has('KeyW') || this._dirHeld('up')) ? 1
+                        : (this._padValue('R2') > 0.08 ? this._padValue('R2') : 0))
+                    : 0);
             const throttleKey = canDrive && throttleTarget > 0.02;
             const brakeKey = auto ? !!auto.brake
-                : (readInput && (this._freeMoveKeys.has('KeyS') || Input.isPressed('down')));
+                : (readInput && (this._freeMoveKeys.has('KeyS') || this._dirHeld('down') ||
+                    this._padValue('L2') > 0.3));
             // Turbo. Beyond the speed it buys, this is the ONE thing that lets
             // a vehicle destroy the scenery out here (see _checkPropCollision):
             // held, trees and rocks give way; released, they do not, however
@@ -5750,7 +5855,7 @@
             // --- the trim ----------------------------------------------------
             let dir = 0;
             if (typeof Input !== 'undefined') {
-                if (this._freeMoveKeys.has('Space') || Input.isPressed('ok')) dir += 1;
+                if (this._freeMoveKeys.has('Space') || Input.isPressed('ok') || this._padPressed('Y')) dir += 1;
                 if (this._freeMoveKeys.has('KeyC') || Input.isPressed('pageup')) dir -= 1;
             }
             // The pad's shoulder buttons do the same, so a controller can hold
@@ -8339,20 +8444,19 @@
             this._aimFromWalker(this._digOrigin, this._digDir);
 
             // R1 on a pad swings the same way the mouse button does, so it digs
-            // the same way too.
-            // Deaf while the second layer is held: R1 is the vehicle menu there
-            // (Controller.BINDINGS.drive), and a reach for it must not also cut
-            // a hole in whatever the party happens to be facing.
-            const chord = this._chordHeld();
-            const padDig = !chord && (typeof Input !== 'undefined' && Input.isPressed &&
-                            Input.isPressed('pagedown'));
+            // the same way too, and so does R2, the trigger finger, out of a
+            // fight (in one R2 is the weapon's alone, see _fightButtons).
+            const fightNow = this._fightButtons();
+            const padDig = (typeof Input !== 'undefined' && Input.isPressed &&
+                            Input.isPressed('pagedown')) ||
+                (!fightNow && this._padValue('R2') > 0.3);
             // L1 is the bar itself: one press walks blocks -> spells -> items,
             // the pad's Tab. It used to step along the cells of whichever bar
             // was up and the bars themselves were on L2, which left the two
             // shoulder buttons doing halves of the same job and the triggers,
             // which are the camera's, doing a third. The cells are stepped with
             // the d-pad now (below), so one button answers each question.
-            if (!chord && typeof Input !== 'undefined' && Input.isTriggered &&
+            if (typeof Input !== 'undefined' && Input.isTriggered &&
                 Input.isTriggered('pageup')) {
                 this._cycleBarMode(1);
             }
@@ -8715,6 +8819,8 @@
         }
 
         _disposeInner() {
+            // The pad's A, X and Y go back to the engine before anything else.
+            this._setPadProfile(false);
             this._disposeWalkerBody();
             // The frame meter's readout goes with the world it was reading.
             if (typeof window !== 'undefined' && window.VoxelPerf) window.VoxelPerf.frame(null, this._renderer);

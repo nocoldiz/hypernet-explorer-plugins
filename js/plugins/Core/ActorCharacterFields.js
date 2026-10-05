@@ -22,6 +22,7 @@
  *   vnBust() / setVnBust(v) .................  bust portrait image name (or 0)
  *   portraitMode() / setPortraitMode(v) .....  "bust" | "sprite" | "model" (or 0)
  *   pvArcane/pvSubstance/pvStealth/pvIntimidation() + setters ... equip-derived stats
+ *   modelColours() / setModelColour(part, hex)  skin/hair/dress/belt/boots/underwear/glasses colour of a dossier model
  *
  * portraitMode is the exclusive art style chosen at character creation. A
  * humanoid picks "bust" (hand-drawn portrait) or "model" (a procedural 3D model
@@ -102,6 +103,23 @@
     Game_Actor.prototype.setReproductionType = function (value) {
         this._pvReproductionType = (value === null || value === undefined)
             ? null : Math.floor(Number(value) || 0);
+    };
+
+    // The colours a dossier model is worn in: skin, hair, dress, belt, boots,
+    // underwear and glasses, each a
+    // "#rrggbb" string or null for the colour the model shipped with. Painted
+    // onto the model by window.ActorModel3D.tint.
+    const MODEL_COLOUR_PARTS = ["skin", "hair", "dress", "belt", "boots", "underwear", "glasses"];
+    Game_Actor.prototype.modelColours = function () {
+        const src = this._pvModelColours || {};
+        const out = {};
+        MODEL_COLOUR_PARTS.forEach((p) => { out[p] = src[p] || null; });
+        return out;
+    };
+    Game_Actor.prototype.setModelColour = function (part, hex) {
+        if (MODEL_COLOUR_PARTS.indexOf(part) < 0) return;
+        const v = /^#[0-9a-f]{6}$/i.test(String(hex || "")) ? String(hex).toLowerCase() : null;
+        this._pvModelColours = Object.assign({}, this._pvModelColours || {}, { [part]: v });
     };
 
     defNumField("pvArcane", "setPvArcane", "_pvArcane");

@@ -175,6 +175,7 @@
     "martialArts": "Martial weapon: Martial Arts skills stay usable, Swordsmanship does not",
     "allowsSkillType": "Allows Skill Type: {type}",
     "sealSkillType": "Seal Skill Type: {type}",
+    "boundSkill": "Special: {skill}",
     "grantsSkill": "Grants Skill: {skill}",
     "sealsSkill": "Seals Skill: {skill}",
     "actionPlus": "Extra Action Chance: +{pct}%",
@@ -211,7 +212,7 @@
     "EXP Rate"
   ],
   "model": {
-    "fullscreenHint": "Drag to turn, wheel to zoom, middle drag to pan"
+    "fullscreenHint": "Drag to turn, wheel to zoom, middle drag to pan, right click to close"
   },
   "section": {
     "specifications": "Specifications",

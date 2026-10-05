@@ -3049,6 +3049,10 @@
             // its saddle (PetFollowerSystem.js decides whether it can).
             if (!hasActionEvent && window.PetSystem && window.PetSystem.offerRideAt &&
                 window.PetSystem.offerRideAt(x2, y2)) return true;
+            // And the familiar walking with the party offers its saddle and its
+            // dematerializing (SummonSystem.js).
+            if (!hasActionEvent && window.SummonSystem && window.SummonSystem.offerFamiliarAt &&
+                window.SummonSystem.offerFamiliarAt(x2, y2)) return true;
 
             const facingVehicle = ['ship', 'boat', 'airship'].reduce((found, type) => {
                 if (found) return found;

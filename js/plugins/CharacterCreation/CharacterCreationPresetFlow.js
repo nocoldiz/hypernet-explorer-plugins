@@ -322,6 +322,9 @@
       actor._presetKey = (preset.name || preset.id || "").toString().toLowerCase();
       actor._presetName = preset.name;
       actor._presetId = preset.id;
+      // The familiar the dossier was bound to, if it carries one (a benched or
+      // imported character, SummonSystem.js); a fresh dossier has none.
+      actor._familiar = preset.familiar ? JSON.parse(JSON.stringify(preset.familiar)) : null;
 
       // Set actor properties
       actor.setName(preset.name);

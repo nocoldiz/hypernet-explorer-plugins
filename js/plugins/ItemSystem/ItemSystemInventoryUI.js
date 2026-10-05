@@ -579,6 +579,16 @@
           </div>`;
         document.body.appendChild(el);
         el.addEventListener('click', (e) => { if (e.target === el) closeModelFullscreen(); });
+        // A right click anywhere closes it. The press is eaten before it
+        // reaches TouchInput, or the scene below would read it as its own
+        // cancel and leave the inspect card too.
+        el.addEventListener('mousedown', (e) => {
+          if (e.button !== 2) return;
+          e.preventDefault(); e.stopPropagation();
+          SoundManager.playCancel();
+          closeModelFullscreen();
+        });
+        el.addEventListener('contextmenu', (e) => e.preventDefault());
         const canvas = document.getElementById('item-model-fullscreen-canvas');
         const entry  = canvas ? window.Weapon3DPreview.mount(canvas, item) : null;
         if (entry) fullscreenEntry = [entry];

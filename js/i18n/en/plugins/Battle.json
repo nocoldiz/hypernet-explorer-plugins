@@ -98,6 +98,7 @@
     "aimAt": "Aim: {part}",
     "wrestle": "Wrestle",
     "talk": "Talk",
+    "special": "Special",
     "reload": "Reload",
     "run": "Run",
     "bash": "Bash",
@@ -399,7 +400,15 @@
       }
     },
     "perfectRitual": "[NAT 20] Perfect ritual! {name} gains full HYPER and the master buffs!",
-    "empowered": "[INT +{mod}] The summoning ritual empowered {name} with combat buffs!"
+    "empowered": "[INT +{mod}] The summoning ritual empowered {name} with combat buffs!",
+    "skillsBound": "{name} binds with {n} of its {max} skills.",
+    "attackOnly": "{name} answers, but remembers nothing except how to strike.",
+    "familiarHere": "{name} is already at your side.",
+    "ownerAway": "{owner} is not in the party, so {name} cannot be convoked.",
+    "ownerLeft": "{name} fades away with {owner} gone from the party.",
+    "convokeNoMp": "{owner} needs {cost} MP to convoke {name}.",
+    "dematerialized": "{name} dematerializes.",
+    "talkDematerialize": "Dematerialize {name}"
   },
   "actorDied": "{actor} has died.",
   "knockout": {
@@ -580,7 +589,7 @@
     "fumble": "{actor} loses the thread of {skill}: not enough base {stat}!"
   },
   "critSever": {
-    "roll": "Killing blow on {enemy}: d20 {roll} {mod} = {total}/{dc}",
+    "roll": "Killing blow on {enemy}: \\DIE[{roll}] {mod} = {total}/{dc}",
     "outcomeBehead": "It goes clean through.",
     "outcomeMaim": "A limb comes away.",
     "outcomeNone": "The guard holds.",
@@ -729,7 +738,7 @@
       "wall": "Nothing touches the party for {turns} turns.",
       "disable": "The enemy line is put to sleep, charmed and made useless.",
       "gold": "Money spent as a weapon: {mult} times damage, paid for out of the purse.",
-      "grimoire": "The pact book opens on {slots} spells and takes health for every page turned.",
+      "grimoire": "Her gun opens into a book of {slots} powerful spells for the rest of the fight, with regeneration and focus. Turning a page for new spells costs {cost}% health.",
       "assembly": "Everything the class has learned, thrown at once.",
       "barrageMulti": "Every enemy still standing takes {mult} times damage, {hits} times over."
     }

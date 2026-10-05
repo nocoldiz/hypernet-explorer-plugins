@@ -661,12 +661,15 @@
 
       if ($gameSystem._partyPet && window.PetSystem && window.PetSystem.recruitPet) {
         const traits = this._petTraits();
-        window.PetSystem.recruitPet({
+        const recruited = window.PetSystem.recruitPet({
           id: $gameSystem._partyPet.id,
           name: $gameSystem._partyPet.name || ccT('CharCreate.petDefaultName'),
           characterName: $gameSystem._partyPet.sprite,
           characterIndex: $gameSystem._partyPet.spriteIndex || 0,
           isFollower: traits.sentient, // sentient = free to leave = a follower, not a dependent pet
+          // The enemy the creature is: the familiar it becomes fights as one,
+          // with that enemy's own hands in the first person view.
+          enemyId: $gameSystem._partyPet.enemyId || 0,
           enemyName: $gameSystem._partyPet.species,
           level: 1,
           archetype: $gameSystem._partyPet.kind,
@@ -675,6 +678,14 @@
           magical: traits.magical,
           geneticFreak: traits.geneticFreak,
         });
+        // The story opens with Em's familiar already bound to her and walking
+        // at her side: the creature picked here is that familiar.
+        if (recruited && Scene_CharacterCreation._storyMode &&
+          window.SummonSystem && window.SummonSystem.bindStarterFamiliar) {
+          const seats = ($gameParty && $gameParty.members && $gameParty.members()) || [];
+          const em = seats.find((a) => a && a.name() === "Em") || seats[0];   // i18n-ignore: proper name
+          window.SummonSystem.bindStarterFamiliar(em, recruited);
+        }
       }
 
       // The garage chosen on the Vehicles tab, handed over before the origin
@@ -962,7 +973,8 @@
     },
 
     // kind: "vat" (a creature) or "splice" (a humanoid). opts: { itemId,
-    // carrierId }. Answers false when there is no seat to build on.
+    // carrierId, cost }: cost is the clinic's fee, taken on conception.
+    // Answers false when there is no seat to build on.
     open(kind, opts) {
       const o = opts || {};
       const actorId = freeLabSeat();
@@ -980,6 +992,7 @@
         actorId: actorId,
         carrierId: o.carrierId || 0,
         itemId: o.itemId || 0,
+        cost: o.cost || 0,
         fresh: true,
         bgm: AudioManager.saveBgm(),
         bgs: AudioManager.saveBgs(),

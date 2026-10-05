@@ -1706,19 +1706,33 @@
   const EM_STORY_GENDER = 1;         // Female
   const EM_STORY_REPRODUCTION = 1;   // REPRODUCTION_TYPES.UTERUS
   // What she wakes up believing: Thelema, the creed of a witch who was left
-  // with her will and nothing else: the creed her sheet opens on. The list under it is the shelf her dossier was written against,
-  // a handful of creeds a memory-wiped, gun-casting anarchist witch plausibly
-  // holds: a default and a reading order, not a fence. Every creed in the bank
-  // is offered on her sheet.
+  // with her will and nothing else, is the one her sheet opens on. The list
+  // under it is the whole of what story mode offers her on the Bio page: her
+  // creed is the player's to pick, but only from this shelf.
   const EM_STORY_IDEOLOGY = "thelemic_magus";
   const EM_STORY_IDEOLOGY_CHOICES = [
     "thelemic_magus",
+    "death_metal_inner_circle",
     "traditionalist_witch",
-    "esoteric_psychologist",
-    "metamagical_imaginism",
-    "discordian_chaos",
+    "dissident_cleric",
+    "green_anarchist",
+    "anarcho_transhumanist",
+    "squish_accelerationism",
+    "eighty_creed",
+    "y2k_survivalism",
+    "trucker_knighthood",
+    "theocratic",
+    "scandalous_monarchist",
+    "atomic_modernist",
     "individualist_egoist",
-    "anarcho_syndicalist",
+    "thatcherite_restrictionism",
+    "crowleyan_democratism",
+    "monetarist",
+    "metamagical_imaginism",
+    "atheist",
+    "buddhist_statecraft",
+    "juche",
+    "keynesian",
   ];
   const EM_STORY_JOB_ID = 0;         // The trade she opens on: none yet
 
@@ -1923,6 +1937,7 @@
     // will and a living to make, and both are the player's to write. Only an
     // Em who has answered neither is given the ones she opens on.
     if (!actor._ideologyId) actor._ideologyId = locks.ideologyId;
+    else if (!locks.ideologyChoices.includes(actor._ideologyId)) actor._ideologyId = locks.ideologyId;
     if (actor._jobId == null) actor._jobId = locks.jobId;
     applyStoryModeEmEquipment(actor);
     // Her file with the powers belongs to the dossier, not to play: it is
@@ -3181,6 +3196,9 @@
       // The written dossier they were played from, if any, so a benched Selene
       // is still known to be the game's own (isAuthoredCharacter).
       sourcePresetId: actor._isPresetActor ? (actor._presetId || 0) : 0,
+      // The familiar bound to them (SummonSystem.js). It is theirs, so it
+      // waits on the bench with them and travels in an exported character.
+      familiar: actor._familiar ? JSON.parse(JSON.stringify(actor._familiar)) : null,
       retired: true,
       retiredAtMin: minute,
       retiredDate: dateStr,
@@ -3380,6 +3398,9 @@
       actor._recruitedEnemyId = preset.enemyId || 0;
       actor._recruitedLook = null;   // the look roll of whoever held the slot before goes with them
     }
+
+    // Their familiar comes back with them, and nobody else's stays in the slot.
+    actor._familiar = preset.familiar ? JSON.parse(JSON.stringify(preset.familiar)) : null;
 
     // Anatomy skills need no call here: Health_Core grants them on addActor.
     actor.refresh();

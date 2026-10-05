@@ -1,6 +1,7 @@
 {
   "lab": {
     "noRoom": "There is no free place in the party to grow a new life on. Make room first.",
+    "cannotPay": "The fee can no longer be paid.",
     "noCarrier": "Nobody in the party can carry a spliced embryo.",
     "cannotCarry": "{actor} has no organ that can carry an embryo.",
     "alreadyCarrying": "{actor} is already carrying.",

@@ -1004,17 +1004,26 @@
 }
 
 .cc-bio-chip:hover {
-    border-color: #c9ad6a !important;
-    color: #ffffff !important;
+    border-color: #8b5a2b !important;
+    color: #58180D !important;
 }
 
-/* A picked control is ink and a hairline, with nothing behind it. */
+/* A picked control is ink and a hairline, with nothing behind it: the
+   oxblood of the headings, since white is lost on this paper. */
 .cc-bio-chip.selected,
 .cc-pick-row.selected {
     background: transparent !important;
     background-image: none !important;
-    border-color: #c9ad6a !important;
-    color: #fff8eb !important;
+    border-color: #58180D !important;
+    color: #58180D !important;
+}
+
+/* A colour swatch is ringed, not inked: it has no text to colour. */
+.cc-colour-swatch {
+    border-color: rgba(43, 37, 29, 0.35) !important;
+}
+.cc-colour-swatch.selected {
+    outline-color: #58180D;
 }
 
 /* A card on the pet and garage boards carries no plate, no frame and no glow:
@@ -2474,6 +2483,11 @@ body #fbuild-panel {
     width: var(--spine-x, 55%);
     min-width: 0;
     border-right: none;
+}
+/* The left fore-edge and the cover's turn-in are painted over the page's own
+   padding, so the left leaf is padded past them or its icons are cut. */
+#character-creation-container .cc-pockets-spread > .cc-page-left {
+    padding-left: 34px;
 }
 #character-creation-container .cc-pockets-spread > .cc-page-right {
     flex: 0 0 calc(100% - var(--spine-x, 55%));

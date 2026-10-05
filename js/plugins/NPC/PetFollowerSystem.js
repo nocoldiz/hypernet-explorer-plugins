@@ -413,7 +413,14 @@ window.Game_PetFollower = Game_PetFollower;
     // never asked at all: they are actors, not pet records, so riding goes
     // through the pet registry alone and a person can never be made a mount.
     function _canBeRidden(pet) {
-        return !!pet && !pet.isChild && !!pet.rideEnabled;
+        if (!pet || pet.isChild || !pet.rideEnabled) return false;
+        // A familiar is a body only while it is convoked: one that has been
+        // dematerialized, or never called, has nothing there to sit on.
+        if (pet.isFamiliar) {
+            const S = window.SummonSystem;
+            return !!(S && S.isFamiliarConvoked && S.isFamiliarConvoked(pet.id));
+        }
+        return true;
     }
 
     // Interacting with the companion trailing the party offers its saddle.
@@ -914,6 +921,9 @@ window.Game_PetFollower = Game_PetFollower;
         setActivePet(id) {
             if (!$gameSystem) return;
             const pet = this.getPet(id);
+            // A familiar walks with the party only when it is convoked, in the
+            // summon's own slot (SummonSystem.js), never on the ordinary leash.
+            if (pet && pet.isFamiliar) return;
             $gameSystem._activePetId = pet ? pet.id : null;
             _refreshFollower();
         },
@@ -991,7 +1001,8 @@ window.Game_PetFollower = Game_PetFollower;
         // so the notification can still name what was abandoned.
         abandonPet(id) {
             const pet = this.getPet(id);
-            if (!pet) return null;
+            // A familiar is bound to its owner for good: it cannot be left.
+            if (!pet || pet.isFamiliar) return null;
             const key = _abandonCrimeKey(pet);
             if (key && window.CrimeSystem && window.CrimeSystem.addPresetCrime) {
                 window.CrimeSystem.addPresetCrime(key);

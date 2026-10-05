@@ -50,7 +50,7 @@
     },
     "16": {
       "name": "Incantacolpo",
-      "desc": "Con un'arma da fuoco in pugno infliggi +25% danni e ogni azione restituisce un po' di mana. Un incantesimo puntato su un solo nemico esce dalla canna e consuma un colpo, quindi un caricatore vuoto lo rifiuta; ricaricare restituisce un quinto del mana massimo."
+      "desc": "Con un'arma da fuoco: +25% danni e un po' di mana a ogni azione. Gli incantesimi su un solo bersaglio usano un colpo; ricaricare restituisce il 20% del mana."
     },
     "17": {
       "name": "Gioco di Gambe",

@@ -97,7 +97,7 @@
   "roll": {
     "masterpiece": "[Tiro Culinario NAT 20] Capolavoro gastronomico! {dish} ha guadagnato +50% di nutrizione!",
     "scorched": "[Tiro Culinario NAT 1] Piatto bruciato! {dish} ha perso nutrizione!",
-    "delicious": "[Tiro Culinario: {roll}{mod}={total}] {dish} preparato in modo delizioso!",
+    "delicious": "[Tiro Culinario: \\DIE[{roll}] {mod} = {total}] {dish} preparato in modo delizioso!",
     "action": "Cucina: {dish}"
   },
   "cookware": "Utensili",

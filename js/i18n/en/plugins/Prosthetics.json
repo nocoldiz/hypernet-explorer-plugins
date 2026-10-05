@@ -193,6 +193,10 @@
   "geneSplicing": "Gene splicing",
   "geneSplicingMeta": "Add or remove genetic traits compatible with this body",
   "geneSplicingPrice": "100 € per trait point",
+  "growthTube": "Growth tube",
+  "growthTubeMeta": "Design a creature and grow it in a tube",
+  "designHeir": "Design a heir",
+  "designHeirMeta": "Design a humanoid child this patient will carry",
   "tooExpensive": "Not enough money for that surgery.",
  "remote": {
   "title": "Remote Bistury",

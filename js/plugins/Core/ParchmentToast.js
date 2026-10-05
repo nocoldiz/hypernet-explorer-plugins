@@ -596,7 +596,8 @@
   // literally, so "the \c[14]Dog\c[0]" read as "the 14Dog0". They are read
   // here instead: a colour escape becomes the toast's own highlight span and
   // an icon escape becomes the IconSet cell it names.
-  const ESCAPE_RE = /\\[cC]\[(\d+)\]|\\[iI]\[(\d+)\]/;
+  // A roll travels as \DIE[14] and is drawn as the d20 Dice3D.js paints.
+  const ESCAPE_RE = /\\[cC]\[(\d+)\]|\\[iI]\[(\d+)\]|\\DIE\[(\d+)\]/;
 
   function hasControlEscapes(text) {
     return ESCAPE_RE.test(String(text));
@@ -607,8 +608,11 @@
   function renderControlEscapes(escaped) {
     let open = false;
     let out = String(escaped).replace(
-      /\\[cC]\[(\d+)\]|\\[iI]\[(\d+)\]/g,
-      (_m, colour, iconIndex) => {
+      /\\[cC]\[(\d+)\]|\\[iI]\[(\d+)\]|\\DIE\[(\d+)\]/g,
+      (_m, colour, iconIndex, die) => {
+        if (die !== undefined) {
+          return typeof window !== "undefined" && window.D20Badge ? window.D20Badge.html(die) : die;
+        }
         if (iconIndex !== undefined) return icon(iconIndex);
         if (Number(colour) === 0) {
           if (!open) return "";

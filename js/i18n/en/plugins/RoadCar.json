@@ -15,8 +15,8 @@
   "vehicleCrashed": "You crash into another vehicle. Damaged: {parts}.",
   "emptyWorldUnlocked": "The door is unlocked. Whoever left it here was not coming back for it.",
   "driverSave": {
-    "nearMiss": "[Driver DEX save: {roll}{mod}={total}] Near miss, swerved in time!",
-    "failed": "[Driver DEX save: {roll}{mod}={total} vs DC {dc}] Reflex save failed, the vehicle hits!"
+    "nearMiss": "[Driver DEX save: \\DIE[{roll}] {mod} = {total}] Near miss, swerved in time!",
+    "failed": "[Driver DEX save: \\DIE[{roll}] {mod} = {total} vs DC {dc}] Reflex save failed, the vehicle hits!"
   },
   "incident": {
     "hitParty1": "Watch where you walk! That is a road!",

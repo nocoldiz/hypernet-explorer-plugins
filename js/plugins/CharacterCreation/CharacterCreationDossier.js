@@ -319,6 +319,107 @@
       `;
     }
 
+    // The portrait showcase card: the 2D bust or the live 3D model, whichever
+    // the Bio tab's portrait choice says, for a person and a creature alike.
+    // The sidebar wears it, except on the simple bio sheet, where it trades
+    // places with the written history (see _bioSwapsPortraitAndHistory).
+    _ccPortraitCardHtml(actor, isLocked, isCreature) {
+      let profileBoxHtml = "";
+      // The Romance tab shows her bust, never the model.
+      const storyModel = storyModeModelPath(actor);
+      const storyBust = !!storyModel && this._step === STEP.ROMANCE;
+      if (storyModel && !storyBust) {
+        // Story mode's Em stands in her own dossier model, which the scene
+        // drops into this frame (_syncCC3DPortrait). Clicking it still opens
+        // the bust gallery her portrait elsewhere is picked from.
+        const emTitle = isLocked ? ccT('CharCreate.bustLockedHint') : ccT('CharCreate.bustClickHint');
+        const emClick = isLocked ? 'SoundManager.playBuzzer()' : 'SceneManager._scene.onOpenBustGallery()';
+        profileBoxHtml = `
+          <div class="cc-compact-portrait-card cc-col cc-col-gap-2">
+            <div class="cc-compact-bust-full empty cc3d-live-portrait cc-clip" title="${emTitle}" onclick="${emClick}">
+              <div class="cc3d-live-portrait-fallback cc-col cc-col-gap-2 cc-fill-center">
+                ${this._ccIconHtml(224, 28)}
+                <span class="cc-portrait-caption">${actor.name()}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (!storyBust && portraitIsModel(actor)) {
+        // The archetypes the member is built from, named the way the rest of
+        // the game names them. This used to list Battler3D's ~600 raw
+        // lowercase structure keys ("bigcat", "chromaticmanticore"), none of
+        // which the health side could resolve back to a body.
+        const currentArch = actorArchetypeKey(actor) || (isCreature ? "Beast" : "Humanoid"); // i18n-ignore: Archetypes.json keys
+        const secondArch = actorSecondaryArchetypeKey(actor) || "";
+
+        // The card names the model the member already has and opens the
+        // sculptor.
+        const modelLabel = secondArch
+          ? `${archetypeDisplayName(currentArch)} / ${archetypeDisplayName(secondArch)}`
+          : archetypeDisplayName(currentArch);
+        const modelTitle = isLocked ? ccT('CharCreate.bustLockedHint') : modelLabel;
+        const modelClick = isLocked ? 'SoundManager.playBuzzer()' : 'SceneManager._scene.onOpenCreature3DStudio()';
+
+        // The primary/secondary archetype pickers live on the Bio tab now,
+        // alongside the rest of who the member is. The sidebar keeps only
+        // the model preview and the shortcut into the sculptor.
+        profileBoxHtml = `
+          <div class="cc-compact-portrait-card cc-col cc-col-gap-2">
+            <div class="cc-compact-bust-full empty cc3d-live-portrait cc-clip" title="${modelTitle}" onclick="${modelClick}">
+              <div class="cc3d-live-portrait-fallback cc-col cc-col-gap-2 cc-fill-center">
+                ${this._ccIconHtml(224, 28)}
+                <span class="cc-portrait-caption">${modelLabel}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        const bustName = this._getActorBust(actor);
+        const bustUrl = this._getBustUrl(bustName);
+
+        // The portrait is its own button now: the bust is clicked and the
+        // gallery opens on it. The Appearance button underneath said the
+        // same thing twice and ate a row of the sidebar.
+        const bustTitle = isLocked
+          ? ccT('CharCreate.bustLockedHint')
+          : ccT('CharCreate.bustClickHint');
+        const bustClick = isLocked ? 'SoundManager.playBuzzer()' : 'SceneManager._scene.onOpenBustGallery()';
+
+        profileBoxHtml = `
+          <div class="cc-compact-portrait-card">
+            ${bustUrl ? `
+              <div class="cc-compact-bust-full ${isLocked ? 'locked' : ''}" title="${bustTitle}" onclick="${bustClick}">
+                <img class="cc-compact-bust-img" src="${bustUrl}" alt=""
+                     onerror="this.onerror=null; this.src='img/busts/7.png';">
+              </div>
+            ` : `
+              <div class="cc-compact-bust-full empty ${isLocked ? 'locked' : ''}" title="${bustTitle}" onclick="${bustClick}">
+                <div class="cc-col cc-col-gap-2 cc-fill-center">
+                  ${this._ccIconHtml(224, 28)}
+                  <span class="cc-portrait-caption cc-portrait-caption--empty">${ccT('CharCreate.noBustSelected')}</span>
+                </div>
+              </div>
+            `}
+            ${isLocked ? `
+              <div class="cc-compact-portrait-controls">
+                <div class="cc-portrait-footnote">
+                  ${this._ccIconHtml(195, 14)} <span>${ccT('CharCreate.presetLocked')}</span>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }
+      return profileBoxHtml;
+    }
+
+    // The simple bio sheet reads the history in the sidebar's portrait well,
+    // where it scrolls, and stands the model on the facing page instead.
+    _bioSwapsPortraitAndHistory() {
+      return !this._presetWindow && this._isBioPickerStep() && Scene_CharacterCreation.isSimpleMode()
+        && !Scene_CharacterCreation._isPetMode && !Scene_CharacterCreation._isVehicleMode;
+    }
+
     _renderCompactSidebarHtml() {
       // The preset board reads its own dossier down the sidebar too: browsing
       // wanted posters used to leave this panel showing the (still blank) seat
@@ -389,94 +490,12 @@
         </div>
       `;
 
-      // 2. Full-Width Portrait Showcase Card: the 2D bust or the live 3D
-      // model, whichever the Bio tab's portrait choice says, for a person and
-      // a creature alike.
-      let profileBoxHtml = "";
-      if (!isPetActive) {
-        if (storyModeModelPath(actor)) {
-          // Story mode's Em stands in her own dossier model, which the scene
-          // drops into this frame (_syncCC3DPortrait). Clicking it still opens
-          // the bust gallery her portrait elsewhere is picked from.
-          const emTitle = isLocked ? ccT('CharCreate.bustLockedHint') : ccT('CharCreate.bustClickHint');
-          const emClick = isLocked ? 'SoundManager.playBuzzer()' : 'SceneManager._scene.onOpenBustGallery()';
-          profileBoxHtml = `
-            <div class="cc-compact-portrait-card cc-col cc-col-gap-2">
-              <div class="cc-compact-bust-full empty cc3d-live-portrait cc-clip" title="${emTitle}" onclick="${emClick}">
-                <div class="cc3d-live-portrait-fallback cc-col cc-col-gap-2 cc-fill-center">
-                  ${this._ccIconHtml(224, 28)}
-                  <span class="cc-portrait-caption">${actor.name()}</span>
-                </div>
-              </div>
-            </div>
-          `;
-        } else if (portraitIsModel(actor)) {
-          // The archetypes the member is built from, named the way the rest of
-          // the game names them. This used to list Battler3D's ~600 raw
-          // lowercase structure keys ("bigcat", "chromaticmanticore"), none of
-          // which the health side could resolve back to a body.
-          const currentArch = actorArchetypeKey(actor) || (isCreature ? "Beast" : "Humanoid"); // i18n-ignore: Archetypes.json keys
-          const secondArch = actorSecondaryArchetypeKey(actor) || "";
-
-          // The card names the model the member already has and opens the
-          // sculptor.
-          const modelLabel = secondArch
-            ? `${archetypeDisplayName(currentArch)} / ${archetypeDisplayName(secondArch)}`
-            : archetypeDisplayName(currentArch);
-          const modelTitle = isLocked ? ccT('CharCreate.bustLockedHint') : modelLabel;
-          const modelClick = isLocked ? 'SoundManager.playBuzzer()' : 'SceneManager._scene.onOpenCreature3DStudio()';
-
-          // The primary/secondary archetype pickers live on the Bio tab now,
-          // alongside the rest of who the member is. The sidebar keeps only
-          // the model preview and the shortcut into the sculptor.
-          profileBoxHtml = `
-            <div class="cc-compact-portrait-card cc-col cc-col-gap-2">
-              <div class="cc-compact-bust-full empty cc3d-live-portrait cc-clip" title="${modelTitle}" onclick="${modelClick}">
-                <div class="cc3d-live-portrait-fallback cc-col cc-col-gap-2 cc-fill-center">
-                  ${this._ccIconHtml(224, 28)}
-                  <span class="cc-portrait-caption">${modelLabel}</span>
-                </div>
-              </div>
-            </div>
-          `;
-        } else {
-          const bustName = this._getActorBust(actor);
-          const bustUrl = this._getBustUrl(bustName);
-
-          // The portrait is its own button now: the bust is clicked and the
-          // gallery opens on it. The Appearance button underneath said the
-          // same thing twice and ate a row of the sidebar.
-          const bustTitle = isLocked
-            ? ccT('CharCreate.bustLockedHint')
-            : ccT('CharCreate.bustClickHint');
-          const bustClick = isLocked ? 'SoundManager.playBuzzer()' : 'SceneManager._scene.onOpenBustGallery()';
-
-          profileBoxHtml = `
-            <div class="cc-compact-portrait-card">
-              ${bustUrl ? `
-                <div class="cc-compact-bust-full ${isLocked ? 'locked' : ''}" title="${bustTitle}" onclick="${bustClick}">
-                  <img class="cc-compact-bust-img" src="${bustUrl}" alt=""
-                       onerror="this.onerror=null; this.src='img/busts/7.png';">
-                </div>
-              ` : `
-                <div class="cc-compact-bust-full empty ${isLocked ? 'locked' : ''}" title="${bustTitle}" onclick="${bustClick}">
-                  <div class="cc-col cc-col-gap-2 cc-fill-center">
-                    ${this._ccIconHtml(224, 28)}
-                    <span class="cc-portrait-caption cc-portrait-caption--empty">${ccT('CharCreate.noBustSelected')}</span>
-                  </div>
-                </div>
-              `}
-              ${isLocked ? `
-                <div class="cc-compact-portrait-controls">
-                  <div class="cc-portrait-footnote">
-                    ${this._ccIconHtml(195, 14)} <span>${ccT('CharCreate.presetLocked')}</span>
-                  </div>
-                </div>
-              ` : ''}
-            </div>
-          `;
-        }
-      }
+      // 2. Full-Width Portrait Showcase Card, or on the simple bio sheet the
+      // written history in its place.
+      const sidebarAge = ($gameSystem._ccBirthAge && $gameSystem._ccBirthAge[currentMemberIndex]) || 28;
+      const profileBoxHtml = this._bioSwapsPortraitAndHistory()
+        ? `<div class="cc-compact-portrait-card cc-sidebar-history">${this._simpleSheetHistoryHtml(actor, sidebarAge)}</div>`
+        : this._ccPortraitCardHtml(actor, isLocked, isCreature);
 
       // 3. Core 8-Stat Grid (Status Screen Styled with Red HP and Modifiers)
       // Traits push their positive/negative deltas into actor._paramPlus the

@@ -318,7 +318,14 @@
     },
     "ridable": "Ridable",
     "unridable": "Unridable",
-    "rideOff": "Mark it Ridable first"
+    "rideOff": "Mark it Ridable first",
+    "familiar": "Familiar",
+    "familiarOf": "Bound to {owner}",
+    "familiarOwnerGone": "Its owner is not with the party",
+    "convoke": "Convoke ({cost} MP)",
+    "dematerialize": "Dematerialize",
+    "convokeNoMp": "{owner} needs {cost} MP",
+    "convokeOwnerAway": "{owner} is not in the party"
   },
   "vehicles": {
     "fuel": "Fuel {fuel}L / {max}L",

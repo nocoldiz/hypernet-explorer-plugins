@@ -296,10 +296,6 @@
  * @text Summon: Wild Rite
  * @desc Runs a rite nobody chose. Whatever answers, answers.
  *
- * @command addSoftSummon
- * @text Summon: Familiar
- * @desc The caster's own familiar: its species comes from their class, its name from their name, its strength from their level. Free, and it stays a few turns.
- *
  * @command markNpc
  * @text Mark NPC
  * @desc Marks the person the player is facing, so they can be summoned later.
@@ -376,20 +372,30 @@
  * with, multiplied. It drinks the summoner dry in about three turns, which is
  * the only thing holding it.
  *
+ * THE BINDING THROW DECIDES WHAT IT CAN DO
+ *
+ * Every rite throws one d20 when it binds, and the throw decides how much of
+ * the creature's own kit comes through with it. A natural 1 brings nothing but
+ * the attack; a natural 20 brings everything it knows; anything between brings
+ * that share of its skills, weakest first (skillsForRoll).
+ *
  * THE FAMILIAR IS SOMEBODY'S, NOT THE PARTY'S
  *
- * The familiar is the one rite that belongs to a person. Which creature
- * answers is decided by the CLASS of whoever is taking the turn (a Necromancer
- * is met by something dead, a Mechanic by something built, a Witch by a bat);
- * what it is called is rolled once out of their own NAME and never changes;
- * and it is measured against THEIR stats and THEIR level alone, so it neither
- * rides on a strong party nor is held back by a weak one. Its ultimate is
- * bracketed by their level too. Change class and the pact is re-made with
- * something that suits the new one.
+ * The familiar is the one rite that belongs to a person, and it is bound to
+ * them for good the first time they cast Convoke Familiar. Which creature
+ * answers is decided by the CLASS they carried that day (a Necromancer is met
+ * by something dead, a Mechanic by something built, a Witch by a bat); what it
+ * is called is rolled out of their own NAME; and it is measured against THEIR
+ * stats and THEIR level alone. The bond is kept on the actor itself, so it
+ * survives a spell on the bench and travels in an exported character.
  *
- * The first time a traveller calls their familiar it is written into the
- * Followers page as one of the party's animals (PetFollowerSystem), and it
- * stays on that list afterwards whether it is on the field or not.
+ * Only two things convoke it: the Convoke Familiar skill and the Convoke
+ * button on its row of the Pets page, which costs the same MP. Each convoking
+ * throws the die again, so a familiar can come back with a different kit. It
+ * stays after the fight, walks with the party, joins every battle on its own
+ * and can be ridden, until it dies or is dematerialized (from its row, or by
+ * talking to it). It cannot be convoked while its owner is out of the party,
+ * and it fades if they leave.
  *
  * THE CONDITIONS THAT HOLD IT THERE
  *
@@ -483,6 +489,11 @@ Game_SummonFollower.prototype.sprite = function () {
 };
 
 Game_SummonFollower.prototype.isVisible = function () {
+    // A familiar being ridden is under the rider, not trailing behind them.
+    const S = window.SummonSystem;
+    const info = S && S.mapSummonInfo ? S.mapSummonInfo() : null;
+    const vs = window.MergedVehicleSystem;
+    if (info && info.petId && vs && vs.isRidden && vs.isRidden(info.petId)) return false;
     return !!this.sprite() && $gamePlayer.followers().isVisible();
 };
 
@@ -666,7 +677,8 @@ window.Game_SummonFollower = Game_SummonFollower;
         familiar: {
             archetypes: ['Fairy', 'Gnome', 'Bat', 'Slime', 'Mushroom', 'Ghost', 'Bird', 'Rabbit'],
             upkeep: null,
-            turns: 4,
+            // Held by the bond, not by a clock: it stays until it is killed.
+            turns: 0,
             share: 0.6,
             pick: 'weak',
             // A familiar belongs to one person, not to the party: it is measured
@@ -772,6 +784,7 @@ window.Game_SummonFollower = Game_SummonFollower;
 
     let riteCost = 0;           // MP the skill now casting took from its caster
     let riteActorId = 0;        // who paid it
+    let riteSkillId = 0;        // which skill it was
     let riteFrame = -Infinity;  // when, so a stale rite never prices a later one
 
     // ==================================================================
@@ -1066,46 +1079,110 @@ window.Game_SummonFollower = Game_SummonFollower;
         return Math.abs(hash >>> 0);
     }
 
-    function familiarStore() {
-        if (!$gameSystem) return {};
-        if (!$gameSystem._summonFamiliars) $gameSystem._summonFamiliars = {};
-        return $gameSystem._summonFamiliars;
+    // THE BOND LIVES ON THE ACTOR. A familiar is part of who somebody is, so
+    // the record is a field of the actor: it is still there while they sit on
+    // the bench, it rides out in their dossier (CharacterCreationPresets.js
+    // buildRetiredPreset) and comes back with them, and an exported character
+    // carries it to another world.
+    //   { key, enemyId, name, characterName, characterIndex, petId }
+    // `key` ties the record to its row on the Pets page, so a dossier brought
+    // in from another world never claims some other animal's row.
+    function familiarRecord(actor) {
+        return (actor && actor._familiar) || null;
     }
 
-    // The creature bound to one person: rolled once out of their class's own
-    // list, named once out of their own name, and written down so it is the
-    // same animal every time they call it.
+    function newFamiliarKey(actor) {
+        return 'fam' + nameSeed(actor.name() + ':' + Date.now() + ':' + Math.random()).toString(36);  // i18n-ignore: internal id
+    }
+
+    // The creature bound to one person: rolled the first time they convoke,
+    // out of their class's own list and their own name, and never again.
     function familiarFor(actor) {
         if (!actor) return null;
-        const store = familiarStore();
-        const key = String(actor.actorId());
+        const record = familiarRecord(actor);
+        if (record && (record.petId || $dataEnemies[record.enemyId])) return record;
+        const enemy = rollFamiliarEnemy(actor);
+        if (!enemy) return null;
         const seed = nameSeed(actor.name());
-        const record = store[key];
-        // A record is re-rolled when the traveller has changed class since it
-        // was written: a Necromancer does not keep the Ranger's hawk.
-        if (record && record.classId === actor._classId && $dataEnemies[record.enemyId]) {
-            return record;
-        }
+        const names = T.pool ? T.pool('Battle.summon.familiar.names') : [];
+        const bank = names.length ? names : [enemy.name];
+        const written = {
+            key: newFamiliarKey(actor),
+            enemyId: enemy.id,
+            name: bank[Math.floor(seed / 7) % bank.length],
+            characterName: '',
+            characterIndex: 0,
+            petId: 0
+        };
+        actor._familiar = written;
+        return written;
+    }
+
+    // The creature a person's class would call up, seeded on their name: out
+    // of the class's own list, from the bottom third of it, since a familiar
+    // is a small thing whatever class it answers to.
+    function rollFamiliarEnemy(actor) {
+        const seed = nameSeed(actor.name());
         const archetypes = FAMILIAR_CLASSES[actor._classId] || KINDS.familiar.archetypes;
         const pool = archetypePool(archetypes).length
             ? archetypePool(archetypes)
             : archetypePool(KINDS.familiar.archetypes);
         if (!pool.length) return null;
-        // The bottom third of the pool: a familiar is a small thing, whatever
-        // class it answers to.
         const lowest = pool.slice().sort((a, b) => enemyLevel(a) - enemyLevel(b));
         const band = lowest.slice(0, Math.max(1, Math.ceil(lowest.length / 3)));
-        const enemy = band[seed % band.length];
-        const names = T.pool ? T.pool('Battle.summon.familiar.names') : [];
-        const bank = names.length ? names : [enemy.name];
-        const written = {
-            enemyId: enemy.id,
-            classId: actor._classId,
-            name: bank[Math.floor(seed / 7) % bank.length],
-            petId: (record && record.petId) || 0
-        };
-        store[key] = written;
-        return written;
+        return band[seed % band.length];
+    }
+
+    // Every familiar is an enemy underneath, whatever it was picked as: the
+    // one its record names, else its Pets page row's, else the enemy its
+    // sprite is (js/db/Sprites/MonsterEnemies.json), else the one its
+    // summoner's class would have called up. Written back, so it is asked once.
+    function familiarEnemy(actor, record) {
+        if ($dataEnemies[record.enemyId]) return $dataEnemies[record.enemyId];
+        const pet = familiarPet(record);
+        let table = null;
+        try { table = window.Sprites && window.Sprites.MonsterEnemies; } catch (e) { table = null; }
+        const bySprite = (name) => Number((table && name && table[name]) || 0);
+        const id = (pet && $dataEnemies[pet.enemyId] ? pet.enemyId : 0) ||
+            bySprite(record.characterName) || bySprite(pet && pet.characterName);
+        const enemy = $dataEnemies[id] || rollFamiliarEnemy(actor);
+        if (!enemy) return null;
+        record.enemyId = enemy.id;
+        if (pet && !pet.enemyId) {
+            pet.enemyId = enemy.id;
+            pet.enemyName = pet.enemyName || enemy.name;
+        }
+        return enemy;
+    }
+
+    // The Pets page row a record points at, when it really is that record's:
+    // an id carried in from another world may name somebody else's animal.
+    function familiarPet(record) {
+        const pets = window.PetSystem;
+        if (!record || !record.petId || !pets || !pets.getPet) return null;
+        const pet = pets.getPet(record.petId);
+        return (pet && pet.isFamiliar && pet.familiarKey === record.key) ? pet : null;
+    }
+
+    // Every actor this save has met, benched or not.
+    function everyActor() {
+        const data = ($gameActors && $gameActors._data) || [];
+        return data.filter(a => a && a.actorId && a.actorId() !== summonActorId);
+    }
+
+    // Whose familiar a Pets page row is, or null when its owner is nowhere in
+    // this save (benched into a dossier, or gone).
+    function familiarOwner(petId) {
+        const id = Number(petId) || 0;
+        if (!id) return null;
+        return everyActor().find(a => {
+            const record = familiarRecord(a);
+            return record && record.petId === id && !!familiarPet(record);
+        }) || null;
+    }
+
+    function inParty(actor) {
+        return !!actor && realMembers().includes(actor);
     }
 
     // The familiar is measured against its own summoner and against nothing
@@ -1113,17 +1190,35 @@ window.Game_SummonFollower = Game_SummonFollower;
     // troop on the field does not enter into it.
     function buildFamiliarSpec(summoner) {
         const record = familiarFor(summoner);
-        const enemy = record ? $dataEnemies[record.enemyId] : null;
-        if (!enemy) return null;
-        const spec = buildEnemySpec('familiar', enemy);              // i18n-ignore: internal tag
+        if (!record) return null;
+        // Always an enemy, so it fights with that enemy's skills and its own
+        // hands, and its numbers are that enemy's re-cut to its summoner below.
+        // Only a database with no creature to offer at all falls back on the
+        // Pets page row.
+        const enemy = familiarEnemy(summoner, record);
+        const pet = enemy ? null : familiarPet(record);
+        if (!enemy && !pet) return null;
+        const spec = enemy
+            ? buildEnemySpec('familiar', enemy)                      // i18n-ignore: internal tag
+            : buildPetSpec(pet);
         const ownParams = [];
         for (let i = 0; i < 8; i++) ownParams.push(summoner.param(i));
-        spec.name = record.name;
+        spec.kindKey = 'familiar';                                   // i18n-ignore: internal tag
+        spec.kind = KINDS.familiar;
+        spec.source = 'familiar';                                    // i18n-ignore: internal tag
+        spec.name = record.name || spec.name;
         spec.familiarOf = summoner.actorId();
-        spec.creatureName = enemy.name;
+        spec.creatureName = enemy ? enemy.name : spec.name;
         spec.level = Math.max(1, summoner.level);
         spec.tierLevel = Math.max(1, summoner.level);
-        spec.params = applyConvokerBonus(balanceParams(enemy.params, KINDS.familiar, { ref: ownParams, bias: 1 }));
+        if (record.characterName) {
+            spec.characterName = record.characterName;
+            spec.characterIndex = record.characterIndex || 0;
+        }
+        // Balanced on the summoner whatever it came from: a row with no
+        // numbers of its own is cut from the summoner's shape.
+        const base = enemy ? enemy.params : (spec.params || ownParams);
+        spec.params = applyConvokerBonus(balanceParams(base, KINDS.familiar, { ref: ownParams, bias: 1 }));
         return spec;
     }
 
@@ -1134,14 +1229,12 @@ window.Game_SummonFollower = Game_SummonFollower;
     function registerFamiliarPet(summoner, spec) {
         const pets = window.PetSystem;
         if (!pets || !pets.registerPet) return;
-        const store = familiarStore();
-        const key = String(summoner.actorId());
-        const record = store[key];
+        const record = familiarRecord(summoner);
         if (!record) return;
-        const existing = record.petId ? pets.getPet(record.petId) : null;
+        const existing = familiarPet(record);
         if (existing) {
             existing.level = spec.level;
-            linkMapSummonPet(existing.id);
+            spec.petId = existing.id;
             return;
         }
         const pet = pets.registerPet({
@@ -1157,12 +1250,22 @@ window.Game_SummonFollower = Game_SummonFollower;
             skillIds: spec.skillIds
         });
         if (!pet) return;
+        markFamiliarPet(pet, record);
         record.petId = pet.id;
-        linkMapSummonPet(pet.id);
+        spec.petId = pet.id;
         toast(T('Battle.summon.familiar.bound', {
             name: spec.name,
             summoner: summoner.name()
         }), 'info');
+    }
+
+    // A familiar's row is marked as one, so the Pets page and the leash know it
+    // is nobody's ordinary animal: it is never put on the leash, it cannot be
+    // abandoned, and it may be ridden only while it is convoked.
+    function markFamiliarPet(pet, record) {
+        pet.isFamiliar = true;
+        pet.familiarKey = record.key;
+        pet.rideEnabled = true;
     }
 
     // ==================================================================
@@ -1567,9 +1670,42 @@ window.Game_SummonFollower = Game_SummonFollower;
         return true;
     }
 
+    // WHAT THE THROW LETS THROUGH. The creature's own skills, weakest first
+    // (by what they cost to use), and as many of them as the throw earns: a
+    // natural 1 binds nothing but the attack, a natural 20 binds the whole kit,
+    // and anything between binds that share of it. The attack always comes.
+    const ATTACK_SKILL_ID = 1;
+
+    function skillWeight(id) {
+        const skill = $dataSkills[id];
+        return skill ? (skill.mpCost || 0) + (skill.tpCost || 0) : 0;
+    }
+
+    function skillsForRoll(skillIds, roll) {
+        const pool = [];
+        for (const id of (skillIds || [])) {
+            if (id !== ATTACK_SKILL_ID && $dataSkills[id] && !pool.includes(id)) pool.push(id);
+        }
+        if (!roll || roll.nat1) return [ATTACK_SKILL_ID];
+        pool.sort((a, b) => (skillWeight(a) - skillWeight(b)) || (a - b));
+        const share = roll.nat20 ? 1 : clamp(((Number(roll.total) || 1) - 1) / 19, 0, 1);
+        return [ATTACK_SKILL_ID].concat(pool.slice(0, Math.round(pool.length * share)));
+    }
+
+    // The line the party reads about what came through.
+    function announceSkills(name, bound, all) {
+        const max = all.filter(id => id !== ATTACK_SKILL_ID && $dataSkills[id]).length;
+        const got = bound.filter(id => id !== ATTACK_SKILL_ID).length;
+        toast(got
+            ? T('Battle.summon.skillsBound', { name, n: got, max })
+            : T('Battle.summon.attackOnly', { name }), got ? 'info' : 'warning');
+    }
+
     // The binding throw. One per rite: a fight only ever reads the result back.
-    async function rollRitual(spec, intMod) {
-        if (window.Dice3D) {
+    // `silent` binds without the dice table (a familiar handed over before the
+    // first map is even up has nobody watching the throw).
+    async function rollRitual(spec, intMod, silent) {
+        if (window.Dice3D && !silent) {
             return await window.Dice3D.rollD20({
                 actionName: `Summoning: ${spec.name || 'Creature'}`,
                 statName: 'INT',
@@ -1629,7 +1765,11 @@ window.Game_SummonFollower = Game_SummonFollower;
             initialHyper = Math.min(Math.round(hyperMax * 0.5), Math.round(hyperMax * intBonus));
         }
 
+        const allSkillIds = (spec.allSkillIds || spec.skillIds || []).slice();
         active = Object.assign({}, spec, {
+            allSkillIds,
+            skillIds: skillsForRoll(allSkillIds, rollRes),
+            ritual: rollRes,
             summonerId: summoner ? summoner.actorId() : 0,
             upkeep,
             turnsLeft: spec.mapBound ? 0 : ((spec.kind && spec.kind.turns) || 0),
@@ -1694,6 +1834,7 @@ window.Game_SummonFollower = Game_SummonFollower;
 
         toast(T('Battle.summon.summoned', { name: active.name }), 'info');
         if (!quiet) {
+            announceSkills(active.name, active.skillIds, allSkillIds);
             if (rollRes.nat20) {
                 toast(T('Battle.summon.perfectRitual', { name: active.name }), 'good');
             } else if (rollRes.success && intMod > 0) {
@@ -1753,6 +1894,8 @@ window.Game_SummonFollower = Game_SummonFollower;
         actor._creatureArchetypes = archetype ? [archetype] : null;
 
         actor.recoverAll();
+        // A familiar carries its wounds from one fight into the next.
+        if (Number.isFinite(spec.hpRate)) actor.setHp(Math.max(1, Math.round(actor.mhp * spec.hpRate)));
         actor.clearActions();
     }
 
@@ -1766,6 +1909,13 @@ window.Game_SummonFollower = Game_SummonFollower;
         // a blade, a broken binding, an order to go - is a real departure and
         // takes it off the map with it.
         const wasMapBound = !!active.mapBound;
+        // A FAMILIAR OUTLIVES THE FIGHT. Convoked in the middle of one and
+        // still standing at the end, it does not go anywhere: it walks off the
+        // field beside the party and stays, wounds and kit and all.
+        const proxyNow = actorProxy();
+        const hpRate = (proxyNow && proxyNow.mhp > 0) ? proxyNow.hp / proxyNow.mhp : 1;
+        const stays = !reasonKey && isBoundKind(active) && !!proxyNow && proxyNow.isAlive();
+        const carried = stays ? Object.assign({}, active) : null;
         active = null;              // unlocks removeActor and the param overrides
         pendingLeave = null;
         pendingUltimate = false;
@@ -1788,6 +1938,7 @@ window.Game_SummonFollower = Game_SummonFollower;
         }
 
         if (wasMapBound && reasonKey) dismissMapSummon(null);
+        if (carried) keepFamiliarOnMap(carried, hpRate, wasMapBound);
         refreshFollowers();
 
         rebuildBars();
@@ -1853,7 +2004,30 @@ window.Game_SummonFollower = Game_SummonFollower;
         return clamp(Math.round(riteCost * MAP_STEPS_PER_MP), MAP_STEPS_MIN, MAP_STEPS_MAX);
     }
 
-    async function beginMapSummon(spec) {
+    // The fight is over and the familiar is still standing: it is written down
+    // as walking with the party, keeping the throw and the kit it was bound
+    // with, so the next fight it walks into reads them back.
+    function keepFamiliarOnMap(carried, hpRate, wasMapBound) {
+        const record = mapSummon();
+        if (wasMapBound && record) {
+            record.spec.hpRate = hpRate;
+            return;
+        }
+        const stored = Object.assign({}, carried);
+        for (const k of ['kind', 'upkeep', 'turnsLeft', 'turnsServed', 'hyper', 'hyperMax', 'summonerId', 'mapBound']) {
+            delete stored[k];
+        }
+        stored.hpRate = hpRate;
+        $gameSystem._mapSummon = {
+            spec: stored,
+            bound: true,
+            petId: stored.petId || 0,
+            stepsLeft: 0,
+            stepsTotal: 0
+        };
+    }
+
+    async function beginMapSummon(spec, opts) {
         // Everything that answers a rite carries a walking sprite (archetypePool
         // only ever deals creatures that have one), but a hand-written event can
         // still name something that does not, and an empty slot would follow the
@@ -1876,21 +2050,26 @@ window.Game_SummonFollower = Game_SummonFollower;
         delete stored.kind;
         // The rite is thrown here, once, and written down with the record: every
         // battle the creature walks into reads this back instead of rolling.
-        const summoner = resolveSummoner();
+        const summoner = (spec.familiarOf && $gameActors) ? $gameActors.actor(spec.familiarOf) : resolveSummoner();
         const intMod = summoner ? (summoner.intMod ?? Math.floor(((summoner.mat || 10) - 10) / 2)) : 0;
-        stored.ritual = await rollRitual(spec, intMod);
+        const silent = !!(opts && opts.silent);
+        stored.ritual = await rollRitual(spec, intMod, silent);
+        stored.allSkillIds = (spec.allSkillIds || spec.skillIds || []).slice();
+        stored.skillIds = skillsForRoll(stored.allSkillIds, stored.ritual);
 
         $gameSystem._mapSummon = {
             spec: stored,
             bound,
-            petId: 0,
+            petId: spec.petId || 0,
             stepsLeft: steps,
             stepsTotal: steps
         };
         refreshFollowers();
+        if (silent) return true;
         toast(bound
             ? T('Battle.summon.mapBound', { name: spec.name })
             : T('Battle.summon.mapWalks', { name: spec.name, steps }), 'info');
+        announceSkills(spec.name, stored.skillIds, stored.allSkillIds);
         if (stored.ritual.nat20) {
             toast(T('Battle.summon.perfectRitual', { name: spec.name }), 'good');
         } else if (stored.ritual.success && intMod > 0) {
@@ -1906,24 +2085,30 @@ window.Game_SummonFollower = Game_SummonFollower;
         const record = mapSummon();
         if (!record) return false;
         const name = record.spec.name;
+        // Nobody stays sat on something that has just gone.
+        const vs = window.MergedVehicleSystem;
+        if (record.petId && vs && vs.isMounted && vs.isMounted(record.petId) && vs.dismount) vs.dismount();
         $gameSystem._mapSummon = null;
         refreshFollowers();
         if (reasonKey) toast(T('Battle.summon.' + reasonKey, { name }), 'warning');
         return true;
     }
 
-    // A familiar already has a record in the Followers page (it is an animal
-    // somebody owns, not a spell they cast), so the two are tied together: the
-    // Pets page puts the "send away" button on that row rather than listing the
-    // same creature twice.
-    function linkMapSummonPet(petId) {
-        const record = mapSummon();
-        if (record && petId) record.petId = petId;
-    }
-
     // One step walked. Nothing is counted while the summon is in a fight: there
     // it is held by the battle, not by the road.
+    // A familiar is held by its owner: with them out of the party it fades.
+    function checkFamiliarOwner() {
+        const record = mapSummon();
+        if (!record || active || !record.spec || !record.spec.familiarOf) return;
+        const owner = $gameActors ? $gameActors.actor(record.spec.familiarOf) : null;
+        if (inParty(owner) && familiarRecord(owner)) return;
+        const name = record.spec.name;
+        dismissMapSummon(null);
+        toast(T('Battle.summon.ownerLeft', { name, owner: owner ? owner.name() : '' }), 'warning');
+    }
+
     function walkMapSummon() {
+        checkFamiliarOwner();
         const record = mapSummon();
         if (!record || record.bound || active) return;
         record.stepsLeft = Math.max(0, (record.stepsLeft || 0) - 1);
@@ -1933,6 +2118,7 @@ window.Game_SummonFollower = Game_SummonFollower;
     // The fight opens and what the party has been walking with joins it, at the
     // stature it was called with and owing nothing further.
     async function joinBattleFromMap() {
+        checkFamiliarOwner();
         const record = mapSummon();
         if (!record || active) return;
         // A record written before the rite kept its own throw: it is bound now,
@@ -2373,6 +2559,15 @@ window.Game_SummonFollower = Game_SummonFollower;
     Game_Party.prototype.removeActor = function (actorId) {
         if (active && actorId === summonActorId) return;
         _Game_Party_removeActor.call(this, actorId);
+        if (actorId !== summonActorId) checkFamiliarOwner();
+    };
+
+    // A fresh occupant of an actor slot is a fresh person: the familiar of
+    // whoever held it before went with them, into their dossier.
+    const _Game_Actor_setup = Game_Actor.prototype.setup;
+    Game_Actor.prototype.setup = function (actorId) {
+        _Game_Actor_setup.call(this, actorId);
+        this._familiar = null;
     };
 
     // ==================================================================
@@ -2405,6 +2600,7 @@ window.Game_SummonFollower = Game_SummonFollower;
         if (item && DataManager.isSkill(item) && subject && subject.isActor && subject.isActor()) {
             riteCost = subject.skillMpCost ? subject.skillMpCost(item) : (item.mpCost || 0);
             riteActorId = subject.actorId();
+            riteSkillId = item.id;
             riteFrame = Graphics.frameCount;
         }
         _Game_Action_applyGlobal.call(this);
@@ -2495,7 +2691,9 @@ window.Game_SummonFollower = Game_SummonFollower;
     // rolls inside its own archetypes.
     function summonByKind(kindKey, enemyId) {
         const kind = KINDS[kindKey];
-        if (!kind) {
+        // The familiar has exactly two doors, the skill and the Pets page; no
+        // rite by name and no event reaches it.
+        if (!kind || kindKey === 'familiar') {                      // i18n-ignore: internal tag
             toast(T('Battle.summon.unknownKind'), 'warning');
             return;
         }
@@ -2516,68 +2714,240 @@ window.Game_SummonFollower = Game_SummonFollower;
     // reach them through a common event's script line (window.SummonSystem.*),
     // which is how a skill casts one without knowing a plugin command's name.
 
-    // The familiar Em was handed at the start of story mode, dressed as a
-    // familiar rather than as a pet: the beast the player picked, standing at
-    // her own level. Returns null for anyone else, on any other run, or when
-    // nothing was picked, and the ordinary class roll takes over.
-    function storyModeFamiliarFor(summoner) {
-        const CP = window.CharacterPresets;
-        if (!summoner || !CP || !CP.isEmPlaythrough || !CP.isEmPlaythrough()) return null;
-        if (summoner.name() !== 'Em') return null;                  // i18n-ignore: proper name
-        const pets = window.PetSystem;
-        const chosenId = $gameSystem && $gameSystem._partyPet ? $gameSystem._partyPet.id : null;
-        const pet = pets ? (pets.getPet(chosenId) || pets.getActivePet()) : null;
-        if (!pet) return null;
-        const spec = buildPetSpec(pet);
-        if (!spec) return null;
-        spec.kindKey = 'familiar';                                  // i18n-ignore: internal tag
-        spec.kind = KINDS.familiar;
-        spec.familiarOf = summoner.actorId();
-        spec.level = Math.max(1, summoner.level);
-        spec.tierLevel = Math.max(1, summoner.level);
-        if (spec.params) {
-            const ownParams = [];
-            for (let i = 0; i < 8; i++) ownParams.push(summoner.param(i));
-            spec.params = applyConvokerBonus(balanceParams(spec.params, KINDS.familiar, { ref: ownParams, bias: 1 }));
-        }
-        linkMapSummonPet(pet.id);
-        return spec;
+    // ------------------------------------------------------------------
+    // THE FAMILIAR'S TWO DOORS
+    //
+    // Convoke Familiar (the skill, through its common event) and the Convoke
+    // button on the familiar's row of the Pets page. Nothing else convokes one:
+    // the skill's door checks that the rite now casting really is that skill.
+    // ------------------------------------------------------------------
+
+    let convokeSkillCache = null;
+    function convokeSkill() {
+        if (convokeSkillCache && $dataSkills[convokeSkillCache.id] === convokeSkillCache) return convokeSkillCache;
+        convokeSkillCache = ($dataSkills || []).find(sk => sk && sk.name === 'ConvokeFamiliar') || null;   // i18n-ignore: database name
+        return convokeSkillCache;
     }
 
-    // The familiar answers whoever is taking this turn, and nobody else: which
-    // creature it is comes off their class, what it is called comes off their
-    // name, and how strong it is comes off their level. The first call writes
-    // it into the Followers page for good.
-    function summonFamiliar() {
-        if (!canSummonNow()) return;
-        const summoner = resolveSummoner();
+    function castByConvoke() {
+        const skill = convokeSkill();
+        return !!skill && riteSkillId === skill.id && (Graphics.frameCount - riteFrame) <= RITE_WINDOW;
+    }
+
+    // What convoking costs from the Pets page: exactly what the skill costs
+    // the same person, discounts and all.
+    function convokeCost(actor) {
+        const skill = convokeSkill();
+        if (!skill || !actor) return 0;
+        return actor.skillMpCost ? actor.skillMpCost(skill) : (skill.mpCost || 0);
+    }
+
+    // Whether somebody's familiar is out right now, on the road or in the line.
+    function familiarPresent(actor) {
+        if (!actor) return false;
+        const id = actor.actorId();
+        if (active && active.familiarOf === id) return true;
+        const record = mapSummon();
+        return !!(record && record.spec && record.spec.familiarOf === id);
+    }
+
+    // The convoking itself, whichever door it came through. `refund` is what
+    // was paid for it, handed back when nothing answers.
+    async function convoke(summoner, refund) {
+        const giveBack = () => { if (refund > 0 && summoner && summoner.gainMp) summoner.gainMp(refund); };
         if (!summoner) {
             toast(T('Battle.summon.noSummoner'), 'warning');
-            return;
+            giveBack();
+            return false;
         }
-        // Story mode is played as Em, and story mode asks her which creature
-        // answers to her before the game starts (the Familiar tab of character
-        // creation). When she is the one casting, that is the creature that
-        // comes: the class roll below is for everybody else.
-        const chosen = storyModeFamiliarFor(summoner);
-        if (chosen) {
-            beginSummon(chosen);
-            return;
+        if (!inParty(summoner)) {
+            const record = familiarRecord(summoner);
+            toast(T('Battle.summon.ownerAway', { owner: summoner.name(), name: record ? record.name : '' }), 'warning');
+            giveBack();
+            return false;
         }
         const spec = buildFamiliarSpec(summoner);
         if (!spec) {
-            // No creature in their class's list has a body to stand in the line.
-            summonByKind('familiar', 0);
-            return;
+            toast(T('Battle.summon.nothingAnswers'), 'warning');
+            giveBack();
+            return false;
         }
-        if (beginSummon(spec)) registerFamiliarPet(summoner, spec);
+        if (familiarPresent(summoner)) {
+            toast(T('Battle.summon.familiarHere', { name: spec.name }), 'warning');
+            giveBack();
+            return false;
+        }
+        if ($gameParty.inBattle() && (active || $gameParty._actors.includes(summonActorId))) {
+            toast(T('Battle.summon.alreadyActive'), 'warning');
+            giveBack();
+            return false;
+        }
+        // The bond is written before it answers, so the row it walks out of
+        // on the Pets page is the one it is linked to from the first step.
+        registerFamiliarPet(summoner, spec);
+        const ok = await beginSummon(spec);
+        if (!ok) giveBack();
+        return ok;
     }
+
+    // Door one: the Convoke Familiar skill. The caster is whoever paid for it.
+    function summonFamiliar() {
+        if (!castByConvoke()) return Promise.resolve(false);
+        const summoner = riteCaster() ||
+            (($gameParty && $gameParty.inBattle()) ? resolveSummoner() : null);
+        // Read once: a second call off the same cast is not a second rite.
+        const paid = riteCost;
+        riteSkillId = 0;
+        return convoke(summoner, paid);
+    }
+
+    // Door two: the Convoke button on the Pets page. It answers why it cannot
+    // be pressed, so the row can say so before anybody presses it.
+    function menuConvokeState(petId) {
+        const owner = familiarOwner(petId);
+        const pet = window.PetSystem && window.PetSystem.getPet ? window.PetSystem.getPet(Number(petId)) : null;
+        const name = pet ? pet.name : '';
+        if (!owner) return { ok: false, reason: 'noOwner', name, cost: 0, owner: null };   // i18n-ignore: reason id
+        const cost = convokeCost(owner);
+        const base = { name, cost, owner };
+        if (!inParty(owner)) return Object.assign(base, { ok: false, reason: 'ownerAway' });   // i18n-ignore: reason id
+        if (familiarPresent(owner)) return Object.assign(base, { ok: false, reason: 'present' });   // i18n-ignore: reason id
+        if ($gameParty && $gameParty.inBattle()) return Object.assign(base, { ok: false, reason: 'inBattle' });   // i18n-ignore: reason id
+        if (owner.mp < cost) return Object.assign(base, { ok: false, reason: 'noMp' });   // i18n-ignore: reason id
+        return Object.assign(base, { ok: true, reason: '' });
+    }
+
+    function convokeFromMenu(petId) {
+        const state = menuConvokeState(petId);
+        if (!state.ok) {
+            const key = {
+                noOwner: 'ownerAway', ownerAway: 'ownerAway', present: 'familiarHere',   // i18n-ignore: key fragments
+                inBattle: 'alreadyActive', noMp: 'convokeNoMp'                          // i18n-ignore: key fragments
+            }[state.reason] || 'nothingAnswers';                                         // i18n-ignore: key fragment
+            toast(T('Battle.summon.' + key, {
+                name: state.name, owner: state.owner ? state.owner.name() : '', cost: state.cost
+            }), 'warning');
+            return Promise.resolve(false);
+        }
+        state.owner.gainMp(-state.cost);
+        return convoke(state.owner, state.cost);
+    }
+
+    // Sending a familiar back where it came from: off the road, or out of the
+    // line in the middle of a fight. It can be convoked again afterwards, and
+    // the throw that convokes it decides its kit afresh.
+    function dematerialize() {
+        if (active && isBoundKind(active)) {
+            dismissSummon('dematerialized');                        // i18n-ignore: key fragment
+            dismissMapSummon(null);
+            return true;
+        }
+        const record = mapSummon();
+        if (!record || !isBoundKind(record.spec)) return false;
+        return dismissMapSummon('dematerialized');                  // i18n-ignore: key fragment
+    }
+
+    // EM'S FAMILIAR is the creature picked for her in character creation, and
+    // the story opens with it already bound to her and walking at her side:
+    // no die is thrown at the table, it simply answers.
+    function bindStarterFamiliar(actor, pet) {
+        if (!actor || !pet) return false;
+        const record = {
+            key: newFamiliarKey(actor),
+            enemyId: pet.enemyId || 0,
+            name: pet.name,
+            characterName: pet.characterName || '',
+            characterIndex: pet.characterIndex || 0,
+            petId: pet.id
+        };
+        actor._familiar = record;
+        markFamiliarPet(pet, record);
+        const pets = window.PetSystem;
+        if (pets && pets.getActivePet && pets.getActivePet() === pet) pets.setActivePet(null);
+        const spec = buildFamiliarSpec(actor);
+        if (!spec) return false;
+        spec.petId = pet.id;
+        beginMapSummon(spec, { silent: true });
+        return true;
+    }
+
+    // Talking to the familiar walking with the party: climb on, when it can
+    // be ridden, or send it back where it came from.
+    function familiarSlot() {
+        if (!$gamePlayer || !$gamePlayer.followers) return null;
+        const followers = $gamePlayer.followers();
+        const data = followers && followers.data ? followers.data() : [];
+        const slot = data.find(f => f instanceof Game_SummonFollower);
+        const record = mapSummon();
+        if (!slot || !record || !isBoundKind(record.spec) || !slot.isVisible()) return null;
+        return slot;
+    }
+
+    function offerFamiliarMenu() {
+        const record = mapSummon();
+        const name = record.spec.name;
+        const pets = window.PetSystem;
+        const canRide = !!(record.petId && pets && pets.isRidable && pets.isRidable(record.petId) &&
+            window.MergedVehicleSystem && window.MergedVehicleSystem.mountPet);
+        const choices = [];
+        const acts = [];
+        if (canRide) {
+            choices.push(T('PetFollower.ride.ride', { name }));
+            acts.push(() => window.MergedVehicleSystem.mountPet(record.petId));
+        }
+        choices.push(T('Battle.summon.talkDematerialize', { name }));
+        acts.push(() => dematerialize());
+        choices.push(T('PetFollower.ride.cancel'));
+        acts.push(() => {});
+        $gameMessage.setChoices(choices, 0, choices.length - 1);
+        $gameMessage.setChoiceCallback(i => { if (acts[i]) acts[i](); });
+    }
+
+    function offerFamiliarAt(x, y) {
+        if (!$gameMessage || $gameMessage.isBusy()) return false;
+        if ($gamePlayer.isInVehicle && $gamePlayer.isInVehicle()) return false;
+        const slot = familiarSlot();
+        if (!slot || !slot.pos(x, y)) return false;
+        if ($gameMap.eventsXy(x, y).some(e => e && e.isTriggerIn([0, 1, 2]) && e.isNormalPriority())) return false;
+        offerFamiliarMenu();
+        return true;
+    }
+
+    // Followers are walked through, so turning to face the familiar right
+    // behind the leader lands on its tile: beside the leader counts too, once
+    // the press has found nothing else to do.
+    function offerFamiliarBeside() {
+        if (!$gameMessage || $gameMessage.isBusy()) return false;
+        if ($gameMap.isEventRunning() || $gameTemp.isCommonEventReserved()) return false;
+        if ($gamePlayer.isInVehicle && $gamePlayer.isInVehicle()) return false;
+        const slot = familiarSlot();
+        if (!slot) return false;
+        const near = Math.abs($gameMap.deltaX(slot.x, $gamePlayer.x)) <= 1 &&
+            Math.abs($gameMap.deltaY(slot.y, $gamePlayer.y)) <= 1;
+        if (!near) return false;
+        offerFamiliarMenu();
+        return true;
+    }
+
+    const _Game_Player_triggerButtonAction = Game_Player.prototype.triggerButtonAction;
+    Game_Player.prototype.triggerButtonAction = function () {
+        const ok = Input.isTriggered('ok') && this.canMove();         // i18n-ignore: input name
+        if (ok) {
+            const d = this.direction();
+            const x2 = $gameMap.roundXWithDirection(this.x, d);
+            const y2 = $gameMap.roundYWithDirection(this.y, d);
+            if (offerFamiliarAt(x2, y2)) return true;
+        }
+        if (_Game_Player_triggerButtonAction.call(this)) return true;
+        return ok ? offerFamiliarBeside() : false;
+    };
 
     // Whatever answers, answers. The rites that are not balanced against
     // anything are kept out of the roll: they are asked for on purpose or not
     // at all.
     function summonRandomKind() {
-        const keys = Object.keys(KINDS).filter(k => KINDS[k].archetypes && KINDS[k].balance !== false);
+        const keys = Object.keys(KINDS).filter(k => KINDS[k].archetypes && KINDS[k].balance !== false &&
+            k !== 'familiar');                                        // i18n-ignore: internal tag
         summonByKind(keys[Math.floor(Math.random() * keys.length)], 0);
     }
 
@@ -2727,7 +3097,6 @@ window.Game_SummonFollower = Game_SummonFollower;
     }
 
     register('summonPetrodemon', () => summonByKind('petro', 0));
-    register('addSoftSummon', () => summonFamiliar());
     register('summonRandom', () => summonRandomKind());
     register('summonEnemy', args => summonMarkedEnemy(args && args.enemyId));
     register('summonLastSlain', () => summonLastSlain());
@@ -2767,7 +3136,32 @@ window.Game_SummonFollower = Game_SummonFollower;
         // The rites that are not a straight roll inside an archetype list. The
         // Convokation skills reach these through their common event's script
         // line, so a skill can cast one without naming a plugin command.
-        familiar() { summonFamiliar(); },
+        // The Convoke Familiar skill's door: does nothing unless that skill is
+        // the rite now being cast.
+        familiar() { return summonFamiliar(); },
+        // The Pets page's door, and what the row needs to draw it.
+        convokeFamiliar(petId) { return convokeFromMenu(petId); },
+        convokeState(petId) {
+            const st = menuConvokeState(petId);
+            return { ok: st.ok, reason: st.reason, cost: st.cost, owner: st.owner ? st.owner.name() : '' };
+        },
+        isFamiliarPet(petId) {
+            const pets = window.PetSystem;
+            const pet = pets && pets.getPet ? pets.getPet(Number(petId)) : null;
+            return !!(pet && pet.isFamiliar);
+        },
+        isFamiliarConvoked(petId) {
+            const record = mapSummon();
+            return !!(record && isBoundKind(record.spec) && record.petId && record.petId === Number(petId));
+        },
+        familiarOwnerName(petId) {
+            const owner = familiarOwner(petId);
+            return owner ? owner.name() : '';
+        },
+        dematerialize() { return dematerialize(); },
+        bindStarterFamiliar(actor, pet) { return bindStarterFamiliar(actor, pet); },
+        offerFamiliarAt(x, y) { return offerFamiliarAt(x, y); },
+        skillsForRoll,
         random() { summonRandomKind(); },
         wildShot() { summonWildShot(); },
         beast(petId) { summonPetOrBeast(petId); },
@@ -2821,7 +3215,7 @@ window.Game_SummonFollower = Game_SummonFollower;
         referenceParams,
         // Whose familiar is what, for the Followers page and anything else that
         // wants to name a traveller's animal outside a fight.
-        familiarFor(actor) { return familiarFor(actor || ($gameParty && $gameParty.leader())); }
+        familiarFor(actor) { return familiarRecord(actor || ($gameParty && $gameParty.leader())); }
     };
 
     // Kept for events and plugins written against v2.

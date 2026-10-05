@@ -580,6 +580,10 @@
                     ` background-position:-${(S * col).toFixed(2)}em -${(S * row).toFixed(2)}em; image-rendering:pixelated; margin-right:5px; margin-left:2px; flex-shrink:0;"></span>`;
             });
 
+            // A roll: \DIE[14] is drawn as a d20 with the face inside it.
+            seg = seg.replace(/\\DIE\[(\d+)\]/g, (match, n) =>
+                window.D20Badge ? window.D20Badge.html(n) : n);
+
             seg = seg
                 .replace(/\\v\[\d+\]/gi, '')
                 .replace(/\\n\[\d+\]/gi, '')

@@ -1212,6 +1212,7 @@
                 percent: Math.round((def.threshold || 0) * 100),
                 leech: Math.round((def.leech || 0) * 100),
                 heal: Math.round((def.healRatio || 0) * 100),
+                cost: Math.round(GRIMOIRE_REROLL_HP * 100),
             };
             // A barrage sweeps the whole enemy line; only some of them sweep it
             // more than once, and "1 times over" is not a sentence.

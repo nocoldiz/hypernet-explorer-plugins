@@ -2224,6 +2224,9 @@
   };
 
   Scene_ProstheticShop.prototype.pageCommand = function () {
+    const Lab = window.BiologicLab;
+    const heirRefusal = Lab ? Lab.carrierRefusal(this._selectedActor) : '';
+    const labCost = (kind) => formatPriceInEuros(Lab.clinicCost(kind));
     // In the field only what is already in the pack can be fitted, an augment
     // may be taken out but never seated, and nothing is for sale.
     const commands = this._fieldMode
@@ -2242,7 +2245,14 @@
           { cmd: 'plastic_surgery', icon: 84, label: T('Prosthetics.plasticSurgery'), meta: T('Prosthetics.plasticSurgeryMeta'), value: formatPriceInEuros(PLASTIC_SURGERY_COST) },
           { cmd: 'face_surgery', icon: 188, label: T('Prosthetics.faceSurgery'), meta: T('Prosthetics.faceSurgeryMeta'), value: formatPriceInEuros(FACE_SURGERY_COST) },
           { cmd: 'gene_splicing', icon: 197, label: T('Prosthetics.geneSplicing'), meta: T('Prosthetics.geneSplicingMeta'), value: T('Prosthetics.geneSplicingPrice') }
-        ];
+        ].concat(!Lab ? [] : [
+          { cmd: 'growth_tube', icon: 176, label: T('Prosthetics.growthTube'), meta: T('Prosthetics.growthTubeMeta'), value: labCost('vat') },
+          // Only a body that can carry is offered the heir: testicles, a
+          // mitotic gland and no organs are refused (BiologicLab.carrierRefusal).
+          { cmd: 'design_heir', icon: 268, label: T('Prosthetics.designHeir'), value: labCost('splice'),
+            meta: heirRefusal ? T(heirRefusal, { actor: this._selectedActor ? this._selectedActor.name() : "" }) : T('Prosthetics.designHeirMeta'),
+            blocked: !!heirRefusal }
+        ]);
     return {
       title: this._fieldMode ? T('Prosthetics.fieldTheatre') : T('Prosthetics.biologicLaboratory'),
       brief: this._fieldMode
@@ -2847,6 +2857,10 @@
       this.openFaceSurgery();
     } else if (cmd === 'gene_splicing') {
       this.openGeneSplicing();
+    } else if (cmd === 'growth_tube') {
+      this.openDesignedOffspring('vat');
+    } else if (cmd === 'design_heir') {
+      this.openDesignedOffspring('splice');
     } else if (cmd === 'cancel') {
       this._viewState = 'party';
       this.refreshUIShopDOM();
@@ -2904,6 +2918,28 @@
     Scene_ProstheticShop._returnActorId = actorId;
     Board.prepare(false, actorId, true);
     SceneManager.push(Board);
+  };
+
+  // Growth tube and Design a heir: the character creation wizard opened on a
+  // seat of its own (window.BiologicLab.openAtClinic), building a creature for
+  // the tube or a humanoid the patient carries. The fee is the device's price
+  // and is taken only once the embryo is growing, so walking out costs nothing.
+  Scene_ProstheticShop.prototype.openDesignedOffspring = function (kind) {
+    const Lab = window.BiologicLab;
+    if (!this._selectedActor || !Lab || !Lab.openAtClinic) return;
+    if ($gameParty.gold() < Lab.clinicCost(kind)) {
+      if (window.SoundManager) SoundManager.playBuzzer();
+      this.showClinicNotification(T('Prosthetics.tooExpensive'));
+      return;
+    }
+    const actorId = this._selectedActor.actorId ? this._selectedActor.actorId() : this._selectedActor._actorId;
+    Scene_ProstheticShop._returnActorId = actorId;
+    const refusal = Lab.openAtClinic(kind, this._selectedActor);
+    if (refusal) {
+      Scene_ProstheticShop._returnActorId = null;
+      if (window.SoundManager) SoundManager.playBuzzer();
+      this.showClinicNotification(T(refusal, { actor: this._selectedActor.name() }));
+    }
   };
 
   Scene_ProstheticShop.prototype.chooseArchetype = function (key) {

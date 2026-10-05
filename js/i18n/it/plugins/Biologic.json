@@ -1,6 +1,7 @@
 {
   "lab": {
     "noRoom": "Non c'è posto libero nel gruppo per far crescere una nuova vita. Fai spazio prima.",
+    "cannotPay": "Non è più possibile pagare la tariffa.",
     "noCarrier": "Nessuno nel gruppo può portare un embrione modificato.",
     "cannotCarry": "{actor} non ha un organo in grado di portare un embrione.",
     "alreadyCarrying": "{actor} sta già portando una gravidanza.",

@@ -1045,6 +1045,109 @@
     window.Dice3D = new Dice3DManager();
 
     // ==================================================================
+    // THE D20 BADGE
+    //
+    //   A roll written into a line of text (the battle log, a toast) reads
+    //   as a small flat d20 with the face it landed on inside, not as the
+    //   word "d20" and a number. A line carries it as the escape \DIE[n];
+    //   whoever paints the line asks D20Badge for the markup. A natural 20
+    //   is gilded and a natural 1 is red.
+    // ==================================================================
+    const D20_FACE = {  // i18n-ignore  colours
+        plain: { fill: '#2b1d12', edge: '#d8b45a', ink: '#f6e7c1' },
+        nat20: { fill: '#5a3d08', edge: '#ffd75e', ink: '#fff3c4' },
+        nat1:  { fill: '#4a0e0e', edge: '#ff6a5a', ink: '#ffd9d3' }
+    };
+
+    function d20Svg(face) {
+        // A d20 seen face-on: the hexagon outline, the triangle facing the
+        // viewer and the edges running from its corners to the rim.
+        const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 26">' +  // i18n-ignore  svg
+            `<polygon points="12,1 22.5,7 22.5,19 12,25 1.5,19 1.5,7" fill="${face.fill}" stroke="${face.edge}" stroke-width="1.6" stroke-linejoin="round"/>` +  // i18n-ignore  svg
+            `<polygon points="12,5.5 20,18.5 4,18.5" fill="none" stroke="${face.edge}" stroke-width="0.9" stroke-opacity="0.55" stroke-linejoin="round"/>` +  // i18n-ignore  svg
+            `<path d="M12,1V5.5M22.5,7L20,18.5M1.5,7L4,18.5M22.5,19L20,18.5M1.5,19L4,18.5M12,25L4,18.5M12,25L20,18.5" stroke="${face.edge}" stroke-width="0.7" stroke-opacity="0.4" fill="none"/>` +  // i18n-ignore  svg
+            '</svg>';
+        return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);  // i18n-ignore  data uri
+    }
+
+    window.D20Badge = {
+        // Matches \DIE[n] as a line holds it.
+        PATTERN: /\\DIE\[(\d+)\]/g,
+
+        faceOf(value) {
+            const n = Number(value) || 0;
+            return n === 20 ? D20_FACE.nat20 : n === 1 ? D20_FACE.nat1 : D20_FACE.plain;
+        },
+
+        // Inline markup for one die, sized off the text it sits in.
+        html(value) {
+            const n = Math.max(0, Math.floor(Number(value) || 0));
+            const face = this.faceOf(n);
+            return '<span class="d20-badge" style="display:inline-flex;align-items:center;justify-content:center;' +  // i18n-ignore  css
+                'width:1.75em;height:1.9em;vertical-align:middle;margin:0 0.15em;' +  // i18n-ignore  css
+                `background:url('${d20Svg(face)}') center/contain no-repeat;` +  // i18n-ignore  css
+                `color:${face.ink};font-size:0.95em;font-weight:bold;line-height:1;` +  // i18n-ignore  css
+                'padding-top:0.28em;box-sizing:border-box;text-shadow:0 1px 1px rgba(0,0,0,0.8);' +  // i18n-ignore  css
+                `font-variant-numeric:tabular-nums;">${n}</span>`;  // i18n-ignore  css
+        },
+
+        // Every \DIE[n] in a line already made HTML-safe, turned into a die.
+        render(text) {
+            return String(text).replace(this.PATTERN, (_m, n) => this.html(n));
+        },
+
+        // The bare number, for a surface that cannot draw the die.
+        plain(text) {
+            return String(text).replace(this.PATTERN, (_m, n) => n);
+        }
+    };
+
+    // A message box or any other window drawing the same line gets the die
+    // painted onto its bitmap rather than the escape printed literally.
+    if (typeof Window_Base !== 'undefined') {
+    const _Window_Base_processEscapeCharacter_D20 = Window_Base.prototype.processEscapeCharacter;
+    Window_Base.prototype.processEscapeCharacter = function(code, textState) {
+        if (code !== 'DIE') {
+            _Window_Base_processEscapeCharacter_D20.call(this, code, textState);
+            return;
+        }
+        const n = this.obtainEscapeParam(textState);
+        const value = n === '' ? 0 : Number(n) || 0;
+        const face = window.D20Badge.faceOf(value);
+        const h = this.lineHeight ? Math.round(this.lineHeight() * 0.9) : 32;
+        const w = Math.round(h * 24 / 26);
+        if (textState.drawing && this.contents) {
+            const ctx = this.contents.context;
+            const x = textState.x;
+            const y = textState.y + Math.round((this.lineHeight() - h) / 2);
+            const px = (u) => x + u * w / 24;
+            const py = (v) => y + v * h / 26;
+            ctx.save();
+            ctx.beginPath();
+            [[12, 1], [22.5, 7], [22.5, 19], [12, 25], [1.5, 19], [1.5, 7]].forEach(([u, v], i) => {
+                if (i === 0) ctx.moveTo(px(u), py(v)); else ctx.lineTo(px(u), py(v));
+            });
+            ctx.closePath();
+            ctx.fillStyle = face.fill;
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = face.edge;
+            ctx.stroke();
+            ctx.restore();
+            const fontSize = this.contents.fontSize;
+            const color = this.contents.textColor;
+            this.contents.fontSize = Math.max(10, Math.round(h * 0.42));
+            this.contents.textColor = face.ink;
+            this.contents.drawText(String(value), x, y + Math.round(h * 0.08), w, h, 'center');  // i18n-ignore  align
+            this.contents.fontSize = fontSize;
+            this.contents.textColor = color;
+            this.contents._baseTexture && this.contents._baseTexture.update();
+        }
+        textState.x += w + 4;
+    };
+    }
+
+    // ==================================================================
     // THE EVENT-DRIVEN CHECK
     //
     //   An event asks for a check, the player takes it on or walks away, and

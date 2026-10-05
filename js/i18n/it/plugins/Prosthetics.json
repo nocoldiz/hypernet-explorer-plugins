@@ -193,6 +193,10 @@
   "geneSplicing": "Ingegneria genetica",
   "geneSplicingMeta": "Aggiungi o rimuovi tratti genetici compatibili con questo corpo",
   "geneSplicingPrice": "100 € per punto tratto",
+  "growthTube": "Tubo di crescita",
+  "growthTubeMeta": "Progetta una creatura e falla crescere in un tubo",
+  "designHeir": "Progetta un erede",
+  "designHeirMeta": "Progetta un figlio umanoide che questo paziente porterà in grembo",
   "tooExpensive": "Non hai abbastanza denaro per questo intervento.",
  "remote": {
   "title": "Remote Bistury",

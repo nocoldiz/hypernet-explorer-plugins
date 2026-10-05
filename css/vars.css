@@ -1,4 +1,10 @@
 /* ==========================================================================
+   Omega Tower, CSS Variable Override Theme
+   Derived from vars.css with ASCII mode colors applied as defaults.
+   Import this instead of vars.css to activate the terminal aesthetic globally
+   without needing body.ascii-ui-active.
+   ========================================================================== */
+/* ==========================================================================
    Archive Foundation - CSS Variables Theme Configuration (Merged & Unified)
    ========================================================================== */
 
@@ -27,7 +33,7 @@
     /* The muted half of a label/value pair in a right column. The page
        ink (#b0a080 / #6b5242) reads as a smudge at this size, and a
        right column never carries it. */
-    --text-detail-label: #3d3227;
+    --text-detail-label: #ded3b4;
 
     /* Right-column section headings are gold, never the pale cream body ink. */
     --text-detail-heading: var(--text-primary-hover);
@@ -62,10 +68,10 @@
        may reach for a literal: ship = the vessel and its course, bio = life
        found, bridge = the SB-Bridge and its charge, warn = anything the player
        is losing. */
-    --gx-hull: rgba(28, 22, 14, 0.92);
-    --gx-hull-deep: rgba(18, 14, 9, 0.96);
+    --gx-hull: rgba(12, 10, 8, 0.92);
+    --gx-hull-deep: rgba(7, 6, 4, 0.96);
     /* The dark the catalog modal lays over the sky behind it. */
-    --gx-scrim: rgba(12, 9, 6, 0.62);
+    --gx-scrim: rgba(4, 3, 2, 0.62);
     --gx-line: var(--border-gold-amber-30);
     --gx-ink: var(--text-success-active);
     --gx-ink-dim: var(--accent-cream-warm);
@@ -102,54 +108,102 @@
     --modal-gap: 12px;
     --modal-fg: var(--text-success-active);
     /* The modal press: the frame and ink every popup button wears. */
-    --modal-btn-bg: var(--bg-secondary-hover);
+    --modal-btn-bg: transparent;
     --modal-btn-border: 2px solid var(--text-primary-hover);
     --modal-btn-fg: var(--text-primary-hover);
-    --modal-btn-hover-bg: var(--chip-active-bg);
-    --modal-btn-hover-fg: var(--chip-active-fg);
-    --modal-btn-hover-border: var(--text-primary-hover);
-    --modal-btn-hover-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
+    --modal-btn-hover-bg: transparent;
+    --modal-btn-hover-fg: var(--text-primary-hover);
+    --modal-btn-hover-border: var(--accent-gold-pure);
+    --modal-btn-hover-shadow: none;
 }
 
 :root {
     /* === Background Colors === */
-    --bg-backdrop: #dfd2b5;
-    --bg-base: #e74c3c;
-    --bg-bg-alt-1-translucent-70: rgba(20, 15, 12, 0.7);
-    --bg-bg-alt-10-hover: #a0a0a0;
-    --bg-bg-alt-11: #ffa000;
-    --bg-bg-alt-12-hover-translucent-65: rgba(255, 255, 255, 0.65);
-    --bg-bg-alt-13: #3d5e4b;
-    --bg-bg-alt-14: #5a3d75;
-    --bg-bg-alt-15-hover: #71170b;
+    --bg-backdrop: #000000;
+    --bg-base: #000000;
+    --bg-bg-alt-1-translucent-70: rgba(0, 0, 0, 0.7);
+    --bg-bg-alt-10-hover: #222222;
+    --bg-bg-alt-11: #332200;
+    --bg-bg-alt-12-hover-translucent-65: rgba(0, 0, 0, 0.65);
+    --bg-bg-alt-13: #001a0d;
+    --bg-bg-alt-14: #1a0d22;
+    --bg-bg-alt-15-hover: #3d2800;
     --bg-bg-alt-16-hover: #735a50;
-    --bg-bg-alt-17-hover: #7a2618;
-    --bg-bg-alt-18: #96671e;
-    --bg-bg-alt-19: #b05c3c;
+    --bg-bg-alt-17-hover: #3d2800;
+    --bg-bg-alt-18: #332200;
+    --bg-bg-alt-19: #1a0d00;
     --bg-bg-alt-2: #2ecc71;
-    --bg-bg-alt-20: #b8af9c;
-    --bg-bg-alt-21-hover: #d3c4a3;
+    --bg-bg-alt-20: #0a0a0a;
+    --bg-bg-alt-21-hover: #111111;
     --bg-bg-alt-22-translucent-12: rgba(127, 140, 141, 0.12);
-    --bg-bg-alt-23-translucent-50: rgba(250, 244, 230, 0.5);
-    --bg-bg-alt-24-active-translucent-65: rgba(252, 244, 224, 0.65);
+    --bg-bg-alt-23-translucent-50: rgba(0, 0, 0, 0.6);
+    --bg-bg-alt-24-active-translucent-65: rgba(255, 204, 102, 0.15);
     --bg-bg-alt-25-translucent-8: rgba(43, 28, 17, 0.08);
-    --bg-bg-alt-3: #a69e8b;
+    --bg-bg-alt-3: #0a0a0a;
     --bg-bg-alt-4-translucent-10: rgba(142, 68, 173, 0.1);
     --bg-bg-alt-5-translucent-15: rgba(196, 138, 16, 0.15);
     --bg-bg-alt-6-translucent-12: rgba(22, 72, 126, 0.12);
     --bg-bg-alt-7-translucent-12: rgba(39, 174, 96, 0.12);
     --bg-bg-alt-8-translucent-15: rgba(46, 125, 50, 0.15);
     --bg-bg-alt-9-translucent-15: rgba(61, 94, 56, 0.15);
-    --bg-card-translucent-5: rgba(184, 157, 124, 0.05);
-    --bg-input-hover: #993737;
-    --bg-overlay-hover: #b02313;
-    --bg-panel: #e2dac6;
-    --bg-pockets-clock: var(--text-highlight-active);
-    --bg-primary-hover-translucent-35: rgba(255, 255, 255, 0.35);
-    --bg-secondary-hover: #faf4e6;
-    --bg-surface: #111;
-    --bg-tertiary-focus-translucent-45: rgba(255, 235, 156, 0.45);
-    --bg-well: #d5dbdb;
+    --bg-card-translucent-5: rgba(255, 204, 102, 0.04);
+    --bg-input-hover: #111111;
+    --bg-overlay-hover: #000000;
+    --bg-panel: #0a0a0a;
+    --bg-pockets-clock: #0a0a0a;
+    --bg-primary-hover-translucent-35: rgba(255, 255, 255, 0.08);
+    --bg-secondary-hover: #000000;
+    --bg-surface: #000000;
+    --bg-tertiary-focus-translucent-45: rgba(255, 204, 102, 0.18);
+    --bg-well: #0a0a0a;
+    --bg-danger-dark: #8b1a1a;
+    --bg-danger-plate: #7a2430;
+    --bg-dark-night: #120804;
+    --bg-deep-night: #1a0904;
+    --bg-hp-bar: #8bc34a;
+    --bg-mp-bar: #5b9bd5;
+    --bg-mp-bar-alt: #4070d0;
+    --bg-npc-bark: #8c6d58;
+    --bg-npc-forest: #2a6e4a;
+    /* The deepest rust the parchment menus stamp a primary button in, and the
+       rule that outlines it. Added when the work board, the bank and the
+       prosthetics shop stopped painting them inline. */
+    --bg-accent-deep: #1a0d00;
+    --bg-primary-hover-translucent-10: rgba(88, 24, 13, 0.10);
+    --bg-focus-hover-translucent-10: rgba(139, 90, 43, 0.10);
+    --bg-focus-hover-translucent-15: rgba(139, 90, 43, 0.15);
+    --bg-focus-hover-translucent-18: rgba(139, 90, 43, 0.18);
+    --bg-subtle-translucent-5: rgba(74, 39, 17, 0.05);
+    --bg-subtle-translucent-10: rgba(74, 39, 17, 0.10);
+    --bg-subtle-translucent-15: rgba(74, 39, 17, 0.15);
+    --bg-white-translucent-25: rgba(255, 255, 255, 0.25);
+    --bg-white-translucent-30: rgba(255, 255, 255, 0.30);
+    --bg-white-translucent-40: rgba(255, 255, 255, 0.40);
+    --bg-white-translucent-45: rgba(255, 255, 255, 0.45);
+    --bg-white-translucent-72: rgba(255, 255, 255, 0.72);
+    --bg-parchment-warm-60: rgba(255, 248, 230, 0.60);
+    --bg-parchment-medium-50: rgba(230, 200, 160, 0.50);
+    --bg-parchment-dark-40: rgba(230, 180, 130, 0.40);
+    --bg-warm-cream-25: rgba(255, 240, 200, 0.25);
+    --bg-danger-translucent-5: rgba(192, 57, 43, 0.05);
+    --bg-success-medium-5: rgba(39, 174, 96, 0.05);
+    --bg-info-blue-5: rgba(41, 128, 185, 0.05);
+    --bg-success-medium-8: rgba(46, 125, 50, 0.08);
+    --bg-danger-medium-10: rgba(192, 32, 32, 0.10);
+    --bg-danger-medium-7: rgba(198, 40, 40, 0.07);
+    --bg-success-green-15: rgba(42, 110, 74, 0.15);
+    --bg-crime-dark-10: rgba(140, 20, 20, 0.10);
+    --bg-dark-warm-translucent-96: rgba(30, 18, 8, 0.96);
+    --bg-black-translucent-96: rgba(0, 0, 0, 0.96);
+    --bg-settings-row: rgba(55, 40, 18, 0.42);
+    --bg-settings-row-active: rgba(140, 98, 32, 0.58);
+    --bg-dark-panel: rgba(20, 24, 33, 0.96);
+    --bg-darker-panel: rgba(13, 16, 23, 0.97);
+    --bg-dark-overlay-78: rgba(10, 10, 18, 0.78);
+    --bg-dark-overlay-90: rgba(10, 10, 18, 0.90);
+    --bg-gold-panel-92: rgba(60, 48, 0, 0.92);
+    --bg-gold-panel-95: rgba(80, 62, 0, 0.95);
+    --bg-brown-vignette-10: rgba(78, 38, 12, 0.10);
 
     /* === Diary book (Core/DiaryUI.js) ===
        Lifted out of the plugin, which used to append them to :root as a
@@ -169,94 +223,246 @@
     --accent-brown-dark: #33220f;
 
     /* === Empathize dialogue options (NPC/NPCEmpathizeUI.js) ===
-       The gold of the Omega Tower preset would vanish on this cream page, so
-       the option rows take the parchment pair instead: crimson ink inside a
-       tooled leather border. Same job, same single family, different palette. */
-    --npc-option-fg: #58180D;
-    --npc-option-border: #8b5a2b;
+       Every row in the chat panel (the standing verbs and every submenu:
+       Socialize, Court, Propose, gifts, bribes...) reads as one gold family
+       instead of being tinted per tone, so the list scans as a single menu.
+       Archive Foundation retunes these to its own ink on parchment. */
+    --npc-option-fg: #ffcc66;
+    --npc-option-border: #d4a64e;
 
     /* === Text Colors === */
     /* Map tooltip and NPC bubble plate: the same fill, see-through */
-    --map-tip-bg: rgba(236, 220, 185, 0.82);
-    --text-danger-hover: #ecdcb9;
-    --text-disabled: #5d5044;
-    --text-highlight-active: #f4edd4;
-    --text-info: #6b5242;
+    --map-tip-bg: rgba(0, 0, 0, 0.72);
+    --text-danger-hover: #000000;
+    --text-disabled: #8a8378;
+    --text-highlight-active: #ffffff;
+    --text-info: #ffffff;
     --text-on-danger-plate: #f5ebd0;
-    /* Deepened for the cream page: at #8c7667 this ink landed at 3.47 wherever
-       it is used as a caption (SkillMaster's uppercase section labels and its
-       MP/AP cost line, plus ~20 theme.css rules). #5c4128 matches the brown
-       chosen for the inline-literal captions at the foot of this file. */
-    --text-inverse: #5c4128;
-    --text-muted-hover: #6b5242;
-    --text-primary-hover: #58180D;
-    --text-secondary-active: #58180D;
-    --text-success-active: #2b251d;
-    --text-text-alt-1-active: #58180D;
-    --text-text-alt-10: #8f2318;
-    --text-text-alt-11: #17512a;
-    --text-text-alt-12: #6b5242;
-    --text-text-alt-13: #2b251d;
-    --text-text-alt-14-hover: #58180D;
-    --text-text-alt-15: #8a5410;
-    --text-text-alt-16: #1d4d80;
-    /* Amber ink, deepened for the cream page. At #b8860b it landed at 2.64 in
-       every place it is spent as text: the Army upkeep figure and leader name,
-       the Biologics personality value and register header, the warning toast,
-       the shop rider badge and delivery timer, the battle LP value. #5a3c00 is
-       the same gold this file already picks for the inline #ffcc66/#e9c46a
-       remaps at the foot of the file. */
-    --text-text-alt-17: #58180D;
-    --text-text-alt-18: #17512a;
-    --text-text-alt-19: #7b1fa2;
-    --text-text-alt-2: #000000;
-    --text-text-alt-20: #8a5410;
-    --text-text-alt-21: #17512a;
-    --text-text-alt-22: #17512a;
-    --text-text-alt-23: #58180D;
-    --text-text-alt-24: #8e44ad;
-    --text-text-alt-25: #8f2318;
-    /* Success green, deepened for the cream page (2.33 at #27ae60, e.g. the
-       1.9rem fused-spell preview name in SkillMaster). #155c15 is the same
-       green this file already picks for the inline color:#27ae60 remap below,
-       so the token form and the literal form now agree. */
-    --text-text-alt-3: #17512a;
-    --text-text-alt-4: #6b5242;
-    --text-text-alt-5-hover: #8f2318;
-    --text-text-alt-6-active: #333;
-    --text-text-alt-7: #2b251d;
-    --text-text-alt-8: #6b5242;
-    --text-text-alt-9: #6b4c08;
-    --text-text-alt-9-translucent-50: rgba(92, 44, 22, 0.5);
+    --text-inverse: #cccccc;
+    --text-muted-hover: #ffffff;
+    --text-primary-hover: #ffcc66;
+    --text-secondary-active: #ffcc66;
+    --text-success-active: #e4e0d8;
+    --text-text-alt-1-active: #ffcc66;
+    --text-text-alt-10: #e36a6a;
+    --text-text-alt-11: #6fd089;
+    --text-text-alt-12: #bdb7ad;
+    --text-text-alt-13: #e4e0d8;
+    --text-text-alt-14-hover: #ffcc66;
+    --text-text-alt-15: #e8a05a;
+    --text-text-alt-16: #7fb3e6;
+    --text-text-alt-17: #ffcc66;
+    --text-text-alt-18: #6fd089;
+    --text-text-alt-19: #cc88ff;
+    --text-text-alt-2: #ffffff;
+    --text-text-alt-20: #e8a05a;
+    --text-text-alt-21: #6fd089;
+    --text-text-alt-22: #6fd089;
+    --text-text-alt-23: #ffcc66;
+    --text-text-alt-24: #cc88ff;
+    --text-text-alt-25: #e36a6a;
+    --text-text-alt-3: #6fd089;
+    --text-text-alt-4: #ffffff;
+    --text-text-alt-5-hover: #e36a6a;
+    --text-text-alt-6-active: #d8d8d8;
+    --text-text-alt-7: #e4e0d8;
+    --text-text-alt-8: #bdb7ad;
+    --text-text-alt-9: #c8a44e;
+    --text-text-alt-9-translucent-50: rgba(200, 160, 100, 0.6);
     --text-warning-hover: #ffffff;
+    --text-gold-dark: #c8a44e;
+    --text-brown-deep: #3d2517;
+    --text-brown-medium: #a08a6a;
+    --text-card-dark: #ffffff;
+    --text-card-medium: #ffffff;
+    --text-brown-dark: #3a1f0f;
+    --text-navy: #7fb3e6;
+    --text-forest-complete: #6fd089;
+    --text-amber-hint: #c8a44e;
+    --text-forest-green: #6fd089;
+    --text-blood-red: #d96a6a;
+    --text-npc-red: #8b1010;
+    --text-danger-dark: #d05a5a;
+    --text-info-blue: #2980b9;
+    --text-settings-label: #c8a44e;
+    --text-settings-active: #ffcc66;
+    --text-settings-inactive: #8a6a30;
+    --text-settings-arrow-active: #c8a44e;
+    --text-settings-value-active: #ffcc66;
+    --text-caption-brown: #9d8b6b;
+    --text-subtle-translucent-65: rgba(74, 39, 17, 0.65);
+    --text-pure-white: #ffffff;
+    --text-pure-black: #000000;
+    --text-cost-ok: #6fd089;
+    --text-cost-bad: #e36a6a;
+    --text-teal: #2a9d8f;
+
+    /* === The one selected-chip look ===
+       Tab rails, filter tags and companion switchers used to stamp the active
+       entry as a solid gold plate with black text, one loud fill per screen.
+       They now share a quiet tint, the accent ink and an underline, so every
+       rail in the game reads the same and the text stays legible. */
+    --chip-active-bg: rgba(255, 204, 102, 0.18);
+    --chip-active-fg: #ffcc66;
+
+    /* === The stat ladder ===
+       HP / MP and the six attributes are tagged in the same eight colours
+       wherever a sheet prints them. The three character-creation tables used to
+       carry their own copy of the list, and one of them had HP in green while
+       the other two had it in red. */
+    --stat-hp: #e5736f;
+    --stat-mp: #6fa8e0;
+    --stat-str: #e08a6f;
+    --stat-con: #e0a860;
+    --stat-dex: #e0c760;
+    --stat-int: #b57fd0;
+    --stat-wis: #5fbaad;
+    --stat-psi: #e07fa8;
+
+    /* === Elements and magical nature ===
+       The nine damage elements and the three class natures, tagged in one set
+       of colours wherever a card, a chip or a skill row names them. The class
+       selector used to carry its own copy of both lists as literals, so they
+       could not follow a preset and nothing else could share them. */
+    --element-1: #a8a29a;
+    --element-2: #e5736f;
+    --element-3: #6fa8e0;
+    --element-4: #e0c760;
+    --element-5: #5fbaad;
+    --element-6: #a8846b;
+    --element-7: #6fd089;
+    --element-8: #f0d493;
+    --element-9: #b57fd0;
+    --nature-magical: #b57fd0;
+    --nature-mundane: #8d99a6;
+    --nature-both: #b09a8e;
+    --nature-magical-soft: rgba(181, 127, 208, 0.27);
+    --nature-mundane-soft: rgba(141, 153, 166, 0.27);
+    --nature-both-soft: rgba(176, 154, 142, 0.27);
+
+    /* === Skill roles ===
+       Attack red, heal green, support blue, and the engine's own basic kit in
+       its teal. The skills page used to answer this question twice with two
+       different sets, so a skill's stripe and its row accent disagreed. */
+    --role-offensive: #e5736f;
+    --role-healing: #6fd089;
+    --role-support: #6fa8e0;
+    --role-basic: #5fbaad;
+
+    /* === Inset plates on the page ===
+       The tray a stat box, a graph or a small panel sits in, inside a menu that
+       is already a page. These were black washes written as literals, which is
+       a plate on the dark preset and a grey smear on the parchment one. */
+    --plate-inset: rgba(0, 0, 0, 0.40);
+    --plate-inset-soft: rgba(0, 0, 0, 0.22);
+
+    /* === Toast notifications (Core/ParchmentToast.js) ===
+       The popup sits on the dark parchment plate, so its body text is light
+       and the rarity ladder is tuned to read against it. */
+    --toast-text: #f0e3c4;
+    --toast-text-muted: #cbb894;
 
     /* === Border Colors === */
     --border-accent-hover-translucent-5: rgba(139, 90, 43, 0.05);
-    --border-border-alt-1: #d1c2b4;
-    --border-border-alt-10: #8e6a47;
-    --border-border-alt-11: #9c927f;
-    --border-border-alt-12: #bba390;
-    --border-border-alt-13: #c9ad6a;
-    --border-border-alt-14-translucent-40: rgba(184, 157, 124, 0.4);
-    --border-border-alt-2: #5c4128;
-    --border-border-alt-3-hover: #bdc3c7;
-    --border-border-alt-4: #555;
-    --border-border-alt-5: #bda881;
+    --border-border-alt-1: #5a4a2a;
+    --border-border-alt-10: #5a4a2a;
+    --border-border-alt-11: #5a4a2a;
+    --border-border-alt-12: #5a4a2a;
+    --border-border-alt-13: #5a4a2a;
+    --border-border-alt-14-translucent-40: rgba(255, 204, 102, 0.3);
+    --border-border-alt-2: #5a4a2a;
+    --border-border-alt-3-hover: #888888;
+    --border-border-alt-4: #555555;
+    --border-border-alt-5: #5a4a2a;
     --border-border-alt-6-translucent-25: rgba(255, 140, 0, 0.25);
     --border-border-alt-7: #223a22;
-    --border-border-alt-8: #4a3c31;
-    --border-border-alt-9: #777;
-    --border-danger-active: #822d2d;
-    --border-focus-hover: #8b5a2b;
-    --border-muted-focus: #5c2c16;
-    --border-primary-hover-translucent-15: rgba(88, 24, 13, 0.15);
+    --border-border-alt-8: #5a4a2a;
+    --border-border-alt-9: #777777;
+    --border-danger-active: #ff5555;
+    --border-focus-hover: #ffcc66;
+    --border-muted-focus: #5a4a2a;
+    --border-primary-hover-translucent-15: rgba(255, 255, 255, 0.15);
     /* Fainter siblings of the rule above. theme.css already asked for both;
        until now nothing answered, so those hairlines drew as nothing. */
-    --border-primary-hover-translucent-5: rgba(88, 24, 13, 0.05);
-    --border-primary-hover-translucent-10: rgba(88, 24, 13, 0.10);
-    --border-secondary-hover-translucent-15: rgba(92, 44, 22, 0.15);
-    --border-subtle: #4a2711;
-    --border-success: #bba16d;
+    --border-primary-hover-translucent-5: rgba(255, 204, 102, 0.10);
+    --border-primary-hover-translucent-10: rgba(255, 204, 102, 0.20);
+    --border-secondary-hover-translucent-15: rgba(255, 204, 102, 0.2);
+    --border-subtle: #5a4a2a;
+    --border-success: #5a4a2a;
+    --border-danger-dark: #5a0a0a;
+    --border-gold-amber: #d4a050;
+    --border-forest-green: #2a6e4a;
+    /* Solid white, for the marker rings and pips that must read on any
+       ground at all. Both presets keep it white on purpose. */
+    --border-white-strong: #ffffff;
+    /* === Needs gauges (window.NeedGauge, Core/TimeDateSystem.js) ===
+       One three step scale for every meter in the game: the status
+       sheet's needs, the menu's survival cards, the biologic panel's
+       body parts and the addiction cravings all read it. */
+    --gauge-bad: #ff5555;
+    --gauge-warn: #ffaa44;
+    --gauge-ok: #ffcc66;
+    /* === Hardcore game over (js/plugins/Core/SaveSystem.js) ===
+       The gravestone screen is its own dark plate under either preset,
+       so the two carry the same values; a future preset can retune the
+       whole screen from here. */
+    --hgo-ink: #c9b48a;
+    --hgo-ink-muted: #b8a079;
+    --hgo-ink-strong: #f0e3c0;
+    --hgo-ink-eldritch: #b48ad0;
+    --hgo-rule: rgba(201, 180, 138, 0.25);
+    --hgo-button-bg: #5a1414;
+    --hgo-button-bg-hover: #7a1c1c;
+    --bg-backdrop-black: #000000;
+    --bg-black-translucent-92: rgba(0, 0, 0, 0.92);
+    --bg-danger-translucent-55: rgba(40, 0, 0, 0.55);
+    --shadow-danger-dark-65: rgba(139, 26, 26, 0.65);
+    --shadow-danger-dark-60: rgba(139, 26, 26, 0.60);
+    --shadow-eldritch-55: rgba(150, 90, 200, 0.55);
+    /* === Faction reputation ramp (js/plugins/NPC/FactionDataManager.js) ===
+       Nine bands, nemesis to exalted. Read as a class by the HTML badges and
+       resolved by name for the canvas windows, so a preset retunes the whole
+       ladder here rather than in the plugin. */
+    --faction-rep-exalted: #7fe0a0;
+    --faction-rep-revered: #6fd089;
+    --faction-rep-honored: #8fd08a;
+    --faction-rep-friendly: #a8d894;
+    --faction-rep-neutral: #b0a080;
+    --faction-rep-unfriendly: #e0b070;
+    --faction-rep-hostile: #e8a05a;
+    --faction-rep-hated: #e08a6f;
+    --faction-rep-nemesis: #e36a6a;
+    /* Accord stances between two factions, same idea. */
+    --faction-accord-allied: #6fd089;
+    --faction-accord-neutral: #b0a080;
+    --faction-accord-hostile: #e36a6a;
+    --border-accent-deepest: #3d2800;
+    --border-purple-medium: #6a3aa0;
+    --border-blue-medium: #4070d0;
+    --border-blood-red: #c02020;
+    --border-npc-red: #a02020;
+    --border-subtle-translucent-18: rgba(74, 39, 17, 0.18);
+    --border-subtle-translucent-25: rgba(74, 39, 17, 0.25);
+    --border-subtle-translucent-30: rgba(74, 39, 17, 0.30);
+    --border-subtle-translucent-40: rgba(74, 39, 17, 0.40);
+    --border-subtle-translucent-60: rgba(74, 39, 17, 0.60);
+    --border-parchment-10: rgba(187, 161, 109, 0.10);
+    --border-parchment-30: rgba(187, 161, 109, 0.30);
+    --border-parchment-40: rgba(187, 161, 109, 0.40);
+    --border-danger-translucent-35: rgba(192, 57, 43, 0.35);
+    --border-success-medium-35: rgba(39, 174, 96, 0.35);
+    --border-info-blue-35: rgba(41, 128, 185, 0.35);
+    --border-dark-warm-25: rgba(94, 47, 23, 0.25);
+    --border-npc-danger-38: rgba(140, 20, 20, 0.38);
+    --border-danger-medium-22: rgba(198, 40, 40, 0.22);
+    --border-success-green-25: rgba(46, 125, 50, 0.25);
+    --border-settings-row: rgba(110, 85, 40, 0.38);
+    --border-settings-row-active: rgba(220, 168, 65, 0.88);
+    --border-settings-preview: rgba(140, 110, 55, 0.48);
+    --border-gold-amber-30: rgba(212, 160, 80, 0.30);
+    --border-dark-panel: #3a4a63;
+    --border-panel-separator: #2a3445;
+    --border-panel-tab: #2f3a4d;
 
     /* === Shadow & Glow Colors === */
     --shadow-glow-active-translucent-40: rgba(0, 0, 0, 0.4);
@@ -281,14 +487,33 @@
     --shadow-shadow-alt-9: #444;
     --shadow-soft-active-translucent-25: rgba(139, 30, 16, 0.25);
     --shadow-text-glow-hover-translucent-35: rgba(186, 161, 109, 0.35);
+    --shadow-primary-hover-translucent-25: rgba(88, 24, 13, 0.25);
+    --shadow-black-translucent-6: rgba(0, 0, 0, 0.06);
+    --shadow-black-translucent-15: rgba(0, 0, 0, 0.15);
+    --shadow-black-translucent-25: rgba(0, 0, 0, 0.25);
+    --shadow-black-translucent-30: rgba(0, 0, 0, 0.30);
+    --shadow-black-translucent-45: rgba(0, 0, 0, 0.45);
+    --shadow-black-translucent-50: rgba(0, 0, 0, 0.50);
+    --shadow-black-translucent-55: rgba(0, 0, 0, 0.55);
+    --shadow-black-translucent-75: rgba(0, 0, 0, 0.75);
+    --shadow-black-translucent-80: rgba(0, 0, 0, 0.80);
+    --shadow-black-translucent-95: rgba(0, 0, 0, 0.95);
+    --shadow-settings-glow-28: rgba(200, 155, 80, 0.28);
+    --shadow-gold-amber-30: rgba(212, 160, 80, 0.30);
+    --shadow-gold-amber-50: rgba(212, 160, 80, 0.50);
+    --shadow-amber-60: rgba(233, 196, 106, 0.60);
+    --shadow-amber-translucent-5: rgba(233, 196, 106, 0.05);
+    --shadow-amber-gold-90: rgba(233, 196, 106, 0.90);
+    --shadow-amber-anim: rgba(255, 233, 168, 1.00);
+    --shadow-blue-hover-10: rgba(90, 143, 208, 0.10);
 
     /* === Scrollbar Colors === */
-    --scroll-thumb-hover-translucent-60: rgba(139, 90, 43, 0.6);
+    --scroll-thumb-hover-translucent-60: rgba(255, 204, 102, 0.4);
 
     /* === Accent & Brand Colors === */
     --accent-blue: #2e6db2;
     --accent-blue-2: #0d47a1;
-    --accent-blue-3: #1976d2;
+    --accent-blue-3: #6fa8e0;
     --accent-blue-4: #2c3e50;
     --accent-blue-5: #34495e;
     --accent-blue-6: #448aff;
@@ -311,16 +536,79 @@
     --accent-purple-2: #862eb2;
     --accent-purple-3: #e040fb;
     --accent-red: #800e0b;
-    --accent-red-2: #d32f2f;
+    --accent-red-2: #e0706e;
     --accent-red-3: #ff5252;
     --accent-red-4-translucent-85: rgba(120, 35, 35, 0.85);
     --accent-red-5-translucent-40: rgba(168, 88, 88, 0.4);
     --accent-red-6-translucent-70: rgba(231, 76, 60, 0.7);
     --accent-red-7-translucent-70: rgba(74, 29, 15, 0.7);
     --accent-yellow: #ffd740;
+    --accent-coral: #e76f51;
+    --accent-coral-translucent-80: rgba(231, 111, 81, 0.80);
+    --accent-coral-translucent-90: rgba(231, 111, 81, 0.90);
+    --accent-gold-pure-translucent-18: rgba(255, 215, 0, 0.18);
+    --accent-gold-pure-translucent-20: rgba(255, 215, 0, 0.20);
+    --accent-gold-pure-translucent-30: rgba(255, 215, 0, 0.30);
+    --accent-gold-pure-translucent-60: rgba(255, 215, 0, 0.60);
+    --accent-amber-gold: #caa44a;
+    --accent-amber-light: #e9c46a;
+    --accent-amber-dark: #6b521d;
+    --accent-amber-very-dark: #3a2a06;
+    --accent-amber-bronze: #5a4a1e;
+    --accent-amber-glow: #ffe9a8;
+    /* The cold counterpart of --accent-amber-glow, for the second line of
+       a label drawn onto a canvas bitmap. */
+    --accent-frost-glow: #cfe6ff;
+    --accent-cream-warm: #f6e6b8;
+    --accent-cream-light: #f4e9c9;
+    --accent-cream-very-light: #fff3c9;
+    --accent-cream-lightest: #fff4d2;
+    --accent-dark-navy: #0a0b14;
+    --accent-navy-dark: #1f2138;
+    --accent-navy-mid: #2a2d48;
+    --accent-navy-deep: #161827;
+    --accent-navy-very-dark: #080910;
+    --accent-navy-near-black: #101220;
+    --accent-red-warmth: #b03a2e;
+    --accent-red-warm-dark: #7a241b;
+    --accent-orange: #ffcc66;
+    --accent-gold-pure: #ffd700;
+
+    /* The six bands the historical archive reads a chronicle category in.
+       War and disaster, the state, trade, people, the arcane, the sciences. */
+    --hist-cat-war: #d9704f;
+    --hist-cat-state: #e0b352;
+    --hist-cat-trade: #7fb886;
+    --hist-cat-people: #79a9cf;
+    --hist-cat-arcane: #c08ad8;
+    --hist-cat-science: #6fc3bd;
+    --accent-slate: #3a4a63;
+    --accent-blue-gray-light: #e6ecf5;
+    --accent-blue-gray: #cfd8e6;
+    --accent-dark-blue: #2a3445;
+    --accent-muted-blue: #7e8aa0;
+    --accent-muted-blue-alt: #8a97ad;
+    --accent-tab-dark: #232c3b;
+    --accent-tab-text: #b6c1d4;
+    --accent-tab-active: #3a6ea5;
+    --accent-tab-hover: #5a8fd0;
+    --accent-badge-yellow: #ffcf4d;
+    /* Meaning plates. A tag that states an outcome is a bright plate with
+       --accent-badge-text on it: the page changes under a badge, the badge
+       does not, so one near-black ink reads on every preset. */
+    --plate-good: #7fd396;
+    --plate-bad: #f0908a;
+    --plate-neutral: #c7bfb2;
+    --cc-role-primary-wash: rgba(240, 164, 140, 0.14);
+    --cc-role-secondary-wash: rgba(205, 166, 236, 0.14);
+    --accent-badge-text: #0c1118;
+    --accent-amber-badge: rgba(255, 207, 77, 0.14);
+    --accent-gold-translucent-16: rgba(202, 164, 74, 0.16);
+    --accent-gold-translucent-50: rgba(202, 164, 74, 0.50);
+    --accent-gold-translucent-60: rgba(202, 164, 74, 0.60);
 
     /* === Gradients === */
-    --gradient-1: radial-gradient(circle, var(--accent-bronze-translucent-78) 0%, var(--shadow-heavy) 100%);
+    --gradient-1: linear-gradient(#000000, #000000);
     --gradient-10: linear-gradient(180deg, var(--accent-green-6-translucent-30) 0%, var(--accent-green-4-translucent-75) 100%);
     --gradient-11: linear-gradient(90deg, var(--text-text-alt-18), var(--accent-green-2));
     --gradient-12: linear-gradient(90deg, var(--accent-green), var(--accent-green-3));
@@ -334,662 +622,416 @@
     --gradient-2: linear-gradient(90deg, var(--text-text-alt-16), var(--accent-blue));
     --gradient-20: linear-gradient(to right, var(--accent-blue-2) 0%, var(--accent-blue-3) 40%, var(--accent-blue-6) 100%);
     --gradient-21: linear-gradient(to right, var(--accent-purple), var(--text-text-alt-19), var(--accent-purple-3));
-    --gradient-22: linear-gradient(to right, var(--accent-red) 0%, var(--accent-red-2) 40%, var(--accent-red-3) 100%);
-    --gradient-23: linear-gradient(to right, var(--accent-red), var(--text-primary-hover));
-    --gradient-24: linear-gradient(to right, var(--text-text-alt-17), var(--accent-gold-2));
+    --gradient-22: linear-gradient(#ff5555, #ff5555);
+    --gradient-23: linear-gradient(#ffcc66, #ffcc66);
+    --gradient-24: linear-gradient(#ffcc44, #ffcc44);
     --gradient-25: linear-gradient(to right, var(--border-border-alt-5), var(--text-primary-hover));
-    --gradient-26: linear-gradient(to right, var(--bg-backdrop) 0%, var(--text-highlight-active) 54%, var(--accent-bronze-2) 57%, var(--text-text-alt-2) 58%, var(--accent-bronze-2) 59%, var(--text-highlight-active) 62%, var(--bg-backdrop) 100%);
+    --gradient-26: linear-gradient(#000000, #000000);
     --gradient-27: linear-gradient(to right, var(--accent-gold-4) 0%, var(--bg-bg-alt-11) 40%, var(--accent-yellow) 100%);
-    /* Width of the binding crease. A fold needs room to fall away to either side, or it reads as a drawn line rather than as a curve of the sheet. */
-    --spine-w: 72px;
+    /* Width of the binding crease. The dark preset hides the crease outright, so this is only here to keep full token parity with the paper preset. */
+    /* The book frame (boards, fore-edges, page block) is the paper preset's:
+       this preset paints the spread as one flat black panel and draws none of
+       it. The tokens are declared so the two presets keep full parity, which
+       is what makes a live theme swap safe. */
+    --book-leather: transparent;
+    --book-leather-lit: transparent;
+    --book-gilt: transparent;
+    --book-page-edge: transparent;
+    --book-page-line: transparent;
+    --book-board-w: 0px;
+    --book-fore-l: 0px;
+    --book-fore-r: 0px;
+    --spine-w: 30px;
     --gradient-28: linear-gradient(to right, var(--shadow-primary-hover-translucent-5) 0%, var(--shadow-primary-hover-translucent-5) 30%, var(--shadow-primary-hover-translucent-5) 70%, var(--shadow-primary-hover-translucent-5) 100%);
-    --gradient-29: radial-gradient(circle at 10px 15px, var(--bg-primary-hover-translucent-35) 1.5px, transparent 2px);
+    --gradient-29: none;
     --gradient-3: linear-gradient(90deg, var(--text-secondary-active), var(--text-text-alt-10));
-    --gradient-30: radial-gradient(circle at 12px 14px, var(--bg-primary-hover-translucent-35) 1.5px, transparent 2px);
-    --gradient-31: radial-gradient(circle at 14px 10px, var(--bg-primary-hover-translucent-35) 1.5px, transparent 2px);
-    --gradient-32: radial-gradient(circle at 40% 40%, var(--border-border-alt-4) 0%, var(--text-text-alt-7) 80%, var(--shadow-heavy) 100%);
-    --gradient-33: radial-gradient(circle at 50% 50%, var(--bg-bg-alt-1-translucent-70) 0%, var(--shadow-heavy) 100%);
-    --gradient-34: radial-gradient(circle at 50% 50%, var(--bg-primary-hover-translucent-35) 0%, var(--accent-gold-5-translucent-25) 60%, var(--shadow-shadow-alt-2-hover-translucent-8) 100%);
-    --gradient-35: radial-gradient(circle at 5px 6px, var(--bg-primary-hover-translucent-35) 1px, transparent 1.5px);
-    --gradient-36: radial-gradient(circle at 6px 8px, var(--bg-primary-hover-translucent-35) 1px, transparent 1.5px);
-    --gradient-37: radial-gradient(circle at 7px 12px, var(--bg-primary-hover-translucent-35) 1px, transparent 1.5px);
-    --gradient-38: radial-gradient(circle, var(--text-secondary-active) 0%, var(--text-primary-hover) 100%);
-    --gradient-39: radial-gradient(circle, var(--bg-bg-alt-1-translucent-70) 0%, var(--shadow-heavy) 100%);
-    --gradient-4: radial-gradient(circle, var(--shadow-primary-hover-translucent-5) 20%, var(--shadow-heavy) 90%);
-    --gradient-40: radial-gradient(circle, var(--bg-primary-hover-translucent-35) 0%, var(--shadow-primary-hover-translucent-5) 100%);
-    --gradient-41: radial-gradient(circle, var(--bg-bg-alt-12-hover-translucent-65) 0%, var(--border-secondary-hover-translucent-15) 100%);
+    --gradient-30: none;
+    --gradient-31: none;
+    --gradient-32: linear-gradient(#000000, #000000);
+    --gradient-33: linear-gradient(#000000, #000000);
+    --gradient-34: linear-gradient(#000000, #000000);
+    --gradient-35: none;
+    --gradient-36: none;
+    --gradient-37: none;
+    --gradient-38: linear-gradient(#ffcc66, #ffcc66);
+    --gradient-39: linear-gradient(#000000, #000000);
+    --gradient-4: linear-gradient(#000000, #000000);
+    --gradient-40: linear-gradient(#000000, #000000);
+    --gradient-41: linear-gradient(#000000, #000000);
     --gradient-42: radial-gradient(ellipse at bottom, var(--shadow-shadow-alt-6) 20%, var(--text-text-alt-20) 60%, transparent 100%);
     --gradient-43: repeating-linear-gradient(45deg, var(--bg-surface) 0px, var(--bg-surface) 2px, var(--text-text-alt-6-active) 2px, var(--text-text-alt-6-active) 4px);
-    --gradient-5: radial-gradient(circle at 50% 50%, var(--text-muted-hover) 0%, var(--shadow-heavy) 100%);
-    --gradient-6: linear-gradient(135deg, var(--text-text-alt-1-active) 0%, var(--text-muted-hover) 100%);
+    --gradient-5: linear-gradient(#000000, #000000);
+    --gradient-6: linear-gradient(#000000, #000000);
     --gradient-7: linear-gradient(135deg, var(--bg-primary-hover-translucent-35) 0%, var(--accent-gray-2-translucent-0) 50%);
     --gradient-8: linear-gradient(180deg, var(--shadow-shadow-alt-5-translucent-40) 0%, var(--accent-red-7-translucent-70) 100%);
     --gradient-9: linear-gradient(180deg, var(--accent-red-5-translucent-40) 0%, var(--accent-red-4-translucent-85) 100%);
 
-    /* ======================================================================
-       Token parity with omega_tower.css (parchment-tuned)
-       These 158 tokens are referenced by the newer menu overlays (Skills,
-       Inventory, Biology, Preferences, etc). They were absent from this
-       parchment preset, so every var() reference resolved to nothing and the
-       text rendered invisible on the cream page. Light "ink" tokens are
-       flipped to dark sepia so they read on parchment; structural / navy /
-       shadow tokens keep their functional values.
-       ====================================================================== */
-
-    /* --- Amber / cream device-accent inks --- KEPT BRIGHT.
-       These are "light ink for a dark surface" and are used by always-dark
-       components that live inside both themes (the slot-machine cabinet, the
-       vehicle-repair console, galaxy panels). Darkening them would make those
-       components dark-on-dark, so they stay bright. Book-menu pages that need a
-       per-theme amber use --text-gold-dark instead. --- */
-    --accent-amber-badge: rgba(255, 207, 77, 0.18);
-    --accent-amber-bronze: #5a4a1e;
-    --accent-amber-dark: #6b521d;
-    --accent-amber-glow: #ffe9a8;
-    /* The cold counterpart of --accent-amber-glow, for the second line of
-       a label drawn onto a canvas bitmap. */
-    --accent-frost-glow: #cfe6ff;
-    --accent-amber-gold: #caa44a;
-    --accent-amber-light: #e9c46a;
-    --accent-amber-very-dark: #3a2a06;
-    --accent-cream-light: #f4e9c9;
-    --accent-cream-lightest: #fff4d2;
-    --accent-cream-very-light: #fff3c9;
-    --accent-cream-warm: #f6e6b8;
-    --accent-orange: #ffcc66;
-
-    /* --- Badges / gold accents --- */
-    --accent-badge-text: #0c1118;
-    --accent-badge-yellow: #ffcf4d;
-    /* Meaning plates. A tag that states an outcome is a bright plate with
-       --accent-badge-text on it: the page changes under a badge, the badge
-       does not, so one near-black ink reads on every preset. */
-    --plate-good: #7fd396;
-    --plate-bad: #f0908a;
-    --plate-neutral: #c7bfb2;
-    --cc-role-primary-wash: rgba(140, 60, 60, 0.12);
-    --cc-role-secondary-wash: rgba(90, 61, 117, 0.12);
-    --accent-gold-pure: #ffd700;
-
-    /* The six bands the historical archive reads a chronicle category in.
-       War and disaster, the state, trade, people, the arcane, the sciences. */
-    --hist-cat-war: #8a2f1c;
-    --hist-cat-state: #6b5000;
-    --hist-cat-trade: #1f5a34;
-    --hist-cat-people: #23547e;
-    --hist-cat-arcane: #6b2d8c;
-    --hist-cat-science: #14595a;
-    --accent-gold-pure-translucent-18: rgba(255, 215, 0, 0.18);
-    --accent-gold-pure-translucent-20: rgba(255, 215, 0, 0.20);
-    --accent-gold-pure-translucent-30: rgba(255, 215, 0, 0.30);
-    --accent-gold-pure-translucent-60: rgba(255, 215, 0, 0.60);
-    --accent-gold-translucent-16: rgba(160, 120, 50, 0.16);
-    --accent-gold-translucent-50: rgba(160, 120, 50, 0.50);
-    --accent-gold-translucent-60: rgba(160, 120, 50, 0.60);
-
-    /* --- Coral --- */
-    --accent-coral: #d2542f;
-    --accent-coral-translucent-80: rgba(210, 84, 47, 0.80);
-    --accent-coral-translucent-90: rgba(210, 84, 47, 0.90);
-
-    /* --- Navy / slate data-panel scheme (kept dark; these panels are dark
-           in both themes by design) --- */
-    --accent-blue-gray: #cfd8e6;
-    --accent-blue-gray-light: #e6ecf5;
-    --accent-dark-blue: #2a3445;
-    --accent-dark-navy: #0a0b14;
-    --accent-muted-blue: #7e8aa0;
-    --accent-muted-blue-alt: #8a97ad;
-    --accent-navy-dark: #1f2138;
-    --accent-navy-deep: #161827;
-    --accent-navy-mid: #2a2d48;
-    --accent-navy-near-black: #101220;
-    --accent-navy-very-dark: #080910;
-    --accent-slate: #3a4a63;
-    --accent-tab-active: #3a6ea5;
-    --accent-tab-dark: #232c3b;
-    --accent-tab-hover: #5a8fd0;
-    --accent-tab-text: #b6c1d4;
-
-    /* --- Reds --- */
-    --accent-red-warm-dark: #7a241b;
-    --accent-red-warmth: #b03a2e;
-
-    /* --- Backgrounds --- */
-    --bg-black-translucent-96: rgba(0, 0, 0, 0.96);
-    --bg-brown-vignette-10: rgba(78, 38, 12, 0.10);
-    --bg-crime-dark-10: rgba(140, 20, 20, 0.10);
-    --bg-danger-dark: #8b1a1a;
-    --bg-danger-plate: #7a2430;
-    --bg-danger-medium-10: rgba(192, 32, 32, 0.10);
-    --bg-danger-medium-7: rgba(198, 40, 40, 0.07);
-    --bg-danger-translucent-5: rgba(192, 57, 43, 0.05);
-    --bg-dark-night: #120804;
-    --bg-dark-overlay-78: rgba(10, 10, 18, 0.78);
-    --bg-dark-overlay-90: rgba(10, 10, 18, 0.90);
-    --bg-dark-panel: rgba(20, 24, 33, 0.96);
-    --bg-dark-warm-translucent-96: rgba(30, 18, 8, 0.96);
-    --bg-darker-panel: rgba(13, 16, 23, 0.97);
-    --bg-deep-night: #1a0904;
-    --bg-focus-hover-translucent-10: rgba(139, 90, 43, 0.10);
-    --bg-focus-hover-translucent-15: rgba(139, 90, 43, 0.15);
-    --bg-focus-hover-translucent-18: rgba(139, 90, 43, 0.18);
-    --bg-gold-panel-92: rgba(60, 48, 0, 0.92);
-    --bg-gold-panel-95: rgba(80, 62, 0, 0.95);
-    --bg-hp-bar: #8bc34a;
-    --bg-info-blue-5: rgba(41, 128, 185, 0.05);
-    --bg-mp-bar: #5b9bd5;
-    --bg-mp-bar-alt: #3366cd;
-    --bg-npc-bark: #826552;
-    --bg-npc-forest: #2a6e4a;
-    /* The deepest rust the parchment menus stamp a primary button in, and the
-       rule that outlines it. Added when the work board, the bank and the
-       prosthetics shop stopped painting them inline. */
-    --bg-accent-deep: #4a1d0f;
-    --bg-parchment-dark-40: rgba(230, 180, 130, 0.40);
-    --bg-parchment-medium-50: rgba(230, 200, 160, 0.50);
-    --bg-parchment-warm-60: rgba(255, 248, 230, 0.60);
-    --bg-primary-hover-translucent-10: rgba(88, 24, 13, 0.10);
-    --bg-settings-row: rgba(120, 90, 40, 0.14);
-    --bg-settings-row-active: rgba(160, 120, 50, 0.30);
-    --bg-subtle-translucent-5: rgba(74, 39, 17, 0.05);
-    --bg-subtle-translucent-10: rgba(74, 39, 17, 0.10);
-    --bg-subtle-translucent-15: rgba(74, 39, 17, 0.15);
-    --bg-success-green-15: rgba(42, 110, 74, 0.15);
-    --bg-success-medium-5: rgba(39, 174, 96, 0.05);
-    --bg-success-medium-8: rgba(46, 125, 50, 0.08);
-    --bg-warm-cream-25: rgba(255, 240, 200, 0.25);
-    --bg-white-translucent-25: rgba(255, 255, 255, 0.25);
-    --bg-white-translucent-30: rgba(255, 255, 255, 0.30);
-    --bg-white-translucent-40: rgba(255, 255, 255, 0.40);
-    --bg-white-translucent-45: rgba(255, 255, 255, 0.45);
-    --bg-white-translucent-72: rgba(255, 255, 255, 0.72);
-
-    /* --- Borders --- */
-    --border-blood-red: #c02020;
-    --border-blue-medium: #4070d0;
-    --border-danger-dark: #5a0a0a;
-    --border-danger-medium-22: rgba(198, 40, 40, 0.22);
-    --border-danger-translucent-35: rgba(192, 57, 43, 0.35);
-    --border-dark-panel: #3a4a63;
-    --border-dark-warm-25: rgba(94, 47, 23, 0.25);
-    --border-forest-green: #2a6e4a;
-    /* Solid white, for the marker rings and pips that must read on any
-       ground at all. Both presets keep it white on purpose. */
-    --border-white-strong: #ffffff;
-    /* === Needs gauges (window.NeedGauge, Core/TimeDateSystem.js) ===
-       One three step scale for every meter in the game: the status
-       sheet's needs, the menu's survival cards, the biologic panel's
-       body parts and the addiction cravings all read it. */
-    --gauge-bad: #d9433a;
-    --gauge-warn: #e2933a;
-    --gauge-ok: #d4a64e;
-    /* === Hardcore game over (js/plugins/Core/SaveSystem.js) ===
-       The gravestone screen is its own dark plate under either preset,
-       so the two carry the same values; a future preset can retune the
-       whole screen from here. */
-    --hgo-ink: #c9b48a;
-    --hgo-ink-muted: #b8a079;
-    --hgo-ink-strong: #f0e3c0;
-    --hgo-ink-eldritch: #b48ad0;
-    --hgo-rule: rgba(201, 180, 138, 0.25);
-    --hgo-button-bg: #5a1414;
-    --hgo-button-bg-hover: #7a1c1c;
-    --bg-backdrop-black: #000000;
-    --bg-black-translucent-92: rgba(0, 0, 0, 0.92);
-    --bg-danger-translucent-55: rgba(40, 0, 0, 0.55);
-    --shadow-danger-dark-65: rgba(139, 26, 26, 0.65);
-    --shadow-danger-dark-60: rgba(139, 26, 26, 0.60);
-    --shadow-eldritch-55: rgba(150, 90, 200, 0.55);
-    /* === Faction reputation ramp (js/plugins/NPC/FactionDataManager.js) ===
-       Nine bands, nemesis to exalted. Read as a class by the HTML badges and
-       resolved by name for the canvas windows, so a preset retunes the whole
-       ladder here rather than in the plugin. */
-    --faction-rep-exalted: #14572a;
-    --faction-rep-revered: #17512a;
-    --faction-rep-honored: #235c2a;
-    --faction-rep-friendly: #2b5626;
-    --faction-rep-neutral: #5d4636;
-    --faction-rep-unfriendly: #7a4410;
-    --faction-rep-hostile: #8a3a12;
-    --faction-rep-hated: #8f2318;
-    --faction-rep-nemesis: #6e1410;
-    /* Accord stances between two factions, same idea. */
-    --faction-accord-allied: #17512a;
-    --faction-accord-neutral: #5d4636;
-    --faction-accord-hostile: #8f2318;
-    --border-accent-deepest: #301107;
-    --border-gold-amber: #b8895a;
-    --border-gold-amber-30: rgba(160, 120, 60, 0.35);
-    --border-info-blue-35: rgba(41, 128, 185, 0.35);
-    --border-npc-danger-38: rgba(140, 20, 20, 0.38);
-    --border-npc-red: #a02020;
-    --border-panel-separator: #2a3445;
-    --border-panel-tab: #2f3a4d;
-    --border-parchment-10: rgba(187, 161, 109, 0.10);
-    --border-parchment-30: rgba(187, 161, 109, 0.30);
-    --border-parchment-40: rgba(187, 161, 109, 0.40);
-    --border-purple-medium: #6a3aa0;
-    --border-settings-preview: rgba(140, 110, 55, 0.48);
-    --border-settings-row: rgba(150, 120, 70, 0.35);
-    --border-settings-row-active: rgba(160, 110, 40, 0.80);
-    --border-subtle-translucent-18: rgba(74, 39, 17, 0.18);
-    --border-subtle-translucent-25: rgba(74, 39, 17, 0.25);
-    --border-subtle-translucent-30: rgba(74, 39, 17, 0.30);
-    --border-subtle-translucent-40: rgba(74, 39, 17, 0.40);
-    --border-subtle-translucent-60: rgba(74, 39, 17, 0.60);
-    --border-success-green-25: rgba(46, 125, 50, 0.25);
-    --border-success-medium-35: rgba(39, 174, 96, 0.35);
-
-    /* --- Shadows (functional; kept) --- */
-    --shadow-amber-60: rgba(180, 130, 60, 0.60);
-    --shadow-amber-anim: rgba(200, 150, 70, 1.00);
-    --shadow-amber-gold-90: rgba(180, 130, 60, 0.90);
-    --shadow-amber-translucent-5: rgba(180, 130, 60, 0.08);
-    --shadow-black-translucent-6: rgba(0, 0, 0, 0.06);
-    --shadow-black-translucent-15: rgba(0, 0, 0, 0.15);
-    --shadow-black-translucent-25: rgba(0, 0, 0, 0.25);
-    --shadow-black-translucent-30: rgba(0, 0, 0, 0.30);
-    --shadow-black-translucent-45: rgba(0, 0, 0, 0.45);
-    --shadow-black-translucent-50: rgba(0, 0, 0, 0.50);
-    --shadow-black-translucent-55: rgba(0, 0, 0, 0.55);
-    --shadow-black-translucent-75: rgba(0, 0, 0, 0.75);
-    --shadow-black-translucent-80: rgba(0, 0, 0, 0.80);
-    --shadow-black-translucent-95: rgba(0, 0, 0, 0.95);
-    --shadow-blue-hover-10: rgba(90, 143, 208, 0.10);
-    --shadow-gold-amber-30: rgba(160, 120, 60, 0.30);
-    --shadow-gold-amber-50: rgba(160, 120, 60, 0.50);
-    --shadow-primary-hover-translucent-25: rgba(88, 24, 13, 0.25);
-    --shadow-settings-glow-28: rgba(160, 120, 50, 0.28);
-
-    /* --- Text inks (flipped dark for legibility on cream) --- */
-    --text-amber-hint: #6b4c08;
-    --text-blood-red: #a01818;
-    --text-brown-dark: #3a1f0f;
-    --text-brown-deep: #3d2517;
-    --text-brown-medium: #644d3e;
-    --text-caption-brown: #5b503c;
-    --text-card-dark: #6b5242;
-    --text-card-medium: #6b5242;
-    --text-cost-bad: #8f2318;
-    --text-cost-ok: #17512a;
-    --text-danger-dark: #8b1a1a;
-    --text-forest-complete: #17512a;
-    --text-forest-green: #17512a;
-    --text-gold-dark: #6b4c08;
-    --text-info-blue: #16487e;
-    --text-navy: #1d4d80;
-    --text-npc-red: #8b1010;
-    --text-pure-black: #000000;
-    --text-pure-white: #ffffff;
-    --text-settings-active: #58180D;
-    --text-settings-arrow-active: #6b4c08;
-    --text-settings-inactive: #9c8366;
-    --text-settings-label: #6b4c08;
-    --text-settings-value-active: #58180D;
-    --text-subtle-translucent-65: rgba(74, 39, 17, 0.65);
-    --text-teal: #175b54;
-
-    /* === The one selected-chip look ===
-       Tab rails, filter tags and companion switchers used to stamp the active
-       entry as a solid gold plate with black text, one loud fill per screen.
-       They now share a quiet tint, the accent ink and an underline, so every
-       rail in the game reads the same and the text stays legible. */
-    --chip-active-bg: rgba(88, 24, 13, 0.14);
-    --chip-active-fg: #58180D;
-
-    /* === The stat ladder ===
-       HP / MP and the six attributes are tagged in the same eight colours
-       wherever a sheet prints them. The three character-creation tables used to
-       carry their own copy of the list, and one of them had HP in green while
-       the other two had it in red. */
-    --stat-hp: #8f2318;
-    --stat-mp: #1d4d80;
-    --stat-str: #8a4113;
-    --stat-con: #7a5410;
-    --stat-dex: #6b4c08;
-    --stat-int: #5a2b73;
-    --stat-wis: #155c52;
-    --stat-psi: #7a1f4a;
-
-    /* === Elements and magical nature ===
-       The nine damage elements and the three class natures, tagged in one set
-       of colours wherever a card, a chip or a skill row names them. The class
-       selector used to carry its own copy of both lists as literals, so they
-       could not follow a preset and nothing else could share them. */
-    --element-1: #4a4640;
-    --element-2: #8f2318;
-    --element-3: #1d4d80;
-    --element-4: #6b4c08;
-    --element-5: #155c52;
-    --element-6: #5a4130;
-    --element-7: #17512a;
-    --element-8: #7a5410;
-    --element-9: #5a2b73;
-    --nature-magical: #5a2b73;
-    --nature-mundane: #3d4a52;
-    --nature-both: #5a4438;
-    --nature-magical-soft: rgba(90, 43, 115, 0.27);
-    --nature-mundane-soft: rgba(61, 74, 82, 0.27);
-    --nature-both-soft: rgba(90, 68, 56, 0.27);
-
-    /* === Skill roles ===
-       Attack red, heal green, support blue, and the engine's own basic kit in
-       its teal. The skills page used to answer this question twice with two
-       different sets, so a skill's stripe and its row accent disagreed. */
-    --role-offensive: #8f2318;
-    --role-healing: #17512a;
-    --role-support: #1d4d80;
-    --role-basic: #155c52;
-
-    /* === Inset plates on the page ===
-       The tray a stat box, a graph or a small panel sits in, inside a menu that
-       is already a page. These were black washes written as literals, which is
-       a plate on the dark preset and a grey smear on the parchment one. */
-    --plate-inset: rgba(74, 39, 17, 0.06);
-    --plate-inset-soft: rgba(74, 39, 17, 0.04);
-
-    /* === Toast notifications (Core/ParchmentToast.js) ===
-       The popup sits on a light parchment plate here, so its body text is ink
-       and the rarity ladder is darkened to hold against it. */
-    --toast-text: #2c2418;
-    --toast-text-muted: #5d4c33;
-
-    /* --- Item rarity palette (parchment-tuned: dark, saturated inks) --- */
-    --rarity-common: #644d3e;
-    --rarity-uncommon: #23547e;
-    --rarity-rare: #6d3812;
-    --rarity-epic: #7b2fa0;
-    --rarity-legendary: #6b5000;
+    /* --- Item rarity palette (Omega Tower: bright inks for the black page) --- */
+    --rarity-common: #9a8c7a;
+    --rarity-uncommon: #5fa8d3;
+    --rarity-rare: #e0883c;
+    --rarity-epic: #b96fd6;
+    --rarity-legendary: #e8c24a;
 
     /* --- Eris (Economy/ErisDateSystem.js) ---
-       Her one accent, darkened until it holds against the cream page. */
-    --eris-accent: #a3195c;
-    --eris-accent-light: #c04b83;
-    --eris-accent-deep: rgba(96, 14, 54, 0.9);
+       Her one accent, the only colour in the game that is not the parchment
+       gold. It inks her opinion meter and nothing else. */
+    --eris-accent: #ff69b4;
+    --eris-accent-light: #ffb6c1;
+    --eris-accent-deep: rgba(180, 40, 100, 0.85);
 }
 
 /* ==========================================================================
-   Trait Selector, parchment-theme readability
-   Release-control red tuned for the light parchment page (mirrors theme.css
-   base so this theme remains self-contained when injected over vars.css).
+   Trait Selector overrides
+   The benefit / drawback pills in the trait detail card use parchment-era
+   greens and reds; brighten them for the near-black page.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   Character Creation, archetype / selection card readability
+   The .cc-wanted-card grid (base & hybrid archetypes, battler picker) renders
+   gold text on a near-black panel that barely separates from the page
+   background in this dark theme. Lift the card surface to a warm dark tone,
+   strengthen the borders, brighten the label, and make the active / selected
+   states clearly distinct.
+   ========================================================================== */
+.cc-presets-board .cc-wanted-card {
+    background: var(--bg-dark-warm-translucent-96);
+    border: 1px solid var(--border-gold-amber-30);
+    box-shadow: 0 4px 10px var(--shadow-black-translucent-55);
+}
+
+.cc-presets-board .cc-wanted-card:hover,
+.cc-presets-board .cc-wanted-card.highlighted {
+    background: var(--bg-primary-hover-translucent-35);
+    border-color: var(--border-focus-hover);
+}
+
+.cc-presets-board .cc-wanted-card.selected {
+    background: var(--bg-tertiary-focus-translucent-45);
+    border-color: var(--text-primary-hover);
+    box-shadow: 0 0 12px var(--shadow-gold-amber-50);
+}
+
+.cc-presets-board .cc-wanted-name {
+    color: var(--accent-amber-glow);
+    text-shadow: 0 1px 3px var(--shadow-black-translucent-75);
+    letter-spacing: 0.3px;
+}
+
+/* Selection sub-label under a chosen archetype card ("Primary" / "Secondary")
+   and the same pair of marks in the archetype dossier. Both carry the
+   parchment reds and purples, which are too dark to read on the near-black
+   page. The [style*=] rules are kept for any caller still inlining the hex. */
+.cc-role-badge.primary,
+.cc-archetype-role.primary,
+.cc-parent-ink.primary,
+.cc-presets-board .cc-wanted-card [style*="#822d2d"] {
+    color: #f0a48c !important;
+}
+.cc-role-badge.secondary,
+.cc-archetype-role.secondary,
+.cc-parent-ink.secondary,
+.cc-presets-board .cc-wanted-card [style*="#5a3d75"] {
+    color: #cda6ec !important;
+}
+
+/* ==========================================================================
+   Trait Selector, dark-theme readability
+   The release control uses a parchment-era red that is too dark on the
+   near-black page.
    ========================================================================== */
 .cc-slot-remove {
-    color: #822d2d;
+    color: #ff9b86;
 }
 .cc-slot-remove:hover {
-    background: rgba(130, 45, 45, 0.15);
+    background: rgba(255, 155, 134, 0.18);
 }
 
 /* ==========================================================================
-   Character Creation, parchment-theme readability
-   The base theme.css hardcodes #ffffff and light-tan/yellow accents that were
-   tuned for the dark Omega Tower page and disappear on this light parchment.
-   These overrides re-ink the affected text in dark sepia tones. Scoped to this
-   file only, so omega_tower.css keeps its own (correct) light-on-dark values.
+   Character Creation, full-flow dark-ink legibility (every page + overlays)
+   The class / trait / creature / summary screens are built with hardcoded
+   light-parchment-era inline inks (dark brown, forest green, maroon, plum,
+   mid-grey) plus a few light parchment "wax" document plates. All of it is
+   illegible (or jarringly bright) on the Omega Tower black book. Strip panel
+   backgrounds to bare dark, neutralise the red wax-document styling, and
+   remap every hardcoded ink to a bright legible variant.
+
+   Scoped to .cc-pockets-spread so it covers the LEFT page, the RIGHT page and
+   the TREATY confirmation overlay (which builds its own spread). The default
+   parchment theme is unaffected (this file is only loaded for Omega Tower).
    ========================================================================== */
-
-/* Right-page option cards: descriptions (e.g. "Fast creation for each member").
-   Used by the combat-mode, character-type, archetype and "add member?" steps.
-   !important so it beats theme.css's var(--text-text-alt-13) fallback, which the
-   live vars.css resolves to a near-white #dddddd that washes out on parchment. */
-.cc-option-desc {
-    color: #5c4128 !important;
+.cc-pockets-spread .cc-dossier-card {
+    background: transparent !important;
+    border-color: var(--border-gold-amber-30) !important;
+    box-shadow: none !important;
 }
 
-/* Left-page party dossier: class line (e.g. "Freelancer (Male)") */
-.cc-party-card-class {
-    color: #6b5242;
+
+/* Default ink for any dossier label/value that has no inline override
+   (base theme paints these dark brown -> invisible on the black page). */
+.cc-pockets-spread .cc-dossier-label {
+    color: var(--accent-cream-warm) !important;
+}
+.cc-pockets-spread .cc-dossier-value {
+    color: var(--accent-cream-light) !important;
 }
 
-/* Generated biography blurb, was white on the cream page */
-.cc-party-card-lore {
-    color: #3e2a1a;
+/* Hardcoded inline-colour remaps (inline styles need !important to lose). */
+.cc-pockets-spread [style*="#b87333"] {   /* Base Skills title + skill names */
+    color: var(--accent-amber-light) !important;
 }
-
-/* "PENDING SENSE..." placeholder in vacant slots, was white. #8a7a66 only
-   reached 3.37 on the cream page; #6f6357 is the same caption tier the stat
-   labels below use (4.73), so the slot still reads as quiet but legible. */
-.cc-party-card-vacant-text {
-    color: #6f6357;
+.cc-pockets-spread [style*="#4a7c59"] {   /* "Anatomy" section title */
+    color: #6fcf97 !important;
 }
-
-/* "TRAITS:" / "GEAR:" labels. The amber was #8b620b, which lands at 4.42 on
-   the cream page, just under AA, and disagreed with the deepened gold (#5a3c00)
-   this file settles on for every other gold ink. One gold, and it reads. */
-.cc-detail-label {
-    color: #5a3c00;
+.cc-pockets-spread [style*="#5a3d75"] {   /* Secondary (Sec) badge + labels */
+    color: #cda6ec !important;
 }
-
-/* Active party-card stamp ("ACTIVE" / member badge): cream ink on the
-   --border-focus-hover brown (#8b5a2b) is 4.31 at 0.72rem bold. The stamp
-   reads as a wax seal either way, so deepen the wax rather than the ink. */
-.cc-party-card-badge,
-.cc-party-card.active .cc-party-card-badge {
-    background: #5c3a1a;
+.cc-pockets-spread [style*="#888"] {      /* skill ids + inline skill-name hints */
+    color: var(--text-text-alt-8) !important;
 }
-
-/* Trait / equipment values next to those labels */
-.cc-detail-text {
-    color: #4a2f20;
+/* Dark-brown italics & body ink: "No starting skills", "No skills learned",
+   "Empty backpack", "Loading battler asset", class flavour, item names. */
+.cc-pockets-spread [style*="#5c4b3d"],
+.cc-pockets-spread [style*="#3d2f26"],
+.cc-pockets-spread [style*="#4a3b2c"],
+.cc-pockets-spread [style*="#7f6d5b"] {
+    color: var(--text-card-medium) !important;
 }
-
-/* Stat-row labels (HP, MP, STR...) read a touch deeper on light parchment */
-.cc-party-card-stat .label {
-    color: #6f6357;
+/* Near-black creature name / trait headings. */
+.cc-pockets-spread [style*="#2b1c11"],
+.cc-pockets-spread [style*="#4a1d0f"] {
+    color: var(--accent-amber-glow) !important;
+}
+/* Medium-brown "Index:" sprite label. */
+.cc-pockets-spread [style*="#8b5a2b"] {
+    color: var(--accent-amber-light) !important;
+}
+/* Maroon "wax" ink (Pri badge, drawbacks, COVENANT / TREATY text) -> rose. */
+.cc-pockets-spread [style*="#822d2d"] {
+    color: #f0a48c !important;
+}
+/* Light parchment "wax stamp" plates (COVENANT / TREATY): darken the plate
+   and swap the red double border + ink for gold so no red/cream survives.
+   Placed last so it wins over the #822d2d ink remap on the same element. */
+.cc-pockets-spread [style*="#faf2dc"] {
+    background: var(--bg-gold-panel-92) !important;
+    border-color: var(--border-focus-hover) !important;
+    color: var(--accent-amber-glow) !important;
 }
 
 /* ==========================================================================
-   Character Creation, Unified Tabbed Layout (Archive Foundation Parchment / Leather Spine)
+   Character Creation, Unified Tabbed Layout (Omega Tower Terminal / Dark)
    ========================================================================== */
 .cc-tabs-sidebar {
-    background: linear-gradient(180deg, #2b1d14 0%, #1c120c 100%) !important;
-    border-right: 2px solid #5c4128 !important;
-    box-shadow: 4px 0 16px rgba(44, 29, 20, 0.4) !important;
+    background: linear-gradient(180deg, #0d0d0d 0%, #050505 100%) !important;
+    border-right: 2px solid #5a4a2a !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.9) !important;
 }
 
 .cc-sidebar-header {
-    border-bottom: 1px double #5c4128 !important;
+    border-bottom: 1px solid #5a4a2a !important;
 }
 
 .cc-sidebar-title {
-    color: #e8d5bc !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+    color: #ffcc66 !important;
+    text-shadow: none;
 }
 
 .cc-mode-badge {
-    background: transparent !important;
-    border: 1px solid #8b5a2b !important;
-    color: #4a3520 !important;
+    background: rgba(255, 204, 102, 0.12) !important;
+    border: 1px solid rgba(255, 204, 102, 0.45) !important;
+    color: #ffd700 !important;
 }
 
 .cc-type-toggle-group {
-    background: rgba(0, 0, 0, 0.35) !important;
-    border: 1px solid #4a3424 !important;
+    background: #000000 !important;
+    border: 1px solid #332200 !important;
 }
 
 .cc-type-toggle-btn {
-    color: #bda893 !important;
+    color: #aaaaaa !important;
 }
 
 .cc-type-toggle-btn:hover {
-    background: rgba(255, 255, 255, 0.08) !important;
-    color: #fff6e8 !important;
+    background: rgba(255, 204, 102, 0.12) !important;
+    color: #ffcc66 !important;
 }
 
 .cc-type-toggle-btn.active {
-    background: linear-gradient(180deg, rgba(139, 90, 43, 0.6), rgba(92, 65, 40, 0.4)) !important;
-    border-color: #c9ad6a !important;
-    color: #fff8eb !important;
+    background: linear-gradient(180deg, rgba(140, 98, 32, 0.45), rgba(80, 50, 10, 0.3)) !important;
+    border-color: #ffcc66 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 8px rgba(255, 204, 102, 0.3) !important;
 }
 
 .cc-tab-num {
-    background: rgba(0, 0, 0, 0.4) !important;
-    border: 1px solid #5c4128 !important;
-    color: #ebd9c3 !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    border: 1px solid #5a4a2a !important;
+    color: #ffcc66 !important;
 }
 
 .cc-step-tab.active .cc-tab-num {
-    background: #c9ad6a !important;
-    color: #2b1d14 !important;
-    border-color: #f7e6cd !important;
+    background: #ffd700 !important;
+    color: #000000 !important;
+    border-color: #ffffff !important;
 }
 
 .cc-party-selector {
-    background: rgba(0, 0, 0, 0.35) !important;
-    border: 1px solid #4a3424 !important;
+    background: #000000 !important;
+    border: 1px solid #332200 !important;
 }
 
 .cc-profile-box {
-    background: rgba(0, 0, 0, 0.35) !important;
-    border: 1px solid #5c4128 !important;
+    background: #000000 !important;
+    border: 1px solid #5a4a2a !important;
 }
 
 .cc-profile-avatar-wrap {
-    background: rgba(0, 0, 0, 0.5) !important;
-    border: 1px solid #4a3424 !important;
+    background: #111111 !important;
+    border: 1px solid #332200 !important;
 }
 
 .cc-profile-toggle-group {
-    background: rgba(0, 0, 0, 0.35) !important;
-    border: 1px solid #4a3424 !important;
+    background: #111111 !important;
+    border: 1px solid #332200 !important;
 }
 
 .cc-profile-toggle-btn {
-    color: #bda893 !important;
+    color: #aaaaaa !important;
 }
 
 .cc-profile-toggle-btn:hover {
-    background: rgba(255, 255, 255, 0.08) !important;
-    color: #fff6e8 !important;
+    background: rgba(255, 204, 102, 0.12) !important;
+    color: #ffcc66 !important;
 }
 
 .cc-profile-toggle-btn.active {
-    background: linear-gradient(180deg, rgba(139, 90, 43, 0.6), rgba(92, 65, 40, 0.4)) !important;
-    border-color: #c9ad6a !important;
-    color: #fff8eb !important;
+    background: linear-gradient(180deg, rgba(140, 98, 32, 0.45), rgba(80, 50, 10, 0.3)) !important;
+    border-color: #ffcc66 !important;
+    color: #ffffff !important;
 }
 
 .cc-profile-open-btn {
-    background: rgba(139, 90, 43, 0.3) !important;
-    border: 1px solid #8b5a2b !important;
-    color: #f7e6cd !important;
+    background: rgba(255, 204, 102, 0.1) !important;
+    border: 1px solid #ffcc66 !important;
+    color: #ffd700 !important;
 }
 
 .cc-profile-open-btn:hover {
-    background: rgba(139, 90, 43, 0.5) !important;
-    border-color: #c9ad6a !important;
+    background: rgba(255, 204, 102, 0.25) !important;
     color: #ffffff !important;
 }
 
 .cc-party-tab {
-    color: #bda893 !important;
+    color: #aaaaaa !important;
 }
 
 .cc-party-tab:hover {
-    background: rgba(255, 255, 255, 0.08) !important;
-    color: #fff6e8 !important;
+    background: rgba(255, 204, 102, 0.12) !important;
+    color: #ffcc66 !important;
 }
 
 .cc-party-tab.active {
-    background: linear-gradient(180deg, rgba(139, 90, 43, 0.6), rgba(92, 65, 40, 0.4)) !important;
-    border-color: #c9ad6a !important;
-    color: #fff8eb !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+    background: linear-gradient(180deg, rgba(140, 98, 32, 0.45), rgba(80, 50, 10, 0.3)) !important;
+    border-color: #ffcc66 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(255, 204, 102, 0.3) !important;
 }
 
 .cc-party-add-btn {
-    background: rgba(0, 0, 0, 0.35) !important;
+    background: #000000 !important;
     border: none;
     color: #ffd700 !important;
 }
 
 .cc-party-add-btn:hover {
-    background: rgba(139, 90, 43, 0.4) !important;
-    border-color: #f7e6cd !important;
+    background: rgba(255, 204, 102, 0.25) !important;
     color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(255, 204, 102, 0.4) !important;
 }
 
 .cc-member-remove-btn {
-    background: #a93226 !important;
+    background: #d32f2f !important;
     color: #ffffff !important;
 }
 
 .cc-member-remove-btn:hover {
-    background: #c0392b !important;
+    background: #ff5252 !important;
 }
 
 .cc-step-tab {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid #4a3424 !important;
-    color: #ded1c1 !important;
+    background: rgba(20, 20, 20, 0.8) !important;
+    border: 1px solid rgba(90, 74, 42, 0.5) !important;
+    color: #dddddd !important;
 }
 
 .cc-step-tab:hover {
-    background: rgba(139, 90, 43, 0.35) !important;
-    border-color: #8b5a2b !important;
+    background: rgba(45, 38, 25, 0.9) !important;
+    border-color: #ffcc66 !important;
     color: #ffffff !important;
 }
 
 .cc-step-tab.active {
-    background: linear-gradient(90deg, #4d3320, #362214) !important;
-    border-color: #c9ad6a !important;
+    background: linear-gradient(90deg, rgba(80, 60, 20, 0.85), rgba(35, 25, 12, 0.9)) !important;
+    border-color: #ffd700 !important;
     color: #ffffff !important;
-    box-shadow: inset 3px 0 0 #c9ad6a, 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+    box-shadow: inset 3px 0 0 #ffd700, 0 0 14px rgba(255, 204, 102, 0.25) !important;
 }
 
 .cc-step-tab .cc-tab-subtitle {
-    color: #a89684 !important;
+    color: #888888 !important;
 }
 
 .cc-step-tab.active .cc-tab-subtitle {
-    color: #ebd9c3 !important;
+    color: #ffcc66 !important;
 }
 
 .cc-tab-checkmark {
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    background: rgba(0, 0, 0, 0.35) !important;
+    background: rgba(0, 0, 0, 0.5) !important;
 }
 
 .cc-step-tab.completed .cc-tab-checkmark {
-    background: linear-gradient(135deg, #2e5e3b, #193822) !important;
-    border-color: #6bba80 !important;
+    background: linear-gradient(135deg, #1b5e20, #0d3813) !important;
+    border-color: #4caf50 !important;
     color: #ffffff !important;
-    box-shadow: 0 0 6px rgba(46, 94, 59, 0.6) !important;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.7) !important;
 }
 
 .cc-sidebar-footer {
-    border-top: 1px solid #4a3424 !important;
+    border-top: 1px solid #332200 !important;
 }
 
 .cc-sidebar-loadout-box {
-    background: rgba(26, 18, 11, 0.9) !important;
-    border-color: rgba(201, 173, 106, 0.3) !important;
+    background: rgba(15, 12, 8, 0.85) !important;
+    border-color: rgba(255, 204, 102, 0.3) !important;
 }
 
 .cc-sidebar-loadout-header {
-    color: #ebd9c3 !important;
+    color: #ffcc66 !important;
 }
 
 .cc-sidebar-loadout-group.common {
-    background: rgba(139, 90, 43, 0.15) !important;
-    border-color: rgba(201, 173, 106, 0.3) !important;
+    background: rgba(255, 204, 102, 0.08) !important;
+    border-color: rgba(255, 204, 102, 0.3) !important;
 }
 
 .cc-spec-card {
     background: transparent !important;
-    border-color: rgba(201, 173, 106, 0.25) !important;
+    border-color: rgba(90, 74, 42, 0.5) !important;
 }
 
 .cc-spec-card:hover {
-    background: rgba(139, 90, 43, 0.35) !important;
-    border-color: #c9ad6a !important;
+    background: rgba(45, 38, 25, 0.95) !important;
+    border-color: #ffcc66 !important;
 }
 
 .cc-spec-card.selected {
-    background: linear-gradient(180deg, rgba(139, 90, 43, 0.6), rgba(92, 65, 40, 0.4)) !important;
-    border-color: #f7e6cd !important;
-    box-shadow: 0 0 10px rgba(201, 173, 106, 0.3) !important;
+    background: linear-gradient(180deg, rgba(80, 60, 20, 0.9), rgba(40, 30, 15, 0.9)) !important;
+    border-color: #ffd700 !important;
+    box-shadow: 0 0 12px rgba(255, 204, 102, 0.35) !important;
 }
 
 .cc-bio-section {
@@ -1000,21 +1042,18 @@
 }
 
 .cc-bio-section-title {
-    color: #ebd9c3 !important;
+    color: #ffcc66 !important;
 }
 
 .cc-bio-chip:hover {
-    border-color: #c9ad6a !important;
+    border-color: #ffcc66 !important;
     color: #ffffff !important;
 }
 
-/* A picked control is ink and a hairline, with nothing behind it. */
-.cc-bio-chip.selected,
-.cc-pick-row.selected {
-    background: transparent !important;
-    background-image: none !important;
-    border-color: #c9ad6a !important;
-    color: #fff8eb !important;
+.cc-bio-chip.selected {
+    background: linear-gradient(180deg, rgba(140, 98, 32, 0.5), rgba(80, 50, 10, 0.35)) !important;
+    border-color: #ffd700 !important;
+    color: #ffffff !important;
 }
 
 /* A card on the pet and garage boards carries no plate, no frame and no glow:
@@ -1033,294 +1072,237 @@
 
 .cc-pet-card.selected {
     background: none !important;
-    border-color: #f7e6cd !important;
+    border-color: #ffd700 !important;
     box-shadow: none !important;
 }
 
 .cc-sidebar-btn {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid #5c4128 !important;
-    color: #ebd9c3 !important;
-}
-
-.cc-sidebar-btn:hover {
-    background: rgba(139, 90, 43, 0.4) !important;
-    border-color: #8b5a2b !important;
-    color: #ffffff !important;
-}
-
-.cc-sidebar-btn.primary {
-    background: linear-gradient(135deg, #58180D, #3d0d05) !important;
-    border-color: #8b2b1b !important;
-    color: #ffffff !important;
-    box-shadow: 0 2px 8px rgba(88, 24, 13, 0.4) !important;
-}
-
-.cc-sidebar-btn.primary:hover {
-    background: linear-gradient(135deg, #782314, #521207) !important;
-    box-shadow: 0 0 10px rgba(139, 35, 20, 0.6) !important;
-}
-
-.cc-trait-budget-container {
-    background: rgba(239, 228, 200, 0.8) !important;
-    border: 1px solid #8b5a2b !important;
-}
-
-.cc-trait-budget-title {
-    color: #58180D !important;
-}
-
-.cc-name-input-group input.cc-name-input {
-    background: #efe4c8 !important;
-    border: 1px solid #8b5a2b !important;
-    color: #2c2418 !important;
-}
-
-.cc-dice-btn {
-    background: #58180D !important;
-    border: 1px solid #8b5a2b !important;
-    color: #ffffff !important;
-}
-
-/* ==========================================================================
-   Thinker (Crafting) + Blacksmithing (Anvil) menus, parchment-theme readability
-   The rarity of a name is a class now (.rarity--legendary and the rest, from
-   window.ItemSystemUtils.rarityClass), inked off the --rarity-* tokens this
-   file already tunes for parchment, so the tier colours need nothing here.
-   What is left is the success overlay's own plate: its cream comes from
-   --text-highlight-active, but the rows inside inherit the base theme's white
-   and wash out against it.
-   ========================================================================== */
-#thinker-container .success-overlay,
-#blacksmith-container .success-overlay {
-    background: rgba(244, 237, 212, 0.92) !important;
-}
-#thinker-container .success-item-row,
-#blacksmith-container .success-item-row {
-    background: rgba(200, 180, 150, 0.35) !important;
-}
-
-/* ==========================================================================
-   Profile-image (bust) picker, parchment-theme readability
-   The bust preset cards inherit a dark, filled surface (theme.css cream panel
-   plus the dark omega_tower override that leaks in by higher specificity), so
-   the white-paper ink portraits sit on a dark rectangle on the cream page.
-   Drop the card surface to nothing and multiply-blend the line art straight
-   onto the parchment. Specificity (0,3,0) + !important beats both bases.
-   ========================================================================== */
-.cc-presets-board .cc-bust-card.cc-wanted-card {
-    background: transparent !important;
-    box-shadow: none !important;
-}
-.cc-bust-card .cc-bust-image {
-    mix-blend-mode: multiply;
-}
-
-/* Right-page "Humanoid Species" list: the species cards hardcode inline gold
-   (#ffcc66 title / #e9c46a count) tuned for the dark page, which washes out on
-   parchment. Re-ink the names to the theme's deep red and the counts to sepia;
-   firm up the card outline and the selected highlight so the grid reads. */
-.cc-categories-list .cc-card-option .cc-option-title {
-    color: #58180D !important;
-}
-.cc-categories-list .cc-card-option .cc-element-badge {
-    color: #6b5242 !important;
-    background: transparent !important;
-    border: none !important;
-}
-.cc-categories-list .cc-card-option {
-    border-color: rgba(120, 90, 40, 0.45) !important;
-}
-.cc-categories-list .cc-card-option.selected {
-    border-color: #8b5a2b !important;
-    background-color: transparent !important;
-}
-
-/* ==========================================================================
-   Equip menu, parchment-theme readability
-   Item names are forced to pure white (theme.css var(--text-pure-white)), tuned
-   for the dark page; they vanish on the cream equip card. Re-ink to dark sepia.
-   ========================================================================== */
-.item-name {
-    color: #3a1f0f !important;
-}
-
-/* ==========================================================================
-   Fast-travel map, parchment-theme readability
-   - "Travel to ..." sidebar subtitle hardcodes inline #ffcc66 (pale gold) that
-     barely reads on the cream sidebar; re-ink to dark amber.
-   - The map marker tooltip ("Frozen Station" etc.) paints --text-primary-hover
-     (this theme's deep red #58180D) on a solid black box, an unreadable dark-on-
-     dark. The box is black in both themes, so force a light gold label.
-   ========================================================================== */
-#sidebar-dest-title {
-    color: #8b620b !important;
-}
-.travel-marker-tooltip {
+    background: rgba(255, 204, 102, 0.08) !important;
+    border: 1px solid #5a4a2a !important;
     color: #ffcc66 !important;
 }
 
-/* ==========================================================================
-   Travel countdown overlay, parchment-theme readability
-   The road timer (#html-travel-timer), the starship one
-   (#gx-ship-travel-timer) and the prison cell one (#html-prison-timer) share
-   .html-parchment-overlay, whose plate resolves to the cream page here, but
-   their inks were picked for the dark tower page: the clock is
-   --text-pure-white (1.13 on cream, the digits are ghosts) and the
-   "N km remaining" / bounty line is --text-text-alt-8 #7a7368 (3.37). Re-ink
-   the clock to the near-black this file spends on primary figures and the
-   distance/bounty to the same deep sepia as the hint line further down,
-   keeping the three lines in order of weight. The label and the
-   "Arrived at ..." line already paint this theme's deep red (9.9) and are
-   left alone. An id-scoped selector (1,1,0) outranks theme.css's bare class
-   without !important.
-   ========================================================================== */
-#html-travel-timer .travel-timer-time,
-#gx-ship-travel-timer .travel-timer-time,
-#html-prison-timer .prison-timer-time {
-    color: var(--text-muted-hover);
+.cc-sidebar-btn:hover {
+    background: rgba(255, 204, 102, 0.2) !important;
+    border-color: #ffd700 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(255, 204, 102, 0.3) !important;
 }
-#html-travel-timer .travel-timer-km,
-#gx-ship-travel-timer .travel-timer-km,
-#html-prison-timer .prison-timer-bounty {
-    color: #3a2414;
+
+.cc-sidebar-btn.primary {
+    background: linear-gradient(135deg, #8a6a20, #4d360a) !important;
+    border-color: #ffd700 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 12px rgba(255, 204, 102, 0.35) !important;
+}
+
+.cc-sidebar-btn.primary:hover {
+    background: linear-gradient(135deg, #b38b2a, #6e4e10) !important;
+    box-shadow: 0 0 16px rgba(255, 215, 0, 0.6) !important;
+}
+
+.cc-trait-budget-container {
+    background: rgba(10, 10, 10, 0.9) !important;
+    border: 1px solid #5a4a2a !important;
+}
+
+.cc-trait-budget-title {
+    color: #ffcc66 !important;
+}
+
+.cc-name-input-group input.cc-name-input {
+    background: rgba(0, 0, 0, 0.8) !important;
+    border: 1px solid #5a4a2a !important;
+    color: #ffffff !important;
+}
+
+.cc-dice-btn {
+    background: rgba(255, 204, 102, 0.12) !important;
+    border: 1px solid #5a4a2a !important;
+    color: #ffd700 !important;
 }
 
 /* ==========================================================================
-   Class / Vocation selector right page, parchment-theme readability
-   The "Masteries" dossier and the class cards hardcode light inks tuned for the
-   dark page: gold headers (#ffcc66 / #e9c46a), near-white skill lists (#dddddd),
-   pure-white class name (#ffffff) and pale-gold level badge (#ffcc66). All wash
-   out on the cream page. Re-ink to dark sepia/amber. Attribute selectors target
-   exactly those inline literals so nothing else in the pockets is touched; scoped
-   to .cc-pockets-spread (also catches the settings-preview gold subheader, a win).
+   World Manager (Create World / Manage Worlds), dark-theme readability
+   The dossier labels and the "CREATE WORLD" subheader inherit the base
+   theme's dark-brown ink (--border-muted-focus #5a4a2a), which is nearly
+   invisible on the Omega Tower black page. Lift labels to warm cream and the
+   subheader to amber glow so the dossier reads clearly.
    ========================================================================== */
-.cc-pockets-spread .cc-subheader[style*="#ffcc66"],
-.cc-pockets-spread .cc-subheader[style*="#e9c46a"] {
-    /* #8b620b landed at 4.42, just under AA, and was a second "deep gold"
-       competing with the #5a3c00 used everywhere else in this file. */
-    color: #5a3c00 !important;
+#world-manage-container .cc-dossier-label {
+    color: var(--accent-cream-warm) !important;
 }
-
-/* Creature step: the hint under the anatomy / archetype picker is written as a
-   55% wash of dark brown (2.90 on the cream page). Same hue, full strength. */
-.cc-pockets-spread [style*="rgba(94,47,23,0.55)"] {
-    color: #3a2414 !important;
+#world-manage-container .cc-dossier-value {
+    color: var(--accent-cream-light) !important;
 }
-.cc-pockets-spread .cc-dossier-card p[style*="#dddddd"] {
-    color: #4a2f20 !important;
+#world-manage-container .wm-create label {
+    color: var(--accent-cream-warm) !important;
+    opacity: 1;
 }
-.cc-pockets-spread .cc-wanted-name[style*="#ffffff"] {
-    color: #5c4128 !important;
-}
-.cc-pockets-spread .cc-wanted-class[style*="#ffcc66"] {
-    color: #6b5242 !important;
+#world-manage-container .cc-text-desc {
+    color: var(--text-card-medium) !important;
 }
 
 /* ==========================================================================
-   DialogueSystem choice overlay, parchment-theme readability
-   The choice list (#html-choice-overlay -> .html-choice-item, e.g. the vehicle
-   "Start driving / Fast Travel / Pick up / Leave" popup) defaults to light gold
-   (#ffcc66) ink tuned for the dark Omega Tower page; it washes out on the cream
-   parchment, and the gold selected highlight barely registers. Re-ink the
-   options to dark amber/sepia and give the selected row a deeper amber outline
-   and a subtle warm fill so it reads on the page. Scoped to this file only.
+   Native dropdowns (<select>), gold Omega Tower styling
+   The default browser/parchment dropdown chrome reads as washed-out brown on
+   the black tower. Force every native dropdown to the gold-on-black scheme:
+   gold text + gold border on a dark panel, with the selected/hovered option
+   highlighted in amber.
    ========================================================================== */
-.html-choice-item {
-    color: #5c4128;
+select {
+    background: var(--bg-panel) !important;
+    color: var(--text-primary-hover) !important;
+    border: 1px solid var(--border-focus-hover) !important;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-weight: bold;
 }
-.html-choice-item.disabled {
-    color: rgba(92, 65, 40, 0.45);
-}
-.html-choice-item.selected {
-    color: #3e1b0c;
-    background: rgba(160, 120, 50, 0.20);
-    border-color: #8b5a2b;
-}
-
-/* ==========================================================================
-   Character-creation "Confirm" button, parchment-theme look
-   The base theme flips the Confirm button's hover / highlighted (keyboard /
-   controller focus) state to a flat, bright-yellow (accent-gold-pure) fill that
-   clashes with the parchment book and washes the black label out. Keep the
-   button in the deep-maroon + gold palette: a warmer lifted red fill, a bright
-   gold border and a soft gold glow, with cream text. Scoped to .cc-btn-treaty
-   (character-creation only); the resting label is re-inked cream for contrast.
-   ========================================================================== */
-.cc-btn-treaty.confirm {
-    color: #f4edd4 !important;
-}
-.cc-btn-treaty.confirm:hover,
-.cc-btn-treaty.confirm.highlighted {
-    background: #7a2618 !important;
+select:focus {
+    outline: none;
     border-color: var(--accent-gold-pure) !important;
-    color: #fff4d2 !important;
-    box-shadow: 0 8px 16px var(--shadow-gold-amber-50),
-                0 0 10px var(--accent-gold-pure-translucent-30) !important;
+    box-shadow: 0 0 6px var(--shadow-gold-amber-50);
+}
+select option {
+    background: var(--bg-panel);
+    color: var(--text-primary-hover);
+}
+select option:checked,
+select option:hover {
+    background: var(--bg-tertiary-focus-translucent-45);
+    color: var(--accent-amber-glow);
 }
 
 /* ==========================================================================
-   Factions screen, parchment-theme readability
-   - Left-page reputation badges paint their colour inline from
-     getReputationColor(): the Neutral tier is pure white (#FFFFFF) and the two
-     positive tiers are pale greens (#98FB98 / #90EE90), all tuned for the dark
-     Omega Tower page. On this cream parchment they wash out. Re-ink the white
-     badge to dark sepia and the pale greens to a saturated forest green.
-   - The right-page heraldry emblem box defaults to a cream background
-     (--bg-secondary-hover #faf4e6), so its icon (often light pixels) blends into
-     the parchment and vanishes. Drop in a dark warm-brown medallion background so
-     the emblem reads against it, framed by the existing deep-red border.
+   Thinker (Crafting) menu, dark-theme readability
+   The category and blueprint rows render a warm translucent-gold fill
+   (--bg-primary-hover-translucent-35) that reads as a muddy brown box on the
+   black tower page, and the category names inherit the base theme's dark-brown
+   ink (--border-muted-focus #5a4a2a) with tan counts, all barely legible.
+   Drop the brown row fill (keep only a faint border for separation) and repaint
+   every category + item label white so the recipe list reads clearly.
    ========================================================================== */
-.faction-rep-badge[style*="#FFFFFF"] {
-    color: #5c4128 !important;
-}
-.faction-rep-badge[style*="#98FB98"],
-.faction-rep-badge[style*="#90EE90"] {
-    color: #2e7d32 !important;
-}
-.heraldry-emblem-box {
-    background: transparent !important;
-}
-
-/* ==========================================================================
-   Inventory inspect (right page), parchment-theme readability
-   The item-detail panel packs dense 0.82rem serif text on a barely-tinted
-   translucent-white plate, so spec rows and lore blur into the cream page.
-   Firm the lore plate into a warm parchment card with a clear border, deepen
-   the spec labels and the section-title underline, and nudge the row text up a
-   little so the detail page reads cleanly. (The backpack flattens this plate
-   away again; see .inspect-pockets in theme.css.)
-   ========================================================================== */
-.item-inspect .inspect-lore {
+#thinker-container .category-row,
+#thinker-container .blueprint-row {
     background: transparent;
-    border-color: transparent;
 }
-.item-inspect .inspect-section-title {
-    color: var(--text-detail-heading);
-    border-bottom-color: transparent;
+#thinker-container .category-row:hover,
+#thinker-container .category-row.focused,
+#thinker-container .blueprint-row:hover,
+#thinker-container .blueprint-row.focused,
+#thinker-container .blueprint-row.active {
+    background: var(--bg-tertiary-focus-translucent-45);
 }
-.item-inspect .inspect-spec-row { font-size: var(--fs-detail-body); }
-.item-inspect .inspect-spec-label { color: var(--text-detail-label); }
-.item-inspect .inspect-spec-value { color: var(--text-success-active); }
-.item-inspect .inspect-bullet-item { color: var(--text-success-active); }
+
+/* The pieces' own names carry their rarity class and are inked by it; only
+   the trade headings, their counts and a locked row are forced white. */
+#thinker-container .category-name,
+#thinker-container .category-count,
+#thinker-container .blueprint-name-locked {
+    color: var(--text-pure-white) !important;
+}
 
 /* ==========================================================================
-   Training / Fuse Spells menu (SkillMaster), parchment-theme readability
-   Mirrors the omega_tower block so this preset is self-contained: legible idle
-   card names on cream, clear hover + focus feedback for every pickable card /
-   row / button, and an obviously-grabbable spell-preview canvas. Idle names are
-   re-inked to a dark sepia (the JS default --text-card-medium already reads on
-   cream, so this is a firm safety net) while the focused state stays deep red.
+   Blacksmithing (Anvil) menu, dark-theme readability
+   The trade list and the blueprint rows under it are the same .category-row
+   widget as the Thinker's, so they carry the same muddy brown fill and the
+   dark-brown ink. Strip the fill (border only) and repaint trade names, their
+   x / y counts and the piece names white.
+   ========================================================================== */
+#blacksmith-container .category-row,
+#blacksmith-container .blueprint-row {
+    background: transparent;
+}
+#blacksmith-container .category-row:hover,
+#blacksmith-container .category-row.focused,
+#blacksmith-container .blueprint-row:hover,
+#blacksmith-container .blueprint-row.focused,
+#blacksmith-container .blueprint-row.active {
+    background: var(--bg-tertiary-focus-translucent-45);
+}
+
+/* The pieces' own names carry their rarity class and are inked by it; only
+   the trade headings, their counts and a locked row are forced white. */
+#blacksmith-container .category-name,
+#blacksmith-container .category-count,
+#blacksmith-container .blueprint-name-locked {
+    color: var(--text-pure-white) !important;
+}
+
+/* ==========================================================================
+   Thinker + Blacksmithing, "item obtained" success overlay
+   .success-overlay and .success-item-row read var(--text-highlight-active)
+   and var(--text-warning-hover), both pure white in this theme, so the
+   whole "you obtained X" popup renders as a stark white card floating on
+   the black tower page. success-obtained-label's dark ink (--border-muted-
+   focus) is tuned for that white card and would vanish were the background
+   simply darkened without repainting it too. Give both menus a black panel
+   with a gold rule instead, and lift the label to gold.
+   ========================================================================== */
+#thinker-container .success-overlay,
+#blacksmith-container .success-overlay {
+    background: var(--bg-panel) !important;
+    border: 1px solid var(--border-focus-hover);
+    box-shadow: 0 0 16px var(--shadow-gold-amber-50);
+}
+#thinker-container .success-item-row,
+#blacksmith-container .success-item-row {
+    background: var(--bg-tertiary-focus-translucent-45) !important;
+    border: 1px solid var(--border-focus-hover);
+}
+#thinker-container .success-obtained-label,
+#blacksmith-container .success-obtained-label {
+    color: var(--text-primary-hover) !important;
+}
+
+/* Disassemble owned-count is painted dark brown (#5c2c16) inline -> lift it. */
+#thinker-container .blueprint-count[style*="#5c2c16"] {
+    color: var(--text-text-alt-8) !important;
+}
+
+/* Empty-state prompts ("No item available to salvage", "Select an item to
+   salvage...") use the faint translucent gold by default -> make them white. */
+#thinker-container .workbench-empty {
+    color: var(--text-pure-white) !important;
+}
+
+/* Buttons: black background with gold text/border (issue #70).
+   The base theme inverts the active tab (gold bg + dark text) and paints the
+   craft button gold bg + white text; force both to black-on-gold-ink instead. */
+#thinker-container .tab-btn,
+#thinker-container .tab-btn.active {
+    background: var(--bg-base) !important;
+    color: var(--text-primary-hover) !important;
+    border: 1px solid var(--text-primary-hover) !important;
+}
+#thinker-container .tab-btn.active {
+    box-shadow: 0 0 6px var(--shadow-gold-amber-50) !important;
+}
+#thinker-container .transmute-btn.enabled {
+    background: var(--bg-base) !important;
+    color: var(--text-primary-hover) !important;
+    border: 2px solid var(--text-primary-hover) !important;
+}
+
+/* ==========================================================================
+   Training / Fuse Spells menu (SkillMaster), dark-theme readability
+   The category / member cards, the Fuse Spells editor slots, the animation
+   rows and the Teach / Preview action buttons all paint their idle text with
+   inline vars that can fall dark on the black page. Guarantee legible idle
+   card names, add unmistakable hover + focus feedback (inline styles cannot
+   express :hover, so these !important rules add genuine behaviour), and keep
+   the focused state clearly brighter than the rest.
    ========================================================================== */
 .book-spread .member-card,
 .book-spread .focusable {
     transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-/* Idle card names -> dark sepia so every card reads on the cream page. */
+/* Idle card names -> warm cream so every card reads even before it is focused. */
 .book-spread .category-card-name,
 .book-spread .member-card-name {
-    color: var(--text-card-dark) !important;
+    color: var(--accent-cream-warm) !important;
+    text-shadow: 0 1px 2px var(--shadow-black-translucent-55);
 }
 .book-spread .category-card.focused .category-card-name,
 .book-spread .member-card.focused .member-card-name {
@@ -1342,18 +1324,237 @@
 }
 
 /* ==========================================================================
-   Sandbox Mode (SandboxMode.js), parchment-theme navigation feedback
-   Mirrors the omega_tower block so this preset is self-contained: the dual-
-   pockets sandbox overlay (#menu-container > .book-spread) applies its keyboard /
-   mouse-wheel cursor and hover states via the `.selected` class and :hover with
-   no styling of their own. Give every pickable row a clear hover + selected
-   highlight (inset box-shadow so nothing reflows), a deeper label when selected,
-   a legible search placeholder, and a themed scrollbar for the long category /
+   Book-page menus that hardcode parchment inks, dark-theme readability
+   Several book/pockets menus (Prosthetic Clinic, Biologic Simulation, Plant
+   Growth tools-pockets) paint their text in dark sepia hex literals (#58180D
+   titles/names, #5d483b/#4a1d0f sub-text, #2e7d32 status green, #822d2d/#8b1e10
+   alert reds) that were tuned for the cream parchment theme. On this near-black
+   page they are dark-on-dark and unreadable. Re-ink to light equivalents.
+   Attribute selectors match only those exact inline literals, so token-based
+   text in the same containers is untouched; scoped to the .book-spread and
+   .tools-pockets shells these menus render in.
+   ========================================================================== */
+.book-spread [style*="#58180D"],
+.book-spread [style*="#58180d"],
+.tools-pockets [style*="#58180D"],
+.tools-pockets [style*="#58180d"],
+.book-spread [style*="#4a1d0f"],
+.tools-pockets [style*="#4a1d0f"] {
+    color: var(--accent-amber-glow) !important;
+}
+.book-spread [style*="#5d483b"],
+.book-spread [style*="#2b1207"],
+.book-spread [style*="#6b5242"],
+.tools-pockets [style*="#5d483b"],
+.tools-pockets [style*="#2b1207"],
+.tools-pockets [style*="#6b5242"] {
+    color: var(--accent-cream-warm) !important;
+}
+.book-spread [style*="#2e7d32"],
+.book-spread [style*="#3d5e38"],
+.tools-pockets [style*="#2e7d32"],
+.tools-pockets [style*="#3d5e38"] {
+    color: #84e884 !important;
+}
+.book-spread [style*="#16487e"],
+.tools-pockets [style*="#16487e"] {
+    color: #7fb3ff !important;
+}
+.book-spread [style*="#822d2d"],
+.book-spread [style*="#8b1e10"],
+.tools-pockets [style*="#822d2d"],
+.tools-pockets [style*="#8b1e10"] {
+    color: #ff9b86 !important;
+}
+
+/* ==========================================================================
+   Factions screen, Diplomatic Agreements legibility
+   Each agreement row (.politics-grid > div) holds a "vs. <faction>" label span
+   that carries NO inline colour, so it inherits the dark page ink and is
+   invisible on the black page. The relationship value span (second span) keeps
+   its own inline colour (Neutral #6b5242 -> cream via the remap above; Allied
+   #2e7d32 -> green), so we lift ONLY the first-child label to cream. The hostile
+   value (#c62828) is dark-on-black, so brighten it to rose.
+   ========================================================================== */
+.book-spread .politics-grid div > span:first-child {
+    color: var(--accent-cream-warm) !important;
+}
+.book-spread .politics-grid [style*="#c62828"] {
+    color: #ff9b86 !important;
+}
+/* "Independent." fallback ink (#8c715c) is dark-on-black -> cream (issue #77). */
+.book-spread .politics-grid [style*="#8c715c"] {
+    color: var(--accent-cream-warm) !important;
+}
+/* Heraldry card body text with no inline colour (Council Leaders label +
+   leader names) inherits the dark page ink and is invisible. Lift the whole
+   card's default text to cream so every uncoloured line reads; elements that
+   set their own inline colour still win (issue #77). */
+.book-spread .faction-heraldry-card {
+    color: var(--accent-cream-warm);
+}
+
+/* ==========================================================================
+   Steal window (Scene_Steal), top-aligned layout
+   The shared .left-page / .right-page use justify-content: space-between and
+   .inspect-lore carries flex-grow: 1, so the item description balloons to fill
+   the page and the Weight / Value / Success rows get pushed to the bottom.
+   For the steal screen, stack everything from the top and let the description
+   size to its content (with a sensible cap + scroll for long lore).
+   ========================================================================== */
+#steal-container.book-spread .left-page,
+#steal-container.book-spread .right-page {
+    justify-content: flex-start;
+}
+
+#steal-container .inspect-lore {
+    flex-grow: 0;
+    max-height: 40%;
+    margin-bottom: 16px;
+}
+
+/* ==========================================================================
+   Inventory inspect (right page), dark-theme readability
+   The item-detail panel packs dense 0.82rem serif text. Several pieces are
+   illegible on the black tower page: the lore plate barely tints the page and
+   the attribute-modifier green/red literals (#2e7d32 / #c62828) read dark.
+   Lift the plate to a solid warm-dark card, re-ink the labels to cream/white,
+   brighten the section titles, and remap the inline +/- colours. (The backpack
+   flattens this plate away again; see .inspect-pockets in theme.css.)
+   ========================================================================== */
+.item-inspect .inspect-lore {
+    background: transparent;
+    border-color: transparent;
+    color: var(--text-success-active);
+}
+.item-inspect .inspect-section-title {
+    color: var(--text-detail-heading);
+    border-bottom-color: transparent;
+}
+.item-inspect .inspect-spec-row { font-size: var(--fs-detail-body); }
+.item-inspect .inspect-spec-label { color: var(--text-detail-label); }
+.item-inspect .inspect-spec-value { color: var(--text-success-active); }
+.item-inspect .inspect-bullet-item { color: var(--text-success-active); }
+.item-inspect .inspect-meta-val { color: var(--text-success-active); }
+/* Attribute modifiers: the card no longer inks them inline, so the gain and
+   the loss are named classes read off the theme's own cost tokens. */
+.item-inspect .inspect-spec-value--gain { color: var(--text-cost-ok); }
+.item-inspect .inspect-spec-value--loss { color: var(--text-cost-bad); }
+
+/* ==========================================================================
+   Assets / Bestiary / Equip / Workbench screens, dark-theme readability
+   These four book-spread screens (ItemSystemInventoryUI is the reference
+   layout) render their labels in the base theme's dark-brown ink
+   (--border-muted-focus #5a4a2a, sepia #6b5242) and their names in a
+   near-black (#1a1a1a / --text-brown-dark), both of which vanish on the
+   Omega Tower black page; their descriptions sit in a dim tan. Per the readable
+   spec: every label -> bright gold, every description -> white, and the
+   dark item/monster names -> cream so they read. Scoped to each screen's
+   container so nothing else is touched.
+   ========================================================================== */
+
+/* --- Assets (AssetsMenu, #menu-container). The plugin injects its own
+       parchment-tuned inline <style> AFTER this sheet, so !important is
+       required to win the cascade. --- */
+#menu-container .assets-sum-lbl,
+#menu-container .assets-cat-header,
+#menu-container .assets-graph-title,
+#menu-container .assets-detail-name {
+    color: var(--text-primary-hover) !important;   /* labels -> bright gold */
+}
+#menu-container .assets-row-name {
+    color: var(--text-pure-white) !important;       /* near-black name -> white */
+}
+#menu-container .assets-row-sub,
+#menu-container .assets-legend-item,
+#menu-container .assets-row-bought {
+    color: var(--accent-cream-warm) !important;
+}
+#menu-container .assets-empty,
+#menu-container .assets-detail-empty {
+    color: var(--text-pure-white) !important;       /* description -> white */
+}
+/* Pockets row + detail figures (green gain / red loss) tuned for cream -> bright. */
+#menu-container .assets-row-val[style*="#1f6f3f"],
+#menu-container .assets-detail .inspect-spec-value[style*="#1f6f3f"] { color: #84e884 !important; }
+#menu-container .assets-row-val[style*="#b3322b"],
+#menu-container .assets-detail .inspect-spec-value[style*="#b3322b"] { color: #ff9b86 !important; }
+#menu-container .assets-detail .inspect-spec-label { color: var(--text-primary-hover) !important; }
+#menu-container .assets-detail .inspect-spec-value { color: var(--accent-cream-light) !important; }
+#menu-container .assets-detail .inspect-section-title { color: var(--accent-amber-glow) !important; }
+#menu-container .assets-sum-card {
+    background: var(--bg-dark-warm-translucent-96) !important;
+    border-color: var(--border-gold-amber-30) !important;
+}
+/* Summary values carry a dark parchment-tuned inline colour (Cash #4a2711,
+   greens #2e7d32/#1f6f3f, red #b3322b) that is dark-on-dark on the new card.
+   Remap each to a bright equivalent so the figures read. */
+#menu-container .assets-sum-val[style*="#4a2711"] { color: var(--accent-cream-light) !important; }
+#menu-container .assets-sum-val[style*="#2e7d32"],
+#menu-container .assets-sum-val[style*="#1f6f3f"] { color: #84e884 !important; }
+#menu-container .assets-sum-val[style*="#b3322b"] { color: #ff9b86 !important; }
+
+/* --- Bestiary (#bestiary-list-viewport list + #bestiary-portfolio-container
+       right page) --- */
+#bestiary-list-viewport .monster-name {
+    color: var(--accent-cream-light) !important;    /* dark-brown name -> cream */
+}
+#bestiary-list-viewport .monster-subtitle,
+#bestiary-portfolio-container .stat-label,
+#bestiary-portfolio-container .ecology-lbl,
+#bestiary-portfolio-container .badge {
+    color: var(--text-primary-hover) !important;    /* labels -> bright gold */
+}
+#bestiary-portfolio-container .badge {
+    border-color: var(--border-focus-hover) !important;
+    background: var(--accent-amber-badge) !important;
+}
+#bestiary-portfolio-container .portfolio-description {
+    color: var(--text-pure-white) !important;       /* description -> white */
+}
+
+/* --- Equip (#equip-container) --- */
+#equip-container .stat-label,
+#equip-container .custom-stat-label {
+    color: var(--text-primary-hover) !important;    /* labels -> bright gold */
+}
+#equip-container .stat-val,
+#equip-container .stat-val-new,
+#equip-container .custom-stat-val {
+    color: var(--accent-cream-light) !important;
+}
+#equip-container .equip-lore {
+    color: var(--text-pure-white) !important;        /* item lore -> white */
+    opacity: 1 !important;
+}
+#equip-container .equip-lore-name {
+    color: var(--text-primary-hover) !important;    /* selected piece -> bright gold */
+}
+
+/* --- Workbench (ThinkerMenu, #thinker-container). Item names + category rows
+       are already forced white above; here the flavour description and the
+       salvage/reagent names are dim, so lift them. --- */
+#thinker-container .workbench-desc {
+    color: var(--text-pure-white) !important;        /* description -> white */
+}
+#thinker-container .reagent-name {
+    color: var(--accent-cream-light) !important;
+}
+
+/* ==========================================================================
+   Sandbox Mode (SandboxMode.js), dark-theme navigation feedback
+   The dual-pockets sandbox overlay (#menu-container > .book-spread) inks its
+   category rows and outcome rows with theme tokens (legible on the black page),
+   but the keyboard / mouse-wheel cursor and hover states are applied via the
+   `.selected` class and :hover with no styling of their own, so the focused row
+   was invisible. Give every pickable row a clear hover + selected highlight
+   (inset box-shadow so nothing reflows), a brighter label when selected, a
+   legible search placeholder, and a gold scrollbar for the long category /
    outcome lists.
    ========================================================================== */
 #menu-container .category-item:hover,
 #menu-container .action-item:hover {
-    background: var(--bg-focus-hover-translucent-15);
+    background: var(--bg-primary-hover-translucent-35);
 }
 #menu-container .category-item.selected,
 #menu-container .action-item.selected {
@@ -1362,14 +1563,14 @@
 }
 #menu-container .category-item.selected span,
 #menu-container .action-item.selected span {
-    color: var(--text-secondary-active) !important;
+    color: var(--accent-amber-glow) !important;
 }
 #menu-container #sandbox-search::placeholder {
     color: var(--text-card-medium);
     opacity: 1;
 }
 #menu-container #sandbox-search:focus {
-    border-color: var(--border-focus-hover);
+    border-color: var(--accent-gold-pure);
     box-shadow: 0 0 6px var(--shadow-gold-amber-50);
 }
 #menu-container .categories-list::-webkit-scrollbar,
@@ -1383,9 +1584,10 @@
 }
 
 /* ==========================================================================
-   Archive / Help Codex (HelpMenu.js), parchment-theme readability
-   Force the entry body text to solid black so the description prose reads at
-   full contrast on the cream page (mirrors the omega_tower white override).
+   Archive / Help Codex (HelpMenu.js), dark-theme readability
+   The entry body text defaults to --text-muted-hover (a mid tan), which reads
+   fine but is dimmer than the rest of this high-contrast dark theme. Force
+   pure white for the description prose (issue: "archive text hard to read").
    ========================================================================== */
 #help-container .help-body {
     color: var(--text-success-active);
@@ -1395,113 +1597,197 @@
    Bestiary, empty-state readability
    ========================================================================== */
 .bestiary-list-empty {
-    color: var(--text-pure-black) !important;
+    color: var(--text-pure-white) !important;
 }
 
-/* Portfolio (right page) prose is written as a 30-60% wash of dark brown
-   (rgba(94,47,23,a)): the "Drawing..." placeholder, the 3D drag hint, the seed
-   caption and the three "nothing recorded" lines land at 1.7-3.3 on the cream
-   page, i.e. a faint smudge exactly where the page says nothing was found.
-   Take the alpha off: same hue, full strength, so the prose reads.
+/* Portfolio (right page) prose written with parchment-era inline literals:
+   the "Drawing..." placeholder, the 3D drag hint, the seed caption and the
+   three "nothing recorded" lines all paint a 30-60% wash of dark brown
+   (rgba(94,47,23,a)), which lands at 1.1-1.3 on the black page, and the EXP
+   figure paints the parchment red #8c1d0f (2.17). Re-ink to cream / amber.
    ========================================================================== */
 #bestiary-portfolio-container [style*="rgba(94,47,23,0.3)"],
 #bestiary-portfolio-container [style*="rgba(94,47,23,0.5)"],
 #bestiary-portfolio-container [style*="rgba(94,47,23,0.55)"],
 #bestiary-portfolio-container [style*="rgba(94,47,23,0.6)"] {
-    color: #3a2414 !important;
+    color: var(--accent-cream-warm) !important;
+}
+#bestiary-portfolio-container [style*="#8c1d0f"] {
+    color: var(--accent-amber-glow) !important;
 }
 
 /* ==========================================================================
-   Preferences / Settings menu (GameOptions.js), parchment-theme readability
+   Preferences / Settings menu (GameOptions.js), dark-theme readability
    ========================================================================== */
 #options-inspect .inspect-placeholder-text,
 #options-inspect .inspect-bullet-item,
 #options-inspect .inspect-spec-value {
-    color: var(--text-pure-black) !important;
+    color: var(--text-pure-white) !important;
 }
 
 /* ==========================================================================
    Cooking menu, empty-preview hint readability
    ========================================================================== */
 .cooking-empty-hint p {
-    color: var(--text-pure-black) !important;
+    color: var(--text-pure-white) !important;
+}
+
+/* The "Disastrous Effect (-75%)" warning under a bad pairing is set in the
+   parchment-era red #c0392b at 10px bold: 3.64 on the black page, under AA
+   for text this small. Brighten it to the rose used by every other alert. */
+#cooking-container [style*="#c0392b"] {
+    color: #ff9b86 !important;
 }
 
 /* ==========================================================================
-   Container Storage / Body Part Harvest mini windows, parchment-theme
-   readability. These small centered DOM windows (ContainerSystemUI.js) fall
-   back to a fixed cream ink tuned for the dark tower page, which washes out
-   on the cream parchment. Force black so item names, counts and status text
-   read clearly against the light panel.
+   Backpack, "Cancel" targeting button readability
+   The button that backs out of item targeting is inked with a bare grey
+   literal (#555 text on a #555 border), 2.66 on the black page. Every other
+   .inspect-btn takes its colour from the theme, so bring this one in line.
+   ========================================================================== */
+.inspect-btn[style*="#555"] {
+    color: var(--text-primary-hover) !important;
+    border-color: var(--border-focus-hover) !important;
+}
+
+/* ==========================================================================
+   Workforce (ArmyManager.js), release prompt readability
+   The "Press OK to Release this Troop from Service" line is the one action
+   the troop card offers, and it is set 0.8em bold in --accent-red-2 (#d32f2f),
+   3.98 on the black page. Lift it to the rose used for every other alert ink.
+   ========================================================================== */
+#menu-container [style*="--accent-red-2"] {
+    color: #ff9b86 !important;
+}
+
+/* ==========================================================================
+   Status sheet, superseded stat value readability
+   A buffed / debuffed stat prints its original value struck through in
+   --text-blood-red (#c02020 here), which is 3.27 on the black page. Lift it
+   to the rose used for every other dark-theme alert ink.
+   ========================================================================== */
+.stat-number.debuffed {
+    color: #ff9b86 !important;
+}
+
+/* ==========================================================================
+   Container Storage / Body Part Harvest mini windows, dark-theme readability
+   These small centered DOM windows (ContainerSystemUI.js) fall back to a
+   fixed cream ink when no theme overrides it. Force bright white so item
+   names, counts and status text read clearly against the dark tower panel.
    ========================================================================== */
 #cs-mini, #hv-mini {
-    color: var(--text-pure-black) !important;
+    color: var(--text-pure-white) !important;
 }
 
 /* ==========================================================================
-   Periodic Table (PeriodicTableSystem.js), the category ladder
-   Element category is meaning rather than decoration, exactly as item rarity
-   is, so it is a colour ladder of tokens and never a literal. Each cell,
-   legend swatch and symbol tile carries a .pt-cat-<category> class; the shared
-   rules in theme.css read the three properties below off it. Every ink here is
-   deep enough to be told apart on the cream page.
+   Specializations menu (UI/SpecializationMenu.js)
+   The detail page and the list rows leave most of their text uncoloured and
+   inherit the page ink, which on this black-page theme reads as black on
+   black. Ink both panels with theme tokens; the inline gold headings and the
+   active class / trait rows keep their own colour.
+   ========================================================================== */
+#spec-detail-content {
+    color: var(--accent-cream-warm);
+}
+
+#spec-list-content {
+    color: var(--text-pure-white);
+}
+
+/* ==========================================================================
+   Menu pockets sub-labels (CustomMainMenuLayout.js), dark-theme readability
+   The Party Dynamics tiles, roster rows, pets and vehicles lines carry a
+   secondary description line under the label. Its default tan reads as a dim
+   smudge on this black-page theme, so ink it pure white.
+   ========================================================================== */
+#menu-container .pockets-hint {
+    color: var(--text-pure-white) !important;
+}
+
+/* The Roster / Roster History / Pets / Vehicles pages write their own
+   parchment-era inline literals that no rule above reaches: the class + level
+   + fuel + date captions in mid-brown #7a5c3a (3.22 on the black page), the
+   roster-status inks (Travelling #3c6b2f 2.6, Inactive/Departed #7a5c3a) and
+   the Dead marker / arming "Confirm" control in maroon #8b1010 (2.05).
+   The parchment preset already re-inks #7a5c3a; this is the dark-side twin.
+   ========================================================================== */
+.tools-pockets [style*="#7a5c3a"] {
+    color: var(--accent-cream-warm) !important;
+}
+.tools-pockets [style*="#3c6b2f"] {
+    color: #84e884 !important;
+}
+.tools-pockets [style*="#8b1010"] {
+    color: #ff9b86 !important;
+}
+
+/* ==========================================================================
+   Periodic Table (PeriodicTableSystem.js), dark-theme readability
+   The table is built with parchment-era inline inks: near-black symbols
+   (#2c2416) on a 13%-alpha wash of a dark category colour, sepia labels
+   (#6b5242 / #5a3e28 / #8b5a2b) and near-black values (#3e1b0c / #3e2c1a).
+   Every one of them is dark-on-black here, so the grid reads as empty boxes.
+   Each cell / legend swatch / big symbol tile carries a .pt-cat-<category>
+   class, so the fix is a per-category set of bright inks driven through four
+   custom properties, plus warm-dark plates for the two right-page panels.
    ========================================================================== */
 
-/* --- Per-category palette: ink (border/swatch), fill (rest), hover. --- */
+/* --- Per-category palette: ink (text/border), fill (rest), hover, glow. --- */
 #pt-container .pt-cat-alkaliMetal {
-    --pt-ink: rgba(192, 57, 43, 0.75);
-    --pt-fill: rgba(192, 57, 43, 0.18);
-    --pt-hover: rgba(192, 57, 43, 0.34);
+    --pt-ink: #ff7b6b;
+    --pt-fill: rgba(255, 123, 107, 0.14);
+    --pt-hover: rgba(255, 123, 107, 0.30);
 }
 #pt-container .pt-cat-alkalineEarth {
-    --pt-ink: rgba(211, 84, 0, 0.75);
-    --pt-fill: rgba(211, 84, 0, 0.18);
-    --pt-hover: rgba(211, 84, 0, 0.34);
+    --pt-ink: #ffa14a;
+    --pt-fill: rgba(255, 161, 74, 0.14);
+    --pt-hover: rgba(255, 161, 74, 0.30);
 }
 #pt-container .pt-cat-transitionMetal {
-    --pt-ink: rgba(141, 110, 0, 0.75);
-    --pt-fill: rgba(141, 110, 0, 0.18);
-    --pt-hover: rgba(141, 110, 0, 0.34);
+    --pt-ink: #e8c24a;
+    --pt-fill: rgba(232, 194, 74, 0.14);
+    --pt-hover: rgba(232, 194, 74, 0.30);
 }
 #pt-container .pt-cat-postTransition {
-    --pt-ink: rgba(39, 112, 74, 0.75);
-    --pt-fill: rgba(39, 112, 74, 0.18);
-    --pt-hover: rgba(39, 112, 74, 0.34);
+    --pt-ink: #6fd08c;
+    --pt-fill: rgba(111, 208, 140, 0.14);
+    --pt-hover: rgba(111, 208, 140, 0.30);
 }
 #pt-container .pt-cat-metalloid {
-    --pt-ink: rgba(26, 107, 107, 0.75);
-    --pt-fill: rgba(26, 107, 107, 0.18);
-    --pt-hover: rgba(26, 107, 107, 0.34);
+    --pt-ink: #5fd0cc;
+    --pt-fill: rgba(95, 208, 204, 0.14);
+    --pt-hover: rgba(95, 208, 204, 0.30);
 }
 #pt-container .pt-cat-nonmetal {
-    --pt-ink: rgba(36, 113, 163, 0.75);
-    --pt-fill: rgba(36, 113, 163, 0.18);
-    --pt-hover: rgba(36, 113, 163, 0.34);
+    --pt-ink: #6fb6ef;
+    --pt-fill: rgba(111, 182, 239, 0.14);
+    --pt-hover: rgba(111, 182, 239, 0.30);
 }
 #pt-container .pt-cat-halogen {
-    --pt-ink: rgba(108, 52, 131, 0.75);
-    --pt-fill: rgba(108, 52, 131, 0.18);
-    --pt-hover: rgba(108, 52, 131, 0.34);
+    --pt-ink: #c98ce0;
+    --pt-fill: rgba(201, 140, 224, 0.14);
+    --pt-hover: rgba(201, 140, 224, 0.30);
 }
 #pt-container .pt-cat-nobleGas {
-    --pt-ink: rgba(74, 35, 90, 0.75);
-    --pt-fill: rgba(74, 35, 90, 0.18);
-    --pt-hover: rgba(74, 35, 90, 0.34);
+    --pt-ink: #b98fe8;
+    --pt-fill: rgba(185, 143, 232, 0.14);
+    --pt-hover: rgba(185, 143, 232, 0.30);
 }
 #pt-container .pt-cat-lanthanide {
-    --pt-ink: rgba(176, 19, 90, 0.75);
-    --pt-fill: rgba(176, 19, 90, 0.18);
-    --pt-hover: rgba(176, 19, 90, 0.34);
+    --pt-ink: #ff7fae;
+    --pt-fill: rgba(255, 127, 174, 0.14);
+    --pt-hover: rgba(255, 127, 174, 0.30);
 }
 #pt-container .pt-cat-actinide {
-    --pt-ink: rgba(123, 36, 28, 0.75);
-    --pt-fill: rgba(123, 36, 28, 0.18);
-    --pt-hover: rgba(123, 36, 28, 0.34);
+    --pt-ink: #ff9078;
+    --pt-fill: rgba(255, 144, 120, 0.14);
+    --pt-hover: rgba(255, 144, 120, 0.30);
 }
 #pt-container .pt-cat-esoteric {
-    --pt-ink: rgba(93, 46, 140, 0.75);
-    --pt-fill: rgba(93, 46, 140, 0.18);
-    --pt-hover: rgba(93, 46, 140, 0.34);
+    --pt-ink: #b39bff;
+    --pt-fill: rgba(179, 155, 255, 0.14);
+    --pt-hover: rgba(179, 155, 255, 0.30);
 }
 
 /* Nothing else is needed here. The plugin no longer writes a single inline
@@ -1510,382 +1796,44 @@
    them. */
 
 /* ==========================================================================
-   Enemy Talk panel (EnemyTalkSystem.js), parchment-theme readability
-   #enemy-talk-panel takes its surface from --text-danger-hover, which is
-   #000000 in omega_tower but #ecdcb9 (cream) here, so the panel flips from a
-   black plate to a parchment one. Every ink inside it stayed tuned for the
-   black plate: the enemy name, the disposition label/value and the option rows
-   all paint --accent-orange (#ffcc66, contrast 1.2 on the cream), the hint
-   paints rgba(255,204,102,0.55) (1.04) and the odds badges paint pale
-   gold/green/red. The whole panel is effectively blank in this theme. Re-ink
-   the prose black, the headings deep red, and re-saturate the odds badges and
-   the selected-row highlight so the list reads on the cream plate.
-   ========================================================================== */
-#enemy-talk-panel .etalk-enemy-name,
-#enemy-talk-panel .etalk-dispo-label,
-#enemy-talk-panel .etalk-dispo-value {
-    color: var(--text-primary-hover);
-}
-#enemy-talk-panel .etalk-option {
-    color: var(--text-brown-dark);
-}
-#enemy-talk-panel .etalk-option.selected {
-    color: var(--text-primary-hover);
-    background: rgba(160, 120, 50, 0.22);
-    border-color: var(--border-focus-hover);
-}
-/* Hint prose: black on the cream plate. */
-#enemy-talk-panel .etalk-hint {
-    color: var(--text-pure-black);
-}
-/* Success-odds badges: the pale gold / green / red read as one wash on cream. */
-#enemy-talk-panel .etalk-pct-high { color: #155c15; }
-#enemy-talk-panel .etalk-pct-mid  { color: #5a3c00; }
-#enemy-talk-panel .etalk-pct-low  { color: #7a1010; }
-/* Disposition bar: a 10%-gold track is invisible against the plate. */
-#enemy-talk-panel .etalk-dispo-track {
-    background: var(--bg-subtle-translucent-10);
-}
-#enemy-talk-panel .etalk-dispo-high { background: #2e7d32; }
-#enemy-talk-panel .etalk-dispo-mid  { background: #b8860b; }
-#enemy-talk-panel .etalk-dispo-low  { background: #a02020; }
-
-/* ==========================================================================
-   Description / lore prose, parchment-theme readability
-   Descriptive body text is the one thing that must never be a mid-tone on this
-   theme: it is the longest-running, smallest-set text in the game. theme.css
-   inks these in muted sepias (--text-disabled #5c4b3d, --text-text-alt-4
-   #6b5242, --border-muted-focus #5c2c16) that were chosen as "quiet" against
-   the dark tower page; on the cream page they land at 5.2-6.0, readable but
-   washed. Force every description block to solid black so the prose reads at
-   full contrast on the bright plate, matching the .help-body / #options-inspect
-   / .cooking-empty-hint treatment already established above.
-   ========================================================================== */
-.detail-desc,
-.mp-detail-desc,
-.mp-option-hint,
-.plant-desc,
-.workbench-desc,
-.tt-blurb,
-.thought-desc,
-.thought-detail-desc,
-.portfolio-description,
-.cc-text-desc,
-.save-summary,
-.hr-help {
-    color: var(--text-pure-black) !important;
-}
-
-/* The right column carries no plate at all now: the description and the skill
-   note read on the page itself, so the wash that used to sit under them is
-   gone rather than brightened. */
-
-/* ==========================================================================
-   Secondary hints, parchment-theme readability
-   Keyboard/controller hints and helper captions are secondary text, so they
-   stay a deep sepia rather than black, but several were left below WCAG AA on
-   the cream page: --text-text-alt-12 #7f8c8d (2.50), --text-text-alt-8 #7a7368
-   (3.37), --text-amber-hint #8b620b (3.92), --border-focus-hover #8b5a2b
-   (4.19) and --text-info #7f6859 (4.22). Re-ink to a deep sepia (10.4) that
-   still reads as subordinate to the black body prose.
-   ========================================================================== */
-.shop-slot-hint,
-.bs-skill-hint,
-.bs-skill-help,
-.hints-desc,
-.travel-timer-hint,
-.qty-modal-hint,
-.mod-hint-bar,
-.cc-settings-hint,
-.journal-hint,
-.ag-buy-hint,
-.ms-hint,
-.ms-ok-hint,
-.rent-hint,
-.rf-hint,
-.sl-footer,
-.sl-empty-line,
-.tt-hint,
-.bodypart-cell-hp {
-    color: #3a2414 !important;
-}
-
-/* ==========================================================================
-   Light ink stranded on a bright plate, parchment-theme readability
-   These three keep an ink that only ever made sense on the dark tower page.
-   - .bodypart-hp-val paints --text-warning-hover, which is #ffffff in BOTH
-     presets, onto .bodyparts-card (a 35%-white wash over the cream page):
-     contrast 1.23, the limb HP numbers are invisible.
-   - .cc-inv-chip paints --text-pure-white onto the same 35%-white wash: 1.23.
-   - .status-trait-tooltip is the mirror image: it forces a dark plate
-     (--bg-dark-warm-translucent-96) in both presets, but its ink
-     --text-muted-hover was flipped dark for this theme (#b89060 -> #2b1207),
-     leaving near-black text on a near-black bubble at 1.04.
-   ========================================================================== */
-.bodypart-hp-val {
-    color: var(--text-brown-dark) !important;
-}
-.cc-inv-chip {
-    color: var(--text-brown-dark) !important;
-}
-/* Tooltip keeps its dark bubble (it floats over arbitrary content); re-ink the
-   text light so it reads against it, as omega_tower's --text-muted-hover does. */
-.status-trait-tooltip {
-    color: var(--accent-cream-light) !important;
-}
-.status-trait-tooltip strong {
-    color: var(--accent-orange) !important;
-}
-
-/* ==========================================================================
-   Bright-fill badges and disabled states, parchment-theme readability
-   A handful of components derive their label colour from --bg-panel, i.e.
-   "paint the text in the page colour so it knocks out of a bright fill". That
-   works on the tower page (--bg-panel is dark) but here --bg-panel IS the cream
-   parchment, so cream lands on a pure-gold fill at 1.01. Likewise the disabled
-   states pair --text-text-alt-8 / --text-text-alt-12 with a tan or grey fill
-   for 1.8-3.1, and the resting Treaty button paints deep red on black (1.55).
+   The shop counter (#shop-container)
+   theme.css draws the shop from the shared tokens, which on the tower page
+   leave the two smallest-set runs of text too quiet to read: the left page's
+   labels (funds, tabs, the per-line owned/weight captions) sit at mid greys,
+   and the right page's item prose borrows --text-text-alt-7. Re-ink both on
+   the black page: labels in the tower's amber, prose in plain white.
    ========================================================================== */
 
-/* Horse-race gold tags / primary button: knock out in near-black, not cream. */
-.hr-tag,
-.hr-winner-tag,
-.hr-btn-primary,
-.hr-step:hover,
-.hr-row.staked .hr-gate {
-    color: var(--text-muted-hover) !important;
-}
-
-/* Resting Treaty button (Back / Cancel): deep red on a black fill. The confirm
-   variant is already re-inked cream further up; give the base the same
-   treatment so the unselected buttons read. */
-.cc-btn-treaty {
-    color: var(--accent-cream-light) !important;
-}
-
-/* Transport-hub badge on a fast-travel destination: pure gold on a 16% gold wash. */
-.travel-dest-hub {
-    color: #5a3c00 !important;
-    background: var(--bg-warm-cream-25) !important;
-}
-
-/* Disabled controls: keep them obviously inert, but legible. */
-.btn.disabled,
-.action-btn.disabled,
-.transmute-btn.disabled,
-.qty-btn.disabled,
-.option-status-toggle.disabled {
-    color: var(--text-muted-hover) !important;
-    opacity: 0.55;
-}
-
-/* Tinted status badges: the ink and the fill are the same hue at ~15% alpha,
-   so each badge reads as a flat wash. Deepen the ink only; the fills stay. */
-.shop-role-badge,
-.shop-assign-banner,
-.badge.warning {
-    color: #5a3c00 !important;
-}
-.badge.success,
-.npc-join-msg.accept,
-.apiary-threats.safe,
-.tt-project-btn--active {
-    color: #155c15 !important;
-}
-.badge.danger,
-.npc-join-msg.reject,
-.apiary-threats,
-.bs-warning {
-    color: #7a1010 !important;
-}
-.ms-active-badge,
-.npc-wiki-card-count {
-    color: var(--text-brown-dark) !important;
-}
-
-/* ==========================================================================
-   Plugin-injected CSS, parchment-theme readability
-   These rules live in <style> blocks inside the plugins rather than in
-   theme.css, so they were outside the first pass. Each one paints a muted ink
-   onto a plate that resolves to --bg-panel (the cream page) in this preset.
-   ========================================================================== */
-
-/* Battle skill cards (CategorizedBattleSkills.js): .skill-card-slot uses
-   --bg-panel, so the MP cost sits on cream at 3.92. */
-.card-cost-label {
-    color: #5a3c00 !important;
-}
-
-/* Arena book-spread (ArenaBattleHandlerUI.js): the detail subtitle
-   ("N combatant vessels - Levels x-y") and the "No preview" placeholder both
-   paint --text-info on the parchment page at 3.74. */
-#arena-ui-container .arena-detail-sub,
-#arena-ui-container .arena-preview-missing {
-    color: var(--text-card-dark) !important;
-}
-
-/* Monster Tournament HUD hint: #mt-hud declares background: var(--bg-panel). */
-#mt-hud .mt-hint {
-    color: var(--text-card-dark) !important;
-}
-
-/* Quest detail section headers sit on a hardcoded cream plate (#f0e4c0) at
-   4.24. Same in both presets, but it is description chrome, so deepen it. */
-#kb-detail-panel .kb-detail-sec,
-#qb-detail .qb-d-sec {
-    color: var(--text-brown-deep) !important;
-}
-
-/* ==========================================================================
-   Inline colour literals, parchment-theme readability
-   A dwindling set of low-contrast colour literals is still written straight
-   into style="" in the plugins' HTML templates, so no class-based rule can
-   reach them; the only handle is an attribute selector on the literal itself.
-   They were all picked against the dark Omega Tower page and land at 1.0-4.4
-   on the cream one.
-
-   This block is meant to shrink to nothing. Every menu moved onto the
-   --text-* tokens takes its literals out of reach of these selectors and lets
-   the matching ones be deleted; what is left below is what no menu has been
-   pulled onto tokens for yet, plus the Hypernet OS apps and the minigames,
-   which keep their own look by design.
-
-   Every rule is guarded with :not([style*="background"]): when an element
-   declares its own background inline it is a self-contained chip or button
-   (the brown #8b5a2b buttons in BankLoanSystem, the green/red confirm buttons
-   in SaveSystem, the XP-blue buttons in the Hypernet OS apps) and its light
-   ink is already correct. Only bare inks, which inherit the parchment page,
-   are re-inked. Hypernet OS apps render on --xp-bg rather than the parchment,
-   and their literals always carry a background, so they are untouched.
-   ========================================================================== */
-
-/* Positive / money greens (funds, "Ready!", gains, accepted offers). */
-[style*="color:#27ae60"]:not([style*="background"]),
-[style*="color: #27ae60"]:not([style*="background"]),
-[style*="color:#008000"]:not([style*="background"]),
-[style*="color: #008000"]:not([style*="background"]),
-[style*="color:#2e7d32"]:not([style*="background"]),
-[style*="color: #2e7d32"]:not([style*="background"]),
-[style*="color:#2a6e4a"]:not([style*="background"]),
-[style*="color: #2a6e4a"]:not([style*="background"]) {
-    color: #155c15 !important;
-}
-
-/* Danger / loss reds. */
-[style*="color:#c0392b"]:not([style*="background"]),
-[style*="color:#d9534f"]:not([style*="background"]),
-[style*="color: #d9534f"]:not([style*="background"]),
-[style*="color: #c0392b"]:not([style*="background"]) {
-    color: #7a1010 !important;
-}
-
-/* Golds and ambers: headers, costs, favourite stars, level badges. The
-   #bba16d rule additionally skips the one element that carries the literal as
-   a border-color on a dark brown fill (ItemSystemInventoryUI's Special row). */
-[style*="color:#ffcc66"]:not([style*="background"]),
-[style*="color: #ffcc66"]:not([style*="background"]),
-[style*="color:#f39c12"]:not([style*="background"]),
-[style*="color: #f39c12"]:not([style*="background"]),
-[style*="color:#e67e22"]:not([style*="background"]),
-[style*="color: #e67e22"]:not([style*="background"]),
-[style*="color:#d35400"]:not([style*="background"]),
-[style*="color: #d35400"]:not([style*="background"]),
-[style*="color:#8a6d3b"]:not([style*="background"]),
-[style*="color: #8a6d3b"]:not([style*="background"]) {
-    color: #5a3c00 !important;
-}
-
-[style*="color:#bba16d"]:not([style*="background"]):not([style*="border-color:#bba16d"]),
-[style*="color: #bba16d"]:not([style*="background"]):not([style*="border-color:#bba16d"]) {
-    color: #5a3c00 !important;
-}
-
-/* Muted greys and washed browns used for descriptions, values and empty
-   states. These are the ones the black-prose rule above would have caught had
-   they been written as classes, so take them to the same near-black. */
-[style*="color:#888"]:not([style*="background"]),
-[style*="color: #888"]:not([style*="background"]),
-[style*="color:#8c7667"]:not([style*="background"]),
-[style*="color: #8c7667"]:not([style*="background"]),
-[style*="color:#8b7355"]:not([style*="background"]),
-[style*="color: #8b7355"]:not([style*="background"]),
-[style*="color:#dddddd"]:not([style*="background"]),
-[style*="color: #dddddd"]:not([style*="background"]) {
-    color: #3a2414 !important;
-}
-
-/* Brown labels that only need a nudge over the AA line (4.19-4.41). Kept
-   brown so the label/value hierarchy the screens rely on survives. */
-[style*="color:#8b5a2b"]:not([style*="background"]),
-[style*="color: #8b5a2b"]:not([style*="background"]) {
-    color: #5c4128 !important;
-}
-
-/* ==========================================================================
-   Workforce (ArmyManager.js), release prompt readability
-   The "Press OK to Release this Troop from Service" line is the one action
-   the troop card offers, and it is set 0.8em bold in --accent-red-2 (#d32f2f),
-   4.04 on the cream page. Deepen it to the red this file uses for every other
-   danger literal.
-   ========================================================================== */
-#menu-container [style*="--accent-red-2"] {
-    color: #7a1010 !important;
-}
-
-/* ==========================================================================
-   Save / Load screen, parchment-theme readability
-   The "Another party of this world. You may load it, but not write here."
-   note is inked #c8b088 (a light tan tuned for the dark tower page) and sits
-   directly on .save-details-card, which in this preset is a 35%-white wash
-   over the parchment: contrast 1.70, the one line explaining why the slot
-   refuses to save is the least readable thing on the page. The empty-slot
-   quote next to it carries its own dark plate and is left alone.
-   ========================================================================== */
-.save-details-card > [style*="#c8b088"] {
-    color: #3a2414 !important;
-}
-
-/* ==========================================================================
-   The shop counter (#shop-container), parchment-theme readability
-   The shop draws from the shared tokens, several of which were tuned for the
-   dark tower page and land badly on the cream one: .item-card-stock and the
-   selection summary take --text-secondary-active (#8c1d0f) at 0.78em bold, a
-   danger red for what is only a caption; .backpack-tab and .shop-tab take
-   --text-disabled / --text-inverse, mid sepias that read as disabled; and the
-   dossier's prose on the right page needs the same solid ink every other
-   description block on this theme was given above.
-   ========================================================================== */
-
-/* --- Left page: labels and captions read as quiet ink, not as warnings. --- */
+/* --- Left page: labels and captions. --- */
 #shop-container .shop-funds {
-    color: var(--text-brown-dark) !important;
+    color: var(--accent-cream-light) !important;
 }
 #shop-container .shop-tab {
-    color: #6b503a !important;
+    color: rgba(244, 233, 201, 0.62) !important;
 }
 #shop-container .shop-tab.active {
-    color: var(--text-primary-hover) !important;
-    border-bottom-color: var(--text-primary-hover) !important;
+    color: var(--accent-amber-glow) !important;
+    border-bottom-color: var(--accent-amber-glow) !important;
 }
 #shop-container .item-card-name {
-    color: var(--text-primary-hover) !important;
+    color: var(--accent-amber-glow) !important;
 }
 #shop-container .item-card-sub,
 #shop-container .item-card-stock {
-    color: #3a2414 !important;
+    color: rgba(244, 233, 201, 0.68) !important;
     font-weight: normal !important;
 }
 #shop-container .shop-selection-bar .selection-count {
-    color: #3a2414 !important;
+    color: var(--accent-cream-light) !important;
 }
 #shop-container .shop-cat-name {
-    color: var(--text-primary-hover) !important;
+    color: var(--accent-amber-glow) !important;
 }
 #shop-container .shop-cat-meta {
-    color: #3a2414 !important;
+    color: rgba(244, 233, 201, 0.68) !important;
 }
 
-/* --- Right page: the dossier's own prose and its effect chips. --- */
+/* --- Right page: the dossier's own prose. --- */
 #shop-container .detail-desc,
 #shop-container .detail-lore {
     color: var(--text-success-active) !important;
@@ -1893,79 +1841,195 @@
 }
 #shop-container .detail-desc {
     background: transparent !important;
+    border-left-color: transparent !important;
 }
 #shop-container .detail-name {
     color: var(--text-detail-heading) !important;
 }
-#shop-container .badge-lbl,
+#shop-container .badge-lbl {
+    color: var(--text-primary-hover) !important;
+}
 #shop-container .badge-val,
 #shop-container .detail-effect-chip {
     color: var(--text-success-active) !important;
 }
 
+
 /* ==========================================================================
-   LEGIBILITY SWEEP - no white ink, no bright ink, no ink the colour of its own
-   ground
+   FurnitureSystem build panel (.fbuild-*), Omega Tower gold on black
    --------------------------------------------------------------------------
-   Every colour pair css/theme.css, css/game.css and css/hypernet.css establish
-   was resolved against this preset's tokens and measured (WCAG contrast). The
-   rules below are the ones that came out under 3:1 and are NOT a deliberate
-   inversion (a chip that takes a dark plate and light ink together is fine and
-   is left alone).
+   The dock in css/theme.css reads its ground and its ink off the shared
+   tokens, so it already follows the preset. What is left here is the tower's
+   own reading of it: the page is pure black rather than the panel wash, the
+   rules are gold at 30%, and the gallery thumbnails sit on nothing at all.
 
-   Two failure modes, and they are the two the preset is prone to:
-
-     - INK TOO LIGHT. The shared sheets were authored against omega_tower, where
-       the ground is black and near-white ink is right. Wherever such a surface
-       takes THIS preset's parchment plate instead, that same ink vanishes.
-     - INK TOO DARK ON A DARK PLATE. The mirror image: a chip that keeps a dark
-       plate under every preset, inked with --text-primary-hover, which is
-       #ffcc66 under omega_tower but the deep red #58180D here.
-
-   Each fix names the measured ratio it replaces so a future retune of the
-   tokens can tell whether the override is still doing anything.
+   Scoped by the panel id (#fbuild-panel, and body #fbuild-panel for the panel
+   itself) so it outranks theme.css's plain class rules whichever way the preset
+   reaches the page: @import'ed over css/vars.css at boot, or injected live as
+   <style id="active-theme-override"> by GameOptions.applyTheme.
    ========================================================================== */
+body #fbuild-panel {
+    background: #000000;
+    border-right: 1px solid var(--border-focus-hover);
+    box-shadow: 8px 0 28px var(--shadow-black-translucent-75);
+    color: var(--accent-cream-warm);
+}
 
-/* --- The galaxy HUD (#gx-ui) parchment-theme readability.
-       The HUD is a parchment-and-ink star ledger under Archive Foundation:
-       panels take cream parchment cards, titles take deep crimson ink,
-       labels and keys take sepia ink, data values take deep near-black ink,
-       and buttons/catalog tabs match ItemSystemInventoryUI's tactile parchment chips. */
+/* The gallery, the folder cards and the piece grid all stand on the same pure
+   black as the panel, so a thumbnail never carries a wash of its own. */
+body #fbuild-panel .fbuild-grid,
+body #fbuild-panel .fbuild-card-img,
+body #fbuild-panel .fbuild-folder-img,
+body #fbuild-panel .fbuild-armed-thumb { background: #000000; }
+
+/* Every rule on the dock: the header, the two columns, the strip over the
+   gallery, and the chips that carry a hairline of their own. */
+#fbuild-panel .fbuild-header,
+#fbuild-panel .fbuild-rail,
+#fbuild-panel .fbuild-aside,
+#fbuild-panel .fbuild-catbar,
+#fbuild-panel .fbuild-dd-trigger,
+#fbuild-panel .fbuild-search,
+#fbuild-panel .fbuild-mat {
+    border-color: var(--border-gold-amber-30);
+}
+
+/* Ink: gold for the title and anything being read for, cream for the rest,
+   muted amber for the captions. Nothing on this dock wears a plate. */
+#fbuild-panel .fbuild-title,
+#fbuild-panel .fbuild-gold,
+#fbuild-panel .fbuild-crumb,
+#fbuild-panel .fbuild-armed-name { color: var(--accent-amber-glow); }
+#fbuild-panel .fbuild-card-name,
+#fbuild-panel .fbuild-dd-opt,
+#fbuild-panel .fbuild-subcat,
+#fbuild-panel .fbuild-dd-trigger,
+#fbuild-panel .fbuild-search,
+#fbuild-panel .fbuild-mat { color: var(--accent-cream-warm); }
+#fbuild-panel .fbuild-section-label,
+#fbuild-panel .fbuild-cat-label,
+#fbuild-panel .fbuild-card-folder,
+#fbuild-panel .fbuild-card-size,
+#fbuild-panel .fbuild-card-variants,
+#fbuild-panel .fbuild-count,
+#fbuild-panel .fbuild-mat-empty,
+#fbuild-panel .fbuild-armed-empty,
+#fbuild-panel .fbuild-empty,
+#fbuild-panel .fbuild-search::placeholder { color: var(--text-card-medium); }
+/* On black the muted amber reads as a smudge at caption size, so every label
+   that carries information is lifted to cream; only the placeholder stays low. */
+body #fbuild-panel .fbuild-section-label,
+body #fbuild-panel .fbuild-cat-label,
+body #fbuild-panel .fbuild-card-folder,
+body #fbuild-panel .fbuild-card-size,
+body #fbuild-panel .fbuild-card-variants,
+body #fbuild-panel .fbuild-count,
+body #fbuild-panel .fbuild-folder-count,
+body #fbuild-panel .fbuild-toptab-count,
+body #fbuild-panel .fbuild-mat-empty,
+body #fbuild-panel .fbuild-armed-empty,
+body #fbuild-panel .fbuild-empty { color: var(--accent-cream-warm); }
+body #fbuild-panel .fbuild-folder,
+body #fbuild-panel .fbuild-card-name,
+body #fbuild-panel .fbuild-toptab-opt,
+body #fbuild-panel .fbuild-mode-opt,
+body #fbuild-panel .fbuild-close,
+body #fbuild-panel .fbuild-clear-all,
+body #fbuild-panel .fbuild-subback { color: var(--accent-cream-warm); }
+body #fbuild-panel .fbuild-folder:hover,
+body #fbuild-panel .fbuild-folder.fbcursor { color: var(--accent-amber-glow); border-color: var(--border-focus-hover); }
+
+/* Idle rail and mode entries, and the one being read or held. */
+#fbuild-panel .fbuild-toptab-opt,
+#fbuild-panel .fbuild-mode-opt,
+#fbuild-panel .fbuild-close,
+#fbuild-panel .fbuild-clear-all,
+#fbuild-panel .fbuild-subback { color: var(--text-card-medium); }
+#fbuild-panel .fbuild-toptab-opt:hover,
+#fbuild-panel .fbuild-toptab-opt.active,
+#fbuild-panel .fbuild-mode-opt:hover,
+#fbuild-panel .fbuild-mode-opt.active,
+#fbuild-panel .fbuild-dd-opt:hover,
+#fbuild-panel .fbuild-dd-opt.active,
+#fbuild-panel .fbuild-subcat:hover,
+#fbuild-panel .fbuild-close:hover,
+#fbuild-panel .fbuild-clear-all:hover,
+#fbuild-panel .fbuild-subback:hover {
+    color: var(--accent-amber-glow);
+    border-color: var(--border-focus-hover);
+}
+
+/* The gold hairline is the whole of focus, hover, cursor and armed. */
+#fbuild-panel .fbuild-card:hover,
+#fbuild-panel .fbuild-card.fbcursor,
+#fbuild-panel .fbuild-card.armed,
+#fbuild-panel .fbuild-card-armed-badge,
+#fbuild-panel .fbuild-armed-card,
+#fbuild-panel .fbuild-free { border-color: var(--border-focus-hover); }
+#fbuild-panel .fbuild-card-armed-badge,
+#fbuild-panel .fbuild-free { color: var(--accent-amber-glow); }
+
+/* The category popup and the material tooltip stand off the black page. */
+#fbuild-panel .fbuild-dd-list,
+#fbuild-panel .fbuild-mat-tip {
+    background: #000000;
+    border-color: var(--border-focus-hover);
+}
+#fbuild-panel .fbuild-mat-tip { color: var(--accent-amber-glow); }
+
+/* Scrollbars. */
+#fbuild-panel .fbuild-grid::-webkit-scrollbar-thumb,
+#fbuild-panel .fbuild-materials::-webkit-scrollbar-thumb,
+#fbuild-panel .fbuild-rail::-webkit-scrollbar-thumb,
+#fbuild-panel .fbuild-aside::-webkit-scrollbar-thumb,
+#fbuild-panel .fbuild-dd-list::-webkit-scrollbar-thumb {
+    background: var(--scroll-thumb-hover-translucent-60);
+}
+#fbuild-panel .fbuild-grid::-webkit-scrollbar-thumb:hover,
+#fbuild-panel .fbuild-rail::-webkit-scrollbar-thumb:hover,
+#fbuild-panel .fbuild-aside::-webkit-scrollbar-thumb:hover,
+#fbuild-panel .fbuild-dd-list::-webkit-scrollbar-thumb:hover {
+    background: var(--border-focus-hover);
+}
+
+/* ==========================================================================
+   Galaxy System HUD (#gx-ui, #gx-landing-grid, #gx-service, #gx-anomaly, #gx-mining),
+   dark-theme readability (Omega Tower)
+   ========================================================================== */
 #gx-ui {
     font-family: var(--font-ui);
-    color: var(--text-success-active);
+    color: var(--text-pure-white);
 }
 #gx-ui .gx-panel,
 #gx-landing-grid .gx-lg-card,
 #gx-service .gx-svc-card,
 #gx-anomaly .gx-anom-card,
 #gx-mining {
-    background: var(--bg-panel);
-    border-color: var(--border-focus-hover);
-    box-shadow: 0 4px 14px rgba(43, 28, 17, 0.25);
-    color: var(--text-success-active);
+    background: var(--bg-dark-panel);
+    border-color: var(--border-gold-amber-30);
+    box-shadow: 0 6px 20px var(--shadow-black-translucent-55);
+    color: var(--text-pure-white);
 }
 #gx-ui .gx-title,
 #gx-landing-grid .gx-title,
 #gx-service .gx-title,
 #gx-anomaly .gx-title,
 #gx-mining .gx-title {
-    color: var(--text-primary-hover);
+    color: var(--accent-amber-glow);
     font-family: var(--font-ui);
-    text-shadow: none;
+    text-shadow: 0 1px 3px var(--shadow-black-translucent-75);
 }
 #gx-ui .gx-title.gx-hard,
 #gx-ui .gx-loc-star {
-    color: #6b4a00;
+    color: var(--accent-gold-pure);
     text-shadow: none;
 }
 #gx-ui .gx-sub {
     font-family: var(--font-ui);
-    color: var(--text-text-alt-12);
+    color: var(--accent-amber-light);
 }
 #gx-ui .gx-divider {
-    background: var(--border-focus-hover);
-    opacity: 0.5;
+    background: var(--border-gold-amber-30);
 }
 #gx-ui .gx-k,
 #gx-ui .gx-muted,
@@ -1988,12 +2052,12 @@
 #gx-service .gx-svc-pct,
 #gx-anomaly .gx-anom-body {
     font-family: var(--font-ui);
-    color: var(--text-success-active);
+    color: var(--text-pure-white);
 }
 #gx-ui .gx-note {
-    background: var(--bg-parchment-warm-60);
-    border-color: var(--border-border-alt-12);
-    color: var(--text-success-active);
+    background: var(--bg-dark-warm-translucent-96);
+    border-color: var(--border-gold-amber-30);
+    color: var(--accent-cream-light);
 }
 #gx-ui .gx-btn {
     font-family: var(--font-ui);
@@ -2001,25 +2065,19 @@
     border-color: var(--border-focus-hover);
     color: var(--text-primary-hover);
 }
-#gx-ui .gx-btn.gx-bookmark { color: #6b4a00; }
-#gx-ui .gx-btn.gx-bio { color: #14602f; }
-#gx-ui .gx-btn.gx-ship { color: #10486e; }
-#gx-ui .gx-btn.gx-sb { color: #4b2178; }
-#gx-ui .gx-btn.gx-land { color: #245c14; }
-#gx-ui .gx-btn.gx-stop { color: #8f1b12; }
 #gx-ui .gx-btn:hover,
 #gx-ui .gx-btn.focused {
-    background: var(--bg-focus-hover-translucent-18);
-    color: var(--text-secondary-active);
-    outline: 1px solid var(--border-focus-hover);
+    background: var(--bg-tertiary-focus-translucent-45);
+    color: var(--accent-amber-glow);
+    box-shadow: 0 0 8px var(--shadow-gold-amber-50);
 }
 #gx-catalog .gx-cat-group {
-    color: var(--text-primary-hover);
-    border-bottom-color: var(--border-focus-hover);
+    color: var(--accent-amber-light);
+    border-bottom-color: var(--border-gold-amber-30);
 }
 #gx-catalog .gx-cat-tab.gx-on {
-    background: var(--bg-focus-hover-translucent-18);
-    color: var(--text-secondary-active);
+    background: var(--bg-tertiary-focus-translucent-45);
+    color: var(--accent-amber-glow);
 }
 #gx-fuel .gx-fuel-pct {
     color: var(--text-text-alt-16);
@@ -2027,169 +2085,90 @@
 #gx-fuel .gx-fuel-bar,
 #gx-service .gx-svc-bar,
 #gx-mining .gx-mine-bar {
-    background: rgba(43, 28, 17, 0.15);
-    border-color: var(--border-focus-hover);
+    background: rgba(13, 16, 23, 0.9);
+    border-color: var(--border-gold-amber-30);
 }
 #gx-fuel .gx-sb-pip {
-    background: rgba(123, 31, 162, 0.2);
+    background: rgba(150, 120, 220, 0.25);
 }
 #gx-fuel .gx-sb-pip.on {
-    background: #7b1fa2;
-    box-shadow: 0 0 3px rgba(123, 31, 162, 0.6);
+    background: #c39bff;
+    box-shadow: 0 0 4px #a56bff;
 }
 #gx-fuel .gx-refuel-row {
-    border-top-color: var(--border-focus-hover);
-}
-#gx-fuel .gx-btn.gx-refuel.gx-on {
-    background: rgba(29, 77, 128, 0.2);
-    border-color: var(--text-text-alt-16);
-    color: var(--text-text-alt-16);
+    border-top-color: var(--border-gold-amber-30);
 }
 #gx-zoom {
-    background: rgba(43, 28, 17, 0.15);
-    border-color: var(--border-focus-hover);
+    background: rgba(13, 16, 23, 0.85);
+    border-color: var(--border-gold-amber-30);
 }
 #gx-zoom .gx-zoom-fill {
-    background: linear-gradient(to top, rgba(139, 90, 43, 0.4), rgba(139, 90, 43, 0.05));
+    background: linear-gradient(to top, var(--shadow-gold-amber-50), rgba(212, 160, 80, 0.08));
 }
 #gx-zoom .gx-zoom-knob {
-    background: var(--border-focus-hover);
-    box-shadow: 0 0 6px rgba(139, 90, 43, 0.6);
+    background: var(--accent-amber-glow);
+    box-shadow: 0 0 8px var(--shadow-gold-amber-50);
 }
 #gx-tooltip {
-    background: var(--bg-panel);
-    border-color: var(--border-focus-hover);
-    color: var(--text-success-active);
+    background: var(--bg-darker-panel);
+    border-color: var(--border-gold-amber-30);
+    color: var(--text-pure-white);
 }
 #gx-landing-grid {
-    background: rgba(30, 20, 10, 0.65);
+    background: rgba(6, 8, 14, 0.72);
 }
 #gx-landing-grid .gx-lg-canvas {
-    border-color: var(--border-focus-hover);
+    border-color: var(--border-gold-amber-30);
 }
 #gx-service {
-    background: rgba(30, 20, 10, 0.65);
+    background: rgba(6, 8, 14, 0.72);
 }
 #gx-service .gx-svc-part {
-    border-color: var(--border-border-alt-12);
-    background: var(--bg-card-translucent-5);
-}
-#gx-service .gx-svc-cost {
-    color: var(--text-text-alt-15);
+    border-color: var(--border-gold-amber-30);
 }
 #gx-anomaly {
-    background: rgba(30, 20, 10, 0.7);
+    background: rgba(4, 6, 12, 0.78);
 }
 #gx-anomaly .gx-anom-choices .gx-anom-choice {
-    background: var(--bg-card-translucent-5);
-    border-color: var(--border-focus-hover);
-    color: var(--text-success-active);
+    background: rgba(13, 16, 23, 0.6);
+    border-color: var(--border-gold-amber-30);
+    color: var(--text-pure-white);
 }
 #gx-anomaly .gx-anom-choice:hover,
 #gx-anomaly .gx-anom-choice.focused {
-    border-color: var(--border-focus-hover);
-    background: var(--bg-focus-hover-translucent-18);
+    border-color: var(--accent-amber-light);
+    background: rgba(212, 160, 80, 0.14);
 }
 #gx-anomaly .gx-anom-choice .gx-anom-num {
-    color: var(--text-primary-hover);
+    color: var(--accent-amber-light);
 }
 #gx-anomaly .gx-anom-rewards {
-    border-top-color: var(--border-focus-hover);
-    color: var(--text-text-alt-15);
+    border-top-color: var(--border-gold-amber-30);
+    color: var(--accent-amber-light);
 }
 #gx-mining .gx-mine-clock {
     color: var(--text-text-alt-16);
 }
 #gx-mining .gx-mine-log b {
-    color: var(--text-primary-hover);
+    color: var(--accent-amber-glow);
 }
-
-/* --- Harvest window. The plate is parchment (#e2dac6), so the danger button's
-       salmon (1.70) went with it; and the selected chip inverts to the deep red
-       plate but kept a near-black label (1.35). */
-#hv-mini .cs-actbtn.danger { color: #8f1b12; }
-#hv-mini .cs-actbtn.selected,
-#cs-mini .cs-qty-btn.selected {
-    color: var(--text-highlight-active);
-}
-
-/* --- Map corner readout. #map-info-hud is cream here, and the four state
-       colours are Material palette tints meant for a dark HUD: cool 1.50,
-       warm/insomnia 1.58, cold 1.83. */
-#map-info-hud .mih-temp-cool { color: #10557d; }
-#map-info-hud .mih-temp-cold { color: #0d4a72; }
-#map-info-hud .mih-temp-warm,
-#map-info-hud .mih-insomnia-warn { color: #8a4a00; }
-
-/* --- The pinned clock on the main menu. .pockets-clock takes
-       --bg-pockets-clock, which is the cream #f4edd4 here, and both highlights
-       are pure white on it (1.18). */
-.cash-highlight { color: #1f5c2a; }
-.bounty-highlight { color: var(--text-primary-hover); }
-
-/* --- The wanted level now stands as bare ink beside the bounty rather than on
-       a plate, so the badge amber and the bad red have to be inked down to
-       hold on the cream sheet. */
-.wanted-chip { color: #8a5a00; }
-.wanted-chip--chased { color: #a01a12; }
-
-/* --- Magical Systems wheel. A system's own colour is a bright ink chosen for
-       a dark sheet: on this paper the yellows, greens and cyans wash out, so
-       every system ink is darkened and the black halo goes. */
-.ms-node .ms-pct,
-.ms-node .ms-name,
-.sm-ms-fraction {
-    filter: brightness(0.55) saturate(1.3);
-    text-shadow: none;
-}
-.ms-node .ms-ring {
-    background: var(--bg-panel);
-    border-width: 4px;
-}
-.ms-rigor { color: var(--text-success-active); }
-.sm-ms-dot { box-shadow: 0 0 0 1px var(--text-success-active); }
-
-/* --- Party HUD alert chip and the tournament banner: both keep a dark plate
-       under every preset, and both took --text-primary-hover / a near-black
-       label, which is deep red here (1.37 and 1.46). */
-#party-hud .phud-alert { color: var(--text-highlight-active); }
-/* A state chip sits on the paper plate (--bg-secondary-hover), not on the dark
-   alert plate, so the cream above would vanish on it: deep ink instead. */
-#party-hud .phud-state { color: var(--text-primary-hover); }
-#party-hud .phud-state.phud-state-down { color: var(--text-blood-red); }
-/* Stat and class chips carry bright inks (and a white name) meant for a dark
-   plate, so they keep one here. */
-#party-hud .phud-stat { background: #2b1c11; }
-#mt-banner { color: var(--accent-amber-glow); }
-
-/* --- Hypernet window chrome. The XP titlebar keeps its blue gradient under
-       every preset; #d4c39e on it measured 2.16. Inked down rather than up:
-       white would clear the ratio too, but no surface in this preset is allowed
-       pure white ink, and a dark navy reads just as cleanly on that blue. */
-.hypernet-window-titlebar,
-.hypernet-os-window.active .hypernet-window-titlebar {
-    color: #10233d;
-}
-
-/* --- The duel's win chip is a light green on green (2.54). */
-.cd-chip.cd-win { color: #06280f; }
 
 /* ==========================================================================
-   Voxel World HUD (#camper-drive-hud), parchment-theme readability (Archive Foundation)
+   Voxel World HUD (#camper-drive-hud), dark-theme readability (Omega Tower)
    ========================================================================== */
 #camper-drive-hud {
     font-family: var(--font-ui);
-    color: var(--text-success-active);
+    color: var(--text-pure-white);
 }
 #camper-drive-hud .cds-panel {
-    background: var(--bg-panel);
-    border-color: var(--border-focus-hover);
-    color: var(--text-success-active);
-    box-shadow: 0 4px 14px rgba(43, 28, 17, 0.25);
+    background: var(--bg-dark-panel);
+    border-color: var(--border-gold-amber-30);
+    color: var(--text-pure-white);
+    box-shadow: 0 6px 20px var(--shadow-black-translucent-55);
 }
 #camper-drive-hud .cds-title {
-    color: var(--text-primary-hover);
-    text-shadow: none;
+    color: var(--accent-amber-glow);
+    text-shadow: 0 1px 3px var(--shadow-black-translucent-75);
 }
 #camper-drive-hud .cds-label,
 #camper-drive-hud .cds-cmd-hint,
@@ -2202,190 +2181,99 @@
 #camper-drive-hud .cds-large-val,
 #camper-drive-hud .cds-map-coords,
 #camper-drive-hud .cds-full-coords {
-    color: var(--text-success-active);
+    color: var(--text-pure-white);
 }
 #camper-drive-hud .cds-minimap-canvas {
-    border-color: var(--border-focus-hover);
+    border-color: var(--border-gold-amber-30);
 }
 #camper-drive-hud .cds-key {
-    background: var(--bg-parchment-warm-60);
-    border-color: var(--border-focus-hover);
-    color: var(--text-primary-hover);
+    background: var(--bg-tertiary-focus-translucent-45);
+    border-color: var(--border-gold-amber-30);
+    color: var(--accent-amber-glow);
 }
 #camper-drive-hud .cds-dig-track {
-    background: rgba(43, 28, 17, 0.15);
-    border-color: var(--border-focus-hover);
+    background: rgba(0, 0, 0, 0.5);
+    border-color: var(--border-gold-amber-30);
 }
 #camper-drive-hud .cds-dig-bar {
-    background: var(--border-focus-hover);
+    background: var(--accent-amber-glow);
 }
 #camper-drive-hud .cds-prompt {
-    background: var(--bg-panel);
-    border-color: var(--border-focus-hover);
-    color: var(--text-primary-hover);
+    background: var(--bg-dark-panel);
+    border-color: var(--border-gold-amber-30);
+    color: var(--accent-amber-glow);
 }
 #camper-drive-hud .cds-respawn-hint {
-    background: var(--bg-panel);
-    border-color: var(--border-danger-active);
-    box-shadow: 0 4px 14px rgba(43, 28, 17, 0.25);
-    color: var(--text-text-alt-10);
+    background: rgba(60, 10, 6, 0.82);
+    border-color: rgba(230, 90, 60, 0.8);
+    box-shadow: 0 6px 20px var(--shadow-black-translucent-55);
+    color: #ffd9c8;
 }
 #camper-drive-hud .cds-respawn-reason {
-    color: var(--text-text-alt-10);
+    color: #ffb3a0;
 }
 #camper-drive-hud .cds-respawn-action {
-    color: var(--text-primary-hover);
+    color: var(--accent-amber-glow);
 }
 #camper-drive-hud .cds-respawn-key {
-    color: var(--border-danger-active);
+    color: #ff7a55;
 }
 #camper-drive-hud .cds-full-map-panel {
-    background: rgba(30, 20, 10, 0.75);
+    background: rgba(6, 4, 2, 0.86);
 }
 
 
-/* --- Measured and deliberately NOT changed, so the next sweep does not
-       re-open them:
-
-       #apiary-container, #bestiary-container, #blacksmith-container,
-       #brewery-container, #character-creation-container, #cooking-container,
-       #equip-container, #help-container, #history-container, #shop-container,
-       #thinker-container, #travel-overlay, #tt-container
-         Each sets `color: var(--text-muted-hover)` over a dark --gradient-1
-         backdrop, which measures ~1.15. It reads as ink-on-ink only if you stop
-         at the container: that colour is the INHERITED ink for the parchment
-         spread inside it (.book-spread / .left-page / .right-page declare no
-         colour of their own), and the dark gradient is the frame around the
-         page, which carries no text. Lightening the container would turn every
-         page's body copy cream-on-cream. Where a child really does sit on the
-         dark frame it is fixed one at a time -- see #help-container .help-body,
-         .cooking-empty-hint p and .bestiary-list-empty above.
-
-       .toggle-switch.active .toggle-text
-         --text-highlight-active measures 1.28 against the switch's resting
-         plate, but .toggle-switch.active repaints that plate to
-         --text-secondary-active (#8c1d0f) at the same time, which is the
-         inversion the cream ink was chosen for. */
-
 /* ==========================================================================
-   FurnitureSystem build panel (.fbuild-*), Archive Foundation paper white
+   THE BLACK PAGE (docs/task/ui_fixing.md)
    --------------------------------------------------------------------------
-   The dock in css/theme.css reads its ground and its ink off the shared
-   tokens, so it already follows the preset. What is left here is the paper
-   reading of it: a warm sheet under the gallery, sepia rules, and brown wax
-   for the entry being read.
-
-   Scoped by the panel id (#fbuild-panel, and body #fbuild-panel for the panel
-   itself) so it outranks theme.css's plain class rules whichever way the preset
-   reaches the page: @import'ed over css/vars.css at boot, or injected live as
-   <style id="active-theme-override"> by GameOptions.applyTheme.
+   Omega Tower is not parchment. The spread carries no gilt frame, no inner
+   rule, no inset glow and no paper wash: every menu is a pure black ground
+   with the content drawn straight onto it, which is what makes the gold type
+   and the hairline plates read. The shared sheet still draws the frame for
+   the paper preset, so this is an override rather than a deletion there.
    ========================================================================== */
-body #fbuild-panel {
-    background: linear-gradient(180deg, #fdf8ec 0%, #efe4cd 100%);
-    border-right: 1px solid var(--border-focus-hover);
-    box-shadow: 8px 0 28px rgba(44, 29, 20, 0.35);
-    color: var(--text-card-dark);
+.book-spread,
+.cc-pockets-spread,
+#thinker-container .book-spread,
+#blacksmith-container .book-spread,
+.save-book-spread,
+.shop-spread,
+.mp-spread,
+.travel-book-spread,
+.stock-spread,
+.mp-type-spread {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    background-image: none;
+    background-color: #000000;
 }
 
-/* Every rule on the dock: the header, the two columns, the strip over the
-   gallery, and the chips that carry a hairline of their own. */
-#fbuild-panel .fbuild-header,
-#fbuild-panel .fbuild-rail,
-#fbuild-panel .fbuild-aside,
-#fbuild-panel .fbuild-catbar,
-#fbuild-panel .fbuild-dd-trigger,
-#fbuild-panel .fbuild-search,
-#fbuild-panel .fbuild-mat {
-    border-color: rgba(139, 90, 43, 0.35);
+/* The binding spine down the middle of the book goes with the frame. */
+.book-spread::before,
+.cc-pockets-spread::before,
+#thinker-container .book-spread::before,
+#blacksmith-container .book-spread::before,
+.shop-spread::before,
+.mp-spread::before,
+.travel-book-spread::before,
+.stock-spread::before,
+.mp-type-spread::before {
+    display: none;
 }
 
-/* Ink: the darkest brown for the title and what is in hand, mid brown for the
-   body, and the quiet brown for every caption. */
-#fbuild-panel .fbuild-title,
-#fbuild-panel .fbuild-crumb,
-#fbuild-panel .fbuild-armed-name { color: #3e2a1a; }
-#fbuild-panel .fbuild-gold { color: #5a3c00; }
-#fbuild-panel .fbuild-card-name,
-#fbuild-panel .fbuild-dd-opt,
-#fbuild-panel .fbuild-subcat,
-#fbuild-panel .fbuild-dd-trigger,
-#fbuild-panel .fbuild-search,
-#fbuild-panel .fbuild-mat { color: var(--text-card-dark); }
-#fbuild-panel .fbuild-section-label,
-#fbuild-panel .fbuild-cat-label,
-#fbuild-panel .fbuild-card-folder,
-#fbuild-panel .fbuild-card-size,
-#fbuild-panel .fbuild-card-variants,
-#fbuild-panel .fbuild-count,
-#fbuild-panel .fbuild-mat-empty,
-#fbuild-panel .fbuild-armed-empty,
-#fbuild-panel .fbuild-empty,
-#fbuild-panel .fbuild-search::placeholder { color: var(--text-card-medium); }
-
-/* Idle rail and mode entries, and the one being read or held. */
-#fbuild-panel .fbuild-toptab-opt,
-#fbuild-panel .fbuild-mode-opt,
-#fbuild-panel .fbuild-close,
-#fbuild-panel .fbuild-clear-all,
-#fbuild-panel .fbuild-subback { color: var(--text-card-medium); }
-#fbuild-panel .fbuild-toptab-opt:hover,
-#fbuild-panel .fbuild-toptab-opt.active,
-#fbuild-panel .fbuild-mode-opt:hover,
-#fbuild-panel .fbuild-mode-opt.active,
-#fbuild-panel .fbuild-dd-opt:hover,
-#fbuild-panel .fbuild-dd-opt.active,
-#fbuild-panel .fbuild-subcat:hover,
-#fbuild-panel .fbuild-close:hover,
-#fbuild-panel .fbuild-clear-all:hover,
-#fbuild-panel .fbuild-subback:hover {
-    color: var(--text-secondary-active);
-    border-color: var(--border-focus-hover);
+/* A label is read, so it is not printed in the plate's own brown. The muted
+   half of a label/value pair takes the warm cream ink everywhere, not only
+   inside an item card. */
+.inspect-spec-label,
+.status-bio-item-lbl,
+.ui-empty-text,
+.ui-panel-hint {
+    color: var(--text-detail-label);
 }
 
-/* The hairline is the whole of focus, hover, cursor and armed. */
-#fbuild-panel .fbuild-card:hover,
-#fbuild-panel .fbuild-card.fbcursor,
-#fbuild-panel .fbuild-card.armed,
-#fbuild-panel .fbuild-card-armed-badge,
-#fbuild-panel .fbuild-armed-card,
-#fbuild-panel .fbuild-free { border-color: #a6791f; }
-#fbuild-panel .fbuild-card-armed-badge,
-#fbuild-panel .fbuild-free { color: #5a3c00; }
-
-/* The category popup and the material tooltip stand off the sheet. */
-#fbuild-panel .fbuild-dd-list,
-#fbuild-panel .fbuild-mat-tip {
-    background: #fdf8ec;
-    border-color: var(--border-focus-hover);
-}
-#fbuild-panel .fbuild-mat-tip { color: var(--text-card-dark); }
-
-/* Scrollbars. */
-#fbuild-panel .fbuild-grid::-webkit-scrollbar-thumb,
-#fbuild-panel .fbuild-materials::-webkit-scrollbar-thumb,
-#fbuild-panel .fbuild-rail::-webkit-scrollbar-thumb,
-#fbuild-panel .fbuild-aside::-webkit-scrollbar-thumb,
-#fbuild-panel .fbuild-dd-list::-webkit-scrollbar-thumb {
-    background: var(--scroll-thumb-hover-translucent-60);
-}
-#fbuild-panel .fbuild-grid::-webkit-scrollbar-thumb:hover,
-#fbuild-panel .fbuild-rail::-webkit-scrollbar-thumb:hover,
-#fbuild-panel .fbuild-aside::-webkit-scrollbar-thumb:hover,
-#fbuild-panel .fbuild-dd-list::-webkit-scrollbar-thumb:hover {
-    background: #5c3a1a;
-}
-
-
-/* ==========================================================================
-   Opaque pages
-
-   The paper layers of this preset (--gradient-26 / --gradient-34) and the
-   backdrop behind them (--gradient-33) are all rgba, so a full screen menu
-   was letting the live map through: the status sheet read as amber text
-   floating over a blurred sunset, with the muted browns lost against it.
-   The gradients stay as they are, painted over an opaque parchment base and
-   an opaque scrim, so a page is a page whatever is behind it.
-   ========================================================================== */
+/* ...and the backdrop the spread sits on. A 70% black over the live map is
+   what was still showing through as a warm haze in the screen corners. */
 #menu-container,
 #status-menu-container,
 #character-creation-container,
@@ -2400,478 +2288,174 @@ body #fbuild-panel {
 #stock-container,
 #thinker-container,
 #blacksmith-container {
-    background: #17100a;
+    background: #000000;
 }
 
-/* The paper the leaves are cut from. The boards, the fore-edges and the
-   binding that make this a book and not a panel are at the foot of this file. */
-.book-spread,
-.cc-pockets-spread,
-#thinker-container .book-spread,
-#blacksmith-container .book-spread,
-.save-book-spread,
-.shop-spread,
-.mp-spread,
-.travel-book-spread,
-.stock-spread,
-.mp-type-spread {
-    background-color: #e6d8b6;
-    /* The parchment's own fold (theme.css paints --gradient-26 under every
-       spread) used to sit at a fixed 58%, so a screen binding at 30%, 40% or
-       42% showed its crease in the middle of the right leaf. Restated here,
-       on the spread itself, so it resolves against that spread's --spine-x
-       and lands under the ::before binding. */
-    --gradient-26: linear-gradient(to right,
-        var(--bg-backdrop) 0%,
-        var(--text-highlight-active) calc(var(--spine-x, 58%) - 4%),
-        var(--accent-bronze-2) calc(var(--spine-x, 58%) - 1%),
-        var(--text-text-alt-2) var(--spine-x, 58%),
-        var(--accent-bronze-2) calc(var(--spine-x, 58%) + 1%),
-        var(--text-highlight-active) calc(var(--spine-x, 58%) + 4%),
-        var(--bg-backdrop) 100%);
-}
-
-/* Paper inks on the workshop and the bestiary. Headings, trade names, the
-   undiscovered formula, the piece name being written, the creature names and
-   the creature prose were coming out cream on the cream page. */
-#blacksmith-container .category-name,
-#thinker-container .category-name,
-#bestiary-list-viewport .monster-name {
-    color: #2b251d !important;
-}
-#blacksmith-container .forge-trade-row.active .category-name,
-#thinker-container .forge-trade-row.active .category-name {
-    color: #58180D !important;
-}
-#blacksmith-container .blueprint-name-locked,
-#thinker-container .blueprint-name-locked {
-    color: #6b5242 !important;
-}
-#blacksmith-container .forge-name-input {
-    color: #2b251d !important;
-}
-#blacksmith-container .forge-name-input::placeholder {
-    color: #8a7a66 !important;
-}
-#bestiary-portfolio-container .portfolio-description {
-    color: #000000 !important;
-}
-
-/* Character creation. Its spread sits inside .cc-content-pane, which theme.css
-   leaves transparent over a black layout, so the pages read as black with the
-   paper inks lost on them. The spread gets its paper back, the sidebar no
-   longer fades into black, and the two leaves are held at --spine-x so the
-   binding falls between them instead of across the left page. */
-#character-creation-container .cc-content-pane {
-    background: #17100a;
-}
-#character-creation-container .cc-content-pane .cc-pockets-spread {
-    background-color: #e6d8b6;
-    background-image: var(--gradient-34), var(--gradient-26);
-}
-#character-creation-container .cc-pockets-spread > .cc-page-left:not(.cc-page-full) {
-    flex: 0 0 var(--spine-x, 55%);
-    width: var(--spine-x, 55%);
-    min-width: 0;
-    border-right: none;
-}
-#character-creation-container .cc-pockets-spread > .cc-page-right {
-    flex: 0 0 calc(100% - var(--spine-x, 55%));
-    width: calc(100% - var(--spine-x, 55%));
-    min-width: 0;
-}
-#character-creation-container .cc-compact-sidebar {
-    background: linear-gradient(180deg, #e2dac6, #d3c3a0) !important;
-}
-#character-creation-container .cc-bio-section-title,
-#character-creation-container .cc-pick-trigger,
-#character-creation-container .cc-loadout-item-name,
-#character-creation-container .cc-dossier-card p,
-#character-creation-container .cc-badge-name {
-    color: #2b251d !important;
-}
-#character-creation-container .cc-pick-trigger:hover {
-    color: #58180D !important;
-}
 
 /* ==========================================================================
-   The card duel (js/plugins/Cards/CardGameDuel.js)
-
-   The duel board is painted black in both presets, so the paper preset's own
-   dark inks would vanish on it. The screen, and the card panel that is its
-   right column, take the warm cream ladder instead: the gold heading, the
-   muted label and the bright value, all of them legible on black.
+   Character creation, tower ink
    ========================================================================== */
-#cardduel-container { color: var(--accent-cream-warm); }
-#cardduel-container .inspect-spec-label,
-#cardduel-container .ui-detail-sub { color: var(--accent-cream-warm); }
-#cardduel-container .inspect-spec-value,
-#cardduel-container .cd-lore { color: var(--accent-cream-lightest); }
-#cardduel-container .inspect-section-title,
-#cardduel-container .cd-detail h3,
-#cardduel-container .cd-prompt { color: var(--accent-amber-glow); }
+
+/* The sprite and bust galleries are full-bleed windows over the wizard, so
+   they sit on the tower's own black rather than a dimmed card. */
+.cc-gal-overlay,
+.cc-gal-panel {
+    background: #000000 !important;
+}
+
+/* A picked control is gold ink and a gold hairline, with nothing behind it:
+   the warm gradient plate this used to wear is the one thing every other
+   picked row in the tower has already given up. */
+.cc-bio-chip.selected,
+.cc-pick-row.selected,
+.cc-choice-btn.selected,
+.cc-btn-treaty.selected,
+.cc-compact-btn.selected {
+    background: transparent !important;
+    background-image: none !important;
+    border-color: var(--accent-gold-pure) !important;
+    color: var(--accent-gold-pure) !important;
+    box-shadow: none !important;
+}
+
+/* A dropdown reads its own value in white; gold is for the frame, not for the
+   line the player is reading. */
+select,
+.cc-bio-select {
+    color: #ffffff !important;
+}
+
+select option,
+.cc-bio-select option {
+    color: #ffffff;
+}
+
+/* The one option under the cursor is the tower's gold, so the open list still
+   shows which line is being picked. */
+select option:checked,
+select option:hover {
+    color: var(--accent-amber-glow) !important;
+    background: var(--bg-tertiary-focus-translucent-45);
+}
+
+
+/* The open tab is the page's own top edge, so it has no bottom edge of its
+   own: the line under it read as a closed box sitting above the page. */
+.cc-folder-tab.active,
+.cc-step-tab.active {
+    border-bottom: none !important;
+    box-shadow: none !important;
+}
+
+/* The Simple / Detailed switch is minimal: two words, the one you are in in
+   gold, no cabinet around them. */
+.cc-mode-toggle {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    gap: var(--sp-3) !important;
+}
+
+.cc-mode-pill {
+    background: transparent !important;
+    border: none !important;
+    padding: 2px 4px !important;
+    box-shadow: none !important;
+    color: var(--text-detail-label) !important;
+}
+
+.cc-mode-pill.active {
+    color: var(--accent-gold-pure) !important;
+}
 
 
 /* ==========================================================================
    Battle command rail (BattleSystemEnhanchedCommands.js)
-   The rows are strips of the same page every other menu is written on: warm
-   paper, sepia ink, a brown rule down the left where the dark preset puts its
-   gold. A row carrying a kind of its own keeps that colour on the rule.
+   Black slate rows; the gold edge down the left is the cursor, and a row that
+   carries a kind of its own (a skill's role) keeps that colour there instead.
    ========================================================================== */
 :root {
-    --actorcmd-bg: #efe4c8;
-    --actorcmd-bg-sel: #fbf3de;
-    --actorcmd-bg-image: linear-gradient(to right,
-        rgba(187, 161, 109, 0.16) 0%, rgba(187, 161, 109, 0.04) 45%,
-        rgba(255, 255, 255, 0.10) 100%);
-    --actorcmd-border: rgba(187, 161, 109, 0.55);
-    --actorcmd-border-sel: #8a5a32;
-    --actorcmd-edge: #8a5a32;
-    --actorcmd-sep: rgba(187, 161, 109, 0.45);
-    --actorcmd-ink: #2c2418;
-    --actorcmd-ink-sel: #58180D;
-    --actorcmd-ink-cost: #7a4a18;
-    --actorcmd-ink-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+    --actorcmd-bg: rgba(0, 0, 0, 0.92);
+    --actorcmd-bg-sel: rgba(0, 0, 0, 0.98);
+    --actorcmd-bg-image: none;
+    --actorcmd-border: rgba(255, 255, 255, 0.07);
+    --actorcmd-border-sel: var(--accent-gold-pure);
+    --actorcmd-edge: var(--accent-gold-pure);
+    --actorcmd-sep: rgba(255, 255, 255, 0.09);
+    --actorcmd-ink: var(--text-pure-white);
+    --actorcmd-ink-sel: var(--accent-gold-pure);
+    --actorcmd-ink-cost: var(--text-primary-hover);
+    --actorcmd-ink-shadow: -1px -1px 0 #000, 1px -1px 0 #000,
+                           -1px 1px 0 #000, 1px 1px 0 #000,
+                           2px 2px 5px rgba(0, 0, 0, 0.95);
 }
+
+/* Section headers on the Empathize / wiki spreads read as gold in the tower:
+   --text-text-alt-4 is plain white here, which made every heading shout. */
+.npc-sec-hdr { color: var(--text-gold-dark); }
 
 
 /* ==========================================================================
-   The binding crease (css/theme.css, .book-spread::before / .cc-pockets-spread::after)
-
-   The paper preset is the only one that draws a book: the dark preset paints
-   the spread flat black and takes the crease off it entirely (see the frame
-   override at the head of that preset). Here the two leaves are real paper, so
-   the seam between them is a real fold - a soft gutter shadow falling away to
-   either side with the darker line of the binding down its middle, which is
-   what makes a menu read as two pages rather than as one panel split by a bar.
-
-   WHERE the crease falls is not set here. Each spread declares its own seam in
-   --spine-x (theme.css), so a screen whose pages are 42/58 binds at 42%; this
-   block only says what the fold looks like.
+   Quest log (KanbanQuestLog.js): the tower hangs a white magnetic board where
+   the archive keeps its cork. Aluminium frame, marker ink for the headings,
+   and every note held up by a round magnet instead of a pin. Every rule is
+   scoped under :root so it outranks theme.css, which loads after this file.
    ========================================================================== */
-:root {
-    --gradient-28: linear-gradient(to right,
-        rgba(60, 40, 18, 0) 0%,
-        rgba(60, 40, 18, 0.05) 22%,
-        rgba(60, 40, 18, 0.16) 42%,
-        rgba(46, 30, 12, 0.30) 50%,
-        rgba(60, 40, 18, 0.16) 58%,
-        rgba(255, 248, 226, 0.30) 72%,
-        rgba(255, 248, 226, 0) 100%);
-    --gradient-15: var(--gradient-28);
+:root #kb-board-overlay:not(.kb-app-mode) {
+    background:
+        linear-gradient(115deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.55) 42%, rgba(255,255,255,0) 54%),
+        radial-gradient(ellipse at 30% 20%, #ffffff 0%, #f1f3f5 55%, #dfe3e7 100%);
+    background-size: auto;
+    border-color: #b9bfc6;
+    box-shadow: inset 0 0 0 2px #8d949c, inset 0 0 60px rgba(70,80,90,0.18);
 }
-
-/* ==========================================================================
-   The book frame (css/theme.css, the .book-spread family)
-
-   The binding is not in the middle of the screen, and on most screens it never
-   was: a spread of a 58% page and a 42% page binds at 58%. Drawn as a flat
-   rectangle with a rule down it at 58%, that reads as a panel someone divided
-   badly. Drawn as a book, it reads as a book held turned a little to one side,
-   which is the only way two leaves of different widths can be seen at once,
-   and then the off-centre binding is the reason rather than the mistake.
-
-   So the frame says which leaf is nearer. A book turned about its spine
-   foreshortens the leaf coming towards you and opens the leaf going away: the
-   near leaf shows a wide page and its fore-edge almost edge-on, the far leaf
-   shows a narrow page and a broad stack of page edges, because that block is
-   being seen obliquely. Both bands are worked out from --spine-x, so a screen
-   that binds at 42% turns the other way on its own and none of this has to be
-   restated per screen.
-
-   Drawn on ::after, under the crease on ::before (the pockets spread has those
-   two the other way round: its crease has always been its ::after).
-   ========================================================================== */
-:root {
-    --book-leather: #46301a;
-    --book-leather-lit: #6b4a26;
-    --book-gilt: #b98f43;
-    --book-page-edge: #e6d8b6;
-    --book-page-line: #b09565;
-
-    /* The cover board, seen square on: the same all round. */
-    --book-board-w: 9px;
-    /* The fore-edges. Each is worked out from the OTHER leaf's width, which is
-       what makes the far, narrow leaf show the broader block of page edges.
-       Clamped so the band still sits inside the page padding at any width. */
-    --book-fore-l: clamp(7px, calc((100% - var(--spine-x, 58%)) * 0.030), 26px);
-    --book-fore-r: clamp(7px, calc(var(--spine-x, 58%) * 0.030), 34px);
+:root #kb-board-overlay:not(.kb-app-mode)::before {
+    border-color: #6f767e;
+    box-shadow: inset 0 0 0 2px #e9ecef;
 }
-
-/* The covers themselves. The doubled gold rule the shared sheet draws is a
-   frame around a panel; a book has boards, so it becomes one solid band of
-   leather with the gilt tooling line run inside it. The spread is full bleed,
-   so there is nothing outside it to cast a shadow onto: the depth is worked
-   from the inside, the head and tail falling into the boards.
-
-   Written into the paper rule above rather than as a second group of the same
-   selectors, which the sheet's own duplicate-group check would flag. */
-.book-spread,
-.cc-pockets-spread,
-#thinker-container .book-spread,
-#blacksmith-container .book-spread,
-.save-book-spread,
-.shop-spread,
-.mp-spread,
-.travel-book-spread,
-.stock-spread,
-.mp-type-spread {
-    border: var(--book-board-w) solid var(--book-leather);
-    outline: 1px solid var(--book-gilt);
-    outline-offset: calc(-1 * var(--book-board-w) - 4px);
-    box-shadow:
-        inset 0 0 0 1px #2f1f0d,
-        inset 0 14px 30px -14px rgba(70, 48, 26, 0.55),
-        inset 0 -14px 30px -14px rgba(70, 48, 26, 0.55);
+:root #kb-board-overlay:not(.kb-app-mode)::after {
+    background:
+        radial-gradient(ellipse at 72% 82%, rgba(40,60,120,0.05) 0%, rgba(0,0,0,0) 30%),
+        radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 60%, rgba(60,70,80,0.16) 100%);
 }
-
-/* The page block: leather turn-in, then the stack of page edges, at each
-   fore-edge. Everything is painted in the page's own outer padding, so no line
-   of text ever sits on it. */
-.book-spread::after,
-.save-book-spread::after,
-.shop-spread::after,
-.mp-spread::after,
-.travel-book-spread::after,
-.stock-spread::after,
-.mp-type-spread::after,
-.cc-pockets-spread::before {
-    content: "";
-    position: absolute;
-    /* Longhands, not the inset shorthand: it collapses these overlays in the
-       game runtime (see the CSS notes in docs/task/ui_fixing.md). */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9;
-    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-    background-image:
-        /* the turn-in of the cover over each fore-edge */
-        linear-gradient(to right, var(--book-leather) 0, var(--book-leather-lit) 100%),
-        linear-gradient(to left, var(--book-leather) 0, var(--book-leather-lit) 100%),
-        /* the page block: one line per leaf, closing up towards the board */
-        repeating-linear-gradient(to right,
-            var(--book-page-edge) 0 2px, var(--book-page-line) 2px 3px),
-        repeating-linear-gradient(to left,
-            var(--book-page-edge) 0 2px, var(--book-page-line) 2px 3px);
-    background-size:
-        4px 100%,
-        4px 100%,
-        var(--book-fore-l) 100%,
-        var(--book-fore-r) 100%;
-    background-position:
-        left 0 top 0,
-        right 0 top 0,
-        left 4px top 0,
-        right 4px top 0;
+:root #kb-board-overlay:not(.kb-app-mode) #kb-board-header {
+    color: #1d2b52;
+    text-shadow: none;
+    border-bottom: 3px solid rgba(29,43,82,0.55);
 }
-
-/* A spread with one leaf is a book held square on: no leaf is turned away, so
-   neither fore-edge is opened and the two bands match. */
-.book-spread.spine-none::after,
-.book-spread.options-solo::after,
-.book-spread.skill-fullpage::after,
-.book-spread.mp-type-single::after,
-.cc-pockets-spread:has(> .cc-page-full)::before {
-    --book-fore-l: 10px;
-    --book-fore-r: 10px;
+:root #kb-board-overlay:not(.kb-app-mode) #kb-columns { border-top: none; }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-col-divider {
+    flex-basis: 3px;
+    background: rgba(29,43,82,0.5);
+    box-shadow: none;
+    border-radius: 2px;
 }
-
-
-/* The dialogue box. theme.css paints its lines in --text-pure-white, which
-   vanishes on this paper, so the plain text is inked black. */
-body #html-msg-text {
-    color: #000000;
-}
-
-/* The camp, sleep and wait menu. theme.css inks its rows in the pale amber of
-   the dark themes, which is lost on this paper, so they take the page ink and
-   the picked row the oxblood of the headings. */
-body #sleep-menu-overlay .army-dialog-btn,
-body #refuel-overlay .army-dialog-btn,
-body #sleep-menu-overlay .army-dialog-type-hint,
-body #refuel-overlay .army-dialog-type-hint,
-body #sleep-menu-overlay .army-dialog-type-arrow,
-body #refuel-overlay .army-dialog-type-arrow {
-    color: #2b251d;
-}
-body #sleep-menu-overlay .army-dialog-btn.selected,
-body #refuel-overlay .army-dialog-btn.selected,
-body #sleep-menu-overlay .army-dialog-btn:hover,
-body #refuel-overlay .army-dialog-btn:hover {
-    border-color: #58180D;
-    color: #58180D;
-}
-body #sleep-menu-overlay .army-dialog-btn--disabled,
-body #refuel-overlay .army-dialog-btn--disabled {
-    color: rgba(43, 37, 29, 0.38);
-}
-body #sleep-menu-overlay .army-dialog-type-arrow:hover,
-body #refuel-overlay .army-dialog-type-arrow:hover {
-    background: rgba(88, 24, 13, 0.12);
-}
-
-/* The HP / MP / AP figures beside each portrait. theme.css paints them in
-   --text-pure-white, a ghost on this paper, so they take the page ink; a low
-   pool still turns them warn or bad through .gauge-ink, which outranks this. */
-body .bio-vital-val {
-    color: #2b251d;
-}
-
-/* The diary's category bookmarks. theme.css sets them as near-black plates
-   inked in --text-primary-hover, which is this theme's oxblood and sinks into
-   the black. The idle marks become paper slips, the active one keeps its
-   gold. */
-body #diary-container .diary-mark:not(.active) {
-    background: linear-gradient(180deg, #e2dac6, #d3c3a0);
-    border-color: rgba(88, 24, 13, 0.35);
-    color: #58180D;
-}
-body #diary-container .diary-mark:not(.active):hover {
-    border-color: #58180D;
-}
-
-/* The vector gun's running card writes its name in --text-primary, which this
-   theme leaves unset, so it fell back to a pale gold lost on the paper. */
-body .vg-grid .item-slot.vg-on .item-slot-name {
-    color: #58180D;
-}
-
-/* The research rail. theme.css draws it with no plate over the black frame,
-   and its oxblood tabs and the specialization chip beside Back sank into the
-   black. It gets the same paper slip as the character creation sidebar. */
-body .tt-rail {
-    background: linear-gradient(180deg, #e2dac6, #d3c3a0);
-    border-right: 1px solid rgba(88, 24, 13, 0.35);
-}
-/* A locked discovery was faded to half on top of its sepia ink and read as a
-   ghost; it stays visibly behind the open ones without disappearing. */
-body .tt-node--locked {
-    opacity: 0.72;
-}
-/* The specialization chip floats over whatever is under it, the black frame
-   included, so in this theme it carries its own slip of paper. */
-body .spec-badge {
-    background: #e2dac6;
-}
-
-/* The pick sheet (Teach, Learn, every CCPick list) is a cream card in this
-   theme, so the cursor's row cannot take the near-white ink the dark sidebar
-   chips use: it reads in oxblood inside an oxblood hairline. */
-body .cc-pick .cc-pick-row.selected {
-    border-color: #58180D !important;
-    color: #58180D !important;
-}
-
-/* Biology. Its tab header and the sticky Body Parts title were painted with
-   --gradient-26, the whole spread's gradient spine included, so a false
-   binding ran down the middle of each and cut through the tabs under it. The
-   header sits outside the scroller and needs no plate; the title scrolls over
-   the list, so it takes the flat paper of the page. */
-body #biologic-container .bio-left-header {
+:root #kb-board-overlay:not(.kb-app-mode) .kb-col-header {
+    color: #1d2b52;
     background: transparent;
+    border: none;
+    border-bottom: 3px solid #1d2b52;
+    border-radius: 0;
+    box-shadow: none;
 }
-body #biologic-container .bio-parts-title {
-    background: #e9dec3;
+:root #kb-board-overlay:not(.kb-app-mode) .kb-col-title { text-shadow: none; }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-col-count {
+    color: #a3222c;
+    background: transparent;
+    border: 2px solid #a3222c;
+    border-radius: 50%;
+    padding: 1px 8px;
 }
-
-/* The Empathize folder tabs. theme.css cuts each one from black so it stands
-   on the panel below, which in this theme left oxblood ink on black over the
-   black frame: the bar was not drawn at all. Each tab is a slip of paper here,
-   the open one the same cream as the panel it opens onto. */
-body .npc-tab-bar .npc-tab,
-body .npc-tab-bar .npc-tab:hover {
-    background: linear-gradient(180deg, #e2dac6, #d3c3a0);
-    color: #6b5242;
+:root #kb-board-overlay:not(.kb-app-mode) .kb-empty-col { color: #5b6470; text-shadow: none; }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-cards-wrap::-webkit-scrollbar-track { background: rgba(70,80,90,0.12); }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-cards-wrap::-webkit-scrollbar-thumb { background: #9aa1a9; border: 2px solid #6f767e; }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-card { box-shadow: 2px 4px 8px rgba(40,50,60,0.35); }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-card.focused,
+:root #kb-board-overlay:not(.kb-app-mode) .kb-card:hover { box-shadow: 4px 8px 16px rgba(40,50,60,0.4); }
+/* The pin becomes a flat round magnet in the note's own pin colour. */
+:root #kb-board-overlay:not(.kb-app-mode) .kb-pin {
+    width: 22px; height: 22px; margin-left: -11px; top: -8px;
+    background: radial-gradient(circle at 40% 35%, rgba(255,255,255,0.55) 0 18%, var(--pin, #b03030) 30% 70%, rgba(0,0,0,0.35) 100%);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.45), inset 0 -2px 0 rgba(0,0,0,0.25);
 }
-body .npc-tab-bar .npc-tab:hover:not(.active) {
-    color: #58180D;
-}
-body .npc-tab-bar .npc-tab.active,
-body .npc-tab-bar .npc-tab.selected {
-    background: #faf2e4;
-    color: #58180D;
-}
-body .npc-tab-bar .npc-tab-hint {
-    color: #e2dac6;
-}
-
-/* Character creation on parchment. theme.css draws the tab rail from
-   --bg-panel down to --bg-surface, which is near black here, so the idle tabs
-   were brown ink on a dark smear; the open one wore a different plate on each
-   side of the rail. Every tab is a paper slip now, like the Empathize ones,
-   the open one in the cream of the page it opens onto. */
-body .cc-folder-tab,
-body .cc-step-tab {
-    background: linear-gradient(180deg, #e2dac6, #d3c3a0) !important;
-    border: 1px solid #8b5a2b !important;
-    border-bottom: none !important;
-    color: #6b5242 !important;
-    box-shadow: none !important;
-}
-body .cc-folder-tab:hover,
-body .cc-step-tab:hover {
-    color: #58180D !important;
-    border-color: #58180D !important;
-}
-body .cc-folder-tab.active,
-body .cc-step-tab.active,
-body .cc-folder-tab.selected,
-body .cc-step-tab.selected {
-    background: #faf2e4 !important;
-    border-color: #58180D !important;
-    color: #58180D !important;
-    box-shadow: 0 -2px 8px rgba(88, 24, 13, 0.25) !important;
-}
-body .cc-folder-tab.cc-pet-tab {
-    border-color: #2e5e3b !important;
-}
-body .cc-folder-tab.cc-pet-tab.active {
-    border-color: #2e5e3b !important;
-    color: #2e5e3b !important;
-}
-
-/* theme.css inks every dropdown white for the dark presets, which left the
-   name and the hometown blank on the paper. */
-body .cc-bio-select,
-body .cc-bio-select option {
-    color: #2c2418;
-}
-body .cc-bio-select option {
-    background: #faf2e4;
-}
-body .cc-bio-select.cc-locked {
-    color: #6b5242;
-}
-
-/* Roadmap, proficiency and kit rows read as body text, not as a caption. */
-body .cc-compact-loadout-grid .cc-compact-loadout-item .cc-loadout-name {
-    color: #3b2a1d;
-}
-
-/* The hover card is a slip of the same paper, not a black box carrying
-   parchment ink. */
-body .cc-item-tooltip {
-    background: #faf2e4;
-    border: 1px solid #8b5a2b;
-    box-shadow: 0 6px 18px rgba(44, 36, 24, 0.45);
-    color: #2c2418;
-}
-body .cc-item-tooltip-title {
-    color: #58180D;
-}
-body .cc-item-tooltip-type {
-    border-color: #8b5a2b;
-    color: #6b5242;
-}
-body .cc-item-tooltip-desc {
-    color: #2c2418;
-}
-body .cc-item-tooltip-stats {
-    color: #2e5e3b;
-}
-body .cc-item-tooltip-price {
-    color: #58180D;
-}
+:root #kb-board-overlay:not(.kb-app-mode) .kb-card.kb-compact .kb-pin { top: -9px; }

@@ -50,7 +50,7 @@
     },
     "16": {
       "name": "Spellshot",
-      "desc": "With a firearm in hand you deal +25% damage and every action returns a little mana. A spell aimed at one enemy is fired out of the barrel and spends a round, so an empty magazine refuses it; reloading hands back a fifth of your maximum mana."
+      "desc": "With a firearm: +25% damage and a little mana back on every action. Single target spells use a round; reloading restores 20% mana."
     },
     "17": {
       "name": "Footwork",

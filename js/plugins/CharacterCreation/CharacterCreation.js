@@ -5826,7 +5826,8 @@
       const actor = wrap ? Scene_CharacterCreation.getCurrentActor() : null;
       const dossierModel = storyModeModelPath(actor);
       if (wrap && dossierModel) {
-        this._showCC3DPortrait(wrap, { kind: "glb", path: dossierModel });
+        const colours = typeof actor.modelColours === "function" ? actor.modelColours() : null;
+        this._showCC3DPortrait(wrap, { kind: "glb", path: dossierModel, colours: colours });
         return;
       }
       // A creature that has never been taken into the sculptor has no saved
@@ -5861,6 +5862,9 @@
         const fallback = wrap.querySelector(".cc3d-live-portrait-fallback");
         if (fallback) fallback.style.display = "none";
         wrap.classList.remove("empty");
+        // Same body, perhaps repainted on the Bio page since the last frame.
+        const shown = this._ccPortrait3D.model;
+        if (shown && info.kind === "glb") window.ActorModel3D.tint(shown.model, info.colours);
         return;
       }
       this._destroyCC3DPortrait();
@@ -5907,9 +5911,11 @@
 
       const state = {
         key: key, canvas: canvas, renderer: renderer, scene: scene, camera: camera, pivot: pivot,
-        model: null, rafId: 0, disposed: false, frameAcc: 0, clock: new THREE.Clock()
+        model: null, rafId: 0, disposed: false, frameAcc: 0, clock: new THREE.Clock(),
+        listeners: {}, activeButton: -1, prev: null, travel: 0
       };
       this._ccPortrait3D = state;
+      this._bindCC3DPortraitControls(state);
       // There is a real body on screen now, so the frame stops naming it in
       // words underneath: the caption is only what stands in for the model
       // when no context can be had.
@@ -5953,14 +5959,71 @@
         if (state.frameAcc < FRAME) return;
         const dt = state.frameAcc;
         state.frameAcc = 0;
-        // A slow turntable, not a held pose: this is a preview card the player
-        // is choosing a body from, not a portrait framed once and left alone.
-        pivot.rotation.y += 0.01;
         if (live && state.model) { try { state.model.update(dt); } catch (e) {} }
         if (window.PSXShader) window.PSXShader.render(renderer, scene, camera);
         else renderer.render(scene, camera);
       };
       animate();
+    }
+
+    // The model holds still until the player turns it, the way the status
+    // sheet's does: drag to turn, middle drag to pan, wheel to zoom. Turning
+    // the body is what swings the rig's hair and skirt. The frame around the
+    // canvas opens a gallery on click, so a press that travelled is a drag
+    // and its click never reaches the frame.
+    _bindCC3DPortraitControls(state) {
+      const canvas = state.canvas, pivot = state.pivot, camera = state.camera;
+      const L = state.listeners;
+      canvas.style.cursor = "grab";
+      L.onDown = (e) => {
+        if (e.button !== 0 && e.button !== 1) return;
+        state.activeButton = e.button;
+        state.prev = { x: e.clientX, y: e.clientY };
+        state.travel = 0;
+        if (e.button === 1) e.preventDefault();
+        canvas.style.cursor = "grabbing";
+      };
+      L.onMove = (e) => {
+        if (state.activeButton === -1 || !state.prev) return;
+        const dx = e.clientX - state.prev.x, dy = e.clientY - state.prev.y;
+        state.travel += Math.abs(dx) + Math.abs(dy);
+        if (state.activeButton === 0) {
+          pivot.rotation.y += dx * 0.012; pivot.rotation.x += dy * 0.012;
+        } else {
+          const ps = 0.0035 * camera.position.z;
+          camera.position.x -= dx * ps; camera.position.y += dy * ps;
+        }
+        state.prev = { x: e.clientX, y: e.clientY };
+      };
+      L.onUp = () => { state.activeButton = -1; canvas.style.cursor = "grab"; };
+      L.onClick = (e) => { if (state.travel > 6) { e.stopPropagation(); e.preventDefault(); } state.travel = 0; };
+      L.onWheel = (e) => {
+        e.preventDefault(); e.stopPropagation();
+        camera.position.z = Math.max(1.5, Math.min(60, camera.position.z + e.deltaY * 0.012));
+      };
+      L.onAux = (e) => { if (e.button === 1) e.preventDefault(); };
+      L.onTStart = (e) => {
+        if (e.touches.length !== 1) return;
+        state.activeButton = 0; state.travel = 0;
+        state.prev = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      };
+      L.onTMove = (e) => {
+        if (e.touches.length !== 1 || !state.prev) return;
+        const dx = e.touches[0].clientX - state.prev.x, dy = e.touches[0].clientY - state.prev.y;
+        state.travel += Math.abs(dx) + Math.abs(dy);
+        pivot.rotation.y += dx * 0.012; pivot.rotation.x += dy * 0.012;
+        state.prev = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      };
+      L.onTEnd = () => { state.activeButton = -1; };
+      canvas.addEventListener("mousedown", L.onDown);
+      canvas.addEventListener("mousemove", L.onMove);
+      window.addEventListener("mouseup", L.onUp);
+      canvas.addEventListener("click", L.onClick);
+      canvas.addEventListener("wheel", L.onWheel, { passive: false });
+      canvas.addEventListener("auxclick", L.onAux);
+      canvas.addEventListener("touchstart", L.onTStart);
+      canvas.addEventListener("touchmove", L.onTMove);
+      window.addEventListener("touchend", L.onTEnd);
     }
 
     _destroyCC3DPortrait() {
@@ -5969,6 +6032,9 @@
       this._ccPortrait3D = null;
       s.disposed = true;
       cancelAnimationFrame(s.rafId);
+      const L = s.listeners || {};
+      window.removeEventListener("mouseup", L.onUp);
+      window.removeEventListener("touchend", L.onTEnd);
       // dispose() alone leaves the WebGL context alive, and the browser force-
       // loses the OLDEST context past its cap, which could be the game's own
       // canvas rather than this one.

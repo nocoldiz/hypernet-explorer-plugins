@@ -182,23 +182,24 @@ const GameOptions = {
     },
 
     /**
-     * Put one preset on screen, now. Every theme token the game draws with is a
-     * CSS custom property on :root, so a preset is applied by injecting it as a
-     * stylesheet that sits after the linked one in the cascade: nothing has to
-     * be rebuilt and no restart is needed. The same content is written to
-     * css/vars.css so the choice survives a restart.
-     *
-     * Presets keep full token parity (docs/task/ui_fixing.md), which is what
-     * makes a live swap safe: every property the old preset defined is defined
-     * by the new one too, so no surface is left reading a token that no longer
-     * has a value.
+     * Put the stored preset on screen. This is the boot path only: a preset
+     * is more than tokens, it also carries selector rules tuned for its own
+     * page (a cream page re-inks the dialogue box black, a black page re-inks
+     * it white), and css/theme.css already pulled one preset in through its
+     * @import of vars.css. Swapping presets while the game runs left the old
+     * preset's rules standing under the new tokens, so a theme the player
+     * picks is only saved, and takes effect on the next start (_storeTheme).
+     * The @import is dropped here so the injected preset is the only one
+     * live, even when vars.css on disk was a different preset.
      * @param {string} themeFile - A filename from getThemes, never the ASCII entry.
      */
     _injectTheme: function (themeFile) {
         if (!themeFile || themeFile === this.ASCII_THEME) return;
+        this._loadedTheme = themeFile;
         if (!Utils.isNwjs()) {
             // In a browser there is no disk to write: point a second <link> at
             // the preset instead, which the cascade applies over vars.css.
+            this._dropVarsImport();
             let link = document.getElementById('active-theme-link');
             if (!link) {
                 link = document.createElement('link');
@@ -207,7 +208,6 @@ const GameOptions = {
                 document.head.appendChild(link);
             }
             link.href = 'css/themes/' + themeFile;
-            this._forceRepaint();
             return;
         }
         try {
@@ -218,8 +218,10 @@ const GameOptions = {
             const varsPath = path.join(base, 'css', 'vars.css');
             if (!fs.existsSync(selectedThemePath)) return;
             const content = fs.readFileSync(selectedThemePath, 'utf8');
-            // Written for the next boot; injected for this one.
-            fs.writeFileSync(varsPath, content, 'utf8');
+            if (!fs.existsSync(varsPath) || fs.readFileSync(varsPath, 'utf8') !== content) {
+                fs.writeFileSync(varsPath, content, 'utf8');
+            }
+            this._dropVarsImport();
             let style = document.getElementById('active-theme-override');
             if (!style) {
                 style = document.createElement('style');
@@ -227,21 +229,63 @@ const GameOptions = {
                 document.head.appendChild(style);
             }
             style.textContent = content;
-            // Force a repaint. Updating the :root vars alone won't make
-            // Chromium repaint cached gradient/url() background-images on
-            // surfaces that weren't structurally mutated (e.g. the options
-            // menu's #menu-container / .book-spread). Without this, scenes
-            // that only re-render a small inner subtree show no theme change.
-            this._forceRepaint();
         } catch (e) {
             console.error("GameOptions: Failed to apply theme.", e);
         }
     },
 
+    // Remove theme.css's @import of vars.css, so the preset injected at boot
+    // is the only one whose selector rules are in the cascade.
+    _dropVarsImport: function () {
+        try {
+            const sheets = document.styleSheets || [];
+            for (let i = 0; i < sheets.length; i++) {
+                const sheet = sheets[i];
+                if (!sheet.href || !/\/theme\.css(\?|$)/.test(sheet.href)) continue;
+                const rules = sheet.cssRules;
+                for (let r = rules.length - 1; r >= 0; r--) {
+                    const rule = rules[r];
+                    if (rule.type === 3 && /vars\.css/.test(rule.href)) sheet.deleteRule(r);
+                }
+            }
+        } catch (e) {
+            console.error("GameOptions: Failed to drop the vars.css import.", e);
+        }
+    },
+
+    // The preset that is on screen this session, set at boot.
+    _loadedTheme: null,
+
+    /**
+     * Save a preset the player picked for the next start, and say a restart
+     * is needed when it is not the one already on screen. Nothing is swapped
+     * live (see _injectTheme), and the game is never restarted for them.
+     * @param {string} themeFile - A filename from getThemes, never the ASCII entry.
+     */
+    _storeTheme: function (themeFile) {
+        if (!themeFile || themeFile === this.ASCII_THEME) return;
+        if (Utils.isNwjs()) {
+            try {
+                const fs = require('fs');
+                const path = require('path');
+                const base = path.dirname(process.mainModule.filename);
+                const selectedThemePath = path.join(base, 'css', 'themes', themeFile);
+                if (fs.existsSync(selectedThemePath)) {
+                    fs.writeFileSync(path.join(base, 'css', 'vars.css'),
+                        fs.readFileSync(selectedThemePath, 'utf8'), 'utf8');
+                }
+            } catch (e) {
+                console.error("GameOptions: Failed to save theme.", e);
+            }
+        }
+        if (themeFile !== this._loadedTheme && window.ParchmentToast && window.ParchmentToast.show) {
+            window.ParchmentToast.show(T('GameOptions.themeRestart'), { severity: "warning" });
+        }
+    },
+
     /**
      * Persist a theme selection. Kept as the old name because other plugins
-     * call it; it now applies the preset as well, since a theme change is
-     * immediate everywhere.
+     * call it; it is the same as setTheme.
      * @param {number} themeIndex - Index of theme in getThemes list.
      */
     persistTheme: function (themeIndex) {
@@ -270,8 +314,9 @@ const GameOptions = {
     _asciiUiFromTheme: false,
 
     /**
-     * The one entry point for a theme change the player made. Applies the look
-     * on the spot, with no restart, and keeps the ASCII mode toggle in step.
+     * The one entry point for a theme change the player made. A preset is
+     * saved for the next start (_storeTheme); the ASCII look, which is not a
+     * stylesheet, lands at once. Keeps the ASCII mode toggle in step.
      * @param {number} themeIndex - Index of theme in getThemes list.
      */
     setTheme: function (themeIndex) {
@@ -297,7 +342,7 @@ const GameOptions = {
                     ConfigManager.asciiHudEnabled = false;
                 }
                 ConfigManager.themeBeforeAscii = index;
-                this._injectTheme(themes[index]);
+                this._storeTheme(themes[index]);
             }
         } finally {
             this._themeSyncing = false;
@@ -324,7 +369,7 @@ const GameOptions = {
             } else if (ConfigManager.activeTheme === asciiIndex) {
                 const back = ConfigManager.themeBeforeAscii || 0;
                 ConfigManager.activeTheme = back;
-                this._injectTheme(this.getThemes()[back]);
+                this._storeTheme(this.getThemes()[back]);
             }
         } finally {
             this._themeSyncing = false;
@@ -339,21 +384,6 @@ const GameOptions = {
         document.dispatchEvent(new CustomEvent('gamethemechange', {
             detail: { index: ConfigManager.activeTheme, name: this.themeName(ConfigManager.activeTheme) }
         }));
-    },
-
-    /**
-     * Force a synchronous repaint of the DOM. Toggling display off/on invalidates
-     * the body's layout and paint subtree so var-driven background-images pick up
-     * the new theme values. The state is reverted before the browser yields, so
-     * no intermediate frame is painted (no visible flicker).
-     */
-    _forceRepaint: function () {
-        const b = document.body;
-        if (!b) return;
-        const prev = b.style.display;
-        b.style.display = 'none';
-        void b.offsetHeight; // force reflow
-        b.style.display = prev;
     },
 
     /**
@@ -415,9 +445,8 @@ const GameOptions = {
                 // for before any of the world rules below it. Offered only when
                 // the localization plugin is not pinned to a single language.
                 { key: 'language', symbols: ['language'] },
-                { key: 'combat', symbols: ['enemyDifficulty', 'mapBattleMode', 'cpuPartyMembers'] },
-                { key: 'battleLog', symbols: ['smoothBattleLog', 'battleLogPosition', 'battleCommandPosition', 'battleLogBgOpacity', 'battleLogSkillNames'] },
-                { key: 'exploration', symbols: ['fowEnabled', 'fogOfWar', 'mapStreaming'] },
+                { key: 'combat', symbols: ['enemyDifficulty', 'mapBattleMode', 'cpuPartyMembers', 'enemyBattlers'] },
+                { key: 'exploration', symbols: ['fowEnabled', 'fogOfWar', 'mapStreaming', 'dialogueMode'] },
                 { key: 'saving', symbols: ['autosaveEnabled', 'autosaveInterval'] },
                 { key: 'system', symbols: ['commandRemember', 'runInBackground'] }
             ]
@@ -427,9 +456,10 @@ const GameOptions = {
             nameKey: 'video',
             categories: ['video'],
             groups: [
-                { key: 'display', symbols: ['fullscreen', 'TDDP_pixelPerfectMode', 'TDDP_allowStretching', 'showFps'] },
-                { key: 'interface', symbols: ['uiScale', 'fontScale', 'activeTheme', 'worldMinimap', 'titleBackground', 'hyperverseInvertX'] },
-                { key: 'battleView', symbols: ['enemyBattlers', 'lowModelDetail', 'galaxyQuality', 'starMapInvertY'] }
+                { key: 'display', symbols: ['activeTheme', 'fullscreen', 'TDDP_pixelPerfectMode', 'TDDP_allowStretching', 'showFps'] },
+                { key: 'interface', symbols: ['uiScale', 'fontScale', 'worldMinimap', 'titleBackground', 'hyperverseInvertX', 'padCameraSpeed', 'padCameraInvertY'] },
+                { key: 'battleView', symbols: ['lowModelDetail', 'galaxyQuality', 'starMapInvertY'] },
+                { key: 'battleLog', symbols: ['smoothBattleLog', 'battleLogPosition', 'battleCommandPosition', 'battleLogBgOpacity', 'battleLogSkillNames'] }
             ]
         },
         {
@@ -2153,8 +2183,8 @@ window.GameOptions = GameOptions;
         return _SceneManager_isGameActive.call(this);
     };
 
-    // Register Theme Switcher. Every preset, plus the ASCII layer, applied on
-    // the spot: the tokens are swapped live and nothing needs a restart.
+    // Register Theme Switcher. Every preset, plus the ASCII layer. A preset
+    // takes effect on the next start; the ASCII layer at once.
     const themeCount = () => GameOptions.getThemes().length;
 
     GameOptions.registerOption('activeTheme', T('GameOptions.label.activeTheme'),
