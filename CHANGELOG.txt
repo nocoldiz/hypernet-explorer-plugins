@@ -1,3 +1,48 @@
+
+0.7.13a
+
+Added:
+ - armor type and allergens shown on every item sheet
+ - new Blida and Oran villages near Algeri
+ - object index order now, add to cart, view stockbusters and 3d viewer
+ - placed build menu furniture is interactable, chairs can be sat on
+ - SignBus spawns alongside road biomes, interactable, SignPark only from prefabs
+ - save option on the healing crystal, writes quicksave 1
+ - third person camera in voxelworld with Em's rigged animated model
+ - inverted x for hyperverse title panning and inverted y on star map camera
+
+Changed:
+ - title screen ninth symphony starts from silence at better moments
+ - reworked stock market graph, scrolling minute line toward hidden hourly price
+ - demo mode unlocks floors 1, 2 and 10; floor 2 stairs fixed
+ - spell targeting ring better and more minimal in voxelworld
+ - reworked skillmaster split with skills and magic left, buttons right
+ - eris date and onu left page text bigger, choices aligned left
+ - sync plugins command also updates the build data folder with map filtering
+ - refuel window is now a popup like the sleep menu
+ - vehicles menu disabled in story mode until Bubba joins
+ - options reset to default button now reads just Defaults
+
+Fixed:
+ - omega tower drawn in rocketlaunch as the gigantic railgun, lights up charging
+ - close button has a background in empathize UI
+ - lethal shots consume the enemy HP bar to the end before hiding it
+ - char creation fixed in archive foundation css, no familiar unselects pet
+ -  missing village reserved tiles added
+ - blade seed menu no longer flickers, works with current stats and balancing
+ - rumors and story mode dialogue no longer cut text too early
+ - archive foundation menu readability, help gap, equip page, travel confirm modal
+ - worlds menu dossier gap removed
+ - robbed merchants no longer trade with you after the ban message
+ - active timers freeze when entering battle, no more clock tower battle stuck
+ - archive foundation page colors, middle of pages and character creation
+ - chairs aboard the Starship no longer show character sprites
+ - reflection now cuts off at non-water below the water tile
+ - omega tower chests never spawn on terrain id 7 or region id 10
+ - stock graph no longer frozen while the ticker number changes
+ - idle explorer uses A* pathing when stuck in a 4x4 area
+
+
 0.7.12a
 
 Added:
@@ -16,7 +61,8 @@ Changed:
  - omega tower runs on its own clock, frozen while nobody visits
  - reworked demo switch: only dungeon floors 1, 2 and -1 visitable
  - voxel mode performance rework: terrain meshed in background workers, view culling
- - hypertriangle spinner looks and performs better
+ - hypertriangle spinner looks and performs betterChests will spawn out of bounds all throughout the Omega Tower
+
 
 Fixed:
  - em no longer shows her 3D model in dialogues, status crash fixed

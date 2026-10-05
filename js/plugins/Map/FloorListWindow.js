@@ -91,6 +91,20 @@
             return !!(typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem._isSandboxMode);
         },
 
+        // Whether an upper floor is open. The demo opens its own fixed set
+        // (1, 2 and the floor 10 lift hall) from the start, reached or not;
+        // the full run opens every floor up to the highest one reached.
+        isUpperFloorOpen(floor) {
+            if (this.sandbox()) return true;
+            const params = window.DungeonFloorSystemParams;
+            const tower = window.DungeonFloors;
+            if (params && params.demoMode && tower && tower.isDemoOpenFloor) {
+                return tower.isDemoOpenFloor(floor);
+            }
+            const maxFloor = $gameVariables.value(MAX_FLOOR_VAR) || 0;
+            return floor <= maxFloor;
+        },
+
         // The shaft is listed the way it stands: the floors above ground first,
         // the deepest at the bottom, and the ground itself in between. The
         // cursor opens on it (see initialIndex), so the list is entered at the
@@ -102,10 +116,9 @@
             const sandbox = this.sandbox();
 
             if (generated) {
-                const maxFloor = $gameVariables.value(MAX_FLOOR_VAR) || 0;
                 const floors   = $gameSystem._dungeonFloors || [];
                 for (let i = floors.length - 1; i >= 1; i--) {
-                    if (sandbox || i <= maxFloor) {
+                    if (this.isUpperFloorOpen(i)) {
                         const mapId = floors[i];
                         const actualMapId = getFirstMapId(mapId);
                         const info  = $dataMapInfos[actualMapId] || {};
@@ -158,11 +171,9 @@
                 return;
             }
             const floors = $gameSystem._dungeonFloors || [];
-            const maxFloor = $gameVariables.value(MAX_FLOOR_VAR) || 0;
             const toLoad = [];
-            const sandbox = this.sandbox();
-            for (let i = 1; i < floors.length && (sandbox || i <= maxFloor); i++) {
-                toLoad.push(i);
+            for (let i = 1; i < floors.length; i++) {
+                if (this.isUpperFloorOpen(i)) toLoad.push(i);
             }
             if (toLoad.length === 0) {
                 if (onDone) onDone();
@@ -195,8 +206,7 @@
                 const tower = window.DungeonFloors;
                 return tower ? tower.isLowerFloorUnlocked(item.floor) : false;
             }
-            const maxFloor = $gameVariables.value(MAX_FLOOR_VAR) || 0;
-            return item.floor <= maxFloor;
+            return this.isUpperFloorOpen(item.floor);
         },
 
         applySelection(item) {

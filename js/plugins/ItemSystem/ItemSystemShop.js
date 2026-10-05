@@ -2042,6 +2042,30 @@
           `;
         }
 
+        // Clothes, robe or armour: the kind of body piece, which decides the
+        // body slot it goes in, read off the armour type.
+        const kindName = safe("armorTypeName", () => utils.armorTypeName(selectedItem), "");
+        if (kindName) {
+          slotBadgeHTML += `
+            <div class="detail-spec-badge">
+                <span class="badge-lbl">${esc(T('Inventory.spec.label.armorType'))}</span>
+                <span class="badge-val">${esc(kindName)}</span>
+            </div>
+          `;
+        }
+
+        // What it holds that somebody may be allergic to, the same rows the
+        // backpack's inspect card shows.
+        const allergyRows = safe("allergenRows", () => utils.allergenRows(selectedItem), []);
+        for (const [label, val] of allergyRows) {
+          slotBadgeHTML += `
+            <div class="detail-spec-badge">
+                <span class="badge-lbl">${esc(label)}</span>
+                <span class="badge-val">${esc(val)}</span>
+            </div>
+          `;
+        }
+
         // With a pile on the counter the page's own button settles the pile, not
         // the one item the cursor happens to be on.
         const cartLines = this.shopCart(isBuyMode).size;

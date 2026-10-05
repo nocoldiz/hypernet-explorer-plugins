@@ -2329,7 +2329,7 @@
   }
 
   // The look: the NPC's Arcane, Substance, Stealth and Intimidation (0-100%,
-  // read off what they wear) as bars with the word the world has for each, then
+  // read off what they wear) as bare percentages under the stats, then
   // how the focused party member comes across to them and what that is worth
   // here, from window.NPCEmpathize.Look, the same numbers the rolls add.
   function _buildLookHTML(profile, T, actor) {
@@ -2338,18 +2338,15 @@
     if (!profile || !LS || typeof tr !== 'function') return '';
     if (window.NPCCreature?.isNonSentientProfile?.(profile)) return '';
     const label = { arcane: T.arcaneLbl, substance: T.substanceLbl, stealth: T.stealthLbl, intimidation: T.intimidationLbl };
-    const band = v => (v >= 100 ? 'npc-fill--good' : v >= 70 ? 'npc-fill--warm' : v >= 40 ? 'npc-fill--info' : 'npc-fill--muted');
     const word = v => tr('Empathize.look.tier.' + LS.tier(v));
-    let html = `<div class="npc-sec-hdr npc-mt-2">${_escapeHtml(tr('Empathize.look.hdr'))}</div>`;
+    let html = `<div class="npc-stat-grid npc-mt-1">`;
     for (const s of LS.STATS) {
       const v = Math.round(Math.max(0, Math.min(100, Number(profile[s]) || 0)));
       html +=
-        `<div class="npc-vital-row">` +
-          `<span class="npc-vital-lbl">${_escapeHtml(label[s])}</span>` +
-          `<div class="npc-vital-track"><div class="npc-vital-fill ${band(v)}" style="--npc-w:${v}%"></div></div>` +
-          `<span class="npc-vital-pct">${v}% ${_escapeHtml(word(v))}</span>` +
-        `</div>`;
+        `<div class="npc-stat-cell"><span class="npc-stat-lbl">${_escapeHtml(label[s])}</span>` +
+        `<span class="npc-stat-val">${v}%</span></div>`;
     }
+    html += `</div>`;
     const icons = LS.icons(profile);
     if (icons.length) {
       html += `<div class="npc-sub npc-good">${_escapeHtml(tr('Empathize.look.icon', { stat: icons.map(s => label[s]).join(', ') }))}</div>`;
@@ -2382,18 +2379,12 @@
     if (profile?.mhp !== undefined || profile?.mmp !== undefined) {
       const mhp    = profile.mhp ?? 0;
       const mmp    = profile.mmp ?? 0;
-      const hpPct  = Math.min(100, Math.round((mhp / 2000) * 100));
-      const mpPct  = Math.min(100, Math.round((mmp / 500)  * 100));
+      // Plain numbers, read like the stats under them: a bar against an
+      // arbitrary ceiling said nothing the figure did not.
       hpmpHTML =
-        `<div class="npc-vital-row">` +
-          `<span class="npc-vital-lbl">${T('Equip.hp')}</span>` +
-          `<div class="npc-vital-track"><div class="npc-vital-fill npc-fill--bad" style="--npc-w:${hpPct}%"></div></div>` +
-          `<span class="npc-vital-pct npc-vital-pct--num">${mhp}</span>` +
-        `</div>` +
-        `<div class="npc-vital-row">` +
-          `<span class="npc-vital-lbl">${T('Equip.mp')}</span>` +
-          `<div class="npc-vital-track"><div class="npc-vital-fill npc-fill--mp" style="--npc-w:${mpPct}%"></div></div>` +
-          `<span class="npc-vital-pct npc-vital-pct--num">${mmp}</span>` +
+        `<div class="npc-stat-grid">` +
+          `<div class="npc-stat-cell"><span class="npc-stat-lbl">${T('Equip.hp')}</span><span class="npc-stat-val">${mhp}</span></div>` +
+          `<div class="npc-stat-cell"><span class="npc-stat-lbl">${T('Equip.mp')}</span><span class="npc-stat-val">${mmp}</span></div>` +
         `</div>`;
     }
 

@@ -23,6 +23,7 @@
   "repair": "Repair",
   "upgrades": "Upgrades",
   "close": "CLOSE",
+  "back": "BACK",
   "componentsRegistry": "COMPONENTS REGISTRY",
   "fullRepair": "Full Repair",
   "notInstalled": "NOT INSTALLED",

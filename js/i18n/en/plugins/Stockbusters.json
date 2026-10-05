@@ -75,7 +75,7 @@
     }
   },
   "text": {
-    "tuitionFor": "Tuition For",
+    "tuitionFor": "Trainee",
     "tuitionRequires": "This spell is written in {stat} {points}. A reader under that floor cannot be billed for it.",
     "learnerKnows": "already knows it",
     "learnerStat": "{stat} {value} / {points} base",
@@ -184,6 +184,12 @@
     "noSearchResults": "Nothing in the catalogue matches \"{query}\".",
     "searchTruncated": "Showing the first {count} matches. Refine the search to see more.",
     "leisure": "Leisure",
-    "orderDelivered": "Delivered to your backpack: {items}."
+    "orderDelivered": "Delivered to your backpack: {items}.",
+    "learnedNow": "Learned at once: {items}",
+    "etaInstant": "Immediate: the tutor is on the line",
+    "noTrainee": "No trainee in the party meets the requirements for {items}.",
+    "trainee": "Trainee",
+    "traineeNone": "nobody meets the requirements",
+    "traineeChange": "change"
   }
 }

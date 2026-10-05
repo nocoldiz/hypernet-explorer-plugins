@@ -2650,42 +2650,6 @@
                         </div>
                     </div>
 
-                    <!-- CONFIRM PANEL (initially hidden) -->
-                    <div class="ui-detail travel-confirm-panel" id="panel-confirm">
-                        <div class="page-header-bar">
-                            <div class="back-button focusable" onclick="SceneManager._scene.closeTravelConfirmModal()">${T('FastTravel.ui.back')}</div>
-                            <h2 class="title">${T('FastTravel.ui.confirmJourney')}</h2>
-                        </div>
-                        <div class="travel-confirm-dest" id="sidebar-dest-title">${T('FastTravel.ui.travelToPlaceholder')}</div>
-                        <div class="travel-confirm-picture" id="sidebar-dest-picture"></div>
-
-                        <div class="ui-detail-scroll travel-confirm-details">
-                            <div class="inspect-spec-row">
-                                <span class="inspect-spec-label">${T('FastTravel.ui.transport')}</span>
-                                <span class="inspect-spec-value" id="sidebar-transport-val">${T('FastTravel.ui.transportPlaceholder')}</span>
-                            </div>
-                            <div class="inspect-spec-row">
-                                <span class="inspect-spec-label">${T('FastTravel.ui.distance')}</span>
-                                <span class="inspect-spec-value" id="sidebar-distance-val">12 km</span>
-                            </div>
-                            <div class="inspect-spec-row">
-                                <span class="inspect-spec-label">${T('FastTravel.ui.cost')}</span>
-                                <span class="inspect-spec-value travel-dest-cost" id="sidebar-cost-val">1.20&euro;</span>
-                            </div>
-                            <div class="inspect-spec-row" id="sidebar-level-row">
-                                <span class="inspect-spec-label">${T('FastTravel.ui.enemyLevel')}</span>
-                                <span class="inspect-spec-value travel-dest-level" id="sidebar-level-val">-</span>
-                            </div>
-                            <div class="inspect-spec-row">
-                                <span class="inspect-spec-label">${T('FastTravel.ui.travelTime')}</span>
-                                <span class="inspect-spec-value" id="sidebar-time-val">4s</span>
-                            </div>
-                        </div>
-
-                        <div class="inspect-actions travel-confirm-actions">
-                            <div class="inspect-btn focusable" id="sidebar-confirm-action-btn">${T('FastTravel.ui.travel')}</div>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="right-page travel-right-page">
@@ -2716,6 +2680,43 @@
                         ${editToolbarHTML}
                     </div>
                 </div>
+            </div>
+            <!-- CONFIRM MODAL (initially hidden): over the whole spread, the list stays behind it -->
+            <div class="ui-overlay travel-confirm-veil" id="travel-confirm-veil">
+                    <div class="ui-panel travel-confirm-panel" id="panel-confirm">
+                        <div class="page-header-bar">
+                            <div class="back-button focusable" onclick="SceneManager._scene.closeTravelConfirmModal()">${T('FastTravel.ui.back')}</div>
+                            <h2 class="title">${T('FastTravel.ui.confirmJourney')}</h2>
+                        </div>
+                        <div class="travel-confirm-dest" id="sidebar-dest-title">${T('FastTravel.ui.travelToPlaceholder')}</div>
+
+                        <div class="ui-detail-scroll travel-confirm-details">
+                            <div class="inspect-spec-row">
+                                <span class="inspect-spec-label">${T('FastTravel.ui.transport')}</span>
+                                <span class="inspect-spec-value" id="sidebar-transport-val">${T('FastTravel.ui.transportPlaceholder')}</span>
+                            </div>
+                            <div class="inspect-spec-row">
+                                <span class="inspect-spec-label">${T('FastTravel.ui.distance')}</span>
+                                <span class="inspect-spec-value" id="sidebar-distance-val">12 km</span>
+                            </div>
+                            <div class="inspect-spec-row">
+                                <span class="inspect-spec-label">${T('FastTravel.ui.cost')}</span>
+                                <span class="inspect-spec-value travel-dest-cost" id="sidebar-cost-val">1.20&euro;</span>
+                            </div>
+                            <div class="inspect-spec-row" id="sidebar-level-row">
+                                <span class="inspect-spec-label">${T('FastTravel.ui.enemyLevel')}</span>
+                                <span class="inspect-spec-value travel-dest-level" id="sidebar-level-val">-</span>
+                            </div>
+                            <div class="inspect-spec-row">
+                                <span class="inspect-spec-label">${T('FastTravel.ui.travelTime')}</span>
+                                <span class="inspect-spec-value" id="sidebar-time-val">4s</span>
+                            </div>
+                        </div>
+
+                        <div class="inspect-actions travel-confirm-actions">
+                            <div class="inspect-btn focusable" id="sidebar-confirm-action-btn">${T('FastTravel.ui.travel')}</div>
+                        </div>
+                    </div>
             </div>
 
             <!-- COORDINATE BOX (initially hidden) -->
@@ -2821,7 +2822,18 @@
         this._travelPanX = centerX - playerX * this._travelZoom;
         this._travelPanY = centerY - playerY * this._travelZoom;
 
+        // The sheet is held over the whole page: a pan or zoom that would
+        // pull an edge inside the viewer stops at that edge, so the black
+        // behind the map never shows. A sheet zoomed smaller than the page is
+        // centred instead.
+        const SHEET_W = 1232, SHEET_H = 1039;
+        const clampAxis = (pan, view, sheet) => (sheet <= view
+            ? (view - sheet) / 2
+            : Math.min(0, Math.max(view - sheet, pan)));
         const updateTransform = () => {
+            const m = this.travelViewerMetrics(viewer);
+            this._travelPanX = clampAxis(this._travelPanX, m.w, SHEET_W * this._travelZoom);
+            this._travelPanY = clampAxis(this._travelPanY, m.h, SHEET_H * this._travelZoom);
             wrapper.style.transform = `translate(${this._travelPanX}px, ${this._travelPanY}px) scale(${this._travelZoom})`;
         };
 
@@ -3317,9 +3329,9 @@ Scene_Map.prototype.printTravelCoordinates = function () {
             }
         };
 
-        // Hide list panel and show confirmation panel in sidebar
-        document.getElementById('panel-list').style.display = 'none';
-        document.getElementById('panel-confirm').style.display = 'flex';
+        // The confirmation opens as a modal over the spread; the list stays
+        // where it was behind it.
+        setTravelConfirmOpen(true);
     };
 
     // -- The coordinate box --------------------------------------------------
@@ -3473,16 +3485,19 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         this.openFastTravelUIOverlay();
     };
 
+    // The confirmation's veil and its card are shown and hidden together;
+    // the card's own display is what the input reads to know it is up.
+    function setTravelConfirmOpen(open) {
+        const veil = document.getElementById('travel-confirm-veil');
+        const panel = document.getElementById('panel-confirm');
+        if (veil) veil.style.display = open ? 'flex' : 'none';
+        if (panel) panel.style.display = open ? 'flex' : 'none';
+    }
+
     Scene_Map.prototype.closeTravelConfirmModal = function () {
         SoundManager.playCancel();
 
-        // Show list panel and hide confirmation panel in sidebar
-        const listPanel = document.getElementById('panel-list');
-        const confirmPanel = document.getElementById('panel-confirm');
-        if (listPanel && confirmPanel) {
-            listPanel.style.display = 'flex';
-            confirmPanel.style.display = 'none';
-        }
+        setTravelConfirmOpen(false);
 
         const items = document.querySelectorAll('.travel-dest-item');
         items.forEach(item => item.classList.remove('selected'));
@@ -3627,8 +3642,10 @@ Scene_Map.prototype.printTravelCoordinates = function () {
 
         const listPanel = document.getElementById('panel-list');
         const confirmPanel2 = document.getElementById('panel-confirm');
-        const isListVisible = listPanel && listPanel.style.display !== 'none';
         const isConfirmVisible = confirmPanel2 && confirmPanel2.style.display !== 'none';
+        // The list sits behind the modal, still drawn, but it takes no keys
+        // while the journey is being confirmed.
+        const isListVisible = listPanel && listPanel.style.display !== 'none' && !isConfirmVisible;
 
         if (isListVisible) {
             const items = Array.from(document.querySelectorAll('.travel-dest-item'));

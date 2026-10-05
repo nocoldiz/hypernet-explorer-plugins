@@ -120,7 +120,9 @@
         // the digit row does; it is no binding-table action, so the faces are
         // written out here.
         block:    ['Q / 1-9',       'D-PAD &uarr;&darr;', 'VoxelWorld.hud.cmdBlock'],
-        bar:      ['TAB',           'walk:bar',     'VoxelWorld.hud.cmdBar'],
+        bar:      ['SHIFT+TAB',     'walk:bar',     'VoxelWorld.hud.cmdBar'],
+        // Over the shoulder and back (VoxelWorldScene#_toggleThirdPerson).
+        footView: ['TAB',           'walk:view',    'CamperDrive.hud.cmdView'],
         // R has no pad binding of its own out here: the badge stands as written.
         ready:    ['R',             'R',            'VoxelWorld.hud.cmdReady'],
         exitWalk: ['T',             'walk:exit',    'CamperDrive.hud.cmdExitWalk'],
@@ -168,7 +170,7 @@
         const c = ctx || {};
         const wet = c.env === 'water' || c.env === 'underwater' || c.swimming;
         if (c.mode === 'foot') {
-            const ids = ['walk', 'look', 'run', 'jump'];
+            const ids = ['walk', 'look', 'footView', 'run', 'jump'];
             ids.push(wet ? 'swim' : 'crouch');
             if (c.canFly) ids.push('footFly');
             if (c.canDig && c.fighting) ids.push('fightHit', 'fightUse', 'block', 'bar');

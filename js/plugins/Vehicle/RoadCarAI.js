@@ -235,8 +235,8 @@
 
   // ── Pulling over ────────────────────────────────────────────────────────
   // Somebody is driving these cars, and now and then they stop and get out. On
-  // the open road that happens at a lay-by (a SignPark on the verge, placed by
-  // the biome generator); in a town it can happen anywhere there is room, but
+  // the open road that happens at a lay-by (a SignPark a road prefab brought
+  // with it); in a town it can happen anywhere there is room, but
   // far more rarely, because a town car is usually going somewhere.
   //
   // A town has somewhere to put a car: the city generator paints real bays in
@@ -1352,7 +1352,7 @@
   //
   // Where a car may stop:
   //   road biome  -> beside a lay-by, i.e. within a few tiles of a SignPark
-  //                  the biome generator put on the verge
+  //                  a road prefab brought with it
   //   settlement  -> anywhere there is room, but far more rarely
   //
   // Wherever it stops, it stops OFF the carriageway. The lay-by and the bay say

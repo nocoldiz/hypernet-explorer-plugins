@@ -163,6 +163,7 @@
             loader.load(
                 'models/Camper.glb',
                 (gltf) => {
+                    if (this._disposed) return;   // a preview closed before the GLB arrived
                     const model = gltf.scene;
                     // Orient the imported GLB. Camper.glb is authored Y-up (verified
                     // from its geometry: seats/mirrors split along Z, seats rise
@@ -672,6 +673,7 @@
         }
 
         dispose() {
+            this._disposed = true;
             this.group.traverse(o => { if (o.geometry) o.geometry.dispose(); });
             for (const g of this._geos) g.dispose();
             for (const m of this._mats) m.dispose();
@@ -890,26 +892,24 @@
 
     const VEHICLE_BUILDERS = { car: buildCar, bike: buildBike, boat: buildBoat, broom: buildBroom };
 
-    // The camper, for anything that only wants to LOOK at one: a stand-in built
-    // out of the same parts as the rest of the garage rather than the real GLB,
-    // which loads asynchronously and registers itself as the live camper. The
-    // one the party actually drives is still CamperModel above.
-    function buildCamperStandIn() {
-        const b = new VehicleBuild();
-        const shell = b.mat(0xe8e2d4), trim = b.mat(0x3a3a40);
-        const glass = b.mat(0x9fd4e8, { transparent: true, opacity: 0.55 });
-        const stripe = b.mat(0xc4622f);
-        b.box(4.6, 4.0, 12.0, shell, 0, 3.6, -1.2);        // the box body
-        b.box(4.4, 2.4, 3.6, shell, 0, 2.8, 5.4);          // the cab
-        b.box(4.2, 1.5, 0.3, glass, 0, 3.4, 7.15);         // windscreen
-        b.box(0.3, 1.6, 3.0, glass, 2.31, 3.4, 5.2);
-        b.box(0.3, 1.6, 3.0, glass, -2.31, 3.4, 5.2);
-        b.box(4.62, 0.5, 12.0, stripe, 0, 2.2, -1.2);      // the stripe down the side
-        b.box(4.0, 0.35, 0.4, trim, 0, 1.5, 7.2);          // bumper
-        for (const [x, z] of [[2.3, 4.6], [-2.3, 4.6], [2.3, -4.4], [-2.3, -4.4]]) {
-            b.wheel(1.5, 0.85, trim, x, 1.5, z);
-        }
-        return b.finish(15);
+    // The camper, for anything that only wants to LOOK at one: the very model
+    // the voxel world drives, Camper.glb with its wheels seated under it, held
+    // in its own group. It must not take over as the live camper that
+    // HypernetCamper.setPaint repaints, so whichever one was live stays live.
+    function buildCamperPreview() {
+        const holder = new THREE.Group();
+        const live = window.HypernetCamper && window.HypernetCamper._active;
+        const camper = new CamperModel(holder);
+        window.HypernetCamper._active = live || null;
+        let last = 0;
+        return {
+            group: holder, length: TARGET_LEN,
+            update(t) {
+                camper.update(Math.min(0.1, Math.max(0, t - last)));
+                last = t;
+            },
+            dispose() { camper.dispose(); }
+        };
     }
 
     // =========================================================================
@@ -1046,7 +1046,7 @@
                     dispose() { if (m.dispose) m.dispose(); }
                 };
             }
-            if (key === 'camper') return buildCamperStandIn();
+            if (key === 'camper') return buildCamperPreview();
             const fn = VEHICLE_BUILDERS[key];
             return fn ? fn() : null;
         },

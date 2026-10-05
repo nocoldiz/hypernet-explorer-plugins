@@ -1557,4 +1557,30 @@
         }
     }
 
+    // ========================================================================
+    // 14. Event Timer Freeze During Battle
+    // ========================================================================
+    // A map countdown (Control Timer, e.g. the clock tower crystals) stands
+    // still while a fight is on and resumes on the map. The stock expiry
+    // aborts the battle, which left the custom battle flow hanging with no
+    // menu: with the clock frozen it can no longer expire mid fight.
+
+    if (typeof Game_Timer !== 'undefined' && Game_Timer.prototype) {
+        const _inBattle = function() {
+            return !!(typeof $gameParty !== 'undefined' && $gameParty &&
+                $gameParty.inBattle && $gameParty.inBattle());
+        };
+
+        const _Game_Timer_update = Game_Timer.prototype.update;
+        Game_Timer.prototype.update = function(sceneActive) {
+            if (_inBattle()) return;
+            _Game_Timer_update.call(this, sceneActive);
+        };
+
+        const _Game_Timer_onExpire = Game_Timer.prototype.onExpire;
+        Game_Timer.prototype.onExpire = function() {
+            if (_inBattle()) _Game_Timer_onExpire.call(this);
+        };
+    }
+
 })();

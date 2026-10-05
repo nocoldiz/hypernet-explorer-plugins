@@ -240,5 +240,10 @@
   "painting": {
     "pickTitle": "Which picture does it hold?",
     "none": "As it is"
+  },
+  "use": {
+    "rest": "Rest by the fire",
+    "cook": "Cook",
+    "contentsReturned": "{n} stored items back in the pack"
   }
 }

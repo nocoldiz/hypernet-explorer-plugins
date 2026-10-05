@@ -39,55 +39,25 @@
     9: 'var(--text-text-alt-19)',
   };
 
-  // ── WASD helper ───────────────────────────────────────────────────────────
-  // Four directions: up/down walk a list, left/right step the weapon's look.
-  const WASD_KEYS = { w: 'up', s: 'down', a: 'left', d: 'right' };
-  const DIRS = ['up', 'down', 'left', 'right'];
-
-  function makeWasd(scene) {
-    const blank = () => DIRS.reduce((o, d) => (o[d] = false, o), {});
-    const s = {
-      pending: blank(),
-      held:    blank(),
-      frames:  DIRS.reduce((o, d) => (o[d] = 0, o), {}),
-      onDown: (e) => {
-        if (e.repeat) return;
-        const d = WASD_KEYS[e.key.toLowerCase()];
-        if (d) { s.pending[d] = true; s.held[d] = true; e.preventDefault(); }
-      },
-      onUp: (e) => {
-        const d = WASD_KEYS[e.key.toLowerCase()];
-        if (d) { s.held[d] = false; s.frames[d] = 0; }
-      },
-      tick() {
-        for (const d of DIRS) {
-          if (s.held[d]) {
-            s.frames[d]++;
-            const t = s.frames[d];
-            if (t > Input.keyRepeatWait && (t - Input.keyRepeatWait) % Input.keyRepeatInterval === 0) {
-              s.pending[d] = true;
-            }
-          } else {
-            s.frames[d] = 0;
-          }
-        }
-        const out = {};
-        for (const d of DIRS) {
-          out[d] = Input.isRepeated(d) || s.pending[d];
-          s.pending[d] = false;
-        }
-        return out;
-      },
-      attach() {
-        window.addEventListener('keydown', s.onDown);
-        window.addEventListener('keyup',   s.onUp);
-      },
-      detach() {
-        window.removeEventListener('keydown', s.onDown);
-        window.removeEventListener('keyup',   s.onUp);
-      },
+  // ── Directions ────────────────────────────────────────────────────────────
+  // WASD needs no listener of its own: Input.keyMapper already reads the four
+  // keys as the four directions, with the one repeat rule. A second repeater
+  // running beside it fired a step on alternate frames, so a held key raced
+  // through the list and the page flickered.
+  function readDirs() {
+    return {
+      up:    Input.isRepeated('up'),
+      down:  Input.isRepeated('down'),
+      left:  Input.isRepeated('left'),
+      right: Input.isRepeated('right'),
     };
-    return s;
+  }
+
+  // Right click is read once, through TouchInput.isCancelled() in update().
+  // Acting on the contextmenu event as well popped a second scene behind this
+  // one (or backed out of the preview and then out of the screen).
+  function swallowContextMenu(el) {
+    el.addEventListener('contextmenu', (e) => { e.preventDefault(); e.stopPropagation(); });
   }
 
   // ── Spirit image draw helper ──────────────────────────────────────────────
@@ -155,18 +125,10 @@
       this._looks   = [];      // candidate appearance seeds
       this._lookIdx = 0;
       this._preview = [];      // mounted Weapon3DPreview entries
-      this._wasd    = makeWasd(this);
-
-      this._wasd.attach();
-
       this._el = document.createElement('div');
       this._el.id = 'blade-bind-container';
       this._el.style.cssText = 'opacity:0;transition:opacity 0.2s ease-out;';
-      this._el.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        this.onCancelAction();
-      });
+      swallowContextMenu(this._el);
       document.body.appendChild(this._el);
 
       this._render();
@@ -183,18 +145,18 @@
 
     update() {
       Scene_MenuBase.prototype.update.call(this);
-      const { up, down, left, right } = this._wasd.tick();
+      const { up, down, left, right } = readDirs();
 
       if (this._phase === 'weaponSelect') {
         if (up) {
           this._selIdx = this._selIdx <= 0 ? this._weapons.length - 1 : this._selIdx - 1;
           SoundManager.playCursor();
-          this._updateSel();
+          this._updateSel(true);
         }
         if (down) {
           this._selIdx = this._selIdx < 0 ? 0 : (this._selIdx < this._weapons.length - 1 ? this._selIdx + 1 : 0);
           SoundManager.playCursor();
-          this._updateSel();
+          this._updateSel(true);
         }
         if (Input.isTriggered('ok'))                        this._onWeaponOk();
         if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) this.onCancelAction();
@@ -208,7 +170,6 @@
     }
 
     terminate() {
-      this._wasd.detach();
       this._disposePreview();
       const el = this._el; this._el = null;
       fadeRemove(el);
@@ -302,15 +263,13 @@
         JSON.parse(JSON.stringify($dataWeapons[wid])), { name: this._wName });
       $gameParty.gainItem($dataWeapons[wid], 1);
       const actor = $gameActors.actor(1);
+      // The spirit's stats are read live off the bound blade while it is held
+      // (BladeSeed.bladeSeedParamBonus), so nothing is copied onto the actor.
       actor.changeEquip(0, $dataWeapons[wid]);
-      actor._bladeSeedBonus = {
-        0: sp.currentStats.mhp, 1: sp.currentStats.mmp, 2: sp.currentStats.atk,
-        3: sp.currentStats.def, 4: sp.currentStats.mat, 5: sp.currentStats.mdf,
-        6: sp.currentStats.agi, 7: sp.currentStats.luk,
-      };
       sp.getLearnedSkills().forEach(sk => {
         if (!actor.hasSkill(sk.skillId)) actor.learnSkill(sk.skillId);
       });
+      actor.refresh();
       SoundManager.playEquip();
       if (window.ParchmentToast) {
         window.ParchmentToast.report([
@@ -515,10 +474,17 @@
         </div>`;
     }
 
-    _updateSel() {
+    // Only a keyboard or pad step scrolls the list: scrolling under a resting
+    // mouse slides the next row beneath it, which hovers that row, which
+    // scrolls again, and the selection flickers back and forth.
+    _updateSel(scroll) {
       if (!this._el) return;
       this._el.querySelectorAll('.item-slot').forEach((el, i) =>
         el.classList.toggle('selected', i === this._selIdx));
+      if (scroll) {
+        const sel = this._el.querySelector('.item-slot.selected');
+        if (sel) sel.scrollIntoView({ block: 'nearest' });
+      }
       this._renderWeaponInspect();
     }
   }
@@ -532,17 +498,11 @@
       this._rightTab  = 'stats';  // 'stats' | 'skills'
       this._skillMode = 'learn';  // 'learn' | 'learned'
       this._selIdx    = 0;
-      this._wasd      = makeWasd(this);
-      this._wasd.attach();
 
       this._el = document.createElement('div');
       this._el.id = 'blade-status-container';
       this._el.style.cssText = 'opacity:0;transition:opacity 0.2s ease-out;';
-      this._el.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        this.onCancelAction();
-      });
+      swallowContextMenu(this._el);
       document.body.appendChild(this._el);
 
       this._render();
@@ -556,7 +516,7 @@
 
     update() {
       Scene_MenuBase.prototype.update.call(this);
-      const { up, down, left, right } = this._wasd.tick();
+      const { up, down, left, right } = readDirs();
 
       // Tab or L1 / R1, cycle right-page tabs
       if (Input.isTriggered('pageup') || Input.isTriggered('pagedown') || Input.isTriggered('tab')) {
@@ -601,15 +561,15 @@
           return;
         }
         const list = this._skillList();
-        if (up) {
+        if (list.length && up) {
           this._selIdx = this._selIdx <= 0 ? list.length - 1 : this._selIdx - 1;
           SoundManager.playCursor();
-          this._updateSkillSel();
+          this._updateSkillSel(true);
         }
-        if (down) {
+        if (list.length && down) {
           this._selIdx = this._selIdx < 0 ? 0 : (this._selIdx < list.length - 1 ? this._selIdx + 1 : 0);
           SoundManager.playCursor();
-          this._updateSkillSel();
+          this._updateSkillSel(true);
         }
         if (Input.isTriggered('ok') && this._skillMode === 'learn') this._learnSkill();
       }
@@ -620,7 +580,6 @@
     }
 
     terminate() {
-      this._wasd.detach();
       const el = this._el; this._el = null;
       fadeRemove(el);
       Scene_MenuBase.prototype.terminate.call(this);
@@ -694,8 +653,10 @@
       let rightContent = '';
       if (this._rightTab === 'stats') {
         const s = spirit.currentStats;
+        const dormant = !BD.isSeedEquipped($gameActors.actor(1));
         rightContent = `
           <div class="inspect-section-title">${T('BladeSeed.statBonuses')}</div>
+          ${dormant ? `<div class="bs-warning">${T('BladeSeed.dormant')}</div>` : ''}
           <div class="inspect-spec-grid bs-stat-grid">
             ${[[T('BladeSeed.stat.mhp'),s.mhp],[T('BladeSeed.stat.mmp'),s.mmp],
                [T('BladeSeed.stat.atk'),s.atk],[T('BladeSeed.stat.def'),s.def],
@@ -804,7 +765,7 @@
       });
     }
 
-    _updateSkillSel() {
+    _updateSkillSel(scroll) {
       if (!this._el) return;
       this._el.querySelectorAll('[data-si]').forEach((el, i) =>
         el.classList.toggle('selected', i === this._selIdx));
@@ -812,6 +773,7 @@
       const skill    = list[this._selIdx];
       const helpEl   = this._el.querySelector('.bs-skill-help');
       if (helpEl && skill) helpEl.textContent = $dataSkills[skill.skillId]?.description || '';
+      if (!scroll) return;
       const sel = this._el.querySelector('[data-si].selected');
       if (sel) sel.scrollIntoView({ block: 'nearest' });
     }

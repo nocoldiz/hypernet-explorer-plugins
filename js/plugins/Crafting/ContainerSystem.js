@@ -550,6 +550,9 @@
     function isStolenContainer(containerId, isExtradimensional) {
         if (isExtradimensional || !containerId) return false;
         if (String(containerId).indexOf('vehicle_') === 0) return false;
+        // A chest or wardrobe the party built (FurnitureSystem) is theirs
+        // wherever it stands.
+        if (String(containerId).indexOf('furniture_') === 0) return false;
         // A bought workplace: its containers passed to the party with the deed.
         if (partyOwnsHere()) return false;
         // Out in the open nothing is anybody's cupboard.

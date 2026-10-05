@@ -247,14 +247,21 @@
       // strobes - are not built at all.
       const F = s.mountScale || 1;
       const mounted = !!s.mounted;
-      const BORE = 34 * F;      // ring inner radius: the bullet is 3
+      // THE OMEGA TOWER is not a mast on a foundation: the voxel world's own
+      // heap stands over the bore, so nothing of the lattice is built and the
+      // coil is drawn in tight enough to run up the shaft cut through it.
+      const VW = window.VoxelWorld;
+      const towerGun = !mounted && !!s.omegaTower &&
+        !!(VW && typeof VW.buildOmegaTower === "function" && VW.OMEGA_HEIGHT);
+      const BS = towerGun ? (s.boreScale || 1) : 1;
+      const BORE = 34 * F * BS; // ring inner radius: the bullet is 3
       const LEG = 46 * F;       // corner legs, well outboard of the bore
       const mastMat = this._phong({ color: s.rail, shininess: 20, specular: 0x555a63 });
       const concrete = this._phong({ color: 0x8d8b82, shininess: 4 });
       const darkMat = this._phong({ color: 0x33373d, shininess: 14, specular: 0x555a63 });
 
       // --- the foundation: a poured block a hundred and thirty metres across
-      if (!mounted) {
+      if (!mounted && !towerGun) {
       const base = new THREE.Mesh(
         this._geo(new THREE.CylinderGeometry(112, 148, 92, 16)),
         concrete
@@ -277,7 +284,7 @@
       const capacitors = [];
       const capGeo = this._geo(new THREE.CylinderGeometry(19, 22, 76, 12));
       const trunkGeo = this._geo(new THREE.CylinderGeometry(3.4, 3.4, 240, 6));
-      for (let i = 0; i < (mounted ? 0 : 12); i++) {
+      for (let i = 0; i < (mounted || towerGun ? 0 : 12); i++) {
         const a = (i / 12) * Math.PI * 2 + 0.26;
         const d = 210;
         const c = new THREE.Mesh(capGeo, darkMat);
@@ -304,6 +311,7 @@
 
       // --- the tower. Four legs of real section, X-braced the whole way up.
       const foot = 80 * F;
+      if (!towerGun) {
       const legGeo = this._geo(new THREE.CylinderGeometry(6.5 * F, 9.5 * F, H, 8));
       [[-LEG, -LEG], [LEG, -LEG], [-LEG, LEG], [LEG, LEG]].forEach(([x, z]) => {
         const leg = new THREE.Mesh(legGeo, mastMat);
@@ -327,12 +335,13 @@
           g.add(dia);
         }
       }
+      }
 
       // --- the rings. Fifty of them up the bore, each a slab of laminated
       // iron the size of a house with the coil wound inside it.
       const coilRings = [];
       const RINGS = 50;
-      const ringGeo = this._geo(new THREE.TorusGeometry(BORE, 7.2 * F, 8, 22));
+      const ringGeo = this._geo(new THREE.TorusGeometry(BORE, 7.2 * F * BS, 8, 22));
       const yokeGeo = this._geo(new THREE.BoxGeometry(BORE * 2.5, 5 * F, 5 * F));
       for (let i = 0; i < RINGS; i++) {
         const y = 86 * F + (i / (RINGS - 1)) * (H - 40 * F);
@@ -349,7 +358,7 @@
         g.add(ring);
         coilRings.push(ring);
         // Every fourth ring is tied back to the legs.
-        if (i % 4 === 0) {
+        if (i % 4 === 0 && !towerGun) {
           for (let f = 0; f < 2; f++) {
             const yoke = new THREE.Mesh(yokeGeo, mastMat);
             yoke.position.y = y;
@@ -377,7 +386,7 @@
       // and they are what gives the thing its height at a glance.
       const strobes = [];
       const strobeGeo = this._geo(new THREE.SphereGeometry(3.4, 6, 5));
-      for (let i = 0; i < (mounted ? 0 : 9); i++) {
+      for (let i = 0; i < (mounted || towerGun ? 0 : 9); i++) {
         const y = 140 + i * ((H - 140) / 8);
         for (let f = 0; f < 2; f++) {
           const m = new THREE.Mesh(strobeGeo, this._mat(new THREE.MeshBasicMaterial({ color: 0x3a0806 })));
@@ -392,7 +401,7 @@
       // hangs off rather than to the round it services.
       const gantryMat = this._phong({ color: 0x8a5a2e, shininess: 8 });
       const gantry = new THREE.Group();
-      if (!mounted) {
+      if (!mounted && !towerGun) {
         const tower = new THREE.Mesh(this._geo(new THREE.BoxGeometry(26, 460, 26)), gantryMat);
         tower.position.set(128, 310, 0);
         gantry.add(tower);
@@ -409,9 +418,193 @@
       g.add(gantry);
 
       const top = 86 * F + (H - 40 * F);
+      const omega = towerGun ? this._buildOmegaGun(g, s, top, BORE + 7.2 * F * BS + 5) : null;
       if (arrival) this._buildApproach(g, top);
 
-      return { group: g, rings: coilRings, capacitors, gantry, strobes, top };
+      return { group: g, rings: coilRings, capacitors, gantry, strobes, top, omega };
+    },
+
+    // THE OMEGA TOWER AS A GUN. The same heap of decks the voxel world stands
+    // on its plinth (VoxelWorldDecor's buildOmegaTower), brought down to the
+    // height of this muzzle and bored straight through: the needle is where
+    // the round leaves, and the shaft the coil runs up is cut out of every
+    // deck it crosses.
+    //
+    // ALL OF IT IS THE COIL. The tower's gold is one material, and here it is
+    // given a charge: during the count a tide of light climbs it from the foot
+    // to the needle, the whole heap throbs in the last seconds, and on the shot
+    // a white band runs up it at the round, leaving the gold it has passed
+    // spent and dim behind. Four prongs stand round the muzzle, and the round
+    // leaves them in a flash, a shock ring and a column of ionised air.
+    _buildOmegaGun(into, s, top, holeM) {
+      const VW = window.VoxelWorld;
+      const scale = top / VW.OMEGA_HEIGHT;
+      let built = null;
+      try {
+        built = VW.buildOmegaTower(VW.OMEGA_SPAN, VW.OMEGA_HEIGHT, { bore: holeM / scale });
+      } catch (e) { built = null; }
+      if (!built || !built.gold) return null;
+      built.group.scale.setScalar(scale);
+      into.add(built.group);
+      this._track(built);
+
+      const hot = new THREE.Color(s.coil);
+      // Heights are tower units, which is what the shader sees.
+      const u = {
+        uFill: { value: -1 }, uCharge: { value: 0 },
+        uWave: { value: -1e7 }, uFlash: { value: 0 },
+        uSpent: { value: 1 }, uDir: { value: 1 },
+        uPulse: { value: 0 }, uW: { value: 70 / scale },
+        uHot: { value: hot },
+      };
+      const gold = built.gold;
+      const prev = gold.onBeforeCompile;
+      // i18n-ignore-start  shader source
+      gold.onBeforeCompile = function (shader, renderer) {
+        if (typeof prev === "function") prev.call(this, shader, renderer);
+        Object.assign(shader.uniforms, u);
+        shader.vertexShader = "varying float vGunY;\n" + shader.vertexShader.replace(
+          "#include <begin_vertex>",
+          "#include <begin_vertex>\n" +
+          "#ifdef USE_INSTANCING\n vGunY = (instanceMatrix * vec4(transformed, 1.0)).y;\n" +
+          "#else\n vGunY = transformed.y;\n#endif\n"
+        );
+        shader.fragmentShader =
+          "varying float vGunY;\nuniform float uFill;\nuniform float uCharge;\nuniform float uWave;\n" +
+          "uniform float uFlash;\nuniform float uSpent;\nuniform float uDir;\nuniform float uPulse;\n" +
+          "uniform float uW;\nuniform vec3 uHot;\n" +
+          shader.fragmentShader.replace(
+            "#include <emissivemap_fragment>",
+            "#include <emissivemap_fragment>\n" +
+            // Charged: everything under the tide, rippling upward.
+            " float gunCharged = 1.0 - smoothstep(uFill - uW, uFill + uW, vGunY);\n" +
+            " float gunGlow = gunCharged * uCharge * (0.72 + 0.28 * sin(vGunY * 0.004 - uPulse));\n" +
+            // Spent: what the round has already passed burns down to embers.
+            " float gunAhead = smoothstep(-uW, uW, uDir * (vGunY - uWave));\n" +
+            " gunGlow = mix(gunGlow * uSpent, gunGlow, gunAhead);\n" +
+            // And the band at the round itself, white hot.
+            " float gunD = (vGunY - uWave) / uW;\n float gunBand = exp(-gunD * gunD) * uFlash;\n" +
+            " totalEmissiveRadiance += uHot * gunGlow + mix(uHot, vec3(1.0), 0.6) * gunBand;\n"
+          );
+      };
+      gold.customProgramCacheKey = function () { return "rocketOmegaGun"; };
+      // i18n-ignore-end
+      gold.needsUpdate = true;
+
+      // The prongs: four gold blades round the muzzle, the last thing the
+      // round touches.
+      const prongMat = this._mat(new THREE.MeshPhongMaterial({
+        color: 0xd9a441, emissive: hot.clone(), emissiveIntensity: 0.15, shininess: 70, specular: 0xffe2a0,
+      }));
+      const prongGeo = this._geo(new THREE.BoxGeometry(5, 300, 9));
+      for (let i = 0; i < 4; i++) {
+        const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
+        const p = new THREE.Mesh(prongGeo, prongMat);
+        const r = holeM + 6;
+        p.position.set(Math.cos(a) * r, top - 60, Math.sin(a) * r);
+        p.rotation.y = -a;
+        // Leaning in a little toward the axis, like the jaws of a clamp.
+        p.rotation.z = Math.cos(a) * 0.05;
+        p.rotation.x = -Math.sin(a) * 0.05;
+        into.add(p);
+      }
+
+      const additive = (color, opacity) => this._mat(new THREE.MeshBasicMaterial({
+        color, transparent: true, opacity, blending: THREE.AdditiveBlending,
+        depthWrite: false, side: THREE.DoubleSide,
+      }));
+      const flash = new THREE.Mesh(this._geo(new THREE.SphereGeometry(1, 16, 12)), additive(0xffffff, 0));
+      flash.position.y = top + 20;
+      flash.visible = false;
+      into.add(flash);
+      const shock = new THREE.Mesh(this._geo(new THREE.TorusGeometry(1, 0.06, 6, 48)), additive(hot.getHex(), 0));
+      shock.rotation.x = Math.PI / 2;
+      shock.position.y = top + 30;
+      shock.visible = false;
+      into.add(shock);
+      const beam = new THREE.Mesh(
+        this._geo(new THREE.CylinderGeometry(1, 1, 1, 12, 1, true).translate(0, 0.5, 0)),
+        additive(hot.getHex(), 0)
+      );
+      beam.position.y = top;
+      beam.visible = false;
+      into.add(beam);
+
+      const muzzleLight = new THREE.PointLight(hot.getHex(), 0, 9000, 1);
+      muzzleLight.position.y = top;
+      into.add(muzzleLight);
+      const footLight = new THREE.PointLight(hot.getHex(), 0, 6000, 1);
+      footLight.position.y = 260;
+      into.add(footLight);
+
+      return { tower: built, u, scale, top, prongMat, flash, shock, beam, muzzleLight, footLight, blastAt: null };
+    },
+
+    // One frame of the tower. `charge` 0..1 is the count, `live` says the
+    // round is in the bore (launching up it, or being caught coming down it),
+    // `bulletY` is where it is in metres up the barrel and `dir` which way it
+    // is going. `standby` is a receiving gun that knows something is coming.
+    _driveOmegaGun(o, charge, live, bulletY, dir, standby) {
+      if (!o) return;
+      const u = o.u, sc = o.scale, t = this._time;
+      const e = this.env;
+      o.tower.setNightGlow(e.night ? 1 : e.storm ? 0.6 : e.wet ? 0.3 : 0);
+      u.uDir.value = dir;
+      u.uPulse.value = t * (3 + charge * 14);
+      let muzzle = 0;
+      if (!live) {
+        // The tide climbs with the count and its leading edge burns. In the
+        // last seconds the whole heap throbs, faster and faster.
+        const fill = standby ? 1.1 : smooth(charge) * 1.08;
+        const late = standby ? 0 : ramp(charge, 0.82, 1);
+        const throb = late > 0 ? 0.5 + 0.5 * Math.sin(t * (10 + late * 40)) : 0;
+        u.uFill.value = (o.top * fill) / sc;
+        u.uWave.value = u.uFill.value;
+        u.uSpent.value = 1;
+        if (standby) {
+          u.uCharge.value = 0.5 + 0.3 * Math.sin(t * 3);
+          u.uFlash.value = 0;
+        } else {
+          u.uCharge.value = charge > 0 ? 0.6 + 1.8 * charge + throb * 1.4 * late : 0;
+          u.uFlash.value = charge > 0 && charge < 0.97 ? 2.2 : 0;
+        }
+        muzzle = standby ? 0.4 : charge * charge * (1 + throb * late);
+        if (!standby && late > 0) this.shake = Math.max(this.shake || 0, 0.15 + late * 0.6 * throb);
+      } else {
+        // The shot. A white band at the round, everything ahead of it at full
+        // charge, everything behind it spent.
+        u.uFill.value = 1e7;
+        u.uWave.value = bulletY / sc;
+        u.uFlash.value = 7;
+        u.uSpent.value = 0.22;
+        const since = o.blastAt == null ? 0 : t - o.blastAt;
+        u.uCharge.value = 2.6 * (o.blastAt == null ? 1 : Math.max(0.12, 1 - since / 5));
+        muzzle = o.blastAt == null ? 1.6 : Math.max(0, 1.6 - since);
+        const inBore = dir > 0 ? bulletY < o.top : bulletY > 0;
+        if (inBore) this.shake = Math.max(this.shake || 0, dir > 0 ? 1.2 + 1.4 * bulletY / o.top : 0.6);
+        const atMuzzle = dir > 0 ? bulletY >= o.top : bulletY <= o.top;
+        if (atMuzzle && o.blastAt == null) {
+          o.blastAt = t;
+          this.shake = Math.max(this.shake || 0, 4);
+        }
+      }
+      o.prongMat.emissiveIntensity = 0.15 + muzzle * 2.4;
+      o.muzzleLight.intensity = muzzle * 4;
+      o.footLight.intensity = live ? 0.6 : (standby ? 0.3 : charge * 2.2);
+
+      // The blast at the needle: a white flash, a ring of shock running out
+      // across the sky, and the column of air the round tore open.
+      const a = o.blastAt == null ? -1 : t - o.blastAt;
+      const on = a >= 0 && a < 6;
+      o.flash.visible = o.shock.visible = o.beam.visible = on;
+      if (!on) return;
+      const f = clamp01(1 - a / 1.4);
+      o.flash.scale.setScalar(30 + a * 700);
+      o.flash.material.opacity = f * f;
+      o.shock.scale.setScalar(40 + a * 1400);
+      o.shock.material.opacity = 0.9 * clamp01(1 - a / 3.5);
+      o.beam.scale.set(10 + a * 6, Math.min(24000, a * 9000), 10 + a * 6);
+      o.beam.material.opacity = 0.75 * clamp01(1 - a / 6);
     },
 
     // The skyline: a low sprawl of lit boxes, plus whatever each pad is known
@@ -658,6 +851,8 @@
           : (ph.index > 1 ? 1 : 0);
         this._updateHatch(this.hatchA, open, true);
       }
+      // The Omega Tower charges, and fires, all of itself.
+      if (this.railA.omega) this._driveOmegaGun(this.railA.omega, charging, ph.index > 1, bulletY, 1, false);
       this.railA.rings.forEach((ring, i) => {
         const k = ring.userData.k;
         let e = 0;
@@ -772,6 +967,9 @@
       // work, and the ones it has already cleared hold it on the axis, so the
       // bright band sits AT the round and the afterglow trails upward behind
       // it - the launching gun's wave, running the other way.
+      // A receiving Omega Tower breathes while the round closes and takes the
+      // catch down its whole height.
+      if (rail.omega) this._driveOmegaGun(rail.omega, 0, capturing, bulletY, -1, !capturing && closing > 0.7);
       rail.rings.forEach((ring, i) => {
         let e = 0;
         if (capturing) {

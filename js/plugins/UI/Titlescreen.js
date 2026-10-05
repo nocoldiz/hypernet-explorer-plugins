@@ -1237,25 +1237,8 @@
         const hue = 34 + Math.floor(rnd() * 26);
         const dim = `hsl(${hue}, 70%, 26%)`;
         const lit = `hsl(${hue}, 88%, 62%)`;
-        const shapes = [];
-        const kind = Math.floor(rnd() * 4);
-        for (let i = 0; i < 5; i++) {
-            const x = Math.floor(rnd() * MG_THUMB_W);
-            const y = Math.floor(rnd() * MG_THUMB_H);
-            const r = 6 + Math.floor(rnd() * 22);
-            if (kind === 0) {
-                shapes.push(`<rect x="${x - r}" y="${y - r}" width="${r * 2}" height="${r * 2}" fill="none" stroke="${dim}" stroke-width="2"/>`);
-            } else if (kind === 1) {
-                shapes.push(`<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${dim}" stroke-width="2"/>`);
-            } else if (kind === 2) {
-                shapes.push(`<path d="M${x - r} ${y + r} L${x} ${y - r} L${x + r} ${y + r} Z" fill="none" stroke="${dim}" stroke-width="2"/>`);
-            } else {
-                shapes.push(`<line x1="${x - r}" y1="${y - r}" x2="${x + r}" y2="${y + r}" stroke="${dim}" stroke-width="2"/>`);
-            }
-        }
         const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${MG_THUMB_W}" height="${MG_THUMB_H}" viewBox="0 0 ${MG_THUMB_W} ${MG_THUMB_H}">`
             + `<rect width="${MG_THUMB_W}" height="${MG_THUMB_H}" fill="#0b0906"/>`
-            + shapes.join('')
             + `<text x="${MG_THUMB_W / 2}" y="${MG_THUMB_H / 2}" fill="${lit}" font-family="monospace" font-size="34" font-weight="bold"`
             + ` text-anchor="middle" dominant-baseline="central" letter-spacing="3">${mgInitials(name)}</text>`
             + `<rect width="${MG_THUMB_W}" height="${MG_THUMB_H}" fill="none" stroke="${dim}" stroke-width="2"/>`
@@ -2113,17 +2096,19 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // Where a long piece may start, in seconds into its file. The title is not
     // long enough to wait out a twenty minute movement for its climax, so the
     // piece opens on one of these, drawn each time it starts. Found by a
-    // loudness and brightness pass over the recording (Horenstein, Pro Musica
-    // Symphony Orchestra): each is two or three seconds before a sharp rise
-    // into a sustained full tutti, so the title comes in on the build.
+    // loudness pass over the recording (Horenstein, Pro Musica Symphony
+    // Orchestra): each sits inside one of the score's real pauses, under
+    // -40 dB, about a second before the next entry, so the title comes in
+    // out of silence and the music arrives on its own cue.
     const TITLE_MUSIC_MOMENTS = {
         [TITLE_MUSIC_NINTH]: [
-            279,    // 4:39  the whole orchestra takes up the Ode to Joy
-            508,    // 8:28  the chorus's climax, "vor Gott!"
-            644,    // 10:44 the Alla marcia breaks into the orchestral fugue
-            772,    // 12:52 full chorus, "Freude, schoner Gotterfunken"
-            1041,   // 17:21 the double fugue, "Seid umschlungen"
-            1307,   // 21:47 out of the silence into the Prestissimo coda
+            0,      // 0:00  the opening fanfare breaks the silence
+            181,    // 3:01  the Ode to Joy rises pianissimo from the basses
+            571,    // 9:31  after "vor Gott!", the Alla marcia from nothing
+            829,    // 13:49 the pause before "Seid umschlungen"
+            1017,   // 16:57 the hush that leads into the double fugue
+            1170,   // 19:30 the pause before the coda
+            1307,   // 21:47 out of the silence into the Prestissimo
         ],
     };
 
@@ -4392,6 +4377,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         _pan(dyaw, dpitch) {
             this._enterLook();
             const L = this._look;
+            // Options: Hyperverse Invert X turns mouse and stick pans around.
+            if (typeof ConfigManager !== 'undefined' && ConfigManager.hyperverseInvertX) dyaw = -dyaw;
             L.yaw += dyaw;
             L.pitch = Math.max(-1.35, Math.min(1.35, L.pitch + dpitch));
         }

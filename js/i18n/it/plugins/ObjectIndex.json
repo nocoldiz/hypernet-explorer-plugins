@@ -66,5 +66,15 @@
   "previewOnly": "Solo anteprima, lettura {reading}. Non è stato scritto nulla nel registro.",
   "onlyOneReading": "Questa dichiarazione ha una sola lettura in archivio.",
   "alternativeGenerated": "Lettura alternativa generata. Non archiviata.",
-  "sedates": "Seda"
+  "sedates": "Seda",
+  "allergens": "Allergeni",
+  "orderNow": "Ordina ora",
+  "addToCart": "Aggiungi al carrello",
+  "view": "Vedi",
+  "stockbusters": "Stockbusters",
+  "listedAt": "In vendita a {price} su Stockbusters",
+  "notListed": "Non in vendita su Stockbusters.",
+  "ordered": "Ordine inoltrato a Stockbusters.",
+  "addedToCart": "Aggiunto al carrello di Stockbusters.",
+  "modelHint": "Clicca il modello per vederlo a schermo intero."
 }

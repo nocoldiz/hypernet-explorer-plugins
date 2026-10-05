@@ -75,7 +75,7 @@
     }
   },
   "text": {
-    "tuitionFor": "Lezione per",
+    "tuitionFor": "Allievo",
     "tuitionRequires": "Questo incantesimo è scritto in {stat} {points}. Un lettore sotto quella soglia non può essere intestatario.",
     "learnerKnows": "già conosciuto",
     "learnerStat": "{stat} {value} / {points} base",
@@ -184,6 +184,12 @@
     "noSearchResults": "Niente nel catalogo corrisponde a \"{query}\".",
     "searchTruncated": "Mostro i primi {count} risultati. Affina la ricerca per vederne altri.",
     "leisure": "Svago",
-    "orderDelivered": "Consegnato nello zaino: {items}."
+    "orderDelivered": "Consegnato nello zaino: {items}.",
+    "learnedNow": "Appreso subito: {items}",
+    "etaInstant": "Immediata: il tutore è in linea",
+    "noTrainee": "Nessun allievo del gruppo soddisfa i requisiti per {items}.",
+    "trainee": "Allievo",
+    "traineeNone": "nessuno soddisfa i requisiti",
+    "traineeChange": "cambia"
   }
 }

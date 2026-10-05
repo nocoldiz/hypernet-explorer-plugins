@@ -2164,10 +2164,24 @@
         tex.needsUpdate = true;
     }
 
+    // The export also writes KHR_materials_specular, which the loader can only
+    // honour as MeshPhysicalMaterial: the heaviest shader three has, seventeen
+    // times over. Its extras are invisible on a painted figure with no metal,
+    // so every one becomes the standard material it extends.
+    function plainPortraitMaterial(m) {
+        if (!m || !m.isMeshPhysicalMaterial || typeof THREE === 'undefined' || !THREE.MeshStandardMaterial) return m;
+        const std = new THREE.MeshStandardMaterial();
+        std.copy(m);
+        std.name = m.name;
+        return std;
+    }
+
     function dressPortraitMaterials(root) {
         const shrunk = new Set();
         root.traverse((obj) => {
             if (!obj.material) return;
+            if (Array.isArray(obj.material)) obj.material = obj.material.map(plainPortraitMaterial);
+            else obj.material = plainPortraitMaterial(obj.material);
             const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
             mats.forEach((m) => {
                 Object.keys(m).forEach((k) => shrinkPortraitTexture(m[k], shrunk));
@@ -2181,6 +2195,591 @@
             });
         });
         return root;
+    }
+
+    //=============================================================================
+    // Humanoid rig: a dossier model posed and animated
+    //=============================================================================
+    // The dossier export carries a full weighted VRM skeleton (J_Bip_*) but no
+    // animation clips. HumanoidRig finds the bones by the part they play and
+    // poses them procedurally. Every pose is written in MODEL axes, as if the
+    // figure stood in its rest T-pose facing +Z with its left arm along +X:
+    //   x  pitches: a spine leans forward, a hanging limb swings back,
+    //      a limb held forward drops
+    //   y  turns about the vertical: a T-pose arm swings forward or back
+    //   z  rolls in the frontal plane: a T-pose arm is lowered or raised
+    // Euler order XYZ, so z is applied first, then y, then x. Each rotation is
+    // applied in its parent's frame, so a forearm bends with the upper arm it
+    // hangs from, and nothing depends on the axes the exporter left on a bone.
+    // Mixamo names are read too, so a later dossier exported that way rigs the
+    // same.
+    const RIG_SPINE = {
+        hips:       ['J_Bip_C_Hips', 'mixamorigHips', 'Hips'],
+        spine:      ['J_Bip_C_Spine', 'mixamorigSpine', 'Spine'],
+        chest:      ['J_Bip_C_Chest', 'mixamorigSpine1', 'Chest'],
+        upperChest: ['J_Bip_C_UpperChest', 'mixamorigSpine2', 'UpperChest'],
+        neck:       ['J_Bip_C_Neck', 'mixamorigNeck', 'Neck'],
+        head:       ['J_Bip_C_Head', 'mixamorigHead', 'Head']
+    };
+    const RIG_LIMBS = {
+        Shoulder: ['Shoulder', 'Shoulder'], UpperArm: ['UpperArm', 'Arm'],
+        LowerArm: ['LowerArm', 'ForeArm'],  Hand:     ['Hand', 'Hand'],
+        UpperLeg: ['UpperLeg', 'UpLeg'],    LowerLeg: ['LowerLeg', 'Leg'],
+        Foot:     ['Foot', 'Foot'],         Toe:      ['ToeBase', 'ToeBase']
+    };
+    const RIG_FINGERS = [['Index', 'Index'], ['Middle', 'Middle'], ['Ring', 'Ring'], ['Little', 'Pinky']];
+
+    function rigBoneNames() {
+        const roles = {};
+        Object.keys(RIG_SPINE).forEach((role) => { roles[role] = RIG_SPINE[role]; });
+        [['l', 'L', 'Left'], ['r', 'R', 'Right']].forEach(([s, vrm, mix]) => {
+            Object.keys(RIG_LIMBS).forEach((part) => {
+                const [v, m] = RIG_LIMBS[part];
+                roles[s + part] = ['J_Bip_' + vrm + '_' + v, 'mixamorig' + mix + m, mix + m];
+            });
+            RIG_FINGERS.forEach(([v, m]) => {
+                for (let k = 1; k <= 3; k++) {
+                    roles[s + 'Finger' + v + k] = ['J_Bip_' + vrm + '_' + v + k, 'mixamorig' + mix + 'Hand' + m + k];
+                }
+            });
+        });
+        return roles;
+    }
+    const RIG_ROLES = rigBoneNames();
+
+    // Every animation the rig answers to. Loops run until another is asked
+    // for; one-shots play over whatever loop is running and end by themselves.
+    const RIG_LOOPS = ['idle', 'walk', 'run', 'crouch', 'crouchWalk', 'jump', 'fall',
+                       'swim', 'aim', 'sit', 'dance', 'death'];
+    const RIG_ONESHOTS = { shoot: 0.22, melee: 0.5, hurt: 0.45, wave: 2.2, nod: 0.9, jumpLand: 0.3 };
+    const RIG_UPPER = ['spine', 'chest', 'upperChest', 'neck', 'head',
+                       'lShoulder', 'lUpperArm', 'lLowerArm', 'lHand',
+                       'rShoulder', 'rUpperArm', 'rLowerArm', 'rHand'];
+
+    const D2R = Math.PI / 180;
+    const rigLerp = (a, b, t) => a + (b - a) * t;
+    const rigClamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+    // Pose helpers. A pose is { role: [x, y, z] } in degrees, plus `off` for
+    // the hips' position in metres, model space.
+    function rigAdd(pose, role, x, y, z) {
+        const p = pose[role] || (pose[role] = [0, 0, 0]);
+        p[0] += x || 0; p[1] += y || 0; p[2] += z || 0;
+    }
+    function rigFingers(pose, side, curl) {
+        // Fingers lie along the T-pose arm, palm down: a curl rolls them toward
+        // the palm, which is -z on the left hand and +z on the right.
+        const sign = side === 'l' ? -1 : 1;
+        RIG_FINGERS.forEach(([v]) => {
+            rigAdd(pose, side + 'Finger' + v + '1', 0, 0, sign * curl * 0.8);
+            rigAdd(pose, side + 'Finger' + v + '2', 0, 0, sign * curl);
+            rigAdd(pose, side + 'Finger' + v + '3', 0, 0, sign * curl * 0.7);
+        });
+    }
+    // Arms down at the sides from the T-pose, elbows soft, hands relaxed.
+    function rigStand(pose, drop, elbow) {
+        rigAdd(pose, 'lUpperArm', 0, 0, -drop);
+        rigAdd(pose, 'rUpperArm', 0, 0, drop);
+        rigAdd(pose, 'lLowerArm', 0, -elbow, 0);
+        rigAdd(pose, 'rLowerArm', 0, elbow, 0);
+        rigFingers(pose, 'l', 18);
+        rigFingers(pose, 'r', 18);
+    }
+
+    // The loops. `t` is seconds since the loop began, `ph` the stride phase in
+    // radians, `p` the state the caller passed in.
+    const RIG_POSES = {
+        idle(t) {
+            const pose = { off: [0, 0, 0] };
+            rigStand(pose, 74, 10);
+            const breath = Math.sin(t * 1.7);
+            rigAdd(pose, 'chest', 1.5 * breath, 0, 0);
+            rigAdd(pose, 'upperChest', 1 * breath, 0, 0);
+            rigAdd(pose, 'lShoulder', 0, 0, 1.2 * breath);
+            rigAdd(pose, 'rShoulder', 0, 0, -1.2 * breath);
+            rigAdd(pose, 'hips', 0, 0, 1.5 * Math.sin(t * 0.45));
+            rigAdd(pose, 'spine', 0, 0, -1.5 * Math.sin(t * 0.45));
+            // Glances about now and then, never a metronome.
+            rigAdd(pose, 'head', 4 * Math.sin(t * 0.31), 12 * Math.sin(t * 0.23) * Math.sin(t * 0.11), 2 * Math.sin(t * 0.17));
+            rigAdd(pose, 'lUpperArm', 2 * Math.sin(t * 0.6), 0, 2 * breath);
+            rigAdd(pose, 'rUpperArm', 2 * Math.sin(t * 0.6 + 1), 0, -2 * breath);
+            rigAdd(pose, 'lUpperLeg', 0, 0, -2);
+            rigAdd(pose, 'rUpperLeg', 0, 0, 2);
+            return pose;
+        },
+        // Walking and running are one gait: `run` is how far toward the run
+        // it has gone (0 to 1), so speeding up blends rather than snaps.
+        walk(t, ph, p) {
+            const run = rigClamp(p.run || 0, 0, 1);
+            const pose = { off: [0, 0, 0] };
+            const s = Math.sin(ph), c = Math.cos(ph);
+            rigStand(pose, rigLerp(74, 64, run), rigLerp(18, 85, run));
+            const leg = rigLerp(26, 46, run), knee = rigLerp(38, 88, run), arm = rigLerp(18, 38, run);
+            rigAdd(pose, 'lUpperLeg', -leg * s, 0, 0);
+            rigAdd(pose, 'rUpperLeg', leg * s, 0, 0);
+            rigAdd(pose, 'lLowerLeg', 6 + knee * Math.max(0, c), 0, 0);
+            rigAdd(pose, 'rLowerLeg', 6 + knee * Math.max(0, -c), 0, 0);
+            rigAdd(pose, 'lFoot', -8 * s - 6 * Math.max(0, c), 0, 0);
+            rigAdd(pose, 'rFoot', 8 * s - 6 * Math.max(0, -c), 0, 0);
+            rigAdd(pose, 'lUpperArm', arm * s, 0, 0);
+            rigAdd(pose, 'rUpperArm', -arm * s, 0, 0);
+            rigAdd(pose, 'hips', 0, 7 * s, 2 * c);
+            rigAdd(pose, 'spine', rigLerp(3, 12, run), 0, 0);
+            rigAdd(pose, 'chest', rigLerp(1, 5, run), -9 * s, -c);
+            rigAdd(pose, 'head', -rigLerp(2, 10, run), 2 * s, 0);
+            if (run > 0.5) { rigFingers(pose, 'l', 40 * run); rigFingers(pose, 'r', 40 * run); }
+            // The pelvis is lowest as a foot lands and highest over the
+            // planted leg.
+            pose.off[1] = rigLerp(0.025, 0.06, run) * (Math.abs(c) - 0.6) - 0.03 * run;
+            return pose;
+        },
+        run(t, ph, p) {
+            return RIG_POSES.walk(t, ph, Object.assign({}, p, { run: 1 }));
+        },
+        crouch(t) {
+            const pose = { off: [0, -0.34, 0] };
+            rigStand(pose, 64, 50);
+            rigAdd(pose, 'lUpperLeg', -72, 0, -6);
+            rigAdd(pose, 'rUpperLeg', -72, 0, 6);
+            rigAdd(pose, 'lLowerLeg', 112, 0, 0);
+            rigAdd(pose, 'rLowerLeg', 112, 0, 0);
+            rigAdd(pose, 'lFoot', -38, 0, 0);
+            rigAdd(pose, 'rFoot', -38, 0, 0);
+            rigAdd(pose, 'spine', 18 + Math.sin(t * 1.7), 0, 0);
+            rigAdd(pose, 'chest', 6, 0, 0);
+            rigAdd(pose, 'head', -18, 0, 0);
+            rigAdd(pose, 'lUpperArm', -25, 0, 0);
+            rigAdd(pose, 'rUpperArm', -25, 0, 0);
+            return pose;
+        },
+        crouchWalk(t, ph) {
+            const pose = RIG_POSES.crouch(t);
+            const s = Math.sin(ph), c = Math.cos(ph);
+            rigAdd(pose, 'lUpperLeg', -16 * s, 0, 0);
+            rigAdd(pose, 'rUpperLeg', 16 * s, 0, 0);
+            rigAdd(pose, 'lLowerLeg', 14 * Math.max(0, c), 0, 0);
+            rigAdd(pose, 'rLowerLeg', 14 * Math.max(0, -c), 0, 0);
+            rigAdd(pose, 'lUpperArm', 10 * s, 0, 0);
+            rigAdd(pose, 'rUpperArm', -10 * s, 0, 0);
+            rigAdd(pose, 'hips', 0, 5 * s, 0);
+            pose.off[1] += 0.02 * (Math.abs(c) - 0.6);
+            return pose;
+        },
+        jump() {
+            const pose = { off: [0, 0.02, 0] };
+            rigStand(pose, 38, 40);
+            rigAdd(pose, 'lUpperArm', -30, 0, 0);
+            rigAdd(pose, 'rUpperArm', -30, 0, 0);
+            rigAdd(pose, 'lUpperLeg', -44, 0, 0);
+            rigAdd(pose, 'rUpperLeg', -14, 0, 0);
+            rigAdd(pose, 'lLowerLeg', 70, 0, 0);
+            rigAdd(pose, 'rLowerLeg', 48, 0, 0);
+            rigAdd(pose, 'spine', 6, 0, 0);
+            rigAdd(pose, 'head', -8, 0, 0);
+            return pose;
+        },
+        fall(t) {
+            const pose = { off: [0, 0, 0] };
+            const flail = Math.sin(t * 7);
+            rigStand(pose, 22, 25);
+            rigAdd(pose, 'lUpperArm', -10 + 6 * flail, 0, 4 * flail);
+            rigAdd(pose, 'rUpperArm', -10 - 6 * flail, 0, 4 * flail);
+            rigAdd(pose, 'lUpperLeg', -24, 0, -5);
+            rigAdd(pose, 'rUpperLeg', 10, 0, 5);
+            rigAdd(pose, 'lLowerLeg', 30, 0, 0);
+            rigAdd(pose, 'rLowerLeg', 42, 0, 0);
+            rigAdd(pose, 'spine', -6, 0, 0);
+            rigAdd(pose, 'head', -10, 0, 0);
+            rigFingers(pose, 'l', -6);
+            rigFingers(pose, 'r', -6);
+            return pose;
+        },
+        // Breaststroke arms over a flutter kick, the body laid along the water.
+        swim(t, ph) {
+            const pose = { off: [0, -0.55, -0.1] };
+            const s = Math.sin(ph), c = Math.cos(ph);
+            rigAdd(pose, 'hips', 72, 0, 0);
+            rigAdd(pose, 'neck', -30, 0, 0);
+            rigAdd(pose, 'head', -30, 0, 0);
+            const reach = 0.5 + 0.5 * c;
+            rigAdd(pose, 'lUpperArm', 0, rigLerp(-15, -80, reach), rigLerp(-30, 10, reach));
+            rigAdd(pose, 'rUpperArm', 0, rigLerp(15, 80, reach), rigLerp(30, -10, reach));
+            rigAdd(pose, 'lLowerArm', 0, rigLerp(-90, -10, reach), 0);
+            rigAdd(pose, 'rLowerArm', 0, rigLerp(90, 10, reach), 0);
+            const kick = Math.sin(ph * 3);
+            rigAdd(pose, 'lUpperLeg', 14 * kick, 0, -4);
+            rigAdd(pose, 'rUpperLeg', -14 * kick, 0, 4);
+            rigAdd(pose, 'lLowerLeg', 10 + 10 * Math.max(0, kick), 0, 0);
+            rigAdd(pose, 'rLowerLeg', 10 + 10 * Math.max(0, -kick), 0, 0);
+            rigAdd(pose, 'lFoot', 40, 0, 0);
+            rigAdd(pose, 'rFoot', 40, 0, 0);
+            pose.off[1] += 0.02 * s;
+            return pose;
+        },
+        // A two-handed hold, raised to the line of sight. `pitch` (radians,
+        // up positive) tips the arms, chest and head toward it.
+        aim(t, ph, p) {
+            const pose = { off: [0, 0, 0] };
+            const pitch = rigClamp((p.pitch || 0) / D2R, -70, 70);
+            rigAdd(pose, 'rUpperArm', -pitch * 0.75, 82, 6);
+            rigAdd(pose, 'rLowerArm', 0, 12, 0);
+            rigAdd(pose, 'rHand', 0, 0, -8);
+            rigAdd(pose, 'lUpperArm', -pitch * 0.75, -104, -10);
+            rigAdd(pose, 'lLowerArm', 0, -48, 0);
+            rigAdd(pose, 'lHand', 0, -10, 0);
+            rigFingers(pose, 'r', 70);
+            rigFingers(pose, 'l', 55);
+            rigAdd(pose, 'chest', -pitch * 0.2 + 0.6 * Math.sin(t * 1.7), -6, 0);
+            rigAdd(pose, 'upperChest', -pitch * 0.1, -6, 0);
+            rigAdd(pose, 'neck', -pitch * 0.25, 6, 0);
+            rigAdd(pose, 'head', -pitch * 0.35, 6, 2);
+            return pose;
+        },
+        sit(t) {
+            const pose = { off: [0, -0.43, -0.05] };
+            rigStand(pose, 70, 55);
+            rigAdd(pose, 'lUpperArm', -22, 0, 0);
+            rigAdd(pose, 'rUpperArm', -22, 0, 0);
+            rigAdd(pose, 'lUpperLeg', -88, 0, -4);
+            rigAdd(pose, 'rUpperLeg', -88, 0, 4);
+            rigAdd(pose, 'lLowerLeg', 88, 0, 0);
+            rigAdd(pose, 'rLowerLeg', 88, 0, 0);
+            rigAdd(pose, 'spine', 4 + Math.sin(t * 1.5), 0, 0);
+            rigAdd(pose, 'head', 6 * Math.sin(t * 0.2), 10 * Math.sin(t * 0.13), 0);
+            return pose;
+        },
+        dance(t) {
+            const pose = { off: [0, 0, 0] };
+            const beat = t * Math.PI * 2 * 1.05;
+            const s = Math.sin(beat), b = Math.abs(Math.sin(beat));
+            rigStand(pose, 40, 70);
+            rigAdd(pose, 'lUpperArm', -20 + 25 * s, 0, -20 * b);
+            rigAdd(pose, 'rUpperArm', -20 - 25 * s, 0, 20 * b);
+            rigAdd(pose, 'hips', 0, 12 * s, 6 * s);
+            rigAdd(pose, 'chest', 0, -14 * s, -6 * s);
+            rigAdd(pose, 'head', 6 * b, 8 * s, 0);
+            rigAdd(pose, 'lUpperLeg', -10 * b, 0, 0);
+            rigAdd(pose, 'lLowerLeg', 18 * b, 0, 0);
+            rigAdd(pose, 'rUpperLeg', -10 * (1 - b), 0, 0);
+            rigAdd(pose, 'rLowerLeg', 18 * (1 - b), 0, 0);
+            pose.off[1] = -0.04 * b;
+            return pose;
+        },
+        // Falls back and lies on the ground.
+        death() {
+            const pose = { off: [0, -0.82, -0.25] };
+            rigAdd(pose, 'hips', -86, 0, 4);
+            rigAdd(pose, 'spine', -4, 0, 0);
+            rigAdd(pose, 'head', 0, 25, 0);
+            rigAdd(pose, 'lUpperArm', 0, 0, -48);
+            rigAdd(pose, 'rUpperArm', 0, 0, 32);
+            rigAdd(pose, 'lLowerArm', 0, -20, 0);
+            rigAdd(pose, 'rLowerArm', 0, 35, 0);
+            rigAdd(pose, 'lUpperLeg', -8, 0, -10);
+            rigAdd(pose, 'rUpperLeg', -22, 0, 6);
+            rigAdd(pose, 'rLowerLeg', 30, 0, 0);
+            rigAdd(pose, 'lFoot', 30, 0, 0);
+            rigAdd(pose, 'rFoot', 30, 0, 0);
+            rigFingers(pose, 'l', 30);
+            rigFingers(pose, 'r', 30);
+            return pose;
+        }
+    };
+
+    // The one-shots, added over the running loop. `k` runs 0 to 1 across the
+    // shot; each returns what it adds.
+    const RIG_LAYERS = {
+        // Recoil: the muzzle kicks up and the shoulders take it.
+        shoot(k) {
+            const pose = { off: [0, 0, -0.01 * (1 - k)] };
+            const kick = Math.exp(-k * 6) * (k < 0.08 ? k / 0.08 : 1);
+            rigAdd(pose, 'rUpperArm', -9 * kick, 0, 0);
+            rigAdd(pose, 'lUpperArm', -7 * kick, 0, 0);
+            rigAdd(pose, 'rLowerArm', 0, 8 * kick, 0);
+            rigAdd(pose, 'chest', -3 * kick, 0, 0);
+            rigAdd(pose, 'head', -2 * kick, 0, 0);
+            return pose;
+        },
+        // Wind up over the right shoulder, then cut down and across.
+        melee(k) {
+            const pose = { off: [0, 0, 0] };
+            const up = k < 0.35 ? k / 0.35 : 1;
+            const cut = k < 0.35 ? 0 : Math.min(1, (k - 0.35) / 0.3);
+            const back = k > 0.75 ? (k - 0.75) / 0.25 : 0;
+            const w = 1 - back;
+            rigAdd(pose, 'rUpperArm', w * rigLerp(-120 * up, 30, cut), w * rigLerp(0, 30, cut), w * -20 * up);
+            rigAdd(pose, 'rLowerArm', 0, w * rigLerp(60 * up, 10, cut), 0);
+            rigAdd(pose, 'chest', w * rigLerp(-6 * up, 10, cut), w * rigLerp(-28 * up, 32, cut), 0);
+            rigAdd(pose, 'hips', 0, w * rigLerp(-8 * up, 10, cut), 0);
+            rigFingers(pose, 'r', 60 * w);
+            return pose;
+        },
+        // A flinch: the head snaps back and the arms come up.
+        hurt(k) {
+            const pose = { off: [0, -0.04 * Math.sin(k * Math.PI), 0] };
+            const f = Math.sin(Math.min(1, k * 2.5) * Math.PI / 2) * (1 - k);
+            rigAdd(pose, 'spine', -12 * f, 0, 4 * f);
+            rigAdd(pose, 'chest', -8 * f, 6 * f, 0);
+            rigAdd(pose, 'head', -16 * f, -8 * f, 6 * f);
+            rigAdd(pose, 'lUpperArm', -30 * f, 0, 20 * f);
+            rigAdd(pose, 'rUpperArm', -30 * f, 0, -20 * f);
+            return pose;
+        },
+        // A raised right hand, waving from the elbow.
+        wave(k, t) {
+            const pose = { off: [0, 0, 0] };
+            const w = Math.sin(Math.min(1, k * 6) * Math.PI / 2) * Math.min(1, (1 - k) * 6);
+            rigAdd(pose, 'rUpperArm', 0, 20 * w, -128 * w);
+            rigAdd(pose, 'rLowerArm', 0, 0, w * (-55 + 28 * Math.sin(t * 11)));
+            rigAdd(pose, 'head', -4 * w, 10 * w, -4 * w);
+            rigFingers(pose, 'r', -16 * w);
+            return pose;
+        },
+        nod(k) {
+            const pose = { off: [0, 0, 0] };
+            rigAdd(pose, 'head', 14 * Math.sin(k * Math.PI * 2) * (1 - k), 0, 0);
+            rigAdd(pose, 'neck', 6 * Math.sin(k * Math.PI * 2) * (1 - k), 0, 0);
+            return pose;
+        },
+        // Knees give on landing.
+        jumpLand(k) {
+            const d = Math.sin(k * Math.PI);
+            const pose = { off: [0, -0.1 * d, 0] };
+            rigAdd(pose, 'lUpperLeg', -26 * d, 0, 0);
+            rigAdd(pose, 'rUpperLeg', -26 * d, 0, 0);
+            rigAdd(pose, 'lLowerLeg', 48 * d, 0, 0);
+            rigAdd(pose, 'rLowerLeg', 48 * d, 0, 0);
+            rigAdd(pose, 'lFoot', -22 * d, 0, 0);
+            rigAdd(pose, 'rFoot', -22 * d, 0, 0);
+            rigAdd(pose, 'spine', 10 * d, 0, 0);
+            return pose;
+        }
+    };
+
+    // Which loop the state of a body on the move asks for.
+    function rigLoopFor(state) {
+        if (state.dead) return 'death';
+        if (state.sit) return 'sit';
+        if (state.swim) return 'swim';
+        if (state.grounded === false) return (state.vy || 0) > 0.5 ? 'jump' : 'fall';
+        const moving = (state.speed || 0) > 0.25;
+        if (state.crouch) return moving ? 'crouchWalk' : 'crouch';
+        return moving ? 'walk' : 'idle';
+    }
+
+    function HumanoidRig(root) {
+        this.root = root;
+        this.entries = {};
+        this.loop = 'idle';
+        this.loopTime = 0;
+        this.time = 0;
+        this.phase = 0;
+        this.shots = [];
+        this.cur = {};
+        this.curOff = [0, 0, 0];
+        this.aimWeight = 0;
+        this.wasGrounded = true;
+        this._q = new THREE.Quaternion();
+        this._e = new THREE.Euler(0, 0, 0, 'XYZ');
+        this._v = new THREE.Vector3();
+
+        const byName = {};
+        root.traverse((o) => { if (o.isBone && !byName[o.name]) byName[o.name] = o; });
+        root.updateMatrixWorld(true);
+        const rootQInv = root.getWorldQuaternion(new THREE.Quaternion()).invert();
+        const rootScale = root.getWorldScale(new THREE.Vector3()).x || 1;
+        Object.keys(RIG_ROLES).forEach((role) => {
+            const name = RIG_ROLES[role].find((n) => byName[n]);
+            if (!name) return;
+            const bone = byName[name];
+            const parent = bone.parent;
+            const parentQ = parent
+                ? rootQInv.clone().multiply(parent.getWorldQuaternion(new THREE.Quaternion()))
+                : new THREE.Quaternion();
+            const parentScale = parent ? (parent.getWorldScale(new THREE.Vector3()).x / rootScale) || 1 : 1;
+            this.entries[role] = {
+                bone,
+                restQ: bone.quaternion.clone(),
+                restP: bone.position.clone(),
+                parentQ,
+                parentQInv: parentQ.clone().invert(),
+                parentScale
+            };
+        });
+    }
+
+    // A figure the rig can do something with: hips, legs and arms found.
+    HumanoidRig.prototype.isRigged = function () {
+        return ['hips', 'lUpperArm', 'rUpperArm', 'lUpperLeg', 'rUpperLeg'].every((r) => this.entries[r]);
+    };
+
+    HumanoidRig.prototype.has = function (name) {
+        return RIG_LOOPS.indexOf(name) >= 0 || Object.prototype.hasOwnProperty.call(RIG_ONESHOTS, name);
+    };
+
+    // Plays a named animation: a loop replaces the running one, a one-shot
+    // plays over it.
+    HumanoidRig.prototype.play = function (name) {
+        if (Object.prototype.hasOwnProperty.call(RIG_ONESHOTS, name)) {
+            // Shots retrigger rather than stack, so automatic fire keeps one
+            // recoil going instead of piling them up.
+            this.shots = this.shots.filter((s) => s.name !== name);
+            this.shots.push({ name, t: 0, dur: RIG_ONESHOTS[name] });
+            return true;
+        }
+        if (RIG_LOOPS.indexOf(name) < 0) return false;
+        if (this.loop !== name) { this.loop = name; this.loopTime = 0; }
+        this._forced = name;
+        return true;
+    };
+
+    // Hands the loop back to the state passed to update().
+    HumanoidRig.prototype.release = function () { this._forced = null; };
+
+    // Advances the animation by dt seconds. `state` describes the body the
+    // rig belongs to: { speed (m/s), grounded, vy, crouch, swim, sit, dead,
+    // aim, pitch }. With no state the rig plays whatever loop was last asked
+    // for, idle by default.
+    HumanoidRig.prototype.update = function (dt, state) {
+        dt = Math.min(Math.max(dt || 0, 0), 0.1);
+        this.time += dt;
+        this.loopTime += dt;
+        const st = state || {};
+        if (state && !this._forced) {
+            const next = rigLoopFor(st);
+            if (next !== this.loop) {
+                if (next === 'idle' || next === 'walk' || next === 'crouch' || next === 'crouchWalk') {
+                    if (this.loop === 'fall' || this.loop === 'jump') this.play('jumpLand');
+                }
+                if (!((this.loop === 'walk' && next === 'walk'))) this.loopTime = 0;
+                this.loop = next;
+            }
+        }
+        // A loop asked for by name, with no body to read, keeps its own pace.
+        const LOOP_PACE = { walk: 1.5, run: 5.5, crouchWalk: 1.2, swim: 1.2 };
+        const speed = state ? (st.speed || 0) : (LOOP_PACE[this.loop] || 0);
+        const run = rigClamp((speed - 2.2) / 2.3, 0, 1);
+        // One stride (two steps) per this many metres: longer when running.
+        const stride = this.loop === 'swim' ? 2.2 : rigLerp(1.35, 2.6, run);
+        this.phase = (this.phase + dt * Math.max(speed, this.loop === 'swim' ? 0.9 : 0) / stride * Math.PI * 2) % (Math.PI * 2);
+
+        const p = { run, pitch: st.pitch || 0 };
+        const target = RIG_POSES[this.loop](this.loopTime, this.phase, p);
+
+        // The weapon hold is an upper-body layer, so the legs keep walking,
+        // running or crouching under it.
+        const wantAim = this.loop === 'aim' || (!!st.aim && this.loop !== 'death' && this.loop !== 'swim' && this.loop !== 'sit');
+        this.aimWeight = rigClamp(this.aimWeight + (wantAim ? dt : -dt) * 7, 0, 1);
+        if (this.aimWeight > 0 && this.loop !== 'aim') {
+            const aim = RIG_POSES.aim(this.loopTime, this.phase, p);
+            const w = this.aimWeight;
+            RIG_UPPER.concat(Object.keys(aim).filter((r) => r.indexOf('Finger') > 0)).forEach((role) => {
+                const a = target[role] || [0, 0, 0];
+                const b = aim[role] || [0, 0, 0];
+                // The spine keeps some of the gait so a run still reads as one.
+                const k = (role === 'spine' || role === 'chest') ? w * 0.6 : w;
+                target[role] = [rigLerp(a[0], b[0], k), rigLerp(a[1], b[1], k), rigLerp(a[2], b[2], k)];
+            });
+        }
+
+        // Ease every channel toward the target: switching loops blends
+        // instead of snapping. Dying takes its time.
+        const ease = 1 - Math.exp(-dt * (this.loop === 'death' ? 4 : 14));
+        const roles = new Set(Object.keys(this.cur).concat(Object.keys(target)));
+        roles.delete('off');
+        roles.forEach((role) => {
+            const c = this.cur[role] || (this.cur[role] = [0, 0, 0]);
+            const g = target[role] || [0, 0, 0];
+            c[0] += (g[0] - c[0]) * ease; c[1] += (g[1] - c[1]) * ease; c[2] += (g[2] - c[2]) * ease;
+        });
+        const off = target.off || [0, 0, 0];
+        for (let i = 0; i < 3; i++) this.curOff[i] += (off[i] - this.curOff[i]) * ease;
+
+        // One-shots go over the eased pose, so a recoil is as sharp as it
+        // should be.
+        const pose = {};
+        roles.forEach((role) => { pose[role] = this.cur[role].slice(); });
+        const poseOff = this.curOff.slice();
+        this.shots.forEach((s) => {
+            s.t += dt;
+            const layer = RIG_LAYERS[s.name](Math.min(1, s.t / s.dur), this.time);
+            Object.keys(layer).forEach((role) => {
+                if (role === 'off') { for (let i = 0; i < 3; i++) poseOff[i] += layer.off[i]; return; }
+                rigAdd(pose, role, layer[role][0], layer[role][1], layer[role][2]);
+            });
+        });
+        this.shots = this.shots.filter((s) => s.t < s.dur);
+        this.apply(pose, poseOff);
+    };
+
+    // Writes a pose onto the bones: each rotation is turned from model axes
+    // into the bone's own frame through its parent's rest orientation.
+    HumanoidRig.prototype.apply = function (pose, off) {
+        const q = this._q, e = this._e;
+        Object.keys(this.entries).forEach((role) => {
+            const en = this.entries[role];
+            const r = pose[role];
+            if (!r) { en.bone.quaternion.copy(en.restQ); return; }
+            e.set(r[0] * D2R, r[1] * D2R, r[2] * D2R, 'XYZ');
+            q.setFromEuler(e);
+            en.bone.quaternion.copy(en.parentQInv).multiply(q).multiply(en.parentQ).multiply(en.restQ);
+        });
+        const hips = this.entries.hips;
+        if (hips) {
+            const v = this._v.set(off[0], off[1], off[2]).applyQuaternion(hips.parentQInv).divideScalar(hips.parentScale);
+            hips.bone.position.copy(hips.restP).add(v);
+        }
+    };
+
+    // Back to the T-pose the file was exported in.
+    HumanoidRig.prototype.reset = function () {
+        Object.keys(this.entries).forEach((role) => {
+            const en = this.entries[role];
+            en.bone.quaternion.copy(en.restQ);
+            en.bone.position.copy(en.restP);
+        });
+        this.cur = {};
+        this.curOff = [0, 0, 0];
+        this.shots = [];
+    };
+
+    // The rig a model carries, built on first ask. Null for a model with no
+    // humanoid skeleton.
+    function humanoidRigFor(root) {
+        if (!root || typeof THREE === 'undefined') return null;
+        if (root.userData && root.userData.humanoidRig !== undefined) return root.userData.humanoidRig;
+        let rig = new HumanoidRig(root);
+        if (!rig.isRigged()) rig = null;
+        root.userData = root.userData || {};
+        root.userData.humanoidRig = rig;
+        return rig;
+    }
+
+    // A dossier model of its own, never the cached portrait scene: a body
+    // walking about in the world poses its bones every frame, and the status
+    // sheet must not find it mid-stride. Parsed from the bytes the portrait
+    // load already fetched when it can, so the file is read once.
+    const glbFigureBytes = {};
+    function loadFigureGLB(path) {
+        if (typeof THREE === 'undefined' || !THREE.GLTFLoader || !path) return Promise.resolve(null);
+        if (glbPortraitFailed[path]) return Promise.resolve(null);
+        if (!glbFigureBytes[path]) {
+            glbFigureBytes[path] = new Promise((resolve) => {
+                const loader = new THREE.FileLoader();
+                loader.setResponseType('arraybuffer');
+                loader.load(path, resolve, undefined, () => resolve(null));
+            });
+        }
+        return glbFigureBytes[path].then((bytes) => new Promise((resolve) => {
+            if (!bytes) { resolve(null); return; }
+            try {
+                new THREE.GLTFLoader().parse(bytes, '', (gltf) => {
+                    if (!gltf || !gltf.scene) { resolve(null); return; }
+                    const root = dressPortraitMaterials(gltf.scene);
+                    resolve({ model: root, rig: humanoidRigFor(root) });
+                }, () => resolve(null));
+            } catch (e) { resolve(null); }
+        }));
     }
 
     function loadPortraitGLB(path) {
@@ -2199,16 +2798,23 @@
                 } catch (e) { fail(); }
             });
         }
-        // Dressed in what the viewers expect of a battler: a still figure with
-        // no animations to play, framed like the bust it stands in for.
-        return glbPortraitCache[path].then((scene) => scene ? {
-            model: scene,
-            portraitCrop: 0.5,
-            currentAnimation: null,
-            update() {},
-            hasAnimation() { return false; },
-            playAnimation() {}
-        } : null);
+        // Dressed in what the viewers expect of a battler, framed like the bust
+        // it stands in for. A rigged figure breathes and looks about in its
+        // idle loop instead of holding the export's T-pose. currentAnimation
+        // stays null, so the viewers never set it swinging an attack.
+        return glbPortraitCache[path].then((scene) => {
+            if (!scene) return null;
+            const rig = humanoidRigFor(scene);
+            return {
+                model: scene,
+                rig,
+                portraitCrop: 0.5,
+                currentAnimation: null,
+                update(dt) { if (rig) rig.update(dt); },
+                hasAnimation(name) { return !!(rig && rig.has(name)); },
+                playAnimation(name) { if (rig) rig.play(name); }
+            };
+        });
     }
 
     // Where a portrait viewer puts the camera, and where the subject has to be
@@ -2289,7 +2895,17 @@
         framing(battler, camera, margin) { return portraitFraming(battler, camera, margin || 1); },
         // A model file that could not be read once is not asked for again: the
         // screens that would have shown it fall back to the flat bust.
-        modelAvailable(path)  { return !!path && !glbPortraitFailed[path]; }
+        modelAvailable(path)  { return !!path && !glbPortraitFailed[path]; },
+        // The rigged dossier figure that walks for this character in a 3D
+        // world: its own copy, { model, rig }, or null when the character has
+        // no dossier model or it has no humanoid skeleton.
+        figureFor(actor) {
+            const path = window.CharacterPresets && window.CharacterPresets.getActorPresetModel
+                ? window.CharacterPresets.getActorPresetModel(actor) : null;
+            return loadFigureGLB(path).then((fig) => (fig && fig.rig) ? fig : null);
+        },
+        rigFor(root) { return humanoidRigFor(root); },
+        animations() { return RIG_LOOPS.concat(Object.keys(RIG_ONESHOTS)); }
     };
 
     Scene_Status.prototype.syncStatus3D = function (info) {

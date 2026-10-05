@@ -97,6 +97,17 @@
     // hour is a shadow nobody can tell from a live one.
     const SHADOW_EVERY = 3;
 
+    // The over-the-shoulder camera on foot, in world units (UNITS_PER_M is 4):
+    // three metres back, a little right of the head and above it, never
+    // pulled in closer than half a metre by a wall behind.
+    const TP_DIST = 12;
+    const TP_SIDE = 2.4;
+    const TP_UP   = 1.2;
+    const TP_MIN  = 2;
+    // Closer than this the camera is inside the walker's head: the body is not
+    // drawn, the way it is not in first person.
+    const TP_HIDE = 3.5;
+
     // How close to a tree or a boulder counts as being at it (about two metres).
     const SCENERY_REACH = 9;
 
@@ -1108,16 +1119,15 @@
                 };
                 document.addEventListener('keydown', this._onHelpKey);
 
-                // Tab means the quick bar on foot and the camera at the wheel.
-                // There is no bar to walk through while driving, and no camera
-                // to cycle while standing in a field, so the one key answers
-                // whichever question the party is actually in a position to ask
-                // (L2 on a pad does the same, see _updateBarInput).
+                // Tab is the camera: over the shoulder and back on foot, the
+                // view at the wheel. On foot Shift+Tab walks the quick bar
+                // instead (L1 on a pad does the same, see _updateBarInput).
                 this._onTabKey = (e) => {
                     if (e.code === 'Tab' && VoxelWorldSystem.isActive()) {
                         if (this.isPaused()) return;   // that Tab is the menu's
                         e.preventDefault();
-                        if (this._viewMode === 'foot') this._cycleBarMode(1);
+                        if (this._viewMode === 'foot' && e.shiftKey) this._cycleBarMode(1);
+                        else if (this._viewMode === 'foot') this._toggleThirdPerson();
                         else this._cycleViewMode();
                     }
                 };
@@ -1384,6 +1394,9 @@
             // Teardown previous mode. 'fp' (cabin), 'fpdrive' (driver seat) and
             // 'foot' (outside) share the first-person rig, so all three detach the
             // camera the same way.
+            // Over the shoulder ends with the walk: the camera goes back to
+            // the eye first, so the teardown below finds it where it expects.
+            if (prev === 'foot') this._setThirdPerson(false);
             if (prev === 'fp' || prev === 'fpdrive' || prev === 'foot') {
                 this._fpc.pitch.remove(this._camera);
                 this._scene.add(this._camera);
@@ -1709,6 +1722,204 @@
             const cur = order.indexOf(this._viewMode);
             const idx = cur < 0 ? 0 : (cur + 1) % order.length;
             this._setMode(order[idx]);
+        }
+
+        // ---------------------------------------------------------------
+        // Third person on foot
+        // ---------------------------------------------------------------
+        // Tab (Y on a pad) pulls the camera back over the walker's shoulder.
+        // The controller is left alone: it still owns the eye, the look and
+        // every step, and the camera is only placed behind that eye once the
+        // step has been taken. The walker is drawn by the leader's dossier
+        // figure when there is one (Em, rigged and animated through
+        // window.ActorModel3D.figureFor) and by the leader's walking card
+        // otherwise.
+        _toggleThirdPerson() {
+            if (this._viewMode !== 'foot') return;
+            // Two viewports and a headset each have a camera of their own.
+            if (this._splitNow) return;
+            if (this._renderer && this._renderer.xr && this._renderer.xr.isPresenting) return;
+            this._setThirdPerson(!this._thirdPerson);
+            if (typeof SoundManager !== 'undefined') SoundManager.playCursor();
+        }
+
+        _setThirdPerson(on) {
+            on = !!on;
+            if (on === !!this._thirdPerson) return;
+            this._thirdPerson = on;
+            if (CamperWeapon.setThirdPerson) CamperWeapon.setThirdPerson(on);
+            if (on) {
+                this._fpc.pitch.remove(this._camera);
+                this._scene.add(this._camera);
+                this._tpDist = TP_DIST;
+                this._ensureWalkerBody();
+            } else {
+                this._scene.remove(this._camera);
+                this._camera.position.set(0, 0, 0);
+                this._camera.rotation.set(0, 0, 0);
+                this._fpc.pitch.add(this._camera);
+            }
+            if (this._walker) this._walker.show(on);
+        }
+
+        // The body the leader walks in, built once per leader.
+        _ensureWalkerBody() {
+            const leader = (typeof $gameParty !== 'undefined' && $gameParty.leader) ? $gameParty.leader() : null;
+            const id = leader ? leader.actorId() : 0;
+            if (this._walker && this._walker.actorId === id) return;
+            this._disposeWalkerBody();
+            const walker = {
+                actorId: id, root: null, rig: null, card: null,
+                lx: null, lz: null, speed: 0, yaw: this._fpc.yaw.rotation.y, on: false,
+                show(v) {
+                    this.on = !!v;
+                    if (this.root) this.root.visible = this.on;
+                    if (this.card) this.card.mesh.visible = this.on && this.card._sized;
+                }
+            };
+            this._walker = walker;
+            const AM = window.ActorModel3D;
+            const want = (leader && AM && AM.figureFor) ? AM.figureFor(leader) : Promise.resolve(null);
+            want.then((fig) => {
+                if (this._walker !== walker || this._disposed) return;
+                if (fig) {
+                    // The figure is modelled in metres: the world counts four
+                    // units to one.
+                    fig.model.scale.setScalar(UNITS_PER_M);
+                    // A skinned mesh is culled by its rest pose; a body lying
+                    // down or crouched is still a body on screen.
+                    fig.model.traverse((o) => { if (o.isMesh) o.frustumCulled = false; });
+                    if (window.PSXShader) window.PSXShader.applyToObject(fig.model);
+                    const holder = new THREE.Group();
+                    holder.add(fig.model);
+                    walker.root = holder;
+                    walker.rig = fig.rig;
+                    this._scene.add(holder);
+                } else if (leader && leader.characterName && leader.characterName()) {
+                    walker.card = new CharacterBillboard(leader.characterName(),
+                        leader.characterIndex ? leader.characterIndex() : 0, PERSON_H);
+                    this._scene.add(walker.card.mesh);
+                }
+                walker.show(walker.on);
+            }).catch(() => {});
+        }
+
+        _disposeWalkerBody() {
+            const w = this._walker;
+            this._walker = null;
+            if (!w) return;
+            if (w.root && w.root.parent) w.root.parent.remove(w.root);
+            if (w.card) {
+                if (w.card.mesh && w.card.mesh.parent) w.card.mesh.parent.remove(w.card.mesh);
+                if (w.card.dispose) w.card.dispose();
+            }
+        }
+
+        // A gun in hand is held up to the line of sight; a blade or bare
+        // hands hang at the sides until they swing.
+        _walkerAims() {
+            if (!CamperWeapon._visible) return false;
+            if (this._tool && this._tool.bar && !this._tool.bar.holdingWeapon) return false;
+            const s = CamperWeapon._right || CamperWeapon._left;
+            const w = s && s._weapon;
+            return !!(w && window.SkillWeaponReq && window.SkillWeaponReq.isRanged(w));
+        }
+
+        // CamperWeapon has just fired or swung (see its swing()).
+        _onWeaponSwing(weapon) {
+            const w = this._walker;
+            if (!w || !w.rig || !this._thirdPerson) return;
+            const ranged = !!(weapon && window.SkillWeaponReq && window.SkillWeaponReq.isRanged(weapon));
+            w.rig.play(ranged ? 'shoot' : 'melee');
+        }
+
+        // A ray cast down the crosshair starts where the walker stands, not at
+        // a camera three metres behind them: the reach of a pick or a blade is
+        // measured from the body, and a wall between the camera and the body
+        // is not what is being aimed at.
+        _aimFromWalker(origin, dir) {
+            if (!this._thirdPerson || this._viewMode !== 'foot') return;
+            const eye = this._fpc.getRig().position;
+            const ahead = (eye.x - origin.x) * dir.x + (eye.y - origin.y) * dir.y + (eye.z - origin.z) * dir.z;
+            if (ahead > 0) origin.addScaledVector(dir, ahead);
+        }
+
+        _updateThirdPerson(delta) {
+            if (!this._thirdPerson) return;
+            const fpc = this._fpc;
+            const eye = fpc.getRig().position;
+            this._ensureWalkerBody();
+            const w = this._walker;
+
+            // ---- the camera, behind the eye ------------------------------
+            const cam = this._camera;
+            fpc.pitch.getWorldQuaternion(cam.quaternion);
+            const fwd = (this._tpFwd || (this._tpFwd = new THREE.Vector3())).set(0, 0, -1).applyQuaternion(cam.quaternion);
+            const right = (this._tpRight || (this._tpRight = new THREE.Vector3())).set(1, 0, 0).applyQuaternion(cam.quaternion);
+            const pivot = (this._tpPivot || (this._tpPivot = new THREE.Vector3()))
+                .set(eye.x, eye.y + TP_UP, eye.z).addScaledVector(right, TP_SIDE);
+            // Pulled in by the first cube behind, and let back out slowly, so a
+            // tree trunk passing behind does not pump the view in and out.
+            let room = TP_DIST;
+            const field = this._terrain && this._terrain.field;
+            if (field && field.raycast) {
+                const hit = field.raycast(pivot.x, pivot.y, pivot.z, -fwd.x, -fwd.y, -fwd.z, TP_DIST);
+                if (hit && hit.dist != null) room = Math.max(TP_MIN, hit.dist - 1);
+            }
+            this._tpDist = room < this._tpDist ? room
+                : this._tpDist + (room - this._tpDist) * Math.min(1, delta * 3);
+            cam.position.copy(pivot).addScaledVector(fwd, -this._tpDist);
+            if (fpc.getGroundY) {
+                const g = fpc.getGroundY(cam.position.x, cam.position.z);
+                if (typeof g === 'number' && isFinite(g) && cam.position.y < g + 1) cam.position.y = g + 1;
+            }
+
+            if (!w) return;
+            const near = this._tpDist < TP_HIDE;
+            const feetY = eye.y - (fpc.eyeH || FOOT_EYE);
+
+            // ---- the body: how fast, and which way it faces --------------
+            if (w.lx === null) { w.lx = eye.x; w.lz = eye.z; }
+            const dx = eye.x - w.lx, dz = eye.z - w.lz;
+            w.lx = eye.x; w.lz = eye.z;
+            const moved = Math.hypot(dx, dz);
+            const speed = delta > 0 ? moved / delta / UNITS_PER_M : 0;
+            // A teleport or a respawn is not a sprint.
+            if (speed < 40) w.speed += (speed - w.speed) * Math.min(1, delta * 10);
+            const aiming = this._walkerAims();
+            // A yaw looks down -Z turned about Y, so a step of (dx, dz) faces
+            // atan2(-dx, -dz). Aiming, the body squares up to the crosshair.
+            let want = w.yaw;
+            if (aiming) want = fpc.yaw.rotation.y;
+            else if (moved > 0.02 * Math.max(1, delta * 60)) want = Math.atan2(-dx, -dz);
+            let turn = want - w.yaw;
+            while (turn > Math.PI) turn -= Math.PI * 2;
+            while (turn < -Math.PI) turn += Math.PI * 2;
+            w.yaw += turn * Math.min(1, delta * (aiming ? 18 : 10));
+
+            if (w.root) {
+                w.root.visible = !near;
+                // The figure faces +Z; a yaw of zero looks down -Z.
+                w.root.position.set(eye.x, feetY, eye.z);
+                w.root.rotation.y = w.yaw + Math.PI;
+                if (w.rig && !near) {
+                    w.rig.update(delta, {
+                        speed: w.speed,
+                        grounded: !!(fpc.onGround || fpc.wallRunning),
+                        vy: (fpc.vy || 0) / UNITS_PER_M,
+                        crouch: !!fpc.crouching,
+                        swim: !!fpc.swimming,
+                        aim: aiming,
+                        pitch: fpc.pitch.rotation.x
+                    });
+                }
+            } else if (w.card) {
+                w.card.mesh.visible = !near && w.card._sized;
+                w.card.mesh.position.set(eye.x, feetY + PERSON_H * 0.5, eye.z);
+                w.card.yaw = w.yaw + Math.PI;
+                w.card.moving = moved > 0.05;
+                w.card.step += moved;
+            }
         }
 
         // Toggle player-controlled flight. Needs the 'fly' upgrade; switches
@@ -3319,6 +3530,7 @@
                     this._camera.position.y += (Math.random() - 0.5) * this._solomonShake * 4;
                 }
                 if (this._titleMode) this._updateTitleLook(delta);
+                if (this._viewMode === 'foot') this._updateThirdPerson(delta);
                 // On foot the player is free to walk any distance from the parked
                 // camper (no tether), so terrain streaming has to follow the
                 // player rather than staying centred on the stationary van, or
@@ -3825,6 +4037,8 @@
             this._onXrEnd = () => this._endVR();
             xr.addEventListener('sessionend', this._onXrEnd);
             try {
+                // The headset is the eye: back out of the shoulder view first.
+                this._setThirdPerson(false);
                 await xr.setSession(session);
             } catch (e) {
                 this._endVR();
@@ -4415,10 +4629,12 @@
                 }
             }
 
-            // Y toggles first/third person, mirroring TAB. On the second layer
-            // it is the crouch on foot and the flight toggle at the wheel.
+            // Y toggles first/third person, mirroring TAB: over the shoulder
+            // on foot, the chase camera at the wheel. On the second layer it is
+            // the crouch on foot and the flight toggle at the wheel.
             if (!chord && GamepadRaw.triggeredY() && !this.isPaused()) {
-                this._cycleViewMode();
+                if (this._viewMode === 'foot') this._toggleThirdPerson();
+                else this._cycleViewMode();
             }
 
             // In first person / on foot, the right stick looks around (mouse parity).
@@ -6873,6 +7089,8 @@
             const want = !driving && (this._splitNow ? d > SPLIT_MERGE_D : d > SPLIT_UNMERGE_D);
             if (want !== this._splitNow) {
                 this._splitNow = want;
+                // Each half of a split has its own eye: nobody is over a shoulder.
+                if (want) this._setThirdPerson(false);
                 if (this._hud && this._hud.setSplit) this._hud.setSplit(want);
             }
         }
@@ -7025,6 +7243,10 @@
             // there: the respawn, the gravestone and permadeath all live in
             // BattleSystemEnhancedState's own return to the map.
             if (this._disposed) return;
+            // Free play has no map behind it (the title screen opened it), and
+            // sending the scene there crashed the game: it goes back the way it
+            // came, to the Minigames list.
+            if (this._standalone) { this._exitStandalone(); return; }
             VoxelWorldSystem.stop();
             if (typeof SceneManager !== 'undefined' && typeof Scene_Map !== 'undefined') {
                 SceneManager.goto(Scene_Map);
@@ -8112,6 +8334,7 @@
             this._digDir    = this._digDir    || new THREE.Vector3();
             this._camera.getWorldPosition(this._digOrigin);
             this._camera.getWorldDirection(this._digDir);
+            this._aimFromWalker(this._digOrigin, this._digDir);
 
             // R1 on a pad swings the same way the mouse button does, so it digs
             // the same way too.
@@ -8490,6 +8713,7 @@
         }
 
         _disposeInner() {
+            this._disposeWalkerBody();
             // The frame meter's readout goes with the world it was reading.
             if (typeof window !== 'undefined' && window.VoxelPerf) window.VoxelPerf.frame(null, this._renderer);
             // The world is going: nothing is on the game's canvas any more, so

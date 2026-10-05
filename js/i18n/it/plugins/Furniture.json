@@ -240,5 +240,10 @@
   "painting": {
     "pickTitle": "Quale immagine contiene?",
     "none": "Così com'è"
+  },
+  "use": {
+    "rest": "Riposa accanto al fuoco",
+    "cook": "Cucina",
+    "contentsReturned": "{n} oggetti riposti di nuovo nello zaino"
   }
 }

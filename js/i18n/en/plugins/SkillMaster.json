@@ -27,9 +27,9 @@
   "replay": "↺ Replay",
   "close": "Close",
   "dominantSpell": "Dominant Spell",
-  "magicOnlyDefinesTheEffect": "magic only · defines the effect",
+  "magicOnlyDefinesTheEffect": "a spell; decides what the result does",
   "recessiveSpellOrSkill": "Recessive (Spell or Skill)",
-  "spellOrSkillSetsThe": "spell or skill · sets the result type",
+  "spellOrSkillSetsThe": "a spell or a skill; decides whether the result is a spell or a skill",
   "skill": "SKILL",
   "emptySlot": "Empty",
   "emptyPressToChoose": "empty · press to choose",
@@ -54,7 +54,7 @@
   "youHold": "you hold",
   "dominant": "Dominant:",
   "recessive": "Recessive:",
-  "theDominantDefinesDamageAnd": "The dominant defines damage and targeting; the recessive sets the result type. Components are forgotten; you can split the spell back apart later.",
+  "theDominantDefinesDamageAnd": "The dominant spell decides the damage and the targets. The recessive part decides whether you get a spell or a skill. Both parts are forgotten, but you can split the result back into them later.",
   "training": "Training",
   "fusedSkillDesc": "A procedural skill fused from {parts} (dominant: {dominant}).",
   "fusedSpellDesc": "A procedural spell fused from {parts} (dominant: {dominant}).",
@@ -77,14 +77,14 @@
   "category": {
     "All": "All"
   },
-  "forgeBlurb": "Fuse a dominant spell with a recessive spell or skill from {actor}. A recessive skill produces a skill. Costs the components' MP and AP combined plus Knowledge, and both components are forgotten. You have {knowledge} KP.",
+  "forgeBlurb": "Combine two of {actor}'s abilities into a new one. The dominant spell decides what it does; the recessive spell or skill decides whether the result is a spell or a skill. Both parts are forgotten. You have {knowledge} KP.",
   "kpMultiplier3x": "3.0X KP",
   "kpMultiplier15x": "1.5X KP",
   "foreignSchool": "Self-taught",
   "magicSystem": {
     "tabLabel": "Magical Systems",
     "title": "Magical Systems",
-    "hint": "Select a system to see which classes draw on it",
+    "hint": "Select a system to see its spells and the classes that use it",
     "empty": "Choose a system from the wheel",
     "classesHeading": "Classes",
     "noClasses": "No known class draws on this system yet.",
@@ -147,8 +147,8 @@
     "rigor": {
       "hard": "Hard Magic",
       "soft": "Soft Magic",
-      "hardHint": "Fixed laws, stated costs",
-      "softHint": "Unbound, unexplained"
+      "hardHint": "Fixed rules and known costs",
+      "softHint": "No fixed rules; results vary"
     },
     "loreHeading": "Lore"
   },
@@ -159,7 +159,7 @@
     "locked": "LOCKED",
     "lockedBy": "Unlocked by: {skills}",
     "lockedByCount": "Needs {need} more of: {skills}",
-    "lockedHint": "No skill you know borders this one yet.",
+    "lockedHint": "Learn a connected skill first to unlock this one.",
     "lockedToast": "{skill} does not border anything this pupil knows.",
     "lockedEsotericLevel": "Esoteric knowledge: level {level} or above.",
     "lockedForbiddenLevel": "Forbidden knowledge: level {level} or above.",
@@ -256,7 +256,7 @@
     "anywhere": "Anywhere",
     "battleOnly": "Battle only",
     "riderCount": "Riders",
-    "benchBlurb": "Each part is bought once. Complexity is a permanent cost: it sets the MP of every cast and the {stat} the writer must have.",
+    "benchBlurb": "Buy each part once with KP, then reuse it in everything you write here. Complexity raises the MP of every cast and the {stat} needed to use it.",
     "writtenResult": "\\C[3]{name}\\C[0] is written. {cost} KP spent, {left} KP left.",
     "rewrittenResult": "\\C[3]{name}\\C[0] is rewritten. {cost} KP spent, {left} KP left.",
     "row": {
@@ -645,8 +645,8 @@
     "buttonArmor": "Enchant Equipment",
     "titleWeapon": "Weapon Enchanting",
     "titleArmor": "Equipment Enchanting",
-    "blurbWeapon": "A bound weapon casts its spell free of MP on every critical hit it lands. Offensive and status spells only.",
-    "blurbArmor": "A bound piece answers the first critical hit its wearer takes each battle, free of MP. Protective spells only.",
+    "blurbWeapon": "The weapon casts the bound spell for free every time it lands a critical hit. Only attack and status spells can be bound.",
+    "blurbArmor": "Once per battle, when the wearer takes a critical hit, this piece casts the bound spell for free. Only protective spells can be bound.",
     "back": "Back",
     "chooseGear": "Choose a Piece",
     "boundSoFar": "Bound So Far",
@@ -670,7 +670,7 @@
     },
     "buttonBook": "Enchant Book",
     "titleBook": "Book Enchanting",
-    "blurbBook": "A bound book casts its spell free whenever it is read out, in battle or on the map. Any spell binds, and every reading may burn it.",
+    "blurbBook": "Reading the book aloud casts the bound spell for free, in battle or on the map. Any spell can be bound, but every reading may burn the book.",
     "bookDesc": "A unique artifact. Read it out to cast {spell} for nothing. Every reading may burn it.",
     "bookFallbackName": "Bound Grimorie of {spell}",
     "rename": "Rename",
@@ -681,8 +681,8 @@
     "buttonGrimorie": "Write Grimorie",
     "titleSkillBook": "Writing a Skill Book",
     "titleGrimorie": "Writing a Grimorie",
-    "blurbSkillBook": "Copy out abilities the party already knows. The volume stays open until every page has been read to somebody.",
-    "blurbGrimorie": "Copy out spells the party already knows. The volume stays open until every page has been read to somebody.",
+    "blurbSkillBook": "Copy skills the party knows into a book. Each page teaches one skill to whoever it is read to; the book lasts until every page has been read.",
+    "blurbGrimorie": "Copy spells the party knows into a grimorie. Each page teaches one spell to whoever it is read to; the book lasts until every page has been read.",
     "sourceSkillBook": "Abilities the Party Knows",
     "sourceGrimorie": "Spells the Party Knows",
     "back": "Back",
@@ -707,7 +707,7 @@
     "button": "Hexorcize",
     "title": "Hexorcizing",
     "detailTitle": "The Piece",
-    "blurb": "A magical weapon or piece of equipment is taken apart and what was worked into it comes back as knowledge. Only what the party is carrying: take a piece off before unmaking it.",
+    "blurb": "Break down a magical weapon or piece of equipment to get Knowledge (KP) back. Equipped pieces must be taken off first.",
     "back": "Back",
     "one": "Unmake",
     "all": "Unmake All",
@@ -731,7 +731,7 @@
   "help": {
     "category": {
       "title": "Skill schools",
-      "intro": "Every school of skills and magic the party can learn from.",
+      "intro": "Pick a school to browse and learn its skills or spells, or use a workbench on the right page.",
       "items": {
         "member": {
           "name": "Companion tabs",
@@ -739,15 +739,15 @@
         },
         "skills": {
           "name": "Skills",
-          "text": "Schools of physical skills, paid for in AP. A Primary or Secondary badge marks the pupil's own schools, which cost less Knowledge to learn from."
+          "text": "Schools of physical skills, which cost AP to use. Primary and Secondary schools are the pupil's own and cost less KP to learn from."
         },
         "magic": {
           "name": "Magic",
-          "text": "Schools of spells, paid for in MP. Open a school to see its atlas of spells."
+          "text": "Schools of spells, which cost MP to cast. Open one to see its spells laid out as a map."
         },
         "rail": {
-          "name": "Bench buttons",
-          "text": "The column on the right edge: fuse spells, craft a spell or a skill, browse the magical systems, enchant weapons, equipment and books, write skill books and grimories, and hexorcize magical gear."
+          "name": "Workbenches",
+          "text": "On the right page: fuse spells, create a spell or a skill, view the magical systems, enchant weapons, equipment and books, write skill books and grimories, and hexorcize magical gear."
         },
         "help": {
           "name": "? Help",
@@ -761,11 +761,11 @@
       "items": {
         "map": {
           "name": "Atlas",
-          "text": "Each circle is a skill. A skill opens once the pupil knows one that borders it; locked ones say what they are waiting for."
+          "text": "Each circle is a skill. You can learn a skill once you know one connected to it; a locked skill tells you what it needs."
         },
         "legend": {
           "name": "Learned, Open, Locked",
-          "text": "Learned skills are known, open ones can be taught now for Knowledge, locked ones are still out of reach."
+          "text": "Learned: already known. Open: can be learned now with KP. Locked: not available yet."
         },
         "progress": {
           "name": "Progress",
@@ -773,7 +773,7 @@
         },
         "detail": {
           "name": "Skill card",
-          "text": "Cost, effect and description of the skill under the cursor. From here it can be taught, previewed, or carried into battle and left on the bench."
+          "text": "The selected skill's cost, effect and description. From here you can learn it, preview it, or choose whether it is carried into battle."
         },
         "member": {
           "name": "Companion tabs",
@@ -790,11 +790,11 @@
       "items": {
         "dominant": {
           "name": "Dominant spell",
-          "text": "Defines the damage and the targeting of the result. Magic only."
+          "text": "Decides the damage and the targets of the result. Must be a spell."
         },
         "recessive": {
           "name": "Recessive",
-          "text": "A spell or a skill: it sets whether the result is a spell or a skill."
+          "text": "A spell or a skill. If it is a skill the result is a skill, otherwise it is a spell."
         },
         "animation": {
           "name": "Animation",
@@ -802,7 +802,7 @@
         },
         "cost": {
           "name": "Fusion cost",
-          "text": "MP and AP of both parts combined, plus Knowledge. Both parts are forgotten, and a fused spell can be split back apart later."
+          "text": "Costs KP. The result's MP and AP are the two parts' added together. Both parts are forgotten; you can split the result back apart later."
         },
         "fused": {
           "name": "Fused spells",
@@ -819,11 +819,11 @@
       "items": {
         "parts": {
           "name": "Parts",
-          "text": "Effects, elements and formulas bought once each with Knowledge, then reused in every spell or skill written here."
+          "text": "Effects, elements and formulas. Each is bought once with KP and can then be used in every spell or skill you write."
         },
         "complexity": {
           "name": "Complexity",
-          "text": "A permanent cost: it sets the MP or AP of every cast and the stat the writer must have."
+          "text": "Raises the MP or AP every cast costs, and the stat needed to use it."
         },
         "preview": {
           "name": "Preview",
@@ -848,19 +848,19 @@
       "items": {
         "gear": {
           "name": "Gear",
-          "text": "The weapon, equipment or book to bind a spell into. Only pieces the party carries are shown."
+          "text": "The weapon, equipment or book to put a spell into. Only items the party is carrying appear."
         },
         "spells": {
           "name": "Spells",
-          "text": "The spells that can be bound. A weapon takes offensive and status spells, equipment protective ones, a book any spell."
+          "text": "Spells you can put in. Weapons take attack and status spells, equipment takes protective spells, books take any spell."
         },
         "effect": {
           "name": "What it does",
-          "text": "A weapon casts on every critical hit, equipment answers the first critical hit taken in a battle, a book casts when read out. None of them spend MP."
+          "text": "Weapon: casts on every critical hit it lands. Equipment: casts once per battle when the wearer takes a critical hit. Book: casts when read aloud. None of them cost MP."
         },
         "bound": {
           "name": "Bound so far",
-          "text": "The pieces already enchanted. Rename, unmake or recover a spell from them."
+          "text": "Items already enchanted. Rename them, unmake them, or get the spell back."
         },
         "help": {
           "name": "? Help",
@@ -881,7 +881,7 @@
         },
         "write": {
           "name": "Write it",
-          "text": "Binds the pages into a book. It stays readable until every page has been read to somebody."
+          "text": "Writes the book. It can be read until every page has been read once."
         },
         "written": {
           "name": "Written so far",
@@ -898,15 +898,15 @@
       "items": {
         "pieces": {
           "name": "Magical pieces",
-          "text": "Magical weapons and equipment the party carries. Take a piece off before unmaking it."
+          "text": "Magical weapons and equipment the party is carrying. Equipped pieces must be taken off first."
         },
         "worth": {
           "name": "Worth",
-          "text": "The Knowledge each piece gives back once unmade."
+          "text": "The KP each piece gives back when broken down."
         },
         "unmake": {
           "name": "One or all",
-          "text": "Unmakes the piece under the cursor, or every copy held. The piece is gone for good."
+          "text": "Breaks down the selected piece, or every copy you hold. This cannot be undone."
         },
         "help": {
           "name": "? Help",
@@ -919,7 +919,7 @@
       "items": {
         "map": {
           "name": "Systems",
-          "text": "The ten systems magic is drawn from. The one marked as yours is the pupil's own."
+          "text": "The ten systems all magic comes from. The one marked as yours is the pupil's own."
         },
         "classes": {
           "name": "Classes",
@@ -939,5 +939,8 @@
         }
       }
     }
-  }
+  },
+  "schools": "SCHOOLS",
+  "benches": "WORKBENCHES",
+  "benchesBlurb": "Spend Knowledge (KP) to fuse, create, enchant, copy or break down spells and skills."
 }

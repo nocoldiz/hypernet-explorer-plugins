@@ -27,9 +27,9 @@
   "replay": "↺ Ripeti",
   "close": "Chiudi",
   "dominantSpell": "Incantesimo Dominante",
-  "magicOnlyDefinesTheEffect": "solo magia · definisce l\\'effetto",
+  "magicOnlyDefinesTheEffect": "un incantesimo; decide cosa fa il risultato",
   "recessiveSpellOrSkill": "Recessivo (Incantesimo o Abilità)",
-  "spellOrSkillSetsThe": "magia o abilità · definisce il tipo",
+  "spellOrSkillSetsThe": "un incantesimo o un'abilità; decide se il risultato è un incantesimo o un'abilità",
   "skill": "ABILITÀ",
   "emptySlot": "Vuoto",
   "emptyPressToChoose": "vuoto · premi per scegliere",
@@ -54,7 +54,7 @@
   "youHold": "possiedi",
   "dominant": "Dominante:",
   "recessive": "Recessivo:",
-  "theDominantDefinesDamageAnd": "Il dominante definisce danno e bersaglio; il recessivo ne stabilisce il tipo. I componenti vengono dimenticati; potrai dividere di nuovo l\\'incantesimo più tardi.",
+  "theDominantDefinesDamageAnd": "L'incantesimo dominante decide danno e bersagli. La parte recessiva decide se ottieni un incantesimo o un'abilità. Entrambe le parti vengono dimenticate, ma potrai separare di nuovo il risultato in seguito.",
   "training": "Allenamento",
   "fusedSkillDesc": "Un'abilità procedurale fusa da {parts} (dominante: {dominant}).",
   "fusedSpellDesc": "Un incantesimo procedurale fuso da {parts} (dominante: {dominant}).",
@@ -77,14 +77,14 @@
   "category": {
     "All": "Tutte"
   },
-  "forgeBlurb": "Fondi una magia dominante con una magia o abilita recessiva di {actor}. Un'abilita recessiva produce un'abilita. Costa gli MP e AP dei componenti sommati piu Conoscenza, ed entrambi i componenti vengono dimenticati. Hai {knowledge} KP.",
+  "forgeBlurb": "Unisci due capacità di {actor} in una nuova. L'incantesimo dominante decide cosa fa; l'incantesimo o abilità recessiva decide se il risultato è un incantesimo o un'abilità. Entrambe le parti vengono dimenticate. Hai {knowledge} KP.",
   "kpMultiplier3x": "3.0X KC",
   "kpMultiplier15x": "1.5X KC",
   "foreignSchool": "Da autodidatta",
   "magicSystem": {
     "tabLabel": "Sistemi Magici",
     "title": "Sistemi Magici",
-    "hint": "Seleziona un sistema per vedere quali classi vi attingono",
+    "hint": "Seleziona un sistema per vederne gli incantesimi e le classi che lo usano",
     "empty": "Scegli un sistema dalla ruota",
     "classesHeading": "Classi",
     "noClasses": "Nessuna classe conosciuta attinge ancora a questo sistema.",
@@ -147,8 +147,8 @@
     "rigor": {
       "hard": "Magia Rigida",
       "soft": "Magia Fluida",
-      "hardHint": "Leggi fisse, costi dichiarati",
-      "softHint": "Libera, inspiegata"
+      "hardHint": "Regole fisse e costi noti",
+      "softHint": "Nessuna regola fissa; i risultati variano"
     },
     "loreHeading": "Tradizione"
   },
@@ -159,7 +159,7 @@
     "locked": "BLOCCATA",
     "lockedBy": "Si sblocca da: {skills}",
     "lockedByCount": "Ne servono ancora {need} fra: {skills}",
-    "lockedHint": "Nessuna abilita che conosci confina ancora con questa.",
+    "lockedHint": "Impara prima un'abilità collegata per sbloccare questa.",
     "lockedToast": "{skill} non confina con nulla che questo allievo conosca.",
     "lockedEsotericLevel": "Sapere esoterico: livello {level} o superiore.",
     "lockedForbiddenLevel": "Sapere proibito: livello {level} o superiore.",
@@ -256,7 +256,7 @@
     "anywhere": "Ovunque",
     "battleOnly": "Solo in battaglia",
     "riderCount": "Innesti",
-    "benchBlurb": "Ogni parte si compra una volta sola. La complessita e un costo permanente: fissa gli MP di ogni lancio e la {stat} che lo scrittore deve avere.",
+    "benchBlurb": "Compra ogni parte una volta sola con i KP, poi riusala in tutto ciò che scrivi qui. La complessità aumenta gli MP di ogni lancio e il valore di {stat} necessario per usarlo.",
     "writtenResult": "\\C[3]{name}\\C[0] e scritto. {cost} PC spesi, {left} PC rimasti.",
     "rewrittenResult": "\\C[3]{name}\\C[0] e riscritto. {cost} PC spesi, {left} PC rimasti.",
     "row": {
@@ -645,8 +645,8 @@
     "buttonArmor": "Incanta Equipaggiamento",
     "titleWeapon": "Incantamento delle Armi",
     "titleArmor": "Incantamento dell’Equipaggiamento",
-    "blurbWeapon": "Un’arma vincolata lancia il suo incantesimo, senza costo di MP, a ogni colpo critico che mette a segno. Solo incantesimi offensivi o di stato. Qui non si comprano né danno né statistiche.",
-    "blurbArmor": "Un pezzo vincolato risponde al primo colpo critico che chi lo indossa subisce in ogni battaglia, senza costo di MP, e poi tace fino alla successiva. Solo incantesimi protettivi.",
+    "blurbWeapon": "L'arma lancia gratis l'incantesimo legato ogni volta che mette a segno un colpo critico. Si possono legare solo incantesimi d'attacco e di stato.",
+    "blurbArmor": "Una volta per battaglia, quando chi lo indossa subisce un colpo critico, questo pezzo lancia gratis l'incantesimo legato. Si possono legare solo incantesimi protettivi.",
     "back": "Indietro",
     "chooseGear": "Scegli un Pezzo",
     "boundSoFar": "Già Vincolati",
@@ -670,7 +670,7 @@
     },
     "buttonBook": "Incanta Libro",
     "titleBook": "Incantamento dei Libri",
-    "blurbBook": "Un libro vincolato lancia il suo incantesimo gratis ogni volta che viene letto, sia in battaglia a turni sia sulla mappa strategica. Ogni incantesimo si vincola. Ogni lettura può bruciarlo.",
+    "blurbBook": "Leggere il libro ad alta voce lancia gratis l'incantesimo legato, in battaglia o sulla mappa. Si può legare qualsiasi incantesimo, ma ogni lettura può bruciare il libro.",
     "bookDesc": "Un artefatto unico. Leggilo per lanciare {spell} senza alcun costo. Ogni lettura può bruciarlo.",
     "bookFallbackName": "Grimorie Vincolato di {spell}",
     "rename": "Rinomina",
@@ -681,8 +681,8 @@
     "buttonGrimorie": "Scrivi Grimorie",
     "titleSkillBook": "Scrittura di un Manuale",
     "titleGrimorie": "Scrittura di un Grimorie",
-    "blurbSkillBook": "Ricopia abilità che il gruppo già conosce. Il volume non si chiude finché ogni sua pagina non è stata letta a qualcuno, e una lettura annullata non costa nulla.",
-    "blurbGrimorie": "Ricopia incantesimi che il gruppo già conosce. Il volume non si chiude finché ogni sua pagina non è stata letta a qualcuno, e una lettura annullata non costa nulla.",
+    "blurbSkillBook": "Copia in un libro le abilità che il gruppo conosce. Ogni pagina insegna un'abilità a chi la ascolta; il libro dura finché ogni pagina non è stata letta.",
+    "blurbGrimorie": "Copia in un grimorio gli incantesimi che il gruppo conosce. Ogni pagina insegna un incantesimo a chi la ascolta; il libro dura finché ogni pagina non è stata letta.",
     "sourceSkillBook": "Abilità Note al Gruppo",
     "sourceGrimorie": "Incantesimi Noti al Gruppo",
     "back": "Indietro",
@@ -707,7 +707,7 @@
     "button": "Esorcizza",
     "title": "Esorcismo",
     "detailTitle": "Il Pezzo",
-    "blurb": "Un'arma o un pezzo di equipaggiamento magico viene smontato e ciò che vi era stato lavorato torna come conoscenza. Solo ciò che il gruppo trasporta: togliti un pezzo di dosso prima di disfarlo.",
+    "blurb": "Smonta un'arma o un pezzo d'equipaggiamento magico per riavere Conoscenza (KP). I pezzi indossati vanno prima tolti.",
     "back": "Indietro",
     "one": "Disfa",
     "all": "Disfa Tutti",
@@ -731,7 +731,7 @@
   "help": {
     "category": {
       "title": "Scuole di abilità",
-      "intro": "Ogni scuola di abilità e di magia da cui il gruppo può imparare.",
+      "intro": "Scegli una scuola per sfogliarne e impararne abilità o incantesimi, oppure usa un banco di lavoro nella pagina destra.",
       "items": {
         "member": {
           "name": "Schede dei compagni",
@@ -739,15 +739,15 @@
         },
         "skills": {
           "name": "Abilità",
-          "text": "Scuole di abilità fisiche, pagate in AP. Un badge Primaria o Secondaria segna le scuole dell'allievo, che costano meno Conoscenza."
+          "text": "Scuole di abilità fisiche, che costano AP. Le scuole Primarie e Secondarie sono quelle dell'allievo e costano meno KP da imparare."
         },
         "magic": {
           "name": "Magia",
-          "text": "Scuole di incantesimi, pagati in MP. Apri una scuola per vederne l'atlante."
+          "text": "Scuole di incantesimi, che costano MP. Aprine una per vederne gli incantesimi disposti come una mappa."
         },
         "rail": {
-          "name": "Pulsanti del banco",
-          "text": "La colonna sul bordo destro: fondere incantesimi, creare un incantesimo o un'abilità, sfogliare i sistemi magici, incantare armi, equipaggiamento e libri, scrivere libri di abilità e grimori, esorcizzare oggetti magici."
+          "name": "Banchi di lavoro",
+          "text": "Nella pagina destra: fondi incantesimi, crea un incantesimo o un'abilità, consulta i sistemi magici, incanta armi, equipaggiamento e libri, scrivi libri di abilità e grimori ed esorcizza oggetti magici."
         },
         "help": {
           "name": "? Aiuto",
@@ -761,11 +761,11 @@
       "items": {
         "map": {
           "name": "Atlante",
-          "text": "Ogni cerchio è un'abilità. Si apre quando l'allievo ne conosce una confinante; quelle bloccate dicono cosa aspettano."
+          "text": "Ogni cerchio è un'abilità. Puoi impararla quando ne conosci una collegata; un'abilità bloccata ti dice cosa le serve."
         },
         "legend": {
           "name": "Appresa, Disponibile, Bloccata",
-          "text": "Le apprese sono note, le disponibili si possono insegnare ora con la Conoscenza, le bloccate sono ancora fuori portata."
+          "text": "Imparata: già conosciuta. Aperta: si può imparare ora con i KP. Bloccata: non ancora disponibile."
         },
         "progress": {
           "name": "Progresso",
@@ -773,7 +773,7 @@
         },
         "detail": {
           "name": "Scheda abilità",
-          "text": "Costo, effetto e descrizione dell'abilità sotto il cursore. Da qui si insegna, si vede l'anteprima o la si porta in battaglia o la si lascia in panchina."
+          "text": "Costo, effetto e descrizione dell'abilità selezionata. Da qui puoi impararla, vederne un'anteprima o scegliere se portarla in battaglia."
         },
         "member": {
           "name": "Schede dei compagni",
@@ -790,11 +790,11 @@
       "items": {
         "dominant": {
           "name": "Incantesimo dominante",
-          "text": "Definisce il danno e il bersaglio del risultato. Solo magia."
+          "text": "Decide il danno e i bersagli del risultato. Deve essere un incantesimo."
         },
         "recessive": {
           "name": "Recessivo",
-          "text": "Un incantesimo o un'abilità: decide se il risultato è un incantesimo o un'abilità."
+          "text": "Un incantesimo o un'abilità. Se è un'abilità il risultato è un'abilità, altrimenti è un incantesimo."
         },
         "animation": {
           "name": "Animazione",
@@ -802,7 +802,7 @@
         },
         "cost": {
           "name": "Costo di fusione",
-          "text": "MP e AP delle due parti sommati, più Conoscenza. Entrambe le parti vengono dimenticate, e un incantesimo fuso si può separare in seguito."
+          "text": "Costa KP. MP e AP del risultato sono la somma delle due parti. Entrambe vengono dimenticate; potrai separare di nuovo il risultato in seguito."
         },
         "fused": {
           "name": "Incantesimi fusi",
@@ -819,11 +819,11 @@
       "items": {
         "parts": {
           "name": "Parti",
-          "text": "Effetti, elementi e formule comprati una volta sola con la Conoscenza, poi riusati in ogni incantesimo o abilità scritto qui."
+          "text": "Effetti, elementi e formule. Ognuno si compra una volta con i KP e si può usare in ogni incantesimo o abilità che scrivi."
         },
         "complexity": {
           "name": "Complessità",
-          "text": "Un costo permanente: fissa gli MP o gli AP di ogni lancio e la statistica richiesta a chi scrive."
+          "text": "Aumenta gli MP o AP di ogni lancio e la statistica necessaria per usarlo."
         },
         "preview": {
           "name": "Anteprima",
@@ -848,19 +848,19 @@
       "items": {
         "gear": {
           "name": "Oggetto",
-          "text": "L'arma, l'equipaggiamento o il libro in cui legare un incantesimo. Solo gli oggetti portati dal gruppo."
+          "text": "L'arma, l'equipaggiamento o il libro in cui mettere un incantesimo. Compaiono solo gli oggetti che il gruppo porta con sé."
         },
         "spells": {
           "name": "Incantesimi",
-          "text": "Gli incantesimi che si possono legare. Un'arma prende incantesimi offensivi e di stato, l'equipaggiamento protettivi, un libro qualsiasi."
+          "text": "Gli incantesimi che puoi inserire. Le armi accettano incantesimi d'attacco e di stato, l'equipaggiamento quelli protettivi, i libri qualsiasi incantesimo."
         },
         "effect": {
           "name": "Cosa fa",
-          "text": "Un'arma lancia a ogni colpo critico, l'equipaggiamento risponde al primo critico subito in battaglia, un libro lancia quando viene letto. Nessuno spende MP."
+          "text": "Arma: lancia a ogni colpo critico inflitto. Equipaggiamento: lancia una volta per battaglia quando chi lo indossa subisce un critico. Libro: lancia quando viene letto ad alta voce. Nessuno costa MP."
         },
         "bound": {
           "name": "Legati finora",
-          "text": "Gli oggetti già incantati. Da qui si rinomina, si disfa o si recupera un incantesimo."
+          "text": "Oggetti già incantati. Rinominali, disfali o recupera l'incantesimo."
         },
         "help": {
           "name": "? Aiuto",
@@ -881,7 +881,7 @@
         },
         "write": {
           "name": "Scrivilo",
-          "text": "Rilega le pagine in un libro. Resta leggibile finché ogni pagina non è stata letta a qualcuno."
+          "text": "Scrive il libro. Si può leggere finché ogni pagina non è stata letta una volta."
         },
         "written": {
           "name": "Scritti finora",
@@ -898,15 +898,15 @@
       "items": {
         "pieces": {
           "name": "Oggetti magici",
-          "text": "Armi ed equipaggiamento magici portati dal gruppo. Togli un oggetto di dosso prima di disfarlo."
+          "text": "Armi ed equipaggiamento magici che il gruppo porta con sé. I pezzi indossati vanno prima tolti."
         },
         "worth": {
           "name": "Valore",
-          "text": "La Conoscenza che ogni oggetto restituisce una volta disfatto."
+          "text": "I KP che ogni pezzo restituisce quando viene smontato."
         },
         "unmake": {
           "name": "Uno o tutti",
-          "text": "Disfa l'oggetto sotto il cursore, o ogni copia posseduta. L'oggetto è perso per sempre."
+          "text": "Smonta il pezzo selezionato, o tutte le copie che possiedi. Non si può annullare."
         },
         "help": {
           "name": "? Aiuto",
@@ -919,7 +919,7 @@
       "items": {
         "map": {
           "name": "Sistemi",
-          "text": "I dieci sistemi da cui attinge la magia. Quello segnato come il sistema della tua classe è quello dell'allievo."
+          "text": "I dieci sistemi da cui proviene tutta la magia. Quello segnato come tuo è dell'allievo."
         },
         "classes": {
           "name": "Classi",
@@ -939,5 +939,8 @@
         }
       }
     }
-  }
+  },
+  "schools": "SCUOLE",
+  "benches": "BANCHI DI LAVORO",
+  "benchesBlurb": "Spendi Conoscenza (KP) per fondere, creare, incantare, copiare o smontare incantesimi e abilità."
 }

@@ -414,6 +414,7 @@
     // layer:    'below' (z=1), 'same' (z=3), 'above' (z=5)
     // wall:     true  – must be placed on terrain tag 4
     // ladder:   true  – tile acts as RPG Maker ladder (passable, ignores walls)
+    // seat:     true  – the bottom row is a seat the movement system sits on
 
     // i18n-ignore-start: asset-set folder ids. They key this table, the recipe
     // table, the tab groupings and the img/furniture/<Folder>/ path; the label
@@ -426,7 +427,7 @@
         'Bathroom':     { collision: 'all',   layer: 'same' },
         'Beach':        { collision: 'none',  layer: 'below' },
         'Beds':         { collision: 'all',   layer: 'same' },
-        'Benches':      { collision: 'all',   layer: 'same' },
+        'Benches':      { collision: 'all',   layer: 'same', seat: true },
         'Boards':       { wall: true,  collision: 'none',   layer: 'same' },
         'Bodyparts':    { collision: 'all',   layer: 'same' },
         'Books':        { collision: 'none',  layer: 'same' },
@@ -438,12 +439,12 @@
         'Candles':      { collision: 'none',  layer: 'same' },
         'Carpets':      { collision: 'none',  layer: 'below' },
         'Cauldrons':    { collision: 'all',   layer: 'same' },
-        'Chairs':       { collision: 'all',   layer: 'same' },
+        'Chairs':       { collision: 'all',   layer: 'same', seat: true },
         'City':         { collision: 'all',   layer: 'same' },
         'Clothes':      { collision: 'none',  layer: 'same' },
         'Columns':      { collision: 'all',   layer: 'same' },
         'Containers':   { collision: 'all',   layer: 'same' },
-        'Couches':      { collision: 'all',   layer: 'same' },
+        'Couches':      { collision: 'all',   layer: 'same', seat: true },
         'Counters':     { collision: 'all',   layer: 'same' },
         'Crystals':     { collision: 'all',   layer: 'same' },
         'Decorations':  { collision: 'none',   layer: 'same' },
@@ -2332,7 +2333,7 @@
     // per furniture list a frame. Both questions are asked on every
     // passability check, and a path search makes thousands of those: walking
     // every placed piece for each one was O(furniture) a check.
-    const FURN_BLOCKED = 1, FURN_LADDER = 2;
+    const FURN_BLOCKED = 1, FURN_LADDER = 2, FURN_SEAT = 4;
     let _furnGridList = null;
     let _furnGridFrame = -2;
     let _furnGrid = null;
@@ -2349,16 +2350,21 @@
                 const fData = Furniture[placed.furnitureId];
                 if (!fData) continue;
                 const collision = getEffectiveCollision(placed.furnitureId, fData);
-                const ladder = !!getFolderRules(placed.furnitureId).ladder;
+                const rules = getFolderRules(placed.furnitureId);
+                const ladder = !!rules.ladder;
                 for (let ly = 0; ly < fData.height; ly++) {
                     const blocks = collision === 'all' ||
                         (collision === 'lower' && ly === fData.height - 1) ||
                         (collision === 'lower2' && ly >= fData.height - 2);
-                    if (!blocks && !ladder) continue;
+                    // A chair, bench or couch is sat on along its bottom row:
+                    // a tall piece's upper tiles are its backrest.
+                    const seat = !!rules.seat && ly === fData.height - 1;
+                    if (!blocks && !ladder && !seat) continue;
                     for (let lx = 0; lx < fData.width; lx++) {
                         const key = (placed.y + ly) * w + (placed.x + lx);
                         _furnGrid.set(key, (_furnGrid.get(key) || 0) |
-                            (blocks ? FURN_BLOCKED : 0) | (ladder ? FURN_LADDER : 0));
+                            (blocks ? FURN_BLOCKED : 0) | (ladder ? FURN_LADDER : 0) |
+                            (seat ? FURN_SEAT : 0));
                     }
                 }
             }
@@ -2374,6 +2380,29 @@
     function isTileLadderByFurniture(x, y) {
         return (furnitureTileFlags(x, y) & FURN_LADDER) !== 0;
     }
+
+    // A placed chair, bench or couch is a seat exactly like a region 102 tile:
+    // MovementInteractionSystem asks this to offer Sit / Stop sitting on it.
+    function isTileSeatByFurniture(x, y) {
+        return (furnitureTileFlags(x, y) & FURN_SEAT) !== 0;
+    }
+
+    // Every seat tile the placed furniture provides, for seating followers.
+    function furnitureSeatTiles() {
+        const out = [];
+        const list = $gameSystem ? furnitureOnThisMap() : null;
+        if (!list) return out;
+        for (const placed of list) {
+            const fData = Furniture[placed.furnitureId];
+            if (!fData || !getFolderRules(placed.furnitureId).seat) continue;
+            const y = placed.y + (fData.height || 1) - 1;
+            for (let lx = 0; lx < (fData.width || 1); lx++) out.push({ x: placed.x + lx, y });
+        }
+        return out;
+    }
+
+    window.FurnitureSystem.isSeatAt = isTileSeatByFurniture;
+    window.FurnitureSystem.seatTiles = furnitureSeatTiles;
 
     const _Game_Map_isPassable_furniture = Game_Map.prototype.isPassable;
     Game_Map.prototype.isPassable = function (x, y, d) {
@@ -2401,6 +2430,352 @@
         }
         return _Game_Player_canMove_furniture.call(this);
     };
+
+    //=============================================================================
+    // Using Placed Furniture
+    //=============================================================================
+    // Facing a placed piece and pressing OK uses it the way the same object is
+    // used anywhere else in the game: a bed opens the sleep menu, a toilet runs
+    // the WC common event, a computer boots HypernetOS, a chest is a container
+    // of its own. Nothing here re-implements a mechanic; every use is one of the
+    // project's common events or plugin commands, run through the map
+    // interpreter exactly as a hand-authored event would run it.
+    //
+    // A piece is classified by the words in its id first (the asset folders are
+    // only loosely sorted: a pool table lives under Electronics/Screens) and by
+    // its folder second. Chairs, benches and couches are left to
+    // MovementInteractionSystem, which sits on them.
+
+    // i18n-ignore-start: common event ids, plugin and command ids, sound names.
+    // Every label the player reads comes from Furniture.use.* in the i18n bank.
+    const cmd = (plugin, command, args) => ({ cmd: [plugin, command, args || {}] });
+    const FURNITURE_USES = {
+        sleep:      { steps: [{ ce: 31 }] },
+        campfire:   { choices: [['rest', { steps: [{ ce: 30 }] }],
+                                ['cook', { steps: [cmd('CookingSystem', 'openCookingMenu')] }]] },
+        toilet:     { steps: [{ ce: 20 }] },
+        wash:       { steps: [{ se: 'Water/bubble3' },
+                              cmd('TimeDateSystem', 'AdjustNeed', { need: 'hygiene', amount: '100' })] },
+        shower:     { steps: [{ ce: 51 }] },
+        bath:       { steps: [{ ce: 104 }] },
+        computer:   { steps: [cmd('HypernetOS', 'OpenHypernetOS')] },
+        tv:         { steps: [{ ce: 95 }] },
+        piano:      { steps: [cmd('VisualPiano', 'openPiano')] },
+        guitar:     { steps: [{ ce: 140 }] },
+        sax:        { steps: [{ ce: 212 }] },
+        drum:       { steps: [{ ce: 209 }] },
+        radio:      { steps: [cmd('TunableRadio', 'openRadio')] },
+        music:      { steps: [{ ce: 45 }] },
+        vending:    { steps: [{ ce: 211 }] },
+        arcade:     { steps: [{ ce: 47 }] },
+        fortune:    { steps: [{ ce: 304 }] },
+        slots:      { steps: [cmd('AnimatedSlotMachine', 'openSlotMachine')] },
+        pool:       { steps: [{ ce: 89 }] },
+        chess:      { steps: [{ ce: 188 }] },
+        hoop:       { steps: [cmd('BasketballMinigame', 'startBasketballGame')] },
+        bowling:    { steps: [cmd('BowlingMinigame', 'startBowlingGame')] },
+        target:     { steps: [cmd('TargetShootingRange', 'startTargetRange')] },
+        gym:        { steps: [{ ce: 101 }] },
+        clock:      { steps: [{ ce: 68 }] },
+        mirror:     { steps: [{ ce: 169 }] },
+        mailbox:    { steps: [{ ce: 178 }] },
+        cook:       { steps: [cmd('CookingSystem', 'openCookingMenu')] },
+        coffee:     { steps: [{ ce: 85 }] },
+        alchemy:    { steps: [{ ce: 195 }] },
+        workshop:   { steps: [{ ce: 67 }] },
+        easel:      { steps: [{ ce: 66 }] },
+        blackboard: { steps: [{ ce: 179 }] },
+        questBoard: { steps: [cmd('QuestBoardUI', 'openQuestBoard')] },
+        telescope:  { steps: [{ ce: 152 }] },
+        globe:      { steps: [{ ce: 307 }] },
+        phone:      { steps: [cmd('PublicPhoneSystem', 'openPublicPhone')] },
+        bank:       { steps: [cmd('BankLoanSystem', 'OpenBankMenu')] },
+        stocks:     { steps: [cmd('StockMarketSystem', 'OpenStockMarket')] },
+        cryo:       { steps: [{ ce: 295 }] },
+        fuel:       { steps: [{ ce: 115 }] },
+        sewing:     { steps: [{ ce: 38 }] },
+        tokens:     { steps: [{ ce: 88 }] },
+        news:       { steps: [{ ce: 84 }] },
+        books:      { steps: [cmd('RandomBookGenerator', 'ShowRandomBook')] },
+        painting:   { steps: [cmd('RandomBookGenerator', 'ShowPaintingDescription')] },
+        statue:     { steps: [cmd('RandomBookGenerator', 'ShowStatueDescription')] },
+        mask:       { steps: [cmd('RandomBookGenerator', 'ShowMaskDescription')] },
+        fossil:     { steps: [cmd('RandomBookGenerator', 'ShowFossilDescription')] },
+        // A container of its own, capped in grams like the vehicle holds.
+        storageSmall: { container: 30000 },
+        storageCold:  { container: 60000 },
+        storage:      { container: 100000 },
+        storageLarge: { container: 150000 },
+    };
+
+    // First match wins, so the specific rules sit above the broad ones.
+    //   any:     the id holds at least one of these words
+    //   all:     the id holds every one of these words
+    //   not:     the id holds none of these words
+    //   folders: "Category" or "Category/Subcategory" the piece is filed under
+    const FURNITURE_USE_RULES = [
+        { use: 'pool',       all: ['table'], any: ['pool', 'billiard'] },
+        { use: 'chess',      any: ['chess', 'chessboard'] },
+        { use: 'slots',      all: ['slot'] },
+        { use: 'fortune',    any: ['fortune', 'tarot', 'crystal_ball'] },
+        { use: 'arcade',     any: ['arcade', 'pinball', 'controller'] },
+        { use: 'vending',    any: ['vending'] },
+        { use: 'tokens',     any: ['token'], not: ['plush'] },
+        { use: 'hoop',       any: ['hoop', 'backboard'] },
+        { use: 'bowling',    any: ['bowling'] },
+        { use: 'target',     any: ['target'], not: ['rail', 'track', 'rug', 'screen', 'carrier', 'retrieval', 'marker'] },
+        { use: 'cryo',       any: ['cryo'] },
+        { use: 'fuel',       any: ['fuel', 'gas_pump', 'petrol'] },
+        { use: 'phone',      any: ['payphone', 'telephone', 'phone_booth'] },
+        { use: 'bank',       any: ['atm', 'cash_machine'] },
+        { use: 'stocks',     any: ['ticker'] },
+        { use: 'sewing',     any: ['sewing'] },
+        { use: 'telescope',  any: ['telescope'] },
+        { use: 'globe',      any: ['globe'], not: ['lamp', 'plant', 'gem', 'pile', 'pair', 'snow'] },
+        { use: 'blackboard', any: ['blackboard', 'chalkboard', 'whiteboard'] },
+        { use: 'questBoard', any: ['bulletin', 'notice', 'quest_board', 'corkboard'] },
+        { use: 'news',       any: ['newspaper', 'newsstand'] },
+        { use: 'easel',      any: ['easel'] },
+        { use: 'coffee',     any: ['coffee', 'espresso'], not: ['table', 'cup', 'mug', 'bag', 'bean'] },
+        { use: 'alchemy',    any: ['cauldron', 'alembic', 'alchemy', 'alchemist'] },
+        { use: 'workshop',   any: ['workbench', 'anvil', 'forge'], not: ['icon'] },
+        { use: 'computer',   any: ['computer', 'desktop', 'terminal', 'laptop', 'kiosk', 'pc', 'server'],
+                             not: ['toy', 'privacy', 'broken', 'chibi', 'sprite', 'sign'] },
+        { use: 'computer',   any: ['monitor'],
+                             not: ['heart', 'medical', 'hospital', 'baby', 'toy', 'broken', 'iv', 'frame', 'sign'] },
+        { use: 'tv',         any: ['tv', 'television'], not: ['broken'] },
+        { use: 'piano',      any: ['piano', 'synth', 'synthesizer', 'organ', 'keyboard', 'harp', 'xylophone'] },
+        { use: 'guitar',     any: ['guitar', 'bass', 'violin', 'cello', 'banjo', 'ukulele', 'lute'] },
+        { use: 'sax',        any: ['saxophone', 'sax', 'trumpet', 'trombone', 'tuba', 'horn', 'flute', 'clarinet'],
+                             folders: ['Music'] },
+        { use: 'drum',       any: ['drum', 'bongo', 'conga', 'tambourine', 'cymbal'],
+                             not: ['storage', 'barrel', 'oil'] },
+        { use: 'radio',      any: ['radio', 'boombox'] },
+        { use: 'music',      any: ['jukebox', 'dj', 'turntable', 'gramophone', 'phonograph', 'stereo',
+                                   'speaker', 'amplifier', 'karaoke'] },
+        { use: 'gym',        any: ['treadmill', 'dumbbell', 'barbell', 'kettlebell', 'press', 'rowing', 'cable',
+                                   'smith', 'punching', 'exercise', 'gym'],
+                             not: ['ball', 'mat', 'console', 'printing'] },
+        { use: 'clock',      any: ['clock'], not: ['broken'] },
+        { use: 'mirror',     any: ['mirror'], not: ['fragment'] },
+        { use: 'mailbox',    any: ['mailbox', 'postbox', 'mailboxes'] },
+        { use: 'toilet',     any: ['toilet', 'urinal', 'outhouse', 'latrine'], not: ['paper', 'holder', 'door'] },
+        { use: 'shower',     any: ['shower'] },
+        { use: 'bath',       any: ['bathtub', 'tub'], not: ['toy', 'mat', 'ice', 'cream'] },
+        { use: 'wash',       any: ['sink', 'basin', 'washbasin', 'fountain', 'well'], not: ['toy', 'crown'] },
+        { use: 'campfire',   any: ['campfire', 'bonfire', 'fire_pit', 'firepit'], not: ['banner'] },
+        { use: 'campfire',   folders: ['Camping/Fires'], not: ['log', 'rock'] },
+        { use: 'cook',       any: ['stove', 'oven', 'microwave', 'grill', 'hearth', 'barbecue', 'bbq', 'toaster', 'blender'],
+                             not: ['knob', 'statue', 'rack', 'grate'] },
+        { use: 'cook',       folders: ['Kitchen/Stoves', 'Kitchen/Appliances'], not: ['dj', 'statue', 'knob'] },
+        { use: 'sleep',      any: ['bed', 'beds', 'bunk', 'mattress', 'futon', 'hammock', 'bedroll', 'cot', 'crib', 'sleeping_bag'],
+                             not: ['flower', 'cover', 'sheet', 'pillow', 'sea', 'seabed', 'bedding', 'bedside', 'frame',
+                                   'spread', 'ladder', 'shelf', 'bookcase', 'panel', 'tree'] },
+        { use: 'sleep',      folders: ['Beds/Beds', 'Beds/Bunks', 'Beds/Mattresses', 'Beds/Cribs', 'Tents'], not: ['chair'] },
+        { use: 'books',      any: ['bookshelf', 'bookshelves', 'bookcase', 'library', 'books', 'spellbook', 'tome'] },
+        { use: 'books',      folders: ['Books'] },
+        { use: 'storageCold',  any: ['fridge', 'refrigerator', 'freezer', 'cooler', 'icebox'],
+                               not: ['panel', 'corner', 'edge', 'door', 'produce', 'shelf'] },
+        { use: 'storageCold',  folders: ['Kitchen/Refrigerators', 'Camping/Coolers'] },
+        { use: 'storageLarge', any: ['wardrobe', 'closet', 'armoire', 'chest', 'trunk', 'dresser', 'locker'],
+                               not: ['toy', 'tree', 'jungle', 'stump', 'door', 'pole', 'palm', 'armor', 'mimic',
+                                     'dress', 'section', 'face'] },
+        { use: 'storageSmall', any: ['basket', 'sack', 'bag', 'jar', 'bucket', 'pouch'],
+                               not: ['ball', 'iv', 'medical', 'beanie', 'paint', 'pouring', 'plant'] },
+        { use: 'storage',    any: ['cabinet', 'cupboard', 'drawer', 'drawers', 'crate', 'crates', 'barrel', 'box',
+                                   'luggage', 'suitcase', 'safe', 'bin', 'dumpster', 'canister'],
+                             not: ['juke', 'boom', 'toy', 'altar', 'mail', 'icon', 'trim', 'door', 'panel', 'lantern',
+                                   'fire', 'floor', 'scene', 'grid', 'pillar', 'seat'] },
+        { use: 'storageLarge', folders: ['Storage/Wardrobes', 'Storage/Chests', 'Storage/Trunks', 'Storage/Lockers', 'Storage/Dressers'] },
+        { use: 'storageSmall', folders: ['Storage/Sacks', 'Baskets'] },
+        { use: 'storage',    folders: ['Storage', 'Boxes', 'Barrels', 'Trash/Bins'] },
+        { use: 'painting',   folders: ['Paintings/Paintings', 'Paintings/Misc', 'Art'] },
+        { use: 'statue',     folders: ['Statues'] },
+        { use: 'mask',       folders: ['Masks'] },
+        { use: 'fossil',     any: ['fossil', 'skeleton', 'skull'], folders: ['Bodyparts'] },
+        { use: 'fossil',     folders: ['Bodyparts/Bones', 'Fossils'] },
+    ];
+    // i18n-ignore-end
+
+    function furnitureFolderPath(furnitureId) {
+        const index = (window.Items && window.Items.FurnitureImageFolders) || null;
+        return (furnitureId && index && index[furnitureId]) ? String(index[furnitureId]) : '';
+    }
+
+    // The words an id is made of: "blue_vending_machine_02" -> blue, vending,
+    // machine. Each word is also tried without a trailing "s", and every pair of
+    // neighbours is joined, so a rule can name "fire_pit" or "crystal_ball".
+    function furnitureIdWords(furnitureId) {
+        const parts = String(furnitureId || '').toLowerCase().split(/[^a-z]+/).filter(Boolean);
+        const words = new Set();
+        for (let i = 0; i < parts.length; i++) {
+            const w = parts[i];
+            words.add(w);
+            if (w.length > 3 && w.endsWith('s')) words.add(w.slice(0, -1));
+            if (i + 1 < parts.length) words.add(w + '_' + parts[i + 1]);
+        }
+        return words;
+    }
+
+    // Which use a piece has, as a key of FURNITURE_USES, or '' for none.
+    function furnitureUseKey(furnitureId) {
+        if (!furnitureId) return '';
+        const words = furnitureIdWords(furnitureId);
+        const path = furnitureFolderPath(furnitureId);
+        const category = path.split('/')[0];
+        const has = (w) => words.has(w);
+        for (const rule of FURNITURE_USE_RULES) {
+            if (rule.folders && !rule.folders.some(f => f === path || f === category)) continue;
+            if (rule.any && !rule.any.some(has)) continue;
+            if (rule.all && !rule.all.every(has)) continue;
+            if (rule.not && rule.not.some(has)) continue;
+            return rule.use;
+        }
+        return '';
+    }
+
+    // The usable piece covering (x,y) on this map, the one placed last when
+    // several overlap. Seats are MovementInteractionSystem's to offer.
+    function usablePieceAt(x, y) {
+        const list = $gameSystem ? furnitureOnThisMap() : null;
+        if (!list) return null;
+        for (let i = list.length - 1; i >= 0; i--) {
+            const p = list[i];
+            const f = p && Furniture[p.furnitureId];
+            if (!f) continue;
+            const w = f.width || 1, h = f.height || 1;
+            if (x < p.x || x >= p.x + w || y < p.y || y >= p.y + h) continue;
+            if (getFolderRules(p.furnitureId).seat) continue;
+            const key = furnitureUseKey(p.furnitureId);
+            if (key) return { placed: p, key };
+        }
+        return null;
+    }
+
+    // A placed piece's own container. Built furniture belongs to the world
+    // (see builtFurniture), so its contents are a world container too, and the
+    // world-wide placed id keeps two pieces from ever sharing one.
+    function furnitureContainerId(placed) {
+        return 'furniture_' + placed.id;
+    }
+
+    function openFurnitureContainer(placed, weightLimit) {
+        const SceneContainer = window.Scene_Container;
+        if (!SceneContainer) return;
+        SoundManager.playOk();
+        SceneManager.push(SceneContainer);
+        SceneManager.prepareNextScene(furnitureContainerId(placed), false, weightLimit);
+    }
+
+    // Dismantling a piece hands back whatever was stored in it, so knocking a
+    // wardrobe down never destroys its contents.
+    function returnFurnitureContents(placed) {
+        const CM = window.ContainerManager;
+        const IU = window.ItemUtils;
+        if (!CM || !IU || !placed) return;
+        const id = furnitureContainerId(placed);
+        if (CM.isContainerEmpty(id)) return;
+        const bag = CM.getContainer(id);
+        let count = 0;
+        for (const key of Object.keys(bag)) {
+            const item = IU.decodeKey(key);
+            const qty = bag[key] || 0;
+            if (item && qty > 0) {
+                $gameParty.gainItem(item, qty);
+                count += qty;
+            }
+            delete bag[key];
+        }
+        CM.save();
+        if (count > 0 && window.ParchmentToast) {
+            window.ParchmentToast.show(T('Furniture.use.contentsReturned', { n: count }), { severity: 'info' });
+        }
+    }
+
+    const _Game_System_removePlacedFurniture_use = Game_System.prototype.removePlacedFurniture;
+    Game_System.prototype.removePlacedFurniture = function (mapId, placedId) {
+        const removed = _Game_System_removePlacedFurniture_use.call(this, mapId, placedId);
+        if (removed && FURNITURE_USES[furnitureUseKey(removed.furnitureId)]?.container) {
+            returnFurnitureContents(removed);
+        }
+        return removed;
+    };
+
+    function furnitureUseCommands(steps) {
+        const list = [];
+        for (const step of steps) {
+            if (step.ce) {
+                list.push({ code: 117, indent: 0, parameters: [step.ce] });
+            } else if (step.cmd) {
+                const [plugin, command, args] = step.cmd;
+                list.push({ code: 357, indent: 0, parameters: [plugin, command, command, Object.assign({}, args)] });
+            } else if (step.se) {
+                list.push({ code: 250, indent: 0, parameters: [{ name: step.se, volume: 90, pitch: 100, pan: 0 }] });
+            }
+        }
+        list.push({ code: 0, indent: 0, parameters: [] });
+        return list;
+    }
+
+    function runFurnitureUse(use, placed) {
+        if (!use) return false;
+        if (use.container) {
+            openFurnitureContainer(placed, use.container);
+            return true;
+        }
+        if (use.choices) {
+            const labels = use.choices.map(([label]) => T('Furniture.use.' + label));
+            labels.push(T('Furniture.cancel'));
+            window.skipLocalization = true;
+            $gameMessage.setChoices(labels, 0, labels.length - 1);
+            window.skipLocalization = false;
+            $gameMessage.setChoiceCallback((index) => {
+                const picked = use.choices[index];
+                // Past the choice window's teardown, so a menu it opens shows.
+                if (picked) setTimeout(() => runFurnitureUse(picked[1], placed), 0);
+            });
+            return true;
+        }
+        if (use.steps) {
+            if (!$gameMap || !$gameMap._interpreter || $gameMap._interpreter.isRunning()) return false;
+            $gameMap._interpreter.setup(furnitureUseCommands(use.steps), 0);
+            return true;
+        }
+        return false;
+    }
+
+    function useFurnitureAt(x, y) {
+        const hit = usablePieceAt(x, y);
+        if (!hit) return false;
+        // A painting holding a picture of the player's own is shown, not
+        // described: the picture viewer above answers for that one.
+        if (hit.placed.picture && window.UserPictures) return false;
+        return runFurnitureUse(FURNITURE_USES[hit.key], hit.placed);
+    }
+
+    const _Game_Player_triggerButtonAction_furnitureUse = Game_Player.prototype.triggerButtonAction;
+    Game_Player.prototype.triggerButtonAction = function () {
+        if (Input.isTriggered('ok') && !this.isInVehicle() &&
+            !($gameTemp && $gameTemp.furnitureBuildActive) && !$gameMap.isEventRunning()) {
+            const d = this.direction();
+            const fx = $gameMap.roundXWithDirection(this.x, d);
+            const fy = $gameMap.roundYWithDirection(this.y, d);
+            // A real event on the tile keeps its own interaction.
+            if ($gameMap.eventIdXy(fx, fy) <= 0 && useFurnitureAt(fx, fy)) {
+                // MovementInteractionSystem reads the same OK press later this
+                // frame; this tells it the press was spent.
+                $gameTemp._furnitureUsedFrame = Graphics.frameCount;
+                return true;
+            }
+        }
+        return _Game_Player_triggerButtonAction_furnitureUse.call(this);
+    };
+
+    Object.assign(window.FurnitureSystem, {
+        useKey: furnitureUseKey,
+        useAt: useFurnitureAt,
+        containerId: furnitureContainerId,
+    });
 
     //=============================================================================
     // Tile Placement System (Walls / Terrain / Features / House Doors)

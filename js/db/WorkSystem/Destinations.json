@@ -382,7 +382,8 @@
       "y": 113
     },
     "reservedTiles": [
-      "87,112"
+      "87,112",
+      "88,112"
     ]
   },
   "Middelburg": {
@@ -402,7 +403,8 @@
       "y": 11
     },
     "reservedTiles": [
-      "85,114"
+      "85,114",
+      "86,114"
     ]
   },
   "Harlem": {
@@ -995,7 +997,8 @@
       "y": 113
     },
     "reservedTiles": [
-      "64,113"
+      "64,113",
+      "64,114"
     ]
   },
   "Manchester": {
@@ -1098,7 +1101,8 @@
       "y": 86
     },
     "reservedTiles": [
-      "61,86"
+      "61,86",
+      "62,86"
     ]
   },
   "Oban": {
@@ -1657,6 +1661,7 @@
       "y": 41
     },
     "reservedTiles": [
+      "75,41",
       "76,41"
     ]
   },
@@ -2577,6 +2582,45 @@
       "60,228"
     ]
   },
+  "Blida": {
+    "name": "Blida",
+    "biome": "VillageDesert",
+    "country": "Algeria",
+    "nationId": 42,
+    "procedural": true,
+    "tag": "rural",
+    "mapOffset": {
+      "x": 366,
+      "y": 795
+    },
+    "base": {
+      "x": 59,
+      "y": 231
+    },
+    "reservedTiles": [
+      "59,231",
+      "60,231"
+    ]
+  },
+  "Oran": {
+    "name": "Oran",
+    "biome": "VillageDesert",
+    "country": "Algeria",
+    "nationId": 42,
+    "procedural": true,
+    "tag": "port",
+    "mapOffset": {
+      "x": 280,
+      "y": 784
+    },
+    "base": {
+      "x": 47,
+      "y": 229
+    },
+    "reservedTiles": [
+      "47,229"
+    ]
+  },
   "Atene": {
     "locked": true,
     "name": "Atene",
@@ -3425,7 +3469,8 @@
       "y": 176
     },
     "reservedTiles": [
-      "152,176"
+      "152,176",
+      "153,176"
     ]
   },
   "Sarajevo": {
@@ -3493,7 +3538,8 @@
       "y": 157
     },
     "reservedTiles": [
-      "170,157"
+      "170,157",
+      "171,157"
     ]
   },
   "Tirana": {

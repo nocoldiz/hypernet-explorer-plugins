@@ -30,6 +30,7 @@
   "elementSpirit": "Spirito di {element}",
   "spiritStats": "Statistiche dello spirito",
   "statBonuses": "Bonus dello spirito",
+  "dormant": "Lo spirito dorme finché la lama resta nel fodero: impugnala per ricevere questi bonus.",
   "noneBound": "Nessun Blade Seed legato.",
   "noSkills": "Nessuna abilità.",
   "nextEvolution": "Prossima evoluzione: Liv.{level}",

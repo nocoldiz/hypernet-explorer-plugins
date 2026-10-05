@@ -166,7 +166,7 @@
     "ENABLED",
     "ONLY UI"
   ],
-  "resetDefaults": "RESET TA DEFAULTS",
+  "resetDefaults": "DEFAULTS",
   "resetDefaultsDone": "ALL SETTINGS RESTORED TA DEY DEFAULTS",
   "group": {
     "language": "LANGUAGE",

@@ -496,6 +496,10 @@
         _left: null,
         _held: false,
         _visible: false,
+        // Over the shoulder (VoxelWorldScene#_setThirdPerson): the weapon is
+        // still in hand and still fires, but the walker's own body shows it,
+        // so the first-person layer is not drawn.
+        _thirdPerson: false,
         // The layer has been handed to a battle being fought over the world.
         _battle: false,
 
@@ -539,6 +543,14 @@
 
         /** Only on foot: the one mode where the driver is walking about. */
         showsIn(viewMode) { return viewMode === 'foot'; },
+
+        /** The camera has gone over the shoulder, or come back to the eye. */
+        setThirdPerson(on) {
+            this._thirdPerson = !!on;
+            if (this._battle || !this._held || !window.WeaponThreeScene) return;
+            const canvas = window.WeaponThreeScene.canvas;
+            if (canvas) canvas.style.display = (this._visible && !this._thirdPerson) ? 'block' : 'none';
+        },
 
         /**
          * A fight has opened over the world (VoxelWorldScene#beginBattleView),
@@ -680,6 +692,8 @@
             {
                 const sc = VoxelWorldSystem._scene;
                 if (sc && sc._weaponStrike) sc._weaponStrike(s._weapon);
+                // Seen from behind, the walker's body fires or swings it.
+                if (sc && sc._onWeaponSwing) sc._onWeaponSwing(s._weapon);
             }
 
             // A gun tagged <RecoilJump> (the Vector gun, Bubba's shotgun) throws
@@ -706,7 +720,7 @@
             if (show !== this._visible) {
                 this._visible = show;
                 const canvas = window.WeaponThreeScene.canvas;
-                if (canvas) canvas.style.display = show ? 'block' : 'none';
+                if (canvas) canvas.style.display = (show && !this._thirdPerson) ? 'block' : 'none';
                 if (show) this.refresh();
             }
             if (!show) return;
@@ -724,7 +738,9 @@
                 s._aimPoint = null;
                 s.update();
             }
-            window.WeaponThreeScene.render();
+            // The models keep animating so a swing still runs its course and
+            // ends; only the drawing stops while nobody can see the layer.
+            if (!this._thirdPerson) window.WeaponThreeScene.render();
         },
 
         /**

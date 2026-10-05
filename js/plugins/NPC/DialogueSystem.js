@@ -256,10 +256,70 @@ Imported.DialogueSystem = true;
         return pages.filter(page => page.length > 0);
     }
 
-    function paginateMessage(text, rows = MSG_BOX_ROWS, cols = MSG_LINE_CHARS) {
+    // A character count is only a guess at a proportional font: 46 letters
+    // left most rows a word or three short of the edge, so a long line was
+    // cut over to the next box with half its last row still empty. When the
+    // parchment box is on the page its rows are measured in its own font and
+    // width instead, the way the browser will lay them out. A hair of slack
+    // keeps a row the measure calls full from spilling onto a fifth.
+    const MSG_ROW_SLACK = 0.97;
+    let _msgMeasureCtx = null;
+
+    // What a stretch of the raw line looks like once the box prints it:
+    // [Display | Topic] reads as its left half, colour escapes are not drawn.
+    function _msgShownText(text) {
+        return stripNameMarks(stripControlEscapes(text))
+            .replace(keywordRe(), (_m, inner) => splitKeyword(inner).display);
+    }
+
+    function _msgRowFits() {
+        if (!_htmlMessageActive() || typeof getComputedStyle !== 'function') return null;
+        const el = document.getElementById('html-msg-text');
+        if (!_msgMeasureCtx) {
+            const canvas = document.createElement('canvas');
+            _msgMeasureCtx = canvas.getContext ? canvas.getContext('2d') : null;
+        }
+        const ctx = _msgMeasureCtx;
+        if (!el || !ctx || typeof ctx.measureText !== 'function') return null;
+        const sc   = _msgGetScale();
+        const win  = SceneManager._scene && SceneManager._scene._messageWindow;
+        const pad  = (win && win.padding) || 12;
+        const base = (win && typeof win.standardFontSize === 'function') ? win.standardFontSize() : 29;
+        // The same geometry Window_Message.update gives the box.
+        const boxW = Math.max(160, Math.min(MESSAGE_WINDOW_WIDTH, Graphics.boxWidth - msgEdgeMargin * 2));
+        const room = (boxW * sc.sx - 2 * Math.round(pad * sc.sx) - 6) * MSG_ROW_SLACK;
+        const cs   = getComputedStyle(el);
+        const font = `${cs.fontWeight || 'bold'} ${Math.round(base * sc.sy * 0.85)}px ${cs.fontFamily}`;
+        // A face still on its way would be measured in the fallback, which
+        // runs a different width: better the old guess than a wrong ruler.
+        if (document.fonts && typeof document.fonts.check === 'function' && !document.fonts.check(font)) return null;
+        ctx.font = font;
+        if (!(room > 0)) return null;
+        return line => ctx.measureText(_msgShownText(line)).width <= room;
+    }
+
+    // The rows a sentence takes in a box whose rows are measured, breaking
+    // between words the way the box's own wrap does.
+    function _wrapFit(sentence, fits) {
+        const lines = [];
+        let line = '';
+        for (const word of sentence.split(' ')) {
+            if (!word) continue;
+            const next = line ? line + ' ' + word : word;
+            if (!line || fits(next)) line = next;
+            else { lines.push(line); line = word; }
+        }
+        if (line) lines.push(line);
+        return lines;
+    }
+
+    // `fits` measures one row; left out, the live box is measured when there
+    // is one and the character count stands in when there is not.
+    function paginateMessage(text, rows = MSG_BOX_ROWS, cols = MSG_LINE_CHARS, fits) {
         const flat = String(text == null ? '' : text)
             .replace(/\r?\n/g, ' ').replace(/  +/g, ' ').trim();
         if (!flat) return [];
+        const rowFits = fits || (cols === MSG_LINE_CHARS ? _msgRowFits() : null);
         // The box breaks a line after every sentence (see autoWrapText), so a
         // page is counted in the rows those breaks actually produce.
         const sentences = flat.replace(/\.(\s+|$)/g, '.\n').split('\n')
@@ -269,7 +329,7 @@ Imported.DialogueSystem = true;
         let used = 0;
         const flush = () => { if (page.length) { pages.push(page.join(' ')); page = []; used = 0; } };
         for (const sentence of sentences) {
-            const lines = _wrapWords(sentence, cols).split('\n');
+            const lines = rowFits ? _wrapFit(sentence, rowFits) : _wrapWords(sentence, cols).split('\n');
             while (lines.length) {
                 if (used >= rows) { flush(); continue; }
                 const take = lines.splice(0, rows - used);

@@ -4543,7 +4543,6 @@
                     <div class="companion-switcher ui-switcher-row" id="skillmaster-companion-row"></div>
                     <div id="right-page-content" class="sm-page-body"></div>
                 </div>
-                <div id="sm-action-rail" class="sm-action-rail"></div>
             </div>
         `;
 
@@ -4565,8 +4564,7 @@
             // now; the school grids are the last to keep their own name.
             let box = e.target.closest && e.target.closest('.ui-scroll, .skill-scroll-box');
             if (!box) {
-                box = document.getElementById('category-scroll-box-left') ||
-                      document.getElementById('category-scroll-box-right') ||
+                box = document.getElementById('category-scroll-box') ||
                       document.getElementById('skills-scroll-box');
             }
             if (!box) {
@@ -5203,13 +5201,9 @@
         // The atlas takes the whole sheet: one class on the spread and the
         // stylesheet folds the right page and the spine away with it.
         if (spreadEl) spreadEl.classList.toggle('skill-fullpage', fullPageList);
-        // The school picker sets its two leaves to the same width and hangs
-        // every bench button in one rail down the right edge of the sheet.
+        // The school picker reads like a bench: every school on the left
+        // leaf, every bench button on the right one.
         if (spreadEl) spreadEl.classList.toggle('sm-cat-spread', this._viewMode === 'category');
-        if (this._viewMode !== 'category') {
-            const railOff = this._dndContainer.querySelector('#sm-action-rail');
-            if (railOff && railOff.innerHTML) railOff.innerHTML = '';
-        }
 
         if (compRow && !compRow.classList.contains('is-hidden')) {
             if (fullPageList && leftPageEl && compRow.parentNode !== leftPageEl) {
@@ -5292,9 +5286,8 @@
             let leftPageHTML = "";
             if (this._viewMode === 'category') {
                 const split = SkillMaster.getSplitSkillCategories();
-                const categoriesListHTML = renderCategoryCardsHTML(split.Skill, 0);
                 const backBtnText = T('SkillMaster.back');
-                const skillsTitle = T('SkillMaster.skills');
+                const schoolsTitle = T('SkillMaster.schools');
 
                 const craftSkillLabel = T('SkillMaster.craft.buttonSkill');
                 const enchantWeaponLabel = T('SkillMaster.enchant.buttonWeapon');
@@ -5305,14 +5298,26 @@
                 leftPageHTML = `
                     <div class="page-header-bar">
                       <div class="back-button focusable" onclick="SceneManager._scene.categoryBack()">${backBtnText}</div>
-                      <h2 class="title">${skillsTitle}</h2>
+                      <h2 class="title">${schoolsTitle}</h2>
+                      <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
                     </div>
-                    <div id="category-scroll-box-left" class="skill-scroll-box sm-school-grid">
-                        ${categoriesListHTML}
+                    <div id="category-scroll-box" class="ui-scroll sm-school-scroll">
+                        <div class="ui-section sm-bench-subhead">
+                            <span class="inspect-section-title">${T('SkillMaster.skills')}</span>
+                        </div>
+                        <div id="category-scroll-box-left" class="sm-school-grid sm-school-grid--flow">
+                            ${renderCategoryCardsHTML(split.Skill, 0)}
+                        </div>
+                        <div class="ui-section sm-bench-subhead">
+                            <span class="inspect-section-title">${T('SkillMaster.magic')}</span>
+                        </div>
+                        <div id="category-scroll-box-right" class="sm-school-grid sm-school-grid--flow">
+                            ${renderCategoryCardsHTML(split.Magic, 1)}
+                        </div>
                     </div>
                 `;
-                // The benches hang in the rail down the right edge of the
-                // sheet, not under the schools: one column for both pages.
+                // The benches fill the right leaf, in the order the cursor
+                // walks them down the column.
                 this._railHTML = `
                     <div class="inspect-btn fuse-spells-btn focusable" onclick="SceneManager._scene.openSpellEditor()">${T('SkillMaster.fuseSpells')}</div>
                     <div class="inspect-btn craft-spell-btn focusable" onclick="SceneManager._scene.openCraftBench('spell')">${T('SkillMaster.craft.buttonSpell')}</div>
@@ -5341,10 +5346,6 @@
             }
 
             leftPageBox.innerHTML = leftPageHTML;
-            // The rail only ever holds the school picker's benches; every
-            // other view leaves it empty and the sheet takes the width back.
-            const railBox = document.getElementById('sm-action-rail');
-            if (railBox) railBox.innerHTML = (this._viewMode === 'category') ? (this._railHTML || '') : '';
             this._lastLeftMode = leftMode;
             this._lastLeftCategory = this._selectedCategory;
         }
@@ -5361,16 +5362,6 @@
             };
             applyFocus('category-scroll-box-left', 0);
             applyFocus('category-scroll-box-right', 1);
-            // The three buttons under the schools are one ring: the forge, the
-            // spell bench and the skill bench, walked left and right.
-            CATEGORY_ACTION_BTNS.forEach((sel, i) => {
-                const el = document.querySelector(sel);
-                if (!el) return;
-                const on = !!this._categoryFuseFocused && (this._categoryActionIndex || 0) === i;
-                el.classList.toggle('focused', on);
-                el.classList.toggle('selected', on);
-                if (on && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' });
-            });
         } else if (this.usesGraphView()) {
             this.syncAtlasSky();
             this.repaintAtlasFocus();
@@ -5411,16 +5402,14 @@
             let rightPageHTML = "";
 
             if (this._viewMode === 'category') {
-                const split = SkillMaster.getSplitSkillCategories();
-                const magicListHTML = renderCategoryCardsHTML(split.Magic, 1);
-                const magicTitle = T('SkillMaster.magic');
                 const pupilLine = `<div class="sm-pupil-line">${T('SkillMaster.atlas.held', { knowledge: knowledge })}</div>`;
                 rightPageHTML = `
                     <div class="page-header-bar">
-                      <h2 class="title">${magicTitle}</h2>
+                      <h2 class="title">${T('SkillMaster.benches')}</h2>
                     </div>
-                    <div id="category-scroll-box-right" class="skill-scroll-box sm-school-grid">
-                        ${magicListHTML}
+                    <div class="ui-prose sm-bench-blurb">${T('SkillMaster.benchesBlurb')}</div>
+                    <div id="sm-action-rail" class="sm-action-rail ui-scroll">
+                        ${this._railHTML || ''}
                     </div>
                     ${pupilLine}
                 `;
@@ -5445,6 +5434,19 @@
             this._lastRightActionIndex = this._selectedActionIndex;
             this._lastRightKnowledge = knowledge;
         }
+        if (this._viewMode === 'category') this.paintBenchFocus();
+    };
+
+    // The bench column on the right leaf is one ring the cursor walks down.
+    Scene_SkillEncyclopedia.prototype.paintBenchFocus = function () {
+        CATEGORY_ACTION_BTNS.forEach((sel, i) => {
+            const el = document.querySelector(sel);
+            if (!el) return;
+            const on = !!this._categoryFuseFocused && (this._categoryActionIndex || 0) === i;
+            el.classList.toggle('focused', on);
+            el.classList.toggle('selected', on);
+            if (on && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' });
+        });
     };
 
     Scene_SkillEncyclopedia.prototype.switchTeachActor = function (index) {
@@ -5706,8 +5708,7 @@
 
     Scene_SkillEncyclopedia.prototype.ccScrollTarget = function () {
         return document.getElementById('skills-scroll-box') ||
-            document.getElementById('category-scroll-box-right') ||
-            document.getElementById('category-scroll-box-left') ||
+            document.getElementById('category-scroll-box') ||
             (this._dndContainer && this._dndContainer.querySelector('.ui-scroll, .skill-scroll-box'));
     };
 
@@ -5777,45 +5778,36 @@
                 this.categoryBack();
                 return;
             } else if (Input.isTriggered('right') || Input.isRepeated('right')) {
+                // Both grids sit on the left leaf, SKILLS over MAGIC; the end
+                // of a row steps across the crease onto the bench column.
                 const col = idx % cols;
-                if (col === cols - 1 && pane === 1) {
+                if (col === cols - 1 || idx + 1 >= curLen) {
                     this._categoryFuseFocused = true;
                     this._categoryActionIndex = 0;
                     SoundManager.playCursor();
                     this.refreshUISkillDOM();
                     return;
                 }
-                if (col === cols - 1 && pane === 0 && lists[1].length > 0) {
-                    const row = Math.floor(idx / cols);
-                    pane = 1;
-                    idx = Math.min(row * cols, lists[1].length - 1);
-                } else if (idx + 1 < curLen) {
-                    idx += 1;
-                }
+                idx += 1;
             } else if (Input.isTriggered('left') || Input.isRepeated('left')) {
-                const col = idx % cols;
-                if (col === 0 && pane === 1 && lists[0].length > 0) {
-                    const row = Math.floor(idx / cols);
-                    pane = 0;
-                    idx = Math.min(row * cols + (cols - 1), lists[0].length - 1);
-                } else if (idx - 1 >= 0) {
-                    idx -= 1;
-                }
+                if (idx % cols > 0) idx -= 1;
             } else if (Input.isTriggered('down') || Input.isRepeated('down')) {
                 if (idx + cols < curLen) {
                     idx += cols;
-                } else if (pane === 1 && idx >= curLen - 1) {
-                    this._categoryFuseFocused = true;
-                    this._categoryActionIndex = 0;
-                    SoundManager.playCursor();
-                    this.refreshUISkillDOM();
-                    return;
+                } else if (pane === 0 && lists[1].length > 0) {
+                    pane = 1;
+                    idx = Math.min(idx % cols, lists[1].length - 1);
                 } else {
                     idx = curLen - 1;
                 }
             } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
                 if (idx - cols >= 0) {
                     idx -= cols;
+                } else if (pane === 1 && lists[0].length > 0) {
+                    const len0 = lists[0].length;
+                    const lastRow = Math.floor((len0 - 1) / cols) * cols;
+                    pane = 0;
+                    idx = Math.min(lastRow + (idx % cols), len0 - 1);
                 } else if (this._ccEnterNav('up')) {
                     return;
                 }
@@ -5826,8 +5818,7 @@
                 this._selectedCategoryIndex = idx;
                 SoundManager.playCursor();
                 this.refreshUISkillDOM();
-                const boxId = pane === 1 ? 'category-scroll-box-right' : 'category-scroll-box-left';
-                this.scrollToActiveItem(boxId, `#${boxId} .category-card.focused`); // i18n-ignore: CSS selector
+                this.scrollToActiveItem('category-scroll-box', '#category-scroll-box .category-card.focused'); // i18n-ignore: CSS selector
             }
         } else if (this._viewMode === 'list') {
             if (this.usesGraphView()) {
@@ -8170,6 +8161,9 @@
             : ['unmake'];
     };
 
+    // The pieces stand in a grid this many across (.sm-gear-grid in theme.css).
+    const ENCHANT_GEAR_COLS = 3;
+
     Proto.enchantLeftRows = function () {
         return this.enchantSlots().length + this.enchantBound().length;
     };
@@ -8286,9 +8280,11 @@
             const on = this._enchantColumn === 0 && this._enchantSlotIndex === idx;
             const worn = slot.actorId ? $gameActors.actor(slot.actorId) : null;
             const wornTag = worn ? `<span class="ui-chip sm-skill-badge">${esc(worn.name())}</span>` : '';
+            const picked = !!chosen && chosen.item === slot.item && chosen.actorId === slot.actorId;
             slotsHTML += `
-                <div class="sm-skill-row focusable ${on ? 'focused' : ''}" onclick="SceneManager._scene.enchantSelectSlot(${idx})">
-                    <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(slot.item.iconIndex)}"></span><span class="sm-skill-name">${esc(tx(slot.item.name))}</span></span>
+                <div class="sm-gear-card focusable ${on ? 'focused' : ''} ${picked ? 'selected' : ''}" onclick="SceneManager._scene.enchantSelectSlot(${idx})">
+                    <span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(slot.item.iconIndex)}"></span>
+                    <span class="sm-gear-name">${esc(tx(slot.item.name))}</span>
                     ${wornTag}
                 </div>`;
         });
@@ -8333,7 +8329,7 @@
               <span class="inspect-section-title">${esc(tr('chooseGear'))}</span>
               <span class="ui-chip sm-skill-badge">${slots.length}</span>
             </div>
-            <div id="enchant-gear-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list">
+            <div id="enchant-gear-box" class="ui-scroll sm-gear-grid sm-bench-split-list">
                 ${slotsHTML}
             </div>
             <div class="ui-section sm-bench-subhead">
@@ -8417,8 +8413,15 @@
         // piece waiting for one they cross to the spell book and back.
         const chips = this.enchantChips().length;
         const prevChip = this._enchantChip || 0;
+        // The pieces are a grid: left and right walk its row, and the end of a
+        // row crosses to the spell book once a piece is chosen.
+        const cols = ENCHANT_GEAR_COLS;
+        const gear = this.enchantSlots().length;
+        const at = this._enchantSlotIndex || 0;
+        const inGrid = !spells && !entry && at < gear;
         if (Input.isTriggered('right') || Input.isRepeated('right')) {
             if (entry && prevChip < chips - 1) this._enchantChip = prevChip + 1;
+            else if (inGrid && at % cols < cols - 1 && at + 1 < gear) this._enchantSlotIndex = at + 1;
             else if (!spells && this._enchantChosen) this._enchantColumn = 1;
             else return;
             SoundManager.playCursor();
@@ -8428,6 +8431,7 @@
         if (Input.isTriggered('left') || Input.isRepeated('left')) {
             if (entry && prevChip > 0) this._enchantChip = prevChip - 1;
             else if (spells) this._enchantColumn = 0;
+            else if (inGrid && at % cols > 0) this._enchantSlotIndex = at - 1;
             else return;
             SoundManager.playCursor();
             this.refreshUISkillDOM();
@@ -8435,8 +8439,23 @@
         }
         if (!length) return;
         const prev = this[key];
-        if (Input.isTriggered('down') || Input.isRepeated('down')) this[key] = (prev + 1) % length;
-        else if (Input.isTriggered('up') || Input.isRepeated('up')) this[key] = (prev - 1 + length) % length;
+        const down = Input.isTriggered('down') || Input.isRepeated('down');
+        const up = Input.isTriggered('up') || Input.isRepeated('up');
+        if (spells || (!down && !up)) {
+            if (down) this[key] = (prev + 1) % length;
+            else if (up) this[key] = (prev - 1 + length) % length;
+        } else if (down) {
+            const lastRow = Math.floor((gear - 1) / cols);
+            if (prev >= gear) this[key] = (prev + 1) % length;
+            else if (prev + cols < gear) this[key] = prev + cols;
+            else if (Math.floor(prev / cols) < lastRow) this[key] = gear - 1;
+            else this[key] = length > gear ? gear : prev % cols;
+        } else {
+            if (prev > gear) this[key] = prev - 1;
+            else if (prev === gear) this[key] = Math.max(0, gear - 1);
+            else if (prev - cols >= 0) this[key] = prev - cols;
+            else if (length > gear) this[key] = length - 1;
+        }
         if (this[key] !== prev) {
             // Coming onto a bound row always offers the harmless chip first, so
             // a held Down can never land the cursor on Unmake.

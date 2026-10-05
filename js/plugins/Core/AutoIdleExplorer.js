@@ -1828,6 +1828,100 @@
         return after > DANGER_BERTH || after >= threatDistance(x, y);
     }
 
+    // ----------------------------------------------------------- the detour
+    // The engine's findDirectionTo gives up after searchLimit (12) tiles and
+    // then walks the straight line toward the goal's nearest guess, which in a
+    // wood or round a building is a pocket with no way through: the leader
+    // paces the same few squares forever. Once they have stayed inside one
+    // BOX_SPAN x BOX_SPAN square for BOX_FRAMES, the whole map is searched
+    // instead and the route that comes back is walked step by step.
+    const BOX_SPAN = 4;
+    const BOX_FRAMES = 600; // ten seconds
+
+    // A full map A* from (sx, sy) to (gx, gy) over what the character may
+    // walk on, events left out: they move, and a step into one is refused at
+    // the time it is taken. The goal tile itself need not be passable (a door,
+    // a sign, a person): it only has to be entered from an open neighbour, and
+    // the walker stops beside it. Returns the directions to walk, or null.
+    function routeAround(ch, sx, sy, gx, gy) {
+        if (!$gameMap || !ch || typeof ch.isMapPassable !== "function") return null;
+        const w = $gameMap.width();
+        const h = $gameMap.height();
+        if (!$gameMap.isValid(gx, gy) || (sx === gx && sy === gy)) return null;
+        const size = w * h;
+        const start = sx + sy * w;
+        const goal = gx + gy * w;
+        const g = new Float64Array(size).fill(Infinity);
+        const from = new Int32Array(size).fill(-1);
+        const step = new Uint8Array(size);
+        const closed = new Uint8Array(size);
+        // Binary heap of [f, key].
+        const heap = [];
+        const push = (f, k) => {
+            heap.push([f, k]);
+            let i = heap.length - 1;
+            while (i > 0) {
+                const p = (i - 1) >> 1;
+                if (heap[p][0] <= heap[i][0]) break;
+                const t = heap[p]; heap[p] = heap[i]; heap[i] = t;
+                i = p;
+            }
+        };
+        const pop = () => {
+            const top = heap[0];
+            const last = heap.pop();
+            if (heap.length) {
+                heap[0] = last;
+                let i = 0;
+                for (;;) {
+                    const l = i * 2 + 1, r = l + 1;
+                    let m = i;
+                    if (l < heap.length && heap[l][0] < heap[m][0]) m = l;
+                    if (r < heap.length && heap[r][0] < heap[m][0]) m = r;
+                    if (m === i) break;
+                    const t = heap[m]; heap[m] = heap[i]; heap[i] = t;
+                    i = m;
+                }
+            }
+            return top;
+        };
+        const DIRS = [2, 4, 6, 8];
+        const DX = [0, -1, 1, 0];
+        const DY = [1, 0, 0, -1];
+        const est = (x, y) => Math.abs(x - gx) + Math.abs(y - gy);
+        g[start] = 0;
+        push(est(sx, sy), start);
+        while (heap.length) {
+            const k = pop()[1];
+            if (closed[k]) continue;
+            closed[k] = 1;
+            if (k === goal) {
+                const path = [];
+                for (let c = goal; c !== start; c = from[c]) path.push(step[c]);
+                return path.reverse();
+            }
+            const cx = k % w, cy = (k - cx) / w;
+            for (let n = 0; n < 4; n++) {
+                const nx = cx + DX[n], ny = cy + DY[n];
+                if (!$gameMap.isValid(nx, ny)) continue;
+                const nk = nx + ny * w;
+                if (closed[nk]) continue;
+                const d = DIRS[n];
+                const open = nk === goal
+                    ? $gameMap.isPassable(cx, cy, d)
+                    : ch.isMapPassable(cx, cy, d);
+                if (!open) continue;
+                const ng = g[k] + 1;
+                if (ng >= g[nk]) continue;
+                g[nk] = ng;
+                from[nk] = k;
+                step[nk] = d;
+                push(ng + est(nx, ny), nk);
+            }
+        }
+        return null;
+    }
+
     // --------------------------------------------------------------- the law
     // An officer is whoever CrimeSystem says is one; the party keeps its
     // distance from them while it is wanted, and pays them no mind while it is
@@ -3209,6 +3303,8 @@
                 this._interactWatch = { key: null, count: 0, at: 0 };
                 this._stillTile = null;
                 this._stillSince = this.frame;
+                this._box = null;
+                this.detour = null;
                 this.intent = null;
                 this.target = null;
                 this.goals = 0;
@@ -3646,6 +3742,43 @@
             return false;
         },
 
+        // The leader has paced inside one BOX_SPAN square for BOX_FRAMES: the
+        // engine's short search keeps sending them into the same pocket. The
+        // whole map is searched for the way to wherever they are headed, and
+        // stepToward walks that route (this.detour) until it is spent. A goal
+        // with no way to it at all is dropped. A frame the controller did not
+        // drive (a talk, a menu) starts the clock over.
+        watchBox() {
+            if (!$gamePlayer) return false;
+            const x = $gamePlayer.x, y = $gamePlayer.y;
+            const b = this._box;
+            if (!b || this.frame - b.last > 1 ||
+                Math.max(b.maxX, x) - Math.min(b.minX, x) >= BOX_SPAN ||
+                Math.max(b.maxY, y) - Math.min(b.minY, y) >= BOX_SPAN) {
+                this._box = { minX: x, maxX: x, minY: y, maxY: y, since: this.frame, last: this.frame };
+                return false;
+            }
+            b.last = this.frame;
+            b.minX = Math.min(b.minX, x); b.maxX = Math.max(b.maxX, x);
+            b.minY = Math.min(b.minY, y); b.maxY = Math.max(b.maxY, y);
+            if (this.frame - b.since < BOX_FRAMES) return false;
+            // Waits, clock still run out, for an errand to head for.
+            if (this.destX === null || this.destY === null) return false;
+            if (this.detour && this.detour.x === this.destX && this.detour.y === this.destY) return false;
+            this._box = null;
+            const path = routeAround($gamePlayer, x, y, this.destX, this.destY);
+            if (!path || !path.length) {
+                this.detour = null;
+                this.abandonIntent();
+                this.think = 0;
+                return false;
+            }
+            this.detour = { x: this.destX, y: this.destY, path };
+            if ($gameTemp) $gameTemp.clearDestination();
+            announce("AutoIdle.auto.detour", {}, "info");
+            return true;
+        },
+
         drive() {
             // A crossing over the rim is under way (the pan or fade before the
             // transfer): the party has already left, and walking on would only
@@ -3654,6 +3787,7 @@
             // Five seconds on one square is standing about: nudge before
             // anything else, so no held intent can pin the leader in place.
             if (this.keepMoving()) return;
+            this.watchBox();
             if (this.postDelay > 0) {
                 this.postDelay--;
                 return;
@@ -3969,6 +4103,7 @@
         // (touch-move). Returns true if a move was actually started.
         stepToward(x, y) {
             if (!$gamePlayer || $gamePlayer.isMoving() || !$gamePlayer.canMove()) return false;
+            if (this.followDetour(x, y)) return true;
             const dir = $gamePlayer.findDirectionTo(x, y);
             // The engine's A* reads the map and never the events standing on
             // it, so the shortest line to a door can run past, or straight
@@ -3987,6 +4122,30 @@
             // and swims it (Map/MovementInteractionSystem.js), so the leader
             // does too, the way the loose party already does (Loose.swimToward).
             return this.swimFor(x, y);
+        },
+
+        // One step of the route watchBox worked out, while it still leads to
+        // (x, y). A step that will not take (someone in the way, a threat's
+        // berth) throws the route away and the engine's search is asked again;
+        // the box clock will find the leader again if that pens them in.
+        followDetour(x, y) {
+            const r = this.detour;
+            if (!r) return false;
+            if (r.x !== x || r.y !== y || !r.path.length) {
+                this.detour = null;
+                return false;
+            }
+            const d = r.path[0];
+            if (stepIsSafe($gamePlayer.x, $gamePlayer.y, d)) {
+                $gamePlayer.executeMove(d);
+                if ($gamePlayer.isMovementSucceeded()) {
+                    r.path.shift();
+                    if (!r.path.length) this.detour = null;
+                    return true;
+                }
+            }
+            this.detour = null;
+            return false;
         },
 
         // Get into the water and swim toward (x, y) when that is the way there.
@@ -4422,6 +4581,7 @@
                 this.boarding = null;
             }
             this._shore = false;
+            this.detour = null;
             this.intent = null;
             this.target = null;
             this.rimDir = 0;

@@ -1622,8 +1622,14 @@
     // Every material has its fog turned off: a landmark meant to be seen from
     // the far side of the world cannot be allowed to fade into the haze at four
     // thousand units like a hedge.
-    function buildOmegaTower(span, height) {
+    //
+    // opts.bore, when given, is the half width of a square shaft cut straight
+    // down the tower's axis, in tower units: the launch cinematic fires its
+    // round up the middle of the thing, so every piece crossing the axis is
+    // split round the hole and every cone or tilted blade in it is left out.
+    function buildOmegaTower(span, height, opts) {
         const plan = omegaTowerPlan(span, height);
+        const bore = (opts && opts.bore > 0) ? opts.bore : 0;
         const group = new THREE.Group();
         const geos = [], mats = [];
 
@@ -1808,6 +1814,9 @@
         // ---------------------------------------------------------------------
         // Issued
         // ---------------------------------------------------------------------
+        if (bore) {
+            for (const b of buckets) b.list = boreThrough(b.list, b.geo === uCone);
+        }
         const dummy = new THREE.Object3D();
         for (const b of buckets) {
             if (!b.list.length) continue;
@@ -1827,8 +1836,42 @@
             group.add(im);
         }
 
+        // The shaft. A box is cut in its own frame: the axis is carried into
+        // it, the hole square is clipped to the box, and what is left is up to
+        // four strips round it. Every box turns the hole with it, so the union
+        // of the holes still clears a round shaft of `bore` all the way up.
+        function boreThrough(list, isCone) {
+            const out = [];
+            for (const e of list) {
+                const c = Math.cos(e.ry), s = Math.sin(e.ry);
+                const lx = -e.x * c + e.z * s;
+                const lz = -e.x * s - e.z * c;
+                const hw = e.w / 2, hd = e.d / 2;
+                const x0 = Math.max(-hw, lx - bore), x1 = Math.min(hw, lx + bore);
+                const z0 = Math.max(-hd, lz - bore), z1 = Math.min(hd, lz + bore);
+                if (x0 >= x1 || z0 >= z1) { out.push(e); continue; }
+                if (isCone || e.rz) continue;
+                const strips = [
+                    [-hw, x0, -hd, hd], [x1, hw, -hd, hd],
+                    [x0, x1, -hd, z0], [x0, x1, z1, hd],
+                ];
+                for (const [a0, a1, b0, b1] of strips) {
+                    if (a1 - a0 < 0.5 || b1 - b0 < 0.5) continue;
+                    const cx = (a0 + a1) / 2, cz = (b0 + b1) / 2;
+                    out.push({
+                        x: e.x + cx * c + cz * s, y: e.y, z: e.z - cx * s + cz * c,
+                        w: a1 - a0, h: e.h, d: b1 - b0, ry: e.ry, rz: 0,
+                    });
+                }
+            }
+            return out;
+        }
+
         return {
             group, plan,
+            // The gold itself, for a caller that drives more than the night
+            // glow through it (the launch cinematic charges the whole tower).
+            gold,
             // How hard the gold burns, 0 at noon and 1 at the dead of night.
             // Called every frame by the scene off its own day factor.
             setNightGlow(k) {

@@ -576,6 +576,41 @@
     },
 
     /**
+     * The kind of an armour (Clothes, Robe, Light Armor, Heavy Armor,
+     * Equipment, Shield) in the player's language, or "" for anything that is
+     * not an armour. Every item sheet asks here rather than reading
+     * $dataSystem.armorTypes itself, so they all print the same localized name.
+     */
+    armorTypeName: function (item) {
+      if (!item || !DataManager.isArmor(item) || !item.atypeId) return "";
+      const key = 'Equip.armorTypes.' + item.atypeId;
+      const localized = T(key);
+      if (localized && localized !== key) return localized;
+      const raw = ($dataSystem && $dataSystem.armorTypes || [])[item.atypeId];
+      if (!raw) return T('Inventory.spec.label.armorFallback');
+      return window.translateText ? window.translateText(raw) : raw;
+    },
+
+    /**
+     * What an item holds that somebody may be allergic to, who in the party
+     * that is, and how long it holds allergies off (window.Allergy), as plain
+     * [label, value] rows. Empty when the item says nothing about allergies.
+     * Every item sheet draws its Allergens block from here.
+     */
+    allergenRows: function (item) {
+      const allergy = window.Allergy;
+      if (!allergy || !item) return [];
+      const rows = [];
+      const held = allergy.allergensOf(item);
+      if (held.length) rows.push([T('Inventory.allergyContains'), held.map(k => allergy.label(k)).join(', ')]);
+      const unsafe = allergy.unsafeMembers(item).map(m => m.name());
+      if (unsafe.length) rows.push([T('Inventory.allergyUnsafeFor'), unsafe.join(', ')]);
+      const guardHours = allergy.guardHoursOf(item);
+      if (guardHours > 0) rows.push([T('Inventory.allergyRelief'), T('Inventory.allergyReliefHours', { hours: guardHours })]);
+      return rows;
+    },
+
+    /**
      * Get item category name for display
      */
     getItemCategoryName: function (item) {

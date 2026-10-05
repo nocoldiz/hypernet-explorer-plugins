@@ -30,6 +30,7 @@
   "elementSpirit": "{element} Spirit",
   "spiritStats": "Spirit Stats",
   "statBonuses": "Spirit Stat Bonuses",
+  "dormant": "The spirit sleeps while the blade is sheathed: equip it to receive these bonuses.",
   "noneBound": "No Blade Seed bound.",
   "noSkills": "No skills.",
   "nextEvolution": "Next evolution: Lv.{level}",

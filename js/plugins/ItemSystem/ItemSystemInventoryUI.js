@@ -201,7 +201,7 @@
           }
         }
         else if (isArmor) {
-          generalSpecs.push({ label: T('Inventory.spec.label.armorType'), val: $dataSystem.armorTypes[selectedItem.atypeId] || T('Inventory.spec.label.armorFallback') });
+          generalSpecs.push({ label: T('Inventory.spec.label.armorType'), val: window.ItemSystemUtils.armorTypeName(selectedItem) || T('Inventory.spec.label.armorFallback') });
           generalSpecs.push({ label: T('Inventory.spec.label.equipSlot'), val: $dataSystem.equipTypes[selectedItem.etypeId] || T('Inventory.spec.label.slotFallback') });
         } else if (isItem) {
           generalSpecs.push({ label: T('Inventory.spec.label.consumable'), val: selectedItem.consumable ? T('Inventory.spec.yes') : T('Inventory.spec.no') });
@@ -397,17 +397,10 @@
         }
         // What it holds that somebody may be allergic to, who in the party that
         // is, and how long it holds allergies off (window.Allergy).
-        const allergy = window.Allergy;
-        if (allergy) {
-          const held = allergy.allergensOf(selectedItem);
-          const guardHours = allergy.guardHoursOf(selectedItem);
-          if (held.length || guardHours > 0) {
-            const unsafe = allergy.unsafeMembers(selectedItem).map(m => escapeHtml(m.name()));
-            detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.allergens')}</div>` + specBlock(
-              (held.length ? specRowHTML(T('Inventory.allergyContains'), held.map(k => allergy.label(k)).join(', '), 'inspect-spec-value--wrap') : '')
-              + (unsafe.length ? specRowHTML(T('Inventory.allergyUnsafeFor'), unsafe.join(', '), 'inspect-spec-value--wrap') : '')
-              + (guardHours > 0 ? specRowHTML(T('Inventory.allergyRelief'), T('Inventory.allergyReliefHours', { hours: guardHours })) : ''));
-          }
+        const allergyRows = window.ItemSystemUtils.allergenRows(selectedItem);
+        if (allergyRows.length) {
+          detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.allergens')}</div>`
+            + specBlock(allergyRows.map(([label, val]) => specRowHTML(label, escapeHtml(val), 'inspect-spec-value--wrap')).join(''));
         }
         const cravingsFed = window.ItemSystemUtils && window.ItemSystemUtils.getAddictionRelief ? window.ItemSystemUtils.getAddictionRelief(selectedItem) : [];
         if (cravingsFed.length) {
@@ -613,7 +606,26 @@
 
       function isModelFullscreenOpen() { return !!document.getElementById('item-model-fullscreen'); }
 
-      return { rarityOf, typeLabelOf, descriptionOf, loreOf, detailsHTML, build, drawIcon, showMedicineInfo, closeMedicineInfo, isMedicineInfoOpen, showModelFullscreen, closeModelFullscreen, isModelFullscreenOpen };
+      // A click on a little 3D square opens the piece full screen. The same
+      // square is dragged to turn the model, so only a press that did not
+      // travel counts as a click. Any viewer outside the backpack (the
+      // Stockbusters listing, the Object Index) binds through here.
+      function bindModelFullscreen(canvas, item) {
+        if (!canvas || !item) return;
+        let downAt = null;
+        canvas.style.cursor = 'zoom-in';
+        canvas.addEventListener('mousedown', (e) => { if (e.button === 0) downAt = { x: e.clientX, y: e.clientY }; });
+        canvas.addEventListener('mouseup', (e) => {
+          if (e.button !== 0 || !downAt) { downAt = null; return; }
+          const moved = Math.abs(e.clientX - downAt.x) + Math.abs(e.clientY - downAt.y);
+          downAt = null;
+          if (moved > 6) return;
+          const ref = DataManager.isWeapon(item) ? 'weapon' : (DataManager.isArmor(item) ? 'armor' : 'item');
+          showModelFullscreen(ref, item.id);
+        });
+      }
+
+      return { rarityOf, typeLabelOf, descriptionOf, loreOf, detailsHTML, build, drawIcon, showMedicineInfo, closeMedicineInfo, isMedicineInfoOpen, showModelFullscreen, closeModelFullscreen, isModelFullscreenOpen, bindModelFullscreen };
     })();
   }
 

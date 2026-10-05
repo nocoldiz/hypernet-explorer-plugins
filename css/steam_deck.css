@@ -5158,14 +5158,16 @@
         padding: 4px 14px;
     }
 
-    #sleep-menu-overlay .army-dialog {
+    #sleep-menu-overlay .army-dialog,
+    #refuel-overlay .army-dialog {
         width: 320px;
         padding: 9px 8px;
         max-height: 90vh;
         overflow-y: auto;
     }
 
-    #sleep-menu-overlay .army-dialog-btn {
+    #sleep-menu-overlay .army-dialog-btn,
+    #refuel-overlay .army-dialog-btn {
         padding: 4px 14px;
     }
 }

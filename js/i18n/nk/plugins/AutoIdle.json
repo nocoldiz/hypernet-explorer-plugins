@@ -184,6 +184,7 @@
     "avoided": "{name} KEEPS AWAY FROM {target}, LEVEL {level}",
     "stuck": "{name} NO CAN GET ANYWHERE WIT {target} AN' LOOKS FOR SOMETHIN' ELSE",
     "restless": "{name} HAB STOOD HERE LONG ENOUGH AN' MOVES ON",
+    "detour": "{name} STOPS GOIN' ROUND IN CIRCLES AN' FINDS DA LONG WAY ROUND",
     "flees": "{name} RUNS FROM DA FIGHT",
     "worldMap": "{name} STEPS OUT ONTO DA WORLD MAP",
     "rim": "{name} HEADS FOR DA EDGE OF DA MAP",

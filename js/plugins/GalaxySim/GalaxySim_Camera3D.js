@@ -136,6 +136,11 @@
     }
   }
 
+  // Options: Star Map Invert Y flips the vertical look of mouse and stick.
+  function pitchSign() {
+    return (typeof ConfigManager !== "undefined" && ConfigManager.starMapInvertY) ? -1 : 1;
+  }
+
   // ==========================================================================
   // OrbitController - mouse drag / wheel / keyboard, driving the rig.
   // ==========================================================================
@@ -222,7 +227,7 @@
       this.last.y = e.clientY;
       this._moved += Math.abs(dx) + Math.abs(dy);
       if (this._moved > 4) this._wasDrag = true;
-      this.rig.rotate(-dx * this.rotateSpeed, -dy * this.rotateSpeed);
+      this.rig.rotate(-dx * this.rotateSpeed, -dy * this.rotateSpeed * pitchSign());
     }
 
     _onUp() { this.dragging = false; }
@@ -268,7 +273,7 @@
         const ry = AnalogStickInput.rightY ? AnalogStickInput.rightY() : 0;
         if (rx || ry) {
           this.rig.rotate(-rx * this.stickRotateSpeed * dt,
-            -ry * this.stickRotateSpeed * dt);
+            -ry * this.stickRotateSpeed * dt * pitchSign());
         }
         // L2/R2 triggers: a purely-analog way to reach the whole zoom slider
         // (and so cross scale-ladder bands) without touching Zoom To - R2
@@ -382,10 +387,10 @@
         const rx = AnalogStickInput.rightX ? AnalogStickInput.rightX() : 0;
         const ry = AnalogStickInput.rightY ? AnalogStickInput.rightY() : 0;
         this.yaw -= rx * 1.8 * dt * 60;
-        this.pitch -= ry * 1.8 * dt * 60;
+        this.pitch -= ry * 1.8 * dt * 60 * pitchSign();
       }
       this.yaw -= this.lookDX * this.lookSpeed;
-      this.pitch -= this.lookDY * this.lookSpeed;
+      this.pitch -= this.lookDY * this.lookSpeed * pitchSign();
       this.lookDX = this.lookDY = 0;
       const lim = Math.PI / 2 - 0.02;
       this.pitch = clamp(this.pitch, -lim, lim);

@@ -105,6 +105,16 @@
         return !!($gameSwitches.value(48) && !$gameSwitches.value(49));
     }
 
+    // Story mode (Switch 48) keeps the garage shut until Bubba joins (Switch 49):
+    // the tile, the quick menu voice and the V / L3 hotkey all read this.
+    // The vehicle whose repair bay was opened from the garage page; the menu
+    // rebuilt when the bay pops reopens the garage on it, once.
+    let garageReturnKey = null;
+
+    function storyVehiclesLocked() {
+        return !!($gameSwitches.value(48) && !$gameSwitches.value(49));
+    }
+
     function inVoxelWorld() {
         return !!(window.VoxelWorldSystem && window.VoxelWorldSystem.isActive() &&
                   !window.VoxelWorldSystem.isTitleDrive());
@@ -222,6 +232,7 @@
         status1: 188,
         specializations: 87,
         vector_gun: 115,
+        bladeSeed: 329,
         sleep_menu: 205,
         save: 121,
         search: 247,
@@ -284,6 +295,7 @@
         { symbol: "equip",           labelKey: "MainMenu.cmd.equip", quick: 2 },
         { symbol: "skill",           labelKey: "MainMenu.cmd.skills", quick: 4 },
         { symbol: "vector_gun",      labelKey: "VectorGun.menu" },
+        { symbol: "bladeSeed",       labelKey: "BladeSeed.title" },
         { symbol: "status1",         labelKey: "MainMenu.cmd.status", quick: 1 },
         { symbol: "specializations", labelKey: "MainMenu.cmd.specializations" },
         { symbol: "biologics",       labelKey: "MainMenu.cmd.biologics" },
@@ -779,7 +791,11 @@
         this._dynamicsDrag = null;
         this._isPetsPage = false;
         this._petAbandonId = null;
-        this._isVehiclesPage = false;
+        // Backing out of a repair bay opened from the garage lands on the garage
+        // again, on the vehicle that was being worked on (repairUIVehicle).
+        this._isVehiclesPage = !!garageReturnKey;
+        if (garageReturnKey) this._vehiclesSelected = garageReturnKey;
+        garageReturnKey = null;
         this._rightToolsTab = 'tools';
         this._rightClickStartedOnMenu = false;
 
@@ -1327,6 +1343,7 @@
     };
 
     Scene_Menu.prototype.showVehiclesPage = function () {
+        if (storyVehiclesLocked()) { SoundManager.playBuzzer(); return; }
         SoundManager.playOk();
         this._isVehiclesPage = true;
         this.refreshUIMenuDOM(true);
@@ -1378,7 +1395,7 @@
     Scene_Menu.prototype.repairUIVehicle = function (key) {
         if (!window.MergedVehicleSystem) return;
         SoundManager.playOk();
-        window.MergedVehicleSystem.openRepairByKey(key);
+        if (window.MergedVehicleSystem.openRepairByKey(key)) garageReturnKey = key;
     };
 
     // Sending away whatever the party called. Unlike abandoning an animal this
@@ -3972,6 +3989,12 @@
                 ? this.generateUICommandItemHTML(T('VectorGun.menu'), "vector_gun")
                 : "";
 
+            // The bound spirit weapon: the tile exists only once a seed is bound
+            // (Weapon/BladeSeedSystem.js), since there is nothing to open before.
+            const bladeSeedHTML = bladeSeedBound()
+                ? this.generateUICommandItemHTML(T('BladeSeed.title'), "bladeSeed")
+                : "";
+
             const stopTravelHTML = ($gameMap.mapId() === 315 && !inVoxelWorld()) ? `
                     <div class="command-item focusable" data-symbol="travel_stop" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUITravel === 'function') SceneManager._scene.triggerUITravel('stop')">
                         <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.travelStop)}"></span>
@@ -4049,6 +4072,7 @@
                         this.generateUICommandItemHTML(T('MainMenu.cmd.equip'), "equip"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.skills'), "skill"),
                         vectorGunHTML,
+                        bladeSeedHTML,
                         this.generateUICommandItemHTML(T('MainMenu.cmd.status'), "status1"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.dynamics'), "dynamics"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.specializations'), "specializations"),
@@ -4251,7 +4275,8 @@
         // knows the pocket exists, but it cannot be opened onto an empty page.
         if (symbol === "pets") enabled = (window.PetSystem?.getPets?.() ?? []).length > 0;
         if (symbol === "vehicles") {
-            enabled = (window.MergedVehicleSystem?.getOwnedVehicles?.() ?? []).length > 0;
+            enabled = !storyVehiclesLocked() &&
+                (window.MergedVehicleSystem?.getOwnedVehicles?.() ?? []).length > 0;
         }
         if (symbol === "army") enabled = (typeof $gameArmy !== "undefined" && $gameArmy?.getTroopCount?.() > 0);
 
@@ -5034,6 +5059,7 @@
         // here or calls another one over (Vehicle/VehicleSystem.js).
         vehicles:   () => {
             if (!window.MergedVehicleSystem?.showVehicleListMenu) return;
+            if (storyVehiclesLocked()) { SoundManager.playBuzzer(); return; }
             SoundManager.playOk();
             window.MergedVehicleSystem.showVehicleListMenu();
         },
@@ -5080,6 +5106,7 @@
         specializations: () => pushMapScene(
             typeof Scene_Specializations !== "undefined" ? Scene_Specializations : window.Scene_Specializations),
         vector_gun: () => pushMapScene(window.Scene_VectorGun),
+        bladeSeed:  () => { if (bladeSeedBound()) pushMapScene(window.Scene_BladeSeedStatus); },
         thinker:    () => pushMapScene(typeof Scene_Thinker !== "undefined" ? Scene_Thinker : window.Scene_Thinker),
         alchemistry: () => { if (isAlchemistryAvailable()) pushMapScene(window.Scene_Alchemistry); },
         diary:      () => pushMapScene(window.Scene_Diary),
@@ -5110,6 +5137,11 @@
         dynamics:   () => pushMapScene(typeof Scene_Menu !== "undefined" && Scene_Menu),
         pets:       () => pushMapScene(typeof Scene_Menu !== "undefined" && Scene_Menu),
     };
+
+    function bladeSeedBound() {
+        return !!(window.Scene_BladeSeedStatus && typeof $gameSystem !== "undefined" &&
+            $gameSystem && $gameSystem._bladeSeed && $gameSystem._bladeSeed.bound);
+    }
 
     function pushMapScene(sceneClass) {
         if (!sceneClass) return;
@@ -5177,9 +5209,10 @@
                     return !inVoxelWorld();
                 case "alchemistry": return isAlchemistryAvailable();
                 case "pets": return (window.PetSystem?.getPets?.() ?? []).length > 0;
-                case "vehicles": return (window.MergedVehicleSystem?.getOwnedVehicles?.() ?? []).length > 0;
+                case "vehicles": return !storyVehiclesLocked() && (window.MergedVehicleSystem?.getOwnedVehicles?.() ?? []).length > 0;
                 case "army": return typeof $gameArmy !== "undefined" && $gameArmy?.getTroopCount?.() > 0;
                 case "vector_gun": return !!window.Scene_VectorGun;
+                case "bladeSeed": return bladeSeedBound();
                 default: return true;
             }
         },

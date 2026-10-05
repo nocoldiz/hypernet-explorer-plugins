@@ -52,19 +52,22 @@
     // The panel labels each row with the weapon's own localised name and type,
     // so nothing here is displayed as written.
     // i18n-ignore-start  database ids and the $dataSystem.weaponTypes vocabulary
+    // Each starting skill is the entry-level technique of the school that
+    // weapon is fought with (StatReq 4 to 10), so a freshly bound seed hands
+    // over something its bearer can actually use at level 1.
     const weaponTypes = [
-        {"id": 1,  "name": "Light",      "weaponId": "12",  "startingSkill": 34}, // Seed Dagger
-        {"id": 2,  "name": "Sword",      "weaponId": "54",  "startingSkill": 35}, // Seed Sword
-        {"id": 3,  "name": "Heavy",      "weaponId": "55",  "startingSkill": 36}, // Seed Mace
-        {"id": 4,  "name": "Axe",        "weaponId": "206", "startingSkill": 37}, // Seed Axe
-        {"id": 5,  "name": "Whip",       "weaponId": "243", "startingSkill": 38}, // Seed Whip
-        {"id": 6,  "name": "Staff",      "weaponId": "284", "startingSkill": 7},  // Seed Staff
-        {"id": 7,  "name": "Bow",        "weaponId": "344", "startingSkill": 39}, // Seed Bow
-        {"id": 8,  "name": "Projectile", "weaponId": "392", "startingSkill": 8},  // Seed Grimoire
-        {"id": 9,  "name": "Gun",        "weaponId": "438", "startingSkill": 40}, // Seed Gun
-        {"id": 10, "name": "Claw",       "weaponId": "545", "startingSkill": 41}, // Seed Claw
-        {"id": 11, "name": "Glove",      "weaponId": "580", "startingSkill": 42}, // Seed Glove
-        {"id": 12, "name": "Spear",      "weaponId": "628", "startingSkill": 43}  // Seed Spear
+        {"id": 1,  "name": "Light",      "weaponId": "12",  "startingSkill": 1794}, // Seed Dagger: Throwing Knife
+        {"id": 2,  "name": "Sword",      "weaponId": "54",  "startingSkill": 261},  // Seed Sword: Diagonal Slash
+        {"id": 3,  "name": "Heavy",      "weaponId": "55",  "startingSkill": 1219}, // Seed Mace: Baton Strike
+        {"id": 4,  "name": "Axe",        "weaponId": "206", "startingSkill": 274},  // Seed Axe: Steelcleaver
+        {"id": 5,  "name": "Whip",       "weaponId": "243", "startingSkill": 1801}, // Seed Whip: Tail Whip
+        {"id": 6,  "name": "Staff",      "weaponId": "284", "startingSkill": 848},  // Seed Staff: ArcaneMissile
+        {"id": 7,  "name": "Bow",        "weaponId": "344", "startingSkill": 1796}, // Seed Bow: Arrow Shot
+        {"id": 8,  "name": "Projectile", "weaponId": "392", "startingSkill": 1739}, // Seed Grimorie: StarLance
+        {"id": 9,  "name": "Gun",        "weaponId": "438", "startingSkill": 1037}, // Seed Gun: Point Shot
+        {"id": 10, "name": "Claw",       "weaponId": "545", "startingSkill": 319},  // Seed Claw: Razor Claws
+        {"id": 11, "name": "Glove",      "weaponId": "580", "startingSkill": 1784}, // Seed Glove: Quick Jab
+        {"id": 12, "name": "Spear",      "weaponId": "628", "startingSkill": 253}   // Seed Spear: Wild Thrust
     ];
     // i18n-ignore-end
     
@@ -97,81 +100,86 @@
         });
     }
     
-    // Spirit skill sets - hardcoded skill IDs by element
-    // i18n-ignore-start  skillId is the real skill; these names are only a
-    // fallback label, and $dataSkills[skillId].name (already localised) wins
-    const spiritSkills = {
-        1: [ // Physical
-            {skillId: 1, name: "Attack", cost: 0, learned: true}, // Basic attack, always known
-            {skillId: 2, name: "Guard", cost: 0, learned: true}, // Basic guard, always known
-            {skillId: 7, name: "Heal", cost: 15},
-            {skillId: 8, name: "Fire", cost: 20},
-            {skillId: 44, name: "Escape", cost: 25}
-        ],
-        2: [ // Fire
-            {skillId: 1, name: "Attack", cost: 0, learned: true},
-            {skillId: 2, name: "Guard", cost: 0, learned: true},
-            {skillId: 8, name: "Fire", cost: 10},
-            {skillId: 9, name: "Fire II", cost: 30},
-            {skillId: 10, name: "Fire III", cost: 60},
-            {skillId: 17, name: "Burn", cost: 25}
-        ],
-        3: [ // Ice
-            {skillId: 1, name: "Attack", cost: 0, learned: true},
-            {skillId: 2, name: "Guard", cost: 0, learned: true},
-            {skillId: 11, name: "Ice", cost: 10},
-            {skillId: 12, name: "Ice II", cost: 30},
-            {skillId: 13, name: "Ice III", cost: 60},
-            {skillId: 18, name: "Freeze", cost: 25}
-        ],
-        4: [ // Thunder
-            {skillId: 1, name: "Attack", cost: 0, learned: true},
-            {skillId: 2, name: "Guard", cost: 0, learned: true},
-            {skillId: 14, name: "Thunder", cost: 10},
-            {skillId: 15, name: "Thunder II", cost: 30},
-            {skillId: 16, name: "Thunder III", cost: 60},
-            {skillId: 19, name: "Shock", cost: 25}
-        ],
-        5: [ // Water
-            {skillId: 1, name: "Attack", cost: 0, learned: true},
-            {skillId: 2, name: "Guard", cost: 0, learned: true},
-            {skillId: 7, name: "Heal", cost: 12},
-            {skillId: 22, name: "Heal II", cost: 35},
-            {skillId: 23, name: "Heal III", cost: 65},
-            {skillId: 20, name: "Water Bolt", cost: 18}
-        ],
-        6: [ // Metal
-            {skillId: 1, name: "Attack", cost: 0, learned: true},
-            {skillId: 2, name: "Guard", cost: 0, learned: true},
-            {skillId: 24, name: "Barrier", cost: 20},
-            {skillId: 25, name: "Iron Skin", cost: 35},
-            {skillId: 26, name: "Metal Strike", cost: 25}
-        ],
-        7: [ // Wind
-            {skillId: 1, name: "Attack", cost: 0, learned: true},
-            {skillId: 2, name: "Guard", cost: 0, learned: true},
-            {skillId: 27, name: "Wind Slash", cost: 15},
-            {skillId: 28, name: "Tornado", cost: 40},
-            {skillId: 29, name: "Haste", cost: 30}
-        ],
-        8: [ // Sacred
-            {skillId: 1, name: "Attack", cost: 0, learned: true},
-            {skillId: 2, name: "Guard", cost: 0, learned: true},
-            {skillId: 7, name: "Heal", cost: 8},
-            {skillId: 22, name: "Heal II", cost: 25},
-            {skillId: 23, name: "Heal III", cost: 50},
-            {skillId: 30, name: "Holy Light", cost: 45}
-        ],
-        9: [ // Cursed
-            {skillId: 1, name: "Attack", cost: 0, learned: true},
-            {skillId: 2, name: "Guard", cost: 0, learned: true},
-            {skillId: 31, name: "Dark Strike", cost: 18},
-            {skillId: 32, name: "Curse", cost: 30},
-            {skillId: 33, name: "Drain", cost: 35}
-        ]
+    // Spirit skills are read off the database by school rather than kept as
+    // a list of ids, which went stale every time Skills.json was renumbered.
+    // Each element teaches the entry rungs of its school: the skills with the
+    // lowest stat requirement, cheapest first.
+    // i18n-ignore-start  <category:> values in Skills.json
+    const ELEMENT_SCHOOLS = {
+        1: 'Tactical',     // Physical
+        2: 'Pyromancy',    // Fire
+        3: 'Cryomancy',    // Ice
+        4: 'Electromancy', // Thunder
+        5: 'Idromancy',    // Water
+        6: 'Geomancy',     // Petro (Metal Spirit)
+        7: 'Aeromancy',    // Wind
+        8: 'HolyMagic',    // Sacred
+        9: 'Necromancy'    // Cursed
     };
     // i18n-ignore-end
-    
+    const SPIRIT_SKILLS_PER_ELEMENT = 5;
+
+    // The highest single stat a skill's <StatReq: STR 7, INT 4> asks for.
+    const skillStatReq = (skill) => {
+        const m = /<StatReq:\s*([^>]*)>/i.exec((skill && skill.note) || '');
+        if (!m) return 99;
+        return Math.max(0, ...m[1].split(',').map(part => parseInt(part.trim().split(/\s+/)[1], 10) || 0));
+    };
+
+    const _schoolCache = {};
+    const skillsForElement = (element) => {
+        const school = ELEMENT_SCHOOLS[element] || ELEMENT_SCHOOLS[1];
+        if (_schoolCache[school]) return _schoolCache[school];
+        if (typeof $dataSkills === 'undefined' || !$dataSkills) return [];
+        const tag = new RegExp('<category:\\s*' + school + '\\s*>', 'i');
+        const list = $dataSkills
+            .filter(sk => sk && (sk.name || '').trim() && tag.test(sk.note || '') &&
+                !/<(SkillCategory|Signature|Esoteric|Forbidden)>/i.test(sk.note || ''))
+            .sort((x, y) => skillStatReq(x) - skillStatReq(y) ||
+                ((x.mpCost || 0) + (x.tpCost || 0)) - ((y.mpCost || 0) + (y.tpCost || 0)) ||
+                x.id - y.id)
+            .slice(0, SPIRIT_SKILLS_PER_ELEMENT)
+            .map(sk => sk.id);
+        _schoolCache[school] = list;
+        return list;
+    };
+
+    // Stat growth. The game's core stats run on a compressed scale (a class
+    // starts near 10 and ends near 17 at level 99, a weapon adds 2 to 4, and
+    // the attribute points cap at +8 a stat), so the spirit lends small whole
+    // numbers that grow with its level, never a pile of +1..3 every level.
+    // Its element names the stat it favours.
+    // i18n-ignore-start  param keys
+    const CORE_STATS = ['atk', 'def', 'mat', 'mdf', 'agi', 'luk'];
+    const ELEMENT_FAVOURED_STAT = { 1: 'atk', 2: 'mat', 3: 'mdf', 4: 'agi', 5: 'mat', 6: 'def', 7: 'agi', 8: 'mdf', 9: 'luk' };
+    const PARAM_KEYS = ['mhp', 'mmp', 'atk', 'def', 'mat', 'mdf', 'agi', 'luk'];
+    // i18n-ignore-end
+    const FAVOURED_WEIGHT = 1.5;
+    const SPIRIT_MAX_LEVEL = 99;
+
+    const rollGrowth = (element) => {
+        const favoured = ELEMENT_FAVOURED_STAT[element] || 'atk';
+        const growth = {
+            mhp: 2 + Math.random() * 2,      // HP per level
+            mmp: 0.5 + Math.random()         // MP per level
+        };
+        CORE_STATS.forEach(k => {
+            growth[k] = k === favoured ? FAVOURED_WEIGHT : 0.2 + Math.random() * 0.6;
+        });
+        return growth;
+    };
+
+    // What a spirit of this growth lends at this level.
+    const statsAtLevel = (level, growth) => {
+        const lv = Math.max(1, Math.min(SPIRIT_MAX_LEVEL, level | 0));
+        const out = {
+            mhp: 10 + Math.round(lv * growth.mhp),
+            mmp: 5 + Math.round(lv * growth.mmp)
+        };
+        CORE_STATS.forEach(k => { out[k] = Math.floor(growth[k] * (1 + lv / 25)); });
+        return out;
+    };
+
     // Name generation components
     // i18n-ignore-start  invented proper-name syllables, concatenated into a
     // weapon's name; a proper noun is never translated
@@ -301,6 +309,25 @@
         return cost;
     };
     
+    // The seed is always bound to the party's founder.
+    const bearer = () => (typeof $gameActors !== 'undefined' && $gameActors) ? $gameActors.actor(1) : null;
+
+    // The spirit lives in the blade: it lends its stats only while the bearer
+    // actually holds the seed weapon.
+    const isSeedEquipped = (actor) => {
+        const data = $gameSystem && $gameSystem._bladeSeed;
+        if (!actor || !data || !data.bound || !data.weaponId) return false;
+        if (typeof actor.weapons !== 'function') return false;
+        return actor.weapons().some(w => w && w.id === data.weaponId);
+    };
+
+    const bladeSeedParamBonus = (actor, paramId) => {
+        if (!actor || typeof actor.actorId !== 'function' || actor.actorId() !== 1) return 0;
+        const spirit = $gameSystem && $gameSystem._bladeSeed && $gameSystem._bladeSeed.spirit;
+        if (!spirit || !spirit.currentStats || !isSeedEquipped(actor)) return 0;
+        return spirit.currentStats[PARAM_KEYS[paramId]] || 0;
+    };
+
     // Spirit class
     class SpiritCompanion {
         constructor() {
@@ -309,8 +336,8 @@
             this.element = this.spiritSet.element;
             this.level = 1;
             this.experience = 0;
-            this.baseStats = this.generateRandomStats();
-            this.currentStats = {...this.baseStats};
+            this.growth = rollGrowth(this.element);
+            this.currentStats = statsAtLevel(this.level, this.growth);
             this.skills = this.initializeSkills();
         }
         
@@ -337,24 +364,15 @@
         }
         
         initializeSkills() {
-            const elementSkills = spiritSkills[this.element] || spiritSkills[1];
-            // Only skills the database really carries: an id whose row is
-            // missing or blank would sit in the learn list as an empty line and
-            // cost the player points for nothing.
-            return elementSkills
-                .filter(skill => {
-                    const data = $dataSkills[skill.skillId];
-                    return !!(data && (data.name || '').trim());
-                })
-                .map(skill => ({
-                    skillId: skill.skillId,
-                    name: $dataSkills[skill.skillId].name,
-                    cost: skill.cost > 0 ? skill.cost : calculateSkillLearningCost(skill.skillId),
-                    learned: skill.learned || false,
-                    source: skill.learned ? 'spirit' : 'unlearned' // Track source
-                }));
+            return skillsForElement(this.element).map(skillId => ({
+                skillId: skillId,
+                name: $dataSkills[skillId].name,
+                cost: calculateSkillLearningCost(skillId),
+                learned: false,
+                source: 'unlearned'
+            }));
         }
-        
+
         addWeaponSkill(weaponType) {
             if (weaponType.startingSkill) {
                 // Check if skill already exists in spirit skills
@@ -396,49 +414,58 @@
             return 1;
         }
         
-        generateRandomStats() {
-            return {
-                atk: Math.floor(Math.random() * 5) + 1,
-                def: Math.floor(Math.random() * 5) + 1,
-                mat: Math.floor(Math.random() * 5) + 1,
-                mdf: Math.floor(Math.random() * 5) + 1,
-                agi: Math.floor(Math.random() * 5) + 1,
-                luk: Math.floor(Math.random() * 5) + 1,
-                mhp: Math.floor(Math.random() * 20) + 10,
-                mmp: Math.floor(Math.random() * 10) + 5
-            };
+        // Rolled lazily, so a spirit bound before growth existed gets one.
+        ensureGrowth() {
+            if (!this.growth) this.growth = rollGrowth(this.element);
+            return this.growth;
         }
-        
+
+        recalcStats() {
+            this.currentStats = statsAtLevel(this.level, this.ensureGrowth());
+            return this.currentStats;
+        }
+
         levelUp() {
             const oldStage = this.getEvolutionStage();
             this.level++;
-            const newStage = this.getEvolutionStage();
-            
-            // Increase stats randomly on level up
-            Object.keys(this.currentStats).forEach(stat => {
-                const growth = Math.floor(Math.random() * 3) + 1;
-                this.currentStats[stat] += growth;
-            });
-            
+            this.recalcStats();
             // Return true if evolved
-            return newStage > oldStage;
+            return this.getEvolutionStage() > oldStage;
         }
-        
+
+        // The spirit climbs its bearer's own experience curve on half the
+        // bearer's experience, so it trails them and never outgrows them.
         getExpForNextLevel() {
+            const actor = bearer();
+            if (actor && typeof actor.expForLevel === 'function') {
+                const step = actor.expForLevel(this.level + 1) - actor.expForLevel(this.level);
+                if (step > 0) return step;
+            }
             return this.level * 100;
         }
-        
-        gainExperience(amount) {
-            this.experience += amount;
-            const needed = this.getExpForNextLevel();
-            if (this.experience >= needed) {
-                this.experience -= needed;
-                const evolved = this.levelUp();
-                return { levelUp: true, evolved: evolved };
-            }
-            return { levelUp: false, evolved: false };
+
+        maxLevel() {
+            const actor = bearer();
+            const cap = actor && typeof actor.level === 'number' ? actor.level : SPIRIT_MAX_LEVEL;
+            return Math.max(1, Math.min(SPIRIT_MAX_LEVEL, cap));
         }
-        
+
+        gainExperience(amount) {
+            const result = { levelUp: false, evolved: false, levels: 0 };
+            if (this.level >= this.maxLevel()) return result;
+            this.experience += Math.max(0, Math.floor(amount) || 0);
+            while (this.level < this.maxLevel() && this.experience >= this.getExpForNextLevel()) {
+                this.experience -= this.getExpForNextLevel();
+                if (this.levelUp()) result.evolved = true;
+                result.levelUp = true;
+                result.levels++;
+            }
+            if (this.level >= this.maxLevel()) {
+                this.experience = Math.min(this.experience, this.getExpForNextLevel() - 1);
+            }
+            return result;
+        }
+
         canLearnSkill(skillIndex) {
             const skill = this.skills[skillIndex];
             if (!skill || skill.learned) return false;
@@ -532,7 +559,11 @@
         weaponTypes,
         elementNames,
         spiritSets,
-        spiritSkills,
+        ELEMENT_SCHOOLS,
+        skillsForElement,
+        statsAtLevel,
+        isSeedEquipped,
+        bladeSeedParamBonus,
         SpiritCompanion,
         generateWeaponName,
         loadBladeSeedImage,
@@ -595,11 +626,6 @@
 
         // The chosen look belonged to that binding, not to the database row.
         clearAppearance(weaponId);
-        
-        // Remove spirit stats
-        if (actor._bladeSeedBonus) {
-            delete actor._bladeSeedBonus;
-        }
         
         // Clear blade seed data
         $gameSystem._bladeSeed = {
@@ -674,9 +700,9 @@
         
         // Replace weapon names in text if Blade Seed is bound
         if ($gameSystem._bladeSeed && $gameSystem._bladeSeed.bound) {
-            const originalName = $dataWeapons[$gameSystem._bladeSeed.weaponId].name;
+            const weapon = $dataWeapons[$gameSystem._bladeSeed.weaponId];
             const customName = $gameSystem._bladeSeed.weaponName;
-            text = text.replace(new RegExp(originalName, 'g'), customName);
+            if (weapon && weapon.name && customName) text = text.split(weapon.name).join(customName);
         }
         
         return text;
@@ -706,10 +732,7 @@
     const _Game_Actor_paramBase = Game_Actor.prototype.paramBase;
     Game_Actor.prototype.paramBase = function(paramId) {
         let value = _Game_Actor_paramBase.call(this, paramId);
-        if (this._bladeSeedBonus && this._bladeSeedBonus[paramId]) {
-            value += this._bladeSeedBonus[paramId];
-        }
-        return value;
+        return value + bladeSeedParamBonus(this, paramId);
     };
     
     // Handle experience gain for spirit
@@ -719,6 +742,7 @@
         
         if (this.actorId() === 1 && $gameSystem._bladeSeed && $gameSystem._bladeSeed.bound) {
             const spirit = $gameSystem._bladeSeed.spirit;
+            if (!spirit || typeof spirit.gainExperience !== 'function') return;
             const spiritExp = Math.floor(exp * 0.5); // Spirit gains 50% of actor exp
             
             const result = spirit.gainExperience(spiritExp);
@@ -745,19 +769,6 @@
                 if (typeof window !== 'undefined') {
                     window.skipLocalization = false;
                 }
-                
-                // Reapply stats
-                const actor = $gameActors.actor(1);
-                actor._bladeSeedBonus = {
-                    0: spirit.currentStats.mhp,
-                    1: spirit.currentStats.mmp,
-                    2: spirit.currentStats.atk,
-                    3: spirit.currentStats.def,
-                    4: spirit.currentStats.mat,
-                    5: spirit.currentStats.mdf,
-                    6: spirit.currentStats.agi,
-                    7: spirit.currentStats.luk
-                };
             }
         }
     };
@@ -803,6 +814,7 @@
         // Reconstruct spirit methods if spirit exists
         if ($gameSystem._bladeSeed && $gameSystem._bladeSeed.spirit) {
             Object.setPrototypeOf($gameSystem._bladeSeed.spirit, SpiritCompanion.prototype);
+            $gameSystem._bladeSeed.spirit.recalcStats();
         }
 
         // The database is read off disk unmarked, so the weapon gets its

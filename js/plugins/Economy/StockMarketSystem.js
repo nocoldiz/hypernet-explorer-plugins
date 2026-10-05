@@ -64,6 +64,15 @@
   const soulMedianDefault = Number(parameters["SOUL Median Price"]) || 66666;
   const baseVolatility = Number(parameters["Volatility"]) || 0.2;
   const historyLength = Number(parameters["History Length"]) || 60;
+  // The terminal's chart: the last this many game minutes, one point each,
+  // and its candles this many minutes wide.
+  const CHART_MINUTES = 120;
+  const CANDLE_MINUTES = 5;
+  // How far the minute line strays from the straight road to the next hourly
+  // price, as a share of the listing's own hourly range.
+  const MINUTE_WIGGLE = 2;
+  // A company's minute line never wiggles less than this share of its price.
+  const MINUTE_RANGE_FLOOR = 0.006;
   // How hard a continental outbreak leans on the market: infected people per
   // full point of negative sentiment, and the most it may ever be worth.
   const EPIDEMIC_DRAG_SCALE = 400000;
@@ -1293,11 +1302,9 @@
       const ids = this._engineIds();
       const sentiment = this._sentiment();
       const commodityMove = {};
-      const closing = {};
       for (const id of ids) {
         if (!STOCKS_CONFIG[id].commodity && !E.centre[id]) E.centre[id] = STOCKS_CONFIG[id].centerPrice || this._stocks[id].currentPrice;
         if (!E.target[id]) E.target[id] = this._stocks[id].currentPrice;
-        closing[id] = E.target[id];
       }
 
       let at = endHour - hours;
@@ -1349,11 +1356,11 @@
       for (const id of ids) {
         const hist = this._history[id];
         if (hist && hist.length) {
-          // The live point becomes the close of the hour just gone, then each
-          // priced step is a point, the last a fresh live point.
+          // The last point is the mark just left; each coarse step in between
+          // is a point, and the new mark (E.open) the last. The new target is
+          // the line's hidden end and is never written here.
           const steps = path[id] || [];
-          hist[hist.length - 1] = closing[id];
-          for (let i = 0; i < steps.length - 1; i++) hist.push(steps[i]);
+          for (let i = 0; i < steps.length - 2; i++) hist.push(steps[i]);
           hist.push(E.open[id]);
           while (hist.length > historyLength) hist.shift();
           if (!this._candles[id]) this._candles[id] = [];
@@ -1391,17 +1398,110 @@
       return ((Math.floor(day) + (hashString("earnings:" + id) % EARNINGS_EVERY_DAYS)) % EARNINGS_EVERY_DAYS) === 0;
     }
 
-    // Where a listing's line stands between two marks: from the last mark's
-    // price toward the next one, by the game minutes gone.
+    // Where a listing's line stands at a game minute. The hourly engine has
+    // already priced the next mark (E.target, never shown); inside the hour
+    // the line wanders there on a seeded walk of its own kind, so the world
+    // simulation runs once an hour and the screen still moves every minute.
     _livePrice(id, minute) {
       const E = this._engine;
       const open = E.open[id], target = E.target[id];
       if (!(open > 0) || !(target > 0)) return null;
-      let frac = 0;
-      if (minute !== null && minute !== undefined && E.hour !== null) {
-        frac = Math.max(0, Math.min(1, (minute - E.hour * 60) / 60));
+      if (minute === null || minute === undefined || E.hour === null || E.hour === undefined) return open;
+      return this._priceAtMinute(id, minute);
+    }
+
+    // A listing's price at the hourly mark `hour`: the history's last point is
+    // the current mark, each one before it an hour earlier, and the mark after
+    // it is the engine's hidden target.
+    _anchorAt(id, hour) {
+      const E = this._engine;
+      if (E.hour === null || E.hour === undefined) return null;
+      if (hour > E.hour) return E.target[id] || null;
+      const hist = this._history[id];
+      if (hour === E.hour) return E.open[id] || (hist && hist.length ? hist[hist.length - 1] : null);
+      if (!hist || !hist.length) return E.open[id] || null;
+      return hist[Math.max(0, hist.length - 1 - (E.hour - hour))];
+    }
+
+    _priceAtMinute(id, minute) {
+      const hour = Math.floor(minute / 60);
+      if (hour > this._engine.hour) return this._engine.target[id];
+      const from = this._anchorAt(id, hour);
+      const to = this._anchorAt(id, hour + 1);
+      if (!(from > 0) || !(to > 0)) return from || to || null;
+      return this._minuteBridge(id, hour, from, to)[minute - hour * 60];
+    }
+
+    // How a listing's minutes move: SOUL drifts in long slow swells, OIL
+    // trends and jolts, a company chops about on its own seeded temper.
+    _minuteTexture(id, def) {
+      if (id === "souls") return { persist: 0.85, jumpChance: 0.004, jumpSize: 3 };
+      if (id === "oil") return { persist: 0.55, jumpChance: 0.02, jumpSize: 4 };
+      const temper = (hashString("temper:" + id) % 1000) / 1000;
+      return { persist: 0.15 + temper * 0.35, jumpChance: 0.01 + (def.volatility || baseVolatility) * 0.03, jumpSize: 3 };
+    }
+
+    // The 61 minute prices of one hour, from the mark's price to the next
+    // one's: a seeded walk with its end pulled onto the target (a Brownian
+    // bridge), so the same hour always draws the same line.
+    _minuteBridge(id, hour, from, to) {
+      const cache = this._bridges || (this._bridges = new Map());
+      const key = id + ":" + hour + ":" + from + ":" + to;
+      const hit = cache.get(key);
+      if (hit) return hit;
+      const def = STOCKS_CONFIG[id] || this._stocks[id] || {};
+      const vol = (def.volatility || baseVolatility) * (stocksNoisy() ? NOISY_VOL : 1);
+      const range = def.commodity ? vol * COMMODITY_HOURLY_VOL : Math.max(MINUTE_RANGE_FLOOR, vol * HOURLY_VOL);
+      const sigma = ((from + to) / 2) * range * MINUTE_WIGGLE / Math.sqrt(60);
+      const tex = this._minuteTexture(id, def);
+      const rng = stepRng(hashString("minutes:" + id + ":" + hour) ^ marketSeed());
+      const walk = [0];
+      let step = 0;
+      for (let k = 1; k <= 60; k++) {
+        let kick = (rng() + rng() + rng() - 1.5) * 2 * sigma;
+        if (rng() < tex.jumpChance) kick += (rng() < 0.5 ? -1 : 1) * sigma * tex.jumpSize;
+        step = step * tex.persist + kick * (1 - tex.persist * 0.5);
+        walk.push(walk[k - 1] + step);
       }
-      return Math.max(minimumPrice, Math.round(open + (target - open) * frac));
+      const end = walk[60];
+      const path = walk.map((w, k) => Math.max(minimumPrice, Math.round(from + (to - from) * k / 60 + w - end * k / 60)));
+      path[0] = from;
+      path[60] = to;
+      if (cache.size > 256) cache.clear();
+      cache.set(key, path);
+      return path;
+    }
+
+    // The chart's line: one price per game minute over the last `count`
+    // minutes, ending on the live quote. A frozen market, or one without a
+    // clock or a mark yet, shows its hourly history instead.
+    minuteSeries(stockId, count) {
+      const n = count || CHART_MINUTES;
+      const E = this._engine;
+      const minute = gameMinute();
+      const hist = this._history[stockId] || [];
+      if (stocksFrozen() || minute === null || E.hour === null || E.hour === undefined || !(E.open[stockId] > 0)) {
+        return hist.slice(-n);
+      }
+      const out = [];
+      for (let m = minute - n + 1; m <= minute; m++) {
+        const p = this._priceAtMinute(stockId, m);
+        if (p > 0) out.push(p);
+      }
+      if (out.length) out[out.length - 1] = this._stocks[stockId].currentPrice || out[out.length - 1];
+      return out;
+    }
+
+    // The same minutes as candles, CANDLE_MINUTES each, every one opening on
+    // the last one's close.
+    minuteCandles(stockId, count) {
+      const series = this.minuteSeries(stockId, count);
+      const candles = [];
+      for (let i = 0; i < series.length; i += CANDLE_MINUTES) {
+        const chunk = series.slice(Math.max(0, i - 1), i + CANDLE_MINUTES);
+        candles.push({ open: chunk[0], close: chunk[chunk.length - 1], high: Math.max(...chunk), low: Math.min(...chunk) });
+      }
+      return candles;
     }
 
     // The float is conserved: the party (and a scenario stake such as the CEO
@@ -1622,28 +1722,17 @@
       return moved;
     }
 
-    // A listing's live line: between the last hourly mark and the next, with
-    // the live history point and candle following it. Answers whether it moved.
+    // A listing's live quote: where its minute line stands now. The hourly
+    // history is the engine's to write; the chart reads the minutes off
+    // minuteSeries. Answers whether it moved.
     _animateLine(id, minute) {
       const stock = this._stocks[id];
       const prevPrice = stock.currentPrice;
       const live = this._livePrice(id, minute);
       if (!live) return false;
       stock.currentPrice = live;
-      // A company is quoted in whole euros, so most minutes it does not move.
       this._quoteToRegister(id, live);
-      const price = stock.currentPrice;
-      if (price === prevPrice) return false;
-      const hist = this._history[id];
-      if (hist && hist.length) hist[hist.length - 1] = price;
-      const candles = this._candles[id];
-      if (candles && candles.length) {
-        const last = candles[candles.length - 1];
-        last.close = price;
-        if (price > last.high) last.high = price;
-        if (price < last.low) last.low = price;
-      }
-      return true;
+      return stock.currentPrice !== prevPrice;
     }
 
     // One hourly step of a listing with no engine state behind it: how a
@@ -2333,7 +2422,8 @@
     pumpMarket() {
       for (const [id, stock] of Object.entries(this._stocks)) {
         stock.currentPrice = Math.round(stock.currentPrice * (1.15 + Math.random() * 0.15));
-        this._history[id].push(stock.currentPrice);
+        const hist = this._history[id];
+        if (hist && hist.length) hist[hist.length - 1] = stock.currentPrice;
         this._jumpCompanyLine(id, stock.currentPrice);
         this._quoteToRegister(id, stock.currentPrice);
       }
@@ -2343,7 +2433,8 @@
     crashMarket() {
       for (const [id, stock] of Object.entries(this._stocks)) {
         stock.currentPrice = Math.max(minimumPrice, Math.round(stock.currentPrice * (0.75 - Math.random() * 0.15)));
-        this._history[id].push(stock.currentPrice);
+        const hist = this._history[id];
+        if (hist && hist.length) hist[hist.length - 1] = stock.currentPrice;
         this._jumpCompanyLine(id, stock.currentPrice);
         this._quoteToRegister(id, stock.currentPrice);
       }
@@ -3602,7 +3693,9 @@
 
       const ctx = canvas.getContext("2d");
       const sm = $gameSystem.stockMarket;
-      const history = sm.getHistory(this._selectedStockId);
+      // One point a game minute, the newest on the right edge: every minute
+      // the whole line steps left by one.
+      const history = sm.minuteSeries(this._selectedStockId);
       const stock = sm.getStock(this._selectedStockId);
       if (!history || history.length === 0) return;
 
@@ -3616,9 +3709,12 @@
       ctx.clearRect(0, 0, w, h);
 
       // Min & Max calculations
-      let min = Math.min(...history) * 0.96;
-      let max = Math.max(...history) * 1.04;
-      if (max - min < 100) { max += 50; min -= 50; }
+      // Fitted to what is on screen, so a quiet hour still reads as a line
+      // and not a flat rule.
+      const lo = Math.min(...history), hi = Math.max(...history);
+      const room = Math.max((hi - lo) * 0.15, (hi + lo) * 0.001, 50);
+      let min = lo - room;
+      let max = hi + room;
 
       // Grid lines & price labels
       ctx.strokeStyle = "rgba(0, 0, 0, 0.08)";
@@ -3660,7 +3756,7 @@
 
       if (this._chartMode === 'candle') {
         // Draw Candlesticks
-        const candles = sm.getCandles(this._selectedStockId);
+        const candles = sm.minuteCandles(this._selectedStockId);
         if (candles.length > 0) {
           const candleW = Math.max(3, Math.min(14, (plotW / candles.length) - 4));
           candles.forEach((c, idx) => {
@@ -3690,8 +3786,11 @@
         }
       } else {
         // Draw Smooth Area Line Chart
+        // Evenly spaced minutes, the live one on the right edge.
+        const n = history.length;
+        const xAt = (i) => padL + (n > 1 ? i * (plotW / (n - 1)) : plotW);
         const points = history.map((price, i) => {
-          const px = padL + i * (plotW / (history.length - 1));
+          const px = xAt(i);
           const py = padT + plotH - (((price - min) / (max - min)) * plotH || 0);
           return { x: px, y: py };
         });
@@ -3699,16 +3798,11 @@
         // Line
         ctx.beginPath();
         ctx.moveTo(points[0].x, points[0].y);
-        for (let i = 1; i < points.length - 1; i++) {
-          const xc = (points[i].x + points[i + 1].x) / 2;
-          const yc = (points[i].y + points[i + 1].y) / 2;
-          ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
-        }
-        ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+        for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
 
         const strokeColor = stock.color || "#0b5394";
         ctx.strokeStyle = strokeColor;
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 2;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
         ctx.stroke();
@@ -3724,20 +3818,31 @@
         ctx.fillStyle = grad;
         ctx.fill();
 
-        // Moving Average line (5-period SMA)
-        if (history.length >= 5) {
+        // Moving average over the last SMA_SPAN minutes.
+        const SMA_SPAN = 10;
+        if (history.length >= SMA_SPAN) {
           ctx.beginPath();
           ctx.strokeStyle = "#f39c12";
           ctx.lineWidth = 1.5;
-          for (let i = 4; i < history.length; i++) {
-            const sma = (history[i] + history[i-1] + history[i-2] + history[i-3] + history[i-4]) / 5;
-            const sx = padL + i * (plotW / (history.length - 1));
-            const sy = padT + plotH - (((sma - min) / (max - min)) * plotH || 0);
-            if (i === 4) ctx.moveTo(sx, sy);
+          let sum = 0;
+          for (let i = 0; i < history.length; i++) {
+            sum += history[i];
+            if (i >= SMA_SPAN) sum -= history[i - SMA_SPAN];
+            if (i < SMA_SPAN - 1) continue;
+            const sx = xAt(i);
+            const sy = padT + plotH - (((sum / SMA_SPAN - min) / (max - min)) * plotH || 0);
+            if (i === SMA_SPAN - 1) ctx.moveTo(sx, sy);
             else ctx.lineTo(sx, sy);
           }
           ctx.stroke();
         }
+
+        // The live price, where the quote above stands now.
+        const head = points[points.length - 1];
+        ctx.fillStyle = strokeColor;
+        ctx.beginPath();
+        ctx.arc(head.x, head.y, 3.5, 0, Math.PI * 2);
+        ctx.fill();
       }
     }
 

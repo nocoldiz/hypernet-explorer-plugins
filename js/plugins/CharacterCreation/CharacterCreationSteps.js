@@ -3942,6 +3942,9 @@
     onRemovePet(event) {
       if (event) event.stopPropagation();
       $gameSystem._partyPet = null;
+      // The sidebar reads the hovered card first, so the last monster picked
+      // stayed on it after the none card was chosen.
+      Scene_CharacterCreation._hoveredPetId = PET_NONE_ID;
       SoundManager.playCancel();
       this._lastStep = -1;
       this._lastIndex = -1;

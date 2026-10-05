@@ -66,5 +66,15 @@
   "previewOnly": "Preview only, reading {reading}. Nothing has been written to the record.",
   "onlyOneReading": "This declaration has only one reading on file.",
   "alternativeGenerated": "Alternative reading generated. Not filed.",
-  "sedates": "Sedates"
+  "sedates": "Sedates",
+  "allergens": "Allergens",
+  "orderNow": "Order now",
+  "addToCart": "Add to cart",
+  "view": "View",
+  "stockbusters": "Stockbusters",
+  "listedAt": "Listed at {price} on Stockbusters",
+  "notListed": "Not listed on Stockbusters.",
+  "ordered": "Order placed with Stockbusters.",
+  "addedToCart": "Added to the Stockbusters cart.",
+  "modelHint": "Click the model to view it full screen."
 }

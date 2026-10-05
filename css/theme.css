@@ -11862,17 +11862,12 @@
     background: var(--scroll-thumb-hover-translucent-60);
 }
 
-/* The strip the shared search bar is dropped into on the codex's wide page. It
-   holds its height whether or not the bar has been built yet, so opening the
-   search never shoves the tabs down. */
+/* Where the shared search bar is first dropped on the codex's wide page.
+   MenuSearchBar docks it straight into the header, so the slot is always left
+   empty and takes no room: sized, it opened a blank band under the tabs. */
 #help-search-slot {
     display: flex;
-    align-items: center;
     justify-content: flex-end;
-    border-bottom: none;
-    padding-bottom: 8px;
-    margin-bottom: 20px;
-    min-height: 40px;
     width: 100%;
 }
 
@@ -13908,9 +13903,9 @@
     grid-template-areas:
         "bar"
         "slots"
-        "stats"
-        "warn";
-    row-gap: var(--sp-2);
+        "warn"
+        "stats";
+    row-gap: var(--sp-3);
     align-items: start;
 }
 
@@ -13924,9 +13919,11 @@
     grid-area: stats;
     display: flex;
     flex-direction: column;
-    gap: var(--sp-1);
+    gap: var(--sp-3);
     margin-top: 0;
-    padding: var(--sp-2) var(--sp-3);
+    padding: var(--sp-3) var(--sp-2);
+    border-top: 1px solid var(--border-secondary-hover-translucent-15);
+    border-bottom: 1px solid var(--border-secondary-hover-translucent-15);
 }
 
 #equip-container .party-paperdolls-stacked .paperdoll-stats-strip {
@@ -14057,10 +14054,11 @@
 #equip-container .paperdoll-actor-bar {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 3px 6px;
+    align-items: baseline;
+    padding: 0 2px 6px;
     background: none;
     border: none;
+    border-bottom: 1px solid var(--border-secondary-hover-translucent-15);
     font-family: var(--font-ui);
     margin-bottom: 2px;
 }
@@ -14072,13 +14070,13 @@
 
 #equip-container .paperdoll-actor-name {
     font-weight: bold;
-    font-size: 1.05rem;
+    font-size: 1.35rem;
     color: var(--text-card-dark);
 }
 
 #equip-container .paperdoll-actor-class {
     color: var(--text-card-medium);
-    font-size: 0.86rem;
+    font-size: 0.95rem;
 }
 
 #equip-container .paperdoll-stats-grid {
@@ -14115,8 +14113,10 @@
     gap: 4px 22px;
 }
 
-#equip-container .paperdoll-stats-grid .stat-label {
-    font-size: 0.85rem;
+/* .right-page is named so the strip outranks the bench's shared label/value
+   sizes further down, which are meant for the detail card. */
+#equip-container .right-page .paperdoll-stats-grid .stat-label {
+    font-size: 0.8rem;
     font-weight: 700;
     color: var(--text-card-medium);
     text-transform: uppercase;
@@ -14124,8 +14124,8 @@
     white-space: nowrap;
 }
 
-#equip-container .paperdoll-stats-grid .stat-val {
-    font-size: 1rem;
+#equip-container .right-page .paperdoll-stats-grid .stat-val {
+    font-size: 1.25rem;
     font-weight: bold;
     color: var(--text-card-dark);
     white-space: nowrap;
@@ -14140,7 +14140,7 @@
 #equip-container .paperdoll-slots-grid {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
     width: 100%;
     margin-top: 2px;
 }
@@ -14153,7 +14153,7 @@
 #equip-container .paperdoll-body-slots {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 7px;
+    gap: 8px;
     width: 100%;
 }
 
@@ -14175,29 +14175,30 @@
 }
 
 #equip-container .paperdoll-dual-warning {
-    margin-top: 4px;
-    padding: 3px 7px;
+    margin-top: 0;
+    padding: 6px 10px;
     border-left: 3px solid var(--text-cost-bad, #ef4444);
     background: rgba(239, 68, 68, 0.1);
     border-radius: 3px;
-    font-size: 0.72rem;
+    font-size: 0.88rem;
     line-height: 1.25;
     color: var(--text-card-medium);
 }
 
 #equip-container .paperdoll-slot {
+    display: flex;
+    flex-direction: column;
     background: transparent;
-    min-height: 74px;
     border: 1px solid var(--border-secondary-hover-translucent-15);
     border-radius: 5px;
-    padding: 6px 9px;
+    padding: 8px 10px;
     box-sizing: border-box;
     width: 100%;
     cursor: pointer;
     transition: all 0.15s ease;
     user-select: none;
     position: relative;
-    min-height: 62px;
+    min-height: 76px;
 }
 
 #equip-container .paperdoll-slot:hover {
@@ -14232,36 +14233,43 @@
     50% { box-shadow: 0 0 10px var(--shadow-gold-amber-50); }
 }
 
+/* The slot's name on the left; a hand also says which hand it is on the
+   right, small, and gives way first when the box is narrow. */
 #equip-container .slot-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    align-items: baseline;
+    gap: 6px;
     font-size: 0.74rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-weight: 700;
     color: var(--text-card-medium);
-    margin-bottom: 2px;
+    margin-bottom: 4px;
     line-height: 1.15;
 }
 
 #equip-container .slot-title {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+#equip-container .slot-bodypart {
+    flex: 0 1 auto;
+    min-width: 0;
+    margin-left: auto;
+    font-size: 0.7rem;
+    font-weight: 600;
+    opacity: 0.7;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-#equip-container .slot-bodypart {
-    font-size: var(--fs-caption);
-    opacity: 0.7;
-    white-space: nowrap;
-    margin-left: 2px;
-}
-
 #equip-container .slot-body {
+    flex: 1 1 auto;
     display: flex;
     align-items: center;
-    min-height: 34px;
+    min-height: 36px;
 }
 
 #equip-container .slot-empty-content {
@@ -14269,9 +14277,9 @@
     align-items: center;
     gap: 6px;
     color: var(--text-card-medium);
-    font-size: 0.8rem;
+    font-size: 0.86rem;
     font-style: italic;
-    opacity: 0.6;
+    opacity: 0.55;
 }
 
 #equip-container .slot-empty-glyph {
@@ -14281,7 +14289,7 @@
 #equip-container .slot-equipped-content {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
     width: 100%;
     position: relative;
 }
@@ -14306,7 +14314,7 @@
 #equip-container .slot-item-name {
     font-family: var(--font-ui);
     font-weight: 600;
-    font-size: 0.86rem;
+    font-size: 0.95rem;
     white-space: normal;
     overflow-wrap: anywhere;
     overflow: visible;
@@ -14315,7 +14323,8 @@
 }
 
 #equip-container .slot-item-stat {
-    font-size: 0.74rem;
+    margin-top: 1px;
+    font-size: 0.8rem;
     color: var(--text-cost-ok);
     line-height: 1.1;
     font-weight: bold;
@@ -14642,7 +14651,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    min-height: 62px;
+    min-height: 76px;
     padding: 6px 9px;
     background: transparent;
     border: 1px solid var(--border-secondary-hover-translucent-15);
@@ -14772,9 +14781,20 @@
     min-height: 0;
 }
 
-.ui-detail.travel-confirm-panel {
+/* The confirmation is a modal over the whole spread, the list left standing
+   behind it. The veil and the card are shown together (setTravelConfirmOpen). */
+.ui-overlay.travel-confirm-veil {
+    position: absolute;
     display: none;
-    width: 100%;
+}
+
+.ui-panel.travel-confirm-panel {
+    display: none;
+    flex-direction: column;
+    width: min(520px, 84vw);
+    max-height: 86vh;
+    font-size: var(--fs-detail-body);
+    color: var(--text-success-active);
     animation: fade-in 0.25s ease-out;
 }
 
@@ -14921,8 +14941,9 @@
     white-space: nowrap;
 }
 
+/* A frozen window keeps the same red: gold was unreadable on the page. */
 .travel-dest-level.is-frozen {
-    color: var(--accent-gold-pure);
+    color: var(--text-text-alt-10, #ff5555);
 }
 
 .travel-dest-item.disabled {
@@ -17502,7 +17523,7 @@
    hairline down the speaker's side instead of a bubble. */
 .eris-dialogue-entry {
     font-family: var(--font-ui);
-    font-size: var(--fs-body);
+    font-size: var(--fs-detail-prose);
     line-height: 1.55;
     max-width: 68ch;
     padding: var(--sp-1) var(--sp-4);
@@ -17510,11 +17531,9 @@
     animation: erisEntryFadeIn 0.3s ease both;
 }
 
-/* The other voices sit inset from the page edge rather than hard against it,
-   so the transcript reads as one column of talk instead of two far apart. */
+/* The other voices start at the page's own left margin. */
 .eris-dialogue-entry.eris {
     align-self: flex-start;
-    margin-left: 18%;
     color: var(--text-primary-hover);
     border-left: 1px solid var(--border-focus-hover);
 }
@@ -17528,16 +17547,15 @@
 
 /* Stage direction: the room, not a voice in it. */
 .eris-dialogue-entry.narrator {
-    align-self: center;
-    margin-left: 12%;
+    align-self: flex-start;
     color: var(--text-card-medium);
-    text-align: center;
+    text-align: left;
     padding: 2px var(--sp-4);
 }
 
 .eris-dialogue-entry .eris-speaker {
     font-family: var(--font-ui);
-    font-size: var(--fs-caption);
+    font-size: var(--fs-label);
     letter-spacing: 0.5px;
     display: block;
     margin-bottom: 2px;
@@ -17590,12 +17608,11 @@
    The choices
    -------------------------------------------------------------------------- */
 
-/* Answers belong to the player, so they stack on the player's side of the
-   page, under the player's own lines. */
+/* Answers stack down the page's left margin, under the transcript. */
 .eris-choices-panel {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-start;
     gap: var(--sp-2);
     padding-top: var(--sp-3);
     flex: 0 0 auto;
@@ -17603,16 +17620,29 @@
 
 .eris-choice-btn {
     font-family: var(--font-ui);
-    font-size: var(--fs-body);
+    font-size: var(--fs-detail-prose);
+    font-weight: bold;
     color: var(--text-success-active);
     background: transparent;
     border: 1px solid transparent;
+    border-left: 3px solid var(--border-primary-hover-translucent-15);
     border-radius: 4px;
     padding: var(--sp-2) var(--sp-4);
     cursor: pointer;
     transition: border-color 0.15s ease, color 0.15s ease;
-    text-align: right;
+    text-align: left;
     max-width: 68ch;
+}
+
+/* A leading mark so an answer never reads as one more line of talk. */
+.eris-choice-btn::before {
+    content: "\25B8";
+    margin-right: var(--sp-2);
+    color: var(--text-primary-hover);
+}
+
+.eris-choices-panel > .eris-lawyer-row::before {
+    content: none;
 }
 
 /* The lawyer list is a table of names and fees, not a line of talk: it keeps
@@ -17627,6 +17657,7 @@
 .eris-choice-btn.selected,
 .eris-choice-btn:focus-visible {
     border-color: var(--text-primary-hover);
+    border-left-color: var(--text-primary-hover);
     color: var(--text-primary-hover);
     outline: none;
 }
@@ -21576,123 +21607,57 @@ padding: 2px 10px;
     padding: 8px 18px;
 }
 
-#refuel-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: var(--gradient-4), var(--bg-bg-alt-1-translucent-70);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    box-sizing: border-box;
-    padding: 0;
-    /* was 24px: the backdrop inset that letterboxed the panel */
-}
-
-
 /* ═══════════════════════════════════════════════════════════
    VEHICLE SYSTEM REFUEL UI
+   The pump is a popup in the sleep menu's frame: the shared
+   #sleep-menu-overlay / #refuel-overlay rules further down draw the sheet
+   and the rows, these only add the gauges above the list.
    ═══════════════════════════════════════════════════════════ */
 
-.rf-subtitle {
-    font-size: 1.048em;
-    margin: 4px 0 10px;
-    color: var(--text-text-alt-9);
+#refuel-container {
+    position: relative;
 }
 
-#refuel-container .inspect-section-title {
-    font-size: var(--fs-detail-heading);
-}
-
-#refuel-container .inspect-spec-row {
-    font-size: var(--fs-detail-body);
-}
-
-#refuel-container .rf-label {
-    font-size: var(--fs-detail-heading);
-}
-
-.rf-option-list {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    overflow-y: auto;
-    max-height: 55%;
-    scrollbar-width: thin;
-}
-
-.rf-option-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-}
-
-.rf-label {
-    flex: 1;
-    /* The refuel rows are .item-slot rows but carry their text in .rf-label,
-       not .item-slot-name, so they inherited the browser default black and
-       vanished on the dark presets. Same ink as .item-slot-name. */
+#refuel-container .rf-info {
     font-family: var(--font-ui);
-    font-weight: 700;
-    color: var(--text-success-active);
+    padding: 0 18px 10px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--border-subtle);
 }
 
-.rf-option-row:hover .rf-label,
-.rf-option-row.selected .rf-label {
+.rf-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
     color: var(--text-primary-hover);
+    font-size: 1.05em;
 }
 
-.rf-cost {
-    color: var(--text-text-alt-9);
-    font-size: 0.964em;
+.rf-info-row--gap {
+    margin-top: 6px;
+}
+
+.rf-info-value {
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
     white-space: nowrap;
 }
 
-.rf-disabled {
-    opacity: 0.4;
-    pointer-events: none;
-}
-
-.rf-hint {
-    margin-top: auto;
-    font-size: 0.82em;
-    color: var(--text-disabled);
-    text-align: center;
-}
-
 .rf-fuel-bar-wrap {
-    height: 10px;
+    height: 8px;
     background: var(--bg-bg-alt-25-translucent-8);
     border: 1px solid var(--border-subtle);
-    border-radius: 5px;
+    border-radius: 4px;
     overflow: hidden;
-    margin: 4px 0 6px;
+    margin: 3px 0 6px;
 }
 
 .rf-fuel-bar {
     height: 100%;
     background: var(--border-success);
-    border-radius: 5px;
+    border-radius: 4px;
     transition: width 0.3s ease;
-}
-
-.rf-vehicle-row {
-    margin-top: 14px;
-}
-
-.rf-selected-cost {
-    margin-top: 14px;
-    border-top: 1px solid var(--border-subtle);
-    padding-top: 8px;
-}
-
-.rf-selected-cost .inspect-spec-value {
-    color: var(--text-success-active);
-    font-weight: bold;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -25386,6 +25351,12 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     overflow-y: auto;
     min-height: 0;
 }
+/* The shared inspect sheet spreads its rows over the whole page; the dossier
+   reads top down instead, with no gap above the rows. */
+#world-manage-container .wm-tab-body .item-inspect {
+    height: auto;
+    justify-content: flex-start;
+}
 #world-manage-container .wm-diary-list {
     flex-direction: column;
 }
@@ -27054,6 +27025,15 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    because a rewritten page would take the canvas with it and a new canvas is a
    new WebGL context.
    ========================================================================== */
+/* The sky is dark under every preset, so the names over it always wear Omega
+   Tower's inks: a parchment preset's dark inks would vanish on it. */
+#skill-atlas-box {
+    --text-forest-complete: #6fd089;
+    --text-secondary-active: #ffcc66;
+    --text-card-medium: #ffffff;
+    --text-text-alt-3: #6fd089;
+    --text-pure-white: #ffffff;
+}
 #skill-atlas-box.sg3-sky {
     position: relative; overflow: hidden; min-height: 0; box-sizing: border-box;
     border: none;
@@ -31190,10 +31170,10 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .onu-line {
     font-family: var(--font-ui);
-    font-size: var(--fs-body);
+    font-size: var(--fs-detail-prose);
     line-height: 1.55;
     max-width: 68ch;
-    padding: var(--sp-1) var(--sp-4);
+    padding: var(--sp-1) var(--sp-2);
     color: var(--text-success-active);
     background: transparent;
 }
@@ -31215,7 +31195,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .onu-line-speaker {
     display: block;
-    font-size: var(--fs-caption);
+    font-size: var(--fs-label);
     color: var(--text-primary-hover);
     margin-bottom: 2px;
 }
@@ -31257,7 +31237,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .onu-answer {
     font-family: var(--font-ui);
-    font-size: var(--fs-body);
+    font-size: var(--fs-detail-prose);
     color: var(--text-success-active);
     background: transparent;
     border: 1px solid transparent;
@@ -35241,7 +35221,8 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 /* The rest popup is pinned to the viewport itself, so a list long enough to
    run past the bottom of the screen still sits in the middle of it rather
    than being pushed off to one side by the overlay own overflow. */
-#sleep-menu-overlay {
+#sleep-menu-overlay,
+#refuel-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -35249,7 +35230,8 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     height: 100vh;
 }
 
-#sleep-menu-overlay .army-dialog {
+#sleep-menu-overlay .army-dialog,
+#refuel-overlay .army-dialog {
     margin: auto;
     background: var(--text-danger-hover);
     background-image: radial-gradient(ellipse at center, transparent 40%, var(--bg-brown-vignette-10) 100%);
@@ -35263,7 +35245,8 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     text-align: left;
 }
 
-#sleep-menu-overlay .army-dialog h3 {
+#sleep-menu-overlay .army-dialog h3,
+#refuel-overlay .army-dialog h3 {
     font-family: var(--font-ui);
     font-weight: bold;
     color: var(--text-primary-hover);
@@ -35275,11 +35258,13 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     text-shadow: none;
 }
 
-#sleep-menu-overlay .army-dialog-options {
+#sleep-menu-overlay .army-dialog-options,
+#refuel-overlay .army-dialog-options {
     gap: 0;
 }
 
-#sleep-menu-overlay .army-dialog-btn {
+#sleep-menu-overlay .army-dialog-btn,
+#refuel-overlay .army-dialog-btn {
     font-family: var(--font-ui);
     font-weight: bold;
     font-size: 1.33em;
@@ -35297,43 +35282,52 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 /* The picked hour is marked by its frame alone: no filled band behind the
    row, so the list reads as ink on the same parchment all the way down. */
 #sleep-menu-overlay .army-dialog-btn.selected,
-#sleep-menu-overlay .army-dialog-btn:hover {
+#refuel-overlay .army-dialog-btn.selected,
+#sleep-menu-overlay .army-dialog-btn:hover,
+#refuel-overlay .army-dialog-btn:hover {
     background: none;
     border-color: var(--accent-orange);
     color: var(--accent-orange);
     box-shadow: none;
 }
 
-#sleep-menu-overlay .army-dialog-btn--disabled {
+#sleep-menu-overlay .army-dialog-btn--disabled,
+#refuel-overlay .army-dialog-btn--disabled {
     color: rgba(255, 204, 102, 0.38);
 }
 
-#sleep-menu-overlay .army-dialog-btn__wake {
+#sleep-menu-overlay .army-dialog-btn__wake,
+#refuel-overlay .army-dialog-btn__wake {
     opacity: 0.75;
     font-size: 0.82em;
 }
 
-#sleep-menu-overlay .army-dialog-type-hint {
+#sleep-menu-overlay .army-dialog-type-hint,
+#refuel-overlay .army-dialog-type-hint {
     color: var(--accent-orange);
     font-size: 0.95em;
 }
 
 /* The Sleep <-> Wait flip and the cryo picker sit inside the same frame, so
    they take the amber ink too rather than the army-dialog green. */
-#sleep-menu-overlay .army-dialog-type-selector {
+#sleep-menu-overlay .army-dialog-type-selector,
+#refuel-overlay .army-dialog-type-selector {
     margin-bottom: 6px;
 }
 
-#sleep-menu-overlay .army-dialog-type-label {
+#sleep-menu-overlay .army-dialog-type-label,
+#refuel-overlay .army-dialog-type-label {
     color: var(--text-primary-hover);
     font-size: 1.25em;
 }
 
-#sleep-menu-overlay .army-dialog-type-arrow {
+#sleep-menu-overlay .army-dialog-type-arrow,
+#refuel-overlay .army-dialog-type-arrow {
     color: var(--accent-orange);
 }
 
-#sleep-menu-overlay .army-dialog-type-arrow:hover {
+#sleep-menu-overlay .army-dialog-type-arrow:hover,
+#refuel-overlay .army-dialog-type-arrow:hover {
     background: rgba(255, 204, 102, 0.12);
 }
 
@@ -36640,6 +36634,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 /* The slot's one line of guidance, under the pair it belongs to. */
 .sm-forge-hint {
     grid-column: 2;
+    font-size: var(--fs-body);
     line-height: 1.3;
     color: var(--text-detail-label);
     max-width: 68ch;
@@ -36755,7 +36750,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 }
 
 .sm-craft-write-hint {
-    font-size: var(--fs-caption);
+    font-size: var(--fs-body);
     color: var(--text-detail-label);
 }
 
@@ -36855,12 +36850,46 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 /* The enchanting bench: the rule it works under, and the piece it is working
    on. Everything else on that spread wears the forge's own classes. */
 .sm-enchant-blurb {
-    font-size: var(--fs-caption);
-    font-style: italic;
-    opacity: 0.8;
-    margin-bottom: 4px;
-    line-height: 1.25;
+    font-size: var(--fs-body);
+    margin-bottom: var(--sp-2);
+    line-height: 1.35;
     flex-shrink: 0;
+}
+
+/* The pieces waiting for a spell, as a grid of cards three across
+   (ENCHANT_GEAR_COLS in the plugin walks the same count). */
+.sm-gear-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-content: start;
+    gap: var(--sp-2);
+    padding-right: var(--sp-2);
+    font-size: var(--fs-body);
+}
+.sm-gear-grid > .ui-empty { grid-column: 1 / -1; }
+.sm-gear-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-1);
+    padding: var(--sp-2);
+    min-height: 84px;
+    box-sizing: border-box;
+    text-align: center;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--font-ui);
+}
+.sm-gear-card:hover,
+.sm-gear-card.focused { border-color: var(--text-primary-hover); }
+.sm-gear-card.selected { border-color: var(--text-secondary-active); border-width: 2px; }
+.sm-gear-name {
+    font-weight: bold;
+    line-height: 1.2;
+    color: var(--text-success-active);
+    overflow-wrap: anywhere;
 }
 
 .sm-enchant-target {
@@ -37022,10 +37051,9 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    detail head, so a system reads as lawful or unruly at a glance. */
 .ms-rigor {
     font-family: var(--font-ui);
-    font-size: 9px;
+    font-size: var(--fs-caption);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    opacity: 0.75;
     margin-top: 1px;
 }
 
@@ -37035,7 +37063,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .sm-ms-rigor {
     display: inline-block;
     font-family: var(--font-ui);
-    font-size: 11px;
+    font-size: var(--fs-caption);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     padding: 1px var(--sp-2);
@@ -42123,8 +42151,10 @@ body.pad-input .kb-only {
     color: var(--text-primary-hover);
 }
 
+/* A row that cannot be picked still has to be read: its hint says why. It
+   steps back by a shade instead of fading out. */
 .cc-pick-row.disabled {
-    opacity: 0.4;
+    opacity: 0.62;
     cursor: not-allowed;
 }
 
@@ -42620,6 +42650,15 @@ body.pad-input .kb-only {
     background: var(--bg-black-translucent-96, #000);
     border-bottom-color: transparent;
 }
+/* The Close / Back chip in front of the tabs wears the same backing, so it
+   does not float as bare text over the map behind the panel. */
+.npc-back-btn.npc-tab-back {
+    align-self: flex-end;
+    background: var(--bg-black-translucent-96, #000);
+    border-radius: 6px 6px 0 0;
+    padding: 7px 14px 8px;
+    margin-right: 0;
+}
 .npc-tab-hint {
     margin-right: 6px;
     padding: 5px 9px 6px;
@@ -42659,6 +42698,7 @@ body.pad-input .kb-only {
 .save-modal-overlay,
 .cc3d-modal,
 .ui-overlay.travel-custom-modal,
+.ui-overlay.travel-confirm-veil,
 #diary-container .diary-write-backdrop,
 .sm-craft-write-backdrop,
 .npc-chat-modal-backdrop,
@@ -43273,29 +43313,36 @@ body.pad-input .kb-only {
     text-align: center;
 }
 
-/* --- SkillMaster school picker: two equal leaves and one bench rail ------
-   SKILLS and MAGIC are the same subject read twice, so on this view the two
-   pages are the same width instead of 58/42, and the crease moves with them.
-   Every bench button (both pages' worth) hangs in one column down the right
-   edge of the sheet, so neither grid has a row of buttons under it. */
-#menu-container .book-spread.sm-cat-spread { --spine-x: calc((100% - var(--sm-rail-w, 230px)) / 2); }
-#menu-container .book-spread.sm-cat-spread > .left-page,
-#menu-container .book-spread.sm-cat-spread > .right-page {
-    width: calc((100% - var(--sm-rail-w, 230px)) / 2);
+/* --- SkillMaster school picker: split like the benches -------------------
+   The left leaf holds every school, SKILLS over MAGIC under their own heads;
+   the right leaf holds every bench button in one column. The spread keeps
+   the benches' own 58/42 split (.sm-cat-spread only marks the view). */
+.sm-school-scroll {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: var(--sp-2);
+}
+.sm-school-grid.sm-school-grid--flow {
+    overflow: visible;
+    flex-grow: 0;
+    margin-bottom: var(--sp-3);
+}
+.sm-bench-blurb {
+    font-size: var(--fs-body);
+    margin-bottom: var(--sp-3);
+    flex-shrink: 0;
 }
 
-.sm-action-rail:empty { display: none; }
-
 .sm-action-rail {
-    width: var(--sm-rail-w, 230px);
-    height: 100%;
-    box-sizing: border-box;
-    padding: 35px 30px 35px 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex: 1 1 0;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
     gap: var(--sp-2);
     overflow-y: auto;
+    padding-right: var(--sp-2);
 }
 
 .sm-forged-list--fill { flex: 1 1 0; min-height: 0; }

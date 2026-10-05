@@ -164,11 +164,24 @@
     };
 
     Scene_Equip.prototype.update = function () {
+        // The full screen viewer owns the screen while it is open: its own key
+        // guard eats Escape, a pad's A or B closes it here, and the bench reads
+        // nothing else until it is gone.
+        const inspect = window.ItemInspect;
+        if (inspect && inspect.isModelFullscreenOpen && inspect.isModelFullscreenOpen()) {
+            if (Input.isTriggered('ok') || Input.isTriggered('cancel') || Input.isTriggered('escape')) {
+                SoundManager.playCancel();
+                inspect.closeModelFullscreen();
+            }
+            Scene_MenuBase.prototype.update.call(this);
+            return;
+        }
         this.updateUIEquipInput();
         Scene_MenuBase.prototype.update.call(this);
     };
 
     Scene_Equip.prototype.terminate = function () {
+        if (window.ItemInspect && window.ItemInspect.closeModelFullscreen) window.ItemInspect.closeModelFullscreen();
         window.CharSwitcher.removeTabKey(this);
         hideStatTooltip();
         this.cleanup3DWeaponPreview();
@@ -648,7 +661,25 @@
             if (!canvas) return;
             const entry = window.Weapon3DPreview.mount(canvas, modelItem);
             if (entry) this._previewRenderers.push(entry);
+            this._bindPreviewFullscreen(canvas, this._inspectedItem);
         }, PREVIEW_SETTLE_MS);
+    };
+
+    // A click on the preview opens the piece full screen, the backpack's own
+    // viewer. The same square is dragged to turn the model, so only a press
+    // that did not travel counts as a click.
+    Scene_Equip.prototype._bindPreviewFullscreen = function (canvas, item) {
+        if (!canvas || !item || !window.ItemInspect || !window.ItemInspect.showModelFullscreen) return;
+        let downAt = null;
+        canvas.addEventListener('mousedown', (e) => { if (e.button === 0) downAt = { x: e.clientX, y: e.clientY }; });
+        canvas.addEventListener('mouseup', (e) => {
+            if (e.button !== 0 || !downAt) { downAt = null; return; }
+            const moved = Math.abs(e.clientX - downAt.x) + Math.abs(e.clientY - downAt.y);
+            downAt = null;
+            if (moved > 6) return;
+            const ref = DataManager.isWeapon(item) ? 'weapon' : (DataManager.isArmor(item) ? 'armor' : 'item');
+            window.ItemInspect.showModelFullscreen(ref, item.id);
+        });
     };
 
     Scene_Equip.prototype.cleanup3DWeaponPreview = function () {
@@ -1046,7 +1077,10 @@
                     </div>
                 </div>`;
             }
-            const bodyPart = window.HandSlots && window.HandSlots.bodyPartName ? window.HandSlots.bodyPartName(actor, slotId) : '';
+            // Only a hand names a body part of its own ("Main hand" on the left
+            // hand); every other slot's part is its own name, said twice.
+            const rawPart = window.HandSlots && window.HandSlots.bodyPartName ? window.HandSlots.bodyPartName(actor, slotId) : '';
+            const bodyPart = rawPart && String(rawPart).toLowerCase() !== String(slotName).toLowerCase() ? rawPart : '';
             const equipped = equips[slotId];
             const isFocused = (this._activeArea === 'paperdoll' && this._memberIndex === memberIdx && this._slotIndex === slotId);
 
@@ -1072,8 +1106,7 @@
             } else {
                 contentHtml = `
                     <div class="slot-empty-content">
-                        <span class="slot-empty-glyph">☐</span>
-                        <span class="slot-empty-text">${escapeHtml(slotName)}</span>
+                        <span class="slot-empty-text">${escapeHtml(t.emptySlot)}</span>
                     </div>`;
             }
 
@@ -1416,6 +1449,12 @@
         if (wtype) {
             typeTiles += factTile(T('Equip.weaponType'), escapeHtml(String(wtype).trim()));
         }
+        // Clothes, robe or armour, the same name every item sheet prints.
+        const armorKind = (window.ItemSystemUtils && typeof window.ItemSystemUtils.armorTypeName === 'function')
+            ? window.ItemSystemUtils.armorTypeName(item) : '';
+        if (armorKind) {
+            typeTiles += factTile(T('Inventory.spec.label.armorType'), escapeHtml(armorKind));
+        }
         // The stats the weapon's attack is worked out from, as the same gold
         // chips the stat strip marks (window.WeaponScaling).
         const scaler = window.WeaponScaling;
@@ -1428,6 +1467,10 @@
         if (dt) {
             typeTiles += factTile(T('Equip.damageType'), escapeHtml(String(dt).trim()));
         }
+        // A piece tagged with allergens says so here too, as on every item sheet.
+        const allergyRows = (window.ItemSystemUtils && typeof window.ItemSystemUtils.allergenRows === 'function')
+            ? window.ItemSystemUtils.allergenRows(item) : [];
+        for (const [label, val] of allergyRows) typeTiles += factTile(label, escapeHtml(val));
 
         let factsHtml = '';
         if (damageTiles) factsHtml += `<div class="equip-facts equip-damage-block">${damageTiles}</div>`;

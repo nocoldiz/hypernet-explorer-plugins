@@ -1353,9 +1353,13 @@
     // does so AFTER its children have updated and not at all while another plugin
     // is driving the scene (Health_Monsters' Check panel), so the bar and the DOM
     // text it carries would outlive the creature by a frame or by a whole panel.
-    // Decided here, they go in the same frame the battler does.
+    // Decided here, they go in the same frame the battler does. A killing blow
+    // is the one exception: the bar stays up while the slice it took drains to
+    // empty, and goes the frame it is gone.
     if (this._battler) {
-      this.visible = this._battler.isAlive() && this._barPlaced !== false;
+      this.visible =
+        (this._battler.isAlive() || this.isDrainingToDeath()) &&
+        this._barPlaced !== false;
     }
     if (this._htmlOverlay) this._htmlOverlay.update();
     if (!this._battler) return;
@@ -1412,6 +1416,14 @@
     );
     const ascii = !!(window.AsciiMode && window.AsciiMode.active);
     return stamp * 4 + (targeted ? 2 : 0) + (ascii ? 1 : 0);
+  };
+
+  // The monster has just been killed and the depletion chunk is still running
+  // down the bar. Only a death counts: a monster talked round and hidden is no
+  // longer on the field, so its bar goes at once.
+  Sprite_BattleBar.prototype.isDrainingToDeath = function () {
+    const b = this._battler;
+    return !!(b && b.isAppeared() && b.isDead() && this._damageChunkHp > 0);
   };
 
   // A monster's HP is low enough that the gauge pulses on its own.
@@ -2505,6 +2517,9 @@
       const sprite = sprites[i];
       if (!sprite) continue;
       if (sprite._battler && !sprite._battler.isAlive()) {
+        // A killed monster's bar keeps its place until its last slice of HP
+        // has drained away; the sprite hides itself once it has.
+        if (sprite.isDrainingToDeath && sprite.isDrainingToDeath()) continue;
         sprite._barPlaced = false;
         sprite.visible = false;
         continue;

@@ -27,9 +27,21 @@
  * Category dividers (entries named "<-- Something -->") and the blank padding
  * slots between ranges are never listed; only the 1100 real items are.
  *
+ * STOCKBUSTERS
+ * An object the marketplace lists carries its price and three buttons: Order
+ * now pays for one unit on the spot, Add to cart puts one in the site's basket
+ * (the site does not have to be open), and View opens the site on its listing.
+ *
+ * 3D MODEL
+ * The dossier shows the object's model turning (window.Weapon3DPreview, the
+ * viewer the backpack uses); a click on it opens the piece full screen.
+ *
  * Reads (all optional, degrades gracefully):
  *   window.ItemSystemUtils  - weight, category, nutrition, needs, rarity, lore
  *   window.HypernetOS       - window manager and icon rendering
+ *   window.Stockbusters     - price, cart and orders
+ *   window.Weapon3DPreview  - the 3D viewer
+ *   window.ItemInspect      - the full screen model viewer
  *
  * Exposes:
  *   window.HypernetObjectIndex.launch()
@@ -171,6 +183,12 @@
 
     // getAddictionRelief returns [{ key, amount, label }]: what this object
     // takes OFF a craving, which is why the figures read negative.
+    function allergenRows(item) {
+        const u = utils();
+        if (!u || typeof u.allergenRows !== 'function') return [];
+        try { return u.allergenRows(item); } catch (e) { return []; }
+    }
+
     function cravingRows(item) {
         const u = utils();
         if (!u || typeof u.getAddictionRelief !== 'function') return [];
@@ -212,7 +230,8 @@
     // whatever is left, so a newly added tag still shows up without a code change.
     // i18n-ignore-start  note-tag names, matched against the item's meta
     const HANDLED_TAGS = ['Lore', 'category', 'Weight', 'Recipe',
-                          'calories', 'protein', 'fat', 'caffeine', 'NeedRestore', 'Addiction'];
+                          'calories', 'protein', 'fat', 'caffeine', 'NeedRestore', 'Addiction',
+                          'Allergens', 'Allergen', 'Antiallergic'];
     // i18n-ignore-end
 
     // --- Styling ------------------------------------------------------------
@@ -262,6 +281,13 @@
                 '</tr>'
             ).join('') + '</table>';
     }
+
+    const shop = () => (window.Stockbusters && window.Stockbusters.sells) ? window.Stockbusters : null;
+
+    // A viewport is a fresh WebGL context, so the model is only put on the
+    // stand once the cursor comes to rest on an object (the same settle the
+    // backpack and the marketplace use).
+    const MODEL_SETTLE_MS = 90;
 
     function card(title, rows) {
         if (!rows.length) return '';
@@ -363,6 +389,7 @@
             win.addEventListener('hypernet-closed', () => {
                 if (this._relist && this._relist.cancel) this._relist.cancel();
                 this._relist = null;
+                this.disposeModel();
                 this.win = null;
                 this.reseed = 0;
                 this.rerolls = 0;
@@ -517,6 +544,7 @@
                 return;
             }
 
+            this.disposeModel();
             const meta = metaOf(item);
             const rarity = rarityOf(item);
             const html = [];
@@ -536,8 +564,25 @@
                 '</div></div></div>'
             );
 
+            if (typeof THREE !== 'undefined' && window.Weapon3DPreview) {
+                html.push('<div style="' + S.card + ' padding:4px;">' +
+                    '<div style="width:100%; height:220px; position:relative">' +
+                    '<canvas id="oi-model" style="width:100%; height:100%; display:block"></canvas></div>' +
+                    '<div style="' + S.note + ' text-align:center">' + T('ObjectIndex.modelHint') + '</div></div>');
+            }
+
             if (item.description) {
                 html.push('<div style="' + S.card + '">' + escapeHtml(item.description) + '</div>');
+            }
+
+            const sb = shop();
+            if (sb) {
+                const sells = sb.sells(item);
+                html.push('<div style="' + S.card + '"><div style="' + S.h + '">' + T('ObjectIndex.stockbusters') + '</div>' +
+                    '<div style="' + S.note + ' margin-bottom:6px">' + (sells
+                        ? T('ObjectIndex.listedAt', { price: euros(sb.priceOf(item)) })
+                        : T('ObjectIndex.notListed')) + '</div>' +
+                    '<div id="oi-shop-actions" style="display:flex; gap:6px; flex-wrap:wrap"></div></div>');
             }
 
             // Archive lore, with the reroll control
@@ -579,6 +624,7 @@
             html.push(card(T('ObjectIndex.provisioningValue'), nutritionRows(item)));
             html.push(card(T('ObjectIndex.restores'), needRows(item)));
             html.push(card(T('ObjectIndex.sedates'), cravingRows(item)));
+            html.push(card(T('ObjectIndex.allergens'), allergenRows(item)));
 
             // Composition
             const recipe = recipeText(item);
@@ -595,6 +641,8 @@
             html.push(card(T('ObjectIndex.otherDeclarations'), extra));
 
             panel.innerHTML = html.join('');
+            this.buildShopActions(panel, item);
+            this.mountModel(item);
 
             // The reroll button is built in JS so it carries the focusable
             // class, a tabindex and a stable id the focus ring can re-acquire.
@@ -634,6 +682,71 @@
                     actions.appendChild(tag);
                 }
             }
+        },
+
+        // --- Stockbusters --------------------------------------------------
+
+        buildShopActions: function(panel, item) {
+            const host = panel.querySelector('#oi-shop-actions');
+            const sb = shop();
+            if (!host || !sb) return;
+            const sells = sb.sells(item);
+            const button = (id, label, onClick) => {
+                const btn = document.createElement('div');
+                btn.className = 'focusable';
+                btn.tabIndex = 0;
+                btn.id = id;
+                btn.style.cssText = S.btn;
+                btn.textContent = label;
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    onClick();
+                });
+                host.appendChild(btn);
+            };
+            if (sells) {
+                button('oi-order-now', T('ObjectIndex.orderNow'), () => {
+                    if (sb.orderNow(item, 1)) this.say(T('ObjectIndex.ordered'));
+                });
+                button('oi-add-cart', T('ObjectIndex.addToCart'), () => {
+                    if (sb.addToCart(item, 1)) {
+                        if (window.SoundManager) SoundManager.playOk();
+                        this.say(T('ObjectIndex.addedToCart'));
+                    }
+                });
+            }
+            button('oi-view-shop', T('ObjectIndex.view'), () => {
+                if (window.SoundManager) SoundManager.playOk();
+                sb.view(sells ? item : null);
+            });
+        },
+
+        // --- 3D model -------------------------------------------------------
+
+        mountModel: function(item) {
+            if (!window.Weapon3DPreview) return;
+            this._modelTimer = setTimeout(() => {
+                this._modelTimer = 0;
+                if (!this.alive() || this.selectedId !== item.id) return;
+                const canvas = this.win.querySelector('#oi-model');
+                if (!canvas) return;
+                const entry = window.Weapon3DPreview.mount(canvas, item);
+                if (entry) this._modelPreviews = [entry];
+                if (window.ItemInspect && window.ItemInspect.bindModelFullscreen) {
+                    window.ItemInspect.bindModelFullscreen(canvas, item);
+                }
+            }, MODEL_SETTLE_MS);
+        },
+
+        disposeModel: function() {
+            if (this._modelTimer) {
+                clearTimeout(this._modelTimer);
+                this._modelTimer = 0;
+            }
+            if (this._modelPreviews && window.Weapon3DPreview) {
+                window.Weapon3DPreview.disposeAll(this._modelPreviews);
+            }
+            this._modelPreviews = null;
         },
 
         // Resolve this item's lore at the current preview nonce. reseed 0 asks

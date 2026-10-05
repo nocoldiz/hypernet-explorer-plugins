@@ -190,6 +190,7 @@
     "avoided": "{name} keeps away from {target}, level {level}",
     "stuck": "{name} cannot get anywhere with {target} and looks for something else",
     "restless": "{name} has stood here long enough and moves on",
+    "detour": "{name} stops pacing and works out the long way round",
     "flees": "{name} runs from the fight",
     "worldMap": "{name} steps out onto the world map",
     "rim": "{name} heads for the edge of the map",

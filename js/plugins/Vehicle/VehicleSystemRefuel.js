@@ -201,8 +201,11 @@
         return opts;
     };
 
+    // The pump is a small popup in the sleep menu's frame (the shared
+    // #sleep-menu-overlay / #refuel-overlay rules in theme.css), not a full
+    // book spread: the overlay and its sheet live while the station is open,
+    // and only the sheet's body is redrawn.
     Scene_Map.prototype._rfRebuild = function () {
-        if (this._refuelEl) { this._refuelEl.remove(); this._refuelEl = null; }
         // Refresh the owned-vehicle snapshot (fuel levels, ownership) each rebuild.
         this._rfVehicles = refuelableVehicles();
         this._rfOptions = this._rfView === 'main'
@@ -210,33 +213,36 @@
             : this._rfBuildDetailOptions(this._rfView);
         if (this._rfIdx >= this._rfOptions.length) this._rfIdx = 0;
 
-        const el = document.createElement('div');
-        el.id        = 'refuel-container';
-        el.className = 'book-spread';
-        el.innerHTML = `
-            <div class="left-page">${this._rfBuildLeft()}</div>
-            <div class="right-page">${this._rfBuildRight()}</div>`;
+        if (!this._refuelEl) this._rfCreateOverlay();
+        const body = this._refuelEl.querySelector('.rf-body');
+        body.innerHTML = this._rfBuildBody();
+        const sel = body.querySelector('.army-dialog-btn.selected');
+        if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' });
+    };
 
-        // Fullscreen centering wrapper (the .book-spread itself is position:relative
-        // and would otherwise render in document flow, off-screen).
+    Scene_Map.prototype._rfCreateOverlay = function () {
         const wrap = document.createElement('div');
-        wrap.id = 'refuel-overlay';
-        wrap.appendChild(el);
+        wrap.id        = 'refuel-overlay';
+        wrap.className = 'army-dialog-overlay';
+        const sheet = document.createElement('div');
+        sheet.id        = 'refuel-container';
+        sheet.className = 'army-dialog';
+        sheet.innerHTML = '<div class="rf-body"></div>';
+        wrap.appendChild(sheet);
         document.body.appendChild(wrap);
         this._refuelEl = wrap;
-        if (window.UIHelp) UIHelp.attach(wrap, 'Refuel.help', { when: () => !this._rfWaiting });
+        if (window.UIHelp) UIHelp.attach(sheet, 'Refuel.help', { when: () => !this._rfWaiting });
 
-        el.addEventListener('mouseover', ev => {
+        sheet.addEventListener('mouseover', ev => {
             const row = ev.target.closest('.rf-option-row');
             if (!row || this._rfWaiting) return;
             const i = parseInt(row.dataset.idx);
             if (!isNaN(i) && i !== this._rfIdx) {
                 this._rfIdx = i;
                 this._rfUpdateHighlight();
-                this._rfUpdateRight();
             }
         });
-        el.addEventListener('click', ev => {
+        sheet.addEventListener('click', ev => {
             const row = ev.target.closest('.rf-option-row');
             if (!row || this._rfWaiting) return;
             const i = parseInt(row.dataset.idx);
@@ -244,91 +250,54 @@
         });
     };
 
-    Scene_Map.prototype._rfBuildLeft = function () {
-        const isMain = this._rfView === 'main';
-        let title = T('Refuel.selectVehicle');
-        if (!isMain) {
-            const v = (this._rfVehicles || []).find(x => x.key === this._rfView);
-            title = T('Refuel.vehicleTitle', { vehicle: v ? v.name : T('Refuel.genericVehicle') });
+    // A fuel gauge: name on the left, litres on the right, the bar under them.
+    function gaugeHTML(label, fuel, max) {
+        const pct = max > 0 ? Math.round(fuel / max * 100) : 0;
+        return `<div class="rf-info-row">
+                <span class="rf-info-label">${label}</span>
+                <span class="rf-info-value">${Math.floor(fuel)}L / ${max}L</span>
+            </div>
+            <div class="rf-fuel-bar-wrap"><div class="rf-fuel-bar" style="width:${pct}%"></div></div>`;
+    }
+
+    Scene_Map.prototype._rfBuildBody = function () {
+        const VSR = window.VehicleSystemRefuel;
+        let title, gauges;
+        if (this._rfView === 'main') {
+            title = T('Refuel.ui.fuelStation');
+            const list = this._rfVehicles || [];
+            gauges = list.length
+                ? list.map(v => gaugeHTML(v.name, v.fuel, v.max)).join('')
+                : `<div class="rf-info-row"><span class="rf-info-label">${T('Refuel.ui.noVehicles')}</span></div>`;
+        } else {
+            const key = this._rfView;
+            const v   = (this._rfVehicles || []).find(x => x.key === key);
+            title  = T('Refuel.vehicleTitle', { vehicle: v ? v.name : T('Refuel.genericVehicle') });
+            gauges = gaugeHTML(T('Refuel.ui.level'), vehGet(key), vehMax(key));
         }
         const rows = this._rfOptions.map((opt, i) => {
             const sel  = i === this._rfIdx ? ' selected' : '';
-            const dis  = opt.enabled ? '' : ' rf-disabled';
-            const cost = opt.cost > 0 ? `<span class="rf-cost">€${goldToEuros(opt.cost)}</span>` : '';
-            return `<div class="item-slot rf-option-row${sel}${dis}" data-idx="${i}">
-                <span class="rf-label">${opt.label}</span>${cost}
+            const dis  = opt.enabled ? '' : ' army-dialog-btn--disabled';
+            const cost = opt.cost > 0 ? `<span class="army-dialog-btn__wake">€${goldToEuros(opt.cost)}</span>` : '';
+            const split = cost ? ' army-dialog-btn--split' : '';
+            return `<div class="army-dialog-btn army-dialog-btn--row rf-option-row${split}${sel}${dis}" data-idx="${i}">
+                <span class="army-dialog-btn__label">${opt.label}</span>${cost}
             </div>`;
         }).join('');
         return `
-            <div class="inspect-section-title">${T('Refuel.ui.fuelStation')}</div>
-            <div class="inspect-name rf-subtitle">${title}</div>
-            <div class="rf-option-list">${rows}</div>`;
-    };
-
-    Scene_Map.prototype._rfBuildRight = function () {
-        const VSR = window.VehicleSystemRefuel;
-        if (this._rfView === 'main') {
-            const list = this._rfVehicles || [];
-            let rows = '';
-            if (!list.length) {
-                rows = `<div class="inspect-spec-row rf-vehicle-row">
-                    <span class="inspect-spec-label">${T('Refuel.ui.noVehicles')}</span>
-                </div>`;
-            } else {
-                list.forEach(v => {
-                    const pct = v.max > 0 ? Math.round(v.fuel / v.max * 100) : 0;
-                    rows += `
-                        <div class="inspect-spec-row rf-vehicle-row">
-                            <span class="inspect-spec-label">${v.name}</span>
-                            <span class="inspect-spec-value">${Math.floor(v.fuel)}L / ${v.max}L</span>
-                        </div>
-                        <div class="rf-fuel-bar-wrap">
-                            <div class="rf-fuel-bar" style="width:${pct}%"></div>
-                        </div>`;
-                });
-            }
-            return `
-                <div class="inspect-header"><span class="inspect-name">${T('Refuel.ui.fuelOverview')}</span></div>
-                ${rows}
-                <div class="inspect-spec-row rf-vehicle-row">
-                    <span class="inspect-spec-label">${T('Refuel.ui.pricePerLitre')}</span>
-                    <span class="inspect-spec-value">€${goldToEuros(VSR.getFuelPrice())}</span>
+            <h3>${title}</h3>
+            <div class="rf-info">
+                ${gauges}
+                <div class="rf-info-row rf-info-row--gap">
+                    <span class="rf-info-label">${T('Refuel.ui.pricePerLitre')}</span>
+                    <span class="rf-info-value">€${goldToEuros(VSR.getFuelPrice())}</span>
                 </div>
-                <div class="inspect-spec-row">
-                    <span class="inspect-spec-label">${T('Refuel.ui.wallet')}</span>
-                    <span class="inspect-spec-value">€${goldToEuros($gameParty.gold())}</span>
-                </div>`;
-        }
-        const key    = this._rfView;
-        const v      = (this._rfVehicles || []).find(x => x.key === key);
-        const name   = v ? v.name : T('Refuel.genericVehicle');
-        const fuel   = vehGet(key);
-        const maxCap = vehMax(key);
-        const pct    = maxCap > 0 ? Math.round(fuel / maxCap * 100) : 0;
-        const opt    = this._rfOptions[this._rfIdx];
-        const selRow = (opt && opt.cost > 0)
-            ? `<div class="inspect-spec-row rf-selected-cost">
-                   <span class="inspect-spec-label">${T('Refuel.ui.cost')}</span>
-                   <span class="inspect-spec-value">€${goldToEuros(opt.cost)}</span>
-               </div>` : '';
-        return `
-            <div class="inspect-header"><span class="inspect-name">${T('Refuel.ui.vehicleFuel', { name: name })}</span></div>
-            <div class="inspect-spec-row">
-                <span class="inspect-spec-label">${T('Refuel.ui.level')}</span>
-                <span class="inspect-spec-value">${Math.floor(fuel)}L / ${maxCap}L</span>
+                <div class="rf-info-row">
+                    <span class="rf-info-label">${T('Refuel.ui.wallet')}</span>
+                    <span class="rf-info-value">€${goldToEuros($gameParty.gold())}</span>
+                </div>
             </div>
-            <div class="rf-fuel-bar-wrap">
-                <div class="rf-fuel-bar" style="width:${pct}%"></div>
-            </div>
-            <div class="inspect-spec-row rf-vehicle-row">
-                <span class="inspect-spec-label">${T('Refuel.ui.pricePerLitre')}</span>
-                <span class="inspect-spec-value">€${goldToEuros(VSR.getFuelPrice())}</span>
-            </div>
-            <div class="inspect-spec-row">
-                <span class="inspect-spec-label">${T('Refuel.ui.wallet')}</span>
-                <span class="inspect-spec-value">€${goldToEuros($gameParty.gold())}</span>
-            </div>
-            ${selRow}`;
+            <div class="army-dialog-options army-dialog-options--scroll">${rows}</div>`;
     };
 
     Scene_Map.prototype._rfUpdateHighlight = function () {
@@ -336,11 +305,6 @@
         this._refuelEl.querySelectorAll('.rf-option-row').forEach((el, i) => {
             el.classList.toggle('selected', i === this._rfIdx);
         });
-    };
-
-    Scene_Map.prototype._rfUpdateRight = function () {
-        const rp = this._refuelEl && this._refuelEl.querySelector('.right-page');
-        if (rp) rp.innerHTML = this._rfBuildRight();
     };
 
     Scene_Map.prototype._rfOnOk = function () {
@@ -402,7 +366,12 @@
     };
 
     Scene_Map.prototype._rfClose = function () {
-        if (this._refuelEl) { this._refuelEl.remove(); this._refuelEl = null; }
+        if (this._refuelEl) {
+            const sheet = this._refuelEl.querySelector('#refuel-container');
+            if (window.UIHelp && sheet) UIHelp.detach(sheet);
+            this._refuelEl.remove();
+            this._refuelEl = null;
+        }
         $gamePlayer.setMovementLock(false);
     };
 
@@ -445,7 +414,6 @@
                 this._rfIdx++;
                 SoundManager.playCursor();
                 this._rfUpdateHighlight();
-                this._rfUpdateRight();
                 const sel = this._refuelEl.querySelector('.rf-option-row.selected');
                 if (sel) sel.scrollIntoView({ block: 'nearest' });
             }
@@ -454,7 +422,6 @@
                 this._rfIdx--;
                 SoundManager.playCursor();
                 this._rfUpdateHighlight();
-                this._rfUpdateRight();
                 const sel = this._refuelEl.querySelector('.rf-option-row.selected');
                 if (sel) sel.scrollIntoView({ block: 'nearest' });
             }

@@ -2133,19 +2133,33 @@
 .wanted-chip { color: #8a5a00; }
 .wanted-chip--chased { color: #a01a12; }
 
-/* --- Skill atlas. The figure now hangs in a dark sky of its own inside the
-       spread (#skill-atlas-box), so the names and the banner written over that
-       canvas keep the shared sheet's white ink and its halo. Only the legend
-       strip is still drawn straight onto the parchment above the sky, and that
-       is the one line that has to be inked down here. */
-.sg-legend {
-    color: var(--text-muted-hover);
+/* --- Magical Systems wheel. A system's own colour is a bright ink chosen for
+       a dark sheet: on this paper the yellows, greens and cyans wash out, so
+       every system ink is darkened and the black halo goes. */
+.ms-node .ms-pct,
+.ms-node .ms-name,
+.sm-ms-fraction {
+    filter: brightness(0.55) saturate(1.3);
+    text-shadow: none;
 }
+.ms-node .ms-ring {
+    background: var(--bg-panel);
+    border-width: 4px;
+}
+.ms-rigor { color: var(--text-success-active); }
+.sm-ms-dot { box-shadow: 0 0 0 1px var(--text-success-active); }
 
 /* --- Party HUD alert chip and the tournament banner: both keep a dark plate
        under every preset, and both took --text-primary-hover / a near-black
        label, which is deep red here (1.37 and 1.46). */
 #party-hud .phud-alert { color: var(--text-highlight-active); }
+/* A state chip sits on the paper plate (--bg-secondary-hover), not on the dark
+   alert plate, so the cream above would vanish on it: deep ink instead. */
+#party-hud .phud-state { color: var(--text-primary-hover); }
+#party-hud .phud-state.phud-state-down { color: var(--text-blood-red); }
+/* Stat and class chips carry bright inks (and a white name) meant for a dark
+   plate, so they keep one here. */
+#party-hud .phud-stat { background: #2b1c11; }
 #mt-banner { color: var(--accent-amber-glow); }
 
 /* --- Hypernet window chrome. The XP titlebar keeps its blue gradient under
@@ -2402,6 +2416,82 @@ body #fbuild-panel {
 .stock-spread,
 .mp-type-spread {
     background-color: #e6d8b6;
+    /* The parchment's own fold (theme.css paints --gradient-26 under every
+       spread) used to sit at a fixed 58%, so a screen binding at 30%, 40% or
+       42% showed its crease in the middle of the right leaf. Restated here,
+       on the spread itself, so it resolves against that spread's --spine-x
+       and lands under the ::before binding. */
+    --gradient-26: linear-gradient(to right,
+        var(--bg-backdrop) 0%,
+        var(--text-highlight-active) calc(var(--spine-x, 58%) - 4%),
+        var(--accent-bronze-2) calc(var(--spine-x, 58%) - 1%),
+        var(--text-text-alt-2) var(--spine-x, 58%),
+        var(--accent-bronze-2) calc(var(--spine-x, 58%) + 1%),
+        var(--text-highlight-active) calc(var(--spine-x, 58%) + 4%),
+        var(--bg-backdrop) 100%);
+}
+
+/* Paper inks on the workshop and the bestiary. Headings, trade names, the
+   undiscovered formula, the piece name being written, the creature names and
+   the creature prose were coming out cream on the cream page. */
+#blacksmith-container .category-name,
+#thinker-container .category-name,
+#bestiary-list-viewport .monster-name {
+    color: #2b251d !important;
+}
+#blacksmith-container .forge-trade-row.active .category-name,
+#thinker-container .forge-trade-row.active .category-name {
+    color: #58180D !important;
+}
+#blacksmith-container .blueprint-name-locked,
+#thinker-container .blueprint-name-locked {
+    color: #6b5242 !important;
+}
+#blacksmith-container .forge-name-input {
+    color: #2b251d !important;
+}
+#blacksmith-container .forge-name-input::placeholder {
+    color: #8a7a66 !important;
+}
+#bestiary-portfolio-container .portfolio-description {
+    color: #000000 !important;
+}
+
+/* Character creation. Its spread sits inside .cc-content-pane, which theme.css
+   leaves transparent over a black layout, so the pages read as black with the
+   paper inks lost on them. The spread gets its paper back, the sidebar no
+   longer fades into black, and the two leaves are held at --spine-x so the
+   binding falls between them instead of across the left page. */
+#character-creation-container .cc-content-pane {
+    background: #17100a;
+}
+#character-creation-container .cc-content-pane .cc-pockets-spread {
+    background-color: #e6d8b6;
+    background-image: var(--gradient-34), var(--gradient-26);
+}
+#character-creation-container .cc-pockets-spread > .cc-page-left:not(.cc-page-full) {
+    flex: 0 0 var(--spine-x, 55%);
+    width: var(--spine-x, 55%);
+    min-width: 0;
+    border-right: none;
+}
+#character-creation-container .cc-pockets-spread > .cc-page-right {
+    flex: 0 0 calc(100% - var(--spine-x, 55%));
+    width: calc(100% - var(--spine-x, 55%));
+    min-width: 0;
+}
+#character-creation-container .cc-compact-sidebar {
+    background: linear-gradient(180deg, #e2dac6, #d3c3a0) !important;
+}
+#character-creation-container .cc-bio-section-title,
+#character-creation-container .cc-pick-trigger,
+#character-creation-container .cc-loadout-item-name,
+#character-creation-container .cc-dossier-card p,
+#character-creation-container .cc-badge-name {
+    color: #2b251d !important;
+}
+#character-creation-container .cc-pick-trigger:hover {
+    color: #58180D !important;
 }
 
 /* ==========================================================================
@@ -2589,3 +2679,199 @@ body #fbuild-panel {
     --book-fore-r: 10px;
 }
 
+
+/* The dialogue box. theme.css paints its lines in --text-pure-white, which
+   vanishes on this paper, so the plain text is inked black. */
+body #html-msg-text {
+    color: #000000;
+}
+
+/* The camp, sleep and wait menu. theme.css inks its rows in the pale amber of
+   the dark themes, which is lost on this paper, so they take the page ink and
+   the picked row the oxblood of the headings. */
+body #sleep-menu-overlay .army-dialog-btn,
+body #refuel-overlay .army-dialog-btn,
+body #sleep-menu-overlay .army-dialog-type-hint,
+body #refuel-overlay .army-dialog-type-hint,
+body #sleep-menu-overlay .army-dialog-type-arrow,
+body #refuel-overlay .army-dialog-type-arrow {
+    color: #2b251d;
+}
+body #sleep-menu-overlay .army-dialog-btn.selected,
+body #refuel-overlay .army-dialog-btn.selected,
+body #sleep-menu-overlay .army-dialog-btn:hover,
+body #refuel-overlay .army-dialog-btn:hover {
+    border-color: #58180D;
+    color: #58180D;
+}
+body #sleep-menu-overlay .army-dialog-btn--disabled,
+body #refuel-overlay .army-dialog-btn--disabled {
+    color: rgba(43, 37, 29, 0.38);
+}
+body #sleep-menu-overlay .army-dialog-type-arrow:hover,
+body #refuel-overlay .army-dialog-type-arrow:hover {
+    background: rgba(88, 24, 13, 0.12);
+}
+
+/* The HP / MP / AP figures beside each portrait. theme.css paints them in
+   --text-pure-white, a ghost on this paper, so they take the page ink; a low
+   pool still turns them warn or bad through .gauge-ink, which outranks this. */
+body .bio-vital-val {
+    color: #2b251d;
+}
+
+/* The diary's category bookmarks. theme.css sets them as near-black plates
+   inked in --text-primary-hover, which is this theme's oxblood and sinks into
+   the black. The idle marks become paper slips, the active one keeps its
+   gold. */
+body #diary-container .diary-mark:not(.active) {
+    background: linear-gradient(180deg, #e2dac6, #d3c3a0);
+    border-color: rgba(88, 24, 13, 0.35);
+    color: #58180D;
+}
+body #diary-container .diary-mark:not(.active):hover {
+    border-color: #58180D;
+}
+
+/* The vector gun's running card writes its name in --text-primary, which this
+   theme leaves unset, so it fell back to a pale gold lost on the paper. */
+body .vg-grid .item-slot.vg-on .item-slot-name {
+    color: #58180D;
+}
+
+/* The research rail. theme.css draws it with no plate over the black frame,
+   and its oxblood tabs and the specialization chip beside Back sank into the
+   black. It gets the same paper slip as the character creation sidebar. */
+body .tt-rail {
+    background: linear-gradient(180deg, #e2dac6, #d3c3a0);
+    border-right: 1px solid rgba(88, 24, 13, 0.35);
+}
+/* A locked discovery was faded to half on top of its sepia ink and read as a
+   ghost; it stays visibly behind the open ones without disappearing. */
+body .tt-node--locked {
+    opacity: 0.72;
+}
+/* The specialization chip floats over whatever is under it, the black frame
+   included, so in this theme it carries its own slip of paper. */
+body .spec-badge {
+    background: #e2dac6;
+}
+
+/* The pick sheet (Teach, Learn, every CCPick list) is a cream card in this
+   theme, so the cursor's row cannot take the near-white ink the dark sidebar
+   chips use: it reads in oxblood inside an oxblood hairline. */
+body .cc-pick .cc-pick-row.selected {
+    border-color: #58180D !important;
+    color: #58180D !important;
+}
+
+/* Biology. Its tab header and the sticky Body Parts title were painted with
+   --gradient-26, the whole spread's gradient spine included, so a false
+   binding ran down the middle of each and cut through the tabs under it. The
+   header sits outside the scroller and needs no plate; the title scrolls over
+   the list, so it takes the flat paper of the page. */
+body #biologic-container .bio-left-header {
+    background: transparent;
+}
+body #biologic-container .bio-parts-title {
+    background: #e9dec3;
+}
+
+/* The Empathize folder tabs. theme.css cuts each one from black so it stands
+   on the panel below, which in this theme left oxblood ink on black over the
+   black frame: the bar was not drawn at all. Each tab is a slip of paper here,
+   the open one the same cream as the panel it opens onto. */
+body .npc-tab-bar .npc-tab,
+body .npc-tab-bar .npc-tab:hover {
+    background: linear-gradient(180deg, #e2dac6, #d3c3a0);
+    color: #6b5242;
+}
+body .npc-tab-bar .npc-tab:hover:not(.active) {
+    color: #58180D;
+}
+body .npc-tab-bar .npc-tab.active,
+body .npc-tab-bar .npc-tab.selected {
+    background: #faf2e4;
+    color: #58180D;
+}
+body .npc-tab-bar .npc-tab-hint {
+    color: #e2dac6;
+}
+
+/* Character creation on parchment. theme.css draws the tab rail from
+   --bg-panel down to --bg-surface, which is near black here, so the idle tabs
+   were brown ink on a dark smear; the open one wore a different plate on each
+   side of the rail. Every tab is a paper slip now, like the Empathize ones,
+   the open one in the cream of the page it opens onto. */
+body .cc-folder-tab,
+body .cc-step-tab {
+    background: linear-gradient(180deg, #e2dac6, #d3c3a0) !important;
+    border: 1px solid #8b5a2b !important;
+    border-bottom: none !important;
+    color: #6b5242 !important;
+    box-shadow: none !important;
+}
+body .cc-folder-tab:hover,
+body .cc-step-tab:hover {
+    color: #58180D !important;
+    border-color: #58180D !important;
+}
+body .cc-folder-tab.active,
+body .cc-step-tab.active,
+body .cc-folder-tab.selected,
+body .cc-step-tab.selected {
+    background: #faf2e4 !important;
+    border-color: #58180D !important;
+    color: #58180D !important;
+    box-shadow: 0 -2px 8px rgba(88, 24, 13, 0.25) !important;
+}
+body .cc-folder-tab.cc-pet-tab {
+    border-color: #2e5e3b !important;
+}
+body .cc-folder-tab.cc-pet-tab.active {
+    border-color: #2e5e3b !important;
+    color: #2e5e3b !important;
+}
+
+/* theme.css inks every dropdown white for the dark presets, which left the
+   name and the hometown blank on the paper. */
+body .cc-bio-select,
+body .cc-bio-select option {
+    color: #2c2418;
+}
+body .cc-bio-select option {
+    background: #faf2e4;
+}
+body .cc-bio-select.cc-locked {
+    color: #6b5242;
+}
+
+/* Roadmap, proficiency and kit rows read as body text, not as a caption. */
+body .cc-compact-loadout-grid .cc-compact-loadout-item .cc-loadout-name {
+    color: #3b2a1d;
+}
+
+/* The hover card is a slip of the same paper, not a black box carrying
+   parchment ink. */
+body .cc-item-tooltip {
+    background: #faf2e4;
+    border: 1px solid #8b5a2b;
+    box-shadow: 0 6px 18px rgba(44, 36, 24, 0.45);
+    color: #2c2418;
+}
+body .cc-item-tooltip-title {
+    color: #58180D;
+}
+body .cc-item-tooltip-type {
+    border-color: #8b5a2b;
+    color: #6b5242;
+}
+body .cc-item-tooltip-desc {
+    color: #2c2418;
+}
+body .cc-item-tooltip-stats {
+    color: #2e5e3b;
+}
+body .cc-item-tooltip-price {
+    color: #58180D;
+}

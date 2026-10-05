@@ -2520,6 +2520,17 @@
         return;
       }
 
+      // A keeper who caught the party stealing does not trade with it from
+      // the panel either: the grudge is CrimeSystem's, and it shuts every
+      // door to that counter, not only the shop on its page.
+      if ($gameMap && window.CrimeSystem?.vendorRefusesHere?.($gameMap.mapId(), evId)) {
+        SoundManager.playBuzzer();
+        this._joinMessage = { type: 'reject',
+          text: window.T('Crime.vendorRefusesEntry', { keeper: npcName || window.T('Crime.theShopkeeper') }) };
+        this._render();
+        return;
+      }
+
       // Goodwill sets the starting price; Barter (specialization 30) is what the
       // party can actually talk it down to on top of that. The clamps are wider
       // than the opinion-only ones they replace so a trained trader has room to

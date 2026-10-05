@@ -251,6 +251,19 @@
     // last floor of each half shows no staircase onward.
     demoMaxFloor: 2,
     demoDeepestFloor: -1,
+    // Floors past demoMaxFloor the demo still opens: floor 10, the first lift
+    // hall, reached by the elevator only. Open from the start, like 1 and 2.
+    demoExtraFloors: [10],
+    // Floors that are the same in every world and every mode: the map group
+    // they hold and where their two staircases stand. Arriving from below
+    // lands on the downstairs, arriving from above on the upstairs.
+    fixedFloors: {
+      2: {
+        maps: [15, 140, 348, 406, 546, 543],
+        downstairs: { mapId: 546, x: 43, y: 34 },
+        upstairs: { mapId: 406, x: 20, y: 57 },
+      },
+    },
     // MapInfos folder holding every dungeon floor. The whole tower, demo and
     // full run alike, draws from the maps sitting in it.
     dungeonFolderId: 166,
@@ -399,6 +412,30 @@ Game_System.prototype.generateEventPositions = function(mapId, floor) {
     return taken;
   }
 
+  // Out of bounds squares a chest must never stand on or beside: terrain tag 7
+  // and region 10 paint the void around a floor, which can still read walkable.
+  const CHEST_FORBIDDEN_TERRAIN = 7;
+  const CHEST_FORBIDDEN_REGION = 10;
+
+  // The terrain tag of a square of raw map data, read the way Game_Map.terrainTag does.
+  function mapSquareTerrainTag(mapData, x, y) {
+    const tileset = typeof $dataTilesets !== "undefined" && $dataTilesets ? $dataTilesets[mapData.tilesetId] : null;
+    const flags = tileset && tileset.flags;
+    if (!flags || !mapData.data) return 0;
+    const w = mapData.width, h = mapData.height;
+    for (let z = 3; z >= 0; z--) {
+      const tileId = mapData.data[(z * h + y) * w + x] || 0;
+      const tag = (flags[tileId] || 0) >> 12;
+      if (tag > 0) return tag;
+    }
+    return 0;
+  }
+
+  function chestSquareForbidden(mapData, x, y) {
+    if ($gameSystem.getRegionIdFromMapData(mapData, x, y) === CHEST_FORBIDDEN_REGION) return true;
+    return mapSquareTerrainTag(mapData, x, y) === CHEST_FORBIDDEN_TERRAIN;
+  }
+
   function chestSquareClear(mapData, x, y, taken) {
     const w = mapData.width, h = mapData.height;
     if (x <= 2 || y <= 2 || x >= w - 2 || y >= h - 2) return false;
@@ -406,6 +443,7 @@ Game_System.prototype.generateEventPositions = function(mapId, floor) {
       for (let dx = -1; dx <= 1; dx++) {
         if (taken && taken.has((x + dx) + "," + (y + dy))) return false;
         if (!mapSquareWalkable(mapData, x + dx, y + dy)) return false;
+        if (chestSquareForbidden(mapData, x + dx, y + dy)) return false;
       }
     }
     return true;
@@ -547,6 +585,10 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
       params.townMapId,
       101,
     ]);
+    // A fixed floor's maps are its own, never dealt to another floor.
+    for (const key of Object.keys(params.fixedFloors)) {
+      params.fixedFloors[key].maps.forEach((id) => reserved.add(id));
+    }
 
     const pool = [];
     for (let id = 0; id < infos.length; id++) {
@@ -570,7 +612,9 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
     if (!params.demoMode || !this._dungeonGenerated) return false;
     if (!this._dungeonFloors[params.demoMaxFloor]) return true;
     for (let floor = params.demoMaxFloor + 1; floor <= 100; floor++) {
-      if (this._dungeonFloors[floor]) return true;
+      const extra = params.demoExtraFloors.indexOf(floor) >= 0;
+      if (extra && params.elevatorMaps.length && !this._dungeonFloors[floor]) return true;
+      if (!extra && this._dungeonFloors[floor]) return true;
     }
     return false;
   };
@@ -638,7 +682,9 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
         const lastFloor = params.demoMaxFloor;
         const demoPool = this.demoFloorPool();
         for (let floor = 2; floor <= lastFloor; floor++) {
-            if (demoPool.length > 0) {
+            if (params.fixedFloors[floor]) {
+                this._dungeonFloors[floor] = [...params.fixedFloors[floor].maps];
+            } else if (demoPool.length > 0) {
                 const index = Math.floor(this.dungeonRandom() * demoPool.length);
                 this._dungeonFloors[floor] = demoPool[index];
                 if (demoPool.length > 1) demoPool.splice(index, 1);
@@ -648,6 +694,14 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
         // Floors past the demo limit stay empty and are unreachable.
         for (let floor = lastFloor + 1; floor <= 100; floor++) {
             this._dungeonFloors[floor] = 0;
+        }
+        // Except the extra demo floors, the lift halls, keeping the hall map
+        // the full run gives them.
+        for (const floor of params.demoExtraFloors) {
+            const hall = floor / 10 - 1;
+            if (params.elevatorMaps.length && Number.isInteger(hall)) {
+                this._dungeonFloors[floor] = params.elevatorMaps[hall % params.elevatorMaps.length];
+            }
         }
 
         this.initializeStairLocations();
@@ -693,6 +747,10 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
         continue;
       }
       if (elevatorFloors.indexOf(floor) >= 0) continue;
+      if (params.fixedFloors[floor]) {
+        this._dungeonFloors[floor] = [...params.fixedFloors[floor].maps];
+        continue;
+      }
       const entry = dealFloor();
       if (entry === null) continue;
       this._dungeonFloors[floor] = entry;
@@ -946,6 +1004,8 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
       x: params.playerSpawnX,
       y: params.playerSpawnY,
     };
+    const fixed = params.fixedFloors[floor];
+    if (fixed) return { ...(isUpstairs ? fixed.upstairs : fixed.downstairs) };
     if (floor < 0 || floor > 100 || !this._stairLocations[floor])
       return defaultLoc;
 
@@ -1119,7 +1179,7 @@ Game_System.prototype.isPassableTileFromTilesets = function (mapData, x, y) {
   PluginManager.registerCommand(pluginName, "setFloor", (args) => {
     const floor = parseInt(args.floor || 1);
     const maxFloor = params.demoMode ? params.demoMaxFloor : 100;
-    if (floor > maxFloor) {
+    if (floor > 100 || !isDemoOpenFloor(floor)) {
         console.warn(`Demo mode: Cannot go beyond floor ${maxFloor}`);
         return;
     }
@@ -1155,7 +1215,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   if (isLowerFloor(floor)) return;
 
   const maxFloor = params.demoMode ? params.demoMaxFloor : 100;
-  if (floor >= 0 && floor <= maxFloor) {
+  if (floor >= 0 && floor <= 100 && isDemoOpenFloor(floor)) {
       moveToFloor(floor, "elevator");
   } else {
       console.error(
@@ -1290,6 +1350,15 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   // demoDeepestFloor cannot be reached by stairs, lift or command.
   function isDemoLockedLowerFloor(floor) {
     return !!params.demoMode && isLowerFloor(floor) && floor < params.demoDeepestFloor;
+  }
+
+  // Above ground the demo opens floors 1 to demoMaxFloor plus the extra lift
+  // halls, all of them unlocked from the start. Outside the demo: always true.
+  function isDemoOpenFloor(floor) {
+    if (!params.demoMode) return true;
+    if (floor === 0) return true;
+    return (floor >= 1 && floor <= params.demoMaxFloor) ||
+      params.demoExtraFloors.indexOf(floor) >= 0;
   }
 
   // The two lower floors that are authored maps: no generation, no enemies.
@@ -3312,6 +3381,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     isLowerFloor,
     isGeneratedLowerFloor,
     isLowerFloorUnlocked,
+    isDemoOpenFloor,
     lowerFloorLabel,
     floorBiome: towerFloorBiome,
     depthReached: towerDepthReached,

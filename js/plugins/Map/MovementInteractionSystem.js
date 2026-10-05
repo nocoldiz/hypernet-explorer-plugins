@@ -570,8 +570,15 @@
       return Config.kickableNames.some(k => name.includes(k.toLowerCase()));
     },
 
+    // A seat is a region 102 tile or a chair, bench or couch placed from the
+    // build menu (FurnitureSystem owns which pieces are seats).
     isSeatTile(x, y) {
-      return $gameMap.regionId(x, y) === 102;
+      return $gameMap.regionId(x, y) === 102 || this.isPlacedSeat(x, y);
+    },
+
+    isPlacedSeat(x, y) {
+      const fs = window.FurnitureSystem;
+      return !!(fs && fs.isSeatAt && fs.isSeatAt(x, y));
     },
 
     getSeatTiles() {
@@ -581,6 +588,14 @@
       for (let x = 0; x < w; x++) {
         for (let y = 0; y < h; y++) {
           if ($gameMap.regionId(x, y) === 102) seats.push({ x, y });
+        }
+      }
+      const fs = window.FurnitureSystem;
+      if (fs && fs.seatTiles) {
+        for (const s of fs.seatTiles()) {
+          if ($gameMap.isValid(s.x, s.y) && !seats.some(o => o.x === s.x && o.y === s.y)) {
+            seats.push(s);
+          }
         }
       }
       return seats;
@@ -1238,6 +1253,29 @@
 
   // --- Water Reflection System ---
   const REFLECTION_SCREEN_MARGIN = 3;
+  const REFLECTION_OPACITY = 64;
+
+  // How many region 99 tiles run straight down from (x, y + 1), at most
+  // maxRows. The reflection hangs in that run and nowhere past it.
+  function _misReflectionWaterRows(map, x, y, maxRows) {
+    let rows = 0;
+    const h = map.height();
+    while (rows < maxRows && y + 1 + rows < h && map.regionId(x, y + 1 + rows) === 99) rows++;
+    return rows;
+  }
+
+  // Crops a flipped reflection (anchor at its feet, scale.y -1) so it stops at
+  // the screen line waterBottom: the frame keeps only its bottom rows, the
+  // ones mirrored nearest the shore. The colour mask alone cannot be trusted
+  // with this: a GPU that refuses it leaves the reflection bare on the grass.
+  function _misClipReflection(sprite, waterBottom) {
+    const frame = sprite._frame;
+    if (!frame || frame.width <= 0 || frame.height <= 0) return;
+    const keep = Math.max(0, Math.min(frame.height, Math.floor(waterBottom - sprite.y)));
+    if (keep === frame.height) return;
+    sprite.setFrame(frame.x, frame.y + frame.height - keep, frame.width, keep);
+  }
+
   const ReflectionSystem = {
     // Whether the current map contains any reflective water (region 99).
     // Computed once per map (invalidated from Game_Map.setup) so maps without
@@ -1325,7 +1363,15 @@
       if (!character._characterName) return null;
       const reflection = new Sprite_Character(character);
       reflection.scale.y = -1;
-      reflection.opacity = 64; // Fainter reflection
+      reflection.opacity = REFLECTION_OPACITY;
+      // The engine's own update would put it back on its owner at full
+      // opacity and split it at a bush line; its place is set from outside.
+      reflection.updatePosition = function() {};
+      reflection.updateOther = function() {
+        Sprite_Character.prototype.updateOther.call(this);
+        this.opacity = Math.min(REFLECTION_OPACITY, this.opacity);
+        this._bushDepth = 0;
+      };
 
       // Tint reflection based on time of day
       let timeBlendColor;
@@ -1471,10 +1517,16 @@
                   reflection._lastSrcY !== characterSprite.y ||
                   reflection._lastPattern !== pattern ||
                   reflection._lastDirection !== direction) {
-                reflection.x = characterSprite.x;
-                reflection.y = characterSprite.y + $gameMap.tileHeight() * 2;
                 reflection._character = character;
                 reflection.update();
+                reflection.x = characterSprite.x;
+                reflection.y = characterSprite.y;
+                // Cut off at the first tile below that is not water.
+                const th = $gameMap.tileHeight();
+                const rows = _misReflectionWaterRows($gameMap, character.x, character.y,
+                  Math.ceil(reflection.patternHeight() / th) + 1);
+                _misClipReflection(reflection,
+                  Math.round($gameMap.adjustY(character._realY + 1 + rows) * th));
                 reflection._lastSrcX = characterSprite.x;
                 reflection._lastSrcY = characterSprite.y;
                 reflection._lastPattern = pattern;
@@ -1926,7 +1978,7 @@
       character._misZTileY = character.y;
       character._misZTileMap = mapId;
       const region = $gameMap.regionId(character.x, character.y);
-      character._misZIsSeat = region === 102;
+      character._misZIsSeat = region === 102 || Utils.isPlacedSeat(character.x, character.y);
       character._misZIsRoofOrSeat =
         Utils.isRoofTile(character.x, character.y) || character._misZIsSeat;
       // The bridge deck (region 12, Utils.isBridgeTile) rides along: both
@@ -2604,6 +2656,8 @@
     // point were unreachable: every confirm snapped back to the top row and did
     // nothing at all.
     if ($gameTemp._sleepMenuOpen) return;
+    // This OK press already used a placed piece of furniture (FurnitureSystem).
+    if ($gameTemp._furnitureUsedFrame === Graphics.frameCount) return;
     if ($gamePlayer._isSitting) {
       // Suppress sit input (including the stop-sitting prompt) while a message
       // or event is running, e.g. when talking to an event while seated.

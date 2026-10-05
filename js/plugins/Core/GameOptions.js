@@ -428,8 +428,8 @@ const GameOptions = {
             categories: ['video'],
             groups: [
                 { key: 'display', symbols: ['fullscreen', 'TDDP_pixelPerfectMode', 'TDDP_allowStretching', 'showFps'] },
-                { key: 'interface', symbols: ['uiScale', 'fontScale', 'activeTheme', 'worldMinimap', 'titleBackground'] },
-                { key: 'battleView', symbols: ['enemyBattlers', 'lowModelDetail', 'galaxyQuality'] }
+                { key: 'interface', symbols: ['uiScale', 'fontScale', 'activeTheme', 'worldMinimap', 'titleBackground', 'hyperverseInvertX'] },
+                { key: 'battleView', symbols: ['enemyBattlers', 'lowModelDetail', 'galaxyQuality', 'starMapInvertY'] }
             ]
         },
         {
@@ -856,6 +856,11 @@ window.GameOptions = GameOptions;
         // carrying any of them reads as the cards.
         this.titleBackground = config.titleBackground !== undefined ? config.titleBackground : 7;
         if (this.titleBackground >= 3 && this.titleBackground <= 6) this.titleBackground = 1;
+        // Camera inversions: the Hyperverse title pan reads X the other way
+        // round (UI/Titlescreen.js), the star map orbit reads Y the other way
+        // round (GalaxySim/GalaxySim_Camera3D.js). Mouse and right stick alike.
+        this.hyperverseInvertX = !!config.hyperverseInvertX;
+        this.starMapInvertY = !!config.starMapInvertY;
         // CPU party members: when on, every party member except the leader
         // (first member) is auto-controlled in battle. Disabled by default.
         this.cpuPartyMembers = config.cpuPartyMembers !== undefined ? config.cpuPartyMembers : false;
@@ -946,6 +951,8 @@ window.GameOptions = GameOptions;
         config.galaxyQuality = this.galaxyQuality;
         config.runInBackground = this.runInBackground;
         config.titleBackground = this.titleBackground;
+        config.hyperverseInvertX = this.hyperverseInvertX;
+        config.starMapInvertY = this.starMapInvertY;
         config.cpuPartyMembers = this.cpuPartyMembers;
         config.mapBattleMode = this.mapBattleMode;
         config.mapStreaming = this.mapStreaming;
@@ -2104,6 +2111,16 @@ window.GameOptions = GameOptions;
     GameOptions.registerOption('lowModelDetail', T('GameOptions.label.lowModelDetail'),
         () => !!ConfigManager.lowModelDetail,
         (value) => { ConfigManager.lowModelDetail = !!value; },
+        'video', 'boolean');
+
+    GameOptions.registerOption('hyperverseInvertX', T('GameOptions.label.hyperverseInvertX'),
+        () => !!ConfigManager.hyperverseInvertX,
+        (value) => { ConfigManager.hyperverseInvertX = !!value; },
+        'video', 'boolean');
+
+    GameOptions.registerOption('starMapInvertY', T('GameOptions.label.starMapInvertY'),
+        () => !!ConfigManager.starMapInvertY,
+        (value) => { ConfigManager.starMapInvertY = !!value; },
         'video', 'boolean');
 
     // Register Show FPS

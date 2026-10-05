@@ -774,7 +774,7 @@
 
       const leftPageHTML = `
         <div class="page-header-bar">
-          <div class="back-button focusable" onclick="SceneManager._scene.exitMaintenance()">${T('VehicleRepair.close')}</div>
+          <div class="back-button focusable" onclick="SceneManager._scene.exitMaintenance()">${T('VehicleRepair.back')}</div>
           <h2 class="title">${vehicleName}</h2>
         </div>
 

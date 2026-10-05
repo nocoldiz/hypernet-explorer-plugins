@@ -111,6 +111,9 @@
     // One dispatch carrying several different lots costs the seller less.
     const LOT_BONUS_PER_LINE = 0.01;
     const MAX_LOT_BONUS = 0.10;
+    // A spell taught online is a private tutor on call, not a counter lesson:
+    // it costs this many times the bazaar's tuition, and is learned at once.
+    const ONLINE_TUITION_MARKUP = 2;
 
     // The catalogue-wide search results page, which is not one of the sidebar
     // categories: it draws from every database at once.
@@ -301,6 +304,34 @@
         return $gameParty.allMembers().filter(a => canLearnSkill(a, skill));
     }
 
+    // The spell lines of an order whose booked trainee cannot take them (a
+    // stat fell, the member left, or nobody was ever picked). Checked before a
+    // cent moves: a lesson is only sold to a trainee who clears its floor.
+    function untrainableLines(lines) {
+        return (lines || []).filter(line => {
+            if (!isSkillEntry(line.entry)) return false;
+            const actor = line.learner && $gameActors ? $gameActors.actor(line.learner) : null;
+            return !canLearnSkill(actor, line.entry);
+        });
+    }
+
+    // The next member after `currentId` who could take this spell, wrapping.
+    function nextLearner(skill, currentId) {
+        const list = learnerCandidates(skill);
+        if (!list.length) return 0;
+        const at = list.findIndex(a => a.actorId() === currentId);
+        return list[(at + 1) % list.length].actorId();
+    }
+
+    function warnUntrainable(lines) {
+        SoundManager.playBuzzer();
+        if (window.ParchmentToast) {
+            window.ParchmentToast.show(T('Stockbusters.text.noTrainee', {
+                items: lines.map(line => itemNameOf(line.entry)).join(', ')
+            }), { severity: "warning", icon: lines[0].entry.iconIndex });
+        }
+    }
+
     // The member a skill is billed to: whoever the page has picked, falling
     // back to the first who could take it, then to the leader. Never null while
     // a party exists, so no purchase path has to invent a reader of its own.
@@ -341,7 +372,7 @@
             if (!entry) return 0;
             if (isSkillEntry(entry)) {
                 const base = this.tuition(entry);
-                return limited ? base : Math.floor(base * 0.4);
+                return limited ? base : Math.floor(base * ONLINE_TUITION_MARKUP);
             }
             if (limited) return entry.price || 0;
             const haggle = window.SpecializationXP
@@ -1261,8 +1292,10 @@
     //=========================================================================
     // Basket
     //=========================================================================
-    // Lines of { kind, id, qty }. It lives on the scene rather than in the
-    // savegame: a basket left unpaid is not a promise to anybody.
+    // Lines of { kind, id, qty }. It lives in the session rather than in the
+    // savegame: a basket left unpaid is not a promise to anybody. The site's
+    // own basket is one shared instance (SharedBasket below), so the Object
+    // Index can fill it while the site is closed.
 
     function Basket() {
         this.lines = [];
@@ -1321,6 +1354,10 @@
     Basket.prototype.total = function (limited) {
         return Pricing.basket(this.resolved(), limited);
     };
+
+    // The courier site's basket. A local bazaar keeps a basket of its own per
+    // visit: its shelf is not the warehouse's.
+    const SharedBasket = new Basket();
 
     //=========================================================================
     // Site chrome
@@ -1540,7 +1577,7 @@
         this._selected = null;        // the entry the listing page is showing
         this._qty = 1;
         this._learnerId = 0;          // who a spell on the page is billed to
-        this._basket = new Basket();
+        this._basket = SharedBasket;
         this._confirm = null;         // pending checkout confirmation
         this._nav = 0;
         this._skeletonKey = "";
@@ -1553,6 +1590,7 @@
         this._isLimited = !!params.isLimited;
         this._seedString = params.seedString || "";
         this._maxSkills = params.maxSkills || 0;
+        if (this._isLimited) this._basket = new Basket();
     };
 
     Scene_SearchableShop.prototype.create = function () {
@@ -1720,6 +1758,9 @@
                 break;
             case 'cartqty':
                 this.bumpCartLine(arg, element);
+                break;
+            case 'cartlearner':
+                this.cycleCartLearner(arg);
                 break;
             case 'cartdel':
                 SoundManager.playCancel();
@@ -1918,6 +1959,80 @@
         this.render();
     };
 
+    // Pays for and hands over (or dispatches) a set of resolved lines. The
+    // site's checkout and the Object Index's "Order now" both end here, so an
+    // order is the same order however it was placed. The caller has already
+    // checked the party can afford it.
+    function settleOrder(lines, limited) {
+        const totals = Pricing.basket(lines, limited);
+        $gameParty.loseGold(totals.total);
+        // Buying teaches Haggling, scaled by what the deal was worth.
+        if (window.SpecializationXP) {
+            window.SpecializationXP.awardForValue('Haggling', totals.total);
+        }
+
+        // A line's share of what was actually paid, so an order records what it
+        // cost rather than what it was listed at.
+        const share = totals.gross > 0 ? totals.total / totals.gross : 0;
+        const priced = lines.map(line => ({
+            entry: line.entry,
+            qty: line.qty,
+            learner: line.learner,
+            price: Math.floor(Pricing.unit(line.entry, limited) * line.qty * share)
+        }));
+
+        const names = priced.map(line => line.qty > 1
+            ? T('Stockbusters.text.unitsOf', { item: itemNameOf(line.entry), count: line.qty })
+            : itemNameOf(line.entry)).join(', ');
+
+        if (limited) {
+            // A bazaar hands the goods over across the counter, no courier.
+            for (const line of priced) {
+                if (isSkillEntry(line.entry)) {
+                    const actor = $gameActors.actor(line.learner);
+                    if (canLearnSkill(actor, line.entry)) actor.learnSkill(line.entry.id);
+                } else {
+                    $gameParty.gainItem(line.entry, line.qty);
+                }
+            }
+            SoundManager.playShop();
+            if (window.ParchmentToast) {
+                window.ParchmentToast.show(T('Stockbusters.text.collected', { items: names }), { severity: "info" });
+            }
+        } else {
+            // A lesson needs no courier: the tutor is on the line the moment
+            // it is paid for. Only the wares go into the dispatch.
+            const lessons = priced.filter(line => isSkillEntry(line.entry));
+            const wares = priced.filter(line => !isSkillEntry(line.entry));
+            for (const line of lessons) {
+                const actor = $gameActors.actor(line.learner);
+                if (canLearnSkill(actor, line.entry)) actor.learnSkill(line.entry.id);
+            }
+            SoundManager.playShop();
+            if (lessons.length && window.ParchmentToast) {
+                window.ParchmentToast.show(T('Stockbusters.text.learnedNow', {
+                    items: lessons.map(line => itemNameOf(line.entry)).join(', ')
+                }), { severity: "good", icon: lessons[0].entry.iconIndex });
+            }
+            if (wares.length) {
+                const wareUnits = wares.reduce((sum, line) => sum + line.qty, 0);
+                const warePaid = wares.reduce((sum, line) => sum + line.price, 0);
+                const minutes = DeliveryManager.calculateDeliveryTime(warePaid, wareUnits);
+                DeliveryManager.addDispatch(wares, minutes);
+                if (window.ParchmentToast) {
+                    window.ParchmentToast.show(T('Stockbusters.text.dispatchPlaced', {
+                        count: wareUnits, time: formatDelay(minutes)
+                    }), { severity: "info", icon: wares[0].entry.iconIndex });
+                }
+            }
+        }
+
+        // An order placed, in the party's own diary (Diary.js). A bazaar hands
+        // the goods over at once; everything else is a courier on the way.
+        if (window.Diary) window.Diary.onOrderPlaced(names, totals.total, !limited);
+        return totals;
+    }
+
     Scene_SearchableShop.prototype.askCheckout = function () {
         const lines = this._basket.resolved();
         if (!lines.length) { SoundManager.playBuzzer(); return; }
@@ -1938,54 +2053,15 @@
             return;
         }
 
-        $gameParty.loseGold(totals.total);
-        // Buying teaches Haggling, scaled by what the deal was worth.
-        if (window.SpecializationXP) {
-            window.SpecializationXP.awardForValue('Haggling', totals.total);
+        const blocked = untrainableLines(lines);
+        if (blocked.length) {
+            warnUntrainable(blocked);
+            this._confirm = null;
+            this.render();
+            return;
         }
 
-        // A line's share of what was actually paid, so an order records what it
-        // cost rather than what it was listed at.
-        const share = totals.gross > 0 ? totals.total / totals.gross : 0;
-        const priced = lines.map(line => ({
-            entry: line.entry,
-            qty: line.qty,
-            learner: line.learner,
-            price: Math.floor(Pricing.unit(line.entry, this._isLimited) * line.qty * share)
-        }));
-
-        const names = priced.map(line => line.qty > 1
-            ? T('Stockbusters.text.unitsOf', { item: itemNameOf(line.entry), count: line.qty })
-            : itemNameOf(line.entry)).join(', ');
-
-        if (this._isLimited) {
-            // A bazaar hands the goods over across the counter, no courier.
-            for (const line of priced) {
-                if (isSkillEntry(line.entry)) {
-                    const actor = learnerFor(line.entry, line.learner);
-                    if (actor) actor.learnSkill(line.entry.id);
-                } else {
-                    $gameParty.gainItem(line.entry, line.qty);
-                }
-            }
-            SoundManager.playShop();
-            if (window.ParchmentToast) {
-                window.ParchmentToast.show(T('Stockbusters.text.collected', { items: names }), { severity: "info" });
-            }
-        } else {
-            const minutes = DeliveryManager.calculateDeliveryTime(totals.total, totals.units);
-            DeliveryManager.addDispatch(priced, minutes);
-            SoundManager.playShop();
-            if (window.ParchmentToast) {
-                window.ParchmentToast.show(T('Stockbusters.text.dispatchPlaced', {
-                    count: totals.units, time: formatDelay(minutes)
-                }), { severity: "info", icon: priced[0] ? priced[0].entry.iconIndex : 0 });
-            }
-        }
-
-        // An order placed, in the party's own diary (Diary.js). A bazaar hands
-        // the goods over at once; everything else is a courier on the way.
-        if (window.Diary) window.Diary.onOrderPlaced(names, totals.total, !this._isLimited);
+        settleOrder(lines, this._isLimited);
 
         if (pending.fromBasket) this._basket.clear();
         this._confirm = null;
@@ -2439,7 +2515,9 @@
             ? T('Stockbusters.text.savedAmount', { amount: formatPrice(saved), percent: Math.round(Pricing.bulkRate(qty) * 100) })
             : '-');
         if (!limited) {
-            set('sb-eta', formatDelay(DeliveryManager.calculateDeliveryTime(total, qty)));
+            set('sb-eta', isSkillEntry(entry)
+                ? T('Stockbusters.text.etaInstant')
+                : formatDelay(DeliveryManager.calculateDeliveryTime(total, qty)));
         }
 
         const buy = document.getElementById('sb-buy');
@@ -2493,7 +2571,8 @@
             const key = lotKey(entry);
             html += `<tr><td>${iconHTML(entry.iconIndex, 22)}</td>` +
                 `<td><span class="sb-title" data-act="lot:${key}" data-nav>${escapeHtml(itemNameOf(entry))}</span>` +
-                (rate ? `<span class="sb-badge">-${Math.round(rate * 100)}%</span>` : '') + `</td>` +
+                (rate ? `<span class="sb-badge">-${Math.round(rate * 100)}%</span>` : '') +
+                (isSkillEntry(entry) ? this.cartTraineeHTML(line) : '') + `</td>` +
                 `<td><button class="sb-btn" data-act="cartqty:${line.kind},${line.id},-1" data-nav>-</button> ` +
                 `<input type="number" min="1" step="1" style="width:70px;" value="${line.qty}" data-role="cartqty" data-kind="${line.kind}" data-id="${line.id}"> ` +
                 `<button class="sb-btn" data-act="cartqty:${line.kind},${line.id},1" data-nav>+</button></td>` +
@@ -2511,6 +2590,34 @@
             `<button class="sb-btn" data-act="page:home" data-nav>${T('Stockbusters.text.continueShopping')}</button>` +
             `</div></div></div>`;
         return html;
+    };
+
+    // Who a spell line in the basket is booked for, with a button that walks
+    // the members able to take it. A line nobody can take any more says so.
+    Scene_SearchableShop.prototype.cartTraineeHTML = function (line) {
+        const actor = line.learner && $gameActors ? $gameActors.actor(line.learner) : null;
+        const ok = canLearnSkill(actor, line.entry);
+        const others = learnerCandidates(line.entry).length;
+        let html = `<div style="font-size:11px;margin-top:2px;">${T('Stockbusters.text.trainee')}: `;
+        html += ok
+            ? `<b>${escapeHtml(actor.name())}</b>`
+            : `<b style="color:var(--xp-bad);">${T('Stockbusters.text.traineeNone')}</b>`;
+        if (others > (ok ? 1 : 0)) {
+            html += ` <span class="sb-link" data-act="cartlearner:${line.kind},${line.id}" data-nav>${T('Stockbusters.text.traineeChange')}</span>`;
+        }
+        return html + `</div>`;
+    };
+
+    Scene_SearchableShop.prototype.cycleCartLearner = function (spec) {
+        const [kind, id] = spec.split(',');
+        const entry = entryOf(kind, parseInt(id, 10));
+        const line = entry ? this._basket.find(entry) : null;
+        if (!line) return;
+        const next = nextLearner(entry, line.learner || 0);
+        if (!next) { SoundManager.playBuzzer(); return; }
+        line.learner = next;
+        SoundManager.playCursor();
+        this.render();
     };
 
     Scene_SearchableShop.prototype.cartTotalsHTML = function () {
@@ -2643,6 +2750,9 @@
             if (model) {
                 const preview = window.Weapon3DPreview.mount(canvas, model);
                 if (preview) this._weaponPreviews.push(preview);
+                if (window.ItemInspect && window.ItemInspect.bindModelFullscreen) {
+                    window.ItemInspect.bindModelFullscreen(canvas, entry);
+                }
                 return;
             }
             if (isSkillEntry(entry)) {
@@ -2890,6 +3000,74 @@
         Basket: Basket,
         Listing: Listing,
         BULK_TIERS: BULK_TIERS,
-        Scene: Scene_SearchableShop
+        Scene: Scene_SearchableShop,
+        cart: SharedBasket,
+        settleOrder: settleOrder,
+
+        // Whether the site lists this entry at all, so a caller outside it
+        // (the Object Index) offers to buy only what could be bought.
+        sells: function (entry) {
+            return !!entry && Catalogue.sellable(entry);
+        },
+
+        // The listed price of one unit, in gold.
+        priceOf: function (entry) {
+            return Pricing.unit(entry, false);
+        },
+
+        // Put a lot in the site's basket without the site being open.
+        addToCart: function (entry, qty) {
+            if (!this.sells(entry)) return null;
+            const first = isSkillEntry(entry) ? learnerCandidates(entry)[0] : null;
+            const line = SharedBasket.add(entry, qty || 1, first ? first.actorId() : 0);
+            if (window.ParchmentToast) {
+                window.ParchmentToast.show(T('Stockbusters.text.addedToCart', {
+                    item: itemNameOf(entry), count: Pricing.clampQty(entry, qty || 1)
+                }), { severity: "info", icon: entry.iconIndex });
+            }
+            refreshOpenSite();
+            return line;
+        },
+
+        // Pay for one lot on the spot, as the site's "Buy it now" does. False
+        // when it is not sold or the party cannot cover it.
+        orderNow: function (entry, qty) {
+            if (!this.sells(entry) || !$gameParty) return false;
+            const n = Pricing.clampQty(entry, qty || 1);
+            const first = isSkillEntry(entry) ? learnerCandidates(entry)[0] : null;
+            const lines = [{ kind: kindOf(entry), id: entry.id, qty: n, entry: entry,
+                learner: first ? first.actorId() : 0 }];
+            if (untrainableLines(lines).length) {
+                warnUntrainable(lines);
+                return false;
+            }
+            if (Pricing.basket(lines, false).total > $gameParty.gold()) {
+                SoundManager.playBuzzer();
+                if (window.ParchmentToast) {
+                    window.ParchmentToast.show(T('Stockbusters.text.insufficientFunds'), { severity: "warning" });
+                }
+                return false;
+            }
+            settleOrder(lines, false);
+            refreshOpenSite();
+            return true;
+        },
+
+        // Open the site (or bring it forward) on this lot's listing page.
+        view: function (entry) {
+            const app = window.HypercapitalisEmporiumApp;
+            if (!app) return;
+            app.launch();
+            if (app.appInstance && entry && !app.appInstance._isLimited) {
+                app.appInstance.openLot(lotKey(entry));
+            }
+        }
     };
+
+    // The site redraws its tabs, basket pill and purse after an order or a
+    // basket line arrives from outside.
+    function refreshOpenSite() {
+        const app = window.HypercapitalisEmporiumApp;
+        if (app && app.appInstance && !app.appInstance._isLimited) app.appInstance.render();
+    }
 })();

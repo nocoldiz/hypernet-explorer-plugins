@@ -2475,6 +2475,34 @@
         };
     }
 
+    // The last door: the shop scene itself. A page can open a counter from a
+    // script line (openRandomThemedShop, the openRandomDaily wrappers) or a
+    // command name the set above has never heard of, and none of those pass
+    // through 302 or 357. Whatever opened it, a shop pushed while a grudged
+    // keeper's page is running does not open. The goods prepareNextScene would
+    // have handed it are dropped with it.
+    if (typeof SceneManager !== 'undefined' && typeof SceneManager.push === 'function') {
+        const _SceneManager_push = SceneManager.push;
+        SceneManager.push = function (sceneClass) {
+            this._crimeShopRefused = false;
+            if (typeof Scene_Shop !== 'undefined' && sceneClass === Scene_Shop &&
+                typeof $gameMap !== 'undefined' && $gameMap && $gameMap._interpreter &&
+                $gameMap._interpreter.isRunning() && refuseIfGrudged($gameMap._interpreter)) {
+                this._crimeShopRefused = true;
+                return;
+            }
+            return _SceneManager_push.call(this, sceneClass);
+        };
+        const _SceneManager_prepareNextScene = SceneManager.prepareNextScene;
+        SceneManager.prepareNextScene = function () {
+            if (this._crimeShopRefused) {
+                this._crimeShopRefused = false;
+                return;
+            }
+            return _SceneManager_prepareNextScene.apply(this, arguments);
+        };
+    }
+
     // Initialize on new game or load game
     const _DataManager_createGameObjects = DataManager.createGameObjects;
     DataManager.createGameObjects = function () {

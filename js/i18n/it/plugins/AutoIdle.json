@@ -214,6 +214,7 @@
     "avoided": "{name} sta alla larga da {target}, livello {level}",
     "stuck": "{name} non riesce a concludere nulla con {target} e cerca qualcos'altro",
     "restless": "{name} è rimasto fermo anche troppo e si muove",
+    "detour": "{name} smette di girare a vuoto e trova la strada lunga",
     "flees": "{name} fugge dallo scontro",
     "worldMap": "{name} esce sulla mappa del mondo",
     "rim": "{name} si dirige verso il confine della mappa",

@@ -1537,6 +1537,10 @@
       meridian: false,
       // The whole tower, end to end.
       railScale: 2.4,
+      // And it is THE tower: the voxel world's own heap of decks, stood over
+      // the bore instead of a lattice mast, with a coil narrow enough to run
+      // up the middle of it. See _buildOmegaGun.
+      omegaTower: true, boreScale: 0.35,
       noSea: true, noTown: true,
     },
     // The starship. A pad in orbit: the ship's own rail, the void under it,

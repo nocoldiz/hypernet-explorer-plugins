@@ -1328,16 +1328,25 @@
   };
 
   // One colour, no lighting, no billboards: a silhouette, not a portrait.
+  // A dossier model (Em) is one cached scene that every portrait shares, so
+  // whatever is painted here is handed back: the returned function restores
+  // the materials and visibility it found.
   function paintFlat(root, color) {
     const flat = new THREE.MeshBasicMaterial({ color: new THREE.Color(color) });
+    const saved = [];
     root.traverse((o) => {
-      if (o.isMesh || o.isSkinnedMesh) o.material = flat;
-      else if (o.isSprite || o.isPoints || o.isLine) o.visible = false;
+      if (o.isMesh || o.isSkinnedMesh) { saved.push([o, "material", o.material]); o.material = flat; }
+      else if (o.isSprite || o.isPoints || o.isLine) { saved.push([o, "visible", o.visible]); o.visible = false; }
     });
+    return () => {
+      saved.forEach(([o, key, value]) => { o[key] = value; });
+      flat.dispose();
+    };
   }
 
   function drawCreatureSilhouette(battler, actor) {
     let renderer = null;
+    let unpaint = null;
     try {
       const W = 360, H = 560;
       const canvas = document.createElement("canvas");
@@ -1358,7 +1367,7 @@
       holder.position.copy(fit.center).multiplyScalar(-1);
       holder.add(battler.model);
       scene3d.add(holder);
-      paintFlat(battler.model, silhouetteInk());
+      unpaint = paintFlat(battler.model, silhouetteInk());
       camera.position.set(0, 0, fit.distance);
       camera.lookAt(0, 0, 0);
       renderer.render(scene3d, camera);
@@ -1366,6 +1375,7 @@
     } catch (e) {
       return null;
     } finally {
+      if (unpaint) { try { unpaint(); } catch (e) {} }
       if (renderer) {
         try { renderer.dispose(); } catch (e) {}
         try { renderer.forceContextLoss(); } catch (e) {}

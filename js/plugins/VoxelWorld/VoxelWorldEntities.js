@@ -3671,6 +3671,12 @@
                     $gameSystem.onBattleEscape();
                     const r = BSE && BSE.State && BSE.State.battleRewards;
                     if (r) { r.exp = 0; r.gold = 0; r.items = []; r.knowledge = 0; }
+                } else if (result === 'lose' && this._host && this._host._standalone) {
+                    // Free play (the title screen's Liminal World) runs on a
+                    // throwaway party with no map to wake up on: no wipe, no
+                    // permadeath, no respawn. The party is stood back up and
+                    // the scene takes them back to the list they came from.
+                    for (const a of this._party()) { if (a && a.recoverAll) a.recoverAll(); }
                 } else if (result === 'lose') {
                     // The battle system's own defeat: permadeath, the wipe, who
                     // comes round where. Its scene change is held off

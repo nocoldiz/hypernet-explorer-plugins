@@ -4691,6 +4691,10 @@
     // The fullscreen world map covers the screen and takes the minimap with
     // it; the card goes with them rather than floating over the chart.
     if (window.isWorldMapFullscreen && window.isWorldMapFullscreen()) return null;
+    // The liminal walk and drive (the 3D voxel world) carry their own readout;
+    // the card stays down while either is up.
+    const CDS = window.CamperDrivingSystem;
+    if (CDS && CDS.isActive && CDS.isActive()) return null;
     const mapId = $gameMap ? $gameMap.mapId() : 0;
     if (mapId === 315 || isGlobeMapNow()) return 'world';
     if (VEHICLE_INTERIOR_MAPS.includes(mapId)) {

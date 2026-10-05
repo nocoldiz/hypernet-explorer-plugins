@@ -14,6 +14,17 @@
  * @min 1
  * @max 60
  * @default 5
+ *
+ * @command Quicksave
+ * @text Quicksave
+ * @desc Saves the game into one of the three quicksave slots.
+ *
+ * @arg slot
+ * @text Quicksave slot
+ * @type number
+ * @min 1
+ * @max 3
+ * @default 1
  */
 
 (() => {
@@ -2076,14 +2087,18 @@
         return latestQuickSlot();
     };
 
-    Scene_Map.prototype.executeQuicksave = function() {
+    // `fixedSlot` (a slot id, as the Quicksave plugin command passes) writes
+    // that quicksave instead of the F9 rotation's next one.
+    Scene_Map.prototype.executeQuicksave = function(fixedSlot) {
         if (!$gameSystem.isSaveEnabled()) {
             SoundManager.playBuzzer();
             this.showQuickPopup("Saving Disabled");
             return;
         }
 
-        const slot = this.getQuicksaveSlot();
+        const slot = fixedSlot !== undefined
+            ? (quickSlotsFor(runKind()).indexOf(fixedSlot) >= 0 ? fixedSlot : 0)
+            : this.getQuicksaveSlot();
         if (!(slot > 0)) {
             SoundManager.playBuzzer();
             this.showQuickPopup("Saving Disabled");
@@ -2103,6 +2118,19 @@
                 this.showQuickPopup("Quicksave Failed");
             });
     };
+
+    // Quicksave plugin command: an event (the healing crystal) writes a fixed
+    // quicksave, 1 to 3, the same way F9 does.
+    window.SaveSystem.quicksaveTo = function(n) {
+        const scene = SceneManager._scene;
+        if (!(scene instanceof Scene_Map)) return false;
+        const index = Math.max(1, Math.min(QUICK_SLOT_IDS.length, Number(n) || 1));
+        scene.executeQuicksave(QUICK_SLOT_IDS[index - 1]);
+        return true;
+    };
+    PluginManager.registerCommand("SaveSystem", "Quicksave", (args) => {
+        window.SaveSystem.quicksaveTo(args && args.slot);
+    });
 
     Scene_Map.prototype.executeQuickload = function() {
         const slot = this.getQuickloadSlot();

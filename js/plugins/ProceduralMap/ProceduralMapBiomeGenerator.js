@@ -214,14 +214,15 @@
     window.WorldGen;
 
   // ==========================================================================
-  // Civic signposts (SignPost / SignBus / SignPark)
+  // Civic signposts (SignPost / SignBus)
   // ==========================================================================
-  // Once a settlement (village / burg / city) has its roads and buildings, drop
-  // a few civic signs on the grass verge beside its roads:
+  // Once a settlement (village / burg / city) or a road map has its roads, drop
+  // a few civic signs on the grass verge beside them:
   //   SignPost -> readable place name + dismantle (villages only, 1-3)
   //   SignBus  -> boards the fast-travel map in Bus mode (one per map, at the
-  //               bus stop it serves - never a second one down the road)
-  //   SignPark -> recalls the last vehicle driven (one per settlement)
+  //               bus stop it serves - never a second one down the road). A
+  //               road map only gets one now and then (counts.busChance).
+  // SignPark is never placed here: a parking sign only comes with a prefab.
   // They sit on feature layer 2 so the interaction plugins detect them when the
   // player faces them from the adjacent road tile. Placement is deterministic
   // for a given map seed, so the same tile always shows the same signs.
@@ -436,11 +437,11 @@
     // One bus sign per map, and no more: the city generator raises its own
     // beside the shelter it serves, and a prefab may arrive with one already
     // standing. A second sign is a second stop that boards the same map.
-    const busN = _mapHasFeature("SignBus") ? 0 : Math.min(pick(counts.bus), 1);
-    const parkN = pick(counts.park);
+    // A road map rolls busChance first, so a stop stays a rare sight out there.
+    const busRolled = counts.busChance === undefined || rng() < counts.busChance;
+    const busN = (!busRolled || _mapHasFeature("SignBus")) ? 0 : Math.min(pick(counts.bus), 1);
     const postN = pick(counts.post);
     for (let i = 0; i < busN; i++) placeOne("SignBus");
-    for (let i = 0; i < parkN; i++) placeOne("SignPark");
     for (let i = 0; i < postN; i++) placeOne("SignPost");
   }
 
@@ -1813,13 +1814,10 @@
       }
     }
 
-    // A lay-by: one or two parking signs on the verge. A settlement gets its
-    // camper-recall sign from its own generator; out on the open road this is
-    // also what RoadCarAI reads to decide where a car may pull over and let its
-    // driver out, so a highway has somewhere to stop rather than nowhere.
+    // Now and then a bus stop on the verge, boarding the fast-travel map.
     yield;
 
-    placeCivicSigns(mapData, biome, allFeatures, seed, { park: [1, 2] });
+    placeCivicSigns(mapData, biome, allFeatures, seed, { bus: [1, 1], busChance: 0.2 });
 
     // Create region data for water tile detection in MovementInteractionSystem
     const regiondata = new Array(width * height).fill(0);
@@ -4526,9 +4524,9 @@
 
       yield;
 
-      // Civic signs: readable signposts (1-3), one bus stop, one camper park.
+      // Civic signs: readable signposts (1-3) and one bus stop.
       placeCivicSigns(mapData, biome, allFeatures, seed, {
-        post: [1, 3], bus: [1, 1], park: [1, 1],
+        post: [1, 3], bus: [1, 1],
       });
 
       return mapData;
@@ -4540,9 +4538,9 @@
       const mapData = yield* generateCityBiomeStepsUtil(biome, seed, allFeatures, adjacentBiomes, cityData);
       _persistStructureHints(cityData);
       yield;
-      // Civic signs: one roadside bus stop + one camper park (no readable signposts).
+      // Civic signs: one roadside bus stop (no readable signposts).
       placeCivicSigns(mapData, biome, allFeatures, seed, {
-        bus: [1, 1], park: [1, 1],
+        bus: [1, 1],
       });
       return mapData;
     }
@@ -4553,9 +4551,9 @@
       const mapData = generateBurgBiomeUtil(biome, seed, allFeatures, adjacentBiomes, burgData);
       _persistStructureHints(burgData);
       yield;
-      // Civic signs: one roadside bus stop + one camper park (no readable signposts).
+      // Civic signs: one roadside bus stop (no readable signposts).
       placeCivicSigns(mapData, biome, allFeatures, seed, {
-        bus: [1, 1], park: [1, 1],
+        bus: [1, 1],
       });
       return mapData;
     }

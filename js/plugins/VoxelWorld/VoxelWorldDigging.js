@@ -442,14 +442,35 @@
             // are built once and moved: a spell is fired often enough that
             // building geometry per cast would be felt.
             this._boltGeo = new THREE.SphereGeometry(2.4, 10, 8);
-            this._ringGeo = new THREE.TorusGeometry(6, 0.9, 6, 20);
+            // A thin unit ring and a dot, laid flat on the face the crosshair
+            // is on and scaled to the blast. Depth tested, so a hill or a wall
+            // in front of it hides it the way it would hide the burst.
+            this._ringGeo = new THREE.RingGeometry(0.92, 1, 40);
+            this._dotGeo  = new THREE.CircleGeometry(1, 12);
             this._ringMat = new THREE.MeshBasicMaterial({
-                color: 0xbfe4ff, transparent: true, opacity: 0.55, depthTest: false
+                color: 0xbfe4ff, transparent: true, opacity: 0.45,
+                depthWrite: false, side: THREE.DoubleSide,
+                polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2
             });
-            this._ring = new THREE.Mesh(this._ringGeo, this._ringMat);
+            this._ring = new THREE.Group();
+            this._ringEdge = new THREE.Mesh(this._ringGeo, this._ringMat);
+            this._ringDot  = new THREE.Mesh(this._dotGeo, this._ringMat);
+            this._ring.add(this._ringEdge, this._ringDot);
             this._ring.visible = false;
             this._ring.renderOrder = 900;
             this._group.add(this._ring);
+            this._aimT = 0;
+            this._aimSize = { id: 0, at: -1, r: 0 };
+            this._aimNormal = new THREE.Vector3();
+        }
+
+        // How far the burst of this spell reaches, in world units: the same
+        // sum _burst does, so the ring is the blast and not a guess at it.
+        static blastOf(skill) {
+            const force = SpellCaster.forceOf(skill);
+            const radius = isHealingSkill(skill) ? 0 : Math.max(BLAST_MIN_R,
+                Math.min(BLAST_MAX_R, 1 + Math.sqrt(Math.max(0, force)) * BLAST_SCALE));
+            return Math.max(radius, BLAST_MIN_R) * VOX.SIZE * BLAST_CATCH;
         }
 
         // --- what the leader carries -----------------------------------------
@@ -567,19 +588,41 @@
             return true;
         }
 
-        // The ring that says where the spell in hand would land, drawn at the
-        // first thing the crosshair is on or at the end of its reach.
+        // The ring that says where the spell in hand would land: flat on the
+        // first face the crosshair is on, as wide as the blast. Aimed at open
+        // sky or past its reach there is nothing to mark, and the crosshair is
+        // enough on its own. Dimmed while a cast is still being recovered.
         aim(origin, dir, showing) {
             const skill = showing ? this.held() : null;
-            if (!skill) { this._ring.visible = false; return; }
+            if (!skill || !origin) { this._ring.visible = false; return; }
             const range = SpellCaster.rangeOf(skill);
             const hit = this._terrain.field.raycast(
                 origin.x, origin.y, origin.z, dir.x, dir.y, dir.z, range);
-            const d = hit ? Math.max(8, hit.dist || range) : range;
-            this._ring.position.copy(dir).multiplyScalar(d).add(origin);
-            this._ring.lookAt(origin);
-            this._ring.visible = true;
+            if (!hit || !(hit.dist > 4)) { this._ring.visible = false; return; }
+
+            // The formula is not cheap to run every frame and does not move
+            // from one frame to the next: sized again on a new spell, or twice
+            // a second for the leader's own stats.
+            this._aimT += 1 / 60;
+            const sz = this._aimSize;
+            if (sz.id !== skill.id || this._aimT - sz.at > 0.5) {
+                sz.id = skill.id;
+                sz.at = this._aimT;
+                sz.r  = isHealingSkill(skill) ? VOX.SIZE * 1.5 : SpellCaster.blastOf(skill);
+            }
+
+            this._aimNormal.set(hit.nx || 0, hit.ny || 1, hit.nz || 0);
+            if (this._aimNormal.lengthSq() === 0) this._aimNormal.set(0, 1, 0);
+            this._ring.position.copy(dir).multiplyScalar(hit.dist).add(origin)
+                .addScaledVector(this._aimNormal, 0.15);
+            this._ring.lookAt(this._ring.position.x + this._aimNormal.x,
+                this._ring.position.y + this._aimNormal.y,
+                this._ring.position.z + this._aimNormal.z);
+            this._ringEdge.scale.setScalar(sz.r);
+            this._ringDot.scale.setScalar(Math.min(1.2, sz.r * 0.08));
             this._ringMat.color.setHex(SpellCaster.colourOf(skill));
+            this._ringMat.opacity = this._cool > 0 ? 0.15 : 0.45;
+            this._ring.visible = true;
         }
 
         update(dt) {
@@ -635,6 +678,7 @@
             this._scene.remove(this._group);
             this._boltGeo.dispose();
             this._ringGeo.dispose();
+            this._dotGeo.dispose();
             this._ringMat.dispose();
         }
     }
