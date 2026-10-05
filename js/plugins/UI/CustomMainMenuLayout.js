@@ -3236,7 +3236,7 @@
 
     // The five attributes a companion carries, drawn as a grid of cells rather
     // than a run of dotted text: the same numbers, read down a column instead
-    // of along a line. Shared by the list row and the right-page sheet.
+    // of along a line. Drawn on the right-page sheet only.
     Scene_Menu.prototype.petStatGridHTML = function (pet) {
         if (!pet) return '';
         const attrs = pet.attrs || { STR: 10, CON: 10, INT: 10, WIS: 10, PSI: 10 };
@@ -3274,16 +3274,26 @@
             return window.CCDbName ? window.CCDbName(data) : data.name;
         };
         const activeId = window.PetSystem?.getActivePet?.()?.id ?? null;
-        const typeLabel = sel.isChild
+        const isFamiliar = !!window.SummonSystem?.isFamiliarPet?.(sel.id);
+        const typeLabel = isFamiliar
+            ? T('MainMenu.pets.familiar')
+            : sel.isChild
             ? T('MainMenu.roster.child')
             : (sel.isFollower ? T('MainMenu.roster.follower') : T('MainMenu.roster.pet'));
 
+        // A familiar is never on the leash: it is bound to its owner and called
+        // up by rite, so the sheet names the owner instead of a leash state.
         const facts = [
             [T('MainMenu.pets.sheetKind'), typeLabel],
             [T('MainMenu.pets.sheetLevel'), String(sel.level || 1)],
-            [T('MainMenu.pets.sheetLeash'),
-                sel.id === activeId ? T('MainMenu.roster.following') : T('MainMenu.pets.sheetWaiting')],
         ];
+        if (isFamiliar) {
+            facts.push([T('MainMenu.pets.sheetOwner'),
+                window.SummonSystem.familiarOwnerName?.(sel.id) || T('MainMenu.pets.familiarOwnerGone')]);
+        } else {
+            facts.push([T('MainMenu.pets.sheetLeash'),
+                sel.id === activeId ? T('MainMenu.roster.following') : T('MainMenu.pets.sheetWaiting')]);
+        }
         if (sel.enemyName) facts.push([T('MainMenu.pets.sheetOrigin'), sel.enemyName]);
         if (sel.isChild && sel.parentName) facts.push([T('MainMenu.pets.sheetParent'), sel.parentName]);
         if (sel.bornOn) facts.push([T('MainMenu.pets.sheetBorn'), sel.bornOn]);
@@ -3309,17 +3319,18 @@
                 <div class="pets-group-title">${T('MainMenu.pets.sheetTraits')}</div>
                 <div class="pet-note">${traits.join(' · ')}</div>` : '';
 
+        // Each skill as its icon and name; the raw database note of the monster
+        // it was taken from is never printed, it is tags, not prose.
         const skills = (sel.skillIds || [])
             .map(id => $dataSkills && $dataSkills[id])
             .filter(Boolean)
-            .map(sk => `<div class="pet-sheet-row"><span class="pet-sheet-label">${escapeHtml(
+            .map(sk => `<div class="pet-sheet-row pet-sheet-skill">
+                    <span class="icon menu-icon pet-sheet-skill-icon" style="${iconStyle(sk.iconIndex || 0)}"></span>
+                    <span class="pet-sheet-label">${escapeHtml(
                 window.CCDbName ? window.CCDbName(sk) : sk.name)}</span></div>`).join('');
         const skillPanel = skills ? `
                 <div class="pets-group-title">${T('MainMenu.pets.sheetSkills')}</div>
                 ${skills}` : '';
-
-        const notePanel = sel.note && !/^<Talk>$/i.test(String(sel.note).trim())
-            ? `<div class="pet-note">${escapeHtml(sel.note)}</div>` : '';
 
         return `
             <div class="ui-detail">
@@ -3338,7 +3349,6 @@
                     ${factRows}
                     ${traitPanel}
                     ${skillPanel}
-                    ${notePanel}
                 </div>
             </div>`;
     };
@@ -3813,9 +3823,9 @@
                     ? `<div class="pet-drill">${escapeHtml(drillLine)}</div>`
                     : '';
                 // The three optional traits chosen when the companion was taken
-                // in (or carried over from its <Talk> tag) each lean its base
-                // attributes one way; a child inherits none of them and skips
-                // the line entirely.
+                // in (or carried over from its <Talk> tag); a child inherits
+                // none of them and skips the line entirely. The attributes
+                // themselves are read on the right-page sheet only.
                 let traitsLine = '';
                 if (!pet.isChild) {
                     const traitTags = [
@@ -3823,8 +3833,7 @@
                         pet.magical ? T('MainMenu.pets.traitMagical') : null,
                         pet.geneticFreak ? T('MainMenu.pets.traitGeneticFreak') : null,
                     ].filter(Boolean).join(' · ');
-                    traitsLine = this.petStatGridHTML(pet)
-                        + (traitTags ? `<div class="pet-note">${traitTags}</div>` : '');
+                    traitsLine = traitTags ? `<div class="pet-note">${traitTags}</div>` : '';
                 }
                 const isRead = (this._petsSelected === pet.id);
                 return `

@@ -4778,10 +4778,13 @@
 
 
 /* The shared chip rule strips a selected chip's background and shadow with
-   !important, so the swatch keeps its colour inline and is ringed instead. */
+   !important, so the swatch keeps its colour inline and is ringed instead.
+   The ring is a shadow, not an outline, so it follows the round swatch
+   rather than drawing a square around it. */
 .cc-colour-swatch.selected {
-    outline: 2px solid var(--text-primary-hover);
-    outline-offset: 2px;
+    outline: none;
+    border-color: transparent !important;
+    box-shadow: 0 0 0 2px var(--text-primary-hover) !important;
 }
 
 .cc-colour-free {
@@ -33068,6 +33071,17 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .pet-sheet-label {
     color: var(--text-text-alt-4);
+}
+
+/* A skill on the companion sheet: its icon, then its name. */
+.pet-sheet-skill {
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+}
+
+.pet-sheet-skill-icon {
+    --icon-size: 24px;
 }
 
 .pet-sheet-value {

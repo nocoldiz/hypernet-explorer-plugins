@@ -4690,14 +4690,45 @@
     // follower chain for as long as the ride lasts (the pet follower draws the
     // ACTIVE pet, and the mount is no longer it).
     if (ps.getActivePet && ps.getActivePet() && ps.getActivePet().id === petId) {
-      $gameSystem._mountWasActivePet = petId;
       ps.setActivePet(null);
     }
     return true;
   }
 
-  // Get off, leaving the animal standing where the party stopped and putting it
-  // back on the leash if that is where it came from.
+  // The tile beside the leader the animal they got off steps onto: behind them
+  // first, then either side, then ahead, and the leader's own tile when every
+  // one of those is blocked.
+  function dismountTileNearLeader() {
+    const px = $gamePlayer.x;
+    const py = $gamePlayer.y;
+    const d = $gamePlayer.direction();
+    const back = 10 - d;
+    const sides = (d === 2 || d === 8) ? [4, 6] : [2, 8];
+    for (const dir of [back, sides[0], sides[1], d]) {
+      if (!$gamePlayer.canPass(px, py, dir)) continue;
+      return { x: $gameMap.roundXWithDirection(px, dir), y: $gameMap.roundYWithDirection(py, dir) };
+    }
+    return { x: px, y: py };
+  }
+
+  // The companion trailing the party is stood on that tile, so it is seen
+  // getting down beside the leader instead of reappearing at the tail of the
+  // follower chain wherever the chain had left its empty slot.
+  function placeDismountedPet() {
+    const followers = $gamePlayer.followers();
+    const data = followers && followers.data ? followers.data() : [];
+    const slot = window.Game_PetFollower ? data.find(f => f instanceof window.Game_PetFollower) : null;
+    if (!slot) return;
+    const tile = dismountTileNearLeader();
+    slot.locate(tile.x, tile.y);
+    slot.setDirection($gamePlayer.direction());
+    slot.refresh();
+  }
+
+  // Get off. The animal the leader rode becomes the companion trailing the
+  // party, standing beside the leader; every other ridable companion that was
+  // carrying a party member is gone with the ride, since they were only ever
+  // drawn as temporary mounts.
   function dismountMount() {
     const pet = mountedPet();
     const vehicle = vehicleManager.getVehicle('boat');
@@ -4705,10 +4736,6 @@
       $gamePlayer.vehicle() === vehicle && vehicleManager.getConfig(vehicle) === VehicleConfig.MOUNT;
     if (riding) disembarkLeavingParked(vehicle);
     $gameSystem._mountPetId = null;
-    const ps = petSystem();
-    const back = $gameSystem._mountWasActivePet;
-    $gameSystem._mountWasActivePet = null;
-    if (ps && ps.setActivePet && back != null && pet && back === pet.id) ps.setActivePet(back);
     // Unplace the slot the same way an un-owned vehicle starts out, so nothing
     // is left standing invisibly on the tile the party got off at.
     VehiclePosition.set('mount', 315, 0, 0);
@@ -4717,6 +4744,11 @@
       vehicle._characterIndex = 0;
       moveVehicleInternally(vehicle, 0, 0, 0);
       vehicle.refresh();
+    }
+    const ps = petSystem();
+    if (ps && ps.setActivePet && pet) {
+      ps.setActivePet(pet.id);
+      if (riding && ps.getActivePet && ps.getActivePet() === pet) placeDismountedPet();
     }
     return !!pet;
   }

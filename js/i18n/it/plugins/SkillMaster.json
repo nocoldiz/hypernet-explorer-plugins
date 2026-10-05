@@ -193,7 +193,7 @@
     "confirmDelete": "Disfare {skill}? I suoi componenti sono già stati consumati. Premi di nuovo per confermare.",
     "deleted": "{skill} è stata disfatta."
   },
-  "fusionCritical": "★ SUCCESSO CRITICO NAT 20! ★\n{result}\nPotenziata con -20% di costo in MP e +25% di efficacia!",
+  "fusionCritical": "★ SUCCESSO CRITICO \\DIE[20]! ★\n{result}\nPotenziata con -20% di costo in MP e +25% di efficacia!",
   "fusionFailed": "☠ FUSIONE ARCANA FALLITA (CD {dc}) ☠\nLa fusione degli incantesimi si è destabilizzata in un violento contraccolpo magico!\nGli incantesimi componenti ({components}) sono stati distrutti!",
   "primarySchool": "Primaria",
   "secondarySchool": "Secondaria",

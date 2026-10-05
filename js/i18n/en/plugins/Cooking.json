@@ -95,8 +95,8 @@
     "fat": "Fat"
   },
   "roll": {
-    "masterpiece": "[NAT 20 Culinary Roll] Gourmet masterpiece! {dish} gained +50% nutrition!",
-    "scorched": "[NAT 1 Culinary Roll] Scorched dish! {dish} lost nutrition!",
+    "masterpiece": "[\\DIE[20] Culinary Roll] Gourmet masterpiece! {dish} gained +50% nutrition!",
+    "scorched": "[\\DIE[1] Culinary Roll] Scorched dish! {dish} lost nutrition!",
     "delicious": "[Culinary Roll: \\DIE[{roll}] {mod} = {total}] Deliciously prepared {dish}!",
     "action": "Cooking: {dish}"
   },

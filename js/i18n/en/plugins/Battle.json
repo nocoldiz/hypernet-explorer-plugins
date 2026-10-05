@@ -399,8 +399,8 @@
         "revenant": "Old Debt Repaid"
       }
     },
-    "perfectRitual": "[NAT 20] Perfect ritual! {name} gains full HYPER and the master buffs!",
-    "empowered": "[INT +{mod}] The summoning ritual empowered {name} with combat buffs!",
+    "perfectRitual": "\\DIE[20] Perfect ritual! {name} gains full HYPER and the master buffs!",
+    "empowered": "[\\DIE[{roll}] INT +{mod} = {total}] The summoning ritual empowered {name} with combat buffs!",
     "skillsBound": "{name} binds with {n} of its {max} skills.",
     "attackOnly": "{name} answers, but remembers nothing except how to strike.",
     "familiarHere": "{name} is already at your side.",

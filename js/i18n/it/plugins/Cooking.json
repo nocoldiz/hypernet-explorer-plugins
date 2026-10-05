@@ -95,8 +95,8 @@
     "fat": "Gras"
   },
   "roll": {
-    "masterpiece": "[Tiro Culinario NAT 20] Capolavoro gastronomico! {dish} ha guadagnato +50% di nutrizione!",
-    "scorched": "[Tiro Culinario NAT 1] Piatto bruciato! {dish} ha perso nutrizione!",
+    "masterpiece": "[Tiro Culinario \\DIE[20]] Capolavoro gastronomico! {dish} ha guadagnato +50% di nutrizione!",
+    "scorched": "[Tiro Culinario \\DIE[1]] Piatto bruciato! {dish} ha perso nutrizione!",
     "delicious": "[Tiro Culinario: \\DIE[{roll}] {mod} = {total}] {dish} preparato in modo delizioso!",
     "action": "Cucina: {dish}"
   },

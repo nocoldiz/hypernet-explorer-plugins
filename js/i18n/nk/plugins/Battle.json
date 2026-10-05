@@ -398,8 +398,8 @@
         "revenant": "OLD DEBT REPAID"
       }
     },
-    "perfectRitual": "[NAT 20] PERFECT RITUAL! {name} GAINS FULL HYPER AN' DA MASTER BUFFS!",
-    "empowered": "[INT +{mod}] DA SUMMONIN' RITUAL EMPOWERED {name} WIT COMBAT BUFFS!"
+    "perfectRitual": "\\DIE[20] PERFECT RITUAL! {name} GAINS FULL HYPER AN' DA MASTER BUFFS!",
+    "empowered": "[\\DIE[{roll}] INT +{mod} = {total}] DA SUMMONIN' RITUAL EMPOWERED {name} WIT COMBAT BUFFS!"
   },
   "actorDied": "{actor} HAB DIED.",
   "knockout": {

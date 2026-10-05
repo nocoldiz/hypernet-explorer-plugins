@@ -3291,6 +3291,10 @@
     }
 
     function portraitFraming(battler, camera, margin) {
+        // A dossier GLB is cached and shared, so it can still hang off the
+        // offset holder of the viewer that showed it last. Measured there, the
+        // old offset cancelled the new one and the camera aimed at her feet.
+        if (battler.model.parent) battler.model.parent.remove(battler.model);
         const box    = battler.rig ? posedBox(battler.model) : new THREE.Box3().setFromObject(battler.model);
         const size   = new THREE.Vector3(); box.getSize(size);
         const center = new THREE.Vector3(); box.getCenter(center);

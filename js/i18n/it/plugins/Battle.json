@@ -399,8 +399,8 @@
         "revenant": "Vecchio Debito Saldato"
       }
     },
-    "perfectRitual": "[NAT 20] Rituale perfetto! {name} ottiene HYPER pieno e i potenziamenti da maestro!",
-    "empowered": "[INT +{mod}] Il rituale di evocazione ha potenziato {name} con bonus da combattimento!",
+    "perfectRitual": "\\DIE[20] Rituale perfetto! {name} ottiene HYPER pieno e i potenziamenti da maestro!",
+    "empowered": "[\\DIE[{roll}] INT +{mod} = {total}] Il rituale di evocazione ha potenziato {name} con bonus da combattimento!",
     "skillsBound": "{name} si lega con {n} delle sue {max} abilità.",
     "attackOnly": "{name} risponde, ma ricorda soltanto come colpire.",
     "familiarHere": "{name} è già al tuo fianco.",

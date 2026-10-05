@@ -1838,7 +1838,7 @@ window.Game_SummonFollower = Game_SummonFollower;
             if (rollRes.nat20) {
                 toast(T('Battle.summon.perfectRitual', { name: active.name }), 'good');
             } else if (rollRes.success && intMod > 0) {
-                toast(T('Battle.summon.empowered', { mod: intMod, name: active.name }), 'info');
+                toast(T('Battle.summon.empowered', { roll: rollRes.roll, mod: intMod, total: rollRes.total, name: active.name }), 'info');
             }
         }
         if (spec.kind && spec.kind.announce) {
@@ -2073,7 +2073,7 @@ window.Game_SummonFollower = Game_SummonFollower;
         if (stored.ritual.nat20) {
             toast(T('Battle.summon.perfectRitual', { name: spec.name }), 'good');
         } else if (stored.ritual.success && intMod > 0) {
-            toast(T('Battle.summon.empowered', { mod: intMod, name: spec.name }), 'info');
+            toast(T('Battle.summon.empowered', { roll: stored.ritual.roll, mod: intMod, total: stored.ritual.total, name: spec.name }), 'info');
         }
         return true;
     }

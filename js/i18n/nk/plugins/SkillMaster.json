@@ -193,7 +193,7 @@
     "confirmDelete": "UNMAKE {skill}? ITS COMPONENTS IZ ALREADY SPENT. PRESS AGAIN TA CONFIRM!",
     "deleted": "{skill} IZ UNMADE."
   },
-  "fusionCritical": "★ NAT 20 CRITICAL SUCCESS! ★\n{result}\nEMPOWERED WIT -20% MP COST AN' +25% POTENCY!",
+  "fusionCritical": "★ \\DIE[20] CRITICAL SUCCESS! ★\n{result}\nEMPOWERED WIT -20% MP COST AN' +25% POTENCY!",
   "fusionFailed": "☠ ARCANE FUSION FAILED (DC {dc}) ☠\nDA SPELL FUSION DESTABILISED IN A VIOLENT MAGICAL BACKLASH!\nDA COMPONENT SPELLS ({components}) WAZ DESTROYED!",
   "primarySchool": "PRIMARY",
   "secondarySchool": "SECONDARY",

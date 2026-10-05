@@ -3,7 +3,7 @@
 0.7.14a
 
 Added:
- - belt, boots, underwear, glasses colour pickers for Em's model
+ - colour pickers for Em's model
  - much more ideologies, lore based plus real ones until 2001
  - first person hands for every enemy, used by recruits, summons, familiars
  - Em bio tab: skin, hair, dress colour pickers and creed selector
@@ -14,7 +14,12 @@ Added:
  - road car drivers stop or flee by morality, then speak once
 - rigid skirt for Em and hair jiggle
 
+Changed:
+ - stop riding places the pet near the leader, other mounts despawn
+ - reworked followers tab for familiars, skill icons, no notes
+
 Fixed:
+ - status in story mode no longer shows only Em's legs
  - car lights: hidden vehicles unlit, centered cone, no snapping
  - continue story uses newer quicksave, titlescreen music defaults to ninth symphony
 Changed:

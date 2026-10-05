@@ -193,7 +193,7 @@
     "confirmDelete": "Unmake {skill}? Its components are already spent. Press again to confirm.",
     "deleted": "{skill} is unmade."
   },
-  "fusionCritical": "★ NAT 20 CRITICAL SUCCESS! ★\n{result}\nEmpowered with -20% MP cost and +25% potency!",
+  "fusionCritical": "★ \\DIE[20] CRITICAL SUCCESS! ★\n{result}\nEmpowered with -20% MP cost and +25% potency!",
   "fusionFailed": "☠ ARCANE FUSION FAILED (DC {dc}) ☠\nThe spell fusion destabilised in a violent magical backlash!\nThe component spells ({components}) were destroyed!",
   "primarySchool": "Primary",
   "secondarySchool": "Secondary",
