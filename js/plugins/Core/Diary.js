@@ -218,7 +218,6 @@
         'birth.born':         { icon: 267, cat: CAT.PARTY },
         'birth.mitosis':      { icon: 307, cat: CAT.PARTY },
         'army.recruited':     { icon: 136, cat: CAT.PARTY },
-        'blade.evolved':      { icon: 96,  cat: CAT.PARTY },
 
         // People
         'npc.friend':         { icon: 84,  cat: CAT.PEOPLE },
@@ -375,7 +374,6 @@
         'health.augmentFit':   60,
         'health.surgery':      60,
         'shop.owned':          60,
-        'blade.evolved':       60,
         'card.champion':       58,
         'alien.identified':    58,
         'health.disease':      58,
@@ -2442,20 +2440,6 @@
                     enemy = (army && (army.getName ? army.getName() : army.name)) || "";
                 } catch (e) { /* a column with no name is still a column */ }
                 log(this._battleResult === 'victory' ? 'army.won' : 'army.lost', { enemy });
-            });
-        });
-
-    // A blade that turned. Levels come off every fight won and are no more a
-    // diary line than a point of experience is; an evolution is.
-    whenReady(
-        () => window.BladeSeed && window.BladeSeed.SpiritCompanion,
-        () => {
-            after(window.BladeSeed.SpiritCompanion.prototype, 'levelUp', function (evolved) {
-                if (!evolved) return;
-                log('blade.evolved', {
-                    name: this.name || "",
-                    stage: this.getEvolutionStage ? this.getEvolutionStage() : ""
-                });
             });
         });
 

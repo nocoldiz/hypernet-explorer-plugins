@@ -111,6 +111,14 @@
     startGoblinHordeOrigin,
     finishFactionOrigin,
     startFactionPickerOrigin,
+    patronStarAvailable,
+    patronStarSquare,
+    setPatronStarSquare,
+    startPatronStarOrigin,
+    beginsOffEarth,
+    grantStartingExpressions,
+    activeCustomScenario,
+    startCustomScenarioOrigin,
   } = window.CCOrigins;
 
   // Curated, non-blank IconSet indices for the settings-row icons. Mirrors the
@@ -1765,6 +1773,13 @@
           ...(patronVaultAvailable()
             ? [getLocalizedChoice(T('CharCreate.choice.originPatronVault.name'), "origin_patron_vault", T('CharCreate.choice.originPatronVault.desc'))]
             : []),
+          // The patron's sky: offered on the same terms as the vault.
+          ...(patronStarAvailable()
+            ? [getLocalizedChoice(T('CharCreate.choice.originPatronStar.name'), "origin_patron_star", T('CharCreate.choice.originPatronStar.desc'))]
+            : []),
+          // The player's own scenario, written in the editor on its brief page
+          // and kept in the scenarios folder. Always last of the suggested.
+          getLocalizedChoice(T('CharCreate.choice.originCustom.name'), "origin_custom", T('CharCreate.choice.originCustom.desc')),
           getLocalizedChoice(T('CharCreate.choice.originCar.name'), "origin_car", T('CharCreate.choice.originCar.desc')),
           getLocalizedChoice(T('CharCreate.choice.originBike.name'), "origin_bike", T('CharCreate.choice.originBike.desc')),
           getLocalizedChoice(T('CharCreate.choice.originMayor.name'), "origin_mayor", T('CharCreate.choice.originMayor.desc')),
@@ -1788,6 +1803,7 @@
           getLocalizedChoice(T('CharCreate.choice.originPlague.name'), "origin_plague", T('CharCreate.choice.originPlague.desc')),
           getLocalizedChoice(T('CharCreate.choice.originDiplomat.name'), "origin_diplomat", T('CharCreate.choice.originDiplomat.desc')),
           getLocalizedChoice(T('CharCreate.choice.originHypernetExplorer.name'), "origin_hypernet_explorer", T('CharCreate.choice.originHypernetExplorer.desc')),
+          getLocalizedChoice(T('CharCreate.choice.originExpressions.name'), "origin_expressions", T('CharCreate.choice.originExpressions.desc')),
         ]);
       },
       handler: function (symbol) {
@@ -5101,6 +5117,23 @@
         this._askPatronVaultSquare(() => this._finishOriginChoice(symbol));
         return;
       }
+      // The patron's star is behind the same lock: a square this world has
+      // been shown, picked out of the same sheet.
+      if (symbol === "origin_patron_star" && !patronStarSquare()) {
+        this._askPatronVaultSquare(() => this._finishOriginChoice(symbol), {
+          title: ccT('CharCreate.patronStar.askTitle'),
+          confirmLabel: ccT('CharCreate.patronStar.start'),
+          choose: setPatronStarSquare,
+        });
+        return;
+      }
+      // A custom scenario has to exist before it can begin: with none picked
+      // on the brief page, the editor opens on a blank one, and saving it
+      // starts it.
+      if (symbol === "origin_custom" && !activeCustomScenario()) {
+        this._openCustomScenarioEditor(null, null, () => this._finishOriginChoice(symbol));
+        return;
+      }
       // Whatever this origin decides below, the party is about to be set down
       // somewhere for the first time. Checked once on arrival, so no origin
       // can begin standing inside the scenery of a square that was generated
@@ -5141,6 +5174,10 @@
         startBunkerOrigin();
       } else if (symbol === "origin_patron_vault") {
         startPatronVaultOrigin();
+      } else if (symbol === "origin_patron_star") {
+        startPatronStarOrigin();
+      } else if (symbol === "origin_custom") {
+        startCustomScenarioOrigin();
       } else if (symbol === "origin_ceo") {
         startCEOOrigin();
       } else if (symbol === "origin_artifact") {
@@ -5186,6 +5223,11 @@
         startDiplomatOrigin();
       } else if (symbol === "origin_hypernet_explorer") {
         startHypernetExplorerOrigin();
+      } else if (symbol === "origin_expressions") {
+        // Every member already Expresses: a power rolled for each, then any
+        // city on the map to try them out in.
+        grantStartingExpressions();
+        startWorldMapPickerOrigin();
       } else if (symbol === "origin_augmented") {
         grantStartingAugments();
         // Nowhere in particular to be: the clinic is behind them and any
@@ -5211,7 +5253,7 @@
       // The two faction origins returned above and land through
       // startWorldMapPickerOrigin, which answers this on its own; everything
       // else has just chosen a spot on a planet that is not there.
-      if (startsAtOmegaTower()) startAtOmegaTower();
+      if (startsAtOmegaTower() && !beginsOffEarth(symbol)) startAtOmegaTower();
       // This origin put the party down itself instead of ending in the
       // starting place picker, so there is no picker to walk back out of and
       // no copy of the old world worth keeping.
@@ -5230,14 +5272,18 @@
     // begins only once one of those saved squares has been picked and
     // confirmed. Wrong ones say so and leave the sheet open, and backing out of
     // it simply does not start the scenario.
-    _askPatronVaultSquare(next) {
+    //
+    // `opts` lets the patron's star borrow the same sheet: its own title and
+    // confirm label, and what picking a saved square does (`choose`).
+    _askPatronVaultSquare(next, opts) {
+      const ask = opts || {};
       // Coordinates already proved in this world come back written in: the
       // patron who typed them once should not have to remember them again for
       // every party they raise. Only a claim the world itself kept is offered,
       // so nothing is ever prefilled with a guess that was refused.
       const known = patronVaultClaim();
       this._ccAsk({
-        title: ccT('CharCreate.patronVaultAskTitle'),
+        title: ask.title || ccT('CharCreate.patronVaultAskTitle'),
         // Four numbers and nothing else, so a pad is handed a keypad instead of
         // two text boxes it has no way to type into.
         numeric: true,
@@ -5257,7 +5303,7 @@
           },
         ],
         saveLabel: ccT('CharCreate.patronVaultSave'),
-        confirmLabel: ccT('CharCreate.patronVaultStart'),
+        confirmLabel: ask.confirmLabel || ccT('CharCreate.patronVaultStart'),
         emptyLabel: ccT('CharCreate.patronVaultNoneSaved'),
         pickLabel: ccT('CharCreate.patronVaultPickSquare'),
         onSave: (values) => {
@@ -5275,7 +5321,7 @@
           }),
         })),
       }, (entry) => {
-        setPatronVaultSquare(entry.square);
+        (ask.choose || setPatronVaultSquare)(entry.square);
         next();
       });
     }

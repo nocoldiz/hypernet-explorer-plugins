@@ -275,9 +275,6 @@
     "onu": {
       "vote": "Spoke for {power} and voted {stance} on {motion}; it {outcome}."
     },
-    "blade": {
-      "evolved": "{name} turned, and is a {stage} blade now."
-    },
     "bet": {
       "won": "Won {amount} on {pick}.",
       "lost": "Lost {amount} betting on {pick}."

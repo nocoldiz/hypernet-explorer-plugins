@@ -1303,6 +1303,11 @@
     isReservedName: (name) => ResidentRegistry.isReservedName(name),
     isStoryName: (name) => ResidentRegistry.isStoryName(name),
     isNameGone: (name) => GoneRegistry.isNameGone(name),
+    // The people of a procedural square without its map loaded, and one of
+    // them minted into the society: what the 3D world's crowds are made of,
+    // so the person met on a voxel pavement IS the one on the 2D square.
+    procResidentsAt: (wx, wy, biome) => ProceduralManager.procResidentsAt(wx, wy, biome),
+    ensureProcResidentProfile: (rec, wx, wy) => ProceduralManager.ensureProcResidentProfile(rec, wx, wy),
     // One named person put on the procedural map (a visitor, a newcomer).
     placeNamedNPC: (name, x, y, opts) => ProceduralManager.placeNamedNPC(name, x, y, opts),
     // Somebody on the road on foot, by bike or by broom (ROAD TRAVELLERS).

@@ -321,7 +321,16 @@
     "throw": "Lancia",
     "discard": "Getta",
     "discardItem": "Getta oggetto",
-    "discardBody": "Vuoi togliere {qty} di {item} dallo zaino? (ne hai {owned})"
+    "discardBody": "Vuoi togliere {qty} di {item} dallo zaino? (ne hai {owned})",
+    "disassemble": "Smonta",
+    "disassembleTitle": "Smonta",
+    "disassembleBody": "Smontare {qty} di {item}? (ne hai {owned}) La ricetta è fatta di:",
+    "disassembleFull": "Probabilità di recuperare la ricetta intera: {pct}%",
+    "disassemblePartial": "Altrimenti torna indietro solo una parte di questi pezzi.",
+    "disassembleHands": "Se ne occupa {name}",
+    "disassembled": "Smontati {n} x {item}: {items}",
+    "disassembledFull": "Smontati {n} x {item}, ricetta intera recuperata: {items}",
+    "disassembledNothing": "niente di utilizzabile"
   },
   "medicineDoses": "{days} dosi giornaliere",
   "medicineIllnessCount": "{count} malattie",

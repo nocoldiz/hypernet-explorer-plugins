@@ -132,9 +132,9 @@
       "title": "Grimoires and Skill Books",
       "description": "A grimoire offers five random workings and lets one reader claim one. The five are rolled once when the book is opened, against the whole party; switching reader does not reroll them.\n\nA reader can only claim an offer whose MP cost fits their maximum MP and that they do not already know. The party's median PSI raises the chance of a Forbidden working turning up.\n\nThere are school specific grimoires, category specific skill books, and the Forbidden Grimoire, which offers nothing else."
     },
-    "blade_seeds": {
-      "title": "Blade Seeds",
-      "description": "Twelve seeds, one per weapon type. A seed is a permanent upgrade path for a whole weapon type rather than for one weapon.\n\nIt grows as that type is used, and what it grows into is procedural, so no two worlds grow the same blade. A seed outlasts the weapon that carried it."
+    "expression_seeds": {
+      "title": "Expression Seeds",
+      "description": "An expression seed is used on one character and unlocks their Expression. Each character needs a seed of their own.\n\nExpression is opened from the skills benches, picking any party member who has it."
     },
     "equipment_hands_and_slots": {
       "title": "Equipment: Hands and Slots",
@@ -542,7 +542,7 @@
     },
     "dating_eris": {
       "title": "Dating Eris",
-      "description": "Eris can be courted, and an evening with her is a generated scene.\n\nIt happens in a biome, and each biome owns its opening, its questions, its romantic beat, its chaotic beat, its shared activity and its local incidents. A scenario is rolled on top, picnic, seance, stakeout and others, so one biome hosts many evenings.\n\nHer mood is rolled from sixteen: playful, romantic, chaotic, nervous, confident, caring, guilty, crazed, psyched out, high on solipsism, eldritch, melancholy, smug, paranoid, prophetic, bored. It can shift mid date. In the eldritch mood her lines warp, her pulse reads things that are not numbers, and the portrait misbehaves.\n\nEach date also rolls a register, sincere, capricious or completely bonkers, which scales how often the evening is interrupted and how hard her feelings swing. She interrupts with dares, up to robbing a bank. Your own answers are generated too, and how she takes one is a roll of her mood.\n\nTwo heartbeats are drawn on screen, yours and hers. She remembers past dates, keeps a separate score for every party member, and sometimes turns towards one of your companions mid date.\n\nThe first date that ends well pays a blade seed, once per save."
+      "description": "Eris can be courted, and an evening with her is a generated scene.\n\nIt happens in a biome, and each biome owns its opening, its questions, its romantic beat, its chaotic beat, its shared activity and its local incidents. A scenario is rolled on top, picnic, seance, stakeout and others, so one biome hosts many evenings.\n\nHer mood is rolled from sixteen: playful, romantic, chaotic, nervous, confident, caring, guilty, crazed, psyched out, high on solipsism, eldritch, melancholy, smug, paranoid, prophetic, bored. It can shift mid date. In the eldritch mood her lines warp, her pulse reads things that are not numbers, and the portrait misbehaves.\n\nEach date also rolls a register, sincere, capricious or completely bonkers, which scales how often the evening is interrupted and how hard her feelings swing. She interrupts with dares, up to robbing a bank. Your own answers are generated too, and how she takes one is a roll of her mood.\n\nTwo heartbeats are drawn on screen, yours and hers. She remembers past dates, keeps a separate score for every party member, and sometimes turns towards one of your companions mid date.\n\nThe first date that ends well pays an expression seed, once per save."
     },
     "the_post": {
       "title": "The Post",

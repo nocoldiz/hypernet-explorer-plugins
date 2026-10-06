@@ -20,7 +20,7 @@
   "encounterList": [],
   "encounterStep": 30,
   "height": 90,
-  "note": "<Interior>\n<Country: Belgium>\n<Coords 79 125>\n<BuildRights: Free>\n<Biome: City>\n<BgsNight: hallway>",
+  "note": "<Interior>\n<Country: Belgium>\n<Coords 79 125>\n<BuildRights: Free>\n<Biome: City>\n<BgsNight: hallway>\n<BgmNight: KevinMacLeod/Mysterious/Comfortable Mystery 2>",
   "parallaxLoopX": true,
   "parallaxLoopY": true,
   "parallaxName": "Eris2",

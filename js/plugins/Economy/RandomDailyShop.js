@@ -321,7 +321,7 @@
   // The databases are divided by named separator rows ("<-- Whip -->"), which
   // are real entries as far as the engine is concerned and would otherwise end
   // up priced on a shelf. A <Restricted> row is no shop's to sell: it is
-  // granted by the one system that owns it (a seed weapon by a blade seed),
+  // granted by the one system that owns it (a seed weapon by an expression seed),
   // and a hand-picked id does not get it onto a shelf either.
   function isSellableEntry(entry) {
     if (window.ItemSystemUtils && window.ItemSystemUtils.isRestrictedEntry(entry)) return false;

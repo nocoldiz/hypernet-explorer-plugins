@@ -294,6 +294,10 @@
       "note": "2,4 m, levigato secondo la curvatura sbagliata nel 1981. Aberrazione sferica."
     }
   },
+  "storyCrew": {
+    "vice": "La Capitana Hack ha eletto Bubba come suo vice per i suoi meriti scientifici",
+    "scrubber": "Em è stata promossa a lavapavimenti di bordo"
+  },
   "hubbleQuest": {
     "title": "Revisione del Telescopio Spaziale Hubble",
     "giver": "Registro di manutenzione dell'astronave",

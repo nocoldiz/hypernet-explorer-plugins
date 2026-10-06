@@ -1622,7 +1622,7 @@
         Electronics:  ['blue_electric_guitar.png', 'robot_face_console_panel.png', 'static_computer_monitor.png', 'dark_tv_screen.png'],
         Peluches:     ['stacked_cushion_pile.png', 'panda_plush.png', 'pink_bear_plush.png', 'elephant_plush_toy.png'],
         Vases:        ['dark_ritual_urn.png', 'striped_orange_urn.png', 'pink_hourglass_vase.png', 'red_clay_pot.png'],
-        Fossils:      ['twin_fossil_nodule_case_01.png', 'fossil_creature_display.png', 'fossil_case_corner_fragment_03.png', 'crouching_skeleton_diorama.png']
+        Fossils:      ['twin_fossil_nodule_case_01.png', 'fossil_creature_display.png', 'round_fossil_specimen_case.png', 'crouching_skeleton_diorama.png']
     };
     const BILLBOARD_FOLDERS = Object.keys(BILLBOARDS);
 

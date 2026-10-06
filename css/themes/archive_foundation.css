@@ -1481,8 +1481,6 @@
    still reads as subordinate to the black body prose.
    ========================================================================== */
 .shop-slot-hint,
-.bs-skill-hint,
-.bs-skill-help,
 .hints-desc,
 .travel-timer-hint,
 .qty-modal-hint,
@@ -1577,8 +1575,7 @@
 }
 .badge.danger,
 .npc-join-msg.reject,
-.apiary-threats,
-.bs-warning {
+.apiary-threats {
     color: #7a1010 !important;
 }
 .ms-active-badge,

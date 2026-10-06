@@ -234,7 +234,8 @@
     "short": "No materials",
     "locked": "Untrained",
     "owned": "Carried",
-    "forged": "Forged"
+    "forged": "Forged",
+    "salvage": "Disassemble"
   },
   "allTrades": "All trades",
   "shortBy": "Missing {n}",
@@ -437,5 +438,11 @@
     }
   },
   "finishMine": "Your pictures",
-  "finishMineTitle": "One of your pictures as the finish"
+  "finishMineTitle": "One of your pictures as the finish",
+  "salvageAll": "Disassemble all ({n})",
+  "salvageAllTitle": "Disassemble everything",
+  "salvageAllBody": "Take apart all {n} unequipped pieces on this shelf?",
+  "salvageAllConfirm": "Disassemble",
+  "salvageWorker": "{name}: {n}",
+  "salvageMore": "...and {n} more"
 }

@@ -4191,6 +4191,72 @@
     return state.identities[actorName];
   }
 
+  // ---- a member of the team seated as mayor ------------------------------------
+  //
+  // A custom scenario can open with one of the team already in a town hall
+  // (CharacterCreationOrigins, applyCustomMayor). Nobody is elected: the
+  // sitting mayor steps down in the team member's favour, the world's history
+  // says so, and the new mayor serves a full term before the town votes again.
+  // The other offices stay with whoever holds them; the new mayor inherits
+  // their council rather than sacking it. Answers { settlement, previous } or
+  // null when there is no world or nobody to seat.
+  function seatTeamMayor(groupName, actorName) {
+    const state = getState();
+    const group = String(groupName || "");
+    const actor = String(actorName || "");
+    if (!state || !group || !actor) return null;
+    const minute = nowMinuteVar();
+    state.settlements = state.settlements || {};
+    let settlement = state.settlements[group];
+    if (!settlement) {
+      let polity = { country: null, power: null };
+      try { polity = resolveGroupPolity(state, group) || polity; } catch (_) { /* unresolved town */ }
+      settlement = state.settlements[group] = {
+        group, country: polity.country ?? null, power: polity.power ?? null,
+        offices: { mayor: null, guardCaptain: null, taxCollector: null, highPriest: null },
+        nextLocalElectionMinute: minute, history: [],
+      };
+    }
+    settlement.offices = settlement.offices || { mayor: null, guardCaptain: null, taxCollector: null, highPriest: null };
+    settlement.history = settlement.history || [];
+    const previous = settlement.offices.mayor && settlement.offices.mayor !== actor ? settlement.offices.mayor : null;
+    if (previous) {
+      const old = state.identities[previous];
+      if (old) {
+        old.localOffice = null;
+        pushIdentityEvent(old, minute, "office", "Politics.identity.resignedMayor", { group, successor: actor }); // i18n-ignore: event type
+      }
+      window.NPCSim?.StoryLogger?.record?.(previous, "politics", "Politics.story.resignedMayor", { group }); // i18n-ignore: log kind
+    }
+    // Whoever sat on the council the new mayor now leads keeps their seat,
+    // unless it was the new mayor's own.
+    for (const office of LOCAL_OFFICES.slice(1)) {
+      if (settlement.offices[office] === actor) settlement.offices[office] = null;
+    }
+    const identity = ensureCandidateIdentity(state, actor, group, candidatePlatform(state));
+    identity.group = identity.group || group;
+    identity.localOffice = "mayor"; // i18n-ignore: office id
+    settlement.offices.mayor = actor;
+    pushIdentityEvent(identity, minute, "office", "Politics.identity.succeededMayor", { group, predecessor: previous || "" }); // i18n-ignore: event type
+    settlement.history.unshift({
+      minute, date: dateStrOf(minute), mayor: actor, votes: 0,
+      offices: { ...settlement.offices }, appointed: true, resigned: previous,
+    });
+    if (settlement.history.length > SETTLEMENT_LOG_CAP) settlement.history.pop();
+    settlement.nextLocalElectionMinute = minute + LOCAL_TERM_DAYS * MINUTES_PER_DAY;
+    const HM = window.HistoryManager;
+    if (HM && typeof HM.recordEvent === "function") {
+      try {
+        HM.recordEvent({
+          date: dateStrOf(minute), category: "political", type: "mayor_resigned", // i18n-ignore: category, type
+          descKey: previous ? "Politics.history.mayorResigned" : "Politics.history.mayorSeated",
+          descParams: { mayor: previous || "", successor: actor, group },
+        });
+      } catch (_) { /* the chronicle is optional */ }
+    }
+    return { settlement, previous };
+  }
+
   // A national or bloc election has just been resolved: the candidates who
   // stood in it are weighed against the winner. The electorate is the same one
   // the ballot counted; the party's supporters vote for its candidate, and a
@@ -4248,6 +4314,7 @@
     upcomingElections,
     standForElection,
     withdrawCandidacy,
+    seatTeamMayor,
     listCandidacies() { return ($gameSystem?._npcPolitics?.candidacies || []).slice(); },
     // --- the party's own political party -----------------------------------
     PLAYER_PARTY_ID,

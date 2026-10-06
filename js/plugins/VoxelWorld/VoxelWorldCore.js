@@ -571,6 +571,18 @@
     const ROAD_DASH_ON     = 20;   // dashed lane line, on/off along the road
     const ROAD_DASH_OFF    = 15;
     const ROAD_KERB_H      = 3;    // the median kerb the grass sits behind
+    // How a road meets ground that is not at its own level. The paving is
+    // always at the square's flat grade; the NATURAL ground (what the squares
+    // around it put there, carried on across the square) is measured against it:
+    //   natural above the paving by more than ROAD_TUNNEL_H  -> a tunnel bored
+    //                                           through, ROAD_TUNNEL_CLEAR cubes high
+    //   natural BELOW the paving by more than ROAD_VIADUCT_H -> a viaduct on
+    //                                                          concrete piers
+    // and anything between is a cut or an embankment: the verge keeps the
+    // natural ground and the carriageway's own skirt makes up the difference.
+    const ROAD_TUNNEL_H     = 40;
+    const ROAD_TUNNEL_CLEAR = 4;
+    const ROAD_VIADUCT_H    = 35;
     // Colours the ribbon is painted with.
     const ROAD_COL = {
         asphalt:  0x38383d,
@@ -2750,6 +2762,7 @@
         NATURAL_TOP, OVERDRIVE_DECAY, OVERDRIVE_KMHPS, PERSON_H, PLANT_CROPS, TRAFFIC_VEHICLES,
         PLANT_POOL, RECOIL_KICK, REVERSE_ACCEL, REVERSE_MAX_KMH, ROAD_GAP,
         ROAD_BED_CLEAR, ROAD_BED_DROP, ROAD_COL, ROAD_DASH_OFF, ROAD_DASH_ON,
+        ROAD_TUNNEL_H, ROAD_TUNNEL_CLEAR, ROAD_VIADUCT_H,
         ROAD_HALF_LANE, ROAD_KERB_H, ROAD_LANE_OFF, ROAD_LANE_W, ROAD_LINE_W, ROAD_LINKS,
         ROAD_MARK_LIFT, ROAD_OPPOSITE, ROAD_PAVE_T, ROAD_SHOULDER_W, ROAD_SKIRT,
         ROAD_SINK, ROAD_STEP, ROAD_TOTAL_W, ROCK_ASH, ROCK_POOL, SECONDARY_PARTS,

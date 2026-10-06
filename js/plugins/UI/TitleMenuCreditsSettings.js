@@ -327,6 +327,9 @@
 
     Scene_Credits.prototype = Object.create(Scene_Base.prototype);
     Scene_Credits.prototype.constructor = Scene_Credits;
+    // Pushed from the map too (ErisDateSystem's Bubba ending): it pops back to
+    // whichever scene opened it.
+    window.Scene_Credits = Scene_Credits;
 
     // Design pixels per frame at speed 10, i.e. a shade over a line a second at
     // the default 3.

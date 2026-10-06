@@ -114,6 +114,14 @@
     // for a database that carries them.
     const SEWER_BIOME_TAGS = ['Sewer', 'Sewers', 'Cistern'];                    // i18n-ignore  <Biome:> tag names
     const SEWER_STRUCTURE  = 'Sewer';                                           // i18n-ignore  structure catalogue key
+    // ...and the PLACES under the world (VoxelWorldField's sites). A goblin
+    // warren is full of goblins: anything whose name or archetype says so,
+    // wherever the database files it. A dungeon and a grotto read the tags
+    // of the 2D places they are built like. Each falls back to the caves.
+    const WARREN_MATCH       = /goblin|hobgoblin|naguka/i;                         // i18n-ignore  enemy name / archetype match
+    const DUNGEON_BIOME_TAGS = ['Dungeon', 'Crypt', 'Catacombs', 'Oubliette', 'Barrow'];   // i18n-ignore  <Biome:> tag names
+    const GROTTO_BIOME_TAGS  = ['Crystals', 'CrystalCavern', 'Mines', 'Mineshaft'];        // i18n-ignore  <Biome:> tag names
+    const SITE_TOAST_KEY     = 'vwsite';                                                   // i18n-ignore  toast key
     // A passage is not a prairie: things are met round the next corner, not
     // half a kilometre off across open country.
     const CAVE_SPAWN_MIN  = 90;    // world units from the party
@@ -566,10 +574,53 @@
                 if (!ent.battler && dx * dx + dz * dz > ENEMY_3D_DESPAWN * ENEMY_3D_DESPAWN) this._remove(i);
             }
             this._ecoTick(delta, vanX, vanZ);
+            this._siteWatch(vanX, vanZ);
             this._timer += delta;
-            if (this._timer < ENEMY_3D_SPAWN_INT) return;
+            // A warren is busier than a passage: its goblins come twice as fast.
+            const gap = this._siteKey === 'warren' ? ENEMY_3D_SPAWN_INT * 0.5 : ENEMY_3D_SPAWN_INT;
+            if (this._timer < gap) return;
             this._timer = 0;
             if (this._ents.length < ENEMY_3D_MAX) this._trySpawn(vanX, vanZ);
+        }
+
+        // Which of the places under the world the party is in, kept up to
+        // date underground and announced once on the way in.
+        _siteWatch(vanX, vanZ) {
+            const field = this._terrain && this._terrain.field;
+            let key = null;
+            if (this._under && field && field.siteAt) key = field.siteAt(vanX, vanZ, this._underY || 0);
+            if (key === this._siteKey) return;
+            this._siteKey = key;
+            if (key && window.ParchmentToast) {
+                window.ParchmentToast.show(T('VoxelWorld.site.' + key), { key: SITE_TOAST_KEY });
+            }
+        }
+
+        // The roster of one of the places, cached per place, or null.
+        _sitePool(key) {
+            if (this._roster) return this._roster;
+            this._sitePools = this._sitePools || {};
+            if (this._sitePools[key] !== undefined) return this._sitePools[key];
+            let pool = null;
+            if (key === 'warren') {
+                const out = [];
+                const list = window.$dataEnemies || [];
+                for (let i = 1; i < list.length; i++) {
+                    const e = list[i];
+                    if (!e) continue;
+                    const arch = /<Archetype:\s*([^>]+)>/i.exec(e.note || '');
+                    if (WARREN_MATCH.test(e.name || '') || (arch && WARREN_MATCH.test(arch[1]))) out.push(i);
+                }
+                pool = out.length ? out : null;
+            } else {
+                const tags = key === 'dungeon' ? DUNGEON_BIOME_TAGS : GROTTO_BIOME_TAGS;
+                for (const name of tags) {
+                    const ids = this._candidatesFor(name);
+                    if (ids && ids.length) { pool = ids; break; }
+                }
+            }
+            this._sitePools[key] = pool;
+            return pool;
         }
 
         // ---------------------------------------------------------------------
@@ -1287,6 +1338,13 @@
         // anywhere else, is a cave.
         _undergroundPool(x, z, y) {
             const field = this._terrain && this._terrain.field;
+            // One of the places first: a warren fields goblins whatever the
+            // passage next to it holds.
+            const site = field && field.siteAt ? field.siteAt(x, z, y) : null;
+            if (site) {
+                const p = this._sitePool(site);
+                if (p && p.length) return p;
+            }
             if (field && field.sewerAt && field.sewerAt(x, z, y)) {
                 const s = this._sewerCandidates();
                 if (s && s.length) return s;
@@ -1649,6 +1707,25 @@
             const tile    = { wx, wy, big, plan, originX, originZ, baseY, ts, peds: [] };
 
             const count = big ? 14 : 6;
+            // The people of the procedural map at this very square, dealt by
+            // the same seed the 2D world deals them with (NPCSystem
+            // procResidentsAt): the ones its cull puts on the street first,
+            // then the rest of the household, up to the crowd a square shows.
+            // Only where that is not to be had does the crowd fall back to
+            // the seeded persona generator.
+            const NS = window.NPCSystem;
+            let recs = null;
+            if (NS && NS.procResidentsAt) {
+                try { recs = NS.procResidentsAt(wx, wy, sampleBiomeAt(wx, wy).name); } catch (e) { recs = null; }
+            }
+            if (recs && recs.length) {
+                const order = recs.filter(r => r.out).concat(recs.filter(r => !r.out)).slice(0, count);
+                order.forEach((rec, i) => {
+                    const ped = this._makePed(tile, i, rec);
+                    if (ped) { tile.peds.push(ped); this._scene.add(ped.bb.mesh); }
+                });
+                return tile;
+            }
             for (let i = 0; i < count; i++) {
                 const ped = this._makePed(tile, i);
                 if (ped) { tile.peds.push(ped); this._scene.add(ped.bb.mesh); }
@@ -1656,12 +1733,16 @@
             return tile;
         }
 
-        // One citizen: a seeded persona (the same person every time this square
-        // is walked into) put down on one of the town's pavements.
-        _makePed(tile, i) {
-            const seed = (((tile.wx * 73856093) ^ (tile.wy * 19349663) ^ ((i + 1) * 83492791)) >>> 0) || 1;
-            const persona = (window.NPCSystem && window.NPCSystem.generateSeededPersona)
-                ? window.NPCSystem.generateSeededPersona(seed) : null;
+        // One citizen - a resident record of the procedural map, or failing
+        // that a seeded persona (the same person every time this square is
+        // walked into) - put down on one of the town's pavements.
+        _makePed(tile, i, rec) {
+            let persona = rec ? { name: rec.name, spriteName: rec.spriteName, charIdx: rec.charIdx } : null;
+            if (!persona) {
+                const seed = (((tile.wx * 73856093) ^ (tile.wy * 19349663) ^ ((i + 1) * 83492791)) >>> 0) || 1;
+                persona = (window.NPCSystem && window.NPCSystem.generateSeededPersona)
+                    ? window.NPCSystem.generateSeededPersona(seed) : null;
+            }
             if (!persona || !persona.spriteName) return null;
 
             const lanes = tile.plan.lanes;
@@ -1670,6 +1751,7 @@
             const bb = new CharacterBillboard(persona.spriteName, persona.charIdx, PERSON_H);
             return {
                 bb,
+                rec: rec || null,
                 name: persona.name,
                 sheet: persona.spriteName,
                 charIdx: persona.charIdx,
@@ -1744,6 +1826,16 @@
         static ensureProfile(ped) {
             const reg = window.NPCSocietyRegistry;
             if (!reg || !ped) return null;
+            // A resident of the procedural map is minted the way that map
+            // mints them - same class, same sheet, same opinion of the party -
+            // so Talk and Empathize here and there meet the same person.
+            const NS = window.NPCSystem;
+            if (ped.rec && NS && NS.ensureProcResidentProfile) {
+                try {
+                    const got = NS.ensureProcResidentProfile(ped.rec, ped.wx, ped.wy);
+                    if (got && got.profile) return got.profile;
+                } catch (e) { /* fall through to the plain mint */ }
+            }
             const group = 'Proc:' + ped.wx + ',' + ped.wy;   // i18n-ignore  settlement key
             try {
                 return reg.ensureProfile(ped.name, null, group, WORLD_MAP_ID) || reg.getProfile(ped.name);

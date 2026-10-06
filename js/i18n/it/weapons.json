@@ -45,7 +45,7 @@
   },
   "12": {
     "name": "Pugnale seme",
-    "description": "Pugnale cresciuto da un seme di lama.\nPuo avvelenare."
+    "description": "Pugnale cresciuto da un seme dell'Espressione.\nPuo avvelenare."
   },
   "13": {
     "name": "Nunchaku di legno",
@@ -173,11 +173,11 @@
   },
   "54": {
     "name": "Spada seme",
-    "description": "Spada cresciuta da un seme di lama.\nPuo avvelenare."
+    "description": "Spada cresciuta da un seme dell'Espressione.\nPuo avvelenare."
   },
   "55": {
     "name": "Mazza seme",
-    "description": "Mazza cresciuta da un seme di lama."
+    "description": "Mazza cresciuta da un seme dell'Espressione."
   },
   "56": {
     "name": "Spada mesopotamica",
@@ -737,7 +737,7 @@
   },
   "206": {
     "name": "Ascia seme",
-    "description": "Ascia cresciuta da un seme di lama."
+    "description": "Ascia cresciuta da un seme dell'Espressione."
   },
   "207": {
     "name": "Ascetta",
@@ -845,7 +845,7 @@
   },
   "243": {
     "name": "Frusta seme",
-    "description": "Frusta cresciuta da un seme di lama.\nPuo provocare."
+    "description": "Frusta cresciuta da un seme dell'Espressione.\nPuo provocare."
   },
   "244": {
     "name": "Rete del retiario",
@@ -969,7 +969,7 @@
   },
   "284": {
     "name": "Bordone seme",
-    "description": "Bordone cresciuto da un seme di lama.\nColpisce con Sacro."
+    "description": "Bordone cresciuto da un seme dell'Espressione.\nColpisce con Sacro."
   },
   "285": {
     "name": "Bastone ferrato",
@@ -1173,7 +1173,7 @@
   },
   "344": {
     "name": "Arco seme",
-    "description": "Arco cresciuto da un seme di lama.\nPuo accecare."
+    "description": "Arco cresciuto da un seme dell'Espressione.\nPuo accecare."
   },
   "345": {
     "name": "Arco corto",
@@ -1325,7 +1325,7 @@
   },
   "392": {
     "name": "Grimorie seme",
-    "description": "Grimorie cresciuto da un seme di lama.\nGhiaccio, infligge Freddo."
+    "description": "Grimorie cresciuto da un seme dell'Espressione.\nGhiaccio, infligge Freddo."
   },
   "393": {
     "name": "Bolas",
@@ -1469,7 +1469,7 @@
   },
   "438": {
     "name": "Pistola seme",
-    "description": "Pistola cresciuta da un seme di lama."
+    "description": "Pistola cresciuta da un seme dell'Espressione."
   },
   "439": {
     "name": "Cerbottana di bambu",
@@ -1857,7 +1857,7 @@
   },
   "545": {
     "name": "Artiglio seme",
-    "description": "Artiglio cresciuto da un seme di lama.\nPuo avvelenare."
+    "description": "Artiglio cresciuto da un seme dell'Espressione.\nPuo avvelenare."
   },
   "546": {
     "name": "Bagh Nakh",
@@ -1957,7 +1957,7 @@
   },
   "580": {
     "name": "Guanto seme",
-    "description": "Guanto cresciuto da un seme di lama."
+    "description": "Guanto cresciuto da un seme dell'Espressione."
   },
   "581": {
     "name": "Cesto",
@@ -2109,7 +2109,7 @@
   },
   "628": {
     "name": "Lancia seme",
-    "description": "Lancia cresciuta da un seme di lama.\nPuo avvelenare."
+    "description": "Lancia cresciuta da un seme dell'Espressione.\nPuo avvelenare."
   },
   "629": {
     "name": "Lancia corta",

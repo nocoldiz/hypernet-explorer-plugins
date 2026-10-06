@@ -293,6 +293,8 @@
       "origin_underground": 100000,
       "origin_random": 100000
     };
+    // A custom scenario states its own cash.
+    if (originSymbol === CUSTOM_ORIGIN) return customScenarioGold();
     return additions[originSymbol] || 0;
   }
 
@@ -930,6 +932,18 @@
       { id: ITEM_ELECTROLYTE_POWDER, qty: 3, each: true },
       { id: ITEM_RATION_BAR, qty: 4, each: true },
     ],
+    // Woken aboard in a patron's sky: the orbital issue, without the pin that
+    // calls a ship down to Earth, and the star map to find the way home by.
+    origin_patron_star: [
+      { id: ITEM_STAR_MAP, qty: 1 },
+      { id: ITEM_PILOT_PDA, qty: 1 },
+      { id: ITEM_TELESCOPE, qty: 1 },
+      { id: ITEM_PATRON_KEEPSAKE, qty: 1 },
+      { id: ITEM_PORTABLE_CHARGER, qty: 1 },
+      { id: ITEM_NANITES, qty: 1, each: true },
+      { id: ITEM_ELECTROLYTE_POWDER, qty: 3, each: true },
+      { id: ITEM_RATION_BAR, qty: 4, each: true },
+    ],
     // Road life: a kitchen on wheels and something to listen to.
     origin_camper: [
       { id: ITEM_LIMINAL_CUFFS, qty: 1 },
@@ -1219,6 +1233,8 @@
     origin_train: [ITEM_LOCAL_MAP, ITEM_BEDROLL, ITEM_MEDICAL_SPRAY],
     // Orbit: call the ship down, know where you are, talk to it.
     origin_space: [ITEM_LOW_ORBIT_PIN, ITEM_STAR_MAP, ITEM_PILOT_PDA],
+    // A patron's orbit: where you are, how to get home, and the ship's voice.
+    origin_patron_star: [ITEM_STAR_MAP, ITEM_PILOT_PDA, ITEM_TELESCOPE],
     // The camper itself, what moves it, and where you sleep in it.
     origin_camper: [ITEM_LIMINAL_CUFFS, ITEM_FUEL_TANK, ITEM_SLEEPING_BAG],
     // The car itself, what moves it, and what tells it where to go.
@@ -1735,7 +1751,8 @@
   function resolveOriginLoadout(symbol) {
     const size = loadoutPartySize();
     const rolled = originRoll(symbol);
-    const entries = (ORIGIN_LOADOUTS[symbol] || []).concat(rolled ? rolled.entries : []);
+    const authored = symbol === CUSTOM_ORIGIN ? customScenarioLoadout() : (ORIGIN_LOADOUTS[symbol] || []);
+    const entries = authored.concat(rolled ? rolled.entries : []);
     const merged = [];
     const byKey = {};
     for (const entry of entries) {
@@ -2074,7 +2091,7 @@
   // scenario in the list starts the party somewhere that is not there any more
   // - a train, a city, a lot, a camper parked in a street.
   //
-  // Three survive it, and they are the only three offered from that day on:
+  // Five survive it, and they are the only five offered from that day on:
   //
   //   origin_hypernet_explorer   a heap of parts and a terminal room, which is
   //                              not on the surface of anything
@@ -2082,12 +2099,16 @@
   //                              Earth was and its stack goes on downwards
   //   origin_patron_vault        nine cellars under a hatch, which outlived the
   //                              square they were dug into
+  //   origin_patron_star         a patron's own world, far out in the Milky Way
+  //   origin_custom              whatever its author granted still stands; where
+  //                              it begins is the tower, like everybody else's
   //
   // This is the ONE place that list is written down. Anything that needs to
   // know whether a scenario can still be begun asks survivingOrigins().
   const SW_EARTH_LOST = 199;
   const SURVIVING_ORIGINS = [
     "origin_hypernet_explorer", "origin_dungeon", "origin_patron_vault",   // i18n-ignore  choice symbols
+    "origin_patron_star", "origin_custom",                                  // i18n-ignore  choice symbols
   ];
 
   function earthGone() {
@@ -2107,6 +2128,8 @@
   const SUGGESTED_ORIGINS = [
     "origin_train", "origin_camper", "origin_space", "origin_stranded",     // i18n-ignore  choice symbols
     "origin_lot", "origin_dungeon", "origin_ceo", "origin_patron_vault",    // i18n-ignore  choice symbols
+    // The player's own scenario closes the suggested block.
+    "origin_patron_star", "origin_custom",                                  // i18n-ignore  choice symbols
   ];
 
   /**
@@ -2586,6 +2609,10 @@
   // list, which is told so and given the whole map rather than none of it.
   function allowedStartDestinations(destinations) {
     if (!$gameTemp || !$gameTemp._characterCreationTravelMode) return null;
+    // A custom scenario that begins in one named town (a mayor's, or one its
+    // author picked) is offered that town alone.
+    const custom = customScenarioDestinations(destinations);
+    if (custom) return custom;
     if (!$gameSystem || !isGoblinOrigin($gameSystem._ccOriginSymbol)) return null;
     const names = goblinHordeDestinations(destinations);
     if (names.length > 0) return names;
@@ -2741,6 +2768,733 @@
     });
   }
 
+  // ==========================================================================
+  // Holy Patron Star origin
+  // ==========================================================================
+  // The vault's sky half. Every patron is given a square on Earth AND a world
+  // of their own out in the Milky Way (PatreonRewards, buildPatronSystem): a
+  // life-bearing planet round a star that burns nowhere else. This scenario
+  // begins aboard the ship, parked in orbit of that planet.
+  //
+  // It is locked the same way the vault is: only a square this world has
+  // already had proved to it can be started from, so the coordinates are
+  // asked for through the very sheet the vault uses (and a square proved for
+  // either one is proved for both). Nothing about the patron's star is ever
+  // guessable from the board.
+  //
+  // It is the one Earth-free start the patrons have, so it outlives the impact
+  // like the vault does (SURVIVING_ORIGINS).
+  const PATRON_STAR_ORIGIN = "origin_patron_star"; // i18n-ignore: choice symbol
+  // The ship's bridge, the same berth the space origin wakes on. The space
+  // background drawn behind it follows the ship wherever it is parked.
+  const SHIP_START = { mapId: 721, x: 27, y: 7, dir: 2 };
+
+  function patronStarAvailable() {
+    const PR = window.PatreonRewards;
+    return patronVaultAvailable() && !!PR && typeof PR.ensureSystems === "function" &&
+      typeof PR.patronAtWorld === "function";
+  }
+
+  function patronStarSquare() {
+    return ($gameTemp && $gameTemp._ccPatronStarSquare) || null;
+  }
+
+  function setPatronStarSquare(square) {
+    if ($gameTemp) $gameTemp._ccPatronStarSquare = square || null;
+    patronVaultRememberSquare(square);
+  }
+
+  /**
+   * The patron behind a proved square, their star system and their home world:
+   * the planet that carries life (the one the catalog points at), or the first
+   * one if a hand-edited roster left none flagged.
+   * @returns {object|null} { patron, dm, system, planet }
+   */
+  function patronStarTarget(square) {
+    const PR = window.PatreonRewards;
+    const GS = window.GalaxySim;
+    if (!square || !PR || !GS || typeof GS.getDataManager !== "function") return null;
+    const patron = PR.patronAtWorld(square.x, square.y);
+    if (!patron) return null;
+    const dm = GS.getDataManager();
+    if (!dm) return null;
+    const rows = PR.ensureSystems(dm) || [];
+    const row = rows.find((r) => r && r.patron && r.patron.id === patron.id);
+    const system = row && row.system;
+    if (!system) return null;
+    const planets = system.planets || [];
+    const planet = planets.find((p) => p && p.life === true) || planets[0];
+    if (!planet) return null;
+    return { patron, dm, system, planet };
+  }
+
+  function startPatronStarOrigin() {
+    const square = patronStarSquare();
+    const target = patronStarTarget(square);
+    const parked = !!target && target.dm.teleportToPlanetOrbit(target.system.name, target.planet.name);
+    if (!parked) {
+      console.warn("CharacterCreation: the patron's star could not be reached; starting aboard in Earth orbit instead.");
+      anchorAtSpaceCenter();
+      $gamePlayer.reserveTransfer(SHIP_START.mapId, SHIP_START.x, SHIP_START.y, SHIP_START.dir, 0);
+      return false;
+    }
+    // The ship is somewhere on purpose now, so the one-time Earth orbit seed
+    // must not move it back home on the first frame.
+    if ($gameSystem) {
+      $gameSystem._shipOrbitEarthInit = true;
+      $gameSystem._ccPatronStar = {
+        patronId: target.patron.id, system: target.system.name, planet: target.planet.name,
+      };
+    }
+    // Home ground on Earth is the patron's own square: the place they proved
+    // they knew, and the hatch the vessel opens when the party comes down.
+    anchorAt(square.x, square.y);
+    $gamePlayer.reserveTransfer(SHIP_START.mapId, SHIP_START.x, SHIP_START.y, SHIP_START.dir, 0);
+    return true;
+  }
+
+  // An origin that never stands on Earth's surface is not overruled when Earth
+  // is gone: the tower landing (startAtOmegaTower) is only for the ones that
+  // would have.
+  function beginsOffEarth(symbol) {
+    return symbol === PATRON_STAR_ORIGIN;
+  }
+
+  // ==========================================================================
+  // Expressions origin
+  // ==========================================================================
+  // Everybody in the party starts with Expression already unlocked and a power
+  // rolled at random out of the pieces each of them can reach
+  // (Weapon/ExpressionSystem.js, Expression.randomize). Anybody who joins the
+  // party later in this scenario is handed one too, by the same plugin.
+  const EXPRESSIONS_ORIGIN = "origin_expressions"; // i18n-ignore: choice symbol
+
+  function grantStartingExpressions() {
+    const expression = window.Expression;
+    if (!expression || typeof expression.randomize !== "function" || !$gameParty) return 0;
+    let granted = 0;
+    $gameParty.allMembers().forEach((member) => {
+      if (expression.randomize(member)) granted++;
+    });
+    return granted;
+  }
+
+  // ==========================================================================
+  // Custom scenarios
+  // ==========================================================================
+  // The last card of the suggested block: a scenario the player writes. Every
+  // other origin on the board is a fixed recipe; this one is the recipe itself,
+  // laid open - where the party begins, what it carries, what it owes, who it
+  // answers to and what office it already holds.
+  //
+  // A scenario is a plain JSON file. Saving one writes it into the `scenarios`
+  // folder next to the game (created on the first save), and every .json found
+  // in that folder is offered on the board, so a scenario somebody else wrote
+  // is imported by dropping their file in. A browser build has no folder and
+  // keeps them in local storage instead.
+  //
+  // The roles a scenario can open in are all "a part of something", never the
+  // head of it: a member of a faction or of a hyperpower, the mayor of one town
+  // (the sitting mayor resigns, and the world's history says so), the founder
+  // of the world's own political party or a member of the one already standing,
+  // and the founder of a new faction or a member of one another savegame of the
+  // same world founded (FactionDataManager, Founded factions).
+  //
+  // ONE normaliser (normalizeCustomScenario) is the only door into the data, so
+  // a hand-edited or foreign file can never put a value the grants below were
+  // not written for into the game: every number is clamped, every id is
+  // checked against its database when it is granted, and anything unknown is
+  // dropped.
+  const CUSTOM_ORIGIN = "origin_custom"; // i18n-ignore: choice symbol
+  const CUSTOM_SCENARIO_FORMAT = "hypernet-scenario"; // i18n-ignore: file format tag
+  const CUSTOM_SCENARIO_VERSION = 1;
+  const CUSTOM_SCENARIO_DIR = "scenarios"; // i18n-ignore: folder name
+  const CUSTOM_SCENARIO_LS_KEY = "hypernet.customScenarios"; // i18n-ignore: storage key
+
+  // Where the party begins.
+  //   picker    the full starting place picker, any city
+  //   town      one named place (the picker narrowed to it)
+  //   random    a random land square of the world
+  //   square    one exact world square
+  //   tower     the Omega Tower gate
+  //   space     aboard the ship in Earth orbit
+  //   hypernet  the Hypernet Point terminal room
+  const CUSTOM_START_KINDS = ["picker", "town", "random", "square", "tower", "space", "hypernet"]; // i18n-ignore: start kinds
+  const CUSTOM_ALLEGIANCE_KINDS = ["none", "faction", "hyperpower"]; // i18n-ignore: allegiance kinds
+  const CUSTOM_JOIN_MODES = ["none", "found", "join"]; // i18n-ignore: join modes
+  // Existing grants a scenario can switch on, each the one an origin already
+  // hands out, so a perk is never a second copy of a rule.
+  const CUSTOM_PERKS = ["augments", "cards", "hyperdeck", "crafting", "goblins"]; // i18n-ignore: perk ids
+
+  const CUSTOM_LIMITS = Object.freeze({
+    euros: 10000000,     // 10 million euros of extra cash
+    bounty: 1000000,     // a million euros on the party's heads
+    knowledge: 100000,   // Knowledge Points for the SkillMaster
+    levels: 50,          // levels added to every member
+    items: 80,           // rows in the kit
+    qty: 999,            // of any one row
+    reputations: 24,     // standing rows
+    army: 100,           // the army's own ceiling (ArmyManager)
+    upkeepWeeks: 12,     // weeks of wages paid ahead
+    name: 48,
+    description: 400,
+    motto: 120,
+  });
+  // The standing a member is sworn in at. Enough to be trusted, nowhere near
+  // the top of the house: a member is not the leader.
+  const CUSTOM_MEMBER_REPUTATION = 50;
+
+  const clampInt = (value, min, max, fallback) => {
+    const n = Math.round(Number(value));
+    if (!Number.isFinite(n)) return fallback;
+    return Math.max(min, Math.min(max, n));
+  };
+  const cleanText = (value, max) => String(value == null ? "" : value)
+    .replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, max);
+  const pickOf = (value, list, fallback) => (list.indexOf(value) >= 0 ? value : fallback);
+
+  function customScenarioSlug(text) {
+    let slug = String(text || "").toLowerCase();
+    if (slug.normalize) slug = slug.normalize("NFKD").replace(/[̀-ͯ]/g, "");
+    return slug.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "scenario"; // i18n-ignore: file name fallback
+  }
+
+  /** A blank scenario: begins anywhere, carries nothing extra, owes nothing. */
+  function blankCustomScenario() {
+    return normalizeCustomScenario({ name: T('CharCreate.custom.defaultName') });
+  }
+
+  /**
+   * The one door into scenario data. Whatever came in (a file, the editor, an
+   * old version), what comes out holds only known fields with sane values.
+   */
+  function normalizeCustomScenario(raw) {
+    const src = (raw && typeof raw === "object") ? raw : {};
+    const start = (src.start && typeof src.start === "object") ? src.start : {};
+    const army = (src.army && typeof src.army === "object") ? src.army : {};
+    const allegiance = (src.allegiance && typeof src.allegiance === "object") ? src.allegiance : {};
+    const mayor = (src.mayor && typeof src.mayor === "object") ? src.mayor : {};
+    const party = (src.politicalParty && typeof src.politicalParty === "object") ? src.politicalParty : {};
+    const faction = (src.foundedFaction && typeof src.foundedFaction === "object") ? src.foundedFaction : {};
+
+    const name = cleanText(src.name, CUSTOM_LIMITS.name) || T('CharCreate.custom.defaultName');
+    const items = [];
+    const seen = {};
+    (Array.isArray(src.items) ? src.items : []).forEach((row) => {
+      if (!row || items.length >= CUSTOM_LIMITS.items) return;
+      // A row without a kind is an item, as in ORIGIN_LOADOUTS; a kind no
+      // database answers to is not a row at all.
+      if (row.kind != null && ["item", "weapon", "armor"].indexOf(row.kind) < 0) return; // i18n-ignore: database kinds
+      const kind = row.kind || "item"; // i18n-ignore: database kind
+      // An id is a database row or nothing: never clamped into one.
+      const id = Number(row.id);
+      if (!Number.isInteger(id) || id < 1 || id > 99999) return;
+      const key = `${kind}:${id}`;
+      const qty = clampInt(row.qty, 1, CUSTOM_LIMITS.qty, 1);
+      if (seen[key]) { seen[key].qty = Math.min(CUSTOM_LIMITS.qty, seen[key].qty + qty); return; }
+      seen[key] = { kind, id, qty };
+      items.push(seen[key]);
+    });
+    const reputation = [];
+    (Array.isArray(src.reputation) ? src.reputation : []).forEach((row) => {
+      if (!row || reputation.length >= CUSTOM_LIMITS.reputations) return;
+      const factionId = Number(row.factionId);
+      if (!Number.isInteger(factionId) || factionId < 0 || reputation.some((r) => r.factionId === factionId)) return;
+      reputation.push({ factionId, value: clampInt(row.value, -100, 100, 0) });
+    });
+    const perks = (Array.isArray(src.perks) ? src.perks : [])
+      .filter((p, i, list) => CUSTOM_PERKS.indexOf(p) >= 0 && list.indexOf(p) === i);
+
+    const startKind = pickOf(start.kind, CUSTOM_START_KINDS, "picker"); // i18n-ignore: start kind
+    const mayorTown = cleanText(mayor.town, 64);
+
+    return {
+      format: CUSTOM_SCENARIO_FORMAT,
+      version: CUSTOM_SCENARIO_VERSION,
+      id: customScenarioSlug(src.id || name),
+      name,
+      description: cleanText(src.description, CUSTOM_LIMITS.description),
+      start: {
+        // A mayor begins in their own town hall's town, whatever else was set.
+        kind: mayorTown ? "town" : startKind, // i18n-ignore: start kind
+        town: mayorTown || cleanText(start.town, 64),
+        x: clampInt(start.x, 0, 255, 0),
+        y: clampInt(start.y, 0, 255, 0),
+      },
+      euros: clampInt(src.euros, 0, CUSTOM_LIMITS.euros, 0),
+      bounty: clampInt(src.bounty, 0, CUSTOM_LIMITS.bounty, 0),
+      knowledge: clampInt(src.knowledge, 0, CUSTOM_LIMITS.knowledge, 0),
+      levels: clampInt(src.levels, 0, CUSTOM_LIMITS.levels, 0),
+      items,
+      reputation,
+      perks,
+      army: {
+        count: clampInt(army.count, 0, CUSTOM_LIMITS.army, 0),
+        // -1 is a mixed band drawn from every faction, like the warlord's.
+        factionId: clampInt(army.factionId, -1, 9999, -1),
+        upkeepWeeks: clampInt(army.upkeepWeeks, 0, CUSTOM_LIMITS.upkeepWeeks, 0),
+      },
+      allegiance: {
+        kind: pickOf(allegiance.kind, CUSTOM_ALLEGIANCE_KINDS, "none"), // i18n-ignore: allegiance kind
+        id: clampInt(allegiance.id, 0, 9999, 0),
+      },
+      mayor: { town: mayorTown },
+      politicalParty: {
+        mode: pickOf(party.mode, CUSTOM_JOIN_MODES, "none"), // i18n-ignore: join mode
+        name: cleanText(party.name, CUSTOM_LIMITS.name),
+        ideologyId: cleanText(party.ideologyId, 64),
+      },
+      foundedFaction: {
+        mode: pickOf(faction.mode, CUSTOM_JOIN_MODES, "none"), // i18n-ignore: join mode
+        id: cleanText(faction.id, 64),
+        name: cleanText(faction.name, CUSTOM_LIMITS.name),
+        motto: cleanText(faction.motto, CUSTOM_LIMITS.motto),
+        patronFactionId: clampInt(faction.patronFactionId, -1, 9999, -1),
+      },
+    };
+  }
+
+  // --- The scenarios folder ----------------------------------------------
+  // A tool or a test can point the store somewhere else (setRoot); the game
+  // itself always uses the folder beside its own index.html.
+  let _customScenarioRoot = null;
+
+  function customScenarioFs() {
+    try {
+      if (typeof Utils === "undefined" || !Utils.isNwjs || !Utils.isNwjs()) {
+        if (!_customScenarioRoot) return null;
+      }
+      const fs = require("fs");
+      const path = require("path");
+      const base = _customScenarioRoot ||
+        path.join(path.dirname(process.mainModule.filename), CUSTOM_SCENARIO_DIR);
+      return { fs, path, dir: base };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function customScenarioFolder() {
+    const io = customScenarioFs();
+    return io ? io.dir : null;
+  }
+
+  function readLocalScenarios() {
+    try {
+      const text = typeof localStorage !== "undefined" ? localStorage.getItem(CUSTOM_SCENARIO_LS_KEY) : null;
+      const map = text ? JSON.parse(text) : {};
+      return (map && typeof map === "object") ? map : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function writeLocalScenarios(map) {
+    try {
+      if (typeof localStorage !== "undefined") localStorage.setItem(CUSTOM_SCENARIO_LS_KEY, JSON.stringify(map));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /**
+   * Every scenario on disk, by name: [{ file, scenario }]. A file that is not
+   * a scenario at all (bad JSON, the wrong format tag) is skipped and named on
+   * the console rather than breaking the list.
+   */
+  function listCustomScenarios() {
+    const out = [];
+    const io = customScenarioFs();
+    if (io) {
+      let files = [];
+      try {
+        if (io.fs.existsSync(io.dir)) files = io.fs.readdirSync(io.dir).filter((f) => /\.json$/i.test(f));
+      } catch (e) {
+        files = [];
+      }
+      files.forEach((file) => {
+        try {
+          const raw = JSON.parse(String(io.fs.readFileSync(io.path.join(io.dir, file), "utf8")).replace(/^﻿/, ""));
+          if (!raw || (raw.format && raw.format !== CUSTOM_SCENARIO_FORMAT)) return;
+          out.push({ file, scenario: normalizeCustomScenario(raw) });
+        } catch (e) {
+          console.warn(`CharacterCreation: ${file} in the scenarios folder is not a readable scenario.`);
+        }
+      });
+    } else {
+      const map = readLocalScenarios();
+      Object.keys(map).forEach((file) => out.push({ file, scenario: normalizeCustomScenario(map[file]) }));
+    }
+    return out.sort((a, b) => a.scenario.name.localeCompare(b.scenario.name));
+  }
+
+  /**
+   * Write a scenario out. `file` names the file it was read from, so editing a
+   * scenario rewrites it in place; a new one is named after itself and never
+   * overwrites a different scenario that happens to share the name.
+   * @returns {{ ok: boolean, file?: string, scenario?: object }}
+   */
+  function saveCustomScenario(scenario, file) {
+    const clean = normalizeCustomScenario(scenario);
+    const io = customScenarioFs();
+    const taken = (name) => {
+      if (io) {
+        try { return io.fs.existsSync(io.path.join(io.dir, name)); } catch (e) { return false; }
+      }
+      return Object.prototype.hasOwnProperty.call(readLocalScenarios(), name);
+    };
+    let target = file && /\.json$/i.test(file) ? String(file).replace(/[\\/]/g, "") : null;
+    if (!target) {
+      target = `${clean.id}.json`;
+      for (let n = 2; taken(target); n++) target = `${clean.id}-${n}.json`;
+    }
+    if (io) {
+      try {
+        if (!io.fs.existsSync(io.dir)) io.fs.mkdirSync(io.dir, { recursive: true });
+        io.fs.writeFileSync(io.path.join(io.dir, target), JSON.stringify(clean, null, 2), "utf8");
+      } catch (e) {
+        console.error("CharacterCreation: the scenarios folder could not be written to.", e);
+        return { ok: false };
+      }
+    } else {
+      const map = readLocalScenarios();
+      map[target] = clean;
+      if (!writeLocalScenarios(map)) return { ok: false };
+    }
+    return { ok: true, file: target, scenario: clean };
+  }
+
+  function deleteCustomScenario(file) {
+    if (!file) return false;
+    const name = String(file).replace(/[\\/]/g, "");
+    const io = customScenarioFs();
+    if (io) {
+      try {
+        const full = io.path.join(io.dir, name);
+        if (!io.fs.existsSync(full)) return false;
+        io.fs.unlinkSync(full);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+    const map = readLocalScenarios();
+    if (!map[name]) return false;
+    delete map[name];
+    return writeLocalScenarios(map);
+  }
+
+  // The folder in the system's own file browser, so a player can see where the
+  // exported files went and drop somebody else's in. Created first, so the
+  // button works before anything has been saved.
+  function openCustomScenarioFolder() {
+    const io = customScenarioFs();
+    if (!io) return false;
+    try {
+      if (!io.fs.existsSync(io.dir)) io.fs.mkdirSync(io.dir, { recursive: true });
+      if (typeof nw !== "undefined" && nw.Shell && nw.Shell.openItem) {
+        nw.Shell.openItem(io.dir);
+        return true;
+      }
+    } catch (e) {
+      console.warn("CharacterCreation: could not open the scenarios folder.", e);
+    }
+    return false;
+  }
+
+  // --- The scenario this run will start ------------------------------------
+  // Kept on $gameTemp while the board is open (it is a choice, not yet a fact)
+  // along with the file it came from; written onto $gameSystem once it starts.
+  function activeCustomScenario() {
+    return ($gameTemp && $gameTemp._ccCustomScenario) || null;
+  }
+
+  function activeCustomScenarioFile() {
+    return ($gameTemp && $gameTemp._ccCustomScenarioFile) || null;
+  }
+
+  function setActiveCustomScenario(scenario, file) {
+    if (!$gameTemp) return;
+    $gameTemp._ccCustomScenario = scenario ? normalizeCustomScenario(scenario) : null;
+    $gameTemp._ccCustomScenarioFile = scenario ? (file || null) : null;
+  }
+
+  // The kit the active scenario hands out, as loadout rows (resolveOriginLoadout).
+  function customScenarioLoadout() {
+    const scenario = activeCustomScenario();
+    if (!scenario) return [];
+    return scenario.items.map((row) => ({ kind: row.kind, id: row.id, qty: row.qty }));
+  }
+
+  // Its extra cash, in gold (100 gold = 1 euro).
+  function customScenarioGold() {
+    const scenario = activeCustomScenario();
+    return scenario ? scenario.euros * 100 : 0;
+  }
+
+  // --- What the editor offers ------------------------------------------------
+  // Read off the systems that own each list, so the editor never carries a
+  // second copy of the world's factions, towns or creeds.
+
+  function customFactionOptions() {
+    if (typeof $gameFactions === "undefined" || !$gameFactions || !$gameFactions.getAllFactions) return [];
+    const FDM = window.FactionDataManager && window.FactionDataManager.instance;
+    return ($gameFactions.getAllFactions() || []).filter(Boolean).map((f) => ({
+      id: Number(f.id), name: FDM && FDM.t ? FDM.t(f.name) : String(f.name || f.id),
+    }));
+  }
+
+  function customHyperpowerOptions() {
+    if (typeof $gameFactions === "undefined" || !$gameFactions || !$gameFactions.getHyperpowers) return [];
+    return ($gameFactions.getHyperpowers() || []).map((hp) => ({
+      id: hp.id,
+      name: (window.WorldNames && window.WorldNames.localize) ? window.WorldNames.localize(hp.name) : hp.name,
+    }));
+  }
+
+  // Every inhabited place a mayor could sit in: the cities and villages of the
+  // destination table.
+  function customTownOptions() {
+    const dest = (window.WorkSystem && window.WorkSystem.Destinations) || {};
+    return Object.keys(dest).filter((key) => {
+      const d = dest[key];
+      return d && /^(City|Village)/.test(String(d.biome || ""));
+    }).sort((a, b) => a.localeCompare(b));
+  }
+
+  // Every place the starting picker could land on.
+  function customPlaceOptions() {
+    const dest = (window.WorkSystem && window.WorkSystem.Destinations) || {};
+    return Object.keys(dest).sort((a, b) => a.localeCompare(b));
+  }
+
+  function customCreedOptions() {
+    const NP = window.NPCPolitics;
+    const list = NP && NP.foundableCreeds ? NP.foundableCreeds() : [];
+    return list.map((c) => ({ id: c.id, name: typeof T === "function" ? T(c.name) : c.id }));
+  }
+
+  // The factions this world already holds that a savegame founded.
+  function customFoundedFactionOptions() {
+    const FF = window.FoundedFactions;
+    return FF && FF.list ? FF.list() : [];
+  }
+
+  // --- Starting it -----------------------------------------------------------
+
+  function customLeaderName() {
+    const leader = $gameParty && $gameParty.leader ? $gameParty.leader() : null;
+    return leader ? leader.name() : "";
+  }
+
+  function applyCustomBounty(scenario) {
+    if (!scenario.bounty) return;
+    const CS = window.CrimeSystem;
+    if (!CS || !CS.addCrime) {
+      console.warn("CharacterCreation: CrimeSystem unavailable; the scenario's bounty was not set.");
+      return;
+    }
+    const crime = T('CharCreate.custom.bountyCrime');
+    const gold = scenario.bounty * 100;
+    CS.addCrime(crime, gold);
+    if (CS.filePastLifeWithPress) {
+      const led = CS.pressLedger && CS.pressLedger();
+      if (led) led.queue.length = 0;
+      CS.filePastLifeWithPress(crime, gold);
+    }
+  }
+
+  function applyCustomLevels(scenario) {
+    if (!scenario.levels || !$gameParty) return;
+    $gameParty.members().forEach((actor) => {
+      if (!actor || !actor.changeLevel) return;
+      const max = actor.maxLevel ? actor.maxLevel() : 99;
+      actor.changeLevel(Math.min(max, actor.level + scenario.levels), false);
+    });
+  }
+
+  function applyCustomReputation(scenario) {
+    if (typeof $gameFactions === "undefined" || !$gameFactions) return;
+    scenario.reputation.forEach((row) => {
+      if (!$gameFactions.getFaction || !$gameFactions.getFaction(row.factionId)) return;
+      const delta = row.value - ($gameFactions.getReputation(row.factionId) || 0);
+      if (delta) $gameFactions.changeReputationWithParents(row.factionId, delta);
+    });
+  }
+
+  function applyCustomArmy(scenario) {
+    const army = scenario.army;
+    const AM = window.ArmyManager;
+    if (!army.count || !AM) return;
+    const known = army.factionId >= 0 && typeof $gameFactions !== "undefined" && $gameFactions &&
+      $gameFactions.getFaction && $gameFactions.getFaction(army.factionId);
+    if (known && AM.grantRandomTroops) AM.grantRandomTroops(army.factionId, army.count);
+    else if (AM.grantRandomTroopsMixed) AM.grantRandomTroopsMixed(army.count);
+    if (army.upkeepWeeks && typeof $gameArmy !== "undefined" && $gameArmy) {
+      const upkeep = $gameArmy.getTotalWeeklyCost() * army.upkeepWeeks;
+      if (upkeep > 0) $gameParty.gainGold(upkeep);
+    }
+  }
+
+  // A member, sworn in at a member's standing. Never more: the house keeps
+  // its own head, and the party is one of the ranks under them.
+  function applyCustomAllegiance(scenario) {
+    const al = scenario.allegiance;
+    if (al.kind === "none" || typeof $gameFactions === "undefined" || !$gameFactions) return; // i18n-ignore: allegiance kind
+    if (al.kind === "faction") { // i18n-ignore: allegiance kind
+      if (!$gameFactions.getFaction || !$gameFactions.getFaction(al.id)) return;
+      const delta = CUSTOM_MEMBER_REPUTATION - ($gameFactions.getReputation(al.id) || 0);
+      if (delta > 0) $gameFactions.changeReputationWithParents(al.id, delta);
+    } else {
+      // A hyperpower's standing has no world slot: it lives on each character
+      // (the "hp:<id>" keys), so every member is sworn in on their own.
+      const hp = $gameFactions.getHyperpower && $gameFactions.getHyperpower(al.id);
+      if (!hp || !$gameFactions.changeReputationFor) return;
+      const key = $gameFactions.hyperpowerStandingKey(hp.id);
+      $gameParty.members().forEach((actor) => {
+        const delta = CUSTOM_MEMBER_REPUTATION - ($gameFactions.getReputationFor(actor, key) || 0);
+        if (delta > 0) $gameFactions.changeReputationFor(actor, key, delta);
+      });
+    }
+    $gameSystem._ccAllegiance = { kind: al.kind, id: al.id, rank: "member" }; // i18n-ignore: rank id
+  }
+
+  function applyCustomMayor(scenario) {
+    const town = scenario.mayor.town;
+    const NP = window.NPCPolitics;
+    if (!town || !NP || !NP.seatTeamMayor) return;
+    const seated = NP.seatTeamMayor(town, customLeaderName());
+    if (!seated) console.warn(`CharacterCreation: the town hall of ${town} could not be handed to the party.`);
+  }
+
+  // The world holds one party of the team's own. Founding one where another
+  // savegame of the same world already has is joining it instead.
+  function applyCustomPoliticalParty(scenario) {
+    const spec = scenario.politicalParty;
+    const NP = window.NPCPolitics;
+    if (spec.mode === "none" || !NP) return; // i18n-ignore: join mode
+    if (NP.hasPlayerParty && NP.hasPlayerParty()) {
+      if (NP.enrollTeamInPlayerParty) NP.enrollTeamInPlayerParty();
+      return;
+    }
+    if (spec.mode !== "found" || !NP.foundPlayerParty) return; // i18n-ignore: join mode
+    const creeds = NP.foundableCreeds ? NP.foundableCreeds() : [];
+    const creed = creeds.find((c) => c.id === spec.ideologyId) || creeds[0];
+    if (!creed) return;
+    NP.foundPlayerParty({ name: spec.name, ideologyId: creed.id });
+  }
+
+  function applyCustomFoundedFaction(scenario) {
+    const spec = scenario.foundedFaction;
+    const FF = window.FoundedFactions;
+    if (spec.mode === "none" || !FF) return; // i18n-ignore: join mode
+    const names = $gameParty ? $gameParty.members().map((a) => a.name()) : [];
+    let record = spec.mode === "join" && spec.id ? FF.get(spec.id) : null; // i18n-ignore: join mode
+    if (record) {
+      FF.join(record.id, names);
+    } else if (spec.mode === "found" || spec.mode === "join") { // i18n-ignore: join modes
+      // A faction to join that this world never held (a scenario written in
+      // another world) is founded here under the same name instead.
+      record = FF.found({
+        name: spec.name || T('CharCreate.custom.defaultFactionName'),
+        motto: spec.motto,
+        patronFactionId: spec.patronFactionId,
+        founder: customLeaderName(),
+        members: names,
+      });
+    }
+    if (record && $gameSystem) $gameSystem._ccFoundedFactionId = record.id;
+  }
+
+  function applyCustomPerks(scenario) {
+    const has = (perk) => scenario.perks.indexOf(perk) >= 0;
+    if (has("augments")) grantStartingAugments();
+    if (has("cards")) grantStartingCards();
+    if (has("hyperdeck") && window.HyperDeck && window.HyperDeck.rollStartingDeck) {
+      try {
+        window.HyperDeck.rollStartingDeck(Math.random, { everything: true, mustBoot: true });
+      } catch (e) {
+        console.warn("CharacterCreation: could not roll the scenario's Hyperdeck.", e);
+      }
+    }
+    if (has("crafting")) {
+      $gameParty.members().forEach((actor) => {
+        if (!actor || !actor.setSpecializationTrainedLevel) return;
+        CRAFTING_SPEC_IDS.forEach((specId) => actor.setSpecializationTrainedLevel(specId, 3 + Math.floor(Math.random() * 3)));
+      });
+    }
+    if (has("goblins")) dressPartyAsGoblins();
+  }
+
+  // Where the party is set down. Answers true when that is the starting place
+  // picker, which ends creation on its own (the faction origins' rule).
+  function placeCustomScenario(scenario) {
+    const start = scenario.start;
+    switch (start.kind) {
+      case "random":
+        if (startOnProceduralSquare({ rng: Math.random })) return false;
+        startDungeonOrigin();
+        return false;
+      case "square":
+        if (startOnProceduralSquare({ worldX: start.x, worldY: start.y })) return false;
+        if (startOnProceduralSquare({ rng: Math.random })) return false;
+        startDungeonOrigin();
+        return false;
+      case "tower":
+        startDungeonOrigin();
+        return false;
+      case "space":
+        anchorAtSpaceCenter();
+        $gamePlayer.reserveTransfer(SHIP_START.mapId, SHIP_START.x, SHIP_START.y, SHIP_START.dir, 0);
+        return false;
+      case "hypernet":
+        anchorAtOmegaTower();
+        $gamePlayer.reserveTransfer(HYPERNET_ORIGIN.mapId, HYPERNET_ORIGIN.x, HYPERNET_ORIGIN.y, HYPERNET_ORIGIN.dir, 0);
+        return false;
+      default:
+        // "picker" and "town": the picker, narrowed to the one town for the
+        // latter (allowedStartDestinations).
+        startWorldMapPickerOrigin();
+        return true;
+    }
+  }
+
+  /** The towns the creation picker may offer for this scenario, or null for all. */
+  function customScenarioDestinations(destinations) {
+    if (!$gameSystem || $gameSystem._ccOriginSymbol !== CUSTOM_ORIGIN) return null;
+    const scenario = $gameSystem._ccCustomScenario || activeCustomScenario();
+    if (!scenario || scenario.start.kind !== "town" || !scenario.start.town) return null; // i18n-ignore: start kind
+    const list = Array.isArray(destinations) ? destinations : Object.values(destinations || {});
+    const town = scenario.start.town;
+    const known = list.some((d) => d && (d.name === town || d === town));
+    return known ? [town] : null;
+  }
+
+  /**
+   * Run the active scenario: every grant, then the landing. Its kit and cash
+   * were already handed out by grantOriginLoadout / giveStartingMoney, which
+   * read the same scenario, so the dossier and the grant agree.
+   */
+  function startCustomScenarioOrigin() {
+    const scenario = activeCustomScenario() || blankCustomScenario();
+    if ($gameSystem) {
+      $gameSystem._ccCustomScenario = scenario;
+      $gameSystem._ccCustomScenarioName = scenario.name;
+    }
+    applyCustomLevels(scenario);
+    if (scenario.knowledge && $gameSystem && $gameSystem.addKnowledge) $gameSystem.addKnowledge(scenario.knowledge);
+    applyCustomPerks(scenario);
+    applyCustomReputation(scenario);
+    applyCustomAllegiance(scenario);
+    applyCustomArmy(scenario);
+    applyCustomBounty(scenario);
+    applyCustomPoliticalParty(scenario);
+    applyCustomFoundedFaction(scenario);
+    applyCustomMayor(scenario);
+    return placeCustomScenario(scenario);
+  }
+
   // --- Starting encumbrance ----------------------------------------------
   // A scenario's loadout is written for its story, not for the party's back:
   // between the staples, the spare gear and a heavy origin kit a fresh party
@@ -2892,6 +3646,46 @@
     finishFactionOrigin,
     startFactionPickerOrigin,
     SUGGESTED_ORIGINS,
+    PATRON_STAR_ORIGIN,
+    EXPRESSIONS_ORIGIN,
+    grantStartingExpressions,
+    patronStarAvailable,
+    patronStarSquare,
+    setPatronStarSquare,
+    patronStarTarget,
+    startPatronStarOrigin,
+    beginsOffEarth,
+    CUSTOM_ORIGIN,
+    CUSTOM_SCENARIO_FORMAT,
+    CUSTOM_SCENARIO_VERSION,
+    CUSTOM_START_KINDS,
+    CUSTOM_ALLEGIANCE_KINDS,
+    CUSTOM_JOIN_MODES,
+    CUSTOM_PERKS,
+    CUSTOM_LIMITS,
+    CUSTOM_MEMBER_REPUTATION,
+    blankCustomScenario,
+    normalizeCustomScenario,
+    listCustomScenarios,
+    saveCustomScenario,
+    deleteCustomScenario,
+    customScenarioFolder,
+    openCustomScenarioFolder,
+    activeCustomScenario,
+    activeCustomScenarioFile,
+    setActiveCustomScenario,
+    customScenarioLoadout,
+    customScenarioGold,
+    customFactionOptions,
+    customHyperpowerOptions,
+    customTownOptions,
+    customPlaceOptions,
+    customCreedOptions,
+    customFoundedFactionOptions,
+    customScenarioDestinations,
+    startCustomScenarioOrigin,
+    // For tools and tests: point the scenarios folder somewhere else.
+    setCustomScenarioRoot(dir) { _customScenarioRoot = dir || null; },
   };
 
   // The map every new game / permadeath reset lands on. Read here because

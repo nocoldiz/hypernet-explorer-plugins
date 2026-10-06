@@ -47,7 +47,34 @@
     "ore_arcane": "Arcane seam",
     "ore_ethereal": "Ethereal seam",
     "ore_quantum": "Quantum seam",
-    "ore_meteor": "Meteoric seam"
+    "ore_meteor": "Meteoric seam",
+    "red_sand": "Red sand",
+    "pale_sand": "Pale sand",
+    "flower_bed": "Flower bed",
+    "jungle_turf": "Jungle turf",
+    "lime_moss": "Lime moss",
+    "snow_sparkle": "Powder snow",
+    "reeds": "Reeds",
+    "fieldstone": "Fieldstone",
+    "amber_cobble": "Amber cobble",
+    "blue_cobble": "Blue cobble",
+    "dark_cobble": "Dark cobble",
+    "moss_brick": "Mossy brick",
+    "violet_rock": "Violet rock",
+    "shadow_rock": "Shadow rock",
+    "pale_slate": "Pale slate",
+    "icefall": "Icefall",
+    "scoria": "Scoria",
+    "lava_cobble": "Lava cobble",
+    "ember_thorns": "Ember thorns",
+    "red_brick": "Red brick",
+    "slate_brick": "Slate brick",
+    "cedar": "Cedar planking",
+    "steel_rib": "Ribbed steel",
+    "blue_steel": "Blue steel",
+    "window_pane": "Window pane",
+    "ornate_tile": "Ornate tile",
+    "eye_wall": "Watching wall"
   },
   "tool": {
     "target": "{name}",
@@ -102,5 +129,10 @@
     "enter": "Enter VR",
     "exit": "Exit VR",
     "failed": "The VR headset could not be started."
+  },
+  "site": {
+    "warren": "A goblin warren. Keep your voice down.",
+    "dungeon": "Cut stone underfoot: a dungeon.",
+    "grotto": "A crystal grotto glitters in the dark."
   }
 }

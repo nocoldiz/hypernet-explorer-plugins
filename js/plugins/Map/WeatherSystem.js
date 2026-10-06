@@ -3025,6 +3025,199 @@
   Spriteset_Map.prototype.clearCustomWeather = function () {
     if (this._customWeatherLayer) this._customWeatherLayer.clear();
   };
+  // --- A1 animation speed ----------------------------------------------------
+  // The animated A1 tiles (water, waterfalls) cycle at the pace of the wind of
+  // the active season table (the map's biome on OmegaTower maps, otherwise the
+  // country's). Rain and storm stir them faster, snow slows them down. Indoors
+  // there is no wind, so they stand still. Each map row runs a few counts
+  // behind the one above it, so the ripple travels down the map like a gust.
+  const WATER_ANIM_BASE_WIND = 10; // km/h that plays at the engine's own pace
+  const WATER_ANIM_MIN = 0.4;
+  const WATER_ANIM_MAX = 2.5;
+  const WATER_ANIM_WEATHER = { none: 1, rain: 1.3, storm: 1.6, snow: 0.6 };
+  const WATER_ANIM_ROW_LAG = 5; // animation counts each row trails the one above
+  const WATER_ANIM_UNIFORM_TAG = 3; // terrain tag of water that never lags by row
+
+  const A1_PRESS_HOLD = 90; // frames a stepped-on A1 tile stays still
+
+  function waterTerrainTag(flags, tileId) {
+    return flags ? (flags[tileId] || 0) >> 12 : 0;
+  }
+
+  // Non-water A1 tiles (grass and the like, any terrain tag but 3) stop for a
+  // moment where someone steps, so walkers leave a trail through them. Keyed
+  // by map tile; each entry keeps the frame it froze on.
+  const A1Pressed = {
+    _mapId: 0,
+    _tiles: new Map(),
+    _dirty: false,
+
+    // Every map load starts clean: procedural squares all share map 636, so
+    // the id alone would carry one square's trail into the next.
+    reset() {
+      if (this._tiles.size) this._dirty = true;
+      this._tiles.clear();
+      this._mapId = $gameMap ? $gameMap.mapId() : 0;
+    },
+
+    press(x, y) {
+      if (!$gameMap || !$dataMap) return false;
+      const mapId = $gameMap.mapId();
+      if (mapId !== this._mapId) {
+        this._tiles.clear();
+        this._mapId = mapId;
+      }
+      if (!this.hasLandA1(x, y)) return false;
+      const key = y * $gameMap.width() + x;
+      const until = Graphics.frameCount + A1_PRESS_HOLD;
+      const entry = this._tiles.get(key);
+      if (entry) entry.until = until;
+      else {
+        this._tiles.set(key, { until, frame: undefined });
+        this._dirty = true;
+      }
+      return true;
+    },
+
+    hasLandA1(x, y) {
+      const flags = $gameMap.tilesetFlags();
+      for (let z = 0; z < 4; z++) {
+        const id = $gameMap.tileId(x, y, z);
+        if (id && Tilemap.isTileA1(id) && waterTerrainTag(flags, id) !== WATER_ANIM_UNIFORM_TAG) {
+          return true;
+        }
+      }
+      return false;
+    },
+
+    entryAt(x, y) {
+      if (!this._tiles.size || !$gameMap || $gameMap.mapId() !== this._mapId) return null;
+      return this._tiles.get(y * $gameMap.width() + x) || null;
+    },
+
+    // Drops the tiles whose hold ran out; true when the map must repaint.
+    expire() {
+      let changed = this._dirty;
+      this._dirty = false;
+      if (this._tiles.size) {
+        const now = Graphics.frameCount;
+        for (const [key, entry] of this._tiles) {
+          if (entry.until <= now) {
+            this._tiles.delete(key);
+            changed = true;
+          }
+        }
+      }
+      return changed;
+    },
+  };
+
+  function waterAnimRate(windSpeed, weatherType) {
+    const wind = Number.isFinite(windSpeed) ? Math.max(0, windSpeed) : WATER_ANIM_BASE_WIND;
+    const windFactor = 0.5 + 0.5 * (wind / WATER_ANIM_BASE_WIND);
+    const weatherFactor = WATER_ANIM_WEATHER[weatherType] || 1;
+    return Math.max(WATER_ANIM_MIN, Math.min(WATER_ANIM_MAX, windFactor * weatherFactor));
+  }
+
+  function currentWaterAnimRate() {
+    const w = window.$gameWeather;
+    if (!w) return 1;
+    if (w.isInterior) return 0;
+    let wind = null;
+    try {
+      const seasons = w.currentCountry ? w.getActiveSeasons() : null;
+      const data = seasons ? seasons[w.getSeason().toLowerCase()] : null;
+      if (data && Number.isFinite(data.windSpeed)) wind = data.windSpeed;
+    } catch (e) {
+      wind = null;
+    }
+    return waterAnimRate(wind, w.currentWeatherType || WeatherTypes.NONE);
+  }
+
+  window.WaterAnimation = {
+    rate: waterAnimRate,
+    current: currentWaterAnimRate,
+    ROW_LAG: WATER_ANIM_ROW_LAG,
+    UNIFORM_TAG: WATER_ANIM_UNIFORM_TAG,
+    PRESS_HOLD: A1_PRESS_HOLD,
+    press: (x, y) => A1Pressed.press(x, y),
+    isPressed: (x, y) => !!A1Pressed.entryAt(x, y),
+    resetPressed: () => A1Pressed.reset(),
+  };
+
+  if (typeof Game_Map !== "undefined") {
+    const _Game_Map_setup_a1 = Game_Map.prototype.setup;
+    Game_Map.prototype.setup = function (mapId) {
+      _Game_Map_setup_a1.call(this, mapId);
+      A1Pressed.reset();
+    };
+  }
+
+  if (typeof Tilemap !== "undefined") {
+    // The engine adds one per frame; this adds the eased rate instead, re-read
+    // once a second so a weather change ramps the water up or down smoothly.
+    Tilemap.prototype.update = function () {
+      if (this._waterAnimRate === undefined) {
+        this._waterAnimRate = currentWaterAnimRate();
+        this._waterAnimTarget = this._waterAnimRate;
+        this._waterAnimCheck = 0;
+      }
+      if (--this._waterAnimCheck <= 0) {
+        this._waterAnimTarget = currentWaterAnimRate();
+        this._waterAnimCheck = 60;
+      }
+      this._waterAnimRate += (this._waterAnimTarget - this._waterAnimRate) * 0.02;
+      this.animationCount += this._waterAnimRate;
+      this.animationFrame = Math.floor(this.animationCount / 30);
+      // Rows lag behind each other, so the tilemap has to repaint whenever
+      // any row crosses a frame, not only when the whole map does.
+      const rowTick = Math.floor(this.animationCount / WATER_ANIM_ROW_LAG);
+      if (rowTick !== this._waterRowTick) {
+        this._waterRowTick = rowTick;
+        this._needsRepaint = true;
+      }
+      if (A1Pressed.expire()) this._needsRepaint = true;
+      for (const child of this.children) {
+        if (child.update) child.update();
+      }
+    };
+
+    // A1 tiles read animationFrame while a spot is drawn: give each map row
+    // its own frame, shifted back by its lag. Water tagged terrain 3 is kept
+    // on the shared frame, so it ripples uniformly. A pressed land tile holds
+    // its frame.
+    const _Tilemap_addSpot = Tilemap.prototype._addSpot;
+    Tilemap.prototype._addSpot = function (startX, startY, x, y) {
+      const lagged = this.animationCount - (startY + y) * WATER_ANIM_ROW_LAG;
+      // Wrapped to 0..11 so the engine's % 4 and % 3 lookups stay positive.
+      this._waterRowFrame = ((Math.floor(lagged / 30) % 12) + 12) % 12;
+      this._a1PressedEntry = A1Pressed.entryAt(startX + x, startY + y);
+      _Tilemap_addSpot.call(this, startX, startY, x, y);
+      this._waterRowFrame = undefined;
+      this._a1PressedEntry = null;
+    };
+
+    const _Tilemap_addAutotile = Tilemap.prototype._addAutotile;
+    Tilemap.prototype._addAutotile = function (layer, tileId, dx, dy) {
+      if (this._waterRowFrame === undefined || !Tilemap.isTileA1(tileId) ||
+          waterTerrainTag(this.flags, tileId) === WATER_ANIM_UNIFORM_TAG) {
+        _Tilemap_addAutotile.call(this, layer, tileId, dx, dy);
+        return;
+      }
+      const globalFrame = this.animationFrame;
+      let frame = this._waterRowFrame;
+      // A stepped-on land A1 tile holds the frame it showed when pressed.
+      const pressed = this._a1PressedEntry;
+      if (pressed) {
+        if (pressed.frame === undefined) pressed.frame = frame;
+        frame = pressed.frame;
+      }
+      this.animationFrame = frame;
+      _Tilemap_addAutotile.call(this, layer, tileId, dx, dy);
+      this.animationFrame = globalFrame;
+    };
+  }
+
   const _Game_WeatherTimeSystem_clearWeather =
     Game_WeatherTimeSystem.prototype.clearWeather;
   Game_WeatherTimeSystem.prototype.clearWeather = function () {

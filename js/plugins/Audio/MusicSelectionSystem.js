@@ -31,6 +31,7 @@
  * - None: no music during battles.
  *
  * Available Battle Music:
+ * - Full Strength Unleashed (BattleMusic/13- Full Strength Unleashed)
  * - Drums (RandomMind/Battle)
  * - Shortcuts (ZaneMusic/shortcuts)
  * -  (TallBeard)
@@ -71,6 +72,7 @@
     { get name() { return T('MusicSelection.trackNone'); },              value: MUSIC_NONE, composer: "" },
     { get name() { return T('MusicSelection.trackMap'); }, value: MUSIC_MAP,  composer: "" },
     { get name() { return T('MusicSelection.trackBiome'); }, value: MUSIC_BIOME, composer: "" },
+    { name: "Full Strength Unleashed", value: CUSTOM_FOLDER + "/13- Full Strength Unleashed", composer: "" },  // i18n-ignore  bgm track, named after its file
     { name: "Drums", value: "RandomMind/Battle", composer: "RandomMind" },  // i18n-ignore  bgm track, named after its file
     { name: "Shortcuts", value: "ZaneMusic/shortcuts", composer: "ZaneMusic" },  // i18n-ignore  bgm track, named after its file
     { name: "Melodic Techno", value: "Moogify/MelodicTechno", composer: "Moogify" },  // i18n-ignore  bgm track, named after its file
@@ -111,7 +113,9 @@
   }
 
   // Append any custom tracks found on disk so they show up in every selector.
-  Array.prototype.push.apply(MUSIC_TRACKS, scanCustomTracks());
+  // A file already listed above (shipped in the same folder) is not added twice.
+  Array.prototype.push.apply(MUSIC_TRACKS, scanCustomTracks()
+    .filter(c => !MUSIC_TRACKS.some(t => t.value === c.value)));
 
   // Helper function for localized text
   function getLocalizedText(english, italian) {

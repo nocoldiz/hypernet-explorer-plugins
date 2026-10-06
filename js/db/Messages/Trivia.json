@@ -265,13 +265,13 @@
     "text_int": "trivia.52.text"
   },
   {
-    "en": "One can bind a unique, procedurally-named spiritual weapon called a 'Blade Seed', choosing its shape and its look; nothing else in the world produces one.",
-    "it": "Si può vincolare un'arma spirituale unica dal nome procedurale chiamata 'Blade Seed', scegliendone forma e aspetto; nient'altro al mondo ne produce una.",
+    "en": "An Expression Seed unlocks Expression: a power a character assembles out of a trigger, vows, a branch, effects and a form, the way a Nen ability or a Stand is built.",
+    "it": "Un Seme dell'Espressione sblocca l'Espressione: un potere che un personaggio assembla da un innesco, dei voti, un bivio, degli effetti e una forma, come un'abilità Nen o uno Stand.",
     "text_int": "trivia.53.text"
   },
   {
-    "en": "The guardian spirit of a Blade Seed has 3 evolutionary stages and gains 50% of the experience earned by its wielder.",
-    "it": "Lo spirito guardiano di un Blade Seed ha 3 stadi evolutivi e guadagna il 50% dell'esperienza ottenuta dal suo possessore.",
+    "en": "An Expression fires at most once per battle, and at most once a day out in the world. The stricter its vows, the harder it hits.",
+    "it": "Un'Espressione si attiva al massimo una volta per battaglia, e al massimo una volta al giorno nel mondo. Più severi i suoi voti, più forte colpisce.",
     "text_int": "trivia.54.text"
   },
   {
@@ -290,8 +290,8 @@
     "text_int": "trivia.57.text"
   },
   {
-    "en": "A successful date with Eris will result in her gifting the person a rare Blade Seed.",
-    "it": "Un appuntamento di successo con Eris farà sì che lei regali alla persona un raro Blade Seed.",
+    "en": "A successful date with Eris will result in her gifting the person a rare Expression Seed.",
+    "it": "Un appuntamento di successo con Eris farà sì che lei regali alla persona un raro Seme dell'Espressione.",
     "text_int": "trivia.58.text"
   },
   {

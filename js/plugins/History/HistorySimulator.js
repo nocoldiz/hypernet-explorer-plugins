@@ -4421,6 +4421,14 @@
     // What the party itself puts in the record
     //=========================================================================
 
+    // Today's date in the world's own calendar, written the way every live
+    // record of the chronicle writes it. For callers outside the simulator
+    // that file a record of their own (FoundedFactions).
+    HistoryManager.prototype.liveDateNow = function () {
+        const minute = typeof $gameVariables !== "undefined" && $gameVariables ? $gameVariables.value(114) : 0;
+        return liveDateStr(liveDateOf(liveDayOf(minute)));
+    };
+
     // A party wiped out under permadeath is gone: the savegame goes with it, so
     // the only place they can still be read is the world's own history, which
     // outlives every savegame in it.

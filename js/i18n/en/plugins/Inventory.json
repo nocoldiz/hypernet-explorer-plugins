@@ -321,7 +321,16 @@
     "throw": "Throw",
     "discard": "Discard",
     "discardItem": "Discard Item",
-    "discardBody": "Remove {qty} of {item} from the backpack? (have {owned})"
+    "discardBody": "Remove {qty} of {item} from the backpack? (have {owned})",
+    "disassemble": "Disassemble",
+    "disassembleTitle": "Disassemble",
+    "disassembleBody": "Take apart {qty} of {item}? (have {owned}) The recipe is made of:",
+    "disassembleFull": "Chance to recover the whole recipe: {pct}%",
+    "disassemblePartial": "Otherwise only some of these pieces come back.",
+    "disassembleHands": "Worked by {name}",
+    "disassembled": "Took apart {n} x {item}: {items}",
+    "disassembledFull": "Took apart {n} x {item}, whole recipe recovered: {items}",
+    "disassembledNothing": "nothing usable"
   },
   "medicineDoses": "{days} daily doses",
   "medicineIllnessCount": "{count} illnesses",

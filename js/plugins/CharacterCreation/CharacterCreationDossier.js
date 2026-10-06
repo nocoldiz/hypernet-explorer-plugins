@@ -959,6 +959,15 @@
         return { name: window.CCDbName(data), iconIndex: data.iconIndex || 176, qty: e.qty || 1, type, id: data.id };
       }).filter(Boolean);
       const goldBonus = this._scenarioGoldBonus(originSymbol);
+      // The custom card's brief carries the shelf of saved scenarios, and reads
+      // as the one picked: its own name and description under the card's.
+      const isCustom = originSymbol === "origin_custom";
+      const customPanel = isCustom ? this._customScenarioPanelHtml() : "";
+      const customActive = isCustom && window.CCOrigins && window.CCOrigins.activeCustomScenario
+        ? window.CCOrigins.activeCustomScenario() : null;
+      const briefQuote = customActive
+        ? `${customActive.name}${customActive.description ? `: ${customActive.description}` : ""}`
+        : (originChoice.description || "");
 
       // The party's shared bag, apart from the scenario's own exclusive kit:
       // what the party is already carrying going into the choice above.
@@ -1025,9 +1034,10 @@
               <h2 class="cc-header-gothic">${originChoice.name || ""}</h2>
               <div class="cc-money-badge">${this._ccIconHtml(208, 16)} <span>${this._formatGoldToEuros(totalGold)}</span></div>
             </div>
-            <p class="cc-class-quote">${this.emphasizeText(originChoice.description || "")}</p>
+            <p class="cc-class-quote">${this.emphasizeText(briefQuote)}</p>
 
             <div class="cc-scenario-brief-body">
+              ${customPanel}
               <div class="cc-dossier-card cc-class-section">
                 <h3 class="cc-subheader">
                   <span>${ccT('CharCreate.scenarioExclusiveItems')}</span>
@@ -1110,6 +1120,568 @@
       this._lastStep = -1;
       this._lastIndex = -1;
       this.refreshUIOverlayDOM();
+    }
+
+    // ── Custom scenarios ─────────────────────────────────────────────────────
+    // The last suggested card is the player's own scenario. Its brief page
+    // lists every scenario in the scenarios folder (CharacterCreationOrigins
+    // owns the files and the data); picking one makes it the scenario this run
+    // starts, and the editor writes new ones and rewrites old ones. The kit and
+    // the cash on the brief are read off the picked scenario by the same
+    // resolveOriginLoadout / scenarioGoldBonus every other card uses.
+
+    _ccCustomList(reload) {
+      if (reload || !this._ccCustomScenarios) {
+        const CCO = window.CCOrigins || {};
+        this._ccCustomScenarios = CCO.listCustomScenarios ? CCO.listCustomScenarios() : [];
+      }
+      return this._ccCustomScenarios;
+    }
+
+    // One line of plain words per role the scenario opens in, for the brief.
+    _customScenarioSummaryRows(sc) {
+      const CCO = window.CCOrigins || {};
+      const rows = [];
+      const row = (label, value) => rows.push(
+        `<div class="cc-dossier-row"><span class="cc-dossier-label">${label}</span><span class="cc-dossier-value">${value}</span></div>`);
+      row(ccT('CharCreate.custom.where'), this._customStartLabel(sc));
+      if (sc.bounty) row(ccT('CharCreate.custom.bounty'), this._formatGoldToEuros(sc.bounty * 100));
+      if (sc.knowledge) row(ccT('CharCreate.custom.knowledge'), String(sc.knowledge));
+      if (sc.levels) row(ccT('CharCreate.custom.levels'), `+${sc.levels}`);
+      if (sc.army.count) {
+        row(ccT('CharCreate.custom.troops'), ccTp('CharCreate.custom.troopsLine', {
+          count: sc.army.count, from: this._customFactionLabel(sc.army.factionId, true),
+        }));
+      }
+      if (sc.allegiance.kind !== "none") row(ccT('CharCreate.custom.allegiance'), this._customAllegianceLabel(sc)); // i18n-ignore: allegiance kind
+      if (sc.mayor.town) row(ccT('CharCreate.custom.mayor'), this._ccPlaceLabel(sc.mayor.town));
+      if (sc.politicalParty.mode !== "none") row(ccT('CharCreate.custom.party'), this._customPartyLabel(sc)); // i18n-ignore: join mode
+      if (sc.foundedFaction.mode !== "none") row(ccT('CharCreate.custom.faction'), this._customFoundedLabel(sc)); // i18n-ignore: join mode
+      if (sc.perks.length) {
+        row(ccT('CharCreate.custom.perks'), sc.perks.map((p) => ccT(`CharCreate.custom.perk.${p}`)).join(", "));
+      }
+      if (CCO.CUSTOM_MEMBER_REPUTATION && sc.reputation.length) {
+        row(ccT('CharCreate.custom.standing'), sc.reputation.map((r) =>
+          `${this._customFactionLabel(r.factionId)} ${r.value > 0 ? "+" : ""}${r.value}`).join(", "));
+      }
+      return rows.join("");
+    }
+
+    _ccPlaceLabel(name) {
+      return (window.WorldNames && window.WorldNames.localize) ? window.WorldNames.localize(name) : name;
+    }
+
+    _customStartLabel(sc) {
+      const base = ccT(`CharCreate.custom.start.${sc.start.kind}`);
+      if (sc.start.kind === "town" && sc.start.town) return `${base}: ${this._ccPlaceLabel(sc.start.town)}`; // i18n-ignore: start kind
+      if (sc.start.kind === "square") { // i18n-ignore: start kind
+        const WMT = window.WorldMapTransfer;
+        return WMT && WMT.squareLabel ? WMT.squareLabel(sc.start.x, sc.start.y) : `${base} (${sc.start.x} ${sc.start.y})`;
+      }
+      return base;
+    }
+
+    _customFactionLabel(id, mixedWhenNone) {
+      const CCO = window.CCOrigins || {};
+      const f = (CCO.customFactionOptions ? CCO.customFactionOptions() : []).find((o) => o.id === id);
+      if (f) return f.name;
+      return mixedWhenNone ? ccT('CharCreate.custom.mixed') : ccT('CharCreate.custom.none');
+    }
+
+    _customAllegianceLabel(sc) {
+      const CCO = window.CCOrigins || {};
+      const al = sc.allegiance;
+      if (al.kind === "faction") return this._customFactionLabel(al.id); // i18n-ignore: allegiance kind
+      if (al.kind === "hyperpower") { // i18n-ignore: allegiance kind
+        const hp = (CCO.customHyperpowerOptions ? CCO.customHyperpowerOptions() : []).find((o) => o.id === al.id);
+        return hp ? hp.name : ccT('CharCreate.custom.none');
+      }
+      return ccT('CharCreate.custom.allegianceKind.none');
+    }
+
+    _customPartyLabel(sc) {
+      const p = sc.politicalParty;
+      if (p.mode === "join") return ccT('CharCreate.custom.mode.join'); // i18n-ignore: join mode
+      const CCO = window.CCOrigins || {};
+      const creed = (CCO.customCreedOptions ? CCO.customCreedOptions() : []).find((c) => c.id === p.ideologyId);
+      const name = p.name || ccT('CharCreate.custom.partyUnnamed');
+      return creed ? `${name} (${creed.name})` : name;
+    }
+
+    _customFoundedLabel(sc) {
+      const f = sc.foundedFaction;
+      if (f.mode === "join") { // i18n-ignore: join mode
+        const CCO = window.CCOrigins || {};
+        const rec = (CCO.customFoundedFactionOptions ? CCO.customFoundedFactionOptions() : []).find((r) => r.id === f.id);
+        return rec ? rec.name : (f.name || ccT('CharCreate.custom.none'));
+      }
+      return f.name || ccT('CharCreate.custom.defaultFactionName');
+    }
+
+    // The card on the brief page: every saved scenario, the one picked, and
+    // what can be done with them.
+    _customScenarioPanelHtml() {
+      const CCO = window.CCOrigins || {};
+      const list = this._ccCustomList(false);
+      let active = CCO.activeCustomScenario ? CCO.activeCustomScenario() : null;
+      // The first scenario on the shelf is picked until another one is, so the
+      // brief always reads back a real scenario when there is one.
+      if (!active && list.length && CCO.setActiveCustomScenario) {
+        CCO.setActiveCustomScenario(list[0].scenario, list[0].file);
+        active = CCO.activeCustomScenario();
+      }
+      const activeFile = CCO.activeCustomScenarioFile ? CCO.activeCustomScenarioFile() : null;
+      const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+      const rows = list.length
+        ? list.map((entry, i) => `
+            <button type="button" class="cc-sidebar-btn cc-cs-row focusable ${entry.file === activeFile ? 'selected cc-modal-row-picked' : ''}"
+                    onclick="SceneManager._scene.onCustomScenarioPick(${i})">${esc(entry.scenario.name)}</button>`).join("")
+        : `<span class="cc-class-none">${ccT('CharCreate.custom.noneSaved')}</span>`;
+      const btn = (key, action, disabled) => `
+        <button type="button" class="cc-sidebar-btn cc-cs-action focusable" ${disabled ? 'disabled' : ''}
+                onclick="${disabled ? 'SoundManager.playBuzzer()' : `SceneManager._scene.onCustomScenarioAction('${action}')`}">${ccT(key)}</button>`;
+      const folder = CCO.customScenarioFolder ? CCO.customScenarioFolder() : null;
+      return `
+        <div class="cc-dossier-card cc-class-section cc-cs-panel">
+          <h3 class="cc-subheader">
+            <span>${ccT('CharCreate.custom.panelTitle')}</span>
+            <span class="ts-count">${list.length}</span>
+          </h3>
+          <div class="cc-cs-list">${rows}</div>
+          <div class="cc-cs-actions">
+            ${btn('CharCreate.custom.new', 'new')}
+            ${btn('CharCreate.custom.edit', 'edit', !active)}
+            ${btn('CharCreate.custom.duplicate', 'duplicate', !active)}
+            ${btn('CharCreate.custom.delete', 'delete', !activeFile)}
+            ${btn('CharCreate.custom.reload', 'reload')}
+            ${folder ? btn('CharCreate.custom.folder', 'folder') : ''}
+          </div>
+          ${active ? `<div class="cc-cs-summary">${this._customScenarioSummaryRows(active)}</div>` : ''}
+        </div>`;
+    }
+
+    _repaintCustomBrief() {
+      this._lastStep = -1;
+      this._lastIndex = -1;
+      this.refreshUIOverlayDOM();
+    }
+
+    onCustomScenarioPick(index) {
+      const CCO = window.CCOrigins || {};
+      const entry = this._ccCustomList(false)[index];
+      if (!entry || !CCO.setActiveCustomScenario) return;
+      CCO.setActiveCustomScenario(entry.scenario, entry.file);
+      SoundManager.playCursor();
+      this._repaintCustomBrief();
+    }
+
+    onCustomScenarioAction(action) {
+      const CCO = window.CCOrigins || {};
+      const active = CCO.activeCustomScenario ? CCO.activeCustomScenario() : null;
+      const file = CCO.activeCustomScenarioFile ? CCO.activeCustomScenarioFile() : null;
+      if (action === "new") {
+        this._openCustomScenarioEditor(null, null, null);
+      } else if (action === "edit" && active) {
+        this._openCustomScenarioEditor(active, file, null);
+      } else if (action === "duplicate" && active) {
+        const copy = JSON.parse(JSON.stringify(active));
+        copy.name = ccTp('CharCreate.custom.copyName', { name: active.name });
+        copy.id = "";
+        this._openCustomScenarioEditor(copy, null, null);
+      } else if (action === "delete" && file) {
+        this._ccConfirm({
+          title: ccT('CharCreate.custom.deleteTitle'),
+          body: ccTp('CharCreate.custom.deleteBody', { name: active ? active.name : file }),
+          acceptLabel: ccT('CharCreate.custom.delete'),
+        }, () => {
+          if (CCO.deleteCustomScenario) CCO.deleteCustomScenario(file);
+          if (CCO.setActiveCustomScenario) CCO.setActiveCustomScenario(null);
+          this._ccCustomList(true);
+          this._repaintCustomBrief();
+        });
+      } else if (action === "reload") {
+        SoundManager.playCursor();
+        this._ccCustomList(true);
+        this._repaintCustomBrief();
+      } else if (action === "folder") {
+        // Confirming is silent in the wizard; only a refusal is heard.
+        if (!CCO.openCustomScenarioFolder || !CCO.openCustomScenarioFolder()) SoundManager.playBuzzer();
+      }
+    }
+
+    // ── The scenario editor ──────────────────────────────────────────────────
+    // A sheet over the board, drawn on the same parchment as every other
+    // modal of the wizard. Everything a scenario holds is a button, so a pad
+    // walks it with the sheet's own cursor (see _ccModalPollInput); the only
+    // fields to type in are the names, which a pad leaves as they are. Every
+    // list (towns, factions, creeds, the item database) opens through CCPick,
+    // the wizard's one pick sheet, with its search strip.
+    //
+    // `onSaved`, when given, runs once the scenario is written: the board's
+    // Confirm with no scenario picked opens a blank editor and begins it as
+    // soon as it is saved.
+    _openCustomScenarioEditor(scenario, file, onSaved) {
+      const CCO = window.CCOrigins || {};
+      if (!CCO.normalizeCustomScenario) return;
+      const container = this._dndContainer || document.getElementById("character-creation-container");
+      if (!container) return;
+      const existing = container.querySelector(".cc-modal-veil");
+      if (existing) existing.remove();
+
+      let draft = CCO.normalizeCustomScenario(scenario || CCO.blankCustomScenario());
+      const veil = document.createElement("div");
+      veil.className = "cc-modal-veil cc-cs-veil";
+      veil.setAttribute("data-nav-modal", "1");
+      container.appendChild(veil);
+      const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+      const L = CCO.CUSTOM_LIMITS || {};
+      let error = "";
+
+      const close = () => {
+        document.removeEventListener("keydown", onKey, true);
+        if (this._ccModalState && this._ccModalState.veil === veil) this._ccModalState = null;
+        veil.remove();
+      };
+
+      // --- controls -------------------------------------------------------
+      const pickBtn = (act, value, extra) =>
+        `<button type="button" class="cc-sidebar-btn cc-cs-pick" data-act="${act}" ${extra || ""}>${esc(value)}</button>`;
+      const stepper = (field, value, shown, steps) => `
+        <span class="cc-cs-stepper">
+          ${steps.slice().reverse().map((d) => `<button type="button" class="cc-sidebar-btn cc-cs-step" data-act="step" data-field="${field}" data-delta="${-d}">-${d >= 1000 ? (d / 1000) + "k" : d}</button>`).join("")}
+          <span class="cc-cs-value">${esc(shown == null ? value : shown)}</span>
+          ${steps.map((d) => `<button type="button" class="cc-sidebar-btn cc-cs-step" data-act="step" data-field="${field}" data-delta="${d}">+${d >= 1000 ? (d / 1000) + "k" : d}</button>`).join("")}
+        </span>`;
+      const text = (field, value, max, hint) =>
+        `<input type="text" class="cc-pick-search cc-modal-input cc-cs-text" data-text="${field}" maxlength="${max}"
+                autocomplete="off" spellcheck="false" value="${esc(value)}" placeholder="${esc(hint || "")}">`;
+      const line = (label, control) => `
+        <div class="cc-cs-line"><span class="cc-modal-label cc-cs-label">${esc(label)}</span><span class="cc-cs-control">${control}</span></div>`;
+      const section = (title, body) => `
+        <div class="cc-dossier-card cc-cs-section"><h3 class="cc-subheader"><span>${esc(title)}</span></h3>${body}</div>`;
+      const euros = (n) => this._formatGoldToEuros(n * 100);
+
+      const dbOf = (kind) => (kind === "weapon" ? $dataWeapons : kind === "armor" ? $dataArmors : $dataItems);
+
+      const render = () => {
+        const scroller = veil.querySelector(".cc-cs-body");
+        const keepScroll = scroller ? scroller.scrollTop : 0;
+        const d = draft;
+        const startLines = [line(ccT('CharCreate.custom.where'), pickBtn("start", ccT(`CharCreate.custom.start.${d.start.kind}`)))];
+        if (d.start.kind === "town") { // i18n-ignore: start kind
+          startLines.push(line(ccT('CharCreate.custom.town'),
+            d.mayor.town
+              ? `<span class="cc-cs-value">${esc(this._ccPlaceLabel(d.mayor.town))}</span>`
+              : pickBtn("startTown", d.start.town ? this._ccPlaceLabel(d.start.town) : ccT('CharCreate.custom.pick'))));
+        }
+        if (d.start.kind === "square") { // i18n-ignore: start kind
+          startLines.push(line(ccT('CharCreate.custom.squareX'), stepper("start.x", d.start.x, null, [1, 10])));
+          startLines.push(line(ccT('CharCreate.custom.squareY'), stepper("start.y", d.start.y, null, [1, 10])));
+        }
+
+        const kitRows = d.items.length ? d.items.map((row, i) => {
+          const data = (dbOf(row.kind) || [])[row.id];
+          const name = data ? window.CCDbName(data) : `#${row.id}`;
+          return `
+            <div class="cc-cs-line cc-cs-kit-row">
+              <span class="cc-cs-label cc-row-inline">${data ? `<span class="cc-rpg-icon" style="${this._ccIconStyle(data.iconIndex)}"></span>` : ''}${esc(name)}</span>
+              <span class="cc-cs-control">
+                ${stepper(`item.${i}`, row.qty, `x${row.qty}`, [1, 10])}
+                <button type="button" class="cc-sidebar-btn cc-cs-remove" data-act="removeItem" data-index="${i}">${esc(ccT('CharCreate.custom.remove'))}</button>
+              </span>
+            </div>`;
+        }).join("") : `<span class="cc-class-none">${esc(ccT('CharCreate.custom.noItems'))}</span>`;
+
+        const repRows = d.reputation.length ? d.reputation.map((row, i) => `
+            <div class="cc-cs-line">
+              <span class="cc-cs-label">${esc(this._customFactionLabel(row.factionId))}</span>
+              <span class="cc-cs-control">
+                ${stepper(`rep.${i}`, row.value, `${row.value > 0 ? "+" : ""}${row.value}`, [5, 25])}
+                <button type="button" class="cc-sidebar-btn cc-cs-remove" data-act="removeRep" data-index="${i}">${esc(ccT('CharCreate.custom.remove'))}</button>
+              </span>
+            </div>`).join("") : `<span class="cc-class-none">${esc(ccT('CharCreate.custom.noStanding'))}</span>`;
+
+        const allegianceLines = [line(ccT('CharCreate.custom.allegiance'), pickBtn("allegianceKind", ccT(`CharCreate.custom.allegianceKind.${d.allegiance.kind}`)))];
+        if (d.allegiance.kind !== "none") { // i18n-ignore: allegiance kind
+          allegianceLines.push(line(ccT('CharCreate.custom.allegianceWhich'), pickBtn("allegianceWhich", this._customAllegianceLabel(d))));
+          allegianceLines.push(`<p class="cc-modal-body cc-cs-note">${esc(ccT('CharCreate.custom.memberNote'))}</p>`);
+        }
+
+        const partyLines = [line(ccT('CharCreate.custom.party'), pickBtn("partyMode", ccT(`CharCreate.custom.mode.${d.politicalParty.mode}`)))];
+        if (d.politicalParty.mode === "found") { // i18n-ignore: join mode
+          const creed = (CCO.customCreedOptions() || []).find((c) => c.id === d.politicalParty.ideologyId);
+          partyLines.push(line(ccT('CharCreate.custom.partyName'), text("politicalParty.name", d.politicalParty.name, L.name || 48, ccT('CharCreate.custom.partyUnnamed'))));
+          partyLines.push(line(ccT('CharCreate.custom.creed'), pickBtn("creed", creed ? creed.name : ccT('CharCreate.custom.pick'))));
+        }
+        if (d.politicalParty.mode !== "none") partyLines.push(`<p class="cc-modal-body cc-cs-note">${esc(ccT('CharCreate.custom.partyNote'))}</p>`); // i18n-ignore: join mode
+
+        const factionLines = [line(ccT('CharCreate.custom.faction'), pickBtn("factionMode", ccT(`CharCreate.custom.mode.${d.foundedFaction.mode}`)))];
+        if (d.foundedFaction.mode === "join") { // i18n-ignore: join mode
+          const world = CCO.customFoundedFactionOptions() || [];
+          factionLines.push(world.length
+            ? line(ccT('CharCreate.custom.factionWhich'), pickBtn("factionWhich", this._customFoundedLabel(d)))
+            : `<p class="cc-modal-body cc-cs-note">${esc(ccT('CharCreate.custom.noFoundedFactions'))}</p>`);
+        } else if (d.foundedFaction.mode === "found") { // i18n-ignore: join mode
+          factionLines.push(line(ccT('CharCreate.custom.factionName'), text("foundedFaction.name", d.foundedFaction.name, L.name || 48, ccT('CharCreate.custom.defaultFactionName'))));
+          factionLines.push(line(ccT('CharCreate.custom.motto'), text("foundedFaction.motto", d.foundedFaction.motto, L.motto || 120, "")));
+          factionLines.push(line(ccT('CharCreate.custom.swornUnder'), pickBtn("factionPatron", this._customFactionLabel(d.foundedFaction.patronFactionId))));
+        }
+
+        const perkButtons = (CCO.CUSTOM_PERKS || []).map((p) => `
+          <button type="button" class="cc-sidebar-btn cc-cs-perk ${d.perks.indexOf(p) >= 0 ? 'selected cc-modal-row-picked' : ''}" data-act="perk" data-perk="${p}">${esc(ccT(`CharCreate.custom.perk.${p}`))}</button>`).join("");
+
+        veil.innerHTML = `
+          <div class="cc-modal cc-cs-editor" role="dialog" aria-modal="true">
+            <h3 class="cc-modal-title">${esc(ccT('CharCreate.custom.editorTitle'))}</h3>
+            <div class="cc-cs-body cc-scroll-pane">
+              ${section(ccT('CharCreate.custom.sectionGeneral'),
+                line(ccT('CharCreate.custom.name'), text("name", d.name, L.name || 48, ccT('CharCreate.custom.defaultName'))) +
+                line(ccT('CharCreate.custom.description'), text("description", d.description, L.description || 400, ccT('CharCreate.custom.descriptionHint'))))}
+              ${section(ccT('CharCreate.custom.sectionStart'), startLines.join(""))}
+              ${section(ccT('CharCreate.custom.sectionPurse'),
+                line(ccT('CharCreate.custom.cash'), stepper("euros", d.euros, euros(d.euros), [100, 1000, 100000])) +
+                line(ccT('CharCreate.custom.bounty'), stepper("bounty", d.bounty, euros(d.bounty), [100, 1000, 10000])) +
+                line(ccT('CharCreate.custom.knowledge'), stepper("knowledge", d.knowledge, null, [10, 100, 1000])) +
+                line(ccT('CharCreate.custom.levels'), stepper("levels", d.levels, `+${d.levels}`, [1, 5])))}
+              ${section(ccT('CharCreate.custom.sectionKit'), kitRows + `
+                <div class="cc-cs-actions">
+                  <button type="button" class="cc-sidebar-btn cc-cs-action" data-act="addItem" data-kind="item">${esc(ccT('CharCreate.custom.addItem'))}</button>
+                  <button type="button" class="cc-sidebar-btn cc-cs-action" data-act="addItem" data-kind="weapon">${esc(ccT('CharCreate.custom.addWeapon'))}</button>
+                  <button type="button" class="cc-sidebar-btn cc-cs-action" data-act="addItem" data-kind="armor">${esc(ccT('CharCreate.custom.addArmor'))}</button>
+                </div>`)}
+              ${section(ccT('CharCreate.custom.sectionArmy'),
+                line(ccT('CharCreate.custom.troops'), stepper("army.count", d.army.count, null, [1, 10])) +
+                line(ccT('CharCreate.custom.troopsFrom'), pickBtn("armyFaction", this._customFactionLabel(d.army.factionId, true))) +
+                line(ccT('CharCreate.custom.upkeep'), stepper("army.upkeepWeeks", d.army.upkeepWeeks, ccTp('CharCreate.custom.weeks', { n: d.army.upkeepWeeks }), [1])))}
+              ${section(ccT('CharCreate.custom.sectionRoles'),
+                allegianceLines.join("") +
+                line(ccT('CharCreate.custom.mayor'), pickBtn("mayor", d.mayor.town ? this._ccPlaceLabel(d.mayor.town) : ccT('CharCreate.custom.nobody'))) +
+                (d.mayor.town ? `<p class="cc-modal-body cc-cs-note">${esc(ccT('CharCreate.custom.mayorNote'))}</p>` : "") +
+                partyLines.join("") + factionLines.join(""))}
+              ${section(ccT('CharCreate.custom.sectionStanding'), repRows + `
+                <div class="cc-cs-actions">
+                  <button type="button" class="cc-sidebar-btn cc-cs-action" data-act="addRep">${esc(ccT('CharCreate.custom.addStanding'))}</button>
+                </div>`)}
+              ${section(ccT('CharCreate.custom.sectionPerks'), `<div class="cc-cs-actions">${perkButtons}</div>`)}
+            </div>
+            <p class="cc-modal-error">${esc(error)}</p>
+            <div class="cc-modal-actions army-dialog-buttons">
+              <button type="button" class="army-dialog-btn cc-sidebar-btn cc-modal-cancel" data-act="cancel">${esc(T('CharCreate.cancel'))}</button>
+              <button type="button" class="army-dialog-btn cc-sidebar-btn primary cc-modal-accept" data-act="save">${esc(ccT(onSaved ? 'CharCreate.custom.saveBegin' : 'CharCreate.custom.save'))}</button>
+            </div>
+          </div>`;
+        const body = veil.querySelector(".cc-cs-body");
+        if (body) body.scrollTop = keepScroll;
+        Array.from(veil.querySelectorAll("input.cc-cs-text")).forEach((el) => {
+          el.addEventListener("input", () => setText(el.getAttribute("data-text"), el.value));
+        });
+        paintCursor();
+      };
+
+      const setText = (path, value) => {
+        const parts = path.split(".");
+        if (parts.length === 1) draft[parts[0]] = value;
+        else if (draft[parts[0]]) draft[parts[0]][parts[1]] = value;
+      };
+
+      // Every change goes back through the normaliser, so the sheet can never
+      // hold a value the file could not.
+      const commit = () => {
+        draft = CCO.normalizeCustomScenario(draft);
+        error = "";
+        render();
+      };
+
+      const pick = (title, options, value, onPick) => {
+        if (!window.CCPick) return;
+        window.CCPick.open({
+          title, options, value,
+          container,
+          onPick: (v) => { onPick(v); SoundManager.playCursor(); commit(); },
+        });
+      };
+
+      const step = (field, delta) => {
+        const [head, tail] = field.split(".");
+        if (head === "item") {
+          const row = draft.items[Number(tail)];
+          if (row) row.qty = Math.max(1, Math.min(L.qty || 999, row.qty + delta));
+        } else if (head === "rep") {
+          const row = draft.reputation[Number(tail)];
+          if (row) row.value = Math.max(-100, Math.min(100, row.value + delta));
+        } else if (tail) {
+          draft[head][tail] = Math.max(0, (Number(draft[head][tail]) || 0) + delta);
+        } else {
+          draft[head] = Math.max(0, (Number(draft[head]) || 0) + delta);
+        }
+        SoundManager.playCursor();
+        commit();
+      };
+
+      const factionOptions = (noneLabel) => {
+        const opts = CCO.customFactionOptions().map((f) => ({ value: f.id, label: f.name }));
+        return noneLabel ? [{ value: -1, label: noneLabel }].concat(opts) : opts;
+      };
+
+      const itemOptions = (kind) => {
+        const db = dbOf(kind) || [];
+        const out = [];
+        for (let id = 1; id < db.length; id++) {
+          const data = db[id];
+          if (!data || !data.name || !data.name.trim() || data.name.trim().startsWith("<--")) continue;
+          out.push({
+            value: id, label: window.CCDbName(data),
+            icon: `<span class="cc-rpg-icon" style="${this._ccIconStyle(data.iconIndex)}"></span>`,
+            hint: data.price ? this._formatGoldToEuros(data.price) : "",
+          });
+        }
+        return out;
+      };
+
+      const save = () => {
+        draft = CCO.normalizeCustomScenario(draft);
+        const result = CCO.saveCustomScenario(draft, file);
+        if (!result || !result.ok) {
+          SoundManager.playBuzzer();
+          error = ccT('CharCreate.custom.saveFailed');
+          render();
+          return;
+        }
+        file = result.file;
+        CCO.setActiveCustomScenario(result.scenario, result.file);
+        this._ccCustomList(true);
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(ccTp('CharCreate.custom.saved', { name: result.scenario.name }), { severity: "success" }); // i18n-ignore: severity id
+        }
+        close();
+        if (onSaved) onSaved();
+        else this._repaintCustomBrief();
+      };
+
+      const act = (el) => {
+        const action = el.getAttribute("data-act");
+        const d = draft;
+        switch (action) {
+          case "cancel": SoundManager.playCancel(); close(); return;
+          case "save": save(); return;
+          case "step": step(el.getAttribute("data-field"), Number(el.getAttribute("data-delta")) || 0); return;
+          case "start":
+            pick(ccT('CharCreate.custom.where'), CCO.CUSTOM_START_KINDS.map((k) => ({ value: k, label: ccT(`CharCreate.custom.start.${k}`) })),
+              d.start.kind, (v) => { d.start.kind = v; if (v !== "town") d.mayor.town = ""; }); // i18n-ignore: start kind
+            return;
+          case "startTown":
+            pick(ccT('CharCreate.custom.town'), CCO.customPlaceOptions().map((n) => ({ value: n, label: this._ccPlaceLabel(n) })),
+              d.start.town, (v) => { d.start.town = v; });
+            return;
+          case "mayor":
+            pick(ccT('CharCreate.custom.mayor'), [{ value: "", label: ccT('CharCreate.custom.nobody') }]
+              .concat(CCO.customTownOptions().map((n) => ({ value: n, label: this._ccPlaceLabel(n) }))),
+              d.mayor.town, (v) => { d.mayor.town = v; if (v) { d.start.kind = "town"; d.start.town = v; } }); // i18n-ignore: start kind
+            return;
+          case "armyFaction":
+            pick(ccT('CharCreate.custom.troopsFrom'), factionOptions(ccT('CharCreate.custom.mixed')), d.army.factionId, (v) => { d.army.factionId = Number(v); });
+            return;
+          case "allegianceKind":
+            pick(ccT('CharCreate.custom.allegiance'), CCO.CUSTOM_ALLEGIANCE_KINDS.map((k) => ({ value: k, label: ccT(`CharCreate.custom.allegianceKind.${k}`) })),
+              d.allegiance.kind, (v) => {
+                d.allegiance.kind = v;
+                const first = v === "faction" ? CCO.customFactionOptions()[0] : v === "hyperpower" ? CCO.customHyperpowerOptions()[0] : null; // i18n-ignore: allegiance kinds
+                d.allegiance.id = first ? first.id : 0;
+              });
+            return;
+          case "allegianceWhich": {
+            const list = d.allegiance.kind === "hyperpower" ? CCO.customHyperpowerOptions() : CCO.customFactionOptions(); // i18n-ignore: allegiance kind
+            pick(ccT('CharCreate.custom.allegianceWhich'), list.map((o) => ({ value: o.id, label: o.name })), d.allegiance.id, (v) => { d.allegiance.id = Number(v); });
+            return;
+          }
+          case "partyMode":
+            pick(ccT('CharCreate.custom.party'), CCO.CUSTOM_JOIN_MODES.map((k) => ({ value: k, label: ccT(`CharCreate.custom.mode.${k}`) })),
+              d.politicalParty.mode, (v) => { d.politicalParty.mode = v; });
+            return;
+          case "creed":
+            pick(ccT('CharCreate.custom.creed'), CCO.customCreedOptions().map((c) => ({ value: c.id, label: c.name })),
+              d.politicalParty.ideologyId, (v) => { d.politicalParty.ideologyId = v; });
+            return;
+          case "factionMode":
+            pick(ccT('CharCreate.custom.faction'), CCO.CUSTOM_JOIN_MODES.map((k) => ({ value: k, label: ccT(`CharCreate.custom.mode.${k}`) })),
+              d.foundedFaction.mode, (v) => { d.foundedFaction.mode = v; });
+            return;
+          case "factionWhich":
+            pick(ccT('CharCreate.custom.factionWhich'), CCO.customFoundedFactionOptions().map((r) => ({
+              value: r.id, label: r.name, hint: r.founder || "",
+            })), d.foundedFaction.id, (v) => {
+              const rec = CCO.customFoundedFactionOptions().find((r) => r.id === v);
+              d.foundedFaction.id = v;
+              if (rec) d.foundedFaction.name = rec.name;
+            });
+            return;
+          case "factionPatron":
+            pick(ccT('CharCreate.custom.swornUnder'), factionOptions(ccT('CharCreate.custom.none')), d.foundedFaction.patronFactionId,
+              (v) => { d.foundedFaction.patronFactionId = Number(v); });
+            return;
+          case "addItem": {
+            const kind = el.getAttribute("data-kind") || "item"; // i18n-ignore: database kind
+            const title = ccT(kind === "weapon" ? 'CharCreate.custom.addWeapon' : kind === "armor" ? 'CharCreate.custom.addArmor' : 'CharCreate.custom.addItem');
+            pick(title, itemOptions(kind), null, (v) => { d.items.push({ kind, id: Number(v), qty: 1 }); });
+            return;
+          }
+          case "removeItem": d.items.splice(Number(el.getAttribute("data-index")), 1); SoundManager.playCancel(); commit(); return;
+          case "addRep":
+            pick(ccT('CharCreate.custom.addStanding'), factionOptions(null).filter((o) => !d.reputation.some((r) => r.factionId === o.value)),
+              null, (v) => { d.reputation.push({ factionId: Number(v), value: 25 }); });
+            return;
+          case "removeRep": d.reputation.splice(Number(el.getAttribute("data-index")), 1); SoundManager.playCancel(); commit(); return;
+          case "perk": {
+            const perk = el.getAttribute("data-perk");
+            const at = d.perks.indexOf(perk);
+            if (at >= 0) d.perks.splice(at, 1); else d.perks.push(perk);
+            SoundManager.playCursor();
+            commit();
+            return;
+          }
+          default: return;
+        }
+      };
+
+      veil.addEventListener("click", (e) => {
+        const el = e.target && e.target.closest ? e.target.closest("[data-act]") : null;
+        if (el && veil.contains(el)) { act(el); return; }
+        if (e.target === veil) { SoundManager.playCancel(); close(); }
+      });
+
+      // Escape closes the sheet, unless a pick is open over it (the pick
+      // answers its own Escape).
+      const onKey = (e) => {
+        if (window.CCPick && window.CCPick.isOpen()) return;
+        if (e.key === "Escape") { e.stopPropagation(); SoundManager.playCancel(); close(); }
+      };
+      document.addEventListener("keydown", onKey, true);
+
+      // The pad's cursor: every button on the sheet, in reading order, walked
+      // by the sheet's own state (CharacterCreationRoster, _ccModalPollInput).
+      const buttons = () => Array.from(veil.querySelectorAll("button[data-act]"));
+      const paintCursor = () => {
+        const st = this._ccModalState;
+        if (!st || st.veil !== veil) return;
+        const list = buttons();
+        if (st.index >= list.length) st.index = list.length - 1;
+        list.forEach((b, i) => b.classList.toggle("cc-nav-focus", i === st.index));
+        const cur = list[st.index];
+        if (cur && cur.scrollIntoView && st.padMoved) cur.scrollIntoView({ block: "nearest" });
+      };
+      this._ccModalState = {
+        veil, buttons, index: 0, close,
+        press: () => {
+          const st = this._ccModalState;
+          const cur = buttons()[st ? st.index : -1];
+          if (cur) act(cur);
+        },
+        paint: () => { if (this._ccModalState) this._ccModalState.padMoved = true; paintCursor(); },
+      };
+      render();
+      const nameInput = veil.querySelector("input.cc-cs-text");
+      const nav = window.CCNav;
+      if (nameInput && nameInput.focus && !(nav && nav.padInHand && nav.padInHand())) nameInput.focus();
     }
 
     onReturnToPartyDossier() {

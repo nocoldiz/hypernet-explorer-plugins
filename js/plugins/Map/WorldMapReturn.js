@@ -421,14 +421,15 @@
     // square no named place claims falls back to its biome name, so the
     // anonymous villages of one family at least agree with each other.
     //
-    // There is no night pool and there is not meant to be one: a town keeps its
-    // day theme after dark, which is what biomeTrackPool already does when
-    // `bgmNight` is absent. Do not fill one in for these biomes.
+    // Every scored biome carries a night pool (`bgmNight`) next to its day one,
+    // and the pick flips with the 20:00 / 06:00 watcher below. A town's night
+    // theme is seeded on its name exactly like the day one, so every square of
+    // it still agrees after dark.
     //
-    // OFF-WORLD is silenced outright. Alien surfaces, the vaults under them and
-    // Space carry their ambience and nothing else, so the track the party
-    // warped in with is faded out rather than followed into the vacuum. Their
-    // `bgm` pools are left in the database, unread.
+    // OFF-WORLD is the other scored family. Alien surfaces, the vaults under
+    // them and Space play their own pools (js/db/WorldGen/AlienBiomes.json):
+    // atmospheric by day, darker atmospheric by night. Seeded on the biome, so
+    // one planet type always sounds the same.
     //
     // A settlement theme is also the biome layer's to take away again: it stops
     // on crossing out into open country, and on stepping off the procedural map
@@ -593,9 +594,14 @@
     // into open country. A hand-made map is authored, not generated, so there it
     // still means "carry on with whatever is playing".
     function biomeMusicDecision(biome, biomeName, procGenData, isNight, isProcGenMap) {
-        // Off-world carries no music at all, pool or no pool.
+        // Off-world plays its own pool, seeded on the biome; an empty one is
+        // silence, never the track the party warped in with.
         if (isOffworldBiome(biomeName)) {
-            return { tracks: [], name: biomeName, borrowed: false, action: 'stop', seed: null };
+            const tracks = biomeTrackPool(biome, isNight);
+            return {
+                tracks, name: biomeName, place: biomeName, borrowed: false,
+                action: tracks.length > 0 ? 'play' : 'stop', seed: null
+            };
         }
         // Not a settlement: biome music does not apply here. On a procedural map
         // that means silence, because a procedural map IS its biome - crossing
@@ -785,6 +791,70 @@
     function mapBgsNightName() {
         const m = $dataMap && $dataMap.note && $dataMap.note.match(/<BgsNight:\s*(.+?)>/i);
         return m ? m[1].trim() : '';
+    }
+
+    // ============================================================================
+    // MAP NIGHT MUSIC
+    // ----------------------------------------------------------------------------
+    // The music twin of <BgsNight:>. A map that autoplays a track names its night
+    // version in its note as <BgmNight: name>; the editor's autoplay BGM stays the
+    // day track and the night one keeps its volume and pitch. Every map sharing a
+    // day track shares its night track too (tools/map-night-bgm.js writes the
+    // notes from one table), and a map that plays no BGM carries no tag.
+    //
+    // Only the map's own track is swapped: music an event or a cutscene started
+    // over it is never touched, by the autoplay hook or by the watcher.
+    // ============================================================================
+
+    function mapBgmNightName(mapData) {
+        const data = mapData === undefined ? $dataMap : mapData;
+        const m = data && data.note && data.note.match(/<BgmNight:\s*(.+?)>/i);
+        return m ? m[1].trim() : '';
+    }
+
+    // The track the map's autoplay should be playing right now, or null for a
+    // map that autoplays nothing.
+    function mapAutoplayBgm(isNight) {
+        if (!$dataMap || !$dataMap.autoplayBgm || !$dataMap.bgm || !$dataMap.bgm.name) return null;
+        const night = isNight ? mapBgmNightName() : '';
+        return night ? Object.assign({}, $dataMap.bgm, { name: night }) : $dataMap.bgm;
+    }
+
+    // Autoplay reads $dataMap.bgm (and so does the walking BGM saved while in a
+    // vehicle), so the night track is lent to it for the length of the call.
+    const _Game_Map_autoplay_night = Game_Map.prototype.autoplay;
+    Game_Map.prototype.autoplay = function() {
+        const bgm = mapAutoplayBgm(isNightTimeNow());
+        if (!bgm || bgm === $dataMap.bgm) return _Game_Map_autoplay_night.call(this);
+        const day = $dataMap.bgm;
+        $dataMap.bgm = bgm;
+        try {
+            return _Game_Map_autoplay_night.call(this);
+        } finally {
+            $dataMap.bgm = day;
+        }
+    };
+
+    // At 20:00 and 06:00 the map's own track turns into its other half under a
+    // fade. Runs on the world map too, which the biome watcher skips.
+    let _lastMapNightHalf = null;
+    function watchMapNightMusic() {
+        if (Graphics.frameCount % 30 !== 0 || !$gameMap) return;
+        const isNight = isNightTimeNow();
+        const sig = $gameMap.mapId() + '|' + (isNight ? 1 : 0);
+        if (_lastMapNightHalf === null || _lastMapNightHalf.split('|')[0] !== String($gameMap.mapId())) {
+            _lastMapNightHalf = sig;
+            return;
+        }
+        if (sig === _lastMapNightHalf) return;
+        _lastMapNightHalf = sig;
+        const target = mapAutoplayBgm(isNight);
+        const other  = mapAutoplayBgm(!isNight);
+        if (!target || !other || target.name === other.name) return;
+        const playing = AudioManager._currentBgm && AudioManager._currentBgm.name;
+        if (playing !== other.name) return;   // not the map's own track: leave it be
+        AudioManager.playBgm(target);
+        AudioManager.fadeInBgm(BGM_FADE_SECONDS);
     }
 
     // Ambience with no biome behind it: the map's own bed if it has one, silence
@@ -8050,6 +8120,7 @@
         updateMysteryMarkers();
         updateQuestMarkers();
         watchNationMusicChange();
+        watchMapNightMusic();
         if ($gameTemp._icebushBlockedMessage && !this.isBusy()) {
             $gameTemp._icebushBlockedMessage = false;
             if (window.ParchmentToast) {

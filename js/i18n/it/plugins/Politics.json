@@ -259,11 +259,14 @@
   "smearedOut": "Ha lasciato il {party}, disgustato da quello che dicevano i giornali.",
   "driftedTo": "Si è allontanato da {from} ed è passato a {to}.",
   "driftedOut": "Si è allontanato da {from} e ora non appartiene a nessun partito.",
-  "joinedBy": "È entrato in {party}, convinto da {by} (stava con {from})."
+  "joinedBy": "È entrato in {party}, convinto da {by} (stava con {from}).",
+  "resignedMayor": "Si è dimesso da Sindaco di {group} in favore di {successor}.",
+  "succeededMayor": "È diventato Sindaco di {group}."
  },
  "story": {
   "electedMayor": "eletto Sindaco di {group}",
-  "appointed": "nominato {office} di {group}"
+  "appointed": "nominato {office} di {group}",
+  "resignedMayor": "si è dimesso da Sindaco di {group}"
  },
  "death": {
   "diedInWorld": "morto",
@@ -709,5 +712,9 @@
    "conclave": "Un conclave non accetta candidati esterni.",
    "alreadyStanding": "Quel candidato è già in corsa in un'elezione."
   }
+ },
+ "history": {
+  "mayorResigned": "{mayor} si è dimesso da Sindaco di {group}, lasciando il municipio a {successor}.",
+  "mayorSeated": "{successor} è entrato in carica come Sindaco di {group}."
  }
 }

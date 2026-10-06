@@ -234,7 +234,8 @@
     "short": "Senza materiali",
     "locked": "Non addestrato",
     "owned": "In borsa",
-    "forged": "Forgiati"
+    "forged": "Forgiati",
+    "salvage": "Smonta"
   },
   "allTrades": "Tutti i mestieri",
   "shortBy": "Mancanti {n}",
@@ -437,5 +438,11 @@
     }
   },
   "finishMine": "Le tue immagini",
-  "finishMineTitle": "Una tua immagine come finitura"
+  "finishMineTitle": "Una tua immagine come finitura",
+  "salvageAll": "Smonta tutto ({n})",
+  "salvageAllTitle": "Smonta tutto",
+  "salvageAllBody": "Smontare tutti i {n} pezzi non equipaggiati di questo scaffale?",
+  "salvageAllConfirm": "Smonta",
+  "salvageWorker": "{name}: {n}",
+  "salvageMore": "...e altri {n}"
 }

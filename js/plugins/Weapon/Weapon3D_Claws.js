@@ -369,7 +369,7 @@
         const leaf = this._mat(this.getRandomColor(rand, [0x4E9A3A, 0x6BBF48]), { roughness: 0.6, metalness: 0.05 });
         const husk = this._mat(0xC8A02A, { roughness: 0.55, metalness: 0.1 });
         const sap = this._glow(0xB8FF5A, 0.8);
-        // A blade seed that took root in the hand instead of a scabbard: bark
+        // An expression seed that took root in the hand instead of a scabbard: bark
         // over the knuckles, thorns hardened into claws, and the pod that
         // grew them still hanging on the wrist.
         this._clawHand(group, bark, { width: 0.078, ridgeMat: bark, strapMat: leaf, cuff: 0.04 });

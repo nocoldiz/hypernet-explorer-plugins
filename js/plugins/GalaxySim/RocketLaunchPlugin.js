@@ -421,6 +421,9 @@
   // threshold is spread down from here (see _buildArmour), so a flight whose
   // integrity never falls this far keeps its whole skin.
   const FIRST_PLATE_AT = INTEGRITY_FLOOR + 0.55 + (88 - INTEGRITY_FLOOR);
+  // The integrity at which the array's glass dome goes: past what the air
+  // takes, short of the first plate, so the belt breaks it before anything.
+  const DOME_BREAKS_AT = 90.5;
   // MANUAL CONTROLS. Flown by hand, the hull is no longer an asymptote: the
   // belt takes off what the wrecks the player failed to dodge take off, and
   // that can be everything. Handing the round back to the autopilot is the
@@ -1535,7 +1538,7 @@
     RAIL_LEN_M, RAIL_EXIT_MS, MAXQ_START_M, MAXQ_END_M, IGNITION_M, KARMAN_M,
     KESSLER_IN_M, KESSLER_OUT_M, DOCK_M,
     MOON_DIST_M, MOON_R_M, MOON_ARRIVE_M, MOON_SKIM_M, LUNAR_DRIFT_M,
-    INTEGRITY_START, INTEGRITY_FLOOR, AERO_LOSS, KESSLER_DECAY, FIRST_PLATE_AT,
+    INTEGRITY_START, INTEGRITY_FLOOR, AERO_LOSS, KESSLER_DECAY, FIRST_PLATE_AT, DOME_BREAKS_AT,
     TAPE_KNEE_M, TAPE_TOP_M,
     phaseAt, altitudeAt, verticalSpeedAt, horizontalSpeedAt, speedAt, ORBITAL_V,
     crossingKly, crossingSpeedAt, GALAXY_GAP_KLY, GALAXY_EDGE_KLY, KLY_M,
@@ -3020,8 +3023,13 @@
   // single blue flame big enough to burn the fabric being torn, and across
   // the gap it holds as a torch. On arrival the whole stage is let go, and
   // what comes in to land is the bullet on its one drive.
-  const ARRAY_LEN = 15;
+  const ARRAY_LEN = 24;
   const ARRAY_RING = 8;
+  // THE DOME. While the array is mounted the bullet and its drive ride under
+  // a glass bell standing on the array's collar, so nothing of the inner
+  // round is exposed on the way up. Glass is the weakest thing aboard: it is
+  // the first thing the belt breaks, above every armour plate's threshold.
+  const DOME_PANES = 10;
   // The array is gigantic: the whole stage is drawn at this many times the
   // size it is modelled at, dwarfing the bullet strapped on top of it.
   const ARRAY_SCALE = 5;
@@ -3081,6 +3089,11 @@
   // but a distance being removed, and must not read as the same crossing. The
   // hole does its own bending, with the sky wrapped round the mouth.
   const LENS_BEATS = ["transit", "solomon", "hexspace", "thewhite", "breach", "crossing"];
+  // THE BEATS DRAWN PHOTOSAFE. The breach is the brightest, longest stretch
+  // of the plugin, so on it and the gap after it nothing flickers faster than
+  // a slow breath: no per-frame camera jitter, no strobing torch, no white
+  // flash frame. The light comes up and goes down; it never blinks.
+  const CALM_BEATS = ["breach", "crossing"];
   // How far AHEAD of the round, along its nose, the director looks on the
   // jump between galaxies. The lens is centred on the frame, so this is where
   // the warp distortion sits: in front of the nose, on the line to the galaxy
@@ -4282,6 +4295,85 @@
       g.add(this.arrayHeart);
       this.arrayLight = new THREE.PointLight(0xbfe4ff, 0, 900 * ARRAY_SCALE, 2);
       this.near.add(this.arrayLight);
+      this._buildDome(R, L);
+    }
+
+    // THE DOME: a glass bell from the array's collar up over the drive and
+    // the bullet, wide enough to clear the fins. It is cut into panes, a wall
+    // of DOME_PANES staves and a cap of as many wedges, each one hung on its
+    // own pivot at its middle so that when the belt breaks it the pieces
+    // tumble about themselves. The seat it stands in is part of the array
+    // and stays.
+    _buildDome(R, L) {
+      const RD = R * 2.8;
+      const base = this.array.position.y + ARRAY_SCALE * ARRAY_LEN / 2;
+      const capY = L / 2 + 4;
+      const wallH = capY - base;
+      const glass = this._mat(new THREE.MeshPhongMaterial({
+        color: 0xbfe4ff, emissive: new THREE.Color(0x0c1822), transparent: true, opacity: 0.2,
+        shininess: 120, specular: 0xffffff, side: THREE.DoubleSide, depthWrite: false,
+      }));
+      const seat = new THREE.Mesh(
+        this._geo(new THREE.TorusGeometry(RD / ARRAY_SCALE, 0.16, 6, 32)),
+        this._phong({ color: 0x8d949e, shininess: 60, specular: 0xdfe6ee })
+      );
+      seat.rotation.x = Math.PI / 2;
+      seat.position.y = ARRAY_LEN / 2;
+      this.array.add(seat);
+      this.domePanes = [];
+      this.domeGone = false;
+      // `oy` is where the geometry's own origin sits on the vehicle's axis;
+      // the mesh is put back there inside a pivot that stands at the pane.
+      const pane = (geo, oy, x, y, z) => {
+        const pivot = new THREE.Group();
+        pivot.position.set(x, y, z);
+        const m = new THREE.Mesh(geo, glass);
+        m.position.set(-x, oy - y, -z);
+        m.renderOrder = 2;
+        pivot.add(m);
+        pivot.userData.spin = new THREE.Vector3(this.rng() - 0.5, this.rng() - 0.5, this.rng() - 0.5).multiplyScalar(7);
+        this.vehicle.add(pivot);
+        this.domePanes.push(pivot);
+      };
+      const arc = (Math.PI * 2) / DOME_PANES;
+      for (let i = 0; i < DOME_PANES; i++) {
+        const s = i * arc, m = s + arc / 2;
+        // Three's cylinder puts theta at (sin, cos) in x and z.
+        const wallY = base + wallH / 2;
+        const wall = this._geo(new THREE.CylinderGeometry(RD, RD, wallH, 3, 1, true, s, arc));
+        pane(wall, wallY, Math.sin(m) * RD, wallY, Math.cos(m) * RD);
+        // And the sphere's phi at (-cos, sin), with theta down from the pole.
+        const cap = this._geo(new THREE.SphereGeometry(RD, 4, 6, s, arc, 0, Math.PI / 2));
+        const tm = Math.PI / 4;
+        pane(cap, capY, -Math.cos(m) * Math.sin(tm) * RD, capY + Math.cos(tm) * RD, Math.sin(m) * Math.sin(tm) * RD);
+      }
+    }
+
+    // The belt breaks the dome before it takes anything else - or, on a
+    // flight that never met the belt, it goes with the array on arrival.
+    // Every pane at once, thrown outward off the round.
+    _breakDome(quiet) {
+      if (!this.domePanes || this.domeGone) return;
+      this.domeGone = true;
+      this.domePanes.forEach((p) => {
+        const x = p.position.x, y = p.position.y, z = p.position.z;
+        const nose = this._shedFromVehicle(p, x, y, z);
+        const out = Math.hypot(x, z) || 1;
+        const sp = 10 + this.rng() * 12;
+        // The radial direction turned with the vehicle's pitch, the way
+        // _shedFromVehicle turns the position.
+        p.userData.vel = new THREE.Vector3(
+          (x / out) * sp, -(z / out) * sp * nose.z - nose.y * 8, (z / out) * sp * nose.y - nose.z * 8
+        );
+        p.userData.life = 3.0;
+        this.shed.push(p);
+      });
+      this.domePanes.length = 0;
+      if (quiet) return;
+      this.shake = Math.max(this.shake, 1.2);
+      this._pendingSe = this._pendingSe || [];
+      this._pendingSe.push({ name: SE.shatter, volume: 90, pitch: 110 });
+      this._pendingSe.push({ name: SE.crack, volume: 80, pitch: 120 });
     }
 
     // One drive of the stack, at the end of the beat it was lit for. Reparented
@@ -5335,10 +5427,11 @@
           return { target: T.set(0, 0, 0), yaw: 1.3 - k * 0.4, pitch: 0.12, dist: lerp(60, 96, smooth(k)), fov: lerp(58, 68, smooth(k)) };
         case "charge":
           // Low off the tail, watching the string go out behind the round.
-          return { target: T.set(0, -12, -30), yaw: 2.6 - k * 0.3, pitch: 0.16, dist: lerp(84, 96, smooth(k)), fov: 64 };
+          return { target: T.set(0, -12, this._tailZ() * 0.6), yaw: 2.6 - k * 0.3, pitch: 0.16, dist: lerp(110, 130, smooth(k)), fov: 64 };
         case "blast":
-          // Pulled right out, because each ring is the size of a stadium.
-          return { target: T.set(0, -14, -80), yaw: 2.3 + k * 0.4, pitch: 0.2, dist: lerp(150, 260, smooth(k)), fov: 70 };
+          // Pulled right out, because each ring is the size of a stadium, and
+          // on the gap astern of the tail where they open.
+          return { target: T.set(0, -14, this._tailZ() - 30), yaw: 2.3 + k * 0.4, pitch: 0.2, dist: lerp(170, 280, smooth(k)), fov: 70 };
         case "pluto":
         case "edge":
           // Out past the last of everything, side on and drifting.
@@ -5497,9 +5590,16 @@
 
       // Shake is applied to the camera and not to the vehicle: the vehicle has
       // to stay exactly on the axis for the plates and the plume to line up.
+      // Through the breach and across the gap the shake is a smooth sway, not
+      // a fresh random offset every frame: a whole-frame jitter held for that
+      // long reads as a strobe. See CALM_BEATS.
       const sh = this.shake;
-      const jx = sh ? (Math.random() - 0.5) * sh : 0;
-      const jy = sh ? (Math.random() - 0.5) * sh : 0;
+      const calm = this.phase && CALM_BEATS.indexOf(this.phase.key) >= 0;
+      const t = this._time || 0;
+      const jx = !sh ? 0 : calm ? (Math.sin(t * 2.3) * 0.6 + Math.sin(t * 3.7 + 1) * 0.4) * sh * 0.3
+        : (Math.random() - 0.5) * sh;
+      const jy = !sh ? 0 : calm ? (Math.sin(t * 1.9 + 2) * 0.6 + Math.sin(t * 3.1) * 0.4) * sh * 0.3
+        : (Math.random() - 0.5) * sh;
 
       this.camera.fov = rFov;
       // The near plane rides out with the camera. Pinned at 0.4 across a
@@ -5864,22 +5964,30 @@
       const breach = ph.key === "breach", crossing = ph.key === "crossing";
       let torch = 0;
       if (breach) torch = lerp(0.55, 1.35, smooth(ph.progress)) * smooth(clamp01(ph.progress / 0.12));
-      else if (crossing) torch = 1 - 0.12 * smooth(clamp01((ph.progress - 0.85) / 0.15));
+      // Out of the breach at full blaze and settled to a steady torch over
+      // the first fifth of the gap, never stepped down in one frame.
+      else if (crossing) {
+        torch = lerp(1.35, 1, smooth(clamp01(ph.progress / 0.2))) - 0.12 * smooth(clamp01((ph.progress - 0.85) / 0.15));
+      }
       const push = torch > 0 ? Math.min(1, torch) : (burn ? burn.k : 0);
       const liminal = torch > 0 || (this.speed || 0) > LIGHT_MS;
       this.arrayMode = push > 0.01 ? (liminal ? "liminal" : "rocket") : null;   // i18n-ignore  mode ids
-      const flick = 0.82 + Math.sin(this._time * 37) * 0.12 + Math.sin(this._time * 13) * 0.06;
+      // A motor flickers; the torch through the breach only breathes. See
+      // CALM_BEATS.
+      const calm = CALM_BEATS.indexOf(ph.key) >= 0;
+      const flick = calm ? 0.9 + Math.sin(this._time * 1.6) * 0.06
+        : 0.82 + Math.sin(this._time * 37) * 0.12 + Math.sin(this._time * 13) * 0.06;
       this.arrayPods.forEach((pod, i) => {
         const u = pod.userData;
         if (u.lost) return;
         const health = 1 - u.scorch * 0.45;
-        const lvl = push * health * (0.92 + 0.08 * Math.sin(this._time * 23 + i * 1.7));
+        const lvl = push * health * (calm ? 1 : 0.92 + 0.08 * Math.sin(this._time * 23 + i * 1.7));
         u.fire[0].material.opacity = liminal ? 0 : lvl * 0.95 * flick;
         u.fire[1].material.opacity = liminal ? 0 : lvl * 0.55 * flick;
         u.blue[0].material.opacity = liminal ? lvl * 0.95 * flick : 0;
         u.blue[1].material.opacity = liminal ? lvl * 0.55 * flick : 0;
         u.nozzle.scale.set(1, 0.4 + lvl * (liminal ? 1.1 : 0.9), 1);
-        u.vane.material.emissiveIntensity = (liminal ? lvl : lvl * 0.15) * (3.6 + Math.sin(this._time * 9 + i) * 1.2);
+        u.vane.material.emissiveIntensity = (liminal ? lvl : lvl * 0.15) * (3.6 + (calm ? 0 : Math.sin(this._time * 9 + i) * 1.2));
       });
 
       // THE ONE FLAME. Every engine left feeds it, so it is a little smaller
@@ -5892,18 +6000,17 @@
       this.arrayTorchJets[2].material.opacity = tk * 0.3;
       this.arrayTorch.scale.set(1 + tk * 0.3, 0.3 + tk * 1.2, 1 + tk * 0.3);
       this.arrayTorchRing.material.opacity = tk * 0.6;
-      this.arrayTorchRing.scale.setScalar(1 + tk * (breach ? 1.8 : 1.1));
+      const ringK = breach ? 1.8 : crossing ? lerp(1.8, 1.1, smooth(clamp01(ph.progress / 0.2))) : 1.1;
+      this.arrayTorchRing.scale.setScalar(1 + tk * ringK);
       this.arrayTorchRing.rotation.z += dt * (0.8 + tk * 6);
       if (this.arrayLight) {
         this.arrayLight.intensity = tk * 7 + (liminal ? 0 : push * 2.2);
         this.arrayLight.color.setHex(liminal ? 0xbfe4ff : 0xffb45a);
       }
-      // The moment the fabric gives, and the stage burning through it.
-      if (breach && ph.progress > 0.9 && !this._arrayBurnt) {
-        this._arrayBurnt = true;
-        this.jumpFlash = Math.max(this.jumpFlash || 0, 1);
-      }
-      if (tk > 0.05) this.shake = Math.max(this.shake, 0.4 + tk * 1.6);
+      // The moment the fabric gives is not a flash frame: the light swells
+      // over the last of the breach and ebbs over the start of the gap. See
+      // _updateBreachGlass, which sets breachGlow.
+      if (tk > 0.05) this.shake = Math.max(this.shake, 0.4 + tk * 1.2);
     }
 
     // Reparents a part of the vehicle into the near scene where it is, by
@@ -5956,6 +6063,8 @@
     _dropArray() {
       if (this.arrayGone || !this.array) return;
       this.arrayGone = true;
+      // A dome the belt never broke stands on the array, and goes with it.
+      this._breakDome(true);
       const nose = this._shedFromVehicle(this.array, 0, this.array.position.y, 0);
       this.array.userData.vel = new THREE.Vector3(-nose.x * 16, -nose.y * 16, -nose.z * 16);
       this.array.userData.spin = new THREE.Vector3(
@@ -6185,6 +6294,19 @@
     // over RING_LIFE seconds - so what the round rides is a staircase of five
     // shoves rather than one, which is what the beat's altitude curve is doing
     // underneath.
+    // How far astern, down the track, the round's tail is: the bottom of the
+    // array's bells while it is mounted, else the drive or the bullet. The
+    // charges are dropped behind THIS, so no blast ever opens among the
+    // engines.
+    _tailZ() {
+      const vz = this.vehicle ? this.vehicle.position.z : 0;
+      if (this.array && !this.arrayGone) {
+        return vz + this.array.position.y - ARRAY_SCALE * (ARRAY_LEN / 2 + 2);
+      }
+      if (this.liminal) return vz + this.liminal.position.y - LIMINAL_LEN / 2 - 2;
+      return vz - 16;
+    }
+
     _updateCharges(dt, ph) {
       const dropping = ph.key === "charge";
       const going = ph.key === "blast";
@@ -6199,6 +6321,10 @@
         return;
       }
       this._chargeT = (this._chargeT || 0) + dt;
+      const tail = this._tailZ();
+      // Where each blast opens: a clear gap astern of the tail, and each one
+      // a step further back than the last.
+      const blastZ = (i) => tail - 46 - i * 28;
 
       let lit = 0;
       this.pellets.forEach((p, i) => {
@@ -6211,7 +6337,7 @@
           p.position.set(
             (this.rng() - 0.5) * 0.4,
             -14 - i * 2.0,
-            -out * (40 + i * 26)
+            lerp(tail, blastZ(i), out)
           );
           p.scale.setScalar(1 + Math.sin(this._time * 9 + i) * 0.14);
         } else {
@@ -6241,7 +6367,10 @@
         // Out from where the pellet was, to its own radius, thinning as it
         // goes: a ring of light with nothing inside it.
         const rad = r.userData.radius * u;
-        const z = -(40 + i * 26);
+        const z = blastZ(i);
+        // The shell and its heart never reach back up to the tail: the round
+        // rides the ring, it is not swallowed by the ball.
+        const room = Math.max(8, tail - z - 6);
         r.position.set(0, -14 - i * 2.0, z);
         core.position.copy(r.position);
         r.scale.setScalar(rad);
@@ -6257,12 +6386,12 @@
         // larger surface. The heart of it stays small and stays white.
         if (ball) {
           ball.position.copy(r.position);
-          ball.scale.setScalar(rad * 0.78);
+          ball.scale.setScalar(Math.min(rad * 0.78, room));
           ball.material.opacity = fade * (1 - u * 0.55) * 0.5;
         }
         if (heart) {
           heart.position.copy(r.position);
-          heart.scale.setScalar(rad * (0.10 + u * 0.18));
+          heart.scale.setScalar(Math.min(rad * (0.10 + u * 0.18), room * 0.5));
           heart.material.opacity = fade * 0.9;
         }
         // And the round is shoved by each one as it passes.
@@ -6273,7 +6402,7 @@
       if (this.chargeLight) {
         this.chargeLight.visible = true;
         this.chargeLight.intensity = dropping ? 0.5 : 1.2 + lit * 1.6;
-        this.chargeLight.position.set(0, -16, -60);
+        this.chargeLight.position.set(0, -16, blastZ(1));
       }
       if (dropping) this.shake = Math.max(this.shake, 0.25);
     }
@@ -6319,6 +6448,28 @@
         g.add(L);
         return L;
       };
+
+      // THE LIGHT COMING THROUGH. A soft pool behind the cracks, cold blue at
+      // the rim and pale at the heart, that swells as the pane thins: what is
+      // on the far side is showing before the pane goes. Smoothly filtered,
+      // because a hard-edged disc this size crawls as it scales.
+      const glowTex = this._tex(128, 128, (ctx, w, h) => {
+        const gr = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+        gr.addColorStop(0, "rgba(236,246,255,1)");
+        gr.addColorStop(0.35, "rgba(170,210,255,0.55)");
+        gr.addColorStop(0.7, "rgba(90,140,230,0.18)");
+        gr.addColorStop(1, "rgba(40,70,160,0)");
+        ctx.fillStyle = gr;
+        ctx.fillRect(0, 0, w, h);
+      });
+      glowTex.magFilter = THREE.LinearFilter;
+      glowTex.minFilter = THREE.LinearFilter;
+      this.glassGlow = new THREE.Mesh(this._geo(new THREE.PlaneGeometry(1, 1)), this._mat(new THREE.MeshBasicMaterial({
+        map: glowTex, transparent: true, opacity: 0, depthTest: false, depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      })));
+      this.glassGlow.renderOrder = 998;
+      g.add(this.glassGlow);
 
       // FOUR IMPACTS, staggered across the beat, each one further from the
       // middle than the last so the frame fills up rather than piling in one
@@ -6412,6 +6563,14 @@
 
     _updateBreachGlass(dt, ph) {
       const on = !!this.profile.jump && ph.key === "breach";
+      // THE WHITE, where a flash frame used to be: it swells over the last
+      // fifth of the breach and ebbs over the first quarter of the gap, and
+      // _updateFlash eases toward it. Never more than half the screen.
+      const jump = !!this.profile.jump;
+      this.breachGlow = !jump ? 0
+        : ph.key === "breach" ? 0.5 * smooth(clamp01((ph.progress - 0.8) / 0.2))
+          : ph.key === "crossing" ? 0.5 * (1 - smooth(clamp01(ph.progress / 0.25)))
+            : 0;
       if (on) this._ensure("breachGlass");
       const g = this.breachGlass;
       if (!g) return;
@@ -6432,13 +6591,21 @@
       // The break. Everything that cracked fades as the pieces go.
       const BREAK = 0.86;
       const gone = smooth(clamp01((k - BREAK) / (1 - BREAK)));
+      // The light behind the pane: up with the beat, wider and brighter as
+      // the cracks spread, and opened right out as the pane goes.
+      if (this.glassGlow) {
+        const swell = smooth(clamp01(k / 0.8));
+        const size = lerp(1.2, 3.4, swell) + gone * 4;
+        this.glassGlow.scale.set(size * 1.25, size, 1);
+        this.glassGlow.material.opacity = (0.12 + 0.5 * swell) * (1 - gone * 0.6);
+      }
       this.glassImpacts.forEach((imp) => {
         const u = k - imp.at;
         if (u >= 0 && !imp.played) {
           imp.played = true;
           this._pendingSe = this._pendingSe || [];
           this._pendingSe.push({ name: SE.crack, volume: 85, pitch: 70 + this.rng() * 40 });
-          this.shake = Math.max(this.shake, 1.6);
+          this.shake = Math.max(this.shake, 1.0);
         }
         if (u < 0) imp.played = false;
         imp.stages.forEach((L, s2) => {
@@ -6449,11 +6616,13 @@
         const webLit = clamp01((u - 0.11) / 0.06);
         imp.web.visible = webLit > 0.001 && gone < 0.999;
         imp.web.material.opacity = imp.web.material.userData.peak * webLit * (1 - gone);
-        // The star where it struck flares and settles.
-        const flare = u >= 0 ? Math.exp(-u * 18) : 0;
+        // The star where it struck blooms and settles, over most of a
+        // second rather than in a frame or two: four of them in seven
+        // seconds must not read as a strobe.
+        const flare = u >= 0 ? smooth(clamp01(u / 0.04)) * Math.exp(-u * 6) : 0;
         imp.star.visible = u >= 0 && gone < 0.999;
-        imp.star.material.opacity = (0.35 + flare * 0.65) * (1 - gone);
-        imp.star.scale.setScalar(1 + flare * 3);
+        imp.star.material.opacity = (0.3 + flare * 0.4) * (1 - gone);
+        imp.star.scale.setScalar(1 + flare * 2.2);
       });
 
       const broken = k >= BREAK;
@@ -6462,7 +6631,7 @@
         this._pendingSe = this._pendingSe || [];
         this._pendingSe.push({ name: SE.shatter, volume: 100, pitch: 80 });
         this._pendingSe.push({ name: SE.crack, volume: 90, pitch: 55 });
-        this.shake = Math.max(this.shake, 3.2);
+        this.shake = Math.max(this.shake, 2.4);
       }
       const t = broken ? (k - BREAK) * ph.dur : 0;
       this.glassShards.forEach((m) => {
@@ -6474,7 +6643,7 @@
         m.position.set(d.x + d.vx * t, d.y + d.vy * t - 0.2 * t * t, d.vz * t * 0.12);
         m.rotation.set(t * d.spin * 0.6, t * d.spin, t * d.spin * 0.3);
         m.scale.setScalar(d.size * (1 + t * 0.8));
-        m.material.opacity = 0.85 * (1 - gone);
+        m.material.opacity = 0.6 * (1 - gone);
       });
     }
 
@@ -7675,6 +7844,8 @@
       // behind, so the debris trailing the vehicle is its own armour. A hop
       // never gets here, because nothing on a hop takes armour off.
       if (this.profile.shedsArmour) {
+        // The array's glass dome goes first, before a single plate.
+        if (this.domePanes && this.integrity <= DOME_BREAKS_AT) this._breakDome();
         for (let i = this.plates.length - 1; i >= 0; i--) {
           const pl = this.plates[i];
           if (this.integrity > pl.userData.threshold) continue;
@@ -9441,6 +9612,8 @@
       let color = "#ffffff";
       if (st.impactFlash > 0) { target = st.impactFlash * 90; color = "#ff5a3c"; }
       if (st.jumpFlash > 0.01 && st.jumpFlash * 235 > target) { target = st.jumpFlash * 235; color = "#ffffff"; }
+      // The breach's white is a swell, not a flash: see _updateBreachGlass.
+      if (st.breachGlow > 0.01 && st.breachGlow * 255 > target) { target = st.breachGlow * 255; color = "#eef5ff"; }
       if (st.phase.key === "aboard" || st.phase.key === "arrived") {
         target = Math.max(target, 255 * smooth(st.phase.progress));
         color = "#ffffff";

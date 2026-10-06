@@ -47,7 +47,34 @@
     "ore_arcane": "Filone arcano",
     "ore_ethereal": "Filone eterico",
     "ore_quantum": "Filone quantico",
-    "ore_meteor": "Filone meteorico"
+    "ore_meteor": "Filone meteorico",
+    "red_sand": "Sabbia rossa",
+    "pale_sand": "Sabbia chiara",
+    "flower_bed": "Aiuola",
+    "jungle_turf": "Manto di giungla",
+    "lime_moss": "Muschio verde",
+    "snow_sparkle": "Neve farinosa",
+    "reeds": "Canne",
+    "fieldstone": "Pietra di campo",
+    "amber_cobble": "Ciottoli ambrati",
+    "blue_cobble": "Ciottoli blu",
+    "dark_cobble": "Ciottoli scuri",
+    "moss_brick": "Mattone muschioso",
+    "violet_rock": "Roccia violacea",
+    "shadow_rock": "Roccia d'ombra",
+    "pale_slate": "Ardesia chiara",
+    "icefall": "Cascata di ghiaccio",
+    "scoria": "Scoria",
+    "lava_cobble": "Ciottoli di lava",
+    "ember_thorns": "Spine di brace",
+    "red_brick": "Mattone rosso",
+    "slate_brick": "Mattone d'ardesia",
+    "cedar": "Tavolato di cedro",
+    "steel_rib": "Acciaio nervato",
+    "blue_steel": "Acciaio blu",
+    "window_pane": "Vetrata",
+    "ornate_tile": "Piastrella ornata",
+    "eye_wall": "Muro che osserva"
   },
   "tool": {
     "target": "{name}",
@@ -102,5 +129,10 @@
     "enter": "Entra in VR",
     "exit": "Esci dalla VR",
     "failed": "Impossibile avviare il visore VR."
+  },
+  "site": {
+    "warren": "Una tana di goblin. Abbassa la voce.",
+    "dungeon": "Pietra squadrata sotto i piedi: un dungeon.",
+    "grotto": "Una grotta di cristallo brilla nel buio."
   }
 }

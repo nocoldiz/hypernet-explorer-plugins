@@ -275,9 +275,6 @@
     "onu": {
       "vote": "Parlato per {power} e votato {stance} su {motion}; la mozione {outcome}."
     },
-    "blade": {
-      "evolved": "{name} e mutata, ora e una lama {stage}."
-    },
     "bet": {
       "won": "Vinto {amount} su {pick}.",
       "lost": "Perso {amount} puntando su {pick}."

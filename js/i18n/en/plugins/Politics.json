@@ -259,11 +259,14 @@
   "smearedOut": "Walked out of the {party}, disgusted by what the papers said.",
   "driftedTo": "Drifted from the {from} to the {to}.",
   "driftedOut": "Drifted away from the {from} and now belongs to no party.",
-  "joinedBy": "Joined the {party}, talked round by {by} (was with {from})."
+  "joinedBy": "Joined the {party}, talked round by {by} (was with {from}).",
+  "resignedMayor": "Resigned as Mayor of {group} in favour of {successor}.",
+  "succeededMayor": "Became Mayor of {group}."
  },
  "story": {
   "electedMayor": "elected Mayor of {group}",
-  "appointed": "appointed {office} of {group}"
+  "appointed": "appointed {office} of {group}",
+  "resignedMayor": "resigned as Mayor of {group}"
  },
  "death": {
   "diedInWorld": "died",
@@ -709,5 +712,9 @@
    "conclave": "A conclave takes no outside candidates.",
    "alreadyStanding": "That candidate is already standing in an election."
   }
+ },
+ "history": {
+  "mayorResigned": "{mayor} resigned as Mayor of {group}, handing the town hall to {successor}.",
+  "mayorSeated": "{successor} took office as Mayor of {group}."
  }
 }

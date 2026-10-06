@@ -1749,6 +1749,190 @@
     return filter;
   }
 
+  // --- Water Wakes ---
+  // Whoever moves through water (the party, an enemy, any event, a boat)
+  // leaves rings behind: a small quick one on every stride, a wide slow one
+  // now and then while a swimmer treads water in place. They are their own
+  // expanding pixel ellipses drawn over the tiles, so they read apart from the
+  // A1 cycle of the water underneath. On land, every tile they step on is
+  // reported to window.WaterAnimation, which stops an animated A1 tile (grass)
+  // for a moment there, so walkers leave a trail.
+  const WAKE_MAX = 48;
+  const TRAIL_PRESS_EVERY = 30; // frames between re-pressing the tile stood on
+  const WAKE_SIZES = 9; // ring sizes in the shared sheet
+  const WAKE_CELL_W = 48;
+  const WAKE_CELL_H = 24;
+  const WAKE_STRIDE_EVERY = 10; // frames between rings while moving
+  const WAKE_IDLE_EVERY = 70; // frames between rings while treading water
+  const WAKE_BEHIND = 0.35; // tiles behind the walker a stride ring starts
+  const WAKE_KINDS = {
+    stride: { life: 28, first: 0, last: 6, opacity: 200 },
+    idle: { life: 60, first: 2, last: 8, opacity: 150 },
+  };
+
+  const WaterWakes = {
+    _queue: [],
+    _sheet: null,
+    _gen: 0, // bumped on every map load, so procedural squares (all 636) never share a cache
+
+    reset() {
+      this._queue.length = 0;
+      this._gen++;
+    },
+
+    // Water under the character's feet, cached per tile: terrain tag 3, or
+    // wherever a swimmer is. An A1 tile alone is not enough, animated grass is
+    // A1 too; neither is region 99, interiors reuse it for carpets and
+    // shelves. A bridge deck is dry. Entering a new tile also presses it.
+    onWater(ch) {
+      const x = ch.x, y = ch.y, gen = this._gen;
+      if (ch._wakeTileX !== x || ch._wakeTileY !== y || ch._wakeTileGen !== gen) {
+        ch._wakeTileX = x;
+        ch._wakeTileY = y;
+        ch._wakeTileGen = gen;
+        ch._wakeWater = !Utils.isBridgeTile(x, y) && $gameMap.terrainTag(x, y) === 3;
+        ch._trailClock = 0;
+        this.pressTrail(ch);
+      } else if (++ch._trailClock >= TRAIL_PRESS_EVERY) {
+        ch._trailClock = 0;
+        this.pressTrail(ch);
+      }
+      return ch._wakeWater || !!ch._isSwimming;
+    },
+
+    pressTrail(ch) {
+      if (ch._wakeWater || ch._isSwimming) return;
+      if (typeof Game_Vehicle !== "undefined" && ch instanceof Game_Vehicle) return;
+      const anim = window.WaterAnimation;
+      if (anim && anim.press) anim.press(ch.x, ch.y);
+    },
+
+    canLeaveWake(ch) {
+      if (ch.isTransparent && ch.isTransparent()) return false;
+      if (!ch._characterName && !ch._tileId) return false;
+      if (typeof Game_Follower !== "undefined" && ch instanceof Game_Follower &&
+          !ch.isVisible()) return false;
+      if (typeof Game_Vehicle !== "undefined" && ch instanceof Game_Vehicle &&
+          (ch.isAirship() || ch._mapId !== $gameMap.mapId())) return false;
+      return true;
+    },
+
+    tick(ch) {
+      if (!this.canLeaveWake(ch)) {
+        ch._wakeClock = WAKE_STRIDE_EVERY;
+        return;
+      }
+      if (!this.onWater(ch)) {
+        ch._wakeClock = WAKE_STRIDE_EVERY;
+        return;
+      }
+      ch._wakeClock = (ch._wakeClock === undefined ? WAKE_STRIDE_EVERY : ch._wakeClock) + 1;
+      if (ch.isMoving()) {
+        if (ch._wakeClock >= WAKE_STRIDE_EVERY) {
+          ch._wakeClock = 0;
+          this.push(ch, "stride");
+        }
+      } else if (ch._isSwimming) {
+        if (ch._wakeClock >= WAKE_IDLE_EVERY) {
+          ch._wakeClock = 0;
+          this.push(ch, "idle");
+        }
+      } else {
+        // Standing in shallows: the first stride out rings at once.
+        ch._wakeClock = Math.min(ch._wakeClock, WAKE_STRIDE_EVERY);
+      }
+    },
+
+    push(ch, kind) {
+      if (this._queue.length >= WAKE_MAX) return;
+      let rx = ch._realX, ry = ch._realY;
+      if (kind === "stride") {
+        const d = ch.direction();
+        rx += d === 4 ? WAKE_BEHIND : d === 6 ? -WAKE_BEHIND : 0;
+        ry += d === 8 ? WAKE_BEHIND : d === 2 ? -WAKE_BEHIND : 0;
+      }
+      this._queue.push({ rx, ry, kind });
+    },
+
+    // Frame and opacity of a ring at a given age, or null once it is gone.
+    look(kind, age) {
+      const k = WAKE_KINDS[kind];
+      if (!k || age >= k.life) return null;
+      const p = age / k.life;
+      const frame = Math.min(k.last, k.first + Math.floor(p * (k.last - k.first + 1)));
+      return { frame, opacity: Math.round(k.opacity * (1 - p)) };
+    },
+
+    // One sheet of stepped ellipses, smallest to widest, built on first use.
+    // The near half of each ring is brighter than the far half.
+    sheet() {
+      if (this._sheet) return this._sheet;
+      const bmp = new Bitmap(WAKE_CELL_W * WAKE_SIZES, WAKE_CELL_H);
+      for (let i = 0; i < WAKE_SIZES; i++) {
+        const cx = i * WAKE_CELL_W + WAKE_CELL_W / 2;
+        const cy = WAKE_CELL_H / 2;
+        const rx = 4 + i * 2.5;
+        const ry = rx * 0.45;
+        for (let s = 0; s < 64; s++) {
+          const a = (s / 64) * Math.PI * 2;
+          const px = Math.round((cx + Math.cos(a) * rx) / 2) * 2;
+          const py = Math.round((cy + Math.sin(a) * ry) / 2) * 2;
+          const near = Math.sin(a) > 0;
+          bmp.fillRect(px - 1, py - 1, 2, 2,
+            near ? "rgba(255,255,255,0.95)" : "rgba(220,240,255,0.55)");
+        }
+      }
+      this._sheet = bmp;
+      return bmp;
+    },
+
+    // Moves the queued rings onto the tilemap and ages the live ones.
+    updateSprites(spriteset) {
+      const tilemap = spriteset._tilemap;
+      if (!tilemap) return;
+      const live = spriteset._wakeSprites || (spriteset._wakeSprites = []);
+      while (this._queue.length) {
+        const w = this._queue.shift();
+        if (live.length >= WAKE_MAX) continue;
+        const sprite = new Sprite(this.sheet());
+        sprite.anchor.x = 0.5;
+        sprite.anchor.y = 0.5;
+        sprite.z = 0.5; // over the lower tiles, under every character
+        sprite._wake = w;
+        sprite._wakeAge = 0;
+        tilemap.addChild(sprite);
+        live.push(sprite);
+      }
+      const tw = $gameMap.tileWidth(), th = $gameMap.tileHeight();
+      for (let i = live.length - 1; i >= 0; i--) {
+        const sprite = live[i];
+        const look = this.look(sprite._wake.kind, sprite._wakeAge++);
+        if (!look) {
+          tilemap.removeChild(sprite);
+          live.splice(i, 1);
+          continue;
+        }
+        sprite.setFrame(look.frame * WAKE_CELL_W, 0, WAKE_CELL_W, WAKE_CELL_H);
+        sprite.opacity = look.opacity;
+        sprite.x = Math.round($gameMap.adjustX(sprite._wake.rx) * tw + tw / 2);
+        sprite.y = Math.round($gameMap.adjustY(sprite._wake.ry) * th + th - 8);
+      }
+    },
+  };
+  window.WaterWakes = WaterWakes;
+
+  const _Game_CharacterBase_update_wake = Game_CharacterBase.prototype.update;
+  Game_CharacterBase.prototype.update = function () {
+    _Game_CharacterBase_update_wake.call(this);
+    if ($gameMap && $dataMap) WaterWakes.tick(this);
+  };
+
+  const _Spriteset_Map_update_wake = Spriteset_Map.prototype.update;
+  Spriteset_Map.prototype.update = function () {
+    _Spriteset_Map_update_wake.call(this);
+    WaterWakes.updateSprites(this);
+  };
+
   // --- Mirror Reflection System ---
   // An event named "Mirror" reflects whoever stands on the tile in front of it
   // (the tile in the mirror's own facing direction). The reflection is the same
@@ -3894,6 +4078,7 @@
     _Game_Map_setup_MIS.call(this, mapId);
     ReflectionSystem.invalidateWaterScan();
     MirrorSystem.invalidate();
+    WaterWakes.reset();
     // The submerged-deck flood belongs to the map that was scanned, never to
     // the next one loaded into the same $gameMap.
     this._misSubmergedDeck = null;

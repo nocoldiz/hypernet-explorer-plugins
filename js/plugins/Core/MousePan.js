@@ -1392,6 +1392,94 @@
         }
     };
 
+    // ------------------------------------------------------------------------
+    // Interact Icon
+    // ------------------------------------------------------------------------
+    // A "?" bobbing over the party leader while they stand on or beside an
+    // event that draws nothing (a ticket booth, a lever behind a counter) but
+    // still has something to do. The judgement of which names are machinery is
+    // the hover's own, so a transfer or an audio emitter never raises it.
+    // Off in Options > Video > Interact Icon.
+
+    const INTERACT_TRIGGERS = [0, 1, 2]; // action button, player touch, event touch
+
+    function isInteractCandidate(ev) {
+        if (!ev || ev._erased || !ev.page || !ev.page()) return false;
+        if (ev.characterName() || ev.tileId() > 0) return false;
+        if (ev.isInfoIcon && ev.isInfoIcon()) return false;
+        if (!INTERACT_TRIGGERS.includes(ev._trigger)) return false;
+        const data = ev.event();
+        if (!data || shouldHideEvent(data.name)) return false;
+        if (window.NPCSystem && window.NPCSystem.isNPCEvent && window.NPCSystem.isNPCEvent(data.note || "")) return false;
+        const list = ev.list() || [];
+        return list.some(cmd => cmd && cmd.code !== 0);
+    }
+
+    function interactTargetNear(player) {
+        if (!$gameMap || !player) return null;
+        const px = player.x, py = player.y;
+        for (const ev of $gameMap.events()) {
+            if (!ev) continue;
+            const dist = Math.abs($gameMap.deltaX(ev.x, px)) + Math.abs($gameMap.deltaY(ev.y, py));
+            if (dist <= 1 && isInteractCandidate(ev)) return ev;
+        }
+        return null;
+    }
+
+    function interactIconEnabled() {
+        return ConfigManager.interactIcon !== false;
+    }
+
+    window.InteractIcon = { isCandidate: isInteractCandidate, targetNear: interactTargetNear, enabled: interactIconEnabled };
+
+    function Sprite_InteractIcon() {
+        this.initialize(...arguments);
+    }
+    Sprite_InteractIcon.prototype = Object.create(Sprite.prototype);
+    Sprite_InteractIcon.prototype.constructor = Sprite_InteractIcon;
+
+    Sprite_InteractIcon.prototype.initialize = function () {
+        Sprite.prototype.initialize.call(this, new Bitmap(28, 32));
+        this.anchor.x = 0.5;
+        this.anchor.y = 1;
+        this.bitmap.fontFace = $gameSystem.mainFontFace();
+        this.bitmap.fontSize = 26;
+        this.bitmap.fontBold = true;
+        this.bitmap.outlineWidth = 4;
+        this.bitmap.textColor = "#ffd23f";
+        this.bitmap.outlineColor = "#000000";
+        this.bitmap.drawText("?", 0, 0, 28, 32, "center"); // i18n-ignore: glyph
+        this.visible = false;
+    };
+
+    const _Spriteset_Map_update = Spriteset_Map.prototype.update;
+    Spriteset_Map.prototype.update = function () {
+        _Spriteset_Map_update.call(this);
+        this.updateInteractIcon();
+    };
+
+    Spriteset_Map.prototype.updateInteractIcon = function () {
+        const host = this._characterSprites && this._characterSprites.find(s => s._character === $gamePlayer);
+        if (!host) return;
+        if (!this._interactIcon || this._interactIcon.parent !== host) {
+            if (!this._interactIcon) this._interactIcon = new Sprite_InteractIcon();
+            host.addChild(this._interactIcon);
+        }
+        const icon = this._interactIcon;
+        const key = $gamePlayer.x + "," + $gamePlayer.y + "," + $gameMap.mapId();
+        if (Graphics.frameCount % 10 === 0 || key !== this._interactIconKey) {
+            this._interactIconKey = key;
+            this._interactIconTarget = interactIconEnabled() && !$gamePlayer.isInVehicle()
+                ? interactTargetNear($gamePlayer) : null;
+        }
+        const show = !!this._interactIconTarget && !$gameMap.isEventRunning() && host.visible;
+        icon.visible = show;
+        if (show) {
+            const h = host.patternHeight ? host.patternHeight() : 48;
+            icon.y = -h - 2 + Math.round(Math.sin(Graphics.frameCount / 12) * 2);
+        }
+    };
+
     // Scene_NPCProfile removed â€” social web is now in NPCEmpathize.js
 
 

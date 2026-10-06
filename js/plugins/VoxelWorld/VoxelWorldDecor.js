@@ -915,8 +915,7 @@
             const pick = Math.floor(this._seededRandom(wx, wy, seedBase + 7) * groups.length);
             const g = groups[Math.min(pick, groups.length - 1)];
             if (!g.sprites.length) return;
-            const cats = (BiomeFurniture.map() || {}).categories || {};
-            const sz = size || (cats[g.folder] && cats[g.folder].size) || 11;
+            const sz = size || BiomeFurniture.sizeOf(g.folder);
             const k  = kind || (PLANT_FOLDERS.test(g.folder) ? 'plant' : 'prop');
             this._scatterBillboards(grp, g.folder, g.sprites, quad, items, sz, wx, wy, seedBase, k);
         }
@@ -949,7 +948,7 @@
             if (!list.length) return;
             // Trees, plants and rocks are already scattered from their own
             // curated pools just above; drawing them twice would double a wood.
-            const pool = list.filter(e => !skip.has(e.folder));
+            const pool = list.filter(e => !skip.has(BiomeFurniture.categoryOf(e.folder)));
             if (!pool.length) return;
 
             const total = pool.reduce((sum, e) => sum + e.density, 0);
@@ -1096,7 +1095,7 @@
                     genItems(14, 4100), wx, wy, 4100, 'plant', 0);
             } else {
                 const list = BiomeFurniture.exterior(biome.name)
-                    .filter(e => SEABED_FOLDERS.includes(e.folder));
+                    .filter(e => SEABED_FOLDERS.includes(BiomeFurniture.categoryOf(e.folder)));
                 if (!list.length) return;
                 // Two folders a square, weighted by density: a bed of one weed
                 // with the odd rock in it reads as a sea floor; all four folders
@@ -1200,7 +1199,17 @@
             if (!floorFn) return;
             // Two folders a square, weighted by how thickly each lies, so one
             // cave is a mushroom cave and the next one over is a crystal one.
-            const pool = CAVE_FOLDERS.filter(e => BiomeFurniture.spritesIn(e.folder).length);
+            // A cave kind names a category; the square picks among the
+            // subfolders of it the map knows (ore and formations are rocks).
+            const pool = [];
+            for (const e of CAVE_FOLDERS) {
+                const keys = BiomeFurniture.keysOf(e.folder);
+                if (!keys.length && BiomeFurniture.spritesIn(e.folder).length) { pool.push(e); continue; }
+                for (const k of keys) {
+                    if (!BiomeFurniture.spritesIn(k).length) continue;
+                    pool.push({ folder: k, density: e.density / keys.length, kind: e.kind });
+                }
+            }
             if (!pool.length) return;
             const total = pool.reduce((s, e) => s + e.density, 0) || 1;
             const chosen = new Map();
@@ -1227,7 +1236,7 @@
                 }
                 if (!items.length) { seed += 90; continue; }
                 const sprites = BiomeFurniture.spritesIn(e.folder);
-                const size = (cats[e.folder] && cats[e.folder].size) || 11;
+                const size = (cats[e.folder] && cats[e.folder].size) || BiomeFurniture.sizeOf(e.folder);
                 this._scatterBillboards(grp, e.folder, sprites,
                     e.kind === 'rock' ? this.spriteQuads.rock : this.spriteQuads.plant,
                     items, size, wx, wy, seed, e.kind);
@@ -1242,6 +1251,26 @@
         // without a wood being scattered over its roof.
         //
         //   floorFn(x, z)  the floor of the passage at a world point, or null
+        // The chests of one of the places under the world (VoxelWorldField's
+        // sites), set down on its own furnished spots rather than anywhere on
+        // a passage floor: a vault and a goblin hall always hold one and it is
+        // a good one; a hut, a room or a grotto sometimes do.
+        _scatterSiteChests(grp, wx, wy, tileSize, spots) {
+            if (!spots || !spots.length) return;
+            let i = 0;
+            for (const sp of spots) {
+                i++;
+                const sure = sp.kind === 'vault' || sp.kind === 'hall';
+                const odds = sure ? 1 : sp.kind === 'grotto' ? 0.6 : 0.35;
+                if (!sure && this._seededRandom(wx, wy, 7100 + i) >= odds) continue;
+                const C = chestFor(sure ? 0.99 : this._seededRandom(wx, wy, 7140 + i));
+                this._scatterBillboards(grp, CHEST_FOLDER, [C.sprite], this.spriteQuads.plant,
+                    [{ x: sp.x - (wx + 0.5) * tileSize, y: sp.y, z: sp.z - (wy + 0.5) * tileSize,
+                       rotY: 0, scale: 1, key: 'sitechest' + i }],   // i18n-ignore  prop key
+                    CHEST_SIZE, wx, wy, 7180 + i, 'chest');
+            }
+        }
+
         _scatterCaveChests(grp, wx, wy, tileSize, floorFn) {
             if (!floorFn) return;
             let put = 0;
@@ -1925,10 +1954,14 @@
 
         // Every sprite in a folder. The game ships an index the other way round
         // (sprite -> folder, for the shop and the placement menu), so it is
-        // turned over once here and kept.
-        spritesIn(folder) {
+        // turned over once here and kept. The index files a sprite two levels
+        // deep ('Trees/Conifers'); asked for a bare category ('Trees') this
+        // answers with every subfolder of it, so a list written in categories
+        // (the caves, the sea floor, a shop's fittings) still gets its art.
+        _index() {
             if (!this._byFolder) {
                 this._byFolder = new Map();
+                this._byCategory = new Map();
                 const index = (window.Items && window.Items.FurnitureImageFolders) || null;
                 if (index) {
                     for (const id in index) {
@@ -1936,10 +1969,43 @@
                         let arr = this._byFolder.get(f);
                         if (!arr) { arr = []; this._byFolder.set(f, arr); }
                         arr.push(id + '.png');
+                        const cat = f.indexOf('/') >= 0 ? f.slice(0, f.indexOf('/')) : f;
+                        if (cat !== f) {
+                            let all = this._byCategory.get(cat);
+                            if (!all) { all = []; this._byCategory.set(cat, all); }
+                            all.push(id + '.png');
+                        }
                     }
                 }
             }
-            return this._byFolder.get(folder) || [];
+            return this._byFolder;
+        },
+        spritesIn(folder) {
+            const by = this._index();
+            return by.get(folder) || this._byCategory.get(folder) || [];
+        },
+        // The category a map key belongs to: 'Trees' for 'Trees/Conifers'.
+        categoryOf(folder) {
+            const i = folder.indexOf('/');
+            return i >= 0 ? folder.slice(0, i) : folder;
+        },
+        // Every key of the map under a category, for a list that names the
+        // category and wants to pick among its subfolders.
+        keysOf(category) {
+            const map = this.map();
+            const cats = (map && map.categories) || {};
+            const out = [];
+            for (const k in cats) if (this.categoryOf(k) === category) out.push(k);
+            return out;
+        },
+        // How tall a piece of a key (or of a category: its tallest kind) is.
+        sizeOf(folder) {
+            const map = this.map();
+            const cats = (map && map.categories) || {};
+            if (cats[folder]) return cats[folder].size || 11;
+            let best = 0;
+            for (const k in cats) if (this.categoryOf(k) === folder && (cats[k].size || 0) > best) best = cats[k].size;
+            return best || 11;
         },
 
         // The outdoor list for a biome, as something ready to scatter: the
@@ -2083,7 +2149,7 @@
                     if (!sprites.length) continue;
                     out.push({
                         folder, density: shop.furniture[folder],
-                        size: (cats[folder] && cats[folder].size) || 11, sprites
+                        size: (cats[folder] && cats[folder].size) || BiomeFurniture.sizeOf(folder), sprites
                     });
                 }
             }

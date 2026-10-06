@@ -3538,11 +3538,10 @@
 
   // Everything that is not Earth: every alien biome (surface and underground -
   // they are the only biome names in the game that begin "Alien") plus the two
-  // space biomes. Nothing out here is scored. A planet surface, the vaults under
-  // it and the vacuum are carried by their ambience alone, so the track the
-  // party warped in with is stopped rather than followed out into space. The
-  // `bgm` pools stay in js/db/WorldGen/AlienBiomes.json, unread, so turning the
-  // music back on is one predicate away.
+  // space biomes. A planet surface, the vaults under
+  // it and the vacuum are scored by WorldMapReturn's biome-music layer from
+  // the day / night pools in js/db/WorldGen/AlienBiomes.json, so the interior
+  // music below keeps its hands off them.
   function isOffworldBiome(biomeName) {
     const name = String(biomeName || "");
     return /^Alien/i.test(name) || name === "Space" || name === "Spacecenter";  // i18n-ignore  biome ids
@@ -5553,7 +5552,7 @@
         AudioManager.stopBgs();
       }
 
-      applyBiomeBgm(biomeName, finalBiome, seed, originX, originY);
+      applyBiomeBgm(biomeName, finalBiome, seed, originX, originY, isNightTime);
     } else {
       AudioManager.stopBgs();
       applyBiomeBgm(biomeName, null, seed, originX, originY);
@@ -5575,15 +5574,19 @@
   //    crossings between them. Stopping it here would cut the theme every time
   //    the party walked from one side of a city to the other, and restarting it
   //    from zero right afterwards.
-  //  - OFF-WORLD is silent. An alien vault has a pool in AlienBiomes.json and
-  //    is an interior, so it would otherwise be scored: it is stopped instead.
-  function applyBiomeBgm(biomeName, biomeEntry, seed, originX, originY) {
+  //  - OFF-WORLD is scored by WorldMapReturn too, from its day / night pools
+  //    in AlienBiomes.json, surface and vault alike, so it is left alone here.
+  //
+  // A built interior answers to the clock as well: its `bgmNight` pool, when
+  // it has one, plays after dark.
+  function applyBiomeBgm(biomeName, biomeEntry, seed, originX, originY, isNight) {
     const here = biomeName || "";
     if (isCityBiome(here) || isVillageBiome(here) || isBurgBiome(here)) return;
-    const list = (biomeEntry && Array.isArray(biomeEntry.bgm))
-      ? biomeEntry.bgm.filter((n) => n && n.trim())
-      : [];
-    if (!isInteriorBiome(here) || isOffworldBiome(here) || list.length === 0) {
+    if (isOffworldBiome(here)) return;
+    const clean = (arr) => (Array.isArray(arr) ? arr : []).filter((n) => n && n.trim());
+    const night = clean(biomeEntry && biomeEntry.bgmNight);
+    const list = isNight && night.length > 0 ? night : clean(biomeEntry && biomeEntry.bgm);
+    if (!isInteriorBiome(here) || list.length === 0) {
       AudioManager.stopBgm();
       return;
     }

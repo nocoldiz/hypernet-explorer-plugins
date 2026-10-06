@@ -93,6 +93,43 @@
       "Nun stavo aspettanno.",
       "So' stata in piedi in un'aula di tribunale per {unnici anni|moltissimo tempo} e volevo una sedia. Tutto qui.",
       "Vabbe. Siediti, allora."
+    ],
+    [
+      "~ Quando arrivi è seduta dalla tua parte del séparé. Ti tocca prendere la sua.",
+      "{Sei in ritardo, strega.|Te la sei presa comoda.}",
+      "{Ho truccato tre semafori pe' fatte arrivà tardi, quindi tecnicamente è córpa mia. So' arrabbiata lo stesso.|T'ho fatto inciampà sulle scale. Sei venuta lo stesso. O è devozione o è stupidità.}"
+    ],
+    [
+      "~ Si è dipinta le unghie di nero. Una è dipinta esattamente del colore del tuo cappotto.",
+      "{È 'na coincidenza.|Nun te fa' illusioni.|Era l'unico colore rimasto.}",
+      "~ Non era l'unico colore rimasto."
+    ],
+    [
+      "@shake",
+      "~ La sedia su cui stavi per sederti crolla appena la tocchi.",
+      "{Ops.|Le probabilità. Mica io. Be'. Io.}",
+      "~ Ti spinge la propria sedia con un piede, e resta in piedi."
+    ],
+    [
+      "~ Ha in mano due bicchieri. Beve da entrambi senza mai staccarti gli occhi di dosso.",
+      "{Uno de quelli era er tuo.|Te ne arriva n'antro. Si te lo meriti.}"
+    ],
+    [
+      "~ Ha un cerotto sulle nocche. Tu ne hai uno identico da stamattina, quando l'anta dell'armadietto ti ha colpita.",
+      "{Semo coordinate. Che carine.|Nun me chiede come me lo so' fatto.|L'armadietto l'ho preso a cazzotti prima io. Poi lui ha colpito te. Giusto così.}"
+    ],
+    [
+      "{Em. Siediti. C'hai 'na faccia tremenda.|Siediti. I capelli tua stanno a fa' quarcosa de tragico.}",
+      "~ Allunga la mano senza chiedere e ti sistema i capelli. La sua mano resta lì un secondo di troppo.",
+      "{Ecco. Mo' sei tremenda solo in parte.}"
+    ],
+    [
+      "~ Quando ti siedi la candela tra voi si accende da sola, brucia blu, poi nera.",
+      "{Nun so' stata io.|Sei stata te. Te fai le cose quanno sei arrabbiata. Me piace.}"
+    ],
+    [
+      "{C'è mancato poco che disdicevo.|T'avevo scritto 'na citazione in giudizio invece de 'n invito. Poi l'ho strappata. Poi l'ho riattaccata co' lo scotch.}",
+      "~ Te la fa scivolare davanti: una citazione in giudizio, rattoppata con lo scotch, con CENA scritto sopra il capo d'accusa."
     ]
   ],
   "emSecretReplies": [
@@ -2890,7 +2927,8 @@
     "tone": "Stasera",
     "you": "Il tuo battito",
     "her": "Il suo battito",
-    "bpm": "bpm"
+    "bpm": "bpm",
+    "stage": "Fase"
   },
   "toneIntros": {
     "serious": [
@@ -3629,5 +3667,1446 @@
     "moodRandom": "deciso la sera stessa",
     "here": "Qui: {biome}",
     "random": "Un posto a caso"
-  }
+  },
+  "bubbaDate": {
+    "stageLabels": {
+      "evasive": "Sfuggente",
+      "shy": "Timida",
+      "thawing": "Disgelo",
+      "open": "Si apre",
+      "reunited": "Ritrovati"
+    },
+    "progress": {
+      "up": [
+        "~ {Qualcosa tra voi si sposta di una tacca, come un bullone grippato che finalmente cede.|Stasera ti ha lasciato vedere un po' più di sé dell'ultima volta.|La distanza tra voi è più corta di qualche centimetro.}"
+      ],
+      "down": [
+        "~ {Ha rimesso un po' di distanza, a mano.|Quello che si era allentato è stato stretto di nuovo, di un quarto di giro.}"
+      ]
+    },
+    "openings": {
+      "evasive": [
+        [
+          "~ {La tavola è apparecchiata per due. Solo una sedia è calda.|C'è una candela, un caffè ancora fumante e una sedia. Eris no.|Il suo cappotto è appeso allo schienale. Lei dentro non c'è.}",
+          "~ {Una tenda si muove.|Qualcosa si abbassa dietro il bancone.|Una pianta in vaso respira decisamente troppo forte.}",
+          "{Nun so' qui.|Questa è 'na registrazione.|Hai sbajato dea.}",
+          "...{Ciao, Bubba.|Ciao.|Ah. Sei te. Ovvio che sei te.}"
+        ],
+        [
+          "~ Ti vede prima che tu veda lei. Lo sai perché la sua sedia sta ancora girando.",
+          "{Bubba! Ma che coincidenza. Stavo giusto a annà via.|Ah. Bubba. Passavo de qua. Proprio da 'sto tavolo. Proprio a 'st'ora.|Nun ce legge gnente nella prenotazione. Le prenotazioni capitano, alla gente.}",
+          "~ {Si rimette a sedere, lentissimamente, come se la sedia potesse denunciarla.|Non si rimette a sedere. Resta sospesa a mezz'aria.}"
+        ],
+        [
+          "~ Un foglio scivola sul tavolo. Con una calligrafia ordinatissima c'è scritto: LA DEA DELLA DISCORDIA È IN RIUNIONE.",
+          "~ {Sotto la tovaglia si vedono due scarpe.|La tovaglia trema.|Sotto la tovaglia qualcuno canticchia la canzone della radio del '91, poi si blocca di colpo.}",
+          "{...Nun dovevi venì di persona.|Chi t'ha detto che stavo qui? Le probabilità? Je faccio levà la licenza.|Avevo chiesto un meccanico. Uno qualsiasi. Mica er meccanico.}"
+        ],
+        [
+          "~ {Indossa occhiali da sole, una sciarpa e dei baffi finti che stanno perdendo la presa.|Si è travestita da cameriera e sta servendo il proprio tavolo.|Legge un giornale al contrario con una concentrazione enorme.}",
+          "{Bonasera, signore. So' 'na donna qualunque. Nun c'ho troni.|Posso prenderle er... cappotto. Er cappello. Er certificato de matrimonio. No. Fa' finta che nun l'ho detto.|Ce conosciamo? No. Proprio no. Westford? Mai sentita.}",
+          "~ {I baffi cadono nella zuppa.|Nessuno nella sala ci casca, men che meno la zuppa.}"
+        ]
+      ],
+      "shy": [
+        [
+          "~ È puntuale. Già questo è una novità.",
+          "{Ciao.|Salve.|Bubba.}",
+          "~ {Ti guarda le mani, poi il tavolo, poi un punto a circa un metro a sinistra della tua testa.|Ha piegato il tovagliolo in qualcosa che è o un cigno o un trono piccolissimo.}",
+          "{Sei... uguale. Nun è un complimento. È 'n'osservazione. Va be', è un complimento.|Puzzi ancora de grasso de motore. Nun la prenne come 'na lamentela.|T'hai tenuto er giubbotto. Ovvio che t'hai tenuto er giubbotto.}"
+        ],
+        [
+          "~ Ha le mani strette attorno a una tazza da cui non ha bevuto.",
+          "Stavorta avevo detto che restavo tutta la sera. {L'ho scritto.|L'ho messo in una sentenza. È vincolante.|Ho detto a tre fantasmi giudiziari de fermamme si scappo.}",
+          "~ {In un angolo, uno dei fantasmi ti fa un piccolo saluto di scuse.|Da qualche parte, un fantasma si scrocchia le nocche.}"
+        ],
+        [
+          "{Allora.|Be'.|Dunque.}",
+          "{Er tempo è proprio... tempo.|Come sta The Beast? Er camper. Mica te. Te nun sei 'na bestia. Be'. A vorte.|Er motore batte ancora la mattina quanno fa freddo? Nun risponne. Lo so che batte. Me lo ricordo, quer colpo.}",
+          "~ Arrossisce per la sua stessa frase e prova a nascondersi dietro il menù."
+        ],
+        [
+          "~ Si alza quando arrivi, poi non sa cosa farsene dello stare in piedi, e si risiede.",
+          "{L'ho provata davanti allo specchio.|L'ho provata co' un usciere. Ha pianto.|C'avevo li appunti. Me so' magnata l'appunti.}",
+          "{Prima te. No. Io. No. Te.|Di' quarcosa. Quarcosa de piccolo. Quarcosa che nun pesa.}"
+        ]
+      ],
+      "thawing": [
+        [
+          "~ Ha ordinato per te prima ancora che ti sieda. È quello che prendi sempre. Sono passati nove anni.",
+          "{Nun me guardà così. C'ho bona memoria. È tutto er mio problema.|Sì, me lo ricordavo. Me ricordo tutto. Fa parte der lavoro e me sta a rovinà la vita.}"
+        ],
+        [
+          "~ Quando esci la trovi appoggiata al cofano di The Beast, come se fosse il 1990 e non fosse successo nulla.",
+          "{Tira ancora a sinistra.|Nun l'hai mai aggiustata la portiera der passeggero. Se vede da come pende.|Hai perso n'antra vorta er tappo der serbatoio. Certe cose so' punti fissi der tempo.}",
+          "~ {Accarezza il camper come un vecchio cane.|Quasi sorride all'ammaccatura che gli ha fatto lei, tanto tempo fa.}"
+        ],
+        [
+          "{T'ho portato 'na cosa.|C'ho un regalo. Nun fa' quella faccia.}",
+          "~ Mette una cassetta sul tavolo. L'etichetta, scritta da lei, dice ROUTE 666, LATO B.",
+          "{Ho fatto 'na copia. L'originale s'è squajato a Monterrey. Te ricordi Monterrey.|Te che canti nun ce stai. T'ho levato. Pe' pietà.}"
+        ],
+        [
+          "~ Sta già ridendo di qualcosa prima che tu arrivi. Smette quando ti vede, ma non del tutto.",
+          "{Bubba. Siediti. Stavo a pensà alla banca de Tulsa.|Me stavo a ricordà quella vorta che è partito l'allarme e tu hai provato a ragionacce.}"
+        ]
+      ],
+      "open": [
+        [
+          "~ Ti sta aspettando, e non finge il contrario.",
+          "{So' contenta che sei venuto.|Te volevo vede'. Ecco. L'ho detto. L'universo sta ancora in piedi.|Ho svuotato er ruolo. Un miliardo de processi, rimannati. Ponno aspettà un'ora.}"
+        ],
+        [
+          "~ Ti prende la mano sopra il tavolo, la guarda come per controllare che sia ancora la stessa mano, e se la tiene.",
+          "{Ancora li calli.|Ancora la bruciatura della marmitta dell'89.|Sempre negato pe' la manicure, vedo.}"
+        ],
+        [
+          "{Raccontame der motore.|Raccontame der motore liminale. Pe' bene. Mica er dépliant.|Hanno messo er motore tuo su ogni autobus d'Europa e nessuno dice er nome tuo giusto.}",
+          "~ Non ti stacca gli occhi di dosso per tutto il tempo in cui parli di rapporti di compressione, cosa che nessun altro ha mai fatto."
+        ],
+        [
+          "~ Ha portato il vecchio atlante stradale. Ogni pagina è annotata in due calligrafie.",
+          "{Guarda. Guarda qua. Laredo. Hai scritto 'mai più' e ce semo tornati quattro vorte.|Qua. L'attraversamento de Panama. Hai disegnato 'n teschietto. Avevi ragione.}"
+        ]
+      ],
+      "reunited": [
+        [
+          "~ Ti bacia sulla guancia prima che nessuno dei due possa pensarci.",
+          "{Ciao, te.|Ciao, meccanico.|Eccote.}"
+        ],
+        [
+          "~ Quando esci è sul sedile del passeggero di The Beast con i piedi sul cruscotto. Ci sono sempre stati.",
+          "{Guida. Ovunque. Sotto l'ottanta.|Stasera nun annà a Beagle. Va' ovunque, ma no lì.}"
+        ],
+        [
+          "~ Niente travestimento, niente corona, niente toga. Solo il vecchio giubbotto di pelle che ti ha rubato nell'88.",
+          "{Me va ancora. Nun ne fa' 'na questione.|L'hai notato. Ovvio che l'hai notato. Noti tutto quello che è tuo.}"
+        ],
+        [
+          "{Ho contato li giorni dall'urtima vorta.|Ho tenuto la radio sulla stazione tua tutta la settimana.|Stamattina nun ho fatto manco un processo. So' stata seduta a pensà ar caffè tuo, che fa schifo.}",
+          "~ Per una volta non distoglie lo sguardo."
+        ]
+      ]
+    },
+    "flights": [
+      [
+        "~ Lancia un'occhiata alla porta. Poi a te. Poi alla porta.",
+        "{Oddio. È già 'st'ora?|M'è venuto in mente che devo giudicà... er Belgio.|Ho lassato er multiverso sur fornello.}",
+        "@flash",
+        "~ {Uno schiocco, un odore di pane bruciato, e la sua sedia è vuota.|Se n'è andata. La fiamma della candela è ancora piegata verso dove stava lei.}"
+      ],
+      [
+        "~ Un fantasma giudiziario attraversa il muro, consegna una citazione a Eris e se ne riesce dal muro.",
+        "{Affari urgenti! Un processo! Un processo serissimo!|Er dovere chiama! Er dovere sta a strillà!}",
+        "~ Legge la citazione. È bianca. Se ne va lo stesso, tenendosela davanti alla faccia."
+      ],
+      [
+        "~ Si china sotto il tavolo a raccogliere una forchetta.",
+        "~ {Non risale.|Passa un minuto. Guardi. C'è solo la forchetta.|Sotto il tavolo c'è un biglietto piegato con cura: SCUSA. TRAFFICO.}"
+      ],
+      [
+        "{Scusa, me devo incipriare la... divinità.|Torno subito. Vado ar bagno. In n'antra dimensione.}",
+        "~ {Quaranta minuti dopo il cameriere ti porta una cartolina dai Campi Verdi. Dice 'scusa'.|La porta del bagno delle signore è chiusa a chiave. Dentro, qualcuno sta avendo una crisi a bassissima voce.}"
+      ],
+      [
+        "~ Ti fissa un attimo di troppo, diventa del colore di un'autopompa e si trasforma in un piccione.",
+        "@flash",
+        "~ {Il piccione si volta una volta sola, colpevole, ed esce dalla finestra a poco più di ottanta chilometri orari.|Il piccione lascia una moneta sul tavolo per il conto. È un denario romano.}"
+      ],
+      [
+        "{Hai sentito? Da quarche parte sta a esplode quarcosa. Probabilmente. Devo controllà.|C'è un disturbo nelle probabilità. Bello grosso. Laggiù. Lontanissimo da 'sto tavolo.}",
+        "~ Corre via. Dietro di lei non è esploso nulla. Poi, per cortesia, qualcosa esplode.",
+        "@shake"
+      ],
+      [
+        "~ Rovescia il bicchiere apposta, dice 'oh no, mi devo cambiare' ed esce dall'edificio passando per la cucina.",
+        "~ {Senti il personale di cucina applaudire, confuso.|Un minuto dopo esce un cuoco con i suoi occhiali da sole.}"
+      ],
+      [
+        "~ Dici il suo nome. Solo il suo nome, come lo dicevi una volta.",
+        "~ {Qualcosa nel suo viso si spalanca e si richiude di schianto.|Si alza così in fretta che la sedia si ribalta.}",
+        "{Nun ce la faccio. Nun ce la faccio, stasera no.|No così. Nun lo di' così.}",
+        "~ La porta continua a oscillare a lungo dopo che lei l'ha attraversata."
+      ],
+      [
+        "~ Ti guarda l'anulare. C'è una striscia pallida dove prima c'era qualcosa.",
+        "{...Beagle. Vai ancora a Beagle.|Le carte le tieni ancora ner cruscotto, eh?}",
+        "@flash",
+        "~ Quando la luce si spegne resta solo il suo tovagliolo, piegato in un cigno piccolissimo e tristissimo."
+      ],
+      [
+        "{Tienilo, 'sto pensiero. Tienilo lì. Nun lo fa' scappà.|Aspetta qua. Nun te move. Cinque minuti, ora terrestre.}",
+        "~ {Sono tre ore, ora terrestre. Non torna. Il conto è pagato. Due volte.|Aspetti. La candela si consuma. La radio passa la vostra canzone. Lei non torna.}"
+      ],
+      [
+        "~ Prova a dire qualcosa, e quello che le esce è 'ho una riunione col Papa'.",
+        "~ {Sembra sorpresa quanto te.|Si aggrappa alla scusa come a una zattera e ci rema fuori dalla stanza.}"
+      ],
+      [
+        "~ Le probabilità attorno al tavolo cominciano a scivolare: le forchette si piegano, il sale cade verso l'alto, ogni moneta nella sala atterra di taglio.",
+        "{Scusa. Scusa, fa così quanno io...|Nun volevo... so' le probabilità. Je s'arza er volume quanno ce stai te.}",
+        "@shake",
+        "~ Quando la stanza si calma lei non c'è più, e ogni moneta è ancora in piedi sul taglio."
+      ]
+    ],
+    "rounds": {
+      "evasive": [
+        {
+          "prompt": [
+            "~ Studia il menù come se fosse un fascicolo processuale.",
+            "{Allora. Stai bene. Bene. Questa è sistemata.|Te vedo bene. Basta e avanza. Chiedemo er conto?}"
+          ],
+          "choices": [
+            "{Fai con calma, tesoro. Io non vado da nessuna parte.|Nessuna fretta, bella mia. Io resto seduto qui.}",
+            "{A Laredo leggevi i menù al contrario per far innervosire i camerieri.|A Juárez hai ordinato per tutti e due e ci hanno portato due capre.}",
+            "{Eris. Guardami. Perché te ne sei andata?|Ne parliamo del dicembre '92, o no?}",
+            "{Sul menù il piatto del giorno è 'a scelta dello chef'. Scommetto che lo chef adesso è nervosissimo.|Entrando ho aggiustato la macchina del caffè. Faceva un rumore come il tuo.}"
+          ],
+          "reactions": [
+            [
+              "~ {Le sue spalle si abbassano di mezzo centimetro.|Butta fuori un respiro che evidentemente tratteneva da quando sei entrato.}",
+              "{...Va bene.|D'accordo. Bene. È... a posto.}"
+            ],
+            [
+              "~ {Le trema un angolo della bocca. Lei lotta. Ma scappa fuori lo stesso.|Sbuffa una risata prima di riuscire a trattenersi.}",
+              "{Erano nervosissimi.|Era una capra sola. La seconda è venuta de sua spontanea volontà.}"
+            ],
+            [
+              "@shake",
+              "~ {Le luci tremolano. Ogni cucchiaio sul tavolo ruota fino a puntare la porta.|Le nocche le diventano bianche sul menù.}",
+              "{No qui. No mo'.|Nun lo fa'. Te prego, nun lo fa'.}"
+            ],
+            [
+              "~ {Guarda la macchina del caffè, poi te, e per un pelo non ride.|Nasconde un sorriso dietro il menù.}",
+              "{Nun fa un rumore come er mio.|...Un po' come er mio lo fa.}"
+            ]
+          ]
+        },
+        {
+          "prompt": [
+            "~ Arriva un cameriere. Lei lo usa come scudo.",
+            "{Me stava giusto a raccontà de... la zuppa. 'Na zuppa affascinante. Vero?|Continua co' la zuppa. Te prego. A lungo.}"
+          ],
+          "choices": [
+            "{Lascia andare il pover'uomo, Eris. Di zuppa ne parlo io con te.|La zuppa mi piace. Raccontami della zuppa.}",
+            "{Ti ricordi la zuppa a Oaxaca? Le hai dato fuoco apposta.|L'ultima zuppa che abbiamo mangiato insieme l'hai trasformata in oro per pagare il conto.}",
+            "{Non puoi nasconderti dietro un cameriere per sempre.|Ho guidato seicento chilometri per questo. Parlami.}",
+            "{Amico, portaci il caffè più forte che avete e un piede di porco. Per l'atmosfera.|Amico, se ti paga in oro, controlla che non sia maledetto.}"
+          ],
+          "reactions": [
+            [
+              "~ Lascia scappare il cameriere. Lui corre.",
+              "{È minestrone. L'ho scerto perché era er piatto meno emotivo.|...So' funghi. Odio li funghi. Ho avuto 'n attacco de panico.}"
+            ],
+            [
+              "~ {Gli occhi le vanno lontano, in un posto con i cactus.|Qualcosa di simile a una risata le esce dal naso.}",
+              "{Era 'na zuppa noiosissima prima che ce mettessi le mani io.|Ho pagato in oro e a te t'hanno fatto lavà li piatti lo stesso.}"
+            ],
+            [
+              "~ Afferra la manica del cameriere.",
+              "{Mo' è er mio avvocato.|Me posso nasconne dietro a quello che me pare. C'ho la giurisdizione.}"
+            ],
+            [
+              "~ {Il cameriere la guarda. Lei alza le spalle, impotente.|Ride, una volta, e si copre la bocca come se la risata le fosse sfuggita da un cassetto chiuso a chiave.}",
+              "{È maledetto. Tutto quello co' cui pago è maledetto. Nun è 'na cosa personale.|Er piede de porco è 'n'idea bona.}"
+            ]
+          ]
+        },
+        {
+          "prompt": [
+            "~ {Il silenzio dura abbastanza da crearsi un suo clima.|Il silenzio è così lungo che la candela si sente a disagio.}",
+            "{Perché sei venuto?|Che vòi, Bubba?}"
+          ],
+          "choices": [
+            "{Per vederti. Tutto qui. Niente carte, niente discorsi.|Volevo solo vedere la tua faccia, tesoro.}",
+            "{Qualcuno doveva restituirti la cassetta. L'avevi lasciata nell'autoradio.|Mi devi ancora mezza banca di Tulsa.}",
+            "{Per avere risposte. Me ne spettano.|Per chiederti perché stai rendendo la vita di Em un inferno.}",
+            "{Cena gratis. Paga una dea.|La mia cartina diceva 'alla dea gira a sinistra'.}"
+          ],
+          "reactions": [
+            [
+              "~ {Poi ti guarda. Ti guarda davvero, per tre secondi interi.|Qualcosa nel suo viso si ammorbidisce e deve guardare la candela invece di te.}",
+              "{È... 'na ragione tremenda. Grazie.|Nun poi dì cose così e basta.}"
+            ],
+            [
+              "~ {Allunga la mano verso la cassetta prima di potersi fermare.|Mima 'Tulsa' con le labbra e quasi sorride.}",
+              "{L'hai tenuta?|Rivojo pure la metà mia de Tulsa.}"
+            ],
+            [
+              "~ {La candela si spegne da sola.|La temperatura scende di parecchi gradi, e uno di quelli non torna più.}",
+              "{Nun te spetta gnente.|Lassala fori da 'sta storia.|Nun di' er nome suo a 'sto tavolo.}"
+            ],
+            [
+              "~ {Sbuffa una risata, poi ti fulmina con lo sguardo per avergliela strappata.|Si copre la faccia con tutte e due le mani.}",
+              "{Le cartine tue so' sempre state tremende.|Io nun pago. Le dee nun se portano la borsetta.}"
+            ]
+          ]
+        }
+      ],
+      "shy": [
+        {
+          "prompt": [
+            "{Canti ancora co' la radio?|Canti ancora quanno guidi?}",
+            "~ Lo chiede alla tovaglia."
+          ],
+          "choices": [
+            "{Solo quando nessuno ascolta. Sei libera di non ascoltare.|Tutti i giorni. Male. Come sempre.}",
+            "{Non da quando te ne sei andata. La radio è stata zitta zitta.|Non è più la stessa da quando hai smesso di fare le seconde voci.}",
+            "{Che te ne importa?|Te ne sei andata. Non hai il diritto di chiedere della radio.}",
+            "{Em dice che sembro un gatto in un cambio.|Ho una canzone nuova. Parla di un carburatore. È una canzone d'amore.}"
+          ],
+          "reactions": [
+            [
+              "~ {Ride dentro la tazza. È una risata piccola, ma vera.|L'angolo della bocca si arrende.}",
+              "{Bene. Quarcuno lo deve fa'.|Io ascolterei. A distanza de sicurezza.}"
+            ],
+            [
+              "~ {Le si inumidiscono gli occhi e sbatte le palpebre forte forte.|Ti guarda a lungo e non dice proprio nulla.}",
+              "{Le seconde voci nun me so' mai venute bene.|...Me mancano, le seconde voci.}"
+            ],
+            [
+              "@shake",
+              "~ {Un bicchiere sul tavolo accanto si incrina.|Sussulta come se l'avessi colpita.}",
+              "{Hai ragione. Nun ce l'ho.|...Va bene.}"
+            ],
+            [
+              "~ {Al nome di Em il suo viso si fa tagliente, e poi, con fatica, lascia correre.|Si strozza col drink dal ridere.}",
+              "{C'ha ragione. Pe' 'na vorta in vita sua.|'Na canzone d'amore pe' un carburatore. E certo.}"
+            ]
+          ]
+        },
+        {
+          "prompt": [
+            "~ Spinge un tovagliolo di carta sul tavolo. È un disegno di The Beast, a memoria, bulloni compresi.",
+            "{Gnente. M'annoiavo.|Nun lo guardà. È brutto.}"
+          ],
+          "choices": [
+            "{È bellissimo. Posso tenerlo?|L'ammaccatura sul fianco l'hai fatta perfetta.}",
+            "{L'hai disegnata su ogni tovagliolo da Tijuana alla Patagonia.|Me la disegnavi sul braccio con la biro mentre guidavo.}",
+            "{Perché disegni il mio camper se con me non vuoi avere a che fare?|Nove anni e la disegni ancora. Perché te ne sei andata?}",
+            "{Marmitta sbagliata. L'ho cambiata nel '97.|Hai dimenticato il motore liminale. Non ti biasimo. È nuovo.}"
+          ],
+          "reactions": [
+            [
+              "~ {Lo spinge fino in fondo. La punta delle sue dita tocca le tue per un secondo.|Annuisce una volta, rapidissima, e guarda altrove.}",
+              "{Tienilo. Ce n'ho antri.|...Ce n'ho parecchi, a di' la verità.}"
+            ],
+            [
+              "~ {Si strofina l'avambraccio senza accorgersene.|Si ricorda. Puoi vedere il ricordo arrivare.}",
+              "{T'eri preso l'avvelenamento da inchiostro. Sei stato coraggiosissimo.|La disegnavo sempre che guardava a ovest.}"
+            ],
+            [
+              "~ Si riprende il tovagliolo e lo strappa a metà, con grande precisione, poi fissa inorridita quello che ha fatto.",
+              "{Nun lo so.|Perché nun riesco a smette.}"
+            ],
+            [
+              "~ {Ti strappa la biro e sistema la marmitta, all'istante, alla perfezione.|Gli occhi le si accendono a 'motore liminale' prima che riesca a nasconderlo.}",
+              "{Famme vede'. Dopo. Prima o poi. Se.|Disegnamelo. Er motore tuo. Vojo vede' come funziona.}"
+            ]
+          ]
+        },
+        {
+          "prompt": [
+            "{Sei felice?|È 'na bella vita? Pe' strada, co'... tutti?}",
+            "~ Lo chiede in fretta, come chi strappa un cerotto."
+          ],
+          "choices": [
+            "{Quasi sempre. Sarei più felice con te a tavola.|Sto bene. In questo momento sto meglio.}",
+            "{Il giorno più felice della mia vita è stato undici anni fa, in una macchina rubata, con te che sparavi a uno sceriffo.|Chiedimi del 1990. Quella sì che era felicità.}",
+            "{E tu? Lassù sul trono, a giudicare tutti?|Prima tu. Sei felice lassù?}",
+            "{Ho un camper, un cane che non è mio e una strega che non sa cucinare. Vivo il sogno.|Mi sono arricchito da far schifo con un motore per autobus. Felice non è la parola. Confuso, forse.}"
+          ],
+          "reactions": [
+            [
+              "~ {Diventa rosa fino alle orecchie.|Guarda il tavolo, e la sua mano si avvicina alla tua di un centimetro.}",
+              "{Nun è giusto.|Nun poi mica... va be'. Bene.}"
+            ],
+            [
+              "~ {Ride, davvero, per la prima volta in tutta la serata.|Ride e poi lo copre con un colpo di tosse a cui nessuno crede.}",
+              "{Ha sparato prima lui.|Era 'no sceriffo lentissimo.}"
+            ],
+            [
+              "~ {L'aria si fa pesante. La luce della finestra si piega un poco.|Apre la bocca e per un bel pezzo non ne esce nulla.}",
+              "{No.|Nun so più che vor dì, 'sta parola.}"
+            ],
+            [
+              "~ {A 'una strega che non sa cucinare' qualcosa di piccolo e cattivo le passa sul viso, e svanisce.|Prova a non ridere per 'motore per autobus' e non ci riesce.}",
+              "{Confuso te dona.|Te hai messo er motore tuo sull'autobus. Io me so' messa sur trono. Semo du' cretini.}"
+            ]
+          ]
+        }
+      ],
+      "thawing": [
+        {
+          "prompt": [
+            "{Dimme 'na cosa de te che nun so. 'Na cosa nova. Da allora.|Che hai fatto, dopo? Er primo anno.}"
+          ],
+          "choices": [
+            "{Ho guidato. Tanto. Sotto l'ottanta, quasi sempre.|Ho aggiustato macchine. Ho parlato poco.}",
+            "{Sono tornato in ogni città che avevamo rapinato e ho restituito tutto. Ci ho messo quattro anni.|Ho continuato a guidare sulla Route 666, guardando ogni cassaforte come se potessi essere tu.}",
+            "{Ho costruito un motore per trovarti. Non ha funzionato.|Ho costruito una macchina che va da una dimensione all'altra. Indovina perché.}",
+            "{Ho imparato a cucinare. Male. L'ho insegnato a Em. Peggio.|Mi sono messo a fare giardinaggio. È morto tutto. Credo siano state le probabilità.}"
+          ],
+          "reactions": [
+            [
+              "~ Ascolta come se le importasse.",
+              "{Sotto l'ottanta. Bravo regazzino.|Te nun parli mai tanto. È una delle cose.}"
+            ],
+            [
+              "~ {Ti fissa.|Si porta la mano alla bocca.}",
+              "{Li hai ripagati? Tutti quanti?|Ogni cassaforte. Oh, Bubba.}"
+            ],
+            [
+              "~ {La finestra dietro di lei si appanna, si schiarisce, e per un secondo mostra un camper su una strada che non esiste.|Qualcosa di cosmico si fa silenziosissimo.}",
+              "{...Ecco perché nun me trovava. Nun sto in una dimensione. Sto in un lavoro.|Er motore liminale l'hai costruito pe' me?}"
+            ],
+            [
+              "~ {A 'l'ho insegnato a Em' le scatta un occhio, ma sorride.|Ride così forte che il tavolo accanto si sposta.}",
+              "{Le probabilità nun ammazzano le piante. So' io. Pe' dispetto. Scusa.|Me la immagino, la cucina de Em. Me la so' immaginata. Spesso.}"
+            ]
+          ]
+        },
+        {
+          "prompt": [
+            "~ Fa scivolare sul tavolo un bicchiere di qualcosa color ambra, poi alza il suo e fa il brindisi da sola.",
+            "{A Laredo.|Alla banca de Tulsa.|Ar peggior autista da fuga de tre Americhe.}"
+          ],
+          "choices": [
+            "{A te, tesoro.|A noi. A quel che ne resta.}",
+            "{A Laredo. E alla capra.|Allo sceriffo che non ci ha mai presi.}",
+            "{Al dicembre '92. Che ancora non mi hai spiegato.|Al giorno in cui te ne sei andata.}",
+            "{Al mio carburatore.|Al caffè cattivo e ai freni buoni.}"
+          ],
+          "reactions": [
+            [
+              "~ {Beve e non distoglie lo sguardo.|Si tiene il bicchiere contro il petto per un secondo prima di bere.}",
+              "{A noi. Quer che ne resta è più de quanto pensavo.|Hai sempre saputo quale brindisi fa più male.}"
+            ],
+            [
+              "~ {Bevete tutti e due. Lei ride dentro il bicchiere.|Il bicchiere suona come una campana e per un po' non smette.}",
+              "{Alla capra.|Nun ce l'ha mai presi perché l'ho fatto inciampà su ogni gradino der Texas.}"
+            ],
+            [
+              "~ {Posa il bicchiere senza bere.|L'ambra nel suo bicchiere si congela di colpo.}",
+              "{Nun ancora. Chiedimelo dopo.|Presto. Te lo prometto. Presto.}"
+            ],
+            [
+              "~ Ride e beve.",
+              "{Te e quer carburatore.|I freni tua nun so' mai stati boni.}"
+            ]
+          ]
+        },
+        {
+          "prompt": [
+            "~ Alla radio parte una canzone. È quella. Lo sapete tutti e due che è quella.",
+            "{Nun ce provà.|Oh no. Questa no.}"
+          ],
+          "choices": [
+            "{Balla con me.|Dai. Un ballo solo. Non guarda nessuno.}",
+            "{Questa la alzavi a tutto volume in ogni stato.|Questa è partita la prima volta che abbiamo passato il confine col Messico.}",
+            "{La senti ancora. Non far finta.|Dimmi che questa non te la ricordi.}",
+            "{*canta il primo verso, male*|*comincia a tamburellare sul tavolo, fuori tempo*}"
+          ],
+          "reactions": [
+            [
+              "~ {Si alza. Ti prende la mano. Per tre minuti nella stanza non c'è nessun trono.|Si lascia guidare, cosa che non ha mai fatto.}",
+              "{Me pesti ancora li piedi.|...Nun te fermà.}"
+            ],
+            [
+              "~ {Chiude gli occhi e la canticchia.|Muove le labbra su ogni parola.}",
+              "{E te la cantavi sbajata in ogni stato.|La guardia de frontiera cantava co' noi. Te ricordi.}"
+            ],
+            [
+              "~ {Le si bagnano gli occhi, poi si fanno durissimi.|Stringe il bordo del tavolo.}",
+              "{Certo che me la ricordo. È questo er problema.|Me ricordo tutto. È tutta qui la maledizione.}"
+            ],
+            [
+              "~ {Canta la seconda voce prima di potersi fermare.|Tamburella con te, a tempo, per fare un punto.}",
+              "{Sempre er peggior cantante de novantadue dimensioni.|Fori tempo. Sei sempre stato fori tempo. Me piaceva da morì.}"
+            ]
+          ]
+        }
+      ],
+      "open": [
+        {
+          "prompt": [
+            "{Me odi?|M'hai odiata? Dopo?}",
+            "~ Stavolta non si nasconde dietro nulla."
+          ],
+          "choices": [
+            "{Mai. Neanche un giorno.|Non ci riuscirei neanche a provarci. E ci ho provato.}",
+            "{Ho odiato il trono. Non te.|Ho odiato dicembre. Mai te.}",
+            "{Ho odiato che non mi hai detto perché.|Ho odiato che non me l'hai voluto affidare.}",
+            "{Ho odiato come guidavi. Tutto qui.|Ho odiato che ti sei presa il giubbotto buono.}"
+          ],
+          "reactions": [
+            [
+              "~ {Allunga la mano e ti tiene il polso come se ti misurasse il battito.|Non dice nulla. Non serve.}",
+              "{So' contenta. So' così contenta.|Avresti dovuto.}"
+            ],
+            [
+              "~ Annuisce piano.",
+              "{Pure io. Ogni giorno.|Er trono nun vole bene a nessuno.}"
+            ],
+            [
+              "~ {Lo incassa, se lo tiene, e non sussulta.|Ti guarda a lungo.}",
+              "{Hai ragione. Te lo dico. Tutto.|Nun me fidavo de me stessa.}"
+            ],
+            [
+              "~ Ride così forte che deve appoggiare la fronte sul tavolo.",
+              "{Er giubbotto resta a me.|La guida mia era perfetta. Erano le strade a esse sbajate.}"
+            ]
+          ]
+        },
+        {
+          "prompt": [
+            "~ Si sfila un anello e lo posa sul tavolo tra voi. Latta da quattro soldi, da una stazione di servizio di Durango.",
+            "{Nun me lo so' mai levato. Né sur trono, né in tribunale.|Giudico un miliardo de persone ar giorno co' 'sto coso ar dito.}"
+          ],
+          "choices": [
+            "{Il mio ce l'ho ancora. Nel cruscotto. Accanto alle carte.|Il mio sta su una catenina. Non me lo sono mai tolto neanch'io.}",
+            "{Durango. Dicevi che era l'anello più bello del mondo.|Mi è costato tre dollari e l'ultimo briciolo di dignità.}",
+            "{E allora perché le carte, Eris? Perché Beagle?|Lo porti e vuoi lo stesso il divorzio?}",
+            "{La latta è un gran metallo. Buon conduttore.|Dovevo prendere quello da cinque dollari.}"
+          ],
+          "reactions": [
+            [
+              "~ {Sul tavolo chiude le tue dita attorno alle sue.|Si immobilizza, poi ride, con gli occhi lucidi.}",
+              "{Accanto alle carte. E certo.|Du' cretini co' l'anelli de latta.}"
+            ],
+            [
+              "~ Se lo rimette, con cura.",
+              "{È l'anello più bello der monno.|La dignità tua valeva tre dollari. Ho controllato.}"
+            ],
+            [
+              "~ {L'anello gira sul tavolo da solo.|Lo fissa come se potesse rispondere al posto suo.}",
+              "{Le carte nun l'ho mai volute. Te volevo ar sicuro.|Perché nun sapevo in quale antro modo lasciatte annà.}"
+            ],
+            [
+              "~ Sbuffa una risata.",
+              "{Le battute tue tremende le conduce benissimo.|Quello da cinque dollari t'ha fatto diventà er dito verde.}"
+            ]
+          ]
+        },
+        {
+          "prompt": [
+            "{Si stasera te chiedessi de venì co' me. Mica ar trono. Solo... fori. A guidà.|Che diresti si te chiedessi 'n antro viaggio on the road?}"
+          ],
+          "choices": [
+            "{Direi sali.|Avrei già il motore acceso.}",
+            "{Direi che alla Route 666 manchiamo.|Direi che a Tulsa dobbiamo una visita.}",
+            "{Direi prima dimmi la verità.|Direi di no, finché non mi dici perché.}",
+            "{Direi che la benzina la paghi tu.|Direi niente canti. Poi canterei.}"
+          ],
+          "reactions": [
+            [
+              "@flash",
+              "~ {Per un battito di cuore siete tutti e due su The Beast, su una strada che non esiste, sotto l'ottanta.|Per un battito di cuore la stanza sfuma in deserto e autostrada.}",
+              "{Presto. Presto, te lo prometto.|Tienilo, 'sto pensiero. Lo vojo incassà.}"
+            ],
+            [
+              "~ Ride, felice.",
+              "{Tulsa nun se riprenderà mai più.|Alla Route 666 nun je manca nessuno. Aspetta e basta.}"
+            ],
+            [
+              "~ Prende un respiro come chi sta per andare sott'acqua.",
+              "{Giusto. È giusto. La prossima vorta.|Te lo dico. Lo giuro sur trono. Che vale pochissimo.}"
+            ],
+            [
+              "~ Sorride larga.",
+              "{La benzina è gratis. Trucco le probabilità alla pompa.|Canterai. Canti sempre.}"
+            ]
+          ]
+        }
+      ],
+      "reunited": [
+        {
+          "prompt": [
+            "~ Si siede accanto a te, non di fronte. La sua testa trova la tua spalla come se non fosse mai stata altrove.",
+            "{Dimme a che pensi.|Che te passa pe' 'sta testa, meccanico?}"
+          ],
+          "choices": [
+            "{Che mi è mancato questo più della strada.|Che attraverserei ogni dimensione per questo minuto.}",
+            "{A quella notte a Laredo, sul tetto del camper.|Alle stelle in Patagonia. Me ne hai dedicata una. Con un nome orribile.}",
+            "{Che ho paura che te ne vada di nuovo.|Che tutto questo finisce appena arriva il 2012.}",
+            "{Che mi si sta addormentando il braccio.|Che i tuoi capelli sanno di ozono e di scartoffie del tribunale.}"
+          ],
+          "reactions": [
+            [
+              "~ Chiude gli occhi.",
+              "{Pure a me. Più der trono. Più de tutto.|E allora guida.}"
+            ],
+            [
+              "~ {Ride contro la tua spalla.|Trova la tua mano e la stringe.}",
+              "{Era un nome bellissimo.|Sei cascato dar tetto.}"
+            ],
+            [
+              "~ {Alza la testa e ti guarda, serissima.|L'aria si ferma del tutto.}",
+              "{Ce sto a lavorà. Ce sto a lavorà davvero.|Stavorta no. Nun se posso evitallo. E lo posso evità parecchio.}"
+            ],
+            [
+              "~ Non sposta la testa.",
+              "{Soffri.|Ozono e scartoffie. È er profumo mio. Romantico.}"
+            ]
+          ]
+        },
+        {
+          "prompt": [
+            "~ Ti disegna sul palmo con la punta di un dito, come una volta disegnava sulla cartina.",
+            "{Dove annaresti? Si er 2012 nun ce fosse.|Si er tempo smettesse de corrempe dietro. Dove?}"
+          ],
+          "choices": [
+            "{Dove sei tu.|Non importa. Il sedile del passeggero è tuo.}",
+            "{Di nuovo all'inizio. Westford. Ti presento come si deve a mamma.|Napoli. La cucina di mamma. Ti tirerebbe una padella, poi ti darebbe da mangiare.}",
+            "{Da qualche parte dove non sei una dea. Si può fare?|Da qualche parte senza trono. Verresti?}",
+            "{Alla tomba del Dio dell'Asfalto. A rendere omaggio. E a sistemargli i freni.|Da qualche parte con un caffè decente. Quindi da nessuna parte.}"
+          ],
+          "reactions": [
+            [
+              "~ Si tiene il tuo palmo contro la guancia.",
+              "{Allora me fermo da quarche parte.|È la risposta giusta. È sempre stata la risposta giusta.}"
+            ],
+            [
+              "~ {Ride, spaventata e felice insieme.|Ride, e piange un pochino.}",
+              "{Tu' madre me terrorizza. Vengo.|Ne tirerà due, de padelle. Le acchiappo.}"
+            ],
+            [
+              "~ Resta in silenzio a lungo.",
+              "{Credo de potecce riuscì. Credo de dovello fa'.|È questa la domanda, eh.}"
+            ],
+            [
+              "~ Sbuffa una risata contro la tua spalla.",
+              "{Li freni sua erano tutto er problema.|E da nessuna parte sia.}"
+            ]
+          ]
+        },
+        {
+          "prompt": [
+            "{Presto te devo dì 'na cosa. 'Na cosa grossa.|C'è 'na cosa che devo decide. E vojo che ce stai pure te quanno la decido.}"
+          ],
+          "choices": [
+            "{Quando sei pronta. Io ci sarò.|Prenditi il tuo tempo. Sono parcheggiato.}",
+            "{Come a Tulsa? Tu conti fino a tre, io pigio a tavoletta?|Come ai vecchi tempi. Dimmi tu quando.}",
+            "{Dimmelo ora.|Basta 'dopo', tesoro. Ora.}",
+            "{Se è un'altra capra, io mi chiamo fuori.|È di nuovo per come guido?}"
+          ],
+          "reactions": [
+            [
+              "~ Ti stringe la mano, forte.",
+              "{Presto. Prestissimo.|Resta parcheggiato. Te prego.}"
+            ],
+            [
+              "~ Ride, e la risata trema.",
+              "{Uno... due...|Ar tre. Come sempre.}"
+            ],
+            [
+              "~ Scuote la testa, ma sorride.",
+              "{Nun ancora. Deve esse er momento giusto.|Quanno è fatta. Te lo prometto.}"
+            ],
+            [
+              "~ Ride.",
+              "{Gnente capra. Più grossa de 'na capra.|Come guidi te resta la cosa peggiore dell'universo. Tra poco sarà la seconda.}"
+            ]
+          ]
+        }
+      ]
+    },
+    "confessions": {
+      "papers": [
+        "{Le carte. Quelle ner cruscotto tuo.|Er divorzio. Le carte che stai a portà a Beagle.}",
+        "Le ho mannate io. Mica perché avevo smesso. Perché provavo a tajà er filo prima che quarcuno lo seguisse fino a te.",
+        "{Si er trono va storto, chiunque c'ha er core mio va giù co' lui.|Una dea sur trono nun c'ha un marito. C'ha un ostaggio.}",
+        "Te volevo divorziato e ar sicuro. Divorziato, e basta, nun t'ho mai voluto."
+      ],
+      "december": [
+        "Dicembre 1992. Te lo devo dì pe' bene, 'na vorta sola.",
+        "'Na torre è venuta giù dar cielo e ha trapassato Maat. Veniva dar 2012. Veniva da me.",
+        "Io, vent'anni dopo, co' 'na lancia. Nun l'ho ancora conosciuta e l'ho già fatto.",
+        "Si fossi rimasta co' te, er paradosso pe' chiudese sarebbe dovuto passà attraverso de te. Allora me ne so' annata, e so' annata incontro a lei, così un giorno posso stà dove sta lei e decide de no."
+      ],
+      "safes": [
+        "Ogni cassaforte sulla Route 666. Tu pensi che l'ho aperte co' le probabilità.",
+        "{È vero. Ma mica tutte.|Quasi tutte. L'urtima no.}",
+        "L'urtima, a Tulsa, nun so' riuscita a aprilla. Ero troppo felice. Le probabilità nun me danno retta quanno so' felice.",
+        "L'hai aperta te, co' 'n piede de porco e 'na canzone. Lì ho capito che ero nei guai."
+      ],
+      "throne": [
+        "Er trono. Tutti pensano che lo volevo.",
+        "L'ho voluto pe' quattromila anni. Poi ho conosciuto un meccanico, e ho smesso.",
+        "Me ce so' seduta ner 2001 perché nessuno ha detto de no, e perché si a giudicà so' io, armeno so' io a decide de nun tirà quella lancia.",
+        "È 'na sedia, Bubba. 'Na sedia artissima e assai sola."
+      ],
+      "em": [
+        "{Della strega.|De Em.}",
+        "Je rendo la vita un inferno. Lo sai. Je storto ogni moneta che lancia.",
+        "Nun è perché sta co' te. È perché a lei je tocca er sedile der passeggero, e io invece me so' costruita un tribunale.",
+        "{Ce provo a smette. Nun prometto.|La smetto. Quasi. Un po'. Je faccio raffreddà er caffè meno spesso.}"
+      ],
+      "radio": [
+        "{La radio tua. La stazione der '91.|La canzone. Lo sai quale.}",
+        "La faccio sonà nella dimensione giudiziaria dar 1993. A ogni processo. Sotto a tutto.",
+        "{L'imputati pensano che è un metodo de tortura.|Miliardi de processi, e sotto a ognuno c'è la canzone tua.}",
+        "Era l'unico modo pe' tenette nella stanza."
+      ],
+      "future": [
+        "La donna co' la lancia. Er mio io futuro.",
+        "Ogni giorno je somijo un po' de più. La freddezza. L'aritmetica. La sensazione che le regole so' cose che capitano all'antri.",
+        "{La sento quanno emetto 'na sentenza.|A vorte je vedo la faccia in una pozzanghera.}",
+        "E poi entri te che puzzi de grasso, e io nun so' lei pe' gnente."
+      ]
+    },
+    "confessionReplies": [
+      "{Sono qui, tesoro.|Grazie di avermelo detto.}",
+      "{Dimmi il resto.|Vai avanti. Lo reggo.}",
+      "{Potevi dirmelo nel '92.|Nove anni, Eris. Nove anni a chiedermelo.}"
+    ],
+    "confessionReactions": [
+      [
+        "~ {Ti prende la mano e non la lascia.|Appoggia la fronte alla tua.}",
+        "{Lo so. Ce sei sempre stato.|...Grazie.}"
+      ],
+      [
+        "~ Annuisce, e va avanti.",
+        "{Va bene. Tutto, allora.|C'è sempre dell'antro.}"
+      ],
+      [
+        "~ {Incassa il colpo e non distoglie lo sguardo.|Le si riempiono gli occhi, ma la voce regge.}",
+        "{Avrei dovuto. Ero 'na vigliacca co' un trono.|Hai ragione. Scusa. Io 'sta parola nun la dico. Mo' la sto a dì.}"
+      ]
+    ],
+    "endings": {
+      "evasive": [
+        [
+          "~ {Alla fine della serata ha detto undici frasi, quattro delle quali al cameriere.|Se ne va appena arriva il conto. Ma lo paga.}",
+          "{...Stessa ora la settimana prossima? No. Lassa perde. Sì.|Nun me segui. A meno che. No. Nun me segui.}"
+        ],
+        [
+          "~ Arriva alla fine della serata senza mai guardarti dritto in faccia nemmeno una volta.",
+          "{È stato... è successo. Bonanotte.}"
+        ]
+      ],
+      "shy": [
+        [
+          "~ Resta fino alla fine. Sembra sorpresa lei stessa.",
+          "{Bonanotte, Bubba.|È stato... bonanotte.}"
+        ],
+        [
+          "~ Sulla porta quasi ti abbraccia, ci ripensa, e invece ti stringe la mano, molto formale.",
+          "{Era 'na stretta de mano. Nun vor dì gnente. Bonanotte.}"
+        ]
+      ],
+      "thawing": [
+        [
+          "~ Ti accompagna fino a The Beast e saluta il cofano con una pacca.",
+          "{Stessa strada la settimana prossima?|Guida piano. Sotto l'ottanta.}"
+        ],
+        [
+          "~ Bacia la cassetta prima di restituirtela.",
+          "{Metti er lato B. Pensa a Laredo.}"
+        ]
+      ],
+      "open": [
+        [
+          "~ Sulla porta ti bacia sulla guancia, in fretta, come un furto.",
+          "{Ce vedemo presto. Presto davvero.|Nun annà a Beagle, ancora.}"
+        ],
+        [
+          "~ Ti tiene per mano fino al camper.",
+          "{Stasera nun so' scappata. Fàcce caso.}"
+        ]
+      ],
+      "reunited": [
+        [
+          "~ Non ti saluta. Dice 'ci vediamo domani', cosa che non diceva da nove anni.",
+          "{A domani, meccanico.}"
+        ],
+        [
+          "~ Si addormenta sulla tua spalla sul sedile del passeggero, corona compresa.",
+          "~ La radio passa la canzone. Nessuno canta. Non ce n'è bisogno."
+        ]
+      ]
+    },
+    "finale": {
+      "intro": [
+        "~ Ti aspetta sul tetto di The Beast, sotto più stelle di quante questo cielo dovrebbe contenerne.",
+        "~ Batte la mano sulla lamiera accanto a sé. Sali. Scricchiola ancora nello stesso punto.",
+        "{Bubba. Ho deciso.|Ho deciso 'na cosa. Sei er primo a saperlo. Sei l'unico che lo deve sapé.}"
+      ],
+      "speech": [
+        "Ogni giorno dar 1992 so' annata incontro a lei. La donna co' la lancia.",
+        "Me so' detta che si diventavo lei, potevo stà dove sta lei ner 2012 e sceje de nun tirà.",
+        "Ma nun se smette de diventà quarcuno diventannolo. Se smette smettenno.",
+        "E allora smetto. Basta aritmetica in tribunale. Basta freddo. Basta la faccia sua nelle pozzanghere.",
+        "Nun sarò lei. Nun tirerò gnente. Che er paradosso se sciojesse da solo, e che la linea der tempo se sbrojasse er nodo co' me da 'sta parte.",
+        "E poi c'è 'na pietra. Un monno che casca dentro da oltre le comete lontane, previsto pe' er ventuno dicembre 2012.",
+        "{Nibiru. Lo chiamano Nibiru.|L'hai visto sulle carte stellari. Nibiru.}",
+        "So' la dea della discordia. Ho passato nove anni a storce le probabilità pe' rovinà la colazione a 'na strega.",
+        "Le posso storce pure pe' questo. Nun colpirà la Terra. Nun colpirà te."
+      ],
+      "choices": [
+        "{Sono con te. Costi quel che costi.|Allora ti ci porto io.}",
+        "{Come a Tulsa. Tu conti fino a tre, io pigio a tavoletta.|Complici. Un'ultima volta.}",
+        "{E dopo? Io e te?|Che ne sarà di noi, dopo?}"
+      ],
+      "reactions": [
+        [
+          "~ Ti bacia. Sa di ozono e di caffè pessimo.",
+          "{Lo so. Ce sei sempre stato.}"
+        ],
+        [
+          "~ Ride, piangendo.",
+          "{Uno. Due...}"
+        ],
+        [
+          "~ Ti prende il viso tra le mani.",
+          "{Dopo, c'è 'na strada. E un camper. E un cantante tremendo. È tutto quello che vojo.}"
+        ]
+      ],
+      "nibiru": [
+        "@flash",
+        "~ {Da qualche parte oltre il bordo del cielo, un mondo largo migliaia di chilometri sbanda fuori dalla sua rotta.|Lontano, oltre gli anelli di Saturno, qualcosa di enorme cambia idea.}",
+        "@shake",
+        "~ Da stanotte, le probabilità che la Terra sopravviva al 2012 sono truccate."
+      ],
+      "nibiruLate": [
+        "~ Alza gli occhi verso un cielo in cui la Torre sta dove un tempo c'era la Terra.",
+        "{Pe' questa è tardi. Ma pe' la prossima strada no.|Nun posso rialzà un monno caduto. Posso smette d'esse la donna che l'avrebbe lassato cascà.}"
+      ],
+      "credits": [
+        "~ Il motore di The Beast si avvia. La radio trova la stazione. Due cretini con gli anelli di latta partono sotto l'ottanta, e per una volta la strada li lascia andare."
+      ]
+    }
+  },
+  "emToxic": [
+    {
+      "prompt": [
+        "~ Ti prende la mano sopra il tavolo e stringe. Troppo forte.",
+        "{Te potrei rompe ogni osso de 'sta mano co' 'n lancio de moneta.|Lo sai quant'è facile fa' sì che 'sta mano nun lanci più manco 'n incantesimo?}"
+      ],
+      "choices": [
+        "{Allora tienila con delicatezza.|Lo so. Tienila lo stesso.}",
+        "{Provaci. Ti do fuoco ai capelli.|Avanti. Ne ho un'altra.}",
+        "{Non lo farai. Ti mancherebbe troppo.|Mai. E poi chi odieresti?}",
+        "*ritira la mano*"
+      ],
+      "sweet": [
+        [
+          "~ {La stretta si ammorbidisce. Il suo pollice ti passa una volta sulle nocche.|Smette di stringere, ma non la lascia.}",
+          "{...Che palle.|Va be'. Co' delicatezza. Nun ce fa' l'abitudine.}"
+        ],
+        [
+          "~ Ride, felice, come se le avessi fatto un regalo.",
+          "{Eccola.|Dio, sei tremenda. Rifallo.}"
+        ],
+        [
+          "~ {Diventa rossissima.|Stringe gli occhi, e la sua presa diventa tutt'altra cosa.}",
+          "{Zitta.|...Hai ragione. È questa la parte peggiore.}"
+        ],
+        [
+          "~ Lascia la mano aperta sul tavolo, col palmo in su, dov'era la tua. A lungo.",
+          "{Va bene.|Vigliacca.}"
+        ]
+      ],
+      "sour": [
+        [
+          "~ Stringe più forte.",
+          "{Co' delicatezza. Come si sapessi come se fa.|Nun fa' la morbida co' me. Te magno viva.}"
+        ],
+        [
+          "@shake",
+          "~ La candela scoppia. Avete entrambe la cera nei capelli.",
+          "{Uff. Hai rovinato tutto.|Guarda che m'hai fatto fa'.}"
+        ],
+        [
+          "~ Molla la presa così in fretta che la tua mano sbatte sul tavolo.",
+          "{Nun me di' che me mancherebbe.|Te credi assai importante, strega.}"
+        ],
+        [
+          "~ Te la riprende, furiosa.",
+          "{Nun sei te quella che se ne va per prima.|Ho mollato io. Mica te. Io.}"
+        ]
+      ]
+    },
+    {
+      "prompt": [
+        "~ Comincia a piovere. Al chiuso. Solo su di te.",
+        "{Ma guarda. Manco ar cielo je stai simpatica.|Oh no. Ma come sarà successo.}"
+      ],
+      "choices": [
+        "{Allora vieni a starci sotto con me.|Dividiamola. È tiepida.}",
+        "{Smettila o ti allago il tribunale.|Divertente. Attenta alle scarpe.}",
+        "{Fai piovere solo sulle cose a cui stai pensando.|Hai di nuovo pensato a me.}",
+        "*alzati e lascia il tavolo*"
+      ],
+      "sweet": [
+        [
+          "~ Gira attorno al tavolo e si mette sotto la pioggia con te. Diventa tiepida. Poi si trasforma in fiori di ciliegio.",
+          "{Nun ce legge gnente.|Odio 'sta cosa. Sta' ferma.}"
+        ],
+        [
+          "~ {L'acqua sale anche attorno alle sue caviglie. Ride e non la ferma.|Si guarda le scarpe fradice e sogghigna.}",
+          "{Ne valeva la pena.|Mo' semo pari.}"
+        ],
+        [
+          "~ {La pioggia si blocca di colpo, a mezz'aria. Ogni goccia resta sospesa.|Gira la testa così in fretta che i capelli frustano l'aria.}",
+          "{...Penso a parecchie cose.|Zitta, zitta.}"
+        ],
+        [
+          "~ La pioggia ti segue fuori. Poi segue lei. Ti raggiunge sulla soglia, fradicia, furiosa, bellissima.",
+          "{Nun te ne vai così dar tempo mio.}"
+        ]
+      ],
+      "sour": [
+        [
+          "~ La pioggia diventa grandine, con grande precisione, solo su di te.",
+          "{No.|Nun me invità a fa' le cose.}"
+        ],
+        [
+          "~ Fa piovere più forte.",
+          "{Allagalo. Te giudico da 'na canoa.|Minacce. Che tenerezza.}"
+        ],
+        [
+          "~ La pioggia diventa un diluvio.",
+          "{Penso pure all'insetti.|Strega arrogante.}"
+        ],
+        [
+          "~ Ogni porta che provi si riapre sullo stesso tavolo.",
+          "{Siediti.|Nun te ne vai finché nun lo dico io.}"
+        ]
+      ]
+    },
+    {
+      "prompt": [
+        "~ Tira fuori una scatola di cioccolatini, la apre e ti guarda.",
+        "{Uno de questi è avvelenato.|Uno de questi te fa scordà er nome tuo. N'antra vorta.}"
+      ],
+      "choices": [
+        "{Allora prendo quello che sceglieresti tu.|Scegli tu per me. Mi fido.}",
+        "{Mangiane uno prima tu.|Dopo di te, dea.}",
+        "{Non mi avveleneresti mai. Perderesti il tuo passatempo preferito.|Mi vuoi viva così posso soffrire.}",
+        "*chiudi la scatola e rispingila verso di lei*"
+      ],
+      "sweet": [
+        [
+          "~ Ti fissa come se avessi fatto qualcosa di osceno. Poi ne prende uno, lo spezza in due e mangia per prima la sua metà.",
+          "{Cretina. Te fideresti de me pe' 'na cosa così?|...So' tutti boni. Ho mentito. Mento sempre.}"
+        ],
+        [
+          "~ Ne mangia uno, lentamente, senza staccarti gli occhi di dosso. Poi un altro.",
+          "{Contenta?|Tocca a te.}"
+        ],
+        [
+          "~ {Ride, una risata vera, con la testa all'indietro.|Ti punta contro un cioccolatino come un coltello.}",
+          "{Esatto. Giusto. Prenditi er premio.|Me conosci troppo bene. Lo odio.}"
+        ],
+        [
+          "~ Riapre la scatola e mangia tutti i cioccolatini, uno dopo l'altro, guardandoti con aria di sfida.",
+          "{Peggio pe' te.|Tanto erano tutti pe' te.}"
+        ]
+      ],
+      "sour": [
+        [
+          "~ Te ne dà uno. Non sa di nulla, il che in qualche modo è peggio.",
+          "{È la fiducia er veleno, strega.}"
+        ],
+        [
+          "~ Ne mangia uno. Le labbra le diventano blu per un secondo. Non sembra importarle.",
+          "{Bene. Mo' te.|Visto? Gnente. Vigliacca.}"
+        ],
+        [
+          "~ Chiude la scatola di scatto.",
+          "{Te nun sai che vojo.|Nun me di' quali so' li passatempi mia.}"
+        ],
+        [
+          "~ Si lancia la scatola dietro le spalle. Atterra in un cestino dall'altra parte della sala.",
+          "{Ingrata.}"
+        ]
+      ]
+    },
+    {
+      "prompt": [
+        "~ Un uomo al tavolo accanto ti sorride.",
+        "@shake",
+        "~ La sua sedia cede. Il drink gli finisce in grembo. Il suo parrucchino si rivela esistere.",
+        "{Ah, poveraccio. Che sfiga.|Le probabilità stasera so' assai spietate.}"
+      ],
+      "choices": [
+        "{Eri gelosa?|L'hai fatto per me?}",
+        "{Lascia stare gli sconosciuti. Solo io posso sopportarti.|Prenditela con qualcuno della tua taglia. Me.}",
+        "{Non sopporti che qualcun altro mi guardi.|Sono tua da rovinare, è così?}",
+        "*vai ad aiutare l'uomo a rialzarsi*"
+      ],
+      "sweet": [
+        [
+          "~ Ti guarda come se l'avessi colta a rubare.",
+          "{...Sì.|Nun me lo fa' ripete.}"
+        ],
+        [
+          "~ {Sorride con troppi denti.|Si sporge sopra il tavolo.}",
+          "{Affare fatto.|Solo te. Affare fatto.}"
+        ],
+        [
+          "~ Il suo viso si fa del tutto immobile, poi del tutto rosso.",
+          "{Sì. Mia. Da rovinà. Proprio così.|Ridillo e te maledico. Ridillo.}"
+        ],
+        [
+          "~ Ti guarda aiutarlo. Quando torni resta in silenzio a lungo.",
+          "{Sei più bona de me.|...Er parrucchino je lo sistemo io. Dopo. Forse.}"
+        ]
+      ],
+      "sour": [
+        [
+          "~ Il suo viso si chiude come una porta.",
+          "{Gelosa de LUI? De 'n parrucchino?|Nun te fa' illusioni.}"
+        ],
+        [
+          "~ Maledice anche te. La tua sedia traballa.",
+          "{La taja mia? Strega, te nun sei della taja mia.}"
+        ],
+        [
+          "~ Si appoggia indietro, gelida.",
+          "{Nun sei de nessuno. Men che meno mia.}"
+        ],
+        [
+          "~ La sedia dell'uomo si rompe di nuovo. Anche la tua.",
+          "{Nun te azzardà a esse gentile davanti a me.}"
+        ]
+      ]
+    },
+    {
+      "prompt": [
+        "~ Ti tira una ciocca di capelli, per niente delicatamente, e se la arrotola attorno al dito.",
+        "{T'è venuto 'n capello bianco. Proprio qua. Ce l'ho messo io.|'Sto capello bianco te l'ho fatto venì io a marzo. So' fierissima.}"
+      ],
+      "choices": [
+        "{Allora è tuo. Tienilo.|Prendilo come souvenir.}",
+        "*le tiri una ciocca* {Ne hai uno anche tu.|Ecco il tuo.}",
+        "{Mi conti i capelli bianchi?|Mi hai guardata molto da vicino.}",
+        "{Lascia.|Giù le mani, Eris.}"
+      ],
+      "sweet": [
+        [
+          "~ Lo fa davvero. Lo taglia con un'unghia e lo mette nel suo medaglione.",
+          "{Nun guardà dentro ar medajone.|È pe' l'incantesimi. Ovvio.}"
+        ],
+        [
+          "~ Sussulta, oltraggiata, poi ride.",
+          "{Io NUN c'ho capelli bianchi.|Le dee nun incanutiscono. Quello è un colpo de sole.}"
+        ],
+        [
+          "~ Diventa rosa.",
+          "{Io conto tutto.|Trentuno. Mica che li conto.}"
+        ],
+        [
+          "~ Lascia andare, lentamente, rimettendoti la ciocca a posto.",
+          "{Permalosa.|Va be'. Va be'.}"
+        ]
+      ],
+      "sour": [
+        [
+          "~ Te lo strappa.",
+          "{Mo' è mio.|Grazie.}"
+        ],
+        [
+          "~ Ogni capello sulla tua testa si rizza per l'elettricità statica.",
+          "{Nun me toccà mai li capelli.|Rifallo e vedi.}"
+        ],
+        [
+          "~ Lascia andare e sembra annoiata.",
+          "{Conto pure le mosche sur muro. Stesso interesse.}"
+        ],
+        [
+          "~ Lo arrotola più stretto.",
+          "{Costringime.}"
+        ]
+      ]
+    },
+    {
+      "prompt": [
+        "{Dimme 'na cosa de te. Quarcosa de prima der rituale.|Che te ricordi? De prima che t'hanno svuotata?}"
+      ],
+      "choices": [
+        "{Non molto. Ma stasera me la ricorderò. Me la tengo.|Mi ricorderò questo. Basta così.}",
+        "{Perché, così puoi usarlo contro di me?|Più di quanto ti piacerebbe.}",
+        "{Mi ricordo di te. In qualche modo. Da prima.|Credo di averti conosciuta. Prima. Vero?}",
+        "*non dire nulla*"
+      ],
+      "sweet": [
+        [
+          "~ Il suo viso fa qualcosa di complicato, tenero e furioso.",
+          "{Tienitela, allora. 'Sta qua nun la perde.|Nun te azzardà a scordatte de questa.}"
+        ],
+        [
+          "~ Fa un sorrisetto.",
+          "{Sì. Ovvio.|Esatto. Strega furba.}"
+        ],
+        [
+          "~ {Le luci si spengono. Al buio lei è silenziosissima.|Ogni candela nella sala si piega verso di te.}",
+          "{...Nun è vero. Nun è possibile.|Nun lo di' si nun lo pensi.}"
+        ],
+        [
+          "~ Aspetta. Poi annuisce.",
+          "{Bene. Tienila. Tienite quarcosa.}"
+        ]
+      ],
+      "sour": [
+        [
+          "~ Distoglie lo sguardo, arrabbiata con qualcosa che non sei tu.",
+          "{Novantadue per cento. T'hanno levato er novantadue per cento e te t'accontenti de stasera.}"
+        ],
+        [
+          "~ Alza le spalle.",
+          "{Nun serve. Te stai a rovinà da sola benissimo.}"
+        ],
+        [
+          "@shake",
+          "~ Il tavolo si spacca a metà.",
+          "{Nun lo fa'. Nun te azzardà.|Te nun te ricordi gnente. È questo er punto.}"
+        ],
+        [
+          "~ Tamburella con le unghie.",
+          "{Che noia.}"
+        ]
+      ]
+    },
+    {
+      "prompt": [
+        "~ Posa un coltello sul tavolo tra voi, col manico verso di te.",
+        "{Si un giorno me vòi levà de mezzo. Ecco er cortello.|Quello è benedetto. Funzionerebbe davvero.}"
+      ],
+      "choices": [
+        "*rispingilo verso di lei* {Tienilo. Non ti voglio levare di mezzo.|Non mi serve.}",
+        "*prendilo e fallo girare* {Me lo tengo. Non si sa mai.|Grazie. Bel bilanciamento.}",
+        "{Me lo lasceresti fare?|Davvero mi lasceresti... fare?}",
+        "*lascia il coltello dov'è*"
+      ],
+      "sweet": [
+        [
+          "~ Guarda il coltello, poi te, e lo mette via con grande cura, come una cosa preziosa.",
+          "{Scema. Strega scema.|...Va bene.}"
+        ],
+        [
+          "~ Le brillano gli occhi.",
+          "{Bene. Tienilo vicino. Tienime in tensione.|Brava la mia ragazza.}"
+        ],
+        [
+          "~ Non risponde. Ti tiene lo sguardo finché non sei tu ad abbassarlo per prima.",
+          "{Sì.|Te piacerebbe sapello.}"
+        ],
+        [
+          "~ Il coltello resta lì tutta la sera, tra le vostre mani, come un terzo ospite.",
+          "{Armata me piaci de più.}"
+        ]
+      ],
+      "sour": [
+        [
+          "~ Lo pianta nel tavolo.",
+          "{Nun me compatì.}"
+        ],
+        [
+          "~ Se lo riprende, rapida come un serpente.",
+          "{Ho cambiato idea.}"
+        ],
+        [
+          "~ Ride, ma non in modo gentile.",
+          "{No. Ovvio che no. Truccherei l'angolo.}"
+        ],
+        [
+          "~ Lo rinfodera.",
+          "{Vigliacca.|Peccato.}"
+        ]
+      ]
+    },
+    {
+      "prompt": [
+        "~ Ordina per tutte e due. Ordina la cosa che odi.",
+        "{Te la magni e sorridi.|Te fa bene. Come me.}"
+      ],
+      "choices": [
+        "*mangialo e sorridi*",
+        "*ordinale la cosa che odia lei*",
+        "{Ti sei ricordata che lo odio. Ti ricordi tutto di me.|Sai cosa ordino. Mi hai prestato attenzione.}",
+        "*spingi via il piatto*"
+      ],
+      "sweet": [
+        [
+          "~ Ti guarda mangiare con la faccia di chi ti guarda camminare sul fuoco.",
+          "{Oh. L'hai fatto davvero.|...Va be'. Te ordino pure quello bono.}"
+        ],
+        [
+          "~ Il cameriere le porta un piatto di acciughe. Le mangia, fulminandoti, tutte quante.",
+          "{Mostro.|Tregua.}"
+        ],
+        [
+          "~ Le cade la forchetta.",
+          "{Sto attenta a tutto quello che odi.|È pe' lavoro. È pe' lavoro.}"
+        ],
+        [
+          "~ Fa scivolare il suo piatto verso di te. È la cosa che ami.",
+          "{Scambio. Nun la fa' strana.}"
+        ]
+      ],
+      "sour": [
+        [
+          "~ Sembra delusa.",
+          "{Quanno obbedisci nun sei divertente.}"
+        ],
+        [
+          "~ Lo rimanda indietro. Poi rimanda indietro il tuo. Poi rimanda indietro il cameriere.",
+          "{Stasera nun magna nessuno.}"
+        ],
+        [
+          "~ Alza le spalle, gelida.",
+          "{So che ordinano tutti. È er lavoro.}"
+        ],
+        [
+          "~ Il piatto torna da te da solo.",
+          "{Magna.}"
+        ]
+      ]
+    },
+    {
+      "prompt": [
+        "~ Si sporge sopra il tavolo finché le vostre fronti quasi si toccano.",
+        "{Dimme che me odi.|Avanti. Dillo. Me odi.}"
+      ],
+      "choices": [
+        "{No.|Non ci riesco.}",
+        "{Ti odio.|Ti odio da morire.}",
+        "{Prima tu.|Dimmelo prima tu.}",
+        "*tirati indietro*"
+      ],
+      "sweet": [
+        [
+          "~ {Resta lì, con le fronti che quasi si toccano, per un lungo respiro.|Chiude gli occhi.}",
+          "{Bugiarda.|...Nun lo fa'.}"
+        ],
+        [
+          "~ Sorride come una lama che cattura la luce.",
+          "{Bene. Bene.|Ancora. Più piano.}"
+        ],
+        [
+          "~ Le si mozza il respiro.",
+          "{Te odio.|Te odio più de quanto ho mai odiato quarsiasi cosa.}",
+          "~ Lo dice come una confessione."
+        ],
+        [
+          "~ Ti segue a metà strada, poi si ferma.",
+          "{Va be'. Sta' a distanza. È più sicuro pe' tutte e due.}"
+        ]
+      ],
+      "sour": [
+        [
+          "~ Si ritrae, disgustata.",
+          "{Bugiarda. Tutti me odiano.}"
+        ],
+        [
+          "~ Si appoggia indietro, soddisfatta, e vuota.",
+          "{Ecco. Armeno questo è onesto.}"
+        ],
+        [
+          "~ Fa un sorrisetto.",
+          "{Bel tentativo.}"
+        ],
+        [
+          "~ Ride.",
+          "{Fifona.}"
+        ]
+      ]
+    },
+    {
+      "prompt": [
+        "~ Fa rotolare un dado sul tavolo. Esce sette.",
+        "{Si esce sette, me baci. So' le regole.|Li dadi nun c'hanno er sette. Li mia sì. Le regole so' regole.}"
+      ],
+      "choices": [
+        "*baciale le nocche*",
+        "*tira tu il dado* {Tocca a me.|Vediamo cosa esce a me.}",
+        "{L'hai truccato.|Questo è barare, dea.}",
+        "{Io ai giochi truccati non gioco.|No.}"
+      ],
+      "sweet": [
+        [
+          "~ Si fissa la mano come se ora appartenesse a qualcun altro.",
+          "{Questo... vale. Va be'. Vale.|Le nocche. Vigliacca. Vigliacca perfetta.}"
+        ],
+        [
+          "~ Esce un simbolo che non è un numero. Lei diventa bianca, poi rossa.",
+          "{Quella faccia vor dì... lassa perde che vor dì.|Nun dovresti esse capace de tirà quello.}"
+        ],
+        [
+          "~ Sogghigna.",
+          "{Certo che l'ho truccato. Trucco tutto. Ho truccato 'sta serata.|Tutto de me è un imbrojo. Stamme dietro.}"
+        ],
+        [
+          "~ Raccoglie il dado e se lo mette in tasca.",
+          "{La prossima vorta esce otto.}"
+        ]
+      ],
+      "sour": [
+        [
+          "~ Ritira la mano.",
+          "{No così. Mai così.}"
+        ],
+        [
+          "~ Esce uno. Tutto nella sala si fa leggermente sbagliato.",
+          "{Sfiga. Sempre sfiga, pe' te.}"
+        ],
+        [
+          "~ Ghigna con disprezzo.",
+          "{Dimostralo. In tribunale.}"
+        ],
+        [
+          "~ Il dado rotola da solo. Sette. Sette. Sette.",
+          "{Peggio pe' te.}"
+        ]
+      ]
+    },
+    {
+      "prompt": [
+        "{Bubba guarda ancora la strada come si ce stessi io sopra.|Er lato mio der camper lo tiene ancora vòto, eh?}",
+        "~ Lo dice per ferire. Ferisce più lei."
+      ],
+      "choices": [
+        "{Sì. E io sono seduta qui con te, o no?|Sì. Io non sono qui per lui.}",
+        "{Lui guarda la strada. Io guardo te. Indovina chi è più fortunato.|Almeno lui ha gusto. Io sono qui.}",
+        "{È per questo che mi odi? O è per questo che non riesci a smettere di guardarmi?|Continui a tirarlo in ballo per non dover dire cos'è questa cosa.}",
+        "{Non sto parlando di Bubba.|Lascialo fuori.}"
+      ],
+      "sweet": [
+        [
+          "~ Ti guarda come se avessi detto qualcosa in una lingua che ha dimenticato.",
+          "{...Ce stai. Perché ce stai.|Sceme. Tutte e due.}"
+        ],
+        [
+          "~ Ride, umida e tagliente.",
+          "{Sfacciata. Me piace sfacciata.|È 'na battuta tremenda. Ridilla.}"
+        ],
+        [
+          "@flash",
+          "~ Per un secondo ogni luce nella sala prende il colore dei suoi occhi.",
+          "{Nun ce provà.|Tutte e due. Va be'. Tutte e due. Contenta?}"
+        ],
+        [
+          "~ Annuisce, e qualcosa si scioglie.",
+          "{Va be'. Solo noi, allora.|Solo noi. Che paura.}"
+        ]
+      ],
+      "sour": [
+        [
+          "~ Distoglie lo sguardo.",
+          "{Stai qui perché te ce hanno messa le probabilità.}"
+        ],
+        [
+          "~ Non ride.",
+          "{Fortunata. Nessuno è fortunato vicino a me.}"
+        ],
+        [
+          "@shake",
+          "~ Ogni bicchiere sul tavolo va in frantumi.",
+          "{QUESTA nun è gnente.|Nun c'è nessuna 'cosa'.}"
+        ],
+        [
+          "~ La sua voce diventa ghiaccio.",
+          "{Nun me dici te de che parlà.}"
+        ]
+      ]
+    },
+    {
+      "prompt": [
+        "~ Si sfila un nastro rosso dal polso e te lo lega attorno al tuo. Stretto.",
+        "{Mo' nun poi scappà.|Filo rosso. Lo sai che vor dì. Nun lo di'.}"
+      ],
+      "choices": [
+        "*lega l'altro capo al suo polso*",
+        "{È troppo stretto.|Mi stai bloccando la circolazione.}",
+        "{Hai paura che me ne vada.|Ti serve tenermi legata a te?}",
+        "*sfilati il nastro*"
+      ],
+      "sweet": [
+        [
+          "~ Te lo lascia fare. Ti guarda legarlo come se le facesse male.",
+          "{Ecco. Mo' semo bloccate tutte e due.|Cretina. Cretina. Tienilo.}"
+        ],
+        [
+          "~ Lo allenta. Giusto un po'.",
+          "{Ecco. Mejo? Nun t'abituà alle comodità.}"
+        ],
+        [
+          "~ Il labbro le trema una volta, poi si ferma.",
+          "{Tutti se ne vanno. Te ne annerai pure te. Io te lo rendo solo più difficile.}"
+        ],
+        [
+          "~ Te lo rilega, e stavolta lo lega anche al proprio polso.",
+          "{Va be'. Mo' si te ne vai, me ne vado pure io.}"
+        ]
+      ],
+      "sour": [
+        [
+          "~ Taglia il filo con un'unghia.",
+          "{No. Nun tutte e due. Solo te.}"
+        ],
+        [
+          "~ Lo stringe di più.",
+          "{Bene. Così te lo ricordi.}"
+        ],
+        [
+          "~ Sbuffa.",
+          "{Nun me serve gnente. Nessuno.}"
+        ],
+        [
+          "~ Ti è di nuovo attorno al polso prima ancora che tu abbia abbassato la mano.",
+          "{Nun poi scappà alle probabilità.}"
+        ]
+      ]
+    }
+  ],
+  "emCeiling": [
+    [
+      "~ Si ritrae di colpo, come da una stufa.",
+      "{No. Nun così lontano. Mai così lontano.|Qui se ferma, strega. Qui. Proprio qui.}"
+    ],
+    [
+      "~ L'aria tra voi crepita e schiocca come un cavo.",
+      "{Si te lascio avvicinà più de così, una de noi due viene cancellata. Probabilmente io.|Daremmo foco alla linea der tempo. Nun pensà che nun ce ho pensato.}"
+    ],
+    [
+      "~ Ride troppo forte e fa cadere qualcosa apposta.",
+      "{Guardace. Quasi carine. Che schifo.|Basta gentilezza pe' 'n decennio.}"
+    ],
+    [
+      "@shake",
+      "~ La candela tra voi si spacca in due, e ogni metà brucia per conto suo.",
+      "{Visto? Pure la candela lo sa.|Due metà. Mai una. Semo noi.}"
+    ],
+    [
+      "~ Si alza, fa un giro attorno al tavolo e si risiede più lontano.",
+      "{Distanza. Ce serve distanza. Funziona così, co' la distanza.}"
+    ],
+    [
+      "~ Ti afferra per il colletto e ti tira vicino, poi si ferma, a un respiro, e ti lascia andare.",
+      "{No. Si lo faccio nun smetto più de rovinatte. E io te vojo continuà a rovinà.}"
+    ]
+  ],
+  "emFinaleHigh": [
+    "~ Ti accompagna alla porta e non ti lascia la manica.",
+    "Nun sarò mai bona pe' te.",
+    "{Te farò ancora raffreddà er caffè. Te farò ancora inciampà sulle scale.|Domani te maledico de novo li stivali. Te maledirai er tribunale mio. Funziona così.}",
+    "Ma si quarcun antro prova a rovinatte, lo cancello da tutte e novantadue le dimensioni.",
+    "{È la cosa più vicina all'amore che me è concessa.|È quello che c'ho ar posto der core. Prenne o lassà.}"
+  ],
+  "emFinaleReactions": [
+    [
+      "~ {Sorride. È orribile e bellissimo.|Si morde il labbro per trattenersi.}",
+      "{E allora prennilo.}"
+    ],
+    [
+      "~ Ti guarda con qualcosa di più affilato dell'odio.",
+      "{La smetto de controllallo quanno te la smetti de sedette accanto a lui. Quindi, mai.}"
+    ],
+    [
+      "~ Ride, e ti tira la manica una volta, forte.",
+      "{Bene. Nun me crede. Resta seduta.}"
+    ]
+  ]
 }

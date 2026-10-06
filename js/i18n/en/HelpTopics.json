@@ -163,9 +163,9 @@
       "title": "Grimoires and Skill Books",
       "description": "A [grimoire] opens to a handful of workings, and one reader may take one. The offers are fixed once the book is opened: closing it or changing reader will not change them.\n\nA reader can only take a working they are ready for, with enough MP and the right [stats | progressLoadout]. Forbidden pages ask for more.\n\nLuck, your party's [PSI | partyAttributes], makes darker pages more likely. Beyond the school grimoires and skill books lies the [Forbidden Grimoire], which offers nothing else."
     },
-    "progressBladeSeeds": {
-      "title": "Blade Seeds",
-      "description": "A [Blade Seed] is a spirit weapon bound to the founder of your party. Choose one seed weapon, one for each kind of weapon.\n\nIts spirit grows with the founder's [experience | progressLevels] and evolves as it does. Its gifts only work while the weapon is in hand, and every ordinary strike teaches the spirit something new."
+    "progressExpressionSeeds": {
+      "title": "Expression Seeds",
+      "description": "An [Expression Seed] is used on one character from the backpack and unlocks their Expression. It is refused on a character who already has it.\n\nThe Expressions button on the right page of the skills benches lists everyone in the party with Expression unlocked, and stays greyed out while nobody has it."
     },
     "gearSlots": {
       "title": "Equipment: Hands and Slots",
@@ -573,7 +573,7 @@
     },
     "lawEris": {
       "title": "Dating Eris",
-      "description": "You can take [Eris | eris] on [dates], and no two evenings are the same.\n\nEach date happens somewhere in the world, and the [biome | worldBiomes] shapes it: a picnic, a seance, a stakeout and more. Her [mood] is never certain: playful, romantic, paranoid, prophetic, or worse. In her [eldritch] moods, things stop making sense.\n\nShe may break up the evening with [dares], some of them very much against the law. Two heartbeats on screen show how you are both doing. She feels differently about [every party member], and may turn her attention to one of your companions.\n\nThe first date that ends well brings a [blade seed | progressBladeSeeds]."
+      "description": "You can take [Eris | eris] on [dates], and no two evenings are the same.\n\nEach date happens somewhere in the world, and the [biome | worldBiomes] shapes it: a picnic, a seance, a stakeout and more. Her [mood] is never certain: playful, romantic, paranoid, prophetic, or worse. In her [eldritch] moods, things stop making sense.\n\nShe may break up the evening with [dares], some of them very much against the law. Two heartbeats on screen show how you are both doing. She feels differently about [every party member], and may turn her attention to one of your companions.\n\nThe first date that ends well brings an [expression seed | progressExpressionSeeds]."
     },
     "societyMail": {
       "title": "The Post",

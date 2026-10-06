@@ -227,6 +227,10 @@
     // the recipe belongs to (1 Untrained to 5 Master). Read off the trade, not
     // off Fabrication: knowing where a bench is does not save you leather.
     const RECLAIM_BY_LEVEL = [0, 0, 0.10, 0.20, 0.32, 0.45];
+    // The chance a teardown hands back the WHOLE recipe, by the tier the recipe
+    // asks for (1 Untrained to 5 Master). A demanding piece is built to be
+    // serviced: its parts come out whole. A crude one is mostly glue.
+    const FULL_RETURN_BY_TIER = [0, 0.10, 0.25, 0.45, 0.65, 0.85];
 
     function isSandbox() {
         return !!($gameSystem && $gameSystem._isSandboxMode);
@@ -691,6 +695,18 @@
     // Take one apart again. How many pieces come back is what training buys on
     // this side of the workbench; a teardown can never hand back more than went
     // into it, so the recipe's own unit count is the ceiling.
+    // Whether a piece can be taken apart at all: it has a recipe, the bench
+    // works it, and there is one in the sack.
+    function canDisassemble(item) {
+        return !!(parseRecipe(item) && !isUncraftable(item) && $gameParty.numItems(item) > 0);
+    }
+
+    // The odds a teardown comes back as the whole recipe, read off the tier
+    // the recipe asks for.
+    function fullReturnChance(item) {
+        return FULL_RETURN_BY_TIER[Math.max(1, Math.min(5, recipeTier(item)))] || 0;
+    }
+
     function disassembleAt(item) {
         const recipe = parseRecipe(item);
         if (!recipe || isUncraftable(item) || $gameParty.numItems(item) <= 0) return null;
@@ -699,22 +715,36 @@
 
         const materials = Object.keys(recipe);
         const totalUnits = materials.reduce((sum, id) => sum + (recipe[id] || 1), 0);
-        const numReturned = Math.min(salvageYield(item), totalUnits);
+        const full = Math.random() < fullReturnChance(item);
         const returnedList = [];
-        for (let i = 0; i < numReturned; i++) {
-            const matId = materials[Math.floor(Math.random() * materials.length)];
-            const matItem = $dataItems[parseInt(matId)];
-            if (!matItem) continue;
-            $gameParty.gainItem(matItem, 1);
-            returnedList.push(matItem);
+        if (full) {
+            // Every unit of every reagent, exactly as the recipe lists them.
+            for (const matId of materials) {
+                const matItem = $dataItems[parseInt(matId)];
+                if (!matItem) continue;
+                const qty = recipe[matId] || 1;
+                $gameParty.gainItem(matItem, qty);
+                for (let i = 0; i < qty; i++) returnedList.push(matItem);
+            }
+        } else {
+            const numReturned = Math.min(salvageYield(item), totalUnits);
+            for (let i = 0; i < numReturned; i++) {
+                const matId = materials[Math.floor(Math.random() * materials.length)];
+                const matItem = $dataItems[parseInt(matId)];
+                if (!matItem) continue;
+                $gameParty.gainItem(matItem, 1);
+                returnedList.push(matItem);
+            }
         }
 
+        // Under Auto the member best at this piece's trade takes it apart, and
+        // it is them the job teaches.
+        const doer = handsFor(item);
         if (window.SpecializationXP) {
-            const doer = handsFor(item);
             window.SpecializationXP.award(FAB_SPEC, SALVAGE_POINTS, { actor: doer });
             window.SpecializationXP.award(recipeSpec(item), SALVAGE_POINTS, { actor: doer });
         }
-        return { mode: 'disassemble', items: returnedList };
+        return { mode: 'disassemble', items: returnedList, full, by: doer };
     }
 
     // Everything the workshop's Assemble and Disassemble sides need in order to
@@ -755,7 +785,9 @@
         isSandbox,
         clearKnowledgeCache: clearRecipeKnowledgeCache,
         assemble: assembleAt,
-        disassemble: disassembleAt
+        disassemble: disassembleAt,
+        canDisassemble,
+        fullReturnChance
     };
 })();
 
@@ -888,7 +920,9 @@
     // list filters by status instead of cutting the catalogue into pages the
     // player has to hop between hoping one of them is not empty. All is the
     // default and nothing is ever hidden behind a tab.
-    const STATUS_TABS = ['all', 'ready', 'short', 'locked', 'owned', 'forged'];
+    // 'salvage' is the teardown shelf: every unequipped piece in the sack the
+    // bench can take apart, with a button to take the whole shelf apart at once.
+    const STATUS_TABS = ['all', 'ready', 'short', 'locked', 'owned', 'forged', 'salvage'];
 
     // The first setting of the party switcher is not a member at all. Auto hands
     // every piece on the board to whoever in the party reads its trade best, so
@@ -1851,9 +1885,21 @@
             return b ? b.specLabel(name) : tr(name);
         }
 
+        // On the teardown shelf: in the sack (so not equipped: an equipped
+        // piece is on somebody, not in the sack), with a recipe the bench can
+        // read backwards, and nothing that may never leave a hand.
+        isSalvageable(item) {
+            const b = bench();
+            if (!b || !b.canDisassemble || !b.canDisassemble(item)) return false;
+            if (!DataManager.isWeapon(item) && !DataManager.isArmor(item) && item.itypeId === 2) return false;
+            if (window.VectorGun && window.VectorGun.isBound && window.VectorGun.isBound(item)) return false;
+            return true;
+        }
+
         matchesStatus(item, status) {
             if (status === 'all') return true;
             if (status === 'owned') return $gameParty.numItems(item) > 0;
+            if (status === 'salvage') return this.isSalvageable(item);
             return this.statusOf(item) === status;
         }
 
@@ -1869,7 +1915,7 @@
             const b = bench();
             if (b) b.clearKnowledgeCache();
 
-            const counts = { all: 0, ready: 0, short: 0, locked: 0, owned: 0, forged: 0 };
+            const counts = { all: 0, ready: 0, short: 0, locked: 0, owned: 0, forged: 0, salvage: 0 };
             const trades = new Map();
             const seen = new Map();
             const pool = [];
@@ -1878,7 +1924,10 @@
                 seen.set(item, status);
                 counts.all++;
                 if (counts[status] !== undefined) counts[status]++;
-                if ($gameParty.numItems(item) > 0) counts.owned++;
+                if ($gameParty.numItems(item) > 0) {
+                    counts.owned++;
+                    if (this.isSalvageable(item)) counts.salvage++;
+                }
                 // The shelf of trades is the whole catalogue's, not the open
                 // chip's: which methods exist and how much of each one this
                 // member can read is a fact about them, and it must not shuffle
@@ -2248,8 +2297,15 @@
                 this._activeArea === 'status' && this._statusIndex === idx,
                 'data-status="' + key + '"')).join('');
 
+            // On the teardown shelf one more chip stands after the tabs: take
+            // the whole shelf apart. The cursor reaches it by walking right
+            // off the last tab.
+            const massChip = this._status === 'salvage' && this.listItems().length
+                ? `<div class="backpack-tab focusable forge-salvage-all ${this._activeArea === 'status' && this._statusIndex === STATUS_TABS.length ? 'focused' : ''}" tabindex="0" data-salvage-all="1">${escapeHtml(T('Blacksmith.salvageAll', { n: this.salvageCount() }))}</div>`
+                : '';
+
             el.innerHTML = `<div class="backpack-tabs">
-                    <div class="backpack-tabs-row">${statusRow}</div>
+                    <div class="backpack-tabs-row">${statusRow}${massChip}</div>
                 </div>`;
 
             // The search strip is redrawn with the chips under it, then handed
@@ -3231,6 +3287,12 @@
                     : (d.mode === 'disassemble' ? bt.extractSuccess : bt.success);
                 if (d.mode === 'botched') {
                     rows = `<div class="success-item-row"><span>${escapeHtml(T('Thinker.botchNote'))}</span></div>`;
+                } else if (d.tally) {
+                    rows = `<div class="success-item-row"><span>${escapeHtml(bt.obtained)}</span></div>`;
+                    for (const got of d.tally) rows += row(got.item, got.qty);
+                    for (const w of d.workers || []) {
+                        rows += `<div class="success-item-row"><span>${escapeHtml(T('Blacksmith.salvageWorker', { name: w.name, n: w.n }))}</span></div>`;
+                    }
                 } else {
                     rows = `<div class="success-item-row"><span>${escapeHtml(bt.obtained)}</span></div>`;
                     for (const got of d.items) rows += row(got, 0);
@@ -3399,6 +3461,9 @@
             let done = 0, botched = 0;
             const gained = [];
             for (let run = 0; run < Math.max(1, runs || 1); run++) {
+                // Levels are re-read every run: a member who levels up halfway
+                // through a batch can be the best hands for the rest of it.
+                b.clearKnowledgeCache();
                 const result = job(item);
                 if (!result) break;
                 done++;
@@ -3418,6 +3483,120 @@
             if (botched) SoundManager.playBuzzer();
             else SoundManager.playUseItem();
             this.restoreCursor(item);
+            this.refreshForge();
+        }
+
+        // ---------------------------------------------------- mass teardown
+        // Every copy of every piece on the teardown shelf (as filtered by the
+        // trade and the search strip), one at a time. Each piece is worked by
+        // whoever the switcher says: under Auto, the party's best in THAT
+        // piece's trade, re-read every run, so a mixed shelf passes between
+        // members and every one of them learns from their share of it.
+        salvageCount() {
+            return this.listItems().reduce((n, item) => n + $gameParty.numItems(item), 0);
+        }
+
+        openMassSalvage() {
+            if (this._status !== 'salvage' || !this.listItems().length) { SoundManager.playBuzzer(); return; }
+            this._salvageConfirm = { focus: 0 };
+            SoundManager.playOk();
+            this.renderMassSalvage();
+            if (window.UINav) window.UINav.swallowHeld();
+        }
+
+        closeMassSalvage() {
+            this._salvageConfirm = null;
+            const el = document.getElementById('salvage-modal');
+            if (el && el.parentNode) el.parentNode.removeChild(el);
+            SoundManager.playCancel();
+            if (window.UINav) window.UINav.swallowHeld();
+        }
+
+        // The standard dialog: what is about to go into pieces, and whose
+        // hands each lot goes through.
+        renderMassSalvage() {
+            const root = document.getElementById('blacksmith-container');
+            if (!root || !this._salvageConfirm) return;
+            let el = document.getElementById('salvage-modal');
+            if (!el) {
+                el = document.createElement('div');
+                el.id = 'salvage-modal';
+                el.className = 'army-dialog-overlay';
+                root.appendChild(el);
+            }
+            const b = bench();
+            const items = this.listItems();
+            const workers = new Map();
+            const SHOWN = 10;
+            let lines = '';
+            items.forEach((item, i) => {
+                const held = $gameParty.numItems(item);
+                const doer = b && b.handsFor ? b.handsFor(item) : null;
+                const name = doer ? doer.name() : '';
+                workers.set(name, (workers.get(name) || 0) + held);
+                if (i < SHOWN) {
+                    lines += `<div class="success-item-row"><span class="menu-icon menu-icon--32" style="--icon-col:${item.iconIndex % 16};--icon-row:${Math.floor(item.iconIndex / 16)}"></span><span>${escapeHtml(displayName(item))} &times;${held}</span></div>`;
+                }
+            });
+            if (items.length > SHOWN) {
+                lines += `<div class="success-item-row"><span>${escapeHtml(T('Blacksmith.salvageMore', { n: items.length - SHOWN }))}</span></div>`;
+            }
+            let who = '';
+            for (const [name, n] of workers) {
+                if (name) who += `<div class="success-item-row"><span>${escapeHtml(T('Blacksmith.salvageWorker', { name, n }))}</span></div>`;
+            }
+            const f = this._salvageConfirm.focus;
+            el.innerHTML = `
+                <div class="army-dialog">
+                    <h3>${escapeHtml(T('Blacksmith.salvageAllTitle'))}</h3>
+                    <p>${escapeHtml(T('Blacksmith.salvageAllBody', { n: this.salvageCount() }))}</p>
+                    ${lines}${who}
+                    <div class="army-dialog-buttons">
+                        <div class="army-dialog-btn ${f === 0 ? 'selected' : ''}" id="salvage-confirm">${escapeHtml(T('Blacksmith.salvageAllConfirm'))}</div>
+                        <div class="army-dialog-btn ${f === 1 ? 'selected' : ''}" id="salvage-cancel">${escapeHtml(bsText().back)}</div>
+                    </div>
+                </div>`;
+        }
+
+        massSalvage() {
+            const b = bench();
+            const items = this.listItems().slice();
+            this._salvageConfirm = null;
+            const modal = document.getElementById('salvage-modal');
+            if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
+            if (!b || !items.length) { SoundManager.playBuzzer(); return; }
+
+            const tally = new Map();
+            const workers = new Map();
+            let done = 0;
+            for (const item of items) {
+                while (this.isSalvageable(item)) {
+                    b.clearKnowledgeCache();
+                    const result = b.disassemble(item);
+                    if (!result) break;
+                    done++;
+                    for (const got of result.items || []) tally.set(got, (tally.get(got) || 0) + 1);
+                    const name = result.by ? result.by.name() : '';
+                    if (name) workers.set(name, (workers.get(name) || 0) + 1);
+                }
+            }
+            if (!done) { SoundManager.playBuzzer(); return; }
+
+            this._overlayData = {
+                bench: true,
+                mode: 'disassemble',
+                items: [],
+                tally: Array.from(tally, ([item, qty]) => ({ item, qty })),
+                workers: Array.from(workers, ([name, n]) => ({ name, n })),
+                batch: done
+            };
+            this._overlayTimer = 160;
+            this._listDirty = true;
+            this._itemIndex = 0;
+            this._selectedItem = null;
+            if (this._statusIndex >= STATUS_TABS.length) this._statusIndex = STATUS_TABS.indexOf(this._status);
+            SoundManager.playUseItem();
+            if (window.UINav) window.UINav.swallowHeld();
             this.refreshForge();
         }
 
@@ -3489,6 +3668,13 @@
             if (smith) { this.selectSmith(parseInt(smith.dataset.smith)); return; }
 
             if (e.target.closest('#forge-back')) { this.backOut(); return; }
+
+            if (this._salvageConfirm) {
+                if (e.target.closest('#salvage-confirm')) { this.massSalvage(); return; }
+                if (e.target.closest('#salvage-cancel')) { this.closeMassSalvage(); return; }
+                return;
+            }
+            if (e.target.closest('[data-salvage-all]')) { this.openMassSalvage(); return; }
 
             const statusBtn = e.target.closest('[data-status]');
             if (statusBtn) { this.setStatus(statusBtn.dataset.status); return; }
@@ -3598,6 +3784,21 @@
                 return;
             }
 
+            // The mass teardown's question owns every press while it is up.
+            if (this._salvageConfirm) {
+                if (Input.isRepeated('left') || Input.isRepeated('right')) {
+                    this._salvageConfirm.focus = 1 - this._salvageConfirm.focus;
+                    SoundManager.playCursor();
+                    this.renderMassSalvage();
+                } else if (Input.isTriggered('ok')) {
+                    if (this._salvageConfirm.focus === 0) this.massSalvage();
+                    else this.closeMassSalvage();
+                } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+                    this.closeMassSalvage();
+                }
+                return;
+            }
+
             // L1 / R1 step the status tabs; L2 / R2 hand the workshop to
             // another member (CharSwitcher, installed with the scene).
             const tabStep = window.UINav ? window.UINav.tabDir() : 0;
@@ -3642,12 +3843,23 @@
                         this.refreshForge();
                         return;
                     }
+                    // One step past the last tab is the Disassemble-all chip,
+                    // when the teardown shelf is open and holds anything.
+                    if (at === STATUS_TABS.length && this._status === 'salvage' && this.listItems().length) {
+                        this._statusIndex = at;
+                        SoundManager.playCursor();
+                        this.refreshForge();
+                        return;
+                    }
                     const clamped = Math.min(STATUS_TABS.length - 1, at);
                     this._statusIndex = clamped;
                     this.setStatus(STATUS_TABS[clamped]);
                     this._activeArea = 'status';
                     this.refreshForge();
+                } else if (Input.isTriggered('ok') && this._statusIndex === STATUS_TABS.length) {
+                    this.openMassSalvage();
                 } else if (Input.isTriggered('ok') || Input.isRepeated('down')) {
+                    if (this._statusIndex >= STATUS_TABS.length) this._statusIndex = STATUS_TABS.indexOf(this._status);
                     this._activeArea = 'items';
                     SoundManager.playCursor();
                     this.refreshForge();

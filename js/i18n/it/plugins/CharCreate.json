@@ -481,6 +481,10 @@
       "name": "Diplomatico",
       "desc": "Inizi a [Bruxelles] con un [seggio alle Nazioni Unite] e credenziali diplomatiche."
     },
+    "originExpressions": {
+      "name": "Espressioni",
+      "desc": "Tutti nel gruppo si svegliano [Esprimendo]: un potere tutto loro, tirato a caso e già finalizzato. Chiunque si unisca a voi più tardi ne avrà uno a sua volta. Inizi in una città qualsiasi."
+    },
     "originHypernetExplorer": {
       "name": "Esploratore Hypernet",
       "desc": "Ti riprendi davanti a un terminale dell'[Hypernet Point] con una borsa di [componenti], un energy drink e nessun ricordo di aver pagato l'ora. L'[Hyperdeck e' montato a meta']. Il resto e' la' fuori, nei negozi, nei cassonetti e nelle case degli altri."
@@ -488,6 +492,14 @@
     "originPatronVault": {
       "name": "Bunker del Santo Patrono",
       "desc": "Ti svegli al [Piano -1] di un bunker che nessun altro può raggiungere, nove cantine sotto una [botola in aperta campagna]. L'uscita è la botola del patrono, e l'ingresso era sapere dove si trova."
+    },
+    "originPatronStar": {
+      "name": "Stella del Santo Patrono",
+      "desc": "Ti svegli a bordo della tua nave [in orbita attorno al pianeta natale di un patrono], un mondo vivo attorno a una stella che non brucia da nessun'altra parte, a migliaia di anni luce nella Via Lattea. Solo un [riquadro di un patrono che questo mondo conosce già] può indicare la rotta."
+    },
+    "originCustom": {
+      "name": "Scenario personalizzato",
+      "desc": "Il tuo scenario, scritto nell'[editor] di questa pagina: dove cominci, cosa porti con te, la [taglia] sulle vostre teste, un [esercito], e il tuo posto nel mondo come [membro] di una fazione o di una superpotenza, [sindaco] di una città, o fondatore di un [partito] o di una [fazione]. Salvato nella [cartella scenarios], e ogni file al suo interno compare qui."
     }
   },
   "hairStyle": {
@@ -571,6 +583,10 @@
   "aRandomWorldMapTile": "Un tratto di campagna a caso",
   "theTowerGate": "Il cancello della torre",
   "theOnuAssemblyInBrussels": "L'assemblea ONU, Bruxelles",
+  "expressions": {
+    "powerRow": "Potere",
+    "powerValue": "Un'Espressione per tutti, tirata a caso"
+  },
   "aCityOfYourChoice": "Una città a tua scelta",
   "bounty": "Taglia",
   "10000OnYourHead": "10.000€ sulla tua testa",
@@ -1142,5 +1158,111 @@
     "cancelBody": "Non crescerà nulla, e il dispositivo torna inutilizzato.",
     "confirmVat": "Avvia la crescita",
     "confirmSplice": "Impianta l'embrione"
+  },
+  "patronStar": {
+    "askTitle": "Le coordinate del patrono",
+    "start": "Traccia la rotta",
+    "startRow": "In orbita attorno al pianeta natale di un patrono"
+  },
+  "custom": {
+    "defaultName": "Il mio scenario",
+    "defaultFactionName": "La Libera Compagnia",
+    "bountyCrime": "Vecchi mandati",
+    "startRow": "Dove dice il tuo scenario",
+    "panelTitle": "I tuoi scenari",
+    "noneSaved": "Nessuno scenario salvato. Scrivine uno con Nuovo.",
+    "new": "Nuovo",
+    "edit": "Modifica",
+    "duplicate": "Duplica",
+    "delete": "Elimina",
+    "reload": "Ricarica",
+    "folder": "Apri cartella",
+    "copyName": "{name} (copia)",
+    "deleteTitle": "Eliminare questo scenario?",
+    "deleteBody": "{name} verrà rimosso dalla cartella scenarios.",
+    "editorTitle": "Editor di scenari",
+    "save": "Salva scenario",
+    "saveBegin": "Salva e comincia",
+    "saved": "{name} scritto nella cartella scenarios.",
+    "saveFailed": "Impossibile scrivere nella cartella scenarios.",
+    "sectionGeneral": "Scenario",
+    "sectionStart": "Punto di partenza",
+    "sectionPurse": "Borsa e fedina",
+    "sectionKit": "Equipaggiamento",
+    "sectionArmy": "Esercito",
+    "sectionRoles": "Posto nel mondo",
+    "sectionStanding": "Reputazione",
+    "sectionPerks": "Vantaggi",
+    "name": "Nome",
+    "description": "Descrizione",
+    "descriptionHint": "Di cosa parla questo scenario",
+    "where": "Comincia",
+    "town": "Città",
+    "pick": "Scegli",
+    "squareX": "Riquadro del mondo X",
+    "squareY": "Riquadro del mondo Y",
+    "cash": "Contanti extra",
+    "bounty": "Taglia",
+    "knowledge": "Punti Conoscenza",
+    "levels": "Livelli extra",
+    "addItem": "Aggiungi oggetto",
+    "addWeapon": "Aggiungi arma",
+    "addArmor": "Aggiungi armatura",
+    "noItems": "Niente oltre alle solite provviste.",
+    "remove": "Rimuovi",
+    "troops": "Truppe",
+    "troopsFrom": "Reclutate da",
+    "troopsLine": "{count} truppe da {from}",
+    "mixed": "Ogni fazione",
+    "upkeep": "Paghe anticipate",
+    "weeks": "{n} settimane",
+    "allegiance": "Membro di",
+    "allegianceWhich": "Quale",
+    "memberNote": "Un membro giurato e stimato. Mai il capo: la casata tiene il suo vertice.",
+    "mayor": "Sindaco di",
+    "nobody": "Nessun luogo",
+    "mayorNote": "Il sindaco in carica si dimette in tuo favore, e la storia del mondo lo registra. Cominci in quella città.",
+    "party": "Partito politico",
+    "partyName": "Nome del partito",
+    "partyUnnamed": "Il nome viene tirato a sorte",
+    "creed": "Credo",
+    "partyNote": "Il mondo ospita un solo partito tuo. Se un altro salvataggio di questo mondo l'ha già fondato, ti unisci a quello.",
+    "faction": "Fazione fondata",
+    "factionWhich": "Quale fazione",
+    "factionName": "Nome della fazione",
+    "motto": "Motto",
+    "swornUnder": "Giurata a",
+    "noFoundedFactions": "Nessun salvataggio di questo mondo ha ancora fondato una fazione. Scegli Fondane uno nuovo.",
+    "none": "Nessuna",
+    "standing": "Reputazione",
+    "addStanding": "Aggiungi reputazione",
+    "noStanding": "Nessuna reputazione cambiata.",
+    "perks": "Vantaggi",
+    "start": {
+      "picker": "Una città a tua scelta",
+      "town": "Una città precisa",
+      "random": "Un riquadro casuale del mondo",
+      "square": "Un riquadro esatto del mondo",
+      "tower": "Il cancello della Torre Omega",
+      "space": "A bordo della nave, in orbita terrestre",
+      "hypernet": "L'Hypernet Point"
+    },
+    "allegianceKind": {
+      "none": "Nessuno",
+      "faction": "Una fazione",
+      "hyperpower": "Una superpotenza"
+    },
+    "mode": {
+      "none": "Nessuno",
+      "found": "Fondane uno nuovo",
+      "join": "Unisciti a uno esistente"
+    },
+    "perk": {
+      "augments": "Dotati di potenziamenti",
+      "cards": "Una collezione di carte",
+      "hyperdeck": "Un Hyperdeck completo",
+      "crafting": "Maestria artigiana",
+      "goblins": "Aspetto da goblin"
+    }
   }
 }

@@ -554,5 +554,10 @@
     "capitulation": "{loser} capitulates to {winner}; the war ends on the victor's terms.",
     "ceasefire": "The ONU imposes a ceasefire between {attacker} and {defender}; the guns fall silent until {until}.",
     "sanctions": "The ONU places {power} under sanctions over its war with {enemy}; its trade shrinks for a year."
+  },
+  "foundedFaction": {
+    "founded": "{founder} founded {faction}.",
+    "foundedUnder": "{founder} founded {faction}, sworn under {patron}.",
+    "joined": "{members} joined {faction}."
   }
 }

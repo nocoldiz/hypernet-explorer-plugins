@@ -71,6 +71,7 @@
   },
   "minigameSetup": {
     "venueTitle": "Dove",
+    "biomeTitle": "Bioma",
     "timeTitle": "Quando",
     "exterior": "All'aperto",
     "interior": "Al chiuso",

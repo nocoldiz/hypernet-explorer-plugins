@@ -2660,18 +2660,18 @@ You insisted. Loudly. On a roof.
 
 
 ------------------------------------------------------------------------------------------------------------
-m_bladeseed
+m_expressionseed
 
-Blade seeds
+Expression seeds
 
 Bubba:
-A weapon you keep long enough can be grown rather than replaced.
+Plant one of these in somebody and they learn to Express.
 
 Em:
-Grown.
+Express what?
 
 Bubba:
-Twelve kinds of seed, one per sort of weapon. Do not ask what they are made of.
+Whatever you build. Pick when it fires, what it swears to, what it does. The stricter the vows, the harder it hits.
 
 
 ------------------------------------------------------------------------------------------------------------

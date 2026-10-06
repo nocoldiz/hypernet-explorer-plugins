@@ -1874,6 +1874,11 @@
         const tab = this.tab();
         const base = tab && tab.path ? tab.path : SITE_DIR + '/';
 
+        // A right click inside the page never reaches the desktop's own handler
+        // (events do not cross the frame), so the runtime would offer its native
+        // menu and its Inspect would pop the real DevTools out as a new window.
+        doc.addEventListener('contextmenu', (e) => { e.preventDefault(); }, true);
+
         doc.addEventListener('click', (e) => {
             const a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
             if (!a) return;

@@ -481,6 +481,10 @@
       "name": "Diplomat",
       "desc": "Begin in [Brussels] with an [ONU Terminal], remote access into the assembly. No rations, no rope: a seat at the table is the only thing you brought."
     },
+    "originExpressions": {
+      "name": "Expressions",
+      "desc": "Everybody in the party wakes up [Expressing]: a power of their own, rolled at random, already finalized. Anybody who joins you later has one too. Begin in any city."
+    },
     "originHypernetExplorer": {
       "name": "Hypernet Explorer",
       "desc": "You come round at a terminal in the [Hypernet Point] with a bag of [components], an energy drink and no memory of paying for the hour. The [deck is half built]. The rest of it is out there somewhere, in shops, in skips, and in other people's houses."
@@ -488,6 +492,14 @@
     "originPatronVault": {
       "name": "Holy Patron Bunker",
       "desc": "You wake on [Floor -1] of a bunker nobody else can reach, nine cellars deep under a [hatch in open country]. The way out is the patron's own hatch, and the way in was knowing where it is."
+    },
+    "originPatronStar": {
+      "name": "Holy Patron Star",
+      "desc": "You wake aboard your ship in [orbit of a patron's home world], a living planet round a star that burns nowhere else, thousands of light years out in the Milky Way. Only a [patron square this world already knows] can point the way there."
+    },
+    "originCustom": {
+      "name": "Custom Scenario",
+      "desc": "Your own scenario, written in the [editor] on this page: where you begin, what you carry, the [bounty] on your heads, an [army], and your place in the world as a [member] of a faction or hyperpower, the [mayor] of a town, or the founder of a [party] or a [faction]. Saved to the [scenarios folder], and every file in it is listed here."
     }
   },
   "hairStyle": {
@@ -571,6 +583,10 @@
   "aRandomWorldMapTile": "A random patch of open country",
   "theTowerGate": "The tower gate",
   "theOnuAssemblyInBrussels": "The ONU assembly, Brussels",
+  "expressions": {
+    "powerRow": "Power",
+    "powerValue": "An Expression for everyone, rolled at random"
+  },
   "aCityOfYourChoice": "A city of your choice",
   "bounty": "Bounty",
   "10000OnYourHead": "10,000€ on your head",
@@ -1142,5 +1158,111 @@
     "cancelBody": "Nothing will be grown, and the device is returned unused.",
     "confirmVat": "Start growing",
     "confirmSplice": "Implant embryo"
+  },
+  "patronStar": {
+    "askTitle": "The patron's coordinates",
+    "start": "Set course",
+    "startRow": "In orbit of a patron's home world"
+  },
+  "custom": {
+    "defaultName": "My Scenario",
+    "defaultFactionName": "The Free Company",
+    "bountyCrime": "Old warrants",
+    "startRow": "Wherever your scenario says",
+    "panelTitle": "Your scenarios",
+    "noneSaved": "No scenarios saved yet. Write one with New.",
+    "new": "New",
+    "edit": "Edit",
+    "duplicate": "Duplicate",
+    "delete": "Delete",
+    "reload": "Reload",
+    "folder": "Open folder",
+    "copyName": "{name} (copy)",
+    "deleteTitle": "Delete this scenario?",
+    "deleteBody": "{name} will be removed from the scenarios folder.",
+    "editorTitle": "Scenario editor",
+    "save": "Save scenario",
+    "saveBegin": "Save and begin",
+    "saved": "{name} written to the scenarios folder.",
+    "saveFailed": "The scenarios folder could not be written to.",
+    "sectionGeneral": "Scenario",
+    "sectionStart": "Starting point",
+    "sectionPurse": "Purse and record",
+    "sectionKit": "Kit",
+    "sectionArmy": "Army",
+    "sectionRoles": "Place in the world",
+    "sectionStanding": "Standing",
+    "sectionPerks": "Perks",
+    "name": "Name",
+    "description": "Description",
+    "descriptionHint": "What this scenario is about",
+    "where": "Begins",
+    "town": "Town",
+    "pick": "Choose",
+    "squareX": "World square X",
+    "squareY": "World square Y",
+    "cash": "Extra cash",
+    "bounty": "Bounty",
+    "knowledge": "Knowledge Points",
+    "levels": "Extra levels",
+    "addItem": "Add item",
+    "addWeapon": "Add weapon",
+    "addArmor": "Add armour",
+    "noItems": "Nothing beyond the usual supplies.",
+    "remove": "Remove",
+    "troops": "Troops",
+    "troopsFrom": "Drawn from",
+    "troopsLine": "{count} troops from {from}",
+    "mixed": "Every faction",
+    "upkeep": "Wages paid ahead",
+    "weeks": "{n} weeks",
+    "allegiance": "Member of",
+    "allegianceWhich": "Which one",
+    "memberNote": "A sworn member in good standing. Never the leader: the house keeps its own head.",
+    "mayor": "Mayor of",
+    "nobody": "Nowhere",
+    "mayorNote": "The sitting mayor resigns in your favour, and the world's history records it. You begin in that town.",
+    "party": "Political party",
+    "partyName": "Party name",
+    "partyUnnamed": "A name is rolled for it",
+    "creed": "Creed",
+    "partyNote": "The world holds one party of your own. If another savegame of this world already founded it, you join it instead.",
+    "faction": "Founded faction",
+    "factionWhich": "Which faction",
+    "factionName": "Faction name",
+    "motto": "Motto",
+    "swornUnder": "Sworn under",
+    "noFoundedFactions": "No savegame of this world has founded a faction yet. Choose Found a new one.",
+    "none": "None",
+    "standing": "Standing",
+    "addStanding": "Add standing",
+    "noStanding": "No standing changed.",
+    "perks": "Perks",
+    "start": {
+      "picker": "A city of your choice",
+      "town": "One named town",
+      "random": "A random square of the world",
+      "square": "An exact world square",
+      "tower": "The Omega Tower gate",
+      "space": "Aboard the ship, in Earth orbit",
+      "hypernet": "The Hypernet Point"
+    },
+    "allegianceKind": {
+      "none": "Nobody",
+      "faction": "A faction",
+      "hyperpower": "A hyperpower"
+    },
+    "mode": {
+      "none": "None",
+      "found": "Found a new one",
+      "join": "Join an existing one"
+    },
+    "perk": {
+      "augments": "Fitted with augments",
+      "cards": "A card collection",
+      "hyperdeck": "A complete Hyperdeck",
+      "crafting": "Crafting mastery",
+      "goblins": "Goblin looks"
+    }
   }
 }

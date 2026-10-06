@@ -2492,6 +2492,7 @@
       $gameSystem._awayFromShip = false;
       // First time aboard, the telescope's refit is pinned to the quest log.
       hubbleQuestOpen();
+      storyCrewAnnounce();
       // Entering spaceship interior sets the respawn point to the helm (map 721, x 28, y 10)
       const mapVar = (window.BSE && window.BSE.Params && window.BSE.Params.respawnMapVar) || 25;
       const xVar = (window.BSE && window.BSE.Params && window.BSE.Params.respawnXVar) || 26;
@@ -2503,6 +2504,27 @@
       $gameSystem._respawnPointSet = true;
     }
   };
+
+  // The story mode (switch 100) hands out the crew's ranks the first time the
+  // party boards the Starship: Bubba becomes the captain's vice, Em the deck
+  // scrubber. Shown once per save.
+  const STORY_MODE_SWITCH = 100;
+  function storyCrewAnnounce() {
+    if (typeof $gameSystem === "undefined" || !$gameSystem) return false;
+    if (typeof $gameSwitches === "undefined" || !$gameSwitches) return false;
+    if (!$gameSwitches.value(STORY_MODE_SWITCH)) return false;
+    if ($gameSystem._storyCrewAnnounced) return false;
+    $gameSystem._storyCrewAnnounced = true;
+    const toast = window.ParchmentToast;
+    if (!toast || typeof toast.show !== "function") return true;
+    const lines = [T('Galaxy.storyCrew.vice'), T('Galaxy.storyCrew.scrubber')];
+    const shows = lines.map((text, i) => () =>
+      toast.show(text, { severity: "good", duration: 300, key: "storyCrew" + i }));
+    if (typeof toast.group === "function") toast.group(shows);
+    else shows.forEach((fn) => fn());
+    return true;
+  }
+  window.GalaxySim.storyCrewAnnounce = storyCrewAnnounce;
 
   // ============================================================================
   // Procedural alien species. A living world (see currentAlienHasLife) hosts a

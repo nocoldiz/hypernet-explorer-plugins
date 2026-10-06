@@ -67,14 +67,18 @@
  *   Everyone starts at 0; Em starts at -92 and Bubba at +92 (docs/Lore.odt),
  *   and mid-date she sometimes turns on (or towards) a companion
  * - The first date that ends well (one of the good endings, or a bond of 0.45
- *   with Em) earns a parting gift: a Blade seed, handed over once per save and
+ *   with Em) earns a parting gift: an Expression seed, handed over once per save and
  *   remembered in $gameSystem._erisGiftGiven
- * - Em (switch 48, or an actor named Em in the party) gets a different date
- *   entirely: Eris drops the act and confesses the things docs/Lore.odt says she
- *   has never told anyone. Each secret is spent for good
- *   ($gameSystem._erisEmSecrets) so the next date goes further, and how far it
- *   got is written to $gameSystem._erisEmBond (0..1), which ErisTrial.js reads
- *   when it decides whether to convict her
+ * - The party leader decides the date. Em leading gets her own: chaotic,
+ *   cruel and tender at once, toxic beats where every answer can land sweet or
+ *   sour, the secrets docs/Lore.md says Eris has never told anyone (each spent
+ *   for good in $gameSystem._erisEmSecrets) and a bond that never reaches the
+ *   top ($gameSystem._erisEmBond, capped below 1, read by ErisTrial.js)
+ * - Bubba leading gets his: she is evasive and flees at first, then shy, then
+ *   slowly reconnects across dates ($gameSystem._erisBubbaBond, the field
+ *   ErisTrial.js reads). At the top she decides to stop becoming her future
+ *   self and turns Nibiru aside (switch 200), then the credits roll and the
+ *   adventure carries on
  *
  * Plugin Commands:
  * - Start Date: Begin a date at specified location
@@ -85,7 +89,7 @@
  *
  * @arg mood
  * @text Eris's Initial Mood
- * @desc Leave empty to roll one of the sixteen date moods; set one only to force it.
+ * @desc Ignored: the mood is always rolled, so no two dates open alike. Kept so old events still parse.
  * @type select
  * @option (random)
  * @value
@@ -196,7 +200,7 @@
   // The one thing she owns that a mortal cannot buy off her. She parts with it
   // at the end of the first evening that actually went well, once per save, and
   // never brings it up again.
-  const GIFT_ITEM_ID = 165; // Blade seed
+  const GIFT_ITEM_ID = 165; // Expression seed
   const GIFT_FLAG = "_erisGiftGiven";
 
   // What an evening out does for the party's Social meters (see _fillSocial).
@@ -257,6 +261,8 @@
     return [];
   };
   const pickFrom = (b) => pick(bank(b));
+  // A whole number in [lo, hi].
+  const rollRange = (range) => range[0] + Math.floor(Math.random() * (range[1] - range[0] + 1));
 
   // Resolves "{a|b|c}" groups innermost-first, so groups can nest.
   function vary(text) {
@@ -425,6 +431,112 @@
     }
   };
 
+  //=============================================================================
+  // Who is across the table
+  //=============================================================================
+  //
+  // The party LEADER is the one on the date, so the leader decides which date
+  // this is. It used to be "Em anywhere in the party", which gave a Bubba-led
+  // story party the Em date and left Bubba with no date at all. The switches
+  // only break the tie when the leader cannot be read: a story run has both
+  // dossier switches on (48 Em, 49 Bubba), so they never decide on their own.
+  const ErisDateRoute = {
+    // 'em', 'bubba' or null for an ordinary date.
+    who() {
+      const leader = window.$gameParty && $gameParty.leader && $gameParty.leader();
+      const name = leader && typeof leader.name === 'function' ? leader.name() : null;
+      if (name === 'Em') return 'em';
+      if (name === 'Bubba') return 'bubba'; // i18n-ignore: actor name match
+      if (!name && window.$gameSwitches) {
+        const em = $gameSwitches.value(48), bubba = $gameSwitches.value(49);
+        if (em && !bubba) return 'em';
+        if (bubba && !em) return 'bubba';
+      }
+      return null;
+    }
+  };
+
+  // Em can never take the whole of her. Opinion on an Em date stops short of
+  // the top of the meter and the bond ErisTrial reads stops short of 1: when an
+  // evening gets that close, she breaks it herself (ErisDate.emCeiling).
+  const EM_OPINION_CAP = 880;
+  const EM_BOND_CAP = 0.9;
+  // How an Em date moves: big, and never in a straight line.
+  const EM_SWEET_GAIN = [40, 90];
+  const EM_SOUR_LOSS = [30, 80];
+  const EM_CEILING_DROP = [60, 140];
+  // Odds a toxic beat lands sweet, by Em's answer (0 tender, 1 bite back,
+  // 2 provoke, 3 walk away), nudged by her mood below.
+  const EM_SWEET_ODDS = [0.5, 0.6, 0.55, 0.4];
+  const EM_DATE_MOODS = ['nervous', 'smug', 'paranoid', 'crazed', 'melancholy', 'romantic', 'chaotic', 'guilty'];
+
+  // Bubba. The other half of the grudge (docs/Lore.md): the man she left in
+  // December 1992 so the paradox would not have to go through him. Dating him
+  // she starts out unable to stay in the room and climbs back to him one
+  // evening at a time. How far she has come is $gameSystem._erisBubbaBond
+  // (0..1, the same field ErisTrial reads), what she has admitted to him is
+  // $gameSystem._erisBubbaTold, and the night it reaches the top she decides to
+  // stop becoming her future self and turns Nibiru aside: switch 200, the
+  // world where the Earth is spared (GalaxySim_Core), then the credits.
+  const ErisBubbaState = {
+    bond() {
+      if (!window.$gameSystem) return 0;
+      return Math.max(0, Math.min(1, Number($gameSystem._erisBubbaBond) || 0));
+    },
+    setBond(value) {
+      if (!window.$gameSystem) return;
+      $gameSystem._erisBubbaBond = Math.max(0, Math.min(1, Number(value) || 0));
+    },
+    told() {
+      if (!window.$gameSystem) return [];
+      if (!$gameSystem._erisBubbaTold) $gameSystem._erisBubbaTold = [];
+      return $gameSystem._erisBubbaTold;
+    },
+    tell(key) {
+      const told = this.told();
+      if (key && told.indexOf(key) < 0) told.push(key);
+    },
+    finaleDone() {
+      return !!(window.$gameSystem && $gameSystem._erisBubbaFinale);
+    },
+    markFinale() {
+      if (window.$gameSystem) $gameSystem._erisBubbaFinale = true;
+    }
+  };
+  window.ErisBubbaDate = ErisBubbaState;
+
+  // Where she is with him, by bond. Each stage owns its openings, its rounds,
+  // its endings, the mood she arrives in and how likely she is to bolt.
+  const BUBBA_STAGES = [
+    { key: 'evasive', below: 0.2, rounds: 2, flee: 0.55, moods: ['nervous', 'paranoid', 'psychedOut'], tone: 'serious' },
+    { key: 'shy', below: 0.4, rounds: 3, flee: 0.25, moods: ['nervous', 'guilty', 'melancholy'], tone: 'serious' },
+    { key: 'thawing', below: 0.62, rounds: 3, flee: 0, moods: ['melancholy', 'caring', 'playful'], tone: 'normal' },
+    { key: 'open', below: 0.85, rounds: 3, flee: 0, moods: ['caring', 'romantic', 'playful'], tone: 'normal' },
+    { key: 'reunited', below: Infinity, rounds: 3, flee: 0, moods: ['romantic', 'caring'], tone: 'normal' }
+  ];
+  function bubbaStageFor(bond) {
+    return BUBBA_STAGES.find(s => bond < s.below) || BUBBA_STAGES[BUBBA_STAGES.length - 1];
+  }
+  // Bond points (hundredths) each of Bubba's answers is worth, by stage.
+  // Answer 0 is patience, 1 a shared memory, 2 pressing her, 3 a joke. Early on
+  // pressing her drives her off; once she has thawed it is what she needs.
+  const BUBBA_ROUND_GAIN = {
+    evasive: [3, 2, -3, 2],
+    shy: [3, 3, -2, 2],
+    thawing: [2, 4, 1, 2],
+    open: [3, 4, 3, 2],
+    reunited: [3, 3, 3, 3]
+  };
+  // What any evening is worth for showing up, finished or fled.
+  const BUBBA_DATE_BASE = 0.02;
+  const BUBBA_FLED_BASE = 0.01;
+  // Her confessions, in the order she can bear to make them.
+  const BUBBA_CONFESSIONS = ['radio', 'safes', 'papers', 'december', 'em', 'throne', 'future'];
+  // Where the bond stops while she still has things she has not told him.
+  const BUBBA_UNTOLD_CEILING = 0.97;
+  const SWITCH_EARTH_SPARED = 200;
+  const SWITCH_EARTH_LOST = 199;
+
   // What she remembers of the evenings already spent ($gameSystem, per save).
   // Each finished date leaves a record, and later dates bring them up: the
   // biome it happened in, whether it went anywhere, what was dared and whether
@@ -483,6 +595,25 @@
   // warm reply, index 1 the honest one, index 2 the one that costs her.
   const EM_SECRET_REPLIES = () => dateBank('ErisDate.emSecretReplies');
 
+  // The toxic beats of an Em date, the walls she hits when it gets too close,
+  // and how a good evening with her ends.
+  const EM_TOXIC = () => dateBank('ErisDate.emToxic');
+  const EM_CEILING = () => dateBank('ErisDate.emCeiling');
+  const EM_FINALE_HIGH = () => dateBank('ErisDate.emFinaleHigh');
+  const EM_FINALE_REACTIONS = () => dateBank('ErisDate.emFinaleReactions');
+
+  // Everything the Bubba date says, by stage.
+  const BUBBA_DATE = () => dateBank('ErisDate.bubbaDate') || {};
+
+  // The credits, played over the map once the book spread has faded out.
+  // Scene_Credits pops itself when the roll ends or on Cancel, which drops the
+  // player back on the map where the date happened.
+  function rollCredits() {
+    const Credits = window.Scene_Credits;
+    if (!Credits || typeof SceneManager === 'undefined') return;
+    setTimeout(() => SceneManager.push(Credits), 300);
+  }
+
   // While the book spread is open the player must not walk away from the date
   // or open the pause menu over it (the DOM message box used to block both).
   let dateActive = false;
@@ -510,23 +641,40 @@
       this.mood = mood || null;
       this.opinion = $gameVariables.value(opinionVariableId) || 500;
 
-      // Is it the witch across the table? Everything below reads differently.
-      this.isEm = ErisEmState.inPlay();
+      // Who is across the table: Em, Bubba, or anybody else. Each of the two
+      // she has history with gets a date of their own.
+      this.route = ErisDateRoute.who();
+      this.isEm = this.route === 'em';
+      this.isBubba = this.route === 'bubba';
       this.secretsToldNow = 0;
       // Set by whichever ending the evening earns; only the good ones set it,
       // and only a set one buys the parting gift.
       this._wentWell = false;
 
-      // The register the whole evening is played in. Em always gets the
-      // sincere one: with her, Eris is not performing.
-      this.tone = this.isEm ? 'serious' : rollTone();
+      // Where she is with Bubba decides how the evening goes, before anything
+      // else is rolled. The meter shows that bond, not the general opinion.
+      if (this.isBubba) {
+        this._bubbaBondStart = ErisBubbaState.bond();
+        this._bubbaPoints = 0;
+        this.stage = bubbaStageFor(this._bubbaBondStart);
+        this.opinion = Math.round(this._bubbaBondStart * 1000);
+      }
+
+      // The register the whole evening is played in. With Em it is sincere or
+      // unhinged, never ordinary; with Bubba it follows where they are.
+      if (this.isEm) this.tone = Math.random() < 0.55 ? 'serious' : 'bonkers';
+      else if (this.isBubba) this.tone = this.stage.tone;
+      else this.tone = rollTone();
       this._tuning = TONE_TUNING[this.tone] || TONE_TUNING.normal;
-      if (this.isEm) this.mood = 'nervous';
+      if (this.isEm) this.mood = pick(EM_DATE_MOODS);
+      else if (this.isBubba) this.mood = pick(this.stage.moods);
       else if (DATE_MOODS.indexOf(this.mood) < 0) this.mood = pick(DATE_MOODS);
+      if (this.isEm) this.opinion = Math.min(this.opinion, EM_OPINION_CAP);
 
       // One of several framings an evening in this biome can take, or none.
+      // The two dates of her own history take place in no scenario.
       const scenarioKeys = Object.keys(SCENARIOS() || {});
-      this.scenario = (!this.isEm && scenarioKeys.length && Math.random() < 0.65)
+      this.scenario = (!this.route && scenarioKeys.length && Math.random() < 0.65)
         ? pick(scenarioKeys) : null;
 
       // Once-per-date beats and the token wells _fillTokens draws from.
@@ -614,6 +762,11 @@
           await this.emDate();
           return;
         }
+        // With Bubba she is barely able to stay in the room, at first.
+        if (this.isBubba) {
+          await this.bubbaDate();
+          return;
+        }
 
         // She remembers the last evenings, and says so.
         await this.maybeCallback(0.65);
@@ -642,6 +795,9 @@
       } finally {
         // Never strand the player behind a half-open book spread.
         this.cleanup();
+        // The night she turns Nibiru aside the story has an ending: the credits
+        // roll over the map and pop back to it, and the adventure carries on.
+        if (this._rollCredits) rollCredits();
       }
     }
 
@@ -842,37 +998,71 @@
     // a second date starts where the first one stopped, and how far it got is
     // written to $gameSystem._erisEmBond, which ErisTrial reads in court.
     async emDate() {
-      const t = this._t();
-
-      const opening = pickFrom(EM_DATE_OPENINGS());
-      for (const line of opening) {
-        await this.showErisDialogue(line);
-      }
+      await this.playBeats(pickFrom(EM_DATE_OPENINGS()) || []);
       await this.showNarration(this.scene.gift);
 
-      // Three rounds. Each one is either a secret (if the evening has earned
-      // one) or ordinary talk, with an incident dropped in between.
-      for (let round = 0; round < 3; round++) {
+      // Four rounds. Each one is a toxic beat, or a secret when the evening
+      // has earned one, with an incident or a jab of her mood in between.
+      for (let round = 0; round < 4; round++) {
         const secret = this.nextEmSecret();
-        // She opens up further as the evening goes well; a bad reply shuts the
-        // next one down.
-        const earned = secret && this.opinion >= 250 + round * 150;
-        if (earned) {
-          await this.tellEmSecret(secret);
-        } else {
-          await this.showErisDialogue(pickFrom(DATE_SMALL_TALK()));
-          const replies = T.pool('ErisDate.bank.emDate.replies');
-          const choice = await this.presentChoice(replies, [40, 40, 20]);
-          if (choice === 1) this.playerTraits.thoughtful++;
-          if (choice === 0) this.playerTraits.romantic++;
-          if (choice === 2) this.playerTraits.bold++;
-        }
-        await this.maybeIncident(0.6);
+        const earned = secret && this.opinion >= 250 + round * 120 && Math.random() < 0.6;
+        if (earned) await this.tellEmSecret(secret);
+        else await this.emToxicBeat();
+        await this.maybeIncident(0.5);
       }
 
       await this.emFinale();
       await this.emEnding();
       await this.maybeGiveGift();
+    }
+
+    // One beat of the two of them: she does something unforgivable or
+    // unbearably tender (often both), Em answers, and whether it lands sweet or
+    // sour is a roll of Em's answer and Eris's mood. The swings are big on
+    // purpose: nothing between them moves in a straight line.
+    async emToxicBeat() {
+      const scenes = bank(EM_TOXIC());
+      if (!scenes.length) return;
+      this._emScenesSeen = this._emScenesSeen || [];
+      let scene = pick(scenes);
+      for (let tries = 0; tries < 8 && this._emScenesSeen.indexOf(scene) >= 0; tries++) scene = pick(scenes);
+      this._emScenesSeen.push(scene);
+
+      await this.playBeats(scene.prompt || []);
+      const idx = await this._showChoicesDOM(scene.choices || []);
+      this._choicesMade.push(idx);
+
+      let odds = EM_SWEET_ODDS[idx] !== undefined ? EM_SWEET_ODDS[idx] : 0.5;
+      if ((this.mood === 'romantic' || this.mood === 'melancholy') && idx === 0) odds += 0.2;
+      if (this.mood === 'crazed' || this.mood === 'chaotic') odds += (idx === 1 || idx === 2) ? 0.15 : -0.1;
+      if (this.mood === 'paranoid' && idx === 3) odds -= 0.2;
+      if (this.mood === 'smug' && idx === 1) odds += 0.15;
+      const sweet = Math.random() < odds;
+
+      const traits = ['romantic', 'chaotic', 'bold', 'thoughtful'];
+      this.playerTraits[traits[idx] || 'chaotic'] += 1;
+      if (sweet) {
+        this.changeOpinion(rollRange(EM_SWEET_GAIN));
+        this._bumpHearts(10 + Math.random() * 10, 14 + Math.random() * 14);
+        if (idx === 0) this.conversationFlags.showedVulnerability = true;
+        if (idx === 1) this.conversationFlags.madeHerLaugh = true;
+      } else {
+        this.changeOpinion(-rollRange(EM_SOUR_LOSS));
+        this._bumpHearts(12 + Math.random() * 8, 6 + Math.random() * 10);
+        if (idx === 2) this.conversationFlags.challengedHer = true;
+      }
+      await this.playBeats(((sweet ? scene.sweet : scene.sour) || [])[idx] || []);
+      await this.emCheckCeiling();
+    }
+
+    // She never lets it reach the top. The moment it does she breaks it
+    // herself, and the meter falls back.
+    async emCheckCeiling() {
+      if (this.opinion < EM_OPINION_CAP) return;
+      await this.playBeats(pickFrom(EM_CEILING()) || []);
+      this.opinion = Math.max(0, EM_OPINION_CAP - rollRange(EM_CEILING_DROP));
+      this._bumpHearts(8, 18);
+      this._updateSheet();
     }
 
     // The next thing she has never told Em, or null once they are all spent.
@@ -882,9 +1072,7 @@
     }
 
     async tellEmSecret(secret) {
-      const t = this._t();
-
-      for (const line of secret.lines) {
+      for (const line of secret.lines || []) {
         await this.showErisDialogue(line);
       }
 
@@ -909,34 +1097,33 @@
         this.conversationFlags.challengedHer = true;
         await this.showErisDialogue(T('ErisDate.line.noYouReRightIt'));
       }
+      await this.emCheckCeiling();
     }
 
-    // Where the evening lands: Bubba, the future self, and what she wants Em to
-    // do with any of it.
+    // Where the evening lands. High, she says the nearest thing to love she
+    // is allowed and Em answers it; lower, she sends her back to the camper.
     async emFinale() {
-      const t = this._t();
       await this.showNarration(T('ErisDate.line.forALongMomentNeither'));
 
       if (this.opinion >= 700) {
-        const lines = T.pool('ErisDate.bank.emFinale.lines');
-        for (const line of lines) await this.showErisDialogue(line);
-        await this.presentChoice(T.pool('ErisDate.bank.emFinale.lines'),
-          [60, 40, 60]);
+        await this.playBeats(bank(EM_FINALE_HIGH()));
+        const idx = await this.presentChoice(T.pool('ErisDate.bank.emFinale.lines'), [30, 20, 30]);
+        const reactions = bank(EM_FINALE_REACTIONS());
+        if (reactions[idx]) await this.playBeats(reactions[idx]);
+        await this.emCheckCeiling();
       } else if (this.opinion >= 400) {
-        const lines = T.pool('ErisDate.bank.emFinale.lines2');
-        for (const line of lines) await this.showErisDialogue(line);
+        for (const line of T.pool('ErisDate.bank.emFinale.lines2')) await this.showErisDialogue(line);
       } else {
-        const lines = T.pool('ErisDate.bank.emFinale.lines3');
-        for (const line of lines) await this.showErisDialogue(line);
+        for (const line of T.pool('ErisDate.bank.emFinale.lines3')) await this.showErisDialogue(line);
       }
     }
 
     // Writes the bond ErisTrial reads. Opinion carries most of it; the secrets
     // she has actually said out loud carry the rest, and those never reset.
+    // It never reaches 1: there is always a last wall between them.
     async emEnding() {
-      const t = this._t();
       const toldTotal = ErisEmState.told().length;
-      const bond = Math.max(0, Math.min(1,
+      const bond = Math.max(0, Math.min(EM_BOND_CAP,
         (this.opinion / 1000) * 0.6 + (toldTotal / EM_SECRETS().length) * 0.4
       ));
       ErisEmState.setBond(bond);
@@ -955,6 +1142,163 @@
       }
 
       this._recordDateMemory();
+    }
+
+    //=========================================================================
+    // The Bubba date
+    //=========================================================================
+    //
+    // The man she left so a paradox would not have to go through him. Early on
+    // she cannot stay at the table and flees in a different way every time;
+    // patience brings her back a little further each evening, shared memories
+    // further still once she has thawed, and pushing her only works once she
+    // is ready to be pushed. The bond climbs across dates
+    // ($gameSystem._erisBubbaBond), and the evening it reaches the top is the
+    // last one of the old story.
+    async bubbaDate() {
+      const B = BUBBA_DATE();
+      const stageKey = this.stage.key;
+      await this.playBeats(pick(bank((B.openings || {})[stageKey])) || []);
+      if (stageKey !== 'evasive') await this.showNarration(this.scene.gift);
+
+      let fled = false;
+      const rounds = bank((B.rounds || {})[stageKey]).slice().sort(() => Math.random() - 0.5);
+      const count = Math.min(this.stage.rounds, rounds.length);
+      for (let r = 0; r < count; r++) {
+        const idx = await this.bubbaRound(rounds[r], stageKey);
+        // Early on every round is a chance for her to bolt. Patience halves
+        // it; pressing her doubles it.
+        if (this.stage.flee > 0 && r < count - 1) {
+          let flee = this.stage.flee;
+          if (idx === 0) flee *= 0.5;
+          if (idx === 2) flee *= 2;
+          if (Math.random() < flee) { fled = true; break; }
+        }
+        // Once she has opened up she confesses: one thing an evening, two
+        // once they have found each other again.
+        if ((stageKey === 'open' && r === 0) || (stageKey === 'reunited' && (r === 0 || r === 2))) {
+          await this.bubbaConfession();
+        }
+      }
+
+      if (fled) await this.playBeats(pickFrom(B.flights) || []);
+      else await this.playBeats(pick(bank((B.endings || {})[stageKey])) || []);
+
+      await this.bubbaEnding(fled);
+    }
+
+    // One exchange: her prompt, his four answers, her reaction to the one he
+    // picked. Returns the index so the caller can weigh it.
+    async bubbaRound(round, stageKey) {
+      if (!round) return 0;
+      await this.playBeats(round.prompt || []);
+      const idx = await this._showChoicesDOM(round.choices || []);
+      this._choicesMade.push(idx);
+      const gain = (BUBBA_ROUND_GAIN[stageKey] || [])[idx] || 0;
+      this._bubbaGain(gain);
+      const traits = ['romantic', 'thoughtful', 'bold', 'chaotic'];
+      this.playerTraits[traits[idx] || 'thoughtful'] += 1;
+      this._bumpHearts(4 + Math.random() * 6, gain > 0 ? 6 + gain * 3 : 12);
+      await this.playBeats((round.reactions || [])[idx] || []);
+      return idx;
+    }
+
+    // The next thing she has never told him, said out loud.
+    async bubbaConfession() {
+      const B = BUBBA_DATE();
+      const told = ErisBubbaState.told();
+      const key = BUBBA_CONFESSIONS.find(k => told.indexOf(k) < 0);
+      const lines = key ? bank((B.confessions || {})[key]) : [];
+      if (!lines.length) return;
+      for (const line of lines) await this.showErisDialogue(line);
+      ErisBubbaState.tell(key);
+      this.conversationFlags.sharedSecret = true;
+      const idx = await this._showChoicesDOM(bank(B.confessionReplies));
+      this._choicesMade.push(idx);
+      this._bubbaGain([4, 3, 1][idx] || 0);
+      await this.playBeats(bank(B.confessionReactions)[idx] || []);
+    }
+
+    // Bond points earned this evening move the meter as they come.
+    _bubbaGain(points) {
+      this._bubbaPoints += Number(points) || 0;
+      const bond = Math.max(0, Math.min(1, this._bubbaBondStart + this._bubbaPoints / 100));
+      this.opinion = Math.round(bond * 1000);
+      this._updateSheet();
+    }
+
+    // Banks the evening, says whether it moved them, and, the night the bond
+    // reaches the top, plays the end of the story.
+    async bubbaEnding(fled) {
+      const B = BUBBA_DATE();
+      const before = this._bubbaBondStart;
+      const earned = this._bubbaPoints / 100 + (fled ? BUBBA_FLED_BASE : BUBBA_DATE_BASE);
+      // A fled evening still counts for showing up, never against him. The
+      // top is out of reach until she has told him everything: the ending is
+      // built on what she confessed.
+      const toldAll = BUBBA_CONFESSIONS.every(k => ErisBubbaState.told().indexOf(k) >= 0);
+      const ceiling = toldAll ? 1 : BUBBA_UNTOLD_CEILING;
+      const after = Math.max(fled ? before : 0, Math.min(ceiling, before + earned));
+      ErisBubbaState.setBond(after);
+      this.opinion = Math.round(after * 1000);
+      this._updateSheet();
+      this._wentWell = !fled && after > before;
+
+      const progress = B.progress || {};
+      if (after > before + 0.005) await this.playBeats([pickFrom(progress.up)].filter(Boolean));
+      else if (after < before - 0.005) await this.playBeats([pickFrom(progress.down)].filter(Boolean));
+
+      this._recordDateMemory();
+      if (after >= 1 && !fled && !ErisBubbaState.finaleDone()) await this.bubbaFinale();
+    }
+
+    // The end of the old story. She will stop becoming the woman with the
+    // spear, so the paradox can unpick itself, and she bends the odds one last
+    // time so Nibiru misses the Earth: switch 200, the spared world
+    // (GalaxySim_Core reads it on 21 December 2012). Then the credits, and the
+    // adventure goes on from wherever the camper is parked.
+    async bubbaFinale() {
+      const F = BUBBA_DATE().finale || {};
+      ErisBubbaState.markFinale();
+      await this.playBeats(bank(F.intro));
+      await this.playBeats(bank(F.speech));
+      const idx = await this._showChoicesDOM(bank(F.choices));
+      await this.playBeats(bank(F.reactions)[idx] || []);
+
+      // Too late if the impact has already happened in this world.
+      const lost = (window.$gameSwitches && $gameSwitches.value(SWITCH_EARTH_LOST)) ||
+        (window.$gameSystem && $gameSystem._gxNibiruOutcome === 'omega');
+      if (lost) {
+        await this.playBeats(bank(F.nibiruLate));
+      } else {
+        if (window.$gameSwitches) $gameSwitches.setValue(SWITCH_EARTH_SPARED, true);
+        await this.playBeats(bank(F.nibiru));
+      }
+      await this.playBeats(bank(F.credits));
+      this._rollCredits = true;
+    }
+
+    // Plays a list of beats: "~ " lines are narration, "@shake" and "@flash"
+    // are things that happen to the page, anything else is her speaking.
+    async playBeats(beats) {
+      for (const beat of beats || []) {
+        if (typeof beat !== 'string' || !beat) continue;
+        if (beat === '@shake' || beat === '@flash') { this._pageFx(beat.slice(1)); continue; }
+        if (beat.indexOf('~ ') === 0) await this.showNarration(beat.slice(2));
+        else await this.showErisDialogue(beat);
+      }
+    }
+
+    // The book spread itself reacts: a jolt, or a white flash over the pages.
+    _pageFx(kind) {
+      const el = this._container && this._container.querySelector &&
+        this._container.querySelector('.book-spread');
+      if (!el) return;
+      const cls = kind === 'flash' ? 'eris-fx-flash' : 'eris-fx-shake';
+      el.classList.remove(cls);
+      void el.offsetWidth; // restarts the animation when it is already running
+      el.classList.add(cls);
+      setTimeout(() => el.classList.remove(cls), 700);
     }
 
     getLocationIntro() {
@@ -1756,11 +2100,12 @@
         dareRefused: this._dareRefused,
         eldritch: this.isEldritch(),
         em: this.isEm,
+        bubba: !!this.isBubba,
         minute: window.$gameVariables ? $gameVariables.value(114) : 0
       });
     }
 
-    // The first evening that ends well, she hands over a Blade seed: the one
+    // The first evening that ends well, she hands over an Expression seed: the one
     // irreversible thing a goddess of discord has any patience for. Once per
     // save, whoever she spent it on, so the flag lives beside the opinion.
     async maybeGiveGift() {
@@ -2012,7 +2357,7 @@
             <div class="ui-chip-row">
               <span class="ui-chip" id="eris-mood-badge">${moodIconHTML(this.mood)} ${this._moodLabel()}</span>
               <span class="ui-chip">${this._locationLabel()}</span>
-              <span class="ui-chip">${T('ErisDate.hud.tone')}: ${this._toneLabel()}</span>
+              <span class="ui-chip">${T('ErisDate.hud.tone')}: ${this._toneLabel()}</span>${this._stageChipHTML()}
             </div>
             <div class="eris-meter">
               <div class="meter-label">${erisIconHTML(OPINION_ICON, 16)} ${T('ErisDate.line.opinion')}</div>
@@ -2054,6 +2399,13 @@
       }
       const value = Math.round(bpm);
       return `<span class="eris-pulse-icon" style="--pulse-rate:${(60 / value).toFixed(2)}s">${erisIconHTML(OPINION_ICON, 16)}</span> ${value} ${T('ErisDate.hud.bpm')}`;
+    }
+
+    // The stage of the Bubba date, as a chip beside the tone. Empty otherwise.
+    _stageChipHTML() {
+      if (!this.isBubba || !this.stage) return '';
+      const labels = (BUBBA_DATE().stageLabels) || {};
+      return `<span class="ui-chip">${T('ErisDate.hud.stage')}: ${labels[this.stage.key] || this.stage.key}</span>`;
     }
 
     _toneLabel() {
@@ -2108,7 +2460,10 @@
 
     _speakerLabel(who) {
       const t = this._t();
-      if (who === 'player') return T('ErisDate.line.you');
+      if (who === 'player') {
+        const leader = this.route && window.$gameParty && $gameParty.leader && $gameParty.leader();
+        return leader ? leader.name() : T('ErisDate.line.you');
+      }
       if (who === 'narrator') return '';
       // Her name is a proper noun in every language; while the eldritch mood
       // holds even the letters do not sit still.
@@ -2338,8 +2693,9 @@
     cleanup() {
       dateActive = false;
       this._fillSocial();
-      // Persist the opinion even if the date was cut short by an error.
-      $gameVariables.setValue(opinionVariableId, this.opinion);
+      // Persist the opinion even if the date was cut short by an error. The
+      // Bubba meter is the bond with him, kept on its own field instead.
+      if (!this.isBubba) $gameVariables.setValue(opinionVariableId, this.opinion);
       this._removeDateUI();
     }
   }
@@ -2355,9 +2711,10 @@
     // "location" an old event still passes is ignored on purpose.
     const location = resolveDateBiome(null);
 
-    // The mood is rolled by the constructor from the full date-only pool; the
-    // command's mood argument survives only for events that force one.
-    const date = new ErisDate(location, DATE_MOODS.includes(args.mood) ? args.mood : null);
+    // The mood is rolled by the constructor from the full date-only pool. The
+    // command's old mood argument is ignored: every event in the game forced
+    // one, so every evening opened the same way. The sandbox can still force.
+    const date = new ErisDate(location, null);
     date.startDate().catch(e => {
       console.error('[ErisDateSystem] date failed', e);
       date.cleanup();

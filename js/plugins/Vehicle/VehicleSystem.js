@@ -2618,6 +2618,21 @@
     specs.forEach((name) => window.SpecializationXP.award(name, 1, opts));
   };
 
+  // ---- No vehicle theme ----------------------------------------------------
+  // Riding plays no music of its own: the map's track carries on through
+  // boarding, driving and getting off, and a map entered at the wheel starts
+  // its own BGM exactly as it would on foot (the core only saved it for later).
+  Game_Vehicle.prototype.playBgm = function () {};
+  Game_System.prototype.replayWalkingBgm = function () {};
+
+  const _Game_Map_autoplay_vehicle = Game_Map.prototype.autoplay;
+  Game_Map.prototype.autoplay = function () {
+    _Game_Map_autoplay_vehicle.call(this);
+    if ($dataMap.autoplayBgm && $gamePlayer.isInVehicle()) {
+      AudioManager.playBgm($dataMap.bgm);
+    }
+  };
+
   const _Game_Vehicle_getOn = Game_Vehicle.prototype.getOn;
   Game_Vehicle.prototype.getOn = function () {
     const result = _Game_Vehicle_getOn.call(this);
@@ -3325,8 +3340,11 @@
     vehicle.setLocation(0, vehicle.x, vehicle.y);
     VehiclePosition.set(VehiclePosition.keyForConfig(config), 0, vehicle.x, vehicle.y);
 
+    // Summoning never spends the item (it is the proof of ownership and stays in
+    // the pack), so only hand one back when the party truly lacks it. Otherwise
+    // every summon and pick up would mint another copy.
     const item = $dataItems[config.summonItemId];
-    if (item) {
+    if (item && !$gameParty.hasItem(item)) {
       $gameParty.gainItem(item, 1);
     }
 
@@ -5021,6 +5039,8 @@
     cache: mapCache,
     manager: vehicleManager,
     ownsVehicleKey(key) { return ownsVehicleKey(key); },
+    // Stows a parked bike or broom back into the pack (the "Pick up" choice).
+    pickUpVehicle(vehicle) { return pickUpVehicle(vehicle); },
 
     // Whether the party leader's class is `<Nature: Magical>`, the answer that
     // dresses every broom rider in the pointed hat. The 3D world asks it too

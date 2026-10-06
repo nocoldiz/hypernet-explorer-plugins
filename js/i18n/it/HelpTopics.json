@@ -163,9 +163,9 @@
       "title": "Grimori e manuali di abilità",
       "description": "Un [grimorio] si apre su una manciata di formule, e un lettore può prenderne una. Le offerte restano fisse una volta aperto il libro: chiuderlo o cambiare lettore non le cambia.\n\nUn lettore può prendere solo una formula per cui è pronto, con abbastanza MP e le giuste [statistiche | progressLoadout]. Le pagine proibite chiedono di più.\n\nLa fortuna, la [PSI | partyAttributes] del gruppo, rende più probabili le pagine oscure. Oltre ai grimori delle scuole e ai manuali c'è il [Grimorio proibito], che non offre altro."
     },
-    "progressBladeSeeds": {
-      "title": "Blade Seeds",
-      "description": "Un [Blade Seed] è un'arma spirituale legata al fondatore del tuo gruppo. Scegli un'arma seme, una per ogni tipo di arma.\n\nIl suo spirito cresce con l'[esperienza | progressLevels] del fondatore e si evolve con lui. I suoi doni funzionano solo mentre impugni l'arma, e ogni colpo normale insegna allo spirito qualcosa di nuovo."
+    "progressExpressionSeeds": {
+      "title": "Semi dell'Espressione",
+      "description": "Un [Seme dell'Espressione] si usa su un personaggio dallo zaino e ne sblocca l'Espressione. Non funziona su chi la possiede già.\n\nIl pulsante Espressioni nella pagina destra dei banchi delle abilità elenca chi nel gruppo ha l'Espressione sbloccata, e resta grigio finché nessuno la possiede."
     },
     "gearSlots": {
       "title": "Equipaggiamento: mani e slot",
@@ -573,7 +573,7 @@
     },
     "lawEris": {
       "title": "Uscire con Eris",
-      "description": "Puoi portare [Eris | eris] ad [appuntamenti], e non esistono due serate uguali.\n\nOgni appuntamento si svolge da qualche parte nel mondo, e il [bioma | worldBiomes] gli dà forma: un picnic, una seduta spiritica, un appostamento e altro ancora. Il suo [umore] non è mai certo: giocoso, romantico, paranoico, profetico, o peggio. Nei suoi umori [eldritch], le cose smettono di avere senso.\n\nPuò interrompere la serata con delle [sfide], alcune decisamente contro la legge. Due battiti sullo schermo mostrano come state entrambi. Prova qualcosa di diverso per [ogni membro del gruppo], e può rivolgere le sue attenzioni a uno dei tuoi compagni.\n\nIl primo appuntamento che finisce bene porta un [seme di lama | progressBladeSeeds]."
+      "description": "Puoi portare [Eris | eris] ad [appuntamenti], e non esistono due serate uguali.\n\nOgni appuntamento si svolge da qualche parte nel mondo, e il [bioma | worldBiomes] gli dà forma: un picnic, una seduta spiritica, un appostamento e altro ancora. Il suo [umore] non è mai certo: giocoso, romantico, paranoico, profetico, o peggio. Nei suoi umori [eldritch], le cose smettono di avere senso.\n\nPuò interrompere la serata con delle [sfide], alcune decisamente contro la legge. Due battiti sullo schermo mostrano come state entrambi. Prova qualcosa di diverso per [ogni membro del gruppo], e può rivolgere le sue attenzioni a uno dei tuoi compagni.\n\nIl primo appuntamento che finisce bene porta un [seme dell'Espressione | progressExpressionSeeds]."
     },
     "societyMail": {
       "title": "La posta",

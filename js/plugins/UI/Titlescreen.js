@@ -1119,6 +1119,32 @@
         return LIMINAL_VEHICLES.filter(v => !v.key || (VM && VM.has(v.key)) || v.key === 'broom');
     }
 
+    // The biomes a free-play rod can be cast in: every whole biome in the
+    // catalogue, read through BiomeNames so the page speaks the player's
+    // language. Road and river pieces ("Road t-up") are filed under their
+    // first word by the fishing scenery anyway, rooms already have the
+    // Indoors venue, and a patron's vault is somebody's reward, not a lake.
+    function fishingBiomes() {
+        const list = (window.WorldGen && Array.isArray(window.WorldGen.Biomes)) ? window.WorldGen.Biomes : [];
+        const names = window.BiomeNames;
+        const seen = new Set();
+        const out = [];
+        for (const b of list) {
+            const id = b && typeof b.name === 'string' ? b.name : '';
+            if (!id || /\s/.test(id) || /Inside$/.test(id) || id === 'PatronVault' || seen.has(id)) continue;
+            seen.add(id);
+            out.push({
+                id: id,
+                label: names && names.display ? names.display(id) : id,
+                color: /^#[0-9a-f]{6}$/i.test(b.color || '') ? b.color : null
+            });
+        }
+        const collator = (typeof Intl !== 'undefined' && Intl.Collator)
+            ? new Intl.Collator(ConfigManager.language || 'en') : null;
+        return out.sort((a, b) => collator ? collator.compare(a.label, b.label)
+                                           : String(a.label).localeCompare(String(b.label)));
+    }
+
     function timeModeId(name, fallback) {
         const modes = window.SkyRenderer && window.SkyRenderer.TIME_MODES;
         return (modes && typeof modes[name] === 'number') ? modes[name] : fallback;
@@ -1150,7 +1176,7 @@
             { name: T('Titlescreen.minigame.chess'),                   avail: () => hasCmd('ChessGame', 'startNormalChess'), run: s => PluginManager.callCommand(s, 'ChessGame', 'startNormalChess', {}) },
             { name: T('Titlescreen.minigame.bowling'),                 avail: () => hasScene('Scene_BowlingMinigame'),   run: s => SceneManager.push(window.Scene_BowlingMinigame) },
             { name: T('Titlescreen.minigame.basketball'),              avail: () => hasScene('Scene_BasketballMinigame'), run: s => SceneManager.push(window.Scene_BasketballMinigame) },
-            { name: T('Titlescreen.minigame.fishing'),                 avail: () => hasScene('Scene_FishingMinigame'),   run: s => SceneManager.push(window.Scene_FishingMinigame), setup: true },
+            { name: T('Titlescreen.minigame.fishing'),                 avail: () => hasScene('Scene_FishingMinigame'),   run: s => SceneManager.push(window.Scene_FishingMinigame), setup: true, biomeSetup: true },
             { name: T('Titlescreen.minigame.slotMachine'),            avail: () => hasScene('Scene_SlotMachine'),       run: s => SceneManager.push(window.Scene_SlotMachine) },
             { name: T('Titlescreen.minigame.horseRace'),              avail: () => hasScene('Scene_HorseRace'),         run: s => SceneManager.push(window.Scene_HorseRace) },
             { name: T('Titlescreen.minigame.tarotReading'),           avail: () => hasCmd('AnimatedTarotReading', 'openTarot'), run: s => PluginManager.callCommand(s, 'AnimatedTarotReading', 'openTarot', {}) },
@@ -1223,8 +1249,8 @@
         return words[0][0] + words[1][0];
     }
 
-    function minigameThumb(name) {
-        const key = String(name);
+    function minigameThumb(name, color) {
+        const key = String(name) + (color ? '|' + color : '');
         if (MG_THUMB_CACHE[key]) return MG_THUMB_CACHE[key];
         let seed = mgHash(key);
         const rnd = () => {
@@ -1234,8 +1260,9 @@
         // One gold family, shifted a little per game, so a wall of covers still
         // reads as one cabinet rather than a bag of sweets.
         const hue = 34 + Math.floor(rnd() * 26);
-        const dim = `hsl(${hue}, 70%, 26%)`;
-        const lit = `hsl(${hue}, 88%, 62%)`;
+        // A biome card wears the biome's own map colour instead.
+        const dim = color || `hsl(${hue}, 70%, 26%)`;
+        const lit = color || `hsl(${hue}, 88%, 62%)`;
         const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${MG_THUMB_W}" height="${MG_THUMB_H}" viewBox="0 0 ${MG_THUMB_W} ${MG_THUMB_H}">`
             + `<rect width="${MG_THUMB_W}" height="${MG_THUMB_H}" fill="#0b0906"/>`
             + `<text x="${MG_THUMB_W / 2}" y="${MG_THUMB_H / 2}" fill="${lit}" font-family="monospace" font-size="34" font-weight="bold"`
@@ -1270,7 +1297,9 @@
             this._mode = 'list';
             this._pendingEntry = -1;
             this._pendingVenue = null;
+            this._pendingBiome = null;
             this._pendingVehicle = null;
+            this._biomes = null;
             const last = Scene_MinigameList._lastIndex || 0;
             this._selectedIndex = Math.min(last, this._entries.length);
             this._lastRenderKey = '';
@@ -1286,6 +1315,14 @@
                 return {
                     title: T('Titlescreen.minigameSetup.venueTitle'),
                     rows: WATER_VENUES.map(v => T(v.label))
+                };
+            }
+            if (this._mode === 'biome') {
+                const biomes = this.biomeOptions();
+                return {
+                    title: T('Titlescreen.minigameSetup.biomeTitle'),
+                    rows: biomes.map(b => b.label),
+                    covers: biomes.map(b => minigameThumb(b.label, b.color))
                 };
             }
             if (this._mode === 'time') {
@@ -1304,6 +1341,18 @@
                 title: T('Titlescreen.menuOverlay.minigames'),
                 rows: this._entries.map(e => e.name)
             };
+        }
+
+        // Read once per visit: the catalogue does not change under the picker.
+        biomeOptions() {
+            if (!this._biomes) this._biomes = fishingBiomes();
+            return this._biomes;
+        }
+
+        // The catalogue and the biome page are long enough to need a grid;
+        // the other setup pages are a handful of answers in one column.
+        isGridMode() {
+            return this._mode === 'list' || this._mode === 'biome';
         }
 
         createUIOverlay() {
@@ -1340,7 +1389,7 @@
                 + ` onmouseenter="SceneManager._scene && SceneManager._scene.onMinigameHover && SceneManager._scene.onMinigameHover(${i})"`
                 + ` onclick="SceneManager._scene && SceneManager._scene.onMinigameClick && SceneManager._scene.onMinigameClick(${i})"`;
 
-            if (this._mode === 'list') {
+            if (this.isGridMode()) {
                 // The catalogue is a grid, read left to right and top to bottom:
                 // one card per game, its cover above its name, the whole cabinet
                 // on screen at once. The stylesheet deals the columns (auto-fill
@@ -1352,7 +1401,7 @@
                            <div class="mg-card-label">${r.text}</div>
                        </div>`
                     : `<div class="mg-card" ${hooks(r.index)}>
-                           <img class="mg-card-cover" src="${minigameThumb(page.rows[r.index])}" alt="">
+                           <img class="mg-card-cover" src="${page.covers ? page.covers[r.index] : minigameThumb(page.rows[r.index])}" alt="">
                            <div class="mg-card-label">${r.text}</div>
                        </div>`)).join('');
                 this._menuContainer.innerHTML = `
@@ -1432,7 +1481,7 @@
             // start of the next, wrapping at both ends) while up and down stay
             // in their column and wrap top to bottom, which keeps a short last
             // row from swallowing the cursor.
-            if (this._mode === 'list') {
+            if (this.isGridMode()) {
                 const cols = Math.max(1, Math.min(this._cols || 1, max));
                 let next = this._selectedIndex;
                 if (dx) {
@@ -1501,15 +1550,23 @@
             }
             if (this._mode === 'venue') {
                 this._pendingVenue = WATER_VENUES[this._selectedIndex].venue;
+                this.gotoPage(this.pendingAsksBiome() ? 'biome' : 'time');
+                return;
+            }
+            if (this._mode === 'biome') {
+                const biome = this.biomeOptions()[this._selectedIndex];
+                this._pendingBiome = biome ? biome.id : null;
                 this.gotoPage('time');
                 return;
             }
             if (this._mode === 'time') {
                 const when = WATER_TIMES[this._selectedIndex];
-                MinigameArcade.setSetup({
+                const cfg = {
                     venue: this._pendingVenue,
                     timeMode: timeModeId(when.mode, when.fallback)
-                });
+                };
+                if (this.pendingAsksBiome() && this._pendingBiome) cfg.biome = this._pendingBiome;
+                MinigameArcade.setSetup(cfg);
                 const entry = this._entries[this._pendingEntry];
                 this._mode = 'list';
                 this._selectedIndex = this._pendingEntry;
@@ -1527,6 +1584,7 @@
             if (entry && entry.setup) {
                 this._pendingEntry = index;
                 this._pendingVenue = null;
+                this._pendingBiome = null;
                 this.gotoPage('venue');
                 return;
             }
@@ -1556,9 +1614,19 @@
             this.refreshOverlay();
         }
 
+        // Fishing dresses its shore for a biome, so it asks which one.
+        pendingAsksBiome() {
+            const entry = this._entries[this._pendingEntry];
+            return !!(entry && entry.biomeSetup);
+        }
+
         // Back walks the setup pages in reverse before it leaves the arcade.
         goBack() {
             if (this._mode === 'time') {
+                this.gotoPage(this.pendingAsksBiome() ? 'biome' : 'venue');
+                return;
+            }
+            if (this._mode === 'biome') {
                 this.gotoPage('venue');
                 return;
             }

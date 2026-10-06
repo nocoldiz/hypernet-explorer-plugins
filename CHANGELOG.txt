@@ -1,6 +1,27 @@
 
 
-0.7.17a
+0.8.0a
+MAJOR UPDATE
+
+Added:
+ - interact icon over the party leader near hidden events
+ - reworked voxel generation: tunnels, dunes, goblin cities, new materials
+ - night version bgm for maps with hardcoded music and all biomes
+ - custom scenario editor and Holy Patron Star scenario
+ - fishing from the titlescreen lets you choose the biome
+
+Changed:
+ - reworked blade seed into the expression system with custom powers
+ - A1 wind animation, Em and Bubba Eris dates, inventory and mass disassemble
+ - battle bgm select lists Full Strength Unleashed first after random
+ - longer liminal array with a glass dome, photosafe spacetime breach
+ - cc0 battle backgrounds recategorized, every biome has day, sunset and night
+ - reworked furniture folders: split sprites, recategorized, partials removed
+
+Fixed:
+ - terrain features no longer drawn over prefab occupied tiles
+ - infinite brooms
+ - real world computer bleed through
 
 
 0.7.16a
@@ -8,7 +29,6 @@
 Added:
  - mind wiper option in surgery menu, not allowed in field surgery
  - hypernet pages follow the game language, English fallback
- - cc0 battle backgrounds recategorized, every biome has day, sunset and night
  - empathize wiki search, nudge favourites, shopkeeper stock and colleagues
  - each biome has its own 3D fishing background
  - shopkeepers can join the party, buying from them earns discounts

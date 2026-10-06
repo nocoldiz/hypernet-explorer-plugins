@@ -4525,7 +4525,7 @@
     // the same order, so the two can never drift apart.
     const CATEGORY_ACTION_BTNS = ['.fuse-spells-btn', '.craft-spell-btn', '.magic-systems-btn',
         '.craft-skill-btn', '.enchant-weapon-btn', '.enchant-armor-btn', '.enchant-book-btn',
-        '.write-skillbook-btn', '.write-grimorie-btn', '.hexorcize-btn'];
+        '.write-skillbook-btn', '.write-grimorie-btn', '.hexorcize-btn', '.expression-btn'];
     const CATEGORY_ACTION_FNS = [
         (sc) => sc.openSpellEditor(),
         (sc) => sc.openCraftBench('spell'),
@@ -4537,6 +4537,7 @@
         (sc) => sc.openWriteBench('skillbook'),
         (sc) => sc.openWriteBench('grimorie'),
         (sc) => sc.openHexorcizeBench(),
+        (sc) => sc.openExpressionPicker(),
     ];
     const SKILL_GRID_COLS = 2;
     const ATLAS_ZOOM_DEFAULT = 1.0;
@@ -4624,7 +4625,7 @@
         this.createUISkillDOM();
         if (window.CharSwitcher) {
             window.CharSwitcher.installTabKey(this, (dir) => {
-                const benches = ['spellEditor', 'craft', 'enchant', 'writebook', 'hexorcize', 'preview'];
+                const benches = ['spellEditor', 'craft', 'enchant', 'writebook', 'hexorcize', 'expression', 'preview'];
                 if (!benches.includes(this._viewMode) && getSwitchableMembers().length > 1) this.cycleTeachActor(dir);
             });
         }
@@ -5315,7 +5316,7 @@
         const compRow = document.getElementById('skillmaster-companion-row');
         if (compRow) {
             const members = getSwitchableMembers();
-            if (this._viewMode === 'spellEditor' || this._viewMode === 'craft' || this._viewMode === 'enchant' || this._viewMode === 'writebook' || this._viewMode === 'hexorcize' || members.length <= 1) {
+            if (this._viewMode === 'spellEditor' || this._viewMode === 'craft' || this._viewMode === 'enchant' || this._viewMode === 'writebook' || this._viewMode === 'hexorcize' || this._viewMode === 'expression' || members.length <= 1) {
                 compRow.classList.add('is-hidden');
                 compRow.innerHTML = '';
             } else {
@@ -5380,6 +5381,11 @@
 
         if (this._viewMode === 'hexorcize') {
             this.renderHexorcizeBench(knowledge);
+            return;
+        }
+
+        if (this._viewMode === 'expression') {
+            this.renderExpressionBench(knowledge);
             return;
         }
 
@@ -5469,6 +5475,7 @@
                     <div class="inspect-btn write-skillbook-btn focusable" onclick="SceneManager._scene.openWriteBench('skillbook')">${writeSkillBookLabel}</div>
                     <div class="inspect-btn write-grimorie-btn focusable" onclick="SceneManager._scene.openWriteBench('grimorie')">${writeGrimorieLabel}</div>
                     <div class="inspect-btn hexorcize-btn focusable" onclick="SceneManager._scene.openHexorcizeBench()">${T('SkillMaster.hexorcize.button')}</div>
+                    <div class="inspect-btn expression-btn focusable${window.Expression && window.Expression.anyInParty() ? '' : ' inspect-btn--disabled'}" onclick="SceneManager._scene.openExpressionPicker()">${T('SkillMaster.expression.button')}</div>
                 `;
             } else {
                 this._railHTML = '';
@@ -5541,7 +5548,9 @@
         if (needsRightRebuild) {
             let rightPageHTML = "";
 
-            if (this._viewMode === 'category') {
+            if (this._viewMode === 'category' && this._expressionPicking) {
+                rightPageHTML = this.renderExpressionPickerHTML();
+            } else if (this._viewMode === 'category') {
                 const pupilLine = `<div class="sm-pupil-line">${T('SkillMaster.atlas.held', { knowledge: knowledge })}</div>`;
                 rightPageHTML = `
                     <div class="page-header-bar">
@@ -5575,6 +5584,7 @@
             this._lastRightKnowledge = knowledge;
         }
         if (this._viewMode === 'category') this.paintBenchFocus();
+        if (this._viewMode === 'category' && this._expressionPicking) this.paintExpressionFocus();
     };
 
     // The bench column on the right leaf is one ring the cursor walks down.
@@ -5642,6 +5652,7 @@
         this._selectedCategory = cat;
         this._skillListWindow.setCategory(this._selectedCategory);
         this._viewMode = 'list';
+        this._expressionPicking = false;
         this._selectedSkillIndex = 0;
 
         const schools = this.atlasCategories();
@@ -5881,6 +5892,11 @@
             const prevPane = pane, prevIdx = idx;
             const curLen = lists[pane].length;
 
+            if (this._expressionPicking) {
+                this.updateExpressionPickerInput();
+                return;
+            }
+
             if (this._categoryFuseFocused) {
                 const act = this._categoryActionIndex || 0;
                 if (Input.isTriggered('ok')) {
@@ -6085,6 +6101,8 @@
             this.updateWriteBenchInput();
         } else if (this._viewMode === 'hexorcize') {
             this.updateHexorcizeBenchInput();
+        } else if (this._viewMode === 'expression') {
+            this.updateExpressionBenchInput();
         } else if (this._viewMode === 'magicSystems') {
             if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
                 this.closeMagicSystems();
@@ -9118,7 +9136,7 @@
         if (!window.Controller || !Controller.tips) return;
         if (Controller.textEntryOpen && Controller.textEntryOpen()) return;
         const tip = (face, key) => ({ face: face, label: T('SkillMaster.tips.' + key) });
-        const BENCHES = ['craft', 'enchant', 'writebook', 'hexorcize'];
+        const BENCHES = ['craft', 'enchant', 'writebook', 'hexorcize', 'expression'];
         if (BENCHES.indexOf(this._viewMode) < 0 && this._viewMode !== 'spellEditor') { Controller.clearTips(); return; }
         const tips = [
             tip('A', 'pick'),
@@ -9453,6 +9471,509 @@
 
     // One row, two chips: unmake one of them, or unmake the whole stack.
     const HEX_CHIPS = ['one', 'all'];
+
+    // ── Expression ─────────────────────────────────────────────────────
+    // The Expressions bench lists the party members an expression seed has given
+    // Expression to (Weapon/ExpressionSystem.js, window.Expression). It stays
+    // greyed out while nobody in the party has it.
+    function expressionReady() {
+        return !!(window.Expression && window.Expression.anyInParty());
+    }
+
+    function expressionMembers() {
+        return window.Expression ? window.Expression.members() : [];
+    }
+
+    Proto.openExpressionPicker = function () {
+        if (!expressionReady()) {
+            SoundManager.playBuzzer();
+            return;
+        }
+        this._expressionPicking = true;
+        this._expressionIndex = 0;
+        this._lastRightMode = null;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.closeExpressionPicker = function () {
+        this._expressionPicking = false;
+        this._lastRightMode = null;
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.pickExpressionActor = function (index) {
+        const actor = expressionMembers()[index];
+        if (!actor) {
+            SoundManager.playBuzzer();
+            return;
+        }
+        this._expressionIndex = index;
+        this.openExpressionBench(actor.actorId());
+    };
+
+    Proto.renderExpressionPickerHTML = function () {
+        const rows = expressionMembers().map((actor, idx) => {
+            const sel = actor.actorId() === this._exprActorId ? ' selected' : '';
+            return `<div class="inspect-btn expression-actor-btn focusable${sel}" data-idx="${idx}" onclick="SceneManager._scene.pickExpressionActor(${idx})">${esc(actor.name())}</div>`;
+        }).join('');
+        return `
+            <div class="page-header-bar">
+              <div class="back-button focusable" onclick="SceneManager._scene.closeExpressionPicker()">${T('SkillMaster.back')}</div>
+              <h2 class="title">${T('SkillMaster.expression.title')}</h2>
+            </div>
+            <div class="ui-prose sm-bench-blurb">${T('SkillMaster.expression.pickBlurb')}</div>
+            <div id="sm-expression-list" class="sm-action-rail ui-scroll">${rows}</div>
+        `;
+    };
+
+    Proto.paintExpressionFocus = function () {
+        const members = expressionMembers();
+        document.querySelectorAll('.expression-actor-btn').forEach((el) => {
+            const idx = parseInt(el.dataset.idx, 10);
+            const on = idx === (this._expressionIndex || 0);
+            const actor = members[idx];
+            el.classList.toggle('focused', on);
+            el.classList.toggle('selected', !!actor && actor.actorId() === this._exprActorId);
+            if (on && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' });
+        });
+    };
+
+    // ── The Expression bench ───────────────────────────────────────────
+    // One character's power, assembled the way the vector gun is fitted: a
+    // page of cards per kind of piece on the left, the blueprint on the right.
+    // Confirming a card fits it (a card bound to something asks what first);
+    // the blueprint's chips take pieces off, turn a condition around with NOT
+    // and switch the conditions between ALL and ANY. Finalize spends the KP.
+    const EXPR_COLS = 3;
+    const exprApi = () => window.Expression;
+    const exprT = (key, params) => T('SkillMaster.expression.' + key, params);
+
+    Proto.openExpressionBench = function (actorId) {
+        this._viewMode = 'expression';
+        this._exprActorId = actorId;
+        this._exprTab = this._exprTab || 'trigger';
+        this._exprIndex = 0;
+        this._exprPane = 0;
+        this._exprRightIndex = 0;
+        this._exprArgFor = null;
+        this._exprArgIndex = 0;
+        this._exprDestRule = this._exprDestRule || 'rules';
+        this._exprDestEffect = this._exprDestEffect || 'effects';
+        this._expressionPicking = false;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.closeExpressionBench = function () {
+        this._viewMode = 'category';
+        this._expressionPicking = true;
+        this._lastLeftMode = null;
+        this._lastLeftCategory = null;
+        this._lastRightMode = null;
+        this._lastRightSkillId = null;
+        this._lastRightKnowledge = null;
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.exprActor = function () {
+        return $gameActors.actor(this._exprActorId);
+    };
+
+    Proto.exprOptions = function () {
+        return exprApi().options(this._exprTab);
+    };
+
+    Proto.exprSlotFor = function (cat) {
+        if (cat === 'rule') return this._exprDestRule === 'branch' ? 'branch' : 'rules';
+        if (cat === 'effect') return this._exprDestEffect === 'elseEffects' ? 'elseEffects' : 'effects';
+        return cat;
+    };
+
+    Proto.exprTurnTab = function (tab) {
+        const tabs = exprApi().CATEGORIES;
+        const next = typeof tab === 'number'
+            ? tabs[(tabs.indexOf(this._exprTab) + tab + tabs.length) % tabs.length] : tab;
+        if (!next || next === this._exprTab) return;
+        this._exprTab = next;
+        this._exprIndex = 0;
+        this._exprArgFor = null;
+        this._exprPane = 0;
+        SoundManager.playCursor();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.exprSetDest = function (dest) {
+        if (this._exprTab === 'rule') this._exprDestRule = dest === 'branch' ? 'branch' : 'rules';
+        else if (this._exprTab === 'effect') {
+            if (dest === 'elseEffects' && !exprApi().draft(this.exprActor()).branch) {
+                SoundManager.playBuzzer();
+                this.exprToast(exprT('needsBranch'), 'warning');
+                return;
+            }
+            this._exprDestEffect = dest === 'elseEffects' ? 'elseEffects' : 'effects';
+        }
+        SoundManager.playCursor();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.exprCycleDest = function () {
+        if (this._exprTab === 'rule') this.exprSetDest(this._exprDestRule === 'branch' ? 'rules' : 'branch');
+        else if (this._exprTab === 'effect') this.exprSetDest(this._exprDestEffect === 'elseEffects' ? 'effects' : 'elseEffects');
+    };
+
+    Proto.exprToast = function (text, severity) {
+        if (window.ParchmentToast) window.ParchmentToast.show(text, { severity: severity || 'info' });
+    };
+
+    Proto.exprReport = function (result) {
+        if (result.ok) {
+            SoundManager.playOk();
+            return;
+        }
+        SoundManager.playBuzzer();
+        const msg = exprT('refusal.' + result.reason);
+        if (msg) this.exprToast(msg, 'warning');
+    };
+
+    Proto.exprPick = function (idx) {
+        const o = this.exprOptions()[idx];
+        const actor = this.exprActor();
+        if (!o || !actor) return;
+        this._exprIndex = idx;
+        const E = exprApi();
+        const slot = this.exprSlotFor(o.cat);
+        if (!E.meets(actor, o.key)) {
+            SoundManager.playBuzzer();
+            this.exprToast(exprT('needs', { stat: this.exprStatName(o.stat), req: o.req }), 'warning');
+            this.refreshUISkillDOM();
+            return;
+        }
+        if (o.param) {
+            if (!E.argChoices(actor, o.param).length) {
+                SoundManager.playBuzzer();
+                this.exprToast(exprT('noChoices'), 'warning');
+                return;
+            }
+            this._exprArgFor = o.key;
+            this._exprArgIndex = 0;
+            SoundManager.playOk();
+            this.refreshUISkillDOM();
+            return;
+        }
+        this.exprReport(E.place(actor, slot, o.key, null));
+        this.refreshUISkillDOM();
+    };
+
+    Proto.exprPickArg = function (idx) {
+        const E = exprApi();
+        const actor = this.exprActor();
+        const o = E.option(this._exprArgFor);
+        if (!o || !actor) return;
+        const choice = E.argChoices(actor, o.param)[idx];
+        if (!choice) return;
+        this.exprReport(E.place(actor, this.exprSlotFor(o.cat), o.key, choice.arg));
+        this._exprArgFor = null;
+        this.refreshUISkillDOM();
+    };
+
+    Proto.exprCloseArg = function () {
+        this._exprArgFor = null;
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.exprRun = function (idx) {
+        const action = (this._exprActions || [])[idx];
+        if (!action) return;
+        this._exprRightIndex = idx;
+        action();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.exprRemove = function (slot, index) {
+        exprApi().removeAt(this.exprActor(), slot, index);
+        if (slot === 'branch' && this._exprDestEffect === 'elseEffects') this._exprDestEffect = 'effects';
+        SoundManager.playCancel();
+    };
+
+    Proto.exprToggleNot = function (slot, index) {
+        exprApi().toggleNot(this.exprActor(), slot, index);
+        SoundManager.playCursor();
+    };
+
+    Proto.exprToggleLogic = function () {
+        const d = exprApi().draft(this.exprActor());
+        exprApi().setLogic(this.exprActor(), d.logic === 'all' ? 'any' : 'all');
+        SoundManager.playCursor();
+    };
+
+    Proto.exprFinalize = function () {
+        const actor = this.exprActor();
+        const result = exprApi().finalize(actor);
+        if (!result.ok) {
+            SoundManager.playBuzzer();
+            this.exprToast(exprT('refusal.' + result.reason, { kp: result.cost }), 'warning');
+            return;
+        }
+        SoundManager.playSave();
+        this.exprToast(exprT('finalizedToast', { name: actor.name() }), 'good');
+        this._lastRightKnowledge = null;
+    };
+
+    Proto.exprStatName = function (stat) {
+        return window.SkillStatReq ? window.SkillStatReq.statName(stat) : stat;
+    };
+
+    Proto.exprCardHTML = function (o, idx, actor) {
+        const E = exprApi();
+        const d = E.draft(actor);
+        const fitted = [d.form, d.trigger, d.branch].concat(d.rules, d.effects, d.elseEffects)
+            .some(e => e && e.key === o.key);
+        const open = E.meets(actor, o.key);
+        const cursor = this._exprPane === 0 && idx === this._exprIndex;
+        const meta = o.stat && o.req
+            ? `${this.exprStatName(o.stat)} ${E.statOf(actor, o.stat)}/${o.req}`
+            : T('Expression.where.' + o.where);
+        const chip = fitted ? exprT('fitted') : (o.cost ? `${o.cost} KP` : exprT('free'));
+        return `
+            <div class="item-slot focusable sm-expr-card${cursor ? ' selected' : ''}${fitted ? ' sm-expr-on' : ''}${open ? '' : ' sm-expr-locked'}${o.req >= 30 ? ' sm-expr-tier3' : o.req >= 20 ? ' sm-expr-tier2' : ''}"
+                 onclick="SceneManager._scene.exprPick(${idx})">
+                <span class="sm-skill-icon sm-expr-icon" style="${SkillMaster.getSkillIconStyle(o.icon)}"></span>
+                <div class="item-slot-info">
+                    <div class="item-slot-name">${esc(T('Expression.option.' + o.key + '.name'))}</div>
+                    <div class="item-slot-meta">
+                        <span>${esc(meta)}</span>
+                        <span class="item-slot-count">${esc(chip)}</span>
+                    </div>
+                </div>
+            </div>`;
+    };
+
+    Proto.renderExpressionBench = function (knowledge) {
+        const leftBox = document.getElementById('left-page-content');
+        const rightBox = document.getElementById('right-page-content');
+        const actor = this.exprActor();
+        const E = exprApi();
+        if (!leftBox || !rightBox || !E || !actor) return;
+        const K = SkillMaster.BenchKit;
+        const d = E.draft(actor);
+        const options = this.exprOptions();
+        this._exprIndex = Math.max(0, Math.min(this._exprIndex || 0, options.length - 1));
+
+        const tabsHTML = E.CATEGORIES.map(cat => `
+            <div class="backpack-tab focusable${cat === this._exprTab ? ' active' : ''}"
+                 onclick="SceneManager._scene.exprTurnTab('${cat}')">${esc(T('Expression.category.' + cat))}</div>`).join('');
+
+        let destHTML = '';
+        if (this._exprTab === 'rule' || this._exprTab === 'effect') {
+            const dests = this._exprTab === 'rule' ? ['rules', 'branch'] : ['effects', 'elseEffects'];
+            const current = this._exprTab === 'rule' ? this._exprDestRule : this._exprDestEffect;
+            destHTML = `<div class="sm-expr-dest"><span class="sm-expr-dest-label">${esc(exprT('placeIn'))}</span>${K.chips(dests.map(dest => ({
+                label: exprT('slot.' + dest),
+                selected: dest === current,
+                disabled: dest === 'elseEffects' && !d.branch,
+                onclick: `SceneManager._scene.exprSetDest('${dest}')`
+            })))}</div>`;
+        }
+
+        let bodyHTML;
+        if (this._exprArgFor) {
+            const o = E.option(this._exprArgFor);
+            const choices = E.argChoices(actor, o.param);
+            this._exprArgIndex = Math.max(0, Math.min(this._exprArgIndex || 0, choices.length - 1));
+            bodyHTML = `
+                <div class="cc-bio-note sm-expr-bind">${esc(exprT('bindTo', { name: T('Expression.option.' + o.key + '.name') }))}</div>
+                <div id="sm-expr-args" class="ui-list ui-scroll sm-forged-list sm-forged-list--fill">
+                    ${choices.map((c, i) => `
+                        <div class="sm-skill-row sm-craft-entry focusable${i === this._exprArgIndex ? ' sm-craft-entry--cursor' : ''}"
+                             onclick="SceneManager._scene.exprPickArg(${i})">
+                            <span class="sm-skill-ident">${c.icon ? `<span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(c.icon)}"></span>` : ''}<span class="sm-skill-name">${esc(c.label)}</span></span>
+                        </div>`).join('')}
+                </div>`;
+        } else {
+            bodyHTML = `<div id="sm-expr-grid" class="backpack-grid sm-expr-grid">${options.map((o, i) => this.exprCardHTML(o, i, actor)).join('')}</div>`;
+        }
+
+        leftBox.innerHTML = `
+            <div class="page-header-bar sm-bench-header">
+              <div class="back-button focusable" onclick="SceneManager._scene.${this._exprArgFor ? 'exprCloseArg' : 'closeExpressionBench'}()">${esc(T('SkillMaster.back'))}</div>
+              <h2 class="title">${esc(exprT('benchTitle', { name: actor.name() }))}</h2>
+              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+            </div>
+            <div class="backpack-tabs sm-expr-tabs">${tabsHTML}</div>
+            ${destHTML}
+            ${bodyHTML}`;
+
+        // The right page: the piece under the cursor, then the blueprint.
+        const actions = [];
+        const act = (fn) => { actions.push(fn); return actions.length - 1; };
+        const lit = (i) => (this._exprPane === 1 && i === this._exprRightIndex ? ' focused sm-kit-cursor' : '');
+        const chipBtn = (label, fn, cls) => {
+            const i = act(fn);
+            return `<span class="ui-chip sm-skill-badge focusable sm-expr-chip ${cls || ''}${lit(i)}" data-ra="${i}"
+                onclick="event.stopPropagation(); SceneManager._scene.exprRun(${i})">${esc(label)}</span>`;
+        };
+        const slotRow = (slot, entry, index, extra) => {
+            const lost = entry && E.isLost(actor, entry);
+            const o = entry ? E.option(entry.key) : null;
+            const key = slot === 'rules' || slot === 'effects' || slot === 'elseEffects'
+                ? exprT('slot.' + slot) + ' ' + (index + 1) : exprT('slot.' + slot);
+            const chips = entry ? (extra || '') + chipBtn(exprT('remove'), () => this.exprRemove(slot, index), 'sm-craft-discard') : '';
+            return `
+                <div class="sm-skill-row sm-expr-slot${entry ? ' sm-expr-slot--on' : ''}${lost ? ' sm-expr-slot--lost' : ''}">
+                    <span class="sm-expr-slot-key">${esc(key)}</span>
+                    <span class="sm-skill-ident">${o ? `<span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(o.icon)}"></span>` : ''}<span class="sm-skill-name">${esc(entry ? E.entryLabel(entry) : exprT('empty'))}</span></span>
+                    ${chips}
+                </div>`;
+        };
+        const notChip = (slot, index) => chipBtn(exprT('not'), () => this.exprToggleNot(slot, index));
+
+        let detailHTML = '';
+        const focused = !this._exprArgFor && this._exprPane === 0 ? options[this._exprIndex] : null;
+        if (focused) {
+            const open = E.meets(actor, focused.key);
+            detailHTML = `
+                ${K.title(focused.icon, T('Expression.option.' + focused.key + '.name'), T('Expression.where.' + focused.where))}
+                <div class="ui-prose sm-expr-desc">${esc(T('Expression.option.' + focused.key + '.desc'))}</div>
+                ${K.stats([
+                    focused.stat && focused.req ? {
+                        label: exprT('requires'),
+                        value: `${this.exprStatName(focused.stat)} ${E.statOf(actor, focused.stat)}/${focused.req}`,
+                        bad: !open
+                    } : null,
+                    { label: exprT('cost'), value: focused.cost ? `${focused.cost} KP` : exprT('free') }
+                ], 2)}`;
+        }
+
+        const rows = [];
+        rows.push(slotRow('form', d.form && d.form.key !== 'aura' ? d.form : null, 0));
+        rows.push(slotRow('trigger', d.trigger, 0));
+        const logicLabel = exprT(d.logic === 'any' ? 'logicAny' : 'logicAll');
+        rows.push(`<div class="sm-expr-subhead"><span class="inspect-section-title">${esc(exprT('conditions'))}</span>${chipBtn(logicLabel, () => this.exprToggleLogic(), 'sm-expr-logic')}</div>`);
+        for (let i = 0; i < E.SLOTS.rules; i++) rows.push(slotRow('rules', d.rules[i] || null, i, d.rules[i] ? notChip('rules', i) : ''));
+        rows.push(slotRow('branch', d.branch, 0, d.branch ? notChip('branch', 0) : ''));
+        for (let i = 0; i < E.SLOTS.effects; i++) rows.push(slotRow('effects', d.effects[i] || null, i));
+        if (d.branch) for (let i = 0; i < E.SLOTS.elseEffects; i++) rows.push(slotRow('elseEffects', d.elseEffects[i] || null, i));
+
+        const check = E.finalizeCheck(actor);
+        const finalizeIdx = act(() => this.exprFinalize());
+        const fin = E.finalized(actor);
+        const finText = fin
+            ? exprT('finalized', { power: [fin.trigger].concat(fin.effects).filter(Boolean).map(E.entryLabel).join(' > ') })
+            : exprT('noneFinalized');
+        this._exprActions = actions;
+        this._exprRightIndex = Math.max(0, Math.min(this._exprRightIndex || 0, actions.length - 1));
+
+        rightBox.innerHTML = `
+            <div class="page-header-bar sm-bench-header">
+              <h2 class="title">${esc(exprT('blueprint'))}</h2>
+              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+            </div>
+            <div class="sm-bench-scroll sm-expr-right">
+                ${detailHTML}
+                <div class="ui-list sm-expr-blueprint">${rows.join('')}</div>
+                <div class="cc-bio-note sm-expr-potency">${esc(exprT('potency', { pct: Math.round(E.potency(d) * 100) }))} ${esc(exprT('once'))}</div>
+                <div class="cc-bio-note sm-expr-final">${esc(finText)}</div>
+                <div class="cc-bio-note sm-expr-note">${esc(exprT('alwaysFires'))}</div>
+            </div>
+            <div class="inspect-btn sm-expr-finalize focusable${check.ok ? '' : ' inspect-btn--disabled'}${lit(finalizeIdx)}"
+                 data-ra="${finalizeIdx}" onclick="SceneManager._scene.exprRun(${finalizeIdx})">${esc(exprT('finalize', { kp: check.cost }))}</div>
+            ${check.ok ? '' : `<div class="cc-bio-note sm-expr-reason">${esc(exprT('refusal.' + check.reason, { kp: check.cost }))}</div>`}`;
+
+        const cursorEl = this._exprArgFor ? leftBox.querySelector('.sm-craft-entry--cursor')
+            : (this._exprPane === 1 ? rightBox.querySelector('.sm-kit-cursor') : leftBox.querySelector('.sm-expr-card.selected'));
+        if (cursorEl && cursorEl.scrollIntoView) cursorEl.scrollIntoView({ block: 'nearest' });
+    };
+
+    Proto.updateExpressionBenchInput = function () {
+        const cancel = Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled();
+        const step = (dir) => Input.isTriggered(dir) || Input.isRepeated(dir);
+        const ok = Input.isTriggered('ok') || Input.isTriggered('enter');
+
+        if (this._exprArgFor) {
+            const o = exprApi().option(this._exprArgFor);
+            const count = exprApi().argChoices(this.exprActor(), o.param).length;
+            if (cancel) { this.exprCloseArg(); return; }
+            if (ok) { this.exprPickArg(this._exprArgIndex || 0); return; }
+            if (step('down') || step('up')) {
+                this._exprArgIndex = ((this._exprArgIndex || 0) + (step('down') ? 1 : -1) + count) % count;
+                SoundManager.playCursor();
+                this.refreshUISkillDOM();
+            }
+            return;
+        }
+        if (cancel) {
+            if (this._exprPane === 1) {
+                this._exprPane = 0;
+                SoundManager.playCancel();
+                this.refreshUISkillDOM();
+            } else {
+                this.closeExpressionBench();
+            }
+            return;
+        }
+        if (Input.isTriggered('pageup')) { this.exprTurnTab(-1); return; }
+        if (Input.isTriggered('pagedown')) { this.exprTurnTab(1); return; }
+        if (Input.isTriggered('shift')) { this.exprCycleDest(); return; }
+
+        if (this._exprPane === 1) {
+            const count = (this._exprActions || []).length;
+            if (ok) { this.exprRun(this._exprRightIndex || 0); return; }
+            let moved = false;
+            if (step('down')) { this._exprRightIndex = Math.min(count - 1, (this._exprRightIndex || 0) + 1); moved = true; }
+            else if (step('up')) { this._exprRightIndex = Math.max(0, (this._exprRightIndex || 0) - 1); moved = true; }
+            else if (step('left')) { this._exprPane = 0; moved = true; }
+            if (moved) { SoundManager.playCursor(); this.refreshUISkillDOM(); }
+            return;
+        }
+
+        const count = this.exprOptions().length;
+        const idx = this._exprIndex || 0;
+        if (ok) { this.exprPick(idx); return; }
+        let next = idx;
+        if (step('right')) {
+            if (idx % EXPR_COLS === EXPR_COLS - 1 || idx === count - 1) {
+                this._exprPane = 1;
+                SoundManager.playCursor();
+                this.refreshUISkillDOM();
+                return;
+            }
+            next = idx + 1;
+        } else if (step('left')) next = idx % EXPR_COLS === 0 ? idx : idx - 1;
+        else if (step('down')) next = Math.min(count - 1, idx + EXPR_COLS);
+        else if (step('up')) next = idx - EXPR_COLS >= 0 ? idx - EXPR_COLS : idx;
+        if (next !== idx) {
+            this._exprIndex = next;
+            SoundManager.playCursor();
+            this.refreshUISkillDOM();
+        }
+    };
+
+    Proto.updateExpressionPickerInput = function () {
+        const count = expressionMembers().length;
+        if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
+            this.closeExpressionPicker();
+            return;
+        }
+        if (count === 0) return;
+        const idx = Math.min(this._expressionIndex || 0, count - 1);
+        if (Input.isTriggered('ok')) {
+            this.pickExpressionActor(idx);
+            return;
+        }
+        if (Input.isTriggered('down') || Input.isRepeated('down')) {
+            this._expressionIndex = (idx + 1) % count;
+            SoundManager.playCursor();
+            this.paintExpressionFocus();
+        } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
+            this._expressionIndex = (idx - 1 + count) % count;
+            SoundManager.playCursor();
+            this.paintExpressionFocus();
+        }
+    };
 
     Proto.openHexorcizeBench = function () {
         this._viewMode = 'hexorcize';

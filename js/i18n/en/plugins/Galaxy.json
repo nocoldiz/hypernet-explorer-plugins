@@ -293,6 +293,10 @@
       "note": "2.4 m, ground to the wrong prescription in 1981. Spherical aberration."
     }
   },
+  "storyCrew": {
+    "vice": "Captain Hack has elected Bubba as her vice for his scientific merits",
+    "scrubber": "Em has been promoted to deck scrubber"
+  },
   "hubbleQuest": {
     "title": "Refit of the Hubble Space Telescope",
     "giver": "Starship maintenance log",

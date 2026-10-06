@@ -234,7 +234,7 @@
     }
 
     // A <Restricted> row is granted by the one system that owns it (a seed
-    // weapon by a blade seed) and belongs on no shelf, no search page and no
+    // weapon by an expression seed) and belongs on no shelf, no search page and no
     // delivery catalogue, however it was reached.
     const isShopSellable = (entry) =>
         !(window.ItemSystemUtils && window.ItemSystemUtils.isRestrictedEntry(entry));

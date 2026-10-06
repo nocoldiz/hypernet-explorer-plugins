@@ -41,7 +41,7 @@
   ],
   "encounterStep": 30,
   "height": 25,
-  "note": "\n<Interior>\n\n<Country: Belgium>\n<Coords 84 119>\n<MapGroup Ghent>\n<BuildRights: Owner>\n<Biome: Metro>\n<BgsNight: electrical-hum>",
+  "note": "\n<Interior>\n\n<Country: Belgium>\n<Coords 84 119>\n<MapGroup Ghent>\n<BuildRights: Owner>\n<Biome: Metro>\n<BgsNight: electrical-hum>\n<BgmNight: KevinMacLeod/Techno/Screen Saver>",
   "parallaxLoopX": false,
   "parallaxLoopY": false,
   "parallaxName": "",

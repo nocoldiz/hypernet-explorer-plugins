@@ -45,7 +45,7 @@
   },
   "12": {
     "name": "Seed Dagger",
-    "description": "A dagger grown from a blade seed.\nCan poison on hit."
+    "description": "A dagger grown from an expression seed.\nCan poison on hit."
   },
   "13": {
     "name": "Wooden Nunchaku",
@@ -173,11 +173,11 @@
   },
   "54": {
     "name": "Seed Sword",
-    "description": "A sword grown from a blade seed.\nCan poison on hit."
+    "description": "A sword grown from an expression seed.\nCan poison on hit."
   },
   "55": {
     "name": "Seed Mace",
-    "description": "A mace grown from a blade seed."
+    "description": "A mace grown from an expression seed."
   },
   "56": {
     "name": "Mesopotamian Sword",
@@ -737,7 +737,7 @@
   },
   "206": {
     "name": "Seed Axe",
-    "description": "An axe grown from a blade seed."
+    "description": "An axe grown from an expression seed."
   },
   "207": {
     "name": "Hand Axe",
@@ -845,7 +845,7 @@
   },
   "243": {
     "name": "Seed Whip",
-    "description": "A whip grown from a blade seed.\nCan provoke on hit."
+    "description": "A whip grown from an expression seed.\nCan provoke on hit."
   },
   "244": {
     "name": "Retiarius Net",
@@ -969,7 +969,7 @@
   },
   "284": {
     "name": "Seed Staff",
-    "description": "A staff grown from a blade seed.\nStrikes with Sacred."
+    "description": "A staff grown from an expression seed.\nStrikes with Sacred."
   },
   "285": {
     "name": "Quarterstaff",
@@ -1173,7 +1173,7 @@
   },
   "344": {
     "name": "Seed Bow",
-    "description": "A bow grown from a blade seed.\nCan blind on hit."
+    "description": "A bow grown from an expression seed.\nCan blind on hit."
   },
   "345": {
     "name": "Short Bow",
@@ -1325,7 +1325,7 @@
   },
   "392": {
     "name": "Seed Grimorie",
-    "description": "A grimorie grown from a blade seed.\nIce, inflicts Cold."
+    "description": "A grimorie grown from an expression seed.\nIce, inflicts Cold."
   },
   "393": {
     "name": "Bola",
@@ -1469,7 +1469,7 @@
   },
   "438": {
     "name": "Seed Gun",
-    "description": "A gun grown from a blade seed."
+    "description": "A gun grown from an expression seed."
   },
   "439": {
     "name": "Bamboo Blowgun",
@@ -1857,7 +1857,7 @@
   },
   "545": {
     "name": "Seed Claw",
-    "description": "A claw grown from a blade seed.\nCan poison on hit."
+    "description": "A claw grown from an expression seed.\nCan poison on hit."
   },
   "546": {
     "name": "Bagh Nakh",
@@ -1957,7 +1957,7 @@
   },
   "580": {
     "name": "Seed Glove",
-    "description": "A glove grown from a blade seed."
+    "description": "A glove grown from an expression seed."
   },
   "581": {
     "name": "Cestus",
@@ -2109,7 +2109,7 @@
   },
   "628": {
     "name": "Seed Spear",
-    "description": "A spear grown from a blade seed.\nCan poison on hit."
+    "description": "A spear grown from an expression seed.\nCan poison on hit."
   },
   "629": {
     "name": "Short Spear",

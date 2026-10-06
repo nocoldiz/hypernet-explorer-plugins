@@ -1352,6 +1352,125 @@
     // event id so the same slot is always the same person. Split out of
     // setupProceduralMapNPCs so a citizen can also be born one at a time, long
     // after the map was populated (RoadCarAI's drivers pulling into a lay-by).
+    // -----------------------------------------------------------------------
+    // WHO LIVES ON A PROCEDURAL SQUARE, WITHOUT THE MAP
+    // -----------------------------------------------------------------------
+    // The 3D world (VoxelWorldEntities' CityCrowd) walks the same squares the
+    // procedural map draws, and the people it meets there have to be the SAME
+    // people: same name, same face, same class, same opinion of the party. So
+    // the identity half of dressProcCitizen lives here on its own, needing no
+    // event and no $dataMap, and dressProcCitizen itself dresses an event with
+    // what this hands it, so the two can never drift apart.
+    //
+    // The identity of the person in slot `eventId` of square (worldX, worldY).
+    procIdentity: (eventId, baseSeed, worldX, worldY, procWorldSeed) => {
+      const graphicSeed = baseSeed ^ (eventId * 83492791);
+      const charName = pickNPCCharacter(Utils.seededRandom(graphicSeed), buildNPCCharacterPool());
+      if (!charName) return null;
+      // Big-character sprites (!$) have one slot; normal multi-character sheets use 0-7
+      const isBigSprite = charName.includes('!$');
+      const charIdx = isBigSprite ? 0 : Math.floor(Utils.seededRandom(graphicSeed * 2) * 8);
+      let genName = "NPC";   // i18n-ignore: event-name prefix
+      if (window.generateSeededMarkovName) {
+        const dbId = Config.NAME_DATABASES[Math.floor(Utils.seededRandom(graphicSeed) * Config.NAME_DATABASES.length)];
+        try { genName = window.generateSeededMarkovName(worldX ^ (procWorldSeed & 0xffff), worldY ^ ((procWorldSeed >>> 16) & 0xffff), eventId, dbId, 2, 4, 12); } catch (e) { }
+      }
+      // Safety net: if generation was unavailable/failed and the name is
+      // still the bare placeholder "NPC" (or "Unknown" from a missing DB),
+      // fall back to one seeded off the fixed name-generation seed instead,
+      // see transplantData for the same rule.
+      if ((genName === "NPC" || genName === "Unknown" || !genName) && window.generateSeededMarkovName) { // i18n-ignore: Markov generator sentinels
+        const worldSeed = Config.NPC_NAME_SEED;
+        const dbId = Config.NAME_DATABASES[Math.floor(Utils.seededRandom(worldSeed ^ (eventId * 83492791)) * Config.NAME_DATABASES.length)];
+        try {
+          const fallbackName = window.generateSeededMarkovName(worldSeed & 0xffff, (worldSeed >>> 16) & 0xffff, eventId, dbId, 2, 4, 12);
+          if (fallbackName && fallbackName !== "Unknown") genName = fallbackName; // i18n-ignore: Markov generator sentinel
+        } catch (e) {}
+      }
+      if (!genName || genName === "Unknown") genName = "NPC"; // i18n-ignore: Markov generator sentinel / event-name prefix
+      return {
+        eventId, graphicSeed, name: genName, spriteName: charName, charIdx,
+        classId: ProceduralManager.seededClassId(graphicSeed ^ 0x51ed270b),
+        roughSleeper: Utils.seededRandom((graphicSeed ^ 0x2545f491) >>> 0) < Config.PROC_HOMELESS_CHANCE
+      };
+    },
+
+    // The seeds a square's people are dealt from (setupProceduralMapNPCs).
+    procSquareSeeds: (worldX, worldY) => {
+      const procWorldSeed = window.ProcGenUtils?.getWorldSeed?.() ?? 19002001;
+      const baseSeed = window.ProcGenUtils?.hashCoords?.(procWorldSeed, worldX, worldY)
+        ?? ((worldX * 73856093) ^ (worldY * 19349663));
+      return { procWorldSeed, baseSeed };
+    },
+
+    // The slots of the procedural settlement map: off the manifest, and the
+    // known slots of map 636 when there is none.
+    procSlotIds: () => {
+      const manifest = NPCPoolStore.load()?.[NPCPoolStore.PROC_KEY];
+      const ids = Array.isArray(manifest)
+        ? manifest.map(t => t?.eventData?.id ?? t?.id).filter(Number.isFinite) : [];
+      return ids.length ? ids : [41, 42, 43, 44, 45, 46, 47, 51, 58, 59, 60, 61, 62, 63];
+    },
+
+    // Everybody of square (worldX, worldY), as the map would deal them, with
+    // no map loaded: [{ name, spriteName, charIdx, classId, eventId,
+    // roughSleeper, out }]. `out` is true for the ones the square's cull puts
+    // on the street today and false for the rest of the household, indoors
+    // but every bit as real. Recruited slots and the gone are left out. A
+    // lone door's cluster outside a settlement needs the map's door tiles and
+    // is answered with the open-country share instead.
+    procResidentsAt: (worldX, worldY, biomeName) => {
+      const { procWorldSeed, baseSeed } = ProceduralManager.procSquareSeeds(worldX, worldY);
+      const recruited = ProceduralManager.getRecruitedEventIds(worldX, worldY);
+      const slots = ProceduralManager.procSlotIds().filter(id => !(recruited && recruited.has(id)));
+      if (!slots.length) return [];
+      const cullRng = Utils.seededRandom(baseSeed ^ 0xdeadbeef);
+      const keepCount = Config.isSettlementBiome(biomeName || "Fields")
+        ? Config.settlementCrowdCount(slots.length, cullRng, false)
+        : Math.max(1, Math.ceil(slots.length * (0.3 + cullRng * 0.4)));
+      const indices = Array.from({ length: slots.length }, (_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Utils.seededRandom(baseSeed ^ (i * 12345)) * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      const out = new Set(indices.slice(0, keepCount));
+      const people = [];
+      slots.forEach((id, i) => {
+        const rec = ProceduralManager.procIdentity(id, baseSeed, worldX, worldY, procWorldSeed);
+        if (!rec || GoneRegistry.isNameGone(rec.name)) return;
+        rec.out = out.has(i);
+        people.push(rec);
+      });
+      return people;
+    },
+
+    // The society profile of one of them, minted (or found) as the map mints
+    // it: same class, same sheet pinned, same settlement, hometown opinion,
+    // life record. Returns { profile, spriteName, charIdx }; the sheet can
+    // differ from the record's when the person turns out to be a creature.
+    ensureProcResidentProfile: (rec, worldX, worldY) => {
+      if (!rec || !rec.name) return null;
+      const group = 'Proc:' + worldX + ',' + worldY;   // i18n-ignore: settlement key
+      const profile = ProceduralManager.registerProcCitizen(rec.name, null, group, rec.classId,
+        { spriteKey: rec.spriteName, bustIndex: rec.charIdx, roughSleeper: rec.roughSleeper });
+      let charName = rec.spriteName, charIdx = rec.charIdx;
+      if (!profile) return { profile: null, spriteName: charName, charIdx };
+      const beastSheet = window.NPCCreature?.creatureSheetFor?.(profile, rec.name, true);
+      if (beastSheet && beastSheet !== charName && window.WorldGen?.NPCs?.[beastSheet]) {
+        charName = beastSheet;
+        charIdx = profile.spriteKey === beastSheet ? (profile.bustIndex || 0) : 0;
+      }
+      const entry = window.WorldGen?.NPCs?.[charName] || null;
+      profile.spriteKey = charName;
+      profile.bustIndex = charIdx;
+      window.NPCSocietyRegistry?.reconcileToSprite?.(rec.name, profile);
+      const bust = entry?.busts?.[charIdx] ?? entry?.busts?.[0] ?? null;
+      if (bust && bust !== "7") profile._bustName = bust;
+      if (entry?.markovDB && profile.markovDb == null) profile.markovDb = entry.markovDB;
+      if (entry && entry.Gender != null) profile.gender = entry.Gender;
+      return { profile, spriteName: charName, charIdx };
+    },
+
     dressProcCitizen: (ev, baseSeed, settlementGroup, worldX, worldY, procWorldSeed) => {
       {
         const graphicSeed = baseSeed ^ (ev.eventId() * 83492791);
@@ -1377,16 +1496,23 @@
         })();
         const towerSprite = (towerWorld && !authored)
           ? ProceduralManager.towerCitizenSprite(towerWorld, graphicSeed) : null;
-        let charName      = (authored && towerWorld ? authored.name : null)
-          || towerSprite
-          || pickNPCCharacter(Utils.seededRandom(graphicSeed), charPool);
+        // On Earth the person is whoever procIdentity says lives in this slot,
+        // which is also who the 3D world puts here; a tower floor dresses its
+        // own people out of its own wardrobe.
+        const ident = towerWorld ? null
+          : ProceduralManager.procIdentity(ev.eventId(), baseSeed, worldX, worldY, procWorldSeed);
+        let charName      = ident ? ident.spriteName
+          : ((authored && towerWorld ? authored.name : null)
+            || towerSprite
+            || pickNPCCharacter(Utils.seededRandom(graphicSeed), charPool));
         // A wardrobe with nothing in it at all (no NPCs.json, a magic level that
         // filtered everything out) leaves the event in whatever face it was
         // authored with rather than throwing on the way past.
         if (!charName) return;
         // Big-character sprites (!$) have one slot; normal multi-character sheets use 0-7
         const isBigSprite = charName.includes('!$');
-        let charIdx       = (authored && towerWorld) ? (isBigSprite ? 0 : authored.index)
+        let charIdx       = ident ? ident.charIdx
+          : (authored && towerWorld) ? (isBigSprite ? 0 : authored.index)
           : isBigSprite ? 0 : Math.floor(Utils.seededRandom(graphicSeed * 2) * 8);
 
         const evData = ev.event();
@@ -1408,7 +1534,7 @@
         let spriteDb      = npcEntry?.markovDB || null;
         let spriteGender  = npcEntry && npcEntry.Gender != null ? npcEntry.Gender : null;
 
-        let genName = "NPC";
+        let genName = ident ? ident.name : "NPC";
         // A fungoid world does not name its people Marco. Every world is
         // written in one register and its people are named in it
         // (window.TowerWorlds.nameIn).
@@ -1449,13 +1575,14 @@
         // A class is passed explicitly so it lands even on the canon default
         // seed (19002001), where the society generator's npcData-driven class
         // assignment is otherwise skipped.
-        const procClassId = ProceduralManager.seededClassId(graphicSeed ^ 0x51ed270b);
+        const procClassId = ident ? ident.classId : ProceduralManager.seededClassId(graphicSeed ^ 0x51ed270b);
         // The sprite is pinned into the profile as it is minted, so the
         // creature roll can never deal a beast inside this citizen's clothes.
         const profile = ProceduralManager.registerProcCitizen(
           genName, ev, settlementGroup, procClassId,
           { spriteKey: charName, bustIndex: charIdx,
-            roughSleeper: Utils.seededRandom((graphicSeed ^ 0x2545f491) >>> 0) < Config.PROC_HOMELESS_CHANCE });
+            roughSleeper: ident ? ident.roughSleeper
+              : Utils.seededRandom((graphicSeed ^ 0x2545f491) >>> 0) < Config.PROC_HOMELESS_CHANCE });
         // A name already on the society's books is somebody already met, and a
         // creature or an animal stays one: it walks out in a `creature: true`
         // or `animal: true` sheet (its own, or one dealt to fit its class)

@@ -457,7 +457,7 @@ const GameOptions = {
             categories: ['video'],
             groups: [
                 { key: 'display', symbols: ['activeTheme', 'fullscreen', 'TDDP_pixelPerfectMode', 'TDDP_allowStretching', 'showFps'] },
-                { key: 'interface', symbols: ['uiScale', 'fontScale', 'worldMinimap', 'titleBackground', 'hyperverseInvertX', 'padCameraSpeed', 'padCameraInvertY'] },
+                { key: 'interface', symbols: ['uiScale', 'fontScale', 'worldMinimap', 'interactIcon', 'titleBackground', 'hyperverseInvertX', 'padCameraSpeed', 'padCameraInvertY'] },
                 { key: 'battleView', symbols: ['lowModelDetail', 'galaxyQuality', 'starMapInvertY'] },
                 { key: 'battleLog', symbols: ['smoothBattleLog', 'battleLogPosition', 'battleCommandPosition', 'battleLogBgOpacity', 'battleLogSkillNames'] }
             ]
@@ -862,6 +862,9 @@ window.GameOptions = GameOptions;
         // The theme to come back to when the ASCII layer is switched off.
         this.themeBeforeAscii = config.themeBeforeAscii !== undefined ? config.themeBeforeAscii : 0;
         this.showFps = config.showFps !== undefined ? config.showFps : false;
+        // The "?" over the party leader when they stand by an invisible event
+        // worth pressing a button at (MousePan.js draws it).
+        this.interactIcon = config.interactIcon !== undefined ? !!config.interactIcon : true;
         // Thins the segment count of every procedurally built weapon and item.
         // Read by WeaponSystemProcedural.isLowDetail(), which is the gate on
         // seg(), wantsTrim() and the geometry budget those two stand for.
@@ -977,6 +980,7 @@ window.GameOptions = GameOptions;
         config.activeTheme = this.activeTheme;
         config.themeBeforeAscii = this.themeBeforeAscii;
         config.showFps = this.showFps;
+        config.interactIcon = this.interactIcon;
         config.lowModelDetail = this.lowModelDetail;
         config.galaxyQuality = this.galaxyQuality;
         config.runInBackground = this.runInBackground;
@@ -2138,6 +2142,11 @@ window.GameOptions = GameOptions;
         (value) => T('GameOptions.galaxyQuality.' +
             (GALAXY_QUALITY_MODES.includes(value) ? value : 'high')),
         stepGalaxyQuality(1), stepGalaxyQuality(-1));
+
+    GameOptions.registerOption('interactIcon', T('GameOptions.label.interactIcon'),
+        () => ConfigManager.interactIcon !== false,
+        (value) => { ConfigManager.interactIcon = !!value; },
+        'video', 'boolean');
 
     GameOptions.registerOption('lowModelDetail', T('GameOptions.label.lowModelDetail'),
         () => !!ConfigManager.lowModelDetail,

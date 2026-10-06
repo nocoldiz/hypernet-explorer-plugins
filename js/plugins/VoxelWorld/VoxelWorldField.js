@@ -44,6 +44,7 @@
 
     const {
         MOUNTAIN_MAX_H, ROAD_BED_CLEAR, ROAD_GAP, ROAD_KERB_H, ROAD_LANE_OFF, ROAD_TOTAL_W, SNOW_LINE, WATER_LEVEL_Y,
+        ROAD_TUNNEL_H, ROAD_TUNNEL_CLEAR, ROAD_VIADUCT_H,
         OMEGA_SPAN, OMEGA_TILE, getAlienTerrain, alienHasNoGround,
         WORLD_SCALE, WORLD_TILE_SIZE, _fbm, _perlin, getRenderType, loadTex, loadVoxelTex,
         getRoadDirectionAt, isRiverTile, noiseHeight, riverLinksAt, sampleBiomeAt
@@ -119,7 +120,23 @@
         // --- the seams ---------------------------------------------------------
         ORE_IRON: 36, ORE_COAL: 37, ORE_SILICA: 38, ORE_BONE: 39,
         ORE_TITANIUM: 40, ORE_SULPHUR: 41, ORE_CRYSTAL: 42, ORE_VARLENIA: 43,
-        ORE_ARCANE: 44, ORE_ETHEREAL: 45, ORE_QUANTUM: 46, ORE_METEOR: 47
+        ORE_ARCANE: 44, ORE_ETHEREAL: 45, ORE_QUANTUM: 46, ORE_METEOR: 47,
+        // --- the harvested faces (tools/harvest_voxel_tiles.py) ----------------
+        // Cut out of the hand-drawn tile sheets rather than painted by the
+        // block builder. The ground first: these are SURFACE blocks a column
+        // can wear as its skin, so the bulk mesher draws their picture.
+        RED_SAND: 48, PALE_SAND: 49, FLOWER_BED: 50, JUNGLE_TURF: 51, LIME_MOSS: 52,
+        SNOW_SPARKLE: 53, REEDS: 54,
+        // The themed cliffs and the rock of the deep places.
+        FIELDSTONE: 55, AMBER_COBBLE: 56, BLUE_COBBLE: 57, DARK_COBBLE: 58,
+        MOSS_BRICK: 59, VIOLET_ROCK: 60, SHADOW_ROCK: 61, PALE_SLATE: 62, ICEFALL: 63,
+        // The hot ground.
+        SCORIA: 64, LAVA_COBBLE: 65, EMBER_THORNS: 66,
+        // What people (and goblins) build with.
+        RED_BRICK: 67, SLATE_BRICK: 68, CEDAR: 69, STEEL_RIB: 70, BLUE_STEEL: 71,
+        WINDOW_PANE: 72, ORNATE_TILE: 73,
+        // The weird.
+        EYE_WALL: 74
     };
 
 
@@ -221,13 +238,51 @@
     defMat(MAT.ORE_QUANTUM,  'ore_quantum',  0x4affc9, { hard: 8, seam: true, tex: 'ore_quantum',  drop: 851, glow: true });
     defMat(MAT.ORE_METEOR,   'ore_meteor',   0x7a6f66, { hard: 8, seam: true, tex: 'ore_meteor',   drop: 775 });
 
+    // The harvested faces. `surface: true` marks a block a column may wear as
+    // its skin: the bulk mesher draws its own picture over the top of the
+    // column instead of the biome-tinted grain, which is what lets a dune be
+    // red sand and a meadow have flower beds without a cube-by-cube pass.
+    defMat(MAT.RED_SAND,     'red_sand',     0xd98b4a, { hard: 1, tex: 'red_sand',     surface: true });
+    defMat(MAT.PALE_SAND,    'pale_sand',    0xf3e3b4, { hard: 1, tex: 'pale_sand',    surface: true });
+    defMat(MAT.FLOWER_BED,   'flower_bed',   0x8a5a3a, { hard: 1, tex: 'flower_bed',   surface: true });
+    defMat(MAT.JUNGLE_TURF,  'jungle_turf',  0x5fb544, { hard: 1, tex: 'jungle_turf',  surface: true });
+    defMat(MAT.LIME_MOSS,    'lime_moss',    0xbfe067, { hard: 1, tex: 'lime_moss',    surface: true });
+    defMat(MAT.SNOW_SPARKLE, 'snow_sparkle', 0xf6fbff, { hard: 1, tex: 'snow_sparkle', surface: true });
+    defMat(MAT.REEDS,        'reeds',        0x6cb34a, { hard: 1, tex: 'reeds',        surface: true });
+    defMat(MAT.FIELDSTONE,   'fieldstone',   0x8c8c8c, { hard: 4, tex: 'fieldstone',   surface: true });
+    defMat(MAT.AMBER_COBBLE, 'amber_cobble', 0xe08a2c, { hard: 3, tex: 'amber_cobble', surface: true });
+    defMat(MAT.BLUE_COBBLE,  'blue_cobble',  0x6c9bb3, { hard: 4, tex: 'blue_cobble',  surface: true });
+    defMat(MAT.DARK_COBBLE,  'dark_cobble',  0x5c5560, { hard: 4, tex: 'dark_cobble',  surface: true });
+    defMat(MAT.MOSS_BRICK,   'moss_brick',   0x5a8a4a, { hard: 3, tex: 'moss_brick' });
+    defMat(MAT.VIOLET_ROCK,  'violet_rock',  0x6b3a62, { hard: 5, tex: 'violet_rock',  surface: true });
+    defMat(MAT.SHADOW_ROCK,  'shadow_rock',  0x3a3450, { hard: 5, tex: 'shadow_rock' });
+    defMat(MAT.PALE_SLATE,   'pale_slate',   0xcfd6dc, { hard: 3, tex: 'pale_slate',   surface: true });
+    defMat(MAT.ICEFALL,      'icefall',      0x9fd0f0, { hard: 2, tex: 'icefall' });
+    defMat(MAT.SCORIA,       'scoria',       0x8a2a1a, { hard: 4, tex: 'scoria',       surface: true });
+    defMat(MAT.LAVA_COBBLE,  'lava_cobble',  0xe06a2a, { hard: 4, tex: 'lava_cobble',  surface: true, glow: true });
+    defMat(MAT.EMBER_THORNS, 'ember_thorns', 0xe0742a, { hard: 3, tex: 'ember_thorns' });
+    defMat(MAT.RED_BRICK,    'red_brick',    0xb8402a, { hard: 3, tex: 'red_brick' });
+    defMat(MAT.SLATE_BRICK,  'slate_brick',  0x6f8aa0, { hard: 4, tex: 'slate_brick' });
+    defMat(MAT.CEDAR,        'cedar',        0xc27a3c, { hard: 2, tex: 'cedar' });
+    defMat(MAT.STEEL_RIB,    'steel_rib',    0x7c7f86, { hard: 6, tex: 'steel_rib' });
+    defMat(MAT.BLUE_STEEL,   'blue_steel',   0x2f55b0, { hard: 6, tex: 'blue_steel' });
+    defMat(MAT.WINDOW_PANE,  'window_pane',  0x8fd0e8, { hard: 1, tex: 'window_pane' });
+    defMat(MAT.ORNATE_TILE,  'ornate_tile',  0xe0a030, { hard: 3, tex: 'ornate_tile' });
+    defMat(MAT.EYE_WALL,     'eye_wall',     0xe07a3a, { hard: 4, tex: 'eye_wall',     glow: true });
+
     // The blocks the pick offers to put back, in the order the tool cycles them:
     // the ground first, then everything a wall is made of.
     const PLACEABLE = [
         MAT.DIRT, MAT.ROCK, MAT.SAND, MAT.SNOW, MAT.GRAVEL, MAT.CLAY, MAT.MUD,
         MAT.BRICK, MAT.COBBLE, MAT.CONCRETE, MAT.PLASTER, MAT.PLANK, MAT.TIMBER,
         MAT.THATCH, MAT.GLASS, MAT.IRON, MAT.COPPER, MAT.MARBLE, MAT.SANDSTONE,
-        MAT.LIMESTONE, MAT.GRANITE, MAT.BASALT, MAT.OBSIDIAN, MAT.GLOWSTONE
+        MAT.LIMESTONE, MAT.GRANITE, MAT.BASALT, MAT.OBSIDIAN, MAT.GLOWSTONE,
+        MAT.RED_SAND, MAT.PALE_SAND, MAT.FLOWER_BED, MAT.JUNGLE_TURF, MAT.LIME_MOSS,
+        MAT.SNOW_SPARKLE, MAT.REEDS, MAT.FIELDSTONE, MAT.AMBER_COBBLE, MAT.BLUE_COBBLE,
+        MAT.DARK_COBBLE, MAT.MOSS_BRICK, MAT.VIOLET_ROCK, MAT.SHADOW_ROCK, MAT.PALE_SLATE,
+        MAT.ICEFALL, MAT.SCORIA, MAT.LAVA_COBBLE, MAT.EMBER_THORNS, MAT.RED_BRICK,
+        MAT.SLATE_BRICK, MAT.CEDAR, MAT.STEEL_RIB, MAT.BLUE_STEEL, MAT.WINDOW_PANE,
+        MAT.ORNATE_TILE, MAT.EYE_WALL
     ];
 
     // The old generic seam's payout, kept because a dig log saved before the
@@ -1011,49 +1066,93 @@
             // what a cave wall and the side of a dug shaft are made of.
             bed: MAT.ROCK,
             hot: 0,           // how readily melt shows: 0 nowhere, 1 a volcano
+            // --- what makes one biome's ground look unlike another's --------
+            scree: null,      // the loose rock on a grade steeper than screeAt
+            screeAt: 0.8,     //   but not yet a cliff
+            mesa: 0,          // flat-topped tablelands lifted off the land field
+            knoll: 0,         // round hummocks where the hill field crests
+            // Patches of another skin where the patch field (one slow noise
+            // read per column, taken only on a biome that asks for it) falls
+            // in a band: [[mat, lo, hi], ...], first band to match wins.
+            patch: null,
+            bank: null,       // what grows on a river bank (reeds), else mud
         }, o || {});
         return TERRAIN[key];
     }
 
-    defTerrain('plain',    { land: 8,  hill: 16, fine: 4, bed: MAT.LIMESTONE });
-    defTerrain('meadow',   { land: 6,  hill: 11, fine: 3, bed: MAT.LIMESTONE });
+    // Each biome has a THEME now: its own cliff, its own scree, its own patches
+    // of a second skin, so a forest cliff is fieldstone under moss, a desert
+    // one amber cobble, an ice one a frozen fall. The patch bands read the
+    // patch field, which runs -1..1 and spends most of its time near 0, so a
+    // band starting at 0.5 is a rare pocket and one starting at 0.25 is common.
+    defTerrain('plain',    { land: 8,  hill: 16, fine: 4, knoll: 26, bed: MAT.LIMESTONE,
+                             cliff: MAT.FIELDSTONE, bank: MAT.REEDS,
+                             patch: [[MAT.FLOWER_BED, 0.52, 1]] });
+    defTerrain('meadow',   { land: 6,  hill: 11, fine: 3, knoll: 14, bed: MAT.LIMESTONE,
+                             cliff: MAT.FIELDSTONE, bank: MAT.REEDS,
+                             patch: [[MAT.FLOWER_BED, 0.36, 1]] });
+    // Ploughed and planted: no wild patches, which also keeps the commonest
+    // ground in the world off the block pass altogether.
     defTerrain('field',    { land: 4,  hill: 7,  fine: 2, bed: MAT.LIMESTONE });
-    defTerrain('forest',   { land: 12, hill: 24, fine: 6, bed: MAT.LIMESTONE });
-    defTerrain('jungle',   { land: 16, hill: 34, fine: 9 });
-    defTerrain('taiga',    { land: 14, hill: 30, fine: 7 });
-    defTerrain('steppe',   { land: 10, hill: 18, fine: 4 });
-    defTerrain('savannah', { land: 10, hill: 20, fine: 5 });
-    defTerrain('hills',    { land: 34, hill: 64, ridge: 34, fine: 8, cliffAt: 1.3,
-                             bed: MAT.GRANITE });
-    defTerrain('mountain', { massif: 1, hill: 46, ridge: 120, ridgePow: 2.2, fine: 15,
-                             cliffAt: 1.05, surface: null, sub: MAT.ROCK, bed: MAT.GRANITE });
+    defTerrain('forest',   { land: 12, hill: 28, fine: 6, bed: MAT.LIMESTONE,
+                             cliff: MAT.FIELDSTONE, cliffAt: 1.2, bank: MAT.REEDS,
+                             patch: [[MAT.LIME_MOSS, 0.4, 1]] });
+    defTerrain('jungle',   { land: 16, hill: 34, fine: 9, surface: MAT.JUNGLE_TURF,
+                             cliff: MAT.FIELDSTONE, cliffAt: 1.2, bank: MAT.REEDS,
+                             patch: [[MAT.LIME_MOSS, 0.45, 1]] });
+    defTerrain('taiga',    { land: 14, hill: 30, fine: 7, cliff: MAT.BLUE_COBBLE,
+                             patch: [[MAT.SNOW_SPARKLE, 0.5, 1], [MAT.LIME_MOSS, -1, -0.5]] });
+    defTerrain('steppe',   { land: 10, hill: 18, fine: 4, knoll: 18, cliff: MAT.FIELDSTONE,
+                             patch: [[MAT.RED_SAND, 0.55, 1]] });
+    defTerrain('savannah', { land: 10, hill: 20, fine: 5, knoll: 20, cliff: MAT.AMBER_COBBLE,
+                             patch: [[MAT.RED_SAND, 0.45, 1]] });
+    defTerrain('hills',    { land: 34, hill: 64, ridge: 50, ridgePow: 2.6, fine: 8, cliffAt: 1.2,
+                             cliff: MAT.FIELDSTONE, scree: MAT.PALE_SLATE, screeAt: 0.85,
+                             bed: MAT.GRANITE, patch: [[MAT.LIME_MOSS, 0.5, 1]] });
+    defTerrain('mountain', { massif: 1, hill: 46, ridge: 150, ridgePow: 2.2, fine: 15,
+                             cliffAt: 1.05, scree: MAT.PALE_SLATE, screeAt: 0.72,
+                             surface: null, sub: MAT.ROCK, bed: MAT.GRANITE });
     defTerrain('volcano',  { cone: 300, crater: 70, hill: 30, ridge: 40, fine: 12,
-                             surface: MAT.ASH, sub: MAT.ASH, cliffAt: 1.1,
-                             bed: MAT.BASALT, hot: 1 });
+                             surface: MAT.ASH, sub: MAT.ASH, cliff: MAT.SCORIA, cliffAt: 0.9,
+                             bed: MAT.BASALT, hot: 1,
+                             patch: [[MAT.LAVA_COBBLE, 0.6, 1], [MAT.SCORIA, 0.25, 0.6]] });
     defTerrain('canyon',   { land: 26, hill: 58, terrace: 15, terraceMix: 0.9, fine: 5,
                              strata: true, surface: MAT.SAND, sub: MAT.CLAY,
-                             cliff: MAT.CLAY, cliffAt: 0.95, bed: MAT.SANDSTONE });
+                             cliff: MAT.CLAY, cliffAt: 0.95, bed: MAT.SANDSTONE,
+                             patch: [[MAT.RED_SAND, 0.3, 1]] });
     defTerrain('badlands', { land: 20, hill: 44, terrace: 11, terraceMix: 0.92, fine: 4,
                              strata: true, surface: MAT.CLAY, sub: MAT.CLAY, cliffAt: 0.95,
-                             bed: MAT.SANDSTONE });
-    defTerrain('desert',   { land: 14, hill: 16, dune: 30, fine: 3,
-                             surface: MAT.SAND, sub: MAT.SAND, cliff: MAT.SAND, cliffAt: 99,
-                             bed: MAT.SANDSTONE });
+                             cliff: MAT.AMBER_COBBLE, bed: MAT.SANDSTONE,
+                             patch: [[MAT.RED_SAND, 0.2, 1]] });
+    // A desert is dunes: long crests twice the height they were, and here and
+    // there a mesa standing out of them with cobbled sides.
+    defTerrain('desert',   { land: 18, hill: 14, dune: 60, mesa: 55, fine: 3,
+                             surface: MAT.SAND, sub: MAT.SAND, cliff: MAT.AMBER_COBBLE, cliffAt: 1.5,
+                             bed: MAT.SANDSTONE,
+                             patch: [[MAT.RED_SAND, 0.3, 1], [MAT.PALE_SAND, -1, -0.35]] });
     defTerrain('saltflat', { land: 2,  hill: 2,  fine: 1, surface: MAT.SALT, sub: MAT.CLAY });
     defTerrain('beach',    { base: 6, land: 3, hill: 5, dune: 9, fine: 2,
-                             surface: MAT.SAND, sub: MAT.SAND, cliff: MAT.SAND, cliffAt: 99 });
+                             surface: MAT.SAND, sub: MAT.SAND, cliff: MAT.SAND, cliffAt: 99,
+                             patch: [[MAT.PALE_SAND, 0.35, 1]] });
     defTerrain('swamp',    { base: -9,  land: 5, hill: 9, fine: 4, poolTop: -3,
-                             surface: MAT.MUD, sub: MAT.CLAY, cliff: MAT.CLAY });
+                             surface: MAT.MUD, sub: MAT.CLAY, cliff: MAT.DARK_COBBLE, bank: MAT.REEDS,
+                             patch: [[MAT.REEDS, 0.25, 1]] });
     defTerrain('mangrove', { base: -12, land: 4, hill: 8, fine: 4, poolTop: -4,
-                             surface: MAT.MUD, sub: MAT.CLAY, cliff: MAT.CLAY });
-    defTerrain('tundra',   { land: 10, hill: 20, fine: 5, surface: MAT.SNOW, sub: MAT.DIRT });
+                             surface: MAT.MUD, sub: MAT.CLAY, cliff: MAT.DARK_COBBLE, bank: MAT.REEDS,
+                             patch: [[MAT.REEDS, 0.2, 1]] });
+    defTerrain('tundra',   { land: 10, hill: 20, fine: 5, surface: MAT.SNOW, sub: MAT.DIRT,
+                             cliff: MAT.BLUE_COBBLE, patch: [[MAT.SNOW_SPARKLE, 0.3, 1]] });
     defTerrain('ice',      { land: 12, hill: 26, fine: 6, surface: MAT.SNOW, sub: MAT.ICE,
-                             cliff: MAT.ICE });
+                             cliff: MAT.ICEFALL, cliffAt: 1.1, patch: [[MAT.SNOW_SPARKLE, 0, 1]] });
     defTerrain('ash',      { land: 12, hill: 26, ridge: 20, fine: 7,
-                             surface: MAT.ASH, sub: MAT.ASH, bed: MAT.BASALT, hot: 0.5 });
+                             surface: MAT.ASH, sub: MAT.ASH, bed: MAT.BASALT, hot: 0.5,
+                             cliff: MAT.SHADOW_ROCK, patch: [[MAT.SCORIA, 0.4, 1]] });
     defTerrain('rocky',    { land: 18, hill: 40, ridge: 26, fine: 9,
-                             surface: MAT.ROCK, sub: MAT.ROCK, cliffAt: 1.1 });
-    defTerrain('weird',    { land: 16, hill: 34, ridge: 26, fine: 8 });
+                             surface: MAT.ROCK, sub: MAT.ROCK, cliffAt: 1.1, cliff: MAT.FIELDSTONE,
+                             patch: [[MAT.PALE_SLATE, 0.4, 1]] });
+    defTerrain('weird',    { land: 16, hill: 34, ridge: 26, fine: 8, knoll: 30,
+                             cliff: MAT.VIOLET_ROCK, cliffAt: 1.0,
+                             patch: [[MAT.EYE_WALL, 0.6, 1], [MAT.VIOLET_ROCK, 0.3, 0.6]] });
     defTerrain('farlands', {
         land: 45, hill: 85, ridge: 130, ridgePow: 1.8, terrace: 25, terraceMix: 0.85,
         fine: 16, surface: null, sub: MAT.OBSIDIAN, bed: MAT.BASALT, hot: 0.7,
@@ -1325,6 +1424,22 @@
     // the SAME three noise samples, so two neighbouring biomes agree everywhere
     // along their border and the blend between them is seamless.
     // -------------------------------------------------------------------------
+    // A mesa stands where the land field is high: 0 off it, 1 on its flat top,
+    // and the short ramp between is its wall. Read off the land field alone so
+    // no extra noise is paid for it.
+    function mesaK(n) {
+        const t = (n.a - 0.30) / 0.11;
+        if (t <= 0) return 0;
+        if (t >= 1) return 1;
+        return t * t * (3 - 2 * t);
+    }
+    // Is this column on the WALL of a mesa (the ramp, not the top or the foot)?
+    function mesaWall(p, n) {
+        if (!p.mesa) return false;
+        const k = mesaK(n);
+        return k > 0.04 && k < 0.96;
+    }
+
     function profileHeight(p, x, z, wx, wy, n, gx, gz) {
         if (p.flat) return GROUND_BASE + islandRiseAt(wx, wy) * 0.5;
         let h = GROUND_BASE + p.base;
@@ -1338,9 +1453,17 @@
         if (p.ridge) h += p.ridge * Math.pow(n.ridge, p.ridgePow);
         if (p.dune) {
             // Long parallel crests running north-east, wandering with the
-            // kilometre-scale field so a desert is not corduroy.
+            // kilometre-scale field so a desert is not corduroy. Raised to a
+            // power so the crest is sharp and the trough between two dunes is
+            // a broad flat, which is what a dune field looks like.
             const phase = n.a * 7 + (x + z) * 0.0042;
-            h += p.dune * (0.5 + 0.5 * Math.sin(phase)) * (0.65 + 0.35 * n.b);
+            const s = 0.5 + 0.5 * Math.sin(phase);
+            h += p.dune * Math.pow(s, 1.7) * (0.65 + 0.35 * n.b);
+        }
+        if (p.mesa) h += p.mesa * mesaK(n);
+        if (p.knoll) {
+            const kb = Math.max(0, n.b - 0.42);
+            h += p.knoll * kb * kb * 14;
         }
         if (p.terrace > 0) {
             const q = Math.round(h / p.terrace) * p.terrace;
@@ -1498,6 +1621,10 @@
         _sewerCache.clear();
         _riverPathCache.clear();
         _riverNearCache.clear();
+        _trackCache.clear();
+        _mouthCache.clear();
+        _siteCache.clear();
+        _natCache.clear();
     }
 
 
@@ -1773,6 +1900,7 @@
     // asked for every column the mesher, a ray or a footfall touches, and both
     // callers read it on the spot, so a fresh object each time was only garbage.
     const _shaft = { sx: 0, sz: 0 };
+    const _mouthTmp = [0, 0];
     function shaftOf(wx, wy, own) {
         const oneIn = own >= 26 ? SHAFT_ONE_IN_MTN : SHAFT_ONE_IN;
         if (sqHash(wx, wy, 1) >= 1 / oneIn) return null;
@@ -1780,6 +1908,397 @@
         _shaft.sx = wx * VOX.PER_TILE + Math.floor(sqHash(wx, wy, 2) * VOX.PER_TILE);
         _shaft.sz = wy * VOX.PER_TILE + Math.floor(sqHash(wx, wy, 3) * VOX.PER_TILE);
         return _shaft;
+    }
+
+    // =========================================================================
+    // Tracks and footpaths
+    // =========================================================================
+    // Besides the motorways of the world map there are the ways people and
+    // animals actually walk: gravel tracks a cart wide and dirt paths a stride
+    // wide. Neither is on any map. A row (or a column) of world squares carries
+    // one by hash, for a hashed run of squares, at a hashed offset across the
+    // square, wandering with a slow noise so it does not rule a line across
+    // the country; and because all of that is decided from the line's number
+    // alone, two neighbouring squares agree on where it crosses their shared
+    // edge without ever asking each other.
+    //
+    // Nothing is graded for them: a track climbs whatever it climbs, which is
+    // what makes the one up a mountainside a mountain path.
+    const TRACK_ONE_IN  = 5;     // lines of squares that carry a cart track
+    const PATH_ONE_IN   = 3;     // ...and a footpath
+    const TRACK_HALF_W  = 7.5;   // units either side of the centre line (3 cubes)
+    const PATH_HALF_W   = 2.5;   // (1 cube)
+    const TRACK_WANDER  = 0.16;  // of a square, side to side
+
+    // The ways along line `i` of `axis` (0: east-west, keyed by wy; 1:
+    // north-south, keyed by wx), as { from, to, off } per kind, or null.
+    const _trackCache = new GenCache(FIELD_CACHE_LIMIT);
+    function tracksOnLine(axis, i) {
+        const key = (i + 32768) * 2 + axis;
+        let t = _trackCache.get(key);
+        if (t !== undefined) return t;
+        const salt = axis ? 400 : 300;
+        const line = (oneIn, s) => {
+            if (sqHash(i, axis, salt + s) >= 1 / oneIn) return null;
+            const from = Math.floor(sqHash(i, axis, salt + s + 1) * 230);
+            const len  = 8 + Math.floor(sqHash(i, axis, salt + s + 2) * 34);
+            return { from, to: from + len, off: 0.2 + 0.6 * sqHash(i, axis, salt + s + 3) };
+        };
+        t = { track: line(TRACK_ONE_IN, 0), path: line(PATH_ONE_IN, 10) };
+        if (!t.track && !t.path) t = null;
+        _trackCache.set(key, t);
+        return t;
+    }
+
+    // 2 on a cart track, 1 on a footpath, 0 off both. World units in.
+    function trackAt(x, z, wx, wy) {
+        const ts = WORLD_TILE_SIZE;
+        let hit = 0;
+        for (let axis = 0; axis < 2; axis++) {
+            const i = axis ? wx : wy, j = axis ? wy : wx;
+            const t = tracksOnLine(axis, i);
+            if (!t) continue;
+            const along  = axis ? z : x;
+            const across = axis ? x : z;
+            const base   = i * ts;
+            const wander = _perlin(along * 0.0035 + i * 3.1, axis * 17.7 + 11.3) * ts * TRACK_WANDER;
+            if (t.track && j >= t.track.from && j <= t.track.to) {
+                if (Math.abs(across - (base + t.track.off * ts + wander)) <= TRACK_HALF_W) return 2;
+            }
+            if (t.path && j >= t.path.from && j <= t.path.to) {
+                if (Math.abs(across - (base + t.path.off * ts - wander)) <= PATH_HALF_W) hit = 1;
+            }
+        }
+        return hit;
+    }
+
+    // =========================================================================
+    // The ground under a road
+    // =========================================================================
+    // A road square is flattened for its paving, but the COUNTRY does not stop
+    // at its edge: the mountain the road runs into carries on over it, and
+    // the valley it crosses carries on under it. What that country would have
+    // been is read off the square's four neighbours - the ones that are not
+    // themselves flattened - each weighted by how near its side of the square
+    // the point is, so the ground is continuous across every edge of the
+    // square and a mountain on the north side slopes down to the fields on
+    // the south exactly as it would with no road there at all.
+    const _natCache = new GenCache(FIELD_CACHE_LIMIT);
+    function natSidesOf(wx, wy) {
+        const key = (wx + 32768) * 65536 + (wy + 32768);
+        let got = _natCache.get(key);
+        if (got !== undefined) return got;
+        const sides = [];
+        const D = [[-1, 0, 0], [1, 0, 1], [0, -1, 2], [0, 1, 3]];
+        for (const d of D) {
+            const p = profileFor(sampleBiomeAt(wx + d[0], wy + d[1]).name);
+            if (p.flat) continue;
+            sides.push({ p, wx: wx + d[0], wy: wy + d[1], side: d[2] });
+        }
+        got = sides.length ? sides : null;
+        _natCache.set(key, got);
+        return got;
+    }
+    // The natural ground of square (xx, zz) at world point (x, z), or null.
+    function naturalAt(sides, x, z, gx, gz, n, xx, zz) {
+        const u = _clamp(gx - xx, 0, 1), v = _clamp(gz - zz, 0, 1);
+        let hs = 0, ws = 0;
+        for (let i = 0; i < sides.length; i++) {
+            const s = sides[i];
+            const w = s.side === 0 ? 1 - u : s.side === 1 ? u : s.side === 2 ? 1 - v : v;
+            if (w <= 0) continue;
+            let hh = profileHeight(s.p, x, z, s.wx, s.wy, n, gx, gz);
+            if (s.p.water) hh = s.p.abs !== null ? s.p.abs : hh - s.p.depth;
+            hs += hh * w; ws += w;
+        }
+        return ws > 0 ? hs / ws : null;
+    }
+
+    // Which band of a profile's patch list the patch field falls in, or 0.
+    function patchMat(list, v) {
+        for (let i = 0; i < list.length; i++) {
+            const b = list[i];
+            if (v >= b[1] && v < b[2]) return b[0];
+        }
+        return 0;
+    }
+
+    // A pier of a viaduct stands under each carriageway every PIER_PITCH cubes
+    // along the road. A junction or a bend has no one "along", and its piers
+    // stand on a lattice instead.
+    const PIER_PITCH = 8;
+    function pierAt(x, z, wx, wy) {
+        const ts = WORLD_TILE_SIZE;
+        const dir = getRoadDirectionAt(wx, wy) || 'horizontal';
+        const cell = (u) => ((Math.floor(u / VOX.SIZE) % PIER_PITCH) + PIER_PITCH) % PIER_PITCH === 0;
+        if (dir === 'horizontal' || dir === 'vertical') {
+            const lat = dir === 'horizontal' ? z - (wy + 0.5) * ts : x - (wx + 0.5) * ts;
+            return cell(dir === 'horizontal' ? x : z) &&
+                   Math.abs(Math.abs(lat) - ROAD_LANE_OFF) < VOX.SIZE * 1.1;
+        }
+        return cell(x) && cell(z);
+    }
+
+    // =========================================================================
+    // Cave mouths
+    // =========================================================================
+    // A shaft is a hole in the ground; a MOUTH is a hole in a hillside. One
+    // hill or mountain square in MOUTH_ONE_IN has one: a tube bored into the
+    // slope from a point on the surface, running towards the rising ground and
+    // dropping as it goes until it is down among the mountain passages, where
+    // it ends in a small room. Open to the sky at its start, which is what
+    // caveTopY sees, and under the ground everywhere else. It is kept wholly
+    // inside its own square, so only that square ever has to be asked.
+    const MOUTH_ONE_IN  = 3;
+    const MOUTH_MIN_TOP = 15;    // the ground has to be at least this high (a hill)
+    const MOUTH_LEN     = 30;    // voxels
+    const MOUTH_DROP    = 13;
+    const MOUTH_R       = 2.6;
+    const MOUTH_ROOM    = 4.5;
+    const MOUTH_REACH   = MOUTH_LEN + MOUTH_ROOM + 1;
+    const _mouthCache = new GenCache(FIELD_CACHE_LIMIT);
+    function mouthOf(field, wx, wy) {
+        const key = (wx + 32768) * 65536 + (wy + 32768);
+        let m = _mouthCache.get(key);
+        if (m !== undefined) return m;
+        m = null;
+        if (sqHash(wx, wy, 21) < 1 / MOUTH_ONE_IN &&
+            profileFor(sampleBiomeAt(wx, wy).name).key !== 'road') {
+            const mx = wx * VOX.PER_TILE + 38 + Math.floor(sqHash(wx, wy, 22) * 24);
+            const mz = wy * VOX.PER_TILE + 38 + Math.floor(sqHash(wx, wy, 23) * 24);
+            const ey = field.genTopY(mx, mz);
+            if (ey >= MOUTH_MIN_TOP) {
+                // Into the hill: of the four ways, the one the ground rises most.
+                let best = -Infinity, dx = 1, dz = 0;
+                for (const d of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                    const t = field.genTopY(mx + d[0] * 8, mz + d[1] * 8);
+                    if (t > best) { best = t; dx = d[0]; dz = d[1]; }
+                }
+                if (best > ey + 1) m = { mx, mz, dx, dz, ey };
+            }
+        }
+        _mouthCache.set(key, m);
+        return m;
+    }
+
+    // The mouth's passage through column (vx, vz) as [lo, hi] in `out`, or
+    // false. `own` is the column's ground: past the entrance the tube keeps
+    // under it, so a dip in the hillside further in does not leave it in the air.
+    function mouthRun(m, vx, vz, own, out) {
+        const ax = vx - m.mx, az = vz - m.mz;
+        const along = ax * m.dx + az * m.dz;
+        if (along < -1 || along > MOUTH_LEN + MOUTH_ROOM) return false;
+        const perp = Math.abs(ax * -m.dz + az * m.dx);
+        const inRoom = along > MOUTH_LEN - 2;
+        const r = inRoom ? MOUTH_ROOM : MOUTH_R;
+        if (perp >= r) return false;
+        const t  = Math.min(1, Math.max(0, along / MOUTH_LEN));
+        let cy = m.ey - 1 - t * MOUTH_DROP;
+        if (along > 6) cy = Math.min(cy, own - 4 - (inRoom ? 2 : 0));
+        const rh = (inRoom ? 3.2 : 2.2) * Math.sqrt(1 - (perp / r) * (perp / r)) + 0.6;
+        out[0] = cy - rh; out[1] = cy + rh;
+        return true;
+    }
+
+    // =========================================================================
+    // The places under the world
+    // =========================================================================
+    // The caves are passages; these are PLACES. The world is cut into cells of
+    // SITE_CELL squares a side and a hash gives each cell one of them or none:
+    //
+    //   warren   a goblin town: a wide lit chamber, a cobbled floor, a ring of
+    //            huts round a brick hall, torch posts, and goblins
+    //   dungeon  a built thing: a grid of slate-brick rooms off each other
+    //            through doorways, pillars, a vault floored in ornate tile
+    //   grotto   a dome of crystal and glowstone, stalagmites, a seam-rich wall
+    //
+    // Every one has a way in: a tube dug east from the chamber's edge that
+    // rises until it breaks the surface, so it can be found from above and
+    // walked into. All of it is answered per column in O(1) off the cell's
+    // one memoised record, exactly as the passages are, and nothing is stored.
+    const SITE_CELL = 4;
+    const SITE_SPAN = SITE_CELL * VOX.PER_TILE;
+    const SITE = { NONE: 0, WARREN: 1, DUNGEON: 2, GROTTO: 3 };
+    const SITE_KEYS = [null, 'warren', 'dungeon', 'grotto'];   // i18n-ignore  VoxelWorld.site.* keys
+    const WARREN_R = 34, WARREN_Y = -22, WARREN_HUTS = 9, WARREN_POSTS = 8, WARREN_H = 14;
+    const DUNGEON_ROOM = 8, DUNGEON_ROOMS = 3, DUNGEON_Y = -9, DUNGEON_H = 4;
+    const GROTTO_R = 20, GROTTO_Y = -30, GROTTO_H = 12;
+    const SITE_WAY_LEN = 58;     // the way in, voxels, from the chamber's edge
+    const _siteCache = new GenCache(FIELD_CACHE_LIMIT);
+    function siteOf(field, cx, cz) {
+        const key = (cx + 32768) * 65536 + (cz + 32768);
+        let s = _siteCache.get(key);
+        if (s !== undefined) return s;
+        s = null;
+        const roll = sqHash(cx, cz, 71);
+        const type = roll < 0.18 ? SITE.WARREN : roll < 0.35 ? SITE.DUNGEON : roll < 0.45 ? SITE.GROTTO : SITE.NONE;
+        if (type) {
+            // Well inside the cell, so the place and its way in never reach a
+            // neighbouring cell and a column only ever asks its own.
+            const sx = cx * SITE_SPAN + 120 + Math.floor(sqHash(cx, cz, 72) * 160);
+            const sz = cz * SITE_SPAN + 120 + Math.floor(sqHash(cx, cz, 73) * 160);
+            const own = profileFor(sampleBiomeAt(Math.floor(sx / VOX.PER_TILE), Math.floor(sz / VOX.PER_TILE)).name);
+            if (!own.water) {
+                const jit = Math.floor(sqHash(cx, cz, 74) * 5) - 2;
+                const y0 = (type === SITE.WARREN ? WARREN_Y : type === SITE.DUNGEON ? DUNGEON_Y : GROTTO_Y) + jit;
+                const R  = type === SITE.WARREN ? WARREN_R :
+                           type === SITE.DUNGEON ? (DUNGEON_ROOM * DUNGEON_ROOMS) / 2 + 1 : GROTTO_R;
+                const H  = type === SITE.WARREN ? WARREN_H : type === SITE.DUNGEON ? DUNGEON_H + 1 : GROTTO_H;
+                s = { type, key: SITE_KEYS[type], cx, cz, sx, sz, y0, R, H, seed: sqHash(cx, cz, 75), spots: [] };
+                const wayX = sx + R - 1, exitX = wayX + SITE_WAY_LEN;
+                s.way = { x0: wayX, z: sz, x1: exitX, y0: y0 + 2, y1: field.genTopY(exitX, sz) - 1 };
+                s.x0 = sx - R - 2; s.x1 = exitX + 3; s.z0 = sz - R - 2; s.z1 = sz + R + 2;
+                siteFurnish(s);
+            }
+        }
+        _siteCache.set(key, s);
+        return s;
+    }
+
+    function siteFurnish(s) {
+        if (s.type === SITE.WARREN) {
+            s.huts = []; s.posts = [];
+            for (let i = 0; i < WARREN_HUTS; i++) {
+                const a  = (i / WARREN_HUTS) * Math.PI * 2 + s.seed * 6.28;
+                const hx = Math.round(s.sx + Math.cos(a) * s.R * 0.62);
+                const hz = Math.round(s.sz + Math.sin(a) * s.R * 0.62);
+                // The door faces the middle of the town.
+                const dx = Math.abs(Math.cos(a)) >= Math.abs(Math.sin(a)) ? (Math.cos(a) > 0 ? -1 : 1) : 0;
+                const dz = dx === 0 ? (Math.sin(a) > 0 ? -1 : 1) : 0;
+                const wall = [MAT.MOSS_BRICK, MAT.CEDAR, MAT.RED_BRICK][(i + Math.floor(s.seed * 3)) % 3];
+                s.huts.push({ x: hx, z: hz, dx, dz, wall });
+                s.spots.push({ x: hx, z: hz, kind: 'hut' });   // i18n-ignore  spot kinds
+            }
+            for (let i = 0; i < WARREN_POSTS; i++) {
+                const a = (i / WARREN_POSTS) * Math.PI * 2 + 0.3;
+                s.posts.push({ x: Math.round(s.sx + Math.cos(a) * s.R * 0.36),
+                               z: Math.round(s.sz + Math.sin(a) * s.R * 0.36) });
+            }
+            s.spots.push({ x: s.sx, z: s.sz, kind: 'hall' });
+        } else if (s.type === SITE.DUNGEON) {
+            const N = DUNGEON_ROOM * DUNGEON_ROOMS;
+            s.ox = s.sx - N / 2; s.oz = s.sz - N / 2;
+            for (let rz = 0; rz < DUNGEON_ROOMS; rz++) {
+                for (let rx = 0; rx < DUNGEON_ROOMS; rx++) {
+                    const vault = rx === DUNGEON_ROOMS - 1 && rz === DUNGEON_ROOMS - 1;
+                    s.spots.push({ x: s.ox + rx * DUNGEON_ROOM + 4, z: s.oz + rz * DUNGEON_ROOM + 4,
+                                   kind: vault ? 'vault' : 'room' });
+                }
+            }
+        } else {
+            s.spots.push({ x: s.sx, z: s.sz, kind: 'grotto' });
+        }
+    }
+
+    // What the place does to column (vx, vz): the runs it carves (through
+    // `push`), the things it stands in them (`fills`, as lo, hi, mat triples),
+    // the band its walls have to be drawn over (`walls`), and whether the
+    // column is inside the place at all. `own` is the column's own ground.
+    function siteColumn(s, vx, vz, own, push, fills, walls) {
+        let inside = false;
+        if (s.type === SITE.DUNGEON) {
+            const lx = vx - s.ox, lz = vz - s.oz, N = DUNGEON_ROOM * DUNGEON_ROOMS;
+            if (lx >= -1 && lx <= N + 1 && lz >= -1 && lz <= N + 1) {
+                walls.push(s.y0, s.y0 + DUNGEON_H + 1);
+                const mx = ((lx % DUNGEON_ROOM) + DUNGEON_ROOM) % DUNGEON_ROOM;
+                const mz = ((lz % DUNGEON_ROOM) + DUNGEON_ROOM) % DUNGEON_ROOM;
+                const wallX = mx === 0, wallZ = mz === 0;
+                let open = lx > 0 && lx < N && lz > 0 && lz < N && !wallX && !wallZ;
+                // A three-wide doorway in the middle of every inner wall.
+                if (wallX && !wallZ && lx > 0 && lx < N && mz >= 3 && mz <= 5) open = true;
+                if (wallZ && !wallX && lz > 0 && lz < N && mx >= 3 && mx <= 5) open = true;
+                if (open) {
+                    push(s.y0 + 1, s.y0 + DUNGEON_H, s.y0 + DUNGEON_H);
+                    inside = true;
+                    if ((mx === 2 || mx === 6) && (mz === 2 || mz === 6)) {
+                        fills.push(s.y0 + 1, s.y0 + DUNGEON_H - 1, MAT.SLATE_BRICK,
+                                   s.y0 + DUNGEON_H, s.y0 + DUNGEON_H, MAT.GLOWSTONE);
+                    }
+                }
+            }
+        } else {
+            const d = Math.hypot(vx - s.sx, vz - s.sz);
+            if (d < s.R + 1.5) {
+                walls.push(s.y0, s.y0 + s.H + 1);
+                if (d < s.R) {
+                    const k = 1 - (d / s.R) * (d / s.R);
+                    const ceilH = s.type === SITE.WARREN ? 4 + Math.floor(10 * k) : 3 + Math.floor(9 * k);
+                    const hi = Math.min(s.y0 + ceilH, own - 3);
+                    if (hi >= s.y0 + 1) { push(s.y0 + 1, hi, hi); inside = true; }
+                    if (s.type === SITE.WARREN) warrenFills(s, vx, vz, fills);
+                    else if (d < s.R - 2 && hash3(vx, 7, vz) < 0.05) {
+                        fills.push(s.y0 + 1, s.y0 + 1 + Math.floor(hash3(vx, 8, vz) * 4), MAT.CRYSTAL);
+                    }
+                }
+            }
+        }
+        // The way in: a tube from the chamber's edge up to the daylight.
+        const w = s.way;
+        if (vx >= w.x0 && vx <= w.x1 + 2 && Math.abs(vz - w.z) < 2.5) {
+            const t  = Math.min(1, (vx - w.x0) / (w.x1 - w.x0));
+            const cy = w.y0 + (w.y1 - w.y0) * t;
+            const rh = Math.abs(vz - w.z) < 0.5 ? 2.4 : 1.6;
+            push(cy - rh + 0.5, cy + rh, own - 1);
+            inside = true;
+        }
+        return inside;
+    }
+
+    function warrenFills(s, vx, vz, fills) {
+        const y = s.y0;
+        // The hall in the middle: eleven across, five high, a door east and west.
+        const hx = Math.abs(vx - s.sx), hz = Math.abs(vz - s.sz);
+        if (hx <= 5 && hz <= 5) {
+            if ((hx === 5 || hz === 5) && !(hx === 5 && hz <= 1)) fills.push(y + 1, y + 5, MAT.RED_BRICK);
+            fills.push(y + 6, y + 6, MAT.ORNATE_TILE);
+            return;
+        }
+        for (const h of s.huts) {
+            const ax = vx - h.x, az = vz - h.z;
+            if (Math.abs(ax) > 2 || Math.abs(az) > 2) continue;
+            if (Math.abs(ax) === 2 || Math.abs(az) === 2) {
+                const door = h.dx !== 0 ? (ax === 2 * h.dx && az === 0) : (az === 2 * h.dz && ax === 0);
+                if (!door) fills.push(y + 1, y + 3, h.wall);
+            }
+            fills.push(y + 4, y + 4, MAT.THATCH);
+            return;
+        }
+        for (const p of s.posts) {
+            if (p.x === vx && p.z === vz) {
+                fills.push(y + 1, y + 4, MAT.TIMBER, y + 5, y + 5, MAT.GLOWSTONE);
+                return;
+            }
+        }
+    }
+
+    // What the rock round a place is made of, or 0 for the country rock.
+    function siteMaterial(s, vx, vy, vz) {
+        const y = s.y0;
+        if (s.type === SITE.DUNGEON) {
+            const lx = vx - s.ox, lz = vz - s.oz, N = DUNGEON_ROOM * DUNGEON_ROOMS;
+            if (lx < -1 || lx > N + 1 || lz < -1 || lz > N + 1 || vy < y - 1 || vy > y + DUNGEON_H + 2) return 0;
+            if (vy === y) {
+                const rx = Math.floor(lx / DUNGEON_ROOM), rz = Math.floor(lz / DUNGEON_ROOM);
+                return (rx === DUNGEON_ROOMS - 1 && rz === DUNGEON_ROOMS - 1) ? MAT.ORNATE_TILE : MAT.FIELDSTONE;
+            }
+            return hash3(vx, vy, vz) < 0.12 ? MAT.MOSS_BRICK : MAT.SLATE_BRICK;
+        }
+        const d = Math.hypot(vx - s.sx, vz - s.sz);
+        if (d > s.R + 1.5 || vy < y - 1 || vy > y + s.H + 2) return 0;
+        const h = hash3(vx, vy, vz);
+        if (s.type === SITE.WARREN) {
+            if (vy === y) return (Math.abs(vx - s.sx) <= 5 && Math.abs(vz - s.sz) <= 5) ? MAT.ORNATE_TILE : MAT.DARK_COBBLE;
+            return h < 0.55 ? MAT.MOSS_BRICK : h < 0.85 ? MAT.SHADOW_ROCK : MAT.DARK_COBBLE;
+        }
+        if (vy === y) return MAT.BLUE_COBBLE;
+        return h < 0.4 ? MAT.CRYSTAL : h < 0.5 ? MAT.GLOWSTONE : h < 0.65 ? MAT.ORE_CRYSTAL : MAT.VIOLET_ROCK;
+    }
+
+    // The place whose cell a voxel column is in, if its footprint reaches it.
+    function siteNear(field, vx, vz) {
+        const s = siteOf(field, Math.floor(vx / SITE_SPAN), Math.floor(vz / SITE_SPAN));
+        if (!s || vx < s.x0 || vx > s.x1 || vz < s.z0 || vz > s.z1) return null;
+        return s;
     }
 
     // =========================================================================
@@ -1964,10 +2483,25 @@
             let dryH = 0, landH = 0, landW = 0, wetH = 0, seaW = 0;
             let poolTop = 0, poolW = 0, fineAmp = 0, gradeAmp = 0;
             let r = 0, g = 0, b = 0;
+            // The paving of a road square, blended apart from the ground: a
+            // road's corner puts the COUNTRY'S OWN ground into the height blend
+            // (naturalAt), so a mountain runs on across the road square unbroken,
+            // and the carriageway is laid flat through whatever that is. The
+            // difference between the two is what makes a cut, a tunnel or a
+            // viaduct (see the road branch below).
+            let paveH = 0, paveW = 0;
 
             const acc = (bi, p, ww, xx, zz) => {
                 if (!ww) return;
-                const dry = profileHeight(p, x, z, xx, zz, n, gx, gz);
+                let dry = profileHeight(p, x, z, xx, zz, n, gx, gz);
+                if (p.key === 'road') {
+                    paveH += dry * ww; paveW += ww;
+                    const sides = natSidesOf(xx, zz);
+                    if (sides) {
+                        const nh = naturalAt(sides, x, z, gx, gz, n, xx, zz);
+                        if (nh !== null) dry = nh;
+                    }
+                }
                 dryH     += dry * ww;
                 fineAmp  += p.fine * ww;
                 gradeAmp += (p.hill + p.ridge * 0.8 + p.massif * 140) * ww;
@@ -2075,8 +2609,18 @@
             }
 
             // --- the top cube --------------------------------------------------
+            // The patch field: one slow noise read, taken only by a column
+            // that asks for it (a biome with patches, a bank, a beach, snow).
+            let pn = 2;
+            const patchN = () => pn === 2 ? (pn = _perlin(x * 0.0115 + 91.3, z * 0.0115 - 37.7) * 1.6) : pn;
+            let track = 0, tunnelY = 0, deckY = 0, pier = false, deckRoad = false;
             if (pOwn.key === 'road') {
                 const rd = VoxelField.roadAt(x, z, wx, wy);
+                // `h` here is the country's own ground, mountain or valley; the
+                // paving is the flat blend of the road corners alone. Off the
+                // carriageway (the verge) the ground simply stays what it is,
+                // so a road through a hill has a rock wall beside it.
+                const nat = h;
                 if (rd) {
                     // The median (3) is levelled with the carriageways either
                     // side of it but is not paved: it is left to the surface
@@ -2090,30 +2634,61 @@
                         // sees is the ribbon VoxelWorldTerrain extrudes over it.
                         mat  = MAT.ASPHALT;
                     }
-                    // A carriageway climbs a hill but never ripples: the
-                    // metre-scale roughness comes back out from under it.
-                    h -= n.c * fineAmp;
                     // The paving, exactly: smooth, never rounded to the grid.
                     // The ribbon is laid at it and walkers and wheels stand on it.
-                    pave = h;
+                    pave = paveW > 0 ? paveH / paveW : h;
+                    h = pave;
                     // The bed is the highest whole cube that stays clear of the
                     // paving. A column top is ROUNDED to the voxel grid, so a bed
                     // left level with the surface would poke a cube corner through
                     // the ribbon; one dropped further leaves a hollow under it.
-                    if (rd !== 3) h = Math.floor((pave - ROAD_BED_CLEAR) / VOX.SIZE) * VOX.SIZE;
+                    const bedTop = Math.floor((pave - ROAD_BED_CLEAR) / VOX.SIZE);
+                    const diff = nat - pave;
+                    if (diff > ROAD_TUNNEL_H) {
+                        // A TUNNEL. The hill stays overhead and the carriageway
+                        // runs through it at its own grade: the column's top
+                        // is the natural ground, the bore is carved out of it
+                        // by columnCaves, and the ribbon is laid at the paving
+                        // as it always was, now with a roof over it.
+                        tunnelY = bedTop;
+                        h = nat; road = false; mat = MAT.GRASS;
+                    } else if (diff < -ROAD_VIADUCT_H) {
+                        // A VIADUCT. The valley floor is left where it was, a
+                        // concrete deck is hung one cube under the paving and
+                        // piers come down to the ground under each carriageway.
+                        deckY = bedTop - 1;
+                        deckRoad = rd !== 3;
+                        if (pierAt(x, z, wx, wy)) {
+                            h = deckY * VOX.SIZE; mat = MAT.CONCRETE; road = true; pier = true;
+                        } else {
+                            h = nat; road = false; mat = MAT.GRASS;
+                        }
+                    } else if (rd !== 3) {
+                        h = bedTop * VOX.SIZE;
+                    }
                 }
             }
             if (!road) {
                 const above = h - SEA_LEVEL;
+                let pm = 0;
                 if (bed === 1)                          mat = MAT.SAND;
-                else if (bed === 2)                     mat = MAT.MUD;
+                else if (bed === 2)                     mat = (pOwn.bank && patchN() > 0.05) ? pOwn.bank : MAT.MUD;
                 else if (above < -46)                   mat = MAT.CLAY;
                 else if (above < 0)                     mat = MAT.SAND;
                 else if (seaW > 0.02 && above < BEACH_TOP) mat = MAT.SAND;
-                else if (h > SNOW_LINE)                 mat = MAT.SNOW;
-                else if (slope > pOwn.cliffAt)          mat = pOwn.cliff;
+                else if (h > SNOW_LINE)                 mat = patchN() > 0.35 ? MAT.SNOW_SPARKLE : MAT.SNOW;
+                else if (slope > pOwn.cliffAt || mesaWall(pOwn, n)) mat = pOwn.cliff;
+                else if (pOwn.scree && slope > pOwn.screeAt) mat = pOwn.scree;
+                else if (pOwn.patch && (pm = patchMat(pOwn.patch, patchN()))) mat = pm;
                 else if (pOwn.surface !== null)         mat = pOwn.surface;
                 else mat = h > 120 * WORLD_SCALE ? MAT.ROCK : MAT.GRASS;
+                // The ways people walk: a gravel track or a dirt footpath laid
+                // over whatever the ground is, on dry land off the motorways.
+                if (bed === 0 && above >= 0 && !tunnelY && !deckY &&
+                    pOwn.key !== 'road' && !pOwn.water) {
+                    track = trackAt(x, z, wx, wy);
+                    if (track) mat = track === 2 ? MAT.GRAVEL : MAT.DIRT;
+                }
             }
 
             // --- standing water that the sea plane cannot reach ----------------
@@ -2133,6 +2708,13 @@
             if (h > SNOW_LINE) {
                 const k = Math.min(1, (h - SNOW_LINE) / (150 * WORLD_SCALE));
                 r += (SNOW_RGB.r - r) * k; g += (SNOW_RGB.g - g) * k; b += (SNOW_RGB.b - b) * k;
+            }
+            // A track is gravel-coloured and a path earth-coloured whatever
+            // grows either side of it: the ground skin is drawn in the column's
+            // own colour, so the colour has to say so.
+            if (track) {
+                const c = MATERIALS[mat].rgb;
+                r += (c.r - r) * 0.8; g += (c.g - g) * 0.8; b += (c.b - b) * 0.8;
             }
 
             // The Omega Tower's own ground. Six world squares by six of it are
@@ -2173,6 +2755,7 @@
             }
 
             o.h = h; o.mat = mat; o.road = road; o.prof = pOwn; o.water = waterY; o.pave = pave;
+            o.track = track; o.tunnelY = tunnelY; o.deckY = deckY; o.pier = pier; o.deckRoad = deckRoad;
             o.r = _clamp(r, 0, 1); o.g = _clamp(g, 0, 1); o.b = _clamp(b, 0, 1);
             return o;
         }
@@ -2284,6 +2867,12 @@
             const rec = {
                 h: c.h, mat: c.mat, road: c.road, prof: c.prof, water: c.water, pave: c.pave,
                 r: c.r, g: c.g, b: c.b,
+                // The ways and the works: a track over the column, the floor
+                // of a road tunnel bored through it, the deck of a viaduct hung
+                // over it, or the pier that deck stands on. 0 / false for the
+                // whole of the world that has none, which is nearly all of it.
+                track: c.track || 0, tunnelY: c.tunnelY || 0, deckY: c.deckY || 0, pier: !!c.pier,
+                deckRoad: !!c.deckRoad,
                 top: _clamp(Math.round(c.h / VOX.SIZE), VOX.MIN_Y + 1, VOX.MAX_Y),
                 // The roof of the sewer gallery under this column, or 0 where
                 // no town stands over it. Kept on the column so genMaterial -
@@ -2347,14 +2936,25 @@
             // ever breaks the surface, and a shaft is one spot in a world square
             // that most often has none: the square is asked first, and all but a
             // handful of columns in the world stop here for the cost of a hash.
+            // The same goes for a cave mouth in a hillside and for the way
+            // into one of the places under the world: each is one spot in a
+            // square (or a cell) that mostly has none, and a bounding box
+            // rules the column out before anything is carved.
             const wx = Math.floor(vx / VOX.PER_TILE), wy = Math.floor(vz / VOX.PER_TILE);
+            let near = false;
             const sh = shaftOf(wx, wy, gen);
-            if (!sh) return gen;
-            const reach = SHAFT_RADIUS + SHAFT_FLARE;
-            if (Math.abs(vx - sh.sx) > reach || Math.abs(vz - sh.sz) > reach) return gen;
+            if (sh) {
+                const reach = SHAFT_RADIUS + SHAFT_FLARE;
+                near = Math.abs(vx - sh.sx) <= reach && Math.abs(vz - sh.sz) <= reach;
+            }
+            if (!near) {
+                const m = mouthOf(this, wx, wy);
+                if (m) near = Math.abs(vx - m.mx) <= MOUTH_REACH && Math.abs(vz - m.mz) <= MOUTH_REACH;
+            }
+            if (!near && !siteNear(this, vx, vz)) return gen;
 
             const c = this.columnCaves(vx, vz);
-            if (!c || !c.shaftR || c.shaftTop < gen - 1) return gen;
+            if (!c || !c.open) return gen;
             let y = gen;
             while (y > VOX.MIN_Y + 1 && this.caveAt(vx, y - 1, vz)) y--;
             return y;
@@ -2463,10 +3063,34 @@
                 if (d < SHAFT_RADIUS + SHAFT_FLARE) shaft = d;
             }
 
-            if (!runs.length) return null;
+            // The works and the places. None of these answer to the natural
+            // roof: a road tunnel is bored at the paving's own level, a cave
+            // mouth and a way in are MEANT to break the surface, and a place
+            // keeps its own ceiling (siteColumn holds it under the ground).
+            //   fills  lo, hi, mat triples: things standing in a void (a hut
+            //          wall, a pillar, the deck of a viaduct)
+            //   walls  lo, hi pairs: bands the mesher has to walk for a column
+            //          that carves nothing itself but faces a void next door
+            const col = this.column(vx, vz);
+            const fills = [], walls = [];
+            if (col.tunnelY) push(col.tunnelY, col.tunnelY + ROAD_TUNNEL_CLEAR - 1, col.tunnelY + ROAD_TUNNEL_CLEAR - 1);
+            if (col.deckY) fills.push(col.deckY, col.deckY, MAT.CONCRETE);
+            const mouth = mouthOf(this, wx, wy);
+            if (mouth && mouthRun(mouth, vx, vz, own, _mouthTmp)) push(_mouthTmp[0], _mouthTmp[1], own - 1);
+            let site = null, inSite = false;
+            const near = siteNear(this, vx, vz);
+            if (near) {
+                inSite = siteColumn(near, vx, vz, own, push, fills, walls);
+                if (inSite || walls.length) site = near;
+            }
+
+            if (!runs.length && !fills.length && !walls.length) return null;
 
             let lo = Infinity, hi = -Infinity;
             for (const r of runs) { if (r.lo < lo) lo = r.lo; if (r.hi > hi) hi = r.hi; }
+            // Open to the sky: something carved reaches the column's own top
+            // cube, so the surface over it is gone (caveTopY).
+            let open = hi >= own - 1;
 
             // A shaft is only worth sinking where it reaches something. It is
             // taken from the surface down to the top of whatever this column
@@ -2479,12 +3103,56 @@
                 if (shaftBot < shaftTop) {
                     lo = Math.min(lo, shaftBot);
                     hi = Math.max(hi, shaftTop);
+                    open = true;
                 } else {
                     shaftR = 0;
                 }
             }
 
-            return { runs, lo, hi, shaftR, shaftD: shaft, shaftTop, shaftBot, ceil, sewer };
+            return { runs, lo, hi, shaftR, shaftD: shaft, shaftTop, shaftBot, ceil, sewer,
+                     open, fills: fills.length ? fills : null, walls: walls.length ? walls : null,
+                     site, inSite };
+        }
+
+        // The thing standing in a void at this cube - a hut wall, a pillar, a
+        // deck - or 0. Only ever asked for a column that has caves at all.
+        static fillIn(c, vy) {
+            const f = c.fills;
+            if (!f) return 0;
+            for (let i = 0; i < f.length; i += 3) if (vy >= f[i] && vy <= f[i + 1]) return f[i + 2];
+            return 0;
+        }
+
+        // Which of the places under the world a WORLD-unit point is inside,
+        // by key ('warren', 'dungeon', 'grotto'), or null. What spawns there
+        // answers to this (VoxelWorldEntities), and so does the toast.
+        siteAt(x, z, y) {
+            const S = VOX.SIZE;
+            const vx = Math.floor(x / S), vz = Math.floor(z / S);
+            const s = siteNear(this, vx, vz);
+            if (!s) return null;
+            const c = this.columnCaves(vx, vz);
+            if (!c || !c.inSite) return null;
+            const vy = Math.floor(y / S);
+            return (vy >= s.y0 - 1 && vy <= s.y0 + s.H + 2) ? s.key : null;
+        }
+
+        // The furnished spots of whatever place reaches into world square
+        // (wx, wy) - hut, hall, room, vault, grotto - each with the world
+        // height of its floor, for the decorator's chests. Empty for most.
+        siteSpots(wx, wy) {
+            const out = [];
+            const x0 = wx * VOX.PER_TILE, z0 = wy * VOX.PER_TILE;
+            // A square lies wholly inside one cell, so the cell's place is the
+            // only one that can reach it.
+            const s = siteOf(this, Math.floor(x0 / SITE_SPAN), Math.floor(z0 / SITE_SPAN));
+            if (!s || s.x1 < x0 || s.x0 >= x0 + VOX.PER_TILE || s.z1 < z0 || s.z0 >= z0 + VOX.PER_TILE) return out;
+            for (const sp of s.spots) {
+                if (sp.x < x0 || sp.x >= x0 + VOX.PER_TILE || sp.z < z0 || sp.z >= z0 + VOX.PER_TILE) continue;
+                out.push({ x: (sp.x + 0.5) * VOX.SIZE, z: (sp.z + 0.5) * VOX.SIZE,
+                           y: (s.y0 + 1) * VOX.SIZE, kind: sp.kind, site: s.key });
+            }
+            return out;
         }
 
         // Is a WORLD-unit point inside a sewer gallery rather than a natural
@@ -2505,6 +3173,8 @@
             if (vy <= VOX.MIN_Y || vy > VOX.MAX_Y) return false;
             const c = this.columnCaves(vx, vz);
             if (!c || vy < c.lo || vy > c.hi) return false;
+            // Something built in the void is not the void.
+            if (c.fills && VoxelField.fillIn(c, vy)) return false;
             for (const r of c.runs) if (vy >= r.lo && vy <= r.hi) return true;
             // Inside the shaft's throat. It flares open at the top, so its
             // mouth reads as a sinkhole rather than as a drilled hole.
@@ -2536,6 +3206,9 @@
             if (!c) return bands;
             for (const r of c.runs) bands.push(r.lo - 1, r.hi + 1);
             if (c.shaftR) bands.push(c.shaftBot - 1, c.shaftTop + 1);
+            // What stands in a void, and the walls of a place next door.
+            if (c.fills) for (let i = 0; i < c.fills.length; i += 3) bands.push(c.fills[i] - 1, c.fills[i + 1] + 1);
+            if (c.walls) for (let i = 0; i < c.walls.length; i += 2) bands.push(c.walls[i], c.walls[i + 1]);
             return bands;
         }
 
@@ -2560,7 +3233,11 @@
             // put back into one stays put.
             const e = this.editAt(vx, vy, vz);
             if (e !== undefined) return e !== MAT.AIR;
-            if (vy >= this.genTopY(vx, vz)) return false;
+            const c = this.column(vx, vz);
+            // Over the ground there is only ever one solid thing: the deck of
+            // a viaduct. Read off the column itself, so the open air over the
+            // whole of the rest of the world never has to ask the caves.
+            if (vy >= c.top) return c.deckY !== 0 && vy === c.deckY;
             return !this.caveAt(vx, vy, vz);
         }
 
@@ -2571,7 +3248,7 @@
             const e = this.editAt(vx, vy, vz);
             if (e !== undefined) return e;
             const c = this.genColumn(vx, vz, colOut);
-            if (vy >= c.top) return MAT.AIR;
+            if (vy >= c.top) return (c.deckY !== 0 && vy === c.deckY) ? MAT.CONCRETE : MAT.AIR;
             if (this.caveAt(vx, vy, vz)) return MAT.AIR;
             return this.genMaterial(c, vx, vy, vz);
         }
@@ -2615,6 +3292,28 @@
                 if (vy >= col.sewerHi - SEWER_H - 1 && vy <= col.sewerHi + 1 &&
                     sewerGalleryAt(vx, vz) <= SEWER_HALF + 1) {
                     return MAT.BRICK;
+                }
+            }
+            // The works: a pier is concrete to the ground, a tunnel has its
+            // paving and its bed under the bore and a concrete crown over it.
+            if (col.pier) return MAT.CONCRETE;
+            if (col.tunnelY) {
+                if (vy === col.tunnelY - 1) return MAT.ASPHALT;
+                if (vy >= col.tunnelY - 3 && vy < col.tunnelY) return MAT.GRAVEL;
+                if (vy === col.tunnelY + ROAD_TUNNEL_CLEAR) return MAT.CONCRETE;
+            }
+            // The places: the cubes a column carries inside or beside one wear
+            // that place's own stone. Only a column that has caves at all is
+            // asked, and the record says in one field whether it is one.
+            const cv = this.columnCaves(vx, vz);
+            if (cv) {
+                if (cv.fills) {
+                    const f = VoxelField.fillIn(cv, vy);
+                    if (f) return f;
+                }
+                if (cv.site) {
+                    const sm = siteMaterial(cv.site, vx, vy, vz);
+                    if (sm) return sm;
                 }
             }
             const isMountain = p && (p.massif || p.bed === MAT.GRANITE || (p.ridge && p.ridge >= 30));
@@ -2716,6 +3415,8 @@
             // A cube dug out of the bed is a hole and one built on top of it
             // stands on the road; only the bed as it was laid wears the paving.
             if (top !== c.top * VOX.SIZE) return top;
+            // Over a tunnel the surface is the hill; the paving is inside it.
+            if (c.tunnelY) return top;
             return c.road ? c.pave : c.pave + ROAD_KERB_H;
         }
 
@@ -2761,6 +3462,14 @@
             const vx = Math.floor(x / S), vz = Math.floor(z / S);
             let vy = Math.floor(y / S);
             const top = this.topSolidY(vx, vz);
+            const c = this.column(vx, vz);
+            // Inside a road tunnel the floor is the paving, as on any road.
+            if (c.tunnelY && vy >= c.tunnelY && vy <= c.tunnelY + ROAD_TUNNEL_CLEAR) return c.pave;
+            // On a viaduct: the deck from above, the valley from below it.
+            if (c.deckY) {
+                if (vy >= c.deckY) return c.deckRoad ? c.pave : c.pave + ROAD_KERB_H;
+                if (vy >= top) return top * S;
+            }
             // Above the world: the surface is the floor, as it always was - and
             // on a road that surface is the paving, not the bed under it.
             if (vy >= top) return this.surfaceTopY(vx, vz);
@@ -3019,7 +3728,7 @@
             }
 
             const bias = { x: bx || 0, z: bz || 0 };
-            VoxelMesher._bulk(B, G, field, top, mat, col, detail, w, n, ox, oz, step, bs, bias);
+            VoxelMesher._bulk(B, G, blocks, field, top, mat, col, detail, w, n, ox, oz, step, bs, bias);
             if (detail) VoxelMesher._detail(B, G, blocks, field, top, mat, col, detail, w, n, ox, oz, bs, bias);
             // The caves. Only at full detail, and only for somebody who is
             // actually down there to see them: a passage keeps five voxels of
@@ -3079,9 +3788,17 @@
         }
 
         // --- greedy height field pass -------------------------------------
-        static _bulk(B, G, field, top, mat, col, detail, w, n, ox, oz, step, bs, bias) {
+        static _bulk(B, G, blocks, field, top, mat, col, detail, w, n, ox, oz, step, bs, bias) {
             const at = (i, j) => (j + 1) * w + (i + 1);
             const skip = (i, j) => detail && detail[at(i, j)];
+            // A SURFACE block - red sand, a flower bed, a themed cliff - is a
+            // column skin with a picture of its own. Its top (and the lip of
+            // its wall) go into that block's own buffer, white, so the picture
+            // shows; everything else stays the biome-tinted grain it was.
+            const skinOf = (m) => {
+                const def = MATERIALS[m];
+                return (def && def.surface && def.tex) ? def : null;
+            };
 
             // --- the unmined surface is one smooth skin -----------------------
             // Ground nobody has dug is not drawn as cubes. Every corner of the
@@ -3204,10 +3921,13 @@
                         const y01 = ySW[k] * VOX.SIZE;
 
                         let cr = r * FACE_SHADE.top, cg = g * FACE_SHADE.top, cb = b * FACE_SHADE.top;
-                        const target = (m === MAT.GRASS) ? G : B;
+                        const skin = skinOf(m);
+                        const target = (m === MAT.GRASS) ? G : skin ? VoxelMesher.bufFor(B, blocks, skin) : B;
                         if (m === MAT.GRASS) {
                             const t = grassTint(r, g, b);
                             cr = t.r; cg = t.g; cb = t.b;
+                        } else if (skin) {
+                            cr = cg = cb = FACE_SHADE.top;
                         }
                         // The four corner normals, taken off the lattice rather
                         // than from this quad's own plane, so the quad shades
@@ -3256,9 +3976,14 @@
                     const x0 = (ox + i * step) * VOX.SIZE - bias.x;
                     const z0 = (oz + j * step) * VOX.SIZE - bias.z;
                     const y  = h * VOX.SIZE;
+                    const skin = skinOf(m);
                     if (m === MAT.GRASS) {
                         const t = grassTint(r, g, b);
                         G.quadY(x0, y, z0, ww * bs, hh * bs, t.r, t.g, t.b,
+                                ww * step, hh * step, 1);
+                    } else if (skin) {
+                        VoxelMesher.bufFor(B, blocks, skin).quadY(x0, y, z0, ww * bs, hh * bs,
+                                FACE_SHADE.top, FACE_SHADE.top, FACE_SHADE.top,
                                 ww * step, hh * step, 1);
                     } else {
                         B.quadY(x0, y, z0, ww * bs, hh * bs,
@@ -3338,13 +4063,15 @@
                             const runLen = run * bs;
                             const x0 = (ox + i * step) * VOX.SIZE - bias.x;
                             const z0 = (oz + j * step) * VOX.SIZE - bias.z;
-                            const wall = (yA, yB, cr, cg, cb) => {
+                            const wall = (yA, yB, cr, cg, cb, Q) => {
                                 if (yB <= yA) return;
-                                B.quadSide(dir, x0, z0, yA, yB - yA, runLen, bs,
+                                (Q || B).quadSide(dir, x0, z0, yA, yB - yA, runLen, bs,
                                            cr * shade, cg * shade, cb * shade,
                                            run * step, (yB - yA) / VOX.SIZE);
                             };
-                            wall(yLip, yTop, r, g, b);
+                            const skin = skinOf(m);
+                            if (skin) wall(yLip, yTop, 1, 1, 1, VoxelMesher.bufFor(B, blocks, skin));
+                            else wall(yLip, yTop, r, g, b);
                             if (yLip > yBot) {
                                 const c = MATERIALS[VoxelMesher.subMat(m)].rgb;
                                 wall(yBot, yLip, c.r, c.g, c.b);
@@ -3428,7 +4155,9 @@
 
                     for (let bi = 0; bi < bands.length; bi += 2) {
                         const y0 = Math.max(VOX.MIN_Y + 1, bands[bi]);
-                        const y1 = Math.min(top[k], bands[bi + 1]);
+                        // Not clamped to the ground: the deck of a viaduct is a
+                        // band OVER it, and the band's own end is the end.
+                        const y1 = Math.min(VOX.MAX_Y, bands[bi + 1]);
                         for (let vy = y0; vy <= y1; vy++) {
                             // What this cube is, without asking the column again:
                             // materialAt would re-run the whole biome blend for
@@ -3437,9 +4166,13 @@
                             const e = field.editAt(vx, vy, vz);
                             let m;
                             if (e !== undefined) m = e;
-                            else if (vy >= c.top || field.caveAt(vx, vy, vz)) m = MAT.AIR;
+                            else if (vy >= c.top) m = (c.deckY !== 0 && vy === c.deckY) ? MAT.CONCRETE : MAT.AIR;
+                            else if (field.caveAt(vx, vy, vz)) m = MAT.AIR;
                             else m = field.genMaterial(c, vx, vy, vz);
                             if (m === MAT.AIR) continue;
+                            // A cube over the ground (a deck) has no skin drawn
+                            // over any of its sides, so every exposed one is drawn.
+                            const over = vy >= top[k];
                             const def = MATERIALS[m] || MATERIALS[MAT.ROCK];
                             // A block with a tile of its own goes to the atlas
                             // buffer and carries no colour but its own shading;
@@ -3457,13 +4190,13 @@
                                 Q.quadY(x, y + S, z, S, S, r * FACE_SHADE.top, g * FACE_SHADE.top, b * FACE_SHADE.top, 1, 1, 1);
                             if (!field.isSolid(vx, vy - 1, vz))
                                 Q.quadY(x, y, z, S, S, r * FACE_SHADE.bottom, g * FACE_SHADE.bottom, b * FACE_SHADE.bottom, 1, 1, -1);
-                            if (vy < nb[0] && !field.isSolid(vx - 1, vy, vz))
+                            if ((over || vy < nb[0]) && !field.isSolid(vx - 1, vy, vz))
                                 Q.quadSide(0, x, z, y, S, S, S, r * FACE_SHADE.side, g * FACE_SHADE.side, b * FACE_SHADE.side, 1, 1);
-                            if (vy < nb[1] && !field.isSolid(vx + 1, vy, vz))
+                            if ((over || vy < nb[1]) && !field.isSolid(vx + 1, vy, vz))
                                 Q.quadSide(1, x, z, y, S, S, S, r * FACE_SHADE.side, g * FACE_SHADE.side, b * FACE_SHADE.side, 1, 1);
-                            if (vy < nb[2] && !field.isSolid(vx, vy, vz - 1))
+                            if ((over || vy < nb[2]) && !field.isSolid(vx, vy, vz - 1))
                                 Q.quadSide(2, x, z, y, S, S, S, r * FACE_SHADE.end, g * FACE_SHADE.end, b * FACE_SHADE.end, 1, 1);
-                            if (vy < nb[3] && !field.isSolid(vx, vy, vz + 1))
+                            if ((over || vy < nb[3]) && !field.isSolid(vx, vy, vz + 1))
                                 Q.quadSide(3, x, z, y, S, S, S, r * FACE_SHADE.end, g * FACE_SHADE.end, b * FACE_SHADE.end, 1, 1);
                         }
                     }
@@ -3968,6 +4701,8 @@
         voxelMaterial, voxelGrassMaterial, voxelWaterMaterial, disposeVoxelMaterial,
         voxelBlockMaterial, hotAt, oreAt, bedMat,
         isFarlands,
+        // The ways and the places, for the rest of the suite and the tests.
+        SITE, SITE_KEYS, SITE_SPAN, trackAt, mouthOf, siteOf, siteNear, patchMat,
         voxelHash3: hash3
     });
 })();

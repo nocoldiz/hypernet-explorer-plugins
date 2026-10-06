@@ -1605,3 +1605,161 @@ DataManager.extractSaveContents = function (contents) {
     FactionDataManager.instance = new FactionDataManager();
   }
 };
+
+//=============================================================================
+// Founded factions
+//=============================================================================
+//
+// The eighteen houses of Factions.json are the world's own. A party can found
+// one more: a name, a motto and the house it is sworn under, if any. A founded
+// faction belongs to the WORLD rather than to the savegame that founded it,
+// the same way the reputations above do (npcs.json, "foundedFactions"), so
+// every other savegame of that world sees it, and a party raised later can
+// join it instead of founding its own (a custom scenario, see
+// CharacterCreationOrigins).
+//
+// A record: { id, name, motto, patronFactionId, founder, founded, members }.
+// `members` is every name that ever joined, founder first; it is a roll, not a
+// rank list, and nobody on it is its leader but the founder.
+(() => {
+  const FIELD = "foundedFactions"; // i18n-ignore: world file field
+  const FILE = "npcs";             // i18n-ignore: world file key
+  const MAX_FACTIONS = 64;
+  const MAX_MEMBERS = 200;
+
+  const worldStore = () => {
+    const WM = window.WorldManager;
+    return !!(WM && typeof WM.getField === "function" && WM.activeWorldName);
+  };
+
+  function store() {
+    if (worldStore()) {
+      let list = window.WorldManager.getField(FILE, FIELD);
+      if (!Array.isArray(list)) {
+        list = [];
+        window.WorldManager.setField(FILE, FIELD, list);
+      }
+      return list;
+    }
+    // No world folder (a browser build, a test): the savegame keeps it.
+    if (typeof $gameSystem === "undefined" || !$gameSystem) return [];
+    if (!Array.isArray($gameSystem._foundedFactions)) $gameSystem._foundedFactions = [];
+    return $gameSystem._foundedFactions;
+  }
+
+  // Written straight to the world folder, so a savegame opened next sees the
+  // faction even if this one is never saved.
+  function persist() {
+    const WM = window.WorldManager;
+    if (worldStore() && typeof WM.flush === "function") {
+      try { WM.flush(FILE); } catch (e) { /* written on the next save instead */ }
+    }
+  }
+
+  // The world's own calendar, as the chronicle writes it; null leaves the
+  // chronicle to date the record itself.
+  function today() {
+    const HM = window.HistoryManager;
+    if (HM && typeof HM.liveDateNow === "function") {
+      try { return HM.liveDateNow(); } catch (e) { /* fall through */ }
+    }
+    return null;
+  }
+
+  function record(descKey, params) {
+    const HM = window.HistoryManager;
+    if (!HM || typeof HM.recordEvent !== "function") return;
+    try {
+      HM.recordEvent({ date: today() || undefined, category: "political", type: "founded_faction", descKey, descParams: params }); // i18n-ignore: category, type
+    } catch (e) { /* the chronicle is optional */ }
+  }
+
+  function clean(text, max) {
+    return String(text == null ? "" : text).replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, max);
+  }
+
+  function patronName(id) {
+    if (typeof $gameFactions === "undefined" || !$gameFactions || !$gameFactions.getFaction) return "";
+    const f = $gameFactions.getFaction(id);
+    if (!f) return "";
+    const FDM = FactionDataManager.instance;
+    return FDM && FDM.t ? FDM.t(f.name) : String(f.name || "");
+  }
+
+  const copy = (rec) => Object.assign({}, rec, { members: (rec.members || []).slice() });
+
+  window.FoundedFactions = {
+    MAX_FACTIONS,
+
+    list() { return store().map(copy); },
+
+    get(id) {
+      const rec = store().find((r) => r && r.id === id);
+      return rec ? copy(rec) : null;
+    },
+
+    // spec: { name, motto, patronFactionId, founder, members }
+    found(spec = {}) {
+      const list = store();
+      if (list.length >= MAX_FACTIONS) return null;
+      const name = clean(spec.name, 48);
+      if (!name) return null;
+      // One house to a name. Founding it again (a party that backed out of the
+      // starting place picker and chose the same scenario twice, two savegames
+      // that picked the same name) is joining the one already standing.
+      const same = list.find((r) => r && String(r.name).toLowerCase() === name.toLowerCase());
+      if (same) return this.join(same.id, [spec.founder].concat(Array.isArray(spec.members) ? spec.members : []));
+      const base = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "faction"; // i18n-ignore: id fallback
+      let id = `ff-${base}`; // i18n-ignore: id prefix
+      for (let n = 2; list.some((r) => r.id === id); n++) id = `ff-${base}-${n}`; // i18n-ignore: id prefix
+      const patron = Number(spec.patronFactionId);
+      const founder = clean(spec.founder, 48);
+      const members = [];
+      [founder].concat(Array.isArray(spec.members) ? spec.members : []).forEach((m) => {
+        const who = clean(m, 48);
+        if (who && members.indexOf(who) < 0) members.push(who);
+      });
+      const rec = {
+        id, name,
+        motto: clean(spec.motto, 120),
+        patronFactionId: Number.isFinite(patron) && patron >= 0 && patronName(patron) ? patron : -1,
+        founder,
+        founded: today(),
+        members: members.slice(0, MAX_MEMBERS),
+      };
+      list.push(rec);
+      record(rec.patronFactionId >= 0 ? "History.foundedFaction.foundedUnder" : "History.foundedFaction.founded",
+        { faction: rec.name, founder: founder || name, patron: patronName(rec.patronFactionId) });
+      persist();
+      return copy(rec);
+    },
+
+    // Put names on a founded faction's roll. Answers the record, or null for a
+    // faction this world does not hold.
+    join(id, names) {
+      const rec = store().find((r) => r && r.id === id);
+      if (!rec) return null;
+      rec.members = Array.isArray(rec.members) ? rec.members : [];
+      const joined = [];
+      (Array.isArray(names) ? names : [names]).forEach((m) => {
+        const who = clean(m, 48);
+        if (!who || rec.members.indexOf(who) >= 0 || rec.members.length >= MAX_MEMBERS) return;
+        rec.members.push(who);
+        joined.push(who);
+      });
+      if (joined.length) {
+        record("History.foundedFaction.joined", { faction: rec.name, members: joined.join(", ") });
+        persist();
+      }
+      return copy(rec);
+    },
+
+    // The founded faction this savegame's party belongs to, or null.
+    partyFaction() {
+      const id = typeof $gameSystem !== "undefined" && $gameSystem ? $gameSystem._ccFoundedFactionId : null;
+      return id ? this.get(id) : null;
+    },
+
+    patronName,
+  };
+})();

@@ -3329,54 +3329,6 @@
 
 
 /* ==========================================================================
-   Blade seeds (Weapon/BladeSeedSystemUI.js)
-   --------------------------------------------------------------------------
-   The live 3D look of the weapon sits above the stat grid and the buttons, and
-   at 150px tall it was pushing the buttons off a short page. It is the one
-   thing here that shrinks rather than losing padding, because padding is not
-   what it has.
-   ========================================================================== */
-@media (max-width: 1366px) and (max-height: 860px) {
-
-    .bs-look-canvas {
-        height: 118px;
-    }
-
-    .bs-warning {
-        margin: 4px 6px;
-        padding: 4px 8px;
-    }
-
-    .bs-el-badge {
-        padding: 2px 8px;
-    }
-
-    .bs-stat-grid {
-        gap: 3px 9px;
-        margin-top: 6px;
-    }
-
-    .bs-stat-cell {
-        padding: 2px 5px;
-    }
-
-    .bs-spirit-portrait {
-        padding: 7px;
-        margin: 4px 0;
-    }
-
-    .bs-actions {
-        gap: 6px;
-        margin-top: 10px;
-    }
-
-    .bs-btn {
-        padding: 6px 9px;
-    }
-}
-
-
-/* ==========================================================================
    Plants and livestock (Farming/PlantGrowthSystem.js,
    Farming/AnimalGrowthSystem.js)
    --------------------------------------------------------------------------

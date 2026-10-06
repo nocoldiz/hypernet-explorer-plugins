@@ -985,6 +985,14 @@
         this._dndActionsList.push('favorite'); btnIdx++;
       }
 
+      // Anything the bench could have made can be taken apart again, right
+      // here in the backpack (window.ThinkerBench owns the rule and the roll).
+      if (!isBoundGear && this.canDisassembleItem(selectedItem)) {
+        const isFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
+        actionBtnsHTML += `<div class="inspect-btn ${isFocused}" onclick="SceneManager._scene.triggerUIItemAction('disassemble')">${T('Inventory.ui.disassemble')}</div>`;
+        this._dndActionsList.push('disassemble'); btnIdx++;
+      }
+
       if (!isBoundGear) {
         const isDiscardFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
         actionBtnsHTML += `<div class="inspect-btn inspect-btn--danger ${isDiscardFocused}" data-pad="discard" onclick="SceneManager._scene.triggerUIItemAction('discard')">${T('Inventory.ui.discard')}</div>`;
@@ -1249,10 +1257,25 @@
   // Discard modal
   // =========================================================================
 
-  Scene_EnhancedItem.prototype.showDiscardModal = function (item) {
+  // Whether the bench could take this piece apart: it has a recipe, it is not
+  // food or marked uncraftable, there is one in the sack (so it is not the
+  // one being worn) and it is not a key item.
+  Scene_EnhancedItem.prototype.canDisassembleItem = function (item) {
+    const bench = window.ThinkerBench;
+    if (!item || !bench || !bench.canDisassemble) return false;
+    if (DataManager.isItem(item) && item.itypeId === 2) return false;
+    return bench.canDisassemble(item);
+  };
+
+  // One modal, two questions: 'discard' throws pieces away, 'disassemble'
+  // shows what the recipe is made of and takes them apart. Both share the
+  // quantity stepper and the same input path.
+  Scene_EnhancedItem.prototype.showDiscardModal = function (item, mode) {
     if (!this._dndContainer || !item) return;
     if (window.VectorGun && window.VectorGun.isBound(item)) { SoundManager.playBuzzer(); return; }
+    if (mode === 'disassemble' && !this.canDisassembleItem(item)) { SoundManager.playBuzzer(); return; }
     this._discardModalOpen    = true;
+    this._discardModalMode    = mode === 'disassemble' ? 'disassemble' : 'discard';
     this._discardModalFocusIdx = 0;
     this._discardPendingItem  = item;
     this._discardQty          = 1;
@@ -1274,6 +1297,10 @@
     this._discardQty = qty;
     const confirmSel = this._discardModalFocusIdx === 0 ? 'selected' : '';
     const cancelSel  = this._discardModalFocusIdx === 1 ? 'selected' : '';
+    if (this._discardModalMode === 'disassemble') {
+      el.innerHTML = this.disassembleModalHTML(item, qty, owned, confirmSel, cancelSel);
+      return;
+    }
     el.innerHTML = `
       <div class="army-dialog">
         <h3>${T('Inventory.ui.discardItem')}</h3>
@@ -1297,7 +1324,75 @@
     if (next !== this._discardQty) { SoundManager.playCursor(); this._discardQty = next; this.renderDiscardModal(); }
   };
 
+  // What taking the piece apart can give back: every material of its recipe
+  // with how many went in, and the odds the whole bill comes back.
+  Scene_EnhancedItem.prototype.disassembleModalHTML = function (item, qty, owned, confirmSel, cancelSel) {
+    const bench  = window.ThinkerBench;
+    const recipe = (bench && bench.parseRecipe(item)) || {};
+    const iconCell = (iconIndex) => {
+      const size = 32;
+      const x = (iconIndex % 16) * size;
+      const y = Math.floor(iconIndex / 16) * size;
+      // i18n-ignore: inline CSS for the IconSet sprite cell
+      return `<span class="recipe-mat-icon" style="width:${size}px;height:${size}px;background-position:-${x}px -${y}px;background-size:${size * 16}px auto;"></span>`;
+    };
+    let rows = '';
+    for (const [id, need] of Object.entries(recipe)) {
+      const mat = $dataItems[parseInt(id, 10)];
+      if (!mat) continue;
+      rows += `<div class="inspect-spec-row"><span class="inspect-spec-label">${iconCell(mat.iconIndex)} ${escapeHtml(mat.name)}</span><span class="inspect-spec-value">&times;${need * qty}</span></div>`;
+    }
+    const chance = bench && bench.fullReturnChance ? Math.round(bench.fullReturnChance(item) * 100) : 0;
+    const hands  = bench && bench.handsFor ? bench.handsFor(item) : null;
+    return `
+      <div class="army-dialog">
+        <h3>${T('Inventory.ui.disassembleTitle')}</h3>
+        <p>${T('Inventory.ui.disassembleBody', { qty: `<strong>${qty}</strong>`, item: `<strong>${escapeHtml(item.name)}</strong>`, owned: owned })}</p>
+        <div class="inspect-spec-grid">${rows}</div>
+        <p>${T('Inventory.ui.disassembleFull', { pct: chance })}</p>
+        <p>${T('Inventory.ui.disassemblePartial')}</p>
+        ${hands ? `<p>${T('Inventory.ui.disassembleHands', { name: escapeHtml(hands.name()) })}</p>` : ''}
+        <div class="army-dialog-buttons">
+          <div class="army-dialog-btn" id="discard-qty-minus" onclick="SceneManager._scene.adjustDiscardQty(-1)">-</div>
+          <div class="army-dialog-btn" id="discard-qty-plus" onclick="SceneManager._scene.adjustDiscardQty(1)">+</div>
+        </div>
+        <div class="army-dialog-buttons">
+          <div class="army-dialog-btn ${confirmSel}" id="discard-confirm-btn" onclick="SceneManager._scene.confirmDiscard()">${T('Inventory.ui.disassemble')}</div>
+          <div class="army-dialog-btn ${cancelSel}" id="discard-cancel-btn" onclick="SceneManager._scene.cancelDiscard()">${T('Inventory.ui.cancel')}</div>
+        </div>
+      </div>`;
+  };
+
+  // Takes the pieces apart one at a time, each through the bench's own
+  // teardown, and tells the player what came back.
+  Scene_EnhancedItem.prototype.confirmDisassemble = function () {
+    const item  = this._discardPendingItem;
+    const bench = window.ThinkerBench;
+    if (!item || !bench) { this.closeDiscardModal(); return; }
+    const qty = Math.max(1, Math.min(this._discardQty, $gameParty.numItems(item)));
+    const tally = new Map();
+    let done = 0, full = 0;
+    for (let i = 0; i < qty; i++) {
+      if (bench.clearKnowledgeCache) bench.clearKnowledgeCache();
+      const result = bench.disassemble(item);
+      if (!result) break;
+      done++;
+      if (result.full) full++;
+      for (const got of result.items || []) tally.set(got, (tally.get(got) || 0) + 1);
+    }
+    if (!done) { SoundManager.playBuzzer(); this.closeDiscardModal(); return; }
+    SoundManager.playUseItem();
+    const list = Array.from(tally, ([mat, n]) => `${mat.name} x${n}`).join(', ');
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T(full ? 'Inventory.ui.disassembledFull' : 'Inventory.ui.disassembled',
+        { item: item.name, n: done, items: list || T('Inventory.ui.disassembledNothing') }));
+    }
+    if ($gameParty.numItems(item) <= 0) { this._dndActiveSection = 'items'; this._dndSelectedIndex = 0; }
+    this.closeDiscardModal();
+  };
+
   Scene_EnhancedItem.prototype.confirmDiscard = function () {
+    if (this._discardModalMode === 'disassemble') { this.confirmDisassemble(); return; }
     const item = this._discardPendingItem;
     if (item) {
       const owned = $gameParty.numItems(item);
@@ -1337,6 +1432,7 @@
 
   Scene_EnhancedItem.prototype.closeDiscardModal = function () {
     this._discardModalOpen   = false;
+    this._discardModalMode   = 'discard';
     this._discardPendingItem = null;
     const modal = document.getElementById('discard-modal');
     if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
@@ -1550,6 +1646,8 @@
       this.throwUIItem(item);
     } else if (action === 'discard') {
       this.showDiscardModal(item);
+    } else if (action === 'disassemble') {
+      this.showDiscardModal(item, 'disassemble');
     }
   };
 

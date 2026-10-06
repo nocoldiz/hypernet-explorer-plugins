@@ -592,8 +592,8 @@
     "description": "A ring of keys that calls up a small car."
   },
   "165": {
-    "name": "Blade seed",
-    "description": "A seed holding a blade spirit. Planted,\nit grows into a weapon you choose."
+    "name": "Expression seed",
+    "description": "A seed holding a spark of power. Used on\na character, it unlocks their Expression."
   },
   "166": {
     "name": "Low orbit pin",

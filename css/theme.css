@@ -3307,6 +3307,115 @@
     padding: 10px 8px;
 }
 
+/* --- The custom scenario editor -----------------------------------------
+   The widest sheet of the wizard: a scrolling column of sections, each a set
+   of labelled lines whose controls sit on the right. Steppers are short
+   presses either side of the value; every list opens in the pick sheet. */
+.cc-cs-editor {
+    display: flex;
+    flex-direction: column;
+    width: min(860px, 92vw);
+    max-height: 88vh;
+}
+
+.cc-cs-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0 0 8px 0;
+    padding-right: 6px;
+}
+
+.cc-cs-section .cc-subheader {
+    margin-bottom: 6px;
+}
+
+.cc-cs-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 6px 0;
+}
+
+.cc-cs-label {
+    flex: 0 0 34%;
+    margin: 0;
+}
+
+.cc-cs-control {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.cc-cs-control .cc-cs-text {
+    width: 100%;
+    margin: 0;
+}
+
+.cc-cs-stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cc-cs-value {
+    min-width: 84px;
+    text-align: center;
+    font-size: var(--fs-body);
+    color: var(--text-primary-hover);
+}
+
+.cc-modal .cc-sidebar-btn.cc-cs-step,
+.cc-modal .cc-sidebar-btn.cc-cs-remove {
+    padding: 6px 10px;
+    min-height: 34px;
+}
+
+.cc-cs-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 6px 0 0 0;
+}
+
+.cc-cs-note {
+    margin: 0 0 8px 0;
+    font-size: var(--fs-caption);
+}
+
+.cc-cs-kit-row .cc-cs-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* The shelf on the custom card's brief: one row per saved scenario, the
+   picked one marked like a chosen card. */
+.cc-cs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 160px;
+    overflow-y: auto;
+}
+
+.cc-cs-row {
+    width: 100%;
+    justify-content: flex-start;
+    text-align: left;
+}
+
+.cc-cs-summary {
+    margin: 8px 0 0 0;
+}
+
 /* The type chips are the one way out of a taken dossier (see
    onSetCharacterType), so the locked page must leave them live. */
 .cc-preset-locked .cc-type-chip {
@@ -10629,8 +10738,6 @@
 #bestiary-container > *,
 #biologic-container > *,
 #blacksmith-container > *,
-#blade-bind-container > *,
-#blade-status-container > *,
 #brewery-container > *,
 #cardcol-container > *,
 #cooking-container > *,
@@ -18044,6 +18151,31 @@
     animation: erisEldritchFlicker 4.3s steps(1) infinite;
 }
 
+/* Things that happen to the book itself mid-date ("@shake" and "@flash" beats):
+   the spread jolts, or the pages wash white for a moment. */
+@keyframes erisFxShake {
+    0%, 100% { transform: translate(0, 0); }
+    15%      { transform: translate(-6px, 2px); }
+    30%      { transform: translate(5px, -3px); }
+    45%      { transform: translate(-4px, -2px); }
+    60%      { transform: translate(3px, 3px); }
+    80%      { transform: translate(-2px, 0); }
+}
+
+@keyframes erisFxFlash {
+    0%   { filter: brightness(1); }
+    12%  { filter: brightness(2.4) saturate(0.2); }
+    100% { filter: brightness(1); }
+}
+
+.eris-fx-shake {
+    animation: erisFxShake 0.5s steps(6) 1;
+}
+
+.eris-fx-flash {
+    animation: erisFxFlash 0.6s ease-out 1;
+}
+
 /* A heart beating at the rate it is reporting. The rate is the reading, so it
    arrives as a custom property. */
 @keyframes erisHeartPulse {
@@ -21266,211 +21398,6 @@ padding: 2px 10px;
 
 /* Scrollable list area */
 .shop-mgmt-list {
-    flex: 1;
-    overflow-y: auto;
-    padding: 4px 0;
-}
-
-/* ==========================================================================
-   Blade Seed System UI (BladeSeedSystemUI.js)
-   ========================================================================== */
-
-#blade-bind-container,
-#blade-status-container {
-    /* The four offsets alone collapse a fixed overlay to nothing in this
-       runtime (the same trap as `inset: 0`), which left these three screens
-       blank: an explicit width and height is what actually fills the screen.
-       z-index matches the other full screen DOM menus, so the overlay is never
-       drawn under the HUD it replaces. */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 1000;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg-bg-alt-1-translucent-70);
-}
-
-/* Warning banner */
-.bs-warning {
-    margin: 6px 8px;
-    padding: 5px 10px;
-    font-size: 0.856em;
-    color: var(--text-text-alt-5-hover);
-    background: var(--bg-subtle-translucent-10);
-    border-left: 3px solid var(--border-danger-active);
-    border-radius: 0 4px 4px 0;
-}
-
-/* Chosen appearance: the 3D viewport and its stepper on the binding page */
-.bs-look {
-    margin: 6px 8px 2px;
-}
-.bs-look-canvas {
-    display: block;
-    width: 100%;
-    height: 150px;
-    border: 1px solid var(--border-border-alt-1);
-    border-radius: 4px;
-    background: var(--bg-bg-alt-25-translucent-8);
-    cursor: grab;
-}
-.bs-look-canvas:active { cursor: grabbing; }
-.bs-look-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin-top: 4px;
-}
-.bs-look-label {
-    flex: 1;
-    text-align: center;
-    font-size: var(--fs-detail-body);
-    color: var(--text-detail-label);
-}
-.bs-look-count {
-    margin-left: 6px;
-    color: var(--text-success-active);
-    font-weight: bold;
-}
-.bs-look-arrow {
-    padding: 2px 10px;
-    border: 1px solid var(--border-subtle);
-    border-radius: 4px;
-    background: var(--bg-secondary-hover);
-    color: var(--text-primary-hover);
-    font-size: 0.892em;
-    cursor: pointer;
-}
-.bs-look-arrow:hover { background: var(--bg-bg-alt-21-hover); }
-
-/* Scrollable weapon / skill list */
-.bs-weapon-list,
-.bs-skill-list {
-    flex: 1;
-    overflow-y: auto;
-    padding: 4px 0;
-}
-
-/* Element badge (inline next to title) */
-.bs-el-badge {
-    font-size: var(--fs-detail-heading);
-    font-weight: bold;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border: 1px solid var(--border-success);
-    background: var(--bg-bg-alt-25-translucent-8);
-    white-space: nowrap;
-    align-self: center;
-}
-
-/* Skill source label & hint */
-.bs-src-label { font-size: var(--fs-detail-heading); opacity: 0.65; }
-.bs-skill-hint { font-size: var(--fs-detail-body); color: var(--text-success-active); }
-
-/* Stat grid: 2-column layout */
-.bs-stat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4px 12px;
-    margin-top: 8px;
-}
-.bs-stat-cell {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 3px 6px;
-    border-radius: 4px;
-    background: var(--bg-bg-alt-25-translucent-8);
-}
-.bs-stat-label { color: var(--text-detail-label); font-size: var(--fs-detail-body); }
-.bs-stat-value { color: var(--text-success-active); font-weight: bold; font-size: var(--fs-detail-body); }
-
-/* Action buttons row */
-.bs-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 16px;
-    flex-wrap: wrap;
-}
-.bs-btn {
-    flex: 0 1 auto;
-    padding: 8px 12px;
-    border: 2px solid var(--border-subtle);
-    border-radius: 5px;
-    font-family: var(--font-ui);
-    font-size: 0.892em;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.12s, transform 0.08s;
-    background: var(--bg-secondary-hover);
-    color: var(--text-primary-hover);
-}
-.bs-btn:hover       { background: var(--bg-bg-alt-21-hover); transform: translateY(-1px); }
-.bs-btn:active      { transform: translateY(0); }
-.bs-btn-confirm     { border-color: var(--text-text-alt-11); color: var(--text-text-alt-11); }
-.bs-btn-confirm:hover { background: var(--bg-bg-alt-8-translucent-15); }
-.bs-btn-reshuffle   { border-color: var(--border-focus-hover); color: var(--border-focus-hover); }
-.bs-btn-cancel      { border-color: var(--border-border-alt-9); color: var(--text-disabled); }
-
-/* Spirit portrait block */
-.bs-spirit-portrait {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    margin: 6px 0;
-}
-.bs-spirit-portrait canvas {
-    border: 2px solid var(--border-success);
-    border-radius: 6px;
-    image-rendering: pixelated;
-}
-
-/* EXP bar */
-.bs-exp-bar-wrap {
-    height: 8px;
-    background: var(--bg-bg-alt-25-translucent-8);
-    border: 1px solid var(--border-border-alt-1);
-    border-radius: 4px;
-    margin: 8px 8px 2px;
-    overflow: hidden;
-}
-.bs-exp-bar {
-    height: 100%;
-    background: var(--text-text-alt-11);
-    border-radius: 4px;
-    transition: width 0.3s ease-out;
-}
-.bs-exp-text  { font-size: var(--fs-detail-body); color: var(--text-success-active); text-align: center; margin-bottom: 2px; }
-.bs-evo-text  { font-size: var(--fs-detail-body); color: var(--text-success-active); text-align: center; font-style: normal; padding: 0 8px; }
-
-/* LP value highlight */
-.bs-lp-val { color: var(--text-success-active); font-weight: bold; }
-
-/* Skills, unaffordable row */
-.bs-skill-no { color: var(--text-text-alt-5-hover) !important; }
-
-/* Skill help text */
-.bs-skill-help {
-    margin: 6px 8px 0;
-    padding: 6px 10px;
-    font-size: var(--fs-detail-prose);
-    font-style: normal;
-    color: var(--text-success-active);
-    background: var(--bg-bg-alt-25-translucent-8);
-    border-radius: 4px;
-    border-left: 3px solid var(--border-success);
-}
-
-/* Right-page content scroll */
-.bs-right-content {
     flex: 1;
     overflow-y: auto;
     padding: 4px 0;
@@ -42581,7 +42508,6 @@ body.pad-input .kb-only {
 .apiary-action-btn,
 .tt-research-btn,
 .tt-project-btn,
-.bs-btn,
 #arena-ui-container .arena-action-btn,
 .bank-tier-btn,
 .spellforge-button,
@@ -42645,7 +42571,6 @@ body.pad-input .kb-only {
 .apiary-action-btn,
 .tt-research-btn,
 .tt-project-btn,
-.bs-btn,
 #arena-ui-container .arena-action-btn,
 .bank-tier-btn,
 .spellforge-button,
@@ -42699,8 +42624,6 @@ body.pad-input .kb-only {
 .tt-project-btn:hover,
 .tt-project-btn.selected,
 .tt-project-btn--active,
-.bs-btn:hover,
-.bs-btn.selected,
 #arena-ui-container .arena-action-btn:hover,
 #arena-ui-container .arena-action-btn.selected,
 .bank-tier-btn:hover,
@@ -43729,6 +43652,33 @@ body.pad-input .kb-only {
 
 .sm-forged-list--fill { flex: 1 1 0; min-height: 0; }
 .sm-bench-scroll { flex: 1 1 0; overflow-y: auto; padding-right: var(--sp-2); }
+
+/* The Expression bench (SkillMaster.js, Weapon/ExpressionSystem.js): a card
+   grid per kind of piece on the left, the blueprint on the right. */
+.sm-expr-tabs { flex-wrap: nowrap; white-space: nowrap; }
+.sm-expr-dest { display: flex; align-items: center; gap: var(--sp-2); }
+.sm-expr-dest-label { color: var(--text-primary-hover); font-size: 13px; }
+.sm-expr-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    align-content: start;
+}
+.sm-expr-icon { flex: 0 0 32px; }
+.sm-expr-card.sm-expr-on .item-slot-name { color: var(--text-primary-hover); }
+.sm-expr-card.sm-expr-locked { opacity: 0.45; }
+.sm-expr-card.sm-expr-tier2 { border-color: var(--text-cost-ok); }
+.sm-expr-card.sm-expr-tier3 { border-color: var(--accent-orange); }
+.sm-expr-right { display: flex; flex-direction: column; gap: var(--sp-2); }
+.sm-expr-subhead { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); }
+.sm-expr-slot { opacity: 0.6; }
+.sm-expr-slot--on { opacity: 1; }
+.sm-expr-slot--lost .sm-skill-name { color: var(--text-cost-bad); text-decoration: line-through; }
+.sm-expr-slot-key { flex: 0 0 auto; min-width: 84px; color: var(--text-primary-hover); font-size: 12px; }
+.sm-expr-chip { cursor: pointer; }
+.sm-expr-finalize { flex: 0 0 auto; margin-top: var(--sp-2); }
+.sm-expr-reason { color: var(--text-cost-bad); }
 
 /* The barrel page's inks (Farming/BrewingSystem.js), off the palette. */
 .brewery-ink--ok { color: var(--text-cost-ok); }

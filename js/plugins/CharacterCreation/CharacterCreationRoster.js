@@ -141,10 +141,38 @@
     }
 
     // True while a confirmation sheet is up: it has taken this frame’s press.
+    //
+    // A sheet with more than a yes and a no (the custom scenario editor) hands
+    // over `press`, which OK runs on the button under the cursor without
+    // closing anything, `buttons` as a function, because its controls are
+    // redrawn as they are used, and `paint`. A pick opened over such a sheet
+    // reads the pad itself, so the sheet stands down while it is up.
     _ccModalPollInput() {
       const st = this._ccModalState;
       if (!st) return false;
       if (!st.veil || !st.veil.isConnected) { this._ccModalState = null; return false; }
+      if (window.CCPick && window.CCPick.isOpen()) return false;
+      if (st.press) {
+        if (Input.isTriggered("cancel")) {
+          SoundManager.playCancel();
+          this._ccModalState = null;
+          st.close();
+          return true;
+        }
+        if (Input.isTriggered("ok")) { st.press(); return true; }
+        let turn = 0;
+        if (Input.isRepeated("right") || Input.isRepeated("down")) turn = 1;
+        else if (Input.isRepeated("left") || Input.isRepeated("up")) turn = -1;
+        if (turn) {
+          const n = st.buttons().length;
+          if (n) {
+            st.index = (st.index + turn + n) % n;
+            SoundManager.playCursor();
+            st.paint();
+          }
+        }
+        return true;
+      }
       if (Input.isTriggered("cancel")) {
         SoundManager.playCancel();
         this._ccModalState = null;

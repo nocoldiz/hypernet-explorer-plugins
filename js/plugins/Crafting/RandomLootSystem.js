@@ -614,7 +614,22 @@
     const COLLECTIBLE_CHEST_CHANCE = 0.25;
     const COLLECTIBLE_FLAT_WEIGHT = 250;
 
+    // A rare chest holds an expression seed (Weapon/ExpressionSystem.js). The
+    // seed is <Restricted>, so no ordinary roll can produce it: it is found
+    // here, on its own RNG, or not at all.
+    const EXPRESSION_SEED_CHANCE = 0.01;
+
+    function expressionSeed() {
+        if (typeof $dataItems === 'undefined' || !$dataItems) return null;
+        return $dataItems.find(item => item && item.meta && item.meta.UnlockExpression) || null;
+    }
+
     function lootItem(salt) {
+        const rare = makeLootRNG((salt || 0) + 0xE5);
+        if (rare() < EXPRESSION_SEED_CHANCE) {
+            const seed = expressionSeed();
+            if (seed) return seed;
+        }
         const draw = makeLootRNG((salt || 0) + 0x51D);
         if (draw() < COLLECTIBLE_CHEST_CHANCE) {
             const keepsake = getRandomItem($dataItems, (salt || 0) + 0xC0, true);

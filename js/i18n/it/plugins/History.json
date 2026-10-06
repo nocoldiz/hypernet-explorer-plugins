@@ -554,5 +554,10 @@
     "capitulation": "{loser} capitola davanti a {winner}; la guerra finisce alle condizioni del vincitore.",
     "ceasefire": "L'ONU impone un cessate il fuoco tra {attacker} e {defender}; le armi tacciono fino al {until}.",
     "sanctions": "L'ONU sottopone {power} a sanzioni per la guerra contro {enemy}; i suoi commerci si riducono per un anno."
+  },
+  "foundedFaction": {
+    "founded": "{founder} ha fondato {faction}.",
+    "foundedUnder": "{founder} ha fondato {faction}, giurata a {patron}.",
+    "joined": "{members} si sono uniti a {faction}."
   }
 }

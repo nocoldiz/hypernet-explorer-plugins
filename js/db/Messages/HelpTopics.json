@@ -344,12 +344,12 @@
       "Manuale"
     ]
   },
-  "progressBladeSeeds": {
+  "progressExpressionSeeds": {
     "type": "mechanic",
     "group": "progress",
     "order": 49,
-    "title": "HelpTopics.progressBladeSeeds.title",
-    "description": "HelpTopics.progressBladeSeeds.description",
+    "title": "HelpTopics.progressExpressionSeeds.title",
+    "description": "HelpTopics.progressExpressionSeeds.description",
     "image": ""
   },
   "gearSlots": {

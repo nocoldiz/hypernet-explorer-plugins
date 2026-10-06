@@ -2215,6 +2215,13 @@
       "KevinMacLeod/Jazz/Jazz Brunch",
       "KevinMacLeod/Jazz/Samba Isobel"
     ],
+    "bgmNight": [
+      "KevinMacLeod/Jazz/Night on the Docks - Sax",
+      "KevinMacLeod/Jazz/Night on the Docks - Trumpet",
+      "KevinMacLeod/Jazz/Late Night Radio",
+      "KevinMacLeod/Jazz/Smooth Lovin",
+      "KevinMacLeod/Calm/Night in Venice"
+    ],
     "bgsNight": [
       "city-night",
       "city-night2",
@@ -2389,6 +2396,13 @@
       "KevinMacLeod/Jazz/Jazz Brunch",
       "KevinMacLeod/Jazz/Samba Isobel"
     ],
+    "bgmNight": [
+      "KevinMacLeod/Jazz/Night on the Docks - Sax",
+      "KevinMacLeod/Jazz/Night on the Docks - Trumpet",
+      "KevinMacLeod/Jazz/Late Night Radio",
+      "KevinMacLeod/Jazz/Smooth Lovin",
+      "KevinMacLeod/Calm/Night in Venice"
+    ],
     "bgsNight": [
       "city-night",
       "city-night2",
@@ -2556,6 +2570,13 @@
       "KevinMacLeod/Calm/Your Call",
       "KevinMacLeod/Jazz/Jazz Brunch",
       "KevinMacLeod/Jazz/Samba Isobel"
+    ],
+    "bgmNight": [
+      "KevinMacLeod/Jazz/Night on the Docks - Sax",
+      "KevinMacLeod/Jazz/Night on the Docks - Trumpet",
+      "KevinMacLeod/Jazz/Late Night Radio",
+      "KevinMacLeod/Jazz/Smooth Lovin",
+      "KevinMacLeod/Calm/Night in Venice"
     ],
     "bgsNight": [
       "city-night",
@@ -2727,6 +2748,13 @@
       "KevinMacLeod/Jazz/Jazz Brunch",
       "KevinMacLeod/Jazz/Samba Isobel"
     ],
+    "bgmNight": [
+      "KevinMacLeod/Jazz/Night on the Docks - Sax",
+      "KevinMacLeod/Jazz/Night on the Docks - Trumpet",
+      "KevinMacLeod/Jazz/Late Night Radio",
+      "KevinMacLeod/Jazz/Smooth Lovin",
+      "KevinMacLeod/Calm/Night in Venice"
+    ],
     "bgsNight": [
       "city-night",
       "city-night2",
@@ -2888,6 +2916,13 @@
       "KevinMacLeod/Jazz/Jazz Brunch",
       "KevinMacLeod/Jazz/Samba Isobel"
     ],
+    "bgmNight": [
+      "KevinMacLeod/Jazz/Night on the Docks - Sax",
+      "KevinMacLeod/Jazz/Night on the Docks - Trumpet",
+      "KevinMacLeod/Jazz/Late Night Radio",
+      "KevinMacLeod/Jazz/Smooth Lovin",
+      "KevinMacLeod/Calm/Night in Venice"
+    ],
     "bgsNight": [
       "desert-ambience",
       "desert-monolit",
@@ -3038,6 +3073,13 @@
       "KevinMacLeod/Calm/Your Call",
       "KevinMacLeod/Jazz/Jazz Brunch",
       "KevinMacLeod/Jazz/Samba Isobel"
+    ],
+    "bgmNight": [
+      "KevinMacLeod/Jazz/Night on the Docks - Sax",
+      "KevinMacLeod/Jazz/Night on the Docks - Trumpet",
+      "KevinMacLeod/Jazz/Late Night Radio",
+      "KevinMacLeod/Jazz/Smooth Lovin",
+      "KevinMacLeod/Calm/Night in Venice"
     ],
     "bgsNight": [
       "cold-wind-loop",
@@ -13129,7 +13171,14 @@
       "KevinMacLeod/Techno/Space Fighter Loop",
       "KevinMacLeod/Atmospheric/Deep Haze"
     ],
-    "bgmNight": [],
+    "bgmNight": [
+      "KevinMacLeod/Atmospheric/Black Vortex",
+      "KevinMacLeod/Atmospheric/Shadowlands 1 - Horizon",
+      "KevinMacLeod/Atmospheric/Ossuary 4 - Animate",
+      "KevinMacLeod/Atmospheric/Deep Haze",
+      "KevinMacLeod/Atmospheric/Long Note One",
+      "KevinMacLeod/Atmospheric/Nowhere Land"
+    ],
     "bgsNight": [
       "space-wind-long",
       "cyber-city-loop",
@@ -15077,6 +15126,12 @@
       "Town1",
       "KevinMacLeod/Bright/Achaidh Cheide"
     ],
+    "bgmNight": [
+      "KevinMacLeod/Calm/Laid Back Guitars",
+      "KevinMacLeod/Calm/Peaceful Desolation",
+      "KevinMacLeod/Calm/Constance",
+      "KevinMacLeod/Dreamy/Moonlight Hall"
+    ],
     "bgsNight": [
       "village-night",
       "village-night2",
@@ -15292,6 +15347,11 @@
       "KevinMacLeod/Jazz/Cool Vibes",
       "Theme1"
     ],
+    "bgmNight": [
+      "KevinMacLeod/Dreamy/Winter Chimes",
+      "KevinMacLeod/Dreamy/Frost Waltz",
+      "KevinMacLeod/Calm/Clean Soul"
+    ],
     "bgsNight": [
       "village-night",
       "village-night2",
@@ -15490,6 +15550,12 @@
       "Town1",
       "KevinMacLeod/Bright/Achaidh Cheide"
     ],
+    "bgmNight": [
+      "KevinMacLeod/Calm/Laid Back Guitars",
+      "KevinMacLeod/Calm/Peaceful Desolation",
+      "KevinMacLeod/Calm/Constance",
+      "KevinMacLeod/Dreamy/Moonlight Hall"
+    ],
     "bgsNight": [
       "village-night",
       "village-night2",
@@ -15662,6 +15728,10 @@
     "bgm": [
       "KevinMacLeod/Mysterious/Ibn Al-Noor",
       "KevinMacLeod/Bright/Sardana"
+    ],
+    "bgmNight": [
+      "KevinMacLeod/Mysterious/Desert City",
+      "KevinMacLeod/Calm/Deliberate Thought"
     ],
     "bgsNight": [
       "village-night",
@@ -15853,6 +15923,12 @@
       "Town1",
       "KevinMacLeod/Bright/Achaidh Cheide"
     ],
+    "bgmNight": [
+      "KevinMacLeod/Calm/Laid Back Guitars",
+      "KevinMacLeod/Calm/Peaceful Desolation",
+      "KevinMacLeod/Calm/Constance",
+      "KevinMacLeod/Dreamy/Moonlight Hall"
+    ],
     "bgsNight": [
       "village-night",
       "village-night2",
@@ -16027,6 +16103,12 @@
       "Town3",
       "Town1",
       "KevinMacLeod/Bright/Achaidh Cheide"
+    ],
+    "bgmNight": [
+      "KevinMacLeod/Calm/Laid Back Guitars",
+      "KevinMacLeod/Calm/Peaceful Desolation",
+      "KevinMacLeod/Calm/Constance",
+      "KevinMacLeod/Dreamy/Moonlight Hall"
     ],
     "bgsNight": [
       "village-night",

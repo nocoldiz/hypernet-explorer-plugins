@@ -90,7 +90,7 @@
       i161: 'createLocalMapModel',
       i162: 'createEHIPilotPDAModel',
       i163: 'createStarMapModel',
-      i165: 'createBladeSeedModel',
+      i165: 'createExpressionSeedModel',
       i175: 'createSaxophoneModel',
       i244: 'createSurgicalToolsModel',
       i390: 'createAlchemistryKitModel',
@@ -1547,9 +1547,9 @@
         return group;
       },
 
-      // 165. Blade seed: a seed pod with a blade already forming inside it,
+      // 165. Expression seed: a seed pod with a blade already forming inside it,
       // the edge showing through the split husk.
-      createBladeSeedModel(entry, rand) {
+      createExpressionSeedModel(entry, rand) {
         const group = new THREE.Group();
         const husk = this._mat(0x5A4A2A, { roughness: 0.95, metalness: 0.02 });
         const pod = new THREE.Mesh(new THREE.SphereGeometry(0.019, this.seg(12, 7), this.seg(10, 6)), husk);

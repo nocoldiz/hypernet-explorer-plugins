@@ -41,7 +41,7 @@
   ],
   "encounterStep": 30,
   "height": 17,
-  "note": "<Interior>\n<Country: Belgium>\n<Coords 84 119>\n<MapGroup Ghent>\n<BuildRights: Owner>\n<Biome: Store>\n<BgsNight: hum-loop>",
+  "note": "<Interior>\n<Country: Belgium>\n<Coords 84 119>\n<MapGroup Ghent>\n<BuildRights: Owner>\n<Biome: Store>\n<BgsNight: hum-loop>\n<BgmNight: KevinMacLeod/Techno/Screen Saver>",
   "parallaxLoopX": false,
   "parallaxLoopY": false,
   "parallaxName": "",

@@ -37,7 +37,7 @@
     const {
         MAT, PLACEABLE, ProceduralDecorator, ROAD_SINK, ROAD_TOTAL_W, SEA_LEVEL,
         ROAD_BED_DROP, ROAD_COL, ROAD_DASH_OFF, ROAD_DASH_ON, ROAD_GAP, ROAD_KERB_H,
-        ROAD_LANE_OFF, ROAD_LINE_W, ROAD_MARK_LIFT, ROAD_SHOULDER_W, ROAD_SKIRT,
+        ROAD_LANE_OFF, ROAD_LINE_W, ROAD_MARK_LIFT, ROAD_SHOULDER_W, ROAD_SKIRT, ROAD_VIADUCT_H,
         VOX, VoxelField, VoxelMesher, WORLD_TILE_SIZE, getRenderType, profileFor,
         getRoadDirectionAt, loadTex, loadVoxelTex, sampleBiomeAt, voxelMaterial, VoxelWorldState,
         voxelGrassMaterial, voxelWaterMaterial, disposeVoxelMaterial,
@@ -1196,6 +1196,11 @@
                 return (y == null || !isFinite(y)) ? null : y;
             };
             D._scatterCaveChests(ch.grp, ch.wx, ch.wy, this._ts, floorAt);
+            // ...and the chests of whatever place reaches into this square.
+            if (D._scatterSiteChests && this.field.siteSpots) {
+                const spots = this.field.siteSpots(ch.wx, ch.wy);
+                if (spots.length) D._scatterSiteChests(ch.grp, ch.wx, ch.wy, this._ts, spots);
+            }
             if (D._scatterCaveScenery) {
                 D._scatterCaveScenery(ch.grp, ch.wx, ch.wy, this._ts, floorAt,
                     sampleBiomeAt(ch.wx, ch.wy));
@@ -1767,6 +1772,12 @@
             let w = 18;
             let g = at(e.x + e.nx * w, e.z + e.nz * w);
             let drop = Math.max(ROAD_SKIRT, e.y - g + CLEAR);
+            // Over a viaduct the ground is left where it was and the deck
+            // stands on piers (VoxelWorldField): the skirt is the deck's own
+            // edge, not an embankment chased all the way down to the valley.
+            // The field says which columns are deck; a steep hillside is not.
+            const deck = this._deckAt;
+            if (deck && deck(e.x, e.z)) drop = ROAD_SKIRT;
             if (drop > ROAD_SKIRT) {
                 w = Math.min(MAX_W, 18 + (drop - ROAD_SKIRT) * 0.6);
                 g = at(e.x + e.nx * w, e.z + e.nz * w);
@@ -1817,6 +1828,9 @@
             // the downhill verge of every road on a hillside hanging in the
             // air, with the hollow over the roadbed showing under it as a
             // tunnel; on flat country it is the same 18-unit shoulder it was.
+            const deckScratch = {};
+            this._deckAt = (x, z) => this.field.genColumn(
+                Math.floor((px + x) / VOX.SIZE), Math.floor((pz + z) / VOX.SIZE), deckScratch).deckY !== 0;
             const curtain = (edge, flip, c) => {
                 const feet = edge.map(e => this._roadFoot(at, e));
                 for (let i = 0; i + 1 < edge.length; i++) {

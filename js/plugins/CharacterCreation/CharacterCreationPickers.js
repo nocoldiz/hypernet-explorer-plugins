@@ -695,6 +695,11 @@
           row(T('CharCreate.wayBack'), T('CharCreate.thePatronsOwnHatch')),
           row(T('CharCreate.locked'), T('CharCreate.theSecretCoordinates')),
         ],
+        origin_patron_star: [
+          row(T('CharCreate.start'), T('CharCreate.patronStar.startRow')),
+          row(T('CharCreate.locked'), T('CharCreate.theSecretCoordinates')),
+        ],
+        origin_custom: [row(T('CharCreate.start'), T('CharCreate.custom.startRow'))],
         origin_mayor: [row(T('CharCreate.start'), T('CharCreate.aCityOfYourChoice'))],
         origin_criminal: [
           row(T('CharCreate.start'), T('CharCreate.yourCamperParkedInACity')),
@@ -784,6 +789,10 @@
         origin_plague: [
           row(T('CharCreate.start'), T('CharCreate.aCityOfYourChoice')),
           row(T('CharCreate.stock'), T('CharCreate.sealedVials', { count: plagueVialCount() })),
+        ],
+        origin_expressions: [
+          row(T('CharCreate.start'), T('CharCreate.aCityOfYourChoice')),
+          row(T('CharCreate.expressions.powerRow'), T('CharCreate.expressions.powerValue')),
         ],
         origin_diplomat: [
           row(T('CharCreate.start'), T('CharCreate.theOnuAssemblyInBrussels')),

@@ -75,7 +75,7 @@
 
     /**
      * A restricted entry (<Restricted> note tag) is granted by one system and
-     * one system only: a seed weapon grows from a blade seed, nothing else.
+     * one system only: a seed weapon grows from an expression seed, nothing else.
      * It never turns up in a loot roll, on a shop shelf, in a vending machine,
      * in a stolen pocket or as a quest reward, so every pool builder asks this
      * before it accepts a row of the database.

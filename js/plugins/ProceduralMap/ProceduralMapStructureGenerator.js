@@ -3359,11 +3359,14 @@
     // Smallest footprint first so a pole fits even a tight margin.
     const ordered = variants.slice().sort((a, b) => (a.width * a.height) - (b.width * b.height));
 
+    // A cell a prefab built on stays the prefab's (see cityCellFree).
+    const prefabMask = mapData.prefabMask;
     const footprintClear = (sx, sy, w, h) => {
       for (let gy = 0; gy < h; gy++) for (let gx = 0; gx < w; gx++) {
         const ox = sx + gx, oy = sy + gy;
         if (ox < 0 || ox >= width || oy < 0 || oy >= height) return false;
         if (isOccupied(ox, oy)) return false;
+        if (prefabMask && prefabMask[oy * width + ox]) return false;
       }
       return true;
     };
@@ -3454,10 +3457,15 @@
   }
 
   // Can a prop stand here? Open ground the biome or the pavement pass laid, with
-  // nothing on any object layer and nothing else claiming the tile.
+  // nothing on any object layer and nothing else claiming the tile. A cell a
+  // prefab built on is the prefab's (its roof may be bare on the object
+  // layers, which is how a tree came to grow out of one); the cells it left
+  // empty are open ground like any other.
   function cityCellFree(ctx, x, y) {
     if (x < 1 || y < 1 || x >= ctx.width - 1 || y >= ctx.height - 1) return false;
     if (ctx.isOccupied(x, y)) return false;
+    const prefabMask = ctx.mapData.prefabMask;
+    if (prefabMask && prefabMask[y * ctx.width + x]) return false;
     if (!ctx.openBase.has(ctx.mapData[calculateIndex(x, y, 0, ctx.width, ctx.height)])) return false;
     for (const z of [1, 2, 3]) {
       if (ctx.mapData[calculateIndex(x, y, z, ctx.width, ctx.height)] !== 0) return false;
@@ -3948,6 +3956,7 @@
         // manhole is never left floating over a meadow.
         if (onHard && greenGround.length && roll < local * 0.35 &&
             !ctx.isOccupied(x, y) &&
+            !(ctx.mapData.prefabMask && ctx.mapData.prefabMask[y * ctx.width + x]) &&
             ctx.mapData[calculateIndex(x, y, 1, ctx.width, ctx.height)] === 0 &&
             ctx.mapData[calculateIndex(x, y, 2, ctx.width, ctx.height)] === 0) {
           ctx.mapData[gIdx] = greenGround[Math.floor(roll * 997) % greenGround.length];
