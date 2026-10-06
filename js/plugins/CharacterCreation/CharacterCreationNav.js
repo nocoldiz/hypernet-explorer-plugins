@@ -223,7 +223,7 @@
     // sprite and bust grids, the trait categories, the looks of a dossier -
     // turns on the same four inputs, so they are answered in one place:
     //
-    //   L1 / PageUp / Q          back
+    //   L1 / PageUp             back
     //   R1 / PageDown            forward
     //   Tab                      forward
     //   Shift + Tab              back
@@ -571,6 +571,13 @@
 
     // -------------------------------------------------------------- update --
 
+    // A press the ring acted on is spent for the rest of the frame (UINav's
+    // one press, one action): a page reader, CCScroll or a hotkey reading
+    // Input after the ring must not answer it as well.
+    _spend(action) {
+      if (window.UINav && typeof window.UINav.consume === "function") window.UINav.consume(action);
+    },
+
     // Read once a frame, before the page's own cursor. Returns true when the
     // press belonged to the controls layer.
     update() {
@@ -586,17 +593,20 @@
       if (Input.isTriggered("cancel") ||
           (typeof TouchInput !== "undefined" && TouchInput.isCancelled())) {
         this._notePress();
+        this._spend("cancel");
         this.leave(true);
         return true;
       }
       if (Input.isTriggered("ok")) {
         this._notePress();
+        this._spend("ok");
         this.confirm();
         return true;
       }
       for (const dir of ["up", "down", "left", "right"]) {
         if (!pressed(dir)) continue;
         this._notePress();
+        this._spend(dir);
         if (this.move(dir)) return true;
         // Off the top or the left of the layer: back to the board the page
         // was walking before, so the two layers are one loop and not a trap.

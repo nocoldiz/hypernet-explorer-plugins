@@ -85,14 +85,10 @@
        outline is 12px off each axis at a size where that matters. */
     .book-spread,
     .cc-pockets-spread,
-    #thinker-container .book-spread,
     #blacksmith-container .book-spread,
     .save-book-spread,
     .shop-spread,
-    .mp-spread,
-    .travel-book-spread,
-    .stock-spread,
-    .mp-type-spread {
+    .travel-book-spread {
         border-width: 3px;
         outline-offset: -5px;
     }
@@ -109,7 +105,6 @@
     }
 
     /* --- Right page: the actor card and the readings stacked under it. */
-    .status-card,
     .save-details-card,
     .inspect-lore {
         padding: 8px 10px;
@@ -131,22 +126,10 @@
         gap: 4px;
     }
 
-    .cc-mode-toggle {
-        margin-bottom: 4px;
-        margin-left: 6px;
-        padding: 1px;
-    }
-
-    .cc-mode-pill {
-        font-size: 0.85rem;
-    }
-
     .cc-folder-tab,
     .cc-step-tab {
-        padding: 5px 10px;
         font-size: 0.927rem;
         gap: 5px;
-        border-radius: 6px 6px 0 0;
     }
 
     .cc-folder-tab .cc-tab-portrait,
@@ -255,30 +238,6 @@
         gap: 4px;
     }
 
-    .cc-compact-toggle-row {
-        gap: 4px;
-    }
-
-    .cc-compact-toggle-btn {
-        padding: 4px 6px;
-        font-size: 0.881rem;
-    }
-
-    .cc-compact-edit-btn {
-        padding: 4px 6px;
-        font-size: 0.881rem;
-        gap: 4px;
-    }
-
-    .cc-compact-type-pills {
-        gap: 4px;
-    }
-
-    .cc-compact-type-pill {
-        padding: 4px 5px;
-        font-size: 0.859rem;
-    }
-
     .cc-compact-loadout-grid {
         max-height: 105px;
         gap: 2px;
@@ -339,16 +298,9 @@
         padding: 10px 14px;
     }
 
-    .cc-dossier-card,
-    .cc-card-option,
     .cc-party-card,
     .cc-bust-card {
         padding: 6px 8px;
-    }
-
-    .cc-categories-list,
-    .cc-presets-board {
-        gap: 6px;
     }
 
     .cc-header-gothic {
@@ -411,40 +363,6 @@
         padding-bottom: 1px;
     }
 
-    /* 5. Name Input, Dice, & Trait Budget Bar */
-    .cc-step-single-page {
-        padding: 14px 20px;
-    }
-
-    .cc-name-input-group {
-        max-width: 380px;
-        margin: 8px auto 14px auto;
-        gap: 8px;
-    }
-
-    .cc-name-text-input {
-        padding: 6px 12px;
-        font-size: 1.299rem;
-    }
-
-    .cc-dice-btn {
-        padding: 6px 12px;
-        font-size: 1.243rem;
-    }
-
-    .cc-trait-budget-container {
-        padding: 6px 12px;
-        margin-bottom: 8px;
-    }
-
-    .cc-trait-budget-label {
-        font-size: 0.881rem;
-    }
-
-    .cc-trait-budget-val {
-        font-size: 1.299rem;
-    }
-
     /* 6. Settings Mode (Initial Settings Screen) */
     #character-creation-container .option-row {
         padding: 8px 12px;
@@ -504,11 +422,6 @@
         font-size: 1.04rem;
         margin-top: 4px;
         max-width: 320px;
-    }
-
-    .cc-settings-hint {
-        font-size: 0.949rem;
-        margin-top: 4px;
     }
 
     /* 7. Presets, Wanted Cards & Skin Selector */
@@ -591,10 +504,6 @@
         gap: 6px;
     }
 
-    .cc-class-board-head .cc-subheader {
-        font-size: 1.243rem;
-    }
-
     .cc-class-search {
         height: 26px;
         font-size: 0.96rem;
@@ -657,16 +566,6 @@
 
     .cc-class-stat-grid {
         gap: 1px 8px;
-    }
-
-    .cc-class-growth {
-        font-size: 0.85rem;
-    }
-
-    .cc-class-confirm {
-        height: 30px;
-        margin-top: 4px;
-        font-size: 0.994rem;
     }
 
     /* 9. Traits Selection Step */
@@ -964,11 +863,6 @@
         font-size: 0.85rem;
     }
 
-    .cc-pet-trait-toggle {
-        font-size: 0.85rem;
-        padding: 3px 5px;
-    }
-
     .cc-pet-sidebar-name {
         font-size: 1.074rem;
     }
@@ -996,35 +890,12 @@
         margin-bottom: 3px;
     }
 
-    .cc-option-desc {
-        font-size: 0.949rem;
-        line-height: 1.25;
-    }
-
     .cc-select-grid.cc-compact .cc-option-title {
         font-size: 1.04rem;
     }
 
-    .cc-select-grid.cc-compact.cc-three-col.cc-align-left .cc-option-title {
-        font-size: 0.96rem;
-    }
-
     .cc-select-grid.cc-archetype-grid .cc-card-option {
         gap: 1px;
-    }
-
-    .cc-archetype-card-meta {
-        font-size: 0.85rem;
-    }
-
-    .cc-select-grid.cc-dropdown-list {
-        max-height: 50vh;
-        gap: 2px;
-        padding: 3px;
-    }
-
-    .cc-select-grid.cc-dropdown-list .cc-card-option {
-        padding: 4px 6px;
     }
 
     /* 14. Sprites & Busts Gallery */
@@ -1041,29 +912,10 @@
         gap: 4px;
     }
 
-    .cc-sprite-portrait-bust {
-        width: 150px;
-        height: 160px;
-    }
-
     .cc-sprite-portrait.no-bust {
         width: 110px;
         height: 110px;
         min-height: 110px;
-    }
-
-    .cc-categories-list .cc-card-option {
-        padding: 6px 10px !important;
-        gap: 8px !important;
-    }
-
-    .cc-categories-list .cc-option-title {
-        font-size: 1.017rem;
-    }
-
-    .cc-categories-list .cc-element-badge {
-        font-size: 0.85rem;
-        padding: 1px 5px;
     }
 
     .cc-species-search {
@@ -1124,11 +976,6 @@
 
     .cc-scenario-grid .cc-card-option.cc-scenario-card {
         padding: 5px 8px;
-    }
-
-    .cc-scenario-back {
-        height: 30px;
-        font-size: 0.949rem;
     }
 
     .cc-scenario-sheet {
@@ -1210,43 +1057,6 @@
         padding: 2px 5px;
         font-size: 0.881rem;
         gap: 3px;
-    }
-
-    .cc-alchemical-chamber {
-        width: 130px;
-        height: 170px;
-        padding-bottom: 14px;
-    }
-
-    .cc-chamber-label {
-        font-size: 1.299rem;
-    }
-
-    .cc-incubator-frame {
-        width: 150px;
-        height: 150px;
-        margin: 10px auto;
-    }
-
-    .cc-anatomy-checklist {
-        gap: 4px;
-        margin-top: 6px;
-    }
-
-    .cc-anatomy-row {
-        padding: 4px 8px;
-        font-size: 0.949rem;
-    }
-
-    .cc-balance-pockets {
-        margin-top: 8px;
-        padding: 8px;
-    }
-
-    .cc-balance-line {
-        font-size: 0.96rem;
-        margin-bottom: 3px;
-        padding-bottom: 2px;
     }
 
     /* 17. Signature Bottom Buttons Panel & Navigation */
@@ -1489,37 +1299,33 @@
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
-    .equip-commands {
-        gap: 4px;
-        margin-bottom: 10px;
-    }
-
     .equip-command-bar {
         margin-bottom: 9px;
         padding-bottom: 5px;
     }
 
-    /* Eight slot rows stacked down the left page: two pixels a row is a whole
-       row's worth of height back. */
-    .equip-slot-row {
-        padding: 4px 10px 4px 4px;
-        margin-bottom: 1px;
-    }
-
     #equip-container .companion-tab {
         padding: 2px 7px;
-    }
-
-    .equip-right-content .stats-grid {
-        gap: 3px 9px;
     }
 }
 
 
 /* ==========================================================================
    The status sheet (UI/CustomSceneStatus.js)
+   --------------------------------------------------------------------------
+   The sheet re-states .left-page / .right-page under its own id, which beats
+   the shared spread rule in the first block on specificity, so its margins
+   are restated here at the same specificity or the panel keeps the desk's.
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
+
+    #status-menu-container .left-page {
+        padding: 20px 28px 20px 26px;
+    }
+
+    #status-menu-container .right-page {
+        padding: 20px 26px 20px 28px;
+    }
 
     #status-tabs .backpack-tab {
         padding: 2px 9px;
@@ -1607,15 +1413,6 @@
         gap: 9px;
     }
 
-    .save-detail-rows {
-        margin-top: 6px;
-        gap: 6px;
-    }
-
-    .save-party-title {
-        margin: 9px 0 4px 0;
-    }
-
     .save-modal {
         padding: 18px 22px 16px 22px;
     }
@@ -1647,29 +1444,6 @@
 
     #menu-container .opt-inspect-img-wrap {
         margin: 0 0 8px 0;
-    }
-}
-
-
-/* ==========================================================================
-   The skill atlas (CharacterCreation/SkillMaster.js)
-   --------------------------------------------------------------------------
-   A star chart with a label floating at every node: the labels are what
-   collides on a smaller panel, not the chart, which is drawn to its box.
-   ========================================================================== */
-@media (max-width: 1366px) and (max-height: 860px) {
-
-    .sg3-label-name {
-        font-size: 1.153rem;
-    }
-
-    .sg3-label-cost {
-        margin-left: 3px;
-        font-size: 1.017rem;
-    }
-
-    .sg3-label.sg3-focus .sg3-label-name {
-        padding: 1px 4px;
     }
 }
 
@@ -1709,20 +1483,10 @@
 /* ==========================================================================
    The help codex (UI/HelpMenu.js)
    --------------------------------------------------------------------------
-   This menu re-states .left-page / .right-page under its own id, which beats
-   the shared spread rule above on specificity, so the codex was the one menu
-   on the spread still carrying desktop margins on a handheld. Restated at the
-   same specificity here, which is the whole reason for the block.
+   Its pages take the shared spread margins from the first block; what is left
+   is the codex's own chrome.
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
-
-    #help-container .left-page {
-        padding: 20px 28px 20px 26px;
-    }
-
-    #help-container .right-page {
-        padding: 20px 26px 20px 28px;
-    }
 
     #help-container .help-group-chips {
         margin-bottom: 6px;
@@ -1788,18 +1552,8 @@
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
-    .army-grid {
-        gap: 7px;
-        margin-top: 5px;
-    }
-
     .army-card {
         padding: 7px 10px;
-    }
-
-    .army-table th,
-    .army-table td {
-        padding: 3px 5px;
     }
 
     /* The recruit dialogs are centred boxes rather than pages, so they take a
@@ -1936,17 +1690,16 @@
         height: 46px;
     }
 
-    .cgc-art {
-        height: 128px;
-        margin-bottom: 6px;
+    .cgc-dossier-top {
+        grid-template-columns: 96px minmax(0, 1fr);
     }
 
-    .cgc-decklist {
-        max-height: 120px;
+    .cgc-art {
+        height: 96px;
     }
-    /* The two page buttons, the pager and the deck chips all lose their
-       generous padding: the handheld spread has no room to spend on chrome. */
-    .cgc-modes .cgc-mode,
+
+    /* The pager and the deck chips lose their generous padding: the handheld
+       spread has no room to spend on chrome. */
     .cgc-pager .cgc-pagebtn {
         padding: 3px 8px;
     }
@@ -2081,49 +1834,37 @@
         padding: 5px 9px;
     }
 
-    /* The value graph on the right page: it is read for its shape, and the
-       shape survives a shorter box. */
-    #menu-container .assets-graph-box {
-        padding: 7px 9px;
-        margin-bottom: 9px;
-    }
-
-    #menu-container .assets-graph-legend {
-        gap: 11px;
-        margin-top: 4px;
-    }
-
     #menu-container .assets-detail {
         padding-right: 4px;
+    }
+
+    #menu-container .assets-action {
+        padding: 4px 8px;
     }
 }
 
 
 /* ==========================================================================
-   The thinker menu (Quest/ThinkerMenu.js), and the forge that shares its
-   spread (Crafting/BlacksmithingMenu.js)
+   The workshop (Quest/ThinkerMenu.js): the Thinker's bench and the forge
+   share one spread
    --------------------------------------------------------------------------
-   Both are scoped under their own container id and most of their type is
+   It is scoped under its own container id and most of their type is
    `!important`, so an override here has to be scoped the same way and shouted
    back at the same specificity to land at all.
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
-    #thinker-container .left-page,
     #blacksmith-container .left-page,
-    #thinker-container .right-page,
     #blacksmith-container .right-page {
         padding: 8px 16px;
     }
 
     /* The right page is inset by a share of its own width to clear the spine.
        At 1280 that indent is most of a column of text. */
-    #thinker-container .right-page,
     #blacksmith-container .right-page {
         padding-left: 9%;
     }
 
-    #thinker-container .title,
     #blacksmith-container .title {
         margin: 0 0 8px 0;
         padding-bottom: 4px;
@@ -2131,7 +1872,6 @@
 
     /* The bubbling pot is decoration, and at 4.325em it is decoration the size
        of a paragraph. */
-    #thinker-container .cauldron-animation,
     #blacksmith-container .cauldron-animation {
         font-size: 2.8em !important;
     }
@@ -2147,11 +1887,6 @@
    (#sandbox-search and friends) carry no spacing of their own.
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
-
-    .sandbox-badge {
-        padding: 1px 6px;
-        margin-bottom: 6px;
-    }
 
     .sandbox-14 {
         padding: 7px 5px;
@@ -2176,7 +1911,7 @@
 
 
 /* ==========================================================================
-   The ledger spread (Work/WorkSystem.js, Work/WorkSystemJobOffers.js,
+   The grimorie spread (Work/WorkSystem.js, Work/WorkSystemJobOffers.js,
    Economy/BankLoanSystem.js, Vehicle/VehicleSystemRepair.js)
    --------------------------------------------------------------------------
    Four screens that are the same page under four names: a 50% page inset by
@@ -2407,11 +2142,6 @@
        of prices wide. */
     .shop-right {
         padding-left: 20px;
-    }
-
-    .shop-title {
-        margin: 0 0 9px 0;
-        padding-bottom: 4px;
     }
 
     .shop-funds {
@@ -2717,6 +2447,8 @@
 
     .pas-adv-title {
         font-size: 1.55em;
+        margin-bottom: 6px;
+        padding-bottom: 5px;
     }
 
     .pas-adv-text {
@@ -2725,11 +2457,7 @@
 
     .pas-adv-row {
         font-size: 1.14em;
-    }
-
-    .pas-adv-title {
-        margin-bottom: 6px;
-        padding-bottom: 5px;
+        padding: 5px 12px;
     }
 
     .pas-adv-rewards {
@@ -2742,11 +2470,6 @@
         gap: 4px;
         margin-top: 9px;
     }
-
-    .pas-adv-row {
-        padding: 5px 12px;
-    }
-
 }
 
 
@@ -2913,86 +2636,6 @@
 
     .npc-cc-note {
         padding: 2px 8px;
-    }
-}
-
-
-/* ==========================================================================
-   The compact NPC dialogue panel (NPC/NPCEmpathizeUI.js, .npc-dlg-*)
-   --------------------------------------------------------------------------
-   The same plugin's smaller in-world panel, opened on an NPC without leaving
-   the map: its own portrait, chat and action grid, and a second profile page
-   behind it. A separate layout from the one above rather than a narrower copy
-   of it, so it is compacted separately.
-   ========================================================================== */
-@media (max-width: 1366px) and (max-height: 860px) {
-
-    .npc-dlg-left {
-        padding: 10px 12px 9px;
-    }
-
-    /* The right page's extra left inset clears the spine between the two. */
-    .npc-dlg-right {
-        padding: 10px 14px 10px 20px;
-    }
-
-    .npc-dlg-hdr {
-        gap: 8px;
-        margin-bottom: 7px;
-    }
-
-    .npc-dlg-portrait {
-        width: 72px;
-        height: 72px;
-    }
-
-    .npc-dlg-sep {
-        margin: 6px 0;
-    }
-
-    .npc-dlg-r-sep {
-        margin: 8px 0 6px;
-    }
-
-    .npc-dlg-chat {
-        gap: 5px;
-        margin-bottom: 6px;
-    }
-
-    .npc-dlg-bubble {
-        padding: 5px 8px;
-    }
-
-    .npc-dlg-input-row {
-        margin-bottom: 6px;
-    }
-
-    .npc-dlg-action-btn {
-        padding: 5px 7px;
-    }
-
-    .npc-dlg-join-msg {
-        padding: 5px 8px;
-    }
-
-    .npc-dlg-steal-item {
-        padding: 5px 8px;
-    }
-
-    .npc-dlg-tag {
-        padding: 1px 6px;
-    }
-
-    /* The profile page behind the panel, whose portrait is drawn at 288px
-       square: on a 800px panel that is a third of the screen for a face. */
-    .npc-dlg-portrait-lg {
-        width: 208px;
-        height: 208px;
-    }
-
-    .npc-dlg-profile-hdr,
-    .npc-dlg-panel-hdr {
-        margin-bottom: 8px;
     }
 }
 
@@ -3206,10 +2849,6 @@
         height: calc(100% - 34px);
     }
 
-    #hypernet-start-menu {
-        bottom: 34px;
-    }
-
     #hypernet-start-btn {
         width: 92px;
         padding-right: 10px;
@@ -3239,6 +2878,7 @@
            footer, so those three numbers are one number and are restated
            together. */
     #hypernet-start-menu {
+        bottom: 34px;
         width: 330px;
         height: 420px;
     }
@@ -3398,7 +3038,6 @@
 @media (max-width: 1366px) and (max-height: 860px) {
 
     #bank-system-content .cc-pockets-spread,
-    #stock-container .stock-spread,
     #job-offers-content .cc-pockets-spread,
     #news-history-content .cc-pockets-spread {
         padding: 5px;
@@ -3426,29 +3065,8 @@
         padding: 6px 12px !important;
     }
 
-    #stock-container .stock-top {
-        padding: 6px;
-    }
-
-    #stock-container .portfolio-pane,
-    #stock-container .trade-pane {
-        padding: 7px;
-    }
-
-    /* The price chart. It is read for its line, and the line survives a
-       shorter box; 170px of it plus the panes under it did not survive the
-       window. */
-    #stock-container .graph-box {
-        height: 128px;
-    }
-
     #stock-container .portfolio-header {
         margin-bottom: 6px;
-    }
-
-    #stock-container .asset-row {
-        padding: 4px 8px;
-        margin-bottom: 4px;
     }
 
     #job-offers-content .job-item {
@@ -3503,41 +3121,6 @@
 
 
 /* ==========================================================================
-   The skills page (BattleSystem/CategorizedBattleSkills.js)
-   --------------------------------------------------------------------------
-   A tab rail down the left and a scrolling list of every skill beside it. The
-   list is the screen, and it is the only one here a player reads mid-fight, so
-   the rows close up and the type on them does not.
-   ========================================================================== */
-@media (max-width: 1366px) and (max-height: 860px) {
-
-    .skills-box {
-        padding: 6px 9px;
-        margin-bottom: 9px;
-    }
-
-    .skill-tabs-col {
-        margin-right: 10px;
-        padding-right: 7px;
-    }
-
-    .skill-tab {
-        padding: 4px 8px;
-        margin-bottom: 4px;
-    }
-
-    .skill-row {
-        padding: 5px 9px;
-        margin-bottom: 4px;
-    }
-
-    .skill-scale-badge {
-        padding: 1px 5px;
-    }
-}
-
-
-/* ==========================================================================
    The quick bar (Core/HotbarUI.js)
    --------------------------------------------------------------------------
    Sits over the map and over the battle screen, so its height is taken from
@@ -3579,10 +3162,6 @@
     .cryo-panel {
         width: min(94%, 680px);
         padding: 12px 16px;
-    }
-
-    .cryo-panel-sub {
-        margin: 0 0 9px 0;
     }
 
     .cryo-unavailable {
@@ -3673,11 +3252,6 @@
 
     .re-list {
         gap: 5px;
-    }
-
-    .re-nav-hint {
-        margin-top: 8px;
-        padding-top: 7px;
     }
 
     .estate-04 {
@@ -3812,38 +3386,8 @@
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
-    .plant-grid {
-        gap: 5px;
-    }
-
-    .plant-04 {
-        margin-bottom: 12px;
-    }
-
-    .plant-05 {
-        margin-bottom: 13px;
-    }
-
-    .plant-06 {
-        width: 84px;
-        height: 84px;
-        margin-bottom: 5px;
-    }
-
-    .plant-09 {
-        padding: 8px 12px;
-    }
-
-    .plant-16 {
-        padding: 8px 11px;
-    }
-
     .ag-sprite-canvas {
         margin: 5px auto 7px;
-    }
-
-    #menu-container .assets-action {
-        padding: 4px 8px;
     }
 }
 
@@ -4012,6 +3556,7 @@
 @media (max-width: 1366px) and (max-height: 860px) {
 
     .item-target-card .htp-panel {
+        min-width: 460px;
         padding: 15px 20px;
     }
 
@@ -4023,10 +3568,6 @@
     .item-target-card .htp-vitals {
         gap: 2px;
         min-width: 150px;
-    }
-
-    .item-target-card .htp-panel {
-        min-width: 460px;
     }
 }
 
@@ -4387,8 +3928,8 @@
         margin-bottom: 8px;
     }
 
-    .detail-scroll {
-        padding: 12px;
+    #shop-container .detail-scroll {
+        padding: 12px 0;
     }
 
     .detail-header {
@@ -4429,10 +3970,6 @@
         margin-bottom: 9px;
     }
 
-    .gauge-row {
-        margin-bottom: 5px;
-    }
-
     .detail-effect-chips {
         gap: 4px;
     }
@@ -4445,12 +3982,12 @@
 
 /* ==========================================================================
    The weapon preview box and the equip page's readings
-   (ItemSystem/ItemSystemEquipmentUI.js, Crafting/BlacksmithingMenu.js)
+   (ItemSystem/ItemSystemEquipmentUI.js, Quest/ThinkerMenu.js)
    --------------------------------------------------------------------------
    The shared preview box is the tallest fixed block on every page that carries
    one -- two cards side by side in the equip menu, one large one in the forge,
    one in the shop -- so it is the first thing to give ground on a short panel.
-   Under it sit the scaling line and the stat grids the equip menu shares with
+   Under it sit the stat grids the equip menu shares with
    the forge and the inspect card; the equip menu's own copies are already
    flattened to zero margin, so what is left to win is in the shared rules.
    ========================================================================== */
@@ -4467,24 +4004,17 @@
         margin-bottom: 7px;
     }
 
-    /* The fallback ring drawn in place of a model, for a piece that has none. */
-    .weapon-preview-icon-circle {
-        width: 72px;
-        height: 72px;
-    }
-
-    .scaling-box {
-        padding: 3px 8px;
-        margin-bottom: 9px;
+    /* The fallback ring drawn in place of a model, for a piece that has none.
+       Only the forge draws it, at 200px inside a 440px stage; the stage is
+       300px here, so the ring comes down in step. */
+    #blacksmith-container .weapon-preview-icon-circle {
+        width: 136px;
+        height: 136px;
     }
 
     .stats-grid {
         gap: 4px 9px;
         margin-bottom: 9px;
-    }
-
-    .alchemical-stats {
-        gap: 4px;
     }
 }
 
@@ -4642,8 +4172,7 @@
         min-height: 2rem;
     }
 
-    #qb-title,
-    .kb-board-title {
+    #qb-title {
         font-size: 1.808rem;
         letter-spacing: 2px;
     }
@@ -4718,8 +4247,7 @@
 
     /* The wax seal and the star row are the note's two pieces of furniture and
        they scale with it rather than sitting on top of a smaller note. */
-    .qb-seal,
-    .kb-seal {
+    .qb-seal {
         width: 28px;
         height: 28px;
         font-size: 1.107rem;
@@ -4781,7 +4309,6 @@
     }
 
     .kb-card.kb-compact {
-        min-height: 0;
         padding: 11px 11px 10px 46px;
     }
 
@@ -5010,7 +4537,6 @@
            across leaves a row wide enough for an icon, a name and its count
            without the name being clipped mid-word. */
     .backpack-grid,
-    .inventory-grid--3col,
     #skill-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -5020,15 +4546,6 @@
        rather than by re-declaring a custom property an inline style wins. */
     .sm-skill-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    /* --- The main menu (UI/CustomMainMenuLayout.js). The command rows keep the
-           desk's four tracks, so a page holds the same buttons in the same
-           places at every resolution and nothing reflows onto a second screen
-           of scroll. Only the ability cards are thinned: six glyphs across a
-           1280px page leave no room for the word beneath. */
-    .ability-container {
-        grid-template-columns: repeat(3, 1fr);
     }
 
     /* --- The bestiary (Quest/Bestiary.js). Every card carries a 64px sprite
@@ -5043,15 +4560,6 @@
            are a word each: paired up, the name gets the whole first track. */
     .forge-grid-row {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    /* --- The quantity keypad, at the shop counter and on the trading terminal
-           (ItemSystem/ItemSystemShop.js, Economy/StockMarketSystem.js). Four
-           buttons to a row on a narrow panel are four targets too small for a
-           thumb on a Deck's trackpad. */
-    .quantity-expansion,
-    #stock-container .quantity-expansion {
-        grid-template-columns: repeat(2, 1fr);
     }
 
     /* --- Character creation: the sprite board and the 3D model editor's

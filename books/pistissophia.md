@@ -52,8 +52,8 @@ part of the lost Greek text of Irenaeus. These writers were avowed
 heresy-hunters, keenly alive to the danger to Christianity in the
 doctrines which they exposed, and therefore necessarily inclined to
 believe the worst that could be said against them. But granting the
-Fathers’ entire good faith in the matter—and that of Irenaeus and
-Tertullian at least is undoubted—there was one cogent reason why their
+Fathers’ entire good faith in the matter - and that of Irenaeus and
+Tertullian at least is undoubted - there was one cogent reason why their
 account of Gnostic teaching had to be received with suspicion. The
 leaders of the Gnostics did not teach openly but in secret and by a
 method of initiation and allegory which was directly copied from the
@@ -76,7 +76,7 @@ It is true that Clement of Alexandria and his friend Origen, writing in
 the birthplace of post-Christian Gnosticism, afford us a more tolerant
 and philosophical idea of Gnostical teaching, and have even preserved
 for us some precious extracts from the writings of the school of
-Valentinus, the great leader—who at one time nearly attained to the
+Valentinus, the great leader - who at one time nearly attained to the
 Primacy of the Catholic Church; but save for this, it was not until the
 middle of the nineteenth century that we had any chance of studying
 Gnosticism from the works of its adherents. The discovery in 1840 of an
@@ -268,8 +268,8 @@ was made.
 The date at which the MS. was written is the subject of a much greater
 difference of opinion. Woide, who was the first to call attention to it,
 thought that this was at latest the fourth century, the Abbé Hyvernat
-the seventh,[7] Amélineau—whose work upon it will presently be
-noticed—the ninth or tenth, and Dr. Schmidt the fifth. All these
+the seventh,[7] Amélineau - whose work upon it will presently be
+noticed - the ninth or tenth, and Dr. Schmidt the fifth. All these
 conclusions were apparently arrived at on paleographic grounds and I do
 not feel myself qualified to discuss them; but the dates of the
 different documents from which the MS. was copied will be dealt with
@@ -366,7 +366,7 @@ remembered by many as the first explorer of the Protodynastic Tombs at
 Abydos which entirely revolutionised all our ideas of early Egyptian
 history; and it was probably only the difficulties under which he
 laboured all his life which prevented him from publishing the results of
-this—his first and only excavation—in a manner which would have gained
+this - his first and only excavation - in a manner which would have gained
 him the full credit of his really epoch-making discovery.[13] It was
 doubtless the same difficulties which compelled him to produce his
 translation of the _Pistis Sophia_ in the form in which he did; and
@@ -420,8 +420,8 @@ Mr. Crum, he has all his’ countrymen’s taste for philology and grammar,
 and his acquaintance with the Christian literature of the early
 centuries of our Era is profound. It is not therefore to be wondered at
 that his translation of our text is from the etymological point of view
-as nearly perfect as our present knowledge of Coptic—still limited by
-the paucity of MSS. other than Biblical—allows it to be, and that very
+as nearly perfect as our present knowledge of Coptic - still limited by
+the paucity of MSS. other than Biblical - allows it to be, and that very
 little complaint can be made against it on the score of verbal accuracy.
 The addition to it of a translation of the _Bruce Papyrus_ is also most
 convenient for purposes of reference; but perhaps by reason of this, Dr.
@@ -495,7 +495,7 @@ the six, also, can claim to be included under the title of the _Pistis
 Sophia_, but they are by far the largest and take up between them more
 than half the volume. This arrangement follows strictly the rule of
 stichometry observed by writers of the period, which prescribes that the
-longest document shall come first. Thus in this translation:—
+longest document shall come first. Thus in this translation: - 
 
                   Document       Begin page   End page
                   1st                    63        126
@@ -639,7 +639,7 @@ the beatitudes in store for them will be progressive, beginning with the
 Millenium which will ensue when the number of perfect souls is
 accomplished, the Kerasmos purified and “caught up,” and the Twelve
 Disciples established with Jesus as joint Kings reigning over the
-blessed in the Last Parastates or Helper—a name given to the world which
+blessed in the Last Parastates or Helper - a name given to the world which
 is placed in our universe immediately over the Treasure-house. Here they
 will apparently receive further instruction and be given “mysteries”
 which will enable them to mount to the upper universes before, it is
@@ -706,7 +706,7 @@ Before leaving this Document, it must be noted that in it there appear
 long rhetorical statements in a form which has no parallel in the other
 documents of our text. They repeat the same phrase with the variation of
 two or three words at each repetition, the object being apparently to
-give the hearer an idea which he could not otherwise obtain—except,
+give the hearer an idea which he could not otherwise obtain - except,
 perhaps, by a picture or diagram[26] of the different hierarchies of
 Powers or arrangement of Places which the speaker is describing. Thus in
 one place, Jesus, after speaking of the “Mystery of the Ineffable One,”
@@ -894,8 +894,8 @@ already noticed.
 
 It must be noted that nearly all the first part of this Document is full
 of invocations or prayers couched in the apparent gibberish before
-mentioned, that “Mary”—whether the Mother of Jesus or the Magdalene is
-not stated—asks one question only, that the planet Venus is called
+mentioned, that “Mary” - whether the Mother of Jesus or the Magdalene is
+not stated - asks one question only, that the planet Venus is called
 “Bubastis,” Egyptian, Greek, and Hebrew magic and astrology being
 present in nearly every line, while there is some little trace of
 Persian influence as well. It is also closely connected with one of the
@@ -961,9 +961,9 @@ maleficent Saturn and Mars behind her in the revolution of the Sphere,
 all the souls sent into the world will be good, and when the position is
 reversed, all will be wicked.[41] Here, too, for the first time, we are
 told that the form of the body on reincarnation depends on the sins
-committed by the soul in its last life,—that the soul of the proud man
+committed by the soul in its last life, - that the soul of the proud man
 will be put into a body dumb and deformed, the soul of the thief into
-one lame and maimed and blind—and so on.
+one lame and maimed and blind - and so on.
 
 It will therefore be seen that this Document is sufficiently connected
 with some of the preceding ones to warrant the supposition that it comes
@@ -990,8 +990,8 @@ parchment available.
 To sum up then: the MS. contains five principal documents together with
 a fragment which may or may not once have formed part of one of them.
 All are imperfect and are extracts from longer and possibly more
-coherent writings. Two of them—the _Pistis Sophia_ proper, and our
-Fourth Document—can be clearly distinguished as written by different
+coherent writings. Two of them - the _Pistis Sophia_ proper, and our
+Fourth Document - can be clearly distinguished as written by different
 authors, and the same can be said with nearly as much certainty with
 regard to the Third and Fifth. Yet the book from which the tale of
 Pistis Sophia was extracted must have been old enough to have gone
@@ -1022,8 +1022,8 @@ _Bruce Papyrus_, which actually bears as its frontispiece such words and
 such a cross with the letters Α and Ω and which seems to be a
 reproduction of the Constantinian Labarum.[43] If, too, we put side by
 side the passages in our MS. and the _Bruce Papyrus_ which are
-practically identical—as is the case with the three sacraments or
-baptisms mentioned in the Fourth Document of our text—we find that the
+practically identical - as is the case with the three sacraments or
+baptisms mentioned in the Fourth Document of our text - we find that the
 “seals” or diagrams, passwords, and names given in the Oxford MS. have
 all been omitted from the London book. No one who is familiar with the
 beliefs current in Pagan Egypt can mistake the reason of this omission,
@@ -1190,7 +1190,7 @@ Yet the literary critic, especially he who is acquainted with the
 literature of the early Christian centuries, will hardly require further
 proof of the relative dates of our four chief Documents than that
 afforded by a comparison of their contents. In the First, apart from a
-sketch of—to use a comprehensive word—the uranography of the sect, and
+sketch of - to use a comprehensive word - the uranography of the sect, and
 the speculations about the Divine Nature before referred to, the author
 devotes nearly all his space to the episode of Pistis Sophia, which may
 fairly be looked upon as an allegory pointing out to man the penalty of
@@ -1227,9 +1227,9 @@ Saviour not only describe these at great length, but indicate, though
 obscurely, the various steps by which man can approach divinity. But the
 benefits there promised are to be confined evidently to a small and
 privileged class chosen out of the main body of Christians. The use of
-these means, moreover, is a good deal more magical than religious—that
+these means, moreover, is a good deal more magical than religious - that
 is to say, they apparently act by compulsion rather than by propitiation
-of the celestial powers—and was perhaps bound up with the different
+of the celestial powers - and was perhaps bound up with the different
 “arrays” of stars in a fashion which shows a distinct leaning towards
 the astrology of the time.[71] The rebel Rulers of the stars are here
 made for the first time the instruments in the punishment of sinful
@@ -1284,8 +1284,8 @@ the mysteries and praying prayers in certain forms; but its general
 tendency remains almost entirely magical.
 
 With the Fourth Document, we seem to have reached the bottom of the
-slope. The disciples here know nothing—it will be remembered that the
-scene is supposed to take place directly after the Resurrection—of the
+slope. The disciples here know nothing - it will be remembered that the
+scene is supposed to take place directly after the Resurrection - of the
 higher worlds and their mysteries, or even of the parts of this Chorema
 or Space which are above the Treasure-house; and their flight upward
 with Jesus has for its object merely the exhibition of the terrors of
@@ -1432,7 +1432,7 @@ Genesis, which the last Divine Syzygy of Christ and the Holy Spirit
 before returning to the Godhead fashioned into an Æon as perfect as
 those within it.[94] On finding herself alone, however, this Sophia
 Without, as she was called, suffered several “passions” or
-emotions:—fear, grief, perplexity, and supplication—and she prayed to
+emotions: - fear, grief, perplexity, and supplication - and she prayed to
 the Syzygy which had given her form for deliverance from them. In answer
 to her prayers, yet another Divine Emanation came forth from the
 Godhead. This was “Jesus, the Great High Priest,” to whose formation
@@ -1442,7 +1442,7 @@ consolation of Sophia Without, stripped her of her passions and remained
 with her as her spouse in what is called the Heavenly Jerusalem to reign
 with her over all that is without the Godhead. As for her passions,
 since they could not be destroyed, they were made, say the Valentinians
-quoted by Hippolytus, into different substances or essences—her fear
+quoted by Hippolytus, into different substances or essences - her fear
 into the essence of the soul, her grief into that of matter, and her
 perplexity into that of demons, while of her supplication He made “a
 path for repentance.” The essence of the soul, which is called by
@@ -1571,8 +1571,8 @@ made by Jesus to St. Andrew in the last words of the same Document; and
 the parallel is more close because one or other of the many Sophias in
 the Valentinian system was always identified with the earth. Again, in
 the treatise _de Scorpiace_ (c. 4), he speaks of the hidden sacraments
-of the heretics—by which phrase the ante-Nicene Fathers nearly always
-mean the Valentinians—and the answers which the soul must make when
+of the heretics - by which phrase the ante-Nicene Fathers nearly always
+mean the Valentinians - and the answers which the soul must make when
 arraigned before the _veras potestates et veros homines_, “powers and
 men of Truth,” the “Teleti and Abascanti and Akineti of Valentinus,” of
 which names some are to be found in the long catalogue of transcendental
@@ -1700,12 +1700,12 @@ curious argument in this Third Document as to “a King of to-day” who
 gives gifts to a man equal to himself, clothes him with “the vestures of
 a King,” and pardons him for the most heinous crimes, to an episode in
 the reign of Philip the Arabian recounted in the Augustan History.[110]
-There seems the more reason in this contention that the argument—bad
-though it may be ethically—comparing the Emperor’s proceeding to the
+There seems the more reason in this contention that the argument - bad
+though it may be ethically - comparing the Emperor’s proceeding to the
 pardon extended by the Highest Powers to the worst of sinners, is
 dragged in, as it were, by the neck and heels. But if it be this episode
 which is really hinted at in our Third Document, this last cannot be put
-earlier than A.D. 244 or 250, the dates of Philip’s accession—and death.
+earlier than A.D. 244 or 250, the dates of Philip’s accession - and death.
 
 Passing on to the Fourth Document, there is no need to emphasise what
 has been already said in the preceding chapter of this Introduction as
@@ -2848,7 +2848,7 @@ earth-beings who are dead, no breath being in them. And I took away a
 third part of all their powers, that they should not work in their evil
 doings, and that whenever the men who (are) in the World should invoke
 them in their mysteries, these who brought them down even the Angels who
-transgressed—these which were their magic, that therefore whenever they
+transgressed - these which were their magic, that therefore whenever they
 should invoke them in their evil doings, they should not be able to
 accomplish them: and the Destiny with the Sphere which is lord unto them
 I removed, [24^b] and I caused them to spend six months turned to the
@@ -2951,7 +2951,7 @@ Maria, said she, My Lord, then the hour-setters, with the enquirers,
 then they will not show to the men that which will happen to them from
 this hour?
 
-But answered Jesus, said he to Maria: If the hour-setters—if they should
+But answered Jesus, said he to Maria: If the hour-setters - if they should
 find the Destiny, with the Sphere turned [29^a] to the Left according to
 their first distribution, their words are wont to come (right), and they
 will say that which it is right to become; but if they come (upon) the
@@ -3626,7 +3626,7 @@ Hasten, deliver me at the time when I shall cry up unto thee. [59^b]
 Because my time failed as a breath, and I became matter. They took away
 my light from me. And my power dried up. I forgot my mystery this which
 I was wont to do at first. From the shout of the fear with the power of
-the Self-willed my power failed in me—I became as a mere demon, dwelling
+the Self-willed my power failed in me - I became as a mere demon, dwelling
 in matter in which there is not light. And I became as a counterfeit
 spirit, being in a material body in which there is not power of light.
 And I became as a dekan, being over the air, alone. Afflicted me greatly
@@ -7508,7 +7508,7 @@ to blot out the sins with the unlawfulness of all the sinners.
 It happened therefore, Jesus having finished saying these words unto his
 disciples, came forward Maria, said she to the Saviour, My Lord, then
 there is man righteous, being complete in all the righteousness, and
-that man having not any sin at all.—Such a one they will torment him in
+that man having not any sin at all. - Such a one they will torment him in
 the punishments with the judgments, or otherwise? Or otherwise rather,
 that man they will take away in unto the kingdom of the heavens, or not?
 Answered the Saviour, said he to Maria, A man righteous, this being
@@ -9375,7 +9375,7 @@ said she, My Lord, but I heard that the prophets went unto the Light.
 Added also the Saviour said he to Maria, Amen amen I say to thee, Not
 any prophet went unto the Light. But the Rulers of the Aeons who spake
 with them out of the Aeons, they gave to them the mystery of the Aeons;
-and I having come unto the Place of the Aeons, Helias—I turned him, I
+and I having come unto the Place of the Aeons, Helias - I turned him, I
 dispatched him unto the body of Iohannes the baptist. But the rest also
 I turned them unto righteous bodies, these who will find the mysteries
 of the Light, and go unto the Height and inherit the kingdom of the
@@ -9426,9 +9426,9 @@ thee.
 Then Jesus stood (up) with his disciples at the water of the Ocean and
 he invoked with this prayer saying, Hear me, my Father, the Father of
 every fatherhood, the boundless Light: a e ē i o u ō i a o a o i ō i a
-psinother— ther(i)nops—nōpsither—zagourē—pagouri—nethmomaoth—
-nepsiomaoth—marakhakhtha—thobarraban—tharnakhakhan—
-zorokothora—Ieou—sabaoth: But these saying them Jesus, Thomas with
+psinother - ther(i)nops - nōpsither - zagourē - pagouri - nethmomaoth - 
+nepsiomaoth - marakhakhtha - thobarraban - tharnakhakhan - 
+zorokothora - Ieou - sabaoth: But these saying them Jesus, Thomas with
 Andreas with Iakobos with Simon the Kananites they were being on the
 west, their faces being turned unto the east. [319^a] But Philippos with
 Bartholomaios, they were being on the south, being turned unto north.
@@ -9811,7 +9811,7 @@ and cause them to be worthy of being numbered in unto the kingdom of my
 [334^a] Father, the Father of the Treasury of the Light, because they
 followed me and kept my commandments. Now therefore my Father, Father of
 every fatherhood, let come the forgivers, whose names are these
-ghiphirepsnijiet—zenei berimou—sokhabrikher euthari nanei dieis
+ghiphirepsnijiet - zenei berimou - sokhabrikher euthari nanei dieis
 balmerikh Meuni poskhirie entair mouthiour cmour peukher oouskhous
 minionor isokhobor tha. Hear me invoking you, forgive the sins of these
 souls and blot out their unlawfulness: let them be worthy of being
@@ -10055,8 +10055,8 @@ take away the sperma of the males with the menstruum [351^b] of the
 woman and give them unto a (mess of) lentil and eat it, while they say,
 We are believing Esau with Iakob. Is it a thing which is right or
 otherwise? But Jesus was angry with the World at that hour, and said he
-to Thomas, Amen I say that every sin and every unlawfulness—this sin
-surpasseth them—these of this kind. They are about to take them
+to Thomas, Amen I say that every sin and every unlawfulness - this sin
+surpasseth them - these of this kind. They are about to take them
 immediately unto the Darkness which is outer, nor shall they throw them
 back unto the Sphere again. But they are not about to be wasted away and
 destroy them in the Darkness which is outer, the place in which there is

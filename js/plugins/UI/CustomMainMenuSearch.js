@@ -811,6 +811,12 @@
             return !!b && (state.opened || b.query.trim().length > 0);
         },
 
+        // True while the party picker is up, asking who a use or an equip
+        // lands on: the level a cancel takes back first.
+        hasPending() {
+            return !!state.pending;
+        },
+
         // True while the page is open with the caret somewhere else, which is
         // when the results answer to the arrow keys rather than to the field.
         isBrowsing() {
@@ -1004,7 +1010,10 @@
             if (!state.opened || !state.pending) return;
             const members = $gameParty.members();
             if (!members.length) return;
-            if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+            // Cancel is answered by the menu's navigator, which runs first and
+            // puts the pick down through backOutOneLevel; reading it here as
+            // well would answer one press twice.
+            if (TouchInput.isCancelled()) {
                 this.cancelPending();
                 return;
             }

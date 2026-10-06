@@ -14,7 +14,7 @@
  * @desc Opens the biologic simulation window.
  * 
  * @command MakePregnant
- * @desc Makes the player pregnant (requires Switch 69 ON for uterus).
+ * @desc Makes the player pregnant (requires a reproductive system on the actor).
  *
  * @command ShortenPregnancy
  * @desc Reduces pregnancy timer by 1 month (30 days).
@@ -206,37 +206,13 @@
     return days + (dateObj.hours * 60 + dateObj.minutes) / (24 * 60);
   }
 
-  // Reproduction type is stored per party member: var 87 (member 1),
-  // var 115 (member 2), var 116 (member 3). Select by party index so
-  // actors 2/3 do not inherit actor 1's reproductive data.
-  // LEGACY ONLY. The old home of the reproduction type, read once per actor so
-  // a save made before the field existed can migrate. It is keyed by ACTOR ID,
-  // which is how every writer always keyed it; the reader used to key it by
-  // party index instead, which is the bug this replaces.
-  function legacyReproductionVarId(actor) {
-    var id = actor ? actor.actorId() : 1;
-    if (id === 2) return 115;
-    if (id === 3) return 116;
-    if (id === 1) return 87;
-    return 0;
-  }
-
+  // How this body reproduces lives on the actor (ActorCharacterFields):
+  // 0 testes, 1 uterus, 2 oviparous, 3 plant, 4 mitosis. An actor nobody has
+  // set reads as 0.
   function getReproductionType(actor) {
-    if (!actor) return 0;
-    if (actor.reproductionType) {
-      var own = actor.reproductionType();
-      if (own !== null) return own;
-      var varId = legacyReproductionVarId(actor);
-      var legacy = varId > 0 ? $gameVariables.value(varId) : null;
-      var resolved = (legacy === undefined || legacy === null) ? 0 : legacy;
-      actor.setReproductionType(resolved);
-      return resolved;
-    }
-    // ActorCharacterFields.js absent (a stripped build): fall back to the
-    // variable rather than refusing to answer.
-    var vid = legacyReproductionVarId(actor);
-    var v = vid > 0 ? $gameVariables.value(vid) : 0;
-    return (v === undefined || v === null) ? 0 : v;
+    if (!actor || typeof actor.reproductionType !== "function") return 0;
+    var own = actor.reproductionType();
+    return (own === undefined || own === null) ? 0 : own;
   }
 
   // How long a pregnancy runs is the species' business, not this plugin's:
@@ -275,25 +251,14 @@
   const getBrainRegions = () => window.Health ? window.Health.BrainRegions : null;
   const getPersonalityData = () => window.Health ? window.Health.PersonalityData : null;
 
-  // Gender is stored per-actor: actor 1 -> Var 38, actor 2 -> Var 39,
-  // actor 3 -> Var 40. Reading Var 38 unconditionally gave actors 2/3 the
-  // Player-1 gender.
-  function getGenderVarId(actor) {
-    var id = actor && actor.actorId ? actor.actorId() : 1;
-    return id === 2 ? 39 : id === 3 ? 40 : 38;
-  }
-
-  // Gender itself lives on the actor now (ActorCharacterFields); variables
-  // 38-40 were freed, so they are only read as a fallback for a runtime that
-  // does not carry that plugin.
+  // Gender lives on the actor (ActorCharacterFields).
   function readGender(actor) {
     if (actor && typeof actor.gender === "function") return actor.gender() || 0;
-    return $gameVariables.value(getGenderVarId(actor)) || 0;
+    return 0;
   }
 
   function writeGender(actor, value) {
     if (actor && typeof actor.setGender === "function") actor.setGender(value);
-    else $gameVariables.setValue(getGenderVarId(actor), value);
   }
 
   // ── Endocrine implants ────────────────────────────────────────────────────
@@ -778,7 +743,7 @@
     if (actorId === 1) {
       const player1BustName = $gameActors.actor(1).vnBust();
       if (player1BustName && player1BustName !== "") return "img/busts/" + player1BustName;
-      if ($gameSwitches.value(77)) {
+      if ($gameActors.actor(1)._isCreatureActor) {
         const player1MonsterName = $gameActors.actor(1).vnBattler();
         if (player1MonsterName && player1MonsterName !== "") return "img/enemies/" + player1MonsterName;
       }
@@ -795,7 +760,7 @@
     if (actorId === 2) {
       const player2BustName = $gameActors.actor(2).vnBust();
       if (player2BustName && player2BustName !== "") return "img/busts/" + player2BustName;
-      if ($gameSwitches.value(78)) {
+      if ($gameActors.actor(2)._isCreatureActor) {
         const player2MonsterName = $gameActors.actor(2).vnBattler();
         if (player2MonsterName && player2MonsterName !== "") return "img/enemies/" + player2MonsterName;
       }
@@ -812,7 +777,7 @@
     if (actorId === 3) {
       const player3BustName = $gameActors.actor(3).vnBust();
       if (player3BustName && player3BustName !== "") return "img/busts/" + player3BustName;
-      if ($gameSwitches.value(79)) {
+      if ($gameActors.actor(3)._isCreatureActor) {
         const player3MonsterName = $gameActors.actor(3).vnBattler();
         if (player3MonsterName && player3MonsterName !== "") return "img/enemies/" + player3MonsterName;
       }
@@ -6782,7 +6747,7 @@
 
     // Check if reproduction is possible
     if (pregnancyType === 0) {
-      var message = T('Biologic.noReproductiveSystemAvailableSetVariable87Fi');
+      var message = T('Biologic.noReproductiveSystemAvailable');
       if (window.ParchmentToast) {
         window.ParchmentToast.show(message, { severity: 'info' });
       }

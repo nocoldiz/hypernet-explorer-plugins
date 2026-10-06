@@ -7,15 +7,12 @@
  * @plugindesc Visual Novel Bust System v2.0.0 (Bust image variables)
  * @author Omni-Lex
  * @version 2.0.0
- * @description Visual novel-style bust display with variable-based image loading. Loads busts from img/busts/ using Variables 106-108 per actor.
+ * @description Visual novel-style bust display. Loads busts from img/busts/ off each actor's own portrait fields.
  * @url
  * @help VisualNovelBustSystem.js
  *
- * Loads character busts from img/busts/ directory based on Variables 106-108.
- * Each actor uses their stored variable name:
- * - Actor 1: Variable 106
- * - Actor 2: Variable 107
- * - Actor 3: Variable 108
+ * Loads character busts from img/busts/ directory off each actor's own
+ * portrait fields (ActorCharacterFields.js: vnBust, vnBattler).
  *
  * Displays busts during dialogue with character names in top-left corner,
  * keeps busts visible across multiple messages within the same event,
@@ -526,37 +523,6 @@
                 } catch (_) {}
             }
             return `busts/7`;
-
-            /*
-                        // Player 1 (Actor 1) special handling
-                        if (actorId === 1) {
-                            // Priority 2: Check Variable 109 (Player 1 bust name)
-                            const player1BustName = $gameActors.actor(1).vnBust();
-                            if (player1BustName && player1BustName !== "") {
-                                return `busts/${player1BustName}`;
-                            }
-            
-                            // Priority 3: If Switch 77 is ON, use Variable 106 for monster form
-                            if ($gameSwitches.value(77)) {
-                                const player1MonsterName = $gameActors.actor(1).vnBattler();
-                                if (player1MonsterName && player1MonsterName !== "") {
-                                    return `monsters/${player1MonsterName}`;
-                                }
-                            }
-            
-                            // Priority 4: Fall back to SpritesAssociation
-                        
-                            return `busts/7`;
-                        }
-            
-                        // Players 2 & 3: Use SpritesAssociation based on sprite
-                        if (SpritesAssociation[spritesheetName] && SpritesAssociation[spritesheetName][characterIndex]) {
-                            const bustName = SpritesAssociation[spritesheetName][characterIndex];
-                            return `busts/${bustName}`;
-                        }
-            
-                        // Fallback if sprite not found in association
-                        return `busts/7`;*/
         }
 
         getBustNameFromEventComment() {

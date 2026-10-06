@@ -76,7 +76,7 @@
   "testosteroneProduction": "Выработка тестостерона",
   "normalRange": "Норма",
   "belowNormalHypogonadism": "Ниже нормы (гипогонадизм)",
-  "noReproductiveSystemAvailableSetVariable87Fi": "Репродуктивной системы нет. Сначала задайте переменную 87.",
+  "noReproductiveSystemAvailable": "Репродуктивной системы нет. У этого тела её нет.",
   "alreadyInReproductiveProcess": "Репродуктивный процесс уже идёт!",
   "pregnancyInitiatedDue": {
     "one": "Беременность начата! Срок через {count} день.",

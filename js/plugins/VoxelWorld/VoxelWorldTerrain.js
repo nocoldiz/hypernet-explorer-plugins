@@ -45,6 +45,9 @@
         getAlienTerrain, getBiomeOverride, isRiverTile, riverLinksAt, terrainEpoch
     } = VW;
 
+    // Widest strip a band of the road ribbon is laid in, across the road.
+    const ROAD_RIBBON_STEP = 10;
+
     const WORLD_TILES_ACROSS = 256;
 
     // =========================================================================
@@ -1794,7 +1797,13 @@
 
             const px = wx * ts + ts * 0.5, pz = wy * ts + ts * 0.5;
             const pos = [], col = [], idx = [];
+            // The ground beside the road, for the embankment's foot...
             const at = (x, z) => this.field.heightAt(px + x, pz + z);
+            // ...and the paving, which every vertex of the carriageway is laid
+            // at on its own. One height per cross-section left the ribbon flat
+            // across a hillside while walkers and wheels stood on the real
+            // slope, so on the downhill carriageway they sank through it.
+            const pv = (x, z) => this.field.roadSurfaceAt(px + x, pz + z);
             const push = (x, y, z, c) => {
                 pos.push(x, y, z);
                 col.push(((c >> 16) & 255) / 255, ((c >> 8) & 255) / 255, (c & 255) / 255);
@@ -1844,8 +1853,8 @@
                     // was never dropped to make room for a roadbed. So the
                     // section is hung off the two carriageways either side of
                     // it, which is where the paving actually is.
-                    const y = (at(p.x + nx * ROAD_LANE_OFF, p.z + nz * ROAD_LANE_OFF) +
-                               at(p.x - nx * ROAD_LANE_OFF, p.z - nz * ROAD_LANE_OFF)) * 0.5;
+                    const y = (pv(p.x + nx * ROAD_LANE_OFF, p.z + nz * ROAD_LANE_OFF) +
+                               pv(p.x - nx * ROAD_LANE_OFF, p.z - nz * ROAD_LANE_OFF)) * 0.5;
                     S.push({ x: p.x, z: p.z, nx, nz, s: along, y });
                 }
 
@@ -1854,10 +1863,10 @@
                         // The embankment hangs off each paved edge down to
                         // wherever the country actually is.
                         for (const side of [1, -1]) {
-                            const edge = S.map(p => ({
-                                x: p.x + p.nx * band.from * side, z: p.z + p.nz * band.from * side,
-                                y: p.y, nx: p.nx * side, nz: p.nz * side
-                            }));
+                            const edge = S.map(p => {
+                                const x = p.x + p.nx * band.from * side, z = p.z + p.nz * band.from * side;
+                                return { x, z, y: pv(x, z), nx: p.nx * side, nz: p.nz * side };
+                            });
                             curtain(edge, side < 0, band.col);
                         }
                         return;
@@ -1870,14 +1879,29 @@
                         }
                         const sides = band.both === false ? [1] : [1, -1];
                         for (const side of sides) {
-                            const f = band.both === false ? band.from : band.from * side;
-                            const t = band.both === false ? band.to   : band.to   * side;
+                            const f0 = band.both === false ? band.from : band.from * side;
+                            const t0 = band.both === false ? band.to   : band.to   * side;
                             const yF = (band.lift || 0), yT = (band.lift || 0) - (band.drop || 0);
-                            const v0 = push(a.x + a.nx * f, a.y + yF, a.z + a.nz * f, band.col);
-                            const v1 = push(b.x + b.nx * f, b.y + yF, b.z + b.nz * f, band.col);
-                            const v2 = push(b.x + b.nx * t, b.y + yT, b.z + b.nz * t, band.col);
-                            const v3 = push(a.x + a.nx * t, a.y + yT, a.z + a.nz * t, band.col);
-                            if (side > 0) quad(v0, v1, v2, v3); else quad(v3, v2, v1, v0);
+                            // A wide band is laid in strips across, each edge at
+                            // its own paving, so it bends with the hill under it.
+                            const n = band.drop ? 1 : Math.max(1, Math.ceil(Math.abs(t0 - f0) / ROAD_RIBBON_STEP));
+                            for (let k = 0; k < n; k++) {
+                                const f = f0 + (t0 - f0) * (k / n), t = f0 + (t0 - f0) * ((k + 1) / n);
+                                const ax = a.x + a.nx * f, az = a.z + a.nz * f;
+                                const bx = b.x + b.nx * f, bz = b.z + b.nz * f;
+                                const cx = b.x + b.nx * t, cz = b.z + b.nz * t;
+                                const dx = a.x + a.nx * t, dz = a.z + a.nz * t;
+                                const yA = pv(ax, az), yB = pv(bx, bz);
+                                // A kerb's drop hangs off its own top edge, not off
+                                // the ground it comes down to.
+                                const yC = band.drop ? yB + yT : pv(cx, cz) + yF;
+                                const yD = band.drop ? yA + yT : pv(dx, dz) + yF;
+                                const v0 = push(ax, yA + yF, az, band.col);
+                                const v1 = push(bx, yB + yF, bz, band.col);
+                                const v2 = push(cx, yC, cz, band.col);
+                                const v3 = push(dx, yD, dz, band.col);
+                                if (side > 0) quad(v0, v1, v2, v3); else quad(v3, v2, v1, v0);
+                            }
                         }
                     }
                 };
@@ -1904,7 +1928,8 @@
                     const edge = [];
                     for (let k = 0; k <= 8; k++) {
                         const l = -reach + (2 * reach * k) / 8;
-                        edge.push({ x: p.x + p.nx * l, z: p.z + p.nz * l, y: p.y, nx: tx, nz: tz });
+                        const ex = p.x + p.nx * l, ez = p.z + p.nz * l;
+                        edge.push({ x: ex, z: ez, y: pv(ex, ez), nx: tx, nz: tz });
                     }
                     curtain(edge, end === 0, ROAD_COL.skirt);
                 }
@@ -1925,7 +1950,7 @@
                         const l = -ext + (2 * ext * k) / 8;
                         const lc = Math.max(-b, Math.min(b, l));
                         const x = sd.nx ? sd.nx * b : l, z = sd.nz ? sd.nz * b : l;
-                        const y = at(sd.nx ? x : lc, sd.nz ? z : lc);
+                        const y = pv(sd.nx ? x : lc, sd.nz ? z : lc);
                         edge.push({ x, z, y, nx: sd.nx, nz: sd.nz });
                     }
                     // Wound so each faces out of the box, whichever side it is.
@@ -1936,15 +1961,15 @@
             // The junction box: the legs of a crossing meet in a plain square of
             // tarmac, laid as a grid so it follows the ground under it.
             if (paths.junction) {
-                const b = ROAD_TOTAL_W / 2, n = 5;
+                const b = ROAD_TOTAL_W / 2, n = Math.ceil(ROAD_TOTAL_W / ROAD_RIBBON_STEP);
                 for (let j = 0; j < n; j++) {
                     for (let i = 0; i < n; i++) {
                         const x0 = -b + (2 * b * i) / n, x1 = -b + (2 * b * (i + 1)) / n;
                         const z0 = -b + (2 * b * j) / n, z1 = -b + (2 * b * (j + 1)) / n;
-                        const v0 = push(x0, at(x0, z0), z0, ROAD_COL.asphalt);
-                        const v1 = push(x1, at(x1, z0), z0, ROAD_COL.asphalt);
-                        const v2 = push(x1, at(x1, z1), z1, ROAD_COL.asphalt);
-                        const v3 = push(x0, at(x0, z1), z1, ROAD_COL.asphalt);
+                        const v0 = push(x0, pv(x0, z0), z0, ROAD_COL.asphalt);
+                        const v1 = push(x1, pv(x1, z0), z0, ROAD_COL.asphalt);
+                        const v2 = push(x1, pv(x1, z1), z1, ROAD_COL.asphalt);
+                        const v3 = push(x0, pv(x0, z1), z1, ROAD_COL.asphalt);
                         quad(v0, v1, v2, v3);
                     }
                 }

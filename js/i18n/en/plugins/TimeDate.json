@@ -330,7 +330,8 @@
     "relieved": {
       "wc": "Used the WC.",
       "shower": "Relieved in the shower.",
-      "bath": "Relieved before the bath."
+      "bath": "Relieved before the bath.",
+      "roadside": "Stopped by the side of the road for a piss."
     },
     "nothingToDo": "Nobody needs the WC right now.",
     "accident": "{name} could not hold it any longer and wet themselves.",

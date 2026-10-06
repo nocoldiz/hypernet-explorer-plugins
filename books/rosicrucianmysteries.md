@@ -310,7 +310,7 @@ this blended soul-science of the Western Wisdom School, and gradually
 educate humanity at large in the virtues necessary to make the possession
 of higher powers safe.
 
-_Note_:—
+_Note_: - 
 
 _Pages 19 to 26 inclusive, describing Mt. Ecclesia, have been transferred
 to the back of the book._ (Transcriber’s Note: They are pages 191 through
@@ -326,7 +326,7 @@ THE PROBLEM OF LIFE.
 
 Among all the vicissitudes of life, which vary in each individual’s
 experience, there is one event which sooner or later comes to
-everyone—Death! No matter what our station in life, whether the life lived
+everyone - Death! No matter what our station in life, whether the life lived
 has been a laudable one or the reverse, whether great achievements have
 marked our path among men, whether health or sickness have been our lot,
 whether we have been famous and surrounded by a host of admiring friends
@@ -893,7 +893,7 @@ electricity is switched off. The form of the bird, the animal and the
 human being also cease their motion when the inner force which we call
 _life_ has winged its invisible way.
 
-All forms are impelled into motion by desire:—the bird and the animal roam
+All forms are impelled into motion by desire: - the bird and the animal roam
 land and air in their desire to secure food and shelter, or for the
 purpose of breeding, man is also moved by these desires, but has in
 addition other and higher incentives to spur him to effort, among them is
@@ -1533,7 +1533,7 @@ visible world wherein we dwell, that cannot be learned in any other realm
 of nature, and the very conditions of density and inertia whereof such
 people complain, are factors which make it possible to acquire the
 knowledge this world is designed to give. This fact was so amply
-illustrated in a recent experience of the writer:—A friend had been
+illustrated in a recent experience of the writer: - A friend had been
 studying occultism for a number of years but had not studied astrology.
 
 Last year she became aroused to the importance of this branch of study as
@@ -1583,7 +1583,7 @@ that nothing there is opaque.
 
 In this world the rotation of the opaque earth upon its axis is
 responsible for the alternating conditions of day and night. We call it
-Day—when the spot where we live is turned towards the sun and its rays
+Day - when the spot where we live is turned towards the sun and its rays
 illumine our environment, but when our home is turned away from the sun
 and its rays obstructed by the opaque earth we term the resulting
 darkness: Night. The passage of the earth in its orbit around the sun
@@ -1640,7 +1640,7 @@ feeling of floating in an ocean of intense light, utterly alone, yet
 absolutely fearless, since unimbued with a sense of its form or sound, nor
 past or future, but all is one eternal NOW. There seems to be neither
 pleasure nor pain and yet there is no absence of feeling but it all seems
-to center in the one idea:—“_I am_”! The human Ego stands face to face
+to center in the one idea: - “_I am_”! The human Ego stands face to face
 with itself as it were, and for the time being all else is shut out. This
 is the experience of anyone who passes that breach between the Desire
 World and the World of Thought, whether involuntarily, in the course of an
@@ -1773,7 +1773,7 @@ human being.
 According to the foregoing explanation it seems to be an anomaly when Paul
 speaks of them as evil and exhorts us to withstand them. The difficulty
 disappears, however, when we understand that good and evil are but
-relative qualities. An illustration will make the point clear:—Let us
+relative qualities. An illustration will make the point clear: - Let us
 suppose that an expert organ builder has constructed a wonderful organ, a
 masterpiece. Then he has followed his vocation in the proper manner, and
 is therefore to be commended for the good which he has done. But if he is
@@ -1812,13 +1812,13 @@ _The Region of Abstract Thought._
 
 Various religious systems have been given to humanity at different times,
 each suited to meet the spiritual needs of the people among whom it was
-promulgated, and, coming from the same divine source:—God, all religions
+promulgated, and, coming from the same divine source: - God, all religions
 exhibit similar fundamentals or first principles.
 
 All systems teach that there was a time when _darkness_ reigned supreme.
 Everything which we now perceive was then non-existent. Earth, sky and the
 heavenly bodies were uncreate, so were the multitudinous forms which live
-and move upon the various planets.—All, all, was yet in a fluidic
+and move upon the various planets. - All, all, was yet in a fluidic
 condition and the Universal Spirit brooded _quiescent_ in limitless Space
 as the One Existence.
 
@@ -1826,7 +1826,7 @@ The Greeks called that condition of homogeneity _Chaos_, and the state of
 orderly segregation which we now see; the marching orbs which illumine the
 vaulted canopy of heaven, the stately procession of planets around a
 central light, the majestic sun; the unbroken sequence of the seasons and
-the unvarying alternation of tidal ebb and flow;—all this aggregate of
+the unvarying alternation of tidal ebb and flow; - all this aggregate of
 systematic order, was called _Cosmos_, and was supposed to have proceeded
 from Chaos.
 
@@ -1868,8 +1868,8 @@ John also gives the same teaching.
 The Greek word _arche_, in the opening sentence of the gospel of St. John
 has been translated _the beginning_, and it may be said to have that
 meaning, but it also has other valid interpretations, vastly more
-significant of the idea John wished to convey. It means:—an elementary
-condition,—a chief source,—a first principle,—primordial matter.
+significant of the idea John wished to convey. It means: - an elementary
+condition, - a chief source, - a first principle, - primordial matter.
 
 There was a time when science insisted that the elements were immutable,
 that is to say, that an atom of iron had been an atom of iron since the
@@ -1880,8 +1880,8 @@ longer tenable. The principle of radio-activity has later vindicated the
 Alchemists. Science and the Bible agree in teaching, that all that is, has
 been formed from one homogeneous substance.
 
-It is that basic principle which John called _arche_:—primordial
-matter,—and the dictionary defines Archeology as: “the science of the
+It is that basic principle which John called _arche_: - primordial
+matter, - and the dictionary defines Archeology as: “the science of the
 origin (_arche_) of things.” Masons style God the “Grand Architect,” for
 the Greek word tektos means builder, and God is the Chief Builder
 (_tektos_) of _arche_: the primordial virgin matter which is also the
@@ -1889,7 +1889,7 @@ chief source of all things.
 
 Thus we see that when the opening sentence of St. John’s gospel is
 properly translated, our Christian Religion teaches that once a virgin
-substance enfolded the divine Thinker:—God.
+substance enfolded the divine Thinker: - God.
 
 That is the identical condition which the earlier Greeks called Chaos. A
 little thought will make it evident that we are not arbitrary in finding
@@ -1898,8 +1898,8 @@ word cannot be the beginning, a thought must precede the word, and a
 thinker must originate thought before it can be expressed as a word.
 
 When properly translated the teaching of John fully embodies that idea,
-for the Greek term _logos_ means both the reasonable thought,—(we also say
-Logic),—and the word which expresses this (logical) thought.
+for the Greek term _logos_ means both the reasonable thought, - (we also say
+Logic), - and the word which expresses this (logical) thought.
 
 
     1) _In the primordial substance was thought, and the thought was
@@ -1976,7 +1976,7 @@ man. When the last syllable has been spoken and the complete word has
 sounded, we shall have reached perfection as human beings. Then Time will
 be at an end, and with the last vibration of the Word of God, the worlds
 will be resolved into their original elements. Our life will then be “hid
-with Christ in God,” till the Cosmic Night:—Chaos,—is over, and we wake to
+with Christ in God,” till the Cosmic Night: - Chaos, - is over, and we wake to
 do “greater things” in a “new heaven and a new earth.”
 
 According to the general idea Chaos and Cosmos are superlative antitheses
@@ -2069,7 +2069,7 @@ future environment on earth, and the Region of abstract Thought is the
 _third Heaven_, but as Paul said, it is scarcely lawful to speak about
 that.
 
-Some will ask: is there then no hell?—No! _The mercy of God_ tends as
+Some will ask: is there then no hell? - No! _The mercy of God_ tends as
 greatly towards the principle of GOOD as “_the inhumanity of man_” towards
 cruelty, so that he would consign his brother men to flames of hell during
 eternity for the puerile mistakes committed during a few years, or perhaps
@@ -2116,7 +2116,7 @@ Christ and forget Creed.
 
     Is Christ then divided? Was Cephas or Paul
       Nailed to the deathly tree?
-    If not—then why these divisions at all?
+    If not - then why these divisions at all?
       Christ’s love doth embrace you and me.
 
     His pure sweet love is not confined
@@ -2240,7 +2240,7 @@ of the sun.
 
 Man is in a transition stage, he has 31 pairs of spinal nerves which keys
 him to the solar month, but the nerves in the so-called
-cauda-equina—literally horse-tail—, at the end of our spinal cord, are
+cauda-equina - literally horse-tail - , at the end of our spinal cord, are
 still too undeveloped to act as avenues for the spiritual ray of the sun.
 In proportion as we draw our creative force upward by spiritual thought we
 develop these nerves and awaken dormant faculties of the spirit. But it is
@@ -2753,8 +2753,8 @@ maternity easier, neither pains nor money are spared in these beneficent
 efforts for one whom we have never seen, but when the friend of a
 lifetime, the man who has served his kind well and nobly in profession,
 state, or church, is to leave the scene of his labors for a new field of
-activity, when the woman—who has labored to no less good purpose in
-bringing up a family to take its part in the world’s work—has to leave
+activity, when the woman - who has labored to no less good purpose in
+bringing up a family to take its part in the world’s work - has to leave
 that home and family, when one whom we have loved all our lives is about
 to bid us the final farewell, we stand by utterly at a loss how to help;
 perhaps we even do the very things most detrimental to the comfort and
@@ -2838,8 +2838,8 @@ for as the blood passes through the heart, cycle after cycle, the pictures
 of our good and evil acts are inscribed thereon to the minutest detail.
 This record may be called the sub-conscious memory. It forms the basis of
 our future life when reproduced as a panorama just subsequent to death. By
-removal of the seed atom—which corresponds to the sensitized plate in a
-camera,—the reflecting ether of the vital body serves as a focus, and as
+removal of the seed atom - which corresponds to the sensitized plate in a
+camera, - the reflecting ether of the vital body serves as a focus, and as
 the life unrolls slowly backwards from death to birth the pictures thereof
 are etched into the desire body which will be our vehicle during our
 sojourn in purgatory and the first heaven where evil is eradicated and
@@ -2952,11 +2952,11 @@ by that time, become the equator of a revolving globe. Then it is hurled
 into space and discarded from the economy of the revolving sun.
 
 This process is not accomplished automatically as scientists would have us
-believe,—an assertion which has been proven in _The Rosicrucian Cosmo
+believe, - an assertion which has been proven in _The Rosicrucian Cosmo
 Conception_ and other places in our literature. Herbert Spencer also
 rejected the nebular theory because it required a First Cause, which he
 denied, though unable to form a better hypothesis of the formation of
-solar systems,—but it is accomplished through the activity of a Great
+solar systems, - but it is accomplished through the activity of a Great
 Spirit, which we may call God or by any other name we choose. As above, so
 below, says the Hermetic axiom. Man, who is a lesser spirit, also gathers
 about himself spirit-substance, which crystallizes into matter and becomes
@@ -2967,7 +2967,7 @@ body is born as a child it is extremely soft and flexible.
 Childhood, youth, maturity and old age are but so many different stages of
 crystallization, which goes on until at last a point is reached where the
 spirit can no longer move the hardened body and it is thrown out from the
-spirit as the planet is expelled from the sun. That is death!—the
+spirit as the planet is expelled from the sun. That is death! - the
 commencement of a disrobing process which continues in purgatory. The low
 evil passions and desires we cultivated during life have crystallized the
 desire stuff in such a manner that that also must be expelled. Thus the
@@ -2990,7 +2990,7 @@ murder.
 
 When a man is dangerous he should of course be restrained, but even apart
 from the question of the moral right of a community to take the life of
-anyone—which we deny—society by its very act of retaliatory murder defeats
+anyone - which we deny - society by its very act of retaliatory murder defeats
 the very end it would serve, for if the vicious murderer is restrained
 under whatever discipline is necessary in a prison for a number of years
 until his natural death, he will have forgotten his bitterness against his
@@ -3032,8 +3032,8 @@ such places, and the man whose spiritual sight has been developed is often
 sadly impressed when he sees the subtle influences to which those who
 frequent such places are exposed. It is a fact of course that a man must
 be of a low caliber to be influenced by low thoughts, and that it is as
-impossible to incite a person of benevolent character to do murder—unless
-we put him into a hypnotic sleep—as to make a tuning fork which vibrates
+impossible to incite a person of benevolent character to do murder - unless
+we put him into a hypnotic sleep - as to make a tuning fork which vibrates
 to C sing by striking another attuned to the key of G, but the thoughts of
 both living and dead constantly surround us, and no man ever thought out a
 high spiritual philosophy under the influence of tobacco fumes or while
@@ -3080,7 +3080,7 @@ forced the day of reckoning. The method is as follows:
 In our explanation concerning the sub-conscious memory we noted that a
 record of every act, thought and word is transmitted by air and ether into
 our lungs, thence to the blood, and finally inscribed upon the tablet of
-the heart:—a certain little _seedatom_, which is thus the book of
+the heart: - a certain little _seedatom_, which is thus the book of
 Recording Angels. It was later explained how this panorama of life is
 etched into the desire body and forms the basis of retribution after
 death. When we have committed a wrong and our conscience accuses us in
@@ -3098,7 +3098,7 @@ to do right instead of wrong in a future life. But if he awakens to a
 thorough realization of a wrong previous to his death, then, as said, the
 feeling of sorrow for his victim and the restitution or redress which he
 gives of his own free will, make the suffering after death unnecessary,
-hence—“his sin is forgiven.”
+hence - “his sin is forgiven.”
 
 The Rosicrucian Mystery teaching gives a scientific method whereby an
 aspirant to higher life may purge himself continually, and thus be able to
@@ -3194,7 +3194,7 @@ but an immutable law which proportions the sufferings differently to each
 individual suicide.
 
 We learned previously, when considering the World of Thought, that each
-form in this visible world has its archetype there,—a vibrating hollow
+form in this visible world has its archetype there, - a vibrating hollow
 mold which emits a certain harmonious sound; that sound attracts and forms
 physical matter into the shape we behold, much in the same manner as when
 we place a little sand upon a glass plate and rub the edge with a violin
@@ -3204,7 +3204,7 @@ the sound changes.
 The little atom in the heart is the sample and the center around which the
 atoms in our body gather. When that is removed at death, the center is
 lacking, and although the archetype keeps on vibrating until the limit of
-the life has been reached—as also previously explained,—no matter can be
+the life has been reached - as also previously explained, - no matter can be
 drawn into the hollow shape of the archetype and therefore the suicide
 feels a dreadful gnawing pain as if he were hollowed out, a torture which
 can only be likened to the pangs of hunger. In his case, the intense
@@ -3258,8 +3258,8 @@ injustice. The spirit is brought to birth, caused to die in childhood, it
 re-enters the Desire World and in the first heaven it is taught the
 lessons of which it was deprived previously.
 
-As the first heaven is located in the Desire World,—which is the realm of
-light and color,—where matter is shaped most readily by thought, the
+As the first heaven is located in the Desire World, - which is the realm of
+light and color, - where matter is shaped most readily by thought, the
 little ones are given wonderful toys impossible of construction here. They
 are taught to play with _colors which work upon their moral character_ in
 exactly the manner each child requires. Anyone who is at all sensitive is
@@ -3298,7 +3298,7 @@ it stands utterly alone conscious only of its divinity. When that silence
 is broken there floats in upon the spirit celestial harmonies of _the
 world of tone_ where the second heaven is located. It seems then to lave
 in an ocean of sound and to experience a joy beyond all description and
-words, as it nears its heavenly home—for this is the first of the truly
+words, as it nears its heavenly home - for this is the first of the truly
 spiritual realms from which the spirit has been exiled during its earth
 life and the subsequent post-mortem existence. In the Desire World its
 work was _corrective_, but in the World of Thought the human spirit
@@ -3687,7 +3687,7 @@ We have also built a two-story Administration Building to house the
 general office, the book department, the correspondence school in
 Christian Mysticism which links Headquarters with students all over the
 world, and the editorial offices of our monthly publications, notably the
-“_Rosicrucian Fellowship Magazine—Rays from the Rose Cross_.” We have also
+“_Rosicrucian Fellowship Magazine - Rays from the Rose Cross_.” We have also
 an astrological department which conducts a correspondence school. Its
 offices are located on the second floor.
 
@@ -4961,7 +4961,7 @@ Including
 
 _The Occult Effect of Our Emotions_
 
-_Prayer—A Magic Invocation_
+_Prayer - A Magic Invocation_
 
 _Practical Methods of Achieving Success_
 
@@ -5030,7 +5030,7 @@ spiritual and material development.
 
 A few chapter headings are appended to give a better idea of the contents:
 
-_Initiation—What It Is and Is Not._
+_Initiation - What It Is and Is Not._
 
 _The Sacraments of Communion, Baptism, and Marriage._
 
@@ -5179,7 +5179,7 @@ simple and easy for beginners. It also includes a
 
 Philosophic Encyclopedia
 
-—and—
+ - and - 
 
 Tables of Planetary Hours
 

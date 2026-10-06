@@ -1835,6 +1835,14 @@
             this._effects = new Map();   // url -> loaded effect
             this._live = [];             // { handle, anim, pos, frame, acc, end }
             this._proj = new THREE.Vector3();
+            // Loads still in flight, and whether the world has already gone.
+            // An effect file lands through an XHR, and Effekseer then feeds it
+            // to the context it was asked for: a context released in between
+            // (the party died, the scene closed) is a null native pointer and
+            // the wasm runtime traps on it. So the context outlives every load
+            // it started, and is only released once the last one is home.
+            this._pending = 0;
+            this._dead = false;
             try {
                 if (!window.effekseer || !window.effekseer.createContext) return;
                 this._ctx = window.effekseer.createContext();
@@ -1859,7 +1867,7 @@
                 .split('/').map(encodeURIComponent).join('/') + '.efkefc';
             const at = { x, y, z };
             const begin = (effect) => {
-                if (!effect) return;
+                if (!effect || this._dead || !this._ctx) return;
                 let handle = null;
                 try { handle = this._ctx.play(effect, 0, 0, 0); } catch (e) { return; }
                 if (!handle) return;
@@ -1872,10 +1880,19 @@
             const cached = this._effects.get(url);
             if (cached) { begin(cached); return true; }
             try {
+                this._pending++;
+                let settled = false;
+                const settle = () => {
+                    if (settled) return;
+                    settled = true;
+                    this._pending--;
+                    if (this._dead && this._pending <= 0) this._release();
+                };
                 const effect = this._ctx.loadEffect(url, 1,
-                    () => begin(effect), () => { this._effects.delete(url); });
+                    () => { begin(effect); settle(); },
+                    () => { this._effects.delete(url); settle(); });
                 this._effects.set(url, effect);
-            } catch (e) { return false; }
+            } catch (e) { this._pending--; return false; }
             return true;
         }
 
@@ -1953,17 +1970,29 @@
         }
 
         dispose() {
-            if (!this._ctx) return;
+            if (!this._ctx || this._dead) return;
+            this._dead = true;
             for (const fx of this._live) { try { fx.handle.stop(); } catch (e) { /* gone */ } }
             this._live = [];
+            // A load still on its way keeps the context alive until it lands
+            // (see play); its own callback does the release then.
+            if (this._pending > 0) return;
+            this._release();
+        }
+
+        _release() {
+            const ctx = this._ctx;
+            if (!ctx) return;
+            this._ctx = null;
             for (const effect of this._effects.values()) {
-                try { this._ctx.releaseEffect(effect); } catch (e) { /* gone */ }
+                // Only what actually loaded has anything native to give back.
+                if (!effect || !effect.nativeptr) continue;
+                try { ctx.releaseEffect(effect); } catch (e) { /* gone */ }
             }
             this._effects.clear();
             // One context per world session; left unreleased, its wasm buffers
             // pile up across every drive and walk.
-            try { if (window.effekseer && window.effekseer.releaseContext) window.effekseer.releaseContext(this._ctx); } catch (e) { /* gone */ }
-            this._ctx = null;
+            try { if (window.effekseer && window.effekseer.releaseContext) window.effekseer.releaseContext(ctx); } catch (e) { /* gone */ }
         }
     }
 

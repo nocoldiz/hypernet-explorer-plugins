@@ -4,5 +4,6 @@
   "stealSuccess": "You successfully stole",
   "stealFailed": "You failed to steal",
   "stealTitle": "Steal",
-  "nothingNearby": "Nothing to steal nearby."
+  "nothingNearby": "Nothing to steal nearby.",
+  "recruitSawTheft": "{name} watched you take the {item} off their old counter."
 }

@@ -1747,11 +1747,19 @@ Imported.DialogueSystem = true;
     // vector gun's Solomon incantation raises one over a fight, where nothing
     // is allowed to paint a portrait), and it lasts exactly that box: the
     // override is dropped the moment the window closes.
-    const _voiceOver = { on: false, name: '' };
+    // A named voice is pitched off that name alone, never off whatever event
+    // happens to be running the box, so the same name always chatters the
+    // same way (a television presenter sounds like themselves on every
+    // channel). silence() is the other override: the box is staged but the
+    // letters make no sound at all, which is how Em answers the television
+    // in a story run.
+    const _voiceOver = { on: false, name: '', muted: false };
     window.DialogueVoiceOver = {
-        speak(name) { _voiceOver.on = true; _voiceOver.name = String(name || ''); },
-        stop() { _voiceOver.on = false; _voiceOver.name = ''; },
+        speak(name) { _voiceOver.on = true; _voiceOver.muted = false; _voiceOver.name = String(name || ''); },
+        silence() { _voiceOver.on = true; _voiceOver.muted = true; _voiceOver.name = ''; },
+        stop() { _voiceOver.on = false; _voiceOver.muted = false; _voiceOver.name = ''; },
         speaking() { return _voiceOver.on; },
+        muted() { return _voiceOver.on && _voiceOver.muted; },
         name() { return _voiceOver.name; },
         // One run of portraitless boxes, read aloud in the named voice: the
         // whole of what a caller outside this file needs to be heard over a
@@ -1876,7 +1884,9 @@ Imported.DialogueSystem = true;
         // A new line: the speaker is looked up once, not per letter.
         begin() {
             this._count = 0;
-            this._sheet = _voiceSpeakerSheet();
+            // A named override is the whole answer: the sheet of the event
+            // running the box is somebody else's voice.
+            this._sheet = _voiceOver.on ? '' : _voiceSpeakerSheet();
             this._name  = _voiceSpeakerName();
             this._pitch = _voicePitchFor(this._sheet, this._name || _voiceEventKey());
         },
@@ -1886,6 +1896,7 @@ Imported.DialogueSystem = true;
         // Play one letter. `gold` raises it by the keyword third.
         speakLetter(letter, gold, now) {
             if (!_voiceEnabled()) return false;
+            if (_voiceOver.on && _voiceOver.muted) return false;
             if (!_voiceIsStaged()) return false;
             return this._playLetter(letter, gold, now, this._pitch, this);
         },
@@ -2701,7 +2712,7 @@ Imported.DialogueSystem = true;
             else if (Input.isRepeated('right')) step(1);
             else if (Input.isRepeated('left'))  step(-1);
             if      (Input.isTriggered('ok'))     { if (typeof this.processOk     === 'function') this.processOk(); }
-            else if (Input.isTriggered('cancel')) { if (typeof this.processCancel === 'function') this.processCancel(); }
+            else if (Input.isTriggered('cancel') && this.choiceCancelAllowed()) { this.processCancel(); }
         } else if (this.active) {
             const list      = this._list || [];
             const fullCount = list.length;
@@ -2721,7 +2732,7 @@ Imported.DialogueSystem = true;
                 if (typeof SoundManager !== 'undefined') SoundManager.playCursor();
             }
             if      (Input.isTriggered('ok'))     { if (typeof this.processOk     === 'function') this.processOk(); }
-            else if (Input.isTriggered('cancel')) { if (typeof this.processCancel === 'function') this.processCancel(); }
+            else if (Input.isTriggered('cancel') && this.choiceCancelAllowed()) { this.processCancel(); }
         }
 
         const sc       = _msgGetScale();
@@ -2750,14 +2761,29 @@ Imported.DialogueSystem = true;
                 el.style.fontSize    = scaledFont + 'px';
                 const sel            = this._htmlChoiceOriginalIndices[vi] === idx;
                 el.classList.toggle('selected', sel);
+                // The Ask / Tell board scrolls: the cursor is kept on screen
+                // as the directions walk it, not only where the mouse reads.
+                if (sel && idx !== this._htmlChoiceScrolledTo && el.scrollIntoView) {
+                    el.scrollIntoView({ block: 'nearest' });
+                }
             });
+            this._htmlChoiceScrolledTo = idx;
         }
+    };
+
+    // A choice the event set to Disallow has no cancel branch: B, Escape and X
+    // must not skip it. RMMZ's own processHandling asks isCancelEnabled(), and
+    // the board above stands in for it, so it asks the same.
+    Window_ChoiceList.prototype.choiceCancelAllowed = function () {
+        if (typeof this.processCancel !== 'function') return false;
+        return typeof this.isCancelEnabled !== 'function' || this.isCancelEnabled();
     };
 
     const _WCL_close = Window_ChoiceList.prototype.close;
     Window_ChoiceList.prototype.close = function () {
         _WCL_close.call(this);
         this._htmlChoiceGrid = null;
+        this._htmlChoiceScrolledTo = undefined;
         if (this._htmlChoiceRoot) this._htmlChoiceRoot.style.display = 'none';
     };
 

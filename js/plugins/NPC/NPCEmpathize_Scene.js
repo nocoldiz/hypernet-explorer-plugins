@@ -28,7 +28,7 @@
     _feedNourishment, _feedOpinion, _feralCanGift, _feralGrowlFor, _feralKind, _feralLine,
     _feralNoise, _gainSocialFromCompany, _gainSocialFromOpinion, _genJoke, _getNPCName, _getProfile,
     _getT, _infectChance, _isBubbaActor, _isNonSentientActor, _isNonSentientNpc, _isStoryNpc,
-    _joinChance, _joinLevelNeeded, _joinLevelOk, _llmCharacterSheet, _llmLifeFor, _llmPartyLine, _llmRelationLine,
+    _joinChance, _joinLevelNeeded, _joinLevelOk, _llmCharacterSheet, _llmLifeFor, _llmPartyLine, _llmRelationLine, _llmWorkplaceLine,
     _llmSafe, _llmTopicsLine, _llmWorldLine, _npcBaseOpinion, _npcEffectiveAttraction,
     _npcEffectiveOpinion, _npcProxyTroopId, _pairBond, _pairContext, _pairSituationLine, _payFun,
     _personalityName, _personalitySocialMult, _presetFromEvent, _rand, _recruitAnimalAsMember,
@@ -53,7 +53,7 @@
   // article and the rows of the More tab.
   // i18n-ignore-start: CSS selector
   const CONTENT_NAV_SELECTOR = [
-    '.npc-wiki-card', '.npc-wiki-entry', '.npc-back-btn', '.npc-wiki-link',
+    '.npc-wiki-card', '.npc-wiki-entry', '.npc-back-btn', '.npc-wiki-link', '.msb-toggle',
     '.npc-wiki-fav', '.npc-web-node:not(.npc-web-node--center)',
     '.npc-chat-action-btn', '.npc-action-row',
   ].join(', ');
@@ -860,6 +860,8 @@
       const el = this._contentItems()[this._contentIndex];
       if (!el || el.classList.contains('npc-action-disabled')) return;
       SoundManager.playOk();
+      // The wiki's search handle (MenuSearchBar) answers a click, not a press.
+      if (el.classList.contains('msb-toggle')) { el.click(); return; }
       el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
     }
 
@@ -2850,8 +2852,10 @@
       // ShopShiftManager.isShopEvent). No Switch 67 or name-matching.
       // A full party is NOT a gate any more: the fourth person to say yes signs
       // on into the reserves and waits on the Dynamics board (NPCSystemParty.joinParty).
-      if (window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId))
-          || window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId))) {
+      // A rota keeper can be recruited (their shift is vacated, the counter
+      // stays); a keeper whose event IS the shop cannot.
+      const rotaKeeper = !!window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId));
+      if (!rotaKeeper && window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId))) {
         SoundManager.playBuzzer();
         return;
       }
@@ -2976,7 +2980,9 @@
       // panel was actually opened from, which can differ after wiki navigation
       // or when a shop-shift stand-in supplied the profile, and refresh so the
       // page swap lands immediately instead of on the next map update.
-      _vanishRecruitedEvent(evId ?? this._launchEventId);
+      // A rota keeper's counter was already handled by joinParty (the shift
+      // is vacated, the till stays); anybody else leaves the map.
+      if (!rotaKeeper) _vanishRecruitedEvent(evId ?? this._launchEventId);
 
       // Somebody joining is the end of the conversation, not a line in it: the
       // panel closes and the news is a toast, so the player is left standing on
@@ -3015,8 +3021,10 @@
       const profile = _getProfile(npcName);
       const T       = _getT();
 
-      if (window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId))
-          || window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId))) {
+      // A rota keeper can be recruited (their shift is vacated, the counter
+      // stays); a keeper whose event IS the shop cannot.
+      const rotaKeeper = !!window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId));
+      if (!rotaKeeper && window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId))) {
         SoundManager.playBuzzer();
         return;
       }
@@ -3068,8 +3076,10 @@
       this._justJoined = true;
 
       // They stop standing on the map, and the world knows they left with the
-      // party, exactly as a full recruit does.
-      _vanishRecruitedEvent(evId ?? this._launchEventId);
+      // party, exactly as a full recruit does. A rota keeper leaves their
+      // shift instead: the counter stands unattended for the day.
+      if (rotaKeeper) window.NPCSim?.vacateShopShift?.($gameMap.mapId(), evId);
+      else _vanishRecruitedEvent(evId ?? this._launchEventId);
 
       window.ParchmentToast?.show?.(T('Empathize.joinedFollower', { name: npcName }),
         { severity: 'info', duration: 260 });
@@ -3201,6 +3211,8 @@
             // answer (a system this save has never loaded, a panel opened
             // outside the map) costs a fact and not the line.
             npcLife: _llmSafe(() => this._llmLife()),
+            // A shopkeeper answers off their own shelf.
+            workplace: this._actorId != null ? '' : _llmSafe(() => _llmWorkplaceLine(this._targetName())),
             party: _llmSafe(() => this._llmParty()),
             world: _llmSafe(_llmWorldLine),
             // And whatever the line itself named: a hyperpower, one of its

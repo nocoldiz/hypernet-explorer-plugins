@@ -1548,37 +1548,84 @@
   // Auto-Eat System
   //=============================================================================
 
-  // Function to automatically eat a food item when hunger reaches 0%
+  // The party reaches for food once the shared meter is under this share of
+  // its ceiling, rather than waiting for it to run out.
+  const AUTO_EAT_BELOW = 0.4;
+  // Steps between two meals the party helps itself to, so a run of small
+  // snacks is not bolted one a step while the meter climbs back.
+  const AUTO_EAT_GAP_STEPS = 10;
+  // The sound of every meal the party helps itself to (audio/se/Eat.ogg).
+  const AUTO_EAT_SE = { name: "Eat", volume: 90, pitch: 100, pan: 0 };  // i18n-ignore  audio asset id
+
+  // What one party member makes of one food: 'allergic' (it would set off one
+  // of their allergies, window.Allergy), 'disliked' (their diet traits rule it
+  // out, NPCShared.Diet: a vegan, a vegetarian) or 'ok'.
+  function foodVerdict(actor, item) {
+    const Allergy = window.Allergy;
+    if (Allergy && Allergy.triggersFor && Allergy.triggersFor(actor, item).length) return "allergic";
+    const Diet = window.NPCShared && window.NPCShared.Diet;
+    if (Diet && Diet.forbiddenFor && Diet.contentOf) {
+      const traitIds = Allergy && Allergy._traitIdsOf ? Allergy._traitIdsOf(actor) : [];
+      const no = Diet.forbiddenFor({ traitIds });
+      if (no.size && Diet.contentOf(item).some(k => no.has(k))) return "disliked";
+    }
+    return "ok";
+  }
+
+  // The food in the pack best suited to everyone at the table, or null.
+  //
+  // Hunger is one meter for the whole party (window.PartyMeal), so a meal is
+  // everybody's meal: a food that would set off anybody's allergy is never
+  // picked, a food somebody's diet refuses is passed over while there is
+  // anything else, and among the rest the one that fills the meter closest to
+  // the top without overeating wins, the cheaper on a tie.
+  //
+  // `starving` lets a refused food through when nothing else is left, so a
+  // vegetarian party carrying only jerky still eats before it starves. An
+  // allergen is never let through.
+  function autoEatChoice(eaters, starving) {
+    const meal = window.PartyMeal;
+    const leader = $gameParty.leader();
+    const max = (window.TimeDateSystem && window.TimeDateSystem.maxHunger) || 100;
+    const want = Math.max(0, max - (leader ? leader.hunger() : 0));
+    let best = null;
+    for (const item of $gameParty.allItems()) {
+      if (!DataManager.isItem(item) || !utils.hasItemCategory(item, "Food")) continue;  // i18n-ignore  item-category id
+      if ($gameParty.numItems(item) <= 0) continue;
+      let disliked = 0, allergic = false;
+      for (const m of eaters) {
+        const v = foodVerdict(m, item);
+        if (v === "allergic") { allergic = true; break; }
+        if (v === "disliked") disliked++;
+      }
+      if (allergic) continue;
+      if (disliked && !starving) continue;
+      const fill = meal ? meal.recoveryOf(meal.nutritionOf(item)) : 0;
+      // Falling short costs what it leaves empty; going over costs double,
+      // because past the top the party is overeating.
+      const miss = fill <= want ? want - fill : (fill - want) * 2;
+      const cand = { item, disliked, miss, price: item.price || 0 };
+      if (!best || cand.disliked < best.disliked ||
+          (cand.disliked === best.disliked && (cand.miss < best.miss ||
+            (cand.miss === best.miss && cand.price < best.price)))) {
+        best = cand;
+      }
+    }
+    return best ? best.item : null;
+  }
+
+  // Help the party to a meal from the pack, through `actor`'s hands.
   function autoEatFood(actor) {
     if (!actor) return false;
+    const meal = window.PartyMeal;
+    const eaters = meal ? meal.eaters() : [actor];
+    const foodItem = autoEatChoice(eaters.length ? eaters : [actor], actor.hunger() <= 0);
+    if (!foodItem) return false;
 
-    // Find a food item in inventory
-    const foodItems = $gameParty.allItems().filter(item =>
-      DataManager.isItem(item) && utils.hasItemCategory(item, "Food")  // i18n-ignore  item-category id
-    );
-
-    if (foodItems.length === 0) {
-      return false;
-    }
-
-    // Get the first food item
-    const foodItem = foodItems[0];
-
-    // Check if we actually have this item
-    if ($gameParty.numItems(foodItem) <= 0) {
-      return false;
-    }
-
-    // Play eat sound
-    const animationSound = foodItem.animationId && $dataAnimations[foodItem.animationId]
-      ? ($dataAnimations[foodItem.animationId].soundTimings || []).find(st => st.se && st.se.name)
-      : null;
-
-    if (animationSound && animationSound.se && animationSound.se.name) {
-      AudioManager.playSe(animationSound.se);
-    } else {
-      SoundManager.playUseItem();
-    }
+    // A meal the party helps itself to always sounds like eating, whatever
+    // animation the food carries: it happens off-menu, and the sound is the
+    // only thing that tells the player a tin just went.
+    AudioManager.playSe(AUTO_EAT_SE);
 
     // Consume the item
     $gameParty.consumeItem(foodItem);
@@ -1609,13 +1656,17 @@
     // Call original function first
     _Game_Party_updateHungerAndSleep.call(this);
 
-    // Hunger is one meter shared by the whole party, so an empty one is fed
-    // once, through the leader, and only until it is off empty again. Feeding
-    // every member on the same step used to spend three tins on one stomach.
+    // Hunger is one meter shared by the whole party, so a low one is fed
+    // once, through the leader. Feeding every member on the same step used to
+    // spend three tins on one stomach.
     const leader = this.leader();
-    if (leader && leader.hunger() <= 0) {
-      autoEatFood(leader);
-    }
+    const max = (window.TimeDateSystem && window.TimeDateSystem.maxHunger) || 100;
+    if (!leader || leader.hunger() >= max * AUTO_EAT_BELOW) return;
+    const steps = this.steps();
+    if (this._autoEatStep != null && steps - this._autoEatStep < AUTO_EAT_GAP_STEPS &&
+        steps >= this._autoEatStep) return;
+    this._autoEatStep = steps;
+    autoEatFood(leader);
   };
 
   //=============================================================================

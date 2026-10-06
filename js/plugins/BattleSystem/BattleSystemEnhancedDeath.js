@@ -115,6 +115,8 @@
     const _hardcoreStoryModeMaps = [1414, 1415, 1416, 1417];
     function isTerminalDeath() {
         if (!$gameSwitches.value(9)) return false;
+        // The story mode's Blood and Oil: Em and Bubba never die for good.
+        if ($gameSwitches.value(100)) return false;
         if ($gameSwitches.value(75) && _hardcoreStoryModeMaps.includes($gameMap.mapId())) return false;
         return !!(window.SaveSystem && window.SaveSystem.triggerGameOver);
     }
@@ -342,9 +344,10 @@
         // The post-battle branch may already be carrying this party off.
         if (!respawnClaimed()) return;
 
-        if ($gameSwitches.value(9)) {
+        if ($gameSwitches.value(9) && !$gameSwitches.value(100)) {
             saveDeathData();
         }
+        removeStoryFallen();
 
         $gameVariables.setValue(1, 0);
         $gameSystem.setActor1Died(true);
@@ -442,9 +445,10 @@
 
     Scene_Map.prototype.handlePartyMemberDeath = function(actor, actorName) {
         // Only Hardcore (Permadeath) and Blood and Oil permanently remove a
-        // fallen member. In Roguelite (Switch 9 off) the dead body stays in
-        // the party so it can still be resurrected after the battle.
-        if (!$gameSwitches.value(9)) return;
+        // fallen member, and the story mode anybody but Em and Bubba. In
+        // Roguelite (Switch 9 off) the dead body stays in the party so it can
+        // still be resurrected after the battle.
+        if (!BSE.Helpers.diesForGood(actor)) return;
         if (!actor || !actor.isDead()) return;
         // What it does to the ones still standing, read while the body is
         // still counted as party: grief scaled by how close they were, nothing
@@ -458,6 +462,22 @@
         $gameMessage.add(T('Battle.actorDied', { actor: actorName }));
         window.skipLocalization = false;
     };
+
+    // Story mode: every fallen member who is not Em or Bubba is gone for good.
+    // Run before anything revives the party (a wipe's respawn, a knockout
+    // coming round), so they are buried rather than stood back up. A party with
+    // nobody immortal left in it is never emptied: the respawn needs someone.
+    function removeStoryFallen() {
+        if (!$gameSwitches.value(100) || !window.$gameParty) return;
+        const members = $gameParty.members();
+        if (!members.some(m => m && !BSE.Helpers.diesForGood(m))) return;
+        const fallen = members.filter(m => m && m.isDead() && BSE.Helpers.diesForGood(m));
+        for (const member of fallen) {
+            Scene_Map.prototype.handlePartyMemberDeath.call(SceneManager._scene, member, member.name());
+        }
+    }
+
+    BSE.Functions.removeStoryFallen = removeStoryFallen;
 
     // ========================================================================
     // 6. Coming round - a knock-out is not a death
@@ -525,7 +545,10 @@
     // is standing, and the clock does not move inside one anyway.
     function updateKnockoutWakes() {
         if (!window.$gameParty || $gameParty.inBattle()) return;
-        if ($gameSwitches.value(9)) return;
+        // Story mode keeps the knockout on either difficulty: whoever is left
+        // down once the fallen are buried is Em or Bubba.
+        if ($gameSwitches.value(9) && !$gameSwitches.value(100)) return;
+        removeStoryFallen();
         const now = gameClockMinutes();
         if (now == null) return;
         for (const member of $gameParty.members()) updateKnockoutWake(member, now);

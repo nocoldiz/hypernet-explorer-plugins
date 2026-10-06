@@ -1407,6 +1407,15 @@
         document.addEventListener('keydown', this._onKey, true);
 
         this.win.addEventListener('hypernet-closed', () => this.dispose());
+        // The pad's B backs out one level, as Escape does here: the modal, an
+        // open menu, a page still loading, and only then the window itself.
+        this.win._onCancel = () => {
+            const modal = this.el('#hnb-modal');
+            if (modal && !modal.classList.contains('hnb-hidden')) { this.closeModal(); return true; }
+            if (this.menuOpen) { this.closeMenu(); return true; }
+            if (this.loading) { this.exec('stop'); return true; }
+            return false;
+        };
 
         // The desktop can take a window down without that event (closeAll on
         // leaving the OS scene), so the listener also checks it is still there.
@@ -1491,10 +1500,18 @@
         this.menuOpen = id;
 
         pop.querySelectorAll('.hnb-menu-item.has-sub').forEach((item) => {
-            item.addEventListener('mouseenter', () => {
+            const openSub = () => {
                 item.parentNode.querySelectorAll('.hnb-submenu').forEach((s) => s.classList.add('hnb-hidden'));
                 const sub = item.querySelector('.hnb-submenu');
                 if (sub) sub.classList.remove('hnb-hidden');
+            };
+            item.addEventListener('mouseenter', openSub);
+            // The desktop's focus ring and a pad only ever click: a click on
+            // the row itself (not on an entry of its submenu) opens it.
+            item.addEventListener('click', (e) => {
+                if (e.target.closest && e.target.closest('.hnb-submenu')) return;
+                e.stopPropagation();
+                openSub();
             });
         });
     };
@@ -1506,7 +1523,7 @@
                 const mark = it.mark === 'check' ? '<span class="hnb-menu-mark">&#10003;</span>'
                     : '<span class="hnb-menu-mark"></span>';
                 if (it.sub) {
-                    return '<div class="hnb-menu-item has-sub">' + mark +
+                    return '<div class="hnb-menu-item has-sub focusable" tabindex="0">' + mark +
                         '<span class="hnb-menu-label">' + esc(it.label) + '</span>' +
                         '<span class="hnb-menu-arrow">' + svg('forward', 10) + '</span>' +
                         this.menuHTML(it.sub, depth + 1) + '</div>';

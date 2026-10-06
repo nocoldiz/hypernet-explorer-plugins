@@ -226,8 +226,14 @@
             if (!navigator.getGamepads) return null;
             const pads = navigator.getGamepads();
             if (!pads) return null;
+            // A pad counts only with buttons, the rule Controller.ports() keeps:
+            // on Windows one controller is often listed twice, the second time
+            // as a button-less HID ghost at a lower index, and reading the
+            // ghost left the sticks, the triggers and the right-stick scroll
+            // dead while the d-pad (read by the engine from every pad) worked.
             for (const pad of pads) {
-                if (pad && pad.connected && pad.axes && pad.axes.length >= 2) return pad;
+                if (pad && pad.connected && pad.axes && pad.axes.length >= 2 &&
+                    pad.buttons && pad.buttons.length) return pad;
             }
             return null;
         },

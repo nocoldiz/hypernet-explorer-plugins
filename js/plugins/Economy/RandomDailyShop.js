@@ -1519,10 +1519,10 @@
       <div class="left-page">
         <div class="page-header-bar">
           <div class="back-button focusable" onclick="SceneManager._scene.popScene()">${back}</div>
-          <h2 class="title" style="font-size:1.665em;">${this.headerTitle()}</h2>
+          <h2 class="title">${this.headerTitle()}</h2>
         </div>
-        <div style="font-family:var(--font-ui); font-style: normal; opacity:0.8; font-size:0.892em; margin-bottom:12px; color:var(--text-primary-hover,#58180D);">${blurb}</div>
-        <div style="font-family:var(--font-ui); font-weight:bold; font-size:0.928em; margin-bottom:6px; color:var(--text-primary-hover,#58180D);">${T('DailyShop.ui.pupil')}</div>
+        <div class="inspect-desc" style="margin-bottom:12px;">${blurb}</div>
+        <div class="inspect-section-title">${T('DailyShop.ui.pupil')}</div>
         <div class="teach-list">${actorsHTML}</div>
         <div class="teach-info">
           <div style="font-weight:bold; color:var(--accent-gold-pure,#b8860b);">${isMagic ? (T('DailyShop.ui.todaySSchools')) : (T('DailyShop.ui.todaySDisciplines'))}</div>
@@ -1561,7 +1561,7 @@
 
     const rightHTML = `
       <div class="right-page">
-        <h2 class="title" style="font-size:1.475em; margin-bottom:12px;">${isMagic ? (T('DailyShop.ui.spellsForSale')) : (T('DailyShop.ui.techniquesForSale'))}</h2>
+        <h2 class="title">${isMagic ? (T('DailyShop.ui.spellsForSale')) : (T('DailyShop.ui.techniquesForSale'))}</h2>
         <div class="teach-list">${cardsHTML}</div>
       </div>`;
 

@@ -44,11 +44,12 @@
     "pickSecondTile": "Ora scegli la casella di destinazione.",
     "forfeitAsk": "Lasciare il tavolo? La posta va persa.",
     "forfeitYes": "Rinuncia",
-    "forfeitNo": "Resta"
+    "forfeitNo": "Resta",
+    "forfeitBracketAsk": "Lasciare il tavolo? Il torneo finisce qui, e la quota d'iscrizione resta pagata."
   },
   "col": {
     "title": "Collezione di carte",
-    "owned": "{cards} carte, {distinct} tipi diversi ({pct}%)",
+    "owned": "{cards} carte possedute, {distinct} tipi ({pct}%)",
     "tab": {
       "all": "Tutte",
       "monsters": "Mostri",
@@ -78,7 +79,7 @@
     "legalLabel": "Stato",
     "mode": {
       "deck": "Costruttore di mazzi",
-      "collection": "Collezione di carte"
+      "collection": "Ogni carta"
     },
     "catalogueTitle": "Ogni carta",
     "catalogue": "{distinct} carte su {total} possedute ({pct}%)",
@@ -99,7 +100,11 @@
     "ownedLabel": "Possedute",
     "copies": "{n} nella collezione",
     "notOwned": "Mai posseduta",
-    "valueLabel": "Valore di mercato"
+    "valueLabel": "Valore di mercato",
+    "inDeckOf": "{n}/{of} nel mazzo",
+    "removeFromDeck": "Togli dal mazzo",
+    "edited": "modificato",
+    "autoSaved": "{name} salvato."
   },
   "pack": {
     "title": "Pacchetto di carte",

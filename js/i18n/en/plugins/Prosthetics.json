@@ -197,6 +197,9 @@
   "growthTubeMeta": "Design a creature and grow it in a tube",
   "designHeir": "Design a heir",
   "designHeirMeta": "Design a humanoid child this patient will carry",
+  "mindWipe": "Mind wipe",
+  "mindWipeMeta": "Back to level 1 with a new class, every skill kept",
+  "labOutOfReach": "Needs a clinic, not a field kit",
   "tooExpensive": "Not enough money for that surgery.",
  "remote": {
   "title": "Remote Bistury",

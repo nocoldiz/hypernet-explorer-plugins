@@ -195,7 +195,7 @@
   // BLADDER_SLEEP_FLOOR in bed, and at 0 awake it is emptied where they stand,
   // which their hygiene and their social meter pay for. A non-sentient
   // creature keeps no such meter (window.NPCCreature): it goes where it is.
-  const BLADDER_DRAIN_PER_MIN       = 0.24;
+  const BLADDER_DRAIN_PER_MIN       = 0.12;  // the party's own rate (TimeDateSystem): one or two trips a day
   const BLADDER_SLEEP_DRAIN_PER_MIN = 0.08;
   const BLADDER_SLEEP_FLOOR         = 5;
   const BLADDER_ACCIDENT_HYGIENE    = 35;

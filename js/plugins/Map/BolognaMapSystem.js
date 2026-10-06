@@ -224,8 +224,38 @@
     }
   }
 
+  // ===== THE SLOT IS BORROWED =====
+  // Map 353 is a real authored map of its own (the Monument to Humanity on
+  // Zeta B II), and Bologna only borrows it as a shell for its cells. The city
+  // owns the slot while the party is IN Bologna and at no other time: on its
+  // streets or inside one of its buildings. Only a way into the city (goBologna,
+  // the city chart, walking off a cell's edge) turns it on, and arriving
+  // anywhere that is neither Bologna nor one of its buildings turns it off, so
+  // a landing at the Monument after a visit lands at the Monument.
+  //
+  // `active` is persisted with the cell, so a save made in the city reloads
+  // into the city and a save made at the Monument reloads at the Monument.
+  let _enteringBologna = false;
+
+  function isActive() {
+    return !!($gameSystem && $gameSystem._bologna && $gameSystem._bologna.active === true);
+  }
+
+  // Whether a load of map 353 that is happening right now is Bologna's.
+  function ownsSlot() {
+    return _enteringBologna || isActive();
+  }
+
   function isBolognaMap() {
-    return $gameMap && $gameMap.mapId() === BOLOGNA_MAP_ID;
+    return !!$gameMap && $gameMap.mapId() === BOLOGNA_MAP_ID && isActive();
+  }
+
+  // Inside a building whose door stands on a Bologna street.
+  function insideBolognaBuilding() {
+    const PHS = window.ProceduralHouseSystem;
+    if (!PHS || typeof PHS.houseReturnPoint !== "function") return false;
+    const rp = PHS.houseReturnPoint();
+    return !!(rp && rp.mapId === BOLOGNA_MAP_ID);
   }
 
   // ===== CELL IDENTITY =====
@@ -744,7 +774,7 @@
 
   const _DataManager_loadMapData = DataManager.loadMapData;
   DataManager.loadMapData = function (mapId) {
-    if (mapId !== BOLOGNA_MAP_ID) {
+    if (mapId !== BOLOGNA_MAP_ID || !ownsSlot()) {
       _DataManager_loadMapData.call(this, mapId);
       return;
     }
@@ -873,6 +903,7 @@
           state.row     = pending.row;
           state.col     = pending.col;
           setMapData(mapObj);
+          _enteringBologna = true;
           $gamePlayer.reserveTransfer(BOLOGNA_MAP_ID, pending.spawnX, pending.spawnY, pending.dir, 0);
         })
         .catch(err => {
@@ -895,7 +926,7 @@
     // (tilesetId 102, 256x256), so the world map rendered with the Bologna
     // tileset. Match the post-transfer guard further down by using the target id.
     const targetMapId = this._transfer ? $gamePlayer.newMapId() : $gameMap.mapId();
-    if (targetMapId === BOLOGNA_MAP_ID) {
+    if (targetMapId === BOLOGNA_MAP_ID && ownsSlot()) {
       getState();
       const mapData = getMapData();
       if (mapData && $dataMap) {
@@ -918,7 +949,7 @@
 
     _Scene_Map_onMapLoaded.call(this);
 
-    if ($gameMap.mapId() !== BOLOGNA_MAP_ID) {
+    if (!isBolognaMap()) {
       if (window.MapLabels) window.MapLabels.clear();
       return;
     }
@@ -950,13 +981,31 @@
 
   const _Game_Player_performTransfer = Game_Player.prototype.performTransfer;
   Game_Player.prototype.performTransfer = function () {
-    if (this.isTransferring() &&
+    const transferring = this.isTransferring();
+    const target = this.newMapId();
+    if (transferring && target === BOLOGNA_MAP_ID) {
+      if (_enteringBologna) {
+        getState().active = true;
+        // Bologna is on Earth: a landing on another world ends here, or the
+        // chart keeps answering M with that planet's landing grid.
+        const GS = window.GalaxySim;
+        if (GS && typeof GS.clearAlienSurfaceState === "function") GS.clearAlienSurfaceState();
+      }
+      _enteringBologna = false;
+    }
+    if (transferring &&
         $gameMap.mapId() === BOLOGNA_MAP_ID &&
-        this.newMapId() === BOLOGNA_MAP_ID) {
+        target === BOLOGNA_MAP_ID) {
       this.requestMapReload();
     }
-    const settle = _settleOnArrival && this.isTransferring() && this.newMapId() === BOLOGNA_MAP_ID;
+    const settle = _settleOnArrival && transferring && target === BOLOGNA_MAP_ID;
     _Game_Player_performTransfer.call(this);
+    // Anywhere that is neither the city nor one of its buildings is outside
+    // Bologna, and map 353 goes back to being the Monument.
+    if (transferring && target !== BOLOGNA_MAP_ID && isActive() && !insideBolognaBuilding()) {
+      getState().active = false;
+      _settleOnArrival = false;
+    }
     // A teleport onto a roof or into a canal lands on the nearest street.
     if (settle) {
       _settleOnArrival = false;
@@ -1065,6 +1114,7 @@
         state.col     = col;
         setMapData(mapObj);
         _settleOnArrival = true;
+        _enteringBologna = true;
         $gamePlayer.reserveTransfer(BOLOGNA_MAP_ID, sx, sy, $gamePlayer.direction(), 0);
       })
       .catch(err => {
@@ -1089,6 +1139,11 @@
     MAP_W, MAP_H,
     getState,
     teleportToCell,
+    // True while the party is in Bologna, on a street or inside one of its
+    // buildings. Map 353 is only Bologna then: ask this, never the map id.
+    isActive,
+    // True while the party stands on a Bologna street.
+    isBolognaMap,
     // Where a teleport onto unwalkable ground puts the party instead.
     nearestStandableTile,
     isStandableTile,

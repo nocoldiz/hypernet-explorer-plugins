@@ -57,7 +57,7 @@
         leftPageBox.innerHTML = `
             <div class="page-header-bar">
               <div class="back-button focusable" onclick="SceneManager._scene.closeMagicSystems()">${backLabel}</div>
-              <h2 class="cc-header-gothic" style="border:none; margin:0; padding:0; text-align:center; font-size:2.542rem">${titleLabel}</h2>
+              <h2 class="cc-header-gothic" style="border:none; margin:0; padding:0; text-align:center">${titleLabel}</h2>
             </div>
             ${this.renderMagicSystemWheelHTML()}
         `;
@@ -144,7 +144,7 @@
             const emptyLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.empty') : 'Select a system to inspect';
             return `
                 <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center; gap:16px; padding:20px; box-sizing:border-box">
-                    <h3 class="cc-header-gothic" style="font-size:1.9rem; color:var(--text-secondary-active, var(--text-primary-hover)); margin:0">${emptyLabel}</h3>
+                    <h3 class="cc-header-gothic" style="margin:0">${emptyLabel}</h3>
                 </div>`;
         }
         const sys = SkillMaster.getAllMagicalSystems().find(s => s.id === id);
@@ -176,13 +176,13 @@
             <div style="display:flex; flex-direction:column; height:100%; box-sizing:border-box">
                 <div style="display:flex; align-items:center; gap:10px; padding-bottom:10px; margin-bottom:6px">
                     <span style="width:22px; height:22px; border-radius:50%; background:${color}; flex-shrink:0; box-shadow:0 0 8px ${color}"></span>
-                    <h2 class="cc-header-gothic" style="border:none; margin:0; padding:0; font-size:2.1rem">${SkillMaster.getMagicSystemDisplayName(id)}</h2>
+                    <h2 class="cc-header-gothic" style="border:none; margin:0; padding:0">${SkillMaster.getMagicSystemDisplayName(id)}</h2>
                 </div>
                 ${fractionLine}
                 <div style="font-family:var(--font-ui); font-size:1.2rem; line-height:1.5; color:var(--text-card-medium, #ddd); margin-top:10px">${SkillMaster.getMagicSystemDesc(id)}</div>
-                <h3 class="cc-header-gothic" style="font-size:1.4rem; margin-top:18px">${classesHeading}</h3>
+                <h3 class="cc-header-gothic" style="margin-top:18px">${classesHeading}</h3>
                 <div style="font-family:var(--font-ui); font-size:1.15rem; color:var(--text-success-active); max-height:26%; overflow-y:auto">${classesHTML}</div>
-                <h3 class="cc-header-gothic" style="font-size:1.4rem; margin-top:14px">${spellsHeading}</h3>
+                <h3 class="cc-header-gothic" style="margin-top:14px">${spellsHeading}</h3>
                 <div class="skill-scroll-box" style="flex:1; overflow-y:auto; font-family:var(--font-ui); font-size:1.15rem; color:var(--text-success-active)">${spellsHTML}</div>
             </div>
         `;

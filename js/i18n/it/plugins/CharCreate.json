@@ -35,6 +35,16 @@
   "misfitsAndTheUnclassifiable": "Disadattati e inclassificabili.",
   "initialSettings": "IMPOSTAZIONI INIZIALI",
   "confirm": "Conferma",
+  "storyDifficulty": {
+    "roguelite": {
+      "name": "Roguelike",
+      "desc": "Em e Bubba si riprendono dopo una caduta. Chiunque altro si unisca al gruppo muore per sempre."
+    },
+    "blood_and_oil": {
+      "name": "Sangue e Petrolio",
+      "desc": "Gli arti possono essere mozzati. Em e Bubba non perdono mai una parte vitale e non muoiono mai per sempre. Chiunque altro si unisca al gruppo muore per sempre."
+    }
+  },
   "difficulty": "Difficoltà",
   "selectDifficulty": "Seleziona difficoltà",
   "selectCombatMode": "Seleziona modalità di combattimento",

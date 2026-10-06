@@ -307,15 +307,43 @@
     // built at the start of one:
     //   joining     - the party keeps its purse, its stock and its vehicle; the
     //                 dossier hands over only what belongs to the person.
-    //   memberIndex - which of the three seats they sit in, for the switches and
-    //                 variables that speak per seat. -1 means no seat at all,
-    //                 which is a sheet built on the bench's scratch slot.
+    //   memberIndex - kept for callers; nothing about a person is filed per
+    //                 seat any more, it is all on the actor.
     _applyPreset(preset, actor, skinData, opts = {}) {
       const look = skinData || presetSkins(preset)[0] || preset;
       const joining = !!opts.joining;
-      const seat = Number.isInteger(opts.memberIndex)
-        ? opts.memberIndex
-        : (Scene_CharacterCreation._currentPartyMemberIndex || 0);
+
+      // Whoever the seat held before is gone before anything of the dossier is
+      // written (PartyPerson.wipe, in place, so the actor this scene holds
+      // stays the one being built). A dossier that names no traits, no blood
+      // or no job used to keep the last occupant's, and so did a dossier
+      // browsed after another one on the board.
+      const PP = window.PartyPerson;
+      if (PP && PP.wipe) PP.wipe(actor);
+
+      // A dossier filed with its sheet (a benched or exported person) is that
+      // person exactly. The sheet is restored as it stands, and only what a
+      // party being founded is handed goes on top: its purse and its stock.
+      if (preset.sheet && PP && PP.apply) {
+        PP.apply(preset, actor);
+        if (!joining) {
+          $gameParty.initAllItems();
+          $gameParty.gainGold(-$gameParty.gold());
+          $gameParty.gainGold(presetLoadout(preset).money);
+          if ($dataItems[714]) $gameParty.gainItem($dataItems[714], 1);
+          window.CharacterPresets?.applyPresetVehicle?.(preset);
+        }
+        if (skinData && skinData !== preset) {
+          actor.setCharacterImage(look.sprite, look.spriteIndex || 0);
+          if (look.busts && actor.setVnBust) {
+            actor.setVnBust(look.busts);
+            if (actor.setPortraitMode) actor.setPortraitMode("bust");
+          }
+        }
+        window.CharacterPresets?.applyPresetIdentity?.(preset, actor);
+        actor.refresh();
+        return;
+      }
 
       // Mark preset properties on actor
       actor._isPresetActor = true;
@@ -428,19 +456,17 @@
         // bust never shows: _getActorBust treats any creature-flagged actor
         // as a monster drawn from its 3D model instead of a 2D portrait.
         actor._isCreatureActor = false;
-        const slot = $gameParty.members().indexOf(actor);
-        if (slot >= 0) $gameSwitches.setValue(77 + slot, false);
-        else if (seat >= 0) $gameSwitches.setValue(77 + seat, false);
         if (actor.setPortraitMode) actor.setPortraitMode("bust");
         Scene_CharacterCreation._isCreatureMode = false;
       }
 
-      // Apply preset traits if defined
+      // Apply preset traits if defined. The seat was emptied above, so a
+      // dossier without any carries none rather than the last occupant's.
       if (preset.traits && Array.isArray(preset.traits) && preset.traits.length > 0) {
         if (typeof applyTraitsToActor === 'function') {
           applyTraitsToActor(actor, preset.traits);
-        } else {
-          actor._selectedTraits = [...preset.traits];
+        } else if (PP && PP.applyTraits) {
+          PP.applyTraits(actor, preset.traits);
         }
       }
 
@@ -450,7 +476,7 @@
       // number and writing one into the other put every dossier a tier above
       // what it says.
       if (preset.specializations && Array.isArray(preset.specializations)) {
-        if (!actor._specTrained) actor._specTrained = {};
+        actor._specTrained = {};
         preset.specializations.forEach((entry) => {
           if (entry && entry.id) {
             const level = Math.max(1, Math.min(5, Number(entry.level) || 1));
@@ -505,25 +531,15 @@
         });
       }
 
-      const currentMemberIndex = seat;
-      const creatureSwitchId = 77 + currentMemberIndex;
-
-      // Switches 77/78/79 and variables 38+ speak for a seat. A sheet built on
-      // the bench's scratch slot sits in none of them, so it writes to none.
-      if (currentMemberIndex >= 0) {
-        if (preset.characterType) {
-          $gameSwitches.setValue(creatureSwitchId, preset.characterType === "creature");
-        } else if (preset.isCreature !== undefined) {
-          $gameSwitches.setValue(creatureSwitchId, preset.isCreature);
-        } else {
-          $gameSwitches.setValue(creatureSwitchId, false);
-        }
+      // Whether they are a creature is theirs, on the actor.
+      if (preset.characterType) {
+        actor._isCreatureActor = preset.characterType === "creature";
+      } else {
+        actor._isCreatureActor = !!preset.isCreature;
       }
 
-      if (preset.gender !== undefined) {
-        if (currentMemberIndex >= 0) $gameVariables.setValue(38 + currentMemberIndex, preset.gender);
-        actor._gender = preset.gender;
-        if (actor.setGender) actor.setGender(preset.gender);
+      if (preset.gender !== undefined && actor.setGender) {
+        actor.setGender(preset.gender);
       }
 
       window.CharacterPresets?.applyPresetIdentity?.(preset, actor);
@@ -543,7 +559,7 @@
       // A dossier is played as it was written, so the Bio page it hands over is
       // already answered rather than sitting on its own defaults with nobody
       // allowed to touch them.
-      this._initPresetBio(preset, actor, currentMemberIndex);
+      this._initPresetBio(preset, actor);
 
       actor.refresh();
     }
@@ -551,23 +567,15 @@
     // The bio a dossier implies. Age comes off its birth date, wealth off its
     // purse, and everything the dossier does not state is settled from its own
     // id so the same person is always the same person.
-    _initPresetBio(preset, actor, seatIndex) {
+    _initPresetBio(preset, actor) {
       if (!preset || !actor) return;
-      const memberIdx = Number.isInteger(seatIndex)
-        ? seatIndex
-        : (Scene_CharacterCreation._currentPartyMemberIndex || 0);
       actor._bioSet = true;
 
       const nowYear = (window.TimeDateSystem && window.TimeDateSystem.getCurrentDateObj)
         ? window.TimeDateSystem.getCurrentDateObj().getFullYear() : 2012;
       const birthYear = parseInt(String(preset.birthDate || "").slice(0, 4), 10);
       if (!isNaN(birthYear)) {
-        const age = Math.max(1, nowYear - birthYear);
-        actor._ccAge = age;
-        if (memberIdx >= 0) {
-          if (!$gameSystem._ccBirthAge) $gameSystem._ccBirthAge = [];
-          $gameSystem._ccBirthAge[memberIdx] = age;
-        }
+        actor._ccAge = Math.max(1, nowYear - birthYear);
       }
 
       // Euros, the way the rest of the game counts money: destitute under 200,
@@ -586,16 +594,13 @@
       // no matter which gender it declared; a dossier that names no organs
       // takes the ones its gender usually comes with.
       const CCU = window.CharacterCreationUtils;
-      if (memberIdx >= 0 && CCU) {
-        if (preset.reproduction != null && CCU.setReproductionType) {
-          CCU.setReproductionType(memberIdx, Number(preset.reproduction));
-        } else if (preset.gender !== undefined && CCU.applyGenderAndReproduction) {
-          CCU.applyGenderAndReproduction(memberIdx, preset.gender, { keepOrgans: true });
-        }
+      if (preset.reproduction != null && actor.setReproductionType) {
+        actor.setReproductionType(Number(preset.reproduction));
+      } else if (preset.gender !== undefined && CCU && CCU.applyGenderAndReproduction) {
+        CCU.applyGenderAndReproduction(actor, preset.gender, { keepOrgans: true });
       }
 
-      if (preset.morality != null) actor._morality = Number(preset.morality);
-      else if (actor._morality == null) actor._morality = 0;
+      actor._morality = preset.morality != null ? Number(preset.morality) : 0;
       // The creed, the standing and the hometown a dossier states. Left unread,
       // a saved dossier opened its Bio page on a fresh roll instead of on the
       // answers it was filed with.
@@ -612,11 +617,7 @@
       // One town stands for the whole party, so a dossier only answers for it
       // when nobody has already.
       if (preset.hometown && !$gameSystem._ccHometown) $gameSystem._ccHometown = preset.hometown;
-      if (preset.jobId !== undefined) {
-        actor._jobId = Number(preset.jobId) || 0;
-      } else if (!actor._jobId) {
-        actor._jobId = 0;
-      }
+      actor._jobId = preset.jobId !== undefined ? (Number(preset.jobId) || 0) : 0;
       if (window.NPCSocietyRegistry && typeof window.NPCSocietyRegistry.getActorProfile === "function") {
         const prof = window.NPCSocietyRegistry.getActorProfile(actor.actorId());
         if (prof) prof.jobId = actor._jobId;
@@ -625,7 +626,6 @@
       if (preset.sexualOrientation || preset.romanticOrientation || preset.relStyle || preset.romance) {
         actor._ccRomance = Object.assign(
           {},
-          actor._ccRomance || {},
           preset.romance || {},
           {
             sexualKey: preset.sexualOrientation || (preset.romance && preset.romance.sexualKey) || "hetero",
@@ -644,7 +644,7 @@
         if (window.BloodTypeService && window.BloodTypeService.setForActor) {
           window.BloodTypeService.setForActor(actor, preset.bloodType);
         }
-      } else if (!actor._ccBloodType && !actor._bloodType) {
+      } else {
         const bloods = (window.BloodTypeService && window.BloodTypeService.list && window.BloodTypeService.list()) || [];
         const common = bloods.filter((b) => b && b.rarityKey === "common");
         const pool = common.length ? common : bloods;
@@ -1842,16 +1842,10 @@
     const actorId = (typeof api.freeCompanionActorId === "function") ? api.freeCompanionActorId() : 0;
     if (actorId && $gameActors.actor(actorId)) {
       const actor = $gameActors.actor(actorId);
-      // Seated first, then written. The seat a dossier's gender, body and
-      // creature flag are filed under (variables 38+, 87 / 115 / 116, switches
-      // 77+) has to be the seat the party actually gives them, which is what
-      // every reader of those indexes by: the status sheet, the biologic
-      // simulation and the Empathize panel all ask the party where somebody
-      // sits. Counting the seats before the join guessed the same number in
-      // the ordinary case and the wrong one whenever it did not.
+      // Seated first, then written: _applyPreset empties the seat itself, and
+      // everything it writes goes onto the actor, never onto the seat.
       $gameParty.addActor(actorId);
       stampPreset(preset, actor, $gameParty.members().indexOf(actor));
-      if ($gameVariables) $gameVariables.setValue(29, $gameParty.members().length);
       if (typeof markPresetUsed === "function" && !preset.storyModeOnly) markPresetUsed(preset.id);
       window.ParchmentToast?.show?.(T("CharPresets.dossierJoined", { name: preset.name }));
       return { ok: true, actorId, inactive: false, preset };

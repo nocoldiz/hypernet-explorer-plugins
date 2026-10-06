@@ -1483,8 +1483,27 @@
     return true;
   }
 
+  // A search strip's field (UI/MenuSearchBar.js) is markup inside a pane, and
+  // a pane holding a typed-in field is always rebuilt, so any render that lands
+  // between two keystrokes (not only the one the keystroke asked for) used to
+  // swap the field out from under the caret. The field the player was typing
+  // in is found again by its id and handed the caret back.
+  function _searchFieldFocus() {
+    const ae = typeof document !== 'undefined' ? document.activeElement : null;
+    if (!ae || ae.tagName !== 'INPUT' || !String(ae.id || '').startsWith('msb-input-')) return null;
+    return { id: ae.id, start: ae.selectionStart, end: ae.selectionEnd };
+  }
+  function _restoreSearchFieldFocus(saved) {
+    if (!saved) return;
+    const el = document.getElementById(saved.id);
+    if (!el || document.activeElement === el) return;
+    el.focus();
+    try { el.setSelectionRange(saved.start, saved.end); } catch (e) { /* not a text input */ }
+  }
+
   Scene_NPCEmpathize.prototype._render = function () {
     if (!this._overlay) return;
+    const typing = _searchFieldFocus();
     // Whatever this render draws, the rows the cursor walks are about to be
     // replaced: drop the cached lists of them so the next cursor move reads
     // the panel that is actually there (see _navCache).
@@ -1520,6 +1539,7 @@
         `<div class="npc-unavailable-title">${T.npcUnavailable}</div>` +
         `<div class="npc-unavailable-sub">${T.pressCancel}</div></div></div>`;
     }
+    _restoreSearchFieldFocus(typing);
     // Every innerHTML rebuild wipes the npc-content-focused class off the Wiki
     // grid tiles, so re-apply the keyboard/controller focus ring after each
     // render. The NPC-mode path also does this inside its own rAF, but the
@@ -1671,14 +1691,16 @@
     const partyFull = this._justJoined === true;
 
     // The one thing that takes Join and Follow off the board for somebody who
-    // is otherwise recruitable: a shop-shift-covered counter, where the face on
-    // display is a rotating persona borrowed cosmetically rather than someone
-    // free to travel, and flipping the counter's own self-switch A would strand
-    // it on its shift. The event NOT having a self-switch A page is no longer a
-    // gate: an authored NPC with two ordinary pages and no blank one is erased
-    // on recruitment instead (_vanishRecruitedEvent), which is what silently
-    // hid both offers on hand-written characters like Sister Renna.
-    const isShopEvent = !!shiftInfo || !!window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId));
+    // is otherwise recruitable: a counter keeper who is not on the rota (an
+    // authored face, a <Story> or <Local> keeper), whose event IS the shop and
+    // cannot go with them. A rota keeper can be recruited: they leave their
+    // till, the shift stands unattended for the day and is staffed afresh the
+    // next (ShopShiftManager.vacate), and the counter stays put. The event NOT
+    // having a self-switch A page is no longer a gate: an authored NPC with two
+    // ordinary pages and no blank one is erased on recruitment instead
+    // (_vanishRecruitedEvent), which is what silently hid both offers on
+    // hand-written characters like Sister Renna.
+    const isShopEvent = !shiftInfo && !!window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId));
     const canVanishOnJoin = !isShopEvent;
 
     // A fallen companion is left behind when a recruit signs on, so the count

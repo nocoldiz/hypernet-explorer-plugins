@@ -328,6 +328,37 @@
     return bits.join(' ');
   }
 
+  // The counter this person keeps, for a shopkeeper: where, which shift, who
+  // else is on the rota, and the shelf with what is left of each row. It is
+  // what lets a keeper asked "have you got any X" answer from their own stock
+  // rather than from a guess. ShopShiftManager.workplaceOf does the reading.
+  const _LLM_SHELF_CAP = 30;
+  function _llmWorkplaceLine(npcName) {
+    const SSM = window.NPCSim?.ShopShiftManager;
+    const work = SSM?.workplaceOf?.(npcName);
+    if (!work) return '';
+    const h = SSM.shiftHours(work.shift);
+    const bits = [window.T('Empathize.llm.workplace', {
+      shop: work.shopName || window.T('Empathize.shopkeeperTitle'),
+      map: work.mapName || '',
+      from: String(h.from).padStart(2, '0'),
+      to: String(h.to).padStart(2, '0'),
+    })];
+    if (work.colleagues.length) {
+      bits.push(window.T('Empathize.llm.workColleagues', {
+        names: work.colleagues.map(c => c.name).join(', '),
+      }));
+    }
+    if (work.shelf.length) {
+      const items = work.shelf.slice(0, _LLM_SHELF_CAP).map(row =>
+        row.stock == null ? row.item.name
+        : row.stock > 0 ? `${row.item.name} (${row.stock})`
+        : `${row.item.name} (${window.T('Empathize.llm.workSoldOut')})`);
+      bits.push(window.T('Empathize.llm.workShelf', { items: items.join(', ') }));
+    }
+    return bits.join(' ');
+  }
+
   // The people this one already knows, and how they feel about them. Only the
   // strongest few: a model handed a directory answers with a directory.
   // The whole of what somebody has lived through, as every caller wants it:
@@ -1708,7 +1739,7 @@
     _countRecentInteractions, _diseaseVialId, _diseaseVialItems, _eventCommentLines,
     _extractClassId, _extractContacts, _findEventByName, _forceHighJoinChance, _genJoke,
     _getNPCName, _getProfile, _getT, _hasJoinPartyCommand, _hasSelfSwitchAPage, _infectChance,
-    _isStoryNpc, _joinChance, _joinLevelNeeded, _joinLevelOk, _lastInteractionDay, _llmCharacterSheet, _llmLifeFor,
+    _isStoryNpc, _joinChance, _joinLevelNeeded, _joinLevelOk, _lastInteractionDay, _llmCharacterSheet, _llmLifeFor, _llmWorkplaceLine,
     _llmPartyLine, _llmRelationLine, _llmSafe, _llmTopicsLine, _llmWhereabouts, _llmWorldLine,
     _partyMedianLevel, _presetFromEvent, _rand, _recruitAnimalAsMember, _recruitAnimalAsPet,
     _recruitNpcAsFollower, _resolveBustForActor, _resolveBustPath, _resolveMarkovDb, _socialById,

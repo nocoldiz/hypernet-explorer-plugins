@@ -141,6 +141,26 @@
 
   const NEED_THOUGHTS = () => bank('ConvThoughts.need');
 
+  // How loudly a need speaks, read off its raw meter (ThoughtProvider,
+  // NEED_SEVERITY): needDire.<need> once the meter is nearly empty, needMild
+  // .<need> while it is only on their mind. The need pool above is the middle.
+  // Keyed by sleep, hunger, hygiene, social, leisure and bladder.
+  const NEED_DIRE_THOUGHTS = () => bank('ConvThoughts.needDire');
+  const NEED_MILD_THOUGHTS = () => bank('ConvThoughts.needMild');
+
+  // What they are DOING, for the hours of a day that are not a need: a shift
+  // behind a counter, an errand, a day at home, the WC, a child's school and
+  // play, a fight, a flight, lying downed, getting over it, fishing, swimming.
+  // Kept apart from the need pool on purpose: every species bank must answer
+  // every key of ConvThoughts.need (test_species_voice), and these are not
+  // needs.
+  const ACTIVITY_THOUGHTS = () => bank('ConvThoughts.activity');
+
+  // Each personality's own words for each need (PersonalityThoughts.json,
+  // <personality>.need.<need>), named per personality by PersonalityData.json
+  // needThoughts. Read whole and dug into, so a missing key never warns.
+  const PERSONALITY_THOUGHT_BANK = () => bank('PersonalityThoughts');
+
   // Crime narration with an {item} placeholder, fired by NPCSimulationCore's
   // CrimeManager when an NPC eyes, pockets, or gets caught taking something.
   const CRIME_INTENT_THOUGHTS = () => bank('ConvThoughts.crimeIntent');
@@ -282,13 +302,13 @@
   const SPEC_TALK = () => bank('ConvSkills') || {};
 
   Object.assign(window.NPCConversation._internal, {
-    ADDICTION_THOUGHTS, AMBIENT_SCRIPTS, bank, CAPABILITY_THOUGHTS, CRAVING_THOUGHTS,
+    ACTIVITY_THOUGHTS, ADDICTION_THOUGHTS, AMBIENT_SCRIPTS, bank, CAPABILITY_THOUGHTS, CRAVING_THOUGHTS,
     CRAVING_WITHDRAWAL_THOUGHTS, CREED_FAMILY_BANKS, CREED_SPECIAL_BANKS, CRIME_CAUGHT_THOUGHTS,
     CRIME_INTENT_THOUGHTS, CRIME_SUCCESS_THOUGHTS, DEBATE_SCRIPTS, ELECTION_THOUGHTS,
     FAMILIAR_THOUGHTS, ITEM_BROWSE_THOUGHTS, ITEM_BUY_THOUGHTS, ITEM_DISPOSITION_THOUGHTS,
     LIFE_AMBIENT, LIFE_FALLBACK, LIFE_GREET_KIN, LIFE_MENTIONS, LIFE_SCRIPTS, LIFE_THOUGHTS,
-    NEED_THOUGHTS, NEGATIVE_SCRIPTS, NEUTRAL_SCRIPTS, OFFICE_HOLDER_THOUGHTS,
-    PERSONALITY_CORE_THOUGHTS, PERSONALITY_DEBATE_AFFINITY, PERSONALITY_TONE_BIAS,
+    NEED_DIRE_THOUGHTS, NEED_MILD_THOUGHTS, NEED_THOUGHTS, NEGATIVE_SCRIPTS, NEUTRAL_SCRIPTS, OFFICE_HOLDER_THOUGHTS,
+    PERSONALITY_CORE_THOUGHTS, PERSONALITY_DEBATE_AFFINITY, PERSONALITY_THOUGHT_BANK, PERSONALITY_TONE_BIAS,
     PERSONALITY_VOICES, POLICY_GRUMBLES, POLITICAL_DEBATE_SCRIPTS, POLITICAL_RUMOR_THOUGHTS,
     POLITICAL_THOUGHTS, POSITIVE_SCRIPTS, SEASON_THOUGHTS, SPEC_TALK, TIME_THOUGHTS, WEALTH_THOUGHTS,
     WATER_THOUGHTS, WEATHER_THOUGHTS, WORLD_THOUGHTS,

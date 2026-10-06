@@ -358,13 +358,7 @@
     applyGenderAndReproduction,
     applyRandomGender,
     getGenderChoices,
-    applyTraitsToActor,
-    VAR_PLAYER1_GENDER,
-    VAR_PLAYER2_GENDER,
-    VAR_PLAYER3_GENDER,
-    VAR_PLAYER1_REPRODUCTIVE_TYPE,
-    VAR_PLAYER2_REPRODUCTIVE_TYPE,
-    VAR_PLAYER3_REPRODUCTIVE_TYPE
+    applyTraitsToActor
   } = window.CharacterCreationUtils || {};
   // The shared Back / extras / Continue bar (CharacterCreationShared.js).
   const CCButtons = window.CCButtons;
@@ -422,7 +416,6 @@
     members.forEach((actor, index) => {
       if (index > 0 && actor) $gameParty.removeActor(actor.actorId());
     });
-    if ($gameVariables) $gameVariables.setValue(29, $gameParty.members().length);
   }
 
   // Detailed creation mode lives in CharacterCreationFull.js: the whole
@@ -1188,12 +1181,10 @@
             currentActor.changeClass(1, false);
           }
 
-          // Get the correct creature switch based on current party member (77, 78, or 79)
           const currentMemberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-          const creatureSwitchId = 77 + currentMemberIndex; // 77 for actor 1, 78 for actor 2, 79 for actor 3
 
-          // Set creature switch OFF for normal character
-          $gameSwitches.setValue(creatureSwitchId, false);
+          // A normal character: the actor carries its own creature flag
+          if (currentActor) currentActor._isCreatureActor = false;
           // A person is portrayed by their bust, never by a sculpted model:
           // the art style follows what the character IS, it is not asked for.
           if (currentActor && currentActor.setPortraitMode) currentActor.setPortraitMode("bust");
@@ -1206,12 +1197,10 @@
             currentActor.changeClass(65, false);
           }
 
-          // Get the correct creature switch based on current party member (77, 78, or 79)
           const currentMemberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-          const creatureSwitchId = 77 + currentMemberIndex; // 77 for actor 1, 78 for actor 2, 79 for actor 3
 
-          // Set creature switch ON for creature mode
-          $gameSwitches.setValue(creatureSwitchId, true);
+          // Creature mode: the actor carries its own creature flag
+          if (currentActor) currentActor._isCreatureActor = true;
           Scene_CharacterCreation._isCreatureMode = true;
           // A creature is portrayed by its own model, never by a 2D bust, and it
           // has a valid one from the moment it is made.
@@ -1275,47 +1264,9 @@
       handler: function (symbol, index) {
         const choice = this.currentStepData().choices[index];
         if (choice) {
-          const currentMemberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-
-          // Determine which gender and reproductive type variables to use
-          let genderVar, reproductiveVar;
-          switch (currentMemberIndex) {
-            case 0:
-              genderVar = VAR_PLAYER1_GENDER;
-              reproductiveVar = VAR_PLAYER1_REPRODUCTIVE_TYPE;
-              break;
-            case 1:
-              genderVar = VAR_PLAYER2_GENDER;
-              reproductiveVar = VAR_PLAYER2_REPRODUCTIVE_TYPE;
-              break;
-            case 2:
-              genderVar = VAR_PLAYER3_GENDER;
-              reproductiveVar = VAR_PLAYER3_REPRODUCTIVE_TYPE;
-              break;
-            default:
-              console.warn(`Invalid party member index: ${currentMemberIndex}`);
-              genderVar = VAR_PLAYER1_GENDER;
-              reproductiveVar = VAR_PLAYER1_REPRODUCTIVE_TYPE;
-          }
-
-          // Set gender variable
-          $gameVariables.setValue(genderVar, choice.value);
-
-          // Set reproduction type based on gender
-          switch (choice.value) {
-            case 0: // Male
-              $gameVariables.setValue(reproductiveVar, 0); // Testicles
-              break;
-            case 1: // Female
-              $gameVariables.setValue(reproductiveVar, 1); // Uterus
-              break;
-            case 2: // Non-binary
-              $gameVariables.setValue(reproductiveVar, Math.floor(Math.random() * 5)); // Random (0-4)
-              break;
-            case 3: // Cocoon
-              $gameVariables.setValue(reproductiveVar, 4); // Mitosis
-              break;
-          }
+          // Gender and the organs it usually comes with, both written on the
+          // member being created (CharacterCreationShared.applyGenderAndReproduction).
+          applyGenderAndReproduction(Scene_CharacterCreation.getCurrentActor(), choice.value);
         }
 
         this.leaveGenderStep();
@@ -1634,7 +1585,7 @@
     },
     {
       // Birth date (Full mode only). Asked per member; skipped in the board modes.
-      // Stored as an age per member on $gameSystem._ccBirthAge[index].
+      // Stored as an age on the member's own actor (actor._ccAge).
       id: "birthdate",
       get title() {
         return T('CharCreate.chooseYourBirthDate');
@@ -1662,9 +1613,8 @@
         }
         const [lo, hi] = ranges[key] || ranges.age_adult;
         const age = lo + Math.floor(Math.random() * (hi - lo + 1));
-        const idx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-        if (!$gameSystem._ccBirthAge) $gameSystem._ccBirthAge = [];
-        $gameSystem._ccBirthAge[idx] = age;
+        const ageActor = Scene_CharacterCreation.getCurrentActor();
+        if (ageActor) ageActor._ccAge = age;
         this.nextStep();
       },
     },
@@ -2776,9 +2726,9 @@
     // ask again as they draw, so no page can open on a blank frame.
     // Whether a member is a monster, asked of the member rather than of the
     // wizard's static mode flag (which is about the seat being edited, not
-    // about this actor). Three things can say so and any one of them is
-    // enough: the flag the creature branch writes, a creature class, and the
-    // seat switch the older paths set.
+    // about this actor). Any one of these is enough: the flag the creature
+    // branch writes on the actor (actor._isCreatureActor), a body other than
+    // Humanoid, or a creature class.
     static isCreatureActor(actor) {
       if (!actor) return false;
       if (actor._isCreatureActor) return true;
@@ -2793,9 +2743,6 @@
       if (CC && CC.isCreatureClass && actor._classId && CC.isCreatureClass(actor._classId)) return true;
       const NC = window.NPCCreature;
       if (NC && NC.isNonSentientActor && NC.isNonSentientActor(actor)) return true;
-      const members = ($gameParty && $gameParty.members && $gameParty.members()) || [];
-      const slot = members.indexOf(actor);
-      if (slot >= 0 && typeof $gameSwitches !== "undefined" && $gameSwitches.value(77 + slot)) return true;
       if (Scene_CharacterCreation._isCreatureMode && actor === Scene_CharacterCreation.getCurrentActor()) return true;
       return false;
     }
@@ -3679,8 +3626,7 @@
     // nothing from an unrelated table can leak into the header.
     static currentMemberIsCreature() {
       const actor = this.getCurrentActor();
-      const memberIndex = this._currentPartyMemberIndex || 0;
-      return !!(actor && (actor._isCreatureActor || $gameSwitches.value(77 + memberIndex)));
+      return !!(actor && actor._isCreatureActor);
     }
 
     static syncCreatureModeToCurrentMember() {
@@ -3766,8 +3712,7 @@
         return [];
       }
 
-      const memberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-      const isCreature = !!(actor && (actor._isCreatureActor || $gameSwitches.value(77 + memberIndex)));
+      const isCreature = !!(actor && actor._isCreatureActor);
 
       // Romance sits beside Bio: the same dossier question, asked about who
       // the character is drawn to rather than about what they are.
@@ -3814,8 +3759,7 @@
     _isTabCompleted(tabId) {
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return false;
-      const memberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-      const isCreature = !!(actor._isCreatureActor || $gameSwitches.value(77 + memberIndex));
+      const isCreature = !!actor._isCreatureActor;
 
       switch (tabId) {
         case "archetype":
@@ -3871,8 +3815,6 @@
     onSetCharacterType(type) {
       // The story mode is played as the dossier it opened on (see _renderTypePillsHtml).
       if (Scene_CharacterCreation._storyMode) { SoundManager.playBuzzer(); return; }
-      const currentMemberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-      const creatureSwitchId = 77 + currentMemberIndex;
       const actor = Scene_CharacterCreation.getCurrentActor();
 
       // The type pills are the one way out of a taken dossier: every other
@@ -3907,7 +3849,6 @@
       }
 
       if (type === 'creature') {
-        $gameSwitches.setValue(creatureSwitchId, true);
         Scene_CharacterCreation._isCreatureMode = true;
         if (actor) {
           actor._isCreatureActor = true;
@@ -3930,7 +3871,6 @@
           ensureCreatureModel(actor);
         }
       } else {
-        $gameSwitches.setValue(creatureSwitchId, false);
         Scene_CharacterCreation._isCreatureMode = false;
         if (actor) {
           actor._isCreatureActor = false;

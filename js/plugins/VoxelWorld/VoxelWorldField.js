@@ -43,7 +43,7 @@
     if (!VW) { console.error('[VoxelWorld] core not loaded before VoxelWorldField.js'); return; }
 
     const {
-        MOUNTAIN_MAX_H, ROAD_BED_DROP, ROAD_GAP, ROAD_LANE_OFF, ROAD_TOTAL_W, SNOW_LINE, WATER_LEVEL_Y,
+        MOUNTAIN_MAX_H, ROAD_BED_CLEAR, ROAD_GAP, ROAD_KERB_H, ROAD_LANE_OFF, ROAD_TOTAL_W, SNOW_LINE, WATER_LEVEL_Y,
         OMEGA_SPAN, OMEGA_TILE, getAlienTerrain, alienHasNoGround,
         WORLD_SCALE, WORLD_TILE_SIZE, _fbm, _perlin, getRenderType, loadTex, loadVoxelTex,
         getRoadDirectionAt, isRiverTile, noiseHeight, riverLinksAt, sampleBiomeAt
@@ -816,7 +816,7 @@
         // sky rather than terrain and owe nothing to this.
         if (field.meta && field.meta.gasGiant) {
             o.h = VOX.MIN_Y * VOX.SIZE;
-            o.mat = MAT.AIR; o.road = false; o.prof = profileFor('');
+            o.mat = MAT.AIR; o.road = false; o.pave = null; o.prof = profileFor('');
             o.water = -Infinity;
             o.r = 0; o.g = 0; o.b = 0;
             return o;
@@ -927,7 +927,7 @@
         r *= shade; g *= shade; b *= shade;
         if (band === 'forest') { r *= 0.78; g *= 0.82; b *= 0.78; }
 
-        o.h = h; o.mat = mat; o.road = false; o.prof = profileFor(own.name);
+        o.h = h; o.mat = mat; o.road = false; o.pave = null; o.prof = profileFor(own.name);
         o.water = -Infinity;
         o.r = _clamp(r, 0, 1); o.g = _clamp(g, 0, 1); o.b = _clamp(b, 0, 1);
         return o;
@@ -2038,7 +2038,7 @@
             const wx = Math.floor(gx), wy = Math.floor(gz);
             const own  = sampleBiomeAt(wx, wy);
             const pOwn = profileFor(own.name);
-            let mat = MAT.GRASS, road = false, bed = 0;
+            let mat = MAT.GRASS, road = false, bed = 0, pave = null;
 
             // --- the river, cut into whatever it crosses ----------------------
             // Road squares are left alone: a road over a river is a bridge, and
@@ -2093,11 +2093,14 @@
                     // A carriageway climbs a hill but never ripples: the
                     // metre-scale roughness comes back out from under it.
                     h -= n.c * fineAmp;
-                    // The bed is dropped clear of the paving. A column top is
-                    // ROUNDED to the voxel grid, so a bed left level with the
-                    // surface would poke a cube corner through the ribbon on
-                    // half the squares in the world.
-                    if (rd !== 3) h -= ROAD_BED_DROP;
+                    // The paving, exactly: smooth, never rounded to the grid.
+                    // The ribbon is laid at it and walkers and wheels stand on it.
+                    pave = h;
+                    // The bed is the highest whole cube that stays clear of the
+                    // paving. A column top is ROUNDED to the voxel grid, so a bed
+                    // left level with the surface would poke a cube corner through
+                    // the ribbon; one dropped further leaves a hollow under it.
+                    if (rd !== 3) h = Math.floor((pave - ROAD_BED_CLEAR) / VOX.SIZE) * VOX.SIZE;
                 }
             }
             if (!road) {
@@ -2169,7 +2172,7 @@
                 else mat = MAT.BEDROCK;
             }
 
-            o.h = h; o.mat = mat; o.road = road; o.prof = pOwn; o.water = waterY;
+            o.h = h; o.mat = mat; o.road = road; o.prof = pOwn; o.water = waterY; o.pave = pave;
             o.r = _clamp(r, 0, 1); o.g = _clamp(g, 0, 1); o.b = _clamp(b, 0, 1);
             return o;
         }
@@ -2279,7 +2282,7 @@
             // A copy: sampleColumn hands back the same scratch object every time
             // it is called without one of its own.
             const rec = {
-                h: c.h, mat: c.mat, road: c.road, prof: c.prof, water: c.water,
+                h: c.h, mat: c.mat, road: c.road, prof: c.prof, water: c.water, pave: c.pave,
                 r: c.r, g: c.g, b: c.b,
                 top: _clamp(Math.round(c.h / VOX.SIZE), VOX.MIN_Y + 1, VOX.MAX_Y),
                 // The roof of the sewer gallery under this column, or 0 where
@@ -2702,18 +2705,43 @@
         // hardcore eight units below it. The moment somebody digs the bed out
         // from under the paving the answer goes back to the cubes, so a hole
         // knocked in a motorway is a hole and not a sheet of tarmac in the air.
+        //
+        // The median between the two carriageways is not paved, but it is drawn
+        // as grass behind a kerb ROAD_KERB_H over the paving, so that is where
+        // somebody walking across it stands.
         surfaceTopY(vx, vz) {
             const top = this.topSolidY(vx, vz) * VOX.SIZE;
             const c = this.column(vx, vz);
-            if (!c.road) return top;
-            const paved = c.h + ROAD_BED_DROP;
-            return top >= c.h - VOX.SIZE ? paved : top;
+            if (c.pave == null) return top;
+            // A cube dug out of the bed is a hole and one built on top of it
+            // stands on the road; only the bed as it was laid wears the paving.
+            if (top !== c.top * VOX.SIZE) return top;
+            return c.road ? c.pave : c.pave + ROAD_KERB_H;
         }
 
         // The paved height of a road, sampled smoothly the way heightAt samples
-        // the ground. What lays the ribbon, and what a lamp post on the verge is
-        // measured against.
-        roadSurfaceAt(x, z) { return this.heightAt(x, z); }
+        // the ground, but with the median read at the paving rather than on top
+        // of its kerb. What lays the ribbon, and what a lamp post on the verge is
+        // measured against. Off a road it is heightAt.
+        roadSurfaceAt(x, z) {
+            const S = VOX.SIZE;
+            const fx = x / S - 0.5, fz = z / S - 0.5;
+            const x0 = Math.floor(fx), z0 = Math.floor(fz);
+            const tx = fx - x0, tz = fz - z0;
+            const h00 = this._paveTopY(x0,     z0);
+            const h10 = this._paveTopY(x0 + 1, z0);
+            const h01 = this._paveTopY(x0,     z0 + 1);
+            const h11 = this._paveTopY(x0 + 1, z0 + 1);
+            return h00 * (1 - tx) * (1 - tz) + h10 * tx * (1 - tz) +
+                   h01 * (1 - tx) * tz       + h11 * tx * tz;
+        }
+
+        _paveTopY(vx, vz) {
+            const c = this.column(vx, vz);
+            if (c.pave != null && !c.road &&
+                this.topSolidY(vx, vz) === c.top) return c.pave;
+            return this.surfaceTopY(vx, vz);
+        }
 
         // The exact top of the cube under a point, with no smoothing: what a
         // walker's feet and the dig cursor need.

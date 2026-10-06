@@ -632,6 +632,9 @@
       }
     },
     "randomize": "Tira a caso",
+    "identity": "Identità",
+    "chipInfo": "{name}: {desc} ({kp} KP, complessità {cx})",
+    "pickUpTo": "Scegline fino a {max}. Passa sopra una voce per leggerla.",
     "camel": {
       "title": "Non è un nome da incantesimo",
       "body": "Un incantesimo si chiama con una sola parola in CamelCase, senza spazi: FireBolt, non fire bolt. {name} resta come lo hai scritto, se lo vuoi.",
@@ -701,7 +704,9 @@
     "skillBookDesc": "Un volume scritto a mano, che contiene {count} abilità. Ognuna va letta prima che si chiuda.",
     "grimorieDesc": "Un volume scritto a mano, che contiene {count} incantesimi. Ognuno va letto prima che si chiuda.",
     "skillBookFallbackName": "Quaderno di {first}",
-    "grimorieFallbackName": "Grimorie di {first}"
+    "grimorieFallbackName": "Grimorie di {first}",
+    "statPages": "Pagine",
+    "statCost": "Costo"
   },
   "hexorcize": {
     "button": "Esorcizza",

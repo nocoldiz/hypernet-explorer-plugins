@@ -2381,6 +2381,11 @@
         this._vsStillFrames = (this._vsStillFrames || 0) + 1;
       }
       if (this._vsStillFrames <= VEHICLE_SETTLE_FRAMES) {
+        // A ridden vehicle never steps on its own (it is copied onto the
+        // player), so nothing ever zeroes its stop count, and with step
+        // animation off (a mount) the engine read that as standing and put
+        // the pattern back every tick: the horse slid along on one frame.
+        this.resetStopCount();
         _Game_Vehicle_updateAnimation.call(this);
       } else {
         this._animationCount = 0;

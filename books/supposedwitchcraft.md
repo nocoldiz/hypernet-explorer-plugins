@@ -597,7 +597,7 @@ given greater Magnanimity, who were better principled in their Morals,
 and better rudimented in the Christian Religion, that have scorned and
 undervalued those censures as vanities and trifles, and these were those
 
-                ——_Quos Jupiter æquus amavit,
+ -  - _Quos Jupiter æquus amavit,
                 Et meliore luto finxit præcordia Titan._
 
 These were those that for the advancement of Truth and Learning, and the
@@ -1562,7 +1562,7 @@ though the Germans call =Lamia Ein Rachtsgeist=. But our own Translation
 hath come more near the truth: _Even the Sea-monsters draw out the
 breast, they give suck to their young ones: the Daughter of my people
 are become cruel like the Ostriches in the wilderness._ And _Arias
-Montanus_ gives it thus: _Etiam draco——‏תנין‎ Tannin_ (which signifieth
+Montanus_ gives it thus: _Etiam draco -  - ‏תנין‎ Tannin_ (which signifieth
 a Dragon, Serpent, Whale, or other Sea-creatures) _solverunt mammam,
 lactaverunt catulos suos: Filia populi mei in crudelem, veluti ululæ in
 deserto._ But none hath come up close to the mark but _Junius_ and
@@ -6803,10 +6803,10 @@ say, Πύθων _dicebatur etiam Dæmonium cujus afflatu futura prædicebant,
 because of slaying the Dragon, nam πύθεσθαι _putrescere significat, ut
 est in his carminibus_.
 
-               ——Ὁ δ’ ἐπήυξατο φοῖβος Ἀπόλλων,
+ -  - Ὁ δ’ ἐπήυξατο φοῖβος Ἀπόλλων,
                Ἐνταυθοῖ νῦν πύθεν ἐπὶ χθονὶ βωτιανείρη.
 
-               ——_Sic inde precatus_ Apollo _est:
+ -  - _Sic inde precatus_ Apollo _est:
                Putrescas tellure jacens campoq; feraci_.
 
 And from hence were the Pythian Games instituted:
@@ -6912,7 +6912,7 @@ who was walking in a Grove or Orchard behind the Church-yard, and
 intimateth that he was sent to teach him what was fit for him to do. But
 while that he telleth him that he ought rather to think of the Soul of
 his Father, than of his Fame, or Death; upon the suddain while they
-speak together a voice is heard—imitating his Father’s: Which voice
+speak together a voice is heard - imitating his Father’s: Which voice
 although _Brabantius_ did give out of his Belly, yet he did in a
 wonderful manner counterfeit to tremble: But _Cornutus_ was admonished
 by this voice, into what state his Father was faln by his injustice, and
@@ -12965,7 +12965,7 @@ that Prophet, or that dreamer of dreams: for the Lord your God proveth
 you, to know whether you love the Lord your God with all your heart, and
 with all your soul. And that Prophet, or dreamer of dreams, shall be put
 to death, because he hath spoken to turn you away from the Lord your
-God._—Another place is this: _But the Prophet which shall presume to
+God._ - Another place is this: _But the Prophet which shall presume to
 speak a word in my name, which I have not commanded him to speak, or
 that shall speak in the name of other gods, even that Prophet shall die.
 And if thou say in thine heart, How shall we know the word which the

@@ -1382,6 +1382,48 @@
     return `<hr class="npc-r-sep"><div class="npc-sec-hdr">${_escapeHtml(window.T('Empathize.dossier.carryTitle'))}</div>${rows}`;
   }
 
+  // The counter somebody keeps, for a shopkeeper: the shop and their shift,
+  // the other two on the rota, and what is on the shelf today with how many
+  // of each are left. The reading is ShopShiftManager.workplaceOf; this only
+  // draws it.
+  const _INFO_SHELF_CAP = 24;       // shelf rows shown before "+N more"
+  function _workplaceSectionHTML(npcName) {
+    let work = null;
+    try { work = window.NPCSim?.ShopShiftManager?.workplaceOf?.(npcName) || null; } catch (e) { work = null; }
+    if (!work) return '';
+    const SSM = window.NPCSim.ShopShiftManager;
+    const hoursOf = shift => {
+      const h = SSM.shiftHours(shift);
+      return window.T('Empathize.dossier.work.shift', {
+        from: String(h.from).padStart(2, '0'), to: String(h.to).padStart(2, '0'),
+      });
+    };
+    const shop = work.shopName || window.T('Empathize.shopkeeperTitle');
+    let html = `<hr class="npc-r-sep"><div class="npc-sec-hdr">${_escapeHtml(window.T('Empathize.dossier.work.title'))}</div>`;
+    html += `<div class="npc-ident-row">${_iconSpan(210, 17)}<span>${_escapeHtml(window.T('Empathize.dossier.work.shop', { shop, map: work.mapName || '' }))}</span></div>`;
+    html += `<div class="npc-ident-row">${_iconSpan(220, 17)}<span>${_escapeHtml(hoursOf(work.shift))}</span></div>`;
+    if (work.colleagues.length) {
+      html += `<div class="npc-ident-row npc-mt-1"><span class="npc-sub">${_escapeHtml(window.T('Empathize.dossier.work.colleagues'))}:</span></div>`;
+      html += work.colleagues.map(c =>
+        `<div class="npc-ident-row">${_iconSpan(246, 17)}${_wikiLink('npc', c.name)}&nbsp;<span class="npc-sub">${_escapeHtml(hoursOf(c.shift))}</span></div>`).join('');
+    }
+    html += `<div class="npc-ident-row npc-mt-1"><span class="npc-sub">${_escapeHtml(window.T('Empathize.dossier.work.shelf'))}:</span></div>`;
+    if (!work.shelf.length) {
+      return html + `<div class="npc-note">${_escapeHtml(window.T('Empathize.dossier.work.shelfEmpty'))}</div>`;
+    }
+    let tags = '';
+    for (const row of work.shelf.slice(0, _INFO_SHELF_CAP)) {
+      const left = row.stock == null ? ''
+        : row.stock > 0 ? ` <span class="npc-sub">x${row.stock}</span>`
+        : ` <span class="npc-bad">${_escapeHtml(window.T('Empathize.dossier.work.soldOut'))}</span>`;
+      tags += `<span class="npc-tag" ${_ccHover(row.type, row.id)}>${_iconSpan(row.item.iconIndex || 0, 15)}${_escapeHtml(row.item.name)}${left}</span>`;
+    }
+    html += `<div class="npc-tag-wrap">${tags}</div>`;
+    const hidden = work.shelf.length - _INFO_SHELF_CAP;
+    if (hidden > 0) html += `<div class="npc-note">${_escapeHtml(window.T('Empathize.dossier.more', { n: hidden }))}</div>`;
+    return html;
+  }
+
   // Vegan or vegetarian, off the traits NPCShared.Diet reads: vegan is the one
   // that refuses dairy as well as meat.
   function _dietBadgeHTML(profile) {
@@ -1668,6 +1710,7 @@
     // for a beast, which holds nothing.
     const ownsHTML = (nonSentient || actorObj || !profile)
       ? '' : _artifactsSectionHTML(profile) + _carriedSectionHTML(profile);
+    const workHTML = (nonSentient || actorObj) ? '' : _workplaceSectionHTML(npcName || displayName);
 
     let skillsHTML = '';
     // Skills granted by the NPC's traits (Traits.json `skills` arrays), keyed
@@ -1752,6 +1795,7 @@
       ${specsHTML}
       ${equipHTML}
       ${ownsHTML}
+      ${workHTML}
       ${skillsHTML}
       ${simHTML}`;
   };

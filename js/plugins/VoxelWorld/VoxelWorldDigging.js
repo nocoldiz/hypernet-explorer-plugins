@@ -844,6 +844,16 @@
             }
             if (input.cycle) this.cycle(input.cycle);
 
+            // Nothing comes apart in a fight. A cube dug out from under a
+            // creature, or a wall thrown up in its face, is not a blow struck,
+            // and it leaves the fight standing on ground the fight never
+            // agreed to. The pick is pointed, and that is all it does, until
+            // the last creature is down or the party is clear.
+            if (this._inFight()) {
+                if (input.dig || input.place) this._notifyOnce('fight', T('VoxelWorld.tool.noDigFight'));
+                input = { origin: input.origin, dir: input.dir, reach: input.reach, dig: false, place: false, cycle: 0 };
+            }
+
             const holdingBlock = !this._bar.holdingWeapon;
             const o = input.origin, d = input.dir;
             // Where the eye is, kept for the one question a build has to ask:
@@ -1042,6 +1052,14 @@
                 window.ParchmentToast.show(T('VoxelWorld.tool.struck', { name: item.name }),
                     { icon: item.iconIndex, duration: 150 });
             }
+        }
+
+        // Is a real-time fight on out here? Asked of the system, which owns
+        // the one answer (VoxelWorldSystem.inCombat), and read at the moment
+        // it is asked: the system loads after this file.
+        _inFight() {
+            const S = (VW && VW.System) || window.VoxelWorldSystem;
+            return !!(S && S.inCombat && S.inCombat());
         }
 
         _notifyOnce(tag, text) {

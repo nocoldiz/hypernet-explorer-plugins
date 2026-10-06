@@ -870,18 +870,6 @@
     color: #fff8eb !important;
 }
 
-.cc-profile-open-btn {
-    background: rgba(139, 90, 43, 0.3) !important;
-    border: 1px solid #8b5a2b !important;
-    color: #f7e6cd !important;
-}
-
-.cc-profile-open-btn:hover {
-    background: rgba(139, 90, 43, 0.5) !important;
-    border-color: #c9ad6a !important;
-    color: #ffffff !important;
-}
-
 .cc-party-tab {
     color: #bda893 !important;
 }
@@ -917,25 +905,6 @@
 
 .cc-member-remove-btn:hover {
     background: #c0392b !important;
-}
-
-.cc-step-tab {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid #4a3424 !important;
-    color: #ded1c1 !important;
-}
-
-.cc-step-tab:hover {
-    background: rgba(139, 90, 43, 0.35) !important;
-    border-color: #8b5a2b !important;
-    color: #ffffff !important;
-}
-
-.cc-step-tab.active {
-    background: linear-gradient(90deg, #4d3320, #362214) !important;
-    border-color: #c9ad6a !important;
-    color: #ffffff !important;
-    box-shadow: inset 3px 0 0 #c9ad6a, 0 2px 8px rgba(0, 0, 0, 0.4) !important;
 }
 
 .cc-step-tab .cc-tab-subtitle {
@@ -981,17 +950,6 @@
     border-color: rgba(201, 173, 106, 0.25) !important;
 }
 
-.cc-spec-card:hover {
-    background: rgba(139, 90, 43, 0.35) !important;
-    border-color: #c9ad6a !important;
-}
-
-.cc-spec-card.selected {
-    background: linear-gradient(180deg, rgba(139, 90, 43, 0.6), rgba(92, 65, 40, 0.4)) !important;
-    border-color: #f7e6cd !important;
-    box-shadow: 0 0 10px rgba(201, 173, 106, 0.3) !important;
-}
-
 .cc-bio-section {
     background: transparent !important;
     border: none !important;
@@ -999,18 +957,8 @@
     border-bottom: 1px solid rgba(218, 165, 32, 0.12) !important;
 }
 
-.cc-bio-section-title {
-    color: #ebd9c3 !important;
-}
-
-.cc-bio-chip:hover {
-    border-color: #8b5a2b !important;
-    color: #58180D !important;
-}
-
 /* A picked control is ink and a hairline, with nothing behind it: the
    oxblood of the headings, since white is lost on this paper. */
-.cc-bio-chip.selected,
 .cc-pick-row.selected {
     background: transparent !important;
     background-image: none !important;
@@ -1046,30 +994,6 @@
     box-shadow: none !important;
 }
 
-.cc-sidebar-btn {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid #5c4128 !important;
-    color: #ebd9c3 !important;
-}
-
-.cc-sidebar-btn:hover {
-    background: rgba(139, 90, 43, 0.4) !important;
-    border-color: #8b5a2b !important;
-    color: #ffffff !important;
-}
-
-.cc-sidebar-btn.primary {
-    background: linear-gradient(135deg, #58180D, #3d0d05) !important;
-    border-color: #8b2b1b !important;
-    color: #ffffff !important;
-    box-shadow: 0 2px 8px rgba(88, 24, 13, 0.4) !important;
-}
-
-.cc-sidebar-btn.primary:hover {
-    background: linear-gradient(135deg, #782314, #521207) !important;
-    box-shadow: 0 0 10px rgba(139, 35, 20, 0.6) !important;
-}
-
 .cc-trait-budget-container {
     background: rgba(239, 228, 200, 0.8) !important;
     border: 1px solid #8b5a2b !important;
@@ -1089,24 +1013,6 @@
     background: #58180D !important;
     border: 1px solid #8b5a2b !important;
     color: #ffffff !important;
-}
-
-/* ==========================================================================
-   Thinker (Crafting) + Blacksmithing (Anvil) menus, parchment-theme readability
-   The rarity of a name is a class now (.rarity--legendary and the rest, from
-   window.ItemSystemUtils.rarityClass), inked off the --rarity-* tokens this
-   file already tunes for parchment, so the tier colours need nothing here.
-   What is left is the success overlay's own plate: its cream comes from
-   --text-highlight-active, but the rows inside inherit the base theme's white
-   and wash out against it.
-   ========================================================================== */
-#thinker-container .success-overlay,
-#blacksmith-container .success-overlay {
-    background: rgba(244, 237, 212, 0.92) !important;
-}
-#thinker-container .success-item-row,
-#blacksmith-container .success-item-row {
-    background: rgba(200, 180, 150, 0.35) !important;
 }
 
 /* ==========================================================================
@@ -1247,26 +1153,6 @@
     border-color: #8b5a2b;
 }
 
-/* ==========================================================================
-   Character-creation "Confirm" button, parchment-theme look
-   The base theme flips the Confirm button's hover / highlighted (keyboard /
-   controller focus) state to a flat, bright-yellow (accent-gold-pure) fill that
-   clashes with the parchment book and washes the black label out. Keep the
-   button in the deep-maroon + gold palette: a warmer lifted red fill, a bright
-   gold border and a soft gold glow, with cream text. Scoped to .cc-btn-treaty
-   (character-creation only); the resting label is re-inked cream for contrast.
-   ========================================================================== */
-.cc-btn-treaty.confirm {
-    color: #f4edd4 !important;
-}
-.cc-btn-treaty.confirm:hover,
-.cc-btn-treaty.confirm.highlighted {
-    background: #7a2618 !important;
-    border-color: var(--accent-gold-pure) !important;
-    color: #fff4d2 !important;
-    box-shadow: 0 8px 16px var(--shadow-gold-amber-50),
-                0 0 10px var(--accent-gold-pure-translucent-30) !important;
-}
 
 /* ==========================================================================
    Factions screen, parchment-theme readability
@@ -1403,10 +1289,6 @@
 /* ==========================================================================
    Bestiary, empty-state readability
    ========================================================================== */
-.bestiary-list-empty {
-    color: var(--text-pure-black) !important;
-}
-
 /* Portfolio (right page) prose is written as a 30-60% wash of dark brown
    (rgba(94,47,23,a)): the "Drawing..." placeholder, the 3D drag hint, the seed
    caption and the three "nothing recorded" lines land at 1.7-3.3 on the cream
@@ -1613,7 +1495,6 @@
 .rent-hint,
 .rf-hint,
 .sl-footer,
-.sl-empty-line,
 .tt-hint,
 .bodypart-cell-hp {
     color: #3a2414 !important;
@@ -1663,13 +1544,6 @@
 .hr-step:hover,
 .hr-row.staked .hr-gate {
     color: var(--text-muted-hover) !important;
-}
-
-/* Resting Treaty button (Back / Cancel): deep red on a black fill. The confirm
-   variant is already re-inked cream further up; give the base the same
-   treatment so the unselected buttons read. */
-.cc-btn-treaty {
-    color: var(--accent-cream-light) !important;
 }
 
 /* Transport-hub badge on a fast-travel destination: pure gold on a 16% gold wash. */
@@ -2004,24 +1878,6 @@
     border-color: var(--border-border-alt-12);
     color: var(--text-success-active);
 }
-#gx-ui .gx-btn {
-    font-family: var(--font-ui);
-    background: var(--bg-panel);
-    border-color: var(--border-focus-hover);
-    color: var(--text-primary-hover);
-}
-#gx-ui .gx-btn.gx-bookmark { color: #6b4a00; }
-#gx-ui .gx-btn.gx-bio { color: #14602f; }
-#gx-ui .gx-btn.gx-ship { color: #10486e; }
-#gx-ui .gx-btn.gx-sb { color: #4b2178; }
-#gx-ui .gx-btn.gx-land { color: #245c14; }
-#gx-ui .gx-btn.gx-stop { color: #8f1b12; }
-#gx-ui .gx-btn:hover,
-#gx-ui .gx-btn.focused {
-    background: var(--bg-focus-hover-translucent-18);
-    color: var(--text-secondary-active);
-    outline: 1px solid var(--border-focus-hover);
-}
 #gx-catalog .gx-cat-group {
     color: var(--text-primary-hover);
     border-bottom-color: var(--border-focus-hover);
@@ -2048,11 +1904,6 @@
 }
 #gx-fuel .gx-refuel-row {
     border-top-color: var(--border-focus-hover);
-}
-#gx-fuel .gx-btn.gx-refuel.gx-on {
-    background: rgba(29, 77, 128, 0.2);
-    border-color: var(--text-text-alt-16);
-    color: var(--text-text-alt-16);
 }
 #gx-zoom {
     background: rgba(43, 28, 17, 0.15);
@@ -2331,22 +2182,18 @@ body #fbuild-panel {
 #fbuild-panel .fbuild-empty,
 #fbuild-panel .fbuild-search::placeholder { color: var(--text-card-medium); }
 
-/* Idle rail and mode entries, and the one being read or held. */
+/* The rail and the mode switch are the shared tab: gold ink, and a gold
+   frame round the one in force. */
 #fbuild-panel .fbuild-toptab-opt,
-#fbuild-panel .fbuild-mode-opt,
-#fbuild-panel .fbuild-close,
-#fbuild-panel .fbuild-clear-all,
-#fbuild-panel .fbuild-subback { color: var(--text-card-medium); }
-#fbuild-panel .fbuild-toptab-opt:hover,
+#fbuild-panel .fbuild-mode-opt { color: var(--text-primary-hover); }
 #fbuild-panel .fbuild-toptab-opt.active,
-#fbuild-panel .fbuild-mode-opt:hover,
-#fbuild-panel .fbuild-mode-opt.active,
+#fbuild-panel .fbuild-mode-opt.active { border-color: var(--text-primary-hover); }
+/* The close cross, and the one being read or held. */
+#fbuild-panel .fbuild-close { color: var(--text-card-medium); }
 #fbuild-panel .fbuild-dd-opt:hover,
 #fbuild-panel .fbuild-dd-opt.active,
 #fbuild-panel .fbuild-subcat:hover,
-#fbuild-panel .fbuild-close:hover,
-#fbuild-panel .fbuild-clear-all:hover,
-#fbuild-panel .fbuild-subback:hover {
+#fbuild-panel .fbuild-close:hover {
     color: var(--text-secondary-active);
     border-color: var(--border-focus-hover);
 }
@@ -2455,12 +2302,6 @@ body #fbuild-panel {
 #blacksmith-container .blueprint-name-locked,
 #thinker-container .blueprint-name-locked {
     color: #6b5242 !important;
-}
-#blacksmith-container .forge-name-input {
-    color: #2b251d !important;
-}
-#blacksmith-container .forge-name-input::placeholder {
-    color: #8a7a66 !important;
 }
 #bestiary-portfolio-container .portfolio-description {
     color: #000000 !important;

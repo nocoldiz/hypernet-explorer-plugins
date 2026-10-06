@@ -10197,7 +10197,7 @@ by the Author in this Book; because it was a Colony of the _Phocenses_
 in _Greece_; it is also called _Thyrren_, because it is seated upon the
 _Tyrrhenean_ Sea, as _Virgil_ saith,
 
-    ————_Thyrrenum navigat Æquor_.
+ -  -  -  - _Thyrrenum navigat Æquor_.
 
 
 XCI.

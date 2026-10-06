@@ -2370,6 +2370,10 @@
                     bb: new CharacterBillboard(w.sheet, w.index, PERSON_H),
                     actor: w.actor,
                     x: prev ? prev.x : 0, y: prev ? prev.y : 0, z: prev ? prev.z : 0,
+                    // The ground speed they are carrying (a fight eases them
+                    // about rather than sliding them at one fixed pace), and
+                    // the way they last faced, kept while they stand.
+                    vx: 0, vz: 0, yaw: prev ? prev.yaw : 0,
                     placed: !!prev && !!prev.placed
                 };
             });
@@ -2393,9 +2397,16 @@
         // re-forms from where they actually are once it is over. `goalFn(m)`
         // hands back the point a member is heading for, or null to stay by
         // the leader. A member who is down lies where they fell, dimmed.
+        //
+        // Feet on the ground, always: a member gets going and pulls up with
+        // some weight to them (eased velocity, with an arrival slow-down) and
+        // a blow is a step INTO whoever it is aimed at and back, not a hop
+        // into the air. Standing, they face what they are fighting rather
+        // than whichever way they last walked.
         fight(delta, lx, ly, lz, camYaw, df, groundFn, goalFn) {
             this._trail.length = 0;
             const light = df == null ? 1 : df;
+            const dt = Math.min(delta, 0.05);
             for (let i = 0; i < this._members.length; i++) {
                 const m = this._members[i];
                 // By the leader, each on a side of their own: behind and
@@ -2407,23 +2418,41 @@
                     // Nobody has stood anywhere yet (a fight opened before the
                     // line ever walked): start them where they would stand.
                     m.x = byX; m.z = byZ;
+                    m.vx = 0; m.vz = 0;
                     m.placed = true;
                 }
                 const down = !!(m.actor && m.actor.isDead && m.actor.isDead());
-                let gx = m.x, gz = m.z;
+                let gx = m.x, gz = m.z, faceX = null, faceZ = null;
                 if (!down) {
                     const goal = goalFn ? goalFn(m) : null;
-                    if (goal) { gx = goal.x; gz = goal.z; }
-                    else { gx = byX; gz = byZ; }
+                    if (goal) {
+                        gx = goal.x; gz = goal.z;
+                        // Where the goal is looking, if it says: the foe it is
+                        // standing off from. Otherwise the goal itself.
+                        faceX = goal.faceX != null ? goal.faceX : goal.x;
+                        faceZ = goal.faceZ != null ? goal.faceZ : goal.z;
+                    } else { gx = byX; gz = byZ; }
                 }
                 const dx = gx - m.x, dz = gz - m.z;
                 const d = Math.hypot(dx, dz);
-                const moving = !down && d > 1.5;
-                if (moving) {
-                    const step = Math.min(d, FIGHT_SPEED * delta);
-                    m.x += dx / d * step;
-                    m.z += dz / d * step;
-                    m.bb.yaw = Math.atan2(dx, dz);
+                // Wanted speed: full stride out in the open, easing to nothing
+                // over the last couple of strides so nobody overshoots and
+                // jitters back and forth across the spot.
+                const want = down ? 0 : Math.min(FIGHT_SPEED, d * 3.5);
+                const wx = d > 0.001 ? dx / d * want : 0;
+                const wz = d > 0.001 ? dz / d * want : 0;
+                const k = Math.min(1, dt * 8);
+                m.vx += (wx - m.vx) * k;
+                m.vz += (wz - m.vz) * k;
+                const spd = Math.hypot(m.vx, m.vz);
+                if (spd < 0.5 && d < 1.5) { m.vx = 0; m.vz = 0; }
+                m.x += m.vx * dt;
+                m.z += m.vz * dt;
+                const moving = spd > 4;
+                if (moving) m.yaw = Math.atan2(m.vx, m.vz);
+                else if (faceX != null && !down) {
+                    const fx = faceX - m.x, fz = faceZ - m.z;
+                    if (fx * fx + fz * fz > 1) m.yaw = Math.atan2(fx, fz);
                 }
                 // Nobody stands inside anybody else.
                 for (let j = 0; j < this._members.length; j++) {
@@ -2436,11 +2465,22 @@
                         m.z += oz / od * (FIGHT_SPACING - od) * 0.5;
                     }
                 }
-                const gy = groundFn ? groundFn(m.x, m.z) : ly;
+                // The blow: a short step the way they are facing and back
+                // again, on the ground the whole way.
+                let px = 0, pz = 0;
+                if (m.lungeT > 0) {
+                    const t = m.lungeT / 0.3;
+                    const push = Math.sin(t * Math.PI) * 3;
+                    px = Math.sin(m.yaw) * push;
+                    pz = Math.cos(m.yaw) * push;
+                    m.lungeT -= delta;
+                }
+                const gy = groundFn ? groundFn(m.x + px, m.z + pz) : ly;
                 m.y = gy;
+                m.bb.yaw = m.yaw;
                 m.bb.moving = moving;
-                m.bb.setPosition(m.x, gy + (m.lungeT > 0 ? Math.sin(m.lungeT * 12) * 1.5 : 0), m.z);
-                if (m.lungeT > 0) m.lungeT -= delta;
+                if (moving) m.bb.step += spd * dt;
+                m.bb.setPosition(m.x + px, gy, m.z + pz);
                 m.bb.setDaylight(down ? light * 0.3 : light);
                 m.bb.update(lx, lz, camYaw);
             }
@@ -2512,10 +2552,17 @@
                 const pos = this._sampleTrail(wantD);
                 if (pos) {
                     const gy = groundFn ? groundFn(pos.x, pos.z) : ly;
+                    const stepped = Math.hypot(pos.x - m.x, pos.z - m.z);
                     m.x = pos.x; m.y = gy; m.z = pos.z;
+                    m.vx = 0; m.vz = 0;
                     m.placed = true;
-                    m.bb.yaw = pos.yaw;
+                    // Standing still keeps the way they were last facing: a
+                    // line that stopped used to snap everybody round to one
+                    // fixed bearing, whichever way the road ran.
+                    if (pos.yaw != null) m.yaw = pos.yaw;
+                    m.bb.yaw = m.yaw;
                     m.bb.moving = pos.moving;
+                    if (pos.moving) m.bb.step += stepped;
                     m.bb.setPosition(pos.x, gy, pos.z);
                     m.bb.setDaylight(df == null ? 1 : df);
                     m.bb.update(lx, lz, camYaw);
@@ -2526,7 +2573,7 @@
         _sampleTrail(targetD) {
             if (!this._trail.length) return null;
             if (this._trail.length === 1 || targetD <= 0) {
-                return { x: this._trail[0].x, z: this._trail[0].z, yaw: 0, moving: false };
+                return { x: this._trail[0].x, z: this._trail[0].z, yaw: null, moving: false };
             }
             for (let i = 0; i < this._trail.length - 1; i++) {
                 const a = this._trail[i];
@@ -2541,7 +2588,7 @@
                 }
             }
             const last = this._trail[this._trail.length - 1];
-            return { x: last.x, z: last.z, yaw: 0, moving: false };
+            return { x: last.x, z: last.z, yaw: null, moving: false };
         }
 
         dispose() {
@@ -3023,7 +3070,12 @@
         // ---------------------------------------------------------------------
         // Who is in it
         // ---------------------------------------------------------------------
+        // The party, read once per tick: battleMembers() builds a fresh array
+        // every call and a tick asks for it a dozen times over (every ally's
+        // turn filters it twice more). Who is IN the party does not change
+        // inside a tick; who is alive is filtered by the callers as before.
         _party() {
+            if (this._partyTick) return this._partyTick;
             return (typeof $gameParty !== 'undefined' && $gameParty) ? $gameParty.battleMembers() : [];
         }
         _leader() {
@@ -3146,7 +3198,12 @@
             if (this._popups) this._popups.update(delta, cam.x, cam.z);
             if (!this.active) return;
             this._t += delta;
+            this._partyTick = null;
+            this._partyTick = this._party();
+            try { this._tick(delta, H, cam); } finally { this._partyTick = null; }
+        }
 
+        _tick(delta, H, cam) {
             // A creature the world took away (recycled, dug out from under)
             // leaves the fight as if it had run.
             for (let i = this._foes.length - 1; i >= 0; i--) {
@@ -3398,7 +3455,8 @@
                 gx = lp.x + (gx - lp.x) / ld * COMBAT.ALLY_LEASH;
                 gz = lp.z + (gz - lp.z) / ld * COMBAT.ALLY_LEASH;
             }
-            return { x: gx, z: gz };
+            // ...and the foe itself, which is what they face once they stand.
+            return { x: gx, z: gz, faceX: tp.x, faceZ: tp.z };
         }
 
         // ---------------------------------------------------------------------

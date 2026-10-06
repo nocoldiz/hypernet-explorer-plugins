@@ -221,13 +221,21 @@
 
   // The stock/price record of the shop currently open, or null when this shop
   // keeps no record (an event with no id, a shop opened straight from a plugin).
+  // The shelf a counter keeps is its OWN: an interior shop is scoped to the
+  // building and floor it stands in (ProceduralHouseSystem.shopInstanceId),
+  // so two buildings drawn from one template never share a stock.
+  const stockMapKey = (mapId) => safe("stockMapKey", () => {
+    const P = window.ProceduralHouseSystem;
+    return (P && typeof P.shopInstanceId === "function") ? P.shopInstanceId(mapId) : mapId;
+  }, mapId);
+
   const currentShopData = (scene) => {
     const s = scene || SceneManager._scene;
     if (!(s instanceof Scene_Shop)) return null;
     if (!s._shopMapId || !s._shopEventId) return null;
     const stocks = $gameSystem && $gameSystem._shopStocks;
     if (!stocks) return null;
-    const forMap = stocks[s._shopMapId];
+    const forMap = stocks[s._shopStockKey || s._shopMapId];
     return (forMap && forMap[s._shopEventId]) || null;
   };
 
@@ -310,8 +318,26 @@
       : (item && Number.isFinite(item.price) ? item.price : 0);
     if (!(base > 0)) return 0;
     return Math.max(1, Math.floor(base * marketFactor(shopData, item) * haggleFactor()
-      * standingFactor() * notorietyFactor() * lookFactor()));
+      * standingFactor() * notorietyFactor() * lookFactor() * keeperFactor()));
   };
+
+  // The keeper on shift at this counter, and what they think of the party:
+  // a keeper who likes the median member takes something off (NPCSim's
+  // shopKeeperDisposition owns the rule). A shop opened from no event, or
+  // a vacant till, is a factor of 1.
+  const keeperDisposition = (scene) => safe("keeperDisposition", () => {
+    const s = scene || SceneManager._scene;
+    if (!(s instanceof Scene_Shop) || !s._shopMapId || !s._shopEventId) return null;
+    const sim = window.NPCSim;
+    return (sim && typeof sim.shopKeeperDisposition === "function")
+      ? sim.shopKeeperDisposition(s._shopMapId, s._shopEventId) : null;
+  }, null);
+
+  const keeperFactor = () =>
+    sanePositive(safe("keeperFactor", () => {
+      const d = keeperDisposition();
+      return d && d.discount > 0 ? 1 - d.discount : 1;
+    }, 1), 1);
 
   // A well-dressed customer is quoted a little less: up to 5% off on the
   // leader's Substance look (window.LookStats), 7.5% for an icon of it. Only
@@ -1404,7 +1430,16 @@
     // Shift puts the highlighted line on the counter, or takes it back off: the
     // keyboard's half of the multi-select the cards do on a click. It works on
     // either side of the counter, on whichever list currently has the cursor.
-    if (Input.isTriggered('shift') && !this._numberWindow.active) {
+    //
+    // Shift is also a modifier here (Shift+Tab takes a whole category, Shift
+    // with -/+ or with left/right on a pad steps a line by ten), so the toggle
+    // waits for the key to come back up and only fires when nothing else was
+    // pressed with it. Acting on the press itself took the line off the
+    // counter before the chord it was the first half of could read it.
+    if (Input.isTriggered('shift')) { this._shopShiftHeld = true; this._shopShiftChord = false; }
+    const shiftTap = !!this._shopShiftHeld && !Input.isPressed('shift');
+    if (shiftTap) this._shopShiftHeld = false;
+    if (shiftTap && !this._shopShiftChord && !this._numberWindow.active) {
       const buying = this._buyWindow.active;
       const selling = this._sellWindow.active && !this._chipFocus;
       if (buying || selling) {
@@ -1443,6 +1478,7 @@
     // category under the cursor into the cart on the way out.
     const padCategoryKey = Input.isTriggered('menu') && !Input.isTriggered('escape');
     if (((Input.isTriggered('tab') && Input.isPressed('shift')) || padCategoryKey) && !this._numberWindow.active) {
+      if (Input.isPressed('shift')) this._shopShiftChord = true;
       const buying = this._buyWindow.active;
       const selling = this._sellWindow.active && !this._chipFocus;
       if (buying || selling) {
@@ -1465,6 +1501,7 @@
     // the stepper's clicks.
     if (!this._numberWindow.active) {
       const step = this.readShopQtyStep();
+      if (step && Input.isPressed('shift')) this._shopShiftChord = true;
       if (step) {
         const buying = this._buyWindow.active;
         const selling = this._sellWindow.active && !this._chipFocus;
@@ -1606,6 +1643,10 @@
                     <div class="shop-tab" id="tab-buy">${T('Shop.acquireGoods')}</div>
                     <div class="shop-tab" id="tab-sell">${T('Shop.liquidateAssets')}</div>
                     <div class="shop-tab focusable" id="tab-collect" title="${esc(T('Shop.sellCollectiblesHint'))}">${T('Shop.sellCollectibles')}</div>
+                    <div class="shop-view-toggle focusable" id="shop-view-toggle" title="${esc(T('Shop.viewToggleHint'))}">
+                        <span class="shop-view-opt" data-view="grid">${esc(T('Shop.viewGrid'))}</span>
+                        <span class="shop-view-opt" data-view="list">${esc(T('Shop.viewList'))}</span>
+                    </div>
                 </div>
                 <div id="shop-categories-container"></div>
                 <div id="shop-selection-bar"></div>
@@ -1658,6 +1699,12 @@
     // The whole keepsake shelf over the counter in one gesture: collectibles
     // have no use and one flat price, so there is nothing to weigh up per line.
     onShopClick("#tab-collect", () => this.sellAllCollectibles());
+
+    // Grid of cards or list of lines: one press flips the shelf between them.
+    onShopClick("#shop-view-toggle", () => {
+      SoundManager.playCursor();
+      this.toggleShopView();
+    });
 
     // Mousewheel Scroll support for catalog viewport
     container.addEventListener("wheel", (e) => {
@@ -1798,6 +1845,12 @@
       if (tabSell) tabSell.classList.toggle("active", !isBuyMode);
     }
 
+    // 2b. The view switch names the view the shelf is drawn in.
+    const view = this.shopView();
+    container.querySelectorAll("#shop-view-toggle .shop-view-opt").forEach(opt => {
+      opt.classList.toggle("active", opt.getAttribute("data-view") === view);
+    });
+
     // 3. The chip row: every category this side of the counter actually holds,
     // drawn like the backpack's own. It is rebuilt when the set of categories
     // changes (selling the last of something takes its chip away) or when the
@@ -1872,14 +1925,20 @@
       } else {
         const cart = this.shopCart(isBuyMode);
         const listFocused = isBuyMode || this._sellWindow.active;
+        const grid = view === "grid";
         for (const group of this.shopCategoryGroups(data, isBuyMode)) {
           itemsHTML += this.categoryHeaderHTML(group);
+          if (grid) itemsHTML += `<div class="shop-grid">`;
           for (const idx of group.indices) {
-            itemsHTML += this.itemCardHTML(data[idx], idx, isBuyMode, cart,
-              listFocused && activeIndex === idx);
+            const focusedCard = listFocused && activeIndex === idx;
+            itemsHTML += grid
+              ? this.itemGridCardHTML(data[idx], idx, isBuyMode, cart, focusedCard)
+              : this.itemCardHTML(data[idx], idx, isBuyMode, cart, focusedCard);
           }
+          if (grid) itemsHTML += `</div>`;
         }
       }
+      viewport.classList.toggle("shop-view-grid", view === "grid");
       // Redrawing the page throws the scroll position away, and every pick
       // redraws it: without this, picking a line halfway down a long bag threw
       // the reader back to the top of it.
@@ -2741,11 +2800,33 @@
       this.closeShop();
       return;
     }
+    // A keeper who likes the party says so as the counter opens, with what
+    // it is worth on every price that follows.
+    const keeper = keeperDisposition(this);
+    if (keeper && keeper.discount >= 0.01 && window.ParchmentToast) {
+      window.ParchmentToast.show(T('Shop.keeperDiscount', {
+        name: keeper.name, percent: Math.round(keeper.discount * 100),
+      }), { severity: 'good', duration: 200 });
+    }
     // The command window is the tab bar the overlay draws for itself, so it is
     // never given focus: the shop opens straight onto the buy list.
     this._commandWindow.deactivate();
     this._commandWindow.select(0);
     this.commandBuy();
+  };
+
+  // On the grid the four directions walk the cards first. Answers true when the
+  // press landed on a card; off an edge it answers false and the list's own
+  // walk takes over (left onto the chips, right across to the other tab, up
+  // onto the chips). Left / right step a picked line's quantity only in the
+  // list: on the grid they cross the row, and minus / plus still step it.
+  const gridCursor = function (scene, dir, buying) {
+    if (scene._chipFocus || scene.shopView() !== "grid") return false;
+    const target = scene.shopGridStep(dir, buying);
+    if (target === null || target === undefined) return false;
+    const win = buying ? scene._buyWindow : scene._sellWindow;
+    win.select(target);
+    return true;
   };
 
   // Both lists sit under a chip row, and both are walked the same way: up off
@@ -2756,6 +2837,7 @@
   const chipCursorLeft = function (buying) {
     const scene = SceneManager._scene;
     if (!(scene instanceof Scene_Shop) || !scene.isShopReady()) return;
+    if (gridCursor(scene, "left", buying)) return;
     if (scene.stepCounterLine(-1, buying)) return;
     const win = buying ? scene._buyWindow : scene._sellWindow;
     if (!scene._chipFocus) {
@@ -2772,6 +2854,7 @@
   const chipCursorRight = function (buying) {
     const scene = SceneManager._scene;
     if (!(scene instanceof Scene_Shop) || !scene.isShopReady()) return;
+    if (gridCursor(scene, "right", buying)) return;
     if (scene.stepCounterLine(1, buying)) return;
     if (scene._chipFocus) {
       if (scene.stepShopCategoryChip(1, buying)) SoundManager.playCursor();
@@ -2792,12 +2875,19 @@
       }
       return;
     }
+    if (scene instanceof Scene_Shop && scene.shopView() === "grid") {
+      gridCursor(scene, "down", win === scene._buyWindow);
+      return;
+    }
     Window_Selectable.prototype.cursorDown.call(win, wrap);
   };
 
   const chipCursorUp = function (win, wrap) {
     const scene = SceneManager._scene;
-    if (scene instanceof Scene_Shop && !scene._chipFocus && win.index() <= 0) {
+    if (scene instanceof Scene_Shop && gridCursor(scene, "up", win === scene._buyWindow)) return;
+    // Up off the top of the list, or off the top row of the grid, lands on the chips.
+    if (scene instanceof Scene_Shop && !scene._chipFocus &&
+        (win.index() <= 0 || scene.shopView() === "grid")) {
       scene._chipFocus = true;
       win.select(-1);
       SoundManager.playCursor();
@@ -2929,6 +3019,7 @@
     // event behind it, and then it simply keeps no stock record.
     this._shopMapId = $gameMap ? $gameMap.mapId() : 0;
     this._shopEventId = ($gameMap && $gameMap._interpreter) ? $gameMap._interpreter.eventId() : 0;
+    this._shopStockKey = stockMapKey(this._shopMapId);
   };
 
   // A shop that keeps no stock record sells without limit.
@@ -3051,9 +3142,9 @@
 
     if (!$gameSystem._shopStocks) $gameSystem._shopStocks = {};
     const stocks = $gameSystem._shopStocks;
-    const mapId = this._shopMapId;
+    const mapId = this._shopStockKey || stockMapKey(this._shopMapId);
     const eventId = this._shopEventId;
-    const dateKey = getShopDateKey(mapId, eventId);
+    const dateKey = getShopDateKey(this._shopMapId, eventId);
 
     if (!stocks[mapId]) stocks[mapId] = {};
     if (!stocks[mapId][eventId]) stocks[mapId][eventId] = { date: "" };
@@ -3148,20 +3239,21 @@
     if (!mapId || !eventId || !$gameSystem) return null;
     const stocks = $gameSystem._shopStocks || (create ? ($gameSystem._shopStocks = {}) : null);
     if (!stocks) return null;
-    if (!stocks[mapId]) {
+    const key = stockMapKey(mapId);
+    if (!stocks[key]) {
       if (!create) return null;
-      stocks[mapId] = {};
+      stocks[key] = {};
     }
     const dateKey = getShopDateKey(mapId, eventId);
-    let record = stocks[mapId][eventId];
+    let record = stocks[key][eventId];
     if (!record) {
       if (!create) return null;
-      record = stocks[mapId][eventId] = { date: dateKey, companyFactors: {} };
+      record = stocks[key][eventId] = { date: dateKey, companyFactors: {} };
     }
     // A record left over from another day is a record of nothing: the counter
     // has been restocked since, so it starts again empty of numbers.
     if (record.date !== dateKey) {
-      record = stocks[mapId][eventId] = { date: dateKey, companyFactors: {} };
+      record = stocks[key][eventId] = { date: dateKey, companyFactors: {} };
     }
     return record;
   };
@@ -3321,6 +3413,14 @@
       if (this._buyWindow.index() > last) this._buyWindow.select(Math.max(0, last));
     }
     awardTradeXp('Haggling', spent);  // i18n-ignore  Specialization.json id
+    // The keeper remembers a customer: every member of the party goes up in
+    // their estimation (NPCSim.noteShopPurchase owns how far).
+    safe("noteShopPurchase", () => {
+      const sim = window.NPCSim;
+      if (spent > 0 && this._shopMapId && this._shopEventId && sim && typeof sim.noteShopPurchase === "function") {
+        sim.noteShopPurchase(this._shopMapId, this._shopEventId, spent);
+      }
+    }, null);
   };
 
   const _Scene_Shop_doSell = Scene_Shop.prototype.doSell;
@@ -3345,6 +3445,7 @@
   const sellableCount = (item) => $gameParty.numItems(item);
   window.ItemSystemShop = window.ItemSystemShop || {};
   window.ItemSystemShop.sellableCount = sellableCount;
+  window.ItemSystemShop.stockMapKey = stockMapKey;
 
   const _Window_ShopSell_makeItemList = Window_ShopSell.prototype.makeItemList;
   Window_ShopSell.prototype.makeItemList = function () {
@@ -3962,15 +4063,7 @@
     // several can still be trimmed one at a time.
     const pickedQty = cart.get(item) || 0;
     const isPicked = pickedQty > 0;
-    const qtyHTML = isPicked
-      ? `
-                      <div class="sell-qty">
-                          <span class="sell-qty-total ${buying ? 'cost' : ''}">${money(pickedQty * price)} €</span>
-                          <span class="sell-qty-step" data-idx="${idx}" data-mode="${mode}" data-step="-1" title="${esc(T('Shop.qtyStepHint'))}">－</span>
-                          <span class="sell-qty-val">${pickedQty}</span>
-                          <span class="sell-qty-step" data-idx="${idx}" data-mode="${mode}" data-step="1" title="${esc(T('Shop.qtyStepHint'))}">＋</span>
-                      </div>`
-      : "";
+    const qtyHTML = this.cartQtyHTML(idx, buying, price, pickedQty);
 
     return `
               <div class="item-card ${focused ? 'focused' : ''} ${isPicked ? 'selected' : ''}" data-idx="${idx}" data-mode="${mode}" style="border-left: 4px solid ${rarityColor(item)};">
@@ -3985,6 +4078,119 @@
                   </div>
               </div>
             `;
+  };
+
+  // The quantity, subtotal and -/+ steppers a picked line carries, in either
+  // view. Nothing at all for a line that is not on the counter.
+  Scene_Shop.prototype.cartQtyHTML = function (idx, buying, price, pickedQty) {
+    if (!(pickedQty > 0)) return "";
+    const mode = buying ? "buy" : "sell";
+    return `
+                      <div class="sell-qty">
+                          <span class="sell-qty-total ${buying ? 'cost' : ''}">${money(pickedQty * price)} €</span>
+                          <span class="sell-qty-step" data-idx="${idx}" data-mode="${mode}" data-step="-1" title="${esc(T('Shop.qtyStepHint'))}">－</span>
+                          <span class="sell-qty-val">${pickedQty}</span>
+                          <span class="sell-qty-step" data-idx="${idx}" data-mode="${mode}" data-step="1" title="${esc(T('Shop.qtyStepHint'))}">＋</span>
+                      </div>`;
+  };
+
+  // One line as a card of the grid, the equipment bench's own: the rarity
+  // stripe, the icon, the name, and under it the price and, once picked, the
+  // steppers. It keeps the .item-card class, so the clicks, the cursor ring and
+  // the counter mark are the list's own.
+  Scene_Shop.prototype.itemGridCardHTML = function (item, idx, buying, cart, focused) {
+    if (!item) return "";
+    const mode = buying ? "buy" : "sell";
+    const price = this.cartUnitPrice(item, buying);
+    const pickedQty = cart.get(item) || 0;
+    const isPicked = pickedQty > 0;
+    const rarityCls = safe("rarityClass",
+      () => utils.rarityClass(utils.getItemRarity(item)), "rarity--common") || "rarity--common";
+    const owned = buying ? 0 : $gameParty.numItems(item);
+    return `
+              <div class="item-card shop-grid-card ${focused ? 'focused' : ''} ${isPicked ? 'selected' : ''}" data-idx="${idx}" data-mode="${mode}">
+                  <div class="item-rarity-bar ${esc(rarityCls)}"></div>
+                  <div class="shop-grid-card-icon"><div class="item-card-icon" style="${this.getIconStyle(item.iconIndex)}"></div></div>
+                  <div class="shop-grid-card-info">
+                      <div class="shop-grid-card-name-row">
+                          <span class="item-card-name">${esc(itemName(item))}</span>
+                          ${owned > 1 ? `<span class="shop-grid-card-qty">×${owned}</span>` : ''}
+                      </div>
+                      <div class="shop-grid-card-meta">
+                          <span class="item-card-price">${money(price)} €</span>${this.cartQtyHTML(idx, buying, price, pickedQty)}
+                      </div>
+                  </div>
+              </div>
+            `;
+  };
+
+  //=============================================================================
+  // Grid or list
+  //=============================================================================
+  // The shelf opens as a grid of cards, the way the equipment bench lays out
+  // its pieces, with the plain list one press away on the view switch. The
+  // choice is the party's and rides the save, so the next shop opens the way
+  // the last one was left.
+  const SHOP_VIEWS = ["grid", "list"];
+  const SHOP_GRID_COLS = 3;
+
+  Scene_Shop.prototype.shopView = function () {
+    const view = typeof $gameSystem !== "undefined" && $gameSystem ? $gameSystem._shopView : null;
+    return SHOP_VIEWS.includes(view) ? view : "grid";
+  };
+
+  Scene_Shop.prototype.toggleShopView = function () {
+    const next = this.shopView() === "grid" ? "list" : "grid";
+    if (typeof $gameSystem !== "undefined" && $gameSystem) $gameSystem._shopView = next;
+    this.refreshUIShop();
+    return next;
+  };
+
+  // How many cards a grid row holds, read off the page so the cursor walks the
+  // grid the stylesheet actually drew.
+  Scene_Shop.prototype.shopGridColumns = function () {
+    const container = typeof this.shopContainer === "function" ? this.shopContainer() : null;
+    const grid = container && container.querySelector(".shop-grid");
+    const cols = safe("grid columns", () => {
+      if (!grid || typeof getComputedStyle !== "function") return 0;
+      const tpl = String(getComputedStyle(grid).gridTemplateColumns || "").trim();
+      return tpl && tpl !== "none" ? tpl.split(/\s+/).length : 0;
+    }, 0);
+    return cols > 0 ? cols : SHOP_GRID_COLS;
+  };
+
+  // Where one press of a direction lands on the grid, as an index into the
+  // list, or null off its edge. Each category is a grid of its own under its
+  // header, so down off the last row lands in the same column of the next
+  // category and up climbs into the last row of the one above.
+  Scene_Shop.prototype.shopGridStep = function (dir, buying, cols) {
+    const win = buying ? this._buyWindow : this._sellWindow;
+    const data = buying ? this.buyData() : this.sellData();
+    const current = win ? win.index() : -1;
+    const groups = this.shopCategoryGroups(data, buying);
+    const gi = groups.findIndex(g => g.indices.includes(current));
+    if (gi < 0) return null;
+    const C = Math.max(1, cols || this.shopGridColumns());
+    const ids = groups[gi].indices;
+    const p = ids.indexOf(current);
+    const col = p % C;
+    if (dir === "left") return col > 0 ? ids[p - 1] : null;
+    if (dir === "right") return (col < C - 1 && p + 1 < ids.length) ? ids[p + 1] : null;
+    if (dir === "down") {
+      if (p + C < ids.length) return ids[p + C];
+      // A short last row still sits below: drop onto its end.
+      if (Math.floor(p / C) < Math.floor((ids.length - 1) / C)) return ids[ids.length - 1];
+      const next = groups[gi + 1];
+      return next ? next.indices[Math.min(col, next.indices.length - 1)] : null;
+    }
+    if (dir === "up") {
+      if (p - C >= 0) return ids[p - C];
+      const prev = groups[gi - 1];
+      if (!prev) return null;
+      const last = prev.indices.length - 1;
+      return prev.indices[Math.min(Math.floor(last / C) * C + col, last)];
+    }
+    return null;
   };
 
   //=============================================================================

@@ -17,24 +17,14 @@
  * Bust images are loaded from: /img/busts/{bust_name}.png
  *
  * CUSTOM BUST AND BATTLER IMAGES:
- * For normal characters, bust images can be set via variables:
- * - Variable 109: Actor 1 bust image name (e.g., "7")
- * - Variable 117: Actor 2 bust image name
- * - Variable 118: Actor 3 bust image name
- *
- * For monster characters or custom creatures, battler images can be set via variables:
- * - Variable 106: Actor 1 battler image (e.g., "img/enemies/BattlerName")
- * - Variable 107: Actor 2 battler image
- * - Variable 108: Actor 3 battler image
- *
- * Creature mode switches (when ON, use battler images instead of busts):
- * - Switch 77: Actor 1 is creature
- * - Switch 78: Actor 2 is creature
- * - Switch 79: Actor 3 is creature
+ * Every image comes off the actor itself (ActorCharacterFields.js):
+ * - actor.vnBust(): bust image name (e.g., "7")
+ * - actor.vnBattler(): battler image of a monster character or custom creature
+ * - actor._isCreatureActor: when true, the battler image is used instead of a bust
  *
  * LOADING PRIORITY FOR EACH ACTOR:
- * 1. Bust name from Variable (109/117/118)
- * 2. If creature switch (77/78/79) is ON: Battler path from Variable (106/107/108)
+ * 1. The actor's bust name (vnBust)
+ * 2. If the actor is a creature: its battler image (vnBattler)
  * 3. SpritesAssociation bust mapping (from character sprite sheet name)
  * 4. Fallback: default bust "7"
  *
@@ -157,15 +147,15 @@
 
         // Player 1 (Actor 1) special handling
         if (actorId === 1) {
-            // Priority 1: Check Variable 109 (Player 1 bust name)
+            // Priority 1: the actor's own bust (vnBust)
             const player1BustName = $gameActors.actor(1).vnBust();
             if (player1BustName && player1BustName !== "") {
                 const resolved = window.BustPath.resolve(player1BustName);
                 if (resolved) return `img/busts/${resolved}`;
             }
 
-            // Priority 2: If Switch 77 is ON, use Variable 106 for monster form
-            if ($gameSwitches.value(77)) {
+            // Priority 2: a creature actor shows its monster form
+            if ($gameActors.actor(1)._isCreatureActor) {
                 const player1MonsterName = $gameActors.actor(1).vnBattler();
                 if (player1MonsterName && player1MonsterName !== "") {
                     const resolved = resolveCreatureImagePath(player1MonsterName);
@@ -189,15 +179,15 @@
 
         // Player 2 (Actor 2) special handling
         if (actorId === 2) {
-            // Priority 1: Check Variable 117 (Player 2 bust name)
+            // Priority 1: the actor's own bust (vnBust)
             const player2BustName = $gameActors.actor(2).vnBust();
             if (player2BustName && player2BustName !== "") {
                 const resolved = window.BustPath.resolve(player2BustName);
                 if (resolved) return `img/busts/${resolved}`;
             }
 
-            // Priority 2: If Switch 78 is ON, use Variable 107 for monster form
-            if ($gameSwitches.value(78)) {
+            // Priority 2: a creature actor shows its monster form
+            if ($gameActors.actor(2)._isCreatureActor) {
                 const player2MonsterName = $gameActors.actor(2).vnBattler();
                 if (player2MonsterName && player2MonsterName !== "") {
                     const resolved = resolveCreatureImagePath(player2MonsterName);
@@ -221,15 +211,15 @@
 
         // Player 3 (Actor 3) special handling
         if (actorId === 3) {
-            // Priority 1: Check Variable 118 (Player 3 bust name)
+            // Priority 1: the actor's own bust (vnBust)
             const player3BustName = $gameActors.actor(3).vnBust();
             if (player3BustName && player3BustName !== "") {
                 const resolved = window.BustPath.resolve(player3BustName);
                 if (resolved) return `img/busts/${resolved}`;
             }
 
-            // Priority 2: If Switch 79 is ON, use Variable 108 for monster form
-            if ($gameSwitches.value(79)) {
+            // Priority 2: a creature actor shows its monster form
+            if ($gameActors.actor(3)._isCreatureActor) {
                 const player3MonsterName = $gameActors.actor(3).vnBattler();
                 if (player3MonsterName && player3MonsterName !== "") {
                     const resolved = resolveCreatureImagePath(player3MonsterName);

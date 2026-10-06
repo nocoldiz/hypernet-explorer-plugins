@@ -58,6 +58,7 @@
     "pouchFull": "Non c'è più posto per quello che esce dalla roccia.",
     "barFull": "La barra rapida è piena. Costruisci prima qualcosa con ciò che c'è sopra.",
     "noBlock": "Non hai niente in mano con cui costruire.",
+    "noDigFight": "Non durante uno scontro. Il terreno resta dov'è.",
     "bareHands": "Mani nude"
   },
   "hud": {

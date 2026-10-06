@@ -652,6 +652,21 @@
     // or null when the event is currently showing its own defined identity.
     getShopShiftData(evName, mapId, evId) { return ShopShiftManager.getActivePersona(mapId, evId); },
 
+    // A rota keeper recruited off their counter: the shift stands unattended
+    // for the rest of the day and is staffed afresh the next (see
+    // ShopShiftManager.vacate). Answers the departed keeper's name.
+    vacateShopShift(mapId, evId) { return ShopShiftManager.vacate(mapId, evId); },
+    isShopShiftVacant(mapId, evId) { return ShopShiftManager.isVacant(mapId, evId); },
+
+    // What the keeper behind this counter thinks of the party, and what it is
+    // worth at the till: { name, opinion, discount } or null.
+    shopKeeperDisposition(mapId, evId) { return ShopShiftManager.keeperDisposition(mapId, evId); },
+    // A purchase at this counter warms its keeper to every party member.
+    noteShopPurchase(mapId, evId, gold) { return ShopShiftManager.noteKeeperSale(mapId, evId, gold); },
+    // The recruit whose till stands empty today, and what lifting off it costs.
+    shopVacatedBy(mapId, evId) { return ShopShiftManager.vacatedBy(mapId, evId); },
+    noteVacantTheft(mapId, evId, gold) { return ShopShiftManager.noteVacantTheft(mapId, evId, gold); },
+
     // The name of the person actually standing at this event right now. A
     // <Shop> counter is manned in shifts, so its event name ("Shop", "Bar",
     // ...) is the name of the fixture and not of anybody; whoever is covering

@@ -58,6 +58,7 @@
     "pouchFull": "No room left for what came out of the rock.",
     "barFull": "The quick bar is full. Build something with what is on it first.",
     "noBlock": "Nothing in hand to build with.",
+    "noDigFight": "Not in a fight. The ground stays where it is.",
     "bareHands": "Bare hands"
   },
   "hud": {

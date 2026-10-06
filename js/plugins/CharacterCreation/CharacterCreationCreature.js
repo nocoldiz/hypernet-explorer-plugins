@@ -2533,22 +2533,11 @@
       }
     }
 
-    // Set reproduction variable based on actor ID
-    if ($gameVariables) {
-      var reproductionValue = archetype.reproduction !== undefined ? archetype.reproduction : 0;
-      var actorId = actor.actorId();
-      // The reproduction type lives on the actor now, so it travels with the
-      // character and every party member has one, not just the first three.
-      // The old variables are still written because one event page branches on
-      // them, but nothing in the plugins reads them any more.
+    // The reproduction type lives on the actor, so it travels with the
+    // character and every party member has one, not just the first three.
+    {
+      const reproductionValue = archetype.reproduction !== undefined ? archetype.reproduction : 0;
       if (actor.setReproductionType) actor.setReproductionType(reproductionValue);
-      if (actorId === 1) {
-        $gameVariables.setValue(87, reproductionValue);
-      } else if (actorId === 2) {
-        $gameVariables.setValue(115, reproductionValue);
-      } else if (actorId === 3) {
-        $gameVariables.setValue(116, reproductionValue);
-      }
     }
 
     // Clear all learned skills and add archetype's base skills
@@ -2658,22 +2647,11 @@
     // Use Arch 2 (dominant) for reproduction
     const dominantArchetype = arch2;
 
-    // Set reproduction variable based on actor ID
-    if ($gameVariables) {
-      var reproductionValue = dominantArchetype.reproduction !== undefined ? dominantArchetype.reproduction : 0;
-      var actorId = actor.actorId();
-      // The reproduction type lives on the actor now, so it travels with the
-      // character and every party member has one, not just the first three.
-      // The old variables are still written because one event page branches on
-      // them, but nothing in the plugins reads them any more.
+    // The reproduction type lives on the actor, so it travels with the
+    // character and every party member has one, not just the first three.
+    {
+      const reproductionValue = dominantArchetype.reproduction !== undefined ? dominantArchetype.reproduction : 0;
       if (actor.setReproductionType) actor.setReproductionType(reproductionValue);
-      if (actorId === 1) {
-        $gameVariables.setValue(87, reproductionValue);
-      } else if (actorId === 2) {
-        $gameVariables.setValue(115, reproductionValue);
-      } else if (actorId === 3) {
-        $gameVariables.setValue(116, reproductionValue);
-      }
     }
 
     // Refresh actor parameters

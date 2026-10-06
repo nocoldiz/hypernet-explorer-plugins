@@ -37,7 +37,7 @@ BY THE REVD. C. VEREY
 
 "Receiving in themselves that recompense of their error which was meet."
 
-So wrote the great apostle nearly two thousand years ago; and surely in these latter days, when Satan seems visibly loosed upon earth, the words have a special and dreadful significance even for us who—thanks be to God for His unspeakable mercy!—are washed in the blood of the Lamb and freed from the chains of death—and of hell.
+So wrote the great apostle nearly two thousand years ago; and surely in these latter days, when Satan seems visibly loosed upon earth, the words have a special and dreadful significance even for us who - thanks be to God for His unspeakable mercy! - are washed in the blood of the Lamb and freed from the chains of death - and of hell.
 
 Surely this terrible history is a true Sign of the Times. We walk in the last days, and all the abominations spoken of by the apostle are freely practised in our midst. Nay! they are even the boast and the defence of that spectre of evil, Socialism.
 
@@ -49,7 +49,7 @@ For the former, death; for the latter, the death-in-life of a frightful, loathso
 
 It may seem almost incredible to many of us, perhaps safely established in our comfortable cures, among a simple and Godfearing people, that any man should have been found to pen the disgusting blasphemies, the revolting obscenities, which defile these pages.
 
-Nor can it be denied that a certain power of expression, even at times a certain felicity of phrasing—always, indeed, a profound dramatic feeling—is to be found in these poems. Alas! that we should be compelled to write the words! That an art essentially spiritual, an art dignified by the great names of Gascoigne Mackie, Christina Rossetti, Alfred Tennyson, George Herbert, should here be prostituted to such "ignoble use". Truly the corruption of the best is the lowest—corruptio optimi pessima. Nor can one gleam of Hope, even in the infinite mercy of our loving Father, tinge with gold the leprous gloom of our outlook.
+Nor can it be denied that a certain power of expression, even at times a certain felicity of phrasing - always, indeed, a profound dramatic feeling - is to be found in these poems. Alas! that we should be compelled to write the words! That an art essentially spiritual, an art dignified by the great names of Gascoigne Mackie, Christina Rossetti, Alfred Tennyson, George Herbert, should here be prostituted to such "ignoble use". Truly the corruption of the best is the lowest - corruptio optimi pessima. Nor can one gleam of Hope, even in the infinite mercy of our loving Father, tinge with gold the leprous gloom of our outlook.
 
 These clouds without water have no silver lining.
 
@@ -61,7 +61,7 @@ Where is now that spotted soul? There is but one appalling answer to the questio
 
 Not even in that modern evasion, the plea of insanity, can we find any hope. Nothing is clearer than that these wretched victims of Satan were in full possession of their faculties to the last moment.
 
-Surely the maniacal violence of their unhallowed lust and hate is no ground for pity but for reprobation. When our blessed Lord was on earth He made no excuses for those who were possessed of devils. He took this simply as a fact—and He healed them.
+Surely the maniacal violence of their unhallowed lust and hate is no ground for pity but for reprobation. When our blessed Lord was on earth He made no excuses for those who were possessed of devils. He took this simply as a fact - and He healed them.
 
 It is only the shocking atheism and materialism or modern science that, in an insane endeavour to whittle away the miracles of our blessed Saviour, has sought to include "possession" in the category of disease.
 
@@ -71,9 +71,9 @@ The facts of this shocking case are familiar enough in the drawing-rooms of the 
 
 Both the characters in the story were persons of considerable education and position.
 
-On this account, and because a statement of the truth (however guarded) would have compromised persons of high rank, and was in any case too disgusting to publish in the press, the tragedy has not—one is glad to say in these days of yellow prurience—become matter for public comment.
+On this account, and because a statement of the truth (however guarded) would have compromised persons of high rank, and was in any case too disgusting to publish in the press, the tragedy has not - one is glad to say in these days of yellow prurience - become matter for public comment.
 
-But the wife of the man, driven to drink and prostitution by the inhuman cruelty of his mistress—this modern worse than Lucrezia Borgia or Mdme de Brinvilliers—and the fiancé of the girl betrayed and ruined by her machinations, still haunt the purlieus of the Strand, the one an unfortunate of the lowest order, the other a loafer and parasite upon the ghouls that traffic in human flesh and shame.
+But the wife of the man, driven to drink and prostitution by the inhuman cruelty of his mistress - this modern worse than Lucrezia Borgia or Mdme de Brinvilliers - and the fiancé of the girl betrayed and ruined by her machinations, still haunt the purlieus of the Strand, the one an unfortunate of the lowest order, the other a loafer and parasite upon the ghouls that traffic in human flesh and shame.
 
 Thus we see evil reproducing itself, spreading like an incurable cancer throughout society from one germ of infidelity and unhallowed lust.
 
@@ -83,11 +83,11 @@ Unblushing, the old Serpent rears its crest to the sky; unashamed, the Beast and
 
 Surely the cup of their abominations is nigh full!
 
-Surely we who await the Advent of our blessed Lord are emboldened to trust that this frenzy of wickedness is a sure sign of the last days; that He will shortly come—whose fan is in His hand, wherewith He shall throughly purge His floor—and take us His saints—however failing and humble we may be—to be with Him in His glory for ever and ever, while those who have rejected Himburn in eternal torment, with wailing and gnashing of teeth, in that Lake of Fire and Brimstone from which—thank God! He in His infinite mercy hath delivered us.
+Surely we who await the Advent of our blessed Lord are emboldened to trust that this frenzy of wickedness is a sure sign of the last days; that He will shortly come - whose fan is in His hand, wherewith He shall throughly purge His floor - and take us His saints - however failing and humble we may be - to be with Him in His glory for ever and ever, while those who have rejected Himburn in eternal torment, with wailing and gnashing of teeth, in that Lake of Fire and Brimstone from which - thank God! He in His infinite mercy hath delivered us.
 
 But until that happy day we are bound to work on silently and strenuously in His service.
 
-May the perusal of these atrocious words enlighten us as to the very present influence of Satan in this world—naked and unashamed,
+May the perusal of these atrocious words enlighten us as to the very present influence of Satan in this world - naked and unashamed,
 
 May it show us the full horror of the Enemy with whom we are bound to fight; may it reveal his dispositions, so that under our great Captain we may again and again win the Victory.
 
@@ -148,7 +148,7 @@ V
 Vous qui vous dressez sur l'abîme de l'enfer,
 Vous dont les plumes gravissent le haut des cieux,
 A moi la bouche d'or, à moi le v.. de fer!
-A l'âme, au corps! je suis la déesse des dieux—
+A l'âme, au corps! je suis la déesse des dieux - 
 Et je me dresse sur l'abîme de l'enfer.
 
 A Quean of the Quality
@@ -169,14 +169,14 @@ King of myself, I labour to espouse
 An equal soul. Alas! how frail I find
 The golden light within the gilded house.
 Helpless and passionate, and weak of mind!
-Lechers and lepers!—all as ivy cling,
+Lechers and lepers! - all as ivy cling,
 Emasculate the healthy bole they haunt.
 Eternity is pregnant; I shall sing
-Now—by my power—a spirit grave and gaunt
+Now - by my power - a spirit grave and gaunt
 Brilliant and selfish, hard and hot, to flaunt
 Reared like a flame across the lampless west,
 Until by love or laughter we enchaunt,
-Compel ye to Kithairon's thorny crest—
+Compel ye to Kithairon's thorny crest - 
 Evoe! Iacche! consummatum est.
 
 The Initiation
@@ -213,25 +213,25 @@ So that the heart of heaven breaks and bleeds.
 That poisoned shaft fed with corrupting germs
 Hath stricken us to earth: the wound corrodes,
 Breeding within us all its noisome worms,
-All the black larvae of the accurst abodes:—
+All the black larvae of the accurst abodes: - 
 The virgin of our reed-shrill ecstasies
 Raped by the stinking satyr of disease!
 
 III
 
-I who have loved you—shall I love you now,
+I who have loved you - shall I love you now,
 Your teeth dropt out, your fair flesh fallen away,
 The Crown of Venus on you itching brow,
 The coppery flush, the leprous scurf of grey?
 The god that rots the líving flesh of man
-Fills up your mouth—one ulcer—with his groans
+Fills up your mouth - one ulcer - with his groans
 And all our blessings choke and turn to ban
 The beast that gnaws the marrow of our bones.
 Caught in corrupt caresses of disease,
 Shall we dispute us with his fervour, fain
 To woo with sores your turbid arteries
 And kiss black ulcers in your spotted brain?
-We married close, my Lola, with a kiss:—
+We married close, my Lola, with a kiss: - 
 Now for the lifelong lover, Syphilis!
 
 IV
@@ -242,14 +242,14 @@ There's more than life in this brave universe.
 Death cannot touch the secret of the soul!
 Nor shall we shrink, although this further pang
 Strike through the liver with its fiery dart,
-The hope—the horrid hope—whose gleaming fang
+The hope - the horrid hope - whose gleaming fang
 Now stirs, a serpent's, underneath your heart!
 For lo! not vainly we invoked the god
 That looseneth the girdle of a maid;
 Even now draws nigh the dreadful period
 That maketh all the mother-world afraid.
 With rotten fruit your belly is grown big
-—Thanks to the bastard god that cursed the fig!
+ - Thanks to the bastard god that cursed the fig!
 
 V
 
@@ -262,9 +262,9 @@ Some Minotaur of shame, no egg of pride
 To hatch the miniature of love and spring
 In your own image, subtly glorified.
 White swan you were! not Zeus but Cerberus
-Hath ravished you; you brood on harpy eggs—
+Hath ravished you; you brood on harpy eggs - 
 Sweet sister! is the wine too sour for us?
-We have drunk deep—nay! nay! but to the dregs!
+We have drunk deep - nay! nay! but to the dregs!
 And all their bitterness is braver brew
 Than the dull syrup of the pious crew.
 
@@ -283,7 +283,7 @@ They ache and strain within the water-closet
 Of church and State, their shocked bleat of offence:
 "This poet's life was such a failure". Was it?
 Fools! our worst boredom was a loftier thrill
-Than all you ever felt—or ever will.
+Than all you ever felt - or ever will.
 
 VII
 
@@ -312,12 +312,12 @@ Of snuffle and twang? May not their stinking souls
 Interpret our last sighs as penitence
 When we close up the coruscating scrolls
 Of our life's joy, seal up the jar of sense
-To broach the starry flagon—splendid spilth?
+To broach the starry flagon - splendid spilth?
 These creeping cravens shall be circumvented;
 They shall not belch their flatulence and filth
 On us, or tell the world that we repented.
 Come, as we strained it, let us break the tether
-In the last luxury—to die together!
+In the last luxury - to die together!
 
 IX
 
@@ -333,7 +333,7 @@ We must be well. The cypress cannot daunt,
 Nor the acacia thrill; we are content
 To wander in the shadowy groves, to haunt
 The dark delight of our own element;
-Or—could we send a messenger—to tell
+Or - could we send a messenger - to tell
 Our brothers of the happiness of Hell!
 
 X
@@ -385,7 +385,7 @@ O the enchauntment of this dreamy god,
 My mystic sister, my mellific spouse,
 Tht shepherds us with his hermetic rod
 Into the flowery folds of love and sleep
-Where we have strayed—O never yet so deep!
+Where we have strayed - O never yet so deep!
 
 XIII
 
@@ -402,24 +402,24 @@ Our symbols are but shadows in the sun;
 Love's self springs from the shadow of the kiss;
 Our bliss! O, that was hardly half begun!
 We fight the Fate as we have fought the foemen.
-The poison takes us.—Χαίρετε νικῶμεν.
+The poison takes us. - Χαίρετε νικῶμεν.
 
 XIV
 
 Farewell! O passionate world of changeful hours!
 Come, Lola, let us sleep! Elysian groves
 Await us and the beatific bowers
-Where Love is ours at last—as we were Love's.
+Where Love is ours at last - as we were Love's.
 Come, with our mouths still kissing, with our limbs
 Still twined, relax the ecstasy! pass by
 To the abyss of night where no star swims!
 On to the end beyond the prophecy!
-Ah Lola mine! "No happy end is this"—
-I love you—ah! you love me—you love me!
+Ah Lola mine! "No happy end is this" - 
+I love you - ah! you love me - you love me!
 For we have passed beyond imagined bliss
 Into the kingdom of reality,
-Where we are crowned with flowers—yet closer creep!
-Sleep, Lola, now! I love you—sleep—ah, sleep!
+Where we are crowned with flowers - yet closer creep!
+Sleep, Lola, now! I love you - sleep - ah, sleep!
 
 The Alchemist
 
@@ -430,16 +430,16 @@ The Alchemist
 Love is sore wounded by the dragon shame,
 O maiden o' mine! its life in jets of blood
 Languidly ebbs. I see the gathering flame
-Aspire—expire. I see the evil flood
+Aspire - expire. I see the evil flood
 Of time roll even and steady over it,
 Bearing our God to the accurst ravines;
 Bearing our God to the abysmal pit
 Whence never a God may rise. The wolfish queens
 Of earth have set their fates stern and sour
-Against us; we are bidden to cease—to cease!
+Against us; we are bidden to cease - to cease!
 Ha! how eternity laughs down their hour,
 Dragoons their malice with its dominant peace.
-We are forbidden to love—as one who tries
+We are forbidden to love - as one who tries
 At noontide to forbid the sun to rise.
 
 II
@@ -497,7 +497,7 @@ V
 
 Maiden. Believe me, mystic maiden o' mine,
 That title shall assure the throne of heaven
-To you—the more so that your love divine
+To you - the more so that your love divine
 That maidenhood to me hath freely given?
 Nor have I touched the ark with hands unholy,
 Nor with unsaintly kisses soiled the shrine:
@@ -519,8 +519,8 @@ Bitter and flat, foul, stagnant and abhorred
 Should one compare it with the tiniest tithe
 Of one soft glance your eyes on me might shed,
 One gesture of your body limber and lithe,
-One smile—the sudden white, the abiding red!
-Then—should one slander you in idiot verse
+One smile - the sudden white, the abiding red!
+Then - should one slander you in idiot verse
 By speaking of the subtle seven-fold sweetness
 Your lips can answer me, all fate to amerce
 In one mad kiss in all its mad completeness?
@@ -570,30 +570,30 @@ Unto the deeds that win the world or lose.
 One drop of this raised Attis from the dead;
 One drop of this, and slain Osiris stirs;
 One drop of this; before young Horus fled
-Thine hosts, Typhon!—this wine is mine and hers
+Thine hosts, Typhon! - this wine is mine and hers
 Ye Gods that gave it! not in trickling gouts,
 But from the very fountain whence 'tis drawn
 Gushing in crystal jets and ruby spouts
 From the authentic throne and shrine of dawn.
-Drink it? Ay, so! and bathe therein—and swim
+Drink it? Ay, so! and bathe therein - and swim
 Out to the wide world's everlasting rim!
 
 X
 
 To drink one drop thereof is to be drunk.
 The firm feet stagger, and the world spins round;
-The fair speech stammers—nature's God hath sunk
+The fair speech stammers - nature's God hath sunk
 Into some trivial place of the profound.
 But he who is drunk thereon is wholly sane,
 Being wholly mad; he moves with space-wide wings
-Sees not a world—engulphed in the inane!
+Sees not a world - engulphed in the inane!
 Nor needs a voice for speech, because he sings.
 What then of them who are most drunk together
 As you and I are, mystic maiden o' mine,
 Beyond Dionysus and his tedious tether,
 Beyond Kithairon and his topmost pine?
 Why, even now I am drunk who scribble amiss
-These lines, not thinking—save of your last kiss!
+These lines, not thinking - save of your last kiss!
 
 XI
 
@@ -603,13 +603,13 @@ Till Lola! Lola! Lola! Lola! reels
 The world in a dance of woven white and black
 Shimmering with clear gold greys as hell resounds
 With Lola! Lola! Lola! and heaven responds
-With Lola! Lola! Lola! Lola!—swounds
+With Lola! Lola! Lola! Lola! - swounds
 All light to clustered dazzling diamonds,
 And Lola! Lola! Lola! Lola! rings
 Ever and again on these inchaunted ears,
 And Lola! Lola! Lola! Lola! swings
 My soul across to those inchaunted spheres
-Where Lola is God and priest and wafer and wine—
+Where Lola is God and priest and wafer and wine - 
 O Lola! Lola! mystic maiden o' mine!
 
 XII
@@ -625,7 +625,7 @@ Such as men fling and women paste, no odds.
 Moreover, by the subtle and austere
 Vintage we drain, albeit we drain the less,
 There is no headache for the morning drear,
-No fluctuant in our tideless ecstasies—
+No fluctuant in our tideless ecstasies - 
 Whereby, o maiden o' mine, the runic rime
 Tells me we have ree'd the riddle of old Time.
 
@@ -654,12 +654,12 @@ For though you be afar, my Lola, yet
 You have been with me, whispering to me.
 I bow my head to write, and on the nape
 O' th' neck I feel you lips. I raise my head
-To dream—you mouth achieves its luscious rape—
-I fall back—you are on me—I am dead.
+To dream - you mouth achieves its luscious rape - 
+I fall back - you are on me - I am dead.
 Could it be better? For I surely know
 That you will follow me adown the deep
 When I lay pen and paper by, and go
-Into the ardent avenues of sleep:—
+Into the ardent avenues of sleep: - 
 There also we will drink the appeasing wine,
 Lola, my Lola, mystic maiden o' mine!
 
@@ -682,7 +682,7 @@ That I have figured in this brain of mine.
 The sails of this life's argosy are furled;
 The anchor drops in those abodes divine.
 Master of self and God, freewill and Fate.
-I am alone—at last—to meditate.
+I am alone - at last - to meditate.
 
 II
 
@@ -698,7 +698,7 @@ They reach me not; I made a monstrous crowd,
 Innumerable monuments of thought,
 But none is equal; this high head is bowed
 In vain to the wise God it would have wrought,
-Had not—Who sitteth on the Holy Throne
+Had not - Who sitteth on the Holy Throne
 Thereby must make himself to be alone.
 
 III
@@ -715,7 +715,7 @@ I were a maniac did I contemplate
 The outward glory and the inward terror,
 Sick with the hideous light myself create
 From the dark certainty of gloom and error.
-For I am that I am—behold! this 'I'
+For I am that I am - behold! this 'I'
 Hath nothing constant it may measure by.
 
 IV
@@ -763,10 +763,10 @@ Shrivel and waste to ashes as men gaze:
 So doth the world grow giddy at the brink
 Of these unfathomable eyes, that blaze
 Swifter and deadlier than storms or snakes.
-Then—o what wonder, as I strain afar
-The basilisk flame!—what breathless wonder wakes
+Then - o what wonder, as I strain afar
+The basilisk flame! - what breathless wonder wakes
 That I behold unsinged a silver star!
-O joy! O terror! O!—O can it be
+O joy! O terror! O! - O can it be
 There is a thing that is, apart from me?
 
 VII
@@ -848,7 +848,7 @@ That contradicts the curse "Let Being be!"
 Since all things, even one thing, are absurd;
 And no thing is the utmost ecstasy.
 Kisses induct the soft and solemn tune
-That Israfel shall blow on Doomisday—
+That Israfel shall blow on Doomisday - 
 Your silky eyes are blue as that pale moon
 (For ere it dies it sickens into grey)
 That witches see, whose eager violence
@@ -902,7 +902,7 @@ Born in the utmost world where we in truth
 Abide like Bacchus with a Bassarid
 Drunk with our art, love, beauty, force and youth;
 But place that head upon a pyramid
-Of snaky lightnings, lest—but that shall be
+Of snaky lightnings, lest - but that shall be
 Always a secret between you and me.
 
 XV
@@ -919,7 +919,7 @@ The whole content of our imagining, [shall throng
 The great arcanum in the adytum hid
 From men, and though we varve or kiss or sing,
 The Sphinx is dumb, and blind the Pyramid.
-—Now our affairs are ordered perfectly.
+ - Now our affairs are ordered perfectly.
 Give me your mouth, your mouth, and let us die!
 
 The Augur
@@ -930,7 +930,7 @@ The Augur
 
 Look! Look! upon the tripod through the smoke
 Of slain things kindled, and fine frankincense.
-Look—deep beyond the phantoms these evoke
+Look - deep beyond the phantoms these evoke
 Are sightless halls where spirit stifles sense.
 There do I open the old book of Fate
 Wherein They pictured my delight and me
@@ -939,7 +939,7 @@ And leaping with the laughter of ecstacy.
 Mine eyes grow aged with that hieroglyph
 Of doom that I have sought: the fatal end.
 That which is written is written, even if
-Great Zeus himself—great Zeus!—were to befriend.
+Great Zeus himself - great Zeus! - were to befriend.
 Even in the spring of the first floral kiss:
 "No happy end the gods have given for this".
 
@@ -970,12 +970,12 @@ For in the little coppice by the gate
 Wherein I drew you shy and sly, and kised
 Your lips, your hushed "I love you" smooth and straight
 Sweeping to wrap us in the glittering mist
-Of hell that holds us—even there I heard
+Of hell that holds us - even there I heard
 The lacerating laugh of fate ring out,
 The dog-faced god pronounce the mantic word,
 And saw the avengers gather round about
 Our love. The Mairae neither break nor bend;
-The Erinyes hunt us to—no happy end.
+The Erinyes hunt us to - no happy end.
 
 IV
 
@@ -1001,15 +1001,15 @@ We see the cool mild splendour of the dawn
 Damned by some tragic throw of murderous dice
 To slash like lightning over lea and lawn
 Jagged and horrible across the curtain
-Of heaven, writing ruin, ruin—we see
+Of heaven, writing ruin, ruin - we see
 Our certain joy marred with a doubly certain
-Soul-shattering anguish.—Bah! To you and me
+Soul-shattering anguish. - Bah! To you and me
 Such loathing, such despair are little things.
-We are afloat on the flood-tide of lust—
+We are afloat on the flood-tide of lust - 
 A lust more spiritual than life, that stings
 Till death and hell dissolve i' the aftergust.
 So? But the Gods avert their faces, bend
-Their holy brows, and see—no happy end.
+Their holy brows, and see - no happy end.
 
 VI
 
@@ -1025,7 +1025,7 @@ O! pallid triumph! empty victory!
 When we sit smiling on the infernal thrones
 Starred with our utmost gems of infamy,
 Builded with tears, and cushioned with the groans
-Of these the victims of our joys immense—
+Of these the victims of our joys immense - 
 Child! I aspire to that bad eminence!
 
 VII
@@ -1094,7 +1094,7 @@ Of night awake and revel in our revel,
 While in us rage the devastating storms
 Whose dam is Luxury and their sire the devil...
 It is well seen, however things intend,
-The Gods have given for this—no happy end.
+The Gods have given for this - no happy end.
 
 XI
 
@@ -1151,9 +1151,9 @@ XIV
 
 Behold! I have said. The destiny obscure
 Of this our deed obscure we shall not skry.
-We know "no happy end!"—but we endure,
+We know "no happy end!" - but we endure,
 Abiding as the Pole Star in the sky.
-You mix your life in mine—then soul in soul
+You mix your life in mine - then soul in soul
 We shoot forth, meteors, travelling on and on
 Far beyond Space to some dark-glimmering goal
 Where never a sun or star hath risen or shone;
@@ -1162,7 +1162,7 @@ Beyond space, beyond thought, supreme in deathless pang:
 Nor shall a sound invade that hall of crime.
 Only the champing of the insatiate fang
 Of the undying worm our love, fast wed
-Unto—no happy end. Behold! I have said.
+Unto - no happy end. Behold! I have said.
 
 The Thaumaturge
 
@@ -1213,7 +1213,7 @@ About the highest heavens for many an age!
 So Regent's Park may seem to hot desire;
 So the archangel gets a cabman's wage;
 So all the aeons that pass still leave one time
-To take one's lunch at the appointed hour—
+To take one's lunch at the appointed hour - 
 This is the difference between prose and rime
 And this the great gulf fixed for leaf and flower.
 The British public grunts and growls and grovels,
@@ -1232,7 +1232,7 @@ Agreed with us entirely. Love impresses
 Its seal upon the world; is skilled to wake
 The sympathy of everything that lives.
 Kindliness flows, not venom, from the snake;
-The trodden worm dies duly—but forgives.
+The trodden worm dies duly - but forgives.
 The cabman asked four shillings for the job,
 And almost boggled at my glad ten bob!
 
@@ -1262,12 +1262,12 @@ With their own kisses all this happy day.
 Nay, but blaspheming you put hope aside,
 Bade me forget you, swore yourself a liar,
 Smiled through the words because you knew you lied,
-Knew that—what waters can put out our fire?
+Knew that - what waters can put out our fire?
 So we amused ourselves with cunning brisk
 Careful arrangements to forget each other.
 You cut that love-curl from your neck at risk
-Of comment—at the slightest—from your mother.
-You gave it me—God forget me, dear girl,
+Of comment - at the slightest - from your mother.
+You gave it me - God forget me, dear girl,
 When I forget to treasure up that curl!
 
 VII
@@ -1282,7 +1282,7 @@ Flecked with red fire is like a potion mixed
 Straight out of Lethe, or divination lies.
 If there be truth in augury, your lips
 Fastened to mine should be a certain spell
-To put your memory of me in eclipse:—
+To put your memory of me in eclipse: - 
 In short, if all be true that sages tell,
 Two days of absence with roast beef and beer
 Will cure me of you perfectly, my dear!
@@ -1314,7 +1314,7 @@ Or even for wisdom, lest one day you find
 That you are saddened with some thousand grooms
 (You bear the case of Solomon in mind!)
 All in frock-coats and helmeted (with plumes)
-—A scarcely pleasant prospect! Just give thanks
+ - A scarcely pleasant prospect! Just give thanks
 O Lord, for what we have received, Amen!
 And then if Jordan overflows his banks,
 Our vines increase, and one seed turns to ten,
@@ -1330,7 +1330,7 @@ Now, even now, there would not be another
 In all the earth that should not envy aright
 With plenty cause our short-lived happiness.
 No life can hold one half-an-hour's delight
-Such as we had—this morning! Why then, bless,
+Such as we had - this morning! Why then, bless,
 Bless all that lives and moves and hath its being!
 Bless all the Gods, without omitting one!
 Bless all the company of heaven, agreeing
@@ -1346,14 +1346,14 @@ Chance is another word for ignorance;
 We do not know how all these things are done.
 But what has happened once may happen again,
 And "Hitherto the Lord hath helped us", dear!
-"History repeats itself"—which makes it plain
+"History repeats itself" - which makes it plain
 That "Evermore the Lord will help us." Fear
 And sorrow are folly; you must sleep o' nights
 (Try reading me!) and I can promise you
 You will awake to more divine delights
 Than ever in the world you guessed or knew.
 Stick to it! One fine day you'll find on waking
-Me in your arms, and—oh! your body aching!
+Me in your arms, and - oh! your body aching!
 
 XII
 
@@ -1362,7 +1362,7 @@ Not passing range of human calculation.
 A woman gets exactly what she will
 If she keeps willing it sans divagation.
 To have me secretly and altogether
-Yours is your will—unless your kisses lied.
+Yours is your will - unless your kisses lied.
 Sooner or later we shall slip the tether
 And all the world before us deep and wide
 Gape like the abyss, through which we fall to find
@@ -1403,7 +1403,7 @@ Thus do I hold you; thus I pray you hold
 Me as a secret and a blessed chrism
 That you have gained to adorn your house of gold
 By some strange silent sacred exorcism.
-You have said 'I love you'—sacraments are true—
+You have said 'I love you' - sacraments are true - 
 I exchange the salutation. I love you
 
 The Hermit
@@ -1420,12 +1420,12 @@ Beats as if tired of life, as I am tired
 Who all these days have never seen your face,
 Nor touched the body that my soul desired,
 Nor have inhaled the perfume of the place
-That you make sweet—black dogs of doubt and fear
+That you make sweet - black dogs of doubt and fear
 Howl at my heels while care plies whip and spur,
 Driving me down to the dull damned dead sphere
 Where is no sight or sounds or scent of Her
 Our Lady Dian, but where hag and witch
-Hecat bestrides her broom—the bestial bitch!
+Hecat bestrides her broom - the bestial bitch!
 
 II
 
@@ -1441,8 +1441,8 @@ When they would peer into beatitude.
 I am barred from the incalculable bliss,
 The unutterable chrism, the soul's food,
 Of you, your gaze, your word, your touch, your kiss
-O Gods, Fates, Fiends—whoever plays the Pope!
-Lift up your curse—leave me not without hope!
+O Gods, Fates, Fiends - whoever plays the Pope!
+Lift up your curse - leave me not without hope!
 
 III
 
@@ -1458,8 +1458,8 @@ Its sterile death across my soul, and chills
 All hope of life even from the rare sad seeds
 It blows from sunnier values and happier hills,
 Though at the best they be but worthless weeds.
-I stand—I scan the infinite horizon
-Of hopeless hope—yet I must travel on.
+I stand - I scan the infinite horizon
+Of hopeless hope - yet I must travel on.
 
 IV
 
@@ -1468,7 +1468,7 @@ Barred by the bleak ice of society
 From even the lover's glance, the lover's greeting.
 The intonation that means ecstasy!)
 One ray of saddest gladness lit the dusk:
-This—that I saw you pale and suffering,
+This - that I saw you pale and suffering,
 A goddess armed with myrrh instead of musk,
 With lips too cold to pray, too dry to sing.
 For by that sigh I knew the adorable
@@ -1489,7 +1489,7 @@ And woke the senseless necessary laughter,
 The senseless necessary reply to it,
 The long sad silly commonplace thereafter.
 Suppose we had risen, as quick as thought, and stood
-And caught and kissed—what could the storm have done
+And caught and kissed - what could the storm have done
 Worse than this sickening fog of solitude?
 Who can do worse than take away the sun?
 They better had take care, I think. One day
@@ -1537,12 +1537,12 @@ Fair as it seemed, becomes a hideous den,
 And all life's promises of little worth.
 Like to a mother whose one child is dead
 I wander, aching for the sight, the sound,
-The touch—familiar, now inhibited.
-The child is under ground—is under ground—
-The child is under ground—who comforts her?
+The touch - familiar, now inhibited.
+The child is under ground - is under ground - 
+The child is under ground - who comforts her?
 The bastard fool her priest? The useless clod
 Her husband? The accursed murderer
-Her God?—if so be that she hath a God.
+Her God? - if so be that she hath a God.
 Foul curses from my life's envenomed flood
 Break in a vomit of black foam and blood.
 
@@ -1552,8 +1552,8 @@ As one entranced by dint of cannabis,
 Whose sense of time is changed past recognition,
 Whether he suffer woe or taste of bliss,
 He loses both his reason and volition.
-He says one word—what countless ages pass!
-He walks across the room—a voyage as far
+He says one word - what countless ages pass!
+He walks across the room - a voyage as far
 As the astronomer's who turns his glass
 On faintest star-webs past the farthest star
 And travels thither in the spirit. So
@@ -1568,7 +1568,7 @@ X
 To-morrow is the day when Christ our Lord
 Rose from the dead; therefore, the shops are shut.
 Men may get drunk, or syphilized, or bored,
-Robbed, murdered, or regenerated—but!
+Robbed, murdered, or regenerated - but!
 But they must not get letters, be amused,
 Or do a thing they want to do till Monday;
 Whence comes the universally-diffused
@@ -1583,18 +1583,18 @@ Runs a young resurrection of its own.
 XI
 
 Were you a shop-girl and myself a clerk,
-Things might be better—we could surely meet
+Things might be better - we could surely meet
 With due umbrellas in the dripping Park
 And decorously spoon upon a seat.
 This is the penalty one pays for rank
 And fortune! Ah, my Lola, I am dying
-And mad—or would God play me such a prank
+And mad - or would God play me such a prank
 As to dictate such verse while you are crying?
 Let me too weep, weep on! weep out my soul,
 Weep till the world of sense was wept away
 And, dead, I reached you at the glimmering goal
 Whither you had outrun me! Weep, I say,
-Weep! It is better. Thus one earns a chrism—
+Weep! It is better. Thus one earns a chrism - 
 Who ever gained one by cheap cynicism?
 
 XII
@@ -1660,7 +1660,7 @@ That we have touched the strange and sexless love
 Whose heart is death? That you and I express
 The poison of a thousand evil flowers
 And drain that cup of bitterness, my Lola?
-That you have killed my safe and sunny hours—
+That you have killed my safe and sunny hours - 
 A Venus to seduce Savonarola!
 Why have you taken this most monstrous shape,
 Imperious malison and hate flung after?
@@ -1672,15 +1672,15 @@ Recall the glad kiss and the gentle smile!
 II
 
 Where are you? Who am I? O who am I?
-Why do I lie and let you? I was strong—
+Why do I lie and let you? I was strong - 
 I was so strong I might have bid you die
 With one swift arrow from my quiver, song.
 Now you are over me; you hold me here;
 You grip my flesh till bleeding bruises start;
-You threaten me with—can I name the fear?
+You threaten me with - can I name the fear?
 I always knew you never had a heart.
 God! who am I? My Lola, speak to me!
-Tell me you love me; tell me—I am dazed
+Tell me you love me; tell me - I am dazed
 With something terrible and strange I see
 Even in the mouth that kissed, the lips that praised.
 You leer above me like a brooding fiend
@@ -1688,13 +1688,13 @@ Waiting to leap upon a babe unweaned.
 
 III
 
-Kiss me at least! We always were good friends—
-Kiss me for old times' sake—Kiss me just once!
-I know this ends—as every sweet thing ends!
-But—say you are not angry! Ere you pounce,
+Kiss me at least! We always were good friends - 
+Kiss me for old times' sake - Kiss me just once!
+I know this ends - as every sweet thing ends!
+But - say you are not angry! Ere you pounce,
 Forgive me! You could make me glad to die,
 I think, if you would only kill me kindly.
-Just one swift razor-stroke—cut low!—and I
+Just one swift razor-stroke - cut low! - and I
 Would pass the portal happily and blindly.
 Yes! I would like to think the fountain sprang
 Straight from my throat and slaked your aching thirst,
@@ -1713,7 +1713,7 @@ Let me rise up to kneel to you and pray!
 I hate this hell of agony supine.
 You killed her yesterday; kill me to-day;
 Let me not hang like Christ! Now snap my spine!
-Surely you know the trick—when from your lips
+Surely you know the trick - when from your lips
 I see a think chill stream of stark black blood
 Trickling, the stream of hate that glows and grips
 My lesser life within its sickening flood.
@@ -1734,7 +1734,7 @@ There is no comfort nor defence nor peace
 From thee (and all thy malice) in the world:
 Thou sittest through the aching centuries
 Like the old serpent in his horror curled
-Ready to strike, strike home—and yet not striking
+Ready to strike, strike home - and yet not striking
 Till thou hast lipped the victim to thy liking!
 
 VI
@@ -1742,42 +1742,42 @@ VI
 Am I not beautiful? Your lithe mouth twitches
 As if already you were glutted on
 This fair firm flesh that fears you and yet itches
-—You know it—for some master malison.
+ - You know it - for some master malison.
 Perhaps you mean to let me go? Ah sweet!
-How seven times sweet if you will let me go—
+How seven times sweet if you will let me go - 
 Oh! Oh! I want to worship at your feet.
 Why do you stab me with a smiling "No"?
-Say "no" at least—to see you sitting there
-So dumb is madness—why then, let me go!
-I will—and you sit quiet—did you dare?
+Say "no" at least - to see you sitting there
+So dumb is madness - why then, let me go!
+I will - and you sit quiet - did you dare?
 To everything the answer still is "No!"
-You coward! Coward! Coward! let me rise!—
+You coward! Coward! Coward! let me rise! - 
 I cannot bear the hunger in your eyes.
 
 VII
 
-You are afraid of me—I see it now.
+You are afraid of me - I see it now.
 You know that if you loose me, never again
 Will I be such a fool. I wonder how
 I ever took this destiny of pain.
 Loose me! You dare not. Take your eyes away!
 You dare not. O you laugh! You trust your power
-There you are wrong—but had you turned to-day
+There you are wrong - but had you turned to-day
 I would have murdered you within the hour.
-Yes! you do well—you know the dreadful weight
+Yes! you do well - you know the dreadful weight
 Pale silence sheds, not Atlas could uplift
 You know the spell to conquer love and hate,
 To win the world and win it at a gift.
-You are afraid of that then—had you spoken
+You are afraid of that then - had you spoken
 You fear the spell upon me had been broken!
 
 VIII
 
 Even that taunt has left you smiling still,
-And silent still—and that is ten times worse.
+And silent still - and that is ten times worse.
 Where is my will, my adamantine will?
 Curse God and die? I can nor die nor curse.
-Ah, but I can. The agony extends—
+Ah, but I can. The agony extends - 
 I am wrapt up all in an equal hell.
 There is a point at which emotion ends.
 I am come through to peace, though pain yet swell
@@ -1816,17 +1816,17 @@ Your living thoughts that throng my stagnant veins!
 Your jackals howl among the holy courts;
 Your monster brood of devils in my brains
 Laughs; oh! they feast on my decaying blood;
-They gnaw the last sweet morsel from my bones.—
+They gnaw the last sweet morsel from my bones. - 
 As on the parched-up earth there flames the flood
 Of the monsoon, black dust and bareen stones
 Leap into green, so I whose epitaph
-Your passion writes, awake to live—to laugh!
+Your passion writes, awake to live - to laugh!
 
 XI
 
 Even to the end of all must I resist.
 New deaths, new births, each minute  bolling over.
-I can go on for ever, an you list—
+I can go on for ever, an you list - 
 Now, now! O no! I will not. O my lover!
 Spare me! Enough! Take pity! Mutely moans
 Your mouth in little sobs and calls and cries
@@ -1835,34 +1835,34 @@ In once for all the long-drawn agonies.
 Now that the pain swings over into pleasure,
 Now that the union which is death is done,
 The wine of bliss rolls out in brimming measure.
-The moon is dead—all glory to the Sun!
-Now, now! Oh no! Oh no! I penetrate—
+The moon is dead - all glory to the Sun!
+Now, now! Oh no! Oh no! I penetrate - 
 I pierce. Enough. God! God! how Thou art great!
 
 XII
 
-Then closer, closer. No!—then stop—think well
+Then closer, closer. No! - then stop - think well
 What is this wonder we awake. Now think
 We are cast down to the abyss of hell
-Or tremble upon heaven's dizzy brink—
-Which? All's the same. Go on. No—what is this?
+Or tremble upon heaven's dizzy brink - 
+Which? All's the same. Go on. No - what is this?
 Why dally? To the hilt! Ah mine, ah mine!
-Kiss me—I cannot kiss you—kiss me! Kiss!
-Oh! God! Oh God! Forgive me; I am thine.—
+Kiss me - I cannot kiss you - kiss me! Kiss!
+Oh! God! Oh God! Forgive me; I am thine. - 
 Horses and chariots that champ and clang!
 The roar of blazing cressets that environ
 The form that fuses in the perfect pang.
-A blast of air thorough the molten iron—
+A blast of air thorough the molten iron - 
 One scream of light. Creating silence drops
-Into that silence when creation—stops.
+Into that silence when creation - stops.
 
 XIII
 
-So—é finita la commedia.
+So - é finita la commedia.
 "And if the King like not the comedy"
 (Twine in your hair the fallen gardenia!)
 "Why then, belike he likes it not, pardie!"
-What will the "King"—the British Public—say
+What will the "King" - the British Public - say
 When they perceive their sorrow was my fun,
 Their Hecuba my mocking Brinvilliers?
 I neither know nor care. What we have done
@@ -1870,7 +1870,7 @@ We have done. Admit, though, you are rare and rich!
 This palely-wandering knight has found a flame
 Both merciless and beautiful, you witch!
 You play the game, and frankly, as a game!
-This is the hour of prattle—tell me true!
+This is the hour of prattle - tell me true!
 I have never met another such. Have you?
 
 XIV
@@ -1886,7 +1886,7 @@ Wreathed with the Snake, and chaos is their pall
 Thou art as I; this mystery is ours.
 These blood-bought bastards of futility
 Can never know us, fair and free-born flowers.
-So they may say—they will—of you and me:
+So they may say - they will - of you and me:
 "These poets never know green cheese from chalk:
 "This is the sort of nonsense lovers talk."
 
@@ -1904,16 +1904,16 @@ To feel the murderous ardour of the priest
 Clutch at his throat, theurgic frenzy fly
 About the initiates of the Paschal feast
 And know it centred in the dim dead I
-Loosed by the pang—even thus you know it is,
+Loosed by the pang - even thus you know it is,
 Even thus, when I invoke your harsh caress,
 Put up my mouth to you immortal kiss,
-Confess you for my lady and murderess—
+Confess you for my lady and murderess - 
 In mine own life-blood I exult to float
 Even as your white fangs fasten in my throat.
 
 II
 
-You stand away—to let your long lash curl
+You stand away - to let your long lash curl
 About this aching body, fiery rings
 Of torture, o my hot enamoured girl
 Whose passion rides me like a steed and stings.
@@ -1934,7 +1934,7 @@ A virgin with the lusts of Messaline,
 A goat-soul in the body of a saint,
 You writhe on me with cruel and epicene
 Phrenzy and agony of acute restraint.
-You ache—you burn—you dizzy me with blows—
+You ache - you burn - you dizzy me with blows - 
 You call me coward and eunuch, who say No.
 Volcanic child! upon your masking snows
 I will not raise my rod, that forth may flow
@@ -1942,7 +1942,7 @@ Torrents of blazing lava, that shall hiss
 And roar, and ruin all the glad green world.
 I like the attack of your seducing kiss,
 The lashes of you love about me curled,
-Better than slack delight and murmuring sigh—
+Better than slack delight and murmuring sigh - 
 Flowers by the road to sad satiety.
 
 IV
@@ -1952,11 +1952,11 @@ And beat me! Still, I love you. Let your eyes
 Like fiery opals or mad amethysts
 Curse me! I love you. Let your anger rise
 And with your teeth tear bleeding bits of flesh
-Out of my body—kill me if you can!
+Out of my body - kill me if you can!
 I love you. I will have you fair and fresh,
 A maenad maiden maddening for a man.
 Ay! you shall weary in the erotic craving!
-I'll have you panting—aching to the marrow—
+I'll have you panting - aching to the marrow - 
 Exhausted, but a maiden (Lesbia raving:
 "Catullus brings a song and not a sparrow")
 Famished with love, fed full with love, your soul
@@ -1971,7 +1971,7 @@ We know desire the secret of desire.
 We have the wisdom of the saints of old
 Who know that what divinely is begun
 Glows from dawn's grey to noon's deliberate gold
-Darkens to crimson—and day's race is run.
+Darkens to crimson - and day's race is run.
 For us the glamour of the dawn suborning,
 We escape the enervating heat of noon:
 We hear Astarte for Adonis mourning,
@@ -1990,15 +1990,15 @@ You madden me by blows and bites and kisses;
 You make me drunken with your stormy wine;
 We swoon, we roll into unguessed abysses
 Of torture and of bliss; we wake and yearn,
-Doing violence on ourselves—anon we are slain,
+Doing violence on ourselves - anon we are slain,
 Slain and reborn again to ache and burn:
 Aeon on aeon thunders through our brain.
-—At last you see, my maiden? Kiss me! Kiss!
-There is no end—happy or not—to this!
+ - At last you see, my maiden? Kiss me! Kiss!
+There is no end - happy or not - to this!
 
 VII
 
-There is a respite—we must part anon.
+There is a respite - we must part anon.
 Short are the hours of sweetness: it is well.
 Could such a bout of murder carry on
 We should drink poison and awake in hell;
@@ -2011,7 +2011,7 @@ Smite down rebellious flesh with hideous pain!
 Bite hard! Smite hard! By bruises scarred and marred
 Love this exultant face! Again! Again!
 O Lola! Lola! Lola! Kiss me, Kiss!
-Nay—nay! Kiss not! I cannot bear the bliss.
+Nay - nay! Kiss not! I cannot bear the bliss.
 
 VIII
 
@@ -2094,8 +2094,8 @@ Impossible phantoms in mad revelry
 Conjoined in spinthriae of bestial form,
 Human-faced toads, and serpent-headed women,
 All lashed and slashed by the all-wandering storm
-Caricature of all things holy and human—
-—Such are the discords that absolve the strain
+Caricature of all things holy and human - 
+ - Such are the discords that absolve the strain
 As this wild threnody dissolves the brain.
 
 XIII
@@ -2112,7 +2112,7 @@ Lola, dear Lola, mystic maiden o' mine,
 Let us not mingle with the ribald rout
 That throng our temple. Close, Palladian shrine,
 With our reverberate glory rayed about!
-Abide within—with me! Let silence sever
+Abide within - with me! Let silence sever
 This velvet 'now' from that unclothed 'for ever'!
 
 XIV

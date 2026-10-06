@@ -193,5 +193,9 @@
   "noCollectibles": "Nello zaino non c'e altro che roba che serve davvero a qualcosa.",
   "soldCollectibles": "Consegnati {count} cimeli per {money}.",
   "year": "Anno",
-  "teaches": "Insegna"
+  "teaches": "Insegna",
+  "keeperDiscount": "A {name} piace la vostra compagnia: {percent}% di sconto su tutto oggi.",
+  "viewGrid": "GRIGLIA",
+  "viewList": "ELENCO",
+  "viewToggleHint": "Alterna lo scaffale tra una griglia di schede e un elenco"
 }

@@ -6787,7 +6787,7 @@
   },
   "1433": {
     "name": "PactOfPlenty",
-    "description": "Grants a fortune, full credit and every rent.",
+    "description": "Grants one million coin, full credit and every rent.",
     "message1": "%1 seals a ruinous pact of plenty!",
     "message2": ""
   },
@@ -7201,7 +7201,7 @@
   },
   "1517": {
     "name": "ConvokeStone",
-    "description": "Grants a fortune and a wealth of conjured arms.",
+    "description": "Grants one million coin and a wealth of conjured arms.",
     "message1": "%1 completes the Great Work!",
     "message2": ""
   },

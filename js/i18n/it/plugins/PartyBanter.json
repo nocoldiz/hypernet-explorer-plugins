@@ -1048,6 +1048,998 @@
       [
         "Vuoi sapere cosa ho deciso su tutta questa storia?",
         "Non in salita. Dimmelo quando siamo seduti."
+      ],
+      [
+        "Chi accende il fornello per primo sceglie il tè.",
+        "Ecco perché mi sveglio alle cinque. L'alba non c'entrava niente."
+      ],
+      [
+        "Pieghi la mappa al contrario tutte le mattine.",
+        "Non esiste un verso giusto. Esiste il tuo, e ne hai fatto una religione.",
+        "Una religione con meno strappi."
+      ],
+      [
+        "Calzini sul filo, stivali vicino al fuoco, pane nella scatola. Ogni sera uguale.",
+        "C'è chi la chiamerebbe casa, {name}. Noi ce la portiamo dietro e basta."
+      ],
+      [
+        "Ormai riesco a montare la tenda al buio senza imprecare.",
+        "Non senza imprecare. Solo a voce più bassa."
+      ],
+      [
+        "Tocca a te prendere l'acqua.",
+        "Toccava a me ieri.",
+        "Appunto. Ti è venuto benissimo. Rifallo.",
+        "Non è così che funzionano i turni e lo sai."
+      ],
+      [
+        "Ho cominciato a contare i passi tra una pietra miliare e l'altra.",
+        "E quanti sono?",
+        "Millecento e rotti. Poi una mucca mi distrae e perdo il conto."
+      ],
+      [
+        "Buffo come il camper ormai sappia di noi.",
+        "Sa di lana bagnata e cipolle. Ho deciso di chiamare noi anche quello."
+      ],
+      [
+        "Ogni mattina tu controlli il cielo, io gli stivali, e la padella non la controlla nessuno.",
+        "La padella se la cava da sola dalla primavera. Sta reggendo."
+      ],
+      [
+        "Laviamo le tazze sempre nello stesso ordine.",
+        "Prima la mia, perché è quella pulita.",
+        "È pulita perché non ci bevi mai niente."
+      ],
+      [
+        "Conosco il tuo russare abbastanza da capire quando fingi.",
+        "Non fingo mai. Russo con assoluta sincerità."
+      ],
+      [
+        "{other}, hai rimesso il sale nella tasca sinistra.",
+        "La tasca sinistra è la tasca del sale. Si è deciso in riunione.",
+        "Io a quella riunione non c'ero.",
+        "C'eri, ma dormivi. Vale lo stesso."
+      ],
+      [
+        "Da piccoli avevamo una cucina con la porta gialla.",
+        "Perché gialla?",
+        "Mia madre perse una discussione con un colorificio. Ci tenne il punto per vent'anni."
+      ],
+      [
+        "Prendevo lo stesso tram allo stesso minuto ogni giorno.",
+        "Ti manca?",
+        "Mi manca sapere dove sarei stato alle otto di mattina. Il tram no."
+      ],
+      [
+        "Prima di tutto questo vendevo bottoni dietro un bancone.",
+        "Bottoni.",
+        "Migliaia. Distinguo ancora l'osso dal corno a dieci passi."
+      ],
+      [
+        "Nella mia via c'era un ragazzino che fischiava con due dita. Io non ho mai imparato.",
+        "Te lo insegno io, {name}. Ci vuole una settimana e ci rimetti la dignità."
+      ],
+      [
+        "Com'era casa tua?",
+        "Stretta. Tre piani, una stanza per piano, e una scala da cui tutti sono caduti almeno una volta."
+      ],
+      [
+        "Mio padre conservava ogni giornale. Pile intere nell'ingresso.",
+        "E li rileggeva?",
+        "Mai. Diceva che erano la prova che quei giorni c'erano stati.",
+        "O è molto saggio o è un rischio d'incendio."
+      ],
+      [
+        "Avevo una bicicletta con un solo rapporto e opinioni enormi.",
+        "Quindi la bicicletta eri tu."
+      ],
+      [
+        "Mi manca la campanella della scuola. Non è strano?",
+        "Non è strano. Qualcuno ti diceva quando le cose finivano. Qui fuori non lo fa nessuno."
+      ],
+      [
+        "Una volta sono scappato di casa per un pomeriggio intero.",
+        "E dove sei andato?",
+        "In fondo al giardino. C'erano un albero e un panino e mi sentivo un gigante."
+      ],
+      [
+        "Batti due volte sullo stipite ogni volta che passi una porta.",
+        "Una per uscire, una per tornare. Non è complicato."
+      ],
+      [
+        "Perché ti siedi sempre di fronte alla porta?",
+        "Perché l'unica volta che non l'ho fatto è entrata una capra."
+      ],
+      [
+        "Canticchi quando conti i soldi.",
+        "Canticchio quando conto qualsiasi cosa. I soldi sono solo l'unica che valga la pena contare ad alta voce."
+      ],
+      [
+        "{other}, hai mangiato di nuovo prima le croste.",
+        "Le croste sono la parte dura. Togli di mezzo la parte dura e il resto è una vacanza.",
+        "Lo applichi a tutto.",
+        "Lo applico al pane. Non farmi passare per filosofo."
+      ],
+      [
+        "Parli al fornello.",
+        "Il fornello ascolta. È più di quanto possa dire di certa gente.",
+        "Ce l'hai con me?",
+        "Ce l'ho con i concorrenti del fornello in generale."
+      ],
+      [
+        "Perché pieghi le camicie come lettere?",
+        "Così entrano nello zaino, e posso far finta che me le abbia spedite qualcuno."
+      ],
+      [
+        "Lasci sempre un boccone nel piatto.",
+        "Per fortuna. O per educazione. Mia nonna non mi ha mai detto quale delle due.",
+        "Quindi lo fai senza motivo da tutta la vita.",
+        "Per un motivo molto vecchio. È diverso."
+      ],
+      [
+        "Temperi le matite con il coltello del formaggio.",
+        "Al coltello non dispiace. Il formaggio non si è mai lamentato."
+      ],
+      [
+        "Ogni volta che ti sdrai sospiri come una porta che si chiude.",
+        "È una porta che si chiude. La giornata esce e io chiudo a chiave."
+      ],
+      [
+        "Darei molto per un piatto delle lenticchie di mia zia.",
+        "Cosa ci metteva?",
+        "Lenticchie, una foglia d'alloro e una pazienza che non ho più incontrato."
+      ],
+      [
+        "Quello che vorrei adesso è pane fresco con troppo burro.",
+        "Smettila. Ne sento il profumo, e abbiamo solo biscotti."
+      ],
+      [
+        "A casa facevamo la minestra con quello che la settimana lasciava indietro.",
+        "Ogni famiglia ha quella minestra.",
+        "La nostra aveva un nome. La chiamavamo Giovedì."
+      ],
+      [
+        "Hai mai mangiato le castagne fatte nella padella coi buchi?",
+        "Ogni autunno. Mio nonno si bruciava i pollici apposta, ne sono certo."
+      ],
+      [
+        "Al prossimo mercato spendo {gold} in riso come si deve e formaggio vero.",
+        "E lo cuoci in quale pentola?",
+        "In quella piccola, con tanta pazienza. Non si discute con una voglia."
+      ],
+      [
+        "Metti lo zucchero nel sugo.",
+        "Un pizzico. Per calmare i pomodori.",
+        "Quella non è una ricetta. È una bustarella."
+      ],
+      [
+        "Dimmi un cibo che mangeresti ogni giorno per sempre.",
+        "Arance. Sbucciate in un colpo solo, la buccia in un unico ricciolo lungo.",
+        "Quello non è un cibo. È uno spettacolo.",
+        "È tutte e due le cose, e mi riesce benissimo."
+      ],
+      [
+        "Regola di mia madre: mai fidarsi di un cuoco che non assaggia mentre cucina.",
+        "Quindi mi guardavi assaggiare lo stufato.",
+        "Da settimane. Promozione, per un soffio."
+      ],
+      [
+        "Stasera mi mangerei un intero vasetto di sottaceti.",
+        "Te ne sei mangiato un vasetto intero martedì, {name}.",
+        "E guarda che bella cera."
+      ],
+      [
+        "Quando sarà finita imparerò a fare la pasta a mano.",
+        "Farina, uova e gomiti. Mia nonna la faceva sul tavolo di cucina.",
+        "Insegnerebbe a uno sconosciuto?",
+        "Insegnerebbe al postino, se restasse fermo abbastanza a lungo."
+      ],
+      [
+        "Un formaggio da poco in un bel posto è più buono di un buon formaggio in un brutto posto.",
+        "O è una cosa profondissima o hai una fame tremenda.",
+        "Tutte e due. Passami il formaggio."
+      ],
+      [
+        "Ho la stessa canzone in testa dal ponte.",
+        "Quale?",
+        "Non so le parole. Solo il pezzo che sale alla fine.",
+        "Quella è ogni canzone, {name}."
+      ],
+      [
+        "La cassetta del camper comincia a slabbrarsi.",
+        "È sempre stata lenta. Adesso suona solo più triste."
+      ],
+      [
+        "Mia nonna cantava sempre la stessa aria mentre sgranava i piselli. Niente parole, solo l'aria.",
+        "Canticchiala.",
+        "Non qui. Funziona solo coi piselli."
+      ],
+      [
+        "La radio ha trovato una stazione che trasmette solo fisarmoniche.",
+        "Lasciala. C'è più sentimento lì che nel telegiornale."
+      ],
+      [
+        "Canteresti qualcosa? Qualsiasi cosa.",
+        "Se canto, se ne vanno gli uccelli e anche tu.",
+        "Allora canta piano, e se ne andranno solo gli uccelli."
+      ],
+      [
+        "Una volta ho registrato una cassetta per qualcuno a cui non l'ho mai data.",
+        "Cosa c'era sopra?",
+        "Undici canzoni, e alla fine il rumore della mia timidezza che non premeva stop."
+      ],
+      [
+        "Qui fuori ogni stazione sparisce a metà del ritornello.",
+        "La radio lo sa. Tiene i pezzi migliori per qualcun altro."
+      ],
+      [
+        "Quel motivo che fischietti ogni mattina. Che cos'è?",
+        "Un ballo del paese dove sono cresciuto.",
+        "Per essere un ballo è molto triste.",
+        "Non hai visto il paese."
+      ],
+      [
+        "{leader} canticchia sempre la stessa aria quando smontiamo il campo.",
+        "L'ho notato. Dev'essere l'unica canzone con una strofa per piegare la tenda."
+      ],
+      [
+        "Nell'ultimo paese ho comprato una cassetta senza guardarla.",
+        "Cosa c'è sopra?",
+        "Un uomo che canta della sua barca. Quaranta minuti su una barca sola."
+      ],
+      [
+        "Ho sognato di essere di nuovo a scuola e che nessuno mi avesse avvisato dell'esame.",
+        "Lo faccio ogni anno. L'esame è sempre in una lingua che non parlo."
+      ],
+      [
+        "Stanotte ho sognato che il camper volava.",
+        "E ti ha portato da qualche parte di utile?",
+        "Al matrimonio di mio cugino. Pioveva lo stesso."
+      ],
+      [
+        "Stanotte ridevi nel sonno.",
+        "Davvero? Spero fosse una bella battuta.",
+        "Hai detto la parola cucchiai e hai riso per un minuto buono."
+      ],
+      [
+        "Ho sognato che facevi il fornaio, {other}.",
+        "Ero bravo?",
+        "No. Ma eri al settimo cielo."
+      ],
+      [
+        "Stanotte ho sognato una casa con una stanza che non avevo mai notato.",
+        "Quel sogno lo fanno tutti.",
+        "Nel mio c'era un pianoforte, e la mia calligrafia sui muri.",
+        "Allora il tuo era meglio di quello di tutti."
+      ],
+      [
+        "Hai dormito?",
+        "Ho sognato di portare il fornello su per una scala tutta la notte. Sono stanco in due mondi."
+      ],
+      [
+        "Ho sognato di respirare sott'acqua e me ne vantavo un sacco.",
+        "Sembra proprio come sei da sveglio."
+      ],
+      [
+        "Ho sognato mia nonna arrabbiata con me per un cucchiaio.",
+        "Quale cucchiaio?",
+        "Non lo so. Lei lo sapeva. Era quello il lato spaventoso."
+      ],
+      [
+        "Nel sogno volavo, ma solo a un metro da terra.",
+        "Quindi camminavi, ma tutto fiero.",
+        "Sì, il sogno è tutto lì."
+      ],
+      [
+        "Ho sognato che {leader} era un faro.",
+        "E indicava ancora la strada?",
+        "Stava immobile e lampeggiava. Quindi, niente di molto diverso."
+      ],
+      [
+        "Non mettere il cappello sul letto.",
+        "Perché no?",
+        "Non lo so. Ma mia madre lo saprebbe, da quattrocento chilometri di distanza."
+      ],
+      [
+        "Ti porti ancora dietro quel bottone?",
+        "Viene dal cappotto che avevo il giorno in cui sono sopravvissuto a una cosa. Resta."
+      ],
+      [
+        "Non si ringrazia mai per il sale. Porta sfortuna.",
+        "Quindi lo prendo e ti fisso e basta?",
+        "Fissami con affetto. Quello è permesso."
+      ],
+      [
+        "Hai toccato di nuovo il cucchiaio di legno.",
+        "Non c'era un tavolo. Il cucchiaio è di legno. Le regole sono flessibili."
+      ],
+      [
+        "Stamattina un gatto nero ha attraversato la strada.",
+        "Da sinistra a destra o da destra a sinistra?",
+        "Fa differenza?",
+        "Enorme. E nessuno dei due sa qual è il verso sbagliato."
+      ],
+      [
+        "Tengo una moneta nello stivale per fortuna.",
+        "Quale stivale?",
+        "Il sinistro. Il destro ha un buco e la fortuna cadrebbe fuori."
+      ],
+      [
+        "Tu non parti mai di martedì.",
+        "Di martedì non è mai cominciato niente di buono. Dimmi una cosa.",
+        "Ci siamo conosciuti di martedì.",
+        "Appunto. Non aggiungo altro."
+      ],
+      [
+        "Non fischiettare in casa. Fai scappare i soldi.",
+        "Non abbiamo soldi da far scappare, {name}.",
+        "Allora proteggo quelli che avremo."
+      ],
+      [
+        "Porti quell'anello alla mano sbagliata.",
+        "Era di mio nonno. Anche lui lo portava alla mano sbagliata. È un errore di famiglia."
+      ],
+      [
+        "Ho scritto una cartolina a mia sorella e poi ho dimenticato da che paese l'ho spedita.",
+        "Lo capirà dal francobollo. Le sorelle ci arrivano sempre."
+      ],
+      [
+        "A chi scrivi?",
+        "Ancora a nessuno. Prima scrivo la lettera, poi decido chi se la merita."
+      ],
+      [
+        "Ho comprato la cartolina di un castello che non abbiamo mai visto davvero.",
+        "Spediscila lo stesso. Che pensino che siamo gente colta."
+      ],
+      [
+        "Una lettera da casa ci ha messo sei settimane a trovarmi.",
+        "Cosa diceva?",
+        "Che il gatto è grasso e il tetto sta bene. Sei settimane ben spese."
+      ],
+      [
+        "Come si chiude una lettera quando non sai quando li rivedrai?",
+        "Col tempo che fa. Il tempo lo capiscono tutti."
+      ],
+      [
+        "Ho conservato ogni lettera che mi abbiano mai mandato.",
+        "Quante sono?",
+        "Nove. È una scatola piccola. Viene ovunque."
+      ],
+      [
+        "Un francobollo per casa adesso costa {gold}.",
+        "A quel prezzo la lettera dovrebbe consegnarsi da sola e fermarsi a cena."
+      ],
+      [
+        "Una volta ho cominciato a scriverti una lettera, poi mi sono ricordato che eri lì accanto.",
+        "Cosa diceva?",
+        "Caro {other}, sei qui accanto a me. Più in là non sono andato."
+      ],
+      [
+        "Le cartoline sono meglio delle lettere. Su una cartolina nessuno si aspetta sincerità.",
+        "Vorrei che fossi qui.",
+        "Appunto. Quattro parole, e tre sono pura cortesia."
+      ],
+      [
+        "Stamattina ho trovato un capello bianco.",
+        "Uno solo?",
+        "Uno solo di cui sono disposto a parlare."
+      ],
+      [
+        "Da vecchio voglio una panchina da qualche parte con vista su una strada.",
+        "Per guardare gli altri che la percorrono.",
+        "Per criticare i loro stivali."
+      ],
+      [
+        "Le mie ginocchia hanno cominciato a fare le previsioni del tempo.",
+        "Le mie prevedono le scale. Non sbagliano mai."
+      ],
+      [
+        "Da vecchio sarai una persona gentile o una persona difficile?",
+        "Difficile, ma con biscotti ottimi. Per dei biscotti la gente perdona parecchio."
+      ],
+      [
+        "Mio nonno è arrivato a novantaquattro anni a pane, vino e dispetto.",
+        "Quale dei tre secondo te ha funzionato?",
+        "Il dispetto. Gli altri due gli facevano solo compagnia."
+      ],
+      [
+        "Una volta pensavo che quarant'anni fossero un'età antichissima.",
+        "E adesso?",
+        "Adesso penso che a quarant'anni le ginocchia funzionano ancora."
+      ],
+      [
+        "Da vecchio racconterai tutto questo alla gente?",
+        "Solo le parti in cui faccio la figura del coraggioso. Sarà un racconto breve."
+      ],
+      [
+        "Nel prossimo paese mi compro gli occhiali da lettura.",
+        "Tieni la mappa a braccio teso dalla primavera, {name}.",
+        "La ammiravo da lontano.",
+        "La ammiravi da un altro codice postale."
+      ],
+      [
+        "Voglio invecchiare in un posto con un albero di limoni.",
+        "Ci parleresti ogni mattina.",
+        "Qualcuno deve pur farlo. I limoni si sentono molto soli."
+      ],
+      [
+        "{leader} sarà quello che da vecchio urla le indicazioni all'autista del pullman.",
+        "E l'autista gli darà retta, che è la parte peggiore."
+      ],
+      [
+        "Voglio imparare a nuotare come si deve. Non quella cosa che faccio sguazzando.",
+        "Quella cosa ti ha salvato la vita due volte. Portale rispetto."
+      ],
+      [
+        "Insegnami a leggere le stelle.",
+        "Comincia da una. Trovala ogni sera per una settimana. Poi parliamo della seconda."
+      ],
+      [
+        "Prima di morire imparerò a ballare qualcosa come si deve.",
+        "Quale ballo?",
+        "Uno qualsiasi in cui i piedi sappiano cosa fanno le mani."
+      ],
+      [
+        "Vorrei imparare un'altra lingua. Intera.",
+        "Quale?",
+        "Una con tante parole per la pioggia, così posso lamentarmi con precisione."
+      ],
+      [
+        "Potresti insegnarmi a riparare il motore del camper.",
+        "Potrei. Poi ogni volta che si rompe avresti delle opinioni.",
+        "Le opinioni ce le ho già.",
+        "Sì, ma per ora sono disinformate e posso ignorarle."
+      ],
+      [
+        "Voglio imparare a cucire come si deve. I miei rammendi sembrano un incidente.",
+        "Tengono, {name}. Un rammendo deve solo tenere.",
+        "Tengono come un rancore. Nessuno ne è contento."
+      ],
+      [
+        "Ho comprato un libro sui funghi, per impararli.",
+        "E allora?",
+        "Adesso conosco undici modi di morire in un bosco. Molto istruttivo."
+      ],
+      [
+        "Chi ti ha insegnato a fare i nodi così?",
+        "Un pescatore che non prendeva mai niente. Aveva tutto il tempo di esercitarsi."
+      ],
+      [
+        "Vorrei aver imparato il pianoforte quando c'era un pianoforte.",
+        "C'è un pianoforte in una locanda su due, {name}.",
+        "Sì, e un oste piazzato lì accanto."
+      ],
+      [
+        "Voglio imparare a cucinare una cosa alla perfezione. Una sola.",
+        "Allora le uova. Le uova ci sono sempre e non mentono mai su come te la sei cavata."
+      ],
+      [
+        "Prima di diventare vecchio voglio imparare i nomi degli uccelli.",
+        "Comincia da quello che ci sveglia alle quattro. Vorrei sapere con chi prendermela."
+      ],
+      [
+        "Ci restano {gold} fino a fine mese, e io voglio imparare gli scacchi.",
+        "Gli scacchi costano poco. Perdere contro di me ogni sera non costa niente."
+      ],
+      [
+        "Vorrei imparare a disegnare, per tenermi un po' di tutto questo.",
+        "Comincia dal camper. Sta fermo e non si lamenterà del naso."
+      ],
+      [
+        "Ti scrivi ancora la data sul polso ogni mattina.",
+        "Qui fuori i giorni si confondono. Il polso è l'unico calendario che non si bagna."
+      ],
+      [
+        "Hai ancora la fotografia del giardino di tua madre?",
+        "Nella tasca interna. Ha preso tanta pioggia che sembra un giardino nella nebbia.",
+        "Gli sta bene.",
+        "Sì. Lei diceva sempre che col brutto tempo era più bello."
+      ],
+      [
+        "La radio del camper funziona solo se qualcuno tiene l'antenna.",
+        "Allora chi vuole la musica tiene l'antenna. Si chiama democrazia."
+      ],
+      [
+        "Fai il doppio nodo alle stringhe e poi un terzo per fortuna.",
+        "Il terzo non è per fortuna. È per la salita fuori dall'ultimo paese."
+      ],
+      [
+        "Il riscaldamento funziona solo se qualcuno gli dà un calcio.",
+        "Funziona se il calcio glielo do io. Quando glielo dai tu, si offende."
+      ],
+      [
+        "Chi ha spostato la manopola della radio dal notiziario?",
+        "Nessuno. Scivola a ogni buca.",
+        "Allora questa strada ci ha portati a un bollettino agricolo in sloveno."
+      ],
+      [
+        "Stanotte voglio la cuccetta di sopra.",
+        "Avevi detto che era una bara con vista.",
+        "La vista ha cominciato a piacermi."
+      ],
+      [
+        "Il camper fa un rumore nuovo. A sinistra, dietro il lavello.",
+        "Non è nuovo. È il rumore vecchio, più forte.",
+        "È meglio o peggio?",
+        "Vuol dire che si fida abbastanza da lamentarsi."
+      ],
+      [
+        "Il serbatoio dell'acqua è di nuovo vuoto, {other}.",
+        "Allora qualcuno si è fatto una doccia lunga e non sono io.",
+        "Non mi faccio interrogare nel mio stesso camper."
+      ],
+      [
+        "C'è un calzino nel cruscotto.",
+        "È lì dall'autunno. Ormai ha la residenza."
+      ],
+      [
+        "Chi ha trasformato il tavolo in letto ieri sera l'ha fatto al contrario.",
+        "Va in tutti e due i sensi.",
+        "Va in un senso solo, e l'altro è quello che mi ha rovinato la schiena."
+      ],
+      [
+        "L'indicatore della benzina dice metà.",
+        "Dice metà da quando l'abbiamo comprato. Fidati dell'odore."
+      ],
+      [
+        "Qualcuno in questo camper russa, e per educazione non dico chi.",
+        "Non lo dici perché sei tu.",
+        "Passo metà della notte a occhi aperti senza russare. Me ne accorgerei."
+      ],
+      [
+        "Il tergicristallo dalla tua parte si è arreso.",
+        "Si è arreso sotto la pioggia, una scelta che rispetto."
+      ],
+      [
+        "Dovremmo dare un nome al camper.",
+        "Ce l'ha già. Lo chiamo quel coso, soprattutto quando non parte."
+      ],
+      [
+        "Se avessi una fortuna comprerei una casa con una biblioteca e non aprirei mai la porta.",
+        "La apriresti. Vorresti sapere chi è.",
+        "Allora la aprirei e sarei scortese."
+      ],
+      [
+        "Abbiamo {gold}. Cosa ci si compra, di questi tempi?",
+        "Due notti in un posto modesto, o una notte in un posto che crede di non esserlo."
+      ],
+      [
+        "Mio padre teneva i risparmi in una scatola di biscotti.",
+        "Anche il mio. Poi un Natale qualcuno ha mangiato i biscotti e ha trovato i soldi.",
+        "Eri tu?",
+        "Avevo otto anni e mi sono comprato una bicicletta. Non rimpiango niente."
+      ],
+      [
+        "Mi presteresti dei soldi, se te lo chiedessi?",
+        "Sì. Poi te lo ricorderei a ogni pasto per un anno."
+      ],
+      [
+        "Hai notato che i ricchi non hanno mai contanti in tasca?",
+        "È così che restano ricchi. Nessuno può chiederglieli."
+      ],
+      [
+        "Ho contato il borsellino due volte e fa {gold} tutte e due le volte.",
+        "Contalo una terza volta. A volte alla terza è generoso."
+      ],
+      [
+        "Se vincessimo alla lotteria, continueresti a viaggiare?",
+        "In un camper migliore. Con un riscaldamento che non ha bisogno di calci.",
+        "Quindi la stessa vita con meno lividi.",
+        "È tutto quello che si chiede ai soldi."
+      ],
+      [
+        "Lasci troppe mance.",
+        "Ho servito ai tavoli per tre estati. Lascio quello che a me non hanno mai dato."
+      ],
+      [
+        "Qual è la cifra più alta che hai speso per una stupidaggine?",
+        "Un cappotto. Viola. L'ho messo due volte.",
+        "E adesso dov'è?",
+        "C'è qualcuno a Graz che sta molto al caldo ed è molto viola."
+      ],
+      [
+        "Ho cominciato a mettere da parte. Un poco, ogni settimana.",
+        "Per cosa?",
+        "Non lo so ancora. È questa la parte bella."
+      ],
+      [
+        "Le nuove monete in euro hanno un disegno diverso sul retro in ogni paese.",
+        "Così gli spiccioli in tasca raccontano i tuoi viaggi.",
+        "I miei raccontano viaggi molto noiosi."
+      ],
+      [
+        "Il treno aveva quaranta minuti di ritardo e si sono scusati per il disagio.",
+        "Quaranta minuti non sono un disagio. Sono una breve vacanza su una panchina."
+      ],
+      [
+        "Hai visto il telegiornale della sera?",
+        "Il tizio coi baffi lo leggeva come se fosse la sua settimana storta.",
+        "Magari lo era. Sembrava stanco."
+      ],
+      [
+        "Il telefono pubblico si è mangiato la moneta e in cambio mi ha dato il segnale di linea.",
+        "Allora hai comprato un segnale di linea. C'è chi paga di più per meno."
+      ],
+      [
+        "Hai provato l'Hypernet?",
+        "Una volta, in biblioteca. Una pagina ci ha messo quattro minuti a caricarsi e parlava di gatti.",
+        "Da quel che sento, è quasi tutto così."
+      ],
+      [
+        "Adesso c'è un'elezione da qualche parte ogni settimana.",
+        "E i manifesti promettono tutti la stessa cosa con caratteri diversi."
+      ],
+      [
+        "Ho comprato il giornale solo per il cruciverba.",
+        "E hai letto lo stesso la prima pagina.",
+        "E adesso sono di cattivo umore e il cruciverba è a metà."
+      ],
+      [
+        "Mi è rimasto un ultimo rullino. Ventiquattro foto.",
+        "Allora non sprecarle con me.",
+        "Ne ho già usate sei con te. Hai chiuso gli occhi in tutte."
+      ],
+      [
+        "Uno alla stazione mi ha chiesto il mio indirizzo di posta sull'Hypernet.",
+        "E tu cosa gli hai detto?",
+        "Che ne avevo uno postale e che funzionava benissimo da anni."
+      ],
+      [
+        "Il fotografo dice che le nostre foto saranno pronte giovedì.",
+        "Giovedì saremo a due paesi di distanza.",
+        "Allora qualcuno in quella città vedrà un sacco di foto di te con gli occhi chiusi."
+      ],
+      [
+        "I giornali sono più sottili di una volta.",
+        "Ci sono meno notizie, o c'è meno carta. Non ho mai capito quale delle due."
+      ],
+      [
+        "Quello del meteo in televisione aveva promesso sole.",
+        "Promette sempre sole. È l'unica cosa che gli fa tenere il posto."
+      ],
+      [
+        "Qual era il tuo gioco preferito, nell'infanzia?",
+        "Nascondino. Avevo un talento. Una volta nessuno mi ha trovato fino a cena.",
+        "Quella non è una vittoria. È essere dimenticati."
+      ],
+      [
+        "A scuola in matematica ero un disastro.",
+        "Conti i nostri soldi ogni sera.",
+        "Male. È per questo che il risultato cambia sempre."
+      ],
+      [
+        "Avevi un insegnante che ti faceva paura?",
+        "Una. Sentiva un bisbiglio in fondo all'aula stando in corridoio.",
+        "Il mio tirava i gessetti. Non sbagliava mai."
+      ],
+      [
+        "Facevo la raccolta delle figurine dei calciatori.",
+        "L'hai finita?",
+        "Ne mancava una. Un portiere belga. Ogni tanto ci penso ancora."
+      ],
+      [
+        "A scuola eri tra i bravi o tra i chiassosi?",
+        "Il banco vicino alla finestra, a guardare strade come questa."
+      ],
+      [
+        "A nove anni sono caduto da un albero e mi sono rotto un braccio.",
+        "Quale albero?",
+        "Questa è la tua domanda? Non il braccio?",
+        "Certi alberi meritano di essere ricordati."
+      ],
+      [
+        "Giocavamo a biglie nella polvere dietro la chiesa.",
+        "Noi in corridoio, finché il preside non ci è scivolato sopra.",
+        "Si è fatto male?",
+        "Non è più stato lo stesso, e nemmeno il corridoio."
+      ],
+      [
+        "So ancora le capitali di tutti i paesi d'Europa.",
+        "La metà è cambiata da quando le hai imparate.",
+        "Allora so quelle vecchie. Qualcuno deve pur saperle."
+      ],
+      [
+        "Ti hanno mai mandato fuori dalla classe?",
+        "Ogni martedì. Avevo un posto fisso in corridoio. Ricevevo visite."
+      ],
+      [
+        "La corda. Arrivavo a cento salti senza sbagliare.",
+        "Dimostralo al prossimo paese.",
+        "Le mie ginocchia non hanno più nove anni, {other}."
+      ],
+      [
+        "Giri il caffè in senso antiorario.",
+        "Nell'altro senso ha un sapore diverso.",
+        "Non è vero.",
+        "E allora perché hai cominciato a farlo anche tu?"
+      ],
+      [
+        "Non riesco a pensare finché non ho bevuto un caffè.",
+        "L'ho notato. Prima del caffè hai accettato di portare tutto tu."
+      ],
+      [
+        "Radersi nello specchio del camper è un atto di fede.",
+        "Anche guardarti farlo mentre siamo in movimento."
+      ],
+      [
+        "Passami l'ago da rammendo. Si è bucato un altro tallone.",
+        "Cammini sui talloni come se ce l'avessi con loro.",
+        "Ce l'ho con loro. Continuano a consumarsi."
+      ],
+      [
+        "Ogni mattina guardi il cielo prima di qualsiasi altra cosa.",
+        "Abitudine. Lo faceva mia nonna. Sulla pioggia non ha mai sbagliato una volta."
+      ],
+      [
+        "Pieghi le camicie come se qualcuno dovesse ispezionarle.",
+        "Qualcuno lo faceva, una volta, per due anni. Non ti passa più."
+      ],
+      [
+        "Perché carichi sempre l'orologio alle nove precise?",
+        "Perché alle dieci me lo scordo, e alle undici è fermo."
+      ],
+      [
+        "Il primo caffè spetta a me. Me lo merito.",
+        "Per il merito di aprire gli occhi?",
+        "Mi hai mai visto svegliarmi? È una battaglia."
+      ],
+      [
+        "Ogni sera lasci la tazza accanto al lavello. Mai dentro.",
+        "Il lavello è per le cose finite. Quella tazza ha un futuro."
+      ],
+      [
+        "Ho ricucito lo stesso bottone su questo cappotto quattro volte.",
+        "Allora il bottone ti sta dicendo qualcosa.",
+        "Mi sta dicendo che cucio male. Lo sapevo già."
+      ],
+      [
+        "Rifai sempre il letto, anche qui?",
+        "Soprattutto qui. Un letto rifatto è l'unica cosa della giornata che va secondo i piani."
+      ],
+      [
+        "Quando avrò i capelli bianchi voglio una panchina col mio nome sopra.",
+        "Vuoi che la gente ti si sieda sopra dopo che te ne sei andato?",
+        "Voglio che si ricordi di me qualcuno di stanco. È una specie di onore."
+      ],
+      [
+        "Cosa farai a settant'anni?",
+        "Mi lamenterò dei giovani, ad alta voce, sui treni.",
+        "Lo fai già adesso.",
+        "Allora sono in anticipo sulla tabella di marcia."
+      ],
+      [
+        "Mi piacerebbe una casetta vicino all'acqua.",
+        "Mare o lago?",
+        "Lago. Il mare va sempre da qualche parte. Vorrei un'acqua che resta."
+      ],
+      [
+        "Promettimi che da vecchi non racconterai questa storia sbagliata.",
+        "La racconterò meglio. È una promessa diversa."
+      ],
+      [
+        "Pensi che un giorno metterai radici?",
+        "In un posto con un giardino. Poi passerò le giornate a guardare la strada che porta fuori."
+      ],
+      [
+        "Fra dieci anni voglio riuscire a dormire dopo le sei.",
+        "È tutta qui la tua ambizione?",
+        "Non hai mai dormito in un camper accanto a una strada piena di camion. È un'ambizione enorme."
+      ],
+      [
+        "Quando andrò in pensione scriverò una guida. Tutte le locande peggiori da qui alla costa.",
+        "Non la comprerà nessuno.",
+        "La compreranno tutti. La gente adora sapere cosa evitare."
+      ],
+      [
+        "Vuoi dei figli, un giorno?",
+        "Voglio essere il parente che arriva coi regali e se ne va prima dell'ora di dormire.",
+        "Questo non è avere figli. È avere un pubblico."
+      ],
+      [
+        "Quando saremo vecchi, parleremo ancora così?",
+        "Più lentamente. E con più pause dove ci siamo scordati la parola.",
+        "Quindi esattamente come adesso."
+      ],
+      [
+        "Il mio piano per la vecchiaia è una sedia a dondolo con vista su un parcheggio.",
+        "Perché un parcheggio?",
+        "Qualcosa deve succedere, ma non a me."
+      ],
+      [
+        "Fra cinque anni, dove siamo?",
+        "In un posto con delle sedie. Più in là non vedo."
+      ],
+      [
+        "Non ho mai risposto a mio fratello.",
+        "Non è troppo tardi. C'è un ufficio postale in ogni paese.",
+        "Ho un francobollo nello zaino. È lì da un anno."
+      ],
+      [
+        "Ti penti di aver lasciato il lavoro?",
+        "Ogni venerdì, verso le cinque, per un minuto. Poi passa."
+      ],
+      [
+        "Se potessi tornare indietro e dire una cosa a qualcuno, a chi la diresti?",
+        "A una signora su un treno nel novantasei. Le ho lasciato portare la valigia su per gli scalini.",
+        "Il tuo grande rimpianto è una valigia?",
+        "Lei era molto anziana e io avevo troppo orgoglio. Ti resta dentro."
+      ],
+      [
+        "La settimana in cui ci siamo conosciuti ti ho trattato male.",
+        "Quella settimana trattavi male tutti. Non l'ho presa sul personale."
+      ],
+      [
+        "Ti capita mai di pensare che avresti fatto meglio a non partire?",
+        "Certe mattine. Poi mi ricordo com'era restare."
+      ],
+      [
+        "Una volta ho avuto una seconda occasione e l'ho sprecata.",
+        "Allora questa è la terza. Non dirlo in giro, di solito non le regalano."
+      ],
+      [
+        "Avrei dovuto imparare a nuotare come si deve.",
+        "Non è troppo tardi.",
+        "È troppo tardi per il fiume del mese scorso. Era quello il punto."
+      ],
+      [
+        "C'è qualcuno a cui chiederesti scusa, se riuscissi a trovarlo?",
+        "Un padrone di casa a Lione. Ho preso la finestra invece della porta e gli dovevo un mese.",
+        "E adesso?",
+        "Adesso lo pagherei e userei la porta."
+      ],
+      [
+        "Quella volta avremmo potuto prendere l'altra strada.",
+        "Avremmo potuto. E adesso ci lamenteremmo di quella."
+      ],
+      [
+        "Quest'anno sto cercando di fare meno di testa mia.",
+        "E come va?",
+        "Benissimo. Non accetto di sentire il contrario."
+      ],
+      [
+        "Mi devi ancora l'ombrello.",
+        "L'ombrello che è volato nel fiume con un filo di vento.",
+        "Era una burrasca e lo tenevi male."
+      ],
+      [
+        "Racconta la storia della capra.",
+        "No. Ridi per dieci minuti e io devo camminarti accanto."
+      ],
+      [
+        "Ti ricordi la locanda col pappagallo?",
+        "Nessuno potrebbe scordarsi la locanda col pappagallo.",
+        "Mi deve ancora delle scuse."
+      ],
+      [
+        "È una settimana che pronunci male il nome di quel paese.",
+        "E ogni giorno è rimasto un paese. Nessun danno."
+      ],
+      [
+        "{other}, la mappa. Da che parte va tenuta?",
+        "Me lo chiedi tutte le mattine.",
+        "E tutte le mattine ci metti troppo a rispondere."
+      ],
+      [
+        "Un giorno vincerai a carte e io non avrò più niente da dire.",
+        "Ho vinto martedì.",
+        "Hai vinto una mano. Io conto le partite."
+      ],
+      [
+        "Dovevi imparare a ripiegare una mappa come si deve.",
+        "Sto imparando. È un corso lunghissimo, e la mappa non aiuta."
+      ],
+      [
+        "Raccontami di nuovo di quando hai quasi conosciuto un principe.",
+        "Era un duca, e l'ho quasi conosciuto davvero.",
+        "Hai tenuto la porta aperta al suo autista.",
+        "Quasi, ho detto."
+      ],
+      [
+        "Non ci siamo persi.",
+        "Nessuno ha detto persi.",
+        "Stavi per dirlo.",
+        "Stavo per dire panoramico."
+      ],
+      [
+        "Avevi promesso di smetterla con le scatole di fiammiferi.",
+        "Avevo promesso di smettere di comprarle. È la gente che continua a regalarmele."
+      ],
+      [
+        "Fammi indovinare. Conoscevi una scorciatoia.",
+        "Io conoscevo la scorciatoia, {name}. È la scorciatoia che non conosceva me."
+      ],
+      [
+        "Quando ero piccolo avevamo un cane di nome Professore.",
+        "Perché Professore?",
+        "Guardava tutto come se l'avesse deluso."
+      ],
+      [
+        "Hai mai avuto un gatto?",
+        "Un gatto ha avuto me, per sei anni. Mi era concesso aprire le scatolette."
+      ],
+      [
+        "Un'oca mi ha inseguito per tutta un'aia in Baviera.",
+        "Hai vinto?",
+        "Contro un'oca non vince nessuno. Al massimo arrivi al cancello."
+      ],
+      [
+        "Nella fattoria di mio zio c'era un cavallo a cui piacevo solo io.",
+        "Che fortuna.",
+        "Non era fortuna. Ero io a portare le mele."
+      ],
+      [
+        "Quella gatta al campeggio ti è venuta dietro per un chilometro.",
+        "Aveva buon gusto.",
+        "Aveva sentito l'odore della salsiccia che avevi in tasca."
+      ],
+      [
+        "Da bambino ho tenuto un riccio in una scatola da scarpe per una settimana.",
+        "Che fine ha fatto?",
+        "Mia madre me l'ha fatto liberare. Se n'è andato senza voltarsi. Molto da riccio."
+      ],
+      [
+        "Secondo te gli animali capiscono quando stiamo per lasciare un posto?",
+        "I cani sì. I gatti lo capiscono e fingono che non gli importi."
+      ],
+      [
+        "Mio nonno teneva i piccioni sul tetto.",
+        "Tornavano sempre?",
+        "Tutti. Diceva che era l'unica fedeltà di cui si fidava."
+      ],
+      [
+        "Il cane del contadino ieri notte ha dormito contro la porta del camper.",
+        "Per farci la guardia o per non farci uscire?",
+        "Non gliel'ho chiesto. Sembrava molto sicuro di sé."
+      ],
+      [
+        "Le mucche ti fissano come se gli dovessi una spiegazione.",
+        "Forse gliela dobbiamo. Stiamo attraversando la loro cucina."
+      ],
+      [
+        "Cosa stai leggendo?",
+        "Un giallo. Qualcuno è morto in una biblioteca e mentono tutti.",
+        "Sembra proprio una biblioteca."
+      ],
+      [
+        "È un mese che sei a pagina quaranta di quel libro.",
+        "È una pagina quaranta molto bella. Continuo a tornarci."
+      ],
+      [
+        "Non dirmi come finisce.",
+        "Non lo farei. Tanto il finale è la parte peggiore.",
+        "E allora perché me l'hai detto?",
+        "Così smetti di aspettarti che sia bello."
+      ],
+      [
+        "Ho preso in prestito questo libro da una biblioteca di Gand.",
+        "Quando va restituito?",
+        "A marzo dell'anno scorso. Penso più alla multa che al libro."
+      ],
+      [
+        "Leggi prima l'ultima pagina. Ti ho visto farlo.",
+        "Mi piace sapere chi sopravvive prima di affezionarmi."
+      ],
+      [
+        "È bello quel libro?",
+        "Sono ottocento pagine su una famiglia che non dice mai quello che pensa.",
+        "Quindi parla di noi.",
+        "Con capitoli più brevi, ma sì."
+      ],
+      [
+        "Ho scambiato il mio libro col tuo sullo scaffale dell'ostello.",
+        "Quello era il mio libro, {name}. Non l'avevo finito.",
+        "Eri a pagina quaranta. Non l'avresti finito mai."
+      ],
+      [
+        "Leggimi un pezzo del tuo mentre guido.",
+        "Parla di un guardiano del faro che non fa niente per trecento pagine.",
+        "Perfetto. Leggi piano."
+      ],
+      [
+        "Nel camper c'è un tascabile senza copertina e senza il primo capitolo.",
+        "Lo so. Lo leggo da settimane e ancora non so come si chiama il protagonista.",
+        "Inventagli un nome.",
+        "Già fatto. Lo chiamo {leader}."
       ]
     ],
     "battered": [
@@ -4936,6 +5928,101 @@
           "L'ultimo miglio mi hai portato tu, vero?",
           "Mezzo miglio. Pesi più di quanto sembri.",
           "Grazie comunque."
+        ],
+        [
+          "Ti ho riattaccato il bottone mentre dormivi.",
+          "Quale bottone?",
+          "Quello per cui ti tieni chiuso il cappotto con la mano dal fiume in qua."
+        ],
+        [
+          "Hai preso di nuovo il lato freddo della tenda.",
+          "Io ho sempre caldo. Lo sai.",
+          "Non è vero. Ogni mattina hai i piedi di ghiaccio."
+        ],
+        [
+          "Tieni. Una matita nuova. La tua è un mozzicone.",
+          "Te ne sei accorto?",
+          "È una settimana che scrivi con le unghie."
+        ],
+        [
+          "Brutta notte?",
+          "Il solito sogno. L'acqua e la porta.",
+          "Allora siediti qui finché non passa. Io non vado da nessuna parte.",
+          "Grazie, {name}."
+        ],
+        [
+          "Ho detto a {leader} che l'idea era mia. Era tua.",
+          "E perché l'hai fatto?",
+          "Perché è andata male, e io ho la pelle più dura."
+        ],
+        [
+          "Tè. Due zollette, che negherai.",
+          "Ne prendo una.",
+          "Ne prendi due e la seconda la giri quando nessuno guarda."
+        ],
+        [
+          "Nell'ultimo negozio c'era una cartolina del tuo paese.",
+          "L'hai comprata?",
+          "È nella tasca del tuo cappotto da martedì."
+        ],
+        [
+          "La sciarpa è un prestito. Me la ridai in primavera.",
+          "E se non lo faccio?",
+          "Allora era un regalo, e farò finta di averlo voluto."
+        ],
+        [
+          "Ti ricordi la capra al confine?",
+          "Non cominciare. Mi metto a ridere e sveglio tutto l'accampamento."
+        ],
+        [
+          "Ti ho rattoppato il buco nel sacco a pelo.",
+          "Ecco perché stanotte ho dormito filato. Grazie, {name}."
+        ],
+        [
+          "Appoggiati a me per la salita.",
+          "Solo per la salita. Non dirlo a nessuno."
+        ],
+        [
+          "Ho tenuto l'ultimo pezzo di cioccolato. Metà per uno.",
+          "L'hai spezzato in modo che la mia metà fosse più grande. Lo vedo."
+        ],
+        [
+          "Prendi tu il posto al finestrino nel camper.",
+          "Lo dici sempre, e poi lo pensi davvero, sempre."
+        ],
+        [
+          "Ho fatto il bucato. Anche il tuo.",
+          "Mi hai piegato i calzini a coppie. Non lo faceva nessuno da quando ero bambino."
+        ],
+        [
+          "Piano adesso. Lasciamo dormire gli altri ancora un po'.",
+          "Così l'alba ce la teniamo per noi."
+        ],
+        [
+          "Scrivi a tua madre. La imbuco io al prossimo paese.",
+          "Ti sei ricordato che si preoccupa.",
+          "Parli di lei ogni volta che piove."
+        ],
+        [
+          "Ho detto all'oste che sei un poeta famoso.",
+          "E perché mai?",
+          "Ci ha dato la camera buona. Se te lo chiede, recita qualcosa.",
+          "Gli reciterò i tuoi debiti."
+        ],
+        [
+          "Ti tremano le mani.",
+          "Oggi è stata dura. Più di quanto ho detto.",
+          "Lo so. C'ero anch'io. Dammi le mani."
+        ],
+        [
+          "Ho trovato una cassetta di quelle vecchie canzoni che canticchi.",
+          "Adesso mi toccherà canticchiarle intonate. Grazie, {name}."
+        ],
+        [
+          "Stasera la cena la offro io. Sono {gold} che ti tieni.",
+          "L'ultima volta hai pagato tu.",
+          "E pagherò anche la prossima. Smetti di fare i conti.",
+          "Va bene. Ma i conti li faccio lo stesso."
         ]
       ],
       "sore": [
@@ -5031,6 +6118,101 @@
           "Ogni volta che ci accampiamo sparisci per un'ora.",
           "Mi serve un'ora per me.",
           "Allora dillo, invece di lasciarmi a cercarti lungo gli alberi."
+        ],
+        [
+          "A chi tocca lavare i piatti?",
+          "A te. È sulla lista.",
+          "La lista l'hai scritta tu.",
+          "E tu l'hai approvata, per iscritto."
+        ],
+        [
+          "Dov'è il mio pettine?",
+          "Tre paesi fa, credo. Te ne compro un altro."
+        ],
+        [
+          "Canticchi quando fai lo zaino.",
+          "Canticchio quando sono contento.",
+          "Allora sii contento più piano."
+        ],
+        [
+          "Avevamo detto che saremmo partiti all'alba.",
+          "È quasi l'alba.",
+          "È quasi ora di pranzo."
+        ],
+        [
+          "Hai raccontato a {leader} della mappa.",
+          "Ho detto che era un po' strappata.",
+          "Hai detto che ci ero seduto sopra."
+        ],
+        [
+          "Qualcuno ha letto il mio diario.",
+          "Nessuno ne avrebbe voglia. Parla quasi solo del tempo."
+        ],
+        [
+          "Mi devi {gold}.",
+          "Non ti devo niente. Tu mi devi un paio di lacci.",
+          "I lacci non costano {gold}."
+        ],
+        [
+          "Smettila di scrocchiarti le dita.",
+          "Smettila di ascoltare le mie dita."
+        ],
+        [
+          "Hai mangiato le uova sottaceto.",
+          "Una. Ne ho mangiata una.",
+          "Stamattina erano sei."
+        ],
+        [
+          "Hai prestato la mia mantella a uno sconosciuto.",
+          "Era fradicia. Tu eri asciutto.",
+          "Ero asciutto allora. Guardami adesso."
+        ],
+        [
+          "La tua sveglia da viaggio è suonata alle quattro.",
+          "Non sa che abbiamo cambiato paese."
+        ],
+        [
+          "Prendi sempre l'ultimo fiammifero.",
+          "Qualcuno deve accendere il fuoco. Noto che non sei mai tu."
+        ],
+        [
+          "Ti avevo chiesto di comprare il pane, non un cappello.",
+          "Il cappello costava meno di quanto sembrasse.",
+          "Il cappello non si mangia."
+        ],
+        [
+          "Hai scaricato la batteria del camper con la radio.",
+          "C'era la finale.",
+          "La finale di cosa?",
+          "Ormai non importa. Abbiamo perso."
+        ],
+        [
+          "Togli gli scarponi dalla mia parte.",
+          "In una tenda non ci sono parti."
+        ],
+        [
+          "Hai riso quando sono caduto nel torrente.",
+          "Prima ti ho tirato fuori. Poi ho riso."
+        ],
+        [
+          "Ti sei preso il merito dell'affare al mercato.",
+          "Ho parlato io.",
+          "Ho trattato io. Tu facevi sì con la testa."
+        ],
+        [
+          "Perché la mia camicia buona è nel tuo zaino?",
+          "Faceva freddo.",
+          "È una camicia, non una coperta, ed è mia."
+        ],
+        [
+          "Di nuovo in ritardo.",
+          "Mi sono fermato a chiedere la strada.",
+          "Abbiamo una mappa. Ti sei fermato per le paste.",
+          "Sul sacchetto c'erano le indicazioni."
+        ],
+        [
+          "Mi avevi detto che sapevi nuotare.",
+          "Ho detto che sapevo galleggiare. La parte importante non l'hai mai chiesta."
         ]
       ],
       "road": [
@@ -5090,6 +6272,117 @@
         [
           "Non abbiamo parlato di cosa succede quando tutto questo sarà finito.",
           "No. E non ne parleremo, stanotte."
+        ],
+        [
+          "Bucato al prossimo paese. Tutto quello che ho sa di fumo.",
+          "Il mio sa di te, che è peggio."
+        ],
+        [
+          "Corda, olio per la lampada, cerotti. Cos'altro?",
+          "Caffè. Senza caffè il resto non conta."
+        ],
+        [
+          "La cinghia sinistra del tuo zaino si sta sfilacciando.",
+          "L'ho vista. Stasera la ricucio.",
+          "Usa il filo cerato, non quello di cotone."
+        ],
+        [
+          "Tu fai il primo turno, io quello buio di mezzo.",
+          "Allora domani ti devo quello dell'alba."
+        ],
+        [
+          "Strada della valle o strada del crinale?",
+          "Valle. È più lunga, ma sul crinale non c'è niente da bere.",
+          "Valle, allora. Dillo a {leader}."
+        ],
+        [
+          "Cosa cuciniamo?",
+          "Fagioli.",
+          "Abbiamo mangiato fagioli ieri.",
+          "E li mangeremo anche domani, a meno che qualcuno non vada a fare la spesa."
+        ],
+        [
+          "Ci serve una seconda pentola?",
+          "Solo se vuoi il tè e la zuppa nello stesso momento.",
+          "Io voglio sempre il tè e la zuppa nello stesso momento."
+        ],
+        [
+          "Metti le cose pesanti in basso e vicino alla schiena.",
+          "So come si fa uno zaino.",
+          "E allora perché il tuo dondola come una campana?"
+        ],
+        [
+          "Quanto resta nella borsa?",
+          "{gold}, e prima che il camper chieda carburante."
+        ],
+        [
+          "Il palo della tenda si è piegato col vento.",
+          "Steccalo con un picchetto e un po' di nastro. Regge fino al paese."
+        ],
+        [
+          "Calzini di ricambio stesi sulla corda o in tasca?",
+          "In tasca. L'ultima volta la corda è volata nel fiume."
+        ],
+        [
+          "Se al mercato ci separiamo, dove ci ritroviamo?",
+          "Alla fontana. Ogni paese ha una fontana.",
+          "E se questo non ce l'ha?",
+          "Allora al forno. Ogni paese ha anche quello."
+        ],
+        [
+          "Voglio scarponi nuovi prima delle montagne.",
+          "Comprali due paesi prima, così fai in tempo a domarli."
+        ],
+        [
+          "Svegliami se senti qualcosa più grosso di una volpe.",
+          "E come faccio a sapere quanto è grosso?",
+          "Se te lo devi chiedere, svegliami."
+        ],
+        [
+          "Lo stoppino della lampada è quasi finito.",
+          "Ce n'è uno di scorta nella scatola dei fiammiferi.",
+          "C'era. L'ho usato in cantina."
+        ],
+        [
+          "Chi ha l'orario dei treni?",
+          "Ce l'ha {leader}. Piegato a barchetta, l'ultima volta che l'ho visto."
+        ],
+        [
+          "Sale, sapone e un ago che punga davvero.",
+          "Scrivilo. Comprerai il formaggio e ti scorderai tutto il resto."
+        ],
+        [
+          "Riempi tutte le borracce alla fontanella. La prossima è lontana.",
+          "Quanto lontana?",
+          "Abbastanza da farmi riempire anche la pentola."
+        ],
+        [
+          "Tocca a te guidare il camper.",
+          "Ho guidato tutta la notte.",
+          "Hai guidato un'ora e ti sei fermato per una salsiccia.",
+          "Era una salsiccia lunga."
+        ],
+        [
+          "Dovremmo vendere la lanterna vecchia.",
+          "Funziona ancora.",
+          "Anche quella nuova, e ce le portiamo dietro tutte e due."
+        ],
+        [
+          "Arriva la pioggia. Copri la legna.",
+          "Già fatto. Anche gli scarponi sono sotto il telo."
+        ],
+        [
+          "Costa meno mangiare alla locanda o comprare e cucinare?",
+          "Cucinare. La locanda voleva {gold} per una zuppa che sapeva di pentola."
+        ],
+        [
+          "Ungi la porta del camper prima che svegli tutta la valle.",
+          "L'ho unta ieri.",
+          "Allora cigola per dispetto."
+        ],
+        [
+          "Tieni la mappa al contrario.",
+          "È la strada che è al contrario. Io la tengo giusta."
         ]
       ]
     },
@@ -5550,7 +6843,2083 @@
         "Sento il motore che si raffredda.",
         "È il suono più bello che ci sia. Vuol dire che oggi è finito, davvero."
       ]
-    ]
+    ],
+    "life": {
+      "ill": [
+        [
+          "{illness} ha deciso che abita qui, adesso.",
+          "Allora che cominci a pagare l'affitto."
+        ],
+        [
+          "Non starmi così vicino. {illness} non fa tante storie su chi va a trovare.",
+          "Divido la tenda con te da un anno, {name}. Mi conosce già."
+        ],
+        [
+          "Ho letto di {illness} su un opuscolo, all'ultima farmacia.",
+          "E allora?",
+          "Ho smesso di leggere alla parola prima o poi."
+        ],
+        [
+          "Oggi {illness} è solo un due su dieci. Ieri era un nove.",
+          "Allora oggi camminiamo piano e la chiamiamo vacanza."
+        ],
+        [
+          "Sto bene. Smettila di guardarmi così, {other}.",
+          "Hai tossito una cosa che aveva un colore, {name}.",
+          "Almeno era un bel colore.",
+          "Bevi il tuo tè."
+        ],
+        [
+          "Chiunque mi abbia attaccato {illness}, spero se ne sia tenuto un po' per sé.",
+          "Questa è la febbre che parla.",
+          "Ultimamente io e la febbre siamo d'accordo quasi su tutto."
+        ],
+        [
+          "Continuo a pensare che {illness} si annoierà e se ne andrà.",
+          "Le malattie non si annoiano. Le persone sì. Resta testardo."
+        ],
+        [
+          "Se {illness} mi porta via quaggiù, seppellitemi in un posto con una bella vista.",
+          "Non stai morendo. Stai facendo il melodramma sotto una coperta.",
+          "Le due cose non si escludono."
+        ],
+        [
+          "Mia madre aveva un rimedio per tutto. Cipolle, soprattutto.",
+          "Le cipolle le abbiamo.",
+          "Allora immagino di non avere scuse."
+        ],
+        [
+          "Il farmacista ha detto riposo. Come se il riposo fosse un posto dove arrivare a piedi.",
+          "Lo è. Si chiama fermarsi, {name}. Provaci stasera."
+        ],
+        [
+          "Mi sento il petto quando respiro. Sembra un bollitore.",
+          "Allora al prossimo paese ci fermiamo e troviamo un medico.",
+          "E lo paghiamo con cosa?",
+          "Con quello che costa. Oggi non discutere con me."
+        ],
+        [
+          "Di' agli altri che {illness} sta migliorando.",
+          "Ed è vero?",
+          "No. Ma diglielo lo stesso."
+        ],
+        [
+          "Mi porti lo zaino da colazione.",
+          "Tu ti porti dietro {illness}. Mi sembra giusto, {name}."
+        ],
+        [
+          "È {illness} che fa sapere tutto di metallo, o è solo questa zuppa?",
+          "È la zuppa. L'ho fatta io. Non dare la colpa alla malattia."
+        ],
+        [
+          "Ho sognato che {illness} era un ometto seduto sul mio petto a leggere il giornale.",
+          "Era un buon giornale?",
+          "I risultati delle corse. Aveva perso."
+        ],
+        [
+          "Scusate se vi rallento.",
+          "Non siamo mai stati veloci, {name}. Nessuno ha notato la differenza."
+        ],
+        [
+          "Ho {illness} da così tanto che ho cominciato a dargli una personalità.",
+          "E com'è?",
+          "Meschino. Lento. Odia le salite.",
+          "Quindi sei tu, {name}."
+        ],
+        [
+          "Stasera stammi lontano, {other}. Basta uno di noi con {illness}.",
+          "Dormo dall'altra parte. Chiama se ti serve acqua."
+        ]
+      ],
+      "wounded": [
+        [
+          "Ogni passo, e {part} ha qualcosa da ridire.",
+          "Digli di tenerselo per sé fino alla prossima panchina."
+        ],
+        [
+          "Non toccare {part}. Guardalo pure. Ma non toccarlo.",
+          "Volevo solo controllare la stecca, {name}.",
+          "Controllala con gli occhi."
+        ],
+        [
+          "Ho sentito un crac da {part} e sto facendo finta di niente.",
+          "Quello non è un piano, {name}. È una speranza che zoppica."
+        ],
+        [
+          "Quanto ci mette a saldarsi, secondo te, {part}?",
+          "Più di quanto aspetterai. Meno di quanto temi.",
+          "Parli come una chiromante, {other}."
+        ],
+        [
+          "Posso ancora combattere. Più o meno.",
+          "È quel più o meno che mi preoccupa, {name}."
+        ],
+        [
+          "Ricordami di non parare mai più un'ascia con {part}.",
+          "Te l'avevo ricordato prima. L'hai parata lo stesso."
+        ],
+        [
+          "La fasciatura su {part} è troppo stretta.",
+          "Deve essere stretta.",
+          "Allora sta facendo un lavoro splendido."
+        ],
+        [
+          "Mi porti lo zaino? Solo fino all'incrocio. {part} sta cantando.",
+          "Dammelo. E smettila di chiamare canto il dolore, {name}.",
+          "Ha una melodia. Quasi sempre la stessa nota."
+        ],
+        [
+          "Se qualcuno chiede, sono caduto da qualcosa di eroico.",
+          "Sei caduto da uno sgabello a {place}, {name}.",
+          "Uno sgabello eroico.",
+          "Lo sgabello più eroico che abbia mai visto."
+        ],
+        [
+          "Stanotte il sonno è arrivato due volte e {part} l'ha mandato via tutte e due.",
+          "Stasera prendi il lato morbido della tenda. Senza discutere."
+        ],
+        [
+          "Continuo a dimenticare che è ferito finché non provo a usarlo.",
+          "Allora smetti di provare a usarlo, {name}. La cura è tutta lì."
+        ],
+        [
+          "Il dottore ha detto che {part} guarirà se lo tengo a riposo.",
+          "E l'hai tenuto a riposo?",
+          "Spiritualmente.",
+          "Non vale."
+        ],
+        [
+          "Ho una faccia brutta quanto mi sento?",
+          "Peggio. Ma cammini come chi ha deciso di fregarsene.",
+          "L'ho deciso. È l'unica cosa che mi tiene in piedi."
+        ],
+        [
+          "{part} si è gonfiato come una pagnotta.",
+          "Allora lo teniamo lontano dai fornai, {name}."
+        ],
+        [
+          "Hai fatto un buon lavoro con la stecca, {other}.",
+          "Ho fatto tanta pratica. Soprattutto su di te, {name}."
+        ],
+        [
+          "È grave se comincia a piacermi come {part} prevede la pioggia?",
+          "Sì. Ma è utile. Tienilo così.",
+          "Pioggia entro sera, allora.",
+          "Vado a prendere il telo."
+        ]
+      ],
+      "maimed": [
+        [
+          "Allungo ancora la mano che non c'è per prendere le cose.",
+          "E io te le passo lo stesso. Impareremo tutti e due."
+        ],
+        [
+          "Il pezzo nuovo scatta quando fa freddo.",
+          "Allora lo chiameremo l'orologio del tempo, {name}.",
+          "Non è divertente.",
+          "È un po' divertente. Stai sorridendo."
+        ],
+        [
+          "Al mercato la gente fissa.",
+          "Lasciali fare. Meritavi di essere guardato anche prima, {name}."
+        ],
+        [
+          "Una volta ero bravo ad arrampicarmi.",
+          "Sei ancora bravo. Solo più lento, e bestemmi di più.",
+          "Le bestemmie c'erano anche prima."
+        ],
+        [
+          "Il tecnico ha detto che tra un mese l'innesto lo sentirò mio.",
+          "E allora?",
+          "Sembra preso in affitto. Educato, ma non mio."
+        ],
+        [
+          "Certe mattine me ne dimentico, e poi me ne ricordo. Ogni santa mattina.",
+          "Allora ogni santa mattina sarò qui quando te ne ricordi."
+        ],
+        [
+          "Non aiutarmi con la cinghia. Devo farcela da solo.",
+          "Non volevo aiutarti. Volevo guardare con aria incoraggiante.",
+          "È peggio.",
+          "Lo so."
+        ],
+        [
+          "Fa male dove non è rimasto niente che possa far male.",
+          "I vecchi soldati di {place} lo chiamavano il fantasma. Dicevano che passa.",
+          "Hanno detto quando?"
+        ],
+        [
+          "Darò un nome alla protesi.",
+          "Ti prego, no.",
+          "Troppo tardi. Si chiama Gustavo."
+        ],
+        [
+          "Puoi smettere di camminare dal mio lato debole, {other}.",
+          "Non cammino qui per te, {name}. Da qui si vede meglio."
+        ],
+        [
+          "Avevo paura che mi avreste lasciato al paese successivo.",
+          "Nessuno l'ha nemmeno proposto, {name}. Mai."
+        ],
+        [
+          "Olio per il giunto, olio per gli stivali. Sto diventando una macchina.",
+          "Una macchina che si mangia ancora tutto il formaggio, {name}."
+        ],
+        [
+          "Strano. Adesso ho più coraggio. Ho meno da perdere.",
+          "Non dirla così.",
+          "Allora domani la dirò meglio."
+        ],
+        [
+          "Ho imparato di nuovo ad allacciarmi le scarpe. Con una mano. Ci ho messo una settimana.",
+          "Ho visto. Non ho detto niente.",
+          "Ho notato che non dicevi niente. Grazie."
+        ],
+        [
+          "Ti dà fastidio? Sinceramente.",
+          "Mi dà fastidio che ti abbia fatto male. Il resto sei semplicemente tu, {name}."
+        ],
+        [
+          "L'attacco sfrega quando andiamo in discesa.",
+          "Allora ci fermiamo in fondo e ti trovo un'imbottitura.",
+          "Adesso ti agiti.",
+          "A voce alta, {name}. Abituati."
+        ]
+      ],
+      "craving": [
+        [
+          "Sento la voglia di {substance} che mi chiama da tre strade di distanza.",
+          "Allora facciamo le altre tre strade. Vengo con te."
+        ],
+        [
+          "Solo un po' di {substance}. Poco poco. Per smussare.",
+          "Quel filo tagliente è il segno che stai vincendo, {name}.",
+          "Odio quando fai il saggio."
+        ],
+        [
+          "Mi tremano le mani. Non guardare.",
+          "Guardo la strada. Parlami di qualsiasi altra cosa, {name}.",
+          "Del tempo, allora. Fa schifo."
+        ],
+        [
+          "Nove giorni senza {substance}. Sembrano novanta.",
+          "Nove è un numero vero. Novanta è solo la voglia che ti racconta bugie."
+        ],
+        [
+          "A {place} sembrano tutti avere {substance} tranne me.",
+          "Quelli di {place} non stanno facendo la strada che fai tu.",
+          "E che strada faccio?",
+          "In avanti. Piano. Con me."
+        ],
+        [
+          "Stasera tieni tu i soldi, {other}. Non darmeli neanche se te li chiedo con gentilezza.",
+          "Soprattutto se me li chiedi con gentilezza. La conosco, la tua voce gentile."
+        ],
+        [
+          "Ho sognato di nuovo {substance}. Mi sono svegliato in colpa per una cosa che non ho fatto.",
+          "Allora ti sei svegliato pulito. È questa la parte che conta."
+        ],
+        [
+          "Non ce l'ho con te. Ce l'ho con tutto.",
+          "Lo so. Arrabbiati pure. Ma arrabbiati qui, con noi.",
+          "Qui è noiosissimo.",
+          "Noioso vuol dire al sicuro, {name}. Per stasera."
+        ],
+        [
+          "La cosa peggiore di {substance} è quanto suona ragionevole.",
+          "Ha sempre un buon argomento. È così che capisci che mente."
+        ],
+        [
+          "Puoi tenermi il borsellino fino a domattina?",
+          "Certo. E non ti chiedo perché.",
+          "Lo sai perché."
+        ],
+        [
+          "Se ci ricasco, camminerai ancora con me?",
+          "Se ci ricaschi, ti tiro su e continuiamo a camminare. Non è mai altro che questo."
+        ],
+        [
+          "Hai ancora quella radice di zenzero?",
+          "Tieni. Mia zia giurava che batte qualsiasi voglia di {substance}.",
+          "Tua zia era una bugiarda.",
+          "Una bugiarda gentile. Mastica."
+        ],
+        [
+          "L'odore di {substance} in quella locanda mi ha quasi fregato.",
+          "Ti ho visto uscire. È la cosa più coraggiosa che ho visto in tutta la settimana.",
+          "Stavo quasi per tornare dentro."
+        ],
+        [
+          "Parlami. Di' qualunque cosa. Ho la testa rumorosa.",
+          "Va bene. Lo sapevi che {leader} russa in tre tonalità diverse?",
+          "No. Continua."
+        ],
+        [
+          "Pensavo che {substance} fosse l'unica cosa che mi rendeva interessante.",
+          "Eri interessante anche prima, {name}. Eri solo stanco.",
+          "Sono stanco anche adesso."
+        ],
+        [
+          "Certi giorni la voglia di {substance} è un sussurro. Oggi ha una tromba.",
+          "Allora facciamo più rumore noi. Canta male insieme a me."
+        ]
+      ],
+      "drunk": [
+        [
+          "Non ho bevuto troppo. Sono esattamente felice al punto giusto.",
+          "Hai chiamato signora un lampione, {name}.",
+          "Era molto elegante."
+        ],
+        [
+          "Perché la strada si muove?",
+          "La strada non si muove. Siediti prima di finirci sopra."
+        ],
+        [
+          "Vi voglio bene. Vi voglio bene a tutti. Anche a {leader}.",
+          "Soprattutto a {leader}, un'ora fa. L'hai abbracciato due volte."
+        ],
+        [
+          "Dimmi un segreto, {other}. Tanto non me lo ricorderò.",
+          "È per questo che non te lo dico."
+        ],
+        [
+          "C'era qualcuno che mi aspettava alzato. Prima di tutto questo.",
+          "Vuoi parlarne?",
+          "No. Sì. Domani. Chiedimelo quando sono lucido e ti mentirò."
+        ],
+        [
+          "Acqua? Perché dovrei volere dell'acqua?",
+          "Perché domani rimpiangerai di non averla voluta, {name}."
+        ],
+        [
+          "Adesso faccio a botte con quel cartello.",
+          "Il cartello non ti ha fatto niente.",
+          "C'era scritto {place}. Due volte.",
+          "È perché ci vedi doppio."
+        ],
+        [
+          "Tienimi i capelli se vomito.",
+          "Lo faccio sempre. Reggiti allo steccato, {name}."
+        ],
+        [
+          "Le stelle girano. Falle smettere.",
+          "Ci parlo io. Mettiti sul fianco.",
+          "Sei un buon amico, {other}. Un buon amico sfocato."
+        ],
+        [
+          "L'ultimo bicchiere è stato un errore. I quattro prima erano ottime decisioni.",
+          "È la frase più ubriaca che abbia mai sentito."
+        ],
+        [
+          "Perché nessuno mi ha fermato?",
+          "Ci abbiamo provato, {name}. Hai detto che festeggiavi il martedì.",
+          "È martedì?",
+          "È venerdì."
+        ],
+        [
+          "Mi sa che ho cantato in quella taverna.",
+          "Sì. Nove strofe di una cosa senza melodia.",
+          "Però hanno applaudito."
+        ],
+        [
+          "Sono tutti così lontani e così rumorosi.",
+          "Non parla nessuno, {name}. È il tuo cuore.",
+          "È molto teatrale, il mio cuore."
+        ],
+        [
+          "Bevo perché la strada è lunga, {other}.",
+          "La strada è più lunga se la fai di traverso."
+        ],
+        [
+          "Non dire agli altri che ho pianto.",
+          "Ti ho visto solo io. E me ne sono già dimenticato.",
+          "Grazie. Però piango ancora un pochino.",
+          "Piangi quanto vuoi. Ti tengo io la lanterna."
+        ],
+        [
+          "Da che parte dormiamo stanotte?",
+          "Di qua. Segui la mia voce e non lo steccato.",
+          "Lo steccato sembra più affidabile."
+        ]
+      ],
+      "high": [
+        [
+          "Gli alberi respirano, {other}. Lo sapevi che gli alberi respirano?",
+          "Sì. Non così forte, {name}. Siediti qui vicino."
+        ],
+        [
+          "Credo di sentire i colori.",
+          "E il cielo che suono fa?",
+          "Come qualcuno che sospira in chiesa."
+        ],
+        [
+          "Chi ha messo i funghi nello stufato?",
+          "Tu, {name}. Hai detto che erano di quelli simpatici.",
+          "Sono molto simpatici. Troppo simpatici."
+        ],
+        [
+          "Ho le mani enormi. Guardale.",
+          "Sono mani normali. Tienile lontane dal fuoco."
+        ],
+        [
+          "Ho capito tutto. Il mondo intero. È tutta un'unica zuppa.",
+          "Allora scrivilo.",
+          "Non posso. La penna mi ride dietro.",
+          "Ma certo."
+        ],
+        [
+          "Perché {leader} brilla?",
+          "{leader} ha in mano una lanterna, {name}."
+        ],
+        [
+          "Quella polvere di {place} è stata un errore.",
+          "Il tizio che te l'ha venduta non aveva le sopracciglia. Era quello, l'indizio."
+        ],
+        [
+          "Ho paura e non so di cosa.",
+          "Allora tienimi la manica. Passerà. Quando passa, sarò proprio qui.",
+          "Promesso?",
+          "Promesso."
+        ],
+        [
+          "Il fumo in quella tenda sapeva di magia antica.",
+          "Sapeva di guai. Bevi un po' d'acqua, {name}."
+        ],
+        [
+          "Il tempo si è ammorbidito. Come il burro.",
+          "Sono passati dieci minuti. Siediti.",
+          "Dieci minuti sono un burro lunghissimo."
+        ],
+        [
+          "Sto parlando a voce altissima?",
+          "Stai sussurrando tutto. Con grande intensità.",
+          "È il contrario di quello che volevo fare."
+        ],
+        [
+          "{biome} ha una faccia. Ci guarda con gentilezza.",
+          "Bene. Che guardi pure mentre ti sdrai."
+        ],
+        [
+          "Non farmi mai più comprare da un mago di notte.",
+          "L'avevo detto anche l'ultima volta, {name}.",
+          "Non ti ho sentito. Ero impegnato a essere una nuvola."
+        ],
+        [
+          "È tutto molto divertente e non è successo niente.",
+          "Comincia così. Poi arriva la parte triste.",
+          "Non la voglio, la parte triste.",
+          "Nessuno la vuole. La superiamo con un tè."
+        ],
+        [
+          "Puoi dire al terreno di stare fermo, {other}?",
+          "Il terreno è fermo. Sei tu che ondeggi."
+        ],
+        [
+          "Ho visto mia nonna nel fuoco. Mi ha detto di mettermi il cappotto.",
+          "Allora mettiti il cappotto. Non aveva torto.",
+          "Non aveva mai torto. È questo che fa paura."
+        ]
+      ],
+      "pregnant": [
+        [
+          "Il bambino ha scalciato durante lo scontro. Credo volesse partecipare.",
+          "Digli di aspettare il suo turno. Diciotto anni circa."
+        ],
+        [
+          "Devo fermarmi. Di nuovo. Scusate.",
+          "Fermati tutte le volte che vuoi, {name}. La strada non scappa."
+        ],
+        [
+          "Ucciderei per aringhe sottaceto e marmellata.",
+          "Insieme?",
+          "Non giudicare me. Giudica il bambino."
+        ],
+        [
+          "E se nasce prima del tempo, qui fuori in mezzo a {biome}?",
+          "Allora ce la caviamo. Ho letto il libro due volte.",
+          "Quale libro?",
+          "Quello dell'ultimo paese. Ha le figure. Troppe figure."
+        ],
+        [
+          "Mi dicono tutti di sedermi.",
+          "Perché continui ad arrampicarti dappertutto, {name}."
+        ],
+        [
+          "Pensi che ne sarò capace? Di fare il genitore.",
+          "Tieni in vita questa banda sulla strada tutti i giorni. Andrà benissimo.",
+          "Questa banda non piange di notte.",
+          "{leader} sì. Solo che lo fa piano."
+        ],
+        [
+          "Ho i piedi grandi il doppio. Cammino sul pane.",
+          "Stasera te li massaggio. Pane compreso."
+        ],
+        [
+          "Continuo a pensare ai nomi.",
+          "Qualcuno buono?",
+          "Neanche uno. Sembrano tutti nomi da locandiere."
+        ],
+        [
+          "Il sonno è una diceria. Il bambino ha da ridire quando mi sdraio a sinistra.",
+          "Allora sdraiati a destra e ti racconto storie noiose finché non si arrende."
+        ],
+        [
+          "Adesso la strada mi fa paura. Prima non mi faceva mai paura.",
+          "Avere paura è segno che stai attento, {name}.",
+          "Non voglio stare attento. Voglio una casa."
+        ],
+        [
+          "Non portarmi lo zaino. Be'. Portane metà.",
+          "Lo porto tutto. Tu porti già abbastanza."
+        ],
+        [
+          "Stamattina ho pianto per un'alba. Un'alba.",
+          "Era un'alba molto bella.",
+          "Era un'alba qualunque. È quello il problema."
+        ],
+        [
+          "La levatrice di {place} ha detto di mangiare più verdura.",
+          "Allora mangiamo più verdura. Tutti quanti. Per solidarietà.",
+          "Te ne pentirai, di averlo detto."
+        ],
+        [
+          "Senti. Lì. Si muove.",
+          "Oh. Lì dentro c'è una persona intera, {name}.",
+          "Mezza persona. Il resto è zuppa e speranza."
+        ],
+        [
+          "Quando nasce, viaggia con noi. Ho deciso.",
+          "Allora ci serviranno una tenda più piccola e una pazienza più grande.",
+          "Non abbiamo né l'una né l'altra.",
+          "Le troveremo tutte e due per allora."
+        ],
+        [
+          "Smettila di fissarmi la pancia, {other}.",
+          "È difficile non farlo. Entra nelle stanze prima di te, {name}."
+        ]
+      ],
+      "levelUp": [
+        [
+          "Oggi è scattato qualcosa. Le mani sapevano cosa fare prima di me.",
+          "Ho visto. Ti muovevi come se l'avessi fatto cento volte."
+        ],
+        [
+          "Livello {level}, {other}. Ho contato.",
+          "Nessuno le conta, quelle cose, {name}.",
+          "Io conto tutto. Mi aiuta a dormire."
+        ],
+        [
+          "Ho imparato un trucco nuovo. Vuoi vedere?",
+          "È pericoloso?",
+          "Solo per chi sta lì in piedi.",
+          "Allora mi metto qui di lato, {name}."
+        ],
+        [
+          "Ho la mira più ferma. Lo sento.",
+          "Bene. La settimana scorsa hai tolto il cappello a uno spaventapasseri per sbaglio.",
+          "Era uno spaventapasseri molto minaccioso."
+        ],
+        [
+          "Mi sento più alto. Non lo sono, ma mi ci sento.",
+          "Cammini più alto, {name}. Conta lo stesso."
+        ],
+        [
+          "Credo di aver finalmente capito cosa urlava sempre il mio vecchio maestro.",
+          "Ce ne hai messo di tempo.",
+          "Dodici anni e un sacco di lividi. Sì."
+        ],
+        [
+          "Livello {level}. Si vede?",
+          "Hai smesso di inciampare nelle radici. Si vede, {name}."
+        ],
+        [
+          "Quello scontro mi è sembrato lento. Non perché fosse facile. Perché ero veloce io.",
+          "Non fartelo salire alla testa. Fallo scendere nei piedi."
+        ],
+        [
+          "Adesso sollevo lo zaino pieno senza lamentarmi.",
+          "Allora domani lo porti tu, {name}.",
+          "Me la sono cercata."
+        ],
+        [
+          "Essere più forte è strano. Continuo a rompere le maniglie.",
+          "E una tazza stamattina.",
+          "La tazza era già crepata.",
+          "Non lo era, {name}."
+        ],
+        [
+          "Hai visto? Non ci ho nemmeno pensato.",
+          "Ho visto. Rifallo quando conta.",
+          "È proprio questo. Conterà, e sarò pronto."
+        ],
+        [
+          "Sono arrivato al livello {level} da qualche parte lungo la strada e nessuno ha fatto festa.",
+          "Tieni. Un biscotto raffermo. Buon livello {level}, {name}."
+        ],
+        [
+          "Mi sento come una lama nuova. Affilata, un po' nervosa.",
+          "Affilata va bene. Nervosa ti tiene prudente.",
+          "Allora resto un po' nervoso."
+        ],
+        [
+          "Gli incantesimi mi vengono più facili. Meno come strapparsi un dente.",
+          "Più come strapparsi un dente più piccolo?",
+          "Un dente da latte. Molto gestibile."
+        ],
+        [
+          "Una volta {biome} mi faceva paura. Oggi ero solo curioso.",
+          "È il modo migliore di diventare più forti.",
+          "Non dirlo a nessuno. Rovina il mistero.",
+          "Il tuo segreto è al sicuro, {name}."
+        ],
+        [
+          "Insegnami la prossima cosa che sai, {other}. Adesso sono pronto.",
+          "Lo sei. È una novità. Mi piace."
+        ]
+      ],
+      "rich": [
+        [
+          "Abbiamo addosso {gold}. Continuo a toccare la tasca per controllare.",
+          "Smetti di toccarla. Ormai tutto il paese sa qual è la tasca."
+        ],
+        [
+          "{gold}. Non sono mai stato così vicino a tanti soldi, e non mi piace come mi guardano.",
+          "I soldi non guardano nessuno. È la gente che guarda i soldi.",
+          "Così è peggio. Grazie."
+        ],
+        [
+          "Con {gold} potremmo regalare al camper un cambio nuovo.",
+          "O un camper nuovo, intero.",
+          "Non dirlo dove può sentirti."
+        ],
+        [
+          "Voglio un materasso vero. Non bello. Basta che non sia la terra.",
+          "Sogna più in grande. Siamo ricchi, per una settimana circa."
+        ],
+        [
+          "{leader} ha cominciato a camminare come uno col conto in banca.",
+          "Passerà. Passa sempre al secondo negozio."
+        ],
+        [
+          "Dovremmo dividere quei {gold} in tre tasche, non si sa mai.",
+          "Non si sa mai cosa?",
+          "Tutto quello che abbiamo incontrato su questa strada."
+        ],
+        [
+          "Nell'ultimo paese ho chiesto il prezzo di una spada decente. Adesso ce la potremmo permettere.",
+          "Ce ne potremmo permettere due. È così che la gente finisce con due spade."
+        ],
+        [
+          "Mia madre sverrebbe a vedere {gold} in un borsellino solo.",
+          "Allora non farglieli vedere. Mandale una cartolina.",
+          "Con sopra cosa?",
+          "Un bel panorama. Niente sui soldi."
+        ],
+        [
+          "Uno alla locanda mi ha chiesto come andava. Ho detto male, per abitudine.",
+          "Bene. Continua a dirlo finché i soldi non sono finiti."
+        ],
+        [
+          "Continuo a fare conti a mente. {gold}, meno il cibo, meno la benzina, meno le riparazioni.",
+          "E cosa resta?",
+          "Abbastanza da aver paura di perderlo."
+        ],
+        [
+          "Da piccolo pensavo che i ricchi non dovessero mai andare a piedi.",
+          "E adesso?",
+          "Adesso penso che camminino e basta, con scarpe migliori."
+        ],
+        [
+          "Oggi tienimi lontano dal mercato.",
+          "Perché?",
+          "Ho {gold} in testa e nemmeno un briciolo di giudizio."
+        ],
+        [
+          "Abbiamo {gold}. Potremmo addirittura saldare i debiti.",
+          "Saldarli? Chi te l'ha insegnato? Non sono stato io."
+        ],
+        [
+          "Ho comprato le arance. Vere, dalla Spagna. Nessuno mi dica quanto sono costate.",
+          "Ho visto la bancarella. Me lo porterò nella tomba."
+        ],
+        [
+          "Con {gold} potremmo fermarci un mese da qualche parte al caldo.",
+          "E poi?",
+          "E poi saremmo poveri al caldo.",
+          "Suona comunque meglio che essere poveri qui."
+        ],
+        [
+          "I ladri di {place} sentono l'odore di un borsellino pieno.",
+          "Allora ce ne andiamo prima che finiscano di annusare."
+        ]
+      ],
+      "broke": [
+        [
+          "Abbiamo {gold}. Li ho contati due volte per farli crescere.",
+          "Ha funzionato?",
+          "Sono calati di una moneta. Me n'è caduta una."
+        ],
+        [
+          "{gold}. Fanno una pagnotta, una candela e delle scuse.",
+          "Lascia stare le scuse. La candela ci serve."
+        ],
+        [
+          "Potrei vendere il coltello buono.",
+          "Potresti, e saresti al verde con un coltello peggiore."
+        ],
+        [
+          "Siamo scesi a {gold}.",
+          "Lo so. Passo davanti ai forni con gli occhi chiusi."
+        ],
+        [
+          "Da bambino mangiavamo la minestra fatta con le ossa della minestra di prima.",
+          "Quella non è una ricetta. È una storia di famiglia.",
+          "Ci ha fatto superare degli inverni. Ci farà superare anche {place}."
+        ],
+        [
+          "Dicono che nel prossimo paese ci sia lavoro.",
+          "Lo dicono sempre. Non è mai il tipo che paga in giornata.",
+          "L'ultima volta ci hanno pagato in uova."
+        ],
+        [
+          "Con {gold} non ci facciamo il pieno al camper.",
+          "Allora il camper impara a camminare come noi."
+        ],
+        [
+          "Ho cominciato a guardare per terra in cerca di monete.",
+          "Trovato niente?",
+          "Un bottone. Lo tengo, per principio."
+        ],
+        [
+          "Dimmi sinceramente quanto durano {gold}.",
+          "Due giorni se stiamo attenti. Uno se {leader} vede una pasticceria."
+        ],
+        [
+          "Potremmo fare uno spettacolo in piazza. Tu canti, io tengo il cappello.",
+          "Io non canto.",
+          "Allora ci pagheranno per smettere.",
+          "Sempre pagati sono."
+        ],
+        [
+          "Essere poveri è soprattutto aritmetica. In aritmetica non sono mai andato bene.",
+          "Allora eri destinato ad andare bene nell'essere povero."
+        ],
+        [
+          "{gold}. Il borsellino non tintinna nemmeno più.",
+          "Mi manca il peso. Mi impediva di volare via."
+        ],
+        [
+          "{gold}. Mio padre li guadagnava prima di colazione e li spendeva entro pranzo.",
+          "Quindi è di famiglia.",
+          "Solo la seconda parte."
+        ],
+        [
+          "Non guardare la locanda. Non dormiamo alla locanda.",
+          "Guardavo e basta. Guardare è gratis.",
+          "A {place} non ne sarei così sicuro."
+        ],
+        [
+          "Abbiamo ancora {gold} e una coperta in più. Potremmo vendere la coperta.",
+          "Allora saremmo al verde e al freddo. Una cosa alla volta, per favore."
+        ],
+        [
+          "{other}, prestami una moneta per il telefono pubblico.",
+          "Abbiamo {gold} in tutto. Chi chiami, una banca?"
+        ],
+        [
+          "Siamo stati più poveri di così.",
+          "Quando?",
+          "Quell'inverno in montagna. Avevamo una rapa e un debito.",
+          "E adesso ci resta solo il debito."
+        ],
+        [
+          "Con gli ultimi ho comprato il pane. Non arrabbiarti.",
+          "Arrabbiarmi? È la decisione migliore che questo gruppo abbia preso in una settimana."
+        ]
+      ],
+      "holiday": [
+        [
+          "È {holiday}. Tutti i negozi di {place} hanno la serranda abbassata.",
+          "E noi qui, senza lacci."
+        ],
+        [
+          "A casa, per {holiday}, mangeremmo fino a non reggerci in piedi.",
+          "Qui invece stiamo in piedi. Qualcosa deve cedere.",
+          "Il pranzo, spero."
+        ],
+        [
+          "Tu festeggi {holiday}?",
+          "Festeggio ogni giorno in cui i negozi sono chiusi e nessuno mi chiede soldi."
+        ],
+        [
+          "Famiglie dappertutto, oggi. Passeggini, nonne, tutto quanto.",
+          "E noi, con gli zaini, una mappa e un certo odore.",
+          "Parla per te.",
+          "Parlo per tutti. Sinceramente."
+        ],
+        [
+          "Auguri per {holiday}.",
+          "Davvero? Nessuno l'ha detto alla strada."
+        ],
+        [
+          "Chissà se a casa stanno apparecchiando per {holiday}.",
+          "Sì. E ti lasciano una sedia vuota, per dispetto.",
+          "Per affetto.",
+          "Per tutte e due le cose. La famiglia è questo."
+        ],
+        [
+          "Stamattina il forno ha aperto un'ora per {holiday}. Ho preso l'ultima torta.",
+          "Hai mangiato l'ultima torta.",
+          "L'ho presa. Quello che è successo dopo è privato."
+        ],
+        [
+          "Hanno tutti il giorno libero tranne noi.",
+          "Noi non abbiamo mai giorni liberi. Abbiamo solo giorni."
+        ],
+        [
+          "Le campane suonano dall'alba.",
+          "È {holiday}. Ne hanno il diritto. Siamo noi quelli fuori posto."
+        ],
+        [
+          "Da bambino odiavo {holiday}. Tutti quei parenti.",
+          "E adesso?",
+          "Adesso darei parecchio per annoiarmi a quella tavola."
+        ],
+        [
+          "Un signore di {place} mi ha appena augurato buon {holiday} e mi ha dato un'arancia.",
+          "L'hai ringraziato?",
+          "Ero troppo sorpreso. Ringrazierò l'arancia."
+        ],
+        [
+          "Secondo te i mostri fanno le feste?",
+          "Se le fanno, hanno scelto male quella da saltare."
+        ],
+        [
+          "Niente autobus, niente posta, niente mercato. {holiday} ha chiuso il paese intero.",
+          "Meglio. Nessuno può venderci qualcosa che non ci serve."
+        ],
+        [
+          "Volevo mandare un biglietto per {holiday}.",
+          "Mandalo in ritardo. I biglietti in ritardo sono quelli sinceri."
+        ],
+        [
+          "La piazza è piena di musica. Potremmo fermarci per una canzone.",
+          "Una canzone. Poi si lavora.",
+          "Due canzoni.",
+          "Va bene. Due, e tu porti il mio zaino."
+        ],
+        [
+          "Da qualche parte, in questo momento, una famiglia litiga sull'arrosto.",
+          "Beati loro. Noi litighiamo sulla direzione."
+        ]
+      ],
+      "weekend": [
+        [
+          "Fine settimana. Mezzo paese è ancora a letto.",
+          "E l'altra metà ha il mal di testa. Abbiamo scelto un bel giorno per passare."
+        ],
+        [
+          "La gente lava la macchina. La lava. Apposta.",
+          "A quanto pare, il fine settimana serve a questo."
+        ],
+        [
+          "Quand'è stato il tuo ultimo fine settimana?",
+          "Ne ho avuto uno, una volta. L'ho passato a traslocare.",
+          "Quindi, mai.",
+          "Quindi, mai."
+        ],
+        [
+          "C'è il mercato. Nel fine settimana c'è sempre.",
+          "Allora mani in tasca e occhi sul formaggio."
+        ],
+        [
+          "Mi ricordo i fine settimana. Colazioni lunghe. La radio accesa. Nessun posto dove andare.",
+          "Smettila. Mi fai piangere in mezzo a una collina."
+        ],
+        [
+          "Bambini dappertutto. Aquiloni, biciclette, un pallone in ogni cortile.",
+          "Uno mi ha chiesto se ero un cavaliere.",
+          "E tu cosa hai detto?",
+          "Ho detto di sì. Mi sembrava scortese dire di no."
+        ],
+        [
+          "Il fine settimana vale anche se lo passi a camminare?",
+          "Vale per quelli che ci guardano camminare."
+        ],
+        [
+          "I pescatori sono sulla riva. Ognuno col suo thermos.",
+          "Quello è il vero fine settimana. Un thermos e nessuno che ti chiede niente."
+        ],
+        [
+          "Mio fratello vive per il fine settimana. Calcio, una birra, un pisolino.",
+          "E tu?",
+          "Io vivo per la prossima tappa. Hobby diverso."
+        ],
+        [
+          "Oggi a {place} nessuno ha fretta.",
+          "Tranne noi. Diamo nell'occhio come una sirena dei pompieri."
+        ],
+        [
+          "Il fine settimana lavoravo nel negozio di mio zio.",
+          "Quindi ti sei allenato per questo.",
+          "Mi sono allenato alla delusione. Più o meno è uguale."
+        ],
+        [
+          "Traffico da fine settimana. Tutte le famiglie del paese sono su questa strada.",
+          "Tutte al mare. Col cane e la nonna.",
+          "E una cassa di vino nel bagagliaio."
+        ],
+        [
+          "Facciamo finta che sia fine settimana anche per noi. Un'ora lenta.",
+          "Un'ora. Cronometro."
+        ],
+        [
+          "La radio ha smesso col notiziario e ha cominciato con le dediche.",
+          "Chiedi qualcosa per noi.",
+          "Tipo cosa?",
+          "Qualcosa che parli di camminare. Capiranno."
+        ],
+        [
+          "Qualcuno taglia l'erba. Quel rumore vuol dire fine settimana ovunque.",
+          "Per loro vuol dire riposo. Per me vuol dire che lavora qualcun altro."
+        ],
+        [
+          "Qui nel fine settimana i negozi chiudono presto.",
+          "Allora compriamo adesso e ci lamentiamo dopo, come sempre.",
+          "È tutta la filosofia di questo gruppo."
+        ]
+      ],
+      "night": [
+        [
+          "Ancora sveglio?",
+          "Il fuoco continua a parlare. Io continuo ad ascoltare."
+        ],
+        [
+          "Guarda che cielo. In città non vedi mai tante stelle.",
+          "In città non vedi mai tanto di niente. Tranne le bollette."
+        ],
+        [
+          "Non riesco a dormire con tutto questo silenzio.",
+          "Allora russo io per te. Un servizio pubblico."
+        ],
+        [
+          "Che ore sono?",
+          "Abbastanza tardi da non avere importanza.",
+          "Abbastanza presto da averne domani."
+        ],
+        [
+          "Mia nonna diceva che dopo mezzanotte non succede niente di buono.",
+          "Allora dormi e lascia che il niente succeda a qualcun altro."
+        ],
+        [
+          "Faccio io il primo turno di guardia.",
+          "L'hai fatto anche ieri notte.",
+          "Mi piace il primo turno. È al secondo che cominciano i rumori."
+        ],
+        [
+          "Qualcosa si muove là fuori.",
+          "Una volpe. O un gufo. O qualcosa che incontreremo domattina.",
+          "Non è rassicurante come credi.",
+          "Non doveva rassicurare. Doveva essere preciso."
+        ],
+        [
+          "Raccontami qualcosa. Qualsiasi cosa. Tienimi sveglio.",
+          "A otto anni sono scappato di casa. Sono arrivato fino al forno.",
+          "E poi?",
+          "Poi ho mangiato un panino dolce e sono tornato. Non sono mai stato un grande avventuriero."
+        ],
+        [
+          "Il fuoco si sta spegnendo.",
+          "Lascialo fare. Voglio vedere le braci. Sono la parte migliore."
+        ],
+        [
+          "Secondo te {leader} dorme davvero?",
+          "Con un occhio solo. Quello non dorme mai del tutto."
+        ],
+        [
+          "Continuo a pensare a tutto quello che avrei dovuto dire oggi.",
+          "Dillo domani. I pensieri di notte sono sempre più lunghi del necessario."
+        ],
+        [
+          "C'è una luce in una cascina oltre la collina. Qualcun altro è sveglio.",
+          "Un neonato, forse. O qualcuno che si preoccupa come te.",
+          "Dovremmo salutare.",
+          "Da qui? Vai a dormire."
+        ],
+        [
+          "Mi fanno male i piedi in un modo che riesco a sentire.",
+          "Togliti gli stivali.",
+          "Se li tolgo adesso, non rientrano più."
+        ],
+        [
+          "Le notti in {biome} sono più fredde di quanto mi avevano promesso.",
+          "Nessuno ti ha promesso niente. Te lo sei promesso da solo."
+        ],
+        [
+          "È una radio?",
+          "Qualcuno a {place} che mette musica da ballo a quest'ora.",
+          "Buon per loro. Qualcuno dovrebbe ballare."
+        ],
+        [
+          "Mi manca il mio letto. Non un letto qualsiasi. Il mio, con l'avvallamento in mezzo.",
+          "Troverai un altro avvallamento. Il mondo è pieno di materassi pessimi."
+        ],
+        [
+          "Tè?",
+          "A quest'ora? Sì. Ovviamente sì."
+        ],
+        [
+          "Se mi addormento a metà frase, finiscila tu.",
+          "Lo faccio sempre. Non ti piace mai come finiscono.",
+          "Perché le chiudi sempre con una morale."
+        ]
+      ],
+      "dawn": [
+        [
+          "Gli uccelli cominciano prima della luce. Ogni volta.",
+          "Loro hanno un orario. Noi no."
+        ],
+        [
+          "Buongiorno. C'è il caffè?",
+          "C'è acqua calda e speranza.",
+          "Prendo tutte e due."
+        ],
+        [
+          "Adoro quest'ora. Nessuno vuole ancora niente da te.",
+          "Aspetta venti minuti. Io vorrò la colazione."
+        ],
+        [
+          "Di nuovo brina sugli zaini.",
+          "E sulle mie sopracciglia. Non ridere."
+        ],
+        [
+          "{leader} era in piedi da un'ora. A piegare cose.",
+          "Piegare cosa?",
+          "Tutto. Anche la mappa. Male, ma con ordine."
+        ],
+        [
+          "Guarda la nebbia su {biome}. Sembra che la terra respiri.",
+          "Sembra che la terra abbia freddo. Come me."
+        ],
+        [
+          "Hai dormito?",
+          "Un po'. Ho sognato una colazione che non mangerò.",
+          "Era buona?",
+          "C'erano le uova. Era perfetta."
+        ],
+        [
+          "Le prime luci mi fanno sempre pensare che potremmo ancora tornare indietro.",
+          "E a mezzogiorno?",
+          "A mezzogiorno è troppo tardi, e fa troppo caldo per discutere."
+        ],
+        [
+          "Il forno di {place} apre alle sei. Ne sento il profumo da qui.",
+          "E allora perché siamo ancora qui fermi?"
+        ],
+        [
+          "Mio padre si è alzato alle cinque ogni giorno della sua vita.",
+          "Era felice?",
+          "Era sveglio. Nella nostra famiglia contava quello."
+        ],
+        [
+          "Cielo rosso stamattina.",
+          "Rosso di mattina, la pioggia s'avvicina. Prendi la tela cerata."
+        ],
+        [
+          "Io non parlo finché il sole non è alto.",
+          "Stai parlando adesso.",
+          "Sotto protesta."
+        ],
+        [
+          "Dovremmo camminare finché è fresco.",
+          "Dovremmo, sì. Le mie gambe non sono ancora d'accordo."
+        ],
+        [
+          "È appena passato il furgone del latte. L'autista ci ha salutato come se ci conoscesse.",
+          "All'alba sono tutti gentili. La giornata non è ancora cominciata."
+        ],
+        [
+          "Su. Su. La strada non si cammina da sola.",
+          "Altri cinque minuti.",
+          "L'hai già detto quattro volte.",
+          "E ne è valsa la pena ogni volta."
+        ],
+        [
+          "A quest'ora il mondo sembra pulito, come se l'avessero sciacquato.",
+          "Aspetta mezzogiorno. Lo sporcheremo di nuovo."
+        ]
+      ],
+      "weather": {
+        "rain": [
+          [
+            "I miei calzini si sono arresi.",
+            "I miei si sono arresi un'ora fa. Adesso si fanno solo portare."
+          ],
+          [
+            "Adoro l'odore di quando comincia a piovere.",
+            "E poi continua e smetti di adorarlo."
+          ],
+          [
+            "Il tuo zaino è impermeabile?",
+            "In negozio lo era.",
+            "Il negozio era al chiuso."
+          ],
+          [
+            "Potremmo ripararci sotto quel ponte.",
+            "Con chiunque ci sia già sotto?",
+            "Prima busso."
+          ],
+          [
+            "Piove su {place}. Ogni tetto canta.",
+            "Anche ogni grondaia. Quasi tutte stonate."
+          ],
+          [
+            "Da piccolo stavo sotto la pioggia con la bocca aperta.",
+            "Per favore, non ricominciare adesso."
+          ],
+          [
+            "La mappa è bagnata. La strada si è ammollata. {leader} si è fatto silenzioso.",
+            "L'ultima è il segno peggiore."
+          ],
+          [
+            "Continuo a pensare a un bagno caldo.",
+            "Smettila. Così la pioggia sembra più fredda."
+          ],
+          [
+            "Camminare sotto la pioggia ha qualcosa di bello, se smetti di combatterla.",
+            "E tu quando hai smesso di combatterla?",
+            "Una decina di minuti fa, quando ho perso."
+          ],
+          [
+            "I miei capelli saranno un disastro.",
+            "Erano un disastro già stamattina. La pioggia dà solo una mano."
+          ],
+          [
+            "I contadini saranno contenti.",
+            "Bene. Qualcuno dovrebbe esserlo.",
+            "Magari ci vendono qualcosa a poco.",
+            "Adesso sono contento anch'io."
+          ],
+          [
+            "Stanotte ascoltala sulla tela. Il suono più bello del mondo.",
+            "Da dentro, sì. Da qui fuori è solo bagnato."
+          ],
+          [
+            "La pioggia in {biome} ha un odore diverso. Di ferro e muschio.",
+            "Per me tutto ciò che è bagnato sa della mia vecchia scuola.",
+            "Allora andavi in una scuola molto umida."
+          ],
+          [
+            "Hai un fiammifero asciutto?",
+            "Ho un umorismo asciutto. Nient'altro."
+          ],
+          [
+            "Gli stivali si sono riempiti. Cammino dentro due laghetti.",
+            "Allora sei l'unico di noi con vista lago."
+          ],
+          [
+            "Potremmo aspettare che passi in un caffè.",
+            "Non smetterà.",
+            "Allora aspettiamo per sempre, con una fetta di torta.",
+            "Un piano solido. Te ne ho sentiti di peggiori."
+          ]
+        ],
+        "storm": [
+          [
+            "Quello era vicino.",
+            "Conta i secondi. Uno, due.",
+            "Smetti di contare. Non voglio saperlo."
+          ],
+          [
+            "Allontanati dagli alberi alti.",
+            "Qui ci sono solo alberi alti.",
+            "Allora allontanati dal più alto."
+          ],
+          [
+            "Mio nonno diceva che il tuono sono i santi che spostano i mobili.",
+            "Stanotte stanno riarredando tutta la casa."
+          ],
+          [
+            "Non alzare quella spada.",
+            "Non ci pensavo nemmeno.",
+            "Ci stavi pensando. Te lo leggevo in faccia."
+          ],
+          [
+            "Durante i temporali mi nascondevo sotto il tavolo di cucina.",
+            "Serviva?",
+            "No. Ma c'era anche mia sorella, quindi era compagnia."
+          ],
+          [
+            "Con questo il camper dondolerà tutta la notte.",
+            "Come una culla.",
+            "Come una culla con cui qualcuno ce l'ha a morte."
+          ],
+          [
+            "A ogni lampo vedo tutta la zona di {biome} per un secondo. Poi niente.",
+            "Basta e avanza. Non voglio vederlo più a lungo."
+          ],
+          [
+            "Il cielo è diventato verde prima di aprirsi. Hai visto?",
+            "Ho visto. Sto facendo finta di no."
+          ],
+          [
+            "È grave se i temporali mi piacciono?",
+            "Non grave. Solo preoccupante in un compagno di viaggio."
+          ],
+          [
+            "A {place} è saltata la corrente dappertutto.",
+            "Meglio. A lume di candela sembrano tutti più gentili."
+          ],
+          [
+            "Mi fischiano le orecchie.",
+            "È il tuono. O la tua coscienza.",
+            "La mia coscienza è più silenziosa.",
+            "Non da dove sto io."
+          ],
+          [
+            "Dovevamo fermarci un'ora fa.",
+            "Dovevamo fermarci ieri. Il senno di poi è sempre all'asciutto."
+          ],
+          [
+            "Qualcuno ci conti. Ci siamo tutti?",
+            "Tutti. Bagnati, spaventati e presenti."
+          ],
+          [
+            "Adesso la pioggia va di lato.",
+            "Allora camminiamo di lato. Stai al passo."
+          ],
+          [
+            "Quando passa, l'aria saprà di ferro e pietra pulita.",
+            "Quando passa, bacerò la terra.",
+            "La terra sarà fango.",
+            "La bacerò lo stesso."
+          ],
+          [
+            "Secondo te anche i mostri si nascondono da questo?",
+            "Quelli assennati. Dovremmo prendere appunti."
+          ]
+        ],
+        "snow": [
+          [
+            "Neve. Neve vera.",
+            "Lo dici come se fosse un regalo.",
+            "Lo è. Solo che viene coi geloni."
+          ],
+          [
+            "Le mie dita hanno smesso di appartenermi.",
+            "Mettile sotto le ascelle. La dignità è roba estiva."
+          ],
+          [
+            "Con la neve è tutto così silenzioso. Anche la strada.",
+            "Anche tu, per una volta. Mi piace."
+          ],
+          [
+            "Facevo i pupazzi di neve con mia sorella. Gli metteva sempre il mio naso.",
+            "Il tuo naso?",
+            "Una carota, ma si assicurava che capissi."
+          ],
+          [
+            "Lasciamo tracce che seguirebbe anche un bambino.",
+            "Anche tutto quello che ci insegue. È giusto così."
+          ],
+          [
+            "Come fanno a tenere aperte le strade a {place}?",
+            "Vecchietti con la pala e tante opinioni."
+          ],
+          [
+            "Non mi sento i piedi.",
+            "Meglio. Si sono lamentati tutta la mattina."
+          ],
+          [
+            "Guarda, qui a {biome} è tutto bianco da cima a fondo.",
+            "Bellissimo.",
+            "Bellissimo e molto, molto freddo.",
+            "Le cose belle lo sono quasi tutte. Sono i patti."
+          ],
+          [
+            "Vin brulè. Da qualche parte a {place} c'è del vin brulè.",
+            "E lo troveremo. Ormai è l'unico piano."
+          ],
+          [
+            "Continuo a scivolare.",
+            "Cammina come un pinguino. Passi piccoli, orgoglio basso."
+          ],
+          [
+            "Secondo te attacca?",
+            "Ha attaccato. Ha attaccato dentro i miei stivali.",
+            "Si sta trasferendo."
+          ],
+          [
+            "Il fiato mi si ghiaccia sulla sciarpa.",
+            "Anche a me. Ci stiamo trasformando in statue.",
+            "Almeno le statue non devono camminare."
+          ],
+          [
+            "C'è uno slittino in quel cortile. Non lo usa nessuno.",
+            "Non pensarci nemmeno.",
+            "Troppo tardi. Ci ho già pensato due volte."
+          ],
+          [
+            "La neve fa sembrare ogni paese una cartolina.",
+            "Da fuori. Dentro la cartolina, i tubi sono gelati."
+          ],
+          [
+            "Da bambino, un giorno di neve voleva dire niente scuola.",
+            "Qui fuori un giorno di neve vuol dire la stessa strada, più lenta.",
+            "La vita è ingiusta.",
+            "La vita è fredda. L'ingiustizia è un reclamo a parte."
+          ],
+          [
+            "Scuoti il cappuccio prima di entrare. L'ultima volta hai portato dentro mezza collina.",
+            "Era un souvenir."
+          ]
+        ],
+        "clear": [
+          [
+            "Neanche una nuvola. Nemmeno una.",
+            "Non dirlo ad alta voce. Il cielo ascolta."
+          ],
+          [
+            "Giornate così fanno valere tutto il viaggio.",
+            "Giornate così mi fanno dimenticare le altre. Il trucco è quello."
+          ],
+          [
+            "Da qui vedo tre paesi. E una chiesa. E una capra.",
+            "La capra è la parte migliore.",
+            "D'accordo. Una capra molto sicura di sé."
+          ],
+          [
+            "Oggi mangiamo fuori. Pane, formaggio, panorama.",
+            "Mangiamo fuori tutti i giorni.",
+            "Oggi lo facciamo apposta."
+          ],
+          [
+            "Con questa luce {biome} sembra quasi amichevole.",
+            "Quasi. Tieni comunque gli occhi aperti."
+          ],
+          [
+            "Mi scotterò.",
+            "Mettiti un cappello.",
+            "Allora mi scotterò col cappello."
+          ],
+          [
+            "Con una giornata così mio padre ci portava al lago.",
+            "Facevate il bagno?",
+            "Lui nuotava. Noi lo guardavamo e mangiavamo tutti i panini.",
+            "Bambini furbi."
+          ],
+          [
+            "Stai fischiettando.",
+            "Davvero? Beh. È una di quelle giornate."
+          ],
+          [
+            "Oggi il bucato si asciugherebbe in un'ora.",
+            "Allora laviamo qualcosa. Cominciando da te."
+          ],
+          [
+            "Oggi da {place} si vedono le montagne. Di solito si nascondono.",
+            "Si mettono in mostra. Lasciale fare."
+          ],
+          [
+            "Bel tempo per camminare.",
+            "Bel tempo per tutto. Perfino il mio ginocchio è di buon umore."
+          ],
+          [
+            "Sdraiati nell'erba con me per cinque minuti.",
+            "Cinque?",
+            "Va bene. Dieci. Non dirlo a {leader}."
+          ],
+          [
+            "Voglio ricordarmi questa giornata. La luce, la strada, tutto.",
+            "Allora smetti di parlare e guardala."
+          ],
+          [
+            "In quella cascina qualcuno stende le lenzuola. Guarda quanto sono bianche.",
+            "Bucato e cielo azzurro. Sembra la pubblicità di un detersivo."
+          ],
+          [
+            "Cielo sereno anche stanotte. Vedremo tutte le stelle.",
+            "E geleremo sotto ognuna."
+          ],
+          [
+            "È sbagliato essere felici senza motivo?",
+            "È sospetto.",
+            "Mi va bene sospetto.",
+            "Allora va bene anche a me. Solo per oggi."
+          ]
+        ]
+      },
+      "birthday": [
+        [
+          "Oggi è il mio compleanno. Quasi me ne dimenticavo.",
+          "Buon compleanno, {name}. Io non me n'ero dimenticato. Solo che non avevo niente da regalarti."
+        ],
+        [
+          "{age} anni, oggi.",
+          "Buon compleanno, {name}. Non dimostri un giorno più che stanco.",
+          "È la cosa più carina che mi hai detto in tutto l'anno."
+        ],
+        [
+          "Nessuno deve fare storie. È solo un compleanno.",
+          "Troppo tardi. Ho comprato una torta a {place}.",
+          "Una torta intera?",
+          "Mezza torta. La strada del ritorno era lunga."
+        ],
+        [
+          "Mia madre per il mio compleanno faceva sempre una crostata al limone.",
+          "Non abbiamo limoni, {name}. Però ho una canzone.",
+          "Per favore, non cantare.",
+          "Troppo tardi. Mi esercito dall'alba."
+        ],
+        [
+          "Un anno in più, e sempre in cammino.",
+          "Essere ancora in cammino è tutto il regalo. Buon compleanno, {name}."
+        ],
+        [
+          "Chissà se a casa qualcuno se n'è ricordato.",
+          "Sì. Se ne ricordano sempre. Solo che su una strada non riescono a raggiungerti.",
+          "Una cartolina mi raggiungerebbe.",
+          "Allora mandagliene una tu per primo e falli vergognare."
+        ],
+        [
+          "Oggi vorrei niente mostri, niente pioggia e qualcosa di fritto.",
+          "Buon compleanno, {name}. Due su tre, forse."
+        ],
+        [
+          "{age}. Quando è successo?",
+          "Da qualche parte tra qui e l'ultimo paese, credo."
+        ],
+        [
+          "Per il mio compleanno volevo essere in un posto speciale.",
+          "Sei a {place}.",
+          "Ho detto speciale."
+        ],
+        [
+          "Non dire agli altri che è il mio compleanno.",
+          "Gliel'ho detto ieri. Ti aspetta una sorpresa. Fingi stupore."
+        ],
+        [
+          "Una volta i compleanni sembravano una porta che si apre.",
+          "E adesso?",
+          "Adesso sembrano una porta che devo ricordarmi di chiudere alle spalle."
+        ],
+        [
+          "Cosa abbiamo fatto al mio ultimo compleanno?",
+          "Questo. Camminare. Insieme.",
+          "Allora ormai è una tradizione.",
+          "Buon compleanno, {name}. Ci vediamo qui l'anno prossimo."
+        ],
+        [
+          "Stamattina ho espresso un desiderio di compleanno, sull'ultima stella ancora visibile.",
+          "Cosa hai desiderato?",
+          "Se te lo dico, non si avvera. Conosci le regole."
+        ],
+        [
+          "Quando pensavo ai {age} anni, mi immaginavo con una casa.",
+          "Ce l'hai, una casa. Solo che è a pezzi, nei nostri zaini."
+        ],
+        [
+          "Oggi qualcuno mi deve da bere. È il mio compleanno.",
+          "Io. Buon compleanno, {name}. Il primo giro lo offro io, anche se è acqua."
+        ],
+        [
+          "Oggi mi faccio viziare in tutto. Ho deciso così.",
+          "D'accordo. Non porti niente e scegli tu la cena.",
+          "E posso lamentarmi liberamente?",
+          "Lo fai comunque, {name}. Oggi è ufficiale."
+        ]
+      ],
+      "homesick": [
+        [
+          "C'è un forno a {hometown} che apre alle cinque. Giuro che ne sento il profumo da qui.",
+          "Senti erba bagnata e i nostri calzini. Il resto lo fa la memoria."
+        ],
+        [
+          "Sai che rumore fa il fiume a {hometown} di notte?",
+          "No.",
+          "Nemmeno io, ormai. È questo che mi dà fastidio."
+        ],
+        [
+          "A {hometown} i vecchi litigano sulla stessa panchina ogni pomeriggio.",
+          "Su cosa?",
+          "Su niente. Calcio, tempo, l'uno con l'altro. Darei molto per sentirli."
+        ],
+        [
+          "Certe mattine mi sveglio e per un attimo credo di essere a {hometown}.",
+          "E poi?",
+          "E poi vedo la tua faccia, {other}. Senza offesa.",
+          "Un po' me la prendo."
+        ],
+        [
+          "Questa piazza somiglia un po' a quella di {hometown}. Stessi piccioni, stessa fontana stanca.",
+          "Ogni piazza d'Europa ha la stessa fontana stanca."
+        ],
+        [
+          "Mi mancano i tram di {hometown}. Rumorosi, in ritardo, sempre pieni.",
+          "Stai descrivendo una tortura."
+        ],
+        [
+          "Quando arriviamo a {hometown}, ti porto nella cucina di mia zia.",
+          "Mi darà da mangiare?",
+          "Ti darà da mangiare finché non implori. Poi ricomincerà."
+        ],
+        [
+          "Qui nessuno sa come mi chiamo. A {hometown} non potevo comprare il pane senza tre chiacchierate.",
+          "E adesso daresti qualsiasi cosa per una sola. Si vede."
+        ],
+        [
+          "Continuo a cercare {hometown} sugli espositori delle cartoline. Mai.",
+          "Forse non è una città da cartolina. Di solito sono le migliori."
+        ],
+        [
+          "Le campane di {hometown} sono un po' stonate. Te ne accorgi solo quando smettono.",
+          "E qui hanno smesso.",
+          "Qui non hanno mai cominciato."
+        ],
+        [
+          "La mia via a {hometown} sa di caffè e pietra bagnata dopo la pioggia.",
+          "Questa sa di fango e di qualcosa di morto.",
+          "Grazie, {other}. Molto rassicurante."
+        ],
+        [
+          "Sono mesi che non vedo {hometown}.",
+          "Sarà ancora lì. Le città sanno aspettare."
+        ],
+        [
+          "A volte penso al bar all'angolo e mi chiedo chi sia seduto sulla mia sedia.",
+          "Probabilmente qualcuno con meno vesciche."
+        ],
+        [
+          "Se mai passi da {hometown}, non mangiare in stazione. Entra di due strade.",
+          "E perché dovrei esserci senza di te?",
+          "Giusto. Allora aspettami. Il posto te lo mostro io."
+        ],
+        [
+          "La luce qui è sbagliata. Troppo piatta. Non fa quello che faceva quella di casa.",
+          "La luce è luce.",
+          "Parole di chi non ha mai visto una sera dove sono cresciuto."
+        ],
+        [
+          "Mi manca annoiarmi in un posto di cui conoscevo ogni angolo.",
+          "Qui ti annoi.",
+          "Sì, ma da sconosciuto. Non è la stessa cosa."
+        ],
+        [
+          "Mia madre tiene ancora la mia stanza a {hometown} esattamente come l'ho lasciata.",
+          "Letto sfatto compreso?",
+          "Il letto l'ha rifatto. L'unica cosa che ha cambiato. Fa più male di quanto pensi."
+        ],
+        [
+          "Sai cosa darei per un piatto di qualcosa di casa?",
+          "Tutto quello che abbiamo, a sentirti.",
+          "Meno. Non abbiamo poi tanto.",
+          "Giusta osservazione, {name}."
+        ]
+      ],
+      "past": [
+        [
+          "Quando lavoravo come {job}, sapevo esattamente com'era fatto il domani.",
+          "Adesso sai a malapena com'è fatto questo pomeriggio. Benvenuto nel club."
+        ],
+        [
+          "{job}. Quello ero io, una volta. Camicia stirata e tutto.",
+          "Difficile immaginarlo, {name}.",
+          "È difficile anche per me, e c'ero."
+        ],
+        [
+          "Il mio vecchio mestiere, {job}, pagava male, ma pagava il venerdì.",
+          "Noi veniamo pagati quando qualcosa smette di volerci ammazzare."
+        ],
+        [
+          "Dodici anni come {job} e nemmeno uno mi ha preparato a un goblin.",
+          "Niente ti prepara a un goblin."
+        ],
+        [
+          "Sogno ancora i turni di quando lavoravo come {job}. Stesse facce, stesso orologio al muro.",
+          "Buffo. Quasi tutti sognano di scappare. Tu sogni di timbrare il cartellino."
+        ],
+        [
+          "Sai cosa mi regalarono quando lasciai il posto da {job}? Una penna.",
+          "Una penna buona?",
+          "Finì in una settimana. Un regalo sincero, col senno di poi."
+        ],
+        [
+          "La gente sente {job} e pensa subito a una vita noiosa.",
+          "Lo era?",
+          "Tantissimo. E io ci sapevo fare.",
+          "A questo ci credo, {name}."
+        ],
+        [
+          "Quando ho l'ansia, le mani rifanno ancora i gesti di quando lavoravo come {job}.",
+          "L'avevo notato. Pensavo fosse un incantesimo."
+        ],
+        [
+          "Se va tutto a rotoli, potrei sempre tornare a lavorare come {job}.",
+          "Ti riprenderebbero?",
+          "Dopo quello che ho visto? Avrei troppa esperienza per qualunque cosa."
+        ],
+        [
+          "La strada non faceva per me. Mi aspettavano una scrivania, una radio e una pensione.",
+          "Eppure eccoti qui, a camminare più di tutti noi."
+        ],
+        [
+          "Il bello del lavoro da {job} è che nessuno ti nota finché qualcosa non va storto.",
+          "Pure qui.",
+          "Sì, ma qui quando va storto ha i denti."
+        ],
+        [
+          "Il mio vecchio capo non mi riconoscerebbe.",
+          "È un bene?",
+          "Non mi riconosceva nemmeno quando c'ero. Almeno è coerente."
+        ],
+        [
+          "Ho tenuto il tesserino da {job}. È in fondo allo zaino.",
+          "Perché?",
+          "Nel caso qualcuno mi chieda chi sono e io l'abbia dimenticato."
+        ],
+        [
+          "Sai, il mestiere di {job} insegna la pazienza.",
+          "Tu non ne hai."
+        ],
+        [
+          "Ho lasciato la vita da {job} di martedì. Non ho nemmeno finito il caffè.",
+          "Rimpianti?",
+          "Per il caffè, sì."
+        ],
+        [
+          "Prima di tutto questo avevo una routine. Stesso tram, stesso panino, stesso posto.",
+          "Sembra tranquillo. Certe cose le noti solo quando non ci sono più."
+        ],
+        [
+          "Credi che ci saprei ancora fare? Con il lavoro da {job}, dico.",
+          "Sinceramente? Adesso faresti paura.",
+          "Bene. Prima non facevo paura a nessuno."
+        ],
+        [
+          "Quando qualcuno mi chiede cosa facevo prima, rispondo solo: viaggiavo.",
+          "E la verità?",
+          "La verità comprendeva moduli. Tanti moduli.",
+          "Allora viaggiare è la risposta più gentile, {name}."
+        ]
+      ],
+      "family": [
+        [
+          "Nell'ultimo paese ho scritto una lettera a mia madre. Non l'ho spedita.",
+          "Perché no?",
+          "Perché mi risponderebbe, e io dovrei stare da qualche parte perché arrivi."
+        ],
+        [
+          "Mia sorella odierebbe tutto questo. Ogni singola parte.",
+          "E a te piace quasi tutto. Basta non dirglielo mai."
+        ],
+        [
+          "La settimana scorsa ho chiamato casa da un telefono pubblico. Ha risposto mio padre.",
+          "Cosa ti ha detto?",
+          "Mi ha chiesto se mangio. Poi mi ha passato mia madre, che mi ha chiesto la stessa cosa."
+        ],
+        [
+          "Mia nonna diceva che una strada è solo un modo lungo per tornare a casa.",
+          "Donna saggia.",
+          "In ottant'anni non è mai uscita dal suo paese. Una teorica, diciamo."
+        ],
+        [
+          "Tre paesi fa ho comprato una cartolina per mio fratello. Ce l'ho ancora in tasca.",
+          "Allora ha visto più Europa di quanta ne vedrà mai lui."
+        ],
+        [
+          "I tuoi sanno dove sei, {other}?",
+          "Più o meno. E i tuoi?",
+          "Sanno che sono vivo. I dettagli li tengo vaghi. È più gentile."
+        ],
+        [
+          "Mio padre non mi ha mai detto di essere fiero di me. Mi ha solo aggiustato gli stivali prima che partissi.",
+          "È un modo di dirlo."
+        ],
+        [
+          "Ogni volta che squilla un telefono in un bar, penso che possa essere per me.",
+          "Non lo è mai.",
+          "No. Ma un giorno mia madre troverà il modo."
+        ],
+        [
+          "Il mio cuginetto mi ha chiesto di riportargli un drago.",
+          "Uno piccolo si potrebbe fare."
+        ],
+        [
+          "Porto l'anello di mia nonna appeso a un cordino al collo.",
+          "Per fortuna?",
+          "Per compagnia. Lei parlava tanto. L'anello è più silenzioso.",
+          "Mi pare uno scambio onesto, {name}."
+        ],
+        [
+          "I miei credono che abbia trovato lavoro all'estero.",
+          "Tecnicamente è così."
+        ],
+        [
+          "Mia sorella manda lettere fermo posta in paesi dove non arriviamo mai.",
+          "Quindi da qualche parte ce n'è una pila che aspetta.",
+          "Sì. Delusa da me, con la sua calligrafia."
+        ],
+        [
+          "Mi manca litigare con mio fratello per niente.",
+          "Litighi per niente anche con me.",
+          "Tu non sai dove ho nascosto la sua bici nel novanta. Non è la stessa cosa."
+        ],
+        [
+          "Quando sono partito mia madre mi ha messo in valigia un vasetto di marmellata. Non l'ho ancora aperto.",
+          "Lo conservi?",
+          "Se lo apro, è solo marmellata. Chiuso, è ancora la sua cucina."
+        ],
+        [
+          "Ho cominciato una lettera per mio padre. Sono arrivato a Caro papà.",
+          "La parte difficile è fatta.",
+          "No. La parte difficile è tutto quello che viene dopo."
+        ],
+        [
+          "Mia nonna ti darebbe un'occhiata, {other}, e si metterebbe a cucinare.",
+          "È una minaccia?",
+          "È il più grande onore che concede. E anche una minaccia."
+        ]
+      ],
+      "sleepless": [
+        [
+          "Che giorno è?",
+          "Giovedì.",
+          "Sicuro? Mi sembra di essere sveglio da tre giovedì di fila."
+        ],
+        [
+          "Non dormo come si deve dall'ultimo paese.",
+          "Si vede, {name}."
+        ],
+        [
+          "Stanotte ho contato le stelle. Tutte. Due volte.",
+          "E allora?",
+          "Ne mancano due. Mi servirà un'altra notte."
+        ],
+        [
+          "Se mi siedo mi addormento, e se mi addormento non mi rialzo.",
+          "Allora continua a camminare."
+        ],
+        [
+          "Ogni volta che chiudevo gli occhi, qualcosa faceva rumore.",
+          "Credo fossi io.",
+          "Allora ti perdono. Ma solo dopo un pisolino."
+        ],
+        [
+          "Ho gli occhi come se qualcuno ci avesse versato la sabbia.",
+          "Hai dormito almeno un po'?",
+          "Mi sono sdraiato. È tutta un'altra cosa."
+        ],
+        [
+          "Ti ho appena dato ragione su qualcosa e non ricordo su cosa.",
+          "Hai accettato di portare la tenda.",
+          "Non lo farei mai. Ecco come capisco di essere a pezzi."
+        ],
+        [
+          "Continuo a vedere cose ai margini dello sguardo.",
+          "Cose vere?",
+          "È questa la domanda, no?",
+          "Sdraiati un'ora, {name}. Faccio io la guardia."
+        ],
+        [
+          "Tre notti. Tre notti di quel gufo.",
+          "È un gufo molto tenace."
+        ],
+        [
+          "Ho provato a dormire seduto. Poi in piedi. Poi ho rinunciato.",
+          "C'è una panchina proprio lì."
+        ],
+        [
+          "È mattina o sera?",
+          "Mattina, {name}.",
+          "Di già? Stavo giusto cominciando a sentire la stanchezza."
+        ],
+        [
+          "Stanotte ho sentito ogni tuo singolo russare, {other}.",
+          "Io non russo.",
+          "Li ho catalogati. Ce ne sono sette tipi."
+        ],
+        [
+          "Sono troppo stanco per essere stanco. Sono passato dall'altra parte.",
+          "E com'è, di là?",
+          "Molto luminoso. Tutto ronza."
+        ],
+        [
+          "Mi fanno male le ossa in punti dove non sapevo di averne.",
+          "Ti serve dormire, non fare l'inventario."
+        ],
+        [
+          "Se nella prossima ora mi cade lo zaino, lasciatelo lì. E lasciate anche me.",
+          "Non ti lasciamo."
+        ],
+        [
+          "Parlami. Di qualsiasi cosa. Mi serve qualcosa per tenere gli occhi aperti.",
+          "Del tempo?",
+          "Quello no. Mi darebbe il colpo di grazia."
+        ]
+      ],
+      "wellRested": [
+        [
+          "Buongiorno! Che mattina! Guarda che cielo!",
+          "È grigio.",
+          "Un grigio magnifico!"
+        ],
+        [
+          "Ho dormito dieci ore e mi sento in grado di lottare con un orso.",
+          "Per favore, non lottare con un orso."
+        ],
+        [
+          "Su, in piedi, {other}! La strada non si cammina da sola.",
+          "Finora se l'è cavata benissimo senza di te."
+        ],
+        [
+          "Non ho sognato niente. Un niente puro e perfetto.",
+          "Sembra bellissimo. Io ho sognato un armadio che mi inseguiva."
+        ],
+        [
+          "Ho già fatto lo zaino, preparato il tè e sistemato quella tua cinghia.",
+          "È appena l'alba.",
+          "Lo so! Pensa a cosa posso fare entro mezzogiorno.",
+          "Preferirei di no, {name}."
+        ],
+        [
+          "È una mia impressione, o oggi gli uccelli cantano meglio?",
+          "È una tua impressione. Sono gli stessi uccelli."
+        ],
+        [
+          "Mi sento dieci anni più giovane. Forse dodici.",
+          "Non esagerare.",
+          "Undici, allora. Ultima offerta."
+        ],
+        [
+          "È stato il letto migliore da quando sono partito.",
+          "Era un pagliaio.",
+          "Un pagliaio molto accogliente."
+        ],
+        [
+          "Oggi facciamo la strada lunga? Ho voglia della strada lunga.",
+          "Assolutamente no."
+        ],
+        [
+          "Dormire è meraviglioso. Perché nessuno ne parla mai?",
+          "Ne parlano tutti. In continuazione."
+        ],
+        [
+          "Hai l'aria stanca, {other}. Vuoi che porti qualcosa?",
+          "Non essere gentile prima di colazione. Mi inquieta."
+        ],
+        [
+          "Indovina chi si è svegliato prima del gallo.",
+          "Il gallo ci è rimasto male?",
+          "Visibilmente. Credo di aver vinto."
+        ],
+        [
+          "Oggi potrei arrivare fino al mare. Qualsiasi mare. Scegline uno.",
+          "Possiamo scegliere la panchina più vicina?"
+        ],
+        [
+          "Funzionano tutte le articolazioni. Tutte quante. Ho controllato.",
+          "Congratulazioni.",
+          "Grazie. Era da un po'."
+        ],
+        [
+          "Ho dormito così bene che sono gentile con tutti. Ciao, {other}.",
+          "Ciao. Smettila di sorridere così, per favore.",
+          "Non posso. La mia faccia ha deciso."
+        ],
+        [
+          "Ho dormito come un sasso, {other}. Un sasso felice.",
+          "I sassi non sono felici.",
+          "Non glielo hai mai chiesto."
+        ]
+      ],
+      "fed": [
+        [
+          "Questo sì che era un pasto. Con un piatto. E una sedia.",
+          "E il bis, nel tuo caso."
+        ],
+        [
+          "In questo momento perdonerei qualsiasi cosa a chiunque.",
+          "Anche a me?",
+          "Non esagerare. Chiedimelo dopo il caffè."
+        ],
+        [
+          "Avevo dimenticato che il cibo può essere caldo fino in fondo.",
+          "Lo stufato era bollente.",
+          "La mia lingua lo ricorderà con affetto per una settimana."
+        ],
+        [
+          "Bene. Adesso riesco di nuovo a pensare.",
+          "E prima cosa facevi?",
+          "Avevo fame. Occupa tutta la testa."
+        ],
+        [
+          "Quella era una zuppa o un piccolo miracolo?",
+          "Una zuppa.",
+          "Allora la zuppa è un piccolo miracolo."
+        ],
+        [
+          "Mi sento di nuovo una persona. Una persona sazia, lenta e riconoscente.",
+          "La persona riesce a camminare?",
+          "Non in fretta. Datele un'ora."
+        ],
+        [
+          "Quel pane era ancora caldo. Per poco non piangevo.",
+          "Un po' hai pianto.",
+          "Per la zuppa. È diverso.",
+          "Certo, {name}."
+        ],
+        [
+          "Se adesso ci attacca qualcosa, sarò molto ragionevole al riguardo.",
+          "La pancia piena ti rende diplomatico."
+        ],
+        [
+          "Chi l'avrebbe detto che il miglior cuoco della zona stava in un posto così?",
+          "{leader} lo sapeva. L'ha scelto {leader}.",
+          "Allora d'ora in poi il pranzo lo sceglie {leader}."
+        ],
+        [
+          "Non mangerò mai più gallette da viaggio.",
+          "Le mangerai domani."
+        ],
+        [
+          "Gli stivali mi sembrano più leggeri. È possibile?",
+          "È l'umore a essere più leggero. Gli stivali sono gli stessi."
+        ],
+        [
+          "Ho chiesto la ricetta. Mi ha riso in faccia.",
+          "Giusto. Tu cucini come una frana."
+        ],
+        [
+          "Ti ricordi quando abbiamo mangiato quella roba dalla latta senza etichetta?",
+          "Non tirarla fuori adesso.",
+          "La tiro fuori solo per apprezzare meglio questo."
+        ],
+        [
+          "Questo è il tipo di pasto di cui si parla alla gente.",
+          "E a chi lo racconteresti?",
+          "A tutti. A degli sconosciuti. All'oste, due volte."
+        ],
+        [
+          "Ho caldo, ho la pancia piena e nessuno urla. È questa la pace?",
+          "Per poco.",
+          "Per poco basta."
+        ],
+        [
+          "Grazie per aver pagato, {other}.",
+          "Non ho pagato. Credevo l'avessi fatto tu.",
+          "Allora conviene camminare un po' più in fretta.",
+          "Con calma, {name}. Come chi ha mangiato bene."
+        ]
+      ],
+      "creed": [
+        [
+          "Per come mi ha cresciuto {creed}, ci si alza all'alba.",
+          "E per come mi ha cresciuto {otherCreed}, l'alba può aspettare.",
+          "Questo spiega parecchie cose di te, {other}."
+        ],
+        [
+          "Voi di {otherCreed} piegate le coperte in un modo stranissimo.",
+          "Le pieghiamo come si deve. Voi di {creed} le arrotolate come salsicce."
+        ],
+        [
+          "Preghi prima di mangiare, {other}?",
+          "Non come fate voi di {creed}.",
+          "E allora come?",
+          "In fretta. Prima che tu finisca il tuo piatto."
+        ],
+        [
+          "Continuo a dire che {creed} ha più senso di qualsiasi cosa tu creda.",
+          "E io dico che {otherCreed} ha canzoni migliori.",
+          "Non è un argomento.",
+          "È l'unico che vince attorno a un fuoco."
+        ],
+        [
+          "Accendi una candela ogni sera. È roba di {otherCreed}, o sei solo tu?",
+          "È una cosa da stanza buia. {otherCreed} si limita ad approvare."
+        ],
+        [
+          "Negli ambienti di {creed} questo posto lo chiameremmo un segno.",
+          "Negli ambienti di {otherCreed} lo chiamiamo palude."
+        ],
+        [
+          "Ogni volta che parli di {otherCreed}, imparo qualcosa e non sono d'accordo.",
+          "È quello che provo io per le tue prediche su {creed}.",
+          "Prediche? Ti stavo parlando della colazione."
+        ],
+        [
+          "Mia nonna, fedele a {creed}, ti avrebbe adorato, {other}. Poi avrebbe cercato di convertirti.",
+          "Mio zio, fedele a {otherCreed}, gliel'avrebbe lasciato fare. Poi le avrebbe venduto un opuscolo."
+        ],
+        [
+          "Ma voi di {otherCreed} come le prendete le decisioni?",
+          "Con calma, davanti a un tè."
+        ],
+        [
+          "Hai salutato quell'albero con la testa. È roba di {otherCreed}?",
+          "Buone maniere. C'era prima lui.",
+          "Noi di {creed} agli alberi passiamo accanto e basta.",
+          "Lo so. Gli alberi se ne sono accorti."
+        ],
+        [
+          "Sinceramente, più conosco {otherCreed}, meno mi dà fastidio.",
+          "Un gran complimento, da chi è cresciuto a pane e {creed}."
+        ],
+        [
+          "Non capisco come fai a dormire senza una benedizione di {creed}.",
+          "Sul fianco, di solito."
+        ],
+        [
+          "La tua abitudine da {otherCreed} di ringraziare la zuppa comincia a piacermi.",
+          "La zuppa apprezza.",
+          "I miei maestri di {creed} inorridirebbero.",
+          "Allora non dirglielo. La zuppa saprà tenere il segreto."
+        ],
+        [
+          "Noi di {creed} non contrattiamo. È poco dignitoso.",
+          "Ecco perché quegli stivali li hai pagati il doppio."
+        ],
+        [
+          "Ammettilo. È stato {creed} a tirarci fuori dall'ultimo pasticcio.",
+          "È stato {otherCreed}. Tu facevi solo rumore lì vicino."
+        ],
+        [
+          "Cosa dice {otherCreed} del camminare sotto la pioggia?",
+          "Che tempra il carattere.",
+          "{creed} dice che tempra il raffreddore."
+        ],
+        [
+          "Secondo il mio calendario di {creed}, oggi è giorno di riposo.",
+          "Su quel calendario un giorno su tre è di riposo."
+        ],
+        [
+          "Voi di {otherCreed} avete sempre una risposta per tutto.",
+          "E voi di {creed} avete sempre una domanda.",
+          "Si chiama curiosità.",
+          "Si chiama mettere a disagio la gente a cena."
+        ],
+        [
+          "Prima che tu lo chieda: no, {creed} non vieta le carte.",
+          "Peccato. Speravo in una scusa per smettere di perdere con te."
+        ],
+        [
+          "A volte mi chiedo se crederei in {creed} se fossi nato altrove.",
+          "Magari saresti dei nostri, {name}. {otherCreed} fino al midollo.",
+          "Non augurarmelo.",
+          "Troppo tardi. Me lo sono già immaginato."
+        ],
+        [
+          "I miei maestri di {creed} dicevano che con gente come te sarebbe stato impossibile viaggiare.",
+          "E allora?",
+          "Si sbagliavano. Sei solo difficile."
+        ],
+        [
+          "La tua preghiera di {otherCreed} prima di cena è durata un'eternità.",
+          "La tua preghiera di {creed} era una parola sola.",
+          "Una parola molto efficiente.",
+          "Detta a bocca piena."
+        ]
+      ]
+    }
   },
   "shop": {
     "opener": [
@@ -11654,6 +15023,176 @@
           "Ora ho di nuovo voglia di inventare. Così capisci che lo svago ha funzionato."
         ]
       }
+    },
+    "life": {
+      "ill": [
+        "{illness} può prendersi la mattina. Il pomeriggio no.",
+        "Un altro colpo di tosse. Un'altra occhiata da qualcuno dall'altra parte della strada.",
+        "Se {illness} cercava un ospite facile, ha sbagliato persona.",
+        "Zuppa. Sonno. Camminare comunque. La cura che non è una cura.",
+        "Oggi le ossa mi sembrano prese in prestito.",
+        "Caldo, poi freddo, poi caldo. Deciditi.",
+        "Non farti vedere appoggiato al muro.",
+        "Da qualche parte qualcuno ha una cura per {illness}. Spero che stia venendo da questa parte.",
+        "Con la febbre ogni salita è lunga il doppio.",
+        "Darei gli stivali per un respiro pulito.",
+        "Riposerò quando ci fermiamo. Se mai ci fermiamo.",
+        "{illness}. Perfino il nome sembra stanco."
+      ],
+      "wounded": [
+        "A ogni passo, {part} manda un reclamo ai piani alti.",
+        "Non caricarci sopra il peso. Facile a dirsi.",
+        "{part} guarirà. Lo dicono tutti.",
+        "La stecca prude. La stecca prude sempre.",
+        "Non zoppicare davanti agli altri. Si preoccupano.",
+        "Un altro passo. Poi un altro. {part} può tenere il muso più tardi.",
+        "Promemoria: il prossimo colpo non pararlo con niente di importante.",
+        "Pulsa a tempo col cuore. Molto musicale.",
+        "Starò bene. Starò bene. Dirlo due volte aiuta.",
+        "{part} si ricorda lo scontro meglio di me.",
+        "Dormire aiuterebbe. Il dolore non è d'accordo.",
+        "Guarisci più in fretta, stupido affare."
+      ],
+      "maimed": [
+        "Allungo ancora qualcosa che non c'è.",
+        "L'attacco sfrega. Stasera rimettici l'imbottitura.",
+        "Diverso, non meno. Diverso, non meno.",
+        "Oliare il giunto prima che ci pensi la pioggia.",
+        "I bambini fissano. Giusto. Lo farei anch'io.",
+        "Fa male dove non c'è più niente. Strana aritmetica.",
+        "Oggi ho imparato un altro modo di fare un nodo. Piccola vittoria.",
+        "Certi giorni lo sento mio. Oggi no.",
+        "Nessuno mi ha lasciato indietro. Ricordarselo quando è dura.",
+        "Lo scatto del giunto è il mio nuovo passo.",
+        "Mi manca. Ho il diritto di sentirne la mancanza.",
+        "Più lento. Non fermo."
+      ],
+      "craving": [
+        "Non pensare a {substance}. Pensa alla strada.",
+        "Conta gli alberi. Conta qualsiasi cosa che non sia {substance}.",
+        "È solo una sensazione. Le sensazioni passano. Di solito.",
+        "Un altro giorno senza {substance}. Poi un altro.",
+        "Le mani vogliono qualcosa da fare. Dagli le cinghie.",
+        "Ogni locanda su questa strada conosce il mio nome. Tira dritto.",
+        "La voglia urla. Io posso urlare di più.",
+        "Se cedo adesso, domani si riparte da zero.",
+        "Mi sta mentendo. È bravissima a mentire.",
+        "Inspira. Espira. {substance} non è l'aria.",
+        "Qualcuno del gruppo se ne accorgerebbe. Qualcuno se ne accorge sempre.",
+        "Prima l'acqua. Poi decidi. Poi decidi di nuovo."
+      ],
+      "drunk": [
+        "Il terreno continua ad arrivare prima del previsto.",
+        "Sto bene. Sto benissimo. Sto estremamente bene.",
+        "Perché ci sono due lune? È permesso?",
+        "Un altro bicchiere sarebbe stata un'idea pessima. Ottimo.",
+        "Sembrano tutti così gentili quando è tutto sfocato.",
+        "Non cantare. Non cantare. Ecco, sto cantando.",
+        "Domani mi manderà il conto.",
+        "Cammina dritto. Come una linea. Come una linea storta.",
+        "Mi manca qualcuno e non ricordo chi.",
+        "Quello steccato un minuto fa non c'era.",
+        "Acqua. Trova l'acqua. Poi trova il letto.",
+        "Perché l'ho bevuto? Perché era lì."
+      ],
+      "high": [
+        "Le foglie parlano. Con educazione, però.",
+        "Oggi le dita sono lontanissime.",
+        "È tutto bellissimo e un po' troppo rumoroso.",
+        "Non guardare il cielo troppo a lungo. Ricambia lo sguardo.",
+        "Da quanto sono qui in piedi?",
+        "Era una pessima idea con un bel cappello.",
+        "Il terreno respira. O respiro io. Uno dei due.",
+        "Tieni duro. Passa. Passa sempre.",
+        "Capisco tutto. No, è sparito di nuovo.",
+        "I colori hanno un sapore. Il verde è troppo salato.",
+        "Che nessuno mi noti. Che nessuno mi noti.",
+        "Mai comprare niente da un alchimista sorridente."
+      ],
+      "pregnant": [
+        "Scalci di nuovo. Hai già le tue opinioni.",
+        "Adesso siamo in due su questa strada. Cammina con attenzione.",
+        "Devo sedermi. Devo mangiare. Devo sedermi mentre mangio.",
+        "La schiena ha sporto reclamo.",
+        "In che mondo stai arrivando, piccolino?",
+        "I nomi. Ancora nessun nome.",
+        "A ogni buca della strada conto fino a dieci.",
+        "Qualcuno mi passi qualcosa di salato. E di dolce. Tutti e due.",
+        "Non sono lenta. Porto un bagaglio.",
+        "Buono, adesso. Siamo quasi arrivati. Ovunque sia.",
+        "Chissà se avrai il mio naso.",
+        "Coraggio per due. Adesso il lavoro è questo."
+      ],
+      "broke": [
+        "{gold}. Li riconto fra un'ora e spero.",
+        "Pane o candele. Non tutti e due.",
+        "Una volta lasciavo la mancia. Pensa un po'.",
+        "Se passo piano davanti al forno, magari mi prendono in pietà.",
+        "{gold} e un buon carattere. Soprattutto il carattere.",
+        "Il mio borsellino è più leggero della mia coscienza, e ce ne vuole.",
+        "Da qualche parte c'è una moneta sulla strada che mi aspetta.",
+        "Essere poveri stanca. Stanca perfino contare.",
+        "{gold}. Mia nonna ne teneva di più nella zuccheriera.",
+        "Domani ci sarà lavoro. Per forza.",
+        "Non guarderò il prezzo della benzina. Non lo guarderò.",
+        "La fame è il miglior condimento, dicono. Chiaramente non l'hanno mai provata da sola."
+      ],
+      "birthday": [
+        "È il mio compleanno e nessuno lo sa. Va bene. Va bene così.",
+        "{age}. Sembra il numero di qualcun altro.",
+        "Un altro compleanno. Stessi stivali.",
+        "Dovrei scrivere a casa. Dire che sono vivo e ho un anno in più.",
+        "A casa a quest'ora ci sarebbe già la torta.",
+        "Un compleanno dovrebbe sempre sembrare diverso. Non lo è mai.",
+        "Un'altra candelina che non spegnerò.",
+        "Oggi mi compro qualcosa di piccolo. Un regalo di compleanno. Me lo sono meritato.",
+        "Se arrivo al prossimo compleanno, quello sarà il vero regalo.",
+        "Mia madre mi sta pensando adesso. È il mio compleanno, lo fa sempre.",
+        "Un compleanno in viaggio. Non è come me lo immaginavo da bambino.",
+        "Buon compleanno a me, sottovoce, così nessuno fa storie."
+      ],
+      "homesick": [
+        "Da qualche parte a {hometown} il forno sta aprendo e io non ci sono.",
+        "Darei una settimana di questa vita per una passeggiata serale a {hometown}.",
+        "Buffo. Ho passato anni a voler lasciare {hometown}.",
+        "Il fiume a {hometown} sarà in piena, in questa stagione.",
+        "Qui nessuno dice il mio nome come lo dicono a casa.",
+        "Chissà chi si siede sulla mia panchina a {hometown}, adesso.",
+        "Questa pioggia ha quasi l'odore di {hometown}. Quasi.",
+        "Un giorno entrerò a {hometown} e nessuno mi riconoscerà.",
+        "Casa è lontana. Ogni giorno un po' di più.",
+        "Riesco ancora a disegnare le strade di {hometown} a occhi chiusi.",
+        "Il caffè qui va bene. Solo che non è quello di casa.",
+        "Se chiudo gli occhi, le campane di {hometown} stanno suonando."
+      ],
+      "sleepless": [
+        "Se tengo gli occhi chiusi troppo a lungo, è finita. Crollo.",
+        "Tre notti. Forse quattro. Ho smesso di contare.",
+        "È tutto troppo rumoroso e leggermente spostato a sinistra.",
+        "Potrei dormire in piedi. Forse lo sto già facendo.",
+        "Caffè. Un caffè qualsiasi. Anche cattivo.",
+        "Le mie palpebre pesano più dello zaino.",
+        "Continuo a rileggere lo stesso cartello.",
+        "Si muove il terreno, o sono io?",
+        "Stanotte dormo. Niente me lo impedirà. Neanche i gufi.",
+        "Ho gli occhi aperti. Tecnicamente.",
+        "Chi l'avrebbe detto che un sasso potesse sembrare così tanto un cuscino.",
+        "Ancora un'ora. Poi un'altra. Poi cado."
+      ],
+      "past": [
+        "Quando lavoravo come {job}, almeno le sedie erano morbide.",
+        "{job}. Quello ero io, una volta. Difficile crederci, adesso.",
+        "Qui fuori a nessuno importa che ci sapessi fare come {job}.",
+        "I turni da {job} erano noiosi, ma niente mi mordeva mai.",
+        "Guardo ancora l'orologio come se dovesse iniziare il mio turno da {job}.",
+        "Buffo cosa ti manca del lavoro da {job}. L'orologio al muro, soprattutto.",
+        "Certi giorni penso che restare dov'ero fosse la scelta sensata.",
+        "I miei vecchi colleghi del lavoro da {job} non ci crederebbero mai.",
+        "Tutta quella formazione da {job}, e adesso litigo con una cartina.",
+        "Mi lamentavo del lunedì. Il lunedì non era niente.",
+        "Se mai torno a lavorare come {job}, non mi lamenterò mai più.",
+        "Da qualche parte c'è una scrivania che porta ancora il mio nome."
+      ]
     }
   },
   "crash": {

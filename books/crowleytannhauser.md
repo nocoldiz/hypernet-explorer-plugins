@@ -39,7 +39,7 @@ TANNHÄUSER
    _Est fuga, volvitur rota._
       On we drift: where looms the dim port?
     One, Two, Three, Four, Five, contribute their quota;
-      Something is gained, if one caught but the import—
+      Something is gained, if one caught but the import - 
     Show it us, Hughes of Saxe-Gotha!
 
               R. BROWNING, _Master Hughes of Saxe-Gotha_
@@ -75,7 +75,7 @@ DEDICATION
     I shall not tell thee that I love thee!
       Nay! by the Star in Heaven burning,
       Its ray to me at midnight turning
-    To tell me that it beams above thee—
+    To tell me that it beams above thee - 
       Nay! though thou wert, as I am, yearning,
     I should not tell thee that I love thee!
 
@@ -105,14 +105,14 @@ DEDICATION
     Twin souls are we, to one Star bound in Heaven!
       Twin souls on earth by earthly bars divided!
       But, did thy spirit glide as mine has glided
-    Straight to That Star—no rose-leaves ask to leaven
+    Straight to That Star - no rose-leaves ask to leaven
       The manna that the Moon of Love provided!
     Twin souls are we, to one Star bound in Heaven!
 
     Not to thy presence in the veil and vision
       Of solemn lies that men miscall the world;
       Not to thy mind the lightnings truthward hurled
-    I turn. I laugh dead distance to derision!—
+    I turn. I laugh dead distance to derision! - 
       Spirit to spirit: there our loves are curled,
     Not to thy presence in the veil and vision!
 
@@ -120,13 +120,13 @@ DEDICATION
       The flower that falls from this our stronger sight,
       We dwell, eternal shapes of shadowy light.
     Only the love on earth that shook and smote us
-      Begets new stars—truth’s flowers fallen through night
+      Begets new stars - truth’s flowers fallen through night
     Beyond the gold and glamour of Life’s lotus!
 
     Eternal bliss of Love in birthless bowers!
       Light, the gemmed robes of Love! Life, lifted breath,
       Ageless existence deifying death!
-    Love, the sole flower beyond these lesser flowers!—
+    Love, the sole flower beyond these lesser flowers! - 
       In thee at last the live fruit quickeneth?
     Eternal bliss of Love in birthless bowers!
 
@@ -134,7 +134,7 @@ DEDICATION
 
     There, secret! Know it! Now forget!
       Betray not Wisdom unto Folly!
-      Less sweet is Joy than Melancholy!—
+      Less sweet is Joy than Melancholy! - 
     Why should our eyes for this be wet?
       Enough: be silent and be holy!
     There, secret! Know it! Now forget!
@@ -274,7 +274,7 @@ identical in scheme with the “Pilgrim’s Progress.” Literary and
 spiritual experts will however readily detect minor differences in the
 treatment. It will be sufficient if I state that “the Unknown,” whether
 minstrel, pilgrim, or Egyptian sage, represents Tannhäuser in his true
-Self,—the “Only Being in an Abyss of Light!” The Tannhäuser who talks
+Self, - the “Only Being in an Abyss of Light!” The Tannhäuser who talks
 is the “Only Being in an Abyss of Darkness,” the natural man ignorant
 of his identity with the Supreme Being. The various other characters
 are all little parts of Tannhäuser’s own consciousness and not real
@@ -393,7 +393,7 @@ mountain._
     Six days. Creation took no longer! Yet
       I wander eastward, and no light is found.
     The stars their motion shirk, or else forget.
-      The sun—the moon? Imprisoned underground!
+      The sun - the moon? Imprisoned underground!
       Where gnomes disport, and devils do abound.
 
     Six days. I journey to the black unknown,
@@ -410,13 +410,13 @@ mountain._
 
     I seek the mystery of Life and Time,
       The Key of all that is not and that is,
-    And that which—climb, imagination! climb!—
-      Transcends them both—the mystical abyss
+    And that which - climb, imagination! climb! - 
+      Transcends them both - the mystical abyss
       Where Mind and Being marry, and are Bliss.
 
-    So have I journeyed—like a fool! Ah, well!
+    So have I journeyed - like a fool! Ah, well!
       Let pass self-scorn, as love of self is past!
-    But—am I further forward? Who can tell?
+    But - am I further forward? Who can tell?
       God is the Complex as the Protoplast:
       He is the First (not “was”), and is the Last
 
@@ -430,7 +430,7 @@ mountain._
       Naked and poor! That He might manifest
     A crimson glory subtly caught and come,
       An opal crucible of Alkahest!
-      And yet—what gain of vital gold expressed?
+      And yet - what gain of vital gold expressed?
 
     This were my guerdon: to fade utterly
       Into the rose-heart of that sanguine vase,
@@ -460,7 +460,7 @@ mountain._
       Let be! I ride upon the sand instead,
     Look to the Cross, whereon I take mine ease!
       Let be! Just so the Roman soldier said.
-      Esaias? He is dead—as I am dead!
+      Esaias? He is dead - as I am dead!
 
     What was his symbol and his riddle’s key?
       Go, seek the stars and count them and explore!
@@ -476,15 +476,15 @@ mountain._
 
     Alas! that mind returns from its abode
       With newer problems, fiercer thoughts! But stay!
-    Suppose it came not? It must be with God!—
+    Suppose it came not? It must be with God! - 
       Then this dull house of gold and iron and clay
-      Is happy also—’tis an easy way!
+      Is happy also - ’tis an easy way!
 
     So easy, I am fearful of mishap.
       Some fatal argument the God must find
-    That linked us first. The dice are in His lap—
+    That linked us first. The dice are in His lap - 
       Let Him decide in His imperial mind!
-      My choice; to see entirely—and be blind!
+      My choice; to see entirely - and be blind!
 
     Yet I bethink me of that holy man,
       (Pagan albeit) my stirrup’s wisdom-share:
@@ -496,7 +496,7 @@ mountain._
       Two functions hath the inevitable fire;
      Earthquake hath earth, and yet fertility:
       See to thy purpose, and thy set desire!
-      Else, dire the fate—the ultimation dire!”
+      Else, dire the fate - the ultimation dire!”
 
     Vague threats and foolish words! Quite meaningless
       The empty sounds he muttered in mine ear.
@@ -508,9 +508,9 @@ mountain._
       The Winepress, and the Beauty! Puerile
     And pagan to that old mysterious one,
       The awful Light and the anointed Vial,
-      The Dawning of the Blood, even as a smile:—
+      The Dawning of the Blood, even as a smile: - 
 
-    Even as a smile on Beauty’s burning cheek—
+    Even as a smile on Beauty’s burning cheek - 
       Ha! In a circle? As this journey is?
     How vain is man’s imagining and weak!
       Begod my lady, and my lady’s kiss?
@@ -518,7 +518,7 @@ mountain._
 
     Liken God’s being to the life of man.
       So reason staggers. Angels, answer me!
-    Ye who have watched the far unfolding plan—
+    Ye who have watched the far unfolding plan - 
       How is time shorter than eternity?
       Prove it and weigh! By mind it cannot be.
 
@@ -544,13 +544,13 @@ mountain._
     Warm breasts that glow with light ephemeral
     And move with passionate music to enthrall,
     To charm, to enchant, to seal the entrancing breath.
-    I fall! Stop! Spare me!—Slay me!
+    I fall! Stop! Spare me! - Slay me!
                 [_Tannhäuser enters into an ecstasy._
                                     This is death.
 
     [_The evil and averse Hathoör, or Venus, who hath
         arisen in the place of the Great Goddess, lifteth
-        up her voice and chanteth_:—
+        up her voice and chanteth_: - 
 
                    VENUS.
       Isis am I, and from my life are fed
@@ -559,7 +559,7 @@ mountain._
         The mystery of pleasure and of pain.
       I am the mother! I the speaking sea!
       I am the earth and its fertility!
-    Life, death, love, hatred, light, darkness, return to me—
+    Life, death, love, hatred, light, darkness, return to me - 
       To me!
 
       Hathoör am I, and to my beauty drawn
@@ -568,7 +568,7 @@ mountain._
         Fruit’s blush, and woman, our creation’s crown.
       I am the priest, the sacrifice, the shrine,
       I am the love and life of the divine!
-    Life, death, love, hatred, light, darkness are surely mine—
+    Life, death, love, hatred, light, darkness are surely mine - 
       Are mine!
 
       Venus am I, the love and light of earth,
@@ -577,7 +577,7 @@ mountain._
         The endless, infinite desire of years.
       I am the shrine at which thy long desire
       Devoured thee with intolerable fire.
-    I was song, music, passion, death, upon thy lyre—
+    I was song, music, passion, death, upon thy lyre - 
       Thy lyre!
 
       I am the Grail and I the Glory now:
@@ -586,7 +586,7 @@ mountain._
         I am thy queen, enraptured and possessed.
       Hide thee, sweet river; welcome to the sea,
       Ocean of love that shall encompass thee!
-    Life, death, love, hatred, light, darkness, return to me—
+    Life, death, love, hatred, light, darkness, return to me - 
       To me!
 
     [_Tannhäuser perceives that he is in the palace of a
@@ -603,17 +603,17 @@ mountain._
     Where sweet birds blossom, and in chorus quire
     The rapt beginnings of immense desire.
     Here is the light and rapture of the will:
-    We touch the stars—and they are tiny still!
+    We touch the stars - and they are tiny still!
     O mighty thews! O godlike face and hair!
     Rise up and take me; ay, and keep me there,
     One tingle at thy touch from head to feet;
     Lips that cling close, and never seem to meet,
     Melting as sunlight melts in wine! Arise!
     Shame! Has thy learning left thee overwise?
-    Thy lips sing fondly—to another tune.
+    Thy lips sing fondly - to another tune.
     Nay! ’twas my breathing beauty made thee swoon,
     Dread forkéd fire across the cloven sky;
-    Stripped off thy body of mortality—
+    Stripped off thy body of mortality - 
     Nay, but on steeper slopes my love shall strive!
     Our bodies perish and our hearts revive
     Vainly, unless the shaking sense beware
@@ -659,7 +659,7 @@ ACT II.
 
 
     “But a moment’s thought is passion’s passing bell.”
-                                      —KEATS, _Lamia_.
+ - KEATS, _Lamia_.
 
              _In Venusberg._
 
@@ -679,13 +679,13 @@ ACT II.
     Swoop down with sunlight laden,
       And eyes are bright and bold.
         Life-swelling breasts uncover
-      Their warm involving deep—
-      Love, sleep!—
+      Their warm involving deep - 
+      Love, sleep! - 
     And lover lies with lover
       On air’s substantial steep.
 
           TANNHÄUSER.
-    Ah! sweeter was September—
+    Ah! sweeter was September - 
       The amber rain of leaves,
     The harvest to remember,
       The load of sunny sheaves.
@@ -710,9 +710,9 @@ ACT II.
     Lets loose on earth, that no man
       May linger nor be lost.
     The barren woods, deserted,
-      Lose echo of our sighs—
-      Love—dies?—
-    Love lives—in granite skirted,
+      Lose echo of our sighs - 
+      Love - dies? - 
+    Love lives - in granite skirted,
       And under oaken skies.
 
     But best is grim December,
@@ -720,10 +720,10 @@ ACT II.
     The Satyr blows the ember,
       And pain is passion’s flower;
     When blood drips over kisses,
-      And madness sobs through wine:—
-      Ah, mine!—
+      And madness sobs through wine: - 
+      Ah, mine! - 
     The snake starts up and hisses
-      And strikes and—I am thine!
+      And strikes and - I am thine!
 
              VENUS.
     Those are thy true joys? Cruelty for love?
@@ -740,7 +740,7 @@ ACT II.
     Say you? But somehow, nearer to the end,
     Lost the old sense of mystery, and lost
     That curious reverence in sacrilege
-    With Wonder—the child’s faculty! Less joy,
+    With Wonder - the child’s faculty! Less joy,
     Less laughter, yes! that symptom I approve;
     Yet is that subtle fading-out of smiles
     Rather the coming of a dull despair,
@@ -749,7 +749,7 @@ ACT II.
     With deadliest delight, the self-same hour
     That he unveils the Isis of desire.
     These little lovers strip their maidens bare,
-    And find them—naked! Poor and pitiful!
+    And find them - naked! Poor and pitiful!
     Look at our love instead! I raised Thy veil,
     Nay, tore Thy vesture from Thee, and behold!
     Then only did I see what mystery,
@@ -757,11 +757,11 @@ ACT II.
     Surrounds Thy heart, as with a core of light
     Shut in the mystery of a dead world.
     Thou formless sense of gloom and terror! Thou
-    Upas, new tree of life—by sinister
+    Upas, new tree of life - by sinister
     Cherubim with averted faces kept!
     Nay! This one secret I suspect, and gloat
     Over the solemn purport of the dream
-    With subtle shuddering of joy,—and that
+    With subtle shuddering of joy, - and that
     Keener delight, a sense of deadly fear!
     This secret: Thou art darkness in Thyself,
     And evil wrapped in light, and ugliness
@@ -780,13 +780,13 @@ ACT II.
     Like molten metal in the crucible!
     Death’s secret is some sweetness ultimate,
     Sweeter than poison. Ah! My very words,
-    Chance phrases, ravel out the tale for me—
-    Sweetness and death—poison and love. Consider
+    Chance phrases, ravel out the tale for me - 
+    Sweetness and death - poison and love. Consider
     How this same striving to the Infinite,
     Which I intend by “love,” is likest to
     That journey’s wonder to the womb of death:
     Because no soul of man has ever crossed
-    Again that River—the old fable’s wrong;
+    Again that River - the old fable’s wrong;
     Æneas came never to the ghostly side!
     Was not the boat weighed with his body still?
     Felt he the keen emotions of the dead?
@@ -796,14 +796,14 @@ ACT II.
     And yet returned; because of this decree:
     No man can look upon the face of God!
     Yet Moses looked upon His hinder parts,
-    And I—yes, goddess! in this passionate
+    And I - yes, goddess! in this passionate
     Life in our secret mountain, well I know
     Thy beauty, and Thy love, (although they be
     Infinite, far beyond the mortal mind,
     Body, or soul to touch, to comprehend,
     And dwell in) that the utter intimate
     Knowledge of Thee, if once I ravelled out
-    Thy secret, laid Thee naked to the bone—
+    Thy secret, laid Thee naked to the bone - 
     Nay, to the marrow! were to come, aware,
     Face to face full with deity itself.
     And this I strive at! Therefore is my love
@@ -822,13 +822,13 @@ ACT II.
     And strive toward thy finite consciousness
     As thou art reaching to my infinite,
     Nurturing my Godhead at the breast of Sin
-    With milk of fleshly stings—even to pain:—
+    With milk of fleshly stings - even to pain: - 
 
             TANNHÄUSER.
     I see, I see the Christian mystery!
     That was the purpose of High God Himself,
     Clothed in the Christ! Ah! Triumphed He at last?
-    Nay, not in death! The slave—He rose again!
+    Nay, not in death! The slave - He rose again!
     Alas! Alas!
 
                VENUS.
@@ -840,13 +840,13 @@ ACT II.
 
             TANNHÄUSER.
     Ah, but the waking! As I sink to sleep
-    Pillowed in nuptial arms—so fresh and cool—
+    Pillowed in nuptial arms - so fresh and cool - 
     (Yet in their veins I know the fire that runs
     Racing and maddening from the crown of flame,
     The monolithic core of mystical
     Red fury that is called a woman’s heart)
     Sinking, I say, from the supreme embrace,
-    The Good-night kisses; sinking into sleep—
+    The Good-night kisses; sinking into sleep - 
     What dreams betoken the dread solitude?
 
                VENUS.
@@ -855,15 +855,15 @@ ACT II.
     Of transmutation into molten steel
     Fusing with my intolerable gold
     In the red crucible of alchemy,
-    That is—of clay?
+    That is - of clay?
 
             TANNHÄUSER.
                       I dream of no such thing.
     But of Thy likeness have I often seen
-    The vast presentment—formless, palpable,
+    The vast presentment - formless, palpable,
     Breathing. Not breathing as we use the word,
     When life and spirit mingle in one breath,
-    Slay passion in one kiss—breathing, I say,
+    Slay passion in one kiss - breathing, I say,
     Differently from Thee!
 
                VENUS.
@@ -902,15 +902,15 @@ ACT II.
 
             TANNHÄUSER.
     And is my soul not slain within me now?
-    Yet, I do hate her—in these waking hours.
+    Yet, I do hate her - in these waking hours.
     But in my sleep she grows upon the sense,
     A solitary lotus that pales forth
     In the wide seas of space and separateness.
-    That radiance!—Amber-scented voice of light,
-    Calling my name, ever, ever calling—
+    That radiance! - Amber-scented voice of light,
+    Calling my name, ever, ever calling - 
 
                VENUS.
-    Answer that call—and thou art lost indeed!
+    Answer that call - and thou art lost indeed!
     Wake thou thy spirit in this hateful sleep,
     Keeping the vision, rise, and spit on her!
 
@@ -936,8 +936,8 @@ ACT II.
                VENUS.
                            Forget?
     But I strive fleshwards. Let our sleep renew
-    The endless struggle—and perhaps, for thee,
-    For thee!—the veil may lift another fold.
+    The endless struggle - and perhaps, for thee,
+    For thee! - the veil may lift another fold.
 
             TANNHÄUSER.
     Why dost Thou hate this vision?
@@ -953,7 +953,7 @@ ACT II.
     More intimate than matter, closing in
     Keen on my spirit; as if all I sought
     In Thine own symbol, Beauty, were concealed
-    Under her brows—how wider than the air!
+    Under her brows - how wider than the air!
     How deeper than the sea! How radiant
     Beyond the fire!
 
@@ -966,7 +966,7 @@ ACT II.
             TANNHÄUSER.
                        That is my intent.
     It is the spiritual life of things
-    I seek—Thou knowest!
+    I seek - Thou knowest!
 
                VENUS.
                       Oh, I did not mean!
@@ -985,7 +985,7 @@ ACT II.
     May not my servants of the elements
     Play children’s gambols on the mountain crest
     About our fortress? Leave this idle talk!
-    Come, in this sweet abandonment of self—
+    Come, in this sweet abandonment of self - 
     Come, with this kiss I seal thy loyal oath
     To spit upon her!
 
@@ -1036,8 +1036,8 @@ ACT II.
     Now is the solemn portal of the dusk
     Lifted; and in the gleaming silver-gray,
     The eastern sky, steps out the single One,
-    Hathoör and Aphrodite—whom I mock!
-    I may not follow in the dimness—I
+    Hathoör and Aphrodite - whom I mock!
+    I may not follow in the dimness - I
     Chained unto matter by my evil will,
     Delight of death and carnal life. But see!
     He stirs, as one beholding in a dream
@@ -1045,7 +1045,7 @@ ACT II.
     Sunning its scales, called kingly, in the mire.
     Strike, O my lover! I will drag thee down
     Into mine own unending pain and hate
-    To be one devil more upon the earth.—
+    To be one devil more upon the earth. - 
     Come! ye my serpents, wrap his bosom round
     With your entangling leprosy! And me,
     Let me assume the belovéd limber shape,
@@ -1060,7 +1060,7 @@ ACT II.
     The sleepy arms, and turns the drowsy head
     To catch the dew dissolving of my lip.
     Wake, lover, wake! Thy Venus waits for thee!
-    Draw back, look, hunger!—and thy mouth is mine.
+    Draw back, look, hunger! - and thy mouth is mine.
 
             TANNHÄUSER.
     “Once I will shew Me waking. Destiny
@@ -1102,20 +1102,20 @@ ACT II.
     I cannot bear the glory of the gaze.
     No man shall look upon the face of God!
     Where art thou? Save me from the scorpion!
-    I am—alone!
+    I am - alone!
 
               HATHOÖR.
                  Light, Truth, arise, arise!
 
             TANNHÄUSER.
-    I see—I see! All blinded by the Light—
+    I see - I see! All blinded by the Light - 
     Thou art the Way, the Truth, the Life, the Love!
     Thou, Whom I sought through ages of deep sleep
     Forgotten when I died. There is no death:
     Change alternating; and forgetfulness
-    Of one state in the other—easy truth
+    Of one state in the other - easy truth
     I could not understand! Oh hear me, hear!
-    Spare me the last illusion!—She is gone!
+    Spare me the last illusion! - She is gone!
 
                VENUS.
     Save me, my knight! To thy sufficing arms
@@ -1168,7 +1168,7 @@ ACT II.
     Calling thee Ugliness, I guessed aright,
     Who saw, and see, all Beauty in thee still.
     Only, a beauty risen out of Hell;
-    Death and delusion—ay, corruption’s self,
+    Death and delusion - ay, corruption’s self,
     Wickedness sliming into impotence,
     Pleasure in putrefaction. But, in sleep,
     I will put off that evil as a clout
@@ -1179,7 +1179,7 @@ ACT II.
 
             TANNHÄUSER.
     Oh, but this body, very consciousness!
-    I banish both. I cross the crimson wall—
+    I banish both. I cross the crimson wall - 
     My spirit shall reach up to and attain
     That other.
 
@@ -1196,7 +1196,7 @@ ACT II.
     Set beyond gaze of any eye but God’s;
     And, to forget her, found due somnolence
     In such a warm brown bosom as thine own
-    Is fire and amber. Then I came away:—
+    Is fire and amber. Then I came away: - 
     I heard of knights no better horsed than I,
     No better sworded, with no gift of song,
     Who, caught by one ineffable desire,
@@ -1209,11 +1209,11 @@ ACT II.
     At last an old Egyptian; who bestowed
     The magic word, which, when I had pronounced,
     Called up thine evil corpse-light in the sky.
-    He riddled me—ah God! I see it now!
+    He riddled me - ah God! I see it now!
     The bloody winepress? The ascending sun?
     Thy dawning beauty and thine evil bed!
     The double meaning! I had evil thoughts
-    When I pronounced it—else had She Herself,
+    When I pronounced it - else had She Herself,
     Hathoör or Mary, risen. Misery!
     Incessant mystery of the search for Truth!
 
@@ -1235,7 +1235,7 @@ ACT II.
     Let its old sleepy fragrance lull thee now,
     Yet madden thee in brain and sense and soul,
     Mixing success with infinite despair.
-    So; take our secret back to sleep with us:—
+    So; take our secret back to sleep with us: - 
     And in that sleep I know that thou wilt choose
     The fact, and leave the dream, and so disdain
     These far-off splendours, catch the nearer joy,
@@ -1245,7 +1245,7 @@ ACT II.
     And stumble on their snows? Thine old desire
     Was just to touch the mere impalpable.
     To formulate the formless. Otherwise
-    Christ did as well—thine own words turn again!
+    Christ did as well - thine own words turn again!
 
             TANNHÄUSER.
     Ah, if pure love could grow material!
@@ -1253,11 +1253,11 @@ ACT II.
 
                VENUS.
                     There you make me laugh!
-    Remember—I have known such. But besides
+    Remember - I have known such. But besides
     You ask hot snow and leaden feather-flights!
 
             TANNHÄUSER.
-    And you—you keep me worrying, fair queen,
+    And you - you keep me worrying, fair queen,
     In logic and its meshes, when to-day
     I rather would be caught in other nets,
     The burning gold and glory of your hair,
@@ -1273,10 +1273,10 @@ ACT II.
             TANNHÄUSER.
     Brood evil, then, in your amazing eyes,
     That I may see the serpent grow in you;
-    As I were just the bird upon the bough—
+    As I were just the bird upon the bough - 
     So let the twittering grow faint and still,
     And let me fall, fall into the abyss,
-    Your arms—a culminating ecstasy,
+    Your arms - a culminating ecstasy,
     Darkness and death and rapture. Sing to you?
     What song? My tunes are played upon too oft.
     My first great cry of love inaudible
@@ -1334,7 +1334,7 @@ ACT II.
     To see thee, seeing that all love must die
         Beside thy beauty, see thee and despair!
         Deadly as thou art fair,
-    I cry for all mankind—they are slain, even as I!
+    I cry for all mankind - they are slain, even as I!
 
     [_Tannhäuser pauses, bends eagerly towards Venus.
            She smiling luxuriously, he continues._
@@ -1380,7 +1380,7 @@ ACT II.
         O Mother of my will!
         Set thy live body still
     Unto my heart, that even Eternity
-        Roll by our barren bed—
+        Roll by our barren bed - 
         That even the quick and dead,
     Being mortal, mix in our eternal sea!
         Distil we love from all the universe!
@@ -1422,7 +1422,7 @@ ACT II.
     Incarnate in the spirit: and above
         Hangs Sin, vast vampire, the corrupt, that swings
         Her unredeeming wings
-    Over the world, and flaps for lust of Death—and Love!
+    Over the world, and flaps for lust of Death - and Love!
 
                VENUS.
     This man was drained of music!
@@ -1465,7 +1465,7 @@ _In Venusberg: changing afterward to a woodland cross-way._
 
                VENUS.
     Gone to his Goddess! the poor worm’s asleep.
-    And yet—I cannot follow him. Not even
+    And yet - I cannot follow him. Not even
     Into the dreamland that these mortals use.
     There, I am barred. The flaming sword of Light
     Is set against me, and new pangs consume
@@ -1473,12 +1473,12 @@ _In Venusberg: changing afterward to a woodland cross-way._
     Yet to my fearful task of hate I set
     No faltering bosom. I will have this man,
     His life, his strength; and live a little more.
-    Life—shall I ever reach the splendid sword
+    Life - shall I ever reach the splendid sword
     Of womanhood, and gird it, gain my will,
     A human soul, and from that altitude
     Renew the terrible war against the Gods?
     I have called Chronos the devouring God
-    My father—shall his desolating reign
+    My father - shall his desolating reign
     Never return? Ay me! this heart of hate,
     Loathing the man, takes comfort in the beast,
     And gloats on the new garbage for an hour.
@@ -1486,7 +1486,7 @@ _In Venusberg: changing afterward to a woodland cross-way._
     Transfigured by the dream: slow rapture steals
     Over his face. Mere godhead could not bring
     That human light and living! I will win.
-    He must have banished Her—and dreams of me.
+    He must have banished Her - and dreams of me.
 
             TANNHÄUSER (_in sleep_).
     Elizabeth!
@@ -1562,13 +1562,13 @@ _In Venusberg: changing afterward to a woodland cross-way._
 
             TANNHÄUSER.
                          Vile thing
-    I will try otherwise—to raise myself:
+    I will try otherwise - to raise myself:
     But if I fail, I will not drag her down;
     I will return.
 
                VENUS.
                   To lose thee for one hour
-    Is my swift death—so desolate am I!
+    Is my swift death - so desolate am I!
     I have not got one lover in the world,
     Save only Tannhäuser. And he will go.
 
@@ -1583,12 +1583,12 @@ _In Venusberg: changing afterward to a woodland cross-way._
     I am the soul and symbol of desire,
     Yet individual to thy love. Stay! Stay!
     One last caress, and then I let thee go,
-    And—die. I fear, and I detest, this death.
+    And - die. I fear, and I detest, this death.
     I am not mortal, doomed to it! I slip
     Into mere slime; no resurrection waits
     Me, made the vilest of the stars that fell.
     I must not die. I dare not. But for thee,
-    Thy love, one last extreme delirium!—
+    Thy love, one last extreme delirium! - 
     Take thou this dagger! At the miracle
     Of a moment when our lips are fastened close
     Once more, in the unutterable kiss,
@@ -1626,13 +1626,13 @@ _In Venusberg: changing afterward to a woodland cross-way._
     Beetle and worm, I have a feast for you!
 
             TANNHÄUSER.
-    The palace staggers. I can hardly see—
+    The palace staggers. I can hardly see - 
     Only these writhing horrors. I am blind!
 
                VENUS.
     Ha! My true knight! I ask thee once again,
     Once more invoke the epithets of love,
-    Suspend my powers—constrain thee on my knees
+    Suspend my powers - constrain thee on my knees
     For thine old kisses. See, I am all thine!
     All thine the splendid body, and the shape
     Of mighty breasts, and supple limbs, and wide
@@ -1649,7 +1649,7 @@ _In Venusberg: changing afterward to a woodland cross-way._
     Fresh kisses, and the gold that lurks upon
     The sunny skin, the marble of these brows,
     The roses, and the poppies, and the scent
-    Subtle and sinful—thine, all thine, are these,
+    Subtle and sinful - thine, all thine, are these,
     What with my heart that only beats for thee,
     The many-throned and many-minded soul
     Centred to do thee worship. Hither, hither!
@@ -1690,7 +1690,7 @@ _In Venusberg: changing afterward to a woodland cross-way._
     Of death I cried, and Thou hast holpen me,
     Set me upon a rock, established me,
     And filled my mouth, and tuned mine ancient lyre
-    With a new song—praise, praise to God above,
+    With a new song - praise, praise to God above,
     And to Our Lady of the Smitten Heart,
     That David never knew: my pettiness
     Exceeding through Her mercy and Her might
@@ -1740,7 +1740,7 @@ _In Venusberg: changing afterward to a woodland cross-way._
                     Holy, I cry!
                   Mary shall bend her
                     Face from the sky,
-                  Subtle and tender—
+                  Subtle and tender - 
                     Then I can die!
 
                TANNHÄUSER.
@@ -1757,15 +1757,15 @@ _In Venusberg: changing afterward to a woodland cross-way._
         Thine eyes should gleam to see me there,
             As fixed upon a star.
         And yet thy lips should take a tune,
-            And match me unaware—
+            And match me unaware - 
         So steals the sun beside the moon
             And hides her lustre rare.
         The bloom upon the peach is fine;
         The blossom on thy cheek is mine!
-            O kiss me—if you dare!
+            O kiss me - if you dare!
         I called thee by the name of love
         That mothers fear and gods approve,
-            And maidens blush to say—
+            And maidens blush to say - 
         O Gretchen, meet me in the dell
         We know and love, who love so well,
             While morn is cold and gray!
@@ -1782,7 +1782,7 @@ _In Venusberg: changing afterward to a woodland cross-way._
 
             TANNHÄUSER.
     The simple life of love and joy therein!
-    Merely to love—to take such pride in it
+    Merely to love - to take such pride in it
     Gods must behold! The childish easiness,
     Impossible to me, who am become
     Perhaps the subtlest mind of men. Alas!
@@ -1792,8 +1792,8 @@ _In Venusberg: changing afterward to a woodland cross-way._
     Thought, wounded; as a scorpion to sting
     Its own bruised life out. This is Tannhäuser!
     How long ago since he took pleasure in
-    Such love—                         [_A horn winds._
-               such music as yon horn below—
+    Such love - [_A horn winds._
+               such music as yon horn below - 
                                        [_A chant is heard._
     Such worship as the simple chant that steals
     Calm and majestic in the solitude
@@ -1826,7 +1826,7 @@ _In Venusberg: changing afterward to a woodland cross-way._
           THE YOUNGEST PILGRIM.
     What make you, sir, so downcast? Come with us
     Who taste all happiness in uneasiness,
-    Hunger and thirst, in His sweet Name—
+    Hunger and thirst, in His sweet Name - 
 
              TANNHÄUSER.
                                  Ah no!
@@ -1855,7 +1855,7 @@ _In Venusberg: changing afterward to a woodland cross-way._
     That I am merely here. God speed you, sirs!
     I ask your blessing, not to stay therewith
     My soul’s own need (though that is dire enough)
-    But—he that blesseth shall himself be blessed!
+    But - he that blesseth shall himself be blessed!
     My blessing were small help to you, my friends.
 
         AN INTELLIGENT PILGRIM.
@@ -1915,7 +1915,7 @@ _In Venusberg: changing afterward to a woodland cross-way._
     And there is Heinrich, wastrel of the Court,
     Yet hides a heart beneath the foolish face.
     And lo! The Landgrave! Flushed, undignified!
-    The chase was long—if he could see himself!
+    The chase was long - if he could see himself!
     Wind, wind the mort! What call will answer me
     When I step forward? Am I dead, I wonder,
     Or merely on my hare-brain quest? Three years
@@ -1956,7 +1956,7 @@ _In Venusberg: changing afterward to a woodland cross-way._
     Changed verily. It was most urgent, cousin,
     I were assured of your identity.
     Three weeks the couriers scour the land for you,
-    Urgent demands:—how came you here at last?
+    Urgent demands: - how came you here at last?
     Your horse? Your arms? Three years since Germany
     Saw the brave eyes and kindly face of you!
     Where have you been? Upon the sacred quest
@@ -1988,7 +1988,7 @@ _In Venusberg: changing afterward to a woodland cross-way._
                      You saw the Grail?
 
             TANNHÄUSER.
-    I saw—strange things.
+    I saw - strange things.
 
               WOLFRAM.
                     For very feebleness
@@ -1998,7 +1998,7 @@ _In Venusberg: changing afterward to a woodland cross-way._
             TANNHÄUSER (_with sudden passion_).
                   My squire is dead.
     I am no weakling that I need a knave
-    Hanging upon me—’tis an incubus.
+    Hanging upon me - ’tis an incubus.
 
               LANDGRAVE.
     And then your horse?
@@ -2012,7 +2012,7 @@ _In Venusberg: changing afterward to a woodland cross-way._
 
             TANNHÄUSER.
                       A-many castles, sir,
-    Held by old ogres—and not all of them
+    Held by old ogres - and not all of them
     Stand in the mid-day, front the sober sun,
     Answer the slug-horn.
 
@@ -2031,8 +2031,8 @@ _In Venusberg: changing afterward to a woodland cross-way._
     [_They look about them fearfully and cross themselves._
 
               LANDGRAVE.
-    Even in jest, such words!—Most dangerous
-    Even to think of!—but to speak!
+    Even in jest, such words! - Most dangerous
+    Even to think of! - but to speak!
 
               HEINRICH (_aside_).
                           These fools!
@@ -2048,8 +2048,8 @@ _In Venusberg: changing afterward to a woodland cross-way._
 
               LANDGRAVE.
     You must remember my Elizabeth,
-    My daughter—I designed to marry her
-    To a most noble youth—
+    My daughter - I designed to marry her
+    To a most noble youth - 
 
             TANNHÄUSER.
                       Von Aschenheim?
@@ -2058,7 +2058,7 @@ _In Venusberg: changing afterward to a woodland cross-way._
     The same. I would have wed her, but (’tis strange!)
     The lady had a purpose of her own,
     And swore by all the Virgins in the Book
-    She would wed nobody but—Tannhäuser.
+    She would wed nobody but - Tannhäuser.
     So, like the foolish, doting sire I am,
     I gave her thirty days to find you. This
     Must dumb you with astonishment.
@@ -2078,9 +2078,9 @@ _In Venusberg: changing afterward to a woodland cross-way._
     Why, we are lucky too! We thought you dead!
 
              WOLFRAM.
-    Begrudge you, no! But—wish our luck were yours?
+    Begrudge you, no! But - wish our luck were yours?
     Yes! Come, Tannhäuser, there’s my hand on it!
-    Luck, love, and loyalty—the triple toast!
+    Luck, love, and loyalty - the triple toast!
 
             FORESTERS.
     Tannhäuser! Luck, and love, and loyalty!
@@ -2088,7 +2088,7 @@ _In Venusberg: changing afterward to a woodland cross-way._
             TANNHÄUSER.
     I thank you, loving kinsmen and my friends.
     But see, I am impatient to be gone!
-    Your horse—that favour I shall not forget,
+    Your horse - that favour I shall not forget,
     Nor linger to repay. Good morrow then!
     Good sport all day!
 
@@ -2168,9 +2168,9 @@ ACT IV.
     The swift high mind, the heart of gold and fire,
     The living purpose and the mystic life
     Of lonely seeking for the Grail of God!
-    I—call you husband? When I said your name,
-    It was to set the task impossible:—
-    Had they but known it—just as one should say:
+    I - call you husband? When I said your name,
+    It was to set the task impossible: - 
+    Had they but known it - just as one should say:
     “Bring down St Michael: let me marry him!”
     They knew the angels were too pure; but you,
     They guessed not how exalted were your hopes;
@@ -2180,7 +2180,7 @@ ACT IV.
             TANNHÄUSER (_with bitterness_).
                           I hardly knew, myself!
     (_Aside._) Here is the virgin insight of the truth!
-    Or—cannot purity be brought to know
+    Or - cannot purity be brought to know
     Aught but itself? Some poets tell us that!
     (_Aloud._) I am unworthy even to speak to you.
 
@@ -2192,23 +2192,23 @@ ACT IV.
 
             TANNHÄUSER (_aside_).
                     This is my punishment!
-    This faith, this hope, this love—to me—to me!
+    This faith, this hope, this love - to me - to me!
 
             ELIZABETH.
     Yet, once my word went forth into the world.
     Suddenly came the fear that you were still
-    Accessible to men—might hear, might come!
-    The kind, grave face of you—that light outshone
+    Accessible to men - might hear, might come!
+    The kind, grave face of you - that light outshone
     The mystical ideal. Therefore too
     I minded me of our old baby-love,
-    And—marriages are made in heaven, you know!
-    Besides—Our Lady shewed me in a dream
+    And - marriages are made in heaven, you know!
+    Besides - Our Lady shewed me in a dream
     How you would come.
 
             TANNHÄUSER.
                         And now? So sure are you
     The loving word you spoke an hour ago
-    Came from the heart—who called me by mistake?
+    Came from the heart - who called me by mistake?
 
             ELIZABETH.
     So sure? You want me to confess again
@@ -2216,7 +2216,7 @@ ACT IV.
 
             TANNHÄUSER (_to himself_).
     Words, thoughts, that fail her? How should acts exceed?
-    (_Aloud._) Better sit thus and read each other’s thoughts—
+    (_Aloud._) Better sit thus and read each other’s thoughts - 
     I in the blue eyes, in the hazel you!
     Then, bending, I may touch my lips upon
     Sweet thoughtful brows.
@@ -2231,7 +2231,7 @@ ACT IV.
     Look, only look!
 
             ELIZABETH.
-                I am so happy—so!
+                I am so happy - so!
 
 
                SCENE II.
@@ -2266,7 +2266,7 @@ ACT IV.
               LANDGRAVE.
     Well, we forgive him the more readily
     Because of the occasion. One alone
-    Of all themes possible may grace this hour;—
+    Of all themes possible may grace this hour; - 
     Love! Let the lots of precedence be drawn.
     Tannhäuser, you will string us once again
     Your harp forgotten?
@@ -2315,7 +2315,7 @@ ACT IV.
     Or as a mill grinds on, with steady pace;
     So sprouts, so grinds, the unblushing commonplace.
 
-    Soft, soft the brain—
+    Soft, soft the brain - 
                   [_The murmurs break into an indignant uproar._
 
               HERALD.
@@ -2324,7 +2324,7 @@ ACT IV.
               LANDGRAVE.
             Sir Minstrel, you are insolent!
     We do not know you, yet have borne with you,
-    Rudely uprising ere your turn was come:—
+    Rudely uprising ere your turn was come: - 
     And you abuse our patience to insult
     The noble minstrel whose impassioned song
     Touched every heart. Sing in your turn you may.
@@ -2350,7 +2350,7 @@ ACT IV.
     In shaded woods and dells, Love’s wide demesne.
 
     But me! I burn with love! My lips are wan!
-      Thy face is turned—I flame! I melt! I fall!
+      Thy face is turned - I flame! I melt! I fall!
         My heart is chilled and dark;
         My soul’s ethereal spark
       Is dulled for sorrow; my despairs recall
@@ -2379,7 +2379,7 @@ ACT IV.
     O Love, let Death lay finger unawares!
 
               LANDGRAVE.
-    Passion and music—but no Principle!
+    Passion and music - but no Principle!
     How different is Tannhäuser!
     (_To the unknown minstrel_) You, sir, next!
     Sing of pure love and noble womanhood.
@@ -2412,7 +2412,7 @@ ACT IV.
         Usurps the strain.
 
     I sing not of that other flame of hell
-        Wrapping with torture the delighted brow—
+        Wrapping with torture the delighted brow - 
     But thou! who knowest, and hast known, so well,
         Sing thou!
                  [_Tannhäuser, entranced, imagines himself
@@ -2427,7 +2427,7 @@ ACT IV.
     Listen, then, listen! For some sombre finger,
     Other than mine, impulses on the string.
     This tune I knew not! See, the strings are moved
-    Subtly as if by witchcraft—or by God!
+    Subtly as if by witchcraft - or by God!
                                          [_Sings._
 
     In the Beginning God began,
@@ -2439,7 +2439,7 @@ ACT IV.
     Faces, half-formed, arise; and He
     Looked from the shadow of His throne,
     The curtain of Eternity;
-    He looked—and saw Himself alone,
+    He looked - and saw Himself alone,
     And on the sombre sea, the primal one,
     Faint faces, that might not abide;
     Flicker, and are foredone.
@@ -2478,7 +2478,7 @@ ACT IV.
 
     Then grew within the barren womb of this
     The Breath of the Eternal and the Vast,
-    Softer than dawn, and closer than a kiss—
+    Softer than dawn, and closer than a kiss - 
     And lo! the chaos and the darkness passed!
     At the creative sigh the Light became.
     Chaos rolled back in the abundant flame.
@@ -2545,8 +2545,8 @@ ACT IV.
     The work of man, and all his pomp and power,
     Deface them: shatter the aspiring tower!
     Let all his houses be as caves and holes,
-    Unto the Beast I give them. And their souls—
-    Lift up the shadowy hand!—
+    Unto the Beast I give them. And their souls - 
+    Lift up the shadowy hand! - 
     Confound with darkness them that understand!
     For why?
     Me, the Most High,
@@ -2598,7 +2598,7 @@ ACT IV.
     Shoots to the starry throne:
     That if man lack not purpose, but succeed,
     Reaching in very deed
-    Impersonal existence;—Lo!
+    Impersonal existence; - Lo!
     Man is made one with God, an equal soul.
     For he shall know
     The harmony, the oneness of the Whole.
@@ -2621,7 +2621,7 @@ ACT IV.
               LANDGRAVE.
     Your words are terrible! We knew them true
     Even while you sang. But see! the light of day!
-    Beauty in all things and—for you—true love!
+    Beauty in all things and - for you - true love!
     All the blind horror of the song recedes.
     There is a sequel; is there not, my friend?
     Of love, your theme, we have not heard a note.
@@ -2636,13 +2636,13 @@ ACT IV.
     The Gordian knot Love only hews asunder.
 
             TANNHÄUSER.
-    Or—shall I say?—soothes only, bandages,
+    Or - shall I say? - soothes only, bandages,
     Not heals the sore of Destiny?
 
               WOLFRAM.
                          No, certes,
     But substitutes for one reality
-    Another—and a lovely pleasant one.
+    Another - and a lovely pleasant one.
 
             TANNHÄUSER.
     Existence is illusion after all;
@@ -2659,7 +2659,7 @@ ACT IV.
     By logic baffles logic, chains with Deed
     The lion Thought. It is a circle, friends!
     All life and death and mystery ravel out
-    Into one argument—the rounded one.
+    Into one argument - the rounded one.
 
            THE UNKNOWN MINSTREL.
     Count me your children their arithmetic!
@@ -2678,11 +2678,11 @@ ACT IV.
                   This is noble talk!
 
            THE UNKNOWN MINSTREL.
-    Leave the wide circle—word and argument!
-    Move to the line—the steady will of man,
+    Leave the wide circle - word and argument!
+    Move to the line - the steady will of man,
     That shall attract the Two, the Breath of Life,
     The Holy Spirit: land you in the Three,
-    Where form is perfect—in the triangle.
+    Where form is perfect - in the triangle.
 
             TANNHÄUSER.
     My friend, the Three is infinitely small,
@@ -2705,7 +2705,7 @@ ACT IV.
     But follow me through all the labyrinth,
     And ten rewards us. And your Zero’s found
     To have an actual value and effect
-    On unity—your Will.
+    On unity - your Will.
 
             TANNHÄUSER.
                    What’s then to seek?
@@ -2757,9 +2757,9 @@ ACT IV.
     Deep in thine eyes, where Hell flames steadily?
     I am not clinging thus
     Despairing to the body of thy sin
-    For mere delight—Ah, deadly is to us
+    For mere delight - Ah, deadly is to us
     The pleasure wrapping us, and holding in
-    All love, all hate—the miserable way!
+    All love, all hate - the miserable way!
     Dawns no devouring day
     Still on the infinite slow tune of limbs
     Moving in rapture; sleepy echo swims
@@ -2772,14 +2772,14 @@ ACT IV.
     Bolt-stricken through the brain,
     To the resounding plain:
     The double word,
-    The see-saw of all misery—begin
+    The see-saw of all misery - begin
     The alluring mysteries of lust and sin;
-    Ends their delight!—and are they clear to sight?
+    Ends their delight! - and are they clear to sight?
     Or mixed with death, compact of night?
-    Begin—the bitter tears of impotence,
+    Begin - the bitter tears of impotence,
     The sad permuted sense
-    Of this despair—what would you? and renew
-    The long soft warfare—the enchanted arms,
+    Of this despair - what would you? and renew
+    The long soft warfare - the enchanted arms,
     The silken body’s charms,
     The lips that murmur and the breasts that sting
     The eyes that sink so deep
@@ -2839,7 +2839,7 @@ ACT IV.
     Snake-wise in royal robe,
     Wound round that vanished glory of the globe,
     Unto that sky beyond the starry deeps,
-    Beyond the Toils of Time—then formulate
+    Beyond the Toils of Time - then formulate
     In thine own mind, luminous, concentrate,
     The Lion of the Light, a child that stands
     On the vast shoulders of the Steed of God:
@@ -2849,10 +2849,10 @@ ACT IV.
     Limpid with brilliance of the Light above!
     Draw into nought
     All life, death, hatred, love:
-    All self concentred in the sole desire—
+    All self concentred in the sole desire - 
     Hear thou the Voice of Fire!
 
-    This hope was Zoroaster’s—this is mine!
+    This hope was Zoroaster’s - this is mine!
     Not one but many splendours hath the Shrine:
     Not one but many paths approach the gate
     That guards the Adytum, fortifying Fate!
@@ -2868,22 +2868,22 @@ ACT IV.
     And knew Itself, an eagle for a dove.
     So in one man the height and deep of love
     Joined, in two states alternate (even so
-    Are life and death)—shall one unite the two,
+    Are life and death) - shall one unite the two,
     My long impulsive strife?
     Did I find life?
-    The real life—to know
+    The real life - to know
     The ways of God. Alas! I never knew.
     Then came our Lady of the Sevenfold Light,
     Shewed me a distant plan, distinct and clear,
     As twilight to the dayspring and the night,
     Dividing and uniting even here:
-    The middle path—life interfused with death—
+    The middle path - life interfused with death - 
     Pure love; the secret of Elizabeth!
-    This is my secret—in the man’s delight
+    This is my secret - in the man’s delight
     To lose that stubborn ecstasy for God!
     To this clear knowledge hath my path been trod
-    In deepest hell—in the profoundest sky!
-    This knowledge—the true immortality,
+    In deepest hell - in the profoundest sky!
+    This knowledge - the true immortality,
     I came unto through pain and tears,
     Tigerish hopes, and serpent loves, and dragon fears,
     Most bitter kisses, salted springs and dry;
@@ -2922,7 +2922,7 @@ ACT IV.
     Into mere hatred. Truth is terrible!
     You, cousin, taken in adultery!
     You, Wolfram, lover of the kitchen maids!
-    You, Jerome—yes, I know your secret deeds!
+    You, Jerome - yes, I know your secret deeds!
     You, ladies! Are your faces painted thus
     Not to hide wrinkles of debauchery?
     To catch new lovers?
@@ -2968,7 +2968,7 @@ ACT IV.
 
            THE UNKNOWN MINSTREL.
     It was most necessary for yourself
-    To formulate your thought in word. Enough—
+    To formulate your thought in word. Enough - 
     The thought transmuted in the very act.
 
             TANNHÄUSER.
@@ -2998,13 +2998,13 @@ ACT IV.
     How shall I speak? A violent good-bye,
     As one distraught, ashamed? I had unbared
     My bosom to these folk, but the sole pride,
-    My father’s gift—to be a gentleman—
+    My father’s gift - to be a gentleman - 
     Forbade the dying, welcome otherwise,
     At any despicable hands as theirs.
-    They, they might boast—we hundred swords or so
+    They, they might boast - we hundred swords or so
     Set on the mighty Tannhäuser, and slew him.
     We, scarce an hundred! Yes, believe it, sirs
-    We are not so feeble!—But death anyhow
+    We are not so feeble! - But death anyhow
     Cuts and not loosens the entangled life.
     Be mine the harder and the better way,
     The single chance: not hope; appeal no more;
@@ -3015,43 +3015,43 @@ ACT IV.
             ELIZABETH.
     I heard, I pure, I virginal, your song;
     The shameful story of your intercourse
-    With—fiend or woman? And your burning will.
+    With - fiend or woman? And your burning will.
     Even in that horror, to the Highest; at last
-    Your choice of me—the middle course of them,
+    Your choice of me - the middle course of them,
     Pure human love? And, if your song be true,
     As I, who heard the voice, the earnestness,
     Saw the deep eyes, and truth aflame in them,
-    Know—then the choice be Mary’s and not mine!
+    Know - then the choice be Mary’s and not mine!
     I love you better, were that possible;
     Will make you a true wife, and lead your hand,
     Or be led by you, in the pleasant path.
-    For me, I enter not—Blesséd be God!—
+    For me, I enter not - Blesséd be God! - 
     In those dark problems that disturb your soul.
     Mine is the simple nature. Look at me!
 
             TANNHÄUSER.
     O Lady pure, miracle of true love,
     I have a bitter word and harsh to say.
-    This is my curse—no sooner do I speak,
+    This is my curse - no sooner do I speak,
     Or formulate my mind in iron words,
     That my mind grows, o’erleaps the limit set,
-    And I perceive the truth that lies beyond—
+    And I perceive the truth that lies beyond - 
     One further step into a new-fallen night.
-    Hear then—I hate to hurt your perfect soul;
+    Hear then - I hate to hurt your perfect soul;
     I hate myself because I love you still
     In that strange intermediate consciousness,
     The reason and the mind! This middle way
-    Ancients called safe—that damns it instantly!
+    Ancients called safe - that damns it instantly!
     Without some danger nothing great is done!
     Let me be God! Or, failing of that task,
     Were it but by an unit, let me fall!
     And, falling, be it from so great a height
     That I may reach some uttermost Abyss,
     Inhabit it and reign, most evil one
-    Of all the Horrors there—and in that path
+    Of all the Horrors there - and in that path
     Seem, even deluded, to approach once more
     Infinity. For all the limitless
-    Hath no distinction—evil is no more,
+    Hath no distinction - evil is no more,
     And good no more.
 
             ELIZABETH.
@@ -3088,7 +3088,7 @@ ACT IV.
     The corner of the corner of the earth,
     Itself a speck in solar life; the sun,
     For all I know, a speck among the stars,
-    Themselves one corporate molecule of space!—
+    Themselves one corporate molecule of space! - 
     You from your perch judge, label, limit Him!
     Not that your corner is not equally
     The centre and the whole. Fool’s talk it is!
@@ -3100,7 +3100,7 @@ ACT IV.
                            Indeed
     My brain is baffled. But I see your point.
     Talking of God, even imagining,
-    Insane! But for aspiring—that I will!
+    Insane! But for aspiring - that I will!
 
             TANNHÄUSER.
     That is true marriage, in my estimate.
@@ -3121,12 +3121,12 @@ ACT IV.
 
             ELIZABETH.
                             Oh no!
-    Grant me one boon—the one that I shall ask
+    Grant me one boon - the one that I shall ask
     Ever in this world! Promise me!
 
             TANNHÄUSER.
                                Alas!
-    One promise gave I once to woman—that
+    One promise gave I once to woman - that
     Drove me to this illusion of your love,
     And broke your heart.
 
@@ -3135,7 +3135,7 @@ ACT IV.
     Have I not Mary and the angels yet?
 
             TANNHÄUSER.
-    You are so pure, so pitiful—your word
+    You are so pure, so pitiful - your word
     Cannot bring evil. Yes, I promise you!
 
             ELIZABETH.
@@ -3144,7 +3144,7 @@ ACT IV.
     From him that owns the twin all-opening keys
     That bar your infinite on either side.
     Then! look with freshness, hope, and fortitude
-    Still to the summit—the ideal God.
+    Still to the summit - the ideal God.
 
             TANNHÄUSER.
     I have no hope nor trust in man at all;
@@ -3157,7 +3157,7 @@ ACT IV.
             ELIZABETH.
     Dare I? I kiss you once upon the brow,
     Praying that God will make the purpose clear,
-    And on the eyes—that He may lend them light.
+    And on the eyes - that He may lend them light.
                       [_Tannhäuser rises, and silently departs._
     Oh God! Oh God! That I have loved him so!
     Be merciful! Be merciful! to him,
@@ -3189,7 +3189,7 @@ _A desolate and melancholy wood. Nightfall._
     That lurked, and itched to kill him, him unarmed,
     Not daring! But he reached his hand to me!
     “Good luck, old friend!” and, smiling, he was gone.
-    Gone to the Pope—Great soul to mountebank!
+    Gone to the Pope - Great soul to mountebank!
     It was her wish, they whisper. Well-a-day!
     He’s gone, and not a friend have I again.
     This bank is soft with delicate white moss,
@@ -3211,7 +3211,7 @@ _A desolate and melancholy wood. Nightfall._
 
               HEINRICH.
     Thou, Tannhäuser! what miracle is this?
-    Your body glows—with what unearthly light?
+    Your body glows - with what unearthly light?
 
             TANNHÄUSER.
     I did not know. Ah! sorrow of this earth!
@@ -3228,7 +3228,7 @@ _A desolate and melancholy wood. Nightfall._
             TANNHÄUSER.
     I came to Rome across the winter snows
     Barefoot, and through the lovely watered land
-    Rich in the sunshine—even unto Rome.
+    Rich in the sunshine - even unto Rome.
     There knelt I with the other sinful folk
     At the great chair of Peter. Sobbed they out
     From full repentant hearts their menial sins,
@@ -3236,17 +3236,17 @@ _A desolate and melancholy wood. Nightfall._
     (Cynical phrase, contempt of self and him)
     My sojourn in the Venusberg; then he
     Rose in his wrath, and shook the barren staff
-    Over my head, and cried—I heard his voice
+    Over my head, and cried - I heard his voice
     Most like the dweller of the hurricane
     Calm, small, and still, directing desolation;
-    Death to the world athwart its path.—So he
+    Death to the world athwart its path. - So he
     Cried out upon me “Till this barren staff
     Take life, and bud, and blossom, and bear fruit,
-    And shed sweet scent—so long God casteth thee
-    Out from His glory!” Stricken, smitten, slain—
-    When—one unknown, a pilgrim with the rest,
+    And shed sweet scent - so long God casteth thee
+    Out from His glory!” Stricken, smitten, slain - 
+    When - one unknown, a pilgrim with the rest,
     Darting long rugged fingers and deep eyes,
-    Reached to the sceptre with his word and will—
+    Reached to the sceptre with his word and will - 
     Buds, roses, blossoms! Lilies of the Light!
     Bloom, bloom, the fragrance shed upon the air!
     Out flames the miracle of life and love!
@@ -3262,7 +3262,7 @@ _A desolate and melancholy wood. Nightfall._
     Manifest, open, permeating me!
     Then, then, I cried upon the mystic Word!
     (That once begot in me the Venusberg)
-    And lo! that light was darkness—in the face
+    And lo! that light was darkness - in the face
     Of That which gleamed above. And verily
     My life was borne on the dark stream of death
     Down whirling aeons, linked abysses, columns
@@ -3270,11 +3270,11 @@ _A desolate and melancholy wood. Nightfall._
     Shed from Her shoulders whom I dimly saw;
     Crowned with twelve stars and hornéd as the moon;
     Clothed with a sun to which the sun of earth
-    Were tinsel; and the moon was at Her feet—
+    Were tinsel; and the moon was at Her feet - 
     A moon whose brilliance breaks the sword of song
     Into a million fragments; so transcends
     Music, that starlight-sandalled majesty!
-    Then—shall I contemplate the face of Her?
+    Then - shall I contemplate the face of Her?
     O Nature! Self-begotten! Spouse of God,
     The Glory of thy Countenance unveiled!
     Thy face, O mother! Splendour of the Gods!
@@ -3292,22 +3292,22 @@ _A desolate and melancholy wood. Nightfall._
     Rolling between the heights of starry space;
     Flaming above, beyond the Tomb of Time,
     Blending the darkness into the profound
-    Chasms of matter—so I fell away
+    Chasms of matter - so I fell away
     Through many strange eternities of Space,
     Limitless fields of Time. I knew in me
     That I must fall into the ground and die;
     Dwell in the deep a-many years, at last
-    To rise again—Osiris, slain and risen!
+    To rise again - Osiris, slain and risen!
     Light of the Cross, I see Thee in the sky,
     My future! I must perish from the earth,
     Abide in desolate halls, until the hour
-    When a new Christ must needs be crucified.—
+    When a new Christ must needs be crucified. - 
     So weep I ever with Our Lady’s tears,
     Weep for the pain, the travail, the old curse;
     Weep, weep, and die. So dawns at last the Grail,
     The Glory of the Crucified! Dear friend,
     Be happy, for my heart goes out to you,
-    And most to that poor pale Elizabeth—
+    And most to that poor pale Elizabeth - 
     Were it not only that the selflessness
     That fills me now, forbids the personal,
     Casts out the individual, and weeps on
@@ -3316,7 +3316,7 @@ _A desolate and melancholy wood. Nightfall._
     Rather a spark of the supreme white light
     That dwelt and flickered in him in old time;
     That Light, I say, that hides its flame awhile
-    To shine more fully—to redeem the world!
+    To shine more fully - to redeem the world!
     I say, then, “I”; and yet it is not “I”
     Distinct, but “I” incorporate in All.
     I am, the Resurrection and the Life!
@@ -3324,7 +3324,7 @@ _A desolate and melancholy wood. Nightfall._
     I am the Rising Sun of Life and Light,
     The Glory of the Shining of the Dawn!
     I am Osiris! I the Lord of Life
-    Triumphant over death.—
+    Triumphant over death. - 
 
     O Sorrow, Sorrow, Sorrow of the World!
 
@@ -3333,11 +3333,11 @@ _A desolate and melancholy wood. Nightfall._
     With unsubstantial glory from beyond.
     The stars are buried in the mist of light.
     Beyond the hill the world is, and laments
-    Existence—the wide firmament of woe!
-    And he—his heart was great enough for all,
+    Existence - the wide firmament of woe!
+    And he - his heart was great enough for all,
     The fall of sparrows as the crash of stars,
     The tears of lonely forests, and the pain
-    Of the least atom—all were in his heart.
+    Of the least atom - all were in his heart.
     Was that indeed the truth? that he should come
     At last a Christ upon the waiting world,
     Redeem it to more purpose than the last!
@@ -3363,7 +3363,7 @@ _A desolate and melancholy wood. Nightfall._
       The Mystery of Pain.
     I am the Mother, I the silent Sea,
       The Earth, its travail, its fertility.
-    Life, death, love, hatred, light, darkness, return to me—
+    Life, death, love, hatred, light, darkness, return to me - 
         To Me!
 
      TURNBULL AND SPEARS, PRINTERS, EDINBURGH.

@@ -221,7 +221,7 @@
             <div style="width:82%; max-width:560px; max-height:88%; display:flex; flex-direction:column; gap:12px; padding:20px; box-sizing:border-box; background:var(--bg-dark-warm-translucent-96, rgba(20,18,15,0.96)); border:1.5px solid var(--border-focus-hover, var(--text-primary-hover)); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.75)">
                 <div style="display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--border-secondary-hover-translucent-15); padding-bottom:8px">
                     <div style="${SkillMaster.getSkillIconStyle(skill.iconIndex)} transform:scale(1.1); flex-shrink:0; image-rendering:pixelated"></div>
-                    <h3 class="cc-header-gothic" style="font-size:1.994rem; color:var(--text-secondary-active, var(--text-primary-hover)); margin:0">${skill.name}</h3>
+                    <h3 class="cc-header-gothic" style="margin:0">${skill.name}</h3>
                 </div>
                 <div id="spell-preview-stage" style="position:relative; width:100%; height:300px; border-radius:10px; overflow:hidden; border:1.5px solid var(--border-secondary-hover-translucent-15); background:radial-gradient(circle at 50% 42%, var(--bg-tertiary-focus-translucent-45, rgba(40,35,25,0.45)) 0%, rgba(10,8,6,1) 78%)">
                     <div style="position:absolute; left:50%; bottom:26px; transform:translate(-50%, 0) perspective(420px) rotateX(66deg); width:150px; height:150px; border-radius:50%; border:2px solid rgba(229,192,123,0.5); box-shadow:0 0 0 18px rgba(229,192,123,0.16) inset; background:radial-gradient(circle, rgba(229,192,123,0.16) 0%, transparent 70%)"></div>

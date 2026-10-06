@@ -551,13 +551,19 @@
     // A motorway drawn out of voxels reads as a staircase: the cubes step in
     // 1.25 m, the paint is a row of grey blocks, and the whole thing looks like
     // a quarry track. So the ground under a road square is a ROADBED - graded,
-    // dropped by ROAD_BED_DROP, and never seen - and the surface the eye and the
+    // its top cube stopped just under the paving, and never seen - and the surface the eye and the
     // wheels get is a smooth extruded ribbon laid over it: asphalt, hard
     // shoulder, edge lines, dashed lane lines and a kerbed median, with the
     // verges left open and nothing fenced. VoxelWorldTerrain lays it, the field
     // answers for its height (VoxelField.heightAt), so the camper drives on
     // exactly what is drawn.
-    const ROAD_BED_DROP    = 8;    // roadbed cubes sit this far under the paving
+    // The roadbed's top cube is the highest whole cube that stays ROAD_BED_CLEAR
+    // under the paving, so it is never more than one cube plus that under it.
+    // It used to be a flat 8 units down and then rounded to the grid, which left
+    // a slot up to two cubes deep under every road: a tunnel to anyone who
+    // looked under the ribbon or stepped through it.
+    const ROAD_BED_CLEAR   = 1;
+    const ROAD_BED_DROP    = 6;    // the deepest a roadbed cube sits under the paving (CLEAR + a 5-unit cube)
     const ROAD_PAVE_T      = 3;    // thickness of the slab itself, at its edge
     const ROAD_SKIRT       = 26;   // the embankment dropped from the paved edge
     const ROAD_SHOULDER_W  = 11;   // hard shoulder, inside the paved width
@@ -2178,14 +2184,22 @@
     // Sheet row order is the engine's own: down, left, right, up. `yaw` is the
     // way the figure faces (0 = +Z, growing toward +X); dx/dz point from the
     // figure to the camera.
+    //
+    // Which flank is which: Y is up and the axes are right-handed, so a figure
+    // facing +Z has +X on its LEFT. An eye standing a quarter turn round
+    // toward +X (a = pi/2) looks at that left flank, and from where it stands
+    // the figure's face points to the eye's own left: that is the sheet's
+    // "left" row (1). The flanks were drawn the other way about, and every
+    // person and vehicle out here walked sideways across the eye looking the
+    // wrong way along their own road.
     function characterFacingRow(yaw, dx, dz) {
         let a = Math.atan2(dx, dz) - yaw;
         const TAU = Math.PI * 2;
         a = ((a % TAU) + TAU) % TAU;
         if (a < Math.PI * 0.25 || a > Math.PI * 1.75) return 0;   // looked in the face
-        if (a < Math.PI * 0.75) return 2;                          // their right flank
+        if (a < Math.PI * 0.75) return 1;                          // their left flank, facing the eye's left
         if (a < Math.PI * 1.25) return 3;                          // their back
-        return 1;                                                  // their left flank
+        return 2;                                                  // their right flank, facing the eye's right
     }
 
     // A person - and the SAME person the party is. FOOT_EYE is where the
@@ -2449,7 +2463,7 @@
     // cell, not because the card was cut differently for it.
     // The bearing each facing row is drawn for (rows 0 down, 1 left, 2 right,
     // 3 up), by row index: read on every frame for every vehicle on the road.
-    const ROW_CENTRE = [0, Math.PI * 1.5, Math.PI * 0.5, Math.PI];
+    const ROW_CENTRE = [0, Math.PI * 0.5, Math.PI * 1.5, Math.PI];
     class VehicleBillboard extends CharacterBillboard {
         // `length` is the vehicle's real length in world units.
         constructor(sheet, length) {
@@ -2735,7 +2749,7 @@
         LIMINAL_TOP_KMH, LOOT_RANGE, MAX_KMH, MAX_STEER_LOCK, MOUNTAIN_MAX_H,
         NATURAL_TOP, OVERDRIVE_DECAY, OVERDRIVE_KMHPS, PERSON_H, PLANT_CROPS, TRAFFIC_VEHICLES,
         PLANT_POOL, RECOIL_KICK, REVERSE_ACCEL, REVERSE_MAX_KMH, ROAD_GAP,
-        ROAD_BED_DROP, ROAD_COL, ROAD_DASH_OFF, ROAD_DASH_ON,
+        ROAD_BED_CLEAR, ROAD_BED_DROP, ROAD_COL, ROAD_DASH_OFF, ROAD_DASH_ON,
         ROAD_HALF_LANE, ROAD_KERB_H, ROAD_LANE_OFF, ROAD_LANE_W, ROAD_LINE_W, ROAD_LINKS,
         ROAD_MARK_LIFT, ROAD_OPPOSITE, ROAD_PAVE_T, ROAD_SHOULDER_W, ROAD_SKIRT,
         ROAD_SINK, ROAD_STEP, ROAD_TOTAL_W, ROCK_ASH, ROCK_POOL, SECONDARY_PARTS,

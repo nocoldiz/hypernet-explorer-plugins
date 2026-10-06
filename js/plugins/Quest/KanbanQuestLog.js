@@ -1154,6 +1154,13 @@
                 else if (Input.isTriggered('shift')) this._showOnMap();
                 else if (Input.isRepeated('right')) this._moveSelectedTo('inProgress');
                 else if (Input.isRepeated('left')) this._moveSelectedTo('todo');
+                else {
+                    // A long log runs past the sheet: up and down read it, for
+                    // the arrows, WASD and the d-pad as for the right stick.
+                    const panel = this._el.querySelector('#kb-detail-panel');
+                    if (panel && Input.isRepeated('down')) panel.scrollTop += 48;
+                    else if (panel && Input.isRepeated('up')) panel.scrollTop -= 48;
+                }
                 return;
             }
 

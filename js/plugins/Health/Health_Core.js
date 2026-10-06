@@ -442,6 +442,13 @@
     return getActionDamageType(action, subject) === "Blunt";
   }
 
+  // Em and Bubba in the story mode never lose a vital part, on any difficulty:
+  // they can lose limbs in Blood and Oil, never a heart or a brain.
+  function vitalProtected(actor) {
+    const helpers = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+    return !!(helpers && helpers.isStoryImmortal && helpers.isStoryImmortal(actor));
+  }
+
   /** A vital part under a Blunt blow: kept on the body at 1 HP or more. */
   function holdVitalPart(part) {
     if (!part) return;
@@ -1287,24 +1294,10 @@
       }
     }
 
-    // Set game variable for reproduction based on actor ID
-    // Actor 1 = Variable 87, Actor 2 = Variable 115, Actor 3 = Variable 116
-    if ($gameVariables) {
-      var reproductionValue = archetype.reproduction !== undefined ? archetype.reproduction : 0;
-      var actorId = actor.actorId();
-      // The reproduction type lives on the actor now, so it travels with the
-      // character and every party member has one, not just the first three.
-      // The old variables are still written because one event page branches on
-      // them, but nothing in the plugins reads them any more.
-      if (actor.setReproductionType) actor.setReproductionType(reproductionValue);
-      if (actorId === 1) {
-        $gameVariables.setValue(87, reproductionValue);
-      } else if (actorId === 2) {
-        $gameVariables.setValue(115, reproductionValue);
-      } else if (actorId === 3) {
-        $gameVariables.setValue(116, reproductionValue);
-      }
-    }
+    // The reproduction type lives on the actor, so it travels with the
+    // character and every party member has one.
+    var reproductionValue = archetype.reproduction !== undefined ? archetype.reproduction : 0;
+    if (actor.setReproductionType) actor.setReproductionType(reproductionValue);
 
     // Clear all learned skills and add archetype's base skills
     if (archetype.skills && archetype.skills.length > 0) {
@@ -1584,7 +1577,7 @@
   function destroyPartInPlace(actor, partKey) {
     var part = actor._bodyParts[partKey];
     if (!part || part.ruined) return;
-    if (part.vital && bluntBlowDepth > 0) { holdVitalPart(part); return; }
+    if (part.vital && (bluntBlowDepth > 0 || vitalProtected(actor))) { holdVitalPart(part); return; }
     part.currentHp = 0;
     part.damaged = true;
     part.ruined = true;
@@ -1656,7 +1649,7 @@
     var part = actor._bodyParts[partKey];
     if (!part) return;
 
-    if (part.vital && bluntBlowDepth > 0) { holdVitalPart(part); return; }
+    if (part.vital && (bluntBlowDepth > 0 || vitalProtected(actor))) { holdVitalPart(part); return; }
 
     if (part.vital) {
       // Vital organ check
@@ -1809,7 +1802,7 @@
       // a quarter of their HP, the same line a monster's vital parts keep
       // (MonsterHealth.vitalCanFall). Above it the part holds at 1 HP.
       // A Blunt blow never finishes a vital part, on any difficulty.
-      if (part.vital && (blunt || (isBloodAndOil() && !vitalCanFall(actor)))) {
+      if (part.vital && (blunt || vitalProtected(actor) || (isBloodAndOil() && !vitalCanFall(actor)))) {
         appliedDamage = Math.min(part.currentHp - 1, damage);
         if (appliedDamage <= 0) return 0;
       }
@@ -3064,27 +3057,6 @@
         var success = changeArchetype(actor, archetypeName);
         if (success) {
           console.log(`Successfully changed ${actor.name()}'s archetype to ${archetypeName}`);
-
-          // Update reproduction variable based on actor ID
-          if (actorId === 1) {
-            // Variable 87 already set by changeArchetype
-          } else if (actorId === 2) {
-            // Set variable 115 for player 2
-            const { Archetypes } = window.Health;
-            const archetype = Archetypes[archetypeName];
-            if (archetype && $gameVariables) {
-              var reproductionValue = archetype.reproduction !== undefined ? archetype.reproduction : 0;
-              $gameVariables.setValue(115, reproductionValue);
-            }
-          } else if (actorId === 3) {
-            // Set variable 116 for player 3
-            const { Archetypes } = window.Health;
-            const archetype = Archetypes[archetypeName];
-            if (archetype && $gameVariables) {
-              var reproductionValue = archetype.reproduction !== undefined ? archetype.reproduction : 0;
-              $gameVariables.setValue(116, reproductionValue);
-            }
-          }
         } else {
           console.warn(`Failed to change archetype to ${archetypeName}. Check that it exists in Archetypes.`);
         }

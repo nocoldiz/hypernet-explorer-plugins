@@ -1277,6 +1277,45 @@
     return (altitudeAt(time + dt, profile) - altitudeAt(Math.max(0, time - dt), profile)) / (dt * 2);
   }
 
+  // THE GAP BETWEEN THE TWO GALAXIES, in thousands of light years: the Sun to
+  // the heart of Andromeda. The breach, the crossing and the way in are one
+  // straight run down it, and the far scene, the tape and the speed all read
+  // the same curve, so the number on the readout is the real rate the
+  // window is closing the real distance at.
+  const GALAXY_GAP_KLY = 2540;
+  // Where the breach hands over to the crossing, and the crossing to the way
+  // in: clear of the disc being left, and at the edge of the one ahead.
+  const GALAXY_EDGE_KLY = 60;
+  const KLY_M = 9.4607e18;
+
+  // Thousands of light years covered from the galaxy being left, or null off
+  // the three beats of a jump that cross the gap. Geometric at both ends of
+  // the crossing: the disc astern recedes and the one ahead grows at a steady
+  // rate on screen, which is how a distance this size reads through a lens.
+  function crossingKly(time, profile) {
+    const prof = profile || PROFILES.orbital;
+    if (!prof.jump) return null;
+    const ph = phaseAt(time, prof);
+    const D = GALAXY_GAP_KLY, E = GALAXY_EDGE_KLY, H = D / 2;
+    const u = ph.progress;
+    if (ph.key === "breach") return E * u * u * u;
+    if (ph.key === "crossing") {
+      if (u < 0.5) return E * Math.pow(H / E, u * 2);
+      return D - E * Math.pow(H / E, (1 - u) * 2);
+    }
+    if (ph.key === "emerge") return D - E * Math.pow(1 - u, 3);
+    return null;
+  }
+
+  // The rate that distance is crossed at, in metres a second.
+  function crossingSpeedAt(time, profile) {
+    const h = 0.02;
+    const a = crossingKly(Math.max(0, time - h), profile);
+    const b = crossingKly(time + h, profile);
+    if (a == null || b == null) return null;
+    return Math.abs(b - a) / (h * 2) * KLY_M;
+  }
+
   // Orbital speed at the top of the climb. The number the whole gun exists to
   // buy, and the one the air takes back on the way down.
   const ORBITAL_V = 7800;
@@ -1316,6 +1355,10 @@
   }
 
   function speedAt(time, profile, trackM) {
+    // Across the gap between two galaxies the speed IS the gap: see
+    // crossingKly.
+    const gap = crossingSpeedAt(time, profile);
+    if (gap != null) return gap;
     const v = verticalSpeedAt(time, profile);
     const h = horizontalSpeedAt(time, profile, trackM);
     return Math.sqrt(v * v + h * h);
@@ -1495,6 +1538,7 @@
     INTEGRITY_START, INTEGRITY_FLOOR, AERO_LOSS, KESSLER_DECAY, FIRST_PLATE_AT,
     TAPE_KNEE_M, TAPE_TOP_M,
     phaseAt, altitudeAt, verticalSpeedAt, horizontalSpeedAt, speedAt, ORBITAL_V,
+    crossingKly, crossingSpeedAt, GALAXY_GAP_KLY, GALAXY_EDGE_KLY, KLY_M,
     integrityAt, integrityAtTime, hazardSeverity,
     INTEGRITY_SAFE_MIN, MANUAL, stepIntegrity, manualClockRate,
     tapeFraction, tapeIsTimeline, tapeTimeFraction, airDensity,
@@ -2677,10 +2721,21 @@
     fromCrew(key, params) {
       const crew = this._crew();
       if (!crew.length) return this.fromControl(key, params);
-      const who = crew[this._turn % crew.length];
+      // WITH BUBBA ABOARD, BUBBA HAS THE CHAIR: every call from the round is
+      // the captain's. See Duo.
+      const duo = Duo.aboard();
+      if (duo.bubba) {
+        const call = tOrNull("duo.bubba.call." + key, params);
+        if (call != null) {
+          this.lastWho = "crew";   // i18n-ignore  speaker id
+          return t("radio.line", { who: this._nameOf(duo.bubba), text: call });
+        }
+      }
+      const who = duo.bubba || crew[this._turn % crew.length];
       this._turn++;
       const voice = this.voiceOf(who);
-      let text = tOrNull("crew." + voice + "." + key, params);
+      let text = Duo.isEm(who) ? tOrNull("duo.em.call." + key, params) : null;
+      if (text == null) text = tOrNull("crew." + voice + "." + key, params);
       if (text == null) text = tOrNull("crew.any." + key, params);
       if (text == null) text = t("telemetry." + key, params);
       this.lastWho = "crew";   // i18n-ignore  speaker id
@@ -2712,6 +2767,19 @@
       if (ANSWERED.indexOf(key) < 0) return null;
       const crew = this._crew();
       if (!crew.length) return null;
+      // The captain answers the ground.
+      const duo = Duo.aboard();
+      if (duo.bubba) {
+        this._turn++;
+        let said = tOrNull("duo.bubba.reply." + key, params);
+        for (let i = 0; said == null && i < DUO_ACKS; i++) {
+          said = tOrNull("duo.bubba.ack" + (((this._turn + i) % DUO_ACKS) + 1), params);
+        }
+        if (said != null) {
+          this.lastWho = "crew";   // i18n-ignore  speaker id
+          return t("radio.line", { who: this._nameOf(duo.bubba), text: said });
+        }
+      }
       const who = crew[this._turn % crew.length];
       this._turn++;
       const voice = this.voiceOf(who);
@@ -2735,6 +2803,107 @@
 
   // How many acknowledgements each register is written with.
   const REPLY_ACKS = 4;
+
+  // ==========================================================================
+  // EM AND BUBBA
+  //
+  // The two of them are not a register: they are themselves, and a flight
+  // with them aboard sounds like them. BUBBA TAKES THE CHAIR. Every call from
+  // the round is his, he answers the ground, and whenever the liminal drive
+  // is lit he reminds whoever is listening that he invented it and the
+  // European Space Agency only perfected it. In the chair he also slips into
+  // starship-bridge jargon, to Em's despair, or simply winds her up. EM IS
+  // TERRIFIED, on every beat of every kind of flight, and says so.
+  //
+  //   duo.bubba.call.<key>     his version of a crew call
+  //   duo.bubba.reply.<key>    his answer to the ground; duo.bubba.ack1..N
+  //   duo.<who>.beat.<phase>   a line as a beat begins
+  //   duo.<who>.react.<key>    a line after anything said on the radio
+  //   duo.bubba.inventor1..N   the drive is his, and ESA only polished it
+  //   duo.bubba.trek1..N / duo.em.trekBack1..N    bridge jargon, and Em
+  //   duo.bubba.troll1..N / duo.em.trollBack1..N  winding her up, and Em
+  //
+  // AND ARRIVING HAS A PRICE. Em is very likely to step off a flight sick,
+  // anybody else less likely, and Bubba never is: see Duo.nausea.
+  // ==========================================================================
+  const DUO_ACKS = 4;
+  const DUO_INVENTOR = 6;
+  const DUO_TREK = 8;
+  const DUO_TROLL = 6;
+  // i18n-ignore-start  phase keys
+  // The beats the drive is lit on, which is when Bubba claims it.
+  const DUO_DRIVE_BEATS = ["liminal", "transit", "solomon", "hexspace", "thewhite", "breach", "crossing"];
+  // The beats the round is out in space on, where the chair has time to
+  // talk nonsense.
+  const DUO_SPACE_BEATS = [
+    "clear", "rendezvous", "drift", "cleanSky", "shroud", "transit", "solomon",
+    "hexspace", "thewhite", "emerge", "refuel", "transfer", "cruise", "jupiter",
+    "pluto", "crossing", "flyby", "sister", "edge", "redmoon", "moonbrake", "approach",
+  ];
+  // i18n-ignore-end
+  // How likely a flight leaves each of them sick.
+  const NAUSEA_EM = 0.8;
+  const NAUSEA_OTHER = 0.25;
+  const NAUSEA_STATE = "Nausea";   // i18n-ignore  States.json name, matched not shown
+
+  const Duo = {
+    isEm(actor) {
+      const CP = window.CharacterPresets;
+      return !!(actor && CP && typeof CP.isEmActor === "function" && CP.isEmActor(actor));
+    },
+
+    // The roster owns which actor Bubba is.
+    bubbaActor() {
+      const PR = window.PartyRoster;
+      try { return PR && typeof PR.getBubbaActor === "function" ? PR.getBubbaActor() : null; } catch (e) { return null; }
+    },
+
+    isBubba(actor) {
+      const b = this.bubbaActor();
+      return !!(actor && b && actor === b);
+    },
+
+    // Which of the two is aboard. Bubba rides with Em on the story road
+    // whether or not he holds a seat in the party.
+    aboard() {
+      const crew = Radio._crew();
+      const em = crew.find((a) => this.isEm(a)) || null;
+      const b = this.bubbaActor();
+      let bubba = b && crew.indexOf(b) >= 0 ? b : null;
+      if (!bubba && b && em) {
+        const PR = window.PartyRoster;
+        try {
+          if (PR && typeof PR.isStoryLocked === "function" && PR.isStoryLocked(b.actorId())) bubba = b;
+        } catch (e) { /* not on the story road */ }
+      }
+      return { em, bubba };
+    },
+
+    line(actor, text) {
+      Radio.lastWho = "crew";   // i18n-ignore  speaker id
+      return t("radio.line", { who: Radio._nameOf(actor), text: text });
+    },
+
+    // THE PRICE OF ARRIVING. Rolled once per flight for everybody who made
+    // it; returns the names of those it took.
+    nausea(rng) {
+      const roll = typeof rng === "function" ? rng : Math.random;
+      const crew = Radio._crew().slice();
+      const duo = this.aboard();
+      if (duo.bubba && crew.indexOf(duo.bubba) < 0) crew.push(duo.bubba);
+      const state = typeof $dataStates !== "undefined" && $dataStates
+        ? $dataStates.find((s) => s && s.name === NAUSEA_STATE) : null;
+      const sick = [];
+      crew.forEach((a) => {
+        if (this.isBubba(a)) return;
+        const p = this.isEm(a) ? NAUSEA_EM : NAUSEA_OTHER;
+        if (roll() >= p) return;
+        if (state && typeof a.addState === "function") a.addState(state.id);
+        sick.push(Radio._nameOf(a));
+      });
+      return sick;
+    },
+  };
 
   // T() answers with the key itself when a bank has nothing under it, which is
   // how a missing string is meant to show up on screen - but a FALLBACK CHAIN
@@ -2839,42 +3008,73 @@
   // the drive lights for the first time in the open.
   const LIMINAL_LEN = 7.4;
 
+  // THE ARRAY.
+  //
+  // Two and a half million light years is not a distance one drive holds, so
+  // a round crossing between galaxies goes out strapped to a gigantic stage
+  // under its own drive: a ring of liminal engines round a centre one, on a
+  // thrust frame wider than anything else the gun throws. Below the speed of
+  // light the engines burn as ordinary motors and fly the round out to its
+  // assist; past it they switch over and burn blue. The pellet's shockwave
+  // tears some of them off. At the breach every engine left fires at once, a
+  // single blue flame big enough to burn the fabric being torn, and across
+  // the gap it holds as a torch. On arrival the whole stage is let go, and
+  // what comes in to land is the bullet on its one drive.
+  const ARRAY_LEN = 15;
+  const ARRAY_RING = 8;
+  // The array is gigantic: the whole stage is drawn at this many times the
+  // size it is modelled at, dwarfing the bullet strapped on top of it.
+  const ARRAY_SCALE = 5;
+  // Which of the ring the shockwave takes, by blast ring: the pellet string
+  // opens five rings and three of them each tear an engine away.
+  const ARRAY_HIT_RINGS = [1, 2, 4];
+
   // i18n-ignore-start  phase keys
-  // The beats a drive is at full power for.
-  const LIMINAL_LIT = ["transit", "solomon", "hexspace", "thewhite", "emerge", "transfer", "approach", "moonbrake"];
-  // THE BEATS THE BLUE FLAME IS ACTUALLY LIT ON, which is not the same list.
+  // The beats a drive is at full power for: the range collapsing, and nothing
+  // else. Out of the far mouth it is throttled off over the emerge beat.
+  const LIMINAL_LIT = ["transit", "solomon", "hexspace", "thewhite"];
+  // THE BEATS THE BLUE FLAME IS ACTUALLY LIT ON.
   //
-  // The drive's glow - the vanes, the core, the halo - is the engine being up,
-  // and it is up wherever the round is under it. The FLAME is the engine
-  // PUSHING, and there are two things it pushes the round through:
+  // The liminal engine does ONE job: it takes the round past the speed of
+  // light. The spool, the collapse of the range to the Moon, and the shaft to
+  // Zeta Reticuli - which is the same engine taken to the max, a stack of
+  // three lit one after another and thrown away as each one is spent.
   //
-  //   A CROSSING BETWEEN TWO WORLDS. One drive, lit for as long as the range
-  //   takes to collapse: Earth to its Moon, the burn across the Zeta system,
-  //   the braking pass on the way home.
-  //
-  //   THE SHAFT TO ZETA RETICULI, which is the SAME ENGINE TAKEN TO THE MAX.
-  //   The Gate of Solomon, hexspace and the white desert are not another
-  //   drive and not another physics: they are a stack of three liminal
-  //   engines, lit one after another and thrown away as each one is spent,
-  //   holding a collapse no single drive could hold. So the flame is lit down
-  //   the whole length of it, and out the far mouth with it.
-  //
-  // The spool that comes before either one is the flame coming in.
-  //
-  // It is lit on nothing else, and the SCHRODINGER-BOHR JUMP is the reason
-  // this list exists. That one is not a drive shortening a distance at all:
-  // it is a string of pellets that have not decided where they are yet, and
-  // the round crosses between GALAXIES on the answer. Nothing burns. A jet
-  // hanging under the round while it happens says the opposite of what the
-  // beat is. And a landing is the round being SET DOWN on a pad: it comes in
-  // on the drive's glow and the pad's lights, not on a torch.
-  const LIMINAL_FLAME = [
-    "liminal", "transit", "solomon", "hexspace", "thewhite",
-    "emerge", "transfer", "approach", "moonbrake",
-    // And the run out to the assist, which is a burn like any other - to
-    // Jupiter, or across the Zeta binary to the other sun.
-    "cruise", "sister",
-  ];
+  // Everything else a flight does under power - the run out to an assist,
+  // shedding a crossing's speed, the transfer across a system, the powered
+  // landing - obeys ordinary physics and is flown on the chemical motor: see
+  // SPACE_BURNS. And the SCHRODINGER-BOHR JUMP burns nothing at all: it is a
+  // string of pellets that have not decided where they are yet.
+  const LIMINAL_FLAME = ["liminal", "transit", "solomon", "hexspace", "thewhite"];
+  // THE CHEMICAL BURNS IN SPACE, and they are flown the way a real motor has
+  // to be: thrust is along the bell, so a burn that speeds the round up is
+  // made nose first and one that slows it down is made TAIL first, the round
+  // turned end over end with the bell facing the way it is going. Each window
+  // is a slice of its beat:
+  //   dir  1   prograde, nose along the direction of travel
+  //   dir -1   retrograde, nose against it
+  //   dir  0   a powered landing, nose held on its own authored heading
+  // Between two windows of opposite sense the round turns over, coasting.
+  const SPACE_BURNS = {
+    // The powered run out to a gravity assist.
+    cruise: [{ dir: 1, from: 0, to: 1 }],
+    sister: [{ dir: 1, from: 0, to: 1 }],
+    redmoon: [{ dir: 1, from: 0, to: 0.35 }],
+    // And on out of the system on what the pellet gave it, still burning.
+    pluto: [{ dir: 1, from: 0.1, to: 1 }],
+    edge: [{ dir: 1, from: 0.1, to: 1 }],
+    // Out of a crossing far too fast for anything to catch: the speed is
+    // burned off, bell first.
+    emerge: [{ dir: -1, from: 0.2, to: 1 }],
+    approach: [{ dir: -1, from: 0, to: 1 }],
+    // The braking pass round the Moon is a powered one, made at the bottom.
+    moonbrake: [{ dir: -1, from: 0.25, to: 0.85 }],
+    // Across a system from a standing start: burn, turn over, burn again.
+    transfer: [{ dir: 1, from: 0, to: 0.35 }, { dir: -1, from: 0.65, to: 1 }],
+    // And down onto the pad on the motor, standing on its own flame.
+    skim: [{ dir: 0, from: 0.3, to: 1 }],
+    touchdown: [{ dir: 0, from: 0, to: 0.92 }],
+  };
   // And the beats the lens is bending the frame on. The liminal lens is the
   // CORRIDOR's look and nothing else's: it is worn down the shaft to Zeta and
   // never on the jump to Titania, which is not a drive shortening a distance
@@ -2915,6 +3115,33 @@
     "fall", "reentry", "prograde",
   ];
   // i18n-ignore-end
+
+  // Where a beat of SPACE_BURNS is at `p` of its way through: how hard the
+  // motor is burning (k, 0 to 1) and how far the round is turned over against
+  // its travel (retro, 0 nose first to 1 tail first). Null off the table.
+  function spaceBurnAt(key, p) {
+    const ws = SPACE_BURNS[key];
+    if (!ws) return null;
+    const sense = (w) => (w.dir < 0 ? 1 : 0);
+    let k = 0;
+    let retro = sense(ws[0]);
+    for (let i = 0; i < ws.length; i++) {
+      const w = ws[i];
+      if (p < w.from) {
+        // Coasting toward this window, and turning over to meet it.
+        const prev = ws[i - 1];
+        if (prev) retro = lerp(sense(prev), sense(w), smooth((p - prev.to) / Math.max(1e-6, w.from - prev.to)));
+        break;
+      }
+      retro = sense(w);
+      if (p <= w.to) {
+        const edge = Math.max(1e-6, (w.to - w.from) * 0.2);
+        k = smooth((p - w.from) / edge) * smooth((w.to - p) / edge);
+        break;
+      }
+    }
+    return { k, retro };
+  }
 
   // NO retro look here, and it is not a style choice.
   //
@@ -2979,6 +3206,21 @@
     // i18n-ignore-end
   }
 
+  // The lens is GalaxySim's, and a black hole is always in the middle of its
+  // frame. The array's lens is not: it is centred on the engines. So the
+  // shader's centre is rewritten to a uniform here, and a shader that does
+  // not carry the expected lines is left exactly as it was.
+  function centredLens(sh) {
+    // i18n-ignore-start  GLSL
+    const from = ["(vUv.x - 0.5) * uAspect, vUv.y - 0.5", "src.y) + 0.5)"];
+    const to = ["(vUv.x - uCenter.x) * uAspect, vUv.y - uCenter.y", "src.y) + uCenter)"];
+    if (from.some((f) => sh.frag.indexOf(f) < 0)) return sh;
+    let frag = ["uniform vec2 uCenter;", sh.frag].join("\n");
+    from.forEach((f, i) => { frag = frag.split(f).join(to[i]); });
+    // i18n-ignore-end
+    return { vert: sh.vert, frag };
+  }
+
   class LiminalLens {
     constructor() {
       this._target = null;
@@ -2989,7 +3231,7 @@
 
     _build() {
       if (this._mat) return;
-      const sh = lensShaders();
+      const sh = centredLens(lensShaders());
       this._mat = new THREE.ShaderMaterial({
         depthTest: false,
         depthWrite: false,
@@ -3005,6 +3247,8 @@
           // modest - a crossing should read as depth, not as a blur.
           uEinstein: { value: 0 },
           uSpin: { value: 0.22 },
+          // Where on the screen the well sits. See centredLens.
+          uCenter: { value: new THREE.Vector2(0.5, 0.5) },
         },
         vertexShader: sh.vert,
         fragmentShader: sh.frag,
@@ -3020,7 +3264,7 @@
     // over the bent frame, unwarped, the way the hole is drawn over its own
     // bent sky. Returns false when the lens declined, so the caller falls back
     // to drawing straight at the canvas.
-    render(renderer, drawInto, amount, time, over) {
+    render(renderer, drawInto, amount, time, over, centre) {
       if (!renderer || !(amount > 0)) return false;
       try {
         this._build();
@@ -3065,6 +3309,8 @@
         // photograph of a well - and little is the word: the swirl is what
         // turns a lens into a smear the moment it is overdone.
         u.uSpin.value = 0.22 + 0.12 * Math.sin(time * 1.7);
+        u.uCenter.value.x = centre ? centre.x : 0.5;
+        u.uCenter.value.y = centre ? centre.y : 0.5;
 
         renderer.setRenderTarget(null);
         renderer.render(this._scene, this._cam);
@@ -3686,6 +3932,11 @@
       this.hasShroud = !!(this.hasLiminal && this.profile.shroud && this.profile.belt);
       this.shroudGone = false;
       if (this.hasLiminal) this._buildLiminal(BODY_R, BODY_L);
+      // A crossing between galaxies is flown on THE ARRAY, strapped under the
+      // drive: see _buildArray.
+      this.hasArray = !!(this.hasLiminal && this.profile.jump);
+      this.arrayGone = false;
+      if (this.hasArray) this._buildArray(BODY_R, BODY_L);
       // The boost stage, and only where there is a climb to boost: a round
       // leaving the ship is already in orbit and a round falling to Earth is
       // spending altitude rather than buying it, so neither carries one, and
@@ -3696,7 +3947,9 @@
       // With a stage in between, the boost stage sits further back and the
       // flame comes out of ITS bell rather than out of the bullet's throat.
       if (this.hasLiminal && this.booster) {
-        this.booster.position.y = -BODY_L / 2 - LIMINAL_LEN - 10.4;
+        this.booster.position.y = this.hasArray
+          ? this.array.position.y - ARRAY_SCALE * ARRAY_LEN / 2 - 5.8
+          : -BODY_L / 2 - LIMINAL_LEN - 10.4;
         this.plume.position.y = this.booster.position.y - 7.6;
       }
       // Only a round that comes down through air has anything to hang a
@@ -3917,6 +4170,118 @@
         g.add(c);
         this.shroudStaves.push(c);
       });
+    }
+
+    // THE ARRAY: a thrust frame under the drive, a ring of liminal engines
+    // round a centre one, and the single flame they all make together.
+    _buildArray(R, L) {
+      const g = new THREE.Group();
+      g.scale.setScalar(ARRAY_SCALE);
+      g.position.y = this.liminal.position.y - LIMINAL_LEN / 2 - 0.8 - ARRAY_SCALE * ARRAY_LEN / 2;
+      this.array = g;
+      this.vehicle.add(g);
+
+      const skin = this._phong({ color: 0x3a3d45, shininess: 30, specular: 0x8d949e });
+      const dark = this._phong({ color: 0x1c1e23, shininess: 18, specular: 0x444a55 });
+      const W = R * 3.4;
+      // The frame: a collar the drive sits on, a truss, and the thrust plate.
+      const collar = new THREE.Mesh(this._geo(new THREE.CylinderGeometry(R * 1.1, W * 0.7, 2.4, 20)), skin);
+      collar.position.y = ARRAY_LEN / 2 - 1.2;
+      g.add(collar);
+      const plate = new THREE.Mesh(this._geo(new THREE.CylinderGeometry(W, W, 1.2, 24)), dark);
+      plate.position.y = ARRAY_LEN / 2 - 3.0;
+      g.add(plate);
+      const strut = this._geo(new THREE.BoxGeometry(0.45, ARRAY_LEN - 4, 0.45));
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2 + 0.26;
+        const s = new THREE.Mesh(strut, skin);
+        s.position.set(Math.cos(a) * W * 0.96, -1.4, Math.sin(a) * W * 0.96);
+        g.add(s);
+      }
+
+      // THE ENGINES. Each one a drum with its vanes, a bell, and two flames:
+      // the motor's own and the drive's blue one, never both at once.
+      const podR = R * 0.62, podL = ARRAY_LEN - 5;
+      const drumGeo = this._geo(new THREE.CylinderGeometry(podR, podR, podL, 14));
+      const bellGeo = this._geo(new THREE.ConeGeometry(podR * 0.95, 2.2, 14, 1, true));
+      const vaneGeo = this._geo(new THREE.TorusGeometry(podR * 1.05, 0.22, 6, 16));
+      const bellMat = this._mat(new THREE.MeshPhongMaterial({ color: 0x23262c, side: THREE.DoubleSide, shininess: 22 }));
+      const jet = (parent, rad, len, color) => {
+        const m = new THREE.Mesh(
+          this._geo(new THREE.ConeGeometry(rad, len, 12, 1, true)),
+          this._mat(new THREE.MeshBasicMaterial({
+            color, transparent: true, opacity: 0, side: THREE.DoubleSide,
+            blending: THREE.AdditiveBlending, depthWrite: false,
+          }))
+        );
+        m.rotation.x = Math.PI;
+        m.position.y = -len / 2;
+        parent.add(m);
+        return m;
+      };
+      this.arrayPods = [];
+      for (let i = 0; i <= ARRAY_RING; i++) {
+        const pod = new THREE.Group();
+        if (i < ARRAY_RING) {
+          const a = (i / ARRAY_RING) * Math.PI * 2;
+          pod.position.set(Math.cos(a) * W * 0.66, -2.2, Math.sin(a) * W * 0.66);
+        } else {
+          pod.position.set(0, -2.2, 0);
+        }
+        pod.add(new THREE.Mesh(drumGeo, skin));
+        const bell = new THREE.Mesh(bellGeo, bellMat);
+        bell.rotation.x = Math.PI;
+        bell.position.y = -podL / 2 - 1.0;
+        pod.add(bell);
+        const vane = new THREE.Mesh(vaneGeo, this._mat(new THREE.MeshPhongMaterial({
+          color: 0x201a2e, emissive: new THREE.Color(0x9fd8ff), emissiveIntensity: 0,
+          shininess: 70, specular: 0xdff1ff,
+        })));
+        vane.rotation.x = Math.PI / 2;
+        vane.position.y = podL * 0.22;
+        pod.add(vane);
+        const nozzle = new THREE.Group();
+        nozzle.position.y = -podL / 2 - 2.1;
+        pod.add(nozzle);
+        pod.userData = {
+          vane,
+          fire: [jet(nozzle, podR * 0.5, 12, 0xfff3d0), jet(nozzle, podR * 0.95, 24, 0xff9b3a)],
+          blue: [jet(nozzle, podR * 0.5, 16, 0xffffff), jet(nozzle, podR * 1.0, 30, 0xbfe4ff)],
+          nozzle,
+          lost: false,
+          scorch: 0,
+          centre: i === ARRAY_RING,
+        };
+        g.add(pod);
+        this.arrayPods.push(pod);
+      }
+
+      // THE ONE FLAME, which every engine left feeds once the breach opens.
+      const torch = new THREE.Group();
+      torch.position.y = -ARRAY_LEN / 2 - 1.2;
+      g.add(torch);
+      this.arrayTorch = torch;
+      this.arrayTorchJets = [
+        jet(torch, W * 0.45, 70, 0xffffff),
+        jet(torch, W * 0.85, 150, 0xbfe4ff),
+        jet(torch, W * 1.35, 240, 0x5aa8ff),
+      ];
+      this.arrayTorchRing = new THREE.Mesh(
+        this._geo(new THREE.TorusGeometry(W * 1.25, W * 0.16, 8, 32)),
+        this._basic({
+          color: 0x7fc6ff, transparent: true, opacity: 0,
+          blending: THREE.AdditiveBlending, depthWrite: false,
+        })
+      );
+      this.arrayTorchRing.rotation.x = Math.PI / 2;
+      torch.add(this.arrayTorchRing);
+      torch.visible = false;
+      // The middle of the engines: where the lens bends the frame round.
+      this.arrayHeart = new THREE.Object3D();
+      this.arrayHeart.position.y = -ARRAY_LEN / 2 + 1;
+      g.add(this.arrayHeart);
+      this.arrayLight = new THREE.PointLight(0xbfe4ff, 0, 900 * ARRAY_SCALE, 2);
+      this.near.add(this.arrayLight);
     }
 
     // One drive of the stack, at the end of the beat it was lit for. Reparented
@@ -4170,6 +4535,7 @@
     _buildPlume(R, L) {
       this.plume = new THREE.Group();
       this.plume.position.y = -L / 2 - 3.2;
+      this._throatY = this.plume.position.y;
       this.vehicle.add(this.plume);
 
       // Three nested cones: the white core, the orange body, the mach diamonds.
@@ -5136,6 +5502,11 @@
       const jy = sh ? (Math.random() - 0.5) * sh : 0;
 
       this.camera.fov = rFov;
+      // The near plane rides out with the camera. Pinned at 0.4 across a
+      // 260000 unit range, the pad, the tower and the gantry fought for depth
+      // from any distance and flickered; nothing is ever nearer the lens than
+      // a hundredth of the way to what it is looking at.
+      this.camera.near = clamp(dist * 0.01, 0.4, 20);
       this.camera.updateProjectionMatrix();
       this.camera.position.set(look.x + cx + jx, look.y + cy + jy, look.z + cz);
       this.camera.up.set(0, 1, 0);
@@ -5217,6 +5588,12 @@
       this._farDirector.quaternion.copy(director.quaternion);
       this._farDirector.rotateX(-FAR_TILT * (this.orbitalK || 0));
       this._farDirector.position.copy(this.farCamera.position);
+      // The Local Group is hung off the director before the camera moves on
+      // this frame: re-anchored here, so it is where it is from where the
+      // camera now is. See _placeLG.
+      if (this._lgHung && this.galaxies && this.galaxies.visible) {
+        this._lgHung.forEach((o) => o.position.copy(this._farDirector.position).add(o.userData.lgRel));
+      }
       this._updateMoon(dt, this.phase || phaseAt(time, this.profile));
       // The pad is at a latitude, so the planet hangs under the vehicle at an
       // angle rather than squarely below it.
@@ -5330,6 +5707,7 @@
       this._updateSteer(dt, ph);
       this._updateBelt(dt, ph);
       this._updateLiminal(dt, ph);
+      if (this.hasArray) this._updateArray(dt, ph);
       this._updateCrossing(dt, ph);
       this._updateWarpStars(dt, ph);
       this._updateDriveTunnel(dt, ph);
@@ -5379,24 +5757,13 @@
       }
 
       // The drive comes up over the spool beat, holds through the crossing and
-      // is throttled back over the last few hundred metres of the landing.
+      // is throttled off as the round drops out of it. The run out to an
+      // assist, the braking and the landing are the chemical motor's: see
+      // SPACE_BURNS.
       let k = 0;
       if (ph.key === "liminal" || ph.key === "sbspool") k = smooth(ph.progress);
-      // THE RUN OUT TO JUPITER IS FLOWN UNDER POWER, and it was the one leg of
-      // a jump flight with nothing lit under it: the round left the belt behind
-      // and then crossed seven hundred million kilometres on an engine that was
-      // not burning. Jupiter does the work at the BOTTOM of the well, but
-      // getting to the well is the drive - so it comes up over the first fifth
-      // of the cruise and is throttled off over the last fifth of it, before the
-      // round is handed to the planet.
-      else if (ph.key === "cruise" || ph.key === "sister") {
-        k = smooth(clamp01(ph.progress / 0.2)) *
-          (1 - smooth(clamp01((ph.progress - 0.8) / 0.2)));
-      }
       else if (LIMINAL_LIT.indexOf(ph.key) >= 0) k = 1;
-      else if (ph.key === "skim") k = 1 - smooth(ph.progress) * 0.6;
-      else if (ph.key === "touchdown") k = 0.4 * (1 - smooth(ph.progress));
-      else if (ph.key === "flyby") k = 0.45;
+      else if (ph.key === "emerge" && !prof.jump) k = 1 - smooth(clamp01(ph.progress / 0.2));
       this.liminalK = k;
       // HOW MUCH OF THE DRIVE IS ACTUALLY BURNING, which is not the same as
       // how much of it is powered. See LIMINAL_FLAME.
@@ -5411,8 +5778,7 @@
       // The lens is not the drive: it is what the drive does to the light, and
       // it only opens once the range is actually collapsing.
       this.lensAmount = LENS_BEATS.indexOf(ph.key) >= 0 ? smooth(clamp01(ph.progress / 0.25))
-        : (ph.key === "liminal" || ph.key === "sbspool" ? smooth(ph.progress) * 0.55
-          : (ph.key === "skim" ? (1 - smooth(ph.progress)) * 0.5 : 0));
+        : (ph.key === "liminal" || ph.key === "sbspool" ? smooth(ph.progress) * 0.55 : 0);
 
       const flick = 0.82 + Math.sin(this._time * 41) * 0.12 + Math.sin(this._time * 17) * 0.06;
       if (this.liminalVanes) {
@@ -5439,8 +5805,7 @@
       if (this.liminalFlame) {
         // How much FLAME there is, which is the drive's own level everywhere
         // it is burning and nothing at all everywhere it is not. See
-        // LIMINAL_FLAME: the jump and the landing are both lit by the glow
-        // above and by neither of the jets below.
+        // LIMINAL_FLAME: only past the speed of light.
         this.liminalFlame.visible = fk > 0.01;
         const j = fk * flick;
         this.liminalJetCore.material.opacity = j * 0.98;
@@ -5453,6 +5818,175 @@
       // A drive that is bending the space round the round is felt through the
       // hull, and the shot says so.
       if (k > 0.05) this.shake = Math.max(this.shake, 0.25 + k * 0.9);
+    }
+
+    // THE ARRAY, every frame: which flame each engine is burning, what the
+    // shockwave takes, the one flame at the breach and the torch across the
+    // gap, and the moment it is let go.
+    _updateArray(dt, ph) {
+      const prof = this.profile;
+      const idx = (key) => {
+        this._arrayAt = this._arrayAt || {};
+        if (this._arrayAt[key] == null) this._arrayAt[key] = prof.phases.findIndex((p) => p.key === key);
+        return this._arrayAt[key];
+      };
+
+      // THE SHOCKWAVE. Each blast ring that reaches the stage tears an engine
+      // off it and scorches the ones either side; a skip past the blast
+      // still arrives with the damage done.
+      const blastAt = idx("blast");                        // i18n-ignore  phase key
+      if (!this.arrayGone && blastAt >= 0) {
+        this._arrayHits = this._arrayHits || 0;
+        while (this._arrayHits < ARRAY_HIT_RINGS.length) {
+          const ring = ARRAY_HIT_RINGS[this._arrayHits];
+          const at = (ring / CHARGE_COUNT) * 0.62 + 0.03;
+          const past = ph.index > blastAt || (ph.index === blastAt && ph.progress >= at);
+          if (!past) break;
+          this._loseArrayPod(this._arrayHits);
+          this._arrayHits++;
+        }
+      }
+
+      // LET GO ON ARRIVAL, the moment the round is out of the gap.
+      const emergeAt = idx("emerge");                      // i18n-ignore  phase key
+      if (!this.arrayGone && emergeAt >= 0 &&
+        (ph.index > emergeAt || (ph.index === emergeAt && ph.progress >= 0.04))) {
+        this._dropArray();
+      }
+      if (this.arrayGone) {
+        if (this.arrayLight) this.arrayLight.intensity = 0;
+        return;
+      }
+
+      // HOW HARD THE ENGINES ARE PUSHING, and in which mode. Below the speed
+      // of light they are motors; past it they are liminal drives.
+      const burn = spaceBurnAt(ph.key, ph.progress);
+      const breach = ph.key === "breach", crossing = ph.key === "crossing";
+      let torch = 0;
+      if (breach) torch = lerp(0.55, 1.35, smooth(ph.progress)) * smooth(clamp01(ph.progress / 0.12));
+      else if (crossing) torch = 1 - 0.12 * smooth(clamp01((ph.progress - 0.85) / 0.15));
+      const push = torch > 0 ? Math.min(1, torch) : (burn ? burn.k : 0);
+      const liminal = torch > 0 || (this.speed || 0) > LIGHT_MS;
+      this.arrayMode = push > 0.01 ? (liminal ? "liminal" : "rocket") : null;   // i18n-ignore  mode ids
+      const flick = 0.82 + Math.sin(this._time * 37) * 0.12 + Math.sin(this._time * 13) * 0.06;
+      this.arrayPods.forEach((pod, i) => {
+        const u = pod.userData;
+        if (u.lost) return;
+        const health = 1 - u.scorch * 0.45;
+        const lvl = push * health * (0.92 + 0.08 * Math.sin(this._time * 23 + i * 1.7));
+        u.fire[0].material.opacity = liminal ? 0 : lvl * 0.95 * flick;
+        u.fire[1].material.opacity = liminal ? 0 : lvl * 0.55 * flick;
+        u.blue[0].material.opacity = liminal ? lvl * 0.95 * flick : 0;
+        u.blue[1].material.opacity = liminal ? lvl * 0.55 * flick : 0;
+        u.nozzle.scale.set(1, 0.4 + lvl * (liminal ? 1.1 : 0.9), 1);
+        u.vane.material.emissiveIntensity = (liminal ? lvl : lvl * 0.15) * (3.6 + Math.sin(this._time * 9 + i) * 1.2);
+      });
+
+      // THE ONE FLAME. Every engine left feeds it, so it is a little smaller
+      // for every one the shockwave took.
+      const alive = this.arrayPods.filter((p) => !p.userData.lost).length / this.arrayPods.length;
+      const tk = torch * (0.55 + 0.45 * alive) * flick;
+      this.arrayTorch.visible = tk > 0.01;
+      this.arrayTorchJets[0].material.opacity = tk * 0.95;
+      this.arrayTorchJets[1].material.opacity = tk * 0.6;
+      this.arrayTorchJets[2].material.opacity = tk * 0.3;
+      this.arrayTorch.scale.set(1 + tk * 0.3, 0.3 + tk * 1.2, 1 + tk * 0.3);
+      this.arrayTorchRing.material.opacity = tk * 0.6;
+      this.arrayTorchRing.scale.setScalar(1 + tk * (breach ? 1.8 : 1.1));
+      this.arrayTorchRing.rotation.z += dt * (0.8 + tk * 6);
+      if (this.arrayLight) {
+        this.arrayLight.intensity = tk * 7 + (liminal ? 0 : push * 2.2);
+        this.arrayLight.color.setHex(liminal ? 0xbfe4ff : 0xffb45a);
+      }
+      // The moment the fabric gives, and the stage burning through it.
+      if (breach && ph.progress > 0.9 && !this._arrayBurnt) {
+        this._arrayBurnt = true;
+        this.jumpFlash = Math.max(this.jumpFlash || 0, 1);
+      }
+      if (tk > 0.05) this.shake = Math.max(this.shake, 0.4 + tk * 1.6);
+    }
+
+    // Reparents a part of the vehicle into the near scene where it is, by
+    // arithmetic: `y` is its height along the vehicle, `x` and `z` across it,
+    // turned with the vehicle's own pitch. Returns the nose direction too.
+    _shedFromVehicle(obj, x, y, z) {
+      const f = this.vehicle.rotation.x || 0;
+      const vp = this.vehicle.position;
+      const c = Math.cos(f), s = Math.sin(f);
+      if (obj.parent) obj.parent.remove(obj);
+      this.near.add(obj);
+      obj.position.set(vp.x + x, vp.y + y * c - z * s, vp.z + y * s + z * c);
+      obj.rotation.x = f;
+      return { x: 0, y: c, z: s };
+    }
+
+    // One engine of the ring, torn off by the shockwave.
+    _loseArrayPod(n) {
+      const ring = this.arrayPods.filter((p) => !p.userData.lost && !p.userData.centre);
+      if (!ring.length) return;
+      const pick = ring[Math.floor(makeRng(hashOf(this.profile.id) + n * 977)() * ring.length)];
+      const i = this.arrayPods.indexOf(pick);
+      pick.userData.lost = true;
+      // The two beside it come through, but scorched.
+      [i - 1, i + 1].forEach((j) => {
+        const nb = this.arrayPods[(j + ARRAY_RING) % ARRAY_RING];
+        if (nb && !nb.userData.lost) nb.userData.scorch = Math.min(1, nb.userData.scorch + 0.5);
+      });
+      // Out of the array the engine keeps the array's size.
+      const p = pick.position.clone().multiplyScalar(ARRAY_SCALE);
+      const nose = this._shedFromVehicle(pick, p.x, this.array.position.y + p.y, p.z);
+      pick.scale.setScalar(ARRAY_SCALE);
+      const out = Math.hypot(p.x, p.z) || 1;
+      pick.userData.vel = new THREE.Vector3(
+        (p.x / out) * 14 - nose.x * 6, -nose.y * 6, (p.z / out) * 14 - nose.z * 6
+      );
+      pick.userData.spin = new THREE.Vector3(
+        (this.rng() - 0.5) * 5, (this.rng() - 0.5) * 5, (this.rng() - 0.5) * 5
+      );
+      pick.userData.life = 4.0;
+      this.shed.push(pick);
+      this.shake = Math.max(this.shake, 2.6);
+      this.impactFlash = 1;
+      this._pendingSe = this._pendingSe || [];
+      this._pendingSe.push({ name: SE.hitHeavy, volume: 80, pitch: 70 + n * 8 });
+      if (n === 0) this._say("arrayHit", null, { crew: true });
+    }
+
+    // The whole stage, let go on arrival.
+    _dropArray() {
+      if (this.arrayGone || !this.array) return;
+      this.arrayGone = true;
+      const nose = this._shedFromVehicle(this.array, 0, this.array.position.y, 0);
+      this.array.userData.vel = new THREE.Vector3(-nose.x * 16, -nose.y * 16, -nose.z * 16);
+      this.array.userData.spin = new THREE.Vector3(
+        (this.rng() - 0.5) * 0.6, (this.rng() - 0.5) * 0.6, (this.rng() - 0.5) * 0.6
+      );
+      this.array.userData.life = 8.0;
+      this.arrayTorch.visible = false;
+      this.arrayPods.forEach((pod) => {
+        pod.userData.fire.concat(pod.userData.blue).forEach((m) => { m.material.opacity = 0; });
+      });
+      this.shed.push(this.array);
+      this.shake = Math.max(this.shake, 1.2);
+      this._pendingSe = this._pendingSe || [];
+      this._pendingSe.push({ name: SE.clamp, volume: 90, pitch: 60 });
+      this._say("arrayDrop", null, { crew: true });
+    }
+
+    // Where on the screen the lens bends the frame round, 0 to 1 each way:
+    // the middle of the array's engines while it is burning, the middle of
+    // the frame otherwise.
+    _lensCentre() {
+      if (!this.hasArray || this.arrayGone || !this.arrayHeart || !this.camera) return null;
+      const V = THREE.Vector3;
+      if (!V || typeof V.prototype.project !== "function" || typeof V.prototype.setFromMatrixPosition !== "function") return null;
+      try {
+        if (this.vehicle.updateMatrixWorld) this.vehicle.updateMatrixWorld(true);
+        const v = this._lensV || (this._lensV = new V());
+        v.setFromMatrixPosition(this.arrayHeart.matrixWorld).project(this.camera);
+        if (!isFinite(v.x) || !isFinite(v.y) || v.z > 1) return null;
+        return { x: clamp(v.x * 0.5 + 0.5, 0.08, 0.92), y: clamp(v.y * 0.5 + 0.5, 0.08, 0.92) };
+      } catch (e) { return null; }
     }
 
     // Everything that belongs to one crossing and no other: Jupiter on the way
@@ -6059,6 +6593,7 @@
       this.warpStars.visible = on;
       this.warpState = w;
       if (!on) return;
+      this._alongTravel(this.warpStars);
       // A new kind of field is laid out fresh, all down its length, so the
       // switch from a tunnel to a galaxy is not a wall of stars arriving.
       if (this._warpShape !== w.shape.wide) {
@@ -6255,6 +6790,8 @@
       if (!g) return;
       g.visible = on;
       if (!on) { if (this.tunnelLight) this.tunnelLight.intensity = 0; return; }
+      // Down the direction of travel, always.
+      this._alongTravel(g);
 
       this.tunnelLayers.forEach((L, i) => {
         L.mat.color.setHex(w.color);
@@ -7039,8 +7576,14 @@
       let ramping = this._poweredBeat(ph) ? 1 : 0;
       if (ph.key === starting) ramping = smooth(clamp01(ph.progress / 0.25));
       if (ph.key === "terminal") ramping *= 0.5 + 0.5 * (1 - ph.progress);
-      // Flown by hand, the flame is the throttle.
       if (this.hasBooster && this.boosterGone) ramping = 0;
+      // Out in space the round's own motor does every burn the liminal drive
+      // does not, out of whatever is now the bottom of the stack.
+      const burn = spaceBurnAt(ph.key, ph.progress);
+      // While the array is on, it is the array that burns: see _updateArray.
+      if (burn && !(this.hasArray && !this.arrayGone)) ramping = Math.max(ramping, burn.k);
+      this.plume.position.y = this._plumeMountY();
+      // Flown by hand, the flame is the throttle.
       if (this.manual) ramping *= lerp(0.25, 1, clamp01(this.throttle));
       const flick = 0.85 + Math.sin(this._time * 34) * 0.1 + Math.sin(this._time * 71) * 0.05;
       const p = ramping * flick;
@@ -7111,6 +7654,21 @@
       } else {
         this.flip = 0;
       }
+      // UNDER THE LIMINAL DRIVE THE NOSE IS THE DIRECTION OF TRAVEL, always:
+      // the drive can only take a distance out along one axis, and the round
+      // goes down the track. The spool included, so the flame, the ring and
+      // the tunnel forming round them are already on the line it will go.
+      if (this.profile.liminal && LIMINAL_FLAME.indexOf(ph.key) >= 0) this.flip = Math.PI / 2;
+      // Which way the round is MOVING, whatever its nose is doing. The tunnel
+      // and the streaming stars are laid along this.
+      this.travel = this.flip;
+      // The beat before the drive: coasting, the round turns until the track
+      // is dead ahead.
+      if (this.profile.liminal && (ph.key === "shroud" || ph.key === "drift")) {
+        this.flip = lerp(this.flip, Math.PI / 2, smooth(ph.progress));
+      }
+      // A burn that slows the round is made tail first.
+      if (burn && burn.retro > 0) this.flip += Math.PI * burn.retro;
 
       // Shed whatever the integrity has fallen past. A plate does not vanish:
       // it is reparented to the world, given the tumble it had stored and left
@@ -7175,6 +7733,27 @@
         ? { prograde: 1, terminal: 1 }
         : { ignition: 1, burn: 1, kessler: 1, clear: 1 };
       return !!LIT[ph.key];
+    }
+
+    // Where the chemical flame comes out: the boost stage's bell while there
+    // is one, then the bottom of whatever liminal drums are still on, then
+    // the bullet's own throat.
+    _plumeMountY() {
+      if (this.hasBooster && !this.boosterGone && this.booster) return this.booster.position.y - 7.6;
+      if (this.liminal && this.stackDrums) {
+        const left = this.stackDrums.length - (this._stackDropped || 0);
+        if (left > 0) return this.liminal.position.y - (left - 1) * (LIMINAL_LEN + 0.6) - LIMINAL_LEN / 2 - 0.6;
+      }
+      return this._throatY;
+    }
+
+    // Lays a group built along the scene's +Z down the direction the round is
+    // travelling, centred on it.
+    _alongTravel(obj) {
+      const travel = this.travel == null ? Math.PI / 2 : this.travel;
+      obj.rotation.x = travel - Math.PI / 2;
+      const vp = this.vehicle && this.vehicle.position;
+      if (vp) obj.position.set(vp.x, vp.y, vp.z);
     }
 
     // How fast the flight clock runs this frame. Only a burning motor flown
@@ -7749,7 +8328,7 @@
             if (was[i] !== null) kids[i].visible = was[i];
           }
         };
-        if (this._lens.render(r, world, amount, this._time, over)) return;
+        if (this._lens.render(r, world, amount, this._time, over, this._lensCentre())) return;
       }
       draw(null);
     }
@@ -7937,7 +8516,6 @@
   // number never runs past four digits before the unit steps up, so the
   // readout fits its panel at any speed instead of printing 61409.38 km/s.
   const LIGHT_MS = 299792458;
-  const C_PER_LYH = 8766;            // hours in a Julian year: 1 ly/h is 8766 c
   function shortNum(n) {
     const a = Math.abs(n);
     if (a < 10) return n.toFixed(2);
@@ -7951,9 +8529,17 @@
     if (a < LIGHT_MS * 0.01) return shortNum(v / 1000) + " " + t("unit.kms");
     const c = v / LIGHT_MS;
     if (Math.abs(c) < 10000) return shortNum(c) + " " + t("unit.c");
-    const lyh = c / C_PER_LYH;
-    if (Math.abs(lyh) < 3600) return shortNum(lyh) + " " + t("unit.lyh");
-    return shortNum(lyh / 3600) + " " + t("unit.lys");
+    // Past ten thousand it stays a multiple of light, written as a power of
+    // ten, because that is the number the crew are watching climb.
+    return powText(c) + " " + t("unit.c");
+  }
+  // 1.63x10^13, with the exponent in superscript digits.
+  const SUPER_DIGITS = "⁰¹²³⁴⁵⁶⁷⁸⁹";   // i18n-ignore  digits
+  function powText(n) {
+    const e = Math.floor(Math.log10(Math.abs(n)));
+    const m = n / Math.pow(10, e);
+    const sup = String(e).split("").map((d) => SUPER_DIGITS[+d]).join("");
+    return m.toFixed(2) + "×10" + sup;   // i18n-ignore  multiplication sign
   }
   function pctText(p) { return (p < 10 ? p.toFixed(1) : Math.round(p)) + "%"; }   // i18n-ignore  percent sign
   function clockText(s) {
@@ -8716,6 +9302,7 @@
     // answer from aboard queued a beat behind it.
     _radio(key, text) {
       this._hud.push(text, Radio.lastWho);
+      this._duoReact(key);
       if (Radio.lastWho === "crew") return;   // i18n-ignore  speaker id
       if (this._time - this._lastReply < REPLY_GAP) return;
       const reply = Radio.replyTo(key, {
@@ -8733,6 +9320,72 @@
       });
     }
 
+    // A line from aboard, let out `delay` seconds from now, in its place in
+    // the queue of answers.
+    _queueAside(text, delay) {
+      if (!text) return;
+      const q = (this._replies = this._replies || []);
+      const at = this._time + delay;
+      let i = q.length;
+      while (i > 0 && q[i - 1].at > at) i--;
+      q.splice(i, 0, { at, text });
+    }
+
+    // EM AND BUBBA, AS A BEAT BEGINS. See Duo.
+    _duoBeat(key) {
+      const duo = Duo.aboard();
+      if (!duo.em && !duo.bubba) return;
+      const rnd = Math.random;
+      let delay = 1.6 + rnd() * 0.6;
+      const say = (actor, k, params) => {
+        const text = tOrNull(k, params);
+        if (text == null) return false;
+        this._queueAside(Duo.line(actor, text), delay);
+        delay += 2.2 + rnd() * 0.8;
+        return true;
+      };
+      if (duo.bubba) {
+        if (DUO_DRIVE_BEATS.indexOf(key) >= 0 && rnd() < 0.7) {
+          this._duoInventor = (this._duoInventor || 0) + 1;
+          say(duo.bubba, "duo.bubba.inventor" + (((this._duoInventor - 1) % DUO_INVENTOR) + 1));
+        } else if (rnd() < 0.6) {
+          say(duo.bubba, "duo.bubba.beat." + key);
+        }
+      }
+      if (duo.em && rnd() < 0.75) say(duo.em, "duo.em.beat." + key);
+      // In the chair, out where there is time for it: the bridge jargon, or
+      // simply winding her up.
+      if (duo.bubba && duo.em && DUO_SPACE_BEATS.indexOf(key) >= 0) {
+        const r = rnd();
+        if (r < 0.24) {
+          const n = ((this._duoTrek = (this._duoTrek || 0) + 1) - 1) % DUO_TREK + 1;
+          if (say(duo.bubba, "duo.bubba.trek" + n)) say(duo.em, "duo.em.trekBack" + n);
+        } else if (r < 0.4) {
+          const n = ((this._duoTroll = (this._duoTroll || 0) + 1) - 1) % DUO_TROLL + 1;
+          if (say(duo.bubba, "duo.bubba.troll" + n)) say(duo.em, "duo.em.trollBack" + n);
+        }
+      }
+    }
+
+    // And after anything said on the radio that either of them has a
+    // reaction to: the special moments, a hit, a stage gone, the chute.
+    _duoReact(key) {
+      if (!key || this._duoReacting) return;
+      const duo = Duo.aboard();
+      if (!duo.em && !duo.bubba) return;
+      this._duoReacting = true;
+      try {
+        let delay = 1.4 + Math.random() * 0.6;
+        [[duo.em, "em", 0.7], [duo.bubba, "bubba", 0.55]].forEach(([actor, id, p]) => {
+          if (!actor || Math.random() >= p) return;
+          const text = tOrNull("duo." + id + ".react." + key);
+          if (text == null) return;
+          this._queueAside(Duo.line(actor, text), delay);
+          delay += 2.0;
+        });
+      } finally { this._duoReacting = false; }
+    }
+
     // The answers, let out when their moment comes.
     _drainReplies() {
       const q = this._replies;
@@ -8746,6 +9399,10 @@
     _fireCues() {
       const prof = this._profile;
       if (this._stage && this._stage.phase) Radio.atPhase(prof, this._stage.phase.key);
+      if (this._stage && this._stage.phase && this._stage.phase.key !== this._duoAt) {
+        this._duoAt = this._stage.phase.key;
+        this._duoBeat(this._duoAt);
+      }
       this._cues.forEach((cue, i) => {
         if (this._done.has(i)) return;
         const [key, frac] = cue.at;
@@ -8988,6 +9645,16 @@
           night: this._env.night,
         };
       } catch (e) { /* no save: the flight still happened */ }
+      // AND THE PRICE OF ARRIVING: see Duo.nausea.
+      if (!this._freePlay && this._stage && !this._stage.destroyed) {
+        try {
+          const sick = Duo.nausea();
+          const PT = window.ParchmentToast;
+          if (sick.length && PT && typeof PT.show === "function") {
+            PT.show(t("duo.nausea", { names: sick.join(", ") }));
+          }
+        } catch (e) { /* a queasy stomach never stops a landing */ }
+      }
       this._board();
     }
 
@@ -9348,6 +10015,8 @@
       altText,
       trackText,
       altitudeAt,
+      crossingKly,
+      GALAXY_GAP_KLY,
       availableProfiles,
       availableSites,
       clamp,
@@ -9434,6 +10103,7 @@
     canAfford,
     lunarTo,
     Radio,
+    Duo,
     VOICE_OF,
     BGM,
     SCORES,

@@ -6,7 +6,13 @@
       "{Home|My own bed|A quiet room} is calling me.",
       "Just a few more {steps|streets|minutes} and then I {sleep|lie down|stop}.",
       "{Bed|Sleep|Rest} first. {Everything else|The rest of it|All the rest} can {wait|keep|hold}.",
-      "I have been {awake|up|on my feet} since {before dawn|first light|the small hours}."
+      "I have been {awake|up|on my feet} since {before dawn|first light|the small hours}.",
+      "{The pillow|The mattress|My bed} {has my shape in it|is waiting|knows me} and I {miss it|want it|am going}.",
+      "{Shoes off|Boots off|Coat off}, {lamp out|door bolted|curtains shut}, and {nothing|not a soul|no one} until {morning|dawn|the bell}.",
+      "{Yawning|Blinking|Stumbling} {like a fool|all down the street|at every corner}.",
+      "{Whatever it is|Whoever wants me|The rest of it}, {it can wait until tomorrow|tomorrow|ask me in the morning}.",
+      "{One more hour|An hour|A minute more} {awake|on my feet|of this} and {I fall over|I am useless|I start talking nonsense}.",
+      "{Sleep|A long sleep|Ten hours} {and then|and after that|first, then} I will {think|be kind|be human again}."
     ],
     "hunger": [
       "My stomach is {growling|complaining|making a scene}...",
@@ -14,7 +20,13 @@
       "Is there {a vending machine|a stall|somewhere to eat} nearby?",
       "I need to {find food|eat something|get a meal in me}.",
       "{Bread|Soup|Anything warm} would do. {Anything|Truly anything|Even the cheap stuff}.",
-      "I keep {smelling|thinking about|imagining} {bread|frying oil|something on a fire}."
+      "I keep {smelling|thinking about|imagining} {bread|frying oil|something on a fire}.",
+      "{Hot bread|Fried onions|Roast chestnuts}. {Somebody is cooking|Somewhere close|That smell}. {Cruel|Wonderful|Follow it}.",
+      "{Skipped breakfast|No lunch|Forgot to eat}, {and now|and I am|so} {paying for it|grumpy|hollow}.",
+      "{A plate|A bowl|A loaf} of {anything|something hot|something filling}, {and quickly|soon|please}.",
+      "{Cheapest|Nearest|Quickest} {meal|thing|stall} {going|in sight|I can find}. {Taste is optional|Fine|Any}.",
+      "I {get cross|get stupid|get sad} when I am {this hungry|empty|unfed}. {Eat first|Food, then talk|Feed me, then ask}.",
+      "{What is in the larder|Is there bread at home|Did I leave anything in the pot}? {Probably not|Nothing|Hope so}."
     ],
     "work": [
       "Time for {another shift|the day's work|the grind}.",
@@ -22,7 +34,13 @@
       "I should {get to work|be at my post|start already}.",
       "{Another day, another coin|Same work, same wage|The work does itself, does it}.",
       "{Duty|The work|My shift} first. {It always is|As always|That is the arrangement}.",
-      "The {grimorie|counter|bench} will not {mind itself|do the work|keep}."
+      "The {grimorie|counter|bench} will not {mind itself|do the work|keep}.",
+      "{The foreman|The boss|The master} {counts the minutes|watches the door|keeps a book of who is late}. {Hurry|Move|Run}.",
+      "{Hands busy|Head down|One task at a time}, and the {hours|day|shift} {pass|go|move}.",
+      "{Payday|Friday|The end of the month} is {close|coming|so far away}.",
+      "{I am good at this|I know this work|Nobody does it better}, {whatever they say|even if nobody notices|and they know it}.",
+      "{Same bench|Same tools|Same faces} {every day|for years|since I was young}. {Steady|Dull|Mine}.",
+      "{Do it right|Do it once|Do it properly} and {nobody shouts|it holds|I go home on time}."
     ],
     "leisure": [
       "{Nice|Fine|Good enough} day for {a stroll|a wander|doing nothing}.",
@@ -30,7 +48,13 @@
       "I wonder what's {happening|going on|about} {around here|in town|today}.",
       "I have some {free time|hours to myself|slack in the day}. {What now|What should I do|Where to}?",
       "Nobody {needs|wants|expects} me for {an hour|a while|the rest of the afternoon}.",
-      "{Wine|A walk|A song} and {an hour|the evening|nothing at all} to fill."
+      "{Wine|A walk|A song} and {an hour|the evening|nothing at all} to fill.",
+      "{The park|The square|The bridge} is {nice this time of day|full of pigeons|quiet}. {Just sit|Stay a while|Breathe}.",
+      "{A game of cards|A turn at the arcade|A song or two}, {why not|nobody is stopping me|I have earned it}.",
+      "{Watching people|Watching boats|Watching the clouds} is {free|underrated|the best show in town}.",
+      "{No list|No errands|No shift} today. {Strange feeling|Lovely|I do not know what to do with my hands}.",
+      "{The cinema|The radio play|The travelling show} {is on tonight|has a new one|is in town}. {Maybe|Perhaps|Tempting}.",
+      "{Wander|Drift|Amble} {and see|wherever|until something happens}. {That is a plan|Good enough|That will do}."
     ],
     "crime": [
       "{Nobody's watching|No eyes on me|The street is empty}...",
@@ -38,14 +62,27 @@
       "I need the {money|coin|thing} more than they do.",
       "If I'm {quick|careful|clever}, {no one will notice|it never happened|nobody is any the wiser}.",
       "{One|A single|Just one} {mistake|slip|careless second} and I am {finished|in the cells|marked}.",
-      "{Take it|Do it|Go} and {do not run|walk normally|keep your hands still}."
+      "{Take it|Do it|Go} and {do not run|walk normally|keep your hands still}.",
+      "{Busy street|Crowded market|Distracted shopkeeper}. {Good|Perfect|Useful}.",
+      "{Smile|Look bored|Look like you belong}. {Nobody suspects a smile|Bored is invisible|Belonging is everything}.",
+      "{The guard|The watchman|That policeman} {just turned the corner|is eating|is looking the other way}.",
+      "{They have insurance|They will not miss it|They charge too much anyway}. {Probably|Surely|That is what I tell myself}.",
+      "{My mother|My old teacher|The priest} would {weep|not recognise me|say a prayer}. {She is not here|Not now|Later}.",
+      "{Count to three|Wait for the cart|Wait for the bell}. {Then|And then|Now}."
     ],
     "hygiene": [
       "I {really need to wash up|need a wash|cannot stand myself}.",
       "I feel {grimy|filthy|like a ditch}. Where's the {nearest sink|nearest pump|WC}?",
       "A {trip to the WC|proper wash|bucket of clean water} wouldn't hurt.",
       "I should {clean myself up|make myself presentable|scrub this off} {a bit|properly|before anyone sees}.",
-      "{Soap|Hot water|A clean shirt}. {That is all I ask|Is that so much|Just that}."
+      "{Soap|Hot water|A clean shirt}. {That is all I ask|Is that so much|Just that}.",
+      "{Mud|Dust|Grease} {to the elbows|in my hair|on everything}. {Lovely|Charming|Of course}.",
+      "{The pump|The bathhouse|The river} is {not far|on the way|close enough}.",
+      "{A clean face|Clean hands|Clean hair} and {I feel human|the day starts again|I can look people in the eye}.",
+      "{Did someone notice|Can people smell it|Is it obvious}? {Probably|Surely|I hope not}.",
+      "{Hot water|Real soap|A towel} is a {luxury|small miracle|wonderful thing}.",
+      "{Scrub|Rinse|Wash}, {dry|change|comb}, and {out again|start over|try again}.",
+      "{Smoke|Sweat|The stable} {in my clothes|on my skin|in my hair} {all day|since morning|again}."
     ],
     "money": [
       "I'm {running low on funds|down to coppers|nearly out}.",
@@ -53,33 +90,425 @@
       "{Things|Everything|Bread and rent} are getting {expensive|dearer|worse}...",
       "I need to {top up my wallet|earn|find a few coins}.",
       "{Rent|The bill|What I owe} comes {either way|regardless|whether I have it or not}.",
-      "I have {counted|checked|been through} this purse {three times|twice today|again}."
+      "I have {counted|checked|been through} this purse {three times|twice today|again}.",
+      "{Pawn|Sell|Part with} {the watch|my ring|the good coat}? {Not yet|Maybe|If it comes to that}.",
+      "{Odd jobs|Any work|A day's labour}, {anything going|who is hiring|I will take it}.",
+      "{Bread or candles|Rent or coal|Shoes or soup}. {Pick one|Not both|Never both}.",
+      "{A loan|Credit|A favour} from {a friend|the shop|my cousin}? {Again|One more time|I hate asking}.",
+      "{Every coin|Each coin|All of it} {already has a name on it|is spoken for|goes somewhere before I see it}.",
+      "{The bank|The pawn shop|The moneylender} {smiles|waits|knows my name}. {I do not like it|Not a good sign|Hm}."
     ],
     "safety": [
       "I should {keep a low profile|stay out of sight|be careful} {for a while|a few days|until this passes}.",
       "Better {stash this somewhere safe|hide this|get this out of my hands}.",
       "I don't want {any trouble|a fight|questions} right now.",
       "{Best to lay low|Stay in|Keep my head down} until {things cool down|it blows over|they lose interest}.",
-      "{Someone|Somebody|Someone with a badge} has been {watching|asking|looking} {this street|for me|around}."
+      "{Someone|Somebody|Someone with a badge} has been {watching|asking|looking} {this street|for me|around}.",
+      "{Back roads|Side streets|Alleys} {only|for a while|from now on}. {No main square|Avoid the market|Stay off the high street}.",
+      "{A new coat|A hat|A different walk}, {and they will not know me|maybe|it might help}.",
+      "{Who did I tell|Who saw me|Who talks}? {Too many|Somebody|One is enough}.",
+      "{Every knock|Every footstep|Every uniform} {makes me jump|is for me|could be them}.",
+      "{Out of town|To my cousin's|Somewhere quiet} for {a week|a while|the season}. {Just until|Only until|Until} it {cools|blows over|is forgotten}.",
+      "{Doors locked|Shutters down|Lamp low}, and {nobody home|not a sound|wait}.",
+      "{Trust nobody|Say nothing|Owe nobody} {for now|this week|until it is over}."
     ],
     "comfort": [
       "I could use a {nicer place to stay|room with a window|roof that holds}.",
       "Maybe it's time to {upgrade my living situation|move somewhere better|stop living like this}.",
       "A {proper bed|warm room|dry floor} would be {nice for once|a change|worth every coin}.",
       "I've {saved enough|earned it|scraped it together}. {Why not treat myself|Why not|I deserve one comfort}.",
-      "{Warmth|A soft chair|One good blanket} is not {too much to want|a luxury|asking much}."
+      "{Warmth|A soft chair|One good blanket} is not {too much to want|a luxury|asking much}.",
+      "{The draught|The damp|The cold floor} {gets into everything|never stops|is winning}.",
+      "{A rug|A curtain|A stove that draws} would {change everything|make it a home|be enough}.",
+      "{The neighbours|The street|The trains} {never stop|are always loud|shake the windows}. {Somewhere quieter|A better street|Further out}.",
+      "{Two rooms|A garden|A kitchen of my own}. {Imagine|One day|Is that so much}.",
+      "{A soft chair|A warm bath|Clean sheets} {at the end of the day|tonight|once a week}. {That is the dream|Simple|Not much}.",
+      "{Look at rooms|Ask about rents|Read the notices} {this week|tomorrow|after work}.",
+      "{Mould|A leak|Mice} {again|in the corner|behind the stove}. {Enough|That is it|I am done}."
     ],
     "social": [
       "I should {go meet some new people|find company|talk to somebody}.",
       "It's been a while since I {had a good conversation|heard a friendly voice|spoke to anyone}.",
       "I wonder {who's around|who is in town|who I might run into} today.",
       "Maybe I'll {run into someone interesting|find a familiar face|be talked at for an hour}.",
-      "{A friend|Company|Someone|Anyone at all} would {do me good|help|be welcome}."
+      "{A friend|Company|Someone|Anyone at all} would {do me good|help|be welcome}.",
+      "{The tavern|The café|The square} will have {somebody|faces|noise} in it {by now|this hour|tonight}.",
+      "{Talk about anything|Talk about the weather|Talk about nothing}, {just talk|I do not mind|with anybody}.",
+      "{My old friend|That neighbour|My cousin} {never writes|is always busy|moved away}. {Pity|Shame|Still}.",
+      "{A dance|A game|A card table} {needs people|is better in company|is no fun alone}.",
+      "{Too quiet|Too long|Too many evenings} {at home|alone|by myself} {lately|this month|again}.",
+      "{Say hello|Smile|Wave} {first|this time|for once}. {What is the worst|Go on|Be brave}.",
+      "{Somebody to laugh with|A shoulder|A listener}, {that is all|that would be enough|just one}."
     ],
     "null": [
       "...",
       "{Hm|Mm|...}.",
-      "{...|Hmph.|Well.}"
+      "{...|Hmph.|Well.}",
+      "{Right|Right then|Now then}.",
+      "{Where was I|What was I doing|Where was I going}?",
+      "{Mm|Hmm|Huh}...",
+      "{Nothing|Nothing much|Nothing at all} {to do|on|today}.",
+      "{Hm|Ah|Oh}, {well|anyway|never mind}.",
+      "{Tum te tum|La la|Hm hm hm}...",
+      "{Just|Only|Simply} {passing through|walking|thinking}.",
+      "{Same as always|As ever|Another day}.",
+      "{Quiet|Calm|Still} {today|out here|for once}."
+    ]
+  },
+  "needDire": {
+    "sleep": [
+      "{The street|The ground|Everything} is {tilting|swimming|moving on its own}. {When did I last sleep|How long have I been up|What day is it}?",
+      "I just {read the same sign|counted the same coin|said the same word} {three times|four times|twice} and {did not notice|it meant nothing|forgot it}.",
+      "{A doorway|A bench|The gutter} {would do|looks soft|is starting to look like a bed}.",
+      "My eyes {close on their own|keep shutting|are full of sand} and {the dark|the dreams|the voices} start before I {sit down|reach the wall|stop walking}.",
+      "{If anyone speaks to me|One more question|One more errand} and I {will fall over|will weep|will lie down where I stand}.",
+      "{Days|Two days|Too long} without {sleep|a bed|closing my eyes}. {My hands|My heart|My head} {will not stop shaking|is racing|is full of bees}.",
+      "{Lie down|Sleep|Stop}. {Anywhere|Now|Just stop}. {Anything else can burn|Let it all go|I do not care what it costs}.",
+      "{Was that a cat|Did that wall move|Who said that}? {Nobody|Nothing|Nobody is there}. {I need sleep|I am seeing things|Sleep, now}.",
+      "I {fell asleep|nodded off|dropped off} {standing up|on my feet|mid-step} just now. {That is new|That is bad|Wonderful}.",
+      "{Ten minutes|Five minutes|One minute} with my eyes shut and I {would give|would pay|would trade} {anything|a week's wage|my boots}."
+    ],
+    "hunger": [
+      "{Dizzy|Light in the head|Weak at the knees}. {When did I last eat|Have I eaten today|Was it yesterday I ate}?",
+      "{My hands are shaking|I am seeing spots|My stomach has stopped complaining}, and {that is worse|that frightens me|that is a bad sign}.",
+      "I would {eat anything|eat the bread off the gulls|eat out of a bin}. {Anything|I mean it|Truly}.",
+      "{The smell|Every smell|One smell} from {that kitchen|that stall|that window} is {torture|cruelty|a knife}.",
+      "{Days|Two days|Three days} on {water|nothing|crumbs}. {I cannot think|I cannot work|I cannot stand much longer}.",
+      "{Steal it|Beg for it|Ask for it}, I do not care which. {Food|Bread|Something}, {now|today|before I fall}.",
+      "{My belt|My trousers|My coat} {has a new hole|hangs off me|fits like a sack} now.",
+      "{Pigeons|Rats|Dogs} in the street {eat better than me|look fat to me|are starting to look like dinner}.",
+      "{Please|Please, anything|Somebody}, {a crust|a coin|a bowl of anything}.",
+      "{The cramps|The ache|The hollow} {will not stop|is worse lying down|wakes me at night}."
+    ],
+    "hygiene": [
+      "{People|Everyone|Even the dogs} {step away from me|cross the street|wrinkle their noses}. {I know|I do not blame them|I would too}.",
+      "{I itch|Everything itches|My scalp crawls} and I {do not want to know why|cannot stop scratching|am afraid to look}.",
+      "{A river|A trough|A rain barrel}, {anything|I do not care|any water at all}. {Now|Today|Before anyone else smells me}.",
+      "{I can smell myself|My own smell|The stink} {from here|over the street|over the fish market}.",
+      "{These clothes|This shirt|My socks} could {stand up on their own|walk home without me|be burned}.",
+      "{No shop|Nobody|No inn} will {let me in|serve me|look at me} like this.",
+      "{Weeks|Too long|Since the thaw} without {a proper wash|soap|hot water}. {I am ashamed|I am a disgrace|I have stopped noticing, which is worse}.",
+      "{Flies|The flies|Every fly in town} {follow me|have found me|think I am dinner}.",
+      "{The sores|My skin|My hands} {are cracking|have gone raw|sting}. {Wash|Clean water|A basin}, {please|soon|now}.",
+      "{A child|A woman|An old man} just {held their nose|pointed at me|said something about me}. {Fair|Fair enough|They are right}."
+    ],
+    "social": [
+      "{Days|A week|Weeks} and {not one word|nobody has said my name|not a single kind word}. {Not one|None|Nothing}.",
+      "I {talk to the cat|talk to myself|talk to the walls} now. {They do not answer|The walls are poor company|The cat is bored of me}.",
+      "{Would anyone notice|Who would notice|Would one soul notice} if I {did not come home|vanished|stopped walking this street}?",
+      "{Anyone|Somebody|Anybody at all}. {Just to talk|Just a hello|Just a voice}. {Please|Anyone|That is all}.",
+      "{The silence|The quiet|This empty room} is {loud|heavy|the loudest thing in the house}.",
+      "{Every|Each} {laugh|voice|couple} on the street {feels like it is aimed at me|goes right through me|is somebody else's}.",
+      "{I would sit|I would listen|I would stand} with {a bore|a drunk|a stranger} {for an hour|all evening|gladly} just {to be spoken to|for company|to hear a voice}.",
+      "{Lonely|So lonely|Alone} is {a word|not the right word|too small a word} for it.",
+      "{Even the shopkeeper|Even the baker|Even the postman} {did not look up|said nothing|forgot my face}.",
+      "{A letter|A knock|A friendly face}. {I would weep|I would not know what to say|I would cling to it}."
+    ],
+    "leisure": [
+      "{If I do not stop|If I do not get an hour|One more day of this} {I will break something|I will scream|I will walk into the sea}.",
+      "{Work|Sleep|Work again}, {work|eat|sleep}, and {nothing else|nothing in between|no air}. {For months|For a year|Forever}.",
+      "I {cannot remember|have forgotten|no longer know} {the last time I laughed|what I used to enjoy|what a free afternoon feels like}.",
+      "{Everything|Every face|Every sound} {grates|scrapes|is too loud}. {I need out|I need air|I need one hour of nothing}.",
+      "{A song|A game|A walk by the water}, {anything|just once|one thing} that is {mine|not a chore|not for somebody else}.",
+      "{Grey|Flat|Dull}. {Every day|The whole week|All of it} is {grey|the same colour|the same day}.",
+      "{I snapped at|I shouted at|I was cruel to} {a child|a friend|the baker} today. {That is not me|I need a rest|Something has to give}.",
+      "{Run away|Leave town|Walk out} and {never come back|not say where|leave the key}. {Tempting|Very tempting|Too tempting}.",
+      "My {jaw|shoulders|neck} {is clenched|are up by my ears|is a knot} and {has been for days|will not unclench|aches}.",
+      "{One afternoon|One evening|One whole day} {off|to myself|of nothing}. {Is that so much to ask|That is all|I would pay for it}."
+    ],
+    "bladder": [
+      "{Now|Right now|This second}. {Not in a minute|Not round the corner|Now}.",
+      "{Any wall|Any bush|Any alley} {will do|is a WC now|looks perfect}. {Dignity is overrated|Nobody look|Forgive me}.",
+      "{Do not laugh|Do not sneeze|Do not cough}. {Do not|Whatever happens|For the love of all things}.",
+      "{If that door|If that queue|If that lock} {does not open|does not move|is not open} {in one minute|right now|soon}, {disaster|catastrophe|ruin}.",
+      "{Tiny steps|Short steps|Careful steps}. {Do not jolt|No stairs|No running}.",
+      "{Sweat|Cold sweat|Panic} {on my brow|down my back|everywhere}, and {still|no|not one} {WC|privy|door} in sight.",
+      "{Someone|Anyone|Please}, {a key|a door|a bucket}, {I am begging|I will pay|anything}.",
+      "{The river|That fountain|The rain on the roof} is {the cruellest sound|unbearable|mocking me} right now.",
+      "{Hold|Hold it|Hold on}. {Ten more steps|Five more steps|Two more steps}. {Hold|Hold it|Just hold}.",
+      "{Never again|Never in my life|Never} will I {drink before a walk|have that third cup|leave without going first}."
+    ]
+  },
+  "needMild": {
+    "sleep": [
+      "{Early night|An early bed|Bed early} tonight, I think.",
+      "A {yawn|stretch|long blink} or two. {Nothing a nap would not fix|Nothing serious|The afternoon does that}.",
+      "{A little slow|A bit heavy-eyed|Not quite awake} today.",
+      "{That bed|My pillow|The blanket} will {feel good|be welcome|be lovely} later.",
+      "{Coffee|Another cup|Some air} would {help|sharpen me up|do it}.",
+      "I {slept badly|woke too early|tossed about} last night. {It will catch up with me|I will feel it later|Never mind}.",
+      "{A sit down|A bench|Five minutes off my feet} {would not go amiss|sounds good|is tempting}.",
+      "{The sun|This warmth|The quiet} is making me {drowsy|sleepy|soft}.",
+      "{Not tired|Not exhausted|Fine}, just {ready for evening|counting the hours|looking forward to bed}.",
+      "{Bed|Sleep|Lights out} {at a decent hour|on time|before midnight}, {for once|this time|I promise myself}."
+    ],
+    "hunger": [
+      "{A bite|Something small|A snack} {would be nice|soon|later}.",
+      "{What is|What shall I have|What is there} for {supper|lunch|dinner}, I wonder.",
+      "{That bakery|That stall|The window of that place} {smells good|looks good|is calling}.",
+      "{Peckish|A bit hollow|Ready for a meal}, {not starving|nothing urgent|no hurry}.",
+      "{An apple|A roll|Some cheese} in my pocket {would be perfect|would be handy|is what I need}.",
+      "{Soup|Stew|Roast} {tonight|later|for supper}, if there is {time|money|anything in}.",
+      "My stomach {made a small noise|grumbled once|reminded me}. {Noted|Fair|Soon}.",
+      "{Should I|Could I|Shall I} {stop for something|grab a bite|eat early}? {Maybe|Perhaps|Why not}.",
+      "{Lunch|Dinner|Supper} {cannot come soon enough|is a happy thought|is the plan}.",
+      "{Something sweet|Something warm|Something salty} {would round the day off|would be just right|is on my mind}."
+    ],
+    "hygiene": [
+      "{A quick wash|A splash of water|Clean hands} {later|before dinner|when I get in}.",
+      "{My collar|These cuffs|My boots} could {use a scrub|do with a brush|be cleaner}.",
+      "{Dusty|A bit grubby|Sweaty} from {the road|the day|the work}. {Nothing a basin will not fix|It happens|Later}.",
+      "{Comb my hair|Change my shirt|Wash my face} before {I see anyone|the evening|I go out}.",
+      "{Hot water|A bath|A long wash} {tonight|at the end of the week|soon} would be {a pleasure|nice|lovely}.",
+      "{Mud on my hem|Ink on my fingers|Soot on my cheek}, {I suppose|probably|no doubt}.",
+      "{Wash day|Laundry|The washing} {tomorrow|is due|cannot wait much longer}.",
+      "{Fresh|Clean|Neat} {clothes|linen|socks} {tomorrow|next|for the morning}, {I think|perhaps|definitely}.",
+      "{A whiff|A hint|A trace} of {the stable|the kitchen|the market} on me. {Hm|Fine|Later}.",
+      "{Wash|Shave|Trim my nails} {when I get a minute|after this|tonight}."
+    ],
+    "social": [
+      "{It would be nice|It would be good|I would not mind} to {catch up with someone|have a chat|see a friend}.",
+      "{Who is about|Anyone I know|Any familiar faces} {today|this evening|around}?",
+      "{I should write to|I should visit|I owe a call to} {my sister|an old friend|the neighbours}.",
+      "{A drink|A coffee|A game of cards} with {somebody|company|a friend} {this week|soon|tonight}, perhaps.",
+      "{Quiet day|Not many faces|Few people} {today|so far|about}. {Fine|Pleasant enough|That is all right}.",
+      "{Maybe|Perhaps|I might} {the tavern|the square|the market} {later|tonight|after this}. {See who is there|For the company|For the noise}.",
+      "{It has been|It is a while|It is some days} since I {heard a good story|laughed with someone|had proper company}.",
+      "{A friendly face|A wave|A hello} {would brighten things|would be nice|would do}.",
+      "{News|Gossip|What is new}, {I wonder|anyone|who has some}?",
+      "{Next market day|At the gathering|On Sunday} I will {talk to more people|say hello properly|not hide in a corner}."
+    ],
+    "leisure": [
+      "{An hour|An afternoon|A while} {off|free|to myself} {would be nice|sounds lovely|is overdue}.",
+      "{Work's|The day's|This week's} {wearing|dragging|long}, but {not unbearable|nothing new|bearable}.",
+      "{A walk|A tune|A game} {later|this evening|at the weekend}, {perhaps|maybe|I hope}.",
+      "{The arcade|The park|The river} {would be nice|is calling a little|sounds good} {later|after this|tonight}.",
+      "{A book|A new song|A puzzle} {to look forward to|waiting at home|for the evening}. {Good|Nice|That helps}.",
+      "{Weekend|Saturday|My day off} {cannot come soon enough|is close|is the thought that keeps me going}.",
+      "{Need|Could do with|Want} {a change of scene|some fresh air|something different}. {Not urgently|Soon|Someday}.",
+      "{Sit in the sun|Watch the boats|Feed the ducks}, {that is the plan|maybe|if I get the chance}.",
+      "{A little bored|A touch restless|Slightly fidgety} today. {Nothing a game will not fix|It will pass|Hm}.",
+      "{Treat|Spoil|Reward} myself {later|this evening|at the weekend}. {Small things|A small thing|Nothing much}."
+    ],
+    "bladder": [
+      "{The WC|A privy|The washroom} {at the next stop|before I leave|when I get a minute}.",
+      "{That tea|That beer|That coffee} {is making itself known|is on its way through|has opinions}.",
+      "{Should I|I ought to|Better} {go now|go before the queue|find a WC} {while I think of it|just in case|to be safe}.",
+      "{No rush|Not urgent|Not yet}, but {soon|in a while|before the walk home}.",
+      "{Where is|Which way is|Is there} {the WC|the washroom|a privy} {in here|round here|on this floor}?",
+      "{Remember|Note to self|Do not forget}: {go before the bus|use the WC before leaving|fewer cups}.",
+      "{A little|Slightly|Mildly} {uncomfortable|pressed|full}. {Nothing dramatic|It can wait|Later}.",
+      "{One more errand|One more shop|Finish this} and then {the WC|a stop|the washroom}.",
+      "{The cold|The weather|This rain} {always does this|makes it worse|sends me running}.",
+      "{Last cup|That was the last cup|No more tea} {for a while|this morning|until lunch}."
+    ]
+  },
+  "activity": {
+    "shopwork": [
+      "{Quiet|Slow|Dead} {morning|afternoon|shift} at the counter.",
+      "{Count the till|Wipe the counter|Straighten the shelf}, then {do it again|count it twice|wait}.",
+      "Somebody always wants {the one thing|exactly what|the thing} we {just ran out of|never stock|sold this morning}.",
+      "{Smile|Be polite|Nod}. {They are paying|It is the job|The customer is the wage}.",
+      "My feet {have stopped talking to me|ache from standing|went numb an hour ago}.",
+      "The {bell|door|till} {goes|rings|clatters} and my heart {sinks|lifts|does nothing at all}.",
+      "{Prices|The price list|The stock sheet} {went up again|changed overnight|makes no sense to me}, and I am the one who {has to say it|gets the looks|explains it}.",
+      "{Exact change|Coins on the counter|A note too big to break}. {Bless them|Every time|Of course}.",
+      "I know {every regular|half the street|the whole block} by {what they buy|their coins|their cough}.",
+      "{Two more hours|Three hours left|Not long now} behind {this counter|the till|this wood}.",
+      "If one more person asks {for credit|if it is cheaper elsewhere|to see the manager}, I {will laugh|will scream|will be the manager}.",
+      "The {stockroom|back shelf|cellar} needs {sorting|counting|a good sweep} and nobody will do it but me.",
+      "{A good sale|A big order|One proper customer} and the whole {shift|day|week} feels {lighter|worth it|paid for}.",
+      "{Watch the door|Watch the hands|Watch the pockets}. {Not everyone pays|Some of them are quick|I have been caught before}.",
+      "{Ring it up|Wrap it|Bag it}, {smile|say thank you|next}, {and again|and again|and again}."
+    ],
+    "shopping": [
+      "{A list|My list|The list} in my head and {none of it|half of it|not one thing on it} written down.",
+      "{Bread|Soap|Candles}, {oil|salt|thread}, and something {I will forget|I came for and lost|nice if it is cheap}.",
+      "{Just looking|Only browsing|I am not buying}. {That is what I always say|Famous last words|Mostly}.",
+      "The {other shop|stall on the corner|place by the station} had it {cheaper|for less|on offer} last week.",
+      "I {should|ought to|really must} {compare prices|check the weight|count my change} this time.",
+      "{A treat|Something small|One little thing} for myself. {Just the one|I have earned it|Nobody will know}.",
+      "{Heavy bags|Full arms|Two baskets} and {a long walk home|stairs at the end|no hand free for the door}.",
+      "{Everything|Bread|Even salt} costs more than {last month|it did in spring|my mother ever paid}.",
+      "The {queue|line|crowd} at the till is {a mile long|going nowhere|full of talkers}.",
+      "{Fresh|Ripe|Proper} {fruit|fish|bread} today, {for once|at last|if I hurry}.",
+      "I came in for {one thing|bread|matches} and I am leaving with {five|a basket|regrets}.",
+      "{Do I have enough|Will it stretch|Is there enough in the purse} for {all of it|the good one|both}?",
+      "{The shopkeeper|That clerk|The woman at the till} {knows my face|remembers me|always gives me the bruised ones}.",
+      "{Market day|A busy street|Every stall open}, and {every voice|every seller|half the town} shouting {prices|bargains|my name wrong}."
+    ],
+    "home": [
+      "{Home|My own walls|The kitchen}, and {nowhere to be|no one to answer to|the kettle on}.",
+      "{The floor|The dishes|The window} will not {clean itself|wash themselves|wipe itself}, sadly.",
+      "{A quiet day in|A day at home|Staying in}. {I could get used to this|It is not so bad|Nobody needs to know}.",
+      "The {roof|tap|door hinge} {drips|squeaks|has given up} again. {Later|Tomorrow|Someday}.",
+      "{Mend the shirt|Sort the drawer|Write the letter} I have been {putting off|meaning to|avoiding} for {a week|a month|ages}.",
+      "{The little one|The baby|The child} is {finally quiet|asleep at last|playing on the floor}. {Do not breathe|Tiptoe|Not a sound}.",
+      "{Soup on the stove|Bread rising|Something in the pot}, {and the house smells right|and that is enough|and all is well}.",
+      "{Who is that at the door|Was that the post|Did somebody knock}? {Probably nothing|Let them knock|I am not in}.",
+      "The {radio|clock|neighbour} {hums|ticks|sings badly} through the wall and I {do not mind|almost like it|have stopped hearing it}.",
+      "{Same four walls|This room again|The same chair}. {Comfortable|Safe|Mine}, at least.",
+      "{Laundry|The washing|Wet sheets} on {the line|every chair|the stove rail} and {rain coming|no sun|no space}.",
+      "{A day off|No shift today|Nothing booked}, and I spend it {tidying|worrying|staring at the ceiling}. {Typical|Of course|As ever}."
+    ],
+    "bladder": [
+      "{Where is|Is there|I need} {a WC|a privy|the washroom} {round here|nearby|right now}?",
+      "{That last cup|The second coffee|All that tea} was a {mistake|bad idea|terrible plan}.",
+      "{Walk|Walk faster|Do not run}. {Think of deserts|Think of anything else|Do not think of rivers}.",
+      "{Every|Each} {step|cobble|puddle} {is|feels like} a {personal insult|small torture|test of character}.",
+      "{Not now|Please not now|Of all the times}, {not in the middle of the street|not with everyone watching|not this far from home}.",
+      "{Somebody|Some fool|A whole family} is {in there|taking their time|reading the paper in there}, I know it.",
+      "I {should have gone|meant to go|was going to go} {before I left|at the last place|an hour ago}.",
+      "{Cross the legs|Stand still|Breathe}. {It passes|It will pass|It must pass}.",
+      "{A coin for the attendant|A queue for the WC|A locked door}. {Of course|Naturally|Wonderful}.",
+      "{Nearly there|Two more doors|Round the corner}. {Hold on|Steady|Almost}.",
+      "The {fountain|river|rain} is {not helping|very loud today|deliberately cruel}.",
+      "{Relief|Bliss|Peace} is {one door away|so close|a matter of minutes}."
+    ],
+    "school": [
+      "{Sums|Spelling|Times tables} again. {Why|What for|Who needs them}?",
+      "The teacher {has eyes in the back of her head|saw me|knows everything}. {Everything|I swear|It is not fair}.",
+      "{When is break|Is it break yet|How long till break}?",
+      "I {forgot|lost|left} my {homework|pencil|reading book} {at home|on the bus|somewhere}.",
+      "{Do not look out the window|Look at the board|Pay attention}. {The pigeons are more interesting|But the window|I am trying}.",
+      "{My best friend|The new kid|The boy behind me} {passed me a note|keeps kicking my chair|copied my answers}.",
+      "{A gold star|A good mark|Ten out of ten}! {Wait until I tell|I am telling|Mum will see}.",
+      "{The map of the world|The big globe|The skeleton in the corner} is the {best|only good|most interesting} thing in this room.",
+      "{Chalk dust|The radiator|The ink} smells {funny|like winter|like school}.",
+      "{If she calls on me|If I have to read aloud|If it is my turn}, I will {die|hide under the desk|turn red}.",
+      "{A test|Spelling test|Dictation} {today|tomorrow|on Friday}. {Nobody told me|I knew that|I think}.",
+      "{What is for lunch|Is it lunch|I can smell lunch}? {Please not cabbage|I hope it is pasta|Anything but fish}.",
+      "When I grow up I will be {a pilot|an explorer|a wizard} and {never do sums|nobody can make me sit still|I will not need spelling}.",
+      "{The bell|Home time|The last bell}! {Run|Finally|Freedom}!"
+    ],
+    "play": [
+      "{Tag|Hide and seek|Catch}! {You are it|Not it|I am not it}!",
+      "{One more go|Five more minutes|Just one more game}, {please|then home|I promise}.",
+      "I found {a stick|a beetle|a shiny stone} and it is {the best one|mine|magic}.",
+      "{The puddle|That wall|The big tree} is {the castle|the ship|the dragon's lair} today.",
+      "{Race you|Bet I am faster|First one to the corner} {to the gate|to the fountain|wins}!",
+      "{My knee|My elbow|My hand} is {bleeding|scraped|dirty}. {It does not hurt|I am fine|Do not tell}.",
+      "{If I step on a crack|If I miss the line|If I touch the ground} the {floor is lava|monster gets me|game is over}.",
+      "{My ball|The kite|My marble} went {over the wall|in the river|under the cart}. {Oh no|Again|Somebody get it}.",
+      "{Nobody|Nobody ever|They never} {lets me be the captain|picks me first|lets me win}. {Not fair|Every time|One day}.",
+      "{I am a knight|I am a giant|I am the fastest horse}. {Bow down|Everyone run|Neigh}!",
+      "{Chalk on the pavement|Hopscotch squares|A drawing of a dog}, and it is {perfect|the best one yet|almost a dog}.",
+      "{Mum said|Dad said|Grandma said} {home by dark|stay in the street|no climbing}. {I know|It is not dark yet|I am not climbing, I am sitting high}.",
+      "{Swap you|I will trade|Want to swap} {my red marble|this card|two sweets} for {yours|that one|the blue one}?",
+      "{Splash|Look|Watch me}! {Bigger|Higher|Louder} than {last time|yours|anybody}!",
+      "{Mud pies|Sand castles|Paper boats} for {the whole street|everyone|the queen}. {Free|One coin|Two sweets} each."
+    ],
+    "childHome": [
+      "{Mum|Dad|Grandpa} is {busy|cooking|cross}, so I am {being good|being quiet|drawing}.",
+      "{Can I go out|Can I play outside|Is it time to go out}? {Please|Pleeease|Just for a bit}?",
+      "{My toy soldiers|My doll|The wooden horse} {are having a war|is having tea|is going on a long trip}.",
+      "{I am bored|There is nothing to do|Everything is boring}. {Bored bored bored|So bored|Boooored}.",
+      "{Under the table|Behind the curtain|In the cupboard} is {my fort|my secret cave|the best hiding place}.",
+      "{Can I help|Can I stir|Can I lick the spoon}? {I will be careful|I will not spill|Promise}.",
+      "{The cat|The dog|My little brother} {will not play with me|scratched me|took my spoon}.",
+      "{It is raining|It is too cold|They will not let me out}, so the {stairs|hallway|bed} is {a mountain|a river|a ship}.",
+      "{Is it dinner yet|When is dinner|What is for dinner}? {I am starving|My tummy hurts|I could eat a horse}.",
+      "{I drew|I made|I built} {a house|a monster|a tower} and {nobody looked|it is the best|it fell down}.",
+      "{The clock|The tap|The window} {ticks|drips|rattles} and I count {to a hundred|the ticks|until I forget}.",
+      "{A story|Read me a story|Tell me the one about the wolf}, {please|again|the scary one}."
+    ],
+    "childBedtime": [
+      "{I am not tired|Not sleepy|I am not even yawning}. {Yawn|Hm|Well, maybe a bit}.",
+      "{Leave the door open|Leave the light|Leave the candle}, {please|just a crack|just tonight}.",
+      "{What was that noise|Is there something under the bed|Who is in the wardrobe}?",
+      "{Five more minutes|One more story|Just one more page}. {Please|Pretty please|Then I sleep}.",
+      "{My teddy|My blanket|The old rabbit} {is cold|wants a song|cannot sleep either}.",
+      "{A glass of water|A drink|Some milk}? {I am thirsty|Just a sip|My throat is dry}.",
+      "The {shadows|curtains|trees outside} look like {monsters|giants|a big dog}.",
+      "{Tomorrow|In the morning|When I wake up} I will {play all day|go to the river|be bigger}.",
+      "{Count sheep|Count stars|Count to a hundred}. {One, two|One, two, three|One}... {zzz|...|hm}.",
+      "{Night night|Goodnight|Sleep tight}, {house|moon|everybody}.",
+      "{Is it true|Mum, is it true|Do you think} {the moon follows us|stars are far away|dragons sleep too}?",
+      "{Kiss|Hug|Tuck me in}, {and the other side|and one more|properly}."
+    ],
+    "recovering": [
+      "{Every breath|Each step|Turning over} {hurts|pulls at the stitches|reminds me}.",
+      "{Rest|Lie still|Do nothing}, the doctor said. {Easy for him|As if I could|I am trying}.",
+      "{The bandage|The dressing|The splint} {itches|smells|needs changing} and I {must not touch it|cannot reach it|touch it anyway}.",
+      "{A little better|Better than yesterday|Not worse} today. {I will take it|That counts|Small mercies}.",
+      "{I keep|I cannot stop|I am still} {seeing it happen|hearing the blow|feeling the fall}.",
+      "{Broth|Bread and milk|Something soft}, and {sleep|more sleep|a long sleep}. {Doctor's orders|That is the cure|Apparently}.",
+      "{Who is going to|Who will|Nobody else will} {do my work|pay the rent|feed the animals} while I lie here?",
+      "{A scar|A limp|A story} out of it, {at least|if nothing else|to show for it}.",
+      "{Slowly|Carefully|One stair at a time}. {Do not be a hero|No hurry|The body knows}.",
+      "{The ache|The throb|The stiffness} is {worse at night|worse in the rain|never quite gone}.",
+      "I {was lucky|got off light|should be dead}, {they keep telling me|everyone says|apparently}.",
+      "{Next time|Never again|From now on} I {run|stay home|look where I am going}."
+    ],
+    "fishing": [
+      "{Quiet water|Still water|A good bank}, {a good spot|the right hour|nobody about}.",
+      "{Cast|Wait|Watch the float}. {Patience|Breathe|Do not move}.",
+      "{The float|The line|The rod tip} {twitched|dipped|moved}. {Wait for it|Not yet|Steady}.",
+      "{Worms|Bread paste|Maggots} {again|today|as usual}. {The fish are not fussy|Old reliable|Never fails}.",
+      "{The one that got away|The big one|The carp of legend} is {still in there|laughing at me|out there somewhere}.",
+      "{Nothing|Not a bite|Not one nibble} all {morning|hour|afternoon}. {Lovely|Perfect|Still better than work}.",
+      "{Supper|Dinner|Tonight's pan}, {if they cooperate|with any luck|God willing}.",
+      "{A heron|A kingfisher|Some boy with a net} is {doing better than me|showing off|stealing my fish}.",
+      "{My line|The hook|The knot} {is tangled|caught a weed|caught my sleeve}. {Again|Of course|Wonderful}.",
+      "{The water|The light on the water|The river} {says nothing|goes on|does not care} and that is {the point|why I come|the whole cure}.",
+      "{Thermos|Flask|Bottle} of {tea|coffee|something stronger} and {a folding stool|the whole afternoon|no one to answer to}.",
+      "{Small one|Tiddler|Too small}. {Back you go|Grow up first|Next year, friend}."
+    ],
+    "swimming": [
+      "{Cold|Freezing|Lovely}! {Cold cold cold|Do not think about it|Keep moving}!",
+      "{Kick|Stroke|Breathe}, {kick|stroke|breathe}. {Easy|Nearly|There}.",
+      "{Something|A weed|A fish} {touched my foot|brushed my leg|is down there}. {Do not panic|It is nothing|It is a fish}.",
+      "{Float|Lie back|Let go}, and the {sky|water|whole world} does {the rest|the work|nothing at all}.",
+      "{Out to the rock|To the other bank|Across and back} and {I win|then rest|then home}.",
+      "{Water up my nose|Swallowed half the river|Weed in my teeth}. {Elegant|Very graceful|Worth it}.",
+      "{The current|The water|The tide} {pulls|tugs|has opinions} {more than it looks|today|on this side}.",
+      "{Cleaner|Lighter|Younger} already, {and colder|and wetter|and I do not care}.",
+      "{Where did I leave|Who is watching|Is anyone near} {my clothes|my boots|my purse}?",
+      "{Dry off|Warm up|Get out} {soon|before my lips go blue|in a minute}. {One more length|Not yet|Nearly}.",
+      "{Under|Down|Deep}, {eyes open|holding my breath|counting}, and {the world goes quiet|nothing can reach me|it is green and still}.",
+      "{Not as young|Not as fast|Not as brave} as {I was|last summer|I thought}. {Still floating|Still here|Still swimming}."
+    ],
+    "fighting": [
+      "{Hold|Stand|Keep} {your ground|still|the line}! {Do not run|Not one step back|Face it}!",
+      "{Hit it|Strike|Go for the legs}, {hit it again|now|before it turns}!",
+      "{My hands|My arms|My knees} {are shaking|will not stop|feel like water}, {keep going|swing anyway|never mind}.",
+      "{Not today|Not here|Not on my street}, you {brute|beast|thing}!",
+      "{Get help|Call the guard|Fetch the police}! {Now|Quickly|Somebody}!",
+      "{Watch its claws|Watch the teeth|Mind the tail}. {Left|Right|Duck}!",
+      "{I have|I have got|I have still got} {a family|a shop to open|a life} to get back to. {Move|Fall|Die}!",
+      "{Blood|My blood|Its blood}, {is that mine|whose is that|never mind whose}.",
+      "{Together|All of us|Shoulder to shoulder}! {It cannot take us all|There are more of us|Again}!",
+      "{One more|Just one good|A single clean} {blow|swing|hit} and it is {down|done|over}.",
+      "{Breathe|Think|Focus}. {Where is it weak|Where does it bleed|What does it fear}?",
+      "{I never|Never in my life|Not once have I} {held a weapon like this|fought anything|wanted this}."
+    ],
+    "fleeing": [
+      "{Run|Run run run|Go go go}! {Do not look back|Do not stop|Faster}!",
+      "{It is behind me|It is coming|I can hear it}, {I can hear it breathing|I can hear its feet|it is close}!",
+      "{A door|Any door|The church|A cellar}, {anywhere with a door|anywhere with a lock|anywhere}!",
+      "{My lungs|My legs|My chest} {are on fire|will not last|is bursting}. {Keep going|Do not stop|Just to the corner}.",
+      "{Help|Somebody help|Help me}! {Please|Anyone|Is anyone there}!",
+      "{Left|Right|Over the wall}, {lose it in the alleys|through the market|into the crowd}.",
+      "{I dropped|I left|I lost} {my bag|everything|my shoe}. {Leave it|Never mind|It does not matter now}!",
+      "{Do not fall|Do not trip|Watch the cobbles}, {do not fall|not now|please not now}.",
+      "{Hide|Stay low|Be still}. {Do not breathe|Not a sound|It will pass}.",
+      "{Did I lose it|Is it gone|Is it still there}? {Do not look|Look once|Keep running anyway}.",
+      "{Not me|Not like this|Not here}, {not me|not today|please}.",
+      "{Somebody warn|Tell|Wake} {the street|the others|the guard}! {It is loose|There is a monster|It is in the town}!"
+    ],
+    "downed": [
+      "{Cannot|Can't|Cannot quite} {get up|feel my legs|see straight}...",
+      "{Somebody|Anyone|Please}... {help|a doctor|water}...",
+      "{So cold|The ground is cold|It is getting dark}...",
+      "{Stay awake|Keep your eyes open|Do not sleep}. {Stay awake|Do not|Not yet}.",
+      "{Tell them|Tell my family|Tell her}... {I tried|I am sorry|I was coming home}...",
+      "{Hurts|It hurts|Everything hurts}... {so much|everywhere|less now, which is bad}...",
+      "{Is it gone|Did it go|Is it still here}? {Do not move|Lie still|Play dead}...",
+      "{Mother|Mum|Home}...",
+      "{The sky|The stones|The rain} {is very close|look very large|is warm, strangely}...",
+      "{Breathe|In and out|Small breaths}. {Someone will come|Somebody saw|They will come}...",
+      "{Footsteps|Voices|Someone running}... {here|over here|please, here}...",
+      "{Not yet|Not like this|Not here}... {not yet|please|not today}..."
     ]
   },
   "crimeIntent": [
@@ -96,14 +525,28 @@
     "One {item}, {free of charge|on the house|for nothing}.",
     "That was {almost too easy|hardly a challenge|quicker than I thought}.",
     "This {item} is {mine now|coming home with me|paid for in nerve}.",
-    "{Hands still|Face flat|Breathe normally}. {Just keep walking|Keep going|Nearly at the corner}."
+    "{Hands still|Face flat|Breathe normally}. {Just keep walking|Keep going|Nearly at the corner}.",
+    "{Nobody shouted|No whistle|No one followed}. {Easy|Clean|Done}.",
+    "{Heart pounding|Hands shaking|Grinning like a fool}, {and a {item} in my coat|with the {item}|and the {item} is mine}.",
+    "{Round the corner|Into the crowd|Down the alley}, {and gone|and breathe|and walk}.",
+    "{They will count|They will notice|They will look} {tonight|tomorrow|eventually}. {Too late|By then I am far|Let them}.",
+    "{Sell the {item}|Keep the {item}|Hide the {item}}, {tonight|before morning|somewhere safe}.",
+    "{I should feel worse|I should feel bad|Guilt}? {Later|Maybe|Not yet}.",
+    "{Smooth|Silent|Quick}, {like a cat|like smoke|like I was never there}."
   ],
   "crimeCaught": [
     "They {saw me take|caught me with|watched me lift} the {item}...",
     "I {shouldn't have grabbed|should never have touched|had to reach for} that {item}.",
     "{Great|Wonderful|Perfect}. Now there's {a price on my head|a bounty|my name on a list}.",
     "{Lay low|Keep walking|Say nothing}. {Lay low|Say nothing|Deny it all}.",
-    "{One {item}|A single {item}|That stupid {item}} and I have {ruined the month|earned a cell|thrown it away}."
+    "{One {item}|A single {item}|That stupid {item}} and I have {ruined the month|earned a cell|thrown it away}.",
+    "{A hand on my shoulder|A shout|A whistle}, and {that is that|it is over|my stomach drops}.",
+    "{My mother|My family|The whole street} will {hear of it|know by supper|never let me forget}.",
+    "{A fine|A night in the cells|A record}, for {a {item}|one {item}|that {item}}. {Worth it|Not worth it|Idiot}.",
+    "{I was going to pay|It fell in my bag|I forgot I had it}. {Nobody believes that|They never do|Worth a try}.",
+    "{That shopkeeper|That clerk|That old woman} {saw everything|was faster than she looked|never blinked}.",
+    "{Hands up|Do not run|Stay calm}. {Running makes it worse|They know my face|Just stand}.",
+    "{Never again|Not ever|That is the last time}, {I swear|I promise|I mean it this time}."
   ],
   "itemBuy": {
     "cheap": [
@@ -144,25 +587,57 @@
       "I want {more|another|all of them}.",
       "{Mine, all mine|Mine now|And it stays mine}.",
       "{Never|It is never|Nothing is ever} enough.",
-      "One is {a start|never the last|the first of several}."
+      "One is {a start|never the last|the first of several}.",
+      "{Two would be better|I should have bought two|Why not the whole shelf}.",
+      "{Nobody else|Not a soul|No one} {touches it|gets it|so much as looks at it}.",
+      "{Next|Next time|Tomorrow}, {the bigger one|the dearer one|the best one}.",
+      "{Collect them all|Have one of each|Fill the shelf}. {That is the plan|Why not|Obviously}.",
+      "{Hide it|Lock it away|Keep it close} {before anyone asks|from the neighbours|from the family}.",
+      "{Bargain|A steal|Practically free}. {I should go back for more|Buy more|Get another}.",
+      "{Sharing|Lending|Giving} it? {No|Never|Ha}.",
+      "{More|Bigger|Better} is {better|the point|the only rule}."
     ],
     "frugal": [
       "Still, I should {save my coin|put something by|not have spent that}.",
       "Do I {really need it|need it at all|need this}?",
       "{A penny saved|A coin kept|Every coin counts}...",
-      "That is {a week of bread|two nights of rent|money I will want later}."
+      "That is {a week of bread|two nights of rent|money I will want later}.",
+      "{I will make it last|It has to last|It will last} {years|a lifetime|until it falls apart}.",
+      "{Could I have mended the old one|The old one was fine|I had one already}? {Probably|Maybe|Hm}.",
+      "{Keep the receipt|Keep the box|Keep the paper}. {Just in case|You never know|For returns}.",
+      "{Second hand|At the market|From a neighbour} it would have been {half|a third|less}.",
+      "{Bread for a week|Coal for a month|The gas bill}, {gone|spent|walked out the door}.",
+      "{Write it down|Note it|Remember it} in {the book|my accounts|the household sums}.",
+      "{No more|Nothing else|Not one coin more} {this month|this week|until payday}.",
+      "{Worth it|Was it worth it|It had better be worth it}? {We will see|Time will tell|Hm}."
     ],
     "vain": [
       "I'll be the {envy of the street|talk of the market|best-dressed thing here}.",
       "{Looks matter|Appearances count|People notice}.",
       "Only the {finest|best|very best} for me.",
-      "Let them {look|stare|talk}."
+      "Let them {look|stare|talk}.",
+      "{The mirror|My reflection|The shop glass} {will love this|agrees|approves}.",
+      "{Wear it|Show it|Carry it} {to the square|on Sunday|where everyone can see}.",
+      "{Nobody|Not a soul|None of them} {on this street|in this town|I know} has {one like it|anything like it|the taste}.",
+      "{It suits me|It is so me|It matches my eyes}. {Obviously|Of course|Naturally}.",
+      "{Compliments|Envy|Whispers} by {evening|tomorrow|the end of the week}. {Guaranteed|Watch|Count on it}.",
+      "{Style|Taste|Elegance} {costs|is worth paying for|is never cheap}.",
+      "{A hat to match|Shoes to go with it|Gloves too}, {next|obviously|of course}.",
+      "{Who will see it first|Let me be seen|Where shall I wear it}? {Everyone|The whole square|All of them}."
     ],
     "generous": [
       "Perhaps I'll {gift it to someone|pass it on|give it away}.",
       "{Sharing is its own reward|Better shared|It is no use to me alone}.",
       "{Someone|Somebody|A friend} could {use this|do with this|be glad of this}.",
-      "I know {exactly who|just the person|whose face this would light up}."
+      "I know {exactly who|just the person|whose face this would light up}.",
+      "{The neighbour's child|Old Mrs Rossi|The man at the corner} {would love|could use|would smile at} this.",
+      "{A present|A surprise|A little something}, {wrapped|with a ribbon|in brown paper}. {Perfect|Lovely|Yes}.",
+      "{One for me|One for them|One for the house}, {and one to give|and one spare|and one for whoever needs it}.",
+      "{Things|Coins|Good things} are {for passing on|meant to move|better given}.",
+      "{Who needs it more|Who could use this|Who has nothing like it}? {I know just the one|Somebody does|I will ask}.",
+      "{Bought two|An extra|One more}, {just in case|for a friend|for whoever}.",
+      "{Their face|The look on their face|Their surprise} {when I give it|will be worth it|is the best part}.",
+      "{Giving|A gift|Sharing} {never|hardly ever|rarely} {makes me poorer|costs as much as it seems|feels like a loss}."
     ]
   },
   "familiar": [
@@ -171,119 +646,199 @@
     "I almost {feel like I know them|count them a friend|forget they are a stranger}.",
     "{Strange|Funny|Odd} how we {keep crossing paths|keep meeting|end up in the same streets}.",
     "I {trust|like|mind} them {more than most strangers|better than most|well enough}.",
-    "One of these days I should {ask their name|say something|stop staring and speak}."
+    "One of these days I should {ask their name|say something|stop staring and speak}.",
+    "{That one|They|The stranger} {waved|nodded|smiled} at me {last time|once|yesterday}. {I think|I am sure|Or so it seemed}.",
+    "{People|The neighbours|Everyone} {talk about|have stories about|keep mentioning} {that traveller|those strangers|that lot}.",
+    "{Trouble|Luck|Something} {follows them|walks with them|comes in their wake}, {I would swear|I am sure|always}.",
+    "I {would like to hear|wonder about|could listen to} {where they have been|their stories|what they have seen}.",
+    "{Good people|Decent folk|Not the worst}, {I think|on the whole|as far as I can tell}.",
+    "{They helped|They were kind to|They stood up for} {my neighbour|someone I know|a friend of mine}, {I heard|they say|once}.",
+    "{If they come by|If I see them|Next time}, I will {say hello|buy them a drink|ask their news}.",
+    "{That face|That walk|That voice}. {I would know it anywhere now|Hard to forget|I keep seeing it}."
   ],
   "capability": {
     "cooking_station": [
       "That meal {hit the spot|was worth the trouble|sat well}.",
       "Cooking for myself {beats buying out|costs half as much|tastes better anyway}.",
-      "I should {do that more often|cook more|keep this up}."
+      "I should {do that more often|cook more|keep this up}.",
+      "{Burnt|Scorched|Crispy} on one side, {raw|cold|perfect} on the other. {Progress|Close enough|Still eating it}.",
+      "{My mother's recipe|The old way|A little more salt}, and {it nearly tastes right|close|there it is}.",
+      "{Washing up|The pans|The greasy pot} {is the price|comes after|is the worst part}."
     ],
     "container": [
       "{Finders keepers|Finders keepers, I say|Nobody claimed it}.",
       "You'd be surprised what people {leave lying around|forget|never come back for}.",
-      "A little {extra|something|luck} never hurts."
+      "A little {extra|something|luck} never hurts.",
+      "{Old coins|A button|A letter} at the bottom. {Somebody's|A story|Interesting}.",
+      "{Dusty|Mouldy|Locked for years}, and {still something inside|worth the look|not empty}.",
+      "{Shut it|Close the lid|Put it back}, {quietly|neatly|as I found it}."
     ],
     "rentable_room": [
       "A {real bed|proper mattress|dry room} for once, {wonderful|at last|thank goodness}.",
       "Worth {every coin|the price|the rent} for a {good night's sleep|full night|quiet night}.",
-      "I {needed that rest|slept like a stone|had forgotten what sleep was}."
+      "I {needed that rest|slept like a stone|had forgotten what sleep was}.",
+      "{Clean sheets|A lock on the door|Hot water}, {for once|at last|bless them}.",
+      "{The innkeeper|The landlady|The porter} {was kind|asked no questions|did not overcharge}. {Rare|Remember the place|Good}.",
+      "{Thin walls|Snoring next door|A creaky floor}, {but a bed|but warm|but mine for the night}."
     ],
     "apiary": [
       "The hives are {doing well|thriving|heavy} this season.",
       "Honey {always sells|never sits long|pays the winter}.",
-      "Bees are {good business|patient workers|better company than most}."
+      "Bees are {good business|patient workers|better company than most}.",
+      "{Stung|Stung twice|Only stung once}. {Worth it|Part of the job|They are forgiven}.",
+      "{The queen|The brood|The comb} {looks healthy|is strong|is heavy}. {Good girls|Well done|Lovely}.",
+      "{The smoke|The hum|The smell of wax} {stays in my clothes|calms me|follows me home}."
     ],
     "bank": [
       "That should {tide me over|hold me a month|cover the rent}.",
       "{Better safe than sorry|Out of reach of thieves|Where nobody can lift it}, into the vault it goes.",
-      "Banks. {Can't live with them, can't live without them|All smiles and small print|They keep the coin, I keep the worry}."
+      "Banks. {Can't live with them, can't live without them|All smiles and small print|They keep the coin, I keep the worry}.",
+      "{The clerk|The teller|The man behind the glass} {counted it twice|did not smile|stamped everything}.",
+      "{Interest|A little interest|Pennies of interest}. {Better than nothing|Insulting|Still}.",
+      "{Queue|Forms|Signatures}, {for my own money|to touch what is mine|every time}. {Typical|Banks|Hm}."
     ],
     "real_estate_office": [
       "Property {really does pay for itself|pays while I sleep|was the one clever thing I did}.",
       "Another {month|quarter|season}, another {rent cheque|payment|handful of coin}.",
-      "{Owning land|Buying that place|Signing that deed} was the {smartest thing I ever did|best day's work of my life|one bet that paid}."
+      "{Owning land|Buying that place|Signing that deed} was the {smartest thing I ever did|best day's work of my life|one bet that paid}.",
+      "{Tenants|Repairs|The roof} {again|always|every month}. {Owning is work too|Nothing is free|Still worth it}.",
+      "{Bricks|Land|Walls} {do not run off|stay where you leave them|do not lie}. {Unlike people|Unlike shares|Good}.",
+      "{One more|Another|The next} {house|deed|plot} and {then I stop|that is enough|I retire}. {Probably|Maybe|Ha}."
     ],
     "stock_exchange": [
       "{Easy come, easy go|Up one day, down the next|That is the game}.",
       "The market {giveth and the market taketh away|has no memory|owes nobody anything}.",
-      "I'll make it back {next time|next quarter|eventually}."
+      "I'll make it back {next time|next quarter|eventually}.",
+      "{Numbers|Boards|Tickers} {up|down|sideways}, and {my stomach with them|nobody knows why|I pretend to understand}.",
+      "{Buy low|Sell high|Hold}. {Simple|They say|If only}.",
+      "{A tip|A rumour|A whisper} from {a broker|a friend|a stranger}. {Trust it|Never again|We will see}."
     ],
     "fast_travel_terminal": [
       "Nothing like {seeing somewhere new|a change of sky|arriving somewhere}.",
       "Travel {clears the head|shakes the dust off|is the only cure}.",
-      "Wonder what's {out there|down that road|waiting} today."
+      "Wonder what's {out there|down that road|waiting} today.",
+      "{The ticket|The fare|The timetable} {cost more|made less sense|was later} than I thought.",
+      "{A window seat|A quiet carriage|An empty bench}, {and the world going by|and a nap|and nobody talking}.",
+      "{Home|Somewhere new|Back again} {soon|by evening|in a day}. {Good|Strange|Either way}."
     ],
     "furniture_builder": [
       "A few new touches and this place {feels like home|is almost liveable|stops feeling borrowed}.",
       "{Nice things|Small comforts|A good chair} make a house a home.",
-      "That looks {better already|much better|nearly right}."
+      "That looks {better already|much better|nearly right}.",
+      "{Splinters|A hammered thumb|A wobbly leg}, but {it stands|it is mine|I made it}.",
+      "{A shelf|A chair|A table} {where there was nothing|for the corner|at last}. {Better|Proud|Good}.",
+      "{Move it left|No, right|Back where it was}. {Perfect|Hm|Again}."
     ],
     "arcade": [
       "One more {credit|go|coin} and I {have it|beat that score|am done, honestly}.",
       "My initials are {going on that board|still up there|up there somewhere}, I swear.",
-      "{Those ghosts|That last level|The final boss} {cheats|has it in for me|is rigged}."
+      "{Those ghosts|That last level|The final boss} {cheats|has it in for me|is rigged}.",
+      "{Bleeps|Lights|Music} {in my head|behind my eyes|all the way home}.",
+      "{Out of tokens|Out of coins|Out of luck}, {again|already|as usual}.",
+      "{That kid|Some boy|A girl in a cap} {beat my score|watched me lose|made it look easy}."
     ],
     "slots": [
       "{Three cherries|One more line|Just one more pull} and I {would have had it|was that close|swear it was coming}.",
       "The machine is {due|warm tonight|about to pay}, I can feel it.",
-      "{Easy come, easy go|That is the rent gone|I only meant to put in one coin}."
+      "{Easy come, easy go|That is the rent gone|I only meant to put in one coin}.",
+      "{Lights|Bells|Coins} {everywhere|for someone else|next machine over}. {Never mine|Typical|Next time}.",
+      "{Small win|Got my coin back|Two coins}. {Basically rich|Back to even|A start}.",
+      "{Walk away|Stop now|Go home}. {Walk away|One more|After this one}."
     ],
     "horserace": [
       "{Never|Never again|Not once more} back a horse {with a name like that|on a hunch|because it looked at me}.",
       "{By a nose|By a length|At the post}, and {mine|not mine|the wrong one} took it.",
-      "The form said {one thing|the favourite|nothing useful}, the race said {another|the outsider|everything}."
+      "The form said {one thing|the favourite|nothing useful}, the race said {another|the outsider|everything}.",
+      "{The jockey|That horse|The starter} {was asleep|had other plans|did not try}.",
+      "{Shouting|Cheering|Screaming} {my lungs out|like a fool|at a horse} {for a minute|for nothing|for coins}.",
+      "{Next race|The fourth|Tomorrow's card}, {I have a feeling|surely|that one}."
     ],
     "tournament": [
       "{Mine|My pick|That beast I backed} {went down in the first round|fought like a devil|had no business winning}.",
       "The big ones {always win|never win when I back them|win until they do not}.",
-      "{Blood on the sand|What a bout|What a night}, and {money in my pocket|my pocket lighter|nothing to show for it}."
+      "{Blood on the sand|What a bout|What a night}, and {money in my pocket|my pocket lighter|nothing to show for it}.",
+      "{The crowd|The roar|The smell of the pit} {got into me|will stay with me|was something}.",
+      "{Poor beast|That poor thing|The loser}. {Still|Even so|Hm}, {what a fight|money is money|it chose this, surely}.",
+      "{Next bout|The final|Tomorrow}, {I back the big one|I back the underdog|I keep my coins}."
     ],
     "cards": [
       "{Good hand|Bad draw|Tight board}. {I had them|They had me|Anybody's game} from the {first card|middle|last clash}.",
       "{Next time|One day|Tomorrow} I bring a {better deck|deck worth the name|rarer card}.",
-      "The clash {went my way|went theirs|took everything off the board}."
+      "The clash {went my way|went theirs|took everything off the board}.",
+      "{A rare one|A shiny one|A card I have wanted for months}, {won|traded|finally}. {Mine|Lovely|Yes}.",
+      "{Shuffle|Draw|Play}, {and pray|and hope|and think}. {Same as life|Simple|Not simple}.",
+      "{Should have held|Should have played|Should have kept} {the strong one|that card|my nerve}."
     ],
     "scratch": [
       "{Nothing|Two out of three|A near miss}, {as usual|again|of course}.",
       "{Somebody|Some lucky soul|A cousin of a cousin} won big on one of these, {they say|apparently|once}.",
-      "{Scratch|Scrape|Rub}, {hope|pray|sigh}, {bin|repeat|buy another}."
+      "{Scratch|Scrape|Rub}, {hope|pray|sigh}, {bin|repeat|buy another}.",
+      "{Silver dust|Grey flakes|Scratchings} {under my nails|on my sleeve|everywhere}. {And nothing|For nothing|Again}.",
+      "{A small win|My money back|A free ticket}. {I will take it|Lucky|That counts}.",
+      "{Last one|Just one more|One for luck}, {I promise|honestly|then home}."
     ],
     "bowling": [
       "{A strike|A spare|Straight into the gutter}, {and I will take it|that is my night|typical}.",
       "The {lane|ball|pin setter} {pulls left|has it in for me|is slippery tonight}.",
-      "{Shoes|Rented shoes|Those shoes} {two sizes off|still warm|smell of the last one}, and still {a decent game|I bowled|a win}."
+      "{Shoes|Rented shoes|Those shoes} {two sizes off|still warm|smell of the last one}, and still {a decent game|I bowled|a win}.",
+      "{The pins|The ball|The lane} {and I|and me|and the gutter} {are on speaking terms|are old friends|disagree}.",
+      "{Score sheet|The scores|My total} says {one thing|nothing nice|I lost}. {My heart says another|I had fun|Who cares}.",
+      "{Arm|Shoulder|Back} {aches|will ache|is complaining} {already|tomorrow|now}."
     ],
     "pool": [
       "{Eight ball|Last ball|The black} in the {corner|side pocket|wrong pocket}, {and that is the game|of course|typical}.",
       "{Chalk|A steady hand|A good break} is {half of it|everything|what I did not have}.",
-      "{Bank shot|Long pot|Double}, {just like I called it|nobody saw it coming|pure luck}."
+      "{Bank shot|Long pot|Double}, {just like I called it|nobody saw it coming|pure luck}.",
+      "{Scratched|Sank the white|Missed the easy one}. {Of course|Typical|Of course I did}.",
+      "{Smoke|Low lamps|Green cloth}, {and the click of balls|and quiet|and good company}.",
+      "{Rack them up|One more frame|Best of three}, {come on|again|my break}."
     ],
     "basketball": [
       "{Nothing but net|Off the rim|Off the backboard and in}.",
       "{Nobody|Not a soul|Not one of them} {guards the paint|boxes out|runs back} here.",
-      "{A few more|Ten more|Just one more} shots and I call it {a day|a night|a win}."
+      "{A few more|Ten more|Just one more} shots and I call it {a day|a night|a win}.",
+      "{Out of breath|Sweating|Legs gone}, {but scoring|but happy|and grinning}.",
+      "{Free throw|Three pointer|Layup}, {missed|in|off the rim}, {story of my life|beautiful|nearly}.",
+      "{The hoop|The ring|The net} is {lower|higher|crooked} than {it looks|regulation|it was yesterday}."
     ],
     "target": [
       "{Tighter|Better|Wider} grouping {than last time|than I thought|every round}.",
       "{Breathe out|Squeeze, do not pull|Steady}, and {the target falls|the clay breaks|it is gone}.",
-      "My {ears|shoulder|wrist} will {feel that tomorrow|remember that|ring all night}."
+      "My {ears|shoulder|wrist} will {feel that tomorrow|remember that|ring all night}.",
+      "{Dead centre|Bullseye|Inner ring}, {once|twice|at last}. {Not bad|Good|Again}.",
+      "{The wind|My breath|My heartbeat} {pulls it|moves it|is the enemy}.",
+      "{Calm|Still|Focused} {for once|at last|for a minute}. {That is the real prize|Nice|Good}."
     ],
     "piano": [
       "{Out of tune|Sticky keys|A cracked note} and still {it sings|lovely|worth it}.",
       "My {fingers|hands|left hand} {remember more than I do|have a mind of their own|are out of practice}.",
-      "{Just the one song|Only the chorus|Just the start of it}, {then|and then|maybe} I stop."
+      "{Just the one song|Only the chorus|Just the start of it}, {then|and then|maybe} I stop.",
+      "{A waltz|A hymn|A tavern song}, {half remembered|badly|with feeling}.",
+      "{Somebody listened|Someone clapped|A child stopped to hear}. {Nice|Lovely|That was nice}.",
+      "{Practise|Lessons|Scales} {every day|again|when I can}, {I swear|this time|someday}."
     ],
     "tarot": [
       "{The Tower|Death|The Fool} again. {It means change, not death|I am not worried|That is fine, it is fine}.",
       "The cards {never lie|say what you already know|are only cardboard}, {they say|mostly|surely}.",
-      "{Upright|Reversed|Crossed}, {that is a good sign|that is a bad sign|that is no sign at all}."
+      "{Upright|Reversed|Crossed}, {that is a good sign|that is a bad sign|that is no sign at all}.",
+      "{The Star|The Sun|The Lovers}, {finally|for once|at last}. {Good|Maybe|I will take it}.",
+      "{She looked|The reader looked|The old woman looked} at me {strangely|too long|as if she knew}.",
+      "{Nonsense|Silly|Just cards}. {Still|And yet|But} {I will think about it all night|I keep thinking about it|it was true}."
     ]
   },
   "greetFriend": [
     "{Hey|Oh|Look}, {name}!",
     "{Evening|Morning|Hello}, {name}.",
-    "{name}! {Good to see you|Fancy that|Still alive then}."
+    "{name}! {Good to see you|Fancy that|Still alive then}.",
+    "{name}, {there you are|at last|just the person}!",
+    "{Well|Oh|Ah}, {if it is not|look who it is|it is} {name}!",
+    "{Hello|Hi|Hey there}, {name}! {How are things|All well|Keeping out of trouble}?",
+    "{name}! {Come here|Over here|Wait up}!",
+    "{Good to see you|Nice to see a friendly face|What luck}, {name}.",
+    "{name}, {old friend|my friend|you rascal}!",
+    "{Afternoon|Good day|Morning}, {name}. {Lovely to see you|Out and about|Fine day for it}.",
+    "{name}! {I was just thinking of you|You read my mind|Speak of the devil}.",
+    "{Hey|Ho|Oi}, {name}! {Long time|Where have you been|Still breathing}?"
   ],
   "water": {
     "swim": {
@@ -454,7 +1009,13 @@
       "{Lambs|Calves|Chicks} and rent, {lambs|noise|mess} and rent. {That is spring|Spring, in two words|Every year the same}.",
       "First {blossom|green|warm morning} of the year. I {always notice|never miss it|mark the day}.",
       "Everyone is {in love|foolish|out of doors} in spring and half of them will {regret it by autumn|be sorry by autumn|pay for it later}.",
-      "{Planting weather|Sowing weather|Good ground} at last. {My back knows it|My hands know it|The ache starts today}."
+      "{Planting weather|Sowing weather|Good ground} at last. {My back knows it|My hands know it|The ache starts today}.",
+      "{Windows open|Doors open|Shutters back} for the first time {since autumn|in months|this year}.",
+      "{Spring cleaning|Beating the rugs|Airing the beds}, {and every neighbour doing the same|and dust everywhere|whether I like it or not}.",
+      "{Birdsong|The swallows|The blackbird} {at dawn|outside the window|on the roof}, {lovely|far too early|every single morning}.",
+      "{Showers|April rain|Sudden rain} and {sun|sunshine|blue sky} {in the same hour|by turns|all day}. {Make up your mind|Typical|Spring}.",
+      "{Easter|The spring fair|The first market} {is coming|is close|is on}, and {the town wakes up|everyone is out|the square fills}.",
+      "{My nose|My eyes|My throat} {and the pollen|and the blossom|and the grass} are {at war again|not friends|old enemies}."
     ],
     "SUMMER": [
       "{Too hot|Far too hot|Unbearable} to think, and thinking is {the easy part|all I have to do|most of my work}.",
@@ -462,7 +1023,13 @@
       "{Long days|These long evenings|The light} are the {only|one|single} thing that makes the season worth it.",
       "Everything {smells|goes off|turns} by noon in this heat. {I have stopped buying meat|Nothing keeps|Nothing lasts}.",
       "{Festival season|Market season|The travelling season}. {Strangers everywhere|Half of them are strangers|The street is full of strangers}.",
-      "{Cool water|Shade|A cellar} and {an hour to myself|nothing to do|no one asking me anything}. That is all I want."
+      "{Cool water|Shade|A cellar} and {an hour to myself|nothing to do|no one asking me anything}. That is all I want.",
+      "{Ice|Lemonade|A cold beer} {would be|is|is worth} {heaven|everything|a fortune} right now.",
+      "{Flies|Wasps|Mosquitoes} {everywhere|in the kitchen|all night}. {Summer|The price of sun|Every year}.",
+      "{Sleep with the window open|Sleep on top of the sheets|Not sleep at all}. {Too hot|Sticky|Like an oven}.",
+      "{The sea|The lake|The river} {is calling|would be perfect|is full of people} today.",
+      "{Sunburn|Freckles|A red neck} {again|already|by noon}. {Every year|I never learn|Hat next time}.",
+      "{Half the town|Everyone|The rich} {is away|has gone to the coast|is on holiday}, and {the streets are empty|the shops shut|it is quiet}."
     ],
     "AUTUMN": [
       "{Harvest is in|The harvest is done|We got it in} and it {will not be enough|is thinner than last year|barely covers the year}.",
@@ -470,7 +1037,13 @@
       "{Storing|Salting|Putting by} for winter. {Half of it will spoil|Some of it always spoils|It never lasts as long as you hope}.",
       "{Good sleeping weather|Fine weather for sleeping|The best month for sleeping}, {at least|if nothing else|if nothing more}.",
       "{Everything smells of|The whole street smells of|The air smells of} {smoke|woodsmoke|rot and smoke} now.",
-      "{Debts|Rents|Accounts} come due in autumn. {They always do|They always have|Somebody arranged it that way}."
+      "{Debts|Rents|Accounts} come due in autumn. {They always do|They always have|Somebody arranged it that way}.",
+      "{Leaves|Wet leaves|Chestnuts} {everywhere|on every step|underfoot}. {Slippery|Pretty|Both}.",
+      "{The coats|The scarves|The blankets} {come out|are back|smell of the cupboard}.",
+      "{Mushrooms|Apples|New wine} {at the market|in the woods|everywhere}. {The one good thing|Something to like|Not bad}.",
+      "{Fog|Mist|Grey} {in the mornings|on the river|until noon}, and {nobody can see a thing|everything sounds closer|it gets in the bones}.",
+      "{School|Work|The year} {starts again|is back in earnest|picks up}, and {the holiday feels years ago|summer is gone|so does the patience}.",
+      "{The first fire|The first frost|The first cold night} {of the year|this week|already}. {Here we go|So soon|Every year sooner}."
     ],
     "WINTER": [
       "{Firewood|Fuel|Coal} costs {more|more than the food|twice what it did} and I burn it faster than I earn it.",
@@ -478,7 +1051,13 @@
       "The cold gets into {the joints|my hands|the old break} and {stays|does not leave|sits there until spring}.",
       "{Long nights|These nights|The dark} for {thinking|remembering|going over old ground}, whether I want them or not.",
       "{One more month|Two more months|A few more weeks} of this and then {the light comes back|it turns|the days grow}.",
-      "{Soup|Broth|Something hot} and a {closed door|shut door|banked fire}. {That is the whole plan|The whole plan|Nothing more ambitious than that}."
+      "{Soup|Broth|Something hot} and a {closed door|shut door|banked fire}. {That is the whole plan|The whole plan|Nothing more ambitious than that}.",
+      "{Ice on the inside|Frost on the inside|Breath fogging} of the {window|glass|room}. {Lovely|Charming|Cosy, they call it}.",
+      "{Christmas|The holidays|New Year} {costs|eats|swallows} {a month's wage|everything|the savings}, {every year|again|as always}.",
+      "{Snow|Slush|Black ice} {on every step|all the way|at the corner}. {Slowly|One step at a time|Hold the rail}.",
+      "{Dark at four|Dark by five|Dark all day}. {I miss the sun|Where did the day go|It hardly started}.",
+      "{Chestnuts on the stove|Mulled wine|A hot brick in the bed}. {Winter has its moments|Not all bad|Small mercies}.",
+      "{Coughs|Colds|Fevers} {going round|in every house|everywhere}. {Wrap up|Stay in|Keep warm}."
     ]
   },
   "wealth": {
@@ -488,21 +1067,41 @@
       "{One bad week|A single bad week|One quiet week} and I am {out on the street|finished|done}.",
       "{They call it|People call it|The word for it is} being careful. {It is not|It is not that|It has another name}.",
       "I could {work double|take another shift|not sleep at all} and it would come to {the same|the same money|nothing much}.",
-      "{Somebody|Someone|A man} always {gets paid before me|is paid first|comes before me in the queue}."
+      "{Somebody|Someone|A man} always {gets paid before me|is paid first|comes before me in the queue}.",
+      "{Shoes|Boots|Soles} with {holes|cardboard inside|newspaper in them}, {again|this winter|and nobody notices}.",
+      "{Bread and dripping|Thin soup|Potatoes} {again|every night|this week}. {It fills|It is food|It will do}.",
+      "{The children|The little ones|My boy} {need|want|ask for} {boots|a coat|a book} and I {say next month|say soon|say nothing}.",
+      "{Walk|Walk everywhere|Save the fare}. {The tram is for other people|My legs are free|Shoes are cheaper than tickets}.",
+      "{One good meal|A real coat|A day without sums}. {Someday|One day|Not this year}.",
+      "{The shop window|That bakery|Those boots} {I look|I just look|Looking is free}. {Looking is free|That is all|Just looking}."
     ],
     "comfortable": [
       "{Enough|It is enough|Enough for now}, and I know exactly how {quickly|fast|easily} that changes.",
       "{Put something by|Something set aside|A little put by} for {the bad month|a bad month|when it turns}.",
       "I {remember|have not forgotten|still remember} being {hungry|short|down to nothing}. {It keeps me honest|That is what keeps me careful|It is why I count}.",
       "{Nothing grand|Nothing showy|No luxuries}, but the {roof holds|door shuts|fire is lit}.",
-      "One {good year|solid year|steady year} and I could {buy the shop|take the lease|do it properly}."
+      "One {good year|solid year|steady year} and I could {buy the shop|take the lease|do it properly}.",
+      "{A new coat|Good boots|Proper shoes} {this year|for winter|at last}, and {no guilt|paid for|no debt}.",
+      "{Meat on Sunday|A cake for the birthday|A bottle at Christmas}. {Not every week|Not much|Enough}.",
+      "{The rent|The bills|The grocer} {paid on time|settled|squared}. {A good feeling|Quiet satisfaction|Small pride}.",
+      "{Holiday|A trip|A week at the sea} {next summer|if the year is kind|maybe}.",
+      "{Not rich|Not poor|In between}. {Most of us are|It suits me|That is fine}.",
+      "{A little|Some|A few coins} {for the church box|for the beggar|for the child at the corner}, {because I can|why not|it costs me little}.",
+      "{The savings tin|My account|The jar} {grows|creeps up|fills} {slowly|a little|week by week}. {Good|Patience|Steady}."
     ],
     "rich": [
       "{Money|It|The money} makes itself now. {That is the part nobody warns you about|Nobody warns you about that part|That is the strange part}.",
       "{Everyone|Every one of them|Half this street} is {friendly|very friendly|charming} to me and I have stopped {believing it|taking it personally|being flattered}.",
       "I could {buy this street|buy half of this|have it all bought} and I would still {sleep badly|wake at four|worry about the same thing}.",
       "{The trick|The whole trick|The only trick} is {looking like you are not counting|never appearing to count|counting where nobody sees it}.",
-      "{Somebody|Someone|A cousin} wants {a favour|money|an introduction}. {There is always somebody|There always is|There is one every week}."
+      "{Somebody|Someone|A cousin} wants {a favour|money|an introduction}. {There is always somebody|There always is|There is one every week}.",
+      "{The tailor|The jeweller|The wine merchant} {knows my name|calls on me|sends a card}. {Of course he does|How sweet|Naturally}.",
+      "{A house in town|A house in the country|Another property}. {Why not|It is an investment|One more}.",
+      "{Old money|New money|My money} {talks|is never quiet|says more than I do}.",
+      "{Servants|The staff|My man} {handle it|will see to it|take care of that}. {I do not ask how|I do not need to know|Whatever it costs}.",
+      "{The poor|Those people|The street} {look at me|stare|watch} like {I owe them something|I am a shop window|I am weather}.",
+      "{A charity dinner|A gala|Another reception} {tonight|this week|again}. {Smile|Write a cheque|Be seen}.",
+      "{What do I even want|Is there anything left to buy|What would make me happy}? {I used to know|Hm|Good question}."
     ]
   },
   "addiction": {

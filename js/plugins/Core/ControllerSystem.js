@@ -1186,6 +1186,15 @@
             }
             const _updateScene = SceneManager.updateScene;
             SceneManager.updateScene = function () {
+                // The letter sheet is read AHEAD of the scene and then spends
+                // the whole frame: the screen that opened it, the hotkeys and
+                // any other reader of Input must not answer the same press.
+                // Read after the scene, a B that cancelled the sheet also
+                // backed the screen under it out.
+                if (PadText.isOpen()) {
+                    PadText.update();
+                    UINav.handled();
+                }
                 _updateScene.apply(this, arguments);
                 PadUI.frame();
             };
@@ -1203,10 +1212,7 @@
                 Controller.setMode('menu');
                 this._tips = null;
             }
-            // The letter sheet is read before anything else and swallows the
-            // whole frame while it is up: the screen that opened it must not
-            // answer the same press.
-            if (PadText.isOpen()) PadText.update();
+            // The letter sheet is read before the scene, in install() above.
             const device = this.active();
             if (device !== this._lastDevice) {
                 this._lastDevice = device;
@@ -1276,6 +1282,9 @@
             this._col = 0;
             this._shift = false;
             this._open = true;
+            // The press that asked for the sheet (A on a field, Y on a bench)
+            // is spent: it must not also type the key under the cursor.
+            UINav.swallowHeld();
             // The strip says what the sheet's own buttons do, and the screen
             // underneath gets its own back the moment the sheet is spent.
             this._heldTips = PadUI._tips || null;
@@ -1457,7 +1466,9 @@
     // UINav: the one way a menu reads the pad and the keyboard
     //=========================================================================
     // Every menu in the game answers the same questions the same way:
-    //   L1 / R1   (Q / W, Shift+Tab / Tab)   the previous / next tab
+    //   L1 / R1   (PageUp / PageDown, Shift+Tab / Tab)   the previous / next tab
+    //             (Q and W are not tab keys here: W is north in WASD and Q
+    //             is the world map's zoom, Map/WorldMap.js)
     //   L2 / R2   (, / .)                    the previous / next party member
     //   the cross / left stick / arrows      move, repeating while held
     // and one press is one action: once a screen has acted on a press it

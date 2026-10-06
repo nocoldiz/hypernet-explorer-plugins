@@ -30,16 +30,6 @@
 
 
   //=============================================================================
-  // Constants - Variable IDs
-  //=============================================================================
-  const VAR_PLAYER1_GENDER = 38;
-  const VAR_PLAYER2_GENDER = 39;
-  const VAR_PLAYER3_GENDER = 40;
-  const VAR_PLAYER1_REPRODUCTIVE_TYPE = 87;
-  const VAR_PLAYER2_REPRODUCTIVE_TYPE = 115;
-  const VAR_PLAYER3_REPRODUCTIVE_TYPE = 116;
-
-  //=============================================================================
   // Constants - Gender & Reproduction Types
   //=============================================================================
   const GENDER_TYPES = {
@@ -122,35 +112,27 @@
   //=============================================================================
 
   /**
-   * Get gender variable ID for party member index
-   * @param {number} memberIndex - Party member index (0, 1, 2)
-   * @returns {number} Gender variable ID
+   * The Game_Actor a gender or body question is about. Party identity lives on
+   * the actor itself (ActorCharacterFields.js), never in a variable keyed by
+   * seat, so every helper below resolves its member first. An actor is taken
+   * as it is; a number is a seat. Inside the creation wizard a seat is actor
+   * id - 1, as Scene_CharacterCreation.getCurrentActor reads it (the lab's
+   * embryo sits on a seat without being in the party); anywhere else it is the
+   * party position.
+   * @param {number|object} memberIndexOrActor - Seat index or Game_Actor
+   * @returns {object|null} Game_Actor
    */
-  function getGenderVariableId(memberIndex) {
-    switch (memberIndex) {
-      case 0: return VAR_PLAYER1_GENDER;
-      case 1: return VAR_PLAYER2_GENDER;
-      case 2: return VAR_PLAYER3_GENDER;
-      default:
-        console.warn(`Invalid party member index: ${memberIndex}`);
-        return VAR_PLAYER1_GENDER;
+  function memberActor(memberIndexOrActor) {
+    if (memberIndexOrActor && typeof memberIndexOrActor === "object") return memberIndexOrActor;
+    if (typeof $gameActors === "undefined" || !$gameActors) return null;
+    const idx = Math.max(0, Number(memberIndexOrActor) || 0);
+    const SC = window.Scene_CharacterCreation;
+    const inWizard = !!(SC && typeof SceneManager !== "undefined" && SceneManager._scene instanceof SC);
+    if (!inWizard && typeof $gameParty !== "undefined" && $gameParty && typeof $gameParty.members === "function") {
+      const seated = $gameParty.members()[idx];
+      if (seated) return seated;
     }
-  }
-
-  /**
-   * Get reproductive type variable ID for party member index
-   * @param {number} memberIndex - Party member index (0, 1, 2)
-   * @returns {number} Reproductive type variable ID
-   */
-  function getReproductiveVariableId(memberIndex) {
-    switch (memberIndex) {
-      case 0: return VAR_PLAYER1_REPRODUCTIVE_TYPE;
-      case 1: return VAR_PLAYER2_REPRODUCTIVE_TYPE;
-      case 2: return VAR_PLAYER3_REPRODUCTIVE_TYPE;
-      default:
-        console.warn(`Invalid party member index: ${memberIndex}`);
-        return VAR_PLAYER1_REPRODUCTIVE_TYPE;
-    }
+    return $gameActors.actor(idx + 1);
   }
 
   /**
@@ -166,56 +148,53 @@
    * so with `keepOrgans` they change NOTHING: whatever the character already
    * had, or was built with, stands.
    *
-   * @param {number} memberIndex - Party member index (0, 1, 2)
+   * Both answers are written on the actor (setGender / setReproductionType).
+   *
+   * @param {number|object} memberIndexOrActor - Seat index or Game_Actor
    * @param {number} genderValue - Gender value (0=Male, 1=Female, 2=Non-binary, 3=Cocoon)
    * @param {object} [options] - { keepOrgans } to leave a body the gender does
    *                             not name exactly as it is
    */
-  function applyGenderAndReproduction(memberIndex, genderValue, options) {
-    const genderVar = getGenderVariableId(memberIndex);
-    const reproductiveVar = getReproductiveVariableId(memberIndex);
+  function applyGenderAndReproduction(memberIndexOrActor, genderValue, options) {
+    const actor = memberActor(memberIndexOrActor);
+    if (!actor) return;
     const keepOrgans = !!(options && options.keepOrgans);
+    const setBody = (type) => { if (actor.setReproductionType) actor.setReproductionType(type); };
 
-    // Set gender variable
-    $gameVariables.setValue(genderVar, genderValue);
-
-    // Keep actor's gender field in sync if present
-    const partyActor = ($gameParty && typeof $gameParty.members === 'function')
-      ? $gameParty.members()[memberIndex] : null;
-    if (partyActor && typeof partyActor.setGender === 'function') {
-      partyActor.setGender(genderValue);
-    }
+    if (actor.setGender) actor.setGender(genderValue);
 
     // Set reproduction type based on gender
     switch (genderValue) {
       case GENDER_TYPES.MALE:
-        $gameVariables.setValue(reproductiveVar, REPRODUCTION_TYPES.TESTICLES);
+        setBody(REPRODUCTION_TYPES.TESTICLES);
         break;
       case GENDER_TYPES.FEMALE:
-        $gameVariables.setValue(reproductiveVar, REPRODUCTION_TYPES.UTERUS);
+        setBody(REPRODUCTION_TYPES.UTERUS);
         break;
       case GENDER_TYPES.NON_BINARY:
         // Random (0-4: Testicles, Uterus, Oviparous, Plant, Mitosis), unless
         // the caller is asking on behalf of somebody who already has a body.
-        if (!keepOrgans) $gameVariables.setValue(reproductiveVar, Math.floor(Math.random() * 5));
+        if (!keepOrgans) setBody(Math.floor(Math.random() * 5));
         break;
       case GENDER_TYPES.COCOON:
-        if (!keepOrgans) $gameVariables.setValue(reproductiveVar, REPRODUCTION_TYPES.MITOSIS);
+        if (!keepOrgans) setBody(REPRODUCTION_TYPES.MITOSIS);
         break;
       default:
         console.warn(`Unknown gender value: ${genderValue}`);
-        if (!keepOrgans) $gameVariables.setValue(reproductiveVar, REPRODUCTION_TYPES.NONE);
+        if (!keepOrgans) setBody(REPRODUCTION_TYPES.NONE);
     }
   }
 
   /**
    * The reproductive organs a party member is carrying, as a REPRODUCTION_TYPES
-   * value. NONE (-1) is a real answer: a body with no reproductive system at all.
-   * @param {number} memberIndex - Party member index (0, 1, 2)
+   * value, read off the actor. NONE (-1) is a real answer: a body with no
+   * reproductive system at all.
+   * @param {number|object} memberIndexOrActor - Seat index or Game_Actor
    * @returns {number} Reproduction type
    */
-  function getReproductionType(memberIndex) {
-    const value = $gameVariables.value(getReproductiveVariableId(memberIndex));
+  function getReproductionType(memberIndexOrActor) {
+    const actor = memberActor(memberIndexOrActor);
+    const value = (actor && actor.reproductionType) ? actor.reproductionType() : null;
     return (value === undefined || value === null) ? REPRODUCTION_TYPES.NONE : value;
   }
 
@@ -223,11 +202,12 @@
    * Give a party member a set of reproductive organs outright, whatever their
    * gender says. This is the Bio tab's own answer, and it outranks the default
    * the gender pick wrote.
-   * @param {number} memberIndex - Party member index (0, 1, 2)
+   * @param {number|object} memberIndexOrActor - Seat index or Game_Actor
    * @param {number} type - REPRODUCTION_TYPES value
    */
-  function setReproductionType(memberIndex, type) {
-    $gameVariables.setValue(getReproductiveVariableId(memberIndex), Number(type));
+  function setReproductionType(memberIndexOrActor, type) {
+    const actor = memberActor(memberIndexOrActor);
+    if (actor && actor.setReproductionType) actor.setReproductionType(Number(type));
   }
 
   // Where a body of each build sits on the androgenic/oestrogenic scale the
@@ -269,7 +249,7 @@
 
   /**
    * Set random gender for a party member
-   * @param {number} memberIndex - Party member index (0, 1, 2)
+   * @param {number|object} memberIndex - Seat index or Game_Actor
    */
   function applyRandomGender(memberIndex) {
     const randomGender = Math.floor(Math.random() * 4); // 0-3
@@ -289,7 +269,7 @@
    * a roll: a slime sheet builds a Slime body, a spider sheet a Spider one.
    *
    * The archetype is applied FIRST and the gender second: changeArchetype
-   * writes the reproduction variable from the body plan alone, and the gender
+   * writes the actor's reproduction type from the body plan alone, and the gender
    * is the finer of the two answers.
    *
    * @param {number} memberIndex - Party member index (0, 1, 2)
@@ -300,8 +280,10 @@
     const entry = window.SpriteCatalog && window.SpriteCatalog.entry
       ? window.SpriteCatalog.entry(sheetName)
       : null;
+    // The seat is actor id - 1 here (the sprite grid passes _actorId - 1).
+    const actor = $gameActors.actor(memberIndex + 1);
     if (!entry) {
-      applyRandomGender(memberIndex);
+      applyRandomGender(actor || memberIndex);
       return null;
     }
 
@@ -313,7 +295,6 @@
     // person's sheet also clears whatever the slot held before.
     const archetype = entry.Archetype || DEFAULT_ARCHETYPE;
     const secondary = entry.SecondaryArchetype || null;
-    const actor = $gameActors.actor(memberIndex + 1);
     if (actor) {
       if (window.applyArchetypesToActor) {
         window.applyArchetypesToActor(actor, secondary ? [archetype, secondary] : [archetype]);
@@ -323,9 +304,9 @@
     }
 
     if (entry.Gender != null) {
-      applyGenderAndReproduction(memberIndex, entry.Gender);
+      applyGenderAndReproduction(actor || memberIndex, entry.Gender);
     } else {
-      applyRandomGender(memberIndex);
+      applyRandomGender(actor || memberIndex);
     }
     return entry;
   }
@@ -1741,12 +1722,6 @@
 
   window.CharacterCreationUtils = {
     // Constants
-    VAR_PLAYER1_GENDER,
-    VAR_PLAYER2_GENDER,
-    VAR_PLAYER3_GENDER,
-    VAR_PLAYER1_REPRODUCTIVE_TYPE,
-    VAR_PLAYER2_REPRODUCTIVE_TYPE,
-    VAR_PLAYER3_REPRODUCTIVE_TYPE,
     GENDER_TYPES,
     REPRODUCTION_TYPES,
 
@@ -1758,8 +1733,7 @@
     statLabel,
 
     // Gender & Reproduction
-    getGenderVariableId,
-    getReproductiveVariableId,
+    memberActor,
     applyGenderAndReproduction,
     applyRandomGender,
     applyIdentityFromSprite,

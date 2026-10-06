@@ -855,7 +855,6 @@
             eris.changeLevel(62, false);
             eris.recoverAll();
         }
-        $gameVariables.setValue(29, $gameParty.size()); // party member count
     }
 
     // Minigames: a free-play arcade reachable straight from the title. Opens the
@@ -2084,7 +2083,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // Every classical piece shipped under audio/bgm/Classical is on the dial, so
     // any of them can be the one the title opens on. The entry names the piece playing
     // and steps to the next one, so the pick is made by ear without leaving the
-    // screen. Unpicked, the game opens on the finale of Beethoven's Ninth.
+    // screen. The pick lasts for the visit only: every arrival at the title
+    // opens on the finale of Beethoven's Ninth, whatever was picked before.
     // -------------------------------------------------------------------------
     // i18n-ignore-start  bgm tracks, named after their file
     const TITLE_MUSIC_NINTH = 'Classical/Ludwig van Beethoven - symphony no. 9 in d minor, op. 125 - iv. finale';
@@ -2096,19 +2096,22 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // Where a long piece may start, in seconds into its file. The title is not
     // long enough to wait out a twenty minute movement for its climax, so the
     // piece opens on one of these, drawn each time it starts. Found by a
-    // loudness pass over the recording (Horenstein, Pro Musica Symphony
-    // Orchestra): each sits inside one of the score's real pauses, under
-    // -40 dB, about a second before the next entry, so the title comes in
-    // out of silence and the music arrives on its own cue.
+    // 100 ms loudness pass over the lossless master of the recording
+    // (Horenstein, Pro Musica Symphony Orchestra and Choir, 1956, CC0 on
+    // Wikimedia Commons as "04 Horenstein 9. Beethoven Pantheon XP 2550 -
+    // 4. satz.flac"): each sits inside one of the score's real pauses, under
+    // -40 dB, half a second to a second before the entry, so the title comes
+    // in out of silence and the music arrives on its own cue. Re-measure
+    // these if the file is ever replaced by another recording.
     const TITLE_MUSIC_MOMENTS = {
         [TITLE_MUSIC_NINTH]: [
-            0,      // 0:00  the opening fanfare breaks the silence
-            181,    // 3:01  the Ode to Joy rises pianissimo from the basses
-            571,    // 9:31  after "vor Gott!", the Alla marcia from nothing
-            829,    // 13:49 the pause before "Seid umschlungen"
-            1017,   // 16:57 the hush that leads into the double fugue
-            1170,   // 19:30 the pause before the coda
-            1307,   // 21:47 out of the silence into the Prestissimo
+            0,       // 0:00  the opening fanfare breaks the silence (enters at 0:01.4)
+            180.5,   // 3:00  the Ode to Joy rises pianissimo from the basses (3:01.0)
+            562.8,   // 9:22  after "vor Gott!", the Alla marcia from nothing (9:23.6)
+            828.9,   // 13:48 the pause before "Seid umschlungen" (13:49.7)
+            1015.5,  // 16:55 the hush that leads into the double fugue (16:56.1)
+            1168.0,  // 19:28 the pause before the coda (19:28.9)
+            1303.6,  // 21:43 out of the silence into the Prestissimo (21:44.3)
         ],
     };
 
@@ -2158,34 +2161,15 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         scanTitleMusic().filter(t =>
             !TITLE_MUSIC_DEFAULTS.some(d => d.value === t.value)));
 
-    // A fresh config opens on the Ninth, first on the dial.
+    // The title always opens on the Ninth, first on the dial.
     const TITLE_MUSIC_DEFAULT = TITLE_MUSIC_NINTH;
 
-    Object.defineProperty(ConfigManager, 'titleMusicName', {
-        get() {
-            return this._titleMusicName !== undefined
-                ? this._titleMusicName : TITLE_MUSIC_DEFAULT;
-        },
-        set(value) { this._titleMusicName = value; },
-        configurable: true
-    });
-
-    const _ConfigManager_makeData_titleMusic = ConfigManager.makeData;
-    ConfigManager.makeData = function () {
-        const config = _ConfigManager_makeData_titleMusic.call(this);
-        config.titleMusicName = this.titleMusicName;
-        return config;
-    };
-
-    const _ConfigManager_applyData_titleMusic = ConfigManager.applyData;
-    ConfigManager.applyData = function (config) {
-        _ConfigManager_applyData_titleMusic.call(this, config);
-        this.titleMusicName = config.titleMusicName !== undefined
-            ? config.titleMusicName : TITLE_MUSIC_DEFAULT;
-    };
+    // The dial's pick, never written to the config: the next arrival at the
+    // title is back on the Ninth.
+    let titleMusicPick = TITLE_MUSIC_DEFAULT;
 
     function titleMusicIndex() {
-        const i = TITLE_MUSIC.findIndex(t => t.value === ConfigManager.titleMusicName);
+        const i = TITLE_MUSIC.findIndex(t => t.value === titleMusicPick);
         if (i >= 0) return i;
         const fallback = TITLE_MUSIC.findIndex(t => t.value === TITLE_MUSIC_DEFAULT);
         return fallback < 0 ? 0 : fallback;
@@ -2200,25 +2184,28 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         return overlay ? raw.toUpperCase() : raw;
     }
 
-    // The title BGM is whichever of the three is currently picked, so the choice
-    // is heard the moment it is made and again on every return to the title.
-    // A pick made on the dial plays from the top; only arriving at the title
-    // drops in on one of the piece's cues.
-    Scene_Title.prototype.playTitleBgm = function (fromTop) {
+    // The title BGM is whichever piece is currently picked, so the choice is
+    // heard the moment it is made. Every start, on arrival or off the dial,
+    // drops in on one of the piece's cues drawn afresh. `arriving` puts the
+    // dial back on the Ninth first.
+    Scene_Title.prototype.playTitleBgm = function (arriving) {
+        if (arriving && titleMusicPick !== TITLE_MUSIC_DEFAULT) {
+            titleMusicPick = TITLE_MUSIC_DEFAULT;
+            if (this.refreshMusicSwitchLabel) this.refreshMusicSwitchLabel();
+        }
         const name = titleMusicValue();
         AudioManager.playBgm({
             name,
             volume: 55, pitch: 100, pan: 0
-        }, fromTop ? 0 : titleMusicStart(name));
+        }, titleMusicStart(name));
         AudioManager.stopBgs();
         AudioManager.stopMe();
     };
 
     Scene_Title.prototype.commandTitleMusic = function () {
         const next = (titleMusicIndex() + 1) % TITLE_MUSIC.length;
-        ConfigManager.titleMusicName = TITLE_MUSIC[next].value;
-        ConfigManager.save();
-        this.playTitleBgm(true);
+        titleMusicPick = TITLE_MUSIC[next].value;
+        this.playTitleBgm();
         if (this._commandWindow) {
             const index = this._commandWindow.index();
             this._commandWindow.refresh();
@@ -5869,6 +5856,17 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         }
     }
 
+    // Runs fn under the camera's guards without standing in for a scene.
+    function erisSilently(fn) {
+        const was = ErisCam.ticking;
+        ErisCam.ticking = true;
+        try {
+            return fn();
+        } finally {
+            ErisCam.ticking = was;
+        }
+    }
+
     // Runs fn as the camera's map scene (see the header above).
     function asErisCamera(scene, fn) {
         const prev = SceneManager._scene;
@@ -6063,12 +6061,14 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                     DataManager.createGameObjects();
                     DataManager.extractSaveContents(contents);
                     DataManager.correctDataErrors();
-                    $gameSystem.onAfterLoad();
+                    // onAfterLoad replays the BGM the save was made on: the
+                    // title keeps its own music.
+                    erisSilently(() => $gameSystem.onAfterLoad());
                     return true;
                 })
                 : Promise.resolve().then(() => {
                     if (this._released) return false;
-                    setupSandboxGame();
+                    erisSilently(setupSandboxGame);
                     this._ownsGame = true;
                     this.persist();
                     return true;
@@ -6614,9 +6614,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     Scene_Title.prototype.cycleTitleMusic = function (dir) {
         const n = TITLE_MUSIC.length;
         const next = ((titleMusicIndex() + (dir || 1)) % n + n) % n;
-        ConfigManager.titleMusicName = TITLE_MUSIC[next].value;
-        ConfigManager.save();
-        this.playTitleBgm(true);
+        titleMusicPick = TITLE_MUSIC[next].value;
+        this.playTitleBgm();
         this.refreshMusicSwitchLabel();
         this.layoutMusicSwitchButton();
         this.layoutDisclaimerBox();
@@ -8445,12 +8444,12 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         return cache;
     }
 
-    // The title opens on whatever the music switcher is set to, so the piece
-    // heard on arrival is the one the player picked and not a fresh draw.
+    // Arriving at the title always plays the Ninth, whatever the dial was last
+    // set to; a piece already playing (back from Preferences) carries on.
     const _Scene_Title_playTitleMusic = Scene_Title.prototype.playTitleMusic;
     Scene_Title.prototype.playTitleMusic = function () {
         if (this.playTitleBgm) {
-            this.playTitleBgm();
+            this.playTitleBgm(true);
             return;
         }
         _Scene_Title_playTitleMusic.call(this);

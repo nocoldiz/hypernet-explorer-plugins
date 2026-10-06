@@ -2519,8 +2519,12 @@
         const out = [];
         // A message box is modal: while one is up, only its own controls
         // can take the focus ring.
+        // A power or welcome screen (XP.overlay) covers the desktop the same
+        // way, so the ring walks its buttons and nothing behind it.
         const D = window.HypernetOS.Dialog;
-        const scope = (D && D.isOpen()) ? D.top().shade : this._container;
+        const xpOverlay = document.getElementById('hypernet-xp-overlay');
+        const scope = (D && D.isOpen()) ? D.top().shade
+            : (xpOverlay && xpOverlay.dataset.kind !== 'standby' ? xpOverlay : this._container);
         scope.querySelectorAll(selector).forEach(el => {
             if (seen.has(el)) return;
             seen.add(el);
@@ -2543,8 +2547,24 @@
         return out;
     };
 
+    // What covers the desktop right now, if anything: the top message box, or
+    // a power / welcome screen. The ring is held inside it (_getFocusables).
+    Scene_HypernetOS.prototype._focusCover = function() {
+        const D = window.HypernetOS.Dialog;
+        if (D && D.isOpen()) return D.top().shade;
+        const ov = document.getElementById('hypernet-xp-overlay');
+        return (ov && ov.dataset.kind !== 'standby') ? ov : null;
+    };
+
     Scene_HypernetOS.prototype._setFocus = function(el, silent) {
         if (!el) return;
+        // Stepping from the desktop into a box: the control the ring leaves
+        // behind is remembered, so it gets the ring back once the box is gone.
+        const cover = this._focusCover();
+        if (cover && cover.contains(el) && this._focusEl && this._focusEl.isConnected &&
+            !cover.contains(this._focusEl)) {
+            this._preModalFocus = this._focusEl;
+        }
         this._navMode = 'focus';
         this._focusEl = el;
         // Remember a stable key so the ring can re-acquire this control if the
@@ -2558,6 +2578,12 @@
         }
         this._dispatchMouse(el, 'mouseover');
         this._lastHoverEl = el;
+        // A message box answers Enter with the button holding the DOM focus
+        // (Dialog.handleKey), so the ring hands it over: arrowing onto No
+        // and pressing Enter must answer No, not the default Yes.
+        if (el.classList && el.classList.contains('hypernet-dialog-btn') && typeof el.focus === 'function') {
+            el.focus({ preventScroll: true });
+        }
         if (typeof el.scrollIntoView === 'function') {
             el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
         }
@@ -2569,9 +2595,13 @@
         const list = this._getFocusables();
         if (list.length === 0) return;
 
-        // First nav input (or focus lost) just reveals the nearest element.
+        // First nav input (or focus lost) just reveals the nearest element,
+        // or, when a box that took the ring has closed, the control the ring
+        // was on before it opened.
         if (!this._focusEl || !this._focusEl.isConnected || list.indexOf(this._focusEl) === -1) {
-            this._setFocus(list[0]);
+            const back = this._preModalFocus;
+            this._preModalFocus = null;
+            this._setFocus(back && back.isConnected && list.indexOf(back) >= 0 ? back : list[0]);
             return;
         }
 
@@ -2609,8 +2639,48 @@
     Scene_HypernetOS.prototype._activateFocus = function() {
         const el = this._focusEl;
         if (!el || !el.isConnected) return;
+        // A box or a power screen came up over the control the ring was on:
+        // the press lands on the modal's first control rather than clicking
+        // through to the desktop behind it.
+        const D = window.HypernetOS.Dialog;
+        const cover = (D && D.isOpen()) ? D.top().shade : document.getElementById('hypernet-xp-overlay');
+        if (cover && !cover.contains(el)) {
+            const reachable = this._getFocusables();
+            if (reachable.length) this._setFocus(reachable[0]);
+            return;
+        }
         const tag = el.tagName;
         if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
+            // A pad cannot type into a field, and B on a focused one closes the
+            // window under it: the game's letter sheet stands in for the keys
+            // (Controller.textEntry), and what it hands back is written into
+            // the field the way typing would, Enter included on a one-line one.
+            const type = String(el.getAttribute('type') || 'text').toLowerCase();
+            const wantsLetters = tag === 'TEXTAREA' ||
+                (tag === 'INPUT' && ['text', 'search', 'url', 'email', 'tel', 'password', 'number'].indexOf(type) >= 0);
+            const C = window.Controller;
+            if (wantsLetters && !el.readOnly && C && C.usingPad && C.usingPad() && typeof C.textEntry === 'function') {
+                const win = el.closest ? el.closest('.hypernet-os-window') : null;
+                C.textEntry({
+                    title: el.getAttribute('placeholder') || (win && win.dataset.title) || '',
+                    value: el.value || '',
+                    max: Number(el.getAttribute('maxlength')) > 0 ? Number(el.getAttribute('maxlength')) : (tag === 'TEXTAREA' ? 4000 : 200),
+                    multiline: tag === 'TEXTAREA',
+                    onCommit: (value) => {
+                        if (!el.isConnected) return;
+                        el.value = value;
+                        el.dispatchEvent(new Event('input', { bubbles: true }));
+                        el.dispatchEvent(new Event('change', { bubbles: true }));
+                        if (tag === 'INPUT') {
+                            el.focus();
+                            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+                            // The caret is not left in a field the pad cannot use.
+                            if (document.activeElement === el) el.blur();
+                        }
+                    }
+                });
+                return;
+            }
             // Drop into the field so the player can type / pick.
             el.focus();
             return;
@@ -2724,12 +2794,39 @@
         // stray right click all dismiss it first.
         const CM = window.HypernetOS.ContextMenu;
         if (CM && CM.isOpen()) { CM.hide(); return; }
+        // The screensaver, a power screen and the Start menu all sit over the
+        // windows: B takes them back first, the way the right click and the
+        // keyboard do, rather than closing whatever is underneath.
+        const XP = window.HypernetOS.XP;
+        if (XP && XP.Saver && XP.Saver.active) { XP.Saver.stop(); return; }
+        const overlay = document.getElementById('hypernet-xp-overlay');
+        if (XP && overlay) {
+            const kind = overlay.dataset.kind;
+            if (kind === 'standby') XP.resume();
+            else if (kind === 'turnoff' || kind === 'logoff') {
+                if (window.SoundManager) SoundManager.playCancel();
+                XP.clearOverlay();
+            }
+            return;
+        }
+        const startMenu = document.getElementById('hypernet-start-menu');
+        if (startMenu && startMenu.classList.contains('open')) {
+            startMenu.classList.remove('open');
+            const startBtn = document.getElementById('hypernet-start-btn');
+            if (startBtn) startBtn.classList.remove('active');
+            if (window.SoundManager) SoundManager.playCancel();
+            return;
+        }
         const active = document.querySelector('.hypernet-os-window.active:not(.minimized)');
         const win = active || window.HypernetOS.WindowManager.windows
             .filter(w => w.isConnected && !w.classList.contains('minimized'))
             .sort((a, b) => (parseInt(a.style.zIndex, 10) || 0) - (parseInt(b.style.zIndex, 10) || 0))
             .pop();
 
+        // A window may have something of its own to take back first (the
+        // browser's menus, its modal, a page still loading): it says so by
+        // answering true from win._onCancel.
+        if (win && typeof win._onCancel === 'function' && win._onCancel()) return;
         if (win) {
             if (window.SoundManager) SoundManager.playCancel();
             window.HypernetOS.WindowManager.closeWindow(win);
@@ -2782,10 +2879,27 @@
             }
             if ((a || b) && !this._gamepadBHeld) {
                 this._gamepadBHeld = true;
+                // The same A must not ALSO reach the focus ring or the analog
+                // cursor this frame (both run after this): it would click the
+                // control that opened the box and open it again.
+                if (a) this._cursorAHeld = true;
                 const d = dialog.top();
-                const pick = b ? (d.buttons.find(x => x.cancel) || d.buttons[d.buttons.length - 1])
-                               : (d.buttons.find(x => x.default) || d.buttons[0]);
-                d.finish(pick.id);
+                let pickId = null;
+                if (a) {
+                    // A answers the button the player is on: the ring's, or the
+                    // one under the analog cursor. Only with neither is it the
+                    // default, so a middle button (Don't Save) is reachable.
+                    const on = this._navMode === 'focus' ? this._focusEl
+                        : document.elementFromPoint(this._cursorX, this._cursorY);
+                    const btn = on && on.closest ? on.closest('.hypernet-dialog-btn') : null;
+                    if (btn && d.shade.contains(btn) && btn.dataset.id) pickId = btn.dataset.id;
+                }
+                if (!pickId) {
+                    const pick = b ? (d.buttons.find(x => x.cancel) || d.buttons[d.buttons.length - 1])
+                                   : (d.buttons.find(x => x.default) || d.buttons[0]);
+                    pickId = pick.id;
+                }
+                d.finish(pickId);
             } else if (!a && !b) {
                 this._gamepadBHeld = false;
             }
@@ -2867,9 +2981,18 @@
 
     Scene_HypernetOS.prototype.update = function() {
         Scene_MenuBase.prototype.update.call(this);
-        this.updateGamepadClose();
-        this.updateGamepadNav();
-        this.updateAnalogCursor();
+        // The letter sheet (Controller.textEntry) has the pad while it is up.
+        // The desktop reads the pad's buttons raw, so it stands down by hand,
+        // and keeps every button counted as held: the A or B that spends the
+        // sheet must not also click the ring or close a window on its way up.
+        if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) {
+            this._gamepadBHeld = true;
+            this._cursorAHeld = true;
+        } else {
+            this.updateGamepadClose();
+            this.updateGamepadNav();
+            this.updateAnalogCursor();
+        }
         this._updateFocusHighlight();
         if (window.HypernetOS.Kernel) window.HypernetOS.Kernel.tick();
         // The world goes on while the machine is on: a game minute a second.
@@ -4861,8 +4984,9 @@
                 d.finish(def.id);
                 return true;
             }
-            // Every other key stays inside the box.
-            return !['Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(key)
+            // Every other key stays inside the box. WASD are the arrows here
+            // as everywhere, so they reach the focus ring too.
+            return !['Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D'].includes(key)
                 && !(document.activeElement && ['INPUT', 'SELECT'].includes(document.activeElement.tagName));
         },
 
@@ -5029,9 +5153,13 @@
                         <span class="xp-fb-item-icon">${OS.getIconHTML(it.type === 'directory' ? 191 : 190, 16)}</span>
                         <span class="xp-fb-item-name">${esc(it.name)}</span>
                     </div>`).join('') : `<div class="xp-fb-empty">${esc(FB('emptyFolder'))}</div>`;
+                // A click selects. The focus ring and a pad only ever click (a
+                // synthesised click, detail 0), so for them a click on the row
+                // already selected opens it; the mouse keeps its double click.
                 list.querySelectorAll('.xp-fb-item').forEach(row => {
                     row.addEventListener('click', e => {
                         e.stopPropagation();
+                        if (e.detail === 0 && row.classList.contains('selected')) { enter(row); return; }
                         list.querySelectorAll('.xp-fb-item').forEach(o => o.classList.toggle('selected', o === row));
                         if (!row.dataset.dir) nameInput.value = row.dataset.name;
                     });
@@ -5559,7 +5687,26 @@
             if (this.Saver.active) { this.Saver.stop(); event.preventDefault(); return true; }
             const overlay = document.getElementById('hypernet-xp-overlay');
             if (overlay && overlay.dataset.kind === 'standby') { this.resume(); event.preventDefault(); return true; }
-            if (overlay) { event.preventDefault(); return true; }
+            if (overlay) {
+                const kind = overlay.dataset.kind;
+                // Escape is the Cancel button of the Turn Off and Log Off boxes.
+                if (event.key === 'Escape') {
+                    if (kind === 'turnoff' || kind === 'logoff') this.clearOverlay();
+                    event.preventDefault();
+                    return true;
+                }
+                // The arrows, WASD, Tab, Enter and Space walk and press the
+                // screen's own buttons through the desktop's focus ring, which
+                // _getFocusables scopes to the overlay. Only the black shutdown
+                // screen has nothing to press.
+                const NAV = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter', ' ',
+                    'w', 'a', 's', 'd', 'W', 'A', 'S', 'D'];
+                if (kind !== 'shutdown' && NAV.indexOf(event.key) >= 0 && !event.altKey && !event.ctrlKey && !event.metaKey) {
+                    return false;
+                }
+                event.preventDefault();
+                return true;
+            }
 
             const k = event.key;
             const meta = event.metaKey;
@@ -7373,6 +7520,13 @@
                     row.className = 'xp-regedit-row focusable';
                     row.tabIndex = 0;
                     row.innerHTML = `<span>${esc(e.node.name)}</span><span>${esc(e.path.slice(0, e.path.lastIndexOf('/')).replace(/\//g, '\\'))}</span><span>${String(e.node.content || '').length}</span>`;
+                    // Select on a click; the mouse opens with a double click,
+                    // the ring and a pad (synthesised clicks) with a second
+                    // click on the row already selected.
+                    on(row, 'click', ev => {
+                        if (ev && ev.detail === 0 && row.classList.contains('selected')) { window.HypernetOS.openFile(e.path); return; }
+                        results.querySelectorAll('.xp-regedit-row').forEach(r => r.classList.toggle('selected', r === row));
+                    });
                     on(row, 'dblclick', () => window.HypernetOS.openFile(e.path));
                     results.appendChild(row);
                 }
@@ -7646,10 +7800,20 @@
                     </div>
                 </div>`;
             root.querySelectorAll('[data-log]').forEach(el => on(el, 'click', () => { log = el.dataset.log; render(); }));
-            root.querySelectorAll('.xp-regedit-row[data-i]').forEach(row => on(row, 'dblclick', () => {
+            // Select on a click; the mouse opens the properties with a double
+            // click, the ring and a pad (synthesised clicks) with a second
+            // click on the row already selected.
+            const evProps = row => {
                 const r = rows[parseInt(row.dataset.i, 10)];
                 window.HypernetOS.Dialog.alert(T_('detail', { level: T_('level.' + r.level), date: r.game, source: r.source, text: r.text }), T_('eventProps'));
-            }));
+            };
+            root.querySelectorAll('.xp-regedit-row[data-i]').forEach(row => {
+                on(row, 'click', ev => {
+                    if (ev && ev.detail === 0 && row.classList.contains('selected')) { evProps(row); return; }
+                    root.querySelectorAll('.xp-regedit-row[data-i]').forEach(o => o.classList.toggle('selected', o === row));
+                });
+                on(row, 'dblclick', () => evProps(row));
+            });
             on(q(root, '#ev-clear'), 'click', () => window.HypernetOS.Dialog.confirm(T_('clearConfirm'), T_('appName'), 'warning').then(ok => { if (ok) { window.HypernetOS.EventLog.clear(log); render(); } }));
             on(q(root, '#ev-save'), 'click', () => {
                 const fs = window.HypernetFileSystem;

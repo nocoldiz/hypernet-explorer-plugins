@@ -23,11 +23,12 @@
   "use strict";
 
   const {
-    _personalityNameOf, _personalityOf, _pickFrom, ADDICTION_THOUGHTS, applyVoice,
+    _personalityNameOf, _personalityOf, _pickFrom, ACTIVITY_THOUGHTS, ADDICTION_THOUGHTS, applyVoice,
     CAPABILITY_THOUGHTS, CRAVING_THOUGHTS, CRAVING_WITHDRAWAL_THOUGHTS, CREED_ASIDE_CHANCE,
     CreedVoice, CRIME_CAUGHT_THOUGHTS, CRIME_INTENT_THOUGHTS, CRIME_SUCCESS_THOUGHTS, ElectionClock,
     FAMILIAR_THOUGHTS, isTacticalFight, ITEM_BROWSE_THOUGHTS, ITEM_BUY_THOUGHTS,
-    ITEM_DISPOSITION_THOUGHTS, LifeTalk, NEED_THOUGHTS, PERSONALITY_CORE_THOUGHTS, PoliticsProvider, SpeciesVoice,
+    ITEM_DISPOSITION_THOUGHTS, LifeTalk, NEED_DIRE_THOUGHTS, NEED_MILD_THOUGHTS, NEED_THOUGHTS,
+    PERSONALITY_CORE_THOUGHTS, PERSONALITY_THOUGHT_BANK, PoliticsProvider, SpeciesVoice,
     SEASON_THOUGHTS, SPEC_TALK, TIME_THOUGHTS, vary, WATER_THOUGHTS, WEALTH_THOUGHTS, WEATHER_THOUGHTS,
     WorldProvider,
   } = window.NPCConversation._internal;
@@ -204,6 +205,100 @@
     },
   };
 
+  // What a need thought is about, and how loud it is.
+  //   state     what the simulation says they are doing (profile.currentNeed),
+  //             overruled by what is happening to them this minute
+  //             (NPCSim RoutineManager.liveActivity: downed, fleeing, fighting,
+  //             swimming, fishing, recovering), a WC trip told from a wash
+  //             (profile.washFor), and a child's hours read as a child's
+  //             (school, play, a day at home, bedtime).
+  //   pools     ConvThoughts.need.<state> for a need, ConvThoughts.activity
+  //             .<state> for something they are doing that is not a need,
+  //             need.null for anything else (a creature's hours: a beast's
+  //             bubble is a growl anyway, see ThoughtBubbleManager._showNow).
+  //   severity  the raw meter (0 empty, 100 full): under DIRE_BELOW the
+  //             needDire pool speaks, from MILD_FROM up the needMild pool
+  //             shares the hour with the middle one, which is the need pool.
+  //   voice     now and then (PERSONALITY_NEED_CHANCE) the personality's own
+  //             words for that need, PersonalityThoughts.<name>.need.<state>,
+  //             as PersonalityData.json needThoughts names them.
+  const NEED_ALIASES = Object.freeze({ food: 'hunger', heal: 'recovering' }); // i18n-ignore: need ids
+  const CHILD_STATES = Object.freeze({ leisure: 'play', home: 'childHome', sleep: 'childBedtime' }); // i18n-ignore: activity ids
+  const NEED_METERS = Object.freeze(['sleep', 'hunger', 'hygiene', 'social', 'leisure', 'bladder']); // i18n-ignore: meter ids
+  const NEED_SEVERITY = Object.freeze({ DIRE_BELOW: 15, MILD_FROM: 30, MILD_SHARE: 0.5 });
+  const PERSONALITY_NEED_CHANCE = 0.35;
+
+  const NeedThoughts = {
+    state(profile) {
+      if (!profile) return null;
+      let live = null;
+      try { live = window.NPCSim?._internal?.RoutineManager?.liveActivity?.(profile) || null; } catch (_) { live = null; }
+      if (live) return live;
+      let s = profile.currentNeed ?? null;
+      if (s == null) return null;
+      s = NEED_ALIASES[s] || s;
+      if (s === 'hygiene' && profile.washFor === 'bladder') return 'bladder'; // i18n-ignore: activity id
+      if (LifeTalk.isChild(profile) && CHILD_STATES[s]) return CHILD_STATES[s];
+      return s;
+    },
+
+    // 'dire', 'mild', or null for the middle (or no meter to read).
+    severity(profile, state) {
+      if (!profile || !NEED_METERS.includes(state) || profile[state] == null) return null;
+      const v = Number(profile[state]);
+      if (!Number.isFinite(v)) return null;
+      if (v < NEED_SEVERITY.DIRE_BELOW) return 'dire'; // i18n-ignore: severity tier id
+      if (v >= NEED_SEVERITY.MILD_FROM) return 'mild'; // i18n-ignore: severity tier id
+      return null;
+    },
+
+    // The middle pool for a state: the need's own, or the activity's.
+    pool(state) {
+      if (state == null) return null;
+      const need = NEED_THOUGHTS()?.[state];
+      if (Array.isArray(need) && need.length) return need;
+      const act = ACTIVITY_THOUGHTS()?.[state];
+      return Array.isArray(act) && act.length ? act : null;
+    },
+
+    // The personality's own line for this need, or null. A child has no
+    // grown-up's worries to voice, so it never reaches for these.
+    personalityPool(profile, state) {
+      if (!profile || LifeTalk.isChild(profile)) return null;
+      const pers = _personalityOf(profile);
+      if (!pers || !state) return null;
+      const root = PERSONALITY_THOUGHT_BANK() || {};
+      const ref = pers.needThoughts?.[state];
+      let pool = null;
+      if (Array.isArray(ref)) pool = ref;
+      else if (typeof ref === 'string') {
+        pool = ref.split('.').slice(1).reduce((n, k) => (n && typeof n === 'object' ? n[k] : undefined), root);
+      }
+      if (!Array.isArray(pool)) pool = root[String(pers.name || '').toLowerCase()]?.need?.[state];
+      return Array.isArray(pool) && pool.length ? pool : null;
+    },
+
+    pick(profile) {
+      const persName = _personalityNameOf(profile);
+      const state = this.state(profile);
+      const tier = this.severity(profile, state);
+      if (tier === 'dire') { // i18n-ignore: severity tier id
+        const dire = NEED_DIRE_THOUGHTS()?.[state];
+        if (Array.isArray(dire) && dire.length) return applyVoice(_pickFrom(dire), persName);
+      }
+      if (Math.random() < PERSONALITY_NEED_CHANCE) {
+        const own = this.personalityPool(profile, state ?? 'idle'); // i18n-ignore: PersonalityThoughts key
+        if (own) return vary(_pickFrom(own), persName);
+      }
+      if (tier === 'mild' && Math.random() < NEED_SEVERITY.MILD_SHARE) { // i18n-ignore: severity tier id
+        const mild = NEED_MILD_THOUGHTS()?.[state];
+        if (Array.isArray(mild) && mild.length) return applyVoice(_pickFrom(mild), persName);
+      }
+      const pool = this.pool(state) || NEED_THOUGHTS()[null];
+      return applyVoice(_pickFrom(pool), persName);
+    },
+  };
+
   const ThoughtProvider = {
     get personalityCoreThoughts() { return PERSONALITY_CORE_THOUGHTS(); },
 
@@ -258,6 +353,8 @@
       }
       const r = Math.random();
       if ((profile.playerOpinion ?? 0) >= 20 && r < 0.12) {
+        const own = Math.random() < PERSONALITY_NEED_CHANCE ? NeedThoughts.personalityPool(profile, 'familiar') : null; // i18n-ignore: PersonalityThoughts key
+        if (own) return vary(_pickFrom(own), _personalityNameOf(profile));
         return applyVoice(_pickFrom(FAMILIAR_THOUGHTS()), _personalityNameOf(profile));
       }
       if (r < 0.28) {
@@ -272,8 +369,7 @@
     },
 
     pickNeedThought(profile) {
-      const pool = NEED_THOUGHTS()[profile?.currentNeed ?? null] || NEED_THOUGHTS()[null];
-      return applyVoice(_pickFrom(pool), _personalityNameOf(profile));
+      return NeedThoughts.pick(profile);
     },
 
     // Tier 0-1 counts every coin, 2-3 has something put by, 4 and up has
@@ -1227,7 +1323,8 @@
   };
 
   Object.assign(window.NPCConversation._internal, {
-    AddictionThoughts, BubbleLayout, CareThoughts, CravingProvider, SituationalThoughts, SpeciesThoughts, SpecTalk,
+    AddictionThoughts, BubbleLayout, CareThoughts, CravingProvider, NEED_SEVERITY, NeedThoughts,
+    PERSONALITY_NEED_CHANCE, SituationalThoughts, SpeciesThoughts, SpecTalk,
     ThoughtBubbleManager, ThoughtProvider,
   });
 })();

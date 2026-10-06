@@ -335,10 +335,7 @@
 
 .cc-folder-tab:hover,
 .cc-step-tab:hover {
-    background: linear-gradient(180deg, var(--bg-primary-hover-translucent-35), var(--bg-panel));
     color: var(--text-primary-hover);
-    border-color: var(--text-primary-hover);
-    transform: translateY(-2px);
 }
 
 
@@ -407,7 +404,6 @@
 .cc-folder-tab.cc-pet-tab.active,
 .cc-step-tab.cc-pet-tab.active {
     border-color: var(--text-forest-complete);
-    box-shadow: 0 -2px 10px var(--border-success-medium-35);
 }
 
 .cc-tab-remove-x {
@@ -877,26 +873,19 @@
 .cc-compact-btn.primary.selected,
 .cc-sidebar-btn.primary:hover,
 .cc-sidebar-btn.primary.selected {
-    background: var(--text-primary-hover);
-    color: var(--bg-secondary-hover);
-    box-shadow: 0 4px 10px var(--shadow-gold-amber-50);
-    transform: translateY(-1px);
+    background: var(--chip-active-bg);
+    color: var(--chip-active-fg);
+    box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
 }
 
 .cc-step-tab:hover {
-    background: var(--bg-primary-hover-translucent-35);
-    border-color: var(--text-primary-hover);
     color: var(--text-primary-hover);
-    transform: translateX(3px);
 }
 
 .cc-step-tab.active {
-    background: linear-gradient(90deg, var(--bg-tertiary-focus-translucent-45), var(--bg-panel));
     border-color: var(--text-primary-hover);
     color: var(--text-primary-hover);
     font-weight: bold;
-    box-shadow: inset 3px 0 0 var(--text-primary-hover), 0 2px 10px var(--shadow-black-translucent-45);
-    transform: translateX(4px);
 }
 
 .cc-step-tab.disabled {
@@ -1215,6 +1204,7 @@
 .cc-header-gothic {
     font-family: var(--font-ui);
     font-size: var(--fs-title);
+    font-weight: bold;
     color: var(--text-primary-hover);
     text-align: center;
     margin: 0 0 16px 0;
@@ -3776,60 +3766,27 @@
     font-size: var(--fs-title);
     padding: 11px 30px;
     text-align: center;
-    /* Unselected: black background with gold text and no gold border; the
-       selected/confirm/highlighted variants below add the gold border (#51).
-       The ink is the pure gold rather than the theme's primary hover colour:
-       that colour is a near-black red in the archive theme, which left Back
-       unreadable on its own black plate. */
-    background: var(--text-pure-black);
-    border: 2px solid transparent;
+    /* The inventory's button (.inspect-btn), at the wizard's size. Confirm
+       says what it means in its label, not in a second plate. */
+    background: var(--bg-secondary-hover);
+    border: 2px solid var(--text-primary-hover);
     border-radius: 4px;
-    color: var(--accent-gold-pure);
+    color: var(--text-primary-hover);
+    font-weight: bold;
     cursor: pointer;
     transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
-    box-shadow: 0 4px 10px var(--shadow-primary-hover-translucent-5);
+    box-shadow: 0 3px 6px var(--shadow-primary-hover-translucent-5);
     position: relative;
     outline: none;
 }
 
-/* Hover and cursor states darken the plate instead of flipping it white: the
-   white plate kept the gold ink, which is all but invisible on it. The solid
-   gold plate stays reserved for .confirm, so the two remain telling apart. */
-.cc-btn-treaty:hover {
-    transform: translateY(-2px);
-    background: var(--bg-bg-alt-15-hover);
-    border-color: var(--accent-gold-pure);
-    color: var(--accent-gold-pure);
-    box-shadow: 0 8px 16px var(--border-primary-hover-translucent-15);
-}
-
-.cc-btn-treaty.confirm {
-    background: var(--text-primary-hover);
-    border-color: var(--accent-gold-pure);
-    color: var(--text-pure-black);
-    font-weight: bold;
-}
-
-.cc-btn-treaty.confirm:hover {
-    background: var(--accent-gold-pure);
-    border-color: var(--accent-gold-pure);
-    color: var(--text-pure-black);
-    box-shadow: 0 8px 16px var(--shadow-gold-amber-50);
-}
-
-.cc-btn-treaty.highlighted {
-    transform: translateY(-2px) scale(1.05);
-    background: var(--bg-bg-alt-15-hover);
-    border-color: var(--accent-gold-pure);
-    color: var(--accent-gold-pure);
-    box-shadow: 0 8px 16px var(--border-primary-hover-translucent-15);
-}
-
-.cc-btn-treaty.confirm.highlighted {
-    background: var(--accent-gold-pure);
-    border-color: var(--accent-amber-glow);
-    color: var(--text-pure-black);
-    box-shadow: 0 8px 16px var(--shadow-gold-amber-50);
+.cc-btn-treaty:hover,
+.cc-btn-treaty.selected,
+.cc-btn-treaty.highlighted,
+.cc-btn-treaty:focus-visible {
+    background: var(--chip-active-bg);
+    color: var(--chip-active-fg);
+    box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
 }
 
 /* A control that is on screen but has nothing to act on yet (Continue before
@@ -3840,8 +3797,9 @@
 }
 
 .cc-btn-treaty.disabled:hover {
-    transform: none;
-    box-shadow: 0 4px 10px var(--shadow-primary-hover-translucent-5);
+    background: var(--bg-secondary-hover);
+    color: var(--text-primary-hover);
+    box-shadow: 0 3px 6px var(--shadow-primary-hover-translucent-5);
 }
 
 /* ==========================================================================
@@ -5634,12 +5592,10 @@
 }
 
 .cc-pet-tab {
-    background: var(--bg-success-medium-8) !important;
     border-color: var(--border-forest-green) !important;
 }
 
 .cc-pet-tab.active {
-    background: var(--bg-success-green-15) !important;
     border-color: var(--text-forest-complete) !important;
 }
 
@@ -6145,28 +6101,23 @@
     font-family: var(--font-ui);
     font-size: var(--fs-caption);
     font-weight: bold;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
+    letter-spacing: normal;
+    text-transform: none;
     color: var(--text-text-alt-4);
     background: transparent;
     border: 1px solid transparent;
-    border-radius: 3px;
+    border-radius: 2px;
     padding: 2px 6px;
     cursor: pointer;
     transition: 0.18s ease;
 }
 
-.right-tools-tab:hover,
-/* The pad cursor walks the tabs like any other tile, and wears the same ring. */
-.right-tools-tab.selected {
-    color: var(--text-primary-hover);
-    border: 1px solid var(--border-focus-hover);
-}
-
+/* The pad cursor walks the tabs like any other tile, and wears the tab frame. */
+.right-tools-tab.selected,
 .right-tools-tab.active {
-    color: var(--text-success-active);
-    border: 1px solid var(--border-focus-hover);
-    background: var(--bg-subtle-translucent-5);
+    color: var(--text-primary-hover);
+    border: 1px solid var(--text-primary-hover);
+    background: transparent;
 }
 
 .right-tools-empty {
@@ -9552,9 +9503,8 @@
 .back-button:focus-visible {
     background: var(--chip-active-bg);
     color: var(--chip-active-fg);
-    border-color: var(--chip-active-fg);
     transform: translateY(-50%);
-    box-shadow: 0 4px 8px var(--shadow-gold-amber-50);
+    box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
 }
 
 .back-button:active {
@@ -10611,10 +10561,7 @@
 }
 
 .roster-tab.active {
-    color: var(--text-secondary-active);
-    border-bottom-color: var(--border-focus-hover);
-    font-weight: bold;
-    border-bottom: 2px solid var(--text-secondary-active);
+    border-color: var(--text-primary-hover);
 }
 
 .stock-legend {
@@ -10880,7 +10827,7 @@
 }
 
 .status-gauge-bar-inner.bladder {
-    background: linear-gradient(90deg, #a8861c, #c9a227);
+    background: linear-gradient(90deg, var(--border-gold-amber), var(--accent-gold-pure));
 }
 
 .stats-medallions-grid {
@@ -12603,10 +12550,7 @@
 }
 
 .category-tab-top.selected {
-    background: var(--border-primary-hover-translucent-15);
-    border-bottom: 2px solid var(--text-primary-hover);
-    font-weight: bold;
-    color: var(--text-muted-hover);
+    border-color: var(--text-primary-hover);
 }
 
 .card {
@@ -12879,6 +12823,7 @@
 
 .inspect-btn:hover,
 .inspect-btn.selected,
+.inspect-btn.focused,
 .inspect-btn:focus-visible,
 .cc-profile-open-btn:hover,
 .cc-profile-open-btn.selected,
@@ -13532,7 +13477,6 @@
 #equip-container .back-button:focus-visible {
     background: var(--chip-active-bg);
     color: var(--chip-active-fg);
-    border-color: var(--chip-active-fg);
     box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
 }
 
@@ -14638,10 +14582,9 @@
 #equip-container .equip-action-btn:hover,
 #equip-container .equip-action-btn.focused,
 #equip-container .equip-action-btn:focus-visible {
-    background: var(--chip-active-bg, var(--text-primary-hover));
-    color: var(--chip-active-fg, #fff);
-    border-color: var(--chip-active-fg, var(--text-primary-hover));
-    box-shadow: 0 4px 8px var(--shadow-gold-amber-50, rgba(0,0,0,0.25));
+    background: var(--chip-active-bg);
+    color: var(--chip-active-fg);
+    box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
 }
 
 /* Equip and Unequip are the one button; what they mean is said in their ink,
@@ -14693,7 +14636,7 @@
 #equip-container .equip-type-tab:hover,
 #equip-container .equip-type-tab.focused {
     background: transparent;
-    color: var(--text-card-dark);
+    color: var(--text-primary-hover);
     border-color: var(--text-primary-hover);
     box-shadow: none;
 }
@@ -15565,9 +15508,7 @@
 }
 
 .shop-tab.active {
-    color: var(--text-secondary-active);
-    font-weight: bold;
-    border-bottom: 2px solid var(--text-secondary-active);
+    border-color: var(--text-primary-hover);
 }
 
 /* "TAB" / "L1 R1" chip in front of the two tabs: names the only button that
@@ -15860,6 +15801,119 @@
     white-space: nowrap;
 }
 
+/* The view switch at the end of the tab row: two words, the one the shelf is
+   drawn in set as an active chip. One press anywhere on it flips the view. */
+.shop-view-toggle {
+    margin-left: auto;
+    align-self: center;
+    display: flex;
+    gap: 2px;
+    cursor: pointer;
+    user-select: none;
+    font-family: var(--font-ui);
+    font-size: 0.842em;
+    white-space: nowrap;
+}
+
+.shop-view-opt {
+    padding: 3px 8px;
+    border-radius: 3px;
+    color: var(--text-inverse);
+    opacity: 0.7;
+}
+
+.shop-view-toggle:hover .shop-view-opt {
+    opacity: 1;
+}
+
+.shop-view-opt.active {
+    background: var(--chip-active-bg);
+    color: var(--chip-active-fg);
+    opacity: 1;
+}
+
+.shop-view-toggle.focused {
+    outline: 2px solid var(--text-secondary-active);
+    outline-offset: 2px;
+}
+
+/* Grid view: each category's lines as cards under its header, laid out like
+   the equipment bench's own grid. The cards are still .item-card, so the
+   cursor and the counter mark read the same in both views. */
+#shop-container .shop-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+}
+
+#shop-container .item-card.shop-grid-card {
+    justify-content: flex-start;
+    gap: 8px;
+    min-height: 76px;
+    margin: 0;
+    padding: 6px 9px 6px 0;
+    border: 1px solid var(--border-secondary-hover-translucent-15);
+    border-radius: 4px;
+    position: relative;
+    transition: 0.15s ease; transition-property: border-color, transform, color;
+}
+
+#shop-container .shop-grid-card:hover,
+#shop-container .shop-grid-card.focused {
+    border-color: var(--text-primary-hover);
+}
+
+#shop-container .shop-grid-card:hover {
+    transform: translateY(-1px);
+}
+
+#shop-container .shop-grid-card.selected {
+    border-color: var(--text-cost-ok);
+}
+
+#shop-container .shop-grid-card .item-rarity-bar {
+    margin-right: 0;
+    border-radius: 3px 0 0 3px;
+}
+
+#shop-container .shop-grid-card-icon {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+}
+
+#shop-container .shop-grid-card-info {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+#shop-container .shop-grid-card-name-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+#shop-container .shop-grid-card .item-card-name {
+    font-size: 1em;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+#shop-container .shop-grid-card-qty {
+    font-size: 0.87em;
+    color: var(--text-inverse);
+    opacity: 0.8;
+}
+
+#shop-container .shop-grid-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px 8px;
+    margin-top: 2px;
+}
+
 /* The dossier scrolls; the BUY/SELL button under it is a sibling and never
    does, so a long item sheet can no longer push the one press off the page. */
 .detail-scroll {
@@ -16138,30 +16192,15 @@
 }
 
 .action-btn.confirm {
-    background: transparent;
+    background: var(--bg-secondary-hover);
     color: var(--text-primary-hover);
-    border: 1px solid var(--text-primary-hover);
-}
-
-.action-btn.confirm:hover,
-.action-btn.confirm.selected {
-    background: transparent;
-    color: var(--text-primary-hover);
-    border-color: var(--text-primary-hover);
-    box-shadow: none;
-    filter: brightness(1.12);
+    border: 2px solid var(--text-primary-hover);
 }
 
 .action-btn.cancel {
-    background: transparent;
-    color: var(--text-success-active);
-    border: 1px solid var(--border-muted-focus);
-}
-
-.action-btn.cancel:hover,
-.action-btn.cancel.selected {
-    background: transparent;
-    border-color: var(--text-primary-hover);
+    background: var(--bg-secondary-hover);
+    color: var(--border-focus-hover);
+    border: 2px solid var(--border-focus-hover);
 }
 
 /* Extracted from AnimatedTarotReading.js */
@@ -17328,8 +17367,7 @@
 .action-btn:focus-visible {
     background: var(--chip-active-bg);
     color: var(--chip-active-fg);
-    border-color: var(--chip-active-fg);
-    box-shadow: 0 0 6px var(--shadow-shadow-alt-4-hover-translucent-60);
+    box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
 }
 
 .action-btn.disabled {
@@ -17355,9 +17393,9 @@
 /* The Back stamp is vertically centred in its header bar by the shared rule, so
    its focus ring keeps that transform instead of replacing it. */
 #save-menu-container .back-button.focused {
-    outline: 2px solid var(--text-primary-hover);
-    outline-offset: 2px;
-    box-shadow: 0 0 12px var(--shadow-gold-amber-50);
+    background: var(--chip-active-bg);
+    color: var(--chip-active-fg);
+    box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
 }
 
 /* ==========================================================================
@@ -18224,7 +18262,7 @@
 
 .apiary-resource-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--border-focus-hover), #d4af37);
+    background: linear-gradient(90deg, var(--border-focus-hover), var(--accent-gold-pure));
     border-radius: 3px;
     transition: width 0.35s ease;
 }
@@ -18292,10 +18330,9 @@
 
 .apiary-action-btn:hover,
 .apiary-action-btn.focused {
-    background: var(--bg-focus-hover-translucent-18);
-    border-color: var(--border-focus-hover);
-    color: var(--text-success-active);
-    transform: translateX(4px);
+    background: var(--chip-active-bg);
+    color: var(--chip-active-fg);
+    box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
 }
 
 /* ==========================================================================
@@ -18418,7 +18455,7 @@
 
 .brewery-stage-fill {
     height: 100%;
-    background: linear-gradient(to right, #c0873f, #d4aa1f, var(--text-text-alt-3));
+    background: linear-gradient(to right, var(--border-gold-amber), var(--accent-gold-pure), var(--text-text-alt-3));
     border-radius: 4px;
     transition: width 0.4s ease;
 }
@@ -20478,6 +20515,16 @@ padding: 2px 10px;
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       gap: 6px;
     }
+    /* The wiki's search rides the title row: the title on the left, the field
+       taking the room in between, the way back on the right. */
+    .npc-wiki-search-hdr { gap: 8px; }
+    .npc-wiki-search-hdr > .npc-sec-hdr { flex: 0 1 auto; min-width: 0; }
+    .npc-wiki-search-hdr > .msb-field-only { flex: 1 1 auto; min-width: 0; margin: 0; }
+    .npc-wiki-search-hdr > .msb-field-only .msb-field { max-width: 320px; margin-left: auto; }
+    /* On the search results, each shelf heading opens that shelf. */
+    .npc-wiki-search-group { cursor: pointer; }
+    .npc-wiki-search-group:hover { color: var(--border-focus-hover); }
+    .npc-wiki-search-more { display: inline-block; margin: 6px 0 4px; }
     /* Earth, then the Omega Tower: one heading over each half of the cards. */
     .npc-wiki-realm-hdr { margin: 6px 0 4px; }
     .npc-wiki-grid--cards + .npc-wiki-realm-hdr { margin-top: 18px; }
@@ -22047,7 +22094,7 @@ padding: 2px 10px;
 }
 .tt-tab.selected {
     outline: none;
-    text-decoration: underline;
+    border-color: var(--text-primary-hover);
     color: var(--text-primary-hover);
 }
 .tt-tab.active.selected { color: var(--chip-active-fg); }
@@ -24789,8 +24836,7 @@ body.ascii-ui-active .ascii-passthrough {
 #gx-fuel .gx-refuel-hint { flex:1 1 auto; font-size:var(--fs-chip); line-height:1.3;
   text-align:right; color:var(--gx-ink-dim); }
 #gx-ui .gx-btn.gx-refuel.gx-on {
-  background:var(--bg-primary-hover-translucent-35);
-  border-color:var(--text-primary-hover); color:var(--text-primary-hover); }
+  background:var(--chip-active-bg); color:var(--chip-active-fg); }
 #gx-ui .gx-btn.gx-refuel.gx-disabled { opacity:0.4; cursor:not-allowed; }
 /* Warp-speed slider inside the engine panel. */
 #gx-ui .gx-slider-row { display:flex; align-items:center; gap:8px; margin-top:8px; }
@@ -24806,9 +24852,8 @@ body.ascii-ui-active .ascii-passthrough {
   border-radius:50%; cursor:pointer; background:var(--accent-amber-glow); }
 #gx-ui .gx-btn.gx-sb.gx-disabled { opacity:0.4; cursor:not-allowed; }
 #gx-ui .gx-btn.gx-land.gx-disabled { opacity:0.4; cursor:not-allowed; }
-#gx-ui .gx-btn.gx-bookmark { border-color:var(--text-primary-hover); color:var(--text-primary-hover); }
 #gx-ui .gx-btn.gx-bookmark.gx-on {
-  background:var(--bg-primary-hover-translucent-35); }
+  background:var(--chip-active-bg); color:var(--chip-active-fg); }
 /* Full-screen SB-Bridge warp animation. */
 #gx-warp { position:absolute; top:0; right:0; bottom:0; left:0; pointer-events:none; display:none;
   z-index:20; overflow:hidden; }
@@ -24994,25 +25039,25 @@ body.ascii-ui-active .ascii-passthrough {
 /* Selection-panel actions sit under the title instead of under the stat
    rows, so Fly Here / Bookmark are visible without scrolling. */
 #gx-ui .gx-actions.gx-actions-top { margin-top:2px; margin-bottom:2px; }
-/* One button look across the star map: gold text on a gold hairline with
-   nothing behind it, the same as every other button in the game. The old
-   per-role colours (ship / bio / bridge / tour / land) are folded into it. */
+/* One button look across the star map: the inventory's own button
+   (.inspect-btn), only smaller. The old per-role colours (ship / bio /
+   bridge / tour / land) are folded into it. */
 #gx-ui .gx-btn {
   pointer-events:auto; display:inline-block; cursor:pointer;
-  background:transparent;
-  border:1px solid var(--text-primary-hover);
+  background:var(--bg-secondary-hover);
+  border:2px solid var(--text-primary-hover);
   color:var(--text-primary-hover);
   border-radius:4px; padding:4px 10px; margin:4px 6px 0 0;
-  font-weight:bold; font-size:var(--fs-chip); }
+  font-family:var(--font-ui); font-weight:bold; font-size:var(--fs-chip);
+  box-shadow:0 3px 6px var(--shadow-primary-hover-translucent-5); }
 #gx-ui .gx-btn.gx-stop { border-color:var(--gx-accent-warn);
   color:var(--gx-accent-warn); }
 #gx-ui .gx-btn.gx-step { min-width:28px; text-align:center; }
-/* One appearance for hover, focus and selection across the whole game: a gold
-   hairline and nothing behind it (docs/task/ui_fixing.md). The plate and the
-   glow this rule used to carry were the "different game" look the pass removes. */
+/* Hover, focus and selection are the inventory's: the gold plate fills. */
 #gx-ui .gx-btn:hover, #gx-ui .gx-btn.focused {
-  border-color:var(--text-primary-hover);
-  color:var(--text-primary-hover); }
+  background:var(--chip-active-bg);
+  color:var(--chip-active-fg);
+  box-shadow:0 4px 8px var(--shadow-primary-hover-translucent-5); }
 /* Landing-site picker: full-viewport modal showing the planet's unwrapped
    surface texture divided into a clickable grid of squares. */
 #gx-landing-grid { position:absolute; top:0; right:0; bottom:0; left:0; z-index:25; display:none;
@@ -25478,14 +25523,19 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     border-color: var(--text-primary-hover);
     outline: none;
 }
-#world-manage-container .back-button.kb-focus,
 #world-manage-container .backpack-tab.kb-focus,
-#world-manage-container .inspect-btn.kb-focus,
 #world-manage-container .wm-create input.kb-focus,
 #world-manage-container .wm-year-selector.kb-focus,
 #world-manage-container .wm-reward-slider.kb-focus {
     border: 1px solid var(--text-primary-hover);
     background: none;
+}
+/* A button under the pad fills, as it does under the mouse. */
+#world-manage-container .back-button.kb-focus,
+#world-manage-container .inspect-btn.kb-focus {
+    background: var(--chip-active-bg);
+    color: var(--chip-active-fg);
+    box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
 }
 /* Reward multiplier sliders: the Options slider row, set in the form. */
 #world-manage-container .wm-reward-slider {
@@ -25889,8 +25939,10 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .cgc-cell:hover,
 .cgc-cell.selected { border-color: var(--text-primary-hover); }
-/* The card the cursor is on lifts out of the row the way a held card does. */
+/* The card being read lifts out of the row the way a held card does, and
+   while the cursor itself is on the shelf it also takes the gold ring. */
 .cgc-cell.selected { transform: translateY(-6px) scale(1.045); z-index: 2; }
+.cgc-cell.cgc-cell--cursor { outline: 2px solid var(--text-primary-hover); outline-offset: 2px; }
 
 /* The sheen a card face carries, tinted by its own rarity rather than by a
    literal white, so it reads on the black page and on any theme. */
@@ -25900,8 +25952,10 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
   background: linear-gradient(160deg, currentColor 0%, transparent 46%);
 }
 
-/* A card already spent on the deck is still readable, only quieter. */
-.cgc-cell--spent { opacity: 0.5; }
+/* A card the deck has taken keeps its full ink: it can always be clicked,
+   to add one more copy or to give one back. The ribbon along its foot says
+   how many of its copies went in. */
+.cgc-cell--indeck { border-color: var(--text-primary-hover); }
 
 /* Dealt in, not simply drawn: a filter change riffles the shelf. */
 .cgc-grid.cgc-dealing .cgc-cell {
@@ -25972,16 +26026,25 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    The bench and the catalogue, chosen with the same gold-on-black button the
    rest of the kit uses, so the collection of every card that exists is one
    click from the deck being built and never a mode the player has to guess at. */
+/* Not a .backpack-tabs strip: L1 / R1 turn the TYPE filters below it, and the
+   pad badges those two buttons stamp on a tab strip belong on that one. */
 .cgc-modes {
-  flex: 0 0 auto; display: flex; gap: var(--sp-2); margin-bottom: var(--sp-2);
+  flex: 0 0 auto; display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-2);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--border-primary-hover-translucent-15);
 }
-.cgc-modes .cgc-mode { margin-top: 0; padding: 4px var(--sp-4); }
 
 /* The shared filter strip (UI/MenuSearchBar.js) rides between the type tabs
    and the shelf: the name field docks onto the header bar on its own, the
    ordering and the rarity picker stay here. */
 .cgc-search { flex: 0 0 auto; }
 .cgc-search .msb { margin-bottom: var(--sp-2); }
+/* The keyboard and the pad walk the ordering and the rarity picker too, so the
+   one under the cursor wears the gold frame every other control does. */
+.cgc-search .sort-tag.selected,
+.cgc-search .msb-select.selected {
+  border-color: var(--text-primary-hover); color: var(--text-primary-hover);
+}
 
 /* ---- turning the catalogue ----
    Thousands of records are turned a page at a time rather than scrolled
@@ -26004,9 +26067,14 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 /* The deck count sits in the cell's caption row with the copy count and the
    kind, instead of a plated corner stamp that landed on top of the kind. */
 .cgc-indeck {
+  flex: 0 0 auto; text-align: center; border-radius: 3px;
+  background: var(--plate-inset-soft);
   color: var(--text-primary-hover);
   font-size: calc(var(--fs-caption) * 0.78); font-weight: bold;
   white-space: nowrap;
+}
+.cgc-indeck.cgc-indeck--full {
+  background: var(--text-primary-hover); color: var(--plate-inset);
 }
 
 /* ---- the dossier ----
@@ -26015,14 +26083,40 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    .inspect-spec-grid stat block, and nothing here sets a size or an ink of its
    own (docs/task/ui_fixing.md). */
 .cgc-dossier {
-  flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
-  color: var(--text-success-active);
+  flex: 0 1 auto; min-height: 0; max-height: 50%; display: flex; flex-direction: column;
+  color: var(--text-success-active); margin-bottom: var(--sp-3);
 }
+#cardcol-container.cgc--collection .cgc-dossier { flex: 1 1 auto; max-height: none; }
+.cgc-dossier .ui-detail-scroll { min-height: 0; overflow-y: auto; }
+
+/* The art beside its facts, the five figures in one row under both. */
+.cgc-dossier-top {
+  display: grid; grid-template-columns: 120px minmax(0, 1fr);
+  gap: var(--sp-4); align-items: center; margin: var(--sp-2) 0;
+}
+.cgc-facts { display: flex; flex-direction: column; gap: var(--sp-1); min-width: 0; }
+.cgc-fact {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: var(--sp-3); font-size: var(--fs-detail-body);
+}
+.cgc-fact-label { color: var(--text-detail-label); white-space: nowrap; }
+.cgc-fact-value { color: var(--text-success-active); text-align: right; }
+.cgc-figures {
+  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--sp-1); margin-bottom: var(--sp-3); text-align: center;
+}
+.cgc-figure {
+  display: flex; flex-direction: column; padding: var(--sp-1) 0;
+  border-radius: 4px; background: var(--plate-inset-soft);
+  font-size: var(--fs-label); color: var(--text-detail-label);
+}
+.cgc-figure b { font-size: var(--fs-detail-body); color: var(--text-primary-hover); }
+.cgc-figure--total { border: 1px solid var(--text-primary-hover); }
 
 /* The card art stands on the page: no frame, no plate. */
 .cgc-art {
-  height: 170px; display: flex; align-items: center; justify-content: center;
-  border: none; margin-bottom: var(--sp-4);
+  height: 120px; display: flex; align-items: center; justify-content: center;
+  border-radius: 6px; background: var(--plate-inset-soft);
 }
 .cgc-art img, .cgc-art canvas { max-width: 100%; max-height: 100%; object-fit: contain; }
 .cgc-art canvas { image-rendering: pixelated; }
@@ -26033,7 +26127,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    against the ceiling, a meter that says at a glance how full the list is, and
    one row per card, clicked to give it back. */
 .cgc-deck {
-  flex: 0 1 auto; border-top: 1px solid var(--border-primary-hover-translucent-15);
+  flex: 1 1 auto; border-top: 1px solid var(--border-primary-hover-translucent-15);
   padding-top: var(--sp-2); color: var(--text-success-active);
   display: flex; flex-direction: column; min-height: 0;
 }
@@ -26064,6 +26158,11 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
   letter-spacing: .06em; text-transform: uppercase;
 }
 .cgc-decktally { font-size: var(--fs-detail-title); font-weight: bold; }
+/* The bench no longer matches the deck saved under that name. */
+.cgc-deckedited {
+  font-size: var(--fs-label); letter-spacing: 0; text-transform: none;
+  color: var(--text-primary-hover);
+}
 
 /* How full the list is, read without counting the rows. */
 .cgc-deckmeter {
@@ -26076,13 +26175,14 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
   transition: width .18s ease;
 }
 
-.cgc-decklist { flex: 1 1 auto; min-height: 40px; max-height: 180px; overflow-y: auto; }
+.cgc-decklist { flex: 1 1 auto; min-height: 60px; overflow-y: auto; }
 
 /* A deck row reads left to right the way a deck list reads: the rarity gem,
    the name, what it is worth on the board, how many copies are in. Clicking it
    gives the copy back to the shelf. */
 .cgc-deckrow {
-  display: flex; align-items: center; gap: var(--sp-2);
+  display: grid; grid-template-columns: 8px minmax(0, 1fr) 3em 2.6em;
+  align-items: center; gap: var(--sp-2);
   padding: 2px var(--sp-2); border-radius: 3px; cursor: pointer;
   border: 1px solid transparent;
   font-size: var(--fs-detail-body);
@@ -26095,26 +26195,29 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
   background: currentColor;
 }
 .cgc-deckname {
-  flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   color: var(--text-success-active);
 }
-.cgc-deckpower { flex: 0 0 auto; color: var(--text-detail-label); }
+.cgc-deckpower { text-align: right; color: var(--text-detail-label); }
 .cgc-deckqty {
-  flex: 0 0 auto; min-width: 1.6em; text-align: center; font-weight: bold;
+  text-align: right; font-weight: bold;
   color: var(--text-primary-hover);
 }
 
-.cgc-deckstanding { margin-top: var(--sp-2); font-size: var(--fs-label); }
+.cgc-deckstanding { flex: 0 0 auto; margin-top: var(--sp-2); font-size: var(--fs-label); }
 
 /* ---- the button strip ---- */
-/* The shared gold-on-black button, laid out as a wrapping row rather than the
-   column .inspect-actions draws, because there are nine of them. */
+/* The shared gold-on-black button, laid out as a fixed three-wide grid so the
+   builder's six verbs sit in two even rows instead of wrapping where they fall.
+   Each button keeps the width of its own label, centred in its column, rather
+   than being stretched into a bar the width of the column. */
 .cgc-actions {
-  flex: 0 0 auto; display: flex; flex-wrap: wrap; gap: var(--sp-3);
-  margin-top: var(--sp-2);
+  flex: 0 0 auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  justify-items: center; gap: var(--sp-2); margin-top: var(--sp-3);
 }
 .cgc-actions .inspect-btn {
-  margin-top: 0; padding: 6px 14px;
+  margin-top: 0; padding: 6px 8px; max-width: 100%;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   font-size: var(--fs-detail-body);
   box-shadow: none;
 }
@@ -26504,8 +26607,8 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .qb-c-val { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 6px; min-width: 180px; }
 .qb-c-empty { font-style: italic; opacity: 0.6; }
 .qb-c-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px;
-  background: var(--bg-focus-hover-translucent-18); border: 1px solid #a8814f; border-radius: 12px;
-  font-size: 1.06rem; }
+  background: transparent; border: 1px solid var(--border-success); border-radius: 2px;
+  font-size: 1.06rem; font-weight: bold; }
 .qb-c-chip:hover { background: var(--bg-danger-plate); color: var(--text-on-danger-plate); }
 .qb-c-x { font-weight: bold; opacity: 0.7; }
 .qb-c-rate { font-size: 1.3rem; font-weight: bold; margin: 6px 0; }
@@ -26851,29 +26954,24 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     position: relative;
     padding: 5px 14px;
     min-width: 128px;
-    font-size: 0.878rem;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
+    font-family: var(--font-ui);
+    font-size: 0.964em;
+    font-weight: bold;
     color: var(--text-primary-hover);
-    background: var(--bg-black-translucent-92);
-    border: 1px solid var(--border-gold-amber-30);
-    border-radius: 3px;
-    box-shadow: 0 2px 6px var(--shadow-heavy);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 2px;
     cursor: pointer;
     user-select: none;
     -webkit-user-select: none;
-    transition: color 0.14s ease, background 0.14s ease, border-color 0.14s ease;
+    transition: border-color 0.14s ease, color 0.14s ease;
     white-space: nowrap;
 }
 #diary-container .diary-mark:hover {
-    border-color: var(--text-primary-hover);
-    box-shadow: 0 0 8px var(--shadow-gold-amber-30);
+    color: var(--text-primary-hover);
 }
 #diary-container .diary-mark.active {
-    background: var(--border-gold-amber);
     border-color: var(--text-primary-hover);
-    color: var(--ink-deep);
-    font-weight: 700;
 }
 
 #diary-container .diary-foot {
@@ -27338,24 +27436,21 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
     width: 690px; max-width: 94vw; max-height: 80vh;
     display: flex; flex-direction: column;
-    background: var(--bg-panel);
+    background: var(--modal-bg);
     color: var(--text-primary-hover);
-    border: 1px solid var(--border-gold-amber);
-    border-radius: 13px;
-    box-shadow: 0 21px 69px rgba(0,0,0,0.66);
-    font-family: "Segoe UI", system-ui, sans-serif;
+    border: var(--modal-border);
+    border-radius: var(--modal-radius);
+    box-shadow: var(--modal-shadow);
+    font-family: var(--font-ui);
     z-index: 100; opacity: 0; transition: opacity 0.18s ease-out;
     overflow: hidden;
 }
 #cs-mini .cs-head, #hv-mini .cs-head { display:flex; align-items:center; justify-content:center;
-    padding:17px 23px; border-bottom:1px solid rgba(255,255,255,0.1); }
+    padding:17px 23px; border-bottom:1px solid var(--border-primary-hover-translucent-15); }
 #cs-mini .cs-title, #hv-mini .cs-title { font-size:29px; font-weight:700; color: var(--text-primary-hover);
-    letter-spacing:0.3px; text-shadow:0 1px 2px rgba(0,0,0,0.6); }
+    letter-spacing:1px; text-shadow:1px 1px 1px var(--bg-primary-hover-translucent-35); }
 #cs-mini .cs-tabs { display:flex; gap:6px; padding:12px 15px 0; }
-#cs-mini .cs-tab { text-align:center; padding:11px 0; font-size:23px; font-weight:600; cursor:pointer;
-    opacity:0.62; border-bottom:3px solid transparent; }
-#cs-mini .cs-tab:hover { opacity:0.92; }
-#cs-mini .cs-tab.active { opacity:1; border-bottom-color: var(--text-primary-hover); color: var(--text-primary-hover); }
+#cs-mini .cs-tab { text-align:center; padding:11px 0; font-size:23px; cursor:pointer; }
 /* The chest wears the pockets' own search and sort strip: the collapsed
    handle sits in the corner of the header, the sort tags on a line of their
    own over the shelf. Both are sized up to the rest of this window, which is
@@ -27369,7 +27464,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #cs-mini .cs-categories { padding:10px 15px 0; }
 #cs-mini .cs-categories .backpack-tab { font-size:18px; padding:5px 11px; }
 #cs-mini .backpack-sort-tags { gap:6px; }
-#cs-mini .sort-tag { font-size:18px; padding:5px 11px; border-radius:6px; }
+#cs-mini .sort-tag { font-size:18px; padding:5px 11px; }
 
 #cs-mini .cs-list, #hv-mini .cs-list { flex:1; overflow-y:auto; padding:12px; min-height:315px; }
 #cs-mini .cs-row, #hv-mini .cs-row { display:flex; align-items:center; gap:17px; padding:12px 17px;
@@ -27885,11 +27980,13 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
   border:1px solid var(--border-gold-amber-30); color:var(--accent-amber-glow); user-select:none; }
 #gx-ship-appearance .gx-arrow:hover { background:var(--bg-tertiary-focus-translucent-45); }
 #gx-ship-appearance .gx-btns { display:flex; gap:10px; margin-top:12px; }
-#gx-ship-appearance .gx-btn { flex:0 1 auto; text-align:center; cursor:pointer; padding:10px 8px; border-radius:5px;
-  border:2px solid var(--border-focus-hover); background:var(--bg-tertiary-focus-translucent-45);
-  color:var(--accent-amber-glow); font-weight:bold; text-transform:uppercase; font-size:1.104rem; user-select:none; }
-#gx-ship-appearance .gx-btn:hover { background:var(--chip-active-bg); color:var(--chip-active-fg); }
-#gx-ship-appearance .gx-btn.sel { background:var(--chip-active-bg); color:var(--chip-active-fg); }
+#gx-ship-appearance .gx-btn { flex:0 1 auto; text-align:center; cursor:pointer; padding:10px 8px; border-radius:4px;
+  border:2px solid var(--text-primary-hover); background:var(--bg-secondary-hover);
+  color:var(--text-primary-hover); font-family:var(--font-ui); font-weight:bold; font-size:1.104rem; user-select:none;
+  box-shadow:0 3px 6px var(--shadow-primary-hover-translucent-5); }
+#gx-ship-appearance .gx-btn:hover,
+#gx-ship-appearance .gx-btn.sel { background:var(--chip-active-bg); color:var(--chip-active-fg);
+  box-shadow:0 4px 8px var(--shadow-primary-hover-translucent-5); }
 #gx-ship-appearance .gx-hint { margin-top:8px; text-align:center; font-size:0.915rem; font-style: normal;
   color:var(--text-caption-brown); }
 
@@ -27948,21 +28045,10 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .re-tab {
     text-align: center;
     padding: 7px 10px;
-    font-family: var(--font-ui);
-    font-size: 1.032rem;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    color: var(--text-text-alt-4);
-    background: var(--shadow-primary-hover-translucent-5);
-    border: 1px solid var(--border-primary-hover-translucent-15);
-    border-radius: 4px;
     cursor: pointer;
     user-select: none;
 }
 .re-tab--active {
-    color: var(--text-primary-hover);
-    background: var(--border-primary-hover-translucent-15);
     border-color: var(--text-primary-hover);
 }
 .re-co-bar {
@@ -29132,24 +29218,15 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 }
 
 .news-tab {
-    padding: 4px 10px;
-    border: 1px solid var(--border-primary-hover-translucent-15);
-    border-radius: 4px;
-    background: var(--bg-subtle-translucent-5);
-    letter-spacing: 1px;
+    letter-spacing: normal;
 }
 
 .news-tab.selected {
-    background: var(--bg-subtle-translucent-10);
     border-color: var(--text-primary-hover);
 }
 
 .news-alert-toggle {
     margin-left: auto;
-    padding: 4px 10px;
-    border: 1px solid var(--border-primary-hover-translucent-15);
-    border-radius: 4px;
-    letter-spacing: 1px;
 }
 
 .news-alert-toggle.off {
@@ -31001,10 +31078,10 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     box-sizing: border-box;
     padding: 22px 26px 18px 26px;
     text-align: center;
-    background: var(--bg-panel);
-    border: 2px solid var(--text-primary-hover);
-    border-radius: 6px;
-    box-shadow: 0 6px 20px var(--shadow-black-translucent-55);
+    background: var(--modal-bg);
+    border: var(--modal-border);
+    border-radius: var(--modal-radius);
+    box-shadow: var(--modal-shadow);
 }
 
 /* Shape B's scrolling middle: the panel's body scrolls, never the page. */
@@ -31891,11 +31968,6 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #biologic-container .companion-tab,
 #biologic-container .companion-tab.selected {
     background: transparent;
-    border-left: none;
-}
-
-#biologic-container .category-tab-top.selected {
-    border-bottom: 1px solid var(--text-primary-hover);
 }
 
 #biologic-container .companion-tabs-row {
@@ -35054,21 +35126,10 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     margin-top: 12px;
 }
 
-/* The gold button: the game's own plate, for the places that were still
-   wearing the default steel-blue chrome. */
+/* The landing buttons wear the plain .gx-btn look (the inventory's); gold
+   only drops the margin, since the row spaces them with its own gap. */
 #gx-ui .gx-btn.gx-gold {
-    border-color: var(--border-gold-amber);
-    color: var(--accent-amber-light);
-    background: var(--bg-gold-panel-92);
     margin: 0;
-}
-
-#gx-ui .gx-btn.gx-gold:hover,
-#gx-ui .gx-btn.gx-gold.focused {
-    border-color: var(--accent-amber-glow);
-    color: var(--accent-amber-glow);
-    background: var(--bg-gold-panel-95);
-    box-shadow: 0 0 10px var(--shadow-gold-amber-50);
 }
 
 /* ---------------------------------------------------------------------------
@@ -35134,22 +35195,23 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 #gx-landing-mode .gx-lm-btn {
     cursor: pointer;
-    font-family: inherit;
+    font-family: var(--font-ui);
     font-weight: bold;
     font-size: var(--fs-chip);
     padding: 4px 10px;
     border-radius: 4px;
-    border: 1px solid var(--border-gold-amber);
-    color: var(--accent-amber-light);
-    background: var(--bg-gold-panel-92);
+    border: 2px solid var(--text-primary-hover);
+    color: var(--text-primary-hover);
+    background: var(--bg-secondary-hover);
+    box-shadow: 0 3px 6px var(--shadow-primary-hover-translucent-5);
     outline: none;
 }
 
+#gx-landing-mode .gx-lm-btn:hover,
 #gx-landing-mode .gx-lm-btn.focused {
-    border-color: var(--accent-amber-glow);
-    color: var(--accent-amber-glow);
-    background: var(--bg-gold-panel-95);
-    box-shadow: 0 0 10px var(--shadow-gold-amber-50);
+    background: var(--chip-active-bg);
+    color: var(--chip-active-fg);
+    box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
 }
 
 /* ── Places of the party's own ───────────────────────────────────────────────
@@ -36754,12 +36816,168 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
  * forge has no equivalent for are drawn here.
  * ---------------------------------------------------------------------- */
 
-/* The bench has ten rows where the forge has three, so its list of parts
-   scrolls rather than pushing the written entries off the page. */
+/* The bench's form is the page: it takes the height between the tabs and the
+   Roll / Write buttons and scrolls inside it. */
 .sm-craft-rows {
-    max-height: 58%;
-    overflow-y: auto;
     padding-right: var(--sp-2);
+}
+
+/* -------------------------------------------------------------------------
+ * The bench kit (SkillMaster.BenchKit): the character creation sheet's own
+ * sections, chips, pick triggers and stat boxes, worn by every bench that
+ * makes something. Only what the sheet has no equivalent for is drawn here.
+ * ---------------------------------------------------------------------- */
+.sm-kit-scroll {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.sm-kit-section .cc-bio-section-title,
+.sm-kit-subhead {
+    font-size: var(--fs-body);
+    margin-bottom: 4px;
+}
+
+.sm-kit-subhead {
+    flex: 0 0 auto;
+    margin-top: var(--sp-2);
+}
+
+.cc-bio-section.sm-kit-section {
+    padding: 4px 6px 6px 6px;
+}
+
+/* The section the pad cursor is in: an accent bar down its left edge. A tint
+   would vanish on Omega Tower's black, the bar reads gold there and oxblood
+   on Archive Foundation's paper. Both presets zero .cc-bio-section's shadow
+   with !important, hence the two class selector here. */
+.cc-bio-section.sm-kit-section--focused {
+    box-shadow: inset 2px 0 0 var(--text-primary-hover) !important;
+}
+
+.sm-kit-badge {
+    margin-left: auto;
+    font-size: var(--fs-caption);
+    color: var(--text-detail-label);
+}
+
+.sm-kit-chips {
+    gap: 4px;
+}
+
+.cc-bio-chip.sm-kit-chip {
+    padding: 2px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* The chip under the pad cursor; .selected is the choice already made. */
+.cc-bio-chip.sm-kit-cursor {
+    outline: 1px solid var(--text-primary-hover);
+    outline-offset: 2px;
+}
+
+.sm-kit-note {
+    min-height: 1.3em;
+    color: var(--text-detail-label);
+}
+
+.sm-kit-ident {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 4px 6px;
+}
+
+.sm-kit-span2 { grid-column: 1 / -1; }
+
+.cc-pick-trigger.sm-kit-trigger {
+    min-height: 28px;
+    padding: 2px 8px;
+    gap: 6px;
+}
+
+.cc-pick-trigger.sm-kit-trigger.focused {
+    border-color: var(--text-primary-hover);
+    color: var(--text-primary-hover);
+}
+
+.sm-kit-trigger-key {
+    flex: 0 0 auto;
+    font-size: var(--fs-caption);
+    text-transform: uppercase;
+    color: var(--text-detail-label);
+}
+
+.sm-kit-muted {
+    opacity: 0.6;
+    font-style: italic;
+}
+
+.sm-kit-stats {
+    margin: 4px 0;
+}
+
+.sm-kit-stats--c2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.sm-kit-stats--c3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.sm-kit-stats .cc-stat-val {
+    overflow-wrap: anywhere;
+}
+
+.sm-kit-bad .cc-stat-val { color: var(--text-danger-dark); }
+
+.sm-kit-preview {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.sm-kit-formula {
+    font-size: var(--fs-caption);
+    color: var(--text-detail-label);
+    overflow-wrap: anywhere;
+    margin: 2px 0 4px;
+}
+
+.sm-kit-prose { margin-top: 4px; }
+
+.sm-kit-entries {
+    flex: 0 0 auto;
+}
+
+.sm-kit-entries .sm-forged-list {
+    max-height: 9.5em;
+}
+
+/* The icon sheet: the glyphs themselves in a grid, eight across
+   (SkillMaster.CRAFT_ICON_COLS). */
+.sm-kit-icon-grid {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 4px;
+    align-content: start;
+}
+
+.sm-kit-icon-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.sm-kit-icon-cell:hover,
+.sm-kit-icon-cell.focused {
+    border-color: var(--text-primary-hover);
+}
+
+.sm-kit-icon-cell.selected {
+    border-color: var(--chip-active-fg);
+    box-shadow: inset 0 0 0 1px var(--chip-active-fg);
 }
 
 /* Why the bench will not write the entry, said on the same line as the purse
@@ -36777,6 +36995,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    the row's two chips the OK key would press. */
 .sm-craft-entry--cursor {
     background: var(--bg-primary-hover-translucent-10);
+    box-shadow: inset 2px 0 0 var(--text-primary-hover);
 }
 
 .sm-craft-entry--cursor .sm-skill-badge.selected {
@@ -38699,9 +38918,9 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .cc3d-top .inspect-btn.selected,
 .cc3d-top .inspect-btn:focus-visible,
 .cc3d-top .cc3d-continue-btn:hover,
-.cc3d-top .cc3d-continue-btn.selected {
+.cc3d-top .cc3d-continue-btn.selected,
+.cc3d-top .cc3d-continue-btn:focus-visible {
   background: var(--chip-active-bg);
-  border-color: var(--chip-active-bg);
   color: var(--chip-active-fg);
   box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
   transform: none;
@@ -38771,8 +38990,9 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
   font-family:var(--font-ui); font-size:0.95rem; color:var(--text-primary-hover); font-weight:bold;
   background:var(--bg-secondary-hover); border:2px solid var(--text-primary-hover);
   box-shadow:0 3px 6px var(--shadow-primary-hover-translucent-5); transition:0.2s ease; }
-.cc3d-add:hover, .cc3d-add.selected {
-  background:var(--chip-active-bg); border-color:var(--chip-active-bg); color:var(--chip-active-fg); }
+.cc3d-add:hover, .cc3d-add.selected, .cc3d-add:focus-visible {
+  background:var(--chip-active-bg); color:var(--chip-active-fg);
+  box-shadow:0 4px 8px var(--shadow-primary-hover-translucent-5); }
 .cc3d-chip { flex:0 0 auto; padding:4px 10px; border-radius:4px; cursor:pointer;
   font-family:var(--font-ui); font-size:0.92rem; white-space:nowrap; color:var(--text-muted-hover);
   background:var(--bg-card-translucent-5); border:1px solid var(--border-primary-hover-translucent-15);
@@ -39951,10 +40171,10 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     font-size: 12px;
     line-height: 1.45;
     color: var(--text-detail-label);
-    background: var(--bg-panel);
-    border: 1px solid var(--state-tip-ink, var(--border-subtle));
-    border-radius: 4px;
-    box-shadow: 0 4px 14px var(--shadow-black-translucent-55);
+    background: var(--map-tip-bg);
+    border: 2px solid var(--state-tip-ink, var(--border-subtle));
+    border-radius: 10px;
+    box-shadow: none;
     pointer-events: none;
     text-align: left;
 }
@@ -40045,8 +40265,8 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    from a line, and it fades up on the spot instead of sliding in from an edge. */
 .bse-item-panel {
     display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 6px 12px;
+    grid-template-columns: repeat(var(--bse-item-cols, 5), minmax(0, 1fr));
+    grid-gap: 6px;
     align-content: start;
     left: var(--bse-item-x, auto);
     top: var(--bse-item-y, auto);
@@ -40059,48 +40279,59 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .bse-item-panel.bse-slide-panel--in { transform: translateY(-50%) scale(1); }
 
-/* One item in that panel. */
-.bse-item-row {
+/* One item in that panel: a tile with the icon on top, the name under it in
+   up to two lines and the count pinned in the top right corner. */
+.bse-item-cell {
+    position: relative;
     font-family: var(--font-ui);
     font-weight: bold;
     color: var(--text-primary-hover);
     font-size: var(--hud-size, 16px);
-    padding: 6px 12px;
+    padding: 8px 4px 6px;
     border-radius: 4px;
     cursor: pointer;
     border: 2px solid transparent;
     background: transparent;
     transition: background 0.1s, border-color 0.1s;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 4px;
     user-select: none;
     box-sizing: border-box;
-    min-height: 40px;
+    min-height: 92px;
+    min-width: 0;
 }
 
-.bse-item-row--on {
-    background: var(--bg-subtle-translucent-15);
+.bse-item-cell--on {
     border-color: var(--border-subtle);
 }
 
-.bse-item-row--spent { opacity: 0.4; }
+.bse-item-cell--spent { opacity: 0.4; }
 
-.bse-item-row-name {
-    display: flex;
-    align-items: center;
+.bse-item-cell-name {
+    width: 100%;
+    font-size: 62%;
+    line-height: 1.15;
+    text-align: center;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow-wrap: break-word;
 }
 
-.bse-item-row-count {
-    display: flex;
-    align-items: center;
-    font-size: 85%;
+.bse-item-cell-count {
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    font-size: 60%;
     font-weight: bold;
     color: var(--text-primary-hover);
 }
+
+.bse-item-cell .bse-item-icon { transform: none; margin: 4px 0 0; }
 
 .bse-item-icon { transform: scale(0.75); margin-right: var(--sp-1); }
 
@@ -40295,11 +40526,11 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     transition: background 0.15s ease, color 0.15s ease;
 }
 
-/* Picked is a gold hairline and nothing behind it, like every other control
-   in the game. */
+/* Picked fills, as the inventory's button does. */
 .spellforge-button.focused {
-    border-color: var(--border-focus-hover);
-    box-shadow: inset 0 0 0 1px var(--border-focus-hover);
+    background: var(--chip-active-bg);
+    color: var(--chip-active-fg);
+    box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
 }
 
 .spellforge-button.disabled {
@@ -41236,8 +41467,6 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .cc-step-tab.selected,
 .cc-compact-toggle-btn.active,
 .cc-compact-type-pill.active,
-.cc-compact-btn.selected,
-.cc-compact-btn.primary.selected,
 .cc-step-tab.active,
 .cc-bio-chip.selected,
 .cc-pick-row.selected,
@@ -41251,18 +41480,19 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     box-shadow: none !important;
 }
 
-/* Dropdowns read in white: the closed control, its list and the picked row. */
+/* Dropdowns read in the page's own ink: white on the tower's black, sepia on
+   the archive's paper, never a literal white the paper would swallow. */
 select,
 select option,
 select optgroup,
 .cc-bio-select,
 .cc-bio-select option {
-    color: #fff;
+    color: var(--text-text-alt-4);
 }
 
 select option:checked,
 select option:hover {
-    color: #fff;
+    color: var(--text-primary-hover);
 }
 
 /* Medicine register window: the full list of illnesses one course answers,
@@ -42336,9 +42566,9 @@ body.pad-input .kb-only {
    round close cross, the dice roll, the map's zoom pair and the paperdoll's
    slot cross are marks, not labelled actions, and keep their own size.
 
-   Minigames, the card game, GalaxySim and everything inside HypernetOS are
-   out of scope by design: they wear their own skins and are styled from
-   hypernet.css and their own blocks.
+   Minigames, the card game and everything inside HypernetOS are out of scope
+   by design: they wear their own skins and are styled from hypernet.css and
+   their own blocks. GalaxySim's buttons wear this look too, in its own block.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -42514,7 +42744,6 @@ body.pad-input .kb-only {
 .target-option.selected {
     background: var(--chip-active-bg);
     background-image: none;
-    border-color: var(--chip-active-bg);
     color: var(--chip-active-fg);
     box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
 }
@@ -42620,7 +42849,9 @@ body.pad-input .kb-only {
 .mail-tab,
 .qb-tab,
 #gsv-root .gsv-tab,
-#cs-mini .cs-tab {
+#cs-mini .cs-tab,
+.news-tab,
+#fbuild-panel .fbuild-mode-opt {
     font-family: var(--font-ui);
     font-size: 0.964em;
     font-weight: bold;
@@ -42660,7 +42891,9 @@ body.pad-input .kb-only {
 .mail-tab:hover,
 .qb-tab:hover,
 #gsv-root .gsv-tab:hover,
-#cs-mini .cs-tab:hover {
+#cs-mini .cs-tab:hover,
+.news-tab:hover,
+#fbuild-panel .fbuild-mode-opt:hover {
     color: var(--text-primary-hover);
     background: transparent;
 }
@@ -42682,7 +42915,9 @@ body.pad-input .kb-only {
 .mail-tab.active, .mail-tab.selected,
 .qb-tab.active, .qb-tab.selected,
 #gsv-root .gsv-tab.gsv-active,
-#cs-mini .cs-tab.active, #cs-mini .cs-tab.selected {
+#cs-mini .cs-tab.active, #cs-mini .cs-tab.selected,
+.news-tab.selected,
+#fbuild-panel .fbuild-mode-opt.active {
     background: transparent;
     background-image: none;
     color: var(--text-primary-hover) !important;
@@ -42705,13 +42940,69 @@ body.pad-input .kb-only {
 #qb-tabs,
 #cs-mini .cs-tabs,
 #gsv-root .gsv-tabs,
-#equip-container .equip-type-tabs {
+#equip-container .equip-type-tabs,
+.right-tools-tabs,
+.news-tabs {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
     gap: 6px;
     border-bottom: none;
+}
+
+/* --------------------------------------------------------------------------
+   7. The chip. A toggle, a filter or a pick among a few is the backpack's
+      sort chip (.sort-tag): a word in a hairline box on the page, gold ink
+      and a gold box when it is on, and never a plate behind it.
+   -------------------------------------------------------------------------- */
+.cc3d-chip,
+.cc-bio-chip,
+.npc-focus-chip,
+.npc-action-cat,
+.news-alert-toggle {
+    font-family: var(--font-ui);
+    font-weight: bold;
+    color: var(--text-text-alt-4);
+    background: transparent;
+    background-image: none;
+    border: 1px solid var(--border-success);
+    border-radius: 0;
+    box-shadow: none;
+    text-transform: none;
+    letter-spacing: normal;
+    cursor: pointer;
+    user-select: none;
+}
+
+.cc3d-chip:hover,
+.cc-bio-chip:hover,
+.npc-focus-chip:hover,
+.npc-action-cat:hover,
+.news-alert-toggle:hover {
+    color: var(--text-primary-hover);
+    background: transparent;
+}
+
+/* Under the pad cursor: the frame, as a tab wears it. */
+.cc3d-chip.selected,
+.cc3d-chip:focus-visible,
+.news-alert-toggle.selected {
+    border-color: var(--text-primary-hover);
+    color: var(--text-primary-hover);
+    background: transparent;
+}
+
+.cc3d-chip.on,
+.cc-bio-chip.selected,
+.npc-focus-chip.on,
+.npc-action-cat.active,
+.news-alert-toggle.on {
+    color: var(--chip-active-fg) !important;
+    border-color: var(--chip-active-fg) !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
 }
 
 /* The folder tabs of the Empathize panel and the star catalog are the one
@@ -43216,7 +43507,8 @@ body.pad-input .kb-only {
     min-width: 0;
 }
 
-#worldmap-chrome .wm-note-btn {
+#worldmap-chrome .wm-note-btn,
+#worldmap-chrome .wm-teleport-btn {
     pointer-events: auto;
 }
 
@@ -43718,41 +44010,41 @@ body.pad-input .kb-only {
     color: var(--text-detail-heading);
 }
 
-/* The tab rail wore a light line inside its top edge, which read as a glow
-   sitting on the tab rather than as part of it. A tab is its frame and its
-   fill and nothing else. */
+/* The character's folder tabs are the backpack's tab (.backpack-tab): a word
+   on the page, framed in gold only when it is the chosen one. They keep only
+   their own layout, a portrait or a dot beside the name. */
 .cc-folder-tab,
 .cc-step-tab {
     position: relative;
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 7px 14px;
-    background: linear-gradient(180deg, var(--bg-panel), var(--bg-surface));
-    border: 1px solid var(--border-gold-amber-30);
-    border-bottom: none;
-    border-radius: 8px 8px 0 0;
-    color: var(--text-card-medium);
+    padding: 4px 10px;
+    background: transparent;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    color: var(--text-primary-hover);
     font-family: var(--font-ui);
-    font-size: var(--fs-chip);
-    font-weight: 500;
+    font-size: 0.964em;
+    font-weight: bold;
     cursor: pointer;
-    transition: 0.2s cubic-bezier(0.2, 0, 0, 1);
-    transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
-    margin-bottom: -1px;
+    transition: 0.2s ease;
+    transition-property: border-color, color, opacity;
     box-shadow: none;
+    transform: none;
 }
 
 .cc-folder-tab.active,
-.cc-step-tab.active {
-    background: linear-gradient(180deg, var(--bg-tertiary-focus-translucent-45), var(--bg-panel)) !important;
+.cc-step-tab.active,
+.cc-folder-tab.selected,
+.cc-step-tab.selected {
+    background: transparent !important;
+    background-image: none !important;
     border-color: var(--text-primary-hover) !important;
-    border-bottom: 2px solid transparent;
     color: var(--text-primary-hover) !important;
-    font-weight: bold;
-    transform: translateY(-3px);
-    z-index: 5;
-    box-shadow: 0 -2px 10px var(--shadow-gold-amber-30);
+    box-shadow: none !important;
+    transform: none;
 }
 
 /* The register's own split. The roll on the left is a column of names and a
@@ -43863,4 +44155,696 @@ body.pad-input .kb-only {
     min-height: 200px;
     aspect-ratio: 883 / 1200;
     position: relative;
+}
+
+/* ==========================================================================
+   THE STRAGGLERS
+   --------------------------------------------------------------------------
+   Push buttons that still drew a look of their own (a hairline with nothing
+   behind it, a text link, a tinted plate) after the stamp above. Each one now
+   wears the inventory's button: the plate, the 2px gold frame, bold UI ink,
+   and the fill under the pointer or the pad. Only the look is set here, never
+   the size, so every one keeps the room its screen gave it.
+   ========================================================================== */
+.eat-raw-btn,
+.forge-name-reroll,
+.npc-cc-row-rand,
+#fbuild-panel .fbuild-town-found,
+#fbuild-panel .fbuild-clear-all,
+#fbuild-panel .fbuild-subback,
+#fbuild-panel .fbuild-armed-flip,
+#menu-container .assets-quick-collect,
+.newspaper-nav-btn:not(.news-tab):not(.news-alert-toggle),
+.page-header-action,
+.spec-spend-button,
+.spellforge-action,
+.spellforge-action--primary,
+.mail-collect,
+.mail-discard,
+.pgrow-btn {
+    font-family: var(--font-ui);
+    font-weight: bold;
+    text-transform: none;
+    letter-spacing: normal;
+    background: var(--bg-secondary-hover);
+    background-image: none;
+    border: 2px solid var(--text-primary-hover);
+    border-radius: 4px;
+    color: var(--text-primary-hover);
+    box-shadow: 0 3px 6px var(--shadow-primary-hover-translucent-5);
+    opacity: 1;
+    cursor: pointer;
+    transform: none;
+}
+
+.eat-raw-btn:hover,
+.eat-raw-btn:focus,
+.eat-raw-btn.selected,
+.eat-raw-btn.focused,
+.forge-name-reroll:hover,
+.forge-name-reroll.selected,
+.forge-name-reroll.focused,
+.npc-cc-row-rand:hover,
+.npc-cc-row-rand.selected,
+.npc-cc-row-rand.npc-content-focused,
+#fbuild-panel .fbuild-town-found:hover,
+#fbuild-panel .fbuild-town-found.fbcursor,
+#fbuild-panel .fbuild-clear-all:hover,
+#fbuild-panel .fbuild-clear-all.fbcursor,
+#fbuild-panel .fbuild-subback:hover,
+#fbuild-panel .fbuild-subback.fbcursor,
+#fbuild-panel .fbuild-armed-flip:hover,
+#fbuild-panel .fbuild-armed-flip.fbcursor,
+#fbuild-panel .fbuild-armed-flip.active,
+#menu-container .assets-quick-collect:hover,
+#menu-container .assets-quick-collect.selected,
+.newspaper-nav-btn:not(.news-tab):not(.news-alert-toggle):hover,
+.newspaper-nav-btn:not(.news-tab):not(.news-alert-toggle).selected,
+.newspaper-nav-btn:not(.news-tab):not(.news-alert-toggle).focused,
+.page-header-action:hover,
+.page-header-action:focus,
+.page-header-action.selected,
+.spec-spend-button:hover:not(:disabled),
+.spec-spend-button.selected,
+.spec-spend-button.focused,
+.spellforge-action:hover,
+.spellforge-action.selected,
+.spellforge-action.focused,
+.mail-collect:hover,
+.mail-collect.selected,
+.mail-discard:hover,
+.mail-discard.selected,
+.pgrow-btn:hover,
+.pgrow-btn.selected,
+#gx-catalog .gx-btn.gx-cat-filter.gx-on,
+#gx-ui .gx-btn.selected,
+#gx-ui .gx-btn:focus-visible {
+    background: var(--chip-active-bg);
+    background-image: none;
+    border-color: var(--text-primary-hover);
+    color: var(--chip-active-fg);
+    box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
+    outline: none;
+}
+
+/* What a button means is said by its ink, as in the stamp's own variants. */
+#fbuild-panel .fbuild-clear-all.armed,
+.mail-discard,
+.cc-btn-danger {
+    border-color: var(--border-danger-active);
+    color: var(--text-text-alt-10);
+}
+
+.pgrow-btn.disabled,
+.spec-spend-button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+
+/* ==========================================================================
+   THE REST OF THE INVENTORY'S VOCABULARY
+   --------------------------------------------------------------------------
+   The button, the tab and the chip are stamped above. These are the other
+   pieces the backpack is made of, given to every screen that still drew its
+   own: the list row, the empty list, the section heading, the page title, the
+   search line, the typed field, the bar, the tooltip and the sheet. Only the
+   look is set, never the size, so each screen keeps the room it was given.
+   Minigames, HypernetOS, the title screen, the 3D HUDs and the hand-skinned
+   pieces (the cork boards, the diary's leather, the radio cabinet, the
+   dialogue parchment) keep their own dress.
+   ========================================================================== */
+
+/* --- 1. The list row --------------------------------------------------------
+   A row is the backpack's .item-slot: nothing behind it, nothing lifting it.
+   The chosen one is told by the gold hairline the rest of the game's rows
+   already use, never by a plate, a glow, an outline ring or a bar down one
+   side. */
+.cc-spec-card,
+.cc-spec-card:hover,
+.cc-spec-card.selected,
+.cc-presets-board .cc-wanted-card,
+.cc-presets-board .cc-wanted-card:hover,
+.cc-presets-board .cc-wanted-card.highlighted,
+.cc-presets-board .cc-wanted-card.selected,
+.cc-card-option.highlighted,
+.cc-card-option.disabled:hover,
+.cc-trait-grid .cc-card-option:hover,
+.cc-scenario-card:hover,
+.cc-scenario-card.selected,
+.cc-compact-loadout-item:hover,
+.cc-pet-card:hover,
+.cc-pet-card.selected,
+.cc3d-card.on,
+.cc3d-part.on,
+.cc3d-part.pick:hover,
+.faction-row:hover,
+.faction-row.selected,
+.category-row:hover,
+.category-row.focused,
+.monster-card:hover,
+.monster-card.focused,
+.monster-card.selected,
+.monster-card.selected:hover,
+.console-row:hover,
+.console-row.focused,
+.cryo-field.selected,
+#equip-container .equip-card:hover,
+.choice-card:hover,
+.choice-card.selected,
+.save-item:hover,
+.save-item.selected,
+.brewery-recipe-row:hover,
+.brewery-recipe-row.focused,
+.steal-choice.selected,
+#state-list-container .sl-row:hover,
+#state-list-container .sl-row.selected,
+.journal-page-item:hover,
+.journal-page-item.selected,
+.journal-page-item--open,
+#cs-mini .cs-row:hover,
+#cs-mini .cs-row.selected,
+#hv-mini .cs-row:hover,
+#hv-mini .cs-row.selected,
+.item-target-card .htp-row,
+.item-target-card .htp-row:hover,
+.item-target-card .htp-row.selected,
+.pas-adv-row,
+.pas-adv-row:hover,
+.pas-adv-row-sel,
+.newspaper-headline-item:hover,
+.newspaper-headline-item.selected,
+.bank-command,
+.bank-command.selected,
+.spellforge-row,
+.spellforge-row.focused,
+.spellforge-slot,
+.spellforge-slot.focused,
+.mail-row.selected,
+.bse-item-cell--on,
+.sm-craft-entry--cursor,
+.sm-gear-card.selected,
+.npc-wiki-card:hover,
+.npc-wiki-card.npc-content-focused {
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    transform: none !important;
+}
+
+/* The chosen row and the row under the cursor: the gold hairline, all round
+   and one pixel wide, so nothing shifts as the choice moves. */
+.cc-spec-card.selected,
+.cc-presets-board .cc-wanted-card.selected,
+.cc-presets-board .cc-wanted-card.highlighted,
+.cc-card-option.highlighted,
+.cc-scenario-card.selected,
+.cc-pet-card.selected,
+.cc3d-card.on,
+.cc3d-part.on,
+.faction-row.selected,
+.category-row.focused,
+.monster-card.focused,
+.monster-card.selected,
+.console-row.focused,
+.cryo-field.selected,
+.choice-card.selected,
+.save-item.selected,
+.brewery-recipe-row.focused,
+.steal-choice.selected,
+#state-list-container .sl-row.selected,
+.journal-page-item.selected,
+#cs-mini .cs-row.selected,
+#hv-mini .cs-row.selected,
+.item-target-card .htp-row.selected,
+.pas-adv-row-sel,
+.newspaper-headline-item.selected,
+.bank-command.selected,
+.spellforge-row.focused,
+.spellforge-slot.focused,
+.mail-row.selected,
+.bse-item-cell--on,
+.sm-craft-entry--cursor,
+.sm-gear-card.selected,
+.npc-wiki-card.npc-content-focused {
+    border: 1px solid var(--text-primary-hover) !important;
+    border-radius: 4px;
+}
+
+/* --- 2. The empty list ------------------------------------------------------
+   The backpack's .item-grid-empty: the plain UI face in the quiet ink,
+   centred, upright and at full strength. */
+.steal-empty,
+.ts-picked-empty,
+.ts-summary-empty,
+.cc-class-empty,
+.cc-picked-empty,
+.cc-empty-note,
+.right-tools-empty,
+.status-traits-empty,
+.status-empty-note,
+.placeholder-message,
+.shop-empty-note,
+.npc-empty,
+.sl-empty-line,
+.bestiary-list-empty,
+#fbuild-panel .fbuild-empty,
+.dz-empty,
+.wm-empty,
+.qb-c-empty,
+.arena-empty,
+.cs-empty,
+.grim-empty,
+.teach-empty,
+.ui-empty-text,
+.roster-empty,
+.army-regiment-empty,
+.cc-loadout-empty,
+.spellforge-empty,
+.mail-empty,
+.tpp-empty,
+.cc-pick-empty {
+    font-family: var(--font-ui);
+    font-style: normal;
+    color: var(--text-text-alt-4) !important;
+    text-align: center;
+    opacity: 1;
+}
+
+/* --- 3. The section heading -------------------------------------------------
+   The backpack's .inspect-section-title: small capitals in the heading ink,
+   bold, a little air between the letters, and no rule drawn under it. */
+.cc-subheader,
+.backpack-group-title,
+#status-menu-container .card-label,
+.apiary-section-title,
+.command-group-header,
+.right-tools-title,
+.topic-group-header,
+.cc-roster-head,
+.cc-class-group-head,
+.cc-scenario-group-title,
+.cc-scenario-section h4,
+.cc-bio-section-title,
+.cc-loadout-section-head,
+.cc-dossier-section-title,
+.cc-dossier-section-title--muted,
+.cc-dossier-section-title--anatomy,
+#equip-container .equip-group-header,
+.npc-sec-hdr,
+.dyn-section-title,
+.mlg-sheet .mlg-heading,
+.onu-section-head,
+.spellforge-subhead,
+.mail-group-head,
+.mail-enclosures-head,
+.tt-detail-head,
+.mpanel-head,
+#arena-ui-container .arena-detail-head,
+.tpp-panel-head {
+    font-family: var(--font-ui);
+    font-size: var(--fs-detail-heading);
+    font-weight: bold;
+    font-style: normal;
+    color: var(--text-detail-heading);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    border-bottom: none;
+    opacity: 1;
+}
+
+/* --- 4. The page title ------------------------------------------------------
+   The backpack's .title: the UI face in gold, bold, at the title size, with
+   its one pixel of shadow and no rule under it. */
+.save-title,
+.help-title,
+.detail-title,
+.target-title,
+.success-title,
+.cc3d-title,
+#cs-mini .cs-title,
+#hv-mini .cs-title,
+.fbuild-title,
+.pgrow-title,
+.pas-adv-title,
+.item-target-card .htp-title,
+.ui-help-title,
+.steal-title,
+#apiary-container .title,
+#brewery-container .title {
+    font-family: var(--font-ui);
+    font-size: var(--fs-title);
+    font-weight: bold;
+    font-style: normal;
+    color: var(--text-primary-hover);
+    text-transform: none;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 1px var(--bg-primary-hover-translucent-35);
+    border-bottom: none;
+}
+
+/* Numbers in a list read in the UI face, lined up, not in a typewriter's. */
+.cc-party-card-stat .value,
+.cc-inv-qty,
+.cc-loadout-qty,
+.cc-role-badge,
+.tt-tab-count,
+.tt-mat-count,
+.tt-node-mats {
+    font-family: var(--font-ui);
+    font-variant-numeric: tabular-nums;
+}
+
+/* --- 5. The search line -----------------------------------------------------
+   The backpack's search (MenuSearchBar): a line to type on, not a box. */
+.news-search-input,
+#fbuild-panel .fbuild-search,
+.cc3d-search,
+.cc3d-modal-search,
+.cc-pick-search,
+.backpack-search-input.cc-rail-search {
+    font-family: var(--font-ui);
+    color: var(--text-primary-hover);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 0;
+    box-shadow: none;
+    outline: none;
+}
+
+.news-search-input:focus,
+#fbuild-panel .fbuild-search:focus,
+.cc3d-search:focus,
+.cc3d-modal-search:focus,
+.cc-pick-search:focus,
+.backpack-search-input.cc-rail-search:focus {
+    border-bottom-color: var(--text-primary-hover);
+}
+
+#fbuild-panel .fbuild-search::-webkit-search-cancel-button,
+.msb-num::-webkit-inner-spin-button,
+.msb-num::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* The chest window's search starts where every other one does. */
+#cs-mini .msb-field .backpack-search-input {
+    padding-left: 2px;
+}
+
+/* --- 6. The typed field -----------------------------------------------------
+   A name or a line of text typed inside a sheet is the .ui-input: gold ink
+   in a gold frame on the page's own dark. */
+.forge-name-input,
+.pet-rename-input,
+#world-manage-container .wm-create input,
+.wm-note-input,
+.fbuild-town-name,
+.npc-chat-modal-input,
+.diary-write-input,
+.sm-craft-write-input,
+.mail-input {
+    font-family: var(--font-ui);
+    color: var(--text-primary-hover);
+    background: var(--bg-backdrop);
+    border: 1.5px solid var(--text-primary-hover);
+    border-radius: 4px;
+    box-shadow: none;
+    outline: none;
+}
+
+/* --- 7. The bar -------------------------------------------------------------
+   The backpack's weight bar: a dark trough, no frame, rounded ends. Each
+   keeps its own height and its own fill, which is what it measures. */
+.coherence-bar-outer,
+.cryo-progress,
+.cryo-vital-bar,
+.status-gauge-bar-outer,
+.gauge-outer,
+.bodypart-vital-bar,
+.eris-meter-track,
+.eris-odds-track,
+.apiary-resource-bar,
+.brewery-stage-bar,
+.meal-row-track,
+.rf-fuel-bar-wrap,
+.mpanel-row .p-bar,
+.dz-bar,
+.container-capacity-track,
+.item-target-card .htp-gauge-track,
+.pshop-track,
+.onu-stat-track,
+.spec-progress-track,
+.vehicle-meter,
+.anatomy-cell-bar,
+.survival-track,
+.vrep-track,
+#biologic-container .brain-region-bar,
+#biologic-container .meridian-track {
+    background: var(--bg-panel);
+    border: none;
+    border-radius: 3px;
+    box-shadow: none;
+    overflow: hidden;
+}
+
+/* --- 8. The tooltip ---------------------------------------------------------
+   One plate for every hover card, the map tip's own (.map-tip): see-through,
+   ringed, rounded, the UI face. */
+.travel-marker-tooltip,
+.cc-item-tooltip,
+.hotbar-tooltip,
+.cc3d-tip,
+.fbuild-mat-tip {
+    background: var(--map-tip-bg);
+    border: 2px solid var(--border-subtle);
+    border-radius: 10px;
+    outline: 1px solid var(--border-subtle-translucent-40);
+    outline-offset: -5px;
+    box-shadow: none;
+    font-family: var(--font-ui);
+}
+
+/* --- 9. The sheet -----------------------------------------------------------
+   Every popup is the shared modal sheet. The sprite gallery is the one sheet
+   that covers the whole screen, so it keeps no frame at all; the bare class
+   lost to the modal rule's two-class selector and wore one anyway. */
+.ui-overlay .ui-panel.cc-gal-panel {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.cryo-panel,
+#blacksmith-container .success-overlay {
+    border: var(--modal-border);
+    border-radius: var(--modal-radius);
+    background: var(--modal-bg);
+    box-shadow: var(--modal-shadow);
+}
+
+#blacksmith-container .success-item-row {
+    background: transparent;
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    box-shadow: none;
+}
+
+/* --- 10. The interior picker (ProceduralHouseSystem, room over the edge) ----
+   It painted itself inline in literals; it is the shared sheet over the
+   shared scrim now, with the tab rail, the search line and the list rows of
+   every other picker. */
+#room-selector-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--modal-scrim);
+}
+
+#room-selector-overlay #room-selector-modal {
+    zoom: var(--ui-zoom, 1);
+}
+
+#room-selector-modal {
+    width: 75vw;
+    max-width: 920px;
+    height: 80vh;
+    max-height: 620px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    user-select: none;
+    background: var(--modal-bg);
+    border: var(--modal-border);
+    border-radius: var(--modal-radius);
+    box-shadow: var(--modal-shadow);
+    color: var(--modal-fg);
+    font-family: var(--font-ui);
+}
+
+#room-selector-modal .room-selector-head,
+#room-selector-modal .room-selector-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border-primary-hover-translucent-15);
+}
+
+#room-selector-modal .room-selector-title {
+    font-size: var(--fs-title);
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: var(--text-primary-hover);
+    text-shadow: 1px 1px 1px var(--bg-primary-hover-translucent-35);
+}
+
+#room-selector-modal .room-selector-sub {
+    margin-top: 2px;
+    color: var(--text-text-alt-4);
+}
+
+#room-selector-modal .room-selector-close {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: var(--text-text-alt-4);
+    font-size: 22px;
+    line-height: 1;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+#room-selector-modal .room-selector-close:hover {
+    color: var(--text-primary-hover);
+    border-color: var(--text-primary-hover);
+}
+
+#room-selector-modal .room-selector-search {
+    width: 180px;
+    padding: 5px 2px;
+    font-family: var(--font-ui);
+    color: var(--text-primary-hover);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 0;
+    outline: none;
+}
+
+#room-selector-modal .room-selector-search:focus {
+    border-bottom-color: var(--text-primary-hover);
+}
+
+#room-selector-modal .room-selector-grid {
+    flex: 1;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    padding: 16px;
+}
+
+#room-selector-modal .room-selector-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 75px;
+    padding: 12px;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+#room-selector-modal .room-selector-card:hover .room-selector-card-name,
+#room-selector-modal .room-selector-card.focused .room-selector-card-name {
+    color: var(--text-primary-hover);
+}
+
+#room-selector-modal .room-selector-card.focused {
+    border-color: var(--text-primary-hover);
+}
+
+#room-selector-modal .room-selector-card-name {
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: var(--text-success-active);
+}
+
+#room-selector-modal .room-selector-card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#room-selector-modal .room-selector-pool {
+    padding: 2px 6px;
+    font-size: var(--fs-chip);
+    font-weight: bold;
+    text-transform: capitalize;
+    color: var(--text-text-alt-4);
+    border: 1px solid var(--border-success);
+}
+
+#room-selector-modal .room-selector-star {
+    font-weight: bold;
+    color: var(--text-primary-hover);
+}
+
+#room-selector-modal .room-selector-empty {
+    grid-column: 1 / -1;
+    padding: 40px;
+    text-align: center;
+    font-family: var(--font-ui);
+    color: var(--text-text-alt-4);
+}
+
+/* --- 11. Waking from a dream (DreamSystem) ----------------------------------
+   The question is the shared sheet over the shared scrim, held inside the
+   dream's own overlay rather than over the whole page. */
+.dream-wake-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--modal-scrim);
+    font-family: var(--font-ui);
+}
+
+.dream-wake-panel {
+    min-width: 340px;
+    padding: 26px 34px;
+    text-align: center;
+    background: var(--modal-bg);
+    border: var(--modal-border);
+    border-radius: var(--modal-radius);
+    box-shadow: var(--modal-shadow);
+    color: var(--modal-fg);
+}
+
+/* --- 12. Body copy ----------------------------------------------------------
+   A line of description outside an item card reads as the item card's own
+   description does. */
+.inspect-desc {
+    font-family: var(--font-ui);
+    font-size: var(--fs-detail-prose);
+    line-height: 1.45;
+    color: var(--text-success-active);
 }

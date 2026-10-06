@@ -167,14 +167,14 @@
 
         // Player 1 (Actor 1) special handling
         if (actorId === 1) {
-            // Priority 1: Check Variable 109 (Player 1 bust name)
+            // Priority 1: the actor's own bust (vnBust)
             const player1BustName = $gameActors.actor(1).vnBust();
             if (player1BustName && player1BustName !== "") {
                 return "img/busts/" + player1BustName;
             }
 
-            // Priority 2: If Switch 77 is ON, use Variable 106 for monster form
-            if ($gameSwitches.value(77)) {
+            // Priority 2: a creature actor shows its monster form
+            if ($gameActors.actor(1)._isCreatureActor) {
                 const player1MonsterName = $gameActors.actor(1).vnBattler();
                 if (player1MonsterName && player1MonsterName !== "") {
                     return "img/enemies/" + player1MonsterName;
@@ -198,14 +198,14 @@
 
         // Player 2 (Actor 2) special handling
         if (actorId === 2) {
-            // Priority 1: Check Variable 117 (Player 2 bust name)
+            // Priority 1: the actor's own bust (vnBust)
             const player2BustName = $gameActors.actor(2).vnBust();
             if (player2BustName && player2BustName !== "") {
                 return "img/busts/" + player2BustName;
             }
 
-            // Priority 2: If Switch 78 is ON, use Variable 107 for monster form
-            if ($gameSwitches.value(78)) {
+            // Priority 2: a creature actor shows its monster form
+            if ($gameActors.actor(2)._isCreatureActor) {
                 const player2MonsterName = $gameActors.actor(2).vnBattler();
                 if (player2MonsterName && player2MonsterName !== "") {
                     return "img/enemies/" + player2MonsterName;
@@ -229,14 +229,14 @@
 
         // Player 3 (Actor 3) special handling
         if (actorId === 3) {
-            // Priority 1: Check Variable 118 (Player 3 bust name)
+            // Priority 1: the actor's own bust (vnBust)
             const player3BustName = $gameActors.actor(3).vnBust();
             if (player3BustName && player3BustName !== "") {
                 return "img/busts/" + player3BustName;
             }
 
-            // Priority 2: If Switch 79 is ON, use Variable 108 for monster form
-            if ($gameSwitches.value(79)) {
+            // Priority 2: a creature actor shows its monster form
+            if ($gameActors.actor(3)._isCreatureActor) {
                 const player3MonsterName = $gameActors.actor(3).vnBattler();
                 if (player3MonsterName && player3MonsterName !== "") {
                     return "img/enemies/" + player3MonsterName;
@@ -781,10 +781,8 @@
             default: genderLabel = T("MainMenu.gender.fluid"); break;
         }
 
-        const ccUtils = window.CharacterCreationUtils;
-        const repVar = (ccUtils && ccUtils.getReproductiveVariableId)
-            ? ccUtils.getReproductiveVariableId(Math.max(0, memberIndex)) : 87;
-        const repType = $gameVariables ? $gameVariables.value(repVar) : 0;
+        const ownRepType = actor.reproductionType ? actor.reproductionType() : null;
+        const repType = (ownRepType === undefined || ownRepType === null) ? 0 : ownRepType;
         let repName = "";
         switch (repType) {
             case -1: repName = T("MainMenu.reproduction.none"); break;
@@ -803,7 +801,7 @@
         const archetypeText = archNames.length ? archNames.join(" / ") : (profile?.isCreature ? T('SceneStatus.ui.archetypeCreature') : T('SceneStatus.ui.archetypeHumanoid'));
 
         const nowYear = (window.NPCLifeSim && window.NPCLifeSim.currentYear) ? window.NPCLifeSim.currentYear() : 2001;
-        let ageVal = ($gameSystem._ccBirthAge && $gameSystem._ccBirthAge[memberIndex]) ||
+        let ageVal = (Number(actor._ccAge) > 0 ? Number(actor._ccAge) : null) ||
                      (window.NPCLifeSim && window.NPCLifeSim.ageOf && window.NPCLifeSim.ageOf(actor.name())) || null;
         let birthYearVal = profile?._birthYearOverride || null;
         if (birthYearVal && !ageVal) ageVal = Math.max(18, nowYear - birthYearVal);
@@ -2002,11 +2000,9 @@
     // talk menu, a summon, or a protagonist in monster form. Their portrait is
     // the creature itself, never a bust or a walking sprite.
     //
-    // Both tests are rewritten every time a slot is filled - the monster-form
-    // switch (77/78/79) by every character-creation path, "sprite" by the three
-    // monster paths alone - so a person built into a slot that once held a
-    // creature is never mistaken for one. `_isCreatureActor` is deliberately NOT
-    // consulted: nothing ever clears it, so it outlives the creature that set it.
+    // Both tests live on the actor: `_isCreatureActor` is the monster-form
+    // flag every character-creation path writes and clears, "sprite" is set by
+    // the three monster paths alone.
     function isMonsterPortraitActor(actor) {
         if (!actor) return false;
         if (typeof actor.portraitMode === 'function' && actor.portraitMode() === 'sprite') return true;
@@ -2017,8 +2013,7 @@
         // window.NPCCreature owns that boundary; it is never re-derived here.
         if (window.NPCCreature && window.NPCCreature.isNonSentientActor &&
             window.NPCCreature.isNonSentientActor(actor)) return true;
-        const slot = actor.actorId();
-        return !!($gameSwitches && slot >= 1 && slot <= 3 && $gameSwitches.value(76 + slot));
+        return !!actor._isCreatureActor;
     }
 
     Scene_Status.prototype.getStatus3DInfo = function (actor) {

@@ -550,14 +550,23 @@
       const e = this.env;
       o.tower.setNightGlow(e.night ? 1 : e.storm ? 0.6 : e.wet ? 0.3 : 0);
       u.uDir.value = dir;
-      u.uPulse.value = t * (3 + charge * 14);
+      // Both waves are ADVANCED by their rate, never worked out as time times
+      // rate: with a rate that climbs, t * rate(t) runs at rate + t * rate',
+      // which tens of seconds into a scene is a hundred beats a second and
+      // reads as the whole tower flickering.
+      const step = o._lastT == null ? 0 : Math.max(0, Math.min(0.1, t - o._lastT));
+      o._lastT = t;
+      o._pulsePh = (o._pulsePh || 0) + step * (3 + charge * 9);
+      u.uPulse.value = o._pulsePh;
       let muzzle = 0;
       if (!live) {
         // The tide climbs with the count and its leading edge burns. In the
-        // last seconds the whole heap throbs, faster and faster.
+        // last seconds the whole heap throbs, faster and faster, up to three
+        // beats a second and no further.
         const fill = standby ? 1.1 : smooth(charge) * 1.08;
         const late = standby ? 0 : ramp(charge, 0.82, 1);
-        const throb = late > 0 ? 0.5 + 0.5 * Math.sin(t * (10 + late * 40)) : 0;
+        o._throbPh = (o._throbPh || 0) + step * Math.PI * 2 * (1 + late * 2);
+        const throb = late > 0 ? 0.5 + 0.5 * Math.sin(o._throbPh) : 0;
         u.uFill.value = (o.top * fill) / sc;
         u.uWave.value = u.uFill.value;
         u.uSpent.value = 1;
@@ -565,7 +574,7 @@
           u.uCharge.value = 0.5 + 0.3 * Math.sin(t * 3);
           u.uFlash.value = 0;
         } else {
-          u.uCharge.value = charge > 0 ? 0.6 + 1.8 * charge + throb * 1.4 * late : 0;
+          u.uCharge.value = charge > 0 ? 0.6 + 1.8 * charge + throb * 0.6 * late : 0;
           u.uFlash.value = charge > 0 && charge < 0.97 ? 2.2 : 0;
         }
         muzzle = standby ? 0.4 : charge * charge * (1 + throb * late);

@@ -261,10 +261,16 @@
     return $gameSystem._mailPartyId;
   }
 
+  // The savegame slot and playthrough uid ride on the card so the messenger
+  // can tell one playthrough's old card from another savegame's, and drop a
+  // card whose savegame has since been overwritten or deleted.
   function selfCard() {
     const leader = hasParty() ? $gameParty.leader() : null;
+    const PP = window.PartyPresence;
     return {
       id: partyId(),
+      slot: PP && PP.currentSlot ? PP.currentSlot() : 0,
+      uid: PP && PP.selfId ? PP.selfId() : "",
       world: activeWorld(),
       name: leader ? leader.name() : T("Mail.unknownParty"),
       members: hasParty() ? $gameParty.members().map((a) => a.name()) : [],
@@ -816,9 +822,37 @@
     },
 
     // ---- who there is to talk to ----
+    // One row per name. The same companion can walk in several savegames of a
+    // world, and the address book keeps every card ever written, so without
+    // this a name turned up once per playthrough that ever carried it.
     contacts() {
       const groups = [];
       const members = (window.$gameParty && $gameParty.members) ? $gameParty.members() : [];
+      const benched = (() => {
+        try { return window.CharacterPresets?.getAvailableRetiredPresets?.() ?? []; }
+        catch (e) { return []; }
+      })().filter(entry => entry && entry.name);
+      const shown = new Set(members.map(actor => actor.name()).concat(benched.map(entry => entry.name)));
+      // The people starred in the Empathize panel, on top: the ones the player
+      // chose to keep in reach. A beast is never on the list, since it holds no
+      // messenger (window.NPCCreature owns that boundary).
+      const favourites = this.favouriteNames().filter(name => {
+        if (shown.has(name)) return false;
+        shown.add(name);
+        return true;
+      });
+      if (favourites.length) {
+        groups.push({
+          label: T('Mail.nudge.groupFavourites'),
+          rows: favourites.map(name => ({
+            key: 'fav:' + name,
+            name,
+            status: 'online',
+            sub: '',
+            favourite: true,
+          })),
+        });
+      }
       if (members.length) {
         groups.push({
           label: T('Mail.nudge.groupParty'),
@@ -835,10 +869,6 @@
       // drawer: each of them lives somewhere the player sent them (the halls,
       // a house the party owns, the starship, the vault), and each of them is
       // reachable from here, which is the whole point of a messenger.
-      const benched = (() => {
-        try { return window.CharacterPresets?.getAvailableRetiredPresets?.() ?? []; }
-        catch (e) { return []; }
-      })().filter(entry => entry && entry.name);
       if (benched.length) {
         groups.push({
           label: T('Mail.nudge.groupBenched'),
@@ -858,15 +888,13 @@
         });
       }
       let others = [];
-      try {
-        const world = activeWorld();
-        const me = partyId();
-        others = world ? partiesIn(world).filter(card => card && card.id !== me) : [];
-      } catch (e) { others = []; }
+      try { others = this.otherCards(); } catch (e) { others = []; }
       if (others.length) {
         const rows = [];
         for (const card of others) {
           for (const name of (card.members || [])) {
+            if (!name || shown.has(name)) continue;
+            shown.add(name);
             rows.push({
               key: 'party:' + card.id + ':' + name,
               name: name,
@@ -880,17 +908,80 @@
         }
         if (rows.length) groups.push({ label: T('Mail.nudge.groupWorld'), rows });
       }
-      groups.push({
-        label: T('Mail.nudge.groupOthers'),
-        rows: NUDGE_LORE.map(entry => ({
-          key: 'lore:' + entry.id,
-          name: T(entry.nameKey),
-          status: entry.status,
-          sub: T('Mail.nudge.alwaysOn'),
-          lore: entry,
-        })),
-      });
+      // A named contact already walking with the party is that companion, and
+      // answers from the row above.
+      const lore = NUDGE_LORE.filter(entry => !shown.has(T(entry.nameKey)));
+      if (lore.length) {
+        groups.push({
+          label: T('Mail.nudge.groupOthers'),
+          rows: lore.map(entry => ({
+            key: 'lore:' + entry.id,
+            name: T(entry.nameKey),
+            status: entry.status,
+            sub: T('Mail.nudge.alwaysOn'),
+            lore: entry,
+          })),
+        });
+      }
       return groups;
+    },
+
+    // The NPCs starred in the Empathize panel, newest star first.
+    favouriteNames() {
+      const Wiki = window.NPCEmpathize?._internal?.Wiki;
+      if (!Wiki || typeof Wiki.listFavourites !== 'function') return [];
+      const NC = window.NPCCreature;
+      const out = [];
+      for (const fav of Wiki.listFavourites()) {
+        if (!fav || fav.type !== 'npc' || !fav.id) continue;
+        const name = String(fav.id);
+        if (out.includes(name)) continue;
+        if (NC && NC.isNonSentientByName && NC.isNonSentientByName(name)) continue;
+        out.push(name);
+      }
+      return out;
+    },
+
+    // The other savegames of this world, one card each. The address book is
+    // merged and never pruned, so it also holds this playthrough's own older
+    // cards, the cards of savegames since overwritten or deleted, and the
+    // autosave and quicksave slots; none of those is somebody else.
+    otherCards() {
+      const world = activeWorld();
+      if (!world) return [];
+      const me = partyId();
+      const PP = window.PartyPresence;
+      const myUid = PP && PP.selfId ? PP.selfId() : '';
+      const mySlot = PP && PP.currentSlot ? PP.currentSlot() : 0;
+      const cards = partiesIn(world)
+        .filter(card => card && card.id !== me)
+        .filter(card => !(card.uid && myUid && card.uid === myUid))
+        .filter(card => {
+          const slot = Number(card.slot) || 0;
+          if (!slot || !PP) return true;
+          // This slot is the savegame doing the looking, so whoever was
+          // written into it before is gone.
+          if (slot === mySlot) return false;
+          if (PP.isPlaythroughSlot && !PP.isPlaythroughSlot(slot)) return false;
+          if (PP.slotExists && !PP.slotExists(slot)) return false;
+          return true;
+        })
+        .sort((a, b) => ((b.updatedAt || 0) - (a.updatedAt || 0)) || ((b.minute || 0) - (a.minute || 0)));
+      // The freshest card of each playthrough and of each slot stands for it.
+      const seenUid = new Set();
+      const seenSlot = new Set();
+      return cards.filter(card => {
+        if (card.uid) {
+          if (seenUid.has(card.uid)) return false;
+          seenUid.add(card.uid);
+        }
+        const slot = Number(card.slot) || 0;
+        if (slot) {
+          if (seenSlot.has(slot)) return false;
+          seenSlot.add(slot);
+        }
+        return true;
+      });
     },
 
     freshness(card) {
@@ -1033,6 +1124,16 @@
     contactContext(contact) {
       if (!contact || contact.lore) return {};
       const E = window.NPCEmpathize;
+      // A starred NPC has the full Empathize sheet: who they are, how they
+      // feel about the party and what their life has been.
+      if (contact.favourite) {
+        try {
+          return (typeof E?.conversationContext === 'function'
+            ? E.conversationContext(contact.name) : null) || {};
+        } catch (e) {
+          return {};
+        }
+      }
       if (!E || typeof E.companionContext !== 'function') return {};
       // Only the party's own: somebody else's party member is a name on a card
       // and this world knows nothing else about them.
@@ -1054,9 +1155,11 @@
         try {
           reply = await llm.reply(Object.assign({
             npcName: contact.name,
-            npcBio: contact.lore ? T(contact.lore.bioKey) : (contact.actor || contact.benched
-              ? T('Mail.nudge.bioMember', { who: contact.name })
-              : T('Mail.nudge.bioStranger', { who: contact.name, leader: contact.card ? contact.card.name : '' })),
+            npcBio: contact.lore ? T(contact.lore.bioKey)
+              : contact.favourite ? T('Mail.nudge.bioFavourite', { who: contact.name })
+              : (contact.actor || contact.benched
+                ? T('Mail.nudge.bioMember', { who: contact.name })
+                : T('Mail.nudge.bioStranger', { who: contact.name, leader: contact.card ? contact.card.name : '' })),
             speakerName: leader ? leader.name() : '',
             situation: T('Mail.nudge.situation'),
             // Whatever the line named, as this world has it: a hyperpower, one

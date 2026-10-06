@@ -34,7 +34,7 @@
     _generatePartyThoughts, _genJoke, _getNPCName, _getProfile, _getT, _hasJoinPartyCommand,
     _hasSelfSwitchAPage, _hygienePenalty, _hygieneReadout, _infectChance, _isBubbaActor,
     _isBubbaNpc, _isEmActor, _isEmLocalNpc, _isEmNpc, _isNonSentientActor, _isNonSentientNpc,
-    _isStoryNpc, _joinChance, _joinLevelOk, _lastInteractionDay, _llmCharacterSheet, _llmLifeFor,
+    _isStoryNpc, _joinChance, _joinLevelOk, _lastInteractionDay, _llmCharacterSheet, _llmLifeFor, _llmWorkplaceLine,
     _llmPartyLine, _llmRelationLine, _llmSafe, _llmTopicsLine, _llmWhereabouts, _llmWorldLine,
     _medianScore, _navigateInPlace, _npcBaseAttraction, _npcBaseOpinion, _npcEffectiveAttraction,
     _npcEffectiveOpinion, _pairBond, _pairContext, _pairData, _pairSide, _pairSituationKeys,
@@ -97,7 +97,10 @@
           ? _llmRelationLine(profile, actor, _npcEffectiveOpinion(profile, actor))
           : '',
         npcLife:      _llmLifeFor(npcName, profile, false),
-        party:        _llmPartyLine(profile, actor),
+        // A shopkeeper's counter, shift, rota and shelf, so "have you got
+        // any X" is answered off the real stock.
+        workplace:    _llmSafe(() => _llmWorkplaceLine(npcName)),
+        party:      _llmPartyLine(profile, actor),
         world:        _llmWorldLine(),
       };
     },

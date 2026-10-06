@@ -828,7 +828,7 @@
   };
 
   //=========================================================================
-  // Battle UI Fixes - Window_BattleItem single column
+  // Battle UI Fixes - Window_BattleItem as a grid of tiles
   //=========================================================================
 
   // -------------------------------------------------------------------------
@@ -843,6 +843,33 @@
   function paintIcon(span, iconIndex) {
       span.className = 'cc-rpg-icon bse-item-icon';
       span.setAttribute('style', window.CCArt.icon(iconIndex, 32));
+  }
+
+  // The backpack is a grid of tiles, BSE_ITEM_COLS across: an icon, the count
+  // in its corner and the name under it. The description box above says the
+  // rest, so a tile never has to carry a long name on one line.
+  const BSE_ITEM_COLS = 5;
+
+  // Where the cursor goes on the grid. Up and down step a whole row and wrap
+  // round to the same column at the other end; a column the short last row
+  // does not reach lands on the last tile. Left and right walk the tiles in
+  // reading order and wrap from the last tile to the first.
+  function battleItemGridStep(idx, max, cols, dir) {
+      if (max <= 0) return -1;
+      if (idx < 0 || idx >= max) return 0;
+      const col = idx % cols;
+      const lastRowStart = Math.floor((max - 1) / cols) * cols;
+      if (dir === 'right') return (idx + 1) % max;
+      if (dir === 'left') return (idx - 1 + max) % max;
+      if (dir === 'down') {
+          if (idx >= lastRowStart) return col < max ? col : 0;
+          return Math.min(idx + cols, max - 1);
+      }
+      if (dir === 'up') {
+          if (idx < cols) return Math.min(lastRowStart + col, max - 1);
+          return idx - cols;
+      }
+      return idx;
   }
 
   //=============================================================================
@@ -1051,12 +1078,11 @@
       }
   };
 
-  // Always return 1 column for battle items to prevent name truncation
+  // The engine's row and page arithmetic follows the grid the panel draws.
   Window_BattleItem.prototype.maxCols = function () {
-    return 1;
+    return BSE_ITEM_COLS;
   };
 
-  // No column spacing needed for single column
   Window_BattleItem.prototype.colSpacing = function () {
     return 0;
   };
@@ -1071,24 +1097,17 @@
               this._actor && this._actor.multiplayerPlayerId && this._actor.multiplayerPlayerId() === 2;
           const input = isP2 ? window.$gameSplitScreen : Input;
 
-          if (input.isRepeated("down")) {
-              if (this.index() >= this.maxItems() - 1) {
-                  this.select(0);
+          const dir = input.isRepeated("down") ? "down"
+              : input.isRepeated("up") ? "up"
+              : input.isRepeated("right") ? "right"
+              : input.isRepeated("left") ? "left" : null;
+          if (dir) {
+              const from = this.index();
+              const to = battleItemGridStep(from, this.maxItems(), this.maxCols(), dir);
+              if (to >= 0 && to !== from) {
+                  this.select(to);
                   this.playCursorSound();
-              } else {
-                  this.cursorDown(input.isTriggered("down"));
               }
-          } else if (input.isRepeated("up")) {
-              if (this.index() <= 0) {
-                  this.select(this.maxItems() - 1);
-                  this.playCursorSound();
-              } else {
-                  this.cursorUp(input.isTriggered("up"));
-              }
-          } else if (input.isRepeated("right")) {
-              this.cursorRight(input.isTriggered("right"));
-          } else if (input.isRepeated("left")) {
-              this.cursorLeft(input.isTriggered("left"));
           } else {
               if (!this.isHandled("pagedown") && input.isRepeated("pagedown")) this.cursorPagedown();
               if (!this.isHandled("pageup") && input.isRepeated("pageup")) this.cursorPageup();
@@ -1104,6 +1123,7 @@
       const root = this._htmlItemRoot;
       if (!root) return;
       root.innerHTML = '';
+      root.style.setProperty('--bse-item-cols', String(BSE_ITEM_COLS));
 
 
 
@@ -1118,28 +1138,29 @@
       this._htmlItemEls = items.map((item, i) => {
           const el = document.createElement('div');
           el.dataset.idx = i;
-          el.className = 'bse-item-row';
+          el.className = 'bse-item-cell';
           el.style.setProperty('--hud-size', scaledFont + 'px');
 
-          // Left side: Icon + Name
+          // The tile: icon on top, name under it, count pinned in the corner.
           const leftDiv = document.createElement('div');
-          leftDiv.className = 'bse-item-row-name';
+          leftDiv.className = 'bse-item-cell-name';
 
           if (typeof item === 'string') {
               // Category Mode
               const iconIndex = 209; // Generic bag icon
               const iconSpan = document.createElement('span');
               paintIcon(iconSpan, iconIndex);
-              leftDiv.appendChild(iconSpan);
+              el.appendChild(iconSpan);
 
               const nameSpan = document.createElement('span');
               nameSpan.textContent = item;
               leftDiv.appendChild(nameSpan);
               el.appendChild(leftDiv);
+              el.title = item;
 
               // Right side: Item count in this category
               const rightDiv = document.createElement('div');
-              rightDiv.className = 'bse-item-row-count';
+              rightDiv.className = 'bse-item-cell-count';
 
               const count = $gameParty.allItems().filter(x => {
                   if (!self.includes(x)) return false;
@@ -1148,7 +1169,7 @@
               }).length;
 
               const countSpan = document.createElement('span');
-              countSpan.textContent = '(' + count + ')';
+              countSpan.textContent = String(count);
               rightDiv.appendChild(countSpan);
               el.appendChild(rightDiv);
 
@@ -1158,23 +1179,24 @@
                   return cat === item && $gameParty.canUse(x);
               });
               if (!isEnabled) {
-                  el.classList.add('bse-item-row--spent');
+                  el.classList.add('bse-item-cell--spent');
               }
           } else if (item) {
               // Standard Item Mode
               const iconIndex = item.iconIndex;
               const iconSpan = document.createElement('span');
               paintIcon(iconSpan, iconIndex);
-              leftDiv.appendChild(iconSpan);
+              el.appendChild(iconSpan);
 
               const nameSpan = document.createElement('span');
               nameSpan.textContent = item.name;
               leftDiv.appendChild(nameSpan);
               el.appendChild(leftDiv);
+              el.title = item.name;
 
               // Right side: Quantity / Number
               const rightDiv = document.createElement('div');
-              rightDiv.className = 'bse-item-row-count';
+              rightDiv.className = 'bse-item-cell-count';
 
               const count = $gameParty.numItems(item);
               const countSpan = document.createElement('span');
@@ -1185,7 +1207,7 @@
               // Enable/disable based on whether party can use the item in battle
               const isEnabled = $gameParty.canUse(item);
               if (!isEnabled) {
-                  el.classList.add('bse-item-row--spent');
+                  el.classList.add('bse-item-cell--spent');
               }
           } else {
               el.classList.add('bse-hidden');
@@ -1243,9 +1265,9 @@
           // slid against an edge: it is placed by its centre and grows around
           // it, so the throw list and the backpack are the same panel in the
           // same place whatever either of them holds. Its height follows the
-          // rows it carries, capped so the panel never climbs into the
+          // rows of tiles it carries, capped so the panel never climbs into the
           // description box that reads from the top centre.
-          const ITEM_W = 420;
+          const ITEM_W = 540;
           const ITEM_TOP = (window.BattleListPage && window.BattleListPage.TOP) || 184;
           const ITEM_H = Math.max(160, Graphics.height - ITEM_TOP * 2);
           const scaledW = ITEM_W * sc.sx;
@@ -1274,7 +1296,7 @@
           if (this._htmlItemEls) {
               this._htmlItemEls.forEach((el, i) => {
                   el.style.setProperty('--hud-size', scaledFont + 'px');
-                  el.classList.toggle('bse-item-row--on', i === idx);
+                  el.classList.toggle('bse-item-cell--on', i === idx);
               });
 
               // Scroll the selected element into view for keyboard/controller navigation
@@ -1298,7 +1320,7 @@
   Window_ItemList.prototype.maxCols = function () {
     // Only affect battle item window, not regular item lists
     if (this.constructor === Window_BattleItem) {
-      return 1;
+      return BSE_ITEM_COLS;
     }
     return _Window_ItemList_maxCols.call(this);
   };

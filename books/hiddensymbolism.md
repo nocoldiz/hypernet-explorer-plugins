@@ -80,7 +80,7 @@ evident. The structuralizations are not so definite. If they were,
 evolution would not have been possible for the living stream of energy
 which is utilized by mind-stuff cannot be confined if it would advance to
 more complex integrations. Hence the products of mind in evolution are
-more plastic—more subtle and more changing. They are to be found in the
+more plastic - more subtle and more changing. They are to be found in the
 myths and the folk-lore of ancient peoples, the poetry, dramatic art, and
 the language of later races. From age to age however the strivings
 continue the same. The living vessels must continue and the products
@@ -98,9 +98,9 @@ are present to-day in all of us though hidden behind a different set of
 structural terms, utilizing different mechanisms for energy expression.
 
 The unceasing complexity of life’s accumulations has created a great
-principle for energy expression—it is termed sublimation—and in popular
+principle for energy expression - it is termed sublimation - and in popular
 parlance represents the spiritual striving of mankind towards the
-perfecting of a relation with the world of reality—the environment—which
+perfecting of a relation with the world of reality - the environment - which
 shall mean human happiness in its truest sense. One of the products of
 this sublimation tendency is called Mysticism. This work would seek to aid
 us to an understanding of this manifestation of human conduct as expressed
@@ -607,8 +607,8 @@ related to several “secret” sciences and organizations, some of which have
 been discredited: magic, kabbala, rosicrucianism, etc. It is particularly
 closely connected with alchemy so that the terms “hermetic art” and
 “alchemy” (and even “royal art”) are often used synonymously. This
-“art”—to call it by the name that not without some justification it
-applies to itself—leads us by virtue of its many ramifications into a
+“art” - to call it by the name that not without some justification it
+applies to itself - leads us by virtue of its many ramifications into a
 large number of provinces, which furnish us desirable material for our
 research.
 
@@ -731,7 +731,7 @@ in dreams where, anxiously turning in flight or oppressed by tormenting
 haste, we cannot move. In connection with what is distressing and
 threatening, as described in the precipitous slope of the wall and the
 narrow plank by the mill, belong also the desperate tasks and
-demands—quite usual in dreams and myths—that meet the wanderer. Among such
+demands - quite usual in dreams and myths - that meet the wanderer. Among such
 tasks or dangers I will only mention the severe examination by the elders,
 the struggle with the lion, the obligation to marry, and the burden of
 responsibility for the nuptial pair, all of which cause the wanderer so
@@ -917,7 +917,7 @@ nothing but a dextrous veiling of a procedure hostile to the censor.
 
 Even that the train comes to a standstill is a polite paraphrase.
 [Paraphrase as the dreamer communicated to me, of an actual physical
-condition—an erection.] Similar meaning is conveyed by the word station,
+condition - an erection.] Similar meaning is conveyed by the word station,
 which reminds us of the Latin word status (from stare, to stand). The
 scene in the car recalls moreover the joke in a story which often used to
 occur to T. “A lady invited to a reception, where there were also young
@@ -1095,8 +1095,8 @@ plays an important rôle in the dream life as also in myth and apparently,
 also in creative poetry. The fables (sagas, dramas) of Œdipus, who slays
 his father and marries his mother are well known. According to the
 observations of psychoanalysis there is a bit of Œdipus in every one of
-us. [These Œdipus elements in us can—as I must observe after reading
-Imago, January, 1913—be called “titanic” in the narrower sense, following
+us. [These Œdipus elements in us can - as I must observe after reading
+Imago, January, 1913 - be called “titanic” in the narrower sense, following
 the lead of Lorenz. They contain the motive for the separation of the
 child from the parents.] The related conflicts, that in their entirety
 constitute the Œdipus complex (almost always unconscious, because actively
@@ -1175,7 +1175,7 @@ we are for the time being proceeding in a decidedly one-sided manner.
 In the interpretation of the parable we cannot apply the original method
 of psychoanalysis. This consists in having a series of seances with the
 dreamer in order to evoke the free associations. The dreamer of the
-parable—or rather the author—has long ago departed this life. We are
+parable - or rather the author - has long ago departed this life. We are
 obliged then to give up the preparatory process and stick to the methods
 derived from them. There are three such methods.
 
@@ -1203,8 +1203,8 @@ interpretation of myths will be explained in Part I. of the synthetic
 part.] It is then possible by the comparison of individual instances of a
 motive, to conclude concerning its true character, inasmuch as one, as it
 were, completes in accordance with their original tendency the lines of
-increasing distinctness in the different examples, and thus—to continue
-the geometric metaphor—one obtains in their prolongations a point of
+increasing distinctness in the different examples, and thus - to continue
+the geometric metaphor - one obtains in their prolongations a point of
 intersection in which can be recognized the goal of the process toward
 which the dream strives, a goal, however, that is not found in the dream
 itself but only in the interpretation.
@@ -1233,7 +1233,7 @@ his narrative. He comes upon a thicket in the woods, loses the usual
 path.... He, too, speaks figuratively. Have we almost unaware, in making
 his symbolism our own, partially drawn away the veil from his mystery? It
 is a fact confirmed by many observations [Cf. my works on threshold
-symbolism—Schwellensymbolik, Jahrb. ps. F. III, p. 621 ff., IV, p. 675
+symbolism - Schwellensymbolik, Jahrb. ps. F. III, p. 621 ff., IV, p. 675
 ff.] that in hypnagogic hallucinations (dreamy images before going to
 sleep), besides all kinds of thought material, the state of going to sleep
 also portrays itself in exactly the same way that in the close of a dream
@@ -1261,8 +1261,8 @@ The wanderer comes through the woods to the Pratum felicitatis, the Meadow
 of Felicity, and there his adventures begin. Here, too, our symbolism is
 maintained; by sleeping or the transition to revery we get into the dream
 and fairy tale realm, a land to which the fulfillment of our keenest
-wishes beckons us. The realm of fairy tales is indeed—and the
-psychoanalyst can confirm this statement—a Pratum felicitatis, in spite of
+wishes beckons us. The realm of fairy tales is indeed - and the
+psychoanalyst can confirm this statement - a Pratum felicitatis, in spite of
 all dangers and accidents which we have there to undergo.
 
 The dream play begins and the interpretation, easy till now, becomes more
@@ -1294,7 +1294,7 @@ determined by our culture, is opposed prohibitively. Obstructed
 satisfaction creates anxiety instead of pleasure. Anxiety may then be
 called also a libido with a negative sign. Only when the impulse in
 question knows how to break through without the painful conflict, can it
-attain pleasure—which is the psychic (not indeed the biologic) tendency of
+attain pleasure - which is the psychic (not indeed the biologic) tendency of
 every impulse emanating from the depths of the soul. The degrees of the
 pleasure that thus exists in the soul may be very different, even
 vanishingly small, a state of affairs occurring if the wish fulfilling
@@ -1422,7 +1422,7 @@ characteristic of the prize that rewards him. The red and the white reveal
 themselves as man and woman, and the last aim is, as the just quoted
 passage clearly shows, and the further course of the narrative fully
 indicates, the sexual union of both. Even the rest of the fairy tale
-prizes are not lacking—kingdoms, riches, happiness. And if they are not
+prizes are not lacking - kingdoms, riches, happiness. And if they are not
 dead they are still living.... The narrative has yielded a complete
 fulfillment of wishes; the longing for love and power has attained its
 end. That the wanderer does not experience the acquired happiness
@@ -1459,7 +1459,7 @@ for presentability”) it has to favor the visual in all cases, the tendency
 toward the pictorial does not explain such a systematic series of
 disguises and such a determinate tendency as that just observed by us. The
 representation of the union of man and woman is strikingly paraphrased.
-First as blood and bones—a type of intimate vital connection; they belong
+First as blood and bones - a type of intimate vital connection; they belong
 to _one_ body, just as two lovers are one and as later the bridal pair
 also melt into one body. Then as two kinds of roses that bloom on one
 bush. The wanderer breaks the rose as the boy does the wild rose maiden.
@@ -1479,7 +1479,7 @@ over a very narrow plank, the ethical symbolism of which will be discussed
 later; and in the striking feeling of responsibility which the wanderer
 has for the actions of the bridal pair in the crystal prison, which gives
 us the impression that he had a bad conscience. Altogether we cannot doubt
-that the dream—the parable—has endeavored, because of the censor, to
+that the dream - the parable - has endeavored, because of the censor, to
 disguise the sexual experiences of the wanderer. We can be quite certain
 that it will be said that the sexual as such will be forbidden by the
 censor. That is, however, not the case. The account is outspoken enough,
@@ -1679,7 +1679,7 @@ significance of the anxiety about examinations. Psychosexual obstructions
 cause impotence. The incest scruple is such an obstruction.
 
 According to Laistner we can conceive the painful examination as a
-question torture—a typical experience of the hero in countless myths.
+question torture - a typical experience of the hero in countless myths.
 Laistner, starting from this central motive, traces the majority of myths
 back to the incubus dream. The solution of the tormenting riddle, the
 magic word that banishes the ghost, is the cry of awakening, by which the
@@ -1836,7 +1836,7 @@ doubling of his being. The Iranian primitive bull ancestor also occurs as
 cow. Compare white and red, male and female, in the body of the lion.
 
 In the Indian Asvamedha the parts of the sacrificed steed correspond to
-the elements of the visible creation. (Cf. Brhadaranyaka—Upanisad I, i.) A
+the elements of the visible creation. (Cf. Brhadaranyaka - Upanisad I, i.) A
 primitive vedic cosmogony makes the world arise from the parts of the body
 of a giant. (Rig-veda purusa-sukta.)
 
@@ -2103,8 +2103,8 @@ For the purpose of being brought to life again the parts of the
 dismembered animal are regularly put in a vessel or some container
 (kettle, box, cloth, skin). In the case of the kettle, which corresponds
 to the belly or uterus, they are generally cooked. Thus in the tale of the
-juniper tree, the magic rejuvenations of Medea, which—except in the
-version mentioning the magic potion—she practices on Jason and Æson, and
+juniper tree, the magic rejuvenations of Medea, which - except in the
+version mentioning the magic potion - she practices on Jason and Æson, and
 also on goats (cf. Thor and his goats). I must quote still other pertinent
 observations of Rank (p. 313 ff). The motive of revivification, most
 intimately connected with dismemberment, appears not only in a secondary
@@ -2131,7 +2131,7 @@ preserved). The incompleteness (stigmata) also appears after the
 resurrection.
 
 John XIX, 33. “But when they came to Jesus, and saw that he was dead
-already, they brake not his legs.”—40 f. “Then took they the body of Jesus
+already, they brake not his legs.” - 40 f. “Then took they the body of Jesus
 and wound it in linen cloths with the spices.... Now in the place where he
 was crucified there was a garden, and in the garden a new sepulcher,
 wherein was never man yet laid.”
@@ -2156,7 +2156,7 @@ mankind, which are stamped deeply with the greatest significance in the
 imaginative “family romance” of neurotics. To the typical dragon fight
 belongs, however (according to Stucken’s correct formulation), the motive
 of denial. As a matter of fact the hero of our parable is denied the prize
-set before him—the admission into the college—for several of the elders
+set before him - the admission into the college - for several of the elders
 insist on the condition that the wanderer must resuscitate the lion (Sec.
 7). In myths where the dragon has to fight with a number of persons this
 difference generally occurs: that he produces dissension among his
@@ -2236,7 +2236,7 @@ ff.)
 
     Sainted Mary
     Closed gate
-    Opened by God’s word—
+    Opened by God’s word - 
     Sealed fountain,
     Barred garden,
     Gate of Paradise.
@@ -2331,7 +2331,7 @@ exactly what he was doing. He was counting or muttering and was so drunk
 that he staggered.”
 
 Stekel: “In this dream are united birth and effects of the forbidden or
-unpermissible. The dreamer goes back over the path—evidently as an adult.
+unpermissible. The dreamer goes back over the path - evidently as an adult.
 The experiences represent an accusation against the mother. This
 accusation was not without reason. Mr. F. Z. S. had a joyless childhood.
 His mother was a heavy drinker. He witnessed her coitus with strangers.
@@ -2353,7 +2353,7 @@ If we remember that the wanderer reverses the way of birth, we shall not
 be surprised that he finds a smaller garden in the larger. That is
 probably the uterus. The wanderer attains the most intimate union with his
 ideal, the mother, in imagining himself in her body. This phantasy is
-continued still less ambiguously,—but I do not wish to anticipate. Be it
+continued still less ambiguously, - but I do not wish to anticipate. Be it
 only said: He possesses his mother as a spouse and as a child; it is as if
 in the desire to do everything better than his father he desires to beget
 himself anew. We already know the mythological motives of new creation,
@@ -2470,7 +2470,7 @@ and mill. Greeth is only a paraphrase of woman. He continues, “Duke Otto,
 Ludwig of Bavaria’s youngest son, wasted his substance with a beautiful
 miller’s daughter named Margaret, and lived in Castle Wolfstein.... This
 mill is still called the Gretel mill and Prince Otto the Finner” (Grimm,
-D. S., No. 496). Finner means, like Fengo, the miller [Fenja—old Norman? =
+D. S., No. 496). Finner means, like Fengo, the miller [Fenja - old Norman? =
 the milleress], for the marriage is a milling [Vermählung ist eine
 Vermehlung], the child is the ground grain, the meal.
 
@@ -2540,7 +2540,7 @@ our sweaty feet.’ Now, as if by command, all the passengers in the coach
 drew off a shoe and each held a sweaty foot in front of my nose.”
 
 This dream, too (beside other things), contains a womb phantasy, wheel
-room, mill, space with wet walls—the womb. The dreamer is followed by a
+room, mill, space with wet walls - the womb. The dreamer is followed by a
 crowd; just as our wanderer is met by a crowd; the elders. This dream,
 which will still further occupy our attention, I shall call the “Flying
 Post.”
@@ -2550,7 +2550,7 @@ wanderer strives for the most intimate union with his mother; his
 striving, to do better than his father culminates in his procreating
 himself, the son, again and better.
 
-He will quite fill up his mother—be the father in full. Of course the
+He will quite fill up his mother - be the father in full. Of course the
 phantasy does not progress without psychic obstructions. The anxious
 passage over the narrow plank manifests it.
 
@@ -2696,7 +2696,7 @@ place, as the parable also does (Sec. 15). In dreams the image of bathing
 frequently appears to occur as a womb or birth phantasy.
 
 At the end of the 14th section, as the inmates of the prison die, his
-certain ruin stands before the wanderer’s eyes—again a faint echo of his
+certain ruin stands before the wanderer’s eyes - again a faint echo of his
 relation to the bridegroom.
 
 We have already for a long time thoroughly familiarized ourselves with the
@@ -2715,9 +2715,9 @@ advanced into autumn. Let us choose for the purpose a middle point between
 the departing summer and the approaching winter, about the end of October,
 and bear in mind that the dog-days come in August, so that at the end of
 July they are in waiting, then we find for the time spent in the
-receptacle nine months—the time of human gestation.
+receptacle nine months - the time of human gestation.
 
-The newborn (Sec. 20) is naturally—thirsty. What shall he be fed with if
+The newborn (Sec. 20) is naturally - thirsty. What shall he be fed with if
 not with the water from the mill? And the water makes him grow and thrive.
 
 Two royal personages stand before us in splendor and magnificence. The
@@ -2798,7 +2798,7 @@ abroad and in which the interest had been raised to almost scientific
 character, was penetrated by the philosophical theories of the Greeks: the
 element and atom ideas of the nature-philosophers and of Plato and of
 Aristotle, and the religious views of the neoplatonists. The magic of the
-orient was amalgamated with it, Christian elements were added—in brief,
+orient was amalgamated with it, Christian elements were added - in brief,
 the content of the chemistry of that time, which mainly had metallurgy as
 its starting point, took a vital part in the hybrid thought of syncretism
 in the first centuries after Christ.
@@ -2925,8 +2925,8 @@ adds to the two principles a third, salt, as the element of fixedness or
 palpability, as he terms it. According to my notion, Paracelsus has not
 introduced an essential innovation, but only used in a new systematic
 terminology what others said before him, even if they did not follow it
-out so consistently. The principles mercury, sulphur and salt—their
-symbols are [Symbol: Mercury], [Symbol: Sulphur] and [Symbol: Salt]—were
+out so consistently. The principles mercury, sulphur and salt - their
+symbols are [Symbol: Mercury], [Symbol: Sulphur] and [Symbol: Salt] - were
 among the followers of the alchemists very widely used in their technical
 language. They were frequently also called spirit, soul and body. They
 were taken in threes but also as before in twos, according to the
@@ -2987,7 +2987,7 @@ worse off. For the matter in which we previously worked, the unconscious,
 remains approximately the same throughout great periods; the unconscious
 of the wanderer is in its fundamentals not very different from that of a
 man of to-day or from that of Zosimos. [Zosimos is one of the oldest
-alchemistic writers of whom we have any definite knowledge—about the 4th
+alchemistic writers of whom we have any definite knowledge - about the 4th
 century.] It is the soul of the race that speaks, its “humanity.” Much
 more swiftly, on the contrary, does objective knowledge change in the
 course of time and the forms also in which this knowledge is expressed.
@@ -3002,7 +3002,7 @@ show in general outline only how we must arrange the leading forms and
 processes of the parable to accord with the mode of thinking peculiar to
 alchemy. If I should succeed in doing so clearly, we should already have
 passed a difficult stage. Then for the first time I might venture
-further—to the special object of this research. But patience! We have not
+further - to the special object of this research. But patience! We have not
 yet gone so far.
 
 First of all it will be necessary for me to draw in a few lines a sketch
@@ -3080,7 +3080,7 @@ prime condition, called among other names Lapis philosophicus
 spiritus (spirit), medicina (medicine), cœlum (sky), nubes (clouds), ros
 (dew), umbra (shadow), stella signata (marked star), and Lucifer, Luna
 (moon), aqua ardens (fiery water), sponsa (betrothed), coniux (wife),
-mater, mother (Eve),—from her princes are born to the king,—virgo
+mater, mother (Eve), - from her princes are born to the king, - virgo
 (virgin), lac virginis (virgin’s milk), menstruum, materia hermaphrodita
 catholica Solis et Lunae (Catholic hermaphrodite matter of sun and moon),
 sputum Lunae (moon spittle), urina puerorum (children’s urine), fæces
@@ -3107,7 +3107,7 @@ rotting. Without this no fruitful work is possible. I have previously
 mentioned that it was thought that semen must rot in order to impregnate.
 The seed grain is subject to putrefaction in the earth. But we must
 remember also the impregnating activity of manure if we wish to understand
-correctly and genetically the association rot—procreate. Putrefaction is
+correctly and genetically the association rot - procreate. Putrefaction is
 one of the forms of corruption (= breaking up) and corruptio unius est
 generatio alterius (the breaking up of one is the begetting of another).
 
@@ -3244,8 +3244,8 @@ father, but they both fall in. [Cf. the dangerous walk of the wanderer on
 the wall, Section 8, where the people fall off.] The son makes every
 effort to get out again, but some one comes who does not permit it.
 [Symbolism of obstruction, the locked door, etc., in the parable. The
-grave changes imperceptibly into the vessel where the bridal pair—with
-Lacinius they are father and son instead of mother and son—are united and
+grave changes imperceptibly into the vessel where the bridal pair - with
+Lacinius they are father and son instead of mother and son - are united and
 securely locked in.] When the whole body is dissolved the bones are thrown
 out of the grave. They are divided into nine [dismemberment], the
 dissolved substance is cooked nine days over a gentle fire till the black
@@ -3299,8 +3299,8 @@ is not yeast, but meal and water [mill water] and the whole dough is
 thoroughly leavened and real yeast, so also the lapis [stone] is itself
 the ferment, yet gold and mercury are also called ferment.”
 
-Now begins the main work—marriage, prison, embrace, conception, birth,
-transfiguration—to which the rest of the parable is devoted.
+Now begins the main work - marriage, prison, embrace, conception, birth,
+transfiguration - to which the rest of the parable is devoted.
 
 The prison is the philosophic egg. It is also called “Athanor, a sieve,
 dunghill, bain-marie (double cooker), a kiln, round ball, green lion,
@@ -3326,7 +3326,7 @@ with the Beja, which when he lies with the Beja, dies immediately and is
 changed into her nature. Although the Beja is a woman, still she improves
 the Gabricum because he is come out of her.” [Death of the bridegroom son.
 It should be remembered in this connection that all metals or all
-substances generally—consequently also the [Symbol: Sun]—come forth from
+substances generally - consequently also the [Symbol: Sun] - come forth from
 the “mother,” the primal substance [Symbol: Mercury].]
 
 In a “Vision” of Daustenius, the king is to return into his mother’s womb
@@ -3403,7 +3403,7 @@ The end is reached with purple. The wanderer at the end describes the
 virtues of the philosopher’s stone. We have already compared the great
 elixir with soma. In the old alchemistic book, which bears the name of the
 Persian magician, Osthanes (Berthelot, Orig., p. 52), the divine water
-heals all maladies. Water of life,—elixir of life.
+heals all maladies. Water of life, - elixir of life.
 
 Many readers will shake their heads over the psychoanalytic exposition of
 the parable. The gross development of sexuality and the Œdipus complex may
@@ -3429,7 +3429,7 @@ independent treatment. In practice there was a fission, and procreation
 becomes an independent problem for alchemists. Yet the followers of the
 art did learn from nature, in order that their art might follow the works
 of nature even to improve on her; what wonder then if many of them set
-themselves to the artificial creation—generation—of man? Yet the belief in
+themselves to the artificial creation - generation - of man? Yet the belief in
 generatio equivoca has not long been dead. Must it not have seemed somehow
 possible, in view of the supposed fact that they saw insects develop out
 of earth, worms out of dung, etc., that they should by special artificial
@@ -3693,8 +3693,8 @@ of anything else. For a long time alchemy meant no more for modern
 historians.
 
 The fact that modern chemical science is sprung from the hermetic
-works,—as the only branch at present clearly visible and comprehensible of
-this misty tree of knowledge,—has had for result that in looking back we
+works, - as the only branch at present clearly visible and comprehensible of
+this misty tree of knowledge, - has had for result that in looking back we
 have received a false impression. Chemical specialists have made
 researches in the hermetic art and have been caught just as completely in
 the tangle of its hieroglyphics as were the blind seekers of gold before
@@ -3711,8 +3711,8 @@ made historical researches. They were hindered by their special knowledge.
 It is far from my purpose to desire in the least to minimize the services
 that a Chevreul or a Kopp has performed for the history of chemistry; what
 I should like to draw attention to is merely that the honored fathers of
-the history of chemistry saw only the lower—“inferius”—and not the
-higher—“superius”—phase of alchemy, for example, in the Smaragdine tablet;
+the history of chemistry saw only the lower - “inferius” - and not the
+higher - “superius” - phase of alchemy, for example, in the Smaragdine tablet;
 and that they used it as the type of universal judgment in such a way that
 it needed a special faculty for discovery to reopen a fountain that had
 been choked up.
@@ -3772,7 +3772,7 @@ work of the alchemists was one of contemplation and not a work of the
 hands. Their alembic, furnace, cucurbit, retort, philosophical egg, etc.,
 etc., in which the work of fermentation, distillation, extraction of
 essences and spirits and the preparation of salts is said to have taken
-place was Man,—yourself, friendly reader,—and if you will take yourself
+place was Man, - yourself, friendly reader, - and if you will take yourself
 into your own study and be candid and honest, acknowledging no other guide
 or authority but Truth, you may easily discover something of hermetic
 philosophy; and if at the beginning there should be ‘fear and trembling’
@@ -3872,7 +3872,7 @@ Conscience in the crude state is generally called by the alchemists
 first by the second and, according to the demands of nature, not forcibly,
 is the one great aim that the hermetics follow. This first goal is a
 preparation for a further work. Whither this leads we can represent in one
-word—“God”—and even here we may be struck with the “circular” character of
+word - “God” - and even here we may be struck with the “circular” character of
 the whole hermetic work, since the heavenly mercury that is necessary to
 the preliminary work, to the purification, is yet itself a gift of God;
 the beginning depends on the end and presupposes it. The symbol of the
@@ -3915,7 +3915,7 @@ saturnine work of the present philosopher, Mr. Johann Isaak Hollandus, is
 not to be understood of common lead ... but of the lead of the
 philosophers.”
 
-And in Hollandus himself we read: “In the name of God, Amen.—My child,
+And in Hollandus himself we read: “In the name of God, Amen. - My child,
 know that the stone called the Philosopher’s Stone comes from Saturn. And
 know my child as a truth that in the whole vegetable work [vegetable on
 account of the symbolism of the sowing and growing] there is no higher or
@@ -4279,8 +4279,8 @@ as a mystical introduction.
 Rosicrucianism And Freemasonry.
 
 
-The previous chapter has shown that there was a higher alchemy—it was
-furthermore regarded as the true alchemy—which has the same relation to
+The previous chapter has shown that there was a higher alchemy - it was
+furthermore regarded as the true alchemy - which has the same relation to
 practical chemistry that freemasonry has to practical masonry. A prominent
 chemist who had entered into the history of chemistry and that of
 freemasonry once wrote to me: “Whoever desires to make a chemical
@@ -4300,7 +4300,7 @@ views of the problems of rosicrucian history. It will be shown that this
 disagreement fortunately has but small influence upon our problem and that
 therefore we are relieved of the difficult task of reaching a conclusion
 and of bringing historical proof for a decision which experienced
-specialists—of whom I am not one—have so signally failed to reach.
+specialists - of whom I am not one - have so signally failed to reach.
 
 Rosicrucians are divided into those of three periods, the old, who are
 connected by the two chief writings, “Fama” and “Confessio,” that appeared
@@ -4514,7 +4514,7 @@ associations of a religious character. Within these associations there
 appeared very early a well developed system of symbols, which were adopted
 for the purpose of actually maintaining, through the concealment
 necessitated by circumstances, their unions and their implements and
-customs—symbols that they chose as cloaks and that in the circle of the
+customs - symbols that they chose as cloaks and that in the circle of the
 initiated were explained and interpreted according to the teachings of
 their cult.
 
@@ -4600,7 +4600,7 @@ victory over matter becomes visible. A representation of trinity is
 possible by means of the conventional cross. We can see in it two elements
 of lines which by their unification or penetration give the third as the
 point of intersection. More generally the cross is conceived as quinity
-(fiveness)—i.e., 4+1ness (in alchemy four elements which are collected
+(fiveness) - i.e., 4+1ness (in alchemy four elements which are collected
 about the quinta esentia). A cross in which unity splits into duality so
 that trinity results, is Y, which is called the forked cross. From unity
 grows duality, that is, nature divides into spirit and matter, into active
@@ -4659,8 +4659,8 @@ mention here in view of the later connection of these two objects.
 
 The semicircle or moon is an emblem of borrowed light. Besides the circles
 or spheres, the symbols of eons (divine beings, powers) that are enthroned
-in the ether as eternal beings, the human soul—the psyche or anima, which
-does not coincide with reason or the purified soul—appears as a broken
+in the ether as eternal beings, the human soul - the psyche or anima, which
+does not coincide with reason or the purified soul - appears as a broken
 circle. As the sun and its symbol, the ragged circle, symbolize the
 eternal light, the half circle is, as it were, the symbol of that spark of
 light that slumbers in the soul of man, or, as the alchemists often say,
@@ -5020,8 +5020,8 @@ foreshadowed, will be treated later.
 We could also posit a psychological interrelation in the form of an
 “etiological assumption” according to the terminology of psychoanalysis.
 It would explain the temporary fusion of alchemistic rosicrucianism with
-freemasonry. The rosicrucian frenzy would never have occurred—so much I
-will say—in masonry, if there had been no trend that way. Some emotional
+freemasonry. The rosicrucian frenzy would never have occurred - so much I
+will say - in masonry, if there had been no trend that way. Some emotional
 cause must have existed for the phenomenon, and as the specter of
 rosicrucianism stalked especially on the masonic stage, and indeed was
 dangerous to it alone, this etiological assumption must be such as to
@@ -5051,7 +5051,7 @@ from time to time names are used which will veil these facts. I add now in
 anticipation a statement whose clear summing up has been reserved for
 psychoanalysis, namely that the object of religious worship is regularly
 to be regarded as a symbol of the libido, that psychologic goddess who
-rules the desires of mankind—and whose prime minister is Eros. [Libido is
+rules the desires of mankind - and whose prime minister is Eros. [Libido is
 desire or the tendency toward desire, as it controls our impulsive life.
 In medical language used mainly for sexual desire, the concept of libido
 is extended in psychoanalysis (namely by C. G. Jung) to the impelling
@@ -5164,7 +5164,7 @@ and religious character is seen in all the figures contained in it as well
 as in the greater part of the text. It is continually reiterated that gold
 is not common gold but our gold, that the stone is a spiritual stone
 (Jesus Christ), etc. The creation of the world, the religious duty of
-mankind, the mystic path to the experiencing of divinity—all is
+mankind, the mystic path to the experiencing of divinity - all is
 represented in detailed pictures with predominantly chemical symbolism.
 This higher conception of alchemy, that corresponds throughout to the
 ideal of the so-called old or true rosicrucian, does not prevent the
@@ -5303,7 +5303,7 @@ they are possible. The psychoanalytic interpretation brings to view
 elements of a purposeless and irrational life of impulse, which works out
 its fury in the phantasies of the parable; and now the analysis of
 hermetic writings shows us that the parable, like all deep alchemistic
-books, is an introduction to a mystic religious life,—according to the
+books, is an introduction to a mystic religious life, - according to the
 degree of clearness with which the ideas hovered before the author. For
 just as the psychoanalytically derived meaning of the phantasies does not
 occur to him, so possibly even the mystical way on which he must travel
@@ -5502,7 +5502,7 @@ from the outset the conquest of a woman. The carpet, the ring, are female
 symbols, the first is the body of the woman, the ring is the vagina (Greek
 kteis = comb = pudenda muliebria). (The carpet is still more specifically
 marked as a female symbol in that the brothers take it from the body of a
-shepherdess. Shepherdess—a coarse “rag”—coarse “cloth”—in contrast to the
+shepherdess. Shepherdess - a coarse “rag” - coarse “cloth” - in contrast to the
 fine carpet of the hero.)
 
 The simpleton is one who does not like much work. When he also ascribes
@@ -5533,14 +5533,14 @@ of the uterus, harmonizing with the situation that the tale presents. (On
 the contrary frog is usually penis.) The toad’s big box (= mother) is also
 the womb. From it indeed the female symbols, in this connection, sisters,
 are produced for the simpleton. The box is, however, also the domestic
-cupboard,—food closet, parcel, bandbox, chamber, bowl, etc.,—from which
+cupboard, - food closet, parcel, bandbox, chamber, bowl, etc., - from which
 the good mother hands out tasty gifts, toys, etc. Just as the father in
 childish phantasy can do anything, so the mother has a box out of which
 she takes all kinds of good gifts for the children. Down among the toads
 an ideal family episode is enacted. The mother’s inexhaustible box (with
 the double meaning) even delivers the desired woman for the simpleton.
 
-The woman—for whom? Doubtless for the simpleton, psychologically. The tale
+The woman - for whom? Doubtless for the simpleton, psychologically. The tale
 says for the king, because the female symbols, carpet, ring, the king
 desires for himself, in so many words, and the inference is that the woman
 also belongs to him. The conclusion of the tale, however, turns out true
@@ -5548,8 +5548,8 @@ to the psychological situation, as it does away with the king and lets the
 simpleton live on, apparently with the same woman. It is clear as day that
 the simpleton identifies himself with his father, places himself in his
 place. The image, which possesses him from the first is the father’s
-woman, the mother. And the father’s death—that is considerately
-ignored—which brings queen and crown, is a wish of the simpleton. So again
+woman, the mother. And the father’s death - that is considerately
+ignored - which brings queen and crown, is a wish of the simpleton. So again
 we find ourselves at the center of the Œdipus complex. As
 mother-substitute figures the sister, one of the little toads.
 
@@ -5616,7 +5616,7 @@ In the third test, the search for “the fairest woman,” the crown of life,
 conceived exoterically as well as esoterically, the carrot represents the
 vegetative life (body, the natural man), and the six mice that draw it are
 our old friends the six swans or virtues, and the highest of these
-compassion—or love—goes as the enthroned queen in the carriage. The
+compassion - or love - goes as the enthroned queen in the carriage. The
 uninitiated man is almost in doubt and asks, “What shall I do with a
 carrot?” Yet the great mother replies, as it were, “Take one of my
 fundamental forces.” And what do we see then? The toad becomes a beautiful
@@ -5721,7 +5721,7 @@ as an “object.”]
 Two typical examples will enable us at once clearly to understand the two
 categories and keep them separate.
 
-A. Material Symbolism.—Conditions. In a drowsy state I reflect upon the
+A. Material Symbolism. - Conditions. In a drowsy state I reflect upon the
 nature of the judgments that are transsubjectively (= for all men) valid.
 All at once the thread of the abstract thought is broken and
 autosymbolically in the place of it is presented the following hypnagogic
@@ -5738,7 +5738,7 @@ apparently homogeneous sphere. Not all judgments are transsubjective; with
 their bodies and limbs men are outside of and under the sphere and stand
 on the earth as separate individuals.
 
-B. Functional Symbolism.—Conditions. Dreamy state as above. I reflect upon
+B. Functional Symbolism. - Conditions. Dreamy state as above. I reflect upon
 something or other, and yet in allowing myself to stray into bypaths of
 thought, I am diverted from my peculiar theme. When I want to get back the
 autosymbolic phenomenon appears.
@@ -5791,7 +5791,7 @@ boundaries between a “here” and a “there,” an “above” and a “below
 for this reason Mephistopheles can say to Faust on his departure,
 
 
-    “Plunge then.—I could as well say soar.”
+    “Plunge then. - I could as well say soar.”
 
 
 We see therefore between the visualized image and the thought content,
@@ -5979,7 +5979,7 @@ primitive psychic activities, from thinking to gazing, from doing to
 hallucinating; a striving back towards childhood and the pleasures of
 childhood. Introversion accordingly is accompanied by a desire for
 symbolic form of expression (the mystical education is carried on in
-symbols), and causes the infantile imagos to revive—chiefly the mother
+symbols), and causes the infantile imagos to revive - chiefly the mother
 image. It was pre-eminently father and mother who appeared as objects of
 childish love, as well as of defiance. They are unique and imperishable,
 and in the life of adults there is no difficulty in reawakening and making
@@ -6184,7 +6184,7 @@ intro-determination represent however a collection of our spiritual
 powers, which we have first formed and exercised at the time that the
 images arose, and which are in their nature closely related to these
 images, indeed completely united with them as a result of the errors of
-superposition—this collection of powers, I say, accompanies us through our
+superposition - this collection of powers, I say, accompanies us through our
 entire life and is that from which are taken the powers that will be
 required for future development. The objects or applications change, the
 powers remain almost the same. The symbolism of the material categories
@@ -6598,7 +6598,7 @@ influential are the early infantile memory images. It is the child’s
 world, the paradise of early childhood, from which a rigorous law has
 separated us. In this subterranean realm slumber sweet domestic feelings
 and the infinite hopes of all “becoming.” Yet as Mephistopheles says, “The
-peril is great.” This depth is seducing: it is the “mother” and—death. If
+peril is great.” This depth is seducing: it is the “mother” and - death. If
 the libido remains suspended in the wonder realm of the inner world the
 man has become but a shadow for the world above. He is as good as dead or
 mortally ill; if the libido succeeds however in tearing itself loose again
@@ -7058,7 +7058,7 @@ Divinity in the Bhagavad-Gita:
     Whoever sees me everywhere, and also sees everything in me,
     From him I can never vanish nor he from me.” VI, 29f.
     “Whoever discovers in all the modes of life the very exalted lord,
-    Who does not fail when they fail—he who recognizes that, has
+    Who does not fail when they fail - he who recognizes that, has
                 learned well,
     For whosoever recognizes the same lord as the one who dwells in
                 all,
@@ -7279,7 +7279,7 @@ undomesticated man; this ideal must die to the moral aspirant.
 
 The painful duty of killing a part of self is beautifully expressed in the
 Bhagavad-Gita, where the hero, Aryuna, hesitates to fight against his
-“kindred,” to shoot at them—the bow falls from his hand.
+“kindred,” to shoot at them - the bow falls from his hand.
 
 Dying relates to the old realms. The old laws expire to make room for the
 new. The new life cancels the old deeds. (Cf. Paul, Rom. VII-VII.)
@@ -7827,7 +7827,7 @@ by Schlegel: German [Schroeder].)
     “Wer wie das Meer in das die Wasser strömen
     Das sich anfüllet und doch ruhig dasteht
     Wer so in sich die Wünsche lässt verschwinden,
-    Der findet Ruhe—nicht wer ihnen nachgibt.”
+    Der findet Ruhe - nicht wer ihnen nachgibt.”
 
 
 Above I have compared the lion of the parable to the Sphinx of Œdipus, and
@@ -7926,7 +7926,7 @@ the phantasy is given free play.
 The raw product then, of the symbol-choosing phantasy of the individual
 (“raw,” i.e., not covered for publicity with a premeditated varnish) bears
 traces of the things that closely concern the person in question. (“Out of
-the fulness of the heart the mouth speaketh”—even without premeditation.)
+the fulness of the heart the mouth speaketh” - even without premeditation.)
 If we now start from a spiritual product which is expressed in symbols
 (mythologically apperceived), and whose author we must take to be not an
 individual man but many generations or simply mankind, then this product
@@ -8363,7 +8363,7 @@ which manifest themselves in pairs. Joy corresponds to desire fulfilled,
 sorrow to the obstructed or imperiled fulfillment; hope is the expectation
 of fulfillment, fear the opposite, etc. All the pairs of opposites are in
 some degree superficial, something that comes and goes with time, while
-the essential remains, itself invisible and without relation to time—a
+the essential remains, itself invisible and without relation to time - a
 perpetual activity, an ever enduring conation as it was formerly called.
 (It is the libido of the psychoanalysis. In its manifestations it is
 subjected to bipolarity, as Stekel has named the inevitable pairs of
@@ -8385,7 +8385,7 @@ is described as having escaped from opposites.
 
 
     “Contact of atoms is only cold and warm, brings pleasure and pain,
-    They come and go without permanency—tolerate them O Bharata.
+    They come and go without permanency - tolerate them O Bharata.
     The wise man, whom these do not affect, O mighty hero,
     Who bears pain and pleasure with equanimity he is ripening for
                 immortality.” (II, 14 ff.)
@@ -8693,7 +8693,7 @@ creatures have their life.”
 
 If I compare the hermetic teachings on the one hand with the vedanta, and
 on the other with the Samkhya-Yoga, I do not lose sight of the fundamental
-antagonism of both—Vedanta is monistic, Samkhya is dualistic—but in
+antagonism of both - Vedanta is monistic, Samkhya is dualistic - but in
 appreciation of the doctrine of salvation which is common to both. That
 the mystic finds the same germ in both systems is shown by the
 Bhagavad-Gita. For him the theoretical difference is trivial, whether the
@@ -8708,7 +8708,7 @@ that is illumined, i.e., space, earth, ether, did not exist, such is the
 isolated state of the seer, of the pure self, when the threefold world,
 you and I, in brief, all that is visible, is gone. As the state of a
 mirror is, in which no reflection falls, neither of statues nor of
-anything else—only representing in itself the being [of the mirror]—such
+anything else - only representing in itself the being [of the mirror] - such
 is the isolation of the seer, who remains without seeing, after the jumble
 of phenomena, I, you, the world, etc., has vanished.” (Garbe,
 Samkhya-Phil., p. 326.)
@@ -8750,7 +8750,7 @@ man and woman. That is the mystic marriage (Hieros gamos), a universally
 widespread symbol of quite supreme importance. In alchemy the last
 process, i.e., according to the viewpoint of representation, the
 tincturing or the unification, is quite frequently represented in the
-guise of a marriage—sometimes of a king and a queen. We cannot interchange
+guise of a marriage - sometimes of a king and a queen. We cannot interchange
 this final process with the initial one of introversion, which (as a
 seeking for the uterus for the purpose of a rebirth) is likewise readily
 conceived of as a sexual union. If the symbol of coitus was conceivable
@@ -8790,7 +8790,7 @@ time when the king, i.e., God, takes the wanderer up into his kingdom.
 
 The attainment of an inner harmony, of a serene peace, is what, as it
 seems to me, is most clearly brought out as the characteristic of the
-final unificatio—not merely by the Hindus or Neoplatonists, but also by
+final unificatio - not merely by the Hindus or Neoplatonists, but also by
 the Christian mystics and by the alchemists.
 
 Artephius is quoted by H. A., p. 86, as follows: “... This water [water of
@@ -8930,7 +8930,7 @@ the yoga we also find 7 steps, which are described in the “Yoga Vasistha”
 (cf. Hath. Prad., pp. 2 ff). It may easily happen that the domination of
 the number 7 is to be derived from the infusion of the scientific
 doctrines (7 planets, 7 metals, 7 tones in the diatonic scale) and yet it
-may depend on an actual correspondence in the human psyche with nature—who
+may depend on an actual correspondence in the human psyche with nature - who
 can tell? Most significant is the connection of the 7 steps of development
 with the infusion of the nature myth in the alchemistic theories of
 “rotations.” For the perfection of the Stone, rotations (i.e., cycles) are
@@ -9020,7 +9020,7 @@ man, the place where they really exist. With this theoretical presumption
 the possible objection against all mysticism is averted, namely that it is
 valueless because it rests merely upon imagined experiences, upon
 fanaticism. This objection, though not to be overlooked, does not apply to
-mysticism, which accomplishes an actual ethical work of enduring value—but
+mysticism, which accomplishes an actual ethical work of enduring value - but
 to the other path that issues from introversion, namely magic (not to
 mention physical and spiritual suicide). This is nicely expressed, too, in
 an allegorical way by saying that magically-made gold melts, as the story
@@ -9137,7 +9137,7 @@ The highest being speaks in the inexhaustible Bhagavad-Gita:
     God is the all. Hard is it to find the noble man who recognizes
                 this.
     Those whom greed robs of knowledge go to other gods,
-    Cleave to many rulers—their own nature rules them,
+    Cleave to many rulers - their own nature rules them,
     And whatsoever divinity one strives to honor in belief,
     I respect his belief and direct him to the right place.
     If he strives in firm belief towards his divinity’s favor and
@@ -9156,7 +9156,7 @@ possible cases only for the reason that the mystic is the one who carries
 out most strenuously the ethical work of purification, and under such
 conditions as are most favorable to a suggestive group of symbols, and in
 particular those rich in characteristic types. Bear in mind the founders
-of religion. (They do not always have to be individuals—schools, myths.)
+of religion. (They do not always have to be individuals - schools, myths.)
 There are, however, others than the religiously inspired natures, who are
 preëminently endowed to produce suggestive symbol groups with anagogic
 value; the artists. I suspect that it would prove that the purifying
@@ -9186,7 +9186,7 @@ ethical) process has already, I believe, been commented on enough to be
 comprehensible. And the power of rule that has been extolled as a magical
 effect of the Philosopher’s Stone lies in the harmonizing of the
 individual will with that of the world or with God’s will. In the new
-birth—so remarks Jane Leade casually—we acquire a magic power; this occurs
+birth - so remarks Jane Leade casually - we acquire a magic power; this occurs
 “through faith, that is, through the harmony of our will with the divine
 will. For faith puts the world in our power, inasmuch as the harmony of
 our will with the divine has the result of making everything ours or
@@ -9207,7 +9207,7 @@ present modes of viewing things.
 should run the risk of unduly expatiating on what is easily understood.
 Robert Fischer describes freemasonry as a society of men who have set
 themselves the severe task of a wise life and labor as the most difficult
-task, of self-knowledge, self-mastery and self-improvement,—tasks that are
+task, of self-knowledge, self-mastery and self-improvement, - tasks that are
 not finished in this life but only through death prepare us for the stage
 where the true consummation begins. These beautiful and straightforward
 words could just as well stand in an alchemistic discussion on the
@@ -9256,7 +9256,7 @@ Jane Leade seeks in the spirit for the key that can open the entrance into
 the great secret that lies deep hidden within her. Her effort to reach the
 holy city is great but at first ineffectual. [One is not admitted without
 further effort.] She wanders around the city and finds no entrance. [Way
-to the Lodge—“Why have they not led you the nearest way to the Lodge?” “In
+to the Lodge - “Why have they not led you the nearest way to the Lodge?” “In
 order to acquaint me with the difficulties and troubles that one must
 first overcome before one finds the way of virtue.”] She is apprehensive
 that she must, lacking the wonderful key, now grope all her days in
@@ -9327,7 +9327,7 @@ where I must still stay until I hear further from you what is to be done.
 (L. G. B., I, pp. 17-19.)
 
 [As we hear it is therefore right to keep the spirit corrected and
-disciplined. “Why came ye ... to subdue my passions—to subject my
+disciplined. “Why came ye ... to subdue my passions - to subject my
 will....” We see two triads. A divine three (3 great lights), and then
 sun, moon and central fire, which second three can be called the lesser
 lights, as the “M. v. St.” appears as a central fire. If we remember that
@@ -9876,7 +9876,7 @@ Having given up himself, the Subjectum is overcome in the philosophic egg
 strength ebbs away, the decomposition begins; the subtle is separated from
 the coarse. [Smaragdine tablet.] That is the first phase of the air test.
 After descending to the center of the earth [Visita interiora terrae,
-etc.—Smaragdine tablet, 6, 8.] where the roots of all individuality meet,
+etc. - Smaragdine tablet, 6, 8.] where the roots of all individuality meet,
 the spirit rises up again [Smaragdine tablet, 10.] released from the caput
 mortuum, which is blacked on the floor of the hermetic receptacle. The
 residuum is represented by the cast-off raiment of the novice. Laboriously
@@ -10088,7 +10088,7 @@ VII, B: Flight from the “man eater” = flight from Potiphar’s wife = flight
 from the wicked stepmother = separation of the first parents = magic
 flight. IX, A: The first parents = magic flight. IX, A: The killed ram =
 Thor’s ram = Thyestes’ meal = soma. XIII, A: The exposed = the persecuted
-= the dismembered child = the slain ram—the helpful animal. XIX: The Uriah
+= the dismembered child = the slain ram - the helpful animal. XIX: The Uriah
 letter = the changed letter = word violence [curse = blessing]. XX:
 Scapegoat = ark. XXVIII: Wrestling match = rape of women = rape of soma =
 opening of the chest [opening of the hole] = rape of the garments [of the
@@ -10205,7 +10205,7 @@ senses; the knowledge of the past and the future, of previous existences
 and of the hour of death; understanding the language of animals, the
 ability to summon the dead, etc. These miraculous powers, however, suffer
 from the disadvantages of being transitory, like everything else won by
-man through his merit—with the exception of salvation. (Garbe, Samkhya and
+man through his merit - with the exception of salvation. (Garbe, Samkhya and
 Yoga, p. 46.)
 
 Note F (305). Jung (Jb., Ill, p. 171) refers to Maeterlinck’s “inconscient
@@ -10402,14 +10402,14 @@ Classe, in welcher der wahren und ächten Adeptorum ... Schrifften nach
 ihrem innerlichen Gehalt und Werth vorgestellt ... worden. Dritte Auflage.
 Dresden, 1784.
 
-“Figuren der Rosenkreuzer.” (“Geheime—aus dem 16-ten und 17-ten
-Jahrhundert.”) Drei Hefte. Altona, 1785ff.—Titel der einzelnen Hefte: I.
+“Figuren der Rosenkreuzer.” (“Geheime - aus dem 16-ten und 17-ten
+Jahrhundert.”) Drei Hefte. Altona, 1785ff. - Titel der einzelnen Hefte: I.
 AVREVM SECVLVM REDIVIVVM. Henricus Madathanus, Theosophus. II. Ein
 güldener Tractat vom Philosophischen Steine. Von einem noch Lebenden, doch
 vngenanten Philosopho ... beschrieben. Anno M.DC.XXV. III. Einfältig A B C
 Büchlein für junge Schüler so sich taglich fleissig üben in der Schule des
 H. Geistes ... Von einem Bruder der Fraternitet CHRISTI des Rosenkreuzes
-P. F.—Auf dem Titelblatt der ersten beiden Hefte heisst es: “Aus einem
+P. F. - Auf dem Titelblatt der ersten beiden Hefte heisst es: “Aus einem
 alten Mscpt zum erstenmal ans Licht gestellt.” In jedem Heft folgt dem
 Text eine Reihe von farbigen Tafeln.
 
@@ -10554,7 +10554,7 @@ Weisheit. Amsterdam, 1699.
 ---- Vier Tractätlein des Seeligen Johannes Pordädschens M. D. in
 Manuschriptis hinterlassen. Amsterdam, 1704.
 
-Reuchlin, Ioannes, De Arte Cabalistica libri tres.—De Verbo Mirifico libri
+Reuchlin, Ioannes, De Arte Cabalistica libri tres. - De Verbo Mirifico libri
 III. Basileae, M.D.LXI.
 
 Riplaeus, Georgius (George Ripley), Chymische Schriften.
@@ -10626,7 +10626,7 @@ Translation.
 Psych., I., Heft 1/2.
 
 ---- Der psychische Hermaphroditismus in Leben und in der
-Neurose.—Fortschritte der Medizin, Leipzig, 1910, Heft 16.
+Neurose. - Fortschritte der Medizin, Leipzig, 1910, Heft 16.
 
 Basile, Giambattista, Das Märchen aller Märchen oder das Pentameron. Neu
 bearb. von Hans Floerke. 2 Bde. München u. Leipzig, 1909.
@@ -11559,7 +11559,7 @@ Juniper tree, 82
 
 K
 
-Kabala—see Cabala
+Kabala - see Cabala
 
 Kalevala, 81
 

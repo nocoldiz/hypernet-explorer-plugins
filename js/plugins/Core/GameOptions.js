@@ -1254,28 +1254,12 @@ window.GameOptions = GameOptions;
         // Build initial option list for the default tab
         this.refreshTabData();
 
-        // WASD tracking (see menurework spec §2)
-        this._wasdInput = { up: false, down: false, left: false, right: false };
-        this._wasdHeld = { up: false, down: false, left: false, right: false };
-        this._wasdHoldFrames = { up: 0, down: 0, left: 0, right: 0 };
-        this._wasdListener = (event) => {
-            if (event.repeat) return;
-            if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
-            const key = event.key.toLowerCase();
-            if (key === 'w') { this._wasdInput.up = true; this._wasdHeld.up = true; event.preventDefault(); }
-            if (key === 's') { this._wasdInput.down = true; this._wasdHeld.down = true; event.preventDefault(); }
-            if (key === 'a') { this._wasdInput.left = true; this._wasdHeld.left = true; event.preventDefault(); }
-            if (key === 'd') { this._wasdInput.right = true; this._wasdHeld.right = true; event.preventDefault(); }
-        };
-        this._wasdUpListener = (event) => {
-            const key = event.key.toLowerCase();
-            if (key === 'w') { this._wasdHeld.up = false; this._wasdHoldFrames.up = 0; }
-            if (key === 's') { this._wasdHeld.down = false; this._wasdHoldFrames.down = 0; }
-            if (key === 'a') { this._wasdHeld.left = false; this._wasdHoldFrames.left = 0; }
-            if (key === 'd') { this._wasdHeld.right = false; this._wasdHoldFrames.right = 0; }
-        };
-        window.addEventListener('keydown', this._wasdListener);
-        window.addEventListener('keyup', this._wasdUpListener);
+        // WASD needs nothing of its own here: the four keys are the four
+        // directions in Input.keyMapper everywhere, so Input.isRepeated
+        // already carries them. A listener of this screen's own used to fire
+        // a second repeat beside the engine's, and held W/S/A/D ran the list
+        // and the sliders at twice the speed of the arrows.
+        this._resetArmed = false;
 
         this.createUIOptionsDOM();
         OptionsInputManager.activate(this);
@@ -1298,9 +1282,9 @@ window.GameOptions = GameOptions;
             <div class="book-spread options-spread">
                 <div class="left-page">
                     <div class="page-header-bar">
-                        <button class="back-button" id="opt-back-btn" onclick="SceneManager._scene.goBack()">${backLabel}</button>
+                        <button class="back-button" id="opt-back-btn" onmousedown="event.preventDefault()" onclick="SceneManager._scene.goBack()">${backLabel}</button>
                         <h2 class="title">${mainTitle}</h2>
-                        <button class="back-button" id="opt-reset-btn" onclick="SceneManager._scene.resetToDefaults()">${resetLabel}</button>
+                        <button class="back-button" id="opt-reset-btn" data-pad="alt" onmousedown="event.preventDefault()" onclick="SceneManager._scene.resetToDefaults()">${resetLabel}</button>
                     </div>
                     <div class="backpack-tabs" id="options-categories"></div>
                     <div id="options-list" class="pockets-scroll"></div>
@@ -1491,27 +1475,35 @@ window.GameOptions = GameOptions;
             const scene = this._scene;
             if (!this._active || !scene || !scene._dndContainer) return;
 
-            // WASD hold-repeat simulation (spec §2)
-            for (const dir of ['up', 'down', 'left', 'right']) {
-                if (scene._wasdHeld[dir]) {
-                    scene._wasdHoldFrames[dir]++;
-                    const t = scene._wasdHoldFrames[dir];
-                    if (t > Input.keyRepeatWait && (t - Input.keyRepeatWait) % Input.keyRepeatInterval === 0) {
-                        scene._wasdInput[dir] = true;
-                    }
-                } else {
-                    scene._wasdHoldFrames[dir] = 0;
-                }
-            }
-            const isDown = Input.isRepeated('down') || scene._wasdInput.down;
-            const isUp = Input.isRepeated('up') || scene._wasdInput.up;
-            const isRight = Input.isRepeated('right') || scene._wasdInput.right;
-            const isLeft = Input.isRepeated('left') || scene._wasdInput.left;
-            scene._wasdInput.up = scene._wasdInput.down = scene._wasdInput.left = scene._wasdInput.right = false;
+            const isDown = Input.isRepeated('down');
+            const isUp = Input.isRepeated('up');
+            const isRight = Input.isRepeated('right');
+            const isLeft = Input.isRepeated('left');
 
-            // L1/R1 tab cycling, fires from anywhere (spec §2)
-            if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
-                scene.cycleTab(Input.isTriggered('pageup') ? -1 : 1);
+            // L1/R1 (PageUp/PageDown, Tab/Shift+Tab) cycle the tabs, from anywhere.
+            const tabDir = window.UINav ? window.UINav.tabDir()
+                : (Input.isTriggered('pageup') ? -1 : (Input.isTriggered('pagedown') ? 1 : 0));
+            if (tabDir) {
+                scene.armReset(false);
+                scene.cycleTab(tabDir);
+                return;
+            }
+
+            // X (Shift) reaches Reset Defaults, which only the mouse could: the
+            // first press lights the button, a second press or OK resets, and
+            // anything else puts it down again. One press never wipes a config.
+            if (Input.isTriggered('shift')) {
+                if (scene._resetArmed) { scene.armReset(false); scene.resetToDefaults(); }
+                else scene.armReset(true);
+                return;
+            }
+            if (scene._resetArmed) {
+                if (Input.isTriggered('ok')) { scene.armReset(false); scene.resetToDefaults(); return; }
+                if (Input.isTriggered('escape') || Input.isTriggered('cancel') ||
+                    isUp || isDown || isLeft || isRight) {
+                    scene.armReset(false);
+                    SoundManager.playCancel();
+                }
                 return;
             }
 
@@ -1953,6 +1945,15 @@ window.GameOptions = GameOptions;
     // Reset every setting to its default. There is no defaults table of its
     // own: applyData({}) is the single place, core and plugin alike, where an
     // absent key falls back to its default, so an empty config IS the defaults.
+    // Lights (or puts down) the Reset Defaults button for the keyboard and the
+    // pad: the press that arms it is not the press that resets.
+    Scene_Options.prototype.armReset = function (on) {
+        this._resetArmed = !!on;
+        const btn = document.getElementById('opt-reset-btn');
+        if (btn) btn.classList.toggle('focused', this._resetArmed);
+        if (on) SoundManager.playCursor();
+    };
+
     Scene_Options.prototype.resetToDefaults = function () {
         ConfigManager.applyData({});
         ConfigManager.save();

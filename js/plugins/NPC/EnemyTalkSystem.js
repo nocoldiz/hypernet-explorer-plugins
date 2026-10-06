@@ -688,7 +688,11 @@
         // one of the travellers, so it never counts against the ceiling.
         const travelling = taken.filter(id => !window.SummonSystem?.isProxyActor?.(id));
         if (travelling.length >= RECRUIT_ACTOR_IDS.length + 1) return 0;
-        return RECRUIT_ACTOR_IDS.find(id => !taken.includes(id)) || 0;
+        // A seat whose member is out on a work shift is still theirs.
+        const free = id => (window.CharacterPresets && window.CharacterPresets.isSeatFree)
+            ? window.CharacterPresets.isSeatFree(id)
+            : !taken.includes(id);
+        return RECRUIT_ACTOR_IDS.find(id => !taken.includes(id) && free(id)) || 0;
     }
 
     // Whoever opened the Talk panel does the talking: the actor whose command
@@ -1277,7 +1281,6 @@
     // flat battler image otherwise (what an unset portrait mode means).
     Scene_Battle.prototype.applyRecruitPortrait = function (actor, enemyData, enemy) {
         if (!actor || !enemyData) return;
-        const slot = actor.actorId();
         // The body it was standing in front of the party in. Every fight rolls
         // its own look for the monsters in it, so the creature that walks off
         // with the party has to carry that roll with it or it would be redrawn
@@ -1294,18 +1297,9 @@
         if (actor.setPortraitMode) actor.setPortraitMode("sprite");
         if (actor.setVnBattler) actor.setVnBattler(enemyData.battlerName || "");
         actor._recruitedEnemyId = enemyData.id;
-        // Switches 77/78/79 say whether Actor 1/2/3 is portrayed by a battler
-        // image instead of a bust.
-        if ($gameSwitches && slot >= 1 && slot <= 3) {
-            $gameSwitches.setValue(76 + slot, !!enemyData.battlerName);
-        }
-        // Drop the previous occupant's custom 3D model and look seed: the
-        // recruit is portrayed by its own species, with its own roll (above),
-        // not by theirs.
-        if (window.CC3DModel) {
-            if (window.CC3DModel.setConfig) window.CC3DModel.setConfig(slot, null);
-            if (window.CC3DModel.setCreatureSeed) window.CC3DModel.setCreatureSeed(slot, null);
-        }
+        // Portrayed by a battler image instead of a bust, which every portrait
+        // reader asks the actor itself.
+        actor._isCreatureActor = !!enemyData.battlerName;
     };
 
     // Give the recruit the body it is standing in front of the party with.
@@ -1338,27 +1332,11 @@
         if (actor.setGender) actor.setGender(gender);
         if (actor.setReproductionType) actor.setReproductionType(body);
         const BTS = window.BloodTypeService;
-        if (BTS && BTS.forNpc && !actor._ccBloodType) {
+        if (BTS && BTS.forNpc) {
             const blood = BTS.forNpc(key);
             const bloodId = blood && (blood.id || blood.key);
             if (bloodId && BTS.get && BTS.get(bloodId)) actor._ccBloodType = bloodId;
         }
-    };
-
-    // The reproduction variable belongs to a SEAT (87 / 115 / 116 by party
-    // index), so it can only be written once the recruit is sitting in one.
-    Scene_Battle.prototype.syncRecruitSeatBody = function (actor) {
-        if (!actor || !$gameParty || !$gameVariables) return;
-        const code = actor.reproductionType ? actor.reproductionType() : null;
-        if (code == null) return;
-        const members = $gameParty.allMembers ? $gameParty.allMembers() : [];
-        const index = members.indexOf(actor);
-        if (index < 0 || index > 2) return;
-        const CCU = window.CharacterCreationUtils;
-        const varId = (CCU && CCU.getReproductiveVariableId)
-            ? CCU.getReproductiveVariableId(index)
-            : (index === 1 ? 115 : index === 2 ? 116 : 87);
-        $gameVariables.setValue(varId, code);
     };
 
     Scene_Battle.prototype.applyRecruitAnatomy = function (actor, enemy) {
@@ -1461,11 +1439,18 @@
                 return;
             }
 
-            // Set name
+            // The seat is emptied first (PartyPerson.wipe): its last occupant's
+            // traits, cravings, blood, gear, illnesses and pregnancy are theirs,
+            // not the monster's.
+            if (window.PartyPerson && window.PartyPerson.wipe) window.PartyPerson.wipe(newActor);
+
+            // Set name: one its kind would answer to, else its own.
             if (archetype && archetypeNames[archetype]) {
                 const names = archetypeNames[archetype];
                 const randomName = names[Math.floor(Math.random() * names.length)];
                 newActor.setName(randomName);
+            } else {
+                newActor.setName(enemy.name());
             }
 
             // Set class from archetype (case-insensitive); fall back to a broad
@@ -1523,7 +1508,6 @@
             // would stand in the party with no turn, no actions and no bars),
             // and the field is refreshed so their sprite and gauges appear.
             $gameParty.addActor(actorIdToAdd);
-            this.syncRecruitSeatBody(newActor);   // seat-owned, so only now
             if ($gameParty.inBattle()) {
                 newActor.onBattleStart();
                 newActor.clearActions();

@@ -101,6 +101,108 @@
   // scales them: the disc the old painted plates carried.
   const GALAXY_VIS_R = 1200;
 
+  // ==========================================================================
+  // THE LOCAL GROUP, to scale.
+  //
+  // The crossing is flown down the real line from the Sun to the heart of
+  // Andromeda, and everything in the window is where it really is: the Milky
+  // Way's disc tilted the way the line leaves it (Andromeda sits 21.6 degrees
+  // below our galactic plane), Andromeda seen 77 degrees off face-on, and the
+  // neighbours at their real bearings, distances and sizes. Nothing is
+  // keyframed: the round moves down the line and perspective does the rest,
+  // which is why the galaxy being left drops astern and out of the window
+  // while the one ahead grows from a smudge to the whole sky.
+  //
+  // The frame: +Z is the line to Andromeda, +Y is up the window. Positions in
+  // thousands of light years from the Sun, sizes as radii.
+  // ==========================================================================
+  const LG_UNITS = 6;               // far-scene units per thousand light years
+  const LG = (() => {
+    const rad = Math.PI / 180;
+    const v = (x, y, z) => ({ x, y, z });
+    const dot = (a, b) => a.x * b.x + a.y * b.y + a.z * b.z;
+    const cross = (a, b) => v(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
+    const add = (a, b, k) => v(a.x + b.x * k, a.y + b.y * k, a.z + b.z * k);
+    const scale = (a, k) => v(a.x * k, a.y * k, a.z * k);
+    const unit = (a) => scale(a, 1 / (Math.hypot(a.x, a.y, a.z) || 1));
+    // Andromeda's galactic bearing, which fixes the whole frame.
+    const L0 = 121.17 * rad, B0 = -21.57 * rad;
+    const Z = v(0, 0, 1);
+    // The galactic north pole, tipped so the line to Andromeda is B0 below
+    // the plane; the in-plane direction of that line; and the galactic
+    // centre and the l=90 axis turned out of it by Andromeda's longitude.
+    const n = v(0, Math.cos(B0), Math.sin(B0));
+    const e1 = unit(add(Z, n, -dot(Z, n)));
+    const f = cross(n, e1);
+    const gc = add(scale(e1, Math.cos(L0)), f, -Math.sin(L0));
+    const l90 = cross(n, gc);
+    const gal = (l, b, d) => {
+      const L = l * rad, B = b * rad;
+      return scale(add(add(scale(gc, Math.cos(B) * Math.cos(L)), l90, Math.cos(B) * Math.sin(L)), n, Math.sin(B)), d);
+    };
+    // A disc's normal: `incl` degrees off the line it is seen down from the
+    // Sun, tipped toward `pa` on the sky.
+    const tilted = (at, incl, pa) => {
+      const los = unit(scale(at, -1));
+      const side = unit(cross(los, Math.abs(los.y) > 0.9 ? v(1, 0, 0) : v(0, 1, 0)));
+      const up = cross(side, los);
+      const p = add(scale(side, Math.cos(pa * rad)), up, Math.sin(pa * rad));
+      return unit(add(scale(los, Math.cos(incl * rad)), p, Math.sin(incl * rad)));
+    };
+    const m31c = gal(121.17, -21.57, 2540);
+    const n31 = tilted(m31c, 77, 38);
+    // TITANIA is not at Andromeda's heart any more than the Sun is at ours:
+    // it is out in the disc, thirty thousand light years from the middle. The
+    // line is flown Sun to Titania, so the whole group is turned until that
+    // line is +Z, and scaled so its length is the model's gap.
+    const upIn = unit(add(v(0, 1, 0), n31, -n31.y));
+    const tit = add(m31c, upIn, 30);
+    const L = unit(tit);
+    const axis = cross(L, Z);
+    const sinA = Math.hypot(axis.x, axis.y, axis.z), cosA = dot(L, Z);
+    const k = sinA > 1e-12 ? scale(axis, 1 / sinA) : v(1, 0, 0);
+    // Rodrigues: turns any vector by the angle that lays L onto +Z.
+    const turn = (a) => {
+      const kxa = cross(k, a), kda = dot(k, a);
+      return v(
+        a.x * cosA + kxa.x * sinA + k.x * kda * (1 - cosA),
+        a.y * cosA + kxa.y * sinA + k.y * kda * (1 - cosA),
+        a.z * cosA + kxa.z * sinA + k.z * kda * (1 - cosA));
+    };
+    const fit = K.GALAXY_GAP_KLY / Math.hypot(tit.x, tit.y, tit.z);
+    const place = (a) => scale(turn(a), fit);
+    const m33 = gal(133.61, -31.33, 2730);
+    // i18n-ignore-start  object ids and kinds, never displayed
+    const out = {
+      milkyWay: { at: gal(0, 0, 26.7), r: 52, normal: n },
+      andromeda: { at: m31c, r: 110, normal: n31 },
+      neighbours: [
+        { id: "M33", at: m33, r: 30, kind: "spiral", normal: tilted(m33, 55, 23) },
+        { id: "LMC", at: gal(280.47, -32.89, 163), r: 7, kind: "irregular" },
+        { id: "SMC", at: gal(302.81, -44.33, 203), r: 3.5, kind: "irregular" },
+        { id: "M32", at: gal(121.15, -21.98, 2490), r: 3.3, kind: "elliptical" },
+        { id: "M110", at: gal(120.72, -21.14, 2690), r: 8.5, kind: "elliptical" },
+        { id: "NGC185", at: gal(120.79, -14.48, 2050), r: 4, kind: "elliptical" },
+        { id: "NGC147", at: gal(119.82, -14.25, 2530), r: 5, kind: "elliptical" },
+        { id: "IC10", at: gal(118.97, -3.33, 2200), r: 2.5, kind: "irregular" },
+        { id: "IC1613", at: gal(129.73, -60.58, 2380), r: 5, kind: "irregular" },
+        { id: "NGC6822", at: gal(25.34, -18.4, 1630), r: 3.5, kind: "irregular" },
+        { id: "SagDEG", at: gal(5.57, -14.17, 65), r: 5, kind: "elliptical" },
+        { id: "Fornax", at: gal(237.1, -65.7, 460), r: 3, kind: "elliptical" },
+        { id: "Sculptor", at: gal(287.5, -83.2, 290), r: 1.5, kind: "elliptical" },
+        { id: "LeoI", at: gal(225.99, 49.11, 820), r: 1.5, kind: "elliptical" },
+      ],
+    };
+    // i18n-ignore-end
+    [out.milkyWay, out.andromeda].concat(out.neighbours).forEach((g) => {
+      g.at = place(g.at);
+      if (g.normal) g.normal = unit(turn(g.normal));
+    });
+    return out;
+  })();
+  // Published, so the test suite can measure the window against it.
+  RL.LOCAL_GROUP = LG;
+
   Object.assign(P.Stage.prototype, {
 
     // WHICH WORLD IS UNDERNEATH THE PAD.
@@ -1450,6 +1552,95 @@
       // which is astern depends on which way the crossing is being flown.
       this.milkyWay.userData.tilt = 0.5;
       this.andromeda.userData.tilt = -0.9;
+
+      // THE NEIGHBOURS. Small enough that a painted card is all they ever are
+      // in a window this size: a spiral for Triangulum, a soft warm ball for
+      // the ellipticals, a lumpy blue cloud for the irregulars.
+      const cards = {
+        // i18n-ignore-start  neighbour kinds
+        spiral: this._paintGalaxy(0xdfe6ff, 0x6a86c0),
+        elliptical: this._paintBlob(false),
+        irregular: this._paintBlob(true),
+        // i18n-ignore-end
+      };
+      this.neighbours = LG.neighbours.map((nb) => {
+        const m = mk(cards[nb.kind], 2);
+        m.userData.lg = nb;
+        return m;
+      });
+    },
+
+    // A neighbour too small for arms: a soft ball of old stars, or for an
+    // irregular, a few lumpy clouds of young blue ones.
+    _paintBlob(lumpy) {
+      return this._tex(64, 64, (ctx, w, h) => {
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(0, 0, w, h);
+        const r = makeRng(lumpy ? 0x1a3c : 0x0e11);
+        const n = lumpy ? 6 : 1;
+        for (let i = 0; i < n; i++) {
+          const cx = w / 2 + (lumpy ? (r() - 0.5) * w * 0.4 : 0);
+          const cy = h / 2 + (lumpy ? (r() - 0.5) * h * 0.3 : 0);
+          const rr = lumpy ? w * (0.12 + r() * 0.16) : w * 0.48;
+          const gr = ctx.createRadialGradient(cx, cy, 0, cx, cy, rr);
+          gr.addColorStop(0, lumpy ? "rgba(200,220,255,0.85)" : "rgba(255,236,200,0.95)");
+          gr.addColorStop(1, "rgba(0,0,0,0)");
+          ctx.fillStyle = gr;
+          ctx.fillRect(0, 0, w, h);
+        }
+      });
+    },
+
+    // A vector in the NEAR scene's frame, turned into the far scene's: the
+    // same turn _hangOnNose makes, so a thing on the round's nose line in one
+    // is on it in the other. Without the rotations (a headless build) the
+    // near frame's +Z is taken as dead ahead of the far aim.
+    _nearToFar(vec) {
+      const fd = this._farDirector, dc = this._directorCam;
+      const Q = THREE.Quaternion;
+      const q = this._n2fQ || (this._n2fQ = Q ? new Q() : null);
+      if (fd && dc && q && typeof q.invert === "function" && dc.quaternion && dc.quaternion.w !== undefined) {
+        q.copy(dc.quaternion).invert();
+        return vec.applyQuaternion(q).applyQuaternion(fd.quaternion);
+      }
+      const aim = fd || this._farAim || this.farCamera;
+      vec.set(-vec.x, vec.y, -vec.z);
+      return vec.applyQuaternion(aim.quaternion);
+    },
+
+    // Hangs one member of the Local Group where it really is from where the
+    // round is, `pos` being the round's place down the line. Returns the
+    // distance in far units.
+    _placeLG(obj, at, pos, inbound) {
+      const v = this._lgV || (this._lgV = new THREE.Vector3());
+      let x = at.x - pos.x, y = at.y - pos.y, z = at.z - pos.z;
+      // Flown home, the line is run the other way: turned half round, so
+      // the way the round is going is still +Z.
+      if (inbound) { x = -x; z = -z; }
+      v.set(x * LG_UNITS, y * LG_UNITS, z * LG_UNITS);
+      const d = Math.hypot(v.x, v.y, v.z);
+      this._nearToFar(v);
+      const aim = this._farDirector || this._farAim || this.farCamera;
+      obj.position.copy(aim.position).add(v);
+      // Kept, so the frame can re-anchor it once the camera has moved.
+      (obj.userData.lgRel || (obj.userData.lgRel = new THREE.Vector3())).copy(v);
+      const hung = this._lgHung || (this._lgHung = []);
+      if (hung.indexOf(obj) < 0) hung.push(obj);
+      return d;
+    },
+
+    // Lays a disc's face square to `normal` (a Local Group vector).
+    _faceLG(obj, normal, inbound) {
+      const Q = obj.quaternion;
+      if (!Q || typeof Q.setFromUnitVectors !== "function") {
+        Q.copy((this._farAim || this.farCamera).quaternion);
+        return;
+      }
+      const v = this._lgN || (this._lgN = new THREE.Vector3());
+      v.set(inbound ? -normal.x : normal.x, normal.y, inbound ? -normal.z : normal.z);
+      this._nearToFar(v).normalize();
+      const z = this._lgZ || (this._lgZ = new THREE.Vector3(0, 0, 1));
+      Q.setFromUnitVectors(z, v);
     },
 
     // One of the two galaxies as GalaxySim's star map builds it, in a holder
@@ -1577,8 +1768,9 @@
       });
     },
 
-    // They trade places across the jump: home going away astern, the
-    // destination growing ahead, crossing over inside the throat.
+    // THE CROSSING, DOWN THE REAL LINE. The round's place on it is the
+    // model's (crossingKly), the same number the speed readout is the rate
+    // of, and every galaxy is hung where it really is from there: see LG.
     _updateGalaxies(dt, ph) {
       const on = ph.key === "breach" || ph.key === "crossing" || ph.key === "emerge";
       if (on) this._ensure("galaxies");
@@ -1586,97 +1778,60 @@
       this.galaxies.visible = on;
       if (!on) return;
 
-      // How far through the crossing between them this beat is, 0 to 1.
-      const k = ph.key === "breach" ? smooth(ph.progress) * 0.12
-        : ph.key === "crossing" ? 0.12 + smooth(ph.progress) * 0.78
-          : 0.9 + smooth(ph.progress) * 0.1;
-
-      // WHICH OF THE TWO IS BEING LEFT. Nine of the seventeen jump plans are
-      // flown OUT of Andromeda - home from Titania, or across from Titania to
-      // Zeta - and on those it is Andromeda that falls away astern and the
-      // Milky Way that comes up ahead. Drawn the one fixed way round, the trip
-      // home showed the round leaving its own galaxy and arriving at the one
-      // it had just left.
-      const outbound = this.profile.fromWorld !== "titania";   // i18n-ignore  world id
-      const astern = outbound ? this.milkyWay : this.andromeda;
-      const ahead = outbound ? this.andromeda : this.milkyWay;
-
-      // THE ONE BEING LEFT, AND THE ROUND RISES OUT OF IT.
-      //
-      // Through the breach the round is still INSIDE its galaxy - the star
-      // field streaming past it is that galaxy's stars, see _warpState - so the
-      // disc is not a thing in the sky yet. As the stars thin, it opens out
-      // UNDERNEATH the round: a vast floor of light seen from just above it,
-      // and then, across the first half of the crossing, it zooms away below
-      // and behind as the round climbs clear, until it is a smudge off to one
-      // side of a sky with nothing else in it.
+      // WHICH OF THE TWO IS BEING LEFT. Flown out of Andromeda - home from
+      // Titania, or across to Zeta - the line is run backwards.
+      const inbound = this.profile.fromWorld === "titania";   // i18n-ignore  world id
+      const astern = inbound ? this.andromeda : this.milkyWay;
+      const ahead = inbound ? this.milkyWay : this.andromeda;
+      const D = K.GALAXY_GAP_KLY;
+      const s = K.crossingKly(this._time, this.profile) || 0;
+      const z = inbound ? D - s : s;
+      const pos = this._lgPos || (this._lgPos = { x: 0, y: 0, z: 0 });
+      pos.z = z;
       const u = smooth(ph.progress);
-      let aD, aAz, aEl, aScale, aOp, aLie;
-      if (ph.key === "breach") {
-        const rise = smooth(clamp01((ph.progress - 0.35) / 0.65));
-        aD = lerp(240, 900, u);
-        aAz = lerp(0.12, 0.35, u);
-        aEl = -0.42;
-        aScale = lerp(3.4, 1.8, u);
-        aOp = lerp(0.12, 0.92, rise);
-        aLie = -0.95;
-      } else if (ph.key === "crossing") {
-        const up = smooth(clamp01(ph.progress / 0.6));
-        aD = lerp(900, 9000, up);
-        aAz = lerp(0.35, 0.6, up);
-        aEl = lerp(-0.42, -0.2, up);
-        aScale = lerp(1.8, 0.45, up);
-        aOp = lerp(0.92, 0.35, up);
-        aLie = lerp(-0.95, -0.3, up);
-      } else {
-        aD = 9000; aAz = 0.6; aEl = -0.2; aScale = 0.45;
-        aOp = lerp(0.35, 0.12, u);
-        aLie = -0.3;
-      }
-      this._placeFar(astern, aAz, aEl, aD);
-      astern.quaternion.copy((this._farAim || this.farCamera).quaternion);
-      // Laid back toward flat, so it reads as a disc the round is above.
-      astern.rotateX(aLie);
-      astern.rotateZ(astern.userData.tilt || 0);
-      this._galaxyOpacity(astern, aOp);
-      astern.scale.setScalar(aScale);
 
-      // AND THE ONE BEING ARRIVED AT, AHEAD, WHICH IS THE WHOLE POINT OF THIS
-      // CROSSING.
-      //
-      // It is a smudge in the distance through the breach, it CLOSES across
-      // the whole of the crossing until it fills the window - and then the
-      // round goes INTO it. Out of the gap, the plate opens past the edges of
-      // the frame and dissolves, and what is left is that galaxy's own stars
-      // streaming at the round, slowing, all the way in to the world it is
-      // aimed at.
-      let bD, bScale, bOp;
+      // How bright each is. The one being left comes up out of the field
+      // streaming past as the round rises clear of it; the one ahead is a
+      // smudge that brightens as it closes, and is dissolved into its own
+      // stars as the round goes in.
+      let aOp, bOp, nOp;
       if (ph.key === "breach") {
-        bD = lerp(9000, 7000, u);
-        bScale = 0.55;
-        bOp = lerp(0.22, 0.4, u);
+        aOp = lerp(0.12, 0.92, smooth(clamp01((ph.progress - 0.35) / 0.65)));
+        bOp = lerp(0.22, 0.45, u);
+        nOp = 0.6 * u;
       } else if (ph.key === "crossing") {
-        bD = lerp(7000, 380, u);
-        bScale = lerp(0.55, 1.3, u);
-        bOp = lerp(0.4, 0.95, u);
+        aOp = lerp(0.92, 0.75, u);
+        bOp = lerp(0.45, 0.95, u);
+        nOp = 0.6 + 0.3 * u;
       } else {
-        bD = lerp(380, 120, u);
-        bScale = lerp(1.3, 2.6, u);
+        aOp = lerp(0.75, 0.5, u);
         bOp = lerp(0.95, 0.08, u);
+        nOp = lerp(0.9, 0.4, u);
       }
-      // ON THE ROUND'S OWN LINE through the breach and the crossing: the nose,
-      // the lens in front of it and this galaxy are one straight line, so it
-      // is hung on the bearing the nose points along rather than off to one
-      // side of the camera. Out of the gap it drifts back off the axis as the
-      // shot swings round.
-      if (!(ph.key !== "emerge" && this._hangOnNose(ahead, bD))) {
-        const off = ph.key === "emerge" ? smooth(ph.progress) : 0;
-        this._placeFar(ahead, -0.10 * off, 0.06 * off, bD);
-      }
-      ahead.quaternion.copy((this._farAim || this.farCamera).quaternion);
-      ahead.rotateZ(ahead.userData.tilt || 0);
-      this._galaxyOpacity(ahead, bOp);
-      ahead.scale.setScalar(bScale);
+
+      const hang = (gx, rec, op) => {
+        const d = this._placeLG(gx, rec.at, pos, inbound);
+        this._faceLG(gx, rec.normal, inbound);
+        gx.scale.setScalar((rec.r * LG_UNITS) / GALAXY_VIS_R);
+        this._galaxyOpacity(gx, op);
+        return d;
+      };
+      hang(astern, inbound ? LG.andromeda : LG.milkyWay, aOp);
+      hang(ahead, inbound ? LG.milkyWay : LG.andromeda, bOp);
+
+      // THE NEIGHBOURS, each where it is. A dwarf two and a half million
+      // light years off is a few pixels, and so it is drawn: never smaller
+      // than a point, never bigger than it really is.
+      const camQ = (this._farAim || this.farCamera).quaternion;
+      (this.neighbours || []).forEach((m) => {
+        const nb = m.userData.lg;
+        const d = this._placeLG(m, nb.at, pos, inbound);
+        if (nb.normal) this._faceLG(m, nb.normal, inbound);
+        else m.quaternion.copy(camQ);
+        m.scale.setScalar(Math.max(nb.r * LG_UNITS, d * 0.0035));
+        m.material.opacity = nOp;
+      });
+
       // The hole at the heart of the star map's Andromeda turns, as it does
       // there.
       [astern, ahead].forEach((gx) => {

@@ -197,6 +197,9 @@
   "growthTubeMeta": "Progetta una creatura e falla crescere in un tubo",
   "designHeir": "Progetta un erede",
   "designHeirMeta": "Progetta un figlio umanoide che questo paziente porterà in grembo",
+  "mindWipe": "Cancellazione mentale",
+  "mindWipeMeta": "Torna al livello 1 con una nuova classe, tutte le abilità restano",
+  "labOutOfReach": "Serve una clinica, non un kit da campo",
   "tooExpensive": "Non hai abbastanza denaro per questo intervento.",
  "remote": {
   "title": "Remote Bistury",

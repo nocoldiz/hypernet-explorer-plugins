@@ -14,17 +14,16 @@
  * - "JoinMessage": Shows a "[Name] joins the party!" message
  * 
  * What TransformActor2/3 does:
- * - Sets Actor's name to match the event's name (unless note is "NPC-0")
- * - If the event's note is "NPC-0", assigns a random class and keeps original name
- * - Otherwise sets Actor's class to the number found in the event's note field
- * - Sets Actor's character graphics to match the event's sprite
- * - Sets Actor's level to match Actor1's level
- * - Does NOT equip any items automatically (equipment remains as default)
+ * - Empties the seat (window.PartyPerson), so nothing of its last occupant
+ *   survives, then writes the NPC onto it as one person record: name, class
+ *   (the society profile's, else the note's NPC-X, NPC-0 = random), level,
+ *   sprite, skills, traits, gender, body, blood, needs and cravings
+ * - Does NOT equip any items automatically
  *
  * SetArchetype:
  * - Sets the body archetype for the specified actor ID (1, 2, or 3)
  * - The archetypeName must match a key in window.Health.Archetypes
- * - Updates body parts, reproduction variables (87/115/116), skills, and stat modifiers
+ * - Updates body parts, reproduction type, skills, and stat modifiers
  * 
  * @command TransformActor2
  * @desc Transforms Actor2 based on the triggering event
@@ -39,7 +38,7 @@
  * @desc Shows a message that the actor has joined the party
  *
  * @command JoinParty
- * @desc Handles full NPC party join flow: slot detection, transform, gender, Markov DB, self-switch
+ * @desc Handles full NPC party join flow: slot detection, transform, Markov DB, self-switch
  *
  * @arg markovString
  * @text Markov Database String
@@ -52,6 +51,20 @@
  * @type number
  * @default 0
  * @desc Joining NPC's event ID (0 = derive from the calling interpreter/$gameTemp)
+ *
+ * @arg gender
+ * @text Gender
+ * @type select
+ * @option Their own
+ * @value -1
+ * @option Male
+ * @value 0
+ * @option Female
+ * @value 1
+ * @option Non-binary
+ * @value 2
+ * @default -1
+ * @desc Overrides the gender the NPC's profile gives them
  *
  * @command PresetJoinParty
  * @text Preset Character Joins
@@ -134,7 +147,8 @@
     });
 
     PluginManager.registerCommand(pluginName, "JoinParty", args => {
-        joinParty(args.markovString || "", Number(args.eventId) || 0);
+        const gender = args.gender === undefined || args.gender === "" ? -1 : Number(args.gender);
+        joinParty(args.markovString || "", Number(args.eventId) || 0, gender);
     });
 
     PluginManager.registerCommand(pluginName, "PresetJoinParty", args => {
@@ -530,6 +544,53 @@
         getBubbaActor() {
             return getBubbaActor();
         },
+
+        // The party is never led by a body. A leader who is dead, or stood
+        // at zero hit points, hands the lead to the first member still on
+        // their feet, through setLeader so the story lock and every other
+        // rule of the seat still hold. Not in the middle of a battle: the
+        // battle has its own order, and the swap waits for it to end (see
+        // the hooks below). Returns true when the lead changed hands.
+        ensureLiveLeader() {
+            if (typeof $gameParty === "undefined" || !$gameParty) return false;
+            if ($gameParty.inBattle && $gameParty.inBattle()) return false;
+            const members = $gameParty.members();
+            const leader = members[0];
+            if (!leader || !isDown(leader)) return false;
+            const next = members.find(a => a && a !== leader && !isDown(a));
+            if (!next) return false;
+            const result = this.setLeader(next.actorId());
+            if (!result || !result.ok) return false;
+            if (typeof $gamePlayer !== "undefined" && $gamePlayer && $gamePlayer.refresh) $gamePlayer.refresh();
+            return true;
+        },
+    };
+
+    function isDown(actor) {
+        return !!actor && ((actor.isDead && actor.isDead()) || (actor.hp != null && actor.hp <= 0));
+    }
+
+    // Wherever a leader can go down outside a fight (poison on the road,
+    // a trap, a need run dry), the lead passes the moment it happens; a
+    // leader who went down IN a fight passes it once the fight is over.
+    const _Game_BattlerBase_die_lead = Game_BattlerBase.prototype.die;
+    Game_BattlerBase.prototype.die = function() {
+        _Game_BattlerBase_die_lead.call(this);
+        if (this.isActor && this.isActor()) window.PartyRoster.ensureLiveLeader();
+    };
+    const _Game_Party_onBattleEnd_lead = Game_Party.prototype.onBattleEnd;
+    Game_Party.prototype.onBattleEnd = function() {
+        _Game_Party_onBattleEnd_lead.call(this);
+        window.PartyRoster.ensureLiveLeader();
+    };
+    // ...and a leader brought to zero by anything that never calls die()
+    // (a raw setHp from an event) is caught on the map, once a second.
+    const _Scene_Map_update_lead = Scene_Map.prototype.update;
+    Scene_Map.prototype.update = function() {
+        _Scene_Map_update_lead.call(this);
+        if ((this._liveLeadT = (this._liveLeadT || 0) + 1) < 60) return;
+        this._liveLeadT = 0;
+        window.PartyRoster.ensureLiveLeader();
     };
 
     // ========================================================================
@@ -670,7 +731,6 @@
             if ($gameTemp) $gameTemp._partyReturningActorId = actorId;
             $gameParty.removeActor(actorId);
             if ($gameTemp) $gameTemp._partyReturningActorId = null;
-            if ($gameVariables) $gameVariables.setValue(29, $gameParty.members().length);
 
             const back = this.returnToWorld(name);
             if (!back.ok) return back;
@@ -879,7 +939,8 @@
                 ? $gameSystem._npcInheritedHouses : [];
             for (const home of inherited) {
                 if (!home || home.mapId == null) continue;
-                const id = "home:" + home.mapId;   // i18n-ignore: place id
+                // One place per house, not per template.
+                const id = "home:" + (home.buildingKey ? `${home.buildingKey}_f${Number(home.floorIndex) || 0}` : home.mapId);   // i18n-ignore: place id
                 if (out.some(place => place.id === id)) continue;
                 out.push({ id, kind: "home", name: T('NPCParty.lodging.house', { place: home.mapName || home.npcName || "" }) });
             }
@@ -1208,17 +1269,6 @@
         return window.NPCSim?.npcNameForEvent?.(event) ?? (event.event()?.name?.trim() || "");
     }
 
-    function transferNPCNeeds(actorId, eventName) {
-        const profile = window.NPCSocietyRegistry?.getProfile(eventName);
-        if (!profile) return;
-        const actor = $gameActors.actor(actorId);
-        if (!actor) return;
-        const maxH = window.TimeDateSystem?.maxHunger ?? 100;
-        const maxS = window.TimeDateSystem?.maxSleep ?? 100;
-        if (profile.hunger !== undefined) actor._hunger = Math.round((profile.hunger / 100) * maxH);
-        if (profile.sleep  !== undefined) actor._sleep  = Math.round((profile.sleep  / 100) * maxS);
-    }
-
     function equipNPCActor(actorId, eventName) {
         if (!window.NPCSocietyGetEquip) return;
         const actor = $gameActors.actor(actorId);
@@ -1299,15 +1349,26 @@
 
     // If the NPC owns/resides in a procedural house (NPCSociety home assignment),
     // record it so the Assets pockets lists it and FurnitureSystem allows building
-    // inside that house's interior template. Keyed by the interior map id - the
-    // home is an abstract template assignment, not a placed entrance, so the
-    // interior mapId is the only concrete hook available.
+    // inside it. A home with a door is filed by that building and floor (the
+    // key the home registry files its occupants under), so two companions from
+    // two houses of the same template inherit two houses, and build rights hold
+    // in theirs alone. Only a home that was never more than an abstract
+    // template assignment is filed by the interior map id.
     function registerNPCHouse(eventName) {
         const profile = window.NPCSocietyRegistry?.getProfile(eventName);
         if (!profile || profile.homeMapId == null) return;
         if (typeof $gameSystem === 'undefined' || !$gameSystem) return;
         const list = $gameSystem._npcInheritedHouses = $gameSystem._npcInheritedHouses || [];
-        if (list.some(h => h.mapId === profile.homeMapId)) return; // dedup by template
+        const home = profile.homeBuilding || null;
+        const groupName = profile._homeGroupName || home?.groupName || null;
+        const buildingKey = home
+            ? (home.key || window.ProceduralHouseSystem?.buildingKey?.(home, groupName) || null)
+            : null;
+        const floorIndex = Number(home?.floorIndex) || 0;
+        const same = buildingKey
+            ? (h => h.buildingKey === buildingKey && (Number(h.floorIndex) || 0) === floorIndex)
+            : (h => !h.buildingKey && h.mapId === profile.homeMapId);
+        if (list.some(same)) return;
         // Named through WorldMapReturn: a home whose entrance is the procedural
         // map would otherwise be filed as "ProceduralRoom", the one map every
         // world square reuses.
@@ -1327,6 +1388,9 @@
             npcName: eventName,
             mapName,
             value,
+            buildingKey,
+            floorIndex,
+            groupName,
         });
     }
 
@@ -1381,7 +1445,9 @@
         return true;
     }
 
-    function joinParty(markovString, eventIdArg) {
+    // genderArg >= 0 overrides the gender their profile gives them (the old
+    // JoinPartyMale / Female / NonBinary common events say which).
+    function joinParty(markovString, eventIdArg, genderArg) {
         if (!$gameParty || !$gameMap || !$gameTemp) return false;
 
         // Why a join failed, for callers that word their own feedback (the
@@ -1437,7 +1503,10 @@
         // which is what benchRecruit below is for.
         const maxActive  = window.PartyLodging?.MAX_ACTIVE ?? 3;
         const travelling = ($gameParty._actors || []).filter(id => !isSummonProxy(id));
-        const slotFree   = id => !$gameParty._actors.includes(id);
+        // A seat whose member is out on a work shift is still theirs.
+        const slotFree   = id => (window.CharacterPresets && window.CharacterPresets.isSeatFree)
+            ? window.CharacterPresets.isSeatFree(id)
+            : !$gameParty._actors.includes(id);
         let actorId = 0;
         if (travelling.length < maxActive) {
             if ($gameSwitches.value(67)) {
@@ -1462,35 +1531,33 @@
                 $gameParty.removeActor(actorId);
             }
         }
-        $gameVariables.setValue(29, $gameParty.members().length);
 
         if (!actorId) {
             // Three on the road is the ceiling, but a fourth is not turned away:
             // they sign on INACTIVE and wait on the Dynamics board, where the
             // player calls them up whenever a slot opens. Everything else about
             // the recruitment happens exactly as it would have.
-            return benchRecruit(eventId, event);
+            return benchRecruit(eventId, event, genderArg);
         }
 
         const eventName     = npcNameOf(event);
-        const gender        = parseGenderFromNote(event.event().note);
         const selfSwitchKey = [$gameMap.mapId(), eventId, 'A'];
+        // A rota shopkeeper leaves their till, not the map: the counter is a
+        // fixture that two more shifts still work (leaveMapAfterJoin).
+        const rotaKeeper    = !!window.NPCSim?.isShopShiftCovered?.(event);
 
         AudioManager.playMe({ name: "Victory2", volume: 90, pitch: 100, pan: 0 });
         showJoinMessage();
-        transformActor(actorId);                           // name, class, level, graphics, skills
-        transferNPCNeeds(actorId, eventName);
-        // The profile is the record of who they are; the note only answers for
-        // an NPC nobody ever wrote a profile for (carryIdentityToActor).
-        const joinedActor = $gameActors.actor(actorId);
-        const joinGender = joinedActor?.gender ? joinedActor.gender() : gender;
-        $gameVariables.setValue(actorId === 2 ? 39 : 40, joinGender);
+        transformActor(actorId, event, genderArg);         // the whole person, onto an emptied seat
         $gameParty.addActor(actorId);                      // adds to party (Wiki party tab reads members())
-        syncSeatReproductionVar(joinedActor);              // seat-owned, so only now
         grantNPCPossessions(eventName);                    // money on hand + owned items -> party
         equipNPCActor(actorId, eventName);
         callThoughtsMenuMarkov(actorId, markovString);
         registerNPCHouse(eventName);                       // owned/resided house -> Assets + build rights
+        if (rotaKeeper) {
+            leaveMapAfterJoin(eventId, event, eventName, true);
+            return true;
+        }
         $gameSelfSwitches.setValue(selfSwitchKey, true);
         // ...and record the loss in the world folder, so this person is gone
         // from every savegame of the world rather than only from this one
@@ -1529,7 +1596,6 @@
             window.skipLocalization = true;
             $gameMessage.add(T('NPCParty.joinsParty', { name }));
             window.skipLocalization = false;
-            if ($gameVariables) $gameVariables.setValue(29, $gameParty.members().length);
             return true;
         }
         const reason = result ? result.reason : "";
@@ -1552,8 +1618,19 @@
     // scratch slot, snapshotted into a world dossier (the same one benching a
     // companion writes) and dropped into the reserves. They leave the map,
     // and the world's books, exactly as a travelling recruit does.
-    function benchRecruit(eventId, event) {
+    // The map's side of a recruitment for a rota shopkeeper: their shift is
+    // vacated (unattended today, staffed afresh tomorrow) and the counter
+    // stays exactly where it is, unflipped and unerased, so the two other
+    // shifts still work it. True when it was a rota keeper and is handled.
+    function leaveMapAfterJoin(eventId, event, eventName, rotaKeeper) {
+        if (!rotaKeeper) return false;
+        window.NPCSim?.vacateShopShift?.($gameMap.mapId(), eventId);
+        return true;
+    }
+
+    function benchRecruit(eventId, event, genderArg) {
         const eventName = npcNameOf(event);
+        const rotaKeeper = !!window.NPCSim?.isShopShiftCovered?.(event);
         const scratch = $gameActors.actor(BENCH_SCRATCH_ACTOR_ID);
         const bench = window.CharacterPresets && window.CharacterPresets.benchActorAsPreset;
         if (!bench || !scratch || $gameParty._actors.includes(BENCH_SCRATCH_ACTOR_ID)) {
@@ -1568,7 +1645,7 @@
             return false;
         }
 
-        transformActor(BENCH_SCRATCH_ACTOR_ID);            // name, class, level, graphics, skills
+        transformActor(BENCH_SCRATCH_ACTOR_ID, event, genderArg); // the whole person, onto the emptied scratch slot
         equipNPCActor(BENCH_SCRATCH_ACTOR_ID, eventName);
         const profile = window.NPCSocietyRegistry?.getProfile(eventName);
         const result = bench($gameActors.actor(BENCH_SCRATCH_ACTOR_ID), {
@@ -1588,12 +1665,14 @@
         AudioManager.playMe({ name: "Victory2", volume: 90, pitch: 100, pan: 0 });
         grantNPCPossessions(eventName);                    // money on hand + owned items -> party
         registerNPCHouse(eventName);                       // owned/resided house -> Assets + build rights
-        $gameSelfSwitches.setValue([$gameMap.mapId(), eventId, 'A'], true);
-        window.NPCGone?.record($gameMap.mapId(), eventId, eventName, 'joined');
-        if (Array.isArray($gameSystem?.npcControllers)) {
-            $gameSystem.npcControllers = $gameSystem.npcControllers.filter(c => !(c && c.eventId === eventId));
+        if (!leaveMapAfterJoin(eventId, event, eventName, rotaKeeper)) {
+            $gameSelfSwitches.setValue([$gameMap.mapId(), eventId, 'A'], true);
+            window.NPCGone?.record($gameMap.mapId(), eventId, eventName, 'joined');
+            if (Array.isArray($gameSystem?.npcControllers)) {
+                $gameSystem.npcControllers = $gameSystem.npcControllers.filter(c => !(c && c.eventId === eventId));
+            }
+            window.NPCSystem?.recordProceduralRecruit?.(eventId, eventName);
         }
-        window.NPCSystem?.recordProceduralRecruit?.(eventId, eventName);
 
         // Says how they signed on, so the Empathize panel can word its own
         // notice rather than claiming they are walking alongside the party.
@@ -1608,188 +1687,89 @@
         return true;
     }
 
-    // A recruit's identity, copied out of their NPC profile and onto the actor
-    // they now are. Every one of these fields has an actor-side reader that
-    // answers with a default when nobody ever told it, so leaving them unset
-    // silently rewrote the person (see the call site in transformActor).
-    function carryIdentityToActor(actor, eventName, profile, event) {
-        if (!actor) return;
+    // The person standing at an NPC event, as a party record (PartyPerson,
+    // CharacterCreationPresets.js). Their society profile is the record of who
+    // they are; the event note only answers for an NPC nobody ever wrote a
+    // profile for. Everything is written onto an EMPTIED seat by
+    // PartyPerson.apply, so nothing of whoever sat there before (their
+    // traits, cravings, blood, body, skills, pregnancy) is inherited.
+    function npcPersonRecord(event) {
+        const eventName = npcNameOf(event);
+        const profile   = window.NPCSocietyRegistry?.getProfile(eventName) || null;
+        const note      = event.event().note || "";
 
-        // Gender. The society profile is the record; the event note is what the
-        // map was built with, and only answers when there is no profile.
-        const noteGender = parseGenderFromNote(event?.event?.().note);
-        const gender = profile?.gender ?? noteGender;
-        if (actor.setGender) actor.setGender(gender);
-
-        // The body they were rolled with, so the Bio page keeps showing the one
-        // the player read on the map. The seat variable itself is written once
-        // they hold a seat (syncSeatReproductionVar, after addActor).
-        const code = window.NPCRolledGenitalCode?.(eventName, profile);
-        if (code != null && actor.setReproductionType) actor.setReproductionType(code);
-
-        // Blood type is rolled per NPC name AND world seed for a stranger, but
-        // off a plain name hash for an actor: two different answers for one
-        // person unless the stranger's is written down on the way in.
-        const BTS = window.BloodTypeService;
-        if (BTS && !actor._ccBloodType) {
-            const blood = BTS.forNpc(eventName);
-            const id = blood && (blood.id || blood.key);
-            if (id && BTS.get?.(id)) actor._ccBloodType = id;
+        // The class the simulation gave them, else the note's NPC-X (NPC-0 is
+        // a random class), else the first class.
+        let classId = Number(profile?.assignedClassId) || 0;
+        if (!$dataClasses[classId]) {
+            const match = note.match(/NPC-(\d+)/);
+            classId = match ? parseInt(match[1]) : 1;
+            if (classId === 0) {
+                const valid = [];
+                for (let i = 1; i < $dataClasses.length; i++) if ($dataClasses[i]) valid.push(i);
+                classId = valid.length ? valid[Math.floor(Math.random() * valid.length)] : 1;
+            }
+            if (!$dataClasses[classId]) classId = 1;
         }
+
+        const leader  = $gameActors.actor(1);
+        const level   = profile?.level ?? (leader ? leader.level : 1);
+        const maxH    = window.TimeDateSystem?.maxHunger ?? 100;
+        const maxS    = window.TimeDateSystem?.maxSleep ?? 100;
+        const blood   = window.BloodTypeService?.forNpc?.(eventName);
+        const NC      = window.NPCCreature;
+        const creature = !!(NC && NC.isNonSentientClassId && NC.isNonSentientClassId(classId));
+
+        return {
+            name:        eventName,
+            classId,
+            level,
+            exp:         profile?.exp,
+            sprite:      event.characterName(),
+            spriteIndex: event.characterIndex(),
+            skills:      (profile?.skillIds || []).slice(),
+            traits:      (profile?.traitIds || []).slice(),
+            gender:      profile?.gender ?? parseGenderFromNote(note),
+            reproduction: window.NPCRolledGenitalCode?.(eventName, profile) ?? undefined,
+            bloodType:   (blood && (blood.id || blood.key)) || undefined,
+            ideologyId:  profile?.ideologyId || undefined,
+            isCreature:  creature,
+            characterType: creature ? "creature" : "humanoid", // i18n-ignore: record field value
+            archetypes:  creature ? ((NC.archetypeKeysOf && NC.archetypeKeysOf(profile)) || []) : undefined,
+            hunger:      profile?.hunger !== undefined ? Math.round((profile.hunger / 100) * maxH) : undefined,
+            sleep:       profile?.sleep  !== undefined ? Math.round((profile.sleep  / 100) * maxS) : undefined,
+            // An addict arrives as badly in want as they were on the street
+            // (NPCSim.Addictions keeps the meter on the profile).
+            cravings:    profile?._crave?.v || undefined,
+            hp:          profile?.mhp,
+            mp:          profile?.mmp,
+        };
+    }
+
+    // Writes the person at the calling event onto a seat. Also the
+    // TransformActor2 / TransformActor3 plugin commands.
+    function transformActor(actorId, eventArg, genderArg) {
+        if (!$gameParty || !$gameMap || !$gameTemp) return null;
+        const eventId = $gameTemp.lastPluginCommandEventId || $gameMap._interpreter._eventId;
+        const event = eventArg || (eventId ? $gameMap.event(eventId) : null);
+        if (!event || !window.PartyPerson) return null;
+
+        const record = npcPersonRecord(event);
+        if (Number(genderArg) >= 0) record.gender = Number(genderArg);
+        const actor = window.PartyPerson.apply(record, actorId);
 
         // Their means. A traveller spends out of the party purse, so the purse
         // is what their band is read from afterwards (NPCSociety), and a party
         // with nothing in it reported everybody they ever took on as destitute.
         // Recording the band they arrived with keeps it as the floor the same
         // way a band picked at character creation is kept.
+        const profile = window.NPCSocietyRegistry?.getProfile(record.name);
         if (profile && profile.wealthTierChosen == null && profile.wealthTierBase != null) {
             profile.wealthTierChosen = profile.wealthTierBase;
         }
+        return actor;
     }
 
-    // The reproduction variable belongs to a SEAT (87 / 115 / 116 by party
-    // index), so it can only be written once the recruit is sitting in one.
-    function syncSeatReproductionVar(actor) {
-        if (!actor || !$gameParty || !$gameVariables) return;
-        const code = actor.reproductionType ? actor.reproductionType() : null;
-        if (code == null) return;
-        const members = $gameParty.allMembers ? $gameParty.allMembers() : [];
-        const index = members.indexOf(actor);
-        if (index < 0 || index > 2) return;
-        const CCU = window.CharacterCreationUtils;
-        const varId = CCU?.getReproductiveVariableId
-            ? CCU.getReproductiveVariableId(index)
-            : (index === 1 ? 115 : index === 2 ? 116 : 87);
-        $gameVariables.setValue(varId, code);
-    }
-
-    function transformActor(actorId) {
-        if (!$gameParty || !$gameMap || !$gameTemp) return;
-        
-        // Get the event that called this (triggering event)
-        const eventId = $gameTemp.lastPluginCommandEventId || $gameMap._interpreter._eventId;
-        if (!eventId) return;
-        
-        const event = $gameMap.event(eventId);
-        if (!event) return;
-        
-        // Get Actor1 and target Actor
-        const actor1 = $gameActors.actor(1);
-        const targetActor = $gameActors.actor(actorId);
-        if (!actor1 || !targetActor) return;
-        
-        // Check if note value is NPC-0 for random class mode
-        let classId = 1; // Default class ID
-        let randomClassMode = false;
-        const noteData = event.event().note;
-        if (noteData) {
-            // Updated regex to match NPC-X format
-            const match = noteData.match(/NPC-(\d+)/);
-            if (match && match[1]) {
-                const noteValue = parseInt(match[1]);
-                if (noteValue === 0) {
-                    // Enable random class mode
-                    randomClassMode = true;
-                    // Get a list of all valid classes (excluding ID 0)
-                    const validClassIds = [];
-                    for (let i = 1; i < $dataClasses.length; i++) {
-                        if ($dataClasses[i]) {
-                            validClassIds.push(i);
-                        }
-                    }
-                    // Pick a random class
-                    if (validClassIds.length > 0) {
-                        classId = validClassIds[Math.floor(Math.random() * validClassIds.length)];
-                    }
-                } else {
-                    classId = noteValue;
-                }
-            }
-        }
-        
-        // Verify class exists
-        if (!$dataClasses[classId]) {
-            classId = 1; // Fallback to class 1 if invalid
-        }
-        
-        // Apply changes to target actor properties
-        targetActor._classId = classId;
-        
-        // The person at the event, not the sign over the counter
-        const eventName = npcNameOf(event);
-
-        // Only set name if not in random class mode
-        if (!randomClassMode) {
-            targetActor._name = eventName;
-        }
-        
-        // Set target actor's character graphics to match the event's sprite
-        const characterName = event.characterName();
-        const characterIndex = event.characterIndex();
-        if (characterName) {
-            targetActor._characterName = characterName;
-            targetActor._characterIndex = characterIndex;
-        }
-        
-        // Use NPC profile level+exp if available, otherwise fall back to Actor1's level
-        const _eventNameForLevel = npcNameOf(event);
-        const _npcProfile = window.NPCSocietyRegistry?.getProfile(_eventNameForLevel);
-        const newLevel = _npcProfile?.level ?? actor1._level;
-        const newExp   = _npcProfile?.exp   ?? targetActor.expForLevel(newLevel);
-        targetActor._level = newLevel;
-        targetActor._exp[targetActor._classId] = newExp;
-
-        // Learn all class skills up to NPC's level
-        const _joinClass = $dataClasses?.[targetActor._classId];
-        if (_joinClass) {
-          for (const _learning of (_joinClass.learnings || [])) {
-            if (_learning.level <= newLevel) targetActor.learnSkill(_learning.skillId);
-          }
-        }
-        // Learn NPC's personal skills
-        if (_npcProfile?.skillIds?.length) {
-          for (const _sid of _npcProfile.skillIds) targetActor.learnSkill(_sid);
-        }
-
-        // A creature that joins the party brings its body with it. Its class is
-        // one of the non-sentient ones (NPCCreature owns that boundary), and for
-        // a creature the parts themselves are its stats - the anatomy has to be
-        // built out of its archetype before the numbers mean anything
-        // (Health_Core.creatureAnatomyBonus), exactly as creature mode does in
-        // character creation.
-        const _NC = window.NPCCreature;
-        if (_NC && _NC.isNonSentientClassId && _NC.isNonSentientClassId(targetActor._classId)) {
-            targetActor._isCreatureActor = true;
-            const _keys = _NC.archetypeKeysOf(_npcProfile) || [];
-            const _archetype = _keys[0];
-            if (_archetype && window.changeArchetypeForActor) {
-                try { window.changeArchetypeForActor(targetActor, _archetype); } catch (e) { /* anatomy layer not up */ }
-            } else if (window.initializeBodyParts) {
-                try { window.initializeBodyParts(targetActor); } catch (e) { /* anatomy layer not up */ }
-            }
-        }
-
-        // Who this person IS travels with them. Everything below used to be
-        // read off the actor by the panels, the status sheet and the biologic
-        // simulation, and an actor that had never been told answered with its
-        // default: gender 0 (Male), reproduction 0 (Testes), a blood type
-        // re-rolled off a different seed than the stranger's, and a wealth band
-        // read out of an empty purse. So the person the player had been talking
-        // to was partly overwritten the moment they signed on.
-        carryIdentityToActor(targetActor, eventName, _npcProfile, event);
-
-        // Refresh actor to apply changes
-        targetActor.refresh();
-
-        // Apply NPC profile HP/MP (clamped to actor max after refresh)
-        if (_npcProfile) {
-            if (_npcProfile.mhp !== undefined)
-                targetActor._hp = Math.min(_npcProfile.mhp, targetActor.mhp);
-            if (_npcProfile.mmp !== undefined)
-                targetActor._mp = Math.min(_npcProfile.mmp, targetActor.mmp);
-        }
-    }
-    
     function showGreetingMessage() {
         if (!$gameMap || !$gameTemp) return;
         

@@ -349,6 +349,7 @@
         }
       }
       bumpMutualOpinion(visitorName, serverName, 1);
+      server._lastServedMinute = minute;
       const said = this._line("NPCSim.work.served", visitorName, serverName, "served_" + minute);
       const heard = this._line("NPCSim.work.thanked", serverName, visitorName, "thanked_" + minute);
       if (said) ThoughtGenerator._push(server, said);
@@ -358,12 +359,54 @@
       EventBus.emit("npc:work_served", { server: serverName, customer: visitorName, tip, eventRef: targetEvent });
       return { server: serverName, tip };
     },
+
+    // The quiet hours behind a counter and the end of them. A keeper on a
+    // counter shift (currentNeed "shopwork") with nobody served for a while
+    // now and then says so on a work tick (NPCSim.work.idle); one whose
+    // counter shift has just ended says goodbye to it (NPCSim.work.closing).
+    // A beast keeps no such thoughts (NPCCreature).
+    IDLE_CHANCE: 0.15,     // per work tick, once the counter has been quiet
+    IDLE_AFTER_MIN: 30,    // game minutes without a customer before it counts
+    IDLE_GAP_MIN: 45,      // game minutes between two idle remarks of one keeper
+    CLOSING_CHANCE: 0.5,   // per counter shift that ends in front of the party
+
+    _speaks(profile, name) {
+      return !!profile && !window.NPCCreature?.isHeldToBeastRules?.(profile, name);
+    },
+
+    idle(name) {
+      const profile = $gameSystem?._npcSociety?.[name];
+      if (!this._speaks(profile, name) || profile.currentNeed !== "shopwork") return null;
+      const minute = $gameVariables?.value(114) ?? 0;
+      if (minute - (profile._lastServedMinute ?? -Infinity) < this.IDLE_AFTER_MIN) return null;
+      if (minute - (profile._lastIdleMinute ?? -Infinity) < this.IDLE_GAP_MIN) return null;
+      if (economyRng(name, "idleRoll_" + minute).next() >= this.IDLE_CHANCE) return null;
+      profile._lastIdleMinute = minute;
+      const line = this._line("NPCSim.work.idle", name, name, "idle_" + minute);
+      if (line) ThoughtGenerator._push(profile, line);
+      return line;
+    },
+
+    closing(name) {
+      const profile = $gameSystem?._npcSociety?.[name];
+      if (!this._speaks(profile, name) || !$gameSystem?._npcShopAssignments?.[name]) return null;
+      const minute = $gameVariables?.value(114) ?? 0;
+      // Both the dispatcher and the controller can report the same shift end.
+      if (profile._lastClosingMinute === minute) return null;
+      profile._lastClosingMinute = minute;
+      if (economyRng(name, "closingRoll_" + minute).next() >= this.CLOSING_CHANCE) return null;
+      const line = this._line("NPCSim.work.closing", name, name, "closing_" + minute);
+      if (line) ThoughtGenerator._push(profile, line);
+      return line;
+    },
   };
 
   EventBus.on("npc:interact", ({ name, targetEvent }) => {
     if (!targetEvent) return;
     WorkServe.serve(name, targetEvent);
   });
+  EventBus.on("npc:work_tick", ({ name }) => { WorkServe.idle(name); });
+  EventBus.on("npc:shift_end", ({ name }) => { WorkServe.closing(name); });
 
   // ============================================================================
   // SECTION 11c, SHOP SHIFT MANAGER
@@ -454,10 +497,9 @@
           || !!window.NPCSystem?.hasLocalTag?.(data?.note);
         ev._npcShopRota = tagged && !owned;
         if (tagged && !ev._npcShopRota) this._releaseRota($gameMap?.mapId(), ev.eventId());
-        // A counter can never be recruited (the Join gate in NPCEmpathizeUI now
-        // excludes any shop-shift-covered event), so its self-switch A page is
-        // only ever a leftover template artifact, never a legitimate "joined"
-        // state. A stray ON flips the counter onto that blank/no-command page
+        // Recruiting a counter's keeper never flips the counter (vacate()
+        // blanks the shift instead), so its self-switch A page is only ever a
+        // leftover template artifact, never a legitimate "joined" state. A stray ON flips the counter onto that blank/no-command page
         // (through the ordinary page-condition machinery) and strands it: still
         // drawn with a face (the persona sprite is written to every page) but
         // walkable and unresponsive. Cleared the moment the counter is
@@ -515,6 +557,234 @@
     currentShift() {
       const hour = $gameVariables?.value(23) ?? 12;
       return Math.floor(hour / SHIFT_HOURS) % SHIFT_COUNT;
+    },
+
+    // ---- a keeper recruited off their till --------------------------------
+    // A rota keeper can be talked into joining the party or walking with it
+    // (NPCEmpathize Join / Join as Follower). The counter is not erased the
+    // way a recruited citizen's event is: it is a fixture, and two more
+    // shifts still work it. The shift they walked out of stands unattended
+    // for the rest of the day (blanked, so nobody answers and the shelf can
+    // be taken from freely, see isUnattendedEvent), and on the next day a
+    // new face is drawn for that shift out of the same candidate pool the
+    // rota was built from.
+    //
+    // The departed are remembered by NAME, not by rota slot: an interior's
+    // rota is rebuilt from its seed on every entry and would otherwise put
+    // the recruit straight back behind the till. Wherever a recruit turns up
+    // in a rota, _slotPersona either leaves that shift vacant (today) or
+    // replaces them (any later day).
+    _recruitedKeepers() {
+      if (!$gameSystem) return {};
+      if (!$gameSystem._npcShopRecruited) $gameSystem._npcShopRecruited = {};
+      return $gameSystem._npcShopRecruited;
+    },
+    _vacancies() {
+      if (!$gameSystem) return {};
+      if (!$gameSystem._npcShopVacancies) $gameSystem._npcShopVacancies = {};
+      return $gameSystem._npcShopVacancies;
+    },
+    _today() {
+      return Math.floor(($gameVariables?.value(114) ?? 0) / 1440);
+    },
+
+    // The counter as its own shop: an interior counter is the building and
+    // floor it stands in (ProceduralHouseSystem.shopInstanceId), never the
+    // template map every building drawn from it shares. Vacancies are kept
+    // under this, so a keeper recruited in one bakery leaves only that one
+    // bakery's till empty.
+    _instanceKey(key) {
+      const parts = String(key).split('_');
+      const mapId = Number(parts[0]), evId = parts[1];
+      const P = window.ProceduralHouseSystem;
+      const inst = (P && typeof P.shopInstanceId === 'function') ? P.shopInstanceId(mapId) : mapId;
+      return `${inst}_${evId}`;
+    },
+    // Interior rotas live under the building's seed (assignInteriorPersonas);
+    // a replacement drawn for one is written back there so it sticks.
+    _interiorRotaKeys: {},
+
+    // Takes the keeper of the current shift off this counter. Answers the
+    // name of whoever left, or null when nobody from the rota stands there.
+    vacate(mapId, evId) {
+      const key = `${mapId}_${evId}`;
+      const slot = this.currentShift();
+      const persona = this._getPersonas(key)?.[slot];
+      if (!persona?.name) return null;
+      this._recruitedKeepers()[persona.name] = true;
+      this._vacancies()[this._instanceKey(key)] = { slot, day: this._today(), name: persona.name };
+      // Their shift is nobody's now: the routine that sent them to work,
+      // and the reservation that kept them out of the map's roster, go.
+      const assigns = $gameSystem?._npcShopAssignments || {};
+      const a = assigns[persona.name];
+      if (a && a.mapId === mapId && a.eventId === evId) delete assigns[persona.name];
+      const reserved = $gameSystem?._npcShopReservedNames?.[mapId];
+      const i = reserved ? reserved.indexOf(persona.name) : -1;
+      if (i >= 0) reserved.splice(i, 1);
+      const prof = $gameSystem?._npcSociety?.[persona.name];
+      if (prof) prof._routineDay = -1;
+      const ev = ($gameMap && $gameMap.mapId() === mapId) ? $gameMap.event(evId) : null;
+      if (ev) this._blankCounter(ev);
+      this._applied[key] = slot;
+      delete this._lastAppliedShift[mapId];
+      return persona.name;
+    },
+
+    // True while this counter's current shift stands empty because its
+    // keeper was recruited today (or nobody could be found to replace them).
+    isVacant(mapId, evId) {
+      const key = `${mapId}_${evId}`;
+      const slot = this.currentShift();
+      const p = this._getPersonas(key)?.[slot];
+      if (!p || !this._recruitedKeepers()[p.name]) return false;
+      return this._slotPersona(key, slot) === null;
+    },
+
+    // The recruit whose till this is, while it stands empty because of them:
+    // their name, or null. Taking off it is still a theft, and they saw it
+    // (StealingSystemUI).
+    vacatedBy(mapId, evId) {
+      if (!this.isVacant(mapId, evId)) return null;
+      return this._getPersonas(`${mapId}_${evId}`)?.[this.currentShift()]?.name || null;
+    },
+
+    // Whoever works this shift, with the recruited resolved: null for a
+    // shift left vacant today, a replacement drawn and booked for one whose
+    // keeper left on an earlier day.
+    _slotPersona(key, slot) {
+      const rota = this._getPersonas(key);
+      const p = rota?.[slot] || null;
+      if (!p || !this._recruitedKeepers()[p.name]) return p;
+      const vkey = this._instanceKey(key);
+      const vac = this._vacancies()[vkey];
+      if (vac && vac.slot === slot && vac.name === p.name && vac.day >= this._today()) return null;
+      const next = this._replacementFor(key, p);
+      if (!next) return null;
+      const parts = key.split('_');
+      const mapId = Number(parts[0]), evId = Number(parts[1]);
+      const persisted = !!this._persistedPersonas()[key];
+      const shifts = Object.assign({}, rota, { [slot]: next });
+      this._setPersonas(key, shifts, persisted);
+      const rotaKey = this._interiorRotaKeys[key];
+      if (rotaKey && $gameSystem?._npcInteriorShopRotas) $gameSystem._npcInteriorShopRotas[rotaKey] = shifts;
+      const ev = ($gameMap && $gameMap.mapId() === mapId) ? $gameMap.event(evId) : null;
+      const shopName = ev ? (window.NPCSystem?.extractShopName?.(ev.event()) ?? null) : null;
+      this._recordAssignments(mapId, evId, shopName, { [slot]: next });
+      if (vac && vac.name === p.name) delete this._vacancies()[vkey];
+      delete this._applied[key];
+      delete this._lastAppliedShift[mapId];
+      return next;
+    },
+
+    // A new keeper for a shift its old one walked out of: the departed
+    // keeper's own town first, then anybody free, seeded on the counter and
+    // the day so the same face takes the till however often it is asked.
+    _replacementFor(key, departed) {
+      const group = $gameSystem?._npcSociety?.[departed.name]?._homeGroupName || null;
+      const used = new Set(Object.keys($gameSystem?._npcShopAssignments || {}));
+      const gone = this._recruitedKeepers();
+      const pool = this._candidates(group).filter(c => c && !used.has(c.name) && !gone[c.name]);
+      if (!pool.length) return null;
+      const local = pool.filter(c => c.local);
+      const src = local.length ? local : pool;
+      const worldSeed = window.HistoryManager ? window.HistoryManager.getSeed() : 19002001;
+      const rng = new MiniRng(nameHash(key + '_shopVacancy_' + this._today()) ^ worldSeed);
+      return src[rng.int(0, src.length - 1)];
+    },
+
+    // ---- what the keeper on shift thinks of the party ---------------------
+    // A keeper who likes the party takes something off the sticker. The
+    // party's standing with them is the MEDIAN of what they think of each
+    // member (the per-member opinion the Empathize panel reads), so one
+    // charmer cannot buy the whole party a discount. Nothing below
+    // KEEPER_LIKING_FLOOR; from there it climbs straight to
+    // KEEPER_MAX_DISCOUNT at full opinion. Only ever a discount.
+    KEEPER_LIKING_FLOOR: 20,
+    KEEPER_MAX_DISCOUNT: 0.20,
+
+    // Whoever keeps this counter right now, with their society profile:
+    // { name, profile } or null when nobody does (a vacant shift, an
+    // unknown keeper, a counter on another map).
+    _keeperAt(mapId, evId) {
+      if (!$gameMap || $gameMap.mapId() !== mapId) return null;
+      const ev = $gameMap.event(evId);
+      if (!ev || this.isUnattendedEvent(ev)) return null;
+      const covered = this.isShopEvent(ev);
+      const persona = covered ? this.getActivePersona(mapId, evId) : null;
+      if (covered && !persona) return null;
+      const name = persona?.name || ev.event()?.name?.trim() || '';
+      const profile = name ? $gameSystem?._npcSociety?.[name] : null;
+      return profile ? { name, profile } : null;
+    },
+
+    // { name, opinion, discount } for whoever keeps this counter right now,
+    // or null when nobody does (a vacant shift, an unknown keeper).
+    keeperDisposition(mapId, evId) {
+      const keeper = this._keeperAt(mapId, evId);
+      if (!keeper) return null;
+      const { name, profile } = keeper;
+      const H = window.NPCEmpathize?._helpers;
+      const preds = H?._computePartyPredisposition ? H._computePartyPredisposition(profile) : [];
+      if (!preds.length || !H._medianScore) return null;
+      const opinion = H._medianScore(preds);
+      const over = Math.max(0, opinion - this.KEEPER_LIKING_FLOOR);
+      const discount = Math.min(this.KEEPER_MAX_DISCOUNT,
+        this.KEEPER_MAX_DISCOUNT * over / (100 - this.KEEPER_LIKING_FLOOR));
+      return { name, opinion, discount };
+    },
+
+    // ---- a customer is remembered -----------------------------------------
+    // Buying from a keeper warms them to the whole party, every member at
+    // once: one point a purchase, one more for every KEEPER_GOODWILL_STEP
+    // spent on it, never more than KEEPER_GOODWILL_MAX from one purchase.
+    // A keeper warms by at most KEEPER_GOODWILL_DAILY a day, so buying
+    // matches one at a time cannot buy a friendship. This is the opinion
+    // keeperDisposition reads, so a regular is quoted less over time.
+    KEEPER_GOODWILL_STEP: 2000,   // 2000 gold = 20.00 euros
+    KEEPER_GOODWILL_MAX: 5,
+    KEEPER_GOODWILL_DAILY: 10,
+
+    // Answers the opinion each member gained, 0 when nobody was there to
+    // remember the sale or today's warmth is spent.
+    noteKeeperSale(mapId, evId, gold) {
+      const spent = Math.max(0, Number(gold) || 0);
+      if (!(spent > 0)) return 0;
+      const keeper = this._keeperAt(mapId, evId);
+      const add = window.NPCEmpathize?._helpers?._addNpcOpinion;
+      if (!keeper || typeof add !== 'function') return 0;
+      const profile = keeper.profile;
+      const today = this._today();
+      const book = profile._shopGoodwill && profile._shopGoodwill.day === today
+        ? profile._shopGoodwill : (profile._shopGoodwill = { day: today, gained: 0 });
+      const want = Math.min(this.KEEPER_GOODWILL_MAX, 1 + Math.floor(spent / this.KEEPER_GOODWILL_STEP));
+      const delta = Math.min(want, this.KEEPER_GOODWILL_DAILY - book.gained);
+      if (!(delta > 0)) return 0;
+      book.gained += delta;
+      for (const actor of ($gameParty?.members?.() || [])) {
+        if (actor && typeof actor.actorId === 'function') add(profile, actor.actorId(), delta);
+      }
+      return delta;
+    },
+
+    // ---- a theft from the till a recruit walked out of -------------------
+    // Their old shelf is nobody's to mind and nobody's to take. The one who
+    // kept it is standing right there with the party: they think less of
+    // every OTHER member for it (two points, one more for every
+    // KEEPER_GOODWILL_STEP the thing was worth, at most ten). Answers the
+    // opinion lost, 0 when the till is not a recruit's.
+    noteVacantTheft(mapId, evId, gold) {
+      const name = this.vacatedBy(mapId, evId);
+      const profile = name ? $gameSystem?._npcSociety?.[name] : null;
+      const add = window.NPCEmpathize?._helpers?._addNpcOpinion;
+      if (!profile || typeof add !== 'function') return 0;
+      const worth = Math.max(0, Number(gold) || 0);
+      const delta = Math.min(10, 2 + Math.floor(worth / this.KEEPER_GOODWILL_STEP));
+      for (const actor of ($gameParty?.members?.() || [])) {
+        if (!actor || typeof actor.actorId !== 'function') continue;
+        if (typeof actor.name === 'function' && actor.name() === name) continue;
+        add(profile, actor.actorId(), -delta);
+      }
+      return delta;
     },
 
     // ---- a zombie world's counters ---------------------------------------
@@ -786,8 +1056,9 @@
         const key  = `${mapId}_${evId}`;
         // Session cache only: this key belongs to a shared interior template,
         // so it must not be read back from (or written to) the world store.
-        if (this._personas[key]) continue;
         const rotaKey = `${baseSeed}_${evId}`;
+        this._interiorRotaKeys[key] = rotaKey;
+        if (this._personas[key]) continue;
         const kept = rotas[rotaKey];
         if (kept) {
           this._setPersonas(key, kept, false);
@@ -857,6 +1128,83 @@
       }
     },
 
+    // ── A keeper's counter, read from anywhere ────────────────────────────
+    // Everything there is to say about where one person stands a till: the
+    // shop, their shift, the other two on the rota and what is on the shelf
+    // today with how many of each are left. Null for anybody who keeps no
+    // counter. Read by the Empathize dossier and by the chat context, which
+    // is how a keeper messaged from across the world can say what they have.
+    workplaceOf(name) {
+      const who = String(name || '');
+      const assign = who ? $gameSystem?._npcShopAssignments?.[who] : null;
+      if (!assign) return null;
+      const { mapId, eventId } = assign;
+      const rota = this._rotaOf(who, mapId, eventId);
+      const colleagues = [];
+      for (let s = 0; s < SHIFT_COUNT; s++) {
+        const p = rota?.[s];
+        if (p?.name && p.name !== who) colleagues.push({ name: p.name, shift: s });
+      }
+      return {
+        mapId, eventId,
+        shift: assign.shift,
+        mapName: assign.mapName,
+        shopName: assign.shopName || null,
+        colleagues,
+        shelf: this._shelfAt(mapId, eventId),
+      };
+    },
+
+    // The hours one shift of the rota covers, as { from, to } on the clock.
+    shiftHours(shift) {
+      const from = (Number(shift) || 0) * SHIFT_HOURS;
+      return { from, to: (from + SHIFT_HOURS) % 24 };
+    },
+
+    // The rota a person is on. A world counter keeps it under its map and
+    // event; a counter inside a building keeps it under the building's seed,
+    // so that one is found by who is on it.
+    _rotaOf(name, mapId, eventId) {
+      const has = rota => !!rota && Object.values(rota).some(p => p?.name === name);
+      const key = `${mapId}_${eventId}`;
+      const own = this._persistedPersonas()[key] || this._personas[key];
+      if (has(own)) return own;
+      const interior = $gameSystem?._npcInteriorShopRotas || {};
+      for (const rotaKey of Object.keys(interior)) {
+        if (rotaKey.endsWith(`_${eventId}`) && has(interior[rotaKey])) return interior[rotaKey];
+      }
+      return null;
+    },
+
+    // What one counter sells and how many of each are left today, off the
+    // event's own pages (ShopScanner) and the counter's own stock record
+    // (ShopStock, the numbers the till sells from). A row asked about for the
+    // first time is rolled on the spot, exactly as the till would roll it.
+    _shelfAt(mapId, eventId) {
+      const SC = window.ShopScanner;
+      const loader = window.NPCSystem?._internal?.MapManager;
+      if (!SC?.shelfOf || !loader?.loadMapData) return [];
+      let data = null;
+      try { data = loader.loadMapData(mapId); } catch (e) { data = null; }
+      const ev = data?.events?.[eventId];
+      if (!ev) return [];
+      const SS = window.ShopStock;
+      const seen = new Set();
+      const out = [];
+      for (const row of SC.shelfOf(mapId, ev, ev.x, ev.y)) {
+        const key = `${row.type}_${row.id}`;
+        if (!row.data || seen.has(key)) continue;
+        seen.add(key);
+        let stock = null;
+        try {
+          const n = SS ? SS.get(mapId, eventId, row.data) : null;
+          stock = (Number.isFinite(n) && n !== SS.UNLIMITED) ? n : null;
+        } catch (e) { stock = null; }
+        out.push({ type: row.type, id: row.id, item: row.data, stock });
+      }
+      return out;
+    },
+
     updateSprites() {
       if (!$gameMap) return;
       const mapId = $gameMap.mapId();
@@ -881,7 +1229,13 @@
         // deferred assignPersonas on a regular group map): the early no-op
         // would set _applied[key]=slot, and assignPersonas's own
         // updateSprites() would then skip it, leaving the shop graphic empty.
-        const persona = this._getPersonas(key)?.[slot];
+        // A shift whose keeper was recruited today stands empty.
+        if (this.isVacant(mapId, evId)) {
+          this._blankCounter(ev);
+          this._applied[key] = slot;
+          continue;
+        }
+        const persona = this._slotPersona(key, slot);
         // A shift ending while the party watches is walked rather than swapped.
         const prev = this._applied[key];
         if (prev !== undefined && prev !== slot && !this._isZombieWorld() &&
@@ -933,8 +1287,9 @@
       // carry the clock past another shift change on the way.
       const seat = () => {
         if (!$gameMap || $gameMap.mapId() !== mapId || $gameMap.event(ev.eventId()) !== ev || ev._erased) return;
-        const now = this._getPersonas(key)?.[this.currentShift()];
+        const now = this._slotPersona(key, this.currentShift());
         if (now) this._applyPersonaSprite(ev, now);
+        else this._blankCounter(ev);
       };
       this._blankCounter(ev);
       if (begin(ev, outgoing, persona, seat)) return true;
@@ -960,7 +1315,12 @@
         if (!ev || ev._erased) continue;
         const key = `${mapId}_${ev.eventId()}`;
         if (this._applied[key] === slot) continue;
-        const persona = this._getPersonas(key)?.[slot];
+        if (this.isVacant(mapId, ev.eventId())) {
+          this._applied[key] = slot;
+          this._blankCounter(ev);
+          continue;
+        }
+        const persona = this._slotPersona(key, slot);
         if (!persona) {
           // An uncovered shift of a zombie world's counter is drawn empty as
           // early as any staffed one, so a persona left on the event by the
@@ -1037,7 +1397,7 @@
     // null when no persona has been assigned to it.
     getActivePersona(mapId, evId) {
       const slot = this.currentShift();
-      const persona = this._getPersonas(`${mapId}_${evId}`)?.[slot];
+      const persona = this._slotPersona(`${mapId}_${evId}`, slot);
       if (!persona) return null;
 
       const profile = $gameSystem._npcSociety?.[persona.name];
@@ -1057,6 +1417,7 @@
       this._shopEventsCache = null;
       this._shopEventsMapId = -1;
       this._fallbackApplied = {};
+      this._interiorRotaKeys = {};
     },
 
     // Decides the three-shift rota for every <Shop> counter in the world at

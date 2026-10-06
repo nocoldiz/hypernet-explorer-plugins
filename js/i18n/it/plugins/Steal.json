@@ -4,5 +4,6 @@
   "stealSuccess": "Hai rubato con successo",
   "stealFailed": "Non sei riuscito a rubare",
   "stealTitle": "Ruba",
-  "nothingNearby": "Non c'è nulla da rubare qui intorno."
+  "nothingNearby": "Non c'è nulla da rubare qui intorno.",
+  "recruitSawTheft": "{name} ti ha visto prendere {item} dal suo vecchio bancone."
 }

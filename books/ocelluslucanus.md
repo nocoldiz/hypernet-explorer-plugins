@@ -34,7 +34,7 @@ _&c. &c. &c._
     θειων και τιμιωτατων επιγνωσις.
 
     _i. e._ The knowledge of divine and the most honourable things,
-    is the principle and cause and rule of human felicity.—ARCHYTAS.
+    is the principle and cause and rule of human felicity. - ARCHYTAS.
 
                                  LONDON:
             PRINTED FOR THE TRANSLATOR; AND SOLD BY JOHN BOHN,
@@ -190,7 +190,7 @@ Impassivity of Incorporeal Natures.”
 [3] It is rightly observed by Fabricius, “that this work of Ocellus was
 originally written in the Doric dialect, but was afterwards translated by
 some grammarian into the common dialect, in order that it might be more
-easily understood by the reader.”—Vid. Biblioth. Græc. tom. i. p. 510.
+easily understood by the reader.” - Vid. Biblioth. Græc. tom. i. p. 510.
 
 [4] In all the editions of Plato, μυριοι, conformably to the above
 translation; but from Diogenes Laertius, who, in his Life of Archytas,
@@ -601,7 +601,7 @@ the natures that are generated in it.
 Since, therefore, in each division of the world, a certain genus of
 animals is arranged, which surpasses the rest contained in that division;
 in the heavens, indeed, the genus of the gods, but in the earth men, and
-in the region on high demons;—this being the case, it is necessary that
+in the region on high demons; - this being the case, it is necessary that
 the race of men should be perpetual, since reason truly induces us to
 believe, that not only the [great] parts of the world are consubsistent
 with the world, but also the natures comprehended in these parts.
@@ -635,7 +635,7 @@ CHAP. IV.
 Concerning the generation of men, however, from each other, after what
 manner, and from what particulars, it may be most properly effected, law,
 and temperance and piety at the same time co-operating, will be, I think,
-as follows. In the first place, indeed, this must be admitted,—that we
+as follows. In the first place, indeed, this must be admitted, - that we
 should not be connected with women for the sake of pleasure, but for the
 sake of begetting children.
 
@@ -647,7 +647,7 @@ should participate of a divine life, if the immortality of his genus
 was corrupted; Divinity gave completion to this immortality through
 individuals, and made this generation of mankind to be unceasing and
 continued. This, therefore, is one of the first things which it is
-necessary to survey,—that copulation should not be undertaken for the
+necessary to survey, - that copulation should not be undertaken for the
 sake of voluptuous delight.
 
 In the next place, the co-ordination itself of man should be considered
@@ -758,7 +758,7 @@ that those who rear horses, or birds, or dogs, should, with the utmost
 diligence, endeavour that the breed may be such as is proper, and from
 such things as are proper, and when it is proper[22]; and likewise
 consider how they ought to be disposed when they copulate with each
-other, in order that the offspring may not be a casual production;—but
+other, in order that the offspring may not be a casual production; - but
 that men should pay no attention to their progeny, but should beget them
 casually; and when begotten, should neglect both their nutriment and
 their education: for these being disregarded, the causes of all vice and
@@ -886,7 +886,7 @@ OCELLUS LUCANUS ON LAWS.
 A FRAGMENT PRESERVED BY STOBÆUS, ECLOG. PHYS. LIB. I. CAP. 16.
 
 
-Life, connectedly—contains in itself bodies; but of this, soul is the
+Life, connectedly - contains in itself bodies; but of this, soul is the
 cause. Harmony comprehends, connectedly, the world; but of this, God
 is the cause. Concord binds together families and cities; and of this,
 law is the cause. Hence, there is a certain cause and nature which
@@ -923,7 +923,7 @@ our admirable philosophic poet, Pope, in his Essay on Man:
 
 ADDITIONAL NOTES.
 
-[a] Page 1.—“_But others from opinion in conjunction with reason_;”—which
+[a] Page 1. - “_But others from opinion in conjunction with reason_;” - which
 in the original is, τα δε και δοξῃ, μετα λογου. But Ocellus is not
 accurate in what he here asserts, as is evident from what Plato says in
 his Timæus. For the divine philosopher having, in the former part of this
@@ -990,7 +990,7 @@ celestial, this also is possible, so far as it participates of being,
 and so far as it can be apprehended by intelligence. For, if anything
 necessary can be collected concerning it, it is alone through geometrical
 demonstrations which are universal. But so far as it is sensible, it is
-difficult to be apprehended, and difficult to be surveyed.”—See the first
+difficult to be apprehended, and difficult to be surveyed.” - See the first
 volume of my translation of Proclus on the Timæus of Plato, p. 291.
 
 In p. 293, he also observes, “that perfectly accurate arguments, and such
@@ -1030,9 +1030,9 @@ be necessarily true, the causes of, more known than, and prior to
 the conclusion. But where the premises of a syllogism are false, the
 conclusion is not _scientifically_, i. e. _necessarily_, true. Thus in
 the syllogism, Every stone is an animal; every man is a stone; therefore
-every man is an animal,—the conclusion is true, but not _scientific_.
+every man is an animal, - the conclusion is true, but not _scientific_.
 
-_Note to p. 14._—Ocellus is wrong in ascribing two powers only to each
+_Note to p. 14._ - Ocellus is wrong in ascribing two powers only to each
 of the elements, instead of three, as is clearly shown by Proclus, in
 the following extract from his admirable Commentary on the Timæus of
 Plato. “There are some physiologists (says he) who ascribe one power to
@@ -1315,7 +1315,7 @@ understand that the world is unbegotten according to time; but to those
 who are not able to understand this, he indicates that it is generated.
 He is also anxious that they may believe this, in order that at the
 same time they may be persuaded in the existence of Providence. But the
-second cause which induced Plato thus to write, is this,—that assertions
+second cause which induced Plato thus to write, is this, - that assertions
 are then more clear, when we meet with them as with things which
 actually take place. Thus geometricians compose diagrams as if they were
 generated, though they are not composites. And Euclid defines a circle,
@@ -1364,7 +1364,7 @@ was generated_.
 vol. i. from p. 237 to p. 251. And also the Commentary of the same
 incomparable man on the words of Plato, in the same Dialogue, “But we
 say that whatever is generated, is necessarily generated by a certain
-cause.”—Vol. i. of my Translation, p. 249, &c.
+cause.” - Vol. i. of my Translation, p. 249, &c.
 
 [33] viz. Whether the world is unbegotten, or generated.
 
@@ -1563,7 +1563,7 @@ the _Demiurgus_ by Plato, in the Timæus.
 
 [37]
 
-                —— Quid mirum noscere mundum
+ -  - Quid mirum noscere mundum
     Si possent homines, quibus est et mundus in ipsis;
     Exemplumque Dei quisque est in imagine parva?
 
@@ -1573,7 +1573,7 @@ the _Demiurgus_ by Plato, in the Timæus.
 nature, and motions, and influences are perpetual. Hence, in the Orphic
 Hymn to the Stars, they are invoked as
 
-                —— αει γενετηρες απαντων,
+ -  - αει γενετηρες απαντων,
     “Th’ _eternal_ fathers of whate’er exists.”
 
 [39] Of the astrological Æsculapius, I have not been able to obtain any
@@ -1634,7 +1634,7 @@ of them are situated in a summer sign, viz. either in Leo or in Cancer.
 For as the Sun alone, when he is in Leo, causes summer, but when he is in
 Capricorn winter, and thus the year is formed, which is so denominated,
 because the Sun tends to one and the same point (ενιαυτος), for his
-restitution is from the same to the same,—in like manner there is an
+restitution is from the same to the same, - in like manner there is an
 arrangement of all the planets effected in long periods of time, which
 produces the great year. For if all the planets becoming vertical, heat
 in the same manner as the sun, but departing from this vertical position
@@ -1674,7 +1674,7 @@ p. 4.
 
 ADDITIONAL NOTES.
 
-[b] _Page 50._—Petosiris and Necepso were two of the most ancient
+[b] _Page 50._ - Petosiris and Necepso were two of the most ancient
 writers of Egyptian astrology, which, in many respects, differs from
 that of the Chaldeans. The former of these celebrated men is greatly
 applauded by Manetho, who, in his Apotelesmatica, professes to be his
@@ -1748,7 +1748,7 @@ year 800 of the Attic æra, i. e. about the beginning of the Olympiads.
 He is praised by Pliny, by Galen, ix. p. 2. De Facultat. Simplicium
 Medicament., and from him by Aetius.
 
-[c] _Page 56._—Proclus in Tim. lib. iv. p. 277, informs us, that the
+[c] _Page 56._ - Proclus in Tim. lib. iv. p. 277, informs us, that the
 Chaldeans had observations of the stars, which embraced whole mundane
 periods. What Proclus likewise asserts of the Chaldeans is confirmed by
 Cicero in his first book on Divination, who says that they had records of
@@ -1848,7 +1848,7 @@ time of the death of Romulus. Hence, as physiologists assert, 15,000
 years after the death of Romulus the sun will again be so eclipsed,
 that it will be in the same sign, and in the same part of the heavens,
 as it was at that time; all the stars likewise returning to the same
-place.”—_Macrob. in Somn. Scip._ lib. ii.
+place.” - _Macrob. in Somn. Scip._ lib. ii.
 
 Hence, as the greater mundane apocatastasis consists of 300,000 years,
 and 15,000 years make a mundane year, the greater apocatastasis will
@@ -1933,7 +1933,7 @@ consentaneous to the arcana of a fable.”
 
 The following is the extract from the Asclepian Dialogue, a Latin
 translation only of which is extant, and is generally believed by the
-learned to have been made by Apuleius:—
+learned to have been made by Apuleius: - 
 
 “An ignoras, O Asclepi, quod Ægyptus imago sit cœli, aut, quod est
 verius, translatio et descensio omnium quæ gubernantur atque exercentur
@@ -2097,7 +2097,7 @@ to have proved it to be spurious if they could, because it predicts,
 (which is the third thing especially deserving of remark,) that the
 memorials of the martyrs should succeed in the place of the temples of
 the Gods. Hence Augustin concludes this to be a prophecy or prediction
-made _instinctu fallacis spiritûs_,—_by the instinct or suggestion of
+made _instinctu fallacis spiritûs_, - _by the instinct or suggestion of
 a deceitful spirit_. But that this prediction was accomplished, is
 evident, as Dr. Cudworth observes in his True Intellectual System of
 the Universe, p. 329, from the following passages of Theodoret, which I
@@ -2117,7 +2117,7 @@ intelligent reader who compares this prediction with what is said about
 the philosophic stranger by Synesius, in the foregoing extract, will
 immediately see that the former wonderfully accords with the latter.
 
-[d] _Page 57._—This first period of the world, which was uncultivated
+[d] _Page 57._ - This first period of the world, which was uncultivated
 and rude, and, according to Firmicus, was under the dominion of Saturn,
 is mentioned by Plato at the beginning of his third book On Laws. For
 there having observed that time is infinite, he says, “that myriads upon
@@ -2156,11 +2156,11 @@ Hesiod beautifully observes, “an intellectual life is implied. For such
 a life is pure, impassive, and free from sorrow; and of this impassivity
 and purity gold is an image, because it is never subject to rust or
 putrefaction. Such a life, too, is very properly said to be under Saturn,
-because Saturn is an intellectual god.”—See more concerning this Divinity
+because Saturn is an intellectual god.” - See more concerning this Divinity
 in the Additional Notes at the end of the 5th vol. of my Plato, p. 675,
 &c.
 
-[e] _Page 59._—Plato, in the eighth book of his Republic, speaking of the
+[e] _Page 59._ - Plato, in the eighth book of his Republic, speaking of the
 dissolution of the city which he has constituted, observes as follows:
 “Not only with respect to terrestrial plants, but likewise in terrestrial
 animals, a fertility and sterility of soul as well as of body takes
@@ -2168,7 +2168,7 @@ place, when the revolutions of the heavenly bodies complete the periphery
 of their respective orbits; which are shorter to the shorter lived, and
 contrarywise to such as are the contrary.” The necessity for such a
 mutation taking place is this (as I have observed in the Introduction to
-my Translation of Aristotle’s History of Animals),—that all the parts of
+my Translation of Aristotle’s History of Animals), - that all the parts of
 the universe are unable to participate the providence of divinity in a
 similar manner, but some of its parts enjoy this perpetually, and others
 only for a time; some in a primary, and others in a secondary degree. For
@@ -2200,7 +2200,7 @@ to the Augustan age, the destruction of all the great ancient cities,
 with all their rites, philosophy, &c. being the natural consequence of
 such a period. It appears to me that this period commenced in the time of
 Sylla, and I found this opinion on the following passage in Plutarch’s
-Life of that great commander:—Το δε παντων μεγιστον, εξ ανεφελου και
+Life of that great commander: - Το δε παντων μεγιστον, εξ ανεφελου και
 διαιθρου του περιεχοντος ηχησε φωνη σαλπιγγος, οξυν αποτεινουσα και
 θρηνωδη φθογγον, ὡστε παντας εκφρονας γενεσθαι, και καταπτηξαι το
 μεγεθος. Τυρῥηνων δε οἱ λογιοι μεταβολην ἑτερου γενους απεφαινοντο, και
@@ -2220,7 +2220,7 @@ which this time consists is bounded by the period of the great year.
 Hence, when one age is finished, and another is about to commence, a
 certain wonderful sign will present itself, either from the earth or the
 heavens.” The _mournfulness_ of this sound of the trumpet was evidently
-an indication that a barren period was about to commence.—For an account
+an indication that a barren period was about to commence. - For an account
 of the _great year_, see the note to page 478 of the treatise on Meteors.
 
 The following extracts from a work entitled “Sketches chiefly relating
@@ -2261,7 +2261,7 @@ the Brahmans is confirmed by the testimony of our European tables, which
 prove it to be the result of a true observation. Monsieur Bailly is of
 opinion, that their astronomical time is dated from an eclipse of the
 moon, which appears then to have happened, and that the conjunction of
-the planets is only mentioned by the way.”—pp. 224, 225.
+the planets is only mentioned by the way.” - pp. 224, 225.
 
 The conjunction of the planets mentioned in the above extract, is
 admirably elucidated by Olympiodorus in his MS. Scholia on the Gorgias of
@@ -2282,7 +2282,7 @@ twelve times five; so that their revolutions will be conjoined in sixty
 years. Souls, therefore, are punished for such-like periods. _But the
 seven planetary spheres conjoin their revolutions with the inerratic
 sphere, through many myriads of years_; and this is the period which
-Plato calls τον αει χρονον, _for ever_.”—See the Introduction to the
+Plato calls τον αει χρονον, _for ever_.” - See the Introduction to the
 volume of my Aristotle, which contains a translation of Aristotle’s
 treatise on the Soul, &c. &c.
 
@@ -2381,7 +2381,7 @@ THEOREM 1.
 
 Things which are naturally moved in a circle are simple.
 
-_Demonstration._—Let AB be that which is naturally moved in a circle.
+_Demonstration._ - Let AB be that which is naturally moved in a circle.
 I say that AB is simple: for, since the motion in a circle is a simple
 motion; but every simple motion is the motion of a simple body; hence
 AB is a simple body. Things, therefore, which are naturally moved in a
@@ -2394,7 +2394,7 @@ Things naturally moved in a circle, are neither the same with those moved
 in a right line, nor with those which are composed from things moved in a
 right line.
 
-_Demonstration._—Let AB be that which is naturally moved in a circle. I
+_Demonstration._ - Let AB be that which is naturally moved in a circle. I
 say that it is not the same with those things which are moved in a right
 line. For, if it is the same with any one of these, it must either be
 naturally moved upwards or downwards. But every simple body is moved with
@@ -2412,7 +2412,7 @@ THEOREM 3.
 Things which are naturally moved in a circle, neither participate of
 gravity nor levity.
 
-_Demonstration._—For if AB is either heavy or light, it is either
+_Demonstration._ - For if AB is either heavy or light, it is either
 naturally moved to the middle, or from the middle: for, from the
 definitions, that is heavy which is moved to the middle, and that is
 light which is moved from the middle. But that which is moved either
@@ -2425,7 +2425,7 @@ THEOREM 4.
 
 Nothing is contrary to a circular motion.
 
-_Demonstration._—For if this be possible, let the motion from A to B be
+_Demonstration._ - For if this be possible, let the motion from A to B be
 a circular motion, and let the motion contrary to this be either some
 one of the motions in a right line, or some one of those in a circle.
 If, then, the motion upwards is contrary to that in a circle, the motion
@@ -2456,7 +2456,7 @@ THEOREM 5.
 Things which are naturally moved in a circle, neither receive generation
 nor corruption.
 
-_Demonstration._—For let AB be that which is naturally moved in a
+_Demonstration._ - For let AB be that which is naturally moved in a
 circle, I say that AB is without generation and corruption: for if it
 is generable and corruptible, it is generated from a contrary, and is
 corrupted into a contrary. But that which is moved in a circle has not
@@ -2472,7 +2472,7 @@ THEOREM 6.
 
 The powers of bodies terminated according to magnitude are not infinite.
 
-_Demonstration._—For, if possible, let B be the infinite power of the
+_Demonstration._ - For, if possible, let B be the infinite power of the
 finite body A; and let the half of A be taken, which let be C, and let
 the power of this be D. But it is necessary that the power D should be
 less than the power B: for a part has a power less than that of the
@@ -2489,7 +2489,7 @@ THEOREM 7.
 
 Simple bodies are terminated according to species.
 
-_Demonstration._—For let the magnitude A be a simple body. Since,
+_Demonstration._ - For let the magnitude A be a simple body. Since,
 therefore, a simple body is moved with a simple motion, A will be moved
 with a simple motion. And if it is moved in a circle, it will have one
 nature and one form. But if it is moved according to any one of the
@@ -2504,7 +2504,7 @@ THEOREM 8.
 
 Time is continued and perpetual.
 
-_Demonstration._—For, if it is neither continued nor eternal, it will
+_Demonstration._ - For, if it is neither continued nor eternal, it will
 have a certain beginning. Let, therefore, A B be time, and let its
 beginning be A. But if A is time, it is divisible, and we shall not yet
 have the beginning of time, but there will be another beginning of the
@@ -2521,7 +2521,7 @@ THEOREM 9.
 
 A motion which is naturally circular is perpetual.
 
-_Demonstration._—Let the circular motion be that of the circle A B, I say
+_Demonstration._ - Let the circular motion be that of the circle A B, I say
 that it is perpetual: for, since time is perpetual, it is also necessary
 that motion should be perpetual. And since time is continued, (for
 there is the same _now_ in the past and present time,) it is necessary
@@ -2547,7 +2547,7 @@ THEOREM 10.
 
 That which moves a perpetual motion is perpetual.
 
-_Demonstration._—For let A be that which moves a perpetual motion. I say
+_Demonstration._ - For let A be that which moves a perpetual motion. I say
 that A also is perpetual: for, if it is not, it will not then move when
 it is not. But this not moving, neither does the motion subsist, which
 it moved before. It is however supposed to be perpetual. But, nothing
@@ -2561,7 +2561,7 @@ THEOREM 11.
 
 That which is immoveable is the leader of things moving and moved.
 
-_Demonstration._—For let A be moved by B, and B by C, I say that this
+_Demonstration._ - For let A be moved by B, and B by C, I say that this
 will some time or other stop, and that not everything which moves will be
 itself moved: for, if possible, let this take place. Motions, therefore,
 are either in a circle, or _ad infinitum_. But, if things moving and
@@ -2591,7 +2591,7 @@ THEOREM 12.
 
 Everything which is moved, is moved by something.
 
-_Demonstration._—Let A be that which is moved, I say that A is moved by
+_Demonstration._ - Let A be that which is moved, I say that A is moved by
 something: for it is either moved according or contrary to nature. If,
 therefore, it is moved according to nature, that which moves is nature;
 but, if contrary to nature, that which employs violence moves; for every
@@ -2602,7 +2602,7 @@ THEOREM 13.
 
 That which first moves a circular motion is impartible, or without parts.
 
-_Demonstration._—For let A be that which moves the first motion: for
+_Demonstration._ - For let A be that which moves the first motion: for
 it is necessary that there should be something of this kind, because
 everything which is moved is moved by something. But A, if it is that
 which first moves, will be immoveable: for that which is immoveable is

@@ -778,15 +778,15 @@
   //   mats             how much a haul of materials is worth carrying
   //   relic            what a minted artifact is worth on the counter
   const ANOM_BRACKETS = [
-    { max: 10, gold: 0.45, goldCap: 6000, exp: 0.5, expCap: 120, kp: 0.6,
+    { max: 10, gold: 0.45, goldCap: 6000, exp: 0.75, expCap: 180, kp: 0.6,
       gear: [100, 1200], mats: 0.6, relic: [15000, 60000] },
-    { max: 20, gold: 0.7, goldCap: 18000, exp: 0.7, expCap: 400, kp: 0.8,
+    { max: 20, gold: 0.7, goldCap: 18000, exp: 1.05, expCap: 600, kp: 0.8,
       gear: [600, 5000], mats: 0.8, relic: [40000, 200000] },
-    { max: 30, gold: 1, goldCap: 45000, exp: 1, expCap: 1000, kp: 1,
+    { max: 30, gold: 1, goldCap: 45000, exp: 1.5, expCap: 1500, kp: 1,
       gear: [2000, 14000], mats: 1, relic: [150000, 600000] },
-    { max: 40, gold: 1.25, goldCap: 90000, exp: 1.15, expCap: 2000, kp: 1.15,
+    { max: 40, gold: 1.25, goldCap: 90000, exp: 1.7, expCap: 3000, kp: 1.15,
       gear: [6000, 30000], mats: 1.2, relic: [400000, 1500000] },
-    { max: Infinity, gold: 1.5, goldCap: 160000, exp: 1.3, expCap: 3500, kp: 1.25,
+    { max: Infinity, gold: 1.5, goldCap: 160000, exp: 1.95, expCap: 5250, kp: 1.25,
       gear: [12000, 60000], mats: 1.4, relic: [800000, 2500000] },
   ];
 

@@ -90,32 +90,15 @@
     // Actor slot helpers
     // =========================================================================
 
-    // Switches 77/78/79 say whether Actor 1/2/3 is drawn from a battler image
-    // instead of a bust (CustomBustFaceSystemjs.js). Nobody past the third slot
-    // has one, so nothing is written for them.
-    function setCreatureSwitch(actor, on) {
-        const slot = actor.actorId();
-        if ($gameSwitches && slot >= 1 && slot <= 3) {
-            $gameSwitches.setValue(76 + slot, !!on);
-        }
+    // Whether an actor is drawn from a battler image instead of a bust
+    // (CustomBustFaceSystemjs.js) lives on the actor itself, so every party
+    // member has one, not only the first three seats.
+    function setCreatureFlag(actor, on) {
+        actor._isCreatureActor = !!on;
     }
 
-    function creatureSwitchValue(actor) {
-        const slot = actor.actorId();
-        if ($gameSwitches && slot >= 1 && slot <= 3) {
-            return $gameSwitches.value(76 + slot);
-        }
-        return false;
-    }
-
-    // Reproduction type is stored per PARTY INDEX, not per actor id:
-    // var 87 (first member), 115 (second), 116 (third), the same mapping
-    // Health_BiologicSimulation reads.
-    function reproductionVarId(actor) {
-        const idx = actor && $gameParty ? $gameParty.members().indexOf(actor) : 0;
-        if (idx === 1) return 115;
-        if (idx === 2) return 116;
-        return 87;
+    function creatureFlagValue(actor) {
+        return !!actor._isCreatureActor;
     }
 
     // =========================================================================
@@ -200,7 +183,7 @@
             portraitMode: actor.portraitMode ? actor.portraitMode() : 0,
             recruitedEnemyId: actor._recruitedEnemyId || 0,
             recruitedLook: actor._recruitedLook || null,
-            creatureSwitch: creatureSwitchValue(actor),
+            isCreatureActor: creatureFlagValue(actor),
             archetypeName: actor._currentArchetype || null,
             archetypePair: Array.isArray(actor._creatureArchetypes) ? actor._creatureArchetypes.slice() : null,
             bodyParts: actor._bodyParts ? JSON.parse(JSON.stringify(actor._bodyParts)) : null,
@@ -253,7 +236,7 @@
         if (actor.setPortraitMode) actor.setPortraitMode(snap.portraitMode);
         actor._recruitedEnemyId = snap.recruitedEnemyId;
         actor._recruitedLook = snap.recruitedLook;
-        setCreatureSwitch(actor, snap.creatureSwitch);
+        setCreatureFlag(actor, snap.isCreatureActor);
         actor._currentArchetype = snap.archetypeName;
         actor._creatureArchetypes = snap.archetypePair;
         if (snap.bodyParts) actor._bodyParts = JSON.parse(JSON.stringify(snap.bodyParts));
@@ -295,7 +278,7 @@
         actor._recruitedLook = (liveEnemy && window.Battler3D && window.Battler3D.currentLook)
             ? window.Battler3D.currentLook(liveEnemy.index ? liveEnemy.index() : 0)
             : null;
-        setCreatureSwitch(actor, !!battlerName);
+        setCreatureFlag(actor, !!battlerName);
 
         // The slot may still be carrying the previous occupant's hand-built 3D
         // model. A copy is portrayed by the species it copied, not by them.
@@ -493,7 +476,7 @@
         actor._faceIndex = target._faceIndex;
         actor._recruitedEnemyId = target._recruitedEnemyId || 0;
         actor._recruitedLook = target._recruitedLook || null;
-        setCreatureSwitch(actor, creatureSwitchValue(target));
+        setCreatureFlag(actor, creatureFlagValue(target));
 
         const archetypeName = target._currentArchetype;
         if (archetypeName &&
@@ -595,10 +578,9 @@
         }
 
         // Gestation belongs to the dominant archetype now.
-        if ($gameVariables) {
-            const reproVal = arch2.reproduction !== undefined ? arch2.reproduction : 0;
-            $gameVariables.setValue(reproductionVarId(actor), reproVal);
-        }
+        // It lives on the actor, where Health_BiologicSimulation reads it.
+        const reproVal = arch2.reproduction !== undefined ? arch2.reproduction : 0;
+        if (actor.setReproductionType) actor.setReproductionType(reproVal);
 
         // Grant type-based body-part skills (Mouth/Hands/Eyes/Feet) for the
         // newly merged body.

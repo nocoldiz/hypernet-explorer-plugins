@@ -632,6 +632,9 @@
       }
     },
     "randomize": "Roll it",
+    "identity": "Identity",
+    "chipInfo": "{name}: {desc} ({kp} KP, complexity {cx})",
+    "pickUpTo": "Pick up to {max}. Hover or move onto a chip to read it.",
     "camel": {
       "title": "That is not a spell name",
       "body": "A spell is named as one word in CamelCase, with no spaces: FireBolt, not fire bolt. {name} is kept as written if you want it.",
@@ -701,7 +704,9 @@
     "skillBookDesc": "A volume written by hand, holding {count} abilities. Every one of them must be read out before it closes.",
     "grimorieDesc": "A volume written by hand, holding {count} spells. Every one of them must be read out before it closes.",
     "skillBookFallbackName": "Notebook of {first}",
-    "grimorieFallbackName": "Grimorie of {first}"
+    "grimorieFallbackName": "Grimorie of {first}",
+    "statPages": "Pages",
+    "statCost": "Cost"
   },
   "hexorcize": {
     "button": "Hexorcize",

@@ -1569,7 +1569,9 @@
             const seen = ($gameSystem._diaryPregnant ||= {});
             for (const actor of $gameParty.members()) {
                 const data = actor._uterusData;
-                const id = actor.actorId();
+                // Watched per person, not per seat: a recruit taking the seat
+                // of somebody pregnant is not the one expecting.
+                const id = window.PartyPerson ? window.PartyPerson.uidOf(actor) : actor.actorId();
                 const pregnant = !!(data && data.isPregnant);
                 if (pregnant && !seen[id]) {
                     seen[id] = 1;

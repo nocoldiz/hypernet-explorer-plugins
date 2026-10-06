@@ -187,6 +187,14 @@
 
       $gameVariables.setValue(79, item.price || 0);
 
+      // A till left empty because its keeper joined the party is unminded,
+      // not ownerless: the one who kept it saw, it is still a theft, and
+      // they think less of the rest of the party for it.
+      const sim = window.NPCSim;
+      const recruit = (entry && entry.sourceMapId != null && entry.sourceEventId != null &&
+        sim && typeof sim.shopVacatedBy === 'function')
+        ? sim.shopVacatedBy(entry.sourceMapId, entry.sourceEventId) : null;
+
       if (success) {
         $gameParty.gainItem(item, 1, false);
         SS().reduceStock(entry);
@@ -194,6 +202,18 @@
           window.ParchmentToast.show(`${SS().translate('stealSuccess')} ${item.name}!`, {
             severity: 'good'
           });
+        }
+        if (recruit) {
+          sim.noteVacantTheft?.(entry.sourceMapId, entry.sourceEventId, item.price || 0);
+          const C = window.CrimeSystem;
+          if (C && typeof C.commit === 'function') {
+            C.commit({ crimeId: 'shoplifting', verb: 'theft', victim: recruit, target: item.name });
+          }
+          if (window.ParchmentToast) {
+            window.ParchmentToast.show(T('Steal.recruitSawTheft', { name: recruit, item: item.name }), {
+              severity: 'warning'
+            });
+          }
         }
       } else if (SS().isUnattendedSource?.(entry)) {
         // Fumbled with nobody watching: no keeper, no report, no bounty.

@@ -330,7 +330,8 @@
     "relieved": {
       "wc": "Hai usato il WC.",
       "shower": "Sollievo sotto la doccia.",
-      "bath": "Sollievo prima del bagno."
+      "bath": "Sollievo prima del bagno.",
+      "roadside": "Sosta a bordo strada per una pisciata."
     },
     "nothingToDo": "Nessuno ha bisogno del WC adesso.",
     "accident": "{name} non ce la faceva più e se l'è fatta addosso.",

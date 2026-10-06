@@ -49,6 +49,12 @@
  * The view is graded by the map's live screen tone, so the time-of-day tint
  * carries into the minigame.
  *
+ * Every biome dresses the lake its own way (window.FishingScenery): the bank
+ * wears the biome's ground, its props stand along the shore (pines, palms,
+ * cacti, crystals, mushrooms, gravestones, buildings and so on) and its
+ * skyline closes the view: hills, peaks, dunes, mesas, a volcano or a city.
+ * A cave picks up the biome's colours and whatever grows under a roof.
+ *
  * Plugin Commands:
  *   openFishingMinigame   opens the fishing scene
  *   closeFishingMinigame  closes the fishing scene
@@ -305,8 +311,8 @@
         return pal;
     }
 
-    function palette(venue) {
-        return alienise(earthPalette(venue));
+    function palette(venue, scenery) {
+        return alienise(biomeTint(earthPalette(venue), scenery));
     }
 
     // Palette (sky, water, bed, light) for the venue, and for the hour when the
@@ -345,6 +351,246 @@
                          night: false, venue: VENUE_OPEN, fogNear: 42, fogFar: 118 };
         }
     }
+
+    //=========================================================================
+    // Biome scenery - what stands around the water depends on the biome
+    //=========================================================================
+    // Every biome gets its own backdrop. A biome is filed into a family by
+    // name (first matching rule wins), the family says what grows or stands on
+    // the banks and what the hills behind look like, and the biome's own map
+    // colour from Biomes.json is folded into the ground and the props, so two
+    // biomes of one family still never look alike. Placement is seeded off the
+    // biome name: the same biome always shows the same shore.
+    const SCENERY_RULES = [
+        [/^Alien(Under)?(Lava|Magma|Chthonian|Hot)/, 'volcano'],
+        [/^Alien(Under)?(Ice|Glacier|Tundra|Comet|ShortPeriod|LongPeriod|Dwarf|Centaur)/, 'ice'],
+        [/^Alien(Diamond|UnderGeode)/, 'crystal'],
+        [/^Alien(Rainforest|Habitable|EarthLike)/, 'alienjungle'],
+        [/^Alien(Ocean|AcidOcean|UnderAbyss)/, 'ocean'],
+        [/^Alien(Desert|UnderDust)/, 'desert'],
+        [/^Alien(Plasma|Magnetar|Quark|UnderVoid|UnderStorm)/, 'eldritch'],
+        [/^Alien/, 'alien'],
+        [/^(Hell)$/, 'hell'],
+        [/Volcano|Lava|UnderForge/, 'volcano'],
+        [/^(Ice|Permafrost|CaveIce|CaveFrozen|BurgIce)$/, 'ice'],
+        [/Ice$|^Snow|Tundra/, 'snow'],
+        [/Crystal/, 'crystal'],
+        [/Mushroom|Fungal/, 'mushroom'],
+        [/Fairy/, 'fairy'],
+        [/SpiritWoods/, 'spirit'],
+        [/Eldritch|Underdark|ProfaneShrine/, 'eldritch'],
+        [/Dreamscape/, 'dream'],
+        [/Digital/, 'digital'],
+        [/Heaven/, 'heaven'],
+        [/Limbo|Abstract/, 'limbo'],
+        [/^Space$|OmegaTower/, 'space'],
+        [/Graveyard|Crypt|Catacombs|Barrow/, 'graveyard'],
+        [/Swamp/, 'swamp'],
+        [/Mangrove/, 'mangrove'],
+        [/Jungle|Tropical/, 'jungle'],
+        [/Bamboo/, 'bamboo'],
+        [/TempleShinto/, 'shinto'],
+        [/Temple|Ruins|Arena|ChurchInside/, 'ruins'],
+        [/Castle|Burg$|Burg[A-Z]/, 'castle'],
+        [/Canyon|Badlands|MountainDesert/, 'canyon'],
+        [/Desert/, 'desert'],
+        [/SaltFlats|SaltWorks/, 'salt'],
+        [/Savannah/, 'savannah'],
+        [/Steppe/, 'steppe'],
+        [/Taiga|Highlands/, 'conifer'],
+        [/Mountain/, 'mountain'],
+        [/Beach|VillageSea|Docks/, 'beach'],
+        [/^(Ocean|SeaBed|SeaGrotto)$/, 'ocean'],
+        [/Landfill|Abandoned/, 'wasteland'],
+        [/Factory|Mines|Mineshaft|Sewer|Metro|Train|Highway|Spacecenter|Laboratory|BuriedLab|ColdWarBunker/, 'industrial'],
+        [/^City|Office|Hospital|Clinic|Store|Restaurant|Road|Bridge|Villa/, 'city'],
+        [/Village|Houses|Farmhouse|Tavern/, 'village'],
+        [/Farm/, 'farm'],
+        [/Fields|Meadows|Park/, 'meadow'],
+        [/Lake|River|Cistern/, 'lake'],
+        [/Forest/, 'forest'],
+        [/Cave|Dungeon|Lair|Basement|Cellar|Vault|Oubliette|Library|Tunnel|Bunker/, 'cave']
+    ];
+
+    // flora: the prop kinds scattered over the banks, in order of frequency.
+    // hills: the backdrop behind the far shore. water/sky: a replacement colour
+    // (sky blended by skyMix, 1 = take it outright). glow: the props light
+    // themselves. noFarShore: open water to the horizon.
+    const SCENERY_FAMILIES = {
+        forest:     { flora: ['broadleaf', 'conifer', 'bush'], ground: 0x4f6e32, leaf: 0x2f5a2a, hills: 'rolling', density: 44 },
+        conifer:    { flora: ['conifer', 'conifer', 'rock'], ground: 0x3e5a3a, leaf: 0x1f4a2e, hills: 'mountains', density: 48 },
+        meadow:     { flora: ['bush', 'broadleaf', 'flower', 'reed'], ground: 0x6f9a3e, leaf: 0x3f7a2a, hills: 'rolling', density: 26 },
+        farm:       { flora: ['fence', 'hay', 'broadleaf', 'house'], ground: 0x7a8a3e, leaf: 0x3f6a2a, hills: 'rolling', density: 24 },
+        lake:       { flora: ['reed', 'broadleaf', 'conifer', 'reed'], ground: 0x557a3a, leaf: 0x2f5a2a, hills: 'rolling', density: 38 },
+        jungle:     { flora: ['jungle', 'palm', 'bush', 'jungle'], ground: 0x2f5a22, leaf: 0x1f6a2a, water: 0x2a6a5a, hills: 'rolling', density: 58 },
+        mangrove:   { flora: ['mangrove', 'reed', 'jungle'], ground: 0x3a5a32, leaf: 0x2a6a3a, water: 0x2f6a62, hills: 'none', density: 46 },
+        swamp:      { flora: ['dead', 'reed', 'reed', 'jungle'], ground: 0x3a4a2a, leaf: 0x3a5a2a, water: 0x3f4a2a, sky: 0x8a9a7a, skyMix: 0.45, fogFar: 96, hills: 'none', density: 44 },
+        bamboo:     { flora: ['bamboo', 'bamboo', 'bush'], ground: 0x4f7942, leaf: 0x5f9a3a, hills: 'mountains', density: 52 },
+        beach:      { flora: ['palm', 'rock', 'palm'], ground: 0xd8c88a, sand: 0xe8d8a0, leaf: 0x3f8a3a, water: 0x2fa8b8, hills: 'none', density: 16 },
+        ocean:      { flora: ['rock'], ground: 0x8a8a7a, sand: 0xc8b890, water: 0x1f5f9a, hills: 'none', noFarShore: true, density: 6 },
+        desert:     { flora: ['cactus', 'rock', 'cactus'], ground: 0xd0b070, sand: 0xe0c890, water: 0x3f8fa0, sky: 0xf0d8a0, skyMix: 0.25, hills: 'dunes', density: 18 },
+        canyon:     { flora: ['cactus', 'rock', 'rock'], ground: 0xb0603a, sand: 0xc08a5a, water: 0x4a7a7a, hills: 'mesas', density: 14 },
+        salt:       { flora: ['rock', 'crystal'], ground: 0xf0eee6, sand: 0xe8e4d8, water: 0x6fa8b0, hills: 'none', density: 8 },
+        savannah:   { flora: ['acacia', 'grass', 'grass'], ground: 0xb09a50, leaf: 0x5f7a2a, sky: 0xf0c890, skyMix: 0.15, hills: 'rolling', density: 22 },
+        steppe:     { flora: ['grass', 'grass', 'rock'], ground: 0x9a9a5a, leaf: 0x8a8a4a, hills: 'rolling', density: 26 },
+        snow:       { flora: ['snowpine', 'snowpine', 'iceshard'], ground: 0xe8eef4, sand: 0xc8d4dc, leaf: 0x2a4a3a, water: 0x5f8fa8, hills: 'mountains', snowcaps: true, density: 32 },
+        ice:        { flora: ['iceshard', 'iceshard', 'rock'], ground: 0xf0f6fa, sand: 0xd8e6ee, water: 0x7fb0c8, hills: 'mountains', snowcaps: true, density: 22 },
+        mountain:   { flora: ['conifer', 'rock', 'rock'], ground: 0x5a5a52, leaf: 0x2a4a32, hills: 'mountains', snowcaps: true, density: 28 },
+        volcano:    { flora: ['spire', 'dead', 'spire'], ground: 0x2a2220, sand: 0x3a2a22, leaf: 0x3a2a22, water: 0xd0431a, lava: true, sky: 0x5a1a10, skyMix: 0.45, hills: 'volcano', density: 22 },
+        hell:       { flora: ['spire', 'dead', 'bone'], ground: 0x3a1210, sand: 0x4a1a12, leaf: 0x2a0a08, water: 0xd02a10, lava: true, sky: 0x6a0a08, skyMix: 0.75, hills: 'volcano', density: 26 },
+        city:       { flora: ['building', 'building', 'lamp'], ground: 0x6a6a6a, sand: 0x8a8a84, water: 0x3a6a80, hills: 'skyline', density: 26 },
+        village:    { flora: ['house', 'broadleaf', 'fence'], ground: 0x667a3e, leaf: 0x2f5a2a, hills: 'rolling', density: 26 },
+        industrial: { flora: ['chimney', 'building', 'tank'], ground: 0x55524c, sand: 0x6a665e, water: 0x4a5a50, sky: 0x9a9a92, skyMix: 0.35, hills: 'skyline', density: 18 },
+        castle:     { flora: ['tower', 'conifer', 'broadleaf'], ground: 0x5f6e46, leaf: 0x2f5a2a, hills: 'rolling', density: 26 },
+        ruins:      { flora: ['column', 'broadleaf', 'rock'], ground: 0x8a8a5a, leaf: 0x4a6a2a, hills: 'rolling', density: 24 },
+        shinto:     { flora: ['torii', 'bamboo', 'broadleaf'], ground: 0x5a7a3a, leaf: 0xc8503a, hills: 'mountains', density: 28 },
+        graveyard:  { flora: ['grave', 'grave', 'dead'], ground: 0x3a4a3a, leaf: 0x2a3a2a, sky: 0x6a7a80, skyMix: 0.35, fogFar: 100, hills: 'rolling', density: 34 },
+        wasteland:  { flora: ['dead', 'junk', 'rock'], ground: 0x6a6248, sand: 0x7a7058, water: 0x5a5a3a, sky: 0xa8a080, skyMix: 0.25, hills: 'rolling', density: 24 },
+        mushroom:   { flora: ['mushroom', 'mushroom', 'bush'], ground: 0x5a4a6a, leaf: 0x9370db, sky: 0x9370db, skyMix: 0.25, glow: true, hills: 'rolling', density: 34 },
+        fairy:      { flora: ['mushroom', 'broadleaf', 'flower'], ground: 0x6a8a5a, leaf: 0xff7fe0, sky: 0xffa8f0, skyMix: 0.25, glow: true, hills: 'rolling', density: 36 },
+        crystal:    { flora: ['crystal', 'crystal', 'rock'], ground: 0x4a5a6a, leaf: 0x00ced1, glow: true, hills: 'mountains', density: 26 },
+        spirit:     { flora: ['spirittree', 'spirittree', 'flower'], ground: 0x2a4a3a, leaf: 0x00fa9a, water: 0x1a5a5a, sky: 0x1a3a3a, skyMix: 0.45, glow: true, hills: 'rolling', density: 34 },
+        eldritch:   { flora: ['tentacle', 'spire', 'tentacle'], ground: 0x2a1a3a, leaf: 0x6a2a8a, water: 0x2a0a3a, sky: 0x2a0a4a, skyMix: 0.6, glow: true, hills: 'mesas', density: 26 },
+        dream:      { flora: ['floater', 'broadleaf', 'flower'], ground: 0xf0c0d0, leaf: 0xffa0c0, water: 0xa0c0ff, sky: 0xffc0cb, skyMix: 0.5, hills: 'rolling', density: 26 },
+        digital:    { flora: ['voxel', 'voxel', 'voxel'], ground: 0x0a1a0a, sand: 0x0f2a0f, leaf: 0x00ff00, water: 0x003a10, sky: 0x000a00, skyMix: 0.85, glow: true, hills: 'skyline', density: 30 },
+        heaven:     { flora: ['cloud', 'column', 'cloud'], ground: 0xf8f8f0, sand: 0xf0ece0, leaf: 0xffffff, water: 0xc0e8ff, sky: 0xfff8f0, skyMix: 0.5, hills: 'none', density: 22 },
+        limbo:      { flora: ['floater', 'spire'], ground: 0xb8b8b8, sand: 0xcacaca, leaf: 0x9a9a9a, water: 0x8a9aa0, sky: 0xd3d3d3, skyMix: 0.7, hills: 'none', density: 16 },
+        space:      { flora: ['spire', 'rock'], ground: 0x3a3a40, sand: 0x4a4a50, leaf: 0x6a6a7a, water: 0x1a1a3a, sky: 0x000005, skyMix: 1, stars: true, hills: 'mesas', density: 16 },
+        alien:      { flora: ['alienplant', 'spire', 'rock'], ground: 0x5a4a6a, hills: 'mesas', density: 28 },
+        cave:       { flora: ['rock', 'spire', 'rock'], ground: 0x4a4640, leaf: 0x3a4a3a, hills: 'mountains', density: 22 },
+        alienjungle:{ flora: ['alienplant', 'jungle', 'alienplant'], ground: 0x2f5a4a, glow: true, hills: 'rolling', density: 46 }
+    };
+
+    // The props each family scatters, listed once so a test can prove every
+    // family names a builder that exists.
+    const FLORA_KINDS = ['broadleaf', 'conifer', 'bush', 'flower', 'reed', 'fence', 'hay', 'house',
+        'jungle', 'palm', 'mangrove', 'dead', 'bamboo', 'rock', 'cactus', 'crystal', 'acacia', 'grass',
+        'snowpine', 'iceshard', 'spire', 'bone', 'building', 'lamp', 'chimney', 'tank', 'tower',
+        'column', 'torii', 'grave', 'junk', 'mushroom', 'spirittree', 'tentacle', 'floater', 'voxel',
+        'cloud', 'alienplant'];
+    const HILL_KINDS = ['none', 'rolling', 'mountains', 'dunes', 'mesas', 'volcano', 'skyline'];
+
+    function hashString(s) {
+        let h = 2166136261;
+        for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+        return h >>> 0;
+    }
+
+    function seededRng(seed) {
+        let a = seed >>> 0 || 1;
+        return function() {
+            a = (a + 0x6D2B79F5) >>> 0;
+            let t = a;
+            t = Math.imul(t ^ (t >>> 15), t | 1);
+            t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+    }
+
+    function mixColor(a, b, t) {
+        const ar = (a >> 16) & 255, ag = (a >> 8) & 255, ab = a & 255;
+        const br = (b >> 16) & 255, bg = (b >> 8) & 255, bb = b & 255;
+        return (Math.round(lerp(ar, br, t)) << 16) | (Math.round(lerp(ag, bg, t)) << 8) | Math.round(lerp(ab, bb, t));
+    }
+
+    function shadeColor(c, f) {
+        return mixColor(c, f < 1 ? 0x000000 : 0xffffff, f < 1 ? 1 - f : f - 1);
+    }
+
+    // The biome the rod is being cast in: a free-play pick first, then the
+    // procedural square, then a static map's <Biome: X> note. "River vertical"
+    // and every other road or river piece is filed under its first word.
+    function currentBiomeName() {
+        const setup = arcadeSetup();
+        if (setup && setup.biome) return String(setup.biome);
+        try {
+            const pg = window.$gameSystem && $gameSystem._procGenData;
+            if (pg && pg.currentBiome) {
+                if (pg.displayAsIsland || pg.displayAsBeach) return 'Beach';
+                return String(pg.currentBiome);
+            }
+            const meta = window.$dataMap && $dataMap.meta && $dataMap.meta.Biome;
+            if (meta && typeof meta === 'string') return meta.trim();
+        } catch (e) { /* no game loaded */ }
+        return '';
+    }
+
+    function biomeRecord(name) {
+        const list = (window.WorldGen && Array.isArray(window.WorldGen.Biomes)) ? window.WorldGen.Biomes : [];
+        for (const b of list) if (b && b.name === name) return b;
+        return null;
+    }
+
+    function sceneryFamily(name) {
+        const key = String(name || '').split(' ')[0];
+        for (const [re, fam] of SCENERY_RULES) if (re.test(key)) return fam;
+        return 'forest';
+    }
+
+    // The whole backdrop of one biome as plain data. No three.js in here, so it
+    // can be asserted on without a renderer.
+    function biomeScenery(name) {
+        const biome = String(name || '').split(' ')[0];
+        const family = sceneryFamily(biome);
+        const fam = SCENERY_FAMILIES[family];
+        const rec = biomeRecord(String(name || '')) || biomeRecord(biome);
+        const tint = (rec && /^#[0-9a-f]{6}$/i.test(rec.color)) ? parseInt(rec.color.slice(1), 16) : null;
+        const seed = hashString(biome || family);
+        const rng = seededRng(seed);
+        // The biome's own colour pulls the ground and the foliage a little way
+        // toward it, and a seeded nudge keeps two same-coloured biomes apart.
+        const pull = tint == null ? 0 : 0.18 + rng() * 0.12;
+        const ground = tint == null ? fam.ground : mixColor(fam.ground, tint, pull);
+        const baseLeaf = fam.leaf != null ? fam.leaf : mixColor(fam.ground, 0x2f5a2a, 0.5);
+        const leaf = tint == null ? baseLeaf : mixColor(baseLeaf, tint, pull * 0.8);
+        return {
+            biome: biome,
+            family: family,
+            seed: seed,
+            flora: fam.flora.slice(),
+            density: Math.round(fam.density * (0.85 + rng() * 0.3)),
+            ground: ground,
+            sand: fam.sand != null ? fam.sand : mixColor(0x8a7a52, ground, 0.25),
+            leaf: leaf,
+            accent: tint != null ? tint : leaf,
+            water: fam.water != null ? fam.water : null,
+            sky: fam.sky != null ? fam.sky : null,
+            skyMix: fam.skyMix || 0,
+            fogFar: fam.fogFar || 150,
+            hills: fam.hills,
+            hillColor: mixColor(ground, 0x5a6a7a, 0.35),
+            snowcaps: !!fam.snowcaps,
+            lava: !!fam.lava,
+            glow: !!fam.glow,
+            stars: !!fam.stars,
+            noFarShore: !!fam.noFarShore
+        };
+    }
+
+    // Fold the biome into the open-air palette. A cave or a room keeps its
+    // own sky, but its water and rock still take on the biome's colours.
+    function biomeTint(pal, sc) {
+        if (!sc) return pal;
+        if (sc.water != null) {
+            pal.water = pal.night ? shadeColor(sc.water, 0.5) : sc.water;
+            pal.deep = shadeColor(sc.water, 0.3);
+        }
+        if (pal.venue === VENUE_INDOOR) return pal;
+        pal.bank = pal.night ? shadeColor(sc.ground, 0.45) : sc.ground;
+        if (pal.venue !== VENUE_OPEN) return pal;
+        if (sc.sky != null && sc.skyMix > 0) {
+            const sky = pal.night ? shadeColor(sc.sky, 0.3) : sc.sky;
+            pal.sky = mixColor(pal.sky, sky, sc.skyMix);
+        }
+        if (sc.stars) pal.night = true;
+        pal.fogFar = Math.max(pal.fogFar || 0, sc.fogFar);
+        return pal;
+    }
+
+    window.FishingScenery = {
+        families: SCENERY_FAMILIES, floraKinds: FLORA_KINDS, hillKinds: HILL_KINDS,
+        family: sceneryFamily, profile: biomeScenery, current: currentBiomeName
+    };
 
     // Water surface displacement. One function drives the mesh, the bobber, the
     // splash rings and the fish that break the surface, so they never disagree.
@@ -434,7 +680,8 @@
             this._h = height;
             this._t = 0;
             this._venue = venue || VENUE_OPEN;
-            this._pal = palette(this._venue);
+            this._scenery = biomeScenery(currentBiomeName());
+            this._pal = palette(this._venue, this._scenery);
             this.entities = [];
             this._splashes = [];
             this._disposed = false;
@@ -518,7 +765,7 @@
         // stars in a cellar, whatever the palette's night flag says.
         _buildSky() {
             if (this._venue !== VENUE_OPEN || !this._pal.night) return;
-            const N = 220;
+            const N = this._scenery && this._scenery.stars ? 600 : 220;
             const pos = new Float32Array(N * 3);
             for (let i = 0; i < N; i++) {
                 const a = Math.random() * Math.PI * 2;
@@ -542,7 +789,10 @@
             const geo = new THREE.PlaneGeometry(W, D, SEG, SEG);
             geo.rotateX(-Math.PI / 2);
             geo.translate(0, WATER_Y, (SHORE_Z + LAKE_FAR_Z) / 2 - 4);
-            const mat = this._mat(this._pal.water, { transparent: true, opacity: 0.80 });
+            const lava = this._scenery && this._scenery.lava;
+            const mat = this._mat(this._pal.water, lava
+                ? { transparent: true, opacity: 0.92, emissive: shadeColor(this._pal.water, 0.45) }
+                : { transparent: true, opacity: 0.80 });
             const mesh = new THREE.Mesh(geo, mat);
             mesh.renderOrder = 2;     // after the opaque fish, so they show through
             this.scene.add(mesh);
@@ -660,8 +910,9 @@
         _buildCavern() {
             const pal = this._pal;
             const group = new THREE.Group();
-            const rockMat = this._mat(0x3a3630);
-            const wetMat = this._mat(0x2a2a30);
+            const sc = this._scenery;
+            const rockMat = this._mat(mixColor(0x3a3630, sc.accent, 0.22));
+            const wetMat = this._mat(mixColor(0x2a2a30, sc.accent, 0.15));
 
             // Ledge behind the player, where the rod is being held from.
             const ledge = new THREE.Mesh(new THREE.BoxGeometry(60, 4, 22), rockMat);
@@ -703,8 +954,27 @@
                 group.add(spike);
             }
 
+            // A cave in a biome that grows something grows it here too:
+            // crystals, mushrooms, ice, a lava seam. Only the props that
+            // make sense under a roof are carried down.
+            const caveKinds = sc.flora.filter(k => /^(crystal|mushroom|iceshard|spire|rock|bone|tentacle|voxel|grave)$/.test(k));
+            if (caveKinds.length) {
+                const rng = seededRng(sc.seed ^ 0x5bd1e995);
+                const kit = this._sceneryKit(sc);
+                for (let i = 0; i < 18; i++) {
+                    const side = i % 2 ? 1 : -1;
+                    const x = side * (LAKE_HALF_X - 6 + rng() * 6);
+                    const z = SHORE_Z - 6 - rng() * (SHORE_Z - LAKE_FAR_Z - 8);
+                    const prop = this._floraProp(caveKinds[i % caveKinds.length], rng, kit);
+                    if (!prop) continue;
+                    prop.position.set(x, 0.4, z);
+                    prop.rotation.y = rng() * Math.PI * 2;
+                    group.add(prop);
+                }
+            }
+
             // The one light source down here that is not the party's own.
-            const glowMat = this._mat(0x2a6a5a, { emissive: 0x1d4f42 });
+            const glowMat = this._mat(mixColor(0x2a6a5a, sc.accent, 0.4), { emissive: mixColor(0x1d4f42, sc.accent, 0.4) });
             for (let i = 0; i < 10; i++) {
                 const patch = new THREE.Mesh(new THREE.CircleGeometry(0.5 + Math.random(), 6), glowMat);
                 patch.rotation.x = -Math.PI / 2;
@@ -803,46 +1073,51 @@
             }
         }
 
+        // Under the open sky the biome dresses the whole shore: the bank and the
+        // headlands wear its ground, its own props stand along the banks, and
+        // its skyline (hills, dunes, mesas, peaks, a volcano or a city) closes
+        // the view behind the far shore.
         _buildOpenShore() {
+            const sc = this._scenery;
+            const pal = this._pal;
             const group = new THREE.Group();
+            const rng = seededRng(sc.seed);
+            const kit = this._sceneryKit(sc);
+            const bankMat = this._mat(pal.bank);
 
             // Bank behind the player.
-            const bank = new THREE.Mesh(new THREE.BoxGeometry(140, 4, 40), this._mat(this._pal.bank));
-            bank.position.set(0, -1.4, SHORE_Z + 20);
-            group.add(bank);
+            group.add(this._slab(140, 4, 40, bankMat, 0, -1.4, SHORE_Z + 20));
 
             // A dip of shoreline sand where the bank meets the water.
-            const sand = new THREE.Mesh(new THREE.BoxGeometry(140, 1.6, 6), this._mat(0x8a7a52));
-            sand.position.set(0, -0.5, SHORE_Z + 1.2);
-            group.add(sand);
+            group.add(this._slab(140, 1.6, 6, this._mat(pal.night ? shadeColor(sc.sand, 0.5) : sc.sand), 0, -0.5, SHORE_Z + 1.2));
 
             // Side headlands so the lake reads as enclosed rather than infinite.
             for (const sx of [-1, 1]) {
-                const head = new THREE.Mesh(new THREE.BoxGeometry(26, 5, 120), this._mat(this._pal.bank));
-                head.position.set(sx * (LAKE_HALF_X + 14), -1.6, LAKE_FAR_Z / 2 + 10);
-                group.add(head);
+                group.add(this._slab(26, 5, 120, bankMat, sx * (LAKE_HALF_X + 14), -1.6, LAKE_FAR_Z / 2 + 10));
             }
 
-            // Far shore across the water.
-            const far = new THREE.Mesh(new THREE.BoxGeometry(180, 6, 24), this._mat(this._pal.bank));
-            far.position.set(0, -1.8, LAKE_FAR_Z - 10);
-            group.add(far);
-
-            // Low-poly trees on the far shore and headlands.
-            const trunkMat = this._mat(0x4a3420);
-            const leafMat  = this._mat(this._pal.night ? 0x1d3320 : 0x2f5a2a);
-            for (let i = 0; i < 34; i++) {
-                const onFar = i % 3 !== 0;
-                const x = onFar ? (Math.random() * 2 - 1) * 80 : (Math.random() < 0.5 ? -1 : 1) * (LAKE_HALF_X + 8 + Math.random() * 16);
-                const z = onFar ? LAKE_FAR_Z - 6 - Math.random() * 14 : LAKE_FAR_Z / 2 + (Math.random() * 2 - 1) * 50;
-                const h = 3 + Math.random() * 4;
-                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.3, h, 4), trunkMat);
-                trunk.position.set(x, 0.6 + h / 2, z);
-                group.add(trunk);
-                const crown = new THREE.Mesh(new THREE.ConeGeometry(1.2 + Math.random(), 2.6 + Math.random() * 2, 5), leafMat);
-                crown.position.set(x, 0.6 + h + 1.1, z);
-                group.add(crown);
+            // Far shore across the water, unless this is open sea all the way
+            // to the horizon.
+            if (!sc.noFarShore) {
+                group.add(this._slab(180, 6, 24, bankMat, 0, -1.8, LAKE_FAR_Z - 10));
             }
+
+            // The biome's own props, along the far shore and the headlands.
+            const kinds = sc.flora;
+            for (let i = 0; i < sc.density; i++) {
+                const onFar = !sc.noFarShore && i % 3 !== 0;
+                const x = onFar ? (rng() * 2 - 1) * 80 : (rng() < 0.5 ? -1 : 1) * (LAKE_HALF_X + 6 + rng() * 18);
+                const z = onFar ? LAKE_FAR_Z - 4 - rng() * 16 : LAKE_FAR_Z / 2 + (rng() * 2 - 1) * 50;
+                const prop = this._floraProp(kinds[i % kinds.length], rng, kit);
+                if (!prop) continue;
+                prop.position.x += x;
+                prop.position.y += 0.6;
+                prop.position.z += z;
+                prop.rotation.y = rng() * Math.PI * 2;
+                group.add(prop);
+            }
+
+            this._buildHills(group, sc, rng, kit);
 
             // The dock the player stands on, jutting out over the water.
             this._buildJetty(group, 0x6b4a2c, 0x4e3520);
@@ -850,6 +1125,387 @@
             this.scene.add(group);
             this._shore = group;
             this._track(group);
+        }
+
+        // One shared set of materials per biome, so fifty trees are not fifty
+        // materials.
+        _sceneryKit(sc) {
+            const night = this._pal.night;
+            const dim = c => (night ? shadeColor(c, 0.5) : c);
+            return {
+                sc: sc,
+                night: night,
+                trunk: this._mat(dim(mixColor(0x4a3420, sc.ground, 0.2))),
+                leaf: sc.glow ? this._mat(sc.leaf, { emissive: shadeColor(sc.leaf, 0.45) }) : this._mat(dim(sc.leaf)),
+                leafDark: this._mat(dim(shadeColor(sc.leaf, 0.7))),
+                rock: this._mat(dim(mixColor(0x6a665e, sc.ground, 0.3))),
+                accent: this._mat(dim(sc.accent)),
+                glow: this._mat(sc.accent, { emissive: shadeColor(sc.accent, 0.6) }),
+                lava: this._mat(0xff6a20, { emissive: 0xd0431a }),
+                snow: this._mat(dim(0xf4f8fc)),
+                ice: this._mat(dim(0xbfe6f4), { transparent: true, opacity: 0.85 }),
+                wall: this._mat(dim(mixColor(0xc8b8a0, sc.accent, 0.2))),
+                concrete: this._mat(dim(mixColor(0x8a8a8a, sc.accent, 0.15))),
+                roof: this._mat(dim(0x8a3a2a)),
+                wood: this._mat(dim(0x7a5a38)),
+                metal: this._mat(dim(0x6a7078)),
+                rust: this._mat(dim(0x8a4a2a)),
+                stone: this._mat(dim(0xd8d4c8)),
+                bone: this._mat(dim(0xe8e0c8)),
+                red: this._mat(dim(0xc8302a)),
+                hay: this._mat(dim(0xd8b850)),
+                cloud: this._mat(0xffffff, { emissive: 0x9a9a9a }),
+                window: this._mat(0xffd890, { emissive: night ? 0xffc060 : 0x3a3020 }),
+                wire: new THREE.MeshBasicMaterial({ color: sc.accent, wireframe: true })
+            };
+        }
+
+        _part(geo, mat, x, y, z) {
+            const m = new THREE.Mesh(geo, mat);
+            m.position.set(x || 0, y || 0, z || 0);
+            return m;
+        }
+
+        // One prop of the named kind, standing on its own origin.
+        _floraProp(kind, r, k) {
+            const g = new THREE.Group();
+            const P = (geo, mat, x, y, z) => { const m = this._part(geo, mat, x, y, z); g.add(m); return m; };
+            switch (kind) {
+                case 'broadleaf': {
+                    const h = 2.4 + r() * 2;
+                    P(new THREE.CylinderGeometry(0.22, 0.32, h, 5), k.trunk, 0, h / 2, 0);
+                    P(new THREE.IcosahedronGeometry(1.5 + r(), 0), k.leaf, 0, h + 0.9, 0);
+                    if (r() < 0.5) P(new THREE.IcosahedronGeometry(1 + r() * 0.6, 0), k.leafDark, 0.9, h + 0.2, 0.3);
+                    break;
+                }
+                case 'conifer': case 'snowpine': {
+                    const h = 3 + r() * 4;
+                    P(new THREE.CylinderGeometry(0.22, 0.3, h, 4), k.trunk, 0, h / 2, 0);
+                    const w = 1.2 + r();
+                    P(new THREE.ConeGeometry(w, 2.6 + r() * 2, 5), k.leaf, 0, h + 0.4, 0);
+                    P(new THREE.ConeGeometry(w * 0.7, 2 + r(), 5), kind === 'snowpine' ? k.snow : k.leaf, 0, h + 2, 0);
+                    break;
+                }
+                case 'bush':
+                    P(new THREE.DodecahedronGeometry(0.8 + r() * 0.7, 0), k.leaf, 0, 0.5, 0).scale.y = 0.7;
+                    break;
+                case 'flower':
+                    P(new THREE.DodecahedronGeometry(0.5, 0), k.leafDark, 0, 0.3, 0);
+                    for (let i = 0; i < 4; i++) {
+                        P(new THREE.OctahedronGeometry(0.22, 0), k.glow, (r() - 0.5) * 1.4, 0.7 + r() * 0.3, (r() - 0.5) * 1.4);
+                    }
+                    break;
+                case 'reed':
+                    for (let i = 0; i < 6; i++) {
+                        const h = 1.4 + r() * 1.4;
+                        const s = P(new THREE.CylinderGeometry(0.04, 0.06, h, 3), k.leafDark, (r() - 0.5) * 1.6, h / 2, (r() - 0.5) * 1.6);
+                        s.rotation.z = (r() - 0.5) * 0.3;
+                        if (r() < 0.5) P(new THREE.CylinderGeometry(0.1, 0.1, 0.4, 4), k.trunk, s.position.x, h, s.position.z);
+                    }
+                    break;
+                case 'fence':
+                    for (let i = 0; i < 4; i++) P(new THREE.BoxGeometry(0.2, 1.3, 0.2), k.wood, -3 + i * 2, 0.65, 0);
+                    P(new THREE.BoxGeometry(6.4, 0.16, 0.1), k.wood, 0, 1.0, 0);
+                    P(new THREE.BoxGeometry(6.4, 0.16, 0.1), k.wood, 0, 0.5, 0);
+                    break;
+                case 'hay':
+                    P(new THREE.CylinderGeometry(1.0, 1.0, 1.3, 8), k.hay, 0, 1.0, 0).rotation.z = Math.PI / 2;
+                    break;
+                case 'house': {
+                    const w = 3.5 + r() * 2, d = 3.5 + r() * 2, h = 2.6 + r() * 1.4;
+                    P(new THREE.BoxGeometry(w, h, d), k.wall, 0, h / 2, 0);
+                    const roof = P(new THREE.ConeGeometry(Math.max(w, d) * 0.78, 2 + r(), 4), k.roof, 0, h + 1.1, 0);
+                    roof.rotation.y = Math.PI / 4;
+                    P(new THREE.BoxGeometry(0.7, 0.7, 0.1), k.window, w * 0.2, h * 0.6, d / 2 + 0.05);
+                    P(new THREE.BoxGeometry(0.7, 0.7, 0.1), k.window, -w * 0.2, h * 0.6, d / 2 + 0.05);
+                    break;
+                }
+                case 'jungle': {
+                    const h = 5 + r() * 4;
+                    P(new THREE.CylinderGeometry(0.3, 0.45, h, 5), k.trunk, 0, h / 2, 0);
+                    for (let i = 0; i < 3; i++) {
+                        P(new THREE.IcosahedronGeometry(1.6 + r() * 1.2, 0), i % 2 ? k.leafDark : k.leaf,
+                            (r() - 0.5) * 2.4, h - 0.4 + r() * 1.4, (r() - 0.5) * 2.4).scale.y = 0.6;
+                    }
+                    break;
+                }
+                case 'palm': {
+                    const h = 4 + r() * 3, lean = (r() - 0.5) * 0.5;
+                    let x = 0;
+                    for (let i = 0; i < 4; i++) {
+                        P(new THREE.CylinderGeometry(0.2, 0.26, h / 4, 5), k.trunk, x, h / 8 + i * h / 4, 0);
+                        x += lean * (i + 1) * 0.35;
+                    }
+                    for (let i = 0; i < 6; i++) {
+                        const f = P(new THREE.BoxGeometry(2.6, 0.06, 0.5), k.leaf, x, h, 0);
+                        f.rotation.y = i * Math.PI / 3;
+                        f.rotation.z = -0.35;
+                        f.translateX(1.2);
+                    }
+                    break;
+                }
+                case 'mangrove': {
+                    for (let i = 0; i < 4; i++) {
+                        const root = P(new THREE.CylinderGeometry(0.08, 0.14, 2.4, 4), k.trunk,
+                            Math.cos(i * 1.57) * 0.7, 1.0, Math.sin(i * 1.57) * 0.7);
+                        root.rotation.set(Math.sin(i * 1.57) * 0.45, 0, -Math.cos(i * 1.57) * 0.45);
+                    }
+                    P(new THREE.CylinderGeometry(0.22, 0.26, 2.2, 5), k.trunk, 0, 3.0, 0);
+                    P(new THREE.IcosahedronGeometry(2 + r(), 0), k.leaf, 0, 4.6, 0).scale.y = 0.6;
+                    break;
+                }
+                case 'dead': {
+                    const h = 3 + r() * 3;
+                    P(new THREE.CylinderGeometry(0.14, 0.28, h, 4), k.trunk, 0, h / 2, 0);
+                    for (let i = 0; i < 3; i++) {
+                        const b = P(new THREE.CylinderGeometry(0.05, 0.1, 1.6 + r(), 3), k.trunk, 0, h * (0.55 + i * 0.15), 0);
+                        b.rotation.set(0, i * 2.1, 0.7 + r() * 0.4);
+                        b.translateY(0.7);
+                    }
+                    break;
+                }
+                case 'bamboo': {
+                    const n = 5 + Math.floor(r() * 4);
+                    for (let i = 0; i < n; i++) {
+                        const h = 5 + r() * 4;
+                        const x = (r() - 0.5) * 1.8, z = (r() - 0.5) * 1.8;
+                        P(new THREE.CylinderGeometry(0.1, 0.12, h, 5), k.leafDark, x, h / 2, z);
+                        P(new THREE.ConeGeometry(0.5, 1.2, 4), k.leaf, x, h + 0.3, z);
+                    }
+                    break;
+                }
+                case 'rock': {
+                    const s = 0.7 + r() * 1.5;
+                    const m = P(new THREE.DodecahedronGeometry(s, 0), k.rock, 0, s * 0.35, 0);
+                    m.rotation.set(r() * 3, r() * 3, r() * 3);
+                    break;
+                }
+                case 'cactus': {
+                    const h = 2.6 + r() * 2.4;
+                    P(new THREE.CylinderGeometry(0.3, 0.34, h, 6), k.leaf, 0, h / 2, 0);
+                    for (const sx of [-1, 1]) {
+                        if (r() < 0.25) continue;
+                        const y = h * (0.35 + r() * 0.25), up = 0.8 + r() * 0.8;
+                        P(new THREE.CylinderGeometry(0.18, 0.18, 0.7, 5), k.leaf, sx * 0.55, y, 0).rotation.z = Math.PI / 2;
+                        P(new THREE.CylinderGeometry(0.18, 0.2, up, 5), k.leaf, sx * 0.85, y + up / 2, 0);
+                    }
+                    break;
+                }
+                case 'crystal': {
+                    const n = 3 + Math.floor(r() * 3);
+                    for (let i = 0; i < n; i++) {
+                        const rad = 0.5 + r() * 0.5, sy = 2.2 + r() * 1.6;
+                        const c = P(new THREE.OctahedronGeometry(rad, 0), k.glow, (r() - 0.5) * 1.6, rad * sy * 0.6, (r() - 0.5) * 1.6);
+                        c.scale.y = sy;
+                        c.rotation.set((r() - 0.5) * 0.6, r() * 3, (r() - 0.5) * 0.6);
+                    }
+                    break;
+                }
+                case 'acacia': {
+                    const h = 3 + r() * 1.5;
+                    const t = P(new THREE.CylinderGeometry(0.16, 0.28, h, 4), k.trunk, 0, h / 2, 0);
+                    t.rotation.z = (r() - 0.5) * 0.3;
+                    P(new THREE.CylinderGeometry(2.8 + r(), 2.2, 0.6, 7), k.leaf, 0, h + 0.2, 0);
+                    break;
+                }
+                case 'grass':
+                    for (let i = 0; i < 7; i++) {
+                        const h = 0.7 + r() * 0.6;
+                        P(new THREE.ConeGeometry(0.12, h, 3), k.leaf, (r() - 0.5) * 1.6, h / 2, (r() - 0.5) * 1.6);
+                    }
+                    break;
+                case 'iceshard': {
+                    const n = 2 + Math.floor(r() * 3);
+                    for (let i = 0; i < n; i++) {
+                        const h = 2 + r() * 4;
+                        const c = P(new THREE.ConeGeometry(0.5 + r() * 0.5, h, 4), k.ice, (r() - 0.5) * 2, h / 2, (r() - 0.5) * 2);
+                        c.rotation.set((r() - 0.5) * 0.5, 0, (r() - 0.5) * 0.5);
+                    }
+                    break;
+                }
+                case 'spire': {
+                    const h = 4 + r() * 8;
+                    P(new THREE.ConeGeometry(0.8 + r() * 1.2, h, 5), k.sc.lava ? k.rock : k.accent, 0, h / 2, 0);
+                    if (k.sc.lava && r() < 0.6) P(new THREE.CircleGeometry(1.2, 6), k.lava, 0, 0.08, 0).rotation.x = -Math.PI / 2;
+                    break;
+                }
+                case 'bone':
+                    for (let i = 0; i < 4; i++) {
+                        const rib = P(new THREE.TorusGeometry(1.4, 0.12, 4, 8, Math.PI), k.bone, 0, 0, -1.5 + i);
+                        rib.rotation.y = Math.PI / 2;
+                    }
+                    break;
+                case 'building': {
+                    const w = 4 + r() * 4, d = 4 + r() * 4, h = 8 + r() * 14;
+                    P(new THREE.BoxGeometry(w, h, d), k.concrete, 0, h / 2, 0);
+                    for (let y = 2; y < h - 1; y += 2.4) {
+                        for (let x = -w / 2 + 1; x < w / 2 - 0.5; x += 1.6) {
+                            if (r() < 0.45) P(new THREE.BoxGeometry(0.8, 1, 0.1), k.window, x, y, d / 2 + 0.05);
+                        }
+                    }
+                    break;
+                }
+                case 'lamp':
+                    P(new THREE.CylinderGeometry(0.08, 0.1, 4, 4), k.metal, 0, 2, 0);
+                    P(new THREE.BoxGeometry(0.5, 0.3, 0.5), k.window, 0, 4.1, 0);
+                    break;
+                case 'chimney': {
+                    const h = 12 + r() * 8;
+                    P(new THREE.CylinderGeometry(0.8, 1.2, h, 6), k.concrete, 0, h / 2, 0);
+                    P(new THREE.CylinderGeometry(0.85, 0.85, 1, 6), k.red, 0, h - 1.5, 0);
+                    break;
+                }
+                case 'tank':
+                    P(new THREE.CylinderGeometry(2.4, 2.4, 4, 8), k.metal, 0, 2, 0);
+                    P(new THREE.SphereGeometry(2.4, 8, 3, 0, Math.PI * 2, 0, Math.PI / 2), k.metal, 0, 4, 0);
+                    break;
+                case 'tower': {
+                    const h = 8 + r() * 5;
+                    P(new THREE.CylinderGeometry(1.8, 2, h, 7), k.rock, 0, h / 2, 0);
+                    P(new THREE.ConeGeometry(2.3, 3.4, 7), k.roof, 0, h + 1.7, 0);
+                    P(new THREE.BoxGeometry(0.5, 0.9, 0.1), k.window, 0, h * 0.7, 1.9);
+                    break;
+                }
+                case 'column': {
+                    const h = 2 + r() * 4;
+                    const c = P(new THREE.CylinderGeometry(0.45, 0.5, h, 8), k.stone, 0, h / 2, 0);
+                    if (h > 4) P(new THREE.BoxGeometry(1.3, 0.35, 1.3), k.stone, 0, h + 0.17, 0);
+                    else c.rotation.z = (r() - 0.5) * 0.3;
+                    break;
+                }
+                case 'torii':
+                    for (const sx of [-1, 1]) P(new THREE.CylinderGeometry(0.22, 0.26, 4.5, 6), k.red, sx * 1.8, 2.25, 0);
+                    P(new THREE.BoxGeometry(5.4, 0.35, 0.5), k.red, 0, 4.6, 0);
+                    P(new THREE.BoxGeometry(4.2, 0.25, 0.35), k.red, 0, 3.7, 0);
+                    break;
+                case 'grave':
+                    if (r() < 0.4) {
+                        P(new THREE.BoxGeometry(0.2, 1.6, 0.2), k.rock, 0, 0.8, 0);
+                        P(new THREE.BoxGeometry(0.9, 0.2, 0.2), k.rock, 0, 1.15, 0);
+                    } else {
+                        P(new THREE.BoxGeometry(0.8, 1.1, 0.25), k.rock, 0, 0.55, 0).rotation.z = (r() - 0.5) * 0.25;
+                    }
+                    break;
+                case 'junk': {
+                    const b = P(new THREE.BoxGeometry(2.6, 1.1, 1.4), k.rust, 0, 0.55, 0);
+                    b.rotation.set(0, 0, (r() - 0.5) * 0.4);
+                    P(new THREE.TorusGeometry(0.4, 0.16, 4, 8), k.metal, 1.8, 0.3, 0.6).rotation.x = Math.PI / 2;
+                    break;
+                }
+                case 'mushroom': {
+                    const h = 1 + r() * 3, cap = 0.8 + h * 0.5;
+                    P(new THREE.CylinderGeometry(0.15 + h * 0.05, 0.25 + h * 0.06, h, 6), k.bone, 0, h / 2, 0);
+                    P(new THREE.SphereGeometry(cap, 8, 3, 0, Math.PI * 2, 0, Math.PI / 2), k.glow, 0, h - 0.1, 0);
+                    break;
+                }
+                case 'spirittree': {
+                    const h = 3 + r() * 3;
+                    P(new THREE.CylinderGeometry(0.2, 0.32, h, 5), k.bone, 0, h / 2, 0);
+                    P(new THREE.IcosahedronGeometry(1.5 + r(), 0), k.glow, 0, h + 0.9, 0);
+                    break;
+                }
+                case 'tentacle': {
+                    let x = 0, y = 0, rad = 0.6;
+                    const bend = (r() - 0.5) * 0.8;
+                    for (let i = 0; i < 6; i++) {
+                        P(new THREE.SphereGeometry(rad, 5, 4), i % 2 ? k.leaf : k.accent, x, y + rad, 0);
+                        y += rad * 1.5; x += bend * i * 0.3; rad *= 0.82;
+                    }
+                    break;
+                }
+                case 'floater': {
+                    const geo = [new THREE.OctahedronGeometry(1, 0), new THREE.BoxGeometry(1.4, 1.4, 1.4),
+                                 new THREE.IcosahedronGeometry(1, 0)][Math.floor(r() * 3)];
+                    const m = P(geo, k.glow, 0, 4 + r() * 8, 0);
+                    m.rotation.set(r() * 3, r() * 3, r() * 3);
+                    (this._floaters || (this._floaters = [])).push({ obj: m, y: m.position.y, phase: r() * 6.28 });
+                    break;
+                }
+                case 'voxel': {
+                    const n = 2 + Math.floor(r() * 4);
+                    for (let i = 0; i < n; i++) {
+                        P(new THREE.BoxGeometry(1.5, 1.5, 1.5), i % 2 ? k.wire : k.glow, 0, 0.75 + i * 1.5, 0);
+                    }
+                    break;
+                }
+                case 'cloud':
+                    for (let i = 0; i < 4; i++) {
+                        P(new THREE.IcosahedronGeometry(1 + r() * 0.8, 0), k.cloud, (i - 1.5) * 1.1, 0.6 + r() * 0.5, (r() - 0.5)).scale.y = 0.6;
+                    }
+                    break;
+                case 'alienplant': {
+                    const h = 2 + r() * 4;
+                    P(new THREE.CylinderGeometry(0.1, 0.25, h, 4), k.leafDark, 0, h / 2, 0);
+                    P(new THREE.SphereGeometry(0.6 + r() * 0.6, 5, 4), k.glow, 0, h + 0.3, 0);
+                    for (let i = 0; i < 3; i++) {
+                        const t = P(new THREE.ConeGeometry(0.12, 1.4, 3), k.leaf, 0, h * 0.5, 0);
+                        t.rotation.set(0, i * 2.1, 1.0);
+                        t.translateY(0.6);
+                    }
+                    break;
+                }
+                default:
+                    return null;
+            }
+            return g;
+        }
+
+        // The skyline beyond the far shore. Far enough back that the fog
+        // turns it into a silhouette rather than scenery to walk to.
+        _buildHills(group, sc, rng, kit) {
+            if (sc.hills === 'none' || sc.noFarShore) return;
+            const night = this._pal.night;
+            const base = night ? shadeColor(sc.hillColor, 0.45) : sc.hillColor;
+            const hillMat = this._mat(base);
+            const zBack = () => LAKE_FAR_Z - 24 - rng() * 22;
+            const H = (geo, mat, x, y, z) => { const m = this._part(geo, mat, x, y, z); group.add(m); return m; };
+            switch (sc.hills) {
+                case 'rolling':
+                case 'dunes': {
+                    const mat = sc.hills === 'dunes' ? this._mat(night ? shadeColor(sc.sand, 0.45) : sc.sand) : hillMat;
+                    for (let i = 0; i < 9; i++) {
+                        const r = 16 + rng() * 16;
+                        H(new THREE.SphereGeometry(r, 9, 5), mat, -110 + i * 27 + rng() * 10, -r * (sc.hills === 'dunes' ? 0.2 : 0.3), zBack())
+                            .scale.y = sc.hills === 'dunes' ? 0.45 : 0.7;
+                    }
+                    break;
+                }
+                case 'mountains':
+                    for (let i = 0; i < 8; i++) {
+                        const r = 14 + rng() * 12, h = 24 + rng() * 22;
+                        const x = -105 + i * 30 + rng() * 10, z = zBack() - 8;
+                        H(new THREE.ConeGeometry(r, h, 5), hillMat, x, h / 2 - 2, z);
+                        if (sc.snowcaps) H(new THREE.ConeGeometry(r * 0.32, h * 0.32, 5), kit.snow, x, h - 2 - h * 0.16 + 0.05, z);
+                    }
+                    break;
+                case 'mesas':
+                    for (let i = 0; i < 7; i++) {
+                        const r = 8 + rng() * 9, h = 10 + rng() * 12;
+                        H(new THREE.CylinderGeometry(r * 0.85, r, h, 6), hillMat, -100 + i * 32 + rng() * 10, h / 2 - 1, zBack());
+                    }
+                    break;
+                case 'volcano': {
+                    const z = LAKE_FAR_Z - 44;
+                    H(new THREE.CylinderGeometry(6, 34, 34, 8), hillMat, -12, 16, z);
+                    H(new THREE.CircleGeometry(5.5, 8), kit.lava, -12, 33.1, z).rotation.x = -Math.PI / 2;
+                    for (let i = 0; i < 4; i++) {
+                        const r = 10 + rng() * 8, h = 12 + rng() * 10;
+                        H(new THREE.ConeGeometry(r, h, 5), hillMat, (i < 2 ? -70 : 50) + rng() * 30, h / 2 - 1, zBack());
+                    }
+                    break;
+                }
+                case 'skyline':
+                    for (let i = 0; i < 16; i++) {
+                        const w = 6 + rng() * 8, h = 14 + rng() * 28;
+                        const x = -115 + i * 15 + rng() * 6, z = zBack();
+                        H(new THREE.BoxGeometry(w, h, 8), hillMat, x, h / 2 - 1, z);
+                        for (let j = 0; j < 6; j++) {
+                            if (rng() < 0.5) H(new THREE.BoxGeometry(1.1, 1.3, 0.1), kit.window,
+                                x + (rng() - 0.5) * (w - 2), 2 + rng() * (h - 4), z + 4.05);
+                        }
+                    }
+                    break;
+            }
         }
 
         // The rod lives in camera space, so it always hangs in the same corner of
@@ -1499,6 +2155,12 @@
             this._updateWater();
             this._updateSplashes(dt);
             this._updateWeather(dt);
+            if (this._floaters) {
+                for (const f of this._floaters) {
+                    f.obj.position.y = f.y + Math.sin(this._t * 0.7 + f.phase) * 0.8;
+                    f.obj.rotation.y += dt * 0.3;
+                }
+            }
             for (const ent of this.entities) {
                 if (ent.battler && ent.battler.update) ent.battler.update(dt);
             }
@@ -1561,6 +2223,7 @@
             if (this.scene) this._disposeTree(this.scene);
             this.entities = [];
             this._splashes = [];
+            this._floaters = null;
             if (this.renderer) {
                 if (window.PSXShader && window.PSXShader.disposeContext) {
                     window.PSXShader.disposeContext(this.renderer);
@@ -1576,6 +2239,8 @@
             this._freeView = null;
         }
     }
+
+    window.FishingScenery.World = FishingWorld3D;
 
     //=========================================================================
     // Scene_FishingMinigame

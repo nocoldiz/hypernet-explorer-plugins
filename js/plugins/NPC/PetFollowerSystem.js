@@ -298,26 +298,26 @@ window.Game_PetFollower = Game_PetFollower;
         // seat for the fight and is not one of them.
         const travelling = $gameParty._actors.filter(id => !window.SummonSystem?.isProxyActor?.(id));
         if (travelling.length >= 3) return 0;
+        // A seat whose member is out on a work shift is still theirs.
+        const free = id => (window.CharacterPresets && window.CharacterPresets.isSeatFree)
+            ? window.CharacterPresets.isSeatFree(id)
+            : !$gameParty._actors.includes(id);
         if ($gameSwitches && $gameSwitches.value(67)) {
-            return $gameParty._actors.includes(3) ? 0 : 3;
+            return free(3) ? 3 : 0;
         }
-        if (!$gameParty._actors.includes(2)) return 2;
-        if (!$gameParty._actors.includes(3)) return 3;
+        if (free(2)) return 2;
+        if (free(3)) return 3;
         return 0;
     }
 
-    // Per-actor slots that hold what used to live in global variables
-    // (ActorCharacterFields.js) and the switches/variables the creature and
-    // reproduction systems still key by party position.
-    const CREATURE_SWITCHES = { 1: 77, 2: 78, 3: 79 };
-    const REPRODUCTION_VARS = { 1: 87, 2: 115, 3: 116 };
 
     function _copyActorInto(actorId, source, name) {
         const clone = $gameActors && $gameActors.actor(actorId);
         if (!clone) return null;
-        // Start from the database entry so nothing of a previous occupant of the
-        // slot (a companion who left, a guest) survives into the copy.
-        clone.setup(actorId);
+        // An emptied seat (PartyPerson.wipe), so nothing of a previous occupant
+        // (a companion who left, a guest) survives into the copy.
+        if (window.PartyPerson && window.PartyPerson.wipe) window.PartyPerson.wipe(clone);
+        else clone.setup(actorId);
         clone.setName(name);
         if (source._classId) clone.changeClass(source._classId, false);
         clone.changeLevel(source.level(), false);
@@ -329,26 +329,13 @@ window.Game_PetFollower = Game_PetFollower;
         if (clone.setVnBust && source.vnBust) clone.setVnBust(source.vnBust());
         if (clone.setVnBattler && source.vnBattler) clone.setVnBattler(source.vnBattler());
         // A creature divides into a creature, and whatever divided can divide
-        // again: the copy inherits both flags from the original's slot.
-        const sourceId = source.actorId();
-        if ($gameSwitches && CREATURE_SWITCHES[sourceId] && CREATURE_SWITCHES[actorId]) {
-            $gameSwitches.setValue(CREATURE_SWITCHES[actorId], $gameSwitches.value(CREATURE_SWITCHES[sourceId]));
-        }
-        // A copy of a body is that body, blood included. Where the original
-        // holds no seat of its own (a reserve, the scratch slot) the actor
-        // still answers, and it answers before the seat the copy takes is left
-        // reading whatever the previous occupant put in it.
-        if ($gameVariables && REPRODUCTION_VARS[actorId]) {
-            const inherited = (REPRODUCTION_VARS[sourceId] != null)
-                ? $gameVariables.value(REPRODUCTION_VARS[sourceId])
-                : (source.reproductionType ? source.reproductionType() : null);
-            $gameVariables.setValue(REPRODUCTION_VARS[actorId], inherited == null ? 0 : inherited);
-            if (clone.setReproductionType && inherited != null) clone.setReproductionType(inherited);
-        }
+        // again. A copy of a body is that body, blood included.
+        clone._isCreatureActor = !!source._isCreatureActor;
+        const inherited = source.reproductionType ? source.reproductionType() : null;
+        if (clone.setReproductionType && inherited != null) clone.setReproductionType(inherited);
         if (source._ccBloodType) clone._ccBloodType = source._ccBloodType;
         clone.recoverAll();
         $gameParty.addActor(actorId);
-        if ($gameVariables) $gameVariables.setValue(29, $gameParty.members().length);
         return clone;
     }
 
@@ -479,10 +466,9 @@ window.Game_PetFollower = Game_PetFollower;
     }
 
     // A companion's body, decided ONCE when it is taken on and kept on its
-    // record. The seat a graduate later takes (REPRODUCTION_VARS) holds
-    // whatever the last occupant left in it, and an actor nobody has told
-    // answers gender 0 (Male), so a tamed animal used to arrive in the party
-    // wearing the body of the companion before it. A creature is not a person,
+    // record, so it is the same body however many seats it later takes. An
+    // actor nobody has told answers gender 0 (Male), so a tamed animal used to
+    // arrive in the party wearing a body that was not its own. A creature is not a person,
     // so no roll is weighted towards a human shape: the archetype decides
     // (window.NPCCreature owns what counts as one) and everything non-Humanoid
     // is read off the whole spread the same way a stranger's body is.
@@ -580,9 +566,10 @@ window.Game_PetFollower = Game_PetFollower;
     function _petIntoActor(actorId, pet, classId) {
         const actor = $gameActors && $gameActors.actor(actorId);
         if (!actor) return null;
-        // Start from the database entry so nothing of a previous occupant of
-        // the slot survives into the graduate.
-        actor.setup(actorId);
+        // An emptied seat (PartyPerson.wipe), so nothing of a previous occupant
+        // survives into the graduate.
+        if (window.PartyPerson && window.PartyPerson.wipe) window.PartyPerson.wipe(actor);
+        else actor.setup(actorId);
         actor.setName(pet.name);
         const wearClass = Number(classId || pet.training?.classId || BEAST_CLASS_ID);
         actor.changeClass(wearClass, false);
@@ -599,20 +586,12 @@ window.Game_PetFollower = Game_PetFollower;
             actor._currentArchetype = pet.archetype;
             actor._creatureArchetypes = [pet.archetype];
         }
-        // A graduate on a creature class is still a creature, and every system
-        // that asks does so through this slot's switch.
-        if ($gameSwitches && CREATURE_SWITCHES[actorId]) {
-            $gameSwitches.setValue(CREATURE_SWITCHES[actorId], _isCreatureClass(wearClass));
-        }
-        // The body it was taken on with, not the one the seat still held from
-        // whoever sat there before (see _rollBody). actor.setup() leaves both
-        // of these alone, so an unwritten seat is a leak rather than a blank.
+        // A graduate on a creature class is still a creature.
+        actor._isCreatureActor = _isCreatureClass(wearClass);
+        // The body it was taken on with (see _rollBody).
         if (actor.setGender) actor.setGender(pet.gender || 0);
         if (actor.setReproductionType && pet.reproduction != null) {
             actor.setReproductionType(pet.reproduction);
-        }
-        if ($gameVariables && REPRODUCTION_VARS[actorId] && pet.reproduction != null) {
-            $gameVariables.setValue(REPRODUCTION_VARS[actorId], pet.reproduction);
         }
         // Its own blood, rather than a re-roll off whatever name it graduated
         // under (BloodTypeService keys an actor by name alone).
@@ -624,7 +603,6 @@ window.Game_PetFollower = Game_PetFollower;
         }
         actor.recoverAll();
         $gameParty.addActor(actorId);
-        if ($gameVariables) $gameVariables.setValue(29, $gameParty.members().length);
         return actor;
     }
 
@@ -824,8 +802,7 @@ window.Game_PetFollower = Game_PetFollower;
             const CC3D = window.CC3DModel;
             return {
                 actor: JsonEx.stringify(actor),
-                creature: !!(actor._isCreatureActor ||
-                    ($gameSwitches && CREATURE_SWITCHES[id] && $gameSwitches.value(CREATURE_SWITCHES[id]))),
+                creature: !!actor._isCreatureActor,
                 model: CC3D && CC3D.getConfig ? CC3D.getConfig(id) : null,
                 seed: CC3D && CC3D.getCreatureSeed ? CC3D.getCreatureSeed(id) : null,
             };
@@ -849,19 +826,12 @@ window.Game_PetFollower = Game_PetFollower;
             actor._actorId = slot;
             $gameActors._data[slot] = actor;
             actor.setName(pet.name);
-            if ($gameSwitches && CREATURE_SWITCHES[slot]) {
-                $gameSwitches.setValue(CREATURE_SWITCHES[slot], !!pet.snapshot.creature);
-            }
-            const repro = actor.reproductionType ? actor.reproductionType() : null;
-            if ($gameVariables && REPRODUCTION_VARS[slot] && repro != null) {
-                $gameVariables.setValue(REPRODUCTION_VARS[slot], repro);
-            }
+            actor._isCreatureActor = !!pet.snapshot.creature;
             const CC3D = window.CC3DModel;
             if (CC3D && CC3D.setConfig) CC3D.setConfig(slot, pet.snapshot.model || null);
             if (CC3D && CC3D.setCreatureSeed) CC3D.setCreatureSeed(slot, pet.snapshot.seed || null);
             actor.recoverAll();
             $gameParty.addActor(slot);
-            if ($gameVariables) $gameVariables.setValue(29, $gameParty.members().length);
             this.releasePet(pet.id);
             _toast(T('PetFollower.designedJoined', { name: actor.name() }), "info");
             return actor;

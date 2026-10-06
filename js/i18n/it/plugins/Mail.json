@@ -167,6 +167,7 @@
     "appName": "Nudge",
     "signedIn": "Connesso come {who}",
     "signedOut": "Nessuno è connesso.",
+    "groupFavourites": "Preferiti",
     "groupParty": "In viaggio con te",
     "groupWorld": "Altrove in questo mondo",
     "groupOthers": "Sempre connessi",
@@ -188,6 +189,7 @@
     "noAnswer": "...",
     "situation": "Una conversazione scritta sull'hypernet, a notte fonda, in una finestra con la barra blu.",
     "bioMember": "{who} viaggia con la compagnia e sta scrivendo da due passi di distanza, cosa che nessuno dei due nomina.",
+    "bioFavourite": "{who} è qualcuno che la compagnia ha conosciuto e messo tra i preferiti, e risponde sul messenger da dovunque si trovi oggi.",
     "bioStranger": "{who} viaggia con un'altra compagnia di questo stesso mondo, quella guidata da {leader}. Non vi siete mai incontrati.",
     "lore": {
       "eris": {

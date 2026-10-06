@@ -751,6 +751,32 @@
         return !$gameSwitches.value(9);
     };
 
+    // i18n-ignore: actor names, matched at runtime
+    const STORY_IMMORTAL_NAMES = ['Em', 'Bubba'];
+
+    /**
+     * Em and Bubba in the story mode (switch 100). On either of its two
+     * difficulties they are knocked out and come round, never lost for good,
+     * and in Blood and Oil they can lose limbs but never a vital part.
+     */
+    BSE.Helpers.isStoryImmortal = function(actor) {
+        if (!actor || !$gameSwitches.value(100)) return false;
+        return STORY_IMMORTAL_NAMES.includes(actor.name());
+    };
+
+    /**
+     * The one answer to "is this fallen party member gone for good?".
+     * Hardcore and Blood and Oil (switch 9) lose everybody, the story mode
+     * loses everybody who joined the party except Em and Bubba, on either of
+     * its difficulties. Peaceful loses nobody.
+     */
+    BSE.Helpers.diesForGood = function(actor) {
+        if (!actor) return false;
+        if (window.PeacefulMode && window.PeacefulMode.isActive()) return false;
+        if (BSE.Helpers.isStoryImmortal(actor)) return false;
+        return !!($gameSwitches.value(9) || $gameSwitches.value(100));
+    };
+
     /**
      * Every need meter of every party member back to full: hunger and sleep,
      * which live on the actor, and hygiene / social / leisure, which live on

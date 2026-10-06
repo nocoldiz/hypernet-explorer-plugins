@@ -5902,7 +5902,7 @@
                 const traits = actor._selectedTraits || [];
                 const isSynthetic = /cyborg|android|robot|machine|automaton/i.test(cls) ||
                     traits.some(t => /cyber|robot|synthetic|machine/i.test(t?.name || ''));
-                const isBotanic = ($gameVariables && $gameVariables.value(87) === 3) ||
+                const isBotanic = (actor.reproductionType ? actor.reproductionType() === 3 : false) ||
                     /plant|flora|dryad|treant|fungus/i.test(cls);
                 const isNonSentient = (window.NPCCreature?.isNonSentientActor?.(actor) ?? false) ||
                     (window.NPCEmpathize?._helpers?._isNonSentientActor?.(actor) ?? false);
@@ -6648,6 +6648,42 @@
             // voice of their own says it their way (NPCConversation.SpeciesVoice).
             const line = lines[Math.floor(Math.random() * lines.length)];
             Bubbles.show(char, window.NPCConversation?.SpeciesVoice ? window.NPCConversation.SpeciesVoice.render(line, actor) : line);
+            return true;
+        },
+
+        // The town's half of a greeting. `say` is the party's mouth and asks
+        // PartyBanter whether the speaker may talk, which a townsperson (no
+        // actor behind them) never may, so the stranger's answer has its own
+        // path. About half the time a stranger with a life to speak of answers
+        // out of it (NPCConversation's LifeTalk: the baby at home, the partner
+        // away, the job, the war); otherwise, or when nothing in their life asks
+        // to be said, out of the plain pool. A creature (window.NPCCreature owns
+        // the boundary) has no prose to answer with and stays silent.
+        sayNpcReply(p, npcName, npcProfile) {
+            if (!p) return false;
+            const NC = window.NPCCreature;
+            if (NC && ((npcProfile && NC.isNonSentientProfile && NC.isNonSentientProfile(npcProfile))
+                || (npcName && NC.isNonSentientByName && NC.isNonSentientByName(npcName)))) return false;
+            const LIFE_SHARE = 0.5;
+            let line = null;
+            const LT = window.NPCConversation?.LifeTalk;
+            if (LT && npcProfile && Math.random() < LIFE_SHARE) {
+                try {
+                    const family = () => (LT.familyMention ? LT.familyMention(npcName, npcProfile) : null);
+                    const thought = () => (LT.pickThought ? LT.pickThought(npcProfile) : null);
+                    line = Math.random() < 0.5 ? (family() || thought()) : (thought() || family());
+                } catch (e) { line = null; }
+            }
+            if (!line) {
+                const lines = T.pool("AutoIdle.loose.reply");
+                if (!lines.length) return false;
+                line = lines[Math.floor(Math.random() * lines.length)];
+                const SV = window.NPCConversation?.SpeciesVoice;
+                if (SV && npcProfile) line = SV.render(line, npcProfile);
+            }
+            if (!line) return false;
+            this._stampTalk(p);
+            Bubbles.show(p, line);
             return true;
         },
 
@@ -7479,7 +7515,7 @@
                 return;
             }
             if (s.beat === 1) {
-                this.say(p, "AutoIdle.loose.reply", true);
+                this.sayNpcReply(p, npcName, npcProfile);
                 s.beat = 2;
                 s.wait = 110;
                 return;
@@ -9968,7 +10004,12 @@
     const PROC_MAP_ID = (window.WorldMapReturn && window.WorldMapReturn.procMapId) || 636;
     const WORLD_MAP_ID = (window.WorldMapReturn && window.WorldMapReturn.worldMapId) || 315;
 
-    function _isHardcoreOrBloodAndOil() {
+    // Whether this fallen member is lost for good: Hardcore / Blood and Oil,
+    // or the story mode for anybody but Em and Bubba (BattleSystemEnhanced).
+    function _diesForGood(actor) {
+        if (!actor) return false;
+        const helpers = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+        if (helpers && helpers.diesForGood) return helpers.diesForGood(actor);
         return !!($gameSwitches && $gameSwitches.value(9));
     }
 
@@ -10346,7 +10387,7 @@
     // Hook death in Blood & Oil / Hardcore mode
     const _Scene_Map_handlePartyMemberDeath_downed = Scene_Map.prototype.handlePartyMemberDeath;
     Scene_Map.prototype.handlePartyMemberDeath = function (actor, actorName) {
-        if (_isHardcoreOrBloodAndOil() && actor && actor.isDead()) {
+        if (_diesForGood(actor) && actor.isDead()) {
             createPartyCorpseFromActor(actor);
         }
         _Scene_Map_handlePartyMemberDeath_downed.call(this, actor, actorName);
@@ -10796,7 +10837,7 @@
     const _Game_Actor_processMapDeath_succession = Game_Actor.prototype.processMapDeath;
     Game_Actor.prototype.processMapDeath = function () {
         if (this === $gameParty.members()[0]) {
-            if (_isHardcoreOrBloodAndOil()) {
+            if (_diesForGood(this)) {
                 const livingMembers = $gameParty.members().filter(m => m && !m.isDead() && m !== this);
                 if (livingMembers.length > 0) {
                     const deceasedName = this.name();

@@ -675,14 +675,14 @@
 
       // Player 1 (Actor 1) special handling
       if (actorId === 1) {
-        // Priority 1: Check Variable 109 (Player 1 bust name)
+        // Priority 1: the actor's own bust (vnBust)
         const player1BustName = $gameActors.actor(1).vnBust();
         if (player1BustName && player1BustName !== "") {
           return "img/busts/" + player1BustName;
         }
 
-        // Priority 2: If Switch 77 is ON, use Variable 106 for monster form
-        if ($gameSwitches.value(77)) {
+        // Priority 2: a creature actor shows its monster form
+        if ($gameActors.actor(1)._isCreatureActor) {
           const player1MonsterName = $gameActors.actor(1).vnBattler();
           if (player1MonsterName && player1MonsterName !== "") {
             return "img/enemies/" + player1MonsterName;
@@ -2844,6 +2844,8 @@
   const BTN_CLASS = 'ui-help-btn';
   const HOST_CLASS = 'ui-help-host';
   const SHEET_ID = 'ui-help-sheet';
+  // i18n-ignore-next-line  an Input symbol, not prose
+  const HELP_KEY = 'wmrToggle';
   const SCROLL_STEP = 56;
 
   const tr = (key, params) => (typeof window.T === 'function' ? window.T(key, params) : key);
@@ -3062,10 +3064,13 @@
     },
 
     // The sheet's own frame: close, or scroll the list.
+    // HELP_KEY is the keyboard's twin of the pad's Select: Map/WorldMapReturn
+    // puts T and Select on the same symbol, so a keyboard player opens the
+    // sheet with T where the pad presses Select, instead of only the mouse.
     _sheetFrame() {
       const C = window.Controller;
       if (Input.isTriggered('cancel') || Input.isTriggered('escape') || Input.isTriggered('ok') ||
-          (C && C.triggered && C.triggered('SELECT')) ||
+          (C && C.triggered && C.triggered('SELECT')) || Input.isTriggered(HELP_KEY) ||
           (TouchInput.isCancelled && TouchInput.isCancelled())) {
         this.close();
         return;
@@ -3094,7 +3099,7 @@
       const C = window.Controller;
       if (!C || !C.triggered) return false;
       if (C.textEntryOpen && C.textEntryOpen()) return false;
-      if (C.triggered('SELECT') && this.open()) return true;
+      if ((C.triggered('SELECT') || Input.isTriggered(HELP_KEY)) && this.open()) return true;
       return false;
     },
 

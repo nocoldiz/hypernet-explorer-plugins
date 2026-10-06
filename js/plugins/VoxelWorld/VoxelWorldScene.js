@@ -4028,9 +4028,9 @@
                 if (!ok || this._disposed || !this._overlay || this._vrButton) return;
                 const btn = document.createElement('button');
                 btn.type = 'button';
-                btn.className = 'vw-vr-button';
+                btn.className = 'inspect-btn vw-vr-button';
                 btn.style.cssText = 'position:absolute;right:16px;bottom:16px;z-index:5;' +
-                    'padding:6px 14px;font:inherit;cursor:pointer;pointer-events:auto;';
+                    'margin:0;pointer-events:auto;';
                 btn.textContent = T('VoxelWorld.vr.enter');
                 // Kept off the world: a click here is not a swing or a dig.
                 btn.addEventListener('mousedown', (e) => e.stopPropagation());
@@ -5045,7 +5045,7 @@
             if (this.isPaused()) return;
             this._teachControl('voxReturn');
             if (typeof $gameMessage !== 'undefined' && $gameMessage.isBusy()) return;
-            this._endDriveToWorldMap();
+            this._leaveToWorldMap();
         }
 
         // Free-play teardown (Minigames menu): stop the overlay / rAF loop and
@@ -5085,7 +5085,7 @@
             // Stop liminal drive: cancel any fast travel and drop the player onto
             // the world map (315) at the tile the camper actually reached.
             choices.push(T('CamperDrive.stopLiminal'));
-            handlers.push(() => this._endDriveToWorldMap());
+            handlers.push(() => this._leaveToWorldMap());
 
             // Stop driving: halt motion without closing the scene, drop to the cabin.
             choices.push(T('CamperDrive.stopDriving'));
@@ -5215,6 +5215,83 @@
         // End the drive and place the player on the world map (315) at the world
         // tile the camper actually reached. Variables 43/44 mirror the player's
         // world position on map 315, so we write the live tile and transfer there.
+        // The one way out for the player: the world stands still, a black
+        // sheet is pulled over the page (VoxelWorldSystem.showExitSheet) and
+        // the exit proper runs under it, so the 2D map is never seen at the
+        // old square. The map scene on the other side lifts the sheet.
+        _leaveToWorldMap() {
+            if (this._leaving) return;
+            if (this._standalone || this._alien) { this._endDriveToWorldMap(); return; }
+            this._leaving = true;
+            this._suspended = true;
+            const go = () => {
+                this._leaving = false;
+                if (this._disposed || !VoxelWorldSystem.isActive()) return;
+                this._endDriveToWorldMap();
+            };
+            if (!VoxelWorldSystem.showExitSheet || !VoxelWorldSystem.showExitSheet(go)) {
+                this._leaving = false;
+                this._endDriveToWorldMap();
+            }
+        }
+
+        // The transfer's own fade: none under the sheet (the sheet is the
+        // fade), the engine's black one when there was no page to draw it on.
+        _exitFadeType() {
+            return (typeof document !== 'undefined' && document.getElementById &&
+                document.getElementById('vw-exit-sheet')) ? 2 : 0;
+        }
+
+        // The world square under a point, clamped to the 256x256 grid.
+        _tileOf(x, z) {
+            return {
+                x: Math.max(0, Math.min(255, Math.floor(x / WORLD_TILE_SIZE))),
+                y: Math.max(0, Math.min(255, Math.floor(z / WORLD_TILE_SIZE)))
+            };
+        }
+
+        // Every vehicle the party owns and left standing on the very square
+        // they are about to be put down on is moved to a free square beside
+        // it, so the 2D map shows it parked NEXT to them rather than under
+        // them (where the engine would read the next OK press as boarding
+        // it). `keepKey` is the one they are sitting in. Answers the moves.
+        _settleVehiclesAround(tileX, tileY, keepKey) {
+            const VP = window.VehiclePosition;
+            const VM = window.VehicleModels;
+            const keys = (VM && Array.isArray(VM.KEYS)) ? VM.KEYS : [];
+            if (!VP || typeof VP.get !== 'function' || !keys.length) return [];
+            const inBounds = (x, y) => x >= 0 && y >= 0 && x < 256 && y < 256;
+            const isWater = (x, y) => getRenderType(sampleBiomeAt(x, y).name) === 'water';
+            const taken = new Set([tileX + ',' + tileY]);
+            const moved = [];
+            for (const key of keys) {
+                if (key === keepKey) continue;
+                if (typeof VP.owns === 'function' && !VP.owns(key)) continue;
+                const rec = VP.get(key);
+                if (!rec || rec.alien) continue;
+                if (VP.worldX(key) !== tileX || VP.worldY(key) !== tileY) continue;
+                const floats = key === 'boat';
+                let spot = null;
+                for (let r = 1; r <= 3 && !spot; r++) {
+                    for (let dy = -r; dy <= r && !spot; dy++) {
+                        for (let dx = -r; dx <= r; dx++) {
+                            if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
+                            const x = tileX + dx, y = tileY + dy;
+                            if (!inBounds(x, y) || taken.has(x + ',' + y)) continue;
+                            if (!floats && isWater(x, y)) continue;
+                            spot = { x, y };
+                            break;
+                        }
+                    }
+                }
+                if (!spot) continue;
+                taken.add(spot.x + ',' + spot.y);
+                VP.set(key, WORLD_MAP_ID, spot.x, spot.y, spot.x, spot.y);
+                moved.push({ key, x: spot.x, y: spot.y });
+            }
+            return moved;
+        }
+
         _endDriveToWorldMap() {
             // Free-play launch (Minigames menu): there is no world map to hand
             // control back to, so just dispose the drive and run the exit callback.
@@ -5269,18 +5346,32 @@
             const onFoot = this._viewMode === 'foot';
             if (typeof $gamePlayer !== 'undefined') {
                 if (onFoot) {
-                    // Ended outside: dismount and stand one tile south of the parked
-                    // camper, facing it, rather than spawning aboard the vehicle.
+                    // Ended outside: the party is put down on the square THEY
+                    // stand on, not beside the camper. The camper stays on its
+                    // own square, and if that is the same one it is moved to
+                    // the square next door (_settleVehiclesAround) so it is
+                    // parked beside them rather than under them.
                     if ($gamePlayer.isInVehicle && $gamePlayer.isInVehicle()) {
                         $gamePlayer._vehicleType = '';
                         $gamePlayer._vehicleGettingOn = false;
                         $gamePlayer._vehicleGettingOff = false;
                     }
                     if (camper) camper._driving = false;
-                    const py = Math.min(255, tileY + 1);
-                    if (typeof $gameVariables !== 'undefined') $gameVariables.setValue(44, py);
-                    $gamePlayer.reserveTransfer(WORLD_MAP_ID, tileX, py, 8, 0);
+                    const at = this._contactPoint ? this._contactPoint() : { x: this._vanX, z: this._vanZ };
+                    let party = this._tileOf(at.x, at.z);
+                    if (getRenderType(sampleBiomeAt(party.x, party.y).name) === 'water') {
+                        party = this._nearestLandTile(party.x, party.y) || party;
+                    }
+                    if (typeof $gameVariables !== 'undefined') {
+                        $gameVariables.setValue(43, party.x);
+                        $gameVariables.setValue(44, party.y);
+                    }
+                    const moved = this._settleVehiclesAround(party.x, party.y, null);
+                    const ride = moved.find(m => m.key === 'camper');
+                    if (ride && camper && camper.setLocation) camper.setLocation(WORLD_MAP_ID, ride.x, ride.y);
+                    $gamePlayer.reserveTransfer(WORLD_MAP_ID, party.x, party.y, 2, this._exitFadeType());
                 } else {
+                    this._settleVehiclesAround(tileX, tileY, this._vehicleId || 'camper');
                     // Ended while driving: return to map 315 still aboard the camper
                     // at the exact tile reached, so the player resumes driving it on
                     // the world map instead of being dropped at (0,0).
@@ -5293,7 +5384,7 @@
                     // here so only the camper graphic shows and the hidden player sprite
                     // rides along with the vehicle instead of standing beside it.
                     $gamePlayer.setTransparent(true);
-                    $gamePlayer.reserveTransfer(WORLD_MAP_ID, tileX, tileY, 2, 0);
+                    $gamePlayer.reserveTransfer(WORLD_MAP_ID, tileX, tileY, 2, this._exitFadeType());
                 }
             }
 
@@ -5329,13 +5420,19 @@
                 $gameVariables.setValue(43, tileX);
                 $gameVariables.setValue(44, tileY);
             }
+            // Anything the party left standing on this very square is parked
+            // beside them instead of under them.
+            if (this._settleVehiclesAround) this._settleVehiclesAround(tileX, tileY, null);
             // Only actually transfer when the walk covered ground: a transfer
             // rebuilds the map scene, which is a lot of work to end up on the very
             // square the party never left.
             if (typeof $gamePlayer !== 'undefined' &&
                 !($gameMap.mapId() === WORLD_MAP_ID &&
                   $gamePlayer.x === tileX && $gamePlayer.y === tileY)) {
-                $gamePlayer.reserveTransfer(WORLD_MAP_ID, tileX, tileY, 2, 0);
+                $gamePlayer.reserveTransfer(WORLD_MAP_ID, tileX, tileY, 2, this._exitFadeType ? this._exitFadeType() : 0);
+            } else if (VoxelWorldSystem.clearExitSheet) {
+                // No map scene is coming to lift the sheet: lift it here.
+                VoxelWorldSystem.clearExitSheet(false);
             }
             VoxelWorldSystem.stop();
         }

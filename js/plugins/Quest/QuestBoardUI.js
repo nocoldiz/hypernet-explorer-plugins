@@ -236,6 +236,8 @@
       this._onKey = ev => {
         const picker = this._composer && this._composer.picker;
         if (!picker) return;
+        // The pad's letter sheet is up: the keys are its, not the shelf's.
+        if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) return;
         if (ev.key === "Backspace") {
           picker.query = picker.query.slice(0, -1);
         } else if (ev.key.length === 1 && !ev.ctrlKey && !ev.altKey && !ev.metaKey) {
@@ -362,9 +364,9 @@
         btns.push(`<span class="qb-status">${T('QuestBoard.bringTheGoodsToCollect')}</span>`);
       }
       if (this._confirmAbandon === q.qid) {
-        btns.push(`<span class="qb-btn danger" data-confirm-abandon="${esc(q.qid)}">${T('QuestBoard.confirmAbandonPenaltiesApply')}</span>`);
+        btns.push(`<span class="qb-btn danger" data-pad="confirm" data-confirm-abandon="${esc(q.qid)}">${T('QuestBoard.confirmAbandonPenaltiesApply')}</span>`);
       } else {
-        btns.push(`<span class="qb-btn danger" data-abandon="${esc(q.qid)}">${T('QuestBoard.abandon')}</span>`);
+        btns.push(`<span class="qb-btn danger" data-pad="alt" data-abandon="${esc(q.qid)}">${T('QuestBoard.abandon')}</span>`);
       }
       return `<div class="qb-note qb-contract ${i === this._focus && !this._detail ? "focused" : ""}"
         data-card="${i}" style="--rot:${rot}deg; --note-bg:${bg}">
@@ -999,6 +1001,19 @@
       this._refresh();
     }
 
+    // Confirm on a posted notice's sheet: the one button _detailHTML drew for
+    // it, chosen by the same conditions.
+    _postedAction() {
+      const api = PQ();
+      const o = this._detail;
+      if (!o) return;
+      const mine = api.isOwnPost(o);
+      if (mine && o.status === "open") this._withdrawPosted(o.id);
+      else if (mine && (o.status === "done" || o.status === "expired")) this._collectPosted(o.id);
+      else if (!mine && o.status === "open" && $gameParty.members().length >= (o.minParty || 1)) this._takePosted(o.id);
+      else SoundManager.playBuzzer();
+    }
+
     _withdrawPosted(id) {
       const api = PQ();
       const res = api.withdrawPost(id);
@@ -1036,7 +1051,16 @@
       if (this._detail) {
         if (Input.isTriggered("cancel")) this._closeDetail();
         else if (Input.isTriggered("shift")) this._showOnMap();
-        else if (Input.isTriggered("ok") && this._detailIsOffer) this._acceptCurrent();
+        else if (Input.isTriggered("ok")) {
+          if (this._detailIsOffer) this._acceptCurrent();
+          else if (this._detailIsPosted) this._postedAction();
+        } else {
+          // The sheet is longer than the screen: the directions read it, as
+          // the right stick and the wheel already do.
+          const sheet = this._el.querySelector("#qb-detail");
+          if (sheet && Input.isRepeated("down")) sheet.scrollTop += 48;
+          else if (sheet && Input.isRepeated("up")) sheet.scrollTop -= 48;
+        }
         return;
       }
 
@@ -1051,11 +1075,19 @@
         this._switchTab(order[(i + (tabDir < 0 ? order.length - 1 : 1)) % order.length]);
         return;
       }
+      // X (Shift) on a contract asks to abandon it, and Confirm while it
+      // asks is the yes: the two buttons on the note, without a mouse.
+      if (this._tab === "contracts" && Input.isTriggered("shift")) {
+        const q = this._cards()[this._focus];
+        if (q) this._askAbandon(q.qid);
+        return;
+      }
       if (Input.isTriggered("ok")) {
         if (this._tab === "posted") { this._openDetail(); return; }
         if (this._tab === "contracts") {
-          // OK on a claimable contract collects it directly.
           const q = this._cards()[this._focus];
+          if (q && this._confirmAbandon === q.qid) { this._doAbandon(q.qid); return; }
+          // OK on a claimable contract collects it directly.
           if (q && q.status === "claimable") { this._claim(q.qid); return; }
         }
         this._openDetail();

@@ -143,9 +143,13 @@
       return specs.some(s => this.specTier(profile, s) >= this.KEEN_TIER);
     },
 
+    // Their own house and floor, not any house drawn from the same template
+    // (NPCSim_Homes isHomeHere): a neighbour's garden is not theirs to tend.
     livesOn(profile, mapId) {
       if (!profile || !mapId) return false;
-      return profile.homeBuilding?.mapId === mapId || profile.homeMapId === mapId;
+      const isHomeHere = NPCSim._internal?.isHomeHere;
+      if (typeof isHomeHere === 'function') return isHomeHere(profile, mapId);
+      return profile.homeBuilding?.mapId === mapId;
     },
 
     // A job whose trade or work spots name one of `trades` / `words`, on shift

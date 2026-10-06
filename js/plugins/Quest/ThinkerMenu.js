@@ -1366,6 +1366,15 @@
         return out;
     }
 
+    // Whether a piece goes on the 3D stand at all: a weapon with three.js to
+    // build it, or an armor with ItemModelSystem as well.
+    function hasStandModel(item) {
+        if (typeof THREE === 'undefined' || !item) return false;
+        if (DataManager.isWeapon(item)) return true;
+        return DataManager.isArmor(item) && !!(window.ItemModelSystem &&
+            typeof window.ItemModelSystem.createModel === 'function');
+    }
+
     function finishSrc(filename) {
         if (isUserFinish(filename)) return window.UserPictures.resolve(filename) || '';
         const P = window.WeaponSystemProcedural;
@@ -2929,32 +2938,41 @@
                 lore;
         }
 
-        // -------------------------------------------------- weapon preview
+        // -------------------------------------------------- piece preview
         // The same card the equip menu uses, for one entry instead of a
-        // wearer's two hands: the weapon's real 3D model. An armor, or a
-        // runtime without three.js, gets the icon on its rarity ring instead.
+        // wearer's two hands: the piece's real 3D model. A weapon is built by
+        // WeaponSystemProcedural, an armor or a piece of clothing by
+        // ItemModelSystem, the very model the equip menu shows it as. Only a
+        // runtime without three.js gets the icon on its rarity ring instead.
         previewHTML(item) {
-            const canThree = typeof THREE !== 'undefined' && DataManager.isWeapon(item);
+            const canThree = hasStandModel(item);
+            // An armor's model is built from its recipe and is not drawn in the
+            // weapon skins, so the finish the smith picked is the cloth the
+            // piece is laid on. A weapon wears its finish on the model itself.
+            const skin = this.finishSkinStyle(item);
             let html = '<div class="weapon-previews-container">';
             if (canThree) {
-                html += `<div class="weapon-preview-card weapon-preview-card--single"><canvas id="forge-preview-canvas" width="640" height="440"></canvas></div>`;
+                const cloth = DataManager.isWeapon(item) ? '' : ` style="${skin}"`;
+                html += `<div class="weapon-preview-card weapon-preview-card--single"${cloth}><canvas id="forge-preview-canvas" width="640" height="440"></canvas></div>`;
             } else {
                 const rarity = rarityOf(item);
-                // Nothing here is drawn in three dimensions, so the finish the
-                // smith picked is shown as the cloth the piece is laid on.
-                const finish = isForged(item)
-                    ? (item.meta.ForgeTexture ? String(item.meta.ForgeTexture).trim() : '')
-                    : this.chosenFinish(item);
                 // The finish is the stuff the piece is made of, so it is worn BY
                 // the piece: it fills the disc the icon sits on. Washing the
                 // whole card in it only ever looked like a change of wallpaper.
-                const skin = finish
-                    ? `background-image:url('${escapeHtml(finishSrc(finish))}'); background-size:cover; background-position:center;`
-                    : '';
                 const inner = `<div class="weapon-preview-icon-wrapper"><div class="weapon-preview-icon-circle rarity-ring ${window.ItemSystemUtils.rarityClass(rarity)}" style="${skin}"><div class="item-icon" style="${iconStyle(item.iconIndex, 32)}"></div></div></div>`;
                 html += `<div class="weapon-preview-card weapon-preview-card--single">${inner}</div>`;
             }
             return html + '</div>';
+        }
+
+        // The finish the smith picked, as a CSS background, or '' for none.
+        finishSkinStyle(item) {
+            const finish = isForged(item)
+                ? (item.meta.ForgeTexture ? String(item.meta.ForgeTexture).trim() : '')
+                : this.chosenFinish(item);
+            return finish
+                ? `background-image:url('${escapeHtml(finishSrc(finish))}'); background-size:cover; background-position:center;`
+                : '';
         }
 
         // --------------------------------------------------- the model editor
@@ -3031,7 +3049,7 @@
         // slow.
         mount3D(baseItem) {
             this.dispose3D();
-            if (typeof THREE === 'undefined' || !DataManager.isWeapon(baseItem)) return;
+            if (!hasStandModel(baseItem)) return;
             this._previewTimer = setTimeout(() => {
                 this._previewTimer = 0;
                 this.mount3DNow(baseItem);
@@ -3082,8 +3100,12 @@
             if (item.meta && item.meta.model3d && THREE.GLTFLoader) {
                 new THREE.GLTFLoader().load(`models/${item.meta.model3d}`, g => place(g.scene), undefined,
                     err => console.error('[Blacksmithing] model load failed', err));
-            } else if (window.WeaponSystemProcedural && WeaponSystemProcedural.createModel) {
-                const model = WeaponSystemProcedural.createModel(item);
+            } else if (DataManager.isWeapon(item)) {
+                const model = window.WeaponSystemProcedural && WeaponSystemProcedural.createModel
+                    ? WeaponSystemProcedural.createModel(item) : null;
+                if (model) place(model);
+            } else {
+                const model = window.ItemModelSystem.createModel(item);
                 if (model) place(model);
             }
 

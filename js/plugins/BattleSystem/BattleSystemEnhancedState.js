@@ -404,6 +404,15 @@
         return _Game_Enemy_dropItemRate.call(this) * (hasDoubleSpoils(this) ? 2 : 1);
     };
 
+    // Every kill pays half again its database experience: at the raw values
+    // levelling crawled. The world's own multiplier still applies on top.
+    const MONSTER_EXP_BUFF = 1.5;
+    BSE.Helpers.MONSTER_EXP_BUFF = MONSTER_EXP_BUFF;
+    const _Game_Enemy_exp = Game_Enemy.prototype.exp;
+    Game_Enemy.prototype.exp = function() {
+        return Math.round(_Game_Enemy_exp.call(this) * MONSTER_EXP_BUFF);
+    };
+
     // The world's reward multipliers (WorldManager.rewardMultiplier), chosen on
     // the creation form. 1 everywhere unless the world says otherwise.
     function worldRewardMultiplier(kind) {
@@ -590,7 +599,9 @@
         const _storyModeMaps = [1414, 1415, 1416, 1417];
         const inStoryMode = $gameSwitches.value(75) && _storyModeMaps.includes($gameMap.mapId());
         AudioManager.stopBgm();
-        if ($gameSwitches.value(9) && !inStoryMode) {
+        // The story mode's Blood and Oil never ends the run: Em and Bubba
+        // come round (BattleSystemEnhancedDeath.js).
+        if ($gameSwitches.value(9) && !inStoryMode && !$gameSwitches.value(100)) {
             // Permadeath ON: save death data
             $gameSwitches.setValue(34, true);
             // Whole party down for good: every fallen member gets a date of
@@ -756,19 +767,24 @@
         // Shared corpse helper - used for both flee (dead enemies mid-battle)
         // and win (all enemies cleared). An enemy whose HP is still > 0 survived
         // and gets no corpse; only those killed before the battle ended do.
+        // Returns whether a body was dropped.
         const dropCorpse = (evMapId, evId, troopIndex) => {
-            if (!evId || !evMapId) return;
+            if (!evId || !evMapId) return false;
             const deadEvent = $gameMap.event(evId);
-            if (!deadEvent || !deadEvent._characterName) return;
+            if (!deadEvent || !deadEvent._characterName) return false;
             const deadTroop = deadEvent._fixedTroopId ? $dataTroops[deadEvent._fixedTroopId] : null;
             const deadEnemy = (deadTroop && deadTroop.members.length > 0)
                 ? $dataEnemies[deadTroop.members[0].enemyId] : null;
             // Still standing is not the same as still having HP: a monster kept
             // up by Immortal sits at 0 and would otherwise leave a body behind
             // on every flee while its map event lives on.
+            // Off the field is not dead either: a monster tamed as a pet or
+            // recruited into the party is hidden (EnemyTalkSystem), and walks
+            // away with the party instead of leaving a body.
             const troopMember = $gameTroop && $gameTroop.members()[troopIndex];
             const enemyAlive = troopMember && (troopMember.isAlive() || troopMember._bseEscaped);
-            if (enemyAlive) return;
+            const leftTheField = troopMember && !troopMember.isAppeared();
+            if (!troopMember || enemyAlive || leftTheField) return false;
             BSE.Functions.dropMapCorpse({
                 mapId: evMapId,
                 x: deadEvent.x,
@@ -779,6 +795,7 @@
                 bloodColor: getCorpseBloodColor(deadEnemy),
                 enemyId: (deadTroop && deadTroop.members[0]) ? deadTroop.members[0].enemyId : 0
             });
+            return true;
         };
 
         if (result === 1 && bId) { // Fled, or a recruit that emptied the field
@@ -833,10 +850,12 @@
         } else if (result === 0 && bId) { // Win
             const baseIndexes = [];
             for (let i = 0; i < baseSize; i++) baseIndexes.push(i);
+            // One body per event, from the first of its monsters that actually
+            // died: a pack whose lead was tamed still leaves the one it lost.
             const baseEscaped = escapedIn(baseIndexes);
-            if (!baseEscaped) dropCorpse(mId, eId, 0);
+            if (!baseEscaped) baseIndexes.some(i => dropCorpse(mId, eId, i));
             joined.forEach(j => {
-                if (!escapedIn(j.memberIndexes)) dropCorpse(j.mapId, j.eventId, j.memberIndexes[0]);
+                if (!escapedIn(j.memberIndexes)) j.memberIndexes.some(ti => dropCorpse(j.mapId, j.eventId, ti));
             });
 
             if (baseEscaped) {
@@ -1309,6 +1328,10 @@
 
             const _storyModeRespawnMaps = [1414, 1415, 1416, 1417];
             const _inStoryModeRespawn = $gameSwitches.value(75) && _storyModeRespawnMaps.includes($gameMap.mapId());
+
+            // Story mode: whoever fell and is not Em or Bubba is buried before
+            // any branch below stands the party back up.
+            if (BSE.Functions.removeStoryFallen) BSE.Functions.removeStoryFallen();
 
             if (_inStoryModeRespawn && $gameSystem.isFullPartyWipe()) {
                 this._refillPartyOnRespawn();

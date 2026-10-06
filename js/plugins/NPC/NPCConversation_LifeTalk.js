@@ -21,7 +21,7 @@
   "use strict";
 
   const {
-    _getProfile, _personalityNameOf, _pickFrom, applyVoice, CREED_FAMILY_BANKS, CREED_SPECIAL_BANKS,
+    _getProfile, _personalityNameOf, _pickFrom, applyVoice, bank, CREED_FAMILY_BANKS, CREED_SPECIAL_BANKS,
     LIFE_AMBIENT, LIFE_FALLBACK, LIFE_GREET_KIN, LIFE_MENTIONS, LIFE_SCRIPTS, LIFE_THOUGHTS, vary,
     VOICE_CHANCE_DIALOGUE,
   } = window.NPCConversation._internal;
@@ -186,6 +186,324 @@
     clear() { this._hour = -1; this._val = null; },
   };
 
+  // --- The rest of a life: trade, home, roots, health, money, friends ------
+  // Everything below is something the simulation already keeps on the
+  // profile or the life record. Each source is optional and read through its
+  // owner's own getter when it has one; a missing system means a missing
+  // topic, never a wrong one.
+  const WORK_SOON_HOURS   = 1;     // "on my way to work" this long before the shift
+  const NEW_JOB_DAYS      = 60;
+  const MOVED_DAYS        = 365;
+  const RECOVERED_DAYS    = 45;
+  const IMPLANT_NEW_DAYS  = 60;
+  const BAND_SOON_DAYS    = 4;
+  const BAND_BACK_DAYS    = 14;
+  const BIRTHDAY_SOON_DAYS = 7;
+  const HOLIDAY_SOON_DAYS = 3;
+  const MONEY_LOG_DAYS    = 7;
+  const RELEASED_DAYS     = 120;
+  const GRIEF_DAYS        = 365;
+  const FRIEND_MIN_OPINION = 45;
+  const RIVAL_MAX_OPINION  = -30;
+  const FRIEND_MIN_MEETS   = 3;
+  // i18n-ignore-start: NPCLife MOVE_REASONS ids, folded into four pools
+  const MOVE_REASON_POOL = {
+    lookingForWork: 'Work', cheapHousing: 'Work',
+    followingFamily: 'Love', chasingLove: 'Love',
+    fleeingTrouble: 'Trouble', fallingOut: 'Trouble',
+    freshStart: 'Fresh', changeOfAir: 'Fresh', homecoming: 'Fresh',
+  };
+  // i18n-ignore-end
+
+  // The calendar day of a game minute, counted the way TimeDateSystem counts
+  // it (the clock starts at 1 JAN 2001 10:00 and adds wall-clock minutes), so
+  // `day` is the same index PublicHolidays uses.
+  function _dateOfMinute(minute) {
+    const dt = new Date(2001, 0, 1, 10, 0, 0);
+    dt.setMinutes(dt.getMinutes() + (Number(minute) || 0));
+    const y = dt.getFullYear(), m = dt.getMonth() + 1, d = dt.getDate();
+    return {
+      y, m, d, hour: dt.getHours(), weekday: dt.getDay(),
+      day: Math.round((Date.UTC(y, m - 1, d) - Date.UTC(2001, 0, 1)) / 86400000),
+    };
+  }
+  // How many days from (m, d) to the next (bm, bd), 0 on the day itself.
+  function _daysUntilDate(today, bm, bd) {
+    const from = Date.UTC(today.y, today.m - 1, today.d);
+    let to = Date.UTC(today.y, bm - 1, bd);
+    if (to < from) to = Date.UTC(today.y + 1, bm - 1, bd);
+    return Math.round((to - from) / 86400000);
+  }
+  function _hashOf(str) {
+    let h = 2166136261;
+    const s = String(str || '');
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return h >>> 0;
+  }
+  function _label(group, key) {
+    try {
+      const v = bank('ConvLife.label')?.[group]?.[key];
+      return typeof v === 'string' && v ? v : null;
+    } catch (_) { return null; }
+  }
+
+  function _readLife(c, x) {
+    const { name, profile, rec, now, LS, recOf, events, log, stage } = x;
+    const p = c.params;
+    const adult = stage === 'adult'; // i18n-ignore: life stage id
+    const within = (minute, days) => Number.isFinite(minute) && now >= minute && now - minute <= days * MIN_PER_DAY;
+    const lastEvent = (pred, days) => {
+      let best = null;
+      for (const e of events) if (e && pred(e) && within(e.minute, days) && (!best || e.minute > best.minute)) best = e;
+      return best;
+    };
+    const lastLog = (pred, days) => log.find(e => e && pred(e) && within(e.minute, days)) || null;
+    const today = _dateOfMinute(now);
+    c.today = today;
+
+    // Their trade, whatever the hour, and when they work it.
+    const JM = window.NPCSim?.JobManager;
+    let job = null;
+    try {
+      job = (profile.currentJobId > 0 && Array.isArray(window.WorkSystem?.Jobs))
+        ? window.WorkSystem.Jobs.find(j => j && j.id === profile.currentJobId) || null : null;
+    } catch (_) { job = null; }
+    const openSeg = Array.isArray(rec?.careerHistory) ? rec.careerHistory.find(s => s && s.toYear == null) : null;
+    const jobName = job?.name ? _tr(job.name) : (openSeg?.jobName ? _tr(openSeg.jobName) : null);
+    c.retired = adult && rec?.employment === 'retired'; // i18n-ignore: employment state id
+    c.employed = adult && !c.retired && !c.leave && !!jobName && profile.currentJobId !== 0;
+    if (c.employed) {
+      p.job = p.job || jobName;
+      c.jobObj = job;
+      // The workplace by name only when it is the map in hand: naming any
+      // other would mean reading its map file in the middle of a chat.
+      try {
+        const gm = typeof $gameMap !== 'undefined' ? $gameMap : null;
+        p.workplace = (profile.workMapId && gm?.mapId?.() === profile.workMapId) ? (gm.displayName?.() || null) : null;
+      } catch (_) { p.workplace = null; }
+      const shift = Number(profile.workShift);
+      if (Number.isFinite(shift) && shift >= 0 && shift <= 2) {
+        c.shift = shift;
+        c.nightShift = shift === 0;
+        const start = shift * 8;
+        const sinceStart = ((today.hour - start) + 24) % 24;
+        c.workSoon = sinceStart >= 24 - WORK_SOON_HOURS || sinceStart < 8;
+      }
+      // Whether they love the trade or hate it is theirs to keep: a stable
+      // roll on the name and the job, a third each way and a third shrugging.
+      const taste = _hashOf(name + '|' + jobName) % 3;
+      c.workTaste = taste === 0 ? 'love' : taste === 1 ? 'hate' : null; // i18n-ignore: taste ids
+    }
+    const newJob = lastEvent(e => e.key === 'NPCLife.event.changedJob' || e.key === 'NPCLife.event.foundWork', NEW_JOB_DAYS);
+    if (newJob && adult && !c.retired) {
+      c.newJob = true;
+      p.job = p.job || _tr(newJob.params?.job) || null;
+    }
+
+    // Home: none at all, a new one and why, and how they feel about it.
+    c.homeless = adult && !!(profile.isHomeless || profile._sleepsRough);
+    const hist = Array.isArray(rec?.locationHistory) ? rec.locationHistory : [];
+    const stay = hist.length ? hist[hist.length - 1] : null;
+    if (c.newcomer && stay && MOVE_REASON_POOL[stay.reason] && lastEvent(e => e.key === 'NPCLife.event.moved', MOVED_DAYS)) {
+      c.moveReason = MOVE_REASON_POOL[stay.reason];
+    }
+    const hb = profile.homeBuilding;
+    if (adult && !c.homeless && hb && !hb._placeholder) {
+      const tier = profile.wealthTierBase ?? 2;
+      if (tier >= 3) c.homePride = true;
+      else if (tier <= 1) c.homeWorry = true;
+    }
+
+    // Roots: where they were born, and whether they still live there.
+    const LSI = LS?._internal;
+    if (rec?.birthplace && adult) {
+      let born = null;
+      try { born = LSI?.placeLabel ? LSI.placeLabel(rec.birthplace) : String(rec.birthplace); } catch (_) { born = null; }
+      if (born) {
+        p.birthplace = born;
+        if (!c.refugee && rec.currentPlace && rec.currentPlace !== rec.birthplace) c.homesick = true;
+        else if (rec.currentPlace && rec.currentPlace === rec.birthplace) c.rootsLocal = true;
+      }
+    }
+
+    // Health: what they are ill with now, what they live with, what they got over.
+    const DS = window.DiseaseSystem;
+    if (DS) {
+      const nameOf = (id) => { try { return DS.displayName ? DS.displayName(id) : null; } catch (_) { return null; } };
+      let acute = null, chronic = null;
+      for (const e of (Array.isArray(profile.diseases) ? profile.diseases : [])) {
+        if (!e || e.id == null) continue;
+        let d = null;
+        try { d = DS.resolve ? DS.resolve(e) : null; } catch (_) { d = null; }
+        if (d && d.venereal) continue;
+        const isChronic = !!e.chronic || (d && (d.durationDays < 0 || d.durationDays >= 9999));
+        if (isChronic) { if (!chronic) chronic = e; }
+        else if (!(e.contact && !e.symptomatic) && !acute) acute = e;
+      }
+      if (!chronic) {
+        const conds = Array.isArray(profile.conditions) ? profile.conditions : [];
+        chronic = conds.find(e => e && e.id != null) || null;
+      }
+      if (acute) { c.ill = true; p.illness = nameOf(acute.id) || null; }
+      if (chronic && adult) { c.chronic = true; p.condition = nameOf(chronic.id) || null; }
+      const fell = lastEvent(e => /^NPCLife\.event\.fellIll/.test(e.key || ''), RECOVERED_DAYS);
+      if (fell && !c.ill) { c.recovered = true; p.illness = p.illness || fell.params?.illness || null; }
+    }
+
+    // Implants and prosthetics: a new one, or one they have lived with.
+    const Impl = window.NPCSim?.Implants;
+    const fitted = lastEvent(e => e.key === 'NPCLife.event.gotImplant' || e.key === 'NPCLife.event.gotProsthetic', IMPLANT_NEW_DAYS);
+    const label = (id) => { try { return Impl?.label ? Impl.label(id) : null; } catch (_) { return null; } };
+    const partOf = (part) => { try { return Impl?.partLabel ? Impl.partLabel(part, profile) : null; } catch (_) { return null; } };
+    if (fitted && adult) {
+      c.newImplant = true;
+      p.augment = label(fitted.params?.augment) || null;
+      p.bodyPart = partOf(fitted.params?.bodyPart) || null;
+    } else if (adult && Array.isArray(profile.implants) && profile.implants.length) {
+      // Only an augment that does something is worth a word: never one of
+      // the catalogue's inert organ replacements.
+      const types = (() => { try { return Impl?.types ? Impl.types() : null; } catch (_) { return null; } })();
+      const imp = profile.implants.find(i => i && i.augmentId &&
+        (!types || !Impl?.worthwhile || Impl.worthwhile(types[i.augmentId])));
+      if (imp) { c.hasImplant = true; p.augment = label(imp.augmentId) || null; p.bodyPart = partOf(imp.part) || null; }
+    }
+
+    // Growing in skill: a level gained in the last day.
+    const lvl = lastLog(e => e.tag === 'levelup', 1);
+    if (lvl) { c.levelUp = true; p.level = String(lvl.params?.level ?? profile.level ?? ''); }
+
+    // An adventuring band: about to set out, out now, or just home.
+    const Bands = LS?.Bands;
+    let band = null;
+    try { band = Bands?.bandOf ? Bands.bandOf(name) : null; } catch (_) { band = null; }
+    if (band && adult) {
+      const since = Number(band.since), until = Number(band.until);
+      if (Number.isFinite(since) && now < since && since - now <= BAND_SOON_DAYS * MIN_PER_DAY) c.bandSoon = true;
+      else if (Number.isFinite(since) && now >= since && now < until) c.bandAway = true;
+      if (c.bandSoon || c.bandAway) {
+        p.expedition = _label('expedition', band.kind);
+        p.bandmate = band.leader && band.leader !== name ? band.leader
+          : ((band.members || []).find(m => m && m !== name) || null);
+      }
+    }
+    const back = adult ? lastEvent(e => /^NPCLife\.event\.bandBack\./.test(e.key || ''), BAND_BACK_DAYS) : null;
+    if (back && !c.bandAway && !c.bandSoon) {
+      const parts = String(back.key).split('.');
+      c.bandBack = parts[3] || 'plain'; // i18n-ignore: band outcome id
+      p.expedition = _label('expedition', parts[4]);
+    }
+
+    // Birthdays: their own, one coming, and a close relative's today.
+    if (rec?.birthMonth && rec?.birthDay) {
+      const until = _daysUntilDate(today, rec.birthMonth, rec.birthDay);
+      if (until === 0) c.birthdayToday = true;
+      else if (until <= BIRTHDAY_SOON_DAYS) c.birthdaySoon = true;
+      // The age they are turning: the year the next birthday falls in.
+      const nextYear = new Date(Date.UTC(today.y, today.m - 1, today.d) + until * 86400000).getUTCFullYear();
+      if (Number.isFinite(rec.birthYear)) p.age = String(nextYear - rec.birthYear);
+    }
+    if (adult) {
+      for (const n of [...c.partners, ...c.children.child, ...c.children.adult, ...c.parents]) {
+        const r = recOf(n);
+        if (r?.birthMonth && r?.birthDay && _daysUntilDate(today, r.birthMonth, r.birthDay) === 0) {
+          c.kinBirthday = true; p.relative = n; break;
+        }
+      }
+    }
+
+    // Days off: a public holiday today or soon, and the weekend.
+    const PH = window.PublicHolidays;
+    if (PH?.forCountry && c.country) {
+      try {
+        const hol = PH.forCountry(c.country, today.day) || [];
+        if (hol.length) {
+          c.holidayToday = true;
+          p.holiday = PH.nameOf ? PH.nameOf(hol[0].id) : String(hol[0].id);
+        } else {
+          for (let k = 1; k <= HOLIDAY_SOON_DAYS; k++) {
+            const next = PH.forCountry(c.country, today.day + k) || [];
+            if (next.length) { c.holidaySoon = true; p.holiday = PH.nameOf ? PH.nameOf(next[0].id) : String(next[0].id); break; }
+          }
+        }
+      } catch (_) {}
+    }
+    if (c.holidayToday && c.employed) {
+      try { c.holidayShift = !!JM?.worksHolidays?.(c.jobObj); } catch (_) { c.holidayShift = false; }
+    }
+    if (adult && !c.holidayToday && (today.weekday === 0 || today.weekday === 6)) {
+      let weekdayOnly = true;
+      try { weekdayOnly = c.employed && c.jobObj && JM?.isWeekdayOnly ? !!JM.isWeekdayOnly(c.jobObj) : true; } catch (_) { weekdayOnly = true; }
+      if (c.employed && !weekdayOnly) c.weekendWork = true;
+      else c.weekendOff = true;
+    }
+
+    // Money: the market, the bank, a rent cheque, a treat, saving up.
+    if (adult) {
+      const inv = lastLog(e => e.tag === 'investing', MONEY_LOG_DAYS);
+      if (inv) {
+        const k = String(inv.key || '');
+        if (/stocksGain/.test(k)) c.stocksWon = true;
+        else if (/stocksLoss/.test(k)) c.stocksLost = true;
+        else if (/stocksBought/.test(k)) { c.stocksBought = true; p.company = inv.params?.company || null; }
+      }
+      const held = profile.shareholdings && typeof profile.shareholdings === 'object' ? Object.keys(profile.shareholdings) : [];
+      if (held.length) {
+        c.shareholder = true;
+        if (!p.company) { try { p.company = window.StockSociety?.nameOf ? window.StockSociety.nameOf(held[0]) : null; } catch (_) { p.company = null; } }
+      }
+      const bankLog = lastLog(e => e.tag === 'banking', MONEY_LOG_DAYS);
+      if (bankLog) {
+        if (/tookLoan/.test(bankLog.key || '')) c.loan = true;
+        else if (/deposited/.test(bankLog.key || '')) c.saved = true;
+      }
+      if (lastLog(e => e.tag === 'realty', MONEY_LOG_DAYS)) c.rentIncome = true;
+      const bought = lastLog(e => e.tag === 'shopping' && /bought$/.test(e.key || '') && e.params?.item, 1);
+      if (bought) { c.bought = true; p.purchase = _tr(bought.params.item); }
+      const tier = profile.wealthTierBase ?? 2;
+      if (c.employed && tier >= 1 && tier <= 2) c.saving = true;
+    }
+
+    // Prison: just out, or a record they are trying to live down.
+    const released = lastEvent(e => e.key === 'NPCLife.event.releasedFromPrison' || e.key === 'NPCLife.event.servedAndReleased', RELEASED_DAYS);
+    if (released && adult && rec?.inPrisonUntilMinute == null) c.released = true;
+    else if (adult && !c.wanted && Array.isArray(rec?.criminalRecord) && rec.criminalRecord.some(e => e && e.convicted)) c.reformed = true;
+
+    // What they get about on. Read only once the sim has dealt their ride:
+    // asking before that would deal it, and this context only reads.
+    const Veh = window.NPCSim?.Vehicles;
+    if (adult && Veh?.vehicleOf && profile._vehV != null) {
+      try { c.vehicle = Veh.vehicleOf(profile, name) || null; } catch (_) { c.vehicle = null; }
+      if (c.vehicle) p.vehicle = _label('vehicle', c.vehicle);
+    }
+
+    // Friends and rivals: the people they know best, by opinion.
+    if (adult && profile.relationships && typeof profile.relationships === 'object') {
+      const kinNames = new Set([...c.partners, ...Object.keys(rec?.kin || {})]);
+      let best = null, worst = null;
+      for (const [n, r] of Object.entries(profile.relationships)) {
+        if (!r || kinNames.has(n) || n === name || (r.meetCount ?? 0) < FRIEND_MIN_MEETS) continue;
+        if (recOf(n)?.dead) continue;
+        const op = Number(r.opinion) || 0;
+        if (op >= FRIEND_MIN_OPINION && (!best || op > best.op)) best = { n, op };
+        if (op <= RIVAL_MAX_OPINION && (!worst || op < worst.op)) worst = { n, op };
+      }
+      if (best) { c.friend = true; p.friend = best.n; }
+      if (worst) { c.foe = true; p.foe = worst.n; }
+    }
+
+    // Kin: a parent or a child lost this year, and grandchildren.
+    if (adult) {
+      for (const [n, rel] of Object.entries(rec?.kin || {})) {
+        const r = recOf(n);
+        if (rel === 'grandparent' && !r?.dead && !p.grandchild) { c.grandkids = true; p.grandchild = n; }
+        if (!r?.dead || !within(Number(r.dead.minute), GRIEF_DAYS)) continue;
+        // kin[n] is what THIS person is to n: 'child' means n was their parent.
+        if (rel === 'child' && !c.lostParent) { c.lostParent = true; p.lostParent = n; }
+        else if (rel === 'parent' && !c.lostChild) { c.lostChild = true; p.lostChild = n; }
+      }
+    }
+  }
+
   // --- One person's context -----------------------------------------------
   const LifeContext = {
     _cache: new Map(),
@@ -228,8 +546,10 @@
       p.partner2 = c.partners[1] || null;
 
       // Kin: kin[n] is what THIS person is to n ("parent" = n is my child).
+      // The dead are mourned (_readLife), not visited: they are left out here.
       const kin = rec?.kin || {};
       for (const [n, rel] of Object.entries(kin)) {
+        if (recOf(n)?.dead) continue;
         if (rel === 'parent') c.children[stageOf(n)]?.push(n);
         else if (rel === 'child') c.parents.push(n);
         else if (rel === 'sibling') c.siblings.push(n);
@@ -366,6 +686,7 @@
         if (c.underHorde) push += 2.5;
         c.emigrate = push;
       }
+      _readLife(c, { name, profile, rec, now, LS, recOf, events, log, stage, opts });
       return c;
     },
 
@@ -454,6 +775,61 @@
     { key: 'electionWeek',        frame: 'elections', w: c => _adult(c) && c.election && c.election.daysTo >= 1 && c.election.daysTo <= 7 ? c.election.weight : 0 },
     { key: 'electionSoon',        frame: 'elections', w: c => _adult(c) && c.election && c.election.daysTo > 7 && c.election.daysTo <= 30 ? c.election.weight : 0 },
     { key: 'electionResult',      frame: 'elections', w: c => _adult(c) && c.election && c.election.daysSince != null && c.election.daysSince <= 7 && c.election.winner && !(c.election.daysTo <= 7) ? 4 : 0 },
+    // The rest of a life (_readLife). Standing facts (a trade they love, a
+    // bike, a friend) weigh little, so they colour a day rather than fill it;
+    // fresh news (a new job, a birthday, home from the Tower) weighs a lot.
+    { key: 'workGoing',           frame: 'work',      w: c => c.employed && c.workSoon && !c.holidayToday ? 1.5 : 0 },
+    { key: 'workNight',           frame: 'work',      w: c => c.employed && c.nightShift ? 0.5 : 0 },
+    { key: 'workLoves',           frame: 'work',      w: c => c.employed && c.workTaste === 'love' ? 0.5 : 0 }, // i18n-ignore: taste id
+    { key: 'workHates',           frame: 'work',      w: c => c.employed && c.workTaste === 'hate' ? 0.5 : 0 }, // i18n-ignore: taste id
+    { key: 'workNewJob',          frame: 'work',      w: c => c.newJob && !c.unemployed ? 3 : 0 },
+    { key: 'workRetired',         frame: 'work',      w: c => c.retired ? 1.2 : 0 },
+    { key: 'workHoliday',         frame: 'work',      w: c => c.holidayShift ? 3 : 0 },
+    { key: 'homeHomeless',        frame: 'money',     w: c => c.homeless ? 3 : 0 },
+    { key: 'homeMovedWork',       frame: 'work',      w: c => c.moveReason === 'Work' ? 2 : 0 },    // i18n-ignore: move pool id
+    { key: 'homeMovedLove',       frame: 'family',    w: c => c.moveReason === 'Love' ? 2 : 0 },    // i18n-ignore: move pool id
+    { key: 'homeMovedTrouble',    frame: null,        w: c => c.moveReason === 'Trouble' ? 2 : 0 }, // i18n-ignore: move pool id
+    { key: 'homeMovedFresh',      frame: null,        w: c => c.moveReason === 'Fresh' ? 2 : 0 },   // i18n-ignore: move pool id
+    { key: 'homePride',           frame: 'money',     w: c => c.homePride ? 0.4 : 0 },
+    { key: 'homeWorry',           frame: 'money',     w: c => c.homeWorry ? 0.5 : 0 },
+    { key: 'rootsHomesick',       frame: null,        w: c => c.homesick ? 0.5 : 0 },
+    { key: 'rootsLocal',          frame: null,        w: c => c.rootsLocal ? 0.3 : 0 },
+    { key: 'healthIll',           frame: null,        w: c => c.ill && c.leave !== 'sick' ? 3 : 0 }, // i18n-ignore: leave kind id
+    { key: 'healthChronic',       frame: null,        w: c => c.chronic ? 0.7 : 0 },
+    { key: 'healthRecovered',     frame: null,        w: c => c.recovered ? 2.5 : 0 },
+    { key: 'implantNew',          frame: null,        w: c => c.newImplant ? 3 : 0 },
+    { key: 'implantProud',        frame: null,        w: c => c.hasImplant ? 0.4 : 0 },
+    { key: 'levelUp',             frame: 'work',      w: c => c.levelUp ? 2.5 : 0 },
+    { key: 'bandSoon',            frame: null,        w: c => c.bandSoon ? 4 : 0 },
+    { key: 'bandAway',            frame: null,        w: c => c.bandAway ? 3 : 0 },
+    { key: 'bandBack',            frame: null,        w: c => c.bandBack === 'plain' ? 4 : 0 }, // i18n-ignore: band outcome ids
+    { key: 'bandBackHurt',        frame: null,        w: c => c.bandBack === 'hurt' ? 4 : 0 },
+    { key: 'bandBackRich',        frame: 'money',     w: c => c.bandBack === 'rich' ? 4 : 0 },
+    { key: 'birthdayToday',       frame: null,        w: c => _adult(c) && c.birthdayToday ? 8 : 0 },
+    { key: 'birthdaySoon',        frame: null,        w: c => _adult(c) && c.birthdaySoon ? 1.5 : 0 },
+    { key: 'birthdayKin',         frame: 'family',    w: c => c.kinBirthday && !c.birthdayToday ? 3 : 0 },
+    { key: 'holidayToday',        frame: null,        w: c => _adult(c) && c.holidayToday && !c.holidayShift ? 3 : 0 },
+    { key: 'holidaySoon',         frame: null,        w: c => _adult(c) && c.holidaySoon ? 1.2 : 0 },
+    { key: 'weekendOff',          frame: null,        w: c => c.weekendOff ? 0.6 : 0 },
+    { key: 'weekendWork',         frame: 'work',      w: c => c.weekendWork ? 0.6 : 0 },
+    { key: 'moneyStocksWon',      frame: 'money',     w: c => c.stocksWon ? 3 : 0 },
+    { key: 'moneyStocksLost',     frame: 'money',     w: c => c.stocksLost ? 3 : 0 },
+    { key: 'moneyShares',         frame: 'money',     w: c => c.stocksBought ? 2 : (c.shareholder ? 0.4 : 0) },
+    { key: 'moneyLoan',           frame: 'money',     w: c => c.loan ? 2.5 : 0 },
+    { key: 'moneySaved',          frame: 'money',     w: c => c.saved ? 1.5 : 0 },
+    { key: 'moneyRent',           frame: 'money',     w: c => c.rentIncome ? 2 : 0 },
+    { key: 'moneySaving',         frame: 'money',     w: c => c.saving ? 0.3 : 0 },
+    { key: 'moneyBought',         frame: 'money',     w: c => c.bought ? 1.5 : 0 },
+    { key: 'crimeReleased',       frame: null,        w: c => c.released ? 3 : 0 },
+    { key: 'crimeReformed',       frame: null,        w: c => c.reformed ? 0.3 : 0 },
+    { key: 'vehicleBike',         frame: null,        w: c => c.vehicle === 'bike' ? 0.3 : 0 },  // i18n-ignore: vehicle ids
+    { key: 'vehicleBroom',        frame: null,        w: c => c.vehicle === 'broom' ? 0.3 : 0 },
+    { key: 'vehicleCar',          frame: 'money',     w: c => c.vehicle === 'car' ? 0.3 : 0 },
+    { key: 'friendBest',          frame: null,        w: c => c.friend ? 0.5 : 0 },
+    { key: 'friendRival',         frame: null,        w: c => c.foe ? 0.5 : 0 },
+    { key: 'familyLostParent',    frame: 'family',    w: c => c.lostParent ? 2.5 : 0, map: { lost: 'lostParent' } },
+    { key: 'familyLostChild',     frame: 'family',    w: c => c.lostChild ? 3 : 0, map: { lost: 'lostChild' } },
+    { key: 'familyGrandchildren', frame: 'family',    w: c => c.grandkids ? 0.6 : 0 },
   ];
 
   // Face-to-face scripts one of the two can open about their own life (the
@@ -489,6 +865,30 @@
     { key: 'topicSick',          tone: 'positive', frame: 'work',      w: c => c.leave === 'sick' ? 2.5 : 0 }, // i18n-ignore: leave kind id
     { key: 'topicParentalLeave', tone: 'positive', frame: 'family',    w: c => c.leave === 'parental' ? 2.5 : 0 }, // i18n-ignore: leave kind id
     { key: 'topicConversion',    tone: 'neutral',  frame: 'politics',  w: c => _adult(c) && c.doubting ? 1.5 : 0 },
+    { key: 'talkJob',            tone: 'neutral',  frame: 'work',      w: c => c.employed ? 0.6 : 0 },
+    { key: 'talkNewJob',         tone: 'positive', frame: 'work',      w: c => c.newJob && !c.unemployed ? 2.5 : 0 },
+    { key: 'talkRetired',        tone: 'positive', frame: 'work',      w: c => c.retired ? 1 : 0 },
+    { key: 'talkHomeless',       tone: 'neutral',  frame: 'money',     w: c => c.homeless ? 2 : 0 },
+    { key: 'talkHomesick',       tone: 'neutral',  frame: null,        w: c => c.homesick ? 0.5 : 0 },
+    { key: 'talkIll',            tone: 'neutral',  frame: null,        w: c => c.ill && c.leave !== 'sick' ? 2 : 0 }, // i18n-ignore: leave kind id
+    { key: 'talkRecovered',      tone: 'positive', frame: null,        w: c => c.recovered ? 2 : 0 },
+    { key: 'talkChronic',        tone: 'neutral',  frame: null,        w: c => c.chronic ? 0.5 : 0 },
+    { key: 'talkImplant',        tone: 'neutral',  frame: null,        w: c => c.newImplant ? 2.5 : (c.hasImplant ? 0.3 : 0) },
+    { key: 'talkLevelUp',        tone: 'positive', frame: 'work',      w: c => c.levelUp ? 2 : 0 },
+    { key: 'talkBandSoon',       tone: 'neutral',  frame: null,        w: c => c.bandSoon ? 3 : 0 },
+    { key: 'talkBandBack',       tone: 'positive', frame: null,        w: c => c.bandBack ? 3 : 0 },
+    { key: 'talkBirthday',       tone: 'positive', frame: null,        w: c => _adult(c) && c.birthdayToday ? 6 : 0 },
+    { key: 'talkHoliday',        tone: 'positive', frame: null,        w: c => _adult(c) && (c.holidayToday || c.holidaySoon) ? 1.5 : 0 },
+    { key: 'talkWeekend',        tone: 'positive', frame: null,        w: c => c.weekendOff || c.weekendWork ? 0.5 : 0 },
+    { key: 'talkStocks',         tone: 'neutral',  frame: 'money',     w: c => c.stocksWon || c.stocksLost || c.stocksBought ? 2 : 0 },
+    { key: 'talkLoan',           tone: 'neutral',  frame: 'money',     w: c => c.loan ? 2 : 0 },
+    { key: 'talkReleased',       tone: 'neutral',  frame: null,        w: c => c.released ? 2.5 : 0 },
+    { key: 'talkVehicle',        tone: 'positive', frame: null,        w: c => c.vehicle ? 0.3 : 0 },
+    { key: 'talkFriend',         tone: 'positive', frame: null,        w: c => c.friend ? 0.4 : 0 },
+    { key: 'talkRival',          tone: 'neutral',  frame: null,        w: c => c.foe ? 0.4 : 0 },
+    { key: 'talkGriefParent',    tone: 'neutral',  frame: 'family',    w: c => c.lostParent ? 2 : 0, map: { lost: 'lostParent' } },
+    { key: 'talkGriefChild',     tone: 'neutral',  frame: 'family',    w: c => c.lostChild ? 2.5 : 0, map: { lost: 'lostChild' } },
+    { key: 'talkGrandchildren',  tone: 'positive', frame: 'family',    w: c => c.grandkids ? 0.5 : 0 },
   ];
 
   // The tone of each family exchange (between two relatives).
@@ -498,6 +898,15 @@
     kinParentChildScold: 'negative', kinParentAdultChild: 'neutral', kinSiblings: 'neutral',
     kinSiblingsSpat: 'negative', kinNewborn: 'positive', kidStranger: 'neutral', kidPlay: 'positive',
   };
+
+  // The creed frame a non-family mention to the party takes (familyMention);
+  // anything not listed is family talk.
+  const MENTION_FRAME = { // i18n-ignore-start: mention keys and frame ids
+    job: 'work', newJob: 'work', retired: 'work', levelUp: 'work', homeless: 'money', stocks: 'money',
+    homesick: 'flavour', ill: 'flavour', chronic: 'flavour', recovered: 'flavour', implant: 'flavour',
+    bandSoon: 'flavour', bandBack: 'flavour', birthday: 'flavour', holiday: 'flavour', released: 'flavour',
+    vehicle: 'flavour', friend: 'flavour',
+  }; // i18n-ignore-end
 
   const LIFE_THOUGHT_CAP   = 0.6;   // most a life topic can crowd out everything else
   const LIFE_THOUGHT_SCALE = 0.07;  // chance per unit of topic weight
@@ -796,6 +1205,16 @@
         if (c.unemployed) opts.push({ key: 'work', weight: 1.5 });
         if (c.hordeNear || c.underHorde || c.refugee || c.integrated) opts.push({ key: 'horde', weight: 2 });
         if ((c.emigrate ?? 0) >= 2) opts.push({ key: 'emigrate', weight: 1.5 });
+        if (c.employed) opts.push({ key: 'job', weight: c.workSoon || c.newJob ? 1.5 : 0.6 });
+        if (c.homeless) opts.push({ key: 'home', weight: 1.5 });
+        if (c.ill || c.recovered || c.newImplant) opts.push({ key: 'health', weight: 1.5 });
+        if (c.bandSoon || c.bandBack) opts.push({ key: 'band', weight: 2 });
+        if (c.birthdayToday) opts.push({ key: 'birthday', weight: 4 });
+        if (c.holidayToday || c.holidaySoon) opts.push({ key: 'holiday', weight: 1.5 });
+        else if (c.weekendOff || c.weekendWork) opts.push({ key: 'weekend', weight: 0.6 });
+        if (c.stocksWon || c.stocksLost || c.loan || c.rentIncome || c.bought) opts.push({ key: 'money', weight: 1.2 });
+        if (c.friend) opts.push({ key: 'friends', weight: 0.4 });
+        if (c.vehicle) opts.push({ key: 'vehicle', weight: 0.3 });
       }
       if (!opts.length || Math.random() >= LIFE_AMBIENT_CHANCE) return null;
       const pick = _weighted(opts);
@@ -815,8 +1234,9 @@
       return vary(String(_pickFrom(pool)).replace(/\{name\}/g, otherName), pers);
     },
 
-    // What an NPC tells the PARTY about their own family, from the real names
-    // in their life record; null when there is no family to speak of.
+    // What an NPC tells the PARTY about their own life: their family by the
+    // real names in their life record first, then their trade, home, health,
+    // plans and friends; null when there is nothing in their life to tell.
     familyMention(npcName, profile) {
       profile = profile || _getProfile(npcName);
       if (!profile || _isNonSentientProfile(profile)) return null;
@@ -839,6 +1259,27 @@
       add('adultChild', c.children.adult.length ? 1 : 0, { child: 'childAdult' });
       add('parents', c.parents.length ? 1 : 0);
       add('siblings', c.siblings.length ? 1 : 0);
+      add('grief', c.lostChild ? 3 : (c.lostParent ? 2.5 : 0), { lost: c.lostChild ? 'lostChild' : 'lostParent' });
+      add('grandchildren', c.grandkids ? 1 : 0);
+      // The rest of their life, a little less often than the family.
+      add('job', c.employed ? 0.8 : 0);
+      add('newJob', c.newJob && !c.unemployed ? 3 : 0);
+      add('retired', c.retired ? 1 : 0);
+      add('homeless', c.homeless ? 2 : 0);
+      add('homesick', c.homesick ? 0.6 : 0);
+      add('ill', c.ill ? 2.5 : 0);
+      add('chronic', c.chronic ? 0.5 : 0);
+      add('recovered', c.recovered ? 2 : 0);
+      add('implant', c.newImplant ? 2.5 : (c.hasImplant ? 0.3 : 0));
+      add('levelUp', c.levelUp ? 2 : 0);
+      add('bandSoon', c.bandSoon ? 3 : 0);
+      add('bandBack', c.bandBack ? 3 : 0);
+      add('birthday', c.birthdayToday ? 5 : 0);
+      add('holiday', c.holidayToday || c.holidaySoon ? 1.5 : 0);
+      add('stocks', c.stocksWon || c.stocksLost || c.stocksBought ? 2 : 0);
+      add('released', c.released ? 2 : 0);
+      add('vehicle', c.vehicle ? 0.3 : 0);
+      add('friend', c.friend ? 0.5 : 0);
       const pick = _weighted(opts);
       if (!pick) return null;
       const pool = LIFE_MENTIONS()[pick.key];
@@ -846,7 +1287,7 @@
       const persName = _personalityNameOf(profile);
       const params = Object.assign({}, c.params, { years: c.params.years || (c.togetherYears != null ? String(Math.max(1, c.togetherYears)) : null) });
       const line = applyVoice(_lifeFill(_pickFrom(pool), params, pick.map), persName, VOICE_CHANCE_DIALOGUE);
-      return CreedVoice.decorate(line, profile, 'family', CREED_CHANCE_MENTION, params, npcName);
+      return CreedVoice.decorate(line, profile, MENTION_FRAME[pick.key] || 'family', CREED_CHANCE_MENTION, params, npcName);
     },
   };
 

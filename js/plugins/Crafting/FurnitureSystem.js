@@ -376,6 +376,16 @@
     // per-piece x/y (proc-map coordinates) are already stored on each placement.
     function furnitureMapKey() {
         const mapId = (typeof $gameMap !== 'undefined' && $gameMap) ? $gameMap.mapId() : 0;
+        // A house interior is a template every building drawn from it shares:
+        // what is built in one house stays in that house and floor
+        // (ProceduralHouseSystem.houseInstanceKey), never in its neighbours.
+        const P = window.ProceduralHouseSystem;
+        if (P && typeof P.houseInstanceKey === 'function') {
+            try {
+                const house = P.houseInstanceKey(mapId);
+                if (house) return 'house:' + house; // i18n-ignore: furniture store key
+            } catch (e) { /* fall through to the map's own key */ }
+        }
         const provider = window.FurnitureSystem && window.FurnitureSystem.mapKeyProvider;
         if (provider) {
             try {

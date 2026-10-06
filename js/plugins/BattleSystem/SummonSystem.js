@@ -497,6 +497,18 @@ Game_SummonFollower.prototype.isVisible = function () {
     return !!this.sprite() && $gamePlayer.followers().isVisible();
 };
 
+// The sheet is only re-read on refresh, so a ride starting or ending has to
+// ask for one, or a familiar being sat on would keep trailing the party as a
+// second copy of itself until the next map.
+Game_SummonFollower.prototype.update = function () {
+    Game_Follower.prototype.update.call(this);
+    const shown = this.isVisible();
+    if (shown !== this._summonShown) {
+        this._summonShown = shown;
+        this.refresh();
+    }
+};
+
 Game_SummonFollower.prototype.refresh = function () {
     const look = this.isVisible() ? this.sprite() : null;
     this.setImage(look ? look.characterName : '', look ? (look.characterIndex || 0) : 0);

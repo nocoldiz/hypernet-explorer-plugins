@@ -180,5 +180,12 @@
   "release": "Remove Claim",
   "released": "You gave up your claim on {name}.",
   "charge": "Squatting"
+ },
+ "hologram": {
+   "check": "Check",
+   "projected": "Hologram projected to {name}.",
+   "outOfRange": "Hologram out of range",
+   "terminate": "Terminate hologram",
+   "cancel": "Cancel"
  }
 }

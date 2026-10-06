@@ -2113,6 +2113,8 @@
   // is played rather than read.
   const TILL_APP_ID = 'app-tillbook';
   const TILL_ICON = 230; // Brown Book, per js/db/Sprites/Icons.json
+  const TILL_WP_PREFIX = 'wp:';  // i18n-ignore: nav key of a workplace deed
+  const TILL_SHIFT_HOURS = 8;    // a JobShiftManager shift, NPCSimulationCore SHIFT_HOURS
 
   const TB = {
     app: "display:flex; flex-direction:column; height:100%; background:var(--xp-face-5); " +
@@ -2226,34 +2228,63 @@
       try { return ownedShops(); } catch (e) { console.warn('[Tillbook]', e); return []; }
     },
 
+    // The other kind of business: a workplace deed (RealEstateMarket.js,
+    // window.WorkplaceDeeds), bought off the floor the party stood on. It has
+    // no shelves and no till; the town's own staff work its shifts and the
+    // takings are paid out weekly. The page reads the deed's report and never
+    // settles it, so opening Tillbook pays out nothing early.
+    workplaces() {
+      const WD = window.WorkplaceDeeds;
+      if (!WD || typeof WD.list !== 'function' || typeof WD.report !== 'function') return [];
+      try { return WD.list().map(deed => WD.report(deed.mapId)).filter(Boolean); }
+      catch (e) { console.warn('[Tillbook]', e); return []; }
+    },
+
     render() {
       if (!this.win || !this.win.isConnected) return;
       const shops = this.shops();
+      const places = this.workplaces();
+      const onStyle = 'background:var(--xp-face-2); border-left-color:#6b5a8a; font-weight:bold;';
       const nav = this.win.querySelector('#tb-nav');
       if (nav) {
         const rows = [`<div class="focusable" tabindex="0" id="tb-shop-all" data-tb-shop="*"
-          style="${TB.navItem}${this.shopId == null ? 'background:var(--xp-face-2); border-left-color:#6b5a8a; font-weight:bold;' : ''}">
+          style="${TB.navItem}${this.shopId == null ? onStyle : ''}">
           ${T('ShopManagement.till.allShops')}</div>`];
         for (const shop of shops) {
           const on = this.shopId === String(shop.id);
           rows.push(`<div class="focusable" tabindex="0" id="tb-shop-${tbEsc(shop.id)}" data-tb-shop="${tbEsc(shop.id)}"
-            style="${TB.navItem}${on ? 'background:var(--xp-face-2); border-left-color:#6b5a8a; font-weight:bold;' : ''}">
+            style="${TB.navItem}${on ? onStyle : ''}">
             ${tbEsc(shopDisplayName(shop))}
             <div style="${TB.note}">${tbEsc(formatEuroPrice(shop.balance || 0))}</div></div>`);
+        }
+        if (places.length) {
+          rows.push(`<div style="${TB.tileLbl} padding:10px 12px 4px">${T('ShopManagement.till.workplaces')}</div>`);
+          for (const rep of places) {
+            const key = TILL_WP_PREFIX + rep.deed.mapId;
+            rows.push(`<div class="focusable" tabindex="0" id="tb-wp-${tbEsc(rep.deed.mapId)}" data-tb-shop="${tbEsc(key)}"
+              style="${TB.navItem}${this.shopId === key ? onStyle : ''}">
+              ${tbEsc(rep.deed.name)}
+              <div style="${TB.note}">${T('ShopManagement.till.perDayLine', { sum: formatEuroPrice(rep.today.profit) })}</div></div>`);
+          }
         }
         nav.innerHTML = rows.join('');
       }
       const panel = this.win.querySelector('#tb-panel');
       if (panel) {
-        const shop = this.shopId ? shops.find(s => String(s.id) === this.shopId) : null;
-        panel.innerHTML = shop ? this.shopHTML(shop) : this.summaryHTML(shops);
+        const id = this.shopId;
+        const place = id && id.startsWith(TILL_WP_PREFIX)
+          ? places.find(p => TILL_WP_PREFIX + p.deed.mapId === id) : null;
+        const shop = id && !place ? shops.find(s => String(s.id) === id) : null;
+        panel.innerHTML = place ? this.workplaceHTML(place)
+          : shop ? this.shopHTML(shop) : this.summaryHTML(shops, places);
       }
       const total = this.win.querySelector('#tb-total');
       if (total) {
         const sum = shops.reduce((n, s) => n + (Number(s.balance) || 0), 0);
+        const perDay = places.reduce((n, p) => n + p.today.profit, 0);
         total.textContent = shops.length
           ? T('ShopManagement.till.onTheBooks', { sum: formatEuroPrice(sum) })
-          : '';
+          : places.length ? T('ShopManagement.till.perDayLine', { sum: formatEuroPrice(perDay) }) : '';
       }
     },
 
@@ -2263,10 +2294,18 @@
         <div style="${TB.tileLbl}">${tbEsc(label)}</div></div>`;
     },
 
-    summaryHTML(shops) {
-      if (!shops.length) {
+    summaryHTML(shops, places) {
+      places = places || [];
+      if (!shops.length && !places.length) {
         return `<h2 style="${TB.h}">${T('ShopManagement.till.appName')}</h2>
           <div style="${TB.card} ${TB.note}">${T('ShopManagement.till.noShops')}</div>`;
+      }
+      if (!shops.length) {
+        return `<h2 style="${TB.h}">${T('ShopManagement.till.summaryTitle')}</h2>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px">
+            ${this.tile(String(places.length), T('ShopManagement.till.tileShops'))}
+          </div>
+          ${this.workplacesSummaryHTML(places)}`;
       }
       // The day's takings are read where they lie: calling for them would wipe
       // the running total the daily announcement is owed.
@@ -2292,7 +2331,7 @@
       return `
         <h2 style="${TB.h}">${T('ShopManagement.till.summaryTitle')}</h2>
         <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px">
-          ${this.tile(String(shops.length), T('ShopManagement.till.tileShops'))}
+          ${this.tile(String(shops.length + places.length), T('ShopManagement.till.tileShops'))}
           ${this.tile(formatEuroPrice(shops.reduce((n, s) => n + (Number(s.balance) || 0), 0)), T('ShopManagement.till.tileOnBooks'))}
           ${this.tile(formatEuroPrice(shops.reduce((n, s) => n + (Number(s.earnedToday) || 0), 0)), T('ShopManagement.till.tileToday'), '#2e7d32')}
           ${this.tile(String(shops.reduce((n, s) => n + (Number(s.soldToday) || 0), 0)), T('ShopManagement.till.tileSoldToday'))}
@@ -2310,7 +2349,110 @@
             <th style="${TB.th} text-align:right">${T('ShopManagement.till.colOnShelves')}</th>
             <th style="${TB.th} text-align:right">${T('ShopManagement.till.colCover')}</th>
           </tr></thead><tbody>${rows}</tbody></table></div>
-        <div style="${TB.note}">${T('ShopManagement.till.coverNote')}</div>`;
+        <div style="${TB.note}">${T('ShopManagement.till.coverNote')}</div>
+        ${places.length ? this.workplacesSummaryHTML(places) : ''}`;
+    },
+
+    // The workplace deeds as one table under the shops: who is on shift, what
+    // a day of it is worth and when the week is paid out.
+    workplacesSummaryHTML(places) {
+      const warnings = []
+        .concat(places.filter(p => p.today.shifts <= 0)
+          .map(p => T('ShopManagement.till.warnWpIdle', { shop: p.deed.name })))
+        .concat(places.filter(p => p.today.shifts > 0 && p.today.profit < 0)
+          .map(p => T('ShopManagement.till.warnWpLoss', { shop: p.deed.name })));
+      const rows = places.map(p => `<tr>
+          <td style="${TB.td}">${tbEsc(p.deed.name)}</td>
+          <td style="${TB.td}">${tbEsc(p.deed.place || '')}</td>
+          <td style="${TB.td} text-align:right; color:${p.today.shifts ? 'inherit' : '#c0392b'}">${p.today.shifts} / ${p.positions}</td>
+          <td style="${TB.td} text-align:right; color:${p.today.profit < 0 ? '#c0392b' : 'inherit'}">${tbEsc(formatEuroPrice(p.today.profit))}</td>
+          <td style="${TB.td} text-align:right">${p.nextPayout == null ? '-' : tbEsc(T('ShopManagement.till.inDays', { days: p.nextPayout }))}</td>
+        </tr>`).join('');
+      const perDay = places.reduce((n, p) => n + p.today.profit, 0);
+      return `
+        <h2 style="${TB.h} margin-top:14px">${T('ShopManagement.till.workplaces')}</h2>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px">
+          ${this.tile(formatEuroPrice(perDay), T('ShopManagement.till.tilePerDay'), perDay < 0 ? '#c0392b' : '#2e7d32')}
+          ${this.tile(formatEuroPrice(places.reduce((n, p) => n + ((p.deed.totals && p.deed.totals.profit) || 0), 0)), T('ShopManagement.till.tilePaidSoFar'))}
+        </div>
+        ${warnings.length ? `<div style="${TB.card}">
+          <b>${T('ShopManagement.till.attention')}</b>
+          ${warnings.map(w => `<div style="${TB.note}">${tbEsc(w)}</div>`).join('')}</div>` : ''}
+        <div style="${TB.card} padding:6px 8px"><table style="${TB.table}">
+          <thead><tr>
+            <th style="${TB.th}">${T('ShopManagement.till.colWorkplace')}</th>
+            <th style="${TB.th}">${T('ShopManagement.till.colPlace')}</th>
+            <th style="${TB.th} text-align:right">${T('ShopManagement.till.colStaffed')}</th>
+            <th style="${TB.th} text-align:right">${T('ShopManagement.till.colPerDay')}</th>
+            <th style="${TB.th} text-align:right">${T('ShopManagement.till.colPayout')}</th>
+          </tr></thead><tbody>${rows}</tbody></table></div>
+        <div style="${TB.note}">${T('ShopManagement.till.wpNote')}</div>`;
+    },
+
+    workplaceHTML(rep) {
+      const deed = rep.deed;
+      const today = rep.today;
+      const totals = deed.totals || { days: 0, profit: 0 };
+      const WD = window.WorkplaceDeeds;
+      const WS = window.WorkSystem;
+      const jobLabel = (jobId) => {
+        const job = WS && Array.isArray(WS.Jobs) ? WS.Jobs.find(j => j && j.id === jobId) : null;
+        return job && typeof WS.jobName === 'function' ? WS.jobName(job) : String(jobId);
+      };
+      let staff = [];
+      try { staff = WD && typeof WD.staffedShifts === 'function' ? WD.staffedShifts(deed.mapId) : []; }
+      catch (e) { console.warn('[Tillbook]', e); }
+      const hours = (shift) => {
+        const start = (Number(shift) || 0) * TILL_SHIFT_HOURS;
+        return `${String(start).padStart(2, '0')}:00 - ${String((start + TILL_SHIFT_HOURS) % 24).padStart(2, '0')}:00`;
+      };
+      const staffRows = staff.length
+        ? staff.slice().sort((a, b) => a.shift - b.shift).map(s => `<tr>
+            <td style="${TB.td}">${tbEsc(s.name)}</td>
+            <td style="${TB.td}">${tbEsc(jobLabel(s.jobId))}</td>
+            <td style="${TB.td}">${hours(s.shift)}</td>
+          </tr>`).join('')
+        : `<tr><td style="${TB.td} ${TB.note}" colspan="3">${T('ShopManagement.till.noStaff')}</td></tr>`;
+      const money = (label, value, bold) => `<tr>
+          <td style="${TB.td}${bold ? ' font-weight:bold' : ''}">${label}</td>
+          <td style="${TB.td} text-align:right; ${value < 0 ? 'color:#c0392b;' : ''}${bold ? ' font-weight:bold' : ''}">${tbEsc(formatEuroPrice(value))}</td>
+        </tr>`;
+      const history = Array.isArray(deed.history) ? deed.history : [];
+      const historyRows = history.length
+        ? history.map(h => money(tbEsc(T('ShopManagement.till.payoutLine', { days: h.days })), h.profit)).join('')
+        : `<tr><td style="${TB.td} ${TB.note}" colspan="2">${T('ShopManagement.till.noPayouts')}</td></tr>`;
+      return `
+        <h2 style="${TB.h}">${tbEsc(deed.name)}</h2>
+        ${deed.place ? `<div style="${TB.note} margin:-4px 0 10px">${tbEsc(deed.place)}</div>` : ''}
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px">
+          ${this.tile(formatEuroPrice(today.profit), T('ShopManagement.till.tilePerDay'), today.profit < 0 ? '#c0392b' : '#2e7d32')}
+          ${this.tile(`${today.shifts} / ${rep.positions}`, T('ShopManagement.till.colStaffed'), today.shifts ? undefined : '#c0392b')}
+          ${this.tile(rep.nextPayout == null ? '-' : T('ShopManagement.till.inDays', { days: rep.nextPayout }), T('ShopManagement.till.colPayout'))}
+          ${this.tile(formatEuroPrice(totals.profit || 0), T('ShopManagement.till.tilePaidSoFar'))}
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+          <div style="${TB.card} flex:1; min-width:230px; padding:6px 8px">
+            <b>${T('ShopManagement.till.wpDay')}</b>
+            <table style="${TB.table}"><tbody>
+              ${money(T('ShopManagement.till.wpRevenue'), today.revenue)}
+              ${money(T('ShopManagement.till.wpWages'), -today.wages)}
+              ${money(T('ShopManagement.till.wpProfit'), today.profit, true)}
+            </tbody></table>
+          </div>
+          <div style="${TB.card} flex:1; min-width:230px; padding:6px 8px">
+            <b>${T('ShopManagement.till.wpPayouts')}</b>
+            <table style="${TB.table}"><tbody>${historyRows}</tbody></table>
+          </div>
+        </div>
+        <div style="${TB.card} padding:6px 8px">
+          <b>${T('ShopManagement.till.wpOnShift')}</b>
+          <table style="${TB.table}"><tbody>${staffRows}</tbody></table>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px">
+          ${this.tile(formatEuroPrice(deed.price || 0), T('ShopManagement.till.wpBoughtFor'))}
+          ${this.tile(formatEuroPrice(rep.salePrice || 0), T('ShopManagement.till.wpSellsFor'))}
+        </div>
+        <div style="${TB.note}">${T('ShopManagement.till.wpNote')}</div>`;
     },
 
     shopHTML(shop) {

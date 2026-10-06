@@ -42,14 +42,7 @@
     equipRandomCompatibleWeapon,
     GLOBAL_STARTER_SKILLS,
   } = window.StartingEquipment || {};
-  const {
-    VAR_PLAYER1_GENDER,
-    VAR_PLAYER2_GENDER,
-    VAR_PLAYER3_GENDER,
-    VAR_PLAYER1_REPRODUCTIVE_TYPE,
-    VAR_PLAYER2_REPRODUCTIVE_TYPE,
-    VAR_PLAYER3_REPRODUCTIVE_TYPE,
-  } = window.CharacterCreationUtils || {};
+  const { applyGenderAndReproduction } = window.CharacterCreationUtils || {};
 
   // Written as a class body so the methods move onto the wizard exactly as
   // they were declared while they still lived inside it, accessors and all.
@@ -510,7 +503,7 @@
       // dropped here, which also returns the dossier to the world's pool.
       if (this._clearPresetLock) this._clearPresetLock(targetActor);
       $gameParty.removeActor(actorId);
-      $gameSwitches.setValue(77 + idx, false);
+      targetActor._isCreatureActor = false;
 
       if (Scene_CharacterCreation._currentPartyMemberIndex >= $gameParty.size()) {
         Scene_CharacterCreation._currentPartyMemberIndex = Math.max(0, $gameParty.size() - 1);
@@ -776,7 +769,7 @@
         }
 
         const mClassId = mActor._classId;
-        const mGenderVal = $gameVariables.value(38 + i);
+        const mGenderVal = mActor.gender ? mActor.gender() : 0;
         const name = mActor.name() || "";
         const traitNames = selectedTraitObjects(mActor)
           .map((tr) => resolveTraitName(tr.name, tr.id))
@@ -918,15 +911,14 @@
   // leaves the seat again the moment it is finished or dropped: it only joins
   // the party once it has been born and promoted (PetSystem.promoteDesigned).
   // ==========================================================================
-  const CREATURE_SWITCH_BASE = 77;   // 77 + seat index, as everywhere in the wizard
-
   function freeLabSeat() {
     const Pets = window.PetSystem;
     return (Pets && Pets.freeSlot) ? Pets.freeSlot() : 0;
   }
 
   function clearSeatExtras(actorId) {
-    if ($gameSwitches) $gameSwitches.setValue(CREATURE_SWITCH_BASE + actorId - 1, false);
+    const seated = $gameActors && $gameActors.actor(actorId);
+    if (seated) seated._isCreatureActor = false;
     const CC3D = window.CC3DModel;
     if (CC3D && CC3D.setConfig) CC3D.setConfig(actorId, null);
     if (CC3D && CC3D.setCreatureSeed) CC3D.setCreatureSeed(actorId, null);
@@ -941,7 +933,6 @@
     if ($gameParty && $gameParty._actors.includes(actorId)) $gameParty.removeActor(actorId);
     clearSeatExtras(actorId);
     if ($gameActors && $gameActors._data) $gameActors._data[actorId] = new Game_Actor(actorId);
-    if ($gameVariables && $gameParty) $gameVariables.setValue(29, $gameParty.members().length);
     if ($gamePlayer) $gamePlayer.refresh();
   }
 
@@ -1476,21 +1467,13 @@
 
     // Gender + matching reproduction type. Prefer the chosen sprite's gender so
     // identity matches the sprite the player sees, otherwise roll randomly.
-    const genderVars = [VAR_PLAYER1_GENDER, VAR_PLAYER2_GENDER, VAR_PLAYER3_GENDER];
-    const reproVars = [
-      VAR_PLAYER1_REPRODUCTIVE_TYPE,
-      VAR_PLAYER2_REPRODUCTIVE_TYPE,
-      VAR_PLAYER3_REPRODUCTIVE_TYPE,
-    ];
-    const genderVar = genderVars[memberIndex];
-    const reproVar = reproVars[memberIndex];
+    // Both are written on the actor (CharacterCreationShared).
     const gender =
       npcEntry && npcEntry.Gender != null ? npcEntry.Gender : Math.floor(Math.random() * 4);
-    if (genderVar) $gameVariables.setValue(genderVar, gender);
-    if (reproVar) {
-      const repro =
-        gender === 0 ? 0 : gender === 1 ? 1 : gender === 3 ? 4 : Math.floor(Math.random() * 5);
-      $gameVariables.setValue(reproVar, repro);
+    if (typeof applyGenderAndReproduction === "function") {
+      applyGenderAndReproduction(actor, gender);
+    } else if (actor.setGender) {
+      actor.setGender(gender);
     }
 
     // Random traits (param bonuses, skills, bonus gear into inventory).

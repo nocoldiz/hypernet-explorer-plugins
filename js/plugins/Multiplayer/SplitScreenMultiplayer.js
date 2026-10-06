@@ -817,13 +817,19 @@
 
             $gamePlayer.refresh();
             this.active = true;
-            // Re-apply P2 WASD bindings, MovementInteractionSystem may have mapped them to P1
-            Input.keyMapper[getKeyCode(P2_KEYS.up)]     = "p2_up";
-            Input.keyMapper[getKeyCode(P2_KEYS.down)]   = "p2_down";
-            Input.keyMapper[getKeyCode(P2_KEYS.left)]   = "p2_left";
-            Input.keyMapper[getKeyCode(P2_KEYS.right)]  = "p2_right";
-            Input.keyMapper[getKeyCode(P2_KEYS.action)] = "p2_action";
-            Input.keyMapper[getKeyCode(P2_KEYS.switch)] = "p2_switch";
+            // Re-apply P2 WASD bindings, MovementInteractionSystem may have mapped them to P1.
+            // What each key meant before is kept, so ending the session hands
+            // every one of them back: E is the world map's zoom and R the
+            // sleep hotkey outside a session, not only WASD.
+            // A session started over another one keeps the first snapshot.
+            const firstSnapshot = !this._p1KeyMap;
+            if (firstSnapshot) this._p1KeyMap = {};
+            for (const [key, symbol] of [["up", "p2_up"], ["down", "p2_down"], ["left", "p2_left"],
+                ["right", "p2_right"], ["action", "p2_action"], ["switch", "p2_switch"]]) {
+                const code = getKeyCode(P2_KEYS[key]);
+                if (firstSnapshot && !(code in this._p1KeyMap)) this._p1KeyMap[code] = Input.keyMapper[code];
+                Input.keyMapper[code] = symbol;
+            }
             $gameSwitches.setValue(67, true);
             this.resolveP2Character();
             if (typeof findOrCreateP2Event === 'function') findOrCreateP2Event(true);
@@ -836,7 +842,14 @@
 
         stopSession() {
             this.active = false;
-            // Restore P1 WASD now that split-screen is off
+            // Restore P1 WASD now that split-screen is off, and whatever else
+            // the session borrowed for Player 2 (startSession kept it).
+            const saved = this._p1KeyMap || {};
+            for (const code of Object.keys(saved)) {
+                if (saved[code] === undefined) delete Input.keyMapper[code];
+                else Input.keyMapper[code] = saved[code];
+            }
+            this._p1KeyMap = null;
             Input.keyMapper[87] = "up";
             Input.keyMapper[83] = "down";
             Input.keyMapper[65] = "left";

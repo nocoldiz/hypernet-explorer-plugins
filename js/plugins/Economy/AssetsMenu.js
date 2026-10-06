@@ -234,6 +234,7 @@
         assets.push({
           cat: T('Towns.deeds.sectionHouses'),
           kind: 'proceduralHouse',
+          house: h,
           name: `${h.mapName}${floorTxt}`,
           sub: `${T('Assets.ui.entrance')} X:${h.x} Y:${h.y}`,
           value: h.value,
@@ -259,6 +260,7 @@
         assets.push({
           cat: T('Towns.deeds.sectionHouses'),
           kind: 'residence',
+          residence: hh,
           name: hh.mapName || T('Assets.ui.residence'),
           sub: T('Assets.ui.npcHome', { name: hh.npcName }),
           value: hh.value || 0,
@@ -750,7 +752,7 @@
         </div>`;
 
       const quickCollectHTML = totals.totalRentDue > 0 ? `
-        <div class="assets-quick-collect focusable" tabindex="0" onclick="SceneManager._scene?.collectAllRent?.()">
+        <div class="assets-quick-collect focusable" data-pad="alt" tabindex="0" onclick="SceneManager._scene?.collectAllRent?.()">
           <span class="assets-badge--due">●</span>
           <span>${T('Assets.ui.collectAllRent', { amount: euro(totals.totalRentDue) })}</span>
         </div>` : '';
@@ -941,7 +943,17 @@
         width="128" height="104"></canvas>`;
     }
 
+    // Every deed that is a place the party can be projected to gets the
+    // Check button after its own buttons (HOLOGRAM CHECK below).
     assetButtons(asset) {
+      const btns = this.baseAssetButtons(asset);
+      if (hologramTarget(asset)) {
+        btns.push({ key: 'check', cls: '', label: T('Assets.hologram.check'), enabled: !hologramActive() });
+      }
+      return btns;
+    }
+
+    baseAssetButtons(asset) {
       if (!asset) return [];
       if (asset.kind === 'town') {
         return [
@@ -1103,6 +1115,10 @@
     runAssetAction(key) {
       const a = this._assets[this._selIndex];
       if (!a) return;
+      if (key === 'check') {
+        this.checkAsHologram(a);
+        return;
+      }
       if (key === 'collectTown') {
         this.collectTownRent();
         return;
@@ -1145,6 +1161,18 @@
         return;
       }
       if (a.diplomat && key === 'resign') this.resignPost(a.diplomat);
+    }
+
+    // The Check button: project the party to the deed and leave the book.
+    checkAsHologram(asset) {
+      const target = hologramTarget(asset);
+      if (!target || !startHologram(target)) {
+        if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer();
+        return;
+      }
+      if (typeof SoundManager !== 'undefined') SoundManager.playOk();
+      if (window.ParchmentToast) window.ParchmentToast.show(T('Assets.hologram.projected', { name: asset.name }), { severity: 'info' });
+      if (typeof Scene_Map !== 'undefined') SceneManager.goto(Scene_Map);
     }
 
     collectTownRent() {
@@ -1423,6 +1451,12 @@
         const tab = !handled && window.UINav ? UINav.tabDir() : 0;
         if (tab) { handled = this.stepCategory(tab); }
         if (!handled && Input.isTriggered('ok')) { handled = this.triggerAssetButton(); }
+        // X (Shift) collects every rent that is due: the summary's own button,
+        // which sits outside the rows the cursor walks.
+        if (!handled && Input.isTriggered('shift') && this._container.querySelector('.assets-quick-collect')) {
+          this.collectAllRent();
+          handled = true;
+        }
 
         const cancelTriggered = Input.isTriggered('cancel') || Input.isTriggered('escape') ||
           (typeof TouchInput !== 'undefined' && TouchInput.isCancelled());
@@ -1520,6 +1554,213 @@
     }
   }
 
+
+  // ===========================================================================
+  // HOLOGRAM CHECK
+  // ===========================================================================
+  // The Check button of a deed sends the party to that holding as a
+  // hologram: they are drawn half transparent, walk through walls and
+  // events, and cannot take any transfer while projected. Every transfer
+  // asked for in hologram form (a door, a map edge, a stair, an event) ends
+  // the projection instead and the party is put back where they stood,
+  // with "hologram out of range" on screen. Cancel / the menu button offers
+  // to terminate the hologram, as the pick menu offers to dismantle.
+  //
+  // The state is kept on $gameSystem so a save taken while projected still
+  // knows the way home.
+
+  const HOLOGRAM_OPACITY = 120;
+
+  function hologramState() {
+    if (typeof $gameSystem === 'undefined' || !$gameSystem) return null;
+    return $gameSystem._hologram || null;
+  }
+
+  function hologramActive() {
+    const st = hologramState();
+    return !!(st && st.active);
+  }
+
+  // Where a holding is, as a transfer: { mapId, x, y, worldX, worldY }.
+  // x and y may be null: the party then lands in the middle of the map.
+  // null when the row is not a place the party can be projected to.
+  function hologramTarget(asset) {
+    if (!asset) return null;
+    const W = window.WorldMapTransfer;
+    const procMap = W && typeof W.procMapId === 'function' ? W.procMapId() : null;
+    switch (asset.kind) {
+      case 'shop': {
+        const shop = asset.shop || {};
+        const mapId = Number(shop.mapId) || Number(shop.id) || 0;
+        return mapId > 0 ? { mapId, x: null, y: null } : null;
+      }
+      case 'proceduralHouse': {
+        const h = asset.house || {};
+        if (!h.mapId) return null;
+        const m = String(h.key || '').match(/^\d+:(-?\d+),(-?\d+)_/);
+        return {
+          mapId: h.mapId, x: h.x, y: h.y,
+          worldX: m ? Number(m[1]) : null, worldY: m ? Number(m[2]) : null,
+        };
+      }
+      case 'residence': {
+        const hh = asset.residence || {};
+        return hh.mapId ? { mapId: hh.mapId, x: hh.x != null ? hh.x : null, y: hh.y != null ? hh.y : null } : null;
+      }
+      case 'workplace':
+        return asset.mapId ? { mapId: asset.mapId, x: null, y: null } : null;
+      case 'claim': {
+        const c = asset.claim || {};
+        if (!c.mapId) return null;
+        return { mapId: c.mapId, x: c.x != null ? c.x : null, y: c.y != null ? c.y : null, worldX: c.worldX, worldY: c.worldY };
+      }
+      case 'town': {
+        const t = asset.town || {};
+        if (!procMap || t.worldX == null || t.worldY == null) return null;
+        return { mapId: procMap, x: null, y: null, worldX: t.worldX, worldY: t.worldY };
+      }
+      default:
+        return null;
+    }
+  }
+
+  // Projects the party to the target. Answers false when nothing could be
+  // done (no player, no target, already projected).
+  function startHologram(target) {
+    if (!target || !target.mapId || hologramActive()) return false;
+    if (typeof $gamePlayer === 'undefined' || !$gamePlayer || typeof $gameMap === 'undefined' || !$gameMap) return false;
+    const W = window.WorldMapTransfer;
+    let world = null;
+    try { world = W && typeof W.playerWorld === 'function' ? W.playerWorld() : null; } catch (e) { world = null; }
+    $gameSystem._hologram = {
+      active: true,
+      origin: {
+        mapId: $gameMap.mapId(), x: $gamePlayer.x, y: $gamePlayer.y, dir: $gamePlayer.direction(),
+        worldX: world ? world.x : null, worldY: world ? world.y : null,
+      },
+    };
+    hologramTransfer(target, 2);
+    return true;
+  }
+
+  // A transfer the hologram itself asks for: the projection out and the way
+  // back. The flag lets it through the hook that ends the projection on
+  // every other transfer.
+  let _ownTransfer = false;
+  function hologramTransfer(target, dir) {
+    const W = window.WorldMapTransfer;
+    if (target.worldX != null && target.worldY != null && W && typeof W.setPlayerWorld === 'function') {
+      W.setPlayerWorld(target.worldX, target.worldY);
+    }
+    const st = hologramState();
+    if (st) st.centerLanding = target.x == null || target.y == null;
+    _ownTransfer = true;
+    try {
+      $gamePlayer.reserveTransfer(target.mapId, target.x || 0, target.y || 0, dir || 2, 0);
+    } finally {
+      _ownTransfer = false;
+    }
+  }
+
+  // Ends the projection and sends the party home. reason 'range' is the
+  // transfer that was refused; 'terminate' is the player's own choice.
+  function endHologram(reason) {
+    const st = hologramState();
+    if (!st || !st.active) return false;
+    st.active = false;
+    const origin = st.origin || {};
+    $gameSystem._hologram = null;
+    if (reason === 'range' && window.ParchmentToast) {
+      window.ParchmentToast.show(T('Assets.hologram.outOfRange'), { severity: 'warning' });
+    }
+    if (origin.mapId && typeof $gamePlayer !== 'undefined' && $gamePlayer) {
+      hologramTransfer({ mapId: origin.mapId, x: origin.x, y: origin.y, worldX: origin.worldX, worldY: origin.worldY }, origin.dir);
+    }
+    return true;
+  }
+
+  // The question the cancel button asks while projected.
+  function askTerminateHologram() {
+    if (typeof $gameMessage === 'undefined' || !$gameMessage) return;
+    if ($gameMessage.isBusy && $gameMessage.isBusy()) return;
+    window.skipLocalization = true;
+    $gameMessage.setChoices([T('Assets.hologram.terminate'), T('Assets.hologram.cancel')], 1, 1);
+    window.skipLocalization = false;
+    $gameMessage.setChoiceCallback(index => {
+      if (index !== 0) return;
+      setTimeout(() => endHologram('terminate'), 0);
+    });
+  }
+
+  if (typeof Game_Player !== 'undefined' && Game_Player.prototype) {
+    // Any transfer that is not the hologram's own ends the projection: the
+    // party goes home instead of wherever the door led.
+    const _GP_reserveTransfer = Game_Player.prototype.reserveTransfer;
+    Game_Player.prototype.reserveTransfer = function (mapId, x, y, d, fadeType) {
+      if (hologramActive() && !_ownTransfer) {
+        endHologram('range');
+        return;
+      }
+      _GP_reserveTransfer.call(this, mapId, x, y, d, fadeType);
+    };
+
+    // A holding with no recorded tile lands the hologram mid-map.
+    const _GP_performTransfer = Game_Player.prototype.performTransfer;
+    Game_Player.prototype.performTransfer = function () {
+      const st = hologramState();
+      if (st && st.centerLanding && this.isTransferring() && typeof $dataMap !== 'undefined' && $dataMap) {
+        this._newX = Math.floor(($dataMap.width || 1) / 2);
+        this._newY = Math.floor(($dataMap.height || 1) / 2);
+        st.centerLanding = false;
+      }
+      _GP_performTransfer.call(this);
+    };
+
+    // Walls and events are no obstacle to a hologram.
+    const _GP_isThrough = Game_Player.prototype.isThrough;
+    Game_Player.prototype.isThrough = function () {
+      return hologramActive() || _GP_isThrough.call(this);
+    };
+  }
+
+  if (typeof Sprite_Character !== 'undefined' && Sprite_Character.prototype) {
+    const _SC_updateOther = Sprite_Character.prototype.updateOther;
+    Sprite_Character.prototype.updateOther = function () {
+      _SC_updateOther.call(this);
+      const ch = this._character;
+      if (!ch || !hologramActive()) return;
+      const isParty = (typeof Game_Player !== 'undefined' && ch instanceof Game_Player) ||
+                      (typeof Game_Follower !== 'undefined' && ch instanceof Game_Follower);
+      if (!isParty) return;
+      this.opacity = Math.min(this.opacity, HOLOGRAM_OPACITY);
+      this.blendMode = 1;
+    };
+  }
+
+  if (typeof Scene_Map !== 'undefined' && Scene_Map.prototype) {
+    // Cancel / the menu button asks to terminate the hologram instead of
+    // opening the menu.
+    const _SM_callMenu = Scene_Map.prototype.callMenu;
+    Scene_Map.prototype.callMenu = function () {
+      if (hologramActive()) {
+        if (typeof SoundManager !== 'undefined') SoundManager.playCancel();
+        this.menuCalling = false;
+        askTerminateHologram();
+        return;
+      }
+      _SM_callMenu.call(this);
+    };
+  }
+
+  window.Hologram = {
+    isActive: hologramActive,
+    state: hologramState,
+    target: hologramTarget,
+    start: startHologram,
+    end: endHologram,
+    askTerminate: askTerminateHologram,
+  };
+
   // Global exports
   window.Scene_AssetsMenu = Scene_AssetsMenu;
   window.AssetsMenu = {
@@ -1531,6 +1772,7 @@
     workplaceDeedRow,
     claimOfferRow,
     claimRow,
+    hologramTarget,
   };
 
 })();

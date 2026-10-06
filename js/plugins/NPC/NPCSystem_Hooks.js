@@ -844,7 +844,8 @@
     // set up; the city is then filled the way Omega City is, so a Bolognese
     // stands next to somebody who came in from any other town in the world,
     // Earth or otherwise.
-    if (currentMapId === Config.BOLOGNA_MAP_ID && window.BolognaMapSystem) {
+    if (currentMapId === Config.BOLOGNA_MAP_ID && window.BolognaMapSystem &&
+        window.BolognaMapSystem.isBolognaMap()) {
       const bolognaGroup = ProceduralManager.ensureBolognaSettlement();
       if (bolognaGroup) {
         SpawnManager.randomizeOmegaCityMap(currentMapId, bolognaGroup, {

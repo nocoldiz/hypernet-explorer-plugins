@@ -1760,6 +1760,13 @@
         const rightArea = container.querySelector('.right-content-area');
         if (!rightArea) return;
         this.cleanup3DWeaponPreview();
+        // The bench can shrink under the cursor (the last card equipped from
+        // its own detail): the cursor comes back onto the last card standing
+        // instead of pointing past the end, with nothing lit and OK dead.
+        if (typeof this.getFilteredPartyEquipment === 'function') {
+            const count = this.getFilteredPartyEquipment().length;
+            this._gridIndex = Math.max(0, Math.min(this._gridIndex || 0, count - 1));
+        }
         rightArea.innerHTML = this._buildRightPageHTML();
         this._syncPaperdollStats();
         if (this._viewMode === 'detail') {
@@ -2258,8 +2265,15 @@
         const isRight = dir === 'right';
         const isLeft  = dir === 'left';
 
-        // L1 / R1 step the equipment-type tabs; L2 / R2 change the member
-        // (CharSwitcher, installed with the scene).
+        // On this screen Tab is the member, not the tab strip: Tab and
+        // Shift+Tab step the character switcher on the right page, the way
+        // L2 / R2 do (CharSwitcher, installed with the scene). L1 / R1 still
+        // step the equipment-type tabs.
+        if (enableSwitching && Input.isTriggered('tab')) {
+            if (Input.isPressed('shift')) this.switchToPreviousCharacter();
+            else this.switchToNextCharacter();
+            return;
+        }
         const tabStep = window.UINav ? window.UINav.tabDir() : 0;
         if (tabStep) {
             const tabs = getEquipTabs();

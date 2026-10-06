@@ -67,10 +67,11 @@
       const s = this._scene;
       if (!s) return;
 
-      // L1 / R1 (Q / W, Tab) tab cycling (suppressed during slot-assignment mode)
+      // L1 / R1 (PageUp / PageDown, Tab) tab cycling (suppressed during slot-assignment mode)
       if (s._changingSlot === null) {
         const dir = window.UINav ? UINav.tabDir() : 0;
         if (dir) {
+          if (window.CCNav && CCNav._scene === s) CCNav.leave(false);
           const cur = _TABS.indexOf(s._activeTab);
           s._activeTab     = _TABS[(cur + dir + _TABS.length) % _TABS.length];
           s._selectedIndex = 0;
@@ -78,6 +79,19 @@
           s._refreshDOM();
           return;
         }
+      }
+
+      // The roster and the shelves are the shared two-panel picker: rows with
+      // their own Hire / Shelve buttons, the bag / wholesaler switch and
+      // Fabricate, all .focusable and none of them in a list this screen
+      // walks. The shared focus ring walks them instead: a direction steps
+      // onto the page, OK presses, B steps back off and a second B leaves.
+      if ((s._activeTab === 'staff' || s._activeTab === 'shelves') && window.CCNav && s._el) {
+        if (CCNav._scene !== s) CCNav.attach(s, s._el, { boards: false });
+        if (CCNav.update()) { CCNav.paint(); return; }
+        const enterDir = window.UINav ? UINav.navDir() : null;
+        if (enterDir && CCNav.tryEnterFromBoard(enterDir)) return;
+        CCNav.paint();
       }
 
       // The list steps by its drawn columns, so the same four directions work
@@ -215,6 +229,7 @@
 
     terminate() {
       UIShopInputManager.deactivate();
+      if (window.CCNav) window.CCNav.detach(this);
       if (this._el) {
         const el = this._el;
         el.style.transition = 'opacity 0.18s ease-out';

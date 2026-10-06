@@ -81,23 +81,45 @@
     }
     if (waterTiles.length === 0) return;
 
+    const prefabMask = mapData.prefabMask;
+    const opts = settlementCoastOptions(worldCoords);
+    opts.keep = prefabMask ? (x, y) => !!prefabMask[y * width + x] : null;
+    BeachGen.drawWaterEdges(
+      mapData, waterTiles, adjacentBiomes, Math.floor(rng() * 0x7fffffff), width, height, rng, null, allFeatures, "",
+      opts
+    );
+  }
+
+  /** Where a settlement's shoreline is anchored and how deep it may cut. */
+  function settlementCoastOptions(worldCoords) {
     const pg = typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem._procGenData;
     const cache = pg && pg.biomeCoordinateCache;
     const wc = worldCoords || { x: pg ? pg.worldX || 0 : 0, y: pg ? pg.worldY || 0 : 0 };
     const diagonalBiomes = cache && Utils2.checkDiagonalMapBiomesFromCache
       ? Utils2.checkDiagonalMapBiomesFromCache(wc.x || 0, wc.y || 0, cache)
       : null;
+    const BeachGen = window.ProcGenBeach;
+    return {
+      worldCoords: wc,
+      diagonalBiomes,
+      maxDepth: BeachGen ? BeachGen.SETTLEMENT_MAX_DEPTH : undefined,
+    };
+  }
 
-    const prefabMask = mapData.prefabMask;
-    BeachGen.drawWaterEdges(
-      mapData, waterTiles, adjacentBiomes, Math.floor(rng() * 0x7fffffff), width, height, rng, null, allFeatures, "",
-      {
-        worldCoords: wc,
-        diagonalBiomes,
-        maxDepth: BeachGen.SETTLEMENT_MAX_DEPTH,
-        keep: prefabMask ? (x, y) => !!prefabMask[y * width + x] : null,
-      }
-    );
+  /**
+   * The sea addDirectionalBeach is going to lay over this settlement, handed
+   * to the prefab placer before the lots are built (allOtherData.seaMask). The
+   * shoreline is laid after the lots and spares whatever stands on them, so
+   * without this a lot on the waterline came out as a house in the sea.
+   */
+  function predictSettlementSea(width, height, adjacentBiomes, worldCoords) {
+    const BeachGen = window.ProcGenBeach;
+    if (!adjacentBiomes || !BeachGen || !BeachGen.predictCoastWater) return null;
+    try {
+      return BeachGen.predictCoastWater(adjacentBiomes, width, height, settlementCoastOptions(worldCoords));
+    } catch (e) {
+      return null;
+    }
   }
 
   // ===========================================================================
@@ -2864,6 +2886,7 @@
       const worldCoords = allOtherData?.worldCoords || { x: 0, y: 0 };
       if (window.ProceduralMapPrefabs && window.ProceduralMapPrefabs.applyPrefabsToMap) {
         try {
+          allOtherData.seaMask = predictSettlementSea(width, height, adjacentBiomes, worldCoords);
           window.ProceduralMapPrefabs.applyPrefabsToMap(mapData, biome.name, worldCoords, allOtherData);
           // This placement is the one that took the map's roads and lots into
           // account; it must take priority over the generic, hint-blind pass
@@ -4600,6 +4623,7 @@
 
       if (window.ProceduralMapPrefabs && window.ProceduralMapPrefabs.applyPrefabsToMap) {
         try {
+          allOtherData.seaMask = predictSettlementSea(width, height, adjacentBiomes, worldCoords);
           window.ProceduralMapPrefabs.applyPrefabsToMap(mapData, biome.name, worldCoords, allOtherData);
           // This lot-aligned placement takes priority over the generic pass
           // DataManager.loadMapData would otherwise still run on this array.
@@ -5077,6 +5101,7 @@ function generateBurgBiome(biome, seed, allFeatures, adjacentBiomes, allOtherDat
 
     if (window.ProceduralMapPrefabs && window.ProceduralMapPrefabs.applyPrefabsToMap) {
       try {
+        allOtherData.seaMask = predictSettlementSea(width, height, adjacentBiomes, worldCoords);
         window.ProceduralMapPrefabs.applyPrefabsToMap(mapData, biome.name, worldCoords, allOtherData);
         // This lot-aligned placement takes priority over the generic pass
         // DataManager.loadMapData would otherwise still run on this array.

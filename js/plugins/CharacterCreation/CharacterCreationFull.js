@@ -83,10 +83,6 @@
   const ALLEGIANCE_POWER = 40;
   const ALLEGIANCE_RIVAL = -20;
 
-  // Reproduction type variable per party member (see CharacterCreationShared).
-  const REPRO_VARS = [87, 115, 116];
-  // Creature switch per party member.
-  const CREATURE_SWITCHES = [77, 78, 79];
   const CREATURE_CLASS_ID = 65;
   const DEFAULT_CLASS_ID = 1;
   const NAME_MAX_LENGTH = 16;
@@ -266,8 +262,10 @@
     if (!society[newName]) society[newName] = profile;
   }
 
+  // Whether the member is a creature is the actor's own flag.
   function isCreature() {
-    return !!($gameSwitches && $gameSwitches.value(CREATURE_SWITCHES[Session.memberIndex] || 77));
+    const actor = editedActor();
+    return !!(actor && actor._isCreatureActor);
   }
 
   // A creature played as one of the creature classes (Feral, Mimic, Monster,
@@ -329,32 +327,30 @@
     const utils = window.CharacterCreationUtils;
     if (utils && utils.applyGenderAndReproduction) {
       // Derives the reproduction type from the gender, the way the wizard's own
-      // gender step does; re-applying it here keeps switch 69 in step with it.
-      utils.applyGenderAndReproduction(Session.memberIndex, value);
-      applyReproduction(reproductionValue());
+      // gender step does, and writes both on the actor.
+      utils.applyGenderAndReproduction(actor, value);
     }
     const profile = editedProfile();
     if (profile) profile.gender = value;
   }
 
+  // The organs live on the actor (actor.reproductionType()); a uterus is
+  // reproductionType() === 1, nothing else has to be kept in step with it.
   function reproductionValue() {
-    const varId = REPRO_VARS[Session.memberIndex] || REPRO_VARS[0];
-    return $gameVariables ? $gameVariables.value(varId) : 0;
+    const actor = editedActor();
+    const value = (actor && actor.reproductionType) ? actor.reproductionType() : null;
+    return value == null ? 0 : value;
   }
 
   function applyReproduction(value) {
-    const varId = REPRO_VARS[Session.memberIndex] || REPRO_VARS[0];
-    if ($gameVariables) $gameVariables.setValue(varId, value);
-    // Switch 69 is the party-wide "someone can carry a pregnancy" flag the
-    // biologic simulation reads, and only the first member owns it.
-    if (Session.memberIndex === 0 && $gameSwitches) $gameSwitches.setValue(69, value === 1);
+    const actor = editedActor();
+    if (actor && actor.setReproductionType) actor.setReproductionType(value);
   }
 
   function applyKind(creature) {
     const actor = editedActor();
     if (!actor) return;
-    const switchId = CREATURE_SWITCHES[Session.memberIndex] || 77;
-    if ($gameSwitches) $gameSwitches.setValue(switchId, creature);
+    actor._isCreatureActor = !!creature;
     if (window.Scene_CharacterCreation) window.Scene_CharacterCreation._isCreatureMode = creature;
     // Which side of the line the member's class sits on is the class's own
     // <Sentient> / <NonSentient> tag, read through window.CreatureClasses: a
@@ -449,8 +445,8 @@
   }
 
   function applyAge(age) {
-    if (!$gameSystem._ccBirthAge) $gameSystem._ccBirthAge = [];
-    $gameSystem._ccBirthAge[Session.memberIndex] = age;
+    const aged = editedActor();
+    if (aged) aged._ccAge = age;
     const profile = editedProfile();
     if (!profile) return;
     const nowYear = (window.NPCLifeSim && window.NPCLifeSim.currentYear)
@@ -466,9 +462,9 @@
   }
 
   function currentAge() {
-    const stored = $gameSystem._ccBirthAge && $gameSystem._ccBirthAge[Session.memberIndex];
-    if (stored) return stored;
     const actor = editedActor();
+    const stored = actor && Number(actor._ccAge);
+    if (stored) return stored;
     const name = actor && actor.name();
     if (name && window.NPCLifeSim && window.NPCLifeSim.ageOf) {
       const age = window.NPCLifeSim.ageOf(name);
@@ -1898,13 +1894,13 @@
         seat._ccFactionPicks = {};
         seat._ccSwornFaction = null;
       }
-      // The creature switch can still be carrying a previous playthrough's
+      // The creature flag can still be carrying a previous playthrough's
       // answer, so it is squared with the class this member actually has
       // before the first row is drawn.
-      if (actor && $gameSwitches) {
+      if (actor) {
         const isCreatureClass = !!(actor.currentClass() &&
           window.CreatureClasses.isCreatureClass(actor.currentClass().id));
-        $gameSwitches.setValue(CREATURE_SWITCHES[Session.memberIndex] || 77, isCreatureClass);
+        actor._isCreatureActor = isCreatureClass;
         if (window.Scene_CharacterCreation) window.Scene_CharacterCreation._isCreatureMode = isCreatureClass;
       }
       // A member arriving here has whatever the wizard left them with; make

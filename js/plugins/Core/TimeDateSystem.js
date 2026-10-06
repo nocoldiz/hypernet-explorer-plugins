@@ -423,6 +423,10 @@
   // turns red, and only then applies the overeating state, at this line. One
   // constant so the colour and the penalty can never disagree.
   const OVEREAT_RATE = 2.5;          // 250% of a full meter
+  // Overeating nausea is short: every character shakes it off by themselves
+  // somewhere between these two marks, in in-game minutes, never past the hour.
+  const OVEREAT_NAUSEA_MIN_MIN = 30;
+  const OVEREAT_NAUSEA_MAX_MIN = 60;
 
   const maxSleep = Number(parameters.maxSleep || 100);
 
@@ -1314,7 +1318,8 @@
 
     // Check for state changes
     this.checkStateChange("hunger", oldState);
-    this.updateOvereatState(); // Check for overeating state
+    if (amount > 0 && this._hunger > maxHunger * OVEREAT_RATE) rearmOvereatNausea(this);
+    else this.updateOvereatState(); // Check for overeating state
   };
 
   Game_Actor.prototype.reduceHunger = function (amount) {
@@ -1455,11 +1460,14 @@
   // is the meter read backwards (100 - meter), which is the number the water
   // rule speaks in ("more than 80% full").
   //
-  // It runs down at four times the sleep drain, so a body that starts the day
-  // empty wants a WC within about seven waking hours, and every liquid that
-  // goes in (ItemSystemUtils.liquidVolume: water, coffee, beer, a potion) takes
-  // a bite out of it at once, scaled by how much of it there was. Asleep it
-  // fills slower and never past BLADDER_SLEEP_FLOOR: nobody wets the bed.
+  // It runs down by GAME TIME, never by the step: a step buys a tenth of a
+  // minute in a town, ten on the world map and fifty on the globe, and a drain
+  // paid per step sent the party to the WC every few seconds out there. A body
+  // that starts the day empty wants a WC after about fourteen waking hours, so
+  // a day is one trip or two, and every liquid that goes in
+  // (ItemSystemUtils.liquidVolume: water, coffee, beer, a potion) takes a bite
+  // out of it at once, scaled by how much of it there was. Asleep it fills
+  // slower and never past BLADDER_SLEEP_FLOOR: nobody wets the bed.
   //
   // At 0 the member empties it where they stand: the meter is full again, their
   // hygiene pays for it and, somebody rather than something, so does their
@@ -1469,17 +1477,18 @@
   // Where it lives follows the other extended meters: on the actor for the
   // player, on the society profile for a recruited companion (whose meter the
   // NPC simulation drains, NPCSimulationCore NeedManager).
-  const BLADDER_DRAIN_SHARE   = 4;     // x the sleep drain, per step
+  const BLADDER_AWAKE_PER_MIN = 0.12;  // per waking game minute: about fourteen hours from empty to full
   const BLADDER_SLEEP_PER_MIN = 0.08;  // per slept minute
   const BLADDER_SLEEP_FLOOR   = 5;     // a skipped stretch of time never ends in an accident
   const BLADDER_LOW           = 20;    // under this the meter warns: over 80% full
   const BLADDER_SWIM_FULLNESS = 80;    // fuller than this and the water does the rest
+  const BLADDER_ROADSIDE_AT   = 5;     // travelling the world map, the party pulls over at this
   const BLADDER_ACCIDENT_HYGIENE = 35;
   const BLADDER_ACCIDENT_SOCIAL  = 10;
-  const BLADDER_ML_PER_POINT  = 33;    // 500 ml of drink is 15 points of the meter
+  const BLADDER_ML_PER_POINT  = 66;    // 500 ml of drink is 7.5 points of the meter
   const BLADDER_DIURETIC      = 1.25;  // alcohol and caffeine send it through faster
   const BLADDER_DRINK_MIN     = 3;
-  const BLADDER_DRINK_MAX     = 35;
+  const BLADDER_DRINK_MAX     = 20;
 
   Game_Actor.prototype.bladder = function () {
     return this.extendedNeed("bladder");
@@ -1495,7 +1504,7 @@
   };
 
   window.Bladder = {
-    DRAIN_SHARE: BLADDER_DRAIN_SHARE,
+    AWAKE_PER_MIN: BLADDER_AWAKE_PER_MIN,
     SLEEP_PER_MIN: BLADDER_SLEEP_PER_MIN,
     SLEEP_FLOOR: BLADDER_SLEEP_FLOOR,
     LOW: BLADDER_LOW,
@@ -1577,9 +1586,51 @@
       return true;
     },
 
-    /** Called once a step per member: an accident once the meter is out. */
+    /**
+     * On the road: the world map, on foot or in anything that drives it (the
+     * 3D voxel world is the world map too). Out there nobody holds it to the
+     * end: the party pulls over by the side of the road first.
+     */
+    travelling() {
+      try {
+        const W = window.WorldMapTransfer;
+        const worldId = W && W.worldMapId ? W.worldMapId : 315;
+        if (typeof $gameMap !== "undefined" && $gameMap && $gameMap.mapId &&
+            $gameMap.mapId() === worldId) return true;
+        const V = window.VoxelWorldSystem;
+        if (V && V.isActive && V.isActive() && !(V.isTitleDrive && V.isTitleDrive()) &&
+            !(V.inCombat && V.inCombat())) return true;
+      } catch (e) { /* no map yet: not travelling */ }
+      return false;
+    },
+
+    /**
+     * Almost bursting on the road: everybody gets out and goes, at once, and
+     * the party is told so once. Returns true when the stop was made.
+     */
+    roadsideStop() {
+      if (typeof $gameParty === "undefined" || !$gameParty) return false;
+      let total = 0;
+      for (const m of $gameParty.members()) total += this.relieve(m);
+      if (total <= 0) return false;
+      try {
+        window.ParchmentToast?.need("bladder", total, {
+          value: maxNeed,
+          note: T("TimeDate.bladder.relieved.roadside"),
+        });
+      } catch (e) { /* the stop was made either way */ }
+      return true;
+    },
+
+    /**
+     * Called once a step per member: an accident once the meter is out. On
+     * the road it never gets that far: under ROADSIDE_AT the party stops.
+     */
     check(actor) {
       if (!actor || !actor.bladder) return false;
+      if (actor.bladder() <= BLADDER_ROADSIDE_AT && this.ownsDrain(actor) && this.travelling()) {
+        return this.roadsideStop();
+      }
       if (actor.bladder() > 0) return false;
       return this.accident(actor);
     },
@@ -1848,32 +1899,59 @@
     },
   };
 
-  // Overeating nausea is one bout per binge. Crossing the 250% line applies
-  // the state once and latches _overeatNausea; once the state is gone (walked
-  // off, cured by an item, anything) it stays gone until the stomach empties
-  // below 100% and is stuffed past the line again. Without the latch the next
-  // needs tick put it straight back on a player who had just cured it, and
-  // walking it off became an endless "no longer nauseated" loop.
+  // How long one character's overeating nausea lasts, in in-game minutes.
+  function overeatNauseaMinutes() {
+    const span = OVEREAT_NAUSEA_MAX_MIN - OVEREAT_NAUSEA_MIN_MIN;
+    return OVEREAT_NAUSEA_MIN_MIN + Math.floor(Math.random() * (span + 1));
+  }
+
+  // Overeating nausea is one short bout per meal past the line. Crossing the
+  // 250% line applies the state and latches _overeatNausea; each character
+  // then shakes it off on their own clock (_overeatNauseaUntil, an in-game
+  // hour at most). Once it is gone (worn off, walked off, cured by an item) it
+  // stays gone however long the stomach stays over 100%: only another meal
+  // eaten into the overeating zone re-arms it (rearmOvereatNausea, from
+  // addHunger), or the stomach settling below 100%. Without the latch the next
+  // needs tick put it straight back on a player who had just lost it.
   Game_Actor.prototype.updateOvereatState = function () {
     const overeatThreshold = maxHunger * OVEREAT_RATE; // 250%
     const normalThreshold = maxHunger; // 100%
-
-    if (this._hunger > overeatThreshold) {
-      if (!this._overeatNausea) {
-        this._overeatNausea = true;
-        this.addState(overeatStateId);
-        debug(`Actor ${this._actorId} is overeating. Applied state ${overeatStateId}.`);
-      }
-    } else if (this._hunger < normalThreshold && this._overeatNausea) {
-      // Only the nausea this binge caused is lifted: salt water or a sickness
-      // applying the same state keeps theirs.
-      this._overeatNausea = false;
-      if (this.isStateAffected(overeatStateId)) {
+    const now = getGameTimeMinutes();
+    // Only the nausea this binge caused is ever lifted here: salt water or a
+    // sickness applying the same state keeps theirs.
+    const liftOwn = (why) => {
+      const own = this._overeatNauseaUntil != null;
+      this._overeatNauseaUntil = null;
+      if (own && this.isStateAffected(overeatStateId)) {
         this.removeState(overeatStateId);
-        debug(`Actor ${this._actorId} is no longer overeating. Removed state ${overeatStateId}.`);
+        debug(`Actor ${this._actorId} ${why}. Removed state ${overeatStateId}.`);
       }
+    };
+
+    if (this._hunger > overeatThreshold && !this._overeatNausea) {
+      this._overeatNausea = true;
+      this._overeatNauseaUntil = now + overeatNauseaMinutes();
+      this.addState(overeatStateId);
+      debug(`Actor ${this._actorId} is overeating. Applied state ${overeatStateId}.`);
+    } else if (this._hunger < normalThreshold && this._overeatNausea) {
+      this._overeatNausea = false;
+      liftOwn("is no longer overeating");
+    } else if (this._overeatNauseaUntil != null && now >= this._overeatNauseaUntil) {
+      liftOwn("shook off the overeating nausea");
     }
   };
+
+  // A meal eaten into the overeating zone is a new binge for everybody at the
+  // table: each member may be nauseated again, on a fresh clock of their own.
+  function rearmOvereatNausea(eater) {
+    const members = (window.$gameParty && $gameParty.members()) || [];
+    const all = members.includes(eater) ? members : members.concat([eater]);
+    for (const actor of all) {
+      if (!actor || !actor.updateOvereatState) continue;
+      actor._overeatNausea = false;
+      actor.updateOvereatState();
+    }
+  }
 
   // State Changes and Effects
   Game_Actor.prototype.checkStateChange = function (type, oldState) {
@@ -2080,6 +2158,8 @@
 
     // Update game time based on map
     const currentTime = getGameTimeMinutes();
+    // The game time this one step bought, for the meters that run by the clock.
+    let stepMinutes = 0;
     if (isOnWorldMap) {
       // On world map, time passes quickly with each step. Vehicles cross a tile
       // in less game-time than walking, and the Aero Streamlining workshop
@@ -2098,10 +2178,12 @@
         }
       }
       setGameTimeMinutes(currentTime + minutesToAdd * travelScale);
+      stepMinutes = minutesToAdd * travelScale;
     } else {
       // On foot, time advances by 1 minute every STEPS_PER_MINUTE steps, and
       // much more slowly than that inside a procedural square.
       const stepsPerMinute = (mapId === PROC_MAP_ID) ? PROC_STEPS_PER_MINUTE : STEPS_PER_MINUTE;
+      stepMinutes = 1 / stepsPerMinute;
       if ($gameParty.steps() % stepsPerMinute === 0) {
         setGameTimeMinutes(currentTime + 1);
       }
@@ -2134,9 +2216,10 @@
 
     // The bladder fills for every member whose meter lives on the actor; a
     // recruited companion's lives on their society profile, which the NPC
-    // simulation fills (window.Bladder.ownsDrain).
+    // simulation fills (window.Bladder.ownsDrain). By the minutes the step
+    // bought, so a world-map stride costs what ten minutes cost and no more.
     for (const member of this.members()) {
-      if (member) window.Bladder.step(member, sleepRate * BLADDER_DRAIN_SHARE * baseMultiplier * needAugmentRate(member, "bladder"));
+      if (member) window.Bladder.step(member, BLADDER_AWAKE_PER_MIN * stepMinutes * needAugmentRate(member, "bladder"));
     }
 
     // Social is not the leader's meter alone: it is the party's, and the road
@@ -2630,12 +2713,21 @@
   Window_Bounty.prototype.drawBounty = function () {
     const bountyValue = $gameVariables.value(66) || 0;
 
+    // Only undo a hide this window did itself: a scene that hid it (the
+    // parchment main menu) keeps it hidden, or the bounty/date cycle would
+    // flash it back in while the menu closes.
     if (bountyValue === 0) {
-      this.hide();
+      if (this.visible) {
+        this.hide();
+        this._hiddenForNoBounty = true;
+      }
       return;
     }
 
-    this.show();
+    if (this._hiddenForNoBounty) {
+      this._hiddenForNoBounty = false;
+      this.show();
+    }
     const minutes = getGameTimeMinutes();
     const dateTime = getDateTimeFromMinutes(minutes);
 
@@ -5513,7 +5605,7 @@
       // Awake hours fill the bladder at the walking rate, but the stretch
       // never ends in an accident (window.Bladder.skipTime).
       for (const member of $gameParty.members()) {
-        window.Bladder.skipTime(member, maxSleep * 0.0006 * BLADDER_DRAIN_SHARE * deltaMin);
+        window.Bladder.skipTime(member, BLADDER_AWAKE_PER_MIN * deltaMin);
       }
       const frac = a.totalMinutes > 0 ? a.doneMinutes / a.totalMinutes : 1;
       leader._sleep = a.sleepStart + (a.sleepTarget - a.sleepStart) * frac;

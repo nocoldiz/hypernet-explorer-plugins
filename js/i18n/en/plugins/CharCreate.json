@@ -35,6 +35,16 @@
   "misfitsAndTheUnclassifiable": "Misfits and the unclassifiable.",
   "initialSettings": "INITIAL SETTINGS",
   "confirm": "Confirm",
+  "storyDifficulty": {
+    "roguelite": {
+      "name": "Roguelike",
+      "desc": "Em and Bubba come round after a fall. Anybody else who joins the party dies for good."
+    },
+    "blood_and_oil": {
+      "name": "Blood and Oil",
+      "desc": "Limbs can be cut off. Em and Bubba never lose a vital part and never die for good. Anybody else who joins the party dies for good."
+    }
+  },
   "difficulty": "Difficulty",
   "selectDifficulty": "Select difficulty",
   "selectCombatMode": "Select combat mode",

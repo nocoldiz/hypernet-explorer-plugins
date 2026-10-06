@@ -612,8 +612,12 @@
         }
       }
 
-      // Priority: sleep need → go home if on home map
-      if (profile?.currentNeed === 'sleep' && profile.homeMapId === $gameMap?.mapId()) {
+      // Priority: sleep need → go home if on home map. Their own house and
+      // floor only: a house built from the same template is somebody else's.
+      const homeHere = window.NPCSim?._internal?.isHomeHere
+        ? window.NPCSim._internal.isHomeHere(profile)
+        : profile?.homeMapId === $gameMap?.mapId();
+      if (profile?.currentNeed === 'sleep' && homeHere) {
         const door = $gameMap.events().find(e => {
           const n = e?.event()?.name ?? '';
           return n === 'Door' || n === 'House';

@@ -379,13 +379,32 @@
 
             const sourceMapId = $gameMap.mapId();
             const sourceEventId = event.eventId();
-            const push = (list) => {
-                for (const entry of list) {
-                    entry.sourceMapId = sourceMapId;
-                    entry.sourceEventId = sourceEventId;
-                    items.push(entry);
-                }
-            };
+            for (const entry of this.shelfOf(sourceMapId, event.event(), event.x, event.y)) {
+                entry.sourceMapId = sourceMapId;
+                entry.sourceEventId = sourceEventId;
+                items.push(entry);
+            }
+
+            // Fallback: If no shop items found, and the event is the currently active interpreter event (e.g. NPC Pickpocketing)
+            if (items.length === 0 && event.eventId() === $gameMap._interpreter.eventId()) {
+                const npcItems = this.generateNPCItems(event);
+                items.push(...npcItems);
+            }
+
+            return items;
+        }
+
+        // What one counter sells, read off the event's own pages: Shop
+        // Processing rows, a themed daily shop, the local bazaar, a vending
+        // machine. Needs no live event and no Scene_Shop, only the event's data
+        // and where it stands, so a keeper's shelf can be read from anywhere
+        // (ShopShiftManager.workplaceOf). Rows carry no source ids; the caller
+        // knows which counter it asked about.
+        static shelfOf(mapId, eventData, x, y) {
+            const items = [];
+            if (!eventData || !Array.isArray(eventData.pages)) return items;
+            const spot = { x, y };
+            const push = (list) => { for (const entry of list) items.push(entry); };
             const goodsEntry = (type, id) => {
                 let data = null;
                 let itemType = '';
@@ -400,8 +419,8 @@
             let hasVending = false;
             let scriptBuffer = '';
 
-            for (const page of pages) {
-                const list = page.list;
+            for (const page of eventData.pages) {
+                const list = (page && page.list) || [];
                 for (let i = 0; i < list.length; i++) {
                     const command = list[i];
 
@@ -427,7 +446,7 @@
                             const shopType = this.shopTypeOf(command.parameters);
                             if (shopType && !seenThemed.has(shopType)) {
                                 seenThemed.add(shopType);
-                                push(this.getDailyShopItems(event, shopType));
+                                push(this.getDailyShopItems(spot, shopType, mapId));
                             }
                         } else if (this.matchesCommand(command.parameters, 'limited')) {
                             hasLimited = true;
@@ -447,20 +466,13 @@
                 const shopType = this.scriptShopType(scriptBuffer);
                 if (shopType && !seenThemed.has(shopType)) {
                     seenThemed.add(shopType);
-                    push(this.getDailyShopItems(event, shopType));
+                    push(this.getDailyShopItems(spot, shopType, mapId));
                 }
                 if (/OpenLimitedShop|limitedSelection/.test(scriptBuffer)) hasLimited = true;
             }
 
-            if (hasLimited) push(this.getLimitedShopItems(event));
-            if (hasVending) push(this.getVendingMachineItems(event));
-
-            // Fallback: If no shop items found, and the event is the currently active interpreter event (e.g. NPC Pickpocketing)
-            if (items.length === 0 && event.eventId() === $gameMap._interpreter.eventId()) {
-                const npcItems = this.generateNPCItems(event);
-                items.push(...npcItems);
-            }
-
+            if (hasLimited) push(this.getLimitedShopItems(spot, mapId));
+            if (hasVending) push(this.getVendingMachineItems(spot, mapId));
             return items;
         }
 
@@ -479,11 +491,11 @@
             return out;
         }
 
-        static getLimitedShopItems(event) {
+        static getLimitedShopItems(event, mapId) {
             const api = window.SearchableItemShop;
             if (!api || typeof api.limitedSelection !== 'function') return [];
             try {
-                const seed = api.limitedSeedString($gameMap.mapId(), event.x, event.y);
+                const seed = api.limitedSeedString(mapId || $gameMap.mapId(), event.x, event.y);
                 const selection = api.limitedSelection(seed, 6);
                 return this.toStealEntries(selection && selection.items);
             } catch (e) {
@@ -492,11 +504,11 @@
             }
         }
 
-        static getVendingMachineItems(event) {
+        static getVendingMachineItems(event, mapId) {
             const api = window.VendingMachine;
             if (!api || typeof api.stockAt !== 'function') return [];
             try {
-                const stock = api.stockAt($gameMap.mapId(), event.x, event.y);
+                const stock = api.stockAt(mapId || $gameMap.mapId(), event.x, event.y);
                 const slots = (stock && stock.slots) || {};
                 return this.toStealEntries(Object.keys(slots).map(code => slots[code].item));
             } catch (e) {
@@ -580,7 +592,7 @@
             return items;
         }
 
-        static getDailyShopItems(event, shopType = 'generalStore') {
+        static getDailyShopItems(event, shopType = 'generalStore', mapIdArg = 0) {
             const items = [];
 
             if (!window.getRandomThemedShopItems) {
@@ -589,7 +601,7 @@
             }
 
             try {
-                const mapId = $gameMap.mapId();
+                const mapId = mapIdArg || $gameMap.mapId();
                 const x = event.x;
                 const y = event.y;
 

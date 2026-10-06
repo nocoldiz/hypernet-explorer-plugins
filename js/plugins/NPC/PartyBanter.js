@@ -64,6 +64,14 @@
  *              now, and nothing outside the party can reach it. Split three
  *              ways by how the two of them are actually getting on: `warm`,
  *              `sore`, and `road` for the practical middle.
+ *   life       the members' OWN lives, each only while it is true: a disease,
+ *              a broken or lost limb, a hard craving, being drunk or high, a
+ *              pregnancy, a level just gained, a birthday, no sleep or a great
+ *              deal of it, the town they miss, the job and family they left,
+ *              a purse empty or fat, a holiday or a weekend, night, dawn, the
+ *              weather, a good meal, and two creeds rubbing against each other.
+ *              A condition that is one member's makes them the opening speaker.
+ *              See "THEIR OWN LIVES" below.
  *   general    the road, the money, the leader, the plan. Always available.
  *   personality one member's own PERSONALITY opens (their archetype from
  *              js/db/Health/PersonalityData.json), the other's personality
@@ -164,6 +172,8 @@
  *   PartyBanter.noteShopBuy(item, price, place)
  *   PartyBanter.noteDeed(topic, label, ctx) queue "we just did this", for a
  *                                           plugin that keeps no diary line
+ *   PartyBanter.lifeOf(actor)               what this member's own life brings to
+ *                                           the table now: [{ key, weight, ctx }]
  *   PartyBanter.sweepDiary()                read the newest diary line and queue
  *                                           whatever the party just did
  *
@@ -300,7 +310,8 @@
 
     // 'cynical', 'nurturing', ... A member whose society profile carries no
     // archetype (the player, in a save made before creation wrote one) is still
-    // given one, derived from their actor id so it never changes under them.
+    // given one, derived from who they are (their person uid) so it never
+    // changes under them and is never handed down with the seat.
     function personalityKey(actor) {
         if (!actor) return null;
         const list = personalityList();
@@ -308,7 +319,9 @@
         const profile = profileOf(actor);
         let index = profile && profile.personalityIndex;
         if (index === undefined || index === null || !list[index]) {
-            const id = (actor.actorId && actor.actorId()) || 1;
+            const uid = window.PartyPerson ? String(window.PartyPerson.uidOf(actor) || '') : '';
+            let id = (actor.actorId && actor.actorId()) || 1;
+            for (let i = 0; i < uid.length; i++) id = (id * 31 + uid.charCodeAt(i)) >>> 0;
             index = (id * 7 + String(actor.name() || '').length * 3) % list.length;
         }
         const name = list[index] && list[index].name;
@@ -687,7 +700,7 @@
         if (!extra) return ctx;
         const merged = Object.assign({}, ctx);
         for (const key of Object.keys(extra)) {
-            if (key === '_sig') continue;
+            if (key.charAt(0) === '_') continue;
             merged['ev_' + key] = extra[key];
             if (!RESERVED.includes(key)) merged[key] = extra[key];
         }
@@ -733,6 +746,411 @@
         if ((roll -= w.warm) <= 0) return 'warm';
         if ((roll -= w.road) <= 0) return 'road';
         return 'sore';
+    }
+
+    // =====================================================================
+    // THEIR OWN LIVES
+    // =====================================================================
+    // Everything above is about the road: where they are standing, what they
+    // just did, what they are short of. People who travel together also talk
+    // about THEMSELVES: the fever one of them has been carrying for a week, the
+    // arm in a sling, the bottle somebody keeps reaching for, the baby on the
+    // way, the town they grew up in and the job they left for this. Each of
+    // those is read off the real state of the member (the disease system, the
+    // anatomy, the addiction and intoxication stores, the society profile, the
+    // life record), never rolled, and each one is a bank under `script.life`.
+    //
+    // A condition that belongs to ONE member makes that member the speaker of
+    // the opening beat: the cast is turned round so they are {name}, and the
+    // beats are handed back indexed into the cast as the caller passed it. Like
+    // the companion bank, a life script is a conversation between two people,
+    // so a third member only ever gets the closer.
+    const LIFE_VOICES = 2;
+
+    const CRAVING_LINE = 70;      // a craving this hard is on their mind
+    const INTOX_STAGE = 2;        // 0 sober, 1 tipsy, 2 drunk, 3 gone
+    const SLEEPLESS_LINE = 15;    // sleep meter on the floor
+    const RESTED_LINE = 95;       // ...and right at the top
+    const BROKE_GOLD = 5000;      // 50 euros: the purse is nearly empty
+    const RICH_GOLD = 500000;     // 5000 euros: the purse is fat
+    const LEVEL_FRESH = 360;      // world minutes a level gained stays news
+    const FED_FRESH = 120;        // world minutes a good meal is still talked about
+    const FED_JUMP = 25;          // a hunger meter rising this far is a meal
+    const LIFE_SOLO_CHANCE = 0.35; // a thought about their own state, when they have one
+
+    function safely(fn, fallback) {
+        try {
+            const out = fn();
+            return out === undefined ? fallback : out;
+        } catch (e) {
+            return fallback;
+        }
+    }
+
+    function actorKey(actor) {
+        return actor && actor.actorId ? actor.actorId() : null;
+    }
+
+    // The in-game clock as a Date, or null where there is none (a test, a
+    // title screen).
+    function nowDate() {
+        return safely(() => {
+            const TDS = window.TimeDateSystem;
+            return (TDS && TDS.getCurrentDateObj) ? TDS.getCurrentDateObj() : null;
+        }, null);
+    }
+
+    // ----------------------------------------------------- their own bodies
+    function illnessOf(actor) {
+        const DS = window.DiseaseSystem;
+        if (!DS || !DS.actorEntries) return null;
+        return safely(() => {
+            const entry = DS.actorEntries(actor).find((e) => e && e.id != null);
+            if (!entry) return null;
+            const label = DS.displayName ? DS.displayName(entry.id) : '';
+            return label ? { illness: String(label) } : null;
+        }, null);
+    }
+
+    // A part that is broken but still on the body. The name is the anatomy's
+    // own display name, already in the player's language.
+    function woundOf(actor) {
+        const parts = actor && actor._bodyParts;
+        if (!parts) return null;
+        for (const key of Object.keys(parts)) {
+            const part = parts[key];
+            if (!part || !part.name) continue;
+            if (part.damaged || part.destroyed || Number(part.currentHp) <= 0) return { part: String(part.name) };
+        }
+        return null;
+    }
+
+    // A part that is gone for good, or one that came out of a shop.
+    function maimedOf(actor) {
+        const severed = actor && actor._severedParts;
+        const fitted = actor && actor._prosthetics;
+        const any = (bag) => !!bag && Object.keys(bag).some((key) => !!bag[key]);
+        return (any(severed) || any(fitted)) ? {} : null;
+    }
+
+    function cravingOf(actor) {
+        const AS = window.AddictionSystem;
+        if (!AS || !AS.worst) return null;
+        return safely(() => {
+            const worst = AS.worst(actor);
+            if (!worst || Number(worst.value) < CRAVING_LINE) return null;
+            const label = AS.label ? AS.label(worst.key) : worst.key;
+            return label ? { substance: String(label) } : null;
+        }, null);
+    }
+
+    // 'drunk' or 'high', whichever substance is doing the talking, once they
+    // are past tipsy.
+    function intoxicationOf(actor) {
+        const IX = window.Intoxication;
+        if (!IX || !IX.stage) return null;
+        return safely(() => {
+            if (IX.stage(actor) < INTOX_STAGE) return null;
+            return IX.register && IX.register(actor) === 'high' ? 'high' : 'drunk';
+        }, null);
+    }
+
+    function pregnantOf(actor) {
+        return !!(actor && actor._uterusData && actor._uterusData.isPregnant);
+    }
+
+    // A level gained is news for a few hours. The level is remembered per
+    // member the first time it is read, so loading a save never announces the
+    // level they already had; and once a level has been talked about it is not
+    // talked about again.
+    const _levels = new Map();
+
+    function levelUpOf(actor) {
+        const id = actorKey(actor);
+        const level = Number(actor && actor.level) || 0;
+        if (id === null || !level) return null;
+        const now = worldMinutes();
+        const seen = _levels.get(id);
+        if (!seen) { _levels.set(id, { level, at: -Infinity, spoken: true }); return null; }
+        if (level > seen.level) { seen.level = level; seen.at = now; seen.spoken = false; }
+        else if (level < seen.level) { seen.level = level; }
+        if (seen.spoken || now - seen.at > LEVEL_FRESH) return null;
+        return { level: String(level) };
+    }
+
+    function markLevelSpoken(actor) {
+        const seen = _levels.get(actorKey(actor));
+        if (seen) seen.spoken = true;
+    }
+
+    // A hunger meter that has jumped since the last reading is a meal eaten;
+    // a cooked dish in the diary is one too.
+    const _hunger = new Map();
+    let _fedAt = -Infinity;
+    let _fedSpoken = true;
+
+    function watchMeals(list) {
+        const now = worldMinutes();
+        for (const actor of list) {
+            const needs = needsOf(actor);
+            const value = needs ? Number(needs.hunger) : NaN;
+            if (!isFinite(value)) continue;
+            const id = actorKey(actor);
+            const before = _hunger.get(id);
+            _hunger.set(id, value);
+            if (before !== undefined && value - before >= FED_JUMP) { _fedAt = now; _fedSpoken = false; }
+        }
+        const entries = safely(() => (window.Diary && window.Diary.entries) ? window.Diary.entries() : [], []) || [];
+        for (let i = entries.length - 1, seen = 0; i >= 0 && seen < RECENT_DEPTH; i--, seen++) {
+            const entry = entries[i];
+            if (!entry || entry.k !== 'craft.cook') continue;
+            const at = Number(entry.t || 0);
+            if (at > _fedAt && now - at <= FED_FRESH) { _fedAt = at; _fedSpoken = false; }
+            break;
+        }
+    }
+
+    function fedRecently() {
+        return !_fedSpoken && worldMinutes() - _fedAt <= FED_FRESH;
+    }
+
+    function sleepOf(actor) {
+        const needs = needsOf(actor);
+        const value = needs ? Number(needs.sleep) : NaN;
+        if (!isFinite(value)) return null;
+        if (value <= SLEEPLESS_LINE) return 'sleepless';
+        if (value >= RESTED_LINE) return 'wellRested';
+        return null;
+    }
+
+    // ------------------------------------------------------ who they were
+    function lifeRecordOf(actor) {
+        const LS = window.NPCLifeSim;
+        if (!actor || !LS || !LS.getRecord) return null;
+        return safely(() => LS.getRecord(actor.name()), null);
+    }
+
+    // Today, on their own calendar. The day and month come out of the life
+    // record a recruited person was minted with; a member nobody ever dated
+    // has no birthday to remember, and is never given one here.
+    function birthdayOf(actor) {
+        const today = nowDate();
+        if (!today) return null;
+        const record = lifeRecordOf(actor);
+        let month = record && Number(record.birthMonth);
+        let day = record && Number(record.birthDay);
+        let year = record && Number(record.birthYear);
+        if (!(month && day) && actor && typeof actor._ccBirthDate === 'string') {
+            const parts = actor._ccBirthDate.split('-').map(Number);
+            year = parts[0]; month = parts[1]; day = parts[2];
+        }
+        if (!month || !day) return null;
+        if (today.getMonth() + 1 !== month || today.getDate() !== day) return null;
+        const out = {};
+        if (year) out.age = String(Math.max(1, today.getFullYear() - year));
+        return out;
+    }
+
+    // Where they grew up: the hometown picked at creation for the player's own
+    // character, the life record's birthplace for anybody recruited.
+    function hometownOf(actor) {
+        const id = actorKey(actor);
+        if (id === 1 && typeof $gameSystem !== 'undefined' && $gameSystem && $gameSystem._ccHometown) {
+            return String($gameSystem._ccHometown);
+        }
+        const record = lifeRecordOf(actor);
+        if (record && record.birthplace) return String(record.birthplace);
+        return '';
+    }
+
+    // The trade they had before the road: the job picked at creation, or the
+    // one the simulation gave them while they were still a townsperson.
+    function jobOf(actor) {
+        const WS = window.WorkSystem;
+        if (!actor || !WS || !WS.getJob || !WS.jobName) return '';
+        return safely(() => {
+            let id = actor._jobId;
+            if (!id) {
+                const profile = profileOf(actor);
+                id = profile && profile.currentJobId;
+            }
+            if (!id) return '';
+            const job = WS.getJob(Number(id));
+            return job ? String(WS.jobName(job) || '') : '';
+        }, '');
+    }
+
+    // The creed they hold, as an entry out of the ideology list.
+    function creedOf(actor) {
+        const NS = window.NPCShared;
+        if (!actor || !NS || !NS.ideologyFor) return null;
+        return safely(() => {
+            if (actor._ideologyId) {
+                const own = NS.ideologyFor({ ideologyId: actor._ideologyId });
+                if (own) return own;
+            }
+            return NS.ideologyFor(profileOf(actor));
+        }, null);
+    }
+
+    function creedName(entry) {
+        if (!entry) return '';
+        const DS = window.DataService;
+        const translated = DS && DS.t ? safely(() => DS.t(entry.name), null) : null;
+        if (translated && translated !== entry.name) return String(translated);
+        return String(entry.name || entry.id || '').split('.').pop()
+            .split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
+
+    // --------------------------------------------------- the day they are in
+    function hourNow() {
+        const today = nowDate();
+        return today ? today.getHours() : null;
+    }
+
+    function holidayToday() {
+        const PH = window.PublicHolidays;
+        if (!PH || !PH.here || !PH.forCountry || !PH.todayIndex || !PH.nameOf) return '';
+        return safely(() => {
+            const country = PH.here();
+            if (!country) return '';
+            const list = PH.forCountry(country, PH.todayIndex()) || [];
+            return list.length ? String(PH.nameOf(list[0].id) || '') : '';
+        }, '');
+    }
+
+    function weekendToday() {
+        const today = nowDate();
+        if (!today) return false;
+        const day = today.getDay();
+        return day === 0 || day === 6;
+    }
+
+    function weatherNow() {
+        return safely(() => {
+            if (typeof $gameScreen === 'undefined' || !$gameScreen || !$gameScreen.weatherType) return null;
+            const type = String($gameScreen.weatherType() || 'none');
+            if (type === 'rain' || type === 'storm' || type === 'snow') return type;
+            return type === 'none' ? 'clear' : null;
+        }, null);
+    }
+
+    // Everything about ONE member that is worth a conversation, as
+    // [{ key, weight, ctx }]. `key` names the bank under script.life (and
+    // solo.life for a thought); `ctx` carries the tokens it fills.
+    function memberLife(actor) {
+        const out = [];
+        if (!actor || nonSentient(actor)) return out;
+        const add = (key, weight, ctx) => { if (ctx) out.push({ key, weight, ctx }); };
+        add('ill', 22, illnessOf(actor));
+        add('wounded', 20, woundOf(actor));
+        add('maimed', 10, maimedOf(actor));
+        add('craving', 22, cravingOf(actor));
+        const intox = intoxicationOf(actor);
+        if (intox) add(intox, 26, {});
+        if (pregnantOf(actor)) add('pregnant', 16, {});
+        add('levelUp', 24, levelUpOf(actor));
+        add('birthday', 40, birthdayOf(actor));
+        const sleep = sleepOf(actor);
+        if (sleep) add(sleep, sleep === 'sleepless' ? 16 : 8, {});
+        const hometown = hometownOf(actor);
+        if (hometown) {
+            add('homesick', 6, { hometown });
+            add('family', 5, {});
+        }
+        const job = jobOf(actor);
+        if (job) add('past', 6, { job });
+        return out;
+    }
+
+    // Everything about the whole company and its day, same shape.
+    function partyLife(cast) {
+        const out = [];
+        const add = (key, weight, ctx) => { if (ctx) out.push({ key, weight, ctx }); };
+        const gold = safely(() => ($gameParty && $gameParty.gold) ? Number($gameParty.gold()) : null, null);
+        if (gold !== null && isFinite(gold)) {
+            if (gold < BROKE_GOLD) add('broke', 14, {});
+            else if (gold > RICH_GOLD) add('rich', 10, {});
+        }
+        const holiday = holidayToday();
+        if (holiday) add('holiday', 18, { holiday });
+        else if (weekendToday()) add('weekend', 6, {});
+        const hour = hourNow();
+        if (hour !== null) {
+            if (hour >= 22 || hour < 5) add('night', 12, {});
+            else if (hour < 8) add('dawn', 12, {});
+        }
+        const weather = weatherNow();
+        if (weather && (weather !== 'clear' || (hour !== null && hour >= 8 && hour < 20))) {
+            add('weather.' + weather, weather === 'clear' ? 5 : 14, {});
+        }
+        watchMeals(cast);
+        if (fedRecently()) add('fed', 18, {});
+        // Two of them who believe different things, and know it.
+        const mine = creedOf(cast[0]);
+        const theirs = creedOf(cast[1]);
+        if (mine && theirs && mine.id !== theirs.id && !nonSentient(cast[0]) && !nonSentient(cast[1])) {
+            const a = creedName(mine);
+            const b = creedName(theirs);
+            if (a && b) add('creed', 10, { creed: a, otherCreed: b });
+        }
+        return out;
+    }
+
+    // What chooseTopic adds for their lives: the two people holding the
+    // conversation each bring their own, the speaker's at full weight and the
+    // listener's turned round so they speak first.
+    function lifeOptions(cast) {
+        const options = [];
+        for (const subject of [0, 1]) {
+            for (const item of memberLife(cast[subject])) {
+                options.push({
+                    weight: item.weight,
+                    path: 'script.life.' + item.key,
+                    extra: Object.assign({}, item.ctx),
+                    voices: LIFE_VOICES,
+                    subject,
+                    life: item.key,
+                });
+            }
+        }
+        for (const item of partyLife(cast)) {
+            options.push({
+                weight: item.weight,
+                path: 'script.life.' + item.key,
+                extra: Object.assign({}, item.ctx),
+                voices: LIFE_VOICES,
+                subject: 0,
+                life: item.key,
+            });
+        }
+        return options;
+    }
+
+    // Something that is news once: spoken about, it stops being news.
+    function spendLife(topic, cast) {
+        if (!topic || !topic.life) return;
+        if (topic.life === 'levelUp') markLevelSpoken(cast[topic.subject || 0]);
+        if (topic.life === 'fed') _fedSpoken = true;
+    }
+
+    // A thought about their own state, for the single bubbles: only the
+    // conditions that are THEIRS (and the empty purse, which is everybody's).
+    function lifeSolo(actor) {
+        const options = memberLife(actor).filter((item) => has('solo.life.' + item.key));
+        const gold = safely(() => ($gameParty && $gameParty.gold) ? Number($gameParty.gold()) : null, null);
+        if (gold !== null && gold < BROKE_GOLD && has('solo.life.broke')) options.push({ key: 'broke', weight: 8, ctx: {} });
+        if (!options.length) return null;
+        let roll = Math.random() * options.reduce((sum, item) => sum + item.weight, 0);
+        let chosen = options[options.length - 1];
+        for (const item of options) {
+            roll -= item.weight;
+            if (roll <= 0) { chosen = item; break; }
+        }
+        const line = pickFrom('solo.life.' + chosen.key);
+        if (!line) return null;
+        const text = fill(line, mergeContext(baseContext([actor]), chosen.ctx));
+        return unresolved(text) ? null : text;
     }
 
     // ---------------------------------------------------------------- topics
@@ -784,6 +1202,12 @@
         // The party's own subjects: the watch, the rations, the purse, the pack,
         // who snores. Nobody outside the party can reach this bank.
         add(24, 'script.companion.' + companionTone(cast), null, 2);
+
+        // Their own lives: the fever, the sling, the craving, the birthday, the
+        // town they come from, the creed they hold. Each only while it is true.
+        for (const option of lifeOptions(cast)) {
+            if (option.weight > 0 && has(option.path)) options.push(option);
+        }
 
         add(26, 'script.general');
 
@@ -1281,7 +1705,12 @@
                 if (!topic) return null;
 
                 let beats;
-                const merged = mergeContext(ctx, topic.extra);
+                // A topic about the second member's own life is opened by
+                // them: the cast is turned round for the script, and the beats
+                // are turned back so `who` still indexes the caller's array.
+                const turned = topic.subject === 1;
+                const order = turned ? [people[1], people[0]].concat(people.slice(2)) : people;
+                const merged = mergeContext(turned ? baseContext(order) : ctx, topic.extra);
                 if (topic.reaction) {
                     beats = reactionBeats(topic.reaction, people, merged);
                 } else if (!topic.path) {
@@ -1289,8 +1718,12 @@
                 } else {
                     const entry = pick(pool(topic.path));
                     if (!entry) continue;
-                    beats = scriptBeats(entry, people, merged, topic.voices);
+                    beats = scriptBeats(entry, order, merged, topic.voices);
+                    if (beats && turned) {
+                        for (const beat of beats) beat.who = beat.who === 0 ? 1 : (beat.who === 1 ? 0 : beat.who);
+                    }
                     if (beats && topic.extra && topic.extra._sig) _lastRecent = topic.extra._sig;
+                    if (beats) spendLife(topic, people);
                 }
                 if (!beats || beats.length < 2) continue;
 
@@ -1316,6 +1749,12 @@
             if (kind === 'reply') return null;            // that is the town's line
             if (kind === 'greet') return this.strangerGreet(actor);
             if (!/^[\w.]+$/.test(kind)) return null;
+            // A member with something going on in their own life (a fever, a
+            // craving, a town they miss) thinks about it some of the time.
+            if (kind === 'thought' && Math.random() < LIFE_SOLO_CHANCE) {
+                const own = lifeSolo(actor);
+                if (own) return voiced(actor, own);
+            }
             const section = 'solo.' + kind;
             const archetype = personalityKey(actor);
             const line = pick(speciesPool(actor, section, () => {
@@ -1384,8 +1823,15 @@
 
         stopTravel,
 
+        // What each member's own life brings to the table right now, as the
+        // topic chooser sees it: [{ key, weight, ctx }]. Read by the tests and
+        // handy from the console.
+        lifeOf(actor) { return memberLife(actor).map((item) => ({ key: item.key, weight: item.weight, ctx: item.ctx })); },
+
         // Testing seams.
         _travel: travel,
+        _lifeOptions: lifeOptions,
+        _resetLife() { _levels.clear(); _hunger.clear(); _fedAt = -Infinity; _fedSpoken = true; },
         _travelCast: travelCast,
         // Whether this member has any conversation in them at all. A cast is
         // built by the caller and the beats come back indexed into the array it

@@ -177,10 +177,10 @@
   //   onMonster    what it does to whoever is standing there, either side
   //   onEmpty      what it leaves behind on bare ground
   const EFFECTS = {
-    x1: { id: "halve", icon: 18 },   // Blight   : halves / cursed ground
-    x2: { id: "double", icon: 26 },  // Gild     : doubles / blessed ground
-    x3: { id: "cull", icon: 1 },     // Cull     : kills outright / a trap
-    x4: { id: "swap", icon: 83, needsTarget: true }, // Displace : trades two tiles
+    x1: { id: "halve", icon: 71 },   // Blight   : halves / cursed ground
+    x2: { id: "double", icon: 87 },  // Gild     : doubles / blessed ground
+    x3: { id: "cull", icon: 86 },    // Cull     : kills outright / a trap
+    x4: { id: "swap", icon: 75, needsTarget: true }, // Displace : trades two tiles
     x5: { id: "ward", icon: 81 }     // Ward     : wins ties / bars the tile
   };
   const EFFECT_KEYS = Object.keys(EFFECTS);

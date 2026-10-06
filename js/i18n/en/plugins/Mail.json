@@ -167,6 +167,7 @@
     "appName": "Nudge",
     "signedIn": "Signed in as {who}",
     "signedOut": "Nobody is signed in.",
+    "groupFavourites": "Favourites",
     "groupParty": "Walking with you",
     "groupWorld": "Elsewhere in this world",
     "groupOthers": "Always on",
@@ -188,6 +189,7 @@
     "noAnswer": "...",
     "situation": "A typed conversation over the hypernet, late at night, in a window with a blue title bar.",
     "bioMember": "{who} walks with the party and is typing from a few feet away, which neither of you mentions.",
+    "bioFavourite": "{who} is somebody the party met and starred, writing back over the messenger from wherever they are today.",
     "bioStranger": "{who} walks with another party in this same world, the one {leader} leads. You have never met.",
     "lore": {
       "eris": {

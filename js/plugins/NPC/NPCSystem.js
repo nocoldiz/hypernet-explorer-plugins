@@ -1184,6 +1184,11 @@
       // cannot live in the static map index; resolve it to the live synthetic
       // settlement registered for the current world coordinates instead.
       if (mapId === 636) return $gameSystem?._currentProcGroup ?? null;
+      // Map 353 is only Bologna while BolognaMapSystem lends it the slot;
+      // standing on it any other time is standing at the Monument to Humanity,
+      // which is no part of the city's group.
+      if (mapId === Config.BOLOGNA_MAP_ID && $gameMap && $gameMap.mapId() === mapId &&
+          window.BolognaMapSystem && !window.BolognaMapSystem.isBolognaMap()) return null;
       if (!GroupRegistry._mapIndex) {
         const groups = GroupRegistry.build();
         GroupRegistry._mapIndex = new Map();

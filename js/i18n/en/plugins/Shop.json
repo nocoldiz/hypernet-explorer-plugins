@@ -193,5 +193,9 @@
   "noCollectibles": "Nothing in the bag but things that are actually good for something.",
   "soldCollectibles": "Handed over {count} keepsakes for {money}.",
   "year": "Year",
-  "teaches": "Teaches"
+  "teaches": "Teaches",
+  "keeperDiscount": "{name} likes your company: {percent}% off everything today.",
+  "viewGrid": "GRID",
+  "viewList": "LIST",
+  "viewToggleHint": "Switch the shelf between a grid of cards and a list"
 }

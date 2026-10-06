@@ -441,9 +441,8 @@
       // The garage reads its dossier down the sidebar the same way.
       if (Scene_CharacterCreation._isVehicleMode) return this._vehicleSidebarHtml();
 
-      const currentMemberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       const isCreature = (Scene_CharacterCreation.isCreatureActor && Scene_CharacterCreation.isCreatureActor(actor))
-        || !!(actor && (actor._isCreatureActor || $gameSwitches.value(77 + currentMemberIndex) || (window.NPCCreature && window.NPCCreature.isNonSentientActor && window.NPCCreature.isNonSentientActor(actor))));
+        || !!(actor && (actor._isCreatureActor || (window.NPCCreature && window.NPCCreature.isNonSentientActor && window.NPCCreature.isNonSentientActor(actor))));
       const isPreset = !!this._presetWindow;
       const isPetActive = false;
 
@@ -492,7 +491,7 @@
 
       // 2. Full-Width Portrait Showcase Card, or on the simple bio sheet the
       // written history in its place.
-      const sidebarAge = ($gameSystem._ccBirthAge && $gameSystem._ccBirthAge[currentMemberIndex]) || 28;
+      const sidebarAge = (actor && Number(actor._ccAge)) || 28;
       const profileBoxHtml = this._bioSwapsPortraitAndHistory()
         ? `<div class="cc-compact-portrait-card cc-sidebar-history">${this._simpleSheetHistoryHtml(actor, sidebarAge)}</div>`
         : this._ccPortraitCardHtml(actor, isLocked, isCreature);
@@ -686,7 +685,10 @@
 
       const classData = $dataClasses[actor._classId];
       const className = classData ? window.CCDbName(classData) : "Class";
-      const genderName = actor.genderName ? actor.genderName() : ($gameVariables.value(38 + (Scene_CharacterCreation._currentPartyMemberIndex || 0)) === 0 ? "Male ♂" : "Female ♀");
+      const genderVal = actor.gender ? actor.gender() : 0;
+      const genderName = [
+        ccT('CharCreate.male'), ccT('CharCreate.female'), ccT('CharCreate.nonBinary2'), ccT('CharCreate.cocoon')
+      ][genderVal] || ccT('CharCreate.none2');
       const startingGold = CC_BASE_START_GOLD + memberStartingGold(actor);
       const startingMoneyFormatted = this._formatGoldToEuros(startingGold);
       const bustName = this._getActorBust(actor);

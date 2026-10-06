@@ -31,9 +31,15 @@
  * week. When nobody is fit to relieve the driver, they keep going and the party
  * is told so - stopping the car is the player's call, not the plugin's.
  *
- * The Bike and the Broom are pedalled and flown by their rider alone: they have
- * no driver's seat, no rota and no naps in the back. The Starship gets no driver
- * either - it flies itself, which is what the second half of this file is for.
+ * The Bike and the Broom have no driver's seat and no rota: the leader at the
+ * front of the column steers, and everybody riding behind them can nap. The
+ * Starship gets no driver either - it flies itself, which is what the second
+ * half of this file is for. Holding the wheel never makes anybody the party
+ * leader: the hand-over happens on the spot and the marching order stays put.
+ *
+ * In ANY vehicle with more than one person aboard, the crew keeps each other
+ * company: everybody awake gains Social and Fun (the meter the party's mood is
+ * paid in) by the hour, the one steering at half the rate.
  *
  * Sleep, meanwhile, is paid back to whoever is NOT driving: it only starts once
  * the meter is under 40% (nobody naps at 90%), and once it starts it fills all
@@ -124,6 +130,12 @@
   const MEAL_HUNGER_CEILING = 85;
 
   const NEED_KEYS = ['hunger', 'sleep', 'hygiene', 'social', 'leisure'];
+
+  // Company on the road, per game-hour, for everybody awake aboard any
+  // vehicle with somebody else in it; the one steering gets this share of it.
+  const COMPANY_SOCIAL_PER_HOUR = 12;
+  const COMPANY_FUN_PER_HOUR = 8;
+  const COMPANY_DRIVER_SHARE = 0.5;
 
   // ---------------------------------------------------------------------------
   // Small readers
@@ -512,24 +524,55 @@
 
     // Off the road: everybody sheds strain, and the journey's latches are shut
     // so the next one starts clean.
-    if (!type || !DRIVEN_TYPES[type]) {
+    if (!type) {
       if (s.driverId != null || napping().length) release();
       for (const actor of crew) setStrain(actor, strainOf(actor) - (STRAIN_SHED_PER_HOUR / 60) * elapsed);
-      if (type === 'airship') updateAboard(elapsed);
-      else s.chore = null;
+      s.chore = null;
       return;
     }
 
-    const atWheel = assignWheel(true);
-    if (!atWheel) return;
-    s.driverId = atWheel.actorId();
-
-    for (const actor of crew) {
-      const delta = actor === atWheel ? STRAIN_PER_HOUR : -STRAIN_SHED_PER_HOUR;
-      setStrain(actor, strainOf(actor) + (delta / 60) * elapsed);
+    // Who is steering. A car, a camper or a boat has a seat for it and a rota
+    // to fill it; a bike or a broom is steered by whoever rides at the front
+    // of the column (the leader); a starship flies itself. The wheel is never
+    // the party's lead: handing it over moves nobody in the marching order.
+    let atWheel = null;
+    if (DRIVEN_TYPES[type]) {
+      atWheel = assignWheel(true);
+      if (!atWheel) return;
+      s.driverId = atWheel.actorId();
+      for (const actor of crew) {
+        const delta = actor === atWheel ? STRAIN_PER_HOUR : -STRAIN_SHED_PER_HOUR;
+        setStrain(actor, strainOf(actor) + (delta / 60) * elapsed);
+      }
+    } else {
+      s.driverId = null;
+      for (const actor of crew) setStrain(actor, strainOf(actor) - (STRAIN_SHED_PER_HOUR / 60) * elapsed);
+      if (type !== 'airship' && $gameParty && $gameParty.leader) atWheel = $gameParty.leader();
     }
+
     payRest(crew, atWheel, elapsed);
     syncSleep(crew, atWheel);
+    payCompany(crew, atWheel, elapsed);
+    if (type === 'airship') updateAboard(elapsed);
+    else s.chore = null;
+  }
+
+  // Company on the road, in anything that moves: the people riding together
+  // talk (Social) and pass the time (Fun, which is also what the party's mood
+  // is paid in, see TimeDateSystem's BattleMood). Whoever is steering keeps
+  // half an ear on the conversation; whoever is asleep in the back gets none
+  // of it. Nobody has company on their own.
+  function payCompany(crew, atWheel, minutes) {
+    if (!crew || crew.length < 2 || minutes <= 0) return;
+    const out = napping();
+    const awake = crew.filter(a => out.indexOf(a.actorId()) < 0);
+    if (awake.length < 2) return;
+    const hours = minutes / 60;
+    for (const actor of awake) {
+      const share = actor === atWheel ? COMPANY_DRIVER_SHARE : 1;
+      if (actor.addSocial) actor.addSocial(COMPANY_SOCIAL_PER_HOUR * hours * share);
+      if (actor.addLeisure) actor.addLeisure(COMPANY_FUN_PER_HOUR * hours * share);
+    }
   }
 
   // The wheel is let go of: the driver's seat empties and the rest the party was

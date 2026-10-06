@@ -79,6 +79,9 @@
     } catch (e) { /* a missing sound never stops a match */ }
   }
 
+  // How long the verdict banner holds before a press can dismiss it.
+  const BANNER_HOLD_FRAMES = 30;
+
   const CARD_SLIDE = () => "Casino/card_slide_" + (1 + Math.floor(Math.random() * 8));
   const CARD_PLACE = () => "Casino/card_place_" + (1 + Math.floor(Math.random() * 4));
 
@@ -166,7 +169,11 @@
         if (this._turn === 1) this.updateAI();
         else this.updateInput();
       } else if (this._phase === "over") {
-        if (Input.isTriggered("ok") || Input.isTriggered("cancel") || TouchInput.isTriggered()) this.leave();
+        // The verdict is read before it can be dismissed: the click or the
+        // press that ended the match must not also sweep its banner away.
+        if (this._overWait > 0) { this._overWait--; return; }
+        if (Input.isTriggered("ok") || Input.isTriggered("cancel")
+          || TouchInput.isTriggered() || TouchInput.isCancelled()) this.leave();
       }
     }
 
@@ -487,7 +494,11 @@
     //-------------------------------------------------------------------------
 
     updateInput() {
-      if (Input.isTriggered("cancel")) {
+      // L1 / R1 (Q / W) step the card in hand from anywhere, so a pad can
+      // change its mind without walking off the board and back.
+      const tabDir = window.UINav ? window.UINav.tabDir() : 0;
+      if (tabDir && this._hands[0].length) { this.stepHand(tabDir); return; }
+      if (Input.isTriggered("cancel") || TouchInput.isCancelled()) {
         // Cancel takes back a half-picked Displace before it takes the player
         // away from the table.
         if (this._pendingSwap != null) {
@@ -511,17 +522,9 @@
       if (this._area === "hand") {
         const hand = this._hands[0];
         if (!hand.length) return;
-        if (Input.isRepeated("right")) { this._handIndex = (this._handIndex + 1) % hand.length; SoundManager.playCursor(); this.renderAll(); }
-        else if (Input.isRepeated("left")) { this._handIndex = (this._handIndex - 1 + hand.length) % hand.length; SoundManager.playCursor(); this.renderAll(); }
-        else if (Input.isRepeated("up")) {
-          const legal = this.legalTilesFor(0, hand[this._handIndex]);
-          if (legal.length) { this._area = "board"; this._cursor = legal[0]; SoundManager.playOk(); this.renderAll(); }
-          else SoundManager.playBuzzer();
-        } else if (Input.isTriggered("ok")) {
-          const legal = this.legalTilesFor(0, hand[this._handIndex]);
-          if (legal.length) { this._area = "board"; this._cursor = legal[0]; SoundManager.playOk(); this.renderAll(); }
-          else SoundManager.playBuzzer();
-        }
+        if (Input.isRepeated("right")) this.stepHand(1);
+        else if (Input.isRepeated("left")) this.stepHand(-1);
+        else if (Input.isRepeated("up") || Input.isTriggered("ok")) this.toBoard();
         return;
       }
 
@@ -550,6 +553,36 @@
       }
     }
 
+    // Steps the card in hand, wrapping. On the board the cursor stays where it
+    // is when the new card can go there, and jumps to its first legal tile
+    // otherwise; a card with nowhere to go takes the cursor back to the hand.
+    stepHand(dir) {
+      const hand = this._hands[0];
+      if (!hand.length) return;
+      if (this._pendingSwap != null) { SoundManager.playBuzzer(); return; }
+      this._handIndex = (this._handIndex + dir + hand.length) % hand.length;
+      SoundManager.playCursor();
+      if (this._area === "board") {
+        const legal = this.legalTilesFor(0, hand[this._handIndex]);
+        if (!legal.length) this._area = "hand";
+        else if (!legal.includes(this._cursor)) this._cursor = legal[0];
+      }
+      this.renderAll();
+    }
+
+    // From the hand up onto the board, on the tile the cursor last stood on
+    // when the card can go there, so placing twice in a row is not a walk
+    // back from the corner every time.
+    toBoard() {
+      const hand = this._hands[0];
+      const legal = this.legalTilesFor(0, hand[this._handIndex]);
+      if (!legal.length) { SoundManager.playBuzzer(); return; }
+      this._area = "board";
+      if (!legal.includes(this._cursor)) this._cursor = legal[0];
+      SoundManager.playOk();
+      this.renderAll();
+    }
+
     playerPlace() {
       const card = this._hands[0][this._handIndex];
       if (!this.canPlace(0, card, this._cursor)) { SoundManager.playBuzzer(); return; }
@@ -567,8 +600,15 @@
       // Walking out of a staked duel forfeits it, which is the honest reading of
       // leaving the table; a practice game just ends. A stake is never handed
       // over on one press: the table asks first, A forfeits and B stays.
-      if (this._stake.type === "none") { this.leave(); return; }
+      // A bracket round is staked too, on the entry fee already paid: one
+      // stray press of B used to knock the player out of a paid run.
+      if (this._stake.type === "none" && !this.inBracket()) { this.leave(); return; }
       this.openQuitAsk();
+    }
+
+    // Whether somebody outside the table is waiting on this result.
+    inBracket() {
+      return !!(this._config && typeof this._config.onFinish === "function");
     }
 
     forfeit() {
@@ -587,7 +627,8 @@
       const box = document.createElement("div");
       box.className = "cd-banner cd-confirm cd-in";
       box.id = "cd-quit-ask";
-      box.innerHTML = `<p>${escapeHtml(T("CardGame.duel.forfeitAsk"))}</p>
+      const ask = this._stake.type === "none" ? "CardGame.duel.forfeitBracketAsk" : "CardGame.duel.forfeitAsk";
+      box.innerHTML = `<p>${escapeHtml(T(ask))}</p>
         <div class="cd-confirm-btns">
           <button class="cd-btn" id="cd-quit-yes" data-pad="confirm">${escapeHtml(T("CardGame.duel.forfeitYes"))}</button>
           <button class="cd-btn" id="cd-quit-no" data-pad="back">${escapeHtml(T("CardGame.duel.forfeitNo"))}</button>
@@ -1045,6 +1086,7 @@
     }
 
     showBanner(winner) {
+      this._overWait = BANNER_HOLD_FRAMES;
       const container = document.getElementById("cardduel-container");
       if (!container) return;
       const CGx = CG();
@@ -1156,8 +1198,16 @@
       wrap.style.top = Math.round(metrics.boardTop + metrics.boardSize / 2) + "px";
       container.querySelector("#cd-detail").style.top = Math.round(metrics.boardTop) + "px";
 
+      // The right button is the table's Back (read through TouchInput), so the
+      // browser's own menu is kept off the board.
+      container.addEventListener("contextmenu", (e) => { e.preventDefault(); e.stopPropagation(); });
+
       container.querySelector("#cd-quit").addEventListener("click", () => {
         if (this._quitAsk) return;
+        // The clash is the verdict being read out: walking away from it
+        // used to leave the table before the stake was settled, so a losing
+        // board could be escaped for free.
+        if (this._phase === "clash") { SoundManager.playBuzzer(); return; }
         if (this._phase === "play") this.confirmQuit(); else this.leave();
       });
     }
@@ -1187,7 +1237,7 @@
     }
 
     onTileClick(index) {
-      if (this._phase !== "play" || this._turn !== 0) return;
+      if (this._phase !== "play" || this._turn !== 0 || this._quitAsk) return;
       const card = this._hands[0][this._handIndex];
       if (this.canPlace(0, card, index)) {
         this._cursor = index;
@@ -1202,8 +1252,11 @@
     }
 
     onCardClick(handIndex) {
-      if (this._phase !== "play" || this._turn !== 0) return;
+      if (this._phase !== "play" || this._turn !== 0 || this._quitAsk) return;
       if (this._handIndex === handIndex && this._area === "board") return;
+      // A second click on the card already held lifts it onto the board, the
+      // way OK does, so the legal tiles light up under the cursor.
+      if (this._handIndex === handIndex && this._area === "hand") { this.toBoard(); return; }
       this._handIndex = handIndex;
       this._area = "hand";
       SoundManager.playCursor();
@@ -1707,7 +1760,7 @@
       <div style="display:flex; flex-direction:column; height:100%; font-family:Tahoma,sans-serif; background:var(--xp-bg); overflow:hidden">
         <div style="background:linear-gradient(135deg, var(--xp-navy-8) 0%, var(--xp-navy-7) 55%, var(--xp-sky) 100%); padding:10px 16px; border-bottom:2px solid var(--xp-navy-6); flex-shrink:0">
           <div style="color:var(--xp-white); font-weight:bold; font-size:17px; letter-spacing:2px">${escapeHtml(T("CardGame.arena.banner"))}</div>
-          <div style="color:#cfe6ff; font-size:13px; margin-top:2px">${escapeHtml(T("CardGame.arena.tagline"))}</div>
+          <div style="color:var(--xp-sky-4); font-size:13px; margin-top:2px">${escapeHtml(T("CardGame.arena.tagline"))}</div>
         </div>
         <div style="flex:1; overflow-y:auto; padding:10px 14px; display:flex; flex-direction:column; gap:10px">
           <div>
@@ -1751,8 +1804,8 @@
 
     const el = (id) => win.querySelector("#" + id);
     const paint = (btn, on) => {
-      btn.style.background = on ? "linear-gradient(180deg,var(--xp-sky-2),var(--xp-navy-7))" : "#ece9d8";
-      btn.style.color = on ? "#ffffff" : "#333333";
+      btn.style.background = on ? "linear-gradient(180deg,var(--xp-sky-2),var(--xp-navy-7))" : "var(--xp-bg)";
+      btn.style.color = on ? "var(--xp-white)" : "var(--xp-ink-4)";
     };
 
     function renderLevels() {
@@ -1802,7 +1855,7 @@
         playSe("Buzzer1", 70, 100);
         const line = el("ca-status");
         line.textContent = T("CardGame.arena.cannotAfford", { amount: euros(window.CardArena.entryFee(level)) });
-        line.style.color = "#8B1A00";
+        line.style.color = "var(--xp-red-4)";
         return;
       }
       playSe("Casino/card_place_1", 80, 105);

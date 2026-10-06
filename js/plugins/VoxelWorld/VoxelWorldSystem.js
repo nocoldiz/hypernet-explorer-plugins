@@ -365,7 +365,9 @@
         exitToWorldMap() {
             const sc = this._scene;
             if (!sc || sc._titleMode || sc._standalone) return false;
-            sc._endDriveToWorldMap();   // answers for the walk as well as the drive
+            // answers for the walk as well as the drive, behind the sheet
+            if (sc._leaveToWorldMap) sc._leaveToWorldMap();
+            else sc._endDriveToWorldMap();
             return true;
         },
         // Write where the party stands into the 2D map's records without
@@ -502,6 +504,112 @@
     Scene_Map.prototype.isMenuEnabled = function() {
         if (VoxelWorldSystem.isActive()) return false;
         return _Scene_Map_isMenuEnabled_CDS.call(this);
+    };
+
+    // =========================================================================
+    // The 2D map is sandboxed while the world is up
+    //
+    // canMove above keeps the party from walking down there, but the engine
+    // still read every OK press and every click against the map under the
+    // overlay: Game_Player.updateNonmoving runs triggerAction each frame, so
+    // the E that opened a door out here also fired the event the 2D player
+    // happened to be facing on map 315, boarded the camper standing under
+    // them, or set a touch destination. None of the map's own input runs
+    // now: not the action button, not the touch-to-walk, not the random
+    // encounter counter, not the debug call. Every key and click belongs to
+    // the world, and the map waits exactly as it was left.
+    // =========================================================================
+    function worldHasInput() {
+        return VoxelWorldSystem.isActive() && !VoxelWorldSystem.isTitleDrive();
+    }
+    VoxelWorldSystem.sandboxesMapInput = worldHasInput;
+
+    const _Game_Player_triggerAction_VW = Game_Player.prototype.triggerAction;
+    Game_Player.prototype.triggerAction = function() {
+        if (worldHasInput()) return false;
+        return _Game_Player_triggerAction_VW ? _Game_Player_triggerAction_VW.call(this) : false;
+    };
+    const _Game_Player_getOnOffVehicle_VW = Game_Player.prototype.getOnOffVehicle;
+    Game_Player.prototype.getOnOffVehicle = function() {
+        if (worldHasInput()) return false;
+        return _Game_Player_getOnOffVehicle_VW ? _Game_Player_getOnOffVehicle_VW.call(this) : false;
+    };
+    ['checkEventTriggerHere', 'checkEventTriggerThere', 'checkEventTriggerTouch', 'updateEncounterCount'].forEach(name => {
+        const orig = Game_Player.prototype[name];
+        Game_Player.prototype[name] = function() {
+            if (worldHasInput()) return false;
+            return orig ? orig.apply(this, arguments) : false;
+        };
+    });
+
+    const _Scene_Map_processMapTouch_VW = Scene_Map.prototype.processMapTouch;
+    Scene_Map.prototype.processMapTouch = function() {
+        if (worldHasInput()) { this._touchCount = 0; return; }
+        if (_Scene_Map_processMapTouch_VW) _Scene_Map_processMapTouch_VW.call(this);
+    };
+    ['updateEncounter', 'updateCallDebug'].forEach(name => {
+        const orig = Scene_Map.prototype[name];
+        Scene_Map.prototype[name] = function() {
+            if (worldHasInput()) return;
+            if (orig) orig.apply(this, arguments);
+        };
+    });
+
+    // =========================================================================
+    // The way back, under a black sheet
+    //
+    // Leaving used to be a cut: the overlay came down on the same frame the
+    // transfer was booked, so the 2D map showed through at the OLD square
+    // for the whole of the engine's fade before the new one came up. The
+    // exit now pulls a black sheet over the page first (the scene's
+    // _leaveToWorldMap), ends the world and books the transfer under it, and
+    // the sheet is lifted by the map scene that comes up on the other side.
+    // A sheet nobody lifts (a transfer that never came) lifts itself.
+    // =========================================================================
+    const EXIT_SHEET_ID = 'vw-exit-sheet';
+    const EXIT_SHEET_IN_MS = 260;
+    const EXIT_SHEET_OUT_MS = 420;
+    const EXIT_SHEET_MAX_MS = 5000;
+
+    function exitSheet() {
+        return (typeof document !== 'undefined' && document.getElementById) ? document.getElementById(EXIT_SHEET_ID) : null;
+    }
+    // Draws the sheet and answers true once it is opaque (through `done`).
+    // False when there is no page to draw on: the caller leaves at once.
+    function showExitSheet(done) {
+        if (typeof document === 'undefined' || !document.body || !document.createElement) return false;
+        let el = exitSheet();
+        if (!el) {
+            el = document.createElement('div');
+            el.id = EXIT_SHEET_ID;
+            el.style.cssText = 'position:fixed;left:0;top:0;width:100%;height:100%;background:#000;' +
+                'opacity:0;z-index:2147483646;pointer-events:none;transition:opacity ' + EXIT_SHEET_IN_MS + 'ms ease-out;';
+            document.body.appendChild(el);
+        }
+        el._vwShownAt = Date.now();
+        requestAnimationFrame(() => { if (el.isConnected) el.style.opacity = '1'; });
+        setTimeout(done, EXIT_SHEET_IN_MS + 20);
+        // Never a black screen for good.
+        setTimeout(() => { if (exitSheet() === el) clearExitSheet(true); }, EXIT_SHEET_MAX_MS);
+        return true;
+    }
+    function clearExitSheet(instant) {
+        const el = exitSheet();
+        if (!el) return;
+        if (instant) { if (el.parentNode) el.parentNode.removeChild(el); return; }
+        el.style.transition = 'opacity ' + EXIT_SHEET_OUT_MS + 'ms ease-in';
+        el.style.opacity = '0';
+        setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, EXIT_SHEET_OUT_MS + 40);
+    }
+    VoxelWorldSystem.showExitSheet = showExitSheet;
+    VoxelWorldSystem.clearExitSheet = clearExitSheet;
+
+    // The map scene on the other side lifts the sheet as it starts: the new
+    // square is already drawn under it, so the lift is the whole transition.
+    const _Scene_Map_start_VW = Scene_Map.prototype.start;
+    Scene_Map.prototype.start = function() {
+        if (_Scene_Map_start_VW) _Scene_Map_start_VW.call(this);
+        if (!VoxelWorldSystem.isActive() && exitSheet()) clearExitSheet(false);
     };
 
     // =========================================================================
@@ -722,6 +830,7 @@
     const _Scene_Title_create_VW = Scene_Title.prototype.create;
     Scene_Title.prototype.create = function() {
         stopPlayableWorld();
+        clearExitSheet(true);
         _Scene_Title_create_VW.call(this);
     };
     const _Scene_Gameover_create_VW = Scene_Gameover.prototype.create;

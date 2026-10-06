@@ -475,11 +475,21 @@
     "TESTES",       // 5
   ];
 
-  // Maps party index (0/1/2) to the game variable for reproduction type
-  function getReproductionVariableId(actor) {
-    const idx = $gameParty.members().indexOf(actor);
-    return [87, 115, 116][idx] !== undefined ? [87, 115, 116][idx] : 87;
+  // The reproduction type lives on the actor (ActorCharacterFields), so an
+  // implant changes the body it was fitted to and Health_BiologicSimulation
+  // reads the same answer.
+  function readReproductionType(actor) {
+    const v = actor && actor.reproductionType ? actor.reproductionType() : null;
+    return (v === undefined || v === null) ? 0 : v;
   }
+
+  function writeReproductionType(actor, value) {
+    if (actor && actor.setReproductionType) actor.setReproductionType(value);
+  }
+
+  // The reproduction type each reproductive implant gives the body it is
+  // fitted to.
+  const IMPLANT_REPRODUCTION = { UTERUS: 1, OVIDUCT: 2, SPORE_GLAND: 3, MITOSIS_GLAND: 4, TESTES: 0 };
 
   if (Utils.RPGMAKER_NAME === "MZ") {
     parameters = PluginManager.parameters(pluginName);
@@ -657,6 +667,7 @@
   const INSTALLATION_FEE = 5000; // 50€ flat labor fee for any installation
   const PLASTIC_SURGERY_COST = 10000; // 100€ for sprite plastic surgery
   const FACE_SURGERY_COST = 5000;     // 50€ for face bust surgery
+  const MIND_WIPE_COST = 750000;      // 7500€, dearer than the 5000€ Mind Wiper item
 
   // ── The world of chaos: the clinic quotes what it likes ────────────────────
   // Nothing about a part or an augment changes here, only what is asked for it:
@@ -1690,12 +1701,9 @@
 
     skillIdList(prosthetic.skill).forEach((sid) => { if ($dataSkills[sid]) actor.learnSkill(sid); });
 
-    const reproVarId = getReproductionVariableId(actor);
-    if (prostheticKey === "UTERUS") $gameVariables.setValue(reproVarId, 1);
-    else if (prostheticKey === "OVIDUCT") $gameVariables.setValue(reproVarId, 2);
-    else if (prostheticKey === "SPORE_GLAND") $gameVariables.setValue(reproVarId, 3);
-    else if (prostheticKey === "MITOSIS_GLAND") $gameVariables.setValue(reproVarId, 4);
-    else if (prostheticKey === "TESTES") $gameVariables.setValue(reproVarId, 0);
+    if (IMPLANT_REPRODUCTION[prostheticKey] !== undefined) {
+      writeReproductionType(actor, IMPLANT_REPRODUCTION[prostheticKey]);
+    }
 
     trainOnImplant(prostheticKey);
     actor.refresh();
@@ -1725,9 +1733,8 @@
       skillIdList(prosthetic.skill).forEach((sid) => actor.forgetSkill(sid));
     }
 
-    const reproVarId = getReproductionVariableId(actor);
     if (["UTERUS", "OVIDUCT", "SPORE_GLAND", "MITOSIS_GLAND"].includes(currentProstheticKey)) {
-      $gameVariables.setValue(reproVarId, 0);
+      writeReproductionType(actor, 0);
     }
 
     delete actor._prosthetics[partKey];
@@ -2000,12 +2007,9 @@
 
     skillIdList(prosthetic.skill).forEach((sid) => { if ($dataSkills[sid]) actor.learnSkill(sid); });
 
-    const reproVarId = getReproductionVariableId(actor);
-    if (prostheticKey === "UTERUS") $gameVariables.setValue(reproVarId, 1);
-    else if (prostheticKey === "OVIDUCT") $gameVariables.setValue(reproVarId, 2);
-    else if (prostheticKey === "SPORE_GLAND") $gameVariables.setValue(reproVarId, 3);
-    else if (prostheticKey === "MITOSIS_GLAND") $gameVariables.setValue(reproVarId, 4);
-    else if (prostheticKey === "TESTES") $gameVariables.setValue(reproVarId, 0);
+    if (IMPLANT_REPRODUCTION[prostheticKey] !== undefined) {
+      writeReproductionType(actor, IMPLANT_REPRODUCTION[prostheticKey]);
+    }
 
     trainOnImplant(prostheticKey);
     actor.refresh();
@@ -2036,9 +2040,8 @@
       skillIdList(prosthetic.skill).forEach((sid) => actor.forgetSkill(sid));
     }
 
-    const reproVarId = getReproductionVariableId(actor);
     if (["UTERUS", "OVIDUCT", "SPORE_GLAND", "MITOSIS_GLAND"].includes(currentProstheticKey)) {
-      $gameVariables.setValue(reproVarId, 0);
+      writeReproductionType(actor, 0);
     }
 
     delete actor._prosthetics[partKey];
@@ -2055,15 +2058,12 @@
   window.ProstheticShop.inventoryBodyParts = getInventoryBodyParts;
 
   function getGenderName(actor) {
-    const idx = $gameParty.members().indexOf(actor);
-    const varId = [38, 39, 40][idx] !== undefined ? [38, 39, 40][idx] : 38;
-    const val = $gameVariables.value(varId);
+    const val = actor && actor.gender ? actor.gender() : 0;
     return T.list('Prosthetics.genderNames')[val] || T('Prosthetics.notAvailable');
   }
 
   function getReproductionName(actor) {
-    const varId = getReproductionVariableId(actor);
-    const val = $gameVariables.value(varId);
+    const val = readReproductionType(actor);
     const names = T.obj('Prosthetics.reproductionNames') || {};
     return names[val] || T('Prosthetics.notAvailable');
   }
@@ -2117,7 +2117,15 @@
     window.addEventListener("contextmenu", this._onContextMenu);
 
     UIShopInputManager.init(this._dndContainer, this);
-    const _seedData = $gameTemp._prostheticShopSeedData;
+    // Back from a sub-screen (plastic surgery, the trait board, the wizard)
+    // the scene is rebuilt, so the clinic it was opened at is carried over.
+    const _seedData = $gameTemp._prostheticShopSeedData
+      || (Scene_ProstheticShop._returnActorId ? Scene_ProstheticShop._lastSeedData : null);
+    Scene_ProstheticShop._lastSeedData = _seedData || null;
+    // Only a clinic's own counter seeds the shop. Opened from a kit in the
+    // pack (Surgical Tools, a summoned sawbones) there is no lab to hand, so
+    // the vat, the heir and the gene splicer stay shut.
+    this._labOutOfReach = !_seedData;
     if (_seedData) {
       this._dailyArchetypes = getDailyProstheticArchetypes(_seedData.mapId, _seedData.x, _seedData.y);
       $gameTemp._prostheticShopSeedData = null;
@@ -2227,6 +2235,8 @@
     const Lab = window.BiologicLab;
     const heirRefusal = Lab ? Lab.carrierRefusal(this._selectedActor) : '';
     const labCost = (kind) => formatPriceInEuros(Lab.clinicCost(kind));
+    const noLab = !!this._labOutOfReach;
+    const labMeta = (meta) => noLab ? T('Prosthetics.labOutOfReach') : meta;
     // In the field only what is already in the pack can be fitted, an augment
     // may be taken out but never seated, and nothing is for sale.
     const commands = this._fieldMode
@@ -2244,14 +2254,15 @@
           { cmd: 'implant', icon: 128, label: T('Prosthetics.installImplant') },
           { cmd: 'plastic_surgery', icon: 84, label: T('Prosthetics.plasticSurgery'), meta: T('Prosthetics.plasticSurgeryMeta'), value: formatPriceInEuros(PLASTIC_SURGERY_COST) },
           { cmd: 'face_surgery', icon: 188, label: T('Prosthetics.faceSurgery'), meta: T('Prosthetics.faceSurgeryMeta'), value: formatPriceInEuros(FACE_SURGERY_COST) },
-          { cmd: 'gene_splicing', icon: 197, label: T('Prosthetics.geneSplicing'), meta: T('Prosthetics.geneSplicingMeta'), value: T('Prosthetics.geneSplicingPrice') }
+          { cmd: 'gene_splicing', icon: 197, label: T('Prosthetics.geneSplicing'), meta: labMeta(T('Prosthetics.geneSplicingMeta')), value: T('Prosthetics.geneSplicingPrice'), blocked: noLab },
+          { cmd: 'mind_wipe', icon: 192, label: T('Prosthetics.mindWipe'), meta: labMeta(T('Prosthetics.mindWipeMeta')), value: formatPriceInEuros(MIND_WIPE_COST), blocked: noLab }
         ].concat(!Lab ? [] : [
-          { cmd: 'growth_tube', icon: 176, label: T('Prosthetics.growthTube'), meta: T('Prosthetics.growthTubeMeta'), value: labCost('vat') },
+          { cmd: 'growth_tube', icon: 176, label: T('Prosthetics.growthTube'), meta: labMeta(T('Prosthetics.growthTubeMeta')), value: labCost('vat'), blocked: noLab },
           // Only a body that can carry is offered the heir: testicles, a
           // mitotic gland and no organs are refused (BiologicLab.carrierRefusal).
           { cmd: 'design_heir', icon: 268, label: T('Prosthetics.designHeir'), value: labCost('splice'),
-            meta: heirRefusal ? T(heirRefusal, { actor: this._selectedActor ? this._selectedActor.name() : "" }) : T('Prosthetics.designHeirMeta'),
-            blocked: !!heirRefusal }
+            meta: labMeta(heirRefusal ? T(heirRefusal, { actor: this._selectedActor ? this._selectedActor.name() : "" }) : T('Prosthetics.designHeirMeta')),
+            blocked: noLab || !!heirRefusal }
         ]);
     return {
       title: this._fieldMode ? T('Prosthetics.fieldTheatre') : T('Prosthetics.biologicLaboratory'),
@@ -2829,7 +2840,14 @@
     this.switchSelectedActor(next);
   };
 
+  // The lab services a kit opened in the field cannot offer.
+  const LAB_ONLY_COMMANDS = ['gene_splicing', 'mind_wipe', 'growth_tube', 'design_heir'];
+
   Scene_ProstheticShop.prototype.chooseCommand = function (cmd) {
+    if ((this._fieldMode || this._labOutOfReach) && LAB_ONLY_COMMANDS.includes(cmd)) {
+      if (window.SoundManager) SoundManager.playBuzzer();
+      return;
+    }
     if (cmd === 'install') {
       this._viewState = 'install_archetype';
       this.refreshUIShopDOM();
@@ -2857,6 +2875,8 @@
       this.openFaceSurgery();
     } else if (cmd === 'gene_splicing') {
       this.openGeneSplicing();
+    } else if (cmd === 'mind_wipe') {
+      this.openMindWipe();
     } else if (cmd === 'growth_tube') {
       this.openDesignedOffspring('vat');
     } else if (cmd === 'design_heir') {
@@ -2918,6 +2938,21 @@
     Scene_ProstheticShop._returnActorId = actorId;
     Board.prepare(false, actorId, true);
     SceneManager.push(Board);
+  };
+
+  // Mind wipe: the Mind Wiper's class selection (CharacterCreationClassSelector)
+  // opened on the patient at the clinic's price. The patient is wiped to level
+  // 1 and the fee taken only once a class is picked; backing out costs nothing.
+  Scene_ProstheticShop.prototype.openMindWipe = function () {
+    if (!this._selectedActor || !window.MindWiper) return;
+    if ($gameParty.gold() < MIND_WIPE_COST) {
+      if (window.SoundManager) SoundManager.playBuzzer();
+      this.showClinicNotification(T('Prosthetics.tooExpensive'));
+      return;
+    }
+    const actorId = this._selectedActor.actorId ? this._selectedActor.actorId() : this._selectedActor._actorId;
+    Scene_ProstheticShop._returnActorId = actorId;
+    window.MindWiper.apply(actorId, { fee: MIND_WIPE_COST });
   };
 
   // Growth tube and Design a heir: the character creation wizard opened on a
@@ -3251,11 +3286,11 @@
     const shouldAssign = !assignmentDone || currentName !== storedName;
 
     if (shouldAssign) {
-      const v87Value = $gameVariables.value(87);
-      const implantName = AUTO_ASSIGN_IMPLANTS[v87Value] !== undefined
-        ? AUTO_ASSIGN_IMPLANTS[v87Value]
+      const reproType = readReproductionType(actor);
+      const implantName = AUTO_ASSIGN_IMPLANTS[reproType] !== undefined
+        ? AUTO_ASSIGN_IMPLANTS[reproType]
         : "TESTES";
-      console.log(`Auto-assigning implant: ${implantName} (V87 value: ${v87Value})`);
+      console.log(`Auto-assigning implant: ${implantName} (reproduction type: ${reproType})`);
       $gameSwitches.setValue(88, true);
       $gameSystem._autoProstheticName = currentName;
     } else {

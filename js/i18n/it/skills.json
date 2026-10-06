@@ -6787,7 +6787,7 @@
   },
   "1433": {
     "name": "PattoAbbondanza",
-    "description": "Concede una fortuna, credito pieno e ogni\nrendita.",
+    "description": "Concede un milione di monete, credito pieno e\nogni rendita.",
     "message1": "%1 sigla un rovinoso patto d'abbondanza!",
     "message2": ""
   },
@@ -7201,7 +7201,7 @@
   },
   "1517": {
     "name": "ConvocaPietra",
-    "description": "Concede una fortuna e molte armi evocate.",
+    "description": "Concede un milione di monete e molte armi evocate.",
     "message1": "%1 porta a termine la Grande Opera!",
     "message2": ""
   },

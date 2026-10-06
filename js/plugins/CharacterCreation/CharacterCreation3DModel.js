@@ -305,36 +305,33 @@
       !!(window.Battler3D && window.Battler3D.create && window.Battler3D.createCustomHumanoid);
   }
 
-  function configStore() {
-    if (typeof $gameSystem === "undefined" || !$gameSystem) return null;
-    if (!$gameSystem._cc3DModelByActor) $gameSystem._cc3DModelByActor = {};
-    return $gameSystem._cc3DModelByActor;
-  }
-  function seedStore() {
-    if (typeof $gameSystem === "undefined" || !$gameSystem) return null;
-    if (!$gameSystem._cc3DSeedByActor) $gameSystem._cc3DSeedByActor = {};
-    return $gameSystem._cc3DSeedByActor;
+  // The model config and the creature seed are the character's own, so they
+  // live on the Game_Actor (actor._cc3DModel / actor._cc3DSeed) and travel
+  // with it. The functions still take an actor id so callers stay unchanged.
+  function actorFor(actorId) {
+    if (typeof $gameActors === "undefined" || !$gameActors) return null;
+    return $gameActors.actor(actorId) || null;
   }
 
   function getConfig(actorId) {
-    const s = configStore();
-    return (s && s[actorId]) ? normalizeConfig(s[actorId]) : null;
+    const actor = actorFor(actorId);
+    return (actor && actor._cc3DModel) ? normalizeConfig(actor._cc3DModel) : null;
   }
   function setConfig(actorId, cfg) {
-    const s = configStore();
-    if (!s) return;
-    if (cfg) s[actorId] = JSON.parse(JSON.stringify(normalizeConfig(cfg)));
-    else delete s[actorId];
+    const actor = actorFor(actorId);
+    if (!actor) return;
+    if (cfg) actor._cc3DModel = JSON.parse(JSON.stringify(normalizeConfig(cfg)));
+    else delete actor._cc3DModel;
   }
   function getCreatureSeed(actorId) {
-    const s = seedStore();
-    return (s && s[actorId]) || null;
+    const actor = actorFor(actorId);
+    return (actor && actor._cc3DSeed) || null;
   }
   function setCreatureSeed(actorId, seed) {
-    const s = seedStore();
-    if (!s) return;
-    if (seed) s[actorId] = seed;
-    else delete s[actorId];
+    const actor = actorFor(actorId);
+    if (!actor) return;
+    if (seed) actor._cc3DSeed = seed;
+    else delete actor._cc3DSeed;
   }
 
   function defaultParts() {

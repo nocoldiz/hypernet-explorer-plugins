@@ -1154,9 +1154,11 @@
   // The Omega Tower half of the front page: the worlds its floors open onto,
   // then the same shelves again, holding only what those worlds rolled. Its
   // cards open 'tower:<id>', which is how the entry grid knows which half of
-  // a shelf to draw.
+  // a shelf to draw. Favourites heads both halves and holds everything
+  // starred, wherever it came from.
   const TOWER_WIKI_CATEGORIES = [
-    { id: 'worlds',           glyph: '◈', labelKey: 'wikiWorlds' },
+    { id: 'favourites',       glyph: '☆', labelKey: 'wikiFavourites' },
+    { id: 'worlds',         glyph: '◈', labelKey: 'wikiWorlds' },
     { id: 'people',           glyph: '☺', labelKey: 'wikiPeople' },
     { id: 'politicians',      glyph: '☗', labelKey: 'wikiPoliticians' },
     { id: 'powers',           glyph: '♛', labelKey: 'wikiHyperpowers' },
@@ -1344,66 +1346,15 @@
       (a.kind !== 'party' && Wiki.isTowerPower(a.powerName)) === tower);
   }
 
-  Scene_NPCEmpathize.prototype._buildWikiTabHTML = function (T) {
-    const pets = window.PetSystem ? window.PetSystem.getPets() : [];
-    const countOf = (id, realm) => {
-      if (id === 'favourites') return Wiki.listFavourites().length;
-      if (id === 'party') {
-        return ($gameParty?.members()?.length ?? 0) + _pastPartyMembers().length + pets.length;
-      }
-      if (id === 'armies') return _listArmiesIn(realm).length;
-      return (Wiki.listIn(id, realm) || []).length;
-    };
-
-    // ── Category grid ─────────────────────────────────────────────────────────
-    if (!this._wikiCategory) {
-      // The category last opened keeps a golden border while the grid is up, so
-      // coming back out of a category still shows which one you were reading.
-      const cards = (list, realm) => list.map(cat => {
-        const key = (realm === 'tower' ? _TOWER_WIKI_PREFIX : '') + cat.id;
-        return `
-        <div class="npc-wiki-card${this._lastWikiCategory === key ? ' npc-wiki-card-selected' : ''}" onmousedown="event.stopPropagation();SceneManager._scene._setWikiCategory('${key}')">
-          <span class="npc-wiki-card-glyph">${cat.glyph}</span>
-          <span class="npc-wiki-card-label">${_escapeHtml(T[cat.labelKey] || cat.fallback)}</span>
-          <span class="npc-wiki-card-count">${countOf(cat.id, realm)}</span>
-        </div>`;
-      }).join('');
-      return `
-        <div class="npc-wiki-hdr">
-          <div class="npc-sec-hdr">${_escapeHtml(T.wikiTab)}, ${_escapeHtml(T.wikiCategories)}</div>
-          <hr class="npc-r-sep">
-        </div>
-        <div class="npc-sec-hdr npc-wiki-realm-hdr">${_escapeHtml(T.wikiEarth)}</div>
-        <div class="npc-wiki-grid npc-wiki-grid--cards">${cards(WIKI_CATEGORIES, 'earth')}</div>
-        <div class="npc-sec-hdr npc-wiki-realm-hdr">${_escapeHtml(T.wikiOmegaTower)}</div>
-        <div class="npc-wiki-grid npc-wiki-grid--cards">${cards(TOWER_WIKI_CATEGORIES, 'tower')}</div>`;
-    }
-
-    // ── Entry grid for the selected category ─────────────────────────────────
-    const sel = _wikiCategoryOf(this._wikiCategory);
-    const realm = sel.realm;
-    const shelf = realm === 'tower' ? TOWER_WIKI_CATEGORIES : WIKI_CATEGORIES;
-    const cat = shelf.find(c => c.id === sel.id) || shelf[0];
-    const realmLbl = realm === 'tower' ? `${_escapeHtml(T.wikiOmegaTower)} · ` : '';
-    const headerHTML = `
-      <div class="npc-wiki-hdr">
-      <div class="npc-panel-top-hdr">
-        <div class="npc-sec-hdr npc-wiki-cat-selected npc-mb-0">${cat.glyph} ${realmLbl}${_escapeHtml(T[cat.labelKey] || cat.fallback)} (${countOf(cat.id, realm)})</div>
-        <span class="npc-back-btn" onmousedown="event.stopPropagation();SceneManager._scene._setWikiCategory(null)">← ${_escapeHtml(T.wikiCategories)}</span>
-      </div>
-      <hr class="npc-r-sep">
-      </div>`;
-
-    let tiles = '';
-    switch (cat.id) {
+  // Every tile one shelf holds, as separate tiles so the wiki's search can
+  // keep the ones that match. An empty array is an empty shelf.
+  function _wikiShelfTiles(catId, realm, T) {
+    switch (catId) {
       // Everything the player has starred, whatever shelf it came off.
       case 'favourites': {
         const favs = Wiki.listFavourites();
-        tiles = favs.length
-          ? favs.map(f => _wikiEntryTile(f.type, f.id, _escapeHtml(f.name),
-              _escapeHtml(_favKindLabel(f.type, T)))).join('')
-          : `<p class="npc-empty">${_escapeHtml(T.wikiNoFavourites)}</p>`;
-        break;
+        return favs.map(f => _wikiEntryTile(f.type, f.id, _escapeHtml(f.name),
+              _escapeHtml(_favKindLabel(f.type, T))));
       }
       case 'party': {
         // Current members open in actor mode, full profile *and* the chat
@@ -1422,7 +1373,7 @@
           <div class="npc-wiki-entry" onmousedown="event.stopPropagation();window.NPCEmpathize.openForActor(${a.actorId()})">
             <span class="npc-wiki-entry-name">${_escapeHtml(a.name())}</span>
             <span class="npc-wiki-entry-sub">${_escapeHtml(T.partyCurrentMember)} · ${_escapeHtml(a.currentClass()?.name || '')} Lv.${a.level}${seenLine(ownLastSeen)}</span>
-          </div>`).join('');
+          </div>`);
         // The other playthroughs of this world, and where each was left. They
         // are people this party can actually meet, so they are listed here with
         // the same "last seen" line rather than being invisible until walked
@@ -1433,8 +1384,8 @@
           <div class="npc-wiki-entry" onmousedown="event.stopPropagation();window.NPCEmpathize.openByName(decodeURIComponent('${_encId(m.name)}'))">
             <span class="npc-wiki-entry-name">${_escapeHtml(m.name)}</span>
             <span class="npc-wiki-entry-sub">${_escapeHtml(T.partyOtherMember)}${party.leaderName ? ` (${_escapeHtml(party.leaderName)})` : ''}${seenLine(where)}</span>
-          </div>`).join('');
-        }).join('');
+          </div>`);
+        }).flat();
         // Former members carry how they left (NPCSystemParty's roster history):
         // retired to a dossier, dismissed, or dead, with the date it happened.
         const pastTiles = _pastPartyMembers().map(p => {
@@ -1449,7 +1400,7 @@
             <span class="npc-wiki-entry-name">${_escapeHtml(p.name)}${p.reason === 'died' ? ' <span class="npc-bad">✝</span>' : ''}</span>
             <span class="npc-wiki-entry-sub">${_escapeHtml(statusLabel)}${when ? ` ${_escapeHtml(when)}` : ''} · ${_escapeHtml(p.className || '')} Lv.${p.level || 1}</span>
           </div>`;
-        }).join('');
+        });
         // Pets/followers: trailing map companions that never battle. Informational
         // tiles only, with the active follower flagged.
         const petList   = window.PetSystem ? window.PetSystem.getPets() : [];
@@ -1466,89 +1417,79 @@
             <span class="npc-wiki-entry-name">${_escapeHtml(pet.name)}</span>
             <span class="npc-wiki-entry-sub">${_escapeHtml(typeLabel)}${activeSuffix} · Lv.${pet.level || 1}</span>
           </div>`;
-        }).join('');
-        tiles = curTiles + pastTiles + petTiles + visitorTiles;
-        break;
+        });
+        return curTiles.concat(pastTiles, petTiles, visitorTiles);
       }
       // Every world the tower opens onto, under the floor it is reached from.
       case 'worlds':
-        tiles = Wiki.listIn('worlds', realm).map(w =>
+        return Wiki.listIn('worlds', realm).map(w =>
           _wikiEntryTile('world', w.id, `◈ ${_escapeHtml(w.name)}`,
             [T2('DungeonFloor.worldKind.' + w.kind, w.kind),
              T2('DungeonFloor.world.reachedFloor', '', { floor: w.floor })]
               .filter(Boolean).map(_escapeHtml).join(' · '))
-        ).join('');
-        break;
+        );
       case 'people':
-        tiles = Wiki.listIn('people', realm).map(p =>
+        return Wiki.listIn('people', realm).map(p =>
           _wikiEntryTile('npc', p.name, _escapeHtml(p.name), p.group ? _escapeHtml(p.group) : '')
-        ).join('');
-        break;
+        );
       // Both shelves draw the same tile: the article behind it does not care
       // which half of the cast the person came from.
       case 'mainPlayers':
       case 'leaders': {
         const roll = Wiki.listIn(cat.id, realm);
-        tiles = roll.map(l =>
+        return roll.map(l =>
           _wikiEntryTile('leader', l.name,
             `${_escapeHtml(_worldName('leader', l.name))}${l.dead ? ' <span class="npc-bad">✝</span>' : ''}`,
             l.of ? _escapeHtml(_worldName(_LEADER_OF_KIND[l.ofType] || 'power', l.of)) : '')
-        ).join('');
-        break;
+        );
       }
       case 'politicians':
         // Everybody the world elected without history writing them down. The
         // article behind the tile is the same leader profile: it simply has a
         // politician on the other side of it instead of a book entry.
-        tiles = Wiki.listIn('politicians', realm).map(p =>
+        return Wiki.listIn('politicians', realm).map(p =>
           _wikiEntryTile('leader', p.name,
             `${_escapeHtml(_worldName('leader', p.name))}${p.dead ? ' <span class="npc-bad">✝</span>' : ''}`,
             [p.office, p.of ? _worldName(_LEADER_OF_KIND[p.ofType] || 'power', p.of) : '']
               .filter(Boolean).map(_escapeHtml).join(' · '))
-        ).join('');
-        break;
+        );
       case 'powers':
-        tiles = Wiki.listIn('powers', realm).map(n => {
+        return Wiki.listIn('powers', realm).map(n => {
           const live = window.NPCPolitics?.getPower?.(n);
           return _wikiEntryTile('power', n, `♛ ${_escapeHtml(_worldName('power', n))}`,
             live ? _escapeHtml(window.NPCPolitics?.powerLabel?.(live, 'govType') || live.govType) : '');
-        }).join('');
-        break;
+        });
       case 'nations':
-        tiles = Wiki.listIn('nations', realm).map(n =>
+        return Wiki.listIn('nations', realm).map(n =>
           _wikiEntryTile('nation', n.name, `⚑ ${_escapeHtml(_worldName('nation', n.name))}`,
             n.controller && n.controller !== 'Neutral'
               ? _escapeHtml(_worldName('power', n.controller)) : _escapeHtml(T.independent))
-        ).join('');
-        break;
+        );
       case 'artifacts':
-        tiles = Wiki.listIn('artifacts', realm).map(a => {
+        return Wiki.listIn('artifacts', realm).map(a => {
           const kindLabel = a.kind === 'weapon' ? (T.artifactKindWeapon)
             : a.kind === 'armor' ? (T.artifactKindArmor)
             : (T.artifactKindItem);
           return _wikiEntryTile('artifact', a.key,
             `${_iconSpan(a.iconIndex ?? 245, 15)} ${_escapeHtml(a.name)}`, _escapeHtml(kindLabel));
-        }).join('');
-        break;
+        });
       case 'factions':
-        tiles = Wiki.listIn('factions', realm).map(n =>
+        return Wiki.listIn('factions', realm).map(n =>
           _wikiEntryTile('faction', n, `⚜ ${_escapeHtml(_worldName('faction', n))}`, '')
-        ).join('');
-        break;
+        );
       case 'politicalParties':
-        tiles = Wiki.listIn('politicalParties', realm).map(p => {
+        return Wiki.listIn('politicalParties', realm).map(p => {
           const ideoLabel = _ideologyLabel(p.ideologyId);
           const sub = [_worldName('power', p.powerName), ideoLabel].filter(Boolean).join(' · ');
           return _wikiEntryTile('party', p.id, `⚖ ${_escapeHtml(p.name)}`, _escapeHtml(sub));
-        }).join('');
-        break;
+        });
       case 'armies':
         // Every column standing today, biggest first, each under the name of
         // whoever holds it. The tile opens that leader's article, where the
         // column itself is written out in full (_buildArmyHoldingHTML); the
         // party's own army is led by a party member with no article to open,
         // so its tile is a plain row like a pet's.
-        tiles = _listArmiesIn(realm).map(a => {
+        return _listArmiesIn(realm).map(a => {
           const men   = `${a.troopCount} ${T.armySoldiers}`;
           const label = `⚔ ${_escapeHtml(_armyTitle(a, T))}`;
           if (a.kind === 'party' || !a.leaderName) {
@@ -1560,23 +1501,235 @@
           }
           return _wikiEntryTile('leader', a.leaderName, label,
             `${_escapeHtml(_worldName('leader', a.leaderName))} · ${_escapeHtml(men)}`);
-        }).join('');
-        break;
+        });
       case 'ideologies':
-        tiles = Wiki.listIn('ideologies', realm).map(e => {
+        return Wiki.listIn('ideologies', realm).map(e => {
           const label = window.T ? window.T(e.name) : e.id;
           const sub = e.partyCount
             ? T.n('Empathize.ideologyPartyCount', e.partyCount, { n: e.partyCount })
             : T.noParties;
           return _wikiEntryTile('ideology', e.id, `✪ ${_escapeHtml(label)}`, _escapeHtml(sub));
-        }).join('');
-        break;
+        });
     }
-    if (!tiles) {
-      tiles = `<p class="npc-sub">${_escapeHtml(T.noRecords)}</p>`;
+    return [];
+  }
+
+  Scene_NPCEmpathize.prototype._buildWikiTabHTML = function (T) {
+    const pets = window.PetSystem ? window.PetSystem.getPets() : [];
+    const countOf = (id, realm) => {
+      if (id === 'favourites') return Wiki.listFavourites().length;
+      if (id === 'party') {
+        return ($gameParty?.members()?.length ?? 0) + _pastPartyMembers().length + pets.length;
+      }
+      if (id === 'armies') return _listArmiesIn(realm).length;
+      return (Wiki.listIn(id, realm) || []).length;
+    };
+
+    this._wikiCountOf = countOf;
+    const bar = this._wikiBar();
+    const field = bar ? bar.fieldHTML() : '';
+
+    // The header holds the search field, and the results under it are their
+    // own box: a keystroke redraws the box alone (_refreshWikiResults), so
+    // the field and its caret are never torn down mid-word.
+    let titleHTML;
+    if (!this._wikiCategory) {
+      titleHTML = `
+          <div class="npc-panel-top-hdr npc-wiki-search-hdr">
+            <div class="npc-sec-hdr npc-mb-0">${_escapeHtml(T.wikiTab)}, ${_escapeHtml(T.wikiCategories)}</div>
+            ${field}
+          </div>`;
+    } else {
+      const { realm, cat } = this._wikiOpenShelf();
+      const realmLbl = realm === 'tower' ? `${_escapeHtml(T.wikiOmegaTower)} · ` : '';
+      titleHTML = `
+          <div class="npc-panel-top-hdr npc-wiki-search-hdr">
+            <div class="npc-sec-hdr npc-wiki-cat-selected npc-mb-0">${cat.glyph} ${realmLbl}${_escapeHtml(T[cat.labelKey] || cat.fallback)} (${countOf(cat.id, realm)})</div>
+            ${field}
+            <span class="npc-back-btn" onmousedown="event.stopPropagation();SceneManager._scene._setWikiCategory(null)">← ${_escapeHtml(T.wikiCategories)}</span>
+          </div>`;
+    }
+    return `
+        <div class="npc-wiki-hdr">${titleHTML}
+          <hr class="npc-r-sep">
+        </div>
+        <div id="npc-wiki-results">${this._buildWikiResultsHTML(T)}</div>`;
+  };
+
+  // The shelf the entry grid is open on, as { realm, cat }.
+  Scene_NPCEmpathize.prototype._wikiOpenShelf = function () {
+    const sel = _wikiCategoryOf(this._wikiCategory);
+    const shelf = sel.realm === 'tower' ? TOWER_WIKI_CATEGORIES : WIKI_CATEGORIES;
+    return { realm: sel.realm, cat: shelf.find(c => c.id === sel.id) || shelf[0] };
+  };
+
+  // Everything under the header: the category cards or one shelf when nothing
+  // is typed, and the matches when something is.
+  Scene_NPCEmpathize.prototype._buildWikiResultsHTML = function (T) {
+    const countOf = this._wikiCountOf;
+    const query = this._wikiBar()?.query || '';
+    const searching = _wikiQueryWords(query).length > 0;
+    if (!searching) this._wikiSearchRows = null;
+
+    // ── Category grid ─────────────────────────────────────────────────────────
+    if (!this._wikiCategory) {
+      if (searching) return this._buildWikiSearchAllHTML(T, query);
+      // The category last opened keeps a golden border while the grid is up, so
+      // coming back out of a category still shows which one you were reading.
+      const cards = (list, realm) => list.map(cat => {
+        const key = (realm === 'tower' ? _TOWER_WIKI_PREFIX : '') + cat.id;
+        return `
+        <div class="npc-wiki-card${this._lastWikiCategory === key ? ' npc-wiki-card-selected' : ''}" onmousedown="event.stopPropagation();SceneManager._scene._setWikiCategory('${key}')">
+          <span class="npc-wiki-card-glyph">${cat.glyph}</span>
+          <span class="npc-wiki-card-label">${_escapeHtml(T[cat.labelKey] || cat.fallback)}</span>
+          <span class="npc-wiki-card-count">${countOf(cat.id, realm)}</span>
+        </div>`;
+      }).join('');
+      return `
+        <div class="npc-sec-hdr npc-wiki-realm-hdr">${_escapeHtml(T.wikiEarth)}</div>
+        <div class="npc-wiki-grid npc-wiki-grid--cards">${cards(WIKI_CATEGORIES, 'earth')}</div>
+        <div class="npc-sec-hdr npc-wiki-realm-hdr">${_escapeHtml(T.wikiOmegaTower)}</div>
+        <div class="npc-wiki-grid npc-wiki-grid--cards">${cards(TOWER_WIKI_CATEGORIES, 'tower')}</div>`;
     }
 
-    return `${headerHTML}<div class="npc-wiki-grid">${tiles}</div>`;
+    // ── Entry grid for the selected category ─────────────────────────────────
+    const { realm, cat } = this._wikiOpenShelf();
+    if (searching) {
+      const hits = _wikiMatch(this._wikiRowsOf(cat.id, realm, T), query);
+      if (!hits.length) return _wikiNoMatchHTML(query);
+      return `<div class="npc-sub npc-mb-2">${_escapeHtml(window.T('Empathize.wikiSearchCount', { n: hits.length }))}</div>
+        <div class="npc-wiki-grid">${hits.map(r => r.html).join('')}</div>`;
+    }
+    const tiles = _wikiShelfTiles(cat.id, realm, T);
+    if (!tiles.length) {
+      return cat.id === 'favourites'
+        ? `<p class="npc-empty">${_escapeHtml(T.wikiNoFavourites)}</p>`
+        : `<p class="npc-sub">${_escapeHtml(T.noRecords)}</p>`;
+    }
+    return `<div class="npc-wiki-grid">${tiles.join('')}</div>`;
+  };
+
+  // ============================================================================
+  // THE WIKI'S SEARCH
+  // ============================================================================
+  // One field over the whole encyclopedia. On the category page it searches
+  // every shelf of both halves at once (Earth and the Omega Tower) and lists
+  // the matches under the shelf they sit on; inside a shelf it narrows that
+  // shelf. A tile matches when every word typed is somewhere in its name or
+  // the line under it, accents and case aside, and the tiles whose NAME
+  // starts with what was typed come first. The strip itself is the shared
+  // MenuSearchBar: a magnifier until opened, F opens it, no field on a pad.
+
+  const _WIKI_SEARCH_GROUP_CAP = 24;   // matches shown per shelf on the category page
+
+  function _wikiFold(text) {
+    return String(text || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  }
+
+  function _wikiQueryWords(query) {
+    return _wikiFold(query).split(/\s+/).filter(Boolean);
+  }
+
+  // A tile's readable text, off its own markup.
+  function _wikiPlain(html) {
+    return String(html || '').replace(/<[^>]*>/g, ' ')
+      .replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&')
+      .replace(/\s+/g, ' ').trim();
+  }
+
+  // One tile as the search reads it: its name alone (for ranking) and its
+  // name and sub line together (for matching).
+  function _wikiRow(html) {
+    const at = html.indexOf('npc-wiki-entry-name');
+    const sub = html.indexOf('npc-wiki-entry-sub');
+    // The sub line's own tag starts at the '<' before its class name.
+    const cut = sub > at ? html.lastIndexOf('<', sub) : -1;
+    const nameHTML = at < 0 ? html : html.slice(html.indexOf('>', at) + 1, cut > at ? cut : undefined);
+    return { html, name: _wikiFold(_wikiPlain(nameHTML)), text: _wikiFold(_wikiPlain(html)) };
+  }
+
+  // The matches in a list of rows, best first and otherwise in shelf order.
+  function _wikiMatch(rows, query) {
+    const words = _wikiQueryWords(query);
+    if (!words.length) return rows.slice();
+    const whole = words.join(' ');
+    const rank = r => (r.name.startsWith(whole) ? 0 : words.every(w => r.name.includes(w)) ? 1 : 2);
+    return rows
+      .filter(r => words.every(w => r.text.includes(w)))
+      .map((r, i) => ({ r, i, k: rank(r) }))
+      .sort((a, b) => (a.k - b.k) || (a.i - b.i))
+      .map(x => x.r);
+  }
+
+  function _wikiNoMatchHTML(query) {
+    return `<p class="npc-empty">${_escapeHtml(window.T('Empathize.wikiSearchNone', { query: String(query).trim() }))}</p>`;
+  }
+
+  // The shelves do not change while a query is being typed, so each is read
+  // once per search and kept until the field is emptied.
+  Scene_NPCEmpathize.prototype._wikiRowsOf = function (catId, realm, T) {
+    if (!this._wikiSearchRows) this._wikiSearchRows = new Map();
+    const key = realm + ':' + catId;
+    let rows = this._wikiSearchRows.get(key);
+    if (!rows) {
+      let tiles = [];
+      try { tiles = _wikiShelfTiles(catId, realm, T); } catch (e) { tiles = []; }
+      rows = tiles.map(_wikiRow);
+      this._wikiSearchRows.set(key, rows);
+    }
+    return rows;
+  };
+
+  // Every shelf of both halves, the matches listed under the shelf they sit
+  // on. Favourites are left out: everything on them is on its own shelf too.
+  Scene_NPCEmpathize.prototype._buildWikiSearchAllHTML = function (T, query) {
+    let total = 0;
+    let html = '';
+    for (const [realm, list] of [['earth', WIKI_CATEGORIES], ['tower', TOWER_WIKI_CATEGORIES]]) {
+      for (const cat of list) {
+        if (cat.id === 'favourites') continue;
+        const hits = _wikiMatch(this._wikiRowsOf(cat.id, realm, T), query);
+        if (!hits.length) continue;
+        total += hits.length;
+        const key = (realm === 'tower' ? _TOWER_WIKI_PREFIX : '') + cat.id;
+        const realmLbl = realm === 'tower' ? T.wikiOmegaTower : T.wikiEarth;
+        const more = hits.length - _WIKI_SEARCH_GROUP_CAP;
+        html += `
+        <div class="npc-sec-hdr npc-wiki-realm-hdr npc-wiki-search-group" onmousedown="event.stopPropagation();SceneManager._scene._setWikiCategory('${key}')">${cat.glyph} ${_escapeHtml(realmLbl)} · ${_escapeHtml(T[cat.labelKey] || cat.fallback)} (${hits.length})</div>
+        <div class="npc-wiki-grid">${hits.slice(0, _WIKI_SEARCH_GROUP_CAP).map(r => r.html).join('')}</div>
+        ${more > 0 ? `<span class="npc-back-btn npc-wiki-search-more" onmousedown="event.stopPropagation();SceneManager._scene._setWikiCategory('${key}')">${_escapeHtml(window.T('Empathize.wikiSearchShowAll', { n: hits.length }))} →</span>` : ''}`;
+      }
+    }
+    if (!total) return _wikiNoMatchHTML(query);
+    return `<div class="npc-sub npc-mb-2">${_escapeHtml(window.T('Empathize.wikiSearchCount', { n: total }))}</div>${html}`;
+  };
+
+  // The strip, made once per panel and remade if another menu has since taken
+  // the registry slot. What is typed survives moving between shelves, so
+  // "Show all" opens the shelf still filtered.
+  Scene_NPCEmpathize.prototype._wikiBar = function () {
+    const MSB = window.MenuSearchBar;
+    if (!MSB) return null;
+    if (this._wikiSearch && MSB.get?.('npcWiki') === this._wikiSearch) return this._wikiSearch;
+    this._wikiSearch = MSB.create({
+      id: 'npcWiki',
+      placeholder: window.T('Empathize.wikiSearchPlaceholder'),
+      onChange: () => this._refreshWikiResults(),
+    });
+    return this._wikiSearch;
+  };
+
+  // A keystroke: redraw the results box alone, leaving the field where it is.
+  Scene_NPCEmpathize.prototype._refreshWikiResults = function () {
+    const box = (typeof document !== 'undefined') ? document.getElementById('npc-wiki-results') : null;
+    if (!box || this._activeTab !== 'wiki' || !this._wikiCountOf) { this._render(); return; }
+    box.innerHTML = this._buildWikiResultsHTML(_getT());
+    // The panel's own copy of its markup is stale now, so the next full
+    // render draws instead of deciding nothing changed.
+    if (this._rightEl) this._rightEl._npcHTML = null;
+    this._contentIndex = 0;
+    this._invalidateNavCache?.();
   };
 
   // ============================================================================

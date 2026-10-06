@@ -108,13 +108,13 @@
     --modal-gap: 12px;
     --modal-fg: var(--text-success-active);
     /* The modal press: the frame and ink every popup button wears. */
-    --modal-btn-bg: transparent;
+    --modal-btn-bg: var(--bg-secondary-hover);
     --modal-btn-border: 2px solid var(--text-primary-hover);
     --modal-btn-fg: var(--text-primary-hover);
-    --modal-btn-hover-bg: transparent;
-    --modal-btn-hover-fg: var(--text-primary-hover);
-    --modal-btn-hover-border: var(--accent-gold-pure);
-    --modal-btn-hover-shadow: none;
+    --modal-btn-hover-bg: var(--chip-active-bg);
+    --modal-btn-hover-fg: var(--chip-active-fg);
+    --modal-btn-hover-border: var(--text-primary-hover);
+    --modal-btn-hover-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
 }
 
 :root {
@@ -696,24 +696,6 @@
    strengthen the borders, brighten the label, and make the active / selected
    states clearly distinct.
    ========================================================================== */
-.cc-presets-board .cc-wanted-card {
-    background: var(--bg-dark-warm-translucent-96);
-    border: 1px solid var(--border-gold-amber-30);
-    box-shadow: 0 4px 10px var(--shadow-black-translucent-55);
-}
-
-.cc-presets-board .cc-wanted-card:hover,
-.cc-presets-board .cc-wanted-card.highlighted {
-    background: var(--bg-primary-hover-translucent-35);
-    border-color: var(--border-focus-hover);
-}
-
-.cc-presets-board .cc-wanted-card.selected {
-    background: var(--bg-tertiary-focus-translucent-45);
-    border-color: var(--text-primary-hover);
-    box-shadow: 0 0 12px var(--shadow-gold-amber-50);
-}
-
 .cc-presets-board .cc-wanted-name {
     color: var(--accent-amber-glow);
     text-shadow: 0 1px 3px var(--shadow-black-translucent-75);
@@ -913,17 +895,6 @@
     color: #ffffff !important;
 }
 
-.cc-profile-open-btn {
-    background: rgba(255, 204, 102, 0.1) !important;
-    border: 1px solid #ffcc66 !important;
-    color: #ffd700 !important;
-}
-
-.cc-profile-open-btn:hover {
-    background: rgba(255, 204, 102, 0.25) !important;
-    color: #ffffff !important;
-}
-
 .cc-party-tab {
     color: #aaaaaa !important;
 }
@@ -959,25 +930,6 @@
 
 .cc-member-remove-btn:hover {
     background: #ff5252 !important;
-}
-
-.cc-step-tab {
-    background: rgba(20, 20, 20, 0.8) !important;
-    border: 1px solid rgba(90, 74, 42, 0.5) !important;
-    color: #dddddd !important;
-}
-
-.cc-step-tab:hover {
-    background: rgba(45, 38, 25, 0.9) !important;
-    border-color: #ffcc66 !important;
-    color: #ffffff !important;
-}
-
-.cc-step-tab.active {
-    background: linear-gradient(90deg, rgba(80, 60, 20, 0.85), rgba(35, 25, 12, 0.9)) !important;
-    border-color: #ffd700 !important;
-    color: #ffffff !important;
-    box-shadow: inset 3px 0 0 #ffd700, 0 0 14px rgba(255, 204, 102, 0.25) !important;
 }
 
 .cc-step-tab .cc-tab-subtitle {
@@ -1023,37 +975,11 @@
     border-color: rgba(90, 74, 42, 0.5) !important;
 }
 
-.cc-spec-card:hover {
-    background: rgba(45, 38, 25, 0.95) !important;
-    border-color: #ffcc66 !important;
-}
-
-.cc-spec-card.selected {
-    background: linear-gradient(180deg, rgba(80, 60, 20, 0.9), rgba(40, 30, 15, 0.9)) !important;
-    border-color: #ffd700 !important;
-    box-shadow: 0 0 12px rgba(255, 204, 102, 0.35) !important;
-}
-
 .cc-bio-section {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     border-bottom: 1px solid rgba(218, 165, 32, 0.12) !important;
-}
-
-.cc-bio-section-title {
-    color: #ffcc66 !important;
-}
-
-.cc-bio-chip:hover {
-    border-color: #ffcc66 !important;
-    color: #ffffff !important;
-}
-
-.cc-bio-chip.selected {
-    background: linear-gradient(180deg, rgba(140, 98, 32, 0.5), rgba(80, 50, 10, 0.35)) !important;
-    border-color: #ffd700 !important;
-    color: #ffffff !important;
 }
 
 /* A card on the pet and garage boards carries no plate, no frame and no glow:
@@ -1072,33 +998,8 @@
 
 .cc-pet-card.selected {
     background: none !important;
-    border-color: #ffd700 !important;
+    border-color: var(--text-primary-hover) !important;
     box-shadow: none !important;
-}
-
-.cc-sidebar-btn {
-    background: rgba(255, 204, 102, 0.08) !important;
-    border: 1px solid #5a4a2a !important;
-    color: #ffcc66 !important;
-}
-
-.cc-sidebar-btn:hover {
-    background: rgba(255, 204, 102, 0.2) !important;
-    border-color: #ffd700 !important;
-    color: #ffffff !important;
-    box-shadow: 0 0 10px rgba(255, 204, 102, 0.3) !important;
-}
-
-.cc-sidebar-btn.primary {
-    background: linear-gradient(135deg, #8a6a20, #4d360a) !important;
-    border-color: #ffd700 !important;
-    color: #ffffff !important;
-    box-shadow: 0 0 12px rgba(255, 204, 102, 0.35) !important;
-}
-
-.cc-sidebar-btn.primary:hover {
-    background: linear-gradient(135deg, #b38b2a, #6e4e10) !important;
-    box-shadow: 0 0 16px rgba(255, 215, 0, 0.6) !important;
 }
 
 .cc-trait-budget-container {
@@ -1160,8 +1061,7 @@ select {
 }
 select:focus {
     outline: none;
-    border-color: var(--accent-gold-pure) !important;
-    box-shadow: 0 0 6px var(--shadow-gold-amber-50);
+    border-color: var(--text-primary-hover) !important;
 }
 select option {
     background: var(--bg-panel);
@@ -1186,14 +1086,6 @@ select option:hover {
 #thinker-container .blueprint-row {
     background: transparent;
 }
-#thinker-container .category-row:hover,
-#thinker-container .category-row.focused,
-#thinker-container .blueprint-row:hover,
-#thinker-container .blueprint-row.focused,
-#thinker-container .blueprint-row.active {
-    background: var(--bg-tertiary-focus-translucent-45);
-}
-
 /* The pieces' own names carry their rarity class and are inked by it; only
    the trade headings, their counts and a locked row are forced white. */
 #thinker-container .category-name,
@@ -1231,25 +1123,10 @@ select option:hover {
 
 /* ==========================================================================
    Thinker + Blacksmithing, "item obtained" success overlay
-   .success-overlay and .success-item-row read var(--text-highlight-active)
-   and var(--text-warning-hover), both pure white in this theme, so the
-   whole "you obtained X" popup renders as a stark white card floating on
-   the black tower page. success-obtained-label's dark ink (--border-muted-
-   focus) is tuned for that white card and would vanish were the background
-   simply darkened without repainting it too. Give both menus a black panel
-   with a gold rule instead, and lift the label to gold.
+   The popup is the shared modal sheet (theme.css). Its label's dark ink
+   (--border-muted-focus) was tuned for the old white card and vanishes on
+   the tower's black, so it is lifted to gold.
    ========================================================================== */
-#thinker-container .success-overlay,
-#blacksmith-container .success-overlay {
-    background: var(--bg-panel) !important;
-    border: 1px solid var(--border-focus-hover);
-    box-shadow: 0 0 16px var(--shadow-gold-amber-50);
-}
-#thinker-container .success-item-row,
-#blacksmith-container .success-item-row {
-    background: var(--bg-tertiary-focus-translucent-45) !important;
-    border: 1px solid var(--border-focus-hover);
-}
 #thinker-container .success-obtained-label,
 #blacksmith-container .success-obtained-label {
     color: var(--text-primary-hover) !important;
@@ -1481,7 +1358,6 @@ select option:hover {
 #menu-container .assets-detail .inspect-spec-value[style*="#b3322b"] { color: #ff9b86 !important; }
 #menu-container .assets-detail .inspect-spec-label { color: var(--text-primary-hover) !important; }
 #menu-container .assets-detail .inspect-spec-value { color: var(--accent-cream-light) !important; }
-#menu-container .assets-detail .inspect-section-title { color: var(--accent-amber-glow) !important; }
 #menu-container .assets-sum-card {
     background: var(--bg-dark-warm-translucent-96) !important;
     border-color: var(--border-gold-amber-30) !important;
@@ -1596,10 +1472,6 @@ select option:hover {
 /* ==========================================================================
    Bestiary, empty-state readability
    ========================================================================== */
-.bestiary-list-empty {
-    color: var(--text-pure-white) !important;
-}
-
 /* Portfolio (right page) prose written with parchment-era inline literals:
    the "Drawing..." placeholder, the 3D drag hint, the seed caption and the
    three "nothing recorded" lines all paint a 30-60% wash of dark brown
@@ -1808,13 +1680,6 @@ select option:hover {
 #shop-container .shop-funds {
     color: var(--accent-cream-light) !important;
 }
-#shop-container .shop-tab {
-    color: rgba(244, 233, 201, 0.62) !important;
-}
-#shop-container .shop-tab.active {
-    color: var(--accent-amber-glow) !important;
-    border-bottom-color: var(--accent-amber-glow) !important;
-}
 #shop-container .item-card-name {
     color: var(--accent-amber-glow) !important;
 }
@@ -1931,30 +1796,22 @@ body #fbuild-panel .fbuild-armed-empty,
 body #fbuild-panel .fbuild-empty { color: var(--accent-cream-warm); }
 body #fbuild-panel .fbuild-folder,
 body #fbuild-panel .fbuild-card-name,
-body #fbuild-panel .fbuild-toptab-opt,
-body #fbuild-panel .fbuild-mode-opt,
-body #fbuild-panel .fbuild-close,
-body #fbuild-panel .fbuild-clear-all,
-body #fbuild-panel .fbuild-subback { color: var(--accent-cream-warm); }
+body #fbuild-panel .fbuild-close { color: var(--accent-cream-warm); }
 body #fbuild-panel .fbuild-folder:hover,
 body #fbuild-panel .fbuild-folder.fbcursor { color: var(--accent-amber-glow); border-color: var(--border-focus-hover); }
 
 /* Idle rail and mode entries, and the one being read or held. */
+#fbuild-panel .fbuild-close { color: var(--text-card-medium); }
+/* The rail and the mode switch are the shared tab: gold ink, and a gold
+   frame round the one in force. */
 #fbuild-panel .fbuild-toptab-opt,
-#fbuild-panel .fbuild-mode-opt,
-#fbuild-panel .fbuild-close,
-#fbuild-panel .fbuild-clear-all,
-#fbuild-panel .fbuild-subback { color: var(--text-card-medium); }
-#fbuild-panel .fbuild-toptab-opt:hover,
+#fbuild-panel .fbuild-mode-opt { color: var(--text-primary-hover); }
 #fbuild-panel .fbuild-toptab-opt.active,
-#fbuild-panel .fbuild-mode-opt:hover,
-#fbuild-panel .fbuild-mode-opt.active,
+#fbuild-panel .fbuild-mode-opt.active { border-color: var(--text-primary-hover); }
 #fbuild-panel .fbuild-dd-opt:hover,
 #fbuild-panel .fbuild-dd-opt.active,
 #fbuild-panel .fbuild-subcat:hover,
-#fbuild-panel .fbuild-close:hover,
-#fbuild-panel .fbuild-clear-all:hover,
-#fbuild-panel .fbuild-subback:hover {
+#fbuild-panel .fbuild-close:hover {
     color: var(--accent-amber-glow);
     border-color: var(--border-focus-hover);
 }
@@ -2058,18 +1915,6 @@ body #fbuild-panel .fbuild-folder.fbcursor { color: var(--accent-amber-glow); bo
     background: var(--bg-dark-warm-translucent-96);
     border-color: var(--border-gold-amber-30);
     color: var(--accent-cream-light);
-}
-#gx-ui .gx-btn {
-    font-family: var(--font-ui);
-    background: var(--bg-panel);
-    border-color: var(--border-focus-hover);
-    color: var(--text-primary-hover);
-}
-#gx-ui .gx-btn:hover,
-#gx-ui .gx-btn.focused {
-    background: var(--bg-tertiary-focus-translucent-45);
-    color: var(--accent-amber-glow);
-    box-shadow: 0 0 8px var(--shadow-gold-amber-50);
 }
 #gx-catalog .gx-cat-group {
     color: var(--accent-amber-light);
@@ -2306,11 +2151,7 @@ body #fbuild-panel .fbuild-folder.fbcursor { color: var(--accent-amber-glow); bo
 /* A picked control is gold ink and a gold hairline, with nothing behind it:
    the warm gradient plate this used to wear is the one thing every other
    picked row in the tower has already given up. */
-.cc-bio-chip.selected,
-.cc-pick-row.selected,
-.cc-choice-btn.selected,
-.cc-btn-treaty.selected,
-.cc-compact-btn.selected {
+.cc-choice-btn.selected {
     background: transparent !important;
     background-image: none !important;
     border-color: var(--accent-gold-pure) !important;
@@ -2338,14 +2179,6 @@ select option:hover {
     background: var(--bg-tertiary-focus-translucent-45);
 }
 
-
-/* The open tab is the page's own top edge, so it has no bottom edge of its
-   own: the line under it read as a closed box sitting above the page. */
-.cc-folder-tab.active,
-.cc-step-tab.active {
-    border-bottom: none !important;
-    box-shadow: none !important;
-}
 
 /* The Simple / Detailed switch is minimal: two words, the one you are in in
    gold, no cabinet around them. */
@@ -2392,7 +2225,6 @@ select option:hover {
 
 /* Section headers on the Empathize / wiki spreads read as gold in the tower:
    --text-text-alt-4 is plain white here, which made every heading shout. */
-.npc-sec-hdr { color: var(--text-gold-dark); }
 
 
 /* ==========================================================================

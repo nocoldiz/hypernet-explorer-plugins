@@ -92,10 +92,10 @@
 
       const cleanDesc = (s) => (s || '').replace(/\\C\[\d+\]/gi, '').replace(/\\C/gi, '');
 
-      // Story mode has no difficulty choice: it is locked to roguelite and the
-      // row is dropped from the list entirely.
+      // Story mode's difficulty is picked on Em's Bio tab (Roguelike or Blood
+      // and Oil), so this row is dropped and anything else falls to roguelite.
       const storyMode = !!(typeof Scene_CharacterCreation !== 'undefined' && Scene_CharacterCreation._storyMode);
-      if (storyMode && window.$gameSystem) {
+      if (storyMode && window.$gameSystem && !$gameSystem._bloodAndOilMode) {
         $gameSystem._difficultyMode = 'roguelite';
         $gameSystem._bloodAndOilMode = false;
         $gameSystem._peacefulMode = false;

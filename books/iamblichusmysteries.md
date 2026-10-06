@@ -390,7 +390,7 @@ can appease the anger of the divinities, and procure a reconciliation
 with them; and still more, what are called the necessities of the Gods,
 will be vain. For that which is impassive cannot be allured, nor
 compelled, nor necessitated. How, therefore, are many things, in sacred
-operations, performed to them as passive? Invocations,—likewise, are
+operations, performed to them as passive? Invocations, - likewise, are
 made to the Gods as passive; so that not dæmons only are passive, but
 the Gods also, conformably to what Homer says,
 
@@ -1605,7 +1605,7 @@ imperfection.
 If, indeed, it is considered that sacred prayers are sent to men from
 the Gods themselves, that they are certain symbols of the divinities,
 and that they are only known to the Gods, with whom, in a certain
-respect, they possess the same power,—how can it any longer be justly
+respect, they possess the same power, - how can it any longer be justly
 apprehended, that a supplication of this kind is sensible, and not
 divine and intellectual? Or what passion can accede to a thing of this
 kind, the purity of which the most worthy human manners cannot easily
@@ -1838,7 +1838,7 @@ multitude.[39]
 Since, however, the order of all the Gods is profoundly united, and the
 first and second genera of them, and all the multitude which is
 spontaneously produced about them, are consubsistent in unity, and also
-every thing which is in them is one,—hence the beginning, middles, and
+every thing which is in them is one, - hence the beginning, middles, and
 ends in them are consubsistent according to _the one itself_; so that in
 these, it is not proper to inquire, whence _the one_ accedes to all of
 them. For the very existence in them, whatever it may be, is _this
@@ -3156,7 +3156,7 @@ But the multitude of sacrifices, the sacred law of the whole sanctimony,
 and such other things as are performed in a divine manner, prior to the
 prophetic inspiration, _viz._ the baths of the prophetess, her fasting
 for three whole days, her retiring into the adyta, and there receiving a
-divine light, and rejoicing for a considerable time—all these evince
+divine light, and rejoicing for a considerable time - all these evince
 that the God is entreated by prayer to approach, that he becomes
 externally present, and that the prophetess, before she comes to her
 accustomed place, is inspired in a wonderful manner; and that, in the
@@ -3302,7 +3302,7 @@ has every thing which it possesses subservient to the will and
 intelligence alone of the Gods, and as the greatest thing pertaining to
 it, possesses a sacred irradiating light, either supernally derived from
 ether, or from the air, or the moon, or the sun, or from some other
-celestial sphere,—this being the case, it is evident from all these
+celestial sphere, - this being the case, it is evident from all these
 particulars, that such a mode of divination as this is unrestrained,
 primordial, and worthy of the Gods.
 
@@ -4148,7 +4148,7 @@ impiety, which are introduced into sacred works in a disorderly manner,
 and which are also confusedly performed by those who betake themselves
 to such works, and at one time, as it seems, cause one divinity to be
 present instead of another, and again, introduce depraved dæmons instead
-of Gods, whom they call equal to the Gods (αντιθεους)—such deeds as
+of Gods, whom they call equal to the Gods (αντιθεους) - such deeds as
 these you should never adduce in a discourse concerning sacerdotal
 divination. For good is more contrary to evil than to that which is not
 good. As, therefore, the sacrilegious are in the most eminent degree
@@ -5717,7 +5717,7 @@ therefore, a thing of this kind, the God who is the cause of generation,
 of all nature, and of all the powers in the elements, as transcending
 these, and as being immaterial, incorporeal, and supernatural,
 unbegotten and impartible, wholly derived from himself, and concealed in
-himself,—this God precedes all things, and comprehends all things in
+himself, - this God precedes all things, and comprehends all things in
 himself. And because, indeed, he comprehends all things, and imparts
 himself to all mundane natures, he is from these unfolded into light.
 Because, however, he transcends all things, and is by himself expanded
@@ -7072,7 +7072,7 @@ astonished, and perplexed.”
 
 
 P. 35. _Since, however, the order of all the Gods is profoundly
-united.——For the very existence in them, whatever it may be, is the one
+united. -  - For the very existence in them, whatever it may be, is the one
 of their nature._
 
 The Gods are self-perfect superessential unities, so far as they are
@@ -7474,7 +7474,7 @@ the gates of the Muses, and thus being filled from thence exclaim,
 
 And,
 
-                            Μηνιν αειδε θεα—
+                            Μηνιν αειδε θεα - 
 
 And,
 
@@ -7525,7 +7525,7 @@ indivisible thing.
 
 P. 74. _For the human soul is on all sides darkened by body, which he
 who denominates the river of Negligence, or the water of Oblivion_,
-&c.——_will not by such appellations sufficiently express its turpitude_.
+&c. -  - _will not by such appellations sufficiently express its turpitude_.
 “The whole of generation, as well as the human body,” says Proclus in
 Tim. lib. v. p. 339, “may be called a river, through its rapid,
 impetuous, and unstable flux. Thus also in the Republic, Plato calls the
@@ -7599,14 +7599,14 @@ the Christians, “If any one wishes to consider the truth respecting you,
 he will find that your impiety consists of the Judaic audacity, and the
 _indolence_ and _confusion of the heathens_. For deriving from both, not
 that which is most beautiful, but the worst, you have fabricated a web
-of evils.——Hence, from the innovation of the Hebrews, you have seized
+of evils. -  - Hence, from the innovation of the Hebrews, you have seized
 blasphemy towards the venerable Gods; but from our religion you have
 cast aside reverence to every nature more excellent than man, and the
 love of paternal institutes.” Το γαρ αληθες ει τις υπερ υμων εθελοι
 σκοπειν, ευρησει την υμετεραν ασεβειαν, εκ τε της Ιουδαϊκης τολμης και
 της παρα τοις εθνεσιν αδιαφοριας και χυδαιοτητος συγκειμενην. εξ αμφοιν
 γαρ ουτι το καλλιστον αλλα το χειρον ελκυσαντες, παρυφην κακων
-ειργασασθε.——Απο μεν ουν της Εβραιων καινοτομιας το βλασφημειν
+ειργασασθε. -  - Απο μεν ουν της Εβραιων καινοτομιας το βλασφημειν
 τιμωμενους θεους ηρπασατε· απο δε της παρ’ ημιν θρησκειας το μεν ευλαβες
 τε ομου προς απασαν την κρειττονα φυσιν, και των πατριων αγαπητικον,
 απολελοιπατε.
@@ -7621,7 +7621,7 @@ unfolded by Proclus in the second and third books of his treatise on the
 Theology of Plato.
 
 P. 122. _He arranges the God Eneph prior to, and as the leader of, the
-celestial Gods.—But prior to this he arranges the impartible one, which
+celestial Gods. - But prior to this he arranges the impartible one, which
 he says is the first paradigm, and which he denominates Eicton._ It
 appears to me that the former of these two divinities is the same with
 Saturn, who is the summit of the intellectual order of Gods; and that
@@ -7655,29 +7655,29 @@ Salmasius de Annis climactericis. Gale also gives the following extract
 from Hermes relative to the decans, which had not been before published,
 and which he derived from a MS. copy of Stobæus in the possession of
 Vossius. Φαμεν ω τεκνον, περιεκτικον των απαντων ειναι το σωμα. εννοησον
-ουν αυτο ωσπερ κυκλοειδες σχημα——υπο δε τον κυκλον του σωματος τουτου
+ουν αυτο ωσπερ κυκλοειδες σχημα -  - υπο δε τον κυκλον του σωματος τουτου
 τεταχθαι τους λϛ δεκανους, μεσους του παντος κυκλου του
-ζωδιακου.——νοησωμεν ωσπερει φυλακας αυτους προϊστασθαι των εν κοσμῳ
-απαντων παντα συνεχοντας——και τηρουντας την των παντων ευταξιαν.——ετι δε
+ζωδιακου. -  - νοησωμεν ωσπερει φυλακας αυτους προϊστασθαι των εν κοσμῳ
+απαντων παντα συνεχοντας -  - και τηρουντας την των παντων ευταξιαν. -  - ετι δε
 νοησον ω Τατ, οτι απαθεις εισιν ων οι αλλοι αστερες πασχουσιν. ουτε γαρ
 επεχομενοι τον δρομον στηριζουσιν, ουτε κωλυομενοι αναποδιζουσιν, αλλ’
 ουδε μην απο του φωτος του ηλιου σκεπονται, απερ πασχουσιν οι αλλοι
 αστερες. ελευθεροι δε οντες υπερανω παντων, ωσπερ φυλακες και επισκοποι
-ακριβεις του παντος, περιεχονται τῳ νυχθημερῳ το παν.——εχουσι προς ημας
+ακριβεις του παντος, περιεχονται τῳ νυχθημερῳ το παν. -  - εχουσι προς ημας
 την μεγιστην δυναμιν. _i. e._ “We say, O son, that the body [of the
 universe] is comprehensive of all things. Conceive, therefore, this to
-be as it were of a circular form.——But under the circle of this body the
+be as it were of a circular form. -  - But under the circle of this body the
 thirty-six decans are arranged, as the media of the whole circle of the
-zodiac.——These, likewise, must be understood to preside as guardians
-over every thing in the world, connecting and containing all things——and
-preserving the established order of all things.——Farther still,
+zodiac. -  - These, likewise, must be understood to preside as guardians
+over every thing in the world, connecting and containing all things -  - and
+preserving the established order of all things. -  - Farther still,
 understand, O Tat, that these decans are impassive to the things which
 the other stars suffer. For neither being detained, do they stop their
 course, nor being impeded do they recede, nor are they, like the other
 stars, concealed as with a veil by the light of the sun. But being
 liberated above all things, they comprehend the universe as the
 guardians and accurate inspectors of it, in the Nycthemeron [or the
-space of night and day].——They also possess, with respect to us, the
+space of night and day]. -  - They also possess, with respect to us, the
 greatest power.”
 
 
@@ -8206,10 +8206,10 @@ Footnote 51:
   See, likewise, on this subject, Ptolem. Harmonic, lib. iii. cap. 7 and
   8, who observes among other things, “that our souls directly
   sympathize with the energies of melody, recognizing, as it were, their
-  alliance to them—and that at one time the soul is changed to a quiet
+  alliance to them - and that at one time the soul is changed to a quiet
   and repressed condition, but at another to fury and enthusiasm. Ταις
   ενεργειαις της μελῳδιας συμπασχειν ημων αντικρυς τας ψυχας, την
-  συγγενειαν ωσπερ επιγινωσκουσας——et, ποτε μεν εις ησυχιαν και
+  συγγενειαν ωσπερ επιγινωσκουσας -  - et, ποτε μεν εις ησυχιαν και
   κατασολην τρεπεσθαι, ποτε δε εις οἱσρον και ενθυσιασμον. And, in the
   last place, see Plato in his Io, and Aristotle in his Politics.
 
@@ -8636,7 +8636,7 @@ Footnote 81:
 
   Agreeably to this, Porphyry says in his Αφορμαι προς τα νοητα, or
   _Auxiliaries to Intelligibles_, ψυχη καταδειται προς το σωμα, τῃ
-  επιστροφη τῃ προς τα παθη τα απ’ αυτου.——And ψυχη εδησεν εαυτην εν τῳ
+  επιστροφη τῃ προς τα παθη τα απ’ αυτου. -  - And ψυχη εδησεν εαυτην εν τῳ
   σωματι. _i. e._ “The soul is bound to the body, by a conversion to the
   passions arising from her union with it.” And, “the soul binds herself
   in the body.” Philolaus also says, that the ancient theologists and
@@ -9181,7 +9181,7 @@ Footnote 114:
 
   Conformably to this, Servius, in his Annotations on the words
 
-                          Diique, deæque omnes—
+                          Diique, deæque omnes - 
 
   in the sixth book of the Æneid observes, “more pontificum, per quos
   ritu veteri in omnibus sacris post speciales Deos, quos ad ipsum
@@ -9372,9 +9372,9 @@ Footnote 128:
   Most historians give the palm of antiquity to the Egyptians. And
   Lucian, in lib. De Syria Dea, says, “that the Egyptians are said to be
   the first among men that had a conception of the Gods, and a knowledge
-  of sacred concerns.——They were also the first that had a knowledge of
+  of sacred concerns. -  - They were also the first that had a knowledge of
   sacred names.” Αιγυπτιοι πρωτοι ανθρωπων λεγονται θεων τε εννοιην
-  λαβειν και ιρα εισασθαι——πρωτοι δε και ονοματα ιρα εγνωσαν.
+  λαβειν και ιρα εισασθαι -  - πρωτοι δε και ονοματα ιρα εγνωσαν.
   Conformably to this, also, an oracle of Apollo, quoted by Eusebius,
   says that the Egyptians were the first that disclosed by infinite
   actions the path that leads to the Gods. This oracle is as follows:
@@ -9492,7 +9492,7 @@ Footnote 140:
   Proclus, in MS. Comment, in Alcibiad. cites one of the Chaldean
   oracles, which says,
 
-                   ——πορθμιον ουνομα το δ’ εν απειροις
+ -  - πορθμιον ουνομα το δ’ εν απειροις
                    Κοσμοις ενθρωσκον.
 
   _i. e._ “There is a transmitting name which leaps into the infinite
@@ -9656,7 +9656,7 @@ Footnote 163:
 
 
   “‘The City of Dreadful Night’ ranks with Omar Khayyam’s Rubaiyat as a
-  lyrical expression of despair, and it strikes a deeper note.”—_Daily
+  lyrical expression of despair, and it strikes a deeper note.” - _Daily
   News._
 
   “Thomson’s work ... has intensity, it has grip, it has that power of
@@ -9667,7 +9667,7 @@ Footnote 163:
   pessimistic verse has the fascination of gloomy grandeur, and when, as
   in such poems as ‘The Happy Poet’ and ‘Sunday up the River,’ he rises
   into an ampler ether, a diviner air, his verse has not only the
-  impressiveness of power, but the witchery of delight.”—_Westminster
+  impressiveness of power, but the witchery of delight.” - _Westminster
   Gazette._
 
   “Messrs. Reeves & Turner and Mr. Dobell have published in two volumes
@@ -9678,7 +9678,7 @@ Footnote 163:
   utterances of the author of ‘The City of Dreadful Night’ were never
   likely to be very popular, but this excellent edition will be very
   welcome to many who know the strength and true poetry of many of his
-  writings.”—_Daily Telegraph._
+  writings.” - _Daily Telegraph._
 
 
                    Crown 8vo, pp. 334. Price 7s. 6d.
@@ -9701,7 +9701,7 @@ Footnote 163:
   to plenty of his letters, and these really are a treat.... But
   whatever the demerits of Mr. Salt’s criticism, this seems certain:
   that the perusal of his ‘Life of James Thomson’ will prove in most
-  cases a prelude to the perusal of James Thomson’s works.”—_Scots
+  cases a prelude to the perusal of James Thomson’s works.” - _Scots
   Observer._
 
 
@@ -9716,11 +9716,11 @@ Footnote 163:
 
   “Of the essays in this volume, the principal are those on Emerson,
   Burns, Shelley, Blake, and Walt Whitman. All these contain solid,
-  though unequal work,—the first named, for instance, reproducing
+  though unequal work, - the first named, for instance, reproducing
   Emerson’s peculiar _staccato_ style too closely to be pleasant. Those
   on Blake and Walt Whitman are, we think, his best, though we are not
   sure that we agree with Mr. Robertson in thinking that Thomson was
-  really more competent in prose than in poetry.”—_The Speaker._
+  really more competent in prose than in poetry.” - _The Speaker._
 
 
                                 CATALOGUE
@@ -9751,7 +9751,7 @@ Footnote 163:
   Dixon [others have since been noticed]. The Appleton Press of Mr. W.
   J. Linton is fairly represented, and so is that of the late
   Halliwell-Phillipps. Altogether the curious reader will find here much
-  to interest him in one of the by-paths of literature.”—_The Academy._
+  to interest him in one of the by-paths of literature.” - _The Academy._
 
 
 ------------------------------------------------------------------------

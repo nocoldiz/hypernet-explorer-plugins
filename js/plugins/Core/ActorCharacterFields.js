@@ -11,11 +11,15 @@
  * @help
  * ActorCharacterFields.js
  * ============================================================================
- * These per-character values used to live in fixed global game variables, one
- * block per protagonist. They now live on the Game_Actor itself, so they are
- * party-private, travel with the character, and no longer occupy variable ids:
+ * Party identity lives on the Game_Actor and nowhere else: never in game
+ * variables or switches keyed by party seat or actor id. These fields are
+ * party-private and travel with the character:
  *
  *   gender() / setGender(v) .................  0=Male 1=Female 2=Non-binary 3=Cocoon
+ *   reproductionType() / setReproductionType(v)  0=testes 1=uterus 2=oviparous
+ *                                              3=plant 4=mitosis, null where
+ *                                              nobody has said. A uterus is
+ *                                              reproductionType() === 1.
  *   hormoneBalance() / setHormoneBalance(v) .  0=oestrogenic .. 100=androgenic,
  *                                              null where nobody has said
  *   vnBattler() / setVnBattler(v) ...........  monster/battler portrait image name (or 0)
@@ -23,6 +27,9 @@
  *   portraitMode() / setPortraitMode(v) .....  "bust" | "sprite" | "model" (or 0)
  *   pvArcane/pvSubstance/pvStealth/pvIntimidation() + setters ... equip-derived stats
  *   modelColours() / setModelColour(part, hex)  skin/hair/dress/belt/boots/underwear/glasses colour of a dossier model
+ *
+ * Whether an actor is a creature (portrayed by its monster form) is the plain
+ * field `actor._isCreatureActor`, written and cleared by character creation.
  *
  * portraitMode is the exclusive art style chosen at character creation. A
  * humanoid picks "bust" (hand-drawn portrait) or "model" (a procedural 3D model
@@ -33,9 +40,8 @@
  * its art, _recruitedEnemyId the exact enemy when it is known), and the flat
  * battler image only stands in when no 3D model resolves for the species.
  *
- * All plugins and events that used the old variables (gender 38-40, battler
- * 106-108, bust 109/117/118, stats 121-130) were rewritten to call these
- * accessors, and those variable ids were freed in System.json.
+ * Plugins and events read and write these accessors; nothing mirrors them
+ * into a game variable or switch.
  * ============================================================================
  */
 
@@ -90,12 +96,9 @@
     defRawField("portraitMode", "setPortraitMode", "_pvPortraitMode");
 
     // How this body reproduces: 0 testes, 1 uterus, 2 oviparous, 3 plant,
-    // 4 mitosis. It used to live in variables 87/115/116, which the writers
-    // picked by ACTOR ID and the reader picked by PARTY INDEX - so reordering
-    // the party handed a character somebody else's reproductive system, and a
-    // pregnancy whose type read back as 0 gestated for ever without a birth.
-    // null means nobody has said, which is what lets an old save migrate off
-    // the variables once.
+    // 4 mitosis. It belongs to the body, so reordering the party never hands
+    // a character somebody else's reproductive system. null means nobody has
+    // said; readers treat it as 0.
     Game_Actor.prototype.reproductionType = function () {
         const v = this._pvReproductionType;
         return (v === undefined || v === null) ? null : v;

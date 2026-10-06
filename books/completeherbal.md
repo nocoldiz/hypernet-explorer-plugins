@@ -51,9 +51,9 @@ IN WHICH CULPEPER LIVED, STUDIED AND DIED]
 
   FAMILY DISPENSATORY AND NATURAL SYSTEM OF PHYSIC.
 
-  ————————————
+ -  -  -  -  -  -  -  -  -  -  -  - 
   BY NICHOLAS CULPEPER, M.D.
-  ————————————
+ -  -  -  -  -  -  -  -  -  -  -  - 
 
   TO WHICH IS ALSO ADDED,
 
@@ -71,14 +71,14 @@ IN WHICH CULPEPER LIVED, STUDIED AND DIED]
   _Illustrated by Engravings of numerous British Herbs and Plants,
         correctly coloured from nature._
 
-  ———————
+ -  -  -  -  -  -  - 
   “The Lord hath created Medicines out of the earth; and he that is
-      wise will not abhor them.”—_Ecc._ xxxviii. 4.
-  ———————
+      wise will not abhor them.” - _Ecc._ xxxviii. 4.
+ -  -  -  -  -  -  - 
 
   LONDON:
   THOMAS KELLY, 17, PATERNOSTER ROW.
-  ———
+ -  -  - 
   MDCCCL.
 
 
@@ -370,16 +370,16 @@ venture to use them: And therefore I do warn the Public of them: I can
 do no more at present; only take notice of these Directions by which
 you shall be sure to know the _True one_ from the _False_.
 
-_The first Direction._—The true one hath this Title over the head of
+_The first Direction._ - The true one hath this Title over the head of
 every Book, THE COMPLETE HERBAL AND ENGLISH PHYSICIAN ENLARGED. The
 small Counterfeit ones have only this Title, THE ENGLISH PHYSICIAN.
 
-_The second Direction._—The true one hath these words, GOVERNMENT
+_The second Direction._ - The true one hath these words, GOVERNMENT
 AND VIRTUES, following the time of the Plants flowering, &c. The
 counterfeit small ones have these words, VIRTUES AND USE, following the
 time of the Plants flowering.
 
-_The third Direction._—The true one is of a larger Letter than the
+_The third Direction._ - The true one is of a larger Letter than the
 counterfeit ones, which are in _Twelves_, &c., of the Letter small
 Bibles used to be printed on. I shall now speak something of the book
 itself.
@@ -395,7 +395,7 @@ me to work in studying the nature of simples, most of which I knew
 by sight before; and indeed all the Authors I could read gave me but
 little satisfaction in this particular, or none at all. I cannot build
 my faith upon Authors’ words, nor believe a thing because they say it,
-and could wish every body were of my mind in this,—to labour to be
+and could wish every body were of my mind in this, - to labour to be
 able to give a reason for every thing they say or do. They say Reason
 makes a man differ from a Beast; if that be true, pray what are they
 that, instead of reason for their judgment, quote old Authors? Perhaps
@@ -462,7 +462,7 @@ from eternity, when the mysteries of it are so clear to every eye? but
 that Scripture shall be verified to them, _Rom._ i. 20: “_The invisible
 things of him from the Creation of the World are clearly seen, being
 understood by the things that are made, even his Eternal Power and
-Godhead; so that they are without excuse._”—And a Poet could teach them
+Godhead; so that they are without excuse._” - And a Poet could teach them
 a better lesson;
 
     “_Because out of thy thoughts God shall not pass,_
@@ -583,7 +583,7 @@ monument of his skill and industry.
 
     “Culpeper, the man that first ranged the woods and climbed
     the mountains in search of medicinal and salutary herbs, has
-    undoubtedly merited the gratitude of posterity.”—DR. JOHNSON.
+    undoubtedly merited the gratitude of posterity.” - DR. JOHNSON.
 
 
 
@@ -2345,7 +2345,7 @@ wounds, either green or old, and especially if the nerves be hurt.
     THE BRAMBLE, OR BLACK-BERRY BUSH.
 
 IT is so well known that it needs no description. The virtues thereof
-are as follows:—
+are as follows: - 
 
 _Government and virtues._] It is a plant of Venus in Aries. If any
 ask the reason why Venus is so prickly? Tell them it is because she
@@ -2610,7 +2610,7 @@ works the same effects, but more weakly; the root bruised and applied
 of itself to any place where the bones are broken, helps to draw them
 forth, as also splinters and thorns in the flesh; and being applied
 with a little wine mixed therewith, it breaks boils, and helps whitlows
-on the joints.—For all these latter, beginning at sores, cancers, &c.
+on the joints. - For all these latter, beginning at sores, cancers, &c.
 apply it outwardly, mixing it with a little hog’s grease, or other
 convenient ointment.
 
@@ -2887,8 +2887,8 @@ antipathy; Saturn being exalted in Libra, in the house of Venus.
 
 IT is called Sanguisorbia, Pimpinella, Bipulo, Solbegrella, &c.
 The common garden Burnet is so well known, that it needs no
-description.—There is another sort which is wild, the description
-whereof take as follows:—
+description. - There is another sort which is wild, the description
+whereof take as follows: - 
 
 _Descript._] The great wild Burnet has winged leaves arising from
 the roots like the garden Burnet, but not so many; yet each of these
@@ -14161,7 +14161,7 @@ is, because the word Julep is an Arabic word.
 are sick, and want help, or such as are in health, and want no money
 to quench thirst.
 
-3. Now-a-day it is commonly used—
+3. Now-a-day it is commonly used - 
 
     1. To prepare the body for purgation.
     2. To open obstructions and the pores.
@@ -24794,7 +24794,7 @@ stomachs, and work so easily that you need not fear following your
 business the next day.
 
     _Pilulæ sine Quibus._
-    Or Pills without which——
+    Or Pills without which -  - 
 
 _College._] Take of washed Aloes fourteen drams, Scammony prepared
 six drams, Agarick, Rhubarb, Sena, of each half an ounce, Wormwood,
@@ -25653,7 +25653,7 @@ _Culpeper._] Because most of these Oils are out of use, I took not the
 pains to quote the virtues of them; if any wish to make them, let them
 look to the simples, and there they have them; if the simples be not to
 be found in this book, there are other plentiful medicines conducing to
-the cure of all usual diseases; which are—
+the cure of all usual diseases; which are - 
 
     _Oil of Bays._
 
@@ -29335,9 +29335,9 @@ GALEN’S KEY TO PHYSIC.
 
   ADDER’S Tongue, or Serpent’s Tongue, 3
   Agrimony, 4
-  —— Water, 5
+ -  - Water, 5
   Alder Tree, the black, 6
-  —— the common, 7
+ -  - the common, 7
   Alehoof, or Ground-Ivy, 5
   Alexander, 6
   Alkanet, 3, 218
@@ -29349,22 +29349,22 @@ GALEN’S KEY TO PHYSIC.
   Anthoræ, 218
   Archangel, 11
   Arrach, garden, 10
-  —— wild and stinking, 10
+ -  - wild and stinking, 10
   Ars-smart, 12
   Artichokes, 88, 221
   Asarabacca, 13, 218
   Ash Tree, 14, 222
   Asparagus, 213
-  —— prickly, 14
-  —— or Sperage, 218
+ -  - prickly, 14
+ -  - or Sperage, 218
   Asphodel, Female, or King’s Spear, 218
-  —— Male, 219
+ -  - Male, 219
   Avens, Colewort, or Herb Bonet, 15
   Avens, or Herb Bennet, 219
 
   Balm, 215
   Barks, 259
-  —— appropriated to parts of the body, 259
+ -  - appropriated to parts of the body, 259
   Barberry, 16
   Barks, 202
   Barks, 227
@@ -29379,7 +29379,7 @@ GALEN’S KEY TO PHYSIC.
   Beets, 20
   Beets, black, white, and red, 219
   Betony, Water, 21
-  —— Wood, ib.
+ -  - Wood, ib.
   Bifoil, or Twoblade, 24
   Bilberries, Whorts, or Whortleberries, 23
   Birch Tree, 24
@@ -29400,7 +29400,7 @@ GALEN’S KEY TO PHYSIC.
   Brooklime, or Water Pimpernel, 31
   Broom and Broom-rape, 32
   Buck’s horn Plantain, 33
-  —— —— ib.
+ -  -  -  - ib.
   Bugle, 33
   Bugloss, 219
   Bulbus Vomitorius, 219
@@ -29422,7 +29422,7 @@ GALEN’S KEY TO PHYSIC.
   Carraway, 42
   Carrots, 41, 221
   Celandine, 42
-  —— lesser, 44
+ -  - lesser, 44
   Celandine, the greater and lesser, 220
   Centaury, ordinary small, 44
   Centaury, the greater, 219
@@ -29431,7 +29431,7 @@ GALEN’S KEY TO PHYSIC.
   Cherries, Winter, 45
   Cherry-Tree, 45
   Chervil, 46
-  —— Sweet, or Sweet Cicely, 47
+ -  - Sweet, or Sweet Cicely, 47
   Chesnut-Tree, 47
   Chesnuts, Earth, ib.
   Chickweed, 48
@@ -29441,7 +29441,7 @@ GALEN’S KEY TO PHYSIC.
   Cinquefoil, or Five-leaved Grass, 49
   Cives, 50
   Clary, or Clear Eye, 50
-  —— Wild, 50
+ -  - Wild, 50
   Cleavers, 51
   Clown’s Woodwort, 52
   Cock’s Head, Red Fitching, or Medick Fetch, 52
@@ -29461,8 +29461,8 @@ GALEN’S KEY TO PHYSIC.
   Creatures, Living, 252
   Creatures, part of Living and Excrements, 253
   Cresses, black, 57
-  —— Sciatica, ib.
-  —— Water, 58
+ -  - Sciatica, ib.
+ -  - Water, 58
   Crosswort, 58
   Crowfoot, 59
   Cuckow Point, ib.
@@ -29478,7 +29478,7 @@ GALEN’S KEY TO PHYSIC.
   Devil’s Bit, 63, 223
   Dill, 63
   Distilled Waters, Simples, 278
-  —— —— —— being digested before hand, 278
+ -  -  -  -  -  - being digested before hand, 278
   Dittany, 221
   Dock, 64
   Dodder of Thyme, Epithymun, &c., 64
@@ -29494,11 +29494,11 @@ GALEN’S KEY TO PHYSIC.
 
   Elder, 225
   Elder Tree, 67
-  —— Dwarf, 67
+ -  - Dwarf, 67
   Elecampane, 69, 221
   Electuaries, 205
   Electuaries, 324
-  —— purging, 33
+ -  - purging, 33
   Elm Tree, 68
   Emplasters, 391
   Endive, 69
@@ -29507,11 +29507,11 @@ GALEN’S KEY TO PHYSIC.
   Eyebright, 71
 
   Fennel, 73, 222
-  —— Sow, or Hog’s Fennel, 47
+ -  - Sow, or Hog’s Fennel, 47
   Fern, 71
-  —— Water, or Osmond Royal, 72
-  —— Male and Female, 222
-  —— of the Oak, 224
+ -  - Water, or Osmond Royal, 72
+ -  - Male and Female, 222
+ -  - of the Oak, 224
   Feverfew, or Fetherfew, 72
   Fig-wort, 226
   Fig-wort, or Throat-wort, 74
@@ -29522,17 +29522,17 @@ GALEN’S KEY TO PHYSIC.
   Flea-Wort, 77
   Flower-de-luce, 78
   Flowers, 200, 247
-  —— 264
-  —— appropriated to certain parts of the body, 265
+ -  - 264
+ -  - appropriated to certain parts of the body, 265
   Fluellin, or Lluellin, 79
   Fluxweed, 78
   Fox-Gloves, 80
   Fresh-water Soldier, or Crab’s Claws, 57
   Fruits, 267
-  —— appropriated to the body of man, 267
-  —— by their several operations, bind, &c., 268
-  —— purging, 208
-  —— and their buds, 248
+ -  - appropriated to the body of man, 267
+ -  - by their several operations, bind, &c., 268
+ -  - purging, 208
+ -  - and their buds, 248
   Fuller’s Thistle, 223
   Fumitory, 80
   Furze Bush, 81
@@ -29570,13 +29570,13 @@ GALEN’S KEY TO PHYSIC.
   Hemp, 91
   Henbane, 91
   Herb Robert, 94
-  —— True-Love, or One Berry, 94
+ -  - True-Love, or One Berry, 94
   Herbs, 260
-  —— appropriated to certain parts of the body of man, 262
-  —— altering according to property, 263
-  —— purging, 264
+ -  - appropriated to certain parts of the body of man, 262
+ -  - altering according to property, 263
+ -  - purging, 264
   Herbs or Trees, of the leaves of, 200
-  —— and their Leaves, 229
+ -  - and their Leaves, 229
   Hermodactils, 222
   Holly, Holm, or Hulver Bush, 99
   Hops, 95
@@ -29600,85 +29600,85 @@ GALEN’S KEY TO PHYSIC.
   Knee-holly, or Butcher’s-broom, or Bruscus, 225
 
   Ladies’ thistles, 220
-  —— Mantle, 103
-  —— Smock, 104
+ -  - Mantle, 103
+ -  - Smock, 104
   Lavender, ib.
-  —— Cotton, 104
+ -  - Cotton, 104
   Leeks, 225
   Lettice, 223
   Lettuce, 104
   Lilies, Water, 223
   Lilies, White, 106, 223
   Lily, Water, 105
-  —— of the Valley, ib.
+ -  - of the Valley, ib.
   Liquorice, 106, 222
   Liverwort, 107
   Lohochs, 208
   Loosestrife, or Willow-herb, 107
-  —— with spiked heads of flowers, ib.
+ -  - with spiked heads of flowers, ib.
   Lovage, 108, 223
   Lungwort, 109
   Madder, 109, 225
   Maidenhair, 110
-  —— white, or Wall Rue, ib.
-  —— Golden, ib.
+ -  - white, or Wall Rue, ib.
+ -  - Golden, ib.
   Mallows, 223
   Mandrakes, ib.
   Maple Tree, 112
   Marigolds, 114
   Marjoram, wind, 112
-  —— sweet, 113
+ -  - sweet, 113
   Marsh-mallows, 218
   Masterwort, 114, 223, 224
   Maudlin, Sweet, 114
   Mead-sweet, 227
   Mechracah, 223
   Medicines, method of mixing, 210
-  —— on the Temperature of, 376
-  —— Temperate, 377
-  —— Hot, ib.
-  —— Hot in the first degree, ib.
-  —— —— second degree, 378
-  —— —— third degree, ib.
-  —— —— fourth degree, ib.
-  —— Cooling, 378
-  —— cool in the first degree, 379
-  —— —— second and third degree, ib.
-  —— cold in the fourth degree, 379
-  —— moistening, ib.
-  —— drying, ib.
-  —— of the appropriation of the several parts of the body, 380
-  —— appropriated to the Head, ib.
-  —— —— Brain, ib.
-  —— —— Eyes, ib.
-  —— —— Mouth & Nose, 382
-  —— —— Ears, ib.
-  —— —— Teeth, ib.
-  —— —— Breast & lungs, ib.
-  —— —— Heart, 383
-  —— —— Stomach, 384
-  —— —— Spleen, ib.
-  —— —— Reins and Bladder, 386
-  —— —— Womb, ib.
-  —— —— Joints, ib.
-  —— —— Propriety, or operation of, 387
-  —— —— Hardening, ib.
-  —— —— Loosening, 388
-  —— —— Drawing, 389
-  —— —— Discussive, ib.
-  —— —— Repelling, 390
-  —— —— appropriated to the Liver, 385
-  —— —— Cleansing, 391
-  —— —— Suppuring, 392
-  —— —— Provoking urine, ib.
-  —— —— Breeding flesh, 393
-  —— —— Glutinative, ib.
-  —— —— Resisting poison, ib.
-  —— —— Purging, 394
+ -  - on the Temperature of, 376
+ -  - Temperate, 377
+ -  - Hot, ib.
+ -  - Hot in the first degree, ib.
+ -  -  -  - second degree, 378
+ -  -  -  - third degree, ib.
+ -  -  -  - fourth degree, ib.
+ -  - Cooling, 378
+ -  - cool in the first degree, 379
+ -  -  -  - second and third degree, ib.
+ -  - cold in the fourth degree, 379
+ -  - moistening, ib.
+ -  - drying, ib.
+ -  - of the appropriation of the several parts of the body, 380
+ -  - appropriated to the Head, ib.
+ -  -  -  - Brain, ib.
+ -  -  -  - Eyes, ib.
+ -  -  -  - Mouth & Nose, 382
+ -  -  -  - Ears, ib.
+ -  -  -  - Teeth, ib.
+ -  -  -  - Breast & lungs, ib.
+ -  -  -  - Heart, 383
+ -  -  -  - Stomach, 384
+ -  -  -  - Spleen, ib.
+ -  -  -  - Reins and Bladder, 386
+ -  -  -  - Womb, ib.
+ -  -  -  - Joints, ib.
+ -  -  -  - Propriety, or operation of, 387
+ -  -  -  - Hardening, ib.
+ -  -  -  - Loosening, 388
+ -  -  -  - Drawing, 389
+ -  -  -  - Discussive, ib.
+ -  -  -  - Repelling, 390
+ -  -  -  - appropriated to the Liver, 385
+ -  -  -  - Cleansing, 391
+ -  -  -  - Suppuring, 392
+ -  -  -  - Provoking urine, ib.
+ -  -  -  - Breeding flesh, 393
+ -  -  -  - Glutinative, ib.
+ -  -  -  - Resisting poison, ib.
+ -  -  -  - Purging, 394
   Medlar, 115
   Melilot, or King’s Claver, 115
   Mercury, French and Dog, 116
-  —— Dog, ib.
+ -  - Dog, ib.
   Metals, Minerals, and Stones, 254
   Metals, Stones, Salts, and other Minerals, 276
   Mints, 117
@@ -29694,7 +29694,7 @@ GALEN’S KEY TO PHYSIC.
   Mulberry Tree, 123, 223
   Mullein, ib.
   Mustard, 124
-  —— Hedge, 125
+ -  - Hedge, 125
 
   Nailwort, or Whitlow-grass, 126
   Nep, or Catmint, ib.
@@ -29705,12 +29705,12 @@ GALEN’S KEY TO PHYSIC.
   Oats, 129
   Oils, 205
   Oils, 353
-  —— Simple Oils, by expression, ib.
-  —— —— —— Infusion and Decoction, 354
-  —— Compound Oils by Infusion and Decoction, 355
+ -  - Simple Oils, by expression, ib.
+ -  -  -  -  -  - Infusion and Decoction, 354
+ -  - Compound Oils by Infusion and Decoction, 355
   Ointments, 208
   Ointments, more simple, 358
-  —— more compound, 362
+ -  - more compound, 362
   One Blade, ib.
   Onions, 130, 220
   Orchis, 129
@@ -29718,14 +29718,14 @@ GALEN’S KEY TO PHYSIC.
   Orris, or Flower-de-luce, 222
 
   Parsley, 131
-  —— Piert, or Parsley Breakstone, ib.
+ -  - Piert, or Parsley Breakstone, ib.
   Parsnips, 132
-  —— Cow, ib.
-  —— garden and wild, 224
+ -  - Cow, ib.
+ -  - garden and wild, 224
   Peach Tree, 133
   Pear Tree, 134
   Pellitory of Spain, 134, 225
-  —— of the Wall, 135
+ -  - of the Wall, 135
   Peony, male and female, 224
   Pennyroyal, 136
   Peony, male and female, 137
@@ -29734,8 +29734,8 @@ GALEN’S KEY TO PHYSIC.
   Peter’s Wort, St., 139
   Pimpernel, 139
   Physic, a Key to Galen’s Method of, 376
-  —— the general use of, ib.
-  —— of the temperature, ib.
+ -  - the general use of, ib.
+ -  - of the temperature, ib.
   Pills, 209, 339
   Pine, Ground, 140
   Plaisters, 208, 367
@@ -29760,63 +29760,63 @@ GALEN’S KEY TO PHYSIC.
   Rest-Harrow, or Camonack, 150
   Rattle Grass, 150
   Receipts, General Caution, 395
-  —— to purge the Head, ib.
-  —— for a Rheum in the Head, and the Palsy, ib.
-  —— —— ib. 396
-  —— for the falling off of the Hair, ib.
-  —— to purge the Head, ib.
-  —— for Eyes that are blasted, ib.
-  —— Excellent Water to clear the Sight, ib.
-  —— for a hurt in the Eye with a stroke, ib.
-  —— to draw Rheum back from the Eyes, ib.
-  —— for a Web in the Eye, ib.
-  —— pain in the Ears, ib.
-  —— an Imposthume in the Ear, ib.
-  —— Polypus, or a fleshy substance growing in the Nose, ib.
-  —— bleeding at the Nose, ib.
-  —— a Canker in the Nose, ib.
-  —— another for the Polypus, ib.
-  —— extreme heat of the Mouth, 397
-  —— for a Canker in the Mouth, ib.
-  —— to keep Teeth white, ib.
-  —— —— fasten the Teeth, ib.
-  —— for the Tooth-ache, ib.
-  —— Scurvy in the Gums, ib.
-  —— for rotting and consuming of the Gums, ib.
-  —— the cause of Infirmities in the Face, ib.
-  —— for a Face full of red pimples, ib.
-  —— to take away the marks of Small Pox, ib.
-  —— caution concerning the Infirmities of the Throat, ib.
-  —— for Hoarseness, 398
-  —— for the Quinsey, ib.
-  —— for Sore Breasts, ib.
-  —— —— —— —— inward Medicine for, ib.
-  —— for Moisture of the Stomach, ib.
-  —— for the heat of the Stomach, ib.
-  —— to cause the Liver well to digest, ib.
-  —— a Caution, ib.
-  —— for a stoppage of the Liver, ib.
-  —— for the Liver, ib.
+ -  - to purge the Head, ib.
+ -  - for a Rheum in the Head, and the Palsy, ib.
+ -  -  -  - ib. 396
+ -  - for the falling off of the Hair, ib.
+ -  - to purge the Head, ib.
+ -  - for Eyes that are blasted, ib.
+ -  - Excellent Water to clear the Sight, ib.
+ -  - for a hurt in the Eye with a stroke, ib.
+ -  - to draw Rheum back from the Eyes, ib.
+ -  - for a Web in the Eye, ib.
+ -  - pain in the Ears, ib.
+ -  - an Imposthume in the Ear, ib.
+ -  - Polypus, or a fleshy substance growing in the Nose, ib.
+ -  - bleeding at the Nose, ib.
+ -  - a Canker in the Nose, ib.
+ -  - another for the Polypus, ib.
+ -  - extreme heat of the Mouth, 397
+ -  - for a Canker in the Mouth, ib.
+ -  - to keep Teeth white, ib.
+ -  -  -  - fasten the Teeth, ib.
+ -  - for the Tooth-ache, ib.
+ -  - Scurvy in the Gums, ib.
+ -  - for rotting and consuming of the Gums, ib.
+ -  - the cause of Infirmities in the Face, ib.
+ -  - for a Face full of red pimples, ib.
+ -  - to take away the marks of Small Pox, ib.
+ -  - caution concerning the Infirmities of the Throat, ib.
+ -  - for Hoarseness, 398
+ -  - for the Quinsey, ib.
+ -  - for Sore Breasts, ib.
+ -  -  -  -  -  -  -  - inward Medicine for, ib.
+ -  - for Moisture of the Stomach, ib.
+ -  - for the heat of the Stomach, ib.
+ -  - to cause the Liver well to digest, ib.
+ -  - a Caution, ib.
+ -  - for a stoppage of the Liver, ib.
+ -  - for the Liver, ib.
   Reed, Aromatical, 219
   Reeds, common and sugar, 218
   Rhadish, or Horse Rhadish, 148
   Rhapontick, or Rhubarb of Pontus, 225
   Rhubarb, 225
   Rhubarb, or Rephontic, 156
-  —— Monk’s or garden Patience, 157
-  —— Bastard, or great Round-leaved Dock, ib.
+ -  - Monk’s or garden Patience, 157
+ -  - Bastard, or great Round-leaved Dock, ib.
   Rocket, 151
-  —— Winter, or Cresses, 152
+ -  - Winter, or Cresses, 152
   Roots, 201, 217, 256
-  —— Temperature of, 257
-  —— appropriated to several parts of the body, 258
-  —— properties of, ib.
+ -  - Temperature of, 257
+ -  - appropriated to several parts of the body, 258
+ -  - properties of, ib.
   Rosa Solis, or Sun Dew, 155
   Rosemary, ib.
   Rose Root, 225
   Roses, 152
   Rue, Meadow, 158
-  —— Garden, 159
+ -  - Garden, 159
   Rupture-wort, 160
   Rushes, 161
   Rye, ib.
@@ -29824,7 +29824,7 @@ GALEN’S KEY TO PHYSIC.
   Saffron, Meadow, 220
   Saffron, 161
   Sage, 162
-  —— Wood, ib.
+ -  - Wood, ib.
   Samphire, 164
   Sanicle, ib.
   Saracen’s Confound, or Saracen’s Wound-wort, 165
@@ -29834,8 +29834,8 @@ GALEN’S KEY TO PHYSIC.
   Savine, 166
   Savory, Winter and Summer, ib.
   Saxifrage, the common white, 167
-  —— Burnet, ib.
-  —— white, or Lady-Smocks, 226
+ -  - Burnet, ib.
+ -  - white, or Lady-Smocks, 226
   Scabious, ib.
   Scabious, three sorts, 161
   Scirrits, 226
@@ -29843,8 +29843,8 @@ GALEN’S KEY TO PHYSIC.
   Scurvygrass, 169
   Sea, things belonging to, 254
   Seeds, 201
-  —— or Grains, 249, 268
-  —— according to their operation, bind, &c. 269
+ -  - or Grains, 249, 268
+ -  - according to their operation, bind, &c. 269
   Self-heal, 170
   Service Tree, 171
   Seseli, or Hartwort, 226
@@ -29854,7 +29854,7 @@ GALEN’S KEY TO PHYSIC.
   Solomon’s Seal, 163, 225
   Sope-wort, or Bruise-wort, 172
   Sorrel, ib.
-  —— Wood, ib.
+ -  - Wood, ib.
   Sow Thistles, 173
   Southern-wood, ib.
   Sorrel, 223
@@ -29877,9 +29877,9 @@ GALEN’S KEY TO PHYSIC.
   Sugars, 316
   Sulphur-wort, Hog’s-fennel, or Hore-strange, 224
   Syrups, 203, 294
-  —— altering, 294
-  —— purging, 305
-  —— made with Vinegar and Honey, 308
+ -  - altering, 294
+ -  - purging, 305
+ -  - made with Vinegar and Honey, 308
 
   Tamaris, 226
   Tamarisk Tree, 178
@@ -29889,15 +29889,15 @@ GALEN’S KEY TO PHYSIC.
   Tears, Liquors, and Rosins, 251
   Teazle, 223
   Thistles, 179
-  —— Melancholy, 180
-  —— our Lady’s, ib.
-  —— Woollen or Cotton, 181
-  —— Fuller’s, or Teazle, ib.
+ -  - Melancholy, 180
+ -  - our Lady’s, ib.
+ -  - Woollen or Cotton, 181
+ -  - Fuller’s, or Teazle, ib.
   Thorn, black, or Sloe Bush, 182
   Thorough Wax, or Thorough Leaf, 183
   Throat-wort, 226
   Thyme, 123
-  —— Wild, or Mother of Thyme, ib.
+ -  - Wild, or Mother of Thyme, ib.
   Tinctures, 290
   Toad-stools, 226
   Tobacco, English, 177
@@ -29907,8 +29907,8 @@ GALEN’S KEY TO PHYSIC.
   Treacle Mustard, 181
   Trefoil, 226
   Trefoil, Meadow, or Honey-suckles, 115
-  —— Heart, 186
-  —— Pearl, ib.
+ -  - Heart, 186
+ -  - Pearl, ib.
   Troches, 209, 346
   Turbith, 226
   Turmerick, 221
@@ -29923,7 +29923,7 @@ GALEN’S KEY TO PHYSIC.
   Vinegars, Physical, 292
   Violets, 188
   Viper’s Bugloss, 189
-  —— —— or Wild Bugloss, 221
+ -  -  -  - or Wild Bugloss, 221
   Viper’s Grass, 226
 
   Wall Flowers, or Winter Gillflowers, 190
@@ -29935,7 +29935,7 @@ GALEN’S KEY TO PHYSIC.
   Willow Tree, ib.
   Wines, Physical, 291
   Wood, 193
-  —— 193, 223
+ -  - 193, 223
   Woodbine, or Honey-suckles, ib.
   Woods, 260
   Woods, and their Chips or Rapeings, 229
@@ -29965,15 +29965,15 @@ A LIST OF THE PRINCIPAL DISEASES.
     Pellitory, 134.
     Meadow-sweet, 147
 
-  —— Dry.
+ -  - Dry.
     Maudlin, 114.
     Lovage, 108
 
-  —— Hot.
+ -  - Hot.
     Mallows, 111, 302.
     Wild Tansey, 179
 
-  —— Quartan.
+ -  - Quartan.
     Fumitory, 237.
     Cinque-foil, 242
 
@@ -30127,7 +30127,7 @@ A LIST OF THE PRINCIPAL DISEASES.
     Rattle-grass, 150.
     Beets, 20
 
-  —— (inflammations of).
+ -  - (inflammations of).
     Violets, 188.
     Anemone, 9.
     Groundsel, 87
@@ -30157,12 +30157,12 @@ A LIST OF THE PRINCIPAL DISEASES.
     Master-wort, 114.
     Marigolds, 114, 333
 
-  —— (Pestilential).
+ -  - (Pestilential).
     Butter-burr, 35.
     Elecampane, 69.
     Clove-gilliflowers, 83
 
-  —— (Putrid).
+ -  - (Putrid).
     Borage, 28
 
   Fistulas, 351.
@@ -30204,30 +30204,30 @@ A LIST OF THE PRINCIPAL DISEASES.
     Pellitory, 134.
     Roses, 153
 
-  —— Ache.
+ -  - Ache.
     Beets, 20.
     Duck’s-meat, 66.
     Ivy, 99.
     Privet, 146
 
-  —— Bald.
+ -  - Bald.
     White-lilies, 106.
     Wall-Rue, 110, 396
 
-  —— Scabby.
+ -  - Scabby.
     Fox-glove, 80.
     Knapweed, 102.
     Nep, 126
 
-  —— Scald.
+ -  - Scald.
     White-Lilies, 106
 
   Heart-Burn.
     Vine, 246
 
-  —— (to strengthen), 284, 287, 289, 298, 318, 326, 349
+ -  - (to strengthen), 284, 287, 289, 298, 318, 326, 349
 
-  —— (palpitation of).
+ -  - (palpitation of).
     Syrup of Apples, 303
 
   Hic-cough.
@@ -30255,7 +30255,7 @@ A LIST OF THE PRINCIPAL DISEASES.
     Cinquefoil, 49.
     Black Cresses, 57
 
-  —— in the sides.
+ -  - in the sides.
      Violets, 247
 
   Infection, (to preserve from).
@@ -30274,7 +30274,7 @@ A LIST OF THE PRINCIPAL DISEASES.
     Ash, 14.
     Carduus Benedict, 41
 
-  —— Yellow.
+ -  - Yellow.
     Wormwood, 196.
     Barberries, 227
 
@@ -30295,17 +30295,17 @@ A LIST OF THE PRINCIPAL DISEASES.
     Strawberries, 175.
     Maple-tree, 112
 
-  —— (inflammation of).
+ -  - (inflammation of).
     Wild Thyme, 183
 
-  —— (obstructions of).
+ -  - (obstructions of).
     Rhubarb, 157, 225.
     Parsley, 131.
     Columbines, 53.
     Liver-wort, 107.
     Alexander, 6
 
-  —— (to strengthen).
+ -  - (to strengthen).
     Cleavers, 51.
     Costmary, 55.
     Dock, 64.
@@ -30321,11 +30321,11 @@ A LIST OF THE PRINCIPAL DISEASES.
     Filipendula, 75.
     Scabious, 168
 
-  —— (inflammation of).
+ -  - (inflammation of).
     Garden Rue, 159, 244.
     Heart’s-ease, 88
 
-  —— (ulcers of).
+ -  - (ulcers of).
     Money-wort, 119.
     Horehound, 240
 
@@ -30333,7 +30333,7 @@ A LIST OF THE PRINCIPAL DISEASES.
     Tormentil, 184.
     Saffron, 161
 
-  —— (to drive out).
+ -  - (to drive out).
     Alkanet, 2.
     Marigolds, 114
 
@@ -30353,7 +30353,7 @@ A LIST OF THE PRINCIPAL DISEASES.
     Bdellium, 271, 258, 269.
     Marjoram, 281, 274
 
-  —— (to stop), 259, 264, 270, 299, 305.
+ -  - (to stop), 259, 264, 270, 299, 305.
     Tansy, 179
 
   Milk, (to increase in Nurses).
@@ -30370,13 +30370,13 @@ A LIST OF THE PRINCIPAL DISEASES.
   Nervous Complaints.
     Privet, 230, 356, 363
 
-  —— Head-ache.
+ -  - Head-ache.
     Lily of the Valley, 105.
     Plantain, 224
 
   Nose, 396
 
-  —— (bleeding at).
+ -  - (bleeding at).
     Fluellin, 79.
     Houseleek, 97.
     Periwinkle, 138
@@ -30386,12 +30386,12 @@ A LIST OF THE PRINCIPAL DISEASES.
     Mouse-ear, 122.
     Of Marsh-mallows, 218, 281
 
-  —— in the Side.
+ -  - in the Side.
     Chick-pease, 48.
     Coral-wort, 54.
     Gentian, 82
 
-  —— in the Stomach.
+ -  - in the Stomach.
     Rupture-wort, 160.
     Spignel, 174.
     Black-thorn, 182, 273
@@ -30420,11 +30420,11 @@ A LIST OF THE PRINCIPAL DISEASES.
   Purging.
     Flowers, 266
 
-  —— Fruits, 268
+ -  - Fruits, 268
 
-  —— Herbs, 264
+ -  - Herbs, 264
 
-  —— Syrups, 305
+ -  - Syrups, 305
 
 
   Quinsey.
@@ -30491,22 +30491,22 @@ A LIST OF THE PRINCIPAL DISEASES.
     Purslain, 146.
     Quince, 148, 398
 
-  —— Eyes.
+ -  - Eyes.
     Buck’s-horn-plantain, 33.
     Succory, 176.
     Celandine, 42.
     Loose-strife, 108
 
-  —— Head.
+ -  - Head.
     Garden Rue, 159.
     Tormentil, 184
 
-  —— Mouth.
+ -  - Mouth.
     Blue-bottle, 28.
     Birch, 24.
     Golden Rod, 84
 
-  —— Throat.
+ -  - Throat.
     Sanicle, 164.
     Self-heal, 170, 398.
     Saracen’s Confound, 165
@@ -30528,14 +30528,14 @@ A LIST OF THE PRINCIPAL DISEASES.
     Mint, 117.
     Lovage, 108, 398
 
-  —— (inflammations of).
+ -  - (inflammations of).
     Wallnut-Tree, 190
 
-  —— (obstructions of).
+ -  - (obstructions of).
     Cross-wort, 58.
     Rhubarb, 157, 297, 317, 343
 
-  —— (to strengthen).
+ -  - (to strengthen).
     Gentian, 82.
     Mustard, 124.
     Roses, 152.
@@ -30559,7 +30559,7 @@ A LIST OF THE PRINCIPAL DISEASES.
     Sea-Coleworts, 37.
     Chick-weed, 48
 
-  —— in the Throat.
+ -  - in the Throat.
     Water Caltrops, 39.
     Devil’s-bit, 63.
     S. Gladwin, 84
@@ -30567,12 +30567,12 @@ A LIST OF THE PRINCIPAL DISEASES.
 
   Teeth, (to draw without pain), 252
 
-  —— (to fasten).
+ -  - (to fasten).
     Mastich, 251.
     Bistort, 219.
     Silver-weed, 231
 
-  —— (to whiten).
+ -  - (to whiten).
     Vine, 246, 397
 
   Teething of Children, 253
@@ -30588,11 +30588,11 @@ A LIST OF THE PRINCIPAL DISEASES.
     Lesser Celandine, 42.
     True Love, 91, 359, 360
 
-  —— (hard).
+ -  - (hard).
     Misselto, 118.
     Mallows, 111
 
-  —— (hot).
+ -  - (hot).
     Water Lily, 105
 
 
@@ -30640,7 +30640,7 @@ A LIST OF THE PRINCIPAL DISEASES.
     Fennel, 73.
     Hemp, 91, 264, 323
 
-  —— in the Stomach.
+ -  - in the Stomach.
     Lovage, 108.
     Thyme, 183.
     Mint, 118.
@@ -30650,11 +30650,11 @@ A LIST OF THE PRINCIPAL DISEASES.
   Womb, (cold infirmities of).
     Bayberries, 248
 
-  —— (diseases of).
+ -  - (diseases of).
     Wild Arrach, 10.
     Feverfew, 72, 365
 
-  —— (inflammations of).
+ -  - (inflammations of).
     Schœnanth, 247
 
   Women’s Diseases.
@@ -30662,7 +30662,7 @@ A LIST OF THE PRINCIPAL DISEASES.
     Moses, 120.
     Mugwort, 122, 231
 
-  —— in Labour.
+ -  - in Labour.
     Cinnamon, 227.
     Hore-hound, 240.
     Penny-royal, 243
@@ -30686,7 +30686,7 @@ A LIST OF THE PRINCIPAL DISEASES.
     Moon-wort, 120.
     Lupines, 249
 
-  —— in the Head.
+ -  - in the Head.
     Shepherd’s-purse, 171
 
        *       *       *       *       *
@@ -31465,7 +31465,7 @@ Page 394, “*nd” changed to “and” (and sweating the last)
 Page 396, “int*” changed to “into” (of sweet Almonds into)
 
 Page 399, “fourth” repeated under “Hot in the first degree” under
-“second”. The first “fourth” was changed to “third” (—— —— third
+“second”. The first “fourth” was changed to “third” ( -  -  -  - third
 degree, ib.)
 
 Page 401, page number added to entry for “Tamarisk Tree.”

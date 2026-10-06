@@ -1284,6 +1284,18 @@
             // under the caret and Escape must reach the field, not the scene.
             if (window.MenuSearchBar && window.MenuSearchBar.isTyping()) return;
 
+            // L1 / R1 turn the tabs of the page under the cursor: on the list
+            // they turn the Earth / Petrodemon / Rarity / Alien pockets, in the
+            // detail they turn the Lexicon / Anatomy / Extraction tabs. Read
+            // ahead of the empty-pocket check: an empty pocket is exactly the
+            // one the player has to be able to turn away from.
+            const tabDir = window.UINav ? window.UINav.tabDir() : 0;
+            if (tabDir && this._monsterList.length === 0) {
+                const page = Math.max(0, Math.min(3, (this._pageTab || 0) + tabDir));
+                this.switchBestiaryPageTab(page);
+                return;
+            }
+
             if (this._monsterList.length === 0) {
                 if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
                     this.popScene();
@@ -1292,10 +1304,6 @@
                 return;
             }
 
-            // L1 / R1 turn the tabs of the page under the cursor: on the list
-            // they turn the Earth / Petrodemon / Rarity / Alien pockets, in the
-            // detail they turn the Lexicon / Anatomy / Extraction tabs.
-            const tabDir = window.UINav ? window.UINav.tabDir() : 0;
             if (tabDir) {
                 if (this._activeArea === 'tabs') {
                     this._activeTab = Math.max(0, Math.min(2, this._activeTab + tabDir));
@@ -1341,6 +1349,11 @@
                         SoundManager.playCursor();
                         this.refreshUIBestiary();
                     }
+                } else if (Input.isTriggered('ok')) {
+                    // The one control the Lexicon tab draws: rolling the
+                    // creature's model again, which the mouse clicks.
+                    const reroll = document.getElementById('bestiary-seed-reroll');
+                    if (reroll && this._activeTab === 0) reroll.click();
                 } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
                     // One level out: back to the creature list, not out of the book.
                     this._activeArea = 'list';

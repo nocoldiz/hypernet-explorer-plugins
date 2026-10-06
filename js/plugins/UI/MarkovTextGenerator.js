@@ -1821,6 +1821,12 @@
             spec.whereabouts
                 ? T('Markov.llm.chatWhereabouts', { npc: npc, where: llmTrim(spec.whereabouts, profile.world) })
                 : '',
+            // A shopkeeper's own shelf. High in the list for the same reason
+            // as the topics: asked whether they have something, a model with
+            // no stock in front of it makes one up.
+            spec.workplace
+                ? T('Markov.llm.chatWorkplace', { npc: npc, work: llmTrim(spec.workplace, profile.world) })
+                : '',
             // The life this person has lived, the company standing with them
             // and the state of the world: the first things dropped when the
             // model is small, because a line can be spoken without them.

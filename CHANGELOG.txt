@@ -1,37 +1,53 @@
 
 
-0.7.14a
+0.7.17a
+
+
+0.7.16a
 
 Added:
- - colour pickers for Em's model
- - much more ideologies, lore based plus real ones until 2001
- - first person hands for every enemy, used by recruits, summons, familiars
- - Em bio tab: skin, hair, dress colour pickers and creed selector
- - growth tube and design a heir in the surgery menu
- - rocket manual controls switch
- - reworked summoning with dice-bound familiars
- - visiting hypernet pages awards KP, shown when closing hyperdeck
- - road car drivers stop or flee by morality, then speak once
-- rigid skirt for Em and hair jiggle
+ - mind wiper option in surgery menu, not allowed in field surgery
+ - hypernet pages follow the game language, English fallback
+ - cc0 battle backgrounds recategorized, every biome has day, sunset and night
+ - empathize wiki search, nudge favourites, shopkeeper stock and colleagues
+ - each biome has its own 3D fishing background
+ - shopkeepers can join the party, buying from them earns discounts
+ - deeds menu hologram check
 
 Changed:
- - stop riding places the pet near the leader, other mounts despawn
- - reworked followers tab for familiars, skill icons, no notes
+ - hyper array is now gigantic
+ - removed battlebacks1 images where ground is not visible
+ - reworked galaxy crossing: liminal engine array, realistic Local Group, Em and Bubba
+ - reworked overeating nausea: wears off within an hour, returns only on eating
+ - reworked skillmaster menus, card menus, controller controls and steam deck css
+ - auto eating always plays the eat sound
+ - story mode difficulty: only Em and Bubba never die permanently
+ - reworked shop interface as a category grid with a list view toggle
+ - inventory in battle is now a grid
+ - help rechecked against real mechanics, hidden mechanics pages, clickable links, translated
+ - bathroom once or twice a day, autoeat under 40% avoiding allergenics
+ - higher quality ode to joy always opens the title at a random cue
+ - reworked teleport cutscene
 
 Fixed:
- - status in story mode no longer shows only Em's legs
- - car lights: hidden vehicles unlit, centered cone, no snapping
- - continue story uses newer quicksave, titlescreen music defaults to ninth symphony
-Changed:
- - changing theme warns to restart the game instead of applying live
- - reworked weapon skills into a special command replacing defend and reload
- - switched position of bio description and 3d model
- - reorganized options: theme, battle log, camera in video
- - dice rolls in battlelog and toasts show a d20 icon plus modifier
- - reworked liminal shader into alcubierre drive space distortion
- - time loop bubbles in voxel mode no longer stop you, climb over them
- - map tooltips appear over bubba sprite, H controls moved to right side
- - reworked bubba battle command explanation, shorter, explains vector gun switch
+ - help pages trimmed of technical detail, lists go to newline
+ - bologna worldmap can be zoomed, dragged and its tiles selected
+ - teleport animation no longer leaves party sprites on the map
+ - empathize search bar no longer loses focus on each keystroke
+ - old bounty window no longer flickers when closing the main menu
+ - economy skill descriptions name the exact sum they conjure
+ - many more NPC and party lines, joining members no longer inherit their slot
+ - field surgery kit no longer offers growth tube, design a heir, gene splicing
+ - prefabs no longer placed in water in non ocean biomes
+ - joining as pet no longer spawns a corpse
+ - each shop and house instance keeps its own stock, staff and residents
+ - voxel mode sandboxes 2D map input, smoother exit, vehicles parked nearby
+ - television letter sounds fixed per presenter, silent for Em in story mode
+ - ui follows inventory styling, omega tower and rocket launch flicker fixed
+ - Bologna map sandboxed, voxel roads no longer hollow underneath or clippable
+ - voxel battle no longer crashes on death, blocks locked during combat
+ - ridden familiar now walks and no longer clones itself following the party
+
 
 0.7.13a
 

@@ -27,19 +27,19 @@
 
                                 LONDON
                 ELLIOT STOCK, 62 PATERNOSTER ROW, E.C.
-                                 ————
+ -  -  -  - 
                                  1886
 
 
              _This edition of_ SCOT’S DISCOVERIE _consists
-                      of 250 copies only.—E. S._
+                      of 250 copies only. - E. S._
 
 
 
 
                      DR. NICHOLSON’S SUBSCRIBERS.
 
-                                 ————
+ -  -  -  - 
 
     THE ROYAL LIBRARY, WINDSOR CASTLE.
     W. ALDIS WRIGHT, LL.D., Cambridge.
@@ -82,15 +82,15 @@
     DAV. A. KING, M.B., London.
     F. de M. LEATHES, Esq., London.
     LIBRARY, British Museum.
-    ———— Exeter College, Oxford.
-    ———— Harvard Coll., Cambridge, U.S.A.
-    ———— Royal Institution, London.
-    ———— Leeds.
-    ———— McGill University, Montreal.
-    ———— National, of Ireland.
-    ———— Society of Antiquaries, Scotland.
-    ———— St. Andrew’s University, Aberdeen.
-    ———— Free, Sydney.
+ -  -  -  - Exeter College, Oxford.
+ -  -  -  - Harvard Coll., Cambridge, U.S.A.
+ -  -  -  - Royal Institution, London.
+ -  -  -  - Leeds.
+ -  -  -  - McGill University, Montreal.
+ -  -  -  - National, of Ireland.
+ -  -  -  - Society of Antiquaries, Scotland.
+ -  -  -  - St. Andrew’s University, Aberdeen.
+ -  -  -  - Free, Sydney.
     LOUIS LEISLER, Esq., Frankfort-on-the-Main.
     The MARQUIS OF LOTHIAN, Newbattle Abbey.
     DOVE MACCOLMAN, M.D., Argyleshire.
@@ -121,7 +121,7 @@
 
                               DEDICATION.
 
-                                 ————
+ -  -  -  - 
 
                             ►To the Memory◄
                                   OF
@@ -142,7 +142,7 @@
 
                                PREFACE.
 
-                                 ————
+ -  -  -  - 
 
 This reprint is not a facsimile of the edition of 1584, for that was in
 black letter, and its page smaller and of quarto size. Being also for
@@ -155,7 +155,7 @@ man of science, and by the psychological physician, willing to learn
 all that may instruct himself and benefit others. Neither would this
 reprint have been undertaken, unless the work itself had appeared to
 my friend and fellow-student, W. T. Gairdner, M.D., LL.D., Professor
-of Medicine in the University of Glasgow,—and led by him—to myself and
+of Medicine in the University of Glasgow, - and led by him - to myself and
 others, worthy on the above-mentioned grounds, of being reproduced, and
 as being both in matter and style a valuable English classic.
 
@@ -220,7 +220,7 @@ ever-to-be-revered physician and man, W. Pulteney Alison.
 
                                                        BR. NICHOLSON.
 
-                             ————————————
+ -  -  -  -  -  -  -  -  -  -  -  - 
 
 
                                 ERRATA.
@@ -240,7 +240,7 @@ ever-to-be-revered physician and man, W. Pulteney Alison.
 
                              INTRODUCTION.
 
-                                 ————
+ -  -  -  - 
 
 Except that they add the names of some who have opposed his views, or
 some such trifling matters, all the writers of biographical notices
@@ -277,7 +277,7 @@ place, give his words verbatim from the edition of 1691.
   hidden, howbeit very necessary to be known. _Lond._ 1584. qu.
   in 16 books.
 
-  “Discourse upon Devils and Spirits.—In this, and the former,
+  “Discourse upon Devils and Spirits. - In this, and the former,
   both printed together, it plainly appears that the author was
   very well versed in many choice books, and that his search into
   them was so profound, that nothing slip’d his Pen that might
@@ -311,7 +311,7 @@ place, give his words verbatim from the edition of 1691.
 
   “7. The learned author in his _Discovery_ is as vehement
   against Popery as against witchcraft, and quite indecent in his
-  abuse of the saints of the Romish church.”—COLE. [His indecency
+  abuse of the saints of the Romish church.” - COLE. [His indecency
   being for the most part a narrative of, and obvious reflections
   on, their indecency. And this I say understanding the sense in
   which he uses the word.]
@@ -319,20 +319,20 @@ place, give his words verbatim from the edition of 1691.
   “8. See a full account of this curious book, as Mr. Oldys calls
   it, in his _British Librarian_, p. 213. All the copies of the
   first edit. 1584, that could be found were burnt by order of
-  K. James I. an author on the other side of the question.”—Vid.
+  K. James I. an author on the other side of the question.” - Vid.
   _Hist. Dictionary_, sub voce “Scot”.
 
   [“REGINALDUS SCOTUS, _Anglus_, _tractatum de Incantamentis_
   scripsit, in quo plerasque traditiones de Magia Melancholiæ, &
   morbis variis, aut artibus histrionicis adscribit.”] “Hunc in
   Anglia publica auctoritate combustum, sibi autem nunquam fuisse
-  visum refert Thomasius de crimine magiæ § 3.”—Vide [J. V.]
+  visum refert Thomasius de crimine magiæ § 3.” - Vide [J. V.]
   Vogt., _Cat. Libr. rar._, p. 617 [1713].
 
   “Liber in folio scriptus Anglica lingua a Reginaldo Scoto in
   quo plurima occurrunt contra magiæ existentiam argumenta. Est
   ille etiam in Belgicam linguam conversus: sed plenior editio
-  est ultima Anglica.”—_Morhof._, ii, 459.
+  est ultima Anglica.” - _Morhof._, ii, 459.
 
   [Then a short note on the three editions.]
 
@@ -421,8 +421,8 @@ this view cannot be upheld.
 
 Another Sir William, apparently a grandson of the above, acquired
 through his mother the manor of Combe in Brabourne, and through his
-first wife and her relations—modes of increase in which the family seem
-to have been fortunate—that of Orlestone, as well as other places;
+first wife and her relations - modes of increase in which the family seem
+to have been fortunate - that of Orlestone, as well as other places;
 and in 1420 he built Scotshall, in the manor of Hall in Smeeth, and
 was in 1428 sheriff of the county, and in 1430 knight of the shire in
 parliament. He died 1433. Scotshall, from time to time enlarged or
@@ -575,7 +575,7 @@ cannot go.
     If he were woont to make delaye
      To doe his countrie pleasure.
 
-    But Ashford’s proffer passeth all—
+    But Ashford’s proffer passeth all - 
      It was both rare and gentle;
     They would have pay’d his funerall
      T’ have toomb’d him in their temple.
@@ -659,7 +659,7 @@ a brass to their memory is fixed in the north wall of the chancel. Of
 Richard himself nothing more is known. He probably died young, and
 certainly before December 1554, his death being mentioned in the will
 of his brother Sir Reginald, who died on the 16th of that month. In
-this will, failing his own issue—a lapse which did not occur—he left
+this will, failing his own issue - a lapse which did not occur - he left
 his real estate “unto Rainolde Scotte, son and heire of my brother
 Richard Scotte, dec^{d}”, and Rainolde’s issue failing, it was devised
 to a more distant branch. Hence, contrary to the table given on page
@@ -683,10 +683,10 @@ the next heir to the estate, and also because we know nothing of the
 circumstances in which his widowed mother was left, nor as yet of the
 date at which she was re-married to Onslow.
 
-On the 11th of October he married Jane—not, as stated in “The
-Memorials”, Alice—Cobbe, the daughter of an old yeoman family long
+On the 11th of October he married Jane - not, as stated in “The
+Memorials”, Alice - Cobbe, the daughter of an old yeoman family long
 resident at Cobbe’s Place, in the adjoining parish of Aldington. The
-entry in the Registers of Brabourne is—
+entry in the Registers of Brabourne is - 
 
     “M[*] Reignold Scott and Jane Cobbe
      were maryed the xi^{th} of October 1658.”
@@ -695,8 +695,8 @@ entry in the Registers of Brabourne is—
 make it “Mr.” or “Married”; but I have not myself yet seen the entry.
 
 The only issue of this marriage, the only issue (that at least
-survived) of both his marriages—for the Maria in the table of “The
-Memorials” was the daughter of his second wife by her first husband—was
+survived) of both his marriages - for the Maria in the table of “The
+Memorials” was the daughter of his second wife by her first husband - was
 Elizabeth, afterwards married to Sackville Turnor; and the only issue
 of that marriage, prior at least to Reynold’s death in 1599, was
 Cicely. Elizabeth’s birth must have been in or before 1574, for in the
@@ -742,7 +742,7 @@ estate between this date and that of 1584, the date of the publication
 of the _Witchcraft_. At least, in this _Discoverie_ occur two passages
 which, taken together, seem to point to this. In his dedication to
 Sir Th. Scot he says: _A_ vi, “My foot being [not, having been] under
-your table, my hand in your dish, or rather in your pursse”—and, _A_
+your table, my hand in your dish, or rather in your pursse” - and, _A_
 viii: “If they will allow men knowledge and give them no leave to
 use it, men were much better be without it than have it; ... it is,
 as ... to put a candle under a bushell: or as to have a ship, and to
@@ -765,8 +765,8 @@ describes himself as, “having his foot under your [Sir Th. Scot’s]
 table”, etc., or in other words, as being a dependant not worth one
 groat. Nor do we know more of this second wife beyond these slight
 particulars that we gather from Reynold’s will: that her Christian name
-was Alice—given in “The Memorials” instead of Jane, to Cobbe, the first
-wife—that she was a widow with a daughter by her former husband; and
+was Alice - given in “The Memorials” instead of Jane, to Cobbe, the first
+wife - that she was a widow with a daughter by her former husband; and
 that she had some land, either in her own right or derived from her
 former husband. That she was a widow at the time of her remarriage is
 shown by Reynold’s bequest of “six poundes thirteene shillings foure
@@ -857,8 +857,8 @@ possession of Mr. Oliver, it appears that the county had then furnished
 8,201 footmen and 711 horsemen, and that Sir Thomas was captain
 of the 309 trained foot raised in the lathe of Shepway, with four
 hundreds of the lathe of Scraye and Romney Marsh. Hence his office
-as Colonel-General was not given him—indeed, this is shown by the
-_Accompt_—until the men had been assembled in camp on the 29th July.
+as Colonel-General was not given him - indeed, this is shown by the
+_Accompt_ - until the men had been assembled in camp on the 29th July.
 In like manner the Muster-roll gives Sir Jas. Hales as Captain of the
 Lances; but in the pay list Th. Scott (a son of Sir Thomas) is Captain
 both of the Light Horse and Lances. With regard to “Reinalde”, who,
@@ -905,7 +905,7 @@ the reader to these, and to the ambiguous sentence in the latter
 commencing “Finally” (sig. _A_ ii), I would also give the words in
 the latter, where he says, _A._ v: “But I protest the contrarie, and by
 these presents I renounce all protection”; and in the former the legal
-phraseology is carried on throughout in—“and be it also knowne to all
+phraseology is carried on throughout in - “and be it also knowne to all
 men by these presentes that your acceptance hereof shall not be any
 wyse prejudiciall unto you, for I delyver it as an Obligation, wherein
 I acknowledge my selfe to stande further bounde unto you, without
@@ -936,7 +936,7 @@ And in taking leave of this portion of my subject, I cannot but
 reiterate the obligations both the reader and the literary world
 generally are under to Mr. Edmund Ward Oliver. The suppositions as
 to the cause of Scot’s loss of his moiety of the estates of Lady
-Winnifred Rainsford—not, it is believed, a large sum—and as to his
+Winnifred Rainsford - not, it is believed, a large sum - and as to his
 law-studentship, based as they are on facts stated by Scot or derived
 from his writings, and those of Th. Ady, are my own; while in one
 or two instances I have put forth opinions not quite in accord with
@@ -982,7 +982,7 @@ accounted somewhat mythical, or not being a knight of fame, he was not
 recognised as the same with Sir William Scott, the Chief Justice of
 England.
 
-                             ————————————
+ -  -  -  -  -  -  -  -  -  -  -  - 
 
                          WILL OF RAYNOLD SCOT.
 
@@ -1028,8 +1028,8 @@ England.
   defeated of my true meaninge towardes her Item I do bequeath to
   my saied wief and to her heires for ever All my Landes Lyinge
   in Aldington and now in thoccupac_i_on of John Pollard and
-  all my Landes in Ruckinge in thoccupac_i_on of —— Diggons and
-  all my Landes in Sellenge in the occupac_i_on of —— Coakar All
+  all my Landes in Ruckinge in thoccupac_i_on of -  - Diggons and
+  all my Landes in Sellenge in the occupac_i_on of -  - Coakar All
   which Landes lye in the s̶a̶y̶d̶e̶ sayde[*] Countie of Kent
   Item I gyve and bequeath to my said wief all my other Landes
   in Rumney Marshe or els where in the said countye duringe her
@@ -1041,7 +1041,7 @@ England.
   the consyderac_i_ons for greate is the trouble my poore wief hath
   had with me, and small is the comforte she hath receyved at my
   handes whome yf I had not matched w^{th} all I had not dyed
-  worth one groate.—
+  worth one groate. - 
                                                           Ray: Scott.
 
 [*] _Sic_, first at end of line.
@@ -1056,7 +1056,7 @@ regarding the will, and that probate was granted as aforesaid on the
 22nd November 1599. But as the cause or subject of the dispute is not
 mentioned, this, like the short notice, is not given.
 
-                             ————————————
+ -  -  -  -  -  -  -  -  -  -  -  - 
 
         ABSTRACT OF INQUIS. POST MORTEM, 18 ELIZ. P. 1, No. 84.
 
@@ -1101,7 +1101,7 @@ mentioned, this, like the short notice, is not given.
   as receiving pay among those appointed in 1587-8 was “a son of Sir
   Thomas”.
 
-                             ————————————
+ -  -  -  -  -  -  -  -  -  -  -  - 
 
          ABSTRACT OF INQUIS. P.M., 45 ELIZ., PARS. 1, No. 71.
 
@@ -1131,10 +1131,10 @@ mentioned, this, like the short notice, is not given.
   was his own through his wife Alice, he specially devised “to her
   and to _her_ heirs”.]
 
-                             ————————————
+ -  -  -  -  -  -  -  -  -  -  -  - 
 
 
-_The Cause and History of the Work._—That is, what induced Scot to
+_The Cause and History of the Work._ - That is, what induced Scot to
 write it, and why did he set it forth as he did? inquiries which
 involve, among other matters, a short notice of the position then and
 previously held by witchcraft in England. His _Hoppe-garden_ shows him
@@ -1168,7 +1168,7 @@ to its faith in the course of illiterate ages by the Popish Church.
 He had read Plotina, who taught him that the so-called vicars of
 Christ and his vice-gerents on earth were often devils incarnate and
 standard-bearers of vice, and that the system which did now and again
-produce a St. Francis d’Assis—all reverence to his name—produced
+produce a St. Francis d’Assis - all reverence to his name - produced
 also the congeners of Loyola, and Loyola himself, whose followers,
 while assuming to themselves the holy name of Socii Jesu, made that
 name famous and infamous, and their tenets execrated throughout the
@@ -1176,8 +1176,8 @@ civilised world. But he accepted with some doubting, having, as he
 thought, great authority for it and no means of investigation, the
 story of the Remora; and accepted without doubting the beliefs that
 the bone of a carp’s head, and none other, staunched blood, the value
-of the unicorn’s horn, and the like, and—notwithstanding his disbelief
-in astrology—that seed-time and springing were governed by the waxing
+of the unicorn’s horn, and the like, and - notwithstanding his disbelief
+in astrology - that seed-time and springing were governed by the waxing
 and waning of the moon. He also believed that precious stones owed
 their origin to the influences of the heavenly bodies; and besides his
 credulous beliefs as to certain waters, narrated at the commencement,
@@ -1223,7 +1223,7 @@ law, which would have burnt them, nor, as evidenced by its little
 results, does it seem to have been made through any mania or scare in
 the matter. This came on later, when, as we are told by Brian Darcie
 in 1582, at what time, under pie-crust promises of favour, he was
-endeavouring to get women to confess, and then be hanged,—“there is a
+endeavouring to get women to confess, and then be hanged, - “there is a
 man of great learning and knowledge come over lately into our Queenes
 Majestie, which hath advertised her what a companie and numbers of
 Witches be within Englande: whereupon I and other of her Justices have
@@ -1232,7 +1232,7 @@ limites.” Alas, this man of great learning and knowledge seems to have
 been none other than that otherwise light of the English Church, the
 great, good, and pious Bishop Jewel, who, having returned from a forced
 residence abroad, was speedily promoted by her Majesty, and in a sermon
-preached before her, in 1572, brought in the subject as follows:—
+preached before her, in 1572, brought in the subject as follows: - 
 
 “Heere perhaps some man will replie, that witches, and conjurers often
 times chase away one Divell by the meane of another. Possible it is so;
@@ -1301,8 +1301,8 @@ and then, on her own confession and her re-acted acts, branded as an
 impostor, like the Holy Maid. The Dutchman, too, at Maidstone, after
 being set forth as a worker of miracles and an exorcist, was found to
 be a rogue; and “manie other such miracles had beene latelie printed,
-whereof diverse had beene bewraied.” He had taken part also—apparently
-as one engaged for the defence—in that piece of folly called the trial
+whereof diverse had beene bewraied.” He had taken part also - apparently
+as one engaged for the defence - in that piece of folly called the trial
 of Margaret Simons, and knew the history of Ade Davie, and of her
 restoration to sanity without exorcism, hanging, or burning.
 
@@ -1315,16 +1315,16 @@ the subject, and in especial the known book of Wier; and thoughtful
 reading of these, and meditation must have led him to extend his views,
 and gather them into a harmonious and consistent whole. Meanwhile,
 however, the bloodthirsty superstition daily increased, and there were
-published first, the mad book or books of Richard Gallis—spoken of in
-pp. 132-3—of the witches at Windsor, now, I believe, unfortunately
+published first, the mad book or books of Richard Gallis - spoken of in
+pp. 132-3 - of the witches at Windsor, now, I believe, unfortunately
 lost, where, among other things, he narrates how, at a Sabbath meeting,
 he had a hand-to-hand encounter with the devil, and wounded him so
 sore that he stank of brimstone; and in 1582, there took place the
 wholesale condemnation of the poor old women of St. Osees, thirteen
 I believe of whom were hanged. There had been no such condemnation
 before in England. It is not unlikely that he himself witnessed their
-condemnation—see pp. xxv-vi. So unusual was it, that—as I cannot but
-believe on other evidence, as stated in my noting on Macbeth—a ballad
+condemnation - see pp. xxv-vi. So unusual was it, that - as I cannot but
+believe on other evidence, as stated in my noting on Macbeth - a ballad
 was written on it, which became very commonly known, and was remembered
 as late as 1606. This same unusual breadth of punishment also created
 so much attention that Justice Brian Darcie thought it worth while to
@@ -1358,8 +1358,8 @@ are his errors as to Haias and Sedaias, for at one time he speaks of
 Rabbi Sedaias Haias, repeating it also at the last when he gives his
 “forren authors” consulted, and between these speaks of them as two
 persons, as they were. More especially would I call attention to his
-blunders as to Argerius Ferrerius. He quotes him—yet he is always
-Ferr_a_rius—five times in his text, twice in his table of contents, and
+blunders as to Argerius Ferrerius. He quotes him - yet he is always
+Ferr_a_rius - five times in his text, twice in his table of contents, and
 once in his “authors used”. So in his translation from him, the “s” of
 “verbis” being indistinct in some copies, he read the word as “verbi”,
 and thereby translated the sentence into such unmistakable nonsense
@@ -1397,7 +1397,7 @@ he copied him in some other instances, he borrowed from him mainly
 a long list of illustrations, some of which even he may have drawn
 independently from the same sources as did Wier.
 
-_Bibliography._—We do not find an entry of Scot’s _Hoppe-garden_ in the
+_Bibliography._ - We do not find an entry of Scot’s _Hoppe-garden_ in the
 Stationers’ Registers, because the entries about 1574 are wanting. But
 why do we not find so large and important a book as the _Witchcraft_
 of 1584 so entered, the writer being of a family of no mean repute,
@@ -1406,15 +1406,15 @@ of some mark? The answer, after what has been said, is simple. He
 upheld and defended a heresy, the existence and diabolical powers and
 practices of witches being believed in and guarded against, by the
 Queen, the bishops, and the people. Hence the reply of the Stationers’
-Company would most certainly have been—the same as in more trifling
-cases—“provided he shall get the bishop of London his alowance to
+Company would most certainly have been - the same as in more trifling
+cases - “provided he shall get the bishop of London his alowance to
 yt”, words which, under the circumstances, would have been a refusal,
 and a refusal which, had any steps been taken against him after its
 publication, would have told against him. Hence he resolved to print
 it, taking all the blame and responsibility on his own shoulders, no
 stationer’s name being connected with it, and the name of the printer
 appearing only at the end of the book, without date or place of
-address—“Imprinted at London by | _William Brome_.” And here, by the
+address - “Imprinted at London by | _William Brome_.” And here, by the
 way, it may be mentioned that though called in catalogues a quarto, its
 signatures are in eights. As before stated, both Thomas Ady and Anthony
 à Wood tell us that it “did for a time make great impressions on the
@@ -1484,7 +1484,7 @@ account as made by Thomasius de crimine magiæ, a book which I believe
 does not exist. There is a Thesis inaugaralis de crimine magiæ
 submitted in 1701 by Johan Reiche to the Regia Academia Fredericiana
 ... præside D. Christiano Thomasio. But Reiche refers to an earlier
-writer—“Gisberti Voetii | Theologiæ in Acad. Ultrajectina Professoris
+writer - “Gisberti Voetii | Theologiæ in Acad. Ultrajectina Professoris
 | Selectarum | Disputationum | Theologicarum, | Pars Tertia. | ... |
 Ultrajecti, | Ex Officina Johannis à Waesberge, | Anno CIↃ IↃ C LIX, |”
 which says, p. 564:
@@ -1550,11 +1550,11 @@ it in the various books on either side that afterwards came forth,
 and in part, perhaps, through that decree itself, called for its
 reproduction; and in 1651 it was issued with a new title-page, though
 naturally it was again not entered on the Stationers’ Registers. This
-time it was really—as evidenced by the signatures—a quarto. The text
+time it was really - as evidenced by the signatures - a quarto. The text
 was one and the same with that printed off by Richard Cotes; but
 there were three issues, and three slightly different title-pages.
-The first bears—LONDON | Printed by _Richard Cotes_. 1651. The second
-has—_Printed by_ R. C. _and are to be sold by_ Giles Calvert, _dwelling
+The first bears - LONDON | Printed by _Richard Cotes_. 1651. The second
+has - _Printed by_ R. C. _and are to be sold by_ Giles Calvert, _dwelling
 at the | Black Spread-Eagle at the West-end of_ Pauls. 1651. And except
 for these final words, separated on both title-pages by a line from the
 rest, both are word for word, and even to the misprint “superstions”
@@ -1577,8 +1577,8 @@ prefixing a new title-page of his own, printed by E. Cotes.
 
 There is not the slightest evidence of a copy of the 1584 edition
 having been prepared for the press, beyond the new title-page, and on
-two occasions the translation of Latin, that Scot had not—as he had
-done in similar instances—translated. The Latin-named ingredients on
+two occasions the translation of Latin, that Scot had not - as he had
+done in similar instances - translated. The Latin-named ingredients on
 p. 184 are Englished, and I have thus been enabled to give them in my
 notings with the more probability that they are correct. The second
 instance is, as stated in my margin, on p. 416. Two or three press
@@ -1633,23 +1633,23 @@ Beyond these, the limited edition now printed is the only other known
 to me. As stated in the preface, it is a reprint of the first edition,
 with some slight alterations in the lettering, but not in the spelling.
 Besides the few errata that have been found and recorded, the small
-heading on its left hand pages up to p. 24 is “Chap. —”, like that on
+heading on its left hand pages up to p. 24 is “Chap. - ”, like that on
 the right hand, instead of being “1 or 2 Booke”. So also in
 the earlier pages, the marginal references, though correct, are not
 printed line for line with the original. The pictorial initial letters
 of the first chapter of each book occupy in the original almost a
 third of the page. The first word of a chapter has only its first two
-letters—including its pictorial letter—in capitals, but the remainder,
+letters - including its pictorial letter - in capitals, but the remainder,
 as well as the rest of the first line, is in larger type than the
 rest. The original being also in black letter was enabled to use both
 Romans and Italics as variants, whereas the reprint could only use
 Italics. The rule of the original is, however, in general very simple.
-“The — Chapter”, the contents of the chapter and proper names are in
-Romans; “The — Booke” and quotations in Italics; the translations of
+“The - Chapter”, the contents of the chapter and proper names are in
+Romans; “The - Booke” and quotations in Italics; the translations of
 quotations in Romans. Wherever there can be any doubt the type of the
 original is marked in the margin, as are occasional uses by the author
 of [] to distinguish them from the editor’s use of the same. It may be
-added that “The — Chapter”, and the contents of the chapter, have been
+added that “The - Chapter”, and the contents of the chapter, have been
 transposed. The V like arrangement of the lines at the end of a chapter
 have not been followed, but been imitated according to the spirit in
 which they were employed; for, after an investigation made for the
@@ -1688,11 +1688,11 @@ have said: “Pity and compassion moves me,” because they held pity
 and compassion were one and the same; and the habit of using Saxon
 and Latin, or other synonyms, led them to use the same construction
 when the meanings were but allied. This seems to me the more likely
-explanation: but the reader may prefer this—that our ancestors took the
+explanation: but the reader may prefer this - that our ancestors took the
 phrase to be elliptical, and that the verb really employed after both
 substantives was to be understood after the first and before the “and”.
 
-_Contemporary Notices of Scot._—Of strictly contemporary notices, I
+_Contemporary Notices of Scot._ - Of strictly contemporary notices, I
 know of but two. In Nash’s _Four Letters Confuted_, 1593, he asks, ed.
 Grosart, ii, 252: “How is the _Supplication_ a diabolicall Discourse,
 otherwise than as it intreats of the diverse natures and properties
@@ -1716,9 +1716,9 @@ Meric Casaubon, Cotta, etc., ending with Glanvil on the other. But
 these, the really curious in such matters may be left to search out
 for themselves. Only I would like to mention John Deacon’s and John
 Walker’s _Dialogicall Discourses of ... Devils_ [etc.], 1601, both
-because they, being clergymen, had the boldness—besides adding new
+because they, being clergymen, had the boldness - besides adding new
 arguments of their own, and though their wording is somewhat less
-decided than their own evident belief—out of three explanations of the
+decided than their own evident belief - out of three explanations of the
 case of the Witch of Endor which they set before the reader, to plainly
 prefer Scot’s view of her ventriloquism, both naming him in the text,
 and giving the reference to his page in their margin; and secondly,
@@ -1769,7 +1769,7 @@ doubts; and to turn our belief to a positive certainty, it only remains
 to discover that he was a Justice of the Peace.
 
 Possibly the reader may now expect some pages on Scot’s style as a
-writer, and on his claim—his claim, yet not one made by himself—to be
+writer, and on his claim - his claim, yet not one made by himself - to be
 considered an English classic. But, besides that, I am not “greatly
 æsthetic”, and besides having expressed my opinions in more than
 one place in this Introduction, I think that any reader, with any
@@ -1824,10 +1824,10 @@ Agrippa ...), was far in advance of either in the clearness of his
 views and the unwavering steadiness of his leanings to the side of
 humanity and justice.”
 
-                             ————————————
+ -  -  -  -  -  -  -  -  -  -  -  - 
 
 
-  NOTE.—_The italic numerals in the side margins denote the
+  NOTE. - _The italic numerals in the side margins denote the
   pages of the first, the ordinary numbers those of the second
   edition._
 
@@ -8671,7 +8671,7 @@ became, whom _Bodins_ transformed woolves devoured. But
 
 ♦_August. Lib. 18. de civit. Dei._♦
 
-    —————————————————————————————_ô quàm
+ -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - _ô quàm
     Credula mens hominis, & erectæ fabulis aures!_
 
      [*]_Good Lord! how light of credit is
@@ -9640,7 +9640,7 @@ privilie, so inevitablie, and so incurablie, that of all other it hath
 beene thought the most odious kind of murther; according to the saieng
 of _Ovid_:
 
-    ——————————————————————_non hospes ab hospite tutus,
+ -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - _non hospes ab hospite tutus,
     Non socer à genero, fratrum quóq; gratia rara est:
     Imminet exitio vir conjugis, illa mariti,
     Lurida terribiles miscent aconita novercæ,
@@ -9648,7 +9648,7 @@ of _Ovid_:
 
 ♦_Ovid. metamorph. lib. 1._♦
 
-        —————_The travelling ghest opprest  }
+ -  -  -  -  - _The travelling ghest opprest  }
         Dooth stand in danger of his host,  }
           the host eke of his ghest:        }
         The father of his sonne in lawe,    }
@@ -10225,7 +10225,7 @@ _London_: anno 1572. with this title before the booke, as followeth.
             _vels, and was by Gods mightie providence dis-_
                 possessed  of  them  againe,  the  27.
                     _of Januarie last past, 1572._
-  ——————————————————————————————————————————————————————————————
+ -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - 
 
 Unto this the Maior of _Maidstone_, with diverse of his brethren
 subscribed, chieflie by the persuasion of _Nicasius Vander Schuere_,
@@ -13281,7 +13281,7 @@ imperfection; the twelfe is conclusiin.[*] Thus farre he.
 
 ♦_Aug. Niphus de auguriis, lib. 1._♦
 
-♦[*] [_read_, —sion]♦
+♦[*] [_read_, - sion]♦
 
 Among the _Romans_ none could be received into the college of augurors
 that had a bile, or had beene bitten with a dog, &c: and at the
@@ -13329,13 +13329,13 @@ fell from the top of the house.
 ♦_Martin. de Arles in tract. de superst. contra maleficta._[§]
 _Appian. de bello civili._♦
 
-♦[*] [_read_, witch—]♦
+♦[*] [_read_, witch - ]♦
 
-♦[†] [_read_, —kie]♦
+♦[†] [_read_, - kie]♦
 
 ♦[‡] [_read_, his]♦
 
-♦[§] [read, _—ficia_.]♦
+♦[§] [read, _ - ficia_.]♦
 
 ♦Augurificall toies.♦
 
@@ -14387,7 +14387,7 @@ _Also out of other poets._
         They send the streames another waie,
         And throwe downe hilles where they abound._
 
-    ——————————————_linguis dixere volucrum,
+ -  -  -  -  -  -  -  -  -  -  -  -  -  - _linguis dixere volucrum,
     Consultare fibras, & rumpere vocibus angues,
     Solicitare umbras, ipsúmque Acheronta movere,
     In noctémque dies, in lucem vertere noctes,
@@ -16116,7 +16116,7 @@ _Againe, the same Ovid commeth in as before:[*]_
 
 _And Virgil also harpeth upon the like string:[*]_
 
-    ——————————————————_baccare frontem
+ -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - _baccare frontem
     Cingite, ne vati noceat mala lingua futuro:_
 
 ♦_Virg. in Bucolicis._♦
@@ -17594,7 +17594,7 @@ poets experiment of liquor is verified, in these words following:
 
 ♦Agreement & disagreement in sufferance.♦
 
-    ——————————————_sunt qui non corpora tantùm,
+ -  -  -  -  -  -  -  -  -  -  -  -  -  - _sunt qui non corpora tantùm,
     Verùm animas etiam valeant mutare liquores:_
 
         _Some waters have so powerfull ben,
@@ -20817,7 +20817,7 @@ like a vapor, whiles they have beene over rash in the practise hereof)
 this discourse will not moove to desist from such extreame dotage, I
 saie to him or them and that aptlie,
 
-    —————————————————_dicítque facítque quod ipse
+ -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - _dicítque facítque quod ipse
     Non sani esse hominis non sanus juret Orestes:_
 
 ♦_Idem, ibid._♦
@@ -21609,7 +21609,7 @@ twentie legions under him.
 
 ♦_Flauros._♦
 
-[†] [? transpose ;—,]
+[†] [? transpose ; - ,]
 
 [‡] [an erroneous duplication of next clause]
 
@@ -27777,7 +27777,7 @@ patronesses of harlots and strong strumpets.
 
 ♦[†] [. in text]♦
 
-♦[‡] [= bead—]♦
+♦[‡] [= bead - ]♦
 
 Was there such a traitor among all the heathen idols, as S. _Thomas
 Becket_? Or such a whoore as S. _Bridget_? I warrant you S. _Hugh_ was
@@ -33210,7 +33210,7 @@ of the _Nature_ of _Astral_ or _Infernal Spirits_.
 
                          SHAKESPEARE NOTINGS.
 
-                                 ————
+ -  -  -  - 
 
 
 P. 99. Bodin’s “asseheaded man”. N. Drake, in his _Shakespeare and his
@@ -33224,7 +33224,7 @@ presume at night, after his purgatorial day) in a bear’s skin, with
 an ass’s head _in such sort as he lived_. But I incline to think that
 these after-statements only caused him to remember the more this first,
 full, and remarkable M. Mal-Bodin-Cyprus tale; and more especially this
-passage, for in iv, i, 30, Bottom declares—“Methinks I have a great
+passage, for in iv, i, 30, Bottom declares - “Methinks I have a great
 desire to a bottle of hay: good hay, sweet hay hath no fellow.” So
 acute and ready an observer may have the more remembered the epithet
 “asseheaded” because, as most readers must observe, Scot uses this
@@ -33236,8 +33236,8 @@ have in iv, 1, _Musicke and a Song. Blacke Spirits, &c._, and because
 in Middleton’s _Witch_ the words are given at length, it has been
 held that Middleton was either Shakespeare’s coadjutor, or his after
 interpolator, that these lines were his, and were first used in his
-_Witch_. But, according to most of Malone’s arguments—for one certainly
-is not sound—the _Witch_ was some years later than _Macbeth_, as is
+_Witch_. But, according to most of Malone’s arguments - for one certainly
+is not sound - the _Witch_ was some years later than _Macbeth_, as is
 also likely from Middleton’s age. And that it was later is in especial
 shown by a hitherto unnoticed passage in ii, 1:
 
@@ -33259,9 +33259,9 @@ failure.
 
 But in reference to the supposed right of Middleton to these lines, we
 now find, in 1584, when Middleton was a boy, that the first of the two
-lines—or, if one chooses, the first two of the four, the words being in
+lines - or, if one chooses, the first two of the four, the words being in
 each half phrase inverted, possibly to vary the too great sing-song of
-the sentence—was copied by Scot as part of a known series of rhyming
+the sentence - was copied by Scot as part of a known series of rhyming
 lines. Shakespeare, who wrote later, has the “Black spirits”, etc.;
 Middleton, in his _Witch_, where we find passages taken verbatim and
 almost verbatim from Scot, has these and the other rhymes given by Scot
@@ -33272,13 +33272,13 @@ them as from W. W.’s booklet on the Witches at St. Osees, Essex. But
 certainly the lines, nor any of them, are not in that booklet. These
 things, however, are there. Ursula Kempe’s little boy deposes, and she
 herself, on promise from the Justice, Brian Darcie, Esq., of favour
-being shown her—which promise, by the way, both in her case and that of
-others, was carried out by their being hanged—that she had two he- and
+being shown her - which promise, by the way, both in her case and that of
+others, was carried out by their being hanged - that she had two he- and
 two she-spirits, the shes being Tyffen, in the shape of a white lamb,
 and Pigine, black like a toad; the hes, Tittie, like a little grey cat,
 and Jacke, black like a cat. Nor are these merely thus mentioned by
 each, but the old woman specifies their doings through three or four
-of the earlier pages (A 3, v—A 8). Mother Bennet’s spirits were two,
+of the earlier pages (A 3, v - A 8). Mother Bennet’s spirits were two,
 Suckin, like a black dog, and Lyerd, redde like a Lyon (B 3, etc., B
 7). Besides these, but less prominently brought forward, were these.
 Mother Hunt had two little things like horses, one white and one black,
@@ -33294,10 +33294,10 @@ cow while being milked was viciously unruly, and that something like
 a white cat struck at her heart, so that she became so weak that she
 could not stand, and being found leaning against a style, was carried
 home in a chair (D 4, v). Ales Mansfield had given her by Margaret
-Grevell (elsewhere Gravell)—for these imps seem to have been given away
+Grevell (elsewhere Gravell) - for these imps seem to have been given away
 without will of their own, like brute beasts, and being hungry were
 fed on milk, beer, bread, oats, hay, straw, and especially a sup of
-blood sucked from the body—two he- and two she-spirits, named Robin,
+blood sucked from the body - two he- and two she-spirits, named Robin,
 Jack, William, and Puppet, alias Mamet, like black cats (D 6). Mother
 Eustace also had three imps, like white, gray, and black cats. Annis
 Dowsing, aged seven, base daughter of Annis Herd, tells B. Darcie that
@@ -33320,7 +33320,7 @@ then followed by others through promises of favour, promises lyingly
 carried out to condemnation and death. Thirdly, that, as shown by such
 instances as “[she] desired to speake alone with me, the said Bryan
 Darcey, whereupon I went into my garden”, etc., and by the frequent
-use of “before mee”—the initials W. W. were either fictitious, or not
+use of “before mee” - the initials W. W. were either fictitious, or not
 improbably those of his clerk, and that the real author was Brian
 Darcie, Esq., Justice of the Peace, who desired to gain favour from
 his kinsman, Lord Darcie, to whom the book was dedicated, or possibly,
@@ -33328,7 +33328,7 @@ through him and it, the notice of her Majesty, as a clever, zealous,
 and trustworthy seeker-out of these old-new things.
 
 It need hardly be added that ballading was then a profession, and that
-its professors seized upon anything of interest,—an atrocious murder,
+its professors seized upon anything of interest, - an atrocious murder,
 the last words of the murderer (spoken or not), unusual floods or
 storms, the effects of lightning, the cruise of an adventurous vessel,
 shipwrecks, the story of a strange fish “in forme of a woman from the
@@ -33358,15 +33358,15 @@ S. R. Gardiner has discovered that James “touched” and was almost
 compelled to “touch” as early as 1603. Its efficacy had been believed
 in, and was set forth in books; so that the very assumption of this
 prerogative proved its efficacy, and thus proved his rightful heirship
-to the English crown,—a proof, I suspect, not lost sight of by the
+to the English crown, - a proof, I suspect, not lost sight of by the
 astute counsellors who counselled its adoption, nor by James himself.
 And I think that he must be blind who cannot see how this, added to the
 other evidence set forth in the play, and to the true, though somewhat,
 and of purpose, indirectly exposed intent of _Macbeth_, proved both
 James’s heirship and set forth the certain overthrow of all such
-devilishly contrived plots,—such as, to name but three, the attempt at
+devilishly contrived plots, - such as, to name but three, the attempt at
 the Carse of Gowrie; the plot in which Raleigh was, or was supposed
-to be, concerned; and lastly, the gunpowder plot—as would alter the
+to be, concerned; and lastly, the gunpowder plot - as would alter the
 predestinate decree of Heaven, that James I and VI should be King of
 Great Britain. Unless, too, I am much mistaken, the fears of James were
 the direct or indirect instigators of Shakespeare’s play, and the cause
@@ -33381,7 +33381,7 @@ P. 10. “They can pull down the moon.” This belief, derived from classic
 times, is authority for Prospero’s “A witch ... so strong That could
 control the moon” (v, i). So also ii, 1, 174.
 
-——— “Corne in the blade.” There is frequent reference to this in Scot,
+ -  -  - “Corne in the blade.” There is frequent reference to this in Scot,
 as here and at pp. _A_ iiii, _v_, 49, 58, 63, 219, 221, 482, and
 elsewhere. But as Staunton saw, this is the nearest to _Macbeth’s_
 “though bladed corn be lodged” (iv, 1). Also, though this happens more
@@ -33415,19 +33415,19 @@ says: “When a raven stands on a high place and looks a particular way
 and cries, a corse comes thence soon.”
 
 P. 187. “A thousand for one that fell out contrary.” We would more
-correctly write—“A thousand that fell out contrary for one that fell
+correctly write - “A thousand that fell out contrary for one that fell
 out rightly or correctly.” But this and others are examples of what we
 would call a more than loose way of expressing oneself, though then
 it was allowable, for Scot was an educated and intelligent man, who
 wrote well. “Each putter out of five for one”, _Tempest_, iii, 2, is
 an almost exactly similar instance. The putting out of five for one is
-considered as one action, and is—_pace_ Dyce—the receiving, as Malone
+considered as one action, and is - _pace_ Dyce - the receiving, as Malone
 says, at the rate of five for one, the putter out being he who puts out
 in the hope of receiving five for one.
 
 P. 212. “The blind man ... in killing the crow.” Green’s _Defence of
-Cony-Catching_, p. 70, ed. Grosart, gives this proverbial saying—“as
-blinde men shoote the crowe”. _Hamlet_, 4to., 1603, has the variant—“as
+Cony-Catching_, p. 70, ed. Grosart, gives this proverbial saying - “as
+blinde men shoote the crowe”. _Hamlet_, 4to., 1603, has the variant - “as
 the blinde man catcheth the hare”.
 
 “A green silk curtain.” These words, also in Middleton’s _Witch_, i,
@@ -33462,7 +33462,7 @@ detail into the question, I would note that three substantives, all
 names of vegetables, are here mentioned, and that this alone is placed
 in italics. So, in the Appendix II, 1665, pp. 67-8, we have a number of
 aromatics named, but this only, and only on its second occurrence, is
-with _Sperma Ceti_ placed in italics—the reason, I presume, being, that
+with _Sperma Ceti_ placed in italics - the reason, I presume, being, that
 as a medicine, a more strange and less-known name to the commonalty,
 and a Latin one, it was treated as a quoted proper name.
 
@@ -33520,8 +33520,8 @@ _Hamlet_ followed in _Hamlet’s_ ghost the beliefs of his day.
 
 “_Feature._” An example of its being used for the make of a man,
 and not merely of the features of his countenance, to which it is
-now appropriated; but till I can find—and as yet I have found none,
-though I have looked out for it—an example of feature used for things
+now appropriated; but till I can find - and as yet I have found none,
+though I have looked out for it - an example of feature used for things
 inanimate, I cannot accept the interpretation of song or sonnet in
 Touchstone’s _As You Like It_, iii, 3, 3. Feature here, as any shape
 or proportions, is perfectly intelligible. Did it refer to verse we
@@ -33532,7 +33532,7 @@ new situation as like that of the _honest_ poet Ovid among the Goths.
 Had he been poetical and given her verses, he could not have explained
 to Aubrey that he, being a poet, only feigned to love her.
 
-P. 198. “_Primus secundus._” This goes far to show—proves, I think—that
+P. 198. “_Primus secundus._” This goes far to show - proves, I think - that
 the Clown’s “Primo, secundo, tertio is a good play” (_Tw. N._, v, 1),
 a passage on which no commentator known to me has touched, thinking it
 a merely jocular remark, is, in fact, taken from a well-known “play”
@@ -33554,7 +33554,7 @@ _Tempest_, iv, 1, 64, “The banks with pioned ... brims.”
 
                          MIDDLETON’S “WITCH”.
 
-                                 ————
+ -  -  -  - 
 
 
 P. 117. “_Marmaritin_”, etc. In i, 2, he copies these names, altering
@@ -33568,7 +33568,7 @@ reason omitting “Mevais”.
 
 P. 124. “Needles wherwith dead bodies are sowne or sockt into their
 sheetes.” [Noted amidst charms procuring love and hate.] In i, 2,
-following the marmaritin passage, we find—
+following the marmaritin passage, we find - 
 
                           “More I could instance
     As, the same needles _thrust into their pillows_
@@ -33579,8 +33579,8 @@ Kentish phrase. “A privy gristle”, etc., as given by Middleton, was, I
 presume, one of the other things which, “for reverence of the reader”,
 Scot omits, though whence the former got it I know not.
 
-——— Among other “toies which procure love” are, “a little fish called
-Remora”. In the same scene of the _Witch_, we find—
+ -  -  - Among other “toies which procure love” are, “a little fish called
+Remora”. In the same scene of the _Witch_, we find - 
 
     “_Hæc._         Thou com’st for a love charm now
           *       *       *       *       *       *
@@ -33588,13 +33588,13 @@ Remora”. In the same scene of the _Witch_, we find—
           *       *       *       *       *       *
                                ... a small fish.”
 
-——— Scot also gives “the bone of a greene frog, the flesh thereof being
-consumed with pismers or ants”. And Middleton’s Hecate adds—
+ -  -  - Scot also gives “the bone of a greene frog, the flesh thereof being
+consumed with pismers or ants”. And Middleton’s Hecate adds - 
 
     “The bones of a green frog too, wondrous precious,
      The flesh consum’d by pismires.”
 
-——— “The haire growing on the nethermost part of a woolves taile ... the
+ -  -  - “The haire growing on the nethermost part of a woolves taile ... the
 braine of a cat.” In ii, 2, Almachildes, speaking of love charms, says:
 “The whorsom old hellcat would have given me the brain of a cat ... and
 a little bone in the hithermost part of a wolf’s tail.” In the words
@@ -33615,7 +33615,7 @@ into Eleoselinum, Aconitum, Frondes populeas and Soote.... Another
 receipt.... ℞, Sium, acarum vulgare, pentaphyllon, the bloud of a
 flittermouse, solanum somniferum, & oleum.”
 
-In i, 2, we have these bits almost verbatim—
+In i, 2, we have these bits almost verbatim - 
 
     “_Hec._ There take this unbaptised brat,
             Boil it well; preserve the fat:
@@ -33624,17 +33624,17 @@ In i, 2, we have these bits almost verbatim—
             In moonlight nights,
                *       *       *       *       *
             I thrust in eleoselinum lately,
-            Aconitum, frondes populeas and soot—
+            Aconitum, frondes populeas and soot - 
                *       *       *       *       *
             Then sium, acorum vulgare too,
             Pentaphyllon, the blood of a flitter-mouse
             Solanum somni_ficum_ et oleum.”
 
-——— “By this means (saith he) in a moonlight night [see fifth line of i,
+ -  -  - “By this means (saith he) in a moonlight night [see fifth line of i,
 2, just quoted] they seeme to be carried through the air, to feasting,
 singing, dansing, kissing, colling, and other acts of venerie, with
 such youthes as they love and desire most.” In i, 2, just after the
-previous lines, are these—
+previous lines, are these - 
 
     “When hundred leagues in the air, we feast and sing,
      Dance, kiss, and coll, use everything:
@@ -33655,7 +33655,7 @@ neighbors doong, hay, corne, &c: into their own ground, make haile,
 tempests, and flouds, with thunder and lightning.” Bodin also, bk. ii,
 c. 6; but he makes Hoppo and Stadlin co-disciples of Stafus and master
 witches. Compare i, 2, _ad init._ for Hoppo and Stadlin, while further
-on comes—
+on comes - 
 
     “Stadlin’s within:
      She raises all your sudden ruinous storms
@@ -33675,16 +33675,16 @@ sudden pause, the contortions of her haggard visage, and the grotesque
 movements of the 117-year-old hag would greatly add to the comedy of
 the scene.
 
-P. 542. When this mortal witch Hecate—not the Queen of Hell and of
+P. 542. When this mortal witch Hecate - not the Queen of Hell and of
 Witchdom, as was the Hecate of antiquity and of Shakespeare, and
 others in the middle ages, for, says one of the after writers given
-in the later editions of M. Mal., “Hecate artem magicam doceret”—uses
+in the later editions of M. Mal., “Hecate artem magicam doceret” - uses
 in i, 2, the very rhymes spoken of under this page in the Shakespeare
 writings, some [ands] and [&c., his] being omitted, and “devil-lambe”
 being changed to “devil-ram”. In v, 2, she again mentions “Titty and
 Tiffin, Leaid and Robin”, and this time “Pucky”, for the rhyme’s sake.
-Hellwin and Prickle are—as shown by her other mention of them (see
-note, p. 153), as well as her mention of them elsewhere—mere copyists’
+Hellwin and Prickle are - as shown by her other mention of them (see
+note, p. 153), as well as her mention of them elsewhere - mere copyists’
 or printers’ errors for Hellwain and Puckle.
 
                   •       •       •       •       •
@@ -33704,7 +33704,7 @@ _Middleton_.
 
                           EXTRACTS FROM WIER.
 
-                                 ————
+ -  -  -  - 
 
 
                                   I.
@@ -33727,7 +33727,7 @@ Agrippa...), was far in advance of either in the clearness of his views
 and the unwavering steadiness of his leanings to the side of humanity
 and justice.”
 
-N.B.—“&c.” for the words following in the page has been omitted, as
+N.B. - “&c.” for the words following in the page has been omitted, as
 unnecessary.
 
 P. 7. The reader may compare the first, and the first part of par. 2
@@ -33767,7 +33767,7 @@ P. 231. “_A wastcote of proofe._” Wier v, 8, § 2. Scot’s “little
 virgine girl” is a “junioribus notæ castitatis puelles”, his “hat” is
 “galea”.
 
-——— “_Gaspar._” These verses, with a longer proem, are in Wier v, 8 §
+ -  -  - “_Gaspar._” These verses, with a longer proem, are in Wier v, 8 §
 1.
 
 P. 240. “_Homerica medicatio._” Wier v, 19, § 1. See note in its place.
@@ -33775,7 +33775,7 @@ Wier quotes at length from Ferrarius, § 2, 3, and 4, gives his name
 rightly, and rightly reads in the present passage _verbis_, and not as
 Scot, _verbi_.
 
-——— “_Nos habitat._” Wier v, 19, § 3, from Ferrarius.
+ -  -  - “_Nos habitat._” Wier v, 19, § 3, from Ferrarius.
 
 P. 242. “For the falling evil ... no more.” Wier v, 8, § 2; but he
 finishes the charm with “In nomine [etc.]. Amen.”
@@ -33784,7 +33784,7 @@ P. 243. “_Ananizapta_”, v, 9, § 6. Wier gives _Ananisapta_, has “quæ”
 instead of “dum”, l. 1, and adds “contra febres a quodam nebulone ...
 offerantur”.
 
-——— “Write upon a piece of bread” [for the bite of a mad dog]. This
+ -  -  - “Write upon a piece of bread” [for the bite of a mad dog]. This
 Scot gives from v, 8, § 6. But Wier has “... Khiriori essera ... fede”.
 Afterwards, “Vel hoc scriptum in papiro, aut pane, homini sive cani
 in os inseritur”. In the _O rex_, etc., there are crosses after each
@@ -33796,7 +33796,7 @@ two charms, omitting the intervening one, are in Wier v, 8, § 6, adding
 to the _persanate_ one, “hoc scriptum appenditur”. The second, “At
 saccaring”, etc., is given v, 4, § 2.
 
-——— “Let a virgine”, v, 8, § 3. Wier preceding this with the words,
+ -  -  - “Let a virgine”, v, 8, § 3. Wier preceding this with the words,
 “Ita antiquitas credebat, verbascum cum sua radice tusum, vino
 aspersum, folioque involutum, & in cinere calefactum, strumisque
 impositum, eas abigere, si hoc fecisset virgo jejuna jejuno, & manu
@@ -33808,11 +33808,11 @@ and the story told “a viro Ecclesiastico, non infimi nominis Theologo”.
 Scot evidently thought that this description of the perpetrator of so
 indecorous a jest might better be omitted, even though he were a German.
 
-——— “_To open locks_.... Take a peece ... _Amen_”, v, 11, § 2; but
+ -  -  - “_To open locks_.... Take a peece ... _Amen_”, v, 11, § 2; but
 “hinder” is anteriore. The essential part of the words just marked as
 omitted is in v, 11, § 3.
 
-——— “_A charme to drive ... house._” This and the marginal note are in
+ -  -  - “_A charme to drive ... house._” This and the marginal note are in
 v, 14, § 4. But Wier places “vel” between each of the Bible sentences,
 therefore Scot’s “this sentence” should have been “any of these
 sentences”.
@@ -33823,8 +33823,8 @@ all attention. Also in his haste he omits that the conjuror gave doses
 of rhubarb and other herbs twice daily.
 
 P. 247. “The sicke man”, v, 23, § 6. Wier gives the words of the
-“gospell” that is to be carried about his neck—“Hoc genus dæmonii non
-ejicitur, nisi jejunio & oratione”—taken, though apparently by memory
+“gospell” that is to be carried about his neck - “Hoc genus dæmonii non
+ejicitur, nisi jejunio & oratione” - taken, though apparently by memory
 only, from Matt. 17, 20, Vulg. The names in Scot’s margin are in Wier,
 Gualterio, Bernhardo.
 
@@ -33834,21 +33834,21 @@ Pp. 247-8. “This office or conjuration.” The paragraph is from v, 22, §
 P. 248. “_A charme for the bots_”, v, 4, § 8. Scot only omitting the
 “sanctus” before “Job”.
 
-P. 249. “There are also”, v, 4, § 7. Wier commences—“Vidi, haud ita
+P. 249. “There are also”, v, 4, § 7. Wier commences - “Vidi, haud ita
 pridem apud magnæ authoritatis virum nobilem, librum conscriptum
 execrabilem, flammis dignissimum, plenum exorcismis, frequenti crucis
 consignatione, & ex sancta Scriptura formulis in nomine Patris [etc.]
 finitis, contra equorum non modo morbos quoslibet,” etc. But he has not
 “as it ... Rome.”
 
-——— “Item, the Duke of Alba”, v, 4, § 5. “Equo item Vice-regis in
+ -  -  - “Item, the Duke of Alba”, v, 4, § 5. “Equo item Vice-regis in
 sacello suum fuisse locum ubi celebraretur Missa. Continebat & dux
 exercitus vexillum in manu, quamdiu sollennibus ritibus idipsum
 uti campanæ solent, baptizaretur. Ornabat & hunc actum effigies D.
 Virginis Mariæ cum filiolo in eodem volans, & duæ complicatæ manus ad
 stipulantium morem.”
 
-——— “That wine”, v, 4, § 9. Scot omitting after eager, “eo anno”.
+ -  -  - “That wine”, v, 4, § 9. Scot omitting after eager, “eo anno”.
 
 P. 252. “_Mahomets_ pigeon”, i, 19, § 3, 4. Scot omitting all notice of
 the apostate confederate Sergius, of the trained bull, and of the words
@@ -33876,7 +33876,7 @@ absimile monstrum fingitur, ut quis tibi in omnibus obsequatur”.
 P. 259. “_Imparibus_ ... breake a bone of him”, v, 12, § 1. I doubt,
 however, Scot’s dividing “_Jesus autem_” [etc.] from “You shall not”
 [etc.] by the last “otherwise”, for Wier does not, and in § 3 tells of
-one who silently submitted to all tortures, and on whom was found—“sub
+one who silently submitted to all tortures, and on whom was found - “sub
 scruffiam inter crines quandam parvam schedulam”, containing “✠ Jesus
 autem transiens ✠ per mediam illorum ✠ os non comminueris ex eo ✠”.
 
@@ -33907,9 +33907,9 @@ P. 266. “They naile a wolves head”, v, 20, § 3.
 
 P. 267. “_Terque_”, given in Wier, v, 21, § 1.
 
-——— “_Adveniat_”, v, 21, § 6.
+ -  -  - “_Adveniat_”, v, 21, § 6.
 
-——— “_Baccare_”, v, 21, § 4.
+ -  -  - “_Baccare_”, v, 21, § 4.
 
 P. 269. “_To spoile a theefe_”, v, 5, § 8. But the strange words are in
 Wier, “Droch, myrroch esenaroth”, and in the next set of unintelligible
@@ -33920,7 +33920,7 @@ repeated.
 P. 270. “Say three severall times”, v, 4, § 6, the final Amen and some
 ✠s being omitted.
 
-——— “_Charmes against a quotidian_”, v, 8, § 7. With these
+ -  -  - “_Charmes against a quotidian_”, v, 8, § 7. With these
 differences, the three pieces, “the jejunus”, should “easdem tribus
 diebus edat”. Instead of Scot’s “Otherwises” we have “Si minus
 successerit, in pane missali scribitur: O febrem omni laude colendam:
@@ -33930,12 +33930,12 @@ it would seem that three massecakes were in each instance to be used,
 and not one divided into three, a thought probably suggested by the
 three pieces of apple.
 
-——— “_For ... agues intermittent._” The whole paragraph is in v, 8, §
+ -  -  - “_For ... agues intermittent._” The whole paragraph is in v, 8, §
 7.
 
 P. 271. “_S. Barnard_”, Wier i, 16, § 6.
 
-——— “Take three consecrated ... Trinitie”, v, 4, § 2, “Recipe tres
+ -  -  - “Take three consecrated ... Trinitie”, v, 4, § 2, “Recipe tres
 panes Missales”, etc.
 
 P. 272. “In the yeere.” This paragraph is, with a little freeness of
@@ -33966,13 +33966,13 @@ last.
 P. 276. “Otherwise: Jesus Christ”, v, 15, § 3. Scot omits the ✠ after
 the first Christ.
 
-——— “Another such cousening”, v, 15, § 4.
+ -  -  - “Another such cousening”, v, 15, § 4.
 
 P. 282. “At Easter”, v, 40, § 4. Note, in the margin I have placed [?
 or] for the “on” of text. The “?” is unnecessary, for in Wier it is
 “infra cornua vel aures”.
 
-——— “Otherwise _Jacobus_”, v, 40, § 3.
+ -  -  - “Otherwise _Jacobus_”, v, 40, § 3.
 
 P. 294. “The corral”, v, 21, § 5. But Scot refers to Avicenna, though
 Wier does not; nor do the names of the precious stones spoken of,
@@ -34025,12 +34025,12 @@ _Diabolus_, and his last names, “owle”, etc., Scot follows the order of
 Wier.
 
 P. 521. “_Lares_ ... cities”, i, 6, § 6, except that Wier has “cuam
-agere” for both “trouble”—an odd word here—and “set to oversee”.
+agere” for both “trouble” - an odd word here - and “set to oversee”.
 
-——— “_Virunculi terrei_ ... drawe water.” Follows generally, though
+ -  -  - “_Virunculi terrei_ ... drawe water.” Follows generally, though
 not quite literally, i, 22, § 5.
 
-——— “_Dii geniales_ ... birth”, i, 6, § 6, shortened.
+ -  -  - “_Dii geniales_ ... birth”, i, 6, § 6, shortened.
 
 P. 522. “_Tetrici_ ... _Subterranei_; _Cobali_; _Guteli_ or _Trulli_
 (the etymology being Scot’s); _Virunculi_ [_montani_, Wier]; _Dæmones
@@ -34038,12 +34038,12 @@ montani_.” These being in the same order, are adopted from Wier i, 22,
 § 8-11, but much shortened. “_Hudgin_” immediately follows as “Hutkin”,
 § 12.
 
-——— “_Hudgin_ ... ware a cap”, i, 22, § 12. Here it is said—“pileo caput
+ -  -  - “_Hudgin_ ... ware a cap”, i, 22, § 12. Here it is said - “pileo caput
 opertus unde & vulgo Pileatum eum appellabant rurales, hoc est, ein
 Hedeckin, lingua Saxonica.”
 
-——— “_Familiares Dæmones_ ... Simon Samareus ... to come”, etc.—but of
-course omitting _Feats_ and _Dr. Burcot_—are from i, 22, § 7. Also
+ -  -  - “_Familiares Dæmones_ ... Simon Samareus ... to come”, etc. - but of
+course omitting _Feats_ and _Dr. Burcot_ - are from i, 22, § 7. Also
 “Albæ mulieres and Albæ Sibyllæ”, though shortened. The “did much
 harm” is from Wier. “_Deumus_, _Agnan_, _Grigii_, _Charoibes_” and
 “_Hovioulsira_” follow in order, § 23-26. See note on _Deumus_.
@@ -34077,7 +34077,7 @@ some other, I think, from facts presently to be mentioned, it will be
 rendered probable that he copied.
 
 P. 378. “_Marbas._” After this name Scot omits from Wier’s
-list—“Purflas, alibi invenitur Busas, magnus Princeps & Dux est,
+list - “Purflas, alibi invenitur Busas, magnus Princeps & Dux est,
 cujus mansio circa turrim Babylonis, & videtur in eo flamma foris,
 caput autem assimilatur magno nycto-coraci. Autor est et promotor
 discordiarum, bellorum, rixarum et mendaciorum. Omnibus in locis non
@@ -34135,9 +34135,9 @@ omitting both “perfecte” and “abstrusis”. See under _Botis_ for both
 (_c_) and (_d_). (_e_) “_Bune_ Muta loquitur voce”, rendered in Scot,
 “he speaketh with a divine voice”. The translator apparently looked
 out for “mutus” in a dictionary, such as Th. Cooper’s, where in Old
-English he found “dumme”, and read it—as I at first sight did, and with
+English he found “dumme”, and read it - as I at first sight did, and with
 great astonishment, though I confess my thoughts were running on the
-puzzle—“divine”. (_f_) Under _Bileth_, “... before whome go trumpets
+puzzle - “divine”. (_f_) Under _Bileth_, “... before whome go trumpets
 and all kind of melodious musicke”, Scot has, “or if he have not the
 chaine of spirits [the book called _Vinculum Spirituum_], certeinelie
 he will never feare nor regard him after”, but Wier has, “... sciet
@@ -34219,14 +34219,14 @@ on its first occurrence under _Buer_, and, not mentioning any sign,
 translates it, “is seene in this sign;”! (_y_) The names of the fiends
 differ also sometimes in spelling; omitting such instances as “i”
 for “y”, “c” for “k”, etc., I give Wier first, followed by Scot’s
-form. “Bathym”, alibi “Marthim”—“Bathin”, “Mathin”; “Pursan”—“Purson”;
-“Loray”—“Leraie”, this latter being wrong, because his alias is
+form. “Bathym”, alibi “Marthim” - “Bathin”, “Mathin”; “Pursan” - “Purson”;
+“Loray” - “Leraie”, this latter being wrong, because his alias is
 “Oray”. Wier, by the way, also shows that “Leraie” was not pronounced
 “Leraje”, as given in the second edition of Scot. “Ipes”, alias
-“Ayperos”—“Ipos”, “Ayporos”; “Naberus”—“Naberius”, probably the wrong
-form; “Roneve”—“Ronove”; “Forres”—“Foras”; “Marchocias”—“Marchosias”;
-“Chax”—“Shax”; “Pucel”—“Procell”; “Zagam”—“Zagan”; “Volac”—“Valac”;
-“Androalphus”—“Andrealphus”; “Oze”—“Ose”; “Zaleos”—“Saleos”; “Wal,
+“Ayperos” - “Ipos”, “Ayporos”; “Naberus” - “Naberius”, probably the wrong
+form; “Roneve” - “Ronove”; “Forres” - “Foras”; “Marchocias” - “Marchosias”;
+“Chax” - “Shax”; “Pucel” - “Procell”; “Zagam” - “Zagan”; “Volac” - “Valac”;
+“Androalphus” - “Andrealphus”; “Oze” - “Ose”; “Zaleos” - “Saleos”; “Wal,
 1660”, is “Vual (as Scot), 1583”. It will be noticed that “e” is five
 times used for “o”, a MS. copyist’s error.
 
@@ -34257,7 +34257,7 @@ idoll”.
 P. 389. “_Valac_ ... with angels wings like a boie”, cannot, I think,
 be Scot’s translation of “uti puer alis angeli”.
 
-——— “_Gomory._” Wier says “ducali corona”, but the rest is the same; and
+ -  -  - “_Gomory._” Wier says “ducali corona”, but the rest is the same; and
 it must be remembered that a fiend (as in Incubus and Succubus) could
 be of either sex.
 
@@ -34272,10 +34272,10 @@ is, in all probability, Scot’s own.
 
 P. 393. “Ch. 3” is “§ 69” of Wier.
 
-——— “Ch. 4” is “Citatio Prædictorum Spirituum”, and though not marked as
+ -  -  - “Ch. 4” is “Citatio Prædictorum Spirituum”, and though not marked as
 a new chapter, is one having § 1, § 2, etc.
 
-——— These are the variations between Wier and Scot in this chapter 4,
+ -  -  - These are the variations between Wier and Scot in this chapter 4,
 or Citatio, Wier being in Latin, Scot in English. (_a_) “For one
 [companion] must always be with you”; “si præsto fuerit”. (_b_) 394,
 “effect”; Wier adds, “imo tuæ animæ perditione”. (_c_) “And note”,
@@ -34301,7 +34301,7 @@ sentence is better explained by Wier’s “Continua ut in libro * Annuli
 Salomonis continetur”, that is, continue the “etc.” as etc. It may be
 added that the *, the mark of an omission, is omitted in the English.
 
-——— Scot (_i.e._, his authority) wholly omits Wier’s final § 5: “Hæc
+ -  -  - Scot (_i.e._, his authority) wholly omits Wier’s final § 5: “Hæc
 blasphema & execranda hujus mundi fæx & sentina pœnam in magos
 prophanos bene constitutam, pro scelerato mentis ausu jure meretur.”
 Scot, I think, would be unlikely not to translate this, or be incited
@@ -34317,7 +34317,7 @@ Salomonis_ from which these leaves are copied may itself, and possibly
 by way of proving its genuineness, have copied these details from an
 earlier, or supposedly earlier, “Secretum secretorum”.
 
-                             ————————————
+ -  -  -  -  -  -  -  -  -  -  -  - 
 
 
                      ADDITIONS TO PART I, P. 558.
@@ -34339,7 +34339,7 @@ butyrum, caseus & serum.” Cf. Scot, p. 281, copied verbatim.
 
                _For words not given here see Glossary._
 
-                                ——————
+ -  -  -  -  -  - 
 
 
 P. 2. “Ring bells.” Still done in Switzerland, and, I think, elsewhere.
@@ -34390,8 +34390,8 @@ looked into M. M. and found: “Nota quod excommunicati, item participes
 & socii criminis, item infames, et criminosi nec servi contra dominos
 admittentur ad agendum, & testificandum in causa fidei quacunque.” It
 will be observed that he remembered “infames” as “infants”, and, as
-there might have been a misprint in his copy, I have consulted all—not
-a short list—in the British Museum. Possibly he was influenced by W.
+there might have been a misprint in his copy, I have consulted all - not
+a short list - in the British Museum. Possibly he was influenced by W.
 W.’s book, which had taken a strong hold on him, if it were not one of
 the causes of his writing, for there, children from 6¾ to 9 years
 (infants in law) were taken as witnesses against their mothers, while
@@ -34406,7 +34406,7 @@ recorded in an instance at Windsor, “R. S. probably gave the God speed
 at the assembly, and God’s name so frayed the witches that they fled,
 and so frayed the devil that he was conquered in a hand-to-hand fight.”
 
-——— “At shrift.” This was laid down by Roman Catholic priests, though
+ -  -  - “At shrift.” This was laid down by Roman Catholic priests, though
 it was, and is, a rule with them that no confessor can reveal a
 confession, even before a court of law!
 
@@ -34417,7 +34417,7 @@ concurrence of two t’s.
 P. 42. “_La volta._” A fact strangely overlooked (as is David’s
 dancing) by the damners of dancing.
 
-——— “Socke the corps.” The same in p. 124 explains that this is sewing
+ -  -  - “Socke the corps.” The same in p. 124 explains that this is sewing
 the body in its winding-sheet or sheets. The phrase is Kentish.
 
 P. 45. “Young maister”, _i.e._, their new master, they having just come
@@ -34428,9 +34428,9 @@ which are to us strange. Here is a clearer example than usual of its
 synonymity with our “by”. Cf. also p. 76, and Auth. Ver., 1 Cor. xv,
 5-8.
 
-P. 50. “The veines have passage.” For as little, others—as Paracelsus,
-by R. Browning, etc.—have been credited—to the discomfiture of
-Harvey—with the knowledge of the circulation of the blood. Even
+P. 50. “The veines have passage.” For as little, others - as Paracelsus,
+by R. Browning, etc. - have been credited - to the discomfiture of
+Harvey - with the knowledge of the circulation of the blood. Even
 Shakespeare is so credited by some whose knowledge will assert
 positively that the moon is _not_ made of green cheese.
 
@@ -34448,7 +34448,7 @@ with”. An expression that sounds odd to us, but then used practically
 and metaphorically, from the idea of companionship on a journey, when
 companionship was almost or altogether necessary.
 
-P. 84. “The [night]mare.” Most, I suppose—among them I myself—have
+P. 84. “The [night]mare.” Most, I suppose - among them I myself - have
 known that these occur at times to a person in a deep sleep. My
 fourth nightmare, a horrible, troubled, and inconsequent dream, so
 far as I can remember, occurred some two years ago; three, at only a
@@ -34460,11 +34460,11 @@ visible, and my thoughts and conclusions were as coherent, and myself
 as self-possessed as at any moment of my life, until a sense of
 unreality came upon me, and by two or more vigorous efforts of both
 mind and body I awoke myself. My experience, and that recorded p. 84,
-will explain various ghostly stories—I do not say all—wherein the
+will explain various ghostly stories - I do not say all - wherein the
 sufferer asserts positively, and believes, that he was wide-awake.
 
-——— “As sure as a club.” The derivation and meaning—as sure as is a
-tangible club that can or will strike you—is obvious; but I have heard
+ -  -  - “As sure as a club.” The derivation and meaning - as sure as is a
+tangible club that can or will strike you - is obvious; but I have heard
 it at the card-table, as though derived from the sureness of the cards
 thus named. An example of a false application arising from the apparent
 sameness of the words, and possibly in the first instance from a
@@ -34478,20 +34478,20 @@ with “stampen”.
 P. 87. “To her that night.” I have placed “him” in the margin, my own
 conjecture and the reading of the British Museum MS. of parts of Scot.
 But in Fletcher’s _M. Thomas_, iv, 6, we have the same spell, with some
-slight variations, and ending—
+slight variations, and ending - 
 
     “She would not stir from him [St. George] that night”,
 
-which more agrees with Shakespeare’s quotation in _Lear_, iii, 4—St.
+which more agrees with Shakespeare’s quotation in _Lear_, iii, 4 - St.
 Withold
 
                         “Bid her alight
     And her [the nightmare’s] troth plight.”
 
-——— “_Viderunt_”, etc. Altered, apparently, from Vulgate, which has
+ -  -  - “_Viderunt_”, etc. Altered, apparently, from Vulgate, which has
 “Videntes ... essent pulchræ”, etc.
 
-——— “_Filios Dei._” Scot here alters “_Filii_” to the objective,
+ -  -  - “_Filios Dei._” Scot here alters “_Filii_” to the objective,
 because it follows “doo interpret”. He does the same elsewhere, whether
 it be English verb or preposition that precedes. Thus, 422, we have
 “_Vitas Patrum_”, because it follows “prooved”; 458, “in _Speculo
@@ -34509,7 +34509,7 @@ P. 95. “Saccaring bell” = a sacring bell, the bell rung at the
 elevation of the host, when all true, _i.e._, Roman Catholic,
 worshippers fall on their knees.
 
-——— “A morrowe masse”—a morning mass. All masses, except, I think, on
+ -  -  - “A morrowe masse” - a morning mass. All masses, except, I think, on
 Christmas Day and Good Friday, and except in certain churches, where
 the older usage was by prescription allowed, being in Scot’s time, and
 now, celebrated before noon. This rule was made by the Pope in 1550-58.
@@ -34519,7 +34519,7 @@ the sailor.
 
 P. 104. “_Abacuck._” _Bel and the Dragon_, 36, 37.
 
-——— “One syllable nor five words.” A curiously sounding phrase; but he
+ -  -  - “One syllable nor five words.” A curiously sounding phrase; but he
 seems to have used “syllable” as we do, figuratively, meaning, “in the
 same sense”, while the five words are, “not even differing five words
 in the form of expression”.
@@ -34542,13 +34542,13 @@ nos; percutiet, et curabit nos. 3. Vivificabit nos post duos dies.”
 The “ego”, etc., is only found in Deut. xxxii, 39, where the Vulg. has
 “vivere faciam”.
 
-——— “If you looke into [what I have written concerning] _Habar_”, etc.
+ -  -  - “If you looke into [what I have written concerning] _Habar_”, etc.
 
 P. 119. “Besmearing with an ointment.” Such beliefs then current
 justify more than is now supposed the beliefs of Elizabeth and her
 counsellors, and the execution of her would-be murderer.
 
-——— “Wolves doong.” A bit of folk-lore, which has, I think, sufficient
+ -  -  - “Wolves doong.” A bit of folk-lore, which has, I think, sufficient
 _vraisemblance_ as to be worthy of trial, the more so as it is said to
 this day that a young dog shows fear at the smell of a dried piece of
 wolf’s skin.
@@ -34576,7 +34576,7 @@ folds of netting.
 P. 146. “Finger in a hole.” I presume it is meant that Saul shut
 himself out of all means of knowing what really went on, as much as if
 he had closed up a hole in a shut door or window-shutter, through which
-alone he could see—or have light thrown upon—the subject.
+alone he could see - or have light thrown upon - the subject.
 
 P. 147. “She saith to herself” [but intentionally loud enough for Saul
 to hear].
@@ -34605,8 +34605,8 @@ or Vulg., or Greek N.T. Vulg., 1 Sam. xxviii, 7, has “mulier pythonem
 habens”; and in Acts xvi, 16, the Greek, the Vulg., and Beza have
 similar wordings.
 
-——— “Liber pater.” “Liber” is “Bacchus” in Scot himself; but
-Porphyrius—whom Th. Cooper and Calepine follow—says of “Liber pater”:
+ -  -  - “Liber pater.” “Liber” is “Bacchus” in Scot himself; but
+Porphyrius - whom Th. Cooper and Calepine follow - says of “Liber pater”:
 “Eundem Solem apud superos: Liberum patrem in terris: Apollinem apud
 inferos.”
 
@@ -34619,12 +34619,12 @@ spelling was not at the time universal, but only commencing.
 P. 159. “_Nemo scit._” Slightly altered from the question. 1 Cor. ii,
 11, and not the Vulgate words, but apparently more those of Beza.
 
-——— “_Tu solus_” [2 Chron. vi, 30]. Vulg. reads, “tu _enim_ solus
+ -  -  - “_Tu solus_” [2 Chron. vi, 30]. Vulg. reads, “tu _enim_ solus
 nosti _corda filiorum_ hominem”; it has also “corda”, where David
 speaks to Solomon similarly, 1 Chron. xxviii, 9; but “universas mentium
 cogitationes” follows it.
 
-——— “_Ego Deus_” [Jer. xvii, 10]. He omits “_probans_” before
+ -  -  - “_Ego Deus_” [Jer. xvii, 10]. He omits “_probans_” before
 “_renes_” in Vulg.
 
 P. 162. “Epotherses.” Rightly, in 163, “Epitherses”.
@@ -34634,7 +34634,7 @@ P. 166. “By revolution.” I presume by revolution of the planets
 “constellation”, _i.e._, position as regards one another. This I gather
 from a previous page.
 
-——— [Margin] “Zach. 10.” We have here a further example of the loose
+ -  -  - [Margin] “Zach. 10.” We have here a further example of the loose
 references, common in those days, to the Bible made by both Roman
 Catholics and Protestants. The first clause is in sense is given Zach.
 10 [, 2], and somewhat, Isai. 44 [9, 10]; but the remainder from Ps.
@@ -34665,7 +34665,7 @@ a press error for “menacies”. It is so changed in the second edition.
 
 P. 180. “Faile to dreame by night.” Scot’s general statement may be
 true, but must in some instances be modified. From my youth, for
-many—say at least twenty—years, I tried to remember my dreams for this
+many - say at least twenty - years, I tried to remember my dreams for this
 very purpose, and could remember them for a short while very well; but
 never could I find that what I had thought on during the day, or the
 days before, gave even a suggestion to my dreams. Thrice, however,
@@ -34695,7 +34695,7 @@ P. 183. “De Profundis.” Ps. cxxix; Vulg. cxxx; Prayer Book. All that
 follow are given consecutively, I think, in the _Rit. Rom. Officium
 Defunctorum_.
 
-——— “Pleasant and certain dreams.” Formerly an at least English
+ -  -  - “Pleasant and certain dreams.” Formerly an at least English
 notion, as expressed by the servant-lover of Bombastes:
 
     “And morning dreams, they say, come true.”
@@ -34703,12 +34703,12 @@ notion, as expressed by the servant-lover of Bombastes:
 P. 184. “Eleoselinum.” Translated in the second edition as “mountain
 parsley.”
 
-——— “Sium” in the second edition is “yellow water-cress”.
+ -  -  - “Sium” in the second edition is “yellow water-cress”.
 
-——— “Acarum vulgare”, “common acorus”—our “Asarum Europ.”
+ -  -  - “Acarum vulgare”, “common acorus” - our “Asarum Europ.”
 
-P. 185. “An errand ... from farre countries.” A similar tale is told—in
-some English work against witchcraft after Scot—of an Italian judge who
+P. 185. “An errand ... from farre countries.” A similar tale is told - in
+some English work against witchcraft after Scot - of an Italian judge who
 thus tried a supposed witch.
 
 P. 187. “A thousand for one that.” Here the “that” does not, as with
@@ -34724,16 +34724,16 @@ in its essence a purifying, and possibly an expiatory, one.
 P. 198. “_Menehas_” (example, Deut. xix, 10). Hebr. מנחש. Here he does
 not quite agree with Wier, i, § 9.
 
-——— “Philosophers table.” Cf. Strutt, _s. n._ The philosopher’s game,
+ -  -  - “Philosophers table.” Cf. Strutt, _s. n._ The philosopher’s game,
 played on a “table” or board.
 
-——— “Sober writer.” Of course, ironical.
+ -  -  - “Sober writer.” Of course, ironical.
 
-——— “Of each letters.” Either misprint for letter, or rather, perhaps,
+ -  -  - “Of each letters.” Either misprint for letter, or rather, perhaps,
 a loose way of saying “of each [set of] letters”, or “of the letters of
 each person’s name or names”.
 
-——— “Unequal number of vowels.” A bit of folk-lore as yet, I think,
+ -  -  - “Unequal number of vowels.” A bit of folk-lore as yet, I think,
 unnoticed.
 
 P. 200. “Added the Apocrypha.” Council of Trent, 1550, made them of
@@ -34744,7 +34744,7 @@ P. 202. “True loves.” Garden pansies, viola tricolor, L. (Britten and
 H.), four-leaved grass, occasional variations of the three-leaved
 grass, trefoil.
 
-——— “To our left side.” So far an explanation why horse-shoes, salt,
+ -  -  - “To our left side.” So far an explanation why horse-shoes, salt,
 etc., are thrown against ill-luck over the left shoulder.
 
 P. 205. “_Sero rubens._” P. 169, Scot quotes this in English as
@@ -34755,7 +34755,7 @@ P. 206. “_Stella errans._” I presume he means a planet, partly because
 a comet was then thought a portent, differing in origin and nature from
 a star, partly because Cicero uses the plural in the sense of planets.
 
-——— “_Non est._” Not from Vulg. or Beza; probably his own rendering.
+ -  -  - “_Non est._” Not from Vulg. or Beza; probably his own rendering.
 
 P. 209. “Milvus” [Jer. viii, 7]. Sentence as in Vulg., while the Geneva
 version, like our Authorised version, has storke.
@@ -34782,7 +34782,7 @@ inadvertently, almost reduplicated the “is”.
 P. 233. “✠ Thomas.” His and our “N.” (or sometimes “John”, etc.),
 anyone who may be the invoker.
 
-——— “A popish periapt.” The distances between these letters are
+ -  -  - “A popish periapt.” The distances between these letters are
 somewhat variable, the “ka” and “am” are near enough to be syllables.
 But I have not misspent my time in a search for the true original.
 
@@ -34801,9 +34801,9 @@ signification was formerly given to “plum”. It could well bear it.
 
 P. 240. “Constant opinion” = firm belief or firm faith.
 
-——— “_Homerica Medicatio._” The physician was “Ferrerius”, alias
-“Auger”, or “Oger Ferrier”—not “Ferrarius”, as given throughout the
-text, in his list of authors, and in his contents—born at Toulouse,
+ -  -  - “_Homerica Medicatio._” The physician was “Ferrerius”, alias
+“Auger”, or “Oger Ferrier” - not “Ferrarius”, as given throughout the
+text, in his list of authors, and in his contents - born at Toulouse,
 1513, physician in ordinary to Catherine de Medicis, and afterwards
 returned to his birthplace, where he died in 1588. B. 2, ch. ii, of his
 _Vera medendi modus_ is headed “De Homerica Medicatione”. And here I
@@ -34855,7 +34855,7 @@ P. 244. “Scarifie.” Might be done with a gum lancet; but the magical
 tooth might have the advantage in some instances of affecting the
 thoughts, and through them the body, as noted, p. 240.
 
-——— “_Os non._” This, preceded by “✠ Jesus autem transiens ✠ per
+ -  -  - “_Os non._” This, preceded by “✠ Jesus autem transiens ✠ per
 medium illorum ibat ✠”, with a ✠ after “eo”, was, according to Paulus
 Grillandus, who twice witnessed it, a charm producing taciturnity
 and insensibility under torture! Something, either this or something
@@ -34884,15 +34884,15 @@ by Elizabethan versifiers to obtain a rhyme.
 P. 257. “Certeine name.” I presume this caution is inserted lest one
 hurt Tom instead of Harry.
 
-——— “Each image must have in his hand.” For the true reading cf.
+ -  -  - “Each image must have in his hand.” For the true reading cf.
 “Extracts from Wier”. Scot must, I think, have trusted too much to his
 memory.
 
-——— “Domine Dominus”, etc. Pss. 8. 27. 102. 109. Prayer Book numbering.
+ -  -  - “Domine Dominus”, etc. Pss. 8. 27. 102. 109. Prayer Book numbering.
 
 P. 264. “Bladder.” Clearly a press error for bladders.
 
-——— “Ribbes and genitals.” Conjoined, apparently, from a remembrance of
+ -  -  - “Ribbes and genitals.” Conjoined, apparently, from a remembrance of
 the procreation of Eve, Genesis ii, 21, 22.
 
 P. 265. “Sir _John_ ... pulpit.” As the story was told of “as honest
@@ -34908,10 +34908,10 @@ P. 266. “Hundred and eight.” Here, from the “sayers of the charm”, the
 authority is, in all probability, the Vulg. Its 108 is our 109, Scot
 not having in this instance changed the numbering.
 
-——— “Seachers.” Probably “Sea[r]chers”, as given in the second edition,
+ -  -  - “Seachers.” Probably “Sea[r]chers”, as given in the second edition,
 but it may have been a form of seekers, since seche = seek.
 
-——— “Horsse shoo.” This superstition probably had its origin from
+ -  -  - “Horsse shoo.” This superstition probably had its origin from
 Stonehenge times and before, since the inner stones there, apparently
 the more sacred portion, and, so far as one can now judge, the
 corresponding part at Avebury, each form a horse-shoe. Sir H. James
@@ -34920,32 +34920,32 @@ afterwards independently observed it, both there and then at Avebury,
 and connected it with this horse-shoe superstition in _The Antiquary_,
 vol. ii, Oct. 1880.
 
-——— “_Alicium._” Have not as yet found this.
+ -  -  - “_Alicium._” Have not as yet found this.
 
 P. 267. “Herbe betonica.” “Stachys betonica”, Plin., b. 25, c. 8.
 
-——— “Pullein”, etc. “Verbascum”; “Thapsus”, L., “bullock’s lungwort”
+ -  -  - “Pullein”, etc. “Verbascum”; “Thapsus”, L., “bullock’s lungwort”
 (Kent). Tusser, like Scot, calls it “Longwort”, a variant of “Lungwort”.
 
 P. 268. “Baccar.” “Nardum rusticum”, or, according to Sprengel,
 “Valeriana Celtica”, L.; others “foxglove”, or “asarabacca”.
 
-——— “Browze”. Gives us the meaning of Bowze = boughs, it being so spelt
+ -  -  - “Browze”. Gives us the meaning of Bowze = boughs, it being so spelt
 to accord, as was the custom, not only in rhyme but in spelling.
 
-——— “Vervain.” “Verbena officinalis”, L. (and other verbenas?), used,
+ -  -  - “Vervain.” “Verbena officinalis”, L. (and other verbenas?), used,
 according to Park, “against poison, venom of beasts, and bewitched
 drinks”.
 
-——— “Palma.” Willows in England were used as the palm on Palm Sunday;
+ -  -  - “Palma.” Willows in England were used as the palm on Palm Sunday;
 sometimes the yew; but here I incline to think he means Palma Christi,
 a flat-hand rooted orchis.
 
-——— “Antirchmon.” I suspect a misprint for “antirrhinum”, calf’s snout,
-snap-dragon, A—. Linn. Pliny, b. 25, c. 8, says it is much esteemed by
+ -  -  - “Antirchmon.” I suspect a misprint for “antirrhinum”, calf’s snout,
+snap-dragon, A - . Linn. Pliny, b. 25, c. 8, says it is much esteemed by
 enchanters.
 
-——— “Lappoint.” Minshen gives “Lapouin”, as the French for lapwing, but
+ -  -  - “Lappoint.” Minshen gives “Lapouin”, as the French for lapwing, but
 I have been unable to find this word. Wier v, 21 § 6, says, as Scot,
 “Dicuntur & pennæ upupæ suffitæ, phantasmata fugare”, and the upupa,
 then as now, was taken to be the lapwing, though Th. Cooper says,
@@ -34979,16 +34979,16 @@ being a remembrance of the sense of verses 13 and 17. It is not Ecclus.
 P. 294. “The corral.” Can we see in this the origin of the almost
 universal coral for children when teething?
 
-——— “Dinothera.” Cannot find it.
+ -  -  - “Dinothera.” Cannot find it.
 
-——— “Aitites.” Properly “Aetites”, a stone said to be found in the
+ -  -  - “Aitites.” Properly “Aetites”, a stone said to be found in the
 eagle’s nest. Plin., b. 7, c. 3.
 
 P. 294. “Droonke as apes.” An expression readily understood by those
 who have watched the purposeless doings of apes and their throwing
 themselves about.
 
-——— “Amethysus.” This occurs twice, but I know it not as a variant of
+ -  -  - “Amethysus.” This occurs twice, but I know it not as a variant of
 amethystus. “Corneolus.” Various descriptions are given of this by
 Pliny, Bartholome, Th. Cooper, Minshen, and Holyokes Rider, but I
 presume (as given by Bailey) it is our cornelian.
@@ -35030,7 +35030,7 @@ but produced by the action of the sun on inanimate matters, in fact by
 spontaneous generation. Even the generation of man was held to require
 the co-operation of the sun.
 
-——— “Of the fat of a man ... lice.” He means, I presume, of fat beneath
+ -  -  - “Of the fat of a man ... lice.” He means, I presume, of fat beneath
 the skin of a living person, a belief apparently confirmed by the
 death of persons from lice; for Bartholome, Batman’s alias Trevisa’s
 translation, says, l. 18, c. 88: “Lice and nits gender in the head or
@@ -35053,7 +35053,7 @@ Cf. _The Boke of St. Albans_, at the end of “Hawking”.
 P. 339. “Send them to Pope.” Unable to refer “them” to the “horses” or
 to the “neighbors”, I am forced to believe it an error for “then”.
 
-——— “Unto the doore.” This (.) should be (,) the “W” marking, as usual,
+ -  -  - “Unto the doore.” This (.) should be (,) the “W” marking, as usual,
 the beginning of (the purport of) his speech.
 
 P. 342. “You meane to cut.” He would say, “which you would make believe
@@ -35067,14 +35067,14 @@ certainty.
 
 P. 386. “Goeth before.” Takes precedency of.
 
-——— “Be abroad.” Cf. “Extracts from Wier II.”
+ -  -  - “Be abroad.” Cf. “Extracts from Wier II.”
 
-——— “If his cap be on his head.” Cf. “Extracts from Wier II.”
+ -  -  - “If his cap be on his head.” Cf. “Extracts from Wier II.”
 
 P. 390. “_Duratque._” When Dr. Fian was examined, James VI being
 present, he, after the two torturings of the rope, and boots,
-confessed, among other things, that he had bewitched a gentleman—a
-rival lover—and “caused the sade Gentleman that once in xxiiii howers
+confessed, among other things, that he had bewitched a gentleman - a
+rival lover - and “caused the sade Gentleman that once in xxiiii howers
 he fell into a lunacie and madnes and so continued one hower together”.
 The gentleman was brought before the king, and went violently mad for
 an hour, leaping so high that he touched the ceiling with his head, and
@@ -35107,7 +35107,7 @@ P. 406. “Common copulation.” Used as “friendly conjunction” or working
 together, in opposition to “carnal copulation”, a phrase he employs
 when necessary.
 
-——— “To whome be honour.” Is there an omission here of (as seems
+ -  -  - “To whome be honour.” Is there an omission here of (as seems
 most likely) “In the name”, etc., or are we to look back as far as
 “Tetragrammaton”, etc., for antecedents? a course in which I cannot
 myself believe.
@@ -35118,8 +35118,8 @@ have, while alive, spiritual “names after a Magical manner”, whatever
 that may mean.
 
 P. 414. “ffalaur” (Diagram). If one were really wanted, a most
-excellent example—whether we look to Scot’s other uses of this word, or
-to the names of the other three spirits in the diagram—that “ff” was
+excellent example - whether we look to Scot’s other uses of this word, or
+to the names of the other three spirits in the diagram - that “ff” was
 merely “F”.
 
 P. 416. “Ps. xxii and li.” Prayer Book numbers and version.
@@ -35136,7 +35136,7 @@ throno”. On the whole, I think that it refers to some conjuration not
 copied by Scot, thus strengthening the supposition set forth under
 Extracts from Wier II, and p. 418.
 
-——— “Then say _In throno_.” I feel by no means content with the change
+ -  -  - “Then say _In throno_.” I feel by no means content with the change
 of “then” to “thou”. “And” may be an = “if”, but I do not remember an
 instance of Scot’s use of “and” in this sense. Or this “and” may be an
 accidental insertion by the printer, when after “_throno_” we might
@@ -35158,7 +35158,7 @@ gold, silver, etc. “N.” was therefore a general indefinite, not used,
 as now, for a man only; still, its most likely etymon seems to be the
 initial of “Nomen”.
 
-——— “On thy booke.” In 424 we have “by the holie contents in this
+ -  -  - “On thy booke.” In 424 we have “by the holie contents in this
 booke”, and “kisse the booke”. From these, and from the statements in
 the additions to the third edition that the conjuror is to consecrate
 and take a Bible with him, I presume, that one is here meant to be used.
@@ -35185,7 +35185,7 @@ or wonderful wonder”, the adjective being intensative, as is perhaps
 P. 434. “Doctor Burc.” The Burcot cozened into buying a familiar from
 Feats, p. 522.
 
-——— “He strake.” Spirit-rapping, therefore, is older than this century,
+ -  -  - “He strake.” Spirit-rapping, therefore, is older than this century,
 though the manner was different.
 
 P. 436. “Matins at midnight.” The Franciscans solemnise matins directly
@@ -35198,7 +35198,7 @@ of a line, the second at the beginning of the next.
 
 P. 441. “_Deus in adjutorium._” Ps. lxx. Prayer Book.
 
-——— “Excommunicate.” 479. “Infatuate.” The form originated _circa_
+ -  -  - “Excommunicate.” 479. “Infatuate.” The form originated _circa_
 1400, from “infatuatus”, etc., before the verbs existed, and are not
 examples of “ed” eliding or coalescing when the verb ends in “d” or
 “t”. This last, however, is found in Scot, and in a work at least ten
@@ -35220,7 +35220,7 @@ the earth’s semi-diameter, that is, 3,985,760 miles. Scot, however,
 must have taken some later computation, as he speaks of the sun’s
 “neerest” distance.
 
-——— Note, a pound of good candles, such as were offered in church, cost
+ -  -  - Note, a pound of good candles, such as were offered in church, cost
 threepence.
 
 P. 461. “Sir John” = the aforesaid priest. Cf. 265, 361, and “Sir
@@ -35248,14 +35248,14 @@ means to explain that the miracle consisted in his being able to read
 the canonical scriptures written in God’s name, or inspired by Him, but
 not the fabulous Apocrypha.
 
-——— “The good speed.” See note, p. 24.
+ -  -  - “The good speed.” See note, p. 24.
 
 
 
 
                                GLOSSARY.
 
-                                ——————
+ -  -  -  -  -  - 
 
 _The numbers refer to the pages of the first edition, and refer to an
 occurrence of the word, but not necessarily to the only occurrence of
@@ -35282,7 +35282,7 @@ Notings._
   _Addicted_, 298. Joined or attached to.
 
   _A doo_, 475. The “a” = at in this and like words was then
-    frequently printed apart, or according to them—a part.
+    frequently printed apart, or according to them - a part.
 
   _Ægyptians_, 197. Gypsies.
 
@@ -35370,7 +35370,7 @@ Notings._
   _Bucklers, laie down the_, _A_ iii. Submit, own themselves
     defeated. The origin of this and similar phrases is unknown. From
     the words “Clypeus salvus in Cic.” and “Clypeum abjicere”, it may
-    be from the usages of classic times,—or it may be mediæval.
+    be from the usages of classic times, - or it may be mediæval.
 
   _Bugges_, 288. Frightful and unnatural appearances, as in bugbears,
     a now equivalent word.
@@ -35418,7 +35418,7 @@ Notings._
     was the spleen. Cf. _Batman on Barth._, iv, 10, and v, 39.
 
   _Circumstance_, 24. Elsewhere, as 75, used for round-about or
-    superfluous means. Here it has a greater ill-meaning—a round-about
+    superfluous means. Here it has a greater ill-meaning - a round-about
     statement that would evade declaring the truth.
 
   _Clam_, 208. To stick on; various dialects.
@@ -35598,7 +35598,7 @@ Notings._
     covers (opposite one another) and double-bottomed.
 
   _Foreslowed_, 365. Slowed overmuch, _i.e._, omitted at times. So
-    we have other words in fore—foregrown, etc. _Forespoken_, has been
+    we have other words in fore - foregrown, etc. _Forespoken_, has been
     said to be a compound of our fore, meaning bespeak or predict
     (Rich.). But it is not to predict, but to do. Hence, I rather take
     it as equal to speak over-much against, _i.e._, bewitch.
@@ -35674,7 +35674,7 @@ Notings._
 
   _Illuded_, 69. Cozened, deceived.
 
-  _Impugnable_, 492. Not able to be imposed. This ——able form not in
+  _Impugnable_, 492. Not able to be imposed. This -  - able form not in
     our dictionaries.
 
   _Incestuous_, 124. In Latinate sense, full of pollution.
@@ -35808,7 +35808,7 @@ Notings._
     appears _specie angelica_, but not white, but darker than a lion,
     and filthy.
 
-  _Occupy_, 77; _——ied_, 415. See note.
+  _Occupy_, 77; _ -  - ied_, 415. See note.
 
   _Onely_, 114. A good example of the position then commonly given to
     the word in a sentence. He does not mean that this is the only work
@@ -35818,7 +35818,7 @@ Notings._
     so called by the Romans because it was large, and large pearls
     generally came from the East. So here, easterly seems to be used as
     an equivalent for hot. The eastern regions being in his astronomy
-    nearer the sun’s rising, they were hotter,—a false explanation of a
+    nearer the sun’s rising, they were hotter, - a false explanation of a
     true fact.
 
   _Orizons_, 41. Orisons.
@@ -35841,7 +35841,7 @@ Notings._
   _Passible_, 496. Passable, able to pass away, temporary.
 
   _Peevishness_, 483. Foolishness. Greene seems sometimes to use the
-    adjective for perverse or rascally, _Planetomachia_, 40, 22—95, 18,
+    adjective for perverse or rascally, _Planetomachia_, 40, 22 - 95, 18,
     etc., ed. Grosart.
 
   _Perbreake_, 310, or _Parbreak_. Vomit.
@@ -36052,8 +36052,8 @@ Notings._
 
   _Treene_, _A_ vi. Tree-en, wooden.
 
-  _Trench master._ He—says G. Markham, _Soldier’s Grammar_, p.
-    128—“hath command over all the pyoners ... and by his [the master
+  _Trench master._ He - says G. Markham, _Soldier’s Grammar_, p.
+    128 - “hath command over all the pyoners ... and by his [the master
     general of the ordnance] directions seeth all manner of trenches
     cast up, whether it be for guard and inclosing of the campe, or for
     other particular annoyance to the enemye, or for the building of
@@ -36147,10 +36147,10 @@ Notings._
 
 
   In almost the words of my circular, “I would gladly reprint the
-  all but necessary continuation—though from an opposite point of
-  view—James I’s small _Counterblast_, his _Demonology_, 80 pages
-  in the 1603 edition—consulted by Shakespeare before writing his
-  _Macbeth_—collating the editions from that of 1597 to the Bishop of
+  all but necessary continuation - though from an opposite point of
+  view - James I’s small _Counterblast_, his _Demonology_, 80 pages
+  in the 1603 edition - consulted by Shakespeare before writing his
+  _Macbeth_ - collating the editions from that of 1597 to the Bishop of
   Winton’s in 1616.” Should any reader of this also wish it, I would
   be glad to hear from him to that effect.
 
@@ -36178,10 +36178,10 @@ Notings._
 ∵ Fifty Large-paper Copies only have been printed and numbered, price
 31_s._ 6_d._ each.
 
-“Fairly deserves success.”—_Athenæum_.
+“Fairly deserves success.” - _Athenæum_.
 
 “A beautiful specimen of the art of the publisher and
-printer.”—_Antiquary_.
+printer.” - _Antiquary_.
 
                   •       •       •       •       •
 
@@ -36194,20 +36194,20 @@ printer.”—_Antiquary_.
 
 The GENTLEMAN’S MAGAZINE LIBRARY presents the principal contents of
 the _Gentleman’s Magazine_ from its commencement in 1731 to 1868,
-arranged in subjects—all the contributions throughout this period,
+arranged in subjects - all the contributions throughout this period,
 on each topic, being brought together and classified systematically
 under heads. Each volume is devoted to one subject, and is complete
 in itself, and besides Notes and an Appendix, has a very copious and
 carefully prepared Index. The following are the subjects into which the
-work is divided:—
+work is divided: - 
 
   Manners and Customs.
   Dialect, Proverbs and Word Lore.
   Popular Superstitions.
   Popular Legends and Traditions.
-  Archæology—Geological and Pre-historic.
-  Archæology—Roman and Saxon.
-  Archæology—Foreign and Later English.
+  Archæology - Geological and Pre-historic.
+  Archæology - Roman and Saxon.
+  Archæology - Foreign and Later English.
   Numismatics.
   Historical Antiquities.
   Original Letters.
@@ -36221,7 +36221,7 @@ Each volume consists of from 300 to 350 closely printed demy 8vo.
 pages. The work is tastefully printed in oldface type, and is
 handsomely bound in cloth and Roxburgh half-morocco.
 
-                       Volumes already issued:—
+                       Volumes already issued: - 
 
   Vol. 1. On MANNERS and CUSTOMS.
   Vol. 2. On DIALECT, PROVERBS, Etc.
@@ -36229,14 +36229,14 @@ handsomely bound in cloth and Roxburgh half-morocco.
   Vol. 4. On POPULAR LEGENDS and TRADITIONS.
 
 “Not only full of value, but rich in popular interest in many
-directions.”—_British Quarterly Review_.
+directions.” - _British Quarterly Review_.
 
 “All who have not the _Gentleman’s Magazine_ will welcome this
 book, and those who have will find it convenient as a companion and
-guide.”—_Bibliographer_.
+guide.” - _Bibliographer_.
 
 “As a work of reference it will possess a great value, and students of
-local history will much appreciate its excellent index.”—_Whitehall
+local history will much appreciate its excellent index.” - _Whitehall
 Review_.
 
   ∵ _A full Prospectus, giving Prices of the various Editions, will
@@ -36265,7 +36265,7 @@ Review_.
                   SIEVEKING. With Proem by E. V. B.
 
 “We have every reason to be grateful to the industrious compiler, who
-has indefatigably ransacked a world-treasury of riches.”—_Times_.
+has indefatigably ransacked a world-treasury of riches.” - _Times_.
 
                   •       •       •       •       •
 
@@ -36277,18 +36277,18 @@ has indefatigably ransacked a world-treasury of riches.”—_Times_.
  Dew of the ever-living rose, gathered from the poet’s garden of many
                          lands. By E. V. B.
 
-“Full of the fairest blooms of the whole world of poetry.”—_Morning
+“Full of the fairest blooms of the whole world of poetry.” - _Morning
 Post_.
 
 “E. V. B. has made a charming collection of what the poets have said
-about the rose. She has drawn from many sources—from the Bible, from
+about the rose. She has drawn from many sources - from the Bible, from
 the Palatine Anthology, from Hafiz, and from Omar Khayyam, from Dante,
-from Ronsard, from Victor Hugo, from Heine—in fact, from the poets of
-all ages and countries.”—_Athenæum_.
+from Ronsard, from Victor Hugo, from Heine - in fact, from the poets of
+all ages and countries.” - _Athenæum_.
 
 “With its lovely typography, its appropriate cover, and the general
 excellence of its workmanship, this may claim to be one of the
-daintiest volumes ever issued from the English press.”—_Notes and
+daintiest volumes ever issued from the English press.” - _Notes and
 Queries_.
 
                   •       •       •       •       •
@@ -36301,19 +36301,19 @@ Queries_.
 
                         FIRST SERIES. 3 Vols.
 
-  Vol.   I.—FOLK-LORE RELICS of EARLY VILLAGE LIFE. By G. L. GOMME.
-  Vol.  II.—The GAME and PLAYE of the CHESSE. By CAXTON. Edited by W. E.
+  Vol.   I. - FOLK-LORE RELICS of EARLY VILLAGE LIFE. By G. L. GOMME.
+  Vol.  II. - The GAME and PLAYE of the CHESSE. By CAXTON. Edited by W. E.
                A. AXON.
-  Vol. III.—The HISTORY of FAIRS, ANCIENT and MODERN. By CORNELIUS
+  Vol. III. - The HISTORY of FAIRS, ANCIENT and MODERN. By CORNELIUS
                WALFORD.
 
                  SECOND SERIES. 3 Vols. Consisting of
 
-  Vol.   I.—COINS and MEDALS: their Place in History and Art. Edited by
+  Vol.   I. - COINS and MEDALS: their Place in History and Art. Edited by
                STANLEY LANE POOLE.
-  Vol.  II.—THE LIFE OF KING HAROLD: a Mediæval Romance, with
+  Vol.  II. - THE LIFE OF KING HAROLD: a Mediæval Romance, with
                Introduction and Notes by WALTER DE GRAY BIRCH.
-  Vol. III.—GLEANINGS from the NATURAL HISTORY of the ANCIENTS. By the
+  Vol. III. - GLEANINGS from the NATURAL HISTORY of the ANCIENTS. By the
                Rev. M. G. WATKINS, M.A.
 
 The Works constituting this Library are on subjects of interest to
@@ -36352,7 +36352,7 @@ First Series are left for sale.
                   •       •       •       •       •
 
   “The best tribute to the memory of Johnson which the centenary of
-              his death has called forth.”—_Athenæum_.
+              his death has called forth.” - _Athenæum_.
 
                   •       •       •       •       •
 

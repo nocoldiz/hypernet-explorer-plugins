@@ -1653,6 +1653,81 @@
     };
 
     //=============================================================================
+    // The bench kit
+    //
+    // Every bench that makes something (the fusion forge, the workbench, the
+    // enchanting bench, the grimorie desk, the hexorcist) is drawn from the same
+    // few parts the character creation sheet is drawn from, so the two read as
+    // one book: a titled section, a row of chips a choice is made on, a trigger
+    // that opens a longer list, and a grid of stat boxes for the numbers.
+    // Every argument that carries text is escaped here, once.
+    //=============================================================================
+
+    const BenchKit = (() => {
+        const esc = (s) => String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+
+        /** A small IconSet glyph, the size the CC section titles wear. */
+        const icon = (iconIndex, size) => (iconIndex == null || iconIndex < 0 || !window.CCArt)
+            ? '' : `<span class="cc-rpg-icon" style="${window.CCArt.icon(iconIndex, size || 16)}"></span>`;
+
+        /**
+         * A section: icon, title, an optional count badge, then the body.
+         * opts: { icon, title, badge, body, note, cls }
+         */
+        const section = (opts) => `
+            <div class="cc-bio-section sm-kit-section ${opts.cls || ''}">
+                <div class="cc-bio-section-title">${icon(opts.icon)} <span>${esc(opts.title)}</span>${opts.badge != null && opts.badge !== '' ? `<span class="sm-kit-badge">${esc(opts.badge)}</span>` : ''}</div>
+                ${opts.body || ''}
+                ${opts.note ? `<div class="cc-bio-note sm-kit-note" ${opts.noteId ? `id="${opts.noteId}"` : ''}>${esc(opts.note)}</div>` : ''}
+            </div>`;
+
+        /**
+         * A row of chips. Each chip: { label, onclick, selected, cursor,
+         * disabled, title, hover }. `selected` is the choice already made,
+         * `cursor` the chip under the pad cursor, the two drawn differently.
+         */
+        const chips = (list, cls) => `<div class="cc-bio-chips-row sm-kit-chips ${cls || ''}">${list.map(c => `
+                <button type="button" class="cc-bio-chip sm-kit-chip focusable${c.selected ? ' selected' : ''}${c.cursor ? ' sm-kit-cursor' : ''}${c.disabled ? ' disabled' : ''}"
+                    ${c.title ? `title="${esc(c.title)}"` : ''}
+                    ${c.hover ? `onmouseenter="${c.hover}"` : ''}
+                    onclick="${c.onclick}">${c.iconIndex ? icon(c.iconIndex) : ''}${esc(c.label)}</button>`).join('')}</div>`;
+
+        /**
+         * The CC pick trigger: one line that opens a longer list or a sheet.
+         * opts: { label, value, muted, onclick, focused, iconIndex, cls }
+         */
+        const trigger = (opts) => `
+            <div class="cc-bio-select cc-pick-trigger sm-kit-trigger focusable${opts.focused ? ' focused' : ''} ${opts.cls || ''}" tabindex="0" onclick="${opts.onclick}">
+                ${opts.label ? `<span class="sm-kit-trigger-key">${esc(opts.label)}</span>` : ''}
+                ${opts.iconIndex ? icon(opts.iconIndex, 24) : ''}
+                <span class="cc-pick-trigger-label${opts.muted ? ' sm-kit-muted' : ''}">${esc(opts.value)}</span>
+                ${opts.extra || ''}
+                <span class="cc-pick-trigger-caret">&#9662;</span>
+            </div>`;
+
+        /**
+         * A grid of stat boxes, the CC sheet's own. Each box: { label, value, bad }.
+         * Boxes with an empty value are left out, so a grid never shows a blank.
+         */
+        const stats = (boxes, cols) => `<div class="cc-stat-grid sm-kit-stats${cols ? ' sm-kit-stats--c' + cols : ''}">${boxes
+            .filter(b => b && b.value !== '' && b.value != null)
+            .map(b => `<div class="cc-stat-box${b.bad ? ' sm-kit-bad' : ''}" ${b.title ? `title="${esc(b.title)}"` : ''}><span class="cc-stat-label">${esc(b.label)}</span><span class="cc-stat-val">${esc(b.value)}</span></div>`)
+            .join('')}</div>`;
+
+        /**
+         * A section title standing on its own, for a page whose list must stay
+         * a direct child of the page so it can take the height that is left.
+         */
+        const title = (iconIndex, text, badge) => `
+            <div class="cc-bio-section-title sm-kit-subhead">${icon(iconIndex)} <span>${esc(text)}</span>${badge != null && badge !== '' ? `<span class="sm-kit-badge">${esc(badge)}</span>` : ''}</div>`;
+
+        return { esc, icon, section, chips, trigger, stats, title };
+    })();
+    SkillMaster.BenchKit = BenchKit;
+
+    //=============================================================================
     // Plugin Commands & Menu Integration
     //=============================================================================
 
@@ -3528,6 +3603,7 @@
     const FORGE_ANIM_IDX = 2;
     const FORGE_CREATE_IDX = 3;
     const FORGE_SPLIT_BASE = 4;
+    const FORGE_SECTION_ICONS = { dominant: 79, recessive: 76, animation: 234, fused: 183 };
 
     function makeFusedSpellName(names) {
         const parts = names.map(n => {
@@ -3934,11 +4010,15 @@
         const picking = this._editorPicking;
         const animPicking = this._editorAnimPicking;
 
+        const K = SkillMaster.BenchKit;
+        // Each slot is a section of the sheet with one trigger in it, the way
+        // the character sheet asks for an archetype: the trigger names what is
+        // in the slot, and opens the list on the right page.
         const slotMeta = [
             { label: T('SkillMaster.dominantSpell'),
-              hint: T('SkillMaster.magicOnlyDefinesTheEffect') },
+              hint: T('SkillMaster.magicOnlyDefinesTheEffect'), icon: FORGE_SECTION_ICONS.dominant },
             { label: T('SkillMaster.recessiveSpellOrSkill'),
-              hint: T('SkillMaster.spellOrSkillSetsThe') }
+              hint: T('SkillMaster.spellOrSkillSetsThe'), icon: FORGE_SECTION_ICONS.recessive }
         ];
         let slotsHTML = '';
         this._editorSlots.forEach((id, i) => {
@@ -3949,29 +4029,29 @@
             if (skill && i === FORGE_RECESSIVE_IDX) {
                 const cat = SkillMaster.getSkillCategory(skill.id);
                 const isSkill = cat ? SkillMaster.getCategoryType(cat) !== 'Magic' : false; // i18n-ignore: skill category id / type discriminator
-                const bLabel = isSkill ? (T('SkillMaster.skill')) : (T('SkillMaster.magic'));
-                typeBadge = `<span class="sm-forge-badge">${bLabel}</span>`;
+                typeBadge = isSkill ? (T('SkillMaster.skill')) : (T('SkillMaster.magic'));
             }
-            const value = skill
-                ? `<span class="sm-forge-icon" style="${SkillMaster.getSkillIconStyle(skill.iconIndex)}"></span><span class="inspect-spec-value">${skill.name}</span><span class="sm-forge-cost">MP ${skill.mpCost} &middot; AP ${skill.tpCost}</span>`
-                : `<span class="inspect-spec-value inspect-spec-value--muted">${T('SkillMaster.emptySlot')}</span>`;
-            slotsHTML += `
-                <div class="sm-forge-row focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorFocusSlot(${i})">
-                    <span class="inspect-spec-label">${meta.label}${typeBadge}</span>
-                    <span class="sm-forge-answer">${value}</span>
-                    <span class="sm-forge-hint">${meta.hint}</span>
-                </div>`;
+            slotsHTML += K.section({
+                icon: meta.icon, title: meta.label, badge: typeBadge, note: meta.hint,
+                cls: focused ? 'sm-kit-section--focused' : '',
+                body: K.trigger({
+                    focused, iconIndex: skill ? skill.iconIndex : 0,
+                    value: skill ? skill.name : T('SkillMaster.emptySlot'), muted: !skill,
+                    extra: skill ? `<span class="sm-forge-cost">MP ${skill.mpCost} &middot; AP ${skill.tpCost}</span>` : '',
+                    onclick: `SceneManager._scene.editorFocusSlot(${i})`
+                })
+            });
         });
 
         const animId = (this._editorAnimId && this._editorAnimId > 0) ? this._editorAnimId : this.getDefaultAnimId();
         const animData = animId && $dataAnimations ? $dataAnimations[animId] : null;
         const animName = animData ? `#${animId} · ${animData.name}` : (T('SkillMaster.default'));
         const animFocused = !animPicking && this._editorFocus === FORGE_ANIM_IDX;
-        const animRowHTML = `
-            <div class="sm-forge-row focusable ${animFocused ? 'focused' : ''}" onclick="SceneManager._scene.openAnimPicker()">
-                <span class="inspect-spec-label">${T('SkillMaster.animation')}</span>
-                <span class="sm-forge-answer"><span class="inspect-spec-value">${animName}</span></span>
-            </div>`;
+        const animRowHTML = K.section({
+            icon: FORGE_SECTION_ICONS.animation, title: T('SkillMaster.animation'),
+            cls: animFocused ? 'sm-kit-section--focused' : '',
+            body: K.trigger({ focused: animFocused, value: animName, onclick: 'SceneManager._scene.openAnimPicker()' })
+        });
 
         const allFilled = this._editorSlots.every(x => x != null);
         const fuseCost = allFilled ? this.editorFusionCost() : 0;
@@ -3985,9 +4065,7 @@
                     ${T('SkillMaster.fuseSpells2')}${costTag}
                 </div>
             </div>
-            <div class="sm-forge-knowledge ${canPay ? '' : 'sm-forge-knowledge--short'}">
-                ${T('SkillMaster.knowledge')}: <strong>${knowledge} KP</strong>${allFilled && !canPay ? (T('SkillMaster.notEnough')) : ''}
-            </div>`;
+            ${allFilled && !canPay ? `<div class="sm-craft-block">${knowledge} KP${T('SkillMaster.notEnough')}</div>` : ''}`;
 
         const customSpells = this.getEditorCustomSpells();
         let fusedListHTML = '';
@@ -4010,18 +4088,16 @@
               <h2 class="title">${title}</h2>
               <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
             </div>
-            <div class="sm-forge-rows">
+            <div class="sm-kit-scroll sm-forge-rows">
                 ${slotsHTML}
                 ${animRowHTML}
-                ${createHTML}
             </div>
-            <div class="ui-section sm-forged-section sm-bench-subhead">
-                <span class="inspect-section-title">${T('SkillMaster.fusedSpells')}</span>
-                <span class="ui-chip sm-skill-badge">${customSpells.length}</span>
-            </div>
-            <div id="fused-scroll-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list">
-                ${fusedListHTML}
-            </div>`;
+            ${createHTML}
+            ${K.section({
+                icon: FORGE_SECTION_ICONS.fused, title: T('SkillMaster.fusedSpells'), badge: customSpells.length,
+                cls: 'sm-kit-entries',
+                body: `<div id="fused-scroll-box" class="ui-list ui-scroll sm-forged-list">${fusedListHTML}</div>`
+            })}`;
 
         let rightHTML = '';
         if (picking) {
@@ -4100,17 +4176,17 @@
                             </div>
                             <span class="ui-chip sm-result-chip">${T('SkillMaster.becomesA')} ${resultKind}</span>
                         </div>
-                        <div class="ui-detail-scroll ui-scroll">
-                            <div class="inspect-spec-grid">
-                                <div class="inspect-spec-row"><span class="inspect-spec-label">${T('SkillMaster.mpLabel')}</span><span class="inspect-spec-value">${mp}</span></div>
-                                <div class="inspect-spec-row"><span class="inspect-spec-label">${T('SkillMaster.apLabel')}</span><span class="inspect-spec-value">${ap}</span></div>
-                                <div class="inspect-spec-row"><span class="inspect-spec-label">${T('SkillMaster.fusionCost')}</span><span class="inspect-spec-value ${knowledge >= previewCost ? '' : 'sm-value--short'}">${previewCost} KP</span></div>
-                                <div class="inspect-spec-row"><span class="inspect-spec-label">${T('SkillMaster.youHold')}</span><span class="inspect-spec-value">${knowledge} KP</span></div>
-                                <div class="inspect-spec-row"><span class="inspect-spec-label">${T('SkillMaster.dominant')}</span><span class="inspect-spec-value">${dominant.name}</span></div>
-                                <div class="inspect-spec-row"><span class="inspect-spec-label">${T('SkillMaster.recessive')}</span><span class="inspect-spec-value">${recessive.name}</span></div>
-                            </div>
-                            <div class="ui-prose">${T('SkillMaster.theDominantDefinesDamageAnd')}</div>
-                        </div>
+                        ${K.stats([
+                            { label: T('SkillMaster.mpLabel'), value: mp },
+                            { label: T('SkillMaster.apLabel'), value: ap },
+                            { label: T('SkillMaster.fusionCost'), value: `${previewCost} KP`, bad: knowledge < previewCost },
+                            { label: T('SkillMaster.youHold'), value: `${knowledge} KP` }
+                        ])}
+                        ${K.stats([
+                            { label: T('SkillMaster.dominant'), value: dominant.name },
+                            { label: T('SkillMaster.recessive'), value: recessive.name }
+                        ], 2)}
+                        <div class="cc-bio-note sm-kit-note">${T('SkillMaster.theDominantDefinesDamageAnd')}</div>
                     </div>`;
             } else {
                 rightHTML = `
@@ -5780,8 +5856,14 @@
         Scene_MenuBase.prototype.update.call(this);
 
         // A field has focus somewhere on the sheet: every letter belongs to it
-        // and nothing else on the page may read the keyboard.
-        if (this._craftTyping) return;
+        // and nothing else on the page may read the keyboard. The key guard
+        // stops every key before Input sees it, so a cancel that still gets
+        // through is the pad's B: a sheet opened at the keyboard and then
+        // walked away from with a pad in hand is left, not a trap.
+        if (this._craftTyping) {
+            if (Input.isTriggered('cancel')) this.closeCraftTextSheet();
+            return;
+        }
         // Same again for the letter sheet a pad types on: it answers every
         // press itself until it is spent.
         if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) return;
@@ -6639,6 +6721,7 @@
         }
         this._craftFocus = 0;
         this._craftChip = 0;
+        this._craftChipAt = {};
         this._craftPicker = null;
         this._craftPickIndex = 0;
         this._craftTyping = false;
@@ -7126,6 +7209,12 @@
             this._craftEditingId = null;
             this._craftBaseQuote = null;
         }
+        // The list shrank under the cursor: the next entry slides into its
+        // row, and the chip goes back to the harmless one so a second OK
+        // does not discard that one too. A cursor past the last row is
+        // brought back onto it.
+        this._craftChip = 0;
+        this._craftFocus = Math.max(0, Math.min(this._craftFocus || 0, this.craftFocusRows() - 1));
         SoundManager.playCancel();
         this.refreshUISkillDOM();
     };
@@ -7143,6 +7232,81 @@
     const componentName = (group, key) => tr('comp.' + group + '.' + key + '.name');
     const componentDesc = (group, key) => tr('comp.' + group + '.' + key + '.desc');
 
+    // The five parts of a build are picked straight off the page, one row of
+    // chips each, the way the character sheet asks its questions. Only the
+    // icon and the animation still open a list: those run to hundreds.
+    const CRAFT_CHIP_ROWS = ['core', 'power', 'scope', 'riders', 'refines'];
+    SkillMaster.CRAFT_CHIP_ROWS = CRAFT_CHIP_ROWS;
+    const CRAFT_MULTI_ROWS = ['riders', 'refines'];
+    const CRAFT_SECTION_ICONS = {
+        identity: 224, core: 79, power: 176, scope: 190, riders: 87, refines: 193, entries: 183
+    };
+    // The icon sheet is a grid this many across (.sm-kit-icon-grid in theme.css).
+    const CRAFT_ICON_COLS = 8;
+    SkillMaster.CRAFT_ICON_COLS = CRAFT_ICON_COLS;
+
+    // The chips a row offers. A rider the shape cannot reach is not offered at
+    // all, so the row stays short and no chip on it only buzzes.
+    Proto.craftChipRows = function (group) {
+        const build = this._craft;
+        const rows = this.craftPickerRows(group);
+        if (group !== 'riders' || !build) return rows;
+        return rows.filter(r => riderAllowed(build, r) || build.riders.includes(r.key));
+    };
+
+    // Which chip of a row the pad cursor stands on. A single choice row opens
+    // on the chip already chosen, a multi choice row on its first chip.
+    Proto.craftChipCursor = function (group) {
+        const rows = this.craftChipRows(group);
+        if (!rows.length) return 0;
+        const store = this._craftChipAt || (this._craftChipAt = {});
+        let at = store[group];
+        if (at == null) {
+            at = CRAFT_MULTI_ROWS.includes(group) ? 0 : rows.findIndex(r => r.key === this._craft[group]);
+        }
+        return Math.max(0, Math.min(rows.length - 1, at | 0));
+    };
+
+    Proto.craftPickChip = function (group, key) {
+        const rows = this.craftChipRows(group);
+        const at = rows.findIndex(r => r.key === key);
+        const k = this.craftPickerRows(group).findIndex(r => r.key === key);
+        if (at < 0 || k < 0) { SoundManager.playBuzzer(); return; }
+        (this._craftChipAt || (this._craftChipAt = {}))[group] = at;
+        this._craftFocus = CRAFT_ROWS.indexOf(group);
+        this.craftChoose(group, k);
+    };
+
+    // One line that says everything a part is: its name, what it does, what
+    // it costs and how much it complicates the build.
+    Proto.craftChipInfo = function (group, key) {
+        const row = byKey(this.craftPickerRows(group), key);
+        if (!row) return '';
+        return tr('chipInfo', {
+            name: componentName(group, key), desc: componentDesc(group, key),
+            kp: row.kp || 0, cx: (row.cx || 0).toFixed(1)
+        });
+    };
+
+    // A pointer resting on a chip reads it out under the row, without
+    // redrawing the page under the pointer.
+    Proto.craftHoverChip = function (group, key) {
+        const note = document.getElementById('craft-note-' + group);
+        if (note) note.textContent = this.craftChipInfo(group, key);
+    };
+
+    Proto.craftRowNote = function (group) {
+        const build = this._craft;
+        if (!this._craftPicker && CRAFT_ROWS[this._craftFocus] === group) {
+            const row = this.craftChipRows(group)[this.craftChipCursor(group)];
+            if (row) return this.craftChipInfo(group, row.key);
+        }
+        if (CRAFT_MULTI_ROWS.includes(group)) {
+            return tr('pickUpTo', { max: group === 'riders' ? CRAFT_MAX_RIDERS : CRAFT_MAX_REFINES });
+        }
+        return this.craftChipInfo(group, build[group]);
+    };
+
     Proto.renderCraftBench = function (knowledge) {
         const leftBox = document.getElementById('left-page-content');
         const rightBox = document.getElementById('right-page-content');
@@ -7150,92 +7314,72 @@
         const actor = this.getTeachActor();
         const build = this._craft;
         if (!actor || !build) return;
+        const K = SkillMaster.BenchKit;
 
         const spell = build.kind !== 'skill';
         const quote = craftQuote(build);
         const verdict = this.craftCanWrite();
         const picking = this._craftPicker;
+        const focusOn = (row) => !picking && this._craftFocus === CRAFT_ROWS.indexOf(row);
+        const rowLabelOf = (row) => {
+            const rowLabel = (row === 'lore' && spell) ? tr('row.incantation') : tr('row.' + row);
+            return rowLabel;
+        };
+        const activate = (row) => `SceneManager._scene.craftActivateRow(${CRAFT_ROWS.indexOf(row)})`;
 
-        const plain = (text, muted) =>
-            `<span class="inspect-spec-value ${muted ? 'inspect-spec-value--muted' : ''}">${esc(text)}</span>`;
-        const rowHTML = (idx, label, value, hint) => {
-            const focused = !picking && this._craftFocus === idx;
-            return `
-                <div class="sm-forge-row focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.craftActivateRow(${idx})">
-                    <span class="inspect-spec-label">${esc(label)}</span>
-                    <span class="sm-forge-answer">${value}</span>
-                    ${hint ? `<span class="sm-forge-hint">${esc(hint)}</span>` : ''}
-                </div>`;
+        // Who the entry is: five triggers in one compact block.
+        const anim = (build.animationId && typeof $dataAnimations !== 'undefined' && $dataAnimations)
+            ? $dataAnimations[build.animationId] : null;
+        const identHTML = `
+            <div class="sm-kit-ident">
+                ${K.trigger({ label: rowLabelOf('name'), cls: 'sm-kit-span2', focused: focusOn('name'),
+                    value: build.name || tr(spell ? 'defaultSpellName' : 'defaultSkillName'), muted: !build.name,
+                    iconIndex: build.iconIndex, onclick: activate('name') })}
+                ${K.trigger({ label: rowLabelOf('icon'), focused: focusOn('icon'),
+                    value: build.iconIndex ? '#' + build.iconIndex : tr('none'), muted: !build.iconIndex,
+                    onclick: activate('icon') })}
+                ${K.trigger({ label: rowLabelOf('animation'), focused: focusOn('animation'),
+                    value: anim ? anim.name : tr('none'), muted: !anim, onclick: activate('animation') })}
+                ${K.trigger({ label: rowLabelOf('description'), cls: 'sm-kit-span2', focused: focusOn('description'),
+                    value: build.description || tr('unwritten'), muted: !build.description, onclick: activate('description') })}
+                ${K.trigger({ label: rowLabelOf('lore'), cls: 'sm-kit-span2', focused: focusOn('lore'),
+                    value: build.lore || tr('unwritten'), muted: !build.lore, onclick: activate('lore') })}
+            </div>`;
+
+        const chipSection = (group) => {
+            const multi = CRAFT_MULTI_ROWS.includes(group);
+            const focused = focusOn(group);
+            const cursor = this.craftChipCursor(group);
+            const list = this.craftChipRows(group).map((r, k) => ({
+                label: componentName(group, r.key),
+                selected: multi ? build[group].includes(r.key) : build[group] === r.key,
+                cursor: focused && k === cursor,
+                hover: `SceneManager._scene.craftHoverChip('${group}', '${r.key}')`,
+                onclick: `SceneManager._scene.craftPickChip('${group}', '${r.key}')`
+            }));
+            const cap = group === 'riders' ? CRAFT_MAX_RIDERS : CRAFT_MAX_REFINES;
+            return K.section({
+                icon: CRAFT_SECTION_ICONS[group], title: rowLabelOf(group),
+                badge: multi ? `${build[group].length}/${cap}` : '',
+                body: K.chips(list), note: this.craftRowNote(group), noteId: 'craft-note-' + group,
+                cls: focused ? 'sm-kit-section--focused' : ''
+            });
         };
 
-        let rowsHTML = '';
-        CRAFT_ROWS.forEach((row, idx) => {
-            if (row === 'create' || row === 'randomize') return;
-            let value = '', hint = '';
-            if (row === 'name') {
-                value = plain(build.name || tr(spell ? 'defaultSpellName' : 'defaultSkillName'), !build.name);
-            } else if (row === 'description' || row === 'lore') {
-                value = plain(build[row] || tr('unwritten'), !build[row]);
-            } else if (row === 'icon') {
-                value = build.iconIndex
-                    ? `<span class="sm-forge-icon" style="${SkillMaster.getSkillIconStyle(build.iconIndex)}"></span>${plain('#' + build.iconIndex)}`
-                    : plain(tr('none'), true);
-            } else if (row === 'animation') {
-                const a = (build.animationId && typeof $dataAnimations !== 'undefined' && $dataAnimations)
-                    ? $dataAnimations[build.animationId] : null;
-                value = plain(a ? `#${a.id} · ${a.name}` : tr('none'), !a);
-            } else if (row === 'core') {
-                value = plain(componentName('core', build.core));
-                hint = componentDesc('core', build.core);
-            } else if (row === 'power' || row === 'scope') {
-                value = plain(componentName(row, build[row] || 'plain'));
-            } else if (row === 'riders' || row === 'refines') {
-                value = build[row].length
-                    ? plain(build[row].map(k => componentName(row, k)).join(', '))
-                    : plain(tr('none'), true);
-                hint = `${build[row].length}/${row === 'riders' ? CRAFT_MAX_RIDERS : CRAFT_MAX_REFINES}`;
-            }
-            const rowLabel = (row === 'lore' && spell) ? tr('row.incantation') : tr('row.' + row);
-            rowsHTML += rowHTML(idx, rowLabel, value, hint);
-        });
-
-        const createIdx = CRAFT_ROWS.indexOf('create');
-        const createFocused = !picking && this._craftFocus === createIdx;
-        const randomFocused = !picking && this._craftFocus === CRAFT_ROWS.indexOf('randomize');
         const owed = verdict.owed !== undefined ? verdict.owed : quote.price;
         const statName = window.SkillStatReq ? window.SkillStatReq.statName(quote.statKey) : quote.statKey;
         const blockText = verdict.ok ? '' : tr('blocked.' + verdict.reason, {
             stat: statName, need: quote.statReq,
             have: verdict.have !== undefined ? verdict.have : 0, max: CRAFT_MAX_PER_ACTOR
         });
-        const createHTML = `
+        const actionsHTML = `
             <div class="inspect-actions sm-forge-actions">
-                <div class="inspect-btn focusable ${randomFocused ? 'selected' : ''}" onclick="SceneManager._scene.craftRandomize()">${esc(tr('randomize'))}</div>
-                <div class="inspect-btn focusable ${createFocused ? 'selected' : ''} ${verdict.ok ? '' : 'unusable'}" onclick="SceneManager._scene.craftWrite()">
-                    ${esc(this._craftEditingId ? tr('rewrite') : tr('writeIt'))} <span class="sm-forge-cost">· ${owed} KP</span>
+                <div class="inspect-btn focusable ${focusOn('randomize') ? 'selected' : ''}" onclick="SceneManager._scene.craftRandomize()">${esc(tr('randomize'))}</div>
+                <div class="inspect-btn focusable ${focusOn('create') ? 'selected' : ''} ${verdict.ok ? '' : 'unusable'}" onclick="SceneManager._scene.craftWrite()">
+                    ${esc(this._craftEditingId ? tr('rewrite') : tr('writeIt'))} <span class="sm-forge-cost">&middot; ${owed} KP</span>
                 </div>
             </div>
-            <div class="sm-forge-knowledge ${verdict.reason === 'knowledge' ? 'sm-forge-knowledge--short' : ''}">
-                ${esc(tr('knowledge'))}: <strong>${knowledge} KP</strong>
-                ${blockText ? `<span class="sm-craft-block">${esc(blockText)}</span>` : ''}
-            </div>`;
-
-        let listHTML = '';
-        this.craftedEntries(build.kind).forEach((s, at) => {
-            const on = this._craftEditingId === s.id;
-            // Two rings, and they mean different things: "focused" is the entry
-            // the cursor is on, "selected" is which of its two chips the OK key
-            // would press. Left and right walk between them.
-            const cursor = !picking && this._craftFocus === CRAFT_ROWS.length + at;
-            const chip = (which) => (cursor && this._craftChip === which) ? ' selected' : '';
-            listHTML += `
-                <div class="sm-skill-row sm-craft-entry focusable ${on ? 'focused' : ''}${cursor ? ' sm-craft-entry--cursor' : ''}">
-                    <span class="sm-skill-ident" onclick="SceneManager._scene.openCraftBench('${build.kind}', ${s.id})"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></span><span class="sm-skill-name">${esc(s.name)}</span></span>
-                    <span class="ui-chip sm-skill-badge${chip(0)}" onclick="SceneManager._scene.openCraftBench('${build.kind}', ${s.id})">${esc(tr('edit'))}</span>
-                    <span class="ui-chip sm-skill-badge sm-craft-discard${chip(1)}" onclick="SceneManager._scene.craftDiscard(${s.id})">${esc(tr('discard'))}</span>
-                </div>`;
-        });
-        if (!listHTML) listHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('noneYet'))}</div></div>`;
+            ${blockText ? `<div class="sm-craft-block">${esc(blockText)}</div>` : ''}`;
 
         const craftTitle = spell ? tr('titleSpell') : tr('titleSkill');
         leftBox.innerHTML = `
@@ -7248,37 +7392,74 @@
               <div class="backpack-tab sm-bench-tab focusable ${spell ? 'active' : ''}" onclick="SceneManager._scene.openCraftBench('spell')">${esc(tr('titleSpell'))}</div>
               <div class="backpack-tab sm-bench-tab focusable ${!spell ? 'active' : ''}" onclick="SceneManager._scene.openCraftBench('skill')">${esc(tr('titleSkill'))}</div>
             </div>
-            <div class="sm-forge-rows sm-craft-rows">
-                ${rowsHTML}
-                ${createHTML}
+            <div id="craft-form-box" class="ui-scroll sm-kit-scroll sm-craft-rows">
+                ${K.section({ icon: CRAFT_SECTION_ICONS.identity, title: tr('identity'), body: identHTML })}
+                ${CRAFT_CHIP_ROWS.map(chipSection).join('')}
             </div>
-            <div class="ui-section sm-forged-section sm-bench-subhead">
-                <span class="inspect-section-title">${esc(spell ? tr('yourSpells') : tr('yourSkills'))}</span>
-                <span class="ui-chip sm-skill-badge">${this.craftedEntries(build.kind).length}</span>
-            </div>
-            <div id="craft-scroll-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list">
-                ${listHTML}
-            </div>`;
+            ${actionsHTML}`;
 
-        rightBox.innerHTML = picking
-            ? this.renderCraftPickerHTML(picking)
-            : this.renderCraftPreviewHTML(quote, verdict);
-        if (picking === 'animation') this.setupCraftAnimPreview();
+        if (picking) {
+            rightBox.innerHTML = this.renderCraftPickerHTML(picking);
+            if (picking === 'animation') this.setupCraftAnimPreview();
+            return;
+        }
+
+        const entries = this.craftedEntries(build.kind);
+        let listHTML = '';
+        entries.forEach((s, at) => {
+            const on = this._craftEditingId === s.id;
+            // Two rings, and they mean different things: "focused" is the entry
+            // the cursor is on, "selected" is which of its two chips the OK key
+            // would press. Left and right walk between them.
+            const cursor = this._craftFocus === CRAFT_ROWS.length + at;
+            const chip = (which) => (cursor && this._craftChip === which) ? ' selected' : '';
+            listHTML += `
+                <div class="sm-skill-row sm-craft-entry focusable ${on ? 'focused' : ''}${cursor ? ' sm-craft-entry--cursor' : ''}">
+                    <span class="sm-skill-ident" onclick="SceneManager._scene.openCraftBench('${build.kind}', ${s.id})"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></span><span class="sm-skill-name">${esc(s.name)}</span></span>
+                    <span class="ui-chip sm-skill-badge${chip(0)}" onclick="SceneManager._scene.openCraftBench('${build.kind}', ${s.id})">${esc(tr('edit'))}</span>
+                    <span class="ui-chip sm-skill-badge sm-craft-discard${chip(1)}" onclick="SceneManager._scene.craftDiscard(${s.id})">${esc(tr('discard'))}</span>
+                </div>`;
+        });
+        if (!listHTML) listHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('noneYet'))}</div></div>`;
+
+        rightBox.innerHTML = `
+            ${this.renderCraftPreviewHTML(quote, verdict)}
+            ${K.section({
+                icon: CRAFT_SECTION_ICONS.entries, title: spell ? tr('yourSpells') : tr('yourSkills'),
+                badge: `${entries.length}/${CRAFT_MAX_PER_ACTOR}`, cls: 'sm-kit-entries',
+                body: `<div id="craft-entries-box" class="ui-list ui-scroll sm-forged-list">${listHTML}</div>`
+            })}`;
     };
 
     Proto.renderCraftPickerHTML = function (group) {
         const build = this._craft;
         const rows = this.craftPickerRows(group);
         let html = '';
+
+        // The icons are a sheet to look at, not a list to read: a grid of the
+        // glyphs themselves, the one worn now ringed.
+        if (group === 'icon') {
+            rows.forEach((row, k) => {
+                const focused = this._craftPickIndex === k;
+                const chosen = row.iconIndex === build.iconIndex;
+                html += `
+                    <div class="sm-kit-icon-cell focusable ${focused ? 'focused' : ''} ${chosen ? 'selected' : ''}" title="#${row.iconIndex}" onclick="SceneManager._scene.craftChoose('icon', ${k})">
+                        <span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(row.iconIndex)}"></span>
+                    </div>`;
+            });
+            if (!html) html = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('nothingToBuy'))}</div></div>`;
+            return `
+                <div class="ui-detail">
+                    <div class="ui-detail-head">
+                        <div class="ui-detail-titles"><h3 class="sm-detail-name">${esc(tr('pick.icon'))}</h3></div>
+                        <div class="inspect-btn focusable" onclick="SceneManager._scene.closeCraftPicker()">${esc(tr('cancel'))}</div>
+                    </div>
+                    <div id="craft-pick-box" class="ui-detail-scroll ui-scroll sm-kit-icon-grid">${html}</div>
+                </div>`;
+        }
+
         rows.forEach((row, k) => {
             const focused = this._craftPickIndex === k;
-            if (group === 'icon') {
-                html += `
-                    <div class="sm-skill-row focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.craftChoose('icon', ${k})">
-                        <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(row.iconIndex)}"></span><span class="sm-skill-name">#${row.iconIndex}</span></span>
-                    </div>`;
-                return;
-            }
             if (group === 'animation') {
                 html += `
                     <div class="sm-skill-row anim-row focusable ${focused ? 'focused' : ''}" data-idx="${k}" onclick="SceneManager._scene.craftAnimHighlight(${k})">
@@ -7300,7 +7481,7 @@
         if (!html) html = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('nothingToBuy'))}</div></div>`;
 
         const focusedRow = rows[this._craftPickIndex];
-        const blurb = (focusedRow && focusedRow.key && group !== 'icon' && group !== 'animation')
+        const blurb = (focusedRow && focusedRow.key && group !== 'animation')
             ? `<div class="ui-prose">${esc(componentDesc(group, focusedRow.key))}</div>` : '';
 
         // An animation is chosen by eye: the bench plays it over the writer's
@@ -7356,6 +7537,7 @@
     Proto.renderCraftPreviewHTML = function (quote, verdict) {
         const build = this._craft;
         const actor = this.getTeachActor();
+        const K = SkillMaster.BenchKit;
         const spell = build.kind !== 'skill';
         const preview = buildCraftedSkill(build, actor.actorId(), { id: 0 });
         const statName = window.SkillStatReq ? window.SkillStatReq.statName(quote.statKey) : quote.statKey;
@@ -7364,11 +7546,25 @@
         const elName = (preview.damage.elementId && typeof $dataSystem !== 'undefined' && $dataSystem && $dataSystem.elements)
             ? $dataSystem.elements[preview.damage.elementId] : '';
 
-        const spec = (label, value, bad) =>
-            `<div class="inspect-spec-row"><span class="inspect-spec-label">${esc(label)}</span><span class="inspect-spec-value ${bad ? 'sm-value--short' : ''}">${esc(value)}</span></div>`;
+        // Everything that is a number is a stat box, the way the character
+        // sheet shows a build, so the whole preview reads at one glance.
+        const boxes = K.stats([
+            { label: spell ? tr('mpLabel') : tr('apLabel'), value: spell ? preview.mpCost : preview.tpCost },
+            { label: tr('price'), value: `${verdict.owed !== undefined ? verdict.owed : quote.price} KP`, bad: verdict.reason === 'knowledge' },
+            { label: tr('statFloor'), value: `${statName} ${quote.statReq}`, bad: short },
+            { label: tr('yourStat'), value: `${statName} ${have}`, bad: short },
+            { label: tr('complexity'), value: quote.complexity.toFixed(1) },
+            { label: tr('effectLabel'), value: tr('dmgType.' + preview.damage.type) },
+            { label: tr('element'), value: elName || tr('none') },
+            { label: tr('repeats'), value: preview.repeats },
+            { label: tr('variance'), value: preview.damage.variance + '%' },
+            { label: tr('critical'), value: preview.damage.critical ? tr('yes') : tr('no') },
+            { label: tr('occasionLabel'), value: preview.occasion === 0 ? tr('anywhere') : tr('battleOnly') },
+            { label: tr('riderCount'), value: preview.effects.length }
+        ]);
 
         return `
-            <div class="ui-detail sm-fuse-preview">
+            <div class="ui-detail sm-fuse-preview sm-kit-preview">
                 <div class="ui-detail-head">
                     <div class="ui-detail-titles">
                         <h3 class="sm-detail-name">${esc(preview.name)}</h3>
@@ -7376,26 +7572,11 @@
                     </div>
                     <span class="ui-chip sm-result-chip">${esc(spell ? tr('spendsMP') : tr('spendsAP'))}</span>
                 </div>
-                <div class="ui-detail-scroll ui-scroll">
-                    <div class="inspect-spec-grid">
-                        ${spec(spell ? tr('mpLabel') : tr('apLabel'), spell ? preview.mpCost : preview.tpCost)}
-                        ${spec(tr('complexity'), quote.complexity.toFixed(1))}
-                        ${spec(tr('statFloor'), `${statName} ${quote.statReq}`, short)}
-                        ${spec(tr('yourStat'), `${statName} ${have}`, short)}
-                        ${spec(tr('price'), `${verdict.owed !== undefined ? verdict.owed : quote.price} KP`, verdict.reason === 'knowledge')}
-                        ${spec(tr('effectLabel'), tr('dmgType.' + preview.damage.type))}
-                        ${spec(tr('element'), elName || tr('none'))}
-                        ${spec(tr('formula'), preview.damage.formula)}
-                        ${spec(tr('repeats'), preview.repeats)}
-                        ${spec(tr('variance'), preview.damage.variance + '%')}
-                        ${spec(tr('critical'), preview.damage.critical ? tr('yes') : tr('no'))}
-                        ${spec(tr('occasionLabel'), preview.occasion === 0 ? tr('anywhere') : tr('battleOnly'))}
-                        ${spec(tr('riderCount'), preview.effects.length)}
-                    </div>
-                    ${preview.description ? `<div class="ui-prose">${esc(preview.description)}</div>` : ''}
-                    ${build.lore ? `<div class="inspect-flavour">${esc(build.lore)}</div>` : ''}
-                    <div class="ui-prose">${esc(tr('benchBlurb', { stat: statName }))}</div>
-                </div>
+                ${boxes}
+                ${preview.damage.formula ? `<div class="sm-kit-formula"><span class="cc-stat-label">${esc(tr('formula'))}</span> <code>${esc(preview.damage.formula)}</code></div>` : ''}
+                ${preview.description ? `<div class="ui-prose sm-kit-prose">${esc(preview.description)}</div>` : ''}
+                ${build.lore ? `<div class="inspect-flavour sm-kit-prose">${esc(build.lore)}</div>` : ''}
+                <div class="cc-bio-note sm-kit-note">${esc(tr('benchBlurb', { stat: statName }))}</div>
             </div>`;
     };
 
@@ -7415,6 +7596,12 @@
         if (row === 'name' || row === 'description' || row === 'lore') this.openCraftTextSheet(row);
         else if (row === 'randomize') this.craftRandomize();
         else if (row === 'create') this.craftWrite();
+        else if (CRAFT_CHIP_ROWS.includes(row)) {
+            // OK on a row of chips presses the chip under the cursor.
+            const chip = this.craftChipRows(row)[this.craftChipCursor(row)];
+            if (chip) this.craftPickChip(row, chip.key);
+            else SoundManager.playBuzzer();
+        }
         else this.openCraftPicker(row);
     };
 
@@ -7428,6 +7615,8 @@
             else if (Input.isTriggered('cancel') || Input.isTriggered('escape')) this.closeCraftNameWarning(true);
             return;
         }
+
+        const pressed = (dir) => Input.isTriggered(dir) || Input.isRepeated(dir);
 
         if (this._craftPicker) {
             const rows = this.craftPickerRows(this._craftPicker);
@@ -7445,8 +7634,17 @@
             }
             if (Input.isTriggered('ok')) { this.craftChoose(this._craftPicker, this._craftPickIndex); return; }
             const prev = this._craftPickIndex;
-            if (Input.isTriggered('down') || Input.isRepeated('down')) this._craftPickIndex = (this._craftPickIndex + 1) % max;
-            else if (Input.isTriggered('up') || Input.isRepeated('up')) this._craftPickIndex = (this._craftPickIndex - 1 + max) % max;
+            // The icon sheet is a grid: left and right walk a line of it, up
+            // and down a column. Every other list is one column.
+            const step = this._craftPicker === 'icon' ? CRAFT_ICON_COLS : 1;
+            if (pressed('down')) this._craftPickIndex = Math.min(max - 1, this._craftPickIndex + step);
+            else if (pressed('up')) this._craftPickIndex = Math.max(0, this._craftPickIndex - step);
+            else if (step > 1 && pressed('right')) this._craftPickIndex = (this._craftPickIndex + 1) % max;
+            else if (step > 1 && pressed('left')) this._craftPickIndex = (this._craftPickIndex - 1 + max) % max;
+            if (step === 1 && this._craftPickIndex === prev) {
+                if (pressed('down')) this._craftPickIndex = 0;
+                else if (pressed('up')) this._craftPickIndex = max - 1;
+            }
             if (this._craftPickIndex !== prev) {
                 SoundManager.playCursor();
                 this.refreshUISkillDOM();
@@ -7464,6 +7662,8 @@
         const max = this.craftFocusRows();
         const prev = this._craftFocus;
         const prevChip = this._craftChip || 0;
+        const chipRow = CRAFT_ROWS[this._craftFocus];
+        const prevCursor = CRAFT_CHIP_ROWS.includes(chipRow) ? this.craftChipCursor(chipRow) : -1;
         if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
             this.closeCraftBench();
             return;
@@ -7478,15 +7678,24 @@
             && (Input.isTriggered('right') || Input.isTriggered('left'))) {
             // Only a finished entry has anything to step sideways to.
             this._craftChip = this._craftChip ? 0 : 1;
+        } else if (prevCursor >= 0 && (pressed('right') || pressed('left'))) {
+            // On a row of chips, left and right walk the chips; OK presses one.
+            const n = this.craftChipRows(chipRow).length;
+            if (n) this._craftChipAt[chipRow] = (prevCursor + (pressed('right') ? 1 : -1) + n) % n;
         }
         // Coming onto an entry row always offers the harmless chip first, so a
         // held Down can never land the cursor on Discard.
         if (this._craftFocus !== prev) this._craftChip = 0;
-        if (this._craftFocus !== prev || this._craftChip !== prevChip) {
+        const cursorMoved = prevCursor >= 0 && this._craftFocus === prev && this.craftChipCursor(chipRow) !== prevCursor;
+        if (this._craftFocus !== prev || this._craftChip !== prevChip || cursorMoved) {
             SoundManager.playCursor();
             this.refreshUISkillDOM();
-            this.scrollToActiveItem('craft-scroll-box',
-                '.sm-craft-rows .focused, .sm-craft-entry--cursor');
+            if (this.craftFocusedEntry()) {
+                this.scrollToActiveItem('craft-entries-box', '#craft-entries-box .sm-craft-entry--cursor');
+            } else {
+                this.scrollToActiveItem('craft-form-box',
+                    '#craft-form-box .sm-kit-section--focused, #craft-form-box .sm-kit-trigger.focused');
+            }
         }
     };
 
@@ -8281,6 +8490,8 @@
 
     Proto.enchantUnbind = function (entryId) {
         if (unbind(entryId, this._enchantKind || 'weapon')) {
+            // The next piece slides under the cursor: never onto Unmake.
+            this._enchantChip = 0;
             SoundManager.playCancel();
             this.refreshUISkillDOM();
         }
@@ -8332,10 +8543,15 @@
         this.refreshUISkillDOM();
     };
 
+    // The glyph each heading of the bench wears, the way the character sheet
+    // heads its sections.
+    const ENCHANT_ICONS = { weapon: 97, armor: 135, book: 189, bound: 183 };
+
     Proto.renderEnchantBench = function (knowledge) {
         const leftBox = document.getElementById('left-page-content');
         const rightBox = document.getElementById('right-page-content');
         if (!leftBox || !rightBox) return;
+        const K = SkillMaster.BenchKit;
         const kind = this._enchantKind || 'weapon';
         // Weapon / Armor / Book, the tail of every string key this page reads.
         const kindWord = kind.charAt(0).toUpperCase() + kind.slice(1);
@@ -8391,18 +8607,12 @@
               <div class="backpack-tab sm-bench-tab focusable ${kind === 'armor' ? 'active' : ''}" onclick="SceneManager._scene.openEnchantBench('armor')">${esc(tr('titleArmor'))}</div>
               <div class="backpack-tab sm-bench-tab focusable ${kind === 'book' ? 'active' : ''}" onclick="SceneManager._scene.openEnchantBench('book')">${esc(tr('titleBook'))}</div>
             </div>
-            <div class="sm-enchant-blurb">${esc(tr('blurb' + kindWord))}</div>
-            <div class="ui-section sm-bench-subhead">
-              <span class="inspect-section-title">${esc(tr('chooseGear'))}</span>
-              <span class="ui-chip sm-skill-badge">${slots.length}</span>
-            </div>
+            <div class="sm-enchant-blurb cc-bio-note">${esc(tr('blurb' + kindWord))}</div>
+            ${K.title(ENCHANT_ICONS[kind], tr('chooseGear'), slots.length)}
             <div id="enchant-gear-box" class="ui-scroll sm-gear-grid sm-bench-split-list">
                 ${slotsHTML}
             </div>
-            <div class="ui-section sm-bench-subhead">
-              <span class="inspect-section-title">${esc(tr('boundSoFar'))}</span>
-              <span class="ui-chip sm-skill-badge">${this.enchantBound().length}</span>
-            </div>
+            ${K.title(ENCHANT_ICONS.bound, tr('boundSoFar'), this.enchantBound().length)}
             <div id="enchant-bound-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list">
                 ${boundHTML}
             </div>`;
@@ -8432,11 +8642,10 @@
               <h2 class="title">${esc(tr('spellsTitle'))}</h2>
               <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
             </div>
-            <div class="sm-enchant-target">${esc(target)}</div>
+            ${K.title(chosen ? chosen.item.iconIndex : ENCHANT_ICONS[kind], target)}
             <div id="enchant-spell-box" class="ui-list ui-scroll sm-forged-list sm-forged-list--fill">
                 ${spellsHTML}
-            </div>
-            <div class="sm-forge-knowledge">${esc(tr('knowledge'))}: <strong>${knowledge} KP</strong></div>`;
+            </div>`;
     };
 
     Proto.updateEnchantBenchInput = function () {
@@ -8894,6 +9103,8 @@
         const En = E();
         const kind = this._writeKind || 'grimorie';
         if (En.unbind && En.unbind(entryId, kind)) {
+            // The next volume slides under the cursor: never onto Unmake.
+            this._writeChip = 0;
             SoundManager.playCancel();
             this.refreshUISkillDOM();
         }
@@ -8953,10 +9164,13 @@
         else this.writeUnmake(entry.id);
     };
 
+    const WRITE_ICONS = { chosen: 189, written: 183 };
+
     Proto.renderWriteBench = function (knowledge) {
         const leftBox = document.getElementById('left-page-content');
         const rightBox = document.getElementById('right-page-content');
         if (!leftBox || !rightBox) return;
+        const K = SkillMaster.BenchKit;
         const kind = this._writeKind || 'grimorie';
         const word = kind === 'grimorie' ? 'Grimorie' : 'SkillBook';
         const chosen = this.writeChosenSkills();
@@ -9008,10 +9222,8 @@
               <div class="backpack-tab sm-bench-tab focusable ${kind === 'grimorie' ? 'active' : ''}" onclick="SceneManager._scene.openWriteBench('grimorie')">${esc(tr('titleGrimorie'))}</div>
               <div class="backpack-tab sm-bench-tab focusable ${kind === 'skillbook' ? 'active' : ''}" onclick="SceneManager._scene.openWriteBench('skillbook')">${esc(tr('titleSkillBook'))}</div>
             </div>
-            <div class="sm-enchant-blurb">${esc(tr('blurb' + word))}</div>
-            <div class="ui-section sm-bench-subhead">
-              <span class="inspect-section-title">${esc(tr('chosenPages', { count: chosen.length, max: WRITE_MAX_ENTRIES }))}</span>
-            </div>
+            <div class="sm-enchant-blurb cc-bio-note">${esc(tr('blurb' + word))}</div>
+            ${K.title(WRITE_ICONS.chosen, tr('chosenPages', { count: chosen.length, max: WRITE_MAX_ENTRIES }))}
             <div id="write-chosen-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list">
                 ${chosenHTML}
             </div>
@@ -9020,10 +9232,7 @@
                     ${esc(tr('writeIt'))} <span class="sm-forge-cost">&middot; ${cost} KP</span>
                 </div>
             </div>
-            <div class="ui-section sm-bench-subhead">
-              <span class="inspect-section-title">${esc(tr('writtenSoFar'))}</span>
-              <span class="ui-chip sm-skill-badge">${this.writeMade().length}</span>
-            </div>
+            ${K.title(WRITE_ICONS.written, tr('writtenSoFar'), this.writeMade().length)}
             <div id="write-made-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list">
                 ${writtenHTML}
             </div>`;
@@ -9046,10 +9255,14 @@
               <h2 class="title">${esc(tr('source' + word))}</h2>
               <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
             </div>
+            ${K.stats([
+                { label: tr('statPages'), value: `${chosen.length}/${WRITE_MAX_ENTRIES}` },
+                { label: tr('statCost'), value: `${cost} KP`, bad: chosen.length > 0 && knowledge < cost },
+                { label: tr('knowledge'), value: `${knowledge} KP` }
+            ], 3)}
             <div id="write-source-box" class="ui-list ui-scroll sm-forged-list sm-forged-list--fill">
                 ${listHTML}
-            </div>
-            <div class="sm-forge-knowledge">${esc(tr('knowledge'))}: <strong>${knowledge} KP</strong></div>`;
+            </div>`;
     };
 
     Proto.writeDrop = function (skillId) {
@@ -9287,10 +9500,13 @@
         this.hexorcizeTake(idx, HEX_CHIPS[this._hexChip || 0] === 'all');
     };
 
+    const HEX_ICON = 135;
+
     Proto.renderHexorcizeBench = function (knowledge) {
         const leftBox = document.getElementById('left-page-content');
         const rightBox = document.getElementById('right-page-content');
         if (!leftBox || !rightBox) return;
+        const K = SkillMaster.BenchKit;
 
         const rows = this.hexorcizeRows();
         this._hexIndex = Math.max(0, Math.min(this._hexIndex || 0, rows.length - 1));
@@ -9321,7 +9537,7 @@
               <h2 class="title">${esc(tr('title'))}</h2>
               <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
             </div>
-            <div class="sm-enchant-blurb">${esc(tr('blurb'))}</div>
+            <div class="sm-enchant-blurb cc-bio-note">${esc(tr('blurb'))}</div>
             <div id="hexorcize-gear-box" class="ui-list ui-scroll sm-forged-list sm-forged-list--fill">
                 ${listHTML}
             </div>`;
@@ -9333,16 +9549,18 @@
             const item = focused.item;
             const spell = item.meta && item.meta.EnchantSpell ? $dataSkills[Number(item.meta.EnchantSpell)] : null;
             const params = ($dataSystem.terms && $dataSystem.terms.params) || [];
-            const statRows = (item.params || []).map((v, i) => (v ? `
-                <div class="inspect-spec-row"><span class="inspect-spec-label">${esc(tx(params[i] || ''))}</span><span class="inspect-spec-value">${v > 0 ? '+' : ''}${v}</span></div>` : '')).join('');
+            // The piece reads as the character sheet reads a build: its worth
+            // and its stats as one grid of boxes, not a column of rows.
+            const statBoxes = (item.params || []).map((v, i) => (v
+                ? { label: tx(params[i] || ''), value: `${v > 0 ? '+' : ''}${v}` } : null));
             detailHTML = `
-                <div class="ui-section">
-                  <h4 class="inspect-section-title">${esc(tx(item.name))}</h4>
-                </div>
-                <div class="inspect-spec-row"><span class="inspect-spec-label">${esc(tr('worth'))}</span><span class="inspect-spec-value">${focused.kp} KP</span></div>
-                <div class="inspect-spec-row"><span class="inspect-spec-label">${esc(tr('held'))}</span><span class="inspect-spec-value">${focused.count}</span></div>
-                ${spell ? `<div class="inspect-spec-row"><span class="inspect-spec-label">${esc(tr('bindingHeld'))}</span><span class="inspect-spec-value">${esc(tx(spell.name))}</span></div>` : ''}
-                ${statRows}`;
+                ${K.title(HEX_ICON, tx(item.name))}
+                ${K.stats([
+                    { label: tr('worth'), value: `${focused.kp} KP` },
+                    { label: tr('held'), value: focused.count },
+                    spell ? { label: tr('bindingHeld'), value: tx(spell.name) } : null
+                ], 3)}
+                ${K.stats(statBoxes)}`;
         }
 
         rightBox.innerHTML = `
@@ -9353,8 +9571,7 @@
             <div class="sm-bench-scroll">
                 ${detailHTML}
             </div>
-            <div class="sm-enchant-target">${esc(tr('totalHere', { kp: total }))}</div>
-            <div class="sm-forge-knowledge">${esc(tr('knowledge'))}: <strong>${knowledge} KP</strong></div>`;
+            <div class="sm-enchant-target cc-bio-note">${esc(tr('totalHere', { kp: total }))}</div>`;
     };
 
     Proto.updateHexorcizeBenchInput = function () {
@@ -9372,11 +9589,15 @@
         this._hexChip = Math.min(this._hexChip || 0, chips - 1);
 
         let moved = false;
+        // A new row always offers the harmless chip first, as every other
+        // bench does: a held Down must not carry "the whole stack" along.
         if (Input.isTriggered('down') || Input.isRepeated('down')) {
             this._hexIndex = (this._hexIndex + 1) % rows.length;
+            this._hexChip = 0;
             moved = true;
         } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
             this._hexIndex = (this._hexIndex - 1 + rows.length) % rows.length;
+            this._hexChip = 0;
             moved = true;
         } else if (Input.isTriggered('right') || Input.isRepeated('right')) {
             this._hexChip = (this._hexChip + 1) % chips;

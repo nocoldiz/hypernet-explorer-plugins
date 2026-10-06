@@ -257,12 +257,6 @@
     if (actor && actor._isCreatureActor) return true;
     const CC = window.Scene_CharacterCreation;
     if (CC && CC._isCreatureMode) return true;
-    const memberIndex = (actorId || 1) - 1;
-    if (memberIndex >= 0 && memberIndex < 3 &&
-        typeof $gameSwitches !== "undefined" && $gameSwitches &&
-        $gameSwitches.value(77 + memberIndex)) {
-      return true;
-    }
     return false;
   };
 
@@ -2046,14 +2040,13 @@
       // Picking a bust settles this character's portrait style.
       if (actor.setPortraitMode) actor.setPortraitMode("bust");
 
-      // Reproduction type variable: 87 for actor 1, 115 / 116 for 2 / 3.
-      const reproductiveVar = actorId === 2 ? 115 : actorId === 3 ? 116 : 87;
+      // The reproduction type is written on the actor itself.
       // i18n-ignore-start: bust folder ids
       if (category === "Bot") {
-        $gameVariables.setValue(reproductiveVar, -1);
+        if (actor.setReproductionType) actor.setReproductionType(-1);
       } else if (category === "Goblin" && actor.gender() === 1) {
         // i18n-ignore-end
-        $gameVariables.setValue(reproductiveVar, 2);
+        if (actor.setReproductionType) actor.setReproductionType(2);
       }
 
 

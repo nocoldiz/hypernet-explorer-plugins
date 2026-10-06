@@ -1195,6 +1195,7 @@
       if (window.$mindWiperActive) {
         window.$mindWiperActive = false;
         window.$mindWiperTargetActorId = null;
+        window.$mindWiperFee = 0;
         window.$ccArchetypeClassFilter = null;
         window.$ccClassReturnByPop = false;
         this.popScene();
@@ -1241,9 +1242,15 @@
       if (window.$mindWiperActive) {
         const targetId = window.$mindWiperTargetActorId || ($gameParty && $gameParty.targetActor() ? $gameParty.targetActor().actorId() : 1);
         const actor = $gameActors ? $gameActors.actor(targetId) : null;
+        // The clinic's wipe is paid only once a class is chosen.
+        const fee = Number(window.$mindWiperFee) || 0;
+        if (actor && fee > 0 && $gameParty && $gameParty.loseGold) {
+          $gameParty.loseGold(fee);
+        }
         if (actor) {
           const preservedSkills = (actor._skills || []).slice();
           actor._exp = actor._exp || {};
+          actor._exp[actor._classId] = 0;
           actor._exp[classId] = 0;
           actor.changeClass(classId, false);
           actor._level = 1;
@@ -1266,6 +1273,7 @@
         }
         window.$mindWiperActive = false;
         window.$mindWiperTargetActorId = null;
+        window.$mindWiperFee = 0;
         window.$ccArchetypeClassFilter = null;
         window.$ccClassReturnByPop = false;
         this.popScene();
@@ -1413,11 +1421,21 @@
   // Mind Wiper
   //=============================================================================
 
+  // opts.fee (gold): the surgery clinic's wipe. Nothing is wiped up front and
+  // the fee is taken only when a class is picked, so backing out is free. The
+  // item has already been spent, so it wipes at once.
   window.MindWiper = {
-    apply(actorId) {
+    apply(actorId, opts) {
       const targetId = actorId || (window.$gameTemp && window.$gameTemp._mindWiperActorId) || ($gameParty && $gameParty.targetActor() ? $gameParty.targetActor().actorId() : 1);
       const actor = $gameActors ? $gameActors.actor(targetId) : null;
       if (!actor) return;
+      const fee = opts && Number(opts.fee) > 0 ? Number(opts.fee) : 0;
+      window.$mindWiperFee = fee;
+      if (!fee) window.MindWiper._wipe(actor);
+      window.MindWiper._openClassSelection(targetId);
+    },
+
+    _wipe(actor) {
       const preservedSkills = (actor._skills || []).slice();
       actor._exp = actor._exp || {};
       actor._exp[actor._classId] = 0;
@@ -1429,7 +1447,9 @@
       actor.clearParamPlus();
       actor.recoverAll();
       preservedSkills.forEach((sid) => actor.learnSkill(sid));
+    },
 
+    _openClassSelection(targetId) {
       window.$mindWiperActive = true;
       window.$mindWiperTargetActorId = targetId;
       window.$ccClassReturnByPop = true;

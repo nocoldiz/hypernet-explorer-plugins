@@ -2719,7 +2719,7 @@ estate, went to the town called Milet to receive the Oracle of Apollo,
 where he made his prayers and offered sacrifice, and desired a husband
 for his daughter: but Apollo though he were a Grecian, and of the
 country of Ionia, because of the foundation of Milet, yet hee gave
-answer in Latine verse, the sence whereof was this:—
+answer in Latine verse, the sence whereof was this: - 
 
 Let Psyches corps be clad in mourning weed,
 And set on rock of yonder hill aloft:

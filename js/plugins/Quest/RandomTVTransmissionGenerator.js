@@ -2129,6 +2129,12 @@
         return pick;
     }
 
+    // Is this a story run? Switch 100 through the one reader of it.
+    function tvStoryMode() {
+        const CP = window.CharacterPresets;
+        try { return !!(CP && typeof CP.isStoryMode === 'function' && CP.isStoryMode()); } catch (e) { return false; }
+    }
+
     // Studio runtime helper invoked from the generated event commands.
     window.TVStudio = {
         begin(channelName, color) {
@@ -2139,6 +2145,15 @@
         },
         prepareSpeaker(name, isViewer) {
             const scene = SceneManager._scene;
+            // The letter blips under the box follow the name on the tag, so
+            // every presenter keeps one voice of their own however the studio
+            // event is drawn. Em's answers in a story run are hers to keep:
+            // staged, but silent.
+            const VO = window.DialogueVoiceOver;
+            if (VO) {
+                if (isViewer && tvStoryMode()) VO.silence();
+                else VO.speak(name);
+            }
             // A cursed broadcast's silences belong to the woman receiving it,
             // not to the studio: her own portrait, and nothing at all if the
             // game has no bust for her (see tvEmCurse).
@@ -2223,6 +2238,7 @@
         },
         end() {
             const scene = SceneManager._scene;
+            if (window.DialogueVoiceOver) window.DialogueVoiceOver.stop();
             if (scene && scene._bustManager && scene._bustManager.hideBusts) {
                 scene._bustManager.hideBusts();
             }

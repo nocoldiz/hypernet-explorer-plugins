@@ -992,23 +992,18 @@
   const _GENITAL_ALIEN = [-1, 2, 3, 4];
 
   // A party member is not rolled: their body was answered on the Bio page (or
-  // stated by the dossier they arrived on) and lives in the reproduction
-  // variable for their seat, 87 / 115 / 116 by party index, the very variable
-  // the status sheet and the biologic simulation read. Rolling one here made
-  // the panel contradict both, so Em could be shown testes and Bubba a uterus.
+  // stated by the dossier they arrived on) and lives on the actor
+  // (reproductionType), the very field the status sheet and the biologic
+  // simulation read. Rolling one here made the panel contradict both, so Em
+  // could be shown testes and Bubba a uterus.
   function _partyGenitalCode(npcName) {
     if (!npcName || typeof $gameParty === 'undefined' || !$gameParty) return null;
     const members = $gameParty.allMembers ? $gameParty.allMembers() : [];
-    // Only the three seats own one of these variables; a fourth companion
-    // (a pet, a summon) has no seat of its own to read and is rolled like
-    // anybody else.
-    const index = members.findIndex((member) => member && member.name() === npcName);
-    if (index < 0 || index > 2) return null;
-    const CCU = window.CharacterCreationUtils;
-    const varId = CCU && CCU.getReproductiveVariableId
-      ? CCU.getReproductiveVariableId(index)
-      : (index === 1 ? 115 : index === 2 ? 116 : 87);
-    const code = $gameVariables ? $gameVariables.value(varId) : null;
+    // A member whose body nobody has stated (a pet, a summon) answers null
+    // and is rolled like anybody else.
+    const member = members.find((m) => m && m.name() === npcName);
+    if (!member || typeof member.reproductionType !== 'function') return null;
+    const code = member.reproductionType();
     return _GENITAL_ALL.includes(code) ? code : null;
   }
 
@@ -1338,8 +1333,6 @@
   // Gender codes (ActorCharacterFields / NPC profiles): 0 Male, 1 Female,
   // 2 Non-binary, 3 Cocoon. The last two are compatible with everyone.
   const _ROM_GENDER_FLUID = g => g === 2 || g === 3;
-  // Reproduction type per player slot (ClassSelector); 3 = plant spores.
-  const _ROM_REPRO_VAR = { 1: 87, 2: 115, 3: 116 };
 
   // ==========================================================================
   // Unwanted courting
@@ -1427,8 +1420,8 @@
     return (actor?._selectedTraits || []).some(t => /cyber|robot|synthetic|machine/i.test(t?.name || ''));
   }
   function _actorIsBotanic(actor) {
-    const v = _ROM_REPRO_VAR[actor?.actorId?.()];
-    if (v && $gameVariables?.value(v) === 3) return true;
+    // Reproduction type 3 is plant spores (ActorCharacterFields).
+    if (actor?.reproductionType?.() === 3) return true;
     return /plant|flora|dryad|treant|fungus/i.test(actor?.currentClass?.()?.name || '');
   }
 

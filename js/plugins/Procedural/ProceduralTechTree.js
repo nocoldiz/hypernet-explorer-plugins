@@ -512,8 +512,8 @@
         // Investment yield: 70% to 120%+ of total reagent investment value.
         return {
             exp: Math.max(
-                Math.round(50 * depth * scale),
-                Math.round((invest / 500) * (1.0 + 0.15 * depth) * scale)
+                Math.round(75 * depth * scale),
+                Math.round((invest / 330) * (1.0 + 0.15 * depth) * scale)
             ),
             gold: Math.max(
                 Math.round(25000 * depth * scale),

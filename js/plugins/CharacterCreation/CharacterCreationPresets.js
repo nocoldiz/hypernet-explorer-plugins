@@ -1923,16 +1923,10 @@
       if (actor.changeClass) actor.changeClass(locks.classId, true);
       else actor._classId = locks.classId;
     }
-    actor._gender = locks.gender;
     if (actor.setGender) actor.setGender(locks.gender);
-    if (typeof $gameVariables !== "undefined" && $gameVariables) {
-      const idx = (typeof Scene_CharacterCreation !== "undefined" && Scene_CharacterCreation._currentPartyMemberIndex) || 0;
-      $gameVariables.setValue(38 + idx, locks.gender);
-      // Her organs are no longer asked on the story sheet, so they are held
-      // to the dossier's own answer rather than to whatever a step wrote.
-      const CCU = window.CharacterCreationUtils;
-      if (CCU && CCU.setReproductionType) CCU.setReproductionType(idx, locks.reproduction);
-    }
+    // Her organs are no longer asked on the story sheet, so they are held to
+    // the dossier's own answer rather than to whatever a step wrote.
+    if (actor.setReproductionType) actor.setReproductionType(locks.reproduction);
     // The creed and the trade are defaults, not locks: the Ritual left her a
     // will and a living to make, and both are the player's to write. Only an
     // Em who has answered neither is given the ones she opens on.
@@ -2296,104 +2290,27 @@
     return Object.keys(byId).map((id) => ({ id: Number(id), level: Math.min(5, byId[id]) }));
   }
 
+  // A dossier the player files from the creation board is a template, not a
+  // person: it can found any number of parties, so it carries the fields of
+  // the record (PartyPerson.fields) but neither the sheet nor the person uid,
+  // or every party built from it would be the same person to the world.
   function buildPlayerPreset(actor) {
-    const equips = actor.equips().map((item) =>
-      item ? { id: item.id, w: item.etypeId === 1 } : null);
-    const weapons = [];
-    const armors = [];
-    actor.equips().forEach((item) => {
-      if (!item) return;
-      (item.etypeId === 1 ? weapons : armors).push({ id: item.id, amount: 1 });
-    });
-    const specializations = presetSpecializations(actor);
-    const isCreature = !!(actor._isCreatureActor || isCreatureSlot(actor));
-
-    let gender = (actor.gender && typeof actor.gender === "function") ? actor.gender() : 0;
-    const memberIdx = ($gameParty && typeof $gameParty.members === "function") ? $gameParty.members().indexOf(actor) : -1;
-    if ((!gender || gender === 0) && memberIdx >= 0) {
-      const v = $gameVariables.value(38 + memberIdx);
-      if (v !== undefined && v !== null && v !== "") gender = Number(v) || 0;
-    }
-
-    let jobId = actor._jobId != null ? actor._jobId : 0;
-    if (!jobId && window.NPCSocietyRegistry && typeof window.NPCSocietyRegistry.getActorProfile === "function") {
-      const prof = window.NPCSocietyRegistry.getActorProfile(actor.actorId());
-      if (prof && prof.jobId) jobId = prof.jobId;
-    }
-
-    const romance = actor._ccRomance || {};
-    let sexualOrientation = romance.sexualKey || "";
-    let romanticOrientation = romance.romanticKey || "";
-    let relStyle = romance.styleKey || "";
-    if (!sexualOrientation && window.NPCSocietyRegistry && typeof window.NPCSocietyRegistry.getActorProfile === "function") {
-      const prof = window.NPCSocietyRegistry.getActorProfile(actor.actorId());
-      if (prof && prof._orientOverride) {
-        sexualOrientation = prof._orientOverride.sexualKey || "";
-        romanticOrientation = prof._orientOverride.romanticKey || "";
-      }
-      if (prof && prof._relStyleOverride) {
-        relStyle = prof._relStyleOverride;
-      }
-    }
-
-    // The rest of the Bio page, which nothing was writing: a dossier saved
-    // from the board used to come back with its creed, its standing, its blood
-    // and its body settled from its own id instead of from what the player
-    // answered, so those pages had to be filled in again every time.
-    const age = (actor._ccAge != null)
-      ? Number(actor._ccAge)
-      : (($gameSystem._ccBirthAge && memberIdx >= 0) ? Number($gameSystem._ccBirthAge[memberIdx]) : NaN);
-    let birthDate;
-    if (!isNaN(age) && age > 0) {
-      const nowYear = (window.TimeDateSystem && window.TimeDateSystem.getCurrentDateObj)
-        ? window.TimeDateSystem.getCurrentDateObj().getFullYear() : 2012;
-      birthDate = String(nowYear - age) + "-01-01"; // i18n-ignore: ISO date, read back by _initPresetBio
-    }
-    const CCU = window.CharacterCreationUtils;
-    const reproduction = (memberIdx >= 0 && CCU && CCU.getReproductionType)
-      ? CCU.getReproductionType(memberIdx) : undefined;
-    const hormones = actor.hormoneBalance ? actor.hormoneBalance() : null;
-
-    return {
+    const fields = personFields(actor);
+    delete fields.personUid;
+    delete fields.familiar;
+    delete fields.hidden;
+    delete fields.sourcePresetId;
+    return Object.assign(fields, {
       id: getNextPlayerPresetId(),
-      name: actor.name(),
-      classId: actor._classId,
-      sprite: actor.characterName(),
-      spriteIndex: actor.characterIndex(),
       // Deliberately empty: a template must not switch on live story flags, and
       // it must not carry a founding fortune either (the class purse stands).
       switches: [],
       money: 0,
       items: [],
-      weapons,
-      armors,
-      equips,
-      skills: actor.skills().map((skill) => skill.id),
-      traits: (actor._selectedTraits || []).map((trait) => trait.id || trait).filter((id) => id > 0),
-      specializations,
-      busts: actor.vnBust ? actor.vnBust() : "",
-      battler: actor.vnBattler ? actor.vnBattler() : "",
-      enemyId: actor._recruitedEnemyId || 0,
-      isCreature,
-      characterType: isCreature ? "creature" : "humanoid", // i18n-ignore: preset field value
-      archetypes: isCreature ? creatureArchetypeKeys(actor) : undefined,
-      gender,
-      jobId,
-      birthDate,
-      reproduction,
-      hormones: (hormones === null || hormones === undefined) ? undefined : hormones,
-      socialClass: (actor._wealthTier != null) ? Number(actor._wealthTier) : undefined,
-      morality: (actor._morality != null) ? Number(actor._morality) : undefined,
-      ideologyId: actor._ideologyId || undefined,
-      bloodType: actor._ccBloodType || actor._bloodType || undefined,
       hometown: $gameSystem._ccHometown || undefined,
-      sexualOrientation: sexualOrientation || undefined,
-      romanticOrientation: romanticOrientation || undefined,
-      relStyle: relStyle || undefined,
-      romance: Object.keys(romance).length > 0 ? Object.assign({}, romance) : undefined,
       playerMade: true,
       lore: T.has('CharPresets.playerMadeLore') ? T('CharPresets.playerMadeLore') : "",
-    };
+    });
   }
 
   /**
@@ -3007,7 +2924,7 @@
       equips: equips,
       skills: skills,
       traits: traits,
-      isCreature: $gameSwitches.value(77),
+      isCreature: !!actor._isCreatureActor,
       gender: actor.gender ? actor.gender() : 0,
     };
 
@@ -3084,6 +3001,383 @@
   }
 
   //=============================================================================
+  // PartyPerson - the one record of a person
+  //=============================================================================
+  // A party seat (Actor 2, Actor 3, the bench's scratch slot) is an actor id
+  // that outlives whoever sits in it. Every join used to overwrite SOME of the
+  // seat and leave the rest to whoever sat there before, which is how a recruit
+  // came out with the last occupant's traits, cravings, blood, body, pregnancy
+  // and skills. A person is now one record, and a seat is always emptied before
+  // a person is written onto it:
+  //
+  //   capture(actor)        the record of a party member: the dossier fields
+  //                         every board and file reads, plus `sheet`, the whole
+  //                         actor as it stands (wounds, illnesses, pregnancy,
+  //                         needs, cravings, training), so a recall or an
+  //                         import is the same person and not a sketch of them.
+  //   apply(record, seat)   empties the seat, then writes the record onto it.
+  //                         A record with a sheet is restored from it; one
+  //                         without (a written dossier, an NPC who never sat in
+  //                         a party) is built from its fields.
+  //   wipe(seat)            the empty seat on its own, in place, so anything
+  //                         already holding the actor keeps a live reference.
+  //
+  // The record is the same object the reserves keep, the QR / card / JSON
+  // carry, and the creation board saves (buildRetiredPreset, buildPlayerPreset,
+  // exportPayloadFromActor are all written from capture).
+
+  // Engine state that belongs to a fight in progress, never to the person.
+  const PERSON_SHEET_SKIP = new Set([
+    "_actorId", "_actions", "_actionInputIndex", "_actionState", "_result",
+    "_speed", "_lastTargetIndex", "_damagePopup", "_effectType", "_motionType",
+    "_weaponImageId", "_motionRefresh", "_selected", "_animations",
+    "_tpbState", "_tpbChargeTime", "_tpbCastTime", "_tpbIdleTime",
+    "_tpbTurnCount", "_tpbTurnEnd",
+  ]);
+
+  function newPersonUid() {
+    return "pp" + Date.now().toString(36) + Math.floor(Math.random() * 1e9).toString(36); // i18n-ignore: identifier
+  }
+
+  // Who this person is across seats, savegames and worlds. Anything that has
+  // to remember a party member (an NPC's opinion of them, the diary) files it
+  // under this rather than under the seat they happen to sit in.
+  function personUidOf(actor) {
+    if (!actor) return null;
+    if (!actor._personUid) actor._personUid = newPersonUid();
+    return actor._personUid;
+  }
+
+  // The whole actor as plain JSON. Game objects (the equipment slots) keep
+  // their class tag, so JsonEx brings them back as themselves. A field that
+  // cannot be written down (a live sprite, a DOM node) is not part of who they
+  // are and is left out rather than failing the capture.
+  function captureSheet(actor) {
+    const sheet = {};
+    Object.keys(actor).forEach((key) => {
+      if (PERSON_SHEET_SKIP.has(key)) return;
+      const value = actor[key];
+      if (value === undefined || typeof value === "function") return;
+      try {
+        sheet[key] = JSON.parse(JsonEx.stringify(value));
+      } catch (e) {
+        /* not serialisable, not part of the person */
+      }
+    });
+    return sheet;
+  }
+
+  function restoreSheet(actor, sheet) {
+    const copy = JsonEx.parse(JSON.stringify(sheet || {}));
+    Object.keys(copy).forEach((key) => {
+      if (!PERSON_SHEET_SKIP.has(key)) actor[key] = copy[key];
+    });
+  }
+
+  /**
+   * Empty a seat in place: every field goes, the actor is set up again from
+   * the database exactly as a new Game_Actor would be, and the database's own
+   * starting kit is taken back off (a seat's stock gear belongs to nobody).
+   * @param {Game_Actor|number} target - Actor, or actor id
+   * @returns {Game_Actor} The same actor object, emptied
+   */
+  function wipePersonSeat(target) {
+    const actorId = typeof target === "number" ? target : (target && target.actorId ? target.actorId() : 0);
+    const actor = typeof target === "number" ? $gameActors.actor(actorId) : target;
+    if (!actor || !actorId) return actor || null;
+    Object.keys(actor).forEach((key) => delete actor[key]);
+    Game_Actor.prototype.initialize.call(actor, actorId);
+    (actor._equips || []).forEach((slot) => slot && slot.setObject(null));
+    actor.refresh();
+    return actor;
+  }
+
+  // Trait stats and trait skills, without what a trait hands out at creation
+  // (items, equipment, switches): a person moving between seats already has
+  // whatever their traits once gave them, and handing it out again on every
+  // recall filled the party's pack.
+  const TRAIT_PARAM_INDEX = { hp: 0, mp: 1, atk: 2, def: 3, mat: 4, mdf: 5, agi: 6, luk: 7 };
+  function applyTraitSheet(actor, traitIds) {
+    actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
+    actor._selectedTraits = [];
+    actor._appliedTraitIds = [];
+    const book = (window.Health && window.Health.Traits) || [];
+    const nonSentient = !!(window.NPCCreature && window.NPCCreature.isNonSentientActor &&
+      window.NPCCreature.isNonSentientActor(actor));
+    const allows = window.TraitPoints && window.TraitPoints.allowsMind;
+    (traitIds || []).forEach((entry) => {
+      const id = (entry && typeof entry === "object") ? entry.id : entry;
+      const trait = book.find((t) => t && String(t.id) === String(id));
+      if (!trait || actor._selectedTraits.includes(trait)) return;
+      if (allows && !allows(trait, nonSentient)) return;
+      [trait.positive, trait.negative].forEach((stats) => {
+        Object.keys(stats || {}).forEach((param) => {
+          const index = TRAIT_PARAM_INDEX[param];
+          if (typeof index === "number") actor._paramPlus[index] += stats[param];
+        });
+      });
+      (trait.skills || []).forEach((skillId) => {
+        if ($dataSkills[skillId]) actor.learnSkill(skillId);
+      });
+      actor._selectedTraits.push(trait);
+      actor._appliedTraitIds.push(trait.id);
+    });
+  }
+
+  // The dossier fields of a live actor: everything a board, a card or a file
+  // reads without restoring the sheet.
+  function personFields(actor) {
+    const equips = actor.equips().map((item) =>
+      item ? { id: item.id, w: item.etypeId === 1 } : null);
+    const weapons = [];
+    const armors = [];
+    actor.equips().forEach((item) => {
+      if (!item) return;
+      (item.etypeId === 1 ? weapons : armors).push({ id: item.id, amount: 1 });
+    });
+    const isCreature = !!actor._isCreatureActor;
+
+    let jobId = actor._jobId != null ? actor._jobId : 0;
+    const registry = window.NPCSocietyRegistry;
+    const profile = (registry && typeof registry.getActorProfile === "function")
+      ? registry.getActorProfile(actor.actorId()) : null;
+    if (!jobId && profile && profile.jobId) jobId = profile.jobId;
+
+    const romance = actor._ccRomance || {};
+    let sexualOrientation = romance.sexualKey || "";
+    let romanticOrientation = romance.romanticKey || "";
+    let relStyle = romance.styleKey || "";
+    if (!sexualOrientation && profile && profile._orientOverride) {
+      sexualOrientation = profile._orientOverride.sexualKey || "";
+      romanticOrientation = profile._orientOverride.romanticKey || "";
+    }
+    if (!relStyle && profile && profile._relStyleOverride) relStyle = profile._relStyleOverride;
+
+    let birthDate;
+    const age = Number(actor._ccAge);
+    if (age > 0) {
+      const nowYear = (window.TimeDateSystem && window.TimeDateSystem.getCurrentDateObj)
+        ? window.TimeDateSystem.getCurrentDateObj().getFullYear() : 2012;
+      birthDate = String(nowYear - age) + "-01-01"; // i18n-ignore: ISO date, read back by _initPresetBio
+    }
+    const reproduction = actor.reproductionType ? actor.reproductionType() : null;
+    const hormones = actor.hormoneBalance ? actor.hormoneBalance() : null;
+    const model3d = (window.CC3DModel && window.CC3DModel.getConfig)
+      ? window.CC3DModel.getConfig(actor.actorId()) : null;
+
+    return {
+      personUid: personUidOf(actor),
+      name: actor.name(),
+      classId: actor._classId,
+      sprite: actor.characterName(),
+      spriteIndex: actor.characterIndex(),
+      level: actor.level,
+      weapons,
+      armors,
+      equips,
+      skills: actor.skills().map((skill) => skill.id),
+      traits: (actor._selectedTraits || []).map((trait) => (trait && trait.id) || trait).filter((id) => id > 0),
+      specializations: presetSpecializations(actor),
+      busts: actor.vnBust ? actor.vnBust() : "",
+      battler: actor.vnBattler ? actor.vnBattler() : "",
+      enemyId: actor._recruitedEnemyId || 0,
+      portraitMode: actor.portraitMode ? (actor.portraitMode() || undefined) : undefined,
+      isCreature,
+      characterType: isCreature ? "creature" : "humanoid", // i18n-ignore: preset field value
+      archetypes: isCreature ? creatureArchetypeKeys(actor) : undefined,
+      gender: actor.gender ? actor.gender() : 0,
+      jobId,
+      birthDate,
+      reproduction: (reproduction === null || reproduction === undefined) ? undefined : reproduction,
+      hormones: (hormones === null || hormones === undefined) ? undefined : hormones,
+      socialClass: (actor._wealthTier != null) ? Number(actor._wealthTier) : undefined,
+      morality: (actor._morality != null) ? Number(actor._morality) : undefined,
+      ideologyId: actor._ideologyId || undefined,
+      bloodType: actor._ccBloodType || actor._bloodType || undefined,
+      sexualOrientation: sexualOrientation || undefined,
+      romanticOrientation: romanticOrientation || undefined,
+      relStyle: relStyle || undefined,
+      romance: Object.keys(romance).length > 0 ? Object.assign({}, romance) : undefined,
+      model3d: model3d || undefined,
+      hidden: actor.name() === "Bubba", // i18n-ignore: preset id
+      // The written dossier they were played from, if any, so a benched Selene
+      // is still known to be the game's own (isAuthoredCharacter).
+      sourcePresetId: actor._isPresetActor ? (actor._presetId || 0) : 0,
+      // The familiar bound to them (SummonSystem.js). It is theirs, so it
+      // waits on the bench with them and travels in an exported character.
+      familiar: actor._familiar ? JSON.parse(JSON.stringify(actor._familiar)) : null,
+    };
+  }
+
+  /**
+   * The record of a live actor: the dossier fields plus the whole sheet.
+   * @param {Game_Actor} actor - Person to describe
+   * @returns {object} Person record
+   */
+  function capturePerson(actor) {
+    const record = personFields(actor);
+    record.sheet = captureSheet(actor);
+    return record;
+  }
+
+  // Builds a person out of a record that carries no sheet: a written dossier,
+  // an old exported file, or an NPC who never sat in a party (NPCSystemParty
+  // writes theirs from the society profile).
+  function applyPersonFields(record, actor) {
+    const actorId = actor.actorId();
+    if (record.name) actor.setName(record.name);
+    if (record.sprite) actor.setCharacterImage(record.sprite, record.spriteIndex || 0);
+    if (record.faceName) actor.setFaceImage(record.faceName, record.faceIndex || 0);
+    if ($dataClasses[record.classId]) actor.changeClass(record.classId, false);
+    actor.changeLevel(Math.max(1, Math.min(99, Number(record.level) || 1)), false);
+    if (Number(record.exp) > 0) actor._exp[actor._classId] = Number(record.exp);
+
+    actor.initSkills();
+    (record.skills || []).forEach((skillId) => {
+      if ($dataSkills[skillId]) actor.learnSkill(skillId);
+    });
+
+    // Worn, not stocked: the piece goes straight onto them, so the party's
+    // pack neither pays for it nor gains a second copy.
+    (record.equips || []).forEach((entry, slotId) => {
+      const itemId = (entry && typeof entry === "object") ? entry.id : entry;
+      if (!(itemId > 0)) return;
+      const isWeapon = (entry && typeof entry === "object")
+        ? !!entry.w
+        : actor.equipSlots()[slotId] === 1;
+      const item = isWeapon ? $dataWeapons[itemId] : $dataArmors[itemId];
+      if (item) actor.forceChangeEquip(slotId, item);
+    });
+
+    actor._isCreatureActor = record.characterType
+      ? record.characterType === "creature"
+      : !!record.isCreature;
+    const archetypes = (record.archetypes || []).filter(Boolean);
+    // The body is built out of the archetype, so a creature arrives with its
+    // own parts rather than the anatomy of whoever held the seat. A hybrid is
+    // only something the creature workshop knows how to assemble.
+    if (actor._isCreatureActor && archetypes.length) {
+      if (archetypes.length >= 2 && typeof window.applyCreatureSelection === "function") {
+        window.applyCreatureSelection(actorId, "hybrid", archetypes[0], archetypes[1], null, null); // i18n-ignore: mode key
+      } else if (typeof window.changeArchetypeForActor === "function") {
+        try { window.changeArchetypeForActor(actor, archetypes[0]); } catch (e) { /* anatomy layer not up */ }
+      }
+    }
+
+    applyTraitSheet(actor, record.traits);
+    actor._specLevels = {};
+    actor._specTrained = {};
+    (record.specializations || []).forEach((entry) => {
+      if (!entry || !entry.id) return;
+      const level = Math.max(1, Math.min(5, Number(entry.level) || 1));
+      actor._specTrained[entry.id] = level - 1;
+      if (actor.setSpecializationTrainedLevel) actor.setSpecializationTrainedLevel(entry.id, level);
+    });
+
+    if (record.gender !== undefined && actor.setGender) actor.setGender(Number(record.gender) || 0);
+    const CCU = window.CharacterCreationUtils;
+    if (record.reproduction != null && actor.setReproductionType) {
+      actor.setReproductionType(Number(record.reproduction));
+    } else if (record.gender !== undefined && CCU && CCU.applyGenderAndReproduction) {
+      CCU.applyGenderAndReproduction(actor, Number(record.gender) || 0, { keepOrgans: true });
+    }
+    if (record.hormones != null && actor.setHormoneBalance) actor.setHormoneBalance(Number(record.hormones));
+    if (record.bloodType) {
+      actor._ccBloodType = record.bloodType;
+      actor._bloodType = record.bloodType;
+      if (window.BloodTypeService && window.BloodTypeService.setForActor) {
+        window.BloodTypeService.setForActor(actor, record.bloodType);
+      }
+    }
+    const birthYear = parseInt(String(record.birthDate || "").slice(0, 4), 10);
+    if (!isNaN(birthYear)) {
+      const nowYear = (window.TimeDateSystem && window.TimeDateSystem.getCurrentDateObj)
+        ? window.TimeDateSystem.getCurrentDateObj().getFullYear() : 2012;
+      actor._ccAge = Math.max(1, nowYear - birthYear);
+    }
+    if (record.jobId !== undefined) actor._jobId = Number(record.jobId) || 0;
+    if (record.socialClass != null) actor._wealthTier = Number(record.socialClass);
+    if (record.morality != null) actor._morality = Number(record.morality);
+    if (record.ideologyId) actor._ideologyId = record.ideologyId;
+    if (record.sexualOrientation || record.romanticOrientation || record.relStyle || record.romance) {
+      actor._ccRomance = Object.assign({}, record.romance || {}, {
+        sexualKey: record.sexualOrientation || (record.romance && record.romance.sexualKey) || "hetero", // i18n-ignore: orientation key
+        romanticKey: record.romanticOrientation || (record.romance && record.romance.romanticKey) || "hetero", // i18n-ignore: orientation key
+        styleKey: record.relStyle || (record.romance && record.romance.styleKey) || "monogamous", // i18n-ignore: style key
+      });
+    }
+
+    if (record.busts && actor.setVnBust) {
+      actor.setVnBust(record.busts);
+      if (actor.setPortraitMode) actor.setPortraitMode("bust");
+    } else if (record.battler && actor.setVnBattler) {
+      // Portrayed by a battler image (a creature, or a monster recruited in
+      // battle). Leaving the portrait mode unset lets the status screen build
+      // the 3D model of the recorded enemy when one resolves.
+      actor.setVnBattler(record.battler);
+      actor._recruitedEnemyId = record.enemyId || 0;
+    }
+    if (record.portraitMode && actor.setPortraitMode) actor.setPortraitMode(record.portraitMode);
+    if (record.model3d && window.CC3DModel && window.CC3DModel.setConfig) {
+      window.CC3DModel.setConfig(actorId, record.model3d);
+    }
+
+    actor._familiar = record.familiar ? JSON.parse(JSON.stringify(record.familiar)) : null;
+    actor._isPresetActor = !!record.sourcePresetId;
+    actor._presetId = record.sourcePresetId || 0;
+
+    // Condition a record states without a sheet (an NPC walking in off the
+    // street arrives as hungry, tired and badly in want as they were).
+    if (record.hunger != null) actor._hunger = Number(record.hunger);
+    if (record.sleep != null) actor._sleep = Number(record.sleep);
+    actor.refresh();
+    // Nobody arrives dead or carrying a state: a seat taken over from a fallen
+    // member used to hand the newcomer its Death. Only what the record states
+    // about their health is put back below.
+    actor.recoverAll();
+    const AS = window.AddictionSystem;
+    if (AS && record.cravings && typeof record.cravings === "object") {
+      AS.keysFor(actor).forEach((key) => {
+        const value = Number(record.cravings[key]);
+        if (Number.isFinite(value)) AS.setCraving(actor, key, value);
+      });
+    }
+    if (record.hp != null) actor.setHp(Math.min(Number(record.hp), actor.mhp));
+    if (record.mp != null) actor.setMp(Math.min(Number(record.mp), actor.mmp));
+  }
+
+  /**
+   * Seat a person: the seat is emptied, then the record is written onto it.
+   * @param {object} record - Person record (a dossier, a file, an NPC's)
+   * @param {Game_Actor|number} target - Seat, as an actor or an actor id
+   * @returns {Game_Actor|null} The seated actor
+   */
+  function applyPerson(record, target) {
+    if (!record) return null;
+    const actor = wipePersonSeat(target);
+    if (!actor) return null;
+    if (record.sheet && typeof record.sheet === "object") {
+      restoreSheet(actor, record.sheet);
+    } else {
+      applyPersonFields(record, actor);
+    }
+    actor._personUid = record.personUid || actor._personUid || newPersonUid();
+    actor.refresh();
+    return actor;
+  }
+
+  window.PartyPerson = {
+    capture: capturePerson,
+    fields: personFields,
+    apply: applyPerson,
+    wipe: wipePersonSeat,
+    uidOf: personUidOf,
+    applyTraits: applyTraitSheet,
+    sheet: captureSheet,
+    restoreSheet,
+  };
+
+  //=============================================================================
   // Sending a party member to the reserves
   //=============================================================================
   // The Dynamics menu can bench a companion instead of dismissing them for
@@ -3114,17 +3408,9 @@
     return Math.max(1000, ...ids, ...spent, 0) + 1;
   }
 
-  /**
-   * Build the dossier for a member being benched.
-   * @param {Game_Actor} actor - Member leaving the active party
-   * @returns {object} Preset object
-   */
-  // Switches 77/78/79 flag Actor 1/2/3 as portrayed by a battler image.
-  function isCreatureSlot(actor) {
-    const slot = actor && actor.actorId ? actor.actorId() : 0;
-    return !!($gameSwitches && slot >= 1 && slot <= 3 && $gameSwitches.value(76 + slot));
-  }
-
+  // The record of who they are (PartyPerson.capture, sheet and all), stamped
+  // with what the bench files it under: an id, the place they wait, and the
+  // day they were benched.
   function buildRetiredPreset(actor) {
     const minute = $gameVariables ? ($gameVariables.value(114) || 0) : 0;
     // Same calendar the roster history prints (NPCSystemParty.js).
@@ -3135,23 +3421,6 @@
     const home = UNHOMEABLE_MAP_IDS.includes($gameMap.mapId())
       ? FALLBACK_HOME
       : { mapId: $gameMap.mapId(), x: $gamePlayer.x, y: $gamePlayer.y };
-
-    // Gear worn on the way out travels with them. _applyPreset equips out of
-    // the party's stock, so every worn piece is listed both as inventory and as
-    // an equip slot; nothing is taken off the party that it still holds.
-    // A hand slot holds a weapon or a shield, so the slot no longer says which
-    // database the id belongs to: each piece records it for itself.
-    const equips = actor.equips().map((item) =>
-      item ? { id: item.id, w: item.etypeId === 1 } : null);
-    const weapons = [];
-    const armors = [];
-    actor.equips().forEach((item, slotId) => {
-      if (!item) return;
-      const isWeapon = item.etypeId === 1;
-      (isWeapon ? weapons : armors).push({ id: item.id, amount: 1 });
-    });
-
-    const specializations = presetSpecializations(actor);
 
     const className = actor.currentClass() ? actor.currentClass().name : "";
     const leaderName = $gameParty.leader() ? $gameParty.leader().name() : "";
@@ -3164,47 +3433,22 @@
       level: actor.level,
     });
 
-    return {
+    // Gear worn on the way out is in the record and travels on them.
+    return Object.assign(capturePerson(actor), {
       id: getNextRetiredPresetId(),
-      name: actor.name(),
-      classId: actor._classId,
-      sprite: actor.characterName(),
-      spriteIndex: actor.characterIndex(),
       mapId: home.mapId,
       x: home.x,
       y: home.y,
       // Deliberately empty: a dossier must not switch on live story flags.
       switches: [],
-      level: actor.level,
       money: 0,
       items: [],
-      weapons,
-      armors,
-      equips,
-      skills: actor.skills().map((skill) => skill.id),
-      traits: (actor._selectedTraits || []).map((trait) => trait.id || 0).filter((id) => id > 0),
-      specializations,
-      busts: actor.vnBust ? actor.vnBust() : "",
-      // A creature or a recruited monster is portrayed by a battler image, not
-      // by a bust, so the dossier carries the image and the enemy it came from
-      // (the status screen builds that enemy's 3D model from the id).
-      battler: actor.vnBattler ? actor.vnBattler() : "",
-      enemyId: actor._recruitedEnemyId || 0,
-      isCreature: isCreatureSlot(actor),
-      gender: actor.gender ? actor.gender() : 0,
-      hidden: !!(actor && typeof actor.name === "function" && actor.name() === "Bubba"), // i18n-ignore: preset id
-      // The written dossier they were played from, if any, so a benched Selene
-      // is still known to be the game's own (isAuthoredCharacter).
-      sourcePresetId: actor._isPresetActor ? (actor._presetId || 0) : 0,
-      // The familiar bound to them (SummonSystem.js). It is theirs, so it
-      // waits on the bench with them and travels in an exported character.
-      familiar: actor._familiar ? JSON.parse(JSON.stringify(actor._familiar)) : null,
       retired: true,
       retiredAtMin: minute,
       retiredDate: dateStr,
       retiredClassName: className,
       lore,
-    };
+    });
   }
 
   /**
@@ -3280,13 +3524,27 @@
    */
   function freeCompanionActorId() {
     if (!$gameParty) return 0;
-    const taken = $gameParty._actors || [];
     if ($gameSwitches && $gameSwitches.value(67)) {
-      return taken.includes(3) ? 0 : 3;
+      return isSeatFree(3) ? 3 : 0;
     }
-    if (!taken.includes(2)) return 2;
-    if (!taken.includes(3)) return 3;
+    if (isSeatFree(2)) return 2;
+    if (isSeatFree(3)) return 3;
     return 0;
+  }
+
+  /**
+   * Whether nobody holds this seat. A member out on a work shift is not in the
+   * party, but the seat is still theirs (WorkSystem.Shifts): handing it to
+   * somebody else wrote the newcomer over the worker, who then came home as a
+   * copy of them. Every seat picker asks here.
+   * @param {number} actorId - Seat
+   * @returns {boolean}
+   */
+  function isSeatFree(actorId) {
+    if (!$gameParty) return false;
+    if (($gameParty._actors || []).includes(actorId)) return false;
+    const shifts = window.WorkSystem && window.WorkSystem.Shifts;
+    return !(shifts && shifts.isBusy && shifts.isBusy(actorId));
   }
 
   function isEmStoryParty() {
@@ -3315,97 +3573,21 @@
   }
 
   /**
-   * Write a retired dossier back onto a companion actor slot. The slot may hold
-   * whoever last used it (an old recruit, or this same member before they were
-   * benched), so every field is overwritten rather than merged.
+   * Write a retired dossier back onto a companion seat. The seat is emptied
+   * first (PartyPerson.apply), so nothing of whoever last sat there survives,
+   * and a dossier filed with its sheet comes back as exactly the person who
+   * was benched: wounds, illnesses, pregnancy and training included.
    * @param {object} preset - Retired dossier
    * @param {Game_Actor} actor - Actor slot receiving them
+   * @returns {Game_Actor} The seated actor
    */
   function applyRetiredPreset(preset, actor) {
-    actor.setName(preset.name);
-    if (preset.sprite) {
-      actor.setCharacterImage(preset.sprite, preset.spriteIndex || 0);
-    }
-    if ($dataClasses[preset.classId]) {
-      actor.changeClass(preset.classId, false);
-    }
-    // After the class change, so the exp curve is the one they come back on.
-    actor.changeLevel(Math.max(1, Math.min(99, preset.level || 1)), false);
-
-    // initSkills drops the previous occupant's list and relearns the class
-    // skills up to this level; the dossier's own skills go on top.
-    actor.initSkills();
-    (preset.skills || []).forEach((skillId) => {
-      if ($dataSkills[skillId]) actor.learnSkill(skillId);
-    });
-
-    // The gear on the way out comes back with them. Strip the slot first with
-    // forceChangeEquip (which does not pay the old occupant's equipment into
-    // the party's stock), then hand the party one copy of each dossier piece
-    // and equip it, so nothing is duplicated and nothing is conjured twice.
-    actor.equips().forEach((item, slotId) => {
-      if (item) actor.forceChangeEquip(slotId, null);
-    });
-    (preset.equips || []).forEach((entry, slotId) => {
-      // Older dossiers stored a bare id per slot; newer ones say what it was.
-      const itemId = (entry && typeof entry === 'object') ? entry.id : entry;
-      if (!(itemId > 0)) return;
-      const isWeapon = (entry && typeof entry === 'object')
-        ? !!entry.w
-        : actor.equipSlots()[slotId] === 1;
-      const item = isWeapon ? $dataWeapons[itemId] : $dataArmors[itemId];
-      if (!item) return;
-      $gameParty.gainItem(item, 1);
-      actor.changeEquip(slotId, item);
-    });
-
-    if (Array.isArray(preset.traits) && preset.traits.length &&
-        window.CharacterCreationUtils && window.CharacterCreationUtils.applyTraitsToActor) {
-      window.CharacterCreationUtils.applyTraitsToActor(actor, preset.traits);
-    }
-
-    actor._specLevels = {};
-    if (Array.isArray(preset.specializations) && actor.setSpecializationTrainedLevel) {
-      preset.specializations.forEach((entry) => {
-        if (entry && entry.id) actor.setSpecializationTrainedLevel(entry.id, entry.level);
-      });
-    }
-
-    // Switches 77/78/79 say whether Actor 1/2/3 is a creature; the slot may
-    // still be flagged from whoever held it before, and a retired companion is
-    // recorded as one or not in their own dossier.
-    const slot = actor.actorId();
-    if ($gameSwitches && slot >= 1 && slot <= 3) {
-      $gameSwitches.setValue(76 + slot, !!preset.isCreature);
-    }
-
-    if (actor.setGender && preset.gender !== undefined) actor.setGender(preset.gender);
-    // Whoever held the slot before is gone, including the monster it may have
-    // been recruited from.
-    actor._recruitedEnemyId = 0;
-    actor._recruitedLook = null;   // the look roll of whoever held the slot before goes with them
-    if (preset.busts && actor.setVnBust) {
-      actor.setVnBust(preset.busts);
-      if (actor.setPortraitMode) actor.setPortraitMode("bust");
-    } else if (preset.battler && actor.setVnBattler) {
-      // Portrayed by a battler image (a creature, or a monster recruited in
-      // battle). Leaving the portrait mode unset lets the status screen build
-      // the 3D model of the recorded enemy when one resolves, and fall back to
-      // the flat battler image when it does not.
-      if (actor.setVnBust) actor.setVnBust("");
-      actor.setVnBattler(preset.battler);
-      if (actor.setPortraitMode) actor.setPortraitMode(0);
-      actor._recruitedEnemyId = preset.enemyId || 0;
-      actor._recruitedLook = null;   // the look roll of whoever held the slot before goes with them
-    }
-
-    // Their familiar comes back with them, and nobody else's stays in the slot.
-    actor._familiar = preset.familiar ? JSON.parse(JSON.stringify(preset.familiar)) : null;
-
+    const seated = applyPerson(preset, actor);
+    if (!seated) return null;
     // Anatomy skills need no call here: Health_Core grants them on addActor.
-    actor.refresh();
     // They have been resting since the day they were benched.
-    actor.recoverAll();
+    seated.recoverAll();
+    return seated;
   }
 
   /**
@@ -3435,7 +3617,6 @@
 
     applyRetiredPreset(preset, actor);
     $gameParty.addActor(actorId);
-    if ($gameVariables) $gameVariables.setValue(29, $gameParty.members().length);
 
     // Off the bench for good. Both writes assign a new array: the fields are
     // WorldManager getter/setter pairs backed by world.json, so only a
@@ -4884,7 +5065,14 @@
     const full = JSON.stringify(exportPayload(preset));
     const utf8 = (text) => unescape(encodeURIComponent(text));
     if (qrVersionFor(utf8(full).length)) return qrEncodeText(full);
-    return qrEncodeText(JSON.stringify(exportCompactPayload(exportPayload(preset))));
+    const compact = JSON.stringify(exportCompactPayload(exportPayload(preset)));
+    if (qrVersionFor(utf8(compact).length)) return qrEncodeText(compact);
+    // A whole sheet (wounds, illnesses, training) outgrows the largest code a
+    // phone can read. The code then says who they are, and the card, the JSON
+    // and the text written into this same PNG still carry all of them.
+    const bare = exportCompactPayload(exportPayload(preset));
+    delete bare.character.sheet;
+    return qrEncodeText(JSON.stringify(bare));
   }
 
   /**
@@ -5553,6 +5741,7 @@
     unstationReserves,
     reservesStationedAt,
     freeCompanionActorId,
+    isSeatFree,
     getUsedPresetIds,
     isPresetUsed,
     isPresetEndless,

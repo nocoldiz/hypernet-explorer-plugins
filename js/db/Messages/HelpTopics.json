@@ -13,7 +13,11 @@
     "order": 11,
     "title": "HelpTopics.controlsMenus.title",
     "description": "HelpTopics.controlsMenus.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Hotkeys",
+      "Scorciatoie"
+    ]
   },
   "controlsMouse": {
     "type": "mechanic",
@@ -61,7 +65,14 @@
     "order": 20,
     "title": "HelpTopics.savingGame.title",
     "description": "HelpTopics.savingGame.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Saving",
+      "Autosave",
+      "Quicksave",
+      "Salvataggio",
+      "Salvataggio rapido"
+    ]
   },
   "worldsFolders": {
     "type": "mechanic",
@@ -69,7 +80,12 @@
     "order": 21,
     "title": "HelpTopics.worldsFolders.title",
     "description": "HelpTopics.worldsFolders.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Worlds",
+      "World",
+      "Mondi"
+    ]
   },
   "optionsMenu": {
     "type": "mechanic",
@@ -77,7 +93,11 @@
     "order": 22,
     "title": "HelpTopics.optionsMenu.title",
     "description": "HelpTopics.optionsMenu.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Options",
+      "Opzioni"
+    ]
   },
   "modsUpdates": {
     "type": "mechanic",
@@ -101,7 +121,11 @@
     "order": 31,
     "title": "HelpTopics.partyCreation.title",
     "description": "HelpTopics.partyCreation.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Character creation",
+      "Creazione del personaggio"
+    ]
   },
   "partyClasses": {
     "type": "mechanic",
@@ -149,7 +173,11 @@
     "order": 37,
     "title": "HelpTopics.partyRecruiting.title",
     "description": "HelpTopics.partyRecruiting.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Recruiting",
+      "Reclutamento"
+    ]
   },
   "partyPets": {
     "type": "mechanic",
@@ -157,7 +185,12 @@
     "order": 38,
     "title": "HelpTopics.partyPets.title",
     "description": "HelpTopics.partyPets.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Pets",
+      "Followers",
+      "Seguaci"
+    ]
   },
   "partyReproduction": {
     "type": "mechanic",
@@ -173,23 +206,33 @@
     "order": 40,
     "title": "HelpTopics.partyDeath.title",
     "description": "HelpTopics.partyDeath.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Death",
+      "Respawn",
+      "Morte",
+      "Rinascita"
+    ]
   },
   "partyBanterPage": {
     "type": "mechanic",
-    "group": "party",
-    "order": 41,
+    "group": "people",
+    "order": 150,
     "title": "HelpTopics.partyBanterPage.title",
     "description": "HelpTopics.partyBanterPage.description",
     "image": ""
   },
   "partyAutoIdle": {
     "type": "mechanic",
-    "group": "party",
-    "order": 42,
+    "group": "controls",
+    "order": 10,
     "title": "HelpTopics.partyAutoIdle.title",
     "description": "HelpTopics.partyAutoIdle.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Auto explorer",
+      "Esploratore automatico"
+    ]
   },
   "progressLevels": {
     "type": "mechanic",
@@ -205,7 +248,12 @@
     "order": 41,
     "title": "HelpTopics.progressKnowledge.title",
     "description": "HelpTopics.progressKnowledge.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "KP",
+      "Knowledge points",
+      "Punti conoscenza"
+    ]
   },
   "progressAtlas": {
     "type": "mechanic",
@@ -213,7 +261,13 @@
     "order": 42,
     "title": "HelpTopics.progressAtlas.title",
     "description": "HelpTopics.progressAtlas.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Skill Atlas",
+      "Skill tree",
+      "Atlante delle abilità",
+      "Albero delle abilità"
+    ]
   },
   "progressTraining": {
     "type": "mechanic",
@@ -221,7 +275,11 @@
     "order": 43,
     "title": "HelpTopics.progressTraining.title",
     "description": "HelpTopics.progressTraining.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Training",
+      "Allenamento"
+    ]
   },
   "progressSpecializations": {
     "type": "mechanic",
@@ -229,7 +287,13 @@
     "order": 44,
     "title": "HelpTopics.progressSpecializations.title",
     "description": "HelpTopics.progressSpecializations.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Specializations",
+      "Specialization",
+      "Specializzazioni",
+      "Specializzazione"
+    ]
   },
   "progressPassives": {
     "type": "mechanic",
@@ -245,7 +309,12 @@
     "order": 46,
     "title": "HelpTopics.progressLoadout.title",
     "description": "HelpTopics.progressLoadout.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Loadout",
+      "Stat requirement",
+      "Requisito di statistica"
+    ]
   },
   "progressFusion": {
     "type": "mechanic",
@@ -253,7 +322,13 @@
     "order": 47,
     "title": "HelpTopics.progressFusion.title",
     "description": "HelpTopics.progressFusion.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Fusion",
+      "Fuse Spells",
+      "Fusione",
+      "Fondi Incantesimi"
+    ]
   },
   "progressGrimoires": {
     "type": "mechanic",
@@ -261,7 +336,13 @@
     "order": 48,
     "title": "HelpTopics.progressGrimoires.title",
     "description": "HelpTopics.progressGrimoires.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Grimoire",
+      "Skill book",
+      "Grimorio",
+      "Manuale"
+    ]
   },
   "progressBladeSeeds": {
     "type": "mechanic",
@@ -309,7 +390,11 @@
     "order": 54,
     "title": "HelpTopics.gearModifiers.title",
     "description": "HelpTopics.gearModifiers.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Modifiers",
+      "Modificatori"
+    ]
   },
   "gearWeight": {
     "type": "mechanic",
@@ -317,7 +402,13 @@
     "order": 55,
     "title": "HelpTopics.gearWeight.title",
     "description": "HelpTopics.gearWeight.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Weight",
+      "Encumbrance",
+      "Peso",
+      "Ingombro"
+    ]
   },
   "gearBackpack": {
     "type": "mechanic",
@@ -373,7 +464,14 @@
     "order": 62,
     "title": "HelpTopics.needsSleep.title",
     "description": "HelpTopics.needsSleep.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Sleep meter",
+      "Time awake",
+      "Cryogenic sleep",
+      "Sonno criogenico",
+      "Ore di veglia"
+    ]
   },
   "needsHygiene": {
     "type": "mechanic",
@@ -397,7 +495,11 @@
     "order": 65,
     "title": "HelpTopics.needsLeisure.title",
     "description": "HelpTopics.needsLeisure.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Fun",
+      "Svago"
+    ]
   },
   "needsAddiction": {
     "type": "mechanic",
@@ -429,7 +531,13 @@
     "order": 72,
     "title": "HelpTopics.healthDiseases.title",
     "description": "HelpTopics.healthDiseases.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Diseases",
+      "Medicine",
+      "Malattie",
+      "Medicinali"
+    ]
   },
   "healthEpidemics": {
     "type": "mechanic",
@@ -445,7 +553,13 @@
     "order": 74,
     "title": "HelpTopics.healthSurgery.title",
     "description": "HelpTopics.healthSurgery.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Clinic",
+      "Clinica",
+      "Field surgery",
+      "Chirurgia da campo"
+    ]
   },
   "healthAugments": {
     "type": "mechanic",
@@ -453,7 +567,13 @@
     "order": 75,
     "title": "HelpTopics.healthAugments.title",
     "description": "HelpTopics.healthAugments.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Augments",
+      "Implants",
+      "Innesti",
+      "Impianti"
+    ]
   },
   "healthWeatherBody": {
     "type": "mechanic",
@@ -469,7 +589,13 @@
     "order": 80,
     "title": "HelpTopics.combatBasics.title",
     "description": "HelpTopics.combatBasics.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Fleeing",
+      "Fuga",
+      "Reinforcements",
+      "Rinforzi"
+    ]
   },
   "combatCommands": {
     "type": "mechanic",
@@ -477,7 +603,11 @@
     "order": 81,
     "title": "HelpTopics.combatCommands.title",
     "description": "HelpTopics.combatCommands.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Battle commands",
+      "Comandi di battaglia"
+    ]
   },
   "combatAP": {
     "type": "mechanic",
@@ -525,7 +655,13 @@
     "order": 85,
     "title": "HelpTopics.combatEnemyLevels.title",
     "description": "HelpTopics.combatEnemyLevels.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Rarities",
+      "Rarità",
+      "Enemy levels",
+      "Livelli dei nemici"
+    ]
   },
   "combatMovementAI": {
     "type": "mechanic",
@@ -533,7 +669,12 @@
     "order": 86,
     "title": "HelpTopics.combatMovementAI.title",
     "description": "HelpTopics.combatMovementAI.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Movement personality",
+      "Ecology",
+      "Personalità di movimento"
+    ]
   },
   "combatSafety": {
     "type": "mechanic",
@@ -541,7 +682,11 @@
     "order": 87,
     "title": "HelpTopics.combatSafety.title",
     "description": "HelpTopics.combatSafety.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Health protection",
+      "Protezione a 1 PV"
+    ]
   },
   "combatModes": {
     "type": "mechanic",
@@ -557,7 +702,11 @@
     "order": 89,
     "title": "HelpTopics.combatMapBattle.title",
     "description": "HelpTopics.combatMapBattle.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Strategic Battle",
+      "Battaglia Strategica"
+    ]
   },
   "combatSummons": {
     "type": "mechanic",
@@ -565,7 +714,13 @@
     "order": 92,
     "title": "HelpTopics.combatSummons.title",
     "description": "HelpTopics.combatSummons.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Summon",
+      "Summons",
+      "Evocazione",
+      "Evocazioni"
+    ]
   },
   "combatArena": {
     "type": "mechanic",
@@ -573,7 +728,12 @@
     "order": 93,
     "title": "HelpTopics.combatArena.title",
     "description": "HelpTopics.combatArena.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Arena",
+      "Streak",
+      "Serie"
+    ]
   },
   "combatBulletHell": {
     "type": "mechanic",
@@ -597,7 +757,11 @@
     "order": 96,
     "title": "HelpTopics.combatMimic.title",
     "description": "HelpTopics.combatMimic.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Mimicry",
+      "Mimesi"
+    ]
   },
   "combatThrow": {
     "type": "mechanic",
@@ -613,7 +777,13 @@
     "order": 90,
     "title": "HelpTopics.combatCorpses.title",
     "description": "HelpTopics.combatCorpses.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Rewards",
+      "Corpses",
+      "Ricompense",
+      "Cadaveri"
+    ]
   },
   "elementsOverview": {
     "type": "mechanic",
@@ -701,7 +871,11 @@
     "order": 110,
     "title": "HelpTopics.worldMapPage.title",
     "description": "HelpTopics.worldMapPage.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "World map",
+      "Mappa del mondo"
+    ]
   },
   "worldProcedural": {
     "type": "mechanic",
@@ -725,7 +899,11 @@
     "order": 113,
     "title": "HelpTopics.worldStructures.title",
     "description": "HelpTopics.worldStructures.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Structures",
+      "Strutture"
+    ]
   },
   "worldHouses": {
     "type": "mechanic",
@@ -741,7 +919,13 @@
     "order": 115,
     "title": "HelpTopics.worldTerrain.title",
     "description": "HelpTopics.worldTerrain.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Felling",
+      "Mining",
+      "Abbattere",
+      "Scavare"
+    ]
   },
   "worldDungeon": {
     "type": "mechanic",
@@ -749,7 +933,13 @@
     "order": 120,
     "title": "HelpTopics.worldDungeon.title",
     "description": "HelpTopics.worldDungeon.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Dungeon",
+      "Lower tower",
+      "Sotterraneo",
+      "Torre inferiore"
+    ]
   },
   "worldPuzzles": {
     "type": "mechanic",
@@ -765,7 +955,11 @@
     "order": 118,
     "title": "HelpTopics.worldFog.title",
     "description": "HelpTopics.worldFog.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Fog of war",
+      "Nebbia di guerra"
+    ]
   },
   "worldDigging": {
     "type": "mechanic",
@@ -773,7 +967,11 @@
     "order": 120,
     "title": "HelpTopics.worldDigging.title",
     "description": "HelpTopics.worldDigging.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Secret doors",
+      "Porte segrete"
+    ]
   },
   "worldMovement": {
     "type": "mechanic",
@@ -781,7 +979,13 @@
     "order": 119,
     "title": "HelpTopics.worldMovement.title",
     "description": "HelpTopics.worldMovement.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Swimming",
+      "Climbing",
+      "Nuoto",
+      "Arrampicata"
+    ]
   },
   "worldWeather": {
     "type": "mechanic",
@@ -789,7 +993,13 @@
     "order": 117,
     "title": "HelpTopics.worldWeather.title",
     "description": "HelpTopics.worldWeather.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Weather",
+      "Meteo",
+      "Clock",
+      "Orologio"
+    ]
   },
   "worldDreams": {
     "type": "mechanic",
@@ -797,7 +1007,13 @@
     "order": 123,
     "title": "HelpTopics.worldDreams.title",
     "description": "HelpTopics.worldDreams.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Dream",
+      "Dreams",
+      "Sogno",
+      "Sogni"
+    ]
   },
   "worldAdventures": {
     "type": "mechanic",
@@ -805,7 +1021,11 @@
     "order": 124,
     "title": "HelpTopics.worldAdventures.title",
     "description": "HelpTopics.worldAdventures.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Adventures",
+      "Avventure"
+    ]
   },
   "worldBologna": {
     "type": "mechanic",
@@ -853,7 +1073,11 @@
     "order": 128,
     "title": "HelpTopics.worldTechTree.title",
     "description": "HelpTopics.worldTechTree.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Tech tree",
+      "Albero tecnologico"
+    ]
   },
   "travelOverview": {
     "type": "mechanic",
@@ -861,7 +1085,13 @@
     "order": 130,
     "title": "HelpTopics.travelOverview.title",
     "description": "HelpTopics.travelOverview.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Fast travel",
+      "Travel countdown",
+      "Viaggio rapido",
+      "Conto alla rovescia"
+    ]
   },
   "travelModes": {
     "type": "mechanic",
@@ -893,7 +1123,11 @@
     "order": 142,
     "title": "HelpTopics.vehicleCar.title",
     "description": "HelpTopics.vehicleCar.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Car",
+      "Auto"
+    ]
   },
   "vehicleBike": {
     "type": "mechanic",
@@ -957,7 +1191,11 @@
     "order": 150,
     "title": "HelpTopics.vehicleCrew.title",
     "description": "HelpTopics.vehicleCrew.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Crew",
+      "Equipaggio"
+    ]
   },
   "vehicleDriving": {
     "type": "mechanic",
@@ -965,7 +1203,11 @@
     "order": 151,
     "title": "HelpTopics.vehicleDriving.title",
     "description": "HelpTopics.vehicleDriving.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Driving in 3D",
+      "Guida in 3D"
+    ]
   },
   "roadTraffic": {
     "type": "mechanic",
@@ -973,7 +1215,11 @@
     "order": 132,
     "title": "HelpTopics.roadTraffic.title",
     "description": "HelpTopics.roadTraffic.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Vehicle theft",
+      "Furto di veicolo"
+    ]
   },
   "peopleOverview": {
     "type": "mechanic",
@@ -989,7 +1235,10 @@
     "order": 151,
     "title": "HelpTopics.peopleEmpathize.title",
     "description": "HelpTopics.peopleEmpathize.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Empatizza"
+    ]
   },
   "peopleOpinion": {
     "type": "mechanic",
@@ -1029,7 +1278,13 @@
     "order": 160,
     "title": "HelpTopics.peoplePolitics.title",
     "description": "HelpTopics.peoplePolitics.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Politics",
+      "Government",
+      "Politica",
+      "Governo"
+    ]
   },
   "peopleFactions": {
     "type": "mechanic",
@@ -1037,7 +1292,13 @@
     "order": 161,
     "title": "HelpTopics.peopleFactions.title",
     "description": "HelpTopics.peopleFactions.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Factions",
+      "Reputation",
+      "Fazioni",
+      "Reputazione"
+    ]
   },
   "peopleONU": {
     "type": "mechanic",
@@ -1045,7 +1306,13 @@
     "order": 162,
     "title": "HelpTopics.peopleONU.title",
     "description": "HelpTopics.peopleONU.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Assembly",
+      "Security Council",
+      "Assemblea",
+      "Consiglio di Sicurezza"
+    ]
   },
   "lawCrime": {
     "type": "mechanic",
@@ -1053,7 +1320,14 @@
     "order": 170,
     "title": "HelpTopics.lawCrime.title",
     "description": "HelpTopics.lawCrime.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Bounty",
+      "Heat",
+      "Taglia",
+      "Calore",
+      "Ricercato"
+    ]
   },
   "lawPolice": {
     "type": "mechanic",
@@ -1061,7 +1335,11 @@
     "order": 171,
     "title": "HelpTopics.lawPolice.title",
     "description": "HelpTopics.lawPolice.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Police portal",
+      "Portale della polizia"
+    ]
   },
   "lawTrial": {
     "type": "mechanic",
@@ -1069,7 +1347,11 @@
     "order": 172,
     "title": "HelpTopics.lawTrial.title",
     "description": "HelpTopics.lawTrial.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Trial",
+      "Processo"
+    ]
   },
   "lawPrison": {
     "type": "mechanic",
@@ -1077,7 +1359,12 @@
     "order": 173,
     "title": "HelpTopics.lawPrison.title",
     "description": "HelpTopics.lawPrison.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Prison",
+      "Jail",
+      "Prigione"
+    ]
   },
   "lawEris": {
     "type": "mechanic",
@@ -1093,7 +1380,14 @@
     "order": 164,
     "title": "HelpTopics.societyMail.title",
     "description": "HelpTopics.societyMail.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Post",
+      "Mail",
+      "Letters",
+      "Posta",
+      "Lettere"
+    ]
   },
   "societyNews": {
     "type": "mechanic",
@@ -1101,7 +1395,11 @@
     "order": 165,
     "title": "HelpTopics.societyNews.title",
     "description": "HelpTopics.societyNews.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "News",
+      "Notizie"
+    ]
   },
   "societyDiary": {
     "type": "mechanic",
@@ -1109,7 +1407,12 @@
     "order": 166,
     "title": "HelpTopics.societyDiary.title",
     "description": "HelpTopics.societyDiary.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Diary",
+      "Party diary",
+      "Diario del gruppo"
+    ]
   },
   "societyTopics": {
     "type": "mechanic",
@@ -1125,7 +1428,11 @@
     "order": 156,
     "title": "HelpTopics.societyArmy.title",
     "description": "HelpTopics.societyArmy.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Troops",
+      "Truppe"
+    ]
   },
   "societyMultiplayer": {
     "type": "mechanic",
@@ -1133,7 +1440,13 @@
     "order": 157,
     "title": "HelpTopics.societyMultiplayer.title",
     "description": "HelpTopics.societyMultiplayer.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Split screen",
+      "Multiplayer",
+      "Schermo condiviso",
+      "Multigiocatore"
+    ]
   },
   "societyHistory": {
     "type": "mechanic",
@@ -1141,7 +1454,13 @@
     "order": 163,
     "title": "HelpTopics.societyHistory.title",
     "description": "HelpTopics.societyHistory.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "History",
+      "Historical Archive",
+      "Storia",
+      "Archivio storico"
+    ]
   },
   "econMoney": {
     "type": "mechanic",
@@ -1157,7 +1476,13 @@
     "order": 181,
     "title": "HelpTopics.econShops.title",
     "description": "HelpTopics.econShops.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Shops",
+      "Shopkeeper",
+      "Negozi",
+      "Commesso"
+    ]
   },
   "econStealing": {
     "type": "mechanic",
@@ -1165,7 +1490,13 @@
     "order": 182,
     "title": "HelpTopics.econStealing.title",
     "description": "HelpTopics.econStealing.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Stealing",
+      "Shoplifting",
+      "Rubare",
+      "Taccheggio"
+    ]
   },
   "econBank": {
     "type": "mechanic",
@@ -1173,7 +1504,12 @@
     "order": 183,
     "title": "HelpTopics.econBank.title",
     "description": "HelpTopics.econBank.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Bank",
+      "Loan",
+      "Banca"
+    ]
   },
   "econStocks": {
     "type": "mechanic",
@@ -1181,7 +1517,13 @@
     "order": 184,
     "title": "HelpTopics.econStocks.title",
     "description": "HelpTopics.econStocks.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Stock market",
+      "Dividends",
+      "Borsa",
+      "Dividendi"
+    ]
   },
   "econProperty": {
     "type": "mechanic",
@@ -1189,7 +1531,13 @@
     "order": 185,
     "title": "HelpTopics.econProperty.title",
     "description": "HelpTopics.econProperty.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Real estate",
+      "Inn room",
+      "Immobili",
+      "Stanza di locanda"
+    ]
   },
   "econShopOwning": {
     "type": "mechanic",
@@ -1197,7 +1545,11 @@
     "order": 186,
     "title": "HelpTopics.econShopOwning.title",
     "description": "HelpTopics.econShopOwning.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Owning a shop",
+      "Negozio tuo"
+    ]
   },
   "econWork": {
     "type": "mechanic",
@@ -1205,7 +1557,13 @@
     "order": 187,
     "title": "HelpTopics.econWork.title",
     "description": "HelpTopics.econWork.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Work",
+      "Jobs",
+      "Lavoro",
+      "Lavori"
+    ]
   },
   "econQuests": {
     "type": "mechanic",
@@ -1213,7 +1571,13 @@
     "order": 188,
     "title": "HelpTopics.econQuests.title",
     "description": "HelpTopics.econQuests.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Quests",
+      "Quest board",
+      "Missioni",
+      "Bacheca"
+    ]
   },
   "econNotices": {
     "type": "mechanic",
@@ -1253,7 +1617,11 @@
     "order": 192,
     "title": "HelpTopics.craftAlchemy.title",
     "description": "HelpTopics.craftAlchemy.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Alchemistry",
+      "Alchimia"
+    ]
   },
   "craftCooking": {
     "type": "mechanic",
@@ -1261,7 +1629,11 @@
     "order": 193,
     "title": "HelpTopics.craftCooking.title",
     "description": "HelpTopics.craftCooking.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Cooking",
+      "Cucina"
+    ]
   },
   "craftBrewing": {
     "type": "mechanic",
@@ -1269,7 +1641,12 @@
     "order": 194,
     "title": "HelpTopics.craftBrewing.title",
     "description": "HelpTopics.craftBrewing.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Brewing",
+      "Barrels",
+      "Botti"
+    ]
   },
   "craftFurniture": {
     "type": "mechanic",
@@ -1277,7 +1654,13 @@
     "order": 195,
     "title": "HelpTopics.craftFurniture.title",
     "description": "HelpTopics.craftFurniture.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Build menu",
+      "Furniture",
+      "Menu Costruzione",
+      "Mobili"
+    ]
   },
   "craftPlants": {
     "type": "mechanic",
@@ -1285,7 +1668,13 @@
     "order": 196,
     "title": "HelpTopics.craftPlants.title",
     "description": "HelpTopics.craftPlants.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Farming",
+      "Crops",
+      "Agricoltura",
+      "Raccolti"
+    ]
   },
   "craftAnimals": {
     "type": "mechanic",
@@ -1293,7 +1682,11 @@
     "order": 197,
     "title": "HelpTopics.craftAnimals.title",
     "description": "HelpTopics.craftAnimals.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Livestock",
+      "Bestiame"
+    ]
   },
   "craftApiary": {
     "type": "mechanic",
@@ -1301,7 +1694,13 @@
     "order": 198,
     "title": "HelpTopics.craftApiary.title",
     "description": "HelpTopics.craftApiary.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Beekeeping",
+      "Hive",
+      "Apicoltura",
+      "Alveare"
+    ]
   },
   "craftArtifacts": {
     "type": "mechanic",
@@ -1317,7 +1716,11 @@
     "order": 200,
     "title": "HelpTopics.craftLoot.title",
     "description": "HelpTopics.craftLoot.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Loot",
+      "Bottino"
+    ]
   },
   "craftContainers": {
     "type": "mechanic",
@@ -1357,7 +1760,11 @@
     "order": 213,
     "title": "HelpTopics.galaxyLanding.title",
     "description": "HelpTopics.galaxyLanding.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Landing",
+      "Atterraggio"
+    ]
   },
   "galaxyAnomalies": {
     "type": "mechanic",
@@ -1365,7 +1772,13 @@
     "order": 214,
     "title": "HelpTopics.galaxyAnomalies.title",
     "description": "HelpTopics.galaxyAnomalies.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Anomaly",
+      "Anomalies",
+      "Anomalia",
+      "Anomalie"
+    ]
   },
   "galaxyBodies": {
     "type": "mechanic",
@@ -1381,7 +1794,11 @@
     "order": 216,
     "title": "HelpTopics.galaxyPatrons.title",
     "description": "HelpTopics.galaxyPatrons.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Patron vault",
+      "Caveau del mecenate"
+    ]
   },
   "galaxySky": {
     "type": "mechanic",
@@ -1397,7 +1814,13 @@
     "order": 200,
     "title": "HelpTopics.hypernetOS.title",
     "description": "HelpTopics.hypernetOS.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Hypernet",
+      "Hypernet desktop",
+      "Desktop Hypernet",
+      "Archways XP"
+    ]
   },
   "hypernetBrowser": {
     "type": "mechanic",
@@ -1405,7 +1828,11 @@
     "order": 201,
     "title": "HelpTopics.hypernetBrowser.title",
     "description": "HelpTopics.hypernetBrowser.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Hypernet Explorer browser",
+      "Browser"
+    ]
   },
   "hypernetMyComputer": {
     "type": "mechanic",
@@ -1433,7 +1860,7 @@
   },
   "hypernetTVGuide": {
     "type": "mechanic",
-    "group": "hypernet",
+    "group": "media",
     "order": 205,
     "title": "HelpTopics.hypernetTVGuide.title",
     "description": "HelpTopics.hypernetTVGuide.description",
@@ -1481,32 +1908,32 @@
   },
   "hypernetPhone": {
     "type": "mechanic",
-    "group": "hypernet",
-    "order": 211,
+    "group": "media",
+    "order": 205,
     "title": "HelpTopics.hypernetPhone.title",
     "description": "HelpTopics.hypernetPhone.description",
     "image": ""
   },
   "hypernetTV": {
     "type": "mechanic",
-    "group": "hypernet",
-    "order": 212,
+    "group": "media",
+    "order": 205,
     "title": "HelpTopics.hypernetTV.title",
     "description": "HelpTopics.hypernetTV.description",
     "image": ""
   },
   "hypernetRadio": {
     "type": "mechanic",
-    "group": "hypernet",
-    "order": 213,
+    "group": "media",
+    "order": 205,
     "title": "HelpTopics.hypernetRadio.title",
     "description": "HelpTopics.hypernetRadio.description",
     "image": ""
   },
   "hypernetMusic": {
     "type": "mechanic",
-    "group": "hypernet",
-    "order": 214,
+    "group": "media",
+    "order": 205,
     "title": "HelpTopics.hypernetMusic.title",
     "description": "HelpTopics.hypernetMusic.description",
     "image": ""
@@ -1517,7 +1944,11 @@
     "order": 220,
     "title": "HelpTopics.gamesOverview.title",
     "description": "HelpTopics.gamesOverview.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Minigames",
+      "Minigiochi"
+    ]
   },
   "gamesArcade": {
     "type": "mechanic",
@@ -1637,7 +2068,12 @@
     "order": 222,
     "title": "HelpTopics.gamesCards.title",
     "description": "HelpTopics.gamesCards.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Card game",
+      "Cards",
+      "Gioco di carte"
+    ]
   },
   "gamesRaman": {
     "type": "mechanic",
@@ -1645,7 +2081,13 @@
     "order": 230,
     "title": "HelpTopics.gamesRaman.title",
     "description": "HelpTopics.gamesRaman.description",
-    "image": ""
+    "image": "",
+    "synonyms": [
+      "Raman probe",
+      "Raman scan",
+      "Sonda Raman",
+      "Scansione Raman"
+    ]
   },
   "gamesPeriodic": {
     "type": "mechanic",
@@ -2102,5 +2544,864 @@
     "title": "HelpTopics.concussed.title",
     "description": "HelpTopics.concussed.description",
     "image": ""
+  },
+  "worldVoxelWalk": {
+    "type": "mechanic",
+    "group": "world",
+    "order": 110,
+    "title": "HelpTopics.worldVoxelWalk.title",
+    "description": "HelpTopics.worldVoxelWalk.description",
+    "image": "",
+    "synonyms": [
+      "3D world",
+      "Liminal walk",
+      "Mondo 3D",
+      "Passeggiata liminale"
+    ]
+  },
+  "worldVoxelDigging": {
+    "type": "mechanic",
+    "group": "world",
+    "order": 110,
+    "title": "HelpTopics.worldVoxelDigging.title",
+    "description": "HelpTopics.worldVoxelDigging.description",
+    "image": "",
+    "synonyms": [
+      "Block bar",
+      "3D digging",
+      "Barra dei blocchi",
+      "Scavare in 3D"
+    ]
+  },
+  "combatVoxel": {
+    "type": "mechanic",
+    "group": "combatApart",
+    "order": 90,
+    "title": "HelpTopics.combatVoxel.title",
+    "description": "HelpTopics.combatVoxel.description",
+    "image": "",
+    "synonyms": [
+      "3D combat",
+      "Real time combat",
+      "Combattimento 3D",
+      "Combattimento in tempo reale"
+    ]
+  },
+  "economyHologramCheck": {
+    "type": "mechanic",
+    "group": "economy",
+    "order": 180,
+    "title": "HelpTopics.economyHologramCheck.title",
+    "description": "HelpTopics.economyHologramCheck.description",
+    "image": "",
+    "synonyms": [
+      "Hologram",
+      "Hologram check",
+      "Ologramma",
+      "Controllo in ologramma"
+    ]
+  },
+  "worldScenery": {
+    "type": "mechanic",
+    "group": "world",
+    "order": 110,
+    "title": "HelpTopics.worldScenery.title",
+    "description": "HelpTopics.worldScenery.description",
+    "image": "",
+    "synonyms": [
+      "Map objects",
+      "Scenery",
+      "Oggetti della mappa",
+      "Scenario"
+    ]
+  },
+  "worldAtlas": {
+    "type": "mechanic",
+    "group": "world",
+    "order": 110,
+    "title": "HelpTopics.worldAtlas.title",
+    "description": "HelpTopics.worldAtlas.description",
+    "image": "",
+    "synonyms": [
+      "Atlas",
+      "World Atlas",
+      "Atlante",
+      "Atlante del Mondo"
+    ]
+  },
+  "combatHyper": {
+    "type": "mechanic",
+    "group": "combat",
+    "order": 80,
+    "title": "HelpTopics.combatHyper.title",
+    "description": "HelpTopics.combatHyper.description",
+    "image": "",
+    "synonyms": [
+      "Hyper",
+      "Limit break",
+      "Limit Break"
+    ]
+  },
+  "combatAmmo": {
+    "type": "mechanic",
+    "group": "combat",
+    "order": 80,
+    "title": "HelpTopics.combatAmmo.title",
+    "description": "HelpTopics.combatAmmo.description",
+    "image": "",
+    "synonyms": [
+      "Ammo",
+      "Reload",
+      "Munizioni",
+      "Ricarica"
+    ]
+  },
+  "gearMartialArts": {
+    "type": "mechanic",
+    "group": "gear",
+    "order": 50,
+    "title": "HelpTopics.gearMartialArts.title",
+    "description": "HelpTopics.gearMartialArts.description",
+    "image": "",
+    "synonyms": [
+      "Martial arts",
+      "Gun-Fu",
+      "Arti marziali"
+    ]
+  },
+  "elementInfusions": {
+    "type": "mechanic",
+    "group": "elements",
+    "order": 100,
+    "title": "HelpTopics.elementInfusions.title",
+    "description": "HelpTopics.elementInfusions.description",
+    "image": "",
+    "synonyms": [
+      "Infusion",
+      "Infusione"
+    ]
+  },
+  "needsGrooming": {
+    "type": "mechanic",
+    "group": "needs",
+    "order": 60,
+    "title": "HelpTopics.needsGrooming.title",
+    "description": "HelpTopics.needsGrooming.description",
+    "image": "",
+    "synonyms": [
+      "Toiletries",
+      "Cosmetics",
+      "Cosmetici",
+      "Articoli da toilette"
+    ]
+  },
+  "partyMetamorphosis": {
+    "type": "mechanic",
+    "group": "party",
+    "order": 30,
+    "title": "HelpTopics.partyMetamorphosis.title",
+    "description": "HelpTopics.partyMetamorphosis.description",
+    "image": "",
+    "synonyms": [
+      "Metamorphosis",
+      "Plastic surgery",
+      "Metamorfosi",
+      "Chirurgia plastica"
+    ]
+  },
+  "partyFamiliar": {
+    "type": "mechanic",
+    "group": "party",
+    "order": 30,
+    "title": "HelpTopics.partyFamiliar.title",
+    "description": "HelpTopics.partyFamiliar.description",
+    "image": "",
+    "synonyms": [
+      "Familiar",
+      "Convoke Familiar",
+      "Famiglio",
+      "Famigli"
+    ]
+  },
+  "powersOwnParty": {
+    "type": "mechanic",
+    "group": "powers",
+    "order": 160,
+    "title": "HelpTopics.powersOwnParty.title",
+    "description": "HelpTopics.powersOwnParty.description",
+    "image": "",
+    "synonyms": [
+      "Own party",
+      "Political party",
+      "Propaganda2",
+      "Il tuo partito",
+      "Partito politico"
+    ]
+  },
+  "powersCampaigns": {
+    "type": "mechanic",
+    "group": "powers",
+    "order": 160,
+    "title": "HelpTopics.powersCampaigns.title",
+    "description": "HelpTopics.powersCampaigns.description",
+    "image": "",
+    "synonyms": [
+      "Campaigns",
+      "Smear",
+      "Campagne",
+      "Diffamazione"
+    ]
+  },
+  "powersElections": {
+    "type": "mechanic",
+    "group": "powers",
+    "order": 160,
+    "title": "HelpTopics.powersElections.title",
+    "description": "HelpTopics.powersElections.description",
+    "image": "",
+    "synonyms": [
+      "Elections",
+      "Candidacy",
+      "Run for office",
+      "Elezioni",
+      "Candidatura"
+    ]
+  },
+  "peopleCivics": {
+    "type": "mechanic",
+    "group": "people",
+    "order": 150,
+    "title": "HelpTopics.peopleCivics.title",
+    "description": "HelpTopics.peopleCivics.description",
+    "image": "",
+    "synonyms": [
+      "Petition",
+      "Endorse",
+      "Petizione",
+      "Sostieni un candidato"
+    ]
+  },
+  "peopleDeals": {
+    "type": "mechanic",
+    "group": "people",
+    "order": 150,
+    "title": "HelpTopics.peopleDeals.title",
+    "description": "HelpTopics.peopleDeals.description",
+    "image": "",
+    "synonyms": [
+      "Lend money",
+      "Borrow money",
+      "Hire",
+      "Prestito",
+      "Assumere"
+    ]
+  },
+  "peopleHelping": {
+    "type": "mechanic",
+    "group": "people",
+    "order": 150,
+    "title": "HelpTopics.peopleHelping.title",
+    "description": "HelpTopics.peopleHelping.description",
+    "image": "",
+    "synonyms": [
+      "First aid",
+      "Offer shelter",
+      "Introduce",
+      "Primo soccorso",
+      "Offri un tetto"
+    ]
+  },
+  "partyRiding": {
+    "type": "mechanic",
+    "group": "travel",
+    "order": 130,
+    "title": "HelpTopics.partyRiding.title",
+    "description": "HelpTopics.partyRiding.description",
+    "image": "",
+    "synonyms": [
+      "Riding",
+      "Mount",
+      "Ridable",
+      "Cavalcare",
+      "Cavalcatura"
+    ]
+  },
+  "lawDowned": {
+    "type": "mechanic",
+    "group": "law",
+    "order": 170,
+    "title": "HelpTopics.lawDowned.title",
+    "description": "HelpTopics.lawDowned.description",
+    "image": "",
+    "synonyms": [
+      "Downed",
+      "Coup de grace",
+      "A terra",
+      "Colpo di grazia"
+    ]
+  },
+  "lawStreet": {
+    "type": "mechanic",
+    "group": "law",
+    "order": 170,
+    "title": "HelpTopics.lawStreet.title",
+    "description": "HelpTopics.lawStreet.description",
+    "image": "",
+    "synonyms": [
+      "Street crime",
+      "Wanted",
+      "Patrols",
+      "Crimini di strada",
+      "Ricercati"
+    ]
+  },
+  "peopleZombies": {
+    "type": "mechanic",
+    "group": "people",
+    "order": 150,
+    "title": "HelpTopics.peopleZombies.title",
+    "description": "HelpTopics.peopleZombies.description",
+    "image": "",
+    "synonyms": [
+      "Zombies",
+      "Zombie world",
+      "Zombi",
+      "Mondo degli zombi"
+    ]
+  },
+  "peopleHorde": {
+    "type": "mechanic",
+    "group": "people",
+    "order": 150,
+    "title": "HelpTopics.peopleHorde.title",
+    "description": "HelpTopics.peopleHorde.description",
+    "image": "",
+    "synonyms": [
+      "Refugees",
+      "Orda dei Goblin",
+      "Rifugiati"
+    ]
+  },
+  "progressSpellCrafting": {
+    "type": "mechanic",
+    "group": "progress",
+    "order": 40,
+    "title": "HelpTopics.progressSpellCrafting.title",
+    "description": "HelpTopics.progressSpellCrafting.description",
+    "image": "",
+    "synonyms": [
+      "Making spells",
+      "Spell creation",
+      "Creating spells",
+      "Creare incantesimi",
+      "Creazione di incantesimi"
+    ]
+  },
+  "progressWorkbench": {
+    "type": "mechanic",
+    "group": "progress",
+    "order": 40,
+    "title": "HelpTopics.progressWorkbench.title",
+    "description": "HelpTopics.progressWorkbench.description",
+    "image": "",
+    "synonyms": [
+      "Craft Spell",
+      "Craft Skill",
+      "Spell Workbench",
+      "Crea Incantesimo",
+      "Banco degli incantesimi"
+    ]
+  },
+  "progressEnchanting": {
+    "type": "mechanic",
+    "group": "progress",
+    "order": 40,
+    "title": "HelpTopics.progressEnchanting.title",
+    "description": "HelpTopics.progressEnchanting.description",
+    "image": "",
+    "synonyms": [
+      "Enchanting",
+      "Enchant Weapon",
+      "Enchant Book",
+      "Incanta Arma",
+      "Incantare"
+    ]
+  },
+  "progressWritingBooks": {
+    "type": "mechanic",
+    "group": "progress",
+    "order": 40,
+    "title": "HelpTopics.progressWritingBooks.title",
+    "description": "HelpTopics.progressWritingBooks.description",
+    "image": "",
+    "synonyms": [
+      "Write Grimorie",
+      "Write Skill Book",
+      "Scrivi Grimorie",
+      "Scrivi Manuale"
+    ]
+  },
+  "progressHexorcize": {
+    "type": "mechanic",
+    "group": "progress",
+    "order": 40,
+    "title": "HelpTopics.progressHexorcize.title",
+    "description": "HelpTopics.progressHexorcize.description",
+    "image": "",
+    "synonyms": [
+      "Hexorcize",
+      "Esorcizza"
+    ]
+  },
+  "hypernetHyperdeck": {
+    "type": "mechanic",
+    "group": "hypernet",
+    "order": 200,
+    "title": "HelpTopics.hypernetHyperdeck.title",
+    "description": "HelpTopics.hypernetHyperdeck.description",
+    "image": "",
+    "synonyms": [
+      "Hyperdeck",
+      "Components",
+      "Componenti"
+    ]
+  },
+  "hypernetChipLab": {
+    "type": "mechanic",
+    "group": "hypernet",
+    "order": 200,
+    "title": "HelpTopics.hypernetChipLab.title",
+    "description": "HelpTopics.hypernetChipLab.description",
+    "image": "",
+    "synonyms": [
+      "Chip lab",
+      "Etched die",
+      "Laboratorio dei chip"
+    ]
+  },
+  "hypernetCalendar": {
+    "type": "mechanic",
+    "group": "hypernet",
+    "order": 200,
+    "title": "HelpTopics.hypernetCalendar.title",
+    "description": "HelpTopics.hypernetCalendar.description",
+    "image": "",
+    "synonyms": [
+      "Calendar",
+      "Calendario"
+    ]
+  },
+  "minigamesCardTables": {
+    "type": "mechanic",
+    "group": "minigames",
+    "order": 220,
+    "title": "HelpTopics.minigamesCardTables.title",
+    "description": "HelpTopics.minigamesCardTables.description",
+    "image": "",
+    "synonyms": [
+      "Card duel",
+      "Hyper Card Arena",
+      "Duello di carte"
+    ]
+  },
+  "galaxyRocketLaunch": {
+    "type": "mechanic",
+    "group": "galaxy",
+    "order": 210,
+    "title": "HelpTopics.galaxyRocketLaunch.title",
+    "description": "HelpTopics.galaxyRocketLaunch.description",
+    "image": "",
+    "synonyms": [
+      "Rocket launch",
+      "Coilgun",
+      "Spaceport",
+      "Spazioporto",
+      "Lancio"
+    ]
+  },
+  "partyOrigins": {
+    "type": "mechanic",
+    "group": "party",
+    "order": 30,
+    "title": "HelpTopics.partyOrigins.title",
+    "description": "HelpTopics.partyOrigins.description",
+    "image": "",
+    "synonyms": [
+      "Origin",
+      "Origins",
+      "Origine",
+      "Origini"
+    ]
+  },
+  "pastimesReading": {
+    "type": "mechanic",
+    "group": "pastimes",
+    "order": 230,
+    "title": "HelpTopics.pastimesReading.title",
+    "description": "HelpTopics.pastimesReading.description",
+    "image": "",
+    "synonyms": [
+      "Bookcase",
+      "Reading",
+      "Libreria",
+      "Lettura"
+    ]
+  },
+  "combatBestiary": {
+    "type": "mechanic",
+    "group": "combat",
+    "order": 80,
+    "title": "HelpTopics.combatBestiary.title",
+    "description": "HelpTopics.combatBestiary.description",
+    "image": "",
+    "synonyms": [
+      "Bestiary",
+      "Bestiario"
+    ]
+  },
+  "travelTickets": {
+    "type": "mechanic",
+    "group": "travel",
+    "order": 130,
+    "title": "HelpTopics.travelTickets.title",
+    "description": "HelpTopics.travelTickets.description",
+    "image": "",
+    "synonyms": [
+      "Tickets",
+      "Fare evasion",
+      "Biglietti",
+      "Evasione tariffaria"
+    ]
+  },
+  "travelOwnPlaces": {
+    "type": "mechanic",
+    "group": "travel",
+    "order": 130,
+    "title": "HelpTopics.travelOwnPlaces.title",
+    "description": "HelpTopics.travelOwnPlaces.description",
+    "image": "",
+    "synonyms": [
+      "Places of your own",
+      "Luoghi tuoi"
+    ]
+  },
+  "lawWitnesses": {
+    "type": "mechanic",
+    "group": "law",
+    "order": 170,
+    "title": "HelpTopics.lawWitnesses.title",
+    "description": "HelpTopics.lawWitnesses.description",
+    "image": "",
+    "synonyms": [
+      "Witnesses",
+      "Witness",
+      "Testimoni",
+      "Testimone"
+    ]
+  },
+  "lawArrest": {
+    "type": "mechanic",
+    "group": "law",
+    "order": 170,
+    "title": "HelpTopics.lawArrest.title",
+    "description": "HelpTopics.lawArrest.description",
+    "image": "",
+    "synonyms": [
+      "Arrest",
+      "Bribe",
+      "Arresto",
+      "Bustarella"
+    ]
+  },
+  "lawJurisdictions": {
+    "type": "mechanic",
+    "group": "law",
+    "order": 170,
+    "title": "HelpTopics.lawJurisdictions.title",
+    "description": "HelpTopics.lawJurisdictions.description",
+    "image": "",
+    "synonyms": [
+      "Canon law",
+      "Jurisdiction",
+      "Diritto canonico",
+      "Giurisdizione"
+    ]
+  },
+  "lawCriminalCareer": {
+    "type": "mechanic",
+    "group": "law",
+    "order": 170,
+    "title": "HelpTopics.lawCriminalCareer.title",
+    "description": "HelpTopics.lawCriminalCareer.description",
+    "image": "",
+    "synonyms": [
+      "Criminal trade",
+      "Mestiere del criminale"
+    ]
+  },
+  "economyWorkplaces": {
+    "type": "mechanic",
+    "group": "economy",
+    "order": 180,
+    "title": "HelpTopics.economyWorkplaces.title",
+    "description": "HelpTopics.economyWorkplaces.description",
+    "image": "",
+    "synonyms": [
+      "Workplace",
+      "Workplaces",
+      "Posto di lavoro",
+      "Posti di lavoro"
+    ]
+  },
+  "economyLandClaims": {
+    "type": "mechanic",
+    "group": "economy",
+    "order": 180,
+    "title": "HelpTopics.economyLandClaims.title",
+    "description": "HelpTopics.economyLandClaims.description",
+    "image": "",
+    "synonyms": [
+      "Claim",
+      "Claims",
+      "Rivendicazione",
+      "Rivendicazioni"
+    ]
+  },
+  "craftingTownFounding": {
+    "type": "mechanic",
+    "group": "crafting",
+    "order": 190,
+    "title": "HelpTopics.craftingTownFounding.title",
+    "description": "HelpTopics.craftingTownFounding.description",
+    "image": "",
+    "synonyms": [
+      "Founding a town",
+      "Town charter",
+      "Fondare una città",
+      "Carta di fondazione"
+    ]
+  },
+  "setupWorldCreation": {
+    "type": "mechanic",
+    "group": "setup",
+    "order": 20,
+    "title": "HelpTopics.setupWorldCreation.title",
+    "description": "HelpTopics.setupWorldCreation.description",
+    "image": "",
+    "synonyms": [
+      "World creation",
+      "New world",
+      "Creazione del mondo",
+      "Nuovo mondo"
+    ]
+  },
+  "setupTimelines": {
+    "type": "mechanic",
+    "group": "setup",
+    "order": 20,
+    "title": "HelpTopics.setupTimelines.title",
+    "description": "HelpTopics.setupTimelines.description",
+    "image": "",
+    "synonyms": [
+      "Alternate timeline",
+      "Timeline",
+      "World of chaos",
+      "Zombie apocalypse",
+      "Linea temporale alternativa",
+      "Mondo del caos",
+      "Apocalisse zombie"
+    ]
+  },
+  "setupMagic": {
+    "type": "mechanic",
+    "group": "setup",
+    "order": 20,
+    "title": "HelpTopics.setupMagic.title",
+    "description": "HelpTopics.setupMagic.description",
+    "image": "",
+    "synonyms": [
+      "Magic level",
+      "Severed magic",
+      "Unbound magic",
+      "Livello di magia",
+      "Magia recisa",
+      "Magia dilagante"
+    ]
+  },
+  "setupStartDate": {
+    "type": "mechanic",
+    "group": "setup",
+    "order": 20,
+    "title": "HelpTopics.setupStartDate.title",
+    "description": "HelpTopics.setupStartDate.description",
+    "image": "",
+    "synonyms": [
+      "Starting date",
+      "Start year",
+      "Data di inizio",
+      "Anno di inizio"
+    ]
+  },
+  "setupStartLevel": {
+    "type": "mechanic",
+    "group": "setup",
+    "order": 20,
+    "title": "HelpTopics.setupStartLevel.title",
+    "description": "HelpTopics.setupStartLevel.description",
+    "image": "",
+    "synonyms": [
+      "Starting level",
+      "Livello iniziale"
+    ]
+  },
+  "setupRewards": {
+    "type": "mechanic",
+    "group": "setup",
+    "order": 20,
+    "title": "HelpTopics.setupRewards.title",
+    "description": "HelpTopics.setupRewards.description",
+    "image": "",
+    "synonyms": [
+      "Reward multipliers",
+      "Moltiplicatori di ricompensa"
+    ]
+  },
+  "setupSkillLimits": {
+    "type": "mechanic",
+    "group": "setup",
+    "order": 20,
+    "title": "HelpTopics.setupSkillLimits.title",
+    "description": "HelpTopics.setupSkillLimits.description",
+    "image": "",
+    "synonyms": [
+      "Skill limits",
+      "Limiti delle abilità"
+    ]
+  },
+  "setupSandbox": {
+    "type": "mechanic",
+    "group": "setup",
+    "order": 20,
+    "title": "HelpTopics.setupSandbox.title",
+    "description": "HelpTopics.setupSandbox.description",
+    "image": "",
+    "synonyms": [
+      "Sandbox",
+      "Sandbox mode",
+      "Modalità sandbox"
+    ]
+  },
+  "needsRestWorth": {
+    "type": "mechanic",
+    "group": "needs",
+    "order": 60,
+    "title": "HelpTopics.needsRestWorth.title",
+    "description": "HelpTopics.needsRestWorth.description",
+    "image": "",
+    "synonyms": [
+      "Rest",
+      "Resting",
+      "Rest menu",
+      "Riposo",
+      "Menu del riposo"
+    ]
+  },
+  "needsForage": {
+    "type": "mechanic",
+    "group": "needs",
+    "order": 60,
+    "title": "HelpTopics.needsForage.title",
+    "description": "HelpTopics.needsForage.description",
+    "image": "",
+    "synonyms": [
+      "Forage",
+      "Foraging",
+      "Foraggiare",
+      "Foraggiamento"
+    ]
+  },
+  "needsCamp": {
+    "type": "mechanic",
+    "group": "needs",
+    "order": 60,
+    "title": "HelpTopics.needsCamp.title",
+    "description": "HelpTopics.needsCamp.description",
+    "image": "",
+    "synonyms": [
+      "Camping"
+    ]
+  },
+  "needsBladder": {
+    "type": "mechanic",
+    "group": "needs",
+    "order": 60,
+    "title": "HelpTopics.needsBladder.title",
+    "description": "HelpTopics.needsBladder.description",
+    "image": "",
+    "synonyms": [
+      "Bladder",
+      "Toilet",
+      "Vescica",
+      "Bagno"
+    ]
+  },
+  "peopleHolidays": {
+    "type": "mechanic",
+    "group": "powers",
+    "order": 160,
+    "title": "HelpTopics.peopleHolidays.title",
+    "description": "HelpTopics.peopleHolidays.description",
+    "image": "",
+    "synonyms": [
+      "Holidays",
+      "Public holidays",
+      "Gatherings",
+      "Feste",
+      "Raduni"
+    ]
+  },
+  "gearWishOrb": {
+    "type": "mechanic",
+    "group": "gear",
+    "order": 50,
+    "title": "HelpTopics.gearWishOrb.title",
+    "description": "HelpTopics.gearWishOrb.description",
+    "image": "",
+    "synonyms": [
+      "Wish-Granting Orb",
+      "Wishing Sanctum",
+      "Wish",
+      "Sfera dei desideri",
+      "Santuario dei desideri"
+    ]
+  },
+  "partyDiceChecks": {
+    "type": "mechanic",
+    "group": "party",
+    "order": 30,
+    "title": "HelpTopics.partyDiceChecks.title",
+    "description": "HelpTopics.partyDiceChecks.description",
+    "image": "",
+    "synonyms": [
+      "Dice",
+      "d20",
+      "Dice checks",
+      "Dado",
+      "Prove di dado"
+    ]
+  },
+  "powersTravelJournal": {
+    "type": "mechanic",
+    "group": "powers",
+    "order": 160,
+    "title": "HelpTopics.powersTravelJournal.title",
+    "description": "HelpTopics.powersTravelJournal.description",
+    "image": "",
+    "synonyms": [
+      "Travel journal",
+      "Notebook",
+      "Diario di viaggio",
+      "Taccuino"
+    ]
   }
 }

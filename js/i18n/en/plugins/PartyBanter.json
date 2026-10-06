@@ -1048,6 +1048,998 @@
       [
         "Do you want to know what I have decided about all this?",
         "Not on a hill. Tell me when we are sitting down."
+      ],
+      [
+        "Whoever lights the stove first gets to choose the tea.",
+        "That is why I have been waking up at five. It was never about the sunrise."
+      ],
+      [
+        "You fold the map the wrong way every single morning.",
+        "There is no right way. There is only your way, and you have made it a religion.",
+        "It is a religion with fewer tears in it."
+      ],
+      [
+        "Socks on the line, boots by the fire, bread in the tin. Same every night.",
+        "Some people would call that a home, {name}. We simply carry ours."
+      ],
+      [
+        "I can pitch the tent in the dark now without swearing.",
+        "Not without swearing. Only more quietly."
+      ],
+      [
+        "Your turn to fetch water.",
+        "It was my turn yesterday.",
+        "It was. You were very good at it. Do it again.",
+        "That is not how turns work and you know it."
+      ],
+      [
+        "I have started counting steps between the milestones.",
+        "And how many is that?",
+        "Eleven hundred and something. Then a cow distracts me and I lose it."
+      ],
+      [
+        "Funny how the camper smells of us now.",
+        "It smells of wet wool and onions. I am choosing to call that us as well."
+      ],
+      [
+        "Every morning you check the sky, I check the boots, and nobody checks the pan.",
+        "The pan has been on its own since the spring. It is coping."
+      ],
+      [
+        "We wash the cups in the same order every night.",
+        "Mine first, because mine is the clean one.",
+        "Yours is the clean one because you never drink anything out of it."
+      ],
+      [
+        "I know your snoring well enough to tell when you are pretending.",
+        "I never pretend. I snore with complete sincerity."
+      ],
+      [
+        "{other}, you put the salt in the left pocket again.",
+        "The left pocket is the salt pocket. It was decided at a meeting.",
+        "I was not at that meeting.",
+        "You were asleep at that meeting. It still counts."
+      ],
+      [
+        "When I was small we had a kitchen with a yellow door.",
+        "Why yellow?",
+        "My mother lost an argument with a paint shop. She stood by it for twenty years."
+      ],
+      [
+        "I used to catch the same tram at the same minute every day.",
+        "Do you miss it?",
+        "I miss knowing where I would be at eight in the morning. Not the tram."
+      ],
+      [
+        "Before all this I worked behind a counter selling buttons.",
+        "Buttons.",
+        "Thousands of them. I can still tell bone from horn at ten paces."
+      ],
+      [
+        "There was a boy on my street who could whistle with two fingers. I never learned.",
+        "I can teach you, {name}. It takes a week and costs you your dignity."
+      ],
+      [
+        "What was your house like?",
+        "Narrow. Three floors, one room on each, and a staircase everybody fell down once."
+      ],
+      [
+        "My father kept every newspaper. Stacks of them in the hall.",
+        "Did he read them again?",
+        "Never. He said they were proof the days had happened.",
+        "That is either very wise or a fire hazard."
+      ],
+      [
+        "I had a bicycle with one gear and enormous opinions.",
+        "So the bicycle was you, then."
+      ],
+      [
+        "I miss school bells. Is that not strange?",
+        "Not strange. Somebody told you when things ended. Nobody does that out here."
+      ],
+      [
+        "Once I ran away from home for a whole afternoon.",
+        "Where did you go?",
+        "The end of the garden. There was a tree and a sandwich and I felt enormous."
+      ],
+      [
+        "You tap the doorframe twice every time you go through one.",
+        "Once for leaving, once for coming back. It is not complicated."
+      ],
+      [
+        "Why do you always sit facing the door?",
+        "Because the one time I did not, a goat came in."
+      ],
+      [
+        "You hum when you are counting money.",
+        "I hum when I am counting anything. Money is simply the only thing worth counting aloud."
+      ],
+      [
+        "{other}, you have eaten the crusts first again.",
+        "The crusts are the hard part. Get the hard part over and the rest is a holiday.",
+        "You apply that to everything.",
+        "I apply that to bread. Do not make a philosopher of me."
+      ],
+      [
+        "You talk to the stove.",
+        "The stove listens. That is more than I can say for some people.",
+        "Is that aimed at me?",
+        "It is aimed at the stove's competitors in general."
+      ],
+      [
+        "Why do you fold your shirts like letters?",
+        "So they fit in the pack, and so I can pretend somebody sent them."
+      ],
+      [
+        "You always leave one bite on the plate.",
+        "For luck. Or manners. My grandmother never told me which.",
+        "So you have done it for no reason your whole life.",
+        "For a very old reason. That is different."
+      ],
+      [
+        "You sharpen pencils with the knife you use for cheese.",
+        "The knife does not mind. The cheese has never complained."
+      ],
+      [
+        "Every time you lie down you sigh like a door closing.",
+        "It is a door closing. The day goes out and I lock it."
+      ],
+      [
+        "I would give a great deal for a plate of my aunt's lentils.",
+        "What was in them?",
+        "Lentils, a bay leaf and a level of patience I have never met since."
+      ],
+      [
+        "What I want right now is fresh bread with too much butter.",
+        "Stop. I can smell it, and we have nothing but biscuits."
+      ],
+      [
+        "At home we made soup out of whatever the week left behind.",
+        "Every family has that soup.",
+        "Ours had a name. We called it Thursday."
+      ],
+      [
+        "Have you ever had chestnuts roasted in a pan with holes in it?",
+        "Every autumn. My grandfather burned his thumbs on purpose, I am sure of it."
+      ],
+      [
+        "At the next market I am spending {gold} on proper rice and real cheese.",
+        "Cooked in what pot?",
+        "The small pot and a great deal of patience. Do not argue with a craving."
+      ],
+      [
+        "You put sugar in tomato sauce.",
+        "A pinch. To calm the tomatoes.",
+        "That is not a recipe. That is a bribe."
+      ],
+      [
+        "Name one food you could eat every day forever.",
+        "Oranges. Peeled in one go, the skin in one long curl.",
+        "That is not a food. That is a performance.",
+        "It is both, and I am very good at it."
+      ],
+      [
+        "My mother's rule: never trust a cook who does not taste as they go.",
+        "So you have been watching me taste the stew.",
+        "For weeks. You pass, narrowly."
+      ],
+      [
+        "I could eat a whole jar of pickles tonight.",
+        "You ate a whole jar of pickles on Tuesday, {name}.",
+        "And look how well I am."
+      ],
+      [
+        "When this is done I will learn to make pasta by hand.",
+        "Flour, eggs and your elbows. My grandmother did it on the kitchen table.",
+        "Would she teach a stranger?",
+        "She would teach the postman if he stood still long enough."
+      ],
+      [
+        "Cheap cheese in a good place tastes better than good cheese in a bad one.",
+        "That is either very deep or you are very hungry.",
+        "Both. Pass the cheese."
+      ],
+      [
+        "I have had the same song in my head since the bridge.",
+        "Which one?",
+        "I do not know the words. Only the part that goes up at the end.",
+        "That is every song, {name}."
+      ],
+      [
+        "The cassette in the camper is starting to stretch.",
+        "It was always slow. It only sounds sadder now."
+      ],
+      [
+        "My grandmother sang one tune while she shelled peas. No words, only the tune.",
+        "Hum it.",
+        "Not here. It only works with peas."
+      ],
+      [
+        "The radio has found a station that plays nothing but accordions.",
+        "Leave it on. It has more feeling in it than the news."
+      ],
+      [
+        "Could you sing something? Anything.",
+        "If I sing, the birds leave and so do you.",
+        "Then sing quietly and only the birds will leave."
+      ],
+      [
+        "I made a mixtape once for somebody I never gave it to.",
+        "What was on it?",
+        "Eleven songs, and the sound of me being too shy to press stop at the end."
+      ],
+      [
+        "Every station out here fades in the middle of the chorus.",
+        "The radio knows. It is saving the good bits for somebody else."
+      ],
+      [
+        "That tune you whistle every morning. What is it?",
+        "A dance from the village I grew up in.",
+        "It sounds very sad for a dance.",
+        "You have not seen the village."
+      ],
+      [
+        "{leader} hums the same tune every time we break camp.",
+        "I noticed. It seems to be the only song with a verse for folding a tent."
+      ],
+      [
+        "I bought a cassette in the last town without looking at it.",
+        "What is on it?",
+        "A man singing about his boat. Forty minutes about one boat."
+      ],
+      [
+        "I dreamed I was back at school and nobody had told me there was an exam.",
+        "I have that one every year. The exam is always in a language I do not speak."
+      ],
+      [
+        "Last night I dreamed the camper could fly.",
+        "Did it go anywhere useful?",
+        "It went to my cousin's wedding. It was still raining."
+      ],
+      [
+        "You laughed in your sleep last night.",
+        "Did I? I hope it was a good joke.",
+        "You said the word spoons and laughed for a full minute."
+      ],
+      [
+        "I had a dream that you were a baker, {other}.",
+        "Was I any good?",
+        "No. But you were over the moon about it."
+      ],
+      [
+        "Last night I dreamed of a house with a room I had never noticed.",
+        "Everybody has that dream.",
+        "Mine had a piano in it, and my own handwriting on the walls.",
+        "Then yours was better than everybody's."
+      ],
+      [
+        "Did you sleep?",
+        "I dreamed I was carrying the stove up a staircase all night. I am tired in two worlds."
+      ],
+      [
+        "I dreamed I could breathe underwater and was very smug about it.",
+        "That sounds like you awake as well."
+      ],
+      [
+        "I dreamed my grandmother was cross with me about a spoon.",
+        "What spoon?",
+        "I do not know. She knew. That was the frightening part."
+      ],
+      [
+        "In my dream I could fly, but only about a metre off the ground.",
+        "So you were walking, but smug.",
+        "That is the whole dream, yes."
+      ],
+      [
+        "I dreamed {leader} was a lighthouse.",
+        "Still leading the way?",
+        "Standing very still and blinking. So, not much of a change."
+      ],
+      [
+        "Do not put your hat on the bed.",
+        "Why not?",
+        "I do not know. But my mother would know, from four hundred kilometres away."
+      ],
+      [
+        "You still carry that button?",
+        "It is from the coat I wore the day I survived something. It stays."
+      ],
+      [
+        "Never thank somebody for salt. It is bad luck.",
+        "So I simply take it and stare at you?",
+        "Stare warmly. That is permitted."
+      ],
+      [
+        "You knocked on the wooden spoon again.",
+        "There was no table. The spoon is wood. The rules are flexible."
+      ],
+      [
+        "A black cat crossed the road this morning.",
+        "Left to right or right to left?",
+        "Does that matter?",
+        "Enormously. Neither of us knows which way is the bad one."
+      ],
+      [
+        "I keep a coin in my boot for luck.",
+        "Which boot?",
+        "The left. The right one has a hole and the luck would fall out."
+      ],
+      [
+        "You will not start a journey on a Tuesday.",
+        "Nothing good ever started on a Tuesday. Name one thing.",
+        "We met on a Tuesday.",
+        "Then I rest my case."
+      ],
+      [
+        "Do not whistle indoors. You will whistle the money away.",
+        "We have no money to whistle away, {name}.",
+        "Then I am protecting the money we will have."
+      ],
+      [
+        "You wear that ring on the wrong hand.",
+        "It was my grandfather's. He wore it on the wrong hand too. It is a family error."
+      ],
+      [
+        "I wrote a postcard to my sister and then forgot which town I posted it from.",
+        "She will work it out from the stamp. Sisters always do."
+      ],
+      [
+        "Who are you writing to?",
+        "Nobody yet. I write the letter first and decide who deserves it afterwards."
+      ],
+      [
+        "I bought a postcard of a castle we never actually saw.",
+        "Send it anyway. Let them think we are cultured."
+      ],
+      [
+        "A letter from home took six weeks to find me.",
+        "What did it say?",
+        "That the cat is fat and the roof is fine. Six weeks well spent."
+      ],
+      [
+        "How do you end a letter when you do not know when you will see them?",
+        "With the weather. Everybody understands the weather."
+      ],
+      [
+        "I have kept every letter anybody ever sent me.",
+        "How many have you got?",
+        "Nine. It is a small box. It goes everywhere."
+      ],
+      [
+        "A stamp home costs {gold} now.",
+        "For that money the letter ought to deliver itself and stay for dinner."
+      ],
+      [
+        "I started a letter to you once, and then remembered you were standing next to me.",
+        "What did it say?",
+        "Dear {other}, you are standing next to me. I got no further."
+      ],
+      [
+        "Postcards are better than letters. Nobody expects you to be honest on a postcard.",
+        "Wish you were here.",
+        "Exactly. Four words, and three of them are polite fiction."
+      ],
+      [
+        "I found a grey hair this morning.",
+        "Just the one?",
+        "Just the one I am admitting to."
+      ],
+      [
+        "When we are old, I want a bench somewhere with a view of a road.",
+        "So you can watch other people walk it.",
+        "So I can criticise their boots."
+      ],
+      [
+        "My knees have started forecasting the weather.",
+        "Mine forecast stairs. They are always right."
+      ],
+      [
+        "Will you be a nice old person or a difficult one?",
+        "Difficult, but with excellent biscuits. People forgive a lot for biscuits."
+      ],
+      [
+        "My grandfather lived to ninety-four on bread, wine and spite.",
+        "Which part do you think did it?",
+        "The spite. The other two were only keeping it company."
+      ],
+      [
+        "I used to think forty was ancient.",
+        "And now?",
+        "Now I think forty is somebody who still has good knees."
+      ],
+      [
+        "When you are old, will you tell people about all this?",
+        "Only the parts where I look brave. It will be a short story."
+      ],
+      [
+        "I am getting reading glasses in the next town.",
+        "You have held the map at arm's length since the spring, {name}.",
+        "I was admiring it from a distance.",
+        "You were admiring it from another postcode."
+      ],
+      [
+        "I want to grow old somewhere with a lemon tree.",
+        "You would talk to it every morning.",
+        "Somebody has to. Lemon trees are very lonely."
+      ],
+      [
+        "{leader} will be the old one shouting directions at the bus driver.",
+        "And the bus driver will listen, which is the worst part."
+      ],
+      [
+        "I want to learn to swim properly. Not that paddling thing I do.",
+        "That paddling thing has saved your life twice. Show it some respect."
+      ],
+      [
+        "Teach me to read the stars.",
+        "Start with one. Find it every night for a week. Then we talk about a second."
+      ],
+      [
+        "Before I die I will learn to dance something properly.",
+        "Which dance?",
+        "Any dance where my feet know what my hands are doing."
+      ],
+      [
+        "I would like to learn another language. A whole one.",
+        "Which?",
+        "Something with a lot of words for rain, so I can complain accurately."
+      ],
+      [
+        "You could teach me to fix the camper engine.",
+        "I could. Then whenever it broke you would have opinions.",
+        "I have opinions now.",
+        "Yes, but at present they are uninformed and I can ignore them."
+      ],
+      [
+        "I want to learn to sew properly. My mending looks like an accident.",
+        "It holds, {name}. That is all a mend has to do.",
+        "It holds like a grudge. Nobody is happy about it."
+      ],
+      [
+        "I bought a book on mushrooms, to learn them.",
+        "And?",
+        "I now know eleven ways to die in a wood. It has been very educational."
+      ],
+      [
+        "Who taught you to tie knots like that?",
+        "A fisherman who never caught anything. He had plenty of time to practise."
+      ],
+      [
+        "I wish I had learned the piano when there was a piano.",
+        "There is a piano in every second inn, {name}.",
+        "Yes, and a landlord standing next to it."
+      ],
+      [
+        "I want to learn to cook one thing perfectly. Just one.",
+        "Then make it eggs. Eggs are always there and they never lie about how you did."
+      ],
+      [
+        "I want to learn the names of the birds before I get old.",
+        "Start with the one that wakes us at four. I would like to know whom to blame."
+      ],
+      [
+        "{gold} left until the end of the month, and I want to learn chess.",
+        "Chess is cheap. Losing to me every evening costs nothing at all."
+      ],
+      [
+        "I would like to learn to draw, so I could keep some of this.",
+        "Draw the camper first. It does not move and it will not complain about its nose."
+      ],
+      [
+        "You still write the date on the inside of your wrist every morning.",
+        "Out here the days run together. My wrist is the only calendar that does not get wet."
+      ],
+      [
+        "Do you still have the photograph of your mother's garden?",
+        "In the inside pocket. It has been rained on so often it looks like a garden in fog.",
+        "It suits it.",
+        "It does. She always said it looked best in bad weather."
+      ],
+      [
+        "The radio in the camper only works if somebody holds the aerial.",
+        "Then whoever wants the music holds the aerial. That is democracy."
+      ],
+      [
+        "You tie your bootlaces in a double knot and then a third for luck.",
+        "The third one is not for luck. It is for the hill outside the last town."
+      ],
+      [
+        "The heater only works if somebody kicks it.",
+        "It works if I kick it. When you kick it, it sulks."
+      ],
+      [
+        "Who moved the radio dial off the news?",
+        "Nobody. It drifts on every pothole.",
+        "Then this road has taken us to a farming report in Slovenian."
+      ],
+      [
+        "I want the top bunk tonight.",
+        "You said the top bunk was a coffin with a view.",
+        "I have come round to the view."
+      ],
+      [
+        "The camper makes a new noise. Left side, behind the sink.",
+        "That is not new. That is the old noise, louder.",
+        "Is that better or worse?",
+        "It means it trusts us enough to complain."
+      ],
+      [
+        "The water tank is empty again, {other}.",
+        "Then somebody had a long shower and it was not me.",
+        "I will not be cross-examined in my own camper."
+      ],
+      [
+        "There is a sock in the glovebox.",
+        "It has been there since autumn. It is a resident now."
+      ],
+      [
+        "Whoever folded the table into a bed last night did it backwards.",
+        "It goes both ways.",
+        "It goes one way, and the other way is the one that ruined my back."
+      ],
+      [
+        "The fuel gauge says half.",
+        "The fuel gauge has said half since we bought it. Trust the smell instead."
+      ],
+      [
+        "Somebody in this camper snores, and I am too polite to say who.",
+        "You are too polite because it is you.",
+        "I spend half the night awake not snoring. I would know."
+      ],
+      [
+        "The windscreen wiper on your side has given up.",
+        "It gave up in the rain, which is a choice I respect."
+      ],
+      [
+        "We should name the camper.",
+        "It has a name. I call it that thing, mostly when it will not start."
+      ],
+      [
+        "If I had a fortune I would buy a house with a library and never answer the door.",
+        "You would answer it. You would want to know who it was.",
+        "Then I would answer it and be rude."
+      ],
+      [
+        "We have {gold}. What does that buy, these days?",
+        "Two nights somewhere modest, or one night somewhere that thinks it is not."
+      ],
+      [
+        "My father kept his savings in a biscuit tin.",
+        "So did mine. Then one Christmas somebody ate the biscuits and found the money.",
+        "Was it you?",
+        "I was eight and I bought a bicycle. I regret nothing."
+      ],
+      [
+        "Would you lend me money, if I asked?",
+        "Yes. Then I would mention it at every meal for a year."
+      ],
+      [
+        "Rich people never carry cash, have you noticed?",
+        "That is how they stay rich. Nobody can ask them for any."
+      ],
+      [
+        "I have counted the purse twice and it comes to {gold} both times.",
+        "Count it a third time. Sometimes it is generous on the third go."
+      ],
+      [
+        "If we won the lottery, would you keep travelling?",
+        "In a better camper. With a heater that does not need kicking.",
+        "So the same life with fewer bruises.",
+        "That is all anybody wants from money."
+      ],
+      [
+        "You tip far too much.",
+        "I waited tables for three summers. I tip what I was never given."
+      ],
+      [
+        "What is the most you ever spent on something stupid?",
+        "A coat. Purple. I wore it twice.",
+        "Where is it now?",
+        "Somebody in Graz is very warm and very purple."
+      ],
+      [
+        "I have started saving. A little, every week.",
+        "For what?",
+        "I do not know yet. That is the nice part."
+      ],
+      [
+        "The new euro coins have a different picture on the back in every country.",
+        "So the change in your pocket tells you where you have been.",
+        "Mine says I have been nowhere interesting."
+      ],
+      [
+        "The train was forty minutes late and they apologised for the inconvenience.",
+        "Forty minutes is not an inconvenience. It is a short holiday on a bench."
+      ],
+      [
+        "Did you see the evening news?",
+        "The man with the moustache read it as if it were his own bad week.",
+        "It might have been. He looked tired."
+      ],
+      [
+        "The payphone ate my coin and gave me a dial tone for it.",
+        "Then you bought a dial tone. Some people pay more for less."
+      ],
+      [
+        "Have you tried the Hypernet?",
+        "Once, in a library. A page took four minutes to load and it was about cats.",
+        "That is most of it, from what I hear."
+      ],
+      [
+        "There is an election somewhere every week now.",
+        "And the posters all promise the same thing in different lettering."
+      ],
+      [
+        "I bought a newspaper just for the crossword.",
+        "And read the front page anyway.",
+        "And now I am in a bad mood and the crossword is unfinished."
+      ],
+      [
+        "I have one roll of film left. Twenty four pictures.",
+        "Then do not waste them on me.",
+        "I already used six on you. You blinked in all of them."
+      ],
+      [
+        "Somebody at the station asked me for my Hypernet mail address.",
+        "What did you tell them?",
+        "That I had a postal one and it had worked fine for years."
+      ],
+      [
+        "The photo shop says our pictures will be ready Thursday.",
+        "We will be two countries away on Thursday.",
+        "Then somebody in that town is going to see a lot of you blinking."
+      ],
+      [
+        "Newspapers are thinner than they used to be.",
+        "There is less news, or less paper. I have never worked out which."
+      ],
+      [
+        "The weather man on the television promised sun.",
+        "He always promises sun. It is the only thing keeping him in work."
+      ],
+      [
+        "What game did you play most, as a child?",
+        "Hide and seek. I had a gift. Once nobody found me until supper.",
+        "That is not winning. That is being forgotten."
+      ],
+      [
+        "I was terrible at mathematics at school.",
+        "You count our money every night.",
+        "Badly. That is why it always comes out differently."
+      ],
+      [
+        "Did you have a teacher who frightened you?",
+        "One. She could hear a whisper at the back of the room from the corridor.",
+        "Mine threw chalk. He never missed."
+      ],
+      [
+        "I used to collect stickers for a football album.",
+        "Did you finish it?",
+        "One missing. A goalkeeper from Belgium. I still think about him sometimes."
+      ],
+      [
+        "Were you the clever one at school, or the loud one?",
+        "The one by the window, looking out at roads like this."
+      ],
+      [
+        "I fell out of a tree at nine and broke my arm.",
+        "Which tree?",
+        "That is your question? Not the arm?",
+        "Some trees deserve to be remembered."
+      ],
+      [
+        "We played marbles in the dust behind the church.",
+        "We played in the corridor until the headmaster slipped on one.",
+        "Was he all right?",
+        "He was never quite the same, and neither was the corridor."
+      ],
+      [
+        "I still know the capitals of every country in Europe.",
+        "Half of them have changed since you learned them.",
+        "Then I know the old ones. Somebody has to."
+      ],
+      [
+        "Did you ever get sent out of the classroom?",
+        "Every Tuesday. I had a regular spot in the corridor. People visited."
+      ],
+      [
+        "Skipping rope. I could do a hundred without a mistake.",
+        "Prove it at the next town.",
+        "My knees are not nine years old any more, {other}."
+      ],
+      [
+        "You stir your coffee anticlockwise.",
+        "It tastes different the other way.",
+        "It does not.",
+        "Then why have you started doing it too?"
+      ],
+      [
+        "I cannot think until I have had a coffee.",
+        "I have noticed. Before the coffee you agreed to carry everything."
+      ],
+      [
+        "Shaving in a camper mirror is an act of faith.",
+        "So is watching you do it while we are moving."
+      ],
+      [
+        "Hand me the darning needle. Another heel has gone.",
+        "You walk on your heels like you are angry at them.",
+        "I am angry at them. They keep wearing through."
+      ],
+      [
+        "Every morning you check the sky before anything else.",
+        "Habit. My grandmother did it. She was never once wrong about rain."
+      ],
+      [
+        "You fold your shirts as if somebody is going to inspect them.",
+        "Somebody did, once, for two years. It does not leave you."
+      ],
+      [
+        "Why do you always wind your watch at exactly nine?",
+        "Because at ten I have forgotten, and at eleven it has stopped."
+      ],
+      [
+        "First coffee is mine. I have earned it.",
+        "Earned it by opening your eyes?",
+        "Have you ever watched me wake up? It is a battle."
+      ],
+      [
+        "You leave the cup by the sink every night. Never in it.",
+        "The sink is for things that are finished. That cup has a future."
+      ],
+      [
+        "I have sewn the same button back on this coat four times.",
+        "Then the button is telling you something.",
+        "It is telling me I sew badly. I knew that."
+      ],
+      [
+        "Do you always make the bed, even here?",
+        "Especially here. A made bed is the only thing in the day that goes to plan."
+      ],
+      [
+        "When my hair is white I want a bench with my name on it.",
+        "You want people sitting on you after you have gone?",
+        "I want to be remembered by somebody tired. That is a kind of honour."
+      ],
+      [
+        "What will you do when you are seventy?",
+        "Complain about the young, loudly, on trains.",
+        "You do that now.",
+        "Then I am ahead of schedule."
+      ],
+      [
+        "I would like a small house by water.",
+        "Sea or lake?",
+        "A lake. The sea is always going somewhere. I would like water that stays."
+      ],
+      [
+        "Promise me that when we are old you will not tell this story wrong.",
+        "I will tell it better. That is a different promise."
+      ],
+      [
+        "Do you think you will ever settle down?",
+        "Somewhere with a garden. Then I will spend all day looking at the road out of it."
+      ],
+      [
+        "In ten years I want to be able to sleep past six.",
+        "That is your whole ambition?",
+        "You have never slept in a camper beside a road full of lorries. It is a big ambition."
+      ],
+      [
+        "When I retire I will write a guidebook. Every bad inn from here to the coast.",
+        "Nobody will buy it.",
+        "Everybody will buy it. People love to know what to avoid."
+      ],
+      [
+        "Do you want children, one day?",
+        "I want to be the relative who turns up with presents and leaves before bedtime.",
+        "That is not having children. That is having an audience."
+      ],
+      [
+        "When we are old, will we still talk like this?",
+        "Slower. And with more pauses where we have forgotten the word.",
+        "So exactly like this, then."
+      ],
+      [
+        "My plan for old age is a rocking chair and a view of a car park.",
+        "Why a car park?",
+        "Something should happen, but not to me."
+      ],
+      [
+        "Five years from now, where are we?",
+        "Somewhere with chairs. That is as far as I can see."
+      ],
+      [
+        "I never wrote back to my brother.",
+        "It is not too late. There is a post office in every town.",
+        "There is a stamp in my pack. It has been there a year."
+      ],
+      [
+        "Do you regret leaving your job?",
+        "Every Friday, at about five, for one minute. Then it passes."
+      ],
+      [
+        "If you could go back and say one thing to somebody, who would it be?",
+        "A woman on a train in ninety-six. I let her carry her own case up the steps.",
+        "That is your great regret? A suitcase?",
+        "She was very old and I had too much pride. It stays with you."
+      ],
+      [
+        "I was unkind to you the week we met.",
+        "You were unkind to everybody that week. I did not take it personally."
+      ],
+      [
+        "Do you ever wish you had stayed?",
+        "Some mornings. Then I remember what staying looked like."
+      ],
+      [
+        "I got a second chance once and wasted it.",
+        "Then this is the third. Do not tell anyone, they are not usually handed out."
+      ],
+      [
+        "I should have learned to swim properly.",
+        "It is not too late.",
+        "It is too late for the river last month. That was my point."
+      ],
+      [
+        "Is there anybody you would apologise to, if you could find them?",
+        "A landlord in Lyon. I left through the window and owed him a month.",
+        "And now?",
+        "Now I would pay him and use the door."
+      ],
+      [
+        "We could have taken the other road, that time.",
+        "We could have. Then we would be complaining about that one instead."
+      ],
+      [
+        "I am trying to be less stubborn this year.",
+        "How is it going?",
+        "Very well. I refuse to hear otherwise."
+      ],
+      [
+        "You still owe me for the umbrella.",
+        "The umbrella that blew into the river in a breeze.",
+        "It was a gale and you were holding it wrong."
+      ],
+      [
+        "Tell the one about the goat.",
+        "No. You laugh for ten minutes and I have to walk next to you."
+      ],
+      [
+        "Do you remember the inn with the parrot?",
+        "Nobody could forget the inn with the parrot.",
+        "It still owes me an apology."
+      ],
+      [
+        "You have mispronounced that town every day for a week.",
+        "And every day it has stayed a town. No harm done."
+      ],
+      [
+        "{other}, the map. Which way up does it go?",
+        "You ask me that every morning.",
+        "And every morning you take too long to answer."
+      ],
+      [
+        "One day you will win at cards and I will have nothing left to say.",
+        "I won on Tuesday.",
+        "You won one hand. I am counting games."
+      ],
+      [
+        "You were going to learn to fold a map back properly.",
+        "I am learning. It is a very long course, and the map is not helping."
+      ],
+      [
+        "Tell me again about the time you nearly met a prince.",
+        "It was a duke, and I very nearly did.",
+        "You held a door open for his driver.",
+        "Very nearly, I said."
+      ],
+      [
+        "We are not lost.",
+        "Nobody said lost.",
+        "You were about to.",
+        "I was about to say scenic."
+      ],
+      [
+        "You promised you would stop collecting matchboxes.",
+        "I promised I would stop buying them. People keep giving them to me."
+      ],
+      [
+        "Let me guess. You knew a shortcut.",
+        "I knew the shortcut, {name}. The shortcut did not know me."
+      ],
+      [
+        "We had a dog called Professor when I was small.",
+        "Why Professor?",
+        "He looked at everything as if it had disappointed him."
+      ],
+      [
+        "Did you ever have a cat?",
+        "A cat had me, for six years. I was allowed to open the tins."
+      ],
+      [
+        "A goose chased me across a farmyard in Bavaria.",
+        "Did you win?",
+        "Nobody wins against a goose. You only reach the gate."
+      ],
+      [
+        "There was a horse on my uncle's farm that only liked me.",
+        "Lucky.",
+        "Not luck. I was the one carrying the apples."
+      ],
+      [
+        "That cat at the campsite followed you for a kilometre.",
+        "She had good taste.",
+        "She had smelled the sausage in your pocket."
+      ],
+      [
+        "I kept a hedgehog in a shoebox for a week as a child.",
+        "What happened to it?",
+        "My mother made me let it go. It left without looking back. Very hedgehog of it."
+      ],
+      [
+        "Do you think animals know when we are leaving a place?",
+        "The dogs do. The cats know and pretend not to care."
+      ],
+      [
+        "My grandfather kept pigeons on the roof.",
+        "Did they always come back?",
+        "Every one. He said it was the only loyalty he ever trusted."
+      ],
+      [
+        "The farmer's dog slept against the camper door last night.",
+        "Guarding us or keeping us in?",
+        "I did not ask. He seemed very sure of himself."
+      ],
+      [
+        "Cows stare at you as if you owe them an explanation.",
+        "Perhaps we do. We are walking through their kitchen."
+      ],
+      [
+        "What are you reading?",
+        "A detective novel. Somebody has died in a library and everybody is lying.",
+        "Sounds like a library."
+      ],
+      [
+        "You have been on page forty of that book for a month.",
+        "It is a very good page forty. I keep going back to it."
+      ],
+      [
+        "Do not tell me how it ends.",
+        "I would not. The ending is the worst part anyway.",
+        "Then why did you say so?",
+        "So you would stop expecting it to be good."
+      ],
+      [
+        "I borrowed this book from a library in Ghent.",
+        "When is it due back?",
+        "Last March. I think about the fine more than the book."
+      ],
+      [
+        "You read the last page first. I have seen you do it.",
+        "I like to know who survives before I get attached."
+      ],
+      [
+        "Is that book any good?",
+        "It is eight hundred pages about a family who never say what they mean.",
+        "So it is about us.",
+        "Shorter chapters, but yes."
+      ],
+      [
+        "I swapped my book for yours on the hostel shelf.",
+        "That was my book, {name}. I had not finished it.",
+        "You were on page forty. You were never going to finish it."
+      ],
+      [
+        "Read me a bit of yours while I drive.",
+        "It is about a lighthouse keeper who does nothing for three hundred pages.",
+        "Perfect. Read slowly."
+      ],
+      [
+        "There is a paperback in the camper with no cover and no first chapter.",
+        "I know. I have read it for weeks and I still do not know the hero's name.",
+        "Make one up.",
+        "I have. I call him {leader}."
       ]
     ],
     "battered": [
@@ -4936,6 +5928,101 @@
           "You carried me the last mile, did you not.",
           "Half a mile. You are heavier than you look.",
           "Thank you all the same."
+        ],
+        [
+          "I sewed your button back on while you slept.",
+          "Which button?",
+          "The one you have been holding your coat shut over since the river."
+        ],
+        [
+          "You took the cold side of the tent again.",
+          "I run warm. You know that.",
+          "You do not. Your feet are ice every morning."
+        ],
+        [
+          "Here. A new pencil. Yours is a stub.",
+          "You noticed that?",
+          "You have been writing with your fingernails for a week."
+        ],
+        [
+          "Bad night?",
+          "The same dream. The water and the door.",
+          "Then sit here until it fades. I am not going anywhere.",
+          "Thank you, {name}."
+        ],
+        [
+          "I told {leader} it was my idea. It was yours.",
+          "Why would you do that?",
+          "Because it went badly, and I have the thicker skin."
+        ],
+        [
+          "Tea. Two sugars, which you will deny.",
+          "I take one.",
+          "You take two and stir the second in when nobody is looking."
+        ],
+        [
+          "There was a postcard of your home town in the last shop.",
+          "You bought it?",
+          "It has been in your coat pocket since Tuesday."
+        ],
+        [
+          "The scarf is a loan. Give it back in spring.",
+          "And if I do not?",
+          "Then it was a gift, and I will pretend I meant it."
+        ],
+        [
+          "Remember the goat at the border?",
+          "Do not start. I will laugh and wake the whole camp."
+        ],
+        [
+          "I patched the hole in your sleeping bag.",
+          "So that is why I slept through the night. Thank you, {name}."
+        ],
+        [
+          "Lean on me for the hill.",
+          "Only for the hill. Do not tell anyone."
+        ],
+        [
+          "I kept the last of the chocolate. Half each.",
+          "You broke it so my half is bigger. I can see it."
+        ],
+        [
+          "Take the window seat in the camper.",
+          "You always say that, and then you always mean it."
+        ],
+        [
+          "I did the washing. Yours too.",
+          "You folded my socks into pairs. Nobody has done that since I was a child."
+        ],
+        [
+          "Quiet now. Let the others sleep a little longer.",
+          "Then we will have the sunrise to ourselves."
+        ],
+        [
+          "Write to your mother. I will post it at the next town.",
+          "You remembered she worries.",
+          "You talk about her every time it rains."
+        ],
+        [
+          "I told the innkeeper you were a famous poet.",
+          "Whatever for?",
+          "We got the good room. Recite something if he asks.",
+          "I will recite your debts."
+        ],
+        [
+          "Your hands are shaking.",
+          "It was close today. Closer than I said.",
+          "I know. I was there. Give me your hands."
+        ],
+        [
+          "I found a cassette of those old songs you hum.",
+          "Now I will have to hum them in tune. Thank you, {name}."
+        ],
+        [
+          "Supper is mine tonight. That is {gold} you get to keep.",
+          "You paid last time.",
+          "And I will pay next time. Stop counting.",
+          "Fine. But I am still counting."
         ]
       ],
       "sore": [
@@ -5031,6 +6118,101 @@
           "Every time we make camp you vanish for an hour.",
           "I need an hour to myself.",
           "Then say so, instead of leaving me to search the treeline."
+        ],
+        [
+          "Whose turn is the washing up?",
+          "Yours. It is on the list.",
+          "You wrote the list.",
+          "And you agreed to it, in writing."
+        ],
+        [
+          "Where is my comb?",
+          "Three towns back, I think. I will buy you another."
+        ],
+        [
+          "You hum when you pack.",
+          "I hum when I am happy.",
+          "Then be happy more quietly."
+        ],
+        [
+          "We said we would leave at dawn.",
+          "It is nearly dawn.",
+          "It is nearly lunch."
+        ],
+        [
+          "You told {leader} about the map.",
+          "I said it was a little torn.",
+          "You said I sat on it."
+        ],
+        [
+          "Somebody has been reading my diary.",
+          "Nobody would want to. It is mostly weather."
+        ],
+        [
+          "You owe me {gold}.",
+          "I owe you nothing. You owe me a pair of bootlaces.",
+          "Bootlaces do not cost {gold}."
+        ],
+        [
+          "Stop cracking your knuckles.",
+          "Stop listening to my knuckles."
+        ],
+        [
+          "You ate the pickled eggs.",
+          "One. I ate one.",
+          "There were six this morning."
+        ],
+        [
+          "You lent my rain cape to a stranger.",
+          "She was soaked. You were dry.",
+          "I was dry then. Look at me now."
+        ],
+        [
+          "Your travel clock went off at four.",
+          "It does not know we changed country."
+        ],
+        [
+          "You always take the last match.",
+          "Somebody has to light the fire. I notice it is never you."
+        ],
+        [
+          "I asked you to buy bread, not a hat.",
+          "The hat was cheaper than it looked.",
+          "The hat is not edible."
+        ],
+        [
+          "You ran the camper battery flat with the radio.",
+          "It was the final.",
+          "The final of what?",
+          "It does not matter now. We lost."
+        ],
+        [
+          "Move your boots off my side.",
+          "There are no sides in a tent."
+        ],
+        [
+          "You laughed when I fell in the stream.",
+          "I pulled you out first. Then I laughed."
+        ],
+        [
+          "You took the credit for that bargain at the market.",
+          "I did the talking.",
+          "I did the haggling. You did the nodding."
+        ],
+        [
+          "Why is my good shirt in your pack?",
+          "It was cold.",
+          "It is a shirt, not a blanket, and it is mine."
+        ],
+        [
+          "Late again.",
+          "I stopped for directions.",
+          "We have a map. You stopped for pastries.",
+          "There were directions on the bag."
+        ],
+        [
+          "You told me you could swim.",
+          "I said I could float. You never asked the important part."
         ]
       ],
       "road": [
@@ -5090,6 +6272,117 @@
         [
           "We have not talked about what happens when this is over.",
           "No. And we are not going to, tonight."
+        ],
+        [
+          "Laundry in the next town. Everything I own smells of smoke.",
+          "Mine smells of you, which is worse."
+        ],
+        [
+          "Rope, lamp oil, plasters. What else?",
+          "Coffee. Without coffee the rest does not matter."
+        ],
+        [
+          "The left strap on your pack is fraying.",
+          "I saw. I will stitch it tonight.",
+          "Use the waxed thread, not the cotton."
+        ],
+        [
+          "You take first watch, I take the dark middle.",
+          "Then I owe you the dawn one tomorrow."
+        ],
+        [
+          "Valley road or ridge road?",
+          "Valley. It is longer, but the ridge has nothing to drink.",
+          "Valley, then. Tell {leader}."
+        ],
+        [
+          "What are we cooking?",
+          "Beans.",
+          "We had beans yesterday.",
+          "And we will have beans tomorrow, unless someone goes shopping."
+        ],
+        [
+          "Do we need a second pot?",
+          "Only if you want tea and soup at the same time.",
+          "I always want tea and soup at the same time."
+        ],
+        [
+          "Pack the heavy things low and close to your back.",
+          "I know how to pack.",
+          "Then why does your bag swing like a church bell?"
+        ],
+        [
+          "How much is left in the purse?",
+          "{gold}, and that is before the camper wants fuel."
+        ],
+        [
+          "The tent pole bent in the wind.",
+          "Splint it with a peg and some tape. It will hold until town."
+        ],
+        [
+          "Spare socks drying on the line, or in your pocket?",
+          "Pocket. Last time the line blew into the river."
+        ],
+        [
+          "If we split up at the market, where do we meet?",
+          "The fountain. Every town has a fountain.",
+          "And if this one does not?",
+          "Then the bakery. Every town has one of those."
+        ],
+        [
+          "I want new boots before the mountains.",
+          "Buy them two towns early, so they are broken in."
+        ],
+        [
+          "Wake me if you hear anything bigger than a fox.",
+          "How do I know how big it is?",
+          "If you have to ask, wake me."
+        ],
+        [
+          "The lamp wick is nearly gone.",
+          "There is a spare in the tin with the matches.",
+          "There was a spare. I used it in the cellar."
+        ],
+        [
+          "Who has the train timetable?",
+          "{leader} does. Folded into a paper boat, last I saw."
+        ],
+        [
+          "Salt, soap, and a needle that is actually sharp.",
+          "Write it down. You will buy cheese and forget the lot."
+        ],
+        [
+          "Fill every bottle at the pump. The next one is a long way off.",
+          "How long?",
+          "Long enough that I am filling the cooking pot too."
+        ],
+        [
+          "Your turn to drive the camper.",
+          "I drove through the night.",
+          "You drove for an hour and stopped for a sausage.",
+          "It was a long sausage."
+        ],
+        [
+          "We should sell the old lantern.",
+          "It still works.",
+          "So does the new one, and we carry both."
+        ],
+        [
+          "Rain coming. Cover the firewood.",
+          "Already done. The boots are under the flap as well."
+        ],
+        [
+          "Cheaper to eat at the inn, or buy and cook?",
+          "Cook. The inn wanted {gold} for soup that tasted of the pot."
+        ],
+        [
+          "Grease the camper door before it wakes the whole valley.",
+          "I greased it yesterday.",
+          "Then it is squeaking out of spite."
+        ],
+        [
+          "You are holding the map upside down.",
+          "The road is upside down. I am holding it correctly."
         ]
       ]
     },
@@ -5550,7 +6843,2083 @@
         "I can hear the engine cooling.",
         "That is the best sound there is. It means today is over."
       ]
-    ]
+    ],
+    "life": {
+      "ill": [
+        [
+          "This {illness} has decided it lives here now.",
+          "Then it can start paying rent."
+        ],
+        [
+          "Do not stand so close. The {illness} is not fussy about who it visits.",
+          "I have shared a tent with you for a year, {name}. It has already met me."
+        ],
+        [
+          "I read about the {illness} in a pamphlet at the last chemist.",
+          "And?",
+          "I stopped reading at the word eventually."
+        ],
+        [
+          "Today the {illness} is only a two out of ten. Yesterday it was a nine.",
+          "Then today we walk slowly and call it a holiday."
+        ],
+        [
+          "I am fine. Stop looking at me like that, {other}.",
+          "You coughed up something with a colour, {name}.",
+          "It was a nice colour, at least.",
+          "Drink your tea."
+        ],
+        [
+          "Whoever gave me this {illness}, I hope they kept a little for themselves.",
+          "That is the fever talking.",
+          "The fever and I agree on most things lately."
+        ],
+        [
+          "I keep thinking the {illness} will get bored and leave.",
+          "Illnesses do not get bored. People do. Stay stubborn."
+        ],
+        [
+          "If the {illness} takes me out here, bury me somewhere with a view.",
+          "You are not dying. You are being dramatic in a blanket.",
+          "Both can be true."
+        ],
+        [
+          "My mother had a cure for everything. Onions, mostly.",
+          "We have onions.",
+          "Then I suppose I have no excuse."
+        ],
+        [
+          "The chemist said rest. As if rest were a place you could walk to.",
+          "It is. It is called stopping, {name}. Try it tonight."
+        ],
+        [
+          "I can hear my own chest when I breathe. It sounds like a kettle.",
+          "Then we stop at the next town and find a doctor.",
+          "And pay with what?",
+          "With whatever it costs. Do not argue with me today."
+        ],
+        [
+          "Tell the others the {illness} is getting better.",
+          "Is it?",
+          "No. But tell them anyway."
+        ],
+        [
+          "You have been carrying my pack since breakfast.",
+          "You have been carrying the {illness}. Seems fair, {name}."
+        ],
+        [
+          "Does the {illness} make everything taste of metal, or is it just this soup?",
+          "It is the soup. I made it. Do not blame the disease."
+        ],
+        [
+          "I dreamed the {illness} was a little man sitting on my chest, reading a newspaper.",
+          "Was it a good paper?",
+          "Racing results. He lost."
+        ],
+        [
+          "Sorry I am slowing us down.",
+          "We were never fast, {name}. Nobody has noticed the difference."
+        ],
+        [
+          "I have had the {illness} so long I have started to give it a personality.",
+          "What is it like?",
+          "Petty. Slow. Hates hills.",
+          "So it is you, then, {name}."
+        ],
+        [
+          "Keep your distance tonight, {other}. One of us with the {illness} is enough.",
+          "I will sleep on the far side. Shout if you need water."
+        ]
+      ],
+      "wounded": [
+        [
+          "My {part} has an opinion about every step.",
+          "Tell it to keep it to itself until the next bench."
+        ],
+        [
+          "Do not touch my {part}. Look at it, by all means. Do not touch it.",
+          "I was only going to check the splint, {name}.",
+          "Check it with your eyes."
+        ],
+        [
+          "I heard something go crack in my {part} and I have been pretending I did not.",
+          "That is not a plan, {name}. That is a hope with a limp."
+        ],
+        [
+          "How long does a {part} take to knit, do you think?",
+          "Longer than you will wait. Shorter than you fear.",
+          "You sound like a fortune teller, {other}."
+        ],
+        [
+          "I can still fight. Mostly.",
+          "Mostly is the word that worries me, {name}."
+        ],
+        [
+          "Remind me never to block an axe with my {part} again.",
+          "I reminded you before. You blocked it anyway."
+        ],
+        [
+          "The bandage on my {part} is too tight.",
+          "It is meant to be tight.",
+          "Then it is doing a wonderful job of it."
+        ],
+        [
+          "Carry my pack? Just to the crossroads. My {part} is singing.",
+          "Give it here. And stop calling the pain singing, {name}.",
+          "It has a tune. Mostly the same note."
+        ],
+        [
+          "If anyone asks, I fell off something heroic.",
+          "You fell off a stool in {place}, {name}.",
+          "A heroic stool.",
+          "The most heroic stool I have ever seen."
+        ],
+        [
+          "Sleep came twice last night and my {part} sent it away both times.",
+          "Take the soft side of the tent tonight. No arguing."
+        ],
+        [
+          "I keep forgetting it is hurt until I try to use it.",
+          "Then stop trying to use it, {name}. That is the whole cure."
+        ],
+        [
+          "The doctor said my {part} would be fine if I rested it.",
+          "And have you rested it?",
+          "Spiritually.",
+          "That does not count."
+        ],
+        [
+          "Do I look as bad as I feel?",
+          "Worse. But you walk like someone who has decided not to care.",
+          "I have decided. It is the only thing holding me up."
+        ],
+        [
+          "My {part} has swollen up like a loaf of bread.",
+          "Then we keep it well away from the bakers, {name}."
+        ],
+        [
+          "You did a good job with the splint, {other}.",
+          "I have had a lot of practice. Mostly on you, {name}."
+        ],
+        [
+          "Is it bad that I am starting to like the way my {part} predicts the rain?",
+          "Yes. But it is useful. Keep it.",
+          "Rain by evening, then.",
+          "I will fetch the tarp."
+        ]
+      ],
+      "maimed": [
+        [
+          "I still reach for things with a hand that is not there.",
+          "And I still hand them to you. We will both learn."
+        ],
+        [
+          "The new piece clicks when it is cold.",
+          "Then we will call it the weather clock, {name}.",
+          "It is not funny.",
+          "It is a little funny. You are smiling."
+        ],
+        [
+          "People stare in the market.",
+          "Let them. You were worth staring at before, {name}."
+        ],
+        [
+          "I used to be good at climbing.",
+          "You are still good at climbing. You are just slower and swear more.",
+          "The swearing was always there."
+        ],
+        [
+          "The fitter said the augment would feel like mine in a month.",
+          "And?",
+          "It feels like a rented one. Polite, but not mine."
+        ],
+        [
+          "Some mornings I forget, and then I remember. Every single morning.",
+          "Then every single morning I will be here when you remember."
+        ],
+        [
+          "Do not help me with the strap. I need to do it myself.",
+          "I was not going to help. I was going to watch and look supportive.",
+          "That is worse.",
+          "I know."
+        ],
+        [
+          "It aches where there is nothing left to ache.",
+          "The old soldiers in {place} called that the ghost. They said it fades.",
+          "Did they say when?"
+        ],
+        [
+          "I am going to give the prosthetic a name.",
+          "Please do not.",
+          "Too late. It is called Gustavo."
+        ],
+        [
+          "You can stop walking on my bad side, {other}.",
+          "I am not walking here for you, {name}. The view is better."
+        ],
+        [
+          "I was afraid you would all leave me at the next town.",
+          "Nobody even suggested it, {name}. Not once."
+        ],
+        [
+          "Oil for the joint, oil for the boots. I am becoming a machine.",
+          "A machine that still eats all the cheese, {name}."
+        ],
+        [
+          "Funny thing. I am braver now. There is less left to lose.",
+          "Do not say it like that.",
+          "Then I will say it better tomorrow."
+        ],
+        [
+          "I learned to tie my laces again. One handed. It took a week.",
+          "I saw. I did not say anything.",
+          "I noticed you not saying anything. Thank you."
+        ],
+        [
+          "Does it bother you? Honestly.",
+          "It bothers me that it hurt you. The rest is just you, {name}."
+        ],
+        [
+          "The fitting rubs when we walk downhill.",
+          "Then we stop at the bottom and I find you some padding.",
+          "You are going to fuss.",
+          "Loudly, {name}. Get used to it."
+        ]
+      ],
+      "craving": [
+        [
+          "I can feel the {substance} calling from three streets away.",
+          "Then we walk the other three streets. I will come with you."
+        ],
+        [
+          "Just a little {substance}. A small one. To take the edge off.",
+          "The edge is how you know you are winning, {name}.",
+          "I hate it when you are wise."
+        ],
+        [
+          "My hands are shaking. Do not look.",
+          "I am looking at the road. Talk to me about anything else, {name}.",
+          "The weather, then. It is being dreadful."
+        ],
+        [
+          "Nine days without {substance}. Feels like ninety.",
+          "Nine is a real number. Ninety is just the craving lying to you."
+        ],
+        [
+          "Everyone in {place} seems to be having {substance} except me.",
+          "Everyone in {place} is not walking where you are walking.",
+          "Where am I walking?",
+          "Forward. Slowly. With me."
+        ],
+        [
+          "Keep the money tonight, {other}. Do not give it to me even if I ask nicely.",
+          "Especially if you ask nicely. I know your nice voice."
+        ],
+        [
+          "I dreamed about {substance} again. I woke up guilty for something I did not do.",
+          "Then you woke up clean. That is the part that counts."
+        ],
+        [
+          "I am not angry with you. I am angry with everything.",
+          "I know. Be angry. Just be angry here, with us.",
+          "Here is very boring.",
+          "Boring is safe, {name}. For tonight."
+        ],
+        [
+          "The worst part about {substance} is how reasonable it sounds.",
+          "It always has a good argument. That is how you know it is lying."
+        ],
+        [
+          "Could you hold on to my purse until morning?",
+          "Of course. And I will not ask why.",
+          "You know why."
+        ],
+        [
+          "If I slip, will you still walk with me?",
+          "If you slip, I pick you up and we keep walking. That is all it ever is."
+        ],
+        [
+          "Have you still got that ginger root?",
+          "Here. My aunt swore it beat any craving for {substance}.",
+          "Your aunt was a liar.",
+          "A kind one. Chew."
+        ],
+        [
+          "The smell of {substance} in that inn nearly had me.",
+          "I saw you leave. That was the bravest thing I have seen all week.",
+          "I nearly turned back."
+        ],
+        [
+          "Talk to me. Say anything. My head is loud.",
+          "Fine. Did you know {leader} snores in three different keys?",
+          "I did not. Keep going."
+        ],
+        [
+          "I used to think {substance} was the only thing that made me interesting.",
+          "You were interesting before, {name}. You were just tired.",
+          "I am still tired."
+        ],
+        [
+          "Some days the craving for {substance} is a whisper. Today it has a trumpet.",
+          "Then we make more noise than it. Sing badly with me."
+        ]
+      ],
+      "drunk": [
+        [
+          "I am not drunk. I am exactly the right amount of happy.",
+          "You called a lamppost madam, {name}.",
+          "She was very elegant."
+        ],
+        [
+          "Why is the road moving?",
+          "The road is not moving. Sit down before you join it."
+        ],
+        [
+          "I love you. I love all of you. Even {leader}.",
+          "Especially {leader}, an hour ago. You hugged them twice."
+        ],
+        [
+          "Tell me a secret, {other}. I will not remember it.",
+          "That is why I am not telling you one."
+        ],
+        [
+          "Somebody used to wait up for me. Before all this.",
+          "Do you want to talk about it?",
+          "No. Yes. Tomorrow. Ask me when I am sober and I will lie."
+        ],
+        [
+          "Water? Why would I want water?",
+          "Because tomorrow you will wish you had wanted it, {name}."
+        ],
+        [
+          "I am going to fight that sign.",
+          "The sign has not done anything to you.",
+          "It said {place}. Twice.",
+          "That is because you are seeing double."
+        ],
+        [
+          "Hold my hair if I am sick.",
+          "I always do. Hold on to the fence, {name}."
+        ],
+        [
+          "The stars are spinning. Make them stop.",
+          "I will have a word with them. Lie on your side.",
+          "You are a good friend, {other}. A good, blurry friend."
+        ],
+        [
+          "The last drink was a mistake. The four before it were very good decisions.",
+          "That is the most drunk sentence I have ever heard."
+        ],
+        [
+          "Why did nobody stop me?",
+          "We tried, {name}. You said you were celebrating Tuesday.",
+          "Is it Tuesday?",
+          "It is Friday."
+        ],
+        [
+          "I think I sang in that tavern.",
+          "You did. Nine verses of something with no tune.",
+          "They clapped, though."
+        ],
+        [
+          "Everyone is so far away and so loud.",
+          "Nobody is talking, {name}. That is your heart.",
+          "It is very dramatic, my heart."
+        ],
+        [
+          "I drink because the road is long, {other}.",
+          "The road is longer when you walk it sideways."
+        ],
+        [
+          "Do not tell the others I cried.",
+          "Nobody saw but me. And I have already forgotten.",
+          "Thank you. I am still going to cry a bit more.",
+          "Cry all you like. I will hold the lamp."
+        ],
+        [
+          "Which way are we sleeping tonight?",
+          "This way. Follow my voice and not the fence.",
+          "The fence seems more reliable."
+        ]
+      ],
+      "high": [
+        [
+          "The trees are breathing, {other}. Did you know the trees breathe?",
+          "They do. Not that loudly, {name}. Sit down by me."
+        ],
+        [
+          "I think I can hear colours.",
+          "What does the sky sound like?",
+          "Like somebody sighing in a church."
+        ],
+        [
+          "Who put the mushrooms in the stew?",
+          "You did, {name}. You said they were the friendly kind.",
+          "They are very friendly. Too friendly."
+        ],
+        [
+          "My hands are enormous. Look at them.",
+          "They are normal hands. Keep them out of the fire."
+        ],
+        [
+          "I have understood everything. The whole world. It is all one soup.",
+          "Write it down, then.",
+          "I cannot. The pen is laughing at me.",
+          "Of course it is."
+        ],
+        [
+          "Why is {leader} glowing?",
+          "{leader} is holding a lantern, {name}."
+        ],
+        [
+          "That powder from {place} was a mistake.",
+          "The man who sold it had no eyebrows. That was the clue."
+        ],
+        [
+          "I am frightened and I do not know of what.",
+          "Then hold my sleeve. It will pass. I will be right here when it does.",
+          "Promise?",
+          "Promise."
+        ],
+        [
+          "The smoke in that tent tasted like old magic.",
+          "It tasted like trouble. Drink some water, {name}."
+        ],
+        [
+          "Time has gone soft. Like butter.",
+          "It has been ten minutes. Sit.",
+          "Ten minutes is a very long butter."
+        ],
+        [
+          "Am I talking very loudly?",
+          "You are whispering everything. Very intensely.",
+          "That is the opposite of what I meant to do."
+        ],
+        [
+          "The {biome} has a face. It is watching us kindly.",
+          "Good. Let it watch while you lie down."
+        ],
+        [
+          "Never let me buy from a wizard at night again.",
+          "I said that last time, {name}.",
+          "I did not hear you. I was busy being a cloud."
+        ],
+        [
+          "Everything is very funny and nothing has happened.",
+          "That is how it starts. Then comes the sad part.",
+          "I do not want the sad part.",
+          "Nobody does. We will get through it with tea."
+        ],
+        [
+          "Can you tell the ground to hold still, {other}?",
+          "The ground is holding still. You are the one swaying."
+        ],
+        [
+          "I saw my grandmother in the fire. She told me to wear a coat.",
+          "Then wear a coat. She was not wrong.",
+          "She was never wrong. That is what is frightening."
+        ]
+      ],
+      "pregnant": [
+        [
+          "The baby kicked during the fight. I think it wanted to join in.",
+          "Tell it to wait its turn. About eighteen years."
+        ],
+        [
+          "I need to stop. Again. I am sorry.",
+          "Stop as often as you like, {name}. The road is not going anywhere."
+        ],
+        [
+          "I would kill for pickled herring and jam.",
+          "Together?",
+          "Do not judge me. Judge the baby."
+        ],
+        [
+          "What if it comes early, out here in the {biome}?",
+          "Then we manage. I have read the book twice.",
+          "Which book?",
+          "The one from the last town. It has pictures. Too many pictures."
+        ],
+        [
+          "Everyone keeps telling me to sit down.",
+          "Because you keep climbing things, {name}."
+        ],
+        [
+          "Do you think I will be any good at it? Being a parent.",
+          "You keep this lot alive on the road every day. You will be fine.",
+          "This lot does not cry at night.",
+          "{leader} does. Just quietly."
+        ],
+        [
+          "My feet are twice their size. I am walking on bread.",
+          "I will rub them tonight. Bread and all."
+        ],
+        [
+          "I keep thinking of names.",
+          "Anything good?",
+          "Not one. They all sound like innkeepers."
+        ],
+        [
+          "Sleep is a rumour. The baby has opinions about lying on the left.",
+          "Then lie on the right and I will tell you boring stories until it gives up."
+        ],
+        [
+          "I am frightened of the road now. I was never frightened before.",
+          "Being frightened is a sign you are paying attention, {name}.",
+          "I do not want to pay attention. I want a house."
+        ],
+        [
+          "Do not carry my pack. Well. Carry half.",
+          "I am carrying all of it. You are carrying enough already."
+        ],
+        [
+          "I cried at a sunrise this morning. A sunrise.",
+          "It was a very nice sunrise.",
+          "It was an ordinary one. That is the problem."
+        ],
+        [
+          "The midwife in {place} said to eat more greens.",
+          "Then we eat more greens. All of us. In solidarity.",
+          "You are going to regret saying that."
+        ],
+        [
+          "Feel. There. It is moving.",
+          "Oh. That is a whole person in there, {name}.",
+          "Half a person. The rest is soup and hope."
+        ],
+        [
+          "When it is born, it travels with us. I have decided.",
+          "Then we will need a smaller tent and a bigger patience.",
+          "We have neither.",
+          "We will find both by then."
+        ],
+        [
+          "Stop staring at my belly, {other}.",
+          "It is hard not to. It enters rooms before you do, {name}."
+        ]
+      ],
+      "levelUp": [
+        [
+          "Something clicked today. My hands knew what to do before I did.",
+          "I saw. You moved like you had done it a hundred times."
+        ],
+        [
+          "Level {level}, {other}. I counted.",
+          "Nobody counts that, {name}.",
+          "I count everything. It helps me sleep."
+        ],
+        [
+          "I learned a new trick. Want to see?",
+          "Is it dangerous?",
+          "Only for whoever is standing there.",
+          "Then I will stand over here, {name}."
+        ],
+        [
+          "My aim is steadier. I can feel it.",
+          "Good. Last week you shot a hat off a scarecrow by accident.",
+          "That was a very threatening scarecrow."
+        ],
+        [
+          "I feel taller. I am not taller, but I feel it.",
+          "You walk taller, {name}. That counts."
+        ],
+        [
+          "I think I finally understand what my old teacher kept shouting about.",
+          "Took you long enough.",
+          "Twelve years and a lot of bruises. Yes."
+        ],
+        [
+          "Level {level}. Does it show?",
+          "You stopped tripping on tree roots. It shows, {name}."
+        ],
+        [
+          "That fight felt slow. Not because it was easy. Because I was quick.",
+          "Do not let it go to your head. Let it go to your feet."
+        ],
+        [
+          "I can lift the full pack now without groaning.",
+          "Then you are carrying it tomorrow, {name}.",
+          "I walked into that one."
+        ],
+        [
+          "Being stronger is strange. I keep breaking door handles.",
+          "And a mug this morning.",
+          "The mug was cracked already.",
+          "It was not, {name}."
+        ],
+        [
+          "Did you see that? I did not even think about it.",
+          "I saw it. Do it again when it matters.",
+          "That is the thing. It will matter, and I will be ready."
+        ],
+        [
+          "Reached level {level} somewhere back on the road and nobody threw a party.",
+          "Here. A stale biscuit. Happy level {level}, {name}."
+        ],
+        [
+          "I feel like a new blade. Sharp, a little nervous.",
+          "Sharp is good. Nervous keeps you careful.",
+          "Then I will stay a little nervous."
+        ],
+        [
+          "My spells come easier now. Less like pulling teeth.",
+          "More like pulling smaller teeth?",
+          "Milk teeth. Very manageable."
+        ],
+        [
+          "I used to be afraid of the {biome}. Today I was only curious.",
+          "That is the best kind of getting stronger.",
+          "Do not tell anyone. It ruins the mystery.",
+          "Your secret is safe, {name}."
+        ],
+        [
+          "Teach me what you know next, {other}. I am ready for it now.",
+          "You are. That is new. I like it."
+        ]
+      ],
+      "rich": [
+        [
+          "We are carrying {gold}. I keep touching the pocket to check.",
+          "Stop touching it. Everyone in town now knows which pocket."
+        ],
+        [
+          "{gold}. I have never been this near so much money, and I do not like how it looks at me.",
+          "Money does not look at anyone. People look at the money.",
+          "That is worse. Thank you."
+        ],
+        [
+          "With {gold} we could buy the camper a new gearbox.",
+          "Or a whole new camper.",
+          "Do not say that where it can hear you."
+        ],
+        [
+          "I want a proper mattress. Not a good one. Just one that is not the ground.",
+          "Dream bigger. We are rich, for about a week."
+        ],
+        [
+          "{leader} has started walking like someone with a bank account.",
+          "It will pass. It always passes by the second shop."
+        ],
+        [
+          "We should split the {gold} into three pockets, just in case.",
+          "In case of what?",
+          "In case of everything we have ever met on this road."
+        ],
+        [
+          "I priced a decent sword in the last town. We could afford it now.",
+          "We could afford two. That is how people end up owning two swords."
+        ],
+        [
+          "My mother would faint if she saw {gold} in one purse.",
+          "Then do not show her. Send a postcard instead.",
+          "With what on it?",
+          "A nice view. Nothing about money."
+        ],
+        [
+          "Someone at the inn asked how we were doing. I said badly, out of habit.",
+          "Good. Keep saying it until the money is spent."
+        ],
+        [
+          "I keep doing sums in my head. {gold}, minus food, minus fuel, minus repairs.",
+          "And what is left?",
+          "Enough to worry about losing."
+        ],
+        [
+          "When I was small I thought rich people never had to walk anywhere.",
+          "And now?",
+          "Now I think they just walk in better shoes."
+        ],
+        [
+          "Keep me away from the market today.",
+          "Why?",
+          "I have {gold} in my head and no sense in it."
+        ],
+        [
+          "We have {gold}. We could actually pay back what we owe.",
+          "Pay it back? Who taught you that? It was not me."
+        ],
+        [
+          "I bought oranges. Real ones, from Spain. Nobody tell me what they cost.",
+          "I saw the stall. I will take it to my grave."
+        ],
+        [
+          "With {gold} we could stop for a month somewhere warm.",
+          "And then?",
+          "And then we would be poor somewhere warm.",
+          "Still sounds better than being poor here."
+        ],
+        [
+          "The thieves in {place} can smell a full purse.",
+          "Then we leave before they finish sniffing."
+        ]
+      ],
+      "broke": [
+        [
+          "We have {gold}. I counted it twice to make it more.",
+          "Did it work?",
+          "It went down by a coin. I dropped one."
+        ],
+        [
+          "{gold}. That is a loaf, a candle and an apology.",
+          "Skip the apology. We will need the candle."
+        ],
+        [
+          "I could sell my good knife.",
+          "You could, and then you would be broke with a worse knife."
+        ],
+        [
+          "We are down to {gold}.",
+          "I know. I have been walking past bakeries with my eyes shut."
+        ],
+        [
+          "When I was a child we ate soup made from the bones of the soup before.",
+          "That is not a recipe. That is a family history.",
+          "It got us through winters. It can get us through {place}."
+        ],
+        [
+          "There is work in the next town, they say.",
+          "They always say. It is never the kind that pays on the day.",
+          "Last time they paid us in eggs."
+        ],
+        [
+          "{gold} will not buy fuel for the camper.",
+          "Then the camper learns to walk like the rest of us."
+        ],
+        [
+          "I have started looking at the ground for dropped coins.",
+          "Found any?",
+          "A button. I am keeping it, out of principle."
+        ],
+        [
+          "Tell me honestly how long {gold} lasts.",
+          "Two days if we are careful. One if {leader} sees a pastry."
+        ],
+        [
+          "We could put on a show in the square. You sing, I hold the hat.",
+          "I do not sing.",
+          "Then they will pay us to stop.",
+          "That is still being paid."
+        ],
+        [
+          "Being poor is mostly arithmetic. I was never good at arithmetic.",
+          "Then you were always going to be good at being poor."
+        ],
+        [
+          "{gold}. The purse does not even jingle any more.",
+          "I miss the weight. It kept me from blowing away."
+        ],
+        [
+          "{gold}. My father earned more than that before breakfast, and spent it by lunch.",
+          "So it runs in the family.",
+          "Only the second half."
+        ],
+        [
+          "Do not look at the inn. We are not sleeping at the inn.",
+          "I was only looking. Looking is free.",
+          "In {place}, I would not be so sure."
+        ],
+        [
+          "We still have {gold} and a spare blanket. We could sell the blanket.",
+          "Then we would be broke and cold. One of those at a time, please."
+        ],
+        [
+          "{other}, lend me a coin for the payphone.",
+          "We have {gold} between us. Who are you calling, a bank?"
+        ],
+        [
+          "We have been poorer than this.",
+          "When?",
+          "That winter in the mountains. We had one turnip and a debt.",
+          "And now we only have the debt."
+        ],
+        [
+          "I bought bread with the last of it. Do not be angry.",
+          "Angry? That is the best decision this party has made in a week."
+        ]
+      ],
+      "holiday": [
+        [
+          "It is {holiday}. Every shop in {place} has its shutters down.",
+          "And here we are, needing laces."
+        ],
+        [
+          "Back home we would be eating until we could not stand, on {holiday}.",
+          "Here we are, standing. Something has to give.",
+          "Lunch, I hope."
+        ],
+        [
+          "Do you celebrate {holiday}?",
+          "I celebrate any day the shops are shut and nobody asks me for money."
+        ],
+        [
+          "Families everywhere today. Prams, grandmothers, the lot.",
+          "And us, with packs and a map and a smell.",
+          "Speak for yourself.",
+          "I am speaking for all of us. Honestly."
+        ],
+        [
+          "Happy {holiday}.",
+          "Is it? Nobody told the road."
+        ],
+        [
+          "I wonder if they are setting the table at home for {holiday}.",
+          "They are. And they are leaving a chair for you, out of spite.",
+          "Out of love.",
+          "Out of both. That is what family is."
+        ],
+        [
+          "The bakery opened for an hour this morning for {holiday}. I got the last cake.",
+          "You ate the last cake.",
+          "I got it. What happened next is private."
+        ],
+        [
+          "Everyone has the day off but us.",
+          "We never have the day off. We just have days."
+        ],
+        [
+          "The church bells have been going since dawn.",
+          "It is {holiday}. They are allowed. We are the ones out of place."
+        ],
+        [
+          "I used to hate {holiday} as a child. All those relatives.",
+          "And now?",
+          "Now I would give a lot to be bored at that table."
+        ],
+        [
+          "A man in {place} just wished me a good {holiday} and gave me an orange.",
+          "Did you thank him?",
+          "I was too surprised. I will thank the orange instead."
+        ],
+        [
+          "Do monsters keep holidays, do you think?",
+          "If they do, they picked a poor one to skip."
+        ],
+        [
+          "No buses, no post, no market. {holiday} has shut the whole country.",
+          "Good. Nobody can sell us anything we do not need."
+        ],
+        [
+          "I meant to send a card for {holiday}.",
+          "Send it late. Late cards are the honest ones."
+        ],
+        [
+          "The square is full of music. We could stop for one song.",
+          "One song. Then we work.",
+          "Two songs.",
+          "Fine. Two, and you carry my pack."
+        ],
+        [
+          "Somewhere a family is arguing over the roast right now.",
+          "Lucky them. We argue over directions."
+        ]
+      ],
+      "weekend": [
+        [
+          "Weekend. Half the town is still in bed.",
+          "And the other half has a headache. We picked a good day to pass through."
+        ],
+        [
+          "People are washing their cars. Washing them. On purpose.",
+          "That is what a weekend is for, apparently."
+        ],
+        [
+          "When did you last have a weekend?",
+          "I had one once. I spent it moving house.",
+          "So, never.",
+          "So, never."
+        ],
+        [
+          "The market is on. It is always on at the weekend.",
+          "Then keep your hands in your pockets and your eyes on the cheese."
+        ],
+        [
+          "I remember weekends. Long breakfasts. The radio on. Nowhere to be.",
+          "Stop it. You will make me cry on a hill."
+        ],
+        [
+          "Children everywhere. Kites, bicycles, a football in every yard.",
+          "One of them asked me if I was a knight.",
+          "What did you say?",
+          "I said yes. It seemed rude not to."
+        ],
+        [
+          "Does the weekend count if you are walking through it?",
+          "It counts for the people watching us walk."
+        ],
+        [
+          "The fishermen are out on the bank. Every single one with a flask.",
+          "That is the real weekend. A flask and nobody asking anything."
+        ],
+        [
+          "My brother lives for the weekend. Football, a beer, a nap.",
+          "And you?",
+          "I live for the next stop. Different hobby."
+        ],
+        [
+          "Nobody in {place} is in a hurry today.",
+          "Except us. We stand out like a fire bell."
+        ],
+        [
+          "I used to work weekends at my uncle's shop.",
+          "So you have trained for this.",
+          "I have trained for disappointment. Close enough."
+        ],
+        [
+          "Weekend traffic. Every family in the country is on this road.",
+          "Going to the seaside, all of them. With the dog and the grandmother.",
+          "And a crate of wine in the boot."
+        ],
+        [
+          "Let us pretend it is a weekend for us too. One slow hour.",
+          "One hour. I am timing it."
+        ],
+        [
+          "The radio has stopped doing news and started doing requests.",
+          "Request something for us.",
+          "Like what?",
+          "Anything about walking. They will know."
+        ],
+        [
+          "Someone is mowing a lawn. That sound means weekend wherever you go.",
+          "It means rest to them. To me it means somebody else is working."
+        ],
+        [
+          "Shops shut early here at the weekend.",
+          "Then we buy now and complain later, as usual.",
+          "That is the whole philosophy of this party."
+        ]
+      ],
+      "night": [
+        [
+          "Still awake?",
+          "The fire keeps talking. I keep listening."
+        ],
+        [
+          "Look at that sky. You never see that many stars in a city.",
+          "You never see that many anything in a city. Except bills."
+        ],
+        [
+          "I cannot sleep when it is this quiet.",
+          "Then I will snore for you. A public service."
+        ],
+        [
+          "What time is it?",
+          "Late enough that it does not matter.",
+          "Early enough that it will matter tomorrow."
+        ],
+        [
+          "My grandmother used to say nothing good happens after midnight.",
+          "Then go to sleep and let nothing happen to someone else."
+        ],
+        [
+          "I will take first watch.",
+          "You took first watch last night.",
+          "I like first watch. Second watch is when the noises start."
+        ],
+        [
+          "Something is moving out there.",
+          "A fox. Or an owl. Or something we will meet in the morning.",
+          "That is not as comforting as you think.",
+          "It was not meant to comfort. It was meant to be accurate."
+        ],
+        [
+          "Tell me something. Anything. Keep me awake.",
+          "When I was eight I ran away from home. I got as far as the bakery.",
+          "Then what?",
+          "Then I had a bun and went back. I was never a great adventurer."
+        ],
+        [
+          "The fire is going down.",
+          "Let it. I want to see the embers. They are the best part."
+        ],
+        [
+          "Do you think {leader} is really asleep?",
+          "With one eye. That one never fully sleeps."
+        ],
+        [
+          "I keep thinking about everything I should have said today.",
+          "Say it tomorrow. Night thoughts are always longer than they need to be."
+        ],
+        [
+          "There is a light in a farmhouse over the hill. Someone else is awake.",
+          "A baby, maybe. Or a worrier like you.",
+          "We should wave.",
+          "From here? Go to sleep."
+        ],
+        [
+          "My feet hurt in a way I can hear.",
+          "Take your boots off.",
+          "If I take them off now, they are never going back on."
+        ],
+        [
+          "Nights in {biome} are colder than I was promised.",
+          "Nobody promised you anything. You promised yourself."
+        ],
+        [
+          "Is that a radio?",
+          "Somebody in {place} playing dance music at this hour.",
+          "Good for them. Somebody should be dancing."
+        ],
+        [
+          "I miss my bed. Not any bed. Mine, with the dip in the middle.",
+          "You will find another dip. The world is full of bad mattresses."
+        ],
+        [
+          "Tea?",
+          "At this hour? Yes. Obviously yes."
+        ],
+        [
+          "If I fall asleep mid sentence, finish it for me.",
+          "I always do. You never like how they end.",
+          "That is because you always end them with a moral."
+        ]
+      ],
+      "dawn": [
+        [
+          "The birds start before the light. Every time.",
+          "They have a schedule. Unlike us."
+        ],
+        [
+          "Morning. Is there coffee?",
+          "There is hot water and hope.",
+          "I will take both."
+        ],
+        [
+          "I love this hour. Nobody wants anything from you yet.",
+          "Give it twenty minutes. I will want breakfast."
+        ],
+        [
+          "Frost on the packs again.",
+          "And on my eyebrows. Do not laugh."
+        ],
+        [
+          "{leader} was up an hour ago. Folding things.",
+          "Folding what?",
+          "Everything. Even the map. Wrongly, but neatly."
+        ],
+        [
+          "Look at the mist over the {biome}. It looks like the ground is breathing.",
+          "It looks like the ground is cold. Same as me."
+        ],
+        [
+          "Did you sleep?",
+          "Some. I dreamed of a breakfast I will not be eating.",
+          "Was it good?",
+          "It had eggs. It was perfect."
+        ],
+        [
+          "First light always makes me think we could still turn back.",
+          "And by midday?",
+          "By midday it is too late, and too hot to argue."
+        ],
+        [
+          "The bakery in {place} opens at six. I can smell it from here.",
+          "Then why are we still standing here?"
+        ],
+        [
+          "My father got up at five every day of his life.",
+          "Was he happy?",
+          "He was awake. In our family that counted."
+        ],
+        [
+          "Red sky this morning.",
+          "Shepherd's warning. Pack the oilcloth."
+        ],
+        [
+          "I do not talk before the sun is fully up.",
+          "You are talking now.",
+          "Under protest."
+        ],
+        [
+          "We should walk while it is cool.",
+          "We should, yes. My legs have not agreed yet."
+        ],
+        [
+          "The milk van just passed. The driver waved like he knew us.",
+          "Everyone is friendly at dawn. They have not had their day yet."
+        ],
+        [
+          "Up. Up. The road will not walk itself.",
+          "Five more minutes.",
+          "You have said that four times already.",
+          "And every one was worth it."
+        ],
+        [
+          "The world looks clean at this hour, like it has been rinsed.",
+          "Give it until noon. We will dirty it again."
+        ]
+      ],
+      "weather": {
+        "rain": [
+          [
+            "My socks have given up.",
+            "Mine gave up an hour ago. They are just along for the ride now."
+          ],
+          [
+            "I love the smell when rain starts.",
+            "And then it keeps going and you stop loving it."
+          ],
+          [
+            "Is your pack waterproof?",
+            "It was in the shop.",
+            "The shop was indoors."
+          ],
+          [
+            "We could shelter under that bridge.",
+            "With whoever is already under it?",
+            "I will knock first."
+          ],
+          [
+            "Rain on {place}. Every roof is singing.",
+            "Every gutter too. Mostly out of tune."
+          ],
+          [
+            "When I was little I would stand in the rain with my mouth open.",
+            "Please do not start again now."
+          ],
+          [
+            "The map is wet. The road has gone soft. {leader} has gone quiet.",
+            "That last one is the worst sign."
+          ],
+          [
+            "I keep thinking of a hot bath.",
+            "Stop. You are making the rain colder."
+          ],
+          [
+            "There is something nice about walking in the rain, if you stop fighting it.",
+            "When did you stop fighting it?",
+            "About ten minutes ago, when I lost."
+          ],
+          [
+            "My hair is going to be a disaster.",
+            "It was a disaster this morning. The rain is just helping."
+          ],
+          [
+            "The farmers will be pleased.",
+            "Good. Somebody should be.",
+            "They might even sell us something cheap.",
+            "Now I am pleased too."
+          ],
+          [
+            "Listen to it on the canvas tonight. Best sound in the world.",
+            "From inside, yes. From out here it is just wet."
+          ],
+          [
+            "Rain in {biome} smells different. Like iron and moss.",
+            "Everything wet smells like my old school to me.",
+            "Then you went to a very damp school."
+          ],
+          [
+            "Do you have a dry match?",
+            "I have a dry sense of humour. Nothing else."
+          ],
+          [
+            "My boots have filled up. I am walking in two small lakes.",
+            "Then you are the only one of us with a view."
+          ],
+          [
+            "We could wait it out in a café.",
+            "It will not stop.",
+            "Then we wait it out forever, with cake.",
+            "A strong plan. I have heard worse from you."
+          ]
+        ],
+        "storm": [
+          [
+            "That one was close.",
+            "Count the seconds. One, two.",
+            "Stop counting. I do not want to know."
+          ],
+          [
+            "Get away from the tall trees.",
+            "There are only tall trees here.",
+            "Then get away from the tallest."
+          ],
+          [
+            "My grandfather said thunder was the saints moving furniture.",
+            "They are rearranging the whole house tonight."
+          ],
+          [
+            "Do not hold that sword up.",
+            "I was not going to.",
+            "You were thinking about it. I could see it in your face."
+          ],
+          [
+            "I used to hide under the kitchen table in storms.",
+            "Did it help?",
+            "No. But my sister was under there too, so it was company."
+          ],
+          [
+            "The camper will rock all night in this.",
+            "Like a cradle.",
+            "Like a cradle somebody is very angry with."
+          ],
+          [
+            "Every flash, I see the whole {biome} for a second. Then nothing.",
+            "That is enough. I do not want to see it for longer."
+          ],
+          [
+            "The sky went green before it broke. Did you see?",
+            "I saw. I am pretending I did not."
+          ],
+          [
+            "Is it bad that I like storms?",
+            "Not bad. Just worrying in a travelling companion."
+          ],
+          [
+            "The power is out all over {place}.",
+            "Good. Candlelight makes everyone look kinder."
+          ],
+          [
+            "My ears are ringing.",
+            "That is the thunder. Or your conscience.",
+            "My conscience is quieter than that.",
+            "Not from where I stand."
+          ],
+          [
+            "We should have stopped an hour ago.",
+            "We should have stopped yesterday. Hindsight is very dry."
+          ],
+          [
+            "Somebody count us. Is everyone here?",
+            "Everyone. Wet, frightened and here."
+          ],
+          [
+            "The rain is going sideways now.",
+            "Then we walk sideways. Keep up."
+          ],
+          [
+            "When this passes, the air will smell of iron and clean stone.",
+            "When this passes, I will kiss the ground.",
+            "The ground will be mud.",
+            "I will kiss it anyway."
+          ],
+          [
+            "Do you think the monsters hide from this too?",
+            "The sensible ones. We should take notes."
+          ]
+        ],
+        "snow": [
+          [
+            "Snow. Real snow.",
+            "You say it like it is a present.",
+            "It is. It just comes with frostbite."
+          ],
+          [
+            "My fingers have stopped belonging to me.",
+            "Put them in your armpits. Dignity is a summer thing."
+          ],
+          [
+            "Everything is so quiet in snow. Even the road.",
+            "Even you, for once. I like it."
+          ],
+          [
+            "I used to build snowmen with my sister. She always gave them my nose.",
+            "Your nose?",
+            "A carrot, but she made sure I knew."
+          ],
+          [
+            "We are leaving tracks a child could follow.",
+            "So is everything chasing us. Fair is fair."
+          ],
+          [
+            "How do they keep the roads open in {place}?",
+            "Old men with shovels and opinions."
+          ],
+          [
+            "I cannot feel my feet.",
+            "Good. They were complaining all morning."
+          ],
+          [
+            "Look, the {biome} has gone white from end to end.",
+            "Beautiful.",
+            "Beautiful and very, very cold.",
+            "Most beautiful things are. That is the deal."
+          ],
+          [
+            "Hot wine. Somewhere in {place} there is hot wine.",
+            "And we will find it. That is the only plan now."
+          ],
+          [
+            "I keep slipping.",
+            "Walk like a penguin. Small steps, low pride."
+          ],
+          [
+            "Do you think it will settle?",
+            "It has settled. It has settled into my boots.",
+            "It is moving in."
+          ],
+          [
+            "My breath is freezing on my scarf.",
+            "Mine too. We are slowly turning into statues.",
+            "At least statues do not have to walk."
+          ],
+          [
+            "There is a sledge in that yard. Nobody is using it.",
+            "Do not even think about it.",
+            "Too late. I have thought about it twice."
+          ],
+          [
+            "The snow makes every town look like a postcard.",
+            "From the outside. Inside the postcard, the pipes have frozen."
+          ],
+          [
+            "When I was a child, a snow day meant no school.",
+            "Out here a snow day means the same road, slower.",
+            "Life is unfair.",
+            "Life is cold. Unfair is a separate complaint."
+          ],
+          [
+            "Shake your hood before you come in. Last time you brought half the hill inside.",
+            "That was a souvenir."
+          ]
+        ],
+        "clear": [
+          [
+            "Not a cloud. Not one.",
+            "Do not say it out loud. The sky listens."
+          ],
+          [
+            "Days like this make the whole trip worth it.",
+            "Days like this make me forget the other days. That is the trick."
+          ],
+          [
+            "I can see three villages from here. And a church. And a goat.",
+            "The goat is the best part.",
+            "I agree. A very confident goat."
+          ],
+          [
+            "Let us eat outside today. Bread, cheese, a view.",
+            "We eat outside every day.",
+            "Today it is on purpose."
+          ],
+          [
+            "The {biome} looks almost friendly in this light.",
+            "Almost. Keep your eyes open anyway."
+          ],
+          [
+            "I am going to get burnt.",
+            "Wear a hat.",
+            "Then I am going to get burnt in a hat."
+          ],
+          [
+            "On a day like this my father would take us to the lake.",
+            "Did you swim?",
+            "He swam. We watched him and ate all the sandwiches.",
+            "Clever children."
+          ],
+          [
+            "You are whistling.",
+            "Am I? Well. It is that kind of day."
+          ],
+          [
+            "Washing would dry in an hour today.",
+            "Then let us wash something. Starting with you."
+          ],
+          [
+            "You can see the mountains from {place} today. Usually they hide.",
+            "They are showing off. Let them."
+          ],
+          [
+            "Good walking weather.",
+            "Good everything weather. Even my knee is in a good mood."
+          ],
+          [
+            "Lie down in the grass with me for five minutes.",
+            "Five?",
+            "Fine. Ten. Do not tell {leader}."
+          ],
+          [
+            "I want to remember this day. The light, the road, all of it.",
+            "Then stop talking and look at it."
+          ],
+          [
+            "Somebody in that farmhouse is hanging out sheets. Look how white they are.",
+            "Laundry and blue sky. It is like a soap advert."
+          ],
+          [
+            "Clear skies tonight too. We will see every star.",
+            "And freeze under every one of them."
+          ],
+          [
+            "Is it wrong that I am happy for no reason?",
+            "It is suspicious.",
+            "I will take suspicious.",
+            "Then so will I. Just for today."
+          ]
+        ]
+      },
+      "birthday": [
+        [
+          "It is my birthday today. I almost forgot.",
+          "Happy birthday, {name}. I did not forget. I just had nothing to give."
+        ],
+        [
+          "{age} today.",
+          "Happy birthday, {name}. You do not look a day over tired.",
+          "That is the nicest thing you have said all year."
+        ],
+        [
+          "Nobody has to make a fuss. It is only a birthday.",
+          "Too late. I bought a cake in {place}.",
+          "A whole cake?",
+          "Half a cake. It was a long road back."
+        ],
+        [
+          "My mother always made a lemon tart on my birthday.",
+          "We have no lemons, {name}. But I have a song.",
+          "Please do not sing.",
+          "Too late. I have been practising since dawn."
+        ],
+        [
+          "Another year older, and still walking.",
+          "Still walking is the whole present. Happy birthday, {name}."
+        ],
+        [
+          "I wonder if anyone at home remembered.",
+          "They did. They always do. They just cannot reach you on a road.",
+          "A postcard would reach me.",
+          "Then send them one first and shame them."
+        ],
+        [
+          "Today I would like no monsters, no rain and something fried.",
+          "Happy birthday, {name}. Two out of three, maybe."
+        ],
+        [
+          "{age}. When did that happen?",
+          "Somewhere between here and the last town, I think."
+        ],
+        [
+          "I wanted to be somewhere special for my birthday.",
+          "You are in {place}.",
+          "I said special."
+        ],
+        [
+          "Do not tell the others it is my birthday.",
+          "I told them yesterday. You have a surprise coming. Act surprised."
+        ],
+        [
+          "Birthdays used to feel like a door opening.",
+          "And now?",
+          "Now they feel like a door I have to remember to close behind me."
+        ],
+        [
+          "What did we do on my last birthday?",
+          "This. Walking. Together.",
+          "Then this is a tradition now.",
+          "Happy birthday, {name}. Same time next year."
+        ],
+        [
+          "I made a birthday wish this morning, on the last star I could still see.",
+          "What did you wish?",
+          "If I tell you, it does not come true. You know the rules."
+        ],
+        [
+          "When I turned {age}, I always thought I would have a house by now.",
+          "You have a house. It is just in pieces, in our packs."
+        ],
+        [
+          "Somebody owes me a drink today. It is my birthday.",
+          "Me. Happy birthday, {name}. The first round is mine, even if it is water."
+        ],
+        [
+          "I am going to be completely spoiled today. That is my decision.",
+          "Agreed. You carry nothing and you choose dinner.",
+          "And I complain freely?",
+          "You do that anyway, {name}. Today it is official."
+        ]
+      ],
+      "homesick": [
+        [
+          "There is a bakery in {hometown} that opens at five. I swear I can smell it from here.",
+          "You can smell wet grass and our socks. Your memory is doing the rest."
+        ],
+        [
+          "Do you know what the river in {hometown} sounds like at night?",
+          "No.",
+          "Neither do I, anymore. That is what bothers me."
+        ],
+        [
+          "In {hometown} the old men argue on the same bench every afternoon.",
+          "About what?",
+          "Nothing. Football, the weather, each other. I would give a lot to hear it."
+        ],
+        [
+          "Some mornings I wake up and for a second I think I am in {hometown}.",
+          "And then?",
+          "And then I see your face, {other}. No offence.",
+          "Some taken."
+        ],
+        [
+          "This square looks a bit like the one in {hometown}. Same pigeons, same tired fountain.",
+          "Every square in Europe has the same tired fountain."
+        ],
+        [
+          "I miss the trams in {hometown}. Loud, late, always full.",
+          "You are describing a misery."
+        ],
+        [
+          "When we get to {hometown}, I am taking you to my aunt's kitchen.",
+          "Will she feed me?",
+          "She will feed you until you beg. Then she will feed you again."
+        ],
+        [
+          "Nobody here knows my name. In {hometown} I could not buy bread without three conversations.",
+          "And now you would give anything for one of them. I can tell."
+        ],
+        [
+          "I keep looking for {hometown} on the postcard racks. Never there.",
+          "Maybe it is not a postcard sort of town. Those are usually the best kind."
+        ],
+        [
+          "The bells in {hometown} ring a little out of tune. You only notice when they stop.",
+          "And here they have stopped.",
+          "Here they never started."
+        ],
+        [
+          "My street in {hometown} smells of coffee and wet stone after rain.",
+          "This one smells of mud and something dead.",
+          "Thank you, {other}. Very grounding."
+        ],
+        [
+          "It has been months since I last saw {hometown}.",
+          "It will still be there. Towns are patient."
+        ],
+        [
+          "Sometimes I think of the cafe on the corner and wonder who is sitting in my chair.",
+          "Probably someone with fewer blisters."
+        ],
+        [
+          "If you ever pass through {hometown}, do not eat at the station. Walk two streets in.",
+          "Why would I be there without you?",
+          "Fair. Then wait for me. I will show you the place."
+        ],
+        [
+          "The light here is wrong. Too flat. It does not do what the light at home did.",
+          "Light is light.",
+          "Spoken like someone who never saw an evening where I grew up."
+        ],
+        [
+          "I miss being bored somewhere I knew every corner of.",
+          "You are bored here.",
+          "Yes, but anonymously. It is not the same."
+        ],
+        [
+          "My mother still keeps my room in {hometown} exactly as I left it.",
+          "Unmade bed and all?",
+          "She made the bed. The only thing she changed. It hurts more than you would think."
+        ],
+        [
+          "Do you know what I would give for one plate of something from home?",
+          "Everything we have, by the sound of it.",
+          "Less. We do not have that much.",
+          "Fair point, {name}."
+        ]
+      ],
+      "past": [
+        [
+          "Back in my {job} days, I knew exactly what tomorrow looked like.",
+          "Now you barely know what this afternoon looks like. Welcome to the club."
+        ],
+        [
+          "{job}. That was me, once. Pressed shirt and everything.",
+          "Hard to picture, {name}.",
+          "It is hard for me too, and I was there."
+        ],
+        [
+          "The {job} work paid badly, but it paid on Fridays.",
+          "We get paid when something stops trying to kill us."
+        ],
+        [
+          "Twelve years of {job} work and not one of them prepared me for a goblin.",
+          "Nothing prepares you for a goblin."
+        ],
+        [
+          "I still dream about the {job} shifts. Same faces, same clock on the wall.",
+          "Funny. Most people dream of escaping. You dream of clocking in."
+        ],
+        [
+          "Do you know what they gave me when I left the {job} post? A pen.",
+          "A good pen?",
+          "It ran out in a week. Very honest gift, in hindsight."
+        ],
+        [
+          "People hear {job} and assume I had a boring life.",
+          "Did you?",
+          "Deeply. And I was very good at it.",
+          "That I believe, {name}."
+        ],
+        [
+          "My hands still do the {job} motions when I get nervous.",
+          "I had noticed. I thought it was a spell."
+        ],
+        [
+          "If this falls apart, I suppose I could go back to {job} work.",
+          "Would they take you?",
+          "After what I have seen? I would have too much experience for everything."
+        ],
+        [
+          "The road was never for me. I had a desk, a radio and a pension waiting.",
+          "And yet here you are, outwalking all of us."
+        ],
+        [
+          "The thing about {job} work is that nobody notices you until something goes wrong.",
+          "Same out here.",
+          "Yes, but out here when it goes wrong it has teeth."
+        ],
+        [
+          "My old boss would not recognise me.",
+          "Is that good?",
+          "He never recognised me when I was there either. So, consistent."
+        ],
+        [
+          "I kept my {job} badge. It is at the bottom of my pack.",
+          "Why?",
+          "In case somebody asks me who I am and I have forgotten."
+        ],
+        [
+          "You know, the {job} trade teaches patience.",
+          "You have none."
+        ],
+        [
+          "I left the {job} life on a Tuesday. Did not even finish my coffee.",
+          "Regrets?",
+          "About the coffee, yes."
+        ],
+        [
+          "Before all this I had a routine. Same tram, same sandwich, same seat.",
+          "Sounds peaceful. You only notice that kind of thing once it is gone."
+        ],
+        [
+          "Do you think I would still be good at it? The {job} work, I mean.",
+          "Honestly? You would be terrifying at it now.",
+          "Good. I was never terrifying before."
+        ],
+        [
+          "When someone asks what I did before, I just say I travelled.",
+          "And the truth?",
+          "The truth involved forms. Many forms.",
+          "Then travel is the kinder answer, {name}."
+        ]
+      ],
+      "family": [
+        [
+          "I wrote my mother a letter in the last town. I did not post it.",
+          "Why not?",
+          "Because she would write back, and I would have to be somewhere for it to arrive."
+        ],
+        [
+          "My sister would hate this. Every single part of it.",
+          "And you love most of it. Just never tell her."
+        ],
+        [
+          "I called home from a payphone last week. My father answered.",
+          "What did he say?",
+          "He asked if I was eating. Then he passed me to my mother so she could ask the same."
+        ],
+        [
+          "My grandmother used to say a road is only a long way of getting home.",
+          "Wise woman.",
+          "She never left her village in eighty years. So, a theorist."
+        ],
+        [
+          "I bought a postcard for my brother three towns ago. It is still in my pocket.",
+          "Then it has seen more of Europe than he ever will."
+        ],
+        [
+          "Do your people know where you are, {other}?",
+          "Roughly. Do yours?",
+          "They know I am alive. I keep the details vague. It is kinder."
+        ],
+        [
+          "My father never said he was proud of me. He just mended my boots before I left.",
+          "That is saying it."
+        ],
+        [
+          "Every time a phone rings in a bar, I think it might be for me.",
+          "It never is.",
+          "No. But one day my mother will find a way."
+        ],
+        [
+          "My little cousin asked me to bring back a dragon.",
+          "We could manage a small one."
+        ],
+        [
+          "I wear my grandmother's ring on a string around my neck.",
+          "For luck?",
+          "For company. She talked a lot. The ring is quieter.",
+          "Sounds like a fair trade, {name}."
+        ],
+        [
+          "My parents think I took a job abroad.",
+          "Technically you did."
+        ],
+        [
+          "My sister sends letters poste restante to towns we never reach.",
+          "So somewhere there is a pile of them waiting.",
+          "Yes. Being disappointed in me, in her handwriting."
+        ],
+        [
+          "I miss arguing with my brother about nothing.",
+          "You argue with me about nothing.",
+          "You do not know where I hid his bicycle in nineteen ninety. It is not the same."
+        ],
+        [
+          "My mother packed me a jar of jam when I left. I still have not opened it.",
+          "Saving it?",
+          "If I open it, it is just jam. Closed, it is still her kitchen."
+        ],
+        [
+          "I started a letter to my father. I got as far as Dear Dad.",
+          "That is the hard part done.",
+          "No. The hard part is everything after it."
+        ],
+        [
+          "My grandmother would take one look at you, {other}, and start cooking.",
+          "Is that a threat?",
+          "It is the highest honour she gives. Also a threat."
+        ]
+      ],
+      "sleepless": [
+        [
+          "What day is it?",
+          "Thursday.",
+          "Are you sure? It feels like I have been awake for three of them."
+        ],
+        [
+          "I have not slept properly since the last town.",
+          "It shows, {name}."
+        ],
+        [
+          "I counted the stars last night. All of them. Twice.",
+          "And?",
+          "Two short. I am going to need another night."
+        ],
+        [
+          "If I sit down I will sleep, and if I sleep I will not get up.",
+          "So keep walking."
+        ],
+        [
+          "Every time I closed my eyes, something made a noise.",
+          "That was me, I think.",
+          "Then I forgive you. But only after a nap."
+        ],
+        [
+          "My eyes feel like somebody filled them with sand.",
+          "Did you sleep at all?",
+          "I lay down. That is a different thing entirely."
+        ],
+        [
+          "I just agreed with you about something and I cannot remember what.",
+          "You agreed to carry the tent.",
+          "I would never. That is how I know I am exhausted."
+        ],
+        [
+          "I keep seeing things at the edge of my vision.",
+          "Real things?",
+          "That is the question, is it not?",
+          "Lie down for an hour, {name}. I will keep watch."
+        ],
+        [
+          "Three nights. Three nights of that owl.",
+          "It is a very dedicated owl."
+        ],
+        [
+          "I tried to sleep sitting up. Then standing up. Then I gave up.",
+          "There is a bench right there."
+        ],
+        [
+          "Is it morning or evening?",
+          "Morning, {name}.",
+          "Already? I was just starting to feel tired."
+        ],
+        [
+          "I heard every snore you made last night, {other}.",
+          "I do not snore.",
+          "I have them catalogued. There are seven kinds."
+        ],
+        [
+          "I am too tired to be tired. I have come out the other side.",
+          "What is it like there?",
+          "Very bright. Everything hums."
+        ],
+        [
+          "My bones hurt in places I did not know had bones.",
+          "You need sleep, not an inventory."
+        ],
+        [
+          "If I drop my pack in the next hour, just leave it. And me.",
+          "We are not leaving you."
+        ],
+        [
+          "Talk to me. About anything. I need something to keep my eyes open.",
+          "The weather?",
+          "Not that. That would finish me off."
+        ]
+      ],
+      "wellRested": [
+        [
+          "Good morning! What a morning! Look at that sky!",
+          "It is grey.",
+          "A magnificent grey!"
+        ],
+        [
+          "I slept ten hours and I feel like I could fight a bear.",
+          "Please do not fight a bear."
+        ],
+        [
+          "Up you get, {other}! The road will not walk itself.",
+          "It has managed fine without your help so far."
+        ],
+        [
+          "I dreamed of nothing at all. Pure, perfect nothing.",
+          "That sounds lovely. I dreamed a wardrobe was chasing me."
+        ],
+        [
+          "I have already packed, made tea, and fixed that strap of yours.",
+          "It is barely light.",
+          "I know! Imagine what I can do by noon.",
+          "I would rather not, {name}."
+        ],
+        [
+          "Is it me, or are the birds singing better today?",
+          "It is you. They are the same birds."
+        ],
+        [
+          "I feel ten years younger. Maybe twelve.",
+          "Do not get carried away.",
+          "Eleven, then. Final offer."
+        ],
+        [
+          "That was the best bed I have had since I left home.",
+          "It was a haystack.",
+          "A very supportive haystack."
+        ],
+        [
+          "Shall we take the long way today? I feel like the long way.",
+          "Absolutely not."
+        ],
+        [
+          "Sleep is wonderful. Why does nobody talk about how wonderful it is?",
+          "Everybody talks about it. Constantly."
+        ],
+        [
+          "You look tired, {other}. Want me to carry something?",
+          "Do not be nice to me before breakfast. It is unsettling."
+        ],
+        [
+          "Guess who woke up before the rooster.",
+          "Was the rooster upset?",
+          "Visibly. I think I won."
+        ],
+        [
+          "I could walk to the coast today. Any coast. Pick one.",
+          "Can we pick the nearest bench instead?"
+        ],
+        [
+          "Every joint works. Every single one. I checked.",
+          "Congratulations.",
+          "Thank you. It has been a while."
+        ],
+        [
+          "I am so rested I am being nice to everyone. Hello, {other}.",
+          "Hello. Please stop smiling like that.",
+          "I cannot. My face has decided."
+        ],
+        [
+          "I slept like a stone, {other}. A happy stone.",
+          "Stones are not happy.",
+          "You never asked them."
+        ]
+      ],
+      "fed": [
+        [
+          "That was a proper meal. With a plate. And a chair.",
+          "And a second helping, in your case."
+        ],
+        [
+          "I could forgive anybody anything right now.",
+          "Even me?",
+          "Do not push it. Ask me after the coffee."
+        ],
+        [
+          "I had forgotten food could be hot all the way through.",
+          "The stew was very hot.",
+          "My tongue will remember it fondly for a week."
+        ],
+        [
+          "Right. Now I can think again.",
+          "What were you doing before?",
+          "Being hungry. It takes up the whole head."
+        ],
+        [
+          "Was that soup or a small miracle?",
+          "Soup.",
+          "Then soup is a small miracle."
+        ],
+        [
+          "I feel like a person again. A full, slow, grateful person.",
+          "Can the person walk?",
+          "Not quickly. Give the person an hour."
+        ],
+        [
+          "That bread was still warm. I nearly wept.",
+          "You did weep a bit.",
+          "Over the soup. Different thing.",
+          "Of course, {name}."
+        ],
+        [
+          "If anything attacks us now, I am going to be very reasonable about it.",
+          "A full stomach makes you a diplomat."
+        ],
+        [
+          "Who knew the best cook in the region would be in a place like this?",
+          "{leader} knew. {leader} picked it.",
+          "Then {leader} chooses lunch from now on."
+        ],
+        [
+          "I am never eating trail biscuits again.",
+          "You will tomorrow."
+        ],
+        [
+          "My boots feel lighter. Is that possible?",
+          "Your mood is lighter. The boots are the same."
+        ],
+        [
+          "I asked for the recipe. She laughed at me.",
+          "Fair. You cook like a landslide."
+        ],
+        [
+          "Remember when we ate that thing from the tin with no label?",
+          "Do not bring that up now.",
+          "I only bring it up to appreciate this."
+        ],
+        [
+          "That was the kind of meal you tell people about.",
+          "Who would you tell?",
+          "Everyone. Strangers. The innkeeper, twice."
+        ],
+        [
+          "I am warm, I am full, and nobody is shouting. Is this what peace is?",
+          "Briefly.",
+          "Briefly is enough."
+        ],
+        [
+          "Thank you for paying, {other}.",
+          "I did not pay. I thought you did.",
+          "Then we should walk a little faster.",
+          "Calmly, {name}. Like people who have eaten well."
+        ]
+      ],
+      "creed": [
+        [
+          "My {creed} upbringing says we should be up at dawn.",
+          "And my {otherCreed} one says the dawn can wait.",
+          "That explains a great deal about you, {other}."
+        ],
+        [
+          "You {otherCreed} people fold your blankets so strangely.",
+          "We fold them correctly. You {creed} lot just roll them into sausages."
+        ],
+        [
+          "Do you pray before meals, {other}?",
+          "Not the way you {creed} folk do.",
+          "How, then?",
+          "Quickly. Before you finish yours."
+        ],
+        [
+          "I still say {creed} makes more sense than anything you believe.",
+          "And I say {otherCreed} has better songs.",
+          "That is not an argument.",
+          "It is the only one that wins at a campfire."
+        ],
+        [
+          "You light a candle every night. Is that {otherCreed}, or just you?",
+          "It is a dark-room thing. {otherCreed} simply approves."
+        ],
+        [
+          "In {creed} circles we would call this place a sign.",
+          "In {otherCreed} circles we call it a swamp."
+        ],
+        [
+          "Every time you talk about {otherCreed}, I learn something and disagree with it.",
+          "That is how I feel about your {creed} sermons.",
+          "Sermons? I was telling you about breakfast."
+        ],
+        [
+          "My {creed} grandmother would have liked you, {other}. Then tried to convert you.",
+          "My {otherCreed} uncle would have let her try. Then sold her a pamphlet."
+        ],
+        [
+          "How do you {otherCreed} people decide anything?",
+          "Slowly, with tea."
+        ],
+        [
+          "You nodded at that tree. Is that {otherCreed}?",
+          "Manners. It was there first.",
+          "We {creed} folk just walk past trees.",
+          "I know. The trees have noticed."
+        ],
+        [
+          "Honestly, the more I see of {otherCreed}, the less I mind it.",
+          "High praise, from someone raised on {creed}."
+        ],
+        [
+          "I do not understand how you sleep without a {creed} blessing.",
+          "On my side, mostly."
+        ],
+        [
+          "Your {otherCreed} habit of thanking the soup is growing on me.",
+          "The soup appreciates it.",
+          "My {creed} teachers would be horrified.",
+          "Then do not tell them. The soup will keep the secret."
+        ],
+        [
+          "We {creed} people do not haggle. It is undignified.",
+          "That is why you paid double for those boots."
+        ],
+        [
+          "Admit it. {creed} got us through that last mess.",
+          "{otherCreed} got us through. You were just loud nearby."
+        ],
+        [
+          "What does {otherCreed} say about walking in the rain?",
+          "That it builds character.",
+          "{creed} says it builds colds."
+        ],
+        [
+          "By my {creed} calendar, today is a day of rest.",
+          "Every third day is a day of rest on that calendar."
+        ],
+        [
+          "You {otherCreed} types always have an answer for everything.",
+          "And you {creed} types always have a question.",
+          "That is called curiosity.",
+          "It is called being awkward at dinner."
+        ],
+        [
+          "Before you ask, no, {creed} does not forbid card games.",
+          "Pity. I was hoping for an excuse to stop losing to you."
+        ],
+        [
+          "Sometimes I wonder if I would believe in {creed} if I had been born somewhere else.",
+          "Maybe you would be one of us, {name}. {otherCreed} through and through.",
+          "Do not wish that on me.",
+          "Too late. I have pictured it."
+        ],
+        [
+          "My {creed} teachers said people like you would be impossible to travel with.",
+          "And?",
+          "They were wrong. You are merely difficult."
+        ],
+        [
+          "Your {otherCreed} grace before dinner went on for ages.",
+          "Your {creed} grace was one word.",
+          "A very efficient word.",
+          "Spoken with your mouth full."
+        ]
+      ]
+    }
   },
   "shop": {
     "opener": [
@@ -11654,6 +15023,176 @@
           "Now I feel like inventing again. That is how you know the fun worked."
         ]
       }
+    },
+    "life": {
+      "ill": [
+        "This {illness} can have the morning. It is not having the afternoon.",
+        "Another cough. Another stare from somebody across the road.",
+        "If {illness} wanted an easy host, it picked the wrong one.",
+        "Soup. Sleep. Walking anyway. The cure that is not a cure.",
+        "My bones feel borrowed today.",
+        "Hot, then cold, then hot. Make up your mind.",
+        "Do not let them see you lean on the wall.",
+        "Somebody somewhere has a cure for {illness}. I hope they are walking this way.",
+        "Every hill is twice as long with a fever.",
+        "I would trade my boots for one clear breath.",
+        "Rest when we stop. If we ever stop.",
+        "{illness}. Even the name sounds tired."
+      ],
+      "wounded": [
+        "Every step, my {part} sends a complaint up the chain.",
+        "Keep the weight off it. Easy to say.",
+        "The {part} will heal. That is what they all say.",
+        "The splint itches. The splint always itches.",
+        "Do not limp in front of the others. They worry.",
+        "One more step. Then another. My {part} can sulk later.",
+        "Note to self: do not catch the next blow with anything important.",
+        "It throbs in time with my heartbeat. Very musical.",
+        "I will be fine. I will be fine. Saying it twice helps.",
+        "My {part} remembers the fight better than I do.",
+        "Sleep would help. Pain disagrees.",
+        "Heal faster, you stupid thing."
+      ],
+      "maimed": [
+        "Still reaching with something that is not there.",
+        "The fitting rubs. Pad it again tonight.",
+        "Different, not less. Different, not less.",
+        "Oil the joint before the rain does it for me.",
+        "Children stare. Fair enough. I would too.",
+        "It aches where nothing is left. Strange arithmetic.",
+        "Learned a new way to tie a knot today. Small victory.",
+        "Some days it feels like mine. Not today.",
+        "Nobody left me behind. Remember that when it is hard.",
+        "The click of the joint is my new footstep.",
+        "I miss it. I am allowed to miss it.",
+        "Slower. Not stopped."
+      ],
+      "craving": [
+        "Do not think about {substance}. Think about the road.",
+        "Count the trees. Count anything that is not {substance}.",
+        "It is just a feeling. Feelings pass. Usually.",
+        "One more day without {substance}. Then one more.",
+        "My hands want something to do. Give them the straps.",
+        "Every inn on this road knows my name. Walk past.",
+        "The craving is loud. I can be louder.",
+        "If I give in now, tomorrow starts from zero.",
+        "It is lying to me. It is very good at lying.",
+        "Breathe in. Breathe out. {substance} is not the air.",
+        "Somebody in the party would notice. Somebody always does.",
+        "Water first. Then decide. Then decide again."
+      ],
+      "drunk": [
+        "The ground keeps arriving sooner than expected.",
+        "I am fine. I am very fine. Extremely fine.",
+        "Why are there two moons? Is that allowed?",
+        "One more would have been a terrible idea. Excellent.",
+        "Everyone looks so kind when it is blurry.",
+        "Do not sing. Do not sing. Oh, I am singing.",
+        "Tomorrow is going to send me a bill.",
+        "Walk straight. Like a line. Like a wobbly line.",
+        "I miss someone and I cannot remember who.",
+        "That fence was not there a minute ago.",
+        "Water. Find water. Then find bed.",
+        "Why did I drink that? Because it was there."
+      ],
+      "high": [
+        "The leaves are talking. Politely, though.",
+        "My fingers are very far away today.",
+        "Everything is beautiful and slightly too loud.",
+        "Do not look at the sky too long. It looks back.",
+        "How long have I been standing here?",
+        "This was a bad idea wearing a good hat.",
+        "The ground is breathing. Or I am. One of us.",
+        "Hold on. It wears off. It always wears off.",
+        "I understand everything. No, it has gone again.",
+        "Colours have flavours. Green is too salty.",
+        "Nobody notice me. Nobody notice me.",
+        "Never buy anything from a smiling alchemist."
+      ],
+      "pregnant": [
+        "Kicking again. You have opinions already.",
+        "Two of us on this road now. Walk carefully.",
+        "Need to sit. Need to eat. Need to sit while eating.",
+        "My back has filed a complaint.",
+        "What kind of world are you coming into, little one?",
+        "Names. I still have no names.",
+        "Every bump in the road, I count to ten.",
+        "Somebody hand me something salty. And sweet. Both.",
+        "I am not slow. I am carrying luggage.",
+        "Hush now. We are almost there. Wherever there is.",
+        "Will you have my nose, I wonder.",
+        "Brave for two. That is the job now."
+      ],
+      "broke": [
+        "{gold}. I will count it again in an hour and hope.",
+        "Bread or candles. Not both.",
+        "I used to leave tips. Imagine.",
+        "If I walk slowly past the bakery, maybe they will take pity on me.",
+        "{gold} and a good attitude. Mostly the attitude.",
+        "My purse is lighter than my conscience, and that is saying something.",
+        "Somewhere a coin is lying in the road, waiting for me.",
+        "Being poor is tiring. Even the counting is tiring.",
+        "{gold}. My grandmother kept more than that in her sugar bowl.",
+        "Tomorrow there will be work. There has to be.",
+        "I will not look at the price of fuel. I will not.",
+        "Hunger is the best sauce, they say. They have clearly never tried it plain."
+      ],
+      "birthday": [
+        "My birthday, and nobody knows. That is fine. That is fine.",
+        "{age}. It sounds like somebody else's number.",
+        "Another birthday. Same boots.",
+        "I should write home. Tell them I am alive and a year older.",
+        "Back home there would be cake by now.",
+        "A birthday always feels like it should feel different. It never does.",
+        "One more candle I will not be blowing out.",
+        "I will buy myself something small today. A birthday treat. I have earned it.",
+        "If I make it to the next birthday, that will be the real present.",
+        "My mother is thinking of me right now. It is my birthday, she always does.",
+        "A birthday on the road. Not what I pictured as a child.",
+        "Happy birthday to me, quietly, so nobody makes a fuss."
+      ],
+      "homesick": [
+        "Somewhere in {hometown} the bakery is opening and I am not there.",
+        "I would give a week of this for one evening walk in {hometown}.",
+        "Funny. I spent years wanting to leave {hometown}.",
+        "The river in {hometown} is probably high this time of year.",
+        "Nobody here says my name the way they say it at home.",
+        "I wonder who sits on my bench in {hometown} now.",
+        "This rain smells almost like {hometown}. Almost.",
+        "One day I will walk into {hometown} and nobody will recognise me.",
+        "Home is a long way back. Further every day.",
+        "I can still draw the streets of {hometown} with my eyes closed.",
+        "The coffee here is fine. It is just not from home.",
+        "If I close my eyes, the bells of {hometown} are ringing."
+      ],
+      "sleepless": [
+        "If I blink for too long, that is it. I am gone.",
+        "Three nights. Maybe four. I have stopped counting.",
+        "Everything is too loud and slightly to the left.",
+        "I could sleep standing up. I might be doing it now.",
+        "Coffee. Any coffee. Even bad coffee.",
+        "My eyelids weigh more than my pack.",
+        "I keep reading the same sign over and over.",
+        "Is the ground moving, or is that me?",
+        "Tonight I sleep. Nothing will stop me. Not even owls.",
+        "My eyes are open. Technically.",
+        "Who knew a rock could look so much like a pillow.",
+        "One more hour. Then one more. Then I fall over."
+      ],
+      "past": [
+        "Back in my {job} days, at least the chairs were soft.",
+        "{job}. That was me, once. Hard to believe now.",
+        "Nobody out here cares that I was good at the {job} work.",
+        "The {job} shifts were dull, but nothing ever bit me.",
+        "I still check my watch like my {job} shift is about to start.",
+        "Funny what you miss about the {job} work. The clock on the wall, mostly.",
+        "Some days I think staying where I was would have been the sensible choice.",
+        "My old {job} colleagues would never believe any of this.",
+        "All that {job} training, and here I am arguing with a map.",
+        "I used to complain about Mondays. Mondays were nothing.",
+        "If I ever go back to {job} work, I will never complain again.",
+        "Somewhere there is a desk that still has my name on it."
+      ]
     }
   },
   "crash": {

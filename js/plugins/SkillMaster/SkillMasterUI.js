@@ -671,9 +671,9 @@
             } else {
                 const teachText = typeof T === 'function' ? T('SkillMaster.teachPupil', { actor: actor.name() }) : `Teach ${actor.name()}`;
                 actionsListHTML += `
-                    <div class="action-button ${isActionFocused ? 'focused' : ''} ${!canAfford ? 'disabled' : ''}" onclick="SceneManager._scene.teachSkill(${actor.actorId()}, ${cost})" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:${isActionFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--accent-gray-2-translucent-0, rgba(30,30,30,0.6))'}; border:1px solid ${isActionFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15, rgba(255,255,255,0.2))'}; border-radius:6px; cursor:${canAfford ? 'pointer' : 'not-allowed'}; font-family:var(--font-ui); opacity:${canAfford ? 1 : 0.6}; transition:all 0.15s ease">
-                        <span style="font-weight:bold; color:${isActionFocused ? 'var(--text-pure-black, #000)' : 'var(--text-card-medium, #fff)'}">${teachText}</span>
-                        <span style="font-family:var(--font-ui); font-weight:bold; color:${isActionFocused ? 'var(--text-pure-black, #000)' : canAfford ? 'var(--text-text-alt-3, #e5c07b)' : 'var(--shadow-shadow-alt-5-translucent-40, #888)'}">${cost} KP</span>
+                    <div class="inspect-btn action-button ${isActionFocused ? 'focused' : ''} ${!canAfford ? 'disabled' : ''}" onclick="SceneManager._scene.teachSkill(${actor.actorId()}, ${cost})" style="display:flex; justify-content:space-between; align-items:center; margin-top:0">
+                        <span>${teachText}</span>
+                        <span>${cost} KP</span>
                     </div>
                 `;
             }
@@ -718,7 +718,7 @@
                 <div style="display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--border-secondary-hover-translucent-15); padding-bottom:8px">
                     <div style="${SkillMaster.getSkillIconStyle(skill.iconIndex)} transform: scale(1.2); flex-shrink: 0; image-rendering: pixelated; margin-right: 2px"></div>
                     <div>
-                        <h3 class="cc-header-gothic" style="font-size:2.134rem; color:var(--text-secondary-active, var(--text-primary-hover)); margin:0; line-height:1.2">
+                        <h3 class="cc-header-gothic" style="margin:0; line-height:1.2">
                             ${skill.name}
                         </h3>
                         <div style="display:flex; align-items:center; gap:8px; font-size:1.196rem; color:var(--text-inverse, #bbb); text-transform:uppercase; margin-top:3px">
@@ -915,7 +915,7 @@
                 leftPageHTML = `
                     <div class="page-header-bar">
                       <div class="back-button focusable" onclick="SceneManager._scene.categoryBack()">${backBtnText}</div>
-                      <h2 class="cc-header-gothic" style="text-align:center; font-size:2.542rem">${skillsTitle}</h2>
+                      <h2 class="cc-header-gothic" style="text-align:center">${skillsTitle}</h2>
                     </div>
                     <div id="category-scroll-box-left" class="skill-scroll-box" style="flex:1; overflow-y:auto; padding-right:10px; display:grid; grid-template-columns:repeat(${CATEGORY_PAGE_COLS}, 1fr); gap:10px; align-content:start; box-sizing:border-box">
                         ${categoriesListHTML}
@@ -929,7 +929,7 @@
                 leftPageHTML = `
                     <div class="page-header-bar">
                       <div class="back-button focusable" onclick="SceneManager._scene.goBack()">${returnBtnText}</div>
-                      <h2 id="atlas-school-name" class="cc-header-gothic" style="border: none; margin: 0; padding: 0; text-align: center; font-size: 2.134rem">${SkillMaster.getCategoryDisplayName(heading)}</h2>
+                      <h2 id="atlas-school-name" class="cc-header-gothic" style="border: none; margin: 0; padding: 0; text-align: center">${SkillMaster.getCategoryDisplayName(heading)}</h2>
                     </div>
                     ${bodyHTML}
                 `;
@@ -960,8 +960,6 @@
             if (fuseEl) {
                 const on = !!this._categoryFuseFocused;
                 fuseEl.classList.toggle('focused', on);
-                fuseEl.style.background = on ? 'var(--text-secondary-active, #e5c07b)' : 'var(--bg-card-translucent-5, rgba(20,20,20,0.5))';
-                fuseEl.style.color = on ? '#000' : 'var(--text-secondary-active, #e5c07b)';
                 if (on && fuseEl.scrollIntoView) fuseEl.scrollIntoView({ block: 'nearest' });
             }
         } else if (this.usesGraphView()) {
@@ -1030,7 +1028,7 @@
 
                 rightPageHTML = `
                     <div class="page-header-bar">
-                      <h2 class="cc-header-gothic" style="text-align:center; font-size:2.542rem">${magicTitle}</h2>
+                      <h2 class="cc-header-gothic" style="text-align:center">${magicTitle}</h2>
                     </div>
                     <div id="category-scroll-box-right" class="skill-scroll-box" style="flex:1; overflow-y:auto; padding-right:10px; display:grid; grid-template-columns:repeat(${CATEGORY_PAGE_COLS}, 1fr); gap:10px; align-content:start; box-sizing:border-box">
                         ${magicListHTML}
@@ -1045,7 +1043,7 @@
                     rightPageHTML = `
                         <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center; gap:20px; padding:20px; box-sizing:border-box">
                             <div style="${SkillMaster.getCategoryIconStyle('All')} transform: scale(2.0); image-rendering: pixelated; margin-bottom: 12px"></div>
-                            <h3 class="cc-header-gothic" style="font-size:2.204rem; color:var(--text-secondary-active, var(--text-primary-hover)); margin:0">
+                            <h3 class="cc-header-gothic" style="margin:0">
                                 ${selectPrompt}
                             </h3>
                         </div>
@@ -1166,9 +1164,9 @@
         const focused = allowFocus && (this._selectedActionIndex === 0) && !locked;
         const usable = !locked && (active || !full);
         return `
-            <div class="action-button carry-button ${focused ? 'focused' : ''} ${usable ? '' : 'disabled'}" onclick="SceneManager._scene.toggleCarry(${actor.actorId()})" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; margin-top:6px; background:${active ? 'var(--bg-tertiary-focus-translucent-45, rgba(45,35,25,0.45))' : 'var(--accent-gray-2-translucent-0, rgba(20,20,20,0.5))'}; border:1px solid ${focused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:6px; cursor:${usable ? 'pointer' : 'not-allowed'}; font-family:var(--font-ui); opacity:${usable ? 1 : 0.6}; transition:all 0.15s ease">
-                <span style="font-weight:bold; font-size:1.292rem; text-transform:uppercase">${active ? '◉' : '○'} ${label}</span>
-                <span style="font-size:1.196rem; color:var(--text-card-medium, #aaa)">${count}</span>
+            <div class="inspect-btn action-button carry-button ${focused ? 'focused' : ''} ${usable ? '' : 'disabled'}" onclick="SceneManager._scene.toggleCarry(${actor.actorId()})" style="display:flex; justify-content:space-between; align-items:center; margin-top:6px">
+                <span>${active ? '◉' : '○'} ${label}</span>
+                <span>${count}</span>
             </div>
         `;
     };

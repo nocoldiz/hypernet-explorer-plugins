@@ -48,7 +48,7 @@
   },
   "col": {
     "title": "CARD COLLECTION",
-    "owned": "{cards} CARDS, {distinct} OF A KIND ({pct}%)",
+    "owned": "{cards} CARDS, {distinct} KINDZ ({pct}%)",
     "tab": {
       "all": "ALL",
       "monsters": "MONSTERS",
@@ -78,7 +78,7 @@
     "legalLabel": "STANDIN'",
     "mode": {
       "deck": "DECK BUILDER",
-      "collection": "CARD COLLECTION"
+      "collection": "EVERY CARD"
     },
     "catalogueTitle": "EVERY CARD",
     "catalogue": "{distinct} OF {total} CARDS HELD ({pct}%)",
@@ -99,7 +99,9 @@
     "ownedLabel": "HELD",
     "copies": "{n} IN DA COLLECTION",
     "notOwned": "NEVER HELD",
-    "valueLabel": "MARKET VALUE"
+    "valueLabel": "MARKET VALUE",
+    "inDeckOf": "{n}/{of} IN DA DECK",
+    "removeFromDeck": "TAKE OUT"
   },
   "pack": {
     "title": "BOOSTER PACK",

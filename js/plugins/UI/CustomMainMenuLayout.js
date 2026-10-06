@@ -552,13 +552,46 @@
         static update() {
             if (!this.active) return;
 
+            // The item card's full screen model and its medicinal register can
+            // be opened from the search page too (ItemInspect is shared with
+            // the backpack). While one is up it owns the screen: a pad's A or
+            // B closes it, as in the backpack, and nothing under it moves.
+            const inspect = window.ItemInspect;
+            if (inspect && inspect.isModelFullscreenOpen && inspect.isModelFullscreenOpen()) {
+                if (Input.isTriggered('ok') || Input.isTriggered('cancel')) {
+                    SoundManager.playCancel();
+                    inspect.closeModelFullscreen();
+                }
+                if (window.UINav) window.UINav.handled();
+                return;
+            }
+            if (inspect && inspect.isMedicineInfoOpen && inspect.isMedicineInfoOpen()) {
+                if (Input.isTriggered('ok') || Input.isTriggered('cancel')) {
+                    SoundManager.playCancel();
+                    inspect.closeMedicineInfo();
+                }
+                if (window.UINav) window.UINav.handled();
+                return;
+            }
+
             // A focused text field owns the keyboard (the search bar above the
             // party cards, a pet's name field). Their key events are stopped at
             // the element so Input never sees the typing, but the gamepad poll
             // and any key pressed before the field took focus still reach here,
             // and "I" must type an i rather than open the backpack.
             const focused = document.activeElement;
-            if (focused && (focused.tagName === 'INPUT' || focused.tagName === 'TEXTAREA')) return;
+            if (focused && (focused.tagName === 'INPUT' || focused.tagName === 'TEXTAREA')) {
+                // The field stops every key at itself, so a cancel that still
+                // reaches Input is the pad's B: it leaves the field (and a
+                // pet's name being written) rather than leaving a pad in it.
+                if (Input.isTriggered('cancel')) {
+                    focused.blur();
+                    const scene = SceneManager._scene;
+                    if (scene && scene._petRenameId != null && scene.cancelPetRename) scene.cancelPetRename();
+                    if (window.UINav) window.UINav.consume('cancel');
+                }
+                return;
+            }
 
             // L2 / R2 (, and . on a keyboard) walk the party while the roster
             // cards are on the page, so the needs panel reports each member in
@@ -596,6 +629,13 @@
                 }
                 return;
             }
+
+            // The search page walks its own results and its own party picker
+            // (CustomMainMenuSearch.js, read after this). The picker's chips are
+            // .focusable for the mouse, so the ring would hold them too: one
+            // arrow moved two cursors and one OK both clicked a member and ran
+            // the row again. Cancel above is the only key the ring keeps there.
+            if (window.MenuSearch && window.MenuSearch.isActive()) return;
 
             if (this.activeElements.length === 0) return;
 
@@ -1132,6 +1172,12 @@
         // A live search covers both pages, so it is the first thing a cancel
         // takes back (CustomMainMenuSearch.js).
         if (window.MenuSearch && window.MenuSearch.isActive()) {
+            // Choosing who a thing lands on is one level deeper than the
+            // results: B puts the pick down, it does not throw the search away.
+            if (window.MenuSearch.hasPending && window.MenuSearch.hasPending()) {
+                window.MenuSearch.cancelPending();
+                return true;
+            }
             window.MenuSearch.clear(this);
             return true;
         }
@@ -1586,6 +1632,23 @@
         this._petRenameId = petId;
         this.refreshUIMenuDOM(false);
         const field = document.getElementById('pet-rename-input');
+        // A pad cannot type into the field: it is handed the game's letter
+        // sheet instead, spent the way Enter and Escape spend the field.
+        const C = window.Controller;
+        if (field && C && C.usingPad && C.usingPad() && typeof C.textEntry === 'function') {
+            C.textEntry({
+                title: T('MainMenu.pets.rename'),
+                value: field.value,
+                max: window.PetSystem.NAME_MAX_LENGTH || 16,
+                onCommit: (value) => {
+                    const live = document.getElementById('pet-rename-input');
+                    if (live) live.value = value;
+                    this.confirmPetRename();
+                },
+                onCancel: () => this.cancelPetRename()
+            });
+            return;
+        }
         if (field) {
             field.focus();
             field.select();
@@ -5031,6 +5094,11 @@
         // The turntable holds a live WebGL context; leaving the menu hands it back.
         _Scene_Menu_terminate.call(this);
         UIMenuInputManager.deactivate();
+        // A modal the item card opened (search page) goes with the menu, key
+        // guard and all, instead of staying up over the map.
+        const inspect = window.ItemInspect;
+        if (inspect && inspect.isMedicineInfoOpen && inspect.isMedicineInfoOpen()) inspect.closeMedicineInfo();
+        if (inspect && inspect.isModelFullscreenOpen && inspect.isModelFullscreenOpen()) inspect.closeModelFullscreen();
 
         const isReturningToMap = SceneManager.isNextScene(Scene_Map) || (SceneManager._nextScene instanceof Scene_Map);
 

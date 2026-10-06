@@ -1610,14 +1610,28 @@
         }
       }
 
+      // A water autotile is drawn as its base id plus one of 48 shape offsets
+      // (the shore cuts every edge tile that way), and the features only list
+      // the base: read an A1 tile by the base of its kind.
+      const isWater = (id) => {
+        if (!id) return false;
+        if (waterTileIds.has(id)) return true;
+        return id >= 2048 && id < 2816 && waterTileIds.has(id - ((id - 2048) % 48));
+      };
+
+      // A settlement lays its shoreline AFTER its lots (see
+      // predictSettlementSea): the sea it is going to draw counts as water now.
+      const seaMask = allOtherData && allOtherData.seaMask;
+
       // OPTIMIZED WATER SCANNING LOOP
       const layerSize = PROC_MAP_WIDTH * PROC_MAP_HEIGHT;
       for (let i = 0; i < layerSize; i++) {
         // Check Layer 0, 1, 2, 3 directly
-        if (waterTileIds.has(mapData[i]) ||
-          waterTileIds.has(mapData[i + layerSize]) ||
-          waterTileIds.has(mapData[i + layerSize * 2]) ||
-          waterTileIds.has(mapData[i + layerSize * 3])) {
+        if ((seaMask && seaMask[i]) ||
+          isWater(mapData[i]) ||
+          isWater(mapData[i + layerSize]) ||
+          isWater(mapData[i + layerSize * 2]) ||
+          isWater(mapData[i + layerSize * 3])) {
           waterOccupiedMapData[i] = 1;
         }
       }

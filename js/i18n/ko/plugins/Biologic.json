@@ -76,7 +76,7 @@
   "testosteroneProduction": "테스토스테론 분비",
   "normalRange": "정상 범위",
   "belowNormalHypogonadism": "정상 이하 (성선기능저하증)",
-  "noReproductiveSystemAvailableSetVariable87Fi": "사용할 수 있는 생식계가 없습니다. 먼저 변수 87을 설정하세요.",
+  "noReproductiveSystemAvailable": "사용할 수 있는 생식계가 없습니다. 이 몸에는 생식계가 없습니다.",
   "alreadyInReproductiveProcess": "이미 생식 과정이 진행 중입니다!",
   "pregnancyInitiatedDue": "임신이 시작되었습니다! {count}일 뒤 출산 예정.",
   "eggDevelopmentInitiated": "알 발생이 시작되었습니다! {count}일 뒤 1~4개의 알이 준비됩니다.",

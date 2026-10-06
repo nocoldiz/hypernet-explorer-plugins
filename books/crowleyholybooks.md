@@ -447,14 +447,14 @@ That falling petal seemed to the little ones a  wave to engulph their continent.
 37. So they will reproach thy servant, saying: Who  hath set thee to save us?
 38. He will be sore distressed.
 39. All they understand not that thou and I are  fashioning a boat of mother-of-pearl. We will  sail down the river of Amrit even to the  yew-groves of Yama, where we may rejoice  exceedingly.
-40. The joy of men shall be our silver gleam, their  woe our blue gleam—all in the mother-of-pearl.
+40. The joy of men shall be our silver gleam, their  woe our blue gleam - all in the mother-of-pearl.
 41. (The scribe was wroth thereat. He spake:
 O Adonai and my master, I have borne the inkhorn  and the pen without pay, in order that I might  search this river of Amrit, and sail thereon as  one of ye. This I demand for my fee, that I partake of the echo of your kisses.)
 42. (And immediately it was granted unto him.)
 43. (Nay; but not therewith was he content. By an  infinite abasement unto shame did he strive. Then  a voice:)
-44. Thou strivest ever; even in thy yielding thou  strivest to yield—and lo! thou yieldest not.
+44. Thou strivest ever; even in thy yielding thou  strivest to yield - and lo! thou yieldest not.
 45. Go thou unto the outermost places and subdue all  things.
-46. Subdue thy fear and thy disgust. Then—yield!
+46. Subdue thy fear and thy disgust. Then - yield!
 47. There was a maiden that strayed among the corn,  and sighed; then grew a new birth, a narcissus,  and therein she forgot her sighing and her  loneliness.
 48. Even instantly rode Hades heavily upon her, and  ravished her away.
 49. (Then the scribe knew the narcissus in his heart;  but because it came not to his lips, therefore was he shamed and spake no more.)
@@ -479,7 +479,7 @@ A casting down of them that sate in high places;  a famine upon the multitude!
 62. O Lord God! let the haven be cast down by the  fury of the storm! Let the foam of the grape tincture my soul with Thy light!
 63. Bacchus grew old, and was Silenus; Pan was ever  Pan for ever and ever more throughout the æons.
 64. Intoxicate the inmost, O my lover, not the  outermost!
-65. So was it—ever the same! I have aimed at the  peeled wand of my God, and I have hit; yea, I have hit.
+65. So was it - ever the same! I have aimed at the  peeled wand of my God, and I have hit; yea, I have hit.
 
 II
 
@@ -1011,7 +1011,7 @@ Also Vitriol and the hierophant's name V.V.V.V.V.
 All this wheeled in fire, in star-fire, rare and far and utterly lonely - even as Thou and I, O desolate soul my God!
 Yea, and the writing (insert image here) It is well. This is the voice which shook the earth.
 Eight times he cried aloud, and by eight and by eight shall I count Thy favours, Oh Thou Elevenfold God 418!
-Yea, and by many more; by the ten in the twenty-two directions; even as the perpendicular of the Pyramid—so shall Thy favours be.
+Yea, and by many more; by the ten in the twenty-two directions; even as the perpendicular of the Pyramid - so shall Thy favours be.
 If I number them, they are One.
 Excellent is Thy love, Oh Lord! Thou art revealed by the darkness, and he who gropeth in the horror of the groves shall haply catch Thee, even as a snake that seizeth on a little singing-bird.
 I have caught Thee, O my soft thrush; I am like a hawk of mother-of-emerald; I catch Thee by instinct, though my eyes fail from Thy glory.
@@ -1194,7 +1194,7 @@ A secret ritual of Apep, the Heart of IAO-OAI, delivered unto V.V.V.V.V. for his
 1. Apep deifieth Asar.
 2. Let excellent virgins evoke rejoicing, son of Night!
 3. This is the book of the most secret cult of the Ruby Star. It shall be given to none, save to the shameless in deed as in word.
-4. No man shall understand this writing—it is too subtle for the sons of men.
+4. No man shall understand this writing - it is too subtle for the sons of men.
 5. If the Ruby Star have shed its blood upon thee; if in the season of the moon thou hast invoked by the Iod and the Pe, then mayest thou partake of this most secret sacrament.
 6. One shall instruct another, with no care for the matters of men's thought.
 7. There shall be a fair altar in the midst, extended upon a black stone.
@@ -1219,26 +1219,26 @@ u, u, u.
 Pe fu telai,
 Fu tu lu.
 O chi balae
-Wa pa malae:—
+Wa pa malae: - 
 Ut! Ut! Ut!
 Ge; fu latrai,
 Le fu malai
 Kut! Hut! Nut!
 Al OAI
 Rel moai
-Ti—Ti—Ti!
+Ti - Ti - Ti!
 Wa la pelai
 Tu fu latai
 Wi, Ni, Bi.
 15. Also thou shalt excite the wheels with the five wounds and the five wounds.
 16. Then thou shalt excite the wheels with the two and the third in the midst; even Saturn and Jupiter, Sun and Moon, Mars and Venus, and Mercury.
-17. Then the five—and the sixth.
+17. Then the five - and the sixth.
 18. Also the altar shall fume before the master with incense that hath no smoke.
 19. That which is to be denied shall be denied; that which is to be trampled shall be trampled; that which is to be spat upon shall be spat upon.
 20. These things shall be burnt in the outer fire.
 21. Then again the master shall speak as he will soft words, and with music and what else he will bring forward the Victim.
 22. Also he shall slay a young child upon the altar, and the blood shall cover the altar with perfume as of roses.
-23. Then shall the master appear as He should appear—in His glory.
+23. Then shall the master appear as He should appear - in His glory.
 24. He shall stretch himself upon the altar, and awake it into life, and into death.
 25. (For so we conceal that life which is beyond.)
 26. The temple shall be darkened, save for the fire and the lamp of the altar.
@@ -1283,7 +1283,7 @@ Fear nothing.
 62. But I will overcome thee; the New Life shall illumine thee with the Light that is beyond the Stars.
 63. Thinkest thou? I, the force that have created all, am not to be despised.
 64. And I will slay thee in my lust.
-65. Thou shalt scream with the joy and the pain and the fear and the love—so that the ΛΟΓΟΣ of a new God leaps out among the Stars.
+65. Thou shalt scream with the joy and the pain and the fear and the love - so that the ΛΟΓΟΣ of a new God leaps out among the Stars.
 66. There shall be no sound heard but this thy lion-roar of rapture; yea, this thy lion-roar of rapture.
 
 Liber Cheth vel Vallum Abiegni
@@ -1353,7 +1353,7 @@ LIBER A'ASH VEL CAPRICORNI PNEUMATICI SUB FIGURÂ CCCLXX
 33. Now therefore thou knowest when I am within Thee,  when my hood is spread over thy skull, when my  might is more than the penned Indus, and  resistless as the Giant Glacier.
 34. For as thou art before a lewd woman in Thy  nakedness in the bazaar, sucked up by her slyness and smiles, so art thou wholly and no more in  part before the symbol of the beloved, though it be but a Pisacha or a Yantra or a Deva.
 35. And in all shalt thou create the Infinite Bliss  and the next link of the Infinite Chain.
-36. This chain reaches from Eternity to Eternity,  ever in triangles—is not my symbol a  triangle?—ever in circles—is not the  symbol of the Beloved a circle? Therein is all  progress base illusion, for every circle is alike  and every triangle alike!
+36. This chain reaches from Eternity to Eternity,  ever in triangles - is not my symbol a  triangle? - ever in circles - is not the  symbol of the Beloved a circle? Therein is all  progress base illusion, for every circle is alike  and every triangle alike!
 37. But the progress is progress, and progress is  rapture, constant, dazzling, showers of light, waves of dew, flames of the hair of the Great  Goddess, flowers of the roses that are about her neck, Amen!
 38. Therefore lift up thyself as I am lifted up. Hold thyself in as I am master to accomplish.  At the end, be the end far distant as the stars that lie in the navel of Nuit, do thou slay  thyself as I at the end am slain, in the death  that is life, in the peace that is mother of war,  in the darkness that holds light in his hand, as  an harlot that plucks a jewel from her nostrils.
 39. So therefore the beginning is delight, and the  end is delight, and delight is in the midst, even as the Indus is water in the cavern of the  glacier, and water among the greater hills and  the lesser hills and through the ramparts of the  hills and through the plains, and water at the mouth thereof when it leaps forth into the mighty  sea, yea, into the mighty sea.
@@ -1514,14 +1514,14 @@ LIBER TZADDI VEL HAMUS HERMETICUS SUB FIGURÂ XC
 22. There is joy in the setting-out; there is joy in the journey; there is joy in the goal.
 23. Only if ye are sorrowful, or weary, or angry, or discomforted; then ye may know that ye have lost the golden thread, the thread wherewith I guide you to the heart of the groves of Eleusis.
 24. My disciples are proud and beautiful; they are strong and swift; they rule their way like mighty conquerors.
-25. The weak, the timid, the imperfect, the cowardly, the poor, the tearful—these are mine enemies, and I am come to destroy them.
+25. The weak, the timid, the imperfect, the cowardly, the poor, the tearful - these are mine enemies, and I am come to destroy them.
 26. This also is compassion: an end to the sickness of earth. A rooting-out of the weeds: a watering of the flowers.
 27. O my children, ye are more beautiful than the flowers: ye must not fade in your season.
 28. I love you; I would sprinkle you with the divine dew of immortality.
 29. This immortality is no vain hope beyond the grave: I offer you the certain consciousness of bliss.
 30. I offer it at once, on earth; before an hour hath struck upon the bell, ye shall be with Me in the Abodes that are beyond Decay.
 31. Also I give you power earthly and joy earthly; wealth, and health, and length of days. Adoration and love shall cling to your feet, and twine around your heart.
-32. Only your mouths shall drink of a delicious wine—the wine of Iacchus; they shall reach ever to the heavenly kiss of the Beautiful God.
+32. Only your mouths shall drink of a delicious wine - the wine of Iacchus; they shall reach ever to the heavenly kiss of the Beautiful God.
 33. I reveal unto you a great mystery. Ye stand between the abyss of height and the abyss of depth.
 34. In either awaits you a Companion; and that Companion is Yourself.
 35. Ye can have no other Companion.
@@ -1568,7 +1568,7 @@ Liber Librae
 
 LIBER LIBRÆ SUB FIGURÂ XXX
 
-0. Learn first—Oh thou who aspirest unto our ancient Order!—that Equilibrium is the basis of the Work. If thou thyself hast not a sure foundation, whereon wilt thou stand to direct the forces of Nature?
+0. Learn first - Oh thou who aspirest unto our ancient Order! - that Equilibrium is the basis of the Work. If thou thyself hast not a sure foundation, whereon wilt thou stand to direct the forces of Nature?
 1. Know then, that as man is born into this world amidst the Darkness of Matter, and the strife of contending forces; so must his first endeavour be to seek the Light through their reconciliation.
 2. Thou then, who hast trials and troubles, rejoice because of them, for in them is Strength, and by their means is a pathway opened unto that Light.
 3. How should it be otherwise, O man, whose life is but a day in Eternity, a drop in the Ocean of time; how, were thy trials not many, couldst thou purge thy soul from the dross of earth?
@@ -1598,7 +1598,7 @@ LIBER III VEL JUGORUM
 
 0
 
-0. Behold the Yoke upon the neck of the  Oxen! Is it not thereby that the Field shall be ploughed?  The Yoke is heavy, but joineth together them that are  separate—Glory to Nuit and to Hadit, and to Him that  hath given us the Symbol of the Rosy Cross!
+0. Behold the Yoke upon the neck of the  Oxen! Is it not thereby that the Field shall be ploughed?  The Yoke is heavy, but joineth together them that are  separate - Glory to Nuit and to Hadit, and to Him that  hath given us the Symbol of the Rosy Cross!
 Glory unto the Lord of the Word  Abrahadabra, and Glory unto Him that hath given us the  Symbol of the Ankh, and of the Cross within the Circle!
 1. Three are the Beasts wherewith thou  must plough the Field; the Unicorn, the Horse, and the  Ox. And these shalt thou yoke in a triple yoke that is  governed by One Whip.
 2. Now these Beasts run wildly upon the  earths and are not easily obedient to the Man.

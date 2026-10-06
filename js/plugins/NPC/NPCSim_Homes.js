@@ -563,6 +563,27 @@
     return entry;
   }
 
+  // Is this NPC at home on `mapId` (the map loaded now when omitted)? A home
+  // with a door is one building and floor: inside a building it is home only
+  // when it is THAT building and floor, so a house drawn from the same
+  // template as somebody else's is not theirs. The street outside it (the
+  // building's own map) counts too. A home that was only ever an abstract
+  // template is matched on the template, which is all it has.
+  function isHomeHere(profile, mapId = null) {
+    if (!profile) return false;
+    const here = mapId != null ? mapId : ($gameMap ? $gameMap.mapId() : null);
+    if (here == null) return false;
+    const home = profile.homeBuilding;
+    const PHS = window.ProceduralHouseSystem;
+    const inside = !!(PHS?.houseInstanceKey && $gameMap && $gameMap.mapId() === here && PHS.houseInstanceKey(here));
+    if (home) {
+      if (home.mapId === here) return true;
+      if (!inside) return false;
+      return PHS.isCurrentHome?.(home, profile._homeGroupName || home.groupName) === true;
+    }
+    return profile.homeMapId === here;
+  }
+
   // Residents of a building, optionally narrowed to one floor. Used by the
   // spawner to decide who should be inside when the player walks in at night or day.
   function getBuildingResidents(building, floorIndex = null, groupName = null) {
@@ -580,7 +601,7 @@
   }
 
   Object.assign(NPCSim._internal, {
-    _assignHomeBuilding, _getBuildingMapName, _getHomeDescription, _registerBuildingOccupant,
+    _assignHomeBuilding, _getBuildingMapName, _getHomeDescription, _registerBuildingOccupant, isHomeHere,
     assignHomesOnMap, ensureBuildingResidents, getBuildingResidents, leaseHolderOf, moveInHousehold,
     moveOut, resettle, sharesHome,
   });

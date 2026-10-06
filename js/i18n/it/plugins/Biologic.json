@@ -100,7 +100,7 @@
  "testosteroneProduction": "Produzione Testosterone",
  "normalRange": "Range normale",
  "belowNormalHypogonadism": "Sotto il normale (Ipogonadismo)",
- "noReproductiveSystemAvailableSetVariable87Fi": "Nessun sistema riproduttivo disponibile. Imposta prima la Variabile 87.",
+ "noReproductiveSystemAvailable": "Nessun sistema riproduttivo disponibile. Questo corpo non ne ha uno con cui portare avanti una gravidanza.",
  "alreadyInReproductiveProcess": "Già in processo riproduttivo!",
  "pregnancyInitiatedDue": {
   "one": "Gravidanza iniziata! Parto previsto tra {count} giorno.",

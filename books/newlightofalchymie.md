@@ -337,7 +337,7 @@ would, according to the custome of Philosophers, debarre all unworthy
 men from this Art; and not forgetting to love their poor neighbor in
 the feare of God (setting aside all vain ostentation) let them sing
 everlasting praises of thankfulnesse unto the great and good God, for
-so speciall a gift, and use it wel with a silent and religious joy——
+so speciall a gift, and use it wel with a silent and religious joy -  - 
 
 Simplicity or plainnesse is the seal of truth.
 
@@ -1105,7 +1105,7 @@ _Of the Praxis, and making of the Stone, or Tincture by Art._
 
 Through all these foregoing Chapters, our discourse of things hath been
 scattered by way of examples, that the Praxis might be the more easily
-understood, which must be done by imitating Nature after this manner——
+understood, which must be done by imitating Nature after this manner -  - 
 
 Take of our earth, through eleven degrees, eleven graines, of our Gold,
 and not of the vulgar one grain, of our Lune, not the vulgar, two
@@ -1803,7 +1803,7 @@ Sulphur, and Metalls, Mineralls, Bloud, Haire, Corrosive waters, Herbs,
 Urine, Vineger, but could find nothing for his purpose; hee left
 nothing unassayed in the whole world, with which hee did not work upon
 good Mercury withall. But when he could doe no good at all with this,
-hee fell upon this saying——_that it is found in the dung-hill_. He
+hee fell upon this saying -  - _that it is found in the dung-hill_. He
 began to worke upon Mercury with divers sorts of dung, together, and
 asunder: And when hee was weary, and full of thoughts he fell into a
 sleep. And in his sleep there appeared to him a vision: there came

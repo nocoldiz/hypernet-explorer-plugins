@@ -51,16 +51,11 @@
   } = window.CCKit;
 
   // The same plugins the orchestrator leans on, imported here for the pages
-  // that were lifted out of it: the bio page writes the gender/reproduction
-  // variables, and the randomizer dresses a member from scratch.
+  // that were lifted out of it: the bio page writes the member's gender and
+  // organs, and the randomizer dresses a member from scratch.
   const {
     applyTraitsToActor,
-    VAR_PLAYER1_GENDER,
-    VAR_PLAYER2_GENDER,
-    VAR_PLAYER3_GENDER,
-    VAR_PLAYER1_REPRODUCTIVE_TYPE,
-    VAR_PLAYER2_REPRODUCTIVE_TYPE,
-    VAR_PLAYER3_REPRODUCTIVE_TYPE,
+    applyGenderAndReproduction,
   } = window.CharacterCreationUtils || {};
   const {
     equipRandomCompatibleWeapon,
@@ -79,7 +74,7 @@
   // believes, what she does for a living and the body she was born in are the
   // player's, while her name, her face, her class and her gender are the
   // story's (see _storyModeEmLocksField).
-  const STORY_EM_OPEN_FIELDS = ["ideology", "job", "reproduction", "skinColour", "hairColour", "dressColour",
+  const STORY_EM_OPEN_FIELDS = ["difficulty", "ideology", "job", "reproduction", "skinColour", "hairColour", "dressColour",
     "beltColour", "bootsColour", "underwearColour", "glassesColour"];
 
   // The colours her dossier model can be worn in (Actor.modelColours): a row of
@@ -1452,14 +1447,14 @@
       return String(key).split(".").pop().split(/[_\-]/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
     }
 
-    // The organs this member is carrying right now. The variable is the store
-    // (Health_BiologicSimulation reads the same one), CharacterCreationUtils
-    // owns which variable that is.
+    // The organs this member is carrying right now, read off the actor
+    // (actor.reproductionType(), the same field Health_BiologicSimulation reads).
     _currentReproductionType() {
-      const memberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
+      const actor = Scene_CharacterCreation.getCurrentActor();
       const CCU = window.CharacterCreationUtils;
-      if (CCU && CCU.getReproductionType) return CCU.getReproductionType(memberIdx);
-      return $gameVariables.value([87, 115, 116][memberIdx] || 87);
+      if (CCU && CCU.getReproductionType) return CCU.getReproductionType(actor);
+      const value = (actor && actor.reproductionType) ? actor.reproductionType() : null;
+      return value == null ? -1 : value;
     }
 
     // Where this character's body sits on the endocrine scale: their own answer
@@ -1515,8 +1510,7 @@
       const takenPreset = (isPresetActor && API.findPresetForActor)
         ? API.findPresetForActor(actor) : null;
       const isVipActor = !!(takenPreset && API.isVipPreset && API.isVipPreset(takenPreset));
-      const currentMemberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-      const isCreature = !isPresetActor && !isPreset && !!(actor._isCreatureActor || $gameSwitches.value(77 + currentMemberIndex));
+      const isCreature = !isPresetActor && !isPreset && !!actor._isCreatureActor;
       // Drawn as the Bio tab's own kind of question: a titled section with a
       // row of chips, the same shape gender and class wear, rather than a
       // stripe of pills that belonged to the old sidebar.
@@ -1956,8 +1950,7 @@
 
       const portraitStyleHtml = this._renderPortraitStyleHtml();
       const typePillsHtml = this._renderTypePillsHtml();
-      const memberIdxForType = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-      const isCreatureActor = !!(actor._isCreatureActor || $gameSwitches.value(77 + memberIdxForType));
+      const isCreatureActor = !!actor._isCreatureActor;
       // The second half is asked of a person as much as of a creature; only
       // the creature is asked what its first half is.
       const archetypeBioHtml = this._archetypeBioHtml(actor, isCreatureActor);
@@ -1969,8 +1962,7 @@
         { val: 2, label: ccT('CharCreate.bio.gender.nonBinary') },
         { val: 3, label: ccT('CharCreate.bio.gender.cocoon') }
       ];
-      const currentMemberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-      const currentGender = $gameVariables.value(38 + currentMemberIdx);
+      const currentGender = actor.gender ? actor.gender() : 0;
       const genderChipsHtml = genders.map((g) => {
         const isSelected = currentGender === g.val;
         const click = isStoryEm ? 'SoundManager.playBuzzer()' : `SceneManager._scene.onSetActorGender(${g.val})`;
@@ -2040,8 +2032,7 @@
         { key: "age_middle", label: ccT('CharCreate.bio.age.middle'), age: 48 },
         { key: "age_elder", label: ccT('CharCreate.bio.age.elder'), age: 68 },
       ];
-      const memberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-      const currentAge = ($gameSystem._ccBirthAge && $gameSystem._ccBirthAge[memberIdx]) || 28;
+      const currentAge = Number(actor._ccAge) || 28;
       const ageChips = ageBands.map((band) => {
         const isSelected = Math.abs(currentAge - band.age) < 10;
         return `<button class="cc-bio-chip ${isSelected ? 'selected' : ''}" onclick="SceneManager._scene.onBioOptionChange('age', ${band.age})">${band.label}</button>`;
@@ -2163,8 +2154,7 @@
         }).join(" ");
       }
 
-      const memberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-      const isCreature = !!(actor && (actor._isCreatureActor || $gameSwitches.value(77 + memberIndex)));
+      const isCreature = !!(actor && actor._isCreatureActor);
 
       // Story mode reads Em's sheet rather than writing it: the whole detailed
       // page is drawn, down to her organs, her standing and her blood, and the
@@ -2226,9 +2216,21 @@
       // facing page is left to her written history alone.
       if (isStoryEm) {
         const storyClassData = (typeof $dataClasses !== 'undefined') ? $dataClasses[actor._classId] : null;
+        // The story mode's difficulty: Roguelike or Blood and Oil, nothing else.
+        const difficultyOpenClass = this._storyOpenClass("difficulty");
+        const currentDifficulty = $gameSystem._bloodAndOilMode ? "blood_and_oil" : "roguelite";
+        const difficultyChips = ["roguelite", "blood_and_oil"].map((mode) => {
+          const isSelected = currentDifficulty === mode;
+          return `<button class="cc-bio-chip ${isSelected ? 'selected' : ''}${difficultyOpenClass}" onclick="SceneManager._scene.onBioOptionChange('difficulty', '${mode}')">${ccT('CharCreate.storyDifficulty.' + mode + '.name')}</button>`;
+        }).join("");
         return `
           <div class="cc-page cc-page-left cc-page-full ts-page cc-page-column">
             <div class="cc-bio-container cc-step-scroll">
+              <div class="cc-bio-section">
+                <div class="cc-bio-section-title">${this._ccIconHtml(176, 16)} <span>${ccT('CharCreate.difficulty')}</span></div>
+                <div class="cc-bio-chips-row">${difficultyChips}</div>
+                <div class="cc-note-quiet">${ccT('CharCreate.storyDifficulty.' + currentDifficulty + '.desc')}</div>
+              </div>
               ${typePillsHtml}
               ${professionSectionHtml}
               <div class="cc-bio-section">
@@ -2348,7 +2350,7 @@
           profile.backstory = null;
         }
       }
-      const lore = this._ensureActorLore(actor, actor._gender) || profile;
+      const lore = this._ensureActorLore(actor, actor.gender ? actor.gender() : 0) || profile;
       const backstory = lore && lore.backstory;
       let html = backstory && window.NPCHistSim?.buildBackstoryHTML
         ? window.NPCHistSim.buildBackstoryHTML(backstory)
@@ -2504,8 +2506,7 @@
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return `<div class="cc-page cc-page-full"></div>`;
 
-      const memberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-      const age = ($gameSystem._ccBirthAge && $gameSystem._ccBirthAge[memberIdx]) || 28;
+      const age = Number(actor._ccAge) || 28;
       const avatarStyle = actor.characterName()
         ? this.getSpriteStyle(actor.characterName(), actor.characterIndex()) : "";
       const classData = (typeof $dataClasses !== 'undefined') ? $dataClasses[actor._classId] : null;
@@ -2558,7 +2559,7 @@
       // A history the player asked for is a history they chose, so the tab
       // stops reading as untouched.
       actor._ccBackstory = true;
-      this._ensureActorLore(actor, actor._gender);
+      this._ensureActorLore(actor, actor.gender ? actor.gender() : 0);
       SoundManager.playCursor();
       this._lastStep = -1;
       this._lastIndex = -1;
@@ -2569,8 +2570,7 @@
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return `<div class="cc-page cc-page-right"></div>`;
 
-      const memberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-      const age = ($gameSystem._ccBirthAge && $gameSystem._ccBirthAge[memberIdx]) || 28;
+      const age = Number(actor._ccAge) || 28;
 
       let avatarStyle = "";
       if (actor.characterName()) {
@@ -2671,19 +2671,14 @@
 
     onSetActorGender(genderVal) {
       if (this._storyModeEmLocksField("gender")) { SoundManager.playBuzzer(); return; }
-      const memberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-      $gameVariables.setValue(38 + memberIdx, genderVal);
       const actor = Scene_CharacterCreation.getCurrentActor();
-      if (actor) {
-        actor._gender = genderVal;
-        if (actor.setGender) actor.setGender(genderVal);
-      }
+      if (actor && actor.setGender) actor.setGender(genderVal);
       const isSimple = Scene_CharacterCreation.isSimpleMode();
       // In simple mode, reproductive organs are always automatically set to the gender default.
       // In detailed mode, existing custom organs are kept unless unset.
       const CCU = window.CharacterCreationUtils;
-      if (CCU && CCU.applyGenderAndReproduction) {
-        CCU.applyGenderAndReproduction(memberIdx, genderVal, { keepOrgans: !isSimple });
+      if (actor && CCU && CCU.applyGenderAndReproduction) {
+        CCU.applyGenderAndReproduction(actor, genderVal, { keepOrgans: !isSimple });
       }
       const untouched = isSimple || (!actor || !actor.hormoneBalance || actor.hormoneBalance() === null);
       if (actor && actor.setHormoneBalance && untouched && (genderVal === 0 || genderVal === 1) &&
@@ -2766,13 +2761,12 @@
       }
 
       // Ensure gender defaults for organs & hormones
-      const memberIdx = ($gameParty && $gameParty.members) ? $gameParty.members().indexOf(actor) : 0;
-      const seat = memberIdx >= 0 ? memberIdx : 0;
-      if (memberIdx >= 0) {
+      const inParty = !!($gameParty && $gameParty.members && $gameParty.members().includes(actor));
+      if (inParty) {
         const CCU = window.CharacterCreationUtils;
-        const currentGender = $gameVariables.value(38 + memberIdx);
+        const currentGender = actor.gender ? actor.gender() : 0;
         if (CCU && CCU.applyGenderAndReproduction) {
-          CCU.applyGenderAndReproduction(memberIdx, currentGender, { keepOrgans: false });
+          CCU.applyGenderAndReproduction(actor, currentGender, { keepOrgans: false });
         }
         if (actor.setHormoneBalance && CCU && CCU.defaultHormoneBalance) {
           actor.setHormoneBalance(CCU.defaultHormoneBalance(currentGender));
@@ -2784,10 +2778,9 @@
         actor._morality = rand([2, 1, 0, -1, -2]);
       }
 
-      // Age, written where the bio page writes it: one birth age per seat.
-      if (!$gameSystem._ccBirthAge) $gameSystem._ccBirthAge = [];
-      if (!$gameSystem._ccBirthAge[seat]) {
-        $gameSystem._ccBirthAge[seat] = 18 + Math.floor(Math.random() * 52);
+      // Age, written where the bio page writes it: on the actor (actor._ccAge).
+      if (!actor._ccAge) {
+        actor._ccAge = 18 + Math.floor(Math.random() * 52);
       }
 
       // Wealth, as the tier index the bio page stores (0 to 3).
@@ -2892,7 +2885,6 @@
       }
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return;
-      const memberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       actor._bioSet = true;
 
       if (/^(skin|hair|dress|belt|boots|underwear|glasses)Colour$/.test(field)) {
@@ -2911,6 +2903,20 @@
           if (free && hex) free.value = hex;
           return;
         }
+      } else if (field === "difficulty") {
+        // The story mode's two difficulties. Em and Bubba never die for good on
+        // either; everybody else who joins does (BattleSystemEnhanced.diesForGood).
+        const bloodAndOil = value === "blood_and_oil";
+        $gameSwitches.setValue(9, bloodAndOil);
+        $gameSwitches.setValue(33, true);
+        $gameSystem._bloodAndOilMode = bloodAndOil;
+        $gameSystem._peacefulMode = false;
+        $gameSystem._difficultyMode = bloodAndOil ? "blood_and_oil" : "roguelite";
+        SoundManager.playCursor();
+        const leftPage = this._dndContainer && this._dndContainer.querySelector(".cc-page-left");
+        if (leftPage) this._ccSwapPage(leftPage, this._bioPickerLeftHtml());
+        else this.refreshUIOverlayDOM();
+        return;
       } else if (field === "class") {
         const classId = Number(value) || 1;
         actor.changeClass(classId, true);
@@ -2986,8 +2992,7 @@
       } else if (field === "hometown") {
         $gameSystem._ccHometown = value;
       } else if (field === "age") {
-        if (!$gameSystem._ccBirthAge) $gameSystem._ccBirthAge = [];
-        $gameSystem._ccBirthAge[memberIdx] = Number(value);
+        actor._ccAge = Number(value);
       } else if (field === "wealth") {
         actor._wealthTier = Number(value);
       } else if (field === "blood") {
@@ -3000,8 +3005,8 @@
         // The player's own answer, which outranks whatever the gender pick
         // defaulted into the selector.
         const CCU = window.CharacterCreationUtils;
-        if (CCU && CCU.setReproductionType) CCU.setReproductionType(memberIdx, Number(value));
-        else $gameVariables.setValue([87, 115, 116][memberIdx] || 87, Number(value));
+        if (CCU && CCU.setReproductionType) CCU.setReproductionType(actor, Number(value));
+        else if (actor.setReproductionType) actor.setReproductionType(Number(value));
       } else if (field === "hormones") {
         // Written on the actor, where Health_BiologicSimulation reads it to
         // build (and then hold) the blood. Saying it at all is what makes it
@@ -3434,7 +3439,6 @@
       // Nothing about story mode's Em is rolled: she is who the story says.
       const CP = window.CharacterPresets;
       if (CP && CP.isStoryModeEm && CP.isStoryModeEm(actor)) { SoundManager.playBuzzer(); return; }
-      const memberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       actor._bioSet = true;
 
       const allJobs = ((window.WorkSystem && window.WorkSystem.Jobs) || []).filter(j => j && !j.appointed);
@@ -3455,8 +3459,7 @@
       const hometowns = ["Paris", "Tokyo", "Neo-Cairo", "Brussels", "Berlin", "London", "Rome", "New York", "Geneva", "Athens"]; // i18n-ignore: WorkSystem.Destinations ids
       $gameSystem._ccHometown = hometowns[Math.floor(Math.random() * hometowns.length)];
 
-      if (!$gameSystem._ccBirthAge) $gameSystem._ccBirthAge = [];
-      $gameSystem._ccBirthAge[memberIdx] = 18 + Math.floor(Math.random() * 52);
+      actor._ccAge = 18 + Math.floor(Math.random() * 52);
 
       actor._wealthTier = Math.floor(Math.random() * 4);
 
@@ -4337,21 +4340,16 @@
       // Set the actor's name
       currentActor.setName(randomName);
 
-      // Get the correct creature switch based on current party member (77, 78, or 79)
-      const creatureSwitchId = 77 + currentMemberIndex; // 77 for actor 1, 78 for actor 2, 79 for actor 3
-
       // Randomly decide: regular character (forceHumanoid forces regular)
       const isCreature = options.forceHumanoid ? false : (Math.random() < 0.2);
 
       if (isCreature) {
         // Set up as creature
-        $gameSwitches.setValue(creatureSwitchId, true);
         Scene_CharacterCreation._isCreatureMode = true;
         currentActor._isCreatureActor = true;
         currentActor.changeClass(65, false);
       } else {
         // Set up as regular character
-        $gameSwitches.setValue(creatureSwitchId, false);
         Scene_CharacterCreation._isCreatureMode = false;
         currentActor._isCreatureActor = false;
 
@@ -4377,46 +4375,13 @@
         }
       }
 
-      // Random gender (0-3: Male, Female, Non-binary, Cocoon)
+      // Random gender (0-3: Male, Female, Non-binary, Cocoon), and the organs
+      // it usually comes with, both written on the actor.
       const randomGender = Math.floor(Math.random() * 4);
-
-      // Determine which variables to use based on party member index
-      let genderVar, reproductiveVar;
-      switch (currentMemberIndex) {
-        case 0:
-          genderVar = VAR_PLAYER1_GENDER;
-          reproductiveVar = VAR_PLAYER1_REPRODUCTIVE_TYPE;
-          break;
-        case 1:
-          genderVar = VAR_PLAYER2_GENDER;
-          reproductiveVar = VAR_PLAYER2_REPRODUCTIVE_TYPE;
-          break;
-        case 2:
-          genderVar = VAR_PLAYER3_GENDER;
-          reproductiveVar = VAR_PLAYER3_REPRODUCTIVE_TYPE;
-          break;
-        default:
-          genderVar = VAR_PLAYER1_GENDER;
-          reproductiveVar = VAR_PLAYER1_REPRODUCTIVE_TYPE;
-      }
-
-      // Set gender variable
-      $gameVariables.setValue(genderVar, randomGender);
-
-      // Set reproduction type based on gender
-      switch (randomGender) {
-        case 0: // Male
-          $gameVariables.setValue(reproductiveVar, 0); // Testicles
-          break;
-        case 1: // Female
-          $gameVariables.setValue(reproductiveVar, 1); // Uterus
-          break;
-        case 2: // Non-binary
-          $gameVariables.setValue(reproductiveVar, Math.floor(Math.random() * 5)); // Random (0-4)
-          break;
-        case 3: // Cocoon
-          $gameVariables.setValue(reproductiveVar, 4); // Mitosis
-          break;
+      if (typeof applyGenderAndReproduction === "function") {
+        applyGenderAndReproduction(currentActor, randomGender);
+      } else if (currentActor.setGender) {
+        currentActor.setGender(randomGender);
       }
 
       // Random traits
@@ -4478,8 +4443,7 @@
         : ["Paris", "Tokyo", "Neo-Cairo", "Brussels", "Berlin", "London", "Rome", "New York", "Geneva", "Athens"]; // i18n-ignore: WorkSystem.Destinations ids
       $gameSystem._ccHometown = hometowns[Math.floor(Math.random() * hometowns.length)];
 
-      if (!$gameSystem._ccBirthAge) $gameSystem._ccBirthAge = [];
-      $gameSystem._ccBirthAge[currentMemberIndex] = 18 + Math.floor(Math.random() * 52);
+      currentActor._ccAge = 18 + Math.floor(Math.random() * 52);
 
       currentActor._wealthTier = Math.floor(Math.random() * 4);
 
@@ -4487,8 +4451,8 @@
       const reproRoll = ccReproChoices();
       const CCU_random = window.CharacterCreationUtils;
       const rolledRepro = reproRoll[Math.floor(Math.random() * reproRoll.length)].val;
-      if (CCU_random && CCU_random.setReproductionType) CCU_random.setReproductionType(currentMemberIndex, rolledRepro);
-      else $gameVariables.setValue([87, 115, 116][currentMemberIndex] || 87, rolledRepro);
+      if (CCU_random && CCU_random.setReproductionType) CCU_random.setReproductionType(currentActor, rolledRepro);
+      else if (currentActor.setReproductionType) currentActor.setReproductionType(rolledRepro);
       if (currentActor.setHormoneBalance) currentActor.setHormoneBalance(Math.floor(Math.random() * 101));
 
       // i18n-ignore-start: BloodTypeService fallback rows, .type is the id stored on the actor

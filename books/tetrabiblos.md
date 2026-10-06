@@ -41,7 +41,7 @@ Typographical and punctuation errors have been silently corrected.
 
          “Ye stars, which are the poetry of Heaven!
           If, in your bright leaves, we would read the fate
-          Of men and empires,—’tis to be forgiven.”
+          Of men and empires, - ’tis to be forgiven.”
                                                  LORD BYRON.
 
                                LONDON:
@@ -220,7 +220,7 @@ what plea his ancestors should stand excused for having, in their day,
 contemplated with respect the unfortunate object of modern derision.
 
 [1] Sir Isaac Newton has the following remarks in regard to the origin
-of Astrology:—“After the study of Astronomy was set on foot for the use
+of Astrology: - “After the study of Astronomy was set on foot for the use
 of navigation, and the Ægyptians, by the heliacal risings and settings
 of the stars, had determined the length of the solar year of 365 days,
 and by other observations had fixed the solstices, and formed the
@@ -240,7 +240,7 @@ year of that king’s reign” (747 B.C.), “and beginning the year on the
 same day with the Ægyptians for the sake of their calculations. So
 Diodorus: ‘_they say that the Chaldæan in Babylon, being colonies of
 the Ægyptians, became famous for astrology, having learned it from the
-priests of Ægypt_.’”—Newton’s Chronology, pp. 251, 252.
+priests of Ægypt_.’” - Newton’s Chronology, pp. 251, 252.
 
 Again, in p. 327: “The practice of observing the stars began in Ægypt
 in the days of Ammon, as above, and was propagated from thence, in the
@@ -269,7 +269,7 @@ Otanes of Herodotus. In his book, called the Octateuchus, he taught the
 same doctrine of the Deity as Zoroaster.”
 
 Having quoted thus far from Newton, it seems proper to subjoin the
-following extract from the “Ancient Universal History:”—“In the reign
+following extract from the “Ancient Universal History:” - “In the reign
 of Gushtasp” (the oriental name of Darius Hystaspis), “King of Persia,
 flourished a celebrated astrologer, whose name was Gjamasp, surnamed
 Al Hakim, or the wise. The most credible writers say that he was the
@@ -314,7 +314,7 @@ for 6 or 700 years past, has produced the most famous astrologers
 in Persia; and the king’s astrologer is always either a native of
 Genabed, or one brought up there. Sir John Chardin affirms that the
 appointments in his time for these sages amounted to six millions of
-French livres per annum.—Albumazar of Balch scholar of Alkendi, a Jew,
+French livres per annum. - Albumazar of Balch scholar of Alkendi, a Jew,
 who was professor of judicial astrology at Bagdad, in the Caliphate
 of Almamoum††† became wonderfully famous. He wrote expressly from the
 Persian astrologers, and it may be from the works of Gjamasp, since
@@ -331,7 +331,7 @@ nativity by his description, casteth this sign into the horoscope.
 But the meaning of Albumazar was, saith Friar Bacon, that the said
 virgin was born, the Sun being in that sign, and so it is noted in the
 calendar; and that she was to bring up her son in the Hebrew land.
-(Mr. John Gregory’s Notes on various Passages of Scripture.)”—_Ancient
+(Mr. John Gregory’s Notes on various Passages of Scripture.)” - _Ancient
 Universal History, vol. 5, pp. 415 to 419._
 
 †It is maintained by astrologers, that the planets, _having been
@@ -344,7 +344,7 @@ hereafter mentioned.
 
 †††This seems to be a mistake of the Arabian author, for Gushtasp was
 identical with Darius Hystaspis, and Lohrasp (otherwise Cyaxares) was
-father of Darius the Mede, who was overcome by Cyrus, 536 B.C.—See
+father of Darius the Mede, who was overcome by Cyrus, 536 B.C. - See
 Newton.
 
 The general want of information on these points, and the indifference
@@ -391,7 +391,7 @@ even more false: it seems to have been adopted not from the elements
 of the science itself, but from trite observations made by writers
 against the science; and consequently the world now wonders at the
 lamentable defect of understanding that could ever have permitted
-belief in it—forgetting that astrology has been consigned to neglect,
+belief in it - forgetting that astrology has been consigned to neglect,
 not in consequence of any _primâ facie_ palpability in its imputed
 fallacies, nor indeed of any special skill or acuteness on the part of
 its professed adversaries, but rather in consequence of the sudden and
@@ -421,7 +421,7 @@ the object of his attack.
 
 [2] To this view of the case, the following remarks seem not
 inapplicable: they are taken from a periodical work of deserved
-reputation:—
+reputation: - 
 
 “The study of astrology itself, as professing to discover, by celestial
 phenomena, future mutations in the elements and terrestrial bodies,
@@ -440,7 +440,7 @@ incredible, and _denied_ rather than _contradicted_.”
 †“Sir Christopher Heydon’s Defence of Astrology, p. 2, edit. 1603.”
 
 ††“Dr. Mead on the Influence of the Sun and Moon upon Human Bodies.
-See also Edinb. Rev. vol. 12, p. 36—Balfour on Sol-Lunar Influence.”
+See also Edinb. Rev. vol. 12, p. 36 - Balfour on Sol-Lunar Influence.”
 _Blackwood’s Magazine for Dec., 1821, Part 2, No. 59._
 
 The author of the present Translation has no intention now of either
@@ -463,10 +463,10 @@ In executing here the desire of attempting to vindicate the ancient
 credence in astrology, an elaborate disquisition would surely be not
 only unnecessary, but misplaced: it seems sufficient to refer the
 reader to the work of which the following is a translation, and to
-these undisputed facts—that the science was formerly inculcated by the
-highest and most erudite authorities of the period—that it was insisted
+these undisputed facts - that the science was formerly inculcated by the
+highest and most erudite authorities of the period - that it was insisted
 on by votaries in all parts of the world, attesting and producing
-instances of its truth;—and, moreover, that it was so finely and
+instances of its truth; - and, moreover, that it was so finely and
 beautifully put together, as to cause the only deficiency of one small,
 though most important, link in its whole chain of argument, to be
 undetected by dull minds, and readily supplied by enthusiastic genius.
@@ -485,7 +485,7 @@ have been of no weak or vulgar order, but that it was sufficiently
 potent and refined to interest and amuse even the present age.[3]
 
 [3] In the 51st No. of the Quarterly Review, Art. “_Astrology and
-Alchymy_,” the following observations are made:—
+Alchymy_,” the following observations are made: - 
 
 “Certainly, if man may ever found his glory on the achievements of
 his wisdom, he may reasonably exult in the discoveries of astronomy;
@@ -574,7 +574,7 @@ in folio, in quarto, in octavo, in sixteens: that lately printed at
 Leyden” (where cthe Elzevirs were established) “I conceive to be most
 exact; it was performed by Allatius.” To the said edition is prefixed
 an anonymous address to the reader, in Latin, and to the following
-effect:—
+effect: - 
 
 “I have reckoned it part of my duty to give you, benevolent reader,
 some short information as to the publication of this little work,
@@ -637,8 +637,8 @@ for forty years, and that he shed tears on losing it. Another story
 of him states, that the Pope had often urged him to take holy orders,
 that he might be advanced in the church, and one day asked him why
 he had not done so: “Because,” said Allatius, “I would be free to
-marry.”—“Why, then, do you not marry?”—“Because I would be free to take
-orders.”—_Chalmer’s Biographical Dictionary._
+marry.” - “Why, then, do you not marry?” - “Because I would be free to take
+orders.” - _Chalmer’s Biographical Dictionary._
 
 † This assertion is applicable only to Proclus’s Paraphrase. There
 were several prior translations of the original Tetrabiblos in Latin
@@ -813,34 +813,34 @@ the University of Paris: he died in 1256. It is pointed out in the
 Edinburgh Review, No. 68, that he was a native of Yorkshire, and his
 real name John Holywood, euphonized, in Paris, into Sacrobosco.
 
-[14] Chalmers.—The Tetrabiblos was among these works.
+[14] Chalmers. - The Tetrabiblos was among these works.
 
 [15] To such readers as may be curious to know in what manner this
 book was promulgated in Europe, after the revival of letters, the
 following extract from the Bibliotheca Græca of Fabricius will furnish
-information:—
+information: - 
 
 “Lib. IV. Cap. XIV. §4. Τετραβιβλος, Συνταξις Μαθηματικη
 _Quadripartitum, sive quatuor libri de apotelesmatibus et judiciis
 astrorum, ad Syrum_ (h). Græce primum editi a _Joachimo Camerario_,
 cum versione suâ duorum priorum librorum, et præcipuorum e reliquis
-locorum. Norimb. 1535, 4to.—Hinc cum versione _Phil._ Melancthonis,
+locorum. Norimb. 1535, 4to. - Hinc cum versione _Phil._ Melancthonis,
 qui in præfat, ad Erasmum Ebnerum Senatorem Norimbergensem testatur
 se editionem Camerarii multis mendis purgasse, tum numeros in locis
 apheticis tam Græci quam Latini textus emendasse. Basil, 1553;
-8vo.—_Latine_ pridem verterat _Ægidius Tebaldinus_, sive latino-barbaré
+8vo. - _Latine_ pridem verterat _Ægidius Tebaldinus_, sive latino-barbaré
 ex Hispanica versione, Alfonsi Castellæ Regis jussu, ex Arabico (i)
 confectâ. Vertit et _Antonius Gogava_, Lovan. 1548, 4to; Patavii,
 1658, 12mo; Pragæ, 1610, 12mo. Commentario illustravit _Hieron.
 Cardanus_ prioribus duobus libris Camerarii, posterioribus Gogavæ
 versione servatâ, Basil, 1554, fol.; 1579, fol.; Lugd. 1555, 8vo, et
-in Cardani opp.—_Georgii Vallæ_ commentarius, anno 1502 editus, nihil
+in Cardani opp. - _Georgii Vallæ_ commentarius, anno 1502 editus, nihil
 aliud est, quam Latina versio scholiorum Græcorum, sive exegeseos
 jejunæ _Demophili_ in tetrabiblon, quæ cum _Porphyrii_ sive _Antiochi_
 isagoge, Græce et Latine, addita _Hieron Wolfii_ versione, lucem vidit
 Basil. 1559, his scholiis Dorotheus allegatur, p. 48, 110, et 139;
 Cleopatra, p. 88; Porphyrius Philosophus, p. 169. Meminit et auctor
-Petosiridis ac Necepso, p. 112:—λεγει δε παλαιον τον Νεχεψω (ita leg,
+Petosiridis ac Necepso, p. 112: - λεγει δε παλαιον τον Νεχεψω (ita leg,
 pro χεψω ut p. 112) και Πετοσιριν, ουτοι χαρ πρωτοι το δι αςρολογιας
 εχηπλωσαν προγνωςικον† Paraphrasin tetrabibli a _Proclo_ concinnatam
 Græce edidit Melancthon, Basil. 1554, 8vo. Græce et Latine cum versione
@@ -849,7 +849,7 @@ Græco MS. in collegio Corporis Christi Oxon, feliciter restituit
 Seldenus, p. 35 ad Marmora Arundeliana. Haly Heben Rodoan Arabis
 commentarium laudat Cardanus, cum Demophilo Latine editum.”
 
-    “(h) Schol. Græc.—Προσφωνει τω Συρω ο Πτολεμαιος
+    “(h) Schol. Græc. - Προσφωνει τω Συρω ο Πτολεμαιος
      το βιβλιον, προς ον και τας αλλας αντου πασας
      πραγματειας προσφωνησεν. Λεγουσι δε τινες ως
      πεπλαςαι αυτο το του Συρω ονομα. Αλλοι δε οτι ον
@@ -1002,7 +1002,7 @@ animals.[20]
 
 [20] The following extract from an old geographical work, framed on the
 rules of Ptolemy, explains the system on which this action of the æther
-is made to depend:—
+is made to depend: - 
 
 “Chap. 2. The world is divided into two parts, the elemental region
 and the æthereal. The elemental region is constantly subject to
@@ -1034,7 +1034,7 @@ by its own force; and there is no star in it. Against this _primum
 mobile_, the motion of the other spheres, running from the west through
 the meridian to the east, contends. Whatever is beyond this, is fixed
 and immovable, and the professors of our orthodox faith affirm it to be
-the empyrean heaven which GOD inhabits with the elect.”—Cosmographia
+the empyrean heaven which GOD inhabits with the elect.” - Cosmographia
 of Peter Apianus (named Benewitz), dedicated to the Archbishop of
 Salzburg, edited by Gemma Frisius, and printed at Antwerp 1574.
 
@@ -1116,10 +1116,10 @@ and of the Sun and Moon, shall have been acquired, and when the
 situation of the place, the time, and all the configurations actually
 existing at that place and time, shall also be duly known; and such
 knowledge be yet further improved by an acquaintance with the natures
-of the heavenly bodies—not of what they are composed, but of the
+of the heavenly bodies - not of what they are composed, but of the
 effective influences they possess; as, for instance, that heat is the
 property of the Sun, and moisture of the Moon, and that other peculiar
-properties respectively appertain to the rest of them;—when all these
+properties respectively appertain to the rest of them; - when all these
 qualifications for prescience may be possessed by any individual,
 there seems no obstacle to deprive him of the insight, offered at once
 by nature and his own judgment, into the effects arising out of the
@@ -1249,7 +1249,7 @@ assert is, that, in their respective degrees, any two individuals, so
 born, will have a partial similarity in the leading features of their
 fate. Whether their assertion is _uniformly_ borne out, I will not
 take upon me to determine, but it would be unfair not to subjoin the
-following fact:—
+following fact: - 
 
 In the newspapers of the month of February, 1820, the death of a
 Mr. Samuel Hemmings is noticed: it was stated that he had been an
@@ -1427,8 +1427,8 @@ necessarily follow, in due obedience to the first principles of the
 existing order of nature, when no means of prevention can be found
 and applied. But, however, neither of these consequences will take
 place, when such antidotes shall be presented as will naturally prevent
-them—and a similar consideration should be given to the predictions of
-the astrologer—because, if garlick be rubbed on the magnet, iron will
+them - and a similar consideration should be given to the predictions of
+the astrologer - because, if garlick be rubbed on the magnet, iron will
 experience no attraction;[27] and if proper medicines be applied to
 the wound, it will cease to increase or to putrefy. And therefore all
 events which happen to mankind take place also in the regular course
@@ -1442,14 +1442,14 @@ should take place, will be much diminished in their force and extent.
 on this mention of the magnet: “However much later it was that the
 loadstone became known in Europe, what is mentioned of it in this
 chapter makes it evident that it was known in Ægypt, where Ptolemy
-lived, in his time.”—That worthy translator forgot (if indeed he ever
+lived, in his time.” - That worthy translator forgot (if indeed he ever
 knew) that the loadstone’s property of attracting iron was known to
 Thales, and commented on by Plato and Aristotle, all of whom lived
 some centuries, more or less, before Ptolemy. It is its polarity that
 was not known until the 11th or 12th century; and the French say that
 the earliest notice of that polarity is found in a poem of Guyot
 of Provence, who was at the Emperor Frederick’s Court at Mentz in
-1181.—See the French Encyclopædia, &c.
+1181. - See the French Encyclopædia, &c.
 
 [27] Respecting the effect here asserted to be produced on the magnet
 by garlick, I have found the following mention in a book called
@@ -1688,7 +1688,7 @@ DIURNAL AND NOCTURNAL
 
 
 The day and the night are the visible divisions of time. The day, in
-its heat and its aptitude for action, is masculine:—the night, in its
+its heat and its aptitude for action, is masculine: - the night, in its
 moisture and its appropriation to rest, feminine.
 
 Hence, again, the Moon and Venus are esteemed to be nocturnal; the
@@ -1835,7 +1835,7 @@ Virgil in the first Georgic, line 33, &c.
     Panditur: ipse tibi jam brachia contrahit ardens
     Scorpius, et cœli justâ plus parte reliquit.
 
-Ovid, likewise, takes the following notice of Scorpio:—
+Ovid, likewise, takes the following notice of Scorpio: - 
 
     Porrigit in spatium signorum membra duorum.
                                        _Met._ 2, l. 198.
@@ -1945,7 +1945,7 @@ CONSTELLATIONS SOUTH OF THE ZODIAC
 
 
 The influences of the constellations south of the zodiac, existing in a
-similar mode, are as follows:—
+similar mode, are as follows: - 
 
     _Piscis Australis._ The bright star in the mouth is of the
                         same influence as Venus and Mercury.
@@ -2092,7 +2092,7 @@ annexed: the general temperaments of the signs are analogous to those
 of the seasons, which are respectively established under each sign,
 but they have, also, certain peculiar energies, arising from their
 familiarity with the Sun, the Moon, and the stars, which shall be
-hereafter specified;—and the simple and unmixed influences existing in
+hereafter specified; - and the simple and unmixed influences existing in
 the signs, as considered only in themselves and with regard to each
 other, will be first stated.
 
@@ -2685,7 +2685,7 @@ THE TERMS ACCORDING TO THE ÆGYPTIANS
     -------+--+--+----+--+--+----+---+--+----+--+--+----+--+--+----+--+--
 
 Thus, by the Ægyptian distribution, it appears that the total numbers
-of the degrees for each planet, added together, make 360:—viz. for
+of the degrees for each planet, added together, make 360: - viz. for
 Saturn 57, Jupiter 79, Mars 66, Venus 82, and Mercury 76.
 
 The method of the Chaldæans contains a certain simplicity of
@@ -2714,7 +2714,7 @@ first planet takes eight degrees, the second seven, the third six, the
 fourth five, and the fifth four. By this arrangement the degrees of
 Saturn amount by day to 78, and by night to 66; the degrees of Jupiter
 to 72, of Mars to 69, of Venus to 75, and of Mercury by day to 66, and
-by night to 78—the whole amounting to 360.
+by night to 78 - the whole amounting to 360.
 
 Of these two distributions of the terms, that of the Ægyptians seems
 more to be relied on than the other; since it has been handed down and
@@ -2722,7 +2722,7 @@ recommended in the writings of the Ægyptian authors, and also because
 the degrees of the terms, in nativities rectified by them as examples,
 are universally in accordance with this distribution; while, on the
 other hand, neither the order nor the number of the Chaldaic method has
-ever been recorded or explained by any writer—not even by the writers
+ever been recorded or explained by any writer - not even by the writers
 of that very nation: the accuracy of that method is consequently
 doubtful, and its irregularity as to the order of placing the planets
 is widely open to censure.
@@ -2763,7 +2763,7 @@ preserved.[58]
 
 [58] The cause of this disposition is that Cancer, the house of the
 Moon, partakes of moisture, and counteracts Mars’s dryness; while Leo,
-the Sun’s house, is hot, and counteracts Saturn’s cold.—Vide Chap. iv,
+the Sun’s house, is hot, and counteracts Saturn’s cold. - Vide Chap. iv,
 and conclusion of Chap. vii of this book.
 
 It may further be observed, that Jupiter’s right, by triplicity, to
@@ -2778,8 +2778,8 @@ the benefics, Jupiter and Venus, takes seven degrees; the malefics,
 Saturn and Mars, take five degrees each; and Mercury, being of common
 influence, takes six degrees; thus completing the whole thirty. Since,
 however, there are some cases in which a planet has always a double
-right—(for Venus obtains the sole government of Taurus and Pisces, as
-the Moon does not share in the terms)—it is to be observed that when
+right - (for Venus obtains the sole government of Taurus and Pisces, as
+the Moon does not share in the terms) - it is to be observed that when
 such double right (whether it exist in the same sign or in the signs
 next following as far as may complete a quadrant) may be possessed by
 any planet, that planet receives in addition one degree. The planets
@@ -2789,7 +2789,7 @@ exercises a double right, is subtracted from those of single right;
 most generally from Saturn and Jupiter, in consequence of their slower
 motion.
 
-These terms are detailed in the following table:—
+These terms are detailed in the following table: - 
 
     ------------+---------+-----------+---------+---------+----------
       Aries     |  Taurus |  Gemini   | Cancer  |   Leo   |  Virgo
@@ -2963,14 +2963,14 @@ not only from their own peculiar natures and properties, but also
 from the quality of the surrounding signs, and from configuration
 with the Sun and the angles; all which has been pointed out. The
 influence of each planet, however, is strengthened chiefly when it
-may be oriental, swift and direct in its proper course and motion—for
+may be oriental, swift and direct in its proper course and motion - for
 it has then its greatest power: but, on the other hand, it loses
 strength when occidental and slow in motion or retrograde; as it then
 acts with smaller effect.[65] Its influence also receives accession
 or diminution, from its position with regard to the horizon; as, if
 it be situated in the mid-heaven, or succedent to the mid-heaven,
 it is especially strong; likewise, if it be on the actual horizon,
-or succedent to the horizon, it is also powerful—particularly if in
+or succedent to the horizon, it is also powerful - particularly if in
 the eastern quarter. Should it, however, be below the earth, and
 configurated with the ascendant, either from the lower heaven, or
 from any other part below the earth, its influence then becomes more
@@ -3139,8 +3139,8 @@ impulse to their minds. Again, the natives of those countries which lie
 towards the east excel in courage, acting boldly and openly under all
 circumstances; for in all their characteristics they are principally
 conformed to the Sun’s nature, which is oriental, diurnal, masculine
-and dexter—(and it is plainly apparent that the dexter parts of all
-animals are much stronger than others)—hence results the greater
+and dexter - (and it is plainly apparent that the dexter parts of all
+animals are much stronger than others) - hence results the greater
 courage of the inhabitants of the East. And as the Moon, on her first
 appearance after conjunction, is always seen in the west, the western
 parts are therefore lunar, and consequently feminine and sinister;
@@ -3268,7 +3268,7 @@ therefore feminine.
 [71] The customs of nations have, in some degree, altered since Ptolemy
 made this severe charge against us and our brethren in the north and
 west of Europe. The following passage also occurs in this part of
-the original text:—Προς δε τας συνουσιας των αρσενικων ανακινουμενοι
+the original text: - Προς δε τας συνουσιας των αρσενικων ανακινουμενοι
 και ζηλουντες, και μητε αισχρον μητε αναλδρον τουτο νομιζοντες. δια
 τουτο ουδε εκλυονται, οτι ουδε ως πασχοντες διακεινται επι τοντω, αλλα
 φυλαττουσι τας ψυχας ανδρειους.
@@ -3554,7 +3554,7 @@ constructed for the dead, in parts of the region in question; some of
 which have been recently made known to the modern world by the sagacity
 and enterprise of the celebrated Belzoni.
 
-[80] Τινες δε και καταφρονουσι των γεννητικων μελων.—The “contempt”
+[80] Τινες δε και καταφρονουσι των γεννητικων μελων. - The “contempt”
 here expressed by καταφρονουσι has been taken by all translators
 (except Whalley) to signify “mutilation.”
 
@@ -3743,7 +3743,7 @@ IN THE EVENT
 
 
 The first of the several branches of consideration just enumerated
-relates to locality, and is to be exercised in the following manner:—
+relates to locality, and is to be exercised in the following manner: - 
 
 In all eclipses of the Sun and Moon, and especially in such as are
 fully visible, the place in the zodiac, where the eclipse happens, is
@@ -3893,7 +3893,7 @@ seem necessary to complete the sense of the passage.
 [90] “When planets, in election for Lords of the eclipse, are found of
 equal strength and dignity, those which are direct are to be preferred
 before those which are retrograde; and the oriental before the
-occidental.”—_Whalley’s “Annotations.”_
+occidental.” - _Whalley’s “Annotations.”_
 
 But, among the fixed stars, the chief bright one (which, during the
 time of the eclipse, may hold connection, in any of the nine modes
@@ -3912,7 +3912,7 @@ eclipse be between the seventh house” (or occidental angle) “and the
 mid-heaven, the stars which are in the seventh shall be preferred; and
 next, those in the mid-heaven; but, if between the mid-heaven and the
 ascendant, those in the mid-heaven shall have the preference; and next,
-those in the ascendant.”—_Whalley’s “Annotations.”_
+those in the ascendant.” - _Whalley’s “Annotations.”_
 
 Having considered, according to the foregoing rules, what stars
 co-operate in regulating the coming event, the conformation and figure
@@ -4022,7 +4022,7 @@ dominion, that the effect is indicated.
 
 In order to understand the indications thus made, it is necessary to
 begin by attending to the following detail of the effective property of
-each planet—previously observing, however, that, when any circumstance
+each planet - previously observing, however, that, when any circumstance
 is said, for the sake of brevity, to come to pass by the general
 influence of the five planets, their temperament, and the power and
 assistance they may derive from natures similar to their own, the
@@ -4204,7 +4204,7 @@ was always sickly: and this observation is wonderful in the changes
 of the times and weather; for this principle Ptolemy adhered to in
 the Almagest, lib. VIII, cap. 4; and this doctrine he also mentions
 in the 2nd Book of Judgments, in the chapter on the Nature of
-Events.”—(Cooper’s Translation, p. 272.)
+Events.” - (Cooper’s Translation, p. 272.)
 
 
 
@@ -4254,7 +4254,7 @@ it will be late and tardy.
 from one zodiacal pole to the other, through the spot where it appears;
 and that spot is to be considered as being in familiarity with the
 same countries as those parts of the zodiac which may be on the same
-line.—_Vide_ Chap. IV of this Book, relative to the manner in which
+line. - _Vide_ Chap. IV of this Book, relative to the manner in which
 fixed stars out of the zodiac hold familiarity with certain regions and
 countries.
 
@@ -4597,7 +4597,7 @@ from the parts where those appearances may be situated.[105]
 Georgic, _vide_ I, 433 _et infra_:
 
     “Sol quoque et exoriens et cum se condit in undas
-    Signa dabit:”——
+    Signa dabit:” -  - 
 
 
 The Moon’s course is to be carefully observed, at the third day
@@ -4619,7 +4619,7 @@ storms of greater fury are portended.
 [106] Virgil has said almost the same thing in these beautiful lines:
 
     “At si virgineum suffuderit ore ruborem
-     Ventus erit: vento semper rubet aurea Phœbe.”—_Georg._ I, l. 430.
+     Ventus erit: vento semper rubet aurea Phœbe.” - _Georg._ I, l. 430.
 
 See also the whole passage, beginning at l. 424:
 
@@ -4674,7 +4674,7 @@ the name of the Aurora Borealis.
 [109] Virgil again:
 
     “Sæpe etiam stellas vento impendente videbis
-     Præcipites cœlo labi.”—&c. _Georg._ I, l. 365.
+     Præcipites cœlo labi.” - &c. _Georg._ I, l. 365.
 
 A great part of the 1st Georgic consists of astrological rules for
 predicting the weather, closely resembling the precepts here given by
@@ -5751,7 +5751,7 @@ the part of Fortune. So, in the nativity of Charles V, the Moon applies
 to the ultimate sextile of the Sun, but with a deficiency of 7° 45′:
 I subtract the 7° 45′ from 5° 34′ of Scorpio, the ultimate sextile to
 the horoscope, and the part of Fortune is placed in 28° 9′ of Libra.”
-N.B.—In this nativity, according to Placidus, the Sun is in the second
+N.B. - In this nativity, according to Placidus, the Sun is in the second
 house, in 14° 30′ of Pisces: the Moon in the ascendant, in 6° 45′ of
 Capricorn; the ascendant is 5° 34′ of Capricorn; and the part Fortune
 is in the ninth house, in 28° 9′ of Libra.
@@ -6040,7 +6040,7 @@ the preceding paragraph.
 There is, however, a method by which the proportion of time, occupied
 in the progress of a succeeding place to a prorogatory and preceding
 place, in whatever position, whether oriental, meridianal, or
-occidental, or any other, may be easily calculated. It is as follows:—
+occidental, or any other, may be easily calculated. It is as follows: - 
 
 When it has been ascertained what degree of the zodiac is on the
 mid-heaven, as also which are the preceding and succeeding degrees,
@@ -6086,7 +6086,7 @@ of Gemini will be about seventeen equatorial times.[166]
 
 [165] This, in the Northern Hemisphere, would be the latitude of
 Alexandria (where Ptolemy flourished), or, in his own words, that of
-the 3rd Climate, passing through Lower Egypt, numbered 30° 22′.—_Vide_
+the 3rd Climate, passing through Lower Egypt, numbered 30° 22′. - _Vide_
 extracts from the Tables of the Almagest, inserted in the Appendix.
 
 [166] This is the magnitude of the diurnal temporal hour of the first
@@ -6144,14 +6144,14 @@ ascensions in the latitude 30° 22′ N. are also shown in the extract
 referred to in the preceding note: and it thereby appears, that Aries
 and Taurus ascend in 45° 5′, instead of 46°.
 
-[170] Or, rather, 57° 44′—by right ascension.—_Vide_ extract above
+[170] Or, rather, 57° 44′ - by right ascension. - _Vide_ extract above
 referred to.
 
 [171] _Vide_ p. 95.
 
 [172] Or on the cusp of the 7th House.
 
-[173] Or, rather, 32° 16′—by right ascension again.—_Vide_ extract as
+[173] Or, rather, 32° 16′ - by right ascension again. - _Vide_ extract as
 before.
 
 [174] By right ascension. The amount according to the Table is,
@@ -6159,7 +6159,7 @@ however, 102° 39′, as before stated.
 
 [175] On which the 10th degree of Virgo will then be posited.
 
-[176] By oblique descension and ascension: _Vide_ p. 95.—The Table
+[176] By oblique descension and ascension: _Vide_ p. 95. - The Table
 shows the amount to be 70° 23′.
 
 Again, let the first point of Aries have another position, not in
@@ -6253,7 +6253,7 @@ intelligible and expeditious manner, all the astronomical problems of
 the zodiac, deserves attention. Whether a similar planisphere was known
 in the days of Placidus, I am not aware; but it is worthy of remark
 that the following words occur in his “Primum Mobile,” and seem almost
-to have been predicted of Mr. Ranger’s planisphere:—“If any one would
+to have been predicted of Mr. Ranger’s planisphere: - “If any one would
 provide himself with a Ptolemaic planisphere, with the horary circles,
 crepuscules, the zodiac’s latitude, and all other things requisite,
 it would be of very great service towards foreseeing the aspects.”
@@ -7429,7 +7429,7 @@ in foreign matters, and deriving profit from their pursuits.
 [225] Meaning probably “if in mutual reception,” which position has
 been before explained.
 
-[226] Or makers of hieroglyphics—ιερογλυφοι.
+[226] Or makers of hieroglyphics - ιερογλυφοι.
 
 When Venus and Mars exercise the dominion together, persons will become
 dyers, dealers in unguents and perfumes, workers in tin, lead, gold,
@@ -7500,7 +7500,7 @@ refractory dæmon is immersed: the said dæmon will sometimes remain at
 the bottom, and sometimes raise himself to the surface, sending forth a
 slender hissing; out of which the desired responses are to be formed.
 
-[229] Κρασεσι των χρωματων.—These words have been rendered literally,
+[229] Κρασεσι των χρωματων. - These words have been rendered literally,
 but they seem to contain some figurative meaning, rather than a literal
 one. Perhaps the preferable sense of them is, “_by a mixture of
 views_,” or “_from various pursuits being blended together_.”
@@ -7970,8 +7970,8 @@ with the ruling places of the nativity, or not in familiarity.
 [256] Those of the Sun, Moon, Ascendant, and part of Fortune, as before
 mentioned.
 
-[257] “—and the attachment, or disagreement, subsisting between them
-and their masters”;—so Allatius, and the Latin translation printed at
+[257] “ - and the attachment, or disagreement, subsisting between them
+and their masters”; - so Allatius, and the Latin translation printed at
 Perugio.
 
 [258] The twelfth house.
@@ -8534,7 +8534,7 @@ ingresses, &c., “these subsequent motions of the causes demand our
 greatest attention.” (_Ibid._, p. 110.) In the Appendix to the same
 book, at p. 438, the proper equation of time, or measurement of the
 arcs of direction, is also treated of, in reference to the 16th canon
-of Placidus, which is as follows:—
+of Placidus, which is as follows: - 
 
 “_To equate the Arc of Direction._ Add the arc of direction to the
 right ascension of the natal Sun; look for this sum in the table
@@ -8666,7 +8666,7 @@ of the zodiac, and the earth combined, are considered, in a general
 manner, by the rising, or meridianal position, or setting of the same
 fixed stars in conjunction with any planet or part of the zodiac; but
 their aspects are properly distinguishable, by means of the Sun, in the
-nine following modes:—
+nine following modes: - 
 
 1. The first is called matutine subsolar, when the star is found
 together with the Sun in the oriental horizon. Of this aspect, one
@@ -9423,7 +9423,7 @@ not hasty in giving judgment.
 
 LXXXIII. The time of obtaining a grant indicates the affection between
 the applicant and his prince; but the seat[299] shows the nature of the
-office;—
+office; - 
 
 [299] Or part of heaven indicating the grant.
 

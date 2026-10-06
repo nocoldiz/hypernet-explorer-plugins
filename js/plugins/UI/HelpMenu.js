@@ -260,37 +260,52 @@
     // blank line and NOTHING else is a line break. A single newline inside a
     // paragraph is just where the author's editor happened to wrap, so it is
     // read as a space and the column wraps the text itself. A line opening with
-    // "- " is a bullet and keeps its own line, which is the one exception.
+    // "- " is a bullet and a line opening with "1. " is a numbered step; both
+    // keep their own line, which is the one exception.
+    const NUMBERED_ITEM = /^(\d+)[.)]\s+/;
     function paragraphsToHtml(text) {
         const blocks = String(text).split(/\n\s*\n/);
         return blocks.map(block => {
             const lines = block.split("\n").map(l => l.trim()).filter(l => l.length);
             if (!lines.length) return "";
             // A block may open with a lead-in and then list under it. A line
-            // that does not open a bullet CONTINUES the one above it, because a
-            // long bullet is wrapped in the source like any other prose; only a
+            // that does not open an item CONTINUES the one above it, because a
+            // long item is wrapped in the source like any other prose; only a
             // blank line ends a list.
             const head = [];
             const items = [];
             lines.forEach(line => {
+                const num = line.match(NUMBERED_ITEM);
                 if (line.startsWith("- ")) {
-                    items.push(line.slice(2).trim());
+                    items.push({ ordered: false, text: line.slice(2).trim() });
+                } else if (num) {
+                    items.push({ ordered: true, n: Number(num[1]), text: line.slice(num[0].length).trim() });
                 } else if (items.length) {
-                    items[items.length - 1] += " " + line;
+                    items[items.length - 1].text += " " + line;
                 } else {
                     head.push(line);
                 }
             });
             let html = head.length ? `<p>${head.join(' ')}</p>` : '';
-            if (items.length) {
-                html += '<ul class="help-list">' +
-                    items.map(item => `<li>${item}</li>`).join('') + '</ul>';
+            // Consecutive items of one kind share a list; a bullet run and a
+            // numbered run in the same block are two lists.
+            let i = 0;
+            while (i < items.length) {
+                const ordered = items[i].ordered;
+                let j = i;
+                while (j < items.length && items[j].ordered === ordered) j++;
+                const lis = items.slice(i, j).map(item => `<li>${item.text}</li>`).join('');
+                html += ordered
+                    ? `<ol class="help-list" start="${items[i].n}">${lis}</ol>`
+                    : `<ul class="help-list">${lis}</ul>`;
+                i = j;
             }
             return html;
         }).join('');
     }
 
-    function parseDescriptionToHtml(text) {
+    // `selfId` is the page being drawn, so a page never links to itself.
+    function parseDescriptionToHtml(text, selfId) {
         if (!text) return "";
         let parsed = ControlTagParser.parseControlText(text);
         parsed = paragraphsToHtml(parsed);
@@ -334,17 +349,25 @@
         if (openSpan) html += "</span>";
         // Last, because the links are drawn as markup and must not be picked
         // apart by the paragraph or colour passes that come before them.
-        return keysToHtml(linksToHtml(html));
+        return keysToHtml(linksToHtml(html), selfId);
     }
 
-    // A bare [term] is a highlight, not a link: the manual brackets the thing
-    // that matters in a sentence (a key, a number, a stat, a menu name) so it
-    // can be found without reading the paragraph. Run AFTER the links, which
-    // are brackets with a bar in them and are already markup by then.
+    // A bare [term] is a highlight: the manual brackets the thing that matters
+    // in a sentence (a key, a number, a stat, a menu name) so it can be found
+    // without reading the paragraph. When the term IS the name of another page
+    // (its file key, keyword, synonym or printed title, the way a
+    // [label | target] link resolves), the highlight is that page's link: every
+    // gold word that names a page opens it, without the page spelling the link
+    // out. A world topic the party has not been told about yet is drawn as a
+    // dimmed link, and following it teaches the topic (Scene_Help.followLink).
+    // Run AFTER the explicit links, which are already markup by then.
     const KEY_PATTERN = /\[([^\[\]|<>\n]{1,40})\]/g;
-    function keysToHtml(html) {
-        return String(html).replace(KEY_PATTERN, (m, inner) =>
-            '<span class="help-key">' + inner + '</span>');
+    function keysToHtml(html, selfId) {
+        return String(html).replace(KEY_PATTERN, (m, inner) => {
+            const row = _linkRows().get(String(inner).trim().toLowerCase());
+            if (row && _pageId(row) !== selfId) return linkSpan(inner, row);
+            return '<span class="help-key">' + inner + '</span>';
+        });
     }
 
     // =============================================================================
@@ -429,14 +452,20 @@
             // dead one, and a page can still print a bracket it means
             // literally, which several of them do.
             if (!row) return match;
-            const open = _isPageOpen(row);
-            const cls = 'help-link' + (open ? '' : ' help-link--closed');
-            return '<span class="' + cls + '" role="link" tabindex="0"' +
-                ' data-help-name="' + _attr(getLocalizedTitle(row) || label) + '"' +
-                ' data-help-page="' + _attr(_pageId(row)) + '"' +
-                (open ? '' : ' data-help-closed="1"') +
-                '>' + label + '</span>';
+            return linkSpan(label, row);
         });
+    }
+
+    // The one way a link is drawn, whether it was written out or implied by a
+    // bare [term] that names a page.
+    function linkSpan(label, row) {
+        const open = _isPageOpen(row);
+        const cls = 'help-link' + (open ? '' : ' help-link--closed');
+        return '<span class="' + cls + '" role="link" tabindex="0"' +
+            ' data-help-name="' + _attr(getLocalizedTitle(row) || label) + '"' +
+            ' data-help-page="' + _attr(_pageId(row)) + '"' +
+            (open ? '' : ' data-help-closed="1"') +
+            '>' + label + '</span>';
     }
 
     // =============================================================================
@@ -1005,7 +1034,7 @@
         } else {
             const topic = this._selectedTopic;
             const displayTitle = getLocalizedTitle(topic);
-            const bodyHtml = parseDescriptionToHtml(getLocalizedDescription(topic));
+            const bodyHtml = parseDescriptionToHtml(getLocalizedDescription(topic), _pageId(topic));
             const imageHtml = topic.image ? `<img class="help-image" src="img/pictures/${topic.image}.png" onerror="this.classList.add('help-image--missing');">` : "";
 
             const isFocused = this._activeArea === "content";
@@ -1235,10 +1264,29 @@
         const page = el.getAttribute("data-help-page");
         if (!page) return this.refuseLink(T("HelpMenu.linkMissing", { name }));
         if (el.getAttribute("data-help-closed") === "1") {
-            return this.refuseLink(T("HelpMenu.linkLocked", { name }));
+            // A world topic nobody in the party has been told about yet. A
+            // manual page that points down at it is telling them about it, so
+            // following the link teaches the topic (announced the way a line
+            // of dialogue that names it would be) and then turns to its page.
+            const row = topicRowById(page);
+            const topics = window.DialogueTopics;
+            if (!row || !topics || typeof topics.learn !== "function" || !row.keyword) {
+                return this.refuseLink(T("HelpMenu.linkLocked", { name }));
+            }
+            topics.learn(row.keyword);
+            // The Topics shelf is cached per visit: rebuilt, so the page just
+            // learned is on it to be turned to.
+            this._topicCache = null;
+            this._searchCache = null;
+            if (!_isPageOpen(row)) return this.refuseLink(T("HelpMenu.linkLocked", { name }));
         }
         if (!this.openPage(page)) this.refuseLink(T("HelpMenu.linkMissing", { name }));
     };
+
+    // The world topic a link points at, by the id it is filed under.
+    function topicRowById(pageId) {
+        return getHelpTopics().find((row) => row && row.type === 'topic' && _pageId(row) === pageId) || null;
+    }
 
     Scene_Help.prototype.refuseLink = function (text) {
         SoundManager.playBuzzer();

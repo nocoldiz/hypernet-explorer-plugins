@@ -76,7 +76,7 @@
   "testosteroneProduction": "Production de testostérone",
   "normalRange": "Plage normale",
   "belowNormalHypogonadism": "Sous la normale (hypogonadisme)",
-  "noReproductiveSystemAvailableSetVariable87Fi": "Aucun système reproducteur disponible. Définis d'abord la variable 87.",
+  "noReproductiveSystemAvailable": "Aucun système reproducteur disponible. Ce corps n'en possède pas.",
   "alreadyInReproductiveProcess": "Déjà engagé dans un processus reproductif !",
   "pregnancyInitiatedDue": {
     "one": "Grossesse démarrée ! Terme dans {count} jour.",

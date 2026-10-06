@@ -1692,21 +1692,29 @@
                 // slab, so it goes on every step, not just the shaft.
                 const pierW = Math.max(1.2, w * 0.045);
                 const pierD = Math.max(1.2, d * 0.045);
+                // How far a pier stands out of the face. A sliver of a percent
+                // was inside what the depth buffer can tell apart from the far
+                // end of the map, and the gold flickered through the black.
+                const proudW = w + 2 * Math.max(1.5, w * 0.02);
+                const proudD = d + 2 * Math.max(1.5, d * 0.02);
                 for (const f of [-0.34, -0.12, 0.12, 0.34]) {
                     const lx = w * f;
                     put(BOX_G, x + lx * cy, y, z + lx * sy2,
-                        pierW, h * 0.985, d * 1.012, ry);
+                        pierW, h * 0.985, proudD, ry);
                 }
                 for (const f of [-0.3, 0.3]) {
                     const lz = d * f;
                     put(BOX_G, x - lz * sy2, y, z + lz * cy,
-                        w * 1.012, h * 0.985, pierD, ry);
+                        proudW, h * 0.985, pierD, ry);
                 }
 
                 // The parapet band, standing proud of the step under it so it
-                // catches the light along its whole edge.
+                // catches the light along its whole edge. Its top stops short
+                // of the roof: level with it, the gold and the black fought for
+                // the same face and the whole roof flickered.
                 const bandH = Math.max(2.5, h * 0.045);
-                put(BOX_G, x, y + h - bandH, z, w * 1.06, bandH, d * 1.06, ry);
+                const bandLip = bandH * 0.35;
+                put(BOX_G, x, y + h - bandH - bandLip, z, w * 1.06, bandH, d * 1.06, ry);
 
                 // ...and the chevron frieze under it: gold blocks alternating
                 // long and short along the two long faces, which at any
@@ -1721,9 +1729,9 @@
                         const lx = w * f, lz = d * sd;
                         put(BOX_G,
                             x + lx * cy - lz * sy2,
-                            y + h - bandH - fh * tall,
+                            y + h - bandH - bandLip - fh * tall,
                             z + lx * sy2 + lz * cy,
-                            toothW, fh * tall, Math.max(1, d * 0.03), ry);
+                            toothW, fh * tall, Math.max(3, d * 0.04), ry);
                     }
                 }
 
@@ -1761,8 +1769,11 @@
             // city begins.
             const extraBaseH = (i === 0) ? 60 : 0;
             put(BOX_A, dk.x, dk.y - dk.plateH - extraBaseH, dk.z, side, dk.plateH + extraBaseH, side, dk.rot);
+            // The rim's top stops short of the deck's: level with it, the gold
+            // and the black fought for the whole floor and every deck flickered.
             const rimH = Math.max(3, dk.plateH * 0.34);
-            put(BOX_G, dk.x, dk.y - rimH, dk.z, side * 1.035, rimH, side * 1.035, dk.rot);
+            const rimLip = rimH * 0.4;
+            put(BOX_G, dk.x, dk.y - rimH - rimLip, dk.z, side * 1.035, rimH, side * 1.035, dk.rot);
             // Corner piers: four stepped gold pylons standing on the corners of
             // the plate, which is how a deco setback is always finished.
             const pw = Math.max(4, dk.half * 0.075);

@@ -142,8 +142,8 @@ the system, but simply indicates the manner in which they have been
 transmitted, it is nevertheless the classical and acknowledged
 appellation of this theosophy. The difference between the word Kabbalah
 (‏קבלה‎ receptio) and the cognate term Massorah (‏מסורה‎ traditio, from
-‏מסר‎ to transmit)—which denotes the traditionally transmitted various
-readings of the Hebrew Scriptures—is, that the former expresses the act
+‏מסר‎ to transmit) - which denotes the traditionally transmitted various
+readings of the Hebrew Scriptures - is, that the former expresses the act
 of receiving, which in this technical sense could only be on the part
 of one who has reached a certain period of life, as well as a certain
 state of sanctity, implying also a degree of secrecy; whilst the latter
@@ -186,9 +186,9 @@ Emanations.
 I. The Supreme Being and the doctrine and classification of the
 Emanations, or Sephiroth.
 
-Being boundless in his nature—which necessarily implies that he is an
+Being boundless in his nature - which necessarily implies that he is an
 absolute unity and inscrutable, and that there is nothing without him,
-or that the τὸ πᾶν is in him, [1]—God is called En Soph (‏אין סוף‎) =
+or that the τὸ πᾶν is in him, [1] - God is called En Soph (‏אין סוף‎) =
 ἄπειρος Endless, Boundless. [2] In this boundlessness, or as the En
 Soph, he cannot be comprehended by the intellect, nor described in
 words, for there is nothing which can grasp and depict him to us, and
@@ -213,14 +213,14 @@ world in an indirect manner.
 Now, the medium by which the En Soph made his existence known in the
 creation of the world are ten Sephiroth [5] (‏ספירות‎) or
 intelligences, which emanated from the Boundless One (‏אין סוף‎) in the
-following manner:—At first the En Soph, or the Aged of the Aged (‏עתיקא
+following manner: - At first the En Soph, or the Aged of the Aged (‏עתיקא
 דעתיקין‎) or the Holy Aged (‏עתיקא קדישא‎), as he is alternately
 called, sent forth from his infinite light one spiritual substance or
 intelligence. This first Sephira, which existed in the En Soph from all
 eternity, and became a reality by a mere act, has no less than seven
-appellations. It is called—I, the Crown (‏כתר‎), because it occupies
+appellations. It is called - I, the Crown (‏כתר‎), because it occupies
 the highest position; II, the Aged (‏עתיקא‎), because it is the oldest
-or the first emanation—and this name must not be confounded with the
+or the first emanation - and this name must not be confounded with the
 Aged of the Aged, which, as we have seen, is the appellation of the En
 Soph; III, the Primordial Point (‏נקודה ראשונה‎), or the Smooth Point
 (‏נקודה פשוטה‎), because, as the Sohar tells us, “When the Concealed of
@@ -242,7 +242,7 @@ VII, it is expressed in the Bible by the Divine name Ehejeh, or I Am
 Infinite as distinguished from the finite, and in the angelic order, by
 the celestial beasts of Ezekiel, called Chajoth (‏חיות‎). The first
 Sephira contained the other nine Sephiroth, and gave rise to them in
-the following order:—At first a masculine or active potency, designated
+the following order: - At first a masculine or active potency, designated
 Wisdom (‏חכמה‎), proceeded from it. This Sephira, which among the
 divine names is represented by Jah (‏יה‎ Isa. xxvi, 4), and among the
 angelic hosts by Oplianim (‏אפנים‎ Wheels), sent forth an opposite,
@@ -256,10 +256,10 @@ assumed a form, he produced everything in the form of male and female,
 as the things could not continue in any other form. Hence Wisdom, which
 is the beginning of development, when it proceeded from the Holy Aged,
 emanated in male and female, for Wisdom expanded, and Intelligence
-proceeded from it, and thus obtained male and female—viz., Wisdom, the
+proceeded from it, and thus obtained male and female - viz., Wisdom, the
 father, and Intelligence, the mother, from whose union the other pairs
-of Sephiroth successively emanated.” These two opposite potencies—viz.,
-Wisdom (‏חכמה‎) and Intelligence (‏בינה‎)—are joined together by the
+of Sephiroth successively emanated.” These two opposite potencies - viz.,
+Wisdom (‏חכמה‎) and Intelligence (‏בינה‎) - are joined together by the
 first potency, the Crown (‏כתר‎); thus yielding the first triad of the
 Sephiroth.
 
@@ -289,7 +289,7 @@ Elohim Sabaoth (‏אלהים צבאות‎), and among the angels Benei Elohim 
 אלהים‎, Gen. vi, 4); and from it again, emanated Foundation or the
 Basis (‏יסוד‎), the ninth Sephira, represented by the divine name El
 Chai (‏אל חי‎), and among the angelic hosts by Ishim (‏אישים‎, Ps. civ,
-4), which is the uniting point between these two opposites—thus
+4), which is the uniting point between these two opposites - thus
 yielding the third trinity of Sephiroth. From the ninth Sephira, the
 Basis (‏יסוד‎) of all, emanated the tenth, called Kingdom (‏מלכות‎),
 and Shechinah (‏שכינה‎), which is represented by the divine name Adonai
@@ -368,7 +368,7 @@ by these (‏אלה‎) works of creation that he made himself known to us. It
 is therefore the combination of the unknown Who (‏מי‎) with these
 visible (‏אלה‎) works that showed him to be God (‏אלהים‎ which is
 produced by ‏מי‎ transposed, i.e. ‏יﬦ‎, and united with ‏אלה‎). Or, as
-it is in the language of the Kabbalah;—
+it is in the language of the Kabbalah; - 
 
 “Before he gave any shape to this world, before he produced any form,
 he was alone, without a form and resemblance to anything else. Who then
@@ -376,8 +376,8 @@ can comprehend him how he was before the creation, since he was
 formless? Hence it is forbidden to represent him by any form,
 similitude, or even by his sacred name, by a single letter or a single
 point; and to this the words ‘Ye saw no manner of similitude on the day
-that the Lord spake unto you’ (Deut. iv, 15)—i.e. ye have not seen
-anything which you could represent by any form or likeness—refer. But
+that the Lord spake unto you’ (Deut. iv, 15) - i.e. ye have not seen
+anything which you could represent by any form or likeness - refer. But
 after he created the form of the Heavenly Man (‏אדם עלאה‎), he used it
 as a chariot (‏מרכבה‎) wherein to descend, and wishes to be called by
 this form, which is the sacred name Jehovah. He wishes to be known by
@@ -470,7 +470,7 @@ are infinite and perfect like the En Soph, and yet constitute the first
 finite things. [8] They are infinite and perfect when the En Soph
 imparts his fulness to them, and finite and imperfect when the fulness
 is withdrawn from them, so that in this respect these ten Sephiroth
-exactly correspond to the double nature of Christ,—his finite and
+exactly correspond to the double nature of Christ, - his finite and
 imperfect human nature and his infinite and perfect divine nature.
 
 In their totality and unity these ten Sephiroth are not only
@@ -479,14 +479,14 @@ Emanations (‏עולﬦ אצילות‎), but represent and are called the Prim
 or Archetypal Man (‏אדﬦ קדמון‎ = πρωτόγονος), and the Heavenly Man
 (‏אדם עילאה‎). In the figure, the Crown (‏כתר‎) is the head; Wisdom
 (‏חכמה‎), the brains; and Intelligence (‏בינה‎), which unites the two
-and produces the first triad, is the heart or the understanding—thus
+and produces the first triad, is the heart or the understanding - thus
 forming the head. The fourth and fifth Sephiroth, i.e., Mercy (‏חסד‎)
 and Justice (‏פחד‎), are the two arms of the Lord, the former the right
 arm and the latter the left, one distributing life and the other death.
 And the sixth Sephira, Beauty (‏תפארת‎), which unites these two
 opposites and produces the second triad, is the chest; whilst the
-seventh and eighth Sephiroth,—i.e., Firmness (‏נצח‎) and Splendour
-(‏הוד‎), of the third triad,—are the two legs; and Foundation (‏יסוד‎),
+seventh and eighth Sephiroth, - i.e., Firmness (‏נצח‎) and Splendour
+(‏הוד‎), of the third triad, - are the two legs; and Foundation (‏יסוד‎),
 the ninth Sephira, represents the genital organs, since it denotes the
 basis and source of all things. Thus it is said “Every thing will
 return to its origin just as it proceeded from it. All marrow, all sap,
@@ -534,7 +534,7 @@ what is called the Kabbalistic tree, denominated the Tree of Life (‏עץ
 the second and third are placed below, in such a manner that the three
 masculine Sephiroth are on the right, the three feminine on the left,
 whilst the four uniting Sephiroth occupy the centre, as shown in the
-following diagrams:—
+following diagrams: - 
 
 
 I.
@@ -599,8 +599,8 @@ whilst the Sephira called Kingdom (‏מלכות‎), which unites the whole
 Sephiroth, is here used to represent the Material World, instead of the
 ninth Sephira, called Foundation (‏יסוד‎), and is in this capacity
 denominated the Queen (‏מלכתא‎) or the Matron (‏מטרוניתא‎). Thus we
-obtain within the trinity of triads a higher trinity of units,—viz.,
-the Crown (‏כתר‎), Beauty (‏תפארת‎), and Kingdom (‏מלכות‎),—which
+obtain within the trinity of triads a higher trinity of units, - viz.,
+the Crown (‏כתר‎), Beauty (‏תפארת‎), and Kingdom (‏מלכות‎), - which
 represents the potencies of all the Sephiroth.
 
 
@@ -629,12 +629,12 @@ monarchs of Israel, and are mentioned as having died one after the
 other, are those primordial worlds which were successively convulsed
 and destroyed; whilst the sovereigns of Israel denote the King and
 Queen who emanated from the En Soph, and who have given birth to and
-perpetuate the present world. Thus we are told:—
+perpetuate the present world. Thus we are told: - 
 
 “Before the Aged of the Aged, the Concealed of the Concealed, expanded
 into the form of King, the Crown of Crowns [i.e. the first Sephira],
 there was neither beginning nor end. He hewed and incised forms and
-figures into it [i.e. the crown] in the following manner:—He spread
+figures into it [i.e. the crown] in the following manner: - He spread
 before him a cover, and carved therein kings [i.e. worlds], and marked
 out their limits and forms, but they could not preserve themselves.
 Therefore it is written, ‘These are the kings that reigned in the land
@@ -653,15 +653,15 @@ worlds,” the Sohar tells us, “which perished as soon as they came into
 existence: were formless, and they were called sparks. Thus the smith
 when hammering the iron, lets the sparks fly in all directions. These
 sparks are the primordial worlds, which could not continue, because the
-Sacred Aged had not as yet assumed his form [of opposite sexes—the King
+Sacred Aged had not as yet assumed his form [of opposite sexes - the King
 and Queen], and the master was not yet at his work.” (Idra Suta, Sohar,
-iii, 292 b.) But since nothing can be annihilated—“Nothing perisheth in
+iii, 292 b.) But since nothing can be annihilated - “Nothing perisheth in
 this world, not even the breath which issues from the mouth, for this,
 like everything else, has its place and destination, and the Holy One,
 blessed be his name! turns it into his service;” (Sohar, ii, 110
-b.)—these worlds could not be absolutely destroyed. Hence when the
-question is asked—‘Why were these primordial worlds destroyed?’ the
-reply is given—“Because the Man, represented by the ten Sephiroth, was
+b.) - these worlds could not be absolutely destroyed. Hence when the
+question is asked - ‘Why were these primordial worlds destroyed?’ the
+reply is given - “Because the Man, represented by the ten Sephiroth, was
 not as yet. The human form contains every thing, and as it did not as
 yet exist, the worlds were destroyed.” It is added, “Still when it is
 said that they perished, it is only meant thereby that they lacked the
@@ -690,7 +690,7 @@ This world, however, is not a creation ex nihilo, but is simply an
 immanent offspring and the image of the King and Queen, or, in other
 words, a farther expansion or evolution of the Sephiroth which are the
 emanations of the En Soph. This is expressed in the Sohar in the
-following passage—“The indivisible point [the Absolute], who has no
+following passage - “The indivisible point [the Absolute], who has no
 limit, and who cannot be comprehended because of his purity and
 brightness, expanded from without, and formed a brightness which served
 as a covering to the indivisible point, yet it too could not be viewed
@@ -715,8 +715,8 @@ a.)
 
 Now these Sephiroth, or the World of Emanation (‏עולם אצילות‎), or the
 Atzilatic World, gave birth to three worlds in the following
-order:—From the conjunction of the King and Queen (i.e., the ten
-Sephiroth) proceeded—I. The World of Creation, or the Briatic World
+order: - From the conjunction of the King and Queen (i.e., the ten
+Sephiroth) proceeded - I. The World of Creation, or the Briatic World
 (‏עולם הבריאה‎), also called The Throne (‏כורסיא‎), which is the abode
 of pure spirits, and which, like its parents, consists of ten
 Sephiroth, or Emanations. The Briatic World, again, gave rise to, II.
@@ -726,7 +726,7 @@ whilst the Jetziratic World, again, sent forth, III. The World of
 Action, or the Assiatic World (‏עולﬦ העשיה‎), also called the World of
 Keliphoth (‏עולﬦ הקליפות‎), which contains the Spheres (‏גלגלים‎) and
 matter, and is the residence of the Prince of Darkness and his legions.
-Or, as the Sohar describes it—“After the Sephiroth, and for their use,
+Or, as the Sohar describes it - “After the Sephiroth, and for their use,
 God made the Throne (i.e., the World of Creation), with four legs and
 six steps, thus making ten (i.e., the decade of Sephiroth which each
 world has).... For this Throne and its service he formed the ten
@@ -736,7 +736,7 @@ Seraphim (‏מלאכיﬦ אראליﬦ חיות אופניﬦ חשמליﬦ א
 שרפים‎), and for their service, again, he made Samaël and his legions
 (i.e., the World of Action), who are, as it were, the clouds upon which
 the angels ride in their descent on the earth, and serve, as it were,
-for their horses. Hence it is written—‘Behold the Lord rideth upon a
+for their horses. Hence it is written - ‘Behold the Lord rideth upon a
 swift cloud, and shall come into Egypt.’” (Isa. xix, 1.) (Sohar ii, 43
 a.) There are, therefore, four worlds, each of which has a separate
 Sephiric system, consisting of a decade of emanations. I. The Atzilatic
@@ -772,7 +772,7 @@ other words, is an evolution of the emanations, and is thus a further
 expansion of the Deity itself, it must not be supposed that the
 Kabbalists believe in a Trinity in our sense of the word. Their view on
 this subject will best be understood from the following remark in the
-Sohar—“Whoso wishes to have an insight into the sacred unity, let him
+Sohar - “Whoso wishes to have an insight into the sacred unity, let him
 consider a flame rising from a burning coal or a burning lamp. He will
 see first a twofold light, a bright white and a black or blue light;
 the white light is above, and ascends in a direct light, whilst the
@@ -782,7 +782,7 @@ flame. The seat, however, formed by the blue or dark light, is again
 connected with the burning matter which is under it again. The white
 light never changes its colour, it always remains white; but various
 shades are observed in the lower light, whilst the lowest light,
-moreover, takes two directions—above it is connected with the white
+moreover, takes two directions - above it is connected with the white
 light, and below with the burning matter. Now this is constantly
 consuming itself, and perpetually ascends to the upper light, and thus
 everything merges into a single unity (‏וכולא אתקשר ביחודא חד‎ Sohar,
@@ -813,7 +813,7 @@ beings of various grades. “God animated every part of the firmament
 with a separate spirit, and forthwith all the heavenly hosts were
 before him. This is meant by the Psalmist, when he says (Ps. xxxiii, 6)
 ‘By the breath of his mouth were made all their hosts.’ (Sohar, iii, 68
-a.) These angels consist of two kinds—good and bad; they have their
+a.) These angels consist of two kinds - good and bad; they have their
 respective princes, and occupy the three habitable worlds in the
 following order. As has already been remarked, the first world, or the
 Archetypal Man, in whose image everything is formed, is occupied by no
@@ -875,12 +875,12 @@ Adam and Eve, before the fall, were wrapped in that luminous ethereal
 substance in which the celestial spirits are clad, and which is neither
 subject to want nor to sensual desires. They were envied by the angels
 of the highest rank. The fall, however, changed it all, as we are told
-in the following passage—“When Adam dwelled in the garden of Eden, he
+in the following passage - “When Adam dwelled in the garden of Eden, he
 was dressed in the celestial garment, which is a garment of heavenly
 light. But when he was expelled from the garden of Eden, and became
 subject to the wants of this world, what is written? ‘The Lord God made
 coats of skins unto Adam and to his wife, and clothed them’ (Gen. iii,
-21); for prior to this they had garments of light—light of that light
+21); for prior to this they had garments of light - light of that light
 which was used in the garden of Eden.” (Sohar, ii, 229 b.) The garments
 of skin, therefore, mean our present body, which was given to our first
 parents in order to adapt them to the changes which the fall
@@ -897,13 +897,13 @@ himself. When man departs, he puts off these garments wherewith the son
 of man is clothed. Yet are all these bones and sinews formed in the
 secret of the highest wisdom, after the heavenly image. The skin
 represents the firmament, which extends everywhere, and covers
-everything like a garment—as it is written, ‘Who stretchest out the
+everything like a garment - as it is written, ‘Who stretchest out the
 heavens like a curtain.’ (Ps. clv, 2) ... The flesh represents the
 deteriorated part of the world;... the bones and the veins represent
 the heavenly chariot, the inner powers, the servants of God.... But
 these are the outer garments, for in the inward part is the deep
 mystery of the heavenly man. Everything here below, as above, is
-mysterious. Therefore it is written—‘God created man in his own image,
+mysterious. Therefore it is written - ‘God created man in his own image,
 in the image of God created he him’ (Gen. i, 27); repeating the word
 God twice, one for the man and the other for the woman. The mystery of
 the earthly man is after the mystery of the Heavenly Man. And just as
@@ -954,7 +954,7 @@ angels. It might, therefore, be asked why do these souls leave such an
 abode of bliss, and come into this vale of tears to dwell in
 tabernacles of clay? The only reply to be given is that these happy
 souls have no choice in the matter. Indeed we are told that the soul,
-before assuming a human body, addresses God—“Lord of the Universe! I am
+before assuming a human body, addresses God - “Lord of the Universe! I am
 happy in this world, and do not wish to go into another world, where I
 shall be a bond-maid, and be exposed to all kinds of pollutions.”
 (Sohar, ii, 96.) [17] And can you wonder at this pitiful ejaculation?
@@ -979,7 +979,7 @@ Queen and conducts him to the palace.” (Sohar, i, 245 b.)
 As has already been remarked, the human soul, before it descends into
 the world, is androgynous, or in other words, consists of two component
 parts, each of which comprises all the elements of our spiritual
-nature. Thus the Sohar tells us—“Each soul and spirit, prior to its
+nature. Thus the Sohar tells us - “Each soul and spirit, prior to its
 entering into this world, consists of a male and female united into one
 being. When it descends on this earth the two parts separate and
 animate two different bodies. At the time of marriage, the Holy One,
@@ -1006,10 +1006,10 @@ form is present at intercourse, and if we were permitted to see it we
 should perceive over our heads an image resembling a human face; and it
 is in this image that we are formed. As long as this image is not sent
 by God and does not descend and hover over our heads, there can be no
-conception, for it is written—‘And God created man in his own image.’
+conception, for it is written - ‘And God created man in his own image.’
 (Gen. i, 27.) This image receives us when we enter the world, it
 develops itself with us when we grow, and accompanies us when we depart
-this life; as it is written—‘Surely, man walked in an image’ (Ps.
+this life; as it is written - ‘Surely, man walked in an image’ (Ps.
 xxxvii, 5): and this image is from heaven. When the souls are to leave
 their heavenly abode, each soul separately appears before the Holy
 King, dressed in a sublime form, with the features in which it is to
@@ -1047,7 +1047,7 @@ source and pursuing an independent and opposite course. Hence, Simon
 ben Jochai said, “If the Holy One, blessed be he, had not put within us
 both the good and the evil desire, which are denominated light and
 darkness, the created man would have neither virtue nor vice. For this
-reason it is written—‘Behold, I have set before thee this day life and
+reason it is written - ‘Behold, I have set before thee this day life and
 good, and death and evil.’ (Deut. xxx, 15.) To this the disciples
 replied, Wherefore is all this? Would it not be better if reward and
 punishment had not existed at all, since in that case man would have
@@ -1074,8 +1074,8 @@ part of the creation, all things visible and invisible are designed to
 aid him in passing through his probationary state here below, in
 gathering that experience for which his soul has been sent down, and in
 returning in a pure state to that source of light from which his soul
-emanated. This destiny of man—i.e., the reunion with the Deity from
-which he emanated—is the constant desire both of God and man, and is an
+emanated. This destiny of man - i.e., the reunion with the Deity from
+which he emanated - is the constant desire both of God and man, and is an
 essential principle of the soul, underlying its very essence.
 Discarding that blind power from our nature, which governs our animal
 life, which never quits this earth, and which therefore plays no part
@@ -1100,11 +1100,11 @@ preserve herself here, so she receives above a shining garment, in
 order to be able to look without injury into the mirror whose light
 proceeds from the Lord of Light. Moses too could not approach to look
 into that higher light which he saw, without putting on such an
-ethereal garment; as it is written—‘And Moses went into the midst of
+ethereal garment; as it is written - ‘And Moses went into the midst of
 the cloud’ (Exod. xxiv, 18), which is to be translated by means of the
 cloud wherewith he wrapped himself as if dressed in a garment. At that
 time Moses almost discarded the whole of his earthly nature; as it is
-written,—‘And Moses was on the mountain forty days and forty nights’
+written, - ‘And Moses was on the mountain forty days and forty nights’
 (ibid.); and he thus approached that dark cloud where God is enthroned.
 In this wise the departed spirits of the righteous dress themselves in
 the upper regions in luminous garments, to be able to endure that light
@@ -1150,7 +1150,7 @@ fear, in fear and love, for the union of the name ‏יה‎ with ‏וה‎ int
 perfect harmony! I pronounce this in the name of all Israel!” [21] In
 order to represent this union to the senses the words Fear ‏יראה‎ and
 Love ‏אהבה‎, are divided, and so placed above each other that they may
-be read either across or down, as follows:—
+be read either across or down, as follows: - 
 
 
                               ‏יר‎   ‏אה‎
@@ -1172,7 +1172,7 @@ in Aaron; Foundation, the ninth Sephira, in Joseph; and Kingdom, the
 tenth Sephira, was incarnate in David. Hence all the righteous who
 constitute the emanations, of the ten Sephiroth are divided into three
 classes corresponding to the three principles or Pillars exhibited in
-the Kabbalistic Tree, viz.:—I. The Pillar of Mercy (‏חסד‎), represented
+the Kabbalistic Tree, viz.: - I. The Pillar of Mercy (‏חסד‎), represented
 by the Patriarch Abraham (comp. ‏חסד לאברהם‎ Micah, vii, 20;) II. The
 Pillar of Justice (‏פחד‎), represented by Isaac (comp. ‏פחד יצחק‎ Gen.
 xxxi, 42); and III. The Middle Pillar, represented by Jacob (comp. ‏אמת
@@ -1187,7 +1187,7 @@ God has put in the firmament to shield them from accidents. “In heaven
 above, that surrounds the universe, are signs in which the deepest
 mysteries are concealed. These signs are constellations and stars,
 which are studied and deciphered by the wise.” (Sohar, ii, 76 a.) Hence
-the admonition—“He who has to start on a journey very early, should
+the admonition - “He who has to start on a journey very early, should
 rise at daybreak, look carefully towards the east, and he will perceive
 certain signs resembling letters which pierce through the sky and
 appear above the horizon. These shining forms are those of the letters
@@ -1231,7 +1231,7 @@ many transmigrations and secret probations which they have to undergo,
 and of the number of souls and spirits which enter into this world, and
 do not return to the palace of the Heavenly King. Men do not know how
 the souls revolve like a stone which is thrown from a sling; as it is
-written—‘And the souls of thine enemies them shall he sling out, as out
+written - ‘And the souls of thine enemies them shall he sling out, as out
 of the middle of a sling.’ (1 Sam., xxv, 29.) But the time is at hand
 when these mysteries will be disclosed.” (Sohar, ii, 99 b.)
 
@@ -1284,7 +1284,7 @@ punishment, nor temptation, nor sin: life will be an everlasting feast,
 a Sabbath without end. Then all souls will be united with the Highest
 Soul, and supplement each other in the Holy of Holies of the Seven
 Halls (‏שבע היכלות‎). Everything will then return to unity and
-perfection—everything will be united into one idea, which shall be
+perfection - everything will be united into one idea, which shall be
 over, and fill the whole universe. The basis of this idea, however
 (i.e., the light which is concealed in it), will never be fathomed or
 comprehended; only the idea itself which emanates from it shall be
@@ -1304,7 +1304,7 @@ books of the Pentateuch. Those of us who read the Books of Moses, and
 cannot discover in them any of the above-mentioned doctrines, will
 naturally ask for the principles of exegesis whereby these secrets are
 deduced from or rather introduced into the text. These principles are
-laid down in the following declaration:—“If the Law simply consisted of
+laid down in the following declaration: - “If the Law simply consisted of
 ordinary expressions and narratives, e. gr., the words of Esau, Hagar,
 Laban, the ass of Balaam, or of Balaam himself, why should it be called
 the Law of truth, the perfect Law, the true witness of God? Each word
@@ -1371,7 +1371,7 @@ and nothing to be added to it.” (Sohar, ii, 99.)
 This fourfold sense is gradually disclosed to the initiated in the
 mysteries of the Kabbalah by the application of definite hermeneutical
 rules, which chiefly affect the letters composing the words. The most
-prominent of these canons are—
+prominent of these canons are - 
 
 I. Every letter of a word is reduced to its numerical value, and the
 word is explained by another of the same quantity. Thus from the words
@@ -1429,7 +1429,7 @@ first of these three verses ‏ויסע מלאך האלהים ההלך לפני 
 מאחריהם ויסע עמוד הענן מפניהם ויעמד מאחריהם‎, and the angel of God,
 which went before the camp of Israel, removed and went behind them; and
 the pillar of the cloud went from before their face, and stood behind
-them (Exod. xiv, 19), is read boustrophedonally, as follows:—
+them (Exod. xiv, 19), is read boustrophedonally, as follows: - 
 
 
                            I.
@@ -1507,7 +1507,7 @@ The three verses which have thus yielded the three Pillars of the
 Sephiroth, are then joined together in groups of three letters in the
 order in which they are read in diagrams ii, iii, and iv, and they then
 yield the seventy-two divine names which the Kabbalah assigns to the
-Deity, [29] as follows:—
+Deity, [29] as follows: - 
 
 
  ‏כהת‎           ‏אכא‎          ‏ללה‎            ‏מהש‎          ‏עלם‎          ‏סיט‎            ‏ילי‎          ‏והו‎
@@ -1536,7 +1536,7 @@ and the commutation is effected according to fixed rules. Thus the
 alphabet is bent exactly in the middle, and one half is put over the
 other, and by changing alternately the first letter or the first two
 letters at the beginning of the second line, twenty-two commutations
-are produced ex. gr.:—
+are produced ex. gr.: - 
 
 
           11  10  9   8   7   6   5   4   3   2   1
@@ -1577,7 +1577,7 @@ established rules of the alphabetical permutations.
           ‏כת‎ יל‎ ‏טמ‎ ‏חנ‎ ‏זס‎ ‏וע‎ ‏הפ‎ ‏דצ‎ ‏גכ‎ ‏בר‎ ‏אש‎ 21. Ashbar.
           ‏כל‎ ימ‎ ‏טנ‎ ‏חס‎ ‏זע‎ ‏ופ‎ ‏הצ‎ ‏דק‎ ‏גר‎ ‏בש‎ ‏את‎ 22. Athbash.
 
-              To this list is to be added—
+              To this list is to be added - 
 
           ‏שת‎ ‏קר‎ ‏פצ‎ ‏סע‎ ‏מנ‎ ‏כל‎ ‏טי‎ ‏זח‎ ‏הו‎ ‏גד‎ ‏אב‎ 23. Abgad.
           ‏כת‎ ‏יש‎ ‏טר‎ ‏חק‎ ‏זצ‎ ‏ופ‎ ‏הע‎ ‏דס‎ ‏גנ‎ ‏בם‎ ‏אל‎ 24. Albam.
@@ -1603,7 +1603,7 @@ mystery of the voice. The voice is only one, find yet it consists of
 three elements, fire [i.e., warmth], air [i.e., breath], and water
 [i.e., humidity], yet are all these one in the mystery of the voice,
 and can only be one. Thus also Jehovah, Elohenu, and Jehovah constitute
-one—three forms which are one. And this is indicated by the voice which
+one - three forms which are one. And this is indicated by the voice which
 man raises [i.e., at prayer], thereby to comprehend spiritually the
 most perfect unity of the En Soph for the finite, since all the three
 [i.e., Jehovah, Elohenu, Jehovah] are rend with the same loud voice,
@@ -1680,7 +1680,7 @@ the recovery of all the members of the body is secured. So it is with
 the children of the world: they are members one of another. When the
 Holy One; blessed be he, wishes the recovery of the world, he afflicts
 one righteous from their midst, and for his sake all are healed. How is
-this shown? It is written—‘He was wounded for our transgressions, he
+this shown? It is written - ‘He was wounded for our transgressions, he
 was bruised for our iniquities, ... and with his stripes we are
 healed.’ (Isa. liii, 5.) ‘With his stripes,’ i.e., healed, as by the
 wound of bleeding an arm, and with this wound we are healed, i.e., it
@@ -1699,7 +1699,7 @@ palace and invokes all the sufferings, pain, and afflictions of Israel
 to come upon him, and they all come upon him. Now if he did not remove
 them thus and take them upon himself, no man could endure the
 sufferings of Israel, due as punishment for transgressing the Law; as
-it is written—‘Surely he hath borne our griefs and carried our
+it is written - ‘Surely he hath borne our griefs and carried our
 sorrows,’ &c. (Isa. liii, 4, with Rom. xii, 3, 4.) When the children of
 Israel were in the Holy Land they removed all those sufferings and
 afflictions from the world by their prayers and sacrifices, but now the
@@ -1741,7 +1741,7 @@ which is translated created, be examined, and if each of the three
 letters composing this word be taken as the initial of a separate word,
 we obtain the expressions ‏בן רוח אב‎ Son, Spirit, Father, according to
 Rule 2 (p. 131). Upon the same principle this erudite scholar deduces
-the first two persons in the Trinity from the words—“the stone which
+the first two persons in the Trinity from the words - “the stone which
 the builders refused is become the head stone of the corner” (Ps.
 cxviii, 22), by dividing the three letters composing the word ‏אבן‎
 stone, into ‏אב בן‎ Father, Son (Comp. De Verbo Mirifico, Basel, 1494).
@@ -1749,7 +1749,7 @@ In more recent times we find it maintained that the ‘righteousness’
 spoken of in Daniel ix, 24, means the Anointed of Jehovah, because the
 original phrase, ‏צדק עלמים‎ is by Gematria, = numerical value, (which
 is Rule 1, given above, p. 131), the same as ‏משיח יהוה‎. So pleased is
-the author with this discovery, that he takes great care to remark—“It
+the author with this discovery, that he takes great care to remark - “It
 is a proof which I believe has hitherto escaped the notice of
 interpreters.” Such proofs, however, of the Messiaship of Christ bring
 no honour to our religion; and in the present day argue badly both
@@ -1771,7 +1771,7 @@ this theosophy. But before this is done, it will be necessary to
 summarize, as briefly as possible, those doctrines which are peculiar
 to the Kabbalah, or which it expounds and elaborates in an especial
 manner, and which constitute it a separate system within the precincts
-of Judaism. The doctrines are as follow:—
+of Judaism. The doctrines are as follow: - 
 
 1. God is boundless in his nature. He has neither will, intention,
 desire, thought, language, nor action. He cannot be grasped and
@@ -1838,7 +1838,7 @@ This marvellous and famous document pretends to be a monologue of the
 patriarch Abraham, and premises that the contemplations it contains are
 those which led the father of the Hebrews to abandon the worship of the
 stars and to embrace the faith of the true God. Hence the remark of the
-celebrated philosopher, R. Jehudah Ha-Levi (born about 1086)—“The Book
+celebrated philosopher, R. Jehudah Ha-Levi (born about 1086) - “The Book
 of the Creation, which belongs to our father Abraham, ... demonstrates
 the existence of the Deity and the Divine Unity, by things which are on
 the one hand manifold and multifarious, whilst on the other hand they
@@ -1874,10 +1874,10 @@ sacred character, as expressing the divine truths of the Scriptures.
 But, since the Hebrew alphabet is also used as numerals, which are
 represented by the fundamental number ten, and since the vowels of the
 language are also ten in number, this decade is added to the twenty-two
-letters, and these two kinds of signs—i.e., the twenty-two letters of
-the alphabet and the ten fundamental numbers—are designated the
+letters, and these two kinds of signs - i.e., the twenty-two letters of
+the alphabet and the ten fundamental numbers - are designated the
 thirty-two ways of secret wisdom; and the treatise opens with the
-declaration [41]—“By thirty-two paths of secret wisdom, the Eternal,
+declaration [41] - “By thirty-two paths of secret wisdom, the Eternal,
 the Lord of Hosts, the God of Israel, the living God, the King of the
 Universe, the Merciful and Gracious, the High and Exalted God, He who
 inhabiteth eternity, Glorious and Holy is His name, hath created the
@@ -1902,7 +1902,7 @@ again, represented by the number three, proceeded from the air (‏מים
 Whilst the ether or fire, represented by the number four, emanated from
 the water (‏אש ממים‎). “In it He engraved the throne of His glory, the
 Ophanim, the Seraphim, the sacred animals, and the ministering angels,
-and from these three he formed His habitation; as it is written—‘He
+and from these three he formed His habitation; as it is written - ‘He
 maketh the wind his messengers, flaming fire his servants’” [43] (Cap.
 i. Mish. ix, x.) These intermediate members between the Creator and the
 created world sustain a passive and created relationship to God, and an
@@ -1915,7 +1915,7 @@ directions (‏שש קצוות‎), or the four corners of the world, east, west
 north, and south, as well as height and depth which emanated from the
 ether, and in the centre of which is the Holy Temple supporting the
 whole (‏והיכל הקודש מכוון באמצע‎). The position of the decade is
-therefore as follows—
+therefore as follows - 
 
 
                                1
@@ -1976,20 +1976,20 @@ developed itself into the genital organ. These three domains, viz., the
 macrocosm, the revolution of time, and the microcosm, which proceeded
 from the three primordial elements, are exhibited by the three letters
 Aleph (‏א‎), Mem (‏מ‎) and Shin (‏ש‎.) Hence it is said that by means
-of these three letters—which, both in their phonetic and sacred
+of these three letters - which, both in their phonetic and sacred
 character, represent the elements, inasmuch as ‏א‎, as a gentle
 aspirate, and as the initial of ‏אויר‎ air, symbolises THE AIR; ‏מ‎, as
 a labial or mute, and as the initial of ‏מיﬦ‎ water, represents THE
 WATER; whilst ‏ש‎, as a sibilant, and as the last letter of ‏אש‎ fire,
-typifies THE FIRE (Chapter iii, Mishna iii)—God created
+typifies THE FIRE (Chapter iii, Mishna iii) - God created
 
 
-    In the World—The Fire, Water, Air.
-    In Man—The Head, Body, Breast.
-    In the Year—Heat, Cold, Wet.
+    In the World - The Fire, Water, Air.
+    In Man - The Head, Body, Breast.
+    In the Year - Heat, Cold, Wet.
 
 
-2. Seven double consonants—Beth, Gimel, Daleth, Caph, Pe, Resh, Tav
+2. Seven double consonants - Beth, Gimel, Daleth, Caph, Pe, Resh, Tav
 ‏שבע כפולות בגדכפרת‎
 
 The three dominions proceeding from the triad of the primordial
@@ -2000,12 +2000,12 @@ These are represented by the seven double consonants of the alphabet.
 Hence it is said that by means of these seven letters, which are called
 double because they have a double pronunciation, being sometimes
 aspirated and sometimes not, according to their being with or without
-the Dagesh, God created—
+the Dagesh, God created - 
 
 
-    In the World—Saturn, Jupiter, Mars, Sun, Venus, Mercury, Moon.
-    In Man—Wisdom, Riches, Dominion, Life, Favour, Progeny, Peace.
-    In the Year—Sabbath, Thursday, Tuesday, Sunday, Friday, Wednesday,
+    In the World - Saturn, Jupiter, Mars, Sun, Venus, Mercury, Moon.
+    In Man - Wisdom, Riches, Dominion, Life, Favour, Progeny, Peace.
+    In the Year - Sabbath, Thursday, Tuesday, Sunday, Friday, Wednesday,
     Monday.
 
 
@@ -2029,14 +2029,14 @@ parts, the macrocosm into the twelve signs of the Zodiac, time into
 twelve months, and the microcosm into twelve active organs. This is
 shown by the twelve simple consonants of the alphabet. Thus it is
 declared, that by means of the twelve letters, which are ‏הוז חטי לן
-סעצק‎, God created the twelve signs of the Zodiac, viz.:—
+סעצק‎, God created the twelve signs of the Zodiac, viz.: - 
 
 
-    In the World—Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra,
+    In the World - Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra,
     Scorpio, Sagittarius, Capricornus, Aquarius, Pisces.
-    In Man—The organs of Sight, Hearing, Smelling, Talking, Taste,
+    In Man - The organs of Sight, Hearing, Smelling, Talking, Taste,
     Copulating, Dealing, Walking, Thinking, Anger, Laughter, Sleeping.
-    In the Year—The twelve months, viz., Nisan, Jiar, Sivan, Tamus, Ab,
+    In the Year - The twelve months, viz., Nisan, Jiar, Sivan, Tamus, Ab,
     Elul, Tishri, Cheshvan, Kislev, Tebet, Shebat, Adar. (Comp. chapter
     v, Mishna i.)
 
@@ -2060,7 +2060,7 @@ letters.
 The infinite variety in creation is still more strikingly exhibited by
 permutations, of which the Hebrew alphabet is capable, and through
 which an infinite variety of types is obtained. Hence the remark
-[46]—“Two letters form two houses, three letters build six houses, four
+[46] - “Two letters form two houses, three letters build six houses, four
 build twenty-four, five build a hundred and twenty houses, six build
 seven hundred and twenty houses; and from thenceforward go out and
 think what the mouth cannot utter and the ear cannot hear.” (Chapter
@@ -2107,7 +2107,7 @@ permutation, will yield an infinite variety.
 
 In order to ascertain how often a certain number of letters can be
 transposed, the product of the preceding number must be multiplied with
-it. Thus—
+it. Thus - 
 
 
                 Letter 2 ×   1 =    2
@@ -2192,7 +2192,7 @@ sorcerer Ankebuta declares, in his work on artificial productions, that
 he created a man, and shows how he did it; but he confesses that the
 human being was without language and reason, that he could not eat, but
 simply opened and closed his eyes. This and many other fragments adds
-R—, from whose communication we quote, show that there were many works
+R - , from whose communication we quote, show that there were many works
 in Babylon which treated on the artificial productions of plants,
 metals, and living beings, and that the Book Jetzira, mentioned in the
 Talmud, was most probably such a Babylonian document. [54]
@@ -2210,7 +2210,7 @@ are the essence of the Kabbalah. [55]
 
 Having shown that the Book Jetzira, claimed by the Kabbalists as their
 first and oldest code of doctrines, has no affinity with the real
-tenets of the Kabbalah, we have now to examine:—
+tenets of the Kabbalah, we have now to examine: - 
 
 
 
@@ -2355,7 +2355,7 @@ Kabbala Denudata.
 vol. iii, 186 a–192 a, and forms part of the text of the Sohar on the
 Sabbatic section called Balak, i.e. Numb. xxii, 2–xxv, 9. It derives
 its name from the fact that the discourses therein recorded were
-delivered by a young man, under the following circumstances:—R. Isaac
+delivered by a young man, under the following circumstances: - R. Isaac
 and R. Jehudah, two of R. Simon b. Jochai’s disciples, when on a
 journey, and passing through the village where the widow of R. Hamnuna
 Saba resided, visited this venerable woman. She asked her son, the
@@ -2382,7 +2382,7 @@ listen to the profound mysteries. It is to a great extent a
 recapitulation of the Idra Rabba, occupying itself with speculations
 about the Sephiroth, the Deity in his three aspects (‏שלת רישין‎), or
 principles which successively developed themselves from each other,
-viz.—the En Soph (‏אין סוף‎), or the Boundless in his absolute nature,
+viz. - the En Soph (‏אין סוף‎), or the Boundless in his absolute nature,
 the Macroprosopon (‏אריך אנפין‎), or the Boundless as manifested in the
 first emanation, and the Microprosopon (‏זעיר אנפין‎), the other nine
 emanations; the abortive creations, &c., and concludes with recording
@@ -2425,7 +2425,7 @@ charged to disclose to them their profound mysteries, which were
 reserved for the days of the Messiah.” On the approach of death, R.
 Simon b. Jochai assembled the small number of his disciples and
 friends, amongst whom was his son, R. Eleazar, to communicate to them
-his last doctrines, [57] “when he ordered as follows—R. Aba shall
+his last doctrines, [57] “when he ordered as follows - R. Aba shall
 write, R. Eleazar, my son, propound, and let my other associates
 quietly think about it.” (Idra Suta, Sohar, iii, 287 b.) It is upon the
 strength of these declarations, as well as upon the repeated
@@ -2467,7 +2467,7 @@ pathetic composition, embodying the cosmic views of Aristotle, and
 forms part of the Jewish service for the evening preceding the Great
 Day of Atonement to the present day. The quotation in the Sohar from
 this Hymn is beyond the shadow of a doubt, as will be seen from the
-following comparison—
+following comparison - 
 
 
      Sohar.                                  Ibn Gebirol.
@@ -2536,11 +2536,11 @@ Messiah,” for which cause this revelation was reserved till the days of
 R. Simon, to be communicated through him. Yet, speaking elsewhere of
 the advent of the Messiah, the Sohar, instead of placing it in the
 second century when this Rabbi lived, forgets itself and says
-[68]—“When the sixtieth or the sixty-sixth year shall have passed over
+[68] - “When the sixtieth or the sixty-sixth year shall have passed over
 the threshold of the sixth millenium [A.M. 5060–66 = A.D. 1300–1306]
 the Messiah will appear” (Sohar i, 116 a, 117 b, Comp. also iii, 252
 a); thus showing that the author lived in the thirteenth century of the
-Christian era. In perfect harmony with this is the fact that:—
+Christian era. In perfect harmony with this is the fact that: - 
 
 9. The doctrine of the En Soph, and the Sephiroth, as well as the
 metempsychosisian retribution were not known before the thirteenth
@@ -2595,7 +2595,7 @@ published the production of his own intellect under another man’s name,
 and that he told her that if he were to publish it under his own name
 nobody would buy it, whereas under the name of R. Simon b. Jochai it
 yielded him a large revenue. This account is confirmed in a most
-remarkable manner by the fact that—
+remarkable manner by the fact that - 
 
 13. The Sohar contains whole passages which Moses de Leon translated
 into Aramaic, from his other works, as the learned Jellinek has
@@ -2647,7 +2647,7 @@ regarded by tradition as the embodiment of mysticism. No better hero
 could be selected for the Sohar than R. Simon, of whom the Talmud gives
 us the following account: “Once upon a time, R. Jehudah, R. Jose, and
 R. Simon sat together, and R. Jehudah b. Gerim sat by them. R. Jehudah
-then began and said—How beautiful are the works of this nation (i.e.,
+then began and said - How beautiful are the works of this nation (i.e.,
 the Romans)! they have erected market-places, they have erected
 bridges, and they have erected baths! R. Jose was quiet, but R. Simon
 b. Jochai answered and said: what they have built they have built for
@@ -2660,12 +2660,12 @@ to Zipporis; and Simon, who spoke evil, is to be killed. He (i.e., R.
 Simon) at once concealed himself with his son, in the place of study,
 whither his wife daily brought them a loaf and a flask of water; but as
 the rigour of the decree increased, he said to his son: women are
-weak-minded—if she is tortured she may betray us. Hence, they left, and
+weak-minded - if she is tortured she may betray us. Hence, they left, and
 betook themselves into a deep cavern, where by a miracle a crab-tree
 and a well were created for their subsistence. He and his son sat in
 the sand up to their necks all the day studying the Law. They spent
 twelve long years in this cavern; when Elias the prophet came and stood
-at the entrance of the cavern, and called out—Who will inform the son
+at the entrance of the cavern, and called out - Who will inform the son
 of Jochai that the emperor is dead, and that the decree is commuted?
 They came out and saw the people tilling and sowing.” (Sabbath, 33 a.
 Comp. also, Jerusalem Shebiith, ix, 1; Bereshith Rabba, cap. lxxix;
@@ -2691,74 +2691,74 @@ questions and answers, [73] and the following is the lucid analysis of
 it as given by the erudite Jellinek, according to Spinoza’s form of
 Ethics.
 
-1. Definition.—By the Being who is the cause and governor of all
+1. Definition. - By the Being who is the cause and governor of all
 things, I understand the En Soph, i.e., a Being infinite, boundless,
 absolutely identical with itself, united in itself, without attributes,
 will, intention, desire, thought, word or deed. (Answers 2 and 4.)
 
-2. Definition.—By Sephiroth I understand the potencies which emanated
+2. Definition. - By Sephiroth I understand the potencies which emanated
 from the absolute En Soph, all entities limited by quantity, which like
 the will, without changing its nature, wills diverse objects that are
 the possibilities of multifarious things. (Answers 3 and 9.)
 
-i. Proposition.—The primary cause and governor of the world is the En
+i. Proposition. - The primary cause and governor of the world is the En
 Soph, who is both immanent and transcendent. (Answer 1.)
 
-(a) Proof.—Each effect has a cause, and every thing which has order and
+(a) Proof. - Each effect has a cause, and every thing which has order and
 design has a governor. (Answer 1.)
 
-(b) Proof.—Every thing visible has a limit, what is limited is finite,
+(b) Proof. - Every thing visible has a limit, what is limited is finite,
 what is finite is not absolutely identical; the primary cause of the
 world is invisible, therefore unlimited, infinite, absolutely
 identical, i.e., he is the En Soph. (Answer 2.)
 
-(c) Proof.—As the primary cause of the world is infinite, nothing can
+(c) Proof. - As the primary cause of the world is infinite, nothing can
 exist without (EXTRA) him; hence he is immanent. (Ibid.)
 
-Scholion.—As the En Soph is invisible and exalted, it is the root of
+Scholion. - As the En Soph is invisible and exalted, it is the root of
 both faith and unbelief. (Ibid.)
 
-ii. Proposition.—The Sephiroth are the medium between the absolute En
+ii. Proposition. - The Sephiroth are the medium between the absolute En
 Soph and the real world.
 
-Proof.—As the real world is limited and not perfect, it cannot directly
+Proof. - As the real world is limited and not perfect, it cannot directly
 proceed from the En Soph, still the En Soph must exercise his influence
 over it, or his perfection would cease. Hence the Sephiroth, which, in
 their intimate connection with the En Soph, are perfect, and in their
 severance are imperfect, must be the medium. (Answer 3.)
 
-Scholion.—Since all existing things originated by means of the
+Scholion. - Since all existing things originated by means of the
 Sephiroth, there are a higher, a middle, and a lower degree of the real
 world. (Vide infra, Proposition 6.)
 
-iii. Proposition.—There are ten intermediate Sephiroth.
+iii. Proposition. - There are ten intermediate Sephiroth.
 
-Proof.—All bodies have three dimensions, each of which repeats the
+Proof. - All bodies have three dimensions, each of which repeats the
 other (3 × 3); and by adding thereunto space generally, we obtain the
 number ten. As the Sephiroth are the potencies of all that is limited
 they must be ten. (Answer 4).
 
-(a) Scholion.—The number ten does not contradict the absolute unity of
+(a) Scholion. - The number ten does not contradict the absolute unity of
 the En Soph, as one is the basis of all numbers, plurality proceeds
 from unity, the germs contain the development, just as fire, flame,
 sparks and colour have one basis, though they differ from one another.
 (Answer 6.)
 
-(b) Scholion.—Just as cogitation or thought, and even the mind as a
+(b) Scholion. - Just as cogitation or thought, and even the mind as a
 cogitated object, is limited, becomes concrete and has a measure,
 although pure thought proceeds from the En Soph; so limit, measure, and
 concretion are the attributes of the Sephiroth. (Answer 7.)
 
-4. Proposition.—The Sephiroth are emanations and not creations.
+4. Proposition. - The Sephiroth are emanations and not creations.
 
-1. Proof.—As the absolute En Soph is perfect, the Sephiroth proceeding
+1. Proof. - As the absolute En Soph is perfect, the Sephiroth proceeding
 therefrom must also be perfect; hence they are not created. (Answer 5.)
 
-2. Proof.—All created objects diminish by abstraction; the Sephiroth do
+2. Proof. - All created objects diminish by abstraction; the Sephiroth do
 not lessen, as their activity never ceases; hence they cannot be
 created. (Ibid.)
 
-Scholion.—The first Sephira was in the En Soph as a power before it
+Scholion. - The first Sephira was in the En Soph as a power before it
 became a reality; then the second Sephira emanated as a potency for the
 intellectual world, and afterwards the other Sephiroth emanated for the
 sensuous and material world. This, however, does not imply a prius and
@@ -2766,26 +2766,26 @@ posterius or a gradation in the En Soph, but just as a light whose
 kindled lights which shine sooner and later and variously, so it
 embraces all in a unity. (Answer 8.)
 
-5. Proposition.—The Sephiroth are both active and passive (‏מקביל
+5. Proposition. - The Sephiroth are both active and passive (‏מקביל
 ומתקבל‎).
 
-Proof.—As the Sephiroth do not set aside the unity of the En Soph, each
+Proof. - As the Sephiroth do not set aside the unity of the En Soph, each
 one of them must receive from its predecessor, and impart to its
-successor—i.e., be receptive and imparting. (Answer 9.)
+successor - i.e., be receptive and imparting. (Answer 9.)
 
-6. Proposition.—The first Sephira is called Inscrutable Height (‏רום
+6. Proposition. - The first Sephira is called Inscrutable Height (‏רום
 מעלה‎); the second, Wisdom (‏חכמה‎); the third, Intelligence (‏בינה‎);
 the fourth, Love (‏חסד‎); the fifth, Justice (‏פחד‎); the sixth, Beauty
 (‏תפארת‎); the seventh, Firmness (‏נצח‎); the eighth, Splendour
 (‏הוד‎); the ninth, the Righteous is the Foundation of the World (‏צדיק
 יסוד עולם‎); and the tenth, Righteousness (‏צדק‎).
 
-(a) Scholion.—The first three Sephiroth form the world of thought; the
+(a) Scholion. - The first three Sephiroth form the world of thought; the
 second three the world of soul; and the four last the world of
-body—thus corresponding to the intellectual, moral, and material
+body - thus corresponding to the intellectual, moral, and material
 worlds. (Answer 10.)
 
-(b) Scholion.—The first Sephira stands in relation to the soul,
+(b) Scholion. - The first Sephira stands in relation to the soul,
 inasmuch as it is called a unity (‏יחידה‎); the second, inasmuch as it
 is denominated living (‏חיה‎); the third, inasmuch as it is termed
 spirit (‏רוח‎); the fourth, inasmuch as it is called vital principle
@@ -2793,14 +2793,14 @@ spirit (‏רוח‎); the fourth, inasmuch as it is called vital principle
 sixth operates on the blood, the seventh on the bones, the eighth on
 the veins, the ninth on the flesh, and the tenth on the skin. (Ibid.)
 
-(c) Scholion.—The first Sephira is like the concealed light, the second
+(c) Scholion. - The first Sephira is like the concealed light, the second
 like sky-blue, the third like yellow, the fourth like white, the fifth
 like red, the sixth like white-red, the seventh like whitish-red, the
 eighth like reddish-white, the ninth like
 white-red-whitish-red-reddish-white, and the tenth is like the light
 reflecting all colours. [74]
 
-The gradation of the Sephiroth is as follows—
+The gradation of the Sephiroth is as follows - 
 
 
                              i
@@ -2849,7 +2849,7 @@ to be found in the Talmud. If this could be proved, the date of the
 Kabbalah would have to be altered from the twelfth to the second or
 third century after Christ. An examination, however, of the passage in
 question, upon which this opinion is based, will show how thoroughly
-fanciful it is. The passage is as follows—“The Rabbins propound, at
+fanciful it is. The passage is as follows - “The Rabbins propound, at
 first the name of twelve letters was communicated to every one, but
 when the profane multiplied, it was only communicated to the most pious
 of the priests, and these pre-eminently pious priests absorbed it from
@@ -2861,9 +2861,9 @@ Rab, the divine name of forty-two letters is only communicated to such
 as are pious, not easily provoked, not given to drinking, and are not
 self opinionated. He who knows this name and preserves it in purity, is
 beloved above, cherished below, respected by every creature, and is
-heir of both worlds—the world that now is, and the world to come.”
+heir of both worlds - the world that now is, and the world to come.”
 (Babylon Kiddushin, 71 a.) Upon this the celebrated Maimonides (born
-1135, died 1204) remarks—“Now everyone who has any intelligence knows
+1135, died 1204) remarks - “Now everyone who has any intelligence knows
 that the forty-two letters cannot possibly make one word, and that they
 must therefore have composed several words. There is no doubt that
 these words conveyed certain ideas, which were designed to bring man
@@ -2876,7 +2876,7 @@ are sometimes used to express one single thing. This must be well
 understood, that they taught the ideas indicated by these names, and
 not the simple pronunciation of the meaningless letters. Neither the
 divine name composed of twelve letters, nor the one of forty-two
-letters, ever obtained the title of Shem Ha-Mephorash—this being the
+letters, ever obtained the title of Shem Ha-Mephorash - this being the
 designation of the particular name, or the Tetragrammaton, as we have
 already propounded. As to the two former names, they assuredly convey a
 certain metaphysical lesson, and there is proof that one of them
@@ -2891,8 +2891,8 @@ them that those moral qualifications and that great preparation are
 requisite. But it is evident that the design of all this is to convey
 certain metaphysical ideas which constitute the mysteries of the divine
 Law as we have already explained. It is shewn in the metaphysical
-Treatises that it is impossible to forget science—I speak of the
-perception of the active intellect—and this is the meaning of the
+Treatises that it is impossible to forget science - I speak of the
+perception of the active intellect - and this is the meaning of the
 remark in the Talmud, ‘he [to whom the divine name of forty-two letters
 is communicated] retains what he learns.’” [79]
 
@@ -2901,7 +2901,7 @@ the erudite Franck to the conclusion that the mysteries of the Kabbalah
 were known to the doctors of the Talmud, and that the forty-two letters
 composing the divine name are the ten Sephiroth, which, by supplying
 the Vav conjunctive before the last Sephira, consist exactly of
-forty-two letters, as follows:—
+forty-two letters, as follows: - 
 
 
    5   +   5   +  3  +  3  +   5   +   5   +   5   +  4   +  4   +  3 = 42
@@ -2915,7 +2915,7 @@ long before the development of the Kabbalah, and that there were a
 certain class of people who specially devoted themselves to the study
 of this mysticism, and who styled themselves “Men of Faith” (‏בעלי
 אמונות‎), is evident from a most cursory glance at the Jewish
-literature. Based upon the remark—“The secret of the Lord is with them
+literature. Based upon the remark - “The secret of the Lord is with them
 that fear him, and he will show them his covenant,” (Ps. xxv, 14,) some
 of the most distinguished Jewish doctors in the days of Christ, and
 afterwards, claimed an attainment of superhuman knowledge, communicated
@@ -3018,7 +3018,7 @@ Ignatz Stern has shown (Ben Chananja, iii, p. 261), that the Sohar
 itself takes the ten divine names mentioned in the Bible, which it
 enumerated in vol. iii, 11 a, and which it makes to correspond to the
 ten Sephiroth, to be the sacred name composed of forty-two letters,
-viz.:—
+viz.: - 
 
 
   4   + 2  + 2  +   5   +  4   +   5   + 2  +   5   + 2  +  4   +  3  +  4   = 42
@@ -3044,7 +3044,7 @@ words; for there is no letter or word which can grasp him,” we have
 here almost the very words of Proclus, who tells us that, “although he
 is generally called the unity (τὸ ἕν) or the first, it would be better
 if no name were given him; for there is no word which can depict his
-nature—he is (ἄῤῥητος, ἄγνωστος), the inexpressible, the unknown.”
+nature - he is (ἄῤῥητος, ἄγνωστος), the inexpressible, the unknown.”
 (Theol. Plat. ii, 6.)
 
 The Kabbalah propounds that the En Soph, not being an object of
@@ -3083,9 +3083,9 @@ The great land mark in the development of the Kabbalah is the birth of
 the Sohar, which divides the history of this theosophy into two
 periods, viz., the pre-Sohar period and the post-Sohar period. During
 these two periods different schools developed themselves, which are
-classified by the erudite historian, Dr. Graetz, as follows:— [82]
+classified by the erudite historian, Dr. Graetz, as follows: - [82]
 
-I.—THE SCHOOL OF GERONA, so called from the fact that the founders of
+I. - THE SCHOOL OF GERONA, so called from the fact that the founders of
 it were born in this place and established the school in it. To this
 school, which is the cradle of the Kabbalah, belong
 
@@ -3131,10 +3131,10 @@ Kabbalah, and was initiated into its mysteries. [83] His numerous
 writings, an account of which will be found in Alexander’s edition of
 Kitto’s Cyclopædia, under Nachmanides, are pervaded with the tenets of
 this system. In the Introduction to his Commentary on the Pentateuch he
-remarks—“We possess a faithful tradition that the whole Pentateuch
+remarks - “We possess a faithful tradition that the whole Pentateuch
 consists of names of the Holy One, blessed be he; for the words may be
 divided into sacred names in another sense, so that it is to be taken
-as an allegory. Thus the words—‏בראשית ברא אלהים‎ in Gen. i, 1, may be
+as an allegory. Thus the words - ‏בראשית ברא אלהים‎ in Gen. i, 1, may be
 redivided into other words, ex. gr. ‏בראש יתברא אלהים‎. In like manner
 is the whole Pentateuch, which consists of nothing but transpositions
 and numerals of divine names.” [84]
@@ -3142,7 +3142,7 @@ and numerals of divine names.” [84]
 5. The Treatise on the Emanations (‏מסכת אצילות‎), supposed to have
 been written by R. Isaac Nasir in the first half of the twelfth
 century. The following is an analysis of this production. Based upon
-the passage—“Jaresiah and Eliah and Zichri, the sons of Jeroham” (1
+the passage - “Jaresiah and Eliah and Zichri, the sons of Jeroham” (1
 Chron. viii, 27), which names the Midrash assigns to the prophet Eliah
 (Shemoth Rabba, cap. xl), this prophet is introduced as speaking and
 teaching under the four names of Eliah b. Josep, Jaresiah b. Joseph,
@@ -3151,12 +3151,12 @@ secret and profounder views of the Deity are only to be communicated to
 the God-fearing, and that none but the pre-eminently pious can enter
 into the temple of this higher gnosis, the prophet Elias propounds the
 system of this secret doctrine, which consists in the following
-maxims—“I. God at first created light and darkness, the one for the
+maxims - “I. God at first created light and darkness, the one for the
 pious and the other for the wicked, darkness having come to pass by the
 divine limitation of light. II. God produced and destroyed sundry
 worlds, which, like ten trees planted upon a narrow space, contend
 about the sap of the soil, and finally perish altogether. III. God
-manifested himself in four worlds, viz.—Atzilah, Beriah, Jetzira and
+manifested himself in four worlds, viz. - Atzilah, Beriah, Jetzira and
 Asiah, corresponding to the Tetragrammaton ‏יהוה‎. In the Atzilatic
 luminous world is the divine majesty, the Shechinah. In the Briatic
 world are the souls of the saints, all the blessings, the throne of the
@@ -3194,9 +3194,9 @@ retribution (‏סוד הגמול‎) belonging thereto, and a peculiar
 christology, whilst the Kabbalistic mode of exegesis is still
 subordinate in it.
 
-II.—THE SCHOOL OF SEGOVIA, so called because it was founded by Jacob of
+II. - THE SCHOOL OF SEGOVIA, so called because it was founded by Jacob of
 Segovia, and its disciples were either natives of this place or lived
-in it. The chief representatives of this school are—
+in it. The chief representatives of this school are - 
 
 1, Isaac, and 2, Jacob, junior, the two sons of Jacob Segovia, and 3,
 Moses b. Simon of Burgos, who are only known by sundry fragments
@@ -3208,7 +3208,7 @@ financier in the court of Sancho IV, King of Castile, and was a great
 favourite of Queen Maria de Moline; he formed one of the cortége when
 this royal pair met Philip IV, the Fair, King of France in Bayonne
 (1290), and his advocacy of this theosophy secured for the doctrines of
-the Kabbalah a kindly reception. His works on the Kabbalah are—(a) An
+the Kabbalah a kindly reception. His works on the Kabbalah are - (a) An
 Exposition of the Talmudic Hagadoth, entitled ‏אוצר הכבוד‎, (b) A
 Commentary on Ps. xix, and (c) A Commentary on the Pentateuch, in which
 he propounds the tenets of the Kabbalah. These works, however, have not
@@ -3225,13 +3225,13 @@ The characteristic of this school is that it is devoted to exegesis,
 and its disciples endeavoured to interpret the Bible and the Hagada in
 accordance with the doctrines of the Kabbalah.
 
-III.—THE QUASI-PHILOSOPHIC SCHOOL of Isaac b. Abraham Ibn-Latif, or
+III. - THE QUASI-PHILOSOPHIC SCHOOL of Isaac b. Abraham Ibn-Latif, or
 Allatif. He was born about 1270 and died about 1390. Believing that to
 view Judaism from an exclusively philosophical stand-point does not
 shew “the right way to the sanctuary,” he endeavoured to combine
 philosophy with Kabbalah. “He laid greater stress than his predecessors
 on the close connection and intimate union between the spiritual and
-material world, between the Creator and the creation—God is in all and
+material world, between the Creator and the creation - God is in all and
 everything is in him. The human soul rises to the world-soul in earnest
 prayer, and unites itself therewith ‘in a kiss,’ operates upon the
 Deity and brings down a divine blessing upon the nether world. But as
@@ -3248,7 +3248,7 @@ they employed the numerals and letters of the alphabet. [88]
 
 
 IV. THE SCHOOL OF ABULAFIA, founded by Abraham ben Samuel Abulafia, is
-represented by—
+represented by - 
 
 1. Abulafia, the founder of it, who was born at Saragossa in 1240, and
 died circa 1292. For thirty years he devoted himself to the study of
@@ -3305,7 +3305,7 @@ Kabbalistic works.
 His Kabbalistic system may be gathered from the following analysis of
 his Rejoinder to R. Solomon ben Abraham ben Adereth, who attacked his
 doctrines and Messianic as well as prophetic pretensions. “There are,”
-says Abulafia, “four sources of knowledge—I, The five senses, or
+says Abulafia, “four sources of knowledge - I, The five senses, or
 experimental maxims; II, Abstract numbers or à priori maxims; III, The
 generally acknowledged maxims, or consensus communis; and IV,
 Transmitted doctrines or traditional maxims. The Kabbalistic tradition,
@@ -3363,7 +3363,7 @@ been published.
 
 2. Joseph Gikatilla b. Abraham (flour. 1260), disciple of Abulafia. He
 wrote in the interests and defence of this school the following
-works:—i. A Kabbalistic work entitled the Garden of Nuts (‏גנת אגוז‎),
+works: - i. A Kabbalistic work entitled the Garden of Nuts (‏גנת אגוז‎),
 consisting of three parts, and treating respectively on the import of
 the divine names, on the mysteries of the Hebrew letters, and on the
 vowel points. It was published at Hanau, 1615. ii. The import of the
@@ -3430,10 +3430,10 @@ gigantic pseudonym.
 1290–1350. Foremost among these is Menahem di Recanti, who was born in
 Recanti (Latin Recinetum) about 1290. He wrote, when about forty years
 of age (1330), a commentary on the Pentateuch, which is little else
-than a commentary on the Sohar. This commentary—which was first
+than a commentary on the Sohar. This commentary - which was first
 published by Jacob b. Chajim in Bomberg’s celebrated printing
 establishment, Venice, 1523, then again, ibid., 1545, and in Lublin,
-1595—has been translated into Latin by the famous Pico della Mirandola.
+1595 - has been translated into Latin by the famous Pico della Mirandola.
 [94]
 
 1320. At the beginning of the fourteenth century Joseph b. Abraham Ibn
@@ -3443,7 +3443,7 @@ of the Kabbalah, which is regarded as one of the best if not the best
 introductory compendium. This production, which is unpublished, and a
 MS. of which exists in the Bodleian Library (Codex Land. 119; described
 by Uri No. 384), consists of four parts or Gates, subdivided into
-chapters, as follows:—
+chapters, as follows: - 
 
 Gate I, which is entitled, On the views of the Kabbalists respecting
 the Primary Cause, blessed be he, and the Sephiroth, as well as their
@@ -3517,9 +3517,9 @@ the study of the Sohar, with editing some older works, and with writing
 Kabbalistic commentaries on the Bible, became more and more aggressive,
 denouncing in unmeasured terms their co-religionists who could not see
 the advantages of this secret doctrine. Thus Abraham b. Isaac of
-Granada—who wrote (1391–1409) a Kabbalistic work entitled The Covenant
+Granada - who wrote (1391–1409) a Kabbalistic work entitled The Covenant
 of Peace, discussing the mysteries of the names of God and the angels,
-of permutations, commutations, the vowel points and accents—declares
+of permutations, commutations, the vowel points and accents - declares
 that he who does not acknowledge God in the manner of the Kabbalah sins
 unwittingly, is not regarded by God, has not his special providence,
 and, like the abandoned and the wicked, is left to fate. [96]
@@ -3553,7 +3553,7 @@ ages, has also been adopted by advocates of other systems who were
 anxious to invest their views with the halo of antiquity.
 
 As countrymen of the foregoing writers, and as exponents of the
-opinions of older Kabbalists, are to be mentioned—(i) Jehudah Chajath
+opinions of older Kabbalists, are to be mentioned - (i) Jehudah Chajath
 who was among the large number of Jews expelled from Spain in 1493, and
 who wrote a commentary on the Kabbalistic work, entitled The Divine
 Order; [99] and (ii) Abraham Ibn Sabba, who was banished with thousands
@@ -3595,12 +3595,12 @@ Scientia animae; and 3, Shem Tob Falaquera’s ‏ספר המעלות‎
 1455–1522. Not only did Mirandola make the Kabbalah known to the
 Christians in Italy, but he was the means of introducing it into
 Germany through John Reuchlin, the father of the German Reformation.
-This eminent scholar,—who is also called by the Greek name Capnion
+This eminent scholar, - who is also called by the Greek name Capnion
 (καπνίον), or Capnio, which is a translation of his German name
 Reuchlin, i.e. smoke, in accordance with the fashion of the time; just
 as Gerard, signifying amiable, assumed the name of Desiderius Erasmus,
 and Schwartzerth, denoting black earth, took the name of
-Melanchthon,—was born at Phorzheim December 28, 1455. At the age of
+Melanchthon, - was born at Phorzheim December 28, 1455. At the age of
 seventeen he was called to the court of Baden, and received among the
 court singers in consequence of his beautiful voice. His brilliant
 attainments soon attracted notice, and he was sent (1473) with the
@@ -3689,7 +3689,7 @@ shall find that each of them has equally a recondite meaning. The first
 letter ‏י‎, which also stands for the number ten, and which by its form
 reminds us of the mathematical point, teaches us that God is the
 beginning and end of all things. The number five, expressed by ‏ה‎ the
-second letter, shows us the union of God with nature—of God inasmuch as
+second letter, shows us the union of God with nature - of God inasmuch as
 he is depicted by the number three, i.e., the Trinity; and of visible
 nature, inasmuch as it is represented by Plato and Pythagoras under the
 dual. The number six, expressed by ‏ו‎, the third letter, which is
@@ -3783,7 +3783,7 @@ exercised upon the greatest thinkers of the time and upon the early
 reformers may be judged of from the unmeasured terms of praise which
 they bestowed upon their author. The Treatises were regarded as
 heavenly communications, revealing new divine wisdom. Conrad
-Leontarius, writing to Wimpheling on the subject, says—“I never saw
+Leontarius, writing to Wimpheling on the subject, says - “I never saw
 anything more beautiful or admirable than this work (i.e., De Verbo
 Mirifico), which easily convinces him who reads it that no philosopher,
 whether Jew or Christian, is superior to Reuchlin.” Aegidius, general
@@ -3854,7 +3854,7 @@ seen from the following specimen of his lucubrations on the nature of
 the Deity. “The knowledge of the Creator is different from that of the
 creature, since in the case of the latter, knowledge and the thing
 known are distinct, thus leading to subjects which are again separate
-from him. This is described by the three expressions—cogitation, the
+from him. This is described by the three expressions - cogitation, the
 cogitator and the cogitated object. Now the Creator is himself
 knowledge, knowing and the known object. His knowledge does not consist
 in the fact that he directs his thoughts to things without him, since
@@ -3948,9 +3948,9 @@ of the Jewish faith in bygone days, refuting at the same time the
 philosophico-theological arguments advanced in its favour. [114] It is,
 however, his second attack on this esoteric doctrine, in his work
 entitled The Roaring Lion (‏ארי נוהם‎), which is so damaging to the
-Kabbalah. In this Treatise—which Leo de Modena composed in 1639, at the
+Kabbalah. In this Treatise - which Leo de Modena composed in 1639, at the
 advanced age of sixty-eight, to reclaim Joseph Chamiz, a beloved
-disciple of his, who was an ardent follower of the Kabbalah—he shows
+disciple of his, who was an ardent follower of the Kabbalah - he shows
 that the books which propound this esoteric doctrine, and which are
 palmed upon ancient authorities, are pseudonymous; that the doctrines
 themselves are mischievous; and that the followers of this system are
@@ -4024,7 +4024,7 @@ and led by Sabbatai Zevi back to Jerusalem. The consuls of Europe were
 ordered to enquire into this extraordinary movement, and the governors
 of the East reported to the Sultan the cessation of commerce. Sabbatai
 Zevi was then arrested by order of the Sultan, Mohammed IV, and taken
-before him at Adrianople. The Sultan spoke to him as follows—“I am
+before him at Adrianople. The Sultan spoke to him as follows - “I am
 going to test thy Messiahship. Three poisoned arrows shall be shot into
 thee, and if they do not kill thee, I too will believe that thou art
 the Messiah.” He saved himself by embracing Islamism in the presence of
@@ -4051,7 +4051,7 @@ publish the celebrated work entitled the Unveiled Kabbalah (Kabbala
 Denudata), in two large volumes, the first of which was printed at
 Sulzbach, 1677–78, and the second at Frankfort-on-the-Maine, 1684,
 giving a Latin translation of the Introduction to and the following
-portion of the Sohar—the Book of Mysteries (‏ספר דצניעותא‎); the Great
+portion of the Sohar - the Book of Mysteries (‏ספר דצניעותא‎); the Great
 Assembly (‏אדרא רבא‎); the Small Assembly (‏אדרא זוטא‎); Joseph
 Gikatilla’s Gate of Light (‏שער אורה‎); the Doctrine of Metempsychosis
 (‏הגלגולים‎), and the Tree of Life (‏עץ חיים‎), of Chajim Vital; the
@@ -4214,12 +4214,12 @@ Jerusalem and Tiberias, devotes seventy pages to a description of the
 Kabbalah. It might have been expected that this industrious writer, who
 draws upon Jewish sources, would give us the result of the researches
 of the above-named Hebraists. But Dr. Etheridge has done no such
-thing;—he confuses the import of the Book Jetzira, the Maase Bereshith
+thing; - he confuses the import of the Book Jetzira, the Maase Bereshith
 (‏מעשה בראשית‎) and the Maase Merkaba (‏מעשה מרכבה‎), with the
 doctrines of the Kabbalah; and assigns both to the Book Jetzira and to
 the Sohar an antiquity which is contrary to all the results of modern
 criticism. The following extract from his work will suffice to shew the
-correctness of our remarks:—
+correctness of our remarks: - 
 
 “To the authenticity of the Zohar, as a work of the early Kabbalistic
 school, objections have indeed been made, but they are not of
@@ -4420,7 +4420,7 @@ transplanted. (Gen. v, 24.) Metatron, moreover, is the Presence Angel
 (Exod. xxiii, 21); he is the visible manifestation of the Deity, for in
 him is the name of the Lord, i.e., his name and that of the Deity are
 identical, inasmuch as they are of the same numerical value
-(viz.:—‏שדי‎ and ‏מטטרון‎ are the same according to the exegetical rule
+(viz.: - ‏שדי‎ and ‏מטטרון‎ are the same according to the exegetical rule
 called Gematria, ‏י‎ 10 + ‏ד‎ 4 + ‏ש‎ 300 = 314; ‏ן‎ 50 + ‏ו‎ 6 + ‏ר‎
 200 + ‏ט‎ 9 + ‏ט‎ 9 + ‏מ‎ 40 = 314. See Rashi on Exod. xxiii, 21,
 ‏רבותינו אמרו זה מטטרון ששמו כשם רבו מטטרון בגמטריא שדי‎ and Sanhedrim
@@ -4526,10 +4526,10 @@ which encloses the Holy of Holies.”
 דלא עלם בגווייהו. זוהר חלק ג דף קד א ,ב‎
 
 [20] The two kinds of faculties, as well as the two sorts of feelings,
-are also mentioned in the Talmud. Thus it is said—“All the prophets
+are also mentioned in the Talmud. Thus it is said - “All the prophets
 looked into the Non-Luminous Mirror, whilst our teacher, Moses, looked
 into the Luminous Mirror.” (‏כל הנביאים נסהכלו באספקלריא שאינה מאירה
-משה רבינו נסתכל באספקלריא המאידה‎ Jebamoth, 49 b). And again—“Also the
+משה רבינו נסתכל באספקלריא המאידה‎ Jebamoth, 49 b). And again - “Also the
 divine service which is engendered by fear and not by love, has its
 merit.” (Jerusalem Berachoth, 44; Babylon Sota, 22 a.)
 
@@ -4591,7 +4591,7 @@ And it is replied that these narratives contain another sense besides
 the literal one. (Sanhedrim, 99 b.) Hence the rule (‏כל מה שאירע לאבות
 סימן לבנים‎), what happened to the fathers is typical of the children.
 
-[26] Origen’s words are almost literally the same—“Si adsideamus
+[26] Origen’s words are almost literally the same - “Si adsideamus
 litterae et secundum hoc vel quod Judaeis, vel quod vulgo videtur,
 accipiamus quæ in lege scripta sunt, erubesco dicere et confiteri quia
 tales leges dederit Deus: videbuntur enim magis elegantes et
@@ -4638,8 +4638,8 @@ manner was also propounded by the Jewish doctors generally, long before
 the existence of the Kabbalah (Comp. Ginsburg, Historical and Critical
 Commentary on Ecclesiastes, Longman, 1861, p. 30), and has been adopted
 by some of the fathers and schoolmen. Origen, although only advocating
-a threefold sense, viz.:—σωματικὸς, ψυχικὸς, πνευματικὸς, to correspond
-to the Platonic notion of the component parts of man, viz.:—σῶμα, ψυχὴ,
+a threefold sense, viz.: - σωματικὸς, ψυχικὸς, πνευματικὸς, to correspond
+to the Platonic notion of the component parts of man, viz.: - σῶμα, ψυχὴ,
 πνεῦμα, almost uses the same words as the Kabbalah. “The sentiments of
 Holy Scriptures must be imprinted upon each one’s soul in a threefold
 manner, that the more simple may be built up by the flesh (or body) of
@@ -4652,7 +4652,7 @@ by the spiritual law, having a shadow of good things to come. περὶ
 Whilst Nicholas de Lyra, the celebrated commentator and forerunner of
 the Reformation (born about 1270, died October 23, 1340), distinctly
 espouses the Jewish four modes of interpretation, which he describes in
-the following couplet—
+the following couplet - 
 
        “Littera gesta docet, quid credas Allegoria,
         Moralis quid agas, quo tendas anagogia.”
@@ -4669,7 +4669,7 @@ tradition as a prophecy respecting Habakkuk, who, as Isaiah foresaw,
 would in coming days use the very words here predicted. (Comp. Isa.
 xxi, 8, 9, with Hab. ii, 1); and this interpretation is obtained by
 rule i; inasmuch as ‏אריה‎ lion and ‏חבקוק‎ Habakkuk are numerically
-the same, viz.:—
+the same, viz.: - 
 
 	  ‏ה‎   ‏י‎    ‏ר‎     ‏א‎       and ‏ק‎     ‏ו‎   ‏ק‎     ‏ב‎   ‏ח‎
 	  5 + 10 + 200 + 1 = 216 and 100 + 6 + 100 + 2 + 8 = 216
@@ -5007,7 +5007,7 @@ ed. Lemberg, 1811.
 Gaon on Pericope ‏וישלח‎ remarks as follows ‏כי פירוש פסוק זה הוא איש
 מפי איש עד ר׳ יצחק בן הרב [ראב״ד] עד אליהו הנביא‎ In another
 Kabbalistic work, entitled ‏בדי הארון ומגדל חננאל‎ which he completed
-at Tafet in 1355, he says—‏ורבי עזרא ורבי עזריאל מגירונה חברו פירוש
+at Tafet in 1355, he says - ‏ורבי עזרא ורבי עזריאל מגירונה חברו פירוש
 ההגדות על פי קבלה והוסיף עזרא לחבר פירוש התפילות.... כמו שקבלו מרבי
 יצחק סגי נהור‎ These two works are still in MS, and the quotations are
 given in Cormoly’s Itinéraris, p. 276, and in Graetz’s Geschichte der
@@ -5050,7 +5050,7 @@ part ii, Leipzig, 1852, p. xiii, &c.
 [88] Comp. Graetz, Geschichte der Juden, vol. vii, p. 221, &c.
 
 [89] This will be seen from the reduction of the respective names to
-their numerical value by the rule Gematria, viz.:—
+their numerical value by the rule Gematria, viz.: - 
 
        ‏ל‎ 30 + ‏א‎ 1 + ‏י‎ 10 + ‏ז‎ 7 + ‏ר‎ 200       = 248;
        ‏ו‎ 6 + ‏ה‎ 5 + ‏י‎ 10 + ‏ר‎ 200 + ‏כ‎ 20 + ‏ז‎ 7 = 248;

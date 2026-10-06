@@ -963,6 +963,11 @@
   // what it used to be.
   function _opinionKey(actorId) {
     if (actorId == null) return null;
+    // The person, not the seat: a recruit who takes Actor 2 over must not
+    // inherit how the town felt about whoever sat there before (PartyPerson).
+    const actor = typeof $gameActors !== "undefined" && $gameActors ? $gameActors.actor(actorId) : null;
+    const uid = actor && window.PartyPerson ? window.PartyPerson.uidOf(actor) : null;
+    if (uid) return `u${uid}`;
     const VP = window.PartyPresence;
     const slot = VP && typeof VP.currentSlot === 'function' ? VP.currentSlot() : 0;
     return slot > 0 ? VP.memberKey(slot, actorId) : String(actorId);

@@ -5,109 +5,163 @@
       "{Dovrei portare|Magari prendo} qualcosa di carino a {partner} tornando a casa.",
       "{partner} {mi chiederà|vorrà sapere} com'è andata la giornata. {Cosa gli dico|Mi inventerò qualcosa}.",
       "{Chissà cosa|Scommetto che} {partner} sta facendo adesso.",
-      "Stasera a casa da {partner}. {È la parte bella della giornata|La parte migliore, davvero}."
+      "Stasera a casa da {partner}. {È la parte bella della giornata|La parte migliore, davvero}.",
+      "{partner} stamattina ha lasciato un biglietto sul {frigo|tavolo della cucina}. {Ce l'ho ancora in tasca|L'ho tenuto}.",
+      "Io e {partner} non abbiamo mai aggiustato {quel rubinetto che gocciola|quella porta che cigola}. {Forse questo fine settimana|Un giorno}.",
+      "{partner} canticchia quando cucina. {Faccio finta di niente|Il suono più bello di casa}."
     ],
     "familyPoly": [
       "{partner} e {partner2} vogliono cenare entrambi da me. {Il calendario sul frigo è una guerra|Serve un tavolo più grande}.",
       "Tre compleanni da ricordare, ora. {partner} non mi perdonerebbe mai se me lo scordassi.",
       "{partner} dice che {partner2} ha finito il caffè. {Io non c'entro|Non è la mia battaglia}.",
-      "Mi chiedono come funziona con {partner} e {partner2}. {Pazienza e un buon calendario|Come tutti, ma più rumoroso}."
+      "Mi chiedono come funziona con {partner} e {partner2}. {Pazienza e un buon calendario|Come tutti, ma più rumoroso}.",
+      "Pranzo della domenica per {partner}, {partner2} e me. {Tre opinioni sul sale|Nessuno è d'accordo sulla pasta}.",
+      "{partner2} ha aggiustato la caldaia mentre {partner} reggeva la torcia. {Lavoro di squadra|Io ho fatto il tè}.",
+      "I vicini ancora {fissano|bisbigliano} su {partner} e {partner2}. {Lasciali fare|Peggio per loro}."
     ],
     "familyLongDistance": [
       "{partner} è così lontano. {Un'altra lettera stasera|Chiamo quando la tariffa scende}.",
       "{Conto|Sto ancora contando} i giorni che mancano per rivedere {partner}.",
       "Una storia a distanza con {partner}. {La bolletta del telefono è una piccola tragedia|Vale ogni francobollo}.",
-      "Tengo l'ultima cartolina di {partner} nel {cappotto|portafoglio}."
+      "Tengo l'ultima cartolina di {partner} nel {cappotto|portafoglio}.",
+      "{partner} dice che i treni sono di nuovo in sciopero. {Ma certo|Un altro mese lontani}.",
+      "Tengo una cartina con una puntina dove sta {partner}. {Sentimentale, lo so|Mi aiuta}.",
+      "Metto da parte ogni euro per il biglietto da {partner}. {Presto|Il mese prossimo, se il pullman regge}."
     ],
     "familyAnniversary": [
       "{years} anni con {partner} questo mese. {Dove sono finiti|Sembra la settimana scorsa}.",
       "Si avvicina l'anniversario. {Non ho ancora comprato niente|Dei fiori, magari. O una bella cena}.",
       "{years} anni e {partner} ride ancora alle mie battute. {Quasi sempre|A volte}.",
-      "Dovrei prenotare un tavolo per me e {partner}. {years} anni se lo meritano."
+      "Dovrei prenotare un tavolo per me e {partner}. {years} anni se lo meritano.",
+      "{years} anni. {partner} mi ruba ancora le coperte. {Certe cose non cambiano|Tradizione}.",
+      "Ho trovato le vecchie foto del primo anno con {partner}. {Guarda che taglio di capelli|Eravamo così giovani}.",
+      "Dovrei {scrivere una poesia|cucinare il piatto del primo appuntamento} per {partner}? {Rischioso|Coraggioso}."
     ],
     "familyPregnant": [
       "{Il bambino ha scalciato di nuovo|Un altro calcio}. {Qualcuno ha fretta|Ciao anche a te, piccolo}.",
       "Mi fa male tutto e {non riesco a smettere di sorridere|ho di nuovo una fame da lupi}.",
       "{partner} continua a chiedermi se mi serve qualcosa. {Una schiena nuova, grazie|Cetrioli. Sempre cetrioli}.",
-      "I nomi. {Non abbiamo|Ancora non abbiamo} un nome."
+      "I nomi. {Non abbiamo|Ancora non abbiamo} un nome.",
+      "I miei piedi {sono spariti|sono un ricordo}. Non li vedo da settimane.",
+      "Tutti vogliono toccare la pancia. {Chiedete prima|Non è un portafortuna}.",
+      "Il piccolo {ha il singhiozzo|scalcia} ogni volta che mi sdraio. {Già nottambulo|Ha preso da {partner}}."
     ],
     "familyPartnerPregnant": [
       "{partner} aspetta un bambino. {Diventerò genitore|Genitore. Io}.",
       "Devo dipingere la stanzetta prima che arrivi il bambino.",
       "{partner} vuole i cetrioli alle tre di notte. {Troverò dei cetrioli|Dove si trovano cetrioli alle tre}.",
-      "{Sono pronto|Nessuno è pronto} per questo? {Respiro profondo|Un giorno alla volta}."
+      "{Sono pronto|Nessuno è pronto} per questo? {Respiro profondo|Un giorno alla volta}.",
+      "Ho letto un libro intero sui neonati. {Ne ho capito metà|Parlava soprattutto di pannolini}.",
+      "La culla è arrivata a pezzi. {Quaranta viti e nessuna istruzione|Avanzano tre viti}.",
+      "{partner} è raggiante. {Io sudo|Io sono solo stanco}."
     ],
     "familyNewborn": [
       "{child} si è svegliato {quattro|cinque} volte stanotte. {Ho dimenticato cos'è il sonno|Caffè. Subito}.",
       "Oggi {child} mi ha stretto il dito e non lo mollava più.",
       "Pannolini, biberon, pannolini. Ora in questa casa comanda {child}.",
-      "{È normale|Sarà normale} che {child} pianga così tanto? {Chiederò al medico|Dicono tutti di sì}."
+      "{È normale|Sarà normale} che {child} pianga così tanto? {Chiederò al medico|Dicono tutti di sì}.",
+      "Oggi {child} ha starnutito. {Si è fermata tutta la casa|La cosa più bella che abbia mai visto}.",
+      "Ho cantato a {child} fino alle tre di notte. {Tutte le canzoni che so|Due volte}.",
+      "{child} ha il mio {naso|mento}. {Poverino|Che fortuna}."
     ],
     "familyChildren": [
       "{child} ha la recita a scuola la settimana prossima. {Non devo dimenticarlo|In prima fila, l'ho promesso}.",
       "{child} mi ha chiesto perché il cielo è blu. {Ho detto magia|Ho detto di chiedere alla maestra}.",
       "Devo andare a prendere {child} prima che chiudano i negozi.",
-      "{child} cresce così in fretta. {Di nuovo scarpe nuove|I pantaloni sono già corti}."
+      "{child} cresce così in fretta. {Di nuovo scarpe nuove|I pantaloni sono già corti}.",
+      "{child} ha portato a casa {una rana|un disegno di me con sei braccia}. {Fiero|Confuso}.",
+      "Stasera colloqui con gli insegnanti. La maestra di {child} vuole parlarmi. {Oh oh|Vedremo}.",
+      "{child} vuole un cane. {Di nuovo|Tutti i santi giorni}."
     ],
     "familyAdultChild": [
       "{child} non chiama mai. {Sarà impegnato|Gli scriverò io}.",
       "{Fiero|Così fiero} di {child}. Non che lo direi ad alta voce.",
       "{child} ha la sua vita, ora. {Strana sensazione|Casa silenziosa}.",
-      "Chissà se {child} mangia come si deve."
+      "Chissà se {child} mangia come si deve.",
+      "{child} ha telefonato domenica. {Venti minuti|Non ha chiesto niente}. {Una bella settimana|Miracoli}.",
+      "Ho lasciato la vecchia stanza di {child} com'era. {Non si sa mai|Che sciocchezza}.",
+      "Adesso {child} mi manda soldi. {Non l'ho mai chiesto|Il mondo alla rovescia}."
     ],
     "familyParents": [
       "Dovrei andare a trovare {parent} questo fine settimana.",
       "{parent} avrebbe qualcosa da ridire su questo. {Come sempre|Non smette mai}.",
       "{parent} sta invecchiando. {Lo noto di più ora|Le scale sono più dure}.",
-      "La cucina di {parent}. {Niente la batte|Non riesco ancora a farla uguale}."
+      "La cucina di {parent}. {Niente la batte|Non riesco ancora a farla uguale}.",
+      "{parent} conserva tutte le lettere che gli ho mandato. {In una scatola da scarpe|Con tanto di nastro}.",
+      "{parent} ha chiamato per chiedere se porto la maglia della salute. {Sono grande|In effetti sì}.",
+      "Ogni anno parlo sempre più come {parent}. {Aiuto|Doveva succedere}."
     ],
     "familySiblings": [
       "{sibling} mi deve ancora dei soldi. {Dai tempi della scuola|Da anni}.",
       "È un po' che non vedo {sibling}. {Dovrei chiamare|Devo scrivere}.",
       "Io e {sibling} da piccoli litigavamo come gatti. {Ora mi manca|Ora andiamo d'accordo}.",
-      "{sibling} è sempre stato il preferito della mamma. {Va bene|Pazienza}."
+      "{sibling} è sempre stato il preferito della mamma. {Va bene|Pazienza}.",
+      "{sibling} si sposa. {Con chi|Alla terza va bene}?",
+      "{sibling} ha ancora {i miei dischi|il mio maglione migliore}. {Da anni|Lo rivoglio}.",
+      "{sibling} ha scritto. Due righe, tutte e due sui soldi. {Tipico|Un classico}."
     ],
     "familyBreakup": [
       "{Non ci credo ancora|Faccio fatica a crederci}, con {ex} è finita.",
       "Continuo a mettere fuori due tazze. {Abitudine|Stupida abitudine}.",
       "{ex} {si è preso la padella buona|si è tenuto i dischi}. {Va bene|Ovvio}.",
-      "Forse stare da solo {per un po'|di nuovo} non è così male."
+      "Forse stare da solo {per un po'|di nuovo} non è così male.",
+      "Ho tolto la foto di {ex} dal muro. {È rimasto un quadrato pulito|Il chiodo c'è ancora}.",
+      "Da quando io e {ex} ci siamo lasciati gli amici mi invitano sempre fuori. {Gentili|Non sono pronto}.",
+      "Ho sentito la nostra canzone alla radio. {Ho cambiato stazione|L'ho alzata, poi spenta}."
     ],
     "familyWidowed": [
       "A {ex} sarebbe piaciuta oggi. {Era il suo tempo|Era la sua giornata}.",
       "La casa è così silenziosa senza {ex}.",
       "A volte parlo ancora con {ex}. {Nessuno deve saperlo|Mi aiuta}.",
-      "Il cappotto di {ex} è ancora vicino alla porta. {Non riesco a spostarlo|Non ancora}."
+      "Il cappotto di {ex} è ancora vicino alla porta. {Non riesco a spostarlo|Non ancora}.",
+      "Ho apparecchiato di nuovo per due. {Vecchia abitudine|L'ho lasciato così}.",
+      "L'orto di {ex} sta crescendo da solo. {L'aveva piantato bene|Testardo, come lui}.",
+      "Vado sulla tomba di {ex} la domenica. {Fiori freschi|Gli racconto le novità}."
     ],
     "familyMovedOut": [
       "Casa nuova, {muri nuovi|stesso me}. Andarmene è stata {la scelta giusta|più dura del previsto}.",
       "Ho lasciato la casa a {ex}. {Scatoloni ovunque|Metà delle mie cose sono ancora negli scatoloni}.",
       "Prima notte nel posto nuovo. {Rumori strani|I tubi battono}.",
-      "Ricomincio da {una stanza in affitto|una stanza singola}. {Poteva andare peggio|È un inizio}."
+      "Ricomincio da {una stanza in affitto|una stanza singola}. {Poteva andare peggio|È un inizio}.",
+      "Ho comprato il mio bollitore. {Piccola vittoria|Mio, tutto mio}.",
+      "Il nuovo padrone di casa è {impiccione|sordo}. {Poteva andare peggio|Poteva andare meglio}.",
+      "Ho ancora la chiave della vecchia casa. {Dovrei restituirla|Non ancora}."
     ],
     "familyPartnerAway": [
       "{partner} è in viaggio. {Il letto è troppo grande|La casa è troppo silenziosa}.",
       "{partner} ha mandato una cartolina. {Vorrei essere lì|Sembra caldo}.",
       "{partner} torna presto. {Devo mettere in ordine|Meglio nascondere i piatti}.",
-      "Cucino per uno mentre {partner} è via. {Di nuovo pane tostato|Di nuovo minestra}."
+      "Cucino per uno mentre {partner} è via. {Di nuovo pane tostato|Di nuovo minestra}.",
+      "Ho pulito tutto l'appartamento per il ritorno di {partner}. {Poi ho fatto un disastro cucinando|Due volte}.",
+      "{partner} ha chiamato dall'albergo. {Linea pessima, belle notizie|Tre minuti, ne valeva la pena}.",
+      "Il cane continua ad aspettare {partner} vicino alla porta. {Anch'io|Pure io}."
     ],
     "familyParentalLeave": [
       "Congedo parentale. {Più dura di qualsiasi turno|Nessuno mi aveva detto che era un doppio turno}.",
       "A casa con {child} tutto il giorno. {Ogni giorno è lunedì|Ho imparato tutte le ninne nanne}.",
       "Il lavoro sembra un'altra vita. Ora il mio lavoro è {child}.",
-      "{Un pisolino|Dieci minuti di silenzio}. Chiedo solo questo."
+      "{Un pisolino|Dieci minuti di silenzio}. Chiedo solo questo.",
+      "{child} mi ha sorriso per la prima volta. {Vale ogni notte insonne|Ho pianto un po'}.",
+      "Non parlo con un adulto da martedì. {È giovedì|Che giorno è}?",
+      "Le mamme della panchina al parco mi hanno adottato. {Sanno tutto|Consigli gratis tutto il giorno}."
     ],
     "familyRefugeeKin": [
       "Nessuna lettera da {kin} questo mese. {Nei campi non c'è posta|Spero stia bene}.",
       "{kin} è fuggito dall'Orda con {niente|una valigia}. Dovrei mandare dei soldi.",
       "{kin} dice che nel campo di notte fa freddo. {Manderò coperte|Manderò un cappotto}.",
-      "Quando potrà tornare a casa {kin}?"
+      "Quando potrà tornare a casa {kin}?",
+      "Ho spedito un pacco a {kin}. {Calzini, sapone, qualche soldo|Quello che stava nella scatola}.",
+      "{kin} potrebbe stare da noi. {Se arrivano i documenti|Faremo spazio}.",
+      "Tengo l'ultima lettera di {kin} vicino alla radio. {Nel caso ci siano notizie|A ogni notiziario}."
     ],
     "kidNewborn": [
       "*ueee*",
       "*singhiozzo* *ueeee*",
       "*gorgoglia*",
-      "*singhiozza e piange*"
+      "*singhiozza e piange*",
+      "*sbadiglia*",
+      "*ueee* *ueee*",
+      "*fa versetti*"
     ],
     "kidChild": [
       "{Voglio|Posso avere} un gelato!",
@@ -115,199 +169,764 @@
       "{Sono un drago|Sono un cavaliere}! {Roaar|Ah}!",
       "{È già|Quando è} il mio compleanno?",
       "Domani non voglio andare a scuola.",
-      "{Guarda|Guarda guarda}! Un {insetto|coleottero}!"
+      "{Guarda|Guarda guarda}! Un {insetto|coleottero}!",
+      "{Da grande|Un giorno} {volerò|avrò un castello}!"
     ],
     "workSick": [
       "A casa in malattia. {Io e il soffitto ormai siamo amici|Tè e coperte}.",
       "{Il medico dice riposo|Riposo, hanno detto}. {Facile a dirsi|Mi annoio già}.",
       "Spero che al lavoro se la cavino senza di me. {Probabilmente sì|Probabilmente no}.",
-      "Un altro giorno di malattia {a tossire|a tirare su col naso}."
+      "Un altro giorno di malattia {a tossire|a tirare su col naso}.",
+      "Ancora minestra. {Chi l'ha inventata merita una medaglia|La quarta scodella}.",
+      "Il certificato del medico dice una settimana. {Il capo ne sarà felice|Una settimana intera}.",
+      "Ho visto tutti i quiz in TV. {Ora so tutte le risposte|Inutile, tutto quanto}."
     ],
     "workUnemployed": [
       "Un altro giorno senza lavoro. {I giornali non hanno niente|Niente negli annunci}.",
       "L'affitto scade e non entra {niente|neanche un soldo}.",
       "Mi lamentavo del mio lavoro. {Cosa darei|Me lo riprenderei subito}.",
-      "{Forse|Magari} dovrei provare in un'altra città. Qui non c'è niente."
+      "{Forse|Magari} dovrei provare in un'altra città. Qui non c'è niente.",
+      "Tre colloqui questa settimana. {Tre no|Nessuno ha richiamato}.",
+      "Ho cerchiato tutti gli annunci sul giornale. {In rosso|Due volte}.",
+      "A questo punto spazzerei le strade. {Lavoro onesto|Qualsiasi cosa}."
     ],
     "workAfterShift": [
       "Turno finito. {I piedi|La schiena} {mi odiano|sono distrutti}.",
       "Un'altra giornata da {job}, qualche altro soldo.",
       "{Meno male|Grazie al cielo} che il turno è finito.",
-      "Domani di nuovo {job}. {Che gioia|Meraviglioso}."
+      "Domani di nuovo {job}. {Che gioia|Meraviglioso}.",
+      "Timbrato. {Non un minuto di ritardo|Non un minuto di più}.",
+      "Mi porto ancora addosso l'odore del lavoro da {job}. {Bagno caldo|Dritto sotto la doccia}.",
+      "Oggi il capo {ha detto bravo|non ha urlato}. {Segnatelo sul calendario|Un miracolo}."
     ],
     "travelAway": [
       "{place} è bellissima, ma mi manca il mio letto.",
       "{Devo mandare|Dovrei mandare} una cartolina a casa da {place}.",
       "A {place} tutto costa il doppio. {Prezzi da turisti|Ovviamente}.",
-      "Ancora qualche giorno a {place}, poi a casa."
+      "Ancora qualche giorno a {place}, poi a casa.",
+      "I letti a {place} sono {troppo morbidi|di pietra}. {Non riesco a dormire|Tutte le notti}.",
+      "Ho comprato un souvenir stupido a {place}. {Una palla di neve|Uno strofinaccio}.",
+      "A {place} la gente parla così {veloce|forte}. {Annuisco e basta|Sto imparando}."
     ],
     "travelOnRoad": [
       "{Ancora ore|Mancano ore} per {place}. {Ho le gambe rigide|Dovevo portarmi un libro}.",
       "In viaggio per {place}. {Spero che la stanza sia prenotata|Speriamo nel tempo}.",
       "A {place} prima di notte, {se la strada regge|con un po' di fortuna}.",
-      "Viaggiare è per il novanta per cento aspettare."
+      "Viaggiare è per il novanta per cento aspettare.",
+      "L'autista non si è mai fermato. {La mia vescica non è d'accordo|Volontà di ferro}.",
+      "Conto {le mucche|i cartelli} per passare il tempo. {Ho perso il conto|Quarantadue}.",
+      "Non vedo l'ora di arrivare a {place}. {Panini finiti|La cartina è al contrario}."
     ],
     "travelEmigrate": [
       "{Forse è ora|Potrebbe essere ora} di lasciare {country} per sempre.",
       "Dicono che all'estero c'è lavoro. {Niente mi trattiene qui|Cosa mi resta qui}?",
       "Ho ricominciato a guardare le mappe. {Da qualche altra parte|Ovunque ma non qui}.",
-      "Se le cose non migliorano entro primavera, faccio le valigie."
+      "Se le cose non migliorano entro primavera, faccio le valigie.",
+      "Mio cugino all'estero dice che c'è {tanto lavoro|da guadagnare bene}. {Allettante|Molto allettante}.",
+      "Sto imparando qualche parola di un'altra lingua. {Non si sa mai|Per dopo}.",
+      "Questo mese ho fatto e disfatto la valigia due volte. {Non riesco a decidere|Quasi}."
     ],
     "travelNewcomer": [
       "Mi sto ancora abituando a questa città. {Le strade sembrano tutte uguali|Mi perdo ogni giorno}.",
       "Mi manca casa. {Il cibo, soprattutto|La gente, soprattutto}.",
       "Qui nessuno sa ancora il mio nome. {Cambierà|Ci vuole tempo}.",
-      "Città nuova, nuovo inizio. {Incrociamo le dita|Vediamo}."
+      "Città nuova, nuovo inizio. {Incrociamo le dita|Vediamo}.",
+      "Il fornaio qui {sa già cosa prendo|mi chiama per nome}. {Progressi|Che bello}.",
+      "Mi sono iscritto al {coro|club di bowling} per conoscere gente. {Cantano malissimo|Brava gente}.",
+      "Ho trovato una scorciatoia {per il mercato|per il parco}. {Mi sento già del posto|Ci sto arrivando}."
     ],
     "warOurs": [
       "{Siamo in guerra con|Ancora in guerra con} {enemy}. {Quando finirà|Quanto durerà stavolta}?",
       "Richiamano altri uomini contro {enemy}. {Spero non nella mia via|Non di nuovo}.",
       "{power} contro {enemy}. {Altri funerali|Altre tessere annonarie}, la guerra porta solo questo.",
-      "Ogni notiziario ormai parla di {enemy}."
+      "Ogni notiziario ormai parla di {enemy}.",
+      "Di nuovo le tessere annonarie. {Lo zucchero sparisce per primo|Niente più caffè}.",
+      "Il ragazzo della porta accanto {è partito|ha ricevuto la cartolina} per il fronte contro {enemy}.",
+      "Di nuovo le tende oscuranti. {Non si sa mai|Dicono che è meglio così}."
     ],
     "warFront": [
       "{enemy} vuole {country}. {Dovranno prendersela|Solo sul mio cadavere}.",
       "Se il fronte si sposta, tocca a {country}. {Dovrei preparare una borsa|Teniamo la cantina piena}.",
       "I cannoni oltre il confine {mi hanno tenuto sveglio|hanno svegliato il cane} di nuovo.",
-      "{country} non può resistere per sempre contro {enemy}."
+      "{country} non può resistere per sempre contro {enemy}.",
+      "Il pane finisce a mezzogiorno ormai. {Tutti fanno scorte|I camion non arrivano}.",
+      "Questa settimana la scuola è un ospedale da campo. {I bambini sono a casa|Brande in palestra}.",
+      "Ho messo il nastro sui vetri. {Come faceva mia nonna|È già qualcosa}."
     ],
     "warFar": [
       "{power} e {enemy} ci risiamo. {Lontano da qui, per fortuna|Meno male che non siamo noi}.",
       "Ho visto le notizie della guerra di {power}. {Terribile|Poveretti}.",
       "{power} contro {enemy}. {I prezzi saliranno anche qui|Entro l'inverno lo vedremo nel prezzo del pane}.",
-      "Qualcuno dovrebbe fermare {power} e {enemy} prima che si allarghi."
+      "Qualcuno dovrebbe fermare {power} e {enemy} prima che si allarghi.",
+      "La radio non parla d'altro che di {power} e {enemy}. {Sono passato alla musica|L'ho spenta}.",
+      "La benzina è aumentata per colpa di {power} e {enemy}. {Paghiamo sempre noi|Ovvio}.",
+      "In chiesa una colletta per i profughi della guerra con {enemy}. {Ho dato quello che potevo|Ogni cosa aiuta}."
     ],
     "warPeace": [
       "Pace con {enemy}, finalmente. {Ci crederò quando la vedrò|Speriamo che tenga}.",
       "L'ONU ha fatto davvero qualcosa. {C'è una prima volta per tutto|I miracoli succedono}.",
       "I soldati tornano a casa dal fronte di {enemy}.",
-      "Una pace firmata sulla carta. {La carta brucia|Meglio di niente}."
+      "Una pace firmata sulla carta. {La carta brucia|Meglio di niente}.",
+      "Il figlio del vicino è tornato dal fronte. {Più magro|Più silenzioso}, ma a casa.",
+      "Le campane hanno suonato per la pace. {La prima volta da mesi|Hanno pianto tutti}.",
+      "Forse adesso il prezzo del pane scende. {Forse|Sperare non costa}."
     ],
     "hordeFleeing": [
       "Abbiamo lasciato {from} con {quello che potevamo portare|nient'altro che i cappotti addosso}.",
       "I goblin hanno preso {from}. {Sento ancora i tamburi|Continuo a vedere il fumo}.",
       "{Continua a camminare|Avanti}. Ovunque non ci sia l'Orda.",
-      "È rimasto ancora qualcuno a {from}?"
+      "È rimasto ancora qualcuno a {from}?",
+      "Mi sanguinano i piedi. {Continua|Non voltarti}.",
+      "Ora dormiamo nei fienili. {I contadini non fanno domande|Fieno e paura}.",
+      "Ho lasciato il gatto a {from}. {Spero sia scappato|Continuo a pensarci}."
     ],
     "hordeCamp": [
       "Un'altra notte al campo. {La tenda perde|Il vento non smette mai}.",
       "Fila per l'acqua, fila per il pane. {Vita da campo|Ora la vita è questa}.",
       "I bambini del campo giocano a goblin e umani. {Gli umani perdono sempre|Non riesco a guardare}.",
-      "{from} è a pochi giorni da qui, ma potrebbe essere sulla luna."
+      "{from} è a pochi giorni da qui, ma potrebbe essere sulla luna.",
+      "La scuola del campo insegna le lettere sul cartone. {I bambini imparano lo stesso|È un inizio}.",
+      "Qualcuno suona la fisarmonica ogni sera. {Sempre le stesse tre canzoni|Aiuta}.",
+      "Ci hanno dato coperte nuove. {Ruvide, ma calde|Una piccola grazia}."
     ],
     "hordeSettled": [
       "{Abbiamo|Ho} un tetto qui ora, ma non è {from}.",
       "La gente qui è gentile, quasi sempre. {Alcuni ti fissano|Alcuni no}.",
       "Tengo ancora l'orologio sull'ora di {from}.",
-      "Un giorno prenderò il treno per tornare a {from}. {Un giorno|Prima o poi}."
+      "Un giorno prenderò il treno per tornare a {from}. {Un giorno|Prima o poi}.",
+      "Ho cucinato un piatto di {from} per i vicini. {Ne hanno chiesto ancora|Sono stati gentili}.",
+      "Sono arrivati i miei documenti. {Ora posso lavorare in regola|Ufficialmente qui}.",
+      "I bambini parlano già come quelli del posto. {Meglio di me|Senza accento}."
     ],
     "hordeReturned": [
       "Di nuovo a casa a {from}. {La casa è ancora in piedi|Mezza casa è ancora in piedi}.",
       "I goblin se ne sono andati da {from}. {La loro puzza no|Le loro scritte no}.",
       "Di nuovo a {from}. {Vicini che non pensavo di rivedere|Strade vuote, ma nostre}.",
-      "Ricostruiamo {from}, mattone dopo mattone."
+      "Ricostruiamo {from}, mattone dopo mattone.",
+      "Ho trovato la teiera di mia madre tra le macerie. {Neanche una crepa|Ancora intera}.",
+      "Il pozzo di {from} è di nuovo pulito. {La prima acqua buona da anni|Abbiamo bevuto tutto il giorno}.",
+      "Ho piantato pomodori dove c'erano le tende dei goblin. {Giusto così|Crescono bene}."
     ],
     "hordeIntegrated": [
       "I goblin mi lasciano in pace {se pago la decima|finché lavoro}. {È una vita|Poteva andare peggio}.",
       "Ho imparato abbastanza goblin da contrattare. {Lo rispettano|Più o meno}.",
       "Il capo dice che gli umani sono utili. {Intendo restare utile|Utile vuol dire al sicuro}.",
-      "{Di nuovo stufato di radici|Di nuovo pane di scarafaggi}. Ci si abitua."
+      "{Di nuovo stufato di radici|Di nuovo pane di scarafaggi}. Ci si abitua.",
+      "I bambini goblin mi chiamano {nasone|spilungone}. {Affetto, credo|Spero}.",
+      "Domani si paga la decima. {Conta le uova due volte|Ne vogliono sempre di più}.",
+      "Ho insegnato a un goblin a giocare a carte. {Bara|Bara meglio di me}."
     ],
     "hordeUnder": [
       "{country} ora appartiene all'Orda. {Testa bassa|Non guardarli negli occhi}.",
       "Stendardi goblin sul municipio. {Non riesco ad abituarmi|Ogni mattina è uno shock}.",
       "Dicono che l'Orda sarà cacciata da {country}. {Dicono tante cose|Chi lo dice}?",
-      "Coprifuoco al tramonto. Ai goblin piace il buio."
+      "Coprifuoco al tramonto. Ai goblin piace il buio.",
+      "Hanno cambiato nome alla piazza principale. {Nessuno riesce a pronunciarlo|Noi usiamo ancora il vecchio}.",
+      "La pattuglia goblin si è presa {la mia radio|la mia bicicletta}. {Per la guerra, hanno detto|Così, per niente}.",
+      "In cantina sussurriamo il vecchio inno. {Piano|Ogni domenica}."
     ],
     "hordeFear": [
       "Se l'Orda passa il confine, {dove andiamo|scappiamo}.",
       "Di nuovo goblin avvistati vicino al passo. {Ho chiuso le imposte|Dormo con l'attizzatoio}.",
       "Mio cugino dice che l'Orda mangia {i cavalli|i cani}. {Ci credo|Probabilmente è vero}.",
-      "Ogni tamburo che sento, penso che siano loro."
+      "Ogni tamburo che sento, penso che siano loro.",
+      "Ho comprato un secondo lucchetto. {E un terzo|La prudenza non è mai troppa}.",
+      "Il telegiornale mostra cartine con frecce rosse. {Ogni settimana più vicine|Ho smesso di guardare}.",
+      "Ho preparato una borsa {sotto il letto|vicino alla porta}. {Non si sa mai|Pane, documenti, un coltello}."
     ],
     "playWon": [
       "Ho vinto a {game}! {Offro io|Sapevo che la fortuna sarebbe girata}!",
       "{game}, e l'ho battuto. {Ci so ancora fare|Niente male}.",
       "Fortuna del principiante a {game}? {Bravura|Pura bravura}.",
-      "Quella vittoria a {game} mi ha fatto la settimana."
+      "Quella vittoria a {game} mi ha fatto la settimana.",
+      "Vinto a {game}. {Offro io|Compro il pane buono}.",
+      "Oggi {game} mi ha sorriso. {Sarà la camicia|Calzini fortunati}.",
+      "Lo sapevo che prima o poi {game} avrebbe pagato. {Pazienza|Perseveranza}."
     ],
     "playLost": [
       "Perso di nuovo a {game}. {Truccato|È truccato, lo giuro}.",
       "{game} si è mangiato i miei soldi. {Mai più|Alla prossima}.",
       "Ci ero così vicino a {game}. {Così vicino|Quasi}!",
-      "{game}: uno, io: zero."
+      "{game}: uno, io: zero.",
+      "{game} si è preso i soldi del pranzo. {Di nuovo|E la mia dignità}.",
+      "Mi ero promesso una partita a {game}. {Erano dodici|Poi un'altra}.",
+      "Con {game} ho chiuso. {Per oggi|Per sempre. Forse}."
     ],
     "fightFleeing": [
       "{Scappa|Scappa, scappa}!",
       "{Stammi lontano|Indietro}!",
       "{Aiuto|Qualcuno mi aiuti}!",
-      "{Non oggi|Non io}, {mostro|bestia}!"
+      "{Non oggi|Non io}, {mostro|bestia}!",
+      "{Non farmi male|Lasciami stare}!",
+      "{Levati|Spostati, spostati}!",
+      "{Qualcuno chiami le guardie|Guardie}!"
     ],
     "fightDowned": [
       "*geme*",
       "{Non riesco|Non riesco... ad} alzarmi...",
       "{Qualcuno|Chiunque}... aiuto...",
-      "*tossisce* {Mi fa male tutto|Ahi}..."
+      "*tossisce* {Mi fa male tutto|Ahi}...",
+      "{Mamma|Mammina}...",
+      "*rantola*",
+      "{Acqua|Solo... un minuto}..."
     ],
     "fightInjured": [
       "Mi fa ancora male {il braccio|la gamba} per quella {cosa|rissa}.",
       "{Di nuovo bende|Altre bende}. {Dovrei vedere un guaritore|Dovrei vedere un medico}.",
       "{Zoppico|Dolori} tutto il giorno. {Mai più|Lezione imparata}.",
-      "Questa mi lascerà una cicatrice."
+      "Questa mi lascerà una cicatrice.",
+      "Il livido è diventato {viola|verde}. {Quasi carino|Splendido}.",
+      "Non riesco ad alzare il braccio sopra la testa. {Chiedi a un altro per lo scaffale|Niente pensili}.",
+      "Ogni gradino è una montagna {oggi|questa settimana}."
     ],
     "fightWitness": [
       "{Hai visto quello|Hai visto lo} scontro? {Terrificante|Incredibile}.",
       "Di nuovo mostri per strada. {Dove sono le guardie|Nessuno è al sicuro}.",
       "{Io resto a distanza|Io sto ben lontano}.",
-      "{Qualcuno|Che qualcuno} chiami le guardie!"
+      "{Qualcuno|Che qualcuno} chiami le guardie!",
+      "Mi tremano ancora le mani. {È successo davvero|Incredibile}.",
+      "Era troppo vicino a casa mia. {Trasloco|Serrature, altre serrature}.",
+      "{Lo racconterò per anni|Nessuno mi crederà}."
     ],
     "crimeWanted": [
       "{Testa bassa|Cammina normale}. {Nessuno guarda|Nessuno sa}.",
       "Ogni divisa mi fa venire il mal di stomaco.",
       "{Forse|Magari} una città nuova e un nome nuovo.",
-      "Quel manifesto non mi somiglia nemmeno."
+      "Quel manifesto non mi somiglia nemmeno.",
+      "Mi sono fatto crescere {la barba|la frangia}. {Nessuno ci fa caso|Un'altra persona}.",
+      "Se qualcuno chiede, sono stato a casa tutta la settimana.",
+      "La guardia mi ha guardato {strano|troppo a lungo}. {Respira|Continua a camminare}."
     ],
     "foodAte": [
       "Quel {item} {ci voleva proprio|era proprio quello che serviva}.",
       "{Mangiato|Di nuovo} {item} al volo. {Niente tempo per sedersi|Giornata piena}.",
       "{item}. Non è un pasto vero, ma andrà bene.",
-      "Un secondo {item} non mi sarebbe dispiaciuto."
+      "Un secondo {item} non mi sarebbe dispiaciuto.",
+      "{item} era {freddo|buono}. {L'ho finito lo stesso|Nessuna lamentela}.",
+      "Briciole di {item} dappertutto. {Ne valeva la pena|Anche sulla camicia}.",
+      "Di nuovo {item} a pranzo. {Dovrei cucinare|Domani un pasto vero}."
     ],
     "specHoned": [
       "Sto migliorando in {spec}. {La pratica paga|Tutta quella pratica}.",
       "Oggi {spec} mi è venuto più facile. {Finalmente|Era ora}.",
       "Qualcuno mi ha chiesto aiuto per {spec}. A me!",
-      "A quanto pare ho un talento per {spec}."
+      "A quanto pare ho un talento per {spec}.",
+      "Con {spec} vado {meglio|più pulito}. {Piano piano|Giorno dopo giorno}.",
+      "Un veterano ha detto che con {spec} me la cavo {discretamente|niente male}. {Gran complimento|Detto da lui, una medaglia}.",
+      "Un giorno insegnerò io {spec}. {Un giorno|Forse}."
     ],
     "creedDoubt": [
       "Forse quelli di {creed} hanno ragione. {Forse|Non ditelo a nessuno}.",
       "Ridevo di {creed}. {Ora non ne sono più sicuro|Ora leggo i loro volantini}.",
       "{Non smetto di pensare|Continuo a pensare} a quello che dicevano su {creed}.",
-      "E se mi fossi sbagliato fin dall'inizio?"
+      "E se mi fossi sbagliato fin dall'inizio?",
+      "Sull'autobus ho letto un volantino di {creed}. {L'ho nascosto nel cappotto|L'ho letto due volte}.",
+      "La mia famiglia {sverrebbe|non me lo perdonerebbe mai} se diventassi {creed}.",
+      "Quelli di {creed} sono stati gentili con me. {Conta qualcosa|Più dei miei}."
     ],
     "electionSoon": [
       "{days} giorni al voto ({election}). {party} o {rival}? {Ancora indeciso|Scelta difficile}.",
       "{Manifesti ovunque|Volantini in ogni cassetta}. Il voto ({election}) è vicino.",
       "{party} promette di nuovo la luna. {rival} la promette a meno.",
-      "Voterò. {Voto sempre|Qualcuno deve farlo}. Solo che non so per chi."
+      "Voterò. {Voto sempre|Qualcuno deve farlo}. Solo che non so per chi.",
+      "{party} mi ha mandato una penna col loro nome. {Penna gratis|Non li voto lo stesso}.",
+      "Stasera il dibattito in TV. {party} contro {rival}. {Popcorn|Passami le patatine}.",
+      "Manifesti di {rival} su ogni lampione. {Qualcuno ha soldi|Qualcuno si dà da fare}."
     ],
     "electionWeek": [
       "Si vota questa settimana ({election}). Dicono che {party} sia avanti nei sondaggi.",
       "{rival} potrebbe ancora farcela. {I sondaggi mentono|L'altra volta i sondaggi sbagliavano}.",
       "Qual è il mio seggio? {Devo controllare|La scuola, credo}.",
-      "Tutti litigano per il voto. {Anche il fornaio|Anche mia madre}."
+      "Tutti litigano per il voto. {Anche il fornaio|Anche mia madre}.",
+      "Un attivista ha bussato {due|tre} volte oggi. {Mi sono nascosto|Ho detto che non c'ero}.",
+      "Al {bar|mercato} non si parla d'altro che delle {election}.",
+      "{party} o {rival}. {Testa o croce|Il male minore}."
     ],
     "electionDay": [
       "Giorno di voto! {Già la fila alla scuola|Vado alla cabina}.",
       "Matita, scheda, croce. {Democrazia|Ho fatto la mia parte}.",
       "Votato. {Ora la lunga attesa|Ora aspettiamo lo spoglio}.",
-      "{I seggi chiudono|Le cabine chiudono} stasera. {Nervoso|Non riesco a stare fermo}."
+      "{I seggi chiudono|Le cabine chiudono} stasera. {Nervoso|Non riesco a stare fermo}.",
+      "Ho messo il cappotto buono per votare. {È un'occasione|Me l'ha insegnato mamma}.",
+      "Lo scrutatore era il mio vecchio maestro. {Fa ancora paura|Mi ha chiesto dei compiti}.",
+      "Risultati stasera in TV. {Caffè pronto|Lunga notte}."
     ],
     "electionResult": [
       "Ha vinto {winner} ({election}). {Beh|Eccoci qua}.",
       "Non posso credere che abbia vinto davvero {winner}.",
       "Ora comanda {winner}. {Vediamo cosa fa|Promesse, promesse}.",
-      "Lo spoglio è finito. {winner}. {Ovvio|E chi altri}."
+      "Lo spoglio è finito. {winner}. {Ovvio|E chi altri}.",
+      "{winner} su tutte le prime pagine. {Le solite facce|Gran sorrisi}.",
+      "Il mio vicino tiene ancora il muso per {winner}. {Da due giorni|Sopravviverà}.",
+      "{winner} ha promesso prezzi più bassi. {Tengo lo scontrino|Staremo a vedere}."
+    ],
+    "workGoing": [
+      "Di corsa verso {workplace}. {Di nuovo in ritardo|In orario, per una volta}.",
+      "Il turno inizia tra poco. {Dove sono le chiavi|Prima il caffè}.",
+      "Un'altra giornata da {job}. {Diamoci da fare|Si parte}.",
+      "Se {l'autobus|il tram} è di nuovo in ritardo {vado a piedi|mi metto a urlare}.",
+      "Pranzo al sacco, camicia pulita. {Pronto|Abbastanza pronto}.",
+      "{Oggi c'è il capo|Oggi c'è l'ispezione}. {Comportarsi bene|Fare finta di lavorare}.",
+      "Otto ore da {job}. {Poi a casa|Poi una bibita fresca}."
+    ],
+    "workNight": [
+      "Di nuovo turno di notte. {Il mondo dorme e io no|Io e i gufi}.",
+      "Colazione alle sei di sera. {Il mio stomaco è confuso|Lavoro di notte}.",
+      "Le strade alle tre di notte sono {dei gatti e mie|degli spazzini e mie}.",
+      "Dormo con {le tende fissate col nastro|il cuscino sulla testa}. {Dormo di giorno|Orari da vampiro}.",
+      "Le notti pagano un po' di più. {Il resto lo paga il mio corpo|Ne vale la pena, quasi}.",
+      "Il conduttore della radio notturna è il mio unico amico. {Le stesse battute ogni notte|Mi conosce}.",
+      "Un'altra cena di famiglia persa per il turno di notte. {Mi hanno tenuto un piatto|Di nuovo pasta fredda}."
+    ],
+    "workLoves": [
+      "Farei il {job} anche gratis. {Non ditelo al capo|Quasi}.",
+      "Il mestiere migliore che ci sia, {job}. {Nessuno mi convincerà del contrario|Nato per questo}.",
+      "Oggi al lavoro mi hanno ringraziato. {Mi ha fatto la settimana|Ecco perché lo faccio}.",
+      "Quando lavoro dimentico tutto il resto. {Pace pura|La sensazione migliore}.",
+      "Ho idee per fare meglio il lavoro da {job}. {Il quaderno è pieno|Dovrei dirlo a qualcuno}.",
+      "{Dieci|Dodici} anni e mi piace ancora andarci. {Che fortuna|Cosa rara}.",
+      "I nuovi al lavoro chiedono a me come si fa. {Mi piace|Glielo mostro per bene}."
+    ],
+    "workHates": [
+      "{job}. {Se l'avessi saputo|Di chi è stata l'idea}?",
+      "Conto i minuti alla fine del turno. {Tutti|Uno per uno}.",
+      "Il capo {ha urlato|mi ha sospirato addosso} di nuovo. {Un giorno gli dirò qualcosa|Mordersi la lingua}.",
+      "Sogno di licenziarmi. {Nei dettagli|Con tanto di discorso}.",
+      "Stesso lavoro da {job}, {stessa paga|stesse pareti grigie}. {Ogni giorno|Per sempre}.",
+      "In pausa ho guardato gli annunci di lavoro. {Non giudicate|Solo per guardare}.",
+      "La schiena, i piedi, la pazienza. {Il lavoro si prende tutto|Finito}."
+    ],
+    "workNewJob": [
+      "Lavoro nuovo come {job}! {Sto ancora imparando i nomi|Ansia da prima settimana}.",
+      "Ora faccio il {job}. {Un altro mondo|Chi l'avrebbe detto}.",
+      "Il posto nuovo ha {una mensa vera|una macchinetta del caffè che funziona}. {Già meglio|Che lusso}.",
+      "Ho preso la prima paga da {job}. {Niente male|Metà già spesa}.",
+      "Al lavoro nuovo continuo a fare le cose alla vecchia maniera. {Ridono|Abitudine}.",
+      "Ho lasciato il vecchio lavoro senza voltarmi. {Una sensazione meravigliosa|Avrei dovuto farlo anni fa}.",
+      "Periodo di prova come {job}. {Incrociamo le dita|Comportarsi bene}."
+    ],
+    "workRetired": [
+      "In pensione. {Niente sveglia|Ogni giorno è domenica}. {Che pace|Mi annoio}.",
+      "Mi sveglio ancora alle sei. {Quarant'anni di abitudine|Il corpo si ricorda}.",
+      "È arrivata la pensione. {Basta appena|Da spendere con giudizio}.",
+      "A volte passo davanti al vecchio posto di lavoro. {Solo per guardare|Non c'è più nessuno che conosco}.",
+      "Pensione vuol dire {orto|cruciverba} e opinioni. {Soprattutto opinioni|Tante}.",
+      "I giovani sulla panchina non sanno quanto abbiamo lavorato. {Non lo sapranno mai|Beati loro}.",
+      "Penso di mettermi a {dipingere|suonare la fisarmonica}. {Perché no|Ora ho tempo}."
+    ],
+    "workHoliday": [
+      "{holiday} e io lavoro. {Qualcuno deve pur farlo|Almeno paga doppia}.",
+      "Per {holiday} sono tutti a casa tranne noi. {Che amarezza|Almeno le strade sono tranquille}.",
+      "Il giorno più pieno dell'anno, {holiday}. {Auguratemi buona fortuna|Eccoli che arrivano}.",
+      "La mia famiglia è al pranzo di {holiday} senza di me. {Tenetemene un po'|L'anno prossimo}.",
+      "Lavoro per {holiday}. {Almeno i clienti sono di buon umore|Mance festive}.",
+      "Cambiare il turno di {holiday}? {Nessuno lo voleva|Ci ho provato. Fallito}.",
+      "Domani festeggio per conto mio. {Dormire fino a tardi|Torta a colazione}."
+    ],
+    "homeHomeless": [
+      "Un'altra notte {sulla panchina|sul cartone}. {Il freddo ti entra nelle ossa|Impari dove fa più caldo}.",
+      "La mensa dei poveri apre alle sei. {Non arrivare tardi|Mettiti in fila presto}.",
+      "La gente mi passa accanto come se fossi {un lampione|invisibile}. {Ci si abitua|Non ci si abitua mai}.",
+      "Un giorno una stanza con una porta che si chiude. {Un giorno|È tutto quello che voglio}.",
+      "Tutto in una borsa. {Mai appoggiarla|Ci dormo sopra}.",
+      "La stazione è calda finché non arriva la guardia. {Poi la prossima|Circolare}.",
+      "Oggi uno sconosciuto gentile mi ha offerto {un caffè|un panino}. {C'è ancora brava gente|Mi ha fatto la settimana}."
+    ],
+    "homeMovedWork": [
+      "Mi sono trasferito qui per lavoro. {Finora tutto bene|Almeno il lavoro c'è davvero}.",
+      "Ho seguito il lavoro fino a questa città. {Anche l'affitto è meglio|Costa meno che a casa}.",
+      "Venuto per la busta paga, rimasto per {il forno|il fiume}. {Buffo come vanno le cose|Vedremo}.",
+      "Ogni euro che guadagno qui va {a casa|nel barattolo}. {Era questo il piano|Per ora}.",
+      "L'appartamento è piccolo ma il lavoro paga. {Scambio giusto|Non si può avere tutto}.",
+      "Quando sono arrivato a cercare lavoro qui non mi conosceva nessuno. {Ora il caporeparto sì|Piano piano}.",
+      "Trasferirmi per lavoro è stata la scelta giusta. {Credo|Chiedimelo tra un anno}."
+    ],
+    "homeMovedLove": [
+      "Mi sono trasferito qui per amore. {Romantico, ha detto mia madre|Sciocco, ha detto mia madre}.",
+      "Sono venuto per stare vicino alla famiglia. {Ora pranzo della domenica ogni settimana|Ne vale la pena}.",
+      "Ho caricato tutta la mia vita su un furgone per seguire il cuore. {Nessun rimpianto|Pochi rimpianti}.",
+      "Qui sono tutti cugini di qualcuno. {Ora anch'io|Paese piccolo}.",
+      "Ho seguito i miei fin qui e lo rifarei. {Casa sono le persone|Non le mura}.",
+      "La città mi è entrata nel cuore {più piano di quanto ci sia entrata la persona|alla fine}.",
+      "Sto imparando {le ricette|le canzoni} del posto per ambientarmi. {Malamente|Con entusiasmo}."
+    ],
+    "homeMovedTrouble": [
+      "Qui nessuno sa cosa è successo laggiù. {Bene|Teniamola così}.",
+      "Mi sono lasciato molto alle spalle. {In parte apposta|Ho bruciato qualche ponte}.",
+      "Nuova città, pagina pulita. {Non rovinarla|Testa bassa}.",
+      "A volte mi guardo ancora alle spalle. {Vecchia abitudine|Non si sa mai}.",
+      "Non me ne sono andato in buoni rapporti. {Eufemismo|Porte sbattute}.",
+      "Qui sono solo quello tranquillo. {Mi sta bene|Nessuno fa domande}.",
+      "È arrivata una lettera dal vecchio posto. {Non l'ho aperta|L'ho bruciata}."
+    ],
+    "homeMovedFresh": [
+      "Nuovo inizio in una città nuova. {Anche un taglio nuovo|Perché non tutto nuovo}.",
+      "Avevo bisogno di cambiare aria. {Fatto|Qui l'aria sa di pane}.",
+      "Oggi ho svuotato l'ultimo scatolone. {Trasferimento ufficiale|Ci sono voluti mesi}.",
+      "Ho dipinto la porta d'ingresso di {giallo|blu}. {Ora è mia|Sembra casa}.",
+      "Dalla finestra nuova vedo {un muro|i tetti}. {Lo adoro|Mi va bene}.",
+      "Il vecchio posto non mi manca {per niente|quanto pensavo}.",
+      "Sto ancora imparando qual è il rubinetto dell'acqua calda. {Scottato due volte|Ci sto arrivando}."
+    ],
+    "homePride": [
+      "Ho fatto rifare il tetto. {Ora non entra una goccia|Vale ogni euro}.",
+      "Il giardino finalmente è {come lo voglio|in fiore}. {Anni di lavoro|Venite a vedere}.",
+      "Tende nuove in salotto. {I vicini se ne sono accorti|Velluto}.",
+      "La casa è pagata. {Ogni mattone è mio|Che soddisfazione}.",
+      "Penso a {una veranda|un secondo bagno}. {Perché no|Possiamo permettercelo}.",
+      "Niente batte la mia poltrona davanti al mio camino.",
+      "Il parquet non scricchiola più. {L'ho fatto rifare tutto|Silenzio}."
+    ],
+    "homeWorry": [
+      "Di nuovo umidità in camera. {Macchie nere sul muro|Che odore}.",
+      "Il padrone di casa vuole di più per {le stesse tre stanze|lo stesso tetto che perde}.",
+      "Si è rotta la caldaia. {Docce fredde|Lavarsi col bollitore} fino alla paga.",
+      "I muri sono così sottili che conosco {le liti|le canzoni preferite} dei vicini.",
+      "Sta arrivando il giorno dell'affitto. {Contali due volte|Di nuovo non bastano}.",
+      "Un secchio sotto la perdita in {cucina|corridoio}. {Plin, plin|Tutta la notte}.",
+      "Un giorno un posto con una finestra che si chiude per bene."
+    ],
+    "rootsHomesick": [
+      "Mi manca {birthplace}. {Il pane, le campane|Il modo in cui cade la luce}.",
+      "Qui nessuno lo fa come a {birthplace}. {Nessuno|Neanche lontanamente}.",
+      "Ho sentito qualcuno con l'accento di {birthplace}. {Per poco non l'abbracciavo|Mi ha fatto la giornata}.",
+      "Dovrei tornare a {birthplace} a trovare qualcuno. {Sono passati anni|Prima che cambi}.",
+      "Nato a {birthplace}, vivo qui. {I piedi qui, il cuore là|Cosa strana}.",
+      "Mia madre mi manda ancora pacchi da {birthplace}. {Salame e calzini|Sempre troppo}.",
+      "Le canzoni di {birthplace} mi fanno {piangere|cantare}. {Ogni volta|Non ci posso fare niente}."
+    ],
+    "rootsLocal": [
+      "Nato qui, cresciuto qui, {mai andato via|mai voluto andarmene}.",
+      "Conosco ogni {sampietrino|crepa del marciapiede} di {birthplace}.",
+      "Mio nonno camminava per queste stesse strade. {E così i miei nipoti|Più o meno gli stessi negozi}.",
+      "La gente arriva a {birthplace} e se ne va. {Noi restiamo|Io no}.",
+      "{Il fornaio|Il giornalaio} mi conosceva prima che sapessi camminare.",
+      "A {birthplace} cambia tutto tranne {i pettegolezzi|l'orologio della chiesa}.",
+      "Non ho mai capito perché lasciare {birthplace}. {Qui ho tutto quello che mi serve|Perché dovrei}?"
+    ],
+    "healthIll": [
+      "{illness} non mi molla. {Terzo giorno|Mi fa male tutto}.",
+      "{illness}, dice il dottore. {Riposo e liquidi|Benissimo}.",
+      "Mi sento come {investito|travolto da un carretto}. {illness}, a quanto pare.",
+      "Non dovrei uscire con {illness} addosso. {Dovevo comprare il pane|Solo una commissione}.",
+      "Limone caldo e miele. {Il rimedio della nonna|Funzionava quando ero piccolo}.",
+      "Stai lontano, ho {illness}. {Non lo vuoi|Fidati}.",
+      "{Brividi|Sudori} a turno. {illness} non è uno scherzo."
+    ],
+    "healthChronic": [
+      "Oggi {condition} si fa sentire. {Il tempo|Lo fa sempre}.",
+      "Pastiglie la mattina, pastiglie la sera. {condition} è un lavoro a tempo pieno.",
+      "Con {condition} impari a conviverci. {Quasi sempre|Non hai scelta}.",
+      "Oggi è una buona giornata. {condition} sta zitto. {Approfittiamone|Fuori a fare due passi}.",
+      "Io e il dottore ci diamo del tu. {condition} fa questo effetto.",
+      "Nessuno vede {condition}. {Non vuol dire che non ci sia|Pensano che stia bene}.",
+      "Nuova cura per {condition}. {Incrociamo le dita|La terza quest'anno}."
+    ],
+    "healthRecovered": [
+      "Finalmente guarito da {illness}. {Il cibo ha di nuovo sapore|Respiro}.",
+      "Primo giorno fuori dopo {illness}. {Il sole|L'aria fresca}! {Mi mancava|Splendido}.",
+      "Ancora un po' debole dopo {illness}. {Le scale sono una montagna|Passo lento}.",
+      "Non avrei mai pensato di essere felice di {andare al lavoro|fare il bucato}. {La salute è tutto|Torno a vivere}.",
+      "Ho perso {peso|una settimana} per {illness}. {Ripresi in fretta|Non ne valeva la pena}.",
+      "Ho ringraziato il dottore con {una torta|una bottiglia}. {Se l'è meritata|Mi ha salvato}.",
+      "Dopo {illness} mi lavo le mani {ogni ora|come un chirurgo}."
+    ],
+    "implantNew": [
+      "L'impianto nuovo ({augment}) {formicola|ronza} quando piove. {Normale, dicono|Strana sensazione}.",
+      "Mi sto ancora abituando all'impianto, {augment}. {Continuo a far cadere le cose|Fin troppo forte}.",
+      "In clinica mi hanno messo un impianto ({augment}): {bodyPart}. {Funziona|Funziona quasi}.",
+      "La gente fissa il mio impianto. {Lasciali fare|Io li fisso a mia volta}.",
+      "{augment}: mi è costato {una fortuna|i risparmi}. {Ne valeva la pena|Chiedimelo l'anno prossimo}.",
+      "Mi sono svegliato e mi ero dimenticato dell'impianto. {Poi mi è tornato in mente|Mi sono spaventato da solo}.",
+      "Di nuovo in clinica per il controllo dell'impianto, {augment}. {Viti strette|Tutto in ordine}."
+    ],
+    "implantProud": [
+      "Il mio impianto, {augment}, non mi ha mai tradito. {Meglio dell'originale|Come nuovo}.",
+      "Stamattina ho oliato l'impianto. {Va che è un sogno|Piccolo rituale}.",
+      "I bambini mi chiedono dell'impianto. {Dico che è stato un drago|Dico la verità}.",
+      "Senza l'impianto, {augment}, non farei metà della mia giornata. {Cosa meravigliosa|La scienza}.",
+      "L'impianto {fa male|scatta} prima di un temporale. {Meglio della radio|Non sbaglia mai}.",
+      "Qualcuno dice che un impianto non è naturale. {Neanche gli occhiali|Problema loro}.",
+      "Il mio impianto sta invecchiando. {Come il resto di me|Va ancora}."
+    ],
+    "levelUp": [
+      "Livello {level}. {L'ho sentito scattare|Qualcosa è scattato}.",
+      "Sto diventando più forte. {Ora livello {level}|Lo sento}. {Niente male per me|Era ora}.",
+      "Tutto quell'esercizio ha dato i suoi frutti. {Livello {level}|Un gradino più su}.",
+      "Oggi ho sollevato una cosa che il mese scorso non riuscivo. {Progressi|Ah}!",
+      "Livello {level}. {Dovrei festeggiare|Me ne sono accorto solo io}.",
+      "Oggi mi sento più sveglio. {Mani più svelte|Testa più lucida}. {Esperienza|Anni di esperienza}.",
+      "Ogni livido mi ha insegnato qualcosa. {Livello {level}|Guardami adesso}."
+    ],
+    "bandSoon": [
+      "Tra poco parto per {expedition} con la compagnia di {bandmate}. {Stivali lucidati|Che nervi}.",
+      "{bandmate} dice che partiamo tra pochi giorni. {Avrò preso abbastanza calzini|Corda, corda, altra corda}.",
+      "Ho scritto una lettera da lasciare, nel caso. {L'ho sigillata|Spero che nessuno la legga}.",
+      "Tutti pensano che sia matto a unirmi a una spedizione. {Forse|Probabilmente hanno ragione}.",
+      "Affilo tutto quello che ho prima di partire. {Anche i cucchiai|La prudenza non è mai troppa}.",
+      "{bandmate} ha un piano. {Credo|Dicono}. {Fidarsi del piano|Speriamo}.",
+      "Ancora qualche notte nel mio letto prima di partire per {expedition}. {Godersela|Ultimo sonno vero}."
+    ],
+    "bandAway": [
+      "In giro con la compagnia di {bandmate}. {Stanotte campo freddo|Di nuovo stufato}.",
+      "{bandmate} russa come {un orso|un motore}. {Tutte le notti|Le ho contate}.",
+      "Ogni rumore qui fuori potrebbe essere {qualcosa con i denti|la fine}. {Stare all'erta|Fare la guardia}.",
+      "A metà strada, forse. {Nessuno lo sa|La mappa mente}.",
+      "Mi mancano le sedie. {E i bagni|E il pane}.",
+      "Ho trovato qualcosa che luccica. {In tasca|Non ditelo a {bandmate}}.",
+      "Breve sosta, poi si riparte. {Piedi distrutti|Avanti}."
+    ],
+    "bandBack": [
+      "Di ritorno dalla spedizione per {expedition}. {Il mio letto|Cibo vero}. {Il paradiso|Non riparto più}.",
+      "Le storie che potrei raccontare su {expedition}. {Nessuno crederebbe a metà|Offrimi da bere}.",
+      "Tornato tutto intero. {Più o meno|Tutte le dita al loro posto}.",
+      "Dopo {expedition} la città sembra più piccola. {O sono cresciuto io|Strano}.",
+      "Ho dormito quattordici ore. {Potrei dormirne altre quattordici|Neanche un sogno}.",
+      "Ci tornerei? {Chiedimelo tra un mese|Probabilmente. Che stupido}.",
+      "Primo bagno caldo da quando siamo partiti. {Sono un'altra persona|L'acqua è diventata nera}."
+    ],
+    "bandBackHurt": [
+      "Tornato dalla spedizione per {expedition} {pieno di bende|in barella}. {Almeno vivo|Lezione imparata}.",
+      "Dopo {expedition} mi fanno male tutte le ossa. {Anche quelle che non sapevo di avere|Tutte}.",
+      "Il guaritore dice settimane di riposo. {Settimane|Impazzirò}.",
+      "Qualcosa laggiù mi ha {morso|graffiato}. {Lo vedo ancora di notte|Non ne voglio parlare}.",
+      "Mai più. {Stavolta dico sul serio|Probabilmente}.",
+      "Mi hanno portato fuori a braccia. {Gli devo tutto|Imbarazzante, ma vivo}.",
+      "La cicatrice di {expedition} sarà una bella storia. {Un giorno|Quando smetterà di fare male}."
+    ],
+    "bandBackRich": [
+      "Tornato dalla spedizione per {expedition} con {un sacco di bottino|le tasche piene}. {Da bere per tutti|Affitto pagato per un anno}.",
+      "Ho venduto quello che abbiamo trovato. {Mai visti tanti euro|Contati due volte}.",
+      "Ora potrei comprarmi {un cappotto nuovo|un guardaroba intero}. {Dovrei|Perché no}?",
+      "Ho nascosto la mia parte {sotto un'asse del pavimento|in un calzino}. {Vecchie abitudini|Abbastanza al sicuro}.",
+      "Valeva ogni vescica. {Ognuna|E anche di più}.",
+      "Mia madre mi ha chiesto da dove venivano i soldi. {Gliel'ho detto|Ho detto che li ho trovati}.",
+      "Un altro viaggio così e mi ritiro. {Lo dicono tutti|Ultime parole famose}."
+    ],
+    "birthdayToday": [
+      "È il mio compleanno! {Oggi compio {age} anni|Un anno in più}. {Torta|Dov'è la torta}?",
+      "Oggi compio {age} anni. {Non me ne sento più di venti|Me li sento tutti}.",
+      "Compleanno. {Qualcuno canti|Mi canto da solo}.",
+      "Mi è arrivato un biglietto da {mia zia|la banca}. {Che carina|Perfino la banca si è ricordata}.",
+      "Oggi mi tratto bene. {È il mio compleanno|Le regole non valgono}.",
+      "Nessuno mi ha ancora fatto gli auguri. {È presto|Forse se ne sono dimenticati}.",
+      "{age} candeline. {Rischio incendio|Ci vuole un bel respiro}."
+    ],
+    "birthdaySoon": [
+      "Il mio compleanno è {la settimana prossima|tra pochi giorni}. {Lo dico così|Non che li conti}.",
+      "Tra poco compio {age} anni. {Dove sono finiti gli anni|Non mi sembra vero}.",
+      "Quest'anno faccio una festa? {Piccola|Non verrebbe nessuno}.",
+      "Ho lanciato qualche frecciatina sul mio compleanno. {Discreta|Per niente discreta}.",
+      "A ogni compleanno mia madre racconta di quando sono nato. {Ogni anno|La so a memoria}.",
+      "{age} anni sono niente. {È solo un numero|Lo dicono tutti quelli più vecchi}.",
+      "Per il compleanno voglio {una torta con le ciliegie|niente di niente}. {Davvero|Quasi}."
+    ],
+    "birthdayKin": [
+      "Oggi è il compleanno di {relative}! {Devo prendere un regalo|Fiori sulla via di casa}.",
+      "Compleanno di {relative}. {Me ne stavo dimenticando|La torta è nascosta nella credenza}.",
+      "Stasera festa per {relative}. {Palloncini|Candeline, piatti, tutto quanto}.",
+      "Ho comprato a {relative} {una sciarpa|un libro}. {Farà finta che gli piaccia|Scelta sicura}.",
+      "Oggi {relative} ha un anno in più. {E quasi anch'io|Il tempo vola}.",
+      "Devo telefonare a {relative} prima di cena. {Tanti auguri a te|Cantare, male}.",
+      "{relative} non voleva storie. {Ci saranno storie|Troppo tardi}."
+    ],
+    "holidayToday": [
+      "{holiday}! {Niente lavoro|Negozi chiusi}. {Si dorme|Pranzo lungo}.",
+      "Tutta la città è in giro per {holiday}. {Musica dappertutto|Profumo di arrosto}.",
+      "Pranzo di {holiday} da mia madre. {Tre portate|Portare appetito}.",
+      "Adoro {holiday}. {Da sempre|Da quando ero piccolo}.",
+      "È tutto chiuso per {holiday} e mi sono dimenticato {il latte|il pane}. {Classico|Ogni anno}.",
+      "{holiday}. {Le campane|La parata}, il cibo, la famiglia. {Bella giornata|Giornata faticosa}.",
+      "Giorno libero per {holiday}. {Non farò niente|Orto, poi pisolino}."
+    ],
+    "holidaySoon": [
+      "Arriva {holiday}. {Devo fare la spesa|I negozi saranno una follia}.",
+      "Pochi giorni a {holiday}. {Li conto|Non vedo l'ora}.",
+      "Chi ospita per {holiday} quest'anno? {Non io|Vi prego, non io}.",
+      "Si montano le decorazioni per {holiday}. {In anticipo|Che belle}.",
+      "La ricetta di {holiday} della nonna. {Quest'anno mi viene bene|Ingrediente segreto}.",
+      "Un ponte con {holiday}. {Progetti|Nessun progetto. Perfetto}.",
+      "Tra poco {holiday}. {I bambini saltano dappertutto|Al lavoro nessuno si concentra}."
+    ],
+    "weekendOff": [
+      "Fine settimana. {Niente sveglia|Pantofole tutto il giorno}.",
+      "Mercato del sabato, poi {un pisolino|l'orto}. {Giornata perfetta|Piaceri semplici}.",
+      "Arrosto della domenica. {Tutta la via ne sente il profumo|Tocca a me tagliare}.",
+      "Due giorni liberi e una lista di faccende lunga così. {Domani|Dopo il caffè}.",
+      "I fine settimana volano. {Ogni volta|Un attimo ed è lunedì}.",
+      "Questo fine settimana vado {al lago|da mia sorella}. {Se il tempo regge|Pranzo al sacco}.",
+      "Oggi ho letto tutto il giornale. {Anche il cruciverba|Ogni pagina}."
+    ],
+    "weekendWork": [
+      "Di nuovo al lavoro nel fine settimana. {Qualcuno deve farlo|I soldi sono gli stessi}.",
+      "Sono tutti liberi tranne noi. {Giornata piena|Giornata lunga}.",
+      "Il mio fine settimana è il martedì. {Nessuno capisce|Almeno i negozi sono vuoti}.",
+      "Folla del sabato. {Pazienza|Respiro profondo}.",
+      "Ho perso la partita per il turno della domenica. {Qualcuno mi dica il risultato|Di nuovo}.",
+      "La famiglia è al parco e io al lavoro. {Il prossimo fine settimana|Un giorno}.",
+      "Turno del fine settimana. {Almeno c'è la torta in saletta|Qualcuno ha portato i biscotti}."
+    ],
+    "moneyStocksWon": [
+      "Ho venduto le azioni al massimo. {Genio|Fortunato}. {Più fortuna che altro|Non ditelo a nessuno}.",
+      "Questa settimana la borsa è stata gentile con me. {Prima volta|Festeggiamo}.",
+      "Bel guadagno in borsa. {Champagne|Formaggio sobrio}.",
+      "Comprato basso, venduto alto. {Come dicono i libri|Finalmente}.",
+      "Il terminale è stato verde tutta la mattina. {Bel colore|Il mio preferito}.",
+      "Il mio amico agente dice che ho fiuto. {Ah|Forse sì}.",
+      "Guadagno sulle azioni. {Nel barattolo|Fondo vacanze}."
+    ],
+    "moneyStocksLost": [
+      "Ho perso soldi con le azioni. {Mai più|Fino alla prossima}.",
+      "La borsa è andata in rosso e anch'io. {Imbarazzato|Furioso}.",
+      "Ho venduto in preda al panico. {Ovviamente è risalita|Il giorno dopo, di nuovo su}.",
+      "Avrei dovuto tenerli sotto il materasso. {Come mia nonna|Più sicuro}.",
+      "Il terminale è {un casinò|un ladro} in giacca e cravatta.",
+      "Ho perso in borsa uno stipendio. {Che stupido|Lezione imparata}.",
+      "Non pronunciate la parola azioni davanti a me. {Non oggi|Non questa settimana}."
+    ],
+    "moneyShares": [
+      "Ho comprato azioni di {company}. {A lungo termine|Incrociamo le dita}.",
+      "Azioni di {company} nel cassetto. {Mi sento un magnate|Un magnate in miniatura}.",
+      "Ho controllato come va {company}. {Un po' su|Un po' giù}. {Va bene|Respira}.",
+      "È arrivato il dividendo di {company}. {Piccolo, ma mio|Spiccioli}.",
+      "Possiedo un pezzetto di {company}. {Strana sensazione|Lo sanno}?",
+      "Ora leggo le pagine di economia. {Io|Chi l'avrebbe detto}.",
+      "Tengo le azioni di {company} per la vecchiaia. {Questo è il piano|Se durano}."
+    ],
+    "moneyLoan": [
+      "Ho preso un prestito in banca. {Solo per tirare avanti|Solo fino alla paga}.",
+      "Il direttore della banca sorrideva mentre me lo concedeva. {Brutto segno|Sorridono sempre}.",
+      "Ora devo soldi alla banca. {Pesa|Ogni rata fa male}.",
+      "Gli interessi di quel prestito. {Una rapina|Una rapina legale}.",
+      "Ho chiesto un prestito per pagare {l'affitto|il dottore}. {Necessità|Nessuna scelta}.",
+      "Quando avrò finito di pagare il prestito faccio una festa. {Piccola|Economica}.",
+      "Nascondi la posta, c'è una lettera della banca. {Non oggi|Più tardi}."
+    ],
+    "moneySaved": [
+      "Oggi ho messo un po' di soldi in banca. {Mi sento adulto|Soldi per i tempi duri}.",
+      "Il mio libretto di risparmio ha una riga nuova. {Piccola|Ogni riga conta}.",
+      "Risparmio per {una vacanza|un appartamento migliore}. {Piano piano|Ci arrivo}.",
+      "Versato, timbrato, fatto. {Al sicuro|Lontano dalle tentazioni}.",
+      "Mio nonno diceva sempre: prima paga te stesso. {Lo faccio|Aveva ragione}.",
+      "L'impiegato della banca ormai mi conosce per nome. {Risparmiatore abituale|Buon cliente}.",
+      "Un po' in banca, un po' di tranquillità."
+    ],
+    "moneyRent": [
+      "È arrivato l'assegno dell'affitto degli inquilini. {Puntuale, per una volta|Che bello}.",
+      "L'appartamento che affitto mi ha pagato il mese. {Il mattone rende|Che furbo}.",
+      "I miei inquilini vogliono {una caldaia nuova|una finestra nuova}. {Ma certo|Vita da padrone di casa}.",
+      "Il mattone è l'unica cosa che non mente mai. {Finora|Tocchiamo ferro}.",
+      "Oggi ho riscosso gli affitti. {Hanno pagato tutti|Una scusa, come sempre}.",
+      "Penso di comprare un altro appartamento da affittare. {Perché fermarsi|Il mercato va bene}.",
+      "Entrano gli affitti, pagate le bollette. {Un buon mese|I conti tornano}."
+    ],
+    "moneySaving": [
+      "Metto da parte un po' ogni settimana. {Per qualcosa di bello|Per il futuro}.",
+      "Il barattolo sullo scaffale si fa più pesante. {Piano piano|Non toccarlo}.",
+      "Di nuovo niente {pasticcino|cinema}. {Risparmio|Disciplina}.",
+      "Un giorno mi comprerò {un cappotto come si deve|un letto buono}. {Presto|Quando il barattolo sarà pieno}.",
+      "Ho contato i risparmi. {Non molto|Più del mese scorso}.",
+      "In questa casa ogni euro ha un compito. {Regola di mia madre|E funziona}.",
+      "Solo vetrine. {Guardare, non toccare|Divertimento gratis}."
+    ],
+    "moneyBought": [
+      "Mi sono regalato {purchase}. {Me lo meritavo|Nessun rimpianto}.",
+      "Oggi ho comprato {purchase}. {Avrò fatto bene|Ormai è fatta}?",
+      "{purchase}, finalmente mio. {Lo volevo da secoli|Valeva l'attesa}.",
+      "Ho speso più del previsto per {purchase}. {Ops|Non ditelo a nessuno}.",
+      "Il negoziante ha detto che {purchase} era un affare. {Lo dicono sempre|Gli ho creduto}.",
+      "Ho portato a casa {purchase} come un trofeo. {Piccole gioie|Fiero}.",
+      "Nuovo acquisto: {purchase}. {Ora devo trovargli un posto|Dove lo metto}?"
+    ],
+    "crimeReleased": [
+      "Fuori di prigione. {L'aria ha un altro sapore|È tutto così rumoroso}.",
+      "Ho scontato la pena. {Pagina pulita|Così dicono, almeno}.",
+      "Ora la gente cambia marciapiede quando mi vede. {Giusto|Fa male, però}.",
+      "Primo pasto vero fuori. {Per poco non piangevo|L'ho mangiato piano}.",
+      "Nessuno assume uno appena uscito. {Provati quattro posti|Continuo a provare}.",
+      "Mi sveglio ancora all'ora della campanella del carcere. {Abitudine|Il corpo si ricorda}.",
+      "Là dentro non ci torno più. {Mai|A qualsiasi costo}."
+    ],
+    "crimeReformed": [
+      "È tanto che filo dritto. {Ne vado fiero|Non è facile}.",
+      "Si sono fatti vivi i vecchi compari. {Ho detto di no|Ho chiuso la porta}.",
+      "La mia fedina mi segue {dappertutto|come un'ombra}. {Non si sfugge alla carta|Ancora}.",
+      "Lavoro onesto, paga onesta. {Più lento|Si dorme meglio}.",
+      "Certi giorni le vecchie abitudini chiamano. {Ignorarle|Tirare dritto}.",
+      "Ai giovani dico: non ne vale la pena. {Non ascoltano|Neanch'io ascoltavo}.",
+      "Ogni anno pulito è un anno guadagnato. {Uno per uno|Li conto}."
+    ],
+    "vehicleBike": [
+      "Stamattina ho gonfiato le gomme della bici. {Pronta a volare|Che scorrevolezza}.",
+      "In discesa niente batte la bici. {Vento in faccia|Freni facoltativi}.",
+      "Mi è saltata di nuovo la catena. {Mani unte|Ogni settimana}.",
+      "Legare la bici, sempre. {L'anno scorso me ne hanno rubata una|Due, a dire il vero}.",
+      "La bici è più vecchia di certi miei amici. {Va ancora|Cigola, però}.",
+      "In salita con la bici. {Gambe in fiamme|L'ultimo pezzo a piedi}.",
+      "Ho attraversato la città in bici in dieci minuti. {Battuto l'autobus|Ah, l'autobus}."
+    ],
+    "vehicleBroom": [
+      "Ho rilegato le setole della scopa. {Ora vola più dritta|Ci ho messo tutta la sera}.",
+      "Volo in scopa stamattina, brina sulle sopracciglia. {Tonificante|Ne vale la pena}.",
+      "In scopa per poco non prendevo {un piccione|un comignolo}. {Per un pelo|Scusa, piccione}.",
+      "La mia scopa tira a sinistra. {Come il mio vecchio carretto|Ci vuole un incantesimo}.",
+      "La vista dalla scopa al tramonto. {Tetti d'oro|La cosa più bella del mondo}.",
+      "Ho spazzato il pavimento con la scopa volante. {Ha tenuto il broncio|Poco dignitoso}.",
+      "Pioggia e scopa non vanno d'accordo. {Fradicio|Mai più col temporale}."
+    ],
+    "vehicleCar": [
+      "Stamattina ho lavato la macchina. {Ora pioverà|Brilla come nuova}.",
+      "La macchina fa di nuovo {un rumore|quel rumore}. {Di nuovo dal meccanico|Ignoriamolo}.",
+      "La benzina è aumentata di nuovo. {Andare a piedi costa meno|Una rapina}.",
+      "Nel fine settimana sono andato in macchina {al mare|dai miei}. {Radio a tutto volume|Finestrini giù}.",
+      "Parcheggiare in questa città è {un incubo|una guerra}. {Quattro giri dell'isolato|Di nuovo}.",
+      "Scade l'assicurazione della macchina. {Ahi|Ogni anno di più}.",
+      "Ho insegnato a guidare {a mio nipote|al vicino}. {Mai più|I miei nervi}."
+    ],
+    "friendBest": [
+      "Stasera viene {friend}. {Carte e pettegolezzi|Il solito}.",
+      "Non arriverei alla fine della settimana senza {friend}. {Non diteglielo|Lo sa}.",
+      "{friend} mi ha prestato dei soldi e non ne ha più parlato. {Amico vero|Cosa rara}.",
+      "Oggi io e {friend} abbiamo riso fino alle lacrime. {Per niente|Il tipo migliore}.",
+      "Devo ricordarmi {del compleanno|dell'onomastico} di {friend}. {L'ho scritto|Due volte}.",
+      "{friend} sa sempre cosa dire. {Irritante|Che fortuna}.",
+      "Conosco {friend} da anni. {Sembra da sempre|Ancora mi sorprende}."
+    ],
+    "friendRival": [
+      "{foe} {sogghigna|gongola} di nuovo. {Ignorare|Volare alto}.",
+      "Se {foe} dice un'altra parola sulla mia {cucina|aiuola}...",
+      "Ho visto {foe} al mercato. {Ho cambiato marciapiede|Ho fatto finta di niente}.",
+      "{foe} si crede migliore di tutti. {Non lo è|Che lo dimostri}.",
+      "Un giorno batterò {foe} a {carte|qualsiasi cosa}. {Un giorno|Presto}.",
+      "{foe} ha messo in giro una voce su di me. {So che è stato lui|Tipico}.",
+      "Non sopporto {foe}. {Mai sopportato|Dai tempi della scuola}."
+    ],
+    "familyLostParent": [
+      "Allungo ancora la mano al telefono per chiamare {lost}. {Poi mi ricordo|Ogni domenica}.",
+      "Ho svuotato la casa di {lost}. {Ogni cassetto un ricordo|Ci è voluta una settimana}.",
+      "{lost} saprebbe cosa fare. {Lo sapeva sempre|Mi manca}.",
+      "Ho fatto la ricetta di {lost}. {Non è la stessa cosa|Quasi uguale}.",
+      "Il funerale è stato bellissimo. {A {lost} non sarebbero piaciute tante storie|Sono venuti tutti}.",
+      "Da quando {lost} se n'è andato nessuno mi chiama più col nome di quando ero piccolo.",
+      "Ho {le mani|la risata} di {lost}. {Lo dice la gente|Ora lo vedo}."
+    ],
+    "familyLostChild": [
+      "La stanza di {lost} è com'era. {Non ce la faccio|Non ancora. Forse mai}.",
+      "I genitori non dovrebbero seppellire i figli. {È al contrario|Niente va più bene}.",
+      "A volte per strada sento la risata di {lost}. {Non è mai lui|Ogni volta}.",
+      "Da quando ho perso {lost} la gente non sa cosa dirmi. {Neanch'io|Ci provano}.",
+      "Oggi ho acceso una candela per {lost}. {Ogni giorno|Aiuta un poco}.",
+      "{lost} adesso sarebbe {più grande|cresciuto}. {Conto i compleanni|Ci penso ogni giorno}.",
+      "Alzarsi è la parte difficile. {Poi il resto della giornata|Ogni mattina}."
+    ],
+    "familyGrandchildren": [
+      "Oggi è venuto {grandchild}. {Ha mangiato tutti i biscotti|Stancante e meraviglioso}.",
+      "Viziare {grandchild} è un mio diritto. {Me lo sono guadagnato|I genitori si lamentino pure}.",
+      "Sto facendo un maglione a {grandchild}. {Taglia sbagliata, probabilmente|Rosso, il preferito}.",
+      "{grandchild} mi ha fatto un disegno. {È sul frigo|L'ho incorniciato}.",
+      "I nipoti sono il premio per essere sopravvissuti ai propri figli.",
+      "Ho raccontato a {grandchild} le vecchie storie. {Sempre quelle|Me le ha richieste}.",
+      "{grandchild} mi chiama {nonna|nonno} e mi sciolgo. {Ogni volta|Vecchio tenerone}."
     ]
   },
   "script": {
@@ -490,100 +1109,438 @@
     "topicConversion": [
       [[0, "Ho letto qualcosa su {creed}."], [1, "{Attento|Quelli}? Davvero?"], [0, "Hanno senso, in parte."]],
       [[1, "Ultimamente sembri diverso."], [0, "Forse {creed} mi ha convinto."]]
+    ],
+    "talkJob": [
+      [[1, "Fai ancora il {job}, {a}?"], [0, "{Ancora|Per sempre, sembra}. E tu?"], [1, "Non mi lamento. {Cioè, potrei|Lo faccio lo stesso}."]],
+      [[0, "Settimana piena al lavoro. {Tutti vogliono tutto per ieri|Di nuovo a corto di personale}."], [1, "Ovunque è così."], [0, "{Almeno paga|Almeno ho un lavoro}."]],
+      [[1, "Com'è fare il {job}?"], [0, "{Meglio di quanto sembri|Peggio di quanto sembri}."], [1, "*ride* Giusto."], [0, "Passa una volta, ti faccio vedere."]],
+      [[0, "Il capo mi ha dato {un aumento|una pacca sulla spalla}."], [1, "{Congratulazioni|Meglio di niente}!"], [0, "{Offro io|Me la incornicio}."]]
+    ],
+    "talkNewJob": [
+      [[0, "Ho un lavoro nuovo! Faccio il {job}."], [1, "{Congratulazioni|Meraviglioso}! Com'è?"], [0, "{È presto per dirlo|Finora, bellissimo}."]],
+      [[1, "Ho sentito che hai cambiato lavoro, {a}."], [0, "Ora faccio il {job}. Gente diversa, caffè diverso."], [1, "Caffè migliore?"], [0, "{Molto migliore|Peggiore, sinceramente}."]],
+      [[0, "Prima settimana nel posto nuovo. {Mi sono perso due volte|Mi hanno dato un armadietto}."], [1, "Ti ambienterai."], [0, "{Spero|Già quasi}."]]
+    ],
+    "talkRetired": [
+      [[1, "Ti godi la pensione, {a}?"], [0, "{Ogni minuto|Più impegnato di quando lavoravo}."], [1, "Beato te."], [0, "Quarant'anni di lavoro. Non fortuna."]],
+      [[0, "Mi sono dato {alla pesca|alle bocce}."], [1, "Sei bravo?"], [0, "{Pessimo|Una frana}. Mi piace da matti."]],
+      [[1, "Ti manca il lavoro?"], [0, "{Le persone|La routine}, un po'. Il capo, mai."]]
+    ],
+    "talkHomeless": [
+      [[0, "Hai qualcosa da darmi? {Una moneta|Un pezzo di pane}?"], [1, "{Tieni|Prendi}. Dove dormi?"], [0, "{Dove è asciutto|In stazione, finché non mi cacciano}."]],
+      [[1, "Stanotte farà freddo."], [0, "{A chi lo dici|Il dormitorio è pieno}."], [1, "In inverno la parrocchia apre il salone."], [0, "{Grazie|Proverò lì}."]],
+      [[0, "Una volta avevo un appartamento. {Prima|Sembra un'altra vita}."], [1, "Cos'è successo?"], [0, "{Lunga storia|I soldi. Sono sempre i soldi}."]]
+    ],
+    "talkHomesick": [
+      [[0, "Da dove vengo io, {birthplace}, non lo farebbero mai così."], [1, "Ti manca?"], [0, "{Ogni giorno|Meno di prima}."]],
+      [[1, "Non sei di qui, vero?"], [0, "{birthplace}, nato e cresciuto."], [1, "Dicono che sia bello là."], [0, "{Lo è|Lo era}."]],
+      [[0, "Torno a {birthplace} per una visita, presto."], [1, "Porti qualcosa?"], [0, "{Il pane|Il formaggio}. Sempre {il pane|il formaggio}."]]
+    ],
+    "talkIll": [
+      [[1, "Hai una faccia terribile, {a}."], [0, "{illness}. {Non avvicinarti|Stai alla larga}."], [1, "Vai a casa a riposare!"]],
+      [[0, "*tossisce* Scusa. {illness}."], [1, "Sei andato dal dottore?"], [0, "{Stamattina|Domani}. Pastiglie e letto, diranno."]],
+      [[1, "Mezza via ha {illness}."], [0, "E ora anch'io."], [1, "Minestra. Tanta minestra."]]
+    ],
+    "talkRecovered": [
+      [[1, "Hai una cera migliore, {a}!"], [0, "Finalmente guarito da {illness}."], [1, "{Grazie al cielo|Bentornato tra i vivi}."]],
+      [[0, "Primo giorno fuori dopo {illness}."], [1, "Vacci piano."], [0, "{Lo farò|Non lo farò}."]],
+      [[1, "{illness} ti ha preso forte?"], [0, "{Una settimana a letto|Peggio di quanto ho fatto vedere}."], [1, "Sono contento che ti sia rimesso."]]
+    ],
+    "talkChronic": [
+      [[1, "Come va con {condition}, {a}?"], [0, "{Certi giorni meglio|Come sempre}."], [1, "Non ti lamenti mai."], [0, "A cosa servirebbe?"]],
+      [[0, "Pastiglie nuove per {condition}."], [1, "Funzionano?"], [0, "{Chiedimelo tra un mese|Sembra}."]],
+      [[1, "Te lo porto io?"], [0, "{Grazie|Ce la faccio}. Oggi {condition} è pesante."]]
+    ],
+    "talkImplant": [
+      [[1, "È nuovo, {a}? L'impianto?"], [0, "Messo in clinica. {Mi ci sto ancora abituando|Funziona a meraviglia}."], [1, "Fa male?"], [0, "{Solo quando piove|Non più}."]],
+      [[0, "Vuoi vedere l'impianto, {augment}?"], [1, "{Dai, fammi vedere|È schifoso}?"], [0, "{Guarda qua|Bello, no}?"]],
+      [[1, "Quegli impianti costano una fortuna."], [0, "{Tutti i miei euro|Ne valeva la pena}."], [1, "Io mi tengo i pezzi originali."]]
+    ],
+    "talkLevelUp": [
+      [[0, "Sto diventando {più forte|più bravo}, {b}. Livello {level}!"], [1, "{Guardati|Bravo}!"], [0, "Ci è voluto parecchio."]],
+      [[1, "Hai qualcosa di diverso, {a}."], [0, "Esercizio. {Tanto|Ogni sera}."], [1, "Si vede."]],
+      [[0, "Oggi ho battuto il mio record."], [1, "In cosa?"], [0, "{In tutto|Sollevare il sacco di farina}."], [1, "*ride* Campione."]]
+    ],
+    "talkBandSoon": [
+      [[0, "Tra pochi giorni parto con la compagnia di {bandmate}. Per {expedition}."], [1, "{Sei matto|Coraggioso}?"], [0, "{Probabilmente|Tutte e due}."]],
+      [[1, "È vero che ti unisci a una spedizione?"], [0, "Con {bandmate}. {Partiamo presto|Bagagli pronti}."], [1, "Torna tutto intero."], [0, "Questo è il piano."]],
+      [[0, "Pensi che mi serva {altra corda|un secondo coltello}?"], [1, "Per {expedition}? Prendi due di tutto."], [0, "{Buon consiglio|La borsa non si chiude}."]]
+    ],
+    "talkBandBack": [
+      [[1, "Sei tornato! Com'è andata con {expedition}?"], [0, "{Buio, freddo e pieno di denti|Incredibile}."], [1, "Raccontami tutto."], [0, "{Prima offrimi da bere|Ci vorrà tutta la notte}."]],
+      [[0, "Sono tornato dalla spedizione per {expedition}."], [1, "{Grazie al cielo|Eravamo preoccupati}!"], [0, "{Anch'io|Pure io}."]],
+      [[1, "Ci torneresti?"], [0, "{Mai|Domani}."], [1, "Quale delle due?"], [0, "{Chiedimelo dopo un bagno|Tutte e due}."]]
+    ],
+    "talkBirthday": [
+      [[0, "Oggi è il mio compleanno!"], [1, "Tanti auguri, {a}! Quanti anni?"], [0, "{age}. {Non ridere|Ancora giovane}."]],
+      [[1, "Buon compleanno, {a}!"], [0, "Te lo sei ricordato! {Grazie|Nessun altro l'ha fatto}."], [1, "Torta più tardi?"], [0, "{Sempre|Ovvio}."]],
+      [[0, "Oggi compio {age} anni. {Strano|Mi sento uguale}."], [1, "Programmi?"], [0, "{Cena con la famiglia|Un lungo pisolino}."]]
+    ],
+    "talkHoliday": [
+      [[0, "Fai qualcosa per {holiday}?"], [1, "{Pranzo in famiglia|Dormire fino a tardi}. E tu?"], [0, "{Uguale|La parata, se non piove}."]],
+      [[1, "Auguri per {holiday}, {a}!"], [0, "Anche a te! {Mangia bene|Riposati}."]],
+      [[0, "Prima di {holiday} i negozi saranno una follia."], [1, "Io la spesa l'ho fatta prima."], [0, "{Sbruffone|Furbo}."]]
+    ],
+    "talkWeekend": [
+      [[1, "Programmi per il fine settimana, {a}?"], [0, "{Niente di niente|L'orto}. Che pace."], [1, "Perfetto."]],
+      [[0, "Di nuovo al lavoro sabato."], [1, "{Poverino|Di nuovo}?"], [0, "Qualcuno deve pur farlo."]],
+      [[1, "Ti va il mercato domenica?"], [0, "{Se è presto|Solo se c'è il caffè}."], [1, "Affare fatto."]]
+    ],
+    "talkStocks": [
+      [[0, "Hai visto la borsa questa settimana?"], [1, "{Non la seguo|Su e giù come uno yo-yo}."], [0, "{Ho guadagnato qualcosa|Ho perso qualcosa}."]],
+      [[1, "Hai ancora azioni di {company}?"], [0, "{Tengo duro|Per ora}."], [1, "Coraggioso."]],
+      [[0, "Penso di comprare altre azioni."], [1, "Con quali soldi?"], [0, "{Bella domanda|I soldi delle vacanze}."], [1, "*sospira*"]]
+    ],
+    "talkLoan": [
+      [[0, "Ho dovuto prendere un prestito."], [1, "{È grave|Ti serve una mano}?"], [0, "{Me la caverò|Stretto, ma me la caverò}."]],
+      [[1, "La banca mi ha detto di no. A te?"], [0, "A me di sì. {Ora vorrei che non l'avessero fatto|A caro prezzo}."]],
+      [[0, "Ogni mese, una fetta alla banca."], [1, "Per quanto?"], [0, "{Due anni|Troppo}."]]
+    ],
+    "talkReleased": [
+      [[0, "Sono fuori. Ho scontato la pena."], [1, "{Bentornato|Com'è stato}?"], [0, "{Lungo|Non chiedere}."]],
+      [[1, "Ho sentito che eri dentro, {a}."], [0, "Ero. {Non più|Mai più}."], [1, "Bene per te."]],
+      [[0, "Da quando sono uscito nessuno mi dà lavoro."], [1, "Prova al porto. Non fanno domande."], [0, "{Grazie|Ci proverò}."]]
+    ],
+    "talkVehicle": [
+      [[1, "Bella la tua {vehicle}, {a}."], [0, "{Grazie|Vecchia, ma va}."], [1, "Posso provarla?"], [0, "{Neanche per sogno|Forse un giorno}."]],
+      [[0, "La mia {vehicle} va di nuovo {aggiustata|sistemata}."], [1, "Di nuovo?"], [0, "{Ogni settimana|Ogni volta che mi serve}."]],
+      [[1, "Ti muovi ancora con la {vehicle}?"], [0, "Dappertutto. {Il modo più veloce|Mai in ritardo}."]]
+    ],
+    "talkFriend": [
+      [[0, "Questo fine settimana io e {friend} andiamo {al lago|al cinema}."], [1, "Voi due siete inseparabili."], [0, "{Da sempre|Come una vecchia coppia}."]],
+      [[1, "Come sta {friend}?"], [0, "{Bene|Come sempre}. Chiede di te."], [1, "Salutamelo."]],
+      [[0, "{friend} mi ha aiutato col trasloco. {Tutto il giorno|Senza neanche chiedere}."], [1, "Quello è un amico."], [0, "Il migliore."]]
+    ],
+    "talkRival": [
+      [[0, "{foe} ci si è rimesso."], [1, "Che c'è adesso?"], [0, "{Pettegolezzi|Si lamenta del mio cane}. Come al solito."]],
+      [[1, "Perché tu e {foe} non andate d'accordo?"], [0, "{Lunga storia|Chiedilo a {foe}}."], [1, "Io me ne tiro fuori."]],
+      [[0, "Se {foe} vince di nuovo {la lotteria|a bocce} mi metto a urlare."], [1, "*ride* Invidioso?"], [0, "{Mai|Forse un po'}."]]
+    ],
+    "talkGriefParent": [
+      [[0, "Quest'anno ho perso {lost}."], [1, "{Mi dispiace tanto|L'ho saputo}. Come stai?"], [0, "{Giorno per giorno|Certi giorni meglio di altri}."]],
+      [[1, "Penso spesso a {lost}. Una brava persona."], [0, "{Grazie|Lo era}."]],
+      [[0, "Ho trovato le vecchie lettere di {lost}. {Non sono riuscito a leggerle|Le ho lette tutta la notte}."], [1, "È dura."], [0, "E bello."]]
+    ],
+    "talkGriefChild": [
+      [[0, "È dura da quando ho perso {lost}."], [1, "{Mi dispiace tanto|Non ci sono parole}."], [0, "No. Non ci sono."]],
+      [[1, "Se ti serve qualcosa, {a}. Qualsiasi cosa."], [0, "{Grazie|Solo compagnia, a volte}."]],
+      [[0, "Tengo {i disegni|le scarpe} di {lost} vicino alla porta."], [1, "Tienili finché ti serve."], [0, "Per sempre, allora."]]
+    ],
+    "talkGrandchildren": [
+      [[0, "Ieri {grandchild} ha detto {la prima parola|la prima frase intera}!"], [1, "{Cosa ha detto|Che bravo}?"], [0, "{Biscotto|Il mio nome}. Il giorno più bello."]],
+      [[1, "Quanti nipoti adesso, {a}?"], [0, "{Troppi per comprare regali a tutti|Mai abbastanza}."]],
+      [[0, "Stasera faccio da baby sitter a {grandchild}."], [1, "Beato te."], [0, "{Chiedimelo domani|Fortunato e distrutto}."]]
     ]
   },
   "ambient": {
     "family": [
       [[0, "{partner} ti saluta."], [1, "Ricambia il saluto."]],
       [[0, "Devo andare a casa, {child} mi aspetta."], [1, "Vai, vai."]],
-      [[0, "Cena in famiglia stasera."], [1, "{Beato te|Buona fortuna}."]]
+      [[0, "Cena in famiglia stasera."], [1, "{Beato te|Buona fortuna}."]],
+      [[0, "{child} ha di nuovo il raffreddore."], [1, "{Gira|Ce l'hanno tutti}."]],
+      [[0, "Vado a prendere {partner} al lavoro."], [1, "{Romantico|Salutamelo}."]],
+      [[0, "In ritardo per cena. {partner} mi ammazza."], [1, "{Corri|Porta dei fiori}."]],
+      [[0, "Servono pannolini. {Di nuovo|Già}."], [1, "{Mangiano soldi|Benvenuto tra i genitori}."]],
+      [[0, "{child} vuole {un cagnolino|un pony}."], [1, "{Auguri|Di' di no}."]]
     ],
     "kids": [
       [[0, "{Guardami|Guarda}!"], [1, "{Attento|Wow}!"]],
-      [[0, "Prendimi!"], [1, "{Arrivo|Non vale}!"]]
+      [[0, "Prendimi!"], [1, "{Arrivo|Non vale}!"]],
+      [[0, "{Facciamo a gara|L'ultimo che arriva è una rana}!"], [1, "{Via|Non vale, sei partito prima}!"]],
+      [[0, "Ho trovato {una lumaca|un verme}!"], [1, "{Bleah|Posso vedere}!"]],
+      [[0, "{Mio papà|Mia mamma} è più forte del tuo."], [1, "{Non è vero|Sì che è vero}!"]],
+      [[0, "Facciamo cambio di {biglie|figurine}?"], [1, "{Solo quella lucida|Va bene}!"]],
+      [[0, "Nascondino! Conti tu!"], [1, "{Uno, due, tre|No, conti tu}!"]],
+      [[0, "So fischiare! Senti!"], [1, "{Quello è sputare|Wow}!"]]
     ],
     "war": [
       [[0, "Notizie dal fronte?"], [1, "Niente di buono."]],
-      [[0, "Il pane è aumentato ancora. La guerra."], [1, "Sempre la guerra."]]
+      [[0, "Il pane è aumentato ancora. La guerra."], [1, "Sempre la guerra."]],
+      [[0, "Mio nipote ha ricevuto la cartolina."], [1, "{Che Dio lo protegga|Povero ragazzo}."]],
+      [[0, "Hai sentito le sirene stanotte?"], [1, "{Un'esercitazione, dicono|Non ho dormito}."]],
+      [[0, "Di nuovo {enemy} al telegiornale."], [1, "{Spegni|Sempre {enemy}}."]],
+      [[0, "Raccolgono rottami di ferro per il fronte."], [1, "{Si sono presi le mie pentole vecchie|Ho dato il cancello}."]],
+      [[0, "Ora lo zucchero è razionato."], [1, "{Tè amaro, allora|Terribile}."]],
+      [[0, "Quando finirà?"], [1, "{Nessuno lo sa|Non presto}."]]
     ],
     "election": [
       [[0, "Voti per {party}?"], [1, "{Forse|Mai}."]],
-      [[0, "Le elezioni sono vicine."], [1, "{Non ricordarmelo|Non vedo l'ora}."]]
+      [[0, "Le elezioni sono vicine."], [1, "{Non ricordarmelo|Non vedo l'ora}."]],
+      [[0, "Hai visto i manifesti di {party}?"], [1, "{Brutti|Dappertutto}."]],
+      [[0, "Oggi {rival} è venuto al mercato."], [1, "{Ha stretto la mano a tutti|Ha baciato un bambino}."]],
+      [[0, "Per chi voti?"], [1, "{Segreto|Non te lo dico}."]],
+      [[0, "Un altro volantino nella buca delle lettere."], [1, "{Buono per accendere il fuoco|Dritto nel cestino}."]],
+      [[0, "Vincerà {party}, vedrai."], [1, "{Vedremo|Non ci scommetterei}."]],
+      [[0, "Hai visto il dibattito?"], [1, "{Mi sono addormentato|Una gara di urla}."]]
     ],
     "work": [
       [[0, "Ancora niente lavoro?"], [1, "{Niente|Proprio niente}."]],
-      [[0, "Vai al turno?"], [1, "{Purtroppo|Sempre}."]]
+      [[0, "Vai al turno?"], [1, "{Purtroppo|Sempre}."]],
+      [[0, "Qualcuno assume da queste parti?"], [1, "{Prova al mercato|Non che io sappia}."]],
+      [[0, "Domani ho un colloquio."], [1, "{In bocca al lupo|Mettiti la cravatta}!"]],
+      [[0, "La fabbrica licenzia di nuovo."], [1, "{Terribile|Chi stavolta}?"]],
+      [[0, "Mi sono iscritto all'ufficio di collocamento."], [1, "{Fila lunga|Qualcosa arriverà}."]],
+      [[0, "Adesso prenderei qualsiasi lavoro."], [1, "{Anch'io|Chiedi al fornaio}."]],
+      [[0, "Di nuovo a guardare gli annunci."], [1, "{Qualcosa di buono|Come la settimana scorsa}?"]]
     ],
     "horde": [
       [[0, "Sentito tamburi?"], [1, "{Non scherzare|Non stanotte}."]],
-      [[0, "I goblin sono agitati."], [1, "Testa bassa."]]
+      [[0, "I goblin sono agitati."], [1, "Testa bassa."]],
+      [[0, "Hai sentito del confine?"], [1, "{Non dirmelo|Di nuovo i goblin}."]],
+      [[0, "Stanotte chiudi le imposte."], [1, "{Ogni notte|Sempre}."]],
+      [[0, "Altri profughi in stazione."], [1, "{Poveretti|Porta coperte}."]],
+      [[0, "Ho visto uno stendardo goblin sulla collina."], [1, "{Non dirlo|Abbassa la voce}."]],
+      [[0, "L'Orda ha preso un'altra città."], [1, "{Quale|Dove si fermerà}?"]],
+      [[0, "Hai la borsa pronta?"], [1, "{Vicino alla porta|Da primavera}."]]
     ],
     "emigrate": [
       [[0, "Penso di trasferirmi all'estero."], [1, "{Portami con te|Buona fortuna}."]],
-      [[0, "Qui per noi non c'è niente."], [1, "{Forse|Purtroppo è vero}."]]
+      [[0, "Qui per noi non c'è niente."], [1, "{Forse|Purtroppo è vero}."]],
+      [[0, "Mio cugino è partito per l'estero la settimana scorsa."], [1, "{Fortunato|Coraggioso}."]],
+      [[0, "Dicono che di là gli stipendi sono il doppio."], [1, "{E l'affitto il triplo|Allettante}."]],
+      [[0, "Ho fatto domanda per il passaporto."], [1, "{Davvero|Te ne vai}?"]],
+      [[0, "Metà della mia classe ha lasciato il paese."], [1, "{Chi è rimasto|Io no}?"]],
+      [[0, "Te ne andresti mai?"], [1, "{Domani|Mai}."]],
+      [[0, "Sto imparando una lingua nuova alla scuola serale."], [1, "{Stai tramando qualcosa|Furbo}?"]]
+    ],
+    "job": [
+      [[0, "Vado al lavoro. {Augurami buona fortuna|Torno alle sei}."], [1, "{In bocca al lupo|Ci vediamo}."]],
+      [[0, "Turno lungo oggi."], [1, "{Poverino|Prima il caffè}."]],
+      [[0, "Tanto lavoro?"], [1, "{Non si ferma mai|Tranquillo, per una volta}."]],
+      [[0, "Devo essere verso {workplace} tra dieci minuti."], [1, "{Corri|Non ce la farai mai}."]],
+      [[0, "Oggi il capo è di cattivo umore."], [1, "{Testa bassa|Tutti i giorni}."]]
+    ],
+    "home": [
+      [[0, "Una moneta per un letto stanotte?"], [1, "{Tieni|Scusa, non ho niente}."]],
+      [[0, "Il dormitorio è di nuovo pieno."], [1, "{Prova in parrocchia|Notte fredda}."]],
+      [[0, "Sai un posto asciutto per dormire?"], [1, "{Sotto il ponte|La stazione}."]],
+      [[0, "Oggi ho mangiato un pasto caldo. Il primo da giorni."], [1, "{Bene|Mi fa piacere}."]]
+    ],
+    "health": [
+      [[0, "*tossisce* Non avvicinarti."], [1, "{Salute|Vai a casa}!"]],
+      [[0, "Oggi mi sento meglio."], [1, "{Era ora|Mi fa piacere}."]],
+      [[0, "Vado in clinica."], [1, "{Niente di grave|Spero si sbrighino}?"]],
+      [[0, "Il dottore dice che sopravviverò."], [1, "{Peccato|Buone notizie}."]]
+    ],
+    "band": [
+      [[0, "Parto presto con la compagnia di {bandmate}."], [1, "{Matto|Torna vivo}."]],
+      [[0, "Tornato dalla spedizione!"], [1, "{Bentornato|Hai una faccia orribile}!"]],
+      [[0, "Dovevi vedere cosa abbiamo trovato."], [1, "{Raccontamelo dopo|Oro}?"]],
+      [[0, "Preparo i bagagli per la spedizione."], [1, "{Prendi un cappotto|Prendi due coltelli}."]]
+    ],
+    "birthday": [
+      [[0, "È il mio compleanno!"], [1, "{Tanti auguri|Cento di questi giorni}!"]],
+      [[0, "Oggi compio {age} anni."], [1, "{Non li dimostri|Ancora un ragazzino}."]],
+      [[0, "Più tardi torta da me."], [1, "{Ci sarò|Tienimene una fetta}."]],
+      [[0, "Un anno in più."], [1, "{E più saggio|E più rumoroso}."]]
+    ],
+    "holiday": [
+      [[0, "Pronto per {holiday}?"], [1, "{Quasi|Mai}."]],
+      [[0, "Auguri per {holiday}!"], [1, "{Anche a te|Altrettanto}!"]],
+      [[0, "I negozi sono chiusi per {holiday}."], [1, "{Ho dimenticato il latte|Ovvio}."]],
+      [[0, "Parata per {holiday} a mezzogiorno."], [1, "{Ci vediamo lì|Porto i bambini}."]]
+    ],
+    "weekend": [
+      [[0, "Finalmente il fine settimana."], [1, "{Era ora|Troppo corto}."]],
+      [[0, "Oggi il mercato è pieno."], [1, "{La folla del sabato|Sono tutti fuori}."]],
+      [[0, "Lavori questo fine settimana?"], [1, "{Purtroppo|Per fortuna no}."]],
+      [[0, "Pranzo della domenica da te?"], [1, "{Porta il vino|Solo se cucini tu}."]]
+    ],
+    "money": [
+      [[0, "Questa settimana in borsa è andata bene."], [1, "{Allora offri tu|Fortunato}."]],
+      [[0, "La banca rivuole i suoi soldi."], [1, "{Sempre|Le banche}."]],
+      [[0, "Oggi mi sono fatto un regalo."], [1, "{Hai fatto bene|Cosa hai preso}?"]],
+      [[0, "I prezzi continuano a salire."], [1, "{Gli stipendi no|A chi lo dici}."]]
+    ],
+    "friends": [
+      [[0, "Hai visto {friend} oggi?"], [1, "{Non ancora|Al bar}."]],
+      [[0, "Vado da {friend}."], [1, "{Salutamelo|Porta una torta}."]],
+      [[0, "{friend} mi deve un caffè."], [1, "{Fattelo offrire|Ah}."]],
+      [[0, "Io e {friend} andiamo {al cinema|alla partita}."], [1, "{Divertitevi|Buon divertimento}."]]
+    ],
+    "vehicle": [
+      [[0, "La mia {vehicle} fa i capricci."], [1, "{Di nuovo|Dalle un calcio}?"]],
+      [[0, "Vuoi un passaggio?"], [1, "{Su quella|È sicura}?"]],
+      [[0, "Ho aggiustato la {vehicle} da solo."], [1, "{Notevole|Reggerà}?"]],
+      [[0, "Dove ho lasciato la {vehicle}?"], [1, "{Dietro di te|Non ne ho idea}."]]
     ]
   },
   "mention": {
     "partner": [
       "Piaceresti a {partner}. {Piace a tutti|A {partner} piacciono tutti}.",
       "{partner} mi aspetta a casa. {Non posso fare tardi|Non devo tardare}.",
-      "Io e {partner} stiamo insieme da {years} anni. {Ancora qui|Ancora a litigare sul termostato}."
+      "Io e {partner} stiamo insieme da {years} anni. {Ancora qui|Ancora a litigare sul termostato}.",
+      "{partner} mi prepara il pranzo ogni mattina. {Viziato, lo so|Non ridete}."
     ],
     "poly": [
       "{partner} e {partner2} mi tengono occupato. {Due anniversari|Il doppio dei compleanni}.",
-      "Divido la casa con {partner} e {partner2}. {Casa rumorosa|Mai soli}."
+      "Divido la casa con {partner} e {partner2}. {Casa rumorosa|Mai soli}.",
+      "Siamo in tre sotto lo stesso tetto: io, {partner} e {partner2}. {Cene mai noiose|Rumorosi e felici}."
     ],
     "longDistance": [
       "{partner} vive lontano. {Lettere ogni settimana|La bolletta del telefono è scioccante}.",
-      "Vedo {partner} solo ogni tanto. Così ogni visita conta."
+      "Vedo {partner} solo ogni tanto. Così ogni visita conta.",
+      "{partner} mi scrive ogni settimana da lontano. {Conservo ogni lettera|Conto i giorni}."
     ],
     "anniversary": [
       "{years} anni con {partner} questo mese. {Non farmi dimenticare i fiori|Mi serve un regalo}.",
-      "Il nostro anniversario è vicino. {partner} pensa che me ne sia dimenticato."
+      "Il nostro anniversario è vicino. {partner} pensa che me ne sia dimenticato.",
+      "{years} anni con {partner}. {Idee per un regalo|Aiutatemi a scegliere}?"
     ],
     "pregnant": [
       "Il bambino nasce presto. {Si vede|Sono enorme}.",
-      "Io e {partner} aspettiamo un bambino. {Terrorizzato|Felicissimo}, in parti uguali."
+      "Io e {partner} aspettiamo un bambino. {Terrorizzato|Felicissimo}, in parti uguali.",
+      "Da un giorno all'altro, dice l'ostetrica. {Tenetemi la porta|Attenti alla pancia}."
     ],
     "partnerPregnant": [
       "{partner} aspetta un bambino. Diventerò genitore!",
-      "Stiamo dipingendo la cameretta. {partner} ha scelto il giallo."
+      "Stiamo dipingendo la cameretta. {partner} ha scelto il giallo.",
+      "{partner} partorisce presto. {Ho letto tutti i libri|Non sono pronto}."
     ],
     "newborn": [
       "Il mio piccolo {child} ha {solo pochi mesi|appena visto il mondo}. Da allora non dormo.",
-      "{child} ha il pianto più forte della via, lo giuro."
+      "{child} ha il pianto più forte della via, lo giuro.",
+      "Volete vedere una foto di {child}? {Solo una|Ne ho dodici}."
     ],
     "children": [
       "Il mio {child} ora è a scuola. {Speriamo che impari qualcosa|Speriamo che si comporti bene}.",
-      "{child} vuole diventare come te da grande. {Avventurieri|Eroi}, tutti quanti."
+      "{child} vuole diventare come te da grande. {Avventurieri|Eroi}, tutti quanti.",
+      "{child} colleziona {coleotteri|francobolli}. {Se ne trovate, portateli|Portatene uno dai vostri viaggi}."
     ],
     "adultChild": [
       "Il mio {child} è cresciuto. {Non chiama mai, ovviamente|Se la cava bene}.",
-      "{child} è andato via di casa l'anno scorso. La casa è così silenziosa."
+      "{child} è andato via di casa l'anno scorso. La casa è così silenziosa.",
+      "{child} ormai manda avanti la sua casa. {Fiero|Chiama ancora per le ricette}."
     ],
     "parents": [
       "Il mio {parent} ti farebbe una testa così. {Vecchie storie|Storie di guerra}.",
-      "Ora mi prendo cura di {parent}. {Odierebbe sentirmelo dire|Testardo come un mulo}."
+      "Ora mi prendo cura di {parent}. {Odierebbe sentirmelo dire|Testardo come un mulo}.",
+      "È per via di {parent} che sono così testardo. {È di famiglia|Chiedete in giro}."
     ],
     "siblings": [
       "Io e {sibling} non ci parliamo molto. {Vecchia lite|Lunga storia}.",
-      "Piaceresti a {sibling}. {Adora i viaggiatori|Ti farebbe mille domande}."
+      "Piaceresti a {sibling}. {Adora i viaggiatori|Ti farebbe mille domande}.",
+      "Io e {sibling} dividiamo tutto. {Tranne l'ultimo biscotto|Soprattutto le liti}."
     ],
     "breakup": [
       "Io e {ex} ci siamo lasciati. {Fa ancora male|Non chiedere}.",
-      "Sono di nuovo single da {ex}. {Vado piano|Mi godo la quiete}."
+      "Sono di nuovo single da {ex}. {Vado piano|Mi godo la quiete}.",
+      "Da quando c'è stata la rottura con {ex} {cucino per uno|imparo a stare bene da solo}."
     ],
     "widowed": [
       "Ho perso {ex} tempo fa. {Certi giorni vanno meglio|Te lo porti dietro}.",
-      "Saresti piaciuto a {ex}. Gli piacevano tutti."
+      "Saresti piaciuto a {ex}. Gli piacevano tutti.",
+      "La sedia di {ex} resta dov'è. {Mi siedo accanto|Certe cose non si spostano}."
     ],
     "partnerAway": [
       "{partner} è in viaggio. {La casa è troppo silenziosa|Mangio pane tostato ogni sera}.",
-      "{partner} manda cartoline dal viaggio. {Si vanta|Lo fa apposta}."
+      "{partner} manda cartoline dal viaggio. {Si vanta|Lo fa apposta}.",
+      "{partner} è in viaggio. {Annaffio le piante e conto i giorni|Manca anche al gatto}."
     ],
     "refugeeKin": [
       "Il mio {kin} è fuggito dall'Orda. {Ora è in un campo|Gli mando quello che posso}.",
-      "Se passi dai campi, chiedi di {kin}. Digli che penso a lui."
+      "Se passi dai campi, chiedi di {kin}. Digli che penso a lui.",
+      "{kin} ha perso tutto per colpa dell'Orda. {Se potete aiutare, aiutate|Ogni coperta conta}."
+    ],
+    "grief": [
+      "Quest'anno ho perso {lost}. {Scusate se sono silenzioso|Mi sembra ancora irreale}.",
+      "A {lost} sareste piaciuti. {Avventurieri|Viaggiatori}, tutti quanti.",
+      "Da quando se n'è andato {lost} parlo di più con gli sconosciuti. {Come voi|Aiuta}."
+    ],
+    "grandchildren": [
+      "Mio nipote {grandchild} adorerebbe conoscere dei veri avventurieri.",
+      "Chiedetemi di {grandchild}. {Ho le foto|Dai, chiedete}.",
+      "{grandchild} mi tiene giovane. {E stanco|Soprattutto stanco}."
+    ],
+    "job": [
+      "Faccio il {job}. {Niente di speciale|Paga l'affitto}.",
+      "{job}, è il mio mestiere. {Da anni|Lavoro buono e onesto}.",
+      "Se vi serve qualcuno che faccia il {job}, sapete dove trovarmi."
+    ],
+    "newJob": [
+      "Ho appena cominciato come {job}! {Sto ancora imparando|Auguratemi buona fortuna}.",
+      "Lavoro nuovo questo mese, {job}. {Paga migliore|Gente migliore}.",
+      "Ho cambiato mestiere. Ora faccio il {job}. {Mai troppo tardi|La decisione migliore}."
+    ],
+    "retired": [
+      "Ora sono in pensione. {Tutto il tempo del mondo|Mi annoio a morte}.",
+      "Ho lavorato quarant'anni. {Ora guardo gli altri farlo|Mi sono guadagnato il riposo}.",
+      "La pensione mi si addice. {Quasi sempre|L'orto non è mai stato così bello}."
+    ],
+    "homeless": [
+      "Al momento non ho un tetto. {Avete qualcosa|C'è qualche lavoro}?",
+      "Questo mese dormo per strada. {Impari gli angoli caldi|Non è per sempre}.",
+      "Una volta avevo una casa con la porta rossa. {Tanto tempo fa|Un'altra vita}."
+    ],
+    "homesick": [
+      "Sono di {birthplace}, in origine. {Vi piacerebbe|Il pane migliore del mondo}.",
+      "Se passate da {birthplace}, {salutatemela|mangiate in piazza}.",
+      "{birthplace} è casa. Qui ci vivo e basta."
+    ],
+    "ill": [
+      "State indietro, ho {illness}. {Non lo auguro a nessuno|È contagioso}.",
+      "Scusate, non sono in me. {illness}. {Ordine del dottore: riposo|Uff}.",
+      "{illness} mi ha tenuto a letto per giorni. {Prima uscita|Solo un po' d'aria}."
+    ],
+    "chronic": [
+      "Convivo con {condition}. {Si va avanti|Certi giorni va bene}.",
+      "{condition}. {Niente storie, ci sono abituato|Pastiglie e pazienza}.",
+      "Camminate più piano con me, va bene? Per via di {condition}."
+    ],
+    "recovered": [
+      "Appena guarito da {illness}. {Mi sento rinato|Ancora un po' traballante}.",
+      "Prima settimana buona dopo {illness}. {La salute è tutto|Mai darla per scontata}.",
+      "Ho avuto {illness}. L'ho battuto. {Più forte di quanto sembri|A forza di minestra}."
+    ],
+    "implant": [
+      "Vedete questo? {augment}. {L'hanno messo in clinica|Mi è costato una fortuna}.",
+      "Il mio impianto, {augment}, funziona meglio dell'originale.",
+      "Mi sto ancora abituando all'impianto. {Attenti alle dita|È forte}."
+    ],
+    "levelUp": [
+      "Sto diventando bravo. {Livello {level}, se contate|Ogni giorno più forte}.",
+      "Mi sono allenato sodo. {Si vede|Sfidatemi a braccio di ferro}.",
+      "La pratica rende perfetti. {Quasi perfetti|Ci sto arrivando}."
+    ],
+    "bandSoon": [
+      "Tra poco parto in spedizione con la compagnia di {bandmate}. {Consigli|Voi l'avete già fatto}?",
+      "Tra pochi giorni parto per {expedition}. {Nervoso|Emozionato}.",
+      "Colleghi avventurieri! Mi unisco a {bandmate} per {expedition}."
+    ],
+    "bandBack": [
+      "Appena tornato dalla spedizione per {expedition}. {Vi sarebbe piaciuta|Non andateci}.",
+      "Sono tornato da {expedition}. {Le storie che potrei raccontarvi|Per un pelo}.",
+      "Avventurieri, eh? Ci sono stato anch'io. {expedition}. {Mai più|Forse di nuovo}."
+    ],
+    "birthday": [
+      "Oggi è il mio compleanno! {{age} anni|Un anno in più}. {Ditemi qualcosa di carino|Avete una torta}?",
+      "Mi avete beccato il giorno del compleanno. {Che fortuna|Torta più tardi}.",
+      "Oggi compio {age} anni e ancora nessuna avventura come la vostra."
+    ],
+    "holiday": [
+      "Auguri per {holiday}! {Vi fermate per i festeggiamenti|Avete mangiato}?",
+      "Per {holiday} chiude tutto. {Fate scorte|Organizzatevi}.",
+      "{holiday} è il giorno più bello dell'anno qui. {Vedrete|Restate}."
+    ],
+    "stocks": [
+      "Seguite la borsa? Ho azioni di {company}.",
+      "Questa settimana ho guadagnato qualcosa in borsa. {Non ditelo al fisco|Mi sento furbo}.",
+      "Azioni. {Mai più|Su, giù, su}. I miei nervi."
+    ],
+    "released": [
+      "Ho appena finito di scontare la pena. {Pagina pulita|Non giudicatemi}.",
+      "Fuori di prigione da qualche settimana. {Il mondo è andato avanti|Mi sto ancora riabituando}.",
+      "Non mi guardate come fanno gli altri. {Grazie|Lo apprezzo}."
+    ],
+    "vehicle": [
+      "Mi muovo con la mia {vehicle}. {La più veloce della città|Non mi ha mai tradito}.",
+      "Se vi serve trasportare qualcosa, la mia {vehicle} è qui fuori.",
+      "Attenti alla mia {vehicle} uscendo. {Appena lucidata|È delicata}."
+    ],
+    "friend": [
+      "Dovreste conoscere {friend}. {Il mio migliore amico|Andreste d'accordo}.",
+      "Io e {friend} ci conosciamo da anni. {Salutatemelo|Inseparabili}.",
+      "Se vedete {friend}, ditegli che mi deve un caffè."
     ]
   },
   "greetKin": {
@@ -603,6 +1560,18 @@
       "{Oi|Ehi}, {name}!",
       "{name}! {Mi devi ancora dei soldi|Chiama la mamma}!"
     ]
+  },
+  "label": {
+    "expedition": {
+      "tower": "la Torre Omega",
+      "dungeon": "il sottosuolo",
+      "space": "lo spazio"
+    },
+    "vehicle": {
+      "bike": "bici",
+      "broom": "scopa",
+      "car": "macchina"
+    }
   },
   "fallback": {
     "partner": "la mia metà",
@@ -625,6 +1594,26 @@
     "winner": "i nuovi",
     "election": "elezioni",
     "job": "lavoro",
-    "years": "alcuni"
+    "days": "pochi",
+    "years": "alcuni",
+    "workplace": "il lavoro",
+    "birthplace": "casa",
+    "illness": "questo malanno",
+    "condition": "il mio disturbo",
+    "augment": "l'impianto",
+    "bodyPart": "braccio",
+    "level": "nuovo",
+    "bandmate": "il capo",
+    "expedition": "la spedizione",
+    "age": "altri",
+    "relative": "mia sorella",
+    "holiday": "la festa",
+    "company": "quella società",
+    "purchase": "qualcosa di bello",
+    "vehicle": "bici",
+    "friend": "il mio migliore amico",
+    "foe": "quel tipo",
+    "lost": "mia madre",
+    "grandchild": "il nipotino"
   }
 }

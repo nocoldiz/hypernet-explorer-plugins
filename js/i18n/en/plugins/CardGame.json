@@ -44,11 +44,12 @@
     "pickSecondTile": "Now pick the tile it moves to.",
     "forfeitAsk": "Leave the table? The stake is forfeit.",
     "forfeitYes": "Forfeit",
-    "forfeitNo": "Stay"
+    "forfeitNo": "Stay",
+    "forfeitBracketAsk": "Leave the table? The bracket ends here, and the entry fee stays paid."
   },
   "col": {
     "title": "Card Collection",
-    "owned": "{cards} cards, {distinct} of a kind ({pct}%)",
+    "owned": "{cards} cards held, {distinct} kinds ({pct}%)",
     "tab": {
       "all": "All",
       "monsters": "Monsters",
@@ -78,7 +79,7 @@
     "legalLabel": "Standing",
     "mode": {
       "deck": "Deck Builder",
-      "collection": "Card Collection"
+      "collection": "Every Card"
     },
     "catalogueTitle": "Every Card",
     "catalogue": "{distinct} of {total} cards held ({pct}%)",
@@ -99,7 +100,11 @@
     "ownedLabel": "Held",
     "copies": "{n} in the collection",
     "notOwned": "Never held",
-    "valueLabel": "Market value"
+    "valueLabel": "Market value",
+    "inDeckOf": "{n}/{of} in deck",
+    "removeFromDeck": "Remove from deck",
+    "edited": "edited",
+    "autoSaved": "{name} saved."
   },
   "pack": {
     "title": "Booster Pack",

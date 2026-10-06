@@ -160,9 +160,9 @@ wanting, with prophecies of coming wrath. It will, therefore, be
 realized that the Apocalyptic Literature is almost wholly concerned with
 the future; it is true that again and again the Apocalyptist glances at
 the contemporary history of the world around him, to which many a
-cryptic reference is made—a fact which necessitates some knowledge of
+cryptic reference is made - a fact which necessitates some knowledge of
 the history of this period (_circa_ 200 B.C.-A.D. 100) for a full
-understanding of the books in question—but these references are only
+understanding of the books in question - but these references are only
 made with a view to comforting the oppressed and afflicted with the
 thought that even the most mighty of earthly powers are shortly to be
 overthrown by the advent of the new and glorious era when every
@@ -198,7 +198,7 @@ together with variableness of teaching often involving contradiction.
 The reason of this is not to be sought simply in the fact that in the
 Apocalypses the hand of more than one author is frequently to be
 discerned, a fact which would easily account for divergence of views in
-one and the same book—no, the chief reason is that, on the one hand, the
+one and the same book - no, the chief reason is that, on the one hand, the
 minds of the Apocalyptists were saturated with the traditional thoughts
 and ideas of the Old Testament, and, on the other, they were eagerly
 absorbing the newer conceptions which the spirit of the age had brought
@@ -257,7 +257,7 @@ that of the Pharisees, for, unlike these, the Apocalyptists laid all
 stress on the spirit of its observance rather than upon the letter.
 Characteristic of their attitude here are the words in 1 Enoch v. 4:
 
-    “But ye—ye have not been steadfast, nor done the commandments of the
+    “But ye - ye have not been steadfast, nor done the commandments of the
        Lord,
     But ye have turned away, and have spoken proud and hard words
     With your impure mouths against His greatness,
@@ -287,7 +287,7 @@ their deserts.[3]
 The Apocalyptic Literature, as distinct from the Apocalyptic Movement
 owing to which it took its rise, began to come into existence about the
 period 200-150 B.C.; at any rate, the earliest extant example of this
-Literature—the earliest portions of the Book of Enoch—belongs to this
+Literature - the earliest portions of the Book of Enoch - belongs to this
 period. Works of an Apocalyptic character continued to be written for
 about three centuries; the Second (Fourth) Book of Esdras, one of the
 most remarkable Apocalypses, belongs to the end of the first Christian
@@ -416,7 +416,7 @@ significant; for he would thereby be just the one to know all about the
 heavenly luminaries; he was just the most appropriate author of a book
 which was to deal with astronomical questions. “The Sadducæan character
 of the original work,” says Leszynsky, “is seen most clearly in the
-discussion regarding the calendar; chapters lxxii.—lxxxii. are rightly
+discussion regarding the calendar; chapters lxxii. - lxxxii. are rightly
 called the Book of Astronomy:[12] ‘the book of the courses of the
 luminaries of the heaven, the relations of each, according to their
 classes, their dominion and their seasons, according to their names and
@@ -488,7 +488,7 @@ parts of the book which he will soon see to be of real value from many
 points of view. But even regarding the less attractive parts, he will
 find that when these are carefully studied they contain more that is of
 interest than appears upon the surface. Unfortunately, the opening
-portion (i.—xxxvi.), which is naturally read first, contains a good deal
+portion (i. - xxxvi.), which is naturally read first, contains a good deal
 of the least important parts of the whole book; some passages are even
 repellent. It is well to remember the point, already referred to, that
 there are at least four quite independent books included in the “Book of
@@ -683,7 +683,7 @@ are confined (with the exception of xciii. 13-14, and of cvi. 17^a which
 should be read immediately after cvi. 14) to xci.-xciii. All critics are
 agreed as to the chief of these. xci. 12-17 should undoubtedly be read
 directly after xciii.... Taken together xciii. 1-10, xci. 12-17 form an
-independent whole—the Apocalypse of Weeks—which has been incorporated in
+independent whole - the Apocalypse of Weeks - which has been incorporated in
 xci.-civ.... The remaining dislocations need only to be pointed out in
 order to be acknowledged. On other grounds we find that xci.-civ. is a
 book of different authorship from that of the rest of the sections. Now,
@@ -744,11 +744,11 @@ he gives a formidable list of passages in the New Testament which
 of, passages in 1 Enoch,” as well as a further list showing that various
 doctrines in 1 Enoch had “an undoubted share in moulding the
 corresponding New Testament doctrines.” These passages should be
-studied—and they will be found to be a most interesting study—in
+studied - and they will be found to be a most interesting study - in
 Charles’s work already referred to several times, pp. xcv.-ciii.; and
 with these should be read the section on the Theology of the Book of
-Enoch, pp. ciii-cx. Another book of great value and interest—also
-already quoted—is Burkitt’s _Jewish and Christian Apocalypses_. In
+Enoch, pp. ciii-cx. Another book of great value and interest - also
+already quoted - is Burkitt’s _Jewish and Christian Apocalypses_. In
 dealing with the subject of 1 Enoch and the Gospels, this writer points
 out that the former “contains a serious attempt to account for the
 presence of Evil in human history, and this attempt claims our
@@ -772,7 +772,7 @@ The special points of interest that should be studied in seeking to
 realize the importance of these books of Enoch for the study of
 Christian origins are the problems of evil, including, of course, the
 subjects of dæmonology, and future judgement; the Messiah and the
-Messianic Kingdom—the title “Son of Man” is of special importance—and
+Messianic Kingdom - the title “Son of Man” is of special importance - and
 the Resurrection. There are, of course, other subjects which will
 suggest themselves in studying the book.
 
@@ -932,7 +932,7 @@ Footnote 22:
 I. 1. The words of the blessing of Enoch, wherewith he blessed the elect
 〚and〛 righteous, who will be living in the day of tribulation, when all
 the wicked 〚and godless〛 are to be removed. 2. And he took up his
-parable and said—Enoch a righteous man, whose eyes were opened by God,
+parable and said - Enoch a righteous man, whose eyes were opened by God,
 saw the vision of the Holy One in the heavens, 〚which〛 the angels showed
 me, and from them I heard everything, and from them I understood as I
 saw, but not for this generation, but for a remote one which is for to
@@ -1013,7 +1013,7 @@ not, but according as 〚God〛 hath ordained so is it done.
 3. And behold how the sea and the rivers in like manner accomplish ⌜and
 change not⌝ their tasks ⌜from His commandments⌝.
 
-    4. But ye—ye have not been steadfast, nor done the commandments of
+    4. But ye - ye have not been steadfast, nor done the commandments of
        the Lord,
     But ye have turned away and spoken proud and hard words
     With your impure mouths against His greatness.
@@ -1214,7 +1214,7 @@ of him. 2. And his activities had to do with the Watchers, and his days
 were with the holy ones.
 
 3. And I, Enoch, was blessing the Lord of =majesty= and the King of the
-ages, and lo! the Watchers called me—Enoch the scribe—and said to me: 4.
+ages, and lo! the Watchers called me - Enoch the scribe - and said to me: 4.
 ‘Enoch, thou scribe of righteousness, go, †declare† to the Watchers of
 the heaven who have left the high heaven, the holy eternal place, and
 have defiled themselves with women, and have done as the children of
@@ -1340,7 +1340,7 @@ of men and against the women, because they have proceeded ⌜from them⌝.
 
 XVI. 1. From the days of the slaughter and destruction and death ⌜of the
 giants⌝, from the souls of whose flesh the spirits, having gone forth,
-shall destroy without incurring judgement—thus shall they destroy until
+shall destroy without incurring judgement - thus shall they destroy until
 the day of the consummation, the great ⌜judgement⌝ in which the age
 shall be consummated over the Watchers and the godless, yea, shall be
 wholly consummated.” 2. And now as to the Watchers who have sent thee to
@@ -1495,7 +1495,7 @@ appointed], till the great judgement (comes) upon them.’
      5. I saw the spirits of the children of men who were
      dead, and their voice went forth to heaven and made suit.
      6. Then I asked Raphael the angel who was with me, and I
-     said unto him: ‘This spirit—whose is it whose voice goeth
+     said unto him: ‘This spirit - whose is it whose voice goeth
      forth and maketh suit?’
 
           G^g
@@ -1741,7 +1741,7 @@ and went far from it, and passed over 〚the angel〛 Zotîêl.
 
           3. And I came to the Garden of Righteousness, and
           from afar off trees more numerous than these trees
-          and great—†two† trees there, very great, beautiful,
+          and great - †two† trees there, very great, beautiful,
           and glorious, and magnificent, and the tree of
           knowledge, whose holy fruit they eat and know great
           wisdom.
@@ -1809,7 +1809,7 @@ work of His hands and bless Him for ever.
                               XXXVII-LXXI.
 
 
-XXXVII. 1. The second vision which he saw, the vision of wisdom—which
+XXXVII. 1. The second vision which he saw, the vision of wisdom - which
 Enoch, the son of Jared, the son of Mahalalel, the son of Cainan, the
 son of Enos, the son of Seth, the son of Adam, saw. 2. And this is the
 beginning of the words of wisdom which I lifted up my voice to speak and
@@ -1991,7 +1991,7 @@ And first the sun goes forth and traverses his path according to the
 commandment of the Lord of Spirits, and mighty is His name for ever and
 ever. 7. And after that I saw the hidden and the visible path of the
 moon, and she accomplishes the course of her path in that place by day
-and by night—the one holding a position opposite to the other before the
+and by night - the one holding a position opposite to the other before the
 Lord of Spirits.
 
      And they give thanks and praise and rest not;
@@ -2173,7 +2173,7 @@ why he went with the Head of Days? 3. And he answered and said unto me:
        Spirits.
 
 
-  XLVIII. _The Fount of Righteousness: the Son of Man—the Stay of the
+  XLVIII. _The Fount of Righteousness: the Son of Man - the Stay of the
            Righteous: Judgement of the Kings and the Mighty._
 
 
@@ -2326,11 +2326,11 @@ why he went with the Head of Days? 3. And he answered and said unto me:
           LII. _The Seven Metal Mountains and the Elect One._
 
 
-[Only six are mentioned; see Charles’ note in his large edition.—EDD.]
+[Only six are mentioned; see Charles’ note in his large edition. - EDD.]
 
 LII. 1. And after those days in that place where I had seen all the
-visions of that which is hidden—for I had been carried off in a
-whirlwind and they had borne me towards the west— 2. There mine eyes saw
+visions of that which is hidden - for I had been carried off in a
+whirlwind and they had borne me towards the west - 2. There mine eyes saw
 all the secret things of heaven that shall be, a mountain of iron, and a
 mountain of copper, and a mountain of silver, and a mountain of gold,
 and a mountain of soft metal, and a mountain of lead.
@@ -2558,7 +2558,7 @@ lightnings were shown to me, and they lighten for blessing and for
 satisfying.]
 
 
-                     LX. =Book of Noah—a Fragment.=
+                     LX. =Book of Noah - a Fragment.=
 
 
      _Quaking of the Heaven: Behemoth and Leviathan: the Elements._
@@ -2588,7 +2588,7 @@ dwell on the earth. 6. And when the day, and the power, and the
 punishment, and the judgement come, which the Lord of Spirits hath
 prepared for those who worship not the righteous =law=, and for those
 who deny the righteous judgement, and for those who take His name in
-vain—that day is prepared; for the elect a covenant, but for sinners an
+vain - that day is prepared; for the elect a covenant, but for sinners an
 inquisition.
 
 5. When the punishment of the Lord of Spirits shall rest upon them, it
@@ -2634,7 +2634,7 @@ strength he draws it back with a rein, and in like manner it is driven
 forward and disperses amid all the mountains of the earth. 17. And the
 spirit of the hoar-frost is his own angel, and the spirit of the hail is
 a good angel. 18. And the spirit of the snow has forsaken (his chamber)
-on account of his strength—there is a special spirit therein, and that
+on account of his strength - there is a special spirit therein, and that
 which ascends from it is like smoke, and its name is frost. 19. And the
 spirit of the mist is not united with them in their chambers, but it has
 a special chamber; for its course is †glorious† both in light and in
@@ -2900,7 +2900,7 @@ hast thou cried unto me with a bitter cry and weeping?
 6. And a command has gone forth from the presence of the Lord concerning
 those who dwell on the earth that their ruin is accomplished because
 they have learnt all the secrets of the angels, and all the violence of
-the Satans, and all their powers—the most secret ones—and all the power
+the Satans, and all their powers - the most secret ones - and all the power
 of those who practise sorcery, and the power of witchcraft, and the
 power of those who make molten images for the whole earth: 7. And how
 silver is produced from the dust of the earth, and how soft metal
@@ -2913,7 +2913,7 @@ commotion on the earth. 10. And He said unto me: “Because of their
 unrighteousness their judgement has been determined upon and shall not
 be =withheld= by Me for ever. Because of the =sorceries= which they have
 searched out and learnt, the earth and those who dwell upon it shall be
-destroyed.” 11. And these—they have no =place of repentance= for ever,
+destroyed.” 11. And these - they have no =place of repentance= for ever,
 because they have shown them what was hidden, and they are the damned:
 but as for thee, my son, the Lord of Spirits knows that thou art pure,
 and guiltless of this reproach concerning the secrets.
@@ -3326,7 +3326,7 @@ that day the night decreases and amounts to nine parts, and the day to
 nine parts, and the night is equal to the day and the year is exactly as
 to its days three hundred and sixty-four. 33. And the length of the day
 and of the night, and the shortness of the day and of the night
-arise—through the course of the sun these distinctions are made (lit.
+arise - through the course of the sun these distinctions are made (lit.
 ‘they are separated’). 34. So it comes that its course becomes daily
 longer, and its course nightly shorter. 35. And this is the law and the
 course of the sun, and his return as often as he returns sixty times and
@@ -3388,7 +3388,7 @@ days, until she goes forth from the fifth and turns back again in seven
 days into the fourth portal and accomplishes all her light: and she
 recedes and enters into the first portal in eight days. 8. And she
 returns again in seven days into the fourth portal from which the sun
-goes forth. 9. Thus I saw their position—how the moons rose and the sun
+goes forth. 9. Thus I saw their position - how the moons rose and the sun
 set in those days. 10. And if five years are added together the sun has
 an overplus of thirty days, and all the days which accrue to it for one
 of those five years, when they are full, amount to 364 days. 11. And the
@@ -3717,7 +3717,7 @@ thereof exact; for the luminaries, and months and festivals, and years
 and days, has Uriel shown and revealed to me, =to whom= the Lord of the
 whole creation of the world has =subjected= the host of heaven. 8. And
 he has power over night and day in the heaven to cause the light to give
-light to men—sun, moon, and stars, and all the powers of the heaven
+light to men - sun, moon, and stars, and all the powers of the heaven
 which revolve in their circular chariots. 9. And these are the orders of
 the stars, which set in their places, and in their seasons and festivals
 and months.
@@ -3735,7 +3735,7 @@ station, but their leaders make the division. 13. And these are the
 names of the leaders who divide the four parts of the year which are
 ordained: Mîlkî’êl, Hel’emmêlêk, and Mêl’êjal, and Nârêl. 14. And the
 names of those who lead them: Adnâr’êl, and Îjâsûsa’êl, and
-‘Elômê’êl—these three follow the leaders of the orders, and there is one
+‘Elômê’êl - these three follow the leaders of the orders, and there is one
 that follows the three leaders of the orders which follow those leaders
 of stations that divide the four parts of the year.
 
@@ -3850,7 +3850,7 @@ LXXXV-XC. _The Second Dream-Vision of Enoch: the History of the World to
 LXXXV. 1. And after this I saw another dream, and I will show the whole
 dream to thee, my son. 2. And Enoch lifted up (his voice) and spake to
 his son Methuselah: ‘To thee, my son, will I speak: hear my
-words—incline thine ear to the dream-vision of thy father. 3. Before I
+words - incline thine ear to the dream-vision of thy father. 3. Before I
 took thy mother Edna, I saw in a vision on my bed, and behold a bull
 came forth from the earth, and that bull was white; and after it came
 forth a heifer, and along with this (latter) came forth two bulls, one
@@ -4117,7 +4117,7 @@ sheep to them that they might pasture them, and He spake to the
 shepherds and their companions: “Let each individual of you pasture the
 sheep henceforward, and everything that I shall command you that do ye.
 60. And I will deliver them over unto you duly numbered, and tell you
-which of them are to be destroyed—and them destroy ye.” And He gave over
+which of them are to be destroyed - and them destroy ye.” And He gave over
 unto them those sheep. 61. And He called another and spake unto him:
 “Observe and mark everything that the shepherds will do to those sheep;
 for they will destroy more of them than I have commanded them. 62. And
@@ -4143,7 +4143,7 @@ demolished, and afterwards I was unable to see if those sheep entered
 that house.
 
 
-LXXXIX. 68-71. _First Period of the Angelic Rulers—from the Destruction
+LXXXIX. 68-71. _First Period of the Angelic Rulers - from the Destruction
             of Jerusalem to the Return from the Captivity._
 
 
@@ -4155,14 +4155,14 @@ destroyed many more than was prescribed; and I began to weep and lament
 on account of those sheep. 70. And thus in the vision I saw that one who
 wrote how he wrote down every one that was destroyed by those shepherds,
 day by day, and carried up and laid down and showed actually the whole
-book to the Lord of the sheep—(even) everything that they had done, and
+book to the Lord of the sheep - (even) everything that they had done, and
 all that each one of them had made away with, and all that they had
 given over to destruction. 71. And the book was read before the Lord of
 the sheep, and He took the book from his hand and read it and sealed it
 and laid it down.
 
 
-    LXXXIX. 72-77. _Second Period—from the time of Cyrus to that of
+    LXXXIX. 72-77. _Second Period - from the time of Cyrus to that of
                          Alexander the Great._
 
 
@@ -4187,7 +4187,7 @@ testimony before Him against all the shepherds. 77. And he took the
 actual book and laid it down beside Him and departed.
 
 
-  XC. 1-5. _Third Period—from Alexander the Great to the Graeco-Syrian
+  XC. 1-5. _Third Period - from Alexander the Great to the Graeco-Syrian
                               Domination._
 
 
@@ -4209,7 +4209,7 @@ undertaken the pasturing and completed in their several periods
 fifty-eight times.
 
 
-   XC. 6-12. _Fourth Period—from the Graeco-Syrian Domination to the
+   XC. 6-12. _Fourth Period - from the Graeco-Syrian Domination to the
                            Maccabæan Revolt._
 
 
@@ -4345,7 +4345,7 @@ and I awoke and blessed the Lord of righteousness and gave Him glory.
 could no longer endure it: when I saw, they flowed on account of what I
 had seen; for everything shall come and be fulfilled; and all the deeds
 of men in their order were shown to me. 42. On that night I remembered
-the first dream, and because of it I wept and was troubled—because I had
+the first dream, and because of it I wept and was troubled - because I had
 seen that vision.’
 
 
@@ -4357,7 +4357,7 @@ seen that vision.’
  XCII. XCI. 1-10, 18-19. _Enoch’s Book of Admonition for his Children._
 
 
-XCII. 1. The book written by Enoch—[Enoch indeed wrote this complete
+XCII. 1. The book written by Enoch - [Enoch indeed wrote this complete
 doctrine of wisdom, (which is) praised of all men and a judge of all the
 earth] for all my children who shall dwell on the earth; and for the
 future generations who shall observe uprightness and peace.
@@ -4694,7 +4694,7 @@ all the luminaries rest?]
     8. Woe to you, ye mighty,
     Who with might oppress the righteous;
     For the day of your destruction is coming.
-    In those days many and good days shall come to the righteous—in the
+    In those days many and good days shall come to the righteous - in the
        day of your judgement.
 
 
@@ -5142,7 +5142,7 @@ mystery, that sinners will alter and pervert the words of righteousness
 in many ways, and will speak wicked words, and lie, and practise great
 deceits, and write books concerning their words. 11. But when they write
 down truthfully all my words in their languages, and do not change or
-minish aught from my words, but write them all down truthfully—all that
+minish aught from my words, but write them all down truthfully - all that
 I first testified concerning them. 12. Then, I know another mystery,
 that books shall be given to the righteous and the wise to become a
 cause of joy and uprightness and much wisdom. 13. And to them shall the
@@ -5230,7 +5230,7 @@ is destroyed and sin passes away from the earth, and all manner of good
 comes upon it. 2. And now, my son, go and make known to thy son Lamech
 that this son, which has been born, is in truth his son, and that (this)
 is no lie.’ 3. And when Methuselah had heard the words of his father
-Enoch—for he had shown to him everything in secret—he returned and
+Enoch - for he had shown to him everything in secret - he returned and
 showed (them) to him and called the name of that son Noah; for he will
 comfort the earth after all the destruction.
 
@@ -5254,10 +5254,10 @@ sweeping to and fro. 5. And I asked one of the holy angels who was with
 me and said unto him: ‘What is this shining thing? for it is not a
 heaven, but only the flame of a blazing fire, and the voice of weeping
 and crying and lamentation and strong pain.’ 6. And he said unto me:
-‘This place which thou seest—here are cast the spirits of sinners and
+‘This place which thou seest - here are cast the spirits of sinners and
 blasphemers, and of those who work wickedness, and of those who pervert
 every thing that the Lord hath spoken through the mouth of the
-prophets—(even) the things that shall be. 7. For some of them are
+prophets - (even) the things that shall be. 7. For some of them are
 written and inscribed above in the heaven, in order that the angels may
 read them and know that which shall befall the sinners, and the spirits
 of the humble, and of those who have afflicted their bodies, and been

@@ -100,7 +100,7 @@
  "testosteroneProduction": "Testosterone Production",
  "normalRange": "Normal range",
  "belowNormalHypogonadism": "Below normal (Hypogonadism)",
- "noReproductiveSystemAvailableSetVariable87Fi": "No reproductive system available. Set Variable 87 first.",
+ "noReproductiveSystemAvailable": "No reproductive system available. This body has none to carry with.",
  "alreadyInReproductiveProcess": "Already in reproductive process!",
  "pregnancyInitiatedDue": {
   "one": "Pregnancy initiated! Due in {count} day.",

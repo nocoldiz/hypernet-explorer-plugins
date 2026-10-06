@@ -180,5 +180,12 @@
     "release": "Rimuovi Rivendicazione",
     "released": "Hai rinunciato alla rivendicazione su {name}.",
     "charge": "Occupazione abusiva"
+  },
+  "hologram": {
+    "check": "Controlla",
+    "projected": "Ologramma proiettato a {name}.",
+    "outOfRange": "Ologramma fuori portata",
+    "terminate": "Termina ologramma",
+    "cancel": "Annulla"
   }
 }

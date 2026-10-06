@@ -78,28 +78,10 @@
     Scene_Alchemistry.prototype.create = function () {
         _Scene_Alchemistry_create.call(this);
 
-        // WASD state
-        this._wasdInput      = { up: false, down: false, left: false, right: false };
-        this._wasdHeld       = { up: false, down: false, left: false, right: false };
-        this._wasdHoldFrames = { up: 0,     down: 0,     left: 0,     right: 0     };
-
-        this._wasdListener = (event) => {
-            if (event.repeat) return;
-            const key = event.key.toLowerCase();
-            if (key === 'w') { this._wasdInput.up    = true; this._wasdHeld.up    = true; event.preventDefault(); }
-            if (key === 's') { this._wasdInput.down  = true; this._wasdHeld.down  = true; event.preventDefault(); }
-            if (key === 'a') { this._wasdInput.left  = true; this._wasdHeld.left  = true; event.preventDefault(); }
-            if (key === 'd') { this._wasdInput.right = true; this._wasdHeld.right = true; event.preventDefault(); }
-        };
-        this._wasdUpListener = (event) => {
-            const key = event.key.toLowerCase();
-            if (key === 'w') { this._wasdHeld.up    = false; this._wasdHoldFrames.up    = 0; }
-            if (key === 's') { this._wasdHeld.down  = false; this._wasdHoldFrames.down  = 0; }
-            if (key === 'a') { this._wasdHeld.left  = false; this._wasdHoldFrames.left  = 0; }
-            if (key === 'd') { this._wasdHeld.right = false; this._wasdHoldFrames.right = 0; }
-        };
-        window.addEventListener('keydown', this._wasdListener);
-        window.addEventListener('keyup',   this._wasdUpListener);
+        // WASD needs nothing of its own: the four keys are the four
+        // directions in Input.keyMapper everywhere, and a listener of this
+        // screen's own fired a second repeat beside the engine's, so a held
+        // W or S walked the list two rows at a time.
 
         // Navigation state
         this._tab            = TAB_READY;
@@ -637,6 +619,9 @@
     Scene_Alchemistry.prototype.syncActions = function (entry) {
         const defs = this.actionsFor(entry);
         this._actionsList = defs.map(d => d.key);
+        // A button can take itself away (Clear steps, once the steps are gone):
+        // the cursor comes back onto the last one standing.
+        this._actionIndex = Math.max(0, Math.min(this._actionIndex || 0, defs.length - 1));
         const nodes = syncRows(this._el.actions, defs.length, () => {
             const node = document.createElement('div');
             node.className = 'inspect-btn';
@@ -952,27 +937,10 @@
             if (!this._active || !this._scene) return;
             const scene = this._scene;
 
-            // WASD hold-repeat simulation
-            for (const dir of ['up', 'down', 'left', 'right']) {
-                if (scene._wasdHeld && scene._wasdHeld[dir]) {
-                    scene._wasdHoldFrames[dir]++;
-                    const tt = scene._wasdHoldFrames[dir];
-                    if (tt > Input.keyRepeatWait && (tt - Input.keyRepeatWait) % Input.keyRepeatInterval === 0) {
-                        scene._wasdInput[dir] = true;
-                    }
-                } else if (scene._wasdHoldFrames) {
-                    scene._wasdHoldFrames[dir] = 0;
-                }
-            }
-
-            const isDown  = Input.isRepeated('down')  || (scene._wasdInput && scene._wasdInput.down);
-            const isUp    = Input.isRepeated('up')    || (scene._wasdInput && scene._wasdInput.up);
-            const isLeft  = Input.isRepeated('left')  || (scene._wasdInput && scene._wasdInput.left);
-            const isRight = Input.isRepeated('right') || (scene._wasdInput && scene._wasdInput.right);
-
-            if (scene._wasdInput) {
-                scene._wasdInput.up = scene._wasdInput.down = scene._wasdInput.left = scene._wasdInput.right = false;
-            }
+            const isDown  = Input.isRepeated('down');
+            const isUp    = Input.isRepeated('up');
+            const isLeft  = Input.isRepeated('left');
+            const isRight = Input.isRepeated('right');
 
             // Modal takes full input priority
             if (scene._modalMode) {

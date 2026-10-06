@@ -596,9 +596,16 @@
 
     // A member of a party, named in a way that means the same person in every
     // savegame of the world. An actor id alone does not: actor 2 is somebody
-    // different in each playthrough.
+    // different in each playthrough, and a different person again once a
+    // recruit takes the seat over. A member here to ask is filed under their
+    // person uid (PartyPerson), which follows them through seats, the bench
+    // and an exported file; the slot form is left for actor 0 (the pet key).
     memberKey(slot, actorId) {
-      return `p${Number(slot) || 0}a${Number(actorId) || 0}`;
+      const id = Number(actorId) || 0;
+      const actor = id > 0 && typeof $gameActors !== "undefined" && $gameActors ? $gameActors.actor(id) : null;
+      const uid = actor && window.PartyPerson ? window.PartyPerson.uidOf(actor) : null;
+      if (uid) return `u${uid}`;
+      return `p${Number(slot) || 0}a${id}`;
     },
 
     keyForActor(actor) {

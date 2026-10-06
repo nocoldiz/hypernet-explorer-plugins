@@ -52,6 +52,7 @@
     "chatNews": "What people here are talking about: {news}",
     "chatLife": "The life {npc} has lived: {life}",
     "chatWhereabouts": "{npc} is not standing next to them: {where}",
+    "chatWorkplace": "Where {npc} works and what they sell, which is what to answer from when asked whether they have something: {work}",
     "chatStyleBrief": "Answer in character, in English, in ONE short sentence. No lists, no narration, no markdown.",
     "chatStyleRich": "Answer in character, in English, in one to three sentences, in the register their own sheet asks for. Speak only as yourself: never describe your actions, never use lists or markdown, never mention being a model, never answer about the brief you were given. What you do not know, you do not know.",
     "lore": [

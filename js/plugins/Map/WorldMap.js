@@ -325,16 +325,30 @@
     // says which map the door stood on, so an interior entered from a Bologna
     // street reads as Bologna and the dot is drawn on that door.
     function bolognaDoorReturn() {
+        if (!bolognaActive()) return null;
         const PHS = window.ProceduralHouseSystem;
         if (!PHS || typeof PHS.houseReturnPoint !== 'function') return null;
         const rp = PHS.houseReturnPoint();
         return (rp && rp.mapId === BOLOGNA_MAP_ID) ? rp : null;
     }
 
+    // Map 353 is the Monument to Humanity whenever the party is not in the city:
+    // BolognaMapSystem lends Bologna the slot only while they are, so the map id
+    // alone never says Bologna.
+    function bolognaActive() {
+        const BMS = window.BolognaMapSystem;
+        return !!(BMS && typeof BMS.isActive === 'function' && BMS.isActive());
+    }
+
+    // On a Bologna street, as opposed to the Monument that owns map 353 otherwise.
+    function onBolognaStreet() {
+        return !!$gameMap && $gameMap.mapId() === BOLOGNA_MAP_ID && bolognaActive();
+    }
+
     // True wherever the Bologna chart is the right picture of where the party is.
     function isBolognaView() {
         if (!$gameMap) return false;
-        if ($gameMap.mapId() === BOLOGNA_MAP_ID) return true;
+        if (onBolognaStreet()) return true;
         return !!bolognaDoorReturn();
     }
 
@@ -1633,6 +1647,8 @@
     // row-1-column-1 of Earth and read as a coastline nobody was standing on.
     function isOffEarthView() {
         if (isAlienPlanetSurface()) return true;
+        // Bologna is on Earth, whatever landing is still on record.
+        if (isBolognaView()) return false;
         const GS = window.GalaxySim;
         return !!(GS && GS.isOffEarth && GS.isOffEarth());
     }
@@ -2407,7 +2423,7 @@
         // a tiny 16px patch up to fill the minimap and looked like illegible mush.
         // Drawing the entire cell keeps the streets readable. State 1 (zoomed)
         // shows a generous window around the player; state 2 shows the full cell.
-        if (mapId === BOLOGNA_MAP_ID) {
+        if (mapId === BOLOGNA_MAP_ID && onBolognaStreet()) {
             const bState = $gameSystem._bologna;
             if (!bState) return;
             const { row, col } = bState;
@@ -3563,7 +3579,10 @@
     // pointing at, so only that one square is drawn. `rectFor` maps a square
     // to the screen: Europe's world squares by default, Bologna's city tiles
     // on its own sheet.
-    function drawSheetGrid(hover, selected, rectFor) {
+    // `minHover` draws a hovered cell that is smaller than that many screen
+    // pixels at that size instead of not at all: Bologna's tiles are a fraction
+    // of a pixel on the fitted sheet, and its pad cursor has to be seen.
+    function drawSheetGrid(hover, selected, rectFor, minHover) {
         const rectOf = rectFor || squareScreenRect;
         if (!sheetGfx) return;
         const key = (hover ? hover.x + ',' + hover.y : '') + '|' +
@@ -3574,7 +3593,12 @@
         sheetGfx.clear();
         if (hover) {
             const cell = rectOf(hover.x, hover.y);
-            if (cell && cell.w >= 3) {
+            if (cell && minHover && cell.w < minHover) {
+                const cx = cell.x + cell.w / 2 - minHover / 2;
+                const cy = cell.y + cell.h / 2 - minHover / 2;
+                sheetGfx.lineStyle(2, 0xFFFFFF, 0.9);
+                sheetGfx.drawRect(cx, cy, minHover, minHover);
+            } else if (cell && cell.w >= 3) {
                 sheetGfx.lineStyle(2, 0xFFFFFF, 0.9);
                 sheetGfx.drawRect(cell.x, cell.y, cell.w, cell.h);
             }
@@ -3655,7 +3679,7 @@
         sheetLayer.visible = true;
         if (isBolognaView()) {
             const hover = bolognaPadTile || (bolognaPointerIn ? null : bolognaTileAtPointer());
-            drawSheetGrid(hover, bolognaPickedTile, bolognaTileRect);
+            drawSheetGrid(hover, bolognaPickedTile, bolognaTileRect, BOLOGNA_CURSOR_MIN_PX);
             refreshSheetNames();
             return;
         }
@@ -4396,10 +4420,14 @@
         SoundManager.playOk();
     }
 
+    // The click that shut the box must not land on the sheet. With no box up
+    // there is no such click: destroyChrome runs this every frame on a sheet
+    // with no chrome (Bologna), and clearing then ate every wheel, drag and tap.
     function closeNoteModal() {
+        const wasOpen = !!noteModalEl;
         if (noteModalEl) { noteModalEl.remove(); noteModalEl = null; }
         noteModalSquare = null;
-        TouchInput.clear();
+        if (wasOpen) TouchInput.clear();
     }
 
     // -- "Show map": looking at the ground before walking onto it ------------
@@ -4512,6 +4540,7 @@
     }
 
     function destroyPreview() {
+        const wasOpen = !!(previewEl || previewCanvas || previewBuilding);
         if (previewEl) { previewEl.remove(); previewEl = null; }
         if (previewTexture && previewTexture.destroy) {
             try { previewTexture.destroy(true); } catch (e) { /* already gone */ }
@@ -4531,7 +4560,9 @@
             previewCanvas = null;
         }
         previewBuilding = false;
-        TouchInput.clear();
+        // Only a preview that was up has a closing click to swallow (see
+        // closeNoteModal).
+        if (wasOpen) TouchInput.clear();
     }
 
     function applyPreviewTransform() {
@@ -4987,6 +5018,7 @@
         const GS = window.GalaxySim;
         if (!GS) return null;
         if (isAlienPlanetSurface()) return 'landing';
+        if (isBolognaView()) return null;
         if (GS.isOffEarth && GS.isOffEarth()) return 'landing';
         if (!isInShipCabin()) return null;
         const planet = orbitedPlanet();
@@ -5226,6 +5258,9 @@
     // cell, one tile per BOLOGNA_CELL_PX / BOLOGNA_MAP_TILES bitmap pixels.
     const BOLOGNA_SHEET_TILES_W = (BOLOGNA_COL_MAX - BOLOGNA_COL_MIN + 1) * BOLOGNA_MAP_TILES;
     const BOLOGNA_SHEET_TILES_H = (BOLOGNA_ROW_MAX - BOLOGNA_ROW_MIN + 1) * BOLOGNA_MAP_TILES;
+    // The smallest the tile cursor is drawn, and how far a d-pad press moves it,
+    // in screen pixels.
+    const BOLOGNA_CURSOR_MIN_PX = 12;
 
     let bolognaChromeEl = null;
     let bolognaReadoutEl = null;
@@ -5389,14 +5424,24 @@
         worldMapSprite.y = panY;
     }
 
+    // How many city tiles one press of the d-pad walks: about one cursor's
+    // width on screen at the current zoom. One tile a press was a fraction of a
+    // pixel on the fitted sheet, so the cursor never visibly moved and never
+    // carried the pan with it.
+    function bolognaPadStep() {
+        const tilePx = (BOLOGNA_CELL_PX / BOLOGNA_MAP_TILES) * (zoomScale || 1);
+        return Math.max(1, Math.round(BOLOGNA_CURSOR_MIN_PX / tilePx));
+    }
+
     function moveBolognaPad(dx, dy) {
         if (!bolognaPadTile) {
             // The first press only summons the cursor, on the party's own tile.
             bolognaPadTile = bolognaPartyTile();
         } else {
+            const step = bolognaPadStep();
             bolognaPadTile = {
-                x: Math.max(0, Math.min(BOLOGNA_SHEET_TILES_W - 1, bolognaPadTile.x + dx)),
-                y: Math.max(0, Math.min(BOLOGNA_SHEET_TILES_H - 1, bolognaPadTile.y + dy)),
+                x: Math.max(0, Math.min(BOLOGNA_SHEET_TILES_W - 1, bolognaPadTile.x + dx * step)),
+                y: Math.max(0, Math.min(BOLOGNA_SHEET_TILES_H - 1, bolognaPadTile.y + dy * step)),
             };
         }
         sheetGfxKey = null;

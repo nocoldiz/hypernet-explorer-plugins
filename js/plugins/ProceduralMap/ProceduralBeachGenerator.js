@@ -560,6 +560,50 @@
   // ===== COASTLINE DRAWING =====
 
   /**
+   * Which sides and diagonal corners of a square face the sea, read off its
+   * neighbouring biomes. The one answer drawWaterEdges and predictCoastWater
+   * both use, so the predicted sea is the sea that gets drawn.
+   */
+  function seaSides(adjacentBiomes, cacheInfo, diag) {
+    function edgeHasWater(direction, adjBiomeName) {
+      if (adjBiomeName && isWaterBiome(adjBiomeName)) return true;
+      const cached = cacheInfo && cacheInfo[direction];
+      return !!(cached && cached.length > 0 && cached.some((b) => isWaterBiome(b)));
+    }
+    const edges = {
+      north: edgeHasWater("north", adjacentBiomes && adjacentBiomes.north),
+      south: edgeHasWater("south", adjacentBiomes && adjacentBiomes.south),
+      east: edgeHasWater("east", adjacentBiomes && adjacentBiomes.east),
+      west: edgeHasWater("west", adjacentBiomes && adjacentBiomes.west),
+    };
+    const diagWater = (list) =>
+      !!(list && list.length > 0 && list.some((b) => isWaterBiome(b)));
+    const seaDiagonals = {
+      topLeft: !!diag && diagWater(diag.topLeft),
+      topRight: !!diag && diagWater(diag.topRight),
+      bottomLeft: !!diag && diagWater(diag.bottomLeft),
+      bottomRight: !!diag && diagWater(diag.bottomRight),
+    };
+    return { edges, seaDiagonals };
+  }
+
+  /**
+   * The sea mask drawWaterEdges WILL lay with these same arguments, without
+   * drawing anything (1 = sea), or null when the square touches no sea. A
+   * settlement places its lots before its shoreline, so it hands this to the
+   * prefab placer: a lot the sea is going to cover is refused up front instead
+   * of being kept as a building standing in the water.
+   */
+  function predictCoastWater(adjacentBiomes, width, height, options) {
+    const opts = options || {};
+    const { edges, seaDiagonals } = seaSides(adjacentBiomes, opts.cacheInfo || null, opts.diagonalBiomes);
+    const { water, touchesSea } = computeCoastMasks(
+      width, height, opts.worldCoords || currentWorldCoords(), edges, seaDiagonals, false, opts.maxDepth
+    );
+    return touchesSea ? water : null;
+  }
+
+  /**
    * Draw this square's whole coastline: the sea, the sand band, the seashells
    * on it and the corners where the sea only touches the square diagonally.
    *
@@ -599,28 +643,7 @@
     const opts = options || {};
     const worldCoords = opts.worldCoords || currentWorldCoords();
 
-    function edgeHasWater(direction, adjBiomeName) {
-      if (adjBiomeName && isWaterBiome(adjBiomeName)) return true;
-      const cached = cacheInfo && cacheInfo[direction];
-      return !!(cached && cached.length > 0 && cached.some((b) => isWaterBiome(b)));
-    }
-
-    const edges = {
-      north: edgeHasWater("north", adjacentBiomes && adjacentBiomes.north),
-      south: edgeHasWater("south", adjacentBiomes && adjacentBiomes.south),
-      east: edgeHasWater("east", adjacentBiomes && adjacentBiomes.east),
-      west: edgeHasWater("west", adjacentBiomes && adjacentBiomes.west),
-    };
-
-    const diag = opts.diagonalBiomes;
-    const diagWater = (list) =>
-      !!(list && list.length > 0 && list.some((b) => isWaterBiome(b)));
-    const seaDiagonals = {
-      topLeft: !!diag && diagWater(diag.topLeft),
-      topRight: !!diag && diagWater(diag.topRight),
-      bottomLeft: !!diag && diagWater(diag.bottomLeft),
-      bottomRight: !!diag && diagWater(diag.bottomRight),
-    };
+    const { edges, seaDiagonals } = seaSides(adjacentBiomes, cacheInfo, opts.diagonalBiomes);
 
     // The Ocean biome is open sea end to end: its terrain fill already covers
     // the square in water, there is no shore to cut and no sand to lay. It is
@@ -869,6 +892,7 @@
     drawWaterEdges,
     coastlineDepth,
     computeCoastMasks,
+    predictCoastWater,
     AXIS_H,
     AXIS_V,
     BEACH_WIDTH,

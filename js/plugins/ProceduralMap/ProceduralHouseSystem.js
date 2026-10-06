@@ -215,6 +215,22 @@
       // being shown. NPCSystem uses this to decide who lives (or hangs out)
       // here. Returns null when not inside a generated building.
       getCurrentBuilding() { return _currentBuilding; },
+      // The one answer to "which shop is this": a counter on an interior is
+      // keyed by the building and floor it stands in, not by the template
+      // map, which every building drawn from that template shares. Anything
+      // that keeps state per shop (its shelf, its rota, a keeper's vacancy)
+      // keys it with this. Plain maps answer their own id, as before.
+      shopInstanceId(mapId) { return shopInstanceId(mapId); },
+      // The same question for a house: the address of the building and floor
+      // the party is standing in (the ownership key cupboards already use),
+      // or null on any map that is not the interior of the current building.
+      // Furniture, a companion's inherited home and "is this NPC at home"
+      // all key by this, so two houses drawn from one template are two homes.
+      houseInstanceKey(mapId) { return houseInstanceKey(mapId); },
+      // Is this the very building and floor the NPC's home record names?
+      // `home` is a profile.homeBuilding. Null when it cannot be told (no
+      // building record on either side), so callers can fall back.
+      isCurrentHome(home, groupName) { return isCurrentHome(home, groupName); },
       getCurrentFloorIndex() { return _currentBuilding ? _currentBuilding.floorIndex : 0; },
       // A "public" building is a skyscraper: nobody lives there, the whole town
       // passes through it. Everything else is residential and gets occupants.
@@ -854,6 +870,38 @@
     window.ProceduralHouseSystem.currentHouseSeed = building ? building.seed : null;
   }
 
+  // A shop counter's map, scoped to the building it stands in (see
+  // shopInstanceId in the exports). Only the map the party is standing on
+  // can be inside a building; any other map id answers itself.
+  function shopInstanceId(mapId) {
+    const id = Number(mapId) || 0;
+    const house = houseInstanceKey(id);
+    return house ? `${id}@${house}` : id;
+  }
+
+  // The building and floor the party stands in, as the ownership key
+  // addresses it, while `mapId` is that building's interior. The street
+  // outside (the building's own parent map) and every other map answer null.
+  function houseInstanceKey(mapId) {
+    const id = Number(mapId) || 0;
+    const b = _currentBuilding;
+    if (!b) return null;
+    if (typeof $gameMap === 'undefined' || !$gameMap || $gameMap.mapId() !== id) return null;
+    if (b.mapId === id) return null;
+    return getCurrentOwnershipKey() || null;
+  }
+
+  // The NPC's home record against the building the party is in: the same
+  // building key the home registry files occupants under, and the same floor.
+  function isCurrentHome(home, groupName) {
+    const b = _currentBuilding;
+    if (!home || !b) return null;
+    const theirs = home.key || buildingKey(home, groupName);
+    const here = buildingKey(b, groupName || home.groupName || b.groupName);
+    if (!theirs || !here) return null;
+    return theirs === here && (Number(home.floorIndex) || 0) === (Number(b.floorIndex) || 0);
+  }
+
   // Floor moves keep the same physical building, only the shown floor changes.
   function setCurrentFloor(floorIndex, interiorMapId) {
     if (!_currentBuilding) return;
@@ -944,10 +992,8 @@
     const stack = currentFixedStack();
     if (stack && stack.owned) return true;
     if (getOwnedHouses()[key]) return true;
-    // Companion residences inherited on party-join grant build rights inside the
-    // matching interior template (NPCSystemParty.registerNPCHouse). The home is an
-    // abstract template assignment with no placed entrance, so the interior map id
-    // is the only concrete signal available to match on.
+    // Companion residences inherited on party-join grant build rights inside
+    // that companion's own building and floor (NPCSystemParty.registerNPCHouse).
     return isCurrentInheritedHouse();
   }
 
@@ -979,12 +1025,24 @@
     return !!houseLetting(getCurrentOwnershipKey());
   }
 
+  // A companion's inherited home is the building and floor they lived on
+  // (NPCSystemParty.registerNPCHouse files its building key), so it grants
+  // build rights in that one house, never in every house drawn from the same
+  // template. A home that was only ever an abstract template (no door, no
+  // building record) can only be matched on the template.
   function isCurrentInheritedHouse() {
     if (typeof $gameSystem === 'undefined' || !$gameSystem) return false;
     const list = $gameSystem._npcInheritedHouses;
     if (!Array.isArray(list) || !list.length) return false;
     const mapId = $gameMap ? $gameMap.mapId() : null;
-    return mapId != null && list.some(h => h.mapId === mapId);
+    if (mapId == null) return false;
+    return list.some(h => {
+      if (!h || h.mapId == null) return false;
+      if (h.buildingKey) {
+        return isCurrentHome({ key: h.buildingKey, floorIndex: h.floorIndex }, h.groupName) === true;
+      }
+      return h.mapId === mapId;
+    });
   }
 
   // Price in gold (100 gold = 1 euro). A stable per-floor base price is derived
@@ -3104,11 +3162,9 @@
 
     const overlay = document.createElement('div');
     overlay.id = 'room-selector-overlay';
-    overlay.style.cssText = 'position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.65);z-index:10000;display:flex;align-items:center;justify-content:center;';
 
     const panel = document.createElement('div');
     panel.id = 'room-selector-modal';
-    panel.style.cssText = 'width:75vw;max-width:920px;height:80vh;max-height:620px;background:var(--bg-panel,#1c1a17);border:2px solid var(--text-primary-hover,#d4af37);border-radius:8px;box-shadow:0 12px 40px rgba(0,0,0,0.85);display:flex;flex-direction:column;font-family:var(--font-ui,sans-serif);color:var(--text-color,#eee);overflow:hidden;user-select:none;';
 
     overlay.appendChild(panel);
     document.body.appendChild(overlay);
@@ -3139,31 +3195,31 @@
       const reservedName = curReserved ? curReserved.name : T('ProceduralHouse.noRoomSelected');
 
       panel.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.25);">
+        <div class="room-selector-head">
           <div>
-            <div style="font-size:18px;font-weight:bold;color:var(--accent-orange,#f39c12);">${T('ProceduralHouse.roomOverEdgeTitle')} - ${T('ProceduralHouse.reserveRoom')}</div>
-            <div style="font-size:12px;opacity:0.8;margin-top:2px;">${T('ProceduralHouse.currentlyReserved', { name: reservedName })}</div>
+            <div class="room-selector-title">${T('ProceduralHouse.roomOverEdgeTitle')} - ${T('ProceduralHouse.reserveRoom')}</div>
+            <div class="room-selector-sub">${T('ProceduralHouse.currentlyReserved', { name: reservedName })}</div>
           </div>
-          <button class="room-selector-close" style="background:transparent;border:none;color:#aaa;font-size:22px;cursor:pointer;padding:4px 8px;line-height:1;">✕</button>
+          <button class="room-selector-close">✕</button>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.15);gap:12px;flex-wrap:wrap;">
+        <div class="room-selector-bar">
           <div class="room-selector-tabs backpack-tabs">
             ${poolTabs.map(tab => `
               <button class="room-selector-tab backpack-tab ${tab.key === currentFilter ? 'active' : ''}" data-tab="${tab.key}">${tab.label}</button>
             `).join('')}
           </div>
-          <input type="text" class="room-selector-search" placeholder="${T('ProceduralHouse.searchPlaceholder')}" value="${searchQuery.replace(/"/g, '&quot;')}" style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.2);border-radius:4px;color:#fff;padding:5px 10px;font-size:12px;width:180px;outline:none;">
+          <input type="text" class="room-selector-search" placeholder="${T('ProceduralHouse.searchPlaceholder')}" value="${searchQuery.replace(/"/g, '&quot;')}">
         </div>
-        <div class="room-selector-grid" style="flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;padding:16px;">
-          ${filtered.length === 0 ? `<div style="grid-column:1/-1;text-align:center;color:#888;padding:40px;">-</div>` : filtered.map((item, idx) => {
+        <div class="room-selector-grid">
+          ${filtered.length === 0 ? `<div class="room-selector-empty">-</div>` : filtered.map((item, idx) => {
             const isReserved = curReserved && curReserved.mapId === item.mapId;
             const isFocused = idx === selectedIndex;
             return `
-              <div class="room-selector-card ${isReserved ? 'reserved' : ''} ${isFocused ? 'focused' : ''}" data-idx="${idx}" style="background:${isFocused ? 'rgba(212,175,55,0.18)' : 'rgba(255,255,255,0.04)'};border:1px solid ${isReserved ? 'var(--accent-orange,#f39c12)' : (isFocused ? '#d4af37' : 'rgba(255,255,255,0.1)')};box-shadow:${isReserved ? '0 0 8px rgba(243,156,18,0.4)' : 'none'};border-radius:6px;padding:12px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;min-height:75px;transition:all 0.1s;">
-                <div style="font-weight:bold;font-size:13px;color:#fff;margin-bottom:6px;">${item.name}</div>
-                <div style="display:flex;align-items:center;justify-content:space-between;">
-                  <span style="font-size:11px;background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:3px;color:#bbb;text-transform:capitalize;">${item.poolName}</span>
-                  ${isReserved ? `<span style="font-size:11px;color:var(--accent-orange,#f39c12);font-weight:bold;">★</span>` : ''}
+              <div class="room-selector-card ${isReserved ? 'reserved' : ''} ${isFocused ? 'focused' : ''}" data-idx="${idx}">
+                <div class="room-selector-card-name">${item.name}</div>
+                <div class="room-selector-card-foot">
+                  <span class="room-selector-pool">${item.poolName}</span>
+                  ${isReserved ? `<span class="room-selector-star">★</span>` : ''}
                 </div>
               </div>
             `;
